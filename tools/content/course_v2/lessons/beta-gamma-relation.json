@@ -1,58 +1,148 @@
 {
   "id": "beta-gamma-relation",
   "title": "Beta 與 Gamma 的關係",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["beta-function", "gamma-half-integer", "change-of-variables", "jacobian-determinant"],
-  "next": ["beta-trig"],
-  "related": ["gamma-half", "residue-real-integrals"],
-  "objectives": [
-    "寫得出 $\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$，並用它算非整數的 Beta 值。",
-    "說得出證明的骨架：$\\Gamma(p)\\Gamma(q)$ 寫成二重積分，換成「總和 $u=x+y$、比例 $v=\\frac{x}{x+y}$」兩個變數。",
-    "把 $[0,1]$ 與 $[0,\\infty)$ 上的 Beta 型積分化成 Gamma 值計算。"
+  "prerequisites": [
+    "beta-function",
+    "gamma-half-integer",
+    "change-of-variables",
+    "jacobian-determinant"
   ],
-  "visual": "第一象限的點 (x, y)，畫出 x + y = u 的斜線族與 x/(x + y) = v 的射線族，兩族線把象限切成彎曲的小格子。點一個格子顯示它的面積約 u du dv，說明 Jacobian 為什麼是 u。",
+  "next": [
+    "beta-trig"
+  ],
+  "related": [
+    "gamma-half",
+    "residue-real-integrals"
+  ],
+  "objectives": [
+    "寫得出 $\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$（$p,q>0$），並用它算非整數參數的 Beta",
+    "說得出證明的骨架：$\\Gamma(p)\\Gamma(q)$ 寫成二重積分，換成「總和 $u=x+y$、比例 $v=\\frac{x}{x+y}$」，Jacobian 是 $u$，積分拆成 $\\Gamma(p+q)\\,\\mathrm{B}(p,q)$",
+    "把 $[0,1]$ 與 $[0,\\infty)$ 上的 Beta 型積分化成 Gamma 值計算"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 公式",
       "body": [
-        "Beta 可以完全用 Gamma 表示。整數時它就是上一課的 $\\frac{(m-1)!(n-1)!}{(m+n-1)!}$，因為 $\\Gamma(m)=(m-1)!$。",
-        "這條公式讓所有非整數的 Beta 都能算：$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)^2}{\\Gamma(1)}=\\pi$，$\\mathrm{B}\\left(\\frac{3}{2},\\frac{3}{2}\\right)=\\frac{(\\sqrt{\\pi}/2)^2}{\\Gamma(3)}=\\frac{\\pi/4}{2}=\\frac{\\pi}{8}$。",
-        "分母 $\\Gamma(p+q)$ 最容易漏掉：$\\mathrm{B}$ 是三個 Gamma 的組合，不是兩個相乘。"
+        "對 $p>0$、$q>0$：",
+        "整數點對得上上一課：$\\Gamma(n)=(n-1)!$",
+        "新的是：參數不是整數也能算",
+        "半整數的 Gamma 已經會算：$\\Gamma(\\frac12)=\\sqrt\\pi$、$\\Gamma(\\frac32)=\\frac{\\sqrt\\pi}2$、$\\Gamma(\\frac52)=\\frac{3\\sqrt\\pi}4$",
+        "算出來：",
+        "$x=0$ 那端是瑕積分（$p=\\frac12>0$，收斂）"
       ],
-      "tex": ["B(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}"],
-      "collapsible": false
+      "tex": [
+        "\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}",
+        "\\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}",
+        "\\frac{\\sqrt\\pi\\cdot\\frac{3\\sqrt\\pi}{4}}{2!}=\\frac{3\\pi}{8}"
+      ]
     },
     {
-      "heading": "② 為什麼：把兩個 Gamma 合成一個二重積分",
+      "heading": "② 為什麼：二重積分",
       "body": [
-        "$\\Gamma(p)\\Gamma(q)=\\int_0^{\\infty}\\int_0^{\\infty}x^{p-1}y^{q-1}e^{-(x+y)}\\,dx\\,dy$。指數只跟 $x+y$ 有關，所以換成兩個新變數：$u=x+y$（總和）、$v=\\frac{x}{x+y}$（$x$ 佔的比例）。反過來 $x=uv$、$y=u(1-v)$，$u$ 從 $0$ 到 $\\infty$、$v$ 從 $0$ 到 $1$，剛好蓋滿第一象限。",
-        "代進去：$x^{p-1}y^{q-1}=u^{p+q-2}v^{p-1}(1-v)^{q-1}$，再乘上 Jacobian $u$，被積函數拆成「只有 $u$」乘「只有 $v$」，兩個積分分開算：$u$ 那邊是 $\\Gamma(p+q)$，$v$ 那邊是 $\\mathrm{B}(p,q)$。"
+        "兩個 Gamma 相乘，用不同的積分變數：",
+        "寫成第一象限上的二重積分：",
+        "合法的理由在下一頁；被積函數非負是關鍵",
+        "指數只看 $x+y$：用總和與比例當新座標",
+        "反過來：$x=uv$，$y=u(1-v)$",
+        "$u\\in(0,\\infty)$、$v\\in(0,1)$ 正好鋪滿第一象限"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Gamma(p)\\Gamma(q)=\\int_0^\\infty x^{p-1}e^{-x}dx\\int_0^\\infty y^{q-1}e^{-y}dy",
+        "=\\iint_{x,y>0}x^{p-1}y^{q-1}e^{-(x+y)}\\,dA",
+        "u=x+y,\\qquad v=\\frac{x}{x+y}"
+      ]
     },
     {
-      "heading": "Jacobian 的計算與嚴格性",
+      "heading": "② Jacobian",
       "body": [
-        "$x=uv$、$y=u-uv$：$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 的行列式 $=(v)(-u)-(u)(1-v)=-u$，絕對值是 $u$（〈Jacobian 行列式〉）。",
-        "被積函數非負，所以 Fubini–Tonelli 定理保證可以把瑕二重積分寫成累次積分、也可以換變數，不用擔心收斂順序。"
+        "$|J|=u$：$dA=u\\,du\\,dv$",
+        "被積函數換過去：",
+        "再乘 $|J|=u$，$u$ 的次方是 $(p-1)+(q-1)+1=p+q-1$：",
+        "變數分離了：",
+        "$\\Gamma(p+q)>0$（被積函數為正），可以除"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\begin{vmatrix}v&u\\\\1-v&-u\\end{vmatrix}=-uv-u(1-v)=-u",
+        "x^{p-1}y^{q-1}e^{-(x+y)}=u^{p-1}v^{p-1}\\cdot u^{q-1}(1-v)^{q-1}\\cdot e^{-u}",
+        "\\Gamma(p)\\Gamma(q)=\\int_0^1\\!\\!\\int_0^\\infty u^{p+q-1}e^{-u}\\,v^{p-1}(1-v)^{q-1}\\,du\\,dv",
+        "\\begin{aligned}\\Gamma(p)\\Gamma(q)&=\\underbrace{\\int_0^\\infty u^{p+q-1}e^{-u}du}_{\\Gamma(p+q)}\\\\&\\quad\\cdot\\underbrace{\\int_0^1v^{p-1}(1-v)^{q-1}dv}_{\\mathrm{B}(p,q)}\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 一個副產品：再證一次 $\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$",
+      "heading": "② 這個計算為什麼嚴格",
       "body": [
-        "$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}$。令 $x=\\sin^2\\theta$，$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$，$\\sqrt{x(1-x)}=\\sin\\theta\\cos\\theta$，積分變成 $\\int_0^{\\pi/2}2\\,d\\theta=\\pi$。",
-        "另一方面 $\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)^2}{\\Gamma(1)}=\\Gamma\\left(\\frac{1}{2}\\right)^2$。所以 $\\Gamma\\left(\\frac{1}{2}\\right)^2=\\pi$，跟〈Γ(1/2) = √π〉的極座標算法得到同一個答案。"
+        "(1) 變換是好的：$T(u,v)=(uv,\\,u(1-v))$",
+        "• 一對一、映成：反函數 $u=x+y$，$v=\\frac{x}{x+y}$",
+        "• $C^1$，而且 $J=-u\\ne0$",
+        "(2) 瑕積分用緊緻集合逼近：被積函數 $f\\ge0$ 連續",
+        "因為 $f\\ge0$：$\\iint_{K_j}f$ 遞增，極限就是所有有界閉子集上積分的上確界",
+        "• 選正方形 $[\\varepsilon,R]^2$：極限是 $\\Gamma(p)\\Gamma(q)$",
+        "• 選 $T\\big([\\varepsilon,R]\\times[\\delta,1-\\delta]\\big)$：在 $(u,v)$ 上就是長方形",
+        "(3) 在每一塊有界閉集合上，9.8 的變數變換公式成立，再取極限",
+        "一般的版本（Tonelli 定理）留到實分析；這裡被積函數非負又連續，上面的論證已經完整"
       ],
-      "collapsible": false
+      "tex": [
+        "\\iint f\\,dA=\\lim\\iint_{K_j}f\\,dA,\\quad K_1\\subset K_2\\subset\\cdots"
+      ]
+    },
+    {
+      "heading": "③ 例：半圓的面積",
+      "body": [
+        "驗算：$y=\\sqrt{x(1-x)}$ 就是 $(x-\\frac12)^2+y^2=\\frac14$ 的上半圓",
+        "半徑 $\\frac12$ 的半圓面積：$\\frac12\\cdot\\pi\\cdot\\frac14=\\frac\\pi8$",
+        "$[0,\\infty)$ 上的 Beta：",
+        "分子次方 $\\frac12$：$p=\\frac32$；分母次方 $3=p+q$：$q=\\frac32$"
+      ],
+      "tex": [
+        "\\int_0^1\\sqrt{x(1-x)}\\,dx=\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)",
+        "=\\frac{\\Gamma(\\frac32)^2}{\\Gamma(3)}=\\frac{(\\frac{\\sqrt\\pi}{2})^2}{2}=\\frac{\\pi}{8}",
+        "\\int_0^\\infty\\frac{\\sqrt x}{(1+x)^3}\\,dx",
+        "=\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)=\\frac\\pi8"
+      ]
+    },
+    {
+      "heading": "③ 副產品：$\\Gamma(\\frac12)$",
+      "body": [
+        "取 $p=q=\\frac12$：",
+        "直接算左邊：令 $x=\\sin^2\\theta$，$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$",
+        "$\\theta\\in(0,\\frac\\pi2)$ 時 $\\sin\\theta,\\cos\\theta>0$，開根號不用加絕對值",
+        "所以 $\\Gamma(\\frac12)^2=\\pi$；又 $\\Gamma(\\frac12)>0$：",
+        "11.17 用極座標證過一次；這次的極座標藏在 $(u,v)$ 換元裡"
+      ],
+      "tex": [
+        "\\mathrm{B}\\big(\\tfrac12,\\tfrac12\\big)=\\frac{\\Gamma(\\frac12)^2}{\\Gamma(1)}=\\Gamma\\big(\\tfrac12\\big)^2",
+        "\\begin{aligned}\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}&=\\int_0^{\\pi/2}\\frac{2\\sin\\theta\\cos\\theta}{\\sin\\theta\\cos\\theta}\\,d\\theta\\\\&=\\int_0^{\\pi/2}2\\,d\\theta=\\pi\\end{aligned}",
+        "\\Gamma\\big(\\tfrac12\\big)=\\sqrt\\pi"
+      ]
     },
     {
       "heading": "預告：反射公式",
       "body": [
-        "$p+q=1$ 時分母是 $\\Gamma(1)=1$，$\\mathrm{B}(s,1-s)=\\Gamma(s)\\Gamma(1-s)$。可以證明 $\\Gamma(s)\\Gamma(1-s)=\\frac{\\pi}{\\sin(\\pi s)}$（$0<s<1$），證明要用複變（〈用留數算實積分〉）。有了它，$\\int_0^{\\infty}\\frac{dx}{1+x^4}=\\frac{1}{4}\\mathrm{B}\\left(\\frac{1}{4},\\frac{3}{4}\\right)=\\frac{\\pi}{4\\sin(\\pi/4)}=\\frac{\\pi}{2\\sqrt{2}}$ 這類積分都能一行算完。"
+        "取 $q=1-p$（$0<p<1$），用 $[0,\\infty)$ 形式：",
+        "這個積分等於 $\\dfrac{\\pi}{\\sin\\pi p}$，所以",
+        "這個積分的值要用複變的留數定理（或其他之後的工具）才證得出來：證明留到後面",
+        "檢查 $p=\\frac12$：$\\Gamma(\\frac12)^2=\\dfrac\\pi{\\sin\\frac\\pi2}=\\pi$",
+        "下一課會用到：$\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\Gamma(p)\\Gamma(1-p)=\\mathrm{B}(p,1-p)=\\int_0^\\infty\\frac{t^{p-1}}{1+t}\\,dt",
+        "\\Gamma(p)\\,\\Gamma(1-p)=\\frac{\\pi}{\\sin\\pi p}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\mathrm{B}(p,q)=\\dfrac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$（$p,q>0$）",
+        "• 證明：$\\Gamma(p)\\Gamma(q)$ 寫成二重積分，換成 $u=x+y$、$v=\\frac{x}{x+y}$，$|J|=u$，積分分離",
+        "• 嚴格性：$f\\ge0$，用有界閉集合逼近，每一塊上換元",
+        "• 用法：讀出 $p,q$ → 換成 Gamma → 用半整數的值",
+        "• 副產品：$\\mathrm{B}(\\frac12,\\frac12)=\\pi$ 給出 $\\Gamma(\\frac12)=\\sqrt\\pi$",
+        "下一課：三角形式的 Beta"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,35 +190,24 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathrm{B}(p,q)$ 用 Gamma 表示是？",
+      "ask": "$\\displaystyle\\int_0^1\\sqrt x\\,(1-x)\\,dx=$？",
       "options": [
-        { "label": "$\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$", "correct": true },
-        { "label": "$\\Gamma(p)\\Gamma(q)$", "why": "少了分母 $\\Gamma(p+q)$；例如 $\\mathrm{B}(1,2)=\\frac{1}{2}$，但 $\\Gamma(1)\\Gamma(2)=1$，要再除以 $\\Gamma(3)=2$ 才對得上。" },
-        { "label": "$\\frac{\\Gamma(p+q)}{\\Gamma(p)\\Gamma(q)}$", "why": "上下顛倒了；$\\mathrm{B}(1,2)=\\frac{1}{2}$，代進去會得到 $2$。" }
-      ]
-    },
-    {
-      "ask": "$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)$ 是？",
-      "options": [
-        { "label": "$\\pi$", "correct": true },
-        { "label": "$\\sqrt{\\pi}$", "why": "$\\Gamma\\left(\\frac{1}{2}\\right)^2=(\\sqrt{\\pi})^2=\\pi$，分母 $\\Gamma(1)=1$。" },
-        { "label": "$2$", "why": "$2$ 是 $\\mathrm{B}\\left(\\frac{1}{2},1\\right)=\\frac{\\Gamma(1/2)\\Gamma(1)}{\\Gamma(3/2)}=\\frac{\\sqrt{\\pi}}{\\sqrt{\\pi}/2}$。" }
-      ]
-    },
-    {
-      "ask": "$\\mathrm{B}\\left(\\frac{3}{2},\\frac{1}{2}\\right)$ 是？",
-      "options": [
-        { "label": "$\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$\\frac{\\pi}{4}$", "why": "分母是 $\\Gamma(2)=1$：$\\frac{(\\sqrt{\\pi}/2)(\\sqrt{\\pi})}{1}=\\frac{\\pi}{2}$。" },
-        { "label": "$\\pi$", "why": "$\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$，不是 $\\sqrt{\\pi}$。" }
-      ]
-    },
-    {
-      "ask": "證明裡用 $x=uv$、$y=u(1-v)$ 換變數，Jacobian 的絕對值是？",
-      "options": [
-        { "label": "$u$", "correct": true },
-        { "label": "$1$", "why": "這個變換會拉伸面積：行列式 $v(-u)-u(1-v)=-u$。" },
-        { "label": "$uv$", "why": "算行列式時 $v$ 的項會消掉，剩 $-u$。" }
+        {
+          "label": "$\\dfrac4{15}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac23$",
+          "why": "把 $(1-x)$ 的次方當 $0$：那是 $\\mathrm{B}(\\frac32,1)$；次方 $1$ 要加 1 得 $q=2$"
+        },
+        {
+          "label": "$\\dfrac8{15}$",
+          "why": "把 $\\Gamma(\\frac32)$ 當成 $\\sqrt\\pi$；應該是 $\\frac{\\sqrt\\pi}2$"
+        },
+        {
+          "label": "$\\dfrac\\pi8$",
+          "why": "那是 $\\sqrt{x}\\sqrt{1-x}$；這裡 $1-x$ 是一次方"
+        }
       ]
     }
   ],
@@ -136,225 +215,993 @@
     {
       "title": "公式",
       "beats": [
-        { "show": ["$\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}$"],
-          "say": "Beta 可以完全用 Gamma 表示：上面兩個 Gamma 相乘，下面是 Gamma p 加 q。",
+        {
+          "show": [
+            "對 $p>0$、$q>0$：",
+            "$\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}$"
+          ],
+          "say": "這一課的主角：p、q 都大於 0 時，貝塔 p q 等於伽瑪函數 p 乘伽瑪函數 q，除以伽瑪函數 p 加 q。",
           "board": [
-            {"do":"write","line":"$\\mathrm{B}(p,q)=\\frac{ {{a:\\Gamma(p)\\,\\Gamma(q)}}}{ {{b:\\Gamma(p+q)}}}$"},
-            {"do":"underline","term":"a","color":"blue","label":"相乘","on":"上面"},
-            {"do":"underline","term":"b","color":"violet","label":"分母","on":"下面"}
-          ] },
-        { "show": ["整數時：$\\frac{(m-1)!(n-1)!}{(m+n-1)!}$"],
-          "note": "因為 $\\Gamma(m)=(m-1)!$。",
-          "say": "整數的時候，Gamma m 就是 m 減一的階乘，正好回到上一課的公式。",
+            {
+              "do": "write",
+              "line": "對 $p>0$、$q>0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}}}$",
+              "color": "red",
+              "on": "貝塔"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "瑪函#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "整數點對得上上一課：$\\Gamma(n)=(n-1)!$",
+            "$\\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$"
+          ],
+          "say": "先檢查整數點。伽瑪函數 n 是 n 減 1 階乘，代進去正好是上一課用分部積分算出的公式。",
           "board": [
-            {"do":"write","line":"$\\Gamma(m)=(m-1)!$"},
-            {"do":"write","line":"$\\mathrm{B}(m,n)=\\frac{(m-1)!(n-1)!}{(m+n-1)!}$","on":"正好回到"}
-          ] },
-        { "show": ["是三個 Gamma，不是兩個"],
-          "note": "分母 $\\Gamma(p+q)$ 最容易漏掉。",
-          "say": "最容易漏的是分母。Beta 是三個 Gamma 的組合，不是兩個相乘就好。",
+            {
+              "do": "write",
+              "line": "整數點對得上上一課：$\\Gamma(n)=(n-1)!$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$",
+              "on": "階乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "新的是：參數不是整數也能算"
+          ],
+          "say": "新的是：參數不是整數也能算，交給伽瑪函數。",
           "board": [
-            {"do":"write","line":"分母 $ {{w:\\Gamma(p+q)}}$ 不能漏"},
-            {"do":"circle","term":"w","color":"red","label":"別漏","on":"三個 Gamma"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "非整數也能算",
-      "beats": [
-        { "show": ["$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)^2}{\\Gamma(1)}$"],
-          "note": "分母 $\\Gamma(1)=1$。",
-          "say": "有了這條公式，非整數的 Beta 也能算。Beta 二分之一、二分之一，是 Gamma 二分之一的平方。",
-          "board": [
-            {"do":"write","line":"$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\frac{ {{g:\\Gamma(1/2)^2}}}{\\Gamma(1)}$","tint":{"g":"blue"}}
-          ] },
-        { "show": ["直接積：$\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}=\\pi$"],
-          "note": "令 $x=\\sin^2\\theta$，變成 $\\int_0^{\\pi/2}2\\,d\\theta$。",
-          "say": "另一方面直接積：令 x 等於 sine 平方 theta，積分變成二從零積到二分之 pi，就是 pi。",
-          "board": [
-            {"do":"write","line":"令 $x=\\sin^2\\theta$","on":"令 x 等於"},
-            {"do":"write","line":"$\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}=\\int_0^{\\pi/2}2\\,d\\theta=\\pi$","on":"積分變成"}
-          ] },
-        { "show": ["$1-x=\\cos^2\\theta$","$\\sqrt{x(1-x)}=\\sin\\theta\\cos\\theta$"],
-          "note": "$\\theta$ 在零到 $\\frac{\\pi}{2}$，sine、cosine 都不是負的。",
-          "say": "x 是 sine 平方，一減 x 就是 cosine 平方，所以根號下變成 sine 乘 cosine。",
-          "board": [
-            {"do":"write","line":"$1-x=\\cos^2\\theta$"},
-            {"do":"write","line":"$\\sqrt{x(1-x)}=\\sin\\theta\\cos\\theta$","on":"根號下"}
-          ] },
-        { "show": ["$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$","分子分母的 $\\sin\\theta\\cos\\theta$ 約掉"],
-          "note": "$x=\\sin^2\\theta$ 對 $\\theta$ 微分。",
-          "say": "dx 是 x 對 theta 微分再乘 d theta，得二 sine cosine d theta。除掉根號下那個，剩二。",
-          "board": [
-            {"do":"write","line":"$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"},
-            {"do":"write","line":"$\\frac{2\\sin\\theta\\cos\\theta}{\\sin\\theta\\cos\\theta}\\,d\\theta=2\\,d\\theta$","on":"除掉"}
-          ] },
-        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)^2=\\pi$"],
-          "note": "跟極座標的算法同一個答案。",
-          "say": "兩邊一比，Gamma 二分之一的平方就是 pi，又證了一次它等於根號 pi。",
-          "board": [
-            {"do":"write","line":"${{g:\\Gamma(1/2)^2}}=\\pi$ ⇒ $\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$","color":"green","on":"兩邊一比"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "為什麼成立",
-      "beats": [
-        { "show": ["$\\Gamma(p)\\Gamma(q)$","$=\\iint x^{p-1}y^{q-1}e^{-(x+y)}\\,dx\\,dy$"],
-          "note": "第一象限上的二重積分。",
-          "say": "把兩個 Gamma 相乘，寫成第一象限上的二重積分。指數只跟 x 加 y 有關。",
-          "board": [
-            {"do":"write","line":"$\\Gamma(p)\\Gamma(q)$"},
-            {"do":"write","line":"$=\\iint x^{p-1}y^{q-1}{{e:e^{-(x+y)}}}\\,dx\\,dy$","on":"二重積分"},
-            {"do":"underline","term":"e","label":"只看 x+y","on":"指數"}
-          ] },
-        { "show": ["二重積分：小方塊 $dx\\,dy$ 加總","$\\Gamma(p)\\Gamma(q)=\\int f\\,dx\\cdot\\int g\\,dy$"],
-          "note": "$f=x^{p-1}e^{-x}$，$g=y^{q-1}e^{-y}$。",
-          "say": "二重積分是把第一象限切成小方塊，每塊面積 dx 乘 dy，再加總。兩個 Gamma 相乘就是 x 的式子乘 y 的式子。",
-          "board": [
-            {"do":"write","line":"$\\iint f\\,dx\\,dy$ ＝ 小方塊 $dx\\,dy$ 加總"},
-            {"do":"write","line":"$\\Gamma(p)\\Gamma(q)=\\int f\\,dx\\cdot\\int g\\,dy$","on":"兩個 Gamma"}
-          ] },
-        { "show": ["$u=x+y$，$v=\\frac{x}{x+y}$"],
-          "note": "$x=uv$，$y=u(1-v)$；$u\\in[0,\\infty)$，$v\\in[0,1]$。",
-          "say": "所以換兩個新變數：u 是總和，v 是 x 佔的比例。u 從零到無限大，v 從零到一，剛好蓋滿第一象限。",
-          "board": [
-            {"do":"write","line":"${{u:u}}=x+y$，${{v:v}}=\\frac{x}{x+y}$","tint":{"u":"blue","v":"violet"}},
-            {"do":"focus","term":"u","color":"blue","label":"總和","on":"總和"},
-            {"do":"focus","term":"v","color":"violet","label":"比例","on":"比例"},
-            {"do":"write","line":"$u\\in[0,\\infty)$，$v\\in[0,1]$","on":"u 從零"}
-          ] },
-        { "show": ["$x=uv$，$y=u(1-v)$","$|J|=u$"],
-          "note": "例：$u=2$、$v=\\frac{1}{2}$ 得 $x=1$、$y=1$。",
-          "say": "Jacobian 是面積的放大倍數，算出來是 u。乘上去，u 的次方加一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=uv$，$y=u(1-v)$","on":"是面"},
-            {"do":"write","line":"$|J|=|v(-u)-u(1-v)|=u$","on":"算出來"},
-            {"do":"write","line":"$u^{p+q-2}\\cdot u=u^{p+q-1}$","on":"乘上去"}
-          ] },
-        { "show": ["只有 $u$ 的部分 × 只有 $v$ 的部分"],
-          "note": "$u$ 那邊是 $\\Gamma(p+q)$，$v$ 那邊是 $\\mathrm{B}(p,q)$。",
-          "say": "代進去再乘上 Jacobian，被積函數拆成只有 u 乘只有 v，分開算：一邊是 Gamma p 加 q，一邊是 Beta。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"被積函數 ＝ 只有 $u$ × 只有 $v$","on":"拆成"},
-            {"do":"write","line":"$\\Gamma(p)\\Gamma(q)={{a:\\Gamma(p+q)}}\\cdot{{b:\\mathrm{B}(p,q)}}$","tint":{"a":"blue","b":"violet"},"on":"分開算"},
-            {"do":"focus","term":"a","color":"blue","on":"Gamma p 加 q"},
-            {"do":"focus","term":"b","color":"violet","on":"一邊是#2"}
-          ] }
-      ],
-      "key": "兩個 Gamma 相乘成二重積分，再換變數分離",
-      "check": 3
-    },
-    {
-      "title": "半圓的面積",
-      "beats": [
-        { "show": ["$\\int_0^1\\sqrt{x(1-x)}\\,dx$"],
-          "note": "$x^{1/2}(1-x)^{1/2}$，次方加 $1$。",
-          "say": "根號 x 乘一減 x，是 x 和一減 x 都開根號，次方各加一，是 Beta 二分之三、二分之三。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1 {{a:x^{1/2}}}{{b:(1-x)^{1/2}}}\\,dx$"},
-            {"do":"underline","term":"a","label":"加 1","on":"次方各加一"},
-            {"do":"write","line":"$={{r:\\mathrm{B}\\left(\\frac{3}{2},\\frac{3}{2}\\right)}}$","on":"Beta"}
-          ] },
-        { "show": ["$y=\\sqrt{x(1-x)}$ 底下的面積"],
-          "say": "先畫出來看：y 等於根號 x 乘一減 x，從零到一，底下這塊面積就是要算的積分。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.2,1.2,-0.1,0.7],"curves":[{"expr":"sqrt(x*(1-x))","domain":[0,1],"color":"blue"}],"fills":[{"expr":"sqrt(x*(1-x))","from":0,"to":1,"color":"blue"}]}}
-          ] },
-        { "show": ["$\\frac{\\Gamma(3/2)^2}{\\Gamma(3)}$"],
-          "note": "$\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$，$\\Gamma(3)=2$。",
-          "say": "用公式：Gamma 二分之三的平方，除以 Gamma 三。Gamma 二分之三是二分之根號 pi。",
-          "board": [
-            {"do":"transform","line":"$=\\frac{ {{g:\\Gamma(3/2)^2}}}{\\Gamma(3)}$"},
-            {"do":"focus","term":"g","color":"blue","on":"平方"},
-            {"do":"write","line":"$\\Gamma(3/2)=\\frac{\\sqrt{\\pi}}{2}$","on":"二分之根號"}
-          ] }
+            {
+              "do": "write",
+              "line": "新的是：參數不是整數也能算",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　半整數的 Gamma 已經會算：$\\Gamma(\\frac12)=\\sqrt\\pi$、$\\Gamma(\\frac32)=\\frac{\\sqrt\\pi}2$、$\\Gamma(\\frac52)=\\frac{3\\sqrt\\pi}4$",
+              "color": "violet",
+              "on": "也能"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "答案是？",
+        "ask": "$\\displaystyle\\int_0^1x^{-1/2}(1-x)^{3/2}\\,dx$ 用公式寫成？",
         "options": [
           {
-            "label": "$\\frac{\\pi}{8}$：半徑 $\\frac{1}{2}$ 的半圓",
+            "label": "$\\dfrac{\\Gamma(\\frac12)\\Gamma(\\frac52)}{\\Gamma(3)}$",
             "correct": true
           },
           {
-            "label": "$\\frac{\\pi}{4}$",
-            "why": "那是分子 $\\left(\\frac{\\sqrt{\\pi}}{2}\\right)^2$；還要除以 $\\Gamma(3)=2$。"
+            "label": "$\\dfrac{\\Gamma(-\\frac12)\\Gamma(\\frac32)}{\\Gamma(1)}$",
+            "why": "次方直接當參數：參數是次方加 1"
           },
           {
-            "label": "$\\frac{\\pi}{2}$",
-            "why": "把 $\\Gamma\\left(\\frac{3}{2}\\right)$ 用成 $\\sqrt{\\pi}$；那是 $\\Gamma\\left(\\frac{1}{2}\\right)$。"
+            "label": "$\\Gamma(\\tfrac12)\\,\\Gamma(\\tfrac52)$",
+            "why": "漏了分母 $\\Gamma(p+q)=\\Gamma(3)=2$"
           }
         ]
       }
     },
     {
-      "title": "一端無界也行",
+      "title": "公式",
       "beats": [
-        { "show": ["$\\int_0^1 x^{-1/2}(1-x)^{3/2}\\,dx$"],
-          "note": "$p=\\frac{1}{2}$，$q=\\frac{5}{2}$，都 $>0$，收斂。",
-          "say": "x 的負二分之一次方在零衝到無限大，但 p 是二分之一、q 是二分之五，都大於零，收斂。",
+        {
+          "show": [
+            "算出來：",
+            "$\\frac{\\sqrt\\pi\\cdot\\frac{3\\sqrt\\pi}{4}}{2!}=\\frac{3\\pi}{8}$"
+          ],
+          "say": "伽瑪函數 2 分之 1 是根號派，伽瑪函數 2 分之 5 是 4 分之 3 根號派，伽瑪函數 3 是 2。答案 8 分之 3 派。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 {{n:x^{-1/2}}}(1-x)^{3/2}\\,dx$"},
-            {"do":"underline","term":"n","color":"red","label":"零處無界","on":"衝到無限大"},
-            {"do":"write","line":"$p=\\frac{1}{2}$，$q=\\frac{5}{2}$，都 $>0$","on":"但 p"}
-          ] },
-        { "show": ["$y=x^{-1/2}$ 在 0 附近往上衝"],
-          "say": "畫出來看：x 的負二分之一次方在零附近往上衝，但那條尖尖的細縫面積很小，整塊面積有限。",
+            {
+              "do": "write",
+              "line": "算出來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{\\sqrt\\pi\\cdot\\frac{3\\sqrt\\pi}{4}}{2!}=\\frac{3\\pi}{8}}}$",
+              "on": "伽瑪#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之#3"
+            },
+            {
+              "do": "write",
+              "line": "　$x=0$ 那端是瑕積分（$p=\\frac12>0$，收斂）",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼：二重積分",
+      "beats": [
+        {
+          "show": [
+            "兩個 Gamma 相乘，用不同的積分變數：",
+            "$\\Gamma(p)\\Gamma(q)=\\int_0^\\infty x^{p-1}e^{-x}dx\\int_0^\\infty y^{q-1}e^{-y}dy$"
+          ],
+          "say": "為什麼？把伽瑪函數 p 和伽瑪函數 q 相乘，兩個積分變數分別叫 x 和 y。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.2,1.5,-0.5,6],"curves":[{"expr":"x^(-1/2)","domain":[0.02,1.5],"color":"red"}],"fills":[{"expr":"x^(-1/2)","from":0.02,"to":1,"color":"red"}]}}
-          ] },
-        { "show": ["$\\int_0^1 x^{-1/2}dx=2$","$\\int_0^1 x^{p-1}dx=\\frac{1}{p}$"],
-          "note": "收斂：積分算出一個有限的數。",
-          "say": "反導函數是二倍根號 x，從零到一是二，有限。一般 p 減一次方，積出來是 p 分之一。",
+            {
+              "do": "write",
+              "line": "兩個 Gamma 相乘，用不同的積分變數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(p)\\Gamma(q)=\\int_0^\\infty x^{p-1}e^{-x}dx\\int_0^\\infty y^{q-1}e^{-y}dy$",
+              "on": "相乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寫成第一象限上的二重積分：",
+            "$=\\iint_{x,y>0}x^{p-1}y^{q-1}e^{-(x+y)}\\,dA$"
+          ],
+          "say": "兩個一維積分的乘積，寫成第一象限上的二重積分。被積函數裡，指數變成 x 加 y。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 x^{-1/2}dx=\\left[2\\sqrt{x}\\right]_0^1=2$"},
-            {"do":"write","line":"一般：$\\int_0^1 x^{p-1}dx=\\frac{1}{p}$，$p>0$","on":"一般"}
-          ] },
-        { "show": ["$\\frac{\\Gamma(1/2)\\Gamma(5/2)}{\\Gamma(3)}=\\frac{3\\pi}{8}$"],
-          "say": "根號 pi 乘四分之三根號 pi，再除以二，得八分之三 pi。",
+            {
+              "do": "write",
+              "line": "寫成第一象限上的二重積分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\iint_{x,y>0}x^{p-1}y^{q-1}e^{-(x+y)}\\,dA}}$",
+              "on": "寫成"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "積分#2"
+            },
+            {
+              "do": "write",
+              "line": "　合法的理由在下一頁；被積函數非負是關鍵",
+              "color": "violet",
+              "on": "數變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "指數只看 $x+y$：用總和與比例當新座標",
+            "$u=x+y,\\qquad v=\\frac{x}{x+y}$"
+          ],
+          "say": "指數只跟 x 加 y 有關，所以用總和 u 當一個座標；另一個座標是比例 v，x 佔總和的幾分之幾。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{\\Gamma(1/2)\\Gamma(5/2)}{\\Gamma(3)}$","on":"根號 pi#1"},
-            {"do":"write","line":"$=\\frac{\\sqrt{\\pi}\\cdot\\frac{3}{4}\\sqrt{\\pi}}{2}$","on":"乘四分之三"},
-            {"do":"write","line":"$={{r:\\frac{3\\pi}{8}}}$","on":"再除以二"},
-            {"do":"box","term":"r","color":"green","on":"得八分之三"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}\\frac{\\sqrt{x}}{(1+x)^3}\\,dx=\\mathrm{B}\\left(\\frac{3}{2},\\frac{3}{2}\\right)$"],
-          "note": "$p=\\frac{3}{2}$；$p+q=3$，$q=\\frac{3}{2}$。",
-          "say": "零到無限大的形式也一樣：分母的三次方是 p 加 q，減掉 p 才是 q。答案又是八分之 pi。",
+            {
+              "do": "write",
+              "line": "指數只看 $x+y$：用總和與比例當新座標"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle u=x+y,\\qquad v=\\frac{x}{x+y}}}$",
+              "color": "red",
+              "on": "用總"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "是比"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：u = 1, 2, 3（總和固定）；紅：v 固定（從原點出發的射線）"
+          ],
+          "say": "圖上，藍線是 u 固定，也就是 x 加 y 固定；紅線是 v 固定，是從原點出發的射線。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{\\sqrt{x}}{(1+x)^3}\\,dx$","on":"零到無限大"},
-            {"do":"write","line":"$p=\\frac{3}{2}$，$p+q=3$","on":"分母的三次方"},
-            {"do":"write","line":"$q=3-\\frac{3}{2}=\\frac{3}{2}$","on":"減掉"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "uv",
+                  "window": [
+                    0,
+                    3.3,
+                    0,
+                    3.3
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        1,
+                        0
+                      ],
+                      "to": [
+                        0,
+                        1
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        2,
+                        0
+                      ],
+                      "to": [
+                        0,
+                        2
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        3,
+                        0
+                      ],
+                      "to": [
+                        0,
+                        3
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        0,
+                        0
+                      ],
+                      "to": [
+                        1,
+                        3
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        0,
+                        0
+                      ],
+                      "to": [
+                        3,
+                        3
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        0,
+                        0
+                      ],
+                      "to": [
+                        3,
+                        1
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.95,
+                      "y": 3.15,
+                      "text": "v = 1/4"
+                    },
+                    {
+                      "x": 2.75,
+                      "y": 3.15,
+                      "text": "v = 1/2"
+                    },
+                    {
+                      "x": 3,
+                      "y": 1.25,
+                      "text": "v = 3/4"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：u = 1, 2, 3（總和固定）；紅：v 固定（從原點出發的射線）",
+              "color": "violet",
+              "on": "固定#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來：$x=uv$，$y=u(1-v)$",
+            "$u\\in(0,\\infty)$、$v\\in(0,1)$ 正好鋪滿第一象限"
+          ],
+          "say": "反過來解：x 等於 u v，y 等於 u 乘 1 減 v。u 從 0 到無限大、v 從 0 到 1，正好鋪滿第一象限，一點一個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來：$x=uv$，$y=u(1-v)$"
+            },
+            {
+              "do": "write",
+              "line": "$u\\in(0,\\infty)$、$v\\in(0,1)$ 正好鋪滿第一象限",
+              "on": "到無"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Jacobian",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\begin{vmatrix}v&u\\\\1-v&-u\\end{vmatrix}=-uv-u(1-v)=-u$"
+          ],
+          "say": "算雅可比行列式：x 對 u、對 v 的偏導是 v 和 u；y 的是 1 減 v 和負 u。行列式是負 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}={\\begin{vmatrix}v&u\\\\1-v&-u\\end{vmatrix}}=-uv-u(1-v)=-u$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|J|=u$：$dA=u\\,du\\,dv$"
+          ],
+          "say": "取絕對值，面積放大倍率是 u。d A 變成 u d u d v。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|J|=u$：$dA=u\\,du\\,dv$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數換過去：",
+            "$x^{p-1}y^{q-1}e^{-(x+y)}=u^{p-1}v^{p-1}\\cdot u^{q-1}(1-v)^{q-1}\\cdot e^{-u}$"
+          ],
+          "say": "被積函數換過去：u 的次方從 x 和 y 兩邊都來，指數只剩 e 的負 u 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "被積函數換過去："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^{p-1}y^{q-1}e^{-(x+y)}=u^{p-1}v^{p-1}\\cdot u^{q-1}(1-v)^{q-1}\\cdot e^{-u}$",
+              "on": "兩邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再乘 $|J|=u$，$u$ 的次方是 $(p-1)+(q-1)+1=p+q-1$：",
+            "$\\Gamma(p)\\Gamma(q)=\\int_0^1\\!\\!\\int_0^\\infty u^{p+q-1}e^{-u}\\,v^{p-1}(1-v)^{q-1}\\,du\\,dv$"
+          ],
+          "say": "再乘上雅可比行列式的 u，u 的次方總共是 p 加 q 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再乘 $|J|=u$，$u$ 的次方是 $(p-1)+(q-1)+1=p+q-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(p)\\Gamma(q)=\\int_0^1\\!\\!\\int_0^\\infty u^{p+q-1}e^{-u}\\,v^{p-1}(1-v)^{q-1}\\,du\\,dv$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "變數分離了：",
+            "$\\begin{aligned}\\Gamma(p)\\Gamma(q)&=\\underbrace{\\int_0^\\infty u^{p+q-1}e^{-u}du}_{\\Gamma(p+q)}\\\\&\\quad\\cdot\\underbrace{\\int_0^1v^{p-1}(1-v)^{q-1}dv}_{\\mathrm{B}(p,q)}\\end{aligned}$"
+          ],
+          "say": "u 和 v 分開了：u 的部分正是伽瑪函數 p 加 q，v 的部分正是貝塔 p q。兩邊除以伽瑪函數 p 加 q，就是公式。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "變數分離了："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}\\Gamma(p)\\Gamma(q)&=\\underbrace{\\int_0^\\infty u^{p+q-1}e^{-u}du}_{\\Gamma(p+q)}\\\\&\\quad\\cdot\\underbrace{\\int_0^1v^{p-1}(1-v)^{q-1}dv}_{\\mathrm{B}(p,q)}\\end{aligned}}}}$",
+              "color": "red",
+              "on": "是伽"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "正是#2"
+            },
+            {
+              "do": "write",
+              "line": "　$\\Gamma(p+q)>0$（被積函數為正），可以除",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "這個計算為什麼嚴格",
+      "beats": [
+        {
+          "show": [
+            "(1) 變換是好的：$T(u,v)=(uv,\\,u(1-v))$",
+            "• 一對一、映成：反函數 $u=x+y$，$v=\\frac{x}{x+y}$"
+          ],
+          "say": "嚴格性要確認三件事。第一，變換是好的：它有反函數，一對一而且映成；可微，雅可比行列式是負 u，在區域裡不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(1) 變換是好的：$T(u,v)=(uv,\\,u(1-v))$"
+            },
+            {
+              "do": "write",
+              "line": "• 一對一、映成：反函數 $u=x+y$，$v=\\frac{x}{x+y}$",
+              "on": "它有"
+            },
+            {
+              "do": "write",
+              "line": "• $C^1$，而且 $J=-u\\ne0$",
+              "on": "可比"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(2) 瑕積分用緊緻集合逼近：被積函數 $f\\ge0$ 連續",
+            "$\\iint f\\,dA=\\lim\\iint_{K_j}f\\,dA,\\quad K_1\\subset K_2\\subset\\cdots$"
+          ],
+          "say": "第二，這是瑕二重積分。非負的連續函數，可以用一列越來越大、鋪滿區域的有界閉集合去逼近，極限跟怎麼選無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(2) 瑕積分用緊緻集合逼近：被積函數 $f\\ge0$ 連續"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint f\\,dA=\\lim\\iint_{K_j}f\\,dA,\\quad K_1\\subset K_2\\subset\\cdots$",
+              "on": "可以"
+            },
+            {
+              "do": "write",
+              "line": "　因為 $f\\ge0$：$\\iint_{K_j}f$ 遞增，極限就是所有有界閉子集上積分的上確界",
+              "color": "violet",
+              "on": "有界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 選正方形 $[\\varepsilon,R]^2$：極限是 $\\Gamma(p)\\Gamma(q)$",
+            "• 選 $T\\big([\\varepsilon,R]\\times[\\delta,1-\\delta]\\big)$：在 $(u,v)$ 上就是長方形"
+          ],
+          "say": "選正方形去逼近，得到兩個伽瑪函數的乘積；選長方形在 T 之下的像去逼近，就是 u v 平面上的長方形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 選正方形 $[\\varepsilon,R]^2$：極限是 $\\Gamma(p)\\Gamma(q)$"
+            },
+            {
+              "do": "write",
+              "line": "• 選 $T\\big([\\varepsilon,R]\\times[\\delta,1-\\delta]\\big)$：在 $(u,v)$ 上就是長方形",
+              "on": "之下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(3) 在每一塊有界閉集合上，9.8 的變數變換公式成立，再取極限"
+          ],
+          "say": "第三，在每一塊有界的長方形上，變數變換公式直接成立，再取極限，兩邊就相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(3) 在每一塊有界閉集合上，9.8 的變數變換公式成立，再取極限",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　一般的版本（Tonelli 定理）留到實分析；這裡被積函數非負又連續，上面的論證已經完整",
+              "color": "violet",
+              "on": "換公"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$ 的步驟"
+          ],
+          "say": "排排看證明的步驟。"
+        }
       ],
-      "key": "被積函數無界也照套，只要 $p$、$q$ 為正",
-      "check": 2
+      "proof": true,
+      "order": {
+        "ask": "證明 $\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$ 的步驟",
+        "steps": [
+          {
+            "label": "把 $\\Gamma(p)\\Gamma(q)$ 寫成第一象限上的二重積分"
+          },
+          {
+            "label": "換成總和 $u=x+y$、比例 $v=\\frac{x}{x+y}$",
+            "why": "先要有上一步：把 $\\Gamma(p)\\Gamma(q)$ 寫成第一象限上的二重積分"
+          },
+          {
+            "label": "算 Jacobian：$|J|=u$",
+            "why": "先要有上一步：換成總和 $u=x+y$、比例 $v=\\frac{x}{x+y}$"
+          },
+          {
+            "label": "積分分離成 $\\Gamma(p+q)\\cdot\\mathrm{B}(p,q)$",
+            "why": "先要有上一步：算 Jacobian：$|J|=u$"
+          },
+          {
+            "label": "兩邊除以 $\\Gamma(p+q)$",
+            "why": "先要有上一步：積分分離成 $\\Gamma(p+q)\\cdot\\mathrm{B}(p,q)$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：半圓的面積",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\sqrt{x(1-x)}\\,dx=\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)$"
+          ],
+          "say": "看例子：根號 x 乘 1 減 x，從 0 積到 1。次方都是 2 分之 1，加 1 得到貝塔 2 分之 3 逗號 2 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\sqrt{x(1-x)}\\,dx=\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{\\Gamma(\\frac32)^2}{\\Gamma(3)}=\\frac{(\\frac{\\sqrt\\pi}{2})^2}{2}=\\frac{\\pi}{8}$"
+          ],
+          "say": "伽瑪函數 2 分之 3 是 2 分之根號派，平方是 4 分之派；除以伽瑪函數 3，也就是 2。答案 8 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =\\frac{\\Gamma(\\frac32)^2}{\\Gamma(3)}=\\frac{(\\frac{\\sqrt\\pi}{2})^2}{2}=\\frac{\\pi}{8}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：$y=\\sqrt{x(1-x)}$ 就是 $(x-\\frac12)^2+y^2=\\frac14$ 的上半圓"
+          ],
+          "say": "驗算：平方移項，這是圓心 2 分之 1、半徑 2 分之 1 的上半圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：$y=\\sqrt{x(1-x)}$ 就是 $(x-\\frac12)^2+y^2=\\frac14$ 的上半圓"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑 $\\frac12$ 的半圓面積：$\\frac12\\cdot\\pi\\cdot\\frac14=\\frac\\pi8$"
+          ],
+          "say": "半圓面積也是 8 分之派。兩種算法對上了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半徑 $\\frac12$ 的半圓面積：$\\frac12\\cdot\\pi\\cdot\\frac14=\\frac\\pi8$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積 π/8 ≈ 0.393",
+            "$[0,\\infty)$ 上的 Beta："
+          ],
+          "say": "再看零到無限大上的一個：根號 x，除以 1 加 x 的三次方。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "semi",
+                  "window": [
+                    -0.05,
+                    1.05,
+                    -0.05,
+                    0.6
+                  ],
+                  "equal": true,
+                  "fn": [
+                    {
+                      "expr": "sqrt(x*(1-x))",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sqrt(x*(1-x))",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 200
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "面積 π/8 ≈ 0.393",
+              "color": "violet",
+              "on": "上的"
+            },
+            {
+              "do": "write",
+              "line": "$[0,\\infty)$ 上的 Beta：",
+              "on": "除以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty\\frac{\\sqrt x}{(1+x)^3}\\,dx$",
+              "on": "的三"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子次方 $\\frac12$：$p=\\frac32$；分母次方 $3=p+q$：$q=\\frac32$",
+            "$=\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)=\\frac\\pi8$"
+          ],
+          "say": "分子次方加 1，p 是 2 分之 3；分母次方是 p 加 q 等於 3，所以 q 也是 2 分之 3。又是同一個貝塔，答案 8 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子次方 $\\frac12$：$p=\\frac32$；分母次方 $3=p+q$：$q=\\frac32$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle =\\mathrm{B}\\big(\\tfrac32,\\tfrac32\\big)=\\frac\\pi8}}$",
+              "on": "方是"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1\\sqrt x\\,(1-x)\\,dx=$？"
+          ],
+          "say": "試一題：根號 x 乘 1 減 x。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "副產品：$\\Gamma(\\frac12)$",
+      "beats": [
+        {
+          "show": [
+            "取 $p=q=\\frac12$：",
+            "$\\mathrm{B}\\big(\\tfrac12,\\tfrac12\\big)=\\frac{\\Gamma(\\frac12)^2}{\\Gamma(1)}=\\Gamma\\big(\\tfrac12\\big)^2$"
+          ],
+          "say": "公式還有一個副產品。取 p、q 都是 2 分之 1：貝塔 2 分之 1 逗號 2 分之 1，等於伽瑪函數 2 分之 1 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $p=q=\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathrm{B}\\big(\\tfrac12,\\tfrac12\\big)=\\frac{\\Gamma(\\frac12)^2}{\\Gamma(1)}=\\Gamma\\big(\\tfrac12\\big)^2$",
+              "on": "逗號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直接算左邊：令 $x=\\sin^2\\theta$，$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$",
+            "$\\begin{aligned}\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}&=\\int_0^{\\pi/2}\\frac{2\\sin\\theta\\cos\\theta}{\\sin\\theta\\cos\\theta}\\,d\\theta\\\\&=\\int_0^{\\pi/2}2\\,d\\theta=\\pi\\end{aligned}$"
+          ],
+          "say": "左邊直接算：令 x 等於正弦平方西塔。根號 x 乘 1 減 x 剛好是正弦乘餘弦，跟 d x 約掉，剩下 2 從 0 積到 2 分之派，等於派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直接算左邊：令 $x=\\sin^2\\theta$，$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}&=\\int_0^{\\pi/2}\\frac{2\\sin\\theta\\cos\\theta}{\\sin\\theta\\cos\\theta}\\,d\\theta\\\\&=\\int_0^{\\pi/2}2\\,d\\theta=\\pi\\end{aligned}}}}$",
+              "on": "根號"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "弦乘"
+            },
+            {
+              "do": "write",
+              "line": "　$\\theta\\in(0,\\frac\\pi2)$ 時 $\\sin\\theta,\\cos\\theta>0$，開根號不用加絕對值",
+              "color": "violet",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\Gamma(\\frac12)^2=\\pi$；又 $\\Gamma(\\frac12)>0$：",
+            "$\\Gamma\\big(\\tfrac12\\big)=\\sqrt\\pi$"
+          ],
+          "say": "所以伽瑪函數 2 分之 1 的平方是派。它是正函數的積分，一定是正的，所以等於根號派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\Gamma(\\frac12)^2=\\pi$；又 $\\Gamma(\\frac12)>0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\Gamma\\big(\\tfrac12\\big)=\\sqrt\\pi}}$",
+              "color": "red",
+              "on": "的平"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "一定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "11.17 用極座標證過一次；這次的極座標藏在 $(u,v)$ 換元裡"
+          ],
+          "say": "之前用極座標證過一次。這是第二個證明，極座標的角色換成了總和與比例的換元。",
+          "board": [
+            {
+              "do": "write",
+              "line": "11.17 用極座標證過一次；這次的極座標藏在 $(u,v)$ 換元裡"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "預告：反射公式",
+      "beats": [
+        {
+          "show": [
+            "取 $q=1-p$（$0<p<1$），用 $[0,\\infty)$ 形式：",
+            "$\\Gamma(p)\\Gamma(1-p)=\\mathrm{B}(p,1-p)=\\int_0^\\infty\\frac{t^{p-1}}{1+t}\\,dt$"
+          ],
+          "say": "最後預告一個公式。取 q 等於 1 減 p，用零到無限大的形式，分母只剩 1 加 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $q=1-p$（$0<p<1$），用 $[0,\\infty)$ 形式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(p)\\Gamma(1-p)=\\mathrm{B}(p,1-p)=\\int_0^\\infty\\frac{t^{p-1}}{1+t}\\,dt$",
+              "on": "用零"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個積分等於 $\\dfrac{\\pi}{\\sin\\pi p}$，所以",
+            "$\\Gamma(p)\\,\\Gamma(1-p)=\\frac{\\pi}{\\sin\\pi p}$"
+          ],
+          "say": "這個積分等於派除以正弦派 p，於是得到反射公式。它的證明要用後面的工具。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個積分等於 $\\dfrac{\\pi}{\\sin\\pi p}$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\Gamma(p)\\,\\Gamma(1-p)=\\frac{\\pi}{\\sin\\pi p}}}$",
+              "color": "blue",
+              "on": "正弦"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "blue",
+              "on": "到反"
+            },
+            {
+              "do": "write",
+              "line": "　這個積分的值要用複變的留數定理（或其他之後的工具）才證得出來：證明留到後面",
+              "color": "violet",
+              "on": "明要"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查 $p=\\frac12$：$\\Gamma(\\frac12)^2=\\dfrac\\pi{\\sin\\frac\\pi2}=\\pi$"
+          ],
+          "say": "檢查 p 等於 2 分之 1：兩邊都是派，跟剛剛證的一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查 $p=\\frac12$：$\\Gamma(\\frac12)^2=\\dfrac\\pi{\\sin\\frac\\pi2}=\\pi$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課會用到：$\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$"
+          ],
+          "say": "下一課算正切開根號的積分時會用到它：伽瑪函數 4 分之 1 乘伽瑪函數 4 分之 3，等於根號 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課會用到：$\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\mathrm{B}(p,q)=\\dfrac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$（$p,q>0$）",
+            "• 證明：$\\Gamma(p)\\Gamma(q)$ 寫成二重積分，換成 $u=x+y$、$v=\\frac{x}{x+y}$，$|J|=u$，積分分離"
+          ],
+          "say": "整理：貝塔等於兩個伽瑪除以一個伽瑪。證明的關鍵是總和與比例的換元，雅可比行列式是 u。算題時讀出 p、q，換成伽瑪函數的值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\mathrm{B}(p,q)=\\dfrac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$（$p,q>0$）"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$\\Gamma(p)\\Gamma(q)$ 寫成二重積分，換成 $u=x+y$、$v=\\frac{x}{x+y}$，$|J|=u$，積分分離",
+              "on": "以一"
+            },
+            {
+              "do": "write",
+              "line": "• 嚴格性：$f\\ge0$，用有界閉集合逼近，每一塊上換元",
+              "on": "總和"
+            },
+            {
+              "do": "write",
+              "line": "• 用法：讀出 $p,q$ → 換成 Gamma → 用半整數的值",
+              "on": "列式"
+            },
+            {
+              "do": "write",
+              "line": "• 副產品：$\\mathrm{B}(\\frac12,\\frac12)=\\pi$ 給出 $\\Gamma(\\frac12)=\\sqrt\\pi$",
+              "on": "換成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：三角形式的 Beta"
+          ],
+          "say": "下一課，把貝塔函數搬到正弦和餘弦的積分上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：三角形式的 Beta"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["beta-function", "gamma-function", "special-functions"],
-    "fine": ["beta-gamma-formula", "beta-gamma-half-values", "beta-gamma-infinite-form", "beta-gamma-proof"]
+    "coarse": [
+      "beta-function",
+      "gamma-function",
+      "special-functions"
+    ],
+    "fine": [
+      "beta-gamma-formula",
+      "beta-gamma-half-values",
+      "beta-gamma-infinite-form",
+      "beta-gamma-proof"
+    ]
   },
   "practice": [
-    { "id": "mob-trap-012", "core": true, "trains": "beta-gamma-formula" },
-    { "id": "mob-beta-005", "core": true, "trains": "beta-gamma-half-values" },
-    { "id": "mob-beta-006", "core": true, "trains": "beta-gamma-half-values" },
-    { "id": "mob-beta-007", "core": true, "trains": "beta-gamma-half-values" },
-    { "id": "burst-int-008", "core": true, "trains": "beta-gamma-half-values" },
-    { "id": "rel-boss-005", "core": true, "trains": "beta-gamma-half-values" },
-    { "id": "hc-spec-002", "trains": "beta-gamma-infinite-form" },
-    { "id": "cg-11d-023", "trains": "beta-gamma-infinite-form" },
-    { "id": "cg-11d-024", "trains": "beta-gamma-infinite-form" },
-    { "id": "burst-int-029", "challenge": true, "trains": "beta-gamma-infinite-form", "note": "挑戰：令 $u=x^2$，化成 $[0,\\infty)$ 的 Beta，再用反射公式。" }
+    {
+      "id": "mob-trap-012",
+      "core": true,
+      "trains": "beta-gamma-formula"
+    },
+    {
+      "id": "mob-beta-005",
+      "core": true,
+      "trains": "beta-gamma-half-values"
+    },
+    {
+      "id": "mob-beta-006",
+      "core": true,
+      "trains": "beta-gamma-half-values"
+    },
+    {
+      "id": "mob-beta-007",
+      "core": true,
+      "trains": "beta-gamma-half-values"
+    },
+    {
+      "id": "burst-int-008",
+      "core": true,
+      "trains": "beta-gamma-half-values"
+    },
+    {
+      "id": "rel-boss-005",
+      "core": true,
+      "trains": "beta-gamma-half-values"
+    },
+    {
+      "id": "hc-spec-002",
+      "trains": "beta-gamma-infinite-form"
+    },
+    {
+      "id": "cg-11d-023",
+      "trains": "beta-gamma-infinite-form"
+    },
+    {
+      "id": "cg-11d-024",
+      "trains": "beta-gamma-infinite-form"
+    },
+    {
+      "id": "burst-int-029",
+      "challenge": true,
+      "trains": "beta-gamma-infinite-form",
+      "note": "挑戰：令 $u=x^2$，化成 $[0,\\infty)$ 的 Beta，再用反射公式。"
+    }
   ],
   "gaps": [
-    { "tag": "beta-gamma-proof", "count": 1, "note": "白話證明題：用 x = uv、y = u(1 − v) 證明 Γ(p)Γ(q) = Γ(p + q)B(p, q)。" }
+    {
+      "tag": "beta-gamma-proof",
+      "count": 1,
+      "note": "白話證明題：用 x = uv、y = u(1 − v) 證明 Γ(p)Γ(q) = Γ(p + q)B(p, q)。"
+    }
   ]
 }

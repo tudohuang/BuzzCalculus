@@ -1,0 +1,361 @@
+{
+  "id": "interval-of-convergence",
+  "title": "收斂區間",
+  "readMinutes": 9,
+  "totalMinutes": 40,
+  "prerequisites": ["radius-of-convergence", "conditional-convergence"],
+  "next": ["power-series-calculus"],
+  "related": ["p-series", "alternating-series-test", "divergence-test"],
+  "objectives": [
+    "求出 $R$ 之後，把兩個端點分別代回，變成數值級數各自判斷。",
+    "知道端點上比值判別一定給 $L=1$，要改用 $p$ 級數、交錯級數判別或發散判別。",
+    "寫出四種可能的區間 $(a,b)$、$[a,b)$、$(a,b]$、$[a,b]$ 之一，並能說出端點是絕對還是條件收斂。"
+  ],
+  "visual": "數線上先畫出開區間 (−1, 1)，兩端畫成空心圈。點一下右端點 x = 1：旁邊展開級數 1 + 1/2 + 1/3 + …，部分和曲線一路上升，圈保持空心。點左端點 x = −1：展開 −1 + 1/2 − 1/3 + …，部分和來回收斂，圈變成實心。最後顯示 [−1, 1)。",
+  "concept": [
+    {
+      "heading": "① 收斂半徑只回答了一半",
+      "body": [
+        "〈收斂半徑〉告訴我們 $|x-a|<R$ 收斂、$|x-a|>R$ 發散，但兩個端點 $x=a-R$、$x=a+R$ 什麼都沒說。端點上比值的極限剛好是 1，比值判別在那裡一定失效。",
+        "所以端點要「代進去」：$x$ 換成具體的數，冪級數就變成一個普通的數值級數，再用前面學過的工具判斷。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 端點常見的三種樣子",
+      "body": [
+        "代進去以後，通常會變成：$p$ 級數（看 $p$ 是否 $>1$，〈p 級數〉）；交錯的 $p$ 級數（用〈交錯級數判別〉，可能條件收斂）；各項不趨近 0 的級數（〈發散判別〉）。",
+        "兩個端點的結果可以不一樣，所以收斂區間有四種可能：$(a-R,a+R)$、$[a-R,a+R)$、$(a-R,a+R]$、$[a-R,a+R]$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 完整流程",
+      "body": [
+        "1. 對整個項用比值（或根值）判別，得到 $|x-a|<R$。",
+        "2. 寫出兩個端點 $a\\pm R$。",
+        "3. 每個端點代回去，化簡成數值級數，判斷收斂或發散（有需要時說明絕對或條件收斂）。",
+        "4. 寫出區間，收斂的端點用中括號。",
+        "中心不在 0 的時候，例如 $(2x-1)^n=2^n\\left(x-\\frac{1}{2}\\right)^n$，先把它化成 $(x-a)$ 的形式，中心與半徑才不會讀錯。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一邊收斂一邊發散",
+      "prompt": "求 $\\sum_{n=1}^{\\infty}\\frac{x^n}{n}$ 的收斂區間。",
+      "problemId": "lec-14-m5",
+      "steps": [
+        "比值：$\\frac{n}{n+1}|x|\\to|x|$，$R=1$，中心 0。",
+        "$x=1$：$\\sum \\frac{1}{n}$，調和級數，發散。",
+        "$x=-1$：$\\sum \\frac{(-1)^n}{n}$，$\\frac{1}{n}$ 遞減到 0，交錯級數判別給收斂（條件收斂，和是 $-\\ln 2$）。",
+        "收斂區間 $[-1,1)$。"
+      ],
+      "answer": "$[-1,1)$",
+      "claim": "LIM(x/(x+1), inf) == 1 ;; SUM((-1)^n/n, 1) == -ln(2)"
+    },
+    {
+      "title": "中心不在 0",
+      "prompt": "求 $\\sum_{n=1}^{\\infty}\\frac{(x-2)^n}{n\\cdot 3^n}$ 的收斂區間。",
+      "problemId": "lec-14-q1a",
+      "steps": [
+        "比值 $\\to\\frac{|x-2|}{3}$，$R=3$，中心 2。端點 $2-3=-1$ 與 $2+3=5$。",
+        "$x=5$：$\\frac{(x-2)^n}{3^n}=1$，級數是 $\\sum \\frac{1}{n}$，發散。",
+        "$x=-1$：$\\frac{(x-2)^n}{3^n}=\\frac{(-3)^n}{3^n}=(-1)^n$，級數是 $\\sum \\frac{(-1)^n}{n}$，收斂。",
+        "收斂區間 $[-1,5)$。"
+      ],
+      "answer": "$[-1,5)$",
+      "claim": "LIM((x/(x+1))/3, inf) == 1/3 ;; SUB((x-2)^n/3^n, -1) == (-1)^n ;; SUM((-1)^n/n, 1) == -ln(2)"
+    },
+    {
+      "title": "兩端都發散",
+      "prompt": "求 $\\sum_{n=1}^{\\infty}\\frac{n(x+1)^n}{4^n}$ 的收斂區間。",
+      "problemId": "lec-14-q1b",
+      "steps": [
+        "比值：$\\frac{n+1}{n}\\cdot\\frac{|x+1|}{4}\\to\\frac{|x+1|}{4}$，$R=4$，中心 $-1$。端點 $-5$ 與 3。",
+        "$x=3$：$\\frac{(x+1)^n}{4^n}=1$，級數是 $\\sum n$，各項 $\\to\\infty$，發散。",
+        "$x=-5$：$\\frac{(x+1)^n}{4^n}=(-1)^n$，級數是 $\\sum (-1)^n n$，各項大小是 $n$，不趨近 0，發散。",
+        "收斂區間 $(-5,3)$。"
+      ],
+      "answer": "$(-5,3)$",
+      "claim": "LIM(((x+1)/x)/4, inf) == 1/4 ;; SUB(abs(n*(-4)^n/4^n), 10) == 10"
+    }
+  ],
+  "pitfalls": [
+    "忘了檢查端點，直接寫開區間。",
+    "在端點上用比值判別，得到 1 之後卡住。",
+    "$(x-2)^n$ 的中心讀成 $-2$，端點全部錯位。",
+    "$(2x-1)^n$ 的半徑沒有除以 2。",
+    "端點代入後符號算錯：$\\frac{(-3)^n}{3^n}=(-1)^n$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\sum \\frac{x^n}{n^2}$ 的收斂區間是？",
+      "options": [
+        { "label": "$[-1,1]$", "correct": true },
+        { "label": "$(-1,1)$", "why": "兩個端點都要代：$x=\\pm 1$ 時是 $\\sum \\frac{(\\pm 1)^n}{n^2}$，絕對值是 $\\sum \\frac{1}{n^2}$，收斂。" },
+        { "label": "$[-1,1)$", "why": "$x=1$ 時是 $\\sum \\frac{1}{n^2}$，$p=2>1$，收斂，不是調和級數。" }
+      ]
+    },
+    {
+      "ask": "$\\sum_{n=0}^{\\infty}x^n$ 的收斂區間是？",
+      "options": [
+        { "label": "$(-1,1)$", "correct": true },
+        { "label": "$[-1,1)$", "why": "$x=-1$ 時是 $1-1+1-\\cdots$，各項不趨近 0，發散。" },
+        { "label": "$[-1,1]$", "why": "兩個端點的各項都是 $\\pm 1$，不趨近 0，都發散。" }
+      ]
+    },
+    {
+      "ask": "為什麼端點不能用比值判別？",
+      "options": [
+        { "label": "在端點上比值的極限剛好是 1，判別法沒有結論", "correct": true },
+        { "label": "因為端點上級數一定發散", "why": "端點可能收斂，例如 $\\sum \\frac{x^n}{n}$ 在 $x=-1$。" },
+        { "label": "因為端點上級數一定收斂", "why": "也可能發散，例如 $\\sum \\frac{x^n}{n}$ 在 $x=1$。" }
+      ]
+    },
+    {
+      "ask": "$\\sum_{n=1}^{\\infty}\\frac{(2x-1)^n}{\\sqrt{n}}$ 的收斂區間是？",
+      "options": [
+        { "label": "$[0,1)$", "correct": true },
+        { "label": "$[-1,1)$", "why": "$(2x-1)^n=2^n\\left(x-\\frac{1}{2}\\right)^n$，中心 $\\frac{1}{2}$、半徑 $\\frac{1}{2}$；$|2x-1|<1$ 給的是 $0<x<1$。" },
+        { "label": "$(0,1]$", "why": "端點反了：$x=1$ 時是 $\\sum \\frac{1}{\\sqrt{n}}$，發散；$x=0$ 時是 $\\sum \\frac{(-1)^n}{\\sqrt{n}}$，收斂。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "半徑只回答一半",
+      "beats": [
+        { "show": ["$|x-a|<R$ 收斂，$|x-a|>R$ 發散"],
+          "say": "收斂半徑告訴我們裡面收斂、外面發散。可是剛好在邊上的兩個點呢？它什麼都沒說。",
+          "board": [
+            {"do":"write","line":"$|x-a|<R$ 收斂，$|x-a|>R$ 發散"},
+            {"do":"write","line":"$|x-a|=R$：？","on":"剛好在邊上"}
+          ] },
+        { "show": ["端點 $x=a-R$、$x=a+R$"],
+          "note": "端點上比值的極限剛好是 1。",
+          "say": "在這兩個端點，比值的極限剛好是一，比值判別在那裡一定沒有結論。",
+          "board": [
+            {"do":"write","line":"端點 ${{l:x=a-R}}$、${{r:x=a+R}}$"}
+          ] },
+        { "show": ["端點要代進去"],
+          "note": "冪級數變成普通的數值級數。",
+          "say": "所以端點要代進去：x 換成具體的數，就變成一個普通的數值級數，用前面學過的工具判斷。",
+          "board": [
+            {"do":"write","line":"$x$ 換成數 ⇒ 數值級數","on":"變成"}
+          ] },
+        { "show": ["端點的三個工具"],
+          "note": "看代進去的樣子，選對工具。",
+          "say": "端點會用到三個工具：各項不趨近零，用發散判別；像 n 分之一的 p 級數，看 p；正負交錯，用交錯級數判別。",
+          "board": [
+            {"do":"write","line":"不趨近 0：發散判別"},
+            {"do":"write","line":"$\\frac{1}{n^p}$：$p$ 級數","on":"p 級數"},
+            {"do":"write","line":"正負交錯：交錯級數判別","on":"正負交錯"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "一邊收斂一邊發散",
+      "beats": [
+        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{x^n}{n}$：$R=1$，中心 0"],
+          "say": "x 的 n 次方除以 n。比值趨近 x 的絕對值，半徑是一，中心是零。端點是一和負一。",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{x^n}{n}$：$R=1$，中心 $0$"},
+            {"do":"write","line":"端點 $x=1$、$x=-1$","on":"端點是"}
+          ] },
+        { "show": ["$x=1$：$\\sum\\frac{1}{n}$，發散"],
+          "note": "調和級數。",
+          "say": "代一進去，得到 n 分之一的和，就是調和級數，發散。",
+          "board": [
+            {"do":"write","line":"$x=1$：${{h:\\sum\\frac{1}{n}}}$，發散"},
+            {"do":"underline","term":"h","label":"調和級數","on":"調和級數"}
+          ] },
+        { "show": ["$x=-1$：$\\sum\\frac{(-1)^n}{n}$，收斂"],
+          "note": "交錯級數判別；條件收斂，和是 $-\\ln 2$。",
+          "say": "代負一進去，正負交錯，n 分之一遞減到零，交錯級數判別說它收斂，而且是條件收斂。",
+          "board": [
+            {"do":"write","line":"$x=-1$：${{al:\\sum\\frac{(-1)^n}{n}}}$，收斂"},
+            {"do":"underline","term":"al","label":"交錯級數判別","on":"交錯級數判別"}
+          ] },
+        { "show": ["交錯級數判別要檢查兩件事"],
+          "note": "$b_n=\\frac{1}{n}$ 是各項取絕對值後的大小。",
+          "say": "交錯級數判別要檢查兩件事：各項大小一路遞減，而且趨近零。這裡大小是 n 分之一，兩件都成立。",
+          "board": [
+            {"do":"write","line":"交錯級數 $\\sum(-1)^n b_n$，$b_n=\\frac{1}{n}$"},
+            {"do":"write","line":"一、$b_n$ 遞減","on":"遞減"},
+            {"do":"write","line":"二、$b_n\\to 0$","on":"趨近零"}
+          ] },
+        { "show": ["$b_n=\\frac{1}{n}$ 的圖"],
+          "say": "看圖：n 分之一的曲線一路往下，越來越貼近橫軸，這就是遞減而且趨近零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[0,6,-0.5,1.5],"curves":[{"expr":"1/x","domain":[0.5,6],"color":"blue"}]},"on":"一路往下"}
+          ] }
+      ],
+      "key": "端點各自代回級數，分別判斷",
+      "predict": {
+        "ask": "所以收斂區間是？",
+        "options": [
+          {
+            "label": "$[-1,1)$",
+            "correct": true
+          },
+          {
+            "label": "$(-1,1]$",
+            "why": "反了：收斂的是 $x=-1$，用中括號；$x=1$ 是調和級數，發散。"
+          },
+          {
+            "label": "$(-1,1)$",
+            "why": "$x=-1$ 收斂，要放進區間，用中括號。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "端點的三種樣子",
+      "beats": [
+        { "show": ["$p$ 級數：看 $p>1$"],
+          "say": "端點代進去，最常見的是 p 級數，看 p 有沒有大於一。",
+          "board": [
+            {"do":"write","line":"$\\sum\\frac{1}{n^p}$：$p>1$ 收斂"}
+          ] },
+        { "show": ["交錯的 $p$ 級數：可能條件收斂"],
+          "say": "第二種是正負交錯的 p 級數，用交錯級數判別，可能是條件收斂。",
+          "board": [
+            {"do":"write","line":"$\\sum\\frac{(-1)^n}{n^p}$：交錯級數判別"}
+          ] },
+        { "show": ["條件收斂：本身收斂，取絕對值發散"],
+          "note": "絕對收斂一定收斂；條件收斂是其中較弱的一種。",
+          "say": "條件收斂的意思是：級數本身收斂，可是每項取絕對值以後就發散。取絕對值還收斂，才叫絕對收斂。",
+          "board": [
+            {"do":"write","line":"條件收斂：$\\sum a_n$ 收斂，$\\sum|a_n|$ 發散"},
+            {"do":"write","line":"絕對收斂：$\\sum|a_n|$ 收斂","on":"絕對收斂"}
+          ] },
+        { "show": ["各項不趨近 0：發散"],
+          "note": "用〈發散判別〉。",
+          "say": "第三種，各項根本不趨近零，直接發散。",
+          "board": [
+            {"do":"write","line":"各項不趨近 0 ⇒ 發散"}
+          ] },
+        { "show": ["$(a-R,a+R)$、$[a-R,a+R)$","$(a-R,a+R]$、$[a-R,a+R]$"],
+          "note": "收斂的端點用中括號。",
+          "say": "兩個端點各自判斷，結果可以不一樣，所以收斂區間有四種可能。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(a-R,a+R)$、$[a-R,a+R)$","on":"各自判斷"},
+            {"do":"write","line":"$(a-R,a+R]$、$[a-R,a+R]$","on":"不一樣"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩端都發散",
+      "beats": [
+        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{n(x+1)^n}{4^n}$"],
+          "note": "比值 $\\to\\frac{|x+1|}{4}$。",
+          "say": "這一個比值趨近四分之 x 加一的絕對值，半徑四，中心是負一，端點負五和三。",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{n(x+1)^n}{4^n}$"},
+            {"do":"write","line":"比值 $\\to\\frac{|x+1|}{4}$：$R=4$，中心 $-1$","on":"比值趨近"}
+          ] },
+        { "show": ["第 $n+1$ 項：把 $n$ 換成 $n+1$"],
+          "say": "先寫第 n 加一項，就是把 n 全部換成 n 加一：n 加一乘 x 加一的 n 加一次方，除以四的 n 加一次方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$a_{n+1}=\\frac{(n+1)(x+1)^{n+1}}{4^{n+1}}$","on":"加一#3"}
+          ] },
+        { "show": ["$\\frac{a_{n+1}}{a_n}=\\frac{n+1}{n}\\cdot\\frac{|x+1|}{4}$"],
+          "say": "除以 a n，x 加一和四都只剩一次方。n 加一比 n 趨近一，所以比值趨近四分之 x 加一的絕對值。",
+          "board": [
+            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}={{k:\\frac{n+1}{n}}}\\cdot\\frac{|x+1|}{4}$"},
+            {"do":"focus","term":"k","label":"趨近 1","on":"趨近一"}
+          ] },
+        { "show": ["$x=3$：$\\sum n$，發散"],
+          "say": "代三進去，四的 n 次方剛好消掉，剩下 n 的和，各項衝向無限大，發散。",
+          "board": [
+            {"do":"write","line":"$x=3$：$\\frac{n\\cdot 4^n}{4^n}$","on":"代三進去"},
+            {"do":"transform","line":"$x=3$：$\\sum n$，發散","on":"剩下 n"}
+          ] },
+        { "show": ["$x=-5$：$\\sum(-1)^n n$，發散"],
+          "note": "各項大小是 $n$，不趨近 0。",
+          "say": "代負五，變成正負交錯的 n。交錯沒有用，各項不趨近零，一樣發散。",
+          "board": [
+            {"do":"write","line":"$x=-5$：$\\sum(-1)^n\\,{{nn:n}}$，發散"},
+            {"do":"focus","term":"nn","label":"不趨近 0","on":"各項不趨近零"}
+          ] },
+        { "show": ["收斂區間 $(-5,3)$"],
+          "say": "兩邊都發散，兩端都用小括號，負五到三的開區間。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"收斂區間 $\\;{{iv:(-5,3)}}$","on":"兩端都用"},
+            {"do":"box","term":"iv","color":"green","on":"負五到三"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "中心不在 0",
+      "beats": [
+        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{(x-2)^n}{n\\cdot 3^n}$"],
+          "note": "$R=3$，中心 2；端點 $-1$ 與 5。",
+          "say": "x 減二，中心是二，不是負二。半徑三，端點是二減三和二加三，也就是負一和五。",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{{{c:(x-2)}}^n}{n\\cdot 3^n}$"},
+            {"do":"focus","term":"c","label":"中心 2","on":"中心是二"},
+            {"do":"write","line":"$R=3$：端點 $2-3=-1$、$2+3=5$","on":"半徑三"}
+          ] },
+        { "show": ["$x=5$：$\\sum\\frac{1}{n}$，發散"],
+          "say": "代五，x 減二是三，跟三的 n 次方消掉，剩調和級數，發散。",
+          "board": [
+            {"do":"write","line":"$x=5$：${{h:\\sum\\frac{1}{n}}}$，發散"},
+            {"do":"underline","term":"h","label":"調和級數","on":"剩調和級數"}
+          ] },
+        { "show": ["$x=-1$：$\\frac{(-3)^n}{3^n}=(-1)^n$"],
+          "note": "級數是 $\\sum\\frac{(-1)^n}{n}$，收斂。",
+          "say": "代負一，負三的 n 次方除以三的 n 次方，是負一的 n 次方，變成交錯級數，收斂。區間是負一到五，左閉右開。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$x=-1$：$\\frac{(-3)^n}{3^n}=(-1)^n$，收斂","on":"代負一"},
+            {"do":"write","line":"區間 $\\;{{iv:[-1,5)}}$","on":"區間是"},
+            {"do":"box","term":"iv","color":"green","on":"負一到五"}
+          ] },
+        { "show": ["$(2x-1)^n=2^n\\left(x-\\frac{1}{2}\\right)^n$"],
+          "note": "先化成 $(x-a)$ 的形式。",
+          "say": "看到二 x 減一，先把二提出來，中心是二分之一，半徑和端點才不會讀錯。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(2x-1)^n=2^n\\left(x-{{c2:\\frac{1}{2}}}\\right)^n$","on":"看到"},
+            {"do":"focus","term":"c2","label":"中心","on":"中心是二分之一"}
+          ] },
+        { "show": ["提出 $2^n$ 後，比值怎麼算"],
+          "note": "$\\sqrt{n}$ 那一項的比值趨近 1。",
+          "say": "提出二的 n 次方以後，比值是二乘 x 減二分之一的絕對值，要小於一，所以半徑是二分之一。",
+          "board": [
+            {"do":"write","line":"比值 $\\to 2\\left|x-\\frac{1}{2}\\right|<1$"},
+            {"do":"write","line":"$\\left|x-\\frac{1}{2}\\right|<\\frac{1}{2}$：$R=\\frac{1}{2}$","on":"半徑"}
+          ] }
+      ],
+      "key": "$(2x-1)^n$ 先提出 $2^n$，找真正的中心",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["endpoint-analysis", "power-series", "radius"],
+    "fine": ["interval-endpoint-test", "interval-center-shift", "interval-endpoint-classify"]
+  },
+  "practice": [
+    { "id": "lec-14-m5", "core": true, "trains": "interval-endpoint-test" },
+    { "id": "lec-14-q1a", "core": true, "trains": "interval-center-shift" },
+    { "id": "lec-14-q1b", "core": true, "trains": "interval-center-shift" },
+    { "id": "lec-14-q1c", "core": true, "trains": "interval-endpoint-test" },
+    { "id": "gap-ser-end-002", "trains": "interval-endpoint-test" },
+    { "id": "gap-ser-end-001", "trains": "interval-endpoint-classify" },
+    { "id": "rel-adv-020", "trains": "interval-endpoint-classify" },
+    { "id": "rel-hard-ser-011", "trains": "interval-endpoint-classify" },
+    { "id": "lec-14-q4a", "trains": "interval-endpoint-test" },
+    { "id": "lec-14-q1d", "challenge": true, "trains": "interval-center-shift", "note": "挑戰：$(2x-1)^n$ 要先改寫成 $2^n\\left(x-\\frac{1}{2}\\right)^n$，中心和半徑才讀得對。" }
+  ],
+  "gaps": []
+}

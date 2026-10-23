@@ -1,0 +1,350 @@
+{
+  "id": "jacobian-determinant",
+  "title": "Jacobian 行列式",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["jacobian-geometry", "partial-derivatives"],
+  "next": ["change-of-variables"],
+  "related": ["multivariable-chain-rule", "spherical-coordinates", "cylindrical-coordinates"],
+  "objectives": [
+    "照定義算 $2\\times2$ 的 Jacobian $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+    "已知 $u$、$v$ 是 $x$、$y$ 的函數時，用倒數關係 $\\frac{\\partial(x,y)}{\\partial(u,v)}=1\\big/\\frac{\\partial(u,v)}{\\partial(x,y)}$，不必先解出 $x$、$y$。",
+    "知道三變數的 Jacobian 也是行列式，柱座標是 $r$、球座標是 $\\rho^2\\sin\\varphi$。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 定義",
+      "body": [
+        "變換 $x=x(u,v)$、$y=y(u,v)$，偏導數連續。把四個偏導數排成矩陣：第一列是 $x$ 對 $u$、$v$ 的偏導，第二列是 $y$ 對 $u$、$v$ 的偏導。它的行列式就是 Jacobian（下式）。",
+        "上一課看到，$|J|$ 是 $(u,v)$ 附近小方格被放大的倍率；$J$ 的正負號表示有沒有翻面。"
+      ],
+      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}=x_u\\,y_v-x_v\\,y_u"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 計算步驟",
+      "body": [
+        "1. 寫出 $x$、$y$ 各自對 $u$、$v$ 的四個偏導數。",
+        "2. 交叉相乘相減：主對角線 $x_uy_v$，減去反對角線 $x_vy_u$。",
+        "3. 化簡。答案通常還是 $u$、$v$ 的函數。",
+        "例：$x=2u+v$、$y=u-v$。$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$，$J=2\\cdot(-1)-1\\cdot1=-3$。面積放大 $|J|=3$ 倍，而且翻面。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 反方向：倒數關係",
+      "body": [
+        "很多題目給的是 $u=u(x,y)$、$v=v(x,y)$（從區域邊界讀出來的），要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。不必先解出 $x$、$y$，直接取倒數（下式）。",
+        "直觀理由：從 $(x,y)$ 到 $(u,v)$ 把面積放大 $k$ 倍，反過來就縮小成 $\\frac{1}{k}$ 倍。正式的理由是〈多變數連鎖律〉：兩個變換合成是恆等映射，兩個 Jacobian 矩陣相乘是單位矩陣，行列式相乘等於 $1$。條件是 $J\\ne 0$。"
+      ],
+      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三個變數",
+      "body": [
+        "$x$、$y$、$z$ 都是 $u$、$v$、$w$ 的函數時，Jacobian 是 $3\\times3$ 的行列式，$|J|$ 是小方塊的體積放大倍率。兩個以後會一直用到：〈柱座標〉的 Jacobian 是 $r$，〈球座標〉的是 $\\rho^2\\sin\\varphi$。"
+      ],
+      "tex": ["\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det\\begin{pmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{pmatrix}"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "照定義算",
+      "prompt": "$x=u^2-v^2$、$y=2uv$，求 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+      "steps": [
+        "$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$。",
+        "$x_uy_v-x_vy_u=2u\\cdot2u-(-2v)(2v)=4u^2+4v^2$。"
+      ],
+      "answer": "$4(u^2+v^2)$",
+      "claim": "D(u^2-v^2, , u)*D(2*u*v, , v) - D(u^2-v^2, , v)*D(2*u*v, , u) == 4*(u^2+v^2)"
+    },
+    {
+      "title": "兩種方法對答案",
+      "prompt": "$u=x+y$、$v=x-y$，求 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+      "steps": [
+        "方法一：解出 $x=\\frac{u+v}{2}$、$y=\\frac{u-v}{2}$。$x_u=\\frac{1}{2}$、$x_v=\\frac{1}{2}$、$y_u=\\frac{1}{2}$、$y_v=-\\frac{1}{2}$。$J=\\left(\\frac{1}{2}\\right)\\left(-\\frac{1}{2}\\right)-\\left(\\frac{1}{2}\\right)\\left(\\frac{1}{2}\\right)=-\\frac{1}{2}$。",
+        "方法二：$\\frac{\\partial(u,v)}{\\partial(x,y)}=1\\cdot(-1)-1\\cdot1=-2$，取倒數得 $-\\frac{1}{2}$。",
+        "兩種一樣。用來換變數時取絕對值 $\\frac{1}{2}$。"
+      ],
+      "answer": "$-\\frac{1}{2}$（絕對值 $\\frac{1}{2}$）",
+      "claim": "D((u+v)/2, , u)*D((u-v)/2, , v) - D((u+v)/2, , v)*D((u-v)/2, , u) == -1/2"
+    },
+    {
+      "title": "解不出來也沒關係",
+      "prompt": "$u=xy$、$v=\\frac{y}{x}$（$x,y>0$），求 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+      "steps": [
+        "先算反方向：$u_x=y$、$u_y=x$；$v_x=-\\frac{y}{x^2}$、$v_y=\\frac{1}{x}$。",
+        "$\\frac{\\partial(u,v)}{\\partial(x,y)}=y\\cdot\\frac{1}{x}-x\\cdot\\left(-\\frac{y}{x^2}\\right)=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}=2v$。",
+        "取倒數：$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{2v}$。",
+        "驗算：其實可以解出 $x=\\sqrt{u/v}$、$y=\\sqrt{uv}$，直接算也是 $\\frac{1}{2v}$。但倒數法完全不需要這一步。"
+      ],
+      "answer": "$\\frac{1}{2v}$",
+      "claim": "D(sqrt(u/v), , u)*D(sqrt(u*v), , v) - D(sqrt(u/v), , v)*D(sqrt(u*v), , u) == 1/(2*v)"
+    }
+  ],
+  "pitfalls": [
+    "要的是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$，卻交出 $\\frac{\\partial(u,v)}{\\partial(x,y)}$，差了一個倒數。",
+    "交叉相乘用成相加：$x_uy_v+x_vy_u$。",
+    "求倒數之後忘了把結果改寫成 $u$、$v$（例如 $\\frac{2y}{x}$ 要寫成 $2v$）。",
+    "換變數時用 $J$ 本身而不是 $|J|$。"
+  ],
+  "checks": [
+    {
+      "ask": "$x=3u+v$、$y=u+2v$，$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+      "options": [
+        { "label": "$5$", "correct": true },
+        { "label": "$7$", "why": "那是 $3\\cdot2+1\\cdot1$，用了相加。行列式是主對角線減反對角線：$6-1$。" },
+        { "label": "$-5$", "why": "順序反了：是 $x_uy_v-x_vy_u=6-1$，不是 $1-6$。" }
+      ]
+    },
+    {
+      "ask": "已知 $\\frac{\\partial(u,v)}{\\partial(x,y)}=4$（處處），那 $\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{4}$", "correct": true },
+        { "label": "$4$", "why": "這是反方向的 Jacobian。從 $(x,y)$ 到 $(u,v)$ 放大 $4$ 倍，反過來是縮小成 $\\frac{1}{4}$。" },
+        { "label": "$-4$", "why": "倒數不會變號；兩者相乘等於 $1$。" }
+      ]
+    },
+    {
+      "ask": "$x=r\\cos\\theta$、$y=r\\sin\\theta$ 的 $\\frac{\\partial(x,y)}{\\partial(r,\\theta)}$ 是？",
+      "options": [
+        { "label": "$r$", "correct": true },
+        { "label": "$1$", "why": "$\\cos^2\\theta+\\sin^2\\theta=1$ 前面還有一個 $r$：$r\\cos^2\\theta+r\\sin^2\\theta=r$。" },
+        { "label": "$r^2$", "why": "四個偏導裡只有 $x_\\theta$、$y_\\theta$ 帶 $r$，每一項只乘到一次 $r$。" }
+      ]
+    },
+    {
+      "ask": "換變數公式裡乘的是什麼？",
+      "options": [
+        { "label": "$\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|$", "correct": true },
+        { "label": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$，正負號要保留", "why": "負號只表示翻面。面積是正的，所以取絕對值。" },
+        { "label": "$\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|$", "why": "方向反了。$dA=dx\\,dy$ 要換成 $du\\,dv$，倍率是 $x$、$y$ 對 $u$、$v$ 的 Jacobian。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義與算法",
+      "beats": [
+        { "show": ["$\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}$","$=x_uy_v-x_vy_u$"],
+          "note": "第一列是 $x$ 的偏導，第二列是 $y$ 的偏導。",
+          "say": "四個偏導數排成矩陣：第一列是 x 對 u、對 v，第二列是 y 對 u、對 v。行列式就是 Jacobian。",
+          "board": [
+            {"do":"write","line":"$J=\\det\\begin{pmatrix}{{xu:x_u}}&{{xv:x_v}}\\\\{{yu:y_u}}&{{yv:y_v}}\\end{pmatrix}$","tint":{"xu":"blue","xv":"blue","yu":"violet","yv":"violet"}},
+            {"do":"write","line":"$={{xu:x_u}}{{yv:y_v}}-{{xv:x_v}}{{yu:y_u}}$","on":"行列式就是"}
+          ] },
+        { "show": ["$|J|$：放大倍率；正負號：有沒有翻面"],
+          "say": "上一課看過：它的絕對值是小方格的放大倍率，正負號表示有沒有翻面。",
+          "board": [
+            {"do":"write","line":"$|J|$：放大倍率；正負號：有沒有翻面","on":"上一課"}
+          ] },
+        { "show": ["$x=2u$、$y=3v$：$J=2\\cdot3=6$"],
+          "note": "寬 $1$、高 $1$ 的小方格，變成寬 $2$、高 $3$。",
+          "say": "舉例：一格寬一高一的小方格，被拉成寬二高三的長方形，面積變六倍。J 就是二乘三。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=2u$、$y=3v$","on":"一格"},
+            {"do":"plot","graph":{"window":[-1,4,-1,4],"fills":[{"pts":[[0,0],[2,0],[2,3],[0,3]],"color":"blue"}],"dashed":[[[0,1],[1,1]],[[1,0],[1,1]]]},"on":"拉成"},
+            {"do":"write","line":"$J=2\\cdot3=6$","on":"面積變六倍"}
+          ] },
+        { "show": ["$x=u$、$y=-v$：$J=1\\cdot(-1)=-1$"],
+          "note": "方格上下顛倒，面積沒變。",
+          "say": "如果 y 等於負 v，方格上下顛倒，面積沒變，J 是負一。負號就是翻面。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=u$、$y=-v$","on":"如果"},
+            {"do":"write","line":"$J=1\\cdot(-1)=-1$","on":"J 是負一"}
+          ] },
+        { "show": ["$x=2u+v$、$y=u-v$"],
+          "note": "$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$。",
+          "say": "照步驟：先寫出四個偏導數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=2u+v$、$y=u-v$","on":"照步驟"},
+            {"do":"write","line":"$x_u=2$，$x_v=1$，$y_u=1$，$y_v=-1$","on":"四個偏導數"}
+          ] },
+        { "show": ["$J=2\\cdot(-1)-1\\cdot1=-3$"],
+          "note": "放大 $3$ 倍，而且翻面。",
+          "say": "主對角相乘，減掉反對角相乘，得負三：面積放大三倍，而且翻面。",
+          "board": [
+            {"do":"write","line":"$J=2\\cdot(-1)-1\\cdot1={{j:-3}}$","on":"主對角"},
+            {"do":"box","term":"j","color":"green","on":"得負三"},
+            {"do":"write","line":"放大 $3$ 倍，而且翻面","on":"面積放大"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "答案通常還有變數",
+      "beats": [
+        { "show": ["$x=u^2-v^2$、$y=2uv$"],
+          "say": "非線性的變換，Jacobian 通常還是 u、v 的函數。",
+          "board": [
+            {"do":"write","line":"$x=u^2-v^2$、$y=2uv$"},
+            {"do":"write","line":"Jacobian 通常還有 $u$、$v$","on":"Jacobian 通常"}
+          ] },
+        { "show": ["$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"],
+          "say": "四個偏導數寫出來。",
+          "board": [
+            {"do":"write","line":"$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"}
+          ] },
+        { "show": ["$2u\\cdot2u-(-2v)(2v)=4(u^2+v^2)$"],
+          "note": "交叉相乘要相減，不是相加。",
+          "say": "交叉相乘相減。減掉一個負的，變成加，得四乘 u 平方加 v 平方。",
+          "board": [
+            {"do":"write","line":"$2u\\cdot2u-{{neg:(-2v)(2v)}}={{r:4(u^2+v^2)}}$"},
+            {"do":"focus","term":"neg","label":"減掉負的","on":"減掉一個負的"},
+            {"do":"box","term":"r","color":"green","on":"得四乘"}
+          ] }
+      ],
+      "key": "答案帶變數：放大倍率隨點而變",
+      "check": 2
+    },
+    {
+      "title": "反方向：取倒數",
+      "beats": [
+        { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"],
+          "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+          "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。",
+          "board": [
+            {"do":"write","line":"$u=u(x,y)$、$v=v(x,y)$"},
+            {"do":"write","line":"要的：$\\frac{\\partial(x,y)}{\\partial(u,v)}$","on":"反方向"}
+          ] },
+        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"],
+          "note": "條件：$J\\ne 0$。",
+          "say": "不必先解出 x、y，直接算反方向再取倒數。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{{{d:\\partial(u,v)/\\partial(x,y)}}}$"},
+            {"do":"underline","term":"d","color":"gold","label":"先算這個","on":"反方向"}
+          ] },
+        { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"],
+          "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
+          "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"去程：放大 $k$ 倍","on":"去程"},
+            {"do":"write","line":"回程：縮成 $\\frac{1}{k}$","on":"回程"}
+          ] },
+        { "show": ["$u=\\frac{x}{2}$、$v=\\frac{y}{3}$：$J=\\frac{1}{6}$"],
+          "note": "前面 $x=2u$、$y=3v$ 的反方向。",
+          "say": "回到 x 等於二 u、y 等於三 v。反過來 u 是 x 的二分之一，v 是 y 的三分之一，Jacobian 是六分之一。",
+          "board": [
+            {"do":"write","line":"$u=\\frac{x}{2}$、$v=\\frac{y}{3}$"},
+            {"do":"write","line":"$J=\\frac{1}{2}\\cdot\\frac{1}{3}=\\frac{1}{6}$","on":"Jacobian"}
+          ] },
+        { "show": ["$6\\cdot\\frac{1}{6}=1$：回到原來大小"],
+          "say": "去程放大六倍，回程縮成六分之一，兩個倍率乘起來是一。所以知道一個，另一個就是它的倒數。",
+          "board": [
+            {"do":"write","line":"$6\\cdot\\frac{1}{6}=1$"},
+            {"do":"write","line":"知道一個，另一個取倒數","on":"所以"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "解不出來也沒關係",
+      "beats": [
+        { "show": ["$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"],
+          "say": "這一題要解出 x、y 很麻煩，直接算反方向。",
+          "board": [
+            {"do":"write","line":"$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"},
+            {"do":"write","line":"算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$","on":"很麻煩"}
+          ] },
+        { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}$"],
+          "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$u_x=y$，$u_y=x$","on":"u、v"},
+            {"do":"write","line":"$v_x=-\\frac{y}{x^2}$，$v_y=\\frac{1}{x}$","on":"偏導數"},
+            {"do":"write","line":"$=\\frac{y}{x}+\\frac{y}{x}={{r:\\frac{2y}{x}}}$","on":"交叉相乘"},
+            {"do":"box","term":"r","color":"green","on":"得到"}
+          ] }
+      ],
+      "key": "先算反向的再取倒數，最後寫成 $u$、$v$",
+      "predict": {
+        "ask": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2v}$",
+            "correct": true
+          },
+          {
+            "label": "$2v$",
+            "why": "$\\frac{2y}{x}=2v$ 是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；要的是反方向，取倒數。"
+          },
+          {
+            "label": "$\\frac{x}{2y}$",
+            "why": "倒數對了，但答案要用 $u$、$v$ 寫：$\\frac{y}{x}=v$，所以是 $\\frac{1}{2v}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "三個變數",
+      "beats": [
+        { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"],
+          "note": "$|J|$ 是小方塊的體積放大倍率。",
+          "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det(3\\times3)$"},
+            {"do":"write","line":"$|J|$：體積放大倍率","on":"絕對值"}
+          ] },
+        { "show": ["$J=x_u(y_vz_w-y_wz_v)$","$-x_v(y_uz_w-y_wz_u)+x_w(y_uz_v-y_vz_u)$"],
+          "note": "沿第一列展開，正負號交替。",
+          "say": "三乘三要沿第一列展開：x u 乘掉它那一列那一行剩下的二乘二行列式，減 x v 乘它的，再加 x w 乘它的。",
+          "board": [
+            {"do":"write","line":"$J=x_u(y_vz_w-y_wz_v)$"},
+            {"do":"write","line":"$-x_v(y_uz_w-y_wz_u)$","on":"減 x v"},
+            {"do":"write","line":"$+x_w(y_uz_v-y_vz_u)$","on":"再加"}
+          ] },
+        { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$"],
+          "note": "$z$ 只跟自己有關。",
+          "say": "柱座標的 z 只跟自己有關，展開剩一乘二乘二行列式，得 r。球座標也這樣算，只是代數多一點。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","on":"柱座標"},
+            {"do":"write","line":"$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$","on":"展開"}
+          ] },
+        { "show": ["柱座標：$r$；球座標：$\\rho^2\\sin\\varphi$"],
+          "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。",
+          "board": [
+            {"do":"write","line":"柱座標：$J=r$"},
+            {"do":"write","line":"球座標：${{s:J=\\rho^2\\sin\\varphi}}$","on":"球座標"},
+            {"do":"box","term":"s","color":"green","on":"rho"}
+          ] },
+        { "show": ["換變數：用 $|J|$，不是 $J$"],
+          "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"換變數時乘 $|J|$，不是 $J$","on":"乘的是"},
+            {"do":"write","line":"面積、體積不會是負的","on":"因為"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["jacobian", "jacobian-chain"],
+    "fine": ["jacobian-2x2-compute", "jacobian-inverse-reciprocal", "jacobian-3x3"]
+  },
+  "practice": [
+    { "id": "der-034", "core": true, "trains": "jacobian-2x2-compute" },
+    { "id": "der-069", "core": true, "trains": "jacobian-2x2-compute" },
+    { "id": "cg-9a2-008", "core": true, "trains": "jacobian-inverse-reciprocal" },
+    { "id": "rel-adv-005", "trains": "jacobian-2x2-compute" },
+    { "id": "rel-hard-mv-005", "trains": "jacobian-2x2-compute" },
+    { "id": "der-072", "trains": "jacobian-2x2-compute" },
+    { "id": "lec-19-q4b", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "gap-int-cov-001", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "cg-9a2-009", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "cg-9a2-010", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "cg-9a2-011", "trains": "jacobian-3x3" },
+    { "id": "cg-9a2-012", "trains": "jacobian-3x3" },
+    { "id": "der-070", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：兩層變換，Jacobian 相乘（連鎖律）。" },
+    { "id": "der-074", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：合成映射的 Jacobian 行列式等於各自行列式相乘。" }
+  ],
+  "gaps": []
+}

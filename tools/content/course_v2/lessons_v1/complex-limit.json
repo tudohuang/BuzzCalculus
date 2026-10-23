@@ -1,0 +1,368 @@
+{
+  "id": "complex-limit",
+  "title": "複變極限",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["complex-functions", "multivariable-limit", "path-test"],
+  "next": ["complex-differentiability"],
+  "related": [],
+  "objectives": [
+    "說得出 $\\lim_{z\\to z_0}f(z)=L$ 的意思：$|z-z_0|\\to 0$ 時 $|f(z)-L|\\to 0$，$z$ 可以從任何方向靠近。",
+    "用實部、虛部分開算極限，並用「兩條路徑給出不同值」證明極限不存在。",
+    "處理 $z\\to\\infty$ 的極限：比最高次項。"
+  ],
+  "visual": "z 平面上以 z₀ 為圓心、半徑 δ 的小圓盤，w 平面上以 L 為圓心、半徑 ε 的小圓盤。縮小 ε 時，找得到一個 δ 讓整個 z 圓盤的像都落進 ε 圓盤，極限就存在。切換到 f(z) = z̄/z：z 圓盤再小，像都是整個單位圓，擠不進任何小圓盤。",
+  "concept": [
+    {
+      "heading": "① 定義：距離換成絕對值",
+      "body": [
+        "跟實數一樣，$\\lim_{z\\to z_0}f(z)=L$ 的意思是：只要 $z$ 夠靠近 $z_0$（但不等於 $z_0$），$f(z)$ 就能要多靠近 $L$ 就多靠近 $L$。差別是「靠近」用的是複數的絕對值 $|z-z_0|$，也就是平面上的距離。",
+        "所以 $z$ 可以從四面八方、沿任何曲線靠近 $z_0$，每一種方式都要得到同一個 $L$。這跟〈多變數極限〉完全一樣，不只左右兩邊。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 實部、虛部分開算",
+      "body": [
+        "$f=u+iv$、$L=a+ib$ 時，$f(z)\\to L$ 若且唯若 $u\\to a$ 而且 $v\\to b$。原因：$|\\operatorname{Re}w|\\le|w|$、$|\\operatorname{Im}w|\\le|w|$，而 $|w|\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$。",
+        "所以極限定律（和、積、商、合成）跟實數一樣成立；多項式與分母不為 $0$ 處的有理函數都可以直接代入，也就是連續。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 證明極限不存在：找兩條路徑",
+      "body": [
+        "$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近：沿實軸 $z=x$，$\\frac{\\bar{z}}{z}=1$；沿虛軸 $z=iy$，$\\frac{\\bar{z}}{z}=\\frac{-iy}{iy}=-1$。兩條路徑給出不同的值，所以極限不存在。",
+        "反過來，沿幾條路徑得到同一個值，不能證明極限存在；那需要估計 $|f(z)-L|$（〈路徑測試〉的同一個道理）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $z\\to\\infty$",
+      "body": [
+        "$z\\to\\infty$ 的意思是 $|z|\\to\\infty$，方向不限。有理函數比最高次項：$\\frac{2z^2+1}{z^2-3i}\\to 2$。常用的事實：$\\frac{1}{z}\\to 0$（$z\\to\\infty$），因為 $\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "距離換成絕對值",
+      "beats": [
+        { "show": ["$\\lim_{z\\to z_0}f(z)=L$"],
+          "note": "$z$ 夠靠近 $z_0$，$f(z)$ 就要多靠近 $L$ 就多靠近。",
+          "say": "定義跟實數一樣：z 夠靠近 z 零但不等於它，f 就能要多靠近 L 就多靠近 L。",
+          "board": [
+            {"do":"write","line":"$\\lim_{z\\to z_0}f(z)=L$"}
+          ] },
+        { "show": ["靠近 $=$ $|z-z_0|$ 小"],
+          "note": "複數的絕對值就是平面上的距離。",
+          "say": "差別在「靠近」：用的是複數的絕對值，也就是平面上兩點的距離。",
+          "board": [
+            {"do":"write","line":"靠近 ⇔ ${{d:|z-z_0|}}$ 小"},
+            {"do":"underline","term":"d","label":"平面距離","on":"絕對值"}
+          ] },
+        { "show": ["小圓盤的像要落進小圓盤"],
+          "say": "看圖：z 零周圍一個小圓盤，它的像要整個塞進 L 周圍的小圓盤裡。",
+          "board": [
+            {"do":"write","line":"$|z-z_0|\\to 0$ ⇒ $|f(z)-L|\\to 0$"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$z$ 可以從哪些方向靠近 $z_0$？",
+        "options": [
+          {
+            "label": "四面八方，沿任何曲線都要得到同一個 $L$",
+            "correct": true
+          },
+          {
+            "label": "只有左右兩邊",
+            "why": "那是實數線。平面上的圓盤包圍 $z_0$，$z$ 可以從任何方向進來。"
+          },
+          {
+            "label": "只有實軸和虛軸",
+            "why": "圓盤裡每個點都算，$z$ 可以沿任何曲線靠近，不只兩個坐標方向。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "實部、虛部分開算",
+      "beats": [
+        { "show": ["$f\\to L$ $\\Leftrightarrow$ $u\\to a$ 而且 $v\\to b$"],
+          "note": "$f=u+iv$，$L=a+ib$。",
+          "say": "好消息：複數的極限可以拆成實部和虛部，兩個實數極限分開算。",
+          "board": [
+            {"do":"write","line":"$f={{u:u}}+i{{v:v}}$，$L=a+ib$","tint":{"u":"blue","v":"violet"}},
+            {"do":"write","line":"$f\\to L$ ⇔ ${{u:u}}\\to a$ 而且 ${{v:v}}\\to b$","on":"拆成"}
+          ] },
+        { "show": ["和、差、積、商的極限可以拆開算"],
+          "note": "商：分母的極限不是 0。",
+          "say": "可以用的定律有四個：和、差、積，還有商。只要各自的極限存在，就能拆開算，商的話分母的極限不能是零。",
+          "board": [
+            {"do":"write","line":"${{l1:\\lim(f+g)=\\lim f+\\lim g}}$"},
+            {"do":"write","line":"${{l2:\\lim(fg)=\\lim f\\cdot\\lim g}}$","on":"積"},
+            {"do":"underline","term":"l2","label":"商同理","on":"商#1"}
+          ] },
+        { "show": ["$|\\operatorname{Re}w|\\le|w|\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$"],
+          "say": "原因是長度被實部虛部夾住：長度小，實部虛部都小；實部虛部都小，長度也小。",
+          "board": [
+            {"do":"write","line":"$|\\operatorname{Re}w|\\le{{len:|w|}}\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$"},
+            {"do":"underline","term":"len","label":"長度","on":"長度被"}
+          ] },
+        { "show": ["$|w|^2=(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2$"],
+          "note": "$w$ 的實部、虛部是直角三角形的兩股。",
+          "say": "把 w 畫成平面上的點，實部和虛部是直角三角形的兩股，長度是斜邊。斜邊最長，所以長度不小於實部的絕對值。",
+          "board": [
+            {"do":"write","line":"${{p:|w|^2}}=(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2$"},
+            {"do":"underline","term":"p","label":"勾股定理","on":"斜邊#1"}
+          ] },
+        { "show": ["$\\lim_{z\\to 1+i}z^2=(1+i)^2=2i$"],
+          "note": "多項式連續，直接代入。",
+          "say": "所以極限定律照樣成立，多項式直接代入。z 趨近一加 i，z 平方趨近二 i。",
+          "board": [
+            {"do":"write","line":"$\\lim_{z\\to 1+i}z^2=(1+i)^2=2i$","on":"多項式"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "找兩條路徑",
+      "beats": [
+        { "show": ["$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近"],
+          "say": "要證明極限不存在，找兩條路徑給出不同的值。看 z 的共軛除以 z。",
+          "board": [
+            {"do":"write","line":"$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近","on":"看 z"}
+          ] },
+        { "show": ["沿實軸 $z=x$：$\\frac{\\bar{z}}{z}=1$"],
+          "say": "沿實軸走，共軛就是自己，比值一直是一。",
+          "board": [
+            {"do":"write","line":"沿實軸 $z=x$：$\\frac{\\bar{z}}{z}={{a:1}}$","tint":{"a":"blue"}}
+          ] },
+        { "show": ["沿虛軸 $z=iy$：$\\frac{-iy}{iy}=-1$"],
+          "say": "沿虛軸走，共軛把 i y 變成負 i y，比值一直是負一。兩條路不一樣。",
+          "board": [
+            {"do":"write","line":"沿虛軸 $z=iy$：$\\frac{-iy}{iy}={{b:-1}}$","tint":{"b":"violet"}},
+            {"do":"focus","term":"b","color":"violet","label":"不一樣","on":"兩條路"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：沿直線靠近",
+      "beats": [
+        { "show": ["沿每一條直線 $y=mx$ 靠近 $0$"],
+          "note": "找兩條給出不同值的直線。",
+          "say": "策略：一次看所有的直線。沿斜率 m 的直線走，只要兩條給出不同的值就證完。",
+          "board": [
+            {"do":"write","line":"沿每一條直線 $y={{m:m}}x$ 靠近 $0$","tint":{"m":"blue"}},
+            {"do":"write","line":"兩條給出不同的值 ⇒ 證完","on":"只要兩條"}
+          ] },
+        { "show": ["共軛：$\\overline{a+bi}=a-bi$"],
+          "note": "只有虛部變號。",
+          "say": "先看定義：a 加 b i 的共軛，是 a 減 b i，實部不動，只有虛部變號。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\overline{a+bi}={{a:a}}-bi$","on":"的共"},
+            {"do":"focus","term":"a","on":"虛部變號"}
+          ] },
+        { "show": ["$z=x(1+im)$：$\\frac{\\bar{z}}{z}=\\frac{1-im}{1+im}$"],
+          "note": "$\\bar{z}=x(1-im)$，實數 $x$ 約掉。",
+          "why": {"ask":"為什麼 $\\bar{z}=x(1-im)$？","say":"z 是 x 乘一加 i m。它的共軛為什麼是 x 乘一減 i m？","options":[{"label":"$x$、$m$ 是實數，共軛只把 $i$ 變號","correct":true},{"label":"共軛把每一項都變號","why":"那會得到 $-x(1+im)$；共軛只把虛部變號，實部不動。"},{"label":"共軛就是倒數 $\\frac{1}{z}$","why":"$\\frac{1}{z}$ 跟 $\\bar{z}$ 差一個 $|z|^2$；共軛是對實軸鏡射。"}]},
+          "say": "x 和 m 都是實數，共軛只把 i 變號。分子分母都有同一個 x，約掉，比值是一減 i m 除以一加 i m。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$z=x(1+i{{m:m}})$","on":"z 是 x"},
+            {"do":"write","line":"$\\bar{z}=x(1{{ng:-i}}{{m:m}})$","on":"它的共軛"},
+            {"do":"focus","term":"ng","label":"只把 i 變號","why":true,"on":"共軛只把"},
+            {"do":"write","line":"$\\frac{\\bar{z}}{z}=\\frac{1-im}{1+im}$","why":true,"on":"比值是"}
+          ] },
+        { "show": ["實部 $\\frac{1-m^2}{1+m^2}$"],
+          "note": "乘上分母的共軛複數。",
+          "say": "乘上分母的共軛，實部是一加 m 平方分之一減 m 平方。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"實部 $=\\frac{1-m^2}{1+m^2}$","on":"實部是"}
+          ] },
+        { "show": ["$m=0$ 得 $1$；$m=2$ 得 $-\\frac{3}{5}$"],
+          "note": "不同直線給出不同的值。",
+          "why": {"ask":"為什麼這樣就證完了？","say":"m 等於零是一，m 等於二是負五分之三。為什麼這樣就證完了？","options":[{"label":"極限存在的話，每條路徑都要趨近同一個 $L$","correct":true},{"label":"$\\frac{\\bar{z}}{z}$ 在 $0$ 沒有定義","why":"沒定義不影響極限：極限本來就不看 $0$ 那一點。"},{"label":"$m=2$ 給出負數","why":"負數不是問題；問題是兩條路徑的值不一樣。"}]},
+          "say": "極限要是存在，從哪個方向靠近都得趨近同一個 L。兩條直線給出不同的值，所以極限不存在。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{m:m}}=0$：$1$","on":"m 等於零"},
+            {"do":"write","line":"${{m:m}}=2$：$-\\frac{3}{5}$","on":"m 等於二"},
+            {"do":"write","line":"不同直線、不同的值 ⇒ 證完","color":"green","why":true,"on":"兩條直線給出"}
+          ] },
+        { "show": ["路徑測試只能證明「不存在」"],
+          "note": "證明存在要估計 $|f(z)-L|$。",
+          "say": "反過來，幾條路得到一樣的值，不能證明極限存在；那要直接估計 f 減 L 的長度。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"路徑測試只能證明「不存在」","on":"反過來"},
+            {"do":"write","line":"證明存在：估計 $|f(z)-L|$","on":"直接估計"}
+          ] }
+      ],
+      "key": "沿 $y=mx$ 靠近，極限隨 $m$ 改變",
+      "proof": true,
+      "of": "ex1",
+      "skeleton": "直接",
+      "check": 2
+    },
+    {
+      "title": "$z\\to\\infty$",
+      "beats": [
+        { "show": ["$z\\to\\infty$：$|z|\\to\\infty$"],
+          "note": "方向不限。",
+          "say": "z 趨近無限大，意思是長度趨近無限大，往哪個方向跑都算，不只往正實數。",
+          "board": [
+            {"do":"write","line":"$z\\to\\infty$ ⇔ $|z|\\to\\infty$"}
+          ] },
+        { "show": ["$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$"],
+          "say": "最常用的事實：z 分之一的長度，是 z 的長度分之一。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "有理函數在無窮遠",
+      "beats": [
+        { "show": ["$\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$"],
+          "say": "算這個極限：有理函數在無限遠，比最高次項。",
+          "board": [
+            {"do":"write","line":"$\\lim_{z\\to\\infty}\\frac{{{a:2z^2}}+1}{z^2-3i}$"},
+            {"do":"focus","term":"a","label":"最高次","on":"比最高"}
+          ] },
+        { "show": ["$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}$"],
+          "note": "$|z|$ 越大，$\\frac{1}{|z|^2}$ 越小。",
+          "say": "商的長度等於長度的商，所以 z 平方分之一的長度，是 z 長度的平方分之一。z 的長度越大，這個數就越趨近零。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}\\to 0$"}
+          ] },
+        { "show": ["同除 $z^2$：$\\frac{2+1/z^2}{1-3i/z^2}$"],
+          "say": "分子分母同除以 z 平方。z 平方分之一的長度趨近零，不論方向。",
+          "board": [
+            {"do":"transform","line":"同除 $z^2$：$\\frac{2+{{b:1/z^2}}}{1-3i/z^2}$"},
+            {"do":"focus","term":"b","label":"不論方向","on":"趨近零"}
+          ] },
+        { "show": ["分子 $\\to 2$，分母 $\\to 1$"],
+          "note": "分母不是 0，商的定律可用。",
+          "say": "一減 三 i 乘 z 平方分之一，也趨近一。分子趨近二，分母趨近一，不是零，所以可以用商的定律，答案是二。",
+          "board": [
+            {"do":"write","line":"分子 $\\to {{t:2}}$，分母 $\\to {{d:1}}$"},
+            {"do":"box","term":"t","color":"green","on":"答案"}
+          ] }
+      ],
+      "key": "分子分母同除最高次 $z^2$",
+      "predict": {
+        "ask": "極限是？",
+        "options": [
+          {
+            "label": "$2$",
+            "correct": true
+          },
+          {
+            "label": "不存在，因為方向不同",
+            "why": "$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}\\to 0$，跟方向無關；極限 $\\frac{2+0}{1-0}=2$。"
+          },
+          {
+            "label": "$\\frac{2}{-3i}$",
+            "why": "$z\\to\\infty$ 時常數項 $1$、$-3i$ 都比不過 $z^2$；比的是最高次項係數 $\\frac{2}{1}$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式直接代入",
+      "prompt": "$\\lim_{z\\to 1+i}z^2$",
+      "steps": [
+        "$z^2=(x^2-y^2)+i(2xy)$，實部虛部都是 $x$、$y$ 的多項式，連續。",
+        "代 $x=1$、$y=1$：實部 $1-1=0$，虛部 $2$。",
+        "極限是 $2i$，也就是 $(1+i)^2$。"
+      ],
+      "answer": "$2i$",
+      "claim": "SUB(x^2-1, 1) == 0 ;; SUB(2*x*1, 1) == 2"
+    },
+    {
+      "title": "沿直線靠近，答案不同",
+      "prompt": "證明 $\\lim_{z\\to 0}\\frac{\\bar{z}}{z}$ 不存在。",
+      "steps": [
+        "沿直線 $y=mx$ 靠近 $0$：$z=x(1+im)$，$\\bar{z}=x(1-im)$，$\\frac{\\bar{z}}{z}=\\frac{1-im}{1+im}$。",
+        "乘上分母的共軛複數：$\\frac{(1-im)^2}{1+m^2}=\\frac{1-m^2-2im}{1+m^2}$，實部是 $\\frac{1-m^2}{1+m^2}$。",
+        "$m=0$ 時實部 $1$；$m=2$ 時實部 $-\\frac{3}{5}$。不同直線給出不同的值，極限不存在。"
+      ],
+      "answer": "極限不存在",
+      "claim": "LIM((x^2-(2x)^2)/(x^2+(2x)^2), 0) == -3/5 ;; LIM(x^2/x^2, 0) == 1"
+    },
+    {
+      "title": "$z\\to\\infty$",
+      "prompt": "$\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$",
+      "steps": [
+        "分子分母同除以 $z^2$：$\\frac{2+1/z^2}{1-3i/z^2}$。",
+        "$z\\to\\infty$ 時 $\\frac{1}{z^2}\\to 0$（$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}\\to 0$），不論方向。",
+        "極限 $\\frac{2+0}{1-0}=2$。（沿實軸檢查：實部 $\\frac{(2x^2+1)x^2}{x^4+9}\\to 2$，虛部 $\\frac{3(2x^2+1)}{x^4+9}\\to 0$。）"
+      ],
+      "answer": "$2$",
+      "claim": "LIM((2x^2+1)*x^2/(x^4+9), inf) == 2 ;; LIM(3*(2x^2+1)/(x^4+9), inf) == 0"
+    }
+  ],
+  "pitfalls": [
+    "只沿實軸檢查就說極限存在。",
+    "以為「沿幾條直線都一樣」就證明了極限存在。",
+    "把 $z\\to\\infty$ 當成「$z$ 往正實數方向跑」。",
+    "實部、虛部只算一個。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\lim_{z\\to 0}\\frac{\\bar{z}}{z}$：",
+      "options": [
+        { "label": "不存在", "correct": true },
+        { "label": "$1$", "why": "沿實軸是 $1$，但沿虛軸是 $-1$；方向不同給出不同值。" },
+        { "label": "$0$", "why": "$\\left|\\frac{\\bar{z}}{z}\\right|=1$，值一直在單位圓上，不會 $\\to 0$。" }
+      ]
+    },
+    {
+      "ask": "$f=u+iv$。$\\lim f(z)=3-2i$ 等價於？",
+      "options": [
+        { "label": "$u\\to 3$ 而且 $v\\to-2$", "correct": true },
+        { "label": "$u\\to 3$ 而且 $v\\to-2i$", "why": "虛部 $v$ 是實數；$L$ 的虛部是 $-2$，不是 $-2i$。" },
+        { "label": "$|f|\\to\\sqrt{13}$ 就夠了", "why": "長度對了，方向可能不對；例如 $f$ 一直在半徑 $\\sqrt{13}$ 的圓上繞。" }
+      ]
+    },
+    {
+      "ask": "沿實軸、虛軸、直線 $y=x$ 三條路徑，$f$ 都趨近 $0$。可以下結論嗎？",
+      "options": [
+        { "label": "不行，還可能有別的路徑給出不同值", "correct": true },
+        { "label": "可以，三條路徑已經足夠", "why": "路徑測試只能證明「不存在」；例如沿拋物線靠近可能得到別的值。" },
+        { "label": "可以，因為複數只有實部與虛部兩個方向", "why": "$z$ 可以沿任何曲線靠近，不只兩個坐標方向。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{z\\to\\infty}\\frac{1}{z}$ 是？",
+      "options": [
+        { "label": "$0$", "correct": true },
+        { "label": "不存在，因為方向不同", "why": "$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}\\to 0$，跟方向無關。" },
+        { "label": "$\\infty$", "why": "那是 $\\lim_{z\\to 0}\\frac{1}{z}$ 的情形。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "multivariable-limit"],
+    "fine": ["complex-limit-components", "complex-limit-path", "complex-limit-infinity"]
+  },
+  "practice": [
+    { "id": "mob-limtrap-008", "core": true, "trains": "complex-limit-components" },
+    { "id": "cg-11g-027", "core": true, "trains": "complex-limit-path" },
+    { "id": "cg-11g-030", "core": true, "trains": "complex-limit-components" },
+    { "id": "cg-11g-032", "core": true, "trains": "complex-limit-infinity" },
+    { "id": "cg-11g-028", "trains": "complex-limit-path" },
+    { "id": "cg-11g-029", "trains": "complex-limit-path" },
+    { "id": "cg-11g-031", "trains": "complex-limit-components" },
+    { "id": "cg-11g-033", "trains": "complex-limit-infinity" }
+  ],
+  "gaps": []
+}

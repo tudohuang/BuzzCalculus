@@ -1,0 +1,421 @@
+{
+  "id": "spring-work",
+  "title": "彈簧做功",
+  "readMinutes": 7,
+  "totalMinutes": 25,
+  "prerequisites": [
+    "work"
+  ],
+  "next": [
+    "fluid-force"
+  ],
+  "related": [],
+  "objectives": [
+    "用 Hooke 定律 $F=kx$，$x$ 從自然長度量起。",
+    "由給定的力或功先求出 $k$，再算 $W=\\int_a^b kx\\,dx=\\frac{1}{2}k(b^2-a^2)$。",
+    "題目給的是彈簧總長或公分時，正確換成伸長量（公尺）。"
+  ],
+  "visual": "F–x 圖上畫出直線 F = kx。拖動兩個端點 a、b，直線下方 a 到 b 的梯形塗色並顯示面積 ½k(b² − a²)。把 [a, b] 往右平移、保持寬度不變，梯形越來越高：同樣多拉 0.1 m，越後面越費力。",
+  "concept": [
+    {
+      "heading": "① Hooke 定律",
+      "body": [
+        "在彈性限度內，把彈簧拉長（或壓縮）$x$，需要的力與 $x$ 成正比：$F=kx$，$k$ 是彈簧常數（N/m）。",
+        "最重要的一點：$x$ 是「離開自然長度多少」，不是彈簧的總長。自然長度 20 cm 的彈簧拉到 30 cm，$x=0.1$ m。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 功是 $F$–$x$ 圖下的面積",
+      "body": [
+        "力隨 $x$ 線性增加，套〈功〉的公式：從伸長 $a$ 拉到伸長 $b$，",
+        "圖像上就是直線 $F=kx$ 底下、$a$ 到 $b$ 的梯形面積。從自然長度開始（$a=0$）時是三角形，$W=\\frac{1}{2}kb^2$。",
+        "因為功跟伸長量的平方成正比，同樣多拉 0.1 m，越後面越費力；不能用「力 $\\times$ 距離」一次算完，因為力一直在變。"
+      ],
+      "tex": [
+        "W=\\int_a^b kx\\,dx=\\tfrac12 k\\,(b^2-a^2)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 先求 $k$",
+      "body": [
+        "題目常常不直接給 $k$：",
+        "給力：「拉長 0.2 m 需 10 N」→ $k=F/x=50$ N/m。",
+        "給功：「從自然長度拉長 0.1 m 需作功 2 J」→ $\\frac{1}{2}k(0.1)^2=2$，$k=400$ N/m。",
+        "兩種資料不要混用：給的是功時，不能拿 2 J 除以 0.1 m 當成 $k$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 壓縮、位能與適用範圍",
+      "body": [
+        "壓縮也用同一條 $F=kx$，$x$ 是被壓短的長度。理想彈簧壓縮 $x$ 與拉長 $x$ 需要的功一樣，都是 $\\frac{1}{2}kx^2$；這正是物理課的彈性位能：外力做的功被存進彈簧裡，放手時再還回來。",
+        "Hooke 定律只在彈性限度內成立。拉過頭，力與伸長不再成正比，$W=\\frac{1}{2}k(b^2-a^2)$ 也就不能用了；題目說「遵守 Hooke 定律」就是在保證這件事。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "給力求功",
+      "prompt": "彈簧受力 10 N 時伸長 0.2 m（遵守 Hooke 定律）。把它從自然長度拉長 0.3 m 需作功幾焦耳？",
+      "problemId": "lec-10-m5",
+      "steps": [
+        "$k=\\frac{10}{0.2}=50$（N/m）。",
+        "$W=\\int_0^{0.3}50x\\,dx=\\frac{1}{2}\\cdot\\, 50\\cdot 0.3^2=25\\cdot 0.09=2.25$（J）。"
+      ],
+      "answer": "2.25 J",
+      "claim": "INT(50x, 0, 0.3) == 2.25"
+    },
+    {
+      "title": "給功求 $k$，再算後面一段",
+      "prompt": "把彈簧從自然長度拉長 0.1 m 需作功 2 J。再從伸長 0.1 m 拉到伸長 0.2 m，需再作多少功？",
+      "problemId": "lec-10-q3a",
+      "steps": [
+        "$\\frac{1}{2}k(0.1)^2=2$，$0.005k=2$，$k=400$（N/m）。",
+        "$W=\\int_{0.1}^{0.2}400x\\,dx=200(0.2^2-0.1^2)=200\\cdot 0.03=6$（J）。",
+        "後面這 0.1 m 要 6 J，是前面 0.1 m 的三倍。"
+      ],
+      "answer": "6 J",
+      "claim": "INT(400x, 0, 0.1) == 2 ;; INT(400x, 0.1, 0.2) == 6"
+    },
+    {
+      "title": "給總長：先換成伸長量",
+      "prompt": "彈簧自然長度 20 cm。用 40 N 的力可以把它維持在 30 cm 長。把它從 30 cm 拉到 35 cm 需作多少功？",
+      "steps": [
+        "換成伸長量（公尺）：30 cm 對應 $x=0.10$ m，35 cm 對應 $x=0.15$ m。",
+        "$k=\\frac{40}{0.10}=400$（N/m）。",
+        "$W=\\int_{0.10}^{0.15}400x\\,dx=200(0.15^2-0.10^2)=200\\cdot 0.0125=2.5$（J）。"
+      ],
+      "answer": "2.5 J",
+      "claim": "INT(400x, 0.1, 0.15) == 2.5"
+    }
+  ],
+  "pitfalls": [
+    "把彈簧的總長當成 $x$。",
+    "公分沒換成公尺，$k$ 和功差了一百倍以上。",
+    "拿最後的力乘距離：力從小變大，從自然長度拉起時這樣會多算一倍。",
+    "給的是功卻用 $W/x$ 求 $k$。",
+    "以為每多拉 0.1 m 需要的功都一樣。"
+  ],
+  "checks": [
+    {
+      "ask": "$k=200$ N/m，從自然長度拉長 0.1 m，功是？",
+      "options": [
+        {
+          "label": "1 J",
+          "correct": true
+        },
+        {
+          "label": "2 J",
+          "why": "這是終點的力 $F=20$ N 乘 0.1 m；力從 0 線性增加到 20 N，平均只有一半。"
+        },
+        {
+          "label": "20 J",
+          "why": "20 是拉到 0.1 m 時的力（N），不是功；功還要對位移積分。"
+        }
+      ]
+    },
+    {
+      "ask": "自然長度 0.5 m 的彈簧被壓縮到 0.4 m。Hooke 定律裡的 $x$ 是？",
+      "options": [
+        {
+          "label": "0.1 m",
+          "correct": true
+        },
+        {
+          "label": "0.4 m",
+          "why": "0.4 m 是壓縮後的總長；$x$ 是離開自然長度的量。"
+        },
+        {
+          "label": "0.9 m",
+          "why": "把自然長度和現在長度相加沒有物理意義；要相減。"
+        }
+      ]
+    },
+    {
+      "ask": "拉長第一個 0.1 m 要 2 J。接下來再拉 0.1 m 要多少？",
+      "options": [
+        {
+          "label": "6 J",
+          "correct": true
+        },
+        {
+          "label": "2 J",
+          "why": "彈簧越拉越緊，力在增加；後面一段比前面費力。"
+        },
+        {
+          "label": "4 J",
+          "why": "以為功跟伸長量成正比。其實跟平方成正比：拉到 0.2 m 共 8 J，扣掉前面的 2 J 是 6 J。"
+        }
+      ]
+    },
+    {
+      "ask": "在 $F$–$x$ 圖上，從伸長 $a$ 拉到伸長 $b$ 的功對應什麼？",
+      "options": [
+        {
+          "label": "直線 $F=kx$ 下方、$a$ 到 $b$ 之間的梯形面積",
+          "correct": true
+        },
+        {
+          "label": "直線的斜率",
+          "why": "斜率是 $k$，是彈簧的硬度，不是功。"
+        },
+        {
+          "label": "高 $F(b)$、寬 $b-a$ 的矩形面積",
+          "why": "用了終點的力，把整段都當成最大的力，會高估。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Hooke 定律",
+      "beats": [
+        { "show": ["$F=kx$"],
+          "note": "$k$ 是彈簧常數（N/m），在彈性限度內成立。",
+          "say": "把彈簧拉長 x，需要的力跟 x 成正比，比例常數 k 叫彈簧常數。",
+          "board": [
+            {"do":"write","line":"$F={{k:k}}\\,x$"},
+            {"do":"focus","term":"k","color":"gold","label":"彈簧常數","on":"比例常數"}
+          ] },
+        { "show": ["$x$ = 離開自然長度多少"],
+          "note": "不是彈簧的總長。",
+          "say": "最重要的一點：x 是離開自然長度多少，不是彈簧現在的總長。",
+          "board": [
+            {"do":"write","line":"${{x:x}}$ ＝ 離開自然長度多少"},
+            {"do":"focus","term":"x","color":"gold","on":"離開"}
+          ] },
+        { "show": ["20 cm 拉到 30 cm：$x=0.1$ m"],
+          "say": "自然長度二十公分，拉到三十公分，x 是零點一公尺，單位換成公尺。",
+          "board": [
+            {"do":"write","line":"20 cm 拉到 30 cm"},
+            {"do":"transform","line":"$x={{r:0.1}}$ m","on":"x 是"},
+            {"do":"box","term":"r","color":"green","on":"單位"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "功是圖下的面積",
+      "beats": [
+        { "show": ["$\\int$ 是把小段全加起來"],
+          "note": "每一小段：力 $kx$ 乘一小步 $dx$。",
+          "say": "積分號是把很多小段全加起來，每一小段是力 k x 乘一小步 d x。反導函數是二分之一 k x 平方。",
+          "board": [
+            {"do":"write","line":"$\\int_a^b {{s:kx\\,dx}}$：小段全加起來"},
+            {"do":"focus","term":"s","color":"gold","on":"每一小段"},
+            {"do":"write","line":"反導函數 $\\frac{1}{2}kx^2$，代 $b$ 減代 $a$","on":"反導函數"}
+          ] },
+        { "show": ["$W=\\int_a^b kx\\,dx=\\frac{1}{2}k(b^2-a^2)$"],
+          "say": "力隨 x 線性增加，套功的公式，從伸長 a 拉到伸長 b，積出二分之一 k 乘平方差。",
+          "board": [
+            {"do":"write","line":"$W=\\int_a^b kx\\,dx$"},
+            {"do":"transform","line":"$W=\\frac{1}{2}k(b^2-a^2)$","on":"積出"}
+          ] },
+        { "show": ["$F$–$x$ 圖：直線下的梯形"],
+          "note": "從自然長度開始是三角形：$W=\\frac{1}{2}kb^2$。",
+          "say": "在力對伸長的圖上，就是直線 F 等於 k x 底下、a 到 b 之間的梯形面積。",
+          "board": [
+            {"do":"write","line":"$F={{l:kx}}$"},
+            {"do":"underline","term":"l","color":"blue","on":"底下"},
+            {"do":"write","line":"$W$ ＝ $a$ 到 $b$ 的梯形面積","on":"之間的"}
+          ] },
+        { "show": ["高從 $ka$ 到 $kb$ 的梯形"],
+          "note": "面積＝平均高度乘寬度。",
+          "say": "高從 k a 長到 k b，梯形面積是平均高度乘寬度，整理後就是二分之一 k 乘平方差。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,4,0,4],"curves":[{"expr":"x","domain":[0,4],"color":"blue"}],"fills":[{"expr":"x","from":1,"to":3,"color":"red"}],"dashed":[[[1,0],[1,1]],[[3,0],[3,3]]],"labels":[{"x":1,"y":0.3,"text":"a","anchor":"middle"},{"x":3,"y":0.3,"text":"b","anchor":"middle"},{"x":0.9,"y":1.4,"text":"ka","anchor":"end"},{"x":2.9,"y":3.4,"text":"kb","anchor":"end"}]}}
+          ] },
+        { "show": ["力一直在變，不能一次「力 $\\times$ 距離」"],
+          "say": "功跟伸長量的平方成正比，越後面越費力，所以不能拿某一個力乘距離一次算完。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"功跟 $x^2$ 成正比","on":"功跟"},
+            {"do":"write","line":"$W = {{p:F \\cdot x}}$","on":"不能拿"},
+            {"do":"strike","term":"p","label":"不行","on":"乘距離"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "給力求 $k$",
+      "beats": [
+        { "show": ["受力 10 N 伸長 0.2 m"],
+          "note": "$k=\\frac{10}{0.2}=50$ N/m。",
+          "say": "題目常不直接給 k。受力十牛頓伸長零點二公尺，k 就是十除以零點二，五十。",
+          "board": [
+            {"do":"write","line":"$F=10$ N，$x=0.2$ m"},
+            {"do":"transform","line":"$k=\\frac{10}{0.2}=50$ N/m","on":"k 就是"}
+          ] },
+        { "show": ["$W=\\int_0^{0.3}50x\\,dx$"],
+          "note": "從自然長度拉長 0.3 m。",
+          "say": "從自然長度拉長零點三公尺，對五十 x 積分。",
+          "board": [
+            {"do":"write","line":"$W=\\int_0^{{{b:0.3}}}50x\\,dx$"},
+            {"do":"focus","term":"b","color":"gold","on":"零點三"}
+          ] }
+      ],
+      "predict": {
+        "ask": "功是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}\\cdot 50\\cdot 0.3^2=2.25$ J",
+            "correct": true
+          },
+          {
+            "label": "$50\\cdot 0.3^2$",
+            "why": "漏了 $\\frac{1}{2}$：力從 $0$ 線性增加，是三角形面積。"
+          },
+          {
+            "label": "$10\\times 0.3$",
+            "why": "10 N 是伸長 0.2 m 時的力，不是整段的力；力一直在變。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "給功求 $k$",
+      "beats": [
+        { "show": ["拉長 0.1 m 作功 2 J"],
+          "note": "不能拿 2 J 除以 0.1 m 當 $k$。",
+          "say": "如果給的是功：從自然長度拉長零點一公尺要二焦耳。這時不能拿功除以距離。",
+          "board": [
+            {"do":"write","line":"$W=2$ J，$x=0.1$ m"},
+            {"do":"write","line":"$k = {{w:\\frac{2}{0.1}}}$","on":"這時"},
+            {"do":"strike","term":"w","label":"不行","on":"除以"}
+          ] },
+        { "show": ["$\\frac{W}{x}=\\frac{1}{2}kx$：平均的力"],
+          "note": "功跟 $x^2$ 成正比，除以 $x$ 剩一半的力。",
+          "say": "功是二分之一 k x 平方，除以 x 只剩二分之一 k x，那是平均的力，不是 k。",
+          "board": [
+            {"do":"write","line":"$\\frac{W}{x}={{h:\\frac{1}{2}kx}}$：平均的力"},
+            {"do":"underline","term":"h","color":"red","label":"不是 k","on":"平均的力"}
+          ] },
+        { "show": ["$\\frac{1}{2}k(0.1)^2=2$，$k=400$ N/m"],
+          "say": "要用功的公式：二分之一 k 乘零點一的平方等於二，解出 k 是四百。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{2}k(0.1)^2=2$"},
+            {"do":"write","line":"$k={{r:400}}$ N/m","on":"解出"},
+            {"do":"box","term":"r","color":"green","on":"k 是"}
+          ] }
+      ],
+      "key": "功是 $\\frac{1}{2}kx^2$，不能拿功除以伸長",
+      "check": 2
+    },
+    {
+      "title": "壓縮與位能",
+      "beats": [
+        { "show": ["壓縮也是 $F=kx$"],
+          "note": "$x$ 是被壓短的長度。",
+          "say": "壓縮也用同一條定律，x 是被壓短了多少。",
+          "board": [
+            {"do":"write","line":"壓縮：$F=k{{x:x}}$"},
+            {"do":"focus","term":"x","color":"gold","label":"壓短多少","on":"被壓短"}
+          ] },
+        { "show": ["功 $\\frac{1}{2}kx^2$ 存成彈性位能"],
+          "note": "放手時再還回來。",
+          "say": "外力做的功被存進彈簧裡，就是物理課的彈性位能，放手時再還回來。",
+          "board": [
+            {"do":"write","line":"$W={{u:\\frac{1}{2}kx^2}}$"},
+            {"do":"underline","term":"u","color":"violet","label":"彈性位能","on":"彈性位能"}
+          ] },
+        { "show": ["$W=\\int_0^x ks\\,ds=\\frac{1}{2}kx^2$"],
+          "note": "$s$ 是中途的伸長量。",
+          "say": "外力在伸長 s 時要用 k s 的力，從零累積到 x，積出來正好是二分之一 k x 平方。",
+          "board": [
+            {"do":"write","line":"$W=\\int_0^x {{f:ks}}\\,ds$"},
+            {"do":"transform","line":"$W=\\frac{1}{2}kx^2$","on":"積出來"}
+          ] },
+        { "show": ["只在彈性限度內成立"],
+          "note": "拉過頭，力就不再跟伸長成正比。",
+          "say": "這些都只在彈性限度內成立。題目說遵守 Hooke 定律，就是在保證這件事。",
+          "board": [
+            {"do":"write","line":"只在彈性限度內成立"},
+            {"do":"write","line":"題目說遵守 Hooke 定律","on":"遵守"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "給總長：先換算",
+      "beats": [
+        { "show": ["自然長度 20 cm，40 N 維持在 30 cm"],
+          "say": "自然長度二十公分，用四十牛頓可以維持在三十公分。拉到三十五公分要多少功？",
+          "board": [
+            {"do":"write","line":"自然長度 20 cm，40 N 維持在 30 cm"},
+            {"do":"write","line":"拉到 35 cm，$W$ = ?","on":"拉到"}
+          ] },
+        { "show": ["$x$：$0.10$ m 到 $0.15$ m；$k=400$"],
+          "note": "$k=\\frac{40}{0.10}$。",
+          "say": "先換成伸長量、單位公尺：零點一零到零點一五。k 是四十除以零點一零，四百。",
+          "board": [
+            {"do":"write","line":"$x$：${{a:0.10}}$ m 到 ${{b:0.15}}$ m"},
+            {"do":"write","line":"$k=\\frac{40}{0.10}=400$","on":"k 是"}
+          ] }
+      ],
+      "key": "總長先扣自然長度，公分換公尺",
+      "predict": {
+        "ask": "功是？",
+        "options": [
+          {
+            "label": "$200(0.15^2-0.10^2)=2.5$ J",
+            "correct": true
+          },
+          {
+            "label": "$200(35^2-30^2)$",
+            "why": "總長、公分都沒換：要用伸長量，單位公尺。"
+          },
+          {
+            "label": "$\\frac{1}{2}\\cdot 400\\cdot 0.15^2$",
+            "why": "那是從自然長度拉到 0.15 m；要扣掉前面到 0.10 m 的部分。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "work-integral",
+      "work"
+    ],
+    "fine": [
+      "spring-find-k",
+      "spring-work-integral",
+      "spring-natural-length"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-10-m5",
+      "core": true,
+      "trains": "spring-find-k"
+    },
+    {
+      "id": "ap-work-001",
+      "core": true,
+      "trains": "spring-find-k"
+    },
+    {
+      "id": "ap-work-002",
+      "core": true,
+      "trains": "spring-work-integral"
+    },
+    {
+      "id": "lec-10-q3a",
+      "core": true,
+      "trains": "spring-work-integral"
+    },
+    {
+      "id": "cg-5d-008",
+      "core": true,
+      "trains": "spring-natural-length"
+    },
+    {
+      "id": "cg-5d-009",
+      "trains": "spring-natural-length"
+    }
+  ],
+  "gaps": []
+}

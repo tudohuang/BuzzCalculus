@@ -1,51 +1,124 @@
 {
   "id": "divergence-theorem",
   "title": "散度定理",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 45,
-  "prerequisites": ["divergence", "flux", "triple-integral"],
-  "next": ["fundamental-theorems-unified"],
-  "related": ["spherical-coordinates", "stokes-theorem", "green-theorem"],
-  "objectives": [
-    "寫出散度定理與它的條件：封閉曲面、朝外法向量、$\\mathbf F$ 在整個立體上偏導連續。",
-    "把封閉曲面的通量換成散度的三重積分；對不封閉的曲面，補一個蓋子再扣掉。",
-    "解釋點源場 $\\frac{\\langle x,y,z\\rangle}{\\rho^3}$ 為什麼散度為 $0$、通量卻是 $4\\pi$。"
+  "prerequisites": [
+    "divergence",
+    "flux",
+    "triple-integral"
   ],
-  "visual": "一個立體被切成許多小方塊，每個方塊的六個面上標出流出量。相鄰方塊共用的面上，一邊的流出就是另一邊的流入，兩個數字一正一負後消失；最後只剩最外層表面的流出量，加起來等於所有方塊散度 × 體積的總和。可以把立體換成球、圓柱，讀數兩邊始終相等。",
+  "next": [
+    "fundamental-theorems-unified"
+  ],
+  "related": [
+    "spherical-coordinates",
+    "stokes-theorem",
+    "green-theorem"
+  ],
+  "objectives": [
+    "寫出散度定理與它的條件：封閉曲面、朝外法向量、$\\mathbf F$ 在整個立體上偏導連續",
+    "把封閉曲面的通量換成散度的三重積分",
+    "對不封閉的曲面，補一個蓋子再扣掉",
+    "解釋點源場 $\\frac{\\langle x,y,z\\rangle}{\\rho^3}$ 為什麼散度為 $0$、通量卻是 $4\\pi$"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 直觀：小方塊的流出量加起來",
+      "heading": "① 小方塊加起來",
       "body": [
-        "〈散度〉：每個小方塊的淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\times{}$ 體積。把立體 $E$ 切成小方塊，全部加起來。",
-        "相鄰兩塊共用一個面：從左塊流出的，正好流進右塊，一正一負抵消。最後只剩最外面那層表面的流出。所以：表面的總流出 $={}$ 裡面所有小源的總和。這是直觀，不是證明。"
+        "上一課：小方塊的淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\,\\Delta V$",
+        "把立體 $E$ 切成很多小方塊，每一塊的淨流出加起來",
+        "內部的面全部抵消，只剩外表面 $S$ 上朝外的流出",
+        "切到無限細：",
+        "跟 Green、Stokes 同一招：小塊加起來，內部抵消，只剩邊界"
       ],
-      "collapsible": false
+      "tex": [
+        "\\iint_S\\mathbf F\\cdot\\mathbf n\\,dS\\approx\\sum(\\nabla\\cdot\\mathbf F)\\,\\Delta V",
+        "\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "$E$ 是空間中有界的立體，邊界 $S$ 是分段光滑的封閉曲面，$S$ 取朝外的法向量；$\\mathbf F$ 的分量在一個包含 $E$（連同邊界）的開集上有連續偏導。那麼下式成立。也叫 Gauss 定理。"
+        "• $E$：有界立體，邊界 $S$ 是封閉、分段光滑的曲面",
+        "• $S$ 的法向量朝外",
+        "• $\\mathbf F$ 的分量在一個包含整個 $E$ 的開集上偏導連續",
+        "曲面積分的符號也常寫成 $\\oiint_S$，強調是封閉曲面",
+        "證明（簡單立體）：$E=\\{(x,y,z):(x,y)\\in D,\\ u_1\\le z\\le u_2\\}$",
+        "只看第三個分量：證 $\\displaystyle\\iint_S R\\,\\mathbf k\\cdot d\\mathbf S=\\iiint_E R_z\\,dV$"
       ],
-      "tex": ["\\iint_S \\mathbf F\\cdot d\\mathbf S=\\iiint_E \\nabla\\cdot\\mathbf F\\,dV"],
-      "collapsible": false
+      "tex": [
+        "\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV"
+      ]
+    },
+    {
+      "heading": "② 證明（續）",
+      "body": [
+        "右邊（微積分基本定理）：",
+        "左邊，三塊分開算：",
+        "• $S_3$（側面）：$\\mathbf n$ 水平，$\\mathbf k\\cdot\\mathbf n=0$，貢獻 $0$",
+        "• $S_2$（上，朝上）：$d\\mathbf S=\\langle -u_{2x},-u_{2y},1\\rangle dA$，得 $\\iint_D R(x,y,u_2)\\,dA$",
+        "• $S_1$（下，朝外＝朝下）：$d\\mathbf S=\\langle u_{1x},u_{1y},-1\\rangle dA$，得 $-\\iint_D R(x,y,u_1)\\,dA$",
+        "兩邊一樣　$\\blacksquare$",
+        "$P$、$Q$ 部分：要 $E$ 對 $x$、$y$ 方向也是這種形狀（球、長方體、圓柱都是）",
+        "一般的立體：切成幾塊簡單立體，切面兩側法向量相反，通量抵消"
+      ],
+      "tex": [
+        "\\iiint_E R_z\\,dV=\\iint_D\\big[R(x,y,u_2)-R(x,y,u_1)\\big]\\,dA"
+      ]
     },
     {
       "heading": "③ 怎麼用",
       "body": [
-        "封閉曲面的通量、而且散度很簡單（常數、或只剩多項式）：換成三重積分，通常再接〈球座標〉或柱座標。",
-        "曲面不封閉（像只有碗面、沒有底）：先補一片蓋子 $S_0$ 讓它封閉，用散度定理算總通量，再減去蓋子那片的通量（蓋子也要朝外）。",
-        "通量形式的〈Green 定理〉$\\oint\\mathbf F\\cdot\\mathbf n\\,ds=\\iint(P_x+Q_y)\\,dA$ 就是它的平面版本。"
+        "例 1：$\\nabla\\cdot\\mathbf F=0+1+0=1$，通量 $=\\iiint_E1\\,dV=$ 體積 $=\\dfrac43\\pi$",
+        "例 2：$\\mathbf F=\\langle xy,\\ y^2+e^{xz^2},\\ \\sin(xy)\\rangle$",
+        "$E$：拋物柱面 $z=1-x^2$、平面 $z=0$、$y=0$、$y+z=2$ 圍成",
+        "$\\nabla\\cdot\\mathbf F=y+2y+0=3y$：醜的項偏導之後消失"
       ],
-      "collapsible": false
+      "tex": [
+        "\\iiint_E3y\\,dV=\\int_{-1}^1\\!\\int_0^{1-x^2}\\!\\!\\int_0^{2-z}3y\\,dy\\,dz\\,dx",
+        "=\\int_{-1}^1\\frac12\\big[8-(1+x^2)^3\\big]dx=\\frac{184}{35}"
+      ]
+    },
+    {
+      "heading": "③ 補蓋子",
+      "body": [
+        "$\\mathbf F=\\langle y,\\ x,\\ z\\rangle$ 朝上穿過碗面 $S$：$z=1-x^2-y^2$，$z\\ge0$",
+        "$S$ 不封閉：補上底部的圓盤 $D$（$z=0$，$x^2+y^2\\le1$），朝外是朝下",
+        "圓盤上：$\\mathbf F\\cdot(-\\mathbf k)=-z=0$，所以 $\\displaystyle\\iint_D=0$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\iint_S+\\iint_D&=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV=\\iiint_E1\\,dV\\\\&=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta=\\frac\\pi2\\end{aligned}",
+        "\\iint_S\\mathbf F\\cdot d\\mathbf S=\\frac\\pi2-0=\\frac\\pi2"
+      ]
     },
     {
       "heading": "④ 條件壞掉時：點源",
       "body": [
-        "$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{\\rho^3}$（$\\rho=\\sqrt{x^2+y^2+z^2}$）在原點以外 $\\nabla\\cdot\\mathbf F=0$。但穿出任一個以原點為中心的球面，通量都是 $4\\pi$：球面上 $\\mathbf F\\cdot\\mathbf n=\\frac{1}{\\rho^2}$，乘上面積 $4\\pi\\rho^2$ 得 $4\\pi$。",
-        "這不矛盾：$\\mathbf F$ 在原點沒有定義，包含原點的立體不滿足定理的條件。所有的源都擠在原點一點上。物理上這就是 Gauss 定律：點電荷的電通量只看包住的電荷。",
-        "對不包含原點的封閉曲面，條件成立，通量是 $0$。"
+        "$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$：原點以外 $\\nabla\\cdot\\mathbf F=0$（9.25）",
+        "但穿出球面的通量是 $4\\pi$，不是 $\\iiint0\\,dV=0$",
+        "$\\mathbf F$ 在原點沒有定義：球裡面有壞點，條件不成立",
+        "任一個包住原點的封閉曲面 $S$：在裡面挖一個小球面 $S_a$",
+        "$E$＝兩者之間（沒有原點），$\\nabla\\cdot\\mathbf F=0$：",
+        "電場 $\\mathbf E=\\frac{q}{4\\pi\\varepsilon_0}\\frac{\\langle x,y,z\\rangle}{\\rho^3}$：通量 $=\\frac{q}{\\varepsilon_0}$，這就是 Gauss 定律"
       ],
-      "collapsible": false
+      "tex": [
+        "\\iint_S\\mathbf F\\cdot d\\mathbf S-\\iint_{S_a}\\mathbf F\\cdot d\\mathbf S=0",
+        "\\iint_S\\mathbf F\\cdot d\\mathbf S=4\\pi\\quad(\\text{沒包住原點：}0)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\displaystyle\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$",
+        "• 條件：$S$ 封閉、朝外；$\\mathbf F$ 在整個 $E$ 上偏導連續",
+        "• 散度好算（常數、醜的項消失）時特別好用",
+        "• 不封閉：補蓋子，再扣掉蓋子的通量",
+        "• 裡面有壞點：挖掉一個小球；點源場包住原點時通量 $4\\pi$",
+        "下一課：把所有的基本定理放在一起"
+      ]
     }
   ],
   "workedExamples": [
@@ -93,35 +166,45 @@
   ],
   "checks": [
     {
-      "ask": "散度定理裡封閉曲面 $S$ 的法向量要取？",
+      "ask": "改成 $\\mathbf F=\\langle y,\\ x,\\ z+1\\rangle$，同一個碗，朝上的通量是？",
       "options": [
-        { "label": "朝外", "correct": true },
-        { "label": "朝內", "why": "定理是「淨流出 $={}$ 內部源的總和」，所以要朝外；朝內會差一個負號。" },
-        { "label": "朝上", "why": "封閉曲面有朝上的部分也有朝下的部分（像球的下半），要一律朝外。" }
+        {
+          "label": "$3\\pi/2$",
+          "correct": true
+        },
+        {
+          "label": "$-\\pi/2$",
+          "why": "扣掉蓋子時正負號錯了：要減 $\\iint_D=-\\pi$，是加 $\\pi$"
+        },
+        {
+          "label": "$\\pi/2$",
+          "why": "散度沒變，但蓋子上的通量不是 $0$ 了，要扣掉"
+        },
+        {
+          "label": "$\\pi$",
+          "why": "只算了蓋子；碗加蓋子的總和 $\\frac\\pi2$ 也要算進去"
+        }
       ]
     },
     {
-      "ask": "$E$ 是邊長 $3$ 的正方體，$\\nabla\\cdot\\mathbf F=2$（處處）。穿出 $E$ 表面的通量是？",
+      "ask": "點源場 $\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$ 穿出正方體 $[-1,1]^3$ 表面（朝外）的通量是？",
       "options": [
-        { "label": "$54$", "correct": true },
-        { "label": "$18$", "why": "用了一個面的面積 $9$。要乘的是體積 $27$。" },
-        { "label": "$2$", "why": "散度是每單位體積的淨流出，要乘上體積。" }
-      ]
-    },
-    {
-      "ask": "$S$ 是上半球面（沒有底），可以直接用散度定理嗎？",
-      "options": [
-        { "label": "不能直接用：先補上底部圓盤，算完再扣掉圓盤的通量", "correct": true },
-        { "label": "可以，直接換成半球的三重積分", "why": "上半球面不封閉，它本身不是任何立體的完整邊界。" },
-        { "label": "永遠不能用", "why": "補一片蓋子就能用，這是很常見的做法。" }
-      ]
-    },
-    {
-      "ask": "$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{\\rho^3}$ 穿出球面 $\\rho=5$ 的通量是 $4\\pi$，可是原點以外 $\\nabla\\cdot\\mathbf F=0$。為什麼？",
-      "options": [
-        { "label": "$\\mathbf F$ 在原點沒有定義，球體不滿足定理的條件", "correct": true },
-        { "label": "散度定理錯了", "why": "定理沒錯，是條件不成立：它要求 $\\mathbf F$ 在整個立體上偏導連續。" },
-        { "label": "其實通量應該是 0", "why": "球面上 $\\mathbf F\\cdot\\mathbf n=\\frac{1}{25}$，乘面積 $100\\pi$ 確實是 $4\\pi$。" }
+        {
+          "label": "$4\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$0$",
+          "why": "散度是 $0$ 沒錯，但原點在裡面，不能直接用散度定理"
+        },
+        {
+          "label": "$8$",
+          "why": "那是正方體的體積；散度不是 $1$"
+        },
+        {
+          "label": "$-4\\pi$",
+          "why": "朝外的通量是正的：箭頭往外穿出"
+        }
       ]
     }
   ],
@@ -129,248 +212,690 @@
     {
       "title": "小方塊加起來",
       "beats": [
-        { "show": ["每個小方塊淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\times$ 體積"],
-          "note": "〈散度〉。",
-          "say": "散度那一課說：每個小方塊的淨流出，大約是散度乘體積。",
+        {
+          "show": [
+            "上一課：小方塊的淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\,\\Delta V$"
+          ],
+          "say": "上一課說過：一個小方塊的淨流出，大約是散度乘上體積。",
           "board": [
-            {"do":"write","line":"小塊淨流出 $\\approx{{d:\\nabla\\cdot\\mathbf F}}\\cdot\\Delta V$"},
-            {"do":"focus","term":"d","on":"大約"}
-          ] },
-        { "show": ["立體 $E$ 切成小方塊，全部加起來"],
-          "say": "把整塊立體切成小方塊，每一塊的淨流出全部加起來。",
+            {
+              "do": "write",
+              "line": "上一課：小方塊的淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\,\\Delta V$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把立體 $E$ 切成很多小方塊，每一塊的淨流出加起來"
+          ],
+          "say": "現在把一整塊立體 E 切成很多小方塊，把每一塊的淨流出全部加起來。",
           "board": [
-            {"do":"write","line":"$\\sum(\\nabla\\cdot\\mathbf F)\\,\\Delta V$：每塊加起來"}
-          ] },
-        { "show": ["切越細，誤差比體積小得多","取極限：總和變成三重積分"],
-          "say": "這裡是近似，因為方塊有大小。切得越細，誤差比體積小得多，取極限後總和正好是三重積分。",
+            {
+              "do": "write",
+              "line": "把立體 $E$ 切成很多小方塊，每一塊的淨流出加起來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "兩個相鄰的方塊共用一面：從這一格流出去的，正好流進那一格，一正一負抵消。",
           "board": [
-            {"do":"write","line":"切細：$\\sum\\to{{k:\\iiint_E\\nabla\\cdot\\mathbf F\\,dV}}$"},
-            {"do":"box","term":"k","color":"green","label":"精確","on":"取極限"}
-          ] },
-        { "show": ["相鄰兩塊共用一個面"],
-          "note": "從左塊流出的，正好流進右塊。",
-          "say": "注意相鄰兩塊共用的面：從左塊流出去的，正好流進右塊。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"dtCells\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b6dtCells\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b6dtCellsblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b6dtCellsred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b6dtCellsgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b6dtCellspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b6dtCellsink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b6dtCells30\"><rect x=\"51.5\" y=\"16\" width=\"523\" height=\"284\"/></clipPath><g clip-path=\"url(#cl9b6dtCells30)\"><polygon points=\"89.6,261.9 158.9,261.9 158.9,192.6 89.6,192.6\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"158.9,261.9 228.1,261.9 228.1,192.6 158.9,192.6\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"228.1,261.9 297.4,261.9 297.4,192.6 228.1,192.6\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"89.6,192.6 158.9,192.6 158.9,123.4 89.6,123.4\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"158.9,192.6 228.1,192.6 228.1,123.4 158.9,123.4\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"228.1,192.6 297.4,192.6 297.4,123.4 228.1,123.4\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"297.4,192.6 366.7,192.6 366.7,123.4 297.4,123.4\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"158.9,123.4 228.1,123.4 228.1,54.1 158.9,54.1\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"228.1,123.4 297.4,123.4 297.4,54.1 228.1,54.1\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/></g><line x1=\"89.6\" y1=\"261.9\" x2=\"158.9\" y2=\"261.9\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"124.2\" y1=\"261.9\" x2=\"124.2\" y2=\"284.1\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"158.9\" y1=\"261.9\" x2=\"158.9\" y2=\"192.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"145\" y1=\"227.3\" x2=\"172.7\" y2=\"227.3\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"89.6\" y1=\"192.6\" x2=\"158.9\" y2=\"192.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"124.2\" y1=\"206.5\" x2=\"124.2\" y2=\"178.8\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"89.6\" y1=\"261.9\" x2=\"89.6\" y2=\"192.6\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"89.6\" y1=\"227.3\" x2=\"67.4\" y2=\"227.3\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"158.9\" y1=\"261.9\" x2=\"228.1\" y2=\"261.9\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"193.5\" y1=\"261.9\" x2=\"193.5\" y2=\"284.1\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"228.1\" y1=\"261.9\" x2=\"228.1\" y2=\"192.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"214.3\" y1=\"227.3\" x2=\"242\" y2=\"227.3\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"158.9\" y1=\"192.6\" x2=\"228.1\" y2=\"192.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"193.5\" y1=\"206.5\" x2=\"193.5\" y2=\"178.8\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"228.1\" y1=\"261.9\" x2=\"297.4\" y2=\"261.9\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"262.8\" y1=\"261.9\" x2=\"262.8\" y2=\"284.1\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"297.4\" y1=\"261.9\" x2=\"297.4\" y2=\"192.6\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"297.4\" y1=\"227.3\" x2=\"319.6\" y2=\"227.3\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"228.1\" y1=\"192.6\" x2=\"297.4\" y2=\"192.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"262.8\" y1=\"206.5\" x2=\"262.8\" y2=\"178.8\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"158.9\" y1=\"192.6\" x2=\"158.9\" y2=\"123.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"145\" y1=\"158\" x2=\"172.7\" y2=\"158\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"89.6\" y1=\"123.4\" x2=\"158.9\" y2=\"123.4\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"124.2\" y1=\"123.4\" x2=\"124.2\" y2=\"101.2\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"89.6\" y1=\"192.6\" x2=\"89.6\" y2=\"123.4\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"89.6\" y1=\"158\" x2=\"67.4\" y2=\"158\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"228.1\" y1=\"192.6\" x2=\"228.1\" y2=\"123.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"214.3\" y1=\"158\" x2=\"242\" y2=\"158\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"158.9\" y1=\"123.4\" x2=\"228.1\" y2=\"123.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"193.5\" y1=\"137.2\" x2=\"193.5\" y2=\"109.5\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"297.4\" y1=\"192.6\" x2=\"297.4\" y2=\"123.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"283.6\" y1=\"158\" x2=\"311.3\" y2=\"158\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"228.1\" y1=\"123.4\" x2=\"297.4\" y2=\"123.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"262.8\" y1=\"137.2\" x2=\"262.8\" y2=\"109.5\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"297.4\" y1=\"192.6\" x2=\"366.7\" y2=\"192.6\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"332\" y1=\"192.6\" x2=\"332\" y2=\"214.8\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"366.7\" y1=\"192.6\" x2=\"366.7\" y2=\"123.4\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"366.7\" y1=\"158\" x2=\"388.8\" y2=\"158\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"297.4\" y1=\"123.4\" x2=\"366.7\" y2=\"123.4\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"332\" y1=\"123.4\" x2=\"332\" y2=\"101.2\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"228.1\" y1=\"123.4\" x2=\"228.1\" y2=\"54.1\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><line x1=\"214.3\" y1=\"88.7\" x2=\"242\" y2=\"88.7\" stroke=\"var(--muted)\" stroke-width=\"2\" marker-end=\"url(#ah9b6dtCellspencil)\"/><line x1=\"158.9\" y1=\"54.1\" x2=\"228.1\" y2=\"54.1\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"193.5\" y1=\"54.1\" x2=\"193.5\" y2=\"31.9\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"158.9\" y1=\"123.4\" x2=\"158.9\" y2=\"54.1\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"158.9\" y1=\"88.7\" x2=\"136.7\" y2=\"88.7\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"297.4\" y1=\"123.4\" x2=\"297.4\" y2=\"54.1\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"297.4\" y1=\"88.7\" x2=\"319.6\" y2=\"88.7\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><line x1=\"228.1\" y1=\"54.1\" x2=\"297.4\" y2=\"54.1\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"262.8\" y1=\"54.1\" x2=\"262.8\" y2=\"31.9\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtCellsred)\"/><text x=\"395\" y=\"92\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">灰：內部的面</text><text x=\"395\" y=\"120\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">這格流出 = 那格流進</text><text x=\"395\" y=\"148\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">→ 抵消</text><text x=\"395\" y=\"210\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">藍：外表面 S</text><text x=\"395\" y=\"238\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">紅：朝外的流出</text><text x=\"395\" y=\"266\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">→ 剩下的就是通量</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "內部的面全部抵消，只剩外表面 $S$ 上朝外的流出"
+          ],
+          "say": "所以內部的面全部抵消，只剩最外面那一層表面，朝外流出去的量。這正是穿過 S 的通量。",
           "board": [
-            {"do":"write","line":"共用面：流出 ${{a:+\\Phi}}$，流入 ${{b:-\\Phi}}$"},
-            {"do":"focus","term":"a","on":"流出去"},
-            {"do":"focus","term":"b","on":"正好"}
-          ] }
+            {
+              "do": "write",
+              "line": "內部的面全部抵消，只剩外表面 $S$ 上朝外的流出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iint_S\\mathbf F\\cdot\\mathbf n\\,dS\\approx\\sum(\\nabla\\cdot\\mathbf F)\\,\\Delta V$"
+          ],
+          "say": "左邊是穿出外表面的通量，右邊是每個小方塊的散度乘體積，加起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_S\\mathbf F\\cdot\\mathbf n\\,dS\\approx\\sum(\\nabla\\cdot\\mathbf F)\\,\\Delta V$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切到無限細：",
+            "$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$"
+          ],
+          "say": "切到無限細，右邊變成三重積分。這就是散度定理，也叫高斯定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "切到無限細："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV}}$",
+              "color": "red",
+              "on": "邊變"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "這就"
+            },
+            {
+              "do": "write",
+              "line": "　跟 Green、Stokes 同一招：小塊加起來，內部抵消，只剩邊界",
+              "color": "violet",
+              "on": "也叫"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$"
+          ],
+          "say": "正式寫出來：穿出封閉曲面的通量，等於裡面散度的三重積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $E$：有界立體，邊界 $S$ 是封閉、分段光滑的曲面",
+            "• $S$ 的法向量朝外"
+          ],
+          "say": "條件有三個：S 是 E 的整個邊界，封閉、分段光滑；法向量朝外；F 的偏導在整個 E 上都連續，裡面不能有壞點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $E$：有界立體，邊界 $S$ 是封閉、分段光滑的曲面"
+            },
+            {
+              "do": "write",
+              "line": "• $S$ 的法向量朝外",
+              "on": "個邊"
+            },
+            {
+              "do": "write",
+              "line": "• $\\mathbf F$ 的分量在一個包含整個 $E$ 的開集上偏導連續",
+              "on": "量朝"
+            },
+            {
+              "do": "write",
+              "line": "　曲面積分的符號也常寫成 $\\oiint_S$，強調是封閉曲面",
+              "color": "violet",
+              "on": "上都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明（簡單立體）：$E=\\{(x,y,z):(x,y)\\in D,\\ u_1\\le z\\le u_2\\}$"
+          ],
+          "say": "證明 E 是簡單立體的情形：投影到 x y 平面是 D，夾在下面 u 1 和上面 u 2 兩張曲面之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明（簡單立體）：$E=\\{(x,y,z):(x,y)\\in D,\\ u_1\\le z\\le u_2\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "它的表面分三塊：上面 S 2，下面 S 1，還有直立的側面 S 3。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"dtSimple\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b6dtSimple\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b6dtSimpleblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b6dtSimplered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b6dtSimplegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b6dtSimplepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b6dtSimpleink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><polygon points=\"363.4,234.2 363.4,205.9 365,201.6 365,230.4\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155,199.7 155,178.5 156.6,183.1 156.6,203.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.4,205.9 363.4,177.5 365,172.8 365,201.6\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155,178.5 155,157.4 156.6,162.4 156.6,183.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"358.7,237.4 358.7,209.6 363.4,205.9 363.4,234.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.4,177.5 363.4,149.2 365,144 365,172.8\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155,157.4 155,136.3 156.6,141.6 156.6,162.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.6,203.9 156.6,183.1 161.3,187.9 161.3,208.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"358.7,209.6 358.7,181.8 363.4,177.5 363.4,205.9\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.4,149.2 363.4,120.8 365,115.2 365,144\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155,136.3 155,115.2 156.6,120.8 156.6,141.6\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.6,183.1 156.6,162.4 161.3,167.4 161.3,187.9\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.9,239.9 350.9,212.8 358.7,209.6 358.7,237.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"358.7,181.8 358.7,154.1 363.4,149.2 363.4,177.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.6,162.4 156.6,141.6 161.3,146.8 161.3,167.4\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.3,208.5 161.3,187.9 169.1,192.8 169.1,213.3\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.9,212.8 350.9,185.7 358.7,181.8 358.7,209.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"358.7,154.1 358.7,126.3 363.4,120.8 363.4,149.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.6,141.6 156.6,120.8 161.3,126.3 161.3,146.8\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.3,187.9 161.3,167.4 169.1,172.3 169.1,192.8\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.4,241.7 340.4,215.3 350.9,212.8 350.9,239.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.9,185.7 350.9,158.5 358.7,154.1 358.7,181.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.3,167.4 161.3,146.8 169.1,151.9 169.1,172.3\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.1,213.3 169.1,192.8 179.6,197.6 179.6,218.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.4,215.3 340.4,188.9 350.9,185.7 350.9,212.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.9,158.5 350.9,131.4 358.7,126.3 358.7,154.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.3,146.8 161.3,126.3 169.1,131.4 169.1,151.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.1,192.8 169.1,172.3 179.6,177.1 179.6,197.6\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,242.6 327.5,217 340.4,215.3 340.4,241.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.4,188.9 340.4,162.5 350.9,158.5 350.9,185.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.6,218.1 179.6,197.6 192.5,202.1 192.5,222.9\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.1,172.3 169.1,151.9 179.6,156.6 179.6,177.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,217 327.5,191.3 340.4,188.9 340.4,215.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.4,162.5 340.4,136 350.9,131.4 350.9,158.5\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.5,242.7 312.5,217.9 327.5,217 327.5,242.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.6,197.6 179.6,177.1 192.5,181.4 192.5,202.1\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.1,151.9 169.1,131.4 179.6,136 179.6,156.6\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,191.3 327.5,165.7 340.4,162.5 340.4,188.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.5,222.9 192.5,202.1 207.5,206.3 207.5,227.4\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.6,177.1 179.6,156.6 192.5,160.7 192.5,181.4\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.5,217.9 312.5,193 327.5,191.3 327.5,217\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,242 295.9,217.9 312.5,217.9 312.5,242.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.5,202.1 192.5,181.4 207.5,185.3 207.5,206.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.5,227.4 207.5,206.3 224.1,210 224.1,231.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,165.7 327.5,140 340.4,136 340.4,162.5\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.6,156.6 179.6,136 192.5,140 192.5,160.7\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.2,240.5 278.2,217.1 295.9,217.9 295.9,242\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.5,193 312.5,168.1 327.5,165.7 327.5,191.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,217.9 295.9,193.8 312.5,193 312.5,217.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.5,181.4 192.5,160.7 207.5,164.3 207.5,185.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.1,231.5 224.1,210 241.8,213.1 241.8,235.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.5,206.3 207.5,185.3 224.1,188.6 224.1,210\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,238.1 260,215.5 278.2,217.1 278.2,240.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.8,235.1 241.8,213.1 260,215.5 260,238.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.2,217.1 278.2,193.8 295.9,193.8 295.9,217.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.5,168.1 312.5,143.3 327.5,140 327.5,165.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.5,160.7 192.5,140 207.5,143.3 207.5,164.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,193.8 295.9,169.8 312.5,168.1 312.5,193\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.1,210 224.1,188.6 241.8,191.1 241.8,213.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.5,185.3 207.5,164.3 224.1,167.1 224.1,188.6\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,215.5 260,192.9 278.2,193.8 278.2,217.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.8,213.1 241.8,191.1 260,192.9 260,215.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.2,193.8 278.2,170.5 295.9,169.8 295.9,193.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.1,188.6 224.1,167.1 241.8,169.1 241.8,191.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,169.8 295.9,145.7 312.5,143.3 312.5,168.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.5,164.3 207.5,143.3 224.1,145.7 224.1,167.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,192.9 260,170.3 278.2,170.5 278.2,193.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.8,191.1 241.8,169.1 260,170.3 260,192.9\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.2,170.5 278.2,147.1 295.9,145.7 295.9,169.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.1,167.1 224.1,145.7 241.8,147.1 241.8,169.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,170.3 260,147.6 278.2,147.1 278.2,170.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.8,169.1 241.8,147.1 260,147.6 260,170.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.6,77 278.2,83.2 250.8,82.9 252.7,76.7\" fill=\"color-mix(in srgb, var(--red) 17%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.7,76.7 250.8,82.9 224.1,84.7 231.3,78.2\" fill=\"color-mix(in srgb, var(--red) 18%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.5,79.1 304.4,85.8 278.2,83.2 274.6,77\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.3,78.2 224.1,84.7 199.8,88.6 211.8,81.3\" fill=\"color-mix(in srgb, var(--red) 18%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"314,82.7 327.5,90.3 304.4,85.8 295.5,79.1\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211.8,81.3 199.8,88.6 179.6,94.3 195.7,85.9\" fill=\"color-mix(in srgb, var(--red) 18%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270.9,73.6 274.6,77 252.7,76.7 254.5,73.4\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"254.5,73.4 252.7,76.7 231.3,78.2 238.5,74.5\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.6,75.2 295.5,79.1 274.6,77 270.9,73.6\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"328.8,87.7 346,96.6 327.5,90.3 314,82.7\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.5,74.5 231.3,78.2 211.8,81.3 223.9,76.9\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"300.5,77.9 314,82.7 295.5,79.1 286.6,75.2\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"195.7,85.9 179.6,94.3 164.8,101.5 183.9,91.6\" fill=\"color-mix(in srgb, var(--red) 18%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.9,76.9 211.8,81.3 195.7,85.9 211.7,80.3\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"311.6,81.7 328.8,87.7 314,82.7 300.5,77.9\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.3,73 270.9,73.6 254.5,73.4 256.3,72.9\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"256.3,72.9 254.5,73.4 238.5,74.5 245.6,73.6\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"338.9,93.7 358.7,104.1 346,96.6 328.8,87.7\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.7,74.1 286.6,75.2 270.9,73.6 267.3,73\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.6,73.6 238.5,74.5 223.9,76.9 235.9,75.2\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287,75.9 300.5,77.9 286.6,75.2 277.7,74.1\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211.7,80.3 195.7,85.9 183.9,91.6 202.9,84.6\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235.9,75.2 223.9,76.9 211.7,80.3 227.8,77.5\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"319.2,86.2 338.9,93.7 328.8,87.7 311.6,81.7\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"294.4,78.4 311.6,81.7 300.5,77.9 287,75.9\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"183.9,91.6 164.8,101.5 156.6,109.6 177.3,98.1\" fill=\"color-mix(in srgb, var(--red) 17%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"263.6,75.2 267.3,73 256.3,72.9 258.2,75.2\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.2,75.2 256.3,72.9 245.6,73.6 252.8,75.5\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"227.8,77.5 211.7,80.3 202.9,84.6 221.9,80.3\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"268.9,75.8 277.7,74.1 267.3,73 263.6,75.2\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"343.7,100.3 364.6,112.4 358.7,104.1 338.9,93.7\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.8,75.5 245.6,73.6 235.9,75.2 248,76.3\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"202.9,84.6 183.9,91.6 177.3,98.1 198,89.4\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"273.5,76.7 287,75.9 277.7,74.1 268.9,75.8\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.5,81.4 319.2,86.2 311.6,81.7 294.4,78.4\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"248,76.3 235.9,75.2 227.8,77.5 243.9,77.5\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.2,77.9 294.4,78.4 287,75.9 273.5,76.7\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.8,91.1 343.7,100.3 338.9,93.7 319.2,86.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"221.9,80.3 202.9,84.6 198,89.4 218.6,83.6\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.9,77.5 227.8,77.5 221.9,80.3 241,78.9\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.7,79.4 299.5,81.4 294.4,78.4 277.2,77.9\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.8,84.7 322.8,91.1 319.2,86.2 299.5,81.4\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"177.3,98.1 156.6,109.6 155.4,118 176.3,104.9\" fill=\"color-mix(in srgb, var(--red) 16%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 263.6,75.2 258.2,75.2 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241,78.9 221.9,80.3 218.6,83.6 239.3,80.5\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 258.2,75.2 252.8,75.5 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 268.9,75.8 263.6,75.2 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 252.8,75.5 248,76.3 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"198,89.4 177.3,98.1 176.3,104.9 197.2,94.5\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 273.5,76.7 268.9,75.8 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.9,81.1 301.8,84.7 299.5,81.4 279.7,79.4\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 248,76.3 243.9,77.5 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 277.2,77.9 273.5,76.7 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 243.9,77.5 241,78.9 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"342.7,107.1 363.4,120.8 364.6,112.4 343.7,100.3\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.6,83.6 198,89.4 197.2,94.5 218.2,87\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 279.7,79.4 277.2,77.9 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 241,78.9 239.3,80.5 260,80.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322,96.2 342.7,107.1 343.7,100.3 322.8,91.1\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.3,80.5 218.6,83.6 218.2,87 239.1,82.2\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 280.9,81.1 279.7,79.4 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.4,88.1 322,96.2 322.8,91.1 301.8,84.7\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 239.3,80.5 239.1,82.2 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.7,82.8 301.4,88.1 301.8,84.7 280.9,81.1\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 280.7,82.8 280.9,81.1 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 239.1,82.2 240.3,83.9 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 279,84.4 280.7,82.8 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 240.3,83.9 242.8,85.4 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 276.1,85.8 279,84.4 260,80.2\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.1,82.2 218.2,87 220.5,90.3 240.3,83.9\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 242.8,85.4 246.5,86.6 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 272,87 276.1,85.8 260,80.2\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.2,87 197.2,94.5 200.8,99.5 220.5,90.3\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279,84.4 298.1,91.3 301.4,88.1 280.7,82.8\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 246.5,86.6 251.1,87.5 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 267.2,87.7 272,87 260,80.2\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 251.1,87.5 256.4,88 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.2,94.5 176.3,104.9 181.1,111.5 200.8,99.5\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 261.8,88.1 267.2,87.7 260,80.2\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,80.2 256.4,88 261.8,88.1 260,80.2\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"176.3,104.9 155.4,118 161.3,126.3 181.1,111.5\" fill=\"color-mix(in srgb, var(--red) 15%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.1,91.3 317.1,101 322,96.2 301.4,88.1\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240.3,83.9 220.5,90.3 225.6,93.3 242.8,85.4\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"276.1,85.8 292.2,94.2 298.1,91.3 279,84.4\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"317.1,101 336.1,113.6 342.7,107.1 322,96.2\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"336.1,113.6 355.2,128.9 363.4,120.8 342.7,107.1\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.8,85.4 225.6,93.3 233,95.8 246.5,86.6\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"220.5,90.3 200.8,99.5 208.4,104 225.6,93.3\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272,87 284.1,96.5 292.2,94.2 276.1,85.8\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.2,94.2 308.3,105.3 317.1,101 298.1,91.3\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"246.5,86.6 233,95.8 242.3,97.6 251.1,87.5\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.2,87.7 274.4,98 284.1,96.5 272,87\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"200.8,99.5 181.1,111.5 191.2,117.5 208.4,104\" fill=\"color-mix(in srgb, var(--red) 13%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.1,87.5 242.3,97.6 252.7,98.6 256.4,88\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.8,88.1 263.7,98.8 274.4,98 267.2,87.7\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"256.4,88 252.7,98.6 263.7,98.8 261.8,88.1\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225.6,93.3 208.4,104 219.5,107.7 233,95.8\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.3,105.3 324.3,119.3 336.1,113.6 317.1,101\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"181.1,111.5 161.3,126.3 174,133.8 191.2,117.5\" fill=\"color-mix(in srgb, var(--red) 14%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.1,96.5 296.1,108.8 308.3,105.3 292.2,94.2\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"324.3,119.3 340.4,136 355.2,128.9 336.1,113.6\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233,95.8 219.5,107.7 233.4,110.5 242.3,97.6\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.4,98 281.5,111.1 296.1,108.8 284.1,96.5\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208.4,104 191.2,117.5 206,122.5 219.5,107.7\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.3,97.6 233.4,110.5 249.1,112 252.7,98.6\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"263.7,98.8 265.5,112.2 281.5,111.1 274.4,98\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.1,108.8 308.2,123.9 324.3,119.3 308.3,105.3\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.7,98.6 249.1,112 265.5,112.2 263.7,98.8\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.2,117.5 174,133.8 192.5,140 206,122.5\" fill=\"color-mix(in srgb, var(--red) 12%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.5,107.7 206,122.5 224.5,126.1 233.4,110.5\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.5,111.1 288.7,127 308.2,123.9 296.1,108.8\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.2,123.9 320.2,141.8 340.4,136 324.3,119.3\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.4,110.5 224.5,126.1 245.4,128.2 249.1,112\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"265.5,112.2 267.3,128.5 288.7,127 281.5,111.1\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"249.1,112 245.4,128.2 267.3,128.5 265.5,112.2\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206,122.5 192.5,140 215.6,144.6 224.5,126.1\" fill=\"color-mix(in srgb, var(--red) 11%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"288.7,127 295.9,145.7 320.2,141.8 308.2,123.9\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.5,126.1 215.6,144.6 241.8,147.1 245.4,128.2\" fill=\"color-mix(in srgb, var(--red) 10%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.3,128.5 269.2,147.5 295.9,145.7 288.7,127\" fill=\"color-mix(in srgb, var(--red) 8%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.4,128.2 241.8,147.1 269.2,147.5 267.3,128.5\" fill=\"color-mix(in srgb, var(--red) 9%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><path d=\"M365 230.4L365 230L364.9 229.5L364.8 229L364.7 228.6L364.5 228.1L364.3 227.6L364 227.1L363.7 226.6L363.4 226.1L363 225.6L362.6 225.1L362.1 224.6L361.6 224.1L361.1 223.6L360.5 223.1L359.9 222.5L359.2 222L358.5 221.5L357.8 221L357 220.4L356.2 219.9L355.4 219.3L354.5 218.8L353.6 218.3L352.6 217.7L351.6 217.2L350.6 216.6L349.5 216.1L348.4 215.6L347.3 215L346.1 214.5L344.9 213.9L343.7 213.4L342.5 212.8L341.2 212.3L339.8 211.7L338.5 211.2L337.1 210.7L335.7 210.1L334.2 209.6L332.8 209.1L331.3 208.5L329.7 208L328.2 207.5L326.6 207L325 206.4L323.4 205.9L321.7 205.4L320 204.9L318.3 204.4L316.6 203.9L314.9 203.4L313.1 202.9L311.3 202.4L309.5 201.9L307.7 201.5L305.8 201L304 200.5L302.1 200.1L300.2 199.6L298.3 199.2L296.3 198.7L294.4 198.3L292.4 197.8L290.5 197.4L288.5 197L286.5 196.6L284.5 196.2L282.5 195.8L280.5 195.4L278.5 195L276.4 194.6L274.4 194.3L272.3 193.9L270.3 193.6L268.2 193.2L266.2 192.9L264.1 192.6L262.1 192.3L260 192L257.9 191.7L255.9 191.4L253.8 191.1L251.8 190.8L249.7 190.6L247.7 190.3L245.6 190.1L243.6 189.8L241.5 189.6L239.5 189.4L237.5 189.2L235.5 189L233.5 188.8L231.5 188.6L229.5 188.5L227.6 188.3L225.6 188.2L223.7 188.1L221.7 187.9L219.8 187.8L217.9 187.7L216 187.6L214.2 187.6L212.3 187.5L210.5 187.4L208.7 187.4L206.9 187.3L205.1 187.3L203.4 187.3L201.7 187.3L200 187.3L198.3 187.3L196.6 187.4L195 187.4L193.4 187.4L191.8 187.5L190.3 187.6L188.7 187.7L187.2 187.7L185.8 187.8L184.3 188L182.9 188.1L181.5 188.2L180.2 188.4L178.8 188.5L177.5 188.7L176.3 188.8L175.1 189L173.9 189.2L172.7 189.4L171.6 189.6L170.5 189.9L169.4 190.1L168.4 190.3L167.4 190.6L166.4 190.9L165.5 191.1L164.6 191.4L163.8 191.7L163 192L162.2 192.3L161.5 192.6L160.8 193L160.1 193.3L159.5 193.6L158.9 194L158.4 194.3L157.9 194.7L157.4 195.1L157 195.5L156.6 195.8L156.3 196.2L156 196.6L155.7 197.1L155.5 197.5L155.3 197.9L155.2 198.3L155.1 198.8L155 199.2L155 199.7\" stroke=\"var(--green)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"6 5\"/><path d=\"M155 199.7L155 200.1L155.1 200.6L155.2 201.1L155.3 201.5L155.5 202L155.7 202.5L156 203L156.3 203.5L156.6 204L157 204.5L157.4 205L157.9 205.5L158.4 206L158.9 206.5L159.5 207L160.1 207.6L160.8 208.1L161.5 208.6L162.2 209.1L163 209.7L163.8 210.2L164.6 210.7L165.5 211.3L166.4 211.8L167.4 212.4L168.4 212.9L169.4 213.5L170.5 214L171.6 214.5L172.7 215.1L173.9 215.6L175.1 216.2L176.3 216.7L177.5 217.3L178.8 217.8L180.2 218.3L181.5 218.9L182.9 219.4L184.3 220L185.8 220.5L187.2 221L188.7 221.6L190.3 222.1L191.8 222.6L193.4 223.1L195 223.7L196.6 224.2L198.3 224.7L200 225.2L201.7 225.7L203.4 226.2L205.1 226.7L206.9 227.2L208.7 227.7L210.5 228.2L212.3 228.6L214.2 229.1L216 229.6L217.9 230L219.8 230.5L221.7 230.9L223.7 231.4L225.6 231.8L227.6 232.3L229.5 232.7L231.5 233.1L233.5 233.5L235.5 233.9L237.5 234.3L239.5 234.7L241.5 235.1L243.6 235.4L245.6 235.8L247.7 236.2L249.7 236.5L251.8 236.9L253.8 237.2L255.9 237.5L257.9 237.8L260 238.1L262.1 238.4L264.1 238.7L266.2 239L268.2 239.3L270.3 239.5L272.3 239.8L274.4 240L276.4 240.3L278.5 240.5L280.5 240.7L282.5 240.9L284.5 241.1L286.5 241.3L288.5 241.4L290.5 241.6L292.4 241.8L294.4 241.9L296.3 242L298.3 242.2L300.2 242.3L302.1 242.4L304 242.5L305.8 242.5L307.7 242.6L309.5 242.7L311.3 242.7L313.1 242.7L314.9 242.8L316.6 242.8L318.3 242.8L320 242.8L321.7 242.8L323.4 242.7L325 242.7L326.6 242.7L328.2 242.6L329.7 242.5L331.3 242.4L332.8 242.4L334.2 242.3L335.7 242.1L337.1 242L338.5 241.9L339.8 241.7L341.2 241.6L342.5 241.4L343.7 241.2L344.9 241.1L346.1 240.9L347.3 240.7L348.4 240.5L349.5 240.2L350.6 240L351.6 239.8L352.6 239.5L353.6 239.2L354.5 239L355.4 238.7L356.2 238.4L357 238.1L357.8 237.8L358.5 237.5L359.2 237.1L359.9 236.8L360.5 236.5L361.1 236.1L361.6 235.8L362.1 235.4L362.6 235L363 234.6L363.4 234.2L363.7 233.9L364 233.4L364.3 233L364.5 232.6L364.7 232.2L364.8 231.8L364.9 231.3L365 230.9L365 230.4\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"365\" y1=\"230.4\" x2=\"365\" y2=\"115.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\"/><line x1=\"155\" y1=\"199.7\" x2=\"155\" y2=\"115.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\"/><path d=\"M215.6 144.6L219.4 145.1L223.2 145.6L227.1 146L231.1 146.4L235 146.7L239.1 147L243.1 147.2L247.2 147.4L251.3 147.5L255.4 147.6L259.5 147.6L263.7 147.6L267.8 147.5L271.9 147.4L276 147.3L280 147L284.1 146.8L288.1 146.5L292 146.1L295.9 145.7L299.8 145.2L303.5 144.7L307.3 144.2L310.9 143.6L314.5 142.9L318 142.2L321.3 141.5L324.6 140.8L327.8 140L330.9 139.1L333.9 138.2L336.8 137.3L339.5 136.4L342.2 135.4L344.7 134.4L347 133.3L349.3 132.3L351.4 131.2L353.3 130L355.2 128.9L356.8 127.7L358.4 126.6L359.7 125.3L360.9 124.1L362 122.9L362.9 121.7L363.6 120.4L364.2 119.1L364.6 117.9L364.9 116.6L365 115.3L364.9 114.1L364.7 112.8L364.3 111.5L363.8 110.3L363.1 109L362.2 107.8L361.2 106.5L360 105.3L358.7 104.1L357.2 102.9L355.5 101.7L353.8 100.6L351.8 99.5L349.8 98.4L347.6 97.3L345.2 96.2L342.7 95.2L340.1 94.2L337.4 93.3L334.6 92.3L331.6 91.5L328.5 90.6L325.4 89.8L322.1 89L318.7 88.3L315.3 87.6L311.7 86.9L308.1 86.3L304.4 85.8L300.6 85.3L296.8 84.8L292.9 84.4L288.9 84L285 83.7L280.9 83.4L276.9 83.2L272.8 83L268.7 82.9L264.6 82.8L260.5 82.7L256.3 82.8L252.2 82.8L248.1 82.9L244 83.1L240 83.3L235.9 83.6L231.9 83.9L228 84.3L224.1 84.7L220.2 85.2L216.5 85.7L212.7 86.2L209.1 86.8L205.5 87.4L202 88.1L198.7 88.9L195.4 89.6L192.2 90.4L189.1 91.3L186.1 92.1L183.2 93.1L180.5 94L177.8 95L175.3 96L173 97L170.7 98.1L168.6 99.2L166.7 100.3L164.8 101.5L163.2 102.6L161.6 103.8L160.3 105L159.1 106.2L158 107.5L157.1 108.7L156.4 110L155.8 111.2L155.4 112.5L155.1 113.8L155 115L155.1 116.3L155.3 117.6L155.7 118.9L156.2 120.1L156.9 121.4L157.8 122.6L158.8 123.9L160 125.1L161.3 126.3L162.8 127.5L164.5 128.6L166.2 129.8L168.2 130.9L170.2 132L172.4 133.1L174.8 134.1L177.3 135.2L179.9 136.2L182.6 137.1L185.4 138L188.4 138.9L191.5 139.8L194.6 140.6L197.9 141.4L201.3 142.1L204.7 142.8L208.3 143.4L211.9 144L215.6 144.6\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M215.6 279.4L219.4 279.9L223.2 280.4L227.1 280.8L231.1 281.2L235 281.5L239.1 281.8L243.1 282L247.2 282.2L251.3 282.3L255.4 282.4L259.5 282.4L263.7 282.4L267.8 282.4L271.9 282.2L276 282.1L280 281.9L284.1 281.6L288.1 281.3L292 280.9L295.9 280.5L299.8 280L303.5 279.5L307.3 279L310.9 278.4L314.5 277.7L318 277.1L321.3 276.3L324.6 275.6L327.8 274.8L330.9 273.9L333.9 273L336.8 272.1L339.5 271.2L342.2 270.2L344.7 269.2L347 268.1L349.3 267.1L351.4 266L353.3 264.9L355.2 263.7L356.8 262.5L358.4 261.4L359.7 260.2L360.9 258.9L362 257.7L362.9 256.5L363.6 255.2L364.2 254L364.6 252.7L364.9 251.4L365 250.1L364.9 248.9L364.7 247.6L364.3 246.3L363.8 245.1L363.1 243.8L362.2 242.6L361.2 241.3L360 240.1L358.7 238.9L357.2 237.7L355.5 236.5L353.8 235.4L351.8 234.3L349.8 233.2L347.6 232.1L345.2 231L342.7 230L340.1 229L337.4 228.1L334.6 227.2L331.6 226.3L328.5 225.4L325.4 224.6L322.1 223.8L318.7 223.1L315.3 222.4L311.7 221.8L308.1 221.2L304.4 220.6L300.6 220.1L296.8 219.6L292.9 219.2L288.9 218.8L285 218.5L280.9 218.2L276.9 218L272.8 217.8L268.7 217.7L264.6 217.6L260.5 217.6L256.3 217.6L252.2 217.6L248.1 217.8L244 217.9L240 218.1L235.9 218.4L231.9 218.7L228 219.1L224.1 219.5L220.2 220L216.5 220.5L212.7 221L209.1 221.6L205.5 222.3L202 222.9L198.7 223.7L195.4 224.4L192.2 225.2L189.1 226.1L186.1 227L183.2 227.9L180.5 228.8L177.8 229.8L175.3 230.8L173 231.9L170.7 232.9L168.6 234L166.7 235.1L164.8 236.3L163.2 237.5L161.6 238.6L160.3 239.8L159.1 241.1L158 242.3L157.1 243.5L156.4 244.8L155.8 246L155.4 247.3L155.1 248.6L155 249.9L155.1 251.1L155.3 252.4L155.7 253.7L156.2 254.9L156.9 256.2L157.8 257.4L158.8 258.7L160 259.9L161.3 261.1L162.8 262.3L164.5 263.5L166.2 264.6L168.2 265.7L170.2 266.8L172.4 267.9L174.8 269L177.3 270L179.9 271L182.6 271.9L185.4 272.8L188.4 273.7L191.5 274.6L194.6 275.4L197.9 276.2L201.3 276.9L204.7 277.6L208.3 278.2L211.9 278.8L215.6 279.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"5 5\"/><line x1=\"265.1\" y1=\"93\" x2=\"267.2\" y2=\"38.3\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtSimplered)\"/><line x1=\"228.4\" y1=\"214.5\" x2=\"219.6\" y2=\"270.2\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtSimplegreen)\"/><line x1=\"353.6\" y1=\"169.8\" x2=\"409.7\" y2=\"178.7\" stroke=\"var(--muted)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6dtSimplepencil)\"/><text x=\"440\" y=\"80\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">S<tspan baseline-shift=\"sub\" font-size=\"15\">2</tspan>（上）</text><text x=\"440\" y=\"108\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z = u<tspan baseline-shift=\"sub\" font-size=\"15\">2</tspan>(x, y)</text><text x=\"440\" y=\"165\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">S<tspan baseline-shift=\"sub\" font-size=\"15\">3</tspan>（側面）</text><text x=\"440\" y=\"222\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">S<tspan baseline-shift=\"sub\" font-size=\"15\">1</tspan>（下）</text><text x=\"440\" y=\"250\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z = u<tspan baseline-shift=\"sub\" font-size=\"15\">1</tspan>(x, y)</text><text x=\"314.9\" y=\"234.1\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只看第三個分量：證 $\\displaystyle\\iint_S R\\,\\mathbf k\\cdot d\\mathbf S=\\iiint_E R_z\\,dV$"
+          ],
+          "say": "只證第三個分量，也就是 R k 這個場。P 和 Q 的部分完全一樣，三個加起來就是定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只看第三個分量：證 $\\displaystyle\\iint_S R\\,\\mathbf k\\cdot d\\mathbf S=\\iiint_E R_z\\,dV$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "右邊（微積分基本定理）：",
+            "$\\iiint_E R_z\\,dV=\\iint_D\\big[R(x,y,u_2)-R(x,y,u_1)\\big]\\,dA$"
+          ],
+          "say": "右邊：先對 z 積分，用微積分基本定理，得到 R 在上面減 R 在下面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊（微積分基本定理）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iiint_E R_z\\,dV=\\iint_D\\big[R(x,y,u_2)-R(x,y,u_1)\\big]\\,dA$",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊，三塊分開算：",
+            "• $S_3$（側面）：$\\mathbf n$ 水平，$\\mathbf k\\cdot\\mathbf n=0$，貢獻 $0$"
+          ],
+          "say": "左邊分三塊：側面的法向量是水平的，跟 k 垂直，沒有貢獻。上面朝上，只取 d S 的第三個分量 1，得到 R 在上面的積分。下面朝外是朝下，第三個分量是負 1，得到負的 R 在下面的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊，三塊分開算："
+            },
+            {
+              "do": "write",
+              "line": "• $S_3$（側面）：$\\mathbf n$ 水平，$\\mathbf k\\cdot\\mathbf n=0$，貢獻 $0$",
+              "on": "沒有"
+            },
+            {
+              "do": "write",
+              "line": "• $S_2$（上，朝上）：$d\\mathbf S=\\langle -u_{2x},-u_{2y},1\\rangle dA$，得 $\\iint_D R(x,y,u_2)\\,dA$",
+              "on": "得到#1"
+            },
+            {
+              "do": "write",
+              "line": "• $S_1$（下，朝外＝朝下）：$d\\mathbf S=\\langle u_{1x},u_{1y},-1\\rangle dA$，得 $-\\iint_D R(x,y,u_1)\\,dA$",
+              "on": "第三#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊一樣　$\\blacksquare$"
+          ],
+          "say": "兩邊完全一樣，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊一樣　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P$、$Q$ 部分：要 $E$ 對 $x$、$y$ 方向也是這種形狀（球、長方體、圓柱都是）"
+          ],
+          "say": "P、Q 的部分，需要 E 從 x 方向、y 方向看也是這種形狀。球、長方體、圓柱都可以。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P$、$Q$ 部分：要 $E$ 對 $x$、$y$ 方向也是這種形狀（球、長方體、圓柱都是）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的立體：切成幾塊簡單立體，切面兩側法向量相反，通量抵消"
+          ],
+          "say": "一般的立體，切成幾塊簡單立體，各自成立再加起來。切開的面，兩塊的朝外方向相反，通量抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的立體：切成幾塊簡單立體，切面兩側法向量相反，通量抵消"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "怎麼用",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbf F=\\langle z,\\ y,\\ x\\rangle$ 穿出單位球面的通量是？"
+          ],
+          "say": "先猜猜看：z、y、x 穿出單位球面的通量是多少？"
+        }
       ],
       "predict": {
-        "ask": "全部加起來，剩下什麼？",
+        "ask": "$\\mathbf F=\\langle z,\\ y,\\ x\\rangle$ 穿出單位球面的通量是？",
         "options": [
           {
-            "label": "最外層表面的總流出",
+            "label": "$4\\pi/3$",
             "correct": true
           },
           {
-            "label": "什麼都不剩，是 $0$",
-            "why": "只有內部共用的面抵消；最外層的面沒有鄰居，流出的量留下來。"
+            "label": "$4\\pi$",
+            "why": "那是球面面積；散度定理積的是==體積=="
           },
           {
-            "label": "每個面都算兩次",
-            "why": "共用面上一塊算流出、一塊算流入，一正一負抵消，不是加倍。"
+            "label": "$0$",
+            "why": "散度是 $1$，不是 $0$；只有 $P_x$、$R_z$ 是 $0$"
           }
         ]
       }
     },
     {
-      "title": "散度定理",
+      "title": "怎麼用",
       "beats": [
-        { "show": ["$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$"],
-          "note": "也叫 Gauss 定理。",
-          "say": "表面的總流出，等於裡面所有小源的總和。這就是散度定理。",
+        {
+          "show": [
+            "例 1：$\\nabla\\cdot\\mathbf F=0+1+0=1$，通量 $=\\iiint_E1\\,dV=$ 體積 $=\\dfrac43\\pi$"
+          ],
+          "say": "散度是常數 1，三重積分就是體積，三分之四派。直接在球面上算，要參數化、算兩個外積，麻煩很多。",
           "board": [
-            {"do":"write","line":"${{l:\\iint_S\\mathbf F\\cdot d\\mathbf S}}={{r:\\iiint_E\\nabla\\cdot\\mathbf F\\,dV}}$"},
-            {"do":"underline","term":"l","label":"表面流出","on":"總流出"},
-            {"do":"underline","term":"r","label":"內部小源","on":"小源"}
-          ] },
-        { "show": ["$S$ 是 $E$ 的封閉邊界，法向量朝外"],
-          "say": "條件：立體有界，邊界是封閉曲面，法向量一律朝外。",
+            {
+              "do": "write",
+              "line": "例 1：$\\nabla\\cdot\\mathbf F=0+1+0=1$，通量 $=\\iiint_E1\\,dV=$ 體積 $=\\dfrac43\\pi$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：$\\mathbf F=\\langle xy,\\ y^2+e^{xz^2},\\ \\sin(xy)\\rangle$",
+            "$E$：拋物柱面 $z=1-x^2$、平面 $z=0$、$y=0$、$y+z=2$ 圍成"
+          ],
+          "say": "例二：F 有很醜的兩項。E 由拋物柱面、z 等於 0、y 等於 0、和平面 y 加 z 等於 2 圍成。表面有四塊，直接算很痛苦。",
           "board": [
-            {"do":"write","line":"$S={{b:\\partial E}}$ 封閉，${{n:\\mathbf n}}$ 朝外"},
-            {"do":"underline","term":"b","on":"封閉曲面"},
-            {"do":"underline","term":"n","on":"一律"}
-          ] },
-        { "show": ["$\\mathbf F$ 在包含 $E$ 的開集上偏導連續"],
-          "say": "還有，場的偏導數在整塊立體連同表面上都要連續。這一條後面會出事。",
+            {
+              "do": "write",
+              "line": "例 2：$\\mathbf F=\\langle xy,\\ y^2+e^{xz^2},\\ \\sin(xy)\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$E$：拋物柱面 $z=1-x^2$、平面 $z=0$、$y=0$、$y+z=2$ 圍成",
+              "on": "和平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\cdot\\mathbf F=y+2y+0=3y$：醜的項偏導之後消失"
+          ],
+          "say": "但是散度：x y 對 x 是 y；e 的那項跟 y 無關，只剩 2 y；正弦那項跟 z 無關。醜的都消失了，剩 3 y。",
           "board": [
-            {"do":"write","line":"$\\mathbf F$ 偏導數連續：整個 ${{e:E}}$ 上"},
-            {"do":"underline","term":"e","label":"後面出事","on":"整塊立體"}
-          ] },
-        { "show": ["場在某點沒有定義：散度看不到那裡的源"],
-          "say": "要是場在立體裡某一點沒有定義，散度就看不到那一點的源，兩邊會不相等。最後一節的點源就是這樣。",
+            {
+              "do": "write",
+              "line": "$\\nabla\\cdot\\mathbf F=y+2y+0=3y$：醜的項偏導之後消失"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iiint_E3y\\,dV=\\int_{-1}^1\\!\\int_0^{1-x^2}\\!\\!\\int_0^{2-z}3y\\,dy\\,dz\\,dx$"
+          ],
+          "say": "寫成三重積分：y 從 0 到 2 減 z，z 從 0 到 1 減 x 平方，x 從負 1 到 1。",
           "board": [
-            {"do":"write","line":"某點沒有定義：散度看不到那裡的源"},
-            {"do":"write","line":"$\\iint_S\\mathbf F\\cdot d\\mathbf S\\ne\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$","color":"red","on":"兩邊"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "散度是常數",
-      "beats": [
-        { "show": ["$\\mathbf F=\\langle z,y,x\\rangle$ 穿出單位球面"],
-          "say": "這個場穿出單位球面的通量。直接算要參數化球面。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iiint_E3y\\,dV=\\int_{-1}^1\\!\\int_0^{1-x^2}\\!\\!\\int_0^{2-z}3y\\,dy\\,dz\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\int_{-1}^1\\frac12\\big[8-(1+x^2)^3\\big]dx=\\frac{184}{35}$"
+          ],
+          "say": "先對 y、再對 z 積分，得到 2 分之一乘 8 減 1 加 x 平方的三次方。最後對 x 積分，答案是 35 分之 184。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle z,y,x\\rangle$ 穿出單位球面"}
-          ] },
-        { "show": ["$\\nabla\\cdot\\mathbf F=0+1+0=1$"],
-          "say": "改算散度：P 是 z，對 x 微分是零；Q 對 y 是一；R 是 x，對 z 是零。散度是一。",
-          "board": [
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F={{a:0}}+{{b:1}}+{{c:0}}=1$","on":"改算散度"},
-            {"do":"focus","term":"a","on":"對 x 微分是零"},
-            {"do":"focus","term":"b","on":"Q 對 y"},
-            {"do":"focus","term":"c","on":"對 z 是零"}
-          ] },
-        { "show": ["通量 $=\\iiint 1\\,dV=\\frac{4\\pi}{3}$"],
-          "note": "就是單位球的體積。",
-          "say": "散度是一，三重積分就是球的體積，三分之四 pi。",
-          "board": [
-            {"do":"write","line":"通量 $=\\iiint 1\\,dV={{v:\\frac{4\\pi}{3}}}$"},
-            {"do":"box","term":"v","color":"green","label":"球的體積","on":"三重積分就是"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "避開難算的分量",
-      "beats": [
-        { "show": ["$\\mathbf F=\\langle xy,\\ y^2+e^{xz^2},\\ \\sin(xy)\\rangle$"],
-          "note": "表面有四片，直接算很難。",
-          "say": "這個場有 e 的 x z 平方次方、sine x y，四片表面一片一片算會很痛苦。",
-          "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle xy,\\ {{q:y^2+e^{xz^2}}},\\ {{r:\\sin(xy)}}\\rangle$"},
-            {"do":"underline","term":"q","on":"e 的"},
-            {"do":"underline","term":"r","on":"sine"}
-          ] },
-        { "show": ["$e^{xz^2}$ 不含 $y$，$\\sin(xy)$ 不含 $z$"],
-          "say": "可是散度只要 Q 對 y、R 對 z 微分，醜的部分剛好都不含那個變數。",
-          "board": [
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F=P_x+{{qy:Q_y}}+{{rz:R_z}}$"},
-            {"do":"focus","term":"qy","on":"Q 對"},
-            {"do":"focus","term":"rz","on":"R 對"},
-            {"do":"write","line":"$e^{xz^2}$ 不含 $y$，$\\sin(xy)$ 不含 $z$","on":"醜的"}
-          ] }
-      ],
-      "key": "只看 $P_x$、$Q_y$、$R_z$，其餘項不用管",
-      "predict": {
-        "ask": "$\\nabla\\cdot\\mathbf F$ 是？",
-        "options": [
-          {
-            "label": "$3y$",
-            "correct": true
-          },
-          {
-            "label": "$y$",
-            "why": "漏了 $Q_y$：$y^2$ 對 $y$ 微分是 $2y$，$y+2y=3y$。"
-          },
-          {
-            "label": "$y+2y+x\\cos(xy)$",
-            "why": "$R$ 要對 $z$ 微分，$\\sin(xy)$ 不含 $z$，得 $0$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\int_{-1}^1\\frac12\\big[8-(1+x^2)^3\\big]dx=\\frac{184}{35}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "補蓋子",
       "beats": [
-        { "show": ["碗面 $z=1-x^2-y^2$（$z\\ge 0$）不封閉"],
-          "note": "$\\mathbf F=\\langle y,x,z\\rangle$，朝上。",
-          "say": "碗面沒有底，不是封閉曲面，不能直接用。" },
-        { "show": ["補底部圓盤 $S_0$，朝外 = 朝下"],
-          "say": "先補一片蓋子：底部的圓盤。它也要朝外，在底部就是朝下。",
+        {
+          "show": [
+            "$\\mathbf F=\\langle y,\\ x,\\ z\\rangle$ 朝上穿過碗面 $S$：$z=1-x^2-y^2$，$z\\ge0$"
+          ],
+          "say": "散度定理只能用在封閉曲面。如果曲面不封閉呢？例如 y、x、z 朝上穿過這個拋物面的碗。",
           "board": [
-            {"do":"plot","graph":{"window":[-1.6,1.6,-0.6,1.5],"curves":[{"expr":"1-x^2","domain":[-1,1],"color":"blue"},{"expr":"0","domain":[-1,1],"color":"violet"}],"arrows":[{"from":[0,1],"to":[0,1.4],"color":"blue"},{"from":[0,0],"to":[0,-0.45],"color":"violet"}],"ticks":false}},
-            {"do":"write","line":"補 $S_0$：朝外 $=$ 朝下","on":"它也要朝外"}
-          ] },
-        { "show": ["橫軸 $x$，縱軸 $z$","碗面 $z=1-x^2$，底部 $z=0$"],
-          "note": "圖是側面剖面。",
-          "say": "這張是側面剖面：橫軸是 x，縱軸是 z。藍線是碗面 z 等於一減 x 平方，紫線是底部 z 等於零的平面。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle y,\\ x,\\ z\\rangle$ 朝上穿過碗面 $S$：$z=1-x^2-y^2$，$z\\ge0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$S$ 不封閉：補上底部的圓盤 $D$（$z=0$，$x^2+y^2\\le1$），朝外是朝下"
+          ],
+          "say": "補一個蓋子：底部的單位圓盤。碗加圓盤就封閉了。圓盤的朝外方向是朝下。",
           "board": [
-            {"do":"write","line":"橫軸 $x$，縱軸 $z$","on":"橫軸是"},
-            {"do":"write","line":"碗面 $z=1-x^2$，底部 $z=0$","on":"藍線"}
-          ] },
-        { "show": ["總通量 $=\\iiint 1\\,dV=\\frac{\\pi}{2}$；底部通量 $0$"],
-          "say": "封閉之後，散度是一，總通量是碗下的體積二分之 pi；底部 z 是零，通量是零。",
+            {
+              "do": "write",
+              "line": "$S$ 不封閉：補上底部的圓盤 $D$（$z=0$，$x^2+y^2\\le1$），朝外是朝下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\iint_S+\\iint_D&=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV=\\iiint_E1\\,dV\\\\&=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta=\\frac\\pi2\\end{aligned}$"
+          ],
+          "say": "散度是 1，所以兩塊加起來，就是碗底下的體積。用極座標算，是 2 分之派。",
           "board": [
-            {"do":"write","line":"總通量 ${{t:\\frac{\\pi}{2}}}$，底部 ${{z:0}}$","on":"封閉之後"},
-            {"do":"focus","term":"t","on":"總通量是"},
-            {"do":"focus","term":"z","on":"底部 z 是零"}
-          ] },
-        { "show": ["$2\\pi\\int_0^1(r-r^3)\\,dr=\\frac{\\pi}{2}$"],
-          "note": "高是 $1-r^2$，面積元素多一個 $r$。",
-          "say": "體積怎麼算：用極座標，高是一減 r 平方。r 減 r 三次方積分得四分之一，乘上角度二 pi，就是二分之 pi。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\iint_S+\\iint_D&=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV=\\iiint_E1\\,dV\\\\&=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta=\\frac\\pi2\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓盤上：$\\mathbf F\\cdot(-\\mathbf k)=-z=0$，所以 $\\displaystyle\\iint_D=0$"
+          ],
+          "say": "圓盤上 z 等於 0，F 點負 k 是 0，圓盤的通量是 0。",
           "board": [
-            {"do":"write","line":"$2\\pi\\int_0^1(r-r^3)\\,dr={{m:2\\pi\\cdot\\frac14}}=\\frac{\\pi}{2}$","on":"極座標"},
-            {"do":"underline","term":"m","label":"積分得四分之一","on":"四分之一"}
-          ] },
-        { "show": ["碗面 $=\\frac{\\pi}{2}-0=\\frac{\\pi}{2}$"],
-          "note": "跟〈通量〉直接算的一樣。",
-          "say": "扣掉蓋子，碗面的通量是二分之 pi，跟上一課直接算的一樣。",
+            {
+              "do": "write",
+              "line": "圓盤上：$\\mathbf F\\cdot(-\\mathbf k)=-z=0$，所以 $\\displaystyle\\iint_D=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\frac\\pi2-0=\\frac\\pi2$"
+          ],
+          "say": "所以碗的通量是 2 分之派減 0，2 分之派。跟 9.23 直接算的答案一樣。",
           "board": [
-            {"do":"transform","line":"碗面 $={{t:\\frac{\\pi}{2}}}-{{z:0}}={{ans:\\frac{\\pi}{2}}}$","on":"扣掉蓋子"},
-            {"do":"box","term":"ans","color":"green","on":"碗面的通量是"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\iint_S\\mathbf F\\cdot d\\mathbf S=\\frac\\pi2-0=\\frac\\pi2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 0
     },
     {
-      "title": "條件壞掉：點源",
+      "title": "條件壞掉時：點源",
       "beats": [
-        { "show": ["$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{\\rho^3}$：原點以外 $\\nabla\\cdot\\mathbf F=0$"],
-          "say": "點電荷的場，原點以外散度處處是零。",
+        {
+          "show": [
+            "$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$：原點以外 $\\nabla\\cdot\\mathbf F=0$（9.25）"
+          ],
+          "say": "最後看條件壞掉的時候。點源場，上一課算過，原點以外散度都是 0。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{\\rho^3}$"},
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F={{z:0}}$（原點以外）","on":"原點以外"},
-            {"do":"focus","term":"z","on":"處處"}
-          ] },
-        { "show": ["球面朝外法向量 $\\mathbf n=\\frac{\\langle x,y,z\\rangle}{\\rho}$","$\\mathbf F\\cdot\\mathbf n=\\frac{x^2+y^2+z^2}{\\rho^4}$"],
-          "say": "朝外法向量是 x y z 除以 rho。分子是 rho 平方，分母是 rho 的四次方，約成 rho 平方分之一。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$：原點以外 $\\nabla\\cdot\\mathbf F=0$（9.25）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但穿出球面的通量是 $4\\pi$，不是 $\\iiint0\\,dV=0$"
+          ],
+          "say": "可是穿出任何一個以原點為中心的球面，通量都是 4 派，不是 0。散度定理錯了嗎？",
           "board": [
-            {"do":"write","line":"$\\mathbf n=\\frac{\\langle x,y,z\\rangle}{\\rho}$"},
-            {"do":"write","line":"$\\mathbf F\\cdot\\mathbf n=\\frac{{{s:x^2+y^2+z^2}}}{\\rho^4}=\\frac{1}{\\rho^2}$","on":"分子"},
-            {"do":"underline","term":"s","label":"rho 平方","on":"rho 平方#1"}
-          ] },
-        { "show": ["穿出球面：$\\frac{1}{\\rho^2}\\times4\\pi\\rho^2=4\\pi$"],
-          "note": "以原點為中心，任何半徑都一樣。",
-          "say": "可是穿出以原點為中心的球面，點積是 rho 平方分之一，乘上球面積，通量是四 pi，不是零。",
+            {
+              "do": "write",
+              "line": "但穿出球面的通量是 $4\\pi$，不是 $\\iiint0\\,dV=0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf F$ 在原點沒有定義：球裡面有壞點，條件不成立"
+          ],
+          "say": "沒有錯：F 在原點沒有定義，球裡面有一個壞點，定理的條件不成立，不能用。",
           "board": [
-            {"do":"write","line":"$\\mathbf F\\cdot\\mathbf n=\\frac{1}{\\rho^2}$","on":"點積是"},
-            {"do":"write","line":"通量 $=\\frac{1}{\\rho^2}\\cdot4\\pi\\rho^2={{f:4\\pi}}$","on":"乘上"},
-            {"do":"box","term":"f","color":"green","on":"通量是"}
-          ] },
-        { "show": ["原點沒有定義：源全部擠在那一點"],
-          "note": "不包含原點的封閉曲面：通量是 $0$。",
-          "say": "不矛盾：場在原點沒有定義，條件不成立，源全部擠在原點。這就是 Gauss 定律。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F$ 在原點沒有定義：球裡面有壞點，條件不成立",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任一個包住原點的封閉曲面 $S$：在裡面挖一個小球面 $S_a$",
+            "$E$＝兩者之間（沒有原點），$\\nabla\\cdot\\mathbf F=0$："
+          ],
+          "say": "如果 S 是任意一個包住原點的封閉曲面，在裡面挖掉一個小球。兩者之間沒有原點，散度是 0。E 的邊界包含小球面，朝外是指向原點，所以帶負號。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\mathbf F$ 在原點沒有定義","on":"場在原點"},
-            {"do":"write","line":"條件不成立：源擠在原點","on":"條件不成立"}
-          ] }
+            {
+              "do": "write",
+              "line": "任一個包住原點的封閉曲面 $S$：在裡面挖一個小球面 $S_a$"
+            },
+            {
+              "do": "write",
+              "line": "$E$＝兩者之間（沒有原點），$\\nabla\\cdot\\mathbf F=0$：",
+              "on": "挖掉"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_S\\mathbf F\\cdot d\\mathbf S-\\iint_{S_a}\\mathbf F\\cdot d\\mathbf S=0$",
+              "on": "的邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iint_S\\mathbf F\\cdot d\\mathbf S=4\\pi\\quad(\\text{沒包住原點：}0)$"
+          ],
+          "say": "所以任何包住原點的封閉曲面，通量都是 4 派；沒包住原點的，通量是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\iint_S\\mathbf F\\cdot d\\mathbf S=4\\pi\\quad(\\text{沒包住原點：}0)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "通量#1"
+            },
+            {
+              "do": "write",
+              "line": "　電場 $\\mathbf E=\\frac{q}{4\\pi\\varepsilon_0}\\frac{\\langle x,y,z\\rangle}{\\rho^3}$：通量 $=\\frac{q}{\\varepsilon_0}$，這就是 Gauss 定律",
+              "color": "violet",
+              "on": "包住#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "點源場 $\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$ 穿出正方體 $[-1,1]^3$ 表面（朝外）的通量是？"
+          ],
+          "say": "試一題：點源場穿出正方體的通量是多少？"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\displaystyle\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$",
+            "• 條件：$S$ 封閉、朝外；$\\mathbf F$ 在整個 $E$ 上偏導連續"
+          ],
+          "say": "整理一下：散度定理把封閉曲面的通量換成散度的三重積分，法向量朝外。不封閉就補蓋子再扣掉；裡面有壞點就挖掉一個小球。點源場包住原點，通量是 4 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$"
+            },
+            {
+              "do": "write",
+              "line": "• 條件：$S$ 封閉、朝外；$\\mathbf F$ 在整個 $E$ 上偏導連續",
+              "on": "的通"
+            },
+            {
+              "do": "write",
+              "line": "• 散度好算（常數、醜的項消失）時特別好用",
+              "on": "量朝"
+            },
+            {
+              "do": "write",
+              "line": "• 不封閉：補蓋子，再扣掉蓋子的通量",
+              "on": "裡面"
+            },
+            {
+              "do": "write",
+              "line": "• 裡面有壞點：挖掉一個小球；點源場包住原點時通量 $4\\pi$",
+              "on": "源場"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：把所有的基本定理放在一起"
+          ],
+          "say": "下一課，把學過的所有基本定理放在一起看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：把所有的基本定理放在一起"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["divergence-theorem", "flux", "vector-calculus"],
-    "fine": ["divergence-theorem-closed", "divergence-theorem-add-lid", "divergence-theorem-hypotheses"]
+    "coarse": [
+      "divergence-theorem",
+      "flux",
+      "vector-calculus"
+    ],
+    "fine": [
+      "divergence-theorem-closed",
+      "divergence-theorem-add-lid",
+      "divergence-theorem-hypotheses"
+    ]
   },
   "practice": [
-    { "id": "vc-div-001", "core": true, "trains": "divergence-theorem-closed" },
-    { "id": "vc-div-004", "core": true, "trains": "divergence-theorem-closed" },
-    { "id": "vc-div-003", "core": true, "trains": "divergence-theorem-closed" },
-    { "id": "vc-div-002", "core": true, "trains": "divergence-theorem-closed", "note": "散度 $3\\rho^2$，接球座標。" },
-    { "id": "vc-div-007", "core": true, "trains": "divergence-theorem-closed" },
-    { "id": "cg-9b6-004", "core": true, "trains": "divergence-theorem-add-lid" },
-    { "id": "cg-9b6-007", "core": true, "trains": "divergence-theorem-hypotheses" },
-    { "id": "vc-div-005", "trains": "divergence-theorem-closed" },
-    { "id": "lec-20-q4a", "trains": "divergence-theorem-closed" },
-    { "id": "vc-rec-001", "trains": "divergence-theorem-closed" },
-    { "id": "cg-9b6-005", "trains": "divergence-theorem-add-lid" },
-    { "id": "cg-9b6-006", "trains": "divergence-theorem-add-lid" },
-    { "id": "vc-div-006", "challenge": true, "trains": "divergence-theorem-hypotheses", "note": "挑戰：散度在原點以外為 $0$，答案卻不是 $0$；想清楚為什麼。" },
-    { "id": "cg-9b6-008", "challenge": true, "trains": "divergence-theorem-hypotheses" }
+    {
+      "id": "vc-div-001",
+      "core": true,
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "vc-div-004",
+      "core": true,
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "vc-div-003",
+      "core": true,
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "vc-div-002",
+      "core": true,
+      "trains": "divergence-theorem-closed",
+      "note": "散度 $3\\rho^2$，接球座標。"
+    },
+    {
+      "id": "vc-div-007",
+      "core": true,
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "cg-9b6-004",
+      "core": true,
+      "trains": "divergence-theorem-add-lid"
+    },
+    {
+      "id": "cg-9b6-007",
+      "core": true,
+      "trains": "divergence-theorem-hypotheses"
+    },
+    {
+      "id": "vc-div-005",
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "lec-20-q4a",
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "vc-rec-001",
+      "trains": "divergence-theorem-closed"
+    },
+    {
+      "id": "cg-9b6-005",
+      "trains": "divergence-theorem-add-lid"
+    },
+    {
+      "id": "cg-9b6-006",
+      "trains": "divergence-theorem-add-lid"
+    },
+    {
+      "id": "vc-div-006",
+      "challenge": true,
+      "trains": "divergence-theorem-hypotheses",
+      "note": "挑戰：散度在原點以外為 $0$，答案卻不是 $0$；想清楚為什麼。"
+    },
+    {
+      "id": "cg-9b6-008",
+      "challenge": true,
+      "trains": "divergence-theorem-hypotheses"
+    }
   ],
   "gaps": []
 }

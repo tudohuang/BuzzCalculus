@@ -1,14 +1,21 @@
 {
   "id": "negation",
   "title": "否定",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 28,
-  "prerequisites": ["propositions-quantifiers"],
-  "next": ["direct-proof"],
-  "related": ["epsilon-n-definition"],
+  "prerequisites": [
+    "propositions-quantifiers"
+  ],
+  "next": [
+    "direct-proof"
+  ],
+  "related": [
+    "epsilon-n-definition"
+  ],
   "objectives": [
-    "會否定且、或、若…則：$\\neg(P\\land Q)$、$\\neg(P\\lor Q)$、$\\neg(P\\Rightarrow Q)$。",
-    "會機械地否定多層量詞：每個 $\\forall$ 換 $\\exists$、每個 $\\exists$ 換 $\\forall$，最後把條件否定。",
+    "會否定且、或、若…則：$\\neg(P\\land Q)$、$\\neg(P\\lor Q)$、$\\neg(P\\Rightarrow Q)$ 各是什麼。",
+    "會機械地否定多層量詞：每個 $\\forall$ 換 $\\exists$、每個 $\\exists$ 換 $\\forall$，最後否定最裡面的敘述。",
     "寫得出「數列不收斂到 $L$」「$f$ 無界」的正確否定，並拿它來證明。"
   ],
   "visual": null,
@@ -16,35 +23,120 @@
     {
       "heading": "① 否定是證明的另一半",
       "body": [
-        "要證明「某件事不成立」，例如「$(-1)^n$ 不收斂到 1」，你得先知道「不收斂到 1」用符號怎麼寫。直接在定義前面加一個「不」沒有用，因為你沒辦法拿「不（對每個 $\\varepsilon$ 存在 $N$……）」去做事。否定要一路推進去，推到最裡面變成一個可以檢查的不等式。"
-      ],
-      "collapsible": false
+        "$\\neg P$（非 $P$）：$P$ 真時它假，$P$ 假時它真",
+        "要說「$P$ 是假的」＝ 要證明 $\\neg P$ 是真的",
+        "分析裡到處都是：",
+        "• 「$a_n$ 不收斂到 $L$」",
+        "• 「$f$ 無界」、「$f$ 在 $a$ 不連續」",
+        "否定要寫成可以直接用的形式",
+        "• 不好用：「並非對所有 $x$ 都有 $x^2\\ge1$」",
+        "• 好用：「存在 $x$ 使 $x^2<1$」",
+        "這一課：先否定連接詞，再否定量詞"
+      ]
     },
     {
       "heading": "② 連接詞的否定",
       "body": [
-        "$\\neg(P\\land Q)\\equiv\\neg P\\lor\\neg Q$：「既…又…」不成立，表示至少有一個不成立。",
-        "$\\neg(P\\lor Q)\\equiv\\neg P\\land\\neg Q$：「…或…」不成立，表示兩個都不成立。",
-        "$\\neg(P\\Rightarrow Q)\\equiv P\\land\\neg Q$：蘊含只在「$P$ 真而 $Q$ 假」時為假，所以它的否定是「$P$ 成立，但 $Q$ 不成立」。注意否定裡沒有箭頭。"
+        "且、或（De Morgan）：",
+        "這叫笛摩根定律；$\\Leftrightarrow$ 在這裡表示「兩句永遠同真同假」",
+        "例：$0<x<1$ 是「$x>0$ 且 $x<1$」，否定是",
+        "$\\neg(x<1)$ 是 $x\\ge1$，不是 $x>1$：等號要歸到另一邊",
+        "若…則：$P\\Rightarrow Q$ 只在「$P$ 真、$Q$ 假」時假，所以",
+        "否定之後沒有「若…則」，常見錯誤是寫成 $P\\Rightarrow\\neg Q$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\neg(P\\land Q)\\ &\\Leftrightarrow\\ \\neg P\\lor\\neg Q\\\\\\neg(P\\lor Q)\\ &\\Leftrightarrow\\ \\neg P\\land\\neg Q\\end{aligned}",
+        "x\\le0\\ \\ \\text{或}\\ \\ x\\ge1",
+        "\\neg(P\\Rightarrow Q)\\ \\Leftrightarrow\\ P\\land\\neg Q"
+      ]
     },
     {
-      "heading": "③ 量詞的否定：一路翻過去",
+      "heading": "③ 量詞的否定",
       "body": [
-        "$\\neg(\\forall x,P(x))\\equiv\\ \\exists x,\\neg P(x)$：不是每個都成立，就是有一個不成立（反例）。$\\neg(\\exists x,P(x))\\equiv\\ \\forall x,\\neg P(x)$。",
-        "多層量詞照順序一個一個翻，變數範圍（$\\varepsilon>0$、$n\\ge N$）不動，只動量詞與最後的條件："
+        "「並非所有 $x$ 都 $P$」＝「有一個 $x$ 不 $P$」",
+        "「沒有 $x$ 使 $P$」＝「每個 $x$ 都不 $P$」",
+        "集合 $A$ 不變：否定的是 $P$，不是 $x$ 跑的範圍",
+        "多層：一路翻過去",
+        "機械規則：每個 $\\forall\\to\\exists$、每個 $\\exists\\to\\forall$，順序不動，最後否定最裡面那句",
+        "例：$\\neg(\\forall x\\in\\mathbb{R}\\ \\exists y\\in\\mathbb{R}:\\ y>x)$"
       ],
-      "tex": ["\\neg\\big(\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N,\\ |a_n-L|<\\varepsilon\\big)\\equiv\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,\\ |a_n-L|\\ge\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\neg\\big(\\forall x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\exists x\\in A,\\ \\neg P(x)",
+        "\\neg\\big(\\exists x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\forall x\\in A,\\ \\neg P(x)",
+        "\\begin{aligned}&\\neg\\big(\\forall x\\ \\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\neg\\big(\\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\forall y\\ \\neg P(x,y)\\end{aligned}",
+        "\\Leftrightarrow\\ \\exists x\\in\\mathbb{R}\\ \\forall y\\in\\mathbb{R}:\\ y\\le x"
+      ]
+    },
+    {
+      "heading": "③ 否定極限的定義",
+      "body": [
+        "$a_n\\to L$：",
+        "一路翻過去：$\\forall\\to\\exists$、$\\exists\\to\\forall$、$\\forall\\to\\exists$、$<\\ \\to\\ \\ge$",
+        "$a_n\\not\\to L$：",
+        "「$\\varepsilon>0$」「$n\\ge N$」是範圍，跟集合一樣不否定"
+      ],
+      "tex": [
+        "\\forall\\varepsilon>0\\ \\ \\exists N\\in\\mathbb{N}\\ \\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon",
+        "\\exists\\varepsilon>0\\ \\ \\forall N\\in\\mathbb{N}\\ \\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon"
+      ]
+    },
+    {
+      "heading": "③ 用它：$(-1)^n\\not\\to1$",
+      "body": [
+        "$a_n=(-1)^n$：$-1,1,-1,1,\\dots$　證明 $a_n$ 不收斂到 $1$",
+        "策略：照否定的句子，依序提供每個東西",
+        "• $\\exists\\varepsilon$：我們挑一個 $\\varepsilon$",
+        "• $\\forall N$：對手給任意的 $N$",
+        "• $\\exists n\\ge N$：我們找一個 $n$",
+        "奇數項都是 $-1$，離 $1$ 的距離是 $2$：挑 $\\varepsilon=1$ 就夠",
+        "證明：取 $\\varepsilon=1$。任意給定 $N\\in\\mathbb{N}$，取 $n=2N+1$。",
+        "$n=2N+1\\ge N$，而且 $n$ 是奇數，所以 $a_n=-1$：",
+        "所以 $\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-1|\\ge\\varepsilon$，$a_n\\not\\to1$　$\\blacksquare$"
+      ],
+      "tex": [
+        "|a_n-1|=|-1-1|=2\\ge1=\\varepsilon"
+      ]
     },
     {
       "heading": "④ 否定句的人話",
       "body": [
-        "「$a_n$ 不收斂到 $L$」：有一個固定的誤差 $\\varepsilon$，不管你把起點 $N$ 推得多遠，後面總還有某一項跟 $L$ 差至少 $\\varepsilon$。",
-        "這個 $\\varepsilon$ 是你挑的，而且只要挑一個。之後證明「不收斂」「不一致連續」，全都是先寫出這種否定，再把那個 $\\varepsilon$ 找出來。"
+        "$a_n\\not\\to L$ 的人話：",
+        "有一個固定的距離 $\\varepsilon$，不管走到多後面，之後總還有項離 $L$ 至少 $\\varepsilon$",
+        "不是「每一項都離得遠」：$(-1)^n$ 的偶數項正好等於 $1$",
+        "有界：$\\exists M\\ \\forall x\\in\\mathbb{R}:\\ |f(x)|\\le M$",
+        "無界：$\\forall M\\ \\exists x\\in\\mathbb{R}:\\ |f(x)|>M$",
+        "人話：不管你說上限是多少，我都找得到一個點超過它",
+        "證明 $f(x)=x^2$ 在 $\\mathbb{R}$ 上無界",
+        "策略：對手給 $M$，我們找 $x$；$M$ 可能是負的，取 $x=|M|+1$",
+        "任意給定 $M\\in\\mathbb{R}$，取 $x=|M|+1\\ge1$：",
+        "$x\\ge1$ 時 $x^2=x\\cdot x\\ge x\\cdot1$"
       ],
-      "collapsible": false
+      "tex": [
+        "f(x)=x^2\\ge x=|M|+1>|M|\\ge M"
+      ]
+    },
+    {
+      "heading": "④ 否定蘊含",
+      "body": [
+        "否定：「$\\forall x\\in\\mathbb{R},\\ x^2<1\\Rightarrow x<1$」，並判斷哪一句是真的",
+        "先翻 $\\forall$，再用 $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$：",
+        "否定句是假的：$x\\ge1\\Rightarrow x^2=x\\cdot x\\ge1\\cdot1=1$，跟 $x^2<1$ 矛盾",
+        "所以原句是真的"
+      ],
+      "tex": [
+        "\\exists x\\in\\mathbb{R}:\\ x^2<1\\ \\text{且}\\ x\\ge1"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\neg(P\\land Q)\\Leftrightarrow\\neg P\\lor\\neg Q$；$\\neg(P\\lor Q)\\Leftrightarrow\\neg P\\land\\neg Q$",
+        "• $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$（不是若…則）",
+        "• 每個 $\\forall\\leftrightarrow\\exists$，順序不動，範圍不動，最後否定最裡面",
+        "• $a_n\\not\\to L$：$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$",
+        "• 無界：$\\forall M\\ \\exists x:\\ |f(x)|>M$",
+        "下一課：直接證明"
+      ]
     }
   ],
   "workedExamples": [
@@ -92,267 +184,800 @@
   ],
   "checks": [
     {
-      "ask": "「$\\exists x\\in S\\ \\forall y\\in S,y\\le x$」（$S$ 有最大元）的否定是？",
+      "ask": "「若 $|x|<1$ 則 $x^2<1$」的否定是？",
       "options": [
-        { "label": "$\\forall x\\in S\\ \\exists y\\in S,y>x$", "correct": true },
-        { "label": "$\\exists x\\in S\\ \\forall y\\in S,y>x$", "why": "你只否定了最後的 $\\le$，量詞沒翻。每個量詞都要換。" },
-        { "label": "$\\forall x\\in S\\ \\exists y\\in S,y\\ge x$", "why": "$\\le$ 的否定是 $>$，不是 $\\ge$；$y=x$ 永遠滿足 $y\\ge x$，這句對任何集合都成立。" }
+        {
+          "label": "若 $|x|<1$ 則 $x^2\\ge1$",
+          "why": "否定之後不會還是「若…則」"
+        },
+        {
+          "label": "若 $|x|\\ge1$ 則 $x^2\\ge1$",
+          "why": "這是把前提、結論都否定，叫「否命題」，不是否定"
+        },
+        {
+          "label": "$|x|<1$ 且 $x^2\\ge1$",
+          "correct": true
+        },
+        {
+          "label": "$|x|\\ge1$ 或 $x^2<1$",
+          "why": "這跟原句一樣真假（$\\neg P\\lor Q$），不是否定"
+        }
       ]
     },
     {
-      "ask": "$\\neg(P\\Rightarrow Q)$ 等價於？",
+      "ask": "「$f$ 在 $\\mathbb{R}$ 上恆正」：$\\forall x\\in\\mathbb{R},\\ f(x)>0$。它的否定是？",
       "options": [
-        { "label": "$P\\land\\neg Q$", "correct": true },
-        { "label": "$\\neg P\\Rightarrow\\neg Q$", "why": "那是「否命題」，跟原命題的否定是兩回事；$P\\Rightarrow Q$ 只有在 $P$ 真 $Q$ 假時才不成立。" },
-        { "label": "$P\\Rightarrow\\neg Q$", "why": "$P$ 為假時 $P\\Rightarrow\\neg Q$ 自動為真，但原命題此時也為真，兩者不可能互為否定。" }
-      ]
-    },
-    {
-      "ask": "要證「$a_n$ 不收斂到 $L$」，$\\varepsilon$ 由誰決定？",
-      "options": [
-        { "label": "由你挑一個固定的 $\\varepsilon>0$，對所有 $N$ 都用它", "correct": true },
-        { "label": "每個 $N$ 各挑一個 $\\varepsilon$", "why": "否定裡 $\\exists\\varepsilon$ 寫在最前面，$\\varepsilon$ 不能依賴 $N$。讓 $\\varepsilon$ 跟著 $N$ 變小，就證不出任何東西。" },
-        { "label": "要對所有 $\\varepsilon>0$ 都證", "why": "那是在證收斂的另一種說法。否定的最外層是 $\\exists\\varepsilon$，找到一個就夠。" }
-      ]
-    },
-    {
-      "ask": "「對所有 $x>0$，$f(x)<1$ 或 $f(x)>2$」的否定是？",
-      "options": [
-        { "label": "存在 $x>0$，使 $1\\le f(x)\\le2$", "correct": true },
-        { "label": "存在 $x\\le0$，使 $1\\le f(x)\\le2$", "why": "你把變數範圍 $x>0$ 也否定了。範圍不動，只換量詞與條件。" },
-        { "label": "存在 $x>0$，使 $f(x)\\ge1$ 或 $f(x)\\le2$", "why": "$\\neg(P\\lor Q)$ 是 $\\neg P\\land\\neg Q$，「或」要換成「且」。你寫的這句幾乎永遠成立。" }
+        {
+          "label": "$\\forall x\\in\\mathbb{R},\\ f(x)\\le0$",
+          "why": "量詞沒翻：這是「恆不正」，比否定強太多"
+        },
+        {
+          "label": "$\\exists x\\in\\mathbb{R},\\ f(x)\\le0$",
+          "correct": true
+        },
+        {
+          "label": "$\\exists x\\in\\mathbb{R},\\ f(x)<0$",
+          "why": "$>0$ 的否定是 $\\le0$，漏了 $f(x)=0$"
+        },
+        {
+          "label": "$\\exists x\\notin\\mathbb{R},\\ f(x)\\le0$",
+          "why": "範圍 $\\mathbb{R}$ 不否定"
+        }
       ]
     }
   ],
   "sections": [
     {
+      "title": "否定是證明的另一半",
+      "beats": [
+        {
+          "show": [
+            "$\\neg P$（非 $P$）：$P$ 真時它假，$P$ 假時它真"
+          ],
+          "say": "上一課的符號，倒 L 型的這個，念作非。非 P 跟 P 的真假剛好相反。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\neg P$（非 $P$）：$P$ 真時它假，$P$ 假時它真"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要說「$P$ 是假的」＝ 要證明 $\\neg P$ 是真的"
+          ],
+          "say": "所以，要說一句話是假的，就是要證明它的否定是真的。否定是證明的另一半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要說「$P$ 是假的」＝ 要證明 $\\neg P$ 是真的",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分析裡到處都是：",
+            "• 「$a_n$ 不收斂到 $L$」"
+          ],
+          "say": "分析裡到處都是這種句子：數列不收斂、函數無界、函數不連續。它們的定義都是一長串量詞，否定要寫對才證得出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分析裡到處都是："
+            },
+            {
+              "do": "write",
+              "line": "• 「$a_n$ 不收斂到 $L$」",
+              "on": "函數#1"
+            },
+            {
+              "do": "write",
+              "line": "• 「$f$ 無界」、「$f$ 在 $a$ 不連續」",
+              "on": "是一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定要寫成可以直接用的形式",
+            "• 不好用：「並非對所有 $x$ 都有 $x^2\\ge1$」"
+          ],
+          "say": "我們要的不是在前面加一個「並非」，而是把否定推到最裡面，寫成可以直接拿來用的句子。像這樣：存在一個 x，讓 x 平方小於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定要寫成可以直接用的形式"
+            },
+            {
+              "do": "write",
+              "line": "• 不好用：「並非對所有 $x$ 都有 $x^2\\ge1$」",
+              "on": "定推"
+            },
+            {
+              "do": "write",
+              "line": "• 好用：「存在 $x$ 使 $x^2<1$」",
+              "on": "這樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這一課：先否定連接詞，再否定量詞"
+          ],
+          "say": "這一課先學連接詞的否定，再學量詞的否定。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這一課：先否定連接詞，再否定量詞"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "連接詞的否定",
       "beats": [
-        { "show": ["否定要一路推進去"],
-          "note": "推到最裡面，變成可以檢查的不等式。",
-          "say": "在一整句定義前面加一個不，沒辦法拿來做事。否定要一路推進去，推到最裡面的條件。",
+        {
+          "show": [
+            "且、或（De Morgan）：",
+            "$\\begin{aligned}\\neg(P\\land Q)\\ &\\Leftrightarrow\\ \\neg P\\lor\\neg Q\\\\\\neg(P\\lor Q)\\ &\\Leftrightarrow\\ \\neg P\\land\\neg Q\\end{aligned}$"
+          ],
+          "say": "且和或的否定：P 且 Q 不成立，就是至少一個不成立，P 不成立或 Q 不成立。P 或 Q 不成立，就是兩個都不成立。且和或會互換。",
           "board": [
-            {"do":"write","line":"否定要一路推進去 → 最裡面的條件"}
-          ] },
-        { "show": ["$\\neg(P\\land Q)\\equiv\\neg P\\lor\\neg Q$"],
-          "note": "既…又…不成立：至少有一個不成立。",
-          "say": "且的否定是或：兩個同時成立這件事不對，表示至少有一個不成立。",
+            {
+              "do": "write",
+              "line": "且、或（De Morgan）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}\\neg(P\\land Q)\\ &\\Leftrightarrow\\ \\neg P\\lor\\neg Q\\\\\\neg(P\\lor Q)\\ &\\Leftrightarrow\\ \\neg P\\land\\neg Q\\end{aligned}}}}$",
+              "on": "就是#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "不成#4"
+            },
+            {
+              "do": "write",
+              "line": "　這叫笛摩根定律；$\\Leftrightarrow$ 在這裡表示「兩句永遠同真同假」",
+              "color": "violet",
+              "on": "就是#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$0<x<1$ 是「$x>0$ 且 $x<1$」，否定是",
+            "$x\\le0\\ \\ \\text{或}\\ \\ x\\ge1$"
+          ],
+          "say": "例子：x 在 0 和 1 之間，是 x 大於 0 且 x 小於 1。否定是：x 小於等於 0，或 x 大於等於 1。",
           "board": [
-            {"do":"write","line":"$\\neg(P\\land Q)\\equiv {{ra:\\neg P\\lor\\neg Q}}$"},
-            {"do":"underline","term":"ra","on":"兩個同時"}
-          ] },
-        { "show": ["$\\neg(x>0\\land x<1)$","$\\equiv x\\le0\\lor x\\ge1$"],
-          "note": "$<$ 的否定是 $\\ge$，$>$ 的否定是 $\\le$。",
-          "say": "舉個例子：x 大於零且 x 小於一不成立，就是 x 小於等於零，或 x 大於等於一。",
+            {
+              "do": "write",
+              "line": "例：$0<x<1$ 是「$x>0$ 且 $x<1$」，否定是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x\\le0\\ \\ \\text{或}\\ \\ x\\ge1$",
+              "on": "大於#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\neg(x<1)$ 是 $x\\ge1$，不是 $x>1$：等號要歸到另一邊",
+              "color": "violet",
+              "on": "小於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若…則：$P\\Rightarrow Q$ 只在「$P$ 真、$Q$ 假」時假，所以",
+            "$\\neg(P\\Rightarrow Q)\\ \\Leftrightarrow\\ P\\land\\neg Q$"
+          ],
+          "say": "若則句只在 P 真、Q 假時是假的。所以它的否定是：P 成立，而且 Q 不成立。否定之後，若則就不見了，變成且。",
           "board": [
-            {"do":"write","line":"$\\neg(x>0\\land x<1)$"},
-            {"do":"write","line":"$\\equiv {{o1:x\\le0\\lor x\\ge1}}$","on":"就是"}
-          ] },
-        { "show": ["$\\neg(P\\lor Q)\\equiv\\neg P\\land\\neg Q$"],
-          "note": "…或…不成立：兩個都不成立。",
-          "say": "或的否定是且：連一個都沒成立，就是兩個都不成立。",
+            {
+              "do": "write",
+              "line": "若…則：$P\\Rightarrow Q$ 只在「$P$ 真、$Q$ 假」時假，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\neg(P\\Rightarrow Q)\\ \\Leftrightarrow\\ P\\land\\neg Q}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "成立#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定之後沒有「若…則」，常見錯誤是寫成 $P\\Rightarrow\\neg Q$"
+          ],
+          "say": "很多人把否定寫成 P 推得非 Q，這是錯的。",
           "board": [
-            {"do":"write","line":"$\\neg(P\\lor Q)\\equiv {{rb:\\neg P\\land\\neg Q}}$"},
-            {"do":"underline","term":"rb","on":"連一個都"}
-          ] },
-        { "show": ["$\\neg(P\\Rightarrow Q)\\equiv P\\land\\neg Q$"],
-          "note": "否定裡沒有箭頭。",
-          "say": "若 P 則 Q 只在 P 真、Q 假時為假，所以它的否定就是：P 成立，但 Q 不成立。",
-          "board": [
-            {"do":"write","line":"$\\neg(P\\Rightarrow Q)\\equiv {{rc:P\\land\\neg Q}}$"},
-            {"do":"underline","term":"rc","label":"沒有箭頭","on":"它的否定"}
-          ] }
+            {
+              "do": "write",
+              "line": "否定之後沒有「若…則」，常見錯誤是寫成 $P\\Rightarrow\\neg Q$"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "check": 0
     },
     {
       "title": "量詞的否定",
       "beats": [
-        { "show": ["$\\neg(\\forall x,P(x))\\equiv\\exists x,\\neg P(x)$"],
-          "note": "不是每個都成立：有一個不成立，也就是反例。",
-          "say": "對所有的否定是存在：不是每一個都成立，就是有一個不成立，那一個就是反例。",
+        {
+          "show": [
+            "「並非所有 $x$ 都 $P$」＝「有一個 $x$ 不 $P$」",
+            "$\\neg\\big(\\forall x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\exists x\\in A,\\ \\neg P(x)$"
+          ],
+          "say": "量詞的否定。並非所有的 x 都滿足 P，就是至少有一個 x 不滿足 P。對所有變成存在。",
           "board": [
-            {"do":"write","line":"$\\neg(\\forall x,P(x))\\equiv {{b:\\exists}} x,\\neg P(x)$","tint":{"b":"violet"}},
-            {"do":"underline","term":"b","label":"那一個是反例","on":"有一個不成立"}
-          ] },
-        { "show": ["$\\neg(\\exists x,P(x))\\equiv\\forall x,\\neg P(x)$"],
-          "say": "存在的否定是對所有：找不到任何一個成立，就是每一個都不成立。",
+            {
+              "do": "write",
+              "line": "「並非所有 $x$ 都 $P$」＝「有一個 $x$ 不 $P$」"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\neg\\big(\\forall x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\exists x\\in A,\\ \\neg P(x)$",
+              "on": "至少"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「沒有 $x$ 使 $P$」＝「每個 $x$ 都不 $P$」",
+            "$\\neg\\big(\\exists x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\forall x\\in A,\\ \\neg P(x)$"
+          ],
+          "say": "反過來，不存在一個 x 滿足 P，就是每一個 x 都不滿足 P。存在變成對所有。",
           "board": [
-            {"do":"write","line":"$\\neg({{b:\\exists}} x,P(x))\\equiv {{a:\\forall}} x,\\neg P(x)$","tint":{"a":"blue","b":"violet"}},
-            {"do":"underline","term":"a","on":"找不到任何"}
-          ] },
-        { "show": ["多層量詞：照順序一個一個翻"],
-          "note": "最後的條件也要否定。",
-          "say": "好幾層量詞，就從左到右一個一個翻：對所有換存在、存在換對所有，最後的條件再否定。",
+            {
+              "do": "write",
+              "line": "「沒有 $x$ 使 $P$」＝「每個 $x$ 都不 $P$」"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\neg\\big(\\exists x\\in A,\\ P(x)\\big)\\ \\Leftrightarrow\\ \\forall x\\in A,\\ \\neg P(x)$",
+              "on": "一個#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "集合 $A$ 不變：否定的是 $P$，不是 $x$ 跑的範圍"
+          ],
+          "say": "注意，集合 A 不變。我們否定的是性質，不是 x 跑的範圍。",
           "board": [
-            {"do":"write","line":"${{a:\\forall}} x\\ {{b:\\exists}} y,\\ {{c:P(x,y)}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"transform","line":"${{b:\\exists}} x\\ {{a:\\forall}} y,\\ \\neg\\,{{c:P(x,y)}}$","on":"對所有換存在"},
-            {"do":"underline","term":"c","label":"條件再否定","on":"最後的條件"}
-          ] }
-      ],
-      "key": "每翻一個量詞，$\\forall$ 與 $\\exists$ 互換",
-      "check": 0
+            {
+              "do": "write",
+              "line": "集合 $A$ 不變：否定的是 $P$，不是 $x$ 跑的範圍",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多層：一路翻過去",
+            "$\\begin{aligned}&\\neg\\big(\\forall x\\ \\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\neg\\big(\\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\forall y\\ \\neg P(x,y)\\end{aligned}$"
+          ],
+          "say": "多層的也一樣，從外往裡一層一層翻：對所有 x 存在 y 的否定，先變成存在 x，再把裡面的存在 y 變成對所有 y，最後否定 P。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多層：一路翻過去"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\neg\\big(\\forall x\\ \\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\neg\\big(\\exists y\\ P(x,y)\\big)\\\\\\Leftrightarrow\\ &\\exists x\\ \\forall y\\ \\neg P(x,y)\\end{aligned}}$",
+              "on": "存在#1"
+            },
+            {
+              "do": "write",
+              "line": "　機械規則：每個 $\\forall\\to\\exists$、每個 $\\exists\\to\\forall$，順序不動，最後否定最裡面那句",
+              "color": "violet",
+              "on": "面的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\neg(\\forall x\\in\\mathbb{R}\\ \\exists y\\in\\mathbb{R}:\\ y>x)$",
+            "$\\Leftrightarrow\\ \\exists x\\in\\mathbb{R}\\ \\forall y\\in\\mathbb{R}:\\ y\\le x$"
+          ],
+          "say": "例如：每個實數都有比它大的實數，它的否定是：存在一個 x，所有 y 都小於等於 x，也就是有最大的實數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\neg(\\forall x\\in\\mathbb{R}\\ \\exists y\\in\\mathbb{R}:\\ y>x)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\Leftrightarrow\\ \\exists x\\in\\mathbb{R}\\ \\forall y\\in\\mathbb{R}:\\ y\\le x}}$",
+              "on": "的否"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "都小"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "否定收斂",
+      "title": "否定極限的定義",
       "beats": [
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N,|a_n-L|<\\varepsilon$"],
-          "note": "$a_n$ 收斂到 $L$。",
-          "say": "這是收斂的定義，疊了好幾層量詞。把它整句否定，看會變成什麼。",
+        {
+          "show": [
+            "$a_n\\to L$：",
+            "$\\forall\\varepsilon>0\\ \\ \\exists N\\in\\mathbb{N}\\ \\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$"
+          ],
+          "say": "現在否定上一課的極限定義。a n 收斂到 L：對所有正的艾普西隆，存在 N，對所有大於等於 N 的 n，誤差小於艾普西隆。",
           "board": [
-            {"do":"write","line":"$\\forall{{e:\\varepsilon>0}}\\ \\exists N\\ \\forall{{n:n\\ge N}},\\ |a_n-L|<\\varepsilon$"}
-          ] },
-        { "show": ["$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-L|\\ge\\varepsilon$"],
-          "note": "範圍 $\\varepsilon>0$、$n\\ge N$ 不動。",
-          "say": "量詞全部翻過來，小於變成大於等於。epsilon 大於零、n 大於等於 N 這些範圍不動。",
+            {
+              "do": "write",
+              "line": "$a_n\\to L$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\forall\\varepsilon>0\\ \\ \\exists N\\in\\mathbb{N}\\ \\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$",
+              "on": "西隆#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一路翻過去：$\\forall\\to\\exists$、$\\exists\\to\\forall$、$\\forall\\to\\exists$、$<\\ \\to\\ \\ge$"
+          ],
+          "say": "照規則一路翻：對所有變存在，存在變對所有，對所有變存在，最後小於變成大於等於。",
           "board": [
-            {"do":"write","line":"$\\exists{{e:\\varepsilon>0}}\\ \\forall N\\ \\exists{{n:n\\ge N}},\\ |a_n-L|{{ge:\\ge}}\\varepsilon$","on":"量詞全部"},
-            {"do":"focus","term":"ge","on":"小於變成"},
-            {"do":"underline","term":"e","label":"範圍不動","on":"epsilon 大於零"},
-            {"do":"underline","term":"n","on":"n 大於等於 N"}
-          ] },
-        { "show": ["有一個固定的誤差 $\\varepsilon$","後面總還有某一項差至少 $\\varepsilon$"],
-          "say": "翻成人話：有一個固定的誤差，不管起點 N 推得多遠，後面總還有某一項跟 L 差至少這麼多。",
+            {
+              "do": "write",
+              "line": "一路翻過去：$\\forall\\to\\exists$、$\\exists\\to\\forall$、$\\forall\\to\\exists$、$<\\ \\to\\ \\ge$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_n\\not\\to L$：",
+            "$\\exists\\varepsilon>0\\ \\ \\forall N\\in\\mathbb{N}\\ \\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$"
+          ],
+          "say": "得到 a n 不收斂到 L 的定義：存在一個正的艾普西隆，對所有 N，都找得到大於等於 N 的 n，誤差至少艾普西隆。",
           "board": [
-            {"do":"write","line":"有一個固定的誤差 $\\varepsilon$","on":"有一個固定"},
-            {"do":"write","line":"後面總還有某一項差至少 $\\varepsilon$","on":"後面總還有"}
-          ] }
+            {
+              "do": "write",
+              "line": "$a_n\\not\\to L$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\exists\\varepsilon>0\\ \\ \\forall N\\in\\mathbb{N}\\ \\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon}}$",
+              "color": "red",
+              "on": "的定"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "對所"
+            },
+            {
+              "do": "write",
+              "line": "　「$\\varepsilon>0$」「$n\\ge N$」是範圍，跟集合一樣不否定",
+              "color": "violet",
+              "on": "誤差"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 1
     },
     {
-      "title": "證明：不收斂到 1",
+      "title": "用它：$(-1)^n\\not\\to1$",
       "beats": [
-        { "show": ["要證：$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-1|\\ge\\varepsilon$"],
-          "note": "照否定形式，由外往內一層一層做。",
-          "say": "a n 是負一的 n 次方，要證它不收斂到一。照上一節的否定形式，一層一層做。",
+        {
+          "show": [
+            "$a_n=(-1)^n$：$-1,1,-1,1,\\dots$　證明 $a_n$ 不收斂到 $1$"
+          ],
+          "say": "用否定來證明。a n 等於負 1 的 n 次方，在負 1 和 1 之間跳。證明它不收斂到 1。",
           "board": [
-            {"do":"write","line":"$a_n=(-1)^n$，要證："},
-            {"do":"write","line":"${{q1:\\exists\\varepsilon>0}}\\ {{q2:\\forall N}}\\ {{q3:\\exists n\\ge N}},\\ |a_n-1|\\ge\\varepsilon$","on":"照上一節"}
-          ] },
-        { "show": ["取 $\\varepsilon=1$"],
-          "note": "存在：挑一個就好。",
-          "say": "最外層是存在 epsilon，由我們挑，而且挑一個就夠。取 epsilon 等於一。",
+            {
+              "do": "write",
+              "line": "$a_n=(-1)^n$：$-1,1,-1,1,\\dots$　證明 $a_n$ 不收斂到 $1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：照否定的句子，依序提供每個東西",
+            "• $\\exists\\varepsilon$：我們挑一個 $\\varepsilon$"
+          ],
+          "say": "策略：照著否定的句子一步一步做。存在艾普西隆，是我們挑；對所有 N，是對手隨便給；存在 n，是我們看了 N 再找。",
           "board": [
-            {"do":"focus","term":"q1","on":"最外層"},
-            {"do":"write","line":"取 ${{e1:\\varepsilon=1}}$","on":"取 epsilon"}
-          ] },
-        { "show": ["任意給定 $N$"],
-          "say": "接著對所有 N：N 是別人給的，不能挑。我們要在 N 後面找一項，離一夠遠。",
+            {
+              "do": "write",
+              "line": "策略：照否定的句子，依序提供每個東西"
+            },
+            {
+              "do": "write",
+              "line": "• $\\exists\\varepsilon$：我們挑一個 $\\varepsilon$",
+              "on": "存在#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\forall N$：對手給任意的 $N$",
+              "on": "對所"
+            },
+            {
+              "do": "write",
+              "line": "• $\\exists n\\ge N$：我們找一個 $n$",
+              "on": "是我#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "奇數項都是 $-1$，離 $1$ 的距離是 $2$：挑 $\\varepsilon=1$ 就夠"
+          ],
+          "say": "想法：奇數項都是負 1，離 1 的距離是 2，所以艾普西隆挑 1 就夠了。",
           "board": [
-            {"do":"focus","term":"q2","on":"對所有 N"},
-            {"do":"transform","line":"取 ${{e1:\\varepsilon=1}}$；任意給定 $N$","on":"別人給的"}
-          ] },
-        { "show": ["取 $n=2N+1$"],
-          "note": "奇數，而且 $n\\ge N$。",
-          "why": {"ask":"$n$ 為什麼取 $2N+1$？","say":"在 N 後面要找哪一項？n 為什麼取二 N 加一？","options":[{"label":"要奇數項（$a_n=-1$），又要 $n\\ge N$","correct":true},{"label":"偶數項離 1 最遠","why":"偶數項 $a_n=1$，$|a_n-1|=0$，不會 $\\ge1$。要挑奇數項。"},{"label":"直接取 $n=N$ 最簡單","why":"$N$ 是別人給的，可能是偶數，那一項剛好等於 1。"}]},
-          "say": "奇數項才是負一。二 N 加一一定是奇數，而且不小於 N，正好落在 N 後面。",
+            {
+              "do": "write",
+              "line": "奇數項都是 $-1$，離 $1$ 的距離是 $2$：挑 $\\varepsilon=1$ 就夠"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：取 $\\varepsilon=1$。任意給定 $N\\in\\mathbb{N}$，取 $n=2N+1$。"
+          ],
+          "say": "證明。取艾普西隆等於 1。任意給定正整數 N，取 n 等於 2N 加 1。",
           "board": [
-            {"do":"focus","term":"q3","on":"N 後面"},
-            {"do":"write","line":"取 ${{nn:n=2N+1}}$","on":"n 為什麼"},
-            {"do":"underline","term":"nn","label":"奇數，n≥N","why":true,"on":"奇數項才是"}
-          ] },
-        { "show": ["$|a_n-1|=|-1-1|=2\\ge1$"],
-          "note": "每個 $N$ 都找得到，證畢。",
-          "why": {"ask":"為什麼這樣就證完了？","say":"奇數項跟一差二。為什麼這樣就證完了？","options":[{"label":"每一個給定的 $N$，都交得出這樣的 $n$","correct":true},{"label":"找到一個 $n$ 就夠了","why":"$n$ 要跟著 $N$ 找：每一個 $N$ 後面都要有這樣的一項，所以 $n$ 寫成 $N$ 的式子。"},{"label":"$a_n$ 有無窮多項等於 $-1$","why":"這是對的直覺，但證明要照否定形式寫：對每個 $N$ 交出 $n\\ge N$。"}]},
-          "say": "奇數項是負一，跟一差二，大於等於一。每個 N 都找得到這樣的 n，證完了。",
+            {
+              "do": "write",
+              "line": "證明：取 $\\varepsilon=1$。任意給定 $N\\in\\mathbb{N}$，取 $n=2N+1$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=2N+1\\ge N$，而且 $n$ 是奇數，所以 $a_n=-1$：",
+            "$|a_n-1|=|-1-1|=2\\ge1=\\varepsilon$"
+          ],
+          "say": "這個 n 大於等於 N，而且是奇數，所以 a n 是負 1，跟 1 的距離是 2，大於等於艾普西隆。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$|a_n-1|=|-1-1|=2\\ge1$","on":"跟一差二"},
-            {"do":"write","line":"每個 $N$ 都找得到這樣的 $n$","color":"green","why":true,"on":"每個 N"}
-          ] },
-        { "show": ["$\\varepsilon=1$ ← $\\exists\\varepsilon$","每個 $N$ 交出 $n$ ← $\\forall N\\ \\exists n$"],
-          "note": "任何奇數、$n\\ge N$ 都行，$2N+1$ 只是一例。",
-          "say": "取 epsilon 等於一，是最外層的存在。每個 N 交出一個 n，是對所有 N、存在 n。二大於等於一，是裡面的條件。",
+            {
+              "do": "write",
+              "line": "$n=2N+1\\ge N$，而且 $n$ 是奇數，所以 $a_n=-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_n-1|=|-1-1|=2\\ge1=\\varepsilon$",
+              "on": "是負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-1|\\ge\\varepsilon$，$a_n\\not\\to1$　$\\blacksquare$"
+          ],
+          "say": "否定的句子每一部分都做到了，所以 a n 不收斂到 1。證明完畢。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{r1:\\varepsilon=1}}$ 對應 $\\exists\\varepsilon$","on":"取 epsilon"},
-            {"do":"write","line":"每個 $N$ 交出 $n$ 對應 $\\forall N\\ \\exists n$","on":"每個 N"},
-            {"do":"write","line":"$2\\ge1$ 對應 $|a_n-1|\\ge\\varepsilon$","on":"二大於等於一"}
-          ] }
+            {
+              "do": "write",
+              "line": "所以 $\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-1|\\ge\\varepsilon$，$a_n\\not\\to1$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "否定句的人話",
+      "beats": [
+        {
+          "show": [
+            "$a_n\\not\\to L$ 的人話：",
+            "有一個固定的距離 $\\varepsilon$，不管走到多後面，之後總還有項離 $L$ 至少 $\\varepsilon$"
+          ],
+          "say": "每個否定都要能翻成人話。不收斂到 L 是說：有一個固定的距離，不管走到多後面，後面總還有項離 L 至少那麼遠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n\\not\\to L$ 的人話："
+            },
+            {
+              "do": "write",
+              "line": "有一個固定的距離 $\\varepsilon$，不管走到多後面，之後總還有項離 $L$ 至少 $\\varepsilon$",
+              "color": "gold",
+              "on": "是說"
+            },
+            {
+              "do": "write",
+              "line": "　不是「每一項都離得遠」：$(-1)^n$ 的偶數項正好等於 $1$",
+              "color": "violet",
+              "on": "後面#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：$\\exists M\\ \\forall x\\in\\mathbb{R}:\\ |f(x)|\\le M$",
+            "無界：$\\forall M\\ \\exists x\\in\\mathbb{R}:\\ |f(x)|>M$"
+          ],
+          "say": "再看有界：存在 M，所有 x 的函數值絕對值都不超過 M。否定是無界：對所有 M，都存在 x，讓函數值絕對值超過 M。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有界：$\\exists M\\ \\forall x\\in\\mathbb{R}:\\ |f(x)|\\le M$"
+            },
+            {
+              "do": "write",
+              "line": "無界：$\\forall M\\ \\exists x\\in\\mathbb{R}:\\ |f(x)|>M$",
+              "color": "gold",
+              "on": "否定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "人話：不管你說上限是多少，我都找得到一個點超過它"
+          ],
+          "say": "人話是：不管你說上限是多少，我都找得到一個點超過它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "人話：不管你說上限是多少，我都找得到一個點超過它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明 $f(x)=x^2$ 在 $\\mathbb{R}$ 上無界"
+          ],
+          "say": "用它來證明 x 平方在實數上無界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明 $f(x)=x^2$ 在 $\\mathbb{R}$ 上無界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：對手給 $M$，我們找 $x$；$M$ 可能是負的，取 $x=|M|+1$"
+          ],
+          "say": "策略：對手給 M，我們找 x。M 可能是負的，所以用 M 的絕對值加 1，保證是至少 1 的正數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：對手給 $M$，我們找 $x$；$M$ 可能是負的，取 $x=|M|+1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任意給定 $M\\in\\mathbb{R}$，取 $x=|M|+1\\ge1$：",
+            "$f(x)=x^2\\ge x=|M|+1>|M|\\ge M$"
+          ],
+          "say": "任意給定 M，取 x 等於 M 的絕對值加 1。x 至少是 1，所以 x 平方大於等於 x，比 M 的絕對值大，也就比 M 大。所以無界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任意給定 $M\\in\\mathbb{R}$，取 $x=|M|+1\\ge1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle f(x)=x^2\\ge x=|M|+1>|M|\\ge M}}$",
+              "on": "絕對#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "　$x\\ge1$ 時 $x^2=x\\cdot x\\ge x\\cdot1$",
+              "color": "violet",
+              "on": "絕對#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "否定蘊含",
+      "beats": [
+        {
+          "show": [
+            "否定：「$\\forall x\\in\\mathbb{R},\\ x^2<1\\Rightarrow x<1$」，並判斷哪一句是真的"
+          ],
+          "say": "最後一例：否定對所有實數 x，x 平方小於 1 推得 x 小於 1，再判斷哪一句是真的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定：「$\\forall x\\in\\mathbb{R},\\ x^2<1\\Rightarrow x<1$」，並判斷哪一句是真的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先翻 $\\forall$，再用 $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$：",
+            "$\\exists x\\in\\mathbb{R}:\\ x^2<1\\ \\text{且}\\ x\\ge1$"
+          ],
+          "say": "先把對所有翻成存在，再用若則的否定：前提成立而且結論不成立。存在 x，x 平方小於 1，而且 x 大於等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先翻 $\\forall$，再用 $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\exists x\\in\\mathbb{R}:\\ x^2<1\\ \\text{且}\\ x\\ge1}}$",
+              "on": "前提"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定句是假的：$x\\ge1\\Rightarrow x^2=x\\cdot x\\ge1\\cdot1=1$，跟 $x^2<1$ 矛盾"
+          ],
+          "say": "否定句是假的：只要 x 大於等於 1，x 平方就大於等於 1，不可能小於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定句是假的：$x\\ge1\\Rightarrow x^2=x\\cdot x\\ge1\\cdot1=1$，跟 $x^2<1$ 矛盾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以原句是真的"
+          ],
+          "say": "否定是假的，所以原句是真的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以原句是真的",
+              "color": "green"
+            }
+          ]
+        }
       ],
-      "key": "挑奇數項，讓它離 $1$ 遠遠的",
-      "proof": true,
-      "of": "ex0",
-      "skeleton": "直接",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
+      "predict": {
+        "ask": "「$\\exists M\\ \\forall n\\in\\mathbb{N}:\\ a_n\\le M$」（上方有界）的否定？",
+        "options": [
           {
-            "label": "取 $\\varepsilon=1$"
+            "label": "$\\forall M\\ \\exists n\\in\\mathbb{N}:\\ a_n>M$",
+            "correct": true
           },
           {
-            "label": "任意給定 $N$",
-            "why": "$\\varepsilon$ 在最外層，要先挑定；$N$ 是之後才給的。"
+            "label": "$\\exists M\\ \\forall n\\in\\mathbb{N}:\\ a_n>M$",
+            "why": "量詞沒翻，這說所有項都超過同一個 $M$"
           },
           {
-            "label": "取 $n=2N+1$",
-            "why": "$n$ 要看 $N$：先有 $N$，才寫得出 $2N+1$。"
+            "label": "$\\forall M\\ \\exists n\\in\\mathbb{N}:\\ a_n\\ge M$",
+            "why": "$\\le$ 的否定是 $>$，不是 $\\ge$"
           },
           {
-            "label": "$|a_n-1|=2\\ge1$",
-            "why": "要先有 $n$，才算得出 $a_n$。"
+            "label": "$\\forall M\\ \\forall n\\in\\mathbb{N}:\\ a_n>M$",
+            "why": "第二個 $\\forall$ 要換成 $\\exists$"
           }
         ]
       }
     },
     {
-      "title": "範圍不動",
+      "title": "重點整理",
       "beats": [
-        { "show": ["有界：$\\exists M\\ \\forall x,|f(x)|\\le M$","無界：$\\forall M\\ \\exists x,|f(x)|>M$"],
-          "say": "再翻一個：有界的否定。存在換對所有、對所有換存在，小於等於換成大於。",
+        {
+          "show": [
+            "• $\\neg(P\\land Q)\\Leftrightarrow\\neg P\\lor\\neg Q$；$\\neg(P\\lor Q)\\Leftrightarrow\\neg P\\land\\neg Q$",
+            "• $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$（不是若…則）"
+          ],
+          "say": "整理：且和或互換；若則的否定是前提成立而且結論不成立。量詞一路翻，順序和範圍不動。不收斂和無界的否定，是之後最常用的兩句。",
           "board": [
-            {"do":"write","line":"有界：$\\exists M\\ \\forall x,\\ |f(x)|\\le M$"},
-            {"do":"write","line":"無界：$\\forall M\\ \\exists x,\\ |f(x)|{{gt:>}}M$","on":"有界的否定"},
-            {"do":"focus","term":"gt","on":"小於等於"}
-          ] },
-        { "show": ["$M$ 是別人給的，$x$ 要看 $M$ 找"],
-          "note": "無界：每個 $M$ 都要被超過。",
-          "say": "無界要對每個 M 都找得到 x。M 是別人給的，所以 x 要寫成 M 的式子。",
+            {
+              "do": "write",
+              "line": "• $\\neg(P\\land Q)\\Leftrightarrow\\neg P\\lor\\neg Q$；$\\neg(P\\lor Q)\\Leftrightarrow\\neg P\\land\\neg Q$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\neg(P\\Rightarrow Q)\\Leftrightarrow P\\land\\neg Q$（不是若…則）",
+              "on": "否定#1"
+            },
+            {
+              "do": "write",
+              "line": "• 每個 $\\forall\\leftrightarrow\\exists$，順序不動，範圍不動，最後否定最裡面",
+              "on": "成立#2"
+            },
+            {
+              "do": "write",
+              "line": "• $a_n\\not\\to L$：$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$",
+              "on": "範圍"
+            },
+            {
+              "do": "write",
+              "line": "• 無界：$\\forall M\\ \\exists x:\\ |f(x)|>M$",
+              "on": "否定#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：直接證明"
+          ],
+          "say": "下一課，開始寫證明：直接證明。",
           "board": [
-            {"do":"write","line":"$M$ 別人給，$x$ 看 ${{k1:M}}$ 找","on":"M 是別人"}
-          ] },
-        { "show": ["$f(x)=x$：取 $x=|M|+1$"],
-          "note": "$|f(x)|=|M|+1>|M|\\ge M$。",
-          "say": "f 在 x 等於 x：不管給哪個 M，取 M 的絕對值加一，就超過 M 了，所以無界。",
-          "board": [
-            {"do":"write","line":"$f(x)=x$：取 $x={{x:|M|+1}}$"},
-            {"do":"write","line":"$|f(x)|=|M|+1>|M|\\ge M$","on":"就超過"}
-          ] },
-        { "show": ["$M$ 可正可負，$x$ 是任意實數"],
-          "note": "$|M|\\ge M$：$M\\ge0$ 時相等，$M<0$ 時 $|M|>0>M$。",
-          "say": "M 和 x 都可以是任何實數。M 不是負的時候，絕對值 M 等於 M。M 是負的時候，絕對值是正的，比 M 大。",
-          "board": [
-            {"do":"write","line":"$M\\ge0$：${{m1:|M|=M}}$","on":"不是負的"},
-            {"do":"underline","term":"m1","label":"所以成立","on":"等於 M"},
-            {"do":"write","line":"$M<0$：$|M|>0>M$","on":"M 是負的"}
-          ] },
-        { "show": ["$\\varepsilon>0$ 不會變成 $\\varepsilon\\le0$","$<$ 的否定是 $\\ge$"],
-          "say": "兩個常見的錯：把變數範圍也否定了；把小於否定成大於，漏掉相等的情況。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\varepsilon>0$ 不會變成 ${{w1:\\varepsilon\\le0}}$","on":"常見的錯"},
-            {"do":"strike","term":"w1","on":"範圍也否定了"},
-            {"do":"write","line":"$\\lnot(a<b)$ 是 $a\\ge b$，不是 ${{w2:a>b}}$","on":"把小於"},
-            {"do":"strike","term":"w2","on":"漏掉"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：直接證明"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["proof"],
-    "fine": ["negation-connectives", "negation-nested-quantifiers", "negation-use-to-disprove"]
+    "coarse": [
+      "proof"
+    ],
+    "fine": [
+      "negation-connectives",
+      "negation-nested-quantifiers",
+      "negation-use-to-disprove"
+    ]
   },
   "practice": [
-    { "id": "cg-12a-015", "core": true, "trains": "negation-connectives" },
-    { "id": "cg-12a-010", "core": true, "trains": "negation-nested-quantifiers" },
-    { "id": "cg-12a-009", "core": true, "trains": "negation-nested-quantifiers" },
-    { "id": "cg-12a-013", "core": true, "trains": "negation-use-to-disprove" },
-    { "id": "cg-12a-016", "trains": "negation-connectives" },
-    { "id": "cg-12a-011", "trains": "negation-nested-quantifiers" },
-    { "id": "cg-12a-014", "trains": "negation-use-to-disprove" },
-    { "id": "cg-12a-012", "challenge": true, "trains": "negation-nested-quantifiers" }
+    {
+      "id": "cg-12a-015",
+      "core": true,
+      "trains": "negation-connectives"
+    },
+    {
+      "id": "cg-12a-010",
+      "core": true,
+      "trains": "negation-nested-quantifiers"
+    },
+    {
+      "id": "cg-12a-009",
+      "core": true,
+      "trains": "negation-nested-quantifiers"
+    },
+    {
+      "id": "cg-12a-013",
+      "core": true,
+      "trains": "negation-use-to-disprove"
+    },
+    {
+      "id": "cg-12a-016",
+      "trains": "negation-connectives"
+    },
+    {
+      "id": "cg-12a-011",
+      "trains": "negation-nested-quantifiers"
+    },
+    {
+      "id": "cg-12a-014",
+      "trains": "negation-use-to-disprove"
+    },
+    {
+      "id": "cg-12a-012",
+      "challenge": true,
+      "trains": "negation-nested-quantifiers"
+    }
   ],
   "gaps": []
 }

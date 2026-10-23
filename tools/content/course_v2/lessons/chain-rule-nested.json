@@ -1,59 +1,146 @@
 {
   "id": "chain-rule-nested",
   "title": "連鎖律 II：多層",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["chain-rule", "product-rule", "quotient-rule"],
-  "next": ["implicit-differentiation"],
+  "prerequisites": [
+    "chain-rule",
+    "product-rule",
+    "quotient-rule"
+  ],
+  "next": [
+    "implicit-differentiation"
+  ],
   "related": [],
   "objectives": [
-    "把三層以上的合成函數一層一層拆開，每一層乘一個導數，不漏層。",
-    "混合題先判斷最外面是乘、除還是合成，決定第一步用哪條法則。",
-    "數對 $\\sin^3(2x)$ 這類寫法的層數。"
+    "把三層以上的合成函數一層一層拆開，每一層乘一個導數，不漏層",
+    "混合題先判斷最外面是乘、除還是合成，決定第一步用哪條法則",
+    "數對 $\\sin^3(2x)$ 這類寫法的層數"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 多層就是連鎖律重複用",
+      "heading": "① 多層：連鎖律重複用",
       "body": [
-        "$y = e^{\\sin(x^2)}$ 有三層：最外 $e^u$，中間 $u = \\sin v$，最裡 $v = x^2$。",
-        "$x$ 動一點點，$v$ 動 $2x$ 倍；$v$ 動一點點，$u$ 動 $\\cos v$ 倍；$u$ 動一點點，$y$ 動 $e^u$ 倍。全部相乘：",
-        "$\\frac{dy}{dx} = e^{\\sin(x^2)} \\cdot \\cos(x^2) \\cdot 2x$。"
+        "計算順序：$x$ → 平方 → 取 $\\sin$ → 取指數",
+        "先看成兩層：外層 $e^u$，裡層 $u=\\sin(x^2)$",
+        "裡層 $\\sin(x^2)$ 本身又是兩層：上一課算過",
+        "合起來：",
+        "多層就是連鎖律重複用：每剝一層，乘一個導數"
       ],
-      "tex": ["\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}"],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}e^{\\sin(x^2)}",
+        "\\big(e^{\\sin(x^2)}\\big)'=e^{\\sin(x^2)}\\cdot\\big(\\sin(x^2)\\big)'",
+        "\\big(\\sin(x^2)\\big)'=\\cos(x^2)\\cdot2x",
+        "\\frac{d}{dx}e^{\\sin(x^2)}=e^{\\sin(x^2)}\\cdot\\cos(x^2)\\cdot2x"
+      ]
     },
     {
-      "heading": "② 剝洋蔥：由外往內，一層一個因子",
+      "heading": "② 剝洋蔥：由外往內",
       "body": [
-        "從最外層開始。每剝一層，就寫下這一層的導數，它裡面的整包原封不動。然後往裡一層，重複，直到剩下單純的 $x$。",
-        "有幾層就有幾個因子相乘。最常漏掉的是最裡面那一層，尤其是 $2x$、3 這種小東西。"
-      ],
-      "collapsible": false
+        "每一層：微這一層，裡面照抄",
+        "• 第 1 層 $e^{(\\ )}$ → $e^{\\sin(x^2)}$",
+        "• 第 2 層 $\\sin(\\ )$ → $\\cos(x^2)$",
+        "• 第 3 層 $x^2$ → $2x$",
+        "最後全部相乘：幾層就有幾個因子",
+        "檢查：三層 → 三個因子 $e^{\\sin(x^2)}$、$\\cos(x^2)$、$2x$"
+      ]
     },
     {
       "heading": "③ 數層數：看計算順序",
       "body": [
-        "$\\sin^3(2x)$ 是 $(\\sin(2x))^3$。計算順序：先乘 2、再取 $\\sin$、最後三次方，所以三層：$u^3$、$\\sin v$、$2x$。",
-        "$\\sqrt{1 + \\sqrt{x}}$：先開 $\\sqrt{x}$、再加 1、最後開根號。外層 $\\sqrt{u}$ 給 $\\frac{1}{2\\sqrt{1 + \\sqrt{x}}}$；裡層 $1 + \\sqrt{x}$ 的導數是 $(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$，加的 1 微分是 0。相乘得 $\\frac{1}{4\\sqrt{x} \\sqrt{1 + \\sqrt{x}}}$。"
-      ],
-      "collapsible": false
+        "例 2　$y=\\sin^3(2x)$，求 $y'$",
+        "$\\sin^3(2x)=\\big(\\sin(2x)\\big)^3$",
+        "計算順序：$x$ → 乘 $2$ → 取 $\\sin$ → 三次方",
+        "• 三次方：$3\\sin^2(2x)$",
+        "• $\\sin$：$\\cos(2x)$",
+        "• $2x$：$2$",
+        "$\\begin{aligned}y'&=3\\sin^2(2x)\\cdot\\cos(2x)\\cdot2\\\\&=6\\sin^2(2x)\\cos(2x)\\end{aligned}$",
+        "最常見的錯：漏掉最裡面的 $2$，得到 $3\\sin^2(2x)\\cos(2x)$"
+      ]
     },
     {
-      "heading": "④ 跟乘法、除法法則混在一起",
+      "heading": "③ 試一題",
       "body": [
-        "$x^2 \\sin(3x)$：最後一步是「乘」，所以先用乘法法則，$(x^2)' \\sin(3x) + x^2 (\\sin(3x))'$；第二項裡面才用連鎖律。",
-        "判斷的方法跟〈連鎖律 I：兩層〉一樣：最後一步做什麼運算，第一步就用那條法則。裡面遇到合成，再一層一層剝。"
+        "檢查清單：",
+        "• 數層數：寫出計算順序",
+        "• 每一層：微這一層，裡面照抄",
+        "• 因子個數 = 層數",
+        "• 最後才整理（常數乘在前面）"
+      ]
+    },
+    {
+      "heading": "③ 四層也一樣",
+      "body": [
+        "例　$\\dfrac{d}{dx}\\sqrt{1+\\sin^2x}$",
+        "計算順序：$x$ → 取 $\\sin$ → 平方 → 加 $1$ → 開根號",
+        "• 開根號：$\\dfrac{1}{2\\sqrt{1+\\sin^2x}}$",
+        "• 加 $1$：$1$",
+        "• 平方：$2\\sin x$",
+        "• $\\sin$：$\\cos x$",
+        "四個因子相乘：",
+        "「加常數」那一層的導數是 $1$，實際算的時候可以直接跳過",
+        "層數多，就寫一張「剝洋蔥」的表，一層一行"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}\\sqrt{1+\\sin^2x}=\\frac{2\\sin x\\cos x}{2\\sqrt{1+\\sin^2x}}",
+        "=\\frac{\\sin x\\cos x}{\\sqrt{1+\\sin^2x}}"
+      ]
+    },
+    {
+      "heading": "④ 跟乘、除法則混在一起",
+      "body": [
+        "先問：最外面是乘、除，還是合成？",
+        "例 3　$\\dfrac{d}{dx}\\,x^2\\sin(3x)$：最後一步是相乘",
+        "$\\big(\\sin(3x)\\big)'=\\cos(3x)\\cdot3$（連鎖律）",
+        "外面是乘法，裡面才是合成：法則是一層套一層用的"
+      ],
+      "tex": [
+        "=(x^2)'\\sin(3x)+x^2\\big(\\sin(3x)\\big)'",
+        "=2x\\sin(3x)+3x^2\\cos(3x)"
+      ]
+    },
+    {
+      "heading": "④ 除法套連鎖律",
+      "body": [
+        "例 4　$\\dfrac{d}{dx}\\dfrac{e^{2x}}{x^2+1}$：最後一步是相除",
+        "上：$(e^{2x})'=2e^{2x}$（連鎖律）",
+        "下：$(x^2+1)'=2x$",
+        "提出 $2e^{2x}$："
+      ],
+      "tex": [
+        "=\\frac{2e^{2x}(x^2+1)-e^{2x}\\cdot2x}{(x^2+1)^2}",
+        "=\\frac{2e^{2x}\\,(x^2-x+1)}{(x^2+1)^2}"
+      ]
     },
     {
       "heading": "⑤ 為什麼可以一直乘下去",
       "body": [
-        "三層 $f(g(h(x)))$：把 $g(h(x))$ 整個當成裡層，兩層的連鎖律給 $f'(g(h(x))) \\cdot [g(h(x))]'$。",
-        "$[g(h(x))]'$ 本身又是兩層，等於 $g'(h(x)) \\cdot h'(x)$。代回去就是三個因子相乘。更多層照樣一層一層代。"
+        "三層：$y=f\\big(g(h(x))\\big)$",
+        "把 $g(h(x))$ 看成一塊，用一次連鎖律：",
+        "$g(h(x))$ 又是兩層，再用一次：",
+        "萊布尼茲寫法：$u=g(v)$，$v=h(x)$",
+        "$n$ 層：每次剝掉最外層，剩下的少一層 → 重複 $n-1$ 次",
+        "每次用的都是上一課證過的兩層連鎖律，所以不需要新的證明"
       ],
-      "collapsible": true
+      "tex": [
+        "y'=f'\\big(g(h(x))\\big)\\cdot\\big(g(h(x))\\big)'",
+        "\\big(g(h(x))\\big)'=g'(h(x))\\cdot h'(x)",
+        "y'=f'\\big(g(h(x))\\big)\\cdot g'\\big(h(x)\\big)\\cdot h'(x)",
+        "\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 多層：連鎖律重複用，每一層一個因子",
+        "• 由外往內剝：微這一層，裡面照抄",
+        "• 數層數看計算順序：$\\sin^3(2x)$ 是三層",
+        "• 混合題：先看最後一步是乘、除還是合成",
+        "• $\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$",
+        "下一課：隱函數微分"
+      ]
     }
   ],
   "workedExamples": [
@@ -105,267 +192,883 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{d}{dx} \\cos(e^{2x})$ 是？",
+      "ask": "$y=\\sin^3(2x)$ 有幾層？",
       "options": [
-        { "label": "$-\\sin(e^{2x}) \\cdot e^{2x}$", "why": "漏了最裡層：$e^{2x}$ 的導數是 $2e^{2x}$，那個 2 來自 $2x$。" },
-        { "label": "$-2e^{2x} \\sin(e^{2x})$", "correct": true },
-        { "label": "$-\\sin(2e^{2x})$", "why": "微分外層時把裡面也微分了。外層換成 $-\\sin$，裡面要原封不動是 $e^{2x}$，導數乘在外面。" }
+        {
+          "label": "三層：三次方、$\\sin$、$2x$",
+          "correct": true
+        },
+        {
+          "label": "兩層：$\\sin^3$ 和 $2x$",
+          "why": "$\\sin^3$ 其實是兩個動作：先 $\\sin$，再三次方"
+        },
+        {
+          "label": "兩層：三次方和 $\\sin x$",
+          "why": "裡面是 $\\sin(2x)$，不是 $\\sin x$；$2x$ 也是一層"
+        },
+        {
+          "label": "一層：它是三角函數",
+          "why": "$\\sin^3(2x)$ 是好幾個函數合成的"
+        }
       ]
     },
     {
-      "ask": "$\\frac{d}{dx} \\ln(\\sin(x^3))$ 是？",
+      "ask": "$\\dfrac{d}{dx}\\cos\\!\\big(e^{3x}\\big)=$？",
       "options": [
-        { "label": "$\\frac{1}{\\sin(x^3)}$", "why": "只微了最外層 $\\ln$。還要乘 $\\sin(x^3)$ 的導數 $\\cos(x^3) \\cdot 3x^2$。" },
-        { "label": "$\\frac{\\cos(x^3)}{\\sin(x^3)}$", "why": "漏了最裡層 $x^3$ 的導數 $3x^2$。" },
-        { "label": "$3x^2 \\frac{\\cos(x^3)}{\\sin(x^3)}$", "correct": true }
+        {
+          "label": "$-3e^{3x}\\sin\\!\\big(e^{3x}\\big)$",
+          "correct": true
+        },
+        {
+          "label": "$-\\sin\\!\\big(e^{3x}\\big)$",
+          "why": "只微了最外層，裡面兩層都漏了"
+        },
+        {
+          "label": "$-e^{3x}\\sin\\!\\big(e^{3x}\\big)$",
+          "why": "漏了最裡層 $3x$ 的導數 $3$"
+        },
+        {
+          "label": "$3e^{3x}\\sin\\!\\big(e^{3x}\\big)$",
+          "why": "$(\\cos u)'=-\\sin u$，漏了負號"
+        }
       ]
     },
     {
-      "ask": "$x^3 e^{-x^2}$ 微分，第一步用什麼？",
+      "ask": "$\\dfrac{d}{dx}\\big(x\\,e^{x^2}\\big)=$？",
       "options": [
-        { "label": "乘法法則", "correct": true },
-        { "label": "連鎖律", "why": "$e^{-x^2}$ 那一個因式才需要連鎖律；整個式子最後一步是 $x^3$ 乘 $e^{-x^2}$。" },
-        { "label": "冪次法則", "why": "$x^3$ 只是其中一個因式，整個式子不是 $x$ 的次方。" }
-      ]
-    },
-    {
-      "ask": "$f(x) = \\ln(\\ln x)$，$f'(e)$ 是？",
-      "options": [
-        { "label": "1", "why": "只微了外層：$\\frac{1}{\\ln x}$ 代 $e$ 得 1。還要乘裡層 $\\ln x$ 的導數 $\\frac{1}{x}$。" },
-        { "label": "$\\frac{1}{e}$", "correct": true },
-        { "label": "0", "why": "那是函數值 $f(e) = \\ln 1 = 0$，不是導數。" }
+        {
+          "label": "$(1+2x^2)e^{x^2}$",
+          "correct": true
+        },
+        {
+          "label": "$2x^2e^{x^2}$",
+          "why": "漏了乘法法則的「前微後不微」：$1\\cdot e^{x^2}$"
+        },
+        {
+          "label": "$(1+x)e^{x^2}$",
+          "why": "$e^{x^2}$ 的導數漏乘裡層的 $2x$"
+        },
+        {
+          "label": "$2xe^{x^2}$",
+          "why": "把 $x$ 當成常數；$x$ 也要微"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "三層就乘三個",
+      "title": "多層：連鎖律重複用",
       "beats": [
-        { "show": ["$y = e^{\\sin(x^2)}$"],
-          "note": "最外 $e^u$，中間 $u = \\sin v$，最裡 $v = x^2$。",
-          "say": "e 的 sine x 平方次方有三層：最外面是 e 的 u 次方，中間是 sine，最裡面是 x 平方。",
+        {
+          "show": [
+            "$\\frac{d}{dx}e^{\\sin(x^2)}$"
+          ],
+          "say": "上一課是兩層。這一課看三層以上，例如 e 的正弦 x 平方次方。",
           "board": [
-            {"do":"write","line":"$y = {{o:e}}^{{{u:\\sin({{v:x^2}})}}}$"},
-            {"do":"focus","term":"o","label":"最外","on":"最外面"},
-            {"do":"focus","term":"u","on":"中間"},
-            {"do":"focus","term":"v","label":"最裡","on":"最裡面"}
-          ] },
-        { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$"],
-          "say": "多層就是連鎖律重複用：每一層的變化倍數，一路乘下去。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}e^{\\sin(x^2)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "計算順序：$x$ → 平方 → 取 $\\sin$ → 取指數"
+          ],
+          "say": "先看計算順序：給一個 x，先平方，再取正弦，最後取指數。一共三層。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$"}
-          ] },
-        { "show": ["$v$ 動 $2x$ 倍，$u$ 動 $\\cos v$ 倍","$y$ 動 $e^u$ 倍"],
-          "say": "x 動一點點，v 動二 x 倍；v 動一點點，u 動 cosine v 倍；u 動一點點，y 動 e 的 u 次方倍。",
+            {
+              "do": "write",
+              "line": "計算順序：$x$ → 平方 → 取 $\\sin$ → 取指數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先看成兩層：外層 $e^u$，裡層 $u=\\sin(x^2)$",
+            "$\\big(e^{\\sin(x^2)}\\big)'=e^{\\sin(x^2)}\\cdot\\big(\\sin(x^2)\\big)'$"
+          ],
+          "say": "先把它看成兩層：外層是 e 的 u 次方，裡層是正弦 x 平方。外層微分不變，再乘上裡層的導數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$v$ 動 $2x$ 倍","on":"x 動一點點"},
-            {"do":"write","line":"$u$ 動 $\\cos v$ 倍","on":"v 動一點點"},
-            {"do":"write","line":"$y$ 動 $e^u$ 倍","on":"u 動一點點"}
-          ] }
+            {
+              "do": "write",
+              "line": "先看成兩層：外層 $e^u$，裡層 $u=\\sin(x^2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(e^{\\sin(x^2)}\\big)'=e^{\\sin(x^2)}\\cdot\\big(\\sin(x^2)\\big)'$",
+              "on": "正弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "裡層 $\\sin(x^2)$ 本身又是兩層：上一課算過",
+            "$\\big(\\sin(x^2)\\big)'=\\cos(x^2)\\cdot2x$"
+          ],
+          "say": "可是裡層正弦 x 平方，本身又是兩層。上一課算過，它的導數是餘弦 x 平方乘 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "裡層 $\\sin(x^2)$ 本身又是兩層：上一課算過"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(\\sin(x^2)\\big)'=\\cos(x^2)\\cdot2x$",
+              "on": "課算"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合起來：",
+            "$\\frac{d}{dx}e^{\\sin(x^2)}=e^{\\sin(x^2)}\\cdot\\cos(x^2)\\cdot2x$"
+          ],
+          "say": "合起來，三個因子相乘：e 的正弦 x 平方次方，乘餘弦 x 平方，乘 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "合起來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{d}{dx}e^{\\sin(x^2)}=e^{\\sin(x^2)}\\cdot\\cos(x^2)\\cdot2x}}$",
+              "color": "red",
+              "on": "的正"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "餘弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多層就是連鎖律重複用：每剝一層，乘一個導數"
+          ],
+          "say": "所以多層沒有新的公式，就是連鎖律重複使用。每剝一層，就乘一個導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多層就是連鎖律重複用：每剝一層，乘一個導數",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "剝洋蔥：由外往內",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "想成剝洋蔥。最外面一層是指數，中間一層是正弦，最裡面是 x 平方。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 230\" width=\"640\"><rect x=\"20\" y=\"15\" width=\"600\" height=\"200\" rx=\"22\" fill=\"var(--red)\" fill-opacity=\"0.0\" stroke=\"var(--red)\" stroke-width=\"2\"/><rect x=\"140\" y=\"60\" width=\"460\" height=\"140\" rx=\"18\" fill=\"var(--blue)\" fill-opacity=\"0.0\" stroke=\"var(--blue)\" stroke-width=\"2\"/><rect x=\"330\" y=\"105\" width=\"250\" height=\"80\" rx=\"14\" fill=\"var(--green)\" fill-opacity=\"0.1\" stroke=\"var(--green)\" stroke-width=\"2\"/><text x=\"38\" y=\"45\" font-size=\"20\" fill=\"var(--red)\" style=\"font-family:inherit\">第 1 層：取指數</text><text x=\"158\" y=\"90\" font-size=\"20\" fill=\"var(--blue)\" style=\"font-family:inherit\">第 2 層：取正弦</text><text x=\"348\" y=\"135\" font-size=\"20\" fill=\"var(--green)\" style=\"font-family:inherit\">第 3 層：平方</text><text x=\"455\" y=\"172\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x²</text><text x=\"80\" y=\"130\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">exp</text><text x=\"235\" y=\"160\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">sin</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一層：微這一層，裡面照抄",
+            "• 第 1 層 $e^{(\\ )}$ → $e^{\\sin(x^2)}$"
+          ],
+          "say": "由外往內，一層一層剝：第一層指數，微完不變，裡面照抄；第二層正弦，微成餘弦，裡面照抄 x 平方；第三層 x 平方，微成 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一層：微這一層，裡面照抄"
+            },
+            {
+              "do": "write",
+              "line": "• 第 1 層 $e^{(\\ )}$ → $e^{\\sin(x^2)}$",
+              "on": "微完"
+            },
+            {
+              "do": "write",
+              "line": "• 第 2 層 $\\sin(\\ )$ → $\\cos(x^2)$",
+              "on": "微成#1"
+            },
+            {
+              "do": "write",
+              "line": "• 第 3 層 $x^2$ → $2x$",
+              "on": "第三"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最後全部相乘：幾層就有幾個因子"
+          ],
+          "say": "最後把每一層剝出來的因子全部乘起來。幾層，就有幾個因子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最後全部相乘：幾層就有幾個因子",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：三層 → 三個因子 $e^{\\sin(x^2)}$、$\\cos(x^2)$、$2x$",
+              "color": "violet",
+              "on": "乘起"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "數層數：看計算順序",
+      "beats": [
+        {
+          "show": [
+            "例 2　$y=\\sin^3(2x)$，求 $y'$"
+          ],
+          "say": "例二：正弦三次方 2x。這種寫法最容易數錯層數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2　$y=\\sin^3(2x)$，求 $y'$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin^3(2x)=\\big(\\sin(2x)\\big)^3$"
+          ],
+          "say": "先改寫：正弦三次方 2x，意思是正弦 2x 整個三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin^3(2x)=\\big(\\sin(2x)\\big)^3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "計算順序：$x$ → 乘 $2$ → 取 $\\sin$ → 三次方"
+          ],
+          "say": "計算順序：先乘 2，再取正弦，最後三次方。所以外層是三次方，中間是正弦，最裡面是 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "計算順序：$x$ → 乘 $2$ → 取 $\\sin$ → 三次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 三次方：$3\\sin^2(2x)$",
+            "• $\\sin$：$\\cos(2x)$"
+          ],
+          "say": "一層一層剝：三次方微成 3 倍平方，裡面照抄；正弦微成餘弦；2x 微成 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 三次方：$3\\sin^2(2x)$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sin$：$\\cos(2x)$",
+              "on": "倍平"
+            },
+            {
+              "do": "write",
+              "line": "• $2x$：$2$",
+              "on": "微成#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}y'&=3\\sin^2(2x)\\cdot\\cos(2x)\\cdot2\\\\&=6\\sin^2(2x)\\cos(2x)\\end{aligned}$"
+          ],
+          "say": "三個因子乘起來，3 乘 2 是 6：6 倍正弦平方 2x 乘餘弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${\\begin{aligned}y'&=3\\sin^2(2x)\\cdot\\cos(2x)\\cdot2\\\\&=6\\sin^2(2x)\\cos(2x)\\end{aligned}}$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　最常見的錯：漏掉最裡面的 $2$，得到 $3\\sin^2(2x)\\cos(2x)$",
+              "color": "violet",
+              "on": "倍正"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "$\\frac{d}{dx} e^{\\sin(x^2)}$ 是？",
-        "options": [
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{d}{dx}\\cos\\!\\big(e^{3x}\\big)=$？"
+          ],
+          "say": "三層，一層一層剝，數數看你的答案有幾個因子。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "檢查清單：",
+            "• 數層數：寫出計算順序"
+          ],
+          "say": "檢查清單：先寫出計算順序數層數；每一層微完，裡面照抄；因子的個數要等於層數；最後才整理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查清單："
+            },
+            {
+              "do": "write",
+              "line": "• 數層數：寫出計算順序",
+              "on": "計算"
+            },
+            {
+              "do": "write",
+              "line": "• 每一層：微這一層，裡面照抄",
+              "on": "一層"
+            },
+            {
+              "do": "write",
+              "line": "• 因子個數 = 層數",
+              "on": "因子"
+            },
+            {
+              "do": "write",
+              "line": "• 最後才整理（常數乘在前面）",
+              "on": "層數#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "四層也一樣",
+      "beats": [
+        {
+          "show": [
+            "例　$\\dfrac{d}{dx}\\sqrt{1+\\sin^2x}$"
+          ],
+          "say": "再一個更多層的例子：根號 1 加正弦平方 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例　$\\dfrac{d}{dx}\\sqrt{1+\\sin^2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "計算順序：$x$ → 取 $\\sin$ → 平方 → 加 $1$ → 開根號"
+          ],
+          "say": "計算順序：先取正弦，再平方，再加 1，最後開根號。一共四層。",
+          "board": [
+            {
+              "do": "write",
+              "line": "計算順序：$x$ → 取 $\\sin$ → 平方 → 加 $1$ → 開根號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 開根號：$\\dfrac{1}{2\\sqrt{1+\\sin^2x}}$",
+            "• 加 $1$：$1$"
+          ],
+          "say": "由外往內：開根號微成 2 倍根號分之一，裡面照抄；加 1 這一層，導數是 1；平方微成 2 倍正弦 x；正弦微成餘弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 開根號：$\\dfrac{1}{2\\sqrt{1+\\sin^2x}}$"
+            },
+            {
+              "do": "write",
+              "line": "• 加 $1$：$1$",
+              "on": "根號#2"
+            },
+            {
+              "do": "write",
+              "line": "• 平方：$2\\sin x$",
+              "on": "這一"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sin$：$\\cos x$",
+              "on": "倍正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "四個因子相乘：",
+            "$\\frac{d}{dx}\\sqrt{1+\\sin^2x}=\\frac{2\\sin x\\cos x}{2\\sqrt{1+\\sin^2x}}$"
+          ],
+          "say": "四個因子乘起來。加 1 那一層乘的是 1，不影響結果。",
+          "board": [
+            {
+              "do": "write",
+              "line": "四個因子相乘："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\sqrt{1+\\sin^2x}=\\frac{2\\sin x\\cos x}{2\\sqrt{1+\\sin^2x}}$",
+              "on": "一層"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{\\sin x\\cos x}{\\sqrt{1+\\sin^2x}}$"
+          ],
+          "say": "2 約掉，得到正弦 x 餘弦 x，除以根號 1 加正弦平方 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle =\\frac{\\sin x\\cos x}{\\sqrt{1+\\sin^2x}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "餘弦"
+            },
+            {
+              "do": "write",
+              "line": "　「加常數」那一層的導數是 $1$，實際算的時候可以直接跳過",
+              "color": "violet",
+              "on": "加正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "層數多，就寫一張「剝洋蔥」的表，一層一行"
+          ],
+          "say": "層數一多，就像剛剛那樣，一層寫一行，最後再乘起來，就不會漏。",
+          "board": [
+            {
+              "do": "write",
+              "line": "層數多，就寫一張「剝洋蔥」的表，一層一行"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "跟乘、除法則混在一起",
+      "beats": [
+        {
+          "show": [
+            "先問：最外面是乘、除，還是合成？"
+          ],
+          "say": "混合題的第一步：先問，最外面的運算是相乘、相除，還是合成？最後一步是什麼，第一步就用什麼法則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先問：最外面是乘、除，還是合成？",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 3　$\\dfrac{d}{dx}\\,x^2\\sin(3x)$：最後一步是相乘"
+          ],
+          "say": "例三：x 平方乘正弦 3x。最後一步是相乘，所以先用乘法法則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 3　$\\dfrac{d}{dx}\\,x^2\\sin(3x)$：最後一步是相乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=(x^2)'\\sin(3x)+x^2\\big(\\sin(3x)\\big)'$"
+          ],
+          "say": "前微後不微，加上前不微後微。後面那個正弦 3x 的導數，要用連鎖律。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =(x^2)'\\sin(3x)+x^2\\big(\\sin(3x)\\big)'$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\big(\\sin(3x)\\big)'=\\cos(3x)\\cdot3$（連鎖律）",
+            "$=2x\\sin(3x)+3x^2\\cos(3x)$"
+          ],
+          "say": "正弦 3x 的導數是餘弦 3x 乘 3。合起來：2x 正弦 3x，加 3x 平方餘弦 3x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\big(\\sin(3x)\\big)'=\\cos(3x)\\cdot3$（連鎖律）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =2x\\sin(3x)+3x^2\\cos(3x)}}$",
+              "color": "red",
+              "on": "3x#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "2x"
+            },
+            {
+              "do": "write",
+              "line": "　外面是乘法，裡面才是合成：法則是一層套一層用的",
+              "color": "violet",
+              "on": "3x#4"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "除法套連鎖律",
+      "beats": [
+        {
+          "show": [
+            "例 4　$\\dfrac{d}{dx}\\dfrac{e^{2x}}{x^2+1}$：最後一步是相除"
+          ],
+          "say": "例四：e 的 2x 次方，除以 x 平方加 1。最後一步是相除，先用除法法則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 4　$\\dfrac{d}{dx}\\dfrac{e^{2x}}{x^2+1}$：最後一步是相除"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上：$(e^{2x})'=2e^{2x}$（連鎖律）"
+          ],
+          "say": "分子的導數要用連鎖律，是 2 倍 e 的 2x 次方；分母的導數是 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上：$(e^{2x})'=2e^{2x}$（連鎖律）"
+            },
+            {
+              "do": "write",
+              "line": "下：$(x^2+1)'=2x$",
+              "on": "2x#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{2e^{2x}(x^2+1)-e^{2x}\\cdot2x}{(x^2+1)^2}$"
+          ],
+          "say": "上微乘下，減上乘下微，除以下平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{2e^{2x}(x^2+1)-e^{2x}\\cdot2x}{(x^2+1)^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "提出 $2e^{2x}$：",
+            "$=\\frac{2e^{2x}\\,(x^2-x+1)}{(x^2+1)^2}$"
+          ],
+          "say": "分子兩項都有 2 倍 e 的 2x 次方，提出來，剩下 x 平方減 x 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "提出 $2e^{2x}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\frac{2e^{2x}\\,(x^2-x+1)}{(x^2+1)^2}}}$",
+              "color": "red",
+              "on": "2x"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "算 $\\dfrac{d}{dx}\\dfrac{e^{2x}}{x^2+1}$ 的順序",
+        "steps": [
           {
-            "label": "$2x \\cos(x^2) e^{\\sin(x^2)}$",
-            "correct": true
+            "label": "看最後一步：相除 → 用除法法則"
           },
           {
-            "label": "$\\cos(x^2) e^{\\sin(x^2)}$",
-            "why": "漏了最裡層：$x^2$ 的導數 $2x$ 也要乘上去。"
+            "label": "分別算上、下的導數（分子用連鎖律）",
+            "why": "先要有上一步：看最後一步：相除 → 用除法法則"
           },
           {
-            "label": "$\\cos(2x) e^{\\sin(x^2)}$",
-            "why": "微分中間層時把裡面也改掉了。$\\cos$ 裡面要原封不動是 $x^2$，$2x$ 乘在外面。"
+            "label": "代進 $\\frac{f'g-fg'}{g^2}$",
+            "why": "先要有上一步：分別算上、下的導數（分子用連鎖律）"
+          },
+          {
+            "label": "提出公因式 $2e^{2x}$ 整理",
+            "why": "先要有上一步：代進 $\\frac{f'g-fg'}{g^2}$"
           }
         ]
       }
     },
     {
-      "title": "剝洋蔥",
+      "title": "為什麼可以一直乘下去",
       "beats": [
-        { "show": ["由外往內，一層一個因子"],
-          "note": "每一層的導數，裡面整包原封不動。",
-          "say": "從最外層開始剝：寫下這一層的導數，它裡面的整包不要動，然後往裡一層，重複。",
+        {
+          "show": [
+            "三層：$y=f\\big(g(h(x))\\big)$"
+          ],
+          "say": "最後說明，為什麼可以一直乘下去。三層的情形：f of g of h of x。",
           "board": [
-            {"do":"write","line":"$\\frac{d}{dx}f(g(h(x)))$"},
-            {"do":"transform","line":"${{o:f'}}({{i:g(h(x))}})\\cdot\\cdots$","on":"寫下"},
-            {"do":"underline","term":"i","label":"原封不動","on":"整包"}
-          ] },
-        { "show": ["先補一個：$e^{\\ln x} = x$"],
-          "note": "直覺：$\\ln$ 與 $e$ 互為反運算。",
-          "say": "剝洋蔥常遇到 ln，先補它的導數。ln 是 e 的反運算，圖對著斜線對稱，所以 e 的 ln x 次方就是 x。",
+            {
+              "do": "write",
+              "line": "三層：$y=f\\big(g(h(x))\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $g(h(x))$ 看成一塊，用一次連鎖律：",
+            "$y'=f'\\big(g(h(x))\\big)\\cdot\\big(g(h(x))\\big)'$"
+          ],
+          "say": "把 g of h of x 看成一塊，它就是兩層：外層 f，裡層這一塊。用一次連鎖律。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-3,4,-3,4],"equal":true,"curves":[{"expr":"exp(x)","domain":[-3,1.5],"color":"blue"},{"expr":"log(x)","domain":[0.05,4],"color":"red"}],"dashed":[[[-3,-3],[4,4]]]},"on":"圖"},
-            {"do":"write","line":"$e^{\\ln x} = x$","on":"所以"}
-          ] },
-        { "show": ["$(\\ln x)' = \\frac{1}{x}$"],
-          "note": "兩邊微分，左邊用連鎖律。",
-          "say": "兩邊微分，左邊用連鎖律，右邊是一。所以 ln x 的導數是 x 分之一。",
+            {
+              "do": "write",
+              "line": "把 $g(h(x))$ 看成一塊，用一次連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y'=f'\\big(g(h(x))\\big)\\cdot\\big(g(h(x))\\big)'$",
+              "on": "是兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g(h(x))$ 又是兩層，再用一次：",
+            "$\\big(g(h(x))\\big)'=g'(h(x))\\cdot h'(x)$"
+          ],
+          "say": "這一塊本身也是兩層，再用一次連鎖律。",
           "board": [
-            {"do":"write","line":"$e^{\\ln x}\\cdot(\\ln x)' = 1$"},
-            {"do":"write","line":"$(\\ln x)' = {{n1:\\frac{1}{x}}}$","on":"所以"},
-            {"do":"focus","term":"n1","color":"green","on":"ln x"}
-          ] },
-        { "show": ["剝到剩下單純的 $x$ 為止"],
-          "note": "有幾層就有幾個因子相乘。",
-          "say": "一直剝到只剩單純的 x。有幾層，就有幾個因子相乘。",
+            {
+              "do": "write",
+              "line": "$g(h(x))$ 又是兩層，再用一次："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(g(h(x))\\big)'=g'(h(x))\\cdot h'(x)$",
+              "on": "再用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'=f'\\big(g(h(x))\\big)\\cdot g'\\big(h(x)\\big)\\cdot h'(x)$"
+          ],
+          "say": "合起來就是三個因子相乘。每一層的導數，代的都是它裡面那一整塊。",
           "board": [
-            {"do":"write","line":"$f'(g(h(x)))\\cdot g'(h(x))\\cdot {{l:h'(x)}}$"},
-            {"do":"underline","term":"l","label":"最裡層","on":"單純的"},
-            {"do":"write","line":"有幾層 ＝ 有幾個因子","on":"有幾層"}
-          ] },
-        { "show": ["最常漏：最裡面那一層"],
-          "note": "尤其是 $2x$、3 這種小東西。",
-          "say": "最常漏掉的是最裡面那一層，像二 x、三這種小小的係數。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y'=f'\\big(g(h(x))\\big)\\cdot g'\\big(h(x)\\big)\\cdot h'(x)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "的導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "萊布尼茲寫法：$u=g(v)$，$v=h(x)$",
+            "$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$"
+          ],
+          "say": "用萊布尼茲的寫法更清楚：d y d x，等於 d y d u，乘 d u d v，乘 d v d x。變化率一路乘過去。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"最常漏：最裡面的 ${{l:h'(x)}}$","on":"最常漏掉"},
-            {"do":"focus","term":"l","label":"別漏","on":"最裡面"},
-            {"do":"write","line":"像 $2x$、3 這種小係數","on":"小小的"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "萊布尼茲寫法：$u=g(v)$，$v=h(x)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "變化"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 層：每次剝掉最外層，剩下的少一層 → 重複 $n-1$ 次"
+          ],
+          "say": "n 層也一樣：每次把最外層剝掉，剩下的就少一層。一直重複，直到剝完。這就是數學歸納法的想法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n$ 層：每次剝掉最外層，剩下的少一層 → 重複 $n-1$ 次"
+            },
+            {
+              "do": "write",
+              "line": "　每次用的都是上一課證過的兩層連鎖律，所以不需要新的證明",
+              "color": "violet",
+              "on": "一直"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "數層數",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\sin^3(2x) = (\\sin(2x))^3$"],
-          "note": "先乘 2、再取 $\\sin$、最後三次方。",
-          "say": "sine 三次方二 x，照計算順序：先乘二，再取 sine，最後三次方，所以是三層。",
+        {
+          "show": [
+            "• 多層：連鎖律重複用，每一層一個因子",
+            "• 由外往內剝：微這一層，裡面照抄"
+          ],
+          "say": "整理一下：多層就是連鎖律重複用；由外往內剝，微這一層、裡面照抄；看計算順序數層數；混合題先看最後一步，決定第一步用哪條法則。",
           "board": [
-            {"do":"write","line":"$\\sin^3(2x)=({{s:\\sin}}({{t:2x}}))^{{{c:3}}}$"},
-            {"do":"focus","term":"t","label":"第一層","on":"先乘二"},
-            {"do":"focus","term":"s","label":"第二層","on":"再取"},
-            {"do":"focus","term":"c","label":"第三層","on":"最後三次方"}
-          ] },
-        { "show": ["最外 $u^3$：$3 \\sin^2(2x)$"],
-          "say": "最外層三次方，微分是三乘 sine 二 x 的平方，裡面不動。",
+            {
+              "do": "write",
+              "line": "• 多層：連鎖律重複用，每一層一個因子"
+            },
+            {
+              "do": "write",
+              "line": "• 由外往內剝：微這一層，裡面照抄",
+              "on": "重複"
+            },
+            {
+              "do": "write",
+              "line": "• 數層數看計算順序：$\\sin^3(2x)$ 是三層",
+              "on": "一層"
+            },
+            {
+              "do": "write",
+              "line": "• 混合題：先看最後一步是乘、除還是合成",
+              "on": "數層"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$",
+              "on": "決定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：隱函數微分"
+          ],
+          "say": "下一課，連鎖律的一個大用處：隱函數微分。",
           "board": [
-            {"do":"transform","line":"$3\\,{{p:\\sin^2(2x)}}$"},
-            {"do":"underline","term":"p","label":"裡面不動","on":"sine"}
-          ] },
-        { "show": ["中間 $\\sin v$：$\\cos(2x)$","最裡 $2x$：2"],
-          "say": "中間的 sine 微分成 cosine 二 x；最裡面的二 x 微分是二。",
-          "board": [
-            {"do":"write","line":"中間 $\\sin v$：$\\cos(2x)$"},
-            {"do":"write","line":"最裡 $2x$：$2$","on":"最裡面的"}
-          ] },
-        { "show": ["$6 \\sin^2(2x) \\cos(2x)$"],
-          "note": "$3 \\cdot 2 = 6$",
-          "say": "三個相乘，三乘二是六。數成兩層的人，就會漏掉這個二。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$3 \\cdot \\sin^2(2x) \\cdot \\cos(2x) \\cdot 2$","on":"三個相乘"},
-            {"do":"transform","line":"${{r:6\\sin^2(2x)\\cos(2x)}}$","on":"三乘二"},
-            {"do":"box","term":"r","color":"green","on":"數成"}
-          ] }
-      ],
-      "key": "次方藏在最外層，最裡層的 $2x$ 別漏",
-      "check": 1
-    },
-    {
-      "title": "根號裡還有根號",
-      "beats": [
-        { "show": ["$\\sqrt{1 + \\sqrt{x}}$"],
-          "note": "先開 $\\sqrt{x}$、再加 1、最後開根號。",
-          "say": "根號一加根號 x：先算根號 x，再加一，最後開根號。最外層是根號。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{1 + {{i:\\sqrt{x}}}}$"},
-            {"do":"focus","term":"i","label":"最裡層","on":"先算"}
-          ] },
-        { "show": ["最外層：大根號；最裡層：$\\sqrt{x}$"],
-          "note": "$1 + \\sqrt{x}$ 整包是外層根號的 $u$。",
-          "say": "最外層是大根號，它蓋住的整包一加根號 x 是 u。最裡層只有小的根號 x。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{1 + {{n2:\\sqrt{x}}}}$"},
-            {"do":"write","line":"外層根號蓋住的 $u = 1 + \\sqrt{x}$","on":"整包"},
-            {"do":"focus","term":"n2","color":"blue","label":"最裡層","on":"最裡層"}
-          ] },
-        { "show": ["$\\sqrt{u} = u^{\\frac12}$"],
-          "note": "用次方法則，不是硬背。",
-          "say": "根號 u 就是 u 的二分之一次方。用次方法則，得到二分之一乘 u 的負二分之一次方，就是二倍根號 u 分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sqrt{u} = u^{\\frac12}$","on":"用次"},
-            {"do":"write","line":"$(\\sqrt{u})'=\\frac12\\,u^{-\\frac12}=\\frac{1}{2\\sqrt{u}}$","on":"次方法則"}
-          ] },
-        { "show": ["外層：$\\frac{1}{2\\sqrt{1 + \\sqrt{x}}}$"],
-          "say": "外層根號 u 的導數，是二倍根號 u 分之一，u 原封不動是一加根號 x。",
-          "board": [
-            {"do":"transform","line":"$\\frac{1}{2\\sqrt{{{u:1 + \\sqrt{x}}}}}$"},
-            {"do":"underline","term":"u","label":"不動","on":"原封不動"}
-          ] },
-        { "show": ["裡層：$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$"],
-          "note": "加的 1 微分是 0。",
-          "say": "裡層一加根號 x：一微分是零，根號 x 微分是二倍根號 x 分之一。",
-          "board": [
-            {"do":"write","line":"$(1)' = 0$","on":"一微分"},
-            {"do":"write","line":"$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$","on":"根號 x 微分"}
-          ] },
-        { "show": ["$\\frac{1}{4\\sqrt{x} \\sqrt{1 + \\sqrt{x}}}$"],
-          "say": "兩個相乘，分母的二乘二變成四。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{2\\sqrt{1+\\sqrt{x}}} \\cdot \\frac{1}{2\\sqrt{x}}$","on":"兩個相乘"},
-            {"do":"transform","line":"$\\frac{1}{4\\sqrt{x}\\sqrt{1+\\sqrt{x}}}$","color":"green","on":"二乘二"}
-          ] }
-      ],
-      "key": "內層根號也要再乘自己的導數",
-      "check": 3
-    },
-    {
-      "title": "外面是乘法",
-      "beats": [
-        { "show": ["$x^2 \\sin(3x)$"],
-          "note": "最後一步是「乘」，先用乘法法則。",
-          "say": "x 平方乘 sine 三 x，最後一步是相乘，所以第一步用乘法法則，不是連鎖律。",
-          "board": [
-            {"do":"write","line":"${{p:x^2}}\\,{{q:\\sin(3x)}}$"},
-            {"do":"write","line":"最後一步是乘，用乘法法則","on":"最後一步"}
-          ] },
-        { "show": ["$(x^2)' \\sin(3x) + x^2 (\\sin(3x))'$"],
-          "say": "前面的導數乘後面，加上前面乘後面的導數。",
-          "board": [
-            {"do":"write","line":"$(x^2)'\\,\\sin(3x) + x^2\\,(\\sin(3x))'$"}
-          ] },
-        { "show": ["$(\\sin(3x))' = \\cos(3x) \\cdot 3$"],
-          "note": "第二項裡面才用連鎖律。",
-          "say": "sine 三 x 是合成，這裡才用連鎖律：cosine 三 x 乘三。",
-          "board": [
-            {"do":"write","line":"$(\\sin(3x))' = {{o:\\cos(3x)}}\\cdot 3$"},
-            {"do":"underline","term":"o","label":"連鎖律","on":"連鎖律"}
-          ] },
-        { "show": ["$2x \\sin(3x) + 3x^2 \\cos(3x)$"],
-          "say": "合起來就是答案。原則：最後一步做什麼運算，第一步就用那條法則。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{r:2x\\sin(3x)+3x^2\\cos(3x)}}$","on":"合起來"},
-            {"do":"box","term":"r","color":"green","on":"答案"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：隱函數微分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["chain-rule"],
-    "fine": ["chain-nested-three-layers", "chain-nested-power-of-trig", "chain-nested-with-product", "chain-nested-radical"]
+    "coarse": [
+      "chain-rule"
+    ],
+    "fine": [
+      "chain-nested-three-layers",
+      "chain-nested-power-of-trig",
+      "chain-nested-with-product",
+      "chain-nested-radical"
+    ]
   },
   "practice": [
-    { "id": "dd-nest-002", "core": true, "trains": "chain-nested-three-layers" },
-    { "id": "db-chain-003", "core": true, "trains": "chain-nested-three-layers" },
-    { "id": "lec-02-q2c", "core": true, "trains": "chain-nested-power-of-trig" },
-    { "id": "ch-mix-010", "core": true, "trains": "chain-nested-power-of-trig" },
-    { "id": "der-026", "core": true, "trains": "chain-nested-with-product" },
-    { "id": "db-chain-002", "core": true, "trains": "chain-nested-radical" },
-    { "id": "lec-02-q2d", "trains": "chain-nested-radical" },
-    { "id": "dd-nest-001", "trains": "chain-nested-three-layers" },
-    { "id": "dd-nest-004", "trains": "chain-nested-three-layers" },
-    { "id": "ch-mix-002", "trains": "chain-nested-with-product" },
-    { "id": "ch-nest-002", "challenge": true, "trains": "chain-nested-three-layers", "note": "挑戰：四層，$e$、$\\sin$、$\\ln$、$x^2 + 1$。" },
-    { "id": "dd-nest-003", "challenge": true, "trains": "chain-nested-radical", "note": "挑戰：三個根號疊在一起。" }
+    {
+      "id": "dd-nest-002",
+      "core": true,
+      "trains": "chain-nested-three-layers"
+    },
+    {
+      "id": "db-chain-003",
+      "core": true,
+      "trains": "chain-nested-three-layers"
+    },
+    {
+      "id": "lec-02-q2c",
+      "core": true,
+      "trains": "chain-nested-power-of-trig"
+    },
+    {
+      "id": "ch-mix-010",
+      "core": true,
+      "trains": "chain-nested-power-of-trig"
+    },
+    {
+      "id": "der-026",
+      "core": true,
+      "trains": "chain-nested-with-product"
+    },
+    {
+      "id": "db-chain-002",
+      "core": true,
+      "trains": "chain-nested-radical"
+    },
+    {
+      "id": "lec-02-q2d",
+      "trains": "chain-nested-radical"
+    },
+    {
+      "id": "dd-nest-001",
+      "trains": "chain-nested-three-layers"
+    },
+    {
+      "id": "dd-nest-004",
+      "trains": "chain-nested-three-layers"
+    },
+    {
+      "id": "ch-mix-002",
+      "trains": "chain-nested-with-product"
+    },
+    {
+      "id": "ch-nest-002",
+      "challenge": true,
+      "trains": "chain-nested-three-layers",
+      "note": "挑戰：四層，$e$、$\\sin$、$\\ln$、$x^2 + 1$。"
+    },
+    {
+      "id": "dd-nest-003",
+      "challenge": true,
+      "trains": "chain-nested-radical",
+      "note": "挑戰：三個根號疊在一起。"
+    }
   ],
   "gaps": []
 }

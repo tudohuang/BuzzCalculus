@@ -1,67 +1,136 @@
 {
   "id": "u-sub-basic",
   "title": "換元：基礎",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 40,
-  "prerequisites": ["chain-rule", "integral-table", "reverse-chain"],
-  "next": ["u-sub-recognize"],
-  "related": ["u-sub-definite"],
+  "prerequisites": [
+    "chain-rule",
+    "integral-table",
+    "reverse-chain"
+  ],
+  "next": [
+    "u-sub-recognize"
+  ],
+  "related": [
+    "u-sub-definite",
+    "u-sub-nonobvious"
+  ],
   "objectives": [
-    "說得出換元積分是連鎖律倒過來用。",
-    "會照四個步驟做：選 $u$、算 $du$、全部換成 $u$、積完換回 $x$。",
-    "看得出什麼時候換元行不通。"
+    "說得出換元積分是連鎖律倒過來用",
+    "會照四個步驟做：選 $u$、算 $du$、全部換成 $u$、積完換回 $x$",
+    "看得出什麼時候換元行不通"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 連鎖律倒過來",
       "body": [
-        "連鎖律說：$\\frac{d}{dx}F(g(x))=F'(g(x))\\cdot g'(x)$。",
-        "倒過來讀：被積函數如果長得像「某個函數套著 $g(x)$，再乘上 $g'(x)$」，反導函數就是 $F(g(x))$。"
+        "連鎖律：$F'=f$ 時",
+        "倒過來讀，就是一條積分公式：",
+        "被積函數要長成：外層(裡層) × 裡層的導數",
+        "上一課的「猜、微分、修正」就是在用這條公式"
       ],
-      "tex": ["\\int f(g(x))\\,g'(x)\\,dx = F(g(x)) + C,\\qquad F' = f"],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)",
+        "\\int f\\big(g(x)\\big)\\,g'(x)\\,dx=F\\big(g(x)\\big)+C"
+      ]
     },
     {
-      "heading": "② 換元：把 $g(x)$ 叫做 $u$",
+      "heading": "② 把 $g(x)$ 叫做 $u$",
       "body": [
-        "令 $u=g(x)$，記 $du=g'(x)\\,dx$。上式就變成 $\\int f(u)\\,du=F(u)+C$。",
-        "關於 $du=g'(x)\\,dx$：目前把它當成「換元時的記號規則」使用就好。它的根據是上面的連鎖律，不需要把 $dx$ 當成一個可以隨便約掉的普通數字。"
+        "每次寫 $g(x)$ 很累：令",
+        "微分：$\\dfrac{du}{dx}=g'(x)$，寫成",
+        "先把它當成「換元時的對照表」；它為什麼可以這樣寫，就是第①節那條公式",
+        "於是 $f(g(x))\\,g'(x)\\,dx$ 整塊變成 $f(u)\\,du$：",
+        "例：$\\displaystyle\\int 2x\\cos(x^2)\\,dx$",
+        "$u=x^2$，$du=2x\\,dx$",
+        "$2x\\,dx$ 整塊被 $du$ 吃掉，剩下的式子只有 $u$"
       ],
-      "collapsible": false
+      "tex": [
+        "u=g(x)",
+        "du=g'(x)\\,dx",
+        "\\int f(u)\\,du=F(u)+C",
+        "\\int\\cos u\\,du=\\sin u+C=\\sin(x^2)+C"
+      ]
     },
     {
       "heading": "③ 四個步驟",
       "body": [
-        "1. 選 $u$：通常是「裡面那一層」，而且它的導數（可以差一個常數倍）也出現在式子裡。",
-        "2. 算 $du=u'\\,dx$。",
-        "3. 把整個積分換成 $u$：$x$ 和 $dx$ 必須全部消失，一個都不能留。",
-        "4. 對 $u$ 積分，最後把 $u$ 換回 $x$，別忘了 $+C$。"
+        "1. 選 $u$：通常是裡層（括號、根號裡、次方上）",
+        "2. 算 $du$：$du=u'(x)\\,dx$",
+        "3. 全部換成 $u$：不能留下任何 $x$",
+        "4. 積完換回 $x$",
+        "例：$\\displaystyle\\int x^2\\sqrt{1+x^3}\\,dx$",
+        "選：$u=1+x^3$（根號裡）；算：$du=3x^2\\,dx$",
+        "換：$x^2\\,dx=\\dfrac13\\,du$",
+        "積、換回："
       ],
-      "collapsible": false
+      "tex": [
+        "\\int x^2\\sqrt{1+x^3}\\,dx=\\frac13\\int u^{1/2}\\,du",
+        "=\\frac13\\cdot\\frac23u^{3/2}+C=\\frac29(1+x^3)^{3/2}+C"
+      ]
     },
     {
-      "heading": "④ 常數倍可以補，$x$ 不行",
+      "heading": "③ $u$ 是 $\\ln x$",
       "body": [
-        "$du=2x\\,dx$，但式子裡只有 $x\\,dx$：可以寫成 $x\\,dx=\\frac{du}{2}$，把 $\\frac{1}{2}$ 提到積分外面。",
-        "式子裡連 $x$ 都沒有，就不能「補一個 $x$」：$x$ 不是常數，不能提出積分號。"
+        "$\\dfrac1x$ 是 $\\ln x$ 的導數：選 $u=\\ln x$",
+        "$du=\\dfrac1x\\,dx$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{\\ln x}{x}\\,dx",
+        "\\begin{aligned}\\int\\frac{\\ln x}{x}\\,dx&=\\int u\\,du=\\frac{u^2}2+C\\\\&=\\frac{(\\ln x)^2}2+C\\end{aligned}"
+      ]
     },
     {
-      "heading": "⑤ 換元行不通的例子",
+      "heading": "④ 常數倍可以補",
       "body": [
-        "$\\int e^{x^2}\\,dx$：令 $u=x^2$，$du=2x\\,dx$，但式子裡沒有 $x$ 可以配。",
-        "$e^{x^2}$ 其實有反導函數（例如 $\\int_0^x e^{t^2}\\,dt$ 就是一個），只是它沒辦法用常見初等函數的有限組合寫出來。換元只是工具，不是萬能。"
+        "$u=1+x^2$，$du=2x\\,dx$；但被積函數只有 $x\\,dx$",
+        "$x\\,dx=\\dfrac12\\,du$：",
+        "$1+x^2>0$，所以絕對值可以省略",
+        "為什麼常數可以補：$\\displaystyle\\int k\\,f\\,dx=k\\int f\\,dx$",
+        "$x$ 不行：$\\displaystyle\\int x\\,f\\,dx\\ne x\\int f\\,dx$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{x}{1+x^2}\\,dx",
+        "\\begin{aligned}\\int\\frac{x}{1+x^2}\\,dx&=\\frac12\\int\\frac{du}{u}\\\\&=\\frac12\\ln(1+x^2)+C\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑤ 行不通的例子",
+      "body": [
+        "$u=1+x^3$，$du=3x^2\\,dx$，於是 $dx=\\dfrac{du}{3x^2}$",
+        "$x$ 和 $u$ 混在一起：這個積分沒辦法照 $u$ 來積",
+        "錯的做法：把 $\\dfrac1{3x^2}$ 當常數提出去",
+        "判斷：換完之後還剩 $x$，而且消不掉 → 這個 $u$ 行不通",
+        "有時候剩下的 $x$ 能用 $u$ 表示出來，例如 $\\int x^5\\sqrt{1+x^3}\\,dx$ 剩下的 $x^3=u-1$；這招在〈非顯然的換元〉學"
+      ],
+      "tex": [
+        "\\int\\sqrt{1+x^3}\\,dx",
+        "\\int\\sqrt{u}\\,\\frac{du}{3x^2}"
+      ]
     },
     {
       "heading": "⑥ 一定能檢查",
       "body": [
-        "做完把答案微分，應該回到被積函數。定積分的換元（上下限要跟著換）放在〈定積分換元〉。"
+        "積分難，微分容易：把答案微分，看回不回得到被積函數",
+        "檢查 $\\dfrac29(1+x^3)^{3/2}$：",
+        "檢查時，連鎖律多乘的那個裡層導數，正是當初被 $du$ 吃掉的東西"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac29\\cdot\\frac32(1+x^3)^{1/2}\\cdot3x^2=x^2\\sqrt{1+x^3}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 換元 = 連鎖律倒過來：$\\int f(g(x))g'(x)\\,dx=F(g(x))+C$",
+        "• 四步：選 $u$、算 $du$、全部換成 $u$、換回 $x$",
+        "• 常數倍可以補；含 $x$ 的因子不能提出去",
+        "• 換完還剩 $x$ 消不掉：這個 $u$ 行不通",
+        "• 做完微分檢查",
+        "下一課：換元：辨識"
+      ]
     }
   ],
   "workedExamples": [
@@ -116,35 +185,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\int 2x\\cos(x^2)\\,dx$，$u$ 應該選？",
+      "ask": "$\\displaystyle\\int\\frac{x}{(3+x^2)^2}\\,dx$，令 $u=3+x^2$，會變成？",
       "options": [
-        { "label": "$u=x^2$", "correct": true },
-        { "label": "$u=\\cos(x^2)$", "why": "它的導數 $-2x\\sin(x^2)$ 不在式子裡，換不乾淨。" },
-        { "label": "$u=2x$", "why": "$2x$ 是「裡面那一層的導數」，應該跟 $du$ 配，而不是當成 $u$。" }
+        {
+          "label": "$\\displaystyle\\frac12\\int u^{-2}\\,du$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle2\\int u^{-2}\\,du$",
+          "why": "$du=2x\\,dx$，所以 $x\\,dx$ 是 $du$ 的一半，不是兩倍"
+        },
+        {
+          "label": "$\\displaystyle\\int u^{-2}\\,du$",
+          "why": "忘了 $du=2x\\,dx$ 多一個 $2$"
+        },
+        {
+          "label": "$\\displaystyle\\frac12\\int x\\,u^{-2}\\,du$",
+          "why": "$x$ 已經被 $du$ 吃掉了，不能再留一個"
+        }
       ]
     },
     {
-      "ask": "承上題，答案是？",
+      "ask": "$\\displaystyle\\int x^3(x^4+2)^5\\,dx=$？",
       "options": [
-        { "label": "$\\sin(x^2)+C$", "correct": true },
-        { "label": "$2x\\sin(x^2)+C$", "why": "$2x\\,dx$ 已經被 $du$ 吃掉了，不會再出現。" },
-        { "label": "$\\sin(x^2)\\cdot x^2+C$", "why": "對 $u$ 積分後只剩 $\\sin u$，再換回 $\\sin(x^2)$。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\frac{x}{1+x^2}\\,dx$ 令 $u=1+x^2$ 之後，$x\\,dx$ 等於？",
-      "options": [
-        { "label": "$\\frac{du}{2}$", "correct": true },
-        { "label": "$du$", "why": "$du=2x\\,dx$，所以 $x\\,dx$ 只有一半。" },
-        { "label": "$2\\,du$", "why": "方向反了：$du$ 是 $x\\,dx$ 的兩倍。" }
-      ]
-    },
-    {
-      "ask": "$\\int e^{x^2}\\,dx$ 為什麼不能用 $u=x^2$ 換元？",
-      "options": [
-        { "label": "$du=2x\\,dx$，但式子裡沒有 $x$ 可以配", "correct": true },
-        { "label": "因為 $e^{x^2}$ 沒有反導函數", "why": "它有（例如 $\\int_0^x e^{t^2}\\,dt$），只是寫不成常見初等函數。" },
-        { "label": "因為 $u=x^2$ 不是一對一的函數", "why": "問題不在這裡，問題是 $du$ 配不起來。" }
+        {
+          "label": "$\\dfrac{(x^4+2)^6}{6}+C$",
+          "why": "忘了 $x^3\\,dx=\\frac14\\,du$；微分回去多了 $4$ 倍"
+        },
+        {
+          "label": "$\\dfrac{(x^4+2)^6}{24}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{x^4}{4}\\cdot\\dfrac{(x^4+2)^6}{6}+C$",
+          "why": "$x^3$ 已經被 $du$ 吃掉，不能再積一次"
+        },
+        {
+          "label": "$\\dfrac{2(x^4+2)^6}{3}+C$",
+          "why": "$du=4x^3\\,dx$，該除以 $4$，你乘了 $4$"
+        }
       ]
     }
   ],
@@ -152,256 +231,740 @@
     {
       "title": "連鎖律倒過來",
       "beats": [
-        { "show": ["$\\frac{d}{dx}F(g(x))=F'(g(x))\\cdot g'(x)$"],
-          "say": "先回想連鎖律：外層套著 g，微分就是外層的導數，再乘上裡面的導數。",
+        {
+          "show": [
+            "連鎖律：$F'=f$ 時",
+            "$\\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)$"
+          ],
+          "say": "從連鎖律出發：F 的導數是 f。那麼 F of g of x 微分，等於 f of g of x，再乘上 g prime x。",
           "board": [
-            {"do":"write","line":"$\\frac{d}{dx}{{fo:F}}({{g:g(x)}})={{fp:F'}}({{g2:g(x)}})\\cdot{{gp:g'(x)}}$","tint":{"fo":"violet","fp":"violet","g":"blue","g2":"blue","gp":"blue"}},
-            {"do":"underline","term":"fp","on":"外層的導數"},
-            {"do":"underline","term":"gp","on":"裡面的導數"}
-          ] },
-        { "show": ["$\\int f(g(x))\\,g'(x)\\,dx=F(g(x))+C$"],
-          "note": "某個函數套著 $g(x)$，再乘上 $g'(x)$。",
-          "say": "倒過來讀：被積函數如果長成某個函數套著 g，再乘上 g prime，反導函數就是 F 套 g。",
+            {
+              "do": "write",
+              "line": "連鎖律：$F'=f$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "倒過來讀，就是一條積分公式：",
+            "$\\int f\\big(g(x)\\big)\\,g'(x)\\,dx=F\\big(g(x)\\big)+C$"
+          ],
+          "say": "把這一行倒過來讀，就是一條積分公式。這就是換元積分的全部內容。",
           "board": [
-            {"do":"write","line":"$\\int f({{g3:g(x)}})\\,{{gp:g'(x)}}\\,dx=F(g(x))+C$","tint":{"g3":"blue","gp":"blue"},"on":"倒過來讀"},
-            {"do":"focus","term":"g3","on":"某個函數套著 g"},
-            {"do":"focus","term":"gp","on":"再乘上 g prime"}
-          ] },
-        { "show": ["令 $u=g(x)$，$du=g'(x)\\,dx$"],
-          "note": "$du$ 是換元的記號規則，根據是連鎖律。",
-          "say": "把裡面那一層叫做 u，它的導數乘 dx 記作 du。這是記號規則，背後的根據就是連鎖律。",
+            {
+              "do": "write",
+              "line": "倒過來讀，就是一條積分公式："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int f\\big(g(x)\\big)\\,g'(x)\\,dx=F\\big(g(x)\\big)+C}}$",
+              "on": "是一"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "是換"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數要長成：外層(裡層) × 裡層的導數"
+          ],
+          "say": "重點是被積函數的樣子：一個外層函數套著裡層，再乘上裡層的導數。",
           "board": [
-            {"do":"write","line":"令 ${{u:u=g(x)}}$，${{du:du=g'(x)\\,dx}}$","tint":{"u":"blue"}},
-            {"do":"underline","term":"du","label":"記號規則","on":"這是記號規則"}
-          ] },
-        { "show": ["$\\int f(u)\\,du=F(u)+C$"],
-          "say": "這樣一換，複雜的積分就變成對 u 的簡單積分。",
-          "board": [
-            {"do":"write","line":"$\\int f(u)\\,du=F(u)+C$","color":"green","on":"這樣一換"}
-          ] }
+            {
+              "do": "write",
+              "line": "被積函數要長成：外層(裡層) × 裡層的導數",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　上一課的「猜、微分、修正」就是在用這條公式",
+              "color": "violet",
+              "on": "函數#2"
+            }
+          ]
+        }
       ],
-      "check": 0
+      "predict": {
+        "ask": "$\\displaystyle\\int\\cos x\\;e^{\\sin x}\\,dx=$？",
+        "options": [
+          {
+            "label": "$e^{\\sin x}+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\sin x\\,e^{\\sin x}+C$",
+            "why": "把 $\\cos x$ 積成了 $\\sin x$；它是裡層的導數，會被「吸收」"
+          },
+          {
+            "label": "$e^{\\cos x}+C$",
+            "why": "微分 $e^{\\cos x}$ 得 $-\\sin x\\,e^{\\cos x}$，對不上"
+          },
+          {
+            "label": "$\\cos x\\,e^{\\sin x}+C$",
+            "why": "這是被積函數本身，還沒有積"
+          }
+        ]
+      }
+    },
+    {
+      "title": "把 $g(x)$ 叫做 $u$",
+      "beats": [
+        {
+          "show": [
+            "每次寫 $g(x)$ 很累：令",
+            "$u=g(x)$"
+          ],
+          "say": "每次都寫 g of x 太累了。給裡層取個名字，叫它 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每次寫 $g(x)$ 很累：令"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle u=g(x)$",
+              "on": "給裡"
+            }
+          ]
+        },
+        {
+          "show": [
+            "微分：$\\dfrac{du}{dx}=g'(x)$，寫成",
+            "$du=g'(x)\\,dx$"
+          ],
+          "say": "u 對 x 的導數是 g prime x。把它寫成 d u 等於 g prime x 乘 d x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "微分：$\\dfrac{du}{dx}=g'(x)$，寫成"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle du=g'(x)\\,dx}}$",
+              "on": "pr#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　先把它當成「換元時的對照表」；它為什麼可以這樣寫，就是第①節那條公式",
+              "color": "violet",
+              "on": "ri#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "於是 $f(g(x))\\,g'(x)\\,dx$ 整塊變成 $f(u)\\,du$：",
+            "$\\int f(u)\\,du=F(u)+C$"
+          ],
+          "say": "這樣一來，整塊就變成 f of u 乘 d u。積出來是 F of u 加 C，最後把 u 換回 g of x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "於是 $f(g(x))\\,g'(x)\\,dx$ 整塊變成 $f(u)\\,du$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int f(u)\\,du=F(u)+C}}$",
+              "color": "red",
+              "on": "積出"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "最後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int 2x\\cos(x^2)\\,dx$"
+          ],
+          "say": "看例子：2x 乘餘弦 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int 2x\\cos(x^2)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=x^2$，$du=2x\\,dx$"
+          ],
+          "say": "令 u 等於 x 平方，d u 就是 2x d x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=x^2$，$du=2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\cos u\\,du=\\sin u+C=\\sin(x^2)+C$"
+          ],
+          "say": "被積函數整塊換掉，變成積分餘弦 u d u。積出來正弦 u，再把 u 換回 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int\\cos u\\,du=\\sin u+C=\\sin(x^2)+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "積出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2x\\,dx$ 整塊被 $du$ 吃掉，剩下的式子只有 $u$"
+          ],
+          "say": "你看，2x d x 整塊被 d u 吃掉了。剩下的式子裡只有 u，沒有 x，這就是換元成功的樣子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$2x\\,dx$ 整塊被 $du$ 吃掉，剩下的式子只有 $u$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "四個步驟",
       "beats": [
-        { "show": ["① 選 $u$：裡面那一層"],
-          "note": "它的導數也要在式子裡，差常數倍可以。",
-          "say": "第一步選 u，通常是裡面那一層，而且它的導數也要出現在式子裡。",
+        {
+          "show": [
+            "1. 選 $u$：通常是裡層（括號、根號裡、次方上）",
+            "2. 算 $du$：$du=u'(x)\\,dx$"
+          ],
+          "say": "整理成四個步驟：選 u，通常是裡面那一層；算 d u；把整個積分全部換成 u，一個 x 都不能留；積完以後，換回 x。",
           "board": [
-            {"do":"write","line":"① 選 ${{u:u}}$：裡面那一層","tint":{"u":"blue"}},
-            {"do":"write","line":"它的導數也要在式子裡","on":"它的導數"}
-          ] },
-        { "show": ["② 算 $du$　③ 全部換成 $u$"],
-          "note": "$x$ 和 $dx$ 一個都不能留。",
-          "say": "第二步算 du。第三步把整個積分換成 u，x 和 dx 必須全部消失，一個都不能留。",
+            {
+              "do": "write",
+              "line": "1. 選 $u$：通常是裡層（括號、根號裡、次方上）"
+            },
+            {
+              "do": "write",
+              "line": "2. 算 $du$：$du=u'(x)\\,dx$",
+              "on": "是裡"
+            },
+            {
+              "do": "write",
+              "line": "3. 全部換成 $u$：不能留下任何 $x$",
+              "on": "個積"
+            },
+            {
+              "do": "write",
+              "line": "4. 積完換回 $x$",
+              "on": "都不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int x^2\\sqrt{1+x^3}\\,dx$"
+          ],
+          "say": "例子：x 平方乘根號 1 加 x 三次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"② 算 $du$","on":"算 du"},
-            {"do":"write","line":"③ 全部換成 $u$","on":"換成 u"},
-            {"do":"write","line":"$x$、$dx$ 一個都不能留","color":"red","on":"必須全部消失"}
-          ] },
-        { "show": ["④ 對 $u$ 積分，換回 $x$，$+C$"],
-          "say": "最後對 u 積分，再把 u 換回 x，別忘了加 C。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int x^2\\sqrt{1+x^3}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "選：$u=1+x^3$（根號裡）；算：$du=3x^2\\,dx$"
+          ],
+          "say": "選根號裡面的 1 加 x 三次方當 u。算 d u：3 x 平方 d x。",
           "board": [
-            {"do":"write","line":"④ 對 $u$ 積分，換回 ${{x:x}}$，$+C$"},
-            {"do":"focus","term":"x","on":"換回 x"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "常數倍可以補",
-      "beats": [
-        { "show": ["$\\int\\frac{x}{1+x^2}\\,dx$"],
-          "note": "裡面那一層 $1+x^2$ 的導數 $2x$，在分子出現。",
-          "say": "看這一題：分母一加 x 平方的導數是二 x，分子有 x，只差一個二。",
+            {
+              "do": "write",
+              "line": "選：$u=1+x^3$（根號裡）；算：$du=3x^2\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換：$x^2\\,dx=\\dfrac13\\,du$",
+            "$\\int x^2\\sqrt{1+x^3}\\,dx=\\frac13\\int u^{1/2}\\,du$"
+          ],
+          "say": "被積函數裡的 x 平方 d x，是 d u 的 3 分之 1。整個積分變成 3 分之 1 積分 u 的 2 分之 1 次方。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{{{n:x}}}{{{d:1+x^2}}}\\,dx$","tint":{"d":"blue"}},
-            {"do":"underline","term":"d","on":"分母"},
-            {"do":"write","line":"$({{d:1+x^2}})'=2x$","on":"導數是"},
-            {"do":"focus","term":"n","on":"分子有"}
-          ] },
-        { "show": ["令 $u=1+x^2$，$du=2x\\,dx$"],
-          "note": "式子裡只有 $x\\,dx$。",
-          "say": "令 u 等於一加 x 平方，du 是二 x dx。可是式子裡只有 x dx，少了一個二。",
+            {
+              "do": "write",
+              "line": "換：$x^2\\,dx=\\dfrac13\\,du$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x^2\\sqrt{1+x^3}\\,dx=\\frac13\\int u^{1/2}\\,du$",
+              "on": "整個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積、換回：",
+            "$=\\frac13\\cdot\\frac23u^{3/2}+C=\\frac29(1+x^3)^{3/2}+C$"
+          ],
+          "say": "照冪次積分，得到 3 分之 2 u 的 2 分之 3 次方，乘上 3 分之 1 是 9 分之 2。最後把 u 換回 1 加 x 三次方。",
           "board": [
-            {"do":"write","line":"令 $u=1+x^2$，$du={{t:2}}x\\,dx$"},
-            {"do":"focus","term":"t","on":"二 x dx"},
-            {"do":"write","line":"式子裡只有 $x\\,dx$","on":"只有"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "換完、積完、換回",
-      "beats": [
-        { "show": ["$\\int\\frac{1}{u}\\cdot\\frac{du}{2}$"],
-          "note": "$x$ 全部消失，只剩 $u$。",
-          "say": "先換：分母一加 x 平方換成 u，x dx 換成 du 除以二，這樣 x 就全部消失了。",
-          "board": [
-            {"do":"write","line":"$\\int{{n1:\\frac{1}{u}}}\\cdot{{n2:\\frac{du}{2}}}$"},
-            {"do":"focus","term":"n2","on":"du 除以二"}
-          ] },
-        { "show": ["$\\frac{1}{2}\\int\\frac{du}{u}=\\frac{1}{2}\\ln(1+x^2)+C$"],
-          "note": "$1+x^2$ 永遠是正的，絕對值可以拿掉。",
-          "say": "常數二分之一提到外面，剩下 u 分之一，積出來是自然對數，再把 u 換回去。",
-          "board": [
-            {"do":"write","line":"${{h:\\frac{1}{2}}}\\int\\frac{du}{u}$"},
-            {"do":"focus","term":"h","on":"提到外面"},
-            {"do":"transform","line":"$={{h:\\frac{1}{2}}}\\ln({{b:1+x^2}})+C$","on":"積出來"},
-            {"do":"focus","term":"b","on":"把 u 換回"}
-          ] },
-        { "show": ["$\\int x^2\\sqrt{1+x^3}\\,dx$"],
-          "note": "根號裡 $1+x^3$ 的導數 $3x^2$，跟 $x^2$ 只差常數。",
-          "say": "再一題：根號裡是一加 x 三次方，它的導數三 x 平方，跟外面的 x 平方只差常數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int{{o:x^2}}\\sqrt{{{i:1+x^3}}}\\,dx$","tint":{"i":"blue"},"on":"再一題"},
-            {"do":"underline","term":"i","on":"根號裡"},
-            {"do":"write","line":"$({{i:1+x^3}})'={{d:3x^2}}$","on":"它的導數"},
-            {"do":"focus","term":"o","on":"外面的"}
-          ] },
-        { "show": ["$u=1+x^3$，$x^2\\,dx=\\frac{du}{3}$"],
-          "note": "$\\frac{1}{3}\\int u^{1/2}\\,du$。",
-          "say": "令 u 等於一加 x 三次方，x 平方 dx 就是三分之一 du，剩下 u 的二分之一次方。",
-          "board": [
-            {"do":"write","line":"$u=1+x^3$，${{e:x^2\\,dx}}=\\frac{du}{3}$"},
-            {"do":"focus","term":"e","on":"x 平方 dx"},
-            {"do":"write","line":"$\\frac{1}{3}\\int u^{1/2}\\,du$","on":"剩下"}
-          ] }
-      ],
-      "key": "根號裡的導數跟外面只差常數倍",
-      "solve": {
-        "ask": "$\\int x^2\\sqrt{1+x^3}\\,dx$ 是？（$+C$ 可以省略）",
-        "problemId": "int-042",
-        "answer": "(2/9)(1+x^3)^(3/2)",
-        "claim": "D(ANS) == x^2*sqrt(1+x^3)",
-        "hint": "$u=1+x^3$，$x^2\\,dx=\\frac{du}{3}$。",
-        "steps": [
-          "$u=1+x^3$，$x^2\\,dx=\\frac{du}{3}$",
-          "$\\frac{1}{3}\\int u^{1/2}\\,du=\\frac{1}{3}\\cdot\\frac{2}{3}u^{3/2}$",
-          "換回 $x$：$\\frac{2}{9}(1+x^3)^{3/2}+C$"
-        ],
-        "wrong": [
-          {
-            "answer": "(2/3)(1+x^3)^(3/2)",
-            "why": "漏了 $\\frac{du}{3}$ 的 $\\frac{1}{3}$：$\\frac{1}{3}\\cdot\\frac{2}{3}=\\frac{2}{9}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "$x$ 不能補",
-      "beats": [
-        { "show": ["常數倍可以補，$x$ 不行"],
-          "note": "$x$ 不是常數，不能提出積分號。",
-          "say": "差常數倍可以補，可是式子裡連 x 都沒有，就不能補一個 x，因為它不是常數。",
-          "board": [
-            {"do":"write","line":"常數倍可以補，${{x:x}}$ 不行"},
-            {"do":"focus","term":"x","color":"red","on":"補一個 x"}
-          ] },
-        { "show": ["乘 $2x$ 再除掉，$x$ 還在"],
-          "note": "式子沒變，但換成 $u$ 後 $x$ 留下來。",
-          "say": "硬湊的話：乘二 x 再除以二 x，式子沒變。可是換成 u 之後，二 x 分之一還留著 x，不能提到積分外面。",
-          "board": [
-            {"do":"write","line":"$\\int{{k:\\frac{1}{2x}}}\\cdot 2x\\,e^{x^2}\\,dx$"},
-            {"do":"write","line":"$=\\int{{m:\\frac{1}{2x}}}\\,e^{u}\\,du$","on":"換成 u"},
-            {"do":"strike","term":"m","label":"x 還在","on":"還留著"}
-          ] },
-        { "show": ["$\\int e^{x^2}\\,dx$：$u=x^2$，$du=2x\\,dx$"],
-          "note": "式子裡沒有 $x$ 可以配。",
-          "say": "例如 e 的 x 平方次方：令 u 等於 x 平方，du 需要一個 x，式子裡卻沒有。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int e^{x^2}\\,dx$","on":"例如"},
-            {"do":"write","line":"$u=x^2$，${{du:du=2x\\,dx}}$","on":"令 u 等於"},
-            {"do":"focus","term":"du","on":"du 需要"}
-          ] },
-        { "show": ["它有反導函數，只是不是初等的"],
-          "note": "例如 $\\int_0^x e^{t^2}\\,dt$。換元不是萬能。",
-          "say": "它其實有反導函數，只是寫不成常見初等函數的有限組合。換元只是工具，不是什麼都能解。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{f:\\int_0^x e^{t^2}\\,dt}}$","on":"它其實"},
-            {"do":"underline","term":"f","label":"有反導函數","on":"只是寫不成"},
-            {"do":"write","line":"換元不是萬能","on":"換元只是工具"}
-          ] },
-        { "show": ["$\\int_0^x e^{t^2}\\,dt$：從 0 累積到 $x$"],
-          "note": "有沒有反導函數，跟寫不寫得出公式是兩回事。",
-          "say": "這是從零累積到 x 的面積，x 一動面積就變，它的導數就是被積函數，所以算反導函數。有沒有，跟寫不寫得出公式無關。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.5,1.5,-0.5,4],"curves":[{"expr":"exp(x^2)","domain":[-0.5,1.5],"color":"blue"}],"fills":[{"expr":"exp(x^2)","from":0,"to":1,"color":"blue"}]}},
-            {"do":"write","line":"$\\frac{d}{dx}\\int_0^x e^{t^2}\\,dt=e^{x^2}$","on":"導數"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "積、換回："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac13\\cdot\\frac23u^{3/2}+C=\\frac29(1+x^3)^{3/2}+C}}$",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "最後"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "$u$ 是 $\\ln x$",
       "beats": [
-        { "show": ["$\\int\\frac{\\ln x}{x}\\,dx$"],
-          "note": "$\\ln x$ 的導數 $\\frac{1}{x}$ 正好在式子裡。",
-          "say": "最後一題：自然對數 x 除以 x。自然對數 x 的導數是 x 分之一，正好在式子裡。",
+        {
+          "show": [
+            "$\\int\\frac{\\ln x}{x}\\,dx$"
+          ],
+          "say": "再一個例子：x 分之自然對數 x。這次沒有括號也沒有根號，裡層是誰？",
           "board": [
-            {"do":"write","line":"$\\int\\frac{{{l:\\ln x}}}{x}\\,dx$","tint":{"l":"blue"}},
-            {"do":"write","line":"$({{l:\\ln x}})'={{r:\\frac{1}{x}}}$","on":"的導數是"},
-            {"do":"focus","term":"r","on":"正好在"}
-          ] },
-        { "show": ["$u=\\ln x$，$du=\\frac{1}{x}\\,dx$"],
-          "note": "整個積分變成 $\\int u\\,du$。",
-          "say": "令 u 等於自然對數 x，x 分之一 dx 整個變成 du，剩下積分 u du。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{\\ln x}{x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac1x$ 是 $\\ln x$ 的導數：選 $u=\\ln x$"
+          ],
+          "say": "注意 x 分之 1 是自然對數 x 的導數。所以選 u 等於自然對數 x。",
           "board": [
-            {"do":"write","line":"令 $u=\\ln x$，${{d:\\frac{1}{x}\\,dx}}=du$"},
-            {"do":"focus","term":"d","on":"整個變成"},
-            {"do":"write","line":"$\\int u\\,du$","on":"剩下"}
-          ] },
-        { "show": ["$\\int u^n\\,du=\\frac{u^{n+1}}{n+1}+C$"],
-          "note": "這裡 $u$ 就是 $u^1$。",
-          "say": "對 u 積分，用反導函數表的次方規則：次方加一，再除以新的次方。這裡的 u 就是 u 的一次方，照套就好。",
+            {
+              "do": "write",
+              "line": "$\\dfrac1x$ 是 $\\ln x$ 的導數：選 $u=\\ln x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$du=\\dfrac1x\\,dx$",
+            "$\\begin{aligned}\\int\\frac{\\ln x}{x}\\,dx&=\\int u\\,du=\\frac{u^2}2+C\\\\&=\\frac{(\\ln x)^2}2+C\\end{aligned}$"
+          ],
+          "say": "d u 是 x 分之 1 d x，正好在場。整個積分變成積分 u d u，等於 2 分之 u 平方。換回來，是自然對數 x 的平方除以 2。",
           "board": [
-            {"do":"write","line":"$\\int u^n\\,du=\\frac{u^{{{p:n+1}}}}{n+1}+C$"},
-            {"do":"focus","term":"p","on":"次方加一"},
-            {"do":"write","line":"$u={{q:u^{1}}}$","on":"這裡的"},
-            {"do":"focus","term":"q","on":"一次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "$du=\\dfrac1x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}\\int\\frac{\\ln x}{x}\\,dx&=\\int u\\,du=\\frac{u^2}2+C\\\\&=\\frac{(\\ln x)^2}2+C\\end{aligned}}}}$",
+              "color": "red",
+              "on": "個積"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "平方#1"
+            }
+          ]
+        }
       ],
-      "key": "$\\frac{1}{x}$ 正好是 $\\ln x$ 的導數",
-      "predict": {
-        "ask": "答案是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "用換元積 $\\displaystyle\\int\\frac{\\ln x}{x}\\,dx$ 的順序",
+        "steps": [
           {
-            "label": "$\\frac{(\\ln x)^2}{2}+C$",
-            "correct": true
+            "label": "令 $u=\\ln x$"
           },
           {
-            "label": "$\\ln|\\ln x|+C$",
-            "why": "那是 $\\int\\frac{du}{u}$；這裡 $u$ 在分子，是 $\\int u\\,du=\\frac{u^2}{2}$。"
+            "label": "算出 $du=\\frac1x\\,dx$",
+            "why": "先要有上一步：令 $u=\\ln x$"
           },
           {
-            "label": "$\\frac{(\\ln x)^2}{2x}+C$",
-            "why": "$\\frac{1}{x}\\,dx$ 已經被 $du$ 吃掉，換回 $x$ 時不會再出現。"
+            "label": "把積分寫成 $\\int u\\,du$",
+            "why": "先要有上一步：算出 $du=\\frac1x\\,dx$"
+          },
+          {
+            "label": "積出 $\\frac{u^2}2+C$",
+            "why": "先要有上一步：把積分寫成 $\\int u\\,du$"
+          },
+          {
+            "label": "換回 $\\frac{(\\ln x)^2}2+C$",
+            "why": "先要有上一步：積出 $\\frac{u^2}2+C$"
           }
         ]
       }
+    },
+    {
+      "title": "常數倍可以補",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\frac{x}{1+x^2}\\,dx$"
+          ],
+          "say": "再看一題：1 加 x 平方分之 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{x}{1+x^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=1+x^2$，$du=2x\\,dx$；但被積函數只有 $x\\,dx$"
+          ],
+          "say": "令 u 是分母 1 加 x 平方，d u 是 2x d x。可是被積函數裡只有 x d x，少了一個 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=1+x^2$，$du=2x\\,dx$；但被積函數只有 $x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\,dx=\\dfrac12\\,du$：",
+            "$\\begin{aligned}\\int\\frac{x}{1+x^2}\\,dx&=\\frac12\\int\\frac{du}{u}\\\\&=\\frac12\\ln(1+x^2)+C\\end{aligned}$"
+          ],
+          "say": "沒關係，x d x 就是 2 分之 1 d u。積分變成 2 分之 1 積分 u 分之 1，得到 2 分之 1 自然對數 1 加 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\,dx=\\dfrac12\\,du$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}\\int\\frac{x}{1+x^2}\\,dx&=\\frac12\\int\\frac{du}{u}\\\\&=\\frac12\\ln(1+x^2)+C\\end{aligned}}}}$",
+              "color": "red",
+              "on": "積分#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "積分#2"
+            },
+            {
+              "do": "write",
+              "line": "　$1+x^2>0$，所以絕對值可以省略",
+              "color": "violet",
+              "on": "自然"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼常數可以補：$\\displaystyle\\int k\\,f\\,dx=k\\int f\\,dx$"
+          ],
+          "say": "常數為什麼可以這樣補？因為常數可以自由進出積分號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼常數可以補：$\\displaystyle\\int k\\,f\\,dx=k\\int f\\,dx$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 不行：$\\displaystyle\\int x\\,f\\,dx\\ne x\\int f\\,dx$"
+          ],
+          "say": "但 x 不行。x 不是常數，不能從積分號裡拿出來；上一課也看過，除以含 x 的東西，微分回去就不對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x$ 不行：$\\displaystyle\\int x\\,f\\,dx\\ne x\\int f\\,dx$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{x}{(3+x^2)^2}\\,dx$，令 $u=3+x^2$，會變成？"
+          ],
+          "say": "試一題：換完會變成什麼？"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "行不通的例子",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\sqrt{1+x^3}\\,dx$"
+          ],
+          "say": "什麼時候換元行不通？看根號 1 加 x 三次方，前面沒有 x 平方了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sqrt{1+x^3}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=1+x^3$，$du=3x^2\\,dx$，於是 $dx=\\dfrac{du}{3x^2}$",
+            "$\\int\\sqrt{u}\\,\\frac{du}{3x^2}$"
+          ],
+          "say": "一樣令 u 等於 1 加 x 三次方。d x 只好寫成 3 x 平方分之 d u。換進去以後，裡面還留著 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=1+x^3$，$du=3x^2\\,dx$，於是 $dx=\\dfrac{du}{3x^2}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sqrt{u}\\,\\frac{du}{3x^2}$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 和 $u$ 混在一起：這個積分沒辦法照 $u$ 來積"
+          ],
+          "say": "x 和 u 混在一起，這個積分沒有辦法只照 u 來積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x$ 和 $u$ 混在一起：這個積分沒辦法照 $u$ 來積",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "錯的做法：把 $\\dfrac1{3x^2}$ 當常數提出去"
+          ],
+          "say": "常見的錯誤，是把 3 x 平方分之 1 當成常數提出去。但 x 會跟著 u 變，它根本不是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯的做法：把 $\\dfrac1{3x^2}$ 當常數提出去",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判斷：換完之後還剩 $x$，而且消不掉 → 這個 $u$ 行不通"
+          ],
+          "say": "所以判斷的標準是：換完以後還剩下 x，而且消不掉，這個 u 就行不通，要換別的 u 或換別的方法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "判斷：換完之後還剩 $x$，而且消不掉 → 這個 $u$ 行不通",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　有時候剩下的 $x$ 能用 $u$ 表示出來，例如 $\\int x^5\\sqrt{1+x^3}\\,dx$ 剩下的 $x^3=u-1$；這招在〈非顯然的換元〉學",
+              "color": "violet",
+              "on": "這個"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "一定能檢查",
+      "beats": [
+        {
+          "show": [
+            "積分難，微分容易：把答案微分，看回不回得到被積函數"
+          ],
+          "say": "換元做完，一定能檢查：積分難，微分容易。把答案微分，看看會不會回到被積函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積分難，微分容易：把答案微分，看回不回得到被積函數",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查 $\\dfrac29(1+x^3)^{3/2}$：",
+            "$\\frac29\\cdot\\frac32(1+x^3)^{1/2}\\cdot3x^2=x^2\\sqrt{1+x^3}$"
+          ],
+          "say": "檢查第三節的答案：2 分之 3 拿下來，再乘裡面的導數 3 x 平方。係數全部相乘剛好是 1，回到原來的被積函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查 $\\dfrac29(1+x^3)^{3/2}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac29\\cdot\\frac32(1+x^3)^{1/2}\\cdot3x^2=x^2\\sqrt{1+x^3}$",
+              "on": "再乘"
+            },
+            {
+              "do": "write",
+              "line": "　檢查時，連鎖律多乘的那個裡層導數，正是當初被 $du$ 吃掉的東西",
+              "color": "violet",
+              "on": "部相"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 換元 = 連鎖律倒過來：$\\int f(g(x))g'(x)\\,dx=F(g(x))+C$",
+            "• 四步：選 $u$、算 $du$、全部換成 $u$、換回 $x$"
+          ],
+          "say": "整理一下：換元是連鎖律倒過來；四個步驟，選 u、算 d u、全部換成 u、換回 x；常數倍可以補，x 不行；換完還剩 x，就要換方法；最後微分檢查。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 換元 = 連鎖律倒過來：$\\int f(g(x))g'(x)\\,dx=F(g(x))+C$"
+            },
+            {
+              "do": "write",
+              "line": "• 四步：選 $u$、算 $du$、全部換成 $u$、換回 $x$",
+              "on": "四個"
+            },
+            {
+              "do": "write",
+              "line": "• 常數倍可以補；含 $x$ 的因子不能提出去",
+              "on": "全部"
+            },
+            {
+              "do": "write",
+              "line": "• 換完還剩 $x$ 消不掉：這個 $u$ 行不通",
+              "on": "倍可"
+            },
+            {
+              "do": "write",
+              "line": "• 做完微分檢查",
+              "on": "就要"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：換元：辨識"
+          ],
+          "say": "下一課，練習一眼看出該選誰當 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：換元：辨識"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["substitution", "u-sub"],
-    "fine": ["u-sub-identify-inner", "u-sub-match-derivative", "u-sub-constant-factor", "u-sub-log", "u-sub-radical", "u-sub-failure-detection"]
+    "coarse": [
+      "substitution",
+      "u-sub"
+    ],
+    "fine": [
+      "u-sub-identify-inner",
+      "u-sub-match-derivative",
+      "u-sub-constant-factor",
+      "u-sub-log",
+      "u-sub-radical",
+      "u-sub-failure-detection"
+    ]
   },
   "practice": [
-    { "id": "exam-int-005", "core": true, "trains": "u-sub-log" },
-    { "id": "exam-int-016", "core": true, "trains": "u-sub-identify-inner" },
-    { "id": "int-045", "core": true, "trains": "u-sub-log" },
-    { "id": "lec-07-m5", "core": true, "trains": "u-sub-match-derivative", "note": "$u=\\cos x$，$du=-\\sin x\\,dx$：負號也是一個常數倍。" },
-    { "id": "int-027", "core": true, "trains": "u-sub-constant-factor" },
-    { "id": "int-041", "core": true, "trains": "u-sub-constant-factor" },
-    { "id": "int-042", "core": true, "trains": "u-sub-radical" },
-    { "id": "cg-4c-003", "core": true, "trains": "u-sub-failure-detection" },
-    { "id": "int-044", "trains": "u-sub-identify-inner" },
-    { "id": "cg-4c-004", "trains": "u-sub-failure-detection" },
-    { "id": "int-043", "challenge": true, "trains": "u-sub-identify-inner", "note": "挑戰：$u$ 要選哪一層？" }
+    {
+      "id": "exam-int-005",
+      "core": true,
+      "trains": "u-sub-log"
+    },
+    {
+      "id": "exam-int-016",
+      "core": true,
+      "trains": "u-sub-identify-inner"
+    },
+    {
+      "id": "int-045",
+      "core": true,
+      "trains": "u-sub-log"
+    },
+    {
+      "id": "lec-07-m5",
+      "core": true,
+      "trains": "u-sub-match-derivative",
+      "note": "$u=\\cos x$，$du=-\\sin x\\,dx$：負號也是一個常數倍。"
+    },
+    {
+      "id": "int-027",
+      "core": true,
+      "trains": "u-sub-constant-factor"
+    },
+    {
+      "id": "int-041",
+      "core": true,
+      "trains": "u-sub-constant-factor"
+    },
+    {
+      "id": "int-042",
+      "core": true,
+      "trains": "u-sub-radical"
+    },
+    {
+      "id": "cg-4c-003",
+      "core": true,
+      "trains": "u-sub-failure-detection"
+    },
+    {
+      "id": "int-044",
+      "trains": "u-sub-identify-inner"
+    },
+    {
+      "id": "cg-4c-004",
+      "trains": "u-sub-failure-detection"
+    },
+    {
+      "id": "int-043",
+      "challenge": true,
+      "trains": "u-sub-identify-inner",
+      "note": "挑戰：$u$ 要選哪一層？"
+    }
   ],
   "gaps": []
 }

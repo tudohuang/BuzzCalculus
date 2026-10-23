@@ -1,0 +1,439 @@
+{
+  "id": "antiderivative",
+  "title": "反導函數",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["derivative-power-rules", "derivative-trig", "mean-value-theorem"],
+  "next": ["indefinite-integral"],
+  "related": ["integral-table"],
+  "objectives": [
+    "說得出「$F$ 是 $f$ 的反導函數」的意思：$F'=f$。",
+    "會用「猜、微分檢查、修正係數」找簡單函數的反導函數。",
+    "知道同一個 $f$ 的反導函數彼此只差一個常數，並會用條件 $F(a)=b$ 定出其中一個。"
+  ],
+  "visual": "上半張圖畫 f(x) = 2x。下半張圖畫一整族拋物線 y = x² + C（C = −2、−1、0、1、2），拖動滑桿可以讓其中一條上下平移。在同一個 x 上放一條直線穿過所有拋物線，每一條在那裡都畫出切線：切線全部平行，斜率都等於上半張圖在該點的高度 2x。最後點選「通過 (1, 4)」，只剩 C = 3 那一條亮著。",
+  "concept": [
+    {
+      "heading": "① 把微分倒過來問",
+      "body": [
+        "微分是：給 $F$，求 $F'$。現在倒過來：給 $f$，找一個 $F$ 使得 $F'=f$。這樣的 $F$ 叫做 $f$ 的反導函數。",
+        "例：$f(x)=2x$。$x^2$ 就是一個反導函數，因為 $(x^2)'=2x$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 反導函數不只一個",
+      "body": [
+        "$x^2+5$、$x^2-100$ 微分也都是 $2x$，因為常數微分是 $0$。所以 $2x$ 的反導函數是一整族：$x^2+C$，$C$ 是任意常數。",
+        "圖形上，這一族就是同一條曲線上下平移：在同一個 $x$，每一條的切線斜率都一樣。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 而且只有這些",
+      "body": [
+        "在一個區間上，如果 $F'=G'$ 處處成立，那麼 $F-G$ 是常數。所以找到一個反導函數 $F$，其他的全部都是 $F+C$，不會漏掉別的樣子。",
+        "直覺（不是證明）：兩個函數每一點的斜率都一樣，它們之間的距離就沒有理由改變。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "嚴格證明：$F'=G'\\Rightarrow F-G$ 是常數",
+      "body": [
+        "令 $H=F-G$，則在區間上 $H'=0$。任取區間裡的 $x_1<x_2$，由〈均值定理〉，存在 $c$ 介於兩者之間，使 $H(x_2)-H(x_1)=H'(c)(x_2-x_1)=0$。所以 $H$ 在任兩點的值都相同，是常數。",
+        "「一個區間」這個條件不能省：$\\frac{1}{x}$ 在 $x>0$ 與 $x<0$ 是兩段分開的區間，兩段可以加不同的常數。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 怎麼找：猜、微分、修正",
+      "body": [
+        "冪次：$(x^4)'=4x^3$。想要 $x^3$ 的反導函數，先猜 $x^4$，微分多了 $4$ 倍，除掉：$\\frac{x^4}{4}$。一般地，$x^n$ 的反導函數是 $\\frac{x^{n+1}}{n+1}$，$n\\ne -1$。",
+        "三角：$(\\cos x)'=-\\sin x$。想要 $\\sin x$ 的反導函數，猜 $\\cos x$ 會差一個負號，所以是 $-\\cos x$。",
+        "每次猜完都微分一次檢查。這一步不花時間，卻能抓到大部分的錯。"
+      ],
+      "tex": ["\\left(\\frac{x^{n+1}}{n+1}\\right)' = x^n\\quad (n \\ne -1)"],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 給一個點，就定出是哪一條",
+      "body": [
+        "只知道 $F'$ 不夠決定 $F$，再給一個點就夠了。$F'(x)=2x$ 且 $F(1)=4$：$F(x)=x^2+C$，代 $x=1$ 得 $1+C=4$，$C=3$，所以 $F(x)=x^2+3$。",
+        "物理上就是：知道速度，還要知道起點，才知道位置。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "冪次倒過來",
+      "prompt": "找出 $6x^2$ 的所有反導函數。",
+      "problemId": "int-001",
+      "steps": [
+        "猜 $x^3$：$(x^3)'=3x^2$，只有要的一半。",
+        "乘 $2$：$(2x^3)'=6x^2$。所以 $2x^3$ 是一個反導函數。",
+        "全部的反導函數是 $2x^3+C$。"
+      ],
+      "answer": "$2x^3+C$",
+      "claim": "D(2*x^3) == 6*x^2"
+    },
+    {
+      "title": "符號要檢查",
+      "prompt": "找出 $\\sin x$ 的一個反導函數。",
+      "steps": [
+        "$\\sin x$ 是誰的導數？先猜 $\\cos x$。",
+        "檢查：$(\\cos x)'=-\\sin x$，差一個負號。",
+        "改成 $-\\cos x$：$(-\\cos x)'=\\sin x$。所以 $-\\cos x$ 是一個反導函數（全部是 $-\\cos x+C$）。"
+      ],
+      "answer": "$-\\cos x$（一般解 $-\\cos x+C$）",
+      "claim": "D(-cos(x)) == sin(x)"
+    },
+    {
+      "title": "用一個點定出常數",
+      "prompt": "$F'(x)=3x^2-4x$，且 $F(2)=5$。求 $F(x)$。",
+      "steps": [
+        "逐項倒過來：$3x^2$ 來自 $x^3$，$-4x$ 來自 $-2x^2$。所以 $F(x)=x^3-2x^2+C$。",
+        "檢查：$(x^3-2x^2+C)'=3x^2-4x$。",
+        "代 $x=2$：$8-8+C=5$，得 $C=5$。",
+        "$F(x)=x^3-2x^2+5$。"
+      ],
+      "answer": "$F(x)=x^3-2x^2+5$",
+      "claim": "D(x^3-2*x^2+5) == 3*x^2-4*x ;; SUB(x^3-2*x^2+5, 2) == 5"
+    }
+  ],
+  "pitfalls": [
+    "把方向搞反：$x^2$ 的反導函數寫成 $2x$（那是導數）。",
+    "冪次倒過來忘記除以新指數：$x^3$ 的反導函數寫成 $x^4$。",
+    "$\\sin x$ 的反導函數寫成 $\\cos x$，符號反了。微分檢查一次就抓得到。",
+    "給了 $F(a)=b$ 卻把 $b$ 直接當成 $C$，沒有真的代 $x=a$ 進去。"
+  ],
+  "checks": [
+    {
+      "ask": "下列哪一個是 $3x^2$ 的反導函數？",
+      "options": [
+        { "label": "$x^3+7$", "correct": true },
+        { "label": "$6x$", "why": "$6x$ 是 $3x^2$ 的導數，你往前微分了；反導函數要往回找：誰微分會變成 $3x^2$。" },
+        { "label": "$\\frac{x^3}{3}$", "why": "$\\left(\\frac{x^3}{3}\\right)'=x^2$，少了 $3$ 倍。你除了新指數，但 $3x^2$ 前面本來就有 $3$，兩者抵消，答案是 $x^3$。" }
+      ]
+    },
+    {
+      "ask": "$F$、$G$ 都是 $f$ 在某區間上的反導函數，$F(0)=2$，$G(0)=5$，$F(3)=10$。$G(3)$ 是？",
+      "options": [
+        { "label": "$13$", "correct": true },
+        { "label": "$10$", "why": "同一個 $f$ 的反導函數不一定相等，只保證差一個常數。這裡 $G$ 一直比 $F$ 多 $3$。" },
+        { "label": "$7$", "why": "差距的方向反了：$G(0)-F(0)=3$，表示 $G$ 比 $F$ 多 $3$，不是少 $3$。" }
+      ]
+    },
+    {
+      "ask": "$F'(x)=2x$，$F(1)=4$。$F(x)$ 是？",
+      "options": [
+        { "label": "$x^2+3$", "correct": true },
+        { "label": "$x^2+4$", "why": "你把 $F(1)=4$ 直接當成 $C$。要代 $x=1$：$1+C=4$，所以 $C=3$。" },
+        { "label": "$2x+2$", "why": "$2x$ 是 $F'$，不是 $F$。要先找 $2x$ 的反導函數 $x^2+C$，再用 $F(1)=4$ 定 $C$。" }
+      ]
+    },
+    {
+      "ask": "$\\sin x$ 的所有反導函數是？",
+      "options": [
+        { "label": "$-\\cos x+C$", "correct": true },
+        { "label": "$\\cos x+C$", "why": "$(\\cos x)'=-\\sin x$，符號反了。微分檢查一次就看得出來。" },
+        { "label": "$-\\sin x+C$", "why": "$(-\\sin x)'=-\\cos x$，不是 $\\sin x$。你可能把「反導函數」想成「加一個負號」。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "把微分倒過來",
+      "beats": [
+        { "show": ["微分：給 $F$，求 $F'$","反過來：給 $f$，找 $F$ 使 $F'=f$"],
+          "note": "這樣的 $F$ 叫 $f$ 的反導函數。",
+          "say": "微分是給一個函數、求它的導數。現在倒過來問：給 f，找一個 F，讓 F prime 剛好等於 f。",
+          "board": [
+            {"do":"write","line":"微分：給 $F$，求 $F'$"},
+            {"do":"write","line":"反過來：找 $F$ 使 $F'=f$","on":"找一個 F"}
+          ] },
+        { "show": ["$f(x)=2x$ → $x^2$"],
+          "note": "因為 $(x^2)'=2x$。",
+          "say": "例如 f 是二 x。x 平方微分就是二 x，所以 x 平方是二 x 的一個反導函數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f(x)=2x$","on":"例如"},
+            {"do":"write","line":"$(x^2)'=2x$","on":"x 平方微分"},
+            {"do":"write","line":"$F(x)=x^2$","on":"所以"}
+          ] },
+        { "show": ["$x^2+5$、$x^2-100$ 也行"],
+          "note": "常數微分是 $0$。",
+          "say": "可是 x 平方加五、x 平方減一百，微分也都是二 x，因為常數微分是零，答案不只一個。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(x^2+5)'=2x$","on":"可是"},
+            {"do":"write","line":"$(x^2-100)'=2x$","on":"減一百"},
+            {"do":"write","line":"常數微分是 $0$","on":"因為"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "一整族：$+C$",
+      "beats": [
+        { "show": ["$2x$ 的反導函數：$x^2+C$"],
+          "note": "$C$ 是任意常數。",
+          "say": "所以二 x 的反導函數是一整族：x 平方加 C，C 可以是任何常數。",
+          "board": [
+            {"do":"write","line":"$F(x)={{a:x^2}}+{{c:C}}$"},
+            {"do":"focus","term":"c","label":"任意常數","on":"C 可以"}
+          ] },
+        { "show": ["同一條曲線上下平移"],
+          "note": "同一個 $x$，每一條的切線斜率都一樣。",
+          "say": "畫出來，這一族就是同一條曲線上下搬動。站在同一個 x，每一條的斜率都一樣。",
+          "board": [
+            {"do":"write","line":"同一條曲線上下平移"},
+            {"do":"write","line":"同一個 $x$，斜率都一樣","on":"站在"}
+          ] },
+        { "show": ["同一個形狀，上下搬動"],
+          "note": "藍、紅、綠是三個不同的 $C$。",
+          "say": "這是 x 平方加 C 的幾條，C 取不同的值。形狀完全一樣，只是整條上下搬動。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-2,4],"curves":[{"expr":"x^2-1","domain":[-2,2],"color":"blue"},{"expr":"x^2","domain":[-2,2],"color":"red"},{"expr":"x^2+1","domain":[-2,2],"color":"green"}]}}
+          ] },
+        { "show": ["區間上 $F'=G'$ ⇒ $F-G$ 是常數"],
+          "note": "找到一個 $F$，其他全部是 $F+C$。",
+          "say": "反過來也對：在一個區間上，兩個函數導數處處相同，它們就只差一個常數，不會漏掉別的樣子。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"區間上 $F'=G'$","on":"區間上"},
+            {"do":"write","line":"所以 ${{h:F-G}}$ 是常數","on":"它們就"}
+          ] },
+        { "show": ["$\\frac{1}{x}$：$x>0$、$x<0$ 兩段"],
+          "note": "兩段分開，各段可加不同常數。",
+          "say": "為什麼說一個區間？區間是連在一起的一段。x 分之一在 x 大於零和小於零是兩段，各加各的常數也行。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{x}$：${{r:x>0}}$、${{s:x<0}}$ 兩段"},
+            {"do":"underline","term":"r","on":"大於零"},
+            {"do":"underline","term":"s","on":"小於零"}
+          ] },
+        { "show": ["斜率處處一樣，距離不會變"],
+          "note": "直覺，不是證明；證明在下一節。",
+          "say": "直覺上，兩條曲線每一點的斜率都一樣，它們之間的距離就沒有理由改變。",
+          "board": [
+            {"do":"write","line":"斜率處處一樣，距離不變"},
+            {"do":"write","line":"直覺，不是證明","color":"red","on":"它們之間"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "證明：只差常數",
+      "beats": [
+        { "show": ["相減，再用〈均值定理〉"],
+          "say": "策略：把兩個函數相減，差的導數是零，再用均值定理說明差是常數。",
+          "board": [
+            {"do":"write","line":"相減 ⇒ $H'=0$ ⇒ 均值定理"}
+          ] },
+        { "show": ["$H=F-G$，$H'=F'-G'=0$"],
+          "say": "令 H 是 F 減 G。F prime 等於 G prime，所以 H prime 處處是零。",
+          "board": [
+            {"do":"write","line":"$H=F-G$"},
+            {"do":"write","line":"$F'=G'$","on":"F prime"},
+            {"do":"write","line":"$H'=F'-G'=0$","on":"所以"}
+          ] },
+        { "show": ["$x_1$、$x_2$ 之間有個 $c$"],
+          "note": "$H$ 連續又可微，$c$ 才一定存在。",
+          "say": "均值定理：兩點連線的斜率，等於中間某一點的切線斜率。前提是 H 連續又可微，這裡成立。",
+          "board": [
+            {"do":"write","line":"$\\frac{H(x_2)-H(x_1)}{x_2-x_1}={{c:H'(c)}}$"},
+            {"do":"focus","term":"c","label":"某一點","on":"中間某一點"},
+            {"do":"write","line":"條件：$H$ 連續又可微","on":"前提是"}
+          ] },
+        { "show": ["任取 $x_1<x_2$","$H(x_2)-H(x_1)=H'(c)(x_2-x_1)=0$"],
+          "note": "均值定理：$c$ 介於 $x_1$、$x_2$ 之間。",
+          "why": {"ask":"為什麼 $H(x_2)-H(x_1)=0$？","say":"在區間裡任取兩點，H 的值為什麼一樣？","options":[{"label":"均值定理：差 $=H'(c)\\cdot$ 距離，而 $H'(c)=0$","correct":true},{"label":"$H'=0$，所以 $H=0$","why":"導數是 $0$ 只說高度不變，不說高度是 $0$：$x^2+5$ 和 $x^2$ 差 $5$。"},{"label":"$x_1$、$x_2$ 靠得很近","why":"兩點是任取的，可以離很遠；靠的是均值定理，不是靠近。"}]},
+          "say": "均值定理說，兩點的差等於中間某點的導數乘距離。導數是零，差就是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"任取 $x_1<x_2$","on":"任取兩點"},
+            {"do":"write","line":"$H(x_2)-H(x_1)={{m:H'(c)}}(x_2-x_1)$","why":true,"on":"均值定理"},
+            {"do":"transform","line":"$H(x_2)-H(x_1)={{m:H'(c)}}(x_2-x_1)=0$","why":true,"on":"導數是零"}
+          ] },
+        { "show": ["不知道 $c$ 在哪也沒關係"],
+          "note": "每一點導數都是 $0$。",
+          "say": "不用知道 c 在哪。每一點的導數都是零，不管 c 落在哪裡，右邊都是零。",
+          "board": [
+            {"do":"write","line":"不管 $c$ 在哪，${{q:H'(c)=0}}$"},
+            {"do":"underline","term":"q","label":"右邊是 0","on":"右邊"}
+          ] },
+        { "show": ["任兩點值相同 ⇒ $H$ 是常數"],
+          "note": "也就是 $F=G+C$。",
+          "say": "任兩點的值都一樣，H 就是常數，F 和 G 只差一個常數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"任兩點值相同 ⇒ $H$ 是常數","on":"任兩點"},
+            {"do":"write","line":"${{r:F=G+C}}$","on":"F 和 G"},
+            {"do":"box","term":"r","color":"green","on":"只差"}
+          ] }
+      ],
+      "key": "相減得 $H'=0$，再證 $H$ 任兩點同值",
+      "proof": true,
+      "of": 3,
+      "skeleton": "直接",
+      "where": {
+        "ask": "「在一個區間上」用在哪一步？",
+        "steps": [
+          {
+            "label": "$H'=F'-G'=0$",
+            "why": "這只用到每一點 $F'=G'$，一點一點各自成立。"
+          },
+          {
+            "label": "對 $[x_1,x_2]$ 用均值定理",
+            "correct": true
+          },
+          {
+            "label": "任兩點值相同 ⇒ 常數",
+            "why": "這只是常數的意思；難的是前一步讓任兩點都能比。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "猜、微分、修正",
+      "beats": [
+        { "show": ["$(x^4)'=4x^3$"],
+          "note": "想要 $x^3$ 的反導函數，先猜 $x^4$。",
+          "say": "想找 x 三次方的反導函數。先猜 x 四次方，微分是四 x 三次方，多了四倍。",
+          "board": [
+            {"do":"write","line":"找 $x^3$ 的反導函數"},
+            {"do":"write","line":"$(x^4)'={{m:4}}x^3$","on":"先猜"},
+            {"do":"focus","term":"m","label":"多 4 倍","on":"四 x 三次方"}
+          ] },
+        { "show": ["除掉 $4$：$\\frac{x^4}{4}$"],
+          "say": "多了四倍就除掉，四分之 x 四次方，微分剛好是 x 三次方。",
+          "board": [
+            {"do":"write","line":"除掉 $4$：$\\frac{x^4}{4}$"},
+            {"do":"write","line":"$\\left(\\frac{x^4}{4}\\right)'=x^3$","on":"微分剛好"}
+          ] },
+        { "show": ["$x^n$ → $\\frac{x^{n+1}}{n+1}$，$n\\ne -1$"],
+          "note": "指數加一，再除以新指數。",
+          "say": "一般的冪次都這樣：指數加一，再除以新的指數。只有 n 等於負一不行，分母會是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x^n$ → $\\frac{x^{n+1}}{n+1}$","on":"指數加一"},
+            {"do":"write","line":"${{k:n\\ne -1}}$","on":"只有"},
+            {"do":"underline","term":"k","label":"分母 0","on":"不行"}
+          ] },
+        { "show": ["$n=-1$：$x^{-1}=\\frac{1}{x}$"],
+          "note": "這個例外後面的課再處理。",
+          "say": "n 等於負一時，x 的負一次方就是 x 分之一，這個公式用不上。它的反導函數後面的課再處理，這裡先不求。",
+          "board": [
+            {"do":"write","line":"$x^{-1}=\\frac{1}{x}$"},
+            {"do":"write","line":"這個公式用不上","color":"red","on":"用不上"}
+          ] },
+        { "show": ["$6x^2$：猜 $x^3$，$(x^3)'=3x^2$"],
+          "note": "只有要的一半。",
+          "say": "試一題：六 x 平方。猜 x 三次方，微分是三 x 平方，只有要的一半。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"找 $6x^2$ 的反導函數","on":"六 x 平方"},
+            {"do":"write","line":"$(x^3)'={{h:3x^2}}$","on":"猜 x 三次方"},
+            {"do":"underline","term":"h","label":"只有一半","on":"只有要的"}
+          ] }
+      ],
+      "key": "猜一個，微分回去，差幾倍就除幾倍",
+      "predict": {
+        "ask": "下一步是？",
+        "options": [
+          {
+            "label": "乘 $2$：$2x^3+C$",
+            "correct": true
+          },
+          {
+            "label": "除以新指數：$\\frac{x^3}{3}+C$",
+            "why": "$\\left(\\frac{x^3}{3}\\right)'=x^2$，離 $6x^2$ 更遠。$(x^3)'$ 只有一半，要乘 $2$。"
+          },
+          {
+            "label": "$x^3+C$ 就是答案",
+            "why": "$(x^3)'=3x^2$，只有 $6x^2$ 的一半。微分檢查一次就看到差 $2$ 倍。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "符號要檢查",
+      "beats": [
+        { "show": ["$\\sin x$ 是誰的導數？"],
+          "note": "先猜 $\\cos x$。",
+          "say": "換三角函數。sine x 是誰的導數？直覺先猜 cosine x。",
+          "board": [
+            {"do":"write","line":"$\\sin x$ 是誰的導數？"},
+            {"do":"write","line":"猜 $\\cos x$","on":"直覺先猜"}
+          ] },
+        { "show": ["$(\\cos x)'=-\\sin x$"],
+          "note": "差一個負號。",
+          "say": "檢查一下：cosine x 微分是負 sine x，差了一個負號。",
+          "board": [
+            {"do":"write","line":"$(\\cos x)'={{m:-\\sin x}}$"},
+            {"do":"underline","term":"m","label":"差個負號","on":"負 sine x"}
+          ] },
+        { "show": ["改成 $-\\cos x$：$(-\\cos x)'=\\sin x$"],
+          "note": "每次猜完都微分一次檢查。",
+          "say": "前面補一個負號就對了。猜完微分一次不花時間，卻能抓到大部分的錯。",
+          "board": [
+            {"do":"write","line":"$({{c:-\\cos x}})'=\\sin x$"},
+            {"do":"underline","term":"c","color":"green","on":"就對了"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "給一個點定 $C$",
+      "beats": [
+        { "show": ["$F'(x)=3x^2-4x$，$F(2)=5$"],
+          "note": "只知道 $F'$ 不夠，再給一個點就夠。",
+          "say": "只知道導數，F 還能上下平移。再給一個點，就能定出是哪一條。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.8,2.6,-1,9],"ticks":false,"curves":[{"expr":"x^3-2*x^2+1","color":"muted"},{"expr":"x^3-2*x^2+3","color":"muted"},{"expr":"x^3-2*x^2+5","color":"blue"}],"points":[{"x":2,"y":5,"color":"gold"}],"labels":[{"x":1.9,"y":6.3,"text":"(2, 5)","anchor":"end"}]}},
+            {"do":"write","line":"$F'(x)=3x^2-4x$，${{pt:F(2)=5}}$","on":"再給一個點"},
+            {"do":"underline","term":"pt","on":"就能定出"}
+          ] },
+        { "show": ["$F(x)=x^3-2x^2+C$"],
+          "note": "逐項倒過來，再微分檢查。",
+          "say": "逐項倒過來：三 x 平方來自 x 三次方，負四 x 來自負二 x 平方，最後加 C。",
+          "board": [
+            {"do":"transform","line":"$F(x)={{a:x^3}}{{b:-2x^2}}+{{c:C}}$","on":"逐項"},
+            {"do":"focus","term":"a","on":"x 三次方"},
+            {"do":"focus","term":"b","on":"負二 x 平方"},
+            {"do":"circle","term":"c","on":"加 C"}
+          ] },
+        { "show": ["代 $x=2$：$8-8+C=5$"],
+          "say": "把 x 等於二代進去，八減八加 C 等於五。",
+          "board": [
+            {"do":"write","line":"代 $x=2$：$8-8+{{c:C}}=5$","on":"代進去"}
+          ] },
+        { "show": ["$C=5$，$F(x)=x^3-2x^2+5$"],
+          "note": "知道速度，還要知道起點，才知道位置。",
+          "say": "所以 C 是五。就像知道速度，還要知道起點，才知道位置。",
+          "board": [
+            {"do":"transform","line":"${{cv:C=5}}$，$F(x)=x^3-2x^2+5$"},
+            {"do":"box","term":"cv","on":"C 是五","color":"green"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["basic-integral", "power-rule"],
+    "fine": ["antiderivative-definition", "antiderivative-power-reverse", "antiderivative-guess-check", "antiderivative-family", "antiderivative-initial-condition"]
+  },
+  "practice": [
+    { "id": "fd-int-001", "core": true, "trains": "antiderivative-power-reverse" },
+    { "id": "int-001", "core": true, "trains": "antiderivative-power-reverse" },
+    { "id": "tmpl-int-power-003", "core": true, "trains": "antiderivative-power-reverse" },
+    { "id": "int-002", "core": true, "trains": "antiderivative-guess-check" },
+    { "id": "fd-int-017", "core": true, "trains": "antiderivative-power-reverse", "note": "先把 $\\frac{1}{x^2}$ 寫成 $x^{-2}$。" },
+    { "id": "cg-4a-001", "core": true, "trains": "antiderivative-initial-condition" },
+    { "id": "cg-4a-004", "core": true, "trains": "antiderivative-family" },
+    { "id": "cg-4a-002", "trains": "antiderivative-initial-condition" },
+    { "id": "cg-4a-003", "trains": "antiderivative-family" },
+    { "id": "gx-048", "challenge": true, "trains": "antiderivative-initial-condition", "note": "挑戰：$f'=2x$ 給出一整族，$f(0)=0$ 挑出其中一條。" }
+  ],
+  "gaps": []
+}

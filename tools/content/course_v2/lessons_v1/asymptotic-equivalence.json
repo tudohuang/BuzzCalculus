@@ -1,0 +1,408 @@
+{
+  "id": "asymptotic-equivalence",
+  "title": "漸近等價",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["taylor-limits-higher", "limit-trig-standard", "limit-exp-log-standard", "limit-at-infinity"],
+  "next": ["big-o-little-o"],
+  "related": ["taylor-limits", "limit-comparison-test", "improper-comparison"],
+  "objectives": [
+    "說得出 $f\\sim g$ 的定義：$\\frac{f}{g}\\to 1$，並背熟 $x\\to 0$ 時的一組等價式。",
+    "在乘積與商裡用等價式替換，而且知道為什麼可以。",
+    "看出在相加、相減、指數裡替換為什麼會出錯，並會把差改寫成積再替換。"
+  ],
+  "visual": "在 x = 0 附近同時畫 y = sin 3x 與 y = 3x，下方畫比值 sin 3x/(3x)。按「放大」時兩條曲線越來越貼在一起，比值曲線越來越平、貼近高度 1；切換成 y = tan x − sin x 與 y = 0（把 tan x、sin x 都換成 x 的結果），可以看到兩者的比值根本不趨近 1。",
+  "concept": [
+    {
+      "heading": "① 兩個函數「長得一樣快」",
+      "body": [
+        "$x\\to 0$ 時 $\\sin x$ 與 $x$ 都 $\\to 0$，而且 $\\frac{\\sin x}{x}\\to 1$：越靠近 $0$，兩者的差相對於它們本身越來越小。這種關係叫漸近等價，記作 $\\sin x\\sim x$（$x\\to 0$）。",
+        "一般定義：$x\\to a$ 時，若 $\\frac{f(x)}{g(x)}\\to 1$，就寫 $f\\sim g$。$a$ 可以是一個數，也可以是 $\\pm\\infty$；一定要說清楚 $x$ 往哪裡跑。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 一組要背的等價式（$x\\to 0$）",
+      "body": [
+        "$\\sin x\\sim x$、$\\tan x\\sim x$、$\\arcsin x\\sim x$、$\\arctan x\\sim x$、$e^x-1\\sim x$、$\\ln(1+x)\\sim x$、$1-\\cos x\\sim\\frac{x^2}{2}$、$(1+x)^a-1\\sim ax$（$a\\ne 0$）。",
+        "它們都是〈用 Taylor 求極限〉裡展開式的第一個非零項。$x$ 可以換成任何 $\\to 0$ 的東西 $u(x)$：例如 $x\\to 0$ 時 $\\sin 3x\\sim 3x$，$\\ln(\\cos x)=\\ln(1+(\\cos x-1))\\sim\\cos x-1\\sim-\\frac{x^2}{2}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 乘積與商可以替換",
+      "body": [
+        "若 $f\\sim f_1$、$g\\sim g_1$，則 $f\\cdot g\\sim f_1\\cdot g_1$、$\\frac{f}{g}\\sim\\frac{f_1}{g_1}$。理由一行：$\\frac{f}{g}=\\frac{f}{f_1}\\cdot\\frac{f_1}{g_1}\\cdot\\frac{g_1}{g}$，頭尾兩個比值都 $\\to 1$，所以 $\\frac{f}{g}$ 與 $\\frac{f_1}{g_1}$ 有相同的極限（一邊存在，另一邊就存在）。",
+        "所以 $\\lim_{x\\to 0}\\frac{\\sin 3x\\cdot\\ln(1+2x)}{x(e^x-1)}$ 可以直接換成 $\\frac{3x\\cdot 2x}{x\\cdot x}=6$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 相減不能替換",
+      "body": [
+        "$\\tan x-\\sin x$：把兩個都換成 $x$ 得到 $0$，但真正的 $\\tan x-\\sin x$ 不是 $0$，它 $\\sim\\frac{x^3}{2}$。等價只保證「比值 $\\to 1$」，前兩項一樣、後面的項不一樣；相減時前面的項抵銷，剩下的正是被替換丟掉的部分。",
+        "補救：把差改寫成積。$\\tan x-\\sin x=\\tan x\\cdot(1-\\cos x)\\sim x\\cdot\\frac{x^2}{2}=\\frac{x^3}{2}$，這樣就又能替換了。真的寫不成積，就回到 Taylor 展開。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 指數裡也不能替換",
+      "body": [
+        "$x\\to\\infty$ 時 $x+1\\sim x$，但 $\\frac{e^{x+1}}{e^x}=e$，不 $\\to 1$。等價只控制比值，不控制差；指數裡的差 $1$ 會被 $e$ 放大成倍數。對數反而比較安全：若 $f\\sim g$ 且 $g\\to 0^+$ 或 $g\\to\\infty$，則 $\\ln f\\sim\\ln g$，因為 $\\ln f-\\ln g=\\ln\\frac{f}{g}\\to 0$，而 $\\ln g$ 本身 $\\to\\pm\\infty$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "乘積與商：直接替換",
+      "prompt": "$\\lim_{x\\to 0}\\frac{\\sin 3x\\cdot\\ln(1+2x)}{x(e^x-1)}$",
+      "steps": [
+        "每一個因子都 $\\to 0$，而且都是乘除關係，可以換。",
+        "$\\sin 3x\\sim 3x$，$\\ln(1+2x)\\sim 2x$，$e^x-1\\sim x$。",
+        "式子 $\\sim\\frac{(3x)(2x)}{x\\cdot x}=6$。"
+      ],
+      "answer": "$6$",
+      "claim": "LIM((sin(3x)*ln(1+2x))/(x*(e^x-1)), 0) == 6"
+    },
+    {
+      "title": "相減：先改寫成積",
+      "prompt": "$\\lim_{x\\to 0}\\frac{\\tan x-\\sin x}{x^3}$",
+      "problemId": "lim-013",
+      "steps": [
+        "分子是差，不能把 $\\tan x$、$\\sin x$ 都換成 $x$（那樣會得到 $0$，是錯的）。",
+        "提出 $\\tan x$：$\\tan x-\\sin x=\\tan x-\\tan x\\cdot\\cos x=\\tan x\\,(1-\\cos x)$。",
+        "現在是積：$\\tan x\\sim x$，$1-\\cos x\\sim\\frac{x^2}{2}$，所以分子 $\\sim\\frac{x^3}{2}$。",
+        "除以 $x^3$ $\\to\\frac{1}{2}$。"
+      ],
+      "answer": "$\\frac{1}{2}$",
+      "claim": "LIM((tan(x)-sin(x))/x^3, 0) == 1/2 ;; LIM((tan(x)-sin(x))/(tan(x)*x^2/2), 0) == 1"
+    },
+    {
+      "title": "$x\\to\\infty$ 的等價",
+      "prompt": "$\\lim_{x\\to\\infty}\\sqrt{x^2+1}\\cdot\\ln\\left(1+\\frac{3}{x}\\right)$",
+      "steps": [
+        "$x\\to\\infty$ 時只看 $x>0$。$\\sqrt{x^2+1}=x\\sqrt{1+1/x^2}$（$x>0$ 時 $\\sqrt{x^2}=x$），而 $\\sqrt{1+1/x^2}\\to 1$，所以 $\\sqrt{x^2+1}\\sim x$。",
+        "$u=\\frac{3}{x}\\to 0$，所以 $\\ln\\left(1+\\frac{3}{x}\\right)\\sim\\frac{3}{x}$。",
+        "乘積 $\\sim x\\cdot\\frac{3}{x}=3$。"
+      ],
+      "answer": "$3$",
+      "claim": "LIM(sqrt(x^2+1)*ln(1+3/x), inf) == 3"
+    }
+  ],
+  "pitfalls": [
+    "在相加或相減裡替換，前面的項抵銷後得到錯的 $0$。",
+    "忘了寫 $x$ 往哪裡跑：$\\sin x\\sim x$ 只在 $x\\to 0$ 成立，$x\\to\\infty$ 時完全不對。",
+    "把等價用在指數裡：$x+1\\sim x$ 不代表 $e^{x+1}\\sim e^x$。",
+    "替換時漏掉係數：$\\sin 3x\\sim 3x$，不是 $\\sim x$。"
+  ],
+  "checks": [
+    {
+      "ask": "$x\\to 0$ 時，$1-\\cos x$ 等價於？",
+      "options": [
+        { "label": "$\\frac{x^2}{2}$", "correct": true },
+        { "label": "$x$", "why": "$\\frac{1-\\cos x}{x}\\to 0$，不是 $\\to 1$。$1-\\cos x$ 是二階小量。" },
+        { "label": "$x^2$", "why": "$\\frac{1-\\cos x}{x^2}\\to\\frac{1}{2}$，不是 $1$；要寫 $\\frac{x^2}{2}$ 比值才 $\\to 1$。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個替換是對的？",
+      "options": [
+        { "label": "$\\lim_{x\\to 0}\\frac{\\sin x\\cdot(e^x-1)}{x^2}$：換成 $\\frac{x\\cdot x}{x^2}$，得 $1$", "correct": true },
+        { "label": "$\\lim_{x\\to 0}\\frac{\\sin x-x}{x^3}$：把 $\\sin x$ 換成 $x$，得 $0$", "why": "這是相減。前面的 $x$ 抵銷之後，剩下的正是被丟掉的 $-\\frac{x^3}{6}$，答案是 $-\\frac{1}{6}$。" },
+        { "label": "$x\\to\\infty$ 時 $x+1\\sim x$，所以 $\\lim\\frac{e^{x+1}}{e^x}=1$", "why": "等價不能放進指數。$\\frac{e^{x+1}}{e^x}=e$。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to 0}\\frac{\\ln(1+5x)}{\\arcsin 2x}$ 是？",
+      "options": [
+        { "label": "$\\frac{5}{2}$", "correct": true },
+        { "label": "$1$", "why": "兩個都「像 $x$」，但係數要留著：$\\ln(1+5x)\\sim 5x$，$\\arcsin 2x\\sim 2x$。" },
+        { "label": "$10$", "why": "這是商，不是積：$\\frac{5x}{2x}=\\frac{5}{2}$。" }
+      ]
+    },
+    {
+      "ask": "$x\\to 0$ 時 $\\ln(\\cos x)$ 等價於？",
+      "options": [
+        { "label": "$-\\frac{x^2}{2}$", "correct": true },
+        { "label": "$\\cos x$", "why": "$\\cos x\\to 1$，$\\ln(\\cos x)\\to 0$，兩者比值不 $\\to 1$。要用 $\\ln(1+u)\\sim u$，$u=\\cos x-1$。" },
+        { "label": "$\\frac{x^2}{2}$", "why": "$\\cos x<1$ 時 $\\ln(\\cos x)<0$，符號是負的。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "長得一樣快",
+      "beats": [
+        { "show": ["$x\\to 0$：$\\frac{\\sin x}{x}\\to 1$"],
+          "note": "兩個都 $\\to 0$，而且越來越像。",
+          "say": "x 趨近零的時候，sine x 和 x 都趨近零，而且比值趨近一。越靠近零，兩者越像。",
+          "board": [
+            {"do":"write","line":"$x\\to 0$：${{r:\\frac{\\sin x}{x}}}\\to 1$"},
+            {"do":"underline","term":"r","on":"比值"}
+          ] },
+        { "show": ["靠近 $0$，兩條線貼在一起"],
+          "note": "藍：$\\sin x$，紅：$x$。",
+          "say": "畫出來看：藍色是 sine x，紅色是 x。靠近零的地方，兩條線幾乎貼在一起。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-2,2],"curves":[{"expr":"sin(x)","domain":[-3,3],"color":"blue"},{"expr":"x","domain":[-2,2],"color":"red","dashed":true}]}}
+          ] },
+        { "show": ["$\\frac{f(x)}{g(x)}\\to 1$：記作 $f\\sim g$"],
+          "note": "這叫漸近等價。",
+          "say": "一般來說，只要 f 除以 g 趨近一，就說 f 和 g 漸近等價，用一個波浪號表示。",
+          "board": [
+            {"do":"write","line":"${{q:\\frac{f}{g}\\to 1}}$：記作 ${{s:f\\sim g}}$"},
+            {"do":"box","term":"s","color":"green","on":"漸近等價"}
+          ] },
+        { "show": ["一定要說 $x$ 往哪裡跑"],
+          "note": "$a$ 可以是一個數，也可以是 $\\pm\\infty$。",
+          "say": "要注意寫清楚 x 往哪裡跑。sine x 等價於 x 只在 x 趨近零成立，跑到無限大就完全不對。",
+          "board": [
+            {"do":"write","line":"$\\sin x\\sim x$ 只在 ${{z:x\\to 0}}$ 成立"},
+            {"do":"focus","term":"z","color":"gold","on":"趨近零成立"},
+            {"do":"write","line":"$x\\to\\infty$：${{w:\\sin x\\sim x}}$","on":"跑到"},
+            {"do":"strike","term":"w","label":"不對","on":"就完全"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f\\sim g$ 要求的是什麼？",
+        "options": [
+          {
+            "label": "比值 $\\frac{f}{g}\\to 1$",
+            "correct": true
+          },
+          {
+            "label": "差 $f-g\\to 0$",
+            "why": "$x\\to 0$ 時 $\\sin x$ 和 $2x$ 的差也 $\\to 0$，但比值不 $\\to 1$；等價看的是比值。"
+          },
+          {
+            "label": "$f$ 和 $g$ 相等",
+            "why": "$\\sin x$ 不等於 $x$，只是越靠近 $0$ 越像，比值 $\\to 1$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "一組要背的",
+      "beats": [
+        { "show": ["$\\sin x$、$\\tan x$、$\\arcsin x$、$\\arctan x\\sim x$"],
+          "note": "以下都是 $x\\to 0$。",
+          "say": "x 趨近零的時候，sine、tangent，還有它們的反函數，都等價於 x。",
+          "board": [
+            {"do":"write","line":"$x\\to 0$：$\\sin x\\sim x$、$\\tan x\\sim x$"},
+            {"do":"write","line":"$\\arcsin x\\sim x$、$\\arctan x\\sim x$","on":"反函數"}
+          ] },
+        { "show": ["$e^x-1\\sim x$，$\\ln(1+x)\\sim x$"],
+          "say": "e 的 x 次方減一，和自然對數一加 x，也都等價於 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$e^x-1\\sim x$","on":"e 的"},
+            {"do":"write","line":"$\\ln(1+x)\\sim x$","on":"自然對數"}
+          ] },
+        { "show": ["$e^x=1+x+\\frac{x^2}{2}+\\cdots$"],
+          "note": "Taylor 展開：把函數寫成 $x$ 的各次項相加。",
+          "say": "Taylor 展開是把函數寫成 x 的一次、二次、三次項相加。e 的 x 次方減一，第一個不是零的項就是 x。",
+          "board": [
+            {"do":"write","line":"$e^x=1+x+\\frac{x^2}{2}+\\cdots$"},
+            {"do":"transform","line":"$e^x-1={{n1:x}}+\\frac{x^2}{2}+\\cdots$","on":"減一"},
+            {"do":"circle","term":"n1","color":"gold","on":"第一個"}
+          ] },
+        { "show": ["$(1+x)^a-1\\sim ax$（$a\\ne 0$）"],
+          "say": "一加 x 的 a 次方減一，等價於 a 乘 x，a 不能是零。",
+          "board": [
+            {"do":"write","line":"$(1+x)^a-1\\sim ax$（${{n:a\\ne 0}}$）"},
+            {"do":"underline","term":"n","color":"gold","on":"a 不能"}
+          ] },
+        { "show": ["都是展開式的第一個非零項"],
+          "note": "見〈用 Taylor 求極限〉。",
+          "say": "不用死背：這些都是 Taylor 展開裡第一個不是零的項。",
+          "board": [
+            {"do":"write","line":"$\\sin x={{f:x}}-\\frac{x^3}{6}+\\cdots$"},
+            {"do":"circle","term":"f","color":"gold","label":"第一項","on":"第一個"}
+          ] },
+        { "show": ["$\\frac{\\sin x}{x}=1-\\frac{x^2}{6}+\\cdots\\to 1$"],
+          "note": "後面的項都比 $x$ 高次。",
+          "say": "其他項都比 x 高次，除以 x 之後趨近零，所以 sine x 除以 x 趨近一。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\sin x}{x}=1-\\frac{x^2}{6}+\\cdots\\to 1$"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$x$ 換成 $u(x)$",
+      "beats": [
+        { "show": ["$x$ 可以換成任何 $\\to 0$ 的 $u(x)$"],
+          "note": "例如 $\\sin 3x\\sim 3x$。",
+          "say": "清單裡的 x 可以換成任何趨近零的東西。sine 三 x 等價於三 x，係數要留著。",
+          "board": [
+            {"do":"write","line":"$\\sin x\\sim x$ ⇒ $\\sin u(x)\\sim u(x)$"},
+            {"do":"write","line":"$\\sin 3x\\sim {{c:3x}}$","on":"sine 三 x"},
+            {"do":"focus","term":"c","color":"gold","label":"係數留著","on":"係數"}
+          ] },
+        { "show": ["$\\ln(\\cos x)=\\ln(1+(\\cos x-1))$"],
+          "note": "$u=\\cos x-1\\to 0$。",
+          "say": "自然對數 cosine x 先湊成一加 u 的樣子，u 是 cosine x 減一，它趨近零。",
+          "board": [
+            {"do":"write","line":"$\\ln(\\cos x)=\\ln(1+{{u:(\\cos x-1)}})$","tint":{"u":"blue"}},
+            {"do":"focus","term":"u","color":"blue","label":"u → 0","on":"u 是"}
+          ] },
+        { "show": ["$\\sim\\cos x-1\\sim-\\frac{x^2}{2}$"],
+          "say": "所以它等價於 u，也就是 cosine x 減一，再等價於負二分之一 x 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sim {{u:(\\cos x-1)}}$","tint":{"u":"blue"},"on":"所以它"},
+            {"do":"focus","term":"u","color":"blue","on":"也就是"}
+          ] },
+        { "show": ["$\\cos x=1-\\frac{x^2}{2}+\\cdots$"],
+          "note": "同理 $1-\\cos x\\sim\\frac{x^2}{2}$。",
+          "say": "cosine x 展開是一減二分之 x 平方，再加後面的項。減掉一，沒有 x 這一項，第一個不是零的是負二分之 x 平方。",
+          "board": [
+            {"do":"write","line":"$\\cos x=1-\\frac{x^2}{2}+\\cdots$"},
+            {"do":"transform","line":"$\\cos x-1={{h:-\\frac{x^2}{2}}}+\\cdots$","on":"減掉一"},
+            {"do":"box","term":"h","color":"green","on":"負二分之"}
+          ] }
+      ],
+      "key": "把 $\\cos x-1$ 當成新的小量 $u$",
+      "check": 3
+    },
+    {
+      "title": "乘與除可以換",
+      "beats": [
+        { "show": ["$f\\sim f_1$、$g\\sim g_1$ ⇒ $\\frac{f}{g}\\sim\\frac{f_1}{g_1}$"],
+          "note": "乘積也一樣。",
+          "say": "在乘積和商裡，每一個因子都可以各自換成等價的東西，極限不變。",
+          "board": [
+            {"do":"write","line":"$f\\sim f_1$、$g\\sim g_1$ ⇒ $\\frac{f}{g}\\sim\\frac{f_1}{g_1}$"}
+          ] },
+        { "show": ["$\\frac{f}{g}=\\frac{f}{f_1}\\cdot\\frac{f_1}{g_1}\\cdot\\frac{g_1}{g}$"],
+          "note": "頭尾兩個比值都 $\\to 1$。",
+          "say": "理由只要一行：拆成三個比值相乘，頭尾兩個都趨近一，中間那個就決定極限。",
+          "board": [
+            {"do":"write","line":"$\\frac{f}{g}={{h:\\frac{f}{f_1}}}\\cdot{{m:\\frac{f_1}{g_1}}}\\cdot{{t:\\frac{g_1}{g}}}$","on":"拆成三個比值"},
+            {"do":"focus","term":"h","label":"→ 1","on":"頭尾兩個"},
+            {"do":"focus","term":"t","label":"→ 1","on":"都趨近一"},
+            {"do":"underline","term":"m","on":"中間那個"}
+          ] },
+        { "show": ["$\\frac{\\sin 3x\\cdot\\ln(1+2x)}{x(e^x-1)}$","$\\sim\\frac{3x\\cdot 2x}{x\\cdot x}=6$"],
+          "say": "例如這一題，分子換成三 x 乘二 x，分母換成 x 乘 x，答案是六。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{ {{a:\\sin 3x}}\\cdot{{b:\\ln(1+2x)}} }{x\\,{{c:(e^x-1)}}}$","on":"例如"},
+            {"do":"write","line":"$\\sim\\frac{ {{a2:3x}}\\cdot{{b2:2x}} }{x\\cdot{{c2:x}}}={{r:6}}$","on":"分子換成"},
+            {"do":"box","term":"r","color":"green","on":"答案是"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "相減不能換",
+      "beats": [
+        { "show": ["$\\tan x-\\sin x$：都換成 $x$ 得 $0$？"],
+          "note": "錯：其實 $\\tan x-\\sin x\\sim\\frac{x^3}{2}$。",
+          "say": "tangent x 減 sine x，兩個都換成 x 會得到零。可是它真的不是零。",
+          "board": [
+            {"do":"write","line":"$\\tan x-\\sin x$"},
+            {"do":"write","line":"$\\sim x-x={{w:0}}$","on":"兩個都換成"},
+            {"do":"strike","term":"w","label":"錯","on":"會得到"}
+          ] },
+        { "show": ["等價只保證比值 $\\to 1$"],
+          "note": "相減時前面的項抵銷，剩下的正是被丟掉的。",
+          "say": "等價只管比值，前面的項一樣、後面的不一樣。相減把前面消掉，剩下的正是替換時丟掉的部分。",
+          "board": [
+            {"do":"write","line":"$\\tan x-\\sin x={{g:(x-x)}}+{{r:\\cdots}}$"},
+            {"do":"circle","term":"g","color":"gold","on":"消掉"},
+            {"do":"underline","term":"r","color":"red","label":"丟掉的","on":"丟掉"}
+          ] },
+        { "show": ["補救：差改寫成積"],
+          "note": "$\\tan x-\\sin x=\\tan x\\,(1-\\cos x)$",
+          "say": "補救的辦法是把差改寫成積：提出 tangent x，剩下一減 cosine x。寫不成積，就回到 Taylor 展開。",
+          "board": [
+            {"do":"write","line":"$\\tan x-\\sin x={{t:\\tan x}}\\,{{c:(1-\\cos x)}}$"},
+            {"do":"focus","term":"t","color":"gold","on":"提出"},
+            {"do":"underline","term":"c","color":"gold","on":"剩下"}
+          ] },
+        { "show": ["$\\sin x-x$ 寫不成積 → 用展開"],
+          "note": "展開後前面的 $x$ 抵銷，剩下的就是答案。",
+          "say": "有些差寫不成積，例如 sine x 減 x。這時用展開：sine x 是 x 減六分之 x 三次，所以差是負六分之 x 三次。",
+          "board": [
+            {"do":"write","line":"$\\sin x-x=(x-\\frac{x^3}{6}+\\cdots)-x$"},
+            {"do":"transform","line":"$=-\\frac{x^3}{6}+\\cdots$","on":"所以差"}
+          ] }
+      ],
+      "key": "差不能各自替換，先改寫成乘積",
+      "predict": {
+        "ask": "$\\tan x\\,(1-\\cos x)$ 等價於？",
+        "options": [
+          {
+            "label": "$\\frac{x^3}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "那是在相減裡直接替換的結果；改寫成積之後，$\\tan x\\sim x$、$1-\\cos x\\sim\\frac{x^2}{2}$。"
+          },
+          {
+            "label": "$x^3$",
+            "why": "$1-\\cos x\\sim\\frac{x^2}{2}$，不是 $x^2$；少了二分之一。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "指數裡與 $x\\to\\infty$",
+      "beats": [
+        { "show": ["$x\\to\\infty$：$x+1\\sim x$","但 $\\frac{e^{x+1}}{e^x}=e$"],
+          "note": "等價只控制比值，不控制差。",
+          "say": "x 加一和 x 等價，但放進指數，比值是 e，不是一。指數裡的差一，被放大成倍數了。",
+          "board": [
+            {"do":"write","line":"$x\\to\\infty$：$x+1\\sim x$"},
+            {"do":"write","line":"但 $\\frac{e^{x+1}}{e^x}={{e:e}}$，不是 ${{w:1}}$","on":"放進指數"},
+            {"do":"strike","term":"w","on":"不是一"}
+          ] },
+        { "show": ["$\\sqrt{x^2+1}\\sim x$（$x>0$）"],
+          "note": "$\\sqrt{1+1/x^2}\\to 1$。",
+          "say": "x 趨近無限大，只看 x 大於零。根號 x 平方加一，提出 x 之後剩下的部分趨近一，所以等價於 x。",
+          "board": [
+            {"do":"write","line":"$\\sqrt{x^2+1}\\sim {{s:x}}$（$x>0$）"},
+            {"do":"focus","term":"s","on":"所以等價於 x"}
+          ] },
+        { "show": ["$\\ln\\left(1+\\frac{3}{x}\\right)\\sim\\frac{3}{x}$"],
+          "note": "$u=\\frac{3}{x}\\to 0$。",
+          "say": "x 分之三趨近零，所以自然對數一加 x 分之三，等價於 x 分之三。",
+          "board": [
+            {"do":"write","line":"$\\ln\\left(1+\\frac{3}{x}\\right)\\sim {{l:\\frac{3}{x}}}$"},
+            {"do":"focus","term":"l","on":"等價於 x 分之三"}
+          ] },
+        { "show": ["乘積 $\\sim x\\cdot\\frac{3}{x}=3$"],
+          "say": "兩個因子相乘，x 約掉，極限是三。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"乘積 $\\sim {{s:x}}\\cdot{{l:\\frac{3}{x}}}={{r:3}}$","on":"兩個因子"},
+            {"do":"box","term":"r","color":"green","on":"極限是三"}
+          ] }
+      ],
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["asymptotics", "standard-limit", "trig-limit"],
+    "fine": ["asymptotic-equivalence-table", "asymptotic-equivalence-product", "asymptotic-equivalence-difference-trap", "asymptotic-equivalence-at-infinity"]
+  },
+  "practice": [
+    { "id": "tb-lh-001", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "tb-lh-002", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "lim-030", "core": true, "trains": "asymptotic-equivalence-table" },
+    { "id": "exam-lim-015", "core": true, "trains": "asymptotic-equivalence-table" },
+    { "id": "lim-013", "core": true, "trains": "asymptotic-equivalence-difference-trap" },
+    { "id": "depth-lim-010", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "rel-boss-019", "core": true, "trains": "asymptotic-equivalence-at-infinity" },
+    { "id": "cg-11a-001", "core": true, "trains": "asymptotic-equivalence-difference-trap" },
+    { "id": "lx-hard-008", "trains": "asymptotic-equivalence-table" },
+    { "id": "fd-limx-608", "trains": "asymptotic-equivalence-table" },
+    { "id": "lm-nr-003", "trains": "asymptotic-equivalence-at-infinity" },
+    { "id": "cg-11a-002", "trains": "asymptotic-equivalence-difference-trap" },
+    { "id": "fd-limx-606", "challenge": true, "trains": "asymptotic-equivalence-difference-trap", "note": "挑戰：提出 $e^x$，$e^{\\tan x}-e^x=e^x\\left(e^{\\tan x-x}-1\\right)$，再用 $e^u-1\\sim u$。" }
+  ],
+  "gaps": []
+}

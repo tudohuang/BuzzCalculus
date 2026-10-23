@@ -1,0 +1,380 @@
+{
+  "id": "harmonic-oscillator",
+  "title": "簡諧振盪",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["complex-roots"],
+  "next": ["damped-oscillator"],
+  "related": ["spring-work"],
+  "objectives": [
+    "從牛頓第二定律與虎克定律寫出 $mx''+kx=0$，說出 $\\omega_0=\\sqrt{k/m}$ 的物理意義。",
+    "用初始位置與初速度解出 $x(t)$，並改寫成 $A\\cos(\\omega_0t-\\varphi)$，讀出振幅與週期。",
+    "用能量守恆 $\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2={}$ 常數 檢查答案。"
+  ],
+  "visual": "左邊一個掛在彈簧上的木塊上下振動，右邊同步畫出 x(t)。滑桿調整 k 與 m：k 變大振得更快，m 變大振得更慢，振幅大小不影響週期。底下兩條能量長條（動能、位能）此消彼長，總和那條保持不動。",
+  "concept": [
+    {
+      "heading": "① 從物理寫出方程",
+      "body": [
+        "質量 $m$ 的木塊接在彈簧上，$x$ 是離開平衡位置的位移。虎克定律：彈簧的力是 $-kx$（拉長就往回拉，壓縮就往外推），$k>0$ 是彈簧常數。牛頓第二定律 力 $={}$ 質量 $\\times$ 加速度："
+      ],
+      "tex": ["m x'' = -kx \\quad\\Longleftrightarrow\\quad x'' + \\omega_0^2 x = 0,\\qquad \\omega_0=\\sqrt{k/m}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解：純虛根給 $\\sin$、$\\cos$",
+      "body": [
+        "特徵方程 $r^2+\\omega_0^2=0$，$r=\\pm i\\omega_0$（〈複數根〉，$\\alpha=0$）。通解 $x(t)=C_1\\cos\\omega_0t+C_2\\sin\\omega_0t$。",
+        "代 $t=0$：$C_1=x(0)$；$x'(0)=\\omega_0C_2$，所以 $C_2=\\frac{x'(0)}{\\omega_0}$。",
+        "$\\omega_0$ 是角頻率（每秒轉幾弧度），週期 $T=\\frac{2\\pi}{\\omega_0}=2\\pi\\sqrt{m/k}$：彈簧越硬振越快，木塊越重振越慢。週期跟振幅無關：拉遠一點，回復力也比較大，剛好抵銷。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 振幅與相位",
+      "body": [
+        "$C_1\\cos\\omega_0t+C_2\\sin\\omega_0t$ 可以合成一個餘弦 $A\\cos(\\omega_0t-\\varphi)$，其中 $A=\\sqrt{C_1^2+C_2^2}$，$\\cos\\varphi=\\frac{C_1}{A}$、$\\sin\\varphi=\\frac{C_2}{A}$。$A$ 是振幅（離平衡最遠多少），$\\varphi$ 說明最遠點發生在什麼時候。",
+        "$\\varphi$ 要看 $C_1$、$C_2$ 的正負決定象限，不能只用 $\\tan\\varphi=\\frac{C_2}{C_1}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 能量守恆",
+      "body": [
+        "動能 $\\frac{1}{2}mx'^2$ 加彈性位能 $\\frac{1}{2}kx^2$ 不隨時間改變：微分得 $x'(mx''+kx)=0$。木塊在平衡點最快、在最遠點瞬間靜止，能量在兩種形式之間來回交換。這是檢查答案的好方法。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "從物理量到 $x(t)$",
+      "prompt": "$m=2$ kg、$k=18$ N/m 的彈簧系統，木塊從平衡位置以 $3$ m/s 出發。求 $x(t)$、振幅、週期。",
+      "steps": [
+        "$\\omega_0=\\sqrt{k/m}=\\sqrt9=3$（rad/s）。方程 $x''+9x=0$。",
+        "$x(0)=0$ 給 $C_1=0$；$x'(0)=3$ 給 $C_2=\\frac{3}{\\omega_0}=1$。",
+        "$x(t)=\\sin 3t$（公尺）。振幅 $1$ m，週期 $\\frac{2\\pi}{3}\\approx2.09$ 秒。"
+      ],
+      "answer": "$x(t)=\\sin 3t$，振幅 $1$ m，週期 $\\frac{2\\pi}{3}$ 秒",
+      "claim": "sqrt(18/2) == 3 ;; D2(sin(3t)) == -9*sin(3t) ;; SUB(sin(3t), 0) == 0 ;; D(sin(3t), 0) == 3"
+    },
+    {
+      "title": "合成振幅與相位",
+      "prompt": "$x''+4x=0$，$x(0)=3$，$x'(0)=8$。寫成 $A\\cos(2t-\\varphi)$。",
+      "steps": [
+        "$\\omega_0=2$。$C_1=x(0)=3$，$C_2=\\frac{x'(0)}{\\omega_0}=\\frac{8}{2}=4$。",
+        "$x=3\\cos 2t+4\\sin 2t$。$A=\\sqrt{3^2+4^2}=5$。",
+        "$\\cos\\varphi=\\frac{3}{5}>0$、$\\sin\\varphi=\\frac{4}{5}>0$，$\\varphi$ 在第一象限：$\\varphi=\\arctan\\frac{4}{3}\\approx0.927$。",
+        "最大速度 $A\\omega_0=10$。"
+      ],
+      "answer": "$x=5\\cos\\left(2t-\\arctan\\frac{4}{3}\\right)$",
+      "claim": "3*cos(2t)+4*sin(2t) == 5*cos(2t - atan(4/3)) ;; D2(3*cos(2t)+4*sin(2t)) == -4*(3*cos(2t)+4*sin(2t)) ;; SUB(3*cos(2t)+4*sin(2t), 0) == 3 ;; D(3*cos(2t)+4*sin(2t), 0) == 8"
+    },
+    {
+      "title": "用能量檢查",
+      "prompt": "承上題，取 $m=1$、$k=4$，驗證總能量不變。",
+      "steps": [
+        "$t=0$：動能 $\\frac{1}{2}\\cdot1\\cdot8^2=32$，位能 $\\frac{1}{2}\\cdot4\\cdot3^2=18$，總和 $50$。",
+        "在最遠點 $x=\\pm5$，速度為 $0$：位能 $\\frac{1}{2}\\cdot4\\cdot5^2=50$，動能 $0$。",
+        "任何時刻 $\\frac{1}{2}x'^2+2x^2$ 都是 $50$。"
+      ],
+      "answer": "總能量 $50$（焦耳）",
+      "claim": "0.5*D(3*cos(2t)+4*sin(2t))^2 + 0.5*4*(3*cos(2t)+4*sin(2t))^2 == 50"
+    }
+  ],
+  "pitfalls": [
+    "$C_2$ 寫成 $x'(0)$，忘了除以 $\\omega_0$。",
+    "把角頻率 $\\omega_0$ 當成每秒振動次數；次數是 $\\frac{\\omega_0}{2\\pi}$。",
+    "振幅寫成 $|C_1|+|C_2|$，正確是 $\\sqrt{C_1^2+C_2^2}$。",
+    "只用 $\\tan\\varphi=\\frac{C_2}{C_1}$ 定相位，象限錯了差 $\\pi$。",
+    "以為振幅越大週期越長：簡諧振盪的週期與振幅無關。"
+  ],
+  "checks": [
+    {
+      "ask": "同一根彈簧，木塊質量變成 4 倍，週期變成？",
+      "options": [
+        { "label": "$2$ 倍", "correct": true },
+        { "label": "$4$ 倍", "why": "$T=2\\pi\\sqrt{m/k}$，$m$ 在根號裡：$\\sqrt4=2$。" },
+        { "label": "$\\frac{1}{2}$", "why": "方向反了：越重越慢，週期變長。" }
+      ]
+    },
+    {
+      "ask": "$x=6\\cos t+8\\sin t$ 的振幅是？",
+      "options": [
+        { "label": "$10$", "correct": true },
+        { "label": "$14$", "why": "$\\cos$ 與 $\\sin$ 不會同時達到最大，係數不能直接相加；$A=\\sqrt{36+64}=10$。" },
+        { "label": "$8$", "why": "只看較大的係數漏了 $\\cos$ 那一項的貢獻；$A=\\sqrt{6^2+8^2}$。" }
+      ]
+    },
+    {
+      "ask": "把木塊拉得更遠再放手（振幅變 $2$ 倍），週期？",
+      "options": [
+        { "label": "不變", "correct": true },
+        { "label": "變 $2$ 倍", "why": "路程變 $2$ 倍，但回復力與速度也都變 $2$ 倍，剛好抵銷；$T=\\frac{2\\pi}{\\omega_0}$ 裡沒有振幅。" },
+        { "label": "變一半", "why": "週期只由 $k$ 與 $m$ 決定，跟拉多遠無關。" }
+      ]
+    },
+    {
+      "ask": "木塊經過平衡位置 $x=0$ 時：",
+      "options": [
+        { "label": "速度最大，動能最大", "correct": true },
+        { "label": "速度為 $0$", "why": "速度為 $0$ 的是最遠點（轉折點）；平衡點位能為 $0$，能量全是動能。" },
+        { "label": "加速度最大", "why": "加速度是 $-\\omega_0^2x$，在 $x=0$ 時是 $0$；最大加速度在最遠點。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從物理寫方程",
+      "beats": [
+        { "show": ["彈簧的力：$-kx$"],
+          "note": "虎克定律，$k>0$ 是彈簧常數。",
+          "say": "木塊離開平衡位置 x。拉長了彈簧往回拉，壓縮了往外推，力是負 k x。",
+          "board": [
+            {"do":"write","line":"彈簧的力：${{f:-kx}}$","on":"拉長了"},
+            {"do":"focus","term":"f","label":"往回拉","on":"往回拉"}
+          ] },
+        { "show": ["$mx''=-kx$"],
+          "note": "力 = 質量 × 加速度。",
+          "say": "牛頓第二定律：質量乘加速度，加速度是位移的二階導數。",
+          "board": [
+            {"do":"transform","line":"${{ma:mx''}}={{f:-kx}}$"},
+            {"do":"underline","term":"ma","label":"質量×加速度","on":"質量乘加速度"}
+          ] },
+        { "show": ["$x''+\\omega_0^2x=0$，$\\omega_0=\\sqrt{k/m}$"],
+          "say": "除以 m 整理一下，k 除以 m 記成 omega 零的平方。",
+          "board": [
+            {"do":"write","line":"$x''+{{w:\\omega_0^2}}x=0$"},
+            {"do":"transform","line":"$x''+{{w:\\omega_0^2}}x=0$，$\\omega_0=\\sqrt{k/m}$","on":"記成"}
+          ] },
+        { "show": ["$m=2$ kg、$k=18$ N/m"],
+          "say": "例如質量二公斤，彈簧常數十八。omega 零是多少？",
+          "board": [
+            {"do":"write","line":"$m=2$ kg、$k=18$ N/m"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$\\omega_0=\\sqrt{k/m}$ 是？",
+        "options": [
+          {
+            "label": "$3$",
+            "correct": true
+          },
+          {
+            "label": "$9$",
+            "why": "$\\frac{18}{2}=9$ 是 $\\omega_0^2$，還要開根號。"
+          },
+          {
+            "label": "$\\frac{1}{3}$",
+            "why": "$k$、$m$ 放反了：是 $\\sqrt{18/2}$，不是 $\\sqrt{2/18}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "純虛根給振盪",
+      "beats": [
+        { "show": ["$r=\\pm i\\omega_0$"],
+          "note": "〈複數根〉，$\\alpha=0$。",
+          "say": "特徵方程 r 平方加 omega 零平方，根是正負 i omega 零，實部是零。",
+          "board": [
+            {"do":"write","line":"$r^2+\\omega_0^2=0$"},
+            {"do":"transform","line":"$r={{r:\\pm i\\omega_0}}$","on":"根是"},
+            {"do":"underline","term":"r","label":"實部是零","on":"實部"}
+          ] },
+        { "show": ["$x(t)=C_1\\cos\\omega_0t+C_2\\sin\\omega_0t$"],
+          "say": "所以解是 cosine 和 sine，不衰減，一直振盪下去。",
+          "board": [
+            {"do":"write","line":"$x(t)={{c1:C_1}}\\cos\\omega_0t+{{c2:C_2}}\\sin\\omega_0t$","tint":{"c1":"blue","c2":"violet"}}
+          ] },
+        { "show": ["$x'(0)=\\omega_0C_2$"],
+          "note": "微分 $x(t)$，再代 $t=0$。",
+          "say": "微分 x，每一項多乘一個 omega 零。代 t 等於零，sine 是零、cosine 是一，剩 omega 零乘 C 二。",
+          "board": [
+            {"do":"write","line":"$x'=-C_1\\omega_0\\sin\\omega_0t+C_2\\omega_0\\cos\\omega_0t$"},
+            {"do":"write","line":"$x'(0)={{n2:\\omega_0C_2}}$","on":"剩"}
+          ] },
+        { "show": ["$C_1=x(0)$，$C_2=\\frac{x'(0)}{\\omega_0}$"],
+          "note": "$C_2$ 要除以 $\\omega_0$。",
+          "say": "代 t 等於零：C 一是起始位置；起始速度要除以 omega 零，才是 C 二。",
+          "board": [
+            {"do":"write","line":"${{c1:C_1}}=x(0)$，${{c2:C_2}}=\\frac{x'(0)}{{{w:\\omega_0}}}$","on":"代 t"},
+            {"do":"focus","term":"w","label":"要除以","on":"要除以"}
+          ] },
+        { "show": ["$x(0)=0$，$x'(0)=3$：$x=\\sin 3t$"],
+          "note": "振幅 1 m。",
+          "say": "木塊從平衡位置以每秒三公尺出發：C 一是零，C 二是三除以三，等於一。",
+          "board": [
+            {"do":"write","line":"$x(0)=0$，$x'(0)=3$：$x={{s:\\sin 3t}}$"},
+            {"do":"underline","term":"s","color":"green","on":"C 二是"}
+          ] },
+        { "show": ["$T=\\frac{2\\pi}{\\omega_0}=2\\pi\\sqrt{m/k}$"],
+          "note": "這裡 $T=\\frac{2\\pi}{3}\\approx2.09$ 秒。",
+          "say": "週期是 omega 零分之二 pi。彈簧越硬振越快，木塊越重振越慢。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$T=\\frac{2\\pi}{\\omega_0}=2\\pi\\sqrt{{{q:m/k}}}$","on":"週期是"},
+            {"do":"underline","term":"q","label":"硬→快，重→慢","on":"彈簧越硬"}
+          ] }
+      ],
+      "key": "特徵根純虛，實部是 $0$，所以不衰減",
+      "check": 0
+    },
+    {
+      "title": "週期跟振幅無關",
+      "beats": [
+        { "show": ["拉遠一點：回復力也比較大"],
+          "say": "拉得更遠，要走的路變長，可是回復力也跟著變大，速度也變大。",
+          "board": [
+            {"do":"write","line":"拉遠：走的路變長"},
+            {"do":"write","line":"回復力 ${{f:-kx}}$ 也變大","on":"回復力"},
+            {"do":"write","line":"速度也變大","on":"速度"}
+          ] },
+        { "show": ["$x=A\\cos(\\omega_0t-\\varphi)$"],
+          "note": "$A$ 只改高度，不進 $\\omega_0$。",
+          "say": "解可以寫成 A cosine omega 零 t 減 phi。拉遠只是 A 變大，cosine 轉一圈，omega 零 t 仍然走二 pi。",
+          "board": [
+            {"do":"write","line":"$x={{a:A}}\\cos({{w:\\omega_0}}t-\\varphi)$"},
+            {"do":"underline","term":"a","label":"只改高度","on":"變大"},
+            {"do":"underline","term":"w","color":"blue","label":"週期在此","on":"轉一圈"}
+          ] },
+        { "show": ["振幅小與振幅大，週期相同"],
+          "say": "畫出來看：藍色振幅小，紅色振幅二倍，每次回到起點的時間一樣。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,7,-2.5,2.5],"curves":[{"expr":"cos(2*x)","domain":[0,7],"color":"blue"},{"expr":"2*cos(2*x)","domain":[0,7],"color":"red"}]}}
+          ] },
+        { "show": ["$T=\\frac{2\\pi}{\\omega_0}$ 裡沒有振幅"],
+          "note": "只由 $k$ 與 $m$ 決定。",
+          "say": "兩件事剛好抵銷。週期公式裡只有 k 和 m，沒有振幅。",
+          "board": [
+            {"do":"write","line":"$T={{t:\\frac{2\\pi}{\\omega_0}}}$","on":"週期公式"},
+            {"do":"underline","term":"t","label":"只有k與m","on":"只有"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "振幅與相位",
+      "beats": [
+        { "show": ["$x''+4x=0$，$x(0)=3$，$x'(0)=8$"],
+          "note": "$C_1=3$，$C_2=\\frac{8}{2}=4$。",
+          "say": "omega 零是二。C 一是三，C 二是八除以二，等於四。",
+          "board": [
+            {"do":"write","line":"$x''+4x=0$，$x(0)=3$，$x'(0)=8$"},
+            {"do":"write","line":"$\\omega_0=2$，$C_1=3$，$C_2=\\frac{8}{2}=4$","on":"C 一是"}
+          ] },
+        { "show": ["$x=3\\cos 2t+4\\sin 2t$","$=A\\cos(2t-\\varphi)$"],
+          "say": "cosine 加 sine 可以合成一個 cosine，有自己的振幅 A 和相位 phi。",
+          "board": [
+            {"do":"write","line":"$x=3\\cos 2t+4\\sin 2t$"},
+            {"do":"write","line":"$={{amp:A}}\\cos(2t-{{ph:\\varphi}})$","tint":{"amp":"blue","ph":"violet"},"on":"合成一個"},
+            {"do":"focus","term":"amp","color":"blue","label":"振幅","on":"振幅 A"},
+            {"do":"focus","term":"ph","color":"violet","label":"相位","on":"相位 phi"}
+          ] },
+        { "show": ["展開 $A\\cos(2t-\\varphi)$"],
+          "note": "用減角公式。",
+          "say": "用減角公式展開，cosine 前面是 A cosine phi，sine 前面是 A sine phi。",
+          "board": [
+            {"do":"write","line":"$A\\cos(2t-\\varphi)$"},
+            {"do":"transform","line":"$=A\\cos\\varphi\\cos2t+A\\sin\\varphi\\sin2t$","on":"用減角公式"}
+          ] },
+        { "show": ["對照係數：$A\\cos\\varphi=3$，$A\\sin\\varphi=4$"],
+          "say": "跟三 cosine 二 t 加四 sine 二 t 對照：係數要相等，所以 A cosine phi 是三，A sine phi 是四。",
+          "board": [
+            {"do":"write","line":"$A\\cos\\varphi=3$，$A\\sin\\varphi=4$"}
+          ] },
+        { "show": ["$A=\\sqrt{3^2+4^2}=5$"],
+          "note": "不是 $3+4$：兩者不會同時最大。",
+          "say": "振幅是平方和開根號，五。cosine 跟 sine 不會同時最大，所以不能直接相加。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"${{amp:A}}=\\sqrt{3^2+4^2}={{five:5}}$","on":"振幅是"},
+            {"do":"focus","term":"five","color":"green","on":"開根號"},
+            {"do":"write","line":"不是 $3+4$：不會同時最大","color":"red","on":"cosine 跟 sine"}
+          ] },
+        { "show": ["$\\cos\\varphi=\\frac{3}{5}$、$\\sin\\varphi=\\frac{4}{5}$"],
+          "note": "看正負號決定象限。",
+          "say": "相位看 cosine phi 和 sine phi 的正負決定象限，這裡都是正的，在第一象限。",
+          "board": [
+            {"do":"keep","n":3},
+            {"do":"write","line":"$\\cos{{ph:\\varphi}}=\\frac{3}{5}$、$\\sin\\varphi=\\frac{4}{5}$","on":"相位看"},
+            {"do":"focus","term":"ph","color":"violet","label":"第一象限","on":"都是正的"}
+          ] }
+      ],
+      "key": "$\\cos$、$\\sin$ 兩項合成一個振幅與相位",
+      "check": 1
+    },
+    {
+      "title": "能量守恆",
+      "beats": [
+        { "show": ["$\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2$ 不變"],
+          "note": "微分得 $x'(mx''+kx)=0$。",
+          "say": "動能加彈性位能不隨時間改變：微分之後剛好是方程本身，等於零。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2$ 不變"},
+            {"do":"transform","line":"$x'\\,{{ode:(mx''+kx)}}=0$","on":"微分之後"},
+            {"do":"underline","term":"ode","label":"就是方程","on":"剛好是"}
+          ] },
+        { "show": ["逐項微分，提出 $x'$"],
+          "note": "二倍乘 $\\frac{1}{2}$ 剛好消掉。",
+          "say": "微分：x 一撇平方得二倍 x 一撇 x 二撇，x 平方得二倍 x x 一撇。提出 x 一撇，括號是方程，等於零。",
+          "board": [
+            {"do":"write","line":"$(\\tfrac12mx'^2)'=mx'x''$"},
+            {"do":"write","line":"$(\\tfrac12kx^2)'=kxx'$","on":"x 平方得"},
+            {"do":"write","line":"$mx'x''+kxx'={{n5:x'(mx''+kx)}}$","on":"提出"},
+            {"do":"focus","term":"n5","color":"green","label":"方程為零","on":"括號是方程"}
+          ] },
+        { "show": ["$t=0$：$32+18=50$"],
+          "note": "取 $m=1$、$k=4$。",
+          "say": "接上一題，取質量一、k 是四。一開始動能三十二，位能十八，總共五十。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$m=1$、$k=4$","on":"取質量"},
+            {"do":"write","line":"$t=0$：${{a:32}}+{{b:18}}=50$","on":"一開始"},
+            {"do":"focus","term":"a","color":"blue","label":"動能","on":"動能"},
+            {"do":"focus","term":"b","color":"violet","label":"位能","on":"位能"}
+          ] },
+        { "show": ["最遠點 $x=\\pm5$：位能 50，動能 0"],
+          "say": "在最遠的地方瞬間靜止，動能是零，五十全部變成位能。",
+          "board": [
+            {"do":"write","line":"最遠點 $x=\\pm5$"},
+            {"do":"write","line":"動能 $0$，位能 ${{p:50}}$","on":"動能"},
+            {"do":"focus","term":"p","color":"green","on":"全部變成"}
+          ] },
+        { "show": ["$x=0$：位能 0，動能 50"],
+          "note": "$\\frac{1}{2}x'^2=50$，速度大小 10。",
+          "say": "再看 x 等於零：位能是零，動能是五十，一半乘 x 一撇平方等於五十，速度大小是十。",
+          "board": [
+            {"do":"write","line":"$x=0$：位能 $0$，動能 ${{k:50}}$"},
+            {"do":"write","line":"$\\tfrac12x'^2=50\\Rightarrow|x'|=10$","on":"速度"}
+          ] },
+        { "show": ["能量在兩種形式之間來回交換"],
+          "note": "檢查答案的好方法。",
+          "say": "能量就在動能和位能之間來回交換。拿它來檢查答案很方便。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"動能 $\\leftrightarrow$ 位能","on":"能量就在"},
+            {"do":"write","line":"拿能量檢查答案","on":"拿它"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "second-order", "complex-roots", "ivp"],
+    "fine": ["sho-model", "sho-initial-conditions", "sho-amplitude-phase", "sho-energy"]
+  },
+  "practice": [
+    { "id": "ode-h2-002", "core": true, "trains": "sho-initial-conditions" },
+    { "id": "gap-der-ode-004", "core": true, "trains": "sho-initial-conditions" },
+    { "id": "ode-h2-007", "core": true, "trains": "sho-initial-conditions" },
+    { "id": "cg-10c-012", "core": true, "trains": "sho-model" },
+    { "id": "cg-10c-015", "core": true, "trains": "sho-amplitude-phase" },
+    { "id": "cg-10c-017", "core": true, "trains": "sho-energy" },
+    { "id": "cg-10c-013", "trains": "sho-model" },
+    { "id": "cg-10c-014", "trains": "sho-model" },
+    { "id": "cg-10c-016", "trains": "sho-amplitude-phase" },
+    { "id": "cg-10c-018", "trains": "sho-energy" }
+  ],
+  "gaps": []
+}

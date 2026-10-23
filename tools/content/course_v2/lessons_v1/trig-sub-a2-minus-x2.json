@@ -1,0 +1,368 @@
+{
+  "id": "trig-sub-a2-minus-x2",
+  "title": "√(a² − x²)",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["trig-integral-sin-cos", "inverse-trig", "u-sub-definite"],
+  "next": ["trig-sub-x2-plus-a2"],
+  "related": ["u-sub-recognize", "definite-signed-area"],
+  "objectives": [
+    "看到 $\\sqrt{a^2-x^2}$ 且換元配不起來時，會令 $x=a\\sin\\theta$，$\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]$。",
+    "會用直角三角形把 $\\theta$ 的答案換回 $x$。",
+    "定積分時會把上下限換成 $\\theta$，並知道什麼時候 $u$ 換元比三角代換快。"
+  ],
+  "visual": "畫半徑 a 的上半圓 y = √(a² − t²)，塗出 t 從 0 到 x 的區域。拖動 x，塗色區域被一條從原點到曲線上點 (x, √(a² − x²)) 的線切成兩塊：一個扇形（角度 θ = arcsin(x/a)，面積 a²θ/2）和一個直角三角形（面積 x√(a² − x²)/2）。旁邊顯示兩塊面積的和，與 ∫₀ˣ √(a² − t²) dt 的值一起變動，永遠相等。",
+  "concept": [
+    {
+      "heading": "① 換元配不起來的根號",
+      "body": [
+        "$\\int x\\sqrt{a^2-x^2}\\,dx$ 外面有 $x$，令 $u=a^2-x^2$ 就解決了。但 $\\int\\sqrt{a^2-x^2}\\,dx$、$\\int\\frac{x^2}{\\sqrt{a^2-x^2}}\\,dx$ 沒有那個 $x$ 可以配，$u$ 換元行不通。",
+        "要讓根號消失，需要一個「$a^2$ 減某個平方，等於另一個平方」的恆等式：$1-\\sin^2\\theta=\\cos^2\\theta$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 令 $x=a\\sin\\theta$",
+      "body": [
+        "$a^2-x^2=a^2-a^2\\sin^2\\theta=a^2\\cos^2\\theta$。取 $\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]$：這段上 $\\sin\\theta$ 從 $-1$ 走到 $1$，每個 $x\\in[-a,a]$ 恰好對應一個 $\\theta=\\arcsin\\frac{x}{a}$；而且 $\\cos\\theta\\ge 0$，所以 $\\sqrt{a^2\\cos^2\\theta}=a\\cos\\theta$，不必加絕對值。",
+        "$dx=a\\cos\\theta\\,d\\theta$。代進去之後，通常剩下 $\\sin$、$\\cos$ 的次方，用〈sinᵐ x cosⁿ x〉的方法積。"
+      ],
+      "tex": ["x=a\\sin\\theta,\\quad dx=a\\cos\\theta\\,d\\theta,\\quad \\sqrt{a^2-x^2}=a\\cos\\theta\\quad\\left(-\\tfrac\\pi2\\le\\theta\\le\\tfrac\\pi2\\right)"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 用三角形換回 $x$",
+      "body": [
+        "$\\sin\\theta=\\frac{x}{a}$：畫一個直角三角形，斜邊 $a$、$\\theta$ 的對邊 $x$，畢氏定理給鄰邊 $\\sqrt{a^2-x^2}$。",
+        "於是 $\\cos\\theta=\\frac{\\sqrt{a^2-x^2}}{a}$，$\\tan\\theta=\\frac{x}{\\sqrt{a^2-x^2}}$，$\\theta=\\arcsin\\frac{x}{a}$。$\\sin 2\\theta$ 要先寫成 $2\\sin\\theta\\cos\\theta$ 再換。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 定積分：直接換上下限",
+      "body": [
+        "$\\theta=\\arcsin\\frac{x}{a}$，把 $x$ 的上下限換成 $\\theta$ 的上下限，就不必換回 $x$（〈定積分換元〉）。",
+        "$\\int_{-a}^{a}\\sqrt{a^2-x^2}\\,dx$ 換完是 $a^2\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta=\\frac{\\pi a^2}{2}$，正好是半圓面積，可以拿〈定積分與有號面積〉的幾何對答案。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "圓的面積公式從哪來",
+      "prompt": "$\\int\\sqrt{1-x^2}\\,dx$",
+      "steps": [
+        "令 $x=\\sin\\theta$，$dx=\\cos\\theta\\,d\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$。",
+        "$\\int\\cos\\theta\\cdot\\cos\\theta\\,d\\theta=\\int\\cos^2\\theta\\,d\\theta=\\int\\frac{1+\\cos 2\\theta}{2}\\,d\\theta=\\frac{\\theta}{2}+\\frac{\\sin 2\\theta}{4}$。",
+        "$\\sin 2\\theta=2\\sin\\theta\\cos\\theta=2x\\sqrt{1-x^2}$。$\\theta=\\arcsin x$。",
+        "答案：$\\frac{1}{2}(\\arcsin x+x\\sqrt{1-x^2})+C$。從 0 積到 $x$ 時，兩項正好是單位圓裡一塊扇形與一個三角形的面積。"
+      ],
+      "answer": "$\\frac{1}{2}(\\arcsin x+x\\sqrt{1-x^2})+C$",
+      "claim": "D((asin(x)+x*sqrt(1-x^2))/2, 0.2) == sqrt(1-0.2^2) ;; D((asin(x)+x*sqrt(1-x^2))/2, 0.5) == sqrt(1-0.5^2) ;; D((asin(x)+x*sqrt(1-x^2))/2, -0.7) == sqrt(1-0.7^2)",
+      "note": "定義域只有 $(-1,1)$，所以在三個點檢查導數。"
+    },
+    {
+      "title": "$a=2$",
+      "prompt": "$\\int\\frac{x^2}{\\sqrt{4-x^2}}\\,dx$",
+      "steps": [
+        "令 $x=2\\sin\\theta$，$dx=2\\cos\\theta\\,d\\theta$，$\\sqrt{4-x^2}=2\\cos\\theta$。",
+        "$\\int\\frac{4\\sin^2\\theta}{2\\cos\\theta}\\cdot 2\\cos\\theta\\,d\\theta=\\int 4\\sin^2\\theta\\,d\\theta=\\int 2(1-\\cos 2\\theta)\\,d\\theta=2\\theta-\\sin 2\\theta$。",
+        "$\\sin 2\\theta=2\\sin\\theta\\cos\\theta=2\\cdot\\frac{x}{2}\\cdot\\frac{\\sqrt{4-x^2}}{2}=\\frac{x\\sqrt{4-x^2}}{2}$。",
+        "答案：$2\\arcsin\\frac{x}{2}-\\frac{x\\sqrt{4-x^2}}{2}+C$。"
+      ],
+      "answer": "$2\\arcsin\\frac{x}{2}-\\frac{x\\sqrt{4-x^2}}{2}+C$",
+      "claim": "D(2*asin(x/2)-x*sqrt(4-x^2)/2) == x^2/sqrt(4-x^2)"
+    },
+    {
+      "title": "定積分，換上下限",
+      "prompt": "$\\int_0^{1/2}\\frac{1}{(1-x^2)^{3/2}}\\,dx$",
+      "steps": [
+        "令 $x=\\sin\\theta$，$dx=\\cos\\theta\\,d\\theta$，$(1-x^2)^{3/2}=\\cos^3\\theta$。",
+        "上下限：$x=0\\to\\theta=0$；$x=\\frac{1}{2}\\to\\theta=\\frac{\\pi}{6}$。",
+        "$\\int_0^{\\pi/6}\\frac{\\cos\\theta}{\\cos^3\\theta}\\,d\\theta=\\int_0^{\\pi/6}\\sec^2\\theta\\,d\\theta=[\\tan\\theta]_0^{\\pi/6}=\\frac{1}{\\sqrt{3}}$。"
+      ],
+      "answer": "$\\frac{1}{\\sqrt{3}}$",
+      "claim": "INT(1/(1-x^2)^(3/2),0,1/2) == 1/sqrt(3)"
+    }
+  ],
+  "pitfalls": [
+    "$x=a\\sin\\theta$ 的 $a$ 取成 $a^2$：$\\sqrt{9-x^2}$ 要令 $x=3\\sin\\theta$。",
+    "$dx$ 忘了換成 $a\\cos\\theta\\,d\\theta$。",
+    "換回 $x$ 時把 $\\cos\\theta$ 寫成 $\\frac{x}{a}$（那是 $\\sin\\theta$）。",
+    "$\\sin 2\\theta$ 沒先拆成 $2\\sin\\theta\\cos\\theta$ 就想換回 $x$。",
+    "外面有 $x$ 可以配的（例如 $\\frac{x}{\\sqrt{4-x^2}}$）也用三角代換，繞遠路。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int\\sqrt{9-x^2}\\,dx$ 應該令？",
+      "options": [
+        { "label": "$x=3\\sin\\theta$", "correct": true },
+        { "label": "$x=9\\sin\\theta$", "why": "要讓 $x^2=9\\sin^2\\theta$，所以係數是 $\\sqrt{9}=3$。代 $9\\sin\\theta$ 得 $9-81\\sin^2\\theta$，消不掉。" },
+        { "label": "$x=3\\tan\\theta$", "why": "$9+9\\tan^2\\theta=9\\sec^2\\theta$，那是 $x^2+a^2$ 用的。這裡是 $a^2-x^2$。" }
+      ]
+    },
+    {
+      "ask": "令 $x=3\\sin\\theta$（$-\\frac{\\pi}{2}\\le\\theta\\le\\frac{\\pi}{2}$），$\\sqrt{9-x^2}$ 等於？",
+      "options": [
+        { "label": "$3\\cos\\theta$", "correct": true },
+        { "label": "$3-3\\sin\\theta$", "why": "根號不能拆減法：$9-9\\sin^2\\theta=9\\cos^2\\theta$，再開根號。" },
+        { "label": "$9\\cos^2\\theta$", "why": "那是根號裡面的東西，還要開根號。" }
+      ]
+    },
+    {
+      "ask": "$x=2\\sin\\theta$。換回 $x$ 時 $\\cos\\theta$ 是？",
+      "options": [
+        { "label": "$\\frac{\\sqrt{4-x^2}}{2}$", "correct": true },
+        { "label": "$\\frac{x}{2}$", "why": "那是 $\\sin\\theta$。三角形斜邊 $2$、對邊 $x$，鄰邊才是 $\\sqrt{4-x^2}$。" },
+        { "label": "$\\frac{2}{\\sqrt{4-x^2}}$", "why": "那是 $\\sec\\theta=\\frac{1}{\\cos\\theta}$，倒過來了。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{x}{\\sqrt{4-x^2}}\\,dx$ 最快的做法是？",
+      "options": [
+        { "label": "令 $u=4-x^2$", "correct": true },
+        { "label": "令 $x=2\\sin\\theta$", "why": "做得出來，但繞遠路：分子的 $x$ 正好是根號裡 $4-x^2$ 的導數（差 $-2$ 倍），$u$ 換元一步就完。" },
+        { "label": "分部積分", "why": "用不到。這是〈換元：辨識〉裡 $\\frac{u'}{\\sqrt{u}}$ 的形狀。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "配不起來的根號",
+      "beats": [
+        { "show": ["$\\int x\\sqrt{a^2-x^2}\\,dx$：$u=a^2-x^2$"],
+          "note": "外面有 $x$ 可以配，一步就完。",
+          "say": "根號外面有 x 的，令 u 等於根號裡面，一步就解決了。",
+          "board": [
+            {"do":"write","line":"$\\int x\\sqrt{{{r:a^2-x^2}}}\\,dx$","tint":{"r":"blue"}},
+            {"do":"write","line":"$u={{r:a^2-x^2}}$","on":"令 u"}
+          ] },
+        { "show": ["$\\int\\sqrt{a^2-x^2}\\,dx$"],
+          "note": "沒有 $x$ 可以配，$u$ 換元行不通。",
+          "say": "可是單獨一個根號 a 平方減 x 平方，外面沒有 x 可以配，u 換元就行不通。",
+          "board": [
+            {"do":"write","line":"$\\int\\sqrt{a^2-x^2}\\,dx$"},
+            {"do":"write","line":"外面沒有 $x$ 可以配","on":"外面沒有"}
+          ] },
+        { "show": ["$1-\\sin^2\\theta=\\cos^2\\theta$"],
+          "note": "減掉一個平方，剛好是另一個平方。",
+          "say": "要讓根號消失，需要一個恆等式：一減 sine 平方，剛好是 cosine 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$1-\\sin^2\\theta={{c:\\cos^2\\theta}}$","on":"一減"},
+            {"do":"box","term":"c","color":"green","on":"剛好是"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "令 $x=a\\sin\\theta$",
+      "beats": [
+        { "show": ["令 $x=a\\sin\\theta$"],
+          "note": "$a$ 是根號裡常數開根號。",
+          "say": "所以令 x 等於 a 乘 sine theta。注意係數是 a，也就是根號裡那個常數開根號。",
+          "board": [
+            {"do":"write","line":"令 $x={{a:a}}\\sin\\theta$","tint":{"a":"blue"}},
+            {"do":"focus","term":"a","color":"blue","label":"常數開根號","on":"係數是"}
+          ] },
+        { "show": ["$a^2-x^2=a^2-a^2\\sin^2\\theta$","$=a^2\\cos^2\\theta$"],
+          "say": "代進去，a 平方提出來，一減 sine 平方變成 cosine 平方，整個是完全平方。",
+          "board": [
+            {"do":"write","line":"$a^2-x^2=a^2-a^2\\sin^2\\theta$"},
+            {"do":"transform","line":"$=a^2(1-\\sin^2\\theta)$","on":"提出來"},
+            {"do":"transform","line":"$={{c:a^2\\cos^2\\theta}}$","on":"變成"},
+            {"do":"box","term":"c","color":"green","on":"整個是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "根號消失",
+      "beats": [
+        { "show": ["取 $\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]$"],
+          "note": "每個 $x\\in[-a,a]$ 恰好對應一個 $\\theta$。",
+          "say": "theta 取在負二分之 pi 到二分之 pi，每個 x 都恰好對應一個 theta。",
+          "board": [
+            {"do":"write","line":"${{t:\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]}}$"},
+            {"do":"write","line":"${{x:x\\in[-a,a]}}$","on":"每個"},
+            {"do":"arrow","from":"x","to":"t","label":"恰好一個","on":"恰好對應"}
+          ] },
+        { "show": ["sine 在這段一路往上，不回頭"],
+          "say": "sine 在這段從負一爬到一，每個高度只過一次。超過二分之 pi 就掉頭，一個 x 會對兩個 theta。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1.5,1.5],"curves":[{"expr":"sin(x)","domain":[-1.5708,1.5708],"color":"blue"}]}}
+          ] },
+        { "show": ["$\\cos\\theta\\ge 0$：$\\sqrt{a^2-x^2}=a\\cos\\theta$"],
+          "note": "不必加絕對值。",
+          "say": "這一段 cosine 不是負的，所以根號開出來直接是 a cosine theta，不用絕對值。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\cos\\theta\\ge 0$","on":"這一段"},
+            {"do":"write","line":"$\\sqrt{a^2-x^2}={{r:a\\cos\\theta}}$","on":"所以"},
+            {"do":"box","term":"r","color":"green","on":"直接是"}
+          ] },
+        { "show": ["$dx=a\\cos\\theta\\,d\\theta$"],
+          "note": "$dx$ 也要換。",
+          "say": "dx 也要跟著換。代完通常剩 sine、cosine 的次方，用前面的方法積。",
+          "board": [
+            {"do":"write","line":"$dx=a\\cos\\theta\\,d\\theta$"},
+            {"do":"write","line":"剩 $\\sin$、$\\cos$ 的次方","on":"代完通常"}
+          ] },
+        { "show": ["$\\frac{d}{d\\theta}(a\\sin\\theta)=a\\cos\\theta$","$dx=a\\cos\\theta\\,d\\theta$"],
+          "say": "x 對 theta 微分，a sine theta 的導數是 a cosine theta。兩邊乘 d theta，就得到 dx。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{d\\theta}(a\\sin\\theta)={{k:a\\cos\\theta}}$"},
+            {"do":"write","line":"兩邊乘 $d\\theta$：$dx={{m:a\\cos\\theta\\,d\\theta}}$","on":"兩邊乘"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "圓的面積公式",
+      "beats": [
+        { "show": ["$\\int\\sqrt{1-x^2}\\,dx$：$x=\\sin\\theta$"],
+          "note": "$dx=\\cos\\theta\\,d\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$。",
+          "say": "a 等於一的例子：根號一減 x 平方。令 x 等於 sine theta，根號變成 cosine theta。",
+          "board": [
+            {"do":"write","line":"$\\int\\sqrt{1-x^2}\\,dx$：$x={{s:\\sin\\theta}}$","tint":{"s":"blue"},"on":"令 x"},
+            {"do":"write","line":"$\\sqrt{1-x^2}={{c:\\cos\\theta}}$，$dx=\\cos\\theta\\,d\\theta$","tint":{"c":"violet"},"on":"根號變成"}
+          ] },
+        { "show": ["$\\cos^2\\theta=\\frac{1+\\cos 2\\theta}{2}$"],
+          "note": "半角公式，再逐項積分。",
+          "say": "半角公式，cosine 平方等於一加 cosine 二 theta 的一半。逐項積分，就得到結果。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\cos^2\\theta=\\frac{1+\\cos 2\\theta}{2}$","on":"半角公式"},
+            {"do":"write","line":"$\\int\\frac{1+\\cos 2\\theta}{2}\\,d\\theta$","on":"一加"},
+            {"do":"write","line":"$=\\frac{\\theta}{2}+\\frac{\\sin 2\\theta}{4}$","on":"逐項積分"}
+          ] },
+        { "show": ["$\\int\\cos^2\\theta\\,d\\theta=\\frac{\\theta}{2}+\\frac{\\sin 2\\theta}{4}$"],
+          "note": "半角降次。",
+          "say": "兩個 cosine 相乘是 cosine 平方，半角降次，積出來。",
+          "board": [
+            {"do":"write","line":"$\\int{{c2:\\cos^2\\theta}}\\,d\\theta=\\frac{\\theta}{2}+{{s2:\\frac{\\sin 2\\theta}{4}}}$"},
+            {"do":"focus","term":"c2","label":"半角降次","on":"半角降次"}
+          ] },
+        { "show": ["$\\sin\\theta=x$，$\\cos\\theta=\\sqrt{1-x^2}$"],
+          "note": "一個是代換本身，一個是前面開根號。",
+          "say": "x 是 sine theta，所以 sine theta 就是 x。cosine theta 是前面開根號得到的，根號一減 x 平方。",
+          "board": [
+            {"do":"write","line":"$\\sin\\theta=x$"},
+            {"do":"write","line":"$\\cos\\theta=\\sqrt{1-x^2}$","on":"開根號"}
+          ] },
+        { "show": ["$\\sin 2\\theta=2\\sin\\theta\\cos\\theta=2x\\sqrt{1-x^2}$"],
+          "note": "先拆開，才換得回 $x$。",
+          "say": "換回 x 之前，sine 二 theta 要先拆成二 sine 乘 cosine，兩個都有 x 的寫法。",
+          "board": [
+            {"do":"underline","term":"s2","label":"先拆開","on":"換回 x 之前"},
+            {"do":"write","line":"$\\sin 2\\theta=2{{s:\\sin\\theta}}{{c:\\cos\\theta}}=2x\\sqrt{1-x^2}$","on":"要先拆成"}
+          ] }
+      ],
+      "key": "$\\sin 2\\theta$ 先拆成 $2\\sin\\theta\\cos\\theta$ 才換回",
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}(\\arcsin x+x\\sqrt{1-x^2})+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{\\arcsin x}{2}+\\frac{\\sin 2x}{4}+C$",
+            "why": "$\\sin 2\\theta$ 的角是 $\\theta=\\arcsin x$，不是 $x$；要先拆成 $2\\sin\\theta\\cos\\theta$ 再換。"
+          },
+          {
+            "label": "$\\frac{1}{2}(\\arcsin x+\\sqrt{1-x^2})+C$",
+            "why": "$\\frac{2x\\sqrt{1-x^2}}{4}$ 裡的 $x$ 不能丟。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "用三角形換回 $x$",
+      "beats": [
+        { "show": ["$\\sin\\theta=\\frac{x}{a}$：斜邊 $a$、對邊 $x$"],
+          "say": "換回 x 最穩的方法是畫三角形：sine theta 是 a 分之 x，斜邊 a，對邊 x。",
+          "board": [
+            {"do":"write","line":"$\\sin\\theta=\\frac{x}{a}$"},
+            {"do":"write","line":"斜邊 $a$、對邊 $x$","on":"斜邊"}
+          ] },
+        { "show": ["鄰邊 $\\sqrt{a^2-x^2}$"],
+          "note": "畢氏定理。",
+          "say": "用畢氏定理，鄰邊就是根號 a 平方減 x 平方。",
+          "board": [
+            {"do":"write","line":"鄰邊 $={{r:\\sqrt{a^2-x^2}}}$"},
+            {"do":"box","term":"r","color":"green","on":"根號"}
+          ] },
+        { "show": ["$\\cos\\theta=\\frac{\\sqrt{a^2-x^2}}{a}$，$\\tan\\theta=\\frac{x}{\\sqrt{a^2-x^2}}$"],
+          "say": "剩下的三角函數都從圖上讀：cosine 是鄰邊比斜邊，tangent 是對邊比鄰邊。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\cos\\theta=\\frac{\\sqrt{a^2-x^2}}{a}$","on":"cosine"},
+            {"do":"write","line":"$\\tan\\theta=\\frac{x}{\\sqrt{a^2-x^2}}$","on":"tangent"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "定積分：換上下限",
+      "beats": [
+        { "show": ["$x$ 的上下限換成 $\\theta$ 的"],
+          "note": "$\\theta=\\arcsin\\frac{x}{a}$，不必換回 $x$。",
+          "say": "定積分的話，直接把上下限換成 theta 的值，就不用換回 x。",
+          "board": [
+            {"do":"write","line":"$\\theta=\\arcsin\\frac{x}{a}$"},
+            {"do":"write","line":"上下限直接換成 $\\theta$","on":"換成"}
+          ] },
+        { "show": ["$\\int_{-a}^{a}\\sqrt{a^2-x^2}\\,dx$","$=a^2\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta$"],
+          "say": "x 從負 a 到 a，theta 從負二分之 pi 到二分之 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_{-a}^{a}\\sqrt{a^2-x^2}\\,dx$"},
+            {"do":"transform","line":"$=a^2\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta$","on":"theta 從"}
+          ] },
+        { "show": ["$a^2\\left[\\frac{\\theta}{2}+\\frac{\\sin 2\\theta}{4}\\right]_{-\\pi/2}^{\\pi/2}$"],
+          "note": "反導函數用前面算過的。",
+          "say": "cosine 平方的反導函數前面算過了。把負二分之 pi 和二分之 pi 代進去，sine 二 theta 那一項各自算。",
+          "board": [
+            {"do":"write","line":"$a^2\\left[\\frac{\\theta}{2}+{{s:\\frac{\\sin 2\\theta}{4}}}\\right]_{-\\pi/2}^{\\pi/2}$"},
+            {"do":"underline","term":"s","label":"各自算","on":"sine 二 theta"}
+          ] }
+      ],
+      "key": "上下限直接換成 $\\theta$，不必換回 $x$",
+      "predict": {
+        "ask": "結果是？",
+        "options": [
+          {
+            "label": "$\\frac{\\pi a^2}{2}$，正好是半圓面積",
+            "correct": true
+          },
+          {
+            "label": "$\\pi a^2$",
+            "why": "$\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta=\\frac{\\pi}{2}$；圖形只是上半圓。"
+          },
+          {
+            "label": "$\\frac{\\pi a^2}{4}$",
+            "why": "那是四分之一圓；$x$ 從 $-a$ 到 $a$ 是整個上半圓。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-substitution", "radical", "inverse-trig", "definite-integral"],
+    "fine": ["trig-sub-choose", "trig-sub-sine", "trig-sub-triangle", "trig-sub-bounds"]
+  },
+  "practice": [
+    { "id": "lec-07-m3", "core": true, "trains": "trig-sub-choose" },
+    { "id": "cx-trig-001", "core": true, "trains": "trig-sub-bounds" },
+    { "id": "lec-07-q4a", "core": true, "trains": "trig-sub-bounds" },
+    { "id": "int-048", "core": true, "trains": "trig-sub-sine" },
+    { "id": "cg-4g-001", "core": true, "trains": "trig-sub-triangle" },
+    { "id": "cg-4g-004", "core": true, "trains": "trig-sub-choose" },
+    { "id": "depth-int-027", "trains": "trig-sub-bounds" },
+    { "id": "mob-tech-006", "trains": "trig-sub-choose" },
+    { "id": "cg-4g-002", "trains": "trig-sub-triangle" },
+    { "id": "cg-4g-003", "trains": "trig-sub-triangle" },
+    { "id": "cg-4g-005", "trains": "trig-sub-choose" }
+  ],
+  "gaps": []
+}

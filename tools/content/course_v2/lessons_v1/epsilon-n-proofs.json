@@ -1,0 +1,409 @@
+{
+  "id": "epsilon-n-proofs",
+  "title": "用定義證明數列極限",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "epsilon-n-definition",
+    "archimedean-property"
+  ],
+  "next": [
+    "limit-laws-proof"
+  ],
+  "related": [
+    "direct-proof"
+  ],
+  "objectives": [
+    "分清楚「草稿」與「證明」：草稿從 $|a_n-L|<\\varepsilon$ 倒推 $N$，證明從 $N$ 正著寫回 $|a_n-L|<\\varepsilon$。",
+    "會把 $|a_n-L|$ 放大成一個簡單的上界（例如 $\\frac{C}{n}$），用它找 $N$，而不是硬解不等式。",
+    "寫得出一份完整的 $\\varepsilon$-$N$ 證明：給定 $\\varepsilon$、選 $N$、對 $n\\ge N$ 推出結論。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 兩張紙：草稿與正式證明",
+      "body": [
+        "$\\varepsilon$-$N$ 證明幾乎都分兩步。草稿紙上，從想要的 $|a_n-L|<\\varepsilon$ 往回推，看 $n$ 要多大才夠，得到一個 $N$ 的公式。正式證明則反過來：「給定 $\\varepsilon>0$，取 $N=$ ……。則當 $n\\ge N$ 時，$|a_n-L|\\le$ …… $<\\varepsilon$。」",
+        "讀者只看正式證明，所以草稿裡的倒推不必寫，但正式證明的每一個不等號都要站得住。這就是〈直接證明〉的結構：從假設 $n\\ge N$ 一路推到結論。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 不用解得剛剛好：放大成好算的上界",
+      "body": [
+        "$|a_n-L|$ 常常是一個麻煩的分式，硬解 $|a_n-L|<\\varepsilon$ 要解二次不等式。更好的做法是先放大：找一個簡單的 $b_n$，使 $|a_n-L|\\le b_n$，而且 $b_n<\\varepsilon$ 很好解。只要 $b_n<\\varepsilon$，$|a_n-L|$ 就更小於 $\\varepsilon$。",
+        "放大的常用招式：分子放大（把減掉的正數丟掉）、分母縮小（把加上的正數丟掉）。例如 $\\frac{3n-1}{n^2+n}\\le\\frac{3n}{n^2}=\\frac{3}{n}$。代價是 $N$ 比最小的大一點，但定義本來就不要求最小。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ $N$ 要是自然數",
+      "body": [
+        "草稿常得到「$n>\\frac{3}{\\varepsilon}$」。$\\frac{3}{\\varepsilon}$ 不一定是整數，所以正式證明寫「由阿基米德性質，取自然數 $N>\\frac{3}{\\varepsilon}$」。之後 $n\\ge N>\\frac{3}{\\varepsilon}$，推得 $\\frac{3}{n}<\\varepsilon$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "最基本的一題：$\\frac{1}{n}\\to0$",
+      "prompt": "用 $\\varepsilon$-$N$ 定義證明 $\\lim\\frac{1}{n}=0$。",
+      "problemId": "px-eps-003",
+      "steps": [
+        "草稿：要 $|\\frac{1}{n}-0|=\\frac{1}{n}<\\varepsilon$，只要 $n>\\frac{1}{\\varepsilon}$。",
+        "證明：給定 $\\varepsilon>0$。由阿基米德性質，取自然數 $N>\\frac{1}{\\varepsilon}$。",
+        "對任何 $n\\ge N$：$n\\ge N>\\frac{1}{\\varepsilon}>0$，所以 $\\frac{1}{n}<\\varepsilon$，也就是 $|\\frac{1}{n}-0|<\\varepsilon$。",
+        "由定義，$\\lim\\frac{1}{n}=0$。"
+      ],
+      "answer": "得證（$N$ 取任何大於 $\\frac{1}{\\varepsilon}$ 的自然數）",
+      "claim": null,
+      "claimNote": "對所有 ε 的證明；N 的公式在下一題用具體數字驗。"
+    },
+    {
+      "title": "放大成 $\\frac{3}{n}$",
+      "prompt": "證明 $\\frac{3n^2+1}{n^2+n}\\to3$，並比較 $\\varepsilon=10^{-3}$ 時放大得到的 $N$ 與最小的 $N$。",
+      "problemId": "an-en-004",
+      "steps": [
+        "草稿：$a_n-3=\\frac{3n^2+1-3n^2-3n}{n^2+n}=\\frac{1-3n}{n^2+n}$。$n\\ge1$ 時 $3n-1>0$，所以 $|a_n-3|=\\frac{3n-1}{n^2+n}$。",
+        "放大：分子 $3n-1<3n$，分母 $n^2+n>n^2$，所以 $|a_n-3|<\\frac{3n}{n^2}=\\frac{3}{n}$。",
+        "證明：給定 $\\varepsilon>0$，取自然數 $N>\\frac{3}{\\varepsilon}$。$n\\ge N$ 時 $|a_n-3|<\\frac{3}{n}\\le\\frac{3}{N}<\\varepsilon$。",
+        "$\\varepsilon=10^{-3}$：放大法要 $N>3000$，取 $N=3001$。直接檢查原式，最小可用的是 $N=2999$（$n=2998$ 時距離約 0.0010002，還不夠）。兩個都對，放大法只是多走兩步。"
+      ],
+      "answer": "得證；$\\varepsilon=10^{-3}$ 時放大法給 $N=3001$，最小的 $N$ 是 2999",
+      "claim": "abs((3n^2+1)/(n^2+n)-3) == (3n-1)/(n^2+n) ;; (3n-1)/(n^2+n) < 3/n ;; abs((3*3001^2+1)/(3001^2+3001)-3) < 0.001 ;; abs((3*2999^2+1)/(2999^2+2999)-3) < 0.001 ;; abs((3*2998^2+1)/(2998^2+2998)-3) >= 0.001"
+    },
+    {
+      "title": "先有理化再放大",
+      "prompt": "證明 $\\sqrt{n+1}-\\sqrt{n}\\to0$。",
+      "steps": [
+        "草稿：乘共軛，$\\sqrt{n+1}-\\sqrt{n}=\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$。這個量是正的。",
+        "放大：$\\sqrt{n+1}>\\sqrt{n}$，所以分母 $>2\\sqrt{n}$，得 $0<\\sqrt{n+1}-\\sqrt{n}<\\frac{1}{2\\sqrt{n}}$。",
+        "要 $\\frac{1}{2\\sqrt{n}}<\\varepsilon$，只要 $n>\\frac{1}{4\\varepsilon^2}$。",
+        "證明：給定 $\\varepsilon>0$，取自然數 $N>\\frac{1}{4\\varepsilon^2}$。$n\\ge N$ 時 $|\\sqrt{n+1}-\\sqrt{n}|<\\frac{1}{2\\sqrt{n}}\\le\\frac{1}{2\\sqrt{N}}<\\varepsilon$。例如 $\\varepsilon=0.001$ 時取 $N=250001$。"
+      ],
+      "answer": "得證（$N>\\frac{1}{4\\varepsilon^2}$）",
+      "claim": "sqrt(n+1)-sqrt(n) == 1/(sqrt(n+1)+sqrt(n)) ;; 1/(sqrt(n+1)+sqrt(n)) < 1/(2*sqrt(n)) ;; sqrt(250001)-sqrt(250000) < 0.001"
+    }
+  ],
+  "pitfalls": [
+    "把草稿當證明交出去：從 $|a_n-L|<\\varepsilon$ 推到 $n>$ ……，方向是反的，只證明了「若在帶內則 $n$ 大」。",
+    "放大時方向弄錯：分母縮小、分子放大才是放大；把分母的 $+n$ 丟掉是對的，把分子的 $-1$ 丟掉也是對的，反過來就錯。",
+    "$N$ 寫成 $\\frac{3}{\\varepsilon}$ 卻沒說它是自然數；若取 $N=\\lceil\\frac{3}{\\varepsilon}\\rceil$，$\\frac{3}{\\varepsilon}$ 剛好是整數時 $\\frac{3}{N}=\\varepsilon$，得不到嚴格的 $<\\varepsilon$，所以要取 $N>\\frac{3}{\\varepsilon}$。",
+    "$N$ 的公式裡出現 $n$。$N$ 只能依賴 $\\varepsilon$（與題目給的常數），不能依賴之後才挑的 $n$。"
+  ],
+  "checks": [
+    {
+      "ask": "要證 $a_n\\to L$，正式證明的第一句應該是？",
+      "options": [
+        {
+          "label": "給定 $\\varepsilon>0$。",
+          "correct": true
+        },
+        {
+          "label": "設 $|a_n-L|<\\varepsilon$。",
+          "why": "這是在假設結論，是草稿倒推的起點，不能出現在正式證明裡。"
+        },
+        {
+          "label": "取 $N=\\frac{1}{\\varepsilon}$。",
+          "why": "$\\varepsilon$ 還沒出現就先用它；而且 $\\frac{1}{\\varepsilon}$ 未必是自然數。要先給定 $\\varepsilon$，再選自然數 $N>\\frac{1}{\\varepsilon}$。"
+        }
+      ]
+    },
+    {
+      "ask": "$n\\ge1$ 時，下列哪個是 $\\frac{3n-1}{n^2+n}$ 的正確上界？",
+      "options": [
+        {
+          "label": "$\\frac{3}{n}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{3}{n^2}$",
+          "why": "你把分子 $3n-1$ 當成常數 3。$n=3$ 時原式是 $\\frac{8}{12}\\approx0.667$，比 $\\frac{3}{9}\\approx0.333$ 大，所以 $\\frac{3}{n^2}$ 不是上界。"
+        },
+        {
+          "label": "$\\frac{1}{n}$",
+          "why": "$n=3$ 時 $\\frac{9-1}{12}=\\frac{2}{3}$，比 $\\frac{1}{3}$ 大。分子大約 $3n$，丟掉 3 就變成下界了。"
+        }
+      ]
+    },
+    {
+      "ask": "證明 $\\sqrt{n+1}-\\sqrt{n}\\to0$ 時，$\\varepsilon=0.01$ 可以取哪個 $N$？",
+      "options": [
+        {
+          "label": "$N=2501$",
+          "correct": true
+        },
+        {
+          "label": "$N=101$",
+          "why": "你可能用了 $\\frac{1}{n}<\\varepsilon$。上界是 $\\frac{1}{2\\sqrt{n}}$，要 $n>\\frac{1}{4\\varepsilon^2}=2500$。"
+        },
+        {
+          "label": "$N=2500$",
+          "why": "$n>\\frac{1}{4\\varepsilon^2}$ 是嚴格的，$n=2500$ 時上界 $\\frac{1}{2\\cdot50}$ 剛好等於 0.01，放大法保證不了 $<\\varepsilon$。"
+        }
+      ]
+    },
+    {
+      "ask": "下列哪個「$N$」的寫法不合法？",
+      "options": [
+        {
+          "label": "取 $N=n+1$",
+          "correct": true
+        },
+        {
+          "label": "取自然數 $N>\\frac{5}{\\varepsilon}$",
+          "why": "這是合法的：$N$ 只依賴 $\\varepsilon$。你可能以為 $N$ 一定要是公式算出的最小值。"
+        },
+        {
+          "label": "取自然數 $N>\\max(10,\\frac{1}{\\varepsilon})$",
+          "why": "這是合法的：$N$ 只依賴 $\\varepsilon$，同時滿足兩個條件時取較大的那個是常用寫法。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "草稿與正式證明",
+      "beats": [
+        { "show": ["草稿：從 $|a_n-L|<\\varepsilon$ 往回推"],
+          "note": "看 $n$ 要多大才夠，得到 $N$ 的公式。",
+          "say": "epsilon N 證明要兩張紙。草稿紙上，從想要的結果往回推，看 n 要多大才夠。",
+          "board": [
+            {"do":"write","line":"草稿：從 ${{g:|a_n-L|<\\varepsilon}}$ 往回推"},
+            {"do":"write","line":"看 $n$ 要多大 → 得到 $N$","on":"往回推"}
+          ] },
+        { "show": ["正式：給定 $\\varepsilon>0$，取 $N=\\dots$","則 $n\\ge N$ 時 $|a_n-L|<\\varepsilon$"],
+          "say": "正式證明反過來寫：先給定 epsilon，再取 N，然後證 n 大於等於 N 時距離小於 epsilon。",
+          "board": [
+            {"do":"write","line":"正式：先選 $N$，再正著往下推"},
+            {"do":"write","line":"$n\\ge N$ ⇒ ${{g:|a_n-L|<\\varepsilon}}$","on":"大於等於"}
+          ] },
+        { "show": ["草稿的倒推不必寫"],
+          "note": "但正式證明的每個不等號都要站得住。",
+          "say": "讀的人只看正式證明。草稿怎麼想到的不用交，但正式那一張每一步都要對。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"草稿不必交，正式每一步都要對","on":"不用交"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\frac{1}{n}\\to0$",
+      "beats": [
+        { "show": ["草稿：$\\frac{1}{n}<\\varepsilon$ ⇔ $n>\\frac{1}{\\varepsilon}$"],
+          "say": "最基本的一題：n 分之一趨近零。草稿上，要 n 分之一小於 epsilon，只要 n 大於 epsilon 分之一。",
+          "board": [
+            {"do":"write","line":"草稿：$\\frac{1}{n}<\\varepsilon$ ⇔ ${{r:n>\\frac{1}{\\varepsilon}}}$"},
+            {"do":"underline","term":"r","on":"只要"}
+          ] },
+        { "show": ["正式證明：給定 $\\varepsilon>0$"],
+          "say": "現在寫正式的。第一句給定 epsilon。第二句要取 N，該怎麼寫？",
+          "board": [
+            {"do":"write","line":"正式證明：給定 $\\varepsilon>0$"}
+          ] }
+      ],
+      "predict": {
+        "ask": "第二句：取哪個 $N$？",
+        "options": [
+          {
+            "label": "由阿基米德性質，取自然數 $N>\\frac{1}{\\varepsilon}$",
+            "correct": true
+          },
+          {
+            "label": "取 $N=\\frac{1}{\\varepsilon}$",
+            "why": "$\\frac{1}{\\varepsilon}$ 不一定是整數；而且剛好相等時只得到 $\\frac{1}{n}\\le\\varepsilon$，不是嚴格小於。"
+          },
+          {
+            "label": "取 $N>\\varepsilon$",
+            "why": "$\\varepsilon$ 很小時，$N$ 也可以很小，$\\frac{1}{N}$ 根本不會小於 $\\varepsilon$。要的是 $\\frac{1}{\\varepsilon}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "放大成好算的",
+      "beats": [
+        { "show": ["$n\\ge N>\\frac{1}{\\varepsilon}$ ⇒ $\\frac{1}{n}<\\varepsilon$"],
+          "say": "取好 N 之後，n 大於等於 N，又大於 epsilon 分之一，所以 n 分之一小於 epsilon，證完。",
+          "board": [
+            {"do":"write","line":"$n\\ge N>\\frac{1}{\\varepsilon}$ ⇒ $\\frac{1}{n}<\\varepsilon$"}
+          ] },
+        { "show": ["$|a_n-L|\\le b_n$，而 $b_n<\\varepsilon$ 好解"],
+          "note": "不用解得剛剛好。",
+          "say": "距離常常是麻煩的分式。不必硬解，先放大成一個簡單的上界，讓上界小於 epsilon 就好。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|a_n-L|\\le {{b:b_n}}$","tint":{"b":"violet"},"on":"先放大"},
+            {"do":"write","line":"讓 ${{b:b_n}}<\\varepsilon$ 就好","on":"讓上界"}
+          ] },
+        { "show": ["$\\frac{3n^2+1}{n^2+n}\\to3$","$|a_n-3|=\\frac{3n-1}{n^2+n}$"],
+          "say": "例子：分子三 n 平方加一，分母 n 平方加 n，往三收斂。跟三的距離化簡完是這個分式。",
+          "board": [
+            {"do":"write","line":"$\\frac{3n^2+1}{n^2+n}\\to3$","on":"例子"},
+            {"do":"write","line":"$|a_n-3|=\\frac{3n{{m:-1}}}{n^2{{pn:+n}}}$","on":"跟三的距離"}
+          ] },
+        { "show": ["分子放大、分母縮小"],
+          "note": "把減掉的正數丟掉、把加上的正數丟掉。",
+          "say": "放大的招式：分子把減掉的一丟掉，變大；分母把加上的 n 丟掉，變小。整個分式就變大了。",
+          "board": [
+            {"do":"focus","term":"m","on":"分子把"},
+            {"do":"focus","term":"pn","on":"分母把"}
+          ] },
+        { "show": ["代 $n=3$：$\\frac{8}{12}\\le\\frac{3}{3}$"],
+          "note": "放大後的值要真的比原式大。",
+          "say": "代 n 等於三檢查：原式是十二分之八，約零點六六七，放大的 n 分之三是一，確實比較大。",
+          "board": [
+            {"do":"write","line":"$n=3$：$\\frac{8}{12}\\le\\frac{3}{3}$"}
+          ] }
+      ],
+      "key": "放大成好解的 $b_n$，不必解得剛好",
+      "check": 1
+    },
+    {
+      "title": "$N$ 要是自然數",
+      "beats": [
+        { "show": ["$|a_n-3|<\\frac{3n}{n^2}=\\frac{3}{n}$"],
+          "say": "放大之後是 n 分之三，要它小於 epsilon，n 大於 epsilon 分之三就夠。",
+          "board": [
+            {"do":"write","line":"$|a_n-3|<\\frac{3n}{n^2}={{t:\\frac{3}{n}}}$","tint":{"t":"violet"}},
+            {"do":"write","line":"${{t:\\frac{3}{n}}}<\\varepsilon\\iff n>\\frac{3}{\\varepsilon}$","on":"要它小於"}
+          ] },
+        { "show": ["取自然數 $N>\\frac{3}{\\varepsilon}$"],
+          "note": "$\\frac{3}{\\varepsilon}$ 不一定是整數。",
+          "say": "epsilon 分之三不一定是整數，所以寫：由阿基米德性質，取一個比它大的自然數 N。",
+          "board": [
+            {"do":"write","line":"取自然數 $N>\\frac{3}{\\varepsilon}$（阿基米德性質）","on":"所以寫"}
+          ] },
+        { "show": ["$\\varepsilon=10^{-3}$：放大法 $N=3001$","最小可用的 $N=2999$"],
+          "say": "誤差十的負三次方，放大法給三千零一，最小可用的是兩千九百九十九。兩個都對，只是多走兩步。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\varepsilon=10^{-3}$：放大法 $N=3001$","on":"誤差"},
+            {"do":"write","line":"最小可用的 $N=2999$","on":"最小可用"}
+          ] },
+        { "show": ["$\\frac{3}{n}$ 只是上界，比原式大"],
+          "note": "用上界檢查會偏嚴；原式直接算才準。",
+          "say": "n 分之三只是上界，比真正的距離大一點。拿它檢查兩千九百九十九會不過，但原式直接算是過的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{3}{n}$ 只是上界，比原式大","on":"只是上界"},
+            {"do":"write","line":"$n=2999$：原式距離 $<10^{-3}$","on":"原式直接算"}
+          ] },
+        { "show": ["試 $n=2999$ 與 $n=2998$"],
+          "note": "最小的 $N$：直接代原式找。",
+          "say": "找最小的就直接代原式：n 等於兩千九百九十九夠小，n 等於兩千九百九十八是零點零零一零零零二，還不夠。",
+          "board": [
+            {"do":"write","line":"$n=2999$：距離 $<10^{-3}$"},
+            {"do":"write","line":"$n=2998$：距離約 $0.0010002$","on":"兩千九百九十八"}
+          ] },
+        { "show": ["$N$ 只能依賴 $\\varepsilon$"],
+          "note": "不能依賴之後才挑的 $n$。",
+          "say": "還有一條：N 的公式只能用 epsilon 和題目給的常數，不能用到後來才挑的 n。",
+          "board": [
+            {"do":"write","line":"$N$ 只能依賴 $\\varepsilon$ 和題目的常數"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明：先有理化再放大",
+      "beats": [
+        { "show": ["$\\sqrt{n+1}-\\sqrt{n}\\to0$：有理化、放大、取 $N$"],
+          "say": "策略：先乘共軛把差變成分式，再放大成好解的上界，最後照草稿取 N。",
+          "board": [
+            {"do":"write","line":"目標：$\\sqrt{n+1}-\\sqrt{n}\\to0$"},
+            {"do":"write","line":"有理化、放大、取 $N$","on":"先乘共軛"}
+          ] },
+        { "show": ["$\\sqrt{n+1}-\\sqrt{n}=\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$"],
+          "note": "乘共軛，這個量是正的。",
+          "say": "根號 n 加一減根號 n，乘共軛，變成一個分子是一的分式，而且是正的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sqrt{n+1}-\\sqrt{n}=\\frac{1}{ {{den:{{big:\\sqrt{n+1}}}+\\sqrt{n}}} }$","tint":{"den":"blue"},"on":"乘共軛"}
+          ] },
+        { "show": ["分母 $>2\\sqrt{n}$ ⇒ 距離 $<\\frac{1}{2\\sqrt{n}}$"],
+          "note": "$\\sqrt{n+1}>\\sqrt{n}$，分母變小、分式變大。",
+          "why": {"ask":"為什麼分母 $>2\\sqrt{n}$？","say":"放大這一步：分母為什麼大於二倍根號 n？","options":[{"label":"$\\sqrt{n+1}>\\sqrt{n}$，大的換成小的","correct":true},{"label":"$\\sqrt{n+1}\\approx\\sqrt{n}$，分母約 $2\\sqrt{n}$","why":"約等於不能當不等式用；要知道方向，分母變小、分式變大，才是上界。"},{"label":"$\\sqrt{n+1}=\\sqrt{n}+1$","why":"根號不能這樣拆：$\\sqrt{n+1}$ 其實比 $\\sqrt{n}+1$ 小。"}]},
+          "say": "分母兩個根號裡，大的那個換成小的，分母變小，分式變大，上界是二倍根號 n 分之一。",
+          "board": [
+            {"do":"write","line":"${{den:{{big:\\sqrt{n+1}}}+\\sqrt{n}}}>2\\sqrt{n}$ ⇒ 距離 $<\\frac{1}{2\\sqrt{n}}$","on":"分母"},
+            {"do":"underline","term":"big","label":"大的換小的","why":true,"on":"大的那個"}
+          ] },
+        { "show": ["$\\sqrt{n+1}>\\sqrt{n}$"],
+          "say": "n 加一大於 n，開根號大小不變，所以根號 n 加一大於根號 n。加上根號 n，分母就大於二倍根號 n。",
+          "board": [
+            {"do":"write","line":"$n+1>n$ ⇒ $\\sqrt{n+1}>\\sqrt{n}$"},
+            {"do":"write","line":"$\\sqrt{n+1}+\\sqrt{n}>2\\sqrt{n}$","on":"加上根號"}
+          ] },
+        { "show": ["給定 $\\varepsilon>0$，取自然數 $N>\\frac{1}{4\\varepsilon^2}$"],
+          "note": "例：$\\varepsilon=0.001$ 時 $N=250001$。",
+          "say": "正式證明：給定 epsilon，取一個大於四倍 epsilon 平方分之一的自然數 N。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"給定 $\\varepsilon>0$，取自然數 $N>\\frac{1}{4\\varepsilon^2}$","on":"正式證明"}
+          ] },
+        { "show": ["$n\\ge N$：$|\\sqrt{n+1}-\\sqrt{n}|<\\frac{1}{2\\sqrt{n}}\\le\\frac{1}{2\\sqrt{N}}<\\varepsilon$"],
+          "note": "$4\\varepsilon^2N>1$，開根號得 $2\\sqrt{N}\\varepsilon>1$。",
+          "why": {"ask":"為什麼 $\\frac{1}{2\\sqrt{N}}<\\varepsilon$？","say":"最後一個不等號：二倍根號 N 分之一，為什麼小於 epsilon？","options":[{"label":"$N>\\frac{1}{4\\varepsilon^2}$，乘開再開根號","correct":true},{"label":"$N$ 很大，所以分式很小","why":"很小不夠：要小於這一個 $\\varepsilon$，靠的是 $N$ 照 $\\varepsilon$ 取。"},{"label":"$\\frac{1}{2\\sqrt{n}}\\to0$","why":"這是要證的事換個說法；這裡要的是一個對這個 $N$ 成立的不等式。"}]},
+          "say": "N 大於四倍 epsilon 平方分之一，乘開再開根號，二倍根號 N 乘 epsilon 大於一。證完。",
+          "board": [
+            {"do":"write","line":"$n\\ge N$：距離 $<\\frac{1}{2\\sqrt{n}}\\le\\,{{q:\\frac{1}{2\\sqrt{N}}<\\varepsilon}}$","on":"最後一個"},
+            {"do":"write","line":"$4\\varepsilon^2N>1$ ⇒ $2\\sqrt{N}\\varepsilon>1$","why":true,"on":"乘開"},
+            {"do":"box","term":"q","color":"green","why":true,"on":"二倍根號 N"}
+          ] }
+      ],
+      "key": "乘共軛，再把分母縮成 $2\\sqrt{n}$",
+      "proof": true,
+      "of": "ex2",
+      "skeleton": "ε-δ",
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "epsilon-delta",
+      "sequence-limit",
+      "written-proof"
+    ],
+    "fine": [
+      "epsn-proof-structure",
+      "epsn-bound-simplify",
+      "epsn-rationalize-bound",
+      "epsn-find-n"
+    ]
+  },
+  "practice": [
+    {
+      "id": "px-eps-003",
+      "core": true,
+      "trains": "epsn-proof-structure"
+    },
+    {
+      "id": "an-en-001",
+      "core": true,
+      "trains": "epsn-find-n"
+    },
+    {
+      "id": "an-en-004",
+      "core": true,
+      "trains": "epsn-bound-simplify"
+    },
+    {
+      "id": "an-en-003",
+      "trains": "epsn-find-n"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "epsn-bound-simplify",
+      "count": 3,
+      "note": "白話證明題：有理數列 → 常數（例如 (2n + 1)/(n + 3) → 2、(n² + 1)/(2n² − 1) → 1/2），需要放大成 C/n。"
+    },
+    {
+      "tag": "epsn-rationalize-bound",
+      "count": 2,
+      "note": "根號數列的 ε-N 證明（√(n + 1) − √n → 0、√(n² + n) − n → 1/2）。"
+    }
+  ]
+}

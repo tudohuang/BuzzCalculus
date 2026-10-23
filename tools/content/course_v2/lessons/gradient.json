@@ -1,51 +1,128 @@
 {
   "id": "gradient",
   "title": "梯度",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["partial-derivatives", "level-curves", "r2-r3"],
-  "next": ["directional-derivative"],
-  "related": ["tangent-plane", "critical-points-2d"],
-  "objectives": [
-    "把偏導數排成向量 $\\nabla f=(f_x,f_y)$（三變數多一個 $f_z$），在給定點算出來。",
-    "在等高線圖上說出梯度的三個性質：垂直等高線、指向上坡、長度是最大上升率。",
-    "知道 $\\nabla f$ 是定義域裡的向量（二變數時在 $xy$ 平面上），不是曲面上的箭頭。"
+  "prerequisites": [
+    "partial-derivatives",
+    "level-curves",
+    "r2-r3"
   ],
-  "visual": "f(x, y) = 100 − x² − 2y² 的等高線圖（一圈圈橢圓），格點上畫出 ∇f 的箭頭：每支都垂直於經過它的等高線、指向山頂，等高線越密的地方箭頭越長。拖動一個點，顯示該點的 ∇f 與它的長度；切換到 3D 視角，看出箭頭畫在底下的平面上，指的是「往哪走上坡最陡」。",
+  "next": [
+    "directional-derivative"
+  ],
+  "related": [
+    "tangent-plane",
+    "critical-points-2d"
+  ],
+  "objectives": [
+    "把偏導數排成向量 $\\nabla f=(f_x,f_y)$（三變數多一個 $f_z$），在給定點算出來",
+    "在等高線圖上說出梯度的三個性質：垂直等高線、指向上坡、長度是最大上升率",
+    "知道 $\\nabla f$ 是定義域裡的向量（二變數時在 $xy$ 平面上），不是曲面上的箭頭"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 兩個偏導數合成一個向量",
+      "heading": "① 兩個偏導數，排成向量",
       "body": [
-        "$f_x$ 告訴你往東（$+x$）走時 $f$ 變多快，$f_y$ 告訴你往北（$+y$）走時變多快。把它們排在一起，就是梯度：",
-        "例：$f=x^2+y^2$，$\\nabla f=(2x,2y)$。在 $(1,2)$ 是 $(2,4)$：往東走一小段 $h$，$f$ 約增加 $2h$；往北走一小段 $h$，約增加 $4h$。"
+        "$f_x$：往 $x$ 方向（東）走的變化率；$f_y$：往 $y$ 方向（北）",
+        "兩個數各說一半，排在一起變成一個向量：",
+        "也寫成 $f_x\\,\\mathbf i+f_y\\,\\mathbf j$；$\\nabla$ 念 del 或 nabla",
+        "例：$f(x,y)=x^2+y^2$",
+        "在 $(1,2)$：",
+        "長度：",
+        "每一點都有自己的一支箭頭：$\\nabla f$ 是一個向量場"
       ],
-      "tex": ["\\nabla f(x,y)=\\bigl(f_x(x,y),\\ f_y(x,y)\\bigr)"],
-      "collapsible": false
+      "tex": [
+        "\\nabla f(x,y)=\\big(f_x(x,y),\\ f_y(x,y)\\big)",
+        "\\nabla f=(2x,\\ 2y)",
+        "\\nabla f(1,2)=(2,\\ 4)",
+        "|\\nabla f(1,2)|=\\sqrt{2^2+4^2}=\\sqrt{20}=2\\sqrt5\\approx4.47"
+      ]
+    },
+    {
+      "heading": "① 箭頭畫在哪裡？",
+      "body": [
+        "$f$ 的輸入是 $(x,y)$，梯度有兩個分量",
+        "$\\nabla f(1,2)$ 從 $(1,2)$ 出發，畫在 $xy$ 平面上，不是從 $(1,2,5)$",
+        "規則：$\\nabla f$ 的分量個數 = 輸入變數的個數"
+      ]
     },
     {
       "heading": "② 在等高線地圖上看",
       "body": [
-        "把 $f$ 想成地形的高度，畫出等高線（〈圖形與等高線〉）。在每一點畫出 $\\nabla f$ 的箭頭，會看到三件事：",
-        "1. 箭頭垂直於經過那一點的等高線。2. 箭頭指向高度增加的一側。3. 箭頭的長度 $|\\nabla f|$ 是那一點最大的上升率；等高線越密，坡越陡，箭頭越長。",
-        "注意：$f(x,y)$ 的梯度是 $xy$ 平面上的二維向量，告訴你「在地圖上往哪走」，不是貼在曲面上的三維箭頭。"
-      ],
-      "collapsible": false
+        "看箭頭，有三件事：",
+        "• 垂直於通過那一點的等高線",
+        "• 指向 $f$ 變大的那一邊（上坡）",
+        "• 等高線越密，箭頭越長",
+        "例：$\\nabla f(1,2)=(2,4)$ 是 $(1,2)$ 的 $2$ 倍，從原點往外指，跟圓垂直",
+        "長度 $|\\nabla f|$ = 在這一點，$f$ 最大的上升率",
+        "這三件事這一課先講直覺，下一課（方向導數）會證明",
+        "地圖上：等高線越密 = 地形越陡 = 箭頭越長"
+      ]
     },
     {
-      "heading": "③ 直覺，不是證明：為什麼垂直於等高線",
+      "heading": "② 例：平板上的溫度",
       "body": [
-        "沿著等高線走，高度不變，所以那個方向的變化率是 $0$。最陡的上坡方向不應該浪費任何一步在「高度不變」的方向上，所以跟等高線垂直。",
-        "這個說法還沒證明「梯度方向就是最陡方向」，也還沒說清楚「某個方向的變化率」是什麼。嚴格版本要用 $D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u$，在〈方向導數〉推出。"
+        "方向 $(-1,-1)$；最大升溫率",
+        "單位：度／（長度單位）",
+        "梯度指的是眼前最陡，不一定直指山頂"
       ],
-      "collapsible": false
+      "tex": [
+        "T(x,y)=100-x^2-2y^2",
+        "\\nabla T=(-2x,\\ -4y)\\ \\Rightarrow\\ \\nabla T(2,1)=(-4,\\ -4)",
+        "|\\nabla T(2,1)|=\\sqrt{16+16}=4\\sqrt2\\approx5.66"
+      ]
     },
     {
-      "heading": "④ 三個變數、與梯度為零",
+      "heading": "③ 為什麼垂直等高線",
       "body": [
-        "$f(x,y,z)$ 的梯度是 $(f_x,f_y,f_z)$，垂直於等值面 $f=c$；這會在〈切平面〉用來找法向量。",
-        "$\\nabla f=\\mathbf 0$ 的點，往哪個方向第一階都不變，是找極值的候選點（〈臨界點〉）。"
+        "沿等高線走一小步 $(dx,dy)$：$f$ 沒變",
+        "左邊就是內積：",
+        "為什麼指向上坡：往 $\\nabla f$ 的方向走一小步 $(dx,dy)=\\varepsilon\\,\\nabla f$（$\\varepsilon>0$）",
+        "為什麼密 = 長：相鄰兩條等高線差 $\\Delta c$，距離 $\\Delta s$",
+        "例：$f=x^2+y^2$ 每隔 $2$ 一條，外圈間距越來越小，所以越往外 $|\\nabla f|=2r$ 越大",
+        "這是直覺（用 $\\Delta f\\approx df$），還不是證明"
       ],
-      "collapsible": false
+      "tex": [
+        "df=f_x\\,dx+f_y\\,dy=0",
+        "\\nabla f\\cdot(dx,dy)=0",
+        "df=\\varepsilon\\,(f_x^2+f_y^2)=\\varepsilon\\,|\\nabla f|^2>0",
+        "|\\nabla f|\\approx\\frac{\\Delta c}{\\Delta s}"
+      ]
+    },
+    {
+      "heading": "④ 三個變數",
+      "body": [
+        "例：$f(x,y,z)=x^2y+z$",
+        "它住在 $\\mathbb R^3$（定義域），垂直於等值面 $f=c$",
+        "這裡 $f(1,2,0)=2$：$\\nabla f(1,2,0)$ 垂直於曲面 $x^2y+z=2$；8.15 用它求切平面"
+      ],
+      "tex": [
+        "\\nabla f(x,y,z)=\\big(f_x,\\ f_y,\\ f_z\\big)",
+        "\\nabla f=(2xy,\\ x^2,\\ 1)",
+        "\\nabla f(1,2,0)=(4,\\ 1,\\ 1),\\quad|\\nabla f|=\\sqrt{18}=3\\sqrt2\\approx4.24"
+      ]
+    },
+    {
+      "heading": "④ 梯度為零",
+      "body": [
+        "$\\nabla f(P)=\\mathbf 0$：每個方向一階都不升不降",
+        "例：$f=x^2+y^2$ 在 $(0,0)$：$\\nabla f=(0,0)$，是谷底",
+        "也可能是山頂，或像 $x^2-y^2$ 在原點那樣的鞍點；8.16 臨界點再分辨"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\nabla f=(f_x,f_y)$；三變數多一個 $f_z$",
+        "• 住在定義域：二變數時畫在 $xy$ 平面，不是曲面上",
+        "• 垂直等高線（等值面）、指向上坡",
+        "• $|\\nabla f|$ = 最大上升率；等高線越密越長",
+        "• 不一定直指山頂；$\\nabla f=\\mathbf 0$ 的地方是平的",
+        "下一課：方向導數，把三個性質證明出來"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,255 +171,730 @@
   ],
   "checks": [
     {
-      "ask": "$f(x,y)=x^2y$，$\\nabla f(1,3)$ 是？",
+      "ask": "$f(x,y)=xy^2$，$\\nabla f(3,1)=$？",
       "options": [
-        { "label": "$(6,1)$", "correct": true },
-        { "label": "$(1,6)$", "why": "順序反了：第一個分量是 $f_x=2xy=6$，第二個是 $f_y=x^2=1$。" },
-        { "label": "$(2,1)$", "why": "對 $x$ 偏微分時 $y$ 是常數 $3$，要保留：$f_x=2xy=6$，不是 $2x$。" }
+        {
+          "label": "$(1,\\ 6)$",
+          "correct": true
+        },
+        {
+          "label": "$(6,\\ 1)$",
+          "why": "兩個分量對調了：第一個分量是對 $x$ 的偏導數"
+        },
+        {
+          "label": "$7$",
+          "why": "梯度是向量，不是把兩個偏導數加起來"
+        },
+        {
+          "label": "$(1,\\ 6,\\ 3)$",
+          "why": "二變數的梯度只有兩個分量；$3$ 是函數值，不屬於梯度"
+        }
       ]
     },
     {
-      "ask": "梯度和等高線的關係是？",
+      "ask": "$g(x,y)=x^2-2x+y^2+4y$ 在哪一點 $\\nabla g=\\mathbf 0$？",
       "options": [
-        { "label": "梯度垂直於經過該點的等高線", "correct": true },
-        { "label": "梯度沿著等高線的切線方向", "why": "沿等高線走 $f$ 不變；梯度指的是 $f$ 增加最快的方向，跟它垂直。" },
-        { "label": "梯度永遠平行 $x$ 軸", "why": "只有 $f_y=0$ 時才平行 $x$ 軸，一般不是。" }
-      ]
-    },
-    {
-      "ask": "$\\nabla f(P)=(3,4)$，在 $P$ 的最大上升率是？",
-      "options": [
-        { "label": "$5$", "correct": true },
-        { "label": "$7$", "why": "把分量相加了；最大上升率是長度 $\\sqrt{3^2+4^2}$。" },
-        { "label": "$25$", "why": "那是長度的平方，還要開根號。" }
-      ]
-    },
-    {
-      "ask": "$f(x,y)$ 的梯度 $\\nabla f$ 是哪裡的向量？",
-      "options": [
-        { "label": "$xy$ 平面上的二維向量", "correct": true },
-        { "label": "貼在曲面 $z=f(x,y)$ 上、往上指的三維向量", "why": "$\\nabla f$ 只有 $f_x$、$f_y$ 兩個分量，告訴你在地圖上往哪走，不是曲面上的箭頭。" },
-        { "label": "一個數", "why": "那是 $|\\nabla f|$ 或某個方向的變化率；梯度本身有方向。" }
+        {
+          "label": "$(1,\\ -2)$",
+          "correct": true
+        },
+        {
+          "label": "$(-1,\\ 2)$",
+          "why": "正負號反了：$2x-2=0$ 給 $x=1$"
+        },
+        {
+          "label": "$(0,\\ 0)$",
+          "why": "$\\nabla g(0,0)=(-2,4)$，不是零向量"
+        },
+        {
+          "label": "$(2,\\ -4)$",
+          "why": "那是一次項係數的相反數，忘了除以 $2$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "合成一個向量",
+      "title": "兩個偏導數，排成向量",
       "beats": [
-        { "show": ["$f_x$：往東，$f_y$：往北"],
-          "say": "f 下標 x 告訴你往東走時函數變多快，f 下標 y 告訴你往北走時變多快。",
+        {
+          "show": [
+            "$f_x$：往 $x$ 方向（東）走的變化率；$f_y$：往 $y$ 方向（北）"
+          ],
+          "say": "8.7 學過偏導數：f 對 x 的偏導數，是往 x 方向、也就是往東走時 f 的變化率；f 對 y 的偏導數是往北走的變化率。",
           "board": [
-            {"do":"write","line":"${{a:f_x}}$：往東，${{b:f_y}}$：往北"},
-            {"do":"focus","term":"a","on":"往東走時"},
-            {"do":"focus","term":"b","on":"往北走時"}
-          ] },
-        { "show": ["$\\nabla f=(f_x,\\ f_y)$"],
-          "note": "第一個分量是 $f_x$。",
-          "say": "把這兩個數排成一個向量，就叫梯度，符號是倒三角形，念作 nabla。",
+            {
+              "do": "write",
+              "line": "$f_x$：往 $x$ 方向（東）走的變化率；$f_y$：往 $y$ 方向（北）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個數各說一半，排在一起變成一個向量：",
+            "$\\nabla f(x,y)=\\big(f_x(x,y),\\ f_y(x,y)\\big)$"
+          ],
+          "say": "兩個數各說了一半。把它們排在一起，變成一個向量，叫做 f 的梯度，寫成倒三角形 f，念 del f。",
           "board": [
-            {"do":"write","line":"${{g:\\nabla f}}=({{a:f_x}},\\ {{b:f_y}})$"},
-            {"do":"circle","term":"g","on":"倒三角形"}
-          ] },
-        { "show": ["$f=x^2+y^2$：$\\nabla f=(2x,2y)$","在 $(1,2)$ 是 $(2,4)$"],
-          "say": "例如 x 平方加 y 平方，梯度是二 x、二 y。在點一、二，是二、四。",
+            {
+              "do": "write",
+              "line": "兩個數各說一半，排在一起變成一個向量："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\nabla f(x,y)=\\big(f_x(x,y),\\ f_y(x,y)\\big)}}$",
+              "on": "排在"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的梯"
+            },
+            {
+              "do": "write",
+              "line": "　也寫成 $f_x\\,\\mathbf i+f_y\\,\\mathbf j$；$\\nabla$ 念 del 或 nabla",
+              "color": "violet",
+              "on": "角形"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x,y)=x^2+y^2$",
+            "$\\nabla f=(2x,\\ 2y)$"
+          ],
+          "say": "例子：x 平方加 y 平方。對 x 偏微分是 2x，對 y 偏微分是 2y，所以梯度是 2x 逗號 2y。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=x^2+y^2$：$\\nabla f=(2x,\\ 2y)$","on":"例如"},
-            {"do":"write","line":"在 $(1,2)$：$(2,4)$","on":"在點一"}
-          ] },
-        { "show": ["往東走 $h$：約增加 $2h$；往北：約 $4h$"],
-          "say": "意思是：往東走一小段 h，函數大約多二 h；往北走同樣一段，大約多四 h。",
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^2+y^2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f=(2x,\\ 2y)$",
+              "on": "偏微#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $(1,2)$：",
+            "$\\nabla f(1,2)=(2,\\ 4)$"
+          ],
+          "say": "在點 1 逗號 2，代進去，梯度是 2 逗號 4。",
           "board": [
-            {"do":"write","line":"往東走 $h$：約增加 ${{e:2h}}$"},
-            {"do":"write","line":"往北走 $h$：約增加 ${{n:4h}}$","on":"往北走同樣"}
-          ] },
-        { "show": ["$(1+h)^2-1^2=2h+h^2$"],
-          "say": "實際算一下：x 從一走到一加 h，y 不動，函數多出來的量是二 h 加 h 平方。",
+            {
+              "do": "write",
+              "line": "在 $(1,2)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f(1,2)=(2,\\ 4)$",
+              "on": "梯度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "長度：",
+            "$|\\nabla f(1,2)|=\\sqrt{2^2+4^2}=\\sqrt{20}=2\\sqrt5\\approx4.47$"
+          ],
+          "say": "它的長度是根號 2 平方加 4 平方，根號 20，也就是 2 根號 5，大約 4.47。等一下會知道這個長度代表什麼。",
           "board": [
-            {"do":"write","line":"$(1+h)^2-1^2={{p1:2h}}+{{p2:h^2}}$"},
-            {"do":"focus","term":"p1","on":"二 h"}
-          ] },
-        { "show": ["h 很小：$h^2$ 比 $2h$ 小很多"],
-          "say": "h 很小的時候，h 平方比二 h 小得多，可以忽略，所以才說大約是二 h。",
+            {
+              "do": "write",
+              "line": "長度："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle |\\nabla f(1,2)|=\\sqrt{2^2+4^2}=\\sqrt{20}=2\\sqrt5\\approx4.47}}$",
+              "color": "red",
+              "on": "根號#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "47"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一點都有自己的一支箭頭：$\\nabla f$ 是一個向量場"
+          ],
+          "say": "注意梯度跟著點在變：每一點都有自己的一支箭頭。整個平面上的箭頭，合起來叫一個向量場。",
           "board": [
-            {"do":"write","line":"h 很小：${{p3:h^2}}$ 比 ${{p4:2h}}$ 小很多"},
-            {"do":"underline","term":"p3","label":"可忽略","on":"小得多"}
-          ] }
+            {
+              "do": "write",
+              "line": "每一點都有自己的一支箭頭：$\\nabla f$ 是一個向量場"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "箭頭畫在哪裡？",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "一個常見的誤會：以為梯度是畫在曲面上的箭頭。看圖，曲面是 z 等於 x 平方加 y 平方，點 1 逗號 2 在曲面上的高度是 5。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gDomain\" viewBox=\"0 0 480 420\" width=\"480\" height=\"420\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8dgDomain\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8dgDomainblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8dgDomainred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8dgDomaingreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8dgDomainpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8dgDomainink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"235\" y1=\"318\" x2=\"159.9\" y2=\"370.9\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgDomainink)\"/><line x1=\"235\" y1=\"318\" x2=\"393.9\" y2=\"349.7\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgDomainink)\"/><line x1=\"235\" y1=\"318\" x2=\"235\" y2=\"21.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgDomainink)\"/><text x=\"149.9\" y=\"389.2\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"413.5\" y=\"359.6\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"235\" y=\"0.5\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><polygon points=\"237.3,235.2 237.8,203.9 222.3,204.3 224.5,235.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"250,235.9 253,204.8 237.8,203.9 237.3,235.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236.8,261.5 237.3,235.2 224.5,235.5 226.6,261.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"247,262.1 250,235.9 237.3,235.2 236.8,261.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.8,203.9 238.2,167.7 220.2,168.2 222.3,204.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253,204.8 256,168.7 238.2,167.7 237.8,203.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.5,235.5 222.3,204.3 207.6,206 212.1,236.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"226.6,261.8 224.5,235.5 212.1,236.9 216.7,263\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236.4,283 236.8,261.5 226.6,261.8 228.7,283.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"244,283.5 247,262.1 236.8,261.5 236.4,283\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"256.6,263.5 262,237.7 250,235.9 247,262.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262,237.7 267.4,206.9 253,204.8 250,235.9\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.3,204.3 220.2,168.2 203,170.2 207.6,206\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.2,167.7 238.7,126.6 218.1,127.2 220.2,168.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"228.7,283.2 226.6,261.8 216.7,263 221.3,284.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"256,168.7 259,127.8 238.7,126.6 238.2,167.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.2,284.5 256.6,263.5 247,262.1 244,283.5\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.4,206.9 272.8,171.2 256,168.7 253,204.8\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"216.7,263 212.1,236.9 201,239.3 207.8,264.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212.1,236.9 207.6,206 194.2,208.9 201,239.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"220.2,168.2 218.1,127.2 198.4,129.4 203,170.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235.9,299.6 236.4,283 228.7,283.2 230.8,299.7\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"221.3,284.1 216.7,263 207.8,264.9 214.6,285.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241,299.9 244,283.5 236.4,283 235.9,299.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"265.1,265.7 272.6,240.4 262,237.7 256.6,263.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.8,299.7 228.7,283.2 221.3,284.1 225.9,300.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.6,286.2 265.1,265.7 256.6,263.5 251.2,284.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.8,300.6 251.2,284.5 244,283.5 241,299.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.7,126.6 239.1,80.6 216,81.2 218.1,127.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.8,171.2 278.2,130.6 259,127.8 256,168.7\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.6,240.4 280.1,210.2 267.4,206.9 262,237.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.6,206 203,170.2 187.4,173.5 194.2,208.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259,127.8 262,81.9 239.1,80.6 238.7,126.6\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225.9,300.3 221.3,284.1 214.6,285.5 221.4,301.2\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"250,301.7 257.6,286.2 251.2,284.5 245.8,300.6\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"214.6,285.5 207.8,264.9 200.2,267.5 208.9,287.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.8,264.9 201,239.3 191.5,242.6 200.2,267.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.1,210.2 287.7,175 272.8,171.2 267.4,206.9\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.1,127.2 216,81.2 193.8,83.8 198.4,129.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235.5,311.2 235.9,299.6 230.8,299.7 232.9,311.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238,311.4 241,299.9 235.9,299.6 235.5,311.2\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"221.4,301.2 214.6,285.5 208.9,287.5 217.6,302.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"203,170.2 198.4,129.4 180.6,133.3 187.4,173.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,288.3 272.1,268.6 265.1,265.7 257.6,286.2\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.9,311.3 230.8,299.7 225.9,300.3 230.4,311.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"201,239.3 194.2,208.9 182.8,212.8 191.5,242.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240.4,311.7 245.8,300.6 241,299.9 238,311.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.1,268.6 281.3,243.9 272.6,240.4 265.1,265.7\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.2,130.6 283.6,85.1 262,81.9 259,127.8\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.5,303.1 262.8,288.3 257.6,286.2 250,301.7\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.4,311.6 225.9,300.3 221.4,301.2 228.2,312.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.1,80.6 239.6,29.7 213.9,30.4 216,81.2\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.5,312.3 250,301.7 245.8,300.6 240.4,311.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262,81.9 265,31.2 239.6,29.7 239.1,80.6\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287.7,175 295.2,135 278.2,130.6 272.8,171.2\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.3,243.9 290.6,214.4 280.1,210.2 272.6,240.4\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"228.2,312.1 221.4,301.2 217.6,302.6 226.3,312.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208.9,287.5 200.2,267.5 194.4,270.7 204.5,289.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217.6,302.6 208.9,287.5 204.5,289.9 214.7,304.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194.2,208.9 187.4,173.5 174.1,178.1 182.8,212.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"244.3,313 253.5,303.1 250,301.7 242.5,312.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"256.1,304.8 266.7,290.8 262.8,288.3 253.5,303.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"200.2,267.5 191.5,242.6 184.2,246.6 194.4,270.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"216,81.2 213.9,30.4 189.3,33.2 193.8,83.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"226.3,312.7 217.6,302.6 214.7,304.1 224.8,313.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"198.4,129.4 193.8,83.8 173.7,88.1 180.6,133.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"266.7,290.8 277.2,271.9 272.1,268.6 262.8,288.3\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.6,313.8 256.1,304.8 253.5,303.1 244.3,313\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 235.5,311.2 232.9,311.3 235,318\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 238,311.4 235.5,311.2 235,318\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"290.6,214.4 299.9,180 287.7,175 280.1,210.2\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 232.9,311.3 230.4,311.6 235,318\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 240.4,311.7 238,311.4 235,318\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 230.4,311.6 228.2,312.1 235,318\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"283.6,85.1 289,34.7 265,31.2 262,81.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 242.5,312.3 240.4,311.7 235,318\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.2,271.9 287.8,248.1 281.3,243.9 272.1,268.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 228.2,312.1 226.3,312.7 235,318\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.8,313.5 214.7,304.1 212.8,305.9 223.9,314.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"214.7,304.1 204.5,289.9 201.7,292.6 212.8,305.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 244.3,313 242.5,312.3 235,318\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.5,242.6 182.8,212.8 174.1,217.6 184.2,246.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 226.3,312.7 224.8,313.5 235,318\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.2,135 302.7,90 283.6,85.1 278.2,130.6\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"187.4,173.5 180.6,133.3 165.4,138.5 174.1,178.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"246.3,314.8 257.6,306.6 256.1,304.8 245.6,313.8\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 245.6,313.8 244.3,313 235,318\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 224.8,313.5 223.9,314.4 235,318\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.6,306.6 268.9,293.6 266.7,290.8 256.1,304.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"204.5,289.9 194.4,270.7 190.6,274.3 201.7,292.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 246.3,314.8 245.6,313.8 235,318\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 223.9,314.4 223.5,315.4 235,318\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.9,314.4 212.8,305.9 212,307.8 223.5,315.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 246.5,315.7 246.3,314.8 235,318\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 223.5,315.4 223.7,316.3 235,318\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287.8,248.1 298.3,219.4 290.6,214.4 281.3,243.9\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 246.1,316.7 246.5,315.7 235,318\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"246.5,315.7 258,308.5 257.6,306.6 246.3,314.8\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"268.9,293.6 280.2,275.6 277.2,271.9 266.7,290.8\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 223.7,316.3 224.4,317.3 235,318\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.9,180 309.2,140.7 295.2,135 287.7,175\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"193.8,83.8 189.3,33.2 166.9,38 173.7,88.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212.8,305.9 201.7,292.6 200.5,295.4 212,307.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 245.2,317.6 246.1,316.7 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194.4,270.7 184.2,246.6 179.5,251.1 190.6,274.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 224.4,317.3 225.7,318.1 235,318\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"182.8,212.8 174.1,178.1 163.9,183.7 174.1,217.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 243.7,318.4 245.2,317.6 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.5,315.4 212,307.8 212.4,309.8 223.7,316.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 225.7,318.1 227.5,318.8 235,318\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 241.8,319 243.7,318.4 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258,308.5 269.5,296.4 268.9,293.6 257.6,306.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 227.5,318.8 229.6,319.4 235,318\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"246.1,316.7 257.2,310.4 258,308.5 246.5,315.7\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 239.6,319.5 241.8,319 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 229.6,319.4 232,319.7 235,318\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 237.1,319.8 239.6,319.5 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"180.6,133.3 173.7,88.1 156.7,94 165.4,138.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 232,319.7 234.5,319.9 235,318\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,318 234.5,319.9 237.1,319.8 235,318\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.2,275.6 291.5,252.7 287.8,248.1 277.2,271.9\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"302.7,90 310.2,40.2 289,34.7 283.6,85.1\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"201.7,292.6 190.6,274.3 189,278.1 200.5,295.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.7,316.3 212.4,309.8 213.9,311.6 224.4,317.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.3,219.4 308.9,185.8 299.9,180 290.6,214.4\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.2,317.6 255.3,312.2 257.2,310.4 246.1,316.7\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212,307.8 200.5,295.4 201.1,298.3 212.4,309.8\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"184.2,246.6 174.1,217.6 168.4,223 179.5,251.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.5,296.4 281,279.4 280.2,275.6 268.9,293.6\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.4,317.3 213.9,311.6 216.5,313.3 225.7,318.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.2,310.4 268.3,299.3 269.5,296.4 258,308.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"309.2,140.7 318.4,96.4 302.7,90 295.2,135\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.1,178.1 165.4,138.5 153.8,144.9 163.9,183.7\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.7,318.4 252.4,313.8 255.3,312.2 245.2,317.6\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"190.6,274.3 179.5,251.1 177.5,255.8 189,278.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"291.5,252.7 302.8,225 298.3,219.4 287.8,248.1\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225.7,318.1 216.5,313.3 220,314.7 227.5,318.8\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.8,319 248.6,315.1 252.4,313.8 243.7,318.4\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212.4,309.8 201.1,298.3 203.3,301.1 213.9,311.6\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"200.5,295.4 189,278.1 189.8,281.9 201.1,298.3\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"227.5,318.8 220,314.7 224.2,315.8 229.6,319.4\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"173.7,88.1 166.9,38 148,44.6 156.7,94\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"255.3,312.2 265.5,302 268.3,299.3 257.2,310.4\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.6,319.5 244.1,316.1 248.6,315.1 241.8,319\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.9,185.8 319.4,147.3 309.2,140.7 299.9,180\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.1,217.6 163.9,183.7 157.3,190 168.4,223\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281,279.4 292.5,257.5 291.5,252.7 280.2,275.6\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"229.6,319.4 224.2,315.8 229,316.5 232,319.7\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.1,319.8 239.2,316.7 244.1,316.1 239.6,319.5\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"268.3,299.3 279.4,283.3 281,279.4 269.5,296.4\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232,319.7 229,316.5 234.1,316.8 234.5,319.9\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"234.5,319.9 234.1,316.8 239.2,316.7 237.1,319.8\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"213.9,311.6 203.3,301.1 207.2,303.6 216.5,313.3\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"165.4,138.5 156.7,94 143.6,101.2 153.8,144.9\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"318.4,96.4 327.7,47.3 310.2,40.2 302.7,90\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.5,251.1 168.4,223 166.1,228.7 177.5,255.8\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.4,313.8 261.1,304.4 265.5,302 255.3,312.2\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"302.8,225 314.1,192.3 308.9,185.8 298.3,219.4\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"201.1,298.3 189.8,281.9 192.8,285.6 203.3,301.1\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"189,278.1 177.5,255.8 178.5,260.6 189.8,281.9\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"216.5,313.3 207.2,303.6 212.4,305.7 220,314.7\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"248.6,315.1 255.4,306.3 261.1,304.4 252.4,313.8\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,257.5 303.9,230.7 302.8,225 291.5,252.7\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"265.5,302 275.6,286.9 279.4,283.3 268.3,299.3\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"163.9,183.7 153.8,144.9 146.2,152 157.3,190\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"319.4,147.3 330,103.9 318.4,96.4 309.2,140.7\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.4,283.3 290.5,262.3 292.5,257.5 281,279.4\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"220,314.7 212.4,305.7 218.8,307.3 224.2,315.8\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"244.1,316.1 248.7,307.8 255.4,306.3 248.6,315.1\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"203.3,301.1 192.8,285.6 197.9,289 207.2,303.6\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.2,315.8 218.8,307.3 226,308.4 229,316.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"168.4,223 157.3,190 154.6,196.6 166.1,228.7\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.2,316.7 241.3,308.6 248.7,307.8 244.1,316.1\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"229,316.5 226,308.4 233.6,308.8 234.1,316.8\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"314.1,192.3 325.4,154.7 319.4,147.3 308.9,185.8\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.7,94 148,44.6 133.5,52.5 143.6,101.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"234.1,316.8 233.6,308.8 241.3,308.6 239.2,316.7\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.1,304.4 269.8,290 275.6,286.9 265.5,302\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"189.8,281.9 178.5,260.6 182.2,265.3 192.8,285.6\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"177.5,255.8 166.1,228.7 167.2,234.5 178.5,260.6\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.9,230.7 315.4,199 314.1,192.3 302.8,225\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.2,303.6 197.9,289 204.9,291.8 212.4,305.7\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.6,286.9 285.8,266.8 290.5,262.3 279.4,283.3\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"153.8,144.9 143.6,101.2 135.1,109.2 146.2,152\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"290.5,262.3 301.6,236.5 303.9,230.7 292.5,257.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"330,103.9 340.5,55.6 327.7,47.3 318.4,96.4\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"255.4,306.3 262.2,292.7 269.8,290 261.1,304.4\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212.4,305.7 204.9,291.8 213.4,294 218.8,307.3\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"157.3,190 146.2,152 143.1,159.7 154.6,196.6\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.8,285.6 182.2,265.3 188.7,269.4 197.9,289\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"248.7,307.8 253.3,294.6 262.2,292.7 255.4,306.3\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"325.4,154.7 336.7,112.2 330,103.9 319.4,147.3\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.8,307.3 213.4,294 223,295.4 226,308.4\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"166.1,228.7 154.6,196.6 155.9,203.4 167.2,234.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"178.5,260.6 167.2,234.5 171.7,240 182.2,265.3\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.8,290 278.5,270.8 285.8,266.8 275.6,286.9\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.3,308.6 243.4,295.7 253.3,294.6 248.7,307.8\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"226,308.4 223,295.4 233.2,296 233.6,308.8\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.6,308.8 233.2,296 243.4,295.7 241.3,308.6\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.4,199 326.9,162.4 325.4,154.7 314.1,192.3\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"285.8,266.8 295.9,241.8 301.6,236.5 290.5,262.3\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.6,236.5 312.7,205.7 315.4,199 303.9,230.7\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.9,289 188.7,269.4 197.4,273 204.9,291.8\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"143.6,101.2 133.5,52.5 124,61.5 135.1,109.2\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.2,292.7 269,274.1 278.5,270.8 269.8,290\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"146.2,152 135.1,109.2 131.6,117.8 143.1,159.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"182.2,265.3 171.7,240 179.4,245 188.7,269.4\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"204.9,291.8 197.4,273 208,275.7 213.4,294\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"336.7,112.2 348,64.9 340.5,55.6 330,103.9\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.3,294.6 257.9,276.5 269,274.1 262.2,292.7\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"154.6,196.6 143.1,159.7 144.6,167.4 155.9,203.4\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"167.2,234.5 155.9,203.4 161.1,209.8 171.7,240\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.5,270.8 287.2,246.6 295.9,241.8 285.8,266.8\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"213.4,294 208,275.7 220,277.5 223,295.4\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"326.9,162.4 338.4,120.9 336.7,112.2 325.4,154.7\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.4,295.7 245.5,277.9 257.9,276.5 253.3,294.6\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,241.8 306.1,212 312.7,205.7 301.6,236.5\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223,295.4 220,277.5 232.7,278.2 233.2,296\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.2,296 232.7,278.2 245.5,277.9 243.4,295.7\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.7,205.7 323.8,170 326.9,162.4 315.4,199\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"188.7,269.4 179.4,245 189.9,249.3 197.4,273\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269,274.1 275.8,250.5 287.2,246.6 278.5,270.8\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"135.1,109.2 124,61.5 120.1,71 131.6,117.8\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"171.7,240 161.1,209.8 170.1,215.7 179.4,245\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.4,273 189.9,249.3 202.6,252.5 208,275.7\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"143.1,159.7 131.6,117.8 133.3,126.5 144.6,167.4\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155.9,203.4 144.6,167.4 150.6,174.7 161.1,209.8\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.9,276.5 262.4,253.4 275.8,250.5 269,274.1\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287.2,246.6 295.9,217.6 306.1,212 295.9,241.8\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"338.4,120.9 349.9,74.5 348,64.9 336.7,112.2\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208,275.7 202.6,252.5 217,254.7 220,277.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"306.1,212 316.2,177.2 323.8,170 312.7,205.7\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"323.8,170 334.9,129.5 338.4,120.9 326.9,162.4\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.5,277.9 247.7,255.1 262.4,253.4 257.9,276.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"220,277.5 217,254.7 232.2,255.5 232.7,278.2\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.7,278.2 232.2,255.5 247.7,255.1 245.5,277.9\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.4,245 170.1,215.7 182.3,220.6 189.9,249.3\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.8,250.5 282.6,222.1 295.9,217.6 287.2,246.6\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.1,209.8 150.6,174.7 160.8,181.4 170.1,215.7\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"131.6,117.8 120.1,71 122,80.7 133.3,126.5\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"144.6,167.4 133.3,126.5 140,134.8 150.6,174.7\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"189.9,249.3 182.3,220.6 197.2,224.5 202.6,252.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295.9,217.6 304.6,183.6 316.2,177.2 306.1,212\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.4,253.4 267,225.5 282.6,222.1 275.8,250.5\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"334.9,129.5 346,84 349.9,74.5 338.4,120.9\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.2,177.2 326.4,137.6 334.9,129.5 323.8,170\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"202.6,252.5 197.2,224.5 214,226.9 217,254.7\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"247.7,255.1 249.8,227.5 267,225.5 262.4,253.4\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"170.1,215.7 160.8,181.4 174.8,187.1 182.3,220.6\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217,254.7 214,226.9 231.8,228 232.2,255.5\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.2,255.5 231.8,228 249.8,227.5 247.7,255.1\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.6,222.1 289.4,188.8 304.6,183.6 295.9,217.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"150.6,174.7 140,134.8 151.6,142.3 160.8,181.4\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"133.3,126.5 122,80.7 129.5,89.9 140,134.8\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"182.3,220.6 174.8,187.1 191.8,191.5 197.2,224.5\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.6,183.6 313.3,144.7 326.4,137.6 316.2,177.2\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267,225.5 271.6,192.7 289.4,188.8 282.6,222.1\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"326.4,137.6 336.5,93 346,84 334.9,129.5\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.2,224.5 191.8,191.5 211,194.3 214,226.9\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"249.8,227.5 251.9,194.9 271.6,192.7 267,225.5\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"160.8,181.4 151.6,142.3 167.3,148.7 174.8,187.1\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"214,226.9 211,194.3 231.3,195.5 231.8,228\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.8,228 231.3,195.5 251.9,194.9 249.8,227.5\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"289.4,188.8 296.3,150.6 313.3,144.7 304.6,183.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"140,134.8 129.5,89.9 142.3,98.3 151.6,142.3\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.8,187.1 167.3,148.7 186.4,153.6 191.8,191.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"313.3,144.7 322,100.9 336.5,93 326.4,137.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"271.6,192.7 276.2,154.9 296.3,150.6 289.4,188.8\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.8,191.5 186.4,153.6 208,156.8 211,194.3\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"151.6,142.3 142.3,98.3 159.8,105.3 167.3,148.7\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.9,194.9 254,157.5 276.2,154.9 271.6,192.7\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211,194.3 208,156.8 230.9,158.1 231.3,195.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.3,195.5 230.9,158.1 254,157.5 251.9,194.9\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.3,150.6 303.1,107.5 322,100.9 313.3,144.7\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"167.3,148.7 159.8,105.3 181,110.8 186.4,153.6\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"276.2,154.9 280.7,112.3 303.1,107.5 296.3,150.6\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"186.4,153.6 181,110.8 205,114.3 208,156.8\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"254,157.5 256.1,115.1 280.7,112.3 276.2,154.9\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208,156.8 205,114.3 230.4,115.8 230.9,158.1\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.9,158.1 230.4,115.8 256.1,115.1 254,157.5\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><path d=\"M182.5 355L186.4 355.7L190.4 356.4L194.5 357L198.6 357.6L202.8 358.1L207 358.5L211.3 358.9L215.6 359.2L219.9 359.5L224.3 359.7L228.7 359.8L233 359.9L237.4 359.9L241.8 359.8L246.2 359.7L250.6 359.5L254.9 359.2L259.2 358.9L263.5 358.5L267.7 358.1L271.9 357.5L276 357L280 356.3L284 355.6L287.9 354.9L291.7 354.1L295.5 353.2L299.1 352.3L302.7 351.3L306.1 350.3L309.4 349.2L312.7 348.1L315.8 347L318.7 345.8L321.6 344.5L324.3 343.2L326.9 341.9L329.3 340.5L331.6 339.1L333.7 337.7L335.7 336.2L337.5 334.7L339.2 333.2L340.7 331.6L342.1 330.1L343.2 328.5L344.3 326.9L345.1 325.3L345.8 323.6L346.3 322L346.6 320.4L346.8 318.7L346.8 317.1L346.6 315.4L346.2 313.8L345.7 312.2L345 310.5L344.2 308.9L343.1 307.3L341.9 305.8L340.6 304.2L339 302.7L337.3 301.1L335.5 299.6L333.5 298.2L331.3 296.7L329 295.3L326.6 294L324 292.6L321.3 291.4L318.4 290.1L315.4 288.9L312.3 287.7L309.1 286.6L305.7 285.6L302.3 284.6L298.7 283.6L295.1 282.7L291.3 281.8L287.5 281L283.6 280.3L279.6 279.6L275.5 279L271.4 278.4L267.2 277.9L263 277.5L258.7 277.1L254.4 276.8L250.1 276.5L245.7 276.3L241.3 276.2L237 276.1L232.6 276.1L228.2 276.2L223.8 276.3L219.4 276.5L215.1 276.8L210.8 277.1L206.5 277.5L202.3 277.9L198.1 278.5L194 279L190 279.7L186 280.4L182.1 281.1L178.3 281.9L174.5 282.8L170.9 283.7L167.3 284.7L163.9 285.7L160.6 286.8L157.3 287.9L154.2 289L151.3 290.2L148.4 291.5L145.7 292.8L143.1 294.1L140.7 295.5L138.4 296.9L136.3 298.3L134.3 299.8L132.5 301.3L130.8 302.8L129.3 304.4L127.9 305.9L126.8 307.5L125.7 309.1L124.9 310.7L124.2 312.4L123.7 314L123.4 315.6L123.2 317.3L123.2 318.9L123.4 320.6L123.8 322.2L124.3 323.8L125 325.5L125.8 327.1L126.9 328.7L128.1 330.2L129.4 331.8L131 333.3L132.7 334.9L134.5 336.4L136.5 337.8L138.7 339.3L141 340.7L143.4 342L146 343.4L148.7 344.6L151.6 345.9L154.6 347.1L157.7 348.3L160.9 349.4L164.3 350.4L167.7 351.4L171.3 352.4L174.9 353.3L178.7 354.2L182.5 355\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"6 5\"/><path d=\"M182.5 123.2L186.4 123.9L190.4 124.6L194.5 125.2L198.6 125.8L202.8 126.3L207 126.8L211.3 127.1L215.6 127.5L219.9 127.7L224.3 127.9L228.7 128L233 128.1L237.4 128.1L241.8 128L246.2 127.9L250.6 127.7L254.9 127.4L259.2 127.1L263.5 126.7L267.7 126.3L271.9 125.7L276 125.2L280 124.5L284 123.8L287.9 123.1L291.7 122.3L295.5 121.4L299.1 120.5L302.7 119.5L306.1 118.5L309.4 117.5L312.7 116.3L315.8 115.2L318.7 114L321.6 112.7L324.3 111.4L326.9 110.1L329.3 108.7L331.6 107.3L333.7 105.9L335.7 104.4L337.5 102.9L339.2 101.4L340.7 99.8L342.1 98.3L343.2 96.7L344.3 95.1L345.1 93.5L345.8 91.9L346.3 90.2L346.6 88.6L346.8 86.9L346.8 85.3L346.6 83.6L346.2 82L345.7 80.4L345 78.8L344.2 77.1L343.1 75.5L341.9 74L340.6 72.4L339 70.9L337.3 69.3L335.5 67.8L333.5 66.4L331.3 64.9L329 63.5L326.6 62.2L324 60.9L321.3 59.6L318.4 58.3L315.4 57.1L312.3 55.9L309.1 54.8L305.7 53.8L302.3 52.8L298.7 51.8L295.1 50.9L291.3 50L287.5 49.2L283.6 48.5L279.6 47.8L275.5 47.2L271.4 46.6L267.2 46.1L263 45.7L258.7 45.3L254.4 45L250.1 44.7L245.7 44.5L241.3 44.4L237 44.3L232.6 44.3L228.2 44.4L223.8 44.5L219.4 44.7L215.1 45L210.8 45.3L206.5 45.7L202.3 46.2L198.1 46.7L194 47.2L190 47.9L186 48.6L182.1 49.3L178.3 50.1L174.5 51L170.9 51.9L167.3 52.9L163.9 53.9L160.6 55L157.3 56.1L154.2 57.2L151.3 58.5L148.4 59.7L145.7 61L143.1 62.3L140.7 63.7L138.4 65.1L136.3 66.5L134.3 68L132.5 69.5L130.8 71L129.3 72.6L127.9 74.1L126.8 75.7L125.7 77.3L124.9 78.9L124.2 80.6L123.7 82.2L123.4 83.8L123.2 85.5L123.2 87.1L123.4 88.8L123.8 90.4L124.3 92L125 93.7L125.8 95.3L126.9 96.9L128.1 98.4L129.4 100L131 101.6L132.7 103.1L134.5 104.6L136.5 106L138.7 107.5L141 108.9L143.4 110.2L146 111.6L148.7 112.8L151.6 114.1L154.6 115.3L157.7 116.5L160.9 117.6L164.3 118.6L167.7 119.7L171.3 120.6L174.9 121.5L178.7 122.4L182.5 123.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"299.8\" y1=\"352.1\" x2=\"299.8\" y2=\"120.3\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"7 6\"/><line x1=\"299.8\" y1=\"352.1\" x2=\"332.2\" y2=\"369.2\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8dgDomainred)\"/><circle cx=\"299.8\" cy=\"352.1\" r=\"5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><circle cx=\"299.8\" cy=\"120.3\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"344.2\" y=\"383.2\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇f(1, 2)</text><text x=\"313.8\" y=\"114.3\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(1, 2, 5)</text><text x=\"344.2\" y=\"411.2\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">在 xy 平面上</text><text x=\"157.9\" y=\"129.1\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z = x² + y²</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f$ 的輸入是 $(x,y)$，梯度有兩個分量"
+          ],
+          "say": "但 f 的輸入只有 x 和 y 兩個數，梯度也只有兩個分量。它是 xy 平面上的向量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 的輸入是 $(x,y)$，梯度有兩個分量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla f(1,2)$ 從 $(1,2)$ 出發，畫在 $xy$ 平面上，不是從 $(1,2,5)$"
+          ],
+          "say": "所以梯度要從平面上的點 1 逗號 2 出發畫，而不是從曲面上的點 1 逗號 2 逗號 5。它告訴你：站在這裡，往平面上哪個方向走，f 漲得最快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\nabla f(1,2)$ 從 $(1,2)$ 出發，畫在 $xy$ 平面上，不是從 $(1,2,5)$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　規則：$\\nabla f$ 的分量個數 = 輸入變數的個數",
+              "color": "violet",
+              "on": "逗號#3"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
       "title": "在等高線地圖上看",
       "beats": [
-        { "show": ["① 垂直於等高線"],
-          "note": "把 $f$ 想成地形的高度。",
-          "say": "在等高線地圖上，每一點畫出梯度的箭頭，會看到三件事。第一，箭頭跟等高線垂直。",
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "把 x 平方加 y 平方的等高線畫出來：是一圈一圈的圓，數字是 f 的值。每隔 2 畫一條。綠色箭頭是各點的梯度，長度照比例畫。",
           "board": [
-            {"do":"write","line":"$\\nabla f\\ \\perp$ 等高線"}
-          ] },
-        { "show": ["② 指向高度增加的一側"],
-          "say": "第二，箭頭指向上坡，高度變大的那一側。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gContour\" viewBox=\"0 0 620 430\" width=\"620\" height=\"430\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8dgContour\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8dgContourblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8dgContourred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8dgContourgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8dgContourpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8dgContourink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8dgContour30\"><rect x=\"106.2\" y=\"16\" width=\"413.5\" height=\"384\"/></clipPath><g clip-path=\"url(#cl8dgContour30)\"><path d=\"M365.2 215.4L365.2 213.3L365.1 211.3L364.9 209.2L364.6 207.2L364.2 205.2L363.8 203.2L363.3 201.2L362.7 199.2L362 197.3L361.2 195.4L360.4 193.5L359.5 191.7L358.6 189.9L357.5 188.1L356.4 186.4L355.2 184.7L354 183.1L352.7 181.5L351.3 179.9L349.9 178.5L348.4 177L346.9 175.7L345.3 174.4L343.7 173.1L342 172L340.3 170.9L338.5 169.8L336.7 168.9L334.9 168L333 167.1L331.1 166.4L329.1 165.7L327.2 165.1L325.2 164.6L323.2 164.2L321.2 163.8L319.1 163.5L317.1 163.3L315.1 163.2L313 163.2L310.9 163.2L308.9 163.3L306.9 163.5L304.8 163.8L302.8 164.2L300.8 164.6L298.8 165.1L296.9 165.7L294.9 166.4L293 167.1L291.1 168L289.3 168.9L287.5 169.8L285.7 170.9L284 172L282.3 173.1L280.7 174.4L279.1 175.7L277.6 177L276.1 178.5L274.7 179.9L273.3 181.5L272 183.1L270.8 184.7L269.6 186.4L268.5 188.1L267.4 189.9L266.5 191.7L265.6 193.5L264.8 195.4L264 197.3L263.3 199.2L262.7 201.2L262.2 203.2L261.8 205.2L261.4 207.2L261.1 209.2L260.9 211.3L260.8 213.3L260.8 215.4L260.8 217.4L260.9 219.5L261.1 221.5L261.4 223.6L261.8 225.6L262.2 227.6L262.7 229.6L263.3 231.5L264 233.5L264.8 235.4L265.6 237.2L266.5 239.1L267.4 240.9L268.5 242.7L269.6 244.4L270.8 246.1L272 247.7L273.3 249.3L274.7 250.8L276.1 252.3L277.6 253.7L279.1 255.1L280.7 256.4L282.3 257.6L284 258.8L285.7 259.9L287.5 260.9L289.3 261.9L291.1 262.8L293 263.6L294.9 264.4L296.9 265L298.8 265.6L300.8 266.2L302.8 266.6L304.8 267L306.9 267.2L308.9 267.4L310.9 267.6L313 267.6L315.1 267.6L317.1 267.4L319.1 267.2L321.2 267L323.2 266.6L325.2 266.2L327.2 265.6L329.1 265L331.1 264.4L333 263.6L334.9 262.8L336.7 261.9L338.5 260.9L340.3 259.9L342 258.8L343.7 257.6L345.3 256.4L346.9 255.1L348.4 253.7L349.9 252.3L351.3 250.8L352.7 249.3L354 247.7L355.2 246.1L356.4 244.4L357.5 242.7L358.6 240.9L359.5 239.1L360.4 237.2L361.2 235.4L362 233.5L362.7 231.5L363.3 229.6L363.8 227.6L364.2 225.6L364.6 223.6L364.9 221.5L365.1 219.5L365.2 217.4L365.2 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M386.8 215.4L386.8 212.5L386.6 209.6L386.3 206.7L385.9 203.8L385.4 201L384.8 198.1L384.1 195.3L383.2 192.6L382.3 189.8L381.2 187.1L380.1 184.5L378.8 181.9L377.4 179.3L376 176.8L374.4 174.4L372.7 172L371 169.7L369.2 167.4L367.2 165.3L365.2 163.2L363.1 161.2L361 159.2L358.7 157.4L356.4 155.6L354 154L351.6 152.4L349.1 151L346.5 149.6L343.9 148.3L341.3 147.2L338.6 146.1L335.8 145.2L333 144.3L330.2 143.6L327.4 143L324.6 142.4L321.7 142.1L318.8 141.8L315.9 141.6L313 141.5L310.1 141.6L307.2 141.8L304.3 142.1L301.4 142.4L298.6 143L295.8 143.6L293 144.3L290.2 145.2L287.4 146.1L284.7 147.2L282.1 148.3L279.5 149.6L276.9 151L274.4 152.4L272 154L269.6 155.6L267.3 157.4L265 159.2L262.9 161.2L260.8 163.2L258.8 165.3L256.8 167.4L255 169.7L253.3 172L251.6 174.4L250 176.8L248.6 179.3L247.2 181.9L245.9 184.5L244.8 187.1L243.7 189.8L242.8 192.6L241.9 195.3L241.2 198.1L240.6 201L240.1 203.8L239.7 206.7L239.4 209.6L239.2 212.5L239.2 215.4L239.2 218.3L239.4 221.2L239.7 224.1L240.1 226.9L240.6 229.8L241.2 232.6L241.9 235.4L242.8 238.2L243.7 240.9L244.8 243.6L245.9 246.3L247.2 248.9L248.6 251.5L250 254L251.6 256.4L253.3 258.8L255 261.1L256.8 263.3L258.8 265.5L260.8 267.6L262.9 269.6L265 271.5L267.3 273.4L269.6 275.1L272 276.8L274.4 278.3L276.9 279.8L279.5 281.2L282.1 282.4L284.7 283.6L287.4 284.7L290.2 285.6L293 286.5L295.8 287.2L298.6 287.8L301.4 288.3L304.3 288.7L307.2 289L310.1 289.2L313 289.2L315.9 289.2L318.8 289L321.7 288.7L324.6 288.3L327.4 287.8L330.2 287.2L333 286.5L335.8 285.6L338.6 284.7L341.3 283.6L343.9 282.4L346.5 281.2L349.1 279.8L351.6 278.3L354 276.8L356.4 275.1L358.7 273.4L361 271.5L363.1 269.6L365.2 267.6L367.2 265.5L369.2 263.3L371 261.1L372.7 258.8L374.4 256.4L376 254L377.4 251.5L378.8 248.9L380.1 246.3L381.2 243.6L382.3 240.9L383.2 238.2L384.1 235.4L384.8 232.6L385.4 229.8L385.9 226.9L386.3 224.1L386.6 221.2L386.8 218.3L386.8 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M403.4 215.4L403.4 211.8L403.2 208.3L402.8 204.8L402.3 201.2L401.7 197.7L400.9 194.3L400 190.8L399 187.4L397.9 184.1L396.6 180.8L395.1 177.5L393.6 174.3L391.9 171.2L390.1 168.1L388.2 165.1L386.2 162.2L384 159.4L381.8 156.6L379.4 154L377 151.4L374.4 149L371.7 146.6L369 144.4L366.2 142.2L363.2 140.2L360.3 138.3L357.2 136.5L354.1 134.8L350.9 133.2L347.6 131.8L344.3 130.5L340.9 129.4L337.5 128.3L334.1 127.4L330.6 126.7L327.1 126.1L323.6 125.6L320.1 125.2L316.6 125L313 124.9L309.4 125L305.9 125.2L302.4 125.6L298.9 126.1L295.4 126.7L291.9 127.4L288.5 128.3L285.1 129.4L281.7 130.5L278.4 131.8L275.1 133.2L271.9 134.8L268.8 136.5L265.7 138.3L262.8 140.2L259.8 142.2L257 144.4L254.3 146.6L251.6 149L249 151.4L246.6 154L244.2 156.6L242 159.4L239.8 162.2L237.8 165.1L235.9 168.1L234.1 171.2L232.4 174.3L230.9 177.5L229.4 180.8L228.1 184.1L227 187.4L226 190.8L225.1 194.3L224.3 197.7L223.7 201.2L223.2 204.8L222.8 208.3L222.6 211.8L222.6 215.4L222.6 218.9L222.8 222.5L223.2 226L223.7 229.5L224.3 233L225.1 236.5L226 239.9L227 243.3L228.1 246.7L229.4 250L230.9 253.2L232.4 256.4L234.1 259.6L235.9 262.6L237.8 265.6L239.8 268.5L242 271.4L244.2 274.1L246.6 276.8L249 279.3L251.6 281.8L254.3 284.2L257 286.4L259.8 288.6L262.8 290.6L265.7 292.5L268.8 294.3L271.9 296L275.1 297.5L278.4 298.9L281.7 300.2L285.1 301.4L288.5 302.4L291.9 303.3L295.4 304.1L298.9 304.7L302.4 305.2L305.9 305.5L309.4 305.8L313 305.8L316.6 305.8L320.1 305.5L323.6 305.2L327.1 304.7L330.6 304.1L334.1 303.3L337.5 302.4L340.9 301.4L344.3 300.2L347.6 298.9L350.9 297.5L354.1 296L357.2 294.3L360.3 292.5L363.2 290.6L366.2 288.6L369 286.4L371.7 284.2L374.4 281.8L377 279.3L379.4 276.8L381.8 274.1L384 271.4L386.2 268.5L388.2 265.6L390.1 262.6L391.9 259.6L393.6 256.4L395.1 253.2L396.6 250L397.9 246.7L399 243.3L400 239.9L400.9 236.5L401.7 233L402.3 229.5L402.8 226L403.2 222.5L403.4 218.9L403.4 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M417.4 215.4L417.4 211.3L417.1 207.2L416.7 203.1L416.1 199L415.4 195L414.5 191L413.5 187L412.3 183.1L411 179.2L409.5 175.4L407.8 171.7L406.1 168L404.1 164.4L402 160.8L399.8 157.4L397.5 154L395 150.7L392.4 147.6L389.7 144.5L386.8 141.5L383.9 138.7L380.8 136L377.7 133.4L374.4 130.9L371 128.6L367.6 126.3L364 124.3L360.4 122.3L356.7 120.5L353 118.9L349.1 117.4L345.3 116.1L341.3 114.9L337.4 113.8L333.4 113L329.3 112.2L325.3 111.7L321.2 111.3L317.1 111L313 111L308.9 111L304.8 111.3L300.7 111.7L296.7 112.2L292.6 113L288.6 113.8L284.7 114.9L280.7 116.1L276.9 117.4L273 118.9L269.3 120.5L265.6 122.3L262 124.3L258.4 126.3L255 128.6L251.6 130.9L248.3 133.4L245.2 136L242.1 138.7L239.2 141.5L236.3 144.5L233.6 147.6L231 150.7L228.5 154L226.2 157.4L224 160.8L221.9 164.4L219.9 168L218.2 171.7L216.5 175.4L215 179.2L213.7 183.1L212.5 187L211.5 191L210.6 195L209.9 199L209.3 203.1L208.9 207.2L208.6 211.3L208.6 215.4L208.6 219.5L208.9 223.6L209.3 227.7L209.9 231.7L210.6 235.8L211.5 239.8L212.5 243.7L213.7 247.7L215 251.5L216.5 255.3L218.2 259.1L219.9 262.8L221.9 266.4L224 270L226.2 273.4L228.5 276.8L231 280L233.6 283.2L236.3 286.3L239.2 289.2L242.1 292.1L245.2 294.8L248.3 297.4L251.6 299.9L255 302.2L258.4 304.4L262 306.5L265.6 308.4L269.3 310.2L273 311.9L276.9 313.4L280.7 314.7L284.7 315.9L288.6 316.9L292.6 317.8L296.7 318.5L300.7 319.1L304.8 319.5L308.9 319.7L313 319.8L317.1 319.7L321.2 319.5L325.3 319.1L329.3 318.5L333.4 317.8L337.4 316.9L341.3 315.9L345.3 314.7L349.1 313.4L353 311.9L356.7 310.2L360.4 308.4L364 306.5L367.6 304.4L371 302.2L374.4 299.9L377.7 297.4L380.8 294.8L383.9 292.1L386.8 289.2L389.7 286.3L392.4 283.2L395 280L397.5 276.8L399.8 273.4L402 270L404.1 266.4L406.1 262.8L407.8 259.1L409.5 255.3L411 251.5L412.3 247.7L413.5 243.7L414.5 239.8L415.4 235.8L416.1 231.7L416.7 227.7L417.1 223.6L417.4 219.5L417.4 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M429.8 215.4L429.7 210.8L429.4 206.2L429 201.7L428.3 197.1L427.5 192.6L426.5 188.1L425.4 183.7L424 179.3L422.5 175L420.9 170.7L419 166.5L417 162.4L414.9 158.3L412.6 154.4L410.1 150.5L407.5 146.8L404.7 143.1L401.8 139.6L398.7 136.1L395.6 132.8L392.3 129.6L388.8 126.6L385.3 123.7L381.6 120.9L377.9 118.3L374 115.8L370.1 113.5L366 111.3L361.9 109.3L357.7 107.5L353.4 105.8L349.1 104.3L344.7 103L340.3 101.8L335.8 100.9L331.3 100.1L326.7 99.4L322.2 99L317.6 98.7L313 98.6L308.4 98.7L303.8 99L299.3 99.4L294.7 100.1L290.2 100.9L285.7 101.8L281.3 103L276.9 104.3L272.6 105.8L268.3 107.5L264.1 109.3L260 111.3L255.9 113.5L252 115.8L248.1 118.3L244.4 120.9L240.7 123.7L237.2 126.6L233.7 129.6L230.4 132.8L227.3 136.1L224.2 139.6L221.3 143.1L218.5 146.8L215.9 150.5L213.4 154.4L211.1 158.3L209 162.4L207 166.5L205.1 170.7L203.5 175L202 179.3L200.6 183.7L199.5 188.1L198.5 192.6L197.7 197.1L197 201.7L196.6 206.2L196.3 210.8L196.2 215.4L196.3 220L196.6 224.5L197 229.1L197.7 233.7L198.5 238.2L199.5 242.6L200.6 247.1L202 251.5L203.5 255.8L205.1 260.1L207 264.3L209 268.4L211.1 272.4L213.4 276.4L215.9 280.3L218.5 284L221.3 287.7L224.2 291.2L227.3 294.6L230.4 297.9L233.7 301.1L237.2 304.2L240.7 307.1L244.4 309.8L248.1 312.5L252 314.9L255.9 317.3L260 319.4L264.1 321.4L268.3 323.3L272.6 324.9L276.9 326.4L281.3 327.8L285.7 328.9L290.2 329.9L294.7 330.7L299.3 331.3L303.8 331.8L308.4 332.1L313 332.1L317.6 332.1L322.2 331.8L326.7 331.3L331.3 330.7L335.8 329.9L340.3 328.9L344.7 327.8L349.1 326.4L353.4 324.9L357.7 323.3L361.9 321.4L366 319.4L370.1 317.3L374 314.9L377.9 312.5L381.6 309.8L385.3 307.1L388.8 304.2L392.3 301.1L395.6 297.9L398.7 294.6L401.8 291.2L404.7 287.7L407.5 284L410.1 280.3L412.6 276.4L414.9 272.4L417 268.4L419 264.3L420.9 260.1L422.5 255.8L424 251.5L425.4 247.1L426.5 242.6L427.5 238.2L428.3 233.7L429 229.1L429.4 224.5L429.7 220L429.8 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M440.9 215.4L440.8 210.4L440.5 205.3L440 200.4L439.3 195.4L438.4 190.4L437.4 185.5L436.1 180.7L434.6 175.9L433 171.1L431.2 166.4L429.2 161.8L427 157.3L424.6 152.9L422.1 148.6L419.3 144.3L416.5 140.2L413.4 136.2L410.3 132.3L406.9 128.6L403.4 124.9L399.8 121.5L396.1 118.1L392.2 114.9L388.2 111.9L384.1 109L379.8 106.3L375.5 103.8L371.1 101.4L366.5 99.2L361.9 97.2L357.3 95.4L352.5 93.7L347.7 92.3L342.9 91L338 89.9L333 89.1L328 88.4L323 87.9L318 87.6L313 87.5L308 87.6L303 87.9L298 88.4L293 89.1L288 89.9L283.1 91L278.3 92.3L273.5 93.7L268.7 95.4L264.1 97.2L259.5 99.2L254.9 101.4L250.5 103.8L246.2 106.3L241.9 109L237.8 111.9L233.8 114.9L229.9 118.1L226.2 121.5L222.6 124.9L219.1 128.6L215.7 132.3L212.6 136.2L209.5 140.2L206.7 144.3L203.9 148.6L201.4 152.9L199 157.3L196.8 161.8L194.8 166.4L193 171.1L191.4 175.9L189.9 180.7L188.6 185.5L187.6 190.4L186.7 195.4L186 200.4L185.5 205.3L185.2 210.4L185.1 215.4L185.2 220.4L185.5 225.4L186 230.4L186.7 235.4L187.6 240.3L188.6 245.2L189.9 250.1L191.4 254.9L193 259.7L194.8 264.3L196.8 268.9L199 273.5L201.4 277.9L203.9 282.2L206.7 286.4L209.5 290.6L212.6 294.6L215.7 298.5L219.1 302.2L222.6 305.8L226.2 309.3L229.9 312.6L233.8 315.8L237.8 318.9L241.9 321.7L246.2 324.4L250.5 327L254.9 329.3L259.5 331.5L264.1 333.6L268.7 335.4L273.5 337L278.3 338.5L283.1 339.8L288 340.8L293 341.7L298 342.4L303 342.9L308 343.2L313 343.3L318 343.2L323 342.9L328 342.4L333 341.7L338 340.8L342.9 339.8L347.7 338.5L352.5 337L357.3 335.4L361.9 333.6L366.5 331.5L371.1 329.3L375.5 327L379.8 324.4L384.1 321.7L388.2 318.9L392.2 315.8L396.1 312.6L399.8 309.3L403.4 305.8L406.9 302.2L410.3 298.5L413.4 294.6L416.5 290.6L419.3 286.4L422.1 282.2L424.6 277.9L427 273.5L429.2 268.9L431.2 264.3L433 259.7L434.6 254.9L436.1 250.1L437.4 245.2L438.4 240.3L439.3 235.4L440 230.4L440.5 225.4L440.8 220.4L440.9 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M451.2 215.4L451 210L450.7 204.5L450.2 199.1L449.5 193.8L448.5 188.4L447.3 183.1L446 177.9L444.4 172.7L442.6 167.6L440.6 162.5L438.5 157.5L436.1 152.7L433.5 147.9L430.8 143.2L427.9 138.6L424.8 134.2L421.5 129.9L418.1 125.7L414.4 121.6L410.7 117.7L406.8 113.9L402.7 110.3L398.5 106.9L394.2 103.6L389.8 100.5L385.2 97.6L380.5 94.8L375.7 92.3L370.8 89.9L365.9 87.7L360.8 85.8L355.7 84L350.5 82.4L345.3 81L340 79.9L334.6 78.9L329.2 78.2L323.8 77.7L318.4 77.3L313 77.2L307.6 77.3L302.2 77.7L296.8 78.2L291.4 78.9L286 79.9L280.7 81L275.5 82.4L270.3 84L265.2 85.8L260.1 87.7L255.2 89.9L250.3 92.3L245.5 94.8L240.8 97.6L236.2 100.5L231.8 103.6L227.5 106.9L223.3 110.3L219.2 113.9L215.3 117.7L211.6 121.6L207.9 125.7L204.5 129.9L201.2 134.2L198.1 138.6L195.2 143.2L192.5 147.9L189.9 152.7L187.5 157.5L185.4 162.5L183.4 167.6L181.6 172.7L180 177.9L178.7 183.1L177.5 188.4L176.5 193.8L175.8 199.1L175.3 204.5L175 210L174.8 215.4L175 220.8L175.3 226.2L175.8 231.6L176.5 237L177.5 242.3L178.7 247.6L180 252.9L181.6 258.1L183.4 263.2L185.4 268.3L187.5 273.2L189.9 278.1L192.5 282.9L195.2 287.6L198.1 292.1L201.2 296.6L204.5 300.9L207.9 305.1L211.6 309.2L215.3 313.1L219.2 316.8L223.3 320.4L227.5 323.9L231.8 327.2L236.2 330.3L240.8 333.2L245.5 335.9L250.3 338.5L255.2 340.8L260.1 343L265.2 345L270.3 346.8L275.5 348.4L280.7 349.7L286 350.9L291.4 351.8L296.8 352.6L302.2 353.1L307.6 353.4L313 353.5L318.4 353.4L323.8 353.1L329.2 352.6L334.6 351.8L340 350.9L345.3 349.7L350.5 348.4L355.7 346.8L360.8 345L365.9 343L370.8 340.8L375.7 338.5L380.5 335.9L385.2 333.2L389.8 330.3L394.2 327.2L398.5 323.9L402.7 320.4L406.8 316.8L410.7 313.1L414.4 309.2L418.1 305.1L421.5 300.9L424.8 296.6L427.9 292.1L430.8 287.6L433.5 282.9L436.1 278.1L438.5 273.2L440.6 268.3L442.6 263.2L444.4 258.1L446 252.9L447.3 247.6L448.5 242.3L449.5 237L450.2 231.6L450.7 226.2L451 220.8L451.2 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M460.7 215.4L460.6 209.6L460.2 203.8L459.7 198L458.9 192.3L457.9 186.6L456.6 180.9L455.1 175.3L453.5 169.7L451.6 164.3L449.4 158.9L447.1 153.6L444.6 148.3L441.9 143.2L438.9 138.2L435.8 133.3L432.5 128.6L429 123.9L425.3 119.5L421.5 115.1L417.4 111L413.3 106.9L408.9 103.1L404.4 99.4L399.8 95.9L395.1 92.6L390.2 89.5L385.2 86.5L380.1 83.8L374.8 81.3L369.5 78.9L364.1 76.8L358.6 74.9L353.1 73.2L347.5 71.8L341.8 70.5L336.1 69.5L330.4 68.7L324.6 68.1L318.8 67.8L313 67.7L307.2 67.8L301.4 68.1L295.6 68.7L289.9 69.5L284.2 70.5L278.5 71.8L272.9 73.2L267.4 74.9L261.9 76.8L256.5 78.9L251.2 81.3L245.9 83.8L240.8 86.5L235.8 89.5L230.9 92.6L226.2 95.9L221.6 99.4L217.1 103.1L212.7 106.9L208.6 111L204.5 115.1L200.7 119.5L197 123.9L193.5 128.6L190.2 133.3L187.1 138.2L184.1 143.2L181.4 148.3L178.9 153.6L176.6 158.9L174.4 164.3L172.5 169.7L170.9 175.3L169.4 180.9L168.1 186.6L167.1 192.3L166.3 198L165.8 203.8L165.4 209.6L165.3 215.4L165.4 221.2L165.8 227L166.3 232.7L167.1 238.5L168.1 244.2L169.4 249.9L170.9 255.5L172.5 261L174.4 266.5L176.6 271.9L178.9 277.2L181.4 282.4L184.1 287.6L187.1 292.6L190.2 297.4L193.5 302.2L197 306.8L200.7 311.3L204.5 315.6L208.6 319.8L212.7 323.8L217.1 327.7L221.6 331.4L226.2 334.9L230.9 338.2L235.8 341.3L240.8 344.2L245.9 347L251.2 349.5L256.5 351.8L261.9 353.9L267.4 355.8L272.9 357.5L278.5 359L284.2 360.2L289.9 361.3L295.6 362.1L301.4 362.6L307.2 363L313 363.1L318.8 363L324.6 362.6L330.4 362.1L336.1 361.3L341.8 360.2L347.5 359L353.1 357.5L358.6 355.8L364.1 353.9L369.5 351.8L374.8 349.5L380.1 347L385.2 344.2L390.2 341.3L395.1 338.2L399.8 334.9L404.4 331.4L408.9 327.7L413.3 323.8L417.4 319.8L421.5 315.6L425.3 311.3L429 306.8L432.5 302.2L435.8 297.4L438.9 292.6L441.9 287.6L444.6 282.4L447.1 277.2L449.4 271.9L451.6 266.5L453.5 261L455.1 255.5L456.6 249.9L457.9 244.2L458.9 238.5L459.7 232.7L460.2 227L460.6 221.2L460.7 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M469.7 215.4L469.5 209.2L469.2 203.1L468.6 197L467.7 190.9L466.6 184.8L465.3 178.8L463.8 172.9L462 167L460 161.2L457.7 155.4L455.3 149.8L452.6 144.3L449.7 138.8L446.6 133.5L443.3 128.4L439.7 123.3L436 118.4L432.1 113.6L428 109L423.8 104.6L419.3 100.4L414.7 96.3L410 92.4L405.1 88.7L400 85.1L394.9 81.8L389.5 78.7L384.1 75.8L378.6 73.1L372.9 70.7L367.2 68.4L361.4 66.4L355.5 64.6L349.6 63.1L343.6 61.7L337.5 60.7L331.4 59.8L325.3 59.2L319.2 58.9L313 58.7L306.8 58.9L300.7 59.2L294.6 59.8L288.5 60.7L282.4 61.7L276.4 63.1L270.5 64.6L264.6 66.4L258.8 68.4L253.1 70.7L247.4 73.1L241.9 75.8L236.5 78.7L231.1 81.8L226 85.1L220.9 88.7L216 92.4L211.3 96.3L206.7 100.4L202.2 104.6L198 109L193.9 113.6L190 118.4L186.3 123.3L182.7 128.4L179.4 133.5L176.3 138.8L173.4 144.3L170.7 149.8L168.3 155.4L166 161.2L164 167L162.2 172.9L160.7 178.8L159.4 184.8L158.3 190.9L157.4 197L156.8 203.1L156.5 209.2L156.3 215.4L156.5 221.5L156.8 227.7L157.4 233.8L158.3 239.9L159.4 245.9L160.7 252L162.2 257.9L164 263.8L166 269.6L168.3 275.3L170.7 281L173.4 286.5L176.3 291.9L179.4 297.2L182.7 302.4L186.3 307.5L190 312.4L193.9 317.1L198 321.7L202.2 326.2L206.7 330.4L211.3 334.5L216 338.4L220.9 342.1L226 345.6L231.1 349L236.5 352.1L241.9 355L247.4 357.6L253.1 360.1L258.8 362.4L264.6 364.4L270.5 366.2L276.4 367.7L282.4 369L288.5 370.1L294.6 371L300.7 371.6L306.8 371.9L313 372L319.2 371.9L325.3 371.6L331.4 371L337.5 370.1L343.6 369L349.6 367.7L355.5 366.2L361.4 364.4L367.2 362.4L372.9 360.1L378.6 357.6L384.1 355L389.5 352.1L394.9 349L400 345.6L405.1 342.1L410 338.4L414.7 334.5L419.3 330.4L423.8 326.2L428 321.7L432.1 317.1L436 312.4L439.7 307.5L443.3 302.4L446.6 297.2L449.7 291.9L452.6 286.5L455.3 281L457.7 275.3L460 269.6L462 263.8L463.8 257.9L465.3 252L466.6 245.9L467.7 239.9L468.6 233.8L469.2 227.7L469.5 221.5L469.7 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M478.1 215.4L478 208.9L477.6 202.4L477 196L476.1 189.6L475 183.2L473.6 176.8L471.9 170.6L470 164.4L467.9 158.2L465.6 152.2L463 146.3L460.1 140.4L457.1 134.7L453.8 129.1L450.3 123.6L446.6 118.3L442.7 113.2L438.6 108.1L434.3 103.3L429.8 98.6L425.1 94.1L420.2 89.8L415.2 85.7L410.1 81.8L404.7 78.1L399.3 74.6L393.7 71.3L388 68.3L382.1 65.4L376.2 62.8L370.2 60.5L364 58.3L357.8 56.5L351.5 54.8L345.2 53.4L338.8 52.3L332.4 51.4L326 50.8L319.5 50.4L313 50.3L306.5 50.4L300 50.8L293.6 51.4L287.2 52.3L280.8 53.4L274.5 54.8L268.2 56.5L262 58.3L255.8 60.5L249.8 62.8L243.9 65.4L238 68.3L232.3 71.3L226.7 74.6L221.3 78.1L215.9 81.8L210.8 85.7L205.8 89.8L200.9 94.1L196.2 98.6L191.7 103.3L187.4 108.1L183.3 113.2L179.4 118.3L175.7 123.6L172.2 129.1L168.9 134.7L165.9 140.4L163 146.3L160.4 152.2L158.1 158.2L156 164.4L154.1 170.6L152.4 176.8L151 183.2L149.9 189.6L149 196L148.4 202.4L148 208.9L147.9 215.4L148 221.9L148.4 228.3L149 234.8L149.9 241.2L151 247.6L152.4 253.9L154.1 260.2L156 266.4L158.1 272.5L160.4 278.6L163 284.5L165.9 290.3L168.9 296.1L172.2 301.7L175.7 307.1L179.4 312.4L183.3 317.6L187.4 322.6L191.7 327.5L196.2 332.1L200.9 336.6L205.8 340.9L210.8 345.1L215.9 349L221.3 352.7L226.7 356.2L232.3 359.5L238 362.5L243.9 365.3L249.8 367.9L255.8 370.3L262 372.4L268.2 374.3L274.5 375.9L280.8 377.3L287.2 378.5L293.6 379.4L300 380L306.5 380.4L313 380.5L319.5 380.4L326 380L332.4 379.4L338.8 378.5L345.2 377.3L351.5 375.9L357.8 374.3L364 372.4L370.2 370.3L376.2 367.9L382.1 365.3L388 362.5L393.7 359.5L399.3 356.2L404.7 352.7L410.1 349L415.2 345.1L420.2 340.9L425.1 336.6L429.8 332.1L434.3 327.5L438.6 322.6L442.7 317.6L446.6 312.4L450.3 307.1L453.8 301.7L457.1 296.1L460.1 290.3L463 284.5L465.6 278.6L467.9 272.5L470 266.4L471.9 260.2L473.6 253.9L475 247.6L476.1 241.2L477 234.8L477.6 228.3L478 221.9L478.1 215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/></g><line x1=\"102.2\" y1=\"215.4\" x2=\"531.8\" y2=\"215.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgContour)\"/><line x1=\"313\" y1=\"404\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgContour)\"/><text x=\"529.8\" y=\"206.4\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"362.1\" y1=\"197.5\" x2=\"386.6\" y2=\"188.6\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"295.1\" y1=\"166.3\" x2=\"286.2\" y2=\"141.8\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"263.9\" y1=\"233.2\" x2=\"239.4\" y2=\"242.2\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"330.9\" y1=\"264.5\" x2=\"339.8\" y2=\"289\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"218.4\" y1=\"171.2\" x2=\"171\" y2=\"149.2\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"268.9\" y1=\"310\" x2=\"246.8\" y2=\"357.4\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"407.6\" y1=\"259.5\" x2=\"455\" y2=\"281.6\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"442.8\" y1=\"168.1\" x2=\"507.7\" y2=\"144.5\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"265.7\" y1=\"85.6\" x2=\"242.1\" y2=\"20.7\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"183.2\" y1=\"262.6\" x2=\"118.3\" y2=\"286.3\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"360.3\" y1=\"345.2\" x2=\"383.9\" y2=\"410.1\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah8dgContourgreen)\"/><line x1=\"349.9\" y1=\"141.5\" x2=\"368.4\" y2=\"104.6\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8dgContourred)\"/><circle cx=\"349.9\" cy=\"141.5\" r=\"5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"313\" cy=\"215.4\" r=\"4\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"339.9\" y=\"165.5\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(1, 2)</text><text x=\"378.4\" y=\"104.6\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇f</text><text x=\"260.8\" y=\"273.6\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"17\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"230.4\" y=\"303.9\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"17\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">10</text><text x=\"208.6\" y=\"325.8\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"17\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">16</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "看箭頭，有三件事："
+          ],
+          "say": "仔細看這些箭頭，有三件事。",
           "board": [
-            {"do":"write","line":"$\\nabla f$ → 高度增加的一側"}
-          ] },
-        { "show": ["③ 長度 $|\\nabla f|$：最大上升率"],
-          "note": "線越密、坡越陡，箭頭越長。",
-          "say": "第三，箭頭的長度是那一點最大的上升率。等高線越密的地方，箭頭越長。",
+            {
+              "do": "write",
+              "line": "看箭頭，有三件事："
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 垂直於通過那一點的等高線",
+            "• 指向 $f$ 變大的那一邊（上坡）"
+          ],
+          "say": "第一，每支箭頭都垂直於通過那一點的等高線。第二，都指向外面，也就是 f 變大的那一邊。第三，外圈等高線比較密，箭頭也比較長。",
           "board": [
-            {"do":"write","line":"${{l:|\\nabla f|}}$ ＝ 最大上升率"},
-            {"do":"write","line":"等高線越密 → 箭頭越長","on":"等高線越密"}
-          ] },
-        { "show": ["沿等高線：高度不變"],
-          "note": "直覺，不是證明；嚴格版在〈方向導數〉。",
-          "say": "為什麼垂直？沿等高線走，高度不變。最陡的上坡不該浪費任何一步在高度不變的方向。",
+            {
+              "do": "write",
+              "line": "• 垂直於通過那一點的等高線"
+            },
+            {
+              "do": "write",
+              "line": "• 指向 $f$ 變大的那一邊（上坡）",
+              "on": "點的"
+            },
+            {
+              "do": "write",
+              "line": "• 等高線越密，箭頭越長",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\nabla f(1,2)=(2,4)$ 是 $(1,2)$ 的 $2$ 倍，從原點往外指，跟圓垂直",
+              "color": "violet",
+              "on": "外圈"
+            }
+          ]
+        },
+        {
+          "show": [
+            "長度 $|\\nabla f|$ = 在這一點，$f$ 最大的上升率"
+          ],
+          "say": "長度的意思是：站在這一點，往所有方向走，f 上升最快的那個速率。在 1 逗號 2，最快每走一單位 f 漲大約 4.47。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"沿等高線：高度不變","on":"沿等高線"},
-            {"do":"write","line":"最陡上坡 → 垂直等高線","on":"最陡的上坡"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "長度 $|\\nabla f|$ = 在這一點，$f$ 最大的上升率",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這三件事這一課先講直覺，下一課（方向導數）會證明",
+              "color": "violet",
+              "on": "逗號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "地圖上：等高線越密 = 地形越陡 = 箭頭越長"
+          ],
+          "say": "對照地圖：等高線越密，地形越陡，梯度就越長。",
+          "board": [
+            {
+              "do": "write",
+              "line": "地圖上：等高線越密 = 地形越陡 = 箭頭越長"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "圓形等高線",
+      "title": "例：平板上的溫度",
       "beats": [
-        { "show": ["$f=x^2+y^2$，$\\nabla f(1,2)=(2,4)$"],
-          "note": "等高線是以原點為圓心的圓。",
-          "say": "回到 x 平方加 y 平方，等高線是一圈一圈以原點為圓心的圓。",
+        {
+          "show": [
+            "$T(x,y)=100-x^2-2y^2$"
+          ],
+          "say": "第二個例子：一塊平板上的溫度，是 100 減 x 平方減 2 y 平方。原點最熱，100 度，往外越來越冷。",
           "board": [
-            {"do":"write","line":"$f=x^2+y^2$，$\\nabla f(1,2)=(2,4)$"},
-            {"do":"write","line":"等高線：圓心在原點的圓","on":"等高線是"}
-          ] },
-        { "show": ["$(2,4)$ 跟 $(1,2)$ 同方向"],
-          "note": "從原點往外指：垂直於圓、指向外側。",
-          "say": "梯度二、四，跟點一、二同方向，從原點往外指。正好垂直於這個圓，而且指向函數變大的外側。",
-          "board": [
-            {"do":"write","line":"$(2,4)=2\\cdot(1,2)$"},
-            {"do":"write","line":"垂直於圓、指向外側","on":"正好垂直於"}
-          ] },
-        { "show": ["圖：圓上 $(1,2)$ 的梯度往外"],
-          "say": "畫出來：圓是等高線，從點一、二出發的箭頭是梯度，垂直於圓，往外指。",
-          "board": [
-            {"do":"plot","graph":{"window":[-5,5,-5,5],"equal":true,"curves":[{"param":{"x":"cos(t)*sqrt(1^2+2^2)","y":"sin(t)*sqrt(1^2+2^2)","t":[0,6.2832]},"color":"blue"}],"points":[{"x":1,"y":2}],"labels":[{"x":1.2,"y":1.4,"text":"(1,2)","anchor":"start"}],"arrows":[{"from":[1,2],"to":[2,4],"color":"green"}]}}
-          ] },
-        { "show": ["$|\\nabla f|^2=2^2+4^2=20$"],
-          "note": "長度是 $\\sqrt{f_x^2+f_y^2}$，不是分量相加。",
-          "say": "長度的平方是四加十六，等於二十。最大上升率要算長度，不是把分量相加。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|\\nabla f|^2=2^2+4^2={{t:20}}$","on":"長度的平方"},
-            {"do":"box","term":"t","color":"green","on":"等於二十"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle T(x,y)=100-x^2-2y^2$"
+            }
+          ]
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "往哪走最熱",
-      "beats": [
-        { "show": ["$T(x,y)=100-x^2-2y^2$"],
-          "note": "平板溫度。",
-          "say": "一塊平板的溫度分布，原點最熱，往外變冷。",
-          "board": [
-            {"do":"write","line":"$T(x,y)=100-x^2-2y^2$"},
-            {"do":"write","line":"原點最熱，往外變冷","on":"原點最熱"}
-          ] },
-        { "show": ["$\\nabla T=(-2x,-4y)$","在 $(2,1)$：$(-4,-4)$"],
-          "say": "偏導數是負二 x 和負四 y，在點二、一，梯度是負四、負四。",
-          "board": [
-            {"do":"write","line":"$\\nabla T=(-2x,\\ -4y)$"},
-            {"do":"write","line":"在 $(2,1)$：$(-4,-4)$","on":"在點二"}
-          ] },
-        { "show": ["分量為負：往正方向走會變小"],
-          "say": "看符號：分量是負的，代表往那個軸的正方向走，函數會變小，反過來走，函數就變大。",
-          "board": [
-            {"do":"write","line":"分量為負：往正方向，函數變小"},
-            {"do":"write","line":"反方向：函數變大","on":"反過來走"}
-          ] }
-      ],
-      "key": "上升最快的方向就是梯度本身",
       "predict": {
-        "ask": "在 $(2,1)$，往哪個方向走溫度上升最快？",
+        "ask": "站在 $(2,1)$，想讓溫度==升得最快==，該往哪個方向走？",
         "options": [
           {
-            "label": "朝原點：$-x$、$-y$ 方向",
+            "label": "$(-1,-1)$ 的方向",
             "correct": true
           },
           {
-            "label": "遠離原點",
-            "why": "梯度 $(-4,-4)$ 兩個分量都是負的，指向原點；遠離原點是溫度下降最快的方向。"
+            "label": "直直走向最熱點，也就是 $(-2,-1)$ 的方向",
+            "why": "直覺上對，但等溫線是橢圓，最陡的方向要垂直於橢圓"
           },
           {
-            "label": "沿著等高線",
-            "why": "沿等高線溫度不變；上升最快的方向是梯度，跟等高線垂直。"
+            "label": "$(4,4)$ 的方向",
+            "why": "偏導數的正負號漏了：$T_x=-2x$ 在 $x=2$ 是負的"
+          },
+          {
+            "label": "$(2,1)$ 的方向",
+            "why": "那是背離原點、往冷的方向走"
           }
         ]
       }
     },
     {
-      "title": "梯度住在哪裡",
+      "title": "例：平板上的溫度",
       "beats": [
-        { "show": ["$f(x,y)$：$\\nabla f=(f_x,f_y)$，兩個分量"],
-          "note": "它告訴你往哪走。",
-          "say": "注意，兩變數函數的梯度只有兩個分量：對 x 的偏導和對 y 的偏導。它告訴你往哪走。",
+        {
+          "show": [
+            "$\\nabla T=(-2x,\\ -4y)\\ \\Rightarrow\\ \\nabla T(2,1)=(-4,\\ -4)$"
+          ],
+          "say": "算梯度：對 x 偏微分是負 2x，對 y 偏微分是負 4y。在 2 逗號 1 是負 4 逗號負 4。",
           "board": [
-            {"do":"write","line":"$f(x,y)$：$\\nabla f=({{g:f_x,f_y}})$","on":"兩變數函數"},
-            {"do":"underline","term":"g","label":"兩個分量","on":"只有兩個分量"}
-          ] },
-        { "show": ["$\\nabla f=(f_x,f_y,f_z)$ 垂直於等值面"],
-          "note": "三個變數；〈切平面〉用它找法向量。",
-          "say": "三個變數的梯度有三個分量，垂直於等值面，切平面那一課會用它當法向量。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla T=(-2x,\\ -4y)\\ \\Rightarrow\\ \\nabla T(2,1)=(-4,\\ -4)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，藍色的是等溫線，是一圈圈橢圓。紅色的梯度箭頭垂直於粗的那條橢圓，不是沿著虛線直接指向最熱點。",
           "board": [
-            {"do":"write","line":"$\\nabla f=(f_x,f_y,f_z)$ ${{p:\\perp}}$ 等值面","on":"三個變數"},
-            {"do":"focus","term":"p","on":"垂直於"}
-          ] },
-        { "show": ["等值面：$f=c$，等高線的三維版"],
-          "note": "切平面貼著曲面；$\\nabla f$ 是它的法向量。",
-          "say": "等值面是函數值同為 c 的所有點，等高線的三維版。切平面貼著它，梯度就是垂直的法向量。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gTemp\" viewBox=\"0 0 620 380\" width=\"620\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8dgTemp\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8dgTempblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8dgTempred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8dgTempgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8dgTemppencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8dgTempink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8dgTemp30\"><rect x=\"76\" y=\"16\" width=\"474.1\" height=\"334\"/></clipPath><g clip-path=\"url(#cl8dgTemp30)\"><path d=\"M389.2 183L389.1 180.9L389 178.8L388.7 176.7L388.2 174.6L387.7 172.5L387.1 170.4L386.3 168.4L385.5 166.4L384.5 164.4L383.4 162.4L382.2 160.4L380.9 158.5L379.5 156.7L378 154.9L376.3 153.1L374.6 151.3L372.8 149.6L370.9 148L368.9 146.4L366.9 144.9L364.7 143.4L362.5 142L360.2 140.7L357.8 139.4L355.3 138.2L352.8 137.1L350.2 136L347.6 135L344.9 134.1L342.2 133.2L339.4 132.5L336.5 131.8L333.7 131.2L330.8 130.6L327.9 130.2L324.9 129.8L322 129.5L319 129.3L316 129.2L313 129.1L310 129.2L307 129.3L304 129.5L301.1 129.8L298.1 130.2L295.2 130.6L292.3 131.2L289.5 131.8L286.6 132.5L283.8 133.2L281.1 134.1L278.4 135L275.8 136L273.2 137.1L270.7 138.2L268.2 139.4L265.8 140.7L263.5 142L261.3 143.4L259.1 144.9L257.1 146.4L255.1 148L253.2 149.6L251.4 151.3L249.7 153.1L248 154.9L246.5 156.7L245.1 158.5L243.8 160.4L242.6 162.4L241.5 164.4L240.5 166.4L239.7 168.4L238.9 170.4L238.3 172.5L237.8 174.6L237.3 176.7L237 178.8L236.9 180.9L236.8 183L236.9 185.1L237 187.2L237.3 189.3L237.8 191.4L238.3 193.5L238.9 195.6L239.7 197.6L240.5 199.6L241.5 201.6L242.6 203.6L243.8 205.6L245.1 207.5L246.5 209.3L248 211.1L249.7 212.9L251.4 214.7L253.2 216.4L255.1 218L257.1 219.6L259.1 221.1L261.3 222.6L263.5 224L265.8 225.3L268.2 226.6L270.7 227.8L273.2 228.9L275.8 230L278.4 231L281.1 231.9L283.8 232.8L286.6 233.5L289.5 234.2L292.3 234.8L295.2 235.4L298.1 235.8L301.1 236.2L304 236.5L307 236.7L310 236.8L313 236.9L316 236.8L319 236.7L322 236.5L324.9 236.2L327.9 235.8L330.8 235.4L333.7 234.8L336.5 234.2L339.4 233.5L342.2 232.8L344.9 231.9L347.6 231L350.2 230L352.8 228.9L355.3 227.8L357.8 226.6L360.2 225.3L362.5 224L364.7 222.6L366.9 221.1L368.9 219.6L370.9 218L372.8 216.4L374.6 214.7L376.3 212.9L378 211.1L379.5 209.3L380.9 207.5L382.2 205.6L383.4 203.6L384.5 201.6L385.5 199.6L386.3 197.6L387.1 195.6L387.7 193.5L388.2 191.4L388.7 189.3L389 187.2L389.1 185.1L389.2 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M420.7 183L420.7 180L420.4 177L420 174L419.4 171.1L418.7 168.1L417.8 165.2L416.7 162.3L415.5 159.5L414.1 156.6L412.5 153.8L410.8 151.1L409 148.4L407 145.8L404.9 143.2L402.6 140.7L400.2 138.2L397.6 135.8L394.9 133.5L392.1 131.3L389.2 129.1L386.1 127.1L383 125.1L379.7 123.2L376.3 121.4L372.9 119.7L369.3 118L365.6 116.5L361.9 115.1L358.1 113.8L354.2 112.6L350.3 111.5L346.3 110.5L342.2 109.7L338.2 108.9L334 108.3L329.9 107.8L325.7 107.3L321.5 107L317.2 106.9L313 106.8L308.8 106.9L304.5 107L300.3 107.3L296.1 107.8L292 108.3L287.8 108.9L283.8 109.7L279.7 110.5L275.7 111.5L271.8 112.6L267.9 113.8L264.1 115.1L260.4 116.5L256.7 118L253.1 119.7L249.7 121.4L246.3 123.2L243 125.1L239.9 127.1L236.8 129.1L233.9 131.3L231.1 133.5L228.4 135.8L225.8 138.2L223.4 140.7L221.1 143.2L219 145.8L217 148.4L215.2 151.1L213.5 153.8L211.9 156.6L210.5 159.5L209.3 162.3L208.2 165.2L207.3 168.1L206.6 171.1L206 174L205.6 177L205.3 180L205.3 183L205.3 186L205.6 189L206 192L206.6 194.9L207.3 197.9L208.2 200.8L209.3 203.7L210.5 206.5L211.9 209.4L213.5 212.2L215.2 214.9L217 217.6L219 220.2L221.1 222.8L223.4 225.3L225.8 227.8L228.4 230.2L231.1 232.5L233.9 234.7L236.8 236.9L239.9 238.9L243 240.9L246.3 242.8L249.7 244.6L253.1 246.3L256.7 248L260.4 249.5L264.1 250.9L267.9 252.2L271.8 253.4L275.7 254.5L279.7 255.5L283.8 256.3L287.8 257.1L292 257.7L296.1 258.2L300.3 258.7L304.5 259L308.8 259.1L313 259.2L317.2 259.1L321.5 259L325.7 258.7L329.9 258.2L334 257.7L338.2 257.1L342.2 256.3L346.3 255.5L350.3 254.5L354.2 253.4L358.1 252.2L361.9 250.9L365.6 249.5L369.3 248L372.9 246.3L376.3 244.6L379.7 242.8L383 240.9L386.1 238.9L389.2 236.9L392.1 234.7L394.9 232.5L397.6 230.2L400.2 227.8L402.6 225.3L404.9 222.8L407 220.2L409 217.6L410.8 214.9L412.5 212.2L414.1 209.4L415.5 206.5L416.7 203.7L417.8 200.8L418.7 197.9L419.4 194.9L420 192L420.4 189L420.7 186L420.7 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M445 183L444.9 179.3L444.5 175.7L444 172L443.3 168.4L442.4 164.8L441.3 161.2L440 157.7L438.5 154.2L436.8 150.7L434.9 147.3L432.8 143.9L430.6 140.6L428.1 137.4L425.5 134.2L422.7 131.2L419.8 128.2L416.6 125.2L413.3 122.4L409.9 119.7L406.3 117L402.6 114.5L398.7 112L394.7 109.7L390.6 107.5L386.3 105.4L381.9 103.4L377.5 101.6L372.9 99.9L368.2 98.3L363.5 96.8L358.7 95.5L353.8 94.3L348.8 93.2L343.8 92.3L338.7 91.5L333.6 90.8L328.5 90.3L323.4 90L318.2 89.8L313 89.7L307.8 89.8L302.6 90L297.5 90.3L292.4 90.8L287.3 91.5L282.2 92.3L277.2 93.2L272.2 94.3L267.3 95.5L262.5 96.8L257.8 98.3L253.1 99.9L248.5 101.6L244.1 103.4L239.7 105.4L235.4 107.5L231.3 109.7L227.3 112L223.4 114.5L219.7 117L216.1 119.7L212.7 122.4L209.4 125.2L206.2 128.2L203.3 131.2L200.5 134.2L197.9 137.4L195.4 140.6L193.2 143.9L191.1 147.3L189.2 150.7L187.5 154.2L186 157.7L184.7 161.2L183.6 164.8L182.7 168.4L182 172L181.5 175.7L181.1 179.3L181 183L181.1 186.7L181.5 190.3L182 194L182.7 197.6L183.6 201.2L184.7 204.8L186 208.3L187.5 211.8L189.2 215.3L191.1 218.7L193.2 222.1L195.4 225.4L197.9 228.6L200.5 231.8L203.3 234.8L206.2 237.8L209.4 240.8L212.7 243.6L216.1 246.3L219.7 249L223.4 251.5L227.3 254L231.3 256.3L235.4 258.5L239.7 260.6L244.1 262.6L248.5 264.4L253.1 266.1L257.8 267.7L262.5 269.2L267.3 270.5L272.2 271.7L277.2 272.8L282.2 273.7L287.3 274.5L292.4 275.2L297.5 275.7L302.6 276L307.8 276.2L313 276.3L318.2 276.2L323.4 276L328.5 275.7L333.6 275.2L338.7 274.5L343.8 273.7L348.8 272.8L353.8 271.7L358.7 270.5L363.5 269.2L368.2 267.7L372.9 266.1L377.5 264.4L381.9 262.6L386.3 260.6L390.6 258.5L394.7 256.3L398.7 254L402.6 251.5L406.3 249L409.9 246.3L413.3 243.6L416.6 240.8L419.8 237.8L422.7 234.8L425.5 231.8L428.1 228.6L430.6 225.4L432.8 222.1L434.9 218.7L436.8 215.3L438.5 211.8L440 208.3L441.3 204.8L442.4 201.2L443.3 197.6L444 194L444.5 190.3L444.9 186.7L445 183\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"1\"/><path d=\"M465.4 183L465.3 178.8L464.9 174.5L464.3 170.3L463.5 166.1L462.4 162L461.2 157.8L459.6 153.8L457.9 149.7L456 145.7L453.8 141.8L451.4 137.9L448.8 134.1L445.9 130.4L442.9 126.7L439.7 123.1L436.3 119.7L432.7 116.3L428.9 113L424.9 109.9L420.7 106.8L416.4 103.9L412 101.1L407.3 98.4L402.6 95.8L397.7 93.4L392.6 91.1L387.5 89L382.2 87L376.8 85.2L371.3 83.5L365.7 81.9L360.1 80.5L354.4 79.3L348.6 78.2L342.7 77.3L336.8 76.6L330.9 76L325 75.6L319 75.3L313 75.3L307 75.3L301 75.6L295.1 76L289.2 76.6L283.3 77.3L277.4 78.2L271.6 79.3L265.9 80.5L260.3 81.9L254.7 83.5L249.2 85.2L243.8 87L238.5 89L233.4 91.1L228.3 93.4L223.4 95.8L218.7 98.4L214 101.1L209.6 103.9L205.3 106.8L201.1 109.9L197.1 113L193.3 116.3L189.7 119.7L186.3 123.1L183.1 126.7L180.1 130.4L177.2 134.1L174.6 137.9L172.2 141.8L170 145.7L168.1 149.7L166.4 153.8L164.8 157.8L163.6 162L162.5 166.1L161.7 170.3L161.1 174.5L160.7 178.8L160.6 183L160.7 187.2L161.1 191.5L161.7 195.7L162.5 199.9L163.6 204L164.8 208.2L166.4 212.2L168.1 216.3L170 220.3L172.2 224.2L174.6 228.1L177.2 231.9L180.1 235.6L183.1 239.3L186.3 242.9L189.7 246.3L193.3 249.7L197.1 253L201.1 256.1L205.3 259.2L209.6 262.1L214 264.9L218.7 267.6L223.4 270.2L228.3 272.6L233.4 274.9L238.5 277L243.8 279L249.2 280.8L254.7 282.5L260.3 284.1L265.9 285.5L271.6 286.7L277.4 287.8L283.3 288.7L289.2 289.4L295.1 290L301 290.4L307 290.7L313 290.7L319 290.7L325 290.4L330.9 290L336.8 289.4L342.7 288.7L348.6 287.8L354.4 286.7L360.1 285.5L365.7 284.1L371.3 282.5L376.8 280.8L382.2 279L387.5 277L392.6 274.9L397.7 272.6L402.6 270.2L407.3 267.6L412 264.9L416.4 262.1L420.7 259.2L424.9 256.1L428.9 253L432.7 249.7L436.3 246.3L439.7 242.9L442.9 239.3L445.9 235.6L448.8 231.9L451.4 228.1L453.8 224.2L456 220.3L457.9 216.3L459.6 212.2L461.2 208.2L462.4 204L463.5 199.9L464.3 195.7L464.9 191.5L465.3 187.2L465.4 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M483.4 183L483.2 178.3L482.8 173.5L482.2 168.8L481.3 164.2L480.1 159.5L478.6 154.9L477 150.3L475 145.8L472.8 141.3L470.4 136.9L467.7 132.6L464.8 128.3L461.6 124.1L458.3 120.1L454.6 116.1L450.8 112.2L446.8 108.4L442.5 104.8L438.1 101.2L433.5 97.8L428.6 94.5L423.6 91.4L418.5 88.4L413.1 85.5L407.6 82.8L402 80.3L396.2 77.9L390.3 75.7L384.3 73.6L378.2 71.7L372 70L365.6 68.4L359.2 67.1L352.8 65.9L346.2 64.9L339.6 64L333 63.4L326.4 62.9L319.7 62.6L313 62.5L306.3 62.6L299.6 62.9L293 63.4L286.4 64L279.8 64.9L273.2 65.9L266.8 67.1L260.4 68.4L254 70L247.8 71.7L241.7 73.6L235.7 75.7L229.8 77.9L224 80.3L218.4 82.8L212.9 85.5L207.5 88.4L202.4 91.4L197.4 94.5L192.5 97.8L187.9 101.2L183.5 104.8L179.2 108.4L175.2 112.2L171.4 116.1L167.7 120.1L164.4 124.1L161.2 128.3L158.3 132.6L155.6 136.9L153.2 141.3L151 145.8L149 150.3L147.4 154.9L145.9 159.5L144.7 164.2L143.8 168.8L143.2 173.5L142.8 178.3L142.6 183L142.8 187.7L143.2 192.5L143.8 197.2L144.7 201.8L145.9 206.5L147.4 211.1L149 215.7L151 220.2L153.2 224.7L155.6 229.1L158.3 233.4L161.2 237.7L164.4 241.9L167.7 245.9L171.4 249.9L175.2 253.8L179.2 257.6L183.5 261.2L187.9 264.8L192.5 268.2L197.4 271.5L202.4 274.6L207.5 277.6L212.9 280.5L218.4 283.2L224 285.7L229.8 288.1L235.7 290.3L241.7 292.4L247.8 294.3L254 296L260.4 297.6L266.8 298.9L273.2 300.1L279.8 301.1L286.4 302L293 302.6L299.6 303.1L306.3 303.4L313 303.5L319.7 303.4L326.4 303.1L333 302.6L339.6 302L346.2 301.1L352.8 300.1L359.2 298.9L365.6 297.6L372 296L378.2 294.3L384.3 292.4L390.3 290.3L396.2 288.1L402 285.7L407.6 283.2L413.1 280.5L418.5 277.6L423.6 274.6L428.6 271.5L433.5 268.2L438.1 264.8L442.5 261.2L446.8 257.6L450.8 253.8L454.6 249.9L458.3 245.9L461.6 241.9L464.8 237.7L467.7 233.4L470.4 229.1L472.8 224.7L475 220.2L477 215.7L478.6 211.1L480.1 206.5L481.3 201.8L482.2 197.2L482.8 192.5L483.2 187.7L483.4 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M499.6 183L499.5 177.8L499 172.6L498.3 167.5L497.3 162.4L496 157.3L494.5 152.2L492.6 147.2L490.5 142.2L488.1 137.3L485.4 132.5L482.5 127.8L479.3 123.1L475.8 118.5L472.1 114.1L468.2 109.7L464 105.4L459.6 101.3L454.9 97.3L450 93.4L445 89.7L439.7 86.1L434.2 82.7L428.5 79.4L422.7 76.2L416.7 73.3L410.5 70.5L404.2 67.9L397.7 65.4L391.1 63.2L384.4 61.1L377.6 59.2L370.7 57.5L363.7 56L356.6 54.7L349.4 53.6L342.2 52.7L334.9 52L327.6 51.5L320.3 51.1L313 51L305.7 51.1L298.4 51.5L291.1 52L283.8 52.7L276.6 53.6L269.4 54.7L262.3 56L255.3 57.5L248.4 59.2L241.6 61.1L234.9 63.2L228.3 65.4L221.8 67.9L215.5 70.5L209.3 73.3L203.3 76.2L197.5 79.4L191.8 82.7L186.3 86.1L181 89.7L176 93.4L171.1 97.3L166.4 101.3L162 105.4L157.8 109.7L153.9 114.1L150.2 118.5L146.7 123.1L143.5 127.8L140.6 132.5L137.9 137.3L135.5 142.2L133.4 147.2L131.5 152.2L130 157.3L128.7 162.4L127.7 167.5L127 172.6L126.5 177.8L126.4 183L126.5 188.2L127 193.4L127.7 198.5L128.7 203.6L130 208.7L131.5 213.8L133.4 218.8L135.5 223.8L137.9 228.7L140.6 233.5L143.5 238.2L146.7 242.9L150.2 247.5L153.9 251.9L157.8 256.3L162 260.6L166.4 264.7L171.1 268.7L176 272.6L181 276.3L186.3 279.9L191.8 283.3L197.5 286.6L203.3 289.8L209.3 292.7L215.5 295.5L221.8 298.1L228.3 300.6L234.9 302.8L241.6 304.9L248.4 306.8L255.3 308.5L262.3 310L269.4 311.3L276.6 312.4L283.8 313.3L291.1 314L298.4 314.5L305.7 314.9L313 315L320.3 314.9L327.6 314.5L334.9 314L342.2 313.3L349.4 312.4L356.6 311.3L363.7 310L370.7 308.5L377.6 306.8L384.4 304.9L391.1 302.8L397.7 300.6L404.2 298.1L410.5 295.5L416.7 292.7L422.7 289.8L428.5 286.6L434.2 283.3L439.7 279.9L445 276.3L450 272.6L454.9 268.7L459.6 264.7L464 260.6L468.2 256.3L472.1 251.9L475.8 247.5L479.3 242.9L482.5 238.2L485.4 233.5L488.1 228.7L490.5 223.8L492.6 218.8L494.5 213.8L496 208.7L497.3 203.6L498.3 198.5L499 193.4L499.5 188.2L499.6 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M514.6 183L514.4 177.4L513.9 171.8L513.2 166.2L512.1 160.7L510.7 155.2L509 149.7L507 144.3L504.7 139L502.1 133.7L499.2 128.5L496.1 123.3L492.6 118.3L488.9 113.4L484.9 108.5L480.6 103.8L476.1 99.2L471.3 94.8L466.3 90.4L461 86.3L455.5 82.2L449.8 78.3L443.9 74.6L437.8 71.1L431.5 67.7L425 64.5L418.3 61.5L411.5 58.6L404.5 56L397.4 53.6L390.1 51.3L382.8 49.3L375.3 47.4L367.7 45.8L360.1 44.4L352.3 43.2L344.5 42.2L336.7 41.5L328.8 40.9L320.9 40.6L313 40.5L305.1 40.6L297.2 40.9L289.3 41.5L281.5 42.2L273.7 43.2L265.9 44.4L258.3 45.8L250.7 47.4L243.2 49.3L235.9 51.3L228.6 53.6L221.5 56L214.5 58.6L207.7 61.5L201 64.5L194.5 67.7L188.2 71.1L182.1 74.6L176.2 78.3L170.5 82.2L165 86.3L159.7 90.4L154.7 94.8L149.9 99.2L145.4 103.8L141.1 108.5L137.1 113.4L133.4 118.3L129.9 123.3L126.8 128.5L123.9 133.7L121.3 139L119 144.3L117 149.7L115.3 155.2L113.9 160.7L112.8 166.2L112.1 171.8L111.6 177.4L111.4 183L111.6 188.6L112.1 194.2L112.8 199.8L113.9 205.3L115.3 210.8L117 216.3L119 221.7L121.3 227L123.9 232.3L126.8 237.5L129.9 242.7L133.4 247.7L137.1 252.6L141.1 257.5L145.4 262.2L149.9 266.8L154.7 271.2L159.7 275.6L165 279.7L170.5 283.8L176.2 287.7L182.1 291.4L188.2 294.9L194.5 298.3L201 301.5L207.7 304.5L214.5 307.4L221.5 310L228.6 312.4L235.9 314.7L243.2 316.7L250.7 318.6L258.3 320.2L265.9 321.6L273.7 322.8L281.5 323.8L289.3 324.5L297.2 325.1L305.1 325.4L313 325.5L320.9 325.4L328.8 325.1L336.7 324.5L344.5 323.8L352.3 322.8L360.1 321.6L367.7 320.2L375.3 318.6L382.8 316.7L390.1 314.7L397.4 312.4L404.5 310L411.5 307.4L418.3 304.5L425 301.5L431.5 298.3L437.8 294.9L443.9 291.4L449.8 287.7L455.5 283.8L461 279.7L466.3 275.6L471.3 271.2L476.1 266.8L480.6 262.2L484.9 257.5L488.9 252.6L492.6 247.7L496.1 242.7L499.2 237.5L502.1 232.3L504.7 227L507 221.7L509 216.3L510.7 210.8L512.1 205.3L513.2 199.8L513.9 194.2L514.4 188.6L514.6 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M528.5 183L528.3 177L527.8 171L527 165.1L525.8 159.2L524.3 153.3L522.5 147.4L520.4 141.6L517.9 135.9L515.2 130.3L512.1 124.7L508.7 119.2L505 113.8L501 108.5L496.7 103.4L492.2 98.3L487.3 93.4L482.2 88.7L476.9 84L471.2 79.6L465.4 75.3L459.3 71.1L452.9 67.1L446.4 63.3L439.7 59.7L432.7 56.3L425.6 53.1L418.3 50.1L410.8 47.2L403.2 44.6L395.5 42.2L387.6 40L379.6 38.1L371.5 36.4L363.3 34.8L355 33.6L346.7 32.5L338.3 31.7L329.9 31.1L321.5 30.7L313 30.6L304.5 30.7L296.1 31.1L287.7 31.7L279.3 32.5L271 33.6L262.7 34.8L254.5 36.4L246.4 38.1L238.4 40L230.5 42.2L222.8 44.6L215.2 47.2L207.7 50.1L200.4 53.1L193.3 56.3L186.3 59.7L179.6 63.3L173.1 67.1L166.7 71.1L160.6 75.3L154.8 79.6L149.1 84L143.8 88.7L138.7 93.4L133.8 98.3L129.3 103.4L125 108.5L121 113.8L117.3 119.2L113.9 124.7L110.8 130.3L108.1 135.9L105.6 141.6L103.5 147.4L101.7 153.3L100.2 159.2L99 165.1L98.2 171L97.7 177L97.5 183L97.7 189L98.2 195L99 200.9L100.2 206.8L101.7 212.7L103.5 218.6L105.6 224.4L108.1 230.1L110.8 235.7L113.9 241.3L117.3 246.8L121 252.2L125 257.5L129.3 262.6L133.8 267.7L138.7 272.6L143.8 277.3L149.1 282L154.8 286.4L160.6 290.7L166.7 294.9L173.1 298.9L179.6 302.7L186.3 306.3L193.3 309.7L200.4 312.9L207.7 315.9L215.2 318.8L222.8 321.4L230.5 323.8L238.4 326L246.4 327.9L254.5 329.6L262.7 331.2L271 332.4L279.3 333.5L287.7 334.3L296.1 334.9L304.5 335.3L313 335.4L321.5 335.3L329.9 334.9L338.3 334.3L346.7 333.5L355 332.4L363.3 331.2L371.5 329.6L379.6 327.9L387.6 326L395.5 323.8L403.2 321.4L410.8 318.8L418.3 315.9L425.6 312.9L432.7 309.7L439.7 306.3L446.4 302.7L452.9 298.9L459.3 294.9L465.4 290.7L471.2 286.4L476.9 282L482.2 277.3L487.3 272.6L492.2 267.7L496.7 262.6L501 257.5L505 252.2L508.7 246.8L512.1 241.3L515.2 235.7L517.9 230.1L520.4 224.4L522.5 218.6L524.3 212.7L525.8 206.8L527 200.9L527.8 195L528.3 189L528.5 183\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/></g><line x1=\"72\" y1=\"183\" x2=\"562\" y2=\"183\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgTemp)\"/><line x1=\"313\" y1=\"354\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8dgTemp)\"/><text x=\"560\" y=\"174\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"420.7\" y1=\"129.1\" x2=\"313\" y2=\"183\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"420.7\" y1=\"129.1\" x2=\"377.6\" y2=\"172.2\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8dgTempred)\"/><circle cx=\"420.7\" cy=\"129.1\" r=\"5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"313\" cy=\"183\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"430.7\" y=\"121.1\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(2, 1)</text><text x=\"430.7\" y=\"147.1\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T = 94</text><text x=\"379.6\" y=\"202.2\" text-anchor=\"middle\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇T</text><text x=\"303\" y=\"171\" text-anchor=\"end\" fill=\"var(--ink)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">最熱</text><text x=\"303\" y=\"209\" text-anchor=\"end\" fill=\"var(--ink)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T = 100</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方向 $(-1,-1)$；最大升溫率",
+            "$|\\nabla T(2,1)|=\\sqrt{16+16}=4\\sqrt2\\approx5.66$"
+          ],
+          "say": "所以最快升溫的方向是負 1 逗號負 1，最大升溫率是 4 根號 2，大約每單位 5.66 度。",
           "board": [
-            {"do":"write","line":"等值面：${{c1:f=c}}$，等高線的三維版"},
-            {"do":"focus","term":"c1","on":"所有點"},
-            {"do":"write","line":"切平面：貼著面；梯度是法向量","on":"切平面"}
-          ] },
-        { "show": ["$\\nabla f(1,2,0)=(4,1,1)$，長 $3\\sqrt2$"],
-          "note": "$f=x^2y+z$。",
-          "say": "例如 x 平方 y 加 z，在點一、二、零，梯度是四、一、一，長度是根號十八，三根號二。",
+            {
+              "do": "write",
+              "line": "方向 $(-1,-1)$；最大升溫率"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle |\\nabla T(2,1)|=\\sqrt{16+16}=4\\sqrt2\\approx5.66}}$",
+              "color": "red",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "溫率"
+            },
+            {
+              "do": "write",
+              "line": "　單位：度／（長度單位）",
+              "color": "violet",
+              "on": "約每"
+            }
+          ]
+        },
+        {
+          "show": [
+            "梯度指的是眼前最陡，不一定直指山頂"
+          ],
+          "say": "學到一件事：梯度只管眼前這一步哪裡最陡，不一定直接指向山頂。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=x^2y+z$","on":"例如"},
-            {"do":"write","line":"$\\nabla f(1,2,0)=(4,1,1)$","on":"在點一"},
-            {"do":"write","line":"$|\\nabla f|=\\sqrt{18}={{l:3\\sqrt2}}$","on":"長度是"},
-            {"do":"underline","term":"l","on":"三根號二"}
-          ] },
-        { "show": ["$\\nabla f=\\mathbf 0$：極值的候選點"],
-          "say": "梯度是零的點，往哪個方向第一階都不變，是找極值的候選點。",
+            {
+              "do": "write",
+              "line": "梯度指的是眼前最陡，不一定直指山頂"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼垂直等高線",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "為什麼梯度會垂直於等高線？放大點 1 逗號 2 附近。粗的藍線是等高線 f 等於 5。",
           "board": [
-            {"do":"write","line":"$\\nabla f={{z:\\mathbf 0}}$：極值的候選點"},
-            {"do":"focus","term":"z","on":"第一階都不變"}
-          ] },
-        { "show": ["第一階不變：像 $x^2$ 在 $x=0$"],
-          "say": "第一階，就是只看斜率這種一次的變化率。x 平方在零斜率是零，那裡是最低點，所以梯度為零的點值得檢查。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gPerp\" viewBox=\"0 0 620 380\" width=\"620\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8dgPerp\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8dgPerpblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8dgPerpred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8dgPerpgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8dgPerppencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8dgPerpink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8dgPerp30\"><rect x=\"99.2\" y=\"16\" width=\"427.5\" height=\"334\"/></clipPath><g clip-path=\"url(#cl8dgPerp30)\"><path d=\"M426.6 463.6L426.4 453.1L425.7 442.6L424.7 432.2L423.3 421.8L421.4 411.4L419.2 401.2L416.5 391L413.5 381L410 371.1L406.2 361.3L402 351.7L397.4 342.3L392.5 333L387.2 323.9L381.5 315.1L375.5 306.5L369.2 298.1L362.5 290L355.6 282.2L348.3 274.6L340.7 267.3L332.9 260.4L324.8 253.7L316.4 247.4L307.8 241.4L299 235.7L289.9 230.4L280.7 225.5L271.2 220.9L261.6 216.7L251.8 212.9L241.9 209.4L231.9 206.4L221.7 203.7L211.5 201.5L201.2 199.6L190.8 198.2L180.3 197.2L169.9 196.6L159.4 196.4L148.9 196.6L138.4 197.2L128 198.2L117.6 199.6L107.2 201.5L97 203.7L86.8 206.4L76.8 209.4L66.9 212.9L57.1 216.7L47.5 220.9L38.1 225.5L28.8 230.4L19.7 235.7L10.9 241.4L2.3 247.4L-6.1 253.7L-14.2 260.4L-22 267.3L-29.6 274.6L-36.9 282.2L-43.8 290L-50.5 298.1L-56.8 306.5L-62.8 315.1L-68.5 323.9L-73.8 333L-78.7 342.3L-83.3 351.7L-87.5 361.3L-91.3 371.1L-94.8 381L-97.8 391L-100.5 401.2L-102.7 411.4L-104.6 421.8L-106 432.2L-107 442.6L-107.6 453.1L-107.8 463.6L-107.6 474.1L-107 484.5L-106 495L-104.6 505.4L-102.7 515.7L-100.5 525.9L-97.8 536.1L-94.8 546.1L-91.3 556L-87.5 565.8L-83.3 575.4L-78.7 584.9L-73.8 594.1L-68.5 603.2L-62.8 612L-56.8 620.6L-50.5 629L-43.8 637.1L-36.9 644.9L-29.6 652.5L-22 659.8L-14.2 666.7L-6.1 673.4L2.3 679.7L10.9 685.7L19.7 691.4L28.8 696.7L38.1 701.6L47.5 706.2L57.1 710.4L66.9 714.2L76.8 717.7L86.8 720.7L97 723.4L107.2 725.6L117.6 727.5L128 728.9L138.4 729.9L148.9 730.6L159.4 730.8L169.9 730.6L180.3 729.9L190.8 728.9L201.2 727.5L211.5 725.6L221.7 723.4L231.9 720.7L241.9 717.7L251.8 714.2L261.6 710.4L271.2 706.2L280.7 701.6L289.9 696.7L299 691.4L307.8 685.7L316.4 679.7L324.8 673.4L332.9 666.7L340.7 659.8L348.3 652.5L355.6 644.9L362.5 637.1L369.2 629L375.5 620.6L381.5 612L387.2 603.2L392.5 594.1L397.4 584.9L402 575.4L406.2 565.8L410 556L413.5 546.1L416.5 536.1L419.2 525.9L421.4 515.7L423.3 505.4L424.7 495L425.7 484.5L426.4 474.1L426.6 463.6\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/><path d=\"M458.1 463.6L457.9 451.8L457.2 440.1L456 428.4L454.4 416.8L452.4 405.3L449.8 393.8L446.9 382.5L443.5 371.2L439.6 360.2L435.4 349.2L430.7 338.5L425.5 327.9L420 317.6L414.1 307.5L407.8 297.6L401 288L394 278.6L386.5 269.5L378.7 260.8L370.6 252.3L362.1 244.2L353.4 236.4L344.3 229L335 221.9L325.3 215.2L315.5 208.8L305.3 202.9L295 197.4L284.4 192.3L273.7 187.6L262.8 183.3L251.7 179.4L240.4 176L229.1 173.1L217.6 170.6L206.1 168.5L194.5 166.9L182.8 165.7L171.1 165.1L159.4 164.8L147.6 165.1L135.9 165.7L124.2 166.9L112.6 168.5L101.1 170.6L89.6 173.1L78.3 176L67 179.4L56 183.3L45 187.6L34.3 192.3L23.7 197.4L13.4 202.9L3.3 208.8L-6.6 215.2L-16.2 221.9L-25.6 229L-34.7 236.4L-43.4 244.2L-51.9 252.3L-60 260.8L-67.8 269.5L-75.2 278.6L-82.3 288L-89 297.6L-95.4 307.5L-101.3 317.6L-106.8 327.9L-111.9 338.5L-116.6 349.2L-120.9 360.2L-124.8 371.2L-128.2 382.5L-131.1 393.8L-133.6 405.3L-135.7 416.8L-137.3 428.4L-138.5 440.1L-139.1 451.8L-139.4 463.6L-139.1 475.3L-138.5 487L-137.3 498.7L-135.7 510.3L-133.6 521.8L-131.1 533.3L-128.2 544.6L-124.8 555.9L-120.9 567L-116.6 577.9L-111.9 588.6L-106.8 599.2L-101.3 609.5L-95.4 619.7L-89 629.5L-82.3 639.2L-75.2 648.5L-67.8 657.6L-60 666.3L-51.9 674.8L-43.4 682.9L-34.7 690.7L-25.6 698.2L-16.2 705.2L-6.6 712L3.3 718.3L13.4 724.2L23.7 729.7L34.3 734.9L45 739.6L56 743.8L67 747.7L78.3 751.1L89.6 754L101.1 756.6L112.6 758.6L124.2 760.2L135.9 761.4L147.6 762.1L159.4 762.3L171.1 762.1L182.8 761.4L194.5 760.2L206.1 758.6L217.6 756.6L229.1 754L240.4 751.1L251.7 747.7L262.8 743.8L273.7 739.6L284.4 734.9L295 729.7L305.3 724.2L315.5 718.3L325.3 712L335 705.2L344.3 698.2L353.4 690.7L362.1 682.9L370.6 674.8L378.7 666.3L386.5 657.6L394 648.5L401 639.2L407.8 629.5L414.1 619.7L420 609.5L425.5 599.2L430.7 588.6L435.4 577.9L439.6 567L443.5 555.9L446.9 544.6L449.8 533.3L452.4 521.8L454.4 510.3L456 498.7L457.2 487L457.9 475.3L458.1 463.6\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"1\"/><path d=\"M486.6 463.6L486.4 450.7L485.6 437.9L484.3 425.1L482.6 412.4L480.3 399.7L477.6 387.2L474.3 374.7L470.6 362.4L466.4 350.3L461.7 338.3L456.6 326.6L450.9 315L444.9 303.7L438.4 292.6L431.5 281.7L424.1 271.2L416.4 261L408.2 251L399.7 241.4L390.8 232.2L381.5 223.3L371.9 214.7L362 206.6L351.7 198.8L341.2 191.5L330.3 184.5L319.3 178L307.9 172L296.4 166.4L284.6 161.2L272.6 156.5L260.5 152.3L248.2 148.6L235.8 145.4L223.2 142.6L210.6 140.3L197.8 138.6L185 137.3L172.2 136.6L159.4 136.3L146.5 136.6L133.7 137.3L120.9 138.6L108.2 140.3L95.5 142.6L83 145.4L70.5 148.6L58.2 152.3L46.1 156.5L34.1 161.2L22.4 166.4L10.8 172L-0.5 178L-11.6 184.5L-22.5 191.5L-33 198.8L-43.2 206.6L-53.2 214.7L-62.8 223.3L-72 232.2L-80.9 241.4L-89.5 251L-97.6 261L-105.4 271.2L-112.7 281.7L-119.7 292.6L-126.2 303.7L-132.2 315L-137.8 326.6L-143 338.3L-147.7 350.3L-151.9 362.4L-155.6 374.7L-158.8 387.2L-161.6 399.7L-163.9 412.4L-165.6 425.1L-166.9 437.9L-167.6 450.7L-167.9 463.6L-167.6 476.4L-166.9 489.2L-165.6 502L-163.9 514.8L-161.6 527.4L-158.8 540L-155.6 552.4L-151.9 564.7L-147.7 576.8L-143 588.8L-137.8 600.6L-132.2 612.1L-126.2 623.5L-119.7 634.5L-112.7 645.4L-105.4 655.9L-97.6 666.2L-89.5 676.1L-80.9 685.7L-72 695L-62.8 703.9L-53.2 712.4L-43.2 720.6L-33 728.3L-22.5 735.7L-11.6 742.6L-0.5 749.1L10.8 755.1L22.4 760.8L34.1 765.9L46.1 770.6L58.2 774.8L70.5 778.5L83 781.8L95.5 784.5L108.2 786.8L120.9 788.5L133.7 789.8L146.5 790.6L159.4 790.8L172.2 790.6L185 789.8L197.8 788.5L210.6 786.8L223.2 784.5L235.8 781.8L248.2 778.5L260.5 774.8L272.6 770.6L284.6 765.9L296.4 760.8L307.9 755.1L319.3 749.1L330.3 742.6L341.2 735.7L351.7 728.3L362 720.6L371.9 712.4L381.5 703.9L390.8 695L399.7 685.7L408.2 676.1L416.4 666.2L424.1 655.9L431.5 645.4L438.4 634.5L444.9 623.5L450.9 612.1L456.6 600.6L461.7 588.8L466.4 576.8L470.6 564.7L474.3 552.4L477.6 540L480.3 527.4L482.6 514.8L484.3 502L485.6 489.2L486.4 476.4L486.6 463.6\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.4\"/></g><line x1=\"406.5\" y1=\"253.1\" x2=\"179.4\" y2=\"139.6\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"293\" y1=\"196.4\" x2=\"203.3\" y2=\"151.5\" stroke=\"var(--ink)\" stroke-width=\"3\" marker-end=\"url(#ah8dgPerpink)\"/><line x1=\"293\" y1=\"196.4\" x2=\"359.8\" y2=\"62.8\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8dgPerpred)\"/><line x1=\"301.3\" y1=\"179.6\" x2=\"284.6\" y2=\"171.3\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"284.6\" y1=\"171.3\" x2=\"276.2\" y2=\"188\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><circle cx=\"293\" cy=\"196.4\" r=\"5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"371.8\" y=\"66.8\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇f = (2, 4)</text><text x=\"199.3\" y=\"137.5\" text-anchor=\"end\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(dx, dy)</text><text x=\"399.8\" y=\"336.6\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"19\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"435.1\" y=\"336.6\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"19\" font-weight=\"bold\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">5</text><text x=\"466.3\" y=\"336.6\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"19\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">6</text><text x=\"105.9\" y=\"42.7\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:inherit\">等高線 f = 4, 5, 6</text><text x=\"281\" y=\"226.4\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(1, 2)</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿等高線走一小步 $(dx,dy)$：$f$ 沒變",
+            "$df=f_x\\,dx+f_y\\,dy=0$"
+          ],
+          "say": "沿著等高線走一小步 d x 逗號 d y，高度不變，所以 8.10 的全微分 d f 等於 0。",
           "board": [
-            {"do":"write","line":"第一階＝一次的變化率（斜率）"},
-            {"do":"write","line":"$f=x^2$：$f'(0)=0$，是最低點","on":"x 平方"}
-          ] }
+            {
+              "do": "write",
+              "line": "沿等高線走一小步 $(dx,dy)$：$f$ 沒變"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle df=f_x\\,dx+f_y\\,dy=0$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊就是內積：",
+            "$\\nabla f\\cdot(dx,dy)=0$"
+          ],
+          "say": "仔細看，f x 乘 d x 加 f y 乘 d y，正好是梯度跟這一小步的內積。內積是 0，就是互相垂直。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊就是內積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\nabla f\\cdot(dx,dy)=0}}$",
+              "on": "正好"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "步的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼指向上坡：往 $\\nabla f$ 的方向走一小步 $(dx,dy)=\\varepsilon\\,\\nabla f$（$\\varepsilon>0$）",
+            "$df=\\varepsilon\\,(f_x^2+f_y^2)=\\varepsilon\\,|\\nabla f|^2>0$"
+          ],
+          "say": "再看為什麼指向上坡：沿著梯度本身的方向走一小步，也就是艾普西隆倍的梯度。代進全微分，得到艾普西隆乘梯度長度的平方，是正的，f 變大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼指向上坡：往 $\\nabla f$ 的方向走一小步 $(dx,dy)=\\varepsilon\\,\\nabla f$（$\\varepsilon>0$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle df=\\varepsilon\\,(f_x^2+f_y^2)=\\varepsilon\\,|\\nabla f|^2>0$",
+              "on": "梯度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼密 = 長：相鄰兩條等高線差 $\\Delta c$，距離 $\\Delta s$",
+            "$|\\nabla f|\\approx\\frac{\\Delta c}{\\Delta s}$"
+          ],
+          "say": "長度呢？相鄰兩條等高線的值差德爾塔 c，距離是德爾塔 s。距離越短，也就是越密，比值越大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼密 = 長：相鄰兩條等高線差 $\\Delta c$，距離 $\\Delta s$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |\\nabla f|\\approx\\frac{\\Delta c}{\\Delta s}$",
+              "on": "爾塔#1"
+            },
+            {
+              "do": "write",
+              "line": "　例：$f=x^2+y^2$ 每隔 $2$ 一條，外圈間距越來越小，所以越往外 $|\\nabla f|=2r$ 越大",
+              "color": "violet",
+              "on": "離越"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這是直覺（用 $\\Delta f\\approx df$），還不是證明"
+          ],
+          "say": "這些都是直覺，用的是德爾塔 f 大約等於 d f。下一課有了方向導數，會正式證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這是直覺（用 $\\Delta f\\approx df$），還不是證明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "三個變數",
+      "beats": [
+        {
+          "show": [
+            "$\\nabla f(x,y,z)=\\big(f_x,\\ f_y,\\ f_z\\big)$"
+          ],
+          "say": "三個變數，梯度就多一個分量：對 z 的偏導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\nabla f(x,y,z)=\\big(f_x,\\ f_y,\\ f_z\\big)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "分量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x,y,z)=x^2y+z$",
+            "$\\nabla f=(2xy,\\ x^2,\\ 1)$"
+          ],
+          "say": "例子：x 平方 y 加 z。對 x 是 2 x y，對 y 是 x 平方，對 z 是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x,y,z)=x^2y+z$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f=(2xy,\\ x^2,\\ 1)$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla f(1,2,0)=(4,\\ 1,\\ 1),\\quad|\\nabla f|=\\sqrt{18}=3\\sqrt2\\approx4.24$"
+          ],
+          "say": "在 1 逗號 2 逗號 0，梯度是 4、1、1，長度是根號 18，3 根號 2，大約 4.24。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f(1,2,0)=(4,\\ 1,\\ 1),\\quad|\\nabla f|=\\sqrt{18}=3\\sqrt2\\approx4.24$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它住在 $\\mathbb R^3$（定義域），垂直於等值面 $f=c$"
+          ],
+          "say": "這次梯度是空間裡的向量，同樣住在定義域裡。三個變數沒有等高線，換成等值面，梯度垂直於等值面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它住在 $\\mathbb R^3$（定義域），垂直於等值面 $f=c$"
+            },
+            {
+              "do": "write",
+              "line": "　這裡 $f(1,2,0)=2$：$\\nabla f(1,2,0)$ 垂直於曲面 $x^2y+z=2$；8.15 用它求切平面",
+              "color": "violet",
+              "on": "變數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "梯度為零",
+      "beats": [
+        {
+          "show": [
+            "$\\nabla f(P)=\\mathbf 0$：每個方向一階都不升不降"
+          ],
+          "say": "如果梯度在某一點是零向量，意思是：站在那裡，往任何方向，一階都不升也不降，地形是平的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\nabla f(P)=\\mathbf 0$：每個方向一階都不升不降"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f=x^2+y^2$ 在 $(0,0)$：$\\nabla f=(0,0)$，是谷底"
+          ],
+          "say": "例如 x 平方加 y 平方在原點，梯度是 0，那裡是谷底。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f=x^2+y^2$ 在 $(0,0)$：$\\nabla f=(0,0)$，是谷底"
+            },
+            {
+              "do": "write",
+              "line": "　也可能是山頂，或像 $x^2-y^2$ 在原點那樣的鞍點；8.16 臨界點再分辨",
+              "color": "violet",
+              "on": "原點"
+            }
+          ]
+        }
       ],
-      "key": "三變數時梯度垂直等值面，不是等高線",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\nabla f=(f_x,f_y)$；三變數多一個 $f_z$",
+            "• 住在定義域：二變數時畫在 $xy$ 平面，不是曲面上"
+          ],
+          "say": "整理一下：梯度是偏導數排成的向量，畫在定義域裡；它垂直等高線、指向上坡，長度是最大上升率；不一定直指山頂，梯度是零的地方是平的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\nabla f=(f_x,f_y)$；三變數多一個 $f_z$"
+            },
+            {
+              "do": "write",
+              "line": "• 住在定義域：二變數時畫在 $xy$ 平面，不是曲面上",
+              "on": "成的"
+            },
+            {
+              "do": "write",
+              "line": "• 垂直等高線（等值面）、指向上坡",
+              "on": "垂直"
+            },
+            {
+              "do": "write",
+              "line": "• $|\\nabla f|$ = 最大上升率；等高線越密越長",
+              "on": "是最"
+            },
+            {
+              "do": "write",
+              "line": "• 不一定直指山頂；$\\nabla f=\\mathbf 0$ 的地方是平的",
+              "on": "梯度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：方向導數，把三個性質證明出來"
+          ],
+          "say": "下一課，學方向導數，把今天的三個性質證明出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：方向導數，把三個性質證明出來"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["gradient", "multivariable"],
-    "fine": ["gradient-compute", "gradient-level-curve", "gradient-max-rate"]
+    "coarse": [
+      "gradient",
+      "multivariable"
+    ],
+    "fine": [
+      "gradient-compute",
+      "gradient-level-curve",
+      "gradient-max-rate"
+    ]
   },
   "practice": [
-    { "id": "exam-multi-003", "core": true, "trains": "gradient-compute" },
-    { "id": "lec-17-q3a", "core": true, "trains": "gradient-compute" },
-    { "id": "lec-17-m2", "core": true, "trains": "gradient-max-rate" },
-    { "id": "lec-17-q3c", "core": true, "trains": "gradient-max-rate" },
-    { "id": "cg-8d-001", "core": true, "trains": "gradient-level-curve" },
-    { "id": "vc-nab-006", "trains": "gradient-max-rate" },
-    { "id": "cg-8d-002", "trains": "gradient-level-curve" }
+    {
+      "id": "exam-multi-003",
+      "core": true,
+      "trains": "gradient-compute"
+    },
+    {
+      "id": "lec-17-q3a",
+      "core": true,
+      "trains": "gradient-compute"
+    },
+    {
+      "id": "lec-17-m2",
+      "core": true,
+      "trains": "gradient-max-rate"
+    },
+    {
+      "id": "lec-17-q3c",
+      "core": true,
+      "trains": "gradient-max-rate"
+    },
+    {
+      "id": "cg-8d-001",
+      "core": true,
+      "trains": "gradient-level-curve"
+    },
+    {
+      "id": "vc-nab-006",
+      "trains": "gradient-max-rate"
+    },
+    {
+      "id": "cg-8d-002",
+      "trains": "gradient-level-curve"
+    }
   ],
   "gaps": []
 }

@@ -1,360 +1,179 @@
 {
   "id": "euler-formula",
   "title": "Euler 公式",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["complex-polar", "maclaurin-series", "radius-of-convergence"],
-  "next": ["complex-functions"],
-  "related": ["complex-roots", "ibp-cyclic", "basel-problem"],
-  "objectives": [
-    "從 $e^x$、$\\cos x$、$\\sin x$ 的 Maclaurin 級數推出 $e^{i\\theta}=\\cos\\theta+i\\sin\\theta$，並說清楚 $e^{i\\theta}$ 是怎麼定義的。",
-    "用 $\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}{2}$、$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$ 把三角函數換成指數。",
-    "用「取實部」算 $\\int e^{ax}\\cos bx\\,dx$ 與 $e^x\\cos x$ 的高階導數，取代重複分部積分。"
+  "prerequisites": [
+    "complex-polar",
+    "maclaurin-series",
+    "radius-of-convergence"
   ],
-  "visual": "單位圓上一個點 e^{iθ}，θ 用滑桿從 0 拉到 2π，點沿圓逆時針走一圈；同時在旁邊把 1 + iθ + (iθ)²/2! + ⋯ 的部分和畫成一條折線（每一段轉 90°、長度是 θᵏ/k!），折線的終點逐漸收斂到圓上那個點。",
+  "next": [
+    "complex-functions"
+  ],
+  "related": [
+    "complex-roots",
+    "ibp-cyclic",
+    "basel-problem"
+  ],
+  "objectives": [
+    "從 $e^x$、$\\cos x$、$\\sin x$ 的 Maclaurin 級數推出 $e^{i\\theta}=\\cos\\theta+i\\sin\\theta$",
+    "用 $\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}{2}$、$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$ 推導三角恆等式",
+    "用「取實部」算 $\\int e^{ax}\\cos bx\\,dx$ 與 $e^x\\cos x$ 的高階導數，取代重複分部積分"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 先問：$e$ 的虛數次方是什麼意思",
+      "heading": "① $e$ 的虛數次方？",
       "body": [
-        "$e^3$ 是三個 $e$ 相乘，$e^{1/2}$ 是開根號，但 $e^{i}$ 不能用「乘幾次」來理解。我們用級數來定義：對任何複數 $z$，$e^z=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$。這個級數的收斂半徑是 $\\infty$（跟實數時一樣用比值判別），所以對所有複數都有定義，而且 $z$ 是實數時就是原來的 $e^x$。"
+        "$e^{i\\theta}$ 是什麼？「$e$ 乘自己 $i$ 次」沒有意義",
+        "實數時，$e^x$ 還有另一個樣子：",
+        "級數只用到加法和乘法，複數也有。定義：",
+        "一定收斂：$\\Big|\\dfrac{z^n}{n!}\\Big|=\\dfrac{|z|^n}{n!}$，而 $\\displaystyle\\sum\\frac{|z|^n}{n!}=e^{|z|}$",
+        "絕對收斂 $\\Rightarrow$ 收斂",
+        "實部、虛部的每一項都不超過 $\\frac{|z|^n}{n!}$，用比較審斂法各自絕對收斂",
+        "$z=x$ 是實數時，就是原來的 $e^x$：沒有衝突"
       ],
-      "collapsible": false
+      "tex": [
+        "e^x=\\sum_{n=0}^{\\infty}\\frac{x^n}{n!}=1+x+\\frac{x^2}{2!}+\\cdots",
+        "e^z=\\sum_{n=0}^{\\infty}\\frac{z^n}{n!}\\qquad(z\\text{ 是複數})"
+      ]
     },
     {
-      "heading": "② 代入 $z=i\\theta$，分成實部與虛部",
+      "heading": "② 代入 $z=i\\theta$",
       "body": [
-        "$i$ 的次方四個一循環：$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$。所以 $e^{i\\theta}=1+i\\theta-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\frac{i\\theta^5}{5!}-\\cdots$。",
-        "把沒有 $i$ 的項收在一起：$1-\\frac{\\theta^2}{2!}+\\frac{\\theta^4}{4!}-\\cdots=\\cos\\theta$；有 $i$ 的項：$\\theta-\\frac{\\theta^3}{3!}+\\frac{\\theta^5}{5!}-\\cdots=\\sin\\theta$。（級數絕對收斂，重新分組合法。）"
+        "$(i\\theta)^n$：$i$ 的次方四個一循環",
+        "偶數項是實數、奇數項帶 $i$。部分和分開寫：",
+        "實部是 $\\cos\\theta$ 的 Maclaurin 部分和，虛部是 $\\sin\\theta$ 的",
+        "$N\\to\\infty$：",
+        "沒有重排無窮多項：$S_n$ 收斂，取子序列 $S_{2N+1}$ 的極限即可"
       ],
-      "tex": ["e^{i\\theta}=\\cos\\theta+i\\sin\\theta"],
-      "collapsible": false
+      "tex": [
+        "1,\\ \\ i\\theta,\\ -\\theta^2,\\ -i\\theta^3,\\ \\ \\theta^4,\\ \\ i\\theta^5,\\ \\dots",
+        "\\begin{aligned}S_{2N+1}&=\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k}}{(2k)!}\\\\&\\quad+i\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k+1}}{(2k+1)!}\\end{aligned}",
+        "e^{i\\theta}=\\cos\\theta+i\\sin\\theta"
+      ]
+    },
+    {
+      "heading": "② 例：$\\theta=\\pi$",
+      "body": [
+        "② 例：$\\theta=\\pi$"
+      ],
+      "tex": [
+        "e^{i\\pi}=-1,\\qquad e^{i\\pi}+1=0"
+      ]
     },
     {
       "heading": "③ 立刻得到的東西",
       "body": [
-        "極式可以寫成 $z=re^{i\\theta}$，上一課的「長度相乘、角度相加」變成指數律 $e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$。$\\theta=\\pi$ 時 $e^{i\\pi}=-1$。",
-        "把 $\\theta$ 換成 $-\\theta$ 得 $e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$，兩式相加減：$\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}{2}$，$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$。三角恆等式變成指數的代數，例如 $\\sin^3\\theta=\\frac{3\\sin\\theta-\\sin 3\\theta}{4}$ 可以直接展開 $\\left(\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}\\right)^3$ 得到。"
+        "極式變短：$z=r(\\cos\\theta+i\\sin\\theta)=re^{i\\theta}$",
+        "乘法：$e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$：角度相加 $=$ 指數律",
+        "De Moivre：$(e^{i\\theta})^n=e^{in\\theta}$",
+        "一般的指數律：$e^ze^w=e^{z+w}$",
+        "兩個絕對收斂的級數可以這樣相乘（Cauchy 乘積）：下一頁證明",
+        "特例：$e^{a+bi}=e^a(\\cos b+i\\sin b)$，$\\ e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"
       ],
-      "collapsible": false
+      "tex": [
+        "e^ze^w=\\sum_{n=0}^{\\infty}\\sum_{k=0}^{n}\\frac{z^kw^{n-k}}{k!\\,(n-k)!}=\\sum_{n=0}^{\\infty}\\frac{(z+w)^n}{n!}"
+      ]
     },
     {
-      "heading": "④ 微積分裡的用法：先算複數，最後取實部",
+      "heading": "③ 證明：Cauchy 乘積",
       "body": [
-        "對實變數 $x$ 與複數常數 $c$，$\\frac{d}{dx}e^{cx}=ce^{cx}$（逐項微分級數）。所以 $e^{ax}\\cos bx=\\operatorname{Re}e^{(a+ib)x}$，它的反導函數就是 $\\operatorname{Re}\\left[\\frac{e^{(a+ib)x}}{a+ib}\\right]$，不必做〈重複分部與循環積分〉。同理 $n$ 階導數是 $\\operatorname{Re}\\left[(a+ib)^ne^{(a+ib)x}\\right]$。"
+        "定理：$\\sum a_n$、$\\sum b_n$ 絕對收斂，和為 $A$、$B$；令 $c_n=\\sum_{k=0}^{n}a_kb_{n-k}$，則",
+        "部分和 $A_N=\\sum_{i\\le N}a_i$，$B_N$、$C_N$ 同理："
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=0}^{\\infty}c_n=AB",
+        "A_NB_N=\\sum_{i,\\,j\\le N}a_ib_j,\\qquad C_N=\\sum_{i+j\\le N}a_ib_j"
+      ]
     },
     {
-      "heading": "另一個證明：導數為零",
+      "heading": "③ 證明（續）",
       "body": [
-        "令 $g(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$。$g'(\\theta)=-ie^{-i\\theta}(\\cos\\theta+i\\sin\\theta)+e^{-i\\theta}(-\\sin\\theta+i\\cos\\theta)=e^{-i\\theta}(-i\\cos\\theta+\\sin\\theta-\\sin\\theta+i\\cos\\theta)=0$，而 $g(0)=1$，所以 $g\\equiv 1$，即 $e^{i\\theta}=\\cos\\theta+i\\sin\\theta$。這個證明用到 $\\frac{d}{d\\theta}e^{-i\\theta}=-ie^{-i\\theta}$，它同樣來自級數逐項微分。"
+        "紅點：$i+j>N$ ⇒ $i>\\frac N2$ 或 $j>\\frac N2$",
+        "令 $\\alpha=\\sum|a_i|$，$\\beta=\\sum|b_j|$（有限）：",
+        "絕對收斂 ⇒ 尾巴 $\\to0$，所以 $A_NB_N-C_N\\to0$",
+        "取 $a_k=\\frac{z^k}{k!}$、$b_k=\\frac{w^k}{k!}$：① 已證絕對收斂，所以 $e^ze^w=e^{z+w}$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "$e$ 的虛數次方",
-      "beats": [
-        { "show": ["$e^{i}$ 是什麼意思？"],
-          "note": "不能用「乘幾次」來理解。",
-          "say": "e 的三次方是三個 e 相乘，e 的二分之一次方是開根號。可是 e 的 i 次方，乘幾次？說不通。",
-          "board": [
-            {"do":"write","line":"$e^{{{i:i}}}$ 是什麼意思？"},
-            {"do":"focus","term":"i","label":"乘幾次？","on":"i 次方"}
-          ] },
-        { "show": ["$e^z=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$"],
-          "note": "用級數來定義。",
-          "say": "所以改用級數來定義：把 z 代進 e 的 x 次方那條熟悉的級數，對任何複數都照樣算。",
-          "board": [
-            {"do":"write","line":"$e^{{{z:z}}}=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$"},
-            {"do":"focus","term":"z","label":"任何複數","on":"任何複數"}
-          ] },
-        { "show": ["$|z|<R$：級數收斂"],
-          "note": "$R$ 叫收斂半徑。",
-          "say": "z 的長度小於某個數 R，級數就收斂，這個 R 叫收斂半徑。看相鄰兩項的比，長度趨近小於一就收斂。",
-          "board": [
-            {"do":"write","line":"$|z|<{{r:R}}$：級數收斂"},
-            {"do":"focus","term":"r","label":"收斂半徑","on":"收斂半徑"}
-          ] },
-        { "show": ["$z$ 是實數時就是原來的 $e^x$"],
-          "say": "這個定義跟舊的不衝突：z 是實數的時候，它就是原來的 e 的 x 次方。",
-          "board": [
-            {"do":"write","line":"$z$ 是實數：$e^z=e^x$"}
-          ] }
-      ],
-      "predict": {
-        "ask": "這個級數的收斂半徑是？",
-        "options": [
-          {
-            "label": "$\\infty$：對所有複數都有定義",
-            "correct": true
-          },
-          {
-            "label": "$1$",
-            "why": "比值判別：相鄰兩項的比是 $\\frac{|z|}{n+1}\\to 0$，不管 $|z|$ 多大都收斂。"
-          },
-          {
-            "label": "只在實數收斂",
-            "why": "比值判別對複數一樣用：$\\frac{|z|}{n+1}\\to 0$，所有複數都收斂。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}|A_NB_N-C_N|&\\le\\Big(\\sum_{i>N/2}|a_i|\\Big)\\beta\\\\&\\quad+\\alpha\\Big(\\sum_{j>N/2}|b_j|\\Big)\\end{aligned}",
+        "C_N\\to AB\\qquad\\blacksquare"
+      ]
     },
     {
-      "title": "代入 $i\\theta$",
-      "beats": [
-        { "show": ["$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$"],
-          "say": "代入 i theta。i 的次方四個一循環，所以每一項的係數照一、i、負一、負 i 輪流。",
-          "board": [
-            {"do":"write","line":"$z=i\\theta$"},
-            {"do":"write","line":"$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$","on":"i 的次方"}
-          ] },
-        { "show": ["$1+i\\theta-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"],
-          "say": "寫出來，有的項帶 i、有的不帶，正負號兩個兩個換。",
-          "board": [
-            {"do":"write","line":"$1+{{a:i\\theta}}-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"},
-            {"do":"focus","term":"a","on":"帶 i"}
-          ] },
-        { "show": ["沒有 $i$：$1-\\frac{\\theta^2}{2!}+\\cdots=\\cos\\theta$","有 $i$：$\\theta-\\frac{\\theta^3}{3!}+\\cdots=\\sin\\theta$"],
-          "note": "絕對收斂，重新分組合法。",
-          "say": "不帶 i 的收在一起，正好是 cosine 的級數；帶 i 的收在一起，正好是 sine 的級數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1-\\frac{\\theta^2}{2!}+\\cdots={{c:\\cos\\theta}}$","on":"不帶 i"},
-            {"do":"focus","term":"c","color":"green","on":"cosine"},
-            {"do":"write","line":"$\\theta-\\frac{\\theta^3}{3!}+\\cdots={{s:\\sin\\theta}}$","on":"帶 i#2"},
-            {"do":"focus","term":"s","color":"green","on":"正好是#2"}
-          ] },
-        { "show": ["$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],
-          "note": "點在單位圓上，角度是 $\\theta$。",
-          "say": "這就是 Euler 公式。cosine 和 sine 是單位圓上角度 theta 那一點的座標。",
-          "board": [
-            {"do":"write","line":"$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$","color":"green"}
-          ] },
-        { "show": ["點 $(\\cos\\theta,\\sin\\theta)$ 轉動"],
-          "say": "點隨 theta 轉動，畫出來是一個圓，橫座標是 cosine，縱座標是 sine。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.5,1.5,-1.5,1.5],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}]}}
-          ] }
+      "heading": "③ 用 $e^{\\pm i\\theta}$ 表示 $\\cos$、$\\sin$",
+      "body": [
+        "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$，$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$，相加、相減：",
+        "例：證明 $\\sin^3\\theta=\\dfrac{3\\sin\\theta-\\sin3\\theta}4$",
+        "二項式展開，再兩兩配對："
       ],
-      "check": 3
+      "tex": [
+        "\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}2,\\qquad\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}",
+        "\\sin^3\\theta=\\frac{(e^{i\\theta}-e^{-i\\theta})^3}{(2i)^3},\\qquad(2i)^3=-8i",
+        "\\begin{aligned}&e^{3i\\theta}-3e^{i\\theta}+3e^{-i\\theta}-e^{-3i\\theta}\\\\&=(e^{3i\\theta}-e^{-3i\\theta})-3(e^{i\\theta}-e^{-i\\theta})\\\\&=2i\\sin3\\theta-6i\\sin\\theta\\end{aligned}",
+        "\\sin^3\\theta=\\frac{2i\\sin3\\theta-6i\\sin\\theta}{-8i}=\\frac{3\\sin\\theta-\\sin3\\theta}4"
+      ]
     },
     {
-      "title": "另一個證明",
-      "beats": [
-        { "show": ["證明兩邊的比是常數：導數為零"],
-          "note": "不再分組級數，改用微分。",
-          "say": "策略：換一條路。把右邊除以左邊做成一個函數，證明它的導數是零，所以是常數。",
-          "board": [
-            {"do":"write","line":"證明兩邊的比是常數：導數為零"}
-          ] },
-        { "show": ["令 $g(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$"],
-          "say": "令 g 等於 e 的負 i theta 次方，乘上 cosine 加 i sine。要證的就是 g 恆等於一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$g(\\theta)={{em:e^{-i\\theta}}}(\\cos\\theta+i\\sin\\theta)$","tint":{"em":"violet"},"on":"令 g"},
-            {"do":"transform","line":"$g(\\theta)={{em:e^{-i\\theta}}}(\\cos\\theta+i\\sin\\theta)$，要證 $g\\equiv1$","on":"要證的"}
-          ] },
-        { "show": ["$g'=e^{-i\\theta}(-i\\cos\\theta+\\sin\\theta-\\sin\\theta+i\\cos\\theta)=0$"],
-          "note": "乘法律；$\\frac{d}{d\\theta}e^{-i\\theta}=-ie^{-i\\theta}$。",
-          "why": {"ask":"$e^{-i\\theta}$ 為什麼能這樣微分？","say":"這一步要微分 e 的負 i theta 次方。憑什麼說它的導數是負 i 乘自己？","options":[{"label":"級數逐項微分：$\\frac{d}{dx}e^{cx}=ce^{cx}$ 對複數 $c$ 也成立","correct":true},{"label":"$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$，對它微分","why":"這是拿要證的 Euler 公式來用，繞了一圈。"},{"label":"鏈鎖律：$(e^u)'=e^u u'$","why":"實數的公式還沒對複數的 $u$ 證過；要靠級數逐項微分，才知道複數常數也照樣拉出來。"}]},
-          "say": "用乘法律。e 的負 i theta 的導數是負 i 乘自己，這來自級數逐項微分；四項兩兩消掉，剩零。",
-          "board": [
-            {"do":"write","line":"$g'={{em:e^{-i\\theta}}}(-i\\cos\\theta+\\sin\\theta-\\sin\\theta+i\\cos\\theta)$","on":"這一步"},
-            {"do":"write","line":"$({{em:e^{-i\\theta}}})'=-ie^{-i\\theta}$：逐項微分","why":true,"on":"導數是負 i"},
-            {"do":"write","line":"$g'(\\theta)=0$","why":true,"on":"四項兩兩"}
-          ] },
-        { "show": ["逐項微分：每項多一個 $-i$"],
-          "say": "把 e 的負 i theta 寫成級數，逐項微分：每一項都多出一個負 i，提出來，剩下的正好是原來的級數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$e^{-i\\theta}=1-i\\theta-\\frac{\\theta^2}{2!}+\\frac{i\\theta^3}{3!}+\\cdots$","on":"a"},
-            {"do":"write","line":"微分：$-i-\\theta+\\frac{i\\theta^2}{2!}+\\cdots$","on":"逐項微分"},
-            {"do":"write","line":"$=-i\\,(1-i\\theta-\\frac{\\theta^2}{2!}+\\cdots)$","on":"提出來"}
-          ] },
-        { "show": ["$g(0)=1$，所以 $g\\equiv 1$"],
-          "note": "導數處處為 $0$，$g$ 是常數。",
-          "why": {"ask":"為什麼 $g$ 處處都是 $1$？","say":"只知道 g 在零的值是一，為什麼每一點都是一？","options":[{"label":"$g'\\equiv 0$，所以 $g$ 是常數，等於 $g(0)$","correct":true},{"label":"$g(0)=1$ 就夠了","why":"一點的值管不到別的點；要導數處處為零，函數才不會動。"},{"label":"$|e^{-i\\theta}|=1$","why":"長度是一，不代表乘起來的值固定是一；何況這也還沒證。"}]},
-          "say": "導數處處是零，g 就是常數；它在零的值是一，所以處處都是一。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$g(0)=1$ ⇒ $g\\equiv1$","on":"只知道"},
-            {"do":"write","line":"導數處處是 $0$ ⇒ $g$ 是常數","why":true,"on":"導數處處"}
-          ] },
-        { "show": ["兩邊乘 $e^{i\\theta}$：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],
-          "say": "g 恆等於一，兩邊乘上 e 的 i theta 次方，就是 Euler 公式。證完。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"兩邊乘 $e^{i\\theta}$","on":"兩邊乘上"},
-            {"do":"write","line":"$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$","color":"green","on":"就是 Euler"}
-          ] }
+      "heading": "④ 先算複數，再取實部",
+      "body": [
+        "$f(x)=u(x)+i\\,v(x)$（$x$ 是實數）：$f'=u'+i\\,v'$，$\\int f=\\int u+i\\int v$",
+        "關鍵：$c=a+bi$，",
+        "證：$e^{cx}=e^{ax}\\cos bx+i\\,e^{ax}\\sin bx$，各自微分：",
+        "正好是 $(a+bi)(\\cos bx+i\\sin bx)\\,e^{ax}$ 的實部、虛部",
+        "例：$\\displaystyle\\int e^{2x}\\cos3x\\,dx=\\operatorname{Re}\\int e^{(2+3i)x}\\,dx$",
+        "$\\operatorname{Re}\\big[(2-3i)(\\cos3x+i\\sin3x)\\big]=2\\cos3x+3\\sin3x$",
+        "驗算：微分得 $\\frac{e^{2x}}{13}\\big[2(2\\cos3x+3\\sin3x)+(-6\\sin3x+9\\cos3x)\\big]=e^{2x}\\cos3x$"
       ],
-      "key": "比值 $g$ 的導數為零，$g$ 就是常數",
-      "proof": true,
-      "of": 4,
-      "skeleton": "構造",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "令 $g(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$"
-          },
-          {
-            "label": "算出 $g'(\\theta)=0$",
-            "why": "要先有 $g$ 才能微分它。"
-          },
-          {
-            "label": "$g(0)=1$，所以 $g\\equiv 1$",
-            "why": "要先知道 $g'=0$，才能說 $g$ 是常數。"
-          },
-          {
-            "label": "乘上 $e^{i\\theta}$，得到 Euler 公式",
-            "why": "要先知道 $g$ 恆等於 $1$，才有等式可以乘。"
-          }
-        ]
-      }
+      "tex": [
+        "\\frac{d}{dx}e^{cx}=c\\,e^{cx}",
+        "\\begin{aligned}u'&=e^{ax}(a\\cos bx-b\\sin bx)\\\\v'&=e^{ax}(a\\sin bx+b\\cos bx)\\end{aligned}",
+        "=\\operatorname{Re}\\frac{e^{(2+3i)x}}{2+3i},\\qquad\\frac1{2+3i}=\\frac{2-3i}{13}",
+        "\\begin{aligned}&\\int e^{2x}\\cos3x\\,dx\\\\&=\\frac{e^{2x}}{13}(2\\cos3x+3\\sin3x)+C\\end{aligned}"
+      ]
     },
     {
-      "title": "立刻得到的東西",
-      "beats": [
-        { "show": ["$z=re^{i\\theta}$"],
-          "say": "極式可以寫得更短：長度 r 乘上 e 的 i theta 次方。",
-          "board": [
-            {"do":"write","line":"$z={{r:r}}\\,e^{i{{t:\\theta}}}$","tint":{"r":"violet","t":"blue"}},
-            {"do":"focus","term":"r","label":"長度","on":"長度 r"}
-          ] },
-        { "show": ["$e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$"],
-          "note": "角度相加變成指數律。",
-          "say": "上一課的乘法規則，角度相加，現在就是指數律，指數相加。",
-          "board": [
-            {"do":"write","line":"$e^{i\\alpha}e^{i\\beta}=e^{i({{sum:\\alpha+\\beta}})}$"},
-            {"do":"underline","term":"sum","label":"角度相加","on":"角度相加"}
-          ] },
-        { "show": ["$e^{i\\pi}=-1$"],
-          "say": "theta 取派，單位圓上轉半圈到負一，所以 e 的 i 派次方等於負一。",
-          "board": [
-            {"do":"write","line":"${{t:\\theta}}=\\pi$：轉半圈"},
-            {"do":"write","line":"$e^{i\\pi}=-1$","color":"green","on":"所以"}
-          ] }
+      "heading": "④ 高階導數",
+      "body": [
+        "$e^x\\cos x=\\operatorname{Re}e^{(1+i)x}$，所以",
+        "$(1+i)^2=2i$，$(1+i)^4=(2i)^2=-4$：",
+        "一般：$(1+i)^n=2^{n/2}e^{in\\pi/4}$，所以 $\\frac{d^n}{dx^n}(e^x\\cos x)=2^{n/2}e^x\\cos\\big(x+\\frac{n\\pi}4\\big)$"
       ],
-      "check": 0
+      "tex": [
+        "\\frac{d^n}{dx^n}(e^x\\cos x)=\\operatorname{Re}\\big[(1+i)^ne^{(1+i)x}\\big]",
+        "\\frac{d^4}{dx^4}(e^x\\cos x)=-4e^x\\cos x",
+        "\\frac{d^4}{dx^4}(e^x\\cos x)\\Big|_{x=0}=-4"
+      ]
     },
     {
-      "title": "cos 與 sin 的指數式",
-      "beats": [
-        { "show": ["$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"],
-          "say": "把 theta 換成負 theta：cosine 不變，sine 變號。",
-          "board": [
-            {"do":"write","line":"$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"},
-            {"do":"transform","line":"$e^{-i\\theta}={{c:\\cos\\theta}}-i\\sin\\theta$","on":"負 theta"},
-            {"do":"focus","term":"c","on":"cosine"}
-          ] },
-        { "show": ["$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$"],
-          "note": "分母有 $i$，別漏掉。",
-          "say": "兩式相減，cosine 消掉，剩兩倍的 i sine，所以 sine 要除以二 i。",
-          "board": [
-            {"do":"write","line":"$e^{i\\theta}-e^{-i\\theta}=2i\\sin\\theta$"},
-            {"do":"transform","line":"$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$","on":"所以"}
-          ] },
-        { "show": ["三角恆等式 → 指數的代數"],
-          "note": "例如 $\\sin^3\\theta=\\frac{3\\sin\\theta-\\sin 3\\theta}{4}$。",
-          "say": "這樣三角恆等式就變成指數的代數。例如 sine 三次方，直接展開三次方就證出來。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"三角恆等式 → 指數的代數","on":"三角恆等式"},
-            {"do":"write","line":"$\\sin^3\\theta=\\left(\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}\\right)^3$","on":"例如"}
-          ] }
+      "heading": "⑤ 另一個證明：導數為零",
+      "body": [
+        "令 $f(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$",
+        "級數逐項微分：$\\dfrac{d}{d\\theta}\\displaystyle\\sum_{n\\ge0}\\frac{(-i\\theta)^n}{n!}=-i\\sum_{n\\ge1}\\frac{(-i\\theta)^{n-1}}{(n-1)!}=-ie^{-i\\theta}$",
+        "不能引用 ④（④ 用到了 Euler 公式）；實部、虛部各是收斂半徑 $\\infty$ 的冪級數，可以逐項微分",
+        "再用乘積法則：",
+        "$f'=0$：實部、虛部的導數都是 $0$，由均值定理都是常數",
+        "兩邊乘 $e^{i\\theta}$（$e^{i\\theta}e^{-i\\theta}=e^0=1$）：",
+        "這個證明沒有用到 $\\cos$、$\\sin$ 的級數，只用到它們的導數、$e^z$ 級數的逐項微分與指數律"
       ],
-      "check": 1
+      "tex": [
+        "\\begin{aligned}f'(\\theta)&=e^{-i\\theta}\\big[-i(\\cos\\theta+i\\sin\\theta)\\\\&\\qquad\\quad+(-\\sin\\theta+i\\cos\\theta)\\big]\\\\&=e^{-i\\theta}\\big[-i\\cos\\theta+\\sin\\theta-\\sin\\theta+i\\cos\\theta\\big]\\\\&=0\\end{aligned}",
+        "f(\\theta)=f(0)=1\\cdot1=1",
+        "\\cos\\theta+i\\sin\\theta=e^{i\\theta}"
+      ]
     },
     {
-      "title": "先算複數，再取實部",
-      "beats": [
-        { "show": ["$e^{2x}\\cos 3x=\\operatorname{Re}e^{(2+3i)x}$"],
-          "say": "算 e 的二 x 乘 cosine 三 x 的積分。它是 e 的二加三 i 乘 x 次方的實部。",
-          "board": [
-            {"do":"write","line":"$e^{2x}\\cos 3x={{re:\\operatorname{Re}}}\\,e^{(2+3i)x}$"},
-            {"do":"focus","term":"re","label":"實部","on":"它是"}
-          ] },
-        { "show": ["$\\int e^{(2+3i)x}\\,dx=\\frac{e^{(2+3i)x}}{2+3i}$"],
-          "note": "$\\frac{d}{dx}e^{cx}=ce^{cx}$ 對複數 $c$ 也成立。",
-          "say": "指數函數的積分照舊，除以係數二加三 i 就好，不用分部積分繞兩圈。",
-          "board": [
-            {"do":"write","line":"$\\int e^{(2+3i)x}\\,dx=\\frac{e^{(2+3i)x}}{ {{c:2+3i}} }$","tint":{"c":"violet"}},
-            {"do":"underline","term":"c","label":"除以係數","on":"除以係數"}
-          ] },
-        { "show": ["$\\frac{d}{dx}\\frac{e^{cx}}{c}=e^{cx}$"],
-          "note": "這裡 $c=2+3i$。",
-          "say": "逐項微分 e 的 c x 次方的級數，每項提出一個 c，得到 c 乘自己，c 是複數也行。所以除以 c，微分就回到原式。",
-          "board": [
-            {"do":"write","line":"$\\frac{d}{dx}\\frac{e^{cx}}{ {{k:c}} }=e^{cx}$"},
-            {"do":"focus","term":"k","label":"c=2+3i","on":"c 乘自己"}
-          ] },
-        { "show": ["$\\frac{1}{2+3i}=\\frac{2-3i}{13}$"],
-          "note": "取實部之前先化好分母。",
-          "say": "取實部之前，先把分母化成實數：同乘共軛，分母變十三。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{ {{c:2+3i}} }=\\frac{2-3i}{ {{d:13}} }$"},
-            {"do":"underline","term":"d","label":"同乘共軛","on":"同乘共軛"}
-          ] },
-        { "show": ["$(2-3i)(\\cos 3x+i\\sin 3x)$ 的實部"],
-          "say": "展開二減三 i 乘 cosine 加 i sine：i 平方是負一，負三 i 乘 i sine 變成正三 sine。不帶 i 的就是實部。",
-          "board": [
-            {"do":"write","line":"$(2-3i)(\\cos 3x+i\\sin 3x)$"},
-            {"do":"transform","line":"$={{rp:2\\cos 3x+3\\sin 3x}}+i\\,(\\cdots)$","on":"i 平方"},
-            {"do":"box","term":"rp","color":"green","label":"實部","on":"不帶 i"}
-          ] },
-        { "show": ["$\\frac{e^{2x}(2\\cos 3x+3\\sin 3x)}{13}+C$"],
-          "say": "跟 e 的二 x 乘 cosine 加 i sine 相乘，取實部，就是答案。微分可以檢查回去。",
-          "board": [
-            {"do":"write","line":"$\\frac{e^{2x}(2\\cos 3x+3\\sin 3x)}{13}+C$","color":"green"}
-          ] }
-      ],
-      "key": "取實部之前，先把分母有理化",
-      "check": 2
-    },
-    {
-      "title": "高階導數",
-      "beats": [
-        { "show": ["$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$"],
-          "say": "同一招算高階導數：e 的 x 次方乘 cosine x，微分四次，在零的值。",
-          "board": [
-            {"do":"write","line":"$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$"}
-          ] },
-        { "show": ["$\\operatorname{Re}\\left[(1+i)^ne^{(1+i)x}\\right]$"],
-          "say": "它是 e 的一加 i 乘 x 次方的實部，每微分一次就乘一個一加 i。",
-          "board": [
-            {"do":"write","line":"$\\operatorname{Re}\\left[{{p:(1+i)^n}}e^{(1+i)x}\\right]$"},
-            {"do":"focus","term":"p","label":"每次都乘","on":"每微分一次"}
-          ] },
-        { "show": ["$(1+i)^n=2^{n/2}e^{in\\pi/4}$"],
-          "note": "$1+i=\\sqrt{2}\\,e^{i\\pi/4}$",
-          "say": "一加 i 的長度是根號二，角度四分之派。n 次方就是長度乘 n 次，角度轉 n 次。",
-          "board": [
-            {"do":"write","line":"$1+i=\\sqrt{2}\\,e^{i\\pi/4}$"},
-            {"do":"write","line":"$(1+i)^n={{len:2^{n/2}}}e^{in\\pi/4}$","on":"n 次方"},
-            {"do":"underline","term":"len","label":"長度","on":"長度乘"}
-          ] }
-      ],
-      "key": "$1+i$ 寫成極式，次方變成角度相乘",
-      "predict": {
-        "ask": "$n=4$、$x=0$，值是？",
-        "options": [
-          {
-            "label": "$-4$",
-            "correct": true
-          },
-          {
-            "label": "$4$",
-            "why": "$2^{4/2}=4$，但角度 $4\\cdot\\frac{\\pi}{4}=\\pi$，$\\cos\\pi=-1$。"
-          },
-          {
-            "label": "$1$",
-            "why": "那是沒微分的 $e^0\\cos 0$。微分四次：$2^{4/2}\\cos\\pi=-4$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 定義 $e^z=\\sum\\frac{z^n}{n!}$，處處絕對收斂；$e^ze^w=e^{z+w}$",
+        "• 代 $z=i\\theta$，分成實部、虛部：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$",
+        "• $e^{i\\pi}=-1$；$z=re^{i\\theta}$；$|e^{i\\theta}|=1$",
+        "• $\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}2$，$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$：證恆等式",
+        "• $\\frac{d}{dx}e^{cx}=ce^{cx}$：先算複數，最後取實部",
+        "下一課：複變函數：輸入、輸出都是平面"
+      ]
     }
   ],
   "workedExamples": [
@@ -402,54 +221,977 @@
   ],
   "checks": [
     {
-      "ask": "$e^{i\\pi/2}$ 是？",
+      "ask": "用同樣的方法，$\\cos^2\\theta=$？",
       "options": [
-        { "label": "$i$", "correct": true },
-        { "label": "$e^{\\pi/2}$", "why": "指數是純虛數，結果在單位圓上：$\\cos\\frac{\\pi}{2}+i\\sin\\frac{\\pi}{2}=i$。" },
-        { "label": "$-1$", "why": "那是 $e^{i\\pi}$。" }
+        {
+          "label": "$\\dfrac{1+\\cos2\\theta}2$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{1-\\cos2\\theta}2$",
+          "why": "那是 $\\sin^2\\theta$；$\\cos$ 是相加，中間項是 $+2$"
+        },
+        {
+          "label": "$\\dfrac{2+\\cos2\\theta}4$",
+          "why": "忘了 $e^{2i\\theta}+e^{-2i\\theta}=2\\cos2\\theta$ 的 $2$"
+        },
+        {
+          "label": "$\\cos2\\theta$",
+          "why": "少了中間項 $2e^{i\\theta}e^{-i\\theta}=2$"
+        }
       ]
     },
     {
-      "ask": "$\\cos\\theta$ 用指數表示是？",
+      "ask": "$\\displaystyle\\int e^x\\sin x\\,dx=$？（取 $\\operatorname{Im}\\dfrac{e^{(1+i)x}}{1+i}$）",
       "options": [
-        { "label": "$\\frac{e^{i\\theta}+e^{-i\\theta}}{2}$", "correct": true },
-        { "label": "$\\frac{e^{i\\theta}-e^{-i\\theta}}{2}$", "why": "相減會消掉 $\\cos$，剩 $i\\sin\\theta$；那是 $i\\sin\\theta$ 的式子。" },
-        { "label": "$e^{i\\theta}$", "why": "$e^{i\\theta}$ 是 $\\cos\\theta+i\\sin\\theta$，它的實部才是 $\\cos\\theta$。" }
+        {
+          "label": "$\\dfrac{e^x(\\sin x-\\cos x)}2+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{e^x(\\sin x+\\cos x)}2+C$",
+          "why": "那是實部，也就是 $\\int e^x\\cos x\\,dx$"
+        },
+        {
+          "label": "$\\dfrac{e^x(\\cos x-\\sin x)}2+C$",
+          "why": "正負號反了：$\\frac1{1+i}=\\frac{1-i}2$，不是 $\\frac{i-1}2$"
+        },
+        {
+          "label": "$e^x\\sin x+C$",
+          "why": "忘了除以 $1+i$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "$e$ 的虛數次方？",
+      "beats": [
+        {
+          "show": [
+            "$e^{i\\theta}$ 是什麼？「$e$ 乘自己 $i$ 次」沒有意義"
+          ],
+          "say": "e 的 i 西塔次方是什麼？e 乘自己 i 次，完全沒有意義。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{i\\theta}$ 是什麼？「$e$ 乘自己 $i$ 次」沒有意義"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實數時，$e^x$ 還有另一個樣子：",
+            "$e^x=\\sum_{n=0}^{\\infty}\\frac{x^n}{n!}=1+x+\\frac{x^2}{2!}+\\cdots$"
+          ],
+          "say": "但實數的 e 的 x 次方，還有另一個樣子：馬克勞林級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實數時，$e^x$ 還有另一個樣子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^x=\\sum_{n=0}^{\\infty}\\frac{x^n}{n!}=1+x+\\frac{x^2}{2!}+\\cdots$",
+              "on": "還有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "級數只用到加法和乘法，複數也有。定義：",
+            "$e^z=\\sum_{n=0}^{\\infty}\\frac{z^n}{n!}\\qquad(z\\text{ 是複數})$"
+          ],
+          "say": "級數只用到加法和乘法，複數都有。所以定義：e 的 z 次方，就是同一個級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "級數只用到加法和乘法，複數也有。定義："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle e^z=\\sum_{n=0}^{\\infty}\\frac{z^n}{n!}\\qquad(z\\text{ 是複數})}}$",
+              "color": "red",
+              "on": "數都"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一定收斂：$\\Big|\\dfrac{z^n}{n!}\\Big|=\\dfrac{|z|^n}{n!}$，而 $\\displaystyle\\sum\\frac{|z|^n}{n!}=e^{|z|}$",
+            "絕對收斂 $\\Rightarrow$ 收斂"
+          ],
+          "say": "它一定收斂：絕對值加起來是 e 的 z 絕對值次方，有限。z 是實數時，就是原來的 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一定收斂：$\\Big|\\dfrac{z^n}{n!}\\Big|=\\dfrac{|z|^n}{n!}$，而 $\\displaystyle\\sum\\frac{|z|^n}{n!}=e^{|z|}$"
+            },
+            {
+              "do": "write",
+              "line": "絕對收斂 $\\Rightarrow$ 收斂",
+              "on": "絕對#2"
+            },
+            {
+              "do": "write",
+              "line": "　實部、虛部的每一項都不超過 $\\frac{|z|^n}{n!}$，用比較審斂法各自絕對收斂",
+              "color": "violet",
+              "on": "有限"
+            },
+            {
+              "do": "write",
+              "line": "$z=x$ 是實數時，就是原來的 $e^x$：沒有衝突",
+              "on": "原來"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$e^{i\\pi}$ 是多少？",
+        "options": [
+          {
+            "label": "$-1$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "$e^{2\\pi i}$ 才是 $1$"
+          },
+          {
+            "label": "$i$",
+            "why": "那是 $e^{i\\pi/2}$"
+          },
+          {
+            "label": "沒有意義",
+            "why": "用級數定義之後就有意義，而且是一個實數"
+          }
+        ]
+      }
+    },
+    {
+      "title": "代入 $z=i\\theta$",
+      "beats": [
+        {
+          "show": [
+            "$(i\\theta)^n$：$i$ 的次方四個一循環",
+            "$1,\\ \\ i\\theta,\\ -\\theta^2,\\ -i\\theta^3,\\ \\ \\theta^4,\\ \\ i\\theta^5,\\ \\dots$"
+          ],
+          "say": "代 z 等於 i 西塔。i 的次方四個一循環：1、i 西塔、負西塔平方、負 i 西塔三次方，然後重複。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(i\\theta)^n$：$i$ 的次方四個一循環"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1,\\ \\ i\\theta,\\ -\\theta^2,\\ -i\\theta^3,\\ \\ \\theta^4,\\ \\ i\\theta^5,\\ \\dots$",
+              "on": "西塔#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "偶數項是實數、奇數項帶 $i$。部分和分開寫：",
+            "$\\begin{aligned}S_{2N+1}&=\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k}}{(2k)!}\\\\&\\quad+i\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k+1}}{(2k+1)!}\\end{aligned}$"
+          ],
+          "say": "偶數項是實數，奇數項帶一個 i。把部分和分成實部和虛部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "偶數項是實數、奇數項帶 $i$。部分和分開寫："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}S_{2N+1}&=\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k}}{(2k)!}\\\\&\\quad+i\\sum_{k=0}^{N}\\frac{(-1)^k\\theta^{2k+1}}{(2k+1)!}\\end{aligned}}$",
+              "on": "把部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實部是 $\\cos\\theta$ 的 Maclaurin 部分和，虛部是 $\\sin\\theta$ 的"
+          ],
+          "say": "實部正好是餘弦的馬克勞林部分和，虛部是正弦的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實部是 $\\cos\\theta$ 的 Maclaurin 部分和，虛部是 $\\sin\\theta$ 的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$N\\to\\infty$：",
+            "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"
+          ],
+          "say": "N 趨近無限大，就得到尤拉公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N\\to\\infty$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle e^{i\\theta}=\\cos\\theta+i\\sin\\theta}}$",
+              "color": "red",
+              "on": "無限"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "就得"
+            },
+            {
+              "do": "write",
+              "line": "　沒有重排無窮多項：$S_n$ 收斂，取子序列 $S_{2N+1}$ 的極限即可",
+              "color": "violet",
+              "on": "拉公"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "用複數算 $\\int e^x\\sin x\\,dx$，應該取哪一個的虛部？",
-      "options": [
-        { "label": "$\\frac{e^{(1+i)x}}{1+i}$", "correct": true },
-        { "label": "$e^{(1+i)x}(1+i)$", "why": "積分要除以 $1+i$；乘以 $1+i$ 是微分。" },
-        { "label": "$\\frac{e^{x}}{1+i}$", "why": "$\\sin x$ 要從 $e^{ix}$ 來，指數裡必須有 $i$。" }
+      "title": "例：$\\theta=\\pi$",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上是西塔等於派時的部分和：從 1 出發，往上走派，再往左，一路繞圈，最後收斂到負 1。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"efSpiral\" viewBox=\"0 0 620 380\" width=\"620\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gaefSpiral\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gaefSpiralblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gaefSpiralred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gaefSpiralgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gaefSpiralpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gaefSpiralink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gaefSpiral30\"><rect x=\"135.4\" y=\"16\" width=\"355.2\" height=\"334\"/></clipPath><g clip-path=\"url(#cl11gaefSpiral30)\"><line x1=\"167.2\" y1=\"16\" x2=\"167.2\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"220.2\" y1=\"16\" x2=\"220.2\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"273.2\" y1=\"16\" x2=\"273.2\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"326.3\" y1=\"16\" x2=\"326.3\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"379.3\" y1=\"16\" x2=\"379.3\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"432.3\" y1=\"16\" x2=\"432.3\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"485.3\" y1=\"16\" x2=\"485.3\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"318.2\" x2=\"490.6\" y2=\"318.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"265.2\" x2=\"490.6\" y2=\"265.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"212.2\" x2=\"490.6\" y2=\"212.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"159.1\" x2=\"490.6\" y2=\"159.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"106.1\" x2=\"490.6\" y2=\"106.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"135.4\" y1=\"53.1\" x2=\"490.6\" y2=\"53.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"131.4\" y1=\"212.2\" x2=\"502.6\" y2=\"212.2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gaefSpiral)\"/><line x1=\"379.3\" y1=\"354\" x2=\"379.3\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gaefSpiral)\"/><text x=\"220.2\" y=\"234.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−3</text><text x=\"372.3\" y=\"113.1\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"500.6\" y=\"203.2\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"388.3\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"379.3\" y1=\"212.2\" x2=\"432.3\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"432.3\" y1=\"212.2\" x2=\"432.3\" y2=\"45.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"432.3\" y1=\"45.6\" x2=\"170.7\" y2=\"45.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"170.7\" y1=\"45.6\" x2=\"170.7\" y2=\"319.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"170.7\" y1=\"319.6\" x2=\"385.8\" y2=\"319.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"385.8\" y1=\"319.6\" x2=\"385.8\" y2=\"184.4\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"385.8\" y1=\"184.4\" x2=\"315\" y2=\"184.4\" stroke=\"var(--blue)\" stroke-width=\"2.6\" marker-end=\"url(#ah11gaefSpiralblue)\"/><line x1=\"315\" y1=\"184.4\" x2=\"315\" y2=\"216.1\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"315\" y1=\"216.1\" x2=\"327.5\" y2=\"216.1\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"327.5\" y1=\"216.1\" x2=\"327.5\" y2=\"211.8\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"327.5\" y1=\"211.8\" x2=\"326.2\" y2=\"211.8\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"326.2\" y1=\"211.8\" x2=\"326.2\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"326.2\" y1=\"212.2\" x2=\"326.3\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"326.3\" y1=\"212.2\" x2=\"326.3\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"326.3\" y1=\"212.2\" x2=\"326.3\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><line x1=\"326.3\" y1=\"212.2\" x2=\"326.3\" y2=\"212.2\" stroke=\"var(--blue)\" stroke-width=\"2.6\"/><circle cx=\"326.3\" cy=\"212.2\" r=\"7\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"432.3\" cy=\"212.2\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"432.3\" cy=\"45.6\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"170.7\" cy=\"45.6\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"170.7\" cy=\"319.6\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"385.8\" cy=\"319.6\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"442.3\" y=\"236.2\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan>₀ = 1</text><text x=\"442.3\" y=\"51.6\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan>₁ = 1 + π<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"176.7\" y=\"33.6\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan>₂</text><text x=\"176.7\" y=\"345.6\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan>₃</text><text x=\"395.8\" y=\"341.6\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan>₄</text><text x=\"316.3\" y=\"242.2\" text-anchor=\"end\" fill=\"var(--red)\" font-weight=\"bold\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−1</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{i\\pi}=-1,\\qquad e^{i\\pi}+1=0$"
+          ],
+          "say": "所以 e 的 i 派次方等於負 1。移項，就是把 e、i、派、1、0 連在一起的式子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle e^{i\\pi}=-1,\\qquad e^{i\\pi}+1=0}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "就是"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$|e^{i\\theta}|$ 是？",
-      "options": [
-        { "label": "$1$", "correct": true },
-        { "label": "$e^\\theta$", "why": "$|e^{i\\theta}|^2=\\cos^2\\theta+\\sin^2\\theta=1$；虛數的指數只轉角度，不改長度。" },
-        { "label": "$|\\theta|$", "why": "$\\theta$ 是角度，不是長度。" }
+      "title": "立刻得到的東西",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "第一件事：e 的 i 西塔次方，就是單位圓上角度西塔的點，絕對值是 1。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"efCircle\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gaefCircle\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gaefCircleblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gaefCirclered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gaefCirclegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gaefCirclepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gaefCircleink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gaefCircle30\"><rect x=\"118.9\" y=\"16\" width=\"388.2\" height=\"314\"/></clipPath><g clip-path=\"url(#cl11gaefCircle30)\"><line x1=\"198.8\" y1=\"16\" x2=\"198.8\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"313\" y1=\"16\" x2=\"313\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"427.2\" y1=\"16\" x2=\"427.2\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"118.9\" y1=\"295.7\" x2=\"507.1\" y2=\"295.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"118.9\" y1=\"181.6\" x2=\"507.1\" y2=\"181.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"118.9\" y1=\"67.4\" x2=\"507.1\" y2=\"67.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M427.2 181.6L427.1 178.6L427 175.6L426.8 172.6L426.6 169.6L426.2 166.7L425.8 163.7L425.3 160.8L424.7 157.8L424 154.9L423.3 152L422.5 149.1L421.6 146.3L420.6 143.4L419.6 140.6L418.5 137.9L417.3 135.1L416.1 132.4L414.7 129.7L413.3 127.1L411.9 124.5L410.4 121.9L408.8 119.4L407.1 116.9L405.4 114.4L403.6 112.1L401.7 109.7L399.8 107.4L397.9 105.2L395.8 103L393.7 100.8L391.6 98.7L389.4 96.7L387.2 94.7L384.9 92.8L382.5 91L380.1 89.2L377.7 87.5L375.2 85.8L372.7 84.2L370.1 82.7L367.5 81.2L364.8 79.8L362.2 78.5L359.4 77.3L356.7 76.1L353.9 75L351.1 73.9L348.3 73L345.4 72.1L342.6 71.3L339.7 70.5L336.7 69.9L333.8 69.3L330.9 68.8L327.9 68.4L324.9 68L322 67.7L319 67.5L316 67.4L313 67.4L310 67.4L307 67.5L304 67.7L301.1 68L298.1 68.4L295.1 68.8L292.2 69.3L289.3 69.9L286.3 70.5L283.4 71.3L280.6 72.1L277.7 73L274.9 73.9L272.1 75L269.3 76.1L266.6 77.3L263.8 78.5L261.2 79.8L258.5 81.2L255.9 82.7L253.3 84.2L250.8 85.8L248.3 87.5L245.9 89.2L243.5 91L241.1 92.8L238.8 94.7L236.6 96.7L234.4 98.7L232.3 100.8L230.2 103L228.1 105.2L226.2 107.4L224.3 109.7L222.4 112.1L220.6 114.4L218.9 116.9L217.2 119.4L215.6 121.9L214.1 124.5L212.7 127.1L211.3 129.7L209.9 132.4L208.7 135.1L207.5 137.9L206.4 140.6L205.4 143.4L204.4 146.3L203.5 149.1L202.7 152L202 154.9L201.3 157.8L200.7 160.8L200.2 163.7L199.8 166.7L199.4 169.6L199.2 172.6L199 175.6L198.9 178.6L198.8 181.6L198.9 184.6L199 187.5L199.2 190.5L199.4 193.5L199.8 196.5L200.2 199.4L200.7 202.4L201.3 205.3L202 208.2L202.7 211.1L203.5 214L204.4 216.8L205.4 219.7L206.4 222.5L207.5 225.3L208.7 228L209.9 230.7L211.3 233.4L212.7 236L214.1 238.7L215.6 241.2L217.2 243.8L218.9 246.2L220.6 248.7L222.4 251.1L224.3 253.4L226.2 255.7L228.1 258L230.2 260.2L232.3 262.3L234.4 264.4L236.6 266.4L238.8 268.4L241.1 270.3L243.5 272.2L245.9 273.9L248.3 275.7L250.8 277.3L253.3 278.9L255.9 280.4L258.5 281.9L261.2 283.3L263.8 284.6L266.6 285.9L269.3 287.1L272.1 288.2L274.9 289.2L277.7 290.2L280.6 291L283.4 291.9L286.3 292.6L289.3 293.3L292.2 293.8L295.1 294.3L298.1 294.8L301.1 295.1L304 295.4L307 295.6L310 295.7L313 295.7L316 295.7L319 295.6L322 295.4L324.9 295.1L327.9 294.8L330.9 294.3L333.8 293.8L336.7 293.3L339.7 292.6L342.6 291.9L345.4 291L348.3 290.2L351.1 289.2L353.9 288.2L356.7 287.1L359.4 285.9L362.2 284.6L364.8 283.3L367.5 281.9L370.1 280.4L372.7 278.9L375.2 277.3L377.7 275.7L380.1 273.9L382.5 272.2L384.9 270.3L387.2 268.4L389.4 266.4L391.6 264.4L393.7 262.3L395.8 260.2L397.9 258L399.8 255.7L401.7 253.4L403.6 251.1L405.4 248.7L407.1 246.2L408.8 243.8L410.4 241.2L411.9 238.7L413.3 236L414.7 233.4L416.1 230.7L417.3 228L418.5 225.3L419.6 222.5L420.6 219.7L421.6 216.8L422.5 214L423.3 211.1L424 208.2L424.7 205.3L425.3 202.4L425.8 199.4L426.2 196.5L426.6 193.5L426.8 190.5L427 187.5L427.1 184.6L427.2 181.6\" stroke=\"var(--muted)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"114.9\" y1=\"181.6\" x2=\"519.1\" y2=\"181.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gaefCircle)\"/><line x1=\"313\" y1=\"334\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gaefCircle)\"/><text x=\"517.1\" y=\"172.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"400.5\" y1=\"181.6\" x2=\"400.5\" y2=\"108.2\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"313\" y1=\"108.2\" x2=\"400.5\" y2=\"108.2\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"313\" y1=\"181.6\" x2=\"400.5\" y2=\"108.2\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gaefCircleblue)\"/><path d=\"M347.3 181.6L347.3 181.5L347.3 181.4L347.3 181.3L347.3 181.2L347.3 181.1L347.2 181L347.2 180.9L347.2 180.8L347.2 180.7L347.2 180.6L347.2 180.5L347.2 180.4L347.2 180.3L347.2 180.2L347.2 180.1L347.2 180L347.2 179.9L347.2 179.8L347.2 179.7L347.2 179.6L347.2 179.5L347.2 179.4L347.2 179.3L347.2 179.2L347.2 179.1L347.2 179L347.1 178.9L347.1 178.8L347.1 178.7L347.1 178.6L347.1 178.5L347.1 178.4L347.1 178.3L347.1 178.2L347.1 178.1L347.1 178L347.1 177.9L347 177.8L347 177.7L347 177.6L347 177.5L347 177.4L347 177.3L347 177.2L347 177.1L346.9 177L346.9 176.9L346.9 176.8L346.9 176.7L346.9 176.6L346.9 176.5L346.9 176.4L346.8 176.3L346.8 176.2L346.8 176.1L346.8 176L346.8 175.9L346.8 175.8L346.8 175.7L346.7 175.6L346.7 175.5L346.7 175.4L346.7 175.3L346.7 175.2L346.6 175.1L346.6 175L346.6 174.9L346.6 174.8L346.6 174.7L346.5 174.6L346.5 174.5L346.5 174.4L346.5 174.3L346.5 174.2L346.4 174.1L346.4 174.1L346.4 174L346.4 173.9L346.4 173.8L346.3 173.7L346.3 173.6L346.3 173.5L346.3 173.4L346.2 173.3L346.2 173.2L346.2 173.1L346.2 173L346.1 172.9L346.1 172.8L346.1 172.7L346.1 172.6L346 172.5L346 172.4L346 172.3L346 172.2L345.9 172.1L345.9 172L345.9 171.9L345.8 171.8L345.8 171.7L345.8 171.6L345.8 171.5L345.7 171.5L345.7 171.4L345.7 171.3L345.6 171.2L345.6 171.1L345.6 171L345.5 170.9L345.5 170.8L345.5 170.7L345.5 170.6L345.4 170.5L345.4 170.4L345.4 170.3L345.3 170.2L345.3 170.1L345.3 170L345.2 169.9L345.2 169.8L345.2 169.8L345.1 169.7L345.1 169.6L345.1 169.5L345 169.4L345 169.3L344.9 169.2L344.9 169.1L344.9 169L344.8 168.9L344.8 168.8L344.8 168.7L344.7 168.6L344.7 168.5L344.6 168.5L344.6 168.4L344.6 168.3L344.5 168.2L344.5 168.1L344.5 168L344.4 167.9L344.4 167.8L344.3 167.7L344.3 167.6L344.3 167.5L344.2 167.4L344.2 167.4L344.1 167.3L344.1 167.2L344 167.1L344 167L344 166.9L343.9 166.8L343.9 166.7L343.8 166.6L343.8 166.5L343.7 166.5L343.7 166.4L343.7 166.3L343.6 166.2L343.6 166.1L343.5 166L343.5 165.9L343.4 165.8L343.4 165.7L343.3 165.7L343.3 165.6L343.2 165.5L343.2 165.4L343.2 165.3L343.1 165.2L343.1 165.1L343 165L343 165L342.9 164.9L342.9 164.8L342.8 164.7L342.8 164.6L342.7 164.5L342.7 164.4L342.6 164.4L342.6 164.3L342.5 164.2L342.5 164.1L342.4 164L342.4 163.9L342.3 163.8L342.3 163.8L342.2 163.7L342.2 163.6L342.1 163.5L342 163.4L342 163.3L341.9 163.2L341.9 163.2L341.8 163.1L341.8 163L341.7 162.9L341.7 162.8L341.6 162.7L341.6 162.7L341.5 162.6L341.5 162.5L341.4 162.4L341.3 162.3L341.3 162.2L341.2 162.2L341.2 162.1L341.1 162L341.1 161.9L341 161.8L340.9 161.8L340.9 161.7L340.8 161.6L340.8 161.5L340.7 161.4L340.7 161.3L340.6 161.3L340.5 161.2L340.5 161.1L340.4 161L340.4 160.9L340.3 160.9L340.2 160.8L340.2 160.7L340.1 160.6L340.1 160.6L340 160.5L339.9 160.4L339.9 160.3L339.8 160.2L339.7 160.2L339.7 160.1L339.6 160L339.6 159.9L339.5 159.9L339.4 159.8L339.4 159.7L339.3 159.6L339.2 159.5\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" marker-end=\"url(#ah11gaefCirclered)\"/><circle cx=\"400.5\" cy=\"108.2\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"198.8\" cy=\"181.6\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"313\" cy=\"67.4\" r=\"6\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><circle cx=\"427.2\" cy=\"181.6\" r=\"4.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"412.5\" y=\"100.2\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">e</tspan><tspan dy=\"-11\" font-size=\"17\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">iθ</tspan></tspan></text><text x=\"357.6\" y=\"175.5\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">θ</text><text x=\"382.5\" y=\"207.6\" text-anchor=\"middle\" fill=\"var(--muted)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">cos θ</text><text x=\"305\" y=\"116.2\" text-anchor=\"end\" fill=\"var(--muted)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">sin θ</text><text x=\"188.8\" y=\"169.6\" text-anchor=\"end\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">e</tspan><tspan dy=\"-11\" font-size=\"17\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">iπ</tspan></tspan><tspan dy=\"11\"> = −1</tspan></text><text x=\"301\" y=\"59.4\" text-anchor=\"end\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">e</tspan><tspan dy=\"-11\" font-size=\"17\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan>π/2</tspan><tspan dy=\"11\"> = </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"435.2\" y=\"173.6\" text-anchor=\"start\" fill=\"var(--ink)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極式變短：$z=r(\\cos\\theta+i\\sin\\theta)=re^{i\\theta}$"
+          ],
+          "say": "所以極式可以寫得很短：r 乘 e 的 i 西塔次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極式變短：$z=r(\\cos\\theta+i\\sin\\theta)=re^{i\\theta}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘法：$e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$：角度相加 $=$ 指數律"
+          ],
+          "say": "上一課的角度相加，就變成指數律；棣美弗公式也只是指數相乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘法：$e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$：角度相加 $=$ 指數律"
+            },
+            {
+              "do": "write",
+              "line": "De Moivre：$(e^{i\\theta})^n=e^{in\\theta}$",
+              "on": "棣美"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的指數律：$e^ze^w=e^{z+w}$"
+          ],
+          "say": "一般的複數也有指數律。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的指數律：$e^ze^w=e^{z+w}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^ze^w=\\sum_{n=0}^{\\infty}\\sum_{k=0}^{n}\\frac{z^kw^{n-k}}{k!\\,(n-k)!}=\\sum_{n=0}^{\\infty}\\frac{(z+w)^n}{n!}$"
+          ],
+          "say": "兩個級數相乘，次數和是 n 的項放在一起，內層正好是 z 加 w 的 n 次方的二項式展開。為什麼可以這樣乘？下一頁證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^ze^w=\\sum_{n=0}^{\\infty}\\sum_{k=0}^{n}\\frac{z^kw^{n-k}}{k!\\,(n-k)!}=\\sum_{n=0}^{\\infty}\\frac{(z+w)^n}{n!}$"
+            },
+            {
+              "do": "write",
+              "line": "　兩個絕對收斂的級數可以這樣相乘（Cauchy 乘積）：下一頁證明",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "特例：$e^{a+bi}=e^a(\\cos b+i\\sin b)$，$\\ e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"
+          ],
+          "say": "特例：e 的 a 加 b i 次方，拆成 e 的 a 次方乘 e 的 i b 次方；e 的負 i 西塔，正弦變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "特例：$e^{a+bi}=e^a(\\cos b+i\\sin b)$，$\\ e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：Cauchy 乘積",
+      "beats": [
+        {
+          "show": [
+            "定理：$\\sum a_n$、$\\sum b_n$ 絕對收斂，和為 $A$、$B$；令 $c_n=\\sum_{k=0}^{n}a_kb_{n-k}$，則",
+            "$\\sum_{n=0}^{\\infty}c_n=AB$"
+          ],
+          "say": "補上剛才的定理：兩個絕對收斂的級數，和是 A、B。把次數和是 n 的乘積收集成 c n，c n 的總和就是 A 乘 B。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$\\sum a_n$、$\\sum b_n$ 絕對收斂，和為 $A$、$B$；令 $c_n=\\sum_{k=0}^{n}a_kb_{n-k}$，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\sum_{n=0}^{\\infty}c_n=AB}}$",
+              "color": "red",
+              "on": "把次"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "的總"
+            }
+          ]
+        },
+        {
+          "show": [
+            "部分和 $A_N=\\sum_{i\\le N}a_i$，$B_N$、$C_N$ 同理：",
+            "$A_NB_N=\\sum_{i,\\,j\\le N}a_ib_j,\\qquad C_N=\\sum_{i+j\\le N}a_ib_j$"
+          ],
+          "say": "看部分和。A N 乘 B N，是正方形格點上所有的 a i b j；C N 只有三角形，i 加 j 不超過 N 的部分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "部分和 $A_N=\\sum_{i\\le N}a_i$，$B_N$、$C_N$ 同理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A_NB_N=\\sum_{i,\\,j\\le N}a_ib_j,\\qquad C_N=\\sum_{i+j\\le N}a_ib_j$",
+              "on": "只有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "藍點是三角形；紅點是兩者的差：在正方形裡，但 i 加 j 大於 N。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cauchyGrid\" viewBox=\"0 0 620 370\" width=\"620\" height=\"370\" font-size=\"22\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gCauchyGrid\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"220\" y1=\"50\" x2=\"220\" y2=\"322\" stroke=\"var(--red)\" stroke-width=\"1.6\" stroke-dasharray=\"6 6\" stroke-opacity=\".7\"/><line x1=\"88\" y1=\"190\" x2=\"360\" y2=\"190\" stroke=\"var(--red)\" stroke-width=\"1.6\" stroke-dasharray=\"6 6\" stroke-opacity=\".7\"/><rect x=\"86\" y=\"56\" width=\"268\" height=\"268\" stroke=\"var(--muted)\" stroke-width=\"1.4\" rx=\"6\"/><line x1=\"88\" y1=\"58\" x2=\"352\" y2=\"322\" stroke=\"var(--blue)\" stroke-width=\"2\"/><line x1=\"90\" y1=\"310\" x2=\"380\" y2=\"310\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11gCauchyGrid)\"/><line x1=\"100\" y1=\"332\" x2=\"100\" y2=\"28\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11gCauchyGrid)\"/><circle cx=\"100\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"230\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"190\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"150\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"110\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"100\" cy=\"70\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"230\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"190\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"150\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"110\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"140\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"180\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"180\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"180\" cy=\"230\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"180\" cy=\"190\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"180\" cy=\"150\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"180\" cy=\"110\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"180\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"220\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"220\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"220\" cy=\"230\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"220\" cy=\"190\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"220\" cy=\"150\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"220\" cy=\"110\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"220\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"260\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"260\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"260\" cy=\"230\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"260\" cy=\"190\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"260\" cy=\"150\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"260\" cy=\"110\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"260\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"300\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"300\" cy=\"270\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"300\" cy=\"230\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"300\" cy=\"190\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"300\" cy=\"150\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"300\" cy=\"110\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"300\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"310\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><circle cx=\"340\" cy=\"270\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"230\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"190\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"150\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"110\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><circle cx=\"340\" cy=\"70\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\"/><text x=\"388\" y=\"317\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</text><text x=\"84\" y=\"36\" text-anchor=\"end\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">j</text><text x=\"220\" y=\"352\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</tspan>/2</text><text x=\"340\" y=\"352\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</text><text x=\"78\" y=\"197\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</tspan>/2</text><text x=\"78\" y=\"77\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</text><text x=\"78\" y=\"317\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">0</text><circle cx=\"410\" cy=\"110\" r=\"7\" fill=\"var(--blue)\" stroke=\"var(--blue)\"/><text x=\"426\" y=\"117\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"15\" dy=\"5\">N</tspan><tspan dy=\"-5\">：</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan> + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">j</tspan> ≤ <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</tspan></text><circle cx=\"410\" cy=\"160\" r=\"7\" fill=\"var(--red)\" stroke=\"var(--red)\"/><text x=\"426\" y=\"167\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">A</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"15\" dy=\"5\">N</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" dy=\"-5\">B</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"15\" dy=\"5\">N</tspan><tspan dy=\"-5\"> − </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"15\" dy=\"5\">N</tspan></text><text x=\"404\" y=\"222\" fill=\"var(--muted)\" style=\"font-family:inherit\">紅點都滿足：</text><text x=\"404\" y=\"256\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan> &gt; <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</tspan>/2 <tspan style=\"font-family:inherit\">或</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">j</tspan> &gt; <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</tspan>/2</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "紅點：$i+j>N$ ⇒ $i>\\frac N2$ 或 $j>\\frac N2$"
+          ],
+          "say": "紅點的 i 加 j 大於 N，所以 i、j 至少有一個大於 N 的一半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "紅點：$i+j>N$ ⇒ $i>\\frac N2$ 或 $j>\\frac N2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $\\alpha=\\sum|a_i|$，$\\beta=\\sum|b_j|$（有限）：",
+            "$\\begin{aligned}|A_NB_N-C_N|&\\le\\Big(\\sum_{i>N/2}|a_i|\\Big)\\beta\\\\&\\quad+\\alpha\\Big(\\sum_{j>N/2}|b_j|\\Big)\\end{aligned}$"
+          ],
+          "say": "取絕對值，紅點分成兩條帶子。i 大於一半的那條，不超過 a 的尾巴乘貝塔；j 大於一半的，不超過阿法乘 b 的尾巴。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $\\alpha=\\sum|a_i|$，$\\beta=\\sum|b_j|$（有限）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}|A_NB_N-C_N|&\\le\\Big(\\sum_{i>N/2}|a_i|\\Big)\\beta\\\\&\\quad+\\alpha\\Big(\\sum_{j>N/2}|b_j|\\Big)\\end{aligned}}$",
+              "on": "的尾#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "絕對收斂 ⇒ 尾巴 $\\to0$，所以 $A_NB_N-C_N\\to0$",
+            "$C_N\\to AB\\qquad\\blacksquare$"
+          ],
+          "say": "絕對收斂，尾巴趨近 0，差就趨近 0。A N B N 趨近 A B，所以 C N 也是。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "絕對收斂 ⇒ 尾巴 $\\to0$，所以 $A_NB_N-C_N\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle C_N\\to AB\\qquad\\blacksquare}}$",
+              "on": "差就"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "趨近#3"
+            },
+            {
+              "do": "write",
+              "line": "　取 $a_k=\\frac{z^k}{k!}$、$b_k=\\frac{w^k}{k!}$：① 已證絕對收斂，所以 $e^ze^w=e^{z+w}$",
+              "color": "violet",
+              "on": "也是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用 $e^{\\pm i\\theta}$ 表示 $\\cos$、$\\sin$",
+      "beats": [
+        {
+          "show": [
+            "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$，$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$，相加、相減：",
+            "$\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}2,\\qquad\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$"
+          ],
+          "say": "兩條相加，正弦消掉，得到餘弦；相減，得到正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$，$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$，相加、相減："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}2,\\qquad\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}}}$",
+              "color": "red",
+              "on": "消掉"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "相減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：證明 $\\sin^3\\theta=\\dfrac{3\\sin\\theta-\\sin3\\theta}4$"
+          ],
+          "say": "用它證明三角恆等式：正弦三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：證明 $\\sin^3\\theta=\\dfrac{3\\sin\\theta-\\sin3\\theta}4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin^3\\theta=\\frac{(e^{i\\theta}-e^{-i\\theta})^3}{(2i)^3},\\qquad(2i)^3=-8i$"
+          ],
+          "say": "正弦三次方，寫成這個差的三次方，除以 2i 的三次方，也就是負 8i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sin^3\\theta=\\frac{(e^{i\\theta}-e^{-i\\theta})^3}{(2i)^3},\\qquad(2i)^3=-8i$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "二項式展開，再兩兩配對：",
+            "$\\begin{aligned}&e^{3i\\theta}-3e^{i\\theta}+3e^{-i\\theta}-e^{-3i\\theta}\\\\&=(e^{3i\\theta}-e^{-3i\\theta})-3(e^{i\\theta}-e^{-i\\theta})\\\\&=2i\\sin3\\theta-6i\\sin\\theta\\end{aligned}$"
+          ],
+          "say": "分子二項式展開，正負指數兩兩配對，得到 2i 正弦 3 西塔，減 6i 正弦西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "二項式展開，再兩兩配對："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&e^{3i\\theta}-3e^{i\\theta}+3e^{-i\\theta}-e^{-3i\\theta}\\\\&=(e^{3i\\theta}-e^{-3i\\theta})-3(e^{i\\theta}-e^{-i\\theta})\\\\&=2i\\sin3\\theta-6i\\sin\\theta\\end{aligned}}$",
+              "on": "2i"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin^3\\theta=\\frac{2i\\sin3\\theta-6i\\sin\\theta}{-8i}=\\frac{3\\sin\\theta-\\sin3\\theta}4$"
+          ],
+          "say": "除以負 8i，i 約掉，正好是要證的式子。不用背三倍角公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\sin^3\\theta=\\frac{2i\\sin3\\theta-6i\\sin\\theta}{-8i}=\\frac{3\\sin\\theta-\\sin3\\theta}4}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "要證"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "先算複數，再取實部",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=u(x)+i\\,v(x)$（$x$ 是實數）：$f'=u'+i\\,v'$，$\\int f=\\int u+i\\int v$"
+          ],
+          "say": "值是複數的函數，實部、虛部分開微分、分開積分，所以取實部可以跟微積分交換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=u(x)+i\\,v(x)$（$x$ 是實數）：$f'=u'+i\\,v'$，$\\int f=\\int u+i\\int v$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵：$c=a+bi$，",
+            "$\\frac{d}{dx}e^{cx}=c\\,e^{cx}$"
+          ],
+          "say": "關鍵：c 是複數時，e 的 c x 次方微分，還是 c 倍的自己。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵：$c=a+bi$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\frac{d}{dx}e^{cx}=c\\,e^{cx}}}$",
+              "color": "red",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "還是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證：$e^{cx}=e^{ax}\\cos bx+i\\,e^{ax}\\sin bx$，各自微分：",
+            "$\\begin{aligned}u'&=e^{ax}(a\\cos bx-b\\sin bx)\\\\v'&=e^{ax}(a\\sin bx+b\\cos bx)\\end{aligned}$"
+          ],
+          "say": "證明：拆成實部、虛部，各自用乘積法則微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證：$e^{cx}=e^{ax}\\cos bx+i\\,e^{ax}\\sin bx$，各自微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}u'&=e^{ax}(a\\cos bx-b\\sin bx)\\\\v'&=e^{ax}(a\\sin bx+b\\cos bx)\\end{aligned}}$",
+              "on": "各自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "正好是 $(a+bi)(\\cos bx+i\\sin bx)\\,e^{ax}$ 的實部、虛部"
+          ],
+          "say": "合起來正好是 c 乘 e 的 c x 次方。所以反導數就是 c 分之 e 的 c x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "正好是 $(a+bi)(\\cos bx+i\\sin bx)\\,e^{ax}$ 的實部、虛部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int e^{2x}\\cos3x\\,dx=\\operatorname{Re}\\int e^{(2+3i)x}\\,dx$"
+          ],
+          "say": "例子：e 的 2x 次方乘餘弦 3x 的積分，是 e 的 2 加 3i 乘 x 次方的實部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int e^{2x}\\cos3x\\,dx=\\operatorname{Re}\\int e^{(2+3i)x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\operatorname{Re}\\frac{e^{(2+3i)x}}{2+3i},\\qquad\\frac1{2+3i}=\\frac{2-3i}{13}$"
+          ],
+          "say": "積分就是除以 2 加 3i，用共軛化成 13 分之 2 減 3i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\operatorname{Re}\\frac{e^{(2+3i)x}}{2+3i},\\qquad\\frac1{2+3i}=\\frac{2-3i}{13}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\operatorname{Re}\\big[(2-3i)(\\cos3x+i\\sin3x)\\big]=2\\cos3x+3\\sin3x$",
+            "$\\begin{aligned}&\\int e^{2x}\\cos3x\\,dx\\\\&=\\frac{e^{2x}}{13}(2\\cos3x+3\\sin3x)+C\\end{aligned}$"
+          ],
+          "say": "乘開取實部，再乘 13 分之 e 的 2x 次方，就是答案，不用分部積分兩次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\operatorname{Re}\\big[(2-3i)(\\cos3x+i\\sin3x)\\big]=2\\cos3x+3\\sin3x$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle {\\begin{aligned}&\\int e^{2x}\\cos3x\\,dx\\\\&=\\frac{e^{2x}}{13}(2\\cos3x+3\\sin3x)+C\\end{aligned}}}}$",
+              "color": "red",
+              "on": "13"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "2x"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：微分得 $\\frac{e^{2x}}{13}\\big[2(2\\cos3x+3\\sin3x)+(-6\\sin3x+9\\cos3x)\\big]=e^{2x}\\cos3x$",
+              "color": "violet",
+              "on": "不用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "高階導數",
+      "beats": [
+        {
+          "show": [
+            "$e^x\\cos x=\\operatorname{Re}e^{(1+i)x}$，所以",
+            "$\\frac{d^n}{dx^n}(e^x\\cos x)=\\operatorname{Re}\\big[(1+i)^ne^{(1+i)x}\\big]$"
+          ],
+          "say": "高階導數更明顯：它是 e 的 1 加 i 乘 x 次方的實部，微分 n 次，只是乘上 1 加 i 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^x\\cos x=\\operatorname{Re}e^{(1+i)x}$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d^n}{dx^n}(e^x\\cos x)=\\operatorname{Re}\\big[(1+i)^ne^{(1+i)x}\\big]$",
+              "on": "實部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(1+i)^2=2i$，$(1+i)^4=(2i)^2=-4$：",
+            "$\\frac{d^4}{dx^4}(e^x\\cos x)=-4e^x\\cos x$"
+          ],
+          "say": "1 加 i 的平方是 2i，四次方是負 4。所以微分四次是負 4 倍的自己，在 0 的值是負 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(1+i)^2=2i$，$(1+i)^4=(2i)^2=-4$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d^4}{dx^4}(e^x\\cos x)=-4e^x\\cos x$",
+              "on": "2i"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\frac{d^4}{dx^4}(e^x\\cos x)\\Big|_{x=0}=-4}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "red",
+              "on": "倍的"
+            },
+            {
+              "do": "write",
+              "line": "　一般：$(1+i)^n=2^{n/2}e^{in\\pi/4}$，所以 $\\frac{d^n}{dx^n}(e^x\\cos x)=2^{n/2}e^x\\cos\\big(x+\\frac{n\\pi}4\\big)$",
+              "color": "violet",
+              "on": "的值"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "另一個證明：導數為零",
+      "beats": [
+        {
+          "show": [
+            "令 $f(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$"
+          ],
+          "say": "最後，用微分再證一次尤拉公式。令 f 等於 e 的負 i 西塔次方，乘餘弦加 i 正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $f(\\theta)=e^{-i\\theta}(\\cos\\theta+i\\sin\\theta)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "級數逐項微分：$\\dfrac{d}{d\\theta}\\displaystyle\\sum_{n\\ge0}\\frac{(-i\\theta)^n}{n!}=-i\\sum_{n\\ge1}\\frac{(-i\\theta)^{n-1}}{(n-1)!}=-ie^{-i\\theta}$",
+            "再用乘積法則："
+          ],
+          "say": "e 的負 i 西塔次方逐項微分，得到負 i 倍的自己。再用乘積法則，四項兩兩抵消，導數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "級數逐項微分：$\\dfrac{d}{d\\theta}\\displaystyle\\sum_{n\\ge0}\\frac{(-i\\theta)^n}{n!}=-i\\sum_{n\\ge1}\\frac{(-i\\theta)^{n-1}}{(n-1)!}=-ie^{-i\\theta}$"
+            },
+            {
+              "do": "write",
+              "line": "　不能引用 ④（④ 用到了 Euler 公式）；實部、虛部各是收斂半徑 $\\infty$ 的冪級數，可以逐項微分",
+              "color": "violet",
+              "on": "逐項"
+            },
+            {
+              "do": "write",
+              "line": "再用乘積法則：",
+              "on": "的自"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}f'(\\theta)&=e^{-i\\theta}\\big[-i(\\cos\\theta+i\\sin\\theta)\\\\&\\qquad\\quad+(-\\sin\\theta+i\\cos\\theta)\\big]\\\\&=e^{-i\\theta}\\big[-i\\cos\\theta+\\sin\\theta-\\sin\\theta+i\\cos\\theta\\big]\\\\&=0\\end{aligned}}$",
+              "on": "項兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'=0$：實部、虛部的導數都是 $0$，由均值定理都是常數",
+            "$f(\\theta)=f(0)=1\\cdot1=1$"
+          ],
+          "say": "導數是 0，實部和虛部各自用均值定理，都是常數。所以 f 永遠等於 f of 0，也就是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f'=0$：實部、虛部的導數都是 $0$，由均值定理都是常數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(\\theta)=f(0)=1\\cdot1=1$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊乘 $e^{i\\theta}$（$e^{i\\theta}e^{-i\\theta}=e^0=1$）：",
+            "$\\cos\\theta+i\\sin\\theta=e^{i\\theta}$"
+          ],
+          "say": "兩邊乘上 e 的 i 西塔次方，又得到尤拉公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊乘 $e^{i\\theta}$（$e^{i\\theta}e^{-i\\theta}=e^0=1$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle \\cos\\theta+i\\sin\\theta=e^{i\\theta}}}$",
+              "color": "red",
+              "on": "西塔"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "塔次"
+            },
+            {
+              "do": "write",
+              "line": "　這個證明沒有用到 $\\cos$、$\\sin$ 的級數，只用到它們的導數、$e^z$ 級數的逐項微分與指數律",
+              "color": "violet",
+              "on": "到尤"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 定義 $e^z=\\sum\\frac{z^n}{n!}$，處處絕對收斂；$e^ze^w=e^{z+w}$",
+            "• 代 $z=i\\theta$，分成實部、虛部：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"
+          ],
+          "say": "整理：用級數定義 e 的 z 次方；代 i 西塔，就是尤拉公式；積分和高階導數，先用複數算，再取實部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 定義 $e^z=\\sum\\frac{z^n}{n!}$，處處絕對收斂；$e^ze^w=e^{z+w}$"
+            },
+            {
+              "do": "write",
+              "line": "• 代 $z=i\\theta$，分成實部、虛部：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• $e^{i\\pi}=-1$；$z=re^{i\\theta}$；$|e^{i\\theta}|=1$",
+              "on": "西塔"
+            },
+            {
+              "do": "write",
+              "line": "• $\\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}2$，$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$：證恆等式",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{d}{dx}e^{cx}=ce^{cx}$：先算複數，最後取實部",
+              "on": "先用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複變函數：輸入、輸出都是平面"
+          ],
+          "say": "下一課，看複變函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：複變函數：輸入、輸出都是平面"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "higher-derivative", "complex-roots"],
-    "fine": ["euler-formula-series", "euler-trig-to-exp", "euler-real-part-integral", "euler-high-derivative"]
+    "coarse": [
+      "complex",
+      "higher-derivative",
+      "complex-roots"
+    ],
+    "fine": [
+      "euler-formula-series",
+      "euler-trig-to-exp",
+      "euler-real-part-integral",
+      "euler-high-derivative"
+    ]
   },
   "practice": [
-    { "id": "world-024", "core": true, "trains": "euler-high-derivative" },
-    { "id": "hd-006", "core": true, "trains": "euler-high-derivative" },
-    { "id": "world-027", "core": true, "trains": "euler-real-part-integral" },
-    { "id": "burst-int-002", "core": true, "trains": "euler-real-part-integral" },
-    { "id": "burst-der-008", "trains": "euler-high-derivative" },
-    { "id": "burst-der-010", "trains": "euler-high-derivative" },
-    { "id": "burst-int-003", "trains": "euler-real-part-integral" },
-    { "id": "ode-h2-008", "trains": "euler-trig-to-exp" },
-    { "id": "cg-11g-018", "trains": "euler-trig-to-exp" },
-    { "id": "cg-11g-019", "trains": "euler-trig-to-exp" },
-    { "id": "burst-boss-der-005", "challenge": true, "trains": "euler-high-derivative", "note": "挑戰：$e^x\\cos 2x$ 的 16 階導數，$(1+2i)^{16}$ 用極式算。" }
+    {
+      "id": "world-024",
+      "core": true,
+      "trains": "euler-high-derivative"
+    },
+    {
+      "id": "hd-006",
+      "core": true,
+      "trains": "euler-high-derivative"
+    },
+    {
+      "id": "world-027",
+      "core": true,
+      "trains": "euler-real-part-integral"
+    },
+    {
+      "id": "burst-int-002",
+      "core": true,
+      "trains": "euler-real-part-integral"
+    },
+    {
+      "id": "burst-der-008",
+      "trains": "euler-high-derivative"
+    },
+    {
+      "id": "burst-der-010",
+      "trains": "euler-high-derivative"
+    },
+    {
+      "id": "burst-int-003",
+      "trains": "euler-real-part-integral"
+    },
+    {
+      "id": "ode-h2-008",
+      "trains": "euler-trig-to-exp"
+    },
+    {
+      "id": "cg-11g-018",
+      "trains": "euler-trig-to-exp"
+    },
+    {
+      "id": "cg-11g-019",
+      "trains": "euler-trig-to-exp"
+    },
+    {
+      "id": "burst-boss-der-005",
+      "challenge": true,
+      "trains": "euler-high-derivative",
+      "note": "挑戰：$e^x\\cos 2x$ 的 16 階導數，$(1+2i)^{16}$ 用極式算。"
+    }
   ],
   "gaps": []
 }

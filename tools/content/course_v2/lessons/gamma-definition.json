@@ -1,78 +1,143 @@
 {
   "id": "gamma-definition",
   "title": "Gamma 函數：定義與遞迴",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["integration-by-parts", "u-sub-basic", "u-sub-definite", "improper-infinite", "improper-singular", "improper-p-test"],
-  "next": ["gamma-recurrence-apps", "gamma-half"],
+  "prerequisites": [
+    "integration-by-parts",
+    "u-sub-basic",
+    "u-sub-definite",
+    "improper-infinite",
+    "improper-singular",
+    "improper-p-test"
+  ],
+  "next": [
+    "gamma-recurrence-apps",
+    "gamma-half"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 $\\Gamma(s)$ 的積分定義，說得出這個積分什麼時候收斂。",
-    "用分部積分推出 $\\Gamma(s+1)=s\\Gamma(s)$，以及 $\\Gamma(n+1)=n!$。",
-    "把 $\\int_0^{\\infty}x^ke^{-x}\\,dx$ 這類積分直接讀成 Gamma 函數的值。"
+    "寫得出 $\\Gamma(s)$ 的積分定義，說得出這個積分恰好在 $s>0$ 時收斂",
+    "用分部積分推出 $\\Gamma(s+1)=s\\Gamma(s)$，以及 $\\Gamma(n+1)=n!$",
+    "把 $\\int_0^{\\infty}x^ke^{-x}\\,dx$ 這類積分直接讀成 Gamma 函數的值"
   ],
-  "visual": "畫出 y = x^{s−1} e^{−x}，s 用滑桿從 1 拉到 5，曲線底下的面積即時顯示：s = 1, 2, 3, 4, 5 時面積是 1, 1, 2, 6, 24。第二張圖畫 Γ(s) 本身，在 s = 1, 2, 3, 4, 5 標出 0!, 1!, 2!, 3!, 4!：一條平滑曲線穿過所有階乘。",
-  "figures": [
-    {"caption":"s 是整數時，面積是 (s − 1)!","after":0,"widget":{"type":"family","f":"x^(s-1)*exp(-x)","param":"s","range":[1,4],"step":0.05,"value":3,"area":[0,60],"window":[0,12,0,1.5]}}
-  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 為什麼要學它：一整族積分其實是同一個函數",
+      "heading": "① 一整族積分",
       "body": [
-        "前面分部積分時會反覆遇到 $\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、$\\int_0^{\\infty}x^3e^{-x}\\,dx$……每一個都要分部積分好幾次。",
-        "Gamma 函數把這一整族積分統一成一個函數。之後看到這種形狀，就不用再算，直接讀值。而它在整數點剛好是階乘，等於把 $n!$ 延伸成一條平滑曲線。"
+        "每多一個 $x$，就要多做一次分部積分",
+        "把次方當成變數，這一整族就是一個函數：",
+        "次方寫成 $s-1$ 是慣例；好處等一下就看到：$\\Gamma(n+1)=n!$",
+        "上面三個值就是 $\\Gamma(1)$、$\\Gamma(2)$、$\\Gamma(3)$"
       ],
-      "tex": ["\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\int_0^\\infty e^{-x}\\,dx=1,\\qquad\\int_0^\\infty xe^{-x}\\,dx=1",
+        "\\int_0^\\infty x^2e^{-x}\\,dx=2",
+        "\\Gamma(s)=\\int_0^\\infty x^{s-1}e^{-x}\\,dx"
+      ]
     },
     {
-      "heading": "② 這個積分什麼時候收斂",
+      "heading": "② 什麼時候收斂",
       "body": [
-        "這是兩端都要檢查的瑕積分：",
-        "$x\\to\\infty$：$e^{-x}$ 衰減得比任何 $x$ 的次方增長都快，尾巴收斂。",
-        "$x\\to 0^+$：$e^{-x}\\to 1$，被積函數像 $x^{s-1}$。由 $p$ 判別，$\\int_0^1x^{s-1}\\,dx$ 收斂若且唯若 $s-1>-1$，也就是 $s>0$。",
-        "所以：此積分表示式在 $s>0$ 時收斂。"
+        "兩個可能出問題的地方：$x\\to0^+$ 與 $x\\to\\infty$",
+        "$[1,\\infty)$：對每個 $s$ 都收斂",
+        "$x^{s+1}e^{-x}\\to0$，所以存在 $M$，$x\\ge M$ 時",
+        "$\\int_M^\\infty\\frac{dx}{x^2}$ 收斂（p 判別）→ 比較判別：收斂",
+        "1 到 $M$ 之間是連續函數在閉區間上的積分，本來就是有限的",
+        "$(0,1]$：看 $x^{s-1}$",
+        "$e^{-1}\\le e^{-x}\\le1$，所以",
+        "p 判別：$\\int_0^1x^{s-1}\\,dx$ 收斂 $\\iff s-1>-1$",
+        "• $s>0$：上界收斂 → 收斂",
+        "• $s\\le0$：下界發散 → 發散"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^\\infty=\\int_0^1+\\int_1^\\infty",
+        "0<x^{s-1}e^{-x}\\le\\frac1{x^2}",
+        "e^{-1}x^{s-1}\\le x^{s-1}e^{-x}\\le x^{s-1}",
+        "\\Gamma(s)\\ \\text{的積分收斂}\\iff s>0"
+      ]
     },
     {
-      "heading": "預告：$s\\le 0$ 呢？",
+      "heading": "② 圖：$s$ 越小，左端越陡",
       "body": [
-        "積分在 $s\\le 0$ 發散，但 Gamma 函數可以用別的方法延伸到負的非整數（例如用遞迴 $\\Gamma(s)=\\frac{\\Gamma(s+1)}{s}$ 往左推）。這叫解析延拓。在 $0$、$-1$、$-2$、……仍然沒有定義。"
-      ],
-      "collapsible": true
+        "預告：$s\\le0$ 呢？",
+        "積分發散，所以不能用積分定義",
+        "下一課用遞迴 $\\Gamma(s)=\\dfrac{\\Gamma(s+1)}{s}$ 往左推",
+        "這一課的 $\\Gamma(s)$ 一律指 $s>0$"
+      ]
     },
     {
       "heading": "③ 第一個值：$\\Gamma(1)=1$",
       "body": [
-        "$s=1$ 時 $x^0=1$，$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$。"
+        "這個值是整個遞迴的起點"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Gamma(1)=\\int_0^\\infty e^{-x}\\,dx=\\lim_{R\\to\\infty}\\Big[-e^{-x}\\Big]_0^R",
+        "=\\lim_{R\\to\\infty}\\left(1-e^{-R}\\right)=1"
+      ]
     },
     {
       "heading": "④ 遞迴：$\\Gamma(s+1)=s\\Gamma(s)$",
       "body": [
-        "對 $\\Gamma(s+1)=\\int_0^{\\infty}x^se^{-x}\\,dx$ 做分部積分，令 $u=x^s$、$dv=e^{-x}\\,dx$。",
-        "邊界項：$x\\to\\infty$ 時 $e^{-x}$ 贏過 $x^s$，趨近 $0$；$x=0$ 時 $x^s=0$（$s>0$）。所以邊界項是 $0$，剩下 $\\Gamma(s+1)=s\\Gamma(s)$。"
+        "$s>0$。先在 $[\\varepsilon,R]$ 上分部積分：",
+        "$u=x^s$，$dv=e^{-x}dx$",
+        "邊界項 $=\\varepsilon^se^{-\\varepsilon}-R^se^{-R}$",
+        "• $\\varepsilon\\to0^+$：$\\varepsilon^s\\to0$（因為 $s>0$）",
+        "• $R\\to\\infty$：$R^se^{-R}\\to0$（指數贏次方）",
+        "兩個積分都收斂（$s>0$、$s+1>0$），取極限：",
+        "$s>0$ 用了兩次：邊界項 $\\varepsilon^s\\to0$，以及 $\\Gamma(s)$ 收斂"
       ],
-      "tex": ["\\Gamma(s+1)=\\Bigl[-x^{s}e^{-x}\\Bigr]_0^{\\infty}+s\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx=s\\,\\Gamma(s)"],
-      "collapsible": false
+      "tex": [
+        "\\int_\\varepsilon^Rx^se^{-x}dx=\\Big[-x^se^{-x}\\Big]_\\varepsilon^R+s\\int_\\varepsilon^Rx^{s-1}e^{-x}dx",
+        "\\Gamma(s+1)=s\\,\\Gamma(s)\\qquad(s>0)"
+      ]
     },
     {
       "heading": "⑤ 在整數點就是階乘",
       "body": [
-        "從 $\\Gamma(1)=1$ 開始：$\\Gamma(2)=1$，$\\Gamma(3)=2$，$\\Gamma(4)=6$，……一般地 $\\Gamma(n+1)=n!$。",
-        "注意差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。"
+        "$\\Gamma(1)=1$，一直用遞迴：",
+        "定理：$n=0,1,2,\\dots$ 時",
+        "證明（數學歸納法）",
+        "• $n=0$：$\\Gamma(1)=1=0!$",
+        "• 設 $\\Gamma(k+1)=k!$，則 $\\Gamma(k+2)=(k+1)\\Gamma(k+1)=(k+1)!$",
+        "所以 $\\Gamma(6)=5!=120$，$\\Gamma(4)=3!=6$",
+        "Gamma 函數把階乘延伸到所有正實數；$0!=1$ 也從 $\\Gamma(1)=1$ 得到解釋"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Gamma(2)=1\\cdot\\Gamma(1)=1,\\quad\\Gamma(3)=2\\cdot\\Gamma(2)=2",
+        "\\Gamma(4)=3\\cdot\\Gamma(3)=6,\\quad\\Gamma(5)=4\\cdot\\Gamma(4)=24",
+        "\\Gamma(n+1)=n!"
+      ]
     },
     {
-      "heading": "⑥ 讀積分：看到 $x^ke^{-x}$ 就是 Gamma",
+      "heading": "⑥ 讀積分：看到 $x^ke^{-x}$",
       "body": [
-        "$\\int_0^{\\infty}x^ke^{-x}\\,dx=\\Gamma(k+1)$。指數裡有常數 $a>0$ 時，換元 $u=ax$，得到下面的公式。"
+        "次方 $k$ ↔ $s=k+1$：",
+        "例 1：$\\displaystyle\\int_0^\\infty x^2e^{-x}\\,dx=\\Gamma(3)=2!=2$",
+        "例 2：$\\displaystyle\\int_0^\\infty x^4e^{-3x}\\,dx$，令 $u=3x$",
+        "$x=\\frac u3$，$dx=\\frac{du}3$，上下限不變：",
+        "例 3：$\\displaystyle\\int_0^\\infty x^3e^{-x^2}\\,dx$，令 $u=x^2$",
+        "$du=2x\\,dx$，$x^3dx=x^2\\cdot x\\,dx=\\dfrac u2\\,du$",
+        "$x\\ge0$ 時 $u=x^2$ 單調遞增，$0\\to0$、$\\infty\\to\\infty$"
       ],
-      "tex": ["\\int_0^{\\infty}x^{k}e^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}"],
-      "collapsible": false
+      "tex": [
+        "\\int_0^\\infty x^ke^{-x}\\,dx=\\Gamma(k+1)",
+        "\\int_0^\\infty\\frac{u^4}{3^4}e^{-u}\\frac{du}{3}=\\frac{\\Gamma(5)}{3^5}=\\frac{24}{243}=\\frac8{81}",
+        "\\begin{aligned}\\int_0^\\infty x^3e^{-x^2}dx&=\\frac12\\int_0^\\infty ue^{-u}du\\\\&=\\frac12\\Gamma(2)=\\frac12\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\Gamma(s)=\\displaystyle\\int_0^\\infty x^{s-1}e^{-x}dx$，恰好在 $s>0$ 收斂",
+        "• 收斂：$[1,\\infty)$ 比 $\\frac1{x^2}$；$(0,1]$ 夾在 $x^{s-1}$ 的倍數之間",
+        "• $\\Gamma(1)=1$；分部積分 ⇒ $\\Gamma(s+1)=s\\Gamma(s)$",
+        "• $\\Gamma(n+1)=n!$",
+        "• $\\int_0^\\infty x^ke^{-x}dx=\\Gamma(k+1)$；有係數或 $x^2$ 就先換元",
+        "下一課：Gamma 遞迴的應用"
+      ]
     }
   ],
   "workedExamples": [
@@ -131,35 +196,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\Gamma(5)$ 是多少？",
+      "ask": "$\\dfrac{\\Gamma(6)}{\\Gamma(4)}=$？",
       "options": [
-        { "label": "$24$", "correct": true },
-        { "label": "$120$", "why": "那是 $5!=\\Gamma(6)$。$\\Gamma(5)=4!=24$。" },
-        { "label": "$5$", "why": "$\\Gamma$ 不是把參數直接拿出來，是階乘。" }
+        {
+          "label": "$20$",
+          "correct": true
+        },
+        {
+          "label": "$30$",
+          "why": "這是 $\\frac{6!}{4!}=6\\cdot5$：忘了 $\\Gamma(n)=(n-1)!$ 要減 1"
+        },
+        {
+          "label": "$\\dfrac32$",
+          "why": "把 $\\Gamma(6)$ 當成 $6$、$\\Gamma(4)$ 當成 $4$ 直接相除"
+        },
+        {
+          "label": "$2$",
+          "why": "看成 $\\Gamma(6-4)$；Gamma 的比值不是自變數相減"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\infty}x^3e^{-x}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^\\infty x^5e^{-2x}\\,dx=$？",
       "options": [
-        { "label": "$6$", "correct": true },
-        { "label": "$24$", "why": "$x^3$ 對應 $\\Gamma(4)=3!=6$，不是 $4!$。" },
-        { "label": "$3$", "why": "那只是指數，還要做階乘。" }
-      ]
-    },
-    {
-      "ask": "積分 $\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$ 為什麼要 $s>0$ 才收斂？",
-      "options": [
-        { "label": "$x\\to 0$ 時被積函數像 $x^{s-1}$，$s\\le 0$ 時那一端發散", "correct": true },
-        { "label": "因為 $e^{-x}$ 在 $s\\le 0$ 時不收斂", "why": "$e^{-x}$ 跟 $s$ 無關，問題出在 $x\\to 0$ 那一端。" },
-        { "label": "因為負數沒有階乘", "why": "這是結果不是原因；限制來自積分收斂。" }
-      ]
-    },
-    {
-      "ask": "$\\Gamma(s+1)=s\\Gamma(s)$ 是用什麼推出來的？",
-      "options": [
-        { "label": "分部積分，而且邊界項是 0", "correct": true },
-        { "label": "換元 $u=x+1$", "why": "遞迴來自分部積分，不是平移。" },
-        { "label": "定義直接代入", "why": "定義裡沒有 $s$ 這個係數，要靠分部積分「生出來」。" }
+        {
+          "label": "$\\dfrac{15}8$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{15}4$",
+          "why": "$\\frac{120}{32}$：只算了 $x^5$ 的 $2^5$，漏了 $dx=\\frac{du}2$ 的那個 $2$"
+        },
+        {
+          "label": "$120$",
+          "why": "忘了換元：$e^{-2x}$ 不是 $e^{-x}$"
+        },
+        {
+          "label": "$\\dfrac38$",
+          "why": "$\\frac{24}{64}$：把次方 $5$ 直接當成 $s$，用了 $\\Gamma(5)$；應該是 $s=6$"
+        }
       ]
     }
   ],
@@ -167,268 +242,951 @@
     {
       "title": "一整族積分",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"],
-          "note": "每一個都要分部積分好幾次。",
-          "say": "x 乘 e 的負 x 次方、x 平方乘 e 的負 x 次方，這一整族積分，每一個都要分部積分好幾次。",
+        {
+          "show": [
+            "$\\int_0^\\infty e^{-x}\\,dx=1,\\qquad\\int_0^\\infty xe^{-x}\\,dx=1$",
+            "$\\int_0^\\infty x^2e^{-x}\\,dx=2$"
+          ],
+          "say": "先看幾個瑕積分。e 的負 x 次方從 0 積到無限大是 1；乘上 x 還是 1；乘上 x 平方，分部積分兩次，得到 2。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"}
-          ] },
-        { "show": ["$\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$"],
-          "note": "把它們統一成一個函數。",
-          "say": "Gamma 函數把這一整族統一成一個函數。看到這種形狀，就不用再算，直接讀值。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty e^{-x}\\,dx=1,\\qquad\\int_0^\\infty xe^{-x}\\,dx=1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty x^2e^{-x}\\,dx=2$",
+              "on": "乘上#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每多一個 $x$，就要多做一次分部積分"
+          ],
+          "say": "每多一個 x，就多做一次分部積分；次方是分數時，根本做不完。",
           "board": [
-            {"do":"transform","line":"$\\Gamma({{s:s}})=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$","tint":{"s":"blue"},"on":"Gamma 函數"}
-          ] },
-        { "show": ["$s=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$"],
-          "fig": {"use":0,"to":2},
-          "say": "看圖：s 等於二，曲線是 x 乘 e 的負 x 次方，塗色的面積就是 Gamma 在二的值。",
+            {
+              "do": "write",
+              "line": "每多一個 $x$，就要多做一次分部積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把次方當成變數，這一整族就是一個函數：",
+            "$\\Gamma(s)=\\int_0^\\infty x^{s-1}e^{-x}\\,dx$"
+          ],
+          "say": "把次方當成變數，這一整族積分就是同一個函數，叫伽瑪函數：x 的 s 減 1 次方，乘 e 的負 x 次方，從 0 積到無限大。",
           "board": [
-            {"do":"write","line":"${{s:s}}=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$","on":"s 等於二"}
-          ] },
-        { "show": ["$s=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$"],
-          "fig": {"use":0,"to":3},
-          "say": "s 調到三，曲線換成 x 平方乘 e 的負 x 次方，面積跟著變。",
+            {
+              "do": "write",
+              "line": "把次方當成變數，這一整族就是一個函數："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\Gamma(s)=\\int_0^\\infty x^{s-1}e^{-x}\\,dx}}$",
+              "on": "是同"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "　次方寫成 $s-1$ 是慣例；好處等一下就看到：$\\Gamma(n+1)=n!$",
+              "color": "violet",
+              "on": "次方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上面三個值就是 $\\Gamma(1)$、$\\Gamma(2)$、$\\Gamma(3)$"
+          ],
+          "say": "上面三個積分就是伽瑪 1、2、3。注意 s 比次方多 1。",
           "board": [
-            {"do":"transform","line":"${{s:s}}=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$","on":"s 調到三"}
-          ] }
+            {
+              "do": "write",
+              "line": "上面三個值就是 $\\Gamma(1)$、$\\Gamma(2)$、$\\Gamma(3)$"
+            }
+          ]
+        }
       ],
-      "drag": {
-        "use": 0,
-        "ask": "自己把 $s$ 拉回 $1$ 附近，看曲線變成 $e^{-x}$",
-        "range": [
-          1,
-          1.05
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^\\infty x^3e^{-x}\\,dx=\\Gamma(4)$ 是多少？",
+        "options": [
+          {
+            "label": "$6$",
+            "correct": true
+          },
+          {
+            "label": "$3$",
+            "why": "規律不是「加 1」：從 $1$ 到 $2$ 是乘 $2$，下一步是乘 $3$"
+          },
+          {
+            "label": "$4$",
+            "why": "看成每次翻倍；但 $1\\to1$ 那一步沒有翻倍"
+          }
         ]
       }
     },
     {
       "title": "什麼時候收斂",
       "beats": [
-        { "show": ["$x\\to\\infty$：$e^{-x}$ 贏"],
-          "note": "指數衰減比任何次方增長都快。",
-          "say": "兩端都要檢查。無限遠那端，e 的負 x 次方衰減得比任何次方都快，尾巴一定收斂。",
+        {
+          "show": [
+            "兩個可能出問題的地方：$x\\to0^+$ 與 $x\\to\\infty$",
+            "$\\int_0^\\infty=\\int_0^1+\\int_1^\\infty$"
+          ],
+          "say": "這個瑕積分有兩個可能出問題的地方：x 靠近 0，和 x 往無限大。在 1 切開分別看。",
           "board": [
-            {"do":"write","line":"$x\\to\\infty$：${{e:e^{-x}}}$ 贏"},
-            {"do":"focus","term":"e","label":"衰減最快","on":"衰減"}
-          ] },
-        { "show": ["$x^3e^{-x}$ 先升後降，壓向 $0$"],
-          "note": "$e^x$ 展開有更高次項，分母長更快。",
-          "say": "看 x 三次方乘 e 的負 x 次方。e 的 x 次方展開有更高次項，分母長更快，所以壓向零。",
+            {
+              "do": "write",
+              "line": "兩個可能出問題的地方：$x\\to0^+$ 與 $x\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty=\\int_0^1+\\int_1^\\infty$",
+              "on": "往無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$[1,\\infty)$：對每個 $s$ 都收斂"
+          ],
+          "say": "先看無限遠那一段。",
           "board": [
-            {"do":"plot","graph":{"window":[0,12,0,2],"curves":[{"expr":"x^3*exp(-x)","domain":[0,12],"color":"blue"}]}},
-            {"do":"write","line":"$e^x=1+x+\\frac{x^2}{2!}+\\cdots$","on":"展開"}
-          ] },
-        { "show": ["$x\\to 0^+$：像 $x^{s-1}$"],
-          "note": "$e^{-x}\\to 1$。",
-          "say": "零那端，e 的負 x 次方趨近一，被積函數就像 x 的 s 減一次方。",
+            {
+              "do": "write",
+              "line": "$[1,\\infty)$：對每個 $s$ 都收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^{s+1}e^{-x}\\to0$，所以存在 $M$，$x\\ge M$ 時",
+            "$0<x^{s-1}e^{-x}\\le\\frac1{x^2}$"
+          ],
+          "say": "指數贏過任何次方，所以 x 的 s 加 1 次方乘 e 的負 x 次方趨近 0；過了某個 M 它小於 1，除以 x 平方，被積函數就比 x 平方分之一小。",
           "board": [
-            {"do":"write","line":"$x\\to0^+$：$e^{-x}\\to1$，像 ${{p:x^{s-1}}}$"},
-            {"do":"underline","term":"p","label":"看這一項","on":"被積函數"}
-          ] },
-        { "show": ["$\\int_0^1\\frac{1}{x^p}dx$ 收斂若且唯若 $p<1$"],
-          "note": "$x^{s-1}=\\frac{1}{x^{1-s}}$，所以 $p=1-s$。",
-          "say": "p 判別：一除以 x 的 p 次方，零到一積分，p 小於一才收斂。x 的 s 減一，p 就是一減 s。",
+            {
+              "do": "write",
+              "line": "$x^{s+1}e^{-x}\\to0$，所以存在 $M$，$x\\ge M$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0<x^{s-1}e^{-x}\\le\\frac1{x^2}$",
+              "on": "過了"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_M^\\infty\\frac{dx}{x^2}$ 收斂（p 判別）→ 比較判別：收斂"
+          ],
+          "say": "x 平方分之一的積分收斂，比較判別告訴我們，這段對任何 s 都收斂。",
           "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{1}{x^p}dx$ 收斂若且唯若 ${{pp:p<1}}$"},
-            {"do":"write","line":"$x^{s-1}=\\frac{1}{x^{1-s}}$，$p=1-s$","on":"x 的 s 減一"}
-          ] },
-        { "show": ["$p$ 判別：$s-1>-1$，即 $s>0$"],
-          "note": "此積分表示式在 $s>0$ 時收斂。",
-          "say": "用 p 判別，s 減一要大於負一，也就是 s 大於零，這個積分才收斂。",
+            {
+              "do": "write",
+              "line": "$\\int_M^\\infty\\frac{dx}{x^2}$ 收斂（p 判別）→ 比較判別：收斂"
+            },
+            {
+              "do": "write",
+              "line": "　1 到 $M$ 之間是連續函數在閉區間上的積分，本來就是有限的",
+              "color": "violet",
+              "on": "告訴"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(0,1]$：看 $x^{s-1}$",
+            "$e^{-1}\\le e^{-x}\\le1$，所以"
+          ],
+          "say": "靠近 0 那一段：e 的負 x 次方在 e 分之一和 1 之間，被積函數被 x 的 s 減 1 次方的兩個倍數夾住。",
           "board": [
-            {"do":"write","line":"$p$ 判別：${{a:s-1>-1}}$"},
-            {"do":"transform","line":"即 ${{b:s>0}}$","on":"也就是"},
-            {"do":"box","term":"b","color":"green","on":"大於零"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "$(0,1]$：看 $x^{s-1}$"
+            },
+            {
+              "do": "write",
+              "line": "$e^{-1}\\le e^{-x}\\le1$，所以",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^{-1}x^{s-1}\\le x^{s-1}e^{-x}\\le x^{s-1}$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "p 判別：$\\int_0^1x^{s-1}\\,dx$ 收斂 $\\iff s-1>-1$"
+          ],
+          "say": "用 p 判別，x 的 s 減 1 次方從 0 積到 1，收斂恰好是 s 減 1 大於負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "p 判別：$\\int_0^1x^{s-1}\\,dx$ 收斂 $\\iff s-1>-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $s>0$：上界收斂 → 收斂",
+            "• $s\\le0$：下界發散 → 發散"
+          ],
+          "say": "s 大於 0，上界收斂；s 小於等於 0，下界發散。結論：伽瑪的積分恰好在 s 大於 0 時收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $s>0$：上界收斂 → 收斂"
+            },
+            {
+              "do": "write",
+              "line": "• $s\\le0$：下界發散 → 發散",
+              "on": "小於"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Gamma(s)\\ \\text{的積分收斂}\\iff s>0}}$",
+              "on": "結論"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大於#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "起點與遞迴",
+      "title": "圖：$s$ 越小，左端越陡",
       "beats": [
-        { "show": ["$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$"],
-          "fig": {"use":0,"to":1},
-          "say": "s 等於一，x 的零次方是一，只剩 e 的負 x 次方，面積剛好是一。",
+        {
+          "show": [
+            "藍線：x^(s−1) e^(−x)。右邊永遠被 e^(−x) 壓下去；左端看 s"
+          ],
+          "say": "圖上是被積函數。s 等於 3，左端從 0 出發，右邊被壓下去。",
           "board": [
-            {"do":"write","line":"$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx={{one:1}}$"},
-            {"do":"box","term":"one","color":"green","on":"面積剛好"}
-          ] },
-        { "show": ["$\\Gamma(s+1)$：$u=x^s$，$dv=e^{-x}\\,dx$"],
-          "say": "遞迴從分部積分來：u 取 x 的 s 次方，dv 取 e 的負 x 次方 dx。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "gint",
+                  "window": [
+                    0,
+                    6,
+                    0,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(s-1)*exp(-x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "ystep": 0.5,
+                  "params": {
+                    "s": {
+                      "min": 0.3,
+                      "max": 3,
+                      "value": 3,
+                      "label": "s"
+                    }
+                  },
+                  "readout": "s = {s}",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "s = 3",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "藍線：x^(s−1) e^(−x)。右邊永遠被 e^(−x) 壓下去；左端看 s",
+              "color": "violet",
+              "on": "出發"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖：$s$ 越小，左端越陡"
+          ],
+          "say": "s 等於 1，就是 e 的負 x 次方本身，左端是 1。",
           "board": [
-            {"do":"write","line":"$\\Gamma(s+1)$：$u={{u:x^s}}$，$dv=e^{-x}\\,dx$","tint":{"u":"blue"}}
-          ] },
-        { "show": ["$dv=e^{-x}\\,dx$，$v=-e^{-x}$"],
-          "note": "$(-e^{-x})'=e^{-x}$，負號乘負號才對得回去。",
-          "say": "dv 是 e 的負 x 次方 dx，反導數 v 是負的 e 的負 x 次方。微分它，負號乘負號變正，才對得回去。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "gint",
+                  "window": [
+                    0,
+                    6,
+                    0,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(s-1)*exp(-x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "ystep": 0.5,
+                  "params": {
+                    "s": {
+                      "min": 0.3,
+                      "max": 3,
+                      "value": 3,
+                      "label": "s"
+                    }
+                  },
+                  "readout": "s = {s}",
+                  "height": 260
+                },
+                "vals": {
+                  "s": 1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "s = 1",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖：$s$ 越小，左端越陡"
+          ],
+          "say": "s 小於 1，左端往上衝；但只要 s 大於 0，衝得夠慢，面積仍然有限。",
           "board": [
-            {"do":"write","line":"$v={{v:-e^{-x}}}$"},
-            {"do":"focus","term":"v","label":"帶負號","on":"負的"}
-          ] },
-        { "show": ["邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}=0$"],
-          "note": "$\\infty$ 端 $e^{-x}$ 贏；$0$ 端 $x^s=0$。",
-          "say": "邊界項兩端都是零：無限遠那邊指數贏，零那邊 x 的 s 次方是零。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "gint",
+                  "window": [
+                    0,
+                    6,
+                    0,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(s-1)*exp(-x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "ystep": 0.5,
+                  "params": {
+                    "s": {
+                      "min": 0.3,
+                      "max": 3,
+                      "value": 3,
+                      "label": "s"
+                    }
+                  },
+                  "readout": "s = {s}",
+                  "height": 260
+                },
+                "vals": {
+                  "s": 0.3
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "s = 0.3",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "預告：$s\\le0$ 呢？"
+          ],
+          "say": "那 s 小於等於 0 呢？積分發散，不能再用積分定義。",
           "board": [
-            {"do":"write","line":"邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}={{z:0}}$"},
-            {"do":"underline","term":"z","label":"兩端都是 0","on":"兩端都是零"}
-          ] },
-        { "show": ["$-\\int v\\,du$ 的負號遇到 $v$ 的負號變正"],
-          "say": "分部積分是 u v 減 v du 的積分。du 是 s 乘 x 的 s 減一次方，v 帶負號，減負變加，所以是正的 s。",
+            {
+              "do": "write",
+              "line": "預告：$s\\le0$ 呢？",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積分發散，所以不能用積分定義",
+            "下一課用遞迴 $\\Gamma(s)=\\dfrac{\\Gamma(s+1)}{s}$ 往左推"
+          ],
+          "say": "下一課會用今天的遞迴式，把伽瑪往左推到負數，0 和負整數除外。",
           "board": [
-            {"do":"write","line":"$-\\int(-e^{-x})\\,sx^{s-1}dx$"},
-            {"do":"transform","line":"$=+{{c:s}}\\int_0^{\\infty}x^{s-1}e^{-x}dx$","on":"減負變加"},
-            {"do":"focus","term":"c","color":"green","on":"正的"}
-          ] },
-        { "show": ["$\\Gamma(s+1)=s\\Gamma(s)$"],
-          "say": "剩下 s 乘 Gamma s。這個係數 s 是分部積分生出來的。",
-          "board": [
-            {"do":"write","line":"$\\Gamma(s+1)={{c:s}}\\,\\Gamma(s)$","color":"green"},
-            {"do":"focus","term":"c","label":"分部積分生的","on":"這個係數"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "積分發散，所以不能用積分定義"
+            },
+            {
+              "do": "write",
+              "line": "下一課用遞迴 $\\Gamma(s)=\\dfrac{\\Gamma(s+1)}{s}$ 往左推",
+              "color": "gold",
+              "on": "把伽"
+            },
+            {
+              "do": "write",
+              "line": "　這一課的 $\\Gamma(s)$ 一律指 $s>0$",
+              "color": "violet",
+              "on": "和負"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "整數點是階乘",
+      "title": "第一個值：$\\Gamma(1)=1$",
       "beats": [
-        { "show": ["$\\Gamma(2)=1$，$\\Gamma(3)=2$"],
-          "fig": {"use":0,"to":3},
-          "say": "從 Gamma 一等於一往上推：Gamma 二是一乘一，Gamma 三是二乘一，等於二。",
+        {
+          "show": [
+            "$\\Gamma(1)=\\int_0^\\infty e^{-x}\\,dx=\\lim_{R\\to\\infty}\\Big[-e^{-x}\\Big]_0^R$"
+          ],
+          "say": "先算最簡單的值伽瑪 1：被積函數就是 e 的負 x 次方。照瑕積分的定義，先積到 R 再取極限。",
           "board": [
-            {"do":"write","line":"$\\Gamma(2)=1\\cdot\\Gamma(1)=1$"},
-            {"do":"write","line":"$\\Gamma(3)=2\\cdot\\Gamma(2)=2$","on":"Gamma 三"}
-          ] },
-        { "show": ["$\\Gamma(4)=6$"],
-          "fig": {"use":0,"to":4},
-          "say": "s 拉到四，面積是六，就是三的階乘。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(1)=\\int_0^\\infty e^{-x}\\,dx=\\lim_{R\\to\\infty}\\Big[-e^{-x}\\Big]_0^R$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\lim_{R\\to\\infty}\\left(1-e^{-R}\\right)=1$"
+          ],
+          "say": "代上下限得到 1 減 e 的負 R 次方，R 趨近無限大，答案是 1。",
           "board": [
-            {"do":"write","line":"$\\Gamma(4)=3\\cdot\\Gamma(3)={{r:6}}$"},
-            {"do":"box","term":"r","color":"green","on":"面積是六"}
-          ] },
-        { "show": ["$\\Gamma(n+1)=n!$"],
-          "note": "差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。",
-          "say": "一般來說 Gamma n 加一是 n 階乘。小心差一：Gamma 六是一百二十，不是七百二十。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\lim_{R\\to\\infty}\\left(1-e^{-R}\\right)=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個值是整個遞迴的起點"
+          ],
+          "say": "等一下所有整數點的值，都從它推上去。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\Gamma(n+1)={{f:n!}}$","color":"green","on":"Gamma n"},
-            {"do":"write","line":"$\\Gamma(n)=(n-1)!$","on":"小心差一"},
-            {"do":"write","line":"$\\Gamma(6)=5!={{h:120}}$","on":"Gamma 六"},
-            {"do":"box","term":"h","color":"green","on":"一百二十"}
-          ] }
+            {
+              "do": "write",
+              "line": "這個值是整個遞迴的起點"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "遞迴：$\\Gamma(s+1)=s\\Gamma(s)$",
+      "beats": [
+        {
+          "show": [
+            "$s>0$。先在 $[\\varepsilon,R]$ 上分部積分：",
+            "$u=x^s$，$dv=e^{-x}dx$"
+          ],
+          "say": "接著推最重要的式子。設 s 大於 0。瑕積分不能直接分部積分，先在艾普西隆到 R 的有限區間上做。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s>0$。先在 $[\\varepsilon,R]$ 上分部積分："
+            },
+            {
+              "do": "write",
+              "line": "$u=x^s$，$dv=e^{-x}dx$",
+              "on": "直接"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_\\varepsilon^Rx^se^{-x}dx=\\Big[-x^se^{-x}\\Big]_\\varepsilon^R+s\\int_\\varepsilon^Rx^{s-1}e^{-x}dx$"
+          ],
+          "say": "u 取 x 的 s 次方，v 是負 e 的負 x 次方。結果是邊界項，加上 s 倍、次方少 1 的同一種積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_\\varepsilon^Rx^se^{-x}dx=\\Big[-x^se^{-x}\\Big]_\\varepsilon^R+s\\int_\\varepsilon^Rx^{s-1}e^{-x}dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界項 $=\\varepsilon^se^{-\\varepsilon}-R^se^{-R}$"
+          ],
+          "say": "邊界項代進去，是這兩項相減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "邊界項 $=\\varepsilon^se^{-\\varepsilon}-R^se^{-R}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\varepsilon\\to0^+$：$\\varepsilon^s\\to0$（因為 $s>0$）",
+            "• $R\\to\\infty$：$R^se^{-R}\\to0$（指數贏次方）"
+          ],
+          "say": "因為 s 大於 0，艾普西隆的 s 次方趨近 0；指數贏過次方，R 那一項也趨近 0。邊界項消失。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\varepsilon\\to0^+$：$\\varepsilon^s\\to0$（因為 $s>0$）"
+            },
+            {
+              "do": "write",
+              "line": "• $R\\to\\infty$：$R^se^{-R}\\to0$（指數贏次方）",
+              "on": "指數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個積分都收斂（$s>0$、$s+1>0$），取極限：",
+            "$\\Gamma(s+1)=s\\,\\Gamma(s)\\qquad(s>0)$"
+          ],
+          "say": "兩個積分剛剛證過都收斂，可以取極限：伽瑪 s 加 1，等於 s 乘伽瑪 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個積分都收斂（$s>0$、$s+1>0$），取極限："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\Gamma(s+1)=s\\,\\Gamma(s)\\qquad(s>0)}}$",
+              "color": "red",
+              "on": "收斂"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　$s>0$ 用了兩次：邊界項 $\\varepsilon^s\\to0$，以及 $\\Gamma(s)$ 收斂",
+              "color": "violet",
+              "on": "乘伽"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\Gamma(s+1)=s\\Gamma(s)$ 的步驟"
+          ],
+          "say": "把證明的步驟排排看。"
+        }
       ],
-      "key": "$\\Gamma(n)$ 是 $(n-1)!$，別多乘一項",
+      "proof": true,
+      "order": {
+        "ask": "證明 $\\Gamma(s+1)=s\\Gamma(s)$ 的步驟",
+        "steps": [
+          {
+            "label": "在有限區間 $[\\varepsilon,R]$ 上寫出 $\\int x^se^{-x}dx$"
+          },
+          {
+            "label": "取 $u=x^s$、$dv=e^{-x}dx$ 分部積分",
+            "why": "先要有上一步：在有限區間 $[\\varepsilon,R]$ 上寫出 $\\int x^se^{-x}dx$"
+          },
+          {
+            "label": "檢查邊界項：$\\varepsilon^s\\to0$、$R^se^{-R}\\to0$",
+            "why": "先要有上一步：取 $u=x^s$、$dv=e^{-x}dx$ 分部積分"
+          },
+          {
+            "label": "兩個積分都收斂，令 $\\varepsilon\\to0^+$、$R\\to\\infty$",
+            "why": "先要有上一步：檢查邊界項：$\\varepsilon^s\\to0$、$R^se^{-R}\\to0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "在整數點就是階乘",
+      "beats": [
+        {
+          "show": [
+            "$\\Gamma(1)=1$，一直用遞迴：",
+            "$\\Gamma(2)=1\\cdot\\Gamma(1)=1,\\quad\\Gamma(3)=2\\cdot\\Gamma(2)=2$"
+          ],
+          "say": "從伽瑪 1 出發一直遞迴：1、1、2、6、24。這就是階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Gamma(1)=1$，一直用遞迴："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(2)=1\\cdot\\Gamma(1)=1,\\quad\\Gamma(3)=2\\cdot\\Gamma(2)=2$",
+              "on": "遞迴"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma(4)=3\\cdot\\Gamma(3)=6,\\quad\\Gamma(5)=4\\cdot\\Gamma(4)=24$",
+              "on": "24"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$n=0,1,2,\\dots$ 時",
+            "$\\Gamma(n+1)=n!$"
+          ],
+          "say": "定理：對每個非負整數 n，伽瑪 n 加 1 等於 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$n=0,1,2,\\dots$ 時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Gamma(n+1)=n!}}$",
+              "color": "red",
+              "on": "伽瑪"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明（數學歸納法）",
+            "• $n=0$：$\\Gamma(1)=1=0!$"
+          ],
+          "say": "用歸納法證。n 等於 0，伽瑪 1 是 1，就是 0 階乘。假設 k 成立，遞迴乘上 k 加 1，就得到 k 加 1 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明（數學歸納法）"
+            },
+            {
+              "do": "write",
+              "line": "• $n=0$：$\\Gamma(1)=1=0!$",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "• 設 $\\Gamma(k+1)=k!$，則 $\\Gamma(k+2)=(k+1)\\Gamma(k+1)=(k+1)!$",
+              "on": "就得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\Gamma(6)=5!=120$，$\\Gamma(4)=3!=6$"
+          ],
+          "say": "例如伽瑪 6 是 5 階乘 120，伽瑪 4 是 3 階乘 6。注意減 1 再階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\Gamma(6)=5!=120$，$\\Gamma(4)=3!=6$"
+            },
+            {
+              "do": "write",
+              "line": "　Gamma 函數把階乘延伸到所有正實數；$0!=1$ 也從 $\\Gamma(1)=1$ 得到解釋",
+              "color": "violet",
+              "on": "階乘#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{\\Gamma(6)}{\\Gamma(4)}=$？"
+          ],
+          "say": "試一題：伽瑪 6 除以伽瑪 4。"
+        }
+      ],
       "check": 0
     },
     {
-      "title": "讀積分",
+      "title": "讀積分：看到 $x^ke^{-x}$",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}x^ke^{-x}\\,dx=\\Gamma(k+1)$"],
-          "say": "看到 x 的 k 次方乘 e 的負 x 次方，就是 Gamma k 加一。",
+        {
+          "show": [
+            "次方 $k$ ↔ $s=k+1$：",
+            "$\\int_0^\\infty x^ke^{-x}\\,dx=\\Gamma(k+1)$"
+          ],
+          "say": "最後練習讀積分：x 的 k 次方乘 e 的負 x 次方，從 0 積到無限大，就是伽瑪 k 加 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}x^{ {{k:k}} }e^{-x}\\,dx=\\Gamma({{k1:k+1}})$","tint":{"k":"blue","k1":"blue"}}
-          ] },
-        { "show": ["$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"],
-          "note": "分部積分兩次也會得到 $2$，但要寫半頁。",
-          "say": "x 平方那一題，k 是二，直接讀成 Gamma 三，等於二。",
+            {
+              "do": "write",
+              "line": "次方 $k$ ↔ $s=k+1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^\\infty x^ke^{-x}\\,dx=\\Gamma(k+1)}}$",
+              "on": "的負"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\int_0^\\infty x^2e^{-x}\\,dx=\\Gamma(3)=2!=2$"
+          ],
+          "say": "例一，x 平方是伽瑪 3，等於 2 階乘，2。跟分部積分的答案一樣。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}$"],
-          "note": "換元 $u=ax$。",
-          "say": "指數裡有常數 a，令 u 等於 a x，多出 a 的 k 加一次方在分母。",
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\int_0^\\infty x^2e^{-x}\\,dx=\\Gamma(3)=2!=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：$\\displaystyle\\int_0^\\infty x^4e^{-3x}\\,dx$，令 $u=3x$"
+          ],
+          "say": "例二，指數裡有 3。令 u 等於 3x。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{ {{a:a^{k+1}}} }$"},
-            {"do":"underline","term":"a","label":"u = ax","on":"多出"}
-          ] },
-        { "show": ["$u=ax$，$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"],
-          "note": "上下限 $0$ 到 $\\infty$ 不變。",
-          "say": "令 u 等於 a x，那 x 是 u 除以 a，dx 是 du 除以 a。上下限零到無限大不變。",
+            {
+              "do": "write",
+              "line": "例 2：$\\displaystyle\\int_0^\\infty x^4e^{-3x}\\,dx$，令 $u=3x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=\\frac u3$，$dx=\\frac{du}3$，上下限不變：",
+            "$\\int_0^\\infty\\frac{u^4}{3^4}e^{-u}\\frac{du}{3}=\\frac{\\Gamma(5)}{3^5}=\\frac{24}{243}=\\frac8{81}$"
+          ],
+          "say": "x 四次方貢獻 3 的四次方，dx 再貢獻一個 3，一共 3 的五次方。答案 243 分之 24，就是 81 分之 8。",
           "board": [
-            {"do":"write","line":"$u=ax$，$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"}
-          ] },
-        { "show": ["$\\left(\\frac{u}{a}\\right)^k e^{-u}\\frac{du}{a}$"],
-          "note": "分母：$a^k\\cdot a=a^{k+1}$。",
-          "say": "x 的 k 次方變成 u 除以 a 的 k 次方，再乘 dx 的 a 分之一，分母兩個 a 合成 a 的 k 加一次方。",
+            {
+              "do": "write",
+              "line": "$x=\\frac u3$，$dx=\\frac{du}3$，上下限不變："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^\\infty\\frac{u^4}{3^4}e^{-u}\\frac{du}{3}=\\frac{\\Gamma(5)}{3^5}=\\frac{24}{243}=\\frac8{81}}}$",
+              "color": "red",
+              "on": "獻一"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "43"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 3：$\\displaystyle\\int_0^\\infty x^3e^{-x^2}\\,dx$，令 $u=x^2$"
+          ],
+          "say": "例三，指數是 x 平方，先換元：令 u 等於 x 平方。",
           "board": [
-            {"do":"write","line":"$\\left(\\frac{u}{a}\\right)^k e^{-u}\\frac{du}{a}=\\frac{u^ke^{-u}}{ {{d:a^{k+1}}} }du$"},
-            {"do":"underline","term":"d","label":"分母","on":"分母兩個"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$"],
-          "say": "例如 x 四次方乘 e 的負三 x 次方：Gamma 五是二十四，除以三的五次方，得八十一分之八。",
+            {
+              "do": "write",
+              "line": "例 3：$\\displaystyle\\int_0^\\infty x^3e^{-x^2}\\,dx$，令 $u=x^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$du=2x\\,dx$，$x^3dx=x^2\\cdot x\\,dx=\\dfrac u2\\,du$",
+            "$\\begin{aligned}\\int_0^\\infty x^3e^{-x^2}dx&=\\frac12\\int_0^\\infty ue^{-u}du\\\\&=\\frac12\\Gamma(2)=\\frac12\\end{aligned}$"
+          ],
+          "say": "把 x 三次方拆成 x 平方乘 x：x 平方是 u，x dx 是 2 分之 du。變成 2 分之一乘伽瑪 2，答案 2 分之 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$","color":"green"}
-          ] }
+            {
+              "do": "write",
+              "line": "$du=2x\\,dx$，$x^3dx=x^2\\cdot x\\,dx=\\dfrac u2\\,du$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\int_0^\\infty x^3e^{-x^2}dx&=\\frac12\\int_0^\\infty ue^{-u}du\\\\&=\\frac12\\Gamma(2)=\\frac12\\end{aligned}}}}$",
+              "color": "red",
+              "on": "平方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　$x\\ge0$ 時 $u=x^2$ 單調遞增，$0\\to0$、$\\infty\\to\\infty$",
+              "color": "violet",
+              "on": "一乘"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^\\infty x^5e^{-2x}\\,dx=$？"
+          ],
+          "say": "換你試試：x 五次方乘 e 的負 2x 次方。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "先換元",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$"],
-          "note": "指數是 $-x^2$，不是標準形狀。",
-          "say": "這一題指數是負 x 平方，不是標準形狀，要先換元。",
+        {
+          "show": [
+            "• $\\Gamma(s)=\\displaystyle\\int_0^\\infty x^{s-1}e^{-x}dx$，恰好在 $s>0$ 收斂",
+            "• 收斂：$[1,\\infty)$ 比 $\\frac1{x^2}$；$(0,1]$ 夾在 $x^{s-1}$ 的倍數之間"
+          ],
+          "say": "整理：伽瑪的積分恰好在 s 大於 0 收斂；分部積分給出遞迴，整數點就是階乘；看到 x 的 k 次方乘 e 的負 x 次方，讀成伽瑪 k 加 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}x^3e^{ {{p:-x^2}} }\\,dx$"},
-            {"do":"focus","term":"p","color":"red","label":"不是標準","on":"不是標準形狀"}
-          ] },
-        { "show": ["$u=x^2$，$du=2x\\,dx$"],
-          "note": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$",
-          "say": "令 u 等於 x 平方。把 x 三次方 dx 拆成 x 平方乘 x dx，就是 u 乘二分之 du。",
+            {
+              "do": "write",
+              "line": "• $\\Gamma(s)=\\displaystyle\\int_0^\\infty x^{s-1}e^{-x}dx$，恰好在 $s>0$ 收斂"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂：$[1,\\infty)$ 比 $\\frac1{x^2}$；$(0,1]$ 夾在 $x^{s-1}$ 的倍數之間",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Gamma(1)=1$；分部積分 ⇒ $\\Gamma(s+1)=s\\Gamma(s)$",
+              "on": "整數"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Gamma(n+1)=n!$",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^\\infty x^ke^{-x}dx=\\Gamma(k+1)$；有係數或 $x^2$ 就先換元",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Gamma 遞迴的應用"
+          ],
+          "say": "下一課，把遞迴用到非整數和負數上。",
           "board": [
-            {"do":"write","line":"$u=x^2$，$du=2x\\,dx$"},
-            {"do":"write","line":"$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$","on":"拆成"}
-          ] },
-        { "show": ["$x=0\\Rightarrow u=0$","$x\\to\\infty\\Rightarrow u\\to\\infty$"],
-          "note": "上下限也要換。",
-          "say": "上下限也要換：x 是零，u 是零；x 無限大，u 也無限大。所以上下限不變，還是零到無限大。",
-          "board": [
-            {"do":"write","line":"$x=0\\Rightarrow u=0$"},
-            {"do":"write","line":"$x\\to\\infty\\Rightarrow u\\to\\infty$","on":"無限大#1"}
-          ] },
-        { "show": ["$e^{-x^2}=e^{-u}$"],
-          "note": "指數變成標準形狀。",
-          "say": "指數的負 x 平方，換成負 u，變成標準形狀。接下來看 u 的幾次方，就知道是哪個 Gamma。",
-          "board": [
-            {"do":"write","line":"$e^{-x^2}={{q:e^{-u}}}$"},
-            {"do":"box","term":"q","color":"green","on":"標準形狀"}
-          ] }
-      ],
-      "key": "先換元成標準形 $u^{k}e^{-u}$",
-      "predict": {
-        "ask": "積分變成？",
-        "options": [
-          {
-            "label": "$\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$",
-            "correct": true
-          },
-          {
-            "label": "$\\Gamma(2)=1$",
-            "why": "漏了 $du=2x\\,dx$ 留下的 $\\frac{1}{2}$。"
-          },
-          {
-            "label": "$\\frac{1}{2}\\Gamma(4)=3$",
-            "why": "換元後被積函數是 $ue^{-u}$，是 $\\Gamma(2)$；$x^3$ 已經拆成 $u$ 和 $x\\,dx$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：Gamma 遞迴的應用"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["gamma-function", "special-functions", "improper-integral"],
-    "fine": ["gamma-read-integral", "gamma-integer-value", "gamma-off-by-one", "gamma-scaling", "gamma-substitution", "gamma-convergence"]
+    "coarse": [
+      "gamma-function",
+      "special-functions",
+      "improper-integral"
+    ],
+    "fine": [
+      "gamma-read-integral",
+      "gamma-integer-value",
+      "gamma-off-by-one",
+      "gamma-scaling",
+      "gamma-substitution",
+      "gamma-convergence"
+    ]
   },
   "practice": [
-    { "id": "mob-gamma-001", "core": true, "trains": "gamma-integer-value" },
-    { "id": "mob-gamma-008", "core": true, "trains": "gamma-off-by-one" },
-    { "id": "mob-gamma-005", "core": true, "trains": "gamma-off-by-one" },
-    { "id": "mob-gamma-006", "core": true, "trains": "gamma-read-integral" },
-    { "id": "depth-int-026", "core": true, "trains": "gamma-substitution" },
-    { "id": "int-040", "core": true, "trains": "gamma-read-integral" },
-    { "id": "cg-11d-002", "core": true, "trains": "gamma-convergence" },
-    { "id": "rel-adv-011", "trains": "gamma-scaling" },
-    { "id": "cg-11d-001", "trains": "gamma-scaling" },
-    { "id": "cg-11d-003", "trains": "gamma-convergence" },
-    { "id": "world-079", "challenge": true, "trains": "gamma-substitution", "note": "挑戰：令 $x=e^{-t}$，看出是 $-\\Gamma(4)$。" }
+    {
+      "id": "mob-gamma-001",
+      "core": true,
+      "trains": "gamma-integer-value"
+    },
+    {
+      "id": "mob-gamma-008",
+      "core": true,
+      "trains": "gamma-off-by-one"
+    },
+    {
+      "id": "mob-gamma-005",
+      "core": true,
+      "trains": "gamma-off-by-one"
+    },
+    {
+      "id": "mob-gamma-006",
+      "core": true,
+      "trains": "gamma-read-integral"
+    },
+    {
+      "id": "depth-int-026",
+      "core": true,
+      "trains": "gamma-substitution"
+    },
+    {
+      "id": "int-040",
+      "core": true,
+      "trains": "gamma-read-integral"
+    },
+    {
+      "id": "cg-11d-002",
+      "core": true,
+      "trains": "gamma-convergence"
+    },
+    {
+      "id": "rel-adv-011",
+      "trains": "gamma-scaling"
+    },
+    {
+      "id": "cg-11d-001",
+      "trains": "gamma-scaling"
+    },
+    {
+      "id": "cg-11d-003",
+      "trains": "gamma-convergence"
+    },
+    {
+      "id": "world-079",
+      "challenge": true,
+      "trains": "gamma-substitution",
+      "note": "挑戰：令 $x=e^{-t}$，看出是 $-\\Gamma(4)$。"
+    }
   ],
   "gaps": []
 }

@@ -1,0 +1,345 @@
+{
+  "id": "direct-proof",
+  "title": "直接證明",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["negation"],
+  "next": ["contrapositive"],
+  "related": [],
+  "objectives": [
+    "照「假設 $P$ → 用定義展開 → 推到 $Q$」的骨架寫證明，每一步都說得出理由。",
+    "證全稱命題時從「任意給定」開始，不偷偷代特例。",
+    "會用平方 $\\ge0$ 與三角不等式這兩個最常用的起點。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 證明是什麼",
+      "body": [
+        "證明是一串句子，每一句都是假設、定義、已知定理，或由前面的句子依邏輯推出來的。讀者不需要相信你，只需要逐行檢查。",
+        "直接證明 $P\\Rightarrow Q$：假設 $P$ 成立，一路推到 $Q$。證 $\\forall x,P(x)\\Rightarrow Q(x)$ 時，第一句永遠是「任意給定 $x$，設 $P(x)$ 成立」，之後不能再對 $x$ 多做任何假設。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 第一步通常是把定義寫開",
+      "body": [
+        "「$n$ 是奇數」本身沒辦法運算；寫成「存在整數 $k$ 使 $n=2k+1$」才可以代數。「$|x-a|<\\delta$」寫成「$a-\\delta<x<a+\\delta$」才可以夾。大多數初學的證明卡住，不是因為不會推，而是沒把定義攤開。",
+        "所以寫證明前先問：結論 $Q$ 的定義是什麼？我最後要寫出哪一行？從那一行往回想，再從前提往前推，兩頭接起來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個最好用的起點",
+      "body": [
+        "平方非負：對任何實數 $t$，$t^2\\ge0$。很多不等式就是某個平方展開後移項。",
+        "三角不等式：$|a+b|\\le|a|+|b|$。分析學裡幾乎每個「差很小」的論證都靠它把一個差拆成幾段小的差。"
+      ],
+      "tex": ["|a+b|\\le|a|+|b|"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 草稿和證明分開",
+      "body": [
+        "找證明時可以從結論倒推（「我需要 $x^2\\ge2x$，等價於 $(x-1)^2\\ge0$」）。但寫出來時要從真的東西出發往結論推，或者每一步都寫明是「等價」。只寫一串從結論往回推的「$\\Rightarrow$」，推到一個真命題，什麼都沒證到：從假的命題也能推出真的。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩個奇數的和是偶數",
+      "prompt": "證明：若 $m$、$n$ 都是奇數，則 $m+n$ 是偶數。",
+      "steps": [
+        "任意給定奇數 $m$、$n$。由定義，存在整數 $k$、$j$ 使 $m=2k+1$、$n=2j+1$。（兩個要用不同字母：$m$、$n$ 不一定相等。）",
+        "$m+n=2k+2j+2=2(k+j+1)$。",
+        "$k+j+1$ 是整數，所以 $m+n$ 是 2 乘一個整數，依定義是偶數。"
+      ],
+      "answer": "$m+n=2(k+j+1)$，是偶數",
+      "claim": "(2k+1)+(2n+1) == 2*(k+n+1)"
+    },
+    {
+      "title": "算幾不等式",
+      "prompt": "證明：$a,b>0$ 時 $\\frac{a+b}{2}\\ge\\sqrt{ab}$，而且等號只在 $a=b$ 成立。",
+      "problemId": "px-ineq-001",
+      "steps": [
+        "$a,b>0$，所以 $\\sqrt{a}$、$\\sqrt{b}$ 都是實數。從真的東西出發：$(\\sqrt{a}-\\sqrt{b})^2\\ge0$。",
+        "展開：$(\\sqrt{a})^2-2\\sqrt{a}\\sqrt{b}+(\\sqrt{b})^2=a-2\\sqrt{ab}+b\\ge0$（$a,b>0$ 時 $\\sqrt{a}\\sqrt{b}=\\sqrt{ab}$）。",
+        "移項：$a+b\\ge2\\sqrt{ab}$，兩邊除以 2 得 $\\frac{a+b}{2}\\ge\\sqrt{ab}$。",
+        "等號 $\\iff(\\sqrt{a}-\\sqrt{b})^2=0\\iff\\sqrt{a}=\\sqrt{b}\\iff a=b$。"
+      ],
+      "answer": "由 $(\\sqrt{a}-\\sqrt{b})^2\\ge0$ 展開移項得證；等號 $\\iff a=b$",
+      "claim": "(x+y)/2 >= sqrt(x*y) ;; (sqrt(x)-sqrt(y))^2 == x - 2*sqrt(x*y) + y"
+    },
+    {
+      "title": "反向三角不等式",
+      "prompt": "證明：對所有實數 $a$、$b$，$||a|-|b||\\le|a-b|$。",
+      "problemId": "px-ineq-003",
+      "steps": [
+        "目標 $||a|-|b||\\le|a-b|$ 等價於 $-|a-b|\\le|a|-|b|\\le|a-b|$，兩邊分開證。",
+        "右邊：$a=(a-b)+b$，由三角不等式 $|a|\\le|a-b|+|b|$，所以 $|a|-|b|\\le|a-b|$。",
+        "左邊：同理 $b=(b-a)+a$ 給 $|b|-|a|\\le|b-a|=|a-b|$，也就是 $|a|-|b|\\ge-|a-b|$。",
+        "兩邊合起來就是 $||a|-|b||\\le|a-b|$。"
+      ],
+      "answer": "把 $a$ 寫成 $(a-b)+b$ 套三角不等式，再對調 $a$、$b$",
+      "claim": "abs(abs(x-2)-abs(y)) <= abs(x-2-y)"
+    }
+  ],
+  "pitfalls": [
+    "用同一個 $k$ 表示兩個不同的奇數，等於偷偷假設 $m=n$。",
+    "從要證的結論出發往下推，推到 $0\\le(a-b)^2$ 就說證完。要嘛反過來寫，要嘛每步寫明「$\\iff$」。",
+    "證全稱命題時代了 $a=1$、$b=4$ 檢查，然後寫「同理可得」。",
+    "$\\sqrt{a}\\sqrt{b}=\\sqrt{ab}$ 沒說 $a,b\\ge0$。$a=b=-1$ 時左邊不是實數。"
+  ],
+  "checks": [
+    {
+      "ask": "證明「若 $n$ 是偶數，則 $n^2$ 是偶數」，第一句最好寫什麼？",
+      "options": [
+        { "label": "任意給定偶數 $n$，存在整數 $k$ 使 $n=2k$", "correct": true },
+        { "label": "取 $n=4$，則 $n^2=16$ 是偶數", "why": "你用一個例子證全稱命題。要對任意偶數成立，得從一般的 $n=2k$ 出發。" },
+        { "label": "假設 $n^2$ 是偶數", "why": "那是把結論當成前提，方向反了。直接證明要從前提 $P$（$n$ 是偶數）出發。" }
+      ]
+    },
+    {
+      "ask": "某人證 $x^2+1\\ge2x$：「$x^2+1\\ge2x\\Rightarrow x^2-2x+1\\ge0\\Rightarrow(x-1)^2\\ge0$，成立。」問題在哪？",
+      "options": [
+        { "label": "方向反了；要嘛從 $(x-1)^2\\ge0$ 往回推，要嘛每一步寫明可逆", "correct": true },
+        { "label": "沒有問題，最後一行是真的", "why": "從結論推出真命題不代表結論為真（從 $1=2$ 也推得出 $0\\cdot1=0\\cdot2$）。這題每步剛好可逆，但要寫出來。" },
+        { "label": "$(x-1)^2\\ge0$ 不一定成立", "why": "實數的平方永遠 $\\ge0$，這一行沒錯；錯的是推論的方向。" }
+      ]
+    },
+    {
+      "ask": "證 $||a|-|b||\\le|a-b|$ 時，把 $a$ 寫成什麼再用三角不等式？",
+      "options": [
+        { "label": "$a=(a-b)+b$", "correct": true },
+        { "label": "$a=(a+b)-b$", "why": "這會得到 $|a|\\le|a+b|+|b|$，出現的是 $|a+b|$，不是要的 $|a-b|$。" },
+        { "label": "$a=|a|$", "why": "$a$ 可能是負數，$a=|a|$ 只在 $a\\ge0$ 成立；而且這一步沒有用到三角不等式。" }
+      ]
+    },
+    {
+      "ask": "算幾不等式 $\\frac{a+b}{2}\\ge\\sqrt{ab}$ 的證明，起點是哪一行？",
+      "options": [
+        { "label": "$(\\sqrt{a}-\\sqrt{b})^2\\ge0$", "correct": true },
+        { "label": "$(a-b)^2\\ge0$", "why": "這展開得 $a^2+b^2\\ge2ab$，是另一個不等式；要得到 $\\sqrt{ab}$ 得用 $\\sqrt{a}$、$\\sqrt{b}$。" },
+        { "label": "$a+b\\ge2\\sqrt{ab}$", "why": "那是要證的結論本身（乘 2 而已），不能拿來當起點。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "證明是什麼",
+      "beats": [
+        { "show": ["每一句：假設、定義、已知定理","或由前面推出來的"],
+          "note": "讀者不必相信你，只要逐行檢查。",
+          "say": "證明是一串句子，每一句都要有來歷。讀的人不需要相信你，只需要一行一行檢查。",
+          "board": [
+            {"do":"write","line":"每一句：假設、定義、已知定理"}
+          ] },
+        { "show": ["直接證明 $P\\Rightarrow Q$：假設 $P$，推到 $Q$"],
+          "say": "直接證明最單純：先假設 P 成立，一路推，推到 Q 為止。",
+          "board": [
+            {"do":"write","line":"$P\\Rightarrow Q$：假設 $P$，推到 $Q$"}
+          ] },
+        { "show": ["第一句：任意給定 $x$，設 $P(x)$ 成立"],
+          "note": "之後不能再對 $x$ 多做任何假設。",
+          "say": "證對所有 x 的命題，第一句永遠是任意給定 x。之後這個 x 就不能再偷偷加條件。",
+          "board": [
+            {"do":"write","line":"第一句：任意給定 $x$，設 $P(x)$ 成立"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "先把定義寫開",
+      "beats": [
+        { "show": ["「$n$ 是奇數」","→ 存在整數 $k$ 使 $n=2k+1$"],
+          "note": "寫開了才能做代數。",
+          "say": "n 是奇數這幾個字沒辦法運算。寫成存在整數 k，使 n 等於二 k 加一，才能拿來算。",
+          "board": [
+            {"do":"write","line":"「$n$ 是奇數」"},
+            {"do":"write","line":"→ 存在整數 $k$ 使 ${{d:n=2k+1}}$","on":"寫成存在"},
+            {"do":"underline","term":"d","on":"二 k 加一"}
+          ] },
+        { "show": ["$|x-a|<\\delta$ → $a-\\delta<x<a+\\delta$"],
+          "say": "絕對值也一樣，攤開成兩個不等式才能夾。初學的證明卡住，多半是定義沒攤開。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|x-a|<\\delta$","on":"絕對值也"},
+            {"do":"transform","line":"$a-\\delta<x<a+\\delta$","on":"攤開成"}
+          ] },
+        { "show": ["證：$m$、$n$ 奇數 ⇒ $m+n$ 偶數"],
+          "note": "由定義，$m=2k+1$。",
+          "say": "來證兩個奇數的和是偶數。任意給定兩個奇數，m 先寫成二 k 加一。那 n 呢？",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"證：$m$、$n$ 奇數 ⇒ $m+n$ 偶數","on":"來證"},
+            {"do":"write","line":"$m=2k+1$","on":"m 先寫成"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$n$ 要寫成什麼？",
+        "options": [
+          {
+            "label": "$n=2j+1$，$j$ 是另一個整數",
+            "correct": true
+          },
+          {
+            "label": "$n=2k+1$",
+            "why": "用同一個 $k$，等於偷偷假設 $m=n$；兩個奇數不一定相等。"
+          },
+          {
+            "label": "$n=2j$",
+            "why": "$2j$ 是偶數的寫法；$n$ 是奇數，要加 1。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "平方非負",
+      "beats": [
+        { "show": ["$n$ 也要寫開：$n=2j+1$"],
+          "note": "換字母，因為 $m$、$n$ 不一定相等。",
+          "say": "n 也是奇數，也要寫開，寫成二 j 加一。換字母 j，因為 m 和 n 不一定相等，共用 k 就是偷偷說它們相等。",
+          "board": [
+            {"do":"write","line":"$m=2k+1$，${{nj:n=2j+1}}$"},
+            {"do":"underline","term":"nj","label":"不同字母","on":"換字母"}
+          ] },
+        { "show": ["$m+n=2k+2j+2=2(k+j+1)$"],
+          "note": "2 乘一個整數，依定義是偶數。",
+          "say": "接著加起來，提出一個二，括號裡是整數，所以和是偶數。上一題就證完了。",
+          "board": [
+            {"do":"write","line":"$m+n=2k+2j+2$"},
+            {"do":"transform","line":"$m+n=2({{kj:k+j+1}})$","on":"提出一個二"},
+            {"do":"underline","term":"kj","label":"整數","on":"括號裡是整數"}
+          ] },
+        { "show": ["$t^2\\ge0$","$|a+b|\\le|a|+|b|$"],
+          "note": "兩個最好用的起點。",
+          "say": "兩個最常用的起點：實數的平方不會是負的；還有和的絕對值不超過絕對值的和，能把一個差拆成幾段。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$t^2\\ge0$","on":"實數的平方"},
+            {"do":"write","line":"$|a+b|\\le|a|+|b|$","on":"還有和的"}
+          ] },
+        { "show": ["證 $a,b>0$ 時 $\\frac{a+b}{2}\\ge\\sqrt{ab}$"],
+          "note": "等號只在 $a=b$。",
+          "say": "算幾不等式：a 和 b 都是正的，平均數大於等於根號 a b。從哪一行真的東西出發？",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"證 ${{goal:\\frac{a+b}{2}\\ge\\sqrt{ab}}}$（$a,b>0$）","on":"算幾不等式"}
+          ] },
+        { "show": ["$(\\sqrt a-\\sqrt b)^2\\ge0$ 展開"],
+          "note": "$a,b>0$，所以 $(\\sqrt a)^2=a$。",
+          "say": "先展開平方。根號 a 的平方是 a，因為 a 是正的。中間根號 a 乘根號 b，合起來是根號 a b。",
+          "board": [
+            {"do":"write","line":"$(\\sqrt a-\\sqrt b)^2\\ge0$"},
+            {"do":"transform","line":"${{sq:(\\sqrt a)^2}}-2{{cr:\\sqrt a\\sqrt b}}+(\\sqrt b)^2\\ge0$","on":"先展開"},
+            {"do":"focus","term":"sq","label":"等於 a","on":"根號 a 的平方"},
+            {"do":"underline","term":"cr","on":"中間"}
+          ] },
+        { "show": ["$a-2\\sqrt{ab}+b\\ge0$","移項，除以 2"],
+          "say": "展開那個平方會得到這一行，移項再除以二，就是要的不等式。等號只在 a 等於 b。",
+          "board": [
+            {"do":"write","line":"$a-2\\sqrt{ab}+b\\ge0$","on":"展開那個平方"},
+            {"do":"transform","line":"$a+b\\ge2\\sqrt{ab}$","on":"移項"},
+            {"do":"box","term":"goal","color":"green","on":"就是要的"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "草稿和證明分開",
+      "beats": [
+        { "show": ["草稿：從結論倒推"],
+          "note": "「我需要 $x^2\\ge2x$，等價於 $(x-1)^2\\ge0$」",
+          "say": "找證明時，從結論往回想完全可以，這是草稿，幫你找到路。",
+          "board": [
+            {"do":"write","line":"草稿：從結論倒推"}
+          ] },
+        { "show": ["寫出來：從真的東西往結論推"],
+          "note": "或者每一步寫明「$\\iff$」。",
+          "say": "可是寫出來的時候，要從真的東西出發往結論推，或者每一步都寫明是等價。",
+          "board": [
+            {"do":"write","line":"寫出來：從真的東西往結論推"},
+            {"do":"write","line":"或每一步寫明 $\\iff$","on":"每一步都"}
+          ] },
+        { "show": ["從假的命題也能推出真的"],
+          "note": "只寫一串往回推的 $\\Rightarrow$，什麼都沒證到。",
+          "say": "為什麼？因為從一個錯的命題出發，也可能推到一個對的結果。推到真的，不代表起點是真的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"從假的命題也能推出真的","on":"錯的命題"},
+            {"do":"write","line":"推到真的，不代表起點真的","on":"推到真的"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "證明：反向三角不等式",
+      "beats": [
+        { "show": ["證 $||a|-|b||\\le|a-b|$"],
+          "note": "拆成兩個不等式，各套一次三角不等式。",
+          "say": "最後一個：反過來的版本。策略：外面那層絕對值拆成兩個不等式，各用一次三角不等式。",
+          "board": [
+            {"do":"write","line":"證 ${{o:||a|-|b||}}\\le|a-b|$"},
+            {"do":"underline","term":"o","on":"外面那層"}
+          ] },
+        { "show": ["$-|a-b|\\le|a|-|b|\\le|a-b|$"],
+          "note": "$|w|\\le c$ 就是 $-c\\le w\\le c$。",
+          "why": {"ask":"為什麼要拆成兩個不等式？","say":"外面那層絕對值，為什麼要拆成兩個不等式？","options":[{"label":"$|w|\\le c$ 等於 $-c\\le w\\le c$","correct":true},{"label":"絕對值可以直接拿掉","why":"拿掉只對非負的數成立；$|a|-|b|$ 可能是負的，兩邊都要管。"},{"label":"證右邊就好，左邊自動成立","why":"右邊只管 $|a|-|b|$ 不太大；它也可能很負，要另外證不太小。"}]},
+          "say": "一個數的絕對值不超過 c，就是它夾在負 c 和 c 之間。所以兩邊要分開證。",
+          "board": [
+            {"do":"write","line":"$-|a-b|\\le{{w:|a|-|b|}}\\le|a-b|$","on":"拆成兩個"},
+            {"do":"underline","term":"w","label":"夾在兩界之間","why":true,"on":"夾在負 c"}
+          ] },
+        { "show": ["$|a|\\le|a-b|+|b|$"],
+          "note": "右邊：$|a|-|b|\\le|a-b|$。",
+          "say": "把 a 拆成兩段，再套剛才那個不等式，就得到這一行，移項是右半邊。",
+          "board": [
+            {"do":"write","line":"$|a|\\le|a-b|+|b|$","on":"再套"},
+            {"do":"transform","line":"$|a|-|b|\\le|a-b|$","on":"移項"}
+          ] },
+        { "show": ["$a$、$b$ 對調：$|b|-|a|\\le|a-b|$"],
+          "note": "$|b-a|=|a-b|$；乘 $-1$ 就是左邊。",
+          "why": {"ask":"為什麼對調就得到左邊？","say":"a 和 b 對調再做一次。為什麼這樣就是左半邊？","options":[{"label":"$|b-a|=|a-b|$，再乘 $-1$ 翻過來","correct":true},{"label":"對調之後，不等號方向會反過來","why":"對調只是換名字，同一個不等式照樣成立；方向是乘 $-1$ 時才翻。"},{"label":"左右兩邊是同一個不等式","why":"不一樣：右邊管 $|a|-|b|$ 不太大，左邊管它不太小。"}]},
+          "say": "對調得到 b 減 a 的絕對值，它就是 a 減 b 的絕對值。兩邊乘負一，就是左半邊。",
+          "board": [
+            {"do":"write","line":"$|b|-|a|\\le|b-a|=|a-b|$","on":"對調"},
+            {"do":"transform","line":"$-|a-b|\\le|a|-|b|$","why":true,"on":"兩邊乘負一"}
+          ] },
+        { "show": ["$|b-a|=|-(a-b)|=|a-b|$","$1\\le2$ 乘 $-1$：$-1\\ge-2$"],
+          "note": "乘負數，不等號方向要反過來。",
+          "say": "b 減 a 是 a 減 b 乘上負一，絕對值相同。而且一小於二，兩邊乘負一，變成負一大於負二，方向反過來。",
+          "board": [
+            {"do":"write","line":"$|b-a|=|-(a-b)|=|a-b|$"},
+            {"do":"write","line":"$1\\le2$ 乘 $-1$：$-1\\ge-2$","on":"一小於二"}
+          ] },
+        { "show": ["兩邊合起來：$||a|-|b||\\le|a-b|$"],
+          "say": "左半邊、右半邊都成立，夾起來就是要證的不等式。證完了。",
+          "board": [
+            {"do":"keep","n":3},
+            {"do":"write","line":"${{fin:||a|-|b||\\le|a-b|}}$","on":"夾起來"},
+            {"do":"box","term":"fin","color":"green","label":"證完","on":"要證的"}
+          ] }
+      ],
+      "key": "拆成兩個不等式，各套一次三角不等式",
+      "proof": true,
+      "of": "ex2",
+      "skeleton": "直接",
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["proof", "written-proof", "inequality", "absolute-value"],
+    "fine": ["proof-unfold-definition", "proof-square-nonnegative", "proof-triangle-inequality", "proof-forward-direction"]
+  },
+  "practice": [
+    { "id": "px-ineq-002", "core": true, "trains": "proof-square-nonnegative" },
+    { "id": "px-ineq-001", "core": true, "trains": "proof-square-nonnegative" },
+    { "id": "px-ineq-003", "core": true, "trains": "proof-triangle-inequality" },
+    { "id": "cg-12a-018", "core": true, "trains": "proof-forward-direction" },
+    { "id": "cg-12a-017", "trains": "proof-forward-direction" }
+  ],
+  "gaps": [
+    { "tag": "proof-unfold-definition", "count": 3, "note": "奇偶、整除、絕對值區間這類「把定義寫開就證完」的白話證明題。" }
+  ]
+}

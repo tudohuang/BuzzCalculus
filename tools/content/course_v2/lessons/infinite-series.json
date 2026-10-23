@@ -1,7 +1,8 @@
 {
   "id": "infinite-series",
   "title": "無窮級數",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 25,
   "prerequisites": [
     "sequence-limit"
@@ -15,46 +16,127 @@
     "p-series"
   ],
   "objectives": [
-    "說出 $\\sum a_n$ 的定義：部分和 $s_n$ 的極限；有極限叫收斂，沒有叫發散。",
-    "分清楚兩個數列：各項 $a_n$ 與部分和 $s_n$。",
-    "知道收斂級數可以逐項相加、乘常數，而去掉或加上有限項不影響收斂。"
+    "說出 $\\sum a_n$ 的定義：部分和 $s_n$ 的極限",
+    "有極限叫收斂，沒有叫發散",
+    "分清楚兩個數列：各項 $a_n$ 與部分和 $s_n$",
+    "知道收斂級數可以逐項相加、乘常數，而去掉或加上有限項不影響收斂"
   ],
-  "visual": "一個面積 1 的正方形：先塗一半，再塗剩下的一半，再塗剩下的一半……每一步旁邊寫出已塗面積 1/2、3/4、7/8、…。塗色永遠蓋不滿，但剩下的空白要多小有多小。下方的數線同步標出部分和 sₙ 擠向 1。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 無窮多個數相加，到底是什麼意思",
+      "heading": "① 無窮多個數相加",
       "body": [
-        "沒有人能真的把無窮多個數一個個加完。所以先加有限項：$s_n=a_1+a_2+\\dots+a_n$，叫做第 $n$ 個部分和。再看 $n\\to\\infty$ 時 $s_n$ 往哪裡去，定義 $\\sum a_n=\\lim s_n$。",
-        "極限存在（是一個實數 $S$），就說級數收斂，和是 $S$，寫 $\\sum a_n=S$。極限不存在（跑到 $\\infty$，或一直跳），就說級數發散。"
+        "問題：無窮多個數，永遠加不完",
+        "辦法：先加前 $n$ 項，再看 $n\\to\\infty$",
+        "離 $\\frac13$ 還差多少？",
+        "例：$\\frac13-0.3=\\frac1{30}$，$\\frac13-0.33=\\frac1{300}$"
       ],
       "tex": [
-        "\\sum_{n=1}^{\\infty} a_n=\\lim_{n\\to\\infty} s_n,\\qquad s_n=a_1+a_2+\\cdots+a_n"
+        "0.333\\dots=\\frac3{10}+\\frac3{100}+\\frac3{1000}+\\cdots",
+        "s_1=0.3,\\quad s_2=0.33,\\quad s_3=0.333,\\ \\dots",
+        "\\frac13-s_n=\\frac{1}{3\\cdot10^n}\\ \\to0",
+        "0.333\\dots=\\lim_{n\\to\\infty}s_n=\\frac13"
+      ]
+    },
+    {
+      "heading": "① 定義：部分和的極限",
+      "body": [
+        "級數 $\\displaystyle\\sum_{n=1}^{\\infty}a_n=a_1+a_2+a_3+\\cdots$",
+        "第 $n$ 個部分和：",
+        "極限存在（是一個數）：級數收斂；不存在：發散"
       ],
-      "collapsible": false
+      "tex": [
+        "s_n=a_1+a_2+\\cdots+a_n=\\sum_{k=1}^{n}a_k",
+        "\\sum_{n=1}^{\\infty}a_n=\\lim_{n\\to\\infty}s_n",
+        "s_n=1-\\frac1{2^n}\\to1,\\quad \\sum_{n=1}^\\infty\\frac1{2^n}=1"
+      ]
     },
     {
       "heading": "② 三種結局",
       "body": [
-        "$\\frac{1}{2}+\\frac{1}{4}+\\frac{1}{8}+\\dots$：部分和 $\\frac{1}{2}$、$\\frac{3}{4}$、$\\frac{7}{8}$、…，是 $1-\\frac{1}{2^n}\\to 1$，收斂到 1（正方形那張圖）。",
-        "$1+1+1+\\dots$：$s_n=n\\to\\infty$，發散。",
-        "$1-1+1-1+\\dots$：$s_n$ 是 1、0、1、0、…，一直跳，發散。"
+        "部分和 $s_n$ 是一個數列，它的結局有三種：",
+        "• 收斂：$s_n\\to S$（一個數）",
+        "• 發散到 $\\infty$：$s_n$ 一路往上衝",
+        "• 發散、跳來跳去：$s_n$ 定不下來",
+        "例：$1+1+1+\\cdots$：$s_n=n\\to\\infty$，發散",
+        "寫 $\\sum a_n=\\infty$ 只是說明它怎麼發散，仍然是發散",
+        "例：$0.999\\dots$ 是多少？",
+        "$s_n=0.\\underbrace{99\\dots9}_{n}$，差 $1-s_n=\\dfrac1{10^n}$"
       ],
-      "collapsible": false
+      "tex": [
+        "0.999\\dots=\\sum_{n=1}^{\\infty}\\frac9{10^n}",
+        "0.999\\dots=\\lim_{n\\to\\infty}\\Big(1-\\frac1{10^n}\\Big)=1"
+      ]
+    },
+    {
+      "heading": "② 部分和一直跳",
+      "body": [
+        "例：$1-1+1-1+\\cdots$ 收斂嗎？",
+        "$s_n$ 在 $1$ 和 $0$ 之間一直跳，沒有極限",
+        "陷阱：亂加括號會得到兩個答案",
+        "發散的級數不能當成普通加法隨便搬動",
+        "加括號等於只看 $s_2,s_4,\\dots$ 或 $s_1,s_3,\\dots$ 這些子數列；收斂的級數加括號沒問題，發散的就不一定"
+      ],
+      "tex": [
+        "s_1=1,\\ s_2=0,\\ s_3=1,\\ s_4=0,\\ \\dots",
+        "\\sum_{n=1}^{\\infty}(-1)^{n+1}\\ \\text{發散}",
+        "(1-1)+(1-1)+\\cdots=0",
+        "1+(-1+1)+(-1+1)+\\cdots=1"
+      ]
     },
     {
       "heading": "③ 兩個數列，不要混在一起",
       "body": [
-        "一個級數牽涉兩個數列：各項 $a_n$，和部分和 $s_n$。「級數收斂」說的是 $s_n$ 有極限，不是 $a_n$。例如 $\\frac{1}{2}+\\frac{1}{4}+\\dots$ 的各項 $\\to 0$，部分和 $\\to 1$。兩者的關係在〈發散判別〉細講。"
+        "一個級數牽涉兩個數列：",
+        "• 各項 $a_n$：加進去的那一項",
+        "• 部分和 $s_n$：加到目前為止的總和",
+        "級數的和是 $\\lim s_n$，不是 $\\lim a_n$",
+        "$\\displaystyle\\sum\\frac1{2^n}$：",
+        "$\\displaystyle\\sum(-1)^{n+1}$："
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{array}{c|cccc}n&1&2&3&\\to\\infty\\\\\\hline a_n&\\frac12&\\frac14&\\frac18&0\\\\ s_n&\\frac12&\\frac34&\\frac78&1\\end{array}",
+        "\\begin{array}{c|ccccc}n&1&2&3&4&\\cdots\\\\\\hline a_n&1&-1&1&-1&\\cdots\\\\ s_n&1&0&1&0&\\cdots\\end{array}"
+      ]
     },
     {
       "heading": "④ 基本規則",
       "body": [
-        "$\\sum a_n$ 與 $\\sum b_n$ 都收斂時，$\\sum(a_n+b_n)=\\sum a_n+\\sum b_n$，$\\sum c\\cdot a_n=c\\sum a_n$。理由：部分和是有限和，可以這樣拆，再用極限定律。",
-        "去掉（或加上）前面有限多項，不改變收不收斂，因為部分和只差一個固定的數；但和會改變。所以 $\\sum_{n=1}^{\\infty}$ 和 $\\sum_{n=5}^{\\infty}$ 收斂與否相同，數值不同。"
+        "$\\sum a_n=A$、$\\sum b_n=B$ 都收斂，則",
+        "證明：部分和 $s_n\\to A$，$t_n\\to B$",
+        "乘常數一樣：前 $n$ 項是 $c\\,s_n\\to cA$",
+        "反過來不行：$\\sum(a_n+b_n)$ 收斂，不代表各自收斂",
+        "例：$a_n=1$，$b_n=-1$：$\\sum(a_n+b_n)=\\sum0=0$，但 $\\sum1$ 發散",
+        "所以拆開之前，要先確定拆出來的每一個都收斂"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^{\\infty}(a_n\\pm b_n)=A\\pm B,\\qquad \\sum_{n=1}^{\\infty}c\\,a_n=cA",
+        "\\sum_{k=1}^{n}(a_k+b_k)=s_n+t_n\\ \\to\\ A+B"
+      ]
+    },
+    {
+      "heading": "④ 有限項不影響收斂",
+      "body": [
+        "從第 $N$ 項開始加：",
+        "$s_{N-1}$ 是固定的數：$s_n$ 有極限 ⇔ $s_n-s_{N-1}$ 有極限",
+        "跟數列一樣：收不收斂只看尾巴"
+      ],
+      "tex": [
+        "\\sum_{n=N}^{\\infty}a_n\\ \\text{的部分和}=s_n-s_{N-1}",
+        "\\sum_{n=1}^{\\infty}a_n=(a_1+\\cdots+a_{N-1})+\\sum_{n=N}^{\\infty}a_n"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\sum a_n=\\lim s_n$，$s_n=a_1+\\cdots+a_n$",
+        "• 極限是一個數：收斂；否則發散（衝到 $\\infty$ 或跳來跳去）",
+        "• $0.333\\dots=\\frac13$，$0.999\\dots=1$；$1-1+1-\\cdots$ 發散",
+        "• 兩個數列：和看 $s_n$，不是 $a_n$",
+        "• 收斂的級數可以逐項加減、乘常數",
+        "• 去掉或加上有限項，不影響收斂",
+        "下一課：部分和"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,262 +182,846 @@
   ],
   "checks": [
     {
-      "ask": "「$\\sum a_n$ 收斂」的意思是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{3^n}$ 的部分和 $s_n=\\dfrac12\\Big(1-\\dfrac1{3^n}\\Big)$。級數的和是？",
       "options": [
         {
-          "label": "部分和 $s_n$ 有極限",
+          "label": "$\\dfrac12$",
           "correct": true
         },
         {
-          "label": "各項 $a_n\\to 0$",
-          "why": "那說的是各項，不是部分和；之後會看到各項 $\\to 0$ 而級數仍發散的例子。"
+          "label": "$0$",
+          "why": "那是 $\\lim a_n=\\lim\\frac1{3^n}$；級數的和看的是 $s_n$"
         },
         {
-          "label": "從某一項開始，每一項都很小",
-          "why": "「很小」不是定義；$\\sum\\frac{1}{n}$ 的各項都很小，部分和卻沒有上界（〈p 級數〉會證明）。"
+          "label": "$\\dfrac13$",
+          "why": "那只是第一項 $a_1$"
+        },
+        {
+          "label": "$\\infty$",
+          "why": "無窮多個正數相加不一定是無限大：項小得夠快，和就有限"
         }
       ]
     },
     {
-      "ask": "$1-1+1-1+\\dots$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}a_n=2$，$\\displaystyle\\sum_{n=1}^{\\infty}b_n=3$。$\\displaystyle\\sum_{n=1}^{\\infty}(2a_n-b_n)=$？",
       "options": [
         {
-          "label": "發散",
+          "label": "$1$",
           "correct": true
         },
         {
-          "label": "0",
-          "why": "這是加了括號 $(1-1)+(1-1)+\\dots$ 得到的；原本的部分和在 1、0 之間跳，沒有極限。"
+          "label": "$7$",
+          "why": "把減號當成加號了：$2\\cdot2+3$"
         },
         {
-          "label": "$\\frac{1}{2}$",
-          "why": "$\\frac{1}{2}$ 是部分和 $1, 0, 1, 0$ 的平均，不是部分和的極限。"
+          "label": "$-1$",
+          "why": "忘了乘 $2$：算成 $A-B=2-3$"
+        },
+        {
+          "label": "不能確定",
+          "why": "兩個都收斂，就可以拆開：$2A-B$"
         }
       ]
     },
     {
-      "ask": "$0.999\\dots$ 和 1 的關係是？",
+      "ask": "$\\sum a_n$ 收斂、$\\sum b_n$ 發散，$\\sum(a_n+b_n)$ 呢？",
       "options": [
         {
-          "label": "相等",
+          "label": "一定發散",
           "correct": true
         },
         {
-          "label": "$0.999\\dots$ 比 1 小一點點",
-          "why": "$0.999\\dots$ 指的是部分和 $1-10^{-n}$ 的極限，極限剛好是 1；「小一點點」說的是某個有限的部分和。"
+          "label": "一定收斂",
+          "why": "加上一個發散的級數，壞掉的部分消不掉"
         },
         {
-          "label": "$0.999\\dots$ 沒有定義",
-          "why": "它就是 $\\sum\\frac{9}{10^n}$，部分和有極限，定義得很清楚。"
-        }
-      ]
-    },
-    {
-      "ask": "把一個收斂級數的前 100 項拿掉，剩下的級數？",
-      "options": [
-        {
-          "label": "還是收斂，但和改變",
-          "correct": true
-        },
-        {
-          "label": "變成發散",
-          "why": "新的部分和等於舊的部分和減掉一個固定的數，極限照樣存在。"
-        },
-        {
-          "label": "還是收斂，而且和不變",
-          "why": "和會少掉前 100 項的總和（除非那總和剛好是 0）。"
+          "label": "不一定",
+          "why": "兩個都發散才是不一定；一收斂一發散，相加一定發散"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "加不完怎麼辦",
+      "title": "無窮多個數相加",
       "beats": [
-        { "show": ["$a_1+a_2+a_3+\\cdots$"],
-          "note": "沒有人能真的一個個加完。",
-          "say": "無窮多個數相加，沒有人能真的加完。那這個加號串到底是什麼意思？",
+        {
+          "show": [
+            "$0.333\\dots=\\frac3{10}+\\frac3{100}+\\frac3{1000}+\\cdots$"
+          ],
+          "say": "循環小數 0.333 一直下去，其實是無窮多個數相加：10 分之 3，加 100 分之 3，加 1000 分之 3，一直加下去。",
           "board": [
-            {"do":"write","line":"$a_1+a_2+a_3+\\cdots$"}
-          ] },
-        { "show": ["$s_n=a_1+a_2+\\cdots+a_n$"],
-          "note": "第 $n$ 個部分和：先加有限項。",
-          "say": "先加有限項。加到第 n 項為止的和，叫第 n 個部分和，這是一個普通的數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0.333\\dots=\\frac3{10}+\\frac3{100}+\\frac3{1000}+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題：無窮多個數，永遠加不完"
+          ],
+          "say": "問題來了：無窮多個數，永遠加不完。那這個加法到底是什麼意思？",
           "board": [
-            {"do":"write","line":"${{s:s_n}}=a_1+a_2+\\cdots+a_n$","tint":{"s":"violet"}},
-            {"do":"focus","term":"s","color":"violet","label":"部分和","on":"第 n 個部分和"}
-          ] },
-        { "show": ["$\\sum_{n=1}^{\\infty}a_n=\\lim_{n\\to\\infty}s_n$"],
-          "say": "再看 n 趨近無限大時，部分和往哪裡去。無窮級數的和，定義成部分和的極限。",
+            {
+              "do": "write",
+              "line": "問題：無窮多個數，永遠加不完",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "辦法：先加前 $n$ 項，再看 $n\\to\\infty$"
+          ],
+          "say": "辦法是：我們只會加有限項，那就先加前 n 項，再看 n 越來越大時，這個和往哪裡去。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^{\\infty}a_n={{l:\\lim_{n\\to\\infty}{{s:s_n}}}}$"},
-            {"do":"box","term":"l","label":"定義","on":"定義成"}
-          ] },
-        { "show": ["極限是實數 $S$：收斂","不存在：發散"],
-          "say": "極限存在、是一個實數，級數就收斂，和是它。跑到無限大或一直跳，就叫發散。",
+            {
+              "do": "write",
+              "line": "辦法：先加前 $n$ 項，再看 $n\\to\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_1=0.3,\\quad s_2=0.33,\\quad s_3=0.333,\\ \\dots$"
+          ],
+          "say": "前 1 項是 0.3，前 2 項是 0.33，前 3 項是 0.333。前 n 項的和，就是 n 個 3 的小數。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"極限是實數 $S$：收斂","color":"green","on":"極限存在"},
-            {"do":"write","line":"不存在：發散","on":"跑到無限大"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_1=0.3,\\quad s_2=0.33,\\quad s_3=0.333,\\ \\dots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "離 $\\frac13$ 還差多少？",
+            "$\\frac13-s_n=\\frac{1}{3\\cdot10^n}\\ \\to0$"
+          ],
+          "say": "它離 3 分之 1 還差多少？算一下，剛好差 3 乘 10 的 n 次方分之 1，n 越大越接近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "離 $\\frac13$ 還差多少？"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac13-s_n=\\frac{1}{3\\cdot10^n}\\ \\to0$",
+              "on": "剛好"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\frac13-0.3=\\frac1{30}$，$\\frac13-0.33=\\frac1{300}$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0.333\\dots=\\lim_{n\\to\\infty}s_n=\\frac13$"
+          ],
+          "say": "所以 0.333 一直下去，意思就是這個極限，等於 3 分之 1。這就是我們熟悉的答案，現在有了精確的意思。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle 0.333\\dots=\\lim_{n\\to\\infty}s_n=\\frac13}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義：部分和的極限",
+      "beats": [
+        {
+          "show": [
+            "級數 $\\displaystyle\\sum_{n=1}^{\\infty}a_n=a_1+a_2+a_3+\\cdots$"
+          ],
+          "say": "把這個想法寫成定義。給一個數列 a n，把它的項全部加起來，寫成總和符號，叫做級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "級數 $\\displaystyle\\sum_{n=1}^{\\infty}a_n=a_1+a_2+a_3+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 $n$ 個部分和：",
+            "$s_n=a_1+a_2+\\cdots+a_n=\\sum_{k=1}^{n}a_k$"
+          ],
+          "say": "前 n 項的和叫做第 n 個部分和，記作 s n。它只加有限項，一定算得出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 $n$ 個部分和："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_n=a_1+a_2+\\cdots+a_n=\\sum_{k=1}^{n}a_k$",
+              "on": "它只"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}a_n=\\lim_{n\\to\\infty}s_n$"
+          ],
+          "say": "級數的和，定義成部分和的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\sum_{n=1}^{\\infty}a_n=\\lim_{n\\to\\infty}s_n}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "成部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限存在（是一個數）：級數收斂；不存在：發散"
+          ],
+          "say": "如果這個極限存在、是一個實數，就說級數收斂，極限就是它的和；不存在，就說級數發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極限存在（是一個數）：級數收斂；不存在：發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1/2 + 1/4 + 1/8 + … 的部分和 s_n"
+          ],
+          "say": "再看一個：2 分之 1 加 4 分之 1 加 8 分之 1。每加一項，都剛好補上剩下距離的一半，部分和一步一步爬向 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "half",
+                  "window": [
+                    0,
+                    9,
+                    -0.1,
+                    1.2
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 0.5,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 0.75,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 0.875,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": 0.9375,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": 0.96875,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": 0.984375,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": 0.9921875,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": 0.99609375,
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 6.5,
+                      "y": 1.12,
+                      "text": "和 = 1"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "1/2 + 1/4 + 1/8 + … 的部分和 s_n",
+              "color": "violet",
+              "on": "每加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_n=1-\\frac1{2^n}\\to1,\\quad \\sum_{n=1}^\\infty\\frac1{2^n}=1$"
+          ],
+          "say": "剩下的距離是 2 的 n 次方分之 1，趨近 0，所以這個級數收斂，和是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_n=1-\\frac1{2^n}\\to1,\\quad \\sum_{n=1}^\\infty\\frac1{2^n}=1$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "三種結局",
       "beats": [
-        { "show": ["$\\frac{1}{2}+\\frac{1}{4}+\\frac{1}{8}+\\cdots$"],
-          "note": "$s_n=1-\\frac{1}{2^n}\\to 1$：收斂到 1。",
-          "say": "二分之一、四分之三、八分之七，每次補上剩下的一半。部分和是一減二的 n 次方分之一，趨近一。",
+        {
+          "show": [
+            "部分和 $s_n$ 是一個數列，它的結局有三種：",
+            "• 收斂：$s_n\\to S$（一個數）"
+          ],
+          "say": "部分和是一個數列，所以結局跟上一課的數列一樣有三種：收斂到一個數；一路衝到無限大；或者跳來跳去，定不下來。後兩種都叫發散。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{2}+\\frac{1}{4}+\\frac{1}{8}+\\cdots$"},
-            {"do":"write","line":"$s_n=1-\\frac{1}{2^n}\\to {{r:1}}$","on":"部分和是"},
-            {"do":"focus","term":"r","color":"green","label":"收斂","on":"n 次方分之一"}
-          ] },
-        { "show": ["$\\frac{1}{2^n}$：$n$ 越大，越小"],
-          "note": "每多一項，分母多乘一個 2。",
-          "say": "二的 n 次方，每多一項就再乘一個二，越來越大。所以二的 n 次方分之一越來越小，趨近零。部分和就趨近一。",
+            {
+              "do": "write",
+              "line": "部分和 $s_n$ 是一個數列，它的結局有三種："
+            },
+            {
+              "do": "write",
+              "line": "• 收斂：$s_n\\to S$（一個數）",
+              "on": "一課"
+            },
+            {
+              "do": "write",
+              "line": "• 發散到 $\\infty$：$s_n$ 一路往上衝",
+              "on": "個數#2"
+            },
+            {
+              "do": "write",
+              "line": "• 發散、跳來跳去：$s_n$ 定不下來",
+              "on": "跳去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$1+1+1+\\cdots$：$s_n=n\\to\\infty$，發散"
+          ],
+          "say": "例如 1 加 1 加 1 一直加，前 n 項的和就是 n，衝到無限大，發散。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{2^n}$：$n$ 越大，越小"},
-            {"do":"write","line":"${{z:\\frac{1}{2^n}}}\\to 0$，所以 $s_n\\to 1$","on":"趨近零"}
-          ] },
-        { "show": ["$1+1+1+\\cdots$"],
-          "note": "$s_n=n\\to\\infty$：發散。",
-          "say": "每一項都是一，加 n 項就是 n，一路跑到無限大，發散。",
+            {
+              "do": "write",
+              "line": "例：$1+1+1+\\cdots$：$s_n=n\\to\\infty$，發散"
+            },
+            {
+              "do": "write",
+              "line": "　寫 $\\sum a_n=\\infty$ 只是說明它怎麼發散，仍然是發散",
+              "color": "violet",
+              "on": "項的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$0.999\\dots$ 是多少？",
+            "$0.999\\dots=\\sum_{n=1}^{\\infty}\\frac9{10^n}$"
+          ],
+          "say": "看一個有名的例子：0.999 一直下去。它是 10 的 n 次方分之 9，從 n 等於 1 加到無限大。",
           "board": [
-            {"do":"write","line":"$1+1+1+\\cdots$：$s_n=n\\to{{inf:\\infty}}$"},
-            {"do":"focus","term":"inf","on":"無限大"}
-          ] },
-        { "show": ["$1-1+1-1+\\cdots$"],
-          "note": "$s_n$：1、0、1、0、…",
-          "say": "一減一加一減一，部分和在一和零之間來回跳，沒有極限，也是發散。",
+            {
+              "do": "write",
+              "line": "例：$0.999\\dots$ 是多少？"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0.999\\dots=\\sum_{n=1}^{\\infty}\\frac9{10^n}$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_n=0.\\underbrace{99\\dots9}_{n}$，差 $1-s_n=\\dfrac1{10^n}$"
+          ],
+          "say": "前 n 項的和是 n 個 9 的小數，它跟 1 差 10 的 n 次方分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1-1+1-1+\\cdots$","on":"一減一#1"},
-            {"do":"write","line":"$s_n$：${{j:1,0,1,0,\\dots}}$","on":"部分和"},
-            {"do":"underline","term":"j","label":"來回跳","on":"來回跳"}
-          ] }
+            {
+              "do": "write",
+              "line": "$s_n=0.\\underbrace{99\\dots9}_{n}$，差 $1-s_n=\\dfrac1{10^n}$"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "兩個數列",
-      "beats": [
-        { "show": ["各項 $a_n$　部分和 $s_n$"],
-          "note": "收斂說的是 $s_n$，不是 $a_n$。",
-          "say": "一個級數有兩個數列：一項一項的 a n，和加起來的 s n。級數收斂，說的是 s n 有極限。",
-          "board": [
-            {"do":"write","line":"各項 ${{a:a_n}}$　部分和 ${{s:s_n}}$","tint":{"a":"blue","s":"violet"}},
-            {"do":"underline","term":"s","label":"收斂看它","on":"說的是 s n"}
-          ] },
-        { "show": ["各項 $\\to 0$，部分和 $\\to 1$"],
-          "note": "$\\frac{1}{2}+\\frac{1}{4}+\\cdots$ 的兩個數列。",
-          "say": "像二分之一加四分之一那個級數，各項趨近零，部分和卻趨近一。兩個極限不一樣。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{2}+\\frac{1}{4}+\\cdots$：${{a:a_n}}\\to {{z:0}}$，${{s:s_n}}\\to {{o:1}}$","on":"像二分之一"},
-            {"do":"focus","term":"z","on":"各項趨近零"},
-            {"do":"focus","term":"o","on":"部分和卻"}
-          ] },
-        { "show": ["$\\sum(a_n+b_n)=\\sum a_n+\\sum b_n$","$\\sum c\\cdot a_n=c\\sum a_n$"],
-          "note": "兩個級數都收斂時才能這樣拆。",
-          "say": "兩個收斂的級數可以分開加，常數也可以提出去。部分和是有限和，再用極限定律。",
-          "board": [
-            {"do":"write","line":"$\\sum(a_n+b_n)=\\sum a_n+\\sum b_n$"},
-            {"do":"write","line":"$\\sum c\\cdot a_n=c\\sum a_n$","on":"常數"}
-          ] },
-        { "show": ["$\\sum_{n=1}^{\\infty}$ 與 $\\sum_{n=5}^{\\infty}$：斂散相同"],
-          "note": "去掉前面有限項，和會變。",
-          "say": "拿掉前面有限幾項，部分和只差一個固定的數，收不收斂不變，可是和會變。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum_{n=1}^{\\infty}a_n$ 與 ${{f:\\sum_{n=5}^{\\infty}a_n}}$：斂散相同","on":"拿掉前面"},
-            {"do":"underline","term":"f","on":"收不收斂"}
-          ] }
-      ],
-      "key": "分清各項 $a_n$ 與部分和 $s_n$",
-      "check": 3
-    },
-    {
-      "title": "循環小數",
-      "beats": [
-        { "show": ["$0.333\\dots=\\sum_{n=1}^{\\infty}\\frac{3}{10^n}$"],
-          "note": "$\\frac{3}{10}+\\frac{3}{100}+\\frac{3}{1000}+\\cdots$",
-          "say": "零點三三三，其實就是十分之三，加百分之三，加千分之三，一直加下去。",
-          "board": [
-            {"do":"write","line":"$0.333\\dots=\\sum_{n=1}^{\\infty}\\frac{3}{10^n}$"},
-            {"do":"write","line":"$=\\frac{3}{10}+\\frac{3}{100}+\\frac{3}{1000}+\\cdots$","on":"十分之三"}
-          ] },
-        { "show": ["$s_n=0.33\\dots3$（$n$ 個 3）"],
-          "say": "部分和就是有 n 個三的小數。它跟三分之一差多少？",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{s:s_n}}=0.33\\dots3$（$n$ 個 3）","tint":{"s":"violet"},"on":"部分和"},
-            {"do":"write","line":"$\\frac{1}{3}-{{s:s_n}}={{q:?}}$","on":"它跟"}
-          ] },
-        { "show": ["前 $n$ 位抵消，剩下往右移 $n$ 位"],
-          "note": "$0.333\\dots$ 減掉前 $n$ 個 3。",
-          "say": "三分之一是三一直下去，減掉前 n 個三，前 n 位抵消。剩下的三三三往右移 n 位，就是三分之一除以十的 n 次方。",
-          "board": [
-            {"do":"write","line":"$0.333\\dots-0.33\\dots3$：前 $n$ 位抵消","on":"減掉"},
-            {"do":"write","line":"剩下 $0.333\\dots$ 往右移 $n$ 位","on":"往右移"}
-          ] },
-        { "show": ["$\\frac{1}{3}-s_n=\\frac{1}{3}\\cdot\\frac{1}{10^n}$"],
-          "say": "差的剛好是三分之一乘十的 n 次方分之一。所以部分和是三分之一乘上一減十的負 n 次方。",
-          "board": [
-            {"do":"transform","line":"$\\frac{1}{3}-{{s:s_n}}=\\frac{1}{3}\\cdot{{t:\\frac{1}{10^n}}}$"},
-            {"do":"write","line":"${{s:s_n}}=\\frac{1}{3}(1-{{t2:10^{-n}}})$","on":"所以部分和"}
-          ] },
-        { "show": ["10 的 $n$ 次方：10、100、1000……"],
-          "note": "分母每次乘 10，$10^{-n}$ 就是它的倒數。",
-          "say": "十的 n 次方是十、一百、一千，每次乘十，要多大有多大。倒數就是十的負 n 次方，要多小有多小，趨近零。",
-          "board": [
-            {"do":"write","line":"$10^n$：10、100、1000、$\\dots$"},
-            {"do":"write","line":"${{m:10^{-n}}}=\\frac{1}{10^n}\\to 0$","on":"倒數"}
-          ] }
-      ],
-      "key": "寫出 $s_n$ 和目標的差，看它趨近 $0$",
       "predict": {
-        "ask": "$s_n=\\frac{1}{3}(1-10^{-n})$，$n\\to\\infty$ 時？",
+        "ask": "$0.999\\dots$ 等於多少？",
         "options": [
           {
-            "label": "$\\to\\frac{1}{3}$",
+            "label": "剛好是 $1$",
             "correct": true
           },
           {
-            "label": "永遠比 $\\frac{1}{3}$ 小，所以沒有極限",
-            "why": "每個 $s_n$ 都比 $\\frac{1}{3}$ 小，但 $10^{-n}\\to 0$，極限就是 $\\frac{1}{3}$。"
+            "label": "比 $1$ 小一點點",
+            "why": "每個 $s_n$ 都比 $1$ 小，但級數的和是 $s_n$ 的==極限==，不是某一個 $s_n$"
           },
           {
-            "label": "$\\to 0.333$",
-            "why": "$0.333$ 只是 $s_3$，一個有限的部分和；極限是 $\\frac{1}{3}$。"
+            "label": "發散",
+            "why": "$s_n$ 被 $1$ 擋住、一路往上爬，而且越來越接近 $1$，有極限"
           }
         ]
       }
     },
     {
-      "title": "$0.999\\dots=1$",
+      "title": "三種結局",
       "beats": [
-        { "show": ["$\\frac{9}{10^n}=3\\cdot\\frac{3}{10^n}$"],
-          "note": "每一項是上一題的 3 倍。",
-          "say": "零點九九九，每一項是剛才那個級數的三倍。那個級數收斂，可以整個乘三。",
+        {
+          "show": [
+            "$0.999\\dots=\\lim_{n\\to\\infty}\\Big(1-\\frac1{10^n}\\Big)=1$"
+          ],
+          "say": "答案剛好是 1。每一個部分和都比 1 小，但級數的和是極限，不是某一個部分和。極限就是 1。",
           "board": [
-            {"do":"write","line":"$\\frac{9}{10^n}={{k:3}}\\cdot\\frac{3}{10^n}$"},
-            {"do":"focus","term":"k","label":"三倍","on":"三倍"}
-          ] },
-        { "show": ["$\\sum\\frac{9}{10^n}=3\\cdot\\frac{1}{3}=1$"],
-          "say": "三乘三分之一，就是一。所以零點九九九等於一。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle 0.999\\dots=\\lim_{n\\to\\infty}\\Big(1-\\frac1{10^n}\\Big)=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "數的"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "部分和一直跳",
+      "beats": [
+        {
+          "show": [
+            "例：$1-1+1-1+\\cdots$ 收斂嗎？"
+          ],
+          "say": "再看這個：1 減 1 加 1 減 1，一直下去。收斂嗎？",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{9}{10^n}=3\\cdot\\frac{1}{3}={{r:1}}$"},
-            {"do":"box","term":"r","color":"green","on":"就是一"}
-          ] },
-        { "show": ["是 $1-10^{-n}$ 的極限，不是「差一點點」"],
-          "say": "差一點點的，是某一個有限的部分和。零點九九九指的是極限，而極限剛好是一。",
+            {
+              "do": "write",
+              "line": "例：$1-1+1-1+\\cdots$ 收斂嗎？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_1=1,\\ s_2=0,\\ s_3=1,\\ s_4=0,\\ \\dots$"
+          ],
+          "say": "一個一個加：前 1 項是 1，前 2 項是 0，前 3 項又是 1，前 4 項又是 0。",
           "board": [
-            {"do":"write","line":"$s_n=1-10^{-n}$：差一點點"},
-            {"do":"write","line":"$0.999\\dots=\\lim s_n$","on":"指的是極限"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_1=1,\\ s_2=0,\\ s_3=1,\\ s_4=0,\\ \\dots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_n$ 在 $1$ 和 $0$ 之間一直跳，沒有極限",
+            "$\\sum_{n=1}^{\\infty}(-1)^{n+1}\\ \\text{發散}$"
+          ],
+          "say": "部分和在 1 和 0 之間一直跳，沒有極限，所以這個級數發散。它沒有和，不是 0 也不是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s_n$ 在 $1$ 和 $0$ 之間一直跳，沒有極限"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\sum_{n=1}^{\\infty}(-1)^{n+1}\\ \\text{發散}}}$",
+              "color": "red",
+              "on": "沒有#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "它沒"
+            }
+          ]
+        },
+        {
+          "show": [
+            "陷阱：亂加括號會得到兩個答案",
+            "$(1-1)+(1-1)+\\cdots=0$"
+          ],
+          "say": "如果亂加括號：兩個兩個一組，每組是 0，好像和是 0；先留下第一個 1，後面兩兩一組，好像和是 1。同一個式子兩個答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "陷阱：亂加括號會得到兩個答案"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (1-1)+(1-1)+\\cdots=0$",
+              "on": "好像#1"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1+(-1+1)+(-1+1)+\\cdots=1$",
+              "color": "red",
+              "on": "一組#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "發散的級數不能當成普通加法隨便搬動"
+          ],
+          "say": "這說明：發散的級數不是普通的加法，不能隨便加括號、搬來搬去。一定要回到部分和去看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "發散的級數不能當成普通加法隨便搬動",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　加括號等於只看 $s_2,s_4,\\dots$ 或 $s_1,s_3,\\dots$ 這些子數列；收斂的級數加括號沒問題，發散的就不一定",
+              "color": "violet",
+              "on": "便加"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個數列，不要混在一起",
+      "beats": [
+        {
+          "show": [
+            "一個級數牽涉兩個數列：",
+            "• 各項 $a_n$：加進去的那一項"
+          ],
+          "say": "一個級數裡面藏著兩個數列，一定要分清楚。各項 a n，是第 n 次加進去的那一項；部分和 s n，是加到目前為止的總和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一個級數牽涉兩個數列："
+            },
+            {
+              "do": "write",
+              "line": "• 各項 $a_n$：加進去的那一項",
+              "on": "各項"
+            },
+            {
+              "do": "write",
+              "line": "• 部分和 $s_n$：加到目前為止的總和",
+              "on": "部分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "級數的和是 $\\lim s_n$，不是 $\\lim a_n$"
+          ],
+          "say": "級數的和，是部分和的極限，不是各項的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "級數的和是 $\\lim s_n$，不是 $\\lim a_n$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\sum\\frac1{2^n}$：",
+            "$\\begin{array}{c|cccc}n&1&2&3&\\to\\infty\\\\\\hline a_n&\\frac12&\\frac14&\\frac18&0\\\\ s_n&\\frac12&\\frac34&\\frac78&1\\end{array}$"
+          ],
+          "say": "對照一下。2 的 n 次方分之 1：各項越來越小，趨近 0；部分和趨近 1，所以和是 1，不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum\\frac1{2^n}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{array}{c|cccc}n&1&2&3&\\to\\infty\\\\\\hline a_n&\\frac12&\\frac14&\\frac18&0\\\\ s_n&\\frac12&\\frac34&\\frac78&1\\end{array}}$",
+              "on": "趨近#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\sum(-1)^{n+1}$：",
+            "$\\begin{array}{c|ccccc}n&1&2&3&4&\\cdots\\\\\\hline a_n&1&-1&1&-1&\\cdots\\\\ s_n&1&0&1&0&\\cdots\\end{array}$"
+          ],
+          "say": "1 減 1 加 1 這個級數：各項在 1 和負 1 之間跳，部分和在 1 和 0 之間跳。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum(-1)^{n+1}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{array}{c|ccccc}n&1&2&3&4&\\cdots\\\\\\hline a_n&1&-1&1&-1&\\cdots\\\\ s_n&1&0&1&0&\\cdots\\end{array}}$",
+              "on": "之間#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{3^n}$ 的部分和 $s_n=\\dfrac12\\Big(1-\\dfrac1{3^n}\\Big)$。級數的和是？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "基本規則",
+      "beats": [
+        {
+          "show": [
+            "$\\sum a_n=A$、$\\sum b_n=B$ 都收斂，則",
+            "$\\sum_{n=1}^{\\infty}(a_n\\pm b_n)=A\\pm B,\\qquad \\sum_{n=1}^{\\infty}c\\,a_n=cA$"
+          ],
+          "say": "最後是基本規則。如果兩個級數都收斂，和分別是 A 和 B，那逐項相加的級數和是 A 加 B，相減是 A 減 B；每項乘上常數 c，和就變成 c 倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum a_n=A$、$\\sum b_n=B$ 都收斂，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\sum_{n=1}^{\\infty}(a_n\\pm b_n)=A\\pm B,\\qquad \\sum_{n=1}^{\\infty}c\\,a_n=cA}}$",
+              "on": "那逐"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "每項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：部分和 $s_n\\to A$，$t_n\\to B$",
+            "$\\sum_{k=1}^{n}(a_k+b_k)=s_n+t_n\\ \\to\\ A+B$"
+          ],
+          "say": "證明只要看部分和。逐項相加的級數，前 n 項的和就是兩個部分和相加，再用數列極限的加法定律，趨近 A 加 B。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：部分和 $s_n\\to A$，$t_n\\to B$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{k=1}^{n}(a_k+b_k)=s_n+t_n\\ \\to\\ A+B$",
+              "on": "項的"
+            },
+            {
+              "do": "write",
+              "line": "　乘常數一樣：前 $n$ 項是 $c\\,s_n\\to cA$",
+              "color": "violet",
+              "on": "數列"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來不行：$\\sum(a_n+b_n)$ 收斂，不代表各自收斂"
+          ],
+          "say": "但是反過來不行。相加以後收斂，不代表兩個各自收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來不行：$\\sum(a_n+b_n)$ 收斂，不代表各自收斂",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=1$，$b_n=-1$：$\\sum(a_n+b_n)=\\sum0=0$，但 $\\sum1$ 發散"
+          ],
+          "say": "例如 a n 都是 1，b n 都是負 1。相加每項都是 0，和是 0；可是 1 加 1 加 1 本身是發散的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$a_n=1$，$b_n=-1$：$\\sum(a_n+b_n)=\\sum0=0$，但 $\\sum1$ 發散"
+            },
+            {
+              "do": "write",
+              "line": "　所以拆開之前，要先確定拆出來的每一個都收斂",
+              "color": "violet",
+              "on": "和是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "有限項不影響收斂",
+      "beats": [
+        {
+          "show": [
+            "從第 $N$ 項開始加：",
+            "$\\sum_{n=N}^{\\infty}a_n\\ \\text{的部分和}=s_n-s_{N-1}$"
+          ],
+          "say": "再一條規則：去掉前面有限項。從第 N 項開始加，它的部分和就是原來的部分和，減掉前 N 減 1 項的和，一個固定的數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從第 $N$ 項開始加："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=N}^{\\infty}a_n\\ \\text{的部分和}=s_n-s_{N-1}$",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_{N-1}$ 是固定的數：$s_n$ 有極限 ⇔ $s_n-s_{N-1}$ 有極限",
+            "$\\sum_{n=1}^{\\infty}a_n=(a_1+\\cdots+a_{N-1})+\\sum_{n=N}^{\\infty}a_n$"
+          ],
+          "say": "減掉一個固定的數，有沒有極限不會改變。所以去掉或加上有限項，收斂還是收斂，發散還是發散；只是收斂時，和會差那幾項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s_{N-1}$ 是固定的數：$s_n$ 有極限 ⇔ $s_n-s_{N-1}$ 有極限"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\sum_{n=1}^{\\infty}a_n=(a_1+\\cdots+a_{N-1})+\\sum_{n=N}^{\\infty}a_n}}$",
+              "on": "不會"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "收斂#1"
+            },
+            {
+              "do": "write",
+              "line": "　跟數列一樣：收不收斂只看尾巴",
+              "color": "violet",
+              "on": "只是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=1}^{\\infty}a_n=2$，$\\displaystyle\\sum_{n=1}^{\\infty}b_n=3$。$\\displaystyle\\sum_{n=1}^{\\infty}(2a_n-b_n)=$？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\sum a_n$ 收斂、$\\sum b_n$ 發散，$\\sum(a_n+b_n)$ 呢？"
+          ],
+          "say": "再一題。"
+        }
       ],
       "check": 2
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\sum a_n=\\lim s_n$，$s_n=a_1+\\cdots+a_n$",
+            "• 極限是一個數：收斂；否則發散（衝到 $\\infty$ 或跳來跳去）"
+          ],
+          "say": "整理一下：級數的和是部分和的極限；有極限叫收斂，沒有叫發散。和看的是部分和，不是各項。收斂的級數可以逐項加減、乘常數；去掉有限項，不影響收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\sum a_n=\\lim s_n$，$s_n=a_1+\\cdots+a_n$"
+            },
+            {
+              "do": "write",
+              "line": "• 極限是一個數：收斂；否則發散（衝到 $\\infty$ 或跳來跳去）",
+              "on": "分和#1"
+            },
+            {
+              "do": "write",
+              "line": "• $0.333\\dots=\\frac13$，$0.999\\dots=1$；$1-1+1-\\cdots$ 發散",
+              "on": "沒有"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個數列：和看 $s_n$，不是 $a_n$",
+              "on": "分和#2"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂的級數可以逐項加減、乘常數",
+              "on": "數可"
+            },
+            {
+              "do": "write",
+              "line": "• 去掉或加上有限項，不影響收斂",
+              "on": "去掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：部分和"
+          ],
+          "say": "下一課，我們專門練習部分和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：部分和"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

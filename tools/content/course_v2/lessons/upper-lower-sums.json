@@ -1,377 +1,127 @@
 {
   "id": "upper-lower-sums",
   "title": "上和與下和",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["partitions", "sup-inf"],
-  "next": ["darboux-integral"],
-  "related": ["improper-singular"],
-  "objectives": [
-    "對有界函數與給定分割，算出上和 $U(f,P)$ 與下和 $L(f,P)$。",
-    "說得出 $L(f,P)\\le$ 任何 Riemann 和 $\\le U(f,P)$。",
-    "證明加細會讓下和變大、上和變小，並推出任何下和 $\\le$ 任何上和。"
+  "prerequisites": [
+    "partitions",
+    "sup-inf"
   ],
-  "visual": "y = x² 在 [−1, 1] 上，每一段畫兩個長方形：高度到該段最高點的（上和，淺色）與到最低點的（下和，深色）。點擊加入分割點，兩組長方形即時重畫：上和的總面積只減不增，下和只增不減，夾住曲線下面積 2/3。",
+  "next": [
+    "darboux-integral"
+  ],
+  "related": [
+    "improper-singular"
+  ],
+  "objectives": [
+    "對有界函數與給定分割，算出上和 $U(f,P)$ 與下和 $L(f,P)$",
+    "說得出 $L(f,P)\\le$ 任何 Riemann 和 $\\le U(f,P)$",
+    "證明加細會讓下和變大、上和變小，並推出任何下和 $\\le$ 任何上和"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從「取一個點」到「取最壞的情況」",
+      "heading": "① 從取一點到最壞情況",
       "body": [
-        "Riemann 和要在每段裡挑一個點 $t_i$，答案跟挑法有關。Darboux 的想法是乾脆不挑：每段取函數的上確界當高度，得到一個一定不會低估的和；取下確界，得到一個一定不會高估的和。真正的面積（如果有的話）被夾在兩者之間。",
-        "直覺，不是證明：這裡還沒定義「面積」，上面那句只是動機。下一課才用這兩個和來定義積分。"
-      ],
-      "collapsible": false
+        "Riemann 和的每一項 $f(t_i)\\,\\Delta x_i$：看你取哪個 $t_i$",
+        "不要選了：每一段都取最高和最低",
+        "「最高」要用 $\\sup$：最大值不一定取得到",
+        "例：$f(x)=x$（$x<1$），$f(1)=0$：$[\\frac12,1]$ 上沒有最大值，但 $\\sup=1$",
+        "所以要求 $f$ 有界：上確界、下確界才存在（完備性）"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $f$ 在 $[a,b]$ 上有界，$P=\\{x_0,\\dots,x_n\\}$ 是分割。令 $M_i=\\sup\\{f(x):x\\in[x_{i-1},x_i]\\}$，$m_i=\\inf\\{f(x):x\\in[x_{i-1},x_i]\\}$。上和 $U(f,P)=\\sum M_i\\Delta x_i$，下和 $L(f,P)=\\sum m_i\\Delta x_i$。",
-        "因為 $m_i\\le f(t_i)\\le M_i$，任何取點的 Riemann 和都夾在中間：$L(f,P)\\le\\sum f(t_i)\\Delta x_i\\le U(f,P)$。",
-        "有界是必要的：$f(x)=\\frac{1}{x}$（$x\\in(0,1]$），$f(0)=0$ 在 $[0,1]$ 上無界，含 0 的那一段沒有有限的上確界，$U(f,P)$ 根本沒有定義。這種函數要用〈瑕積分 II：奇異點〉另外處理。"
+        "$f$ 在 $[a,b]$ 上有界，$P=\\{x_0,\\dots,x_n\\}$。第 $i$ 段：",
+        "例：$f(x)=x^2$，$[0,1]$ 等分 $4$ 段。遞增 ⇒ $M_i$ 在右端，$m_i$ 在左端"
       ],
-      "tex": ["U(f,P)=\\sum_{i=1}^{n}M_i\\,\\Delta x_i,\\qquad L(f,P)=\\sum_{i=1}^{n}m_i\\,\\Delta x_i"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}M_i&=\\sup\\{f(x):x\\in[x_{i-1},x_i]\\}\\\\m_i&=\\inf\\{f(x):x\\in[x_{i-1},x_i]\\}\\end{aligned}",
+        "\\begin{aligned}U(f,P)&=\\sum_{i=1}^n M_i\\,\\Delta x_i\\\\L(f,P)&=\\sum_{i=1}^n m_i\\,\\Delta x_i\\end{aligned}",
+        "\\begin{aligned}U&=\\tfrac14\\big(\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}+\\tfrac{16}{16}\\big)=\\tfrac{30}{64}=\\tfrac{15}{32}\\\\L&=\\tfrac14\\big(0+\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}\\big)=\\tfrac{14}{64}=\\tfrac7{32}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 遞減：反過來",
+      "body": [
+        "$f(x)=\\frac1x$，$[1,2]$ 等分 $5$ 段：$x_i=1+\\frac i5$。遞減 ⇒ $M_i$ 在左端",
+        "$U-L=\\frac15-\\frac1{10}=\\frac1{10}$：中間全部相消",
+        "真正的積分 $\\ln2\\approx0.6931$ 夾在中間"
+      ],
+      "tex": [
+        "L=\\frac15\\sum_{i=1}^5\\frac1{1+\\frac i5}=\\sum_{i=1}^5\\frac1{5+i}=\\frac16+\\frac17+\\frac18+\\frac19+\\frac1{10}",
+        "U=\\frac15+\\frac16+\\frac17+\\frac18+\\frac19",
+        "L=\\tfrac{1627}{2520}\\approx0.6456,\\quad U=\\tfrac{1879}{2520}\\approx0.7456"
+      ]
     },
     {
       "heading": "③ 兩個關鍵性質",
       "body": [
-        "加細引理：若 $P^*$ 是 $P$ 的加細，則 $L(f,P)\\le L(f,P^*)\\le U(f,P^*)\\le U(f,P)$。多切幾刀，夾得只會更緊。",
-        "推論：對任意兩個分割 $P$、$Q$，$L(f,P)\\le U(f,Q)$。任何下和都不超過任何上和，即使它們來自完全不相干的分割。"
+        "(a) 任何取點 $t_i\\in[x_{i-1},x_i]$：",
+        "因為 $m_i\\le f(t_i)\\le M_i$，乘 $\\Delta x_i>0$ 再加總",
+        "再往外：$m(b-a)\\le L\\le U\\le M(b-a)$，$m,M$ 是整個 $[a,b]$ 上的 $\\inf,\\sup$",
+        "(b) 加細：$P\\subseteq P^*$ ⇒",
+        "例：$f(x)=x^2$ 在 $[-1,1]$",
+        "$P=\\{-1,0,1\\}$：每段 $\\sup=1$，$\\inf=0$",
+        "$P^*=\\{-1,-\\frac12,0,\\frac12,1\\}$："
       ],
-      "collapsible": false
+      "tex": [
+        "L(f,P)\\le\\sum_{i=1}^n f(t_i)\\,\\Delta x_i\\le U(f,P)",
+        "L(f,P)\\le L(f,P^*)\\le U(f,P^*)\\le U(f,P)",
+        "U=2,\\quad L=0",
+        "\\begin{aligned}U&=\\tfrac12\\big(1+\\tfrac14+\\tfrac14+1\\big)=\\tfrac54\\\\L&=\\tfrac12\\big(\\tfrac14+0+0+\\tfrac14\\big)=\\tfrac14\\end{aligned}"
+      ]
     },
     {
-      "heading": "證明：加細引理與推論",
+      "heading": "③ 看它夾緊",
       "body": [
-        "只要證「多加一個點」的情形，多加幾個點就重複使用。設新點 $y$ 落在 $[x_{k-1},x_k]$ 內部，把這段切成 $[x_{k-1},y]$ 與 $[y,x_k]$，兩段上的上確界記為 $M'$、$M''$。因為小區間是大區間的子集，$M'\\le M_k$、$M''\\le M_k$（子集的上確界不超過原集合的上確界）。其他段不變，所以 $U(f,P^*)-U(f,P)=M'(y-x_{k-1})+M''(x_k-y)-M_k(x_k-x_{k-1})\\le0$。下和同理，子集的下確界 $\\ge$ 原下確界，所以 $L(f,P^*)\\ge L(f,P)$。中間的 $L(f,P^*)\\le U(f,P^*)$ 來自每段 $m_i\\le M_i$。",
-        "推論：取共同加細 $P\\cup Q$，由引理 $L(f,P)\\le L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)$。"
+        "上下確界不一定在端點：不單調時要看整段",
+        "回到 $x^2$ 在 $[0,1]$：從 $4$ 段切到 $16$ 段"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "不挑點，取最壞",
-      "beats": [
-        { "show": ["Riemann 和：每段挑一個 $t_i$"],
-          "note": "答案跟挑法有關。",
-          "say": "Riemann 和要在每一段裡挑一個點，挑法不同，答案就不同。",
-          "board": [
-            {"do":"write","line":"$\\sum f({{t:t_i}})\\,\\Delta x_i$"},
-            {"do":"focus","term":"t","on":"挑一個點"}
-          ] },
-        { "show": ["$M_i=\\sup$，$m_i=\\inf$（第 $i$ 段上）"],
-          "say": "Darboux 的想法是乾脆不挑：每一段取函數的上確界當高度，或者取下確界。",
-          "board": [
-            {"do":"write","line":"${{mx:M_i}}=\\sup f$，${{mn:m_i}}=\\inf f$","tint":{"mx":"violet","mn":"blue"}},
-            {"do":"focus","term":"mx","color":"violet","on":"上確界"},
-            {"do":"focus","term":"mn","color":"blue","on":"或者"}
-          ] },
-        { "show": ["$U(f,P)=\\sum M_i\\Delta x_i$","$L(f,P)=\\sum m_i\\Delta x_i$"],
-          "say": "用上確界得到上和，一定不會低估；用下確界得到下和，一定不會高估。",
-          "board": [
-            {"do":"write","line":"$U(f,P)=\\sum M_i\\Delta x_i$"},
-            {"do":"write","line":"$L(f,P)=\\sum m_i\\Delta x_i$","on":"用下確界"}
-          ] },
-        { "show": ["$f$ 必須有界"],
-          "note": "$\\frac{1}{x}$ 在含 0 的段沒有有限的上確界。",
-          "say": "前提是函數有界。像一除以 x 在零附近衝上去，那一段沒有上確界，上和根本沒定義。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f$ 必須有界","on":"前提"},
-            {"do":"write","line":"$\\frac{1}{x}$ 含 0 的段：${{s:\\sup}}$ 不存在","on":"一除以 x"},
-            {"do":"strike","term":"s","label":"沒定義","on":"沒有上確界"}
-          ] },
-        { "show": ["$m_i\\le f(t_i)\\le M_i$"],
-          "note": "$t_i$ 在那一段裡。",
-          "say": "挑到的 t i 在那一段裡，f of t i 就是那一段的其中一個值。所以不會比最低的 m i 更低，也不會比最高的 M i 更高。",
-          "board": [
-            {"do":"write","line":"${{a:m_i}}\\le f(t_i)\\le {{b:M_i}}$"},
-            {"do":"focus","term":"a","color":"blue","on":"最低"},
-            {"do":"focus","term":"b","color":"violet","on":"最高"}
-          ] }
-      ],
-      "predict": {
-        "ask": "任何取點的 Riemann 和 $\\sum f(t_i)\\Delta x_i$ 落在哪裡？",
-        "options": [
-          {
-            "label": "$L(f,P)$ 與 $U(f,P)$ 之間",
-            "correct": true
-          },
-          {
-            "label": "可能比 $U(f,P)$ 還大",
-            "why": "$f(t_i)\\le M_i$，每一項都不超過上和的對應項。"
-          },
-          {
-            "label": "一定等於兩者的平均",
-            "why": "沒有這回事；它只是被夾住：$m_i\\le f(t_i)\\le M_i$。"
-          }
-        ]
-      }
+      "tex": [
+        "U(f,P_{16})\\approx0.3652,\\quad L(f,P_{16})\\approx0.3027"
+      ]
     },
     {
-      "title": "遞增：上確界在右端",
-      "beats": [
-        { "show": ["$f(x)=x^2$，$[0,1]$ 等分 4 段"],
-          "note": "$\\Delta x=\\frac{1}{4}$。",
-          "say": "x 平方在零到一，等分成四段，每段寬四分之一。",
-          "board": [
-            {"do":"write","line":"$f(x)=x^2$，$[0,1]$"},
-            {"do":"write","line":"$\\Delta x={{d:\\frac{1}{4}}}$","on":"每段寬"}
-          ] },
-        { "show": ["遞增：$M_i$ 右端、$m_i$ 左端"],
-          "say": "函數在這裡遞增，所以每段的上確界在右端點，下確界在左端點。",
-          "board": [
-            {"do":"write","line":"遞增：${{mx:M_i}}$ 在右端、${{mn:m_i}}$ 在左端","tint":{"mx":"violet","mn":"blue"}},
-            {"do":"focus","term":"mx","color":"violet","on":"上確界"},
-            {"do":"focus","term":"mn","color":"blue","on":"下確界在"}
-          ] },
-        { "show": ["$U=\\frac{1+4+9+16}{64}=\\frac{15}{32}$"],
-          "say": "上和用右端點：一加四加九加十六，除以六十四，等於三十二分之十五。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$U=\\frac{1+4+9+16}{64}$","on":"一加四"},
-            {"do":"transform","line":"$U=\\frac{1+4+9+16}{64}={{r:\\frac{15}{32}}}$","on":"除以六十四"},
-            {"do":"box","term":"r","color":"green","on":"等於"}
-          ] }
+      "heading": "證明：加細引理",
+      "body": [
+        "策略：先只加一個點。只有那一段會變；範圍變小，下確界只會變大",
+        "設 $P^*=P\\cup\\{t\\}$，$x_{k-1}<t<x_k$，",
+        "小段 $\\subseteq[x_{k-1},x_k]$ ⇒ $m'\\ge m_k$，$m''\\ge m_k$",
+        "12B：$A\\subseteq B$ ⇒ $\\inf A\\ge\\inf B$（$B$ 的下界也是 $A$ 的下界）",
+        "其他段不變，所以",
+        "上和：$\\sup$ 在小範圍只會變小，同理 $U(f,P^*)\\le U(f,P)$",
+        "一般的 $P^*$：多出有限個點，一次加一個，用歸納法　$\\blacksquare$"
       ],
-      "predict": {
-        "ask": "下和 $L(f,P_4)$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{0+1+4+9}{64}=\\frac{7}{32}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{15}{32}$",
-            "why": "那是上和。下和用左端點：$0^2$、$(\\frac{1}{4})^2$、$(\\frac{2}{4})^2$、$(\\frac{3}{4})^2$。"
-          },
-          {
-            "label": "$\\frac{1}{3}$",
-            "why": "那是積分值，它夾在 $\\frac{7}{32}\\approx0.219$ 與 $\\frac{15}{32}\\approx0.469$ 之間。"
-          }
-        ]
-      }
+      "tex": [
+        "m'=\\inf_{[x_{k-1},t]}f,\\qquad m''=\\inf_{[t,x_k]}f",
+        "\\begin{aligned}&L(f,P^*)-L(f,P)\\\\&=(m'-m_k)(t-x_{k-1})\\\\&\\quad+(m''-m_k)(x_k-t)\\ \\ge0\\end{aligned}"
+      ]
     },
     {
-      "title": "遞減：反過來",
-      "beats": [
-        { "show": ["$f(x)=\\frac{1}{x}$，$[1,2]$ 等分 5 段"],
-          "note": "$\\Delta x=\\frac{1}{5}$。",
-          "say": "換一除以 x，在一到二，等分成五段，每段寬五分之一。",
-          "board": [
-            {"do":"write","line":"$f(x)=\\frac{1}{x}$，$[1,2]$"},
-            {"do":"write","line":"$\\Delta x={{d:\\frac{1}{5}}}$","on":"每段寬"}
-          ] },
-        { "show": ["遞減：$M_i$ 左端、$m_i$ 右端"],
-          "say": "這次函數遞減，上確界跑到左端點，下確界在右端點。",
-          "board": [
-            {"do":"write","line":"遞減：${{mx:M_i}}$ 在左端、${{mn:m_i}}$ 在右端","tint":{"mx":"violet","mn":"blue"}},
-            {"do":"focus","term":"mx","color":"violet","on":"左端點"},
-            {"do":"focus","term":"mn","color":"blue","on":"下確界在"}
-          ] },
-        { "show": ["$L=\\frac{1}{6}+\\frac{1}{7}+\\frac{1}{8}+\\frac{1}{9}+\\frac{1}{10}\\approx0.6456$"],
-          "say": "下和用右端點，化簡是六分之一一路加到十分之一，大約零點六四五六。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L=\\frac{1}{6}+\\dots+\\frac{1}{10}$","on":"化簡是"},
-            {"do":"write","line":"$\\approx0.6456$","on":"大約"}
-          ] },
-        { "show": ["$\\ln2=\\int_1^2\\frac{1}{x}\\,dx$","下和 $\\le$ 面積 $\\le$ 上和"],
-          "say": "自然對數二，就是一除以 x 在一到二之間，曲線下的面積。下和的長方形在曲線下，上和的蓋住曲線，所以夾在中間。",
-          "board": [
-            {"do":"write","line":"$\\ln2=\\int_1^2\\frac{1}{x}\\,dx$"},
-            {"do":"write","line":"下和 $\\le$ 面積 $\\le$ 上和","on":"下和的長方形"}
-          ] },
-        { "show": ["$U=\\frac{1}{5}+\\dots+\\frac{1}{9}\\approx0.7456$"],
-          "note": "$\\ln2\\approx0.6931$ 夾在中間。",
-          "say": "上和用左端點，五分之一加到九分之一。自然對數二夾在兩者中間。",
-          "board": [
-            {"do":"write","line":"$U=\\frac{1}{5}+\\dots+\\frac{1}{9}\\approx0.7456$"},
-            {"do":"write","line":"$L<{{i:\\ln2}}<U$","on":"自然對數"},
-            {"do":"underline","term":"i","on":"夾在"}
-          ] }
+      "heading": "證明：推論",
+      "body": [
+        "推論：任意兩個分割 $P$、$Q$，",
+        "策略：兩個分割比不了，就走共同加細",
+        "所有下和都在所有上和的左邊"
       ],
-      "check": 0
+      "tex": [
+        "L(f,P)\\le U(f,Q)",
+        "L(f,P)\\le L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)"
+      ]
     },
     {
-      "title": "不單調：最小值在內部",
-      "beats": [
-        { "show": ["$f(x)=x^2$，$[-1,1]$，$P=\\{-1,0,1\\}$"],
-          "say": "x 平方在負一到一，先只切成兩段：負一到零、零到一。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.35,1.35,-0.3,1.3],"curves":[{"expr":"x^2","domain":[-1.15,1.15],"color":"ink"}],"dashed":[[[0,0],[0,1.15]]],"points":[{"x":-1,"y":0},{"x":0,"y":0},{"x":1,"y":0}],"labels":[{"x":-1,"y":-0.2,"text":"-1","anchor":"middle"},{"x":0.1,"y":-0.2,"text":"0","anchor":"middle"},{"x":1,"y":-0.2,"text":"1","anchor":"middle"}],"ticks":false}}
-          ] },
-        { "show": ["兩段都是 $M=1$、$m=0$"],
-          "note": "要分段看單調性。",
-          "say": "左段函數遞減、右段遞增，兩段的上確界都是一，下確界都是 f 在零的值，零。",
-          "board": [
-            {"do":"write","line":"兩段都是 ${{mx:M=1}}$、${{mn:m=0}}$"},
-            {"do":"focus","term":"mx","on":"上確界都是一"},
-            {"do":"focus","term":"mn","on":"下確界都是"}
-          ] },
-        { "show": ["$U(f,P)=2$"],
-          "say": "所以上和是一加一等於二。下和呢？",
-          "board": [
-            {"do":"write","line":"$U(f,P)=1+1={{u:2}}$","on":"上和"},
-            {"do":"box","term":"u","color":"green","on":"等於二"}
-          ] },
-        { "show": ["$L(f,P)=m_1\\cdot1+m_2\\cdot1$"],
-          "note": "每段：最低的值乘寬度。",
-          "say": "下和要問每一段最低多低。兩段的最低點都在零，各乘寬度一，再加起來。",
-          "board": [
-            {"do":"write","line":"$L(f,P)={{a:m_1}}\\cdot1+{{b:m_2}}\\cdot1$"},
-            {"do":"focus","term":"a","color":"blue","on":"各乘寬度"}
-          ] }
-      ],
-      "key": "不單調就分段找最大與最小",
-      "check": 3
-    },
-    {
-      "title": "加細夾得更緊",
-      "beats": [
-        { "show": ["$P^*=\\{-1,-\\frac{1}{2},0,\\frac{1}{2},1\\}$"],
-          "say": "把剛剛的分割加細，多切二分之一和負二分之一，四段都長二分之一。",
-          "board": [
-            {"do":"write","line":"$P^*=\\{-1,{{n:-\\tfrac{1}{2}}},0,{{p:\\tfrac{1}{2}}},1\\}$"},
-            {"do":"focus","term":"p","on":"多切"},
-            {"do":"focus","term":"n","on":"和負二分之一"}
-          ] },
-        { "show": ["積分先當成曲線下的面積","$\\left[\\frac{x^3}{3}\\right]_{-1}^{1}=\\frac{2}{3}$"],
-          "note": "反導函數代入上限減下限。",
-          "say": "積分先當成曲線下的面積。反導函數是 x 三次方除以三，代入一減代入負一，結果是三分之二，剛好夾在中間。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.35,1.35,-0.3,1.3],"curves":[{"expr":"x^2","domain":[-1.15,1.15],"color":"ink"}],"fills":[{"expr":"x^2","from":-1,"to":1,"color":"blue"}]}},
-            {"do":"write","line":"$\\int_{-1}^{1}x^2dx=\\left[\\frac{x^3}{3}\\right]_{-1}^{1}$","on":"反導函數"},
-            {"do":"write","line":"$=\\frac{1}{3}-(-\\frac{1}{3})={{r:\\frac{2}{3}}}$","on":"代入一減"},
-            {"do":"box","term":"r","color":"green","on":"結果是"}
-          ] },
-        { "show": ["$U(f,P^*)=\\frac{5}{4}$，$L(f,P^*)=\\frac{1}{4}$"],
-          "note": "原來是 2 與 0；積分 $\\frac{2}{3}$ 在中間。",
-          "say": "上和從二降到四分之五，下和從零升到四分之一，積分三分之二一直夾在中間。",
-          "board": [
-            {"do":"write","line":"上和：$2\\to{{u:\\frac{5}{4}}}$","tint":{"u":"violet"}},
-            {"do":"write","line":"下和：$0\\to{{l:\\frac{1}{4}}}$","tint":{"l":"blue"},"on":"下和從零"},
-            {"do":"write","line":"${{l:\\frac{1}{4}}}\\le{{i:\\frac{2}{3}}}\\le{{u:\\frac{5}{4}}}$","on":"積分三分之二"},
-            {"do":"underline","term":"i","label":"積分","on":"夾在中間"}
-          ] },
-        { "show": ["$L(f,P)\\le L(f,P^*)\\le U(f,P^*)\\le U(f,P)$"],
-          "say": "這就是加細引理：多切幾刀，下和只會升、上和只會降，夾得只會更緊。證明在下一節。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{lo:L(f,P)\\le L(f,P^*)}}$","tint":{"lo":"blue"},"on":"下和只會升"},
-            {"do":"write","line":"${{up:U(f,P^*)\\le U(f,P)}}$","tint":{"up":"violet"},"on":"上和只會降"}
-          ] },
-        { "show": ["小段的 $\\sup$ 不超過大段的 $\\sup$"],
-          "say": "理由是小區間是大區間的一部分，部分的上確界不會比整體大。",
-          "board": [
-            {"do":"write","line":"小段 $\\subset$ 大段 ⇒ ${{s:\\sup}}$ 不會更大"},
-            {"do":"focus","term":"s","on":"部分的上確界"}
-          ] },
-        { "show": ["$[-1,1]$ 最高 $1$","$[0,\\frac{1}{2}]$ 最高 $\\frac{1}{4}$"],
-          "note": "小段的值都是大段的值。",
-          "say": "例：x 平方在負一到一最高是一，零到二分之一那小段只有四分之一。小段的值都在大段裡，大段的最高壓過全部。",
-          "board": [
-            {"do":"write","line":"$[-1,1]$ 最高 $1$"},
-            {"do":"write","line":"$[0,\\frac{1}{2}]$ 最高 $\\frac{1}{4}$","on":"零到二分之一"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "證明：多切一刀",
-      "beats": [
-        { "show": ["只證多加一個點，再重複"],
-          "say": "策略：只要證多加一個點的情形；多加幾個點，就一個一個加上去。",
-          "board": [
-            {"do":"write","line":"$P^*=P\\cup\\{y\\}$：只加一個點"},
-            {"do":"write","line":"多加幾個點：一個一個加","on":"多加幾個點"}
-          ] },
-        { "show": ["$y$ 切開 $[x_{k-1},x_k]$：上確界 $M'$、$M''$"],
-          "note": "其他段不變。",
-          "say": "新點 y 落在第 k 段裡，把它切成兩小段，兩段上的上確界叫 M 一撇、M 兩撇。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{y:y}}\\in[x_{k-1},x_k]$","tint":{"y":"blue"},"on":"新點 y"},
-            {"do":"write","line":"兩小段的上確界：${{m1:M'}}$、${{m2:M''}}$","on":"兩段上的上確界"}
-          ] },
-        { "show": ["$M'\\le M_k$，$M''\\le M_k$"],
-          "note": "子集的上確界不超過原集合的。",
-          "why": {"ask":"為什麼 $M'\\le M_k$？","say":"小段的上確界，為什麼不超過整段的？","options":[{"label":"小段是大段的子集","correct":true},{"label":"$f$ 遞增，左邊那段比較低","why":"$f$ 不必單調，$x^2$ 在 $[-1,1]$ 就不是；這裡只用到小段包含在大段裡。"},{"label":"小段比較短，上確界就比較小","why":"長短不決定高低，上確界可以一樣大；能保證的只有不超過，理由是子集。"}]},
-          "say": "小段是大段的一部分，部分的上確界不會比整體大。",
-          "board": [
-            {"do":"write","line":"${{m1:M'}}\\le M_k$，${{m2:M''}}\\le M_k$","on":"小段的上確界"},
-            {"do":"write","line":"小段 $\\subset$ 大段","why":true,"on":"一部分"}
-          ] },
-        { "show": ["$U(f,P^*)-U(f,P)\\le0$"],
-          "note": "兩小段的寬加起來是 $x_k-x_{k-1}$。",
-          "say": "上和只差在這一段：兩小段的高都不超過 M k，寬加起來是原來那段，所以上和只會降。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$U(f,P^*)-U(f,P){{z:\\le0}}$","on":"上和只差"},
-            {"do":"focus","term":"z","on":"所以上和"}
-          ] },
-        { "show": ["$L(f,P^*)\\ge L(f,P)$"],
-          "note": "子集的下確界 $\\ge$ 原下確界。",
-          "why": {"ask":"下和為什麼反過來變大？","say":"換成下和，為什麼反而只會升？","options":[{"label":"子集的下確界不小於原集合的","correct":true},{"label":"上和變小，下和就要變大","why":"上下和沒有此消彼長的關係；下和變大，靠的是子集的下確界大於等於原來的。"},{"label":"因為 $L(f,P^*)\\le U(f,P^*)$","why":"那是中間的不等式，來自每段 $m_i\\le M_i$；下和跟下和比，看的是下確界。"}]},
-          "say": "同樣的道理：小段的下確界，大於等於整段的下確界，所以下和只會升。",
-          "board": [
-            {"do":"write","line":"$L(f,P^*){{g:\\ge}}L(f,P)$","on":"換成下和"},
-            {"do":"write","line":"小段的 $\\inf\\ge$ 大段的 $\\inf$","why":true,"on":"小段的下確界"}
-          ] },
-        { "show": ["中間：$L(f,P^*)\\le U(f,P^*)$"],
-          "note": "每段 $m_i\\le M_i$。",
-          "say": "中間那個不等式最簡單：每一段的下確界都不超過上確界。四個量就排好了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{mid:L(f,P^*)\\le U(f,P^*)}}$","on":"不等式"},
-            {"do":"focus","term":"mid","label":"每段 m≤M","on":"每一段的下確界"},
-            {"do":"transform","line":"$L(f,P)\\le{{mid:L(f,P^*)\\le U(f,P^*)}}\\le U(f,P)$","color":"green","on":"四個量"}
-          ] }
-      ],
-      "key": "子集的 $\\sup$ 不超過原集合的 $\\sup$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "新點 $y$ 切開第 $k$ 段"
-          },
-          {
-            "label": "$M'\\le M_k$，$M''\\le M_k$",
-            "why": "要先切出兩小段，才有 $M'$、$M''$。"
-          },
-          {
-            "label": "$U(f,P^*)-U(f,P)\\le0$",
-            "why": "要先知道兩小段的高都不超過 $M_k$，才比得出上和。"
-          },
-          {
-            "label": "多加幾個點：重複使用",
-            "why": "要先證好加一個點的情形，才能一個一個加。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "任何下和都不超過任何上和",
-      "beats": [
-        { "show": ["$P$、$Q$ 不相干"],
-          "say": "現在拿兩個毫不相干的分割 P 和 Q，一個算下和，一個算上和。",
-          "board": [
-            {"do":"write","line":"$L(f,{{p:P}})$，$U(f,{{q:Q}})$","tint":{"p":"blue","q":"violet"}},
-            {"do":"focus","term":"p","color":"blue","on":"算下和"},
-            {"do":"focus","term":"q","color":"violet","on":"一個#2"}
-          ] },
-        { "show": ["$L(f,P)\\le L(f,P\\cup Q)$","$\\le U(f,P\\cup Q)\\le U(f,Q)$"],
-          "say": "用共同加細當橋：P 的下和升到聯集的下和，再到聯集的上和，再升到 Q 的上和。",
-          "board": [
-            {"do":"write","line":"$L(f,P)\\le{{a:L(f,P\\cup Q)}}$"},
-            {"do":"write","line":"${{a:L(f,P\\cup Q)}}\\le{{b:U(f,P\\cup Q)}}$","on":"再到"},
-            {"do":"write","line":"${{b:U(f,P\\cup Q)}}\\le U(f,Q)$","on":"再升到"}
-          ] }
-      ],
-      "check": 2
+      "heading": "重點整理",
+      "body": [
+        "• $M_i=\\sup$、$m_i=\\inf$（第 $i$ 段）；$f$ 要有界",
+        "• $U=\\sum M_i\\Delta x_i$，$L=\\sum m_i\\Delta x_i$：不必取點",
+        "• 遞增：$M_i$ 在右端；遞減：在左端；不單調：看整段",
+        "• $L\\le$ 任何 Riemann 和 $\\le U$",
+        "• 加細：$L$ 不減、$U$ 不增；任何 $L(f,P)\\le U(f,Q)$",
+        "下一課：Darboux 積分：兩邊夾到同一個數"
+      ]
     }
   ],
   "workedExamples": [
@@ -423,52 +173,1396 @@
   ],
   "checks": [
     {
-      "ask": "$f(x)=1-x$，$[0,1]$ 等分成 2 段。$U(f,P_2)$ 是？",
+      "ask": "$f(x)=1-x$，$P=\\{0,\\frac12,1\\}$。$U(f,P)=$？",
       "options": [
-        { "label": "$\\frac{3}{4}$", "correct": true },
-        { "label": "$\\frac{1}{4}$", "why": "你把右端點當上確界，但 $f$ 遞減，$M_i$ 在左端點：$(\\frac{1}{2})(1+\\frac{1}{2})=\\frac{3}{4}$；$\\frac{1}{4}$ 是下和。" },
-        { "label": "$\\frac{1}{2}$", "why": "那是積分值本身，上和要比它大（除非 $f$ 是常數）。" }
+        {
+          "label": "$\\frac34$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac14$",
+          "why": "那是下和：用了右端點 $\\frac12(\\frac12+0)$"
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "那是積分（三角形面積），不是上和"
+        },
+        {
+          "label": "$1$",
+          "why": "用了整個區間的 $\\sup=1$；上和要每段各取各的"
+        }
       ]
     },
     {
-      "ask": "$P^*$ 是 $P$ 的加細。下列何者一定成立？",
+      "ask": "已知 $L(f,P)=0.3$、$U(f,Q)=0.5$。$L(f,P\\cup Q)$ 可能是？",
       "options": [
-        { "label": "$U(f,P^*)\\le U(f,P)$", "correct": true },
-        { "label": "$U(f,P^*)\\ge U(f,P)$", "why": "方向反了。切細之後每小段的上確界不超過原段的上確界，上和只會變小或不變。" },
-        { "label": "$L(f,P^*)\\le L(f,P)$", "why": "下和的方向跟上和相反：小段的下確界 $\\ge$ 原段的下確界，所以下和變大或不變。" }
+        {
+          "label": "$0.35$",
+          "correct": true
+        },
+        {
+          "label": "$0.25$",
+          "why": "加細只會讓下和變大，不會比 $0.3$ 小"
+        },
+        {
+          "label": "$0.55$",
+          "why": "$L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)=0.5$"
+        },
+        {
+          "label": "$0.6$",
+          "why": "下和不能超過任何上和，$0.5$ 就是一個上和"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從取一點到最壞情況",
+      "beats": [
+        {
+          "show": [
+            "Riemann 和的每一項 $f(t_i)\\,\\Delta x_i$：看你取哪個 $t_i$",
+            "第 i 段 [1/2, 1]：長方形的高度跟著 t 跑"
+          ],
+          "say": "黎曼和的每一項，是 f of t i 乘上德爾塔 x i，而高度要看 t i 取在哪裡。看 x 平方在 2 分之 1 到 1 這一段。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Riemann 和的每一項 $f(t_i)\\,\\Delta x_i$：看你取哪個 $t_i$"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ulpick",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2",
+                      "label": "y = x²"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "t^2",
+                      "from": 0.5,
+                      "to": 1,
+                      "color": "green"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        0.5,
+                        1
+                      ],
+                      "to": [
+                        1,
+                        1
+                      ],
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "from": [
+                        0.5,
+                        0.25
+                      ],
+                      "to": [
+                        1,
+                        0.25
+                      ],
+                      "color": "blue",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "t",
+                      "y": "t^2",
+                      "color": "green"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.06,
+                      "y": 1.02,
+                      "text": "M = 1",
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.06,
+                      "y": 0.3,
+                      "text": "m = 1/4",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0.5,
+                      "max": 1,
+                      "value": 0.7,
+                      "label": "取點 t"
+                    }
+                  },
+                  "readout": "f(t)Δx = {t^2*0.5}",
+                  "height": 270
+                }
+              },
+              "on": "乘上"
+            },
+            {
+              "do": "write",
+              "line": "f(t)Δx = 0.245",
+              "on": "取在"
+            },
+            {
+              "do": "write",
+              "line": "第 i 段 [1/2, 1]：長方形的高度跟著 t 跑",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從取一點到最壞情況"
+          ],
+          "say": "t 取左端，長方形最矮，高度 4 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ulpick",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2",
+                      "label": "y = x²"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "t^2",
+                      "from": 0.5,
+                      "to": 1,
+                      "color": "green"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        0.5,
+                        1
+                      ],
+                      "to": [
+                        1,
+                        1
+                      ],
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "from": [
+                        0.5,
+                        0.25
+                      ],
+                      "to": [
+                        1,
+                        0.25
+                      ],
+                      "color": "blue",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "t",
+                      "y": "t^2",
+                      "color": "green"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.06,
+                      "y": 1.02,
+                      "text": "M = 1",
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.06,
+                      "y": 0.3,
+                      "text": "m = 1/4",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0.5,
+                      "max": 1,
+                      "value": 0.7,
+                      "label": "取點 t"
+                    }
+                  },
+                  "readout": "f(t)Δx = {t^2*0.5}",
+                  "height": 270
+                },
+                "vals": {
+                  "t": 0.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(t)Δx = 0.125",
+              "on": "高度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從取一點到最壞情況"
+          ],
+          "say": "t 往右走，長方形一路長高，取右端最高，高度是 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ulpick",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2",
+                      "label": "y = x²"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "t^2",
+                      "from": 0.5,
+                      "to": 1,
+                      "color": "green"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        0.5,
+                        1
+                      ],
+                      "to": [
+                        1,
+                        1
+                      ],
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "from": [
+                        0.5,
+                        0.25
+                      ],
+                      "to": [
+                        1,
+                        0.25
+                      ],
+                      "color": "blue",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "t",
+                      "y": "t^2",
+                      "color": "green"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.06,
+                      "y": 1.02,
+                      "text": "M = 1",
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.06,
+                      "y": 0.3,
+                      "text": "m = 1/4",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0.5,
+                      "max": 1,
+                      "value": 0.7,
+                      "label": "取點 t"
+                    }
+                  },
+                  "readout": "f(t)Δx = {t^2*0.5}",
+                  "height": 270
+                },
+                "vals": {
+                  "t": 1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(t)Δx = 0.5",
+              "on": "取右"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不要選了：每一段都取最高和最低"
+          ],
+          "say": "與其煩惱 t 要取哪裡，不如直接取最壞的兩種情況：每一段都取最高的，和最低的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不要選了：每一段都取最高和最低",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「最高」要用 $\\sup$：最大值不一定取得到"
+          ],
+          "say": "最高要用上確界，因為最大值不一定存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「最高」要用 $\\sup$：最大值不一定取得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=x$（$x<1$），$f(1)=0$：$[\\frac12,1]$ 上沒有最大值，但 $\\sup=1$"
+          ],
+          "say": "例如 f of x 等於 x，但在 1 改成 0。在這一段，函數值往 1 爬卻碰不到：沒有最大值，但上確界是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x)=x$（$x<1$），$f(1)=0$：$[\\frac12,1]$ 上沒有最大值，但 $\\sup=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以要求 $f$ 有界：上確界、下確界才存在（完備性）"
+          ],
+          "say": "所以我們要求 f 有界。有界，完備性才保證每一段的上確界和下確界存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以要求 $f$ 有界：上確界、下確界才存在（完備性）",
+              "color": "red"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$P$、$Q$ 是 $[a,b]$ 的任意兩個分割，兩者沒有包含關係。$L(f,P)$ 與 $U(f,Q)$ 的關係？",
-      "options": [
-        { "label": "一定 $L(f,P)\\le U(f,Q)$", "correct": true },
-        { "label": "無法比較，因為分割不同", "why": "你漏了共同加細：$L(f,P)\\le L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)$。" },
-        { "label": "只有 $\\|P\\|\\le\\|Q\\|$ 時才 $\\le$", "why": "比較跟寬度無關，靠的是聯集同時加細兩者。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $[a,b]$ 上有界，$P=\\{x_0,\\dots,x_n\\}$。第 $i$ 段：",
+            "$\\begin{aligned}M_i&=\\sup\\{f(x):x\\in[x_{i-1},x_i]\\}\\\\m_i&=\\inf\\{f(x):x\\in[x_{i-1},x_i]\\}\\end{aligned}$"
+          ],
+          "say": "定義：f 在 a b 上有界，P 是一個分割。在第 i 段上，M i 是 f 的上確界，m i 是 f 的下確界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $[a,b]$ 上有界，$P=\\{x_0,\\dots,x_n\\}$。第 $i$ 段："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}M_i&=\\sup\\{f(x):x\\in[x_{i-1},x_i]\\}\\\\m_i&=\\inf\\{f(x):x\\in[x_{i-1},x_i]\\}\\end{aligned}}$",
+              "on": "段上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}U(f,P)&=\\sum_{i=1}^n M_i\\,\\Delta x_i\\\\L(f,P)&=\\sum_{i=1}^n m_i\\,\\Delta x_i\\end{aligned}$"
+          ],
+          "say": "上和 U of f P，是每段的上確界乘上長度再加起來；下和 L of f P，用下確界。它們只跟 f 和 P 有關，不用取點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}U(f,P)&=\\sum_{i=1}^n M_i\\,\\Delta x_i\\\\L(f,P)&=\\sum_{i=1}^n m_i\\,\\Delta x_i\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=x^2$，$[0,1]$ 等分 $4$ 段。遞增 ⇒ $M_i$ 在右端，$m_i$ 在左端"
+          ],
+          "say": "例子：x 平方在 0 到 1，等分 4 段。函數遞增，所以每段的上確界在右端點，下確界在左端點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x)=x^2$，$[0,1]$ 等分 $4$ 段。遞增 ⇒ $M_i$ 在右端，$m_i$ 在左端"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}U&=\\tfrac14\\big(\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}+\\tfrac{16}{16}\\big)=\\tfrac{30}{64}=\\tfrac{15}{32}\\\\L&=\\tfrac14\\big(0+\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}\\big)=\\tfrac{14}{64}=\\tfrac7{32}\\end{aligned}$"
+          ],
+          "say": "上和是 4 分之 1，乘上右端點的平方和，等於 32 分之 15。下和用左端點，等於 32 分之 7。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}U&=\\tfrac14\\big(\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}+\\tfrac{16}{16}\\big)=\\tfrac{30}{64}=\\tfrac{15}{32}\\\\L&=\\tfrac14\\big(0+\\tfrac1{16}+\\tfrac4{16}+\\tfrac9{16}\\big)=\\tfrac{14}{64}=\\tfrac7{32}\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅線下是上和，藍色是下和；紅色那一條條是 U − L"
+          ],
+          "say": "圖上，紅色台階蓋住曲線，它下面的面積是上和；藍色台階在曲線下面，是下和。中間紅色那一條一條的，就是兩者的差。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ul4",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red",
+                      "under": "(floor(x*floor(N))/floor(N))^2"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x^2",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 20.99,
+                      "value": 4,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = {(floor(N)+1)*(2*floor(N)+1)/(6*floor(N)^2)}　L = {(floor(N)-1)*(2*floor(N)-1)/(6*floor(N)^2)}",
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 4　U = 0.4688　L = 0.2188",
+              "on": "是上"
+            },
+            {
+              "do": "write",
+              "line": "紅線下是上和，藍色是下和；紅色那一條條是 U − L",
+              "color": "violet",
+              "on": "中間"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f(x)=x^2$ 在 $[-1,1]$、$P=\\{-1,0,1\\}$，$L(f,P)$ 是？",
-      "options": [
-        { "label": "0", "correct": true },
-        { "label": "1", "why": "你把上和 2 與下和平均成一個「中間值」。下和是每段下確界乘長度，兩段的下確界都是 $f(0)=0$。" },
-        { "label": "$\\frac{2}{3}$", "why": "那是積分值。粗的分割下和會明顯低估。" }
+      "title": "遞減：反過來",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\frac1x$，$[1,2]$ 等分 $5$ 段：$x_i=1+\\frac i5$。遞減 ⇒ $M_i$ 在左端"
+          ],
+          "say": "遞減函數反過來。x 分之 1 在 1 到 2，等分 5 段。遞減，所以上確界在左端點，下確界在右端點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\frac1x$，$[1,2]$ 等分 $5$ 段：$x_i=1+\\frac i5$。遞減 ⇒ $M_i$ 在左端"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\frac15\\sum_{i=1}^5\\frac1{1+\\frac i5}=\\sum_{i=1}^5\\frac1{5+i}=\\frac16+\\frac17+\\frac18+\\frac19+\\frac1{10}$"
+          ],
+          "say": "下和用右端點，化簡成 5 加 i 分之 1，也就是 6 分之 1 一路加到 10 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\frac15\\sum_{i=1}^5\\frac1{1+\\frac i5}=\\sum_{i=1}^5\\frac1{5+i}=\\frac16+\\frac17+\\frac18+\\frac19+\\frac1{10}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U=\\frac15+\\frac16+\\frac17+\\frac18+\\frac19$"
+          ],
+          "say": "上和用左端點，是 5 分之 1 加到 9 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle U=\\frac15+\\frac16+\\frac17+\\frac18+\\frac19$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\tfrac{1627}{2520}\\approx0.6456,\\quad U=\\tfrac{1879}{2520}\\approx0.7456$"
+          ],
+          "say": "算出來，下和大約 0.6456，上和大約 0.7456。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle L=\\tfrac{1627}{2520}\\approx0.6456,\\quad U=\\tfrac{1879}{2520}\\approx0.7456}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "上和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U-L=\\frac15-\\frac1{10}=\\frac1{10}$：中間全部相消"
+          ],
+          "say": "相減，中間全部消掉，剩 5 分之 1 減 10 分之 1，等於 10 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$U-L=\\frac15-\\frac1{10}=\\frac1{10}$：中間全部相消"
+            },
+            {
+              "do": "write",
+              "line": "　真正的積分 $\\ln2\\approx0.6931$ 夾在中間",
+              "color": "violet",
+              "on": "10#1"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩個關鍵性質",
+      "beats": [
+        {
+          "show": [
+            "(a) 任何取點 $t_i\\in[x_{i-1},x_i]$：",
+            "$L(f,P)\\le\\sum_{i=1}^n f(t_i)\\,\\Delta x_i\\le U(f,P)$"
+          ],
+          "say": "第一個性質：不管每段怎麼取點，黎曼和都夾在下和與上和之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(a) 任何取點 $t_i\\in[x_{i-1},x_i]$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle L(f,P)\\le\\sum_{i=1}^n f(t_i)\\,\\Delta x_i\\le U(f,P)}}$",
+              "on": "段怎"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "夾在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "因為 $m_i\\le f(t_i)\\le M_i$，乘 $\\Delta x_i>0$ 再加總"
+          ],
+          "say": "理由：f of t i 夾在這一段的下確界和上確界之間。乘上長度再加起來就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "因為 $m_i\\le f(t_i)\\le M_i$，乘 $\\Delta x_i>0$ 再加總"
+            },
+            {
+              "do": "write",
+              "line": "　再往外：$m(b-a)\\le L\\le U\\le M(b-a)$，$m,M$ 是整個 $[a,b]$ 上的 $\\inf,\\sup$",
+              "color": "violet",
+              "on": "確界#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(b) 加細：$P\\subseteq P^*$ ⇒",
+            "$L(f,P)\\le L(f,P^*)\\le U(f,P^*)\\le U(f,P)$"
+          ],
+          "say": "第二個性質：加細的時候，下和只會變大，上和只會變小。上下兩邊一起往中間夾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(b) 加細：$P\\subseteq P^*$ ⇒"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle L(f,P)\\le L(f,P^*)\\le U(f,P^*)\\le U(f,P)}}$",
+              "color": "red",
+              "on": "下和"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "上下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=x^2$ 在 $[-1,1]$",
+            "紅：每段的 sup；藍：每段的 inf"
+          ],
+          "say": "例子：x 平方在負 1 到 1。先用 P 等於負 1、0、1，兩段。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x)=x^2$ 在 $[-1,1]$"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ulx2",
+                  "window": [
+                    -1.15,
+                    1.15,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "max(0,sign((floor((x+1)*floor(N)/2)*2/floor(N)-1)*(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))))*min((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "from": -1,
+                      "to": 0.9999,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "max((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "color": "red",
+                      "domain": [
+                        -1,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "max(0,sign((floor((x+1)*floor(N)/2)*2/floor(N)-1)*(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))))*min((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "color": "blue",
+                      "domain": [
+                        -1,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x^2",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 4.99,
+                      "value": 2,
+                      "label": "段數"
+                    }
+                  },
+                  "height": 250
+                }
+              },
+              "on": "先用"
+            },
+            {
+              "do": "write",
+              "line": "紅：每段的 sup；藍：每段的 inf",
+              "color": "violet",
+              "on": "於負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P=\\{-1,0,1\\}$：每段 $\\sup=1$，$\\inf=0$",
+            "$U=2,\\quad L=0$"
+          ],
+          "say": "每一段的上確界都是 1，下確界都是 0，在 0 那一點取到。所以上和是 2，下和是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P=\\{-1,0,1\\}$：每段 $\\sup=1$，$\\inf=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U=2,\\quad L=0$",
+              "on": "那一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P^*=\\{-1,-\\frac12,0,\\frac12,1\\}$：",
+            "$\\begin{aligned}U&=\\tfrac12\\big(1+\\tfrac14+\\tfrac14+1\\big)=\\tfrac54\\\\L&=\\tfrac12\\big(\\tfrac14+0+0+\\tfrac14\\big)=\\tfrac14\\end{aligned}$"
+          ],
+          "say": "加細成四段：上和變小成 4 分之 5，下和變大成 4 分之 1。真正的面積 3 分之 2 一直夾在中間。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ulx2",
+                  "window": [
+                    -1.15,
+                    1.15,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "max(0,sign((floor((x+1)*floor(N)/2)*2/floor(N)-1)*(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))))*min((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "from": -1,
+                      "to": 0.9999,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "max((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "color": "red",
+                      "domain": [
+                        -1,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "max(0,sign((floor((x+1)*floor(N)/2)*2/floor(N)-1)*(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))))*min((floor((x+1)*floor(N)/2)*2/floor(N)-1)^2,(floor((x+1)*floor(N)/2)*2/floor(N)-1+2/floor(N))^2)",
+                      "color": "blue",
+                      "domain": [
+                        -1,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x^2",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 4.99,
+                      "value": 2,
+                      "label": "段數"
+                    }
+                  },
+                  "height": 250
+                },
+                "vals": {
+                  "N": 4
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "$P^*=\\{-1,-\\frac12,0,\\frac12,1\\}$：",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}U&=\\tfrac12\\big(1+\\tfrac14+\\tfrac14+1\\big)=\\tfrac54\\\\L&=\\tfrac12\\big(\\tfrac14+0+0+\\tfrac14\\big)=\\tfrac14\\end{aligned}}}}$",
+              "on": "分之#2"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "分之#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "看它夾緊",
+      "beats": [
+        {
+          "show": [
+            "不切：$P_0=\\{-1,1\\}$，$f(x)=x^2$。$L(f,P_0)=$？"
+          ],
+          "say": "先猜猜看：完全不切，只有一段，下和是多少？"
+        }
+      ],
+      "predict": {
+        "ask": "不切：$P_0=\\{-1,1\\}$，$f(x)=x^2$。$L(f,P_0)=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$2$",
+            "why": "只看了端點：$f(-1)=f(1)=1$；但最小值在區間中間"
+          },
+          {
+            "label": "$\\frac23$",
+            "why": "那是積分；只切一段的下和沒那麼準"
+          },
+          {
+            "label": "$1$",
+            "why": "用了端點值的平均；下和要用整段的下確界"
+          }
+        ]
+      }
+    },
+    {
+      "title": "看它夾緊",
+      "beats": [
+        {
+          "show": [
+            "上下確界不一定在端點：不單調時要看整段"
+          ],
+          "say": "下確界在區間中間的 0 取到，不在端點。不單調的函數，不能只看端點，要看整段。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上下確界不一定在端點：不單調時要看整段",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "回到 $x^2$ 在 $[0,1]$：從 $4$ 段切到 $16$ 段",
+            "加細：紅色往下壓、藍色往上推"
+          ],
+          "say": "回到 x 平方。從 4 段一路切到 16 段：紅色台階往下壓，藍色台階往上推，中間的縫越來越細。",
+          "board": [
+            {
+              "do": "write",
+              "line": "回到 $x^2$ 在 $[0,1]$：從 $4$ 段切到 $16$ 段"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ul16",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red",
+                      "under": "(floor(x*floor(N))/floor(N))^2"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x^2",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 20.99,
+                      "value": 4,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = {(floor(N)+1)*(2*floor(N)+1)/(6*floor(N)^2)}　L = {(floor(N)-1)*(2*floor(N)-1)/(6*floor(N)^2)}",
+                  "height": 250
+                }
+              },
+              "on": "段一"
+            },
+            {
+              "do": "write",
+              "line": "n = 4　U = 0.4688　L = 0.2188",
+              "on": "16"
+            },
+            {
+              "do": "write",
+              "line": "加細：紅色往下壓、藍色往上推",
+              "color": "violet",
+              "on": "色台#1"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ul16",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red",
+                      "under": "(floor(x*floor(N))/floor(N))^2"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "((floor(x*floor(N))+1)/floor(N))^2",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "(floor(x*floor(N))/floor(N))^2",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x^2",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 20.99,
+                      "value": 4,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = {(floor(N)+1)*(2*floor(N)+1)/(6*floor(N)^2)}　L = {(floor(N)-1)*(2*floor(N)-1)/(6*floor(N)^2)}",
+                  "height": 250
+                },
+                "vals": {
+                  "N": 16.5
+                }
+              },
+              "on": "色台#2"
+            },
+            {
+              "do": "write",
+              "line": "n = 16　U = 0.3652　L = 0.3027",
+              "on": "間的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U(f,P_{16})\\approx0.3652,\\quad L(f,P_{16})\\approx0.3027$"
+          ],
+          "say": "切到 16 段，上和大約 0.365，下和大約 0.303，都往 3 分之 1 靠。下一課會證明真的夾到 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,P_{16})\\approx0.3652,\\quad L(f,P_{16})\\approx0.3027$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：加細引理",
+      "beats": [
+        {
+          "show": [
+            "策略：先只加一個點。只有那一段會變；範圍變小，下確界只會變大",
+            "圖"
+          ],
+          "say": "證明加細引理。策略：先只加一個點。只有被切開的那一段會變；而範圍變小，下確界只會變大。圖上，綠色就是多出來的面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：先只加一個點。只有那一段會變；範圍變小，下確界只會變大"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ul-lemma\" viewBox=\"0 0 640 300\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12ul-lemmaink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12ul-lemmablue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12ul-lemmared\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12ul-lemmagreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12ul-lemmapencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><rect x=\"110\" y=\"179.4\" width=\"430\" height=\"65.6\" fill=\"var(--blue)\" fill-opacity=\"0.1\" stroke=\"var(--blue)\" stroke-width=\"1.8\" stroke-dasharray=\"6 4\"/><rect x=\"346.5\" y=\"155.8\" width=\"193.5\" height=\"23.6\" fill=\"var(--green)\" fill-opacity=\"0.4\" stroke=\"var(--green)\" stroke-width=\"1.8\"/><line x1=\"75.6\" y1=\"245\" x2=\"583\" y2=\"245\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#g12ul-lemmaink)\"/><line x1=\"110\" y1=\"245\" x2=\"110\" y2=\"163\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"6 4\"/><line x1=\"346.5\" y1=\"245\" x2=\"346.5\" y2=\"155.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"6 4\"/><line x1=\"540\" y1=\"245\" x2=\"540\" y2=\"31.7\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"6 4\"/><path d=\"M110 163L113.6 164L117.2 165.1L120.8 166.1L124.3 167.1L127.9 168L131.5 168.9L135.1 169.7L138.7 170.6L142.3 171.3L145.8 172.1L149.4 172.8L153 173.5L156.6 174.1L160.2 174.7L163.8 175.3L167.3 175.8L170.9 176.3L174.5 176.8L178.1 177.2L181.7 177.6L185.3 177.9L188.8 178.2L192.4 178.5L196 178.7L199.6 178.9L203.2 179.1L206.8 179.2L210.3 179.3L213.9 179.4L217.5 179.4L221.1 179.4L224.7 179.3L228.3 179.2L231.8 179.1L235.4 178.9L239 178.7L242.6 178.5L246.2 178.2L249.8 177.9L253.3 177.6L256.9 177.2L260.5 176.8L264.1 176.3L267.7 175.8L271.3 175.3L274.8 174.7L278.4 174.1L282 173.5L285.6 172.8L289.2 172.1L292.8 171.3L296.3 170.6L299.9 169.7L303.5 168.9L307.1 168L310.7 167.1L314.3 166.1L317.8 165.1L321.4 164L325 163L328.6 161.9L332.2 160.7L335.8 159.5L339.3 158.3L342.9 157L346.5 155.8L350.1 154.4L353.7 153.1L357.3 151.6L360.8 150.2L364.4 148.7L368 147.2L371.6 145.7L375.2 144.1L378.8 142.5L382.3 140.8L385.9 139.1L389.5 137.4L393.1 135.6L396.7 133.8L400.3 132L403.8 130.1L407.4 128.2L411 126.2L414.6 124.2L418.2 122.2L421.8 120.1L425.3 118.1L428.9 115.9L432.5 113.8L436.1 111.5L439.7 109.3L443.3 107L446.8 104.7L450.4 102.4L454 100L457.6 97.5L461.2 95.1L464.8 92.6L468.3 90.1L471.9 87.5L475.5 84.9L479.1 82.2L482.7 79.6L486.3 76.8L489.8 74.1L493.4 71.3L497 68.5L500.6 65.6L504.2 62.7L507.8 59.8L511.3 56.8L514.9 53.8L518.5 50.8L522.1 47.7L525.7 44.6L529.3 41.4L532.8 38.2L536.4 35L540 31.7\" stroke=\"var(--ink)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"217.5\" cy=\"179.4\" r=\"5\" fill=\"var(--blue)\"/><text x=\"97.1\" y=\"185\" text-anchor=\"end\" font-size=\"25\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">m</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan></tspan></text><text x=\"552.9\" y=\"163.3\" text-anchor=\"start\" font-size=\"25\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">m</tspan><tspan style=\"font-family:KaTeX_Main,serif\">''</tspan></text><text x=\"110\" y=\"276.9\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan><tspan style=\"font-family:KaTeX_Main,serif\">−1</tspan></tspan></text><text x=\"346.5\" y=\"276.9\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan></text><text x=\"540\" y=\"276.9\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan></tspan></text><text x=\"443.3\" y=\"151.3\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:inherit\">多出來的</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> ≥ 0</tspan></text><text x=\"217.5\" y=\"213.1\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--blue)\"><tspan style=\"font-family:inherit\">原本的</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">m</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan></tspan><tspan style=\"font-family:KaTeX_Main,serif\">Δ</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan></tspan></text></svg>",
+              "on": "而範"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $P^*=P\\cup\\{t\\}$，$x_{k-1}<t<x_k$，",
+            "$m'=\\inf_{[x_{k-1},t]}f,\\qquad m''=\\inf_{[t,x_k]}f$"
+          ],
+          "say": "正式寫：P 星是 P 加上第 k 段裡的一點 t。m prime 和 m 雙 prime 是左右兩小段的下確界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $P^*=P\\cup\\{t\\}$，$x_{k-1}<t<x_k$，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle m'=\\inf_{[x_{k-1},t]}f,\\qquad m''=\\inf_{[t,x_k]}f$",
+              "on": "ri#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小段 $\\subseteq[x_{k-1},x_k]$ ⇒ $m'\\ge m_k$，$m''\\ge m_k$"
+          ],
+          "say": "兩小段都包含在原來那一段裡。集合變小，下確界只會變大，所以 m prime 和 m 雙 prime 都大於等於 m k。",
+          "board": [
+            {
+              "do": "write",
+              "line": "小段 $\\subseteq[x_{k-1},x_k]$ ⇒ $m'\\ge m_k$，$m''\\ge m_k$"
+            },
+            {
+              "do": "write",
+              "line": "　12B：$A\\subseteq B$ ⇒ $\\inf A\\ge\\inf B$（$B$ 的下界也是 $A$ 的下界）",
+              "color": "violet",
+              "on": "pr#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其他段不變，所以",
+            "$\\begin{aligned}&L(f,P^*)-L(f,P)\\\\&=(m'-m_k)(t-x_{k-1})\\\\&\\quad+(m''-m_k)(x_k-t)\\ \\ge0\\end{aligned}$"
+          ],
+          "say": "其他段完全不變。相減只剩第 k 段：m prime 減 m k，乘左段長，加上 m 雙 prime 減 m k，乘右段長。兩項都大於等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "其他段不變，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}&L(f,P^*)-L(f,P)\\\\&=(m'-m_k)(t-x_{k-1})\\\\&\\quad+(m''-m_k)(x_k-t)\\ \\ge0\\end{aligned}}}}$",
+              "on": "me#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "me#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上和：$\\sup$ 在小範圍只會變小，同理 $U(f,P^*)\\le U(f,P)$"
+          ],
+          "say": "上和一樣：範圍變小，上確界只會變小，所以上和不會變大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上和：$\\sup$ 在小範圍只會變小，同理 $U(f,P^*)\\le U(f,P)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的 $P^*$：多出有限個點，一次加一個，用歸納法　$\\blacksquare$"
+          ],
+          "say": "一般的加細只多了有限個點，一次加一個，用歸納法就證完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的 $P^*$：多出有限個點，一次加一個，用歸納法　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：推論",
+      "beats": [
+        {
+          "show": [
+            "推論：任意兩個分割 $P$、$Q$，",
+            "$L(f,P)\\le U(f,Q)$"
+          ],
+          "say": "推論：任何一個下和，都小於等於任何一個上和，就算兩個用的是不同的分割。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：任意兩個分割 $P$、$Q$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle L(f,P)\\le U(f,Q)}}$",
+              "color": "red",
+              "on": "小於"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "算兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：兩個分割比不了，就走共同加細"
+          ],
+          "say": "策略：P 和 Q 沒辦法直接比，就經過它們的共同加細，P 聯集 Q。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：兩個分割比不了，就走共同加細"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L(f,P)\\le L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)$"
+          ],
+          "say": "第一步，P 聯集 Q 是 P 的加細，下和變大。中間，同一個分割，下和不超過上和。最後，它也是 Q 的加細，上和變小。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle L(f,P)\\le L(f,P\\cup Q)\\le U(f,P\\cup Q)\\le U(f,Q)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "下和#2"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "證明：推論",
+      "beats": [
+        {
+          "show": [
+            "所有下和都在所有上和的左邊"
+          ],
+          "say": "所以在數線上，所有下和都在所有上和的左邊。下一課從這裡出發。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所有下和都在所有上和的左邊"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $M_i=\\sup$、$m_i=\\inf$（第 $i$ 段）；$f$ 要有界",
+            "• $U=\\sum M_i\\Delta x_i$，$L=\\sum m_i\\Delta x_i$：不必取點"
+          ],
+          "say": "整理：上和用每段的上確界，下和用下確界，f 要有界。黎曼和夾在兩者中間；加細讓兩者往中間夾；任何下和都不超過任何上和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $M_i=\\sup$、$m_i=\\inf$（第 $i$ 段）；$f$ 要有界"
+            },
+            {
+              "do": "write",
+              "line": "• $U=\\sum M_i\\Delta x_i$，$L=\\sum m_i\\Delta x_i$：不必取點",
+              "on": "下和#1"
+            },
+            {
+              "do": "write",
+              "line": "• 遞增：$M_i$ 在右端；遞減：在左端；不單調：看整段",
+              "on": "有界"
+            },
+            {
+              "do": "write",
+              "line": "• $L\\le$ 任何 Riemann 和 $\\le U$",
+              "on": "加細"
+            },
+            {
+              "do": "write",
+              "line": "• 加細：$L$ 不減、$U$ 不增；任何 $L(f,P)\\le U(f,Q)$",
+              "on": "何下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Darboux 積分：兩邊夾到同一個數"
+          ],
+          "say": "下一課，達布積分：從兩邊夾到同一個數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Darboux 積分：兩邊夾到同一個數"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["darboux", "riemann-sum"],
-    "fine": ["darboux-sum-monotone", "darboux-sum-nonmonotone", "darboux-refinement-lemma", "darboux-lower-le-upper"]
+    "coarse": [
+      "darboux",
+      "riemann-sum"
+    ],
+    "fine": [
+      "darboux-sum-monotone",
+      "darboux-sum-nonmonotone",
+      "darboux-refinement-lemma",
+      "darboux-lower-le-upper"
+    ]
   },
   "practice": [
-    { "id": "an-int-002", "core": true, "trains": "darboux-sum-monotone" },
-    { "id": "an-int-004", "core": true, "trains": "darboux-sum-monotone" },
-    { "id": "cg-12g-006", "core": true, "trains": "darboux-sum-nonmonotone" },
-    { "id": "cg-12g-009", "core": true, "trains": "darboux-refinement-lemma" },
-    { "id": "ig-num-011", "trains": "darboux-lower-le-upper" },
-    { "id": "ig-num-003", "trains": "darboux-sum-monotone" },
-    { "id": "cg-12g-007", "trains": "darboux-sum-nonmonotone" },
-    { "id": "cg-12g-010", "trains": "darboux-refinement-lemma" },
-    { "id": "cg-12g-008", "challenge": true, "trains": "darboux-sum-nonmonotone" }
+    {
+      "id": "an-int-002",
+      "core": true,
+      "trains": "darboux-sum-monotone"
+    },
+    {
+      "id": "an-int-004",
+      "core": true,
+      "trains": "darboux-sum-monotone"
+    },
+    {
+      "id": "cg-12g-006",
+      "core": true,
+      "trains": "darboux-sum-nonmonotone"
+    },
+    {
+      "id": "cg-12g-009",
+      "core": true,
+      "trains": "darboux-refinement-lemma"
+    },
+    {
+      "id": "ig-num-011",
+      "trains": "darboux-lower-le-upper"
+    },
+    {
+      "id": "ig-num-003",
+      "trains": "darboux-sum-monotone"
+    },
+    {
+      "id": "cg-12g-007",
+      "trains": "darboux-sum-nonmonotone"
+    },
+    {
+      "id": "cg-12g-010",
+      "trains": "darboux-refinement-lemma"
+    },
+    {
+      "id": "cg-12g-008",
+      "challenge": true,
+      "trains": "darboux-sum-nonmonotone"
+    }
   ],
   "gaps": []
 }

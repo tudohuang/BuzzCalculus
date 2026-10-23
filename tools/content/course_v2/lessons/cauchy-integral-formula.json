@@ -1,352 +1,141 @@
 {
   "id": "cauchy-integral-formula",
   "title": "Cauchy 積分公式",
-  "readMinutes": 13,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["cauchy-theorem", "contour-integral"],
-  "next": ["complex-taylor"],
-  "related": ["holomorphic"],
-  "objectives": [
-    "寫得出 $f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz$ 與導數版 $f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$，以及條件。",
-    "用它算 $\\oint\\frac{g(z)}{(z-z_0)^k}\\,dz$ 型的圍道積分：先認出 $f$ 與 $z_0$，再算 $f$ 或它的導數。",
-    "說出它的後果：全純函數無限次可微、圓周平均等於圓心值。"
+  "prerequisites": [
+    "cauchy-theorem",
+    "contour-integral"
   ],
-  "visual": "以 z₀ 為圓心畫一個圓，圓上的點用顏色表示 f 的值。把圓縮小，圓上顏色越來越接近圓心的顏色；旁邊顯示圓周平均 (1/2π)∫ f(z₀ + re^{it}) dt，不論半徑多大都正好等於 f(z₀)。",
+  "next": [
+    "complex-taylor"
+  ],
+  "related": [
+    "holomorphic"
+  ],
+  "objectives": [
+    "寫得出 $f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz$ 與導數版 $f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$",
+    "用它算 $\\oint\\frac{g(z)}{(z-z_0)^k}\\,dz$ 型的圍道積分：先認出 $f$ 與 $z_0$，確認 $f$ 在 $C$ 上與內部全純",
+    "說出它的後果：全純函數無限次可微、圓周平均等於圓心值，以及 Liouville 定理與代數基本定理"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 公式：邊界上的值決定裡面的值",
+      "heading": "① 公式：邊界決定裡面",
       "body": [
-        "$f$ 在簡單封閉正向曲線 $C$ 上與內部全純，$z_0$ 在 $C$ 的內部，則下面的公式成立。",
-        "驚人之處：只要知道 $f$ 在 $C$ 上的值，就能算出 $C$ 裡面每一點的值。實數函數完全沒有這種性質。"
+        "$C$ 簡單封閉、正向；$f$ 在 $C$ 上與內部全純；$z_0$ 在 $C$ 的內部：",
+        "意思：只要知道 $f$ 在邊界上的值，裡面每一點的值都決定了",
+        "實數對照：$[0,1]$ 上的可微函數，知道 $f(0)$、$f(1)$ 完全不知道中間",
+        "算積分的用法：",
+        "例 1：$\\displaystyle\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz$",
+        "$f(z)=e^z$ 整函數，$z_0=1$ 在圓心：",
+        "數值驗算：$2\\pi e\\approx17.08$"
       ],
-      "tex": ["f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz"],
-      "collapsible": false
+      "tex": [
+        "f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz",
+        "\\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)",
+        "\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz=2\\pi i\\,e^1=2\\pi e\\,i"
+      ]
     },
     {
       "heading": "② 為什麼：縮成小圓",
       "body": [
-        "$\\frac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純。由〈Cauchy 定理〉的變形原理，$C$ 可以換成以 $z_0$ 為圓心、半徑 $r$ 的小圓。",
-        "小圓上 $f(z)\\approx f(z_0)$，所以積分 $\\approx f(z_0)\\oint\\frac{dz}{z-z_0}=2\\pi i\\,f(z_0)$。",
-        "嚴格化：積分減掉 $2\\pi i\\,f(z_0)$ 等於 $\\oint\\frac{f(z)-f(z_0)}{z-z_0}\\,dz$；$f$ 連續，小圓上 $|f(z)-f(z_0)|\\le\\varepsilon$，ML 不等式給出這個差 $\\le\\frac{\\varepsilon}{r}\\cdot 2\\pi r=2\\pi\\varepsilon$。積分本身跟 $r$ 無關，$\\varepsilon$ 任意小，所以差是 $0$。"
+        "$\\dfrac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純。變形成小圓 $C_r$：$|z-z_0|=r$",
+        "拆成兩項：",
+        "第一項 $=2\\pi i\\,f(z_0)$。第二項叫 $E(r)$，用 ML："
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\oint_{C_r}\\frac{f(z)}{z-z_0}dz=\\ &f(z_0)\\oint_{C_r}\\frac{dz}{z-z_0}\\\\&+\\oint_{C_r}\\frac{f(z)-f(z_0)}{z-z_0}dz\\end{aligned}",
+        "\\begin{aligned}|E(r)|&\\le\\frac{\\max_{C_r}|f(z)-f(z_0)|}{r}\\cdot2\\pi r\\\\&=2\\pi\\max_{C_r}|f(z)-f(z_0)|\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 證明（續）",
+      "body": [
+        "$f$ 連續：$r\\to0$ 時 $\\max_{C_r}|f(z)-f(z_0)|\\to0$，所以 $E(r)\\to0$",
+        "左邊跟 $r$ 無關，所以 $E(r)$ 是常數；常數趨近 $0$，就是 $0$："
+      ],
+      "tex": [
+        "\\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "② 例：先拆出 $f$",
+      "body": [
+        "例 2：$\\displaystyle\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$",
+        "$z^2+1=(z-i)(z+i)$：$i$ 在圓內，$-i$ 離 $i$ 距離 $2$，在圓外",
+        "圓周平均：$C$ 取 $|z-z_0|=r$，$z=z_0+re^{it}$："
+      ],
+      "tex": [
+        "\\frac{1}{z^2+1}=\\frac{f(z)}{z-i},\\qquad f(z)=\\frac{1}{z+i}",
+        "\\oint_{|z-i|=1}\\frac{dz}{z^2+1}=2\\pi i\\cdot\\frac{1}{i+i}=\\pi",
+        "\\begin{aligned}f(z_0)&=\\frac{1}{2\\pi i}\\int_0^{2\\pi}\\frac{f(z_0+re^{it})}{re^{it}}\\,ire^{it}\\,dt\\\\&=\\frac{1}{2\\pi}\\int_0^{2\\pi}f(z_0+re^{it})\\,dt\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 導數版：越微分次方越高",
       "body": [
-        "對 $z_0$ 在積分號裡微分（被積函數在 $C$ 上連續、對 $z_0$ 的導數也連續，可以交換），每微一次分母多一次方、前面多一個係數，$n$ 次之後就是下面的式子。",
-        "後果：右邊對每個 $n$ 都有意義，所以全純函數自動無限次可微——〈全純函數〉預告的剛性就是從這裡來的。"
+        "直覺：對公式裡的 $z_0$ 微分，$\\dfrac{1}{z-z_0}\\to\\dfrac{1}{(z-z_0)^2}\\to\\dfrac{2}{(z-z_0)^3}\\to\\cdots$",
+        "證 $n=1$：$C$ 取小圓 $|z-z_0|=r$（變形），$|h|<\\frac r2$，$|f|\\le M$：",
+        "它跟 $\\frac{1}{2\\pi i}\\oint\\frac{f}{(z-z_0)^2}dz$ 的差是",
+        "圓上 $|z-z_0-h|\\ge r-|h|>\\frac r2$，ML：",
+        "高階用同樣的估計、對 $n$ 歸納；$z_0$ 在 $C$ 內任一點，先把 $C$ 變形成小圓即可",
+        "後果：$f'$ 又是這種積分 ⇒ 又可微 ⇒ 全純函數無限次可微"
       ],
-      "tex": ["f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz"],
-      "collapsible": false
+      "tex": [
+        "f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz",
+        "\\frac{f(z_0+h)-f(z_0)}{h}=\\frac{1}{2\\pi i}\\oint\\frac{f(z)\\,dz}{(z-z_0-h)(z-z_0)}",
+        "\\frac{1}{2\\pi i}\\oint\\frac{h\\,f(z)\\,dz}{(z-z_0-h)(z-z_0)^2}",
+        "\\begin{aligned}\\Big|\\cdots\\Big|&\\le\\frac{1}{2\\pi}\\cdot\\frac{|h|\\,M}{\\frac r2\\cdot r^2}\\cdot2\\pi r\\\\&=\\frac{2M|h|}{r^2}\\xrightarrow{h\\to0}0\\quad\\blacksquare\\end{aligned}"
+      ]
     },
     {
-      "heading": "Liouville 定理與代數基本定理",
+      "heading": "③ 例：導數版",
       "body": [
-        "若整函數 $|f|\\le M$，對以 $z_0$ 為圓心、半徑 $R$ 的圓用 $n=1$ 的公式與 ML 不等式：$|f'(z_0)|\\le\\frac{1}{2\\pi}\\cdot\\frac{M}{R^2}\\cdot(2\\pi R)=\\frac{M}{R}\\to 0$（$R\\to\\infty$）。所以 $f'\\equiv 0$，$f$ 是常數（Liouville）。",
-        "代數基本定理：若非常數多項式 $p$ 沒有根，$\\frac{1}{p}$ 是整函數，而且 $|z|\\to\\infty$ 時 $\\left|\\frac{1}{p}\\right|\\to 0$；在夠大的閉圓盤外它小於 1，圓盤上它連續所以有界，合起來在整個 $\\mathbb{C}$ 上有界，由 Liouville 是常數，矛盾。所以每個非常數多項式都有複數根。"
+        "例 3：$\\displaystyle\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz$",
+        "$z^3=(z-0)^{2+1}$：$n=2$，$z_0=0$，$f(z)=\\cos z$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "邊界決定裡面",
-      "beats": [
-        { "show": ["$f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz$"],
-          "note": "$f$ 在 $C$ 上與內部全純，$z_0$ 在內部。",
-          "say": "Cauchy 積分公式：f 在曲線上和內部全純，z 零在裡面，f 在 z 零的值可以用邊界上的積分算出來。",
-          "board": [
-            {"do":"write","line":"${{l:f(z_0)}}=\\frac{1}{2\\pi i}{{r:\\oint_C\\frac{f(z)}{z-z_0}\\,dz}}$"},
-            {"do":"focus","term":"l","on":"值可以"},
-            {"do":"underline","term":"r","label":"邊界積分","on":"邊界上的積分"}
-          ] },
-        { "show": ["只要知道 $C$ 上的值"],
-          "note": "實數函數完全沒有這種性質。",
-          "say": "驚人之處：只要知道邊界上的值，裡面每一點的值都決定了。實數函數完全做不到。",
-          "board": [
-            {"do":"write","line":"邊界上的值 $\\Rightarrow$ 裡面每一點的值"},
-            {"do":"write","line":"實數函數：做不到","color":"red","on":"完全"}
-          ] },
-        { "show": ["$x$ 與 $x^2$：兩端同值，中間不同"],
-          "note": "只知道兩端，決定不了中間。",
-          "say": "實數函數的例子：x 和 x 平方，在零和一兩端的值一樣，可是中間不同。所以兩端不能決定中間。",
-          "board": [
-            {"do":"write","line":"實數：兩端相同，中間可以不同"},
-            {"do":"plot","graph":{"window":[-0.5,1.5,-0.5,1.5],"equal":true,"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"x^2","domain":[0,1],"color":"red"}],"points":[{"x":0,"y":0},{"x":1,"y":1}],"ticks":false},"on":"可是中間"}
-          ] },
-        { "show": ["$\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz=2\\pi ie$"],
-          "note": "$f=e^z$，$z_0=1$。",
-          "say": "反過來用來算積分：e 的 z 次方除以 z 減一，f 是 e 的 z 次方，答案是二派 i 乘 f 在一的值。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz$","on":"除以"},
-            {"do":"write","line":"$f=e^z$，$z_0=1$","on":"f 是"},
-            {"do":"write","line":"$2\\pi i\\,f(1)=2\\pi ie$","color":"green","on":"答案是"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\begin{aligned}\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz&=\\frac{2\\pi i}{2!}f''(0)\\\\&=\\pi i\\cdot(-\\cos0)=-\\pi i\\end{aligned}"
+      ]
     },
     {
-      "title": "為什麼：縮成小圓",
-      "beats": [
-        { "show": ["$\\frac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純"],
-          "say": "被積函數只有在 z 零出問題，所以用變形原理，把曲線縮成繞 z 零的小圓。",
-          "board": [
-            {"do":"write","line":"$\\frac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純"},
-            {"do":"write","line":"曲線縮成繞 $z_0$ 的小圓","on":"縮成"}
-          ] },
-        { "show": ["小圓上 $f(z)\\approx f(z_0)$"],
-          "note": "$f$ 連續。",
-          "say": "圓很小的時候，圓上的 f 都差不多是 f 在 z 零的值，可以提出來。",
-          "board": [
-            {"do":"write","line":"小圓上 $f(z)\\approx {{c:f(z_0)}}$"},
-            {"do":"focus","term":"c","on":"零的值"}
-          ] },
-        { "show": ["剩下 $\\oint\\frac{dz}{z-z_0}$"],
-          "say": "提出來之後剩下的，就是上一課最重要的那個積分。",
-          "board": [
-            {"do":"write","line":"$f(z_0)\\,{{w:\\oint\\frac{dz}{z-z_0}}}$"},
-            {"do":"underline","term":"w","label":"上一課","on":"最重要"}
-          ] },
-        { "show": ["$z=z_0+re^{it}$，$0\\le t\\le 2\\pi$"],
-          "note": "圓心在 $z_0$，逆時針一圈。",
-          "say": "圓心在 z 零、半徑 r、逆時針一圈：z 等於 z 零加 r 乘 e 的 i t 次方，t 從零到二派。",
-          "board": [
-            {"do":"write","line":"$z=z_0+re^{it}$，$0\\le t\\le 2\\pi$"}
-          ] },
-        { "show": ["$\\oint\\frac{dz}{z-z_0}=2\\pi i$"],
-          "note": "$dz=ire^{it}\\,dt$。",
-          "say": "這時 z 減 z 零是 r 乘 e 的 i t，d z 是 i 乘 r 乘 e 的 i t 乘 d t。相除剩 i d t，積分就是 i 乘二派。",
-          "board": [
-            {"do":"write","line":"$\\oint\\frac{dz}{z-z_0}=\\int_0^{2\\pi}i\\,dt=2\\pi i$","color":"green"}
-          ] }
+      "heading": "④ Liouville 定理",
+      "body": [
+        "Cauchy 估計：$|f|\\le M$ 在 $|z-z_0|=R$ 上，則",
+        "Liouville：整函數而且有界（$|f|\\le M$）⇒ $f$ 是常數",
+        "證明：任一點 $z_0$，任意 $R$：$|f'(z_0)|\\le\\dfrac{M}{R}$",
+        "$R\\to\\infty$：$f'(z_0)=0$，處處成立",
+        "$f(z)-f(0)=\\int_{[0,z]}f'(w)\\,dw=0$ ⇒ $f$ 是常數　$\\blacksquare$",
+        "對照：$\\sin x$ 在實數上有界但不是常數；$\\sin z$ 在複數上無界（$\\sin(iy)=i\\sinh y$）",
+        "例：$e^z$ 不是常數 ⇒ 無界"
       ],
-      "predict": {
-        "ask": "所以積分 $\\approx$？",
-        "options": [
-          {
-            "label": "$2\\pi i\\,f(z_0)$",
-            "correct": true
-          },
-          {
-            "label": "$0$",
-            "why": "$\\oint\\frac{dz}{z-z_0}$ 是 $n=-1$ 的情形，等於 $2\\pi i$，不是 $0$。"
-          },
-          {
-            "label": "$f(z_0)$",
-            "why": "還要乘上 $\\oint\\frac{dz}{z-z_0}=2\\pi i$。"
-          }
-        ]
-      }
+      "tex": [
+        "|f^{(n)}(z_0)|\\le\\frac{n!}{2\\pi}\\cdot\\frac{M}{R^{n+1}}\\cdot2\\pi R=\\frac{n!\\,M}{R^n}"
+      ]
     },
     {
-      "title": "分母要先拆出 $f$",
-      "beats": [
-        { "show": ["$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$"],
-          "note": "近似誤差用 ML 估計，嚴格版在全文。",
-          "say": "剛才的近似可以用 ML 不等式變嚴格。現在看這題：沿以 i 為圓心、半徑一的圓。",
-          "board": [
-            {"do":"write","line":"$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$","on":"現在看這題"},
-            {"do":"plot","graph":{"window":[-3,3,-1.45,2.25],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"1+sin(t)","t":[0,6.2832]},"color":"blue"}],"points":[{"x":0,"y":1},{"x":0,"y":-1}],"labels":[{"x":0.18,"y":1.05,"text":"i","anchor":"start"},{"x":0.18,"y":-1.05,"text":"−i","anchor":"start"}],"ticks":false},"on":"圓心"}
-          ] },
-        { "show": ["$\\left|\\oint_C g\\,dz\\right|\\le M\\cdot L$"],
-          "note": "$M$：$|g|$ 的上界；$L$：$C$ 的長度。",
-          "say": "ML 不等式：曲線上 g 的大小不超過 M，曲線長是 L，那積分的絕對值不超過 M 乘 L。",
-          "board": [
-            {"do":"write","line":"$\\left|\\oint_C g\\,dz\\right|\\le M\\cdot L$"}
-          ] },
-        { "show": ["$z^2+1=(z-i)(z+i)$"],
-          "note": "$-i$ 距離圓心 $2$，在圓外。",
-          "say": "分母拆成 z 減 i 乘 z 加 i。圓只包住 i；負 i 離圓心二，在外面。",
-          "board": [
-            {"do":"write","line":"$z^2+1=({{a:z-i}})({{b:z+i}})$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","label":"圓裡","on":"只包住"},
-            {"do":"focus","term":"b","label":"在外面","on":"負 i"}
-          ] },
-        { "show": ["$f(z)=\\frac{1}{z+i}$，$z_0=i$"],
-          "say": "在圓外的因子留在 f 裡：f 是 z 加 i 分之一，在圓裡全純。",
-          "board": [
-            {"do":"transform","line":"$f(z)=\\dfrac{1}{ {{b:z+i}} }$，$z_0=i$"},
-            {"do":"underline","term":"b","color":"violet","label":"留在 f 裡","on":"留在 f 裡"}
-          ] },
-        { "show": ["$2\\pi i\\,f(i)=\\frac{2\\pi i}{2i}=\\pi$"],
-          "say": "答案二派 i 乘 f 在 i 的值，二 i 分之二派 i，等於派。",
-          "board": [
-            {"do":"transform","line":"$2\\pi i\\,f(i)=\\dfrac{2\\pi i}{2i}=\\,{{r:\\pi}}$"},
-            {"do":"box","term":"r","color":"green","on":"二 i 分之"}
-          ] }
-      ],
-      "key": "把分母拆開，圈外的因式併進 $f$",
-      "check": 2
+      "heading": "④ 代數基本定理",
+      "body": [
+        "定理：次數 $\\ge1$ 的多項式 $p$ 在 $\\mathbb C$ 上一定有根",
+        "證明：假設 $p$ 沒有根，則 $g=\\frac1p$ 是整函數",
+        "$|z|$ 大：$|p(z)|\\ge|a_n||z|^n-\\sum_{k<n}|a_k||z|^k\\to\\infty$，存在 $R_0$ 使 $|g|\\le1$",
+        "$|z|\\le R_0$：閉圓盤上連續 ⇒ 有界",
+        "所以 $g$ 整函數且有界 ⇒（Liouville）常數 ⇒ $p$ 是常數，矛盾　$\\blacksquare$",
+        "再對 $\\frac{p(z)}{z-z_1}$ 重複，就得到 $p$ 恰好有 $n$ 個根（計重數）"
+      ]
     },
     {
-      "title": "導數版",
-      "beats": [
-        { "show": ["對 $z_0$ 在積分號裡微分"],
-          "note": "每微一次分母多一次方。",
-          "say": "把公式對 z 零微分，在積分號裡微：每微一次，分母多一次方，前面多一個係數。",
-          "board": [
-            {"do":"write","line":"$f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz$"},
-            {"do":"write","line":"每微一次：分母多一次方，前面多係數","on":"每微一次"}
-          ] },
-        { "show": ["$f^{(n)}(z_0)=$","$\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$"],
-          "note": "分母是 $n+1$ 次方。",
-          "say": "微 n 次：n 階導數等於二派 i 分之 n 階乘，乘上除以 n 加一次方的積分。",
-          "board": [
-            {"do":"write","line":"$f^{(n)}(z_0)=$"},
-            {"do":"write","line":"$\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{ {{e:n+1}} }}\\,dz$","on":"二派 i 分之"},
-            {"do":"focus","term":"e","label":"n+1 次方","on":"加一次方"}
-          ] },
-        { "show": ["分母 $(z-z_0)^2$：$n=1$"],
-          "note": "積分 $=2\\pi i\\,f'(z_0)$。",
-          "say": "讀法：分母是平方，n 就是一，積分等於二派 i 乘 f prime。別把次方直接當成 n。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"分母 $(z-z_0)^{2}$：${{n:n=1}}$","on":"分母是平方"},
-            {"do":"write","line":"積分 $=2\\pi i\\,f'(z_0)$","on":"積分等於"},
-            {"do":"underline","term":"n","label":"次方減一","on":"別把"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "導數版算一題",
-      "beats": [
-        { "show": ["$\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz$"],
-          "say": "算 cosine z 除以 z 三次方，沿單位圓。",
-          "board": [
-            {"do":"write","line":"$\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz$"}
-          ] },
-        { "show": ["$z^3=(z-0)^{2+1}$：$n=2$，$f=\\cos z$"],
-          "say": "分母三次方，所以 n 是二，z 零是零，f 是 cosine z。",
-          "board": [
-            {"do":"write","line":"$z^3=(z-0)^{2+1}$"},
-            {"do":"write","line":"$n=2$，$z_0=0$，$f=\\cos z$","on":"所以"}
-          ] },
-        { "show": ["$\\frac{2\\pi i}{2!}f''(0)$"],
-          "note": "$f''(z)=-\\cos z$。",
-          "say": "積分等於二派 i 除以二階乘，乘 f 的二階導數在零的值。cosine 微兩次是負 cosine。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{2\\pi i}{2!}\\,{{d:f''(0)}}$","on":"積分等於"},
-            {"do":"focus","term":"d","on":"二階導數"},
-            {"do":"write","line":"$f''(z)=-\\cos z$","on":"微兩次"}
-          ] }
-      ],
-      "key": "$z^3$ 對應 $n=2$，別忘了除以 $2!$",
-      "predict": {
-        "ask": "積分是？",
-        "options": [
-          {
-            "label": "$-\\pi i$",
-            "correct": true
-          },
-          {
-            "label": "$-2\\pi i$",
-            "why": "漏了 $n!=2!$：$\\frac{2\\pi i}{2}\\cdot(-1)=-\\pi i$。"
-          },
-          {
-            "label": "$\\pi i$",
-            "why": "$f''(0)=-\\cos 0=-1$，是負的。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "自動無限次可微",
-      "beats": [
-        { "show": ["右邊對每個 $n$ 都有意義"],
-          "say": "導數版的右邊，對每一個 n 都算得出來。",
-          "board": [
-            {"do":"write","line":"$\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$"},
-            {"do":"write","line":"對每個 $n$ 都有意義","on":"每一個"}
-          ] },
-        { "show": ["全純 $\\Rightarrow$ 無限次可微"],
-          "note": "全純函數的剛性從這裡來。",
-          "say": "所以全純函數自動有任意階導數。上一章預告的剛性，就是從這個公式來的。",
-          "board": [
-            {"do":"write","line":"$f$ 全純 $\\Rightarrow$ ${{k:f^{(n)}}}$ 每階都存在"},
-            {"do":"underline","term":"k","on":"任意階導數"},
-            {"do":"write","line":"全純函數的剛性來自這個公式","on":"剛性"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "證明：Liouville",
-      "beats": [
-        { "show": ["用導數版估 $|f'(z_0)|$，圓越畫越大"],
-          "note": "$f$ 是整函數，$|f|\\le M$。",
-          "say": "策略：有界的整函數一定是常數。用導數版的公式估 f prime，再把圓越畫越大，逼它變成零。",
-          "board": [
-            {"do":"write","line":"$|f|\\le M$ 的整函數 ⇒ 常數"},
-            {"do":"write","line":"估 $|f'(z_0)|$，圓越畫越大","on":"用導數版"}
-          ] },
-        { "show": ["$|f'(z_0)|\\le\\frac{1}{2\\pi}\\cdot\\frac{M}{R^2}\\cdot(2\\pi R)$"],
-          "note": "$n=1$ 的公式＋ML 不等式。",
-          "why": {"ask":"$\\frac{M}{R^2}$ 從哪來？","say":"中間那個 R 平方分之 M，是怎麼來的？","options":[{"label":"圓上 $|f(z)|\\le M$，$|z-z_0|^2=R^2$","correct":true},{"label":"$|f'|\\le M$","why":"有界的是 $f$，不是 $f'$；$f'$ 正是要從公式估出來的東西。"},{"label":"ML 不等式的 L 是 $R^2$","why":"L 是圓周長 $2\\pi R$；$R^2$ 來自分母 $(z-z_0)^{2}$。"}]},
-          "say": "n 等於一的公式，分母是 z 減 z 零的平方。圓上分子不超過 M、分母是 R 平方，再乘上周長二派 R。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|f'(z_0)|\\le\\frac{1}{2\\pi}\\cdot{{m:\\frac{M}{R^2}}}\\cdot{{l:(2\\pi R)}}$","on":"中間那個"},
-            {"do":"focus","term":"m","on":"R 平方分之"},
-            {"do":"underline","term":"m","label":"圓上 |f|≤M","why":true,"on":"分子不超過"},
-            {"do":"focus","term":"l","why":true,"on":"周長"}
-          ] },
-        { "show": ["ML：$\\le\\frac{M}{R^2}\\cdot 2\\pi R$"],
-          "note": "$|z-z_0|=R$，$|f|\\le M$。",
-          "say": "ML 不等式用在這裡：被積函數大小不超過 M 除以 R 平方，乘上圓周長二派 R。",
-          "board": [
-            {"do":"write","line":"$\\left|\\oint\\frac{f}{(z-z_0)^2}dz\\right|\\le\\frac{M}{R^2}\\cdot 2\\pi R$"}
-          ] },
-        { "show": ["$=\\frac{M}{R}\\to 0$（$R\\to\\infty$）"],
-          "note": "整函數：圓可以畫任意大，$M$ 不變。",
-          "why": {"ask":"為什麼可以讓 $R\\to\\infty$？","say":"憑什麼可以把圓一直畫大下去？","options":[{"label":"$f$ 是整函數，任何半徑的圓上與內部都全純","correct":true},{"label":"$|f|\\le M$","why":"有界讓 $M$ 不跟著 $R$ 長大；但圓能畫多大，看的是 $f$ 在哪裡全純。"},{"label":"$z_0$ 固定，公式只看 $z_0$","why":"公式要 $f$ 在整個圓上與內部全純，不只在 $z_0$。"}]},
-          "say": "f 在整個平面全純，圓多大都能用公式；M 又固定不動，所以 R 分之 M 趨近零。",
-          "board": [
-            {"do":"write","line":"$=\\frac{M}{R}\\to 0\\quad({{ri:R\\to\\infty}})$","on":"一直畫大"},
-            {"do":"focus","term":"ri","label":"整函數","why":true,"on":"整個平面全純"}
-          ] },
-        { "show": ["$f'(z_0)=0$，$z_0$ 任意 ⇒ $f$ 是常數"],
-          "say": "左邊跟 R 無關，只能是零。z 零是任意一點，所以 f prime 處處是零，f 是常數。",
-          "board": [
-            {"do":"write","line":"${{z:f'(z_0)=0}}$，$z_0$ 任意 ⇒ $f$ 是常數","on":"只能是零"},
-            {"do":"underline","term":"z","on":"任意一點"}
-          ] },
-        { "show": ["$p$ 沒有根 ⇒ $\\frac{1}{p}$ 是有界整函數","⇒ 常數，矛盾"],
-          "note": "$|z|\\to\\infty$ 時 $\\left|\\frac{1}{p}\\right|\\to 0$。",
-          "say": "代數基本定理：非常數多項式沒有根的話，p 分之一是整函數；遠處趨近零，近處連續，所以有界，只能是常數，矛盾。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$p$ 沒有根 ⇒ ${{q:\\frac{1}{p}}}$ 是有界整函數","on":"沒有根"},
-            {"do":"write","line":"⇒ 常數，矛盾","on":"只能是常數"}
-          ] }
-      ],
-      "key": "導數版＋ML 估計，半徑放大到無窮",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "order": {
-        "ask": "把 Liouville 的證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "以 $z_0$ 為圓心、半徑 $R$ 畫圓"
-          },
-          {
-            "label": "公式＋ML：$|f'(z_0)|\\le\\frac{M}{R}$",
-            "why": "要先有一個圓，公式和 ML 不等式才有曲線可以用。"
-          },
-          {
-            "label": "$R\\to\\infty$：$f'(z_0)=0$",
-            "why": "要先有一個跟 $R$ 有關的上界，才能讓 $R$ 變大。"
-          },
-          {
-            "label": "$z_0$ 任意，所以 $f$ 是常數",
-            "why": "要先知道 $f'$ 在這一點是 $0$，才能說每一點都是。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• $f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}dz$；證明：縮小圓 + ML",
+        "• 導數版：$f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}dz$",
+        "• 用法：分母整理成 $(z-z_0)^{k}$，其他部分當 $f$",
+        "• 後果：無限次可微、圓周平均 = 圓心值",
+        "• Liouville：有界整函數是常數 ⇒ 代數基本定理",
+        "下一課：複數上的 Taylor 級數"
+      ]
     }
   ],
   "workedExamples": [
@@ -394,53 +183,829 @@
   ],
   "checks": [
     {
-      "ask": "$\\oint_{|z|=2}\\frac{\\sin z}{z-1}\\,dz$ 是？",
+      "ask": "$\\displaystyle\\oint_{|z|=2}\\frac{z^2}{z-1}\\,dz=$？",
       "options": [
-        { "label": "$2\\pi i\\sin 1$", "correct": true },
-        { "label": "$\\sin 1$", "why": "公式是 $f(z_0)=\\frac{1}{2\\pi i}\\oint\\dots$，所以積分要乘回 $2\\pi i$。" },
-        { "label": "$0$", "why": "$z_0=1$ 在圓內，被積函數在 $1$ 不全純，不能用 Cauchy 定理。" }
+        {
+          "label": "$2\\pi i$",
+          "correct": true
+        },
+        {
+          "label": "$8\\pi i$",
+          "why": "把 $z_0$ 當成半徑 $2$，代了 $f(2)=4$"
+        },
+        {
+          "label": "$0$",
+          "why": "奇異點 $1$ 在圓內，Cauchy 定理不能用"
+        },
+        {
+          "label": "$4\\pi i$",
+          "why": "$f(1)=1$，不是 $2$"
+        }
       ]
     },
     {
-      "ask": "$\\oint_{|z|=1}\\frac{e^{2z}}{z^2}\\,dz$ 是？",
+      "ask": "$\\displaystyle\\oint_{|z|=1}\\frac{e^z}{2z-1}\\,dz=$？",
       "options": [
-        { "label": "$4\\pi i$", "correct": true },
-        { "label": "$2\\pi i$", "why": "分母是 $z^2$，用 $n=1$ 的導數版：$2\\pi i\\,f'(0)$，$f'(z)=2e^{2z}$，$f'(0)=2$。" },
-        { "label": "$0$", "why": "$0$ 在圓內，而且 $f'(0)\\ne 0$。" }
+        {
+          "label": "$\\pi i\\sqrt e$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pi i\\sqrt e$",
+          "why": "忘了先把分母的 $2$ 提出來"
+        },
+        {
+          "label": "$2\\pi i\\,e$",
+          "why": "$z_0=\\frac12$，不是 $1$"
+        },
+        {
+          "label": "$0$",
+          "why": "$\\frac12$ 在單位圓內，不能直接說是 $0$"
+        }
       ]
     },
     {
-      "ask": "$\\oint_{|z|=1}\\frac{e^z}{z-3}\\,dz$ 是？",
+      "ask": "$\\displaystyle\\oint_{|z|=1}\\frac{e^{2z}}{z^2}\\,dz=$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$2\\pi ie^3$", "why": "$z_0=3$ 在單位圓外，被積函數在圓及其內部全純，由 Cauchy 定理是 $0$。" },
-        { "label": "$2\\pi i$", "why": "沒有任何奇異點在圓內。" }
+        {
+          "label": "$4\\pi i$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pi i$",
+          "why": "那是 $2\\pi i\\,f(0)$；分母是平方，要用 $f'(0)$"
+        },
+        {
+          "label": "$8\\pi i$",
+          "why": "$f'(z)=2e^{2z}$，$f'(0)=2$，不是 $4$"
+        },
+        {
+          "label": "$0$",
+          "why": "$0$ 在圓內；只有 $f'(0)=0$ 時才會是 $0$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "公式：邊界決定裡面",
+      "beats": [
+        {
+          "show": [
+            "$C$ 簡單封閉、正向；$f$ 在 $C$ 上與內部全純；$z_0$ 在 $C$ 的內部：",
+            "$f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz$"
+          ],
+          "say": "柯西積分公式：f 在 C 上和內部全純，z 零在裡面，f of z 零就等於這個積分，除以 2 派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C$ 簡單封閉、正向；$f$ 在 $C$ 上與內部全純；$z_0$ 在 $C$ 的內部："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}\\,dz}}$",
+              "on": "全純"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "零就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：只要知道 $f$ 在邊界上的值，裡面每一點的值都決定了"
+          ],
+          "say": "意思是：只要知道邊界上的值，裡面每一點的值就全部決定了。實數的可微函數完全沒有這種性質。",
+          "board": [
+            {
+              "do": "write",
+              "line": "意思：只要知道 $f$ 在邊界上的值，裡面每一點的值都決定了"
+            },
+            {
+              "do": "write",
+              "line": "　實數對照：$[0,1]$ 上的可微函數，知道 $f(0)$、$f(1)$ 完全不知道中間",
+              "color": "violet",
+              "on": "全部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "算積分的用法：",
+            "$\\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)$"
+          ],
+          "say": "反過來就是算積分的公式：這種積分等於 2 派 i 乘 f of z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "算積分的用法："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)}}$",
+              "on": "這種"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz$"
+          ],
+          "say": "例一：e 的 z 次方除以 z 減 1，沿圓心 1、半徑 1 的圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(z)=e^z$ 整函數，$z_0=1$ 在圓心：",
+            "$\\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz=2\\pi i\\,e^1=2\\pi e\\,i$"
+          ],
+          "say": "f 是 e 的 z 次方，處處全純；z 零是 1，在圓裡面。答案是 2 派 i 乘 e。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(z)=e^z$ 整函數，$z_0=1$ 在圓心："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\oint_{|z-1|=1}\\frac{e^z}{z-1}\\,dz=2\\pi i\\,e^1=2\\pi e\\,i}}$",
+              "color": "red",
+              "on": "處處"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "在圓"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$2\\pi e\\approx17.08$",
+              "color": "violet",
+              "on": "e。"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "為什麼：縮成小圓",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純。變形成小圓 $C_r$：$|z-z_0|=r$"
+          ],
+          "say": "證明。被積函數只在 z 零出問題，所以用變形原理，把 C 換成繞 z 零、半徑 r 的小圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{f(z)}{z-z_0}$ 只在 $z_0$ 不全純。變形成小圓 $C_r$：$|z-z_0|=r$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，外面的藍色曲線換成紅色小圓，小圓還可以一直縮小。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 290\" width=\"640\" height=\"290\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hHb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11hHr\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11hHp\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><path d=\"M347.2 145L347.6 141.6L347.7 138.3L347.7 134.9L347.4 131.5L346.9 128.2L346.2 124.9L345.3 121.6L344.2 118.3L342.9 115.2L341.4 112L339.8 109L337.9 106L335.9 103.1L333.8 100.3L331.5 97.6L329.1 95L326.6 92.5L324 90.1L321.2 87.8L318.4 85.5L315.6 83.4L312.7 81.4L309.7 79.4L306.7 77.6L303.6 75.8L300.6 74.2L297.5 72.6L294.5 71L291.4 69.6L288.4 68.1L285.4 66.8L282.3 65.5L279.4 64.2L276.4 63L273.5 61.7L270.6 60.5L267.7 59.4L264.8 58.2L262 57L259.2 55.9L256.4 54.7L253.6 53.5L250.8 52.3L248.1 51.2L245.3 50L242.5 48.8L239.7 47.5L236.9 46.3L234 45.1L231.2 43.9L228.3 42.7L225.3 41.5L222.3 40.3L219.3 39.1L216.2 38L213.1 36.9L209.9 35.8L206.6 34.8L203.3 33.9L200 33L196.6 32.2L193.2 31.5L189.7 30.9L186.1 30.4L182.6 29.9L179 29.6L175.4 29.5L171.8 29.4L168.1 29.5L164.5 29.8L160.9 30.1L157.3 30.6L153.7 31.3L150.2 32.1L146.7 33.1L143.3 34.2L139.9 35.5L136.7 36.9L133.5 38.5L130.4 40.1L127.4 42L124.5 43.9L121.8 46L119.2 48.2L116.7 50.5L114.3 53L112.1 55.5L110 58.1L108 60.7L106.2 63.5L104.6 66.3L103 69.1L101.7 72L100.4 74.9L99.3 77.8L98.3 80.7L97.4 83.7L96.6 86.6L95.9 89.5L95.4 92.5L94.9 95.4L94.4 98.2L94.1 101.1L93.8 103.9L93.5 106.6L93.3 109.4L93.1 112.1L92.9 114.7L92.8 117.4L92.6 120L92.4 122.5L92.2 125.1L92 127.6L91.8 130.1L91.5 132.6L91.2 135.1L90.9 137.5L90.5 140L90.1 142.5L89.6 145L89.1 147.5L88.6 150.1L88 152.7L87.4 155.3L86.8 158L86.2 160.7L85.5 163.4L84.9 166.3L84.3 169.2L83.7 172.1L83.2 175.1L82.6 178.2L82.2 181.3L81.8 184.5L81.5 187.7L81.3 191L81.2 194.3L81.2 197.6L81.3 201L81.6 204.5L82 207.9L82.5 211.3L83.2 214.8L84.1 218.2L85.2 221.6L86.4 225L87.8 228.3L89.4 231.6L91.2 234.7L93.2 237.9L95.4 240.9L97.7 243.8L100.3 246.5L103 249.2L105.8 251.7L108.9 254.1L112 256.3L115.4 258.3L118.8 260.2L122.4 261.9L126.1 263.3L129.9 264.6L133.8 265.7L137.7 266.6L141.7 267.4L145.8 267.9L149.8 268.2L153.9 268.3L158 268.2L162.1 268L166.2 267.5L170.2 266.9L174.2 266.2L178.1 265.2L182 264.2L185.7 263L189.4 261.6L193.1 260.2L196.6 258.6L200 257L203.3 255.3L206.5 253.5L209.7 251.7L212.7 249.8L215.6 247.9L218.4 246L221.1 244.1L223.8 242.2L226.3 240.3L228.8 238.4L231.2 236.5L233.5 234.7L235.8 233L238.1 231.3L240.3 229.6L242.5 228L244.7 226.4L246.8 224.9L249 223.5L251.2 222.1L253.4 220.8L255.7 219.5L258 218.3L260.3 217.1L262.7 216L265.1 214.9L267.6 213.8L270.1 212.7L272.7 211.6L275.4 210.5L278.1 209.4L280.9 208.3L283.7 207.2L286.6 206L289.5 204.7L292.5 203.5L295.5 202.1L298.6 200.7L301.6 199.1L304.6 197.5L307.7 195.8L310.7 194L313.7 192.1L316.6 190.1L319.5 188L322.3 185.8L325 183.5L327.6 181.1L330.1 178.5L332.5 175.9L334.8 173.1L336.9 170.3L338.8 167.4L340.6 164.4L342.2 161.3L343.6 158.1L344.8 154.9L345.8 151.6L346.6 148.3L347.2 145Z\" stroke=\"var(--blue)\" stroke-width=\"2.8\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><line x1=\"188.5\" y1=\"30.7\" x2=\"169.3\" y2=\"29.5\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hHb)\"/><text x=\"316.7\" y=\"74.8\" fill=\"var(--blue)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><circle cx=\"215\" cy=\"150\" r=\"62\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-dasharray=\"none\" opacity=\"1\"/><circle cx=\"215\" cy=\"150\" r=\"38\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-dasharray=\"5 4\" opacity=\"0.7\"/><path d=\"M277 150 A62 62 0 0 0 269.4 120.3\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah11hHr)\"/><circle cx=\"215\" cy=\"150\" r=\"5\" fill=\"var(--ink)\"/><text x=\"221\" y=\"170\" fill=\"var(--ink)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z<tspan font-size=\"14\" dy=\"5\" style=\"font-family:KaTeX_Main,serif\">0</tspan></text><line x1=\"215\" y1=\"150\" x2=\"163.8\" y2=\"115\" stroke=\"var(--muted)\" stroke-width=\"1.8\"/><text x=\"175\" y=\"120\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</text><text x=\"140\" y=\"235\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan font-size=\"15\" dy=\"5\">r</tspan></text><text x=\"400\" y=\"95\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">① 變形：<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan> 換成小圓 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"14\" dy=\"5\">r</tspan></text><text x=\"400\" y=\"140\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">② <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> → 0</tspan>：小圓上 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif\">) ≈ </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan font-size=\"14\" dy=\"5\" style=\"font-family:KaTeX_Main,serif\">0</tspan><tspan dy=\"-5\" style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"400\" y=\"185\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">剩下 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan font-size=\"14\" dy=\"5\" style=\"font-family:KaTeX_Main,serif\">0</tspan><tspan dy=\"-5\" style=\"font-family:KaTeX_Main,serif\">) · 2π</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "拆成兩項：",
+            "$\\begin{aligned}\\oint_{C_r}\\frac{f(z)}{z-z_0}dz=\\ &f(z_0)\\oint_{C_r}\\frac{dz}{z-z_0}\\\\&+\\oint_{C_r}\\frac{f(z)-f(z_0)}{z-z_0}dz\\end{aligned}$"
+          ],
+          "say": "把 f of z 拆成 f of z 零，加上 f of z 減 f of z 零。第一項是常數乘最重要的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "拆成兩項："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\oint_{C_r}\\frac{f(z)}{z-z_0}dz=\\ &f(z_0)\\oint_{C_r}\\frac{dz}{z-z_0}\\\\&+\\oint_{C_r}\\frac{f(z)-f(z_0)}{z-z_0}dz\\end{aligned}}$",
+              "on": "of#4"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一項 $=2\\pi i\\,f(z_0)$。第二項叫 $E(r)$，用 ML：",
+            "$\\begin{aligned}|E(r)|&\\le\\frac{\\max_{C_r}|f(z)-f(z_0)|}{r}\\cdot2\\pi r\\\\&=2\\pi\\max_{C_r}|f(z)-f(z_0)|\\end{aligned}$"
+          ],
+          "say": "第一項是 2 派 i 乘 f of z 零。第二項叫 E of r，用 M L 不等式：分母是 r，路長 2 派 r，r 剛好消掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第一項 $=2\\pi i\\,f(z_0)$。第二項叫 $E(r)$，用 ML："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}|E(r)|&\\le\\frac{\\max_{C_r}|f(z)-f(z_0)|}{r}\\cdot2\\pi r\\\\&=2\\pi\\max_{C_r}|f(z)-f(z_0)|\\end{aligned}}$",
+              "on": "不等"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "Cauchy 積分公式的導數版告訴我們什麼？",
-      "options": [
-        { "label": "在開集上全純的函數，自動有任意階導數", "correct": true },
-        { "label": "全純函數的導數都是 0", "why": "公式算的是 $f^{(n)}(z_0)$ 的值，一般不是 $0$。" },
-        { "label": "只有多項式才有任意階導數", "why": "$e^z$、$\\sin z$、$\\frac{1}{z}$（在 $0$ 以外）都有任意階導數。" }
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "$f$ 連續：$r\\to0$ 時 $\\max_{C_r}|f(z)-f(z_0)|\\to0$，所以 $E(r)\\to0$"
+          ],
+          "say": "f 連續，所以小圓縮到 z 零時，f of z 減 f of z 零的最大值趨近 0，E of r 也趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 連續：$r\\to0$ 時 $\\max_{C_r}|f(z)-f(z_0)|\\to0$，所以 $E(r)\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊跟 $r$ 無關，所以 $E(r)$ 是常數；常數趨近 $0$，就是 $0$：",
+            "$\\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)\\quad\\blacksquare$"
+          ],
+          "say": "但左邊跟 r 無關，所以 E of r 是一個常數；一個常數趨近 0，它就是 0。證畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊跟 $r$ 無關，所以 $E(r)$ 是常數；常數趨近 $0$，就是 $0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\oint_C\\frac{f(z)}{z-z_0}\\,dz=2\\pi i\\,f(z_0)\\quad\\blacksquare}}$",
+              "on": "of"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "數趨"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：先拆出 $f$",
+      "beats": [
+        {
+          "show": [
+            "例 2：$\\displaystyle\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$"
+          ],
+          "say": "例二：z 平方加 1 分之一，沿圓心 i、半徑 1 的圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：$\\displaystyle\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z^2+1=(z-i)(z+i)$：$i$ 在圓內，$-i$ 離 $i$ 距離 $2$，在圓外"
+          ],
+          "say": "分母分解成 z 減 i 乘 z 加 i。i 在圓裡面，負 i 距離 2，在圓外。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z^2+1=(z-i)(z+i)$：$i$ 在圓內，$-i$ 離 $i$ 距離 $2$，在圓外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{1}{z^2+1}=\\frac{f(z)}{z-i},\\qquad f(z)=\\frac{1}{z+i}$"
+          ],
+          "say": "所以把 z 加 i 分之一當成 f：它在圓上和圓內都全純，因為它唯一的問題點負 i 在外面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{z^2+1}=\\frac{f(z)}{z-i},\\qquad f(z)=\\frac{1}{z+i}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}=2\\pi i\\cdot\\frac{1}{i+i}=\\pi$"
+          ],
+          "say": "答案是 2 派 i，乘 f of i，也就是 2i 分之一，得到派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\oint_{|z-i|=1}\\frac{dz}{z^2+1}=2\\pi i\\cdot\\frac{1}{i+i}=\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓周平均：$C$ 取 $|z-z_0|=r$，$z=z_0+re^{it}$：",
+            "$\\begin{aligned}f(z_0)&=\\frac{1}{2\\pi i}\\int_0^{2\\pi}\\frac{f(z_0+re^{it})}{re^{it}}\\,ire^{it}\\,dt\\\\&=\\frac{1}{2\\pi}\\int_0^{2\\pi}f(z_0+re^{it})\\,dt\\end{aligned}$"
+          ],
+          "say": "另一個後果：取 C 是圓，代參數式，r e 的 i t 次方剛好約掉。圓心的值，等於圓周上的平均值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓周平均：$C$ 取 $|z-z_0|=r$，$z=z_0+re^{it}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}f(z_0)&=\\frac{1}{2\\pi i}\\int_0^{2\\pi}\\frac{f(z_0+re^{it})}{re^{it}}\\,ire^{it}\\,dt\\\\&=\\frac{1}{2\\pi}\\int_0^{2\\pi}f(z_0+re^{it})\\,dt\\end{aligned}}}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "圓心"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "導數版：越微分次方越高",
+      "beats": [
+        {
+          "show": [
+            "$f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$"
+          ],
+          "say": "導數版：f 的 n 階導數，等於 2 派 i 分之 n 階乘，乘 f of z 除以 z 減 z 零的 n 加 1 次方的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：對公式裡的 $z_0$ 微分，$\\dfrac{1}{z-z_0}\\to\\dfrac{1}{(z-z_0)^2}\\to\\dfrac{2}{(z-z_0)^3}\\to\\cdots$"
+          ],
+          "say": "直覺上，就是對公式裡的 z 零一直微分：每微一次，分母的次方加 1，前面跑出階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直覺：對公式裡的 $z_0$ 微分，$\\dfrac{1}{z-z_0}\\to\\dfrac{1}{(z-z_0)^2}\\to\\dfrac{2}{(z-z_0)^3}\\to\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證 $n=1$：$C$ 取小圓 $|z-z_0|=r$（變形），$|h|<\\frac r2$，$|f|\\le M$：",
+            "$\\frac{f(z_0+h)-f(z_0)}{h}=\\frac{1}{2\\pi i}\\oint\\frac{f(z)\\,dz}{(z-z_0-h)(z-z_0)}$"
+          ],
+          "say": "證 n 等於 1。對 z 零加 h 和 z 零各用一次積分公式，相減除以 h，通分以後，分母是 z 減 z 零減 h，乘 z 減 z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證 $n=1$：$C$ 取小圓 $|z-z_0|=r$（變形），$|h|<\\frac r2$，$|f|\\le M$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{f(z_0+h)-f(z_0)}{h}=\\frac{1}{2\\pi i}\\oint\\frac{f(z)\\,dz}{(z-z_0-h)(z-z_0)}$",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它跟 $\\frac{1}{2\\pi i}\\oint\\frac{f}{(z-z_0)^2}dz$ 的差是",
+            "$\\frac{1}{2\\pi i}\\oint\\frac{h\\,f(z)\\,dz}{(z-z_0-h)(z-z_0)^2}$"
+          ],
+          "say": "再跟目標公式相減，又通分一次，分子多出一個 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它跟 $\\frac{1}{2\\pi i}\\oint\\frac{f}{(z-z_0)^2}dz$ 的差是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{2\\pi i}\\oint\\frac{h\\,f(z)\\,dz}{(z-z_0-h)(z-z_0)^2}$",
+              "on": "一次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓上 $|z-z_0-h|\\ge r-|h|>\\frac r2$，ML：",
+            "$\\begin{aligned}\\Big|\\cdots\\Big|&\\le\\frac{1}{2\\pi}\\cdot\\frac{|h|\\,M}{\\frac r2\\cdot r^2}\\cdot2\\pi r\\\\&=\\frac{2M|h|}{r^2}\\xrightarrow{h\\to0}0\\quad\\blacksquare\\end{aligned}$"
+          ],
+          "say": "在小圓上，這個分母至少是 2 分之 r。用 M L 不等式，上界跟 h 成正比，h 趨近 0 就趨近 0。證畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓上 $|z-z_0-h|\\ge r-|h|>\\frac r2$，ML："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\Big|\\cdots\\Big|&\\le\\frac{1}{2\\pi}\\cdot\\frac{|h|\\,M}{\\frac r2\\cdot r^2}\\cdot2\\pi r\\\\&=\\frac{2M|h|}{r^2}\\xrightarrow{h\\to0}0\\quad\\blacksquare\\end{aligned}}}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "上界"
+            },
+            {
+              "do": "write",
+              "line": "　高階用同樣的估計、對 $n$ 歸納；$z_0$ 在 $C$ 內任一點，先把 $C$ 變形成小圓即可",
+              "color": "violet",
+              "on": "趨近#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "後果：$f'$ 又是這種積分 ⇒ 又可微 ⇒ 全純函數無限次可微"
+          ],
+          "say": "後果非常強：f prime 也寫成同樣的積分，所以又可微，一直下去：全純函數自動無限次可微。上一課證明時假設的 f prime 連續，也就自動成立了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "後果：$f'$ 又是這種積分 ⇒ 又可微 ⇒ 全純函數無限次可微",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：導數版",
+      "beats": [
+        {
+          "show": [
+            "例 3：$\\displaystyle\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz$"
+          ],
+          "say": "例三：餘弦 z 除以 z 立方，沿單位圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 3：$\\displaystyle\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z^3=(z-0)^{2+1}$：$n=2$，$z_0=0$，$f(z)=\\cos z$"
+          ],
+          "say": "z 立方是 z 減 0 的 3 次方，所以 n 加 1 等於 3，n 是 2；f 是餘弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z^3=(z-0)^{2+1}$：$n=2$，$z_0=0$，$f(z)=\\cos z$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz&=\\frac{2\\pi i}{2!}f''(0)\\\\&=\\pi i\\cdot(-\\cos0)=-\\pi i\\end{aligned}$"
+          ],
+          "say": "答案是 2 派 i 除以 2 階乘，乘 f 的二階導數在 0 的值。餘弦微兩次是負餘弦，在 0 是負 1，所以是負派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle {\\begin{aligned}\\oint_{|z|=1}\\frac{\\cos z}{z^3}\\,dz&=\\frac{2\\pi i}{2!}f''(0)\\\\&=\\pi i\\cdot(-\\cos0)=-\\pi i\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "的值"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "Liouville 定理",
+      "beats": [
+        {
+          "show": [
+            "Cauchy 估計：$|f|\\le M$ 在 $|z-z_0|=R$ 上，則",
+            "$|f^{(n)}(z_0)|\\le\\frac{n!}{2\\pi}\\cdot\\frac{M}{R^{n+1}}\\cdot2\\pi R=\\frac{n!\\,M}{R^n}$"
+          ],
+          "say": "把 M L 不等式用在導數版，得到柯西估計：n 階導數不超過 n 階乘乘 M，除以 R 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Cauchy 估計：$|f|\\le M$ 在 $|z-z_0|=R$ 上，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle |f^{(n)}(z_0)|\\le\\frac{n!}{2\\pi}\\cdot\\frac{M}{R^{n+1}}\\cdot2\\pi R=\\frac{n!\\,M}{R^n}}}$",
+              "on": "柯西"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "乘乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Liouville：整函數而且有界（$|f|\\le M$）⇒ $f$ 是常數"
+          ],
+          "say": "劉維爾定理：在整個平面上全純、而且有界的函數，一定是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Liouville：整函數而且有界（$|f|\\le M$）⇒ $f$ 是常數",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：任一點 $z_0$，任意 $R$：$|f'(z_0)|\\le\\dfrac{M}{R}$"
+          ],
+          "say": "證明：在任何一點，對任何半徑 R，導數都不超過 R 分之 M。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：任一點 $z_0$，任意 $R$：$|f'(z_0)|\\le\\dfrac{M}{R}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$R\\to\\infty$：$f'(z_0)=0$，處處成立"
+          ],
+          "say": "R 可以任意大，所以導數是 0，而且處處都是。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$R\\to\\infty$：$f'(z_0)=0$，處處成立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(z)-f(0)=\\int_{[0,z]}f'(w)\\,dw=0$ ⇒ $f$ 是常數　$\\blacksquare$"
+          ],
+          "say": "f prime 是 0，沿 0 到 z 的線段積分，f of z 等於 f of 0。f 是常數，證畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(z)-f(0)=\\int_{[0,z]}f'(w)\\,dw=0$ ⇒ $f$ 是常數　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　對照：$\\sin x$ 在實數上有界但不是常數；$\\sin z$ 在複數上無界（$\\sin(iy)=i\\sinh y$）",
+              "color": "violet",
+              "on": "的線"
+            },
+            {
+              "do": "write",
+              "line": "例：$e^z$ 不是常數 ⇒ 無界",
+              "on": "of#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "代數基本定理",
+      "beats": [
+        {
+          "show": [
+            "定理：次數 $\\ge1$ 的多項式 $p$ 在 $\\mathbb C$ 上一定有根"
+          ],
+          "say": "最後，代數基本定理：次數至少 1 的多項式，在複數裡一定有根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：次數 $\\ge1$ 的多項式 $p$ 在 $\\mathbb C$ 上一定有根",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：假設 $p$ 沒有根，則 $g=\\frac1p$ 是整函數"
+          ],
+          "say": "反證：假設 p 沒有根，那 p 分之一處處全純，是整函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：假設 $p$ 沒有根，則 $g=\\frac1p$ 是整函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z|$ 大：$|p(z)|\\ge|a_n||z|^n-\\sum_{k<n}|a_k||z|^k\\to\\infty$，存在 $R_0$ 使 $|g|\\le1$"
+          ],
+          "say": "z 很大時，最高次項壓過其他項，p 的絕對值趨近無限大，所以存在 R 零，外面 g 的絕對值不超過 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z|$ 大：$|p(z)|\\ge|a_n||z|^n-\\sum_{k<n}|a_k||z|^k\\to\\infty$，存在 $R_0$ 使 $|g|\\le1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z|\\le R_0$：閉圓盤上連續 ⇒ 有界"
+          ],
+          "say": "而在半徑 R 零的閉圓盤上，g 連續，所以有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z|\\le R_0$：閉圓盤上連續 ⇒ 有界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $g$ 整函數且有界 ⇒（Liouville）常數 ⇒ $p$ 是常數，矛盾　$\\blacksquare$"
+          ],
+          "say": "合起來，g 是有界的整函數，由劉維爾定理是常數，所以 p 也是常數，跟次數至少 1 矛盾。證畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $g$ 整函數且有界 ⇒（Liouville）常數 ⇒ $p$ 是常數，矛盾　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　再對 $\\frac{p(z)}{z-z_1}$ 重複，就得到 $p$ 恰好有 $n$ 個根（計重數）",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "代數基本定理的證明順序",
+        "steps": [
+          {
+            "label": "假設 $p$ 沒有根，令 $g=\\frac1p$"
+          },
+          {
+            "label": "$g$ 是整函數",
+            "why": "先要有上一步：假設 $p$ 沒有根，令 $g=\\frac1p$"
+          },
+          {
+            "label": "$|z|$ 大時 $|g|\\le1$；圓盤上連續也有界",
+            "why": "先要有上一步：$g$ 是整函數"
+          },
+          {
+            "label": "Liouville：$g$ 是常數",
+            "why": "先要有上一步：$|z|$ 大時 $|g|\\le1$；圓盤上連續也有界"
+          },
+          {
+            "label": "$p$ 是常數，跟次數 $\\ge1$ 矛盾",
+            "why": "先要有上一步：Liouville：$g$ 是常數"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}dz$；證明：縮小圓 + ML",
+            "• 導數版：$f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}dz$"
+          ],
+          "say": "整理：積分公式說邊界決定裡面；導數版讓全純函數無限次可微；柯西估計推出劉維爾定理，再推出代數基本定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f(z_0)=\\frac{1}{2\\pi i}\\oint_C\\frac{f(z)}{z-z_0}dz$；證明：縮小圓 + ML"
+            },
+            {
+              "do": "write",
+              "line": "• 導數版：$f^{(n)}(z_0)=\\frac{n!}{2\\pi i}\\oint_C\\frac{f(z)}{(z-z_0)^{n+1}}dz$",
+              "on": "決定"
+            },
+            {
+              "do": "write",
+              "line": "• 用法：分母整理成 $(z-z_0)^{k}$，其他部分當 $f$",
+              "on": "純函"
+            },
+            {
+              "do": "write",
+              "line": "• 後果：無限次可微、圓周平均 = 圓心值",
+              "on": "西估"
+            },
+            {
+              "do": "write",
+              "line": "• Liouville：有界整函數是常數 ⇒ 代數基本定理",
+              "on": "再推"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複數上的 Taylor 級數"
+          ],
+          "say": "下一課，用積分公式把全純函數展開成泰勒級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：複數上的 Taylor 級數"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "contour-integral", "residue"],
-    "fine": ["cauchy-formula-apply", "cauchy-formula-derivative", "cauchy-formula-factor-split", "cauchy-formula-mean-value"]
+    "coarse": [
+      "complex",
+      "contour-integral",
+      "residue"
+    ],
+    "fine": [
+      "cauchy-formula-apply",
+      "cauchy-formula-derivative",
+      "cauchy-formula-factor-split",
+      "cauchy-formula-mean-value"
+    ]
   },
   "practice": [
-    { "id": "der-084", "core": true, "trains": "cauchy-formula-apply" },
-    { "id": "cg-11h-020", "core": true, "trains": "cauchy-formula-apply" },
-    { "id": "cg-11h-023", "core": true, "trains": "cauchy-formula-derivative" },
-    { "id": "cg-11h-026", "core": true, "trains": "cauchy-formula-factor-split" },
-    { "id": "rel-hard-cpx-006", "trains": "cauchy-formula-derivative" },
-    { "id": "cg-11h-021", "trains": "cauchy-formula-apply" },
-    { "id": "cg-11h-022", "trains": "cauchy-formula-apply" },
-    { "id": "cg-11h-024", "trains": "cauchy-formula-derivative" },
-    { "id": "cg-11h-025", "trains": "cauchy-formula-derivative" },
-    { "id": "cg-11h-027", "trains": "cauchy-formula-factor-split" }
+    {
+      "id": "der-084",
+      "core": true,
+      "trains": "cauchy-formula-apply"
+    },
+    {
+      "id": "cg-11h-020",
+      "core": true,
+      "trains": "cauchy-formula-apply"
+    },
+    {
+      "id": "cg-11h-023",
+      "core": true,
+      "trains": "cauchy-formula-derivative"
+    },
+    {
+      "id": "cg-11h-026",
+      "core": true,
+      "trains": "cauchy-formula-factor-split"
+    },
+    {
+      "id": "rel-hard-cpx-006",
+      "trains": "cauchy-formula-derivative"
+    },
+    {
+      "id": "cg-11h-021",
+      "trains": "cauchy-formula-apply"
+    },
+    {
+      "id": "cg-11h-022",
+      "trains": "cauchy-formula-apply"
+    },
+    {
+      "id": "cg-11h-024",
+      "trains": "cauchy-formula-derivative"
+    },
+    {
+      "id": "cg-11h-025",
+      "trains": "cauchy-formula-derivative"
+    },
+    {
+      "id": "cg-11h-027",
+      "trains": "cauchy-formula-factor-split"
+    }
   ],
   "gaps": []
 }

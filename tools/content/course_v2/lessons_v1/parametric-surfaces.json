@@ -1,0 +1,326 @@
+{
+  "id": "parametric-surfaces",
+  "title": "參數曲面",
+  "readMinutes": 9,
+  "totalMinutes": 25,
+  "prerequisites": ["parametric-curves", "tangent-plane", "spherical-coordinates"],
+  "next": ["surface-area"],
+  "related": ["cylindrical-coordinates"],
+  "objectives": [
+    "用 $\\mathbf r(u,v)$ 描述平面、函數圖形、圓柱、球面、圓錐這些曲面，並寫出參數的範圍。",
+    "算出兩個切向量 $\\mathbf r_u$、$\\mathbf r_v$ 與法向量 $\\mathbf r_u\\times\\mathbf r_v$。",
+    "用法向量寫出參數曲面的切平面。"
+  ],
+  "visual": "左邊是 uv 平面上的矩形參數區域，右邊是對應的曲面（例如球面）。在左邊拖動一個點，右邊的點同步在曲面上移動；左邊的水平線與垂直線分別對應曲面上的兩族格線（緯線、經線）。在該點畫出 r_u、r_v 兩支切向量，以及它們的外積 r_u × r_v（法向量）。",
+  "concept": [
+    {
+      "heading": "① 曲線用一個參數，曲面用兩個",
+      "body": [
+        "〈參數曲線〉$\\mathbf r(t)$ 是一個參數掃出一條線。曲面要兩個參數：$\\mathbf r(u,v)=\\langle x(u,v),y(u,v),z(u,v)\\rangle$，$(u,v)$ 在 $uv$ 平面的某個區域 $D$ 裡變動，像點掃出一整片。",
+        "固定 $v$、只動 $u$，掃出曲面上的一條曲線；固定 $u$、只動 $v$，掃出另一條。這兩族曲線叫格線，把曲面織成一張網。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 常見曲面的參數式",
+      "body": [
+        "函數圖形 $z=g(x,y)$：$\\mathbf r(x,y)=\\langle x,y,g(x,y)\\rangle$，參數就是 $x$、$y$。",
+        "平面：$\\mathbf r(u,v)=\\mathbf r_0+u\\mathbf a+v\\mathbf b$，過 $\\mathbf r_0$、由兩個不平行的向量 $\\mathbf a$、$\\mathbf b$ 張開。",
+        "圓柱面 $x^2+y^2=a^2$：$\\mathbf r(\\theta,z)=\\langle a\\cos\\theta,a\\sin\\theta,z\\rangle$，借用〈柱座標〉。",
+        "球面 $x^2+y^2+z^2=a^2$：$\\mathbf r(\\varphi,\\theta)=\\langle a\\sin\\varphi\\cos\\theta,a\\sin\\varphi\\sin\\theta,a\\cos\\varphi\\rangle$，$0\\le\\varphi\\le\\pi$、$0\\le\\theta\\le 2\\pi$，借用〈球座標〉把 $\\rho$ 固定成 $a$。",
+        "圓錐面 $z=\\sqrt{x^2+y^2}$：以 $(s,\\theta)$ 為參數，$\\langle s\\cos\\theta,s\\sin\\theta,s\\rangle$，$s\\ge 0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 切向量與法向量",
+      "body": [
+        "沿 $u$ 方向的格線，切向量是 $\\mathbf r_u=\\frac{\\partial\\mathbf r}{\\partial u}$；沿 $v$ 方向是 $\\mathbf r_v$。兩者都貼在曲面上。",
+        "它們的外積 $\\mathbf r_u\\times\\mathbf r_v$ 同時垂直於兩者，所以垂直於曲面：這是法向量。$\\mathbf r_u\\times\\mathbf r_v\\ne\\mathbf 0$ 的地方，曲面是光滑的，可以寫切平面：$\\mathbf n\\cdot(\\mathbf r-\\mathbf r_0)=0$。",
+        "$|\\mathbf r_u\\times\\mathbf r_v|$ 還有另一個用處：它是 $\\mathbf r_u$、$\\mathbf r_v$ 張成的平行四邊形面積，下一課〈曲面面積〉就靠它。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "同一張曲面，兩種參數化",
+      "prompt": "把拋物面 $z=x^2+y^2$ 在 $z\\le 4$ 的部分參數化。",
+      "steps": [
+        "當成函數圖形：$\\mathbf r(x,y)=\\langle x,y,x^2+y^2\\rangle$，$(x,y)$ 在圓盤 $x^2+y^2\\le 4$。",
+        "用極座標的 $(r,\\theta)$ 當參數：$\\langle r\\cos\\theta,r\\sin\\theta,r^2\\rangle$，$0\\le r\\le 2$、$0\\le\\theta\\le 2\\pi$。參數區域變成矩形。",
+        "檢查：$x^2+y^2=r^2\\cos^2\\theta+r^2\\sin^2\\theta=r^2=z$，點確實在拋物面上。"
+      ],
+      "answer": "$\\langle r\\cos\\theta,r\\sin\\theta,r^2\\rangle$，$0\\le r\\le 2$、$0\\le\\theta\\le 2\\pi$",
+      "claim": "(r*cos(t))^2+(r*sin(t))^2 == r^2"
+    },
+    {
+      "title": "球面",
+      "prompt": "寫出半徑 $2$ 的球面參數式，並確認點都在球面上。",
+      "steps": [
+        "$\\mathbf r(\\varphi,\\theta)=\\langle 2\\sin\\varphi\\cos\\theta,2\\sin\\varphi\\sin\\theta,2\\cos\\varphi\\rangle$，$0\\le\\varphi\\le\\pi$、$0\\le\\theta\\le 2\\pi$。",
+        "$x^2+y^2=4\\sin^2\\varphi\\,(\\cos^2\\theta+\\sin^2\\theta)=4\\sin^2\\varphi$。",
+        "加上 $z^2=4\\cos^2\\varphi$：總和 $4(\\sin^2\\varphi+\\cos^2\\varphi)=4$。",
+        "$\\varphi$ 固定的格線是緯線圈，$\\theta$ 固定的格線是經線。"
+      ],
+      "answer": "$\\langle 2\\sin\\varphi\\cos\\theta,2\\sin\\varphi\\sin\\theta,2\\cos\\varphi\\rangle$",
+      "claim": "(2*sin(u)*cos(t))^2+(2*sin(u)*sin(t))^2+(2*cos(u))^2 == 4"
+    },
+    {
+      "title": "圓柱面的法向量與切平面",
+      "prompt": "$\\mathbf r(\\theta,z)=\\langle\\cos\\theta,\\sin\\theta,z\\rangle$。求 $\\mathbf r_\\theta\\times\\mathbf r_z$，以及在 $\\theta=0$、$z=1$ 的切平面。",
+      "steps": [
+        "$\\mathbf r_\\theta=\\langle -\\sin\\theta,\\cos\\theta,0\\rangle$，$\\mathbf r_z=\\langle 0,0,1\\rangle$。",
+        "外積：$\\langle\\cos\\theta\\cdot1-0\\cdot0,0\\cdot0-(-\\sin\\theta)\\cdot1,0\\rangle=\\langle\\cos\\theta,\\sin\\theta,0\\rangle$。它從 $z$ 軸往外指，長度 $1$。",
+        "$\\theta=0$、$z=1$ 的點是 $(1,0,1)$，法向量 $\\langle 1,0,0\\rangle$。",
+        "切平面：$1\\cdot(x-1)+0+0=0$，也就是 $x=1$。"
+      ],
+      "answer": "$\\mathbf r_\\theta\\times\\mathbf r_z=\\langle\\cos\\theta,\\sin\\theta,0\\rangle$；切平面 $x=1$",
+      "claim": "D(sin(t), , t)*1 - 0 == cos(t) ;; 0 - D(cos(t), , t)*1 == sin(t)"
+    }
+  ],
+  "pitfalls": [
+    "圓柱面少了 $z$ 參數，寫成只有一個圓。",
+    "球面的 $\\varphi$ 寫到 $2\\pi$，或把 $\\varphi$、$\\theta$ 的角色對調。",
+    "以為 $\\mathbf r_u\\cdot\\mathbf r_v$ 是法向量；法向量要用外積。",
+    "外積的順序對調，法向量指向反面（下一課開始，方向會很重要）。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\mathbf r(u,v)=\\langle u,v,3-u-v\\rangle$ 描述的是？",
+      "options": [
+        { "label": "平面 $x+y+z=3$", "correct": true },
+        { "label": "一條直線", "why": "有兩個獨立的參數，掃出來的是二維的曲面，不是一維的線。" },
+        { "label": "球面", "why": "$x$、$y$ 是任意的 $u$、$v$，$z=3-x-y$ 是一次式，所以是平面。" }
+      ]
+    },
+    {
+      "ask": "圓柱面 $x^2+y^2=9$ 的參數式是？",
+      "options": [
+        { "label": "$\\langle 3\\cos\\theta,3\\sin\\theta,z\\rangle$", "correct": true },
+        { "label": "$\\langle 3\\cos\\theta,3\\sin\\theta,0\\rangle$", "why": "只有一個參數 $\\theta$，掃出來是 $xy$ 平面上的一個圓。圓柱還要沿 $z$ 方向延伸。" },
+        { "label": "$\\langle 9\\cos\\theta,9\\sin\\theta,z\\rangle$", "why": "$x^2+y^2=9$ 的半徑是 $3$，不是 $9$。" }
+      ]
+    },
+    {
+      "ask": "$\\mathbf r_u\\times\\mathbf r_v$ 在幾何上是？",
+      "options": [
+        { "label": "曲面在那一點的法向量", "correct": true },
+        { "label": "曲面在那一點的切向量", "why": "$\\mathbf r_u$、$\\mathbf r_v$ 本身是切向量；它們的外積垂直於兩者，所以垂直於曲面。" },
+        { "label": "一定是零向量", "why": "只有在不光滑的地方（像球面的南北極、圓錐的尖端）才會是 $\\mathbf 0$。" }
+      ]
+    },
+    {
+      "ask": "球面參數式 $\\langle a\\sin\\varphi\\cos\\theta,a\\sin\\varphi\\sin\\theta,a\\cos\\varphi\\rangle$ 中，固定 $\\varphi$、讓 $\\theta$ 變動，得到的格線是？",
+      "options": [
+        { "label": "緯線圈（水平的圓）", "correct": true },
+        { "label": "經線（通過南北極的半圓）", "why": "那是固定 $\\theta$、讓 $\\varphi$ 從 $0$ 走到 $\\pi$。" },
+        { "label": "一個點", "why": "$\\theta$ 從 $0$ 走到 $2\\pi$ 會繞一圈；只有 $\\varphi=0$ 或 $\\pi$（極點）時才縮成一點。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "兩個參數掃出一片",
+      "beats": [
+        { "show": ["曲線：$\\mathbf r(t)$，一個參數"],
+          "say": "參數曲線用一個參數 t，掃出一條線。",
+          "board": [
+            {"do":"write","line":"曲線：$\\mathbf r({{t:t}})$，一個參數"},
+            {"do":"focus","term":"t","color":"blue","on":"一個參數"}
+          ] },
+        { "show": ["曲面：$\\mathbf r(u,v)$，兩個參數","$=\\langle x(u,v),y(u,v),z(u,v)\\rangle$"],
+          "note": "$(u,v)$ 在 $uv$ 平面的區域 $D$ 裡變動。",
+          "say": "曲面要兩個參數 u、v。它們在一塊區域裡變動，像點就掃出一整片。",
+          "board": [
+            {"do":"write","line":"$\\mathbf r({{u:u}},{{v:v}})=\\langle x,y,z\\rangle$","tint":{"u":"blue","v":"violet"}},
+            {"do":"focus","term":"u","color":"blue","on":"兩個參數"},
+            {"do":"write","line":"$(u,v)$ 在區域 $D$ 裡變動","on":"一塊區域"}
+          ] },
+        { "show": ["格線：把曲面織成一張網"],
+          "say": "固定其中一個參數、只動另一個，會掃出曲面上的線。兩族這樣的線，把曲面織成一張網。",
+          "board": [
+            {"do":"write","line":"兩族格線：${{a:u}}$ 族、${{b:v}}$ 族"},
+            {"do":"focus","term":"a","color":"blue","on":"兩族"},
+            {"do":"focus","term":"b","color":"violet","on":"織成"}
+          ] }
+      ],
+      "predict": {
+        "ask": "固定 $v$、只動 $u$，掃出的是？",
+        "options": [
+          {
+            "label": "曲面上的一條曲線",
+            "correct": true
+          },
+          {
+            "label": "一個點",
+            "why": "$u$ 還在動，像點會跟著移動，掃出一條線。"
+          },
+          {
+            "label": "整張曲面",
+            "why": "要兩個參數都動才掃出一整片；只動一個是一條格線。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "圖形與平面",
+      "beats": [
+        { "show": ["$z=g(x,y)$：$\\mathbf r(x,y)=\\langle x,y,g(x,y)\\rangle$"],
+          "note": "參數就是 $x$、$y$。",
+          "say": "函數圖形最簡單：直接拿 x、y 當參數，第三個分量是函數值。",
+          "board": [
+            {"do":"write","line":"$z={{g:g(x,y)}}$"},
+            {"do":"transform","line":"$\\mathbf r(x,y)=\\langle x,y,{{g:g(x,y)}}\\rangle$","on":"直接拿"},
+            {"do":"underline","term":"g","label":"函數值","on":"第三個分量"}
+          ] },
+        { "show": ["平面：$\\mathbf r_0+u\\mathbf a+v\\mathbf b$"],
+          "note": "$\\mathbf a$、$\\mathbf b$ 不平行。",
+          "say": "平面：從一點出發，沿兩個不平行的方向各走 u 倍和 v 倍。",
+          "board": [
+            {"do":"write","line":"${{o:\\mathbf r_0}}+{{a:u\\mathbf a}}+{{b:v\\mathbf b}}$"},
+            {"do":"focus","term":"o","on":"從一點"},
+            {"do":"underline","term":"a","color":"blue","on":"u 倍"},
+            {"do":"underline","term":"b","color":"violet","on":"v 倍"}
+          ] },
+        { "show": ["拋物面 $z\\le 4$：$\\langle r\\cos\\theta,r\\sin\\theta,r^2\\rangle$"],
+          "note": "$0\\le r\\le 2$、$0\\le\\theta\\le 2\\pi$：參數區域是矩形。",
+          "say": "同一張曲面可以有不同參數化。拋物面用極座標的 r 和 theta，參數區域就變成矩形。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\langle r\\cos\\theta,r\\sin\\theta,r^2\\rangle$","on":"拋物面"},
+            {"do":"write","line":"${{rg:0\\le r\\le 2}}$、$0\\le\\theta\\le 2\\pi$","on":"參數區域"},
+            {"do":"box","term":"rg","on":"變成"}
+          ] },
+        { "show": ["$x^2+y^2=r^2(\\cos^2\\theta+\\sin^2\\theta)=r^2$"],
+          "note": "所以 $z=x^2+y^2=r^2$。",
+          "say": "x 是 r cosine theta，y 是 r sine theta。平方相加，剩 r 平方，所以 z 是 r 平方。",
+          "board": [
+            {"do":"write","line":"$x^2+y^2=r^2(\\cos^2\\theta+\\sin^2\\theta)$"},
+            {"do":"write","line":"$={{q:r^2}}=z$","on":"剩"},
+            {"do":"box","term":"q","color":"green","on":"所以"}
+          ] },
+        { "show": ["剖面：$z=r^2$，$0\\le r\\le 2$"],
+          "say": "把 z 對 r 畫出來：r 等於二時高度是四，正好是 z 小於等於四的邊。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,2.5,-0.5,5],"curves":[{"expr":"x^2","domain":[0,2],"color":"blue"}],"points":[{"x":2,"y":4}],"labels":[{"x":1.1,"y":4.3,"text":"r=2, z=4","anchor":"start"}]}}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "圓柱與圓錐",
+      "beats": [
+        { "show": ["圓柱面 $x^2+y^2=a^2$：$\\langle a\\cos\\theta,a\\sin\\theta,z\\rangle$"],
+          "note": "借用〈柱座標〉；別漏了 $z$。",
+          "say": "圓柱面借用柱座標：r 固定成 a，參數是角度 theta 和高度 z。少了 z 就只剩一個圓。",
+          "board": [
+            {"do":"write","line":"$x^2+y^2=a^2$"},
+            {"do":"write","line":"$\\langle a\\cos\\theta,a\\sin\\theta,{{z:z}}\\rangle$","on":"參數是"},
+            {"do":"focus","term":"z","color":"gold","label":"別漏","on":"少了 z"}
+          ] },
+        { "show": ["圓錐面 $z=\\sqrt{x^2+y^2}$：$\\langle s\\cos\\theta,s\\sin\\theta,s\\rangle$"],
+          "note": "$s\\ge 0$。",
+          "say": "圓錐面：離軸的距離 s 跟高度一樣，所以三個分量都帶 s。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$z=\\sqrt{x^2+y^2}$","on":"圓錐面"},
+            {"do":"write","line":"$\\langle {{a:s}}\\cos\\theta,{{b:s}}\\sin\\theta,{{c:s}}\\rangle$","on":"離軸的距離"},
+            {"do":"focus","term":"c","color":"blue","label":"高度","on":"跟高度"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "球面",
+      "beats": [
+        { "show": ["$\\langle a\\sin\\varphi\\cos\\theta,a\\sin\\varphi\\sin\\theta,a\\cos\\varphi\\rangle$"],
+          "note": "$0\\le\\varphi\\le\\pi$、$0\\le\\theta\\le 2\\pi$。",
+          "say": "球面借用球座標，把 rho 固定成半徑 a，參數是兩個角。",
+          "board": [
+            {"do":"write","line":"$\\langle a\\sin\\varphi\\cos\\theta,a\\sin\\varphi\\sin\\theta,a\\cos\\varphi\\rangle$"},
+            {"do":"write","line":"$0\\le\\varphi\\le\\pi$、$0\\le\\theta\\le 2\\pi$","on":"兩個角"}
+          ] },
+        { "show": ["半徑 $2$：$x^2+y^2=4\\sin^2\\varphi$，$z^2=4\\cos^2\\varphi$"],
+          "say": "拿半徑二檢查：x 平方加 y 平方是四 sine 平方 phi，再加 z 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x^2+y^2=4\\sin^2\\varphi$","on":"x 平方"},
+            {"do":"write","line":"$z^2=4\\cos^2\\varphi$","on":"再加"}
+          ] },
+        { "show": ["總和 $4(\\sin^2\\varphi+\\cos^2\\varphi)=4$"],
+          "note": "點確實在球面上。",
+          "say": "加起來是四，點確實都在半徑二的球面上。",
+          "board": [
+            {"do":"write","line":"$4(\\sin^2\\varphi+\\cos^2\\varphi)={{r:4}}$"},
+            {"do":"box","term":"r","color":"green","on":"確實"}
+          ] }
+      ],
+      "key": "代回檢查 $x^2+y^2+z^2$ 是否等於 $a^2$",
+      "check": 3
+    },
+    {
+      "title": "切向量與法向量",
+      "beats": [
+        { "show": ["$\\mathbf r_u$、$\\mathbf r_v$：兩條格線的切向量"],
+          "note": "都貼在曲面上。",
+          "say": "沿兩族格線各有一個切向量，對 u 和對 v 的偏導數，都貼在曲面上。",
+          "board": [
+            {"do":"write","line":"${{a:\\mathbf r_u}}=\\frac{\\partial\\mathbf r}{\\partial u}$","tint":{"a":"blue"}},
+            {"do":"write","line":"${{b:\\mathbf r_v}}=\\frac{\\partial\\mathbf r}{\\partial v}$","tint":{"b":"violet"},"on":"對 v"}
+          ] },
+        { "show": ["偏導數：對 $u$ 微分，$v$ 當常數"],
+          "note": "例：$\\langle u,v,3-u-v\\rangle$ 的 $\\mathbf r_u=\\langle 1,0,-1\\rangle$。",
+          "say": "偏導數：對 u 微分，v 當常數。拿 u、v、三減 u 減 v 來看，r u 是一、零、負一。",
+          "board": [
+            {"do":"write","line":"$\\mathbf r=\\langle u,v,3-u-v\\rangle$"},
+            {"do":"write","line":"$\\mathbf r_u=\\langle {{c:1}},0,-1\\rangle$","on":"r u 是"}
+          ] },
+        { "show": ["$\\mathbf r_u\\times\\mathbf r_v$：法向量"],
+          "note": "不是點積；不為 $\\mathbf 0$ 處曲面光滑。",
+          "say": "外積同時垂直於兩個切向量，所以垂直於曲面，就是法向量。",
+          "board": [
+            {"do":"write","line":"${{n:{{a:\\mathbf r_u}}\\times{{b:\\mathbf r_v}}}}$"},
+            {"do":"box","term":"n","color":"green","label":"法向量","on":"所以垂直"}
+          ] },
+        { "show": ["圓柱：$\\mathbf r_\\theta\\times\\mathbf r_z=\\langle\\cos\\theta,\\sin\\theta,0\\rangle$"],
+          "note": "從 $z$ 軸往外指。",
+          "say": "單位圓柱算一次：法向量從 z 軸往外指，長度一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\mathbf r_\\theta\\times\\mathbf r_z={{m:\\langle\\cos\\theta,\\sin\\theta,0\\rangle}}$","on":"單位圓柱"},
+            {"do":"underline","term":"m","label":"往外","on":"往外指"}
+          ] },
+        { "show": ["$\\mathbf r_\\theta=\\langle-\\sin\\theta,\\cos\\theta,0\\rangle$","$\\mathbf r_z=\\langle 0,0,1\\rangle$"],
+          "note": "外積每個分量：交叉相乘再相減。",
+          "say": "代公式：r theta 是負 sine、cosine、零，r z 是零、零、一。結果是 cosine、sine、零。",
+          "board": [
+            {"do":"write","line":"$\\mathbf r_\\theta=\\langle-\\sin\\theta,\\cos\\theta,0\\rangle$"},
+            {"do":"write","line":"$\\mathbf r_z=\\langle 0,0,1\\rangle$","on":"r z 是"}
+          ] },
+        { "show": ["$(1,0,1)$：法向量 $\\langle 1,0,0\\rangle$，切平面 $x=1$"],
+          "say": "在 theta 等於零、z 等於一那一點，法向量朝 x 方向，切平面是 x 等於一。",
+          "board": [
+            {"do":"write","line":"$(1,0,1)$：法向量 $\\langle 1,0,0\\rangle$"},
+            {"do":"write","line":"切平面 ${{p:x=1}}$","on":"方向"},
+            {"do":"box","term":"p","color":"green","on":"切平面是"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["surface-integral", "vector-calculus", "parametric"],
+    "fine": ["surface-parametrize", "surface-normal-cross"]
+  },
+  "practice": [
+    { "id": "cg-9b4-001", "core": true, "trains": "surface-parametrize" },
+    { "id": "cg-9b4-002", "core": true, "trains": "surface-parametrize" },
+    { "id": "cg-9b4-003", "core": true, "trains": "surface-parametrize" },
+    { "id": "cg-9b4-005", "core": true, "trains": "surface-normal-cross" },
+    { "id": "cg-9b4-006", "core": true, "trains": "surface-normal-cross" },
+    { "id": "cg-9b4-004", "trains": "surface-parametrize" },
+    { "id": "cg-9b4-007", "trains": "surface-normal-cross" }
+  ],
+  "gaps": []
+}

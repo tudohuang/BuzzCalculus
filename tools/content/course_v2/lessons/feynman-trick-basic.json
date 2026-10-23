@@ -1,329 +1,125 @@
 {
   "id": "feynman-trick-basic",
   "title": "Feynman 積分法：基礎",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 45,
-  "prerequisites": ["leibniz-rule", "parameter-integral", "gamma-half"],
-  "next": ["feynman-trick-advanced"],
-  "related": ["frullani", "dirichlet-integral"],
+  "prerequisites": [
+    "leibniz-rule",
+    "parameter-integral",
+    "gamma-half"
+  ],
+  "next": [
+    "feynman-trick-advanced"
+  ],
+  "related": [
+    "frullani",
+    "dirichlet-integral"
+  ],
   "objectives": [
-    "照五個步驟用對參數微分算積分：放參數、對參數微分、算 $I'(a)$、積回 $I(a)$、用特殊值定常數。",
-    "選參數的原則：讓 $\\frac{\\partial f}{\\partial a}$ 把難纏的因子（$\\frac{1}{\\ln x}$、$\\frac{1}{x}$）消掉。",
-    "每次交換微分與積分，都說得出用的是哪個充分條件（閉矩形連續，或可積的控制函數）。"
+    "照五個步驟用對參數微分算積分：放參數、對參數微分、算 $I'(a)$、積回 $I(a)$、用特殊值定常數",
+    "選參數的原則：讓 $\\frac{\\partial f}{\\partial a}$ 把難纏的因子（$\\frac{1}{\\ln x}$、$\\frac1x$、$\\frac1{x^2}$）消掉",
+    "每次交換微分與積分，都說得出用的是哪個充分條件（閉矩形連續，或可積的控制函數）"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 想法：把一個積分放進一整族",
+      "heading": "① 放進一整族",
       "body": [
-        "$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$ 的被積函數沒有初等反導函數。但把 $2$ 換成參數 $a$，$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$，對 $a$ 微分：$\\frac{\\partial}{\\partial a}(x^a-1)=x^a\\ln x$，分母的 $\\ln x$ 被約掉，剩下 $\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$，一行算完。",
-        "難的積分變簡單，代價是多一個變數；最後再積回來。"
+        "把次方 $2$ 換成參數 $a$：",
+        "對 $a$ 偏微分：$\\dfrac{\\partial}{\\partial a}\\,\\dfrac{x^a-1}{\\ln x}=\\dfrac{x^a\\ln x}{\\ln x}=x^a$",
+        "難纏的 $\\frac1{\\ln x}$ 被消掉了：這就是放參數的目的",
+        "積回去：$I(a)=\\ln(a+1)+C$",
+        "$a=0$：被積函數 $\\equiv0$，$I(0)=0$ ⇒ $C=0$",
+        "數值驗算：$\\approx1.0986$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx",
+        "I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx,\\qquad\\text{要的是 }I(2)",
+        "I'(a)=\\int_0^1x^a\\,dx=\\frac1{a+1}",
+        "\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx=I(2)=\\ln3"
+      ]
     },
     {
       "heading": "② 五個步驟",
       "body": [
-        "1. 放參數：把題目的某個常數換成 $a$（或乘上 $e^{-ax}$ 之類的因子），讓原題是 $I$ 在某個 $a$ 的值。",
-        "2. 對 $a$ 微分，搬進積分號（〈Leibniz 積分法則〉；確認條件）。",
-        "3. 算出 $I'(a)$。",
-        "4. 對 $a$ 積分得 $I(a)=\\dots+C$。",
-        "5. 找一個 $I$ 容易知道的 $a$（常常是 $a=0$ 或 $a\\to\\infty$）定出 $C$，再代入要的 $a$。"
-      ],
-      "collapsible": false
+        "1. 放參數：造 $I(a)$，原積分 $=I(a^*)$",
+        "2. 對參數微分：$I'(a)=\\int\\frac{\\partial f}{\\partial a}\\,dx$，說出合法的理由",
+        "3. 算 $I'(a)$：難纏的因子應該不見了",
+        "4. 積回去：$I(a)=\\int I'(a)\\,da+C$",
+        "5. 定常數：找一個 $I(a_0)$ 好算的 $a_0$",
+        "常數只能在 $I$ 連續的地方定"
+      ]
+    },
+    {
+      "heading": "② 範例 1 合法嗎",
+      "body": [
+        "• $f=\\frac{x^a-1}{\\ln x}$：補 $f(0,a)=0$、$f(1,a)=a$",
+        "• $a\\ge\\delta>0$：$f$、$f_a=x^a$ 在 $[0,1]\\times[\\delta,\\beta]$ 上連續",
+        "⇒ 閉矩形定理：$I'(a)=\\frac1{a+1}$（$a>0$），$I=\\ln(a+1)+C$",
+        "$a=0$ 處 $x^a$ 在 $(0,0)$ 不連續（$0^0$），所以先避開 $a=0$",
+        "定常數要 $I$ 在 $a=0$ 右連續：",
+        "$f$ 在 $[0,1]\\times[0,\\beta]$ 上連續（$x\\to0$ 時 $|f|\\le\\frac1{|\\ln x|}\\to0$）",
+        "上一課的定理 ⇒ $C=\\lim_{a\\to0^+}\\big(I(a)-\\ln(a+1)\\big)=I(0)=0$"
+      ]
     },
     {
       "heading": "③ 怎麼選參數",
       "body": [
-        "看哪個因子讓積分卡住：$\\frac{1}{\\ln x}$ 卡住，就把 $x$ 的次方換成 $a$（微分生出 $\\ln x$）；$\\frac{1}{x}$ 卡住，就乘上 $e^{-ax}$（微分生出 $-x$）；$\\frac{1}{x^2}$ 卡住，就把 $e^{-x^2}$ 改成 $e^{-ax^2}$（微分生出 $-x^2$）。",
-        "放進去的 $e^{-ax}$ 還有一個好處：$a>0$ 時它讓積分絕對收斂，交換微分與積分時容易找到控制函數。"
+        "原則：讓 $\\frac{\\partial}{\\partial a}$ 生出一個因子，把難纏的分母消掉",
+        "• 卡 $\\frac1{\\ln x}$：放進次方 $x^a$",
+        "• 卡 $\\frac1x$：乘上 $e^{-ax}$",
+        "• 卡 $\\frac1{x^2}$：放進 $e^{-ax^2}$",
+        "範例 2：$\\displaystyle\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx$",
+        "$\\int_0^\\infty e^{-ax}\\sin x\\,dx=\\frac1{1+a^2}$：分部積分兩次",
+        "$I(a)=C-\\arctan a$；$a\\to\\infty$：$|I(a)|\\le\\int_0^\\infty e^{-ax}dx=\\frac1a\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "I(a)=\\int_0^\\infty\\frac{e^{-ax}\\sin x}x\\,dx\\quad(a>0),\\ \\text{要 }I(1)",
+        "I'(a)=-\\int_0^\\infty e^{-ax}\\sin x\\,dx=-\\frac1{1+a^2}",
+        "\\begin{aligned}&C=\\frac\\pi2,\\\\&\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx=\\frac\\pi2-\\frac\\pi4=\\frac\\pi4\\end{aligned}"
+      ]
     },
     {
-      "heading": "範例 2 的交換為什麼合法",
+      "heading": "③ 範例 3：$\\frac1{x^2}$ 卡住",
       "body": [
-        "$f(x,a)=\\frac{e^{-ax}\\sin x}{x}$，$\\frac{\\partial f}{\\partial a}=-e^{-ax}\\sin x$。對 $a\\ge a_0>0$，$\\left|\\frac{\\partial f}{\\partial a}\\right|\\le e^{-a_0x}$，在 $[0,\\infty)$ 可積，所以在 $a>0$ 上可以交換。",
-        "定常數用 $a\\to\\infty$：$|I(a)|\\le\\int_0^{\\infty}e^{-ax}\\,dx=\\frac{1}{a}\\to 0$（$\\left|\\frac{\\sin x}{x}\\right|\\le 1$）。$I$ 在 $a=0$ 的值（Dirichlet 積分）要另外處理連續性，留到〈Dirichlet 積分〉。"
+        "$\\partial_a$ 拉下 $x^2$，消掉分母：",
+        "$\\int_0^\\infty e^{-u^2}du=\\frac12\\Gamma(\\frac12)=\\frac{\\sqrt\\pi}2$（11.17）",
+        "積回去：$I(a)=\\sqrt{\\pi a}+C$；$I(0)=0$",
+        "右連續：$1-e^{-t}\\le\\min(t,1)$ ⇒ $0\\le I(a)\\le\\int_0^\\infty\\min\\!\\big(a,\\tfrac1{x^2}\\big)dx=2\\sqrt a$",
+        "$\\min$ 的積分：$\\int_0^{1/\\sqrt a}a\\,dx+\\int_{1/\\sqrt a}^\\infty\\frac{dx}{x^2}=\\sqrt a+\\sqrt a$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "放進一整族",
-      "beats": [
-        { "show": ["$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$"],
-          "note": "被積函數沒有初等反導函數。",
-          "say": "先看這個積分：x 平方減一，除以自然對數 x。直接找反導函數，找不到。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{x^{ {{n:2}} }-1}{ {{l0:\\ln x}} }\\,dx$"},
-            {"do":"focus","term":"l0","on":"除以"}
-          ] },
-        { "show": ["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$"],
-          "note": "把 $2$ 換成參數 $a$。",
-          "say": "換個想法：把次方的二換成參數 a，原題就變成這一整族積分裡的一個。",
-          "board": [
-            {"do":"focus","term":"n","color":"blue","on":"次方的二"},
-            {"do":"write","line":"$I(a)=\\int_0^1\\frac{x^{ {{a:a}} }-1}{ {{l:\\ln x}} }\\,dx$","tint":{"a":"blue"},"on":"參數 a"}
-          ] },
-        { "show": ["下一步：對 $a$ 微分，$x$ 不動"],
-          "note": "代價是多一個變數，最後還要積回來。",
-          "say": "接下來對 a 微分：這時 x 當常數不動，只有 a 在變。代價是多了一個變數，最後還要積回來。",
-          "board": [
-            {"do":"focus","term":"a","label":"對 a 微分","on":"對 a 微分"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\frac{\\partial}{\\partial a}(x^a-1)$ 是？",
-        "options": [
-          {
-            "label": "$x^a\\ln x$",
-            "correct": true
-          },
-          {
-            "label": "$ax^{a-1}$",
-            "why": "那是對 $x$ 微分。這裡 $x$ 不動、對 $a$ 微分，$x^a=e^{a\\ln x}$ 生出 $\\ln x$。"
-          },
-          {
-            "label": "$x^a$",
-            "why": "漏了連鎖律生出的 $\\ln x$；$x^a=e^{a\\ln x}$，對 $a$ 微分要乘 $\\ln x$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}&\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx\\\\ I(a)&=\\int_0^\\infty\\frac{1-e^{-ax^2}}{x^2}\\,dx\\quad(a\\ge0)\\end{aligned}",
+        "I'(a)=\\int_0^\\infty e^{-ax^2}\\,dx=\\frac1{\\sqrt a}\\cdot\\frac{\\sqrt\\pi}2",
+        "C=0,\\qquad\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx=\\sqrt\\pi"
+      ]
     },
     {
-      "title": "五個步驟",
-      "beats": [
-        { "show": ["1. 放參數"],
-          "note": "原題是 $I$ 在某個 $a$ 的值。",
-          "say": "第一步，把題目的某個常數換成 a，或乘上一個因子，讓原題落在某個 a 上。",
-          "board": [
-            {"do":"write","line":"1. 放參數：原題落在某個 ${{a:a}}$ 上"},
-            {"do":"focus","term":"a","color":"blue","on":"落在"}
-          ] },
-        { "show": ["2. 對 $a$ 微分，搬進積分號"],
-          "note": "要確認交換的條件。",
-          "say": "第二步，對 a 微分，把微分搬進積分號裡面。搬之前要確認條件。",
-          "board": [
-            {"do":"write","line":"2. 對 $a$ 微分，搬進積分號"}
-          ] },
-        { "show": ["有限區間：$f$、偏導數連續","無限區間：偏導數有可積上界"],
-          "note": "沒有這個保證，交換可能算錯。",
-          "say": "要確認：區間有限時，f 和對 a 的偏導數都連續；區間無限時，偏導數要有可積的上界。不然交換可能算錯。",
-          "board": [
-            {"do":"write","line":"區間有限：$f$、$\\frac{\\partial f}{\\partial a}$ 連續"},
-            {"do":"write","line":"區間無限：偏導數有可積上界","on":"區間無限時"}
-          ] },
-        { "show": ["3. 算出 $I'(a)$","4. 積回去：$I(a)=\\dots+C$"],
-          "say": "第三步算出 I prime，第四步對 a 積回去。積回去一定會多一個常數 C。",
-          "board": [
-            {"do":"write","line":"3. 算出 $I'(a)$"},
-            {"do":"write","line":"4. 積回去：$I(a)=\\dots+{{c:C}}$","on":"第四步"},
-            {"do":"focus","term":"c","on":"一定會"}
-          ] },
-        { "show": ["5. 用特殊值定出 $C$"],
-          "note": "常常是 $a=0$ 或 $a\\to\\infty$。",
-          "say": "第五步，找一個 I 的值本來就知道的 a，通常是 a 等於零或 a 趨近無限大，定出 C。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"5. 用特殊值定出 ${{c:C}}$","on":"第五步"},
-            {"do":"write","line":"$a=0$ 或 $a\\to\\infty$","on":"通常是"}
-          ] }
+      "heading": "④ 範例 2 為什麼合法",
+      "body": [
+        "$f=\\frac{e^{-ax}\\sin x}x$（補 $f(0,a)=1$），$f_a=-e^{-ax}\\sin x$",
+        "無窮區間 ⇒ 要控制函數：$a\\ge\\alpha>0$ 時",
+        "$\\alpha>0$ 任意 ⇒ 所有 $a>0$ 都成立",
+        "$a\\to\\infty$ 定常數：$|I(a)|\\le\\frac1a$ 是直接估計，不用交換",
+        "$a=0$ 呢？$|\\sin x|$ 沒有可積的控制函數。要讓 $a\\to0^+$ 得到 $\\int_0^\\infty\\frac{\\sin x}x\\,dx=\\frac\\pi2$，需要更細的論證，留到 Dirichlet 積分",
+        "• 範例 1：閉矩形連續＋右連續",
+        "• 範例 2：控制函數 $e^{-\\alpha x}$",
+        "• 範例 3：控制函數 $e^{-\\alpha x^2}$＋右連續的估計"
       ],
-      "check": 3
+      "tex": [
+        "|f_a(x,a)|\\le e^{-\\alpha x}=g(x),\\qquad\\int_0^\\infty g=\\frac1\\alpha<\\infty"
+      ]
     },
     {
-      "title": "範例：$\\frac{1}{\\ln x}$ 卡住",
-      "beats": [
-        { "show": ["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$","原題是 $I(2)$"],
-          "say": "照五步來。參數放在次方，a 大於等於零，原題是 I 在二的值。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\int_0^1\\frac{x^{ {{a:a}} }-1}{\\ln x}\\,dx$","tint":{"a":"blue"}},
-            {"do":"focus","term":"a","on":"放在次方"},
-            {"do":"write","line":"原題是 $I(2)$","on":"原題"}
-          ] },
-        { "show": ["$I'(a)=\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],
-          "note": "$a>0$ 時 $x^a\\le 1$，可以交換。",
-          "say": "微分後自然對數 x 約掉，I prime 等於 a 加一分之一。x 的 a 次方不超過一，可以交換。",
-          "board": [
-            {"do":"write","line":"$I'(a)=\\int_0^1 x^{ {{a:a}} }\\,dx={{d:\\frac{1}{a+1}}}$","on":"微分後"},
-            {"do":"underline","term":"d","on":"a 加一分之一"}
-          ] },
-        { "show": ["交換：先微分再積分 ⇄ 先積分再微分"],
-          "say": "這裡的交換，是把先積分再微分，對調成先微分再積分。微分直接跑進積分號，被積函數就變成偏導數。",
-          "board": [
-            {"do":"write","line":"$\\frac{d}{da}\\int f\\,dx=\\int {{p:\\frac{\\partial f}{\\partial a}}}\\,dx$"},
-            {"do":"underline","term":"p","on":"被積函數"}
-          ] },
-        { "show": ["$0\\le x^a\\le 1$"],
-          "note": "一個不隨 $a$ 變的可積上界。",
-          "say": "畫出來：x 的 a 次方在零到一之間都在一以下，一是不隨 a 變的可積上界，所以可以交換。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,1.2,0,1.3],"curves":[{"expr":"x^2","domain":[0,1],"color":"blue"}],"dashed":[[[0,1],[1,1]]]}}
-          ] },
-        { "show": ["$I(a)=\\ln(a+1)+C$"],
-          "say": "積回去，得到自然對數 a 加一，再加常數 C。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\ln(a+1)+\\,{{c:C}}$","on":"積回去"},
-            {"do":"circle","term":"c","on":"常數 C"}
-          ] },
-        { "show": ["$I(0)=0$，所以 $C=0$","$I(2)=\\ln 3$"],
-          "say": "a 等於零時被積函數是零，所以 I 在零是零，C 等於零。代 a 等於二，答案是自然對數三。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$I(0)=0$ ⇒ ${{c0:C=0}}$","on":"所以"},
-            {"do":"write","line":"$I(2)=\\,{{ans:\\ln 3}}$","on":"代 a"},
-            {"do":"box","term":"ans","color":"green","on":"答案是"}
-          ] }
-      ],
-      "key": "對 $a$ 微分，$\\ln x$ 剛好約掉",
-      "check": 0
-    },
-    {
-      "title": "怎麼選參數",
-      "beats": [
-        { "show": ["$\\frac{1}{\\ln x}$ 卡住 → 次方換成 $a$"],
-          "note": "微分生出 $\\ln x$。",
-          "say": "先看哪個因子讓積分卡住。卡在自然對數 x，就把 x 的次方換成 a，微分會生出自然對數 x。",
-          "board": [
-            {"do":"write","line":"${{f:\\frac{1}{\\ln x}}}$ 卡住 → 次方換成 $a$"},
-            {"do":"focus","term":"f","on":"卡在"},
-            {"do":"write","line":"微分生出 $\\ln x$","on":"微分會生出"}
-          ] },
-        { "show": ["$\\frac{1}{x}$ 卡住 → 乘上 $e^{-ax}$"],
-          "note": "微分生出 $-x$。",
-          "say": "卡在 x 分之一，就乘上 e 的負 a x 次方，對 a 微分生出負 x，把分母消掉。",
-          "board": [
-            {"do":"write","line":"${{fb:\\frac{1}{x}}}$ 卡住 → 乘上 $e^{-ax}$"},
-            {"do":"focus","term":"fb","on":"卡在"},
-            {"do":"write","line":"微分生出 ${{m:-x}}$","on":"生出"},
-            {"do":"underline","term":"m","on":"把分母"}
-          ] },
-        { "show": ["$\\frac{1}{x^2}$ 卡住 → $e^{-x^2}$ 改成 $e^{-ax^2}$"],
-          "say": "卡在 x 平方分之一，就把 e 的負 x 平方改成 e 的負 a x 平方，微分生出負 x 平方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{x^2}$ 卡住","on":"卡在"},
-            {"do":"write","line":"$e^{-x^2}$ → $e^{-ax^2}$","on":"改成"},
-            {"do":"write","line":"微分生出 $-x^2$","on":"微分生出"}
-          ] },
-        { "show": ["$a>0$：$e^{-ax}$ 讓積分絕對收斂"],
-          "note": "交換時容易找到控制函數。",
-          "say": "乘 e 的負 a x 次方還有一個好處：a 大於零時積分絕對收斂，交換時好找控制函數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a>0$：$e^{-ax}$ 讓積分絕對收斂","on":"a 大於零"},
-            {"do":"write","line":"交換時好找控制函數","on":"交換時"}
-          ] },
-        { "show": ["控制函數 $g(x)$：只跟 $x$ 有關、可積的上界"],
-          "note": "例：$e^{-a_0x}$ 在 $[0,\\infty)$ 可積。",
-          "say": "控制函數是只跟 x 有關、可積的上界：偏導數的絕對值永遠不超過它，交換就安全。例如 e 的負 a 零 x 次方。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{\\partial f}{\\partial a}\\right|\\le g(x)$"},
-            {"do":"write","line":"$g$ 可積 ⇒ 可以交換","on":"交換就"},
-            {"do":"write","line":"例：$g=e^{-a_0x}$","on":"例如"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "範例：$\\frac{1}{x}$ 卡住",
-      "beats": [
-        { "show": ["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],
-          "note": "$a>0$，原題是 $I(1)$。",
-          "say": "這題卡在 x 分之一，所以乘上 e 的負 a x 次方。a 大於零，原題是 I 在一的值。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\int_0^{\\infty}\\frac{ {{e:e^{-ax}}}\\sin x}{ {{x:x}} }\\,dx$","tint":{"e":"blue"}},
-            {"do":"focus","term":"x","on":"x 分之一"},
-            {"do":"focus","term":"e","label":"乘上去","on":"乘上"},
-            {"do":"write","line":"原題是 $I(1)$","on":"原題"}
-          ] },
-        { "show": ["$I'(a)=-\\int_0^{\\infty}e^{-ax}\\sin x\\,dx$","$=-\\frac{1}{1+a^2}$"],
-          "say": "微分後分母的 x 消掉，剩下負的 e 的負 a x 乘 sine x，積出來是負的一加 a 平方分之一。",
-          "board": [
-            {"do":"write","line":"$I'(a)=-\\int_0^{\\infty}{{e:e^{-ax}}}\\sin x\\,dx$","on":"微分後"},
-            {"do":"write","line":"$={{d:-\\frac{1}{1+a^2}}}$","on":"積出來"}
-          ] },
-        { "show": ["分部積分兩次：$J=1-a^2J$"],
-          "note": "$J=\\int_0^{\\infty}e^{-ax}\\sin x\\,dx$",
-          "say": "把這個積分記作 J，分部積分兩次會回到自己：J 等於一減 a 平方乘 J，移項得一加 a 平方分之一。",
-          "board": [
-            {"do":"write","line":"分部積分兩次：$J=1-a^2J$","on":"分部積分"},
-            {"do":"write","line":"$J=\\frac{1}{1+a^2}$","on":"移項"}
-          ] },
-        { "show": ["$I(a)=-\\arctan a+C$"],
-          "say": "積回去得到負的 arctan a 加 C。接下來要決定 C，用哪個 a 最方便？",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$I(a)=-\\arctan a+\\,{{c:C}}$","on":"積回去"},
-            {"do":"circle","term":"c","on":"決定 C"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "定常數",
-      "beats": [
-        { "show": ["$a\\to\\infty$：$I(a)\\to 0$","$\\arctan a\\to\\frac{\\pi}{2}$"],
-          "say": "a 趨近無限大，I 趨近零，arctan a 趨近二分之派，所以 C 是二分之派。",
-          "board": [
-            {"do":"write","line":"$I(a)=-\\arctan a+C$"},
-            {"do":"write","line":"$a\\to\\infty$：$I(a)\\to 0$","on":"無限大"},
-            {"do":"write","line":"$\\arctan a\\to\\frac{\\pi}{2}$","on":"arctan"},
-            {"do":"write","line":"${{cc:C=\\frac{\\pi}{2}}}$","on":"所以"},
-            {"do":"box","term":"cc","color":"green","on":"C 是"}
-          ] },
-        { "show": ["$I(1)=\\frac{\\pi}{2}-\\frac{\\pi}{4}=\\frac{\\pi}{4}$"],
-          "say": "代 a 等於一，二分之派減四分之派，答案四分之派。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$I(1)=\\frac{\\pi}{2}-\\frac{\\pi}{4}$","on":"二分之派"},
-            {"do":"write","line":"$I(1)=\\frac{\\pi}{4}$","color":"green","on":"答案"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}\\frac{1-e^{-x^2}}{x^2}\\,dx$"],
-          "note": "$I(a)=\\int_0^{\\infty}\\frac{1-e^{-ax^2}}{x^2}\\,dx$",
-          "say": "再一題卡在 x 平方分之一的：把參數放進 e 的負 a x 平方，原題是 I 在一的值。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\int_0^{\\infty}\\frac{1-{{e:e^{-ax^2}}}}{x^2}\\,dx$"},
-            {"do":"focus","term":"e","label":"放參數","on":"把參數"},
-            {"do":"write","line":"原題是 $I(1)$","on":"原題"}
-          ] },
-        { "show": ["$I'(a)=\\int_0^{\\infty}e^{-ax^2}\\,dx=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$"],
-          "say": "微分後 x 平方約掉，剩下高斯積分，等於二分之一乘根號 a 分之派。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$I'(a)=\\int_0^{\\infty}{{g:e^{-ax^2}}}\\,dx$","on":"微分後"},
-            {"do":"focus","term":"g","on":"高斯積分"},
-            {"do":"write","line":"$=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$","on":"等於"}
-          ] },
-        { "show": ["令 $u=\\sqrt{a}\\,x$"],
-          "note": "$\\int_0^{\\infty}e^{-u^2}du=\\frac{\\sqrt{\\pi}}{2}$",
-          "say": "來源是代換：令 u 等於根號 a 乘 x，dx 變成 du 除以根號 a，e 的負 u 平方從零到無限大是二分之根號派。",
-          "board": [
-            {"do":"write","line":"$u=\\sqrt{a}\\,x$"},
-            {"do":"write","line":"$\\int_0^{\\infty}e^{-u^2}du=\\frac{\\sqrt{\\pi}}{2}$","on":"e 的負"},
-            {"do":"write","line":"再乘 $\\frac{1}{\\sqrt{a}}$","on":"平方從零"}
-          ] }
-      ],
-      "key": "$a\\to0$ 時 $I\\to0$，用它定常數",
-      "predict": {
-        "ask": "積回去並定常數，$I(a)$ 是？",
-        "options": [
-          {
-            "label": "$\\sqrt{\\pi a}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$",
-            "why": "那是 $I'(a)$，還要對 $a$ 積回去。"
-          },
-          {
-            "label": "$\\sqrt{\\pi a}+1$",
-            "why": "$a=0$ 時被積函數是 $0$，$I(0)=0$，所以 $C=0$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 五步：放參數 → 微分 → 算 $I'$ → 積回 → 定常數",
+        "• 選參數：讓 $\\partial_a$ 消掉難纏的分母",
+        "• $\\int_0^1\\frac{x^2-1}{\\ln x}dx=\\ln3$，$\\int_0^\\infty\\frac{e^{-x}\\sin x}xdx=\\frac\\pi4$，$\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}dx=\\sqrt\\pi$",
+        "• 每次交換都說出條件；在端點定常數要先確認連續",
+        "下一課：$I'(a)$ 算不出來，卻能用 $I$ 自己表示：解微分方程"
+      ]
     }
   ],
   "workedExamples": [
@@ -375,55 +171,876 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^1\\frac{x^3-1}{\\ln x}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^\\infty\\frac{1-e^{-4x^2}}{x^2}\\,dx=$？",
       "options": [
-        { "label": "$\\ln 4$", "correct": true },
-        { "label": "$\\ln 3$", "why": "$I(a)=\\ln(a+1)$，原題是 $a=3$，所以是 $\\ln(3+1)$。" },
-        { "label": "$\\frac{1}{4}$", "why": "那是 $I'(3)=\\frac{1}{3+1}$，還要積回去。" }
+        {
+          "label": "$2\\sqrt\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$4\\sqrt\\pi$",
+          "why": "$I(a)=\\sqrt{\\pi a}$ 是開根號，不是乘 $a$"
+        },
+        {
+          "label": "$\\sqrt\\pi$",
+          "why": "那是 $I(1)$；這裡 $a=4$"
+        },
+        {
+          "label": "$\\frac{\\sqrt\\pi}4$",
+          "why": "$I'(4)=\\frac{\\sqrt\\pi}{2\\sqrt4}$ 才是 $\\frac{\\sqrt\\pi}4$；還沒積回去"
+        }
       ]
     },
     {
-      "ask": "$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$ 的積分常數，用哪個特殊值決定最方便？",
+      "ask": "$\\displaystyle\\int_0^\\infty\\frac{e^{-2x}\\sin x}x\\,dx=$？",
       "options": [
-        { "label": "$a\\to\\infty$，因為 $I(a)\\to 0$", "correct": true },
-        { "label": "$a=0$", "why": "$I(0)$ 就是 Dirichlet 積分，它的值正是我們還不知道的東西。" },
-        { "label": "$a=1$", "why": "$I(1)$ 是原題要求的值，不能拿來定常數。" }
+        {
+          "label": "$\\frac\\pi2-\\arctan2$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac\\pi4$",
+          "why": "那是 $I(1)$"
+        },
+        {
+          "label": "$\\arctan2$",
+          "why": "常數 $C=\\frac\\pi2$ 漏了，而且正負號反了"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "放進一整族",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$"
+          ],
+          "say": "看這個積分：x 平方減 1，除以自然對數 x，從 0 積到 1。它的反導數不是初等函數，直接積做不到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把次方 $2$ 換成參數 $a$：",
+            "$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx,\\qquad\\text{要的是 }I(2)$"
+          ],
+          "say": "想法：把次方 2 換成參數 a，得到一整族積分 I a。我們要的是其中一個，I 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把次方 $2$ 換成參數 $a$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx,\\qquad\\text{要的是 }I(2)}}$",
+              "on": "得到"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "我們"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $a$ 偏微分：$\\dfrac{\\partial}{\\partial a}\\,\\dfrac{x^a-1}{\\ln x}=\\dfrac{x^a\\ln x}{\\ln x}=x^a$"
+          ],
+          "say": "關鍵一步：對 a 偏微分。x 的 a 次方對 a 微分，會拉下一個自然對數 x，剛好跟分母的自然對數消掉，只剩 x 的 a 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對 $a$ 偏微分：$\\dfrac{\\partial}{\\partial a}\\,\\dfrac{x^a-1}{\\ln x}=\\dfrac{x^a\\ln x}{\\ln x}=x^a$"
+            },
+            {
+              "do": "write",
+              "line": "　難纏的 $\\frac1{\\ln x}$ 被消掉了：這就是放參數的目的",
+              "color": "violet",
+              "on": "個自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I'(a)=\\int_0^1x^a\\,dx=\\frac1{a+1}$"
+          ],
+          "say": "所以 I prime 就是 x 的 a 次方的積分，a 加 1 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\int_0^1x^a\\,dx=\\frac1{a+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積回去：$I(a)=\\ln(a+1)+C$",
+            "$a=0$：被積函數 $\\equiv0$，$I(0)=0$ ⇒ $C=0$"
+          ],
+          "say": "對 a 積回去，得到自然對數 a 加 1，加常數。a 等於 0 時，分子 x 的 0 次方減 1 是 0，所以 I 0 是 0，常數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積回去：$I(a)=\\ln(a+1)+C$"
+            },
+            {
+              "do": "write",
+              "line": "$a=0$：被積函數 $\\equiv0$，$I(0)=0$ ⇒ $C=0$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx=I(2)=\\ln3$"
+          ],
+          "say": "答案：I 2，自然對數 3，大約 1.0986。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_0^1\\frac{x^2-1}{\\ln x}\\,dx=I(2)=\\ln3}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "然對"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$\\approx1.0986$",
+              "color": "violet",
+              "on": "09"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "為什麼要在 $\\frac{\\sin x}{x}$ 前面乘上 $e^{-ax}$？",
-      "options": [
-        { "label": "對 $a$ 微分會生出 $-x$，把分母的 $x$ 消掉；而且 $a>0$ 時積分絕對收斂", "correct": true },
-        { "label": "因為 $e^{-ax}$ 讓 $\\frac{\\sin x}{x}$ 有初等反導函數", "why": "$\\frac{e^{-ax}\\sin x}{x}$ 一樣沒有初等反導函數；有用的是微分之後的 $-e^{-ax}\\sin x$。" },
-        { "label": "因為 $a=1$ 時剛好是原題，其他理由不重要", "why": "放參數的目的是讓 $\\frac{\\partial f}{\\partial a}$ 好積；只讓原題落在某個 $a$ 上是不夠的。" }
+      "title": "圖：面積 $=\\ln(a+1)$",
+      "beats": [
+        {
+          "show": [
+            "被積函數 (x^a − 1)/ln x：x → 1 時趨近 a，x → 0 時趨近 0"
+          ],
+          "say": "圖上是這一族的被積函數。a 等於 2，面積是自然對數 3。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fam",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    2.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(x^a-1)/ln(x)",
+                      "color": "blue",
+                      "domain": [
+                        0.0005,
+                        0.9995
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "(x^a-1)/ln(x)",
+                      "from": 0.0005,
+                      "to": 0.9995,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 3,
+                      "value": 2,
+                      "label": "a"
+                    }
+                  },
+                  "readout": "a = {a}，面積 = ln(a+1) = {ln(a+1)}",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "a = 2，面積 = ln(a+1) = 1.099",
+              "on": "函數"
+            },
+            {
+              "do": "write",
+              "line": "被積函數 (x^a − 1)/ln x：x → 1 時趨近 a，x → 0 時趨近 0",
+              "color": "violet",
+              "on": "面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖：面積 $=\\ln(a+1)$"
+          ],
+          "say": "a 變小，面積變小；a 等於 0 時整條貼在 0 上，面積是 0，這就是定常數用的特殊值。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fam",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    2.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(x^a-1)/ln(x)",
+                      "color": "blue",
+                      "domain": [
+                        0.0005,
+                        0.9995
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "(x^a-1)/ln(x)",
+                      "from": 0.0005,
+                      "to": 0.9995,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 3,
+                      "value": 2,
+                      "label": "a"
+                    }
+                  },
+                  "readout": "a = {a}，面積 = ln(a+1) = {ln(a+1)}",
+                  "height": 250
+                },
+                "vals": {
+                  "a": 0.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "a = 0.5，面積 = ln(a+1) = 0.4055",
+              "on": "面積#2"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "同樣的方法，$\\displaystyle\\int_0^1\\frac{x-1}{\\ln x}\\,dx=$？",
+        "options": [
+          {
+            "label": "$\\ln2$",
+            "correct": true
+          },
+          {
+            "label": "$\\ln1=0$",
+            "why": "代錯了：$I(a)=\\ln(a+1)$，$a=1$ 是 $\\ln2$"
+          },
+          {
+            "label": "$\\frac12$",
+            "why": "那是 $I'(1)=\\frac1{1+1}$，還沒積回去"
+          }
+        ]
+      }
+    },
+    {
+      "title": "五個步驟",
+      "beats": [
+        {
+          "show": [
+            "1. 放參數：造 $I(a)$，原積分 $=I(a^*)$",
+            "2. 對參數微分：$I'(a)=\\int\\frac{\\partial f}{\\partial a}\\,dx$，說出合法的理由"
+          ],
+          "say": "整理成五個步驟：放參數、對參數微分、算出 I prime、對 a 積回去、最後用一個好算的特殊值定常數。第二步一定要說出交換為什麼合法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. 放參數：造 $I(a)$，原積分 $=I(a^*)$"
+            },
+            {
+              "do": "write",
+              "line": "2. 對參數微分：$I'(a)=\\int\\frac{\\partial f}{\\partial a}\\,dx$，說出合法的理由",
+              "on": "參數#2"
+            },
+            {
+              "do": "write",
+              "line": "3. 算 $I'(a)$：難纏的因子應該不見了",
+              "on": "積回"
+            },
+            {
+              "do": "write",
+              "line": "4. 積回去：$I(a)=\\int I'(a)\\,da+C$",
+              "on": "一個"
+            },
+            {
+              "do": "write",
+              "line": "5. 定常數：找一個 $I(a_0)$ 好算的 $a_0$",
+              "on": "步一"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "把 Feynman 積分法的步驟排順序",
+        "steps": [
+          {
+            "label": "放參數，造出 $I(a)$"
+          },
+          {
+            "label": "對參數微分，把微分搬進積分號",
+            "why": "先要有上一步：放參數，造出 $I(a)$"
+          },
+          {
+            "label": "算出 $I'(a)$",
+            "why": "先要有上一步：對參數微分，把微分搬進積分號"
+          },
+          {
+            "label": "對 $a$ 積回 $I(a)$，多一個常數 $C$",
+            "why": "先要有上一步：算出 $I'(a)$"
+          },
+          {
+            "label": "用特殊值（例如 $I(0)$）定出 $C$",
+            "why": "先要有上一步：對 $a$ 積回 $I(a)$，多一個常數 $C$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "五個步驟",
+      "beats": [
+        {
+          "show": [
+            "常數只能在 $I$ 連續的地方定"
+          ],
+          "say": "注意第五步：特殊值如果在端點，要先確定 I 在那裡連續，常數才能延伸過去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常數只能在 $I$ 連續的地方定",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "已知 $I'(a)=\\frac{1}{a+1}$、$I(0)=0$，$I(a)$ 是？",
-      "options": [
-        { "label": "$\\ln(a+1)$", "correct": true },
-        { "label": "$\\ln(a+1)+1$", "why": "代 $a=0$ 得 $1$，不滿足 $I(0)=0$；常數應該是 $0$。" },
-        { "label": "$-\\frac{1}{(a+1)^2}$", "why": "那是再微分一次；要的是積分。" }
+      "title": "範例 1 合法嗎",
+      "beats": [
+        {
+          "show": [
+            "• $f=\\frac{x^a-1}{\\ln x}$：補 $f(0,a)=0$、$f(1,a)=a$",
+            "• $a\\ge\\delta>0$：$f$、$f_a=x^a$ 在 $[0,1]\\times[\\delta,\\beta]$ 上連續"
+          ],
+          "say": "回頭檢查範例 1。被積函數在 x 等於 0 補 0，在 x 等於 1 補 a，就連續了。a 大於等於某個正的得塔時，f 和偏導數 x 的 a 次方，在閉矩形上都連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f=\\frac{x^a-1}{\\ln x}$：補 $f(0,a)=0$、$f(1,a)=a$"
+            },
+            {
+              "do": "write",
+              "line": "• $a\\ge\\delta>0$：$f$、$f_a=x^a$ 在 $[0,1]\\times[\\delta,\\beta]$ 上連續",
+              "on": "續了"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ 閉矩形定理：$I'(a)=\\frac1{a+1}$（$a>0$），$I=\\ln(a+1)+C$"
+          ],
+          "say": "所以閉矩形定理成立，a 大於 0 時 I prime 是 a 加 1 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ 閉矩形定理：$I'(a)=\\frac1{a+1}$（$a>0$），$I=\\ln(a+1)+C$"
+            },
+            {
+              "do": "write",
+              "line": "　$a=0$ 處 $x^a$ 在 $(0,0)$ 不連續（$0^0$），所以先避開 $a=0$",
+              "color": "violet",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定常數要 $I$ 在 $a=0$ 右連續：",
+            "$f$ 在 $[0,1]\\times[0,\\beta]$ 上連續（$x\\to0$ 時 $|f|\\le\\frac1{|\\ln x|}\\to0$）"
+          ],
+          "say": "定常數要用 a 等於 0，所以要 I 在 0 右連續。f 本身在包含 a 等於 0 的閉矩形上連續：x 靠近 0 時，f 的絕對值不超過自然對數絕對值分之一，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定常數要 $I$ 在 $a=0$ 右連續："
+            },
+            {
+              "do": "write",
+              "line": "$f$ 在 $[0,1]\\times[0,\\beta]$ 上連續（$x\\to0$ 時 $|f|\\le\\frac1{|\\ln x|}\\to0$）",
+              "on": "的閉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課的定理 ⇒ $C=\\lim_{a\\to0^+}\\big(I(a)-\\ln(a+1)\\big)=I(0)=0$"
+          ],
+          "say": "由參數積分的連續性定理，常數等於 I 0，也就是 0。每一步都有根據。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課的定理 ⇒ $C=\\lim_{a\\to0^+}\\big(I(a)-\\ln(a+1)\\big)=I(0)=0$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "怎麼選參數",
+      "beats": [
+        {
+          "show": [
+            "原則：讓 $\\frac{\\partial}{\\partial a}$ 生出一個因子，把難纏的分母消掉",
+            "• 卡 $\\frac1{\\ln x}$：放進次方 $x^a$"
+          ],
+          "say": "怎麼選參數？原則是：對 a 微分要生出一個因子，把難纏的分母消掉。卡著自然對數，就放進次方；卡著 x，就乘 e 的負 a x；卡著 x 平方，就放進 e 的負 a x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原則：讓 $\\frac{\\partial}{\\partial a}$ 生出一個因子，把難纏的分母消掉"
+            },
+            {
+              "do": "write",
+              "line": "• 卡 $\\frac1{\\ln x}$：放進次方 $x^a$",
+              "on": "因子"
+            },
+            {
+              "do": "write",
+              "line": "• 卡 $\\frac1x$：乘上 $e^{-ax}$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• 卡 $\\frac1{x^2}$：放進 $e^{-ax^2}$",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "範例 2：$\\displaystyle\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx$",
+            "$I(a)=\\int_0^\\infty\\frac{e^{-ax}\\sin x}x\\,dx\\quad(a>0),\\ \\text{要 }I(1)$"
+          ],
+          "say": "範例 2：e 的負 x 次方乘正弦 x，除以 x。卡的是 x 分之一，所以把 e 的負 x 換成 e 的負 a x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "範例 2：$\\displaystyle\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(a)=\\int_0^\\infty\\frac{e^{-ax}\\sin x}x\\,dx\\quad(a>0),\\ \\text{要 }I(1)$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I'(a)=-\\int_0^\\infty e^{-ax}\\sin x\\,dx=-\\frac1{1+a^2}$"
+          ],
+          "say": "對 a 微分，拉下負 x，跟分母的 x 消掉，剩下負的 e 的負 a x 乘正弦 x。分部積分兩次，得到負的 1 加 a 平方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=-\\int_0^\\infty e^{-ax}\\sin x\\,dx=-\\frac1{1+a^2}$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_0^\\infty e^{-ax}\\sin x\\,dx=\\frac1{1+a^2}$：分部積分兩次",
+              "color": "violet",
+              "on": "乘正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I(a)=C-\\arctan a$；$a\\to\\infty$：$|I(a)|\\le\\int_0^\\infty e^{-ax}dx=\\frac1a\\to0$"
+          ],
+          "say": "積回去：常數減反正切 a。這次在 a 趨近無限大定常數：正弦 x 除以 x 不超過 1，所以 I 不超過 a 分之 1，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$I(a)=C-\\arctan a$；$a\\to\\infty$：$|I(a)|\\le\\int_0^\\infty e^{-ax}dx=\\frac1a\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&C=\\frac\\pi2,\\\\&\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx=\\frac\\pi2-\\frac\\pi4=\\frac\\pi4\\end{aligned}$"
+          ],
+          "say": "常數是 2 分之派，代 a 等於 1：2 分之派減 4 分之派，答案 4 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&C=\\frac\\pi2,\\\\&\\int_0^\\infty\\frac{e^{-x}\\sin x}x\\,dx=\\frac\\pi2-\\frac\\pi4=\\frac\\pi4\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "範例 3：$\\frac1{x^2}$ 卡住",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}&\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx\\\\ I(a)&=\\int_0^\\infty\\frac{1-e^{-ax^2}}{x^2}\\,dx\\quad(a\\ge0)\\end{aligned}$"
+          ],
+          "say": "範例 3：1 減 e 的負 x 平方，除以 x 平方。卡的是 x 平方，把參數放進指數：e 的負 a x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx\\\\ I(a)&=\\int_0^\\infty\\frac{1-e^{-ax^2}}{x^2}\\,dx\\quad(a\\ge0)\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\partial_a$ 拉下 $x^2$，消掉分母：",
+            "$I'(a)=\\int_0^\\infty e^{-ax^2}\\,dx=\\frac1{\\sqrt a}\\cdot\\frac{\\sqrt\\pi}2$"
+          ],
+          "say": "對 a 微分，拉下 x 平方，正好消掉分母。剩下高斯積分：換元 u 等於根號 a 乘 x，得到根號 a 分之一乘 2 分之根號派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\partial_a$ 拉下 $x^2$，消掉分母："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\int_0^\\infty e^{-ax^2}\\,dx=\\frac1{\\sqrt a}\\cdot\\frac{\\sqrt\\pi}2$",
+              "on": "剩下"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_0^\\infty e^{-u^2}du=\\frac12\\Gamma(\\frac12)=\\frac{\\sqrt\\pi}2$（11.17）",
+              "color": "violet",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積回去：$I(a)=\\sqrt{\\pi a}+C$；$I(0)=0$"
+          ],
+          "say": "對 a 積回去，是根號派 a 加常數。a 等於 0 時被積函數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積回去：$I(a)=\\sqrt{\\pi a}+C$；$I(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右連續：$1-e^{-t}\\le\\min(t,1)$ ⇒ $0\\le I(a)\\le\\int_0^\\infty\\min\\!\\big(a,\\tfrac1{x^2}\\big)dx=2\\sqrt a$"
+          ],
+          "say": "但要確定 I 在 0 右連續。1 減 e 的負 t 次方，同時不超過 t 和 1，所以 I 被一個算得出來的積分壓住，等於 2 倍根號 a，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右連續：$1-e^{-t}\\le\\min(t,1)$ ⇒ $0\\le I(a)\\le\\int_0^\\infty\\min\\!\\big(a,\\tfrac1{x^2}\\big)dx=2\\sqrt a$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C=0,\\qquad\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx=\\sqrt\\pi$"
+          ],
+          "say": "所以常數是 0，答案是根號派，大約 1.7725。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle C=0,\\qquad\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}\\,dx=\\sqrt\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "答案"
+            },
+            {
+              "do": "write",
+              "line": "　$\\min$ 的積分：$\\int_0^{1/\\sqrt a}a\\,dx+\\int_{1/\\sqrt a}^\\infty\\frac{dx}{x^2}=\\sqrt a+\\sqrt a$",
+              "color": "violet",
+              "on": "77"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^\\infty\\frac{1-e^{-4x^2}}{x^2}\\,dx=$？"
+          ],
+          "say": "試一題：把範例 3 的 1 換成 4。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^\\infty\\frac{e^{-2x}\\sin x}x\\,dx=$？"
+          ],
+          "say": "再一題，範例 2 換成 e 的負 2x。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "範例 2 為什麼合法",
+      "beats": [
+        {
+          "show": [
+            "$f=\\frac{e^{-ax}\\sin x}x$（補 $f(0,a)=1$），$f_a=-e^{-ax}\\sin x$"
+          ],
+          "say": "最後把範例 2 的交換說清楚。被積函數在 0 補 1 就連續；偏導數是負 e 的負 a x 乘正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f=\\frac{e^{-ax}\\sin x}x$（補 $f(0,a)=1$），$f_a=-e^{-ax}\\sin x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "無窮區間 ⇒ 要控制函數：$a\\ge\\alpha>0$ 時",
+            "$|f_a(x,a)|\\le e^{-\\alpha x}=g(x),\\qquad\\int_0^\\infty g=\\frac1\\alpha<\\infty$"
+          ],
+          "say": "區間無限長，要控制函數。a 大於等於一個正的 阿法，偏導數的絕對值不超過 e 的負 阿法 x，它的積分是 阿法 分之一，有限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "無窮區間 ⇒ 要控制函數：$a\\ge\\alpha>0$ 時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle |f_a(x,a)|\\le e^{-\\alpha x}=g(x),\\qquad\\int_0^\\infty g=\\frac1\\alpha<\\infty}}$",
+              "on": "阿法#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "阿法#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\alpha>0$ 任意 ⇒ 所有 $a>0$ 都成立"
+          ],
+          "say": "阿法 可以取任意小的正數，所以每個大於 0 的 a 都可以交換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\alpha>0$ 任意 ⇒ 所有 $a>0$ 都成立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a\\to\\infty$ 定常數：$|I(a)|\\le\\frac1a$ 是直接估計，不用交換"
+          ],
+          "say": "定常數用的是 a 趨近無限大，那一步是直接估計，不需要交換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a\\to\\infty$ 定常數：$|I(a)|\\le\\frac1a$ 是直接估計，不用交換"
+            },
+            {
+              "do": "write",
+              "line": "　$a=0$ 呢？$|\\sin x|$ 沒有可積的控制函數。要讓 $a\\to0^+$ 得到 $\\int_0^\\infty\\frac{\\sin x}x\\,dx=\\frac\\pi2$，需要更細的論證，留到 Dirichlet 積分",
+              "color": "violet",
+              "on": "那一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 範例 1：閉矩形連續＋右連續",
+            "• 範例 2：控制函數 $e^{-\\alpha x}$"
+          ],
+          "say": "三個範例各用了什麼：範例 1 是閉矩形；範例 2 是控制函數 e 的負 阿法 x；範例 3 是控制函數 e 的負 阿法 x 平方，加上右連續的估計。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 範例 1：閉矩形連續＋右連續"
+            },
+            {
+              "do": "write",
+              "line": "• 範例 2：控制函數 $e^{-\\alpha x}$",
+              "on": "是控#1"
+            },
+            {
+              "do": "write",
+              "line": "• 範例 3：控制函數 $e^{-\\alpha x^2}$＋右連續的估計",
+              "on": "函數#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 五步：放參數 → 微分 → 算 $I'$ → 積回 → 定常數",
+            "• 選參數：讓 $\\partial_a$ 消掉難纏的分母"
+          ],
+          "say": "整理：五個步驟；選參數的原則是讓微分消掉難纏的分母；每次交換都要說出條件，在端點定常數之前，先確認 I 在那裡連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 五步：放參數 → 微分 → 算 $I'$ → 積回 → 定常數"
+            },
+            {
+              "do": "write",
+              "line": "• 選參數：讓 $\\partial_a$ 消掉難纏的分母",
+              "on": "是讓"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1\\frac{x^2-1}{\\ln x}dx=\\ln3$，$\\int_0^\\infty\\frac{e^{-x}\\sin x}xdx=\\frac\\pi4$，$\\int_0^\\infty\\frac{1-e^{-x^2}}{x^2}dx=\\sqrt\\pi$",
+              "on": "換都"
+            },
+            {
+              "do": "write",
+              "line": "• 每次交換都說出條件；在端點定常數要先確認連續",
+              "on": "之前"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：$I'(a)$ 算不出來，卻能用 $I$ 自己表示：解微分方程"
+          ],
+          "say": "下一課，I prime 算不出閉式，但能用 I 自己表示，就解微分方程。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：$I'(a)$ 算不出來，卻能用 $I$ 自己表示：解微分方程"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["feynman", "parameter-integral"],
-    "fine": ["feynman-choose-parameter", "feynman-differentiate-integrate", "feynman-fix-constant", "feynman-justify"]
+    "coarse": [
+      "feynman",
+      "parameter-integral"
+    ],
+    "fine": [
+      "feynman-choose-parameter",
+      "feynman-differentiate-integrate",
+      "feynman-fix-constant",
+      "feynman-justify"
+    ]
   },
   "practice": [
-    { "id": "world-041", "core": true, "trains": "feynman-differentiate-integrate" },
-    { "id": "world-019", "core": true, "trains": "feynman-choose-parameter" },
-    { "id": "world-064", "core": true, "trains": "feynman-choose-parameter" },
-    { "id": "world-070", "core": true, "trains": "feynman-fix-constant" },
-    { "id": "cg-11e-007", "core": true, "trains": "feynman-justify" },
-    { "id": "cg-11e-009", "core": true, "trains": "feynman-fix-constant" },
-    { "id": "dm-int-008", "trains": "feynman-differentiate-integrate" },
-    { "id": "burst-boss-param-001", "trains": "feynman-differentiate-integrate" },
-    { "id": "cg-11e-008", "trains": "feynman-justify" },
-    { "id": "cg-11e-010", "trains": "feynman-fix-constant" },
-    { "id": "world-057", "challenge": true, "trains": "feynman-choose-parameter", "note": "挑戰：令 $I(a)=\\int_0^{\\infty}\\frac{\\ln(1+a^2x^2)}{1+x^2}\\,dx$，$I'(a)$ 用部分分式。" },
-    { "id": "world-015", "challenge": true, "trains": "feynman-choose-parameter", "note": "挑戰：令 $I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$，最後的常數用 $a=0$。" }
+    {
+      "id": "world-041",
+      "core": true,
+      "trains": "feynman-differentiate-integrate"
+    },
+    {
+      "id": "world-019",
+      "core": true,
+      "trains": "feynman-choose-parameter"
+    },
+    {
+      "id": "world-064",
+      "core": true,
+      "trains": "feynman-choose-parameter"
+    },
+    {
+      "id": "world-070",
+      "core": true,
+      "trains": "feynman-fix-constant"
+    },
+    {
+      "id": "cg-11e-007",
+      "core": true,
+      "trains": "feynman-justify"
+    },
+    {
+      "id": "cg-11e-009",
+      "core": true,
+      "trains": "feynman-fix-constant"
+    },
+    {
+      "id": "dm-int-008",
+      "trains": "feynman-differentiate-integrate"
+    },
+    {
+      "id": "burst-boss-param-001",
+      "trains": "feynman-differentiate-integrate"
+    },
+    {
+      "id": "cg-11e-008",
+      "trains": "feynman-justify"
+    },
+    {
+      "id": "cg-11e-010",
+      "trains": "feynman-fix-constant"
+    },
+    {
+      "id": "world-057",
+      "challenge": true,
+      "trains": "feynman-choose-parameter",
+      "note": "挑戰：令 $I(a)=\\int_0^{\\infty}\\frac{\\ln(1+a^2x^2)}{1+x^2}\\,dx$，$I'(a)$ 用部分分式。"
+    },
+    {
+      "id": "world-015",
+      "challenge": true,
+      "trains": "feynman-choose-parameter",
+      "note": "挑戰：令 $I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$，最後的常數用 $a=0$。"
+    }
   ],
   "gaps": []
 }

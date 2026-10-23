@@ -1,299 +1,151 @@
 {
   "id": "feynman-trick-advanced",
   "title": "Feynman 積分法：進階",
-  "readMinutes": 14,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 50,
-  "prerequisites": ["feynman-trick-basic", "first-order-linear", "separation-of-variables", "partial-fractions-quadratic"],
-  "next": ["frullani"],
-  "related": ["gamma-half", "ibp-cyclic", "residue-real-integrals"],
+  "prerequisites": [
+    "feynman-trick-basic",
+    "first-order-linear",
+    "separation-of-variables",
+    "partial-fractions-quadratic"
+  ],
+  "next": [
+    "frullani"
+  ],
+  "related": [
+    "gamma-half",
+    "ibp-cyclic",
+    "residue-real-integrals"
+  ],
   "objectives": [
-    "$I'(a)$ 算不出閉式、但能用 $I(a)$ 本身表示時，解微分方程得到 $I(a)$（Gaussian 乘 $\\cos$ 的例子）。",
-    "對 $a$ 積分時需要輔助積分或巧妙換元的情況，能一步一步做完（$\\int_0^{\\pi/2}\\ln(1+a\\sin^2 x)\\,dx$）。",
-    "認出「積回去之後原積分又出現」的結構，移項解出答案（$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx$）。"
+    "$I'(a)$ 算不出閉式、但能用 $I(a)$ 本身表示時，解微分方程得到 $I(a)$（Gaussian 乘 $\\cos$：$\\int_0^\\infty e^{-x^2}\\cos(2ax)\\,dx$）",
+    "對 $a$ 積分時需要輔助積分或巧妙換元的情況，能一步一步做完（$\\int_0^{\\pi/2}\\ln(1+a\\sin^2x)\\,dx$）",
+    "認出「積回去之後原積分又出現」的結構，移項解出答案（$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx$）"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 基礎版不夠用的三種情況",
+      "heading": "① 基礎版不夠用時",
       "body": [
-        "〈Feynman 積分法：基礎〉的題目，$I'(a)$ 都是一個能直接算出閉式的積分。進階題常卡在三個地方：",
-        "$I'(a)$ 算不出來，但分部積分後又變回 $I(a)$：得到 $I'=$ (某個式子)$\\cdot I$，是一個微分方程。",
-        "$I'(a)$ 算得出來，但對 $a$ 積回去很難：需要一個輔助積分，加上一次換元。",
-        "積回去時，原本要求的積分又在另一邊出現：像〈重複分部與循環積分〉一樣移項。"
-      ],
-      "collapsible": false
+        "基礎版：$I'(a)$ 算出來，直接積回去。三種卡住的情況：",
+        "• $I'(a)$ 算不出閉式，但等於 $I$ 的倍數 → 解微分方程",
+        "• $I'(a)$ 算得出來，但積回去要換元、還要輔助積分",
+        "• 積回去時，原積分又出現 → 移項",
+        "交換的理由跟上一課一樣：",
+        "• 閉矩形上 $f,f_a$ 連續",
+        "• 或可積的控制函數 $|f_a|\\le g$",
+        "選參數多一個原則：放在「$a=0$ 時變簡單」的位置，$I(0)$ 才好算"
+      ]
     },
     {
-      "heading": "② 微分方程型：$I'=-2aI$",
+      "heading": "② 微分方程型",
       "body": [
-        "$I(t)=\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx$。對 $t$ 微分：$I'(t)=-\\int_0^{\\infty}2xe^{-x^2}\\sin(2tx)\\,dx$（$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le 2xe^{-x^2}$，可積，可以交換）。",
-        "分部積分，$u=\\sin(2tx)$、$dv=2xe^{-x^2}\\,dx$、$v=-e^{-x^2}$：邊界項 $\\left[-e^{-x^2}\\sin(2tx)\\right]_0^{\\infty}=0$，剩 $2t\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx=2tI(t)$。",
-        "所以 $I'(t)=-2tI(t)$，分離變數得 $I(t)=I(0)e^{-t^2}$，而 $I(0)=\\frac{\\sqrt{\\pi}}{2}$。"
+        "控制函數：$|\\partial_a f|=|2xe^{-x^2}\\sin2ax|\\le2xe^{-x^2}$，可積",
+        "這個積分沒有閉式，但可以分部積分：$-2xe^{-x^2}dx=d\\big(e^{-x^2}\\big)$"
       ],
-      "tex": ["\\int_0^{\\infty}e^{-x^{2}}\\cos(2tx)\\,dx=\\frac{\\sqrt{\\pi}}{2}\\,e^{-t^{2}}"],
-      "collapsible": false
+      "tex": [
+        "I(a)=\\int_0^\\infty e^{-x^2}\\cos(2ax)\\,dx,\\quad\\text{要 }I(1)",
+        "I'(a)=-\\int_0^\\infty2xe^{-x^2}\\sin(2ax)\\,dx",
+        "\\begin{aligned}I'(a)&=\\Big[e^{-x^2}\\sin2ax\\Big]_0^\\infty\\\\&\\quad-\\int_0^\\infty e^{-x^2}\\cdot2a\\cos2ax\\,dx\\\\&=0-2a\\,I(a)\\end{aligned}",
+        "I'(a)=-2a\\,I(a)"
+      ]
     },
     {
-      "heading": "③ 選參數的位置要「在 $a=0$ 時變簡單」",
+      "heading": "② 解微分方程",
       "body": [
-        "定常數需要一個知道 $I$ 值的 $a$。把參數放在「$a=0$ 時整個積分變成 $0$ 或一個已知值」的位置：$\\ln(1+a\\sin^2 x)$ 在 $a=0$ 是 $0$；$\\frac{\\ln(1+ax)}{1+x^2}$ 在 $a=0$ 也是 $0$。這比把參數放在別處（例如 $\\ln(a+\\sin^2 x)$）好用得多。"
+        "乘積分因子 $e^{a^2}$：",
+        "$e^{a^2}I(a)$ 是常數 $=I(0)=\\int_0^\\infty e^{-x^2}dx=\\frac{\\sqrt\\pi}2$",
+        "不用除以 $I$，所以不必擔心 $I=0$；分離變數的寫法 $\\frac{dI}I=-2a\\,da$ 會得到同樣的結果"
       ],
-      "collapsible": false
+      "tex": [
+        "\\big(e^{a^2}I(a)\\big)'=e^{a^2}\\big(I'+2aI\\big)=0",
+        "I(a)=\\frac{\\sqrt\\pi}2e^{-a^2},\\qquad\\int_0^\\infty e^{-x^2}\\cos2x\\,dx=\\frac{\\sqrt\\pi}{2e}"
+      ]
     },
     {
-      "heading": "關於 $\\int_0^{\\infty}\\frac{\\cos(tx)}{1+x^2}\\,dx$",
+      "heading": "③ $a=0$ 時變簡單",
       "body": [
-        "這個積分（Laplace 積分）等於 $\\frac{\\pi}{2}e^{-|t|}$，常被寫成「微分兩次得到 $I''=I$」。但第二次微分時被積函數變成 $-\\frac{x^2\\cos(tx)}{1+x^2}$，找不到可積的控制函數，直接交換不合法。正確的做法要先把 $\\frac{x^2}{1+x^2}$ 拆成 $1-\\frac{1}{1+x^2}$，搭配 Dirichlet 積分處理；或者用〈用留數算實積分〉一行算完。"
+        "$a=0$：$\\ln1=0$，$I(0)=0$　這就是 $a$ 放在這裡的理由",
+        "$a\\in[\\alpha,\\beta]\\subset(-1,\\infty)$：$1+a\\sin^2x\\ge\\min(1,1+\\alpha)>0$，閉矩形上 $f,f_a$ 連續",
+        "$a\\ne0$：分子湊成分母，",
+        "輔助積分：上下除以 $\\cos^2x$，$t=\\tan x$：",
+        "$\\frac{1}{1+a\\sin^2x}=\\frac{\\sec^2x}{\\sec^2x+a\\tan^2x}=\\frac{\\sec^2x}{1+(1+a)\\tan^2x}$，$dt=\\sec^2x\\,dx$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "基礎版不夠用",
-      "beats": [
-        { "show": ["基礎版：$I'(a)$ 直接算出閉式"],
-          "say": "基礎版的題目，對參數微分之後，I prime 都能直接算出來。進階題常卡在下面幾個地方。",
-          "board": [
-            {"do":"write","line":"基礎版：$I'(a)$ 直接算出閉式"}
-          ] },
-        { "show": ["① $I'$ 又變回 $I$：微分方程"],
-          "say": "第一種，I prime 算不出來，可是分部積分之後又變回 I 本身，得到一個微分方程。",
-          "board": [
-            {"do":"write","line":"① $I'$ 又變回 $I$：微分方程"}
-          ] },
-        { "show": ["② $I'$ 算得出來，積回去很難"],
-          "note": "需要輔助積分，加上一次換元。",
-          "say": "第二種，I prime 算得出來，可是對 a 積回去很難，要借一個輔助積分再換元。",
-          "board": [
-            {"do":"write","line":"② $I'$ 算得出來，積回去很難"}
-          ] },
-        { "show": ["③ 積回去時原積分又出現"],
-          "say": "最後一種，積回去的時候，原本要求的那個積分，又在等式另一邊冒出來。",
-          "board": [
-            {"do":"write","line":"③ 積回去時原積分 ${{o:I}}$ 又出現"},
-            {"do":"underline","term":"o","color":"gold","on":"原本要求的"}
-          ] }
-      ],
-      "predict": {
-        "ask": "原本要求的積分又出現在另一邊，下一步是？",
-        "options": [
-          {
-            "label": "移項，解出它",
-            "correct": true
-          },
-          {
-            "label": "當成新的未知積分繼續算",
-            "why": "繼續算只會繞圈。它就是要求的那個數，像循環積分一樣移到同一邊。"
-          },
-          {
-            "label": "再對參數微分一次",
-            "why": "再微分只會更複雜；等式兩邊有同一個未知數，移項就解出來了。"
-          }
-        ]
-      }
+      "tex": [
+        "I(a)=\\int_0^{\\pi/2}\\ln\\big(1+a\\sin^2x\\big)\\,dx\\quad(a>-1)",
+        "I'(a)=\\int_0^{\\pi/2}\\frac{\\sin^2x}{1+a\\sin^2x}\\,dx",
+        "I'(a)=\\frac1a\\Big(\\frac\\pi2-J(a)\\Big),\\quad J(a)=\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2x}",
+        "J(a)=\\int_0^\\infty\\frac{dt}{1+(1+a)t^2}=\\frac{\\pi}{2\\sqrt{1+a}}"
+      ]
     },
     {
-      "title": "微分方程型",
-      "beats": [
-        { "show": ["$I(t)=\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx$"],
-          "say": "看這個積分：e 的負 x 平方乘 cosine 二 t x。參數 t 放在 cosine 裡面。",
-          "board": [
-            {"do":"write","line":"$I(t)=\\int_0^{\\infty}e^{-x^2}{{c:\\cos(2tx)}}\\,dx$","tint":{"c":"blue"}},
-            {"do":"underline","term":"c","color":"blue","label":"參數在這裡","on":"參數 t"}
-          ] },
-        { "show": ["$I'(t)=-\\int_0^{\\infty}2xe^{-x^2}\\sin(2tx)\\,dx$"],
-          "say": "對 t 微分，cosine 變成負 sine，還多生出一個二 x。這個積分沒辦法直接算出閉式。",
-          "board": [
-            {"do":"write","line":"$I'(t)=-\\int_0^{\\infty}{{tx:2x}}\\,e^{-x^2}{{sn:\\sin(2tx)}}\\,dx$","tint":{"sn":"blue"}},
-            {"do":"underline","term":"sn","color":"blue","on":"變成負"},
-            {"do":"underline","term":"tx","label":"多生出來","on":"還多生出"}
-          ] },
-        { "show": ["$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le 2xe^{-x^2}$"],
-          "note": "右邊在 $[0,\\infty)$ 可積。",
-          "say": "先確認能不能交換：偏導數的絕對值不超過二 x 乘 e 的負 x 平方，這個可積，所以可以。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le{{dom:2xe^{-x^2}}}$","on":"偏導數的"},
-            {"do":"underline","term":"dom","on":"二 x 乘"}
-          ] }
+      "heading": "③ 積回去要換元",
+      "body": [
+        "令 $s=\\sqrt{1+a}$（$a=s^2-1$）：",
+        "$a=0$ 時公式給 $\\frac\\pi4=\\int_0^{\\pi/2}\\sin^2x\\,dx$，跟直接代一致",
+        "對 $a$ 積分，$da=2s\\,ds$：",
+        "$I(0)=0$，$s=1$：$\\pi\\ln2+C=0$",
+        "例：$a=1$ 得 $\\pi\\ln\\frac{1+\\sqrt2}2\\approx0.5913$"
       ],
-      "check": 3
+      "tex": [
+        "I'(a)=\\frac{\\pi}{2a}\\Big(1-\\frac1s\\Big)=\\frac{\\pi(s-1)}{2(s^2-1)s}=\\frac{\\pi}{2s(s+1)}",
+        "I=\\int\\frac{\\pi}{2s(s+1)}\\cdot2s\\,ds=\\pi\\ln(1+s)+C",
+        "I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}2"
+      ]
     },
     {
-      "title": "分部積分變回 $I$",
-      "beats": [
-        { "show": ["$u=\\sin(2tx)$，$v=-e^{-x^2}$"],
-          "note": "$dv=2xe^{-x^2}\\,dx$",
-          "say": "分部積分：u 取 sine 二 t x，二 x 乘 e 的負 x 平方剛好積成負的 e 的負 x 平方。",
-          "board": [
-            {"do":"write","line":"$u=\\sin(2tx)$","on":"u 取"},
-            {"do":"write","line":"$dv=2xe^{-x^2}\\,dx$","on":"二 x 乘"},
-            {"do":"transform","line":"$v=-e^{-x^2}$","on":"剛好積成"}
-          ] },
-        { "show": ["邊界項 $=0$，剩 $2tI(t)$"],
-          "say": "邊界項在零和無限大都是零。剩下的積分，正好是二 t 乘上原來的 I。",
-          "board": [
-            {"do":"write","line":"$\\Big[-e^{-x^2}\\sin(2tx)\\Big]_0^{\\infty}={{z:0}}$"},
-            {"do":"write","line":"剩 ${{rest:2t\\,I(t)}}$","on":"剩下的積分"},
-            {"do":"underline","term":"rest","label":"原來的 I","on":"原來的"}
-          ] },
-        { "show": ["$I'(t)=-2tI(t)$"],
-          "say": "所以 I prime 等於負二 t 乘 I。I 的導數用 I 自己表示，這是一個微分方程。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{de:I'(t)=-{{rest:2t\\,I(t)}}}}$","on":"所以 I prime"},
-            {"do":"box","term":"de","label":"微分方程","on":"這是一個"}
-          ] },
-        { "show": ["$\\frac{dI}{I}=-2t\\,dt$"],
-          "note": "分離變數；初值 $I(0)=\\frac{\\sqrt{\\pi}}{2}$。",
-          "say": "分離變數：I 移到左邊，t 留在右邊，兩邊積分。初值是 t 等於零的高斯積分，二分之根號派。",
-          "board": [
-            {"do":"write","line":"$\\frac{dI}{I}=-2t\\,dt$","on":"分離變數"},
-            {"do":"write","line":"$I(0)=\\frac{\\sqrt{\\pi}}{2}$","on":"初值是"}
-          ] },
-        { "show": ["$t=0$：$\\cos 0=1$","$I(0)=\\int_0^{\\infty}e^{-x^2}dx$"],
-          "say": "t 等於零時，cosine 零等於一，積分就只剩 e 的負 x 平方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$I(0)=\\int_0^{\\infty}e^{-x^2}\\cos(0)\\,dx$","on":"cosine"},
-            {"do":"transform","line":"$I(0)=\\int_0^{\\infty}e^{-x^2}\\,dx$","on":"只剩"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}e^{-x^2}dx=\\frac{\\sqrt{\\pi}}{2}$","已知結果，這課直接用"],
-          "say": "這個高斯積分的值是已知結果，算法要用到多變數積分，這堂課直接拿來用。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}e^{-x^2}dx={{g:\\frac{\\sqrt{\\pi}}{2}}}$"},
-            {"do":"box","term":"g","color":"green","label":"已知結果","on":"已知結果"}
-          ] }
+      "heading": "④ 原積分又出現",
+      "body": [
+        "$[0,1]\\times[0,1]$ 上 $f,f_a$ 連續：",
+        "部分分式（不可約二次式）：",
+        "驗算：$-a(1+x^2)+(x+a)(1+ax)=x(1+a^2)$",
+        "三個基本積分：",
+        "• $\\int_0^1\\frac{a}{1+ax}dx=\\ln(1+a)$",
+        "• $\\int_0^1\\frac{x}{1+x^2}dx=\\frac12\\ln2$",
+        "• $\\int_0^1\\frac{dx}{1+x^2}=\\frac\\pi4$"
       ],
-      "key": "分部積分讓 $I$ 自己再出現",
-      "check": 0
+      "tex": [
+        "\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx,\\qquad I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx",
+        "I'(a)=\\int_0^1\\frac{x}{(1+ax)(1+x^2)}\\,dx",
+        "\\frac{x}{(1+ax)(1+x^2)}=\\frac1{1+a^2}\\Big(\\frac{-a}{1+ax}+\\frac{x+a}{1+x^2}\\Big)",
+        "I'(a)=\\frac{-\\ln(1+a)+\\frac12\\ln2+\\frac\\pi4a}{1+a^2}"
+      ]
     },
     {
-      "title": "代值",
-      "beats": [
-        { "show": ["$\\int_0^{\\infty}e^{-x^{2}}\\cos(2tx)\\,dx=\\frac{\\sqrt{\\pi}}{2}\\,e^{-t^{2}}$"],
-          "say": "解出來：這一整族積分等於二分之根號派，乘上 e 的負 t 平方。",
-          "board": [
-            {"do":"write","line":"$I(t)=\\frac{\\sqrt{\\pi}}{2}\\,{{e:e^{-t^2}}}$"},
-            {"do":"box","term":"e","color":"green","on":"乘上"}
-          ] },
-        { "show": ["$\\cos(2x)$：$t=1$"],
-          "note": "$I(1)=\\frac{\\sqrt{\\pi}}{2}e^{-1}\\approx 0.3260$",
-          "say": "原題是 cosine 二 x，對應 t 等於一，答案是二分之根號派乘 e 的負一次方，大約零點三二六零。",
-          "board": [
-            {"do":"write","line":"$\\cos(2x)$：${{t:t=1}}$"},
-            {"do":"focus","term":"t","color":"blue","on":"對應"},
-            {"do":"write","line":"$I(1)=\\frac{\\sqrt{\\pi}}{2}e^{-1}\\approx 0.3260$","on":"答案是"}
-          ] }
+      "heading": "④ 移項",
+      "body": [
+        "從 $0$ 積到 $1$：$I(1)=I(1)-I(0)=\\int_0^1I'(a)\\,da$",
+        "$\\int_0^1\\frac{da}{1+a^2}=\\frac\\pi4$，$\\int_0^1\\frac{a\\,da}{1+a^2}=\\frac{\\ln2}2$"
       ],
-      "check": 1
+      "tex": [
+        "\\begin{aligned}I(1)&=-I(1)+\\frac{\\ln2}2\\cdot\\frac\\pi4+\\frac\\pi4\\cdot\\frac{\\ln2}2\\\\2I(1)&=\\frac\\pi4\\ln2\\end{aligned}",
+        "\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx=\\frac\\pi8\\ln2"
+      ]
     },
     {
-      "title": "積回去要換元",
-      "beats": [
-        { "show": ["$I(a)=\\int_0^{\\pi/2}\\ln(1+a\\sin^2 x)\\,dx$"],
-          "note": "$a=0$ 時整個積分是 $0$。",
-          "say": "參數要放在 a 等於零時變簡單的位置。這裡 a 等於零，積分就是零，常數很好定。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\int_0^{\\pi/2}\\ln(1+{{a:a}}\\sin^2 x)\\,dx$","tint":{"a":"blue"}},
-            {"do":"focus","term":"a","color":"blue","on":"放在"},
-            {"do":"write","line":"$I(0)=0$","on":"這裡"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2 x}=\\frac{\\pi}{2\\sqrt{1+a}}$"],
-          "note": "同除 $\\cos^2 x$、令 $u=\\tan x$。",
-          "say": "微分之後需要這個輔助積分：上下同除 cosine 平方，令 u 等於 tangent x，就積得出來。",
-          "board": [
-            {"do":"write","line":"${{l:\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2 x}}}=\\frac{\\pi}{2\\sqrt{1+a}}$"},
-            {"do":"underline","term":"l","color":"gold","label":"輔助積分","on":"輔助積分"}
-          ] },
-        { "show": ["同除 $\\cos^2 x$","$\\sec^2 x=1+\\tan^2 x$"],
-          "say": "同除 cosine 平方，分母變 secant 平方加 a tangent 平方。再換成一加 tangent 平方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{1+a\\sin^2x}=\\frac{\\sec^2x}{\\sec^2x+a\\tan^2x}$","on":"同除"},
-            {"do":"transform","line":"$=\\frac{\\sec^2x}{1+(1+a)\\tan^2x}$","on":"換成"}
-          ] },
-        { "show": ["$u=\\tan x$，$u$ 從 $0$ 到 $\\infty$"],
-          "say": "令 u 等於 tangent x，u 從零跑到無限大。積出 arctangent，再除以根號一加 a，就得答案。",
-          "board": [
-            {"do":"write","line":"$u=\\tan x,\\ du=\\sec^2x\\,dx$"},
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{du}{1+(1+a)u^2}$","on":"跑到"},
-            {"do":"write","line":"$=\\frac{1}{\\sqrt{1+a}}\\cdot\\frac{\\pi}{2}$","on":"除以"}
-          ] },
-        { "show": ["$I'(a)=\\frac{\\pi}{2a}\\left(1-\\frac{1}{\\sqrt{1+a}}\\right)$"],
-          "say": "於是 I prime 有了閉式。難的是對 a 積回去，有根號又有 a 分之一。",
-          "board": [
-            {"do":"write","line":"$I'(a)=\\frac{\\pi}{2a}\\left(1-{{sq:\\frac{1}{\\sqrt{1+a}}}}\\right)$"},
-            {"do":"underline","term":"sq","color":"gold","label":"根號","on":"根號"}
-          ] }
+      "heading": "⑤ 一個會出事的例子",
+      "body": [
+        "這個值的證明要用留數或 Fourier 變換，留到之後",
+        "硬微分兩次：$I''=-\\int_0^\\infty\\frac{x^2\\cos tx}{1+x^2}dx$，而 $\\frac{x^2}{1+x^2}\\to1$：發散",
+        "連一次都有問題：$t=0$ 時",
+        "• 硬搬：$-\\int_0^\\infty\\frac{x\\sin0}{1+x^2}dx=0$",
+        "• 真正：$I'(0^+)=-\\frac\\pi2$",
+        "原因：$\\big|\\frac{x}{1+x^2}\\big|\\sim\\frac1x$，沒有可積的控制函數"
       ],
-      "key": "同除 $\\cos^2x$、令 $u=\\tan x$ 算輔助積分",
-      "predict": {
-        "ask": "對 $a$ 積回去，該怎麼換元？",
-        "options": [
-          {
-            "label": "$w=\\sqrt{1+s}$，被積函數變成 $\\frac{2}{w+1}$",
-            "correct": true
-          },
-          {
-            "label": "$w=\\frac{1}{s}$",
-            "why": "根號還在，沒有變簡單；要換掉的是 $\\sqrt{1+s}$，令 $w=\\sqrt{1+s}$。"
-          },
-          {
-            "label": "不用換元，直接分開積",
-            "why": "$\\frac{1}{s}$ 那一項單獨積會在 $0$ 發散；合在一起換 $w=\\sqrt{1+s}$ 才得 $\\frac{2}{w+1}$。"
-          }
-        ]
-      }
+      "tex": [
+        "I(t)=\\int_0^\\infty\\frac{\\cos tx}{1+x^2}\\,dx=\\frac\\pi2e^{-|t|}"
+      ]
     },
     {
-      "title": "原積分又出現",
-      "beats": [
-        { "show": ["$w=\\sqrt{1+s}$，$s=w^2-1$","$ds=2w\\,dw$"],
-          "say": "令 w 等於根號一加 s，s 是 w 平方減一，ds 是二 w dw。代入後只剩二除以 w 加一。",
-          "board": [
-            {"do":"write","line":"$w=\\sqrt{1+s},\\ s=w^2-1,\\ ds=2w\\,dw$"},
-            {"do":"write","line":"$\\frac{1}{s}\\left(1-\\frac{1}{w}\\right)2w=\\frac{2}{w+1}$","on":"代入"}
-          ] },
-        { "show": ["$I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}{2}$"],
-          "say": "接上一題：換元後積出自然對數 w 加一，答案是派乘自然對數，二分之一加根號一加 a。",
-          "board": [
-            {"do":"write","line":"$I(a)=\\;{{ans:\\pi\\ln\\frac{1+\\sqrt{1+a}}{2}}}$","on":"換元後"},
-            {"do":"box","term":"ans","color":"green","on":"答案是"}
-          ] },
-        { "show": ["$I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$"],
-          "note": "$I(0)=0$，原題是 $I(1)$。",
-          "say": "最後一型。參數放在對數裡，a 等於零時積分是零，原題是 I 在一的值。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$I(a)=\\int_0^1\\frac{\\ln(1+{{a:a}}x)}{1+x^2}\\,dx$","tint":{"a":"blue"},"on":"最後一型"},
-            {"do":"focus","term":"a","color":"blue","on":"參數放在"},
-            {"do":"write","line":"$I(0)=0$，原題是 ${{i1:I(1)}}$","tint":{"i1":"violet"},"on":"a 等於零"}
-          ] },
-        { "show": ["$I'(a)=\\frac{1}{1+a^2}\\left[\\frac{\\ln 2}{2}+\\frac{a\\pi}{4}\\right.$","$\\left.-\\ln(1+a)\\right]$"],
-          "note": "部分分式之後積分。",
-          "say": "微分後用部分分式拆開再積。注意最後一項是負的自然對數一加 a。",
-          "board": [
-            {"do":"write","line":"$I'(a)=\\frac{1}{1+a^2}\\Big[\\frac{\\ln 2}{2}+\\frac{a\\pi}{4}$","on":"微分後"},
-            {"do":"write","line":"$\\qquad{{neg:-\\ln(1+a)}}\\Big]$","on":"部分分式"},
-            {"do":"underline","term":"neg","label":"負的","on":"最後一項"}
-          ] },
-        { "show": ["$I(1)=\\frac{\\pi\\ln 2}{4}-\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da$"],
-          "say": "從零積到一，前兩項合起來是四分之派乘自然對數二。最後那個積分，不就是 I 在一的值本身嗎？",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{i1:I(1)}}={{pl:\\frac{\\pi\\ln 2}{4}}}-{{ii:\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da}}$","on":"從零積到一"},
-            {"do":"focus","term":"pl","on":"前兩項"},
-            {"do":"underline","term":"ii","color":"violet","label":"就是 I(1)","on":"最後那個積分"}
-          ] },
-        { "show": ["把 $a$ 換成 $x$，值不變"],
-          "say": "積分變數只是代號，把 a 換成 x，積分的值不變，就是 I 在一的值。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da$"},
-            {"do":"write","line":"$=\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx=I(1)$","on":"換成"}
-          ] }
-      ],
-      "check": 2
+      "heading": "重點整理",
+      "body": [
+        "• $I'$ 用 $I$ 表示 → 解微分方程：$\\int_0^\\infty e^{-x^2}\\cos2ax\\,dx=\\frac{\\sqrt\\pi}2e^{-a^2}$",
+        "• 參數放在 $a=0$ 變簡單的位置；輔助積分＋換元：$\\pi\\ln\\frac{1+\\sqrt{1+a}}2$",
+        "• 原積分又出現 → 移項：$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}dx=\\frac\\pi8\\ln2$",
+        "• 沒有控制函數時不要硬搬",
+        "下一課：Frullani 積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -358,54 +210,814 @@
   ],
   "checks": [
     {
-      "ask": "$I'(t)=-2tI(t)$，$I(0)=\\frac{\\sqrt{\\pi}}{2}$，則 $I(t)$ 是？",
+      "ask": "$\\displaystyle\\int_0^\\infty e^{-x^2}\\cos4x\\,dx=$？",
       "options": [
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}e^{-t^2}$", "correct": true },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}e^{-2t}$", "why": "$\\int -2t\\,dt=-t^2$，不是 $-2t$。" },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}(1-t^2)$", "why": "那只是 $e^{-t^2}$ 的一階近似；解微分方程要用分離變數。" }
+        {
+          "label": "$\\frac{\\sqrt\\pi}2e^{-4}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\sqrt\\pi}2e^{-16}$",
+          "why": "把 $a$ 當成 $4$；但 $\\cos(2ax)$ 的 $2a=4$"
+        },
+        {
+          "label": "$\\frac{\\sqrt\\pi}2e^{-2}$",
+          "why": "指數是 $-a^2$，不是 $-a$"
+        },
+        {
+          "label": "$\\frac{\\sqrt\\pi}2$",
+          "why": "那是 $I(0)$"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\infty}e^{-x^2}\\cos x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\ln\\big(1+3\\sin^2x\\big)\\,dx=$？",
       "options": [
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}e^{-1/4}$", "correct": true },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}e^{-1}$", "why": "$\\cos x=\\cos(2tx)$ 時 $t=\\frac{1}{2}$，$e^{-t^2}=e^{-1/4}$。" },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}e^{-1/2}$", "why": "指數是 $-t^2$，$t=\\frac{1}{2}$ 時是 $-\\frac{1}{4}$，不是 $-\\frac{1}{2}$。" }
+        {
+          "label": "$\\pi\\ln\\frac32$",
+          "correct": true
+        },
+        {
+          "label": "$\\pi\\ln\\frac52$",
+          "why": "忘了開根號：用了 $1+a=4$"
+        },
+        {
+          "label": "$\\pi\\ln3$",
+          "why": "漏了常數 $C=-\\pi\\ln2$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "基礎版不夠用時",
+      "beats": [
+        {
+          "show": [
+            "基礎版：$I'(a)$ 算出來，直接積回去。三種卡住的情況："
+          ],
+          "say": "基礎版是 I prime 算出來、直接積回去。這一課看三種卡住的情況。",
+          "board": [
+            {
+              "do": "write",
+              "line": "基礎版：$I'(a)$ 算出來，直接積回去。三種卡住的情況："
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $I'(a)$ 算不出閉式，但等於 $I$ 的倍數 → 解微分方程",
+            "• $I'(a)$ 算得出來，但積回去要換元、還要輔助積分"
+          ],
+          "say": "一，I prime 算不出來，但等於 I 的倍數，就解微分方程。二，要輔助積分，積回去還要換元。三，原積分又冒出來，就移項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $I'(a)$ 算不出閉式，但等於 $I$ 的倍數 → 解微分方程"
+            },
+            {
+              "do": "write",
+              "line": "• $I'(a)$ 算得出來，但積回去要換元、還要輔助積分",
+              "on": "的倍"
+            },
+            {
+              "do": "write",
+              "line": "• 積回去時，原積分又出現 → 移項",
+              "on": "回去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "交換的理由跟上一課一樣：",
+            "• 閉矩形上 $f,f_a$ 連續"
+          ],
+          "say": "交換的理由還是那兩個：閉矩形上連續，或可積的控制函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "交換的理由跟上一課一樣："
+            },
+            {
+              "do": "write",
+              "line": "• 閉矩形上 $f,f_a$ 連續",
+              "on": "閉矩"
+            },
+            {
+              "do": "write",
+              "line": "• 或可積的控制函數 $|f_a|\\le g$",
+              "on": "或可"
+            }
+          ]
+        },
+        {
+          "show": [
+            "選參數多一個原則：放在「$a=0$ 時變簡單」的位置，$I(0)$ 才好算"
+          ],
+          "say": "多一個原則：a 放在 a 等於 0 時變簡單的位置，I 0 好算，常數才定得出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "選參數多一個原則：放在「$a=0$ 時變簡單」的位置，$I(0)$ 才好算",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "得到 $I(1)=\\frac{\\pi\\ln 2}{4}-I(1)$ 之後，$I(1)$ 是？",
-      "options": [
-        { "label": "$\\frac{\\pi\\ln 2}{8}$", "correct": true },
-        { "label": "$\\frac{\\pi\\ln 2}{4}$", "why": "右邊還有 $-I(1)$，要移到左邊變成 $2I(1)$。" },
-        { "label": "$0$", "why": "這不是 $I(1)=I(1)$ 的恆等式；移項後 $2I(1)=\\frac{\\pi\\ln 2}{4}$。" }
+      "title": "微分方程型",
+      "beats": [
+        {
+          "show": [
+            "$I(a)=\\int_0^\\infty e^{-x^2}\\cos(2ax)\\,dx,\\quad\\text{要 }I(1)$"
+          ],
+          "say": "第一型：e 的負 x 平方乘餘弦 2 a x，從 0 積到無限大，要 a 等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(a)=\\int_0^\\infty e^{-x^2}\\cos(2ax)\\,dx,\\quad\\text{要 }I(1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "控制函數：$|\\partial_a f|=|2xe^{-x^2}\\sin2ax|\\le2xe^{-x^2}$，可積",
+            "$I'(a)=-\\int_0^\\infty2xe^{-x^2}\\sin(2ax)\\,dx$"
+          ],
+          "say": "對 a 微分，拉下負 2x，餘弦變正弦。偏導數被 2x 乘 e 的負 x 平方控制，可積，交換合法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "控制函數：$|\\partial_a f|=|2xe^{-x^2}\\sin2ax|\\le2xe^{-x^2}$，可積"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=-\\int_0^\\infty2xe^{-x^2}\\sin(2ax)\\,dx$",
+              "on": "2x#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個積分沒有閉式，但可以分部積分：$-2xe^{-x^2}dx=d\\big(e^{-x^2}\\big)$"
+          ],
+          "say": "這個積分算不出閉式。但負 2x 乘 e 的負 x 平方，正好是 e 的負 x 平方的微分，可以分部積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個積分沒有閉式，但可以分部積分：$-2xe^{-x^2}dx=d\\big(e^{-x^2}\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}I'(a)&=\\Big[e^{-x^2}\\sin2ax\\Big]_0^\\infty\\\\&\\quad-\\int_0^\\infty e^{-x^2}\\cdot2a\\cos2ax\\,dx\\\\&=0-2a\\,I(a)\\end{aligned}$"
+          ],
+          "say": "邊界項兩端都是 0。剩下的積分，正好是 2a 乘 I 自己。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}I'(a)&=\\Big[e^{-x^2}\\sin2ax\\Big]_0^\\infty\\\\&\\quad-\\int_0^\\infty e^{-x^2}\\cdot2a\\cos2ax\\,dx\\\\&=0-2a\\,I(a)\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I'(a)=-2a\\,I(a)$"
+          ],
+          "say": "得到微分方程：I prime 等於負 2a 乘 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle I'(a)=-2a\\,I(a)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$I(t)=\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx$ 可以對 $t$ 微分搬進積分號，理由是？",
-      "options": [
-        { "label": "$\\left|\\frac{\\partial f}{\\partial t}\\right|=|-2xe^{-x^2}\\sin(2tx)|\\le 2xe^{-x^2}$，而後者在 $[0,\\infty)$ 可積", "correct": true },
-        { "label": "因為 $\\cos$ 有界", "why": "只看 $f$ 有界不夠；要控制的是 $\\frac{\\partial f}{\\partial t}$，而且控制函數要可積。" },
-        { "label": "微分與積分永遠可以交換", "why": "不是：$\\int_0^{\\infty}\\frac{\\sin(tx)}{x}\\,dx$ 對 $t$ 微分就會出錯。" }
+      "title": "解微分方程",
+      "beats": [
+        {
+          "show": [
+            "乘積分因子 $e^{a^2}$：",
+            "$\\big(e^{a^2}I(a)\\big)'=e^{a^2}\\big(I'+2aI\\big)=0$"
+          ],
+          "say": "一階線性方程，乘積分因子 e 的 a 平方：乘積的導數等於 e 的 a 平方乘 I prime 加 2a I，是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘積分因子 $e^{a^2}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(e^{a^2}I(a)\\big)'=e^{a^2}\\big(I'+2aI\\big)=0$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{a^2}I(a)$ 是常數 $=I(0)=\\int_0^\\infty e^{-x^2}dx=\\frac{\\sqrt\\pi}2$"
+          ],
+          "say": "所以 e 的 a 平方乘 I 是常數，等於 I 0，就是高斯積分，2 分之根號派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{a^2}I(a)$ 是常數 $=I(0)=\\int_0^\\infty e^{-x^2}dx=\\frac{\\sqrt\\pi}2$"
+            },
+            {
+              "do": "write",
+              "line": "　不用除以 $I$，所以不必擔心 $I=0$；分離變數的寫法 $\\frac{dI}I=-2a\\,da$ 會得到同樣的結果",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I(a)=\\frac{\\sqrt\\pi}2e^{-a^2},\\qquad\\int_0^\\infty e^{-x^2}\\cos2x\\,dx=\\frac{\\sqrt\\pi}{2e}$"
+          ],
+          "say": "所以 I a 是 2 分之根號派乘 e 的負 a 平方。代 a 等於 1，答案是 2e 分之根號派，大約 0.326。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle I(a)=\\frac{\\sqrt\\pi}2e^{-a^2},\\qquad\\int_0^\\infty e^{-x^2}\\cos2x\\,dx=\\frac{\\sqrt\\pi}{2e}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$a=0$ 時變簡單",
+      "beats": [
+        {
+          "show": [
+            "$I(a)=\\int_0^{\\pi/2}\\ln\\big(1+a\\sin^2x\\big)\\,dx\\quad(a>-1)$"
+          ],
+          "say": "第二型：自然對數 1 加 a 倍正弦平方，從 0 積到 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(a)=\\int_0^{\\pi/2}\\ln\\big(1+a\\sin^2x\\big)\\,dx\\quad(a>-1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a=0$：$\\ln1=0$，$I(0)=0$　這就是 $a$ 放在這裡的理由"
+          ],
+          "say": "a 等於 0 時對數裡是 1，積分是 0。這就是 a 放在這裡的理由。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=0$：$\\ln1=0$，$I(0)=0$　這就是 $a$ 放在這裡的理由"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a\\in[\\alpha,\\beta]\\subset(-1,\\infty)$：$1+a\\sin^2x\\ge\\min(1,1+\\alpha)>0$，閉矩形上 $f,f_a$ 連續"
+          ],
+          "say": "合法性：a 在負 1 右邊的閉區間裡，對數裡面大於一個正數，閉矩形上都連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a\\in[\\alpha,\\beta]\\subset(-1,\\infty)$：$1+a\\sin^2x\\ge\\min(1,1+\\alpha)>0$，閉矩形上 $f,f_a$ 連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I'(a)=\\int_0^{\\pi/2}\\frac{\\sin^2x}{1+a\\sin^2x}\\,dx$"
+          ],
+          "say": "微分得到：正弦平方除以 1 加 a 正弦平方。對數消失了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\int_0^{\\pi/2}\\frac{\\sin^2x}{1+a\\sin^2x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a\\ne0$：分子湊成分母，",
+            "$I'(a)=\\frac1a\\Big(\\frac\\pi2-J(a)\\Big),\\quad J(a)=\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2x}$"
+          ],
+          "say": "分子湊成分母，I prime 等於 a 分之一，乘上 2 分之派減一個輔助積分 J。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a\\ne0$：分子湊成分母，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\frac1a\\Big(\\frac\\pi2-J(a)\\Big),\\quad J(a)=\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2x}$",
+              "on": "之一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "輔助積分：上下除以 $\\cos^2x$，$t=\\tan x$：",
+            "$J(a)=\\int_0^\\infty\\frac{dt}{1+(1+a)t^2}=\\frac{\\pi}{2\\sqrt{1+a}}$"
+          ],
+          "say": "J 怎麼算？上下同除餘弦平方，令 t 等於正切 x，變成反正切型的積分，等於 2 倍根號 1 加 a 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "輔助積分：上下除以 $\\cos^2x$，$t=\\tan x$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle J(a)=\\int_0^\\infty\\frac{dt}{1+(1+a)t^2}=\\frac{\\pi}{2\\sqrt{1+a}}}}$",
+              "on": "等於#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "成反"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{1}{1+a\\sin^2x}=\\frac{\\sec^2x}{\\sec^2x+a\\tan^2x}=\\frac{\\sec^2x}{1+(1+a)\\tan^2x}$，$dt=\\sec^2x\\,dx$",
+              "color": "violet",
+              "on": "倍根"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "積回去要換元",
+      "beats": [
+        {
+          "show": [
+            "令 $s=\\sqrt{1+a}$（$a=s^2-1$）：",
+            "$I'(a)=\\frac{\\pi}{2a}\\Big(1-\\frac1s\\Big)=\\frac{\\pi(s-1)}{2(s^2-1)s}=\\frac{\\pi}{2s(s+1)}$"
+          ],
+          "say": "令 s 等於根號 1 加 a，a 就是 s 平方減 1。約掉 s 減 1，I prime 變成 2 s 乘 s 加 1 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $s=\\sqrt{1+a}$（$a=s^2-1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\frac{\\pi}{2a}\\Big(1-\\frac1s\\Big)=\\frac{\\pi(s-1)}{2(s^2-1)s}=\\frac{\\pi}{2s(s+1)}$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "　$a=0$ 時公式給 $\\frac\\pi4=\\int_0^{\\pi/2}\\sin^2x\\,dx$，跟直接代一致",
+              "color": "violet",
+              "on": "me"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $a$ 積分，$da=2s\\,ds$：",
+            "$I=\\int\\frac{\\pi}{2s(s+1)}\\cdot2s\\,ds=\\pi\\ln(1+s)+C$"
+          ],
+          "say": "對 a 積回去，換元：d a 等於 2 s d s。2s 剛好約掉，剩 s 加 1 分之派，積分是派乘自然對數 1 加 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對 $a$ 積分，$da=2s\\,ds$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=\\int\\frac{\\pi}{2s(s+1)}\\cdot2s\\,ds=\\pi\\ln(1+s)+C$",
+              "on": "約掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I(0)=0$，$s=1$：$\\pi\\ln2+C=0$",
+            "$I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}2$"
+          ],
+          "say": "a 等於 0 時 s 等於 1，定出常數是負派乘自然對數 2。所以 I a 是派乘自然對數 2 分之 1 加根號 1 加 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$I(0)=0$，$s=1$：$\\pi\\ln2+C=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}2}}$",
+              "color": "red",
+              "on": "定出"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　例：$a=1$ 得 $\\pi\\ln\\frac{1+\\sqrt2}2\\approx0.5913$",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "原積分又出現",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx,\\qquad I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$"
+          ],
+          "say": "第三型：自然對數 1 加 x，除以 1 加 x 平方。參數放進對數，a 等於 0 時積分是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx,\\qquad I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$[0,1]\\times[0,1]$ 上 $f,f_a$ 連續：",
+            "$I'(a)=\\int_0^1\\frac{x}{(1+ax)(1+x^2)}\\,dx$"
+          ],
+          "say": "閉矩形上都連續，交換合法。微分後得到有理函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$[0,1]\\times[0,1]$ 上 $f,f_a$ 連續："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I'(a)=\\int_0^1\\frac{x}{(1+ax)(1+x^2)}\\,dx$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "部分分式（不可約二次式）：",
+            "$\\frac{x}{(1+ax)(1+x^2)}=\\frac1{1+a^2}\\Big(\\frac{-a}{1+ax}+\\frac{x+a}{1+x^2}\\Big)$"
+          ],
+          "say": "用部分分式拆開：一次式那項分子是負 a，二次式那項分子是 x 加 a，外面再除以 1 加 a 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "部分分式（不可約二次式）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{x}{(1+ax)(1+x^2)}=\\frac1{1+a^2}\\Big(\\frac{-a}{1+ax}+\\frac{x+a}{1+x^2}\\Big)}}$",
+              "on": "項分#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "分子#2"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$-a(1+x^2)+(x+a)(1+ax)=x(1+a^2)$",
+              "color": "violet",
+              "on": "再除"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三個基本積分：",
+            "• $\\int_0^1\\frac{a}{1+ax}dx=\\ln(1+a)$"
+          ],
+          "say": "三塊都好積：自然對數 1 加 a；2 分之自然對數 2；4 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三個基本積分："
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1\\frac{a}{1+ax}dx=\\ln(1+a)$",
+              "on": "對數#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1\\frac{x}{1+x^2}dx=\\frac12\\ln2$",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1\\frac{dx}{1+x^2}=\\frac\\pi4$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I'(a)=\\frac{-\\ln(1+a)+\\frac12\\ln2+\\frac\\pi4a}{1+a^2}$"
+          ],
+          "say": "合起來：負自然對數 1 加 a，加 2 分之自然對數 2，加 4 分之派乘 a，全部除以 1 加 a 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle I'(a)=\\frac{-\\ln(1+a)+\\frac12\\ln2+\\frac\\pi4a}{1+a^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "移項",
+      "beats": [
+        {
+          "show": [
+            "從 $0$ 積到 $1$：$I(1)=I(1)-I(0)=\\int_0^1I'(a)\\,da$"
+          ],
+          "say": "對 a 從 0 積到 1。I 0 是 0，所以左邊就是 I 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從 $0$ 積到 $1$：$I(1)=I(1)-I(0)=\\int_0^1I'(a)\\,da$"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "第一塊 $\\displaystyle\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da$ 是什麼？",
+        "options": [
+          {
+            "label": "就是 $I(1)$ 本身",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "被積函數在 $(0,1]$ 上是正的"
+          },
+          {
+            "label": "要再放一個參數",
+            "why": "不用：它就是我們要的那個積分"
+          }
+        ]
+      }
+    },
+    {
+      "title": "移項",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}I(1)&=-I(1)+\\frac{\\ln2}2\\cdot\\frac\\pi4+\\frac\\pi4\\cdot\\frac{\\ln2}2\\\\2I(1)&=\\frac\\pi4\\ln2\\end{aligned}$"
+          ],
+          "say": "第一塊就是原積分，帶負號。後兩塊各是 4 分之派乘 2 分之自然對數 2。移項，2 倍 I 1 等於 4 分之派乘自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}I(1)&=-I(1)+\\frac{\\ln2}2\\cdot\\frac\\pi4+\\frac\\pi4\\cdot\\frac{\\ln2}2\\\\2I(1)&=\\frac\\pi4\\ln2\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_0^1\\frac{da}{1+a^2}=\\frac\\pi4$，$\\int_0^1\\frac{a\\,da}{1+a^2}=\\frac{\\ln2}2$",
+              "color": "violet",
+              "on": "對數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx=\\frac\\pi8\\ln2$"
+          ],
+          "say": "答案：8 分之派乘自然對數 2，大約 0.2722。原積分又出現，不是走進死胡同，而是答案的來源。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx=\\frac\\pi8\\ln2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "原積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "一個會出事的例子",
+      "beats": [
+        {
+          "show": [
+            "$I(t)=\\int_0^\\infty\\frac{\\cos tx}{1+x^2}\\,dx=\\frac\\pi2e^{-|t|}$"
+          ],
+          "say": "最後看一個常見、但要小心的例子：餘弦 t x 除以 1 加 x 平方。它的值是 2 分之派乘 e 的負 t 絕對值次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(t)=\\int_0^\\infty\\frac{\\cos tx}{1+x^2}\\,dx=\\frac\\pi2e^{-|t|}$"
+            },
+            {
+              "do": "write",
+              "line": "　這個值的證明要用留數或 Fourier 變換，留到之後",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "硬微分兩次：$I''=-\\int_0^\\infty\\frac{x^2\\cos tx}{1+x^2}dx$，而 $\\frac{x^2}{1+x^2}\\to1$：發散"
+          ],
+          "say": "想照第二型微分兩次：可是 x 平方除以 1 加 x 平方趨近 1，那個積分像餘弦的積分，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "硬微分兩次：$I''=-\\int_0^\\infty\\frac{x^2\\cos tx}{1+x^2}dx$，而 $\\frac{x^2}{1+x^2}\\to1$：發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "連一次都有問題：$t=0$ 時",
+            "• 硬搬：$-\\int_0^\\infty\\frac{x\\sin0}{1+x^2}dx=0$"
+          ],
+          "say": "連微分一次都會出事。t 等於 0 時，硬搬進去得到 0；但從答案看，右導數是負 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "連一次都有問題：$t=0$ 時"
+            },
+            {
+              "do": "write",
+              "line": "• 硬搬：$-\\int_0^\\infty\\frac{x\\sin0}{1+x^2}dx=0$",
+              "on": "硬搬"
+            },
+            {
+              "do": "write",
+              "line": "• 真正：$I'(0^+)=-\\frac\\pi2$",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$\\big|\\frac{x}{1+x^2}\\big|\\sim\\frac1x$，沒有可積的控制函數"
+          ],
+          "say": "原因還是一樣：偏導數大約是 x 分之一，沒有可積的控制函數。看到絕對值 t 這種尖角，就知道交換在那裡一定失敗。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原因：$\\big|\\frac{x}{1+x^2}\\big|\\sim\\frac1x$，沒有可積的控制函數",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $I'$ 用 $I$ 表示 → 解微分方程：$\\int_0^\\infty e^{-x^2}\\cos2ax\\,dx=\\frac{\\sqrt\\pi}2e^{-a^2}$",
+            "• 參數放在 $a=0$ 變簡單的位置；輔助積分＋換元：$\\pi\\ln\\frac{1+\\sqrt{1+a}}2$"
+          ],
+          "say": "整理：I prime 用 I 表示，解微分方程；參數放在 a 等於 0 變簡單的位置；原積分又出現，就移項；沒有控制函數，不要硬搬。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $I'$ 用 $I$ 表示 → 解微分方程：$\\int_0^\\infty e^{-x^2}\\cos2ax\\,dx=\\frac{\\sqrt\\pi}2e^{-a^2}$"
+            },
+            {
+              "do": "write",
+              "line": "• 參數放在 $a=0$ 變簡單的位置；輔助積分＋換元：$\\pi\\ln\\frac{1+\\sqrt{1+a}}2$",
+              "on": "解微"
+            },
+            {
+              "do": "write",
+              "line": "• 原積分又出現 → 移項：$\\int_0^1\\frac{\\ln(1+x)}{1+x^2}dx=\\frac\\pi8\\ln2$",
+              "on": "變簡"
+            },
+            {
+              "do": "write",
+              "line": "• 沒有控制函數時不要硬搬",
+              "on": "就移"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Frullani 積分"
+          ],
+          "say": "下一課，弗魯拉尼積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Frullani 積分"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["feynman", "parameter-integral", "gaussian"],
-    "fine": ["feynman-ode", "feynman-auxiliary-integral", "feynman-self-referential", "feynman-domination-check"]
+    "coarse": [
+      "feynman",
+      "parameter-integral",
+      "gaussian"
+    ],
+    "fine": [
+      "feynman-ode",
+      "feynman-auxiliary-integral",
+      "feynman-self-referential",
+      "feynman-domination-check"
+    ]
   },
   "practice": [
-    { "id": "world-058", "core": true, "trains": "feynman-ode" },
-    { "id": "world-037", "core": true, "trains": "feynman-ode" },
-    { "id": "dm-int-006", "core": true, "trains": "feynman-ode" },
-    { "id": "burst-boss-param-004", "core": true, "trains": "feynman-auxiliary-integral" },
-    { "id": "world-015", "core": true, "trains": "feynman-self-referential" },
-    { "id": "cg-11e-011", "core": true, "trains": "feynman-domination-check" },
-    { "id": "world-077", "trains": "feynman-self-referential" },
-    { "id": "world-029", "trains": "feynman-auxiliary-integral" },
-    { "id": "cg-11e-012", "trains": "feynman-domination-check" },
-    { "id": "td-int-002", "challenge": true, "trains": "feynman-auxiliary-integral", "note": "挑戰：令 $I(b)=\\int_0^{\\pi}\\ln(5+b\\cos x)\\,dx$，$I'(b)$ 的輔助積分是 $\\int_0^{\\pi}\\frac{dx}{5+b\\cos x}$。" },
-    { "id": "dm-int-009", "challenge": true, "trains": "feynman-domination-check", "note": "挑戰：注意第二次微分不能直接搬進積分號（見可折疊段落）。" }
+    {
+      "id": "world-058",
+      "core": true,
+      "trains": "feynman-ode"
+    },
+    {
+      "id": "world-037",
+      "core": true,
+      "trains": "feynman-ode"
+    },
+    {
+      "id": "dm-int-006",
+      "core": true,
+      "trains": "feynman-ode"
+    },
+    {
+      "id": "burst-boss-param-004",
+      "core": true,
+      "trains": "feynman-auxiliary-integral"
+    },
+    {
+      "id": "world-015",
+      "core": true,
+      "trains": "feynman-self-referential"
+    },
+    {
+      "id": "cg-11e-011",
+      "core": true,
+      "trains": "feynman-domination-check"
+    },
+    {
+      "id": "world-077",
+      "trains": "feynman-self-referential"
+    },
+    {
+      "id": "world-029",
+      "trains": "feynman-auxiliary-integral"
+    },
+    {
+      "id": "cg-11e-012",
+      "trains": "feynman-domination-check"
+    },
+    {
+      "id": "td-int-002",
+      "challenge": true,
+      "trains": "feynman-auxiliary-integral",
+      "note": "挑戰：令 $I(b)=\\int_0^{\\pi}\\ln(5+b\\cos x)\\,dx$，$I'(b)$ 的輔助積分是 $\\int_0^{\\pi}\\frac{dx}{5+b\\cos x}$。"
+    },
+    {
+      "id": "dm-int-009",
+      "challenge": true,
+      "trains": "feynman-domination-check",
+      "note": "挑戰：注意第二次微分不能直接搬進積分號（見可折疊段落）。"
+    }
   ],
   "gaps": []
 }

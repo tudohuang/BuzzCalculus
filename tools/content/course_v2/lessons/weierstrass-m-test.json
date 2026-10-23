@@ -1,358 +1,136 @@
 {
   "id": "weierstrass-m-test",
   "title": "Weierstrass M 判別",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["uniform-convergence-tests", "cauchy-sequence", "comparison-test"],
-  "next": ["limit-integral-swap"],
-  "related": ["power-series", "radius-of-convergence", "power-series-calculus", "limit-derivative-swap"],
+  "prerequisites": [
+    "uniform-convergence-tests",
+    "cauchy-sequence",
+    "comparison-test"
+  ],
+  "next": [
+    "limit-integral-swap"
+  ],
+  "related": [
+    "power-series",
+    "radius-of-convergence",
+    "power-series-calculus",
+    "limit-derivative-swap"
+  ],
   "objectives": [
-    "把函數項級數 $\\sum u_n(x)$ 的一致收斂，讀成部分和 $S_n(x)$ 的一致收斂。",
-    "用 $M$ 判別：找與 $x$ 無關的 $M_n\\ge|u_n(x)|$，且 $\\sum M_n$ 收斂，就得到絕對且一致收斂。",
-    "說明冪級數在收斂半徑內的每個閉區間 $[-r,r]$ 上一致收斂。"
+    "把函數項級數 $\\sum u_n(x)$ 的一致收斂，讀成部分和 $S_n(x)$ 的一致收斂",
+    "用 $M$ 判別：找與 $x$ 無關的 $M_n\\ge|u_n(x)|$，且 $\\sum M_n$ 收斂，就得到絕對且一致收斂",
+    "說明冪級數在收斂半徑內的每個閉區間 $[-r,r]$ 上一致收斂"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 函數項級數就是一列部分和",
+      "heading": "① 級數就是一列部分和",
       "body": [
-        "$\\sum u_n(x)$ 收斂到 $S(x)$，指的是部分和 $S_n(x)=u_1(x)+\\dots+u_n(x)$ 收斂到 $S(x)$。一致收斂也一樣：$S_n$ 在 $D$ 上一致收斂到 $S$。",
-        "直接算 $\\|S_n-S\\|_\\infty$ 通常做不到，因為 $S$ 沒有公式。所以需要一個不必知道 $S$ 的判別法。"
+        "函數項級數 $\\displaystyle\\sum_{n=1}^\\infty u_n(x)$，部分和",
+        "定義：$\\sum u_n$ 在 $D$ 上一致收斂 $\\iff$ $S_n$ 在 $D$ 上一致收斂",
+        "麻煩：和 $S(x)$ 通常寫不出來，$\\|S_n-S\\|_\\infty$ 沒辦法算",
+        "必要條件：一致收斂 $\\Rightarrow$ $u_n\\to0$ 一致",
+        "跟 6.x 的「級數收斂則一般項 $\\to0$」同一個道理"
       ],
-      "collapsible": false
+      "tex": [
+        "S_n(x)=u_1(x)+u_2(x)+\\cdots+u_n(x)",
+        "\\|u_n\\|_\\infty=\\|S_n-S_{n-1}\\|_\\infty\\le\\|S_n-S\\|_\\infty+\\|S-S_{n-1}\\|_\\infty"
+      ]
+    },
+    {
+      "heading": "① 一致 Cauchy 準則",
+      "body": [
+        "$(\\Rightarrow)$ $|f_m-f_n|\\le|f_m-f|+|f-f_n|<\\frac\\varepsilon2+\\frac\\varepsilon2$",
+        "$(\\Leftarrow)$ 固定 $x$：$f_n(x)$ 是柯西數列，由 12.16 收斂，記極限為 $f(x)$",
+        "固定 $n\\ge N$，在 $|f_m(x)-f_n(x)|<\\varepsilon$ 裡讓 $m\\to\\infty$：",
+        "$N$ 沒有看 $x$：所以是一致收斂　$\\blacksquare$",
+        "「$\\le\\varepsilon$」也行：一開始用 $\\frac\\varepsilon2$ 就得到 $<\\varepsilon$"
+      ],
+      "tex": [
+        "\\begin{aligned}&f_n\\text{ 在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_m(x)-f_n(x)|<\\varepsilon\\end{aligned}",
+        "|f(x)-f_n(x)|\\le\\varepsilon\\quad\\forall x\\in D,\\ \\forall n\\ge N"
+      ]
     },
     {
       "heading": "② $M$ 判別",
       "body": [
-        "若存在數 $M_n$，使 $|u_n(x)|\\le M_n$ 對所有 $x\\in D$ 與所有 $n$ 成立，而且數字級數 $\\sum M_n$ 收斂，則 $\\sum u_n(x)$ 在 $D$ 上絕對收斂而且一致收斂。",
-        "直覺，不是證明：每一項都被一個不看 $x$ 的數蓋住，所以尾巴 $\\sum_{k>n}|u_k(x)|$ 也被 $\\sum_{k>n} M_k$ 蓋住；後者是收斂級數的尾巴，會 $\\to0$，而且跟 $x$ 無關。缺的那一步是：沒有 $S$ 的公式，怎麼從「尾巴一致地小」得到一致收斂——這要靠一致 Cauchy 準則（下方證明）。",
-        "搭配上一章：若每個 $u_n$ 連續，和函數 $S$ 也連續。"
+        "定理：若有數 $M_n$ 使",
+        "則 $\\sum u_n$ 在 $D$ 上絕對且一致收斂",
+        "策略：級數的尾巴，被數的級數的尾巴一致地壓住",
+        "證明：$\\sum M_k$ 收斂 $\\Rightarrow$ 它的部分和是柯西數列：",
+        "給 $\\varepsilon$，有 $N$ 使 $m>n\\ge N$ 時 $\\sum_{k=n+1}^mM_k<\\varepsilon$",
+        "對每一個 $x\\in D$：",
+        "$N$ 與 $x$ 無關 $\\Rightarrow$ 一致 Cauchy $\\Rightarrow$ 一致收斂；",
+        "絕對收斂：$\\sum|u_k(x)|\\le\\sum M_k$，比較判別（6.12）　$\\blacksquare$"
       ],
-      "tex": ["|u_n(x)|\\le M_n\\ \\ (\\forall x\\in D),\\quad \\sum M_n<\\infty\\ \\Longrightarrow\\ \\sum u_n\\ \\text{在 }D\\text{ 上一致收斂}"],
-      "collapsible": false
+      "tex": [
+        "|u_n(x)|\\le M_n\\ \\ \\forall x\\in D,\\qquad\\sum M_n<\\infty",
+        "\\begin{aligned}|S_m(x)-S_n(x)|&\\le\\sum_{k=n+1}^m|u_k(x)|\\\\&\\le\\sum_{k=n+1}^mM_k<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 例：三角級數",
+      "body": [
+        "$\\Big|\\dfrac{\\sin(nx)}{n^2}\\Big|\\le\\dfrac1{n^2}=M_n$，$\\displaystyle\\sum\\frac1{n^2}$ 收斂（$p=2>1$）",
+        "$\\Rightarrow$ 在整條 $\\mathbb{R}$ 上絕對且一致收斂",
+        "每個 $S_n$ 連續 + 一致收斂 $\\Rightarrow$ 和函數在 $\\mathbb{R}$ 上連續（12.30）"
+      ],
+      "tex": [
+        "\\sum_{n=1}^\\infty\\frac{\\sin(nx)}{n^2},\\quad x\\in\\mathbb{R}"
+      ]
     },
     {
       "heading": "③ 冪級數",
       "body": [
-        "$\\sum a_nx^n$ 的收斂半徑是 $R$，$0<r<R$。在 $[-r,r]$ 上 $|a_nx^n|\\le|a_n|r^n=M_n$，而 $\\sum|a_n|r^n$ 收斂（$r$ 在收斂半徑內，絕對收斂）。所以冪級數在每個 $[-r,r]$ 上一致收斂，和函數在 $(-R,R)$ 上連續。整個 $(-R,R)$ 上則不一定一致（範例 2）。"
+        "$\\sum a_nx^n$，收斂半徑 $R>0$；取 $0<r<R$：",
+        "$r<R$：冪級數在 $x=r$ 絕對收斂，所以 $\\sum M_n<\\infty$",
+        "$\\Rightarrow$ 在每個 $[-r,r]$（$r<R$）上一致收斂",
+        "推論：和函數在 $(-R,R)$ 連續（每一點都落在某個 $[-r,r]$ 裡）",
+        "幾何級數 $\\sum_{k=1}^\\infty x^k$（$R=1$）",
+        "• $[-0.9,0.9]$：$M_k=0.9^k$，$\\sum0.9^k=9<\\infty$ → 一致",
+        "• $(-1,1)$：$\\sup_{(-1,1)}|x^k|=1\\not\\to0$ → 不一致"
       ],
-      "collapsible": false
+      "tex": [
+        "|a_nx^n|\\le|a_n|r^n=M_n\\quad(|x|\\le r)"
+      ]
     },
     {
-      "heading": "證明：一致 Cauchy 準則與 $M$ 判別",
+      "heading": "③ 端點也能一致",
       "body": [
-        "一致 Cauchy 準則：$f_n$ 在 $D$ 上一致收斂，若且唯若對每個 $\\varepsilon>0$ 存在 $N$，使所有 $m,n\\ge N$ 與所有 $x\\in D$ 都有 $|f_n(x)-f_m(x)|<\\varepsilon$。",
-        "（$\\Rightarrow$）取 $N$ 使 $n\\ge N$ 時 $|f_n(x)-f(x)|<\\frac{\\varepsilon}{2}$ 對所有 $x$ 成立，再用三角不等式。（$\\Leftarrow$）固定 $x$，$f_n(x)$ 是實數的 Cauchy 數列，由實數完備性收斂，記為 $f(x)$。固定 $n\\ge N$ 與 $x$，在 $|f_n(x)-f_m(x)|<\\varepsilon$ 中令 $m\\to\\infty$，得 $|f_n(x)-f(x)|\\le\\varepsilon$；$N$ 與 $x$ 無關，所以一致收斂。",
-        "$M$ 判別：$m>n$ 時，$|S_m(x)-S_n(x)|\\le\\sum_{k=n+1}^{m}|u_k(x)|\\le\\sum_{k=n+1}^{m} M_k\\le\\sum_{k>n} M_k$。$\\sum M_k$ 收斂，尾巴 $\\to0$：給 $\\varepsilon$ 取 $N$ 使 $\\sum_{k>N} M_k<\\varepsilon$，則 $m>n\\ge N$ 時對所有 $x$ 都有 $|S_m(x)-S_n(x)|<\\varepsilon$。由準則，$S_n$ 一致收斂。絕對收斂則是逐點的比較判別。"
+        "在閉區間 $[-1,1]$ 上：$\\Big|\\dfrac{x^n}{n^2}\\Big|\\le\\dfrac1{n^2}$，$\\sum\\frac1{n^2}<\\infty$",
+        "端點能不能一致，要看級數本身，不是看 $R$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\sum_{n=1}^\\infty\\frac{x^n}{n^2}:\\quad R=\\lim\\Big(\\frac{n+1}{n}\\Big)^2=1",
+        "\\Rightarrow\\ \\text{在 }[-1,1]\\text{ 上一致收斂（含端點）}"
+      ]
     },
     {
-      "heading": "$M$ 判別只是充分條件",
+      "heading": "④ $M$ 判別只是充分條件",
       "body": [
-        "$\\sum(-1)^{n+1}\\frac{x^n}{n}$ 在 $[0,1]$ 上一致收斂：交錯級數的誤差 $\\le\\frac{x^{n+1}}{n+1}\\le\\frac{1}{n+1}$，與 $x$ 無關。但 $\\sup|u_n(x)|=\\frac{1}{n}$，$\\sum\\frac{1}{n}$ 發散，$M$ 判別用不上。找不到 $M_n$ 不代表不一致。"
+        "$\\sup_{[0,1]}\\Big|\\dfrac{x^n}n\\Big|=\\dfrac1n$，$\\sum\\frac1n$ 發散：$M$ 判別用不上",
+        "但它還是一致收斂：每個 $x\\in[0,1]$，$\\frac{x^n}n$ 遞減趨近 $0$，交錯級數估計：",
+        "上界與 $x$ 無關（工具 B）$\\Rightarrow$ 一致",
+        "和是 $\\ln(1+x)$；在 $x=1$ 給出 $1-\\frac12+\\frac13-\\cdots=\\ln2$",
+        "$M$ 判別給的是絕對一致收斂；這個級數在 $x=1$ 不絕對收斂，所以 $M$ 判別一定抓不到它"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "級數是一列部分和",
-      "beats": [
-        { "show": ["$S_n(x)=u_1(x)+\\dots+u_n(x)$"],
-          "say": "函數項級數收斂，意思是它的部分和收斂。一致收斂也一樣，看部分和是不是一致收斂。",
-          "board": [
-            {"do":"write","line":"${{s:S_n(x)}}=u_1(x)+\\dots+u_n(x)$"},
-            {"do":"underline","term":"s","label":"部分和","on":"一致收斂也"}
-          ] },
-        { "show": ["$S_n\\to S$ 一致？"],
-          "note": "$S$ 通常沒有公式。",
-          "say": "問題是和函數 S 通常寫不出公式，最大誤差根本沒辦法直接算。",
-          "board": [
-            {"do":"write","line":"$S_n\\to{{f:S}}$ 一致？"},
-            {"do":"underline","term":"f","color":"red","label":"沒有公式","on":"寫不出公式"}
-          ] }
-      ],
-      "predict": {
-        "ask": "那我們需要什麼樣的判別法？",
-        "options": [
-          {
-            "label": "不必知道 $S$ 的判別法",
-            "correct": true
-          },
-          {
-            "label": "先求出 $S$ 的公式",
-            "why": "大多數級數的和沒有公式，這條路通常走不通。"
-          },
-          {
-            "label": "代幾個 $x$ 看部分和有沒有收斂",
-            "why": "固定 $x$ 只能檢查逐點收斂，看不出一致。"
-          }
-        ]
-      }
+      "tex": [
+        "\\sum_{n=1}^\\infty\\frac{(-1)^{n+1}x^n}{n}\\quad\\text{在 }[0,1]",
+        "|S(x)-S_n(x)|\\le\\frac{x^{n+1}}{n+1}\\le\\frac1{n+1}\\to0"
+      ]
     },
     {
-      "title": "$M$ 判別",
-      "beats": [
-        { "show": ["$|u_n(x)|\\le M_n$（所有 $x$）","$\\sum M_n<\\infty$"],
-          "say": "M 判別：每一項都被一個不看 x 的數 M n 蓋住，而且這些數加起來收斂。",
-          "board": [
-            {"do":"write","line":"$|{{un:u_n}}(x)|\\le{{mn:M_n}}$（所有 $x$）","tint":{"un":"blue","mn":"violet"}},
-            {"do":"underline","term":"mn","label":"不看 x","on":"不看 x"},
-            {"do":"write","line":"$\\sum{{mn:M_n}}<\\infty$","on":"加起來收斂"}
-          ] },
-        { "show": ["$\\Rightarrow\\sum u_n$ 在 $D$ 上一致收斂"],
-          "note": "而且絕對收斂。",
-          "say": "那函數項級數就在整個定義域上絕對收斂，而且一致收斂。",
-          "board": [
-            {"do":"write","line":"⇒ $\\sum{{un:u_n}}$ 在 $D$ 上一致收斂","color":"green"}
-          ] },
-        { "show": ["尾巴 $\\le\\sum_{k>n}M_k\\to0$"],
-          "note": "跟 $x$ 無關。",
-          "say": "為什麼？尾巴被 M 的尾巴蓋住，那是收斂級數的尾巴，會趨近零，而且跟 x 無關。證明在下一節。",
-          "board": [
-            {"do":"write","line":"尾巴 $\\le{{tl:\\sum_{k>n}M_k}}\\to0$","on":"尾巴被"},
-            {"do":"underline","term":"tl","label":"跟 x 無關","on":"而且跟"}
-          ] },
-        { "show": ["收斂 ＝ 尾巴 $\\to0$","$M_k=(\\frac12)^k$：尾巴 $(\\frac12)^n$"],
-          "note": "尾巴 ＝ 總和減前 $n$ 項。",
-          "say": "收斂就是尾巴趨近零。例如二分之一的 k 次方，尾巴是二分之一的 n 次方，n 夠大就任意小。",
-          "board": [
-            {"do":"write","line":"尾巴 ＝ 總和 − 前 $n$ 項"},
-            {"do":"write","line":"$M_k=(\\frac12)^k$：尾巴 $(\\frac12)^n\\to0$","on":"例如"}
-          ] },
-        { "show": ["每個 $u_n$ 連續 $\\Rightarrow S$ 連續"],
-          "say": "再接上一章：每一項都連續，和函數也連續。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"每個 ${{un:u_n}}$ 連續 ⇒ $S$ 連續","on":"每一項"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "證明：用 Cauchy 準則",
-      "beats": [
-        { "show": ["不跟 $S$ 比：部分和彼此比"],
-          "note": "一致 Cauchy 準則。",
-          "say": "策略：和函數 S 不知道，就不跟 S 比，改成部分和彼此比，用一致 Cauchy 準則。",
-          "board": [
-            {"do":"write","line":"不跟 $S$ 比：部分和彼此比"}
-          ] },
-        { "show": ["給 $\\varepsilon$，找不看 $x$ 的 $N$","$m>n\\ge N$：$|S_m(x)-S_n(x)|<\\varepsilon$"],
-          "note": "令 $m\\to\\infty$，$S_n$ 與 $S$ 也相差不到 $\\varepsilon$。",
-          "say": "準則：給 epsilon，找一個不看 x 的 N，N 以後的部分和彼此差不到 epsilon，對所有 x 同時成立。",
-          "board": [
-            {"do":"write","line":"給 $\\varepsilon$，找不看 $x$ 的 $N$"},
-            {"do":"write","line":"$m>n\\ge N$：$|S_m(x)-S_n(x)|<\\varepsilon$","on":"N 以後的部分和"}
-          ] },
-        { "show": ["$|S_m(x)-S_n(x)|\\le\\sum_{k=n+1}^{m}|u_k(x)|$"],
-          "note": "$m>n$，三角不等式。",
-          "say": "兩個部分和相減，剩下第 n 加一項到第 m 項；三角不等式，拆成每一項的絕對值。",
-          "board": [
-            {"do":"write","line":"$|S_m(x)-S_n(x)|\\le\\sum_{k=n+1}^{m}|u_k(x)|$","on":"兩個部分和"}
-          ] },
-        { "show": ["$\\le\\sum_{k=n+1}^{m}M_k\\le\\sum_{k>n}M_k$"],
-          "note": "每一項 $|u_k(x)|\\le M_k$。",
-          "why": {"ask":"為什麼這個上界跟 $x$ 無關？","say":"這個上界裡已經沒有 x 了。為什麼可以甩掉 x？","options":[{"label":"$M_k$ 對所有 $x$ 都蓋得住 $|u_k(x)|$","correct":true},{"label":"$\\sum u_k$ 絕對收斂","why":"絕對收斂是逐點的：每個 $x$ 的尾巴各自變小，不保證一起小。甩掉 $x$ 靠的是 $M_k$ 不看 $x$。"},{"label":"每個 $u_k$ 都連續，所以有界","why":"連續函數在 $D$ 上不一定有界；就算有界，界也是各管各的。這裡靠的是給定的 $M_k$。"}]},
-          "say": "每一項都被不看 x 的 M k 蓋住，所以整段被 M 的尾巴蓋住，跟 x 無關。",
-          "board": [
-            {"do":"write","line":"$\\le{{sm:\\sum_{k=n+1}^{m}M_k}}\\le{{tl:\\sum_{k>n}M_k}}$","tint":{"tl":"violet"},"on":"上界"},
-            {"do":"underline","term":"sm","label":"每項被 M 蓋住","why":true,"on":"每一項都被"}
-          ] },
-        { "show": ["取 $N$：$\\sum_{k>N}M_k<\\varepsilon$"],
-          "note": "$\\sum M_k$ 收斂，尾巴 $\\to0$。",
-          "why": {"ask":"為什麼找得到這樣的 $N$？","say":"給定 epsilon，這個 N 為什麼找得到？","options":[{"label":"$\\sum M_k$ 收斂，尾巴趨近 0","correct":true},{"label":"$M_k\\to0$","why":"項趨近 0 不夠：$\\sum\\frac{1}{k}$ 的項趨近 0，尾巴卻一直是無限大。"},{"label":"每個 $x$ 的 $|u_k(x)|$ 都很小","why":"那是逐點的；$N$ 要對所有 $x$ 一起有效，只能從 $M_k$ 的尾巴找。"}]},
-          "say": "M 的級數收斂，尾巴趨近零，所以取得到 N，讓 N 以後的尾巴小於 epsilon。",
-          "board": [
-            {"do":"write","line":"取 $N$：${{tn:\\sum_{k>N}M_k}}<\\varepsilon$","tint":{"tn":"violet"},"on":"N 為什麼"},
-            {"do":"underline","term":"tn","label":"收斂級數的尾巴","why":true,"on":"尾巴趨近"}
-          ] },
-        { "show": ["$m>n\\ge N$：$|S_m(x)-S_n(x)|<\\varepsilon$，$\\forall x$"],
-          "note": "由準則：$S_n$ 一致收斂。",
-          "say": "於是 m 大於 n 大於等於 N 時，對所有 x，部分和的差都小於 epsilon。由準則，一致收斂。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$m>n\\ge N$：$|S_m(x)-S_n(x)|<\\varepsilon$，$\\forall x$","on":"m 大於"},
-            {"do":"write","line":"由準則 ⇒ 一致收斂","color":"green","on":"由準則"}
-          ] }
-      ],
-      "key": "部分和彼此比，不必知道 $S$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "ε-δ",
-      "where": {
-        "ask": "「$\\sum M_k$ 收斂」用在哪一步？",
-        "steps": [
-          {
-            "label": "三角不等式：$|S_m-S_n|\\le\\sum|u_k|$",
-            "why": "這只用到三角不等式，任何級數都成立。"
-          },
-          {
-            "label": "$\\le\\sum_{k>n}M_k$",
-            "why": "這只用到 $|u_k(x)|\\le M_k$；就算 $\\sum M_k$ 發散，不等式也成立，只是右邊是無限大。"
-          },
-          {
-            "label": "取 $N$ 使 $\\sum_{k>N}M_k<\\varepsilon$",
-            "correct": true
-          },
-          {
-            "label": "由一致 Cauchy 準則推出一致收斂",
-            "why": "準則本身靠的是實數的完備性，跟 $M_k$ 無關。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "三角級數",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{\\sin(nx)}{n^2}$"],
-          "say": "來用一次：sine n x 除以 n 平方，從一加到無限大，在整條實數線上。",
-          "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{ {{s:\\sin(nx)}} }{n^2}$，$x\\in\\mathbb{R}$"}
-          ] },
-        { "show": ["$\\left|\\frac{\\sin(nx)}{n^2}\\right|\\le\\frac{1}{n^2}=M_n$"],
-          "say": "sine 的絕對值不超過一，所以每一項被 n 平方分之一蓋住，這個數跟 x 無關。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{ {{s:\\sin(nx)}} }{n^2}\\right|\\le{{mn:\\frac{1}{n^2}}}=M_n$","tint":{"mn":"violet"}},
-            {"do":"focus","term":"s","on":"絕對值不超過"},
-            {"do":"underline","term":"mn","label":"跟 x 無關","on":"這個數"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$ 收斂"],
-          "note": "$p$ 級數，$p=2>1$。",
-          "say": "n 平方分之一加起來收斂，等於六分之 pi 平方。M 判別說：一致收斂。",
-          "board": [
-            {"do":"write","line":"$\\sum{{mn:\\frac{1}{n^2}}}=\\frac{\\pi^2}{6}$ 收斂"},
-            {"do":"write","line":"⇒ 一致收斂","color":"green","on":"M 判別說"}
-          ] },
-        { "show": ["$S$ 連續，$|S(x)|\\le\\frac{\\pi^2}{6}$"],
-          "say": "每一項連續，所以和函數連續；而且它的絕對值不會超過六分之 pi 平方。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$S$ 連續","on":"和函數連續"},
-            {"do":"write","line":"$|S(x)|\\le\\frac{\\pi^2}{6}$","on":"絕對值"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "幾何級數的尾巴",
-      "beats": [
-        { "show": ["$\\sum x^k$ 在 $[-0.9,0.9]$"],
-          "note": "$|x^k|\\le0.9^k=M_k$。",
-          "say": "幾何級數 x 的 k 次方，限制在負零點九到零點九，每一項被零點九的 k 次方蓋住。",
-          "board": [
-            {"do":"write","line":"$\\sum x^k$ 在 $[-0.9,0.9]$"},
-            {"do":"write","line":"$|x^k|\\le{{m:0.9^k}}=M_k$","on":"每一項被"}
-          ] },
-        { "show": ["$\\sum_{k>n}0.9^k=\\frac{0.9^{n+1}}{1-0.9}$","$=10\\cdot0.9^{n+1}$"],
-          "say": "零點九的幾何級數收斂，所以一致收斂。它的尾巴是十倍的零點九的 n 加一次方。",
-          "board": [
-            {"do":"write","line":"$\\sum_{k>n}0.9^k=\\frac{0.9^{n+1}}{1-0.9}$"},
-            {"do":"transform","line":"$={{r:10\\cdot0.9^{n+1}}}$","on":"十倍"}
-          ] },
-        { "show": ["要尾巴 $<0.01$：$n$ 至少多少？"],
-          "note": "這個 $n$ 對區間上每個 $x$ 都有效。",
-          "say": "要讓尾巴小於零點零一，n 至少要多少？算出來的 n，對區間上每一個 x 同時有效。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{t:10\\cdot0.9^{n+1}}}<0.01$","on":"要讓尾巴"},
-            {"do":"underline","term":"t","label":"對所有 x","on":"每一個"}
-          ] }
-      ],
-      "key": "尾巴用幾何級數公式，與 $x$ 無關",
-      "check": 3
-    },
-    {
-      "title": "開區間失守",
-      "beats": [
-        { "show": ["冪級數：在每個 $[-r,r]$ 一致"],
-          "note": "$0<r<R$，$|a_nx^n|\\le|a_n|r^n$。",
-          "say": "同樣的道理，冪級數在收斂半徑裡面的每個閉區間上，都一致收斂。",
-          "board": [
-            {"do":"write","line":"冪級數：每個 $[-r,r]$ 一致收斂"},
-            {"do":"write","line":"$|a_nx^n|\\le{{m:|a_n|r^n}}$","on":"閉區間"}
-          ] },
-        { "show": ["$\\sum x^k$ 在 $(-1,1)$：誤差 $\\frac{x^{n+1}}{1-x}$"],
-          "say": "可是整個負一到一呢？和是一減 x 分之 x，誤差是 x 的 n 加一次方除以一減 x。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum x^k$ 在 $(-1,1)$","on":"整個"},
-            {"do":"write","line":"$S(x)=\\frac{x}{1-x}$","on":"和是"},
-            {"do":"write","line":"誤差 $={{e:\\frac{x^{n+1}}{1-x}}}$","on":"誤差是"},
-            {"do":"box","term":"e","on":"加一次方"}
-          ] },
-        { "show": ["誤差 $=S(x)-S_n(x)$","$S_n=\\frac{x(1-x^n)}{1-x}$"],
-          "note": "分子 $x-x(1-x^n)=x^{n+1}$。",
-          "say": "誤差指 S 減 S n。S n 是 x 乘一減 x 的 n 次方，再除以一減 x；相減，分子只剩 x 的 n 加一次方。",
-          "board": [
-            {"do":"write","line":"$S_n=\\frac{x(1-x^n)}{1-x}$"},
-            {"do":"write","line":"$S-S_n=\\frac{x^{n+1}}{1-x}$","on":"相減"}
-          ] },
-        { "show": ["$x\\to1^-$：誤差 $\\to\\infty$"],
-          "note": "$M_k$ 在 $r\\to1$ 時變成 1，$\\sum1$ 發散。",
-          "say": "x 從左邊靠近一，分母趨近零，誤差衝到無限大，對每個 n 都一樣。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x\\to1^-$：${{d:1-x}}\\to0$","on":"從左邊"},
-            {"do":"underline","term":"d","label":"分母","on":"分母"},
-            {"do":"write","line":"誤差 $\\to\\infty$","color":"red","on":"衝到"}
-          ] },
-        { "show": ["和 $S$ 在 $x\\to1$ 衝上去"],
-          "say": "看圖：和 S 在 x 靠近一時一路衝上去，部分和是多項式，永遠追不上。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1,1.2,-3,8],"curves":[{"expr":"x/(1-x)","domain":[-1,0.97],"color":"blue"}],"dashed":[[[1,-3],[1,8]]]}}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "端點也能一致",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{x^n}{n^2}$，收斂半徑 1"],
-          "say": "換成 x 的 n 次方除以 n 平方，收斂半徑也是一。它在端點也守得住嗎？",
-          "board": [
-            {"do":"write","line":"$\\sum\\frac{x^n}{n^2}$，${{r:R=1}}$"},
-            {"do":"underline","term":"r","label":"收斂半徑","on":"收斂半徑也是"}
-          ] },
-        { "show": ["收斂半徑 $R$：$|x|<R$ 收斂","$|x|>R$ 發散"],
-          "say": "收斂半徑 R 的意思：x 的絕對值小於 R 就收斂，大於 R 就發散。",
-          "board": [
-            {"do":"write","line":"$|x|<R$ 收斂"},
-            {"do":"write","line":"$|x|>R$ 發散","on":"大於"}
-          ] },
-        { "show": ["$\\frac{|x|^{n+1}/(n+1)^2}{|x|^n/n^2}\\to|x|$"],
-          "note": "所以這個級數的 $R=1$。",
-          "say": "這個級數相鄰兩項的比，趨近 x 的絕對值，所以小於一收斂、大於一發散，R 就是一。",
-          "board": [
-            {"do":"write","line":"$\\frac{|x|^{n+1}/(n+1)^2}{|x|^n/n^2}\\to|x|$"},
-            {"do":"write","line":"$|x|<1$ 收斂，$|x|>1$ 發散","on":"小於一"}
-          ] },
-        { "show": ["在 $[-1,1]$ 上，含端點"],
-          "note": "$|x|\\le1$。",
-          "say": "這次直接看負一到一的閉區間，連兩個端點都算進來，找一個蓋得住的 M n。",
-          "board": [
-            {"do":"write","line":"在 $[-1,1]$ 上，含端點"},
-            {"do":"write","line":"$|x|\\le1$","on":"連兩個端點"}
-          ] }
-      ],
-      "predict": {
-        "ask": "在 $[-1,1]$ 上合用的 $M_n$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{1}{n^2}$：$\\sum M_n$ 收斂，一致",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{|x|^n}{n^2}$",
-            "why": "$M_n$ 裡還有 $x$。$M_n$ 必須只跟 $n$ 有關；$|x|\\le1$ 讓你換成 $\\frac{1}{n^2}$。"
-          },
-          {
-            "label": "1：$\\sum1$ 發散，所以不一致",
-            "why": "$M_n$ 取太鬆，$M$ 判別推不出東西，但不代表不一致。$\\frac{1}{n^2}$ 就蓋得住。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 級數一致收斂 = 部分和 $S_n$ 一致收斂；必要條件 $\\|u_n\\|_\\infty\\to0$",
+        "• 一致 Cauchy 準則：不用知道極限",
+        "• $M$ 判別：$|u_n(x)|\\le M_n$、$\\sum M_n<\\infty$ ⇒ 絕對且一致",
+        "• 冪級數：每個 $[-r,r]$（$r<R$）一致；端點要看級數本身",
+        "• $M$ 判別只是充分條件（交錯級數）",
+        "下一課：極限與積分交換"
+      ]
     }
   ],
   "workedExamples": [
@@ -400,52 +178,854 @@
   ],
   "checks": [
     {
-      "ask": "對 $\\sum\\frac{\\sin(nx)}{n^2}$（$x\\in\\mathbb{R}$），哪一個是合用的 $M_n$？",
+      "ask": "$\\sum u_n$ 在 $D$ 上一致收斂。下面哪一個==一定==成立？",
       "options": [
-        { "label": "$\\frac{1}{n^2}$", "correct": true },
-        { "label": "$\\frac{\\sin(n)}{n^2}$", "why": "你代了 $x=1$。$M_n$ 要對所有 $x$ 都蓋得住 $|u_n(x)|$，而且不能是負的。" },
-        { "label": "$\\frac{1}{n}$", "why": "$\\frac{1}{n}$ 確實 $\\ge|\\frac{\\sin(nx)}{n^2}|$，但 $\\sum\\frac{1}{n}$ 發散，$M$ 判別就什麼都推不出來。" }
+        {
+          "label": "$\\sup_D|u_n|\\to0$",
+          "correct": true
+        },
+        {
+          "label": "$\\sum\\sup_D|u_n|$ 收斂",
+          "why": "這是 $M$ 判別的條件，不是一致收斂的必要條件（④ 有反例）"
+        },
+        {
+          "label": "每個 $u_n$ 都連續",
+          "why": "一致收斂不管每一項連不連續"
+        },
+        {
+          "label": "$S$ 寫得出公式",
+          "why": "能不能寫出公式跟收斂無關"
+        }
       ]
     },
     {
-      "ask": "$M$ 判別的結論是什麼？",
+      "ask": "哪一個級數可以==直接==用 $M$ 判別法證明在 $\\mathbb{R}$ 上一致收斂？",
       "options": [
-        { "label": "級數在 $D$ 上絕對收斂而且一致收斂", "correct": true },
-        { "label": "級數的和函數可微", "why": "你把一致收斂跟可微混在一起了。$M$ 判別只講級數本身；可微要對導數級數另外檢查。" },
-        { "label": "級數在 $D$ 上逐點收斂，但不一定一致", "why": "$M_n$ 與 $x$ 無關，尾巴的估計對所有 $x$ 同時成立，所以結論正是一致收斂。" }
+        {
+          "label": "$\\sum\\frac{\\cos(nx)}{n^{3/2}}$",
+          "correct": true
+        },
+        {
+          "label": "$\\sum\\frac{\\sin(nx)}{n}$",
+          "why": "$M_n=\\frac1n$，$\\sum\\frac1n$ 發散，$M$ 判別用不上"
+        },
+        {
+          "label": "$\\sum\\frac{x^n}{n^2}$",
+          "why": "在 $\\mathbb{R}$ 上 $\\sup|x^n|=\\infty$，找不到有限的 $M_n$"
+        },
+        {
+          "label": "$\\sum\\sin\\frac xn$",
+          "why": "$\\sup_{\\mathbb{R}}|\\sin\\frac xn|=1$，$\\sum1$ 發散"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "級數就是一列部分和",
+      "beats": [
+        {
+          "show": [
+            "函數項級數 $\\displaystyle\\sum_{n=1}^\\infty u_n(x)$，部分和",
+            "$S_n(x)=u_1(x)+u_2(x)+\\cdots+u_n(x)$"
+          ],
+          "say": "函數項級數，就是把一列函數 u n 加起來。它的部分和 S n，是前 n 項的和，本身又是一列函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "函數項級數 $\\displaystyle\\sum_{n=1}^\\infty u_n(x)$，部分和"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle S_n(x)=u_1(x)+u_2(x)+\\cdots+u_n(x)$",
+              "on": "分和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義：$\\sum u_n$ 在 $D$ 上一致收斂 $\\iff$ $S_n$ 在 $D$ 上一致收斂"
+          ],
+          "say": "定義：級數在 D 上一致收斂，就是部分和 S n 在 D 上一致收斂。前三課的東西全部可以用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義：$\\sum u_n$ 在 $D$ 上一致收斂 $\\iff$ $S_n$ 在 $D$ 上一致收斂",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "麻煩：和 $S(x)$ 通常寫不出來，$\\|S_n-S\\|_\\infty$ 沒辦法算"
+          ],
+          "say": "麻煩在於，級數的和 S 通常寫不出來，上確界範數根本沒辦法算。需要一個不用知道極限的判準。",
+          "board": [
+            {
+              "do": "write",
+              "line": "麻煩：和 $S(x)$ 通常寫不出來，$\\|S_n-S\\|_\\infty$ 沒辦法算",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "必要條件：一致收斂 $\\Rightarrow$ $u_n\\to0$ 一致",
+            "$\\|u_n\\|_\\infty=\\|S_n-S_{n-1}\\|_\\infty\\le\\|S_n-S\\|_\\infty+\\|S-S_{n-1}\\|_\\infty$"
+          ],
+          "say": "先記一個必要條件：一致收斂的話，每一項 u n 也一致趨近 0。因為 u n 是相鄰兩個部分和的差，用三角不等式拆開，兩段都趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "必要條件：一致收斂 $\\Rightarrow$ $u_n\\to0$ 一致"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\|u_n\\|_\\infty=\\|S_n-S_{n-1}\\|_\\infty\\le\\|S_n-S\\|_\\infty+\\|S-S_{n-1}\\|_\\infty$",
+              "on": "也一"
+            },
+            {
+              "do": "write",
+              "line": "　跟 6.x 的「級數收斂則一般項 $\\to0$」同一個道理",
+              "color": "violet",
+              "on": "部分"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "一致 Cauchy 準則",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}&f_n\\text{ 在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_m(x)-f_n(x)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "不用知道極限的判準，就是一致柯西準則：一列函數一致收斂，若且唯若從某個 N 開始，任兩條 f m、f n 在每一點都相差不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&f_n\\text{ 在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_m(x)-f_n(x)|<\\varepsilon\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "某個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(\\Rightarrow)$ $|f_m-f_n|\\le|f_m-f|+|f-f_n|<\\frac\\varepsilon2+\\frac\\varepsilon2$"
+          ],
+          "say": "往右很直接：用一致收斂取 2 分之艾普西隆，再用三角不等式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(\\Rightarrow)$ $|f_m-f_n|\\le|f_m-f|+|f-f_n|<\\frac\\varepsilon2+\\frac\\varepsilon2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(\\Leftarrow)$ 固定 $x$：$f_n(x)$ 是柯西數列，由 12.16 收斂，記極限為 $f(x)$"
+          ],
+          "say": "往左是重點。固定 x，f n of x 是一個柯西數列，由 12.16 的完備性，它收斂，把極限叫 f of x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(\\Leftarrow)$ 固定 $x$：$f_n(x)$ 是柯西數列，由 12.16 收斂，記極限為 $f(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "固定 $n\\ge N$，在 $|f_m(x)-f_n(x)|<\\varepsilon$ 裡讓 $m\\to\\infty$：",
+            "$|f(x)-f_n(x)|\\le\\varepsilon\\quad\\forall x\\in D,\\ \\forall n\\ge N$"
+          ],
+          "say": "接著固定 n，在不等式裡讓 m 趨近無限大。左邊的 f m of x 趨近 f of x，嚴格小於變成小於等於。這對每個 x、每個大於等於 N 的 n 都成立。",
+          "board": [
+            {
+              "do": "write",
+              "line": "固定 $n\\ge N$，在 $|f_m(x)-f_n(x)|<\\varepsilon$ 裡讓 $m\\to\\infty$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle |f(x)-f_n(x)|\\le\\varepsilon\\quad\\forall x\\in D,\\ \\forall n\\ge N}}$",
+              "on": "of#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "等於#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$N$ 沒有看 $x$：所以是一致收斂　$\\blacksquare$"
+          ],
+          "say": "這個 N 從頭到尾沒有看 x，所以收斂是一致的。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N$ 沒有看 $x$：所以是一致收斂　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　「$\\le\\varepsilon$」也行：一開始用 $\\frac\\varepsilon2$ 就得到 $<\\varepsilon$",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\sum x^k$ 在 $(-1,1)$ 上：",
-      "options": [
-        { "label": "逐點收斂，但不一致收斂", "correct": true },
-        { "label": "一致收斂，因為在每個 $[-r,r]$ 上都一致", "why": "在每個閉子區間上一致，不等於在整個 $(-1,1)$ 上一致；誤差 $\\frac{x^{n+1}}{1-x}$ 在 $x\\to1^-$ 時沒有上界。" },
-        { "label": "連逐點收斂都不成立", "why": "$|x|<1$ 時幾何級數收斂。出問題的只是收斂的速度不能一致。" }
+      "title": "$M$ 判別",
+      "beats": [
+        {
+          "show": [
+            "定理：若有數 $M_n$ 使",
+            "$|u_n(x)|\\le M_n\\ \\ \\forall x\\in D,\\qquad\\sum M_n<\\infty$"
+          ],
+          "say": "魏爾斯特拉斯 M 判別法：如果每一項的絕對值都被一個跟 x 無關的數 M n 壓住，而且 M n 的級數收斂，那麼函數項級數在 D 上絕對而且一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：若有數 $M_n$ 使"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |u_n(x)|\\le M_n\\ \\ \\forall x\\in D,\\qquad\\sum M_n<\\infty$",
+              "on": "個跟"
+            },
+            {
+              "do": "write",
+              "line": "則 $\\sum u_n$ 在 $D$ 上絕對且一致收斂",
+              "color": "gold",
+              "on": "級數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：級數的尾巴，被數的級數的尾巴一致地壓住"
+          ],
+          "say": "策略：函數級數的尾巴，每一點都被數字級數的尾巴壓住，而後者跟 x 無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：級數的尾巴，被數的級數的尾巴一致地壓住"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$\\sum M_k$ 收斂 $\\Rightarrow$ 它的部分和是柯西數列："
+          ],
+          "say": "證明：M 的級數收斂，所以它的部分和是柯西數列。給艾普西隆，有 N，使得 n 之後到 m 的那一段和小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$\\sum M_k$ 收斂 $\\Rightarrow$ 它的部分和是柯西數列："
+            },
+            {
+              "do": "write",
+              "line": "給 $\\varepsilon$，有 $N$ 使 $m>n\\ge N$ 時 $\\sum_{k=n+1}^mM_k<\\varepsilon$",
+              "on": "使得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對每一個 $x\\in D$：",
+            "$\\begin{aligned}|S_m(x)-S_n(x)|&\\le\\sum_{k=n+1}^m|u_k(x)|\\\\&\\le\\sum_{k=n+1}^mM_k<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "那麼對每一個 x，S m 減 S n 就是這一段的和，用三角不等式，不超過每一項的絕對值相加，又不超過 M 那一段的和，小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對每一個 $x\\in D$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}|S_m(x)-S_n(x)|&\\le\\sum_{k=n+1}^m|u_k(x)|\\\\&\\le\\sum_{k=n+1}^mM_k<\\varepsilon\\end{aligned}}}}$",
+              "on": "一段#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "相加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$N$ 與 $x$ 無關 $\\Rightarrow$ 一致 Cauchy $\\Rightarrow$ 一致收斂；"
+          ],
+          "say": "N 跟 x 無關，所以符合一致柯西準則，一致收斂。絕對收斂則是 6.12 的比較判別。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N$ 與 $x$ 無關 $\\Rightarrow$ 一致 Cauchy $\\Rightarrow$ 一致收斂；"
+            },
+            {
+              "do": "write",
+              "line": "絕對收斂：$\\sum|u_k(x)|\\le\\sum M_k$，比較判別（6.12）　$\\blacksquare$",
+              "on": "絕對"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "在 $[-0.9,0.9]$ 上要讓 $\\sum_{k>n} 0.9^k<0.01$，最小的 $n$ 是？",
-      "options": [
-        { "label": "65", "correct": true },
-        { "label": "44", "why": "你解的是 $0.9^n<0.01$，漏了尾巴的係數：$\\sum_{k>n} 0.9^k=10\\cdot0.9^{n+1}$。" },
-        { "label": "66", "why": "你解出 $n+1\\ge66$ 之後忘了減 1。$n=65$ 時尾巴 $10\\cdot0.9^{66}\\approx0.0086$ 已經夠小。" }
+      "title": "例：三角級數",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac{\\sin(nx)}{n^2},\\quad x\\in\\mathbb{R}$"
+          ],
+          "say": "例子：正弦 n x 除以 n 平方，從 1 加到無限大，x 是任意實數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\frac{\\sin(nx)}{n^2},\\quad x\\in\\mathbb{R}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Big|\\dfrac{\\sin(nx)}{n^2}\\Big|\\le\\dfrac1{n^2}=M_n$，$\\displaystyle\\sum\\frac1{n^2}$ 收斂（$p=2>1$）"
+          ],
+          "say": "正弦的絕對值不超過 1，所以每一項不超過 n 平方分之 1，跟 x 無關。而 n 平方分之 1 的級數收斂，p 等於 2 大於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Big|\\dfrac{\\sin(nx)}{n^2}\\Big|\\le\\dfrac1{n^2}=M_n$，$\\displaystyle\\sum\\frac1{n^2}$ 收斂（$p=2>1$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow$ 在整條 $\\mathbb{R}$ 上絕對且一致收斂"
+          ],
+          "say": "由 M 判別，在整條實數線上絕對而且一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Rightarrow$ 在整條 $\\mathbb{R}$ 上絕對且一致收斂",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個 $S_n$ 連續 + 一致收斂 $\\Rightarrow$ 和函數在 $\\mathbb{R}$ 上連續（12.30）"
+          ],
+          "say": "每個部分和都是有限多個連續函數相加，連續；一致收斂又保住連續，所以和函數在整條實數線上連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個 $S_n$ 連續 + 一致收斂 $\\Rightarrow$ 和函數在 $\\mathbb{R}$ 上連續（12.30）"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "冪級數",
+      "beats": [
+        {
+          "show": [
+            "$\\sum a_nx^n$，收斂半徑 $R>0$；取 $0<r<R$：",
+            "$|a_nx^n|\\le|a_n|r^n=M_n\\quad(|x|\\le r)$"
+          ],
+          "say": "冪級數：設收斂半徑是 R，取一個比 R 小的 r。在負 r 到 r 上，每一項不超過 a n 的絕對值乘 r 的 n 次方，跟 x 無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum a_nx^n$，收斂半徑 $R>0$；取 $0<r<R$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_nx^n|\\le|a_n|r^n=M_n\\quad(|x|\\le r)$",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r<R$：冪級數在 $x=r$ 絕對收斂，所以 $\\sum M_n<\\infty$"
+          ],
+          "say": "因為 r 在收斂半徑裡面，冪級數在 r 這點絕對收斂，所以 M n 的級數收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r<R$：冪級數在 $x=r$ 絕對收斂，所以 $\\sum M_n<\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow$ 在每個 $[-r,r]$（$r<R$）上一致收斂"
+          ],
+          "say": "由 M 判別，冪級數在每一個負 r 到 r 的閉區間上一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Rightarrow$ 在每個 $[-r,r]$（$r<R$）上一致收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　推論：和函數在 $(-R,R)$ 連續（每一點都落在某個 $[-r,r]$ 裡）",
+              "color": "violet",
+              "on": "的閉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "幾何級數 $\\sum_{k=1}^\\infty x^k$（$R=1$）",
+            "• $[-0.9,0.9]$：$M_k=0.9^k$，$\\sum0.9^k=9<\\infty$ → 一致"
+          ],
+          "say": "幾何級數，收斂半徑 1。在負 0.9 到 0.9 上，M k 取 0.9 的 k 次方，總和是 9，一致收斂。在整個開區間負 1 到 1 上，每一項的上確界都是 1，不趨近 0，違反必要條件，不一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "幾何級數 $\\sum_{k=1}^\\infty x^k$（$R=1$）"
+            },
+            {
+              "do": "write",
+              "line": "• $[-0.9,0.9]$：$M_k=0.9^k$，$\\sum0.9^k=9<\\infty$ → 一致",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• $(-1,1)$：$\\sup_{(-1,1)}|x^k|=1\\not\\to0$ → 不一致",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誤差 S − Sₙ = xⁿ⁺¹ / (1 − x)；綠帶是 ± 0.1"
+          ],
+          "say": "圖上是誤差，x 的 n 加 1 次方除以 1 減 x。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "geo",
+                  "window": [
+                    -1,
+                    1,
+                    -0.4,
+                    3
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": -0.9,
+                      "to": 0.9,
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(floor(n)+1)/(1-x)",
+                      "color": "blue",
+                      "domain": [
+                        -0.999,
+                        0.97
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.9,
+                      "color": "green"
+                    },
+                    {
+                      "x": -0.9,
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：誤差在 x = 0.9 是 {0.9^(floor(n)+1)/0.1}",
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 2：誤差在 x = 0.9 是 7.29",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "誤差 S − Sₙ = xⁿ⁺¹ / (1 − x)；綠帶是 ± 0.1",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪級數"
+          ],
+          "say": "綠色範圍裡，誤差整段壓進帶子；可是靠近 1 的地方，誤差一直往上衝。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "geo",
+                  "window": [
+                    -1,
+                    1,
+                    -0.4,
+                    3
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": -0.9,
+                      "to": 0.9,
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(floor(n)+1)/(1-x)",
+                      "color": "blue",
+                      "domain": [
+                        -0.999,
+                        0.97
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.9,
+                      "color": "green"
+                    },
+                    {
+                      "x": -0.9,
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：誤差在 x = 0.9 是 {0.9^(floor(n)+1)/0.1}",
+                  "height": 240
+                },
+                "vals": {
+                  "n": 60
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 60：誤差在 x = 0.9 是 0.01617",
+              "on": "靠近"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "端點也能一致",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac{x^n}{n^2}:\\quad R=\\lim\\Big(\\frac{n+1}{n}\\Big)^2=1$"
+          ],
+          "say": "再看 n 平方分之 x 的 n 次方。用比值算收斂半徑，是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\frac{x^n}{n^2}:\\quad R=\\lim\\Big(\\frac{n+1}{n}\\Big)^2=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在閉區間 $[-1,1]$ 上：$\\Big|\\dfrac{x^n}{n^2}\\Big|\\le\\dfrac1{n^2}$，$\\sum\\frac1{n^2}<\\infty$",
+            "$\\Rightarrow\\ \\text{在 }[-1,1]\\text{ 上一致收斂（含端點）}$"
+          ],
+          "say": "在包含端點的閉區間負 1 到 1 上，每一項不超過 n 平方分之 1，級數收斂。所以連端點在內都一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在閉區間 $[-1,1]$ 上：$\\Big|\\dfrac{x^n}{n^2}\\Big|\\le\\dfrac1{n^2}$，$\\sum\\frac1{n^2}<\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\Rightarrow\\ \\text{在 }[-1,1]\\text{ 上一致收斂（含端點）}}}$",
+              "color": "red",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "級數"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\sum x^n$ 與 $\\sum\\frac{x^n}{n^2}$ 的收斂半徑都是 $1$。在 $[-1,1]$ 上？",
+        "options": [
+          {
+            "label": "只有 $\\sum\\frac{x^n}{n^2}$ 一致收斂",
+            "correct": true
+          },
+          {
+            "label": "兩個都一致收斂",
+            "why": "$\\sum x^n$ 在 $x=1$ 是 $1+1+\\cdots$，發散"
+          },
+          {
+            "label": "兩個都不一致",
+            "why": "$\\sum\\frac{x^n}{n^2}$ 有 $M_n=\\frac1{n^2}$"
+          },
+          {
+            "label": "只有 $\\sum x^n$ 一致收斂",
+            "why": "方向反了：$\\sum x^n$ 連逐點收斂都沒有"
+          }
+        ]
+      }
+    },
+    {
+      "title": "端點也能一致",
+      "beats": [
+        {
+          "show": [
+            "端點能不能一致，要看級數本身，不是看 $R$"
+          ],
+          "say": "所以端點的情況要看級數本身，收斂半徑說不出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "端點能不能一致，要看級數本身，不是看 $R$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$M$ 判別只是充分條件",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac{(-1)^{n+1}x^n}{n}\\quad\\text{在 }[0,1]$"
+          ],
+          "say": "M 判別只是充分條件。看這個交錯的冪級數，在 0 到 1 上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\frac{(-1)^{n+1}x^n}{n}\\quad\\text{在 }[0,1]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sup_{[0,1]}\\Big|\\dfrac{x^n}n\\Big|=\\dfrac1n$，$\\sum\\frac1n$ 發散：$M$ 判別用不上"
+          ],
+          "say": "每一項的上確界是 n 分之 1，級數發散，M 判別用不上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sup_{[0,1]}\\Big|\\dfrac{x^n}n\\Big|=\\dfrac1n$，$\\sum\\frac1n$ 發散：$M$ 判別用不上",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但它還是一致收斂：每個 $x\\in[0,1]$，$\\frac{x^n}n$ 遞減趨近 $0$，交錯級數估計：",
+            "$|S(x)-S_n(x)|\\le\\frac{x^{n+1}}{n+1}\\le\\frac1{n+1}\\to0$"
+          ],
+          "say": "但它還是一致收斂。對每個 x，n 分之 x 的 n 次方遞減趨近 0，用交錯級數的誤差估計：誤差不超過下一項，又不超過 n 加 1 分之 1，跟 x 無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但它還是一致收斂：每個 $x\\in[0,1]$，$\\frac{x^n}n$ 遞減趨近 $0$，交錯級數估計："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle |S(x)-S_n(x)|\\le\\frac{x^{n+1}}{n+1}\\le\\frac1{n+1}\\to0}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "一項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上界與 $x$ 無關（工具 B）$\\Rightarrow$ 一致"
+          ],
+          "say": "這正是上一課的工具 B：跟 x 無關的上界趨近 0，所以一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上界與 $x$ 無關（工具 B）$\\Rightarrow$ 一致",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　和是 $\\ln(1+x)$；在 $x=1$ 給出 $1-\\frac12+\\frac13-\\cdots=\\ln2$",
+              "color": "violet",
+              "on": "無關"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$M$ 判別給的是絕對一致收斂；這個級數在 $x=1$ 不絕對收斂，所以 $M$ 判別一定抓不到它"
+          ],
+          "say": "為什麼 M 判別抓不到？M 判別給的是絕對收斂，可是這個級數在 1 不是絕對收斂，所以一定抓不到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$M$ 判別給的是絕對一致收斂；這個級數在 $x=1$ 不絕對收斂，所以 $M$ 判別一定抓不到它"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 級數一致收斂 = 部分和 $S_n$ 一致收斂；必要條件 $\\|u_n\\|_\\infty\\to0$",
+            "• 一致 Cauchy 準則：不用知道極限"
+          ],
+          "say": "整理一下：級數的一致收斂就是部分和的一致收斂；一致柯西準則不用知道極限；M 判別找跟 x 無關的數壓住每一項；冪級數在半徑內的閉區間一致收斂，端點要另外看；M 判別只是充分條件。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 級數一致收斂 = 部分和 $S_n$ 一致收斂；必要條件 $\\|u_n\\|_\\infty\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "• 一致 Cauchy 準則：不用知道極限",
+              "on": "的一#2"
+            },
+            {
+              "do": "write",
+              "line": "• $M$ 判別：$|u_n(x)|\\le M_n$、$\\sum M_n<\\infty$ ⇒ 絕對且一致",
+              "on": "判別#1"
+            },
+            {
+              "do": "write",
+              "line": "• 冪級數：每個 $[-r,r]$（$r<R$）一致；端點要看級數本身",
+              "on": "冪級"
+            },
+            {
+              "do": "write",
+              "line": "• $M$ 判別只是充分條件（交錯級數）",
+              "on": "端點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：極限與積分交換"
+          ],
+          "say": "下一課，用一致收斂來交換極限與積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：極限與積分交換"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["uniform-convergence", "power-series", "radius"],
-    "fine": ["mtest-choose-mn", "mtest-power-series-closed", "mtest-tail-bound", "mtest-not-necessary"]
+    "coarse": [
+      "uniform-convergence",
+      "power-series",
+      "radius"
+    ],
+    "fine": [
+      "mtest-choose-mn",
+      "mtest-power-series-closed",
+      "mtest-tail-bound",
+      "mtest-not-necessary"
+    ]
   },
   "practice": [
-    { "id": "exam-ser-001", "core": true, "trains": "mtest-power-series-closed", "note": "求出 $R$ 之後想一想：$M$ 判別保證在哪些區間上一致收斂？" },
-    { "id": "exam-ser-003", "core": true, "trains": "mtest-power-series-closed" },
-    { "id": "cg-12f-018", "core": true, "trains": "mtest-choose-mn" },
-    { "id": "cg-12f-020", "core": true, "trains": "mtest-tail-bound" },
-    { "id": "lec-14-m3", "trains": "mtest-power-series-closed", "note": "$R=\\infty$：在每個有界區間 $[-r,r]$ 上取 $M_n=\\frac{r^n}{n!}$。" },
-    { "id": "cg-12f-017", "trains": "mtest-choose-mn" },
-    { "id": "cg-12f-019", "trains": "mtest-choose-mn" },
-    { "id": "cg-12f-021", "trains": "mtest-tail-bound" },
-    { "id": "cg-12f-022", "challenge": true, "trains": "mtest-not-necessary" }
+    {
+      "id": "exam-ser-001",
+      "core": true,
+      "trains": "mtest-power-series-closed",
+      "note": "求出 $R$ 之後想一想：$M$ 判別保證在哪些區間上一致收斂？"
+    },
+    {
+      "id": "exam-ser-003",
+      "core": true,
+      "trains": "mtest-power-series-closed"
+    },
+    {
+      "id": "cg-12f-018",
+      "core": true,
+      "trains": "mtest-choose-mn"
+    },
+    {
+      "id": "cg-12f-020",
+      "core": true,
+      "trains": "mtest-tail-bound"
+    },
+    {
+      "id": "lec-14-m3",
+      "trains": "mtest-power-series-closed",
+      "note": "$R=\\infty$：在每個有界區間 $[-r,r]$ 上取 $M_n=\\frac{r^n}{n!}$。"
+    },
+    {
+      "id": "cg-12f-017",
+      "trains": "mtest-choose-mn"
+    },
+    {
+      "id": "cg-12f-019",
+      "trains": "mtest-choose-mn"
+    },
+    {
+      "id": "cg-12f-021",
+      "trains": "mtest-tail-bound"
+    },
+    {
+      "id": "cg-12f-022",
+      "challenge": true,
+      "trains": "mtest-not-necessary"
+    }
   ],
   "gaps": []
 }

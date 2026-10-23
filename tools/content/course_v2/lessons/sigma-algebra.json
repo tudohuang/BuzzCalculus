@@ -1,314 +1,155 @@
 {
   "id": "sigma-algebra",
   "title": "σ-代數",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["measure-zero", "dirichlet-function"],
-  "next": ["measure"],
-  "related": ["lebesgue-measure", "lebesgue-integral"],
+  "prerequisites": [
+    "measure-zero",
+    "dirichlet-function"
+  ],
+  "next": [
+    "measure"
+  ],
+  "related": [
+    "lebesgue-measure",
+    "lebesgue-integral"
+  ],
   "objectives": [
-    "寫得出 $\\sigma$-代數的三條公理，並推出 $\\emptyset$、可數交集、差集都在裡面。",
-    "會求小集合上由一個或兩個子集生成的 $\\sigma$-代數。",
-    "說得出 Borel $\\sigma$-代數是什麼，並證明閉區間、單點、$\\mathbb{Q}$、無理數集都是 Borel 集。"
+    "寫得出 $\\sigma$-代數的三條公理，並推出 $\\emptyset$、可數交集、差集都在裡面",
+    "會求小集合上由一個或兩個子集生成的 $\\sigma$-代數",
+    "說得出 Borel $\\sigma$-代數是什麼，並證明閉區間、單點、$\\mathbb{Q}$、無理數集都是 Borel 集"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 為什麼不能「每個集合都量」",
+      "heading": "① 不能每個集合都量",
       "body": [
-        "我們想把「長度」推廣到 $\\mathbb{R}$ 的子集：區間的長度就是 $b-a$、平移不改變長度、可數多個不相交的集合，總長度等於各自長度相加。",
-        "可惜這三個要求不可能對 $\\mathbb{R}$ 的每一個子集同時成立（〈Lebesgue 測度〉會給出反例）。退一步的做法：先挑出一族「可以量的集合」，只在這族集合上定義長度。這族集合至少要對我們會做的操作封閉：取補集、取可數聯集。直覺，不是證明：極限、級數、Dirichlet 函數那種「可數多次」的操作，都要留在這族集合裡。"
-      ],
-      "collapsible": false
+        "願望：給 $\\mathbb{R}$ 的每個子集 $E$ 一個長度 $m(E)\\in[0,\\infty]$，滿足",
+        "• 區間：$m([a,b])=b-a$",
+        "• 平移不變：$m(E+t)=m(E)$",
+        "• 可數可加：$E_k$ 兩兩不交 ⇒ $m\\big(\\bigcup E_k\\big)=\\sum m(E_k)$",
+        "事實：三條不可能同時對所有子集成立",
+        "證明（Vitali 集）在 12.44；它要用到選擇公理",
+        "退一步：只量一個「好集合」的家族 $\\mathcal{M}$",
+        "這個家族至少要對哪些操作封閉？",
+        "• 量得了 $E$，就該量得了外面 $E^c$",
+        "• 量得了 $E_1,E_2,\\dots$，就該量得了 $\\bigcup E_k$（可數可加要用）"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $X$ 是一個集合。$X$ 的一族子集 $\\mathcal{M}$ 叫做 $\\sigma$-代數，如果：(i) $X\\in\\mathcal{M}$；(ii) $A\\in\\mathcal{M}\\Rightarrow A^c=X\\setminus A\\in\\mathcal{M}$；(iii) $A_1,A_2,\\dots\\in\\mathcal{M}\\Rightarrow\\bigcup_n A_n\\in\\mathcal{M}$。$(X,\\mathcal{M})$ 叫可測空間，$\\mathcal{M}$ 裡的集合叫可測集。",
-        "馬上推得出：$\\emptyset=X^c\\in\\mathcal{M}$；有限聯集（後面補 $\\emptyset$）；可數交集 $\\bigcap A_n=(\\bigcup A_n^c)^c$（De Morgan）；差集 $A\\setminus B=A\\cap B^c$。",
-        "「$\\sigma$」指的是可數：只要求可數聯集。只要求有限聯集的叫做代數，不夠用；要求任意聯集則太強（在 $\\mathbb{R}$ 上任何集合都是單點的聯集）。"
+        "$X$ 是一個集合，$\\mathcal{M}$ 是 $X$ 的一些子集組成的族。$\\mathcal{M}$ 是 $\\sigma$-代數，若",
+        "$\\sigma$（西格瑪）就是在提醒「可數」：$\\sum$ 的那個 $\\sigma$",
+        "$\\mathcal{M}$ 裡的集合叫 可測集",
+        "最小的：$\\{\\emptyset,X\\}$；最大的：$\\mathcal{P}(X)$（所有子集）",
+        "推得出來的（$E,F,E_k\\in\\mathcal{M}$）：",
+        "• $\\emptyset=X^c\\in\\mathcal{M}$",
+        "• 有限聯集：$E\\cup F=E\\cup F\\cup\\emptyset\\cup\\emptyset\\cup\\cdots$",
+        "• 可數交集（De Morgan）：",
+        "• 差集：$E\\setminus F=E\\cap F^c\\in\\mathcal{M}$"
       ],
-      "tex": ["X\\in\\mathcal M,\\qquad A\\in\\mathcal M\\Rightarrow A^{c}\\in\\mathcal M,\\qquad A_1,A_2,\\ldots\\in\\mathcal M\\Rightarrow\\bigcup_{n=1}^{\\infty}A_n\\in\\mathcal M"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&(1)\\ X\\in\\mathcal{M}\\\\&(2)\\ E\\in\\mathcal{M}\\Rightarrow E^c\\in\\mathcal{M}\\\\&(3)\\ E_1,E_2,\\ldots\\in\\mathcal{M}\\Rightarrow\\textstyle\\bigcup_{k=1}^\\infty E_k\\in\\mathcal{M}\\end{aligned}",
+        "\\bigcap_k E_k=\\Big(\\bigcup_k E_k^c\\Big)^c\\in\\mathcal{M}"
+      ]
     },
     {
-      "heading": "③ 生成的 $\\sigma$-代數與 Borel 集",
+      "heading": "③ 生成的 σ-代數",
       "body": [
-        "給一族集合 $\\mathcal{C}$，所有包含 $\\mathcal{C}$ 的 $\\sigma$-代數（至少有 $X$ 的冪集 $\\mathcal{P}(X)$ 一個）的交集仍是 $\\sigma$-代數，而且是包含 $\\mathcal{C}$ 的最小者，記作 $\\sigma(\\mathcal{C})$。",
-        "$\\mathbb{R}$ 上由所有開集生成的 $\\sigma$-代數叫 Borel $\\sigma$-代數 $\\mathcal{B}(\\mathbb{R})$，裡面的集合叫 Borel 集。它也等於由所有開區間生成的 $\\sigma$-代數。開集、閉集、單點、可數集、Cantor 集都是 Borel 集。"
+        "給一族集合 $\\mathcal{C}$，$\\sigma(\\mathcal{C})$ = 包含 $\\mathcal{C}$ 的最小 $\\sigma$-代數",
+        "這一族不是空的：$\\mathcal{P}(X)$ 就包含 $\\mathcal{C}$",
+        "要先證：交集仍是 $\\sigma$-代數",
+        "證明：設每個 $\\mathcal{M}_\\alpha$ 都是 $\\sigma$-代數，$\\mathcal{N}=\\bigcap_\\alpha\\mathcal{M}_\\alpha$。",
+        "• $X$ 在每個 $\\mathcal{M}_\\alpha$ ⇒ $X\\in\\mathcal{N}$",
+        "• $E\\in\\mathcal{N}$ ⇒ $E$ 在每個 $\\mathcal{M}_\\alpha$ ⇒ $E^c$ 在每個 ⇒ $E^c\\in\\mathcal{N}$",
+        "• $E_k\\in\\mathcal{N}$ ⇒ 每個 $\\mathcal{M}_\\alpha$ 都有 $\\bigcup E_k$ ⇒ $\\bigcup E_k\\in\\mathcal{N}$　$\\blacksquare$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sigma(\\mathcal{C})=\\bigcap\\{\\mathcal{M}:\\ \\mathcal{M}\\ \\text{是}\\ \\sigma\\text{-代數},\\ \\mathcal{C}\\subseteq\\mathcal{M}\\}"
+      ]
     },
     {
-      "heading": "證明：交集仍是 $\\sigma$-代數；開集與開區間生成同一個 $\\sigma$-代數",
+      "heading": "③ 例：一個集合生成",
       "body": [
-        "交集：設 $\\{\\mathcal{M}_\\alpha\\}$ 都是 $\\sigma$-代數，$\\mathcal{N}=\\bigcap_\\alpha\\mathcal{M}_\\alpha$。$X$ 在每個 $\\mathcal{M}_\\alpha$ 裡，所以 $X\\in\\mathcal{N}$。若 $A\\in\\mathcal{N}$，則 $A$ 在每個 $\\mathcal{M}_\\alpha$ 裡，$A^c$ 也在每個裡，所以 $A^c\\in\\mathcal{N}$。可數聯集同理。",
-        "開區間是開集，所以 $\\sigma($開區間$)\\subseteq\\sigma($開集$)$。反過來，設 $U$ 開。對每個 $x\\in U$ 有 $r>0$ 使 $(x-r,x+r)\\subseteq U$，可以再找有理數 $p<x<q$ 使 $(p,q)\\subseteq(x-r,x+r)$。所以 $U$ 是「有理端點、且包含於 $U$ 的開區間」的聯集；這種區間只有可數多個，$U$ 就是開區間的可數聯集，屬於 $\\sigma($開區間$)$。因此 $\\sigma($開集$)\\subseteq\\sigma($開區間$)$。"
+        "例：$X=\\{1,2,3,4\\}$，$A=\\{1,2\\}$，求 $\\sigma(\\{A\\})$",
+        "• 必須有：$A$、$A^c=\\{3,4\\}$、$\\emptyset$、$X$",
+        "• 這四個已經封閉（補集、聯集都跑不出去）",
+        "一般：$\\sigma(\\{A\\})=\\{\\emptyset,A,A^c,X\\}$；這些塊叫「原子」，$\\sigma$-代數 = 原子的所有聯集"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "挑出可以量的集合",
-      "beats": [
-        { "show": ["區間長 $b-a$、平移不變、可數可加"],
-          "note": "對每個子集同時成立：不可能。",
-          "say": "我們想把長度推廣到所有子集，要求三件事。可惜對每一個子集同時成立，是不可能的。",
-          "board": [
-            {"do":"write","line":"長度：$b-a$、平移不變、可數可加"},
-            {"do":"write","line":"不可能對每個子集同時成立","on":"可惜"}
-          ] },
-        { "show": ["退一步：先挑一族「可以量的集合」"],
-          "say": "退一步：先挑出一族可以量的集合，只在這一族上定義長度。",
-          "board": [
-            {"do":"write","line":"$\\mathcal{M}$：可以量的集合","on":"先挑出"}
-          ] },
-        { "show": ["(i) $X\\in\\mathcal{M}$　(ii) 補集　(iii) 可數聯集"],
-          "say": "這一族叫 sigma 代數：整個空間在裡面，對取補集封閉，對可數聯集封閉。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$X\\in\\mathcal{M}$","on":"整個空間"},
-            {"do":"write","line":"$A\\in\\mathcal{M}\\Rightarrow A^c\\in\\mathcal{M}$","on":"取補集"},
-            {"do":"write","line":"$A_n\\in\\mathcal{M}\\Rightarrow\\bigcup A_n\\in\\mathcal{M}$","on":"可數聯集"}
-          ] },
-        { "show": ["$\\sigma$ = 可數"],
-          "note": "有限聯集不夠用，任意聯集太強。",
-          "say": "sigma 指的就是可數。只要有限聯集不夠用；要求任意聯集又太強，等於什麼都要量。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sigma$ 指的是可數","on":"指的就是"},
-            {"do":"write","line":"有限聯集不夠、任意聯集太強","on":"任意聯集"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\sigma(\\{A\\})=\\{\\emptyset,\\ \\{1,2\\},\\ \\{3,4\\},\\ X\\}"
+      ]
     },
     {
-      "title": "免費送的",
-      "beats": [
-        { "show": ["$\\emptyset=X^c\\in\\mathcal{M}$"],
-          "say": "從三條公理馬上推得出別的。空集合是整個空間的補集，所以在裡面。",
-          "board": [
-            {"do":"write","line":"$\\emptyset={{c:X^c}}\\in\\mathcal{M}$"},
-            {"do":"underline","term":"c","label":"補集","on":"補集"}
-          ] },
-        { "show": ["有限聯集：後面補 $\\emptyset$"],
-          "say": "有限聯集也在：在後面補無限多個空集合，就變成可數聯集。",
-          "board": [
-            {"do":"write","line":"$A\\cup B=A\\cup B{{z:\\cup\\emptyset\\cup\\emptyset\\cup\\cdots}}$","on":"在後面補"},
-            {"do":"underline","term":"z","label":"空集合","on":"空集合"}
-          ] },
-        { "show": ["$(A\\cap B)^c=A^c\\cup B^c$"],
-          "say": "手上只有補集和聯集。A 交 B 的補集，等於 A 的補集聯集 B 的補集。",
-          "board": [
-            {"do":"write","line":"$(A\\cap B)^c={{u:A^c\\cup B^c}}$"},
-            {"do":"underline","term":"u","label":"補集與聯集","on":"聯集#2"}
-          ] },
-        { "show": ["差集 $A\\setminus B=A\\cap B^c$"],
-          "say": "差集可以寫成 A 交 B 的補集。那交集呢？公理沒寫，它會在裡面嗎？",
-          "board": [
-            {"do":"write","line":"$A\\setminus B={{i:A\\cap B^c}}$"},
-            {"do":"underline","term":"i","label":"交集在嗎","on":"那交集呢"}
-          ] }
-      ],
-      "check": 3
+      "heading": "③ 試一題",
+      "body": [
+        "解法：先找原子（切不開的最小塊）：$\\{1\\}$、$\\{1,2\\}\\setminus\\{1\\}=\\{2\\}$、$\\{3,4\\}$",
+        "每個成員 = 一些原子的聯集 ⇒ $2^3=8$ 個"
+      ]
     },
     {
-      "title": "由一個集合生成",
-      "beats": [
-        { "show": ["$\\sigma(\\mathcal{C})$：包含 $\\mathcal{C}$ 的最小 $\\sigma$-代數"],
-          "note": "所有包含 $\\mathcal{C}$ 的 $\\sigma$-代數取交集。",
-          "say": "給一族集合，包含它的最小 sigma 代數叫它生成的 sigma 代數，做法是把所有候選取交集。",
-          "board": [
-            {"do":"write","line":"$\\sigma(\\mathcal{C})$：包含 $\\mathcal{C}$ 的最小 $\\sigma$-代數"},
-            {"do":"write","line":"做法：所有候選取交集","on":"所有候選"}
-          ] },
-        { "show": ["最小 = 所有候選的交集"],
-          "say": "最小的意思是，把所有包含這族集合的 sigma 代數取交集。交集被每個候選包住，所以最小。",
-          "board": [
-            {"do":"write","line":"最小 ＝ 所有候選的交集","on":"取交集"},
-            {"do":"write","line":"交集 $\\subseteq$ 每一個候選","on":"每個候選"}
-          ] },
-        { "show": ["$X=\\{1,2,3,4\\}$，$A=\\{1,2\\}$"],
-          "say": "例子：X 是一二三四，由 A 等於一二生成。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$X=\\{1,2,3,4\\}$，$A=\\{1,2\\}$","on":"X 是"}
-          ] },
-        { "show": ["必須有 $X$、$A$、$A^c=\\{3,4\\}$、$\\emptyset$"],
-          "say": "X 和 A 一定要有；補集公理逼出三四；X 的補集是空集合。",
-          "board": [
-            {"do":"write","line":"必須有 $X$、$A$"},
-            {"do":"write","line":"$A^c=\\{3,4\\}$","on":"補集公理"},
-            {"do":"write","line":"$X^c=\\emptyset$","on":"X 的補集"}
-          ] },
-        { "show": ["$\\{\\emptyset,\\{1,2\\},\\{3,4\\},X\\}$ 已經封閉"],
-          "note": "共 4 個集合。",
-          "say": "檢查一下，這四個集合互相取聯集、取補集都跑不出去，已經封閉了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{s:\\{\\emptyset,\\{1,2\\},\\{3,4\\},X\\} }}$","on":"這四個"},
-            {"do":"box","term":"s","color":"green","on":"跑不出去"}
-          ] }
+      "heading": "④ Borel 集",
+      "body": [
+        "$\\mathbb{R}$ 上的 Borel $\\sigma$-代數：",
+        "定理：開集與開區間生成同一個 $\\sigma$-代數：$\\sigma(\\{\\text{開集}\\})=\\sigma(\\{\\text{開區間}\\})$",
+        "策略：兩邊互相包含；難的一邊靠「每個開集都是可數多個開區間的聯集」",
+        "引理：開集 $U$ = 所有「端點是有理數、落在 $U$ 裡」的開區間的聯集"
       ],
-      "key": "補集與 $\\emptyset$ 必須一起放進來",
-      "check": 1
+      "tex": [
+        "\\mathcal{B}=\\sigma(\\{\\text{開集}\\})"
+      ]
     },
     {
-      "title": "Borel 集",
-      "beats": [
-        { "show": ["$\\mathcal{B}(\\mathbb{R})=\\sigma($開集$)$"],
-          "note": "也等於由開區間生成。",
-          "say": "實數上最重要的一族：由所有開集生成的 sigma 代數，叫 Borel sigma 代數。",
-          "board": [
-            {"do":"write","line":"$\\mathcal{B}(\\mathbb{R})=\\sigma($開集$)$"}
-          ] },
-        { "show": ["$[a,b]=\\bigcap_{n\\ge1}(a-\\frac{1}{n},b+\\frac{1}{n})$"],
-          "say": "閉區間是 Borel 集：它是可數多個開區間的交集，每個往外多留 n 分之一。",
-          "board": [
-            {"do":"write","line":"$[a,b]=\\bigcap_{n\\ge1}{{iv:(a-\\frac{1}{n},b+\\frac{1}{n})}}$","on":"閉區間是"},
-            {"do":"underline","term":"iv","label":"開區間","on":"可數多個開區間"}
-          ] },
-        { "show": ["回頭看閉區間：往外多留越來越少"],
-          "say": "回頭看閉區間的圖：每個開區間往外多留 n 分之一，n 越大就越貼近閉區間。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.5,2.5,0,4],"arrows":[{"from":[-1,3],"to":[2,3],"color":"blue"},{"from":[-0.5,2],"to":[1.5,2],"color":"blue"},{"from":[-0.25,1],"to":[1.25,1],"color":"blue"}],"points":[{"x":0,"y":0.4},{"x":1,"y":0.4}],"dashed":[[[0,0],[0,3.5]],[[1,0],[1,3.5]]]}}
-          ] },
-        { "show": ["$\\{a\\}=[a,a]$"],
-          "say": "單點就是退化的閉區間，也是 Borel 集。",
-          "board": [
-            {"do":"write","line":"$\\{a\\}=[a,a]$","on":"單點"}
-          ] },
-        { "show": ["$\\mathbb{Q}$ 是可數個單點的聯集；$\\mathbb{R}\\setminus\\mathbb{Q}$ 是補集"],
-          "say": "有理數是可數多個單點的聯集，無理數是它的補集，兩個都是 Borel 集。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\mathbb{Q}=\\bigcup_{q}\\{q\\}$：可數聯集","on":"有理數是"},
-            {"do":"write","line":"$\\mathbb{R}\\setminus\\mathbb{Q}$：補集","on":"無理數是"}
-          ] },
-        { "show": ["有理數可以排成一列：可數"],
-          "note": "直覺，不是證明；嚴格證法此處略。",
-          "say": "有理數可以排成一列，所以是可數的。把單點一個一個排好，聯集就是可數聯集。",
-          "board": [
-            {"do":"write","line":"有理數：可以排成一列"},
-            {"do":"write","line":"單點排好：可數聯集","on":"可數聯集"}
-          ] }
-      ],
-      "check": 2
+      "heading": "④ 證明：開集與開區間",
+      "body": [
+        "引理證明：設 $x\\in U$。$U$ 是開集 ⇒ 有 $r>0$，$(x-r,x+r)\\subseteq U$。",
+        "$\\mathbb{Q}$ 稠密 ⇒ 取 $p,q\\in\\mathbb{Q}$，$x-r<p<x<q<x+r$，則 $x\\in(p,q)\\subseteq U$",
+        "有理端點的區間只有可數多個（對應 $\\mathbb{Q}\\times\\mathbb{Q}$），所以 $U$ 是可數聯集　$\\blacksquare$",
+        "定理證明：",
+        "• $\\supseteq$：開區間是開集 ⇒ $\\{\\text{開區間}\\}\\subseteq\\mathcal{B}$ ⇒ $\\sigma(\\{\\text{開區間}\\})\\subseteq\\mathcal{B}$",
+        "• $\\subseteq$：由引理，每個開集 $\\in\\sigma(\\{\\text{開區間}\\})$ ⇒ $\\mathcal{B}\\subseteq\\sigma(\\{\\text{開區間}\\})$　$\\blacksquare$",
+        "兩次都用同一招：「$\\sigma(\\mathcal{C})$ 是最小的」⇒ 只要 $\\mathcal{C}$ 在某個 $\\sigma$-代數裡，$\\sigma(\\mathcal{C})$ 就在裡面"
+      ]
     },
     {
-      "title": "證明：開集與開區間",
-      "beats": [
-        { "show": ["證兩個方向的包含"],
-          "note": "關鍵：開集是可數個開區間的聯集。",
-          "say": "策略：要證兩族相等，就證兩個方向的包含。關鍵是開集能寫成可數多個開區間的聯集。",
-          "board": [
-            {"do":"write","line":"證 $\\sigma($開區間$)=\\sigma($開集$)$"},
-            {"do":"write","line":"$\\subseteq$ 與 $\\supseteq$ 各證一次","on":"就證兩個方向"}
-          ] },
-        { "show": ["開區間是開集 ⇒ $\\sigma($開區間$)\\subseteq\\sigma($開集$)$"],
-          "why": {"ask":"為什麼這就推得出包含？","say":"開區間是開集。為什麼這樣就推得出包含？","options":[{"label":"$\\sigma($開區間$)$ 是包含開區間的最小 $\\sigma$-代數","correct":true},{"label":"開區間比開集少，生成的也比較少","why":"直覺對，但要有理由：$\\sigma($開集$)$ 是一個包含所有開區間的 $\\sigma$-代數，而 $\\sigma($開區間$)$ 是這種裡面最小的。"},{"label":"開集都是開區間的聯集","why":"那是反方向才要用的事實；這個方向只要開區間本身是開集。"}]},
-          "note": "$\\sigma($開集$)$ 包含所有開區間，生成的是最小的。",
-          "say": "開集生成的那一族，包含所有開區間，又是 sigma 代數；開區間生成的是最小的那一個，所以被包含。",
-          "board": [
-            {"do":"write","line":"$\\sigma($開區間$)\\subseteq\\sigma($開集$)$","on":"為什麼"},
-            {"do":"write","line":"開區間生成的是最小的","why":true,"on":"開區間生成的"}
-          ] },
-        { "show": ["$U$ 開，$x\\in U$：$(x-r,x+r)\\subseteq U$"],
-          "say": "反方向。拿一個開集 U，裡面每一點 x，都有一個小開區間整個落在 U 裡。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x\\in U$ ⇒ ${{r:(x-r,x+r)}}\\subseteq U$","tint":{"r":"blue"},"on":"拿一個開集"}
-          ] },
-        { "show": ["有理數 $p<x<q$，$(p,q)\\subseteq(x-r,x+r)$"],
-          "note": "有理數稠密。",
-          "why": {"ask":"為什麼端點要取有理數？","say":"在小區間裡，再挑有理數當端點。為什麼要有理數？","options":[{"label":"有理端點的區間只有可數多個","correct":true},{"label":"有理數比較好算","why":"跟好不好算無關；$\\sigma$-代數只對可數聯集封閉，有理端點讓這種區間只剩可數多個。"},{"label":"這樣 $(p,q)$ 才會包含 $x$","why":"任何 $p<x<q$ 的區間都包含 $x$；取有理數是為了讓區間只有可數多個。"}]},
-          "say": "有理數稠密，找得到。端點是有理數的區間只有可數多個，這是整個證明的關鍵。",
-          "board": [
-            {"do":"write","line":"${{pq:(p,q)}}\\subseteq{{r:(x-r,x+r)}}$（$p,q\\in\\mathbb{Q}$）","tint":{"pq":"violet"},"on":"再挑有理數"},
-            {"do":"underline","term":"pq","label":"只有可數個","why":true,"on":"端點是有理數"}
-          ] },
-        { "show": ["$U=\\bigcup(p,q)$：可數聯集"],
-          "note": "有理端點、包含於 $U$ 的開區間。",
-          "say": "每一點都被這樣一個區間蓋住，所以 U 就是這些有理端點區間的聯集，只有可數多個。",
-          "board": [
-            {"do":"write","line":"$U=\\bigcup{{pq:(p,q)}}$：可數聯集","on":"所以 U 就是"}
-          ] },
-        { "show": ["$U\\in\\sigma($開區間$)$ ⇒ $\\sigma($開集$)\\subseteq\\sigma($開區間$)$"],
-          "note": "最小性再用一次。",
-          "say": "所以每個開集都在開區間生成的那一族裡；再用一次最小性，反方向的包含也成立。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$U\\in\\sigma($開區間$)$","on":"所以每個開集"},
-            {"do":"write","line":"⇒ $\\sigma($開集$)\\subseteq\\sigma($開區間$)$","color":"green","on":"再用一次"}
-          ] }
+      "heading": "④ 哪些是 Borel 集",
+      "body": [
+        "例：證明 $[a,b]$、$\\{a\\}$、$\\mathbb{Q}$、$\\mathbb{R}\\setminus\\mathbb{Q}$ 都是 Borel 集",
+        "也可以說：$[a,b]^c=(-\\infty,a)\\cup(b,\\infty)$ 是開集"
       ],
-      "key": "有理端點的開區間只有可數多個",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「對可數聯集封閉」用在哪一步？",
-        "steps": [
-          {
-            "label": "開區間是開集，$\\sigma($開區間$)\\subseteq\\sigma($開集$)$",
-            "why": "這只用到開區間是開集，加上生成的 $\\sigma$-代數是最小的。"
-          },
-          {
-            "label": "$(x-r,x+r)\\subseteq U$",
-            "why": "這只用到 $U$ 是開集。"
-          },
-          {
-            "label": "有理數 $p<x<q$，$(p,q)\\subseteq(x-r,x+r)$",
-            "why": "這只用到有理數稠密。"
-          },
-          {
-            "label": "$U$ 是可數個開區間的聯集，在 $\\sigma($開區間$)$ 裡",
-            "correct": true
-          }
-        ]
-      }
+      "tex": [
+        "[a,b]=\\bigcap_{n=1}^\\infty\\Big(a-\\tfrac1n,\\ b+\\tfrac1n\\Big)",
+        "\\{a\\}=[a,a]\\qquad\\mathbb{Q}=\\bigcup_{q\\in\\mathbb{Q}}\\{q\\}",
+        "\\mathbb{R}\\setminus\\mathbb{Q}=\\mathbb{Q}^c"
+      ]
     },
     {
-      "title": "有限聯集不夠",
-      "beats": [
-        { "show": ["$\\mathcal{A}$：$[0,1]$ 中有限個區間的聯集"],
-          "note": "對補集、有限聯集封閉。",
-          "say": "考慮零到一裡面，有限多個區間的聯集組成的族。它對補集和有限聯集都封閉。",
-          "board": [
-            {"do":"write","line":"$\\mathcal{A}$：$[0,1]$ 中有限個區間的聯集"},
-            {"do":"write","line":"補集、有限聯集都封閉","on":"它對補集"}
-          ] },
-        { "show": ["單點 $\\{q\\}=[q,q]\\in\\mathcal{A}$"],
-          "say": "單點是退化的區間，在這一族裡。",
-          "board": [
-            {"do":"write","line":"$\\{q\\}=[q,q]\\in\\mathcal{A}$"}
-          ] },
-        { "show": ["$\\mathbb{Q}\\cap[0,1]=\\bigcup_q\\{q\\}$"],
-          "note": "可數多個單點的聯集。",
-          "say": "把零到一的有理數一個一個聯集起來，是可數聯集。",
-          "board": [
-            {"do":"write","line":"$\\mathbb{Q}\\cap[0,1]={{u:\\bigcup_q\\{q\\} }}$"},
-            {"do":"underline","term":"u","label":"可數個","on":"一個一個"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\mathcal{A}$ 是 $\\sigma$-代數嗎？",
-        "options": [
-          {
-            "label": "不是：$\\mathbb{Q}\\cap[0,1]$ 不是有限個區間的聯集",
-            "correct": true
-          },
-          {
-            "label": "是：它對補集與聯集都封閉",
-            "why": "只對有限聯集封閉。正長度區間含無理數，有限個單點又蓋不住無限多個有理數。"
-          },
-          {
-            "label": "是：每個單點都在裡面",
-            "why": "單點在裡面不夠，可數聯集也要在裡面，而 $\\mathbb{Q}\\cap[0,1]$ 掉出去了。"
-          }
-        ]
-      }
+      "heading": "⑤ 有限聯集不夠",
+      "body": [
+        "$\\mathcal{A}$ = $[0,1]$ 中「有限多個區間（可退化成單點）的聯集」",
+        "• 補集：有限多個區間的補集，還是有限多個區間",
+        "• 有限聯集：顯然封閉",
+        "• 所以 $\\mathcal{A}$ 是「代數」，但不是 $\\sigma$-代數",
+        "反例：$\\{q\\}\\in\\mathcal{A}$，但 $\\mathbb{Q}\\cap[0,1]=\\bigcup_n\\{q_n\\}\\notin\\mathcal{A}$",
+        "證明：假設 $\\mathbb{Q}\\cap[0,1]=I_1\\cup\\cdots\\cup I_m$",
+        "• 若某個 $I_j$ 不是單點，它含一段 $(c,d)$，裡面有無理數（12.40 稠密性），矛盾",
+        "• 所以每個 $I_j$ 是單點 ⇒ 聯集只有有限多個點",
+        "• 但 $\\mathbb{Q}\\cap[0,1]$ 有無限多個點，矛盾　$\\blacksquare$",
+        "教訓：要讓「極限」留在家族裡，需要可數聯集"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\sigma$-代數：含 $X$、對補集封閉、對可數聯集封閉",
+        "• 推得：$\\emptyset$、有限聯集、可數交集、差集",
+        "• $\\sigma(\\mathcal{C})$ = 所有含 $\\mathcal{C}$ 的 $\\sigma$-代數的交集；有限情形找原子",
+        "• Borel：$\\sigma(\\text{開集})=\\sigma(\\text{開區間})$；閉集、單點、$\\mathbb{Q}$、無理數都是",
+        "• 只對有限聯集封閉（代數）不夠",
+        "下一課：在 $\\sigma$-代數上定義測度"
+      ]
     }
   ],
   "workedExamples": [
@@ -361,51 +202,841 @@
   ],
   "checks": [
     {
-      "ask": "$\\sigma$-代數必須對哪一種聯集封閉？",
+      "ask": "$\\mathcal{M}$ 是 $\\sigma$-代數，下列哪一個==不一定==在 $\\mathcal{M}$ 裡？",
       "options": [
-        { "label": "可數聯集", "correct": true },
-        { "label": "只要有限聯集", "why": "那是代數。$\\mathbb{Q}\\cap[0,1]$ 這種可數多個單點的聯集就會掉出去，極限與級數會用到可數聯集。" },
-        { "label": "任意聯集", "why": "要求太強：每個子集都是單點的聯集，只要單點可測就得量所有子集，而那做不到。" }
+        {
+          "label": "$E\\setminus F$（$E,F\\in\\mathcal{M}$）",
+          "why": "差集 $=E\\cap F^c$，補集加交集，一定在"
+        },
+        {
+          "label": "$\\bigcap_{k\\ge1}E_k$（每個 $E_k\\in\\mathcal{M}$）",
+          "why": "可數交集用 De Morgan 推得出來"
+        },
+        {
+          "label": "$\\bigcup_{t\\in[0,1]}E_t$（每個 $E_t\\in\\mathcal{M}$）",
+          "correct": true
+        },
+        {
+          "label": "$\\emptyset$",
+          "why": "$\\emptyset=X^c$，一定在"
+        }
       ]
     },
     {
-      "ask": "$X=\\{1,2,3,4\\}$，$\\sigma(\\{\\{1\\}\\})$ 有幾個元素？",
+      "ask": "$X=\\{1,2,3,4\\}$，$\\mathcal{C}=\\{\\{1\\},\\{1,2\\}\\}$。$\\sigma(\\mathcal{C})$ 有幾個集合？",
       "options": [
-        { "label": "4", "correct": true },
-        { "label": "2", "why": "你只列了 $\\{1\\}$ 與 $X$，忘了補集 $\\{2,3,4\\}$ 與 $\\emptyset$：$\\{\\emptyset,\\{1\\},\\{2,3,4\\},X\\}$。" },
-        { "label": "16", "why": "那是全部子集 $\\mathcal{P}(X)$。只由 $\\{1\\}$ 生成時，$\\{2\\}$ 這種集合不會被產生出來。" }
+        {
+          "label": "$4$",
+          "why": "只算了 $\\{1\\}$ 生成的；$\\{1,2\\}$ 把 $\\{2\\}$ 也切出來了"
+        },
+        {
+          "label": "$6$",
+          "why": "列舉時漏了聯集，例如 $\\{1\\}\\cup\\{3,4\\}$、$\\{2\\}\\cup\\{3,4\\}$"
+        },
+        {
+          "label": "$8$",
+          "correct": true
+        },
+        {
+          "label": "$16$",
+          "why": "那是 $\\mathcal{P}(X)$；$3$ 和 $4$ 一直綁在一起，分不開"
+        }
       ]
     },
     {
-      "ask": "$\\mathbb{Q}\\cap(0,1)$ 是 Borel 集嗎？",
+      "ask": "下面四個都是 Borel 集。哪一個的==理由==是錯的？",
       "options": [
-        { "label": "是，它是可數多個單點的聯集", "correct": true },
-        { "label": "不是，因為它不是區間", "why": "Borel 集不必是區間；單點是閉集，可數聯集仍在 $\\sigma$-代數裡。" },
-        { "label": "不是，因為它既不開也不閉", "why": "Borel 集遠比開集、閉集多；可數聯集、交集、補集反覆做出來的都算。" }
+        {
+          "label": "$[0,1)=\\bigcap_n(-\\frac1n,1)$：可數交集",
+          "why": "理由正確：每個 $(-\\frac1n,1)$ 是開區間"
+        },
+        {
+          "label": "$\\{\\frac1n:n\\ge1\\}$：可數多個單點的聯集",
+          "why": "理由正確：單點是 Borel，可數聯集封閉"
+        },
+        {
+          "label": "$[0,1]=\\bigcup_{x\\in[0,1]}\\{x\\}$：單點的聯集",
+          "correct": true
+        },
+        {
+          "label": "$\\mathbb{Z}^c$：$\\mathbb{Z}$ 可數，取補集",
+          "why": "理由正確：$\\mathbb{Z}$ 是可數聯集，補集封閉"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "不能每個集合都量",
+      "beats": [
+        {
+          "show": [
+            "願望：給 $\\mathbb{R}$ 的每個子集 $E$ 一個長度 $m(E)\\in[0,\\infty]$，滿足",
+            "• 區間：$m([a,b])=b-a$"
+          ],
+          "say": "願望是：給實數線上每一個子集一個長度。區間的長度是右端減左端，平移不改變長度，不相交的可數多塊，長度可以相加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "願望：給 $\\mathbb{R}$ 的每個子集 $E$ 一個長度 $m(E)\\in[0,\\infty]$，滿足"
+            },
+            {
+              "do": "write",
+              "line": "• 區間：$m([a,b])=b-a$",
+              "on": "集一"
+            },
+            {
+              "do": "write",
+              "line": "• 平移不變：$m(E+t)=m(E)$",
+              "on": "減左"
+            },
+            {
+              "do": "write",
+              "line": "• 可數可加：$E_k$ 兩兩不交 ⇒ $m\\big(\\bigcup E_k\\big)=\\sum m(E_k)$",
+              "on": "交的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "事實：三條不可能同時對所有子集成立"
+          ],
+          "say": "壞消息：這三條不可能同時對所有子集成立。反例叫維塔利集，下下一課會證。",
+          "board": [
+            {
+              "do": "write",
+              "line": "事實：三條不可能同時對所有子集成立",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　證明（Vitali 集）在 12.44；它要用到選擇公理",
+              "color": "violet",
+              "on": "成立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "退一步：只量一個「好集合」的家族 $\\mathcal{M}$",
+            "這個家族至少要對哪些操作封閉？"
+          ],
+          "say": "退一步：只量一個好集合的家族，叫花體 M。它至少要封閉兩件事：量得了 E，就量得了補集；量得了一列，就量得了聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "退一步：只量一個「好集合」的家族 $\\mathcal{M}$"
+            },
+            {
+              "do": "write",
+              "line": "這個家族至少要對哪些操作封閉？",
+              "on": "叫花"
+            },
+            {
+              "do": "write",
+              "line": "• 量得了 $E$，就該量得了外面 $E^c$",
+              "on": "件事"
+            },
+            {
+              "do": "write",
+              "line": "• 量得了 $E_1,E_2,\\dots$，就該量得了 $\\bigcup E_k$（可數可加要用）",
+              "on": "量得#3"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "如果要求 $\\mathcal{M}$ 對==任意多個==（不只可數）集合的聯集封閉，而且單點都在 $\\mathcal{M}$ 裡，會怎樣？",
+        "options": [
+          {
+            "label": "$\\mathcal{M}$ 變成所有子集",
+            "correct": true
+          },
+          {
+            "label": "沒有差別，還是一樣",
+            "why": "任意聯集比可數聯集強很多：每個集合都是它的單點的聯集"
+          },
+          {
+            "label": "$\\mathcal{M}$ 只剩可數集",
+            "why": "方向反了：聯集只會讓家族變大"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$X$ 是一個集合，$\\mathcal{M}$ 是 $X$ 的一些子集組成的族。$\\mathcal{M}$ 是 $\\sigma$-代數，若",
+            "$\\begin{aligned}&(1)\\ X\\in\\mathcal{M}\\\\&(2)\\ E\\in\\mathcal{M}\\Rightarrow E^c\\in\\mathcal{M}\\\\&(3)\\ E_1,E_2,\\ldots\\in\\mathcal{M}\\Rightarrow\\textstyle\\bigcup_{k=1}^\\infty E_k\\in\\mathcal{M}\\end{aligned}$"
+          ],
+          "say": "正式定義：花體 M 是 X 的一些子集組成的族，叫西格瑪代數，如果：X 屬於 M；E 屬於 M 推得補集屬於 M；可數多個成員的聯集還屬於 M。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$X$ 是一個集合，$\\mathcal{M}$ 是 $X$ 的一些子集組成的族。$\\mathcal{M}$ 是 $\\sigma$-代數，若"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&(1)\\ X\\in\\mathcal{M}\\\\&(2)\\ E\\in\\mathcal{M}\\Rightarrow E^c\\in\\mathcal{M}\\\\&(3)\\ E_1,E_2,\\ldots\\in\\mathcal{M}\\Rightarrow\\textstyle\\bigcup_{k=1}^\\infty E_k\\in\\mathcal{M}\\end{aligned}}}}$",
+              "on": "集組"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "屬於#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\sigma$（西格瑪）就是在提醒「可數」：$\\sum$ 的那個 $\\sigma$",
+              "color": "violet",
+              "on": "可數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathcal{M}$ 裡的集合叫 可測集",
+            "最小的：$\\{\\emptyset,X\\}$；最大的：$\\mathcal{P}(X)$（所有子集）"
+          ],
+          "say": "裡面的集合叫可測集。最小的例子只有空集合和 X；最大的是所有子集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathcal{M}$ 裡的集合叫 可測集"
+            },
+            {
+              "do": "write",
+              "line": "最小的：$\\{\\emptyset,X\\}$；最大的：$\\mathcal{P}(X)$（所有子集）",
+              "on": "有空"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推得出來的（$E,F,E_k\\in\\mathcal{M}$）：",
+            "• $\\emptyset=X^c\\in\\mathcal{M}$"
+          ],
+          "say": "空集合是 X 的補集，所以在裡面。有限聯集：後面補上無限多個空集合，就變成可數聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推得出來的（$E,F,E_k\\in\\mathcal{M}$）："
+            },
+            {
+              "do": "write",
+              "line": "• $\\emptyset=X^c\\in\\mathcal{M}$",
+              "on": "裡面"
+            },
+            {
+              "do": "write",
+              "line": "• 有限聯集：$E\\cup F=E\\cup F\\cup\\emptyset\\cup\\emptyset\\cup\\cdots$",
+              "on": "多個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 可數交集（De Morgan）：",
+            "$\\bigcap_k E_k=\\Big(\\bigcup_k E_k^c\\Big)^c\\in\\mathcal{M}$"
+          ],
+          "say": "可數交集用笛摩根定律：先取補集、再聯集、再取補集，每一步都合法。差集就是 E 交集 F 的補集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 可數交集（De Morgan）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\bigcap_k E_k=\\Big(\\bigcup_k E_k^c\\Big)^c\\in\\mathcal{M}$",
+              "on": "再聯"
+            },
+            {
+              "do": "write",
+              "line": "• 差集：$E\\setminus F=E\\cap F^c\\in\\mathcal{M}$",
+              "on": "差集"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$A_1,A_2,\\dots\\in\\mathcal{M}$，$\\bigcap_n A_n$ 一定在 $\\mathcal{M}$ 裡嗎？",
-      "options": [
-        { "label": "一定，$\\bigcap A_n=(\\bigcup A_n^c)^c$", "correct": true },
-        { "label": "不一定，定義只保證聯集", "why": "補集加聯集就能做出交集，這是 De Morgan 律。" },
-        { "label": "只有有限交集一定在", "why": "De Morgan 律對可數多個集合一樣成立，可數交集也在。" }
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\mathcal{M}$ 是 $\\sigma$-代數，下列哪一個不一定在 $\\mathcal{M}$ 裡？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "生成的 σ-代數",
+      "beats": [
+        {
+          "show": [
+            "給一族集合 $\\mathcal{C}$，$\\sigma(\\mathcal{C})$ = 包含 $\\mathcal{C}$ 的最小 $\\sigma$-代數",
+            "$\\sigma(\\mathcal{C})=\\bigcap\\{\\mathcal{M}:\\ \\mathcal{M}\\ \\text{是}\\ \\sigma\\text{-代數},\\ \\mathcal{C}\\subseteq\\mathcal{M}\\}$"
+          ],
+          "say": "給一族集合花體 C，西格瑪 C 定義成：所有包含 C 的西格瑪代數，全部交集起來。直覺上，它是包含 C 的最小西格瑪代數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給一族集合 $\\mathcal{C}$，$\\sigma(\\mathcal{C})$ = 包含 $\\mathcal{C}$ 的最小 $\\sigma$-代數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\sigma(\\mathcal{C})=\\bigcap\\{\\mathcal{M}:\\ \\mathcal{M}\\ \\text{是}\\ \\sigma\\text{-代數},\\ \\mathcal{C}\\subseteq\\mathcal{M}\\}}}$",
+              "on": "定義"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "瑪代#1"
+            },
+            {
+              "do": "write",
+              "line": "　這一族不是空的：$\\mathcal{P}(X)$ 就包含 $\\mathcal{C}$",
+              "color": "violet",
+              "on": "它是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要先證：交集仍是 $\\sigma$-代數",
+            "證明：設每個 $\\mathcal{M}_\\alpha$ 都是 $\\sigma$-代數，$\\mathcal{N}=\\bigcap_\\alpha\\mathcal{M}_\\alpha$。"
+          ],
+          "say": "先證：交集還是西格瑪代數。X 在每一個裡面，所以在交集裡。E 在交集裡，就在每一個裡面，補集也就在每一個裡面。可數聯集一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要先證：交集仍是 $\\sigma$-代數"
+            },
+            {
+              "do": "write",
+              "line": "證明：設每個 $\\mathcal{M}_\\alpha$ 都是 $\\sigma$-代數，$\\mathcal{N}=\\bigcap_\\alpha\\mathcal{M}_\\alpha$。",
+              "on": "在每#1"
+            },
+            {
+              "do": "write",
+              "line": "• $X$ 在每個 $\\mathcal{M}_\\alpha$ ⇒ $X\\in\\mathcal{N}$",
+              "on": "在交#1"
+            },
+            {
+              "do": "write",
+              "line": "• $E\\in\\mathcal{N}$ ⇒ $E$ 在每個 $\\mathcal{M}_\\alpha$ ⇒ $E^c$ 在每個 ⇒ $E^c\\in\\mathcal{N}$",
+              "on": "在每#2"
+            },
+            {
+              "do": "write",
+              "line": "• $E_k\\in\\mathcal{N}$ ⇒ 每個 $\\mathcal{M}_\\alpha$ 都有 $\\bigcup E_k$ ⇒ $\\bigcup E_k\\in\\mathcal{N}$　$\\blacksquare$",
+              "on": "每一#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：一個集合生成",
+      "beats": [
+        {
+          "show": [
+            "例：$X=\\{1,2,3,4\\}$，$A=\\{1,2\\}$，求 $\\sigma(\\{A\\})$"
+          ],
+          "say": "例子：X 是 1 到 4，A 是 1 和 2，求它生成的西格瑪代數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$X=\\{1,2,3,4\\}$，$A=\\{1,2\\}$，求 $\\sigma(\\{A\\})$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上 X 被切成兩塊：藍色的 A，和紅色的補集。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"sa-gen\" viewBox=\"0 0 640 200\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect x=\"30\" y=\"20\" width=\"580\" height=\"160\" rx=\"14\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><text x=\"46\" y=\"52\" font-size=\"26\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">X</tspan></text><ellipse cx=\"205\" cy=\"105\" rx=\"120\" ry=\"56\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><ellipse cx=\"440\" cy=\"105\" rx=\"120\" ry=\"56\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-dasharray=\"7 5\"/><circle cx=\"160\" cy=\"105\" r=\"5\" fill=\"var(--ink)\"/><text x=\"160\" y=\"92\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif\">1</text><circle cx=\"250\" cy=\"105\" r=\"5\" fill=\"var(--ink)\"/><text x=\"250\" y=\"92\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif\">2</text><circle cx=\"395\" cy=\"105\" r=\"5\" fill=\"var(--ink)\"/><text x=\"395\" y=\"92\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif\">3</text><circle cx=\"485\" cy=\"105\" r=\"5\" fill=\"var(--ink)\"/><text x=\"485\" y=\"92\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"205\" y=\"145\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">A</tspan></text><text x=\"440\" y=\"145\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">A</tspan><tspan dy=\"-10\" font-size=\"17\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">c</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 必須有：$A$、$A^c=\\{3,4\\}$、$\\emptyset$、$X$",
+            "• 這四個已經封閉（補集、聯集都跑不出去）"
+          ],
+          "say": "一定要有 A、A 的補集、空集合和 X。這四個取補集、取聯集都跑不出去，所以答案就是這四個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 必須有：$A$、$A^c=\\{3,4\\}$、$\\emptyset$、$X$"
+            },
+            {
+              "do": "write",
+              "line": "• 這四個已經封閉（補集、聯集都跑不出去）",
+              "on": "的補"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sigma(\\{A\\})=\\{\\emptyset,\\ \\{1,2\\},\\ \\{3,4\\},\\ X\\}}}$",
+              "on": "這四#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "取聯"
+            },
+            {
+              "do": "write",
+              "line": "　一般：$\\sigma(\\{A\\})=\\{\\emptyset,A,A^c,X\\}$；這些塊叫「原子」，$\\sigma$-代數 = 原子的所有聯集",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$X=\\{1,2,3,4\\}$，$\\mathcal{C}=\\{\\{1\\},\\{1,2\\}\\}$。$\\sigma(\\mathcal{C})$ 有幾個集合？"
+          ],
+          "say": "試一題：由單點 1，和 1、2 這兩個集合生成的西格瑪代數，有幾個集合？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "解法：先找原子（切不開的最小塊）：$\\{1\\}$、$\\{1,2\\}\\setminus\\{1\\}=\\{2\\}$、$\\{3,4\\}$"
+          ],
+          "say": "解法是先找原子：單點 1，1 和 2 差掉 1 得到單點 2，剩下的 3 和 4 永遠綁在一起。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解法：先找原子（切不開的最小塊）：$\\{1\\}$、$\\{1,2\\}\\setminus\\{1\\}=\\{2\\}$、$\\{3,4\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個成員 = 一些原子的聯集 ⇒ $2^3=8$ 個"
+          ],
+          "say": "每個成員都是一些原子的聯集，三個原子各選要或不要，共 2 的 3 次方，8 個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個成員 = 一些原子的聯集 ⇒ $2^3=8$ 個",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Borel 集",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbb{R}$ 上的 Borel $\\sigma$-代數：",
+            "$\\mathcal{B}=\\sigma(\\{\\text{開集}\\})$"
+          ],
+          "say": "實數線上最重要的西格瑪代數，叫博雷爾西格瑪代數：由所有開集生成。裡面的集合叫博雷爾集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbb{R}$ 上的 Borel $\\sigma$-代數："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\mathcal{B}=\\sigma(\\{\\text{開集}\\})}}$",
+              "on": "叫博#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "集生"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：開集與開區間生成同一個 $\\sigma$-代數：$\\sigma(\\{\\text{開集}\\})=\\sigma(\\{\\text{開區間}\\})$",
+            "策略：兩邊互相包含；難的一邊靠「每個開集都是可數多個開區間的聯集」"
+          ],
+          "say": "定理：開集和開區間生成同一個。策略是互相包含：開區間是開集，一邊簡單；難的一邊要證每個開集是可數多個開區間的聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：開集與開區間生成同一個 $\\sigma$-代數：$\\sigma(\\{\\text{開集}\\})=\\sigma(\\{\\text{開區間}\\})$"
+            },
+            {
+              "do": "write",
+              "line": "策略：兩邊互相包含；難的一邊靠「每個開集都是可數多個開區間的聯集」",
+              "on": "一邊#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，藍色是一個開集 U。每一點 x 旁邊，都放得下一個端點是有理數的小區間 p 到 q，整個落在 U 裡。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"sa-open\" viewBox=\"0 0 640 170\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><line x1=\"20\" y1=\"90\" x2=\"620\" y2=\"90\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><line x1=\"80\" y1=\"90\" x2=\"300\" y2=\"90\" stroke=\"var(--blue)\" stroke-width=\"7\" opacity=\"0.4\"/><line x1=\"380\" y1=\"90\" x2=\"560\" y2=\"90\" stroke=\"var(--blue)\" stroke-width=\"7\" opacity=\"0.4\"/><circle cx=\"80\" cy=\"90\" r=\"6\" fill=\"var(--nb-paper,#fff)\" stroke=\"var(--blue)\" stroke-width=\"2\"/><circle cx=\"300\" cy=\"90\" r=\"6\" fill=\"var(--nb-paper,#fff)\" stroke=\"var(--blue)\" stroke-width=\"2\"/><circle cx=\"380\" cy=\"90\" r=\"6\" fill=\"var(--nb-paper,#fff)\" stroke=\"var(--blue)\" stroke-width=\"2\"/><circle cx=\"560\" cy=\"90\" r=\"6\" fill=\"var(--nb-paper,#fff)\" stroke=\"var(--blue)\" stroke-width=\"2\"/><text x=\"470\" y=\"140\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">U</tspan></text><circle cx=\"230\" cy=\"90\" r=\"5\" fill=\"var(--ink)\"/><text x=\"230\" y=\"140\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan></text><path d=\"M190 60 L190 50 L270 50 L270 60\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"230\" y=\"36\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">p</tspan><tspan style=\"font-family:KaTeX_Main,serif\">, </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">q</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"190\" y=\"80\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">p</tspan></text><text x=\"270\" y=\"80\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">q</tspan></text><text x=\"40\" y=\"140\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">端點是有理數</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "引理：開集 $U$ = 所有「端點是有理數、落在 $U$ 裡」的開區間的聯集",
+              "on": "個端"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：開集與開區間",
+      "beats": [
+        {
+          "show": [
+            "引理證明：設 $x\\in U$。$U$ 是開集 ⇒ 有 $r>0$，$(x-r,x+r)\\subseteq U$。"
+          ],
+          "say": "證明引理。x 屬於 U，U 是開集，所以有一個半徑 r，x 減 r 到 x 加 r 整段都在 U 裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "引理證明：設 $x\\in U$。$U$ 是開集 ⇒ 有 $r>0$，$(x-r,x+r)\\subseteq U$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbb{Q}$ 稠密 ⇒ 取 $p,q\\in\\mathbb{Q}$，$x-r<p<x<q<x+r$，則 $x\\in(p,q)\\subseteq U$"
+          ],
+          "say": "有理數是稠密的，在 x 左右各挑一個有理數 p 和 q，夾在這段裡面。那麼 x 屬於 p 到 q，而 p 到 q 包含於 U。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbb{Q}$ 稠密 ⇒ 取 $p,q\\in\\mathbb{Q}$，$x-r<p<x<q<x+r$，則 $x\\in(p,q)\\subseteq U$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理端點的區間只有可數多個（對應 $\\mathbb{Q}\\times\\mathbb{Q}$），所以 $U$ 是可數聯集　$\\blacksquare$"
+          ],
+          "say": "每一點都被這種區間蓋住，而有理端點的區間只有可數多個，所以 U 是可數聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有理端點的區間只有可數多個（對應 $\\mathbb{Q}\\times\\mathbb{Q}$），所以 $U$ 是可數聯集　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理證明：",
+            "• $\\supseteq$：開區間是開集 ⇒ $\\{\\text{開區間}\\}\\subseteq\\mathcal{B}$ ⇒ $\\sigma(\\{\\text{開區間}\\})\\subseteq\\mathcal{B}$"
+          ],
+          "say": "回到定理。開區間是開集，所以博雷爾包含開區間生成的那個最小的。反過來，引理說每個開集都在開區間生成的裡面，所以博雷爾也包含於它。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理證明："
+            },
+            {
+              "do": "write",
+              "line": "• $\\supseteq$：開區間是開集 ⇒ $\\{\\text{開區間}\\}\\subseteq\\mathcal{B}$ ⇒ $\\sigma(\\{\\text{開區間}\\})\\subseteq\\mathcal{B}$",
+              "on": "包含#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\subseteq$：由引理，每個開集 $\\in\\sigma(\\{\\text{開區間}\\})$ ⇒ $\\mathcal{B}\\subseteq\\sigma(\\{\\text{開區間}\\})$　$\\blacksquare$",
+              "on": "引理"
+            },
+            {
+              "do": "write",
+              "line": "　兩次都用同一招：「$\\sigma(\\mathcal{C})$ 是最小的」⇒ 只要 $\\mathcal{C}$ 在某個 $\\sigma$-代數裡，$\\sigma(\\mathcal{C})$ 就在裡面",
+              "color": "violet",
+              "on": "所以#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "哪些是 Borel 集",
+      "beats": [
+        {
+          "show": [
+            "例：證明 $[a,b]$、$\\{a\\}$、$\\mathbb{Q}$、$\\mathbb{R}\\setminus\\mathbb{Q}$ 都是 Borel 集"
+          ],
+          "say": "例子：證明閉區間、單點、有理數集、無理數集都是博雷爾集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：證明 $[a,b]$、$\\{a\\}$、$\\mathbb{Q}$、$\\mathbb{R}\\setminus\\mathbb{Q}$ 都是 Borel 集"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$[a,b]=\\bigcap_{n=1}^\\infty\\Big(a-\\tfrac1n,\\ b+\\tfrac1n\\Big)$"
+          ],
+          "say": "閉區間：它等於 a 減 n 分之一到 b 加 n 分之一這些開區間的交集，可數交集，所以在裡面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle [a,b]=\\bigcap_{n=1}^\\infty\\Big(a-\\tfrac1n,\\ b+\\tfrac1n\\Big)$"
+            },
+            {
+              "do": "write",
+              "line": "　也可以說：$[a,b]^c=(-\\infty,a)\\cup(b,\\infty)$ 是開集",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\{a\\}=[a,a]\\qquad\\mathbb{Q}=\\bigcup_{q\\in\\mathbb{Q}}\\{q\\}$"
+          ],
+          "say": "單點就是退化的閉區間。有理數集是可數多個單點的聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{a\\}=[a,a]\\qquad\\mathbb{Q}=\\bigcup_{q\\in\\mathbb{Q}}\\{q\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbb{R}\\setminus\\mathbb{Q}=\\mathbb{Q}^c$"
+          ],
+          "say": "無理數集是有理數集的補集。四個都是博雷爾集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\mathbb{R}\\setminus\\mathbb{Q}=\\mathbb{Q}^c}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "四個"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "有限聯集不夠",
+      "beats": [
+        {
+          "show": [
+            "$\\mathcal{A}$ = $[0,1]$ 中「有限多個區間（可退化成單點）的聯集」"
+          ],
+          "say": "最後看一個只對有限聯集封閉的例子。花體 A 是 0 到 1 裡面，有限多個區間的聯集，區間可以退化成單點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathcal{A}$ = $[0,1]$ 中「有限多個區間（可退化成單點）的聯集」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 補集：有限多個區間的補集，還是有限多個區間",
+            "• 有限聯集：顯然封閉"
+          ],
+          "say": "它對補集封閉，對有限聯集也封閉，叫做代數。但它不是西格瑪代數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 補集：有限多個區間的補集，還是有限多個區間"
+            },
+            {
+              "do": "write",
+              "line": "• 有限聯集：顯然封閉",
+              "on": "聯集"
+            },
+            {
+              "do": "write",
+              "line": "• 所以 $\\mathcal{A}$ 是「代數」，但不是 $\\sigma$-代數",
+              "on": "但它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反例：$\\{q\\}\\in\\mathcal{A}$，但 $\\mathbb{Q}\\cap[0,1]=\\bigcup_n\\{q_n\\}\\notin\\mathcal{A}$"
+          ],
+          "say": "反例：每個有理數單點都在 A 裡，可是把所有有理數聯集起來，就不在 A 裡了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反例：$\\{q\\}\\in\\mathcal{A}$，但 $\\mathbb{Q}\\cap[0,1]=\\bigcup_n\\{q_n\\}\\notin\\mathcal{A}$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：假設 $\\mathbb{Q}\\cap[0,1]=I_1\\cup\\cdots\\cup I_m$",
+            "• 若某個 $I_j$ 不是單點，它含一段 $(c,d)$，裡面有無理數（12.40 稠密性），矛盾"
+          ],
+          "say": "證明：假設寫得成有限多個區間。只要有一個不是單點，裡面就有無理數，矛盾。所以全是單點，只有有限多點；可是有理數有無限多個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：假設 $\\mathbb{Q}\\cap[0,1]=I_1\\cup\\cdots\\cup I_m$"
+            },
+            {
+              "do": "write",
+              "line": "• 若某個 $I_j$ 不是單點，它含一段 $(c,d)$，裡面有無理數（12.40 稠密性），矛盾",
+              "on": "只要"
+            },
+            {
+              "do": "write",
+              "line": "• 所以每個 $I_j$ 是單點 ⇒ 聯集只有有限多個點",
+              "on": "理數#1"
+            },
+            {
+              "do": "write",
+              "line": "• 但 $\\mathbb{Q}\\cap[0,1]$ 有無限多個點，矛盾　$\\blacksquare$",
+              "on": "有限#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "教訓：要讓「極限」留在家族裡，需要可數聯集"
+          ],
+          "say": "教訓：要讓極限留在家族裡，一定要可數聯集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "教訓：要讓「極限」留在家族裡，需要可數聯集"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\sigma$-代數：含 $X$、對補集封閉、對可數聯集封閉",
+            "• 推得：$\\emptyset$、有限聯集、可數交集、差集"
+          ],
+          "say": "整理：西格瑪代數含 X、對補集和可數聯集封閉。生成的是最小的一個，有限情形找原子。博雷爾由開集生成，也由開區間生成。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\sigma$-代數：含 $X$、對補集封閉、對可數聯集封閉"
+            },
+            {
+              "do": "write",
+              "line": "• 推得：$\\emptyset$、有限聯集、可數交集、差集",
+              "on": "對補"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sigma(\\mathcal{C})$ = 所有含 $\\mathcal{C}$ 的 $\\sigma$-代數的交集；有限情形找原子",
+              "on": "生成#1"
+            },
+            {
+              "do": "write",
+              "line": "• Borel：$\\sigma(\\text{開集})=\\sigma(\\text{開區間})$；閉集、單點、$\\mathbb{Q}$、無理數都是",
+              "on": "限情"
+            },
+            {
+              "do": "write",
+              "line": "• 只對有限聯集封閉（代數）不夠",
+              "on": "集生"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：在 $\\sigma$-代數上定義測度"
+          ],
+          "say": "下一課，在西格瑪代數上定義測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：在 $\\sigma$-代數上定義測度"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["measure", "lebesgue"],
-    "fine": ["sigma-axioms", "sigma-closure-consequences", "sigma-generated", "sigma-borel-membership"]
+    "coarse": [
+      "measure",
+      "lebesgue"
+    ],
+    "fine": [
+      "sigma-axioms",
+      "sigma-closure-consequences",
+      "sigma-generated",
+      "sigma-borel-membership"
+    ]
   },
   "practice": [
-    { "id": "cg-12i-001", "core": true, "trains": "sigma-axioms" },
-    { "id": "cg-12i-004", "core": true, "trains": "sigma-generated" },
-    { "id": "cg-12i-007", "core": true, "trains": "sigma-borel-membership" },
-    { "id": "cg-12i-002", "trains": "sigma-axioms" },
-    { "id": "cg-12i-003", "trains": "sigma-axioms" },
-    { "id": "cg-12i-005", "trains": "sigma-generated" },
-    { "id": "cg-12i-008", "trains": "sigma-borel-membership" },
-    { "id": "cg-12i-006", "challenge": true, "trains": "sigma-generated" }
+    {
+      "id": "cg-12i-001",
+      "core": true,
+      "trains": "sigma-axioms"
+    },
+    {
+      "id": "cg-12i-004",
+      "core": true,
+      "trains": "sigma-generated"
+    },
+    {
+      "id": "cg-12i-007",
+      "core": true,
+      "trains": "sigma-borel-membership"
+    },
+    {
+      "id": "cg-12i-002",
+      "trains": "sigma-axioms"
+    },
+    {
+      "id": "cg-12i-003",
+      "trains": "sigma-axioms"
+    },
+    {
+      "id": "cg-12i-005",
+      "trains": "sigma-generated"
+    },
+    {
+      "id": "cg-12i-008",
+      "trains": "sigma-borel-membership"
+    },
+    {
+      "id": "cg-12i-006",
+      "challenge": true,
+      "trains": "sigma-generated"
+    }
   ],
   "gaps": []
 }

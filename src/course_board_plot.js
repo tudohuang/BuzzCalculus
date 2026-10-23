@@ -5,8 +5,9 @@
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const ease = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-  function html(graph) {
-    const svg = window.BuzzGraphRender.renderProblemGraph({ graph }, { label: " " }, esc);
+  // raw／nb：交付的筆記本課的圖
+  function html(graph, raw, nb) {
+    const svg = nb ? window.BuzzNotebookPlot.svg(nb).svg : raw || window.BuzzGraphRender.renderProblemGraph({ graph }, { label: " " }, esc);
     const m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg) || [0, 320, 220];
     return { svg, w: Number(m[1]), h: Number(m[2]) };
   }

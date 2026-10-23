@@ -1,0 +1,467 @@
+{
+  "id": "center-of-mass",
+  "title": "質心與形心",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "area-between-curves"
+  ],
+  "next": [
+    "sequence-limit"
+  ],
+  "related": [
+    "volume-disk",
+    "double-integral"
+  ],
+  "objectives": [
+    "用「力矩 $\\div$ 總質量」算一列質點的質心。",
+    "算均勻薄板（形心）：$\\bar{x}=\\frac{1}{A}\\int x(f-g)\\,dx$，$\\bar{y}=\\frac{1}{A}\\int\\frac{1}{2}(f^2-g^2)\\,dx$。",
+    "用對稱性直接寫出一個座標，省掉一個積分。"
+  ],
+  "visual": "y = x²（0 ≤ x ≤ 1）下方的薄板放在一根針尖上。拖動針尖的位置，板子往較重的一側傾斜；停在 x = 3/4 時恰好平衡。再把板子切成鉛直細條，每一條標出自己的中點（高度 f(x)/2），所有中點的加權平均就是 ȳ = 3/10。",
+  "concept": [
+    {
+      "heading": "① 蹺蹺板：力矩平衡",
+      "body": [
+        "數線上的質點 $m_1,\\dots,m_n$ 放在 $x_1,\\dots,x_n$。支點放在 $\\bar{x}$ 會平衡的條件是兩邊的力矩抵銷：$\\sum m_i(x_i-\\bar{x})=0$，解出 $\\bar{x}=\\sum m_ix_i/\\sum m_i$。分子 $\\sum m_ix_i$ 叫做對原點的力矩。質心就是「位置的加權平均」，權重是質量。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 均勻薄板：切成細條",
+      "body": [
+        "區域在 $y=f(x)$ 與 $y=g(x)$ 之間（$f\\ge g$），$a\\le x\\le b$，密度 $\\rho$ 是常數。切成鉛直細條：位在 $x$ 的細條質量 $\\rho(f-g)\\,dx$，它自己的質心在 $x$ 位置、高度 $\\frac{f+g}{2}$ 的中點。",
+        "把「加權平均」裡的 $\\sum$ 換成積分。$\\rho$ 在分子分母同時出現、約掉，所以均勻薄板的質心只跟形狀有關，叫做形心。"
+      ],
+      "tex": [
+        "\\bar x=\\frac{1}{A}\\int_a^b x\\,(f-g)\\,dx,\\qquad \\bar y=\\frac{1}{A}\\int_a^b \\frac{f+g}{2}(f-g)\\,dx=\\frac{1}{A}\\int_a^b \\tfrac12\\bigl(f^2-g^2\\bigr)\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 對稱性",
+      "body": [
+        "區域對某條直線對稱，形心就在那條線上。對 $y$ 軸對稱 → $\\bar{x}=0$，不用算。這是最常用的省力技巧，但只省下一個座標，另一個還是要積分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 常見寫錯的地方",
+      "body": [
+        "$\\bar{y}$ 的被積函數是 $\\frac{1}{2}(f^2-g^2)$，不是 $\\frac{1}{2}(f-g)^2$：每根細條的「中點高度 $\\times$ 長度」是 $\\frac{f+g}{2}\\cdot(f-g)$。只有 $g=0$ 時兩者才一樣，都是 $\\frac{1}{2}f^2$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ Pappus 定理",
+      "body": [
+        "平面區域繞一條不穿過它的直線旋轉，體積 = 面積 $\\times$ 形心繞一圈走的距離。繞 $x$ 軸時 $V=2\\pi\\bar{y}\\cdot A$。理由：用〈圓盤法〉（$g=0$ 時）$V=\\int\\pi f^2\\,dx=2\\pi\\int\\frac{1}{2}f^2\\,dx=2\\pi\\bar{y}A$。檢查：半徑 $r$ 的上半圓盤，$A=\\frac{\\pi r^2}{2}$，$\\bar{y}=\\frac{4r}{3\\pi}$，$V=2\\pi\\cdot\\frac{4r}{3\\pi}\\cdot\\frac{\\pi r^2}{2}=\\frac{4\\pi r^3}{3}$，正是球的體積。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "數線上的質點",
+      "prompt": "質量 2、3、5 的質點分別放在 $x=-1$、2、4。求質心。",
+      "steps": [
+        "力矩：$2(-1)+3(2)+5(4)=-2+6+20=24$。",
+        "總質量：$2+3+5=10$。",
+        "$\\bar{x}=\\frac{24}{10}=2.4$。比三點的平均 $\\frac{5}{3}$ 更靠右，因為最重的 5 在 $x=4$。"
+      ],
+      "answer": "$\\bar{x}=2.4$",
+      "claim": "(2*(-1)+3*2+5*4)/(2+3+5) == 2.4"
+    },
+    {
+      "title": "拋物線下的薄板",
+      "prompt": "求 $y=x^2$（$0\\le x\\le 1$）與 $x$ 軸之間區域的形心。",
+      "problemId": "ap-cen-001",
+      "steps": [
+        "$A=\\int_0^1 x^2\\,dx=\\frac{1}{3}$。",
+        "$\\bar{x}=\\frac{1}{A}\\int_0^1 x\\cdot x^2\\,dx=3\\cdot\\frac{1}{4}=\\frac{3}{4}$。",
+        "$g=0$，$\\bar{y}=\\frac{1}{A}\\int_0^1\\frac{1}{2}x^4\\,dx=3\\cdot\\frac{1}{10}=\\frac{3}{10}$。",
+        "形心 $\\left(\\frac{3}{4},\\frac{3}{10}\\right)$：偏右、偏低，因為面積集中在右下方。"
+      ],
+      "answer": "$\\left(\\frac{3}{4},\\frac{3}{10}\\right)$",
+      "claim": "INT(x*x^2, 0, 1)/INT(x^2, 0, 1) == 3/4 ;; INT(x^4/2, 0, 1)/INT(x^2, 0, 1) == 3/10"
+    },
+    {
+      "title": "用對稱省一個積分",
+      "prompt": "求 $y=4-x^2$ 與 $x$ 軸所圍區域（均勻薄板）形心的 $\\bar{y}$。",
+      "problemId": "lec-10-q4a",
+      "steps": [
+        "區域對 $y$ 軸對稱，$\\bar{x}=0$。",
+        "$A=\\int_{-2}^2(4-x^2)\\,dx=\\frac{32}{3}$。",
+        "$\\int_{-2}^2\\frac{1}{2}(4-x^2)^2\\,dx=\\frac{1}{2}\\int_{-2}^2(16-8x^2+x^4)\\,dx=\\frac{1}{2}\\left(64-\\frac{128}{3}+\\frac{64}{5}\\right)=\\frac{256}{15}$。",
+        "$\\bar{y}=\\frac{256/15}{32/3}=\\frac{8}{5}$。"
+      ],
+      "answer": "$\\frac{8}{5}$",
+      "claim": "INT((4-x^2)^2/2, -2, 2) == 256/15 ;; INT((4-x^2)^2/2, -2, 2)/INT(4-x^2, -2, 2) == 8/5"
+    }
+  ],
+  "pitfalls": [
+    "算完力矩忘了除以總質量（或面積）。",
+    "$\\bar{y}$ 寫成 $\\frac{1}{A}\\int f^2\\,dx$，漏了 $\\frac{1}{2}$。",
+    "兩曲線之間的 $\\bar{y}$ 寫成 $\\frac{1}{2}(f-g)^2$。",
+    "以為對稱性兩個座標都給了：它只給對稱軸方向的那一個。"
+  ],
+  "checks": [
+    {
+      "ask": "質量 1 在 $x=0$、質量 3 在 $x=4$，質心在？",
+      "options": [
+        {
+          "label": "$x=3$",
+          "correct": true
+        },
+        {
+          "label": "$x=2$",
+          "why": "這是兩點的中點，沒有考慮右邊比較重。"
+        },
+        {
+          "label": "$x=1$",
+          "why": "權重放反了：$\\frac{3\\cdot 0+1\\cdot 4}{4}=1$。重的那一側應該把質心拉過去。"
+        }
+      ]
+    },
+    {
+      "ask": "$y=f(x)\\ge 0$ 與 $x$ 軸之間的薄板，$\\bar{y}$ 等於？",
+      "options": [
+        {
+          "label": "$\\frac{1}{A}\\int\\frac{1}{2}f(x)^2\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{1}{A}\\int x f(x)\\,dx$",
+          "why": "這是 $\\bar{x}$。$\\bar{y}$ 要用每根細條自己的中點高度 $\\frac{f}{2}$。"
+        },
+        {
+          "label": "$\\frac{1}{A}\\int f(x)^2\\,dx$",
+          "why": "少了 $\\frac{1}{2}$：細條的質心在半高 $\\frac{f}{2}$，不在頂端 $f$。"
+        }
+      ]
+    },
+    {
+      "ask": "區域對 $y$ 軸對稱，可以直接知道？",
+      "options": [
+        {
+          "label": "$\\bar{x}=0$",
+          "correct": true
+        },
+        {
+          "label": "$\\bar{y}=0$",
+          "why": "對 $y$ 軸對稱是左右對稱，說的是 $\\bar{x}$；上下方向的 $\\bar{y}$ 還要算。"
+        },
+        {
+          "label": "形心兩個座標都是 0",
+          "why": "對稱只給對稱軸方向的資訊；例如 $y=4-x^2$ 下方區域的 $\\bar{y}=\\frac{8}{5}$。"
+        }
+      ]
+    },
+    {
+      "ask": "均勻薄板的密度 $\\rho$ 加倍，形心會？",
+      "options": [
+        {
+          "label": "不變",
+          "correct": true
+        },
+        {
+          "label": "座標都加倍",
+          "why": "$\\rho$ 同時乘在力矩與總質量上，分子分母一起約掉。"
+        },
+        {
+          "label": "只有 $\\bar{y}$ 改變",
+          "why": "$\\bar{x}$ 與 $\\bar{y}$ 的式子裡 $\\rho$ 都會約掉，兩個都不變。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "蹺蹺板",
+      "beats": [
+        { "show": ["支點在 $\\bar{x}$：$\\sum m_i(x_i-\\bar{x})=0$"],
+          "note": "兩邊的力矩抵銷。",
+          "say": "數線上放幾個質點，像蹺蹺板。支點放在哪裡會平衡？兩邊的力矩要抵銷。",
+          "board": [
+            {"do":"write","line":"$\\sum {{m:m_i(x_i-\\bar{x})}}=0$"},
+            {"do":"underline","term":"m","label":"力矩","on":"力矩"}
+          ] },
+        { "show": ["$\\bar{x}=\\frac{\\sum m_ix_i}{\\sum m_i}$"],
+          "note": "位置的加權平均，權重是質量。",
+          "say": "解出來，質心就是位置的加權平均：每個位置乘質量加起來，再除以總質量。",
+          "board": [
+            {"do":"transform","line":"$\\bar{x}=\\frac{{{n:\\sum m_ix_i}}}{{{d:\\sum m_i}}}$"},
+            {"do":"underline","term":"n","label":"位置乘質量","on":"每個位置"},
+            {"do":"underline","term":"d","label":"總質量","on":"除以"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算一次",
+      "beats": [
+        { "show": ["質量 $2$、$3$、$5$ 放在 $x=-1$、$2$、$4$"],
+          "say": "質量二、三、五，分別放在負一、二、四。",
+          "board": [
+            {"do":"write","line":"質量 $2$、$3$、$5$ 放在 $x=-1$、$2$、$4$"}
+          ] },
+        { "show": ["力矩：$2(-1)+3(2)+5(4)=24$"],
+          "note": "總質量 $2+3+5=10$。",
+          "say": "力矩是負二加六加二十，等於二十四。總質量是十。",
+          "board": [
+            {"do":"write","line":"力矩：$2(-1)+3(2)+5(4)={{t:24}}$"},
+            {"do":"focus","term":"t","on":"等於"},
+            {"do":"write","line":"總質量 $2+3+5=10$","on":"總質量"}
+          ] }
+      ],
+      "predict": {
+        "ask": "質心是？",
+        "options": [
+          {
+            "label": "$\\bar{x}=\\frac{24}{10}=2.4$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{5}{3}$",
+            "why": "那是三個位置的平均，沒有用質量加權；最重的 5 在 $x=4$，會把質心拉過去。"
+          },
+          {
+            "label": "$24$",
+            "why": "力矩還要除以總質量 $10$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "均勻薄板",
+      "beats": [
+        { "show": ["鉛直細條：質量 $\\rho(f-g)\\,dx$"],
+          "note": "細條質心在 $x$，高度 $\\frac{f+g}{2}$。",
+          "say": "薄板切成鉛直細條。每一條的質量是密度乘長度乘 dx，它自己的質心在中點。",
+          "board": [
+            {"do":"write","line":"細條質量 ${{m:\\rho(f-g)\\,dx}}$"},
+            {"do":"focus","term":"m","on":"密度"},
+            {"do":"write","line":"質心高度 $\\frac{f+g}{2}$","on":"自己的"}
+          ] },
+        { "show": ["細條很窄，上下一樣重，質心在半高"],
+          "say": "為什麼是中點？細條很窄，上下一樣重，所以質心就在正中間，高度是 f 加 g 的一半。",
+          "board": [
+            {"do":"write","line":"細條很窄：上下一樣重 → 質心在半高"}
+          ] },
+        { "show": ["切細：$\\sum \\to \\int$，長度的和是 $A$"],
+          "note": "分母的和就是面積 $A$。",
+          "say": "切成很多條：每條位置乘長度加起來，除以長度加起來。切得越細，長度的和就變成積分，那就是面積 A。",
+          "board": [
+            {"do":"write","line":"$\\bar x\\approx\\frac{{{n:\\sum x\\,(f-g)\\Delta x}}}{{{d:\\sum (f-g)\\Delta x}}}$"},
+            {"do":"write","line":"$\\sum (f-g)\\Delta x\\to\\int_a^b(f-g)\\,dx=A$","on":"越細"}
+          ] },
+        { "show": ["$\\bar x=\\frac{1}{A}\\int_a^b x\\,(f-g)\\,dx$"],
+          "say": "把加權平均裡的 sigma 換成積分，就是 x bar。",
+          "board": [
+            {"do":"write","line":"$\\bar x=\\frac{1}{A}\\int_a^b {{w:x\\,(f-g)}}\\,dx$"},
+            {"do":"focus","term":"w","label":"位置乘長度","on":"積分"}
+          ] },
+        { "show": ["$\\bar y=\\frac{1}{A}\\int_a^b\\frac{1}{2}(f^2-g^2)\\,dx$"],
+          "note": "中點高度乘長度；不是 $\\frac{1}{2}(f-g)^2$。",
+          "say": "y bar 用每一條的中點高度乘長度，整理成二分之一乘 f 平方減 g 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"中點高度乘長度：$\\frac{f+g}{2}(f-g)$","on":"中點高度"},
+            {"do":"write","line":"$\\bar y=\\frac{1}{A}\\int_a^b{{h:\\frac{1}{2}(f^2-g^2)}}\\,dx$","on":"整理成"},
+            {"do":"box","term":"h","color":"green","on":"平方減"}
+          ] },
+        { "show": ["$\\rho$ 約掉：只跟形狀有關"],
+          "note": "所以叫形心。",
+          "say": "密度在分子分母都出現，會約掉，所以均勻薄板的質心只跟形狀有關，叫形心。",
+          "board": [
+            {"do":"write","line":"$\\bar x=\\frac{{{r:\\rho}}\\int x(f-g)\\,dx}{{{s:\\rho}}\\,A}$"},
+            {"do":"focus","term":"r","on":"密度"},
+            {"do":"focus","term":"s","on":"分子分母"},
+            {"do":"write","line":"只跟形狀有關 → 形心","on":"只跟形狀"}
+          ] }
+      ],
+      "key": "細條質心在中點：$\\frac{1}{2}(f+g)$ 乘長度",
+      "check": 3
+    },
+    {
+      "title": "拋物線下的薄板",
+      "beats": [
+        { "show": ["$y=x^2$，$0\\le x\\le 1$：$A=\\frac{1}{3}$"],
+          "say": "x 平方從零到一，跟 x 軸之間的薄板。面積是三分之一。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.6,1.6,-0.12,1.1],"equal":true,"curves":[{"expr":"x^2","domain":[0,1],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":1,"color":"blue"}],"ticks":false}},
+            {"do":"write","line":"$y=x^2$，$0\\le x\\le1$：$A={{a:\\frac{1}{3}}}$","on":"跟 x 軸之間"},
+            {"do":"focus","term":"a","on":"面積是"}
+          ] },
+        { "show": ["$\\int_0^1 x^n\\,dx=\\frac{1}{n+1}$","$\\int_0^1 x^2\\,dx=\\frac{1}{3}$"],
+          "note": "次方加一，再除以新的次方。",
+          "say": "怎麼算？x 的 n 次方積分，次方加一再除以新的次方，代進一再減掉代進零。所以 x 平方變成三分之一。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1 x^n\\,dx=\\frac{1}{n+1}$"},
+            {"do":"write","line":"$\\int_0^1 x^2\\,dx=\\frac{1}{3}$","on":"x 平方"}
+          ] },
+        { "show": ["$\\bar{x}=3\\int_0^1 x\\cdot x^2\\,dx=\\frac{3}{4}$"],
+          "say": "除以三分之一就是乘三。x 乘 x 平方積分是四分之一，x bar 是四分之三。",
+          "board": [
+            {"do":"transform","line":"$\\bar{x}={{three:3}}\\int_0^1 x\\cdot x^2\\,dx={{xb:\\frac{3}{4}}}$"},
+            {"do":"focus","term":"three","on":"乘三"},
+            {"do":"box","term":"xb","color":"green","on":"x bar 是"}
+          ] },
+        { "show": ["$\\bar{y}=3\\cdot\\frac{1}{10}=\\frac{3}{10}$"],
+          "note": "偏右、偏低：面積集中在右下方。",
+          "say": "下面那條是 x 軸，g 是零。y bar 算出十分之三，形心偏右、偏低。",
+          "board": [
+            {"do":"write","line":"$\\bar{y}=3\\cdot\\frac{1}{10}={{yb:\\frac{3}{10}}}$","on":"y bar 算出"},
+            {"do":"box","term":"yb","color":"green","on":"十分之三"}
+          ] },
+        { "show": ["$\\int_0^1 x^3\\,dx=\\frac{1}{4}$","$\\int_0^1\\frac{1}{2}x^4\\,dx=\\frac{1}{10}$"],
+          "say": "同樣的規則：x 三次方積分是四分之一；二分之一乘 x 四次方，是二分之一乘五分之一，十分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^1 x^3\\,dx=\\frac{1}{4}$","on":"三次方"},
+            {"do":"write","line":"$\\int_0^1\\frac{1}{2}x^4\\,dx$","on":"二分之一乘#1"},
+            {"do":"write","line":"$=\\frac{1}{2}\\cdot\\frac{1}{5}=\\frac{1}{10}$","on":"五分之一"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "用對稱省力",
+      "beats": [
+        { "show": ["對稱 → 形心在對稱軸上"],
+          "note": "對 $y$ 軸對稱：$\\bar{x}=0$，不用算。",
+          "say": "區域對某條線對稱，形心就在那條線上。對 y 軸對稱，x bar 直接是零。",
+          "board": [
+            {"do":"write","line":"對稱 → 形心在對稱軸上"},
+            {"do":"write","line":"對 $y$ 軸對稱：${{z:\\bar{x}=0}}$","on":"對 y 軸"},
+            {"do":"box","term":"z","color":"green","on":"x bar"}
+          ] },
+        { "show": ["左右對稱的區域"],
+          "say": "看圖：這個區域沿著 y 軸對折，左右剛好重合。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-1,5],"curves":[{"expr":"4-(x^2)","domain":[-2,2],"color":"blue"}],"fills":[{"expr":"4-(x^2)","from":-2,"to":2,"color":"blue"}],"dashed":[[[0,-0.5],[0,4.5]]]}}
+          ] },
+        { "show": ["對稱：$x$ 與 $-x$ 的力矩抵銷"],
+          "note": "所以 $\\int x(f-g)\\,dx=0$。",
+          "say": "為什麼？對稱的話，x 和負 x 處的細條一樣長，位置乘長度一正一負，互相抵銷，所以積分是零。",
+          "board": [
+            {"do":"write","line":"$\\int_{-a}^{a}{{o:x\\,(f-g)}}\\,dx$"},
+            {"do":"underline","term":"o","label":"一正一負","on":"一正一負"},
+            {"do":"write","line":"$=0$","on":"抵銷"}
+          ] },
+        { "show": ["只省一個座標"],
+          "note": "另一個還是要積分。",
+          "say": "但它只省下一個座標，另一個還是要積分。",
+          "board": [
+            {"do":"write","line":"只省一個座標：$\\bar{x}$"},
+            {"do":"write","line":"${{y:\\bar{y}}}=\\frac{1}{A}\\int\\frac{1}{2}(f^2-g^2)\\,dx$","on":"座標"},
+            {"do":"focus","term":"y","on":"另一個"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "算 $\\bar{y}$",
+      "beats": [
+        { "show": ["$y=4-x^2$：$\\bar{x}=0$，$A=\\frac{32}{3}$"],
+          "say": "四減 x 平方和 x 軸圍成的區域，對 y 軸對稱，x bar 是零。面積三分之三十二。",
+          "board": [
+            {"do":"write","line":"$y=4-x^2$：${{x:\\bar{x}=0}}$，$A={{a:\\frac{32}{3}}}$"},
+            {"do":"focus","term":"x","on":"x bar"},
+            {"do":"box","term":"a","color":"green","on":"面積"}
+          ] },
+        { "show": ["$\\int_{-2}^2\\frac{1}{2}(4-x^2)^2\\,dx=\\frac{256}{15}$"],
+          "note": "展開成 $16-8x^2+x^4$ 再積。",
+          "say": "y bar 的分子：二分之一乘函數平方，展開再積，得十五分之二百五十六。",
+          "board": [
+            {"do":"write","line":"$\\bar y$ 的分子 $=\\int_{-2}^2{{h:\\frac{1}{2}(4-x^2)^2}}\\,dx$"},
+            {"do":"focus","term":"h","on":"二分之一"},
+            {"do":"transform","line":"$=\\frac{1}{2}\\int_{-2}^2(16-8x^2+x^4)\\,dx$","on":"展開"},
+            {"do":"transform","line":"$=\\frac{256}{15}$","color":"green","on":"得"}
+          ] },
+        { "show": ["每項次方加一再除，代 $2$ 減代 $-2$"],
+          "say": "每項次方加一再除，代二減代負二，得六十四減三分之一百二十八加五分之六十四，再乘二分之一。",
+          "board": [
+            {"do":"write","line":"$\\Bigl[16x-\\frac{8x^3}{3}+\\frac{x^5}{5}\\Bigr]_{-2}^{2}$"},
+            {"do":"write","line":"$=64-\\frac{128}{3}+\\frac{64}{5}$","on":"得"}
+          ] },
+        { "show": ["$\\bar y=\\frac{\\text{分子}}{A}$"],
+          "note": "分子是剛才的積分。",
+          "say": "最後別忘了除以面積：y bar 等於分子除以 A，A 是三分之三十二。",
+          "board": [
+            {"do":"write","line":"$\\bar y=\\frac{{{n:分子}}}{{{b:A}}}$"},
+            {"do":"focus","term":"n","on":"分子"},
+            {"do":"focus","term":"b","on":"A#2"}
+          ] }
+      ],
+      "key": "對稱給出 $\\bar x=0$，$\\bar y$ 還是要積",
+      "predict": {
+        "ask": "$\\bar{y}$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{256/15}{32/3}=\\frac{8}{5}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{256}{15}$",
+            "why": "那是力矩，還要除以面積 $\\frac{32}{3}$。"
+          },
+          {
+            "label": "$0$",
+            "why": "對 $y$ 軸對稱只給 $\\bar{x}=0$；$\\bar{y}$ 還要算。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "centroid"
+    ],
+    "fine": [
+      "com-point-masses",
+      "com-centroid-x",
+      "com-centroid-y",
+      "com-symmetry"
+    ]
+  },
+  "practice": [
+    {
+      "id": "ap-cen-001",
+      "core": true,
+      "trains": "com-centroid-x"
+    },
+    {
+      "id": "lec-10-q4a",
+      "core": true,
+      "trains": "com-centroid-y"
+    },
+    {
+      "id": "ap-cen-002",
+      "core": true,
+      "trains": "com-symmetry"
+    },
+    {
+      "id": "cg-5d-017",
+      "core": true,
+      "trains": "com-point-masses"
+    },
+    {
+      "id": "lec-10-q4c",
+      "trains": "com-centroid-x"
+    },
+    {
+      "id": "cg-5d-018",
+      "trains": "com-point-masses"
+    },
+    {
+      "id": "cg-5d-019",
+      "trains": "com-centroid-y"
+    },
+    {
+      "id": "cg-5d-020",
+      "trains": "com-centroid-y"
+    }
+  ],
+  "gaps": []
+}

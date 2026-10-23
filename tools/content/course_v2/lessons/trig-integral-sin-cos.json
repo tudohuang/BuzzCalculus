@@ -1,49 +1,145 @@
 {
   "id": "trig-integral-sin-cos",
   "title": "sinᵐ x cosⁿ x",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["trig-identities", "u-sub-recognize"],
-  "next": ["trig-integral-tan-sec"],
-  "related": ["wallis-integral", "trig-identity-integrals"],
+  "prerequisites": [
+    "trig-identities",
+    "u-sub-recognize"
+  ],
+  "next": [
+    "trig-integral-tan-sec"
+  ],
+  "related": [
+    "wallis-integral",
+    "trig-identity-integrals"
+  ],
   "objectives": [
-    "有奇次方時：留一個因子當 $du$，其餘用 $\\sin^2+\\cos^2=1$ 換成同一種，再換元。",
-    "兩個都是偶次方時：用半角公式降次。",
-    "會用對稱快速算 $\\int_0^{\\pi/2}\\sin^2 x\\,dx=\\int_0^{\\pi/2}\\cos^2 x\\,dx=\\frac{\\pi}{4}$。"
+    "有奇次方時：留一個因子當 $du$，其餘用 $\\sin^2+\\cos^2=1$ 換成同一種，再換元",
+    "兩個都是偶次方時：用半角公式降次",
+    "會用對稱快速算 $\\int_0^{\\pi/2}\\sin^2 x\\,dx=\\int_0^{\\pi/2}\\cos^2 x\\,dx=\\frac\\pi4$"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 判斷看奇偶",
       "body": [
-        "$\\int\\sin^m x\\cos^n x\\,dx$ 的做法只看 $m$、$n$ 的奇偶：有一個是奇數，用「留一個」；兩個都是偶數，用「半角降次」。"
+        "要積的樣子：",
+        "兩個關鍵的導數：",
+        "所以：留一個 $\\cos x$，就有 $u=\\sin x$ 的 $du$",
+        "留一個 $\\sin x$，就有 $u=\\cos x$ 的 $du$",
+        "其餘的用 $\\sin^2x+\\cos^2x=1$ 換成同一種",
+        "判斷流程",
+        "• $\\sin$ 奇次方：留一個 $\\sin x$，$u=\\cos x$",
+        "• $\\cos$ 奇次方：留一個 $\\cos x$，$u=\\sin x$",
+        "• 兩個都是偶次方：半角公式降次",
+        "$0$ 次也算偶次方；兩個都是奇次方，挑哪一個留都可以，通常挑次方小的"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\sin^m x\\cos^n x\\,dx",
+        "(\\sin x)'=\\cos x,\\qquad(\\cos x)'=-\\sin x"
+      ]
     },
     {
-      "heading": "② 有奇次方：留一個出來當 $du$",
+      "heading": "② 有奇次方：留一個",
       "body": [
-        "假設 $\\sin$ 是奇次方。拿一個 $\\sin x$ 出來跟 $dx$ 配成 $du$（$u=\\cos x$，$du=-\\sin x\\,dx$）。剩下的 $\\sin$ 是偶次方，用 $\\sin^2 x=1-\\cos^2 x$ 全部換成 $\\cos$。整個積分就只剩 $u=\\cos x$ 的多項式。",
-        "$\\cos$ 是奇次方就反過來：留一個 $\\cos x$，$u=\\sin x$，$\\cos^2 x=1-\\sin^2 x$。兩個都是奇數時，任選一個留。",
-        "為什麼要「奇」：留走一個之後剩偶次方，才能整個寫成 $(\\sin^2 x)^k=(1-\\cos^2 x)^k$，不會冒出根號。"
+        "例一：$\\displaystyle\\int\\sin^3x\\,dx$",
+        "留一個 $\\sin x$，其餘換成 $\\cos$：",
+        "令 $u=\\cos x$，$du=-\\sin x\\,dx$：",
+        "負號從 $du=-\\sin x\\,dx$ 來，最常漏掉",
+        "驗算：微分回去",
+        "為什麼一定要留一個？",
+        "剩下偶次方 $\\sin^{2k}x=(1-\\cos^2x)^k$ 才換得掉"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\sin^2x\\cdot\\sin x\\,dx=\\int(1-\\cos^2x)\\sin x\\,dx",
+        "=-\\int(1-u^2)\\,du=-u+\\frac{u^3}3+C",
+        "\\int\\sin^3x\\,dx=-\\cos x+\\frac{\\cos^3x}3+C",
+        "\\Big(-\\cos x+\\tfrac{\\cos^3x}3\\Big)'=\\sin x-\\cos^2x\\sin x",
+        "=\\sin x(1-\\cos^2x)=\\sin^3x"
+      ]
     },
     {
-      "heading": "③ 都是偶次方：半角降次",
+      "heading": "② 例二：$\\cos$ 是奇次方",
       "body": [
-        "沒有奇次方可以留，就用半角公式把平方換成一次的 $\\cos 2x$，次方減半；如果還有平方，再做一次。"
+        "留一個 $\\cos x$，$\\cos^2x=1-\\sin^2x$：",
+        "令 $u=\\sin x$，$du=\\cos x\\,dx$："
       ],
-      "tex": ["\\sin^2x=\\frac{1-\\cos 2x}{2},\\qquad \\cos^2x=\\frac{1+\\cos 2x}{2},\\qquad \\sin x\\cos x=\\frac{\\sin 2x}{2}"],
-      "collapsible": false
+      "tex": [
+        "\\int\\sin^2x\\cos^3x\\,dx",
+        "=\\int\\sin^2x\\,(1-\\sin^2x)\\cos x\\,dx",
+        "=\\int(u^2-u^4)\\,du=\\frac{u^3}3-\\frac{u^5}5+C",
+        "\\int\\sin^2x\\cos^3x\\,dx=\\frac{\\sin^3x}3-\\frac{\\sin^5x}5+C"
+      ]
+    },
+    {
+      "heading": "③ 都是偶次方：降次",
+      "body": [
+        "兩個都偶次方：留一個就剩奇次方，換不掉",
+        "半角公式（倍角公式倒過來）：",
+        "由 $\\cos2x=1-2\\sin^2x=2\\cos^2x-1$ 解出來",
+        "例：$\\displaystyle\\int\\sin^2x\\,dx=\\int\\frac{1-\\cos2x}2\\,dx$",
+        "$\\int\\cos2x\\,dx=\\frac{\\sin2x}2$，再乘前面的 $\\frac12$",
+        "同理："
+      ],
+      "tex": [
+        "\\sin^2x=\\frac{1-\\cos2x}2,\\qquad\\cos^2x=\\frac{1+\\cos2x}2",
+        "=\\frac x2-\\frac{\\sin2x}4+C",
+        "\\int\\cos^2x\\,dx=\\frac x2+\\frac{\\sin2x}4+C"
+      ]
+    },
+    {
+      "heading": "③ 降兩次：$\\int\\cos^4x\\,dx$",
+      "body": [
+        "還有 $\\cos^22x$：再降一次",
+        "角度從 $2x$ 變 $4x$",
+        "合併：",
+        "逐項積分：",
+        "$\\int\\frac18\\cos4x\\,dx=\\frac18\\cdot\\frac{\\sin4x}4$"
+      ],
+      "tex": [
+        "\\cos^4x=\\Big(\\frac{1+\\cos2x}2\\Big)^2=\\frac14\\big(1+2\\cos2x+\\cos^22x\\big)",
+        "\\cos^22x=\\frac{1+\\cos4x}2",
+        "\\cos^4x=\\frac38+\\frac12\\cos2x+\\frac18\\cos4x",
+        "\\int\\cos^4x\\,dx=\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}+C"
+      ]
     },
     {
       "heading": "④ 一個常用的定積分",
       "body": [
-        "在 $[0,\\frac{\\pi}{2}]$ 上，$\\sin^2 x$ 和 $\\cos^2 x$ 的圖形左右對稱（$x$ 換成 $\\frac{\\pi}{2}-x$ 就互換），所以兩個積分一樣大；加起來是 $\\int_0^{\\pi/2}1\\,dx=\\frac{\\pi}{2}$，各佔一半：$\\frac{\\pi}{4}$。",
-        "更高的次方 $\\int_0^{\\pi/2}\\sin^n x\\,dx$ 有一條漂亮的公式，在〈Wallis 積分〉。"
+        "令 $u=\\frac\\pi2-x$：$\\sin x=\\cos u$，區間 $0\\leftrightarrow\\frac\\pi2$ 對調",
+        "圖形上：$\\cos^2$ 是 $\\sin^2$ 對 $x=\\frac\\pi4$ 的鏡射",
+        "兩個相加是 $\\int_0^{\\pi/2}1\\,dx=\\frac\\pi2$，所以各是一半：",
+        "跟 ③ 的反導函數對一下：$\\Big[\\frac x2-\\frac{\\sin2x}4\\Big]_0^{\\pi/2}=\\frac\\pi4$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^{\\pi/2}\\sin^2x\\,dx\\quad\\text{與}\\quad\\int_0^{\\pi/2}\\cos^2x\\,dx",
+        "\\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2u\\,du",
+        "\\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2x\\,dx=\\frac\\pi4"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "同一個代換 $u=\\frac\\pi2-x$ 對任何次方都成立：",
+        "例：$n=4$，用 ③ 的結果："
+      ],
+      "tex": [
+        "\\int_0^{\\pi/2}\\sin^n x\\,dx=\\int_0^{\\pi/2}\\cos^n x\\,dx",
+        "\\Big[\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}\\Big]_0^{\\pi/2}=\\frac{3\\pi}{16}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 有奇次方：留一個當 $du$，其餘用 $\\sin^2+\\cos^2=1$ 換成另一種",
+        "• $u=\\cos x$ 時 $du=-\\sin x\\,dx$：別漏負號",
+        "• 都是偶次方：半角 $\\sin^2=\\frac{1-\\cos2x}2$、$\\cos^2=\\frac{1+\\cos2x}2$",
+        "• 偶次方高：一次降不完就再降一次",
+        "• $\\int_0^{\\pi/2}\\sin^2=\\int_0^{\\pi/2}\\cos^2=\\frac\\pi4$：靠對稱",
+        "下一課：$\\tan^m x\\sec^n x$"
+      ]
     }
   ],
   "workedExamples": [
@@ -90,285 +186,949 @@
   ],
   "checks": [
     {
-      "ask": "$\\int\\sin^5 x\\cos^2 x\\,dx$，$u$ 應該選？",
+      "ask": "$\\displaystyle\\int\\sin^3x\\cos^2x\\,dx=$？",
       "options": [
-        { "label": "$u=\\cos x$", "correct": true },
-        { "label": "$u=\\sin x$", "why": "那 $du=\\cos x\\,dx$，要從 $\\cos^2 x$ 借一個，剩下 $\\cos x$ 一次方，換成 $\\sin$ 會出現根號。奇次方的是 $\\sin$，就留 $\\sin x$、令 $u=\\cos x$。" },
-        { "label": "先用半角公式", "why": "半角是兩個都偶次方才用。有奇次方時留一個出來換元，快得多。" }
+        {
+          "label": "$-\\dfrac{\\cos^3x}3+\\dfrac{\\cos^5x}5+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\cos^3x}3-\\dfrac{\\cos^5x}5+C$",
+          "why": "漏了 $du=-\\sin x\\,dx$ 的負號"
+        },
+        {
+          "label": "$\\dfrac{\\sin^4x}4\\cdot\\dfrac{\\cos^3x}3+C$",
+          "why": "乘積不能各自積分再相乘"
+        },
+        {
+          "label": "$-\\dfrac{\\cos^3x}3+C$",
+          "why": "忘了把 $\\sin^2x$ 換成 $1-\\cos^2x$"
+        }
       ]
     },
     {
-      "ask": "$\\sin^2 x$ 等於？",
+      "ask": "$\\displaystyle\\int_0^{\\pi}\\cos^2x\\,dx=$？",
       "options": [
-        { "label": "$\\frac{1-\\cos 2x}{2}$", "correct": true },
-        { "label": "$\\frac{1+\\cos 2x}{2}$", "why": "那是 $\\cos^2 x$。代 $x=0$ 檢查：$\\sin^2 0=0$，只有 $\\frac{1-1}{2}$ 對。" },
-        { "label": "$2\\sin x\\cos x$", "why": "那是 $\\sin 2x$，不是 $\\sin^2 x$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^{\\pi/2}\\cos^2 x\\,dx$ 是？",
-      "options": [
-        { "label": "$\\frac{\\pi}{4}$", "correct": true },
-        { "label": "$\\frac{\\pi}{2}$", "why": "$\\frac{\\pi}{2}$ 是 $\\int_0^{\\pi/2}(\\sin^2 x+\\cos^2 x)\\,dx$。兩者一樣大，各佔一半。" },
-        { "label": "$\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 是 $\\cos^2 x$ 在這段上的平均高度，還要乘上區間長度 $\\frac{\\pi}{2}$。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\sin^3 x\\cos^3 x\\,dx$，兩個都是奇次方。怎麼做？",
-      "options": [
-        { "label": "任選一個留一個出來，其餘換成另一種", "correct": true },
-        { "label": "一定要用半角公式", "why": "半角也做得出來但比較長。有奇次方就能用留一個的方法，兩個都奇時任選。" },
-        { "label": "沒有初等反導函數", "why": "有。例如留 $\\cos x$：$\\int\\sin^3 x(1-\\sin^2 x)\\cos x\\,dx$，令 $u=\\sin x$。" }
+        {
+          "label": "$\\dfrac\\pi2$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac\\pi4$",
+          "why": "那是 $0$ 到 $\\frac\\pi2$；這裡區間長度是 $\\pi$"
+        },
+        {
+          "label": "$0$",
+          "why": "$\\cos x$ 在 $0$ 到 $\\pi$ 正負抵消，但 $\\cos^2x\\ge0$ 不會抵消"
+        },
+        {
+          "label": "$\\pi$",
+          "why": "平均值是 $\\frac12$，不是 $1$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "看奇偶，留一個",
+      "title": "判斷看奇偶",
       "beats": [
-        { "show": ["$\\int\\sin^m x\\cos^n x\\,dx$：看 $m$、$n$ 的奇偶"],
-          "note": "有奇數：留一個；都偶數：半角降次。",
-          "say": "sine 幾次方乘 cosine 幾次方，做法只看兩個次方是奇數還是偶數。",
+        {
+          "show": [
+            "要積的樣子：",
+            "$\\int\\sin^m x\\cos^n x\\,dx$"
+          ],
+          "say": "這一課要積的，是正弦的 m 次方乘餘弦的 n 次方。m 和 n 是不小於 0 的整數。",
           "board": [
-            {"do":"write","line":"$\\int{{mn:\\sin^m x\\cos^n x}}\\,dx$"},
-            {"do":"underline","term":"mn","label":"看奇偶","on":"只看"}
-          ] },
-        { "show": ["$\\sin$ 奇次方：留一個 $\\sin x$ 當 $du$"],
-          "note": "$u=\\cos x$，$du=-\\sin x\\,dx$。",
-          "say": "如果 sine 是奇次方，拿一個 sine x 出來跟 dx 配成 du，令 u 等於 cosine x。",
+            {
+              "do": "write",
+              "line": "要積的樣子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sin^m x\\cos^n x\\,dx$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個關鍵的導數：",
+            "$(\\sin x)'=\\cos x,\\qquad(\\cos x)'=-\\sin x$"
+          ],
+          "say": "關鍵是這兩個導數：正弦微分是餘弦，餘弦微分是負的正弦。它們互相是對方的導數。",
           "board": [
-            {"do":"write","line":"$\\sin$ 奇次方：留一個 ${{s:\\sin x}}$ 當 $du$"},
-            {"do":"underline","term":"s","color":"blue","on":"配成"}
-          ] },
-        { "show": ["剩下偶次方：$\\sin^2 x=1-\\cos^2 x$"],
-          "note": "整個變成 $u=\\cos x$ 的多項式。",
-          "say": "剩下的 sine 是偶次方，用 sine 平方等於一減 cosine 平方，全部換成 cosine。",
+            {
+              "do": "write",
+              "line": "兩個關鍵的導數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (\\sin x)'=\\cos x,\\qquad(\\cos x)'=-\\sin x$",
+              "on": "微分#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：留一個 $\\cos x$，就有 $u=\\sin x$ 的 $du$"
+          ],
+          "say": "意思是：留下一個餘弦 x，它就是 u 等於正弦 x 的 d u，剩下的全部寫成正弦；反過來，留下一個正弦，就令 u 等於餘弦。",
           "board": [
-            {"do":"write","line":"${{a:\\sin^2 x}}=1-{{b:\\cos^2 x}}$"},
-            {"do":"focus","term":"b","color":"blue","on":"全部換成"}
-          ] },
-        { "show": ["為什麼要奇：剩偶次方才不會冒出根號"],
-          "say": "為什麼要奇數？留走一個之後剩偶次方，才能整個寫成平方的幾次方，不會冒出根號。",
+            {
+              "do": "write",
+              "line": "所以：留一個 $\\cos x$，就有 $u=\\sin x$ 的 $du$"
+            },
+            {
+              "do": "write",
+              "line": "留一個 $\\sin x$，就有 $u=\\cos x$ 的 $du$",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其餘的用 $\\sin^2x+\\cos^2x=1$ 換成同一種"
+          ],
+          "say": "剩下的怎麼換成同一種？靠正弦平方加餘弦平方等於 1。不過這只能換平方，所以奇偶就變得很重要。",
           "board": [
-            {"do":"write","line":"剩偶次方 ⇒ 不會冒出根號"}
-          ] },
-        { "show": ["剩奇次方會出根號：","$\\sin x=\\sqrt{1-\\cos^2 x}$"],
-          "note": "奇次方沒辦法整個寫成平方。",
-          "say": "反過來，如果剩下一個 sine x，換成 cosine 就得開根號，sine x 等於根號一減 cosine 平方。",
+            {
+              "do": "write",
+              "line": "其餘的用 $\\sin^2x+\\cos^2x=1$ 換成同一種",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判斷流程",
+            "• $\\sin$ 奇次方：留一個 $\\sin x$，$u=\\cos x$"
+          ],
+          "say": "判斷流程：正弦是奇次方，就留一個正弦，令 u 等於餘弦；餘弦是奇次方，就留一個餘弦，令 u 等於正弦；兩個都是偶次方，換元行不通，改用半角公式降次。",
           "board": [
-            {"do":"write","line":"剩一個 $\\sin x={{r:\\sqrt{1-\\cos^2 x}}}$"},
-            {"do":"underline","term":"r","color":"red","label":"根號","on":"開根號"}
-          ] }
-      ],
-      "key": "留一個當 $du$，剩偶次方才換得掉",
-      "check": 0
-    },
-    {
-      "title": "$\\sin^3 x$",
-      "beats": [
-        { "show": ["$\\sin^3 x=(1-\\cos^2 x)\\sin x$"],
-          "note": "留一個 $\\sin x$。",
-          "say": "sine 三次方，留一個 sine x，剩下的 sine 平方換成一減 cosine 平方。",
-          "board": [
-            {"do":"write","line":"$\\sin^3 x={{r:(1-\\cos^2 x)}}\\,{{k:\\sin x}}$"},
-            {"do":"underline","term":"k","color":"blue","label":"留一個","on":"留一個"},
-            {"do":"focus","term":"r","on":"換成一減"}
-          ] },
-        { "show": ["$du=(\\cos x)'\\,dx=-\\sin x\\,dx$"],
-          "note": "cosine 的導數是負的 sine。",
-          "say": "u 是 cosine x，它的導數是負的 sine，所以 du 等於負 sine x 乘 dx。",
-          "board": [
-            {"do":"write","line":"$du=(\\cos x)'\\,dx={{n1:-\\sin x}}\\,dx$"},
-            {"do":"focus","term":"n1","color":"gold","label":"負號","on":"負的"}
-          ] },
-        { "show": ["$u=\\cos x$：$\\int(1-u^2)(-du)$"],
-          "note": "$\\sin x\\,dx=-du$。",
-          "say": "令 u 等於 cosine x，sine x dx 是負 du，負號要帶著。",
-          "board": [
-            {"do":"write","line":"$u=\\cos x$"},
-            {"do":"write","line":"$\\int(1-u^2)\\,{{m:(-du)}}$","on":"sine x dx"},
-            {"do":"focus","term":"m","label":"帶著","on":"負號"}
-          ] }
+            {
+              "do": "write",
+              "line": "判斷流程"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sin$ 奇次方：留一個 $\\sin x$，$u=\\cos x$",
+              "on": "一個#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\cos$ 奇次方：留一個 $\\cos x$，$u=\\sin x$",
+              "on": "弦是#2"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個都是偶次方：半角公式降次",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "　$0$ 次也算偶次方；兩個都是奇次方，挑哪一個留都可以，通常挑次方小的",
+              "color": "violet",
+              "on": "換元"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "答案是？",
+        "ask": "$\\displaystyle\\int\\sin^4 x\\cos^5 x\\,dx$ 該怎麼開始？",
         "options": [
           {
-            "label": "$-\\cos x+\\frac{\\cos^3 x}{3}+C$",
+            "label": "留一個 $\\cos x$，令 $u=\\sin x$",
             "correct": true
           },
           {
-            "label": "$\\cos x-\\frac{\\cos^3 x}{3}+C$",
-            "why": "漏了 $du=-\\sin x\\,dx$ 的負號，整個差一個負號。"
+            "label": "留一個 $\\sin x$，令 $u=\\cos x$",
+            "why": "剩下 $\\sin^3 x$ 是奇次方，換不成 $\\cos$"
           },
           {
-            "label": "$\\frac{\\sin^4 x}{4}+C$",
-            "why": "要積成 $\\frac{u^4}{4}$，旁邊得有 $du=\\cos x\\,dx$，這裡沒有。"
+            "label": "用半角公式降次",
+            "why": "有奇次方時換元比較快；半角是留給「都是偶次方」的"
           }
         ]
       }
     },
     {
-      "title": "$\\cos$ 是奇次方",
+      "title": "有奇次方：留一個",
       "beats": [
-        { "show": ["$\\int\\sin^2 x\\cos^3 x\\,dx$：留一個 $\\cos x$"],
-          "note": "反過來：$u=\\sin x$。",
-          "say": "cosine 是奇次方就反過來：留一個 cosine x，令 u 等於 sine x。",
+        {
+          "show": [
+            "例一：$\\displaystyle\\int\\sin^3x\\,dx$"
+          ],
+          "say": "第一個例子：正弦 3 次方。正弦是奇次方，餘弦是 0 次方。",
           "board": [
-            {"do":"write","line":"$\\int\\sin^2 x\\cos^3 x\\,dx$"},
-            {"do":"write","line":"留 ${{c:\\cos x}}$，$u=\\sin x$","on":"留一個"}
-          ] },
-        { "show": ["$\\sin^2 x(1-\\sin^2 x)\\cos x$"],
-          "note": "$\\cos^2 x=1-\\sin^2 x$。",
-          "say": "剩下的 cosine 平方換成一減 sine 平方，整個只剩 u 的多項式。",
+            {
+              "do": "write",
+              "line": "例一：$\\displaystyle\\int\\sin^3x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "留一個 $\\sin x$，其餘換成 $\\cos$：",
+            "$\\int\\sin^2x\\cdot\\sin x\\,dx=\\int(1-\\cos^2x)\\sin x\\,dx$"
+          ],
+          "say": "留一個正弦 x 下來。剩下的正弦平方，用 1 減餘弦平方換掉。",
           "board": [
-            {"do":"write","line":"$\\sin^2 x\\,{{r:(1-\\sin^2 x)}}\\cos x$"},
-            {"do":"focus","term":"r","color":"blue","on":"換成一減"}
-          ] },
-        { "show": ["$\\frac{\\sin^3 x}{3}-\\frac{\\sin^5 x}{5}+C$"],
-          "note": "兩個都奇數時，任選一個留。",
-          "say": "u 平方乘一減 u 平方，一項一項積，再換回 sine x。",
+            {
+              "do": "write",
+              "line": "留一個 $\\sin x$，其餘換成 $\\cos$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sin^2x\\cdot\\sin x\\,dx=\\int(1-\\cos^2x)\\sin x\\,dx$",
+              "on": "弦平#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\cos x$，$du=-\\sin x\\,dx$：",
+            "$=-\\int(1-u^2)\\,du=-u+\\frac{u^3}3+C$"
+          ],
+          "say": "令 u 等於餘弦 x，留下的正弦 d x 就是負 d u。積分變成負的 1 減 u 平方，積出來是負 u 加 3 分之 u 立方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int u^2(1-u^2)\\,du$","on":"u 平方乘"},
-            {"do":"write","line":"${{r:\\frac{\\sin^3 x}{3}-\\frac{\\sin^5 x}{5}+C}}$","on":"一項一項"},
-            {"do":"box","term":"r","color":"green","on":"換回"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "令 $u=\\cos x$，$du=-\\sin x\\,dx$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =-\\int(1-u^2)\\,du=-u+\\frac{u^3}3+C$",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　負號從 $du=-\\sin x\\,dx$ 來，最常漏掉",
+              "color": "violet",
+              "on": "積出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\sin^3x\\,dx=-\\cos x+\\frac{\\cos^3x}3+C$"
+          ],
+          "say": "把 u 換回餘弦 x：答案是負餘弦 x，加 3 分之餘弦立方 x，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int\\sin^3x\\,dx=-\\cos x+\\frac{\\cos^3x}3+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：微分回去",
+            "$\\Big(-\\cos x+\\tfrac{\\cos^3x}3\\Big)'=\\sin x-\\cos^2x\\sin x$"
+          ],
+          "say": "微分回去驗算：負餘弦微分是正弦；3 分之餘弦立方微分，用連鎖律，是餘弦平方乘負正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：微分回去"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big(-\\cos x+\\tfrac{\\cos^3x}3\\Big)'=\\sin x-\\cos^2x\\sin x$",
+              "on": "弦立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\sin x(1-\\cos^2x)=\\sin^3x$"
+          ],
+          "say": "提出正弦 x，括號裡 1 減餘弦平方就是正弦平方，合起來正是正弦 3 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\sin x(1-\\cos^2x)=\\sin^3x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼一定要留一個？"
+          ],
+          "say": "為什麼要留剛好一個？因為 d u 只需要一個正弦；剩下的必須是偶次方，才能整個用平方換掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼一定要留一個？"
+            },
+            {
+              "do": "write",
+              "line": "剩下偶次方 $\\sin^{2k}x=(1-\\cos^2x)^k$ 才換得掉",
+              "on": "正弦"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "都是偶次方",
+      "title": "例二：$\\cos$ 是奇次方",
       "beats": [
-        { "show": ["$\\sin^2x=\\frac{1-\\cos 2x}{2}$","$\\cos^2x=\\frac{1+\\cos 2x}{2}$"],
-          "note": "平方換成一次的 $\\cos 2x$，次方減半。",
-          "say": "沒有奇次方可以留，就用半角公式：平方變成一次的 cosine 二 x，次方減半。",
+        {
+          "show": [
+            "$\\int\\sin^2x\\cos^3x\\,dx$"
+          ],
+          "say": "第二個例子：正弦平方乘餘弦 3 次方。這次是餘弦奇次方。",
           "board": [
-            {"do":"write","line":"$\\cos^2 x=\\frac{1+{{h:\\cos 2x}}}{2}$"},
-            {"do":"underline","term":"h","label":"一次","on":"一次的"}
-          ] },
-        { "show": ["$\\cos 2x=\\cos^2 x-\\sin^2 x$","$=2\\cos^2 x-1$"],
-          "note": "用 $\\sin^2 x=1-\\cos^2 x$ 換掉。",
-          "say": "cosine 二 x 是 cosine 平方減 sine 平方，後者換成一減 cosine 平方，得二倍 cosine 平方減一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sin^2x\\cos^3x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "留一個 $\\cos x$，$\\cos^2x=1-\\sin^2x$：",
+            "$=\\int\\sin^2x\\,(1-\\sin^2x)\\cos x\\,dx$"
+          ],
+          "say": "留一個餘弦 x 當 d u，剩下的餘弦平方換成 1 減正弦平方。",
           "board": [
-            {"do":"write","line":"$\\cos 2x=\\cos^2 x-\\sin^2 x$"},
-            {"do":"transform","line":"$\\cos 2x=2\\cos^2 x-1$","on":"換成"}
-          ] },
-        { "show": ["$2\\cos^2 x=1+\\cos 2x$"],
-          "note": "除以 2 就是半角公式。",
-          "say": "把一移過去，兩邊除以二，就得到 cosine 平方等於一加 cosine 二 x 的一半。",
+            {
+              "do": "write",
+              "line": "留一個 $\\cos x$，$\\cos^2x=1-\\sin^2x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int\\sin^2x\\,(1-\\sin^2x)\\cos x\\,dx$",
+              "on": "的餘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\sin x$，$du=\\cos x\\,dx$：",
+            "$=\\int(u^2-u^4)\\,du=\\frac{u^3}3-\\frac{u^5}5+C$"
+          ],
+          "say": "令 u 等於正弦 x，這次 d u 沒有負號。乘開是 u 平方減 u 四次方，積出來 3 分之 u 立方，減 5 分之 u 五次方。",
           "board": [
-            {"do":"write","line":"$2\\cos^2 x=1+\\cos 2x$","on":"移過去"},
-            {"do":"transform","line":"$\\cos^2 x=\\frac{1+\\cos 2x}{2}$","on":"除以二"}
-          ] },
-        { "show": ["$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"],
-          "note": "降完還有平方，就再做一次。",
-          "say": "sine 乘 cosine 也可以寫成二分之 sine 二 x。降完如果還有平方，就再降一次。",
+            {
+              "do": "write",
+              "line": "令 $u=\\sin x$，$du=\\cos x\\,dx$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int(u^2-u^4)\\,du=\\frac{u^3}3-\\frac{u^5}5+C$",
+              "on": "四次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\sin^2x\\cos^3x\\,dx=\\frac{\\sin^3x}3-\\frac{\\sin^5x}5+C$"
+          ],
+          "say": "換回正弦 x，就是答案。整個過程就是：留一個、換同一種、換元。",
           "board": [
-            {"do":"write","line":"$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"},
-            {"do":"write","line":"還有平方 ⇒ 再降一次","on":"降完如果"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int\\sin^2x\\cos^3x\\,dx=\\frac{\\sin^3x}3-\\frac{\\sin^5x}5+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "程就"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "都是偶次方：降次",
+      "beats": [
+        {
+          "show": [
+            "兩個都偶次方：留一個就剩奇次方，換不掉"
+          ],
+          "say": "如果兩個都是偶次方，留一個下來，剩下的就變成奇次方，平方關係換不掉。這時候改用半角公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個都偶次方：留一個就剩奇次方，換不掉",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半角公式（倍角公式倒過來）：",
+            "$\\sin^2x=\\frac{1-\\cos2x}2,\\qquad\\cos^2x=\\frac{1+\\cos2x}2$"
+          ],
+          "say": "半角公式：正弦平方等於 2 分之 1 減餘弦 2x；餘弦平方等於 2 分之 1 加餘弦 2x。它把平方降成一次方，代價是角度變兩倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半角公式（倍角公式倒過來）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sin^2x=\\frac{1-\\cos2x}2,\\qquad\\cos^2x=\\frac{1+\\cos2x}2}}$",
+              "on": "減餘"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　由 $\\cos2x=1-2\\sin^2x=2\\cos^2x-1$ 解出來",
+              "color": "violet",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\sin^2x\\,dx=\\int\\frac{1-\\cos2x}2\\,dx$",
+            "$=\\frac x2-\\frac{\\sin2x}4+C$"
+          ],
+          "say": "最簡單的例子：正弦平方。換成 2 分之 1 減餘弦 2x，積出來是 2 分之 x，減 4 分之正弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\sin^2x\\,dx=\\int\\frac{1-\\cos2x}2\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\frac x2-\\frac{\\sin2x}4+C}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "2x#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int\\cos2x\\,dx=\\frac{\\sin2x}2$，再乘前面的 $\\frac12$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同理：",
+            "$\\int\\cos^2x\\,dx=\\frac x2+\\frac{\\sin2x}4+C$"
+          ],
+          "say": "餘弦平方一樣做，只差一個正負號：2 分之 x 加 4 分之正弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\cos^2x\\,dx=\\frac x2+\\frac{\\sin2x}4+C$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "sin² x 就是一條在 1/2 上下振盪的餘弦波"
+          ],
+          "say": "圖上看：正弦平方其實就是一條餘弦波，週期變成派，在 2 分之 1 上下振盪。平均值是 2 分之 1，所以積分的主要部分是 2 分之 x。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "half",
+                  "window": [
+                    0,
+                    6.3,
+                    -0.2,
+                    1.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)^2",
+                      "color": "blue",
+                      "label": "sin² x"
+                    },
+                    {
+                      "expr": "(1-cos(2*x))/2",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 0.5,
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "sin² x 就是一條在 1/2 上下振盪的餘弦波",
+              "color": "violet",
+              "on": "下振"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "降兩次：$\\int\\cos^4x\\,dx$",
+      "beats": [
+        {
+          "show": [
+            "$\\cos^4x=\\Big(\\frac{1+\\cos2x}2\\Big)^2=\\frac14\\big(1+2\\cos2x+\\cos^22x\\big)$"
+          ],
+          "say": "餘弦 4 次方，是餘弦平方的平方。先用一次半角，再平方展開：4 分之 1，乘上 1 加 2 倍餘弦 2x 加餘弦平方 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos^4x=\\Big(\\frac{1+\\cos2x}2\\Big)^2=\\frac14\\big(1+2\\cos2x+\\cos^22x\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "還有 $\\cos^22x$：再降一次",
+            "$\\cos^22x=\\frac{1+\\cos4x}2$"
+          ],
+          "say": "展開以後又冒出一個餘弦平方 2x，還是偶次方，再用一次半角：2 分之 1 加餘弦 4x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "還有 $\\cos^22x$：再降一次"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos^22x=\\frac{1+\\cos4x}2$",
+              "on": "2x"
+            },
+            {
+              "do": "write",
+              "line": "　角度從 $2x$ 變 $4x$",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合併：",
+            "$\\cos^4x=\\frac38+\\frac12\\cos2x+\\frac18\\cos4x$"
+          ],
+          "say": "常數是 4 分之 1 加 8 分之 1，等於 8 分之 3。所以餘弦 4 次方等於 8 分之 3，加 2 分之 1 餘弦 2x，加 8 分之 1 餘弦 4x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "合併："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos^4x=\\frac38+\\frac12\\cos2x+\\frac18\\cos4x$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項積分：",
+            "$\\int\\cos^4x\\,dx=\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}+C$"
+          ],
+          "say": "現在每一項都是一次方，直接積：8 分之 3x，加 4 分之正弦 2x，加 32 分之正弦 4x，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項積分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\cos^4x\\,dx=\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}+C}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int\\frac18\\cos4x\\,dx=\\frac18\\cdot\\frac{\\sin4x}4$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "算 $\\displaystyle\\int\\cos^4x\\,dx$ 的步驟",
+        "steps": [
+          {
+            "label": "寫成 $(\\cos^2x)^2$，用半角換成 $\\big(\\frac{1+\\cos2x}2\\big)^2$"
+          },
+          {
+            "label": "平方展開",
+            "why": "先要有上一步：寫成 $(\\cos^2x)^2$，用半角換成 $\\big(\\frac{1+\\cos2x}2\\big)^2$"
+          },
+          {
+            "label": "對 $\\cos^22x$ 再用一次半角",
+            "why": "先要有上一步：平方展開"
+          },
+          {
+            "label": "合併成 $\\frac38+\\frac12\\cos2x+\\frac18\\cos4x$，逐項積分",
+            "why": "先要有上一步：對 $\\cos^22x$ 再用一次半角"
+          }
+        ]
+      }
+    },
+    {
+      "title": "一個常用的定積分",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin^2x\\,dx\\quad\\text{與}\\quad\\int_0^{\\pi/2}\\cos^2x\\,dx$"
+          ],
+          "say": "最後一個很常用的結果：正弦平方和餘弦平方，從 0 積到 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin^2x\\,dx\\quad\\text{與}\\quad\\int_0^{\\pi/2}\\cos^2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\frac\\pi2-x$：$\\sin x=\\cos u$，區間 $0\\leftrightarrow\\frac\\pi2$ 對調",
+            "$\\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2u\\,du$"
+          ],
+          "say": "令 u 等於 2 分之派減 x。正弦 x 變成餘弦 u，上下限對調，再被 d u 等於負 d x 的負號翻回來。所以兩個積分相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $u=\\frac\\pi2-x$：$\\sin x=\\cos u$，區間 $0\\leftrightarrow\\frac\\pi2$ 對調"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2u\\,du$",
+              "on": "變成"
+            },
+            {
+              "do": "write",
+              "line": "　圖形上：$\\cos^2$ 是 $\\sin^2$ 對 $x=\\frac\\pi4$ 的鏡射",
+              "color": "violet",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個相加是 $\\int_0^{\\pi/2}1\\,dx=\\frac\\pi2$，所以各是一半：",
+            "$\\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2x\\,dx=\\frac\\pi4$"
+          ],
+          "say": "兩個加起來，被積函數是正弦平方加餘弦平方，等於 1，積分是 2 分之派。兩個又相等，所以各是 4 分之派。完全不用算反導函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個相加是 $\\int_0^{\\pi/2}1\\,dx=\\frac\\pi2$，所以各是一半："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^{\\pi/2}\\sin^2x\\,dx=\\int_0^{\\pi/2}\\cos^2x\\,dx=\\frac\\pi4}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩塊面積互為鏡射，合起來是 π/2"
+          ],
+          "say": "圖上，藍色和紅色對 4 分之派左右對稱，面積一樣大，合起來是一個 1 乘 2 分之派的長方形。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sym",
+                  "window": [
+                    0,
+                    1.5708,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)^2",
+                      "color": "blue",
+                      "label": "sin² x"
+                    },
+                    {
+                      "expr": "cos(x)^2",
+                      "color": "red",
+                      "label": "cos² x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)^2",
+                      "from": 0,
+                      "to": "pi/2",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/4",
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩塊面積互為鏡射，合起來是 π/2",
+              "color": "violet",
+              "on": "樣大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 ③ 的反導函數對一下：$\\Big[\\frac x2-\\frac{\\sin2x}4\\Big]_0^{\\pi/2}=\\frac\\pi4$"
+          ],
+          "say": "用剛剛的反導函數驗算：代 2 分之派，正弦派是 0，剩 4 分之派。對得起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 ③ 的反導函數對一下：$\\Big[\\frac x2-\\frac{\\sin2x}4\\Big]_0^{\\pi/2}=\\frac\\pi4$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi}\\cos^2x\\,dx=$？"
+          ],
+          "say": "試一題：餘弦平方從 0 積到派。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "$\\cos^4 x$：降兩次",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\cos^4 x=\\left(\\frac{1+\\cos 2x}{2}\\right)^2$"],
-          "note": "$=\\frac{1+2\\cos 2x+\\cos^2 2x}{4}$。",
-          "say": "cosine 四次方，先把 cosine 平方換掉，平方展開。",
+        {
+          "show": [
+            "同一個代換 $u=\\frac\\pi2-x$ 對任何次方都成立：",
+            "$\\int_0^{\\pi/2}\\sin^n x\\,dx=\\int_0^{\\pi/2}\\cos^n x\\,dx$"
+          ],
+          "say": "同一個代換，對任何次方都成立：0 到 2 分之派，正弦 n 次方和餘弦 n 次方的積分永遠相等。",
           "board": [
-            {"do":"write","line":"$\\cos^4 x=\\left(\\frac{1+\\cos 2x}{2}\\right)^2$"},
-            {"do":"transform","line":"$\\cos^4 x=\\frac{1+2\\cos 2x+{{sq:\\cos^2 2x}}}{4}$","on":"平方展開"}
-          ] },
-        { "show": ["$\\cos^2 2x=\\frac{1+\\cos 4x}{2}$"],
-          "note": "還有平方，再降一次。",
-          "say": "裡面還有 cosine 二 x 的平方，再用一次半角，變成 cosine 四 x。",
+            {
+              "do": "write",
+              "line": "同一個代換 $u=\\frac\\pi2-x$ 對任何次方都成立："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^{\\pi/2}\\sin^n x\\,dx=\\int_0^{\\pi/2}\\cos^n x\\,dx}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "和餘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$n=4$，用 ③ 的結果：",
+            "$\\Big[\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}\\Big]_0^{\\pi/2}=\\frac{3\\pi}{16}$"
+          ],
+          "say": "例如 4 次方：代入剛剛的反導函數，正弦派和正弦 2 派都是 0，只剩 8 分之 3 乘 2 分之派，16 分之 3 派。正弦 4 次方的積分也是 16 分之 3 派。",
           "board": [
-            {"do":"focus","term":"sq","on":"還有"},
-            {"do":"write","line":"${{sq:\\cos^2 2x}}=\\frac{1+{{c4:\\cos 4x}}}{2}$","tint":{"c4":"blue"},"on":"再用一次半角"}
-          ] },
-        { "show": ["$=\\frac{3}{8}+\\frac{1}{2}\\cos 2x+\\frac{1}{8}\\cos 4x$"],
-          "say": "整理好，全部都是一次的，可以一項一項積了。",
-          "board": [
-            {"do":"write","line":"$\\cos^4 x=\\frac{3}{8}+\\frac{1}{2}\\cos 2x+\\frac{1}{8}{{c4:\\cos 4x}}$","on":"整理好"},
-            {"do":"underline","term":"c4","label":"一次","on":"全部都是一次"}
-          ] }
-      ],
-      "key": "降完還有平方，就再降一次",
-      "predict": {
-        "ask": "逐項積分是？",
-        "options": [
-          {
-            "label": "$\\frac{3x}{8}+\\frac{1}{4}\\sin 2x+\\frac{1}{32}\\sin 4x+C$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{3x}{8}+\\frac{1}{2}\\sin 2x+\\frac{1}{8}\\sin 4x+C$",
-            "why": "$\\int\\cos 2x\\,dx=\\frac{1}{2}\\sin 2x$：裡面的 $2$、$4$ 要除掉。"
-          },
-          {
-            "label": "$\\frac{3}{8}+\\frac{1}{4}\\sin 2x+\\frac{1}{32}\\sin 4x+C$",
-            "why": "常數 $\\frac{3}{8}$ 的積分是 $\\frac{3x}{8}$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "例：$n=4$，用 ③ 的結果："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big[\\frac{3x}8+\\frac{\\sin2x}4+\\frac{\\sin4x}{32}\\Big]_0^{\\pi/2}=\\frac{3\\pi}{16}$",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "常用的定積分",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$[0,\\frac{\\pi}{2}]$ 上 $\\sin^2 x$、$\\cos^2 x$ 一樣大"],
-          "note": "$x$ 換成 $\\frac{\\pi}{2}-x$ 就互換。",
-          "say": "在零到二分之 pi 上，sine 平方和 cosine 平方的圖左右對稱，兩個積分一樣大。",
+        {
+          "show": [
+            "• 有奇次方：留一個當 $du$，其餘用 $\\sin^2+\\cos^2=1$ 換成另一種",
+            "• $u=\\cos x$ 時 $du=-\\sin x\\,dx$：別漏負號"
+          ],
+          "say": "整理一下：先看奇偶。有奇次方就留一個當 d u，小心負號；都是偶次方就用半角降次；0 到 2 分之派的正弦平方和餘弦平方，都是 4 分之派。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}{{s:\\sin^2 x}}\\,dx=\\int_0^{\\pi/2}{{c:\\cos^2 x}}\\,dx$"},
-            {"do":"focus","term":"s","color":"blue","on":"sine 平方和"},
-            {"do":"focus","term":"c","color":"violet","on":"cosine 平方的"},
-            {"do":"write","line":"$x\\to\\frac{\\pi}{2}-x$：互換","on":"左右對稱"}
-          ] },
-        { "show": ["$\\sin(\\frac{\\pi}{2}-x)=\\cos x$"],
-          "note": "代 $x=0$ 檢查。",
-          "say": "x 換成二分之 pi 減 x，sine 就變 cosine。代 x 等於零：sine 二分之 pi 是一，cosine 零也是一。",
+            {
+              "do": "write",
+              "line": "• 有奇次方：留一個當 $du$，其餘用 $\\sin^2+\\cos^2=1$ 換成另一種"
+            },
+            {
+              "do": "write",
+              "line": "• $u=\\cos x$ 時 $du=-\\sin x\\,dx$：別漏負號",
+              "on": "就留"
+            },
+            {
+              "do": "write",
+              "line": "• 都是偶次方：半角 $\\sin^2=\\frac{1-\\cos2x}2$、$\\cos^2=\\frac{1+\\cos2x}2$",
+              "on": "都是#1"
+            },
+            {
+              "do": "write",
+              "line": "• 偶次方高：一次降不完就再降一次",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^{\\pi/2}\\sin^2=\\int_0^{\\pi/2}\\cos^2=\\frac\\pi4$：靠對稱",
+              "on": "餘弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：$\\tan^m x\\sec^n x$"
+          ],
+          "say": "下一課，同樣的想法換到正切和正割。",
           "board": [
-            {"do":"write","line":"$\\sin(\\frac{\\pi}{2}-x)=\\cos x$"},
-            {"do":"write","line":"$x=0$：$\\sin\\frac{\\pi}{2}=1=\\cos 0$","on":"代 x 等於零"}
-          ] },
-        { "show": ["兩條曲線關於 $x=\\frac{\\pi}{4}$ 對稱"],
-          "say": "看圖：藍色是 sine 平方，紅色是 cosine 平方，在四分之 pi 交會，左右剛好對稱。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,1.6,-0.2,1.2],"curves":[{"expr":"sin(x)^2","domain":[0,1.5708],"color":"blue"},{"expr":"cos(x)^2","domain":[0,1.5708],"color":"red"}],"dashed":[[[0.7854,0],[0.7854,1]]]}}
-          ] },
-        { "show": ["加起來：$\\int_0^{\\pi/2}1\\,dx=\\frac{\\pi}{2}$"],
-          "say": "兩個加起來是一，積分就是區間長度二分之 pi。",
-          "board": [
-            {"do":"write","line":"$\\sin^2 x+\\cos^2 x=1$"},
-            {"do":"write","line":"$\\int_0^{\\pi/2}1\\,dx={{r:\\frac{\\pi}{2}}}$","on":"積分就是"},
-            {"do":"box","term":"r","color":"green","on":"區間長度"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：$\\tan^m x\\sec^n x$"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["trig-power", "trig-integral", "half-angle", "substitution"],
-    "fine": ["trig-odd-power-peel", "trig-even-half-angle", "trig-pythagorean-convert", "trig-sincos-definite"]
+    "coarse": [
+      "trig-power",
+      "trig-integral",
+      "half-angle",
+      "substitution"
+    ],
+    "fine": [
+      "trig-odd-power-peel",
+      "trig-even-half-angle",
+      "trig-pythagorean-convert",
+      "trig-sincos-definite"
+    ]
   },
   "practice": [
-    { "id": "lec-07-q3a", "core": true, "trains": "trig-odd-power-peel" },
-    { "id": "uni-int-016", "core": true, "trains": "trig-odd-power-peel" },
-    { "id": "world-005", "core": true, "trains": "trig-pythagorean-convert" },
-    { "id": "lec-07-m4", "core": true, "trains": "trig-even-half-angle" },
-    { "id": "int-012", "core": true, "trains": "trig-sincos-definite" },
-    { "id": "mob-wallis-007", "core": true, "trains": "trig-even-half-angle", "note": "$\\sin x\\cos x=\\frac{\\sin 2x}{2}$，先平方再降次。" },
-    { "id": "depth-int-021", "core": true, "trains": "trig-even-half-angle" },
-    { "id": "hc-rad-007", "trains": "trig-odd-power-peel" },
-    { "id": "burst-int-018", "trains": "trig-odd-power-peel" },
-    { "id": "lec-07-q3d", "trains": "trig-even-half-angle" },
-    { "id": "mob-wallis-006", "trains": "trig-even-half-angle" },
-    { "id": "burst-int-031", "trains": "trig-even-half-angle", "note": "先令 $u=2x$，再降次。" },
-    { "id": "cg-4f-001", "trains": "trig-odd-power-peel" },
-    { "id": "cg-4f-002", "trains": "trig-odd-power-peel" },
-    { "id": "rel-hard-int-007", "challenge": true, "trains": "trig-even-half-angle", "note": "挑戰：$\\sin^4 x\\cos^2 x$，兩個都偶次方，要降好幾次。" }
+    {
+      "id": "lec-07-q3a",
+      "core": true,
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "uni-int-016",
+      "core": true,
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "world-005",
+      "core": true,
+      "trains": "trig-pythagorean-convert"
+    },
+    {
+      "id": "lec-07-m4",
+      "core": true,
+      "trains": "trig-even-half-angle"
+    },
+    {
+      "id": "int-012",
+      "core": true,
+      "trains": "trig-sincos-definite"
+    },
+    {
+      "id": "mob-wallis-007",
+      "core": true,
+      "trains": "trig-even-half-angle",
+      "note": "$\\sin x\\cos x=\\frac{\\sin 2x}{2}$，先平方再降次。"
+    },
+    {
+      "id": "depth-int-021",
+      "core": true,
+      "trains": "trig-even-half-angle"
+    },
+    {
+      "id": "hc-rad-007",
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "burst-int-018",
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "lec-07-q3d",
+      "trains": "trig-even-half-angle"
+    },
+    {
+      "id": "mob-wallis-006",
+      "trains": "trig-even-half-angle"
+    },
+    {
+      "id": "burst-int-031",
+      "trains": "trig-even-half-angle",
+      "note": "先令 $u=2x$，再降次。"
+    },
+    {
+      "id": "cg-4f-001",
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "cg-4f-002",
+      "trains": "trig-odd-power-peel"
+    },
+    {
+      "id": "rel-hard-int-007",
+      "challenge": true,
+      "trains": "trig-even-half-angle",
+      "note": "挑戰：$\\sin^4 x\\cos^2 x$，兩個都偶次方，要降好幾次。"
+    }
   ],
   "gaps": []
 }

@@ -1,0 +1,363 @@
+{
+  "id": "polar-double-integral",
+  "title": "極座標二重積分",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["polar-coordinates", "polar-area", "nonrectangular-regions"],
+  "next": ["jacobian-geometry"],
+  "related": ["gaussian-integral", "change-of-variables"],
+  "objectives": [
+    "說得出 $dA=r\\,dr\\,d\\theta$ 裡那個 $r$ 從哪裡來：外圈的小塊比內圈大。",
+    "把圓盤、圓環、扇形寫成 $r$、$\\theta$ 的範圍，並把被積函數換成 $r$、$\\theta$。",
+    "看到 $x^2+y^2$ 或圓形邊界時，想到改用極座標。"
+  ],
+  "visual": "極座標格線：同心圓加放射線。一塊「極座標矩形」被塗色，標出它的寬 Δr 與弧長 rΔθ。把這塊沿著放射線往外拖，Δr、Δθ 不變，但弧長與面積讀數跟著 r 成比例變大；拖回靠近原點時，小塊縮成細細的楔形。",
+  "concept": [
+    {
+      "heading": "① 圓形區域在直角座標裡很難寫",
+      "body": [
+        "單位圓盤用直角座標寫是 $\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}\\dots\\,dy\\,dx$，上下限帶根號，被積函數若也有 $x^2+y^2$，就更難積。",
+        "用〈極座標〉描述，同一塊圓盤只是 $0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$，像一個矩形。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 小塊的面積：為什麼多一個 $r$",
+      "body": [
+        "用同心圓與放射線把區域切開，每一小塊是「極座標矩形」：徑向寬 $\\Delta r$，角度張開 $\\Delta\\theta$。",
+        "它近似一個長方形：一邊是 $\\Delta r$，另一邊是半徑 $r$ 的圓上、角度 $\\Delta\\theta$ 對應的弧長 $r\\Delta\\theta$。所以面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$。",
+        "直觀上：同樣的 $\\Delta\\theta$，離原點越遠，張出來的弧越長，小塊越大。這個 $r$ 就是放大倍率。",
+        "以上是直觀，不是證明：小塊的兩條邊其實是彎的圓弧，「近似長方形」需要交代誤差。下面可展開的段落說明，取中間半徑時這個面積其實完全精確。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 公式",
+      "body": [
+        "$x=r\\cos\\theta$、$y=r\\sin\\theta$，$x^2+y^2=r^2$，$dA=r\\,dr\\,d\\theta$。區域寫成 $\\alpha\\le\\theta\\le\\beta$、$r_1(\\theta)\\le r\\le r_2(\\theta)$："
+      ],
+      "tex": ["\\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f(r\\cos\\theta,\\,r\\sin\\theta)\\,r\\,dr\\,d\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三步驟",
+      "body": [
+        "1. 畫區域，寫出 $\\theta$ 的範圍（外層，常數）與 $r$ 的範圍（內層，可以隨 $\\theta$ 變）。",
+        "2. 被積函數換掉：$x\\to r\\cos\\theta$、$y\\to r\\sin\\theta$、$x^2+y^2\\to r^2$。",
+        "3. 補上 $dA=r\\,dr\\,d\\theta$ 的 $r$，再積分。",
+        "$f=1$ 時，$\\iint r\\,dr\\,d\\theta=\\frac{1}{2}\\int r_2(\\theta)^2\\,d\\theta$（$r_1=0$ 時），就是〈極座標面積〉的公式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ $r\\,\\Delta r\\,\\Delta\\theta$ 其實是精確的（給想知道的人）",
+      "body": [
+        "極座標矩形 $r_1\\le r\\le r_2$、$\\theta_0\\le\\theta\\le\\theta_0+\\Delta\\theta$ 的面積是兩個扇形相減：$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta=\\frac{1}{2}(r_2+r_1)(r_2-r_1)\\Delta\\theta=\\bar r\\,\\Delta r\\,\\Delta\\theta$，其中 $\\bar r$ 是 $r_1$、$r_2$ 的平均。",
+        "所以取每一塊的中間半徑，Riemann 和裡的面積完全沒有誤差；剩下的只是 $f$ 取樣的誤差，切細就消失。下一課〈Jacobian 的幾何意義〉會把這個 $r$ 推廣到任意的座標變換。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "上半圓環",
+      "prompt": "$\\iint_D(3x+4y^2)\\,dA$，$D$ 是上半平面中 $1\\le x^2+y^2\\le 4$ 的部分。",
+      "steps": [
+        "範圍：$1\\le r\\le 2$、$0\\le\\theta\\le\\pi$（上半平面）。",
+        "被積函數：$3r\\cos\\theta+4r^2\\sin^2\\theta$。乘上 $dA$ 的 $r$：$(3r^2\\cos\\theta+4r^3\\sin^2\\theta)\\,dr\\,d\\theta$。",
+        "內層對 $r$：$\\left[r^3\\cos\\theta+r^4\\sin^2\\theta\\right]_1^2=7\\cos\\theta+15\\sin^2\\theta$。",
+        "外層：$\\int_0^\\pi 7\\cos\\theta\\,d\\theta=0$；$\\int_0^\\pi 15\\sin^2\\theta\\,d\\theta=15\\cdot\\frac{\\pi}{2}$。合計 $\\frac{15\\pi}{2}$。"
+      ],
+      "answer": "$\\frac{15\\pi}{2}$",
+      "claim": "INT(INT((3*r*cos(t)+4*r^2*sin(t)^2)*r,1,2,r),0,pi,t) == 15*pi/2"
+    },
+    {
+      "title": "拋物面下的體積",
+      "prompt": "$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體體積。",
+      "steps": [
+        "$z\\ge 0$ 的部分是 $x^2+y^2\\le 1$，也就是單位圓盤：$0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$。",
+        "高度 $1-r^2$，體積 $=\\int_0^{2\\pi}\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$。",
+        "內層 $\\int_0^1(r-r^3)\\,dr=\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$。外層乘 $2\\pi$，得 $\\frac{\\pi}{2}$。"
+      ],
+      "answer": "$\\frac{\\pi}{2}$",
+      "claim": "INT(INT((1-r^2)*r,0,1,r),0,2*pi,t) == pi/2"
+    },
+    {
+      "title": "多出來的 $r$ 讓積分變得可做",
+      "prompt": "$\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤。",
+      "steps": [
+        "直角座標下 $e^{-x^2}$ 沒有初等反導函數，做不動。",
+        "極座標：$\\int_0^{2\\pi}\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$。",
+        "內層令 $u=r^2$，$du=2r\\,dr$：$\\int_0^1 e^{-r^2}\\,r\\,dr=\\frac{1}{2}(1-e^{-1})$。",
+        "外層乘 $2\\pi$：$\\pi\\left(1-\\frac{1}{e}\\right)$。"
+      ],
+      "answer": "$\\pi\\left(1-\\frac{1}{e}\\right)$",
+      "claim": "INT(INT(e^(-r^2)*r,0,1,r),0,2*pi,t) == pi*(1-1/e)",
+      "note": "把半徑 $1$ 換成 $R$、讓 $R\\to\\infty$，得到 $\\pi$。這就是〈Gaussian 積分〉$\\int e^{-x^2}\\,dx=\\sqrt\\pi$ 的出發點。"
+    }
+  ],
+  "pitfalls": [
+    "漏掉 $dA$ 的 $r$：這是本課最常見的錯。",
+    "$x^2+y^2\\le 9$ 寫成 $0\\le r\\le 9$；應該是 $r\\le 3$。",
+    "上半平面寫成 $0\\le\\theta\\le 2\\pi$；$\\theta$ 的範圍要對照圖形。",
+    "被積函數只換了一半，留著 $x$ 或 $y$。"
+  ],
+  "checks": [
+    {
+      "ask": "極座標下 $dA$ 等於？",
+      "options": [
+        { "label": "$r\\,dr\\,d\\theta$", "correct": true },
+        { "label": "$dr\\,d\\theta$", "why": "漏了 $r$。同樣的 $\\Delta\\theta$，外圈的弧長 $r\\Delta\\theta$ 比內圈長，小塊面積跟 $r$ 成正比。" },
+        { "label": "$r^2\\,dr\\,d\\theta$", "why": "$r^2$ 常常來自被積函數 $x^2+y^2$，不是 $dA$ 本身。$dA$ 只有一個 $r$。" }
+      ]
+    },
+    {
+      "ask": "第一象限、$x^2+y^2\\le 9$ 的四分之一圓盤，$r$ 與 $\\theta$ 的範圍是？",
+      "options": [
+        { "label": "$0\\le r\\le 3$、$0\\le\\theta\\le\\frac{\\pi}{2}$", "correct": true },
+        { "label": "$0\\le r\\le 9$、$0\\le\\theta\\le\\frac{\\pi}{2}$", "why": "$x^2+y^2\\le 9$ 是 $r^2\\le 9$，半徑是 $3$。" },
+        { "label": "$0\\le r\\le 3$、$0\\le\\theta\\le 2\\pi$", "why": "那是整個圓盤。第一象限只有 $\\theta$ 從 $0$ 到 $\\frac{\\pi}{2}$。" }
+      ]
+    },
+    {
+      "ask": "用極座標算 $\\iint_{x^2+y^2\\le1}1\\,dA$，結果是？",
+      "options": [
+        { "label": "$\\pi$", "correct": true },
+        { "label": "$2\\pi$", "why": "漏了 $r$：$\\int_0^1 dr=1$，乘 $2\\pi$ 得 $2\\pi$。正確是 $\\int_0^1 r\\,dr=\\frac{1}{2}$。" },
+        { "label": "$\\frac{1}{2}$", "why": "內層 $\\frac{1}{2}$ 之後還要乘外層 $\\int_0^{2\\pi}d\\theta=2\\pi$。" }
+      ]
+    },
+    {
+      "ask": "$\\iint_{x^2+y^2\\le4}(x^2+y^2)\\,dA$ 是？",
+      "options": [
+        { "label": "$8\\pi$", "correct": true },
+        { "label": "$\\frac{16\\pi}{3}$", "why": "漏了 $dA$ 的 $r$，只積了 $r^2$：$\\int_0^2 r^2\\,dr=\\frac{8}{3}$。被積函數 $r^2$ 再乘 $r$ 是 $r^3$，$\\int_0^2 r^3\\,dr=4$。" },
+        { "label": "$4\\pi$", "why": "那是 $\\iint x^2\\,dA$，只有 $x^2+y^2$ 的一半（$x^2$ 與 $y^2$ 對稱，各佔一半）。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "圓形區域換座標",
+      "beats": [
+        { "show": ["$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}\\dots\\,dy\\,dx$"],
+          "note": "單位圓盤用直角座標寫。",
+          "say": "單位圓盤用直角座標寫，上下限都帶根號；被積函數要是也有 x 平方加 y 平方，就更難積。",
+          "board": [
+            {"do":"write","line":"$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{{{t:\\sqrt{1-x^2}}}}\\,dy\\,dx$"},
+            {"do":"focus","term":"t","label":"帶根號","on":"根號"}
+          ] },
+        { "show": ["$0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$"],
+          "note": "在極座標裡像一個矩形。",
+          "say": "換成極座標，同一塊圓盤只是 r 從零到一、theta 繞一圈，像一個矩形。",
+          "board": [
+            {"do":"write","line":"${{a:0\\le r\\le 1}}$、${{b:0\\le\\theta\\le 2\\pi}}$"},
+            {"do":"underline","term":"a","on":"r 從零"},
+            {"do":"underline","term":"b","label":"繞一圈","on":"theta 繞"}
+          ] },
+        { "show": ["$x=r\\cos\\theta$，$y=r\\sin\\theta$，$x^2+y^2=r^2$"],
+          "say": "換的規則：x 是 r cosine theta，y 是 r sine theta，x 平方加 y 平方就是 r 平方。",
+          "board": [
+            {"do":"write","line":"$x=r\\cos\\theta$，$y=r\\sin\\theta$"},
+            {"do":"write","line":"$x^2+y^2={{q:r^2}}$","on":"x 平方加"},
+            {"do":"box","term":"q","on":"就是"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "為什麼多一個 $r$",
+      "beats": [
+        { "show": ["極座標矩形：徑向寬 $\\Delta r$，張開 $\\Delta\\theta$"],
+          "say": "用同心圓和放射線把區域切開，每一小塊叫極座標矩形。",
+          "board": [
+            {"do":"write","line":"極座標矩形：寬 $\\Delta r$、張開 $\\Delta\\theta$"}
+          ] },
+        { "show": ["一邊 $\\Delta r$，一邊弧長 $r\\Delta\\theta$"],
+          "note": "面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$。",
+          "say": "它差不多是一個長方形：一邊是 delta r，另一邊是半徑 r 的圓上的一段弧，長 r 乘 delta theta。",
+          "board": [
+            {"do":"write","line":"邊長：$\\Delta r$ 與弧長 ${{arc:r\\Delta\\theta}}$"},
+            {"do":"underline","term":"arc","label":"弧長","on":"一段弧"},
+            {"do":"write","line":"面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$","on":"長 r 乘"}
+          ] },
+        { "show": ["$dA=r\\,dr\\,d\\theta$"],
+          "note": "離原點越遠，同樣的 $\\Delta\\theta$ 張出越大的塊。",
+          "say": "同樣的角度，離原點越遠，弧越長、小塊越大。這個 r 就是放大倍率。這其實是精確的，看全文。",
+          "board": [
+            {"do":"write","line":"$dA={{r:r}}\\,dr\\,d\\theta$","on":"小塊越大"},
+            {"do":"focus","term":"r","label":"放大倍率","on":"這個 r"}
+          ] },
+        { "show": ["大扇形減小扇形：$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta$"],
+          "say": "直接算：大扇形減小扇形，面積是二分之一乘外圈半徑平方減內圈半徑平方，再乘 delta theta。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta$"}
+          ] },
+        { "show": ["$=\\frac{1}{2}(r_2+r_1)(r_2-r_1)\\Delta\\theta=\\bar r\\,\\Delta r\\,\\Delta\\theta$"],
+          "note": "取中間半徑 $\\bar r$，面積完全沒有誤差。",
+          "say": "平方差拆開，r 二加 r 一的一半是平均半徑，r 二減 r 一是 delta r。所以取中間半徑，面積完全精確。",
+          "board": [
+            {"do":"write","line":"$=\\frac{1}{2}{{s:(r_2+r_1)}}(r_2-r_1)\\Delta\\theta$"},
+            {"do":"underline","term":"s","label":"平均半徑","on":"平均半徑"},
+            {"do":"write","line":"$=\\bar r\\,\\Delta r\\,\\Delta\\theta$","on":"所以取"}
+          ] }
+      ],
+      "key": "小塊另一邊是弧長 $r\\Delta\\theta$",
+      "check": 0
+    },
+    {
+      "title": "公式與三步",
+      "beats": [
+        { "show": ["$\\iint_D f\\,dA$","$=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f\\,r\\,dr\\,d\\theta$"],
+          "say": "公式：外層是 theta，從 alpha 到 beta；內層是 r，可以隨 theta 變。",
+          "board": [
+            {"do":"write","line":"$\\iint_D f\\,dA$"},
+            {"do":"write","line":"$=\\,{{o:\\int_\\alpha^\\beta}}\\!{{n:\\int_{r_1(\\theta)}^{r_2(\\theta)}}} f\\,r\\,dr\\,d\\theta$","on":"外層是"},
+            {"do":"underline","term":"o","label":"外層","on":"從 alpha"},
+            {"do":"underline","term":"n","label":"內層","on":"內層是"}
+          ] },
+        { "show": ["① 畫區域，寫 $\\theta$、$r$ 的範圍"],
+          "note": "例：$x^2+y^2\\le 9$ 是 $r\\le 3$，不是 $r\\le 9$。",
+          "say": "第一步畫區域。小心，x 平方加 y 平方小於等於九，是 r 小於等於三。",
+          "board": [
+            {"do":"write","line":"① 區域：$\\theta$、$r$ 的範圍"},
+            {"do":"write","line":"$x^2+y^2\\le 9\\Rightarrow {{r:r\\le 3}}$","on":"x 平方加"},
+            {"do":"circle","term":"r","on":"是 r"}
+          ] },
+        { "show": ["② 被積函數換掉  ③ 補上 $r$"],
+          "say": "第二步把 x、y 全部換掉，一個都不留。第三步，補上那個 r，這是最常漏掉的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"② 把 $x$、$y$ 全換掉","on":"第二步"},
+            {"do":"write","line":"③ 補上 ${{rr:r}}$","on":"第三步"},
+            {"do":"circle","term":"rr","label":"最常漏掉","on":"那個 r"}
+          ] },
+        { "show": ["單位圓盤面積：漏掉 $r$ 得 $2\\pi$，補上 $r$ 得 $\\pi$"],
+          "say": "拿單位圓盤面積試試：漏掉 r 會得到二 pi，這是錯的；補上 r 才是 pi。",
+          "board": [
+            {"do":"write","line":"漏掉 $r$：${{w:2\\pi}}$"},
+            {"do":"strike","term":"w","label":"錯","on":"這是錯的"},
+            {"do":"write","line":"補上 $r$：$\\pi$","on":"補上"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "拋物面下的體積",
+      "beats": [
+        { "show": ["$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體"],
+          "note": "$z\\ge 0$：單位圓盤。",
+          "say": "拋物面在 x y 平面上方的部分，影子是單位圓盤。",
+          "board": [
+            {"do":"write","line":"$z=1-x^2-y^2$"},
+            {"do":"write","line":"影子：$x^2+y^2\\le 1$","on":"影子"}
+          ] },
+        { "show": ["沿 $x$ 軸切開：高度 $1-x^2$"],
+          "note": "到圓盤邊緣高度降到零。",
+          "say": "沿 x 軸切開看：高度是一減 x 平方，到圓盤邊緣掉到零。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1.5,1.5,-0.5,1.5],"curves":[{"expr":"1-(x^2)","domain":[-1,1],"color":"blue"}],"fills":[{"expr":"1-(x^2)","from":-1,"to":1,"color":"blue"}]}}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$"],
+          "note": "高度 $1-r^2$。",
+          "say": "高度換成一減 r 平方，再乘上 d A 的那個 r。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\int_0^1 ({{h:1-r^2}})\\,{{rr:r}}\\,dr\\,d\\theta$"},
+            {"do":"underline","term":"h","label":"高度","on":"一減"},
+            {"do":"focus","term":"rr","label":"來自 dA","on":"那個 r"}
+          ] },
+        { "show": ["內層 $\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$，外層 $\\times2\\pi$：$\\frac{\\pi}{2}$"],
+          "say": "內層得四分之一，外層 theta 繞一圈乘二 pi，體積是二分之 pi。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"內層：$\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$","on":"內層"},
+            {"do":"write","line":"$\\frac{1}{4}\\cdot 2\\pi={{v:\\frac{\\pi}{2}}}$","on":"外層"},
+            {"do":"box","term":"v","color":"green","on":"體積是"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "多出來的 $r$ 幫了忙",
+      "beats": [
+        { "show": ["$\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤"],
+          "note": "直角座標：$e^{-x^2}$ 沒有初等反導函數。",
+          "say": "這一題用直角座標做不動，因為 e 的負 x 平方次方沒有初等反導函數。",
+          "board": [
+            {"do":"write","line":"$\\iint_D e^{-(x^2+y^2)}\\,dA$"},
+            {"do":"write","line":"${{b:e^{-x^2}}}$ 沒有初等反導函數","on":"因為"},
+            {"do":"underline","term":"b","label":"做不動","on":"沒有初等"}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$"],
+          "say": "換成極座標，多出來的 r 剛好配上 r 平方，可以換元。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\int_0^1 {{q:e^{-r^2}}}\\,{{r:r}}\\,dr\\,d\\theta$"},
+            {"do":"focus","term":"r","label":"多出來","on":"多出來的"},
+            {"do":"underline","term":"q","on":"配上"}
+          ] },
+        { "show": ["反導函數：微分後變回它","初等：多項式、指數、三角的組合"],
+          "note": "$e^{-x^2}$ 有反導函數，但寫不成初等函數。",
+          "say": "反導函數是微分之後會變回它的函數。初等是指只用多項式、指數、三角這類函數組合出來的。",
+          "board": [
+            {"do":"write","line":"反導函數：微分後變回它"},
+            {"do":"write","line":"初等：多項式、指數、三角的組合","on":"初等是指"}
+          ] },
+        { "show": ["$u=r^2$：$\\int_0^1 e^{-r^2}r\\,dr=\\frac{1}{2}(1-e^{-1})$"],
+          "say": "令 u 等於 r 平方，內層得到二分之一乘上一減 e 的負一次方。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"令 $u=r^2$","on":"令"},
+            {"do":"write","line":"$\\int_0^1 e^{-r^2}r\\,dr={{w:\\frac{1}{2}(1-e^{-1})}}$","on":"內層得到"},
+            {"do":"box","term":"w","on":"二分之一"}
+          ] },
+        { "show": ["$du=2r\\,dr$，$r\\,dr=\\frac{1}{2}du$","上下限：$0\\to0$，$1\\to1$"],
+          "note": "$\\frac{1}{2}\\int_0^1 e^{-u}\\,du$",
+          "say": "du 是二 r dr，所以 r dr 是二分之一 du，上下限還是零到一。一半提出來，e 的負 u 積分得一減 e 的負一次方。",
+          "board": [
+            {"do":"write","line":"$du=2r\\,dr$，$r\\,dr=\\frac{1}{2}du$"},
+            {"do":"write","line":"上下限：$0\\to0$，$1\\to1$","on":"上下限"},
+            {"do":"write","line":"$\\frac{1}{2}\\int_0^1 e^{-u}\\,du$","on":"一半提出來"}
+          ] }
+      ],
+      "key": "多出的 $r$ 讓 $u=r^2$ 換元可做",
+      "predict": {
+        "ask": "整個積分是？",
+        "options": [
+          {
+            "label": "$\\pi\\left(1-\\frac{1}{e}\\right)$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{1}{2}\\left(1-\\frac{1}{e}\\right)$",
+            "why": "那只是內層；外層對 $\\theta$ 從 $0$ 積到 $2\\pi$，還要乘 $2\\pi$。"
+          },
+          {
+            "label": "$2\\pi\\left(1-\\frac{1}{e}\\right)$",
+            "why": "內層有 $\\frac{1}{2}$（$du=2r\\,dr$），乘 $2\\pi$ 之後是 $\\pi$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["polar", "polar-coordinates", "double-integral"],
+    "fine": ["polar-area-element", "polar-region-bounds", "polar-integrand-convert"]
+  },
+  "practice": [
+    { "id": "int-035", "core": true, "trains": "polar-area-element" },
+    { "id": "lec-19-m3", "core": true, "trains": "polar-area-element" },
+    { "id": "int-025", "core": true, "trains": "polar-integrand-convert" },
+    { "id": "int-032", "core": true, "trains": "polar-region-bounds" },
+    { "id": "lec-19-m4", "core": true, "trains": "polar-integrand-convert" },
+    { "id": "lec-19-q2a", "core": true, "trains": "polar-region-bounds" },
+    { "id": "cg-9a2-001", "core": true, "trains": "polar-region-bounds" },
+    { "id": "lec-19-q2b", "trains": "polar-region-bounds" },
+    { "id": "int-033", "trains": "polar-integrand-convert" },
+    { "id": "rel-hard-mv-009", "trains": "polar-integrand-convert" },
+    { "id": "rel-hard-mv-002", "trains": "polar-integrand-convert" },
+    { "id": "cg-9a2-002", "trains": "polar-region-bounds" },
+    { "id": "lec-19-q2c", "challenge": true, "trains": "polar-region-bounds", "note": "挑戰：體積 $=2\\times\\iint\\sqrt{4-r^2}$，$r$ 從 $1$ 到 $2$。" },
+    { "id": "world-090", "challenge": true, "trains": "polar-integrand-convert", "note": "挑戰：令 $I=\\int_0^\\infty e^{-x^2}\\,dx$，算 $I^2$ 寫成第一象限上的二重積分，再換極座標。" }
+  ],
+  "gaps": []
+}

@@ -1,49 +1,122 @@
 {
   "id": "ibp-poly-exp",
   "title": "多項式 × 指數",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["integration-by-parts"],
-  "next": ["ibp-poly-trig"],
-  "related": ["gamma-definition"],
+  "prerequisites": [
+    "integration-by-parts"
+  ],
+  "next": [
+    "ibp-poly-trig"
+  ],
+  "related": [
+    "gamma-definition"
+  ],
   "objectives": [
-    "知道 $x^n e^{ax}$ 要分部 $n$ 次：每次讓多項式降一次。",
-    "會用表格法一次寫完多次分部，正負號交錯。",
-    "記得 $e^{ax}$ 每積一次要除以 $a$。"
+    "知道 $x^n e^{ax}$ 要分部 $n$ 次：每次讓多項式降一次",
+    "會用表格法一次寫完多次分部，正負號交錯",
+    "記得 $e^{ax}$ 每積一次要除以 $a$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 每做一次，多項式降一次",
+      "heading": "① 每做一次，降一次",
       "body": [
-        "多項式 $\\times$ 指數：讓多項式當 $u$（微分會降次），指數當 $dv$（積分不變形）。",
-        "$x^2 e^x$ 做一次分部，剩下 $\\int 2x e^x\\,dx$，還是同一型，只是降到一次；再做一次，剩 $\\int 2e^x\\,dx$，直接積。所以 $x^n$ 要做 $n$ 次。"
+        "$u=x^2$、$dv=e^xdx$：$du=2x\\,dx$，$v=e^x$",
+        "新積分的次方：$2\\to1$，降了一次",
+        "再分部：$u=2x$、$dv=e^xdx$",
+        "代回去（注意前面的減號）：",
+        "微分檢查：$(2x-2)e^x+(x^2-2x+2)e^x=x^2e^x$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int x^2e^x\\,dx",
+        "\\int x^2e^x\\,dx=x^2e^x-\\int 2x\\,e^x\\,dx",
+        "\\int 2xe^x\\,dx=2xe^x-\\int 2e^x\\,dx=2xe^x-2e^x",
+        "\\int x^2e^x\\,dx=x^2e^x-\\big(2xe^x-2e^x\\big)",
+        "=(x^2-2x+2)e^x+C"
+      ]
+    },
+    {
+      "heading": "① 要做幾次？",
+      "body": [
+        "$x^n e^{ax}$：每分部一次，次方降一",
+        "$n$ 次方，就要分部 $n$ 次",
+        "次數一多，代回去的括號和正負號最容易錯",
+        "三次方的結果：",
+        "下一節的表格法，一次寫出這種答案",
+        "有沒有辦法一次寫完？"
+      ],
+      "tex": [
+        "\\int x^3e^x\\,dx=(x^3-3x^2+6x-6)e^x+C"
+      ]
     },
     {
       "heading": "② 表格法：一次寫完",
       "body": [
-        "做好幾次分部很容易抄錯。表格法把它排成兩欄：左欄把多項式一直微分到 $0$，右欄把指數一直積分。然後由左上往右下斜著相乘，正負號依序是 $+$、$-$、$+$、$-$……，全部加起來。",
-        "$x^2 e^{2x}$ 的表：左欄 $x^2$、$2x$、$2$、$0$；右欄 $e^{2x}$、$\\frac{e^{2x}}{2}$、$\\frac{e^{2x}}{4}$、$\\frac{e^{2x}}{8}$。斜乘：$+x^2\\cdot \\frac{e^{2x}}{2}$、$-2x\\cdot \\frac{e^{2x}}{4}$、$+2\\cdot \\frac{e^{2x}}{8}$。",
-        "正負交錯是因為每做一次分部，公式 $uv-\\int v\\,du$ 的減號就把後面全部變號一次。"
+        "左欄 $D$：$u$ 一直微分到 $0$；右欄 $I$：$dv$ 一直積分",
+        "斜著乘：左欄第 $k$ 列 $\\times$ 右欄第 $k+1$ 列",
+        "為什麼對？每一斜就是一次分部的 $uv$",
+        "左欄到 $0$ 就停：剩下的積分是 $\\int 0\\,dx$",
+        "表格法適合「$u$ 微分幾次會變 $0$」的情況：多項式"
       ],
-      "collapsible": false
+      "tex": [
+        "\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^x\\\\ - & 2x & e^x\\\\ + & 2 & e^x\\\\ & 0 & e^x\\end{array}",
+        "\\int x^2e^x\\,dx=+x^2e^x-2x\\,e^x+2e^x+C"
+      ]
     },
     {
       "heading": "③ $e^{ax}$ 的係數",
       "body": [
-        "右欄每往下一格就多除一個 $a$：$e^{ax}$、$\\frac{e^{ax}}{a}$、$\\frac{e^{ax}}{a^2}$……。$a$ 是負數時（例如 $e^{-x}$，$a=-1$）符號會跟著翻，最容易在這裡出錯。"
+        "$\\int x^2e^{2x}dx$：右欄每積一次除以 $2$",
+        "斜乘：",
+        "一般：右欄是 $\\tfrac1ae^{ax},\\ \\tfrac1{a^2}e^{ax},\\ \\tfrac1{a^3}e^{ax},\\dots$",
+        "$a$ 是負的也一樣：$\\int e^{-x}dx=-e^{-x}$，除以 $-1$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^{2x}\\\\ - & 2x & \\tfrac12e^{2x}\\\\ + & 2 & \\tfrac14e^{2x}\\\\ & 0 & \\tfrac18e^{2x}\\end{array}",
+        "\\tfrac12x^2e^{2x}-\\tfrac12xe^{2x}+\\tfrac14e^{2x}",
+        "\\int x^2e^{2x}dx=e^{2x}\\Big(\\tfrac12x^2-\\tfrac12x+\\tfrac14\\Big)+C"
+      ]
     },
     {
-      "heading": "一個可以直接寫的公式（$a=1$）",
+      "heading": "③ 一次方：$\\int xe^{ax}dx$",
       "body": [
-        "$\\int p(x) e^x\\,dx=e^x(p-p'+p''-p'''+\\cdots)+C$，$p$ 是多項式，括號寫到導數變 $0$ 為止。",
-        "檢查：把右邊微分，$e^x$ 乘括號得 $e^x(p-p'+p''-\\cdots)$，$e^x$ 乘括號的導數得 $e^x(p'-p''+\\cdots)$，兩串前後相消，只剩 $e^x p$。"
+        "例：$a=3$",
+        "微分檢查：$3e^{3x}\\big(\\frac x3-\\frac19\\big)+\\frac13e^{3x}=xe^{3x}$",
+        "常見錯：第二項只除一次 $a$，寫成 $\\frac1a$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x & e^{ax}\\\\ - & 1 & \\tfrac1ae^{ax}\\\\ & 0 & \\tfrac1{a^2}e^{ax}\\end{array}",
+        "\\int xe^{ax}\\,dx=e^{ax}\\Big(\\frac xa-\\frac1{a^2}\\Big)+C",
+        "\\int xe^{3x}\\,dx=e^{3x}\\Big(\\frac x3-\\frac19\\Big)+C"
+      ]
+    },
+    {
+      "heading": "④ 可以直接寫的公式（$a=1$）",
+      "body": [
+        "$a=1$ 時右欄全是 $e^x$，表格只剩左欄的交錯和：",
+        "檢查：$p=x^2$：$x^2-2x+2$",
+        "證明：把右邊微分，$(p-p'+p''-\\cdots)'+(p-p'+\\cdots)$ 錯位相消，只剩 $p$",
+        "例：$\\displaystyle\\int_0^1(x+1)e^x\\,dx$",
+        "$p=x+1$，$p'=1$：反導函數 $(x+1-1)e^x=xe^x$",
+        "也可以用 $\\int_a^b u\\,dv=[uv]_a^b-\\int_a^b v\\,du$：$[(x+1)e^x]_0^1-\\int_0^1e^xdx=(2e-1)-(e-1)=e$"
+      ],
+      "tex": [
+        "\\int p(x)e^x\\,dx=\\big(p-p'+p''-\\cdots\\big)e^x+C",
+        "\\int_0^1(x+1)e^x\\,dx=\\Big[xe^x\\Big]_0^1=e-0=e"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $x^ne^{ax}$：$u$ 選多項式，分部 $n$ 次",
+        "• 每次分部，多項式降一次",
+        "• 表格法：左欄微分到 $0$，右欄一直積，斜乘、正負交錯",
+        "• $e^{ax}$ 每積一次除以 $a$（$a<0$ 也是）",
+        "• $a=1$：$\\int pe^x\\,dx=(p-p'+p''-\\cdots)e^x+C$",
+        "下一課：多項式 × 三角"
+      ]
     }
   ],
   "workedExamples": [
@@ -90,294 +163,748 @@
   ],
   "checks": [
     {
-      "ask": "$\\int x^3 e^x\\,dx$ 要分部幾次？",
+      "ask": "$\\displaystyle\\int x^2e^{-x}\\,dx=$？",
       "options": [
-        { "label": "3 次", "correct": true },
-        { "label": "1 次", "why": "一次只把 $x^3$ 降成 $3x^2$，剩下的積分還是同一型。" },
-        { "label": "做不完，會一直下去", "why": "$x^3$ 微分三次變常數 $6$，再一次是 $0$，表格就停了。" }
+        {
+          "label": "$-(x^2+2x+2)e^{-x}+C$",
+          "correct": true
+        },
+        {
+          "label": "$(x^2-2x+2)e^{-x}+C$",
+          "why": "這是照 $e^x$ 的答案抄；$e^{-x}$ 每積一次要除以 $-1$"
+        },
+        {
+          "label": "$-(x^2-2x+2)e^{-x}+C$",
+          "why": "只處理了第一個負號；右欄的負號每列都在變"
+        },
+        {
+          "label": "$(x^2+2x+2)e^{-x}+C$",
+          "why": "少了整體的負號：$\\int e^{-x}dx=-e^{-x}$"
+        }
       ]
     },
     {
-      "ask": "表格法斜乘時的正負號是？",
+      "ask": "$\\displaystyle\\int (x^2+1)e^x\\,dx=$？",
       "options": [
-        { "label": "$+$、$-$、$+$、$-$ 交錯", "correct": true },
-        { "label": "全部是 $+$", "why": "每做一次分部，$uv-\\int v\\,du$ 的減號就把後面全部變號一次。" },
-        { "label": "全部是 $-$", "why": "第一項是 $uv$，前面是正的；之後才開始交錯。" }
-      ]
-    },
-    {
-      "ask": "$\\int x^2 e^x\\,dx$ 是？",
-      "options": [
-        { "label": "$e^x(x^2-2x+2)+C$", "correct": true },
-        { "label": "$e^x(x^2-2x)+C$", "why": "少了最後一項：表格第三列是 $+2\\cdot e^x$。微分檢查會多出 $-2e^x$。" },
-        { "label": "$e^x(x^2+2x+2)+C$", "why": "中間項應該是負的：正負交錯，第二項帶減號。" }
-      ]
-    },
-    {
-      "ask": "$\\int x^2 e^{3x}\\,dx$ 取 $u=x^2$、$dv=e^{3x}\\,dx$，分部一次後剩下的積分是？",
-      "options": [
-        { "label": "$\\frac{2}{3}\\int x e^{3x}\\,dx$", "correct": true },
-        { "label": "$\\int 2x e^{3x}\\,dx$", "why": "$v=\\frac{e^{3x}}{3}$，那個 $\\frac{1}{3}$ 要帶進新積分：$\\int \\frac{e^{3x}}{3}\\cdot 2x\\,dx$。" },
-        { "label": "$6\\int x e^{3x}\\,dx$", "why": "積分 $e^{3x}$ 是除以 $3$，不是乘 $3$。" }
+        {
+          "label": "$(x^2-2x+3)e^x+C$",
+          "correct": true
+        },
+        {
+          "label": "$(x^2+2x+3)e^x+C$",
+          "why": "$p'$ 前面是減號，不是加號"
+        },
+        {
+          "label": "$(x^2-2x+1)e^x+C$",
+          "why": "漏了 $p''=2$"
+        },
+        {
+          "label": "$(x^2-2x+2)e^x+C$",
+          "why": "那是 $\\int x^2e^x\\,dx$，忘了 $+1$ 那一項"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "每做一次降一次",
+      "title": "每做一次，降一次",
       "beats": [
-        { "show": ["多項式當 $u$，指數當 $dv$"],
-          "note": "多項式微分會降次，指數積分不變形。",
-          "say": "多項式乘指數：多項式當 u，微分一次就降一次；指數當 dv，積分完長得一樣。",
+        {
+          "show": [
+            "$\\int x^2e^x\\,dx$"
+          ],
+          "say": "上一課做過 x 乘 e 的 x 次方，分部一次就好。這一課把 x 換成 x 平方。",
           "board": [
-            {"do":"write","line":"${{u:u}}$ ＝ 多項式，微分降一次","tint":{"u":"blue"}},
-            {"do":"write","line":"${{d:dv}}$ ＝ 指數，積分不變形","tint":{"d":"violet"},"on":"指數當"}
-          ] },
-        { "show": ["分部：$\\int u\\,dv=uv-\\int v\\,du$"],
-          "note": "拆法：$u=x^2$，$dv=e^x\\,dx$。",
-          "say": "分部公式：u v 減 v du 的積分。u 取 x 平方，則 du 是二 x dx；dv 取 e 的 x 次方 dx，則 v 是 e 的 x 次方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x^2e^x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=x^2$、$dv=e^xdx$：$du=2x\\,dx$，$v=e^x$",
+            "$\\int x^2e^x\\,dx=x^2e^x-\\int 2x\\,e^x\\,dx$"
+          ],
+          "say": "一樣讓多項式當 u。x 平方微分是 2x，e 的 x 次方積分還是自己。代公式，新的積分是 2x 乘 e 的 x 次方。",
           "board": [
-            {"do":"write","line":"$\\int u\\,dv=uv-\\int v\\,du$"},
-            {"do":"write","line":"$u=x^2$，$du=2x\\,dx$；$v=e^x$","on":"u 取"}
-          ] },
-        { "show": ["$\\int x^2e^x\\,dx$ → 剩 $\\int 2xe^x\\,dx$"],
-          "say": "x 平方乘 e 的 x 次方，做一次分部，剩下二 x 乘 e 的 x 次方，同一型，只是降到一次。",
+            {
+              "do": "write",
+              "line": "$u=x^2$、$dv=e^xdx$：$du=2x\\,dx$，$v=e^x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x^2e^x\\,dx=x^2e^x-\\int 2x\\,e^x\\,dx$",
+              "on": "分還"
+            }
+          ]
+        },
+        {
+          "show": [
+            "新積分的次方：$2\\to1$，降了一次"
+          ],
+          "say": "注意：x 平方變成 x，次方降了一次。但還沒積完，要再分部一次。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int x^2e^x\\,dx$","on":"x 平方"},
-            {"do":"transform","line":"$\\int 2xe^x\\,dx$，降到一次","on":"剩下"}
-          ] },
-        { "show": ["再一次 → 剩 $\\int 2e^x\\,dx$"],
-          "note": "$x^n$ 要做 $n$ 次。",
-          "say": "再做一次，只剩常數二乘 e 的 x 次方，直接積。x 的 n 次方，就要做 n 次。",
+            {
+              "do": "write",
+              "line": "新積分的次方：$2\\to1$，降了一次",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再分部：$u=2x$、$dv=e^xdx$",
+            "$\\int 2xe^x\\,dx=2xe^x-\\int 2e^x\\,dx=2xe^x-2e^x$"
+          ],
+          "say": "第二次，讓 2x 當 u。微分變 2，新的積分只剩 2 倍 e 的 x 次方，直接積。",
           "board": [
-            {"do":"transform","line":"$\\int 2e^x\\,dx$，直接積"},
-            {"do":"write","line":"${{n:x^n}}$ → 做 $n$ 次","on":"x 的 n 次方"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "再分部：$u=2x$、$dv=e^xdx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int 2xe^x\\,dx=2xe^x-\\int 2e^x\\,dx=2xe^x-2e^x$",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回去（注意前面的減號）：",
+            "$\\int x^2e^x\\,dx=x^2e^x-\\big(2xe^x-2e^x\\big)$"
+          ],
+          "say": "代回去。前面有一個減號，括號要整個減掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代回去（注意前面的減號）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x^2e^x\\,dx=x^2e^x-\\big(2xe^x-2e^x\\big)$",
+              "on": "括號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=(x^2-2x+2)e^x+C$"
+          ],
+          "say": "整理成 x 平方減 2x 加 2，乘上 e 的 x 次方，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle =(x^2-2x+2)e^x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "乘上"
+            },
+            {
+              "do": "write",
+              "line": "　微分檢查：$(2x-2)e^x+(x^2-2x+2)e^x=x^2e^x$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "做兩次，合起來",
+      "title": "要做幾次？",
       "beats": [
-        { "show": ["第一次：$x^2e^x-\\int 2xe^x\\,dx$"],
-          "say": "第一次：u 是 x 平方，dv 是 e 的 x 次方 dx。",
+        {
+          "show": [
+            "$x^n e^{ax}$：每分部一次，次方降一"
+          ],
+          "say": "規律很清楚：每分部一次，多項式的次方降一。",
           "board": [
-            {"do":"write","line":"$u=x^2$，$dv=e^x\\,dx$"},
-            {"do":"write","line":"$x^2e^x-{{r:\\int 2xe^x\\,dx}}$","on":"e 的 x 次方"}
-          ] },
-        { "show": ["第二次：$\\int 2xe^x\\,dx=2xe^x-2e^x$"],
-          "say": "第二次處理剩下那個：u 是二 x，再做一次分部。",
+            {
+              "do": "write",
+              "line": "$x^n e^{ax}$：每分部一次，次方降一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 次方，就要分部 $n$ 次"
+          ],
+          "say": "所以 x 的 n 次方乘指數，就要分部 n 次，直到多項式微分成常數，最後一個積分只剩指數。",
           "board": [
-            {"do":"write","line":"$u=2x$：${{q:\\int 2xe^x\\,dx}}=2xe^x-2e^x$"}
-          ] },
-        { "show": ["$u=2x$，$du=2\\,dx$；$v=e^x$"],
-          "say": "細看第二次：u 是二 x，所以 du 是二 dx；dv 是 e 的 x 次方 dx，所以 v 是 e 的 x 次方。",
-          "board": [
-            {"do":"write","line":"$u=2x$，$du=2\\,dx$；$v=e^x$"}
-          ] },
-        { "show": ["代進公式：$2xe^x-\\int 2e^x\\,dx$"],
-          "say": "代進公式：二 x 乘 e 的 x 次方，減掉 e 的 x 次方乘二 dx 的積分。後面積出來是二 e 的 x 次方。",
-          "board": [
-            {"do":"write","line":"$2xe^x-\\int e^x\\cdot 2\\,dx$"},
-            {"do":"write","line":"$=2xe^x-2e^x$","on":"積出來"}
-          ] },
-        { "show": ["$x^2e^x-(2xe^x-2e^x)$"],
-          "note": "括號前的減號要分配到每一項。",
-          "say": "合起來時要小心：括號前面是減號，裡面每一項都要變號。",
-          "board": [
-            {"do":"write","line":"$x^2e^x-({{p:2xe^x-2e^x}})$"},
-            {"do":"underline","term":"p","label":"每項變號","on":"每一項"}
-          ] }
+            {
+              "do": "write",
+              "line": "$n$ 次方，就要分部 $n$ 次",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "key": "第二次分部的結果要整個加括號再減",
-      "solve": {
-        "check": 2,
-        "kind": "antiderivative",
-        "answer": "e^x(x^2-2x+2)",
-        "claim": "D(ANS) == x^2*e^x",
-        "hint": "做兩次分部：先 $u=x^2$，再 $u=2x$。",
-        "steps": [
-          "第一次：$x^2e^x-\\int 2xe^x\\,dx$",
-          "第二次：$\\int 2xe^x\\,dx=2xe^x-2e^x$",
-          "$x^2e^x-(2xe^x-2e^x)=e^x(x^2-2x+2)+C$"
-        ],
-        "wrong": [
-          {
-            "answer": "e^x(x^2-2x)",
-            "why": "少了最後一項：表格第三列是 $+2\\cdot e^x$。微分檢查會多出 $-2e^x$。"
-          },
-          {
-            "answer": "e^x(x^2+2x+2)",
-            "why": "中間項應該是負的：正負交錯，第二項帶減號。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "表格法",
-      "beats": [
-        { "show": ["左欄：多項式一直微分到 $0$","右欄：指數一直積分"],
-          "say": "做好幾次很容易抄錯。表格法排成兩欄：左邊一直微分到零，右邊一直積分。",
-          "board": [
-            {"do":"write","line":"左欄 ${{d:u}}$：一直微分到 $0$","tint":{"d":"blue"}},
-            {"do":"write","line":"右欄 ${{v:dv}}$：一直積分","tint":{"v":"violet"},"on":"右邊"}
-          ] },
-        { "show": ["由左上往右下斜著相乘"],
-          "note": "全部加起來。",
-          "say": "然後左邊每一格，跟右邊下一格斜著相乘，全部加起來。",
-          "board": [
-            {"do":"write","line":"左格 × 右邊下一格，斜著乘"},
-            {"do":"write","line":"全部加起來","on":"全部"}
-          ] },
-        { "show": ["正負號：$+$、$-$、$+$、$-$……"],
-          "note": "每做一次分部，減號把後面全部變號一次。",
-          "say": "正負號一正一負交錯，因為每做一次分部，公式的減號就把後面全部變號一次。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"正負號：$+$、$-$、$+$、$-$……","on":"正負號"},
-            {"do":"write","line":"$uv{{m:-}}\\int v\\,du$","on":"因為每做"},
-            {"do":"focus","term":"m","label":"全部變號","on":"減號"}
-          ] },
-        { "show": ["$x^2e^x-(2xe^x-\\int 2e^x)$","括號展開，減號乘進去變加號"],
-          "say": "第一次減掉一個積分，那個積分自己又展開成前項減積分。括號前的減號乘進去，第二項就變成加號，一正一負一正。",
-          "board": [
-            {"do":"write","line":"$x^2e^x-\\int 2xe^x$"},
-            {"do":"write","line":"$=x^2e^x-(2xe^x-\\int 2e^x)$","on":"自己又"},
-            {"do":"write","line":"$=x^2e^x-2xe^x{{s:+}}\\int 2e^x$","on":"括號前的"},
-            {"do":"focus","term":"s","label":"變號","on":"乘進去"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "用表格算一題",
-      "beats": [
-        { "show": ["$\\int x^2e^{2x}\\,dx$"],
-          "note": "左欄：$x^2$、$2x$、$2$、$0$。",
-          "say": "x 平方乘 e 的二 x 次方。左欄一直微分：x 平方、二 x、二、零。",
-          "board": [
-            {"do":"write","line":"$\\int x^2e^{2x}\\,dx$"},
-            {"do":"write","line":"左欄：${{a:x^2}}$、$2x$、$2$、$0$","on":"左欄"}
-          ] },
-        { "show": ["檢查：$\\left(\\frac{e^{ax}}{a}\\right)'=e^{ax}$"],
-          "note": "連鎖律多出的 $a$，被 $\\frac{1}{a}$ 抵掉。",
-          "say": "為什麼除以 a？微分看看：e 的 a x 次方的導數是 a 乘 e 的 a x 次方，連鎖律多出來的 a，被前面的 a 分之一抵掉。",
-          "board": [
-            {"do":"write","line":"$\\frac{d}{dx}e^{ax}=a\\,e^{ax}$"},
-            {"do":"write","line":"$\\left({{w:\\frac{e^{ax}}{a}}}\\right)'=\\frac{1}{a}\\cdot a\\,e^{ax}=e^{ax}$","on":"a 分之一"}
-          ] },
-        { "show": ["右欄：$e^{2x}$、$\\frac{e^{2x}}{2}$、$\\frac{e^{2x}}{4}$、$\\frac{e^{2x}}{8}$"],
-          "note": "每往下一格多除一個 $2$。",
-          "say": "右欄一直積分，每往下一格就多除一個二。",
-          "board": [
-            {"do":"write","line":"右欄：$e^{2x}$、$\\frac{e^{2x}}{2}$、$\\frac{e^{2x}}{4}$、$\\frac{e^{2x}}{8}$"},
-            {"do":"write","line":"每格多除一個 $2$","on":"多除"}
-          ] }
-      ],
-      "key": "右欄每積一次多除一個 $2$，再斜乘交錯",
       "predict": {
-        "ask": "斜乘、正負交錯，結果是？",
+        "ask": "$\\displaystyle\\int x^3e^x\\,dx$ 要分部幾次？",
         "options": [
           {
-            "label": "$e^{2x}\\left(\\frac{x^2}{2}-\\frac{x}{2}+\\frac{1}{4}\\right)+C$",
+            "label": "$3$ 次",
             "correct": true
           },
           {
-            "label": "$e^{2x}\\left(\\frac{x^2}{2}+\\frac{x}{2}+\\frac{1}{4}\\right)+C$",
-            "why": "第二項帶減號：$-2x\\cdot\\frac{e^{2x}}{4}$。"
+            "label": "$1$ 次",
+            "why": "一次之後還剩 $\\int 3x^2e^x\\,dx$，還要繼續"
           },
           {
-            "label": "$e^{2x}\\left(\\frac{x^2}{2}-\\frac{x}{2}\\right)+C$",
-            "why": "左欄的 $2$ 也要斜乘：$+2\\cdot\\frac{e^{2x}}{8}=\\frac{e^{2x}}{4}$。"
+            "label": "$4$ 次",
+            "why": "第三次分部後新積分已經是常數乘 $e^x$，直接積，不用再分"
           }
         ]
       }
+    },
+    {
+      "title": "要做幾次？",
+      "beats": [
+        {
+          "show": [
+            "次數一多，代回去的括號和正負號最容易錯"
+          ],
+          "say": "次數一多，一層一層代回去，括號跟正負號就很容易錯。",
+          "board": [
+            {
+              "do": "write",
+              "line": "次數一多，代回去的括號和正負號最容易錯",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三次方的結果：",
+            "$\\int x^3e^x\\,dx=(x^3-3x^2+6x-6)e^x+C$"
+          ],
+          "say": "例如三次方的答案，是 x 三次方減 3x 平方加 6x 減 6，再乘 e 的 x 次方。正負號交錯出現。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三次方的結果："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x^3e^x\\,dx=(x^3-3x^2+6x-6)e^x+C$",
+              "on": "3x"
+            },
+            {
+              "do": "write",
+              "line": "　下一節的表格法，一次寫出這種答案",
+              "color": "violet",
+              "on": "次方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有沒有辦法一次寫完？"
+          ],
+          "say": "有沒有辦法不要一層一層代，一次寫完？有，就是表格法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有沒有辦法一次寫完？"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "表格法：一次寫完",
+      "beats": [
+        {
+          "show": [
+            "左欄 $D$：$u$ 一直微分到 $0$；右欄 $I$：$dv$ 一直積分"
+          ],
+          "say": "表格法：左欄放 u，一直微分到 0；右欄放 d v 裡的函數，一直積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左欄 $D$：$u$ 一直微分到 $0$；右欄 $I$：$dv$ 一直積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^x\\\\ - & 2x & e^x\\\\ + & 2 & e^x\\\\ & 0 & e^x\\end{array}$"
+          ],
+          "say": "用 x 平方乘 e 的 x 次方來看。左欄：x 平方、2x、2、0。右欄每一格都是 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\def\\arraystretch{1.5}{\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^x\\\\ - & 2x & e^x\\\\ + & 2 & e^x\\\\ & 0 & e^x\\end{array}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜著乘：左欄第 $k$ 列 $\\times$ 右欄第 $k+1$ 列"
+          ],
+          "say": "然後斜著乘：左欄每一列，乘上右欄的下一列。正負號從正開始，正負交錯。",
+          "board": [
+            {
+              "do": "write",
+              "line": "斜著乘：左欄第 $k$ 列 $\\times$ 右欄第 $k+1$ 列"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int x^2e^x\\,dx=+x^2e^x-2x\\,e^x+2e^x+C$"
+          ],
+          "say": "正的 x 平方 e 的 x 次方，負的 2x e 的 x 次方，正的 2 e 的 x 次方。跟剛剛一層一層代的結果一模一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int x^2e^x\\,dx=+x^2e^x-2x\\,e^x+2e^x+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "正的#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼對？每一斜就是一次分部的 $uv$"
+          ],
+          "say": "為什麼對？每一條斜線，就是一次分部的 u 乘 v；正負交錯，是因為每多分部一次，前面就多一個減號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼對？每一斜就是一次分部的 $uv$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左欄到 $0$ 就停：剩下的積分是 $\\int 0\\,dx$"
+          ],
+          "say": "左欄微分到 0 就停，因為剩下的積分是 0，不用再積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左欄到 $0$ 就停：剩下的積分是 $\\int 0\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "　表格法適合「$u$ 微分幾次會變 $0$」的情況：多項式",
+              "color": "violet",
+              "on": "剩下"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "$e^{ax}$ 的係數",
       "beats": [
-        { "show": ["右欄：$e^{ax}$、$\\frac{e^{ax}}{a}$、$\\frac{e^{ax}}{a^2}$……"],
-          "note": "每往下一格多除一個 $a$。",
-          "say": "指數是 e 的 a x 次方時，右欄每往下一格就多除一個 a。",
+        {
+          "show": [
+            "$\\int x^2e^{2x}dx$：右欄每積一次除以 $2$",
+            "$\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^{2x}\\\\ - & 2x & \\tfrac12e^{2x}\\\\ + & 2 & \\tfrac14e^{2x}\\\\ & 0 & \\tfrac18e^{2x}\\end{array}$"
+          ],
+          "say": "換成 e 的 2x 次方。右欄每往下積一次，就要除以 2：2 分之 1、4 分之 1、8 分之 1。",
           "board": [
-            {"do":"write","line":"$e^{ax}$、$\\frac{e^{ax}}{a}$、$\\frac{e^{ax}}{a^2}$……"},
-            {"do":"write","line":"每格多除一個 ${{a:a}}$","on":"多除"}
-          ] },
-        { "show": ["$e^{-x}$：$a=-1$，符號跟著翻"],
-          "note": "最容易在這裡出錯。",
-          "say": "a 是負的，像 e 的負 x 次方，a 是負一，符號會一路跟著翻，最容易在這裡出錯。",
+            {
+              "do": "write",
+              "line": "$\\int x^2e^{2x}dx$：右欄每積一次除以 $2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\def\\arraystretch{1.5}{\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x^2 & e^{2x}\\\\ - & 2x & \\tfrac12e^{2x}\\\\ + & 2 & \\tfrac14e^{2x}\\\\ & 0 & \\tfrac18e^{2x}\\end{array}}$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜乘：",
+            "$\\tfrac12x^2e^{2x}-\\tfrac12xe^{2x}+\\tfrac14e^{2x}$"
+          ],
+          "say": "斜著乘：x 平方乘 2 分之 1，負的 2x 乘 4 分之 1，正的 2 乘 8 分之 1。",
           "board": [
-            {"do":"write","line":"$e^{-x}$：$a=-1$"},
-            {"do":"write","line":"右欄：$e^{-x}$、${{s:-e^{-x}}}$、$e^{-x}$……","on":"符號會"},
-            {"do":"underline","term":"s","color":"red","label":"符號翻轉","on":"最容易"}
-          ] },
-        { "show": ["被積函數 $x^2e^{2x}$ 的圖"],
-          "say": "畫出被積函數：x 平方乘 e 的二 x 次方，x 往右越來越陡。",
+            {
+              "do": "write",
+              "line": "斜乘："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\tfrac12x^2e^{2x}-\\tfrac12xe^{2x}+\\tfrac14e^{2x}$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int x^2e^{2x}dx=e^{2x}\\Big(\\tfrac12x^2-\\tfrac12x+\\tfrac14\\Big)+C$"
+          ],
+          "say": "整理成 e 的 2x 次方，乘上 2 分之 1 x 平方，減 2 分之 1 x，加 4 分之 1。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,1.5,-1,12],"curves":[{"expr":"x^2*exp(2*x)","domain":[-1,1.5],"color":"blue"}]}}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int x^2e^{2x}dx=e^{2x}\\Big(\\tfrac12x^2-\\tfrac12x+\\tfrac14\\Big)+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：右欄是 $\\tfrac1ae^{ax},\\ \\tfrac1{a^2}e^{ax},\\ \\tfrac1{a^3}e^{ax},\\dots$"
+          ],
+          "say": "一般來說，e 的 a x 次方，右欄依序是 a 分之 1、a 平方分之 1、a 三次方分之 1 倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般：右欄是 $\\tfrac1ae^{ax},\\ \\tfrac1{a^2}e^{ax},\\ \\tfrac1{a^3}e^{ax},\\dots$"
+            },
+            {
+              "do": "write",
+              "line": "　$a$ 是負的也一樣：$\\int e^{-x}dx=-e^{-x}$，除以 $-1$",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 0
     },
     {
-      "title": "定積分",
+      "title": "一次方：$\\int xe^{ax}dx$",
       "beats": [
-        { "show": ["$\\int_0^1(x+1)e^x\\,dx$"],
-          "note": "$u=x+1$，$dv=e^x\\,dx$。",
-          "say": "最後一題：x 加一乘 e 的 x 次方，從零積到一。u 是 x 加一。",
+        {
+          "show": [
+            "$\\def\\arraystretch{1.5}\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x & e^{ax}\\\\ - & 1 & \\tfrac1ae^{ax}\\\\ & 0 & \\tfrac1{a^2}e^{ax}\\end{array}$"
+          ],
+          "say": "最常見的是一次方：x 乘 e 的 a x 次方。表格只有兩斜：x 乘 a 分之 1，負的 1 乘 a 平方分之 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^1(x+1)e^x\\,dx$"},
-            {"do":"write","line":"$u={{u:x+1}}$，$dv=e^x\\,dx$","tint":{"u":"blue"},"on":"u 是"}
-          ] },
-        { "show": ["$(x+1)e^x-\\int e^x\\,dx=xe^x$"],
-          "note": "被積函數本來就是 $(xe^x)'$。",
-          "say": "分部一次，再減掉 e 的 x 次方，剛好剩 x 乘 e 的 x 次方。原來它就是一個乘積的導數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\def\\arraystretch{1.5}{\\begin{array}{c|c|c}\\text{號} & D & I\\\\\\hline + & x & e^{ax}\\\\ - & 1 & \\tfrac1ae^{ax}\\\\ & 0 & \\tfrac1{a^2}e^{ax}\\end{array}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int xe^{ax}\\,dx=e^{ax}\\Big(\\frac xa-\\frac1{a^2}\\Big)+C$"
+          ],
+          "say": "所以答案是 e 的 a x 次方，乘上 a 分之 x 減 a 平方分之 1。",
           "board": [
-            {"do":"write","line":"$(x+1)e^x-\\int e^x\\,dx={{r:xe^x}}$"},
-            {"do":"box","term":"r","color":"green","on":"剛好剩"},
-            {"do":"write","line":"$(xe^x)'=(x+1)e^x$","on":"原來"}
-          ] },
-        { "show": ["$(xe^x)'=1\\cdot e^x+x\\cdot e^x$","$=(x+1)e^x$"],
-          "say": "乘積法則：一乘 e 的 x 次方加 x 乘 e 的 x 次方，合併成 x 加一乘 e 的 x 次方。反過來，積分就回到 x e 的 x 次方。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int xe^{ax}\\,dx=e^{ax}\\Big(\\frac xa-\\frac1{a^2}\\Big)+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a=3$",
+            "$\\int xe^{3x}\\,dx=e^{3x}\\Big(\\frac x3-\\frac19\\Big)+C$"
+          ],
+          "say": "例如 a 等於 3：e 的 3x 次方，乘 3 分之 x 減 9 分之 1。",
           "board": [
-            {"do":"write","line":"$(xe^x)'=1\\cdot e^x+x\\cdot e^x$"},
-            {"do":"transform","line":"$=(x+1)e^x$","on":"合併成"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$a=3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int xe^{3x}\\,dx=e^{3x}\\Big(\\frac x3-\\frac19\\Big)+C$",
+              "on": "3x"
+            },
+            {
+              "do": "write",
+              "line": "　微分檢查：$3e^{3x}\\big(\\frac x3-\\frac19\\big)+\\frac13e^{3x}=xe^{3x}$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常見錯：第二項只除一次 $a$，寫成 $\\frac1a$"
+          ],
+          "say": "常見的錯：第二項只除了一次 a。記得右欄往下第二格已經積了兩次，是 a 平方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常見錯：第二項只除一次 $a$，寫成 $\\frac1a$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "可以直接寫的公式（$a=1$）",
+      "beats": [
+        {
+          "show": [
+            "$a=1$ 時右欄全是 $e^x$，表格只剩左欄的交錯和：",
+            "$\\int p(x)e^x\\,dx=\\big(p-p'+p''-\\cdots\\big)e^x+C$"
+          ],
+          "say": "a 等於 1 的時候，右欄每一格都是 e 的 x 次方，所以答案就是：p 減 p prime 加 p 兩撇，正負交錯，再乘 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=1$ 時右欄全是 $e^x$，表格只剩左欄的交錯和："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int p(x)e^x\\,dx=\\big(p-p'+p''-\\cdots\\big)e^x+C}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "兩撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$p=x^2$：$x^2-2x+2$"
+          ],
+          "say": "檢查：p 是 x 平方，p prime 是 2x，p 兩撇是 2，正好是 x 平方減 2x 加 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$p=x^2$：$x^2-2x+2$"
+            },
+            {
+              "do": "write",
+              "line": "　證明：把右邊微分，$(p-p'+p''-\\cdots)'+(p-p'+\\cdots)$ 錯位相消，只剩 $p$",
+              "color": "violet",
+              "on": "兩撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^1(x+1)e^x\\,dx$"
+          ],
+          "say": "用這個公式做一題定積分：x 加 1 乘 e 的 x 次方，從 0 到 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^1(x+1)e^x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=x+1$，$p'=1$：反導函數 $(x+1-1)e^x=xe^x$"
+          ],
+          "say": "p 是 x 加 1，p prime 是 1，所以反導函數是 x 加 1 減 1，乘 e 的 x 次方，就是 x 乘 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$p=x+1$，$p'=1$：反導函數 $(x+1-1)e^x=xe^x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1(x+1)e^x\\,dx=\\Big[xe^x\\Big]_0^1=e-0=e$"
+          ],
+          "say": "代上下限：1 乘 e 減掉 0，答案是 e。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^1(x+1)e^x\\,dx=\\Big[xe^x\\Big]_0^1=e-0=e}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "減掉"
+            },
+            {
+              "do": "write",
+              "line": "　也可以用 $\\int_a^b u\\,dv=[uv]_a^b-\\int_a^b v\\,du$：$[(x+1)e^x]_0^1-\\int_0^1e^xdx=(2e-1)-(e-1)=e$",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int (x^2+1)e^x\\,dx=$？"
+          ],
+          "say": "用公式試一題。"
+        }
       ],
-      "predict": {
-        "ask": "代上下限，答案是？",
-        "options": [
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "表格法的步驟"
+          ],
+          "say": "排排看表格法的步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "表格法的步驟",
+        "steps": [
           {
-            "label": "$[xe^x]_0^1=e$",
-            "correct": true
+            "label": "左欄放多項式 $u$，右欄放 $dv$ 的函數"
           },
           {
-            "label": "$e-1$",
-            "why": "下限 $x=0$ 時 $xe^x=0\\cdot e^0=0$，不是 $1$。"
+            "label": "左欄一直微分到 $0$，右欄一直積分（$e^{ax}$ 每次除以 $a$）",
+            "why": "先要有上一步：左欄放多項式 $u$，右欄放 $dv$ 的函數"
           },
           {
-            "label": "$2e-1$",
-            "why": "那是只代了 $(x+1)e^x$，忘了減掉 $\\int e^x\\,dx$ 那一項。"
+            "label": "左欄每列斜乘右欄下一列，正負號 $+,-,+,\\dots$",
+            "why": "先要有上一步：左欄一直微分到 $0$，右欄一直積分（$e^{ax}$ 每次除以 $a$）"
+          },
+          {
+            "label": "全部加起來，最後加 $C$",
+            "why": "先要有上一步：左欄每列斜乘右欄下一列，正負號 $+,-,+,\\dots$"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $x^ne^{ax}$：$u$ 選多項式，分部 $n$ 次",
+            "• 每次分部，多項式降一次"
+          ],
+          "say": "整理一下：多項式乘指數，多項式當 u，每分部一次降一次。表格法左欄微分、右欄積分，斜乘、正負交錯。e 的 a x 次方每積一次要除以 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $x^ne^{ax}$：$u$ 選多項式，分部 $n$ 次"
+            },
+            {
+              "do": "write",
+              "line": "• 每次分部，多項式降一次",
+              "on": "項式#2"
+            },
+            {
+              "do": "write",
+              "line": "• 表格法：左欄微分到 $0$，右欄一直積，斜乘、正負交錯",
+              "on": "表格"
+            },
+            {
+              "do": "write",
+              "line": "• $e^{ax}$ 每積一次除以 $a$（$a<0$ 也是）",
+              "on": "斜乘"
+            },
+            {
+              "do": "write",
+              "line": "• $a=1$：$\\int pe^x\\,dx=(p-p'+p''-\\cdots)e^x+C$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：多項式 × 三角"
+          ],
+          "say": "下一課，多項式乘三角函數：表格法照用，只是右欄會多出一組正負號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：多項式 × 三角"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["integration-by-parts", "ibp", "multi-ibp", "exponential"],
-    "fine": ["ibp-poly-exp-repeat", "ibp-tabular", "ibp-exp-coefficient", "ibp-poly-exp-definite"]
+    "coarse": [
+      "integration-by-parts",
+      "ibp",
+      "multi-ibp",
+      "exponential"
+    ],
+    "fine": [
+      "ibp-poly-exp-repeat",
+      "ibp-tabular",
+      "ibp-exp-coefficient",
+      "ibp-poly-exp-definite"
+    ]
   },
   "practice": [
-    { "id": "cx-exam-006", "core": true, "trains": "ibp-poly-exp-definite" },
-    { "id": "burst-int-041", "core": true, "trains": "ibp-exp-coefficient", "note": "$e^{-x}$：右欄每一格符號都會翻。" },
-    { "id": "burst-int-036", "core": true, "trains": "ibp-tabular" },
-    { "id": "burst-boss-anti-001", "core": true, "trains": "ibp-tabular" },
-    { "id": "cg-4d-004", "core": true, "trains": "ibp-poly-exp-repeat" },
-    { "id": "burst-boss-anti-002", "trains": "ibp-exp-coefficient" },
-    { "id": "cg-4d-005", "trains": "ibp-poly-exp-repeat" },
-    { "id": "burst-boss2-anti-001", "challenge": true, "trains": "ibp-tabular", "note": "挑戰：五次多項式，表格有六列。" },
-    { "id": "hc-usub-002", "challenge": true, "trains": "ibp-poly-exp-repeat", "note": "挑戰：先換元 $u=x^2$，變成 $\\frac{1}{2}\\int u^2 e^u\\,du$ 再分部。" }
+    {
+      "id": "cx-exam-006",
+      "core": true,
+      "trains": "ibp-poly-exp-definite"
+    },
+    {
+      "id": "burst-int-041",
+      "core": true,
+      "trains": "ibp-exp-coefficient",
+      "note": "$e^{-x}$：右欄每一格符號都會翻。"
+    },
+    {
+      "id": "burst-int-036",
+      "core": true,
+      "trains": "ibp-tabular"
+    },
+    {
+      "id": "burst-boss-anti-001",
+      "core": true,
+      "trains": "ibp-tabular"
+    },
+    {
+      "id": "cg-4d-004",
+      "core": true,
+      "trains": "ibp-poly-exp-repeat"
+    },
+    {
+      "id": "burst-boss-anti-002",
+      "trains": "ibp-exp-coefficient"
+    },
+    {
+      "id": "cg-4d-005",
+      "trains": "ibp-poly-exp-repeat"
+    },
+    {
+      "id": "burst-boss2-anti-001",
+      "challenge": true,
+      "trains": "ibp-tabular",
+      "note": "挑戰：五次多項式，表格有六列。"
+    },
+    {
+      "id": "hc-usub-002",
+      "challenge": true,
+      "trains": "ibp-poly-exp-repeat",
+      "note": "挑戰：先換元 $u=x^2$，變成 $\\frac{1}{2}\\int u^2 e^u\\,du$ 再分部。"
+    }
   ],
   "gaps": []
 }

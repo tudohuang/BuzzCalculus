@@ -1,50 +1,115 @@
 {
   "id": "function-arithmetic",
   "title": "函數加減乘除",
-  "readMinutes": 6,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 15,
-  "prerequisites": ["function-intro", "domain-range"],
-  "next": ["function-composition"],
-  "related": ["limit-factor", "product-rule", "quotient-rule"],
+  "prerequisites": [
+    "function-intro",
+    "domain-range"
+  ],
+  "next": [
+    "function-composition"
+  ],
+  "related": [
+    "limit-factor",
+    "product-rule",
+    "quotient-rule"
+  ],
   "objectives": [
-    "會算 $(f + g)(x)$、$(f - g)(x)$、$(fg)(x)$、$\\left(\\frac{f}{g}\\right)(x)$，以及它們在某一點的值。",
-    "會找 $\\frac{f}{g}$ 的定義域：兩者都要有定義，而且分母 $g(x) \\ne 0$。",
-    "分得清 $fg$（相乘）與 $f(g(x))$（合成）。"
+    "會算 $(f+g)(x)$、$(f-g)(x)$、$(fg)(x)$、$\\left(\\frac{f}{g}\\right)(x)$",
+    "會找 $\\frac{f}{g}$ 的定義域：兩者都要有定義，而且分母 $g(x)\\ne0$",
+    "分得清 $fg$（相乘）與 $f(g(x))$（合成）"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 逐點運算",
       "body": [
-        "兩個函數相加，意思是在每一個 $x$ 把兩個輸出加起來：$(f + g)(x) = f(x) + g(x)$。減、乘、除同理。",
-        "$f(x) = \\sqrt{x}$、$g(x) = x - 2$：$(f + g)(4) = \\sqrt{4} + (4 - 2) = 4$，$(fg)(9) = 3 \\cdot 7 = 21$。"
+        "兩個函數 $f$、$g$，怎麼「相加」？",
+        "同一個 $x$ 丟進兩台機器，再把兩個輸出加起來",
+        "「逐點」：每一個 $x$ 各算各的",
+        "例：$f(x)=\\sqrt x$，$g(x)=x-2$，$x=4$",
+        "$f(4)=2$，$g(4)=2$",
+        "$(f+g)(4)=2+2=4$",
+        "$(fg)(4)=2\\cdot2=4$",
+        "$\\left(\\dfrac fg\\right)(4)=\\dfrac22=1$"
       ],
-      "tex": ["(f+g)(x)=f(x)+g(x),\\quad (fg)(x)=f(x)\\,g(x),\\quad \\left(\\frac{f}{g}\\right)(x)=\\frac{f(x)}{g(x)}"],
-      "collapsible": false
+      "tex": [
+        "(f+g)(x)=f(x)+g(x)",
+        "(f-g)(x)=f(x)-g(x)\\qquad (fg)(x)=f(x)\\,g(x)",
+        "\\left(\\frac fg\\right)(x)=\\frac{f(x)}{g(x)}"
+      ]
     },
     {
-      "heading": "② 定義域：交集，除法再扣掉分母的零點",
+      "heading": "① 相減要整個括起來",
       "body": [
-        "$(f + g)(x)$ 要算得出來，$f(x)$ 和 $g(x)$ 都得有定義，所以定義域是兩者的交集。",
-        "$\\frac{f}{g}$ 還多一條：$g(x) \\ne 0$。上面的例子 $\\frac{f}{g} = \\frac{\\sqrt{x}}{x - 2}$，定義域是 $x \\ge 0$ 而且 $x \\ne 2$，也就是 $[0, 2) \\cup (2, \\infty)$。"
+        "$f(x)=x^2+1$，$g(x)=3x-2$",
+        "求 $(f-g)(x)$",
+        "檢查：$x=2$ 時 $f(2)-g(2)=5-4=1$；$4-6+3=1$"
       ],
-      "collapsible": false
+      "tex": [
+        "(f-g)(x)=(x^2+1)-\\color{red}{(3x-2)}",
+        "=x^2+1-3x+2=x^2-3x+3",
+        "(fg)(x)=(x^2+1)(3x-2)",
+        "=3x^3-2x^2+3x-2"
+      ]
+    },
+    {
+      "heading": "② 定義域：交集",
+      "body": [
+        "$f+g$、$f-g$、$fg$ 的定義域：兩個都要有定義",
+        "交集：同時屬於兩個集合的部分",
+        "$f=\\sqrt x$：$x\\ge0$；$g=x-2$：所有實數",
+        "交集：$[0,\\infty)$",
+        "$\\dfrac fg$：交集再扣掉 $g(x)=0$ 的點",
+        "$g(x)=x-2=0\\ \\Rightarrow\\ x=2$",
+        "例：$\\left(\\frac fg\\right)(2)=\\frac{\\sqrt2}{0}$，沒有定義"
+      ],
+      "tex": [
+        "\\text{定義域}\\left(\\tfrac fg\\right)=[0,2)\\cup(2,\\infty)"
+      ]
     },
     {
       "heading": "③ 化簡不會改變定義域",
       "body": [
-        "$f(x) = x^2 - 1$、$g(x) = x + 1$：$\\left(\\frac{f}{g}\\right)(x) = \\frac{(x - 1)(x + 1)}{x + 1} = x - 1$，但只在 $x \\ne -1$ 時成立。$\\frac{f}{g}$ 的圖形是直線 $y = x - 1$ 在 $(-1, -2)$ 挖了一個洞。",
-        "「化簡之後跟某條直線一樣，只差一個洞」——〈0/0：因式分解〉整課就在處理這個洞。"
+        "$f(x)=x^2-9$，$g(x)=x-3$",
+        "為什麼要寫 $x\\ne3$？",
+        "定義域在化簡之前就決定了：原式 $x=3$ 時分母是 $0$",
+        "定義域：$(-\\infty,3)\\cup(3,\\infty)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{f(x)}{g(x)}=\\frac{x^2-9}{x-3}=\\frac{(x-3)(x+3)}{x-3}",
+        "=x+3\\qquad (x\\ne3)"
+      ]
     },
     {
       "heading": "④ 相乘不是合成",
       "body": [
-        "$fg$ 是兩個輸出相乘；$f(g(x))$ 是把 $g$ 的輸出餵給 $f$（下一課）。$f(x) = x^2$、$g(x) = x + 3$：$(fg)(x) = x^2(x + 3)$，$f(g(x)) = (x + 3)^2$，$x = 1$ 時一個是 4、一個是 16。",
-        "會把複雜的函數拆成「誰加誰、誰乘誰」，之後的〈乘法法則〉、〈除法法則〉就是在問：拆開之後怎麼微分。"
+        "$fg$ 和 $f(g(x))$ 長得很像，但完全不同",
+        "$f(x)=x^2+1$，$g(x)=3x-2$，比較 $x=2$",
+        "相乘：兩台機器並排，輸出相乘",
+        "合成：兩台機器串起來，$g$ 的輸出丟進 $f$",
+        "小心巧合：$x=1$ 時",
+        "一般式：$(fg)(x)=3x^3-2x^2+3x-2$，$f(g(x))=9x^2-12x+5$",
+        "合成下一課會仔細講"
       ],
-      "collapsible": false
+      "tex": [
+        "(fg)(2)=f(2)\\cdot g(2)=5\\cdot4=20",
+        "f(g(2))=f(4)=4^2+1=17",
+        "(fg)(1)=2\\cdot1=2,\\qquad f(g(1))=f(1)=2"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 逐點運算：同一個 $x$，兩個輸出拿來加減乘除",
+        "• 定義域：交集；除法再扣掉 $g(x)=0$ 的點",
+        "• 相減、相乘：$g(x)$ 要整個括起來",
+        "• 化簡不會改變定義域：約掉的點變成圖上的洞",
+        "• $fg$ 是並排相乘，$f(g(x))$ 是串起來合成",
+        "下一課：函數合成 —— 把機器串起來"
+      ]
     }
   ],
   "workedExamples": [
@@ -92,35 +157,66 @@
   ],
   "checks": [
     {
-      "ask": "$f(x) = x + 1$、$g(x) = x - 1$，$(fg)(x)$ 是？",
+      "ask": "$f(x)=x^2+1$，$g(x)=3x-2$，$(f-g)(x)=$？",
       "options": [
-        { "label": "$x^2 - 1$", "correct": true },
-        { "label": "$2x$", "why": "那是 $f + g$。" },
-        { "label": "$x$", "why": "那是 $f(g(x)) = (x - 1) + 1$，合成不是相乘。" }
+        {
+          "label": "$x^2-3x+3$",
+          "correct": true
+        },
+        {
+          "label": "$x^2-3x-1$",
+          "why": "沒加括號：只對 $3x$ 變號，$-2$ 忘了變成 $+2$"
+        },
+        {
+          "label": "$-x^2+3x-3$",
+          "why": "這是 $g-f$；減法有順序"
+        },
+        {
+          "label": "$x^2+3x+3$",
+          "why": "$-(3x-2)$ 的 $3x$ 應該變成 $-3x$"
+        }
       ]
     },
     {
-      "ask": "$f(x) = x^2$、$g(x) = x - 3$，$(f - g)(x)$ 是？",
+      "ask": "$f(x)=\\sqrt{x+1}$，$g(x)=x$。$\\dfrac fg$ 的定義域是？",
       "options": [
-        { "label": "$x^2 - x - 3$", "why": "減號沒有分配：$-(x - 3) = -x + 3$。" },
-        { "label": "$-x^2 + x - 3$", "why": "那是 $g - f$，順序反了。" },
-        { "label": "$x^2 - x + 3$", "correct": true }
+        {
+          "label": "$[-1,0)\\cup(0,\\infty)$",
+          "correct": true
+        },
+        {
+          "label": "$[-1,\\infty)$",
+          "why": "漏了分母：$x=0$ 時 $g(0)=0$"
+        },
+        {
+          "label": "$(-1,0)\\cup(0,\\infty)$",
+          "why": "$x=-1$ 時 $\\frac{\\sqrt0}{-1}=0$，算得出來，要包含"
+        },
+        {
+          "label": "$(0,\\infty)$",
+          "why": "$x=-\\frac12$ 也可以：$\\frac{\\sqrt{1/2}}{-1/2}$ 算得出來"
+        }
       ]
     },
     {
-      "ask": "$f(x) = \\sqrt{x}$、$g(x) = x - 4$，$\\frac{f}{g}$ 的定義域？",
+      "ask": "$f(x)=x^2+1$，$g(x)=3x-2$，$(fg)(2)=$？",
       "options": [
-        { "label": "$[0, \\infty)$", "why": "漏了 $g(4) = 0$，$x = 4$ 時分母是 0。" },
-        { "label": "$[0, 4) \\cup (4, \\infty)$", "correct": true },
-        { "label": "$x \\ne 4$", "why": "漏了 $\\sqrt{x}$ 要 $x \\ge 0$，負數放不進 $f$。" }
-      ]
-    },
-    {
-      "ask": "$f(x) = x^2 - 9$、$g(x) = x - 3$。$\\left(\\frac{f}{g}\\right)(3)$ 是？",
-      "options": [
-        { "label": "6", "why": "6 是化簡式 $x + 3$ 在 3 的值；但 $g(3) = 0$，$\\left(\\frac{f}{g}\\right)(3)$ 本身沒有定義。" },
-        { "label": "0", "why": "$\\frac{0}{0}$ 不是 0，它根本不是一個數。" },
-        { "label": "沒有定義", "correct": true }
+        {
+          "label": "$20$",
+          "correct": true
+        },
+        {
+          "label": "$17$",
+          "why": "這是 $f(g(2))$：把 $g$ 的輸出丟進 $f$，是合成不是相乘"
+        },
+        {
+          "label": "$9$",
+          "why": "這是 $f(2)+g(2)$"
+        },
+        {
+          "label": "$5$",
+          "why": "只算了 $f(2)$；還要乘上 $g(2)=4$"
+        }
       ]
     }
   ],
@@ -128,203 +224,895 @@
     {
       "title": "逐點運算",
       "beats": [
-        { "show": ["$(f + g)(x) = f(x) + g(x)$"],
-          "note": "減、乘、除同理。",
-          "say": "兩個函數相加，就是在每一個 x，把兩台機器的輸出加起來。減、乘、除都一樣，每個 x 各算各的。",
+        {
+          "show": [
+            "兩個函數 $f$、$g$，怎麼「相加」？"
+          ],
+          "say": "兩個數可以相加，兩個函數要怎麼相加？",
           "board": [
-            {"do":"write","line":"$(f + g)(x) = {{fx:f(x)}} + {{gx:g(x)}}$","tint":{"fx":"blue","gx":"violet"}},
-            {"do":"focus","term":"fx","color":"blue","on":"兩台機器"},
-            {"do":"focus","term":"gx","color":"violet","label":"各算各的","on":"各算各的"}
-          ] },
-        { "show": ["$f(x) = \\sqrt{x}$，$g(x) = x - 2$"],
-          "say": "拿根號 x 和 x 減二來試。",
+            {
+              "do": "write",
+              "line": "兩個函數 $f$、$g$，怎麼「相加」？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同一個 $x$ 丟進兩台機器，再把兩個輸出加起來"
+          ],
+          "say": "想像兩台機器：同一個 x 同時丟進 f 和 g，各吐出一個數，再把這兩個數加起來。",
           "board": [
-            {"do":"write","line":"${{fx:f(x)}} = \\sqrt{x}$，${{gx:g(x)}} = x - 2$"}
-          ] },
-        { "show": ["$(f + g)(4) = 2 + 2 = 4$"],
-          "say": "在四：根號四是二，四減二也是二，加起來是四。",
+            {
+              "do": "write",
+              "line": "同一個 $x$ 丟進兩台機器，再把兩個輸出加起來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(f+g)(x)=f(x)+g(x)$"
+          ],
+          "say": "寫成式子，f 加 g 這台新機器，在 x 的輸出，就是 f of x 加 g of x。",
           "board": [
-            {"do":"write","line":"$(f + g)(4) = {{f4:2}} + {{g4:2}} = \\;\\;{{s:4}}$","tint":{"f4":"blue","g4":"violet"}},
-            {"do":"underline","term":"f4","color":"blue","on":"根號四是二"},
-            {"do":"underline","term":"g4","color":"violet","on":"四減二"},
-            {"do":"box","term":"s","color":"green","on":"加起來是"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$(fg)(9)$ 是？",
-        "options": [
-          {
-            "label": "21",
-            "correct": true
-          },
-          {
-            "label": "3",
-            "why": "3 只是 $f(9) = \\sqrt{9}$；還要乘上 $g(9) = 7$。"
-          },
-          {
-            "label": "7",
-            "why": "7 只是 $g(9)$；還要乘上 $f(9) = 3$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle (f+g)(x)=f(x)+g(x)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "輸出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(f-g)(x)=f(x)-g(x)\\qquad (fg)(x)=f(x)\\,g(x)$",
+            "$\\left(\\frac fg\\right)(x)=\\frac{f(x)}{g(x)}$"
+          ],
+          "say": "減、乘、除也一樣，都是在同一個 x，把兩個輸出拿來運算。這叫逐點運算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle (f-g)(x)=f(x)-g(x)\\qquad (fg)(x)=f(x)\\,g(x)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left(\\frac fg\\right)(x)=\\frac{f(x)}{g(x)}$",
+              "on": "在同"
+            },
+            {
+              "do": "write",
+              "line": "　「逐點」：每一個 $x$ 各算各的",
+              "color": "violet",
+              "on": "拿來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\sqrt x$，$g(x)=x-2$，$x=4$"
+          ],
+          "say": "例子：f 是根號 x，g 是 x 減 2，在 x 等於 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\sqrt x$，$g(x)=x-2$，$x=4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(4)=2$，$g(4)=2$"
+          ],
+          "say": "先各自算：根號 4 是 2，4 減 2 也是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(4)=2$，$g(4)=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(f+g)(4)=2+2=4$"
+          ],
+          "say": "所以相加是 4，相乘是 4，相除是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(f+g)(4)=2+2=4$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "$(fg)(4)=2\\cdot2=4$",
+              "color": "red",
+              "on": "相乘"
+            },
+            {
+              "do": "write",
+              "line": "$\\left(\\dfrac fg\\right)(4)=\\dfrac22=1$",
+              "color": "red",
+              "on": "相除"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "圖上看：高度相加",
+      "beats": [
+        {
+          "show": [
+            "紅色曲線的高度 = 藍色高度 + 綠色高度"
+          ],
+          "say": "用圖看相加：藍色是根號 x，綠色是 x 減 2，紅色是它們的和。在每一個 x，紅色的高度，就是藍色高度加上綠色高度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "add",
+                  "window": [
+                    -0.3,
+                    6,
+                    -2.5,
+                    7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "f = √x",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    },
+                    {
+                      "expr": "x-2",
+                      "color": "green",
+                      "label": "g = x − 2"
+                    },
+                    {
+                      "expr": "sqrt(x)+x-2",
+                      "color": "red",
+                      "label": "f + g",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "a",
+                        0
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)+a-2"
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sqrt(a)+a-2",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.3,
+                      "max": 5.8,
+                      "value": 4,
+                      "label": "x ="
+                    }
+                  },
+                  "readout": "f({a}) + g({a}) = {sqrt(a)} + {a-2} = {sqrt(a)+a-2}",
+                  "height": 330
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(4) + g(4) = 2 + 2 = 4",
+              "on": "紅色#1"
+            },
+            {
+              "do": "write",
+              "line": "紅色曲線的高度 = 藍色高度 + 綠色高度",
+              "color": "violet",
+              "on": "紅色#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖上看：高度相加"
+          ],
+          "say": "把 x 往左移。到 x 等於 1，g 是負 1，所以紅色比藍色低了 1。高度相加，負的也照加。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "add",
+                  "window": [
+                    -0.3,
+                    6,
+                    -2.5,
+                    7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "f = √x",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    },
+                    {
+                      "expr": "x-2",
+                      "color": "green",
+                      "label": "g = x − 2"
+                    },
+                    {
+                      "expr": "sqrt(x)+x-2",
+                      "color": "red",
+                      "label": "f + g",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "a",
+                        0
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)+a-2"
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sqrt(a)+a-2",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.3,
+                      "max": 5.8,
+                      "value": 4,
+                      "label": "x ="
+                    }
+                  },
+                  "readout": "f({a}) + g({a}) = {sqrt(a)} + {a-2} = {sqrt(a)+a-2}",
+                  "height": 330
+                },
+                "vals": {
+                  "a": 1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(1) + g(1) = 1 + −1 = 0",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖上看：高度相加"
+          ],
+          "say": "再往左，紅色在 0 就停住了，因為根號 x 在負數沒有定義。這就是下一節的主題。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "add",
+                  "window": [
+                    -0.3,
+                    6,
+                    -2.5,
+                    7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "f = √x",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    },
+                    {
+                      "expr": "x-2",
+                      "color": "green",
+                      "label": "g = x − 2"
+                    },
+                    {
+                      "expr": "sqrt(x)+x-2",
+                      "color": "red",
+                      "label": "f + g",
+                      "domain": [
+                        0,
+                        6
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "a",
+                        0
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        "a",
+                        "sqrt(a)"
+                      ],
+                      "to": [
+                        "a",
+                        "sqrt(a)+a-2"
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sqrt(a)+a-2",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.3,
+                      "max": 5.8,
+                      "value": 4,
+                      "label": "x ="
+                    }
+                  },
+                  "readout": "f({a}) + g({a}) = {sqrt(a)} + {a-2} = {sqrt(a)+a-2}",
+                  "height": 330
+                },
+                "vals": {
+                  "a": 0.3
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(0.3) + g(0.3) = 0.5477 + −1.7 = −1.152",
+              "on": "在負"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "相減要整個括起來",
       "beats": [
-        { "show": ["$f(x) = x^2 + 1$，$g(x) = 3x - 2$"],
-          "say": "f 是 x 平方加一，g 是三 x 減二，算 f 減 g。",
+        {
+          "show": [
+            "$f(x)=x^2+1$，$g(x)=3x-2$"
+          ],
+          "say": "再來注意一個很常見的錯誤。f 是 x 平方加 1，g 是 3x 減 2，算 f 減 g。",
           "board": [
-            {"do":"write","line":"$f(x) = {{fe:x^2 + 1}}$，$g(x) = {{ge:3x - 2}}$","tint":{"fe":"blue","ge":"violet"}}
-          ] },
-        { "show": ["$(x^2 + 1) - (3x - 2)$"],
-          "note": "$g$ 要整個括起來再減。",
-          "say": "先把 g 整個括起來，再放到減號後面。不加括號，減號只會減到第一項。",
+            {
+              "do": "write",
+              "line": "$f(x)=x^2+1$，$g(x)=3x-2$"
+            },
+            {
+              "do": "write",
+              "line": "求 $(f-g)(x)$",
+              "on": "3x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(f-g)(x)=(x^2+1)-\\color{red}{(3x-2)}$"
+          ],
+          "say": "關鍵：減掉的是整個 g of x，所以 3x 減 2 要整個用括號包起來。",
           "board": [
-            {"do":"write","line":"$({{fe:x^2 + 1}}) - \\;{{gp:({{ge:3x - 2}})}}$"},
-            {"do":"box","term":"gp","label":"整個括起來","on":"放到減號"},
-            {"do":"write","line":"${{w:x^2 + 1 - 3x - 2}}$","color":"red","on":"不加括號"},
-            {"do":"strike","term":"w","label":"只減到第一項","on":"減號只會"}
-          ] },
-        { "show": ["$= x^2 - 3x + 3$"],
-          "note": "$-(3x - 2) = -3x + 2$。",
-          "say": "減號分配進去，負三 x，負負得正變加二。一加二是三，得到 x 平方減三 x 加三。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle (f-g)(x)=(x^2+1)-\\color{red}{(3x-2)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=x^2+1-3x+2=x^2-3x+3$"
+          ],
+          "say": "括號前面是負號，拆開的時候裡面每一項都要變號，減 2 變成加 2。答案是 x 平方減 3x 加 3。",
           "board": [
-            {"do":"transform","line":"$= x^2 + 1 \\;{{m:- 3x + 2}}$","on":"減號分配"},
-            {"do":"underline","term":"m","label":"負負得正","on":"負負得正"},
-            {"do":"transform","line":"$= {{r:x^2 - 3x + 3}}$","on":"一加二是三"}
-          ] },
-        { "show": ["$x = 1$：$f(1) - g(1) = 2 - 1 = 1$"],
-          "note": "代進 $x^2 - 3x + 3$ 也是 1。",
-          "say": "代一個點檢查：在一，f 是二、g 是一，相減是一；化簡的式子代一也是一，對了。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle =x^2+1-3x+2=x^2-3x+3}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "一項"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$x=2$ 時 $f(2)-g(2)=5-4=1$；$4-6+3=1$",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(fg)(x)=(x^2+1)(3x-2)$",
+            "$=3x^3-2x^2+3x-2$"
+          ],
+          "say": "相乘也一樣，兩個都整個括起來再展開，得到 3x 三次方減 2x 平方加 3x 減 2。",
           "board": [
-            {"do":"write","line":"$x = 1$：$f(1) - g(1) = 2 - 1 = 1$","on":"在一"},
-            {"do":"underline","term":"r","color":"green","label":"代 1 也是 1","on":"化簡的式子"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "相乘不是合成",
-      "beats": [
-        { "show": ["$fg$：兩個輸出相乘","$f(g(x))$：$g$ 的輸出餵給 $f$"],
-          "say": "f 乘 g 是兩個輸出相乘；f 括號 g 括號 x，是先算 g，再把結果餵給 f。兩件完全不同的事。",
-          "board": [
-            {"do":"write","line":"${{p:fg}}$：兩個輸出相乘"},
-            {"do":"write","line":"${{c:f(g(x))}}$：先算 $g$ 再餵 $f$","on":"先算"},
-            {"do":"underline","term":"c","color":"gold","on":"餵給"}
-          ] },
-        { "show": ["$f(x) = x^2$，$g(x) = x + 3$"],
-          "say": "用 x 平方和 x 加三來比一比。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x) = x^2$，$g(x) = x + 3$","on":"x 平方"}
-          ] },
-        { "show": ["$(fg)(x) = x^2(x + 3)$","$f(g(x)) = (x + 3)^2$"],
-          "note": "$x = 1$ 時一個是 4，一個是 16。",
-          "say": "相乘是 x 平方乘 x 加三；合成是 x 加三整個平方。代一進去，一個是四，一個是十六。",
-          "board": [
-            {"do":"write","line":"$(fg)(x) = {{a:x^2(x + 3)}}$"},
-            {"do":"write","line":"$f(g(x)) = {{b:(x + 3)^2}}$","on":"合成是"},
-            {"do":"write","line":"$x = 1$：$1 \\cdot 4 = 4$，$4^2 = 16$","on":"代一進去"}
-          ] },
-        { "show": ["$g(1) = 4$，$f(4) = 16$"],
-          "note": "合成先算裡面的 $g$。",
-          "say": "代一進去的時候，合成要先算裡面：g 在一是四，再把四餵給 f，四的平方是十六。",
-          "board": [
-            {"do":"write","line":"$g(1) = 4$，$f(4) = {{s:16}}$"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle (fg)(x)=(x^2+1)(3x-2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =3x^3-2x^2+3x-2$",
+              "on": "3x#1"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
       "title": "定義域：交集",
       "beats": [
-        { "show": ["$f + g$：$f$、$g$ 都要有定義"],
-          "note": "定義域是兩者的交集。",
-          "say": "要算 f 加 g 在某個 x 的值，f 和 g 在那裡都得算得出來，所以定義域取交集。",
+        {
+          "show": [
+            "$f+g$、$f-g$、$fg$ 的定義域：兩個都要有定義"
+          ],
+          "say": "f 加 g 要算得出來，f of x 和 g of x 兩個都要算得出來。所以定義域是兩個定義域的交集。",
           "board": [
-            {"do":"write","line":"定義域 $= {{i:D_f \\cap D_g}}$"},
-            {"do":"focus","term":"i","color":"gold","on":"都得算"}
-          ] },
-        { "show": ["$\\frac{f}{g}$：再加 $g(x) \\ne 0$"],
-          "say": "除法還多一條：分母 g 在 x 的值不能是零。",
+            {
+              "do": "write",
+              "line": "$f+g$、$f-g$、$fg$ 的定義域：兩個都要有定義",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　交集：同時屬於兩個集合的部分",
+              "color": "violet",
+              "on": "兩個#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f=\\sqrt x$：$x\\ge0$；$g=x-2$：所有實數",
+            "交集：$[0,\\infty)$"
+          ],
+          "say": "根號 x 要 x 大於等於 0，x 減 2 什麼數都可以，交集就是 0 到無限大。",
           "board": [
-            {"do":"write","line":"$\\frac{f}{g}$：再加 ${{n:g(x) \\ne 0}}$"},
-            {"do":"box","term":"n","color":"gold","on":"分母"}
-          ] },
-        { "show": ["$\\frac{\\sqrt{x}}{x - 2}$：$x \\ge 0$ 且 $x \\ne 2$"],
-          "note": "$[0, 2) \\cup (2, \\infty)$",
-          "say": "根號 x 除以 x 減二：根號要 x 大於等於零，分母要 x 不等於二。合起來是從零開始，挖掉二。",
+            {
+              "do": "write",
+              "line": "$f=\\sqrt x$：$x\\ge0$；$g=x-2$：所有實數"
+            },
+            {
+              "do": "write",
+              "line": "交集：$[0,\\infty)$",
+              "on": "什麼"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac fg$：交集再扣掉 $g(x)=0$ 的點"
+          ],
+          "say": "除法多一個條件：分母不能是 0，所以還要扣掉讓 g of x 等於 0 的點。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{\\sqrt{x}}{x - 2}$：${{a:x \\ge 0}}$ 且 ${{b:x \\ne 2}}$","on":"除以"},
-            {"do":"focus","term":"a","color":"gold","on":"大於等於零"},
-            {"do":"focus","term":"b","color":"gold","on":"不等於二"},
-            {"do":"write","line":"$[0, 2) \\cup (2, \\infty)$","color":"green","on":"合起來"}
-          ] },
-        { "show": ["圖在 $x = 2$ 斷成兩段"],
-          "note": "左段從 $x = 0$ 開始。",
-          "say": "畫出來看：x 等於二有一條虛線，圖在那裡斷成兩段，左邊只從零開始。",
+            {
+              "do": "write",
+              "line": "$\\dfrac fg$：交集再扣掉 $g(x)=0$ 的點",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g(x)=x-2=0\\ \\Rightarrow\\ x=2$",
+            "$\\text{定義域}\\left(\\tfrac fg\\right)=[0,2)\\cup(2,\\infty)$"
+          ],
+          "say": "x 減 2 等於 0 的是 x 等於 2，挖掉它，得到 0 到 2，聯集 2 到無限大。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,6,-6,6],"curves":[{"expr":"sqrt(x)/(x-2)","domain":[0,1.95],"color":"blue"},{"expr":"sqrt(x)/(x-2)","domain":[2.05,6],"color":"blue"}],"dashed":[[[2,-6],[2,6]]]}}
-          ] }
+            {
+              "do": "write",
+              "line": "$g(x)=x-2=0\\ \\Rightarrow\\ x=2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{定義域}\\left(\\tfrac fg\\right)=[0,2)\\cup(2,\\infty)$",
+              "color": "red",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\left(\\frac fg\\right)(2)=\\frac{\\sqrt2}{0}$，沒有定義",
+              "color": "violet",
+              "on": "聯集"
+            }
+          ]
+        }
       ],
-      "key": "交集之後，再挖掉分母的零點",
+      "check": 1
+    },
+    {
+      "title": "化簡不會改變定義域",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=x^2-9$，$g(x)=x-3$",
+            "$\\frac{f(x)}{g(x)}=\\frac{x^2-9}{x-3}=\\frac{(x-3)(x+3)}{x-3}$"
+          ],
+          "say": "再看一個除法。分子 x 平方減 9 用平方差拆成 x 減 3 乘 x 加 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x^2-9$，$g(x)=x-3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{f(x)}{g(x)}=\\frac{x^2-9}{x-3}=\\frac{(x-3)(x+3)}{x-3}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=x+3\\qquad (x\\ne3)$"
+          ],
+          "say": "分子分母的 x 減 3 約掉，剩下 x 加 3。但是要寫清楚：x 不等於 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =x+3\\qquad (x\\ne3)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "但是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼要寫 $x\\ne3$？"
+          ],
+          "say": "為什麼要特別寫 x 不等於 3？",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼要寫 $x\\ne3$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義域在化簡之前就決定了：原式 $x=3$ 時分母是 $0$"
+          ],
+          "say": "因為定義域在化簡之前就決定了。原來的式子在 x 等於 3 時，分母是 0，根本沒有定義。約分只是讓式子變好算，不能把不存在的點變出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義域在化簡之前就決定了：原式 $x=3$ 時分母是 $0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟直線 y = x + 3 幾乎一樣，只差一個洞"
+          ],
+          "say": "畫出來是一條直線，但在 3 逗號 6 有一個洞，用空心點表示。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "hole",
+                  "window": [
+                    -5,
+                    5,
+                    -3,
+                    9
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(x^2-9)/(x-3)",
+                      "color": "red",
+                      "label": "y = (x²−9)/(x−3)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 3,
+                      "y": 6,
+                      "color": "red",
+                      "open": true
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.6,
+                      "y": -2,
+                      "text": "洞：(3, 6) 不在圖上"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "跟直線 y = x + 3 幾乎一樣，只差一個洞",
+              "color": "violet",
+              "on": "逗號"
+            },
+            {
+              "do": "write",
+              "line": "定義域：$(-\\infty,3)\\cup(3,\\infty)$",
+              "color": "red",
+              "on": "一個"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\dfrac{x^2-9}{x-3}$ 和 $x+3$ 是同一個函數嗎？",
+        "options": [
+          {
+            "label": "是，化簡後一樣",
+            "why": "化簡只對 $x\\ne3$ 成立；在 $x=3$，前者沒有定義，後者是 $6$"
+          },
+          {
+            "label": "不是，定義域不同",
+            "correct": true
+          },
+          {
+            "label": "不是，圖形完全不同",
+            "why": "除了 $x=3$ 以外，每一點的值都一樣"
+          }
+        ]
+      }
+    },
+    {
+      "title": "相乘不是合成",
+      "beats": [
+        {
+          "show": [
+            "$fg$ 和 $f(g(x))$ 長得很像，但完全不同"
+          ],
+          "say": "最後，分清楚兩件長得很像的事：f 乘 g，和 f 合成 g。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$fg$ 和 $f(g(x))$ 長得很像，但完全不同"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x)=x^2+1$，$g(x)=3x-2$，比較 $x=2$"
+          ],
+          "say": "用剛剛的 f 和 g，在 x 等於 2 比較。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x^2+1$，$g(x)=3x-2$，比較 $x=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相乘：兩台機器並排，輸出相乘",
+            "$(fg)(2)=f(2)\\cdot g(2)=5\\cdot4=20$"
+          ],
+          "say": "相乘是兩台機器並排：2 丟進 f 得 5，丟進 g 得 4，5 乘 4 是 20。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相乘：兩台機器並排，輸出相乘"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (fg)(2)=f(2)\\cdot g(2)=5\\cdot4=20$",
+              "on": "丟進#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合成：兩台機器串起來，$g$ 的輸出丟進 $f$",
+            "$f(g(2))=f(4)=4^2+1=17$"
+          ],
+          "say": "合成是兩台機器串起來：2 先丟進 g 得 4，再把 4 丟進 f，得到 17。答案不一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "合成：兩台機器串起來，$g$ 的輸出丟進 $f$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(g(2))=f(4)=4^2+1=17$",
+              "on": "再把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小心巧合：$x=1$ 時",
+            "$(fg)(1)=2\\cdot1=2,\\qquad f(g(1))=f(1)=2$"
+          ],
+          "say": "小心巧合：在 x 等於 1，兩個剛好都是 2。但這只是碰巧，不代表它們是同一個函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "小心巧合：$x=1$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (fg)(1)=2\\cdot1=2,\\qquad f(g(1))=f(1)=2$",
+              "on": "兩個"
+            },
+            {
+              "do": "write",
+              "line": "　一般式：$(fg)(x)=3x^3-2x^2+3x-2$，$f(g(x))=9x^2-12x+5$",
+              "color": "violet",
+              "on": "不代"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合成下一課會仔細講"
+          ],
+          "say": "合成下一課會仔細講。",
+          "board": [
+            {
+              "do": "write",
+              "line": "合成下一課會仔細講"
+            }
+          ]
+        }
+      ],
       "check": 2
     },
     {
-      "title": "化簡之後的洞",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\frac{x^2 - 9}{x - 3} = \\frac{(x - 3)(x + 3)}{x - 3}$"],
-          "say": "f 是 x 平方減九，g 是 x 減三。分子先分解成 x 減三乘 x 加三。",
+        {
+          "show": [
+            "• 逐點運算：同一個 $x$，兩個輸出拿來加減乘除",
+            "• 定義域：交集；除法再扣掉 $g(x)=0$ 的點"
+          ],
+          "say": "整理一下：函數的加減乘除是逐點運算；定義域取交集，除法再扣掉分母的零點；化簡不改變定義域；相乘不是合成。",
           "board": [
-            {"do":"write","line":"$\\frac{x^2 - 9}{x - 3}$"},
-            {"do":"transform","line":"$\\frac{x^2 - 9}{x - 3} = \\frac{{{a:(x - 3)}}(x + 3)}{{{b:x - 3}}}$","on":"分解成"}
-          ] },
-        { "show": ["$x \\ne 3$ 時 $= x + 3$"],
-          "note": "化簡不會改變定義域。",
-          "say": "x 不等於三，才可以約掉 x 減三，剩下 x 加三。約完之後，這個限制還在。",
+            {
+              "do": "write",
+              "line": "• 逐點運算：同一個 $x$，兩個輸出拿來加減乘除"
+            },
+            {
+              "do": "write",
+              "line": "• 定義域：交集；除法再扣掉 $g(x)=0$ 的點",
+              "on": "乘除"
+            },
+            {
+              "do": "write",
+              "line": "• 相減、相乘：$g(x)$ 要整個括起來",
+              "on": "域取"
+            },
+            {
+              "do": "write",
+              "line": "• 化簡不會改變定義域：約掉的點變成圖上的洞",
+              "on": "母的"
+            },
+            {
+              "do": "write",
+              "line": "• $fg$ 是並排相乘，$f(g(x))$ 是串起來合成",
+              "on": "定義#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：函數合成 —— 把機器串起來"
+          ],
+          "say": "下一課，我們就來把機器串起來，學函數合成。",
           "board": [
-            {"do":"write","line":"${{c:x \\ne 3}}$ 時 $= x + 3$"},
-            {"do":"strike","term":"a","color":"gold","on":"約掉"},
-            {"do":"strike","term":"b","color":"gold","on":"x 減三"},
-            {"do":"underline","term":"c","color":"blue","label":"限制還在","on":"這個限制"}
-          ] },
-        { "show": ["原式代 3：$\\frac{0}{0}$"],
-          "note": "分子分母同時是 0。",
-          "say": "回到原本的式子，f 在三是零，g 在三也是零。零除以零不是一個數，所以 f 除以 g 在三沒有定義。",
-          "board": [
-            {"do":"write","line":"$f(3) = 0$，$g(3) = 0$","on":"f 在三是零"},
-            {"do":"write","line":"$\\left(\\frac{f}{g}\\right)(3) = {{z:\\frac{0}{0}}}$","on":"零除以零"},
-            {"do":"underline","term":"z","color":"red","label":"不是數","on":"不是一個數"}
-          ] },
-        { "show": ["$g(3) = 0$：那 $\\left(\\frac{f}{g}\\right)(3)$ 呢？"],
-          "say": "g 在三是零。那 f 除以 g 在三呢？化簡後的式子在三是六，這個六算數嗎？",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$g(3) = 0$：$\\left(\\frac{f}{g}\\right)(3)$ 呢？","on":"g 在三是零"}
-          ] },
-        { "show": ["$x+3$ 代 3 得 6，但那是另一個函數"],
-          "note": "$\\frac{f}{g}$ 的定義域沒有 3。",
-          "say": "化簡後的 x 加三是另一個函數，它在三有定義，值是六。但 f 除以 g 的定義域沒有三，所以六不能當成答案。",
-          "board": [
-            {"do":"write","line":"${{h:x + 3}}$ 在 3 的值是 6","on":"x 加三"},
-            {"do":"underline","term":"h","color":"blue","label":"另一個函數","on":"另一個函數"},
-            {"do":"write","line":"$\\left(\\frac{f}{g}\\right)(3)$ 沒有定義","color":"red","on":"沒有三"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：函數合成 —— 把機器串起來"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
     "coarse": [],
-    "fine": ["function-arithmetic-evaluate", "function-arithmetic-domain", "function-arithmetic-simplify"]
+    "fine": [
+      "function-arithmetic-evaluate",
+      "function-arithmetic-domain",
+      "function-arithmetic-simplify"
+    ]
   },
   "practice": [
-    { "id": "cg-0b-001", "core": true, "trains": "function-arithmetic-evaluate" },
-    { "id": "cg-0b-002", "core": true, "trains": "function-arithmetic-evaluate" },
-    { "id": "cg-0b-003", "core": true, "trains": "function-arithmetic-domain" },
-    { "id": "cg-0b-004", "trains": "function-arithmetic-domain" }
+    {
+      "id": "cg-0b-001",
+      "core": true,
+      "trains": "function-arithmetic-evaluate"
+    },
+    {
+      "id": "cg-0b-002",
+      "core": true,
+      "trains": "function-arithmetic-evaluate"
+    },
+    {
+      "id": "cg-0b-003",
+      "core": true,
+      "trains": "function-arithmetic-domain"
+    },
+    {
+      "id": "cg-0b-004",
+      "trains": "function-arithmetic-domain"
+    }
   ],
   "gaps": []
 }

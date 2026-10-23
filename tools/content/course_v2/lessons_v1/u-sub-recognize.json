@@ -1,0 +1,394 @@
+{
+  "id": "u-sub-recognize",
+  "title": "換元：辨識",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["u-sub-basic", "integral-table"],
+  "next": ["u-sub-definite"],
+  "related": ["u-sub-nonobvious", "antiderivative"],
+  "objectives": [
+    "看到被積函數，先認出「外層的形狀」，再找裡層 $u$。",
+    "熟悉五種常見形狀：$\\frac{u'}{u}$、$u'u^n$、$u'e^u$、$\\frac{u'}{1+u^2}$、$\\frac{u'}{\\sqrt{u}}$。",
+    "知道同一題可以有不同的 $u$，答案可能長得不一樣但只差一個常數。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 先看外層長什麼樣",
+      "body": [
+        "上一課是「已經知道 $u$ 是誰」。真正做題時，難的是看出 $u$。順序是：先看整個式子去掉某個裡層之後，外層像表上的哪一條；再檢查那個裡層的導數在不在場（差常數倍可以）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 五種最常見的形狀",
+      "body": [
+        "$\\frac{u'}{u}$：分子是分母的導數 $\\to\\ln|u|$。例：$\\frac{2x+3}{x^2+3x+5}$、$\\tan x=\\frac{\\sin x}{\\cos x}$。",
+        "$u'\\cdot u^n$：某個東西的次方，乘上它的導數 $\\to\\frac{u^{n+1}}{n+1}$。例：$\\sin^5 x\\cos x$、$\\frac{(\\ln x)^2}{x}$。",
+        "$u'\\cdot e^u$：指數上面的東西，它的導數在外面 $\\to e^u$。例：$x e^{x^2}$、$\\cos x\\, e^{\\sin x}$。",
+        "$\\frac{u'}{1+u^2}$：分母是 $1$ 加某個東西的平方，分子是那個東西的導數 $\\to\\arctan u$。例：$\\frac{x}{1+x^4}$，這裡 $u=x^2$。",
+        "$\\frac{u'}{\\sqrt{u}}$：根號裡的東西，它的導數在分子 $\\to 2\\sqrt{u}$。例：$\\frac{x}{\\sqrt{4-x^2}}$。"
+      ],
+      "tex": ["\\int\\frac{u'}{u}=\\ln|u|,\\quad \\int u'u^n=\\frac{u^{n+1}}{n+1},\\quad \\int u'e^u=e^u,\\quad \\int\\frac{u'}{1+u^2}=\\arctan u,\\quad \\int\\frac{u'}{\\sqrt u}=2\\sqrt u"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 長得像但不是",
+      "body": [
+        "$\\frac{1}{1+x^2}$ 的分子是 $1$，它是 $\\arctan x$，不是 $\\ln(1+x^2)$：$\\ln$ 那條需要分子是 $2x$。",
+        "$\\frac{x}{1+x^2}$ 的分子是 $x$，它是 $\\frac{1}{2}\\ln(1+x^2)$，不是 $\\arctan$：$\\arctan$ 那條要分母是 $1+u^2$，而 $u=x^2$ 時 $u'=2x$，分母卻是 $1+x^2$，不是 $1+x^4$。",
+        "所以每次都要寫出 $u$ 和 $du$ 核對一次，不要只憑形狀。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $u$ 不只一種選法",
+      "body": [
+        "$\\int\\sin x\\cos x\\,dx$：選 $u=\\sin x$ 得 $\\frac{\\sin^2 x}{2}$；選 $u=\\cos x$ 得 $-\\frac{\\cos^2 x}{2}$。兩個答案相差 $\\frac{\\sin^2 x}{2}+\\frac{\\cos^2 x}{2}=\\frac{1}{2}$，是常數，所以都對（〈反導函數〉：只差常數）。",
+        "換不乾淨的時候（$x$ 留下來、$du$ 配不起來），通常是 $u$ 選錯了，或者需要〈非顯然的換元〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$\\frac{u'}{u}$",
+      "prompt": "$\\int\\frac{2x+3}{x^2+3x+5}\\,dx$",
+      "problemId": "exam-int-017",
+      "steps": [
+        "分母的導數是 $2x+3$，正好是分子：形狀 $\\frac{u'}{u}$。令 $u=x^2+3x+5$，$du=(2x+3)\\,dx$。",
+        "$\\int\\frac{du}{u}=\\ln|u|+C$。",
+        "$x^2+3x+5$ 的判別式 $9-20<0$，它永遠是正的，絕對值可以拿掉。",
+        "答案：$\\ln(x^2+3x+5)+C$。"
+      ],
+      "answer": "$\\ln(x^2+3x+5)+C$",
+      "claim": "D(ln(x^2+3*x+5)) == (2*x+3)/(x^2+3*x+5)"
+    },
+    {
+      "title": "看出是 $\\arctan$",
+      "prompt": "$\\int\\frac{x}{x^4+1}\\,dx$",
+      "problemId": "exam-int-018",
+      "steps": [
+        "分母 $x^4+1=1+(x^2)^2$：形狀是 $1+u^2$，$u=x^2$。",
+        "$du=2x\\,dx$，所以 $x\\,dx=\\frac{du}{2}$。",
+        "$\\int\\frac{x}{x^4+1}\\,dx=\\frac{1}{2}\\int\\frac{du}{1+u^2}=\\frac{1}{2}\\arctan u+C$。",
+        "答案：$\\frac{1}{2}\\arctan(x^2)+C$。"
+      ],
+      "answer": "$\\frac{1}{2}\\arctan(x^2)+C$",
+      "claim": "D(atan(x^2)/2) == x/(x^4+1)"
+    },
+    {
+      "title": "兩種選法，答案差常數",
+      "prompt": "$\\int\\sin x\\cos x\\,dx$",
+      "steps": [
+        "選法一：$u=\\sin x$，$du=\\cos x\\,dx$。$\\int u\\,du=\\frac{u^2}{2}$，得 $\\frac{\\sin^2 x}{2}+C$。",
+        "選法二：$u=\\cos x$，$du=-\\sin x\\,dx$。$-\\int u\\,du=-\\frac{u^2}{2}$，得 $-\\frac{\\cos^2 x}{2}+C$。",
+        "兩者相減：$\\frac{\\sin^2 x}{2}-\\left(-\\frac{\\cos^2 x}{2}\\right)=\\frac{\\sin^2 x+\\cos^2 x}{2}=\\frac{1}{2}$，是常數。兩個都是正確答案。"
+      ],
+      "answer": "$\\frac{\\sin^2 x}{2}+C$（或 $-\\frac{\\cos^2 x}{2}+C$）",
+      "claim": "D(sin(x)^2/2) == sin(x)*cos(x) ;; sin(x)^2/2 ~= -cos(x)^2/2"
+    }
+  ],
+  "pitfalls": [
+    "$\\frac{x}{1+x^2}$ 積成 $\\arctan$，或 $\\frac{1}{1+x^2}$ 積成 $\\ln$：只看形狀、沒核對 $du$。",
+    "$u=4-x^2$ 時漏了 $du=-2x\\,dx$ 的負號。",
+    "兩種方法答案長得不同，就以為其中一個錯了。",
+    "$u$ 選成「導數」那一部分（例如把 $\\cos x$ 當 $u$，卻去配 $\\sin^5 x$）。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int\\frac{\\cos x}{1+\\sin x}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\ln(1+\\sin x)+C$", "correct": true },
+        { "label": "$\\arctan(\\sin x)+C$", "why": "$\\arctan$ 需要分母是 $1+u^2$；這裡分母是 $1+u$（$u=\\sin x$），形狀是 $\\frac{du}{u}$。" },
+        { "label": "$-\\ln(1+\\sin x)+C$", "why": "$(1+\\sin x)'=\\cos x$，沒有負號。負號是 $\\cos$ 的反導函數才有的。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{x}{\\sqrt{4-x^2}}\\,dx$ 是？",
+      "options": [
+        { "label": "$-\\sqrt{4-x^2}+C$", "correct": true },
+        { "label": "$\\arcsin\\frac{x}{2}+C$", "why": "$\\arcsin$ 那條的分子是 $1$。這裡分子是 $x$，正好是根號裡 $4-x^2$ 的導數（差 $-2$ 倍），用 $u=4-x^2$。" },
+        { "label": "$\\sqrt{4-x^2}+C$", "why": "$u=4-x^2$ 時 $du=-2x\\,dx$，負號要帶著；$\\left(\\sqrt{4-x^2}\\right)'=-\\frac{x}{\\sqrt{4-x^2}}$。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\sin x\\cos x\\,dx$：甲得 $\\frac{\\sin^2 x}{2}+C$，乙得 $-\\frac{\\cos^2 x}{2}+C$。",
+      "options": [
+        { "label": "兩個都對，相差一個常數 $\\frac{1}{2}$", "correct": true },
+        { "label": "只有甲對", "why": "$\\left(-\\frac{\\cos^2 x}{2}\\right)'=\\cos x\\sin x$，乙也對，只是選了 $u=\\cos x$。" },
+        { "label": "兩個都錯，因為它們不相等", "why": "不定積分只決定到差一個常數。兩者相差 $\\frac{\\sin^2 x+\\cos^2 x}{2}=\\frac{1}{2}$，是常數。" }
+      ]
+    },
+    {
+      "ask": "$\\int e^{\\tan x}\\sec^2 x\\,dx$ 是？",
+      "options": [
+        { "label": "$e^{\\tan x}+C$", "correct": true },
+        { "label": "$e^{\\tan x}\\tan x+C$", "why": "$u=\\tan x$ 時 $\\sec^2 x\\,dx$ 正好是 $du$，被吃掉了，不會再換出 $\\tan x$。" },
+        { "label": "$\\frac{e^{\\tan x}}{\\sec^2 x}+C$", "why": "$\\sec^2 x$ 含 $x$，不能當常數除掉；而且它正好是 $du$，不需要處理。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "先看外層",
+      "beats": [
+        { "show": ["① 外層像表上的哪一條？","② 裡層的導數在不在場？"],
+          "note": "差常數倍可以。",
+          "say": "真正做題時，難的是看出 u 是誰。先看外層像積分表的哪一條，再檢查裡層的導數在不在。",
+          "board": [
+            {"do":"write","line":"先認外層的形狀"},
+            {"do":"write","line":"再查裡層的導數在不在","on":"再檢查"}
+          ] },
+        { "show": ["$\\frac{u'}{u}\\to\\ln|u|$"],
+          "note": "分子是分母的導數。",
+          "say": "第一種形狀：分子剛好是分母的導數，積出來是自然對數絕對值 u。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{a:u'}}}{{{b:u}}}\\to\\ln|u|$"},
+            {"do":"underline","term":"a","color":"blue","on":"分子"},
+            {"do":"underline","term":"b","color":"violet","on":"分母"}
+          ] },
+        { "show": ["$\\int\\frac{2x+3}{x^2+3x+5}\\,dx=\\ln(x^2+3x+5)+C$"],
+          "note": "判別式 $9-20<0$，分母永遠是正的。",
+          "say": "例如分母 x 平方加三 x 加五，導數二 x 加三正好是分子。分母永遠是正的，絕對值可以拿掉。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int\\frac{{{n:2x+3}}}{{{d:x^2+3x+5}}}\\,dx$","on":"例如"},
+            {"do":"underline","term":"d","on":"分母#1"},
+            {"do":"circle","term":"n","color":"blue","on":"分子"},
+            {"do":"transform","line":"$=\\ln({{d:x^2+3x+5}})+C$","on":"絕對值"}
+          ] },
+        { "show": ["判別式 $9-20<0$：拋物線碰不到 x 軸"],
+          "say": "判別式是九減二十，小於零，拋物線碰不到 x 軸。看圖，整條都在 x 軸上面。",
+          "board": [
+            {"do":"write","line":"判別式 $9-20<0$"},
+            {"do":"plot","graph":{"window":[-5,2,-1,12],"curves":[{"expr":"x^2+3*x+5","domain":[-5,2],"color":"blue"}]},"on":"看圖"}
+          ] },
+        { "show": ["對照：$x^2-1$ 在 $x=0$ 是 $-1$"],
+          "note": "分母會變負，絕對值就要留著。",
+          "say": "對照分母是 x 平方減一：x 等於零時是負一，分母會變負，絕對值就要留著。",
+          "board": [
+            {"do":"write","line":"$x^2-1$：$x=0$ 時是 $-1$","color":"red"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "次方與指數",
+      "beats": [
+        { "show": ["$u'\\cdot u^n\\to\\frac{u^{n+1}}{n+1}$"],
+          "note": "例：$\\sin^5 x\\cos x$、$\\frac{(\\ln x)^2}{x}$。",
+          "say": "第二種：某個東西的次方，乘上它的導數。像 sine 五次方乘 cosine，u 就是 sine x。",
+          "board": [
+            {"do":"write","line":"${{a:u'}}\\cdot{{b:u^n}}\\to\\frac{u^{n+1}}{n+1}$"},
+            {"do":"underline","term":"b","on":"次方#1"},
+            {"do":"write","line":"$\\sin^5 x\\,\\cos x$","on":"像 sine"},
+            {"do":"write","line":"$u=\\sin x$","color":"blue","on":"u 就是"}
+          ] },
+        { "show": ["$u'\\cdot e^u\\to e^u$"],
+          "note": "例：$xe^{x^2}$、$\\cos x\\,e^{\\sin x}$。",
+          "say": "第三種：指數上面的東西，它的導數在外面。e 的 sine x 次方乘 cosine x，u 就是 sine x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{c:u'}}\\cdot e^{{{d:u}}}\\to e^u$","on":"第三種"},
+            {"do":"focus","term":"d","color":"blue","on":"指數上面"},
+            {"do":"write","line":"$e^{\\sin x}\\,\\cos x$","on":"e 的 sine x 次方"},
+            {"do":"write","line":"$u=\\sin x$","color":"blue","on":"u 就是"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "arctan 與根號",
+      "beats": [
+        { "show": ["$\\frac{u'}{1+u^2}\\to\\arctan u$"],
+          "note": "分母是 $1$ 加某個東西的平方。",
+          "say": "第四種：分母是一加某個東西的平方，分子是那個東西的導數，積出 arctangent。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{a:u'}}}{1+{{b:u}}^2}\\to\\arctan u$"},
+            {"do":"underline","term":"b","color":"blue","on":"平方"},
+            {"do":"underline","term":"a","on":"導數"}
+          ] },
+        { "show": ["$\\frac{u'}{\\sqrt{u}}\\to 2\\sqrt{u}$"],
+          "note": "根號裡那個東西的導數在分子。",
+          "say": "第五種：根號裡的東西，它的導數在分子，積出二倍根號 u。導數差一個負號也要帶著。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{c:u'}}}{\\sqrt{{{d:u}}}}\\to {{r:2\\sqrt{u}}}$"},
+            {"do":"focus","term":"d","color":"blue","on":"根號裡"},
+            {"do":"box","term":"r","color":"green","on":"二倍根號"},
+            {"do":"write","line":"差一個負號要帶著","on":"負號"}
+          ] },
+        { "show": ["$(2\\sqrt{u})'=\\frac{u'}{\\sqrt{u}}$"],
+          "note": "微分檢查：為什麼係數是 2。",
+          "say": "為什麼是二倍？反過來微分：二乘二分之一，約掉，剩下 u prime 除以根號 u。",
+          "board": [
+            {"do":"write","line":"$(2\\sqrt{u})'=2\\cdot\\frac{1}{2\\sqrt{u}}\\cdot u'$"},
+            {"do":"transform","line":"$=\\frac{u'}{\\sqrt{u}}$","on":"剩下"}
+          ] },
+        { "show": ["$\\int\\frac{x}{\\sqrt{x^2+1}}dx=\\sqrt{x^2+1}+C$"],
+          "note": "導數差常數：補係數。",
+          "say": "差常數就補係數：x dx 是二分之一 du，乘二倍根號 u，得根號 x 平方加一。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{x}{\\sqrt{x^2+1}}\\,dx$"},
+            {"do":"write","line":"$u=x^2+1,\\ x\\,dx=\\frac{du}{2}$","on":"x dx"},
+            {"do":"write","line":"$\\frac{1}{2}\\cdot2\\sqrt{u}=\\sqrt{x^2+1}$","on":"得根號"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "看出是 arctan",
+      "beats": [
+        { "show": ["$\\int\\frac{x}{x^4+1}\\,dx$"],
+          "say": "這一題乍看不像任何一條。先看分母。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{x}{{{d:x^4+1}}}\\,dx$"},
+            {"do":"underline","term":"d","on":"先看"}
+          ] },
+        { "show": ["$x^4+1=1+(x^2)^2$：$u=x^2$"],
+          "note": "形狀是 $1+u^2$。",
+          "say": "x 四次方是 x 平方的平方，所以分母是一加 u 平方，u 等於 x 平方。",
+          "board": [
+            {"do":"transform","line":"${{d:x^4+1}}=1+({{u:x^2}})^2$","tint":{"u":"blue"}},
+            {"do":"write","line":"$u={{u:x^2}}$","tint":{"u":"blue"},"on":"u 等於"}
+          ] },
+        { "show": ["$du=2x\\,dx$，$x\\,dx=\\frac{du}{2}$"],
+          "say": "du 是二 x dx，分子的 x dx 就是二分之一 du，只差常數，配得起來。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$du=2{{x:x\\,dx}}$","on":"du 是"},
+            {"do":"transform","line":"${{x:x\\,dx}}=\\frac{du}{2}$","on":"就是"},
+            {"do":"focus","term":"x","color":"green","on":"只差常數"}
+          ] },
+        { "show": ["常數 $\\frac12$ 提到積分號外面"],
+          "say": "常數二分之一可以提到積分號外面，裡面就剩 du 除以一加 u 平方，這一步你自己接著積。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{x}{x^4+1}\\,dx={{h:\\frac12}}\\int\\frac{du}{1+u^2}$"},
+            {"do":"circle","term":"h","color":"gold","on":"提到"}
+          ] }
+      ],
+      "key": "$x^4+1$ 看成 $1+(x^2)^2$",
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}\\arctan(x^2)+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\arctan(x^2)+C$",
+            "why": "漏了 $x\\,dx=\\frac{du}{2}$ 的 $\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\frac{1}{4}\\ln(x^4+1)+C$",
+            "why": "$\\ln$ 那條要分子是分母的導數 $4x^3$；這裡分子只有 $x$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "長得像但不是",
+      "beats": [
+        { "show": ["$\\frac{1}{1+x^2}\\to\\arctan x$"],
+          "note": "分子是 $1$。$\\ln$ 那條需要分子是 $2x$。",
+          "say": "分子是一，是 arctangent x。要積出自然對數，分子得是分母的導數二 x。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{a:1}}}{1+x^2}\\to\\arctan x$"},
+            {"do":"underline","term":"a","on":"分子#1"},
+            {"do":"write","line":"$\\ln$ 那條要分子是 ${{d:2x}}$","on":"要積出"},
+            {"do":"focus","term":"d","color":"blue","on":"導數"}
+          ] },
+        { "show": ["$\\frac{x}{1+x^2}\\to\\frac{1}{2}\\ln(1+x^2)$"],
+          "note": "分子是 $x$：這是 $\\frac{u'}{u}$。",
+          "say": "分子換成 x，就變成分子是分母的導數，差一個二，答案是二分之一自然對數。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{e:x}}}{{{f:1+x^2}}}\\to{{r:\\frac{1}{2}\\ln(1+x^2)}}$"},
+            {"do":"underline","term":"f","on":"分母"},
+            {"do":"box","term":"r","color":"green","on":"二分之一"}
+          ] },
+        { "show": ["每次都寫出 $u$ 和 $du$ 核對"],
+          "note": "不要只憑形狀。",
+          "say": "兩個只差一點點，答案完全不同。所以每次都把 u 和 du 寫出來核對。",
+          "board": [
+            {"do":"write","line":"每次都寫出 $u$ 和 $du$ 核對"}
+          ] }
+      ],
+      "key": "每次寫出 $u$、$du$ 核對，別只看形狀",
+      "predict": {
+        "ask": "$\\frac{x}{1+x^2}$ 硬套 $\\arctan$ 那條，$u=x^2$，分母應該是？",
+        "options": [
+          {
+            "label": "$1+x^4$，所以套不上",
+            "correct": true
+          },
+          {
+            "label": "$1+x^2$，剛好套上",
+            "why": "$1+u^2$ 的 $u=x^2$，$u^2$ 是 $x^4$，不是 $x^2$。"
+          },
+          {
+            "label": "$1+2x$",
+            "why": "$2x$ 是 $u'$，該出現在分子，不在分母。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$u$ 不只一種選法",
+      "beats": [
+        { "show": ["$\\int\\sin x\\cos x\\,dx$"],
+          "say": "最後一題，sine 乘 cosine，兩個都是對方的導數，u 選哪個都行。",
+          "board": [
+            {"do":"write","line":"${{m:\\int\\sin x\\cos x\\,dx}}$"},
+            {"do":"underline","term":"m","label":"u 隨你選","on":"u 選"}
+          ] },
+        { "show": ["$u=\\sin x$：$\\frac{\\sin^2 x}{2}+C$"],
+          "say": "選 u 等於 sine x，du 是 cosine x dx，積出二分之 sine 平方。",
+          "board": [
+            {"do":"write","line":"$u=\\sin x,\\ du=\\cos x\\,dx$"},
+            {"do":"write","line":"$\\frac{\\sin^2 x}{2}+C$","color":"green","on":"積出"}
+          ] },
+        { "show": ["只差常數，導數就一樣"],
+          "note": "例：$x^2$ 與 $x^2+5$。",
+          "say": "不定積分只決定到差一個常數。像 x 平方和 x 平方加五，導數都是二 x，所以都對。",
+          "board": [
+            {"do":"write","line":"$(x^2)'=(x^2+5)'=2x$"}
+          ] },
+        { "show": ["$u=\\cos x$：$-\\frac{\\cos^2 x}{2}+C$"],
+          "note": "$du=-\\sin x\\,dx$，負號帶著。",
+          "say": "選 u 等於 cosine x，du 有負號，積出負的二分之 cosine 平方。兩個答案長得不一樣。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$u=\\cos x,\\ du={{n:-\\sin x}}\\,dx$","on":"等於"},
+            {"do":"focus","term":"n","label":"負號帶著","on":"有負號"},
+            {"do":"write","line":"$-\\frac{\\cos^2 x}{2}+C$","color":"green","on":"積出"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["substitution", "u-sub", "log", "inverse-trig", "radical"],
+    "fine": ["u-sub-log-derivative", "u-sub-power-of-u", "u-sub-exp-form", "u-sub-arctan-form", "u-sub-root-form", "u-sub-choice-constant"]
+  },
+  "practice": [
+    { "id": "uni-int-009", "core": true, "trains": "u-sub-log-derivative" },
+    { "id": "int-018", "core": true, "trains": "u-sub-log-derivative" },
+    { "id": "exam-int-015", "core": true, "trains": "u-sub-log-derivative", "note": "$u=\\ln x$：分母 $x\\ln x$ 裡藏著 $du=\\frac{dx}{x}$。" },
+    { "id": "uni-int-006", "core": true, "trains": "u-sub-power-of-u" },
+    { "id": "exam-int-007", "core": true, "trains": "u-sub-power-of-u" },
+    { "id": "hc-usub-004", "core": true, "trains": "u-sub-arctan-form" },
+    { "id": "exam-int-011", "core": true, "trains": "u-sub-root-form" },
+    { "id": "exam-int-020", "core": true, "trains": "u-sub-root-form" },
+    { "id": "cg-4c-005", "core": true, "trains": "u-sub-exp-form" },
+    { "id": "depth-int-013", "trains": "u-sub-log-derivative" },
+    { "id": "exam-int-010", "trains": "u-sub-log-derivative", "note": "$u=1+x^{3/2}$，它的導數 $\\frac{3}{2}\\sqrt{x}$ 就在分子。" },
+    { "id": "depth-int-008", "trains": "u-sub-root-form" },
+    { "id": "uni-int-005", "trains": "u-sub-power-of-u" },
+    { "id": "depth-int-003", "trains": "u-sub-power-of-u" },
+    { "id": "hc-usub-006", "trains": "u-sub-exp-form" },
+    { "id": "cg-4c-006", "trains": "u-sub-exp-form" },
+    { "id": "cg-4c-007", "trains": "u-sub-choice-constant" },
+    { "id": "hc-usub-005", "challenge": true, "trains": "u-sub-log-derivative", "note": "挑戰：先選 $u=\\sqrt{1+x^4}$，看看式子變成什麼。" }
+  ],
+  "gaps": []
+}

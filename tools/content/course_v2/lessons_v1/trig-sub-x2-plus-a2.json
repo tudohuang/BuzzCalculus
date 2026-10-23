@@ -1,0 +1,340 @@
+{
+  "id": "trig-sub-x2-plus-a2",
+  "title": "√(x² + a²)",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["trig-sub-a2-minus-x2", "trig-integral-tan-sec"],
+  "next": ["trig-sub-x2-minus-a2"],
+  "related": ["partial-fractions-quadratic", "riemann-sum-notation"],
+  "objectives": [
+    "看到 $\\sqrt{x^2+a^2}$ 或 $(x^2+a^2)^n$ 且換元配不起來時，會令 $x=a\\tan\\theta$，$\\theta\\in(-\\frac{\\pi}{2},\\frac{\\pi}{2})$。",
+    "會用「對邊 $x$、鄰邊 $a$、斜邊 $\\sqrt{x^2+a^2}$」的三角形換回 $x$。",
+    "會積 $\\int\\frac{dx}{\\sqrt{x^2+a^2}}$ 與 $\\int\\frac{dx}{(x^2+a^2)^2}$。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 需要的恆等式：$1+\\tan^2\\theta=\\sec^2\\theta$",
+      "body": [
+        "上一課用 $1-\\sin^2\\theta=\\cos^2\\theta$ 消掉 $a^2-x^2$。這一課是加號，要用 $1+\\tan^2\\theta=\\sec^2\\theta$：令 $x=a\\tan\\theta$，則 $x^2+a^2=a^2\\tan^2\\theta+a^2=a^2\\sec^2\\theta$。",
+        "取 $\\theta\\in(-\\frac{\\pi}{2},\\frac{\\pi}{2})$：$\\tan\\theta$ 在這段上走遍所有實數，每個 $x$ 恰好對應一個 $\\theta=\\arctan\\frac{x}{a}$；而且 $\\cos\\theta>0$，$\\sec\\theta>0$，所以 $\\sqrt{x^2+a^2}=a\\sec\\theta$。",
+        "$dx=a\\sec^2\\theta\\,d\\theta$。代進去之後通常剩 $\\sec$、$\\tan$ 或 $\\sin$、$\\cos$ 的次方。"
+      ],
+      "tex": ["x=a\\tan\\theta,\\quad dx=a\\sec^2\\theta\\,d\\theta,\\quad \\sqrt{x^2+a^2}=a\\sec\\theta\\quad\\left(-\\tfrac\\pi2<\\theta<\\tfrac\\pi2\\right)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 換回 $x$ 的三角形",
+      "body": [
+        "$\\tan\\theta=\\frac{x}{a}$：對邊 $x$、鄰邊 $a$、斜邊 $\\sqrt{x^2+a^2}$。",
+        "$\\sin\\theta=\\frac{x}{\\sqrt{x^2+a^2}}$，$\\cos\\theta=\\frac{a}{\\sqrt{x^2+a^2}}$，$\\sec\\theta=\\frac{\\sqrt{x^2+a^2}}{a}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個常見結果",
+      "body": [
+        "$\\int\\frac{dx}{\\sqrt{x^2+a^2}}$：換完是 $\\int\\sec\\theta\\,d\\theta=\\ln|\\sec\\theta+\\tan\\theta|$，換回 $x$ 得 $\\ln(x+\\sqrt{x^2+a^2})+C$（常數 $-\\ln a$ 併進 $C$；$x+\\sqrt{x^2+a^2}>0$，不用絕對值）。",
+        "$\\int\\frac{dx}{(x^2+a^2)^2}$：換完是 $\\frac{1}{a^3}\\int\\cos^2\\theta\\,d\\theta$，用半角。〈部分分式 III：不可約二次式〉留下的 $(x^2+1)^2$ 就是這樣處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 分母是 $x^2+px+q$ 時",
+      "body": [
+        "先配方成 $(x+h)^2+k^2$，令 $u=x+h$，就回到本課的樣子。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$\\int\\sec\\theta$ 再換回來",
+      "prompt": "$\\int\\frac{1}{\\sqrt{x^2+1}}\\,dx$",
+      "steps": [
+        "令 $x=\\tan\\theta$，$dx=\\sec^2\\theta\\,d\\theta$，$\\sqrt{x^2+1}=\\sec\\theta$。",
+        "$\\int\\frac{\\sec^2\\theta}{\\sec\\theta}\\,d\\theta=\\int\\sec\\theta\\,d\\theta=\\ln|\\sec\\theta+\\tan\\theta|+C$。",
+        "三角形：$\\tan\\theta=x$，$\\sec\\theta=\\sqrt{x^2+1}$。",
+        "答案：$\\ln(x+\\sqrt{x^2+1})+C$。"
+      ],
+      "answer": "$\\ln(x+\\sqrt{x^2+1})+C$",
+      "claim": "D(ln(x+sqrt(x^2+1))) == 1/sqrt(x^2+1)"
+    },
+    {
+      "title": "平方在分母",
+      "prompt": "$\\int\\frac{1}{(x^2+1)^2}\\,dx$",
+      "steps": [
+        "令 $x=\\tan\\theta$，$dx=\\sec^2\\theta\\,d\\theta$，$(x^2+1)^2=\\sec^4\\theta$。",
+        "$\\int\\frac{\\sec^2\\theta}{\\sec^4\\theta}\\,d\\theta=\\int\\cos^2\\theta\\,d\\theta=\\frac{\\theta}{2}+\\frac{\\sin 2\\theta}{4}=\\frac{\\theta+\\sin\\theta\\cos\\theta}{2}$。",
+        "三角形：$\\sin\\theta\\cos\\theta=\\frac{x}{\\sqrt{x^2+1}}\\cdot\\frac{1}{\\sqrt{x^2+1}}=\\frac{x}{x^2+1}$；$\\theta=\\arctan x$。",
+        "答案：$\\frac{1}{2}\\left(\\arctan x+\\frac{x}{x^2+1}\\right)+C$。"
+      ],
+      "answer": "$\\frac{1}{2}\\left(\\arctan x+\\frac{x}{x^2+1}\\right)+C$",
+      "claim": "D((atan(x)+x/(1+x^2))/2) == 1/(x^2+1)^2"
+    },
+    {
+      "title": "定積分",
+      "prompt": "$\\int_0^{\\sqrt{3}}\\frac{1}{(x^2+1)^{3/2}}\\,dx$",
+      "steps": [
+        "令 $x=\\tan\\theta$，$dx=\\sec^2\\theta\\,d\\theta$，$(x^2+1)^{3/2}=\\sec^3\\theta$。",
+        "上下限：$x=0\\to\\theta=0$；$x=\\sqrt{3}\\to\\theta=\\frac{\\pi}{3}$。",
+        "$\\int_0^{\\pi/3}\\frac{\\sec^2\\theta}{\\sec^3\\theta}\\,d\\theta=\\int_0^{\\pi/3}\\cos\\theta\\,d\\theta=\\sin\\frac{\\pi}{3}=\\frac{\\sqrt{3}}{2}$。"
+      ],
+      "answer": "$\\frac{\\sqrt{3}}{2}$",
+      "claim": "INT(1/(x^2+1)^(3/2),0,sqrt(3)) == sqrt(3)/2"
+    }
+  ],
+  "pitfalls": [
+    "加號的根號也用 $x=a\\sin\\theta$：$a^2+a^2\\sin^2\\theta$ 不是完全平方。",
+    "$dx$ 寫成 $a\\sec\\theta\\,d\\theta$，漏了平方。",
+    "三角形邊放錯：$\\tan\\theta=\\frac{x}{a}$ 是「對邊 $x$、鄰邊 $a$」。",
+    "外面有 $x$ 可以配的（例如 $\\frac{x}{\\sqrt{x^2+1}}$）也用三角代換。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int\\frac{1}{\\sqrt{x^2+16}}\\,dx$ 應該令？",
+      "options": [
+        { "label": "$x=4\\tan\\theta$", "correct": true },
+        { "label": "$x=4\\sin\\theta$", "why": "$16\\sin^2\\theta+16=16(1+\\sin^2\\theta)$，不是完全平方。$\\sin$ 是給 $a^2-x^2$ 用的。" },
+        { "label": "$x=16\\tan\\theta$", "why": "係數要是 $\\sqrt{16}=4$，才會得到 $16\\tan^2\\theta+16=16\\sec^2\\theta$。" }
+      ]
+    },
+    {
+      "ask": "令 $x=4\\tan\\theta$（$-\\frac{\\pi}{2}<\\theta<\\frac{\\pi}{2}$），$\\sqrt{x^2+16}$ 等於？",
+      "options": [
+        { "label": "$4\\sec\\theta$", "correct": true },
+        { "label": "$x+4$", "why": "根號不能拆加法：$(x+4)^2=x^2+8x+16$。" },
+        { "label": "$4\\cos\\theta$", "why": "$16\\tan^2\\theta+16=16\\sec^2\\theta$，開根號是 $4\\sec\\theta$，不是 $\\cos\\theta$。" }
+      ]
+    },
+    {
+      "ask": "$\\tan\\theta=\\frac{x}{3}$。$\\sin\\theta$ 是？",
+      "options": [
+        { "label": "$\\frac{x}{\\sqrt{x^2+9}}$", "correct": true },
+        { "label": "$\\frac{x}{3}$", "why": "那是 $\\tan\\theta$。$\\sin\\theta$ 是對邊除以斜邊，斜邊是 $\\sqrt{x^2+9}$。" },
+        { "label": "$\\frac{3}{\\sqrt{x^2+9}}$", "why": "那是 $\\cos\\theta$：鄰邊 $3$ 除以斜邊。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{x}{\\sqrt{x^2+1}}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\sqrt{x^2+1}+C$", "correct": true },
+        { "label": "$\\ln(x+\\sqrt{x^2+1})+C$", "why": "那是 $\\int\\frac{1}{\\sqrt{x^2+1}}\\,dx$。分子是 $x$ 時是 $\\frac{u'}{\\sqrt{u}}$ 形狀，令 $u=x^2+1$。" },
+        { "label": "$\\arctan x+C$", "why": "$\\arctan$ 是 $\\frac{1}{1+x^2}$ 的反導函數，沒有根號、分子是 $1$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "加號用 $\\tan$",
+      "beats": [
+        { "show": ["$1+\\tan^2\\theta=\\sec^2\\theta$"],
+          "note": "上一課是減號，這一課是加號。",
+          "say": "上一課根號裡是減號，用一減 sine 平方。這一課是加號，要用一加 tangent 平方等於 secant 平方。",
+          "board": [
+            {"do":"write","line":"減號：$1-\\sin^2\\theta=\\cos^2\\theta$"},
+            {"do":"write","line":"加號：${{p:1+\\tan^2\\theta}}={{s:\\sec^2\\theta}}$","on":"這一課"},
+            {"do":"underline","term":"p","on":"一加"}
+          ] },
+        { "show": ["令 $x=a\\tan\\theta$"],
+          "note": "係數是 $a$，不是 $a^2$。",
+          "say": "所以令 x 等於 a 乘 tangent theta，係數一樣是根號裡常數開根號。",
+          "board": [
+            {"do":"write","line":"令 $x={{a:a}}\\tan\\theta$"},
+            {"do":"focus","term":"a","label":"開根號","on":"係數"}
+          ] },
+        { "show": ["$x^2+a^2=a^2\\tan^2\\theta+a^2=a^2\\sec^2\\theta$"],
+          "say": "代進去，a 平方提出來，一加 tangent 平方變成 secant 平方，完全平方。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$x^2+a^2=a^2({{p:1+\\tan^2\\theta}})$","on":"a 平方提出來"},
+            {"do":"transform","line":"$x^2+a^2=a^2{{s:\\sec^2\\theta}}$","on":"變成"},
+            {"do":"underline","term":"s","color":"green","label":"完全平方","on":"secant"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "根號消失",
+      "beats": [
+        { "show": ["取 $\\theta\\in(-\\frac{\\pi}{2},\\frac{\\pi}{2})$"],
+          "note": "$\\tan\\theta$ 走遍所有實數，$\\sec\\theta>0$。",
+          "say": "theta 取在負二分之 pi 到二分之 pi，tangent 走遍所有實數，每個 x 都對應一個 theta。",
+          "board": [
+            {"do":"write","line":"$\\theta\\in(-\\frac{\\pi}{2},\\frac{\\pi}{2})$"},
+            {"do":"write","line":"$\\tan\\theta$ 走遍所有實數","on":"走遍"}
+          ] },
+        { "show": ["$\\sqrt{x^2+a^2}=a\\sec\\theta$"],
+          "note": "不必加絕對值。",
+          "say": "這一段 secant 是正的，根號開出來直接是 a secant theta。",
+          "board": [
+            {"do":"write","line":"$\\sec\\theta>0$"},
+            {"do":"write","line":"$\\sqrt{x^2+a^2}={{r:a\\sec\\theta}}$","on":"根號開出來"},
+            {"do":"box","term":"r","color":"green","on":"直接"}
+          ] },
+        { "show": ["假設 $a>0$：$\\sqrt{a^2\\sec^2\\theta}=a\\sec\\theta$"],
+          "note": "$a<0$ 時要寫 $|a|$。",
+          "say": "這裡假設 a 大於零，所以根號 a 平方 secant 平方，是 a 乘 secant。a 若是負的，就寫絕對值 a。",
+          "board": [
+            {"do":"write","line":"$a>0$：$\\sqrt{a^2\\sec^2\\theta}=a\\sec\\theta$"},
+            {"do":"write","line":"$a<0$ 時寫 $|a|\\sec\\theta$","on":"負的"}
+          ] },
+        { "show": ["$dx=a\\sec^2\\theta\\,d\\theta$"],
+          "note": "別漏了平方。",
+          "say": "dx 也要換：tangent 的導數是 secant 平方，平方別漏了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=a\\tan\\theta$","on":"dx"},
+            {"do":"write","line":"$dx=a\\,{{s:\\sec^2\\theta}}\\,d\\theta$","on":"導數"},
+            {"do":"underline","term":"s","label":"平方別漏","on":"secant"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "換回 $x$ 的三角形",
+      "beats": [
+        { "show": ["$\\tan\\theta=\\frac{x}{a}$：對邊 $x$、鄰邊 $a$"],
+          "say": "換回 x 一樣畫三角形：tangent 是對邊比鄰邊，對邊 x，鄰邊 a。",
+          "board": [
+            {"do":"plot","graph":{"window":[0.2,4.1,0.05,2.85],"equal":true,"curves":[{"pts":[[0.6,0.6],[3.4,0.6],[3.4,2.5],[0.6,0.6]],"color":"ink"},{"pts":[[3.15,0.6],[3.15,0.85],[3.4,0.85]],"color":"muted"}],"labels":[{"x":1.25,"y":0.75,"text":"θ","anchor":"middle"},{"x":2,"y":0.28,"text":"a","anchor":"middle"},{"x":3.62,"y":1.5,"text":"x","anchor":"start"}],"ticks":false}},
+            {"do":"write","line":"$\\tan\\theta=\\dfrac{ {{o:x}} }{ {{d:a}} }$","tint":{"o":"blue","d":"violet"},"on":"tangent 是"},
+            {"do":"focus","term":"o","on":"對邊 x"},
+            {"do":"focus","term":"d","on":"鄰邊 a"}
+          ] },
+        { "show": ["斜邊 $\\sqrt{x^2+a^2}$"],
+          "say": "畢氏定理，斜邊是根號 x 平方加 a 平方。這次根號在斜邊。",
+          "board": [
+            {"do":"write","line":"斜邊 ${{h:\\sqrt{x^2+a^2}}}$"},
+            {"do":"underline","term":"h","label":"根號在斜邊","on":"這次"}
+          ] },
+        { "show": ["$\\sin\\theta=\\frac{x}{\\sqrt{x^2+a^2}}$，$\\cos\\theta=\\frac{a}{\\sqrt{x^2+a^2}}$"],
+          "say": "sine 是對邊比斜邊，cosine 是鄰邊比斜邊，都從圖上讀。",
+          "board": [
+            {"do":"transform","line":"$\\sin\\theta=\\dfrac{x}{ {{h:\\sqrt{x^2+a^2}}} }$，$\\cos\\theta=\\dfrac{a}{\\sqrt{x^2+a^2}}$"}
+          ] },
+        { "show": ["重畫三角形"],
+          "say": "重畫三角形：角 theta 在左下，底邊是鄰邊 a，右邊是對邊 x，斜線是斜邊。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","on":"重畫","graph":{"window":[-1,5.5,-1,4],"equal":true,"curves":[{"param":{"x":"4*t","y":"0","t":[0,1]},"color":"ink"},{"param":{"x":"4","y":"3*t","t":[0,1]},"color":"ink"},{"param":{"x":"4*t","y":"3*t","t":[0,1]},"color":"blue"}],"labels":[{"x":0.8,"y":0.25,"text":"θ","anchor":"middle"},{"x":2,"y":-0.5,"text":"a","anchor":"middle"},{"x":4.3,"y":1.5,"text":"x","anchor":"start"},{"x":1.6,"y":2.1,"text":"√(x²+a²)","anchor":"middle"}],"ticks":false}}
+          ] },
+        { "show": ["$\\sec\\theta=\\frac{\\sqrt{x^2+a^2}}{a}$","$\\tan\\theta=\\frac{x}{a}$"],
+          "note": "$\\sec\\theta=\\frac{1}{\\cos\\theta}$。",
+          "say": "secant 是 cosine 的倒數，也就是斜邊比鄰邊。tangent 還是 x 除以 a。",
+          "board": [
+            {"do":"write","line":"$\\sec\\theta=\\dfrac{1}{\\cos\\theta}=\\dfrac{\\sqrt{x^2+a^2}}{a}$"},
+            {"do":"write","line":"$\\tan\\theta=\\dfrac{x}{a}$","on":"tangent"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "又是 $\\int\\sec\\theta$",
+      "beats": [
+        { "show": ["$\\int\\frac{1}{\\sqrt{x^2+1}}\\,dx$：$x=\\tan\\theta$"],
+          "note": "$dx=\\sec^2\\theta\\,d\\theta$，$\\sqrt{x^2+1}=\\sec\\theta$。",
+          "say": "根號 x 平方加一分之一。令 x 等於 tangent theta，根號變成 secant theta。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{1}{ {{r:\\sqrt{x^2+1}}} }\\,dx$"},
+            {"do":"write","line":"$x=\\tan\\theta$：${{r:\\sqrt{x^2+1}}}={{s:\\sec\\theta}}$","on":"令 x"},
+            {"do":"focus","term":"s","on":"根號變成"}
+          ] },
+        { "show": ["$\\int\\frac{\\sec^2\\theta}{\\sec\\theta}\\,d\\theta=\\int\\sec\\theta\\,d\\theta$"],
+          "say": "secant 平方除以 secant，剩下一個 secant。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{\\sec^2\\theta}{\\sec\\theta}\\,d\\theta=\\int{{t:\\sec\\theta}}\\,d\\theta$"},
+            {"do":"underline","term":"t","on":"剩下"}
+          ] },
+        { "show": ["$=\\ln|\\sec\\theta+\\tan\\theta|+C$"],
+          "say": "secant 的積分前面學過，是自然對數絕對值 secant 加 tangent。",
+          "board": [
+            {"do":"write","line":"$=\\ln|\\sec\\theta+\\tan\\theta|+C$","on":"前面學過"}
+          ] },
+        { "show": ["$\\frac{d}{d\\theta}\\ln|\\sec\\theta+\\tan\\theta|=\\sec\\theta$"],
+          "note": "微分檢查：$\\sec\\theta(\\tan\\theta+\\sec\\theta)$ 約掉。",
+          "say": "不記得就微分檢查：對 ln 絕對值 secant 加 tangent 微分，會得到 secant。",
+          "board": [
+            {"do":"write","line":"$\\dfrac{d}{d\\theta}\\ln|\\sec\\theta+\\tan\\theta|=\\sec\\theta$"}
+          ] }
+      ],
+      "key": "約完只剩 $\\int\\sec\\theta\\,d\\theta$",
+      "predict": {
+        "ask": "換回 $x$ 是？",
+        "options": [
+          {
+            "label": "$\\ln(x+\\sqrt{x^2+1})+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\ln|\\sec x+\\tan x|+C$",
+            "why": "要把 $\\theta$ 換回 $x$：$\\tan\\theta=x$，$\\sec\\theta=\\sqrt{x^2+1}$。"
+          },
+          {
+            "label": "$\\arctan x+C$",
+            "why": "那是 $\\frac{1}{1+x^2}$ 的反導函數，沒有根號。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "平方在分母",
+      "beats": [
+        { "show": ["$\\int\\frac{dx}{(x^2+1)^2}$：$x=\\tan\\theta$"],
+          "note": "$\\frac{\\sec^2\\theta}{\\sec^4\\theta}=\\cos^2\\theta$，用半角。",
+          "say": "部分分式留下的 x 平方加一的平方，也是這樣做：換完剩 cosine 平方，用半角。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{dx}{(x^2+1)^2}$"},
+            {"do":"write","line":"$x=\\tan\\theta$","on":"也是"},
+            {"do":"write","line":"$\\frac{\\sec^2\\theta}{\\sec^4\\theta}=\\cos^2\\theta$","on":"換完剩"}
+          ] },
+        { "show": ["$\\cos^2\\theta=\\frac{1+\\cos2\\theta}{2}$"],
+          "say": "cosine 平方是一加 cosine 二 theta 除以二。積分得 theta 除以二加 sine 二 theta 除以四。",
+          "board": [
+            {"do":"write","line":"$\\cos^2\\theta=\\dfrac{1+\\cos2\\theta}{2}$"},
+            {"do":"write","line":"$\\int\\cos^2\\theta\\,d\\theta=\\dfrac{\\theta}{2}+\\dfrac{\\sin2\\theta}{4}$","on":"積分得"}
+          ] },
+        { "show": ["$\\sin2\\theta=2\\sin\\theta\\cos\\theta$","$\\sin\\theta\\cos\\theta=\\frac{x}{x^2+1}$"],
+          "say": "sine 二 theta 是二倍 sine 乘 cosine。三角形給 sine 乘 cosine 等於 x 除以 x 平方加一。",
+          "board": [
+            {"do":"write","line":"$\\sin2\\theta=2\\sin\\theta\\cos\\theta$"},
+            {"do":"write","line":"$\\sin\\theta\\cos\\theta=\\dfrac{x}{x^2+1}$","on":"三角形"}
+          ] },
+        { "show": ["$\\frac{1}{2}\\left(\\arctan x+\\frac{x}{x^2+1}\\right)+C$"],
+          "say": "用三角形換回 x，theta 是 arctangent x，就得到這個答案。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\tan\\theta=x$","on":"用三角形"},
+            {"do":"write","line":"$\\frac{1}{2}\\left(\\arctan x+\\frac{x}{x^2+1}\\right)+C$","color":"green","on":"arctangent"}
+          ] },
+        { "show": ["先看外面有沒有 $x$ 可以配"],
+          "note": "有的話直接 $u$ 換元，不必三角代換。",
+          "say": "不過動手之前先看一眼：根號外面如果有 x 可以配，直接 u 換元就好，不用繞遠路。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"先看外面有沒有 $x$ 可以配","on":"先看一眼"},
+            {"do":"write","line":"有 $x$ → 直接 $u$ 換元","on":"直接"}
+          ] }
+      ],
+      "key": "化成 $\\cos^2\\theta$，再用半角降次",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-substitution", "radical", "inverse-trig"],
+    "fine": ["trig-sub-tan", "trig-sub-tan-triangle", "trig-sub-tan-bounds", "trig-sub-sec-integral"]
+  },
+  "practice": [
+    { "id": "int-051", "core": true, "trains": "trig-sub-tan-triangle" },
+    { "id": "lec-07-q4b", "core": true, "trains": "trig-sub-tan-triangle" },
+    { "id": "cx-trig-002", "core": true, "trains": "trig-sub-tan-bounds" },
+    { "id": "depth-int-011", "core": true, "trains": "trig-sub-tan" },
+    { "id": "cg-4g-006", "core": true, "trains": "trig-sub-sec-integral" },
+    { "id": "cg-4g-008", "core": true, "trains": "trig-sub-tan" },
+    { "id": "cg-4g-007", "trains": "trig-sub-sec-integral" },
+    { "id": "cg-4g-009", "trains": "trig-sub-tan" },
+    { "id": "rel-hard-int-018", "challenge": true, "trains": "trig-sub-tan-bounds", "note": "挑戰：上限 $\\infty$ 對應 $\\theta\\to\\frac{\\pi}{2}$。" },
+    { "id": "lm-rs-006", "challenge": true, "trains": "trig-sub-sec-integral", "note": "挑戰：先認出它是 $\\int_0^1\\frac{dx}{\\sqrt{1+x^2}}$（〈用和式寫定積分〉），再用本課的結果。" }
+  ],
+  "gaps": []
+}

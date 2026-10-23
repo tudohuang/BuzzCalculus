@@ -1,7 +1,8 @@
 {
   "id": "complex-functions",
   "title": "複變函數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "euler-formula",
@@ -15,351 +16,118 @@
     "complex-polar"
   ],
   "objectives": [
-    "把 $w=f(z)$ 拆成實部與虛部 $u(x,y)+i\\,v(x,y)$，並用「平面到平面的映射」來想像它。",
-    "算 $e^z$、$z^2$、$\\frac{1}{z}$ 的實部虛部，說出 $e^z$ 的週期 $2\\pi i$ 與它把直線送到哪裡。",
-    "說清楚 $\\log z$ 為什麼有無窮多個值，以及主值 $\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$ 的定義與限制。"
+    "把 $w=f(z)$ 拆成實部與虛部 $u(x,y)+i\\,v(x,y)$，並用「平面到平面的映射」來想像它",
+    "算 $e^z$、$z^2$、$\\frac{1}{z}$ 的實部虛部，說出 $e^z$ 的週期 $2\\pi i$ 與它把直線送成圓和射線",
+    "說清楚 $\\log z$ 為什麼有無窮多個值，以及主值 $\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$"
   ],
-  "visual": "左邊 z 平面畫一張方格，右邊 w 平面畫它在 f 之下的像。選 f = z²：水平線、垂直線變成兩族互相垂直的拋物線，角度看起來被加倍。選 f = e^z：垂直線變成同心圓、水平線變成從原點出發的射線，z 往上平移 2π 時像完全重疊。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 輸入是平面、輸出也是平面",
+      "heading": "① 平面到平面",
       "body": [
-        "複變函數 $w=f(z)$ 吃一個複數、吐一個複數。寫 $z=x+iy$，輸出也拆成實部與虛部：$f(z)=u(x,y)+i\\,v(x,y)$，$u$、$v$ 是兩個實數值的二變數函數（〈二變數函數〉）。",
-        "例：$f(z)=z^2=(x+iy)^2=(x^2-y^2)+i(2xy)$，所以 $u=x^2-y^2$、$v=2xy$。",
-        "沒辦法畫成「圖形」（要四維），所以改成看映射：$z$ 平面上的一條線、一個區域，被送到 $w$ 平面的哪裡。"
+        "$w=f(z)$：$z=x+iy$ 進去，$w=u+iv$ 出來",
+        "例：$z^2=(x+iy)^2=(x^2-y^2)+i\\,(2xy)$",
+        "$u=x^2-y^2$，$v=2xy$",
+        "例：$\\dfrac1z=\\dfrac{\\bar z}{|z|^2}=\\dfrac{x}{x^2+y^2}-i\\,\\dfrac{y}{x^2+y^2}$（$z\\ne0$）",
+        "畫不出圖形：輸入 2 維、輸出 2 維，圖形要 4 維",
+        "改畫兩個平面：看 $z$ 平面上的曲線，被送到 $w$ 平面的哪裡",
+        "極式更清楚：$z=re^{i\\theta}\\Rightarrow z^2=r^2e^{2i\\theta}$",
+        "長度平方、角度加倍"
       ],
-      "collapsible": false
+      "tex": [
+        "f(z)=u(x,y)+i\\,v(x,y)"
+      ]
+    },
+    {
+      "heading": "① 例：$z^2$ 把直線送到哪",
+      "body": [
+        "垂直線 $x=1$：$z=1+iy$",
+        "消去 $y=\\dfrac v2$："
+      ],
+      "tex": [
+        "u=1-y^2,\\qquad v=2y",
+        "u=1-\\frac{v^2}4"
+      ]
     },
     {
       "heading": "② 指數函數 $e^z$",
       "body": [
-        "$e^z=e^{x+iy}=e^x\\cdot e^{iy}=e^x(\\cos y+i\\sin y)$。所以 $|e^z|=e^x$（只看實部）、$\\arg e^z=y$（只看虛部）。",
-        "兩個跟實數不一樣的地方：$e^z$ 有週期 $2\\pi i$（$e^{z+2\\pi i}=e^z$），而且可以是負數，例如 $e^{i\\pi}=-1$。但 $e^z$ 永遠不是 $0$，因為 $|e^z|=e^x>0$。",
-        "映射：垂直線 $x=c$ 變成半徑 $e^c$ 的圓；水平線 $y=c$ 變成角度 $c$ 的射線。"
+        "• $u=e^x\\cos y$，$v=e^x\\sin y$",
+        "• $|e^z|=e^x>0$：$e^z$ 永遠不是 $0$",
+        "• $y$ 是 $e^z$ 的輻角",
+        "週期 $2\\pi i$：$e^{z+2\\pi i}=e^ze^{2\\pi i}=e^z$",
+        "而且只有這些：$e^z=e^w\\iff z-w=2k\\pi i$",
+        "證：$e^{z-w}=1$，令 $z-w=a+bi$：$e^a(\\cos b+i\\sin b)=1$",
+        "長度：$e^a=1\\Rightarrow a=0$；角度：$\\cos b=1$，$\\sin b=0\\Rightarrow b=2k\\pi$"
       ],
-      "collapsible": false
+      "tex": [
+        "e^{x+iy}=e^x(\\cos y+i\\sin y)"
+      ]
     },
     {
-      "heading": "③ 對數：反函數有無窮多個值",
+      "heading": "② $e^z$ 的映射",
       "body": [
-        "因為 $e^z$ 有週期 $2\\pi i$，$e^w=z$ 的解不只一個：$w=\\ln|z|+i(\\arg z+2\\pi k)$，$k$ 是任意整數。所以 $\\log z$ 是「多值」的。",
-        "選定一個值：主值 $\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$，$\\operatorname{Arg}z\\in(-\\pi,\\pi]$。代價是 $\\operatorname{Log}$ 在負實軸上不連續（從上方靠近時虛部 $\\to\\pi$，從下方靠近時 $\\to-\\pi$），所以通常只在去掉 $(-\\infty,0]$ 的平面上使用。",
-        "連帶地，$z^{1/2}=e^{\\frac{1}{2}\\log z}$ 有兩個值、$z^{1/3}$ 有三個值，跟〈極式〉的 $n$ 次方根一致。"
-      ],
-      "collapsible": false
+        "• 垂直線 $x=c$ $\\to$ 半徑 $e^c$ 的圓",
+        "• 水平線 $y=c$ $\\to$ 角度 $c$ 的射線",
+        "帶狀 $-\\pi<y\\le\\pi$ 一對一蓋滿 $w$ 平面去掉 $0$",
+        "一對一：同一條帶子裡兩點的 $y$ 差小於 $2\\pi$，由 ② 的「只有這些」不會撞在一起",
+        "這就是為什麼反函數 $\\log$ 會有很多個值"
+      ]
     },
     {
-      "heading": "三角函數不再有界",
+      "heading": "③ 對數：無窮多個值",
       "body": [
-        "用 Euler 公式定義 $\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$、$\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}$。$z=iy$ 時 $\\cos(iy)=\\frac{e^{-y}+e^{y}}{2}=\\cosh y$，$y\\to\\infty$ 時無界。一般地 $|\\cos(x+iy)|^2=\\cos^2 x+\\sinh^2 y$，所以實數時的 $|\\cos x|\\le 1$ 在複數上不成立。"
+        "解 $e^w=z$（$z\\ne0$），令 $w=u+iv$：",
+        "• 長度：$e^u=|z|\\Rightarrow u=\\ln|z|$（唯一）",
+        "• 角度：$v$ 是 $z$ 的任何一個輻角",
+        "主值：限制在 $-\\pi<v\\le\\pi$",
+        "例：$\\operatorname{Log}(-1-i)$",
+        "$|z|=\\sqrt2$，$\\ln\\sqrt2=\\dfrac12\\ln2$；第三象限：$\\operatorname{Arg}=-\\dfrac{3\\pi}4$",
+        "$\\frac12\\ln2\\approx0.347$；其他值 $\\frac12\\ln2+i\\big(-\\frac{3\\pi}4+2k\\pi\\big)$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "平面進、平面出",
-      "beats": [
-        { "show": ["$w=f(z)$"],
-          "note": "吃一個複數，吐一個複數。",
-          "say": "複變函數吃一個複數，吐一個複數。輸入是一個平面上的點，輸出也是。",
-          "board": [
-            {"do":"write","line":"${{w:w}}=f({{z:z}})$","tint":{"w":"violet","z":"blue"}}
-          ] },
-        { "show": ["$f(z)=u(x,y)+i\\,v(x,y)$"],
-          "say": "把 z 寫成 x 加 i y，輸出也拆成實部 u 和虛部 v，兩個都是 x、y 的實數函數。",
-          "board": [
-            {"do":"write","line":"$f({{z:z}})={{u:u(x,y)}}+i\\,{{v:v(x,y)}}$","on":"輸出也拆成"},
-            {"do":"underline","term":"u","label":"實部","on":"實部 u"},
-            {"do":"underline","term":"v","label":"虛部","on":"虛部 v"}
-          ] },
-        { "show": ["$f(z)=z^2=(x+iy)^2$"],
-          "note": "展開時 $(iy)^2=-y^2$。",
-          "say": "例如 z 平方：把 x 加 i y 平方展開，注意 i y 的平方是負 y 平方。",
-          "board": [
-            {"do":"write","line":"$f({{z:z}})=z^2=(x+{{iy:iy}})^2$"},
-            {"do":"focus","term":"iy","label":"平方是 −y²","on":"i y 的平方"}
-          ] }
-      ],
-      "check": 2
+      "tex": [
+        "e^u e^{iv}=|z|\\,e^{i\\arg z}",
+        "\\log z=\\ln|z|+i(\\operatorname{Arg}z+2k\\pi),\\quad k\\in\\mathbb Z",
+        "\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z",
+        "\\operatorname{Log}(-1-i)=\\frac12\\ln2-\\frac{3\\pi}4i"
+      ]
     },
     {
-      "title": "看映射",
-      "beats": [
-        { "show": ["畫圖形要四維"],
-          "note": "改成看線、區域被送到哪裡。",
-          "say": "輸入兩維、輸出兩維，圖形要四維，畫不出來。所以改看映射：一條線被送到哪裡。",
-          "board": [
-            {"do":"write","line":"畫圖形要四維"},
-            {"do":"write","line":"改看映射：一條線被送到哪裡","on":"所以改看映射"}
-          ] },
-        { "show": ["$z^2$：$u=x^2-y^2$、$v=2xy$"],
-          "say": "z 平方的實部是 x 平方減 y 平方，虛部是二 x y。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$z^2$：$u=x^2-y^2$、$v=2xy$","on":"實部是"}
-          ] },
-        { "show": ["垂直線 $x=1$：$u=1-y^2$、$v=2y$"],
-          "note": "$y$ 是參數。",
-          "say": "看垂直線 x 等於一：u 是一減 y 平方，v 是二 y，y 當參數跑。",
-          "board": [
-            {"do":"write","line":"垂直線 ${{x1:x=1}}$：${{u1:u=1-y^2}}$、${{v2:v=2y}}$","tint":{"x1":"blue"}},
-            {"do":"underline","term":"x1","on":"x 等於一"}
-          ] },
-        { "show": ["消去 $y$：$y=\\frac{v}{2}$"],
-          "say": "從 v 解出 y 是二分之 v，代回 u 的式子。",
-          "board": [
-            {"do":"write","line":"消去 $y$：${{yv:y=\\frac{v}{2}}}$"},
-            {"do":"focus","term":"v2","on":"從 v"},
-            {"do":"underline","term":"u1","on":"代回"}
-          ] },
-        { "show": ["$u=1-\\left(\\frac{v}{2}\\right)^2$"],
-          "note": "代回去的結果。",
-          "say": "把 y 換成二分之 v 代進 u：u 等於一減二分之 v 的平方。這條曲線長什麼樣子，你來選。",
-          "board": [
-            {"do":"write","line":"$u=1-\\left(\\frac{v}{2}\\right)^2$"}
-          ] }
-      ],
-      "key": "消去參數 $y$，得 $u$、$v$ 的關係",
-      "predict": {
-        "ask": "垂直線 $x=1$ 的像是？",
-        "options": [
-          {
-            "label": "拋物線 $u=1-\\frac{v^2}{4}$，開口向左",
-            "correct": true
-          },
-          {
-            "label": "直線 $u=1$",
-            "why": "$u=1-y^2$ 隨 $y$ 改變；代 $y=\\frac{v}{2}$ 得 $u=1-\\frac{v^2}{4}$，直線被彎成拋物線。"
-          },
-          {
-            "label": "圓",
-            "why": "代 $y=\\frac{v}{2}$ 進 $u=1-y^2$，得 $u=1-\\frac{v^2}{4}$，是拋物線。"
-          }
-        ]
-      }
+      "heading": "③ 主值的代價",
+      "body": [
+        "注意：$\\operatorname{Log}(z_1z_2)$ 不一定等於 $\\operatorname{Log}z_1+\\operatorname{Log}z_2$",
+        "例：$\\operatorname{Log}\\big((-1)(-1)\\big)=\\operatorname{Log}1=0$，但 $\\operatorname{Log}(-1)+\\operatorname{Log}(-1)=2\\pi i$",
+        "多值的 $\\log$ 才有 $\\log(z_1z_2)=\\log z_1+\\log z_2$（兩邊當成集合相等）"
+      ]
     },
     {
-      "title": "指數函數 $e^z$",
-      "beats": [
-        { "show": ["$e^z=e^x\\cdot e^{iy}=e^x(\\cos y+i\\sin y)$"],
-          "say": "e 的 z 次方拆成 e 的 x 次方乘 e 的 i y 次方，後面那個用 Euler 公式。",
-          "board": [
-            {"do":"write","line":"$e^z={{a:e^x}}\\cdot e^{iy}$"},
-            {"do":"transform","line":"$e^z={{a:e^x}}(\\cos y+i\\sin y)$","on":"後面那個"}
-          ] },
-        { "show": ["$\\frac{d}{dy}e^{iy}=i\\,e^{iy}$"],
-          "note": "直覺，不是證明。",
-          "say": "直覺，不是證明：對 y 微分，得到 i 乘自己，方向總是垂直於位置。所以點沿單位圓走，走的弧長就是角度 y。",
-          "board": [
-            {"do":"write","line":"$\\frac{d}{dy}e^{iy}={{k:i\\,e^{iy}}}$"},
-            {"do":"focus","term":"k","label":"垂直轉向","on":"i 乘自己"},
-            {"do":"write","line":"沿單位圓走，弧長 = 角度 $y$","on":"單位圓"}
-          ] },
-        { "show": ["$|e^z|=e^x$，$\\arg e^z=y$"],
-          "note": "長度只看實部，角度只看虛部。",
-          "say": "所以長度只看實部 x，角度只看虛部 y。分工得很乾淨。",
-          "board": [
-            {"do":"write","line":"$|e^z|=e^x$"},
-            {"do":"write","line":"$\\arg e^z=y$","on":"角度"}
-          ] },
-        { "show": ["垂直線 → 圓，水平線 → 射線"],
-          "say": "垂直線 x 固定，長度固定，變成圓；水平線 y 固定，角度固定，變成射線。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"垂直線 $x$ 固定 → 長度固定 → 圓","on":"垂直線"},
-            {"do":"write","line":"水平線 $y$ 固定 → 角度固定 → 射線","on":"水平線"}
-          ] }
+      "heading": "④ 三角函數不再有界",
+      "body": [
+        "用 Euler 公式定義：",
+        "恆等式照樣成立：$a=e^{iz}$，$b=e^{-iz}$，$ab=1$",
+        "但不再有界：$z=iy$，",
+        "$\\cos i\\approx1.543$，$\\cos2i\\approx3.762$；平方和是 $1$ 不矛盾：複數的平方可以是負的",
+        "例：$\\cos z=2$ 有解。令 $a=e^{iz}$：$a+\\frac1a=4$，$a^2-4a+1=0$",
+        "$a=2\\pm\\sqrt3$，$iz=\\pm\\ln(2+\\sqrt3)+2k\\pi i$",
+        "$\\ln(2-\\sqrt3)=-\\ln(2+\\sqrt3)$，因為 $(2-\\sqrt3)(2+\\sqrt3)=1$"
       ],
-      "check": 0
+      "tex": [
+        "\\cos z=\\frac{e^{iz}+e^{-iz}}2,\\qquad\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}",
+        "\\cos^2z+\\sin^2z=\\frac{(a+b)^2-(a-b)^2}4=ab=1",
+        "\\cos(iy)=\\frac{e^{-y}+e^{y}}2\\to\\infty\\quad(y\\to\\infty)",
+        "z=2k\\pi\\pm i\\ln(2+\\sqrt3)\\approx2k\\pi\\pm1.317i"
+      ]
     },
     {
-      "title": "跟實數不一樣",
-      "beats": [
-        { "show": ["$e^{z+2\\pi i}=e^z$"],
-          "note": "往上平移 $2\\pi$，像完全重疊。",
-          "say": "虛部只管角度，角度多轉一圈回到原地，所以 e 的 z 次方有週期。",
-          "board": [
-            {"do":"write","line":"$e^{x+iy}$：虛部只管角度"},
-            {"do":"write","line":"角度多轉一圈 → 回到原地","on":"多轉一圈"},
-            {"do":"write","line":"⇒ $e^z$ 有週期","on":"所以"}
-          ] },
-        { "show": ["$e^{i\\pi}=-1$","但 $e^z\\ne 0$"],
-          "note": "$|e^z|=e^x>0$",
-          "say": "它可以是負數，例如 e 的 i 派次方是負一。可是長度 e 的 x 次方永遠大於零，所以永遠不是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$e^{i\\pi}=-1$","on":"例如"},
-            {"do":"write","line":"$|e^z|=e^x>0$","on":"大於零"},
-            {"do":"write","line":"$e^z\\ne 0$","color":"green","on":"所以永遠"}
-          ] },
-        { "show": ["解 $e^z=-1$：$x=0$，$y=\\pi+2\\pi k$"],
-          "note": "$z=(2k+1)\\pi i$",
-          "say": "解 e 的 z 次方等於負一：長度一，所以 x 是零；角度要指向負一，所以 y 是派加二派 k。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$e^z=-1$","on":"次方等於"},
-            {"do":"write","line":"長度 $1$ ⇒ $x=0$","on":"長度一"},
-            {"do":"write","line":"角度指向 $-1$ ⇒ ${{r:y=\\pi+2\\pi k}}$","on":"角度要"},
-            {"do":"box","term":"r","color":"green","on":"y 是派"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "證明：cos 沒有界",
-      "beats": [
-        { "show": ["用 Euler 公式定義 $\\cos z$，代入 $z=iy$"],
-          "say": "策略：先用 Euler 公式把 cosine 推廣到複數，再往虛軸上走，看它會長到多大。",
-          "board": [
-            {"do":"write","line":"用 Euler 公式定義 $\\cos z$，代入 $z=iy$"}
-          ] },
-        { "show": ["$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$"],
-          "note": "$z$ 是實數時，就是原來的 $\\cos$。",
-          "say": "cosine z 定義成 e 的 i z 次方加 e 的負 i z 次方，再除以二。z 是實數時，就是原來的 cosine。",
-          "board": [
-            {"do":"write","line":"$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$"}
-          ] },
-        { "show": ["$e^{ix}+e^{-ix}=2\\cos x$"],
-          "note": "$\\sin$ 那一項正負抵消。",
-          "say": "x 是實數時，兩個指數一個加 i sine、一個減 i sine，相加 sine 抵消，剩兩倍 cosine，所以才這樣定義。",
-          "board": [
-            {"do":"write","line":"$e^{ix}=\\cos x+i\\sin x$"},
-            {"do":"write","line":"$e^{-ix}=\\cos x-i\\sin x$","on":"一個減"},
-            {"do":"write","line":"$e^{ix}+e^{-ix}=2\\cos x$","on":"相加"}
-          ] },
-        { "show": ["$\\cos(iy)=\\frac{e^{-y}+e^{y}}{2}=\\cosh y$"],
-          "note": "$i\\cdot iy=-y$：指數變成實數。",
-          "why": {"ask":"指數為什麼變成實數？","say":"代入 i y 之後，指數裡的 i 為什麼不見了？","options":[{"label":"$i\\cdot iy=-y$，$-i\\cdot iy=y$","correct":true},{"label":"$|e^{iy}|=1$","why":"那是 $e^{iy}$ 的長度；這裡的指數是 $i\\cdot iy$，不是 $iy$。"},{"label":"$\\cos$ 是偶函數","why":"偶函數只說 $\\cos(-z)=\\cos z$；讓指數變實數的是 $i^2=-1$。"}]},
-          "say": "i 乘 i y 是負 y，負 i 乘 i y 是 y，指數都變成實數。cosine i y 就是 cosh y。",
-          "board": [
-            {"do":"write","line":"$\\cos(iy)=\\frac{{{ey:e^{-y}}}+e^{y}}{2}=\\cosh y$","on":"代入 i y"},
-            {"do":"underline","term":"ey","label":"i·iy = −y","why":true,"on":"i 乘 i y 是負"}
-          ] },
-        { "show": ["$y\\to\\infty$：$\\cosh y\\to\\infty$"],
-          "note": "$e^{-y}>0$，所以 $\\cosh y>\\frac{e^{y}}{2}$。",
-          "why": {"ask":"為什麼沒有界？","say":"y 越來越大的時候，cosh y 為什麼停不下來？","options":[{"label":"$\\cosh y>\\frac{e^{y}}{2}$，而 $e^{y}$ 沒有上限","correct":true},{"label":"兩項 $e^{-y}$、$e^{y}$ 會互相抵消","why":"兩項都是正的，相加只會更大，不會抵消。"},{"label":"$\\cos$ 有週期，所以有界","why":"週期 $2\\pi$ 是沿實軸方向；沿虛軸走沒有週期，$e^{y}$ 一路長大。"}]},
-          "say": "e 的負 y 次方是正的，所以 cosh y 大於二分之 e 的 y 次方，而它沒有上限。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$y\\to\\infty$：$\\cosh y\\to\\infty$","on":"y 越來越大"},
-            {"do":"write","line":"$e^{-y}>0$ ⇒ $\\cosh y>\\frac{e^{y}}{2}$","why":true,"on":"e 的負 y 次方"}
-          ] },
-        { "show": ["$|\\cos(x+iy)|^2=\\cos^2 x+\\sinh^2 y$"],
-          "note": "$|\\cos x|\\le 1$ 在複數上不成立。",
-          "say": "一般的點也一樣：長度平方是 cosine 平方加 sinh 平方。實數時的小於等於一，在複數上不成立。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|\\cos(x+iy)|^2=\\cos^2 x+\\sinh^2 y$","on":"一般的點"},
-            {"do":"write","line":"${{b:|\\cos z|\\le 1}}$","on":"實數時"},
-            {"do":"strike","term":"b","label":"複數上不成立","on":"在複數上"}
-          ] }
-      ],
-      "key": "代純虛數 $z=iy$，三角變成雙曲",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "predict": {
-        "ask": "$\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}$。$\\sin(iy)$ 呢？",
-        "options": [
-          {
-            "label": "$\\frac{e^{-y}-e^{y}}{2i}$，$y\\to\\infty$ 時也無界",
-            "correct": true
-          },
-          {
-            "label": "有界，因為 $|\\sin|\\le 1$",
-            "why": "$|\\sin x|\\le 1$ 只對實數成立；代入 $iy$，$e^{y}$ 一樣會長大。"
-          },
-          {
-            "label": "$0$，兩項抵消",
-            "why": "$e^{-y}$ 和 $e^{y}$ 只在 $y=0$ 時相等；$y$ 變大，差也跟著變大。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "對數有無窮多個值",
-      "beats": [
-        { "show": ["$e^w=z$ 的解不只一個"],
-          "note": "因為 $e^z$ 有週期 $2\\pi i$。",
-          "say": "反過來解 e 的 w 次方等於 z。因為有週期，解一個就有一整串。",
-          "board": [
-            {"do":"write","line":"$e^w=z$"},
-            {"do":"write","line":"$e^{w+2\\pi i k}=e^w$","on":"因為有週期"},
-            {"do":"write","line":"解一個 ⇒ 一整串","on":"解一個"}
-          ] },
-        { "show": ["$w=\\ln|z|+i(\\arg z+2\\pi k)$"],
-          "note": "$k$ 是任意整數。",
-          "say": "實部是 z 的長度取自然對數，虛部是輻角，再加上二派的任意整數倍。",
-          "board": [
-            {"do":"write","line":"$w={{r:\\ln|z|}}+i({{a:\\arg z}}+{{p:2\\pi k}})$"},
-            {"do":"underline","term":"r","color":"blue","label":"實部","on":"長度"},
-            {"do":"underline","term":"a","color":"violet","on":"輻角"},
-            {"do":"focus","term":"p","label":"任意倍","on":"二派的"}
-          ] },
-        { "show": ["$z^{1/2}$ 兩個值、$z^{1/3}$ 三個值"],
-          "say": "連帶地，開根號有兩個值、開三次方有三個值，跟極式的 n 次方根一致。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z^{1/2}$：兩個值","on":"開根號"},
-            {"do":"write","line":"$z^{1/3}$：三個值","on":"開三次方"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "主值對數",
-      "beats": [
-        { "show": ["$\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$"],
-          "note": "$\\operatorname{Arg}z\\in(-\\pi,\\pi]$",
-          "say": "要選一個值，就用主值：輻角取在負派到派之間。",
-          "board": [
-            {"do":"write","line":"$\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$"},
-            {"do":"write","line":"$\\operatorname{Arg}z\\in(-\\pi,\\pi]$","on":"負派到派"}
-          ] },
-        { "show": ["代價：負實軸上不連續"],
-          "note": "常在去掉 $(-\\infty,0]$ 的平面上用。",
-          "say": "代價是在負實軸上斷開：從上面靠近虛部趨近派，從下面靠近趨近負派。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"負實軸上不連續","color":"red","on":"代價"},
-            {"do":"write","line":"上方靠近：$\\operatorname{Arg}\\to\\pi$","on":"從上面"},
-            {"do":"write","line":"下方靠近：$\\operatorname{Arg}\\to-\\pi$","on":"從下面"}
-          ] },
-        { "show": ["負實軸上下兩側的輻角"],
-          "note": "同一個位置附近，兩邊差 $2\\pi$。",
-          "say": "畫出來看：負實軸上方的點，輻角靠近派；下方的點，輻角靠近負派。兩邊差了二派，所以在這條線上斷開。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,2,-2,2],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted"}],"dashed":[[[-2,0],[0,0]]],"points":[{"x":-1,"y":0.3,"color":"blue"},{"x":-1,"y":-0.3,"color":"violet"}],"labels":[{"x":-1.9,"y":0.7,"text":"Arg→π","anchor":"start"},{"x":-1.9,"y":-0.7,"text":"Arg→-π","anchor":"start"}]}}
-          ] },
-        { "show": ["$\\operatorname{Log}(-1-i)$：$|-1-i|=\\sqrt{2}$"],
-          "note": "$\\ln\\sqrt{2}=\\frac{\\ln 2}{2}$",
-          "say": "算負一減 i 的主值對數：長度根號二，取自然對數是二分之一的自然對數二。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\operatorname{Log}(-1-i)$：$|-1-i|=\\sqrt{2}$","on":"算負一減"},
-            {"do":"write","line":"$\\ln\\sqrt{2}={{r:\\frac{\\ln 2}{2}}}$","on":"取自然對數"},
-            {"do":"box","term":"r","color":"green","on":"二分之一"}
-          ] }
-      ],
-      "key": "先判象限，再把輻角收進 $(-\\pi,\\pi]$",
-      "predict": {
-        "ask": "$\\operatorname{Log}(-1-i)$ 的虛部是？",
-        "options": [
-          {
-            "label": "$-\\frac{3\\pi}{4}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{\\pi}{4}$",
-            "why": "$\\arctan 1=\\frac{\\pi}{4}$ 在第一象限；點 $(-1,-1)$ 在第三象限。"
-          },
-          {
-            "label": "$\\frac{5\\pi}{4}$",
-            "why": "方向對，但主值要在 $(-\\pi,\\pi]$ 裡：$\\frac{5\\pi}{4}-2\\pi=-\\frac{3\\pi}{4}$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• $f(z)=u(x,y)+i\\,v(x,y)$：畫兩個平面看映射",
+        "• $z^2$：長度平方、角度加倍；$x=1\\mapsto u=1-\\frac{v^2}4$",
+        "• $e^z=e^x(\\cos y+i\\sin y)$：週期 $2\\pi i$，不為 $0$；直線變圓與射線",
+        "• $\\log z=\\ln|z|+i\\arg z$ 有無窮多個值；主值 $\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$",
+        "• $\\cos z$、$\\sin z$ 用 $e^{\\pm iz}$ 定義：恆等式還在，但無界",
+        "下一課：複變極限"
+      ]
     }
   ],
   "workedExamples": [
@@ -405,70 +173,725 @@
   ],
   "checks": [
     {
-      "ask": "$|e^{3+4i}|$ 是？",
+      "ask": "$f(z)=z^2$ 把水平線 $y=1$ 送到哪裡？",
       "options": [
         {
-          "label": "$e^3$",
+          "label": "拋物線 $u=\\dfrac{v^2}4-1$",
           "correct": true
         },
         {
-          "label": "$e^5$",
-          "why": "$|e^{x+iy}|=e^x$，只看實部；不是 $e^{|3+4i|}$。"
+          "label": "拋物線 $u=1-\\dfrac{v^2}4$",
+          "why": "那是垂直線 $x=1$ 的像；水平線開口向右"
         },
         {
-          "label": "$e^{3}\\cdot 4$",
-          "why": "虛部只決定方向（角度），不影響長度。"
+          "label": "直線 $v=2$",
+          "why": "$v=2xy=2x$ 會跟著 $x$ 變，不是常數"
+        },
+        {
+          "label": "圓 $|w|=1$",
+          "why": "圓是固定 $|z|$ 的像；這裡 $|z|$ 一直在變"
         }
       ]
     },
     {
-      "ask": "$e^z$ 的週期是？",
+      "ask": "所有滿足 $e^z=-1$ 的 $z$ 是？",
       "options": [
         {
-          "label": "$2\\pi i$",
+          "label": "$z=(2k+1)\\pi i$，$k$ 是整數",
           "correct": true
         },
         {
-          "label": "$2\\pi$",
-          "why": "$e^{z+2\\pi}=e^{2\\pi}e^z\\ne e^z$。要加在虛部才是轉一圈。"
+          "label": "$z=\\pi i$",
+          "why": "只是其中一個；週期 $2\\pi i$，還有無窮多個"
         },
         {
-          "label": "沒有週期",
-          "why": "$e^{2\\pi i}=\\cos 2\\pi+i\\sin 2\\pi=1$，所以 $e^{z+2\\pi i}=e^z$。"
+          "label": "沒有解，因為 $e^z>0$",
+          "why": "$e^z$ 只有在 $z$ 是實數時才是正實數"
+        },
+        {
+          "label": "$z=\\ln(-1)$",
+          "why": "實數的 $\\ln$ 不能代負數；要分長度和角度解"
         }
       ]
     },
     {
-      "ask": "$z^2$ 的實部 $u(x,y)$ 是？",
+      "ask": "$\\operatorname{Log}(-e)=$？",
       "options": [
         {
-          "label": "$x^2-y^2$",
+          "label": "$1+\\pi i$",
           "correct": true
         },
         {
-          "label": "$x^2+y^2$",
-          "why": "$(iy)^2=-y^2$，不是 $+y^2$；$x^2+y^2$ 是 $|z|^2$。"
+          "label": "$1-\\pi i$",
+          "why": "$\\operatorname{Arg}$ 在 $(-\\pi,\\pi]$，取 $\\pi$ 不取 $-\\pi$"
         },
         {
-          "label": "$2xy$",
-          "why": "$2xy$ 是虛部 $v$。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\log(1)$ 的所有值是？",
-      "options": [
-        {
-          "label": "$2\\pi ik$，$k$ 為整數",
-          "correct": true
-        },
-        {
-          "label": "只有 $0$",
-          "why": "那是主值 $\\operatorname{Log}1$。$e^{2\\pi ik}=1$，所以每個 $2\\pi ik$ 都是解。"
+          "label": "$1$",
+          "why": "只算了長度，忘了負號帶來的角度 $\\pi$"
         },
         {
           "label": "沒有定義",
-          "why": "只有 $\\log 0$ 沒有定義；$1\\ne 0$。"
+          "why": "實數的 $\\ln$ 不能代負數，但複數的 $\\operatorname{Log}$ 可以"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "平面到平面",
+      "beats": [
+        {
+          "show": [
+            "$w=f(z)$：$z=x+iy$ 進去，$w=u+iv$ 出來",
+            "$f(z)=u(x,y)+i\\,v(x,y)$"
+          ],
+          "say": "複變函數：輸入 z 等於 x 加 i y，輸出 w。輸出的實部、虛部都是 x、y 的函數，所以它就是兩個二變數函數 u 和 v。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$w=f(z)$：$z=x+iy$ 進去，$w=u+iv$ 出來"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f(z)=u(x,y)+i\\,v(x,y)}}$",
+              "on": "輸出#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "函數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$z^2=(x+iy)^2=(x^2-y^2)+i\\,(2xy)$"
+          ],
+          "say": "例如 z 平方：展開得到 x 平方減 y 平方，加 i 乘 2xy。u 是 x 平方減 y 平方，v 是 2xy。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$z^2=(x+iy)^2=(x^2-y^2)+i\\,(2xy)$"
+            },
+            {
+              "do": "write",
+              "line": "$u=x^2-y^2$，$v=2xy$",
+              "on": "2x#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dfrac1z=\\dfrac{\\bar z}{|z|^2}=\\dfrac{x}{x^2+y^2}-i\\,\\dfrac{y}{x^2+y^2}$（$z\\ne0$）"
+          ],
+          "say": "z 分之一：用上一章的倒數公式，z bar 除以絕對值平方，實部是 x 平方加 y 平方分之 x，虛部是負的 x 平方加 y 平方分之 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\dfrac1z=\\dfrac{\\bar z}{|z|^2}=\\dfrac{x}{x^2+y^2}-i\\,\\dfrac{y}{x^2+y^2}$（$z\\ne0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "畫不出圖形：輸入 2 維、輸出 2 維，圖形要 4 維"
+          ],
+          "say": "實數函數可以畫圖形，但複變函數輸入兩維、輸出兩維，圖形要四維，畫不出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "畫不出圖形：輸入 2 維、輸出 2 維，圖形要 4 維"
+            }
+          ]
+        },
+        {
+          "show": [
+            "改畫兩個平面：看 $z$ 平面上的曲線，被送到 $w$ 平面的哪裡"
+          ],
+          "say": "所以改畫兩個平面：在 z 平面上畫一條曲線，看它被送到 w 平面的哪裡。這叫映射的觀點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "改畫兩個平面：看 $z$ 平面上的曲線，被送到 $w$ 平面的哪裡",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極式更清楚：$z=re^{i\\theta}\\Rightarrow z^2=r^2e^{2i\\theta}$"
+          ],
+          "say": "z 平方用極式看更清楚：長度平方、角度加倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極式更清楚：$z=re^{i\\theta}\\Rightarrow z^2=r^2e^{2i\\theta}$"
+            },
+            {
+              "do": "write",
+              "line": "長度平方、角度加倍",
+              "on": "長度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$z^2$ 把直線送到哪",
+      "beats": [
+        {
+          "show": [
+            "垂直線 $x=1$：$z=1+iy$",
+            "$u=1-y^2,\\qquad v=2y$"
+          ],
+          "say": "例子：z 平方把垂直線 x 等於 1，送到哪裡？代 z 等於 1 加 i y：u 是 1 減 y 平方，v 是 2y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "垂直線 $x=1$：$z=1+iy$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle u=1-y^2,\\qquad v=2y$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "消去 $y=\\dfrac v2$：",
+            "$u=1-\\frac{v^2}4$"
+          ],
+          "say": "從 v 等於 2y 解出 y，代進 u：u 等於 1 減 4 分之 v 平方。這是一條開口向左的拋物線，頂點在 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "消去 $y=\\dfrac v2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle u=1-\\frac{v^2}4}}$",
+              "color": "red",
+              "on": "等於#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "這是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，左邊直線上的五個點，各自送到右邊拋物線上同顏色的點。1 不動；1 加減 i 都送到 0 附近的上下兩點，因為長度平方、角度加倍。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cfSquare\" viewBox=\"0 0 640 330\" width=\"640\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacfSquare\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacfSquareblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacfSquarered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacfSquaregreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacfSquarepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacfSquareink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacfSquare10\"><rect x=\"55\" y=\"40\" width=\"190\" height=\"270\"/></clipPath><g clip-path=\"url(#cl11gacfSquare10)\"><line x1=\"65\" y1=\"40\" x2=\"65\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"115\" y1=\"40\" x2=\"115\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"165\" y1=\"40\" x2=\"165\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"215\" y1=\"40\" x2=\"215\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"55\" y1=\"275\" x2=\"245\" y2=\"275\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"55\" y1=\"225\" x2=\"245\" y2=\"225\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"55\" y1=\"175\" x2=\"245\" y2=\"175\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"55\" y1=\"125\" x2=\"245\" y2=\"125\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"55\" y1=\"75\" x2=\"245\" y2=\"75\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M165 310L165 308.9L165 307.8L165 306.6L165 305.5L165 304.4L165 303.3L165 302.1L165 301L165 299.9L165 298.8L165 297.6L165 296.5L165 295.4L165 294.3L165 293.1L165 292L165 290.9L165 289.8L165 288.6L165 287.5L165 286.4L165 285.3L165 284.1L165 283L165 281.9L165 280.8L165 279.6L165 278.5L165 277.4L165 276.3L165 275.1L165 274L165 272.9L165 271.8L165 270.6L165 269.5L165 268.4L165 267.3L165 266.1L165 265L165 263.9L165 262.8L165 261.6L165 260.5L165 259.4L165 258.3L165 257.1L165 256L165 254.9L165 253.8L165 252.6L165 251.5L165 250.4L165 249.3L165 248.1L165 247L165 245.9L165 244.8L165 243.6L165 242.5L165 241.4L165 240.3L165 239.1L165 238L165 236.9L165 235.8L165 234.6L165 233.5L165 232.4L165 231.3L165 230.1L165 229L165 227.9L165 226.8L165 225.6L165 224.5L165 223.4L165 222.3L165 221.1L165 220L165 218.9L165 217.8L165 216.6L165 215.5L165 214.4L165 213.3L165 212.1L165 211L165 209.9L165 208.8L165 207.6L165 206.5L165 205.4L165 204.3L165 203.1L165 202L165 200.9L165 199.8L165 198.6L165 197.5L165 196.4L165 195.3L165 194.1L165 193L165 191.9L165 190.8L165 189.6L165 188.5L165 187.4L165 186.3L165 185.1L165 184L165 182.9L165 181.8L165 180.6L165 179.5L165 178.4L165 177.3L165 176.1L165 175L165 173.9L165 172.8L165 171.6L165 170.5L165 169.4L165 168.3L165 167.1L165 166L165 164.9L165 163.8L165 162.6L165 161.5L165 160.4L165 159.3L165 158.1L165 157L165 155.9L165 154.8L165 153.6L165 152.5L165 151.4L165 150.3L165 149.1L165 148L165 146.9L165 145.8L165 144.6L165 143.5L165 142.4L165 141.3L165 140.1L165 139L165 137.9L165 136.8L165 135.6L165 134.5L165 133.4L165 132.3L165 131.1L165 130L165 128.9L165 127.8L165 126.6L165 125.5L165 124.4L165 123.3L165 122.1L165 121L165 119.9L165 118.7L165 117.6L165 116.5L165 115.4L165 114.3L165 113.1L165 112L165 110.9L165 109.8L165 108.6L165 107.5L165 106.4L165 105.2L165 104.1L165 103L165 101.9L165 100.8L165 99.6L165 98.5L165 97.4L165 96.3L165 95.1L165 94L165 92.9L165 91.8L165 90.6L165 89.5L165 88.4L165 87.3L165 86.1L165 85L165 83.9L165 82.7L165 81.6L165 80.5L165 79.4L165 78.2L165 77.1L165 76L165 74.9L165 73.8L165 72.6L165 71.5L165 70.4L165 69.3L165 68.1L165 67L165 65.9L165 64.8L165 63.6L165 62.5L165 61.4L165 60.2L165 59.1L165 58L165 56.9L165 55.8L165 54.6L165 53.5L165 52.4L165 51.3L165 50.1L165 49L165 47.9L165 46.7L165 45.6L165 44.5L165 43.4L165 42.3L165 41.1L165 40\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"51\" y1=\"175\" x2=\"257\" y2=\"175\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfSquare)\"/><line x1=\"115\" y1=\"314\" x2=\"115\" y2=\"28\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfSquare)\"/><text x=\"108\" y=\"282\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"108\" y=\"82\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"255\" y=\"166\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"124\" y=\"44\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"165\" cy=\"275\" r=\"6\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><circle cx=\"165\" cy=\"225\" r=\"6\" fill=\"var(--muted)\" stroke=\"var(--muted)\" stroke-width=\"2.4\"/><circle cx=\"165\" cy=\"175\" r=\"6\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"165\" cy=\"125\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"165\" cy=\"75\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"177\" y=\"283\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 − 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"177\" y=\"233\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 − <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"177\" y=\"183\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"177\" y=\"133\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"177\" y=\"83\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 + 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><clipPath id=\"cl11gacfSquare340\"><rect x=\"381.9\" y=\"20\" width=\"206.3\" height=\"300\"/></clipPath><g clip-path=\"url(#cl11gacfSquare340)\"><line x1=\"394.4\" y1=\"20\" x2=\"394.4\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"425.6\" y1=\"20\" x2=\"425.6\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"456.9\" y1=\"20\" x2=\"456.9\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"488.1\" y1=\"20\" x2=\"488.1\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"519.4\" y1=\"20\" x2=\"519.4\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"550.6\" y1=\"20\" x2=\"550.6\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"581.9\" y1=\"20\" x2=\"581.9\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"295\" x2=\"588.1\" y2=\"295\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"263.8\" x2=\"588.1\" y2=\"263.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"232.5\" x2=\"588.1\" y2=\"232.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"201.3\" x2=\"588.1\" y2=\"201.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"170\" x2=\"588.1\" y2=\"170\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"138.8\" x2=\"588.1\" y2=\"138.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"107.5\" x2=\"588.1\" y2=\"107.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"76.3\" x2=\"588.1\" y2=\"76.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"381.9\" y1=\"45\" x2=\"588.1\" y2=\"45\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M370.6 320L373.6 318.7L376.6 317.5L379.5 316.3L382.4 315L385.3 313.7L388.2 312.5L391 311.3L393.8 310L396.6 308.7L399.4 307.5L402.1 306.3L404.8 305L407.5 303.7L410.2 302.5L412.8 301.3L415.4 300L418 298.8L420.6 297.5L423.1 296.3L425.6 295L428.1 293.8L430.6 292.5L433 291.3L435.4 290L437.8 288.8L440.2 287.5L442.5 286.3L444.8 285L447.1 283.8L449.4 282.5L451.6 281.3L453.8 280L456 278.8L458.2 277.5L460.3 276.3L462.4 275L464.5 273.8L466.6 272.5L468.6 271.3L470.6 270L472.6 268.8L474.6 267.5L476.5 266.3L478.4 265L480.3 263.8L482.2 262.5L484 261.3L485.8 260L487.6 258.8L489.4 257.5L491.1 256.3L492.8 255L494.5 253.8L496.2 252.5L497.8 251.2L499.4 250L501 248.8L502.6 247.5L504.1 246.3L505.6 245L507.1 243.8L508.6 242.5L510 241.3L511.4 240L512.8 238.8L514.2 237.5L515.5 236.3L516.8 235L518.1 233.8L519.4 232.5L520.6 231.3L521.8 230L523 228.8L524.2 227.5L525.3 226.3L526.4 225L527.5 223.8L528.6 222.5L529.6 221.2L530.6 220L531.6 218.7L532.6 217.5L533.5 216.2L534.4 215L535.3 213.7L536.2 212.5L537 211.3L537.8 210L538.6 208.7L539.4 207.5L540.1 206.2L540.8 205L541.5 203.8L542.2 202.5L542.8 201.3L543.4 200L544 198.8L544.6 197.5L545.1 196.3L545.6 195L546.1 193.8L546.6 192.5L547 191.2L547.4 190L547.8 188.7L548.2 187.5L548.5 186.2L548.8 185L549.1 183.8L549.4 182.5L549.6 181.3L549.8 180L550 178.8L550.2 177.5L550.3 176.3L550.4 175L550.5 173.7L550.6 172.5L550.6 171.3L550.6 170L550.6 168.8L550.6 167.5L550.5 166.3L550.4 165L550.3 163.8L550.2 162.5L550 161.3L549.8 160L549.6 158.8L549.4 157.5L549.1 156.3L548.8 155L548.5 153.8L548.2 152.5L547.8 151.2L547.4 150L547 148.7L546.6 147.5L546.1 146.3L545.6 145L545.1 143.8L544.6 142.5L544 141.3L543.4 140L542.8 138.8L542.2 137.5L541.5 136.3L540.8 135L540.1 133.8L539.4 132.5L538.6 131.3L537.8 130L537 128.8L536.2 127.5L535.3 126.2L534.4 125L533.5 123.7L532.6 122.5L531.6 121.3L530.6 120L529.6 118.8L528.6 117.5L527.5 116.3L526.4 115L525.3 113.8L524.2 112.5L523 111.2L521.8 110L520.6 108.8L519.4 107.5L518.1 106.3L516.8 105L515.5 103.7L514.2 102.5L512.8 101.2L511.4 100L510 98.7L508.6 97.5L507.1 96.3L505.6 95L504.1 93.8L502.6 92.5L501 91.3L499.4 90L497.8 88.7L496.2 87.5L494.5 86.2L492.8 85L491.1 83.8L489.4 82.5L487.6 81.3L485.8 80L484 78.8L482.2 77.5L480.3 76.3L478.4 75L476.5 73.8L474.6 72.5L472.6 71.3L470.6 70L468.6 68.8L466.6 67.5L464.5 66.3L462.4 65L460.3 63.8L458.2 62.5L456 61.3L453.8 60L451.6 58.8L449.4 57.5L447.1 56.3L444.8 55L442.5 53.8L440.2 52.5L437.8 51.3L435.4 50L433 48.8L430.6 47.5L428.1 46.3L425.6 45L423.1 43.7L420.6 42.5L418 41.3L415.4 40L412.8 38.7L410.2 37.5L407.5 36.2L404.8 35L402.1 33.7L399.4 32.5L396.6 31.2L393.8 30L391 28.8L388.2 27.5L385.3 26.2L382.4 25L379.5 23.8L376.6 22.5L373.6 21.2L370.6 20\" stroke=\"var(--red)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"377.9\" y1=\"170\" x2=\"600.1\" y2=\"170\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfSquare)\"/><line x1=\"519.4\" y1=\"324\" x2=\"519.4\" y2=\"8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfSquare)\"/><text x=\"425.6\" y=\"192\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−3</text><text x=\"512.4\" y=\"302\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−4</text><text x=\"512.4\" y=\"52\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"598.1\" y=\"161\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"528.4\" y=\"24\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><circle cx=\"425.6\" cy=\"295\" r=\"6\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><circle cx=\"519.4\" cy=\"232.5\" r=\"6\" fill=\"var(--muted)\" stroke=\"var(--muted)\" stroke-width=\"2.4\"/><circle cx=\"550.6\" cy=\"170\" r=\"6\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"519.4\" cy=\"107.5\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"425.6\" cy=\"45\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"20\" y=\"28\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">z 平面</text><text x=\"304\" y=\"160\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>²</text><text x=\"304\" y=\"176\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\">⟶</text><text x=\"600\" y=\"316\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">w 平面</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$f(z)=z^2$ 把水平線 $y=1$ 送到哪裡？"
+          ],
+          "say": "試一題：水平線 y 等於 1 呢？"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "指數函數 $e^z$",
+      "beats": [
+        {
+          "show": [
+            "$e^{x+iy}=e^x(\\cos y+i\\sin y)$"
+          ],
+          "say": "第二個主角是指數函數。上一課的指數律：e 的 x 加 i y 次方，等於 e 的 x 次方，乘餘弦 y 加 i 正弦 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle e^{x+iy}=e^x(\\cos y+i\\sin y)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $u=e^x\\cos y$，$v=e^x\\sin y$",
+            "• $|e^z|=e^x>0$：$e^z$ 永遠不是 $0$"
+          ],
+          "say": "所以 e 的 z 次方的長度是 e 的 x 次方，永遠大於 0，e 的 z 次方永遠不是 0；它的輻角就是 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $u=e^x\\cos y$，$v=e^x\\sin y$"
+            },
+            {
+              "do": "write",
+              "line": "• $|e^z|=e^x>0$：$e^z$ 永遠不是 $0$",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "• $y$ 是 $e^z$ 的輻角",
+              "on": "次方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "週期 $2\\pi i$：$e^{z+2\\pi i}=e^ze^{2\\pi i}=e^z$"
+          ],
+          "say": "實數的 e 的 x 次方沒有週期，但複數的有：e 的 2 派 i 次方等於 1，所以 z 加 2 派 i，函數值不變。週期是 2 派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "週期 $2\\pi i$：$e^{z+2\\pi i}=e^ze^{2\\pi i}=e^z$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "而且只有這些：$e^z=e^w\\iff z-w=2k\\pi i$"
+          ],
+          "say": "反過來，什麼時候兩個值相等？只有差 2 派 i 的整數倍的時候。",
+          "board": [
+            {
+              "do": "write",
+              "line": "而且只有這些：$e^z=e^w\\iff z-w=2k\\pi i$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證：$e^{z-w}=1$，令 $z-w=a+bi$：$e^a(\\cos b+i\\sin b)=1$"
+          ],
+          "say": "證明：e 的 z 減 w 次方等於 1。比長度，a 是 0；再比實部虛部，餘弦 b 是 1、正弦 b 是 0，b 是 2 派的整數倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證：$e^{z-w}=1$，令 $z-w=a+bi$：$e^a(\\cos b+i\\sin b)=1$"
+            },
+            {
+              "do": "write",
+              "line": "長度：$e^a=1\\Rightarrow a=0$；角度：$\\cos b=1$，$\\sin b=0\\Rightarrow b=2k\\pi$",
+              "on": "部虛"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$e^z$ 的映射",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看 e 的 z 次方的映射。左邊是 z 平面上，負派到派的一條帶狀區域。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cfExp\" viewBox=\"0 0 640 340\" width=\"640\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacfExp\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacfExpblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacfExpred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacfExpgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacfExppencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacfExpink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacfExp10\"><rect x=\"89.1\" y=\"44\" width=\"111.9\" height=\"290\"/></clipPath><g clip-path=\"url(#cl11gacfExp10)\"><line x1=\"105.6\" y1=\"44\" x2=\"105.6\" y2=\"334\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"147.1\" y1=\"44\" x2=\"147.1\" y2=\"334\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"188.5\" y1=\"44\" x2=\"188.5\" y2=\"334\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"313.3\" x2=\"200.9\" y2=\"313.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"271.9\" x2=\"200.9\" y2=\"271.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"230.4\" x2=\"200.9\" y2=\"230.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"189\" x2=\"200.9\" y2=\"189\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"147.6\" x2=\"200.9\" y2=\"147.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"106.1\" x2=\"200.9\" y2=\"106.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.1\" y1=\"64.7\" x2=\"200.9\" y2=\"64.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><polygon points=\"89.1,319.2 200.9,319.2 200.9,58.8 89.1,58.8\" fill=\"#f5d56e\" fill-opacity=\"0.2\"/><path d=\"M118.1 319.2L118.1 318.1L118.1 317L118.1 315.9L118.1 314.8L118.1 313.7L118.1 312.6L118.1 311.6L118.1 310.5L118.1 309.4L118.1 308.3L118.1 307.2L118.1 306.1L118.1 305.1L118.1 304L118.1 302.9L118.1 301.8L118.1 300.7L118.1 299.6L118.1 298.5L118.1 297.5L118.1 296.4L118.1 295.3L118.1 294.2L118.1 293.1L118.1 292L118.1 291L118.1 289.9L118.1 288.8L118.1 287.7L118.1 286.6L118.1 285.5L118.1 284.4L118.1 283.4L118.1 282.3L118.1 281.2L118.1 280.1L118.1 279L118.1 277.9L118.1 276.9L118.1 275.8L118.1 274.7L118.1 273.6L118.1 272.5L118.1 271.4L118.1 270.3L118.1 269.3L118.1 268.2L118.1 267.1L118.1 266L118.1 264.9L118.1 263.8L118.1 262.8L118.1 261.7L118.1 260.6L118.1 259.5L118.1 258.4L118.1 257.3L118.1 256.2L118.1 255.2L118.1 254.1L118.1 253L118.1 251.9L118.1 250.8L118.1 249.7L118.1 248.7L118.1 247.6L118.1 246.5L118.1 245.4L118.1 244.3L118.1 243.2L118.1 242.1L118.1 241.1L118.1 240L118.1 238.9L118.1 237.8L118.1 236.7L118.1 235.6L118.1 234.6L118.1 233.5L118.1 232.4L118.1 231.3L118.1 230.2L118.1 229.1L118.1 228L118.1 227L118.1 225.9L118.1 224.8L118.1 223.7L118.1 222.6L118.1 221.5L118.1 220.5L118.1 219.4L118.1 218.3L118.1 217.2L118.1 216.1L118.1 215L118.1 213.9L118.1 212.9L118.1 211.8L118.1 210.7L118.1 209.6L118.1 208.5L118.1 207.4L118.1 206.4L118.1 205.3L118.1 204.2L118.1 203.1L118.1 202L118.1 200.9L118.1 199.8L118.1 198.8L118.1 197.7L118.1 196.6L118.1 195.5L118.1 194.4L118.1 193.3L118.1 192.3L118.1 191.2L118.1 190.1L118.1 189L118.1 187.9L118.1 186.8L118.1 185.7L118.1 184.7L118.1 183.6L118.1 182.5L118.1 181.4L118.1 180.3L118.1 179.2L118.1 178.2L118.1 177.1L118.1 176L118.1 174.9L118.1 173.8L118.1 172.7L118.1 171.6L118.1 170.6L118.1 169.5L118.1 168.4L118.1 167.3L118.1 166.2L118.1 165.1L118.1 164.1L118.1 163L118.1 161.9L118.1 160.8L118.1 159.7L118.1 158.6L118.1 157.5L118.1 156.5L118.1 155.4L118.1 154.3L118.1 153.2L118.1 152.1L118.1 151L118.1 150L118.1 148.9L118.1 147.8L118.1 146.7L118.1 145.6L118.1 144.5L118.1 143.4L118.1 142.4L118.1 141.3L118.1 140.2L118.1 139.1L118.1 138L118.1 136.9L118.1 135.9L118.1 134.8L118.1 133.7L118.1 132.6L118.1 131.5L118.1 130.4L118.1 129.3L118.1 128.3L118.1 127.2L118.1 126.1L118.1 125L118.1 123.9L118.1 122.8L118.1 121.8L118.1 120.7L118.1 119.6L118.1 118.5L118.1 117.4L118.1 116.3L118.1 115.2L118.1 114.2L118.1 113.1L118.1 112L118.1 110.9L118.1 109.8L118.1 108.7L118.1 107.7L118.1 106.6L118.1 105.5L118.1 104.4L118.1 103.3L118.1 102.2L118.1 101.1L118.1 100.1L118.1 99L118.1 97.9L118.1 96.8L118.1 95.7L118.1 94.6L118.1 93.6L118.1 92.5L118.1 91.4L118.1 90.3L118.1 89.2L118.1 88.1L118.1 87L118.1 86L118.1 84.9L118.1 83.8L118.1 82.7L118.1 81.6L118.1 80.5L118.1 79.5L118.1 78.4L118.1 77.3L118.1 76.2L118.1 75.1L118.1 74L118.1 72.9L118.1 71.9L118.1 70.8L118.1 69.7L118.1 68.6L118.1 67.5L118.1 66.4L118.1 65.4L118.1 64.3L118.1 63.2L118.1 62.1L118.1 61L118.1 59.9L118.1 58.8\" stroke=\"var(--green)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M147.1 319.2L147.1 318.1L147.1 317L147.1 315.9L147.1 314.8L147.1 313.7L147.1 312.6L147.1 311.6L147.1 310.5L147.1 309.4L147.1 308.3L147.1 307.2L147.1 306.1L147.1 305.1L147.1 304L147.1 302.9L147.1 301.8L147.1 300.7L147.1 299.6L147.1 298.5L147.1 297.5L147.1 296.4L147.1 295.3L147.1 294.2L147.1 293.1L147.1 292L147.1 291L147.1 289.9L147.1 288.8L147.1 287.7L147.1 286.6L147.1 285.5L147.1 284.4L147.1 283.4L147.1 282.3L147.1 281.2L147.1 280.1L147.1 279L147.1 277.9L147.1 276.9L147.1 275.8L147.1 274.7L147.1 273.6L147.1 272.5L147.1 271.4L147.1 270.3L147.1 269.3L147.1 268.2L147.1 267.1L147.1 266L147.1 264.9L147.1 263.8L147.1 262.8L147.1 261.7L147.1 260.6L147.1 259.5L147.1 258.4L147.1 257.3L147.1 256.2L147.1 255.2L147.1 254.1L147.1 253L147.1 251.9L147.1 250.8L147.1 249.7L147.1 248.7L147.1 247.6L147.1 246.5L147.1 245.4L147.1 244.3L147.1 243.2L147.1 242.1L147.1 241.1L147.1 240L147.1 238.9L147.1 237.8L147.1 236.7L147.1 235.6L147.1 234.6L147.1 233.5L147.1 232.4L147.1 231.3L147.1 230.2L147.1 229.1L147.1 228L147.1 227L147.1 225.9L147.1 224.8L147.1 223.7L147.1 222.6L147.1 221.5L147.1 220.5L147.1 219.4L147.1 218.3L147.1 217.2L147.1 216.1L147.1 215L147.1 213.9L147.1 212.9L147.1 211.8L147.1 210.7L147.1 209.6L147.1 208.5L147.1 207.4L147.1 206.4L147.1 205.3L147.1 204.2L147.1 203.1L147.1 202L147.1 200.9L147.1 199.8L147.1 198.8L147.1 197.7L147.1 196.6L147.1 195.5L147.1 194.4L147.1 193.3L147.1 192.3L147.1 191.2L147.1 190.1L147.1 189L147.1 187.9L147.1 186.8L147.1 185.7L147.1 184.7L147.1 183.6L147.1 182.5L147.1 181.4L147.1 180.3L147.1 179.2L147.1 178.2L147.1 177.1L147.1 176L147.1 174.9L147.1 173.8L147.1 172.7L147.1 171.6L147.1 170.6L147.1 169.5L147.1 168.4L147.1 167.3L147.1 166.2L147.1 165.1L147.1 164.1L147.1 163L147.1 161.9L147.1 160.8L147.1 159.7L147.1 158.6L147.1 157.5L147.1 156.5L147.1 155.4L147.1 154.3L147.1 153.2L147.1 152.1L147.1 151L147.1 150L147.1 148.9L147.1 147.8L147.1 146.7L147.1 145.6L147.1 144.5L147.1 143.4L147.1 142.4L147.1 141.3L147.1 140.2L147.1 139.1L147.1 138L147.1 136.9L147.1 135.9L147.1 134.8L147.1 133.7L147.1 132.6L147.1 131.5L147.1 130.4L147.1 129.3L147.1 128.3L147.1 127.2L147.1 126.1L147.1 125L147.1 123.9L147.1 122.8L147.1 121.8L147.1 120.7L147.1 119.6L147.1 118.5L147.1 117.4L147.1 116.3L147.1 115.2L147.1 114.2L147.1 113.1L147.1 112L147.1 110.9L147.1 109.8L147.1 108.7L147.1 107.7L147.1 106.6L147.1 105.5L147.1 104.4L147.1 103.3L147.1 102.2L147.1 101.1L147.1 100.1L147.1 99L147.1 97.9L147.1 96.8L147.1 95.7L147.1 94.6L147.1 93.6L147.1 92.5L147.1 91.4L147.1 90.3L147.1 89.2L147.1 88.1L147.1 87L147.1 86L147.1 84.9L147.1 83.8L147.1 82.7L147.1 81.6L147.1 80.5L147.1 79.5L147.1 78.4L147.1 77.3L147.1 76.2L147.1 75.1L147.1 74L147.1 72.9L147.1 71.9L147.1 70.8L147.1 69.7L147.1 68.6L147.1 67.5L147.1 66.4L147.1 65.4L147.1 64.3L147.1 63.2L147.1 62.1L147.1 61L147.1 59.9L147.1 58.8\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M167.8 319.2L167.8 318.1L167.8 317L167.8 315.9L167.8 314.8L167.8 313.7L167.8 312.6L167.8 311.6L167.8 310.5L167.8 309.4L167.8 308.3L167.8 307.2L167.8 306.1L167.8 305.1L167.8 304L167.8 302.9L167.8 301.8L167.8 300.7L167.8 299.6L167.8 298.5L167.8 297.5L167.8 296.4L167.8 295.3L167.8 294.2L167.8 293.1L167.8 292L167.8 291L167.8 289.9L167.8 288.8L167.8 287.7L167.8 286.6L167.8 285.5L167.8 284.4L167.8 283.4L167.8 282.3L167.8 281.2L167.8 280.1L167.8 279L167.8 277.9L167.8 276.9L167.8 275.8L167.8 274.7L167.8 273.6L167.8 272.5L167.8 271.4L167.8 270.3L167.8 269.3L167.8 268.2L167.8 267.1L167.8 266L167.8 264.9L167.8 263.8L167.8 262.8L167.8 261.7L167.8 260.6L167.8 259.5L167.8 258.4L167.8 257.3L167.8 256.2L167.8 255.2L167.8 254.1L167.8 253L167.8 251.9L167.8 250.8L167.8 249.7L167.8 248.7L167.8 247.6L167.8 246.5L167.8 245.4L167.8 244.3L167.8 243.2L167.8 242.1L167.8 241.1L167.8 240L167.8 238.9L167.8 237.8L167.8 236.7L167.8 235.6L167.8 234.6L167.8 233.5L167.8 232.4L167.8 231.3L167.8 230.2L167.8 229.1L167.8 228L167.8 227L167.8 225.9L167.8 224.8L167.8 223.7L167.8 222.6L167.8 221.5L167.8 220.5L167.8 219.4L167.8 218.3L167.8 217.2L167.8 216.1L167.8 215L167.8 213.9L167.8 212.9L167.8 211.8L167.8 210.7L167.8 209.6L167.8 208.5L167.8 207.4L167.8 206.4L167.8 205.3L167.8 204.2L167.8 203.1L167.8 202L167.8 200.9L167.8 199.8L167.8 198.8L167.8 197.7L167.8 196.6L167.8 195.5L167.8 194.4L167.8 193.3L167.8 192.3L167.8 191.2L167.8 190.1L167.8 189L167.8 187.9L167.8 186.8L167.8 185.7L167.8 184.7L167.8 183.6L167.8 182.5L167.8 181.4L167.8 180.3L167.8 179.2L167.8 178.2L167.8 177.1L167.8 176L167.8 174.9L167.8 173.8L167.8 172.7L167.8 171.6L167.8 170.6L167.8 169.5L167.8 168.4L167.8 167.3L167.8 166.2L167.8 165.1L167.8 164.1L167.8 163L167.8 161.9L167.8 160.8L167.8 159.7L167.8 158.6L167.8 157.5L167.8 156.5L167.8 155.4L167.8 154.3L167.8 153.2L167.8 152.1L167.8 151L167.8 150L167.8 148.9L167.8 147.8L167.8 146.7L167.8 145.6L167.8 144.5L167.8 143.4L167.8 142.4L167.8 141.3L167.8 140.2L167.8 139.1L167.8 138L167.8 136.9L167.8 135.9L167.8 134.8L167.8 133.7L167.8 132.6L167.8 131.5L167.8 130.4L167.8 129.3L167.8 128.3L167.8 127.2L167.8 126.1L167.8 125L167.8 123.9L167.8 122.8L167.8 121.8L167.8 120.7L167.8 119.6L167.8 118.5L167.8 117.4L167.8 116.3L167.8 115.2L167.8 114.2L167.8 113.1L167.8 112L167.8 110.9L167.8 109.8L167.8 108.7L167.8 107.7L167.8 106.6L167.8 105.5L167.8 104.4L167.8 103.3L167.8 102.2L167.8 101.1L167.8 100.1L167.8 99L167.8 97.9L167.8 96.8L167.8 95.7L167.8 94.6L167.8 93.6L167.8 92.5L167.8 91.4L167.8 90.3L167.8 89.2L167.8 88.1L167.8 87L167.8 86L167.8 84.9L167.8 83.8L167.8 82.7L167.8 81.6L167.8 80.5L167.8 79.5L167.8 78.4L167.8 77.3L167.8 76.2L167.8 75.1L167.8 74L167.8 72.9L167.8 71.9L167.8 70.8L167.8 69.7L167.8 68.6L167.8 67.5L167.8 66.4L167.8 65.4L167.8 64.3L167.8 63.2L167.8 62.1L167.8 61L167.8 59.9L167.8 58.8\" stroke=\"var(--red)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M89.1 156.5L89.5 156.5L90 156.5L90.5 156.5L90.9 156.5L91.4 156.5L91.9 156.5L92.3 156.5L92.8 156.5L93.3 156.5L93.7 156.5L94.2 156.5L94.7 156.5L95.1 156.5L95.6 156.5L96.1 156.5L96.5 156.5L97 156.5L97.5 156.5L97.9 156.5L98.4 156.5L98.9 156.5L99.3 156.5L99.8 156.5L100.3 156.5L100.7 156.5L101.2 156.5L101.7 156.5L102.1 156.5L102.6 156.5L103.1 156.5L103.5 156.5L104 156.5L104.5 156.5L104.9 156.5L105.4 156.5L105.9 156.5L106.3 156.5L106.8 156.5L107.2 156.5L107.7 156.5L108.2 156.5L108.6 156.5L109.1 156.5L109.6 156.5L110 156.5L110.5 156.5L111 156.5L111.4 156.5L111.9 156.5L112.4 156.5L112.8 156.5L113.3 156.5L113.8 156.5L114.2 156.5L114.7 156.5L115.2 156.5L115.6 156.5L116.1 156.5L116.6 156.5L117 156.5L117.5 156.5L118 156.5L118.4 156.5L118.9 156.5L119.4 156.5L119.8 156.5L120.3 156.5L120.8 156.5L121.2 156.5L121.7 156.5L122.2 156.5L122.6 156.5L123.1 156.5L123.6 156.5L124 156.5L124.5 156.5L125 156.5L125.4 156.5L125.9 156.5L126.4 156.5L126.8 156.5L127.3 156.5L127.8 156.5L128.2 156.5L128.7 156.5L129.2 156.5L129.6 156.5L130.1 156.5L130.6 156.5L131 156.5L131.5 156.5L132 156.5L132.4 156.5L132.9 156.5L133.3 156.5L133.8 156.5L134.3 156.5L134.7 156.5L135.2 156.5L135.7 156.5L136.1 156.5L136.6 156.5L137.1 156.5L137.5 156.5L138 156.5L138.5 156.5L138.9 156.5L139.4 156.5L139.9 156.5L140.3 156.5L140.8 156.5L141.3 156.5L141.7 156.5L142.2 156.5L142.7 156.5L143.1 156.5L143.6 156.5L144.1 156.5L144.5 156.5L145 156.5L145.5 156.5L145.9 156.5L146.4 156.5L146.9 156.5L147.3 156.5L147.8 156.5L148.3 156.5L148.7 156.5L149.2 156.5L149.7 156.5L150.1 156.5L150.6 156.5L151.1 156.5L151.5 156.5L152 156.5L152.5 156.5L152.9 156.5L153.4 156.5L153.9 156.5L154.3 156.5L154.8 156.5L155.3 156.5L155.7 156.5L156.2 156.5L156.7 156.5L157.1 156.5L157.6 156.5L158 156.5L158.5 156.5L159 156.5L159.4 156.5L159.9 156.5L160.4 156.5L160.8 156.5L161.3 156.5L161.8 156.5L162.2 156.5L162.7 156.5L163.2 156.5L163.6 156.5L164.1 156.5L164.6 156.5L165 156.5L165.5 156.5L166 156.5L166.4 156.5L166.9 156.5L167.4 156.5L167.8 156.5L168.3 156.5L168.8 156.5L169.2 156.5L169.7 156.5L170.2 156.5L170.6 156.5L171.1 156.5L171.6 156.5L172 156.5L172.5 156.5L173 156.5L173.4 156.5L173.9 156.5L174.4 156.5L174.8 156.5L175.3 156.5L175.8 156.5L176.2 156.5L176.7 156.5L177.2 156.5L177.6 156.5L178.1 156.5L178.6 156.5L179 156.5L179.5 156.5L180 156.5L180.4 156.5L180.9 156.5L181.4 156.5L181.8 156.5L182.3 156.5L182.8 156.5L183.2 156.5L183.7 156.5L184.2 156.5L184.6 156.5L185.1 156.5L185.5 156.5L186 156.5L186.5 156.5L186.9 156.5L187.4 156.5L187.9 156.5L188.3 156.5L188.8 156.5L189.3 156.5L189.7 156.5L190.2 156.5L190.7 156.5L191.1 156.5L191.6 156.5L192.1 156.5L192.5 156.5L193 156.5L193.5 156.5L193.9 156.5L194.4 156.5L194.9 156.5L195.3 156.5L195.8 156.5L196.3 156.5L196.7 156.5L197.2 156.5L197.7 156.5L198.1 156.5L198.6 156.5L199.1 156.5L199.5 156.5L200 156.5L200.5 156.5L200.9 156.5\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"8 6\"/><path d=\"M89.1 91.4L89.5 91.4L90 91.4L90.5 91.4L90.9 91.4L91.4 91.4L91.9 91.4L92.3 91.4L92.8 91.4L93.3 91.4L93.7 91.4L94.2 91.4L94.7 91.4L95.1 91.4L95.6 91.4L96.1 91.4L96.5 91.4L97 91.4L97.5 91.4L97.9 91.4L98.4 91.4L98.9 91.4L99.3 91.4L99.8 91.4L100.3 91.4L100.7 91.4L101.2 91.4L101.7 91.4L102.1 91.4L102.6 91.4L103.1 91.4L103.5 91.4L104 91.4L104.5 91.4L104.9 91.4L105.4 91.4L105.9 91.4L106.3 91.4L106.8 91.4L107.2 91.4L107.7 91.4L108.2 91.4L108.6 91.4L109.1 91.4L109.6 91.4L110 91.4L110.5 91.4L111 91.4L111.4 91.4L111.9 91.4L112.4 91.4L112.8 91.4L113.3 91.4L113.8 91.4L114.2 91.4L114.7 91.4L115.2 91.4L115.6 91.4L116.1 91.4L116.6 91.4L117 91.4L117.5 91.4L118 91.4L118.4 91.4L118.9 91.4L119.4 91.4L119.8 91.4L120.3 91.4L120.8 91.4L121.2 91.4L121.7 91.4L122.2 91.4L122.6 91.4L123.1 91.4L123.6 91.4L124 91.4L124.5 91.4L125 91.4L125.4 91.4L125.9 91.4L126.4 91.4L126.8 91.4L127.3 91.4L127.8 91.4L128.2 91.4L128.7 91.4L129.2 91.4L129.6 91.4L130.1 91.4L130.6 91.4L131 91.4L131.5 91.4L132 91.4L132.4 91.4L132.9 91.4L133.3 91.4L133.8 91.4L134.3 91.4L134.7 91.4L135.2 91.4L135.7 91.4L136.1 91.4L136.6 91.4L137.1 91.4L137.5 91.4L138 91.4L138.5 91.4L138.9 91.4L139.4 91.4L139.9 91.4L140.3 91.4L140.8 91.4L141.3 91.4L141.7 91.4L142.2 91.4L142.7 91.4L143.1 91.4L143.6 91.4L144.1 91.4L144.5 91.4L145 91.4L145.5 91.4L145.9 91.4L146.4 91.4L146.9 91.4L147.3 91.4L147.8 91.4L148.3 91.4L148.7 91.4L149.2 91.4L149.7 91.4L150.1 91.4L150.6 91.4L151.1 91.4L151.5 91.4L152 91.4L152.5 91.4L152.9 91.4L153.4 91.4L153.9 91.4L154.3 91.4L154.8 91.4L155.3 91.4L155.7 91.4L156.2 91.4L156.7 91.4L157.1 91.4L157.6 91.4L158 91.4L158.5 91.4L159 91.4L159.4 91.4L159.9 91.4L160.4 91.4L160.8 91.4L161.3 91.4L161.8 91.4L162.2 91.4L162.7 91.4L163.2 91.4L163.6 91.4L164.1 91.4L164.6 91.4L165 91.4L165.5 91.4L166 91.4L166.4 91.4L166.9 91.4L167.4 91.4L167.8 91.4L168.3 91.4L168.8 91.4L169.2 91.4L169.7 91.4L170.2 91.4L170.6 91.4L171.1 91.4L171.6 91.4L172 91.4L172.5 91.4L173 91.4L173.4 91.4L173.9 91.4L174.4 91.4L174.8 91.4L175.3 91.4L175.8 91.4L176.2 91.4L176.7 91.4L177.2 91.4L177.6 91.4L178.1 91.4L178.6 91.4L179 91.4L179.5 91.4L180 91.4L180.4 91.4L180.9 91.4L181.4 91.4L181.8 91.4L182.3 91.4L182.8 91.4L183.2 91.4L183.7 91.4L184.2 91.4L184.6 91.4L185.1 91.4L185.5 91.4L186 91.4L186.5 91.4L186.9 91.4L187.4 91.4L187.9 91.4L188.3 91.4L188.8 91.4L189.3 91.4L189.7 91.4L190.2 91.4L190.7 91.4L191.1 91.4L191.6 91.4L192.1 91.4L192.5 91.4L193 91.4L193.5 91.4L193.9 91.4L194.4 91.4L194.9 91.4L195.3 91.4L195.8 91.4L196.3 91.4L196.7 91.4L197.2 91.4L197.7 91.4L198.1 91.4L198.6 91.4L199.1 91.4L199.5 91.4L200 91.4L200.5 91.4L200.9 91.4\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"8 6\"/><path d=\"M89.1 254.1L89.5 254.1L90 254.1L90.5 254.1L90.9 254.1L91.4 254.1L91.9 254.1L92.3 254.1L92.8 254.1L93.3 254.1L93.7 254.1L94.2 254.1L94.7 254.1L95.1 254.1L95.6 254.1L96.1 254.1L96.5 254.1L97 254.1L97.5 254.1L97.9 254.1L98.4 254.1L98.9 254.1L99.3 254.1L99.8 254.1L100.3 254.1L100.7 254.1L101.2 254.1L101.7 254.1L102.1 254.1L102.6 254.1L103.1 254.1L103.5 254.1L104 254.1L104.5 254.1L104.9 254.1L105.4 254.1L105.9 254.1L106.3 254.1L106.8 254.1L107.2 254.1L107.7 254.1L108.2 254.1L108.6 254.1L109.1 254.1L109.6 254.1L110 254.1L110.5 254.1L111 254.1L111.4 254.1L111.9 254.1L112.4 254.1L112.8 254.1L113.3 254.1L113.8 254.1L114.2 254.1L114.7 254.1L115.2 254.1L115.6 254.1L116.1 254.1L116.6 254.1L117 254.1L117.5 254.1L118 254.1L118.4 254.1L118.9 254.1L119.4 254.1L119.8 254.1L120.3 254.1L120.8 254.1L121.2 254.1L121.7 254.1L122.2 254.1L122.6 254.1L123.1 254.1L123.6 254.1L124 254.1L124.5 254.1L125 254.1L125.4 254.1L125.9 254.1L126.4 254.1L126.8 254.1L127.3 254.1L127.8 254.1L128.2 254.1L128.7 254.1L129.2 254.1L129.6 254.1L130.1 254.1L130.6 254.1L131 254.1L131.5 254.1L132 254.1L132.4 254.1L132.9 254.1L133.3 254.1L133.8 254.1L134.3 254.1L134.7 254.1L135.2 254.1L135.7 254.1L136.1 254.1L136.6 254.1L137.1 254.1L137.5 254.1L138 254.1L138.5 254.1L138.9 254.1L139.4 254.1L139.9 254.1L140.3 254.1L140.8 254.1L141.3 254.1L141.7 254.1L142.2 254.1L142.7 254.1L143.1 254.1L143.6 254.1L144.1 254.1L144.5 254.1L145 254.1L145.5 254.1L145.9 254.1L146.4 254.1L146.9 254.1L147.3 254.1L147.8 254.1L148.3 254.1L148.7 254.1L149.2 254.1L149.7 254.1L150.1 254.1L150.6 254.1L151.1 254.1L151.5 254.1L152 254.1L152.5 254.1L152.9 254.1L153.4 254.1L153.9 254.1L154.3 254.1L154.8 254.1L155.3 254.1L155.7 254.1L156.2 254.1L156.7 254.1L157.1 254.1L157.6 254.1L158 254.1L158.5 254.1L159 254.1L159.4 254.1L159.9 254.1L160.4 254.1L160.8 254.1L161.3 254.1L161.8 254.1L162.2 254.1L162.7 254.1L163.2 254.1L163.6 254.1L164.1 254.1L164.6 254.1L165 254.1L165.5 254.1L166 254.1L166.4 254.1L166.9 254.1L167.4 254.1L167.8 254.1L168.3 254.1L168.8 254.1L169.2 254.1L169.7 254.1L170.2 254.1L170.6 254.1L171.1 254.1L171.6 254.1L172 254.1L172.5 254.1L173 254.1L173.4 254.1L173.9 254.1L174.4 254.1L174.8 254.1L175.3 254.1L175.8 254.1L176.2 254.1L176.7 254.1L177.2 254.1L177.6 254.1L178.1 254.1L178.6 254.1L179 254.1L179.5 254.1L180 254.1L180.4 254.1L180.9 254.1L181.4 254.1L181.8 254.1L182.3 254.1L182.8 254.1L183.2 254.1L183.7 254.1L184.2 254.1L184.6 254.1L185.1 254.1L185.5 254.1L186 254.1L186.5 254.1L186.9 254.1L187.4 254.1L187.9 254.1L188.3 254.1L188.8 254.1L189.3 254.1L189.7 254.1L190.2 254.1L190.7 254.1L191.1 254.1L191.6 254.1L192.1 254.1L192.5 254.1L193 254.1L193.5 254.1L193.9 254.1L194.4 254.1L194.9 254.1L195.3 254.1L195.8 254.1L196.3 254.1L196.7 254.1L197.2 254.1L197.7 254.1L198.1 254.1L198.6 254.1L199.1 254.1L199.5 254.1L200 254.1L200.5 254.1L200.9 254.1\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"8 6\"/></g><line x1=\"85.1\" y1=\"189\" x2=\"212.9\" y2=\"189\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfExp)\"/><line x1=\"147.1\" y1=\"338\" x2=\"147.1\" y2=\"32\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfExp)\"/><text x=\"210.9\" y=\"180\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"156.1\" y=\"48\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"155.1\" y=\"78.8\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">π</text><text x=\"155.1\" y=\"311.2\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−π</text><clipPath id=\"cl11gacfExp330\"><rect x=\"330\" y=\"20\" width=\"300\" height=\"300\"/></clipPath><g clip-path=\"url(#cl11gacfExp330)\"><line x1=\"330\" y1=\"20\" x2=\"330\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"405\" y1=\"20\" x2=\"405\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"480\" y1=\"20\" x2=\"480\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"555\" y1=\"20\" x2=\"555\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"630\" y1=\"20\" x2=\"630\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"320\" x2=\"630\" y2=\"320\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"245\" x2=\"630\" y2=\"245\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"170\" x2=\"630\" y2=\"170\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"95\" x2=\"630\" y2=\"95\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"20\" x2=\"630\" y2=\"20\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M517.2 170L517.2 169L517.2 168.1L517.1 167.1L517 166.1L516.9 165.1L516.8 164.2L516.6 163.2L516.4 162.3L516.2 161.3L516 160.4L515.7 159.4L515.4 158.5L515.1 157.6L514.8 156.7L514.4 155.7L514 154.9L513.6 154L513.2 153.1L512.7 152.2L512.3 151.4L511.8 150.5L511.2 149.7L510.7 148.9L510.1 148.1L509.5 147.3L508.9 146.6L508.3 145.8L507.7 145.1L507 144.4L506.3 143.7L505.6 143L504.9 142.3L504.2 141.7L503.4 141.1L502.7 140.5L501.9 139.9L501.1 139.3L500.3 138.8L499.5 138.2L498.6 137.7L497.8 137.3L496.9 136.8L496 136.4L495.1 136L494.3 135.6L493.3 135.2L492.4 134.9L491.5 134.6L490.6 134.3L489.6 134L488.7 133.8L487.7 133.6L486.8 133.4L485.8 133.2L484.9 133.1L483.9 133L482.9 132.9L481.9 132.8L481 132.8L480 132.8L479 132.8L478.1 132.8L477.1 132.9L476.1 133L475.1 133.1L474.2 133.2L473.2 133.4L472.3 133.6L471.3 133.8L470.4 134L469.4 134.3L468.5 134.6L467.6 134.9L466.7 135.2L465.7 135.6L464.9 136L464 136.4L463.1 136.8L462.2 137.3L461.4 137.7L460.5 138.2L459.7 138.8L458.9 139.3L458.1 139.9L457.3 140.5L456.6 141.1L455.8 141.7L455.1 142.3L454.4 143L453.7 143.7L453 144.4L452.3 145.1L451.7 145.8L451.1 146.6L450.5 147.3L449.9 148.1L449.3 148.9L448.8 149.7L448.2 150.5L447.7 151.4L447.3 152.2L446.8 153.1L446.4 154L446 154.9L445.6 155.7L445.2 156.7L444.9 157.6L444.6 158.5L444.3 159.4L444 160.4L443.8 161.3L443.6 162.3L443.4 163.2L443.2 164.2L443.1 165.1L443 166.1L442.9 167.1L442.8 168.1L442.8 169L442.8 170L442.8 171L442.8 171.9L442.9 172.9L443 173.9L443.1 174.9L443.2 175.8L443.4 176.8L443.6 177.7L443.8 178.7L444 179.6L444.3 180.6L444.6 181.5L444.9 182.4L445.2 183.3L445.6 184.3L446 185.1L446.4 186L446.8 186.9L447.3 187.8L447.7 188.6L448.2 189.5L448.8 190.3L449.3 191.1L449.9 191.9L450.5 192.7L451.1 193.4L451.7 194.2L452.3 194.9L453 195.6L453.7 196.3L454.4 197L455.1 197.7L455.8 198.3L456.6 198.9L457.3 199.5L458.1 200.1L458.9 200.7L459.7 201.2L460.5 201.8L461.4 202.3L462.2 202.7L463.1 203.2L464 203.6L464.9 204L465.7 204.4L466.7 204.8L467.6 205.1L468.5 205.4L469.4 205.7L470.4 206L471.3 206.2L472.3 206.4L473.2 206.6L474.2 206.8L475.1 206.9L476.1 207L477.1 207.1L478.1 207.2L479 207.2L480 207.2L481 207.2L481.9 207.2L482.9 207.1L483.9 207L484.9 206.9L485.8 206.8L486.8 206.6L487.7 206.4L488.7 206.2L489.6 206L490.6 205.7L491.5 205.4L492.4 205.1L493.3 204.8L494.3 204.4L495.1 204L496 203.6L496.9 203.2L497.8 202.7L498.6 202.3L499.5 201.8L500.3 201.2L501.1 200.7L501.9 200.1L502.7 199.5L503.4 198.9L504.2 198.3L504.9 197.7L505.6 197L506.3 196.3L507 195.6L507.7 194.9L508.3 194.2L508.9 193.4L509.5 192.7L510.1 191.9L510.7 191.1L511.2 190.3L511.8 189.5L512.3 188.6L512.7 187.8L513.2 186.9L513.6 186L514 185.1L514.4 184.3L514.8 183.3L515.1 182.4L515.4 181.5L515.7 180.6L516 179.6L516.2 178.7L516.4 177.7L516.6 176.8L516.8 175.8L516.9 174.9L517 173.9L517.1 172.9L517.2 171.9L517.2 171L517.2 170\" stroke=\"var(--green)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M555 170L555 168L554.9 166.1L554.8 164.1L554.6 162.2L554.4 160.2L554.1 158.3L553.7 156.3L553.4 154.4L552.9 152.5L552.4 150.6L551.9 148.7L551.3 146.8L550.7 145L550 143.1L549.3 141.3L548.5 139.5L547.7 137.7L546.8 136L545.9 134.2L545 132.5L543.9 130.8L542.9 129.2L541.8 127.5L540.7 125.9L539.5 124.3L538.3 122.8L537 121.3L535.7 119.8L534.4 118.4L533 117L531.6 115.6L530.2 114.3L528.7 113L527.2 111.7L525.7 110.5L524.1 109.3L522.5 108.2L520.8 107.1L519.2 106.1L517.5 105L515.8 104.1L514 103.2L512.3 102.3L510.5 101.5L508.7 100.7L506.9 100L505 99.3L503.2 98.7L501.3 98.1L499.4 97.6L497.5 97.1L495.6 96.6L493.7 96.3L491.7 95.9L489.8 95.6L487.8 95.4L485.9 95.2L483.9 95.1L482 95L480 95L478 95L476.1 95.1L474.1 95.2L472.2 95.4L470.2 95.6L468.3 95.9L466.3 96.3L464.4 96.6L462.5 97.1L460.6 97.6L458.7 98.1L456.8 98.7L455 99.3L453.1 100L451.3 100.7L449.5 101.5L447.7 102.3L446 103.2L444.2 104.1L442.5 105L440.8 106.1L439.2 107.1L437.5 108.2L435.9 109.3L434.3 110.5L432.8 111.7L431.3 113L429.8 114.3L428.4 115.6L427 117L425.6 118.4L424.3 119.8L423 121.3L421.7 122.8L420.5 124.3L419.3 125.9L418.2 127.5L417.1 129.2L416.1 130.8L415 132.5L414.1 134.2L413.2 136L412.3 137.7L411.5 139.5L410.7 141.3L410 143.1L409.3 145L408.7 146.8L408.1 148.7L407.6 150.6L407.1 152.5L406.6 154.4L406.3 156.3L405.9 158.3L405.6 160.2L405.4 162.2L405.2 164.1L405.1 166.1L405 168L405 170L405 172L405.1 173.9L405.2 175.9L405.4 177.8L405.6 179.8L405.9 181.7L406.3 183.7L406.6 185.6L407.1 187.5L407.6 189.4L408.1 191.3L408.7 193.2L409.3 195L410 196.9L410.7 198.7L411.5 200.5L412.3 202.3L413.2 204L414.1 205.8L415 207.5L416.1 209.2L417.1 210.8L418.2 212.5L419.3 214.1L420.5 215.7L421.7 217.2L423 218.7L424.3 220.2L425.6 221.6L427 223L428.4 224.4L429.8 225.7L431.3 227L432.8 228.3L434.3 229.5L435.9 230.7L437.5 231.8L439.2 232.9L440.8 233.9L442.5 235L444.2 235.9L446 236.8L447.7 237.7L449.5 238.5L451.3 239.3L453.1 240L455 240.7L456.8 241.3L458.7 241.9L460.6 242.4L462.5 242.9L464.4 243.4L466.3 243.7L468.3 244.1L470.2 244.4L472.2 244.6L474.1 244.8L476.1 244.9L478 245L480 245L482 245L483.9 244.9L485.9 244.8L487.8 244.6L489.8 244.4L491.7 244.1L493.7 243.7L495.6 243.4L497.5 242.9L499.4 242.4L501.3 241.9L503.2 241.3L505 240.7L506.9 240L508.7 239.3L510.5 238.5L512.3 237.7L514 236.8L515.8 235.9L517.5 235L519.2 233.9L520.8 232.9L522.5 231.8L524.1 230.7L525.7 229.5L527.2 228.3L528.7 227L530.2 225.7L531.6 224.4L533 223L534.4 221.6L535.7 220.2L537 218.7L538.3 217.2L539.5 215.7L540.7 214.1L541.8 212.5L542.9 210.8L543.9 209.2L545 207.5L545.9 205.8L546.8 204L547.7 202.3L548.5 200.5L549.3 198.7L550 196.9L550.7 195L551.3 193.2L551.9 191.3L552.4 189.4L552.9 187.5L553.4 185.6L553.7 183.7L554.1 181.7L554.4 179.8L554.6 177.8L554.8 175.9L554.9 173.9L555 172L555 170\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M603.7 170L603.6 166.8L603.5 163.5L603.3 160.3L603 157.1L602.6 153.9L602.1 150.7L601.6 147.5L601 144.3L600.2 141.1L599.4 138L598.6 134.9L597.6 131.8L596.6 128.7L595.4 125.7L594.2 122.7L593 119.7L591.6 116.8L590.2 113.9L588.7 111L587.1 108.2L585.4 105.4L583.7 102.7L581.9 100L580 97.3L578.1 94.7L576.1 92.2L574 89.7L571.9 87.3L569.7 84.9L567.4 82.6L565.1 80.3L562.7 78.1L560.3 76L557.8 73.9L555.3 71.9L552.7 70L550 68.1L547.3 66.3L544.6 64.6L541.8 62.9L539 61.3L536.1 59.8L533.2 58.4L530.3 57L527.3 55.8L524.3 54.6L521.3 53.4L518.2 52.4L515.1 51.4L512 50.6L508.9 49.8L505.7 49L502.5 48.4L499.3 47.9L496.1 47.4L492.9 47L489.7 46.7L486.5 46.5L483.2 46.4L480 46.3L476.8 46.4L473.5 46.5L470.3 46.7L467.1 47L463.9 47.4L460.7 47.9L457.5 48.4L454.3 49L451.1 49.8L448 50.6L444.9 51.4L441.8 52.4L438.7 53.4L435.7 54.6L432.7 55.8L429.7 57L426.8 58.4L423.9 59.8L421 61.3L418.2 62.9L415.4 64.6L412.7 66.3L410 68.1L407.3 70L404.7 71.9L402.2 73.9L399.7 76L397.3 78.1L394.9 80.3L392.6 82.6L390.3 84.9L388.1 87.3L386 89.7L383.9 92.2L381.9 94.7L380 97.3L378.1 100L376.3 102.7L374.6 105.4L372.9 108.2L371.3 111L369.8 113.9L368.4 116.8L367 119.7L365.8 122.7L364.6 125.7L363.4 128.7L362.4 131.8L361.4 134.9L360.6 138L359.8 141.1L359 144.3L358.4 147.5L357.9 150.7L357.4 153.9L357 157.1L356.7 160.3L356.5 163.5L356.4 166.8L356.3 170L356.4 173.2L356.5 176.5L356.7 179.7L357 182.9L357.4 186.1L357.9 189.3L358.4 192.5L359 195.7L359.8 198.9L360.6 202L361.4 205.1L362.4 208.2L363.4 211.3L364.6 214.3L365.8 217.3L367 220.3L368.4 223.2L369.8 226.1L371.3 229L372.9 231.8L374.6 234.6L376.3 237.3L378.1 240L380 242.7L381.9 245.3L383.9 247.8L386 250.3L388.1 252.7L390.3 255.1L392.6 257.4L394.9 259.7L397.3 261.9L399.7 264L402.2 266.1L404.7 268.1L407.3 270L410 271.9L412.7 273.7L415.4 275.4L418.2 277.1L421 278.7L423.9 280.2L426.8 281.6L429.7 283L432.7 284.2L435.7 285.4L438.7 286.6L441.8 287.6L444.9 288.6L448 289.4L451.1 290.2L454.3 291L457.5 291.6L460.7 292.1L463.9 292.6L467.1 293L470.3 293.3L473.5 293.5L476.8 293.6L480 293.7L483.2 293.6L486.5 293.5L489.7 293.3L492.9 293L496.1 292.6L499.3 292.1L502.5 291.6L505.7 291L508.9 290.2L512 289.4L515.1 288.6L518.2 287.6L521.3 286.6L524.3 285.4L527.3 284.2L530.3 283L533.2 281.6L536.1 280.2L539 278.7L541.8 277.1L544.6 275.4L547.3 273.7L550 271.9L552.7 270L555.3 268.1L557.8 266.1L560.3 264L562.7 261.9L565.1 259.7L567.4 257.4L569.7 255.1L571.9 252.7L574 250.3L576.1 247.8L578.1 245.3L580 242.7L581.9 240L583.7 237.3L585.4 234.6L587.1 231.8L588.7 229L590.2 226.1L591.6 223.2L593 220.3L594.2 217.3L595.4 214.3L596.6 211.3L597.6 208.2L598.6 205.1L599.4 202L600.2 198.9L601 195.7L601.6 192.5L602.1 189.3L602.6 186.1L603 182.9L603.3 179.7L603.5 176.5L603.6 173.2L603.7 170\" stroke=\"var(--red)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"326\" y1=\"170\" x2=\"642\" y2=\"170\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfExp)\"/><line x1=\"480\" y1=\"324\" x2=\"480\" y2=\"8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfExp)\"/><text x=\"640\" y=\"161\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"489\" y=\"24\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><line x1=\"480\" y1=\"170\" x2=\"626.3\" y2=\"23.8\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><line x1=\"480\" y1=\"170\" x2=\"333.8\" y2=\"23.8\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><line x1=\"480\" y1=\"170\" x2=\"480\" y2=\"316.3\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><circle cx=\"480\" cy=\"170\" r=\"5\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"12\" y=\"24\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">z 平面</text><text x=\"300\" y=\"165\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">e</tspan><tspan dy=\"-10\" font-size=\"17\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan></text><text x=\"300\" y=\"190\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\">⟶</text><text x=\"560\" y=\"334\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">w 平面</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 垂直線 $x=c$ $\\to$ 半徑 $e^c$ 的圓",
+            "• 水平線 $y=c$ $\\to$ 角度 $c$ 的射線"
+          ],
+          "say": "垂直線 x 等於 c，長度 e 的 c 次方固定、角度轉一圈，變成圓；水平線 y 等於 c，角度固定、長度從 0 到無限大，變成射線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 垂直線 $x=c$ $\\to$ 半徑 $e^c$ 的圓"
+            },
+            {
+              "do": "write",
+              "line": "• 水平線 $y=c$ $\\to$ 角度 $c$ 的射線",
+              "on": "水平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "帶狀 $-\\pi<y\\le\\pi$ 一對一蓋滿 $w$ 平面去掉 $0$"
+          ],
+          "say": "這條帶狀區域，剛好一對一蓋滿整個 w 平面，只少了原點。往上再一條帶子，又重新蓋一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "帶狀 $-\\pi<y\\le\\pi$ 一對一蓋滿 $w$ 平面去掉 $0$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　一對一：同一條帶子裡兩點的 $y$ 差小於 $2\\pi$，由 ② 的「只有這些」不會撞在一起",
+              "color": "violet",
+              "on": "只少"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這就是為什麼反函數 $\\log$ 會有很多個值"
+          ],
+          "say": "一直重複蓋，就是下一節對數會有無窮多個值的原因。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這就是為什麼反函數 $\\log$ 會有很多個值"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "對數：無窮多個值",
+      "beats": [
+        {
+          "show": [
+            "解 $e^w=z$（$z\\ne0$），令 $w=u+iv$：",
+            "$e^u e^{iv}=|z|\\,e^{i\\arg z}$"
+          ],
+          "say": "對數是指數的反函數：給 z，解 e 的 w 次方等於 z。令 w 等於 u 加 i v，兩邊都寫成長度乘角度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解 $e^w=z$（$z\\ne0$），令 $w=u+iv$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^u e^{iv}=|z|\\,e^{i\\arg z}$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 長度：$e^u=|z|\\Rightarrow u=\\ln|z|$（唯一）",
+            "• 角度：$v$ 是 $z$ 的任何一個輻角"
+          ],
+          "say": "比長度，u 是 z 的絕對值取自然對數，唯一一個。比角度，v 可以是 z 的任何一個輻角。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 長度：$e^u=|z|\\Rightarrow u=\\ln|z|$（唯一）"
+            },
+            {
+              "do": "write",
+              "line": "• 角度：$v$ 是 $z$ 的任何一個輻角",
+              "on": "一個#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\log z=\\ln|z|+i(\\operatorname{Arg}z+2k\\pi),\\quad k\\in\\mathbb Z$"
+          ],
+          "say": "輻角有無窮多個，差 2 派的倍數，所以對數有無窮多個值。原因就是 e 的 z 次方有週期，不是一對一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\log z=\\ln|z|+i(\\operatorname{Arg}z+2k\\pi),\\quad k\\in\\mathbb Z}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "個值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "主值：限制在 $-\\pi<v\\le\\pi$",
+            "$\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$"
+          ],
+          "say": "就像反正弦要限制範圍，對數也取一個主值：虛部限制在負派到派之間，也就是用主輻角，叫做主值對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "主值：限制在 $-\\pi<v\\le\\pi$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z}}$",
+              "on": "一個"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\operatorname{Log}(-1-i)$"
+          ],
+          "say": "例子：負 1 減 i 的主值對數。絕對值是根號 2，取自然對數是 2 分之自然對數 2。點在第三象限，主輻角是負 4 分之 3 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Log}(-1-i)$"
+            },
+            {
+              "do": "write",
+              "line": "$|z|=\\sqrt2$，$\\ln\\sqrt2=\\dfrac12\\ln2$；第三象限：$\\operatorname{Arg}=-\\dfrac{3\\pi}4$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\operatorname{Log}(-1-i)=\\frac12\\ln2-\\frac{3\\pi}4i$"
+          ],
+          "say": "所以答案是 2 分之自然對數 2，減 4 分之 3 派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\operatorname{Log}(-1-i)=\\frac12\\ln2-\\frac{3\\pi}4i}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "自然"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac12\\ln2\\approx0.347$；其他值 $\\frac12\\ln2+i\\big(-\\frac{3\\pi}4+2k\\pi\\big)$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "主值的代價",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，負 1 減 i 的所有對數，排在同一條垂直線上，間隔 2 派。主值帶裡只有一個，就是主值對數。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cfLog\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"22\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacfLog\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacfLogblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacfLogred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacfLoggreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacfLogpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacfLogink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacfLog30\"><rect x=\"251.1\" y=\"16\" width=\"123.8\" height=\"294\"/></clipPath><g clip-path=\"url(#cl11gacfLog30)\"><polygon points=\"251.1,223.8 374.9,223.8 374.9,102.2 251.1,102.2\" fill=\"#f5d56e\" fill-opacity=\"0.3\"/></g><line x1=\"247.1\" y1=\"163\" x2=\"386.9\" y2=\"163\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfLog)\"/><line x1=\"309.1\" y1=\"314\" x2=\"309.1\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacfLog)\"/><text x=\"384.9\" y=\"154\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"318.1\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><circle cx=\"315.8\" cy=\"330.1\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"315.8\" cy=\"208.6\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"315.8\" cy=\"87\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"327.8\" y=\"216.6\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">Log：<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan> = 0</text><text x=\"327.8\" y=\"95\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan> = 1</text><text x=\"327.8\" y=\"338.1\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan> = −1</text><text x=\"430\" y=\"150\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">主值帶</text><text x=\"430\" y=\"176\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">−π < <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</tspan> ≤ π</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意：$\\operatorname{Log}(z_1z_2)$ 不一定等於 $\\operatorname{Log}z_1+\\operatorname{Log}z_2$"
+          ],
+          "say": "代價是：主值的對數律不一定成立。負 1 乘負 1 是 1，主值對數是 0；但兩個負 1 的主值對數相加，是 2 派 i。角度相加後跑出了主值帶。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意：$\\operatorname{Log}(z_1z_2)$ 不一定等於 $\\operatorname{Log}z_1+\\operatorname{Log}z_2$"
+            },
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Log}\\big((-1)(-1)\\big)=\\operatorname{Log}1=0$，但 $\\operatorname{Log}(-1)+\\operatorname{Log}(-1)=2\\pi i$",
+              "on": "主值#2"
+            },
+            {
+              "do": "write",
+              "line": "　多值的 $\\log$ 才有 $\\log(z_1z_2)=\\log z_1+\\log z_2$（兩邊當成集合相等）",
+              "color": "violet",
+              "on": "數相"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "三角函數不再有界",
+      "beats": [
+        {
+          "show": [
+            "用 Euler 公式定義：",
+            "$\\cos z=\\frac{e^{iz}+e^{-iz}}2,\\qquad\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}$"
+          ],
+          "say": "最後是三角函數。用上一課的式子，直接定義複數的餘弦和正弦。z 是實數時，就是原來的餘弦、正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用 Euler 公式定義："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\cos z=\\frac{e^{iz}+e^{-iz}}2,\\qquad\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}}}$",
+              "on": "直接"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "是實"
+            }
+          ]
+        },
+        {
+          "show": [
+            "恆等式照樣成立：$a=e^{iz}$，$b=e^{-iz}$，$ab=1$",
+            "$\\cos^2z+\\sin^2z=\\frac{(a+b)^2-(a-b)^2}4=ab=1$"
+          ],
+          "say": "恆等式照樣成立。令 a、b 是 e 的正負 i z 次方，乘起來是 1。餘弦平方加正弦平方，化簡正好是 ab，等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "恆等式照樣成立：$a=e^{iz}$，$b=e^{-iz}$，$ab=1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos^2z+\\sin^2z=\\frac{(a+b)^2-(a-b)^2}4=ab=1$",
+              "on": "起來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但不再有界：$z=iy$，",
+            "$\\cos(iy)=\\frac{e^{-y}+e^{y}}2\\to\\infty\\quad(y\\to\\infty)$"
+          ],
+          "say": "但是不再有界。代 z 等於 i y，餘弦 i y 等於 e 的負 y 加 e 的 y 再除以 2，y 變大時趨近無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但不再有界：$z=iy$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\cos(iy)=\\frac{e^{-y}+e^{y}}2\\to\\infty\\quad(y\\to\\infty)}}$",
+              "color": "red",
+              "on": "餘弦"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "的負"
+            },
+            {
+              "do": "write",
+              "line": "　$\\cos i\\approx1.543$，$\\cos2i\\approx3.762$；平方和是 $1$ 不矛盾：複數的平方可以是負的",
+              "color": "violet",
+              "on": "變大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\cos z=2$ 有解。令 $a=e^{iz}$：$a+\\frac1a=4$，$a^2-4a+1=0$"
+          ],
+          "say": "所以餘弦 z 等於 2 有解：令 a 是 e 的 i z 次方，得到 a 平方減 4a 加 1 等於 0，a 是 2 加減根號 3。取對數就解出 z。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\cos z=2$ 有解。令 $a=e^{iz}$：$a+\\frac1a=4$，$a^2-4a+1=0$"
+            },
+            {
+              "do": "write",
+              "line": "$a=2\\pm\\sqrt3$，$iz=\\pm\\ln(2+\\sqrt3)+2k\\pi i$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z=2k\\pi\\pm i\\ln(2+\\sqrt3)\\approx2k\\pi\\pm1.317i$"
+          ],
+          "say": "z 等於 2k 派，加減 i 倍的自然對數 2 加根號 3。實數裡不可能的方程式，在複數裡有無窮多個解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle z=2k\\pi\\pm i\\ln(2+\\sqrt3)\\approx2k\\pi\\pm1.317i}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "自然"
+            },
+            {
+              "do": "write",
+              "line": "　$\\ln(2-\\sqrt3)=-\\ln(2+\\sqrt3)$，因為 $(2-\\sqrt3)(2+\\sqrt3)=1$",
+              "color": "violet",
+              "on": "可能"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $f(z)=u(x,y)+i\\,v(x,y)$：畫兩個平面看映射",
+            "• $z^2$：長度平方、角度加倍；$x=1\\mapsto u=1-\\frac{v^2}4$"
+          ],
+          "say": "整理：複變函數是平面到平面的映射；z 平方長度平方、角度加倍；e 的 z 次方週期 2 派 i；對數有無窮多個值，主值用主輻角；複數的三角函數沒有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f(z)=u(x,y)+i\\,v(x,y)$：畫兩個平面看映射"
+            },
+            {
+              "do": "write",
+              "line": "• $z^2$：長度平方、角度加倍；$x=1\\mapsto u=1-\\frac{v^2}4$",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "• $e^z=e^x(\\cos y+i\\sin y)$：週期 $2\\pi i$，不為 $0$；直線變圓與射線",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• $\\log z=\\ln|z|+i\\arg z$ 有無窮多個值；主值 $\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z$",
+              "on": "對數"
+            },
+            {
+              "do": "write",
+              "line": "• $\\cos z$、$\\sin z$ 用 $e^{\\pm iz}$ 定義：恆等式還在，但無界",
+              "on": "主輻"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複變極限"
+          ],
+          "say": "下一課，開始談複變函數的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：複變極限"
+            }
+          ]
         }
       ]
     }

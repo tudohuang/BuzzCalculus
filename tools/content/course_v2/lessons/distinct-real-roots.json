@@ -1,49 +1,122 @@
 {
   "id": "distinct-real-roots",
   "title": "相異實根",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["characteristic-equation", "second-order-linear"],
-  "next": ["repeated-roots"],
-  "related": ["complex-roots"],
+  "prerequisites": [
+    "characteristic-equation",
+    "second-order-linear"
+  ],
+  "next": [
+    "repeated-roots"
+  ],
+  "related": [
+    "complex-roots"
+  ],
   "objectives": [
-    "特徵方程有兩個相異實根 $r_1$、$r_2$ 時，寫出通解 $y=C_1e^{r_1x}+C_2e^{r_2x}$。",
-    "用 $y(0)$、$y'(0)$ 兩個初始條件解出 $C_1$、$C_2$。",
-    "看通解說出 $x\\to\\infty$ 時的行為：哪一個指數會贏。"
+    "特徵方程有兩個相異實根 $r_1$、$r_2$ 時，寫出通解 $y=C_1e^{r_1x}+C_2e^{r_2x}$",
+    "用 $y(0)$、$y'(0)$ 兩個初始條件解出 $C_1$、$C_2$",
+    "看通解說出 $x\\to\\infty$ 時的行為：哪一個指數會贏"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 從特徵方程到兩個解",
       "body": [
-        "常係數齊次方程 $ay''+by'+cy=0$。試 $y=e^{rx}$：$y'=re^{rx}$、$y''=r^2e^{rx}$，代入得 $(ar^2+br+c)e^{rx}=0$。$e^{rx}$ 永遠不是 $0$，所以 $r$ 必須是特徵方程 $ar^2+br+c=0$ 的根（〈特徵方程〉）。",
-        "判別式 $b^2-4ac>0$ 時有兩個不同的實根 $r_1\\ne r_2$，於是 $e^{r_1x}$ 與 $e^{r_2x}$ 都是解。"
+        "$ay''+by'+cy=0$，$b^2-4ac>0$",
+        "特徵根 $r_1\\ne r_2$，都是實數",
+        "例：$y''-3y'+2y=0$",
+        "根 $1,2$：解 $e^x$、$e^{2x}$"
       ],
-      "collapsible": false
+      "tex": [
+        "e^{r_1x}\\ \\text{和}\\ e^{r_2x}\\ \\text{都是解}",
+        "r^2-3r+2=(r-1)(r-2)=0"
+      ]
     },
     {
-      "heading": "② 疊加：兩個解的組合還是解",
+      "heading": "② 疊加：組合還是解",
       "body": [
-        "方程是線性、齊次的，所以兩個解的任意常數倍相加還是解（〈二階線性〉）。通解是："
+        "兩個解都是齊次方程的解，所以",
+        "$y'=C_1r_1e^{r_1x}+C_2r_2e^{r_2x}$",
+        "代 $x=0$（$e^0=1$）：",
+        "例：$y''-3y'+2y=0$，$y(0)=0$，$y'(0)=1$",
+        "$C_2=1$，$C_1=-1$",
+        "檢查：$y(0)=1-1=0$，$y'(0)=2-1=1$"
       ],
-      "tex": ["y = C_1 e^{r_1 x} + C_2 e^{r_2 x}"],
-      "collapsible": false
+      "tex": [
+        "y=C_1e^{r_1x}+C_2e^{r_2x}",
+        "\\begin{aligned}C_1+C_2&=y(0)\\\\r_1C_1+r_2C_2&=y'(0)\\end{aligned}",
+        "\\begin{aligned}C_1+C_2&=0\\\\C_1+2C_2&=1\\end{aligned}",
+        "y=e^{2x}-e^x"
+      ]
     },
     {
-      "heading": "③ 為什麼這已經是「全部」的解",
+      "heading": "② 根是 $\\pm1$",
       "body": [
-        "二階方程要兩個初始條件 $y(0)=y_0$、$y'(0)=v_0$ 才確定一個解。把通解代進去：$C_1+C_2=y_0$、$r_1C_1+r_2C_2=v_0$。這組聯立方程的係數行列式是 $r_2-r_1\\ne 0$，所以不管 $y_0$、$v_0$ 是多少，$C_1$、$C_2$ 都解得出來。",
-        "再配上存在唯一性定理（每組初始條件恰好一個解，〈二階線性〉），任何一個解都等於通解裡的某一個。$r_1=r_2$ 時行列式是 $0$，這就是重根要另外處理的原因。"
+        "$y''-y=0$，$y(0)=2$，$y'(0)=0$",
+        "$r^2-1=0$，$r=\\pm1$：$y=C_1e^{x}+C_2e^{-x}$",
+        "$C_1=C_2=1$：",
+        "$e^x+e^{-x}=2\\cosh x$：雙曲餘弦，懸垂的鏈子就是這個形狀",
+        "首項係數不是 $1$：$2y''+y'-y=0$",
+        "$r=\\frac12,\\ -1$：",
+        "首項的 $2$ 不能丟：丟了會解成 $r^2+r-1=0$，根就錯了"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}C_1+C_2&=2\\\\C_1-C_2&=0\\end{aligned}",
+        "y=e^x+e^{-x}",
+        "2r^2+r-1=(2r-1)(r+1)=0",
+        "y=C_1e^{x/2}+C_2e^{-x}"
+      ]
     },
     {
-      "heading": "④ 圖形長什麼樣",
+      "heading": "③ 為什麼這是全部的解",
       "body": [
-        "沒有振盪。$x\\to\\infty$ 時，根比較大的那一項主宰（只要它的係數不是 $0$）；兩根都是負的，解衰減到 $0$。",
-        "解最多穿過 $x$ 軸一次：$C_1e^{r_1x}+C_2e^{r_2x}=0$ 等價於 $e^{(r_1-r_2)x}=-\\frac{C_2}{C_1}$，左邊是嚴格單調的函數，最多一個解。"
+        "二階線性的結論：$W\\ne0$ 就包含所有解",
+        "$r_1\\ne r_2$，指數不是 $0$ ⇒ $W\\ne0$",
+        "所以「相異」很重要：重根時 $r_2-r_1=0$",
+        "另一個證法：只用一階線性（取 $a=1$）",
+        "令 $u=y'-r_2y$，則",
+        "$u'-r_1u=y''-r_2y'-r_1y'+r_1r_2y$，正好是左邊"
       ],
-      "collapsible": false
+      "tex": [
+        "W=e^{r_1x}\\cdot r_2e^{r_2x}-r_1e^{r_1x}\\cdot e^{r_2x}=(r_2-r_1)e^{(r_1+r_2)x}",
+        "y''-(r_1+r_2)y'+r_1r_2\\,y=0",
+        "u'-r_1u=0"
+      ]
+    },
+    {
+      "heading": "③ 證明（續）",
+      "body": [
+        "一階線性：$u=Ae^{r_1x}$（所有解）",
+        "$y'-r_2y=Ae^{r_1x}$，乘積分因子 $e^{-r_2x}$：",
+        "積分（$r_1\\ne r_2$ 才能除）：",
+        "每一步都沒有漏解 ⇒ 所有解都是這個形式"
+      ],
+      "tex": [
+        "\\big(ye^{-r_2x}\\big)'=Ae^{(r_1-r_2)x}",
+        "y=\\frac{A}{r_1-r_2}e^{r_1x}+Be^{r_2x}"
+      ]
+    },
+    {
+      "heading": "④ 圖形：哪個指數會贏",
+      "body": [
+        "$y=C_1e^{r_1x}+C_2e^{r_2x}$，$r_1<r_2$",
+        "$x\\to\\infty$：只要 $C_2\\ne0$，大的根贏",
+        "• $r_2>0$：往 $+\\infty$ 或 $-\\infty$ 衝（看 $C_2$ 的正負）",
+        "• $r_1<r_2<0$：兩個都衰減，$y\\to0$",
+        "$e^{2x}-e^x\\to+\\infty$；$C_1e^{x/2}+C_2e^{-x}$ 由 $e^{x/2}$ 決定"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 相異實根 $r_1\\ne r_2$：$y=C_1e^{r_1x}+C_2e^{r_2x}$",
+        "• 初始條件：$C_1+C_2=y(0)$，$r_1C_1+r_2C_2=y'(0)$",
+        "• $W=(r_2-r_1)e^{(r_1+r_2)x}\\ne0$：這就是所有解",
+        "• $x\\to\\infty$：大的根贏，除非它的係數是 $0$",
+        "下一課：重根"
+      ]
     }
   ],
   "workedExamples": [
@@ -95,294 +168,867 @@
     {
       "ask": "$y''+y'-6y=0$ 的通解是？",
       "options": [
-        { "label": "$y=C_1e^{2x}+C_2e^{-3x}$", "correct": true },
-        { "label": "$y=C_1e^{-2x}+C_2e^{3x}$", "why": "$r^2+r-6=(r+3)(r-2)$，根是讓括號為 $0$ 的 $-3$ 與 $2$；你把括號裡的數直接當成根。" },
-        { "label": "$y=e^{2x}+e^{-3x}$", "why": "這只是一個特定的解。通解要有兩個任意常數，才能配上任意的初始條件。" }
-      ]
-    },
-    {
-      "ask": "$y''-5y'=0$ 的通解是？",
-      "options": [
-        { "label": "$y=C_1+C_2e^{5x}$", "correct": true },
-        { "label": "$y=Ce^{5x}$", "why": "$r^2-5r=r(r-5)$ 還有 $r=0$ 這個根，$e^{0x}=1$，對應常數項 $C_1$。" },
-        { "label": "$y=(C_1+C_2x)e^{5x}$", "why": "那是重根的形式；這裡兩根 $0$ 與 $5$ 不相同。" }
-      ]
-    },
-    {
-      "ask": "$y=C_1e^x+C_2e^{2x}$ 滿足 $y(0)=1$、$y'(0)=0$，則 $y={}$？",
-      "options": [
-        { "label": "$2e^x-e^{2x}$", "correct": true },
-        { "label": "$e^x$", "why": "$y(0)=1$ 對了，但 $y'(0)=1\\ne 0$。兩個條件都要用：$C_1+C_2=1$、$C_1+2C_2=0$。" },
-        { "label": "$-e^x+2e^{2x}$", "why": "$C_1$、$C_2$ 對調了：這個函數的 $y'(0)=-1+4=3$。" }
-      ]
-    },
-    {
-      "ask": "$y=C_1e^{2x}+C_2e^{-3x}$，$C_1\\ne 0$。$x\\to\\infty$ 時 $y$ 怎樣？",
-      "options": [
-        { "label": "像 $C_1e^{2x}$，往 $+\\infty$ 或 $-\\infty$ 跑", "correct": true },
-        { "label": "趨近 $0$", "why": "只有 $e^{-3x}$ 那一項衰減；$e^{2x}$ 那一項係數不是 $0$，會主宰。" },
-        { "label": "上下振盪", "why": "實根只給指數，不給 $\\sin$、$\\cos$；振盪要等〈複數根〉。" }
+        {
+          "label": "$C_1e^{2x}+C_2e^{-3x}$",
+          "correct": true
+        },
+        {
+          "label": "$C_1e^{-2x}+C_2e^{3x}$",
+          "why": "正負號反了：$(r-2)$ 的根是 $+2$"
+        },
+        {
+          "label": "$C_1e^{x}+C_2e^{-6x}$",
+          "why": "把 $y'$、$y$ 的係數直接當成根了；要先解 $r^2+r-6=0$"
+        },
+        {
+          "label": "$C_1e^{2x}+C_2e^{3x}$",
+          "why": "$-6$ 拆成 $2\\times3$ 要一正一負：$(-3)\\cdot2$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "兩個根，兩個解",
+      "title": "從特徵方程到兩個解",
       "beats": [
-        { "show": ["$ay''+by'+cy=0$","試 $y=e^{rx}$"],
-          "say": "常係數齊次方程，一樣先試 e 的 r x 次方。",
+        {
+          "show": [
+            "$ay''+by'+cy=0$，$b^2-4ac>0$"
+          ],
+          "say": "這一課處理第一種情況：判別式大於 0，特徵方程有兩個相異的實根。",
           "board": [
-            {"do":"write","line":"$ay''+by'+cy=0$"},
-            {"do":"write","line":"試 $y={{e:e^{rx}}}$","tint":{"e":"blue"},"on":"先試"}
-          ] },
-        { "show": ["$ar^2+br+c=0$"],
-          "note": "$e^{rx}$ 永遠不是 0，$r$ 必須是特徵方程的根。",
-          "say": "代進去，e 的 r x 次方提出來，它不會是零，所以 r 一定要是特徵方程的根。",
+            {
+              "do": "write",
+              "line": "$ay''+by'+cy=0$，$b^2-4ac>0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "特徵根 $r_1\\ne r_2$，都是實數",
+            "$e^{r_1x}\\ \\text{和}\\ e^{r_2x}\\ \\text{都是解}$"
+          ],
+          "say": "兩個根 r1、r2 各給一個解：e 的 r1 x 次方，和 e 的 r2 x 次方。",
           "board": [
-            {"do":"write","line":"${{e:e^{rx}}}\\,({{ch:ar^2+br+c}})=0$"},
-            {"do":"underline","term":"e","color":"blue","label":"不會是零","on":"它不會是零"},
-            {"do":"transform","line":"${{ch:ar^2+br+c}}=0$","tint":{"ch":"violet"},"on":"特徵方程"}
-          ] },
-        { "show": ["$b^2-4ac>0$：$r_1\\ne r_2$"],
-          "note": "$e^{r_1x}$ 與 $e^{r_2x}$ 都是解。",
-          "say": "判別式大於零，有兩個不同的實根，各自給一個指數解。",
+            {
+              "do": "write",
+              "line": "特徵根 $r_1\\ne r_2$，都是實數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle e^{r_1x}\\ \\text{和}\\ e^{r_2x}\\ \\text{都是解}}}$",
+              "on": "r1#2"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "r2#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''-3y'+2y=0$",
+            "$r^2-3r+2=(r-1)(r-2)=0$"
+          ],
+          "say": "例子：y 兩撇減 3 y 一撇加 2y。特徵方程 r 平方減 3r 加 2，分解成 r 減 1 乘 r 減 2。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$b^2-4ac>0$：$r_1\\ne r_2$","on":"判別式"},
-            {"do":"write","line":"${{e1:e^{r_1x}}}$、${{e2:e^{r_2x}}}$ 都是解","on":"各自給"}
-          ] },
-        { "show": ["代入 $y=C_1y_1+C_2y_2$","$ay''+by'+cy$ 拆成兩份"],
-          "note": "$y_1,y_2$ 各自滿足方程。",
-          "say": "為什麼組合還是解？把常數倍的和代進方程，微分可以一項一項做，整個式子拆成兩份。",
+            {
+              "do": "write",
+              "line": "例：$y''-3y'+2y=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2-3r+2=(r-1)(r-2)=0$",
+              "on": "方減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "根 $1,2$：解 $e^x$、$e^{2x}$"
+          ],
+          "say": "根是 1 和 2，兩個解就是 e 的 x 次方和 e 的 2x 次方。二階線性那一課是直接給的，現在是算出來的。",
           "board": [
-            {"do":"write","line":"$a(C_1y_1+C_2y_2)''+\\dots$"},
-            {"do":"write","line":"$={{p1:C_1(ay_1''+by_1'+cy_1)}}$","on":"一項一項"},
-            {"do":"write","line":"$\\;+{{p2:C_2(ay_2''+by_2'+cy_2)}}$","on":"拆成"}
-          ] },
-        { "show": ["括號都是 $0$，所以和是 $0$"],
-          "note": "兩個括號各是一個解代進去。",
-          "say": "兩個括號各是一個解代進方程，都是零。零乘常數還是零，所以整個和也是零，它也是解。",
-          "board": [
-            {"do":"write","line":"$={{z:C_1\\cdot0+C_2\\cdot0=0}}$","on":"都是零"},
-            {"do":"box","term":"z","color":"green","label":"還是解","on":"也是解"}
-          ] },
-        { "show": ["$y=C_1e^{r_1x}+C_2e^{r_2x}$"],
-          "note": "線性、齊次：組合還是解。",
-          "say": "方程是線性齊次的，兩個解各乘一個常數再相加還是解，這就是通解。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{gs:y=C_1{{e1:e^{r_1x}}}+C_2{{e2:e^{r_2x}}}}}$","on":"各乘"},
-            {"do":"box","term":"gs","color":"green","label":"通解","on":"這就是"}
-          ] }
+            {
+              "do": "write",
+              "line": "根 $1,2$：解 $e^x$、$e^{2x}$"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "讀根要小心",
+      "title": "疊加：組合還是解",
       "beats": [
-        { "show": ["$2y''+y'-y=0$","$(2r-1)(r+1)=0$"],
-          "say": "首項係數不是一也照做。特徵方程二 r 平方加 r 減一，因式分解。",
+        {
+          "show": [
+            "兩個解都是齊次方程的解，所以",
+            "$y=C_1e^{r_1x}+C_2e^{r_2x}$"
+          ],
+          "say": "兩個指數都是齊次方程的解，由疊加原理，任意組合 C1 e 的 r1 x 次方加 C2 e 的 r2 x 次方也是解。",
           "board": [
-            {"do":"write","line":"$2y''+y'-y=0$"},
-            {"do":"write","line":"$2r^2+r-1=0$","on":"特徵方程"},
-            {"do":"transform","line":"$({{f1:2r-1}})({{f2:r+1}})=0$","on":"因式分解"}
-          ] },
-        { "show": ["$r=\\frac{1}{2}$ 或 $r=-1$"],
-          "note": "$(2r-1)$ 給的是 $\\frac{1}{2}$，不是 2。",
-          "say": "根是讓括號變零的數。二 r 減一那個括號，給的是二分之一，不是二。",
+            {
+              "do": "write",
+              "line": "兩個解都是齊次方程的解，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y=C_1e^{r_1x}+C_2e^{r_2x}}}$",
+              "color": "red",
+              "on": "任意"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "C2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'=C_1r_1e^{r_1x}+C_2r_2e^{r_2x}$"
+          ],
+          "say": "先把導數寫好：每一項多乘一個自己的根。",
           "board": [
-            {"do":"underline","term":"f1","on":"二 r 減一"},
-            {"do":"write","line":"$r=\\frac{1}{2}$（不是 ${{w:2}}$）或 $r=-1$","on":"給的是"},
-            {"do":"circle","term":"w","color":"red","on":"二分之一"}
-          ] },
-        { "show": ["$y=C_1e^{x/2}+C_2e^{-x}$"],
-          "say": "所以通解是 e 的二分之 x 次方，和 e 的負 x 次方，各帶一個常數。",
+            {
+              "do": "write",
+              "line": "$y'=C_1r_1e^{r_1x}+C_2r_2e^{r_2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=0$（$e^0=1$）：",
+            "$\\begin{aligned}C_1+C_2&=y(0)\\\\r_1C_1+r_2C_2&=y'(0)\\end{aligned}$"
+          ],
+          "say": "代 x 等於 0，指數都變成 1，兩個初始條件就變成 C1、C2 的兩條一次方程。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$y=C_1e^{x/2}+C_2e^{-x}$","on":"所以通解"}
-          ] },
-        { "show": ["$r=0$ 也是根：$e^{0x}=1$"],
-          "note": "對應一個常數項。",
-          "say": "還有一個容易漏的：如果零是根，e 的零 x 次方是一，通解裡就有一個常數項。",
+            {
+              "do": "write",
+              "line": "代 $x=0$（$e^0=1$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}C_1+C_2&=y(0)\\\\r_1C_1+r_2C_2&=y'(0)\\end{aligned}}}}$",
+              "on": "兩個"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "C1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''-3y'+2y=0$，$y(0)=0$，$y'(0)=1$",
+            "$\\begin{aligned}C_1+C_2&=0\\\\C_1+2C_2&=1\\end{aligned}$"
+          ],
+          "say": "例子：根是 1 和 2，初始條件 0 和 1。得到 C1 加 C2 等於 0，C1 加 2 C2 等於 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r=0$ 也是根：$e^{0x}={{one:1}}$","on":"如果零是根"},
-            {"do":"underline","term":"one","label":"常數項","on":"通解裡"}
-          ] }
-      ],
-      "key": "$(2r-1)$ 給的根是 $\\frac{1}{2}$，不是 2",
-      "check": 1
+            {
+              "do": "write",
+              "line": "例：$y''-3y'+2y=0$，$y(0)=0$，$y'(0)=1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}C_1+C_2&=0\\\\C_1+2C_2&=1\\end{aligned}}$",
+              "on": "C2#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C_2=1$，$C_1=-1$",
+            "$y=e^{2x}-e^x$"
+          ],
+          "say": "相減得到 C2 等於 1，C1 等於負 1。解是 e 的 2x 次方減 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C_2=1$，$C_1=-1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y=e^{2x}-e^x}}$",
+              "color": "red",
+              "on": "C1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "解是"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$y(0)=1-1=0$，$y'(0)=2-1=1$",
+              "color": "violet",
+              "on": "方減"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "配初始條件",
+      "title": "根是 $\\pm1$",
       "beats": [
-        { "show": ["$y''-3y'+2y=0$：$r=1$、$2$"],
-          "note": "$y(0)=0$，$y'(0)=1$。",
-          "say": "特徵方程 r 平方減三 r 加二，分解成 r 減一乘 r 減二，根是一和二。",
+        {
+          "show": [
+            "$y''-y=0$，$y(0)=2$，$y'(0)=0$"
+          ],
+          "say": "再一例：y 兩撇減 y 等於 0，初始值 2，初始斜率 0。",
           "board": [
-            {"do":"write","line":"$r^2-3r+2=0$"},
-            {"do":"transform","line":"$(r-1)(r-2)=0$","on":"分解成"},
-            {"do":"write","line":"$r=1$、$2$","on":"根是"}
-          ] },
-        { "show": ["$y'=C_1e^x+2C_2e^{2x}$"],
-          "note": "先微分，再代 $y'(0)$。",
-          "say": "兩個條件裡有一個是導數，所以先把通解微分。",
+            {
+              "do": "write",
+              "line": "$y''-y=0$，$y(0)=2$，$y'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r^2-1=0$，$r=\\pm1$：$y=C_1e^{x}+C_2e^{-x}$"
+          ],
+          "say": "特徵方程 r 平方減 1，根是正負 1。通解是 C1 e 的 x 次方加 C2 e 的負 x 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y=C_1e^x+C_2e^{2x}$","on":"兩個條件"},
-            {"do":"write","line":"$y'=C_1e^x+2C_2e^{2x}$","on":"先把通解"}
-          ] },
-        { "show": ["$C_1+C_2=0$，$C_1+2C_2=1$"],
-          "say": "代零：函數值給 C 一加 C 二是零；導數給 C 一加二 C 二是一。",
+            {
+              "do": "write",
+              "line": "$r^2-1=0$，$r=\\pm1$：$y=C_1e^{x}+C_2e^{-x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}C_1+C_2&=2\\\\C_1-C_2&=0\\end{aligned}$"
+          ],
+          "say": "代 0：C1 加 C2 等於 2；導數那條，負 1 的根讓 C2 前面變負號，C1 減 C2 等於 0。",
           "board": [
-            {"do":"write","line":"$y(0)=0$：${{a:C_1+C_2=0}}$","on":"函數值給"},
-            {"do":"write","line":"$y'(0)=1$：${{b:C_1+2C_2=1}}$","on":"導數給"}
-          ] },
-        { "show": ["$C_2=1$，$C_1=-1$：$y=e^{2x}-e^x$"],
-          "say": "兩式相減，C 二是一，C 一是負一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}C_1+C_2&=2\\\\C_1-C_2&=0\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C_1=C_2=1$：",
+            "$y=e^x+e^{-x}$"
+          ],
+          "say": "解出 C1、C2 都是 1。解是 e 的 x 次方加 e 的負 x 次方。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$C_2=1$，$C_1=-1$","on":"兩式相減"},
-            {"do":"write","line":"$y=e^{2x}-e^x$","color":"green","on":"C 一是"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "$C_1=C_2=1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y=e^x+e^{-x}}}$",
+              "color": "red",
+              "on": "都是"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "　$e^x+e^{-x}=2\\cosh x$：雙曲餘弦，懸垂的鏈子就是這個形狀",
+              "color": "violet",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "首項係數不是 $1$：$2y''+y'-y=0$",
+            "$2r^2+r-1=(2r-1)(r+1)=0$"
+          ],
+          "say": "首項係數不是 1 也一樣。2 y 兩撇加 y 一撇減 y，特徵方程分解成 2r 減 1 乘 r 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "首項係數不是 $1$：$2y''+y'-y=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2r^2+r-1=(2r-1)(r+1)=0$",
+              "on": "特徵"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=\\frac12,\\ -1$：",
+            "$y=C_1e^{x/2}+C_2e^{-x}$"
+          ],
+          "say": "根是 2 分之 1 和負 1，通解是 C1 e 的 2 分之 x 次方，加 C2 e 的負 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r=\\frac12,\\ -1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle y=C_1e^{x/2}+C_2e^{-x}}}$",
+              "color": "red",
+              "on": "通解"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　首項的 $2$ 不能丟：丟了會解成 $r^2+r-1=0$，根就錯了",
+              "color": "violet",
+              "on": "C2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "這就是全部的解",
+      "title": "為什麼這是全部的解",
       "beats": [
-        { "show": ["$C_1+C_2=y_0$","$r_1C_1+r_2C_2=v_0$"],
-          "say": "給任意的初始位置和初始速度，代進通解，得到兩條聯立方程。",
+        {
+          "show": [
+            "二階線性的結論：$W\\ne0$ 就包含所有解",
+            "$W=e^{r_1x}\\cdot r_2e^{r_2x}-r_1e^{r_1x}\\cdot e^{r_2x}=(r_2-r_1)e^{(r_1+r_2)x}$"
+          ],
+          "say": "為什麼這個公式已經包含所有的解？二階線性那一課說過，只要朗斯基行列式不是 0 就夠。算一下，W 等於 r2 減 r1，乘上一個指數。",
           "board": [
-            {"do":"write","line":"$C_1+C_2=y_0$"},
-            {"do":"write","line":"$r_1C_1+r_2C_2=v_0$","on":"代進通解"}
-          ] },
-        { "show": ["$\\begin{vmatrix}1&1\\\\r_1&r_2\\end{vmatrix}=r_2-r_1$"],
-          "note": "左上乘右下，減右上乘左下。",
-          "say": "行列式是兩行兩列的數，左上乘右下，減右上乘左下。係數是一和一，還有 r 一和 r 二，得 r 二減 r 一。",
+            {
+              "do": "write",
+              "line": "二階線性的結論：$W\\ne0$ 就包含所有解"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W=e^{r_1x}\\cdot r_2e^{r_2x}-r_1e^{r_1x}\\cdot e^{r_2x}=(r_2-r_1)e^{(r_1+r_2)x}$",
+              "on": "式不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r_1\\ne r_2$，指數不是 $0$ ⇒ $W\\ne0$"
+          ],
+          "say": "兩個根不相等，r2 減 r1 不是 0；指數也不是 0。所以 W 不是 0，這兩個解獨立，通解包含所有的解。",
           "board": [
-            {"do":"write","line":"$\\begin{vmatrix}1&1\\\\r_1&r_2\\end{vmatrix}$"},
-            {"do":"write","line":"$={{dt:1\\cdot r_2-1\\cdot r_1}}$","on":"減右上"},
-            {"do":"underline","term":"dt","label":"交叉相減","on":"得 r 二減"}
-          ] },
-        { "show": ["行列式 $r_2-r_1\\ne 0$"],
-          "note": "不管 $y_0$、$v_0$，都解得出 $C_1$、$C_2$。",
-          "say": "係數行列式是 r 二減 r 一，兩根不同就不是零，一定解得出兩個常數。",
+            {
+              "do": "write",
+              "line": "$r_1\\ne r_2$，指數不是 $0$ ⇒ $W\\ne0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　所以「相異」很重要：重根時 $r_2-r_1=0$",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另一個證法：只用一階線性（取 $a=1$）",
+            "$y''-(r_1+r_2)y'+r_1r_2\\,y=0$"
+          ],
+          "say": "也可以不靠那個定理，直接證。首項係數先除成 1，方程可以寫成 y 兩撇，減 r1 加 r2 乘 y 一撇，加 r1 r2 乘 y。",
           "board": [
-            {"do":"write","line":"行列式 $=r_2-r_1$"},
-            {"do":"write","line":"$r_1\\ne r_2$：${{n:r_2-r_1\\ne0}}$","on":"兩根不同"},
-            {"do":"box","term":"n","color":"green","on":"一定"}
-          ] },
-        { "show": ["不為 $0$：消去 $C_2$ 就能除"],
-          "note": "第一式乘 $r_2$ 減第二式。",
-          "say": "為什麼不是零就解得出？第一式乘 r 二，減第二式，C 二消掉，剩 r 二減 r 一乘 C 一，能除就解出來。",
+            {
+              "do": "write",
+              "line": "另一個證法：只用一階線性（取 $a=1$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y''-(r_1+r_2)y'+r_1r_2\\,y=0$",
+              "on": "兩撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=y'-r_2y$，則",
+            "$u'-r_1u=0$"
+          ],
+          "say": "令 u 等於 y 一撇減 r2 y。展開檢查，方程剛好變成 u 一撇減 r1 u 等於 0。",
           "board": [
-            {"do":"write","line":"$(r_2-r_1)C_1=r_2y_0-v_0$","on":"C 二消掉"},
-            {"do":"write","line":"$C_1=\\frac{r_2y_0-v_0}{r_2-r_1}$","on":"能除"}
-          ] },
-        { "show": ["$r_1=r_2$ 時行列式是 0"],
-          "note": "所以重根要另外處理。",
-          "say": "兩根相同時行列式是零，配不出來。這就是重根要另外處理的原因。",
+            {
+              "do": "write",
+              "line": "令 $u=y'-r_2y$，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle u'-r_1u=0}}$",
+              "on": "r2"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "方程"
+            },
+            {
+              "do": "write",
+              "line": "　$u'-r_1u=y''-r_2y'-r_1y'+r_1r_2y$，正好是左邊",
+              "color": "violet",
+              "on": "r1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "一階線性：$u=Ae^{r_1x}$（所有解）"
+          ],
+          "say": "這是一階方程，所有的解都是 A 乘 e 的 r1 x 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r_1=r_2$：$r_2-r_1={{z:0}}$","on":"兩根相同時"},
-            {"do":"focus","term":"z","color":"red","label":"配不出來","on":"配不出來"},
-            {"do":"write","line":"重根要另外處理","on":"重根要"}
-          ] },
-        { "show": ["$y''-y=0$，$y(0)=2$，$y'(0)=0$"],
-          "note": "$y=C_1e^x+C_2e^{-x}$。",
-          "say": "試一題：根是一和負一。C 一加 C 二是二，C 一減 C 二是零。",
+            {
+              "do": "write",
+              "line": "一階線性：$u=Ae^{r_1x}$（所有解）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'-r_2y=Ae^{r_1x}$，乘積分因子 $e^{-r_2x}$：",
+            "$\\big(ye^{-r_2x}\\big)'=Ae^{(r_1-r_2)x}$"
+          ],
+          "say": "回到 y：y 一撇減 r2 y 等於 A 乘 e 的 r1 x 次方。又是一階線性，乘上積分因子 e 的負 r2 x 次方，左邊變成一個乘積的導數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y''-y=0$","on":"試一題"},
-            {"do":"write","line":"$r=1$、$-1$","on":"根是"},
-            {"do":"write","line":"$y=C_1e^x+C_2e^{-x}$","on":"C 一加"}
-          ] }
+            {
+              "do": "write",
+              "line": "$y'-r_2y=Ae^{r_1x}$，乘積分因子 $e^{-r_2x}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(ye^{-r_2x}\\big)'=Ae^{(r_1-r_2)x}$",
+              "on": "一階"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積分（$r_1\\ne r_2$ 才能除）：",
+            "$y=\\frac{A}{r_1-r_2}e^{r_1x}+Be^{r_2x}$"
+          ],
+          "say": "兩邊積分，因為 r1 不等於 r2，可以除以 r1 減 r2。得到的 y，正好是 e 的 r1 x 次方和 e 的 r2 x 次方的組合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積分（$r_1\\ne r_2$ 才能除）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle y=\\frac{A}{r_1-r_2}e^{r_1x}+Be^{r_2x}}}$",
+              "color": "red",
+              "on": "r1#2"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一步都沒有漏解 ⇒ 所有解都是這個形式"
+          ],
+          "say": "每一步都是一階方程的全部解，沒有漏掉任何一個，所以所有的解都長這樣。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一步都沒有漏解 ⇒ 所有解都是這個形式",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "圖形：哪個指數會贏",
+      "beats": [
+        {
+          "show": [
+            "$y=C_1e^{r_1x}+C_2e^{r_2x}$，$r_1<r_2$"
+          ],
+          "say": "最後看圖形。設 r1 比 r2 小。x 越來越大的時候，誰說了算？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=C_1e^{r_1x}+C_2e^{r_2x}$，$r_1<r_2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to\\infty$：只要 $C_2\\ne0$，大的根贏"
+          ],
+          "say": "x 很大時，e 的 r2 x 次方比另一個大得多。只要 C2 不是 0，大的根就決定一切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\to\\infty$：只要 $C_2\\ne0$，大的根贏",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $r_2>0$：往 $+\\infty$ 或 $-\\infty$ 衝（看 $C_2$ 的正負）",
+            "• $r_1<r_2<0$：兩個都衰減，$y\\to0$"
+          ],
+          "say": "r2 是正的，解會往正無限大或負無限大衝，方向看 C2 的正負。兩個根都是負的，解就衰減到 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $r_2>0$：往 $+\\infty$ 或 $-\\infty$ 衝（看 $C_2$ 的正負）"
+            },
+            {
+              "do": "write",
+              "line": "• $r_1<r_2<0$：兩個都衰減，$y\\to0$",
+              "on": "無限#2"
+            },
+            {
+              "do": "write",
+              "line": "　$e^{2x}-e^x\\to+\\infty$；$C_1e^{x/2}+C_2e^{-x}$ 由 $e^{x/2}$ 決定",
+              "color": "violet",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "y'' − y = 0，y(0) = 1"
+          ],
+          "say": "看 y 兩撇減 y 等於 0，從 1 出發，改變起始斜率。現在斜率是負 0 點 5，e 的 x 次方的係數是正的，曲線最後往上衝。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "race",
+                  "window": [
+                    -1,
+                    4,
+                    -3,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(1-s)/2*exp(-x)+(1+s)/2*exp(x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "s": {
+                      "min": -2,
+                      "max": 0,
+                      "value": -0.5,
+                      "label": "起始斜率 y'(0)"
+                    }
+                  },
+                  "readout": "eˣ 的係數 = {(1+s)/2}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "eˣ 的係數 = 0.25",
+              "on": "改變"
+            },
+            {
+              "do": "write",
+              "line": "y'' − y = 0，y(0) = 1",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖形：哪個指數會贏"
+          ],
+          "say": "斜率調到負 1，e 的 x 次方的係數剛好是 0，解就是 e 的負 x 次方，衰減到 0。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "race",
+                  "window": [
+                    -1,
+                    4,
+                    -3,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(1-s)/2*exp(-x)+(1+s)/2*exp(x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "s": {
+                      "min": -2,
+                      "max": 0,
+                      "value": -0.5,
+                      "label": "起始斜率 y'(0)"
+                    }
+                  },
+                  "readout": "eˣ 的係數 = {(1+s)/2}",
+                  "height": 280
+                },
+                "vals": {
+                  "s": -1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "eˣ 的係數 = 0",
+              "on": "解就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖形：哪個指數會贏"
+          ],
+          "say": "再往下一點點，係數變成負的，曲線就往負無限大掉。差一點點，結局完全不同。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "race",
+                  "window": [
+                    -1,
+                    4,
+                    -3,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(1-s)/2*exp(-x)+(1+s)/2*exp(x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "s": {
+                      "min": -2,
+                      "max": 0,
+                      "value": -0.5,
+                      "label": "起始斜率 y'(0)"
+                    }
+                  },
+                  "readout": "eˣ 的係數 = {(1+s)/2}",
+                  "height": 280
+                },
+                "vals": {
+                  "s": -1.1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "eˣ 的係數 = −0.05",
+              "on": "負無"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "先猜猜看",
+      "beats": [
+        {
+          "show": [
+            "$y''-y=0$，$y(0)=3$，$y'(0)=-3$。$x\\to\\infty$ 時 $y\\to$？"
+          ],
+          "say": "先猜猜看。先把 e 的 x 次方的係數算出來。"
+        }
       ],
-      "key": "行列式 $r_2-r_1\\ne0$ 保證解得出常數",
       "predict": {
-        "ask": "$C_1+C_2=2$、$C_1-C_2=0$，所以 $y$ 是？",
+        "ask": "$y''-y=0$，$y(0)=3$，$y'(0)=-3$。$x\\to\\infty$ 時 $y\\to$？",
         "options": [
           {
-            "label": "$e^x+e^{-x}$",
+            "label": "$0$",
             "correct": true
           },
           {
-            "label": "$2e^x$",
-            "why": "$2e^x$ 的 $y'(0)=2\\ne 0$；$C_1-C_2=0$ 要兩個常數一樣大。"
+            "label": "$+\\infty$",
+            "why": "「大的根贏」要 $e^x$ 的係數不是 $0$；這裡剛好是 $0$"
           },
           {
-            "label": "$e^x-e^{-x}$",
-            "why": "這個在 $x=0$ 是 0，不滿足 $y(0)=2$。"
+            "label": "$-\\infty$",
+            "why": "起始斜率是負的，但 $e^x$ 的係數是 $0$，不會往下衝"
+          },
+          {
+            "label": "$3$",
+            "why": "$y(0)=3$ 只是起點；$3e^{-x}$ 會衰減"
           }
         ]
       }
     },
     {
-      "title": "圖形長什麼樣",
+      "title": "先猜猜看",
       "beats": [
-        { "show": ["沒有振盪"],
-          "note": "實根只給指數，不給 $\\sin$、$\\cos$。",
-          "say": "兩個實根只給指數函數，沒有 sine、cosine，所以圖形不會上下振盪。",
-          "board": [
-            {"do":"write","line":"$y=C_1e^{r_1x}+C_2e^{r_2x}$"},
-            {"do":"write","line":"沒有 $\\sin$、$\\cos$：不振盪","on":"沒有"}
-          ] },
-        { "show": ["$x\\to\\infty$：根大的那一項主宰"],
-          "note": "只要它的係數不是 0。",
-          "say": "x 很大的時候，根比較大的那一項長得最快，會主宰整個解。",
-          "board": [
-            {"do":"write","line":"$x\\to\\infty$，設 $r_1>r_2$"},
-            {"do":"write","line":"${{big:C_1e^{r_1x}}}$ 主宰","on":"那一項"},
-            {"do":"underline","term":"big","label":"長得最快","on":"主宰"}
-          ] },
-        { "show": ["兩根都負：衰減到 0"],
-          "say": "如果兩個根都是負的，兩項都衰減，解就趨近零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r_1<0$、$r_2<0$","on":"兩個根"},
-            {"do":"write","line":"$y\\to0$","on":"兩項都衰減"}
-          ] },
-        { "show": ["令 $y=0$，兩邊除以 $C_1e^{r_2x}$"],
-          "note": "$C_1\\ne0$，$e^{r_2x}$ 不是 $0$。",
-          "say": "這個式子怎麼來的？令 y 等於零，把第二項移到右邊，兩邊除以 C 一乘 e 的 r 二 x 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$C_1e^{r_1x}+C_2e^{r_2x}=0$","on":"等於"},
-            {"do":"write","line":"$C_1e^{r_1x}=-C_2e^{r_2x}$","on":"移到右邊"},
-            {"do":"write","line":"$e^{(r_1-r_2)x}=-\\frac{C_2}{C_1}$","on":"除以"}
-          ] },
-        { "show": ["$e^{kx}$ 嚴格單調：$k\\ne0$"],
-          "note": "$k=r_1-r_2$；$k>0$ 一直升，$k<0$ 一直降。",
-          "say": "左邊指數裡的 r 一減 r 二不是零。它是正的就一路上升，負的就一路下降，同一個高度只會碰到一次。",
-          "board": [
-            {"do":"write","line":"$k=r_1-r_2\\ne0$","on":"不是零"},
-            {"do":"plot","graph":{"window":[-2,2,-1,5],"curves":[{"expr":"exp(x)","domain":[-2,2],"color":"blue"}],"dashed":[[[-2,1],[2,1]]]},"on":"一路上升"}
-          ] },
-        { "show": ["最多穿過 $x$ 軸一次"],
-          "note": "$e^{(r_1-r_2)x}=-\\frac{C_2}{C_1}$ 最多一個解。",
-          "say": "而且解最多穿過 x 軸一次，因為那個等式的左邊是嚴格單調的。",
-          "board": [
-            {"do":"write","line":"最多穿過 $x$ 軸一次"},
-            {"do":"write","line":"${{e:e^{(r_1-r_2)x}}}=-\\frac{C_2}{C_1}$","on":"那個等式"},
-            {"do":"underline","term":"e","label":"嚴格單調","on":"左邊"}
-          ] }
+        {
+          "show": [
+            "判斷初值問題的解在 $x\\to\\infty$ 的行為"
+          ],
+          "say": "排排看：判斷長期行為的步驟。重點在最後一步，看最大的根，以及它的係數是不是 0。"
+        }
       ],
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "判斷初值問題的解在 $x\\to\\infty$ 的行為",
+        "steps": [
+          {
+            "label": "解特徵方程，得到 $r_1<r_2$"
+          },
+          {
+            "label": "寫出 $y=C_1e^{r_1x}+C_2e^{r_2x}$ 和 $y'$",
+            "why": "先要有上一步：解特徵方程，得到 $r_1<r_2$"
+          },
+          {
+            "label": "代 $x=0$，解出 $C_1$、$C_2$",
+            "why": "先要有上一步：寫出 $y=C_1e^{r_1x}+C_2e^{r_2x}$ 和 $y'$"
+          },
+          {
+            "label": "看最大的根 $r_2$ 和它的係數 $C_2$ 是不是 $0$",
+            "why": "先要有上一步：代 $x=0$，解出 $C_1$、$C_2$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 相異實根 $r_1\\ne r_2$：$y=C_1e^{r_1x}+C_2e^{r_2x}$",
+            "• 初始條件：$C_1+C_2=y(0)$，$r_1C_1+r_2C_2=y'(0)$"
+          ],
+          "say": "整理一下：兩個相異實根，通解是兩個指數的組合；代 0 解出常數；W 不是 0，這就是全部的解；長期行為看最大的根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 相異實根 $r_1\\ne r_2$：$y=C_1e^{r_1x}+C_2e^{r_2x}$"
+            },
+            {
+              "do": "write",
+              "line": "• 初始條件：$C_1+C_2=y(0)$，$r_1C_1+r_2C_2=y'(0)$",
+              "on": "是兩"
+            },
+            {
+              "do": "write",
+              "line": "• $W=(r_2-r_1)e^{(r_1+r_2)x}\\ne0$：這就是所有解",
+              "on": "出常"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to\\infty$：大的根贏，除非它的係數是 $0$",
+              "on": "全部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：重根"
+          ],
+          "say": "下一課，兩個根撞在一起，變成重根，會怎麼樣？",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：重根"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "constant-coefficients", "ivp"],
-    "fine": ["ode2-distinct-general", "ode2-distinct-ivp", "ode2-long-term-behavior"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "constant-coefficients",
+      "ivp"
+    ],
+    "fine": [
+      "ode2-distinct-general",
+      "ode2-distinct-ivp",
+      "ode2-long-term-behavior"
+    ]
   },
   "practice": [
-    { "id": "ode-h2-006", "core": true, "trains": "ode2-distinct-ivp" },
-    { "id": "ode-h2-001", "core": true, "trains": "ode2-distinct-ivp" },
-    { "id": "cg-10b-010", "core": true, "trains": "ode2-distinct-general" },
-    { "id": "cg-10b-011", "core": true, "trains": "ode2-distinct-general" },
-    { "id": "cg-10b-012", "core": true, "trains": "ode2-long-term-behavior" },
-    { "id": "cx-ode-006", "trains": "ode2-distinct-ivp" },
-    { "id": "cg-10b-013", "trains": "ode2-long-term-behavior" }
+    {
+      "id": "ode-h2-006",
+      "core": true,
+      "trains": "ode2-distinct-ivp"
+    },
+    {
+      "id": "ode-h2-001",
+      "core": true,
+      "trains": "ode2-distinct-ivp"
+    },
+    {
+      "id": "cg-10b-010",
+      "core": true,
+      "trains": "ode2-distinct-general"
+    },
+    {
+      "id": "cg-10b-011",
+      "core": true,
+      "trains": "ode2-distinct-general"
+    },
+    {
+      "id": "cg-10b-012",
+      "core": true,
+      "trains": "ode2-long-term-behavior"
+    },
+    {
+      "id": "cx-ode-006",
+      "trains": "ode2-distinct-ivp"
+    },
+    {
+      "id": "cg-10b-013",
+      "trains": "ode2-long-term-behavior"
+    }
   ],
   "gaps": []
 }

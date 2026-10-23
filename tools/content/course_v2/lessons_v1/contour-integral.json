@@ -1,0 +1,501 @@
+{
+  "id": "contour-integral",
+  "title": "圍道積分",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "complex-curves",
+    "work-line-integral",
+    "path-independence"
+  ],
+  "next": [
+    "cauchy-theorem"
+  ],
+  "related": [
+    "residue-real-integrals"
+  ],
+  "objectives": [
+    "用定義 $\\int_C f(z)\\,dz=\\int_a^b f(z(t))\\,z'(t)\\,dt$ 把圍道積分化成實變數 $t$ 的積分，並分開實部與虛部。",
+    "背熟並推得出 $\\oint_{|z-z_0|=r}(z-z_0)^n\\,dz$：$n=-1$ 時是 $2\\pi i$，其他整數 $n$ 都是 $0$。",
+    "知道有反導函數時積分只看端點（封閉曲線上是 0），並用 ML 不等式估計積分大小。"
+  ],
+  "visual": "單位圓上取 N 個分點 z₀, z₁, …, 每一小段畫出向量 Δz 與該點的 f(z)。把 f(zₖ)Δzₖ 一個接一個頭尾相連畫成折線，N 越大折線的終點越穩定，那個終點就是積分值。f = 1/z 時折線一路往上走到 2πi；f = z² 時折線繞一圈回到原點。",
+  "concept": [
+    {
+      "heading": "① 定義：把 $dz$ 換成 $z'(t)\\,dt$",
+      "body": [
+        "曲線 $C$ 的參數式 $z(t)$，$t\\in[a,b]$。定義 $\\int_C f(z)\\,dz=\\int_a^b f(z(t))\\,z'(t)\\,dt$。右邊是實變數 $t$ 的積分，被積函數是複數值，實部虛部分開積。",
+        "直覺：把曲線切成小段，每段乘上 $f$ 的值再加起來，跟〈功的線積分〉同一個想法。事實上寫出實部虛部：$\\int_C f\\,dz=\\int(u\\,dx-v\\,dy)+i\\int(v\\,dx+u\\,dy)$，就是兩個實的線積分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 最重要的一個積分",
+      "body": [
+        "$C$：$|z-z_0|=r$ 逆時針，$z=z_0+re^{it}$，$dz=ire^{it}\\,dt$。$(z-z_0)^n\\,dz=ir^{n+1}e^{i(n+1)t}\\,dt$。",
+        "$n=-1$：被積函數是常數 $i$，積分 $2\\pi i$。$n\\ne-1$：$e^{i(n+1)t}=\\cos((n+1)t)+i\\sin((n+1)t)$ 在一整個週期上積分是 $0$。",
+        "這個結果跟 $r$ 無關，後面的 Cauchy 積分公式與留數定理全都建立在它上面。"
+      ],
+      "tex": [
+        "\\oint_{|z-z_0|=r}(z-z_0)^{n}\\,dz=\\begin{cases}2\\pi i,& n=-1\\\\ 0,& n\\neq-1\\end{cases}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 有反導函數就只看端點",
+      "body": [
+        "若 $F'=f$ 在一個包含 $C$ 的開集上成立，則 $\\int_C f\\,dz=F($終點$)-F($起點$)$（〈路徑無關〉的複數版）；封閉曲線上是 $0$。$z^n$（$n\\ne-1$）有反導函數 $\\frac{z^{n+1}}{n+1}$，所以 ② 的 $0$ 不意外。",
+        "反過來：$\\oint\\frac{dz}{z}=2\\pi i\\ne 0$，所以 $\\frac{1}{z}$ 在 $\\mathbb{C}\\setminus\\{0\\}$ 上沒有反導函數——$\\log z$ 繞一圈會多出 $2\\pi i$，接不起來。",
+        "沒有反導函數時，積分會跟路徑有關，例如 $\\bar z$（範例 2）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 兩個基本性質",
+      "body": [
+        "反向變號：$\\int_{-C}f\\,dz=-\\int_C f\\,dz$。",
+        "ML 不等式：若 $C$ 上 $|f|\\le M$、$C$ 長度 $L$，則 $\\left|\\int_C f\\,dz\\right|\\le ML$。例如 $|z|=R$（$R>1$）上 $|z^2+1|\\ge R^2-1$，所以 $\\left|\\oint\\frac{dz}{z^2+1}\\right|\\le\\frac{2\\pi R}{R^2-1}$，$R\\to\\infty$ 時 $\\to 0$。這是〈用留數算實積分〉丟掉大半圓的工具。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義",
+      "beats": [
+        { "show": ["切成小段，每段 $f(z_k)\\Delta z_k$ 加起來"],
+          "note": "跟功的線積分同一個想法。",
+          "say": "沿著曲線切成很多小段，每一段的位移乘上 f 在那裡的值，全部加起來。",
+          "board": [
+            {"do":"write","line":"$\\sum_k f(z_k)\\,{{dz:\\Delta z_k}}$"},
+            {"do":"focus","term":"dz","label":"小段位移","on":"位移"}
+          ] },
+        { "show": ["$\\int_C f(z)\\,dz=\\int_a^b f(z(t))\\,z'(t)\\,dt$"],
+          "say": "用參數式寫，dz 就換成 z prime 乘 dt，變成對實數 t 的積分。",
+          "board": [
+            {"do":"write","line":"$z=z(t)$，$t\\in[a,b]$"},
+            {"do":"write","line":"$dz={{d:z'(t)\\,dt}}$","on":"換成"}
+          ] },
+        { "show": ["實部、虛部分開積"],
+          "note": "就是兩個實的線積分。",
+          "say": "右邊被積函數是複數值，實部虛部各積各的，其實就是兩個實的線積分。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"實部、虛部各積各的","on":"實部虛部"},
+            {"do":"write","line":"＝ 兩個實的線積分","on":"兩個實"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "最重要的一個積分",
+      "beats": [
+        { "show": ["$z=z_0+re^{it}$，$dz=ire^{it}\\,dt$"],
+          "say": "在圓心 z 零、半徑 r 的圓上，積 z 減 z 零的 n 次方。先寫出 dz。",
+          "board": [
+            {"do":"write","line":"$z=z_0+re^{it}$"},
+            {"do":"write","line":"$dz={{dz:ire^{it}\\,dt}}$","on":"先寫出"}
+          ] },
+        { "show": ["$e^{it}=\\cos t+i\\sin t$","微分：$i\\,e^{it}$"],
+          "note": "$e^{it}$ 是單位圓上轉了角度 $t$ 的點。",
+          "say": "e 的 i t 次方就是 cosine t 加 i sine t。對 t 微分，得 i 乘它自己，所以 z 的導數有 i r。",
+          "board": [
+            {"do":"write","line":"$e^{it}=\\cos t+i\\sin t$"},
+            {"do":"write","line":"$(e^{it})'=-\\sin t+i\\cos t={{n1:i\\,e^{it}}}$","on":"對 t 微分"},
+            {"do":"focus","term":"n1","color":"gold","on":"i 乘它自己"}
+          ] },
+        { "show": ["$(z-z_0)^n\\,dz=ir^{n+1}e^{i(n+1)t}\\,dt$"],
+          "say": "代進去，被積函數是 i 乘 r 的 n 加一次方，再乘 e 的 i n 加一 t 次方。",
+          "board": [
+            {"do":"write","line":"$(z-z_0)^n\\,dz=ir^{n+1}{{ex:e^{i(n+1)t}}}\\,dt$"},
+            {"do":"focus","term":"ex","on":"再乘 e"}
+          ] },
+        { "show": ["$n=-1$：被積函數是常數 $i$"],
+          "note": "積分 $2\\pi i$。",
+          "say": "n 等於負一時，指數變成零，被積函數就是常數 i，積一圈得二派 i。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$n=-1$：被積函數 $={{ci:i}}$","on":"負一時"},
+            {"do":"write","line":"$\\int_0^{2\\pi}{{ci:i}}\\,dt={{res:2\\pi i}}$","on":"積一圈"},
+            {"do":"focus","term":"res","color":"green","on":"得二派"}
+          ] },
+        { "show": ["$n\\ne-1$：一整個週期積成 $0$"],
+          "note": "結果跟 $r$ 無關。",
+          "say": "其他的 n，cosine 和 sine 積一整個週期都是零。而且答案跟半徑 r 無關。",
+          "board": [
+            {"do":"write","line":"$n\\ne-1$：$\\int_0^{2\\pi}e^{i(n+1)t}\\,dt={{z:0}}$"},
+            {"do":"focus","term":"z","color":"green","on":"都是零"}
+          ] },
+        { "show": ["$e^{ikt}=\\cos kt+i\\sin kt$","$k\\ne0$：一整圈積成 $0$"],
+          "note": "$k=n+1$ 是不為零的整數。",
+          "say": "k 不是零時，cosine k t 在一圈裡轉 k 次，正負面積剛好抵消；sine 一樣，所以是零。",
+          "board": [
+            {"do":"write","line":"$e^{ikt}=\\cos kt+i\\sin kt$"},
+            {"do":"write","line":"$\\int_0^{2\\pi}\\cos kt\\,dt=\\frac{\\sin 2\\pi k}{k}=0$","on":"正負面積"}
+          ] }
+      ],
+      "key": "參數化後看 $e^{i(n+1)t}$ 整週期的積分",
+      "check": 0
+    },
+    {
+      "title": "單位圓上算一次",
+      "beats": [
+        { "show": ["$z=e^{it}$，$dz=ie^{it}\\,dt$"],
+          "say": "在單位圓上實際算一次：z 是 e 的 i t 次方，t 從零到二派。",
+          "board": [
+            {"do":"write","line":"$z=e^{it}$，$dz=ie^{it}\\,dt$"},
+            {"do":"write","line":"$t$：$0\\to2\\pi$","on":"t 從零"}
+          ] },
+        { "show": ["$t$ 從 $0$ 到 $2\\pi$，$z$ 繞單位圓一圈"],
+          "say": "t 從零走到二派，z 就在單位圓上逆時針轉一圈，從一出發又回到一。",
+          "board": [
+            {"do":"plot","graph":{"equal":true,"ticks":false,"window":[-1.5,1.5,-1.5,1.5],"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}],"points":[{"x":1,"y":0}],"labels":[{"x":1.1,"y":0.12,"text":"1","anchor":"start"}]}}
+          ] },
+        { "show": ["$\\frac{dz}{z}=i\\,dt$，積分 $2\\pi i$"],
+          "say": "dz 除以 z 剛好是 i dt，積一圈是二派 i。",
+          "board": [
+            {"do":"write","line":"$\\frac{dz}{z}=\\frac{ie^{it}\\,dt}{e^{it}}={{idt:i\\,dt}}$"},
+            {"do":"write","line":"$\\oint\\frac{dz}{z}={{r:2\\pi i}}$","on":"積一圈"},
+            {"do":"focus","term":"r","color":"green","on":"是二派"}
+          ] },
+        { "show": ["$z^2\\,dz=ie^{3it}\\,dt$"],
+          "note": "$-\\sin 3t+i\\cos 3t$ 積成 $0$。",
+          "say": "z 平方 dz 是 i 乘 e 的三 i t 次方，sine、cosine 三 t 積一整圈都是零。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$z^2\\,dz=i\\,{{e3:e^{3it}}}\\,dt$","on":"z 平方"},
+            {"do":"write","line":"$\\int_0^{2\\pi}{{e3:e^{3it}}}\\,dt=0$","on":"積一整圈"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "有反導函數",
+      "beats": [
+        { "show": ["$F'=f$：$\\int_C f\\,dz=F(\\text{終點})-F(\\text{起點})$"],
+          "note": "封閉曲線上是 $0$。",
+          "say": "如果 f 有反導函數 F，積分只看端點：終點的 F 減起點的 F，封閉曲線就是零。",
+          "board": [
+            {"do":"write","line":"$F'=f$"},
+            {"do":"write","line":"$\\int_C f\\,dz={{e:F(\\text{終點})-F(\\text{起點})}}$","on":"只看端點"},
+            {"do":"underline","term":"e","color":"blue","on":"終點的"},
+            {"do":"write","line":"封閉曲線：$\\oint f\\,dz=0$","on":"封閉曲線"}
+          ] },
+        { "show": ["$\\oint\\frac{dz}{z}=2\\pi i\\ne 0$"],
+          "note": "$\\frac{1}{z}$ 在去掉 $0$ 的平面上沒有反導函數。",
+          "say": "反過來，z 分之一積一圈不是零，所以它沒有反導函數：log 繞一圈會多出二派 i。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\oint\\frac{dz}{z}={{r:2\\pi i}}\\ne0$","on":"z 分之一"},
+            {"do":"focus","term":"r","color":"green","on":"不是零"},
+            {"do":"write","line":"沒有反導函數：$\\log$ 繞一圈多 $2\\pi i$","on":"log"}
+          ] },
+        { "show": ["$\\log z$：繞一圈多 $2\\pi i$"],
+          "note": "$\\log z$ 的虛部是 $z$ 的角度。",
+          "say": "log z 是會隨角度變的函數，z 繞一圈回到原處，log z 卻多了二派 i，沒有接回來。",
+          "board": [
+            {"do":"write","line":"$\\log z$：繞一圈多 ${{p1:2\\pi i}}$"},
+            {"do":"focus","term":"p1","color":"gold","on":"二派"}
+          ] },
+        { "show": ["有 $F$ ⇒ $\\oint\\frac{dz}{z}=0$","實際是 $2\\pi i$"],
+          "say": "要是有反導函數 F，繞一圈回原處 F 不變，積分該是零。實際是二派 i，矛盾。",
+          "board": [
+            {"do":"write","line":"有 $F$ ⇒ $\\oint\\frac{dz}{z}=0$"},
+            {"do":"write","line":"實際：${{p2:2\\pi i}}\\ne0$，矛盾","color":"red","on":"實際"}
+          ] },
+        { "show": ["$\\int_C z^2\\,dz$，$0$ 到 $1+i$"],
+          "note": "任何分段光滑曲線。",
+          "say": "z 平方從零到一加 i，走哪一條路都一樣，因為它有反導函數三分之 z 三次方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_C z^2\\,dz$，$0$ 到 $1+i$","on":"z 平方"},
+            {"do":"write","line":"$F(z)={{f:\\frac{z^3}{3}}}$","on":"反導函數"},
+            {"do":"focus","term":"f","color":"violet","on":"三分之"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$\\int_C z^2\\,dz$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{(1+i)^3}{3}=\\frac{-2+2i}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "只有封閉曲線才是 $0$；這裡起點 $0$、終點 $1+i$ 不同。"
+          },
+          {
+            "label": "$\\frac{2i}{3}$",
+            "why": "$(1+i)^3=2i(1+i)=-2+2i$，不是 $(1+i)^2=2i$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "沒有反導函數",
+      "beats": [
+        { "show": ["$\\int\\bar z\\,dz$，$0$ 到 $1+i$"],
+          "say": "換成 z 共軛，從零到一加 i，走兩條不同的路比比看。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{1+i}\\bar z\\,dz$"},
+            {"do":"plot","graph":{"ticks":false,"window":[-0.3,1.5,-0.25,1.25],"arrows":[{"from":[0,0],"to":[1,1],"color":"blue"},{"from":[0,0],"to":[1,0],"color":"violet"},{"from":[1,0],"to":[1,1],"color":"violet"}],"points":[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],"labels":[{"x":-0.06,"y":0.08,"text":"0","anchor":"end"},{"x":1.07,"y":0.05,"text":"1","anchor":"start"},{"x":1.07,"y":1.05,"text":"1+i","anchor":"start"},{"x":0.42,"y":0.6,"text":"線段","anchor":"end"}]},"on":"兩條"}
+          ] },
+        { "show": ["沿線段：$\\bar z\\,dz=2t\\,dt$，積分 $1$"],
+          "say": "沿直線段，一減 i 乘一加 i 是二，被積函數是二 t，積分是一。",
+          "board": [
+            {"do":"write","line":"線段：$\\bar z\\,dz=2t\\,dt$ ⇒ ${{s:1}}$"},
+            {"do":"focus","term":"s","on":"積分是一"}
+          ] },
+        { "show": ["先到 $1$：$\\int_0^1t\\,dt=\\frac{1}{2}$"],
+          "say": "另一條路先沿實軸走到一，這一段是二分之一。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"先到 $1$：$\\int_0^1t\\,dt={{h:\\frac{1}{2}}}$","on":"實軸"}
+          ] },
+        { "show": ["再往上：$z=1+it$，$(1-it)i\\,dt$"],
+          "say": "再往上走到一加 i：z 是一加 i t，dz 是 i dt。",
+          "board": [
+            {"do":"transform","line":"先到 $1$：${{h:\\frac{1}{2}}}$；再往上：$(1-it)\\,i\\,dt$","on":"再往上"}
+          ] },
+        { "show": ["$(1-it)\\,i=t+i$","合計 $1+i$"],
+          "say": "i 乘一減 i t 是 t 加 i，從零積到一是二分之一加 i，兩段合計一加 i。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"第二段：$(1-it)\\,i=t+i$","on":"是#1"},
+            {"do":"write","line":"$\\int_0^1(t+i)\\,dt=\\frac{1}{2}+i$","on":"從零積"},
+            {"do":"write","line":"合計 ${{t1:1+i}}$","on":"合計"}
+          ] }
+      ],
+      "key": "分兩段參數化：每段各自寫 $z$ 與 $dz$",
+      "predict": {
+        "ask": "第二條路的總和是？",
+        "options": [
+          {
+            "label": "$1+i$：跟線段的 $1$ 不同",
+            "correct": true
+          },
+          {
+            "label": "$1$：終點一樣，答案一樣",
+            "why": "要有反導函數才只看端點；第二段 $(1-it)i=t+i$，積分 $\\frac{1}{2}+i$，合計 $1+i$。"
+          },
+          {
+            "label": "$\\frac{1}{2}$",
+            "why": "第二段也要算：$(1-it)i=t+i$，積分 $\\frac{1}{2}+i$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "兩個基本性質",
+      "beats": [
+        { "show": ["$\\int_{-C}f\\,dz=-\\int_C f\\,dz$"],
+          "say": "第一，反向走，每一小段的 dz 都反過來，積分變號。",
+          "board": [
+            {"do":"write","line":"反向走：每小段 ${{d:dz}}$ 反過來"},
+            {"do":"focus","term":"d","color":"blue","on":"dz"}
+          ] },
+        { "show": ["$\\left|\\int_C f\\,dz\\right|\\le ML$"],
+          "note": "$C$ 上 $|f|\\le M$，$C$ 長度 $L$。",
+          "say": "第二，ML 不等式：積分的長度，不超過 f 的最大長度乘上曲線長。",
+          "board": [
+            {"do":"write","line":"$\\left|\\int_C f\\,dz\\right|\\le {{ml:ML}}$"},
+            {"do":"write","line":"$|f|\\le M$，長度 $L$","on":"最大長度"}
+          ] },
+        { "show": ["$\\left|\\oint_{|z|=R}\\frac{dz}{z^2+1}\\right|\\le\\frac{2\\pi R}{R^2-1}\\to 0$"],
+          "say": "例如半徑 R 的大圓上，分母至少 R 平方減一，R 越大積分越小，趨近零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|z|=R$：$|z^2+1|\\ge R^2-1$","on":"半徑"},
+            {"do":"write","line":"$\\le\\frac{2\\pi R}{R^2-1}\\to0$","on":"越大"}
+          ] },
+        { "show": ["$|z^2+1|\\ge|z|^2-1=R^2-1$"],
+          "note": "三角不等式：$|a+b|\\ge|a|-|b|$。",
+          "say": "三角不等式：z 平方的長度是 R 平方，加一最少剩 R 平方減一，所以分母至少這麼大。",
+          "board": [
+            {"do":"write","line":"$|z^2+1|\\ge|z|^2-1={{b1:R^2-1}}$"},
+            {"do":"focus","term":"b1","color":"gold","on":"最少"}
+          ] },
+        { "show": ["$M=\\frac{1}{R^2-1}$，$L=2\\pi R$"],
+          "say": "所以 M 取 R 平方減一分之一，長度 L 是圓周二派 R，相乘就是上界。",
+          "board": [
+            {"do":"write","line":"$M=\\frac{1}{R^2-1}$，$L=2\\pi R$"},
+            {"do":"write","line":"$ML=\\frac{2\\pi R}{R^2-1}$","on":"相乘"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "圓上的 $z^n$",
+      "prompt": "$\\oint_{|z|=1}\\frac{dz}{z}$ 與 $\\oint_{|z|=1}z^2\\,dz$",
+      "problemId": "der-084",
+      "steps": [
+        "$z=e^{it}$，$dz=ie^{it}\\,dt$，$t\\in[0,2\\pi]$。",
+        "$\\frac{dz}{z}=i\\,dt$，積分 $\\int_0^{2\\pi}i\\,dt=2\\pi i$。",
+        "$z^2\\,dz=e^{2it}\\cdot ie^{it}\\,dt=ie^{3it}\\,dt=(-\\sin 3t+i\\cos 3t)\\,dt$，實部虛部在 $[0,2\\pi]$ 上都積成 $0$。"
+      ],
+      "answer": "$2\\pi i$ 與 $0$",
+      "claim": "INT(1, 0, 2*pi) == 2*pi ;; INT(-sin(3x), 0, 2*pi) == 0 ;; INT(cos(3x), 0, 2*pi) == 0"
+    },
+    {
+      "title": "沒有反導函數：跟路徑有關",
+      "prompt": "$\\int\\bar z\\,dz$ 從 $0$ 到 $1+i$：(a) 沿線段；(b) 先到 $1$ 再往上到 $1+i$。",
+      "steps": [
+        "(a) $z=(1+i)t$，$\\bar z=(1-i)t$，$dz=(1+i)\\,dt$。$\\bar z\\,dz=(1-i)(1+i)\\,t\\,dt=2t\\,dt$，積分 $1$。",
+        "(b) 第一段 $z=t$：$\\int_0^1t\\,dt=\\frac{1}{2}$。第二段 $z=1+it$，$\\bar z=1-it$，$dz=i\\,dt$：$(1-it)i=t+i$，積分 $\\frac{1}{2}+i$。",
+        "合計 $1+i\\ne 1$。終點相同、路徑不同、答案不同：$\\bar z$ 沒有反導函數（它也不全純）。"
+      ],
+      "answer": "(a) $1$；(b) $1+i$",
+      "claim": "INT(2x, 0, 1) == 1 ;; INT(x, 0, 1) + INT(x, 0, 1) == 1 ;; INT(1, 0, 1) == 1"
+    },
+    {
+      "title": "有反導函數：只看端點",
+      "prompt": "$\\int_C z^2\\,dz$，$C$ 是從 $0$ 到 $1+i$ 的任何分段光滑曲線。",
+      "steps": [
+        "$z^2$ 的反導函數 $\\frac{z^3}{3}$ 在全平面成立，所以答案 $=\\frac{(1+i)^3}{3}$。",
+        "$(1+i)^2=2i$，$(1+i)^3=2i(1+i)=-2+2i$，答案 $\\frac{-2+2i}{3}$。",
+        "檢查（走 $0\\to 1\\to 1+i$）：第一段 $\\int_0^1t^2\\,dt=\\frac{1}{3}$；第二段 $(1+it)^2\\,i=-2t+i(1-t^2)$，積分 $-1+\\frac{2i}{3}$。合計 $-\\frac{2}{3}+\\frac{2i}{3}$，一致。"
+      ],
+      "answer": "$\\frac{-2+2i}{3}$",
+      "claim": "INT(x^2, 0, 1) + INT(-2x, 0, 1) == -2/3 ;; INT(1-x^2, 0, 1) == 2/3"
+    }
+  ],
+  "pitfalls": [
+    "$dz$ 漏掉 $z'(t)$，直接寫 $\\int f(z(t))\\,dt$。",
+    "$\\oint\\frac{dz}{z}$ 算成 $0$（以為「繞一圈回到原點」就是 $0$）。",
+    "以為所有圍道積分都跟路徑無關；要有反導函數才是。",
+    "圓不是以原點為圓心時，參數式忘了加圓心。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\oint_{|z-2|=5}\\frac{dz}{z-2}$（逆時針）是？",
+      "options": [
+        {
+          "label": "$2\\pi i$",
+          "correct": true
+        },
+        {
+          "label": "$10\\pi i$",
+          "why": "結果跟半徑無關：$z-2=5e^{it}$，$\\frac{dz}{z-2}=i\\,dt$。"
+        },
+        {
+          "label": "$0$",
+          "why": "$n=-1$ 是唯一不為 $0$ 的情形；$\\frac{1}{z-2}$ 在圓內沒有反導函數。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\oint_{|z|=1}z^5\\,dz$ 是？",
+      "options": [
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pi i$",
+          "why": "只有 $n=-1$ 才是 $2\\pi i$；$z^5$ 有反導函數 $\\frac{z^6}{6}$，封閉曲線上是 $0$。"
+        },
+        {
+          "label": "$\\frac{2\\pi}{6}$",
+          "why": "反導函數在起點與終點的值相同，相減是 0。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\int_C f\\,dz$ 的定義（$C$：$z(t)$，$t\\in[a,b]$）是？",
+      "options": [
+        {
+          "label": "$\\int_a^b f(z(t))\\,z'(t)\\,dt$",
+          "correct": true
+        },
+        {
+          "label": "$\\int_a^b f(z(t))\\,dt$",
+          "why": "漏了 $dz=z'(t)\\,dt$；那是對參數 $t$ 積分，結果會隨參數化方式改變。"
+        },
+        {
+          "label": "$\\int_a^b f(z(t))\\,|z'(t)|\\,dt$",
+          "why": "那是對弧長積分（純量線積分），不是 $dz$。"
+        }
+      ]
+    },
+    {
+      "ask": "反向走同一條曲線，$\\int f\\,dz$ 會？",
+      "options": [
+        {
+          "label": "變號",
+          "correct": true
+        },
+        {
+          "label": "不變",
+          "why": "$z'(t)$ 的方向全部反過來，每一小段 $f\\,\\Delta z$ 都變號。"
+        },
+        {
+          "label": "變成共軛複數",
+          "why": "反向只改變 $dz$ 的方向，不會對 $f$ 取共軛。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "complex",
+      "contour-integral",
+      "contour"
+    ],
+    "fine": [
+      "contour-integral-parametrize",
+      "contour-integral-power-circle",
+      "contour-integral-antiderivative",
+      "contour-integral-ml-bound"
+    ]
+  },
+  "practice": [
+    {
+      "id": "der-084",
+      "core": true,
+      "trains": "contour-integral-power-circle"
+    },
+    {
+      "id": "cg-11h-006",
+      "core": true,
+      "trains": "contour-integral-parametrize"
+    },
+    {
+      "id": "cg-11h-009",
+      "core": true,
+      "trains": "contour-integral-power-circle"
+    },
+    {
+      "id": "cg-11h-011",
+      "core": true,
+      "trains": "contour-integral-antiderivative"
+    },
+    {
+      "id": "cg-11h-013",
+      "core": true,
+      "trains": "contour-integral-ml-bound"
+    },
+    {
+      "id": "cg-11h-007",
+      "trains": "contour-integral-parametrize"
+    },
+    {
+      "id": "cg-11h-008",
+      "trains": "contour-integral-parametrize"
+    },
+    {
+      "id": "cg-11h-010",
+      "trains": "contour-integral-power-circle"
+    },
+    {
+      "id": "cg-11h-012",
+      "trains": "contour-integral-antiderivative"
+    },
+    {
+      "id": "cg-11h-014",
+      "trains": "contour-integral-ml-bound"
+    }
+  ],
+  "gaps": []
+}

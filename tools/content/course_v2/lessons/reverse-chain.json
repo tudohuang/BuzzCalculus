@@ -1,50 +1,131 @@
 {
   "id": "reverse-chain",
   "title": "反連鎖律",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["chain-rule", "integral-table", "ftc-part2"],
-  "next": ["u-sub-basic"],
+  "prerequisites": [
+    "chain-rule",
+    "integral-table",
+    "ftc-part2"
+  ],
+  "next": [
+    "u-sub-basic"
+  ],
   "related": [],
   "objectives": [
-    "會積「裡面是 $ax+b$」的函數：照表積，再除以 $a$。",
-    "被積函數裡出現「裡面那一層的導數」時，會用「猜外層、微分、修正常數」找到反導函數。",
-    "知道只有常數可以修正；差的是含 $x$ 的因子時，猜法行不通。"
+    "會積「裡面是 $ax+b$」的函數：照表積，再除以 $a$",
+    "被積函數裡出現「裡面那一層的導數」時，會用「猜外層、微分、修正常數」找到反導函數",
+    "知道只有常數可以修正",
+    "差的是含 $x$ 的因子時，猜法行不通"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 微分時多乘的，積分時要除回去",
+      "heading": "① 多乘的要除回去",
       "body": [
-        "$(\\sin 3x)'=3\\cos 3x$：連鎖律多乘了裡面的導數 $3$。倒過來，$\\int\\cos 3x\\,dx$ 要把那個 $3$ 除掉：$\\frac{1}{3}\\sin 3x+C$。",
-        "一般地，裡面是 $ax+b$（$a\\ne 0$）時：先照〈基本積分表〉積外層，再除以 $a$。"
+        "連鎖律：",
+        "微分時，裡面的導數 $3$ 多乘了出來",
+        "現在反過來問：",
+        "猜 $\\sin 3x$？微分是 $3\\cos 3x$，多了 $3$ 倍",
+        "多的 $3$ 倍，除回去：",
+        "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac13\\sin3x\\Big)=\\dfrac13\\cdot3\\cos3x=\\cos3x$"
       ],
-      "tex": ["\\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C,\\qquad F'=f"],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}\\sin 3x=\\cos 3x\\cdot 3",
+        "\\int\\cos 3x\\,dx=\\ ?",
+        "\\int\\cos 3x\\,dx=\\frac13\\sin 3x+C"
+      ]
+    },
+    {
+      "heading": "① 裡面是 $ax+b$",
+      "body": [
+        "同樣的道理，$F'=f$ 時：",
+        "$a\\ne0$；微分 $F(ax+b)$ 會多乘一個 $a$，所以要除掉",
+        "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac1aF(ax+b)\\Big)=\\dfrac1a\\cdot f(ax+b)\\cdot a=f(ax+b)$",
+        "例：",
+        "加 $b$ 不影響：$b$ 的導數是 $0$，不會多乘任何東西",
+        "用在定積分："
+      ],
+      "tex": [
+        "\\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C",
+        "\\int\\frac{1}{2x+1}\\,dx=\\frac12\\ln|2x+1|+C",
+        "\\int_0^{\\pi/6}\\cos3x\\,dx=\\Big[\\tfrac13\\sin3x\\Big]_0^{\\pi/6}",
+        "=\\frac13\\sin\\frac\\pi2-\\frac13\\sin0=\\frac13"
+      ]
     },
     {
       "heading": "② 猜、微分、修正",
       "body": [
-        "沒把握的時候，用三步：先猜外層的反導函數（裡面原封不動），微分一次，看差幾倍，再除掉。",
-        "$\\int (2x+3)^4\\,dx$：猜 $(2x+3)^5$。微分：$5(2x+3)^4\\cdot 2=10(2x+3)^4$，多了 $10$ 倍。答案 $\\frac{(2x+3)^5}{10}+C$。"
+        "三個動作：",
+        "• 猜：照外層的公式寫出一個候選",
+        "• 微分：用連鎖律微分回去",
+        "• 修正：差幾倍就除掉幾倍",
+        "例：$\\displaystyle\\int(2x+3)^4\\,dx$",
+        "猜：外層是 $u^4$，積分是 $\\dfrac{u^5}{5}$，先猜 $(2x+3)^5$",
+        "不要先把 $(2x+3)^4$ 展開：五項，很累",
+        "微分：",
+        "多了 $10$ 倍，除掉："
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}(2x+3)^5=5(2x+3)^4\\cdot2=10(2x+3)^4",
+        "\\int(2x+3)^4\\,dx=\\frac{(2x+3)^5}{10}+C"
+      ]
     },
     {
-      "heading": "③ 裡面不是一次式也可以，只要它的導數在場",
+      "heading": "③ 裡面的導數在場",
       "body": [
-        "$\\int 2x(x^2+1)^3\\,dx$：外層是 $(\\ \\ )^3$，裡面是 $x^2+1$，它的導數 $2x$ 剛好在式子裡。猜 $(x^2+1)^4$，微分得 $4(x^2+1)^3\\cdot 2x$，多了 $4$ 倍。答案 $\\frac{(x^2+1)^4}{4}+C$。",
-        "$\\int x e^{x^2}\\,dx$：猜 $e^{x^2}$，微分得 $2x e^{x^2}$，多了 $2$ 倍。答案 $\\frac{e^{x^2}}{2}+C$。"
+        "外層是 $e^u$，裡面 $u=x^2$，它的導數 $2x$：被積函數裡有 $x$",
+        "猜 $e^{x^2}$，微分：$e^{x^2}\\cdot2x$",
+        "比被積函數多了 $2$ 倍：",
+        "再一個：$\\displaystyle\\int x^2\\cos(x^3)\\,dx$",
+        "裡面 $x^3$ 的導數是 $3x^2$，$x^2$ 在場",
+        "關鍵：裡面那一層的導數（差個常數也行）要在場"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int x\\,e^{x^2}\\,dx",
+        "\\int x\\,e^{x^2}\\,dx=\\frac12e^{x^2}+C",
+        "\\int x^2\\cos(x^3)\\,dx=\\frac13\\sin(x^3)+C"
+      ]
     },
     {
       "heading": "④ 只能修正常數",
       "body": [
-        "$\\int (x^2+1)^2\\,dx$：猜 $\\frac{(x^2+1)^3}{3}$，微分得 $(x^2+1)^2\\cdot 2x$，多了一個 $2x$。$2x$ 含 $x$，不能除掉：$\\frac{(x^2+1)^3}{6x}$ 用除法法則微分會多出別的項，不會回到原式。這題要先展開成 $x^4+2x^2+1$ 再逐項積。",
-        "判斷方法：猜完微分，多出來的如果是常數就修正，含 $x$ 就換方法。下一課〈換元：基礎〉把這套猜法整理成固定步驟。"
+        "猜 $e^{x^2}$，微分：$2x\\,e^{x^2}$，多了 $2x$",
+        "除掉 $2x$？$\\dfrac{e^{x^2}}{2x}$ 微分：",
+        "在 $x=1$：$e\\cdot\\frac12\\approx1.36$，不是 $e\\approx2.72$",
+        "除以常數可以：常數在微分時原封不動",
+        "除以含 $x$ 的東西不行：微分時它也會被微分",
+        "事實上 $e^{x^2}$ 的反導函數寫不成初等函數；這不是你不夠聰明"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int e^{x^2}\\,dx",
+        "\\frac{d}{dx}\\frac{e^{x^2}}{2x}=e^{x^2}\\Big(1-\\frac1{2x^2}\\Big)\\ne e^{x^2}"
+      ]
+    },
+    {
+      "heading": "④ 猜不出來：先展開",
+      "body": [
+        "猜 $\\dfrac{(x^2+1)^3}{3}$，微分：$(x^2+1)^2\\cdot2x$",
+        "換條路：先展開成多項式",
+        "一項一項積："
+      ],
+      "tex": [
+        "\\int(x^2+1)^2\\,dx",
+        "(x^2+1)^2=x^4+2x^2+1",
+        "\\int(x^2+1)^2\\,dx=\\frac{x^5}5+\\frac{2x^3}3+x+C"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 裡面是 $ax+b$：照表積，再除以 $a$",
+        "• 猜、微分、修正：差幾倍就除幾倍",
+        "• 裡面那一層的導數（差常數）在場，就猜得出來",
+        "• 只能修正常數；差的是含 $x$ 的因子就行不通",
+        "• 行不通時換條路：例如先展開",
+        "下一課：換元：基礎"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,162 +185,618 @@
   ],
   "checks": [
     {
-      "ask": "$\\int e^{5x}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\sqrt{4x+1}\\,dx=$？",
       "options": [
-        { "label": "$\\frac{e^{5x}}{5}+C$", "correct": true },
-        { "label": "$5e^{5x}+C$", "why": "那是 $e^{5x}$ 的導數，你往前微分了。" },
-        { "label": "$e^{5x}+C$", "why": "$(e^{5x})'=5e^{5x}$，多了 $5$，要除掉。" }
+        {
+          "label": "$\\dfrac23(4x+1)^{3/2}+C$",
+          "why": "只照表積了外層，忘了裡面的導數 $4$"
+        },
+        {
+          "label": "$\\dfrac16(4x+1)^{3/2}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac83(4x+1)^{3/2}+C$",
+          "why": "多的 $4$ 應該除掉，你乘上去了"
+        },
+        {
+          "label": "$\\dfrac{2}{\\sqrt{4x+1}}+C$",
+          "why": "這是微分 $\\sqrt{4x+1}$ 的結果，方向反了"
+        }
       ]
     },
     {
-      "ask": "$\\int\\frac{1}{2x+1}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int x(x^2+1)^3\\,dx=$？",
       "options": [
-        { "label": "$\\frac{1}{2}\\ln|2x+1|+C$", "correct": true },
-        { "label": "$\\ln|2x+1|+C$", "why": "微分得 $\\frac{2}{2x+1}$，多了裡面的導數 $2$，要除掉。" },
-        { "label": "$2\\ln|2x+1|+C$", "why": "方向反了：多出來的 $2$ 要除掉，不是再乘上去。" }
+        {
+          "label": "$\\dfrac{(x^2+1)^4}{8}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{(x^2+1)^4}{4}+C$",
+          "why": "只除了次方的 $4$，忘了裡面導數的 $2$"
+        },
+        {
+          "label": "$\\dfrac{(x^2+1)^4}{2}+C$",
+          "why": "只除了裡面導數的 $2$，忘了次方的 $4$"
+        },
+        {
+          "label": "$\\dfrac{x^2}{2}\\cdot\\dfrac{(x^2+1)^4}{4}+C$",
+          "why": "乘積不能各積各的；微分回去不對"
+        }
       ]
     },
     {
-      "ask": "有人寫 $\\int (x^2+1)^2\\,dx=\\frac{(x^2+1)^3}{6x}+C$。錯在哪？",
+      "ask": "哪一個可以直接用「猜、微分、修正」積出來？",
       "options": [
-        { "label": "只能除以常數；$2x$ 含 $x$，除掉之後微分回去對不上", "correct": true },
-        { "label": "應該除以 $3$，不是 $6x$", "why": "$\\frac{(x^2+1)^3}{3}$ 微分是 $2x(x^2+1)^2$，還是多一個 $2x$。問題是式子裡沒有 $2x$ 可以配，要先展開。" },
-        { "label": "沒有錯", "why": "用除法法則微分 $\\frac{(x^2+1)^3}{6x}$，會多出一項含 $\\frac{(x^2+1)^3}{x^2}$ 的東西，回不到 $(x^2+1)^2$。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\sin 4x\\,dx$ 是？",
-      "options": [
-        { "label": "$-\\frac{1}{4}\\cos 4x+C$", "correct": true },
-        { "label": "$\\frac{1}{4}\\cos 4x+C$", "why": "$\\sin$ 的反導函數是 $-\\cos$，負號不能丟。" },
-        { "label": "$-4\\cos 4x+C$", "why": "微分 $-4\\cos 4x$ 得 $16\\sin 4x$。多出來的 $4$ 要除，不是乘。" }
+        {
+          "label": "$\\displaystyle\\int\\sin(x^2)\\,dx$",
+          "why": "裡面 $x^2$ 的導數 $2x$ 不在場，差的是 $x$"
+        },
+        {
+          "label": "$\\displaystyle\\int x\\sin(x^2)\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int x^2\\sin(x^2)\\,dx$",
+          "why": "多了一個 $x$；$x^2$ 和 $2x$ 差的不是常數"
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{\\sin(x^2)}{x}\\,dx$",
+          "why": "差的是 $\\frac1{x^2}$，不是常數"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "多乘的，要除回去",
+      "title": "多乘的要除回去",
       "beats": [
-        { "show": ["$(\\sin 3x)'=3\\cos 3x$"],
-          "note": "連鎖律多乘了裡面的導數 $3$。",
-          "say": "sine 三 x 微分，連鎖律會多乘裡面的導數三，得到三倍 cosine 三 x。",
+        {
+          "show": [
+            "連鎖律：",
+            "$\\frac{d}{dx}\\sin 3x=\\cos 3x\\cdot 3$"
+          ],
+          "say": "先回想連鎖律。正弦 3x 微分，外層變成餘弦 3x，還要再乘上裡面 3x 的導數，也就是 3。",
           "board": [
-            {"do":"write","line":"$(\\sin 3x)'={{k:3}}\\cos 3x$","tint":{"k":"blue"}},
-            {"do":"focus","term":"k","on":"裡面的導數三"}
-          ] },
-        { "show": ["$\\int\\cos 3x\\,dx=\\frac{1}{3}\\sin 3x+C$"],
-          "note": "倒過來，把那個 $3$ 除掉。",
-          "say": "倒過來積分，那個多出來的三要除掉，所以是三分之一 sine 三 x。",
+            {
+              "do": "write",
+              "line": "連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\sin 3x=\\cos 3x\\cdot 3$",
+              "on": "3x#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "微分時，裡面的導數 $3$ 多乘了出來"
+          ],
+          "say": "注意這個 3：它是微分的時候，從裡面那一層多乘出來的。",
           "board": [
-            {"do":"write","line":"$\\int\\cos 3x\\,dx={{k3:\\frac{1}{3}}}\\sin 3x+C$","tint":{"k3":"blue"},"on":"倒過來"},
-            {"do":"underline","term":"k3","color":"blue","label":"除掉 3","on":"要除掉"}
-          ] },
-        { "show": ["$\\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C$"],
-          "note": "先照積分表積外層，再除以 $a$。",
-          "say": "一般來說，裡面是 a x 加 b 的時候：外層照積分表積，裡面原封不動，再除以 a。",
+            {
+              "do": "write",
+              "line": "微分時，裡面的導數 $3$ 多乘了出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在反過來問：",
+            "$\\int\\cos 3x\\,dx=\\ ?$"
+          ],
+          "say": "現在反過來問：積分餘弦 3x d x 是什麼？",
           "board": [
-            {"do":"write","line":"$\\int f(ax+b)\\,dx={{a:\\frac1a}}\\,F(ax+b)+C$","tint":{"a":"blue"}},
-            {"do":"focus","term":"a","on":"再除以"}
-          ] },
-        { "show": ["$F$ 是 $f$ 的反導函數：$F'=f$"],
-          "note": "例：$f=\\cos$，$F=\\sin$。",
-          "say": "公式裡的 F 是外層 f 的反導函數，也就是 F prime 等於 f。例如 f 是 cosine，F 就是 sine。",
+            {
+              "do": "write",
+              "line": "現在反過來問："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\cos 3x\\,dx=\\ ?$",
+              "on": "3x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜 $\\sin 3x$？微分是 $3\\cos 3x$，多了 $3$ 倍"
+          ],
+          "say": "直接照表猜正弦 3x，微分回去卻是 3 倍的餘弦 3x，多了 3 倍。",
           "board": [
-            {"do":"write","line":"${{n1:F}}'={{n2:f}}$"},
-            {"do":"write","line":"例：$f=\\cos$，$F=\\sin$","on":"例如"}
-          ] },
-        { "show": ["$\\int\\frac1x\\,dx=\\ln|x|+C$"],
-          "note": "因為 $(\\ln|x|)'=\\frac1x$。",
-          "say": "表裡有一條：x 分之一的反導函數是 ln 絕對值 x，因為它微分就是 x 分之一。遇到一次式分之一，外層就用它。",
+            {
+              "do": "write",
+              "line": "猜 $\\sin 3x$？微分是 $3\\cos 3x$，多了 $3$ 倍",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多的 $3$ 倍，除回去：",
+            "$\\int\\cos 3x\\,dx=\\frac13\\sin 3x+C$"
+          ],
+          "say": "多了 3 倍，就除以 3。答案是 3 分之 1 正弦 3x 加 C。",
           "board": [
-            {"do":"write","line":"$\\int\\frac1x\\,dx={{n3:\\ln|x|}}+C$"},
-            {"do":"box","term":"n3","color":"green","on":"ln 絕對值 x"},
-            {"do":"write","line":"$(\\ln|x|)'=\\frac1x$","on":"它微分"}
-          ] }
+            {
+              "do": "write",
+              "line": "多的 $3$ 倍，除回去："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int\\cos 3x\\,dx=\\frac13\\sin 3x+C}}$",
+              "on": "答案"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "正弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac13\\sin3x\\Big)=\\dfrac13\\cdot3\\cos3x=\\cos3x$"
+          ],
+          "say": "微分檢查：3 分之 1 乘上連鎖律多出來的 3，剛好抵消，回到餘弦 3x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac13\\sin3x\\Big)=\\dfrac13\\cdot3\\cos3x=\\cos3x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅線的斜率，就是藍線的高度"
+          ],
+          "say": "圖上，紅線是 3 分之 1 正弦 3x。它在每一點的斜率，剛好等於藍線的高度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "s3",
+                  "window": [
+                    -0.2,
+                    2.2,
+                    -1.2,
+                    1.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "cos(3*x)",
+                      "color": "blue",
+                      "label": "cos 3x"
+                    },
+                    {
+                      "expr": "sin(3*x)/3",
+                      "color": "red",
+                      "label": "⅓ sin 3x"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅線的斜率，就是藍線的高度",
+              "color": "violet",
+              "on": "它在"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "裡面是 $ax+b$",
+      "beats": [
+        {
+          "show": [
+            "同樣的道理，$F'=f$ 時：",
+            "$\\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C$"
+          ],
+          "say": "一般的規則：裡面是 a x 加 b 的時候，照表積出 F，再除以 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的道理，$F'=f$ 時："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C}}$",
+              "on": "的時"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "時候"
+            },
+            {
+              "do": "write",
+              "line": "　$a\\ne0$；微分 $F(ax+b)$ 會多乘一個 $a$，所以要除掉",
+              "color": "violet",
+              "on": "再除"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac1aF(ax+b)\\Big)=\\dfrac1a\\cdot f(ax+b)\\cdot a=f(ax+b)$"
+          ],
+          "say": "為什麼對？把右邊微分：連鎖律多乘一個 a，前面的 a 分之 1 剛好把它抵掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$\\dfrac{d}{dx}\\Big(\\dfrac1aF(ax+b)\\Big)=\\dfrac1a\\cdot f(ax+b)\\cdot a=f(ax+b)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：",
+            "$\\int\\frac{1}{2x+1}\\,dx=\\frac12\\ln|2x+1|+C$"
+          ],
+          "say": "例如 2x 加 1 分之 1：照表是自然對數，再除以 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{1}{2x+1}\\,dx=\\frac12\\ln|2x+1|+C$",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　加 $b$ 不影響：$b$ 的導數是 $0$，不會多乘任何東西",
+              "color": "violet",
+              "on": "然對"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用在定積分：",
+            "$\\int_0^{\\pi/6}\\cos3x\\,dx=\\Big[\\tfrac13\\sin3x\\Big]_0^{\\pi/6}$"
+          ],
+          "say": "有了反導函數，定積分就用微積分基本定理：上限代進去減下限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用在定積分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/6}\\cos3x\\,dx=\\Big[\\tfrac13\\sin3x\\Big]_0^{\\pi/6}$",
+              "on": "分基"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac13\\sin\\frac\\pi2-\\frac13\\sin0=\\frac13$"
+          ],
+          "say": "3 乘 6 分之派是 2 分之派，正弦是 1；下限是 0。答案 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\frac13\\sin\\frac\\pi2-\\frac13\\sin0=\\frac13}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "下限"
+            }
+          ]
+        }
       ],
-      "check": 0
+      "predict": {
+        "ask": "$\\displaystyle\\int e^{5x}\\,dx=$？",
+        "options": [
+          {
+            "label": "$\\dfrac15e^{5x}+C$",
+            "correct": true
+          },
+          {
+            "label": "$5e^{5x}+C$",
+            "why": "這是 $e^{5x}$ 的==導數==：多的 $5$ 應該除掉，不是乘上"
+          },
+          {
+            "label": "$e^{5x}+C$",
+            "why": "微分回去是 $5e^{5x}$，忘了修正"
+          },
+          {
+            "label": "$\\dfrac{e^{5x+1}}{5x+1}+C$",
+            "why": "把 $e^{u}$ 當成冪函數 $u^n$ 來積了"
+          }
+        ]
+      }
     },
     {
       "title": "猜、微分、修正",
       "beats": [
-        { "show": ["微分回去 = 被積函數，才對"],
-          "say": "猜完一定要微分回去，微分得到原本被積函數才對；多出幾倍，就是要除掉的數。",
+        {
+          "show": [
+            "三個動作：",
+            "• 猜：照外層的公式寫出一個候選"
+          ],
+          "say": "把剛才的想法整理成三個動作：先照外層猜一個；用連鎖律微分回去比一比；差幾倍，就除掉幾倍。",
           "board": [
-            {"do":"write","line":"微分回去 ＝ 被積函數，才對"}
-          ] },
-        { "show": ["$\\int(2x+3)^4\\,dx$：猜 $(2x+3)^5$"],
-          "note": "外層先積，裡面原封不動。",
-          "say": "沒把握的時候用三步。二 x 加三的四次方：先猜五次方，括號裡面不動。",
+            {
+              "do": "write",
+              "line": "三個動作："
+            },
+            {
+              "do": "write",
+              "line": "• 猜：照外層的公式寫出一個候選",
+              "on": "動作"
+            },
+            {
+              "do": "write",
+              "line": "• 微分：用連鎖律微分回去",
+              "on": "用連"
+            },
+            {
+              "do": "write",
+              "line": "• 修正：差幾倍就除掉幾倍",
+              "on": "差幾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int(2x+3)^4\\,dx$"
+          ],
+          "say": "例子：2x 加 3 的 4 次方。",
           "board": [
-            {"do":"write","line":"$\\int(2x+3)^4\\,dx$：猜 ${{g:(2x+3)^5}}$"},
-            {"do":"underline","term":"g","on":"先猜"}
-          ] },
-        { "show": ["$5(2x+3)^4\\cdot 2=10(2x+3)^4$"],
-          "note": "微分一次：多了 $10$ 倍。",
-          "say": "微分一次：外層掉下來一個五，裡面的導數再乘二，一共多了十倍。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int(2x+3)^4\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜：外層是 $u^4$，積分是 $\\dfrac{u^5}{5}$，先猜 $(2x+3)^5$"
+          ],
+          "say": "外層是 4 次方，積完會變 5 次方。先猜 2x 加 3 的 5 次方。",
           "board": [
-            {"do":"write","line":"$({{g:(2x+3)^5}})'={{f:5}}(2x+3)^4\\cdot{{t:2}}$","on":"微分一次"},
-            {"do":"focus","term":"f","on":"掉下來一個五"},
-            {"do":"focus","term":"t","on":"再乘二"},
-            {"do":"write","line":"$={{ten:10}}(2x+3)^4$","on":"一共多了"}
-          ] },
-        { "show": ["$\\frac{(2x+3)^5}{10}+C$"],
-          "note": "不必展開 $(2x+3)^4$。",
-          "say": "多了十倍就除以十。完全不用把四次方展開。",
+            {
+              "do": "write",
+              "line": "猜：外層是 $u^4$，積分是 $\\dfrac{u^5}{5}$，先猜 $(2x+3)^5$"
+            },
+            {
+              "do": "write",
+              "line": "　不要先把 $(2x+3)^4$ 展開：五項，很累",
+              "color": "violet",
+              "on": "先猜"
+            }
+          ]
+        },
+        {
+          "show": [
+            "微分：",
+            "$\\frac{d}{dx}(2x+3)^5=5(2x+3)^4\\cdot2=10(2x+3)^4$"
+          ],
+          "say": "微分回去：次方 5 拿下來，再乘裡面的導數 2，一共是 10 倍。",
           "board": [
-            {"do":"write","line":"$\\int(2x+3)^4\\,dx={{ans:\\frac{(2x+3)^5}{10}+C}}$"},
-            {"do":"box","term":"ans","color":"green","on":"除以十"}
-          ] }
+            {
+              "do": "write",
+              "line": "微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}(2x+3)^5=5(2x+3)^4\\cdot2=10(2x+3)^4$",
+              "on": "裡面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多了 $10$ 倍，除掉：",
+            "$\\int(2x+3)^4\\,dx=\\frac{(2x+3)^5}{10}+C$"
+          ],
+          "say": "多了 10 倍，就除以 10。這樣微分回去，正好是 2x 加 3 的 4 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多了 $10$ 倍，除掉："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int(2x+3)^4\\,dx=\\frac{(2x+3)^5}{10}+C}}$",
+              "color": "red",
+              "on": "這樣"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "2x"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\sqrt{4x+1}\\,dx=$？"
+          ],
+          "say": "試一題：根號 4x 加 1。"
+        }
       ],
-      "key": "猜完一定微分，多出幾倍就除回去",
-      "check": 1
+      "check": 0
     },
     {
       "title": "裡面的導數在場",
       "beats": [
-        { "show": ["$\\int 2x(x^2+1)^3\\,dx$"],
-          "note": "裡面 $x^2+1$ 的導數 $2x$ 剛好在式子裡。",
-          "say": "裡面不是一次式也行，只要它的導數在場。這裡 x 平方加一的導數二 x 就在前面。",
+        {
+          "show": [
+            "$\\int x\\,e^{x^2}\\,dx$"
+          ],
+          "say": "現在裡面不是一次式了。看 x 乘 e 的 x 平方次方。",
           "board": [
-            {"do":"write","line":"$\\int {{d:2x}}\\,{{i:(x^2+1)}}^3\\,dx$","tint":{"i":"blue"}},
-            {"do":"underline","term":"i","color":"blue","label":"裡面","on":"x 平方加一"},
-            {"do":"circle","term":"d","on":"二 x"}
-          ] },
-        { "show": ["猜 $(x^2+1)^4$：多了 $4$ 倍"],
-          "note": "答案 $\\frac{(x^2+1)^4}{4}+C$。",
-          "say": "猜四次方，微分得四倍再乘二 x。二 x 本來就在，只多了四倍，除掉就好。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x\\,e^{x^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "外層是 $e^u$，裡面 $u=x^2$，它的導數 $2x$：被積函數裡有 $x$"
+          ],
+          "say": "外層是 e 的次方，裡面是 x 平方。x 平方的導數是 2x，而被積函數裡剛好有一個 x。",
           "board": [
-            {"do":"write","line":"$({{g:(x^2+1)^4}})'={{f:4}}(x^2+1)^3\\cdot 2x$"},
-            {"do":"focus","term":"f","on":"四倍#1"},
-            {"do":"write","line":"$\\int 2x(x^2+1)^3\\,dx={{ans:\\frac{(x^2+1)^4}{4}}}+C$","on":"本來就在"},
-            {"do":"box","term":"ans","color":"green","on":"只多了"}
-          ] },
-        { "show": ["$\\int xe^{x^2}\\,dx$：猜 $e^{x^2}$"],
-          "note": "微分：$e^{x^2}\\cdot 2x$。",
-          "say": "再一題：x 乘 e 的 x 平方次方。猜 e 的 x 平方次方，微分會多乘裡面的導數二 x。",
+            {
+              "do": "write",
+              "line": "外層是 $e^u$，裡面 $u=x^2$，它的導數 $2x$：被積函數裡有 $x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜 $e^{x^2}$，微分：$e^{x^2}\\cdot2x$"
+          ],
+          "say": "猜 e 的 x 平方次方。微分回去是它自己乘上 2x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int x\\,e^{x^2}\\,dx$：猜 ${{h:e^{x^2}}}$","on":"再一題"},
-            {"do":"underline","term":"h","on":"猜 e"},
-            {"do":"write","line":"微分：$e^{x^2}\\cdot {{t:2x}}$","on":"微分會"},
-            {"do":"focus","term":"t","label":"裡面的導數","on":"裡面的導數"}
-          ] }
+            {
+              "do": "write",
+              "line": "猜 $e^{x^2}$，微分：$e^{x^2}\\cdot2x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比被積函數多了 $2$ 倍：",
+            "$\\int x\\,e^{x^2}\\,dx=\\frac12e^{x^2}+C$"
+          ],
+          "say": "跟 x 乘 e 的 x 平方比，多了 2 倍。除以 2，答案是 2 分之 1 e 的 x 平方次方加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比被積函數多了 $2$ 倍："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int x\\,e^{x^2}\\,dx=\\frac12e^{x^2}+C}}$",
+              "color": "red",
+              "on": "除以"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再一個：$\\displaystyle\\int x^2\\cos(x^3)\\,dx$"
+          ],
+          "say": "再一個：x 平方乘餘弦 x 三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再一個：$\\displaystyle\\int x^2\\cos(x^3)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "裡面 $x^3$ 的導數是 $3x^2$，$x^2$ 在場"
+          ],
+          "say": "裡面是 x 三次方，導數 3 x 平方；被積函數有 x 平方，只差常數 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "裡面 $x^3$ 的導數是 $3x^2$，$x^2$ 在場"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int x^2\\cos(x^3)\\,dx=\\frac13\\sin(x^3)+C$"
+          ],
+          "say": "猜正弦 x 三次方，微分多了 3 倍，除以 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int x^2\\cos(x^3)\\,dx=\\frac13\\sin(x^3)+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "多了"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵：裡面那一層的導數（差個常數也行）要在場"
+          ],
+          "say": "所以重點不是裡面長什麼樣子，而是裡面那一層的導數，有沒有出現在被積函數裡。差一個常數倍沒關係。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵：裡面那一層的導數（差個常數也行）要在場",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int x(x^2+1)^3\\,dx=$？"
+          ],
+          "say": "試一題：x 乘 x 平方加 1 的 3 次方。"
+        }
       ],
-      "key": "裡面函數的導數在外面，才能直接猜",
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\cos x\\,\\sin^4x\\,dx=$？"
+          ],
+          "say": "再猜一題：餘弦 x 乘正弦 x 的 4 次方。想想看，裡面那一層是誰？"
+        }
+      ],
       "predict": {
-        "ask": "答案是？",
+        "ask": "$\\displaystyle\\int\\cos x\\,\\sin^4x\\,dx=$？",
         "options": [
           {
-            "label": "$\\frac{e^{x^2}}{2}+C$",
+            "label": "$\\dfrac{\\sin^5x}{5}+C$",
             "correct": true
           },
           {
-            "label": "$e^{x^2}+C$",
-            "why": "$(e^{x^2})'=2xe^{x^2}$，比 $xe^{x^2}$ 多了 $2$ 倍，要除掉。"
+            "label": "$\\dfrac{\\cos^5x}{5}+C$",
+            "why": "裡面是 $\\sin x$ 不是 $\\cos x$；微分回去會有負號、而且是 $\\cos^4x$"
           },
           {
-            "label": "$\\frac{e^{x^2}}{2x}+C$",
-            "why": "式子裡已經有 $x$，只差常數 $2$；除以 $2x$ 微分回去會多出別的項。"
+            "label": "$\\sin x\\cdot\\dfrac{\\sin^5x}{5}+C$",
+            "why": "把 $\\cos x$ 也積了一次；它是裡面的導數，被「吸收」掉了"
+          },
+          {
+            "label": "$4\\sin^3x\\cos^2x+C$",
+            "why": "這是在微分，不是積分"
           }
         ]
       }
@@ -267,74 +804,292 @@
     {
       "title": "只能修正常數",
       "beats": [
-        { "show": ["$\\int(x^2+1)^2\\,dx$：猜 $\\frac{(x^2+1)^3}{3}$"],
-          "say": "這一題看起來很像：x 平方加一的平方。照樣猜三次方除以三。",
+        {
+          "show": [
+            "$\\int e^{x^2}\\,dx$"
+          ],
+          "say": "最後要說的是：這個方法什麼時候行不通。看 e 的 x 平方次方，前面沒有 x 了。",
           "board": [
-            {"do":"write","line":"$\\int(x^2+1)^2\\,dx$：猜 ${{g:\\frac{(x^2+1)^3}{3}}}$"}
-          ] },
-        { "show": ["微分：$(x^2+1)^2\\cdot 2x$"],
-          "note": "多了 $2x$：含 $x$，不能除掉。",
-          "say": "微分回去多了一個二 x。式子裡沒有 x 可以配，而含 x 的東西不能直接除掉。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^{x^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜 $e^{x^2}$，微分：$2x\\,e^{x^2}$，多了 $2x$"
+          ],
+          "say": "猜 e 的 x 平方，微分回去多了 2x。",
           "board": [
-            {"do":"write","line":"微分：$(x^2+1)^2\\cdot{{x2:2x}}$"},
-            {"do":"circle","term":"x2","color":"red","label":"含 x","on":"多了一個二 x"},
-            {"do":"strike","term":"g","on":"不能直接除掉"}
-          ] },
-        { "show": ["藍：被積函數；紅：猜的微分"],
-          "say": "畫出來看：藍色是原本要積的式子，紅色是猜的答案微分回去。兩條對不上。",
+            {
+              "do": "write",
+              "line": "猜 $e^{x^2}$，微分：$2x\\,e^{x^2}$，多了 $2x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除掉 $2x$？$\\dfrac{e^{x^2}}{2x}$ 微分：",
+            "$\\frac{d}{dx}\\frac{e^{x^2}}{2x}=e^{x^2}\\Big(1-\\frac1{2x^2}\\Big)\\ne e^{x^2}$"
+          ],
+          "say": "那就除以 2x？試試看：把它微分，用商的法則，會多出一項，不等於 e 的 x 平方。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,1,-3,6],"curves":[{"expr":"(x^2+1)^2","domain":[-1,1],"color":"blue"},{"expr":"2*x*(x^2+1)^2","domain":[-1,1],"color":"red"}]}}
-          ] },
-        { "show": ["先展開：$x^4+2x^2+1$"],
-          "note": "逐項積：$\\frac{x^5}{5}+\\frac{2x^3}{3}+x+C$。",
-          "say": "這時就換方法：先展開成多項式，再一項一項積。",
+            {
+              "do": "write",
+              "line": "除掉 $2x$？$\\dfrac{e^{x^2}}{2x}$ 微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\frac{e^{x^2}}{2x}=e^{x^2}\\Big(1-\\frac1{2x^2}\\Big)\\ne e^{x^2}$",
+              "on": "微分"
+            },
+            {
+              "do": "write",
+              "line": "　在 $x=1$：$e\\cdot\\frac12\\approx1.36$，不是 $e\\approx2.72$",
+              "color": "violet",
+              "on": "不等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以常數可以：常數在微分時原封不動"
+          ],
+          "say": "原因是：常數在微分時原封不動，除以常數再微分，常數還在外面。",
           "board": [
-            {"do":"write","line":"先展開：$x^4+2x^2+1$"},
-            {"do":"write","line":"逐項積：$\\frac{x^5}{5}+\\frac{2x^3}{3}+x+C$","on":"一項一項積"}
-          ] }
+            {
+              "do": "write",
+              "line": "除以常數可以：常數在微分時原封不動",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以含 $x$ 的東西不行：微分時它也會被微分"
+          ],
+          "say": "但是 2x 會跟著變。除以含 x 的東西，微分的時候它自己也會被微分，多出一堆項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除以含 $x$ 的東西不行：微分時它也會被微分",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　事實上 $e^{x^2}$ 的反導函數寫不成初等函數；這不是你不夠聰明",
+              "color": "violet",
+              "on": "微分#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "猜不出來：先展開",
+      "beats": [
+        {
+          "show": [
+            "$\\int(x^2+1)^2\\,dx$"
+          ],
+          "say": "再看一個：x 平方加 1 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int(x^2+1)^2\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜 $\\dfrac{(x^2+1)^3}{3}$，微分：$(x^2+1)^2\\cdot2x$"
+          ],
+          "say": "照外層猜 3 次方除以 3，微分回去多了 2x。裡面的導數不在場，猜法行不通。",
+          "board": [
+            {
+              "do": "write",
+              "line": "猜 $\\dfrac{(x^2+1)^3}{3}$，微分：$(x^2+1)^2\\cdot2x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換條路：先展開成多項式",
+            "$(x^2+1)^2=x^4+2x^2+1$"
+          ],
+          "say": "換條路：它只是多項式的平方，先展開，變成 x 四次方加 2 x 平方加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換條路：先展開成多項式"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (x^2+1)^2=x^4+2x^2+1$",
+              "on": "四次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一項一項積：",
+            "$\\int(x^2+1)^2\\,dx=\\frac{x^5}5+\\frac{2x^3}3+x+C$"
+          ],
+          "say": "一項一項照冪次積分，就得到答案。微分回去檢查，正好是展開的那三項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一項一項積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int(x^2+1)^2\\,dx=\\frac{x^5}5+\\frac{2x^3}3+x+C}}$",
+              "color": "red",
+              "on": "得到"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "正好"
+            }
+          ]
+        }
       ],
       "check": 2
     },
     {
-      "title": "怎麼判斷",
+      "title": "重點整理",
       "beats": [
-        { "show": ["多出常數 → 修正","多出含 $x$ 的 → 換方法"],
-          "say": "判斷很簡單：猜完微分，多出來的是常數就修正，含 x 就換方法。",
+        {
+          "show": [
+            "• 裡面是 $ax+b$：照表積，再除以 $a$",
+            "• 猜、微分、修正：差幾倍就除幾倍"
+          ],
+          "say": "整理一下：猜外層、微分、差幾倍除幾倍；能猜出來的關鍵，是裡面那一層的導數在場；只能修正常數，差的是含 x 的東西就要換方法。",
           "board": [
-            {"do":"write","line":"多出常數 → 修正"},
-            {"do":"write","line":"多出含 $x$ 的 → 換方法","on":"含 x"}
-          ] },
-        { "show": ["每一步都微分檢查"],
-          "note": "$\\sin$ 積出 $-\\cos$，負號也一起檢查。",
-          "say": "微分檢查也會抓到符號：sine 的反導函數是負 cosine，負號跟倍數要一起對。",
+            {
+              "do": "write",
+              "line": "• 裡面是 $ax+b$：照表積，再除以 $a$"
+            },
+            {
+              "do": "write",
+              "line": "• 猜、微分、修正：差幾倍就除幾倍",
+              "on": "差幾"
+            },
+            {
+              "do": "write",
+              "line": "• 裡面那一層的導數（差常數）在場，就猜得出來",
+              "on": "關鍵"
+            },
+            {
+              "do": "write",
+              "line": "• 只能修正常數；差的是含 $x$ 的因子就行不通",
+              "on": "只能"
+            },
+            {
+              "do": "write",
+              "line": "• 行不通時換條路：例如先展開",
+              "on": "的東"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：換元：基礎"
+          ],
+          "say": "下一課，把這個猜法寫成一套有系統的步驟：換元積分。",
           "board": [
-            {"do":"write","line":"$\\int\\sin x\\,dx={{m:-\\cos x}}+C$"},
-            {"do":"focus","term":"m","on":"負 cosine"},
-            {"do":"write","line":"檢查：$(-\\cos x)'=\\sin x$","on":"負號"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：換元：基礎"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["substitution", "basic-integral", "trig", "exponential"],
-    "fine": ["reverse-chain-linear-inner", "reverse-chain-linear-power", "reverse-chain-inner-derivative", "reverse-chain-constant-only"]
+    "coarse": [
+      "substitution",
+      "basic-integral",
+      "trig",
+      "exponential"
+    ],
+    "fine": [
+      "reverse-chain-linear-inner",
+      "reverse-chain-linear-power",
+      "reverse-chain-inner-derivative",
+      "reverse-chain-constant-only"
+    ]
   },
   "practice": [
-    { "id": "fd-int-003", "core": true, "trains": "reverse-chain-linear-inner" },
-    { "id": "fd-int-004", "core": true, "trains": "reverse-chain-linear-inner" },
-    { "id": "int-004", "core": true, "trains": "reverse-chain-linear-inner" },
-    { "id": "tmpl-int-linear-power-002", "core": true, "trains": "reverse-chain-linear-power" },
-    { "id": "rel-basic-015", "core": true, "trains": "reverse-chain-linear-inner" },
-    { "id": "tmpl-int-sin-def-001", "core": true, "trains": "reverse-chain-linear-inner" },
-    { "id": "int-007", "core": true, "trains": "reverse-chain-inner-derivative" },
-    { "id": "int-006", "core": true, "trains": "reverse-chain-inner-derivative" },
-    { "id": "cg-4c-001", "core": true, "trains": "reverse-chain-constant-only" },
-    { "id": "fd-int-015", "trains": "reverse-chain-linear-inner" },
-    { "id": "tmpl-int-linear-power-004", "trains": "reverse-chain-linear-power" },
-    { "id": "tmpl-int-usub-poly-001", "trains": "reverse-chain-inner-derivative" },
-    { "id": "mob-trap-002", "trains": "reverse-chain-linear-inner" },
-    { "id": "cg-4c-002", "trains": "reverse-chain-constant-only" }
+    {
+      "id": "fd-int-003",
+      "core": true,
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "fd-int-004",
+      "core": true,
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "int-004",
+      "core": true,
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "tmpl-int-linear-power-002",
+      "core": true,
+      "trains": "reverse-chain-linear-power"
+    },
+    {
+      "id": "rel-basic-015",
+      "core": true,
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "tmpl-int-sin-def-001",
+      "core": true,
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "int-007",
+      "core": true,
+      "trains": "reverse-chain-inner-derivative"
+    },
+    {
+      "id": "int-006",
+      "core": true,
+      "trains": "reverse-chain-inner-derivative"
+    },
+    {
+      "id": "cg-4c-001",
+      "core": true,
+      "trains": "reverse-chain-constant-only"
+    },
+    {
+      "id": "fd-int-015",
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "tmpl-int-linear-power-004",
+      "trains": "reverse-chain-linear-power"
+    },
+    {
+      "id": "tmpl-int-usub-poly-001",
+      "trains": "reverse-chain-inner-derivative"
+    },
+    {
+      "id": "mob-trap-002",
+      "trains": "reverse-chain-linear-inner"
+    },
+    {
+      "id": "cg-4c-002",
+      "trains": "reverse-chain-constant-only"
+    }
   ],
   "gaps": []
 }

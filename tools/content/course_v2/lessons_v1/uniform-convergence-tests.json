@@ -1,0 +1,429 @@
+{
+  "id": "uniform-convergence-tests",
+  "title": "怎麼判斷一致收斂",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["uniform-convergence", "bolzano-weierstrass", "extreme-value-theorem"],
+  "next": ["weierstrass-m-test"],
+  "related": [],
+  "objectives": [
+    "照固定流程判斷：先求逐點極限，再算或估計 $\\|f_n-f\\|_\\infty$。",
+    "會用三種工具：微分求 $\\sup$、找與 $x$ 無關的上界、找一串點 $x_n$ 證明不一致。",
+    "知道「縮小定義域」常常把不一致變成一致，並會用 Dini 定理。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 第一步永遠是逐點極限",
+      "body": [
+        "一致收斂問的是「$f_n$ 一致收斂到誰」。所以先固定 $x$ 求 $f(x)=\\lim f_n(x)$；沒有 $f$，就沒有 $\\|f_n-f\\|_\\infty$ 可算。逐點極限不存在，一致收斂當然也不成立。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三種工具",
+      "body": [
+        "算出來：把 $g_n(x)=|f_n(x)-f(x)|$ 當成 $x$ 的函數，用微分找最大值，得到 $\\|f_n-f\\|_\\infty$ 的公式，看它是否 $\\to0$。",
+        "估出來：不必算到精確，只要找到與 $x$ 無關的 $a_n\\to0$，使 $|f_n(x)-f(x)|\\le a_n$ 對所有 $x$ 成立。例如 $\\left|\\frac{\\sin(nx)}{n}\\right|\\le\\frac{1}{n}$。",
+        "否定：要證不一致，找一串點 $x_n\\in D$ 使 $|f_n(x_n)-f(x_n)|$ 不趨近 0。最常見的 $x_n$ 是高峰的位置，例如 $\\frac{1}{n}$、$\\frac{1}{\\sqrt{n}}$、$1-\\frac{1}{n}$。另一條捷徑：每個 $f_n$ 連續而 $f$ 不連續，就不一致。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 壞事通常發生在一個點附近",
+      "body": [
+        "$\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$ 上不一致，是因為高峰擠向 $x=0$；把定義域改成 $[\\frac{1}{2},1]$，高峰在 $n\\ge2$ 時就跑出定義域，收斂變成一致的（範例 2）。很多「在 $D$ 上不一致、但在每個遠離壞點的閉子區間上一致」的例子都是這種形狀。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ Dini 定理",
+      "body": [
+        "若 (1) $D=[a,b]$ 是有界閉區間；(2) 每個 $f_n$ 連續；(3) 極限 $f$ 連續；(4) 對每個 $x$，$f_n(x)$ 對 $n$ 單調；則 $f_n\\to f$ 一致收斂。",
+        "四個條件都要：$x^n$ 在 $[0,1]$ 上滿足 (1)(2)(4)，缺 (3)，不一致；$x^n$ 在 $[0,1)$ 上滿足 (2)(3)(4)，缺 (1)，也不一致。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "證明：Dini 定理",
+      "body": [
+        "不妨設 $f_n$ 對 $n$ 遞減（遞增時改看 $-f_n$）。令 $g_n=f_n-f$：每個 $g_n$ 連續、$g_n\\ge0$、$g_n(x)$ 對 $n$ 遞減且 $\\to0$。因為 $g_{n+1}\\le g_n$，$\\|g_n\\|_\\infty$ 對 $n$ 遞減。",
+        "反設不一致，則 $\\|g_n\\|_\\infty$ 不趨近 0，又因為遞減，有 $\\varepsilon_0>0$ 使 $\\|g_n\\|_\\infty\\ge\\varepsilon_0$ 對所有 $n$ 成立。$g_n$ 在 $[a,b]$ 上連續，由極值定理取得到最大值，取 $x_n$ 使 $g_n(x_n)\\ge\\varepsilon_0$。",
+        "由 Bolzano–Weierstrass，有子數列 $x_{n_k}\\to x^*\\in[a,b]$。固定 $m$；當 $n_k\\ge m$ 時，$g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})\\ge\\varepsilon_0$。令 $k\\to\\infty$，$g_m$ 連續，得 $g_m(x^*)\\ge\\varepsilon_0$。這對每個 $m$ 成立，和 $g_m(x^*)\\to0$ 矛盾。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "先問：收斂到誰",
+      "beats": [
+        { "show": ["一致收斂到「誰」？"],
+          "note": "先固定 $x$ 求 $f(x)=\\lim f_n(x)$。",
+          "say": "一致收斂一定是收斂到某個函數。所以第一步永遠是：固定 x，先把逐點極限求出來。",
+          "board": [
+            {"do":"write","line":"一致收斂 ⇒ 收斂到某個函數 ${{f:f}}$"},
+            {"do":"underline","term":"f","label":"誰？","on":"某個函數"}
+          ] },
+        { "show": ["沒有 $f$，就沒有 $\\|f_n-f\\|_\\infty$"],
+          "say": "沒有極限函數，就沒有誤差可算；逐點極限不存在，一致收斂當然也不成立。",
+          "board": [
+            {"do":"write","line":"沒有 $f$，就沒有 $\\|f_n-f\\|_\\infty$"},
+            {"do":"write","line":"逐點極限不存在 ⇒ 不一致","on":"逐點極限不存在"}
+          ] },
+        { "show": ["算出來／估出來／否定"],
+          "note": "有了 $f$，再挑工具。",
+          "say": "有了 f 之後，有三種工具：把最大誤差算出來、用上界估出來，或者找壞點否定它。",
+          "board": [
+            {"do":"write","line":"算出來／估出來／否定"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "估出來",
+      "beats": [
+        { "show": ["找與 $x$ 無關的 $a_n\\to0$","$|f_n(x)-f(x)|\\le a_n$"],
+          "say": "不必算到精確，只要找到一個跟 x 無關、又趨近零的上界就夠了。",
+          "board": [
+            {"do":"write","line":"$|f_n(x)-f(x)|\\le {{a:a_n}}$","tint":{"a":"blue"}},
+            {"do":"write","line":"${{a:a_n}}$：跟 $x$ 無關、$\\to 0$","on":"跟 x 無關"}
+          ] },
+        { "show": ["$\\left|\\frac{\\sin(nx)}{n}\\right|\\le\\frac{1}{n}$"],
+          "say": "最簡單的例子：sine n x 除以 n，絕對值不會超過 n 分之一，不管 x 是多少。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{\\sin(nx)}{n}\\right|\\le\\,{{b:\\frac{1}{n}}}$","tint":{"b":"blue"},"on":"sine n x"},
+            {"do":"box","term":"b","label":"沒有 x","on":"不管 x"}
+          ] },
+        { "show": ["$f_n(x)=\\frac{x}{1+nx^2}$，逐點 $\\to0$"],
+          "say": "再看 x 除以一加 n x 平方。x 不是零時分母往無限大跑，逐點極限是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f_n(x)=\\frac{x}{{{d:1+nx^2}}}$，逐點 $\\to0$","on":"再看"},
+            {"do":"underline","term":"d","label":"→ ∞","on":"分母往無限大"}
+          ] },
+        { "show": ["$1+nx^2\\ge2\\sqrt{n}|x|$"],
+          "note": "由 $(\\sqrt{n}|x|-1)^2\\ge0$。",
+          "say": "用一個平方大於等於零的小技巧，分母至少是二倍根號 n 乘 x 的絕對值。",
+          "board": [
+            {"do":"write","line":"$(\\sqrt{n}|x|-1)^2\\ge0$","on":"平方大於等於零"},
+            {"do":"write","line":"$\\Rightarrow\\ {{d:1+nx^2}}\\ge2\\sqrt{n}|x|$","on":"分母至少"}
+          ] },
+        { "show": ["$|f_n(x)|\\le\\frac{|x|}{2\\sqrt{n}\\,|x|}$：$x$ 約得掉"],
+          "note": "上界跟 $x$ 無關又趨近 0：在整條實數線上一致收斂。",
+          "say": "代回去，分子分母的 x 絕對值約得掉，上界跟 x 無關又趨近零，所以一致收斂。",
+          "board": [
+            {"do":"write","line":"$|f_n(x)|\\le\\frac{{{xa:|x|}}}{2\\sqrt{n}\\,{{xb:|x|}}}$"},
+            {"do":"focus","term":"xa","color":"green","on":"分子分母"},
+            {"do":"focus","term":"xb","color":"green","label":"約得掉","on":"約得掉"}
+          ] },
+        { "show": ["等號在 $|x|=\\frac{1}{\\sqrt{n}}$ 成立"],
+          "note": "上界取得到，才是最大值。",
+          "say": "上界只是上界，要當最大值，得讓等號真的成立。等號要平方等於零，也就是根號 n 乘 x 的絕對值等於一。",
+          "board": [
+            {"do":"write","line":"等號：${{eq:\\sqrt{n}|x|=1}}$"},
+            {"do":"underline","term":"eq","color":"gold","label":"取得到","on":"平方等於零"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "壞點在哪裡",
+      "beats": [
+        { "show": ["否定：找 $x_n$，誤差不趨近 0"],
+          "note": "常見的 $x_n$：$\\frac{1}{n}$、$\\frac{1}{\\sqrt{n}}$、$1-\\frac{1}{n}$。",
+          "say": "要證不一致，就找一串點，讓誤差停著不下去。通常就是高峰的位置。",
+          "board": [
+            {"do":"write","line":"找一串點 $x_n$，誤差不趨近 0"},
+            {"do":"write","line":"$x_n$ ＝ 高峰的位置","on":"通常就是"}
+          ] },
+        { "show": ["$\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$：$f_n(\\frac{1}{n})=\\frac{1}{2}$"],
+          "say": "n x 除以一加 n 平方 x 平方，在零到一，取 x 等於 n 分之一，值一直是二分之一，不一致。",
+          "board": [
+            {"do":"write","line":"$f_n(x)=\\frac{nx}{1+n^2x^2}$，$[0,1]$"},
+            {"do":"write","line":"$f_n\\left(\\frac{1}{n}\\right)={{h:\\frac{1}{2}}}$","on":"取 x 等於"},
+            {"do":"box","term":"h","color":"red","label":"不一致","on":"值一直是"}
+          ] },
+        { "show": ["$n=2$ 的高峰在 $x=\\frac{1}{2}$"],
+          "say": "畫出 n 等於二的圖：高峰在 x 等於二分之一，高度二分之一。n 越大，高峰越往零擠。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,1,0,0.8],"curves":[{"expr":"2*x/(1+4*x^2)","domain":[0,1],"color":"blue"}],"points":[{"x":0.5,"y":0.5}],"dashed":[[[0.5,0],[0.5,0.5]]]}}
+          ] },
+        { "show": ["改成 $[\\frac{1}{2},1]$"],
+          "note": "$n\\ge2$ 時高峰跑出定義域。",
+          "say": "壞事發生在零附近。把定義域改成二分之一到一，高峰就跑到外面去了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"壞事發生在 $x=0$ 附近","on":"壞事發生"},
+            {"do":"write","line":"改成 $\\left[\\frac{1}{2},1\\right]$","on":"改成"},
+            {"do":"write","line":"高峰 $\\frac{1}{n}$ 跑出去","on":"高峰就跑到"}
+          ] },
+        { "show": ["$\\|f_n\\|_\\infty=f_n(\\frac{1}{2})=\\frac{2n}{4+n^2}\\to0$"],
+          "say": "這一段上函數遞減，最大在左端二分之一，算出來是四加 n 平方分之二 n，趨近零，一致收斂。",
+          "board": [
+            {"do":"write","line":"$\\|f_n\\|_\\infty=f_n\\left(\\frac{1}{2}\\right)={{r:\\frac{2n}{4+n^2}}}\\to0$"},
+            {"do":"box","term":"r","color":"green","on":"四加"}
+          ] }
+      ],
+      "key": "找追著高峰走的點，例如 $\\frac{1}{n}$",
+      "check": 2
+    },
+    {
+      "title": "Dini 定理",
+      "beats": [
+        { "show": ["$[a,b]$ 有界閉、$f_n$ 連續","$f$ 連續、$f_n(x)$ 對 $n$ 單調"],
+          "note": "四個條件都成立 $\\Rightarrow$ 一致收斂。",
+          "say": "Dini 定理：有界閉區間、每個 f n 連續、極限也連續、而且每個點上對 n 單調，那就一致收斂。",
+          "board": [
+            {"do":"write","line":"${{i:[a,b]}}$ 有界閉、${{j:f_n}}$ 連續"},
+            {"do":"write","line":"${{k:f}}$ 連續、${{l:f_n(x)}}$ 對 $n$ 單調","on":"極限也連續"}
+          ] },
+        { "show": ["$x^n$ 在 $[0,1]$：缺「$f$ 連續」"],
+          "say": "四個條件一個都不能少。x 的 n 次方在零到一，極限在一跳了，缺極限連續，不一致。",
+          "board": [
+            {"do":"write","line":"$x^n$ 在 $[0,1]$：缺「${{m:f}}$ 連續」","on":"x 的 n 次方"},
+            {"do":"focus","term":"m","color":"red","label":"極限會跳","on":"缺極限"}
+          ] },
+        { "show": ["$x^n$ 在 $[0,1)$：缺……？"],
+          "note": "這時極限是 0，連續。",
+          "say": "那在零到一不含一呢？極限變成零，連續了，也單調，可是還是不一致。缺的是哪一個？",
+          "board": [
+            {"do":"write","line":"$x^n$ 在 $[0,1)$：缺……？"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明：Dini 定理",
+      "beats": [
+        { "show": ["$g_n=f_n-f$：連續、$\\ge0$、遞減 $\\to0$"],
+          "note": "不妨設 $f_n$ 遞減。",
+          "say": "策略：反證。看差 g n，它連續、非負、對 n 遞減而且趨近零。假設不一致，推出矛盾。",
+          "board": [
+            {"do":"write","line":"${{g:g_n}}=f_n-f$：連續、$\\ge0$、遞減 $\\to0$","tint":{"g":"blue"}},
+            {"do":"write","line":"反設：不一致","on":"假設不一致"}
+          ] },
+        { "show": ["每個 $n$ 取 $x_n$：$g_n(x_n)\\ge\\varepsilon_0$"],
+          "note": "$\\|g_n\\|_\\infty$ 遞減；極值定理取得到。",
+          "why": {"ask":"為什麼每個 $n$ 都 $\\ge\\varepsilon_0$，不只某些 $n$？","say":"不一致，為什麼每一個 n 的最大誤差都至少 epsilon 零？","options":[{"label":"$\\|g_n\\|_\\infty$ 對 $n$ 遞減，不趨近 0 就停在上面","correct":true},{"label":"不一致收斂，就是每個 $n$ 都有壞點","why":"否定一致只給出無限多個 $n$ 誤差大；要每一個 $n$ 都大，靠的是 $\\|g_n\\|_\\infty$ 遞減。"},{"label":"因為 $g_n\\ge0$","why":"非負只說不會跑到負的；讓它一直停在 $\\varepsilon_0$ 以上的是遞減。"}]},
+          "say": "最大誤差對 n 遞減，不趨近零，就一直停在某個 epsilon 零以上；極值定理給出取到最大的點。",
+          "board": [
+            {"do":"write","line":"每個 $n$ 取 $x_n$：${{gx:g_n(x_n)}}\\ge\\varepsilon_0$","on":"每一個 n"},
+            {"do":"underline","term":"gx","label":"最大誤差遞減","why":true,"on":"最大誤差對 n 遞減"}
+          ] },
+        { "show": ["子數列 $x_{n_k}\\to x^*\\in[a,b]$"],
+          "note": "Bolzano–Weierstrass；區間是閉的。",
+          "say": "這串點在有界閉區間裡，挑出收斂的子數列，極限 x 星還在區間裡。",
+          "board": [
+            {"do":"write","line":"子數列 $x_{n_k}\\to x^*\\in{{ab:[a,b]}}$"},
+            {"do":"underline","term":"ab","label":"閉的","on":"還在區間裡"}
+          ] },
+        { "show": ["固定 $m$，$n_k\\ge m$ 時","$g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})\\ge\\varepsilon_0$"],
+          "note": "同一點上，$g_n$ 對 $n$ 遞減。",
+          "why": {"ask":"為什麼 $g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})$？","say":"固定一個 m。在同一點，g m 為什麼不小於 g n k？","options":[{"label":"$m\\le n_k$，而每一點上 $g_n$ 對 $n$ 遞減","correct":true},{"label":"$g_m$ 連續","why":"連續要等下一步取極限才用；比較同一點、不同的 $n$，靠的是單調。"},{"label":"$x_{n_k}$ 是 $g_m$ 的最大值點","why":"$x_{n_k}$ 是 $g_{n_k}$ 取到大值的點，跟 $g_m$ 的最大值無關；這裡比的是同一點、不同的 $n$。"}]},
+          "say": "m 不超過 n k，在同一點上 g 對 n 遞減，所以 g m 更大，也至少 epsilon 零。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"固定 $m$，$n_k\\ge m$ 時","on":"固定一個 m"},
+            {"do":"write","line":"$g_m(x_{n_k}){{ge:\\ge}}g_{n_k}(x_{n_k})\\ge\\varepsilon_0$","on":"在同一點"},
+            {"do":"focus","term":"ge","label":"g 對 n 遞減","why":true,"on":"g 對 n 遞減"}
+          ] },
+        { "show": ["$k\\to\\infty$：$g_m(x^*)\\ge\\varepsilon_0$"],
+          "note": "$g_m$ 連續。",
+          "say": "讓 k 趨近無限大，g m 連續，不等式留到極限點：g m 在 x 星至少 epsilon 零。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$k\\to\\infty$：${{gs:g_m(x^*)}}\\ge\\varepsilon_0$","on":"讓 k"},
+            {"do":"underline","term":"gs","label":"連續","on":"g m 連續"}
+          ] },
+        { "show": ["每個 $m$ 都成立：與 $g_m(x^*)\\to0$ 矛盾"],
+          "say": "這對每一個 m 都成立，可是 g m 在 x 星應該趨近零，矛盾。所以一致收斂。",
+          "board": [
+            {"do":"write","line":"每個 $m$ 都成立：與 ${{gs:g_m(x^*)}}\\to0$ 矛盾"},
+            {"do":"write","line":"⇒ 一致收斂","color":"green","on":"矛盾"}
+          ] }
+      ],
+      "key": "反設不一致，子數列收斂到 $x^*$ 推矛盾",
+      "proof": true,
+      "of": 4,
+      "skeleton": "反證",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "反設：$\\|g_n\\|_\\infty\\ge\\varepsilon_0$ 對所有 $n$"
+          },
+          {
+            "label": "取 $x_n$ 使 $g_n(x_n)\\ge\\varepsilon_0$",
+            "why": "要先有 $\\varepsilon_0$，才知道要找多大的值。"
+          },
+          {
+            "label": "子數列 $x_{n_k}\\to x^*$",
+            "why": "要先有 $(x_n)$ 這串點，才能挑子數列。"
+          },
+          {
+            "label": "固定 $m$，取極限：$g_m(x^*)\\ge\\varepsilon_0$",
+            "why": "要先有極限點 $x^*$，才能在那裡取極限。"
+          },
+          {
+            "label": "與 $g_m(x^*)\\to0$ 矛盾",
+            "why": "要先知道每一個 $m$ 都有 $g_m(x^*)\\ge\\varepsilon_0$，才矛盾。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "用 Dini 證一致",
+      "beats": [
+        { "show": ["$f_n(x)=(1+\\frac{x}{n})^n\\to e^x$，$[0,1]$"],
+          "say": "一加 n 分之 x 的 n 次方，在零到一收斂到 e 的 x 次方。是一致的嗎？",
+          "board": [
+            {"do":"write","line":"$f_n(x)=\\left(1+\\frac{x}{n}\\right)^n\\to e^x$，$[0,1]$"}
+          ] },
+        { "show": ["$f_n(x)\\le f_{n+1}(x)$"],
+          "note": "對 1 與 $n$ 個 $(1+\\frac{x}{n})$ 用算幾不等式。",
+          "say": "用算幾不等式，可以證明它對 n 遞增。區間有界閉、函數都連續，Dini 說：一致收斂。",
+          "board": [
+            {"do":"write","line":"${{mono:f_n(x)\\le f_{n+1}(x)}}$","on":"用算幾"},
+            {"do":"underline","term":"mono","label":"對 n 遞增","on":"對 n 遞增"},
+            {"do":"write","line":"Dini ⇒ 一致收斂","color":"green","on":"Dini 說"}
+          ] },
+        { "show": ["$(1+\\frac{x}{n})^{\\frac{n}{n+1}}\\le1+\\frac{x}{n+1}$"],
+          "note": "算幾：$n+1$ 個數的平均不小於幾何平均。",
+          "say": "把一和 n 個一加 n 分之 x 丟進算幾不等式：平均是一加 n 加一分之 x，所以乘積的根不超過它，兩邊乘方就得證。",
+          "board": [
+            {"do":"write","line":"$(1+\\frac{x}{n})^{\\frac{n}{n+1}}\\le1+\\frac{x}{n+1}$"},
+            {"do":"write","line":"⇒ $f_n(x)\\le f_{n+1}(x)$","on":"兩邊乘方"}
+          ] },
+        { "show": ["$h(x)=e^x-(1+\\frac{x}{n})^n$，$h'\\ge0$"],
+          "note": "Dini 不給速度，誤差自己算。",
+          "say": "可是 Dini 不告訴你誤差多大。看誤差函數 h，它的導數大於等於零，所以誤差一路往右變大。",
+          "board": [
+            {"do":"write","line":"$h(x)=e^x-\\left(1+\\frac{x}{n}\\right)^n$，${{hp:h'\\ge0}}$","on":"看誤差函數"},
+            {"do":"underline","term":"hp","label":"往右變大","on":"導數大於"}
+          ] },
+        { "show": ["$h$ 遞增，最大在 $x=1$"],
+          "note": "$\\|h\\|_\\infty=e-(1+\\frac{1}{n})^n$",
+          "say": "h 的導數大於等於零，所以 h 遞增，右邊的值最大，最大誤差就在 x 等於一：e 減一加 n 分之一的 n 次方。代 n 就能算。",
+          "board": [
+            {"do":"write","line":"$h$ 遞增 ⇒ 最大在 $x=1$"},
+            {"do":"write","line":"$\\|h\\|_\\infty=e-\\left(1+\\frac{1}{n}\\right)^n$","on":"最大誤差"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$n=10$ 時 $\\|e^x-f_{10}\\|_\\infty$ 是？",
+        "options": [
+          {
+            "label": "$e-1.1^{10}\\approx0.1245$",
+            "correct": true
+          },
+          {
+            "label": "0",
+            "why": "那是 $x=0$ 的誤差 $h(0)$；$h$ 遞增，最大在右端 $x=1$。"
+          },
+          {
+            "label": "$e\\approx2.71828$",
+            "why": "那是 $e^x$ 在 $x=1$ 的值；誤差要再減掉 $f_{10}(1)=1.1^{10}\\approx2.59374$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "找與 $x$ 無關的上界",
+      "prompt": "$f_n(x)=\\frac{x}{1+nx^2}$，$x\\in\\mathbb{R}$。是否一致收斂？",
+      "steps": [
+        "逐點極限：$x=0$ 時 $f_n=0$；$x\\ne0$ 時分母 $\\to\\infty$，$f_n(x)\\to0$。$f\\equiv0$。",
+        "估計：由 $(\\sqrt{n}|x|-1)^2\\ge0$ 得 $1+nx^2\\ge2\\sqrt{n}|x|$，所以 $|f_n(x)|\\le|x|/(2\\sqrt{n}|x|)=\\frac{1}{2\\sqrt{n}}$（$x\\ne0$；$x=0$ 時顯然）。",
+        "上界 $\\frac{1}{2\\sqrt{n}}$ 跟 $x$ 無關且 $\\to0$，所以在整條實數線上一致收斂。等號在 $x=\\frac{1}{\\sqrt{n}}$ 取到，所以 $\\|f_n\\|_\\infty$ 恰好是 $\\frac{1}{2\\sqrt{n}}$。"
+      ],
+      "answer": "一致收斂，$\\|f_n\\|_\\infty=\\frac{1}{2\\sqrt{n}}$",
+      "claim": "SUB(x/(1+n*x^2), 1/sqrt(n)) == 1/(2*sqrt(n)) ;; x/(1+n*x^2) <= 1/(2*sqrt(n))"
+    },
+    {
+      "title": "縮小定義域",
+      "prompt": "$f_n(x)=\\frac{nx}{1+n^2x^2}$。在 $[0,1]$ 與 $[\\frac{1}{2},1]$ 上分別判斷是否一致收斂到 0。",
+      "problemId": "an-uf-004",
+      "steps": [
+        "逐點極限都是 0。$f_n'(x)=\\frac{n(1-n^2x^2)}{(1+n^2x^2)^2}$：$x<\\frac{1}{n}$ 時遞增，$x>\\frac{1}{n}$ 時遞減。",
+        "$[0,1]$：取 $x_n=\\frac{1}{n}$，$f_n(x_n)=\\frac{1}{2}$，不趨近 0，不一致。",
+        "$[\\frac{1}{2},1]$：$n\\ge2$ 時 $\\frac{1}{n}\\le\\frac{1}{2}$，$f_n$ 在這段遞減，$\\|f_n\\|_\\infty=f_n(\\frac{1}{2})=\\frac{\\frac{n}{2}}{1+\\frac{n^2}{4}}=\\frac{2n}{4+n^2}\\to0$，一致收斂。"
+      ],
+      "answer": "$[0,1]$ 上不一致；$[\\frac{1}{2},1]$ 上一致",
+      "claim": "SUB(n*x/(1+n^2*x^2), 1/n) == 1/2 ;; SUB(n*x/(1+n^2*x^2), 1/2) == 2n/(4+n^2) ;; LIM(2n/(4+n^2), inf) == 0"
+    },
+    {
+      "title": "用 Dini 定理",
+      "prompt": "$f_n(x)=(1+\\frac{x}{n})^n$ 在 $[0,1]$ 上收斂到 $e^x$。證明是一致的，並求 $n=10$ 時的 $\\|e^x-f_{10}\\|_\\infty$。",
+      "steps": [
+        "單調：$x\\ge0$ 時，對 1 與 $n$ 個 $(1+\\frac{x}{n})$ 用算幾不等式，$(1+\\frac{x}{n})^{n/(n+1)}\\le\\frac{1+n(1+\\frac{x}{n})}{n+1}=1+\\frac{x}{n+1}$，兩邊 $n+1$ 次方得 $f_n(x)\\le f_{n+1}(x)$。",
+        "$[0,1]$ 有界閉、$f_n$ 與 $e^x$ 連續、對 $n$ 單調，由 Dini 定理一致收斂。",
+        "誤差 $h(x)=e^x-(1+\\frac{x}{n})^n$，$h'(x)=e^x-(1+\\frac{x}{n})^{n-1}\\ge e^x-(1+\\frac{x}{n})^n\\ge0$（因為 $1+\\frac{x}{n}\\ge1$，且 $(1+\\frac{x}{n})^n\\le e^x$），所以最大在 $x=1$：$\\|h\\|_\\infty=e-(1+\\frac{1}{n})^n$。",
+        "$n=10$：$e-1.1^{10}\\approx2.71828-2.59374\\approx0.1245$。"
+      ],
+      "answer": "一致收斂；$n=10$ 時 $\\|e^x-f_{10}\\|_\\infty=e-1.1^{10}\\approx0.1245$",
+      "note": "Dini 只告訴你「一致」，不告訴你速度；誤差的公式還是要自己算。",
+      "claim": "(1+x/9)^9 <= (1+x/10)^10 ;; (1+x/10)^10 <= e^x ;; e - (1+1/10)^10 > 0.124 ;; e - (1+1/10)^10 < 0.125"
+    }
+  ],
+  "pitfalls": [
+    "沒先求逐點極限就開始估 $\\|f_n-f\\|_\\infty$。",
+    "上界裡還留著 $x$（例如 $|f_n(x)|\\le\\frac{1}{nx}$），就宣稱一致收斂。上界必須與 $x$ 無關。",
+    "只代幾個固定的 $x$ 看到誤差 $\\to0$，就說一致。固定 $x$ 的檢查只能證逐點收斂。",
+    "用 Dini 時忘了檢查「極限連續」或「區間有界閉」。"
+  ],
+  "checks": [
+    {
+      "ask": "判斷 $f_n$ 是否一致收斂，第一步應該做什麼？",
+      "options": [
+        { "label": "先固定 $x$ 求逐點極限 $f$", "correct": true },
+        { "label": "直接對 $f_n$ 微分找最大值", "why": "你要的是 $|f_n-f|$ 的最大值，不是 $f_n$ 的。不先知道 $f$，算出來的 $\\sup$ 沒有意義（除非 $f\\equiv0$）。" },
+        { "label": "檢查每個 $f_n$ 是否連續", "why": "連續性只能拿來否定（極限不連續 $\\Rightarrow$ 不一致），不能當判斷的起點。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=\\frac{x}{1+nx^2}$ 在 $\\mathbb{R}$ 上，$\\|f_n\\|_\\infty$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{2\\sqrt{n}}$", "correct": true },
+        { "label": "$\\frac{1}{n}$", "why": "你可能代了 $x=1$：$\\frac{1}{1+n}$，大約 $\\frac{1}{n}$。最大值在 $x=\\frac{1}{\\sqrt{n}}$，不在 $x=1$。" },
+        { "label": "$\\infty$", "why": "分子 $x$ 變大時分母 $nx^2$ 變得更快，$f_n$ 有界。由 $1+nx^2\\ge2\\sqrt{n}|x|$ 可得上界 $\\frac{1}{2\\sqrt{n}}$。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=\\frac{nx}{1+n^2x^2}$ 在 $[\\frac{1}{2},1]$ 上，下列何者正確？",
+      "options": [
+        { "label": "一致收斂，因為 $n\\ge2$ 時 $\\|f_n\\|_\\infty=\\frac{2n}{4+n^2}\\to0$", "correct": true },
+        { "label": "不一致，因為 $f_n(\\frac{1}{n})=\\frac{1}{2}$", "why": "你沿用了 $[0,1]$ 的論證。$n\\ge3$ 時 $\\frac{1}{n}<\\frac{1}{2}$，$x_n=\\frac{1}{n}$ 根本不在 $[\\frac{1}{2},1]$ 裡。" },
+        { "label": "不一致，因為高峰的高度一直是 $\\frac{1}{2}$", "why": "高峰在 $x=\\frac{1}{n}$，已經跑出 $[\\frac{1}{2},1]$。這段區間上 $f_n$ 是遞減的，最大在 $x=\\frac{1}{2}$。" }
+      ]
+    },
+    {
+      "ask": "$x^n$ 在 $[0,1)$ 上單調遞減到連續的 0，每個 $x^n$ 也連續，卻不一致收斂。它違反 Dini 定理的哪個條件？",
+      "options": [
+        { "label": "定義域不是有界閉區間", "correct": true },
+        { "label": "極限函數不連續", "why": "在 $[0,1)$ 上極限是 0，連續。不連續是 $[0,1]$ 那個例子的問題。" },
+        { "label": "$f_n(x)$ 對 $n$ 不單調", "why": "$0\\le x<1$ 時 $x^{n+1}\\le x^n$，是單調的。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence"],
+    "fine": ["uniformconv-sup-norm", "uniformconv-bound-independent-of-x", "uniformconv-negation-witness", "uniformconv-restrict-domain", "uniformconv-dini"]
+  },
+  "practice": [
+    { "id": "an-uf-002", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-004", "core": true, "trains": "uniformconv-negation-witness" },
+    { "id": "an-uf-001", "core": true, "trains": "uniformconv-negation-witness" },
+    { "id": "an-uf-003", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "cg-12f-010", "core": true, "trains": "uniformconv-bound-independent-of-x" },
+    { "id": "cg-12f-013", "core": true, "trains": "uniformconv-restrict-domain" },
+    { "id": "cg-12f-011", "trains": "uniformconv-bound-independent-of-x" },
+    { "id": "cg-12f-012", "trains": "uniformconv-bound-independent-of-x" },
+    { "id": "cg-12f-014", "trains": "uniformconv-restrict-domain" },
+    { "id": "cg-12f-016", "trains": "uniformconv-dini" },
+    { "id": "an-uf-005", "challenge": true, "trains": "uniformconv-negation-witness", "note": "挑戰：高峰位置 $\\frac{1}{\\sqrt{2n}}$ 就是要找的 $x_n$。" },
+    { "id": "cg-12f-015", "challenge": true, "trains": "uniformconv-dini" }
+  ],
+  "gaps": []
+}

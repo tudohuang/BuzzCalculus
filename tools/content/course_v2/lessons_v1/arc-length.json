@@ -1,0 +1,445 @@
+{
+  "id": "arc-length",
+  "title": "弧長",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "riemann-sum-intuition",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "surface-area-revolution"
+  ],
+  "related": [
+    "parametric-arc-length",
+    "trig-sub-x2-plus-a2"
+  ],
+  "objectives": [
+    "從「短線段的長度 $\\sqrt{\\Delta x^2+\\Delta y^2}$」推出 $L=\\int\\sqrt{1+f'(x)^2}\\,dx$。",
+    "看出 $1+f'^2$ 是完全平方的設計，把根號開掉。",
+    "知道多數弧長積分沒有初等反導函數，題目是刻意挑過的。"
+  ],
+  "visual": "曲線 y = x³/6 + 1/(2x)（1 ≤ x ≤ 2）上取 n 個點連成折線，旁邊顯示折線總長。拖動 n 從 2 加到 50，折線越來越貼曲線，總長從下方逼近 17/12 ≈ 1.4167。點開其中一段，標出 Δx、Δy 和斜邊。",
+  "concept": [
+    {
+      "heading": "① 用很多短線段去量",
+      "body": [
+        "直觀，不是證明：把曲線 $y=f(x)$ 切成很多小段，每一小段幾乎是直的，用直線段代替。水平走 $\\Delta x$、垂直走 $\\Delta y$，線段長是 $\\sqrt{\\Delta x^2+\\Delta y^2}=\\sqrt{1+(\\Delta y/\\Delta x)^2}\\cdot\\Delta x$。",
+        "$\\Delta x$ 很小時，$\\Delta y/\\Delta x$ 接近斜率 $f'(x)$。全部加起來、讓 $\\Delta x\\to 0$："
+      ],
+      "tex": [
+        "L=\\int_a^b \\sqrt{1+f'(x)^2}\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 條件與嚴格的那一步",
+      "body": [
+        "公式要求 $f'$ 在 $[a,b]$ 上連續。直觀說明裡「$\\Delta y/\\Delta x$ 接近 $f'(x)$」是近似；嚴格的版本見下方可折疊段落，用的是〈均值定理〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼題目總是長得很奇怪",
+      "body": [
+        "$\\sqrt{1+f'^2}$ 大多數時候沒有初等反導函數。連 $y=x^3$ 這麼簡單的曲線，弧長積分 $\\int\\sqrt{1+9x^4}\\,dx$ 都寫不成常見函數。所以課本與考題的曲線都是挑過的，讓 $1+f'^2$ 剛好是完全平方：",
+        "常見設計是 $f'=A-B$ 而且 $AB=\\frac{1}{4}$，這時 $1+(A-B)^2=(A+B)^2$。另一種是三角恆等式 $1+\\tan^2x=\\sec^2x$。遇到開不掉的，只能數值估計，或用〈√(x² + a²)〉這類代換硬算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 對 y 的版本",
+      "body": [
+        "曲線寫成 $x=g(y)$（$c\\le y\\le d$）時，同樣的推導給 $L=\\int\\sqrt{1+g'(y)^2}\\,dy$。參數曲線的版本在〈參數式弧長〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 嚴格推導：均值定理",
+      "body": [
+        "在 $[x_{i-1},x_i]$ 上，$f$ 可微，由均值定理存在 $c_i$ 使 $f(x_i)-f(x_{i-1})=f'(c_i)\\Delta x$。所以第 $i$ 段線段長恰好是 $\\sqrt{1+f'(c_i)^2}\\,\\Delta x$，沒有任何近似。折線總長 $\\sum\\sqrt{1+f'(c_i)^2}\\,\\Delta x$ 正是 $\\sqrt{1+f'^2}$ 的 Riemann 和；$f'$ 連續保證這個函數可積，$\\Delta x\\to 0$ 時和收斂到積分。弧長的定義就是折線長的極限，所以兩者相等。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$1+f'^2$ 本身就簡單",
+      "prompt": "求 $y=\\frac{2}{3}x^{3/2}$，$0\\le x\\le 3$ 的弧長。",
+      "problemId": "lec-09-q3a",
+      "steps": [
+        "$y'=\\frac{2}{3}\\cdot\\frac{3}{2}x^{1/2}=\\sqrt{x}$，$1+(y')^2=1+x$。",
+        "$L=\\int_0^3\\sqrt{1+x}\\,dx=\\left[\\frac{2}{3}(1+x)^{3/2}\\right]_0^3=\\frac{2}{3}(8-1)=\\frac{14}{3}$。"
+      ],
+      "answer": "$\\frac{14}{3}$",
+      "claim": "D((2/3)*x^(3/2)) == sqrt(x) ;; INT(sqrt(1+x), 0, 3) == 14/3"
+    },
+    {
+      "title": "完全平方的設計",
+      "prompt": "求 $y=\\frac{x^3}{6}+\\frac{1}{2x}$，$1\\le x\\le 2$ 的弧長。",
+      "problemId": "cx-arc-002",
+      "steps": [
+        "$y'=\\frac{x^2}{2}-\\frac{1}{2x^2}$。這是 $A-B$，$A=\\frac{x^2}{2}$、$B=\\frac{1}{2x^2}$，$AB=\\frac{1}{4}$。",
+        "$(y')^2=\\frac{x^4}{4}-\\frac{1}{2}+\\frac{1}{4x^4}$，所以 $1+(y')^2=\\frac{x^4}{4}+\\frac{1}{2}+\\frac{1}{4x^4}=\\left(\\frac{x^2}{2}+\\frac{1}{2x^2}\\right)^2$。",
+        "在 $[1,2]$ 上 $\\frac{x^2}{2}+\\frac{1}{2x^2}>0$，開根號就是它本身。",
+        "$L=\\int_1^2\\left(\\frac{x^2}{2}+\\frac{1}{2x^2}\\right)dx=\\left[\\frac{x^3}{6}-\\frac{1}{2x}\\right]_1^2=\\left(\\frac{4}{3}-\\frac{1}{4}\\right)-\\left(\\frac{1}{6}-\\frac{1}{2}\\right)=\\frac{17}{12}$。"
+      ],
+      "answer": "$\\frac{17}{12}$",
+      "claim": "1+D(x^3/6+1/(2x))^2 == (x^2/2+1/(2x^2))^2 ;; INT(sqrt(1+(x^2/2-1/(2x^2))^2), 1, 2) == 17/12"
+    },
+    {
+      "title": "三角恆等式",
+      "prompt": "求 $y=\\ln(\\cos x)$，$0\\le x\\le\\frac{\\pi}{3}$ 的弧長。",
+      "problemId": "cx-arc-004",
+      "steps": [
+        "$y'=\\frac{-\\sin x}{\\cos x}=-\\tan x$。$1+\\tan^2x=\\sec^2x$。",
+        "在 $\\left[0,\\frac{\\pi}{3}\\right]$ 上 $\\sec x>0$，$\\sqrt{\\sec^2x}=\\sec x$。",
+        "$L=\\int_0^{\\pi/3}\\sec x\\,dx=[\\ln|\\sec x+\\tan x|]_0^{\\pi/3}=\\ln(2+\\sqrt{3})-\\ln 1=\\ln(2+\\sqrt{3})$。"
+      ],
+      "answer": "$\\ln(2+\\sqrt{3})$",
+      "claim": "INT(sqrt(1+tan(x)^2), 0, pi/3) == ln(2+sqrt(3))"
+    }
+  ],
+  "pitfalls": [
+    "根號裡放了 $f(x)^2$ 而不是 $f'(x)^2$。",
+    "把 $\\sqrt{1+f'^2}$ 拆成 $1+f'$。",
+    "開根號時沒確認被開的式子 $\\ge 0$（例如 $\\sec x$ 在區間內要是正的）。",
+    "以為每個弧長積分都算得出來；多數只能數值估計。"
+  ],
+  "checks": [
+    {
+      "ask": "$y=f(x)$ 在 $[a,b]$ 的弧長是？",
+      "options": [
+        {
+          "label": "$\\int_a^b\\sqrt{1+f'(x)^2}\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\int_a^b\\sqrt{1+f(x)^2}\\,dx$",
+          "why": "每一小段的垂直變化是 $\\Delta y\\approx f'(x)\\Delta x$，根號裡要的是斜率，不是高度。"
+        },
+        {
+          "label": "$\\int_a^b(1+f'(x))\\,dx$",
+          "why": "線段長是 $\\sqrt{\\Delta x^2+\\Delta y^2}$，你把兩股直接相加了；兩股和比斜邊長。"
+        }
+      ]
+    },
+    {
+      "ask": "$y=\\frac{2}{3}x^{3/2}$ 時，$1+(y')^2$ 是？",
+      "options": [
+        {
+          "label": "$1+x$",
+          "correct": true
+        },
+        {
+          "label": "$1+x^3$",
+          "why": "$y'=x^{1/2}$，平方是 $x$；$x^3$ 是把指數 $\\frac{3}{2}$ 再乘 2，是對 $y$ 本身平方。"
+        },
+        {
+          "label": "$1+\\frac{4}{9}x^3$",
+          "why": "這是 $1+y^2$：把函數本身平方了，公式要的是導數。"
+        }
+      ]
+    },
+    {
+      "ask": "直線 $y=2x+1$ 在 $0\\le x\\le 3$ 的長度是？",
+      "options": [
+        {
+          "label": "$3\\sqrt{5}$",
+          "correct": true
+        },
+        {
+          "label": "6",
+          "why": "6 只是高度的變化 $\\Delta y$；線段長要 $\\sqrt{3^2+6^2}=3\\sqrt{5}$。"
+        },
+        {
+          "label": "9",
+          "why": "這是 $\\Delta x+\\Delta y=3+6$：兩股相加比斜邊長。"
+        }
+      ]
+    },
+    {
+      "ask": "弧長考題的 $1+f'^2$ 常常剛好是完全平方，原因是？",
+      "options": [
+        {
+          "label": "$\\sqrt{1+f'^2}$ 多半沒有初等反導函數，題目刻意挑了能開根號的曲線",
+          "correct": true
+        },
+        {
+          "label": "$1+f'^2$ 對任何多項式都是完全平方",
+          "why": "$y=x^2$ 就不是：$1+4x^2$ 開不出多項式。"
+        },
+        {
+          "label": "弧長一定是有理數",
+          "why": "範例 3 的弧長是 $\\ln(2+\\sqrt{3})$，不是有理數；重點是反導函數能不能寫出來。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "用短線段去量",
+      "beats": [
+        { "show": ["切成小段，每段用直線段代替"],
+          "note": "直觀，不是證明：每一小段幾乎是直的。",
+          "say": "曲線的長度怎麼量？把它切成很多小段，每一小段幾乎是直的，就用直線段代替。",
+          "board": [
+            {"do":"write","line":"切成小段，每段用直線段代替"}
+          ] },
+        { "show": ["線段長 $\\sqrt{\\Delta x^2+\\Delta y^2}$"],
+          "note": "水平走 $\\Delta x$，垂直走 $\\Delta y$。",
+          "say": "水平走 delta x、垂直走 delta y，線段長就是畢氏定理的斜邊。",
+          "board": [
+            {"do":"write","line":"線段長 $={{s:\\sqrt{\\Delta x^2+\\Delta y^2}}}$"},
+            {"do":"underline","term":"s","label":"斜邊","on":"畢氏定理"}
+          ] },
+        { "show": ["$=\\sqrt{1+(\\Delta y/\\Delta x)^2}\\cdot\\Delta x$"],
+          "note": "$\\Delta x$ 很小時，$\\Delta y/\\Delta x$ 接近斜率 $f'(x)$。",
+          "say": "把 delta x 提出來，根號裡剩一加斜率平方。delta x 很小時，這個斜率就接近 f prime。",
+          "board": [
+            {"do":"transform","line":"$=\\sqrt{1+({{q:\\Delta y/\\Delta x}})^2}\\cdot\\Delta x$"},
+            {"do":"underline","term":"q","label":"接近斜率","on":"很小時"}
+          ] },
+        { "show": ["$y=x^2$ 在 $x=1$：斜率 $2$","$\\Delta x$ 越小，比值越靠近 $2$"],
+          "say": "試一個：x 平方在一的斜率是二。一到二，比值是三；一到二分之三，比值是二分之五。區間越窄，越靠近二。",
+          "board": [
+            {"do":"write","line":"$y=x^2$：$f'(1)=2$"},
+            {"do":"write","line":"$\\Delta x=1$：比值 $3$","on":"比值是三"},
+            {"do":"write","line":"$\\Delta x=\\frac{1}{2}$：比值 $\\frac{5}{2}$","on":"二分之五"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "弧長公式",
+      "beats": [
+        { "show": ["每段長 $\\sqrt{1+f'^2}\\,\\Delta x$，加起來成一個和"],
+          "note": "$\\Delta x$ 越小，和越靠近積分。",
+          "say": "每小段長是根號一加斜率平方乘 delta x，全部加起來是一個和。delta x 越小，和越靠近積分。",
+          "board": [
+            {"do":"write","line":"$L\\approx{{s:\\sum\\sqrt{1+f'(x_i)^2}\\,\\Delta x}}$"},
+            {"do":"underline","term":"s","label":"所有段","on":"全部加起來"},
+            {"do":"write","line":"$\\Delta x\\to 0$：和 $\\to$ 積分","on":"越小"}
+          ] },
+        { "show": ["$L=\\int_a^b\\sqrt{1+f'(x)^2}\\,dx$"],
+          "note": "要 $f'$ 連續。嚴格推導在全文。",
+          "say": "全部加起來，讓 delta x 趨近零，就是弧長公式。條件是 f prime 要連續。",
+          "board": [
+            {"do":"write","line":"${{f:L=\\int_a^b\\sqrt{1+f'(x)^2}\\,dx}}$"},
+            {"do":"box","term":"f","color":"green","on":"弧長公式"},
+            {"do":"write","line":"條件：$f'$ 連續","on":"條件"}
+          ] },
+        { "show": ["根號裡是斜率，不是高度"],
+          "note": "也不能拆成 $1+f'$。",
+          "say": "注意根號裡放的是導數的平方，不是函數本身；根號也不能拆開。",
+          "board": [
+            {"do":"write","line":"根號裡：${{d:f'(x)^2}}$，不是 ${{w:f(x)^2}}$"},
+            {"do":"underline","term":"d","color":"blue","on":"導數的平方"},
+            {"do":"strike","term":"w","on":"函數本身"},
+            {"do":"write","line":"$\\sqrt{1+f'^2}\\ne 1+f'$","on":"根號也"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算一個",
+      "beats": [
+        { "show": ["$y=\\frac{2}{3}x^{3/2}$，$0\\le x\\le 3$"],
+          "say": "三分之二 x 的二分之三次方，從零到三。先求導數。",
+          "board": [
+            {"do":"write","line":"$y=\\frac{2}{3}x^{3/2}$，$0\\le x\\le 3$"}
+          ] },
+        { "show": ["$(x^n)'=n\\,x^{n-1}$"],
+          "note": "指數掉下來，再減一。",
+          "say": "次方的微分：指數掉下來乘在前面，指數減一。x 平方變二 x。x 的二分之三次方，指數減一是二分之一。",
+          "board": [
+            {"do":"write","line":"$(x^n)'=n\\,x^{n-1}$"},
+            {"do":"write","line":"$(x^2)'=2x$","on":"x 平方變"},
+            {"do":"write","line":"$x^{3/2}\\to\\frac{3}{2}\\,x^{1/2}$","on":"二分之三次方"}
+          ] },
+        { "show": ["$y'=\\frac{2}{3}\\cdot\\frac{3}{2}x^{1/2}=\\sqrt{x}$"],
+          "say": "指數二分之三掉下來，跟三分之二乘起來是一，導數就是根號 x。",
+          "board": [
+            {"do":"write","line":"$y'=\\frac{2}{3}\\cdot{{e:\\frac{3}{2}}}\\,x^{1/2}$"},
+            {"do":"underline","term":"e","on":"掉下來"},
+            {"do":"transform","line":"$y'={{r:\\sqrt{x}}}$","on":"乘起來"},
+            {"do":"box","term":"r","color":"green","on":"導數就是"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "積出來",
+      "beats": [
+        { "show": ["$L=\\int_0^3\\sqrt{1+x}\\,dx$"],
+          "note": "$1+(y')^2=1+x$。",
+          "say": "一加根號 x 的平方是一加 x，弧長就是根號一加 x 從零積到三。",
+          "board": [
+            {"do":"write","line":"$1+(\\sqrt{x})^2={{a:1+x}}$"},
+            {"do":"transform","line":"$L=\\int_0^3\\sqrt{{{a:1+x}}}\\,dx$","on":"弧長就是"}
+          ] },
+        { "show": ["猜 $(1+x)^{3/2}$，微分檢查"],
+          "note": "多了 $\\frac{3}{2}$，就補 $\\frac{2}{3}$。",
+          "say": "反導函數怎麼找？先猜一加 x 的二分之三次方，微分得二分之三乘根號一加 x，多了二分之三，所以前面補三分之二。",
+          "board": [
+            {"do":"write","line":"$((1+x)^{3/2})'=\\frac{3}{2}\\sqrt{1+x}$"},
+            {"do":"write","line":"補 $\\frac{2}{3}$：導數剛好是 $\\sqrt{1+x}$","on":"補"}
+          ] },
+        { "show": ["$\\left[\\frac{2}{3}(1+x)^{3/2}\\right]_0^3$"],
+          "say": "反導函數是三分之二乘一加 x 的二分之三次方，代上限減代下限。",
+          "board": [
+            {"do":"transform","line":"$L={{g:\\left[\\frac{2}{3}(1+x)^{3/2}\\right]_0^3}}$"},
+            {"do":"underline","term":"g","label":"代上減下","on":"代上限"}
+          ] },
+        { "show": ["陰影：$\\sqrt{1+x}$ 從 $0$ 到 $3$"],
+          "note": "反導函數的差，量的是累積。",
+          "say": "圖上的陰影，是根號一加 x 從零到三的面積。反導函數代上限減代下限，量的就是這塊累積。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,4,-1,3],"curves":[{"expr":"sqrt(1+x)","domain":[-1,4],"color":"blue"}],"fills":[{"expr":"sqrt(1+x)","from":0,"to":3,"color":"green"}]}}
+          ] }
+      ],
+      "predict": {
+        "ask": "弧長是？",
+        "options": [
+          {
+            "label": "$\\frac{2}{3}(8-1)=\\frac{14}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{2}{3}\\cdot 8$",
+            "why": "下限代 $0$ 是 $(1+0)^{3/2}=1$，不是 $0$，要減掉。"
+          },
+          {
+            "label": "$\\frac{3}{2}(8-1)$",
+            "why": "$(1+x)^{1/2}$ 積分要除以新指數 $\\frac{3}{2}$，也就是乘 $\\frac{2}{3}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "題目為什麼很奇怪",
+      "beats": [
+        { "show": ["$\\sqrt{1+f'^2}$ 多半沒有初等反導函數"],
+          "note": "連 $y=x^3$ 的 $\\int\\sqrt{1+9x^4}\\,dx$ 都寫不出來。",
+          "say": "這個根號大多數時候沒有初等反導函數，連 x 三次方的弧長都寫不出來。所以題目都是挑過的。",
+          "board": [
+            {"do":"write","line":"$\\sqrt{1+f'^2}$：沒有初等反導函數"},
+            {"do":"write","line":"$y=x^3$：$\\int\\sqrt{1+9x^4}\\,dx$","on":"x 三次方"}
+          ] },
+        { "show": ["設計：$f'=A-B$，$AB=\\frac{1}{4}$"],
+          "note": "$1+(A-B)^2=(A+B)^2$。",
+          "say": "常見設計是導數長成 A 減 B，而且 A 乘 B 是四分之一，一加平方就變成 A 加 B 的完全平方。",
+          "board": [
+            {"do":"write","line":"$f'=A-B$，$AB=\\frac{1}{4}$"},
+            {"do":"write","line":"$1+(A-B)^2={{s:(A+B)^2}}$","on":"一加平方"},
+            {"do":"box","term":"s","color":"green","on":"完全平方"}
+          ] },
+        { "show": ["或：$1+\\tan^2x=\\sec^2x$"],
+          "note": "開不掉的，只能數值估計或代換硬算。",
+          "say": "另一種是三角恆等式。遇到開不掉的，就只能數值估計，或用三角代換硬算。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$1+\\tan^2x=\\sec^2x$","on":"三角恆等式"},
+            {"do":"write","line":"開不掉：數值估計、三角代換","on":"開不掉的"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "三角恆等式",
+      "beats": [
+        { "show": ["$(\\ln u)'=\\frac{1}{u}$，再乘 $u'$"],
+          "note": "外層 $\\ln u$，裡層 $u=\\cos x$。",
+          "say": "ln cosine x 是兩層：外層導數是一除以 u，裡層導數是負 sine x。相乘得負 sine 除以 cosine。",
+          "board": [
+            {"do":"write","line":"$(\\ln u)'=\\frac{1}{u}$，$u=\\cos x$"},
+            {"do":"write","line":"$(\\cos x)'=-\\sin x$","on":"裡層"},
+            {"do":"write","line":"$\\frac{1}{\\cos x}\\cdot(-\\sin x)$","on":"相乘"}
+          ] },
+        { "show": ["$y=\\ln(\\cos x)$，$0\\le x\\le\\frac{\\pi}{3}$"],
+          "note": "$y'=\\frac{-\\sin x}{\\cos x}=-\\tan x$。",
+          "say": "自然對數 cosine x，從零到三分之 pi。導數是負 tangent x。",
+          "board": [
+            {"do":"write","line":"$y=\\ln(\\cos x)$，$0\\le x\\le\\frac{\\pi}{3}$"},
+            {"do":"write","line":"$y'=-{{t:\\tan x}}$","on":"導數是"}
+          ] },
+        { "show": ["$1+\\tan^2x=\\sec^2x$"],
+          "note": "這一段 $\\sec x>0$。",
+          "say": "一加 tangent 平方剛好是 secant 平方，而且這一段 secant 是正的，可以直接開根號。",
+          "board": [
+            {"do":"write","line":"$1+{{u:\\tan^2x}}={{s:\\sec^2x}}$"},
+            {"do":"write","line":"這一段 $\\sec x>0$","on":"這一段"}
+          ] }
+      ],
+      "key": "先求 $y'$，平方後找能開根號的恆等式",
+      "predict": {
+        "ask": "弧長是？",
+        "options": [
+          {
+            "label": "$\\int_0^{\\pi/3}\\sec x\\,dx=\\ln(2+\\sqrt{3})$",
+            "correct": true
+          },
+          {
+            "label": "$\\int_0^{\\pi/3}\\sec^2x\\,dx$",
+            "why": "還要開根號：$\\sqrt{\\sec^2x}=\\sec x$。"
+          },
+          {
+            "label": "$\\int_0^{\\pi/3}(1-\\tan x)\\,dx$",
+            "why": "根號不能拆：$\\sqrt{1+f'^2}$ 不等於 $1+f'$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "arc-length"
+    ],
+    "fine": [
+      "arc-length-formula",
+      "arc-length-perfect-square",
+      "arc-length-identity"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-09-q3a",
+      "core": true,
+      "trains": "arc-length-formula"
+    },
+    {
+      "id": "tb-arc-003",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "tb-arc-001",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "lec-09-q3b",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "cx-arc-004",
+      "trains": "arc-length-identity"
+    },
+    {
+      "id": "cx-arc-005",
+      "trains": "arc-length-identity"
+    },
+    {
+      "id": "lec-09-m5",
+      "trains": "arc-length-formula"
+    },
+    {
+      "id": "tb-arc-002",
+      "challenge": true,
+      "trains": "arc-length-formula",
+      "note": "挑戰：$1+x^2$ 開不掉，要用三角代換或 $\\sinh$ 代換算 $\\int_0^1\\sqrt{1+x^2}\\,dx$。"
+    }
+  ],
+  "gaps": []
+}

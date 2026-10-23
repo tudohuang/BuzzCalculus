@@ -1,51 +1,165 @@
 {
   "id": "undetermined-coefficients",
   "title": "待定係數",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["distinct-real-roots", "repeated-roots", "complex-roots"],
-  "next": ["variation-of-parameters"],
-  "related": ["driven-oscillator", "resonance"],
+  "prerequisites": [
+    "distinct-real-roots",
+    "repeated-roots",
+    "complex-roots"
+  ],
+  "next": [
+    "variation-of-parameters"
+  ],
+  "related": [
+    "driven-oscillator",
+    "resonance"
+  ],
   "objectives": [
-    "知道非齊次方程的通解是 $y=y_h+y_p$，並說得出為什麼。",
-    "右邊是多項式、指數、$\\sin/\\cos$ 時，寫出正確的猜測形式並解出係數。",
-    "猜測的某一項已經是齊次解時，會乘上 $x$（重根時乘 $x^2$）修正。"
+    "知道非齊次方程的通解是 $y=y_h+y_p$，並說得出為什麼",
+    "右邊是多項式、指數、$\\sin/\\cos$ 時，寫出正確的猜測形式並解出係數",
+    "猜測的某一項已經是齊次解時，會乘上 $x$（重根時乘 $x^2$）修正"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 通解 $={}$ 齊次解 $+$ 一個特解",
+      "heading": "① 通解＝齊次＋特解",
       "body": [
-        "$ay''+by'+cy=g(x)$，右邊 $g$ 不是 $0$。先解齊次方程（右邊換成 $0$）得 $y_h$，裡面有兩個常數；再找任何一個滿足原方程的函數 $y_p$（特解）。通解就是 $y=y_h+y_p$。",
-        "理由：若 $y$ 是任一個解，$y-y_p$ 代入左邊得 $g-g=0$，所以 $y-y_p$ 是齊次解，也就是 $y_h$ 的某一個。"
+        "非齊次方程：右邊多了一個 $g(x)$",
+        "把左邊記成 $L[y]=y''+py'+qy$",
+        "$L[y_1+y_2]=L[y_1]+L[y_2]$，$L[cy]=cL[y]$",
+        "定理：先找到任何一個特解 $y_p$，則所有解是",
+        "為什麼：設 $y$ 是任意一個解，看差 $y-y_p$：",
+        "所以 $y-y_p$ 是齊次解，可以寫成 $c_1y_1+c_2y_2$",
+        "反過來，$L[y_h+y_p]=0+g=g$：每個 $y_h+y_p$ 也都是解。跟 $A\\mathbf{x}=\\mathbf{b}$ 的解一樣",
+        "工作只剩一件：找一個 $y_p$"
       ],
-      "collapsible": false
+      "tex": [
+        "y''+py'+qy=g(x)",
+        "y=y_h+y_p=c_1y_1+c_2y_2+y_p",
+        "L[y-y_p]=L[y]-L[y_p]=g-g=0"
+      ]
     },
     {
-      "heading": "② 猜一個跟右邊同家族的函數",
+      "heading": "② 猜同家族的函數",
       "body": [
-        "多項式、指數、$\\sin/\\cos$ 微分之後還是同一家族，所以照右邊的樣子猜，係數留成未知數，代入比對：",
-        "$g$ 是 $n$ 次多項式 $\\to$ 猜一般的 $n$ 次多項式（每一次方都要有）。",
-        "$g$ 是 $e^{kx}$ $\\to$ 猜 $Ae^{kx}$。",
-        "$g$ 是 $\\cos\\omega x$ 或 $\\sin\\omega x$ $\\to$ 猜 $A\\cos\\omega x+B\\sin\\omega x$。兩個都要，因為微分會把 $\\cos$ 變成 $\\sin$。",
-        "乘積照樣相乘，例如 $xe^x\\to(Ax+B)e^x$。"
+        "例：$y''-y=e^{2x}$，$y(0)=\\frac13$，$y'(0)=\\frac23$",
+        "$e^{2x}$ 微分幾次還是 $e^{2x}$ 的倍數：猜 $y_p=Ae^{2x}$",
+        "代入：$y_p''=4Ae^{2x}$",
+        "齊次：$r^2-1=0$，$r=\\pm1$",
+        "初始條件：",
+        "$c_1=c_2=0$：$\\;y=\\dfrac13e^{2x}$"
       ],
-      "collapsible": false
+      "tex": [
+        "4Ae^{2x}-Ae^{2x}=3Ae^{2x}=e^{2x}",
+        "A=\\frac13,\\qquad y_p=\\frac13e^{2x}",
+        "y=c_1e^{x}+c_2e^{-x}+\\frac13e^{2x}",
+        "\\begin{aligned}y(0)&=c_1+c_2+\\tfrac13=\\tfrac13\\\\y'(0)&=c_1-c_2+\\tfrac23=\\tfrac23\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 修正規則：猜到齊次解就乘 $x$",
+      "heading": "② 猜測的對照表",
       "body": [
-        "$y''+y'=1$：猜常數 $A$，代入得 $0=1$，失敗。原因是常數本身就是齊次解（$r=0$ 是特徵根），代進左邊一定是 $0$。",
-        "辦法：猜測裡和齊次解重複的部分乘上 $x$；如果那個根是重根，乘 $x^2$。乘完要確定已經不和齊次解重複。"
+        "右邊 $g(x)$ → 猜 $y_p$：",
+        "• $n$ 次多項式 → 完整的 $n$ 次多項式 $A_nx^n+\\cdots+A_0$",
+        "• $e^{ax}$ → $Ae^{ax}$",
+        "• $\\cos bx$ 或 $\\sin bx$ → 兩個都要：$A\\cos bx+B\\sin bx$",
+        "• 乘積（如 $xe^{x}$）→ 形式相乘：$(Ax+B)e^{x}$",
+        "共同點：這些家族微分之後還在家族裡",
+        "$\\ln x$、$\\tan x$、$\\frac1x$ 微分會跑出新東西，猜不完：下一課用參數變異",
+        "例：$y''+y'=2\\sin x$",
+        "猜 $y_p=A\\cos x+B\\sin x$",
+        "餘弦：$-A+B=0$；正弦：$-A-B=2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}y_p'&=-A\\sin x+B\\cos x\\\\y_p''&=-A\\cos x-B\\sin x\\end{aligned}",
+        "(-A+B)\\cos x+(-A-B)\\sin x=2\\sin x",
+        "A=B=-1,\\qquad y_p=-\\cos x-\\sin x"
+      ]
+    },
+    {
+      "heading": "② 多項式要猜完整",
+      "body": [
+        "例：$y''-3y'+2y=2x$，$y(0)=\\frac32$，$y'(0)=1$",
+        "$y_p=Ax+B$：$y_p'=A$，$y_p''=0$",
+        "比係數：",
+        "只猜 $Ax$：常數項要 $-3A=0$，又要 $2A=2$，矛盾",
+        "齊次 $r^2-3r+2=(r-1)(r-2)$：",
+        "$c_1+c_2=0$，$c_1+2c_2+1=1$ ⇒ $c_1=c_2=0$"
+      ],
+      "tex": [
+        "-3A+2(Ax+B)=2x",
+        "\\begin{aligned}x:&\\quad 2A=2\\ \\Rightarrow\\ A=1\\\\\\text{常數}:&\\quad 2B-3A=0\\ \\Rightarrow\\ B=\\tfrac32\\end{aligned}",
+        "y=c_1e^{x}+c_2e^{2x}+x+\\tfrac32",
+        "y=x+\\tfrac32"
+      ]
+    },
+    {
+      "heading": "③ 猜到齊次解就乘 x",
+      "body": [
+        "例：$y''-3y'+2y=e^{x}$，求一個特解",
+        "照表猜 $Ae^{x}$：",
+        "原因：$r=1$ 是特徵根，$e^{x}$ 本身就是齊次解",
+        "修正：乘上 $x$，猜 $y_p=Axe^{x}$",
+        "$y_p'=A(x+1)e^{x}$，$y_p''=A(x+2)e^{x}$",
+        "修正規則：猜的某一項是齊次解 → 乘 $x$；乘完還是，再乘一次",
+        "單根乘 $x$；重根（$e^{rx}$、$xe^{rx}$ 都是齊次解）乘 $x^2$"
+      ],
+      "tex": [
+        "A-3A+2A=0\\ne e^{x}",
+        "A\\big[(x+2)-3(x+1)+2x\\big]e^{x}=-Ae^{x}",
+        "-A=1,\\qquad y_p=-xe^{x}"
+      ]
+    },
+    {
+      "heading": "③ 重根：乘 x²",
+      "body": [
+        "例：$y''-2y'+y=e^{x}$，$r=1$ 是重根",
+        "$e^{x}$、$xe^{x}$ 都是齊次解 → 猜 $Ax^2e^{x}$"
+      ],
+      "tex": [
+        "\\begin{aligned}y_p'&=A(x^2+2x)e^{x}\\\\y_p''&=A(x^2+4x+2)e^{x}\\end{aligned}",
+        "A\\big[(x^2+4x+2)-2(x^2+2x)+x^2\\big]e^{x}=2Ae^{x}",
+        "2A=1,\\qquad y_p=\\tfrac12x^2e^{x}"
+      ]
     },
     {
       "heading": "④ 初始條件最後才用",
       "body": [
-        "先寫出完整的 $y=y_h+y_p$，再代 $y(0)$、$y'(0)$ 解 $C_1$、$C_2$。只對 $y_h$ 代初始條件是常見錯誤：$y_p$ 在 $0$ 也有值。"
+        "例：$y''+y'=1$，$y(0)=0$，$y'(0)=0$",
+        "齊次：$r^2+r=0$，$r=0,-1$ → $y_h=c_1+c_2e^{-x}$",
+        "右邊是常數 $1=e^{0x}$：照表猜 $A$",
+        "但 $r=0$ 是根，常數是齊次解 → 猜 $Ax$",
+        "$y_p'=A$，$y_p''=0$：$0+A=1$",
+        "通解：$y=c_1+c_2e^{-x}+x$",
+        "$c_2=1$，$c_1=-1$：",
+        "常見錯誤：先對 $y_h$ 用初始條件得 $c_1=c_2=0$，再加 $x$",
+        "結果 $y=x$，但 $y'(0)=1\\ne0$",
+        "初始條件是整個解要滿足的，不是 $y_h$ 要滿足的"
       ],
-      "collapsible": false
+      "tex": [
+        "y_p=x",
+        "\\begin{aligned}y(0)&=c_1+c_2=0\\\\y'(0)&=-c_2+1=0\\end{aligned}",
+        "y=x-1+e^{-x}"
+      ]
+    },
+    {
+      "heading": "④ 看圖：齊次部分會消失",
+      "body": [
+        "它跟特解 $x$ 差一個常數 $-1$：那也是齊次解（$c_1=-1$）"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 通解 $y=y_h+y_p$：兩個解的差是齊次解",
+        "• 右邊是多項式、指數、正弦餘弦：猜同家族，比係數",
+        "• 多項式猜完整；$\\sin$、$\\cos$ 兩個都猜",
+        "• 猜到齊次解：乘 $x$；重根乘 $x^2$",
+        "• 初始條件最後用在完整的 $y_h+y_p$ 上",
+        "下一課：右邊是 $\\sec x$ 怎麼辦？參數變異"
+      ]
     }
   ],
   "workedExamples": [
@@ -109,278 +223,1048 @@
   ],
   "checks": [
     {
-      "ask": "$y''+2y'+y=3\\cos x$，特解要猜？",
+      "ask": "$y''-4y'+4y=e^{2x}$ 該猜什麼形式？",
       "options": [
-        { "label": "$A\\cos x+B\\sin x$", "correct": true },
-        { "label": "$A\\cos x$", "why": "$y'$ 會出現 $\\sin x$，只猜 $\\cos$ 的話 $\\sin$ 的係數對不起來。" },
-        { "label": "$x(A\\cos x+B\\sin x)$", "why": "乘 $x$ 只在 $\\cos x$ 是齊次解時才需要；這裡特徵根是 $-1$（重根），$\\cos x$ 不是齊次解。" }
-      ]
-    },
-    {
-      "ask": "$y''-4y=e^{2x}$，特解要猜？",
-      "options": [
-        { "label": "$Axe^{2x}$", "correct": true },
-        { "label": "$Ae^{2x}$", "why": "$r=\\pm2$，$e^{2x}$ 是齊次解，代入左邊得 $4A-4A=0$，永遠等不到 $e^{2x}$。" },
-        { "label": "$Ax^2e^{2x}$", "why": "$x^2$ 只在 $2$ 是重根時需要；這裡 $2$ 是單根，乘一個 $x$ 就夠。" }
-      ]
-    },
-    {
-      "ask": "$y''+y=2$ 的一個特解是？",
-      "options": [
-        { "label": "$y_p=2$", "correct": true },
-        { "label": "$y_p=2x$", "why": "代入得 $0+2x=2x\\ne 2$。右邊是常數，就猜常數 $A$，$A=2$。" },
-        { "label": "$y_p=1$", "why": "代入得 $0+1=1\\ne 2$：常數的 $y''$ 是 $0$，所以 $A$ 本身就要等於 $2$。" }
-      ]
-    },
-    {
-      "ask": "初始條件要代進哪裡？",
-      "options": [
-        { "label": "完整的 $y_h+y_p$", "correct": true },
-        { "label": "只代進 $y_h$", "why": "$y_p$ 在 $x=0$ 也有值，例如 $y_p=x+\\frac{3}{2}$ 在 $0$ 是 $\\frac{3}{2}$，漏掉它常數會算錯。" },
-        { "label": "只代進 $y_p$", "why": "$y_p$ 沒有任意常數，沒東西可以解；常數在 $y_h$ 裡。" }
+        {
+          "label": "$Ax^2e^{2x}$",
+          "correct": true
+        },
+        {
+          "label": "$Axe^{2x}$",
+          "why": "單根才乘 $x$；這裡 $(r-2)^2$ 是重根，$xe^{2x}$ 也是齊次解"
+        },
+        {
+          "label": "$Ae^{2x}$",
+          "why": "$e^{2x}$ 是齊次解，代進去得 $0$"
+        },
+        {
+          "label": "$(Ax+B)e^{2x}$",
+          "why": "兩項都是齊次解，代進去還是 $0$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "齊次解＋一個特解",
+      "title": "通解＝齊次＋特解",
       "beats": [
-        { "show": ["$ay''+by'+cy=g(x)$"],
-          "note": "右邊 $g$ 不是 0。",
-          "say": "這一次右邊不是零。分兩步：先解右邊換成零的齊次方程，再找一個特解。",
+        {
+          "show": [
+            "非齊次方程：右邊多了一個 $g(x)$",
+            "$y''+py'+qy=g(x)$"
+          ],
+          "say": "前三課的方程右邊都是 0。這一課右邊多了一個 g of x，叫做非齊次方程。",
           "board": [
-            {"do":"write","line":"$ay'' + by' + cy = {{g:g(x)}}$"},
-            {"do":"focus","term":"g","label":"不是 0","on":"右邊不是零"}
-          ] },
-        { "show": ["$y=y_h+y_p$"],
-          "note": "$y-y_p$ 代入左邊得 $g-g=0$。",
-          "say": "任何解減掉特解，左邊得到 g 減 g，是齊次解。所以通解就是齊次解加特解。",
+            {
+              "do": "write",
+              "line": "非齊次方程：右邊多了一個 $g(x)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y''+py'+qy=g(x)$",
+              "on": "了一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把左邊記成 $L[y]=y''+py'+qy$"
+          ],
+          "say": "把左邊記成 L of y。L 是線性的：和可以拆開，常數可以提出來。",
           "board": [
-            {"do":"write","line":"$y - {{p:y_p}}$：左邊 $g - g = 0$","tint":{"p":"violet"}},
-            {"do":"write","line":"$y = {{h:y_h}} + {{p:y_p}}$","tint":{"h":"blue"},"on":"所以通解"}
-          ] },
-        { "show": ["$y''-y=e^{2x}$：$y_h=C_1e^x+C_2e^{-x}$"],
-          "note": "$e^{2x}$ 不在其中，可以直接猜。",
-          "say": "例如右邊是 e 的二 x 次方。齊次解是 e 的正負 x，裡面沒有 e 的二 x。",
+            {
+              "do": "write",
+              "line": "把左邊記成 $L[y]=y''+py'+qy$"
+            },
+            {
+              "do": "write",
+              "line": "　$L[y_1+y_2]=L[y_1]+L[y_2]$，$L[cy]=cL[y]$",
+              "color": "violet",
+              "on": "性的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：先找到任何一個特解 $y_p$，則所有解是",
+            "$y=y_h+y_p=c_1y_1+c_2y_2+y_p$"
+          ],
+          "say": "定理：只要找到任何一個特解 y p，所有的解就是齊次解加上 y p。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y'' - y = {{r:e^{2x}}}$","on":"例如"},
-            {"do":"write","line":"${{h:y_h}} = C_1e^x + C_2e^{-x}$","on":"齊次解是"},
-            {"do":"focus","term":"r","label":"不在齊次解","on":"裡面沒有"}
-          ] },
-        { "show": ["猜 $y_p=Ae^{2x}$：$4A-A=1$"],
-          "note": "$y_p''=4Ae^{2x}$。",
-          "say": "就猜 A 乘 e 的二 x 次方。微分兩次是四 A，減掉 A，要等於一。",
+            {
+              "do": "write",
+              "line": "定理：先找到任何一個特解 $y_p$，則所有解是"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle y=y_h+y_p=c_1y_1+c_2y_2+y_p}}$",
+              "color": "red",
+              "on": "特解"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼：設 $y$ 是任意一個解，看差 $y-y_p$：",
+            "$L[y-y_p]=L[y]-L[y_p]=g-g=0$"
+          ],
+          "say": "為什麼？隨便拿一個解 y，看它跟 y p 的差。L 是線性的，所以差的 L 等於 g 減 g，等於 0。",
           "board": [
-            {"do":"write","line":"猜 ${{p:y_p}} = Ae^{2x}$","on":"就猜"},
-            {"do":"write","line":"$4A - A = 1$","on":"微分兩次"}
-          ] }
+            {
+              "do": "write",
+              "line": "為什麼：設 $y$ 是任意一個解，看差 $y-y_p$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L[y-y_p]=L[y]-L[y_p]=g-g=0$",
+              "on": "是線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $y-y_p$ 是齊次解，可以寫成 $c_1y_1+c_2y_2$"
+          ],
+          "say": "所以兩個解的差一定是齊次解。移項就是定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $y-y_p$ 是齊次解，可以寫成 $c_1y_1+c_2y_2$"
+            },
+            {
+              "do": "write",
+              "line": "　反過來，$L[y_h+y_p]=0+g=g$：每個 $y_h+y_p$ 也都是解。跟 $A\\mathbf{x}=\\mathbf{b}$ 的解一樣",
+              "color": "violet",
+              "on": "齊次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "工作只剩一件：找一個 $y_p$"
+          ],
+          "say": "齊次解前面已經會了，所以整個問題只剩一件事：找出一個特解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "工作只剩一件：找一個 $y_p$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "猜同家族的函數",
+      "beats": [
+        {
+          "show": [
+            "例：$y''-y=e^{2x}$，$y(0)=\\frac13$，$y'(0)=\\frac23$"
+          ],
+          "say": "怎麼找特解？看例子：y 兩撇減 y 等於 e 的 2x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''-y=e^{2x}$，$y(0)=\\frac13$，$y'(0)=\\frac23$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{2x}$ 微分幾次還是 $e^{2x}$ 的倍數：猜 $y_p=Ae^{2x}$"
+          ],
+          "say": "關鍵觀察：e 的 2x 次方微分幾次，都還是它自己的倍數。所以猜 A 倍的 e 的 2x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{2x}$ 微分幾次還是 $e^{2x}$ 的倍數：猜 $y_p=Ae^{2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代入：$y_p''=4Ae^{2x}$",
+            "$4Ae^{2x}-Ae^{2x}=3Ae^{2x}=e^{2x}$"
+          ],
+          "say": "代進去：二階導數是 4A 倍，減掉 A 倍，剩 3A 倍。要等於右邊，所以 3A 等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代入：$y_p''=4Ae^{2x}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 4Ae^{2x}-Ae^{2x}=3Ae^{2x}=e^{2x}$",
+              "on": "3A#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$A=\\frac13,\\qquad y_p=\\frac13e^{2x}$"
+          ],
+          "say": "A 是 3 分之 1。係數先不知道，代進去才定出來，所以叫待定係數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle A=\\frac13,\\qquad y_p=\\frac13e^{2x}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "代進"
+            }
+          ]
+        },
+        {
+          "show": [
+            "齊次：$r^2-1=0$，$r=\\pm1$",
+            "$y=c_1e^{x}+c_2e^{-x}+\\frac13e^{2x}$"
+          ],
+          "say": "齊次部分的特徵根是正負 1。通解是兩個齊次解的組合，再加特解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "齊次：$r^2-1=0$，$r=\\pm1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=c_1e^{x}+c_2e^{-x}+\\frac13e^{2x}$",
+              "on": "解是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "初始條件：",
+            "$\\begin{aligned}y(0)&=c_1+c_2+\\tfrac13=\\tfrac13\\\\y'(0)&=c_1-c_2+\\tfrac23=\\tfrac23\\end{aligned}$"
+          ],
+          "say": "最後才代初始條件。y of 0 給出 c1 加 c2 等於 0；y prime of 0 給出 c1 減 c2 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "初始條件："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}y(0)&=c_1+c_2+\\tfrac13=\\tfrac13\\\\y'(0)&=c_1-c_2+\\tfrac23=\\tfrac23\\end{aligned}}$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c_1=c_2=0$：$\\;y=\\dfrac13e^{2x}$"
+          ],
+          "say": "兩個常數都是 0，答案就是特解本身。這次初始條件剛好挑中了特解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c_1=c_2=0$：$\\;y=\\dfrac13e^{2x}$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "猜測的對照表",
+      "beats": [
+        {
+          "show": [
+            "右邊 $g(x)$ → 猜 $y_p$：",
+            "• $n$ 次多項式 → 完整的 $n$ 次多項式 $A_nx^n+\\cdots+A_0$"
+          ],
+          "say": "整理成一張表：多項式猜完整的同次多項式；指數猜同一個指數；正弦餘弦兩個都猜；乘積就形式相乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊 $g(x)$ → 猜 $y_p$："
+            },
+            {
+              "do": "write",
+              "line": "• $n$ 次多項式 → 完整的 $n$ 次多項式 $A_nx^n+\\cdots+A_0$",
+              "on": "式猜"
+            },
+            {
+              "do": "write",
+              "line": "• $e^{ax}$ → $Ae^{ax}$",
+              "on": "指數#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\cos bx$ 或 $\\sin bx$ → 兩個都要：$A\\cos bx+B\\sin bx$",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "• 乘積（如 $xe^{x}$）→ 形式相乘：$(Ax+B)e^{x}$",
+              "on": "乘積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "共同點：這些家族微分之後還在家族裡"
+          ],
+          "say": "共同點是：微分之後還在同一個家族裡，代進去才比得了係數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "共同點：這些家族微分之後還在家族裡",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$\\ln x$、$\\tan x$、$\\frac1x$ 微分會跑出新東西，猜不完：下一課用參數變異",
+              "color": "violet",
+              "on": "家族"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''+y'=2\\sin x$",
+            "猜 $y_p=A\\cos x+B\\sin x$"
+          ],
+          "say": "看正弦的例子：y 兩撇加 y 一撇等於 2 倍正弦 x。猜 A 餘弦加 B 正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''+y'=2\\sin x$"
+            },
+            {
+              "do": "write",
+              "line": "猜 $y_p=A\\cos x+B\\sin x$",
+              "on": "倍正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}y_p'&=-A\\sin x+B\\cos x\\\\y_p''&=-A\\cos x-B\\sin x\\end{aligned}$",
+            "$(-A+B)\\cos x+(-A-B)\\sin x=2\\sin x$"
+          ],
+          "say": "微分兩次代進去，整理成餘弦的係數和正弦的係數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}y_p'&=-A\\sin x+B\\cos x\\\\y_p''&=-A\\cos x-B\\sin x\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (-A+B)\\cos x+(-A-B)\\sin x=2\\sin x$",
+              "on": "餘弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "餘弦：$-A+B=0$；正弦：$-A-B=2$",
+            "$A=B=-1,\\qquad y_p=-\\cos x-\\sin x$"
+          ],
+          "say": "解出 A 和 B 都是負 1。右邊只有正弦，特解卻有餘弦：只猜正弦是做不出來的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "餘弦：$-A+B=0$；正弦：$-A-B=2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle A=B=-1,\\qquad y_p=-\\cos x-\\sin x}}$",
+              "on": "右邊"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "餘弦"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "多項式要猜完整",
+      "beats": [
+        {
+          "show": [
+            "例：$y''-3y'+2y=2x$，$y(0)=\\frac32$，$y'(0)=1$"
+          ],
+          "say": "再看多項式：y 兩撇減 3 倍 y 一撇加 2y，等於 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''-3y'+2y=2x$，$y(0)=\\frac32$，$y'(0)=1$"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$4A-A=1$，所以 $y_p$ 是？",
+        "ask": "右邊是 $2x$，特解該猜什麼？",
         "options": [
           {
-            "label": "$\\frac{e^{2x}}{3}$",
+            "label": "$Ax+B$",
             "correct": true
           },
           {
-            "label": "$\\frac{e^{2x}}{4}$",
-            "why": "只看了 $y''$ 的 $4A$，忘了減掉 $-y$ 那一項的 $A$。"
+            "label": "$Ax$",
+            "why": "代進去是 $-3A+2Ax$，常數項 $-3A$ 消不掉，會得到矛盾"
           },
           {
-            "label": "$e^{2x}$",
-            "why": "$A=1$ 代回去左邊是 $3e^{2x}$，多了三倍。"
+            "label": "$Ax^2$",
+            "why": "次數猜太高了：$y$ 本身有 $2y$ 這一項，同次就夠"
+          },
+          {
+            "label": "$Ae^{x}$",
+            "why": "右邊是多項式，不是指數"
           }
         ]
       }
     },
     {
-      "title": "照右邊的樣子猜",
+      "title": "多項式要猜完整",
       "beats": [
-        { "show": ["微分之後還是同一家族"],
-          "note": "多項式、指數、$\\sin/\\cos$。",
-          "say": "多項式、指數、sine 和 cosine，微分之後還在同一家族。所以照右邊的樣子猜。",
+        {
+          "show": [
+            "$y_p=Ax+B$：$y_p'=A$，$y_p''=0$",
+            "$-3A+2(Ax+B)=2x$"
+          ],
+          "say": "猜 Ax 加 B。一階導數是 A，二階導數是 0，代進去。",
           "board": [
-            {"do":"write","line":"多項式、指數、$\\sin$、$\\cos$：同一家族"}
-          ] },
-        { "show": ["$e^{kx}$ → $Ae^{kx}$","$n$ 次多項式 → 完整的 $n$ 次多項式"],
-          "say": "指數就猜同一個指數。多項式要猜完整的，每一次方都要有。",
+            {
+              "do": "write",
+              "line": "$y_p=Ax+B$：$y_p'=A$，$y_p''=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle -3A+2(Ax+B)=2x$",
+              "on": "二階"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比係數：",
+            "$\\begin{aligned}x:&\\quad 2A=2\\ \\Rightarrow\\ A=1\\\\\\text{常數}:&\\quad 2B-3A=0\\ \\Rightarrow\\ B=\\tfrac32\\end{aligned}$"
+          ],
+          "say": "比較兩邊係數：x 的係數 2A 等於 2，A 是 1。常數項 2B 減 3A 等於 0，B 是 2 分之 3。",
           "board": [
-            {"do":"write","line":"$e^{kx} \\to Ae^{kx}$"},
-            {"do":"write","line":"$n$ 次多項式 $\\to$ ${{f:Ax^n+\\cdots+C}}$","on":"多項式"},
-            {"do":"underline","term":"f","label":"每項都有","on":"每一次方"}
-          ] },
-        { "show": ["$\\cos\\omega x$ → $A\\cos\\omega x+B\\sin\\omega x$"],
-          "note": "微分會把 $\\cos$ 變成 $\\sin$。",
-          "say": "右邊只有 cosine，也要 cosine 和 sine 兩個都猜，因為一微分就會冒出 sine。",
+            {
+              "do": "write",
+              "line": "比係數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}x:&\\quad 2A=2\\ \\Rightarrow\\ A=1\\\\\\text{常數}:&\\quad 2B-3A=0\\ \\Rightarrow\\ B=\\tfrac32\\end{aligned}}$",
+              "on": "常數"
+            },
+            {
+              "do": "write",
+              "line": "　只猜 $Ax$：常數項要 $-3A=0$，又要 $2A=2$，矛盾",
+              "color": "violet",
+              "on": "3A"
+            }
+          ]
+        },
+        {
+          "show": [
+            "齊次 $r^2-3r+2=(r-1)(r-2)$：",
+            "$y=c_1e^{x}+c_2e^{2x}+x+\\tfrac32$"
+          ],
+          "say": "齊次部分的特徵根是 1 和 2，再加上特解，就是通解。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\cos\\omega x \\to A\\cos\\omega x + {{s:B\\sin\\omega x}}$","on":"右邊只有"},
-            {"do":"focus","term":"s","label":"微分冒出","on":"冒出"}
-          ] },
-        { "show": ["$xe^x$ → $(Ax+B)e^x$"],
-          "note": "乘積照樣相乘。",
-          "say": "乘在一起的，猜的樣子也乘在一起。",
+            {
+              "do": "write",
+              "line": "齊次 $r^2-3r+2=(r-1)(r-2)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=c_1e^{x}+c_2e^{2x}+x+\\tfrac32$",
+              "on": "再加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c_1+c_2=0$，$c_1+2c_2+1=1$ ⇒ $c_1=c_2=0$",
+            "$y=x+\\tfrac32$"
+          ],
+          "say": "代初始條件，兩個常數又都是 0，答案是 x 加 2 分之 3。",
           "board": [
-            {"do":"write","line":"$xe^x \\to (Ax+B)e^x$"}
-          ] }
+            {
+              "do": "write",
+              "line": "$c_1+c_2=0$，$c_1+2c_2+1=1$ ⇒ $c_1=c_2=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y=x+\\tfrac32}}$",
+              "color": "red",
+              "on": "又都"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "猜到齊次解就乘 x",
+      "beats": [
+        {
+          "show": [
+            "例：$y''-3y'+2y=e^{x}$，求一個特解"
+          ],
+          "say": "換一個右邊：同一個左邊，右邊是 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''-3y'+2y=e^{x}$，求一個特解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "照表猜 $Ae^{x}$：",
+            "$A-3A+2A=0\\ne e^{x}$"
+          ],
+          "say": "照表猜 A 倍 e 的 x 次方。代進去：A 減 3A 加 2A，等於 0。猜失敗了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "照表猜 $Ae^{x}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A-3A+2A=0\\ne e^{x}$",
+              "color": "red",
+              "on": "3A"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$r=1$ 是特徵根，$e^{x}$ 本身就是齊次解"
+          ],
+          "say": "原因是：1 是特徵根，e 的 x 次方本身就是齊次解。L 把它送到 0，當然生不出右邊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原因：$r=1$ 是特徵根，$e^{x}$ 本身就是齊次解",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "修正：乘上 $x$，猜 $y_p=Axe^{x}$"
+          ],
+          "say": "修正的方法：乘上一個 x。猜 A x e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "修正：乘上 $x$，猜 $y_p=Axe^{x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y_p'=A(x+1)e^{x}$，$y_p''=A(x+2)e^{x}$",
+            "$A\\big[(x+2)-3(x+1)+2x\\big]e^{x}=-Ae^{x}$"
+          ],
+          "say": "用乘積法則微分兩次，代進去。中括號裡 x 的項全部抵消，只剩負 A。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y_p'=A(x+1)e^{x}$，$y_p''=A(x+2)e^{x}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A\\big[(x+2)-3(x+1)+2x\\big]e^{x}=-Ae^{x}$",
+              "on": "的項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$-A=1,\\qquad y_p=-xe^{x}$"
+          ],
+          "say": "負 A 等於 1，所以 A 是負 1，特解是負 x e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle -A=1,\\qquad y_p=-xe^{x}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "特解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "修正規則：猜的某一項是齊次解 → 乘 $x$；乘完還是，再乘一次"
+          ],
+          "say": "修正規則：猜的某一項已經是齊次解，就乘 x。乘完還是齊次解，就再乘一次 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "修正規則：猜的某一項是齊次解 → 乘 $x$；乘完還是，再乘一次",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　單根乘 $x$；重根（$e^{rx}$、$xe^{rx}$ 都是齊次解）乘 $x^2$",
+              "color": "violet",
+              "on": "乘完"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重根：乘 x²",
+      "beats": [
+        {
+          "show": [
+            "例：$y''-2y'+y=e^{x}$，$r=1$ 是重根"
+          ],
+          "say": "重根的例子：這個方程的特徵多項式是 r 減 1 的平方，1 是重根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''-2y'+y=e^{x}$，$r=1$ 是重根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{x}$、$xe^{x}$ 都是齊次解 → 猜 $Ax^2e^{x}$"
+          ],
+          "say": "e 的 x 次方和 x e 的 x 次方都是齊次解，乘一次 x 還不夠，要乘 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{x}$、$xe^{x}$ 都是齊次解 → 猜 $Ax^2e^{x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}y_p'&=A(x^2+2x)e^{x}\\\\y_p''&=A(x^2+4x+2)e^{x}\\end{aligned}$",
+            "$A\\big[(x^2+4x+2)-2(x^2+2x)+x^2\\big]e^{x}=2Ae^{x}$"
+          ],
+          "say": "微分兩次代進去，x 平方和 x 的項都抵消，只剩 2A。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}y_p'&=A(x^2+2x)e^{x}\\\\y_p''&=A(x^2+4x+2)e^{x}\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A\\big[(x^2+4x+2)-2(x^2+2x)+x^2\\big]e^{x}=2Ae^{x}$",
+              "on": "的項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2A=1,\\qquad y_p=\\tfrac12x^2e^{x}$"
+          ],
+          "say": "2A 等於 1，A 是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle 2A=1,\\qquad y_p=\\tfrac12x^2e^{x}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "分之"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "多項式要猜完整",
-      "beats": [
-        { "show": ["$y''-3y'+2y=2x$"],
-          "note": "$y_h=C_1e^x+C_2e^{2x}$。",
-          "say": "右邊是二 x，一次多項式。齊次的根是一和二。",
-          "board": [
-            {"do":"write","line":"$y'' - 3y' + 2y = {{g:2x}}$"},
-            {"do":"underline","term":"g","label":"一次多項式","on":"一次多項式"},
-            {"do":"write","line":"根 $1$、$2$：$y_h = C_1e^x + C_2e^{2x}$","on":"齊次的根"}
-          ] },
-        { "show": ["猜 $y_p=Ax+B$"],
-          "note": "不能只猜 $Ax$。",
-          "say": "猜完整的一次式 A x 加 B，常數項不能省。",
-          "board": [
-            {"do":"write","line":"猜 $y_p = Ax + {{b:B}}$","tint":{"b":"violet"}},
-            {"do":"focus","term":"b","label":"不能省","on":"常數項"}
-          ] },
-        { "show": ["$-3A+2(Ax+B)=2x$"],
-          "note": "$y_p'=A$，$y_p''=0$。",
-          "say": "代進去，比較兩邊的係數。x 的係數：二 A 等於二，A 是一。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$-3A + 2(Ax + {{b:B}}) = 2x$","on":"代進去"},
-            {"do":"write","line":"$x$ 的係數：$2A = 2$，$A = 1$","on":"x 的係數"}
-          ] },
-        { "show": ["$-3A+2B=0$：$B=\\frac{3}{2}$"],
-          "note": "$y_p=x+\\frac{3}{2}$。",
-          "say": "常數項：負三加二 B 等於零，B 是二分之三。只猜 A x 的話，這一條會對不起來。",
-          "board": [
-            {"do":"write","line":"常數項：${{ce:-3A + 2{{b:B}} = 0}}$，$B = \\frac{3}{2}$"},
-            {"do":"underline","term":"ce","label":"只猜Ax不行","on":"只猜 A x"}
-          ] },
-        { "show": ["代回檢查：$-3+2(x+\\frac{3}{2})=2x$"],
-          "note": "$y_p=x+\\frac{3}{2}$ 代進左邊。",
-          "say": "代回去檢查：負三加二乘 x 加二分之三，展開就是二 x，跟右邊一樣。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$-3 + 2(x + \\frac{3}{2}) = {{n1:2x}}$","on":"x#1"},
-            {"do":"box","term":"n1","color":"green","on":"展開"}
-          ] }
-      ],
-      "key": "多項式要猜完整，常數項不能漏",
-      "check": 2
-    },
-    {
-      "title": "猜到齊次解就乘 $x$",
-      "beats": [
-        { "show": ["$y''+y'=1$：猜 $A$，得 $0=1$"],
-          "note": "失敗。",
-          "say": "右邊是常數，照理猜常數 A。代進去，左邊是零，得到零等於一，失敗。",
-          "board": [
-            {"do":"write","line":"$y'' + y' = 1$"},
-            {"do":"write","line":"猜 $y_p = A$","on":"照理猜"},
-            {"do":"transform","line":"猜 $y_p = A$：${{z:0 = 1}}$","on":"左邊是零"},
-            {"do":"strike","term":"z","label":"失敗","on":"得到零"}
-          ] },
-        { "show": ["$r(r+1)=0$：$y_h=C_1+C_2e^{-x}$"],
-          "note": "常數本身就是齊次解。",
-          "say": "原因是零是特徵根，常數本身就是齊次解，代進左邊一定是零。",
-          "board": [
-            {"do":"write","line":"$r(r+1) = 0$：$y_h = {{c:C_1}} + C_2e^{-x}$","on":"零是特徵根"},
-            {"do":"underline","term":"c","label":"常數","on":"常數本身"}
-          ] },
-        { "show": ["重複的部分乘 $x$：猜 $y_p=Ax$"],
-          "note": "重根乘 $x^2$。",
-          "say": "辦法：跟齊次解重複的部分乘上 x。如果那個根是重根，就乘 x 平方。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"乘 $x$：猜 ${{p:y_p = Ax}}$","tint":{"p":"violet"},"on":"重複的部分"},
-            {"do":"underline","term":"p","label":"重根乘 x²","on":"如果那個根"}
-          ] },
-        { "show": ["$A=1$，$y_p=x$"],
-          "say": "猜 A x，一階導數是 A，二階是零，代進去 A 等於一。",
-          "board": [
-            {"do":"write","line":"$y_p' = A$，$y_p'' = 0$","on":"一階導數"},
-            {"do":"write","line":"$A = 1$，$y_p = x$","color":"green","on":"代進去"}
-          ] },
-        { "show": ["$y''-3y'+2y=e^x$：$e^x$ 是齊次解"],
-          "note": "單根也要乘 $x$，不只常數。",
-          "say": "不只常數會撞到。這題齊次的根是一和二，右邊 e 的 x 次方正好是齊次解，單根也要乘 x。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y'' - 3y' + 2y = {{r:e^x}}$","on":"次的"},
-            {"do":"write","line":"根 $1$、$2$：$y_h = C_1e^x + C_2e^{2x}$","on":"一和二"},
-            {"do":"focus","term":"r","label":"齊次解","on":"正好是齊次解"}
-          ] },
-        { "show": ["猜 $y_p=Axe^x$：左邊剩 $-Ae^x$","$A=-1$，$y_p=-xe^x$"],
-          "note": "含 $x$ 的項互相消掉。",
-          "say": "所以猜 A 乘 x 乘 e 的 x 次方。代進去，含 x 的項互相消掉，只剩負 A 乘 e 的 x 次方，A 是負一。",
-          "board": [
-            {"do":"write","line":"猜 $y_p = Axe^x$"},
-            {"do":"write","line":"左邊 $= -Ae^x = e^x$","on":"只剩"},
-            {"do":"write","line":"$A = -1$，$y_p = -xe^x$","color":"green","on":"A 是負一"}
-          ] }
-      ],
-      "key": "先解特徵根，檢查猜的形式有沒有重複",
-      "check": 1
-    },
-    {
       "title": "初始條件最後才用",
       "beats": [
-        { "show": ["$y=C_1+C_2e^{-x}+x$"],
-          "note": "先寫完整的 $y_h+y_p$。",
-          "say": "先把齊次解和特解加起來，寫成完整的通解，最後才代初始條件。",
+        {
+          "show": [
+            "例：$y''+y'=1$，$y(0)=0$，$y'(0)=0$"
+          ],
+          "say": "最後一個例子，把整套流程走一次：y 兩撇加 y 一撇等於 1，初始值都是 0。",
           "board": [
-            {"do":"write","line":"$y = {{h:C_1+C_2e^{-x}}} + {{p:x}}$","tint":{"h":"blue","p":"violet"}}
-          ] },
-        { "show": ["$y(0)=0$：$C_1+C_2=0$"],
-          "say": "y 在零是零：C 一加 C 二是零。這裡特解在零剛好是零。",
+            {
+              "do": "write",
+              "line": "例：$y''+y'=1$，$y(0)=0$，$y'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "齊次：$r^2+r=0$，$r=0,-1$ → $y_h=c_1+c_2e^{-x}$"
+          ],
+          "say": "齊次部分：特徵根是 0 和負 1，齊次解是 c1 加 c2 e 的負 x 次方。",
           "board": [
-            {"do":"write","line":"$y(0)=0$：$C_1+C_2=0$"}
-          ] },
-        { "show": ["$y'=-C_2e^{-x}+1$"],
-          "note": "導數要對整個 $y$ 微分。",
-          "say": "導數要對整個 y 微分：C 二乘 e 的負 x 次方微出來是負 C 二乘 e 的負 x 次方，x 微出來是一。",
+            {
+              "do": "write",
+              "line": "齊次：$r^2+r=0$，$r=0,-1$ → $y_h=c_1+c_2e^{-x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊是常數 $1=e^{0x}$：照表猜 $A$"
+          ],
+          "say": "右邊是常數，照表猜常數 A。可是 0 是特徵根，常數本身就是齊次解。所以乘 x，猜 A x。",
           "board": [
-            {"do":"write","line":"$y' = -C_2e^{-x} + {{n2:1}}$"},
-            {"do":"focus","term":"n2","on":"x 微出來"}
-          ] },
-        { "show": ["$y'(0)=0$：$-C_2+1=0$"],
-          "note": "$y_p$ 的導數貢獻了 1。",
-          "say": "導數在零是零：特解的導數貢獻一，所以 C 二是一，C 一是負一。",
+            {
+              "do": "write",
+              "line": "右邊是常數 $1=e^{0x}$：照表猜 $A$"
+            },
+            {
+              "do": "write",
+              "line": "但 $r=0$ 是根，常數是齊次解 → 猜 $Ax$",
+              "on": "常數#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y_p'=A$，$y_p''=0$：$0+A=1$",
+            "$y_p=x$"
+          ],
+          "say": "代進去：0 加 A 等於 1，所以 A 是 1，特解就是 x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y'(0)=0$：$-C_2+{{o:1}}=0$","on":"導數在零"},
-            {"do":"focus","term":"o","label":"特解貢獻","on":"貢獻一"},
-            {"do":"write","line":"$C_2 = 1$，$C_1 = -1$","on":"所以"}
-          ] },
-        { "show": ["$y=x-1+e^{-x}$"],
-          "say": "只代進齊次解的話，那個一就漏了，常數會算錯。",
+            {
+              "do": "write",
+              "line": "$y_p'=A$，$y_p''=0$：$0+A=1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle y_p=x}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "特解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "通解：$y=c_1+c_2e^{-x}+x$"
+          ],
+          "say": "通解是 c1 加 c2 e 的負 x 次方，加 x。",
           "board": [
-            {"do":"write","line":"$y = x - 1 + e^{-x}$","color":"green"}
-          ] }
+            {
+              "do": "write",
+              "line": "通解：$y=c_1+c_2e^{-x}+x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}y(0)&=c_1+c_2=0\\\\y'(0)&=-c_2+1=0\\end{aligned}$"
+          ],
+          "say": "現在才用初始條件。y of 0 給 c1 加 c2 等於 0；y prime of 0 給 1 減 c2 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}y(0)&=c_1+c_2=0\\\\y'(0)&=-c_2+1=0\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c_2=1$，$c_1=-1$：",
+            "$y=x-1+e^{-x}$"
+          ],
+          "say": "所以 c2 是 1，c1 是負 1。答案是 x 減 1 加 e 的負 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c_2=1$，$c_1=-1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle y=x-1+e^{-x}}}$",
+              "color": "red",
+              "on": "是負"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常見錯誤：先對 $y_h$ 用初始條件得 $c_1=c_2=0$，再加 $x$"
+          ],
+          "say": "常見的錯誤是先對齊次解用初始條件，再加上 x。結果 y 等於 x，導數在 0 是 1，初始條件不成立。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常見錯誤：先對 $y_h$ 用初始條件得 $c_1=c_2=0$，再加 $x$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "結果 $y=x$，但 $y'(0)=1\\ne0$",
+              "color": "red",
+              "on": "再加"
+            },
+            {
+              "do": "write",
+              "line": "　初始條件是整個解要滿足的，不是 $y_h$ 要滿足的",
+              "color": "violet",
+              "on": "數在"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "看圖：齊次部分會消失",
+      "beats": [
+        {
+          "show": [
+            "e^(−x) 很快消失，解貼近 x − 1"
+          ],
+          "say": "畫出來看：藍色的解從原點水平出發，e 的負 x 次方很快消失，解就貼著紅色虛線走。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ivp",
+                  "window": [
+                    -0.5,
+                    5,
+                    -1.5,
+                    4.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x-1+e^(-x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x-1",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "x",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 1.2,
+                      "y": 2.6,
+                      "text": "y = x"
+                    },
+                    {
+                      "x": 3.6,
+                      "y": 1.9,
+                      "text": "y = x − 1"
+                    },
+                    {
+                      "x": 3.3,
+                      "y": 0.9,
+                      "text": "y = x − 1 + e^(−x)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "e^(−x) 很快消失，解貼近 x − 1",
+              "color": "violet",
+              "on": "平出"
+            },
+            {
+              "do": "write",
+              "line": "　它跟特解 $x$ 差一個常數 $-1$：那也是齊次解（$c_1=-1$）",
+              "color": "violet",
+              "on": "快消"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "解 $y''+py'+qy=g(x)$ 的步驟",
+        "steps": [
+          {
+            "label": "解特徵方程，寫出齊次解 $y_h$"
+          },
+          {
+            "label": "依右邊 $g$ 的家族，寫出猜測形式",
+            "why": "先要有上一步：解特徵方程，寫出齊次解 $y_h$"
+          },
+          {
+            "label": "檢查猜測有沒有齊次解，有就乘 $x$",
+            "why": "先要有上一步：依右邊 $g$ 的家族，寫出猜測形式"
+          },
+          {
+            "label": "代入方程、比較係數，求出 $y_p$",
+            "why": "先要有上一步：檢查猜測有沒有齊次解，有就乘 $x$"
+          },
+          {
+            "label": "寫出 $y=y_h+y_p$，最後才代初始條件",
+            "why": "先要有上一步：代入方程、比較係數，求出 $y_p$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 通解 $y=y_h+y_p$：兩個解的差是齊次解",
+            "• 右邊是多項式、指數、正弦餘弦：猜同家族，比係數"
+          ],
+          "say": "整理一下：通解等於齊次解加特解；右邊猜同一個家族；猜到齊次解就乘 x；初始條件最後才用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 通解 $y=y_h+y_p$：兩個解的差是齊次解"
+            },
+            {
+              "do": "write",
+              "line": "• 右邊是多項式、指數、正弦餘弦：猜同家族，比係數",
+              "on": "於齊"
+            },
+            {
+              "do": "write",
+              "line": "• 多項式猜完整；$\\sin$、$\\cos$ 兩個都猜",
+              "on": "邊猜"
+            },
+            {
+              "do": "write",
+              "line": "• 猜到齊次解：乘 $x$；重根乘 $x^2$",
+              "on": "到齊"
+            },
+            {
+              "do": "write",
+              "line": "• 初始條件最後用在完整的 $y_h+y_p$ 上",
+              "on": "初始"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：右邊是 $\\sec x$ 怎麼辦？參數變異"
+          ],
+          "say": "下一課，右邊是正割 x 這種猜不到的函數時，用參數變異。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：右邊是 $\\sec x$ 怎麼辦？參數變異"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "undetermined-coefficients", "ivp"],
-    "fine": ["undet-guess-form", "undet-solve-coefficients", "undet-modification-rule", "undet-full-ivp"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "undetermined-coefficients",
+      "ivp"
+    ],
+    "fine": [
+      "undet-guess-form",
+      "undet-solve-coefficients",
+      "undet-modification-rule",
+      "undet-full-ivp"
+    ]
   },
   "practice": [
-    { "id": "ode-p2-002", "core": true, "trains": "undet-full-ivp" },
-    { "id": "ode-p2-004", "core": true, "trains": "undet-guess-form" },
-    { "id": "ode-p2-003", "core": true, "trains": "undet-solve-coefficients" },
-    { "id": "ode-p2-001", "core": true, "trains": "undet-full-ivp" },
-    { "id": "ode-p2-005", "core": true, "trains": "undet-modification-rule" },
-    { "id": "cg-10c-001", "core": true, "trains": "undet-guess-form" },
-    { "id": "cg-10c-003", "core": true, "trains": "undet-guess-form" },
-    { "id": "cg-10c-004", "core": true, "trains": "undet-modification-rule" },
-    { "id": "cg-10c-002", "trains": "undet-guess-form" },
-    { "id": "cg-10c-005", "trains": "undet-modification-rule" },
-    { "id": "ode-p2-006", "challenge": true, "trains": "undet-modification-rule", "note": "挑戰：$\\cos x$ 是齊次解，要猜 $x(A\\cos x+B\\sin x)$。" }
+    {
+      "id": "ode-p2-002",
+      "core": true,
+      "trains": "undet-full-ivp"
+    },
+    {
+      "id": "ode-p2-004",
+      "core": true,
+      "trains": "undet-guess-form"
+    },
+    {
+      "id": "ode-p2-003",
+      "core": true,
+      "trains": "undet-solve-coefficients"
+    },
+    {
+      "id": "ode-p2-001",
+      "core": true,
+      "trains": "undet-full-ivp"
+    },
+    {
+      "id": "ode-p2-005",
+      "core": true,
+      "trains": "undet-modification-rule"
+    },
+    {
+      "id": "cg-10c-001",
+      "core": true,
+      "trains": "undet-guess-form"
+    },
+    {
+      "id": "cg-10c-003",
+      "core": true,
+      "trains": "undet-guess-form"
+    },
+    {
+      "id": "cg-10c-004",
+      "core": true,
+      "trains": "undet-modification-rule"
+    },
+    {
+      "id": "cg-10c-002",
+      "trains": "undet-guess-form"
+    },
+    {
+      "id": "cg-10c-005",
+      "trains": "undet-modification-rule"
+    },
+    {
+      "id": "ode-p2-006",
+      "challenge": true,
+      "trains": "undet-modification-rule",
+      "note": "挑戰：$\\cos x$ 是齊次解，要猜 $x(A\\cos x+B\\sin x)$。"
+    }
   ],
   "gaps": []
 }

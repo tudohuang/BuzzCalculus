@@ -1,7 +1,8 @@
 {
   "id": "power-series-calculus",
   "title": "冪級數的微分與積分",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
   "prerequisites": [
     "interval-of-convergence",
@@ -15,48 +16,132 @@
     "uniform-convergence"
   ],
   "objectives": [
-    "在收斂半徑內逐項微分、逐項積分，並知道半徑不變、端點可能改變。",
-    "從 $\\frac{1}{1-x}$ 推出 $\\frac{1}{(1-x)^2}$、$\\ln(1+x)$、$\\arctan x$ 的冪級數。",
-    "把數值級數（如 $\\sum \\frac{n}{2^n}$、$\\sum \\frac{1}{n\\cdot 2^n}$）看成某個冪級數在特定 $x$ 的值，求出它的和。"
+    "在收斂半徑內逐項微分、逐項積分，並知道半徑不變、端點可能改變",
+    "從 $\\frac{1}{1-x}$ 推出 $\\frac{1}{(1-x)^2}$、$\\ln(1+x)$、$\\arctan x$ 的冪級數",
+    "把數值級數（如 $\\sum \\frac{n}{2^n}$、$\\sum \\frac{1}{n\\cdot 2^n}$）看成某個冪級數在特定 $x$ 的值，求出它的和"
   ],
-  "visual": "三列並排：上列 1 + x + x² + x³ + …，中列逐項微分得 1 + 2x + 3x² + …，下列逐項積分得 x + x²/2 + x³/3 + …。每一列旁邊畫出它代表的函數 1/(1 − x)、1/(1 − x)²、−ln(1 − x)，以及前 N 項的多項式。三張圖上的綠色區間都是 (−1, 1)；切到端點時，下列在 x = −1 亮起「收斂」，上兩列沒有。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 像多項式一樣逐項處理",
       "body": [
-        "若 $f(x)=\\sum c_n(x-a)^n$ 的收斂半徑 $R>0$，則在 $(a-R,a+R)$ 內 $f$ 可微，而且可以逐項微分、逐項積分：$f'(x)=\\sum n c_n(x-a)^{n-1}$，$\\int_a^x f(t)\\,dt=\\sum \\frac{c_n(x-a)^{n+1}}{n+1}$。",
-        "兩個新級數的收斂半徑都還是 $R$。但端點的收斂性可能改變，要重新檢查（〈收斂區間〉）。"
+        "多項式怎麼微分？一項一項微：",
+        "冪級數 $f(x)=\\sum_{n=0}^\\infty c_n(x-a)^n$，收斂半徑 $R>0$。在 $|x-a|<R$：",
+        "$n=0$ 那一項是常數，微分後是 $0$，所以從 $n=1$ 開始",
+        "兩個新級數的收斂半徑都還是 $R$",
+        "這是一個定理；它的證明需要「均勻收斂」，留到高等微積分",
+        "但端點可能改變：區間的端點要重新判斷"
       ],
       "tex": [
-        "f'(x)=\\sum_{n=1}^{\\infty} n\\,c_n (x-a)^{n-1},\\qquad \\int_a^x f(t)\\,dt=\\sum_{n=0}^{\\infty} \\frac{c_n}{n+1}(x-a)^{n+1}"
-      ],
-      "collapsible": false
+        "\\frac{d}{dx}\\big(c_0+c_1x+c_2x^2+c_3x^3\\big)=c_1+2c_2x+3c_3x^2",
+        "f'(x)=\\sum_{n=1}^\\infty nc_n(x-a)^{n-1}",
+        "\\int f(x)\\,dx=C+\\sum_{n=0}^\\infty \\frac{c_n}{n+1}(x-a)^{n+1}"
+      ]
     },
     {
       "heading": "② 這件事並不理所當然",
       "body": [
-        "有限項的和可以逐項微分，這是微分的線性。無窮多項的和不一定可以：「先取極限再微分」和「先微分再取極限」一般不能交換（〈極限與微分交換〉有反例）。冪級數之所以可以，是因為它在比 $R$ 小的閉區間上一致收斂（〈一致收斂〉）。這裡先接受定理，證明留到分析的支線。"
+        "有限和：$(f+g)'=f'+g'$，當然可以拆",
+        "無限和：「和的導數 = 導數的和」不一定對",
+        "例：$\\displaystyle\\sum_{n=1}^\\infty\\frac{\\sin(n^2x)}{n^2}$ 對每個 $x$ 都收斂（$\\le\\sum\\frac1{n^2}$）",
+        "逐項微分：$\\displaystyle\\sum_{n=1}^\\infty\\cos(n^2x)$，在 $x=0$ 是 $1+1+1+\\cdots$，發散",
+        "冪級數特別好：在收斂半徑內，逐項微分、積分都可以",
+        "半徑為什麼不變：多出來的 $n$ 或 $\\frac1{n+1}$，比值都 $\\to1$",
+        "這裡假設 $\\left|\\frac{c_{n+1}}{c_n}\\right|$ 有極限；一般情況用根值，$\\sqrt[n]{n}\\to1$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\left|\\frac{(n+1)c_{n+1}}{nc_n}\\right|=\\frac{n+1}{n}\\left|\\frac{c_{n+1}}{c_n}\\right|"
+      ]
     },
     {
-      "heading": "③ 從幾何級數出發，造出一整批",
+      "heading": "② 端點可能改變",
       "body": [
-        "$\\frac{1}{1-x}=\\sum x^n$（$|x|<1$）。",
-        "微分：$\\frac{1}{(1-x)^2}=\\sum_{n=1}^{\\infty}n x^{n-1}$。",
-        "$\\frac{1}{1+t}=\\sum (-1)^n t^n$，從 0 積到 $x$：$\\ln(1+x)=\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}x^n}{n}$。",
-        "$\\frac{1}{1+t^2}=\\sum (-1)^n t^{2n}$，從 0 積到 $x$：$\\arctan x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n+1}}{2n+1}$。",
-        "積分時記得用定積分 $\\int_0^x$，常數就自動定好：$\\ln(1+0)=0$、$\\arctan 0=0$。"
-      ],
-      "collapsible": false
+        "$f(x)=\\sum_{n=1}^\\infty\\dfrac{x^n}{n}$，區間 $[-1,1)$",
+        "• 微分：$\\sum x^{n-1}$，區間 $(-1,1)$：丟了 $-1$",
+        "• 積分：$\\sum\\dfrac{x^{n+1}}{n(n+1)}$，區間 $[-1,1]$：多了 $1$",
+        "微分讓端點變差，積分讓端點變好"
+      ]
     },
     {
-      "heading": "④ 用它求數值級數的和",
+      "heading": "③ 微分：$\\frac{1}{(1-x)^2}$",
       "body": [
-        "看到 $\\sum \\frac{n}{2^n}$、$\\sum \\frac{1}{n\\cdot 3^n}$ 這種式子，把 $\\frac{1}{2}$ 或 $\\frac{1}{3}$ 想成 $x$，找出哪個冪級數長這樣，再代值。代的 $x$ 要在收斂區間內。",
-        "端點要小心：$\\ln(1+x)$ 的級數在 $x=1$ 收斂，和確實是 $\\ln 2$，但這需要另一個定理（Abel 定理）保證，不能只靠逐項積分。"
+        "從原型出發：$\\displaystyle\\frac1{1-x}=\\sum_{n=0}^\\infty x^n=1+x+x^2+x^3+\\cdots$，$|x|<1$",
+        "兩邊微分：",
+        "成立範圍：$|x|<1$（端點 $\\pm1$ 項不趨近 $0$）",
+        "檢查 $x=\\frac12$：$\\frac{1}{(1/2)^2}=4$；$1+1+\\frac34+\\frac12+\\frac5{16}+\\cdots\\to4$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\frac{1}{(1-x)^2}&=\\sum_{n=1}^\\infty nx^{n-1}\\\\&=1+2x+3x^2+\\cdots\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 積分：$\\ln(1+x)$",
+      "body": [
+        "原型代 $-t$：$\\displaystyle\\frac1{1+t}=\\sum_{n=0}^\\infty(-1)^nt^n$，$|t|<1$",
+        "從 $0$ 積到 $x$（$|x|<1$）：",
+        "從 $0$ 積分，常數自動定好：$x=0$ 時兩邊都是 $0$",
+        "換成從 $n=1$ 開始：",
+        "半徑 $1$；端點：$x=1$ 交錯調和級數，收斂；$x=-1$ 是 $-\\sum\\frac1n$，發散",
+        "成立範圍 $-1<x\\le1$",
+        "端點 $x=1$ 的和也等於 $\\ln2$，要用 Abel 定理（冪級數在收斂的端點上連續），這裡先承認"
+      ],
+      "tex": [
+        "\\ln(1+x)=\\int_0^x\\frac{dt}{1+t}=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{n+1}}{n+1}",
+        "\\begin{aligned}\\ln(1+x)&=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}x^n}{n}\\\\&=x-\\frac{x^2}2+\\frac{x^3}3-\\cdots\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 積分：$\\arctan x$",
+      "body": [
+        "原型代 $-t^2$：$\\displaystyle\\frac{1}{1+t^2}=\\sum_{n=0}^\\infty(-1)^nt^{2n}$，$|t|<1$",
+        "從 $0$ 積到 $x$：",
+        "端點 $x=\\pm1$：$\\pm\\sum\\frac{(-1)^n}{2n+1}$，交錯、遞減到 $0$，都收斂",
+        "成立範圍 $-1\\le x\\le1$",
+        "代 $x=1$：$1-\\frac13+\\frac15-\\cdots=\\arctan1=\\frac\\pi4$（同樣用 Abel 定理）"
+      ],
+      "tex": [
+        "\\begin{aligned}\\arctan x&=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{2n+1}}{2n+1}\\\\&=x-\\frac{x^3}3+\\frac{x^5}5-\\cdots\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "④ 求和：逐項微分",
+      "body": [
+        "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n}{2^n}=\\frac12+\\frac24+\\frac38+\\cdots$",
+        "想法：它是某個冪級數在特定 $x$ 的值",
+        "代 $x=\\frac12$（在 $|x|<1$ 內）：",
+        "數值檢查：前 $30$ 項和 $\\approx1.99999997$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\sum_{n=1}^\\infty nx^n&=x\\sum_{n=1}^\\infty nx^{n-1}\\\\&=\\frac{x}{(1-x)^2},\\quad|x|<1\\end{aligned}",
+        "\\sum_{n=1}^\\infty\\frac{n}{2^n}=\\frac{1/2}{(1/2)^2}=2"
+      ]
+    },
+    {
+      "heading": "④ 求和：逐項積分",
+      "body": [
+        "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{1}{n\\cdot2^n}$",
+        "$\\ln(1+x)=\\sum\\dfrac{(-1)^{n-1}x^n}{n}$，代 $x=-\\frac12$：",
+        "$\\arctan$ 的級數：求 $\\displaystyle\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1)3^n}$",
+        "$3^n=(\\sqrt3)^{2n}$：代 $x=\\frac1{\\sqrt3}$，$x^{2n+1}=\\dfrac{1}{\\sqrt3\\cdot3^n}$"
+      ],
+      "tex": [
+        "\\ln\\frac12=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}(-1)^n}{n\\,2^n}=-\\sum_{n=1}^\\infty\\frac{1}{n\\,2^n}",
+        "\\sum_{n=1}^\\infty\\frac1{n\\cdot2^n}=-\\ln\\frac12=\\ln2",
+        "\\arctan\\frac1{\\sqrt3}=\\frac{1}{\\sqrt3}\\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}",
+        "\\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}=\\sqrt3\\cdot\\frac\\pi6=\\frac{\\sqrt3\\,\\pi}{6}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 半徑內可逐項微分、積分；半徑不變，端點要重判",
+        "• 無限和的導數不一定能拆；冪級數是好的情況",
+        "• $\\frac{1}{(1-x)^2}=\\sum nx^{n-1}$，$|x|<1$",
+        "• $\\ln(1+x)=\\sum\\frac{(-1)^{n-1}x^n}{n}$，$-1<x\\le1$",
+        "• $\\arctan x=\\sum\\frac{(-1)^nx^{2n+1}}{2n+1}$，$-1\\le x\\le1$",
+        "• 求和：找冪級數，代進特定的 $x$",
+        "下一課：Taylor 多項式"
+      ]
     }
   ],
   "workedExamples": [
@@ -106,296 +191,842 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum_{n=0}^{\\infty}x^n$ 逐項積分（從 0 到 $x$）得到？",
+      "ask": "$\\displaystyle\\sum_{n=1}^\\infty\\frac{x^n}{n^2}$ 的區間是 $[-1,1]$。逐項微分後的級數，區間是？",
       "options": [
         {
-          "label": "$\\sum \\frac{x^{n+1}}{n+1}$",
+          "label": "$[-1,1)$",
           "correct": true
         },
         {
-          "label": "$\\sum n x^{n-1}$",
-          "why": "那是逐項微分。積分要把次方加一、再除以新的次方。"
+          "label": "$[-1,1]$",
+          "why": "半徑不變，但端點要重判；$x=1$ 變成 $\\sum\\frac1n$，發散"
         },
         {
-          "label": "$\\sum x^{n+1}$",
-          "why": "次方加一之後還要除以 $n+1$；$\\int t^n\\,dt=\\frac{t^{n+1}}{n+1}$。"
+          "label": "$(-1,1)$",
+          "why": "$x=-1$ 時 $\\sum\\frac{(-1)^{n-1}}{n}$ 是交錯調和級數，收斂"
+        },
+        {
+          "label": "$(-2,2)$",
+          "why": "微分不改變收斂半徑，$R$ 還是 $1$"
         }
       ]
     },
     {
-      "ask": "冪級數逐項微分後，收斂半徑會？",
+      "ask": "$\\displaystyle\\sum_{n=1}^\\infty\\frac{n}{3^n}=$？",
       "options": [
         {
-          "label": "不變",
+          "label": "$\\dfrac34$",
           "correct": true
         },
         {
-          "label": "變大",
-          "why": "係數多乘了 $n$，比值 $\\frac{n+1}{n}\\to 1$，半徑不受影響。"
+          "label": "$\\dfrac94$",
+          "why": "那是 $\\frac1{(1-x)^2}$：少乘了一個 $x$"
         },
         {
-          "label": "可能變成 0",
-          "why": "多乘一個多項式因子不改變 $R$；改變的只可能是端點。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\sum_{n=1}^{\\infty}\\frac{n}{3^n}=$？",
-      "options": [
-        {
-          "label": "$\\frac{3}{4}$",
-          "correct": true
+          "label": "$\\dfrac32$",
+          "why": "那是 $\\frac1{1-x}$，是 $\\sum\\frac1{3^n}$（從 $n=0$）的和，少了 $n$"
         },
         {
-          "label": "$\\frac{9}{4}$",
-          "why": "這是 $\\sum n x^{n-1}=\\frac{1}{(1-x)^2}$ 在 $x=\\frac{1}{3}$ 的值；$\\sum n x^n$ 還要再乘一個 $x$。"
-        },
-        {
-          "label": "$\\frac{1}{2}$",
-          "why": "這是 $\\sum_{n=1}^{\\infty}\\left(\\frac{1}{3}\\right)^n$；忘了係數 $n$，要用微分過的級數。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\frac{1}{1+x}$ 的級數在 $x=1$ 發散，積分得到的 $\\ln(1+x)$ 級數在 $x=1$ 呢？",
-      "options": [
-        {
-          "label": "收斂（是交錯調和級數）",
-          "correct": true
-        },
-        {
-          "label": "一定也發散，因為積分不改變收斂性",
-          "why": "積分不改變半徑，但端點可以改變：$1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$ 收斂。"
-        },
-        {
-          "label": "沒有意義，$x=1$ 不在定義域",
-          "why": "$\\ln(1+x)$ 在 $x=1$ 好好的；級數在那裡也收斂。"
+          "label": "$3$",
+          "why": "直接把 $x=3$ 代進去不行：要代 $x=\\frac13$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "逐項微分、積分",
+      "title": "像多項式一樣逐項處理",
       "beats": [
-        { "show": ["$f(x)=\\sum c_n(x-a)^n$，$R>0$"],
-          "note": "在 $(a-R,a+R)$ 內 $f$ 可微。",
-          "say": "冪級數只要半徑大於零，在收斂區間裡面就可以像多項式一樣，一項一項處理。",
+        {
+          "show": [
+            "多項式怎麼微分？一項一項微：",
+            "$\\frac{d}{dx}\\big(c_0+c_1x+c_2x^2+c_3x^3\\big)=c_1+2c_2x+3c_3x^2$"
+          ],
+          "say": "多項式怎麼微分？一項一項微就好。",
           "board": [
-            {"do":"write","line":"$f(x)={{s:\\sum c_n(x-a)^n}},\\quad {{r:R>0}}$"},
-            {"do":"underline","term":"r","label":"半徑","on":"半徑大於零"},
-            {"do":"box","term":"s","on":"多項式"}
-          ] },
-        { "show": ["$f'(x)=\\sum n c_n(x-a)^{n-1}$"],
-          "say": "微分：每一項把次方拿下來乘在前面，次方減一。跟多項式完全一樣。",
+            {
+              "do": "write",
+              "line": "多項式怎麼微分？一項一項微："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\big(c_0+c_1x+c_2x^2+c_3x^3\\big)=c_1+2c_2x+3c_3x^2$",
+              "on": "一項#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪級數 $f(x)=\\sum_{n=0}^\\infty c_n(x-a)^n$，收斂半徑 $R>0$。在 $|x-a|<R$："
+          ],
+          "say": "冪級數也可以。設 f 是收斂半徑 R 大於 0 的冪級數。在半徑以內：",
           "board": [
-            {"do":"write","line":"$f'(x)=\\sum {{k:n}}c_n(x-a)^{{{e:n-1}}}$"},
-            {"do":"focus","term":"k","label":"拿下來","on":"拿下來"},
-            {"do":"focus","term":"e","on":"次方減一"}
-          ] },
-        { "show": ["$\\int_a^x f(t)\\,dt=\\sum\\frac{c_n(x-a)^{n+1}}{n+1}$"],
-          "say": "積分：次方加一，再除以新的次方 n 加一。",
+            {
+              "do": "write",
+              "line": "冪級數 $f(x)=\\sum_{n=0}^\\infty c_n(x-a)^n$，收斂半徑 $R>0$。在 $|x-a|<R$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'(x)=\\sum_{n=1}^\\infty nc_n(x-a)^{n-1}$"
+          ],
+          "say": "第一，f 可以微分，導數就是逐項微分：n 乘 c n，乘 x 減 a 的 n 減 1 次方。",
           "board": [
-            {"do":"write","line":"$\\int_a^x f(t)\\,dt=\\sum\\frac{c_n(x-a)^{{{p:n+1}}}}{{{d:n+1}}}$"},
-            {"do":"focus","term":"p","on":"次方加一"},
-            {"do":"underline","term":"d","label":"新的次方","on":"除以新的"}
-          ] },
-        { "show": ["半徑還是 $R$，端點要重查"],
-          "say": "兩個新級數的半徑都不變，但端點收不收斂可能改變，要重新檢查。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f'(x)=\\sum_{n=1}^\\infty nc_n(x-a)^{n-1}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "項微"
+            },
+            {
+              "do": "write",
+              "line": "　$n=0$ 那一項是常數，微分後是 $0$，所以從 $n=1$ 開始",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int f(x)\\,dx=C+\\sum_{n=0}^\\infty \\frac{c_n}{n+1}(x-a)^{n+1}$"
+          ],
+          "say": "第二，可以逐項積分：每一項的次方加 1，再除以新的次方，最後加一個常數 C。",
           "board": [
-            {"do":"write","line":"半徑還是 ${{rr:R}}$，端點要重查"},
-            {"do":"focus","term":"rr","label":"不變","on":"半徑"}
-          ] },
-        { "show": ["無窮多項：一般不能交換"],
-          "note": "冪級數可以，靠的是〈一致收斂〉。",
-          "say": "這不是理所當然的。無窮多項的和，先取極限再微分，一般不能交換；冪級數是特例。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int f(x)\\,dx=C+\\sum_{n=0}^\\infty \\frac{c_n}{n+1}(x-a)^{n+1}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "再除"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個新級數的收斂半徑都還是 $R$"
+          ],
+          "say": "而且，微分和積分得到的兩個新級數，收斂半徑都還是 R，一點都沒變。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"無窮多項：一般不能交換","on":"無窮多項"}
-          ] },
-        { "show": ["$\\frac{\\sin(nx)}{n}\\to 0$，但 $f_n'(0)=1$"],
-          "note": "先微分再取極限是 1；冪級數靠〈一致收斂〉才不會這樣。",
-          "say": "反例：sine n x 除以 n 越來越平，極限是零；可是導數 cosine n x 在零都是一。兩種順序答案不同。",
+            {
+              "do": "write",
+              "line": "兩個新級數的收斂半徑都還是 $R$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這是一個定理；它的證明需要「均勻收斂」，留到高等微積分",
+              "color": "violet",
+              "on": "收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但端點可能改變：區間的端點要重新判斷"
+          ],
+          "say": "但是要小心：半徑不變，端點可能改變。端點要重新判斷。",
           "board": [
-            {"do":"write","line":"$f_n(x)=\\frac{\\sin(nx)}{n}\\to {{l:0}}$"},
-            {"do":"focus","term":"l","label":"極限是 0","on":"極限是零"},
-            {"do":"write","line":"$f_n'(0)=\\cos 0={{o:1}}$","on":"導數"},
-            {"do":"focus","term":"o","color":"red","label":"不是 0","on":"都是一"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "但端點可能改變：區間的端點要重新判斷"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "從幾何級數造一批",
+      "title": "這件事並不理所當然",
       "beats": [
-        { "show": ["$\\frac{1}{1-x}=\\sum x^n$，$|x|<1$"],
-          "say": "起點永遠是幾何級數：一減 x 分之一，等於 x 的 n 次方加起來。",
+        {
+          "show": [
+            "有限和：$(f+g)'=f'+g'$，當然可以拆"
+          ],
+          "say": "為什麼說逐項微分不是理所當然？有限多項相加，導數可以一項一項拆，這沒問題。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{1-x}={{g:\\sum x^n}},\\quad |x|<1$"},
-            {"do":"underline","term":"g","label":"幾何級數","on":"幾何級數"}
-          ] },
-        { "show": ["藍：$\\frac{1}{1-x}$，紅：前幾項"],
-          "note": "靠近 0 幾乎重合。",
-          "say": "畫出來看：藍色是一減 x 分之一，紅色是一加 x 加 x 平方加 x 三次方。靠近零幾乎重合。",
+            {
+              "do": "write",
+              "line": "有限和：$(f+g)'=f'+g'$，當然可以拆"
+            }
+          ]
+        },
+        {
+          "show": [
+            "無限和：「和的導數 = 導數的和」不一定對"
+          ],
+          "say": "但是無限多項相加，和的導數等於導數的和，不一定對。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,1,0,5],"curves":[{"expr":"1/(1-x)","domain":[-0.9,0.9],"color":"blue"},{"expr":"1+x+x^2+x^3","domain":[-0.9,0.9],"color":"red"}]}}
-          ] },
-        { "show": ["微分：$\\frac{1}{(1-x)^2}=\\sum_{n=1}^{\\infty}n x^{n-1}$"],
-          "say": "兩邊微分，左邊變成一減 x 平方分之一，右邊每一項變成 n 乘 x 的 n 減一次方。",
+            {
+              "do": "write",
+              "line": "無限和：「和的導數 = 導數的和」不一定對",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=1}^\\infty\\frac{\\sin(n^2x)}{n^2}$ 對每個 $x$ 都收斂（$\\le\\sum\\frac1{n^2}$）"
+          ],
+          "say": "例如，正弦 n 平方 x，除以 n 平方。每一項的絕對值都不超過 n 平方分之 1，所以處處收斂。",
           "board": [
-            {"do":"write","line":"微分：$\\frac{1}{(1-x)^2}=\\sum_{n=1}^{\\infty}{{d:nx^{n-1}}}$"},
-            {"do":"underline","term":"d","on":"每一項變成"}
-          ] },
-        { "show": ["$\\ln(1+x)=\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}x^n}{n}$"],
-          "note": "$\\frac{1}{1+t}$ 從 0 積到 $x$。",
-          "say": "一加 t 分之一從零積到 x，得到自然對數一加 x，正負交錯、除以 n。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=1}^\\infty\\frac{\\sin(n^2x)}{n^2}$ 對每個 $x$ 都收斂（$\\le\\sum\\frac1{n^2}$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項微分：$\\displaystyle\\sum_{n=1}^\\infty\\cos(n^2x)$，在 $x=0$ 是 $1+1+1+\\cdots$，發散"
+          ],
+          "say": "但是逐項微分，得到餘弦 n 平方 x 的總和。在 x 等於 0，是 1 加 1 加 1 一直加，發散。",
           "board": [
-            {"do":"write","line":"$\\ln(1+x)=\\sum_{n=1}^{\\infty}\\frac{{{s:(-1)^{n+1}}}x^n}{n}$","on":"得到自然對數"},
-            {"do":"focus","term":"s","label":"正負交錯","on":"正負交錯"}
-          ] },
-        { "show": ["$\\arctan x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n+1}}{2n+1}$"],
-          "note": "$\\frac{1}{1+t^2}$ 從 0 積到 $x$。",
-          "say": "一加 t 平方分之一積分，得到 arctan x，只有奇次方。用定積分，常數自動定好。",
+            {
+              "do": "write",
+              "line": "逐項微分：$\\displaystyle\\sum_{n=1}^\\infty\\cos(n^2x)$，在 $x=0$ 是 $1+1+1+\\cdots$，發散",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪級數特別好：在收斂半徑內，逐項微分、積分都可以"
+          ],
+          "say": "所以冪級數是特別好的情況：在收斂半徑內，逐項微分、積分都沒問題。",
           "board": [
-            {"do":"write","line":"$\\arctan x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n {{o:x^{2n+1}}}}{2n+1}$","on":"得到 arctan"},
-            {"do":"focus","term":"o","label":"奇次方","on":"只有奇次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "冪級數特別好：在收斂半徑內，逐項微分、積分都可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑為什麼不變：多出來的 $n$ 或 $\\frac1{n+1}$，比值都 $\\to1$",
+            "$\\left|\\frac{(n+1)c_{n+1}}{nc_n}\\right|=\\frac{n+1}{n}\\left|\\frac{c_{n+1}}{c_n}\\right|$"
+          ],
+          "say": "半徑為什麼不變？微分多乘一個 n，比值多出 n 分之 n 加 1，趨近 1，不改變極限。積分也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半徑為什麼不變：多出來的 $n$ 或 $\\frac1{n+1}$，比值都 $\\to1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{(n+1)c_{n+1}}{nc_n}\\right|=\\frac{n+1}{n}\\left|\\frac{c_{n+1}}{c_n}\\right|$",
+              "on": "比值"
+            },
+            {
+              "do": "write",
+              "line": "　這裡假設 $\\left|\\frac{c_{n+1}}{c_n}\\right|$ 有極限；一般情況用根值，$\\sqrt[n]{n}\\to1$",
+              "color": "violet",
+              "on": "趨近"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "端點可能改變",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\sum_{n=1}^\\infty\\dfrac{x^n}{n}$，區間 $[-1,1)$"
+          ],
+          "say": "看端點怎麼變。x 的 n 次方除以 n，上一課算過，區間是負 1 包含、1 不包含。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\sum_{n=1}^\\infty\\dfrac{x^n}{n}$，區間 $[-1,1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 微分：$\\sum x^{n-1}$，區間 $(-1,1)$：丟了 $-1$",
+            "• 積分：$\\sum\\dfrac{x^{n+1}}{n(n+1)}$，區間 $[-1,1]$：多了 $1$"
+          ],
+          "say": "微分後是幾何級數，負 1 發散，丟了一個端點。積分後，端點的項像 n 平方分之 1，兩端都收斂，多了一個端點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 微分：$\\sum x^{n-1}$，區間 $(-1,1)$：丟了 $-1$"
+            },
+            {
+              "do": "write",
+              "line": "• 積分：$\\sum\\dfrac{x^{n+1}}{n(n+1)}$，區間 $[-1,1]$：多了 $1$",
+              "on": "端點#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "微分讓端點變差，積分讓端點變好"
+          ],
+          "say": "一般規律：微分多乘一個 n，端點變差；積分多除一個 n 加 1，端點變好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "微分讓端點變差，積分讓端點變好",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "代值求和",
+      "title": "微分：$\\frac{1}{(1-x)^2}$",
       "beats": [
-        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{n}{2^n}$：把 $\\frac{1}{2}$ 想成 $x$"],
-          "say": "看到 n 除以二的 n 次方，把二分之一想成 x，找一個長這樣的冪級數。",
+        {
+          "show": [
+            "從原型出發：$\\displaystyle\\frac1{1-x}=\\sum_{n=0}^\\infty x^n=1+x+x^2+x^3+\\cdots$，$|x|<1$"
+          ],
+          "say": "現在從幾何級數出發，造出一整批級數。原型：1 減 x 分之 1，等於 x 的 n 次方總和。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{n}{2^n}$：把 ${{h:\\frac{1}{2}}}$ 想成 $x$","tint":{"h":"blue"}},
-            {"do":"focus","term":"h","label":"當成 x","on":"二分之一想成"}
-          ] },
-        { "show": ["$\\sum n x^{n-1}=\\frac{1}{(1-x)^2}$"],
-          "note": "剛才微分出來的。",
-          "say": "剛剛微分出來的這個很像，只是次方少了一。",
+            {
+              "do": "write",
+              "line": "從原型出發：$\\displaystyle\\frac1{1-x}=\\sum_{n=0}^\\infty x^n=1+x+x^2+x^3+\\cdots$，$|x|<1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊微分：",
+            "$\\begin{aligned}\\frac{1}{(1-x)^2}&=\\sum_{n=1}^\\infty nx^{n-1}\\\\&=1+2x+3x^2+\\cdots\\end{aligned}$"
+          ],
+          "say": "兩邊對 x 微分。左邊是 1 減 x 平方分之 1；右邊逐項微分，得到 n 乘 x 的 n 減 1 次方。",
           "board": [
-            {"do":"write","line":"$\\sum nx^{{{e:n-1}}}=\\frac{1}{(1-x)^2}$","on":"剛剛微分"},
-            {"do":"focus","term":"e","label":"少了一","on":"只是次方"}
-          ] },
-        { "show": ["乘 $x$：$\\sum n x^n=\\frac{x}{(1-x)^2}$"],
-          "say": "兩邊乘 x，次方就對了。",
+            {
+              "do": "write",
+              "line": "兩邊微分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}\\frac{1}{(1-x)^2}&=\\sum_{n=1}^\\infty nx^{n-1}\\\\&=1+2x+3x^2+\\cdots\\end{aligned}}}}$",
+              "on": "平方"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "成立範圍：$|x|<1$（端點 $\\pm1$ 項不趨近 $0$）"
+          ],
+          "say": "半徑還是 1，兩個端點項都不趨近 0，所以範圍是 x 的絕對值小於 1。",
           "board": [
-            {"do":"write","line":"乘 $x$：$\\sum nx^{{{e2:n}}}=\\frac{x}{(1-x)^2}$"},
-            {"do":"focus","term":"e2","on":"次方就"}
-          ] },
-        { "show": ["$x=\\frac{1}{2}$：$\\frac{1/2}{(1/2)^2}=2$"],
-          "note": "$\\frac{1}{2}$ 在 $(-1,1)$ 內，可以代。",
-          "say": "二分之一在收斂區間裡面，代進去，二分之一除以四分之一，得到二。",
+            {
+              "do": "write",
+              "line": "成立範圍：$|x|<1$（端點 $\\pm1$ 項不趨近 $0$）"
+            },
+            {
+              "do": "write",
+              "line": "　檢查 $x=\\frac12$：$\\frac{1}{(1/2)^2}=4$；$1+1+\\frac34+\\frac12+\\frac5{16}+\\cdots\\to4$",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：ln(1+x)；綠虛線：前 3 項；紅：前 9 項。只在 −1 < x ≤ 1 貼近"
+          ],
+          "say": "預告下一個：自然對數 1 加 x，和它的部分和。在負 1 到 1 之間貼近，出了 1 就分開。",
           "board": [
-            {"do":"focus","term":"h","label":"在收斂區間","on":"收斂區間"},
-            {"do":"write","line":"$x=\\frac{1}{2}$：$\\frac{1/2}{(1/2)^2}={{r:2}}$","on":"代進去"},
-            {"do":"box","term":"r","color":"green","on":"四分之一"}
-          ] }
-      ],
-      "key": "對 $\\frac{1}{1-x}$ 微分、乘 $x$，最後代值",
-      "check": 2
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lnp",
+                  "window": [
+                    -1.5,
+                    2,
+                    -3,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "ln(1+x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x-x^2/2+x^3/3",
+                      "color": "green",
+                      "dash": true
+                    },
+                    {
+                      "expr": "x-x^2/2+x^3/3-x^4/4+x^5/5-x^6/6+x^7/7-x^8/8+x^9/9",
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": -1,
+                      "color": "pencil"
+                    },
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 340
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：ln(1+x)；綠虛線：前 3 項；紅：前 9 項。只在 −1 < x ≤ 1 貼近",
+              "color": "violet",
+              "on": "在負"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "積出 $\\ln$",
+      "title": "積分：$\\ln(1+x)$",
       "beats": [
-        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{1}{n\\cdot 2^n}$"],
-          "note": "$\\sum\\frac{x^n}{n}$ 在 $x=\\frac{1}{2}$。",
-          "say": "這一個是 x 的 n 次方除以 n，在 x 等於二分之一的值。除以 n，是積分留下的痕跡。",
+        {
+          "show": [
+            "原型代 $-t$：$\\displaystyle\\frac1{1+t}=\\sum_{n=0}^\\infty(-1)^nt^n$，$|t|<1$"
+          ],
+          "say": "自然對數怎麼來？先在原型裡代負 t，得到 1 加 t 分之 1，等於負 1 的 n 次方乘 t 的 n 次方。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{{{a:x^n}}}{{{d:n}}}$，$x=\\frac{1}{2}$"},
-            {"do":"focus","term":"d","label":"積分痕跡","on":"除以 n#2"}
-          ] },
-        { "show": ["$\\ln(1-x)=-x-\\frac{x^2}{2}-\\frac{x^3}{3}-\\cdots$"],
-          "note": "自然對數一加 $x$ 的級數裡，$x$ 換成 $-x$。",
-          "say": "自然對數一加 x 是正負交錯的。要全正號，把 x 換成負 x，每一項都變成負的。",
+            {
+              "do": "write",
+              "line": "原型代 $-t$：$\\displaystyle\\frac1{1+t}=\\sum_{n=0}^\\infty(-1)^nt^n$，$|t|<1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從 $0$ 積到 $x$（$|x|<1$）：",
+            "$\\ln(1+x)=\\int_0^x\\frac{dt}{1+t}=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{n+1}}{n+1}$"
+          ],
+          "say": "兩邊從 0 積到 x。左邊由微積分基本定理，是自然對數 1 加 x。右邊逐項積分，次方加 1，除以 n 加 1。",
           "board": [
-            {"do":"write","line":"$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"},
-            {"do":"write","line":"$\\ln(1-x)={{m:-x-\\frac{x^2}{2}-\\frac{x^3}{3}-\\cdots}}$","on":"換成"},
-            {"do":"focus","term":"m","label":"全是負號","on":"每一項"}
-          ] },
-        { "show": ["$\\sum\\frac{x^n}{n}=-\\ln(1-x)$"],
-          "say": "兩邊乘負一，就得到 x 的 n 次方除以 n 的和。",
+            {
+              "do": "write",
+              "line": "從 $0$ 積到 $x$（$|x|<1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln(1+x)=\\int_0^x\\frac{dt}{1+t}=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{n+1}}{n+1}$",
+              "on": "本定"
+            },
+            {
+              "do": "write",
+              "line": "　從 $0$ 積分，常數自動定好：$x=0$ 時兩邊都是 $0$",
+              "color": "violet",
+              "on": "項積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換成從 $n=1$ 開始：",
+            "$\\begin{aligned}\\ln(1+x)&=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}x^n}{n}\\\\&=x-\\frac{x^2}2+\\frac{x^3}3-\\cdots\\end{aligned}$"
+          ],
+          "say": "把 n 加 1 改叫 n，就是 x 減 2 分之 x 平方，加 3 分之 x 的 3 次方，一直交錯下去。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{x^n}{n}={{r:-\\ln(1-x)}}$"},
-            {"do":"box","term":"r","color":"green","on":"就得到"}
-          ] },
-        { "show": ["$x=\\frac{1}{2}$：$\\frac{x^n}{n}=\\frac{1}{n\\cdot 2^n}$"],
-          "note": "$\\frac{1}{2}$ 在 $(-1,1)$ 內，可以代。",
-          "say": "代 x 等於二分之一，二分之一的 n 次方就是二的 n 次方分之一，每一項剛好是要的。",
+            {
+              "do": "write",
+              "line": "換成從 $n=1$ 開始："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}\\ln(1+x)&=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}x^n}{n}\\\\&=x-\\frac{x^2}2+\\frac{x^3}3-\\cdots\\end{aligned}}}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑 $1$；端點：$x=1$ 交錯調和級數，收斂；$x=-1$ 是 $-\\sum\\frac1n$，發散"
+          ],
+          "say": "半徑是 1。右端點 x 等於 1，是交錯調和級數，收斂；左端點是負的調和級數，發散。",
           "board": [
-            {"do":"write","line":"$x=\\frac{1}{2}$：$\\frac{x^n}{n}={{n1:\\frac{1}{n\\cdot 2^n}}}$"},
-            {"do":"focus","term":"n1","label":"剛好是","on":"每一項"}
-          ] }
+            {
+              "do": "write",
+              "line": "半徑 $1$；端點：$x=1$ 交錯調和級數，收斂；$x=-1$ 是 $-\\sum\\frac1n$，發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "成立範圍 $-1<x\\le1$"
+          ],
+          "say": "所以這個等式在負 1 到 1 成立，包含 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "成立範圍 $-1<x\\le1$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　端點 $x=1$ 的和也等於 $\\ln2$，要用 Abel 定理（冪級數在收斂的端點上連續），這裡先承認",
+              "color": "violet",
+              "on": "成立"
+            }
+          ]
+        }
       ],
-      "key": "$\\frac{x^n}{n}$ 來自幾何級數逐項積分",
-      "predict": {
-        "ask": "代 $x=\\frac{1}{2}$，$\\sum\\frac{1}{n\\cdot 2^n}=$？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "推出 $\\ln(1+x)$ 的冪級數",
+        "steps": [
           {
-            "label": "$\\ln 2$",
-            "correct": true
+            "label": "寫出 $\\frac{1}{1-u}=\\sum u^n$"
           },
           {
-            "label": "$-\\ln 2$",
-            "why": "$-\\ln\\frac{1}{2}=\\ln 2$；負號跟 $\\ln\\frac{1}{2}$ 的負號抵掉。"
+            "label": "代 $u=-t$：$\\frac1{1+t}=\\sum(-1)^nt^n$",
+            "why": "先要有上一步：寫出 $\\frac{1}{1-u}=\\sum u^n$"
           },
           {
-            "label": "$\\ln\\frac{3}{2}$",
-            "why": "那是 $\\ln(1+x)$ 在 $\\frac{1}{2}$，正負交錯的級數；這裡全是正號。"
+            "label": "兩邊從 $0$ 積到 $x$",
+            "why": "先要有上一步：代 $u=-t$：$\\frac1{1+t}=\\sum(-1)^nt^n$"
+          },
+          {
+            "label": "檢查端點：$x=1$ 收斂、$x=-1$ 發散",
+            "why": "先要有上一步：兩邊從 $0$ 積到 $x$"
           }
         ]
       }
     },
     {
-      "title": "arctan 與端點",
+      "title": "積分：$\\arctan x$",
       "beats": [
-        { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1)3^n}$"],
-          "note": "要湊出 $3^n$：取 $x=\\frac{1}{\\sqrt{3}}$。",
-          "say": "正負交錯、分母是奇數，像 arctan 的級數。要湊出三的 n 次方，就取 x 等於根號三分之一。",
+        {
+          "show": [
+            "原型代 $-t^2$：$\\displaystyle\\frac{1}{1+t^2}=\\sum_{n=0}^\\infty(-1)^nt^{2n}$，$|t|<1$"
+          ],
+          "say": "反正切也一樣。原型代負 t 平方，得到 1 加 t 平方分之 1，6.20 就做過了。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1){{t:3^n}}}$"},
-            {"do":"focus","term":"t","label":"要湊出","on":"要湊出"},
-            {"do":"write","line":"取 $x=\\frac{1}{\\sqrt{3}}$","on":"就取"}
-          ] },
-        { "show": ["$x^{2n+1}=x\\,(x^2)^n$，要 $x^2=\\frac{1}{3}$"],
-          "note": "$x=\\frac{1}{\\sqrt{3}}$：$x^{2n+1}=\\frac{1}{\\sqrt{3}}\\left(\\frac{1}{3}\\right)^n$",
-          "say": "為什麼是根號三分之一？x 的二 n 加一次方，拆成 x 乘 x 平方的 n 次方，要讓 x 平方是三分之一，這樣 x 就是根號三分之一。",
+            {
+              "do": "write",
+              "line": "原型代 $-t^2$：$\\displaystyle\\frac{1}{1+t^2}=\\sum_{n=0}^\\infty(-1)^nt^{2n}$，$|t|<1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從 $0$ 積到 $x$：",
+            "$\\begin{aligned}\\arctan x&=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{2n+1}}{2n+1}\\\\&=x-\\frac{x^3}3+\\frac{x^5}5-\\cdots\\end{aligned}$"
+          ],
+          "say": "從 0 積到 x，左邊是反正切 x，右邊每一項次方加 1，除以 2n 加 1。",
           "board": [
-            {"do":"write","line":"$x^{2n+1}=x\\,({{b:x^2}})^n$"},
-            {"do":"focus","term":"b","label":"要三分之一","on":"要讓"},
-            {"do":"write","line":"$x^2=\\frac{1}{3}\\Rightarrow x=\\frac{1}{\\sqrt{3}}$","on":"這樣"}
-          ] },
-        { "show": ["$\\arctan\\frac{1}{\\sqrt{3}}=\\frac{1}{\\sqrt{3}}\\sum\\frac{(-1)^n}{(2n+1)3^n}$"],
-          "say": "x 的二 n 加一次方，拆成三分之一的 n 次方，再乘一個根號三分之一。",
+            {
+              "do": "write",
+              "line": "從 $0$ 積到 $x$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}\\arctan x&=\\sum_{n=0}^\\infty\\frac{(-1)^nx^{2n+1}}{2n+1}\\\\&=x-\\frac{x^3}3+\\frac{x^5}5-\\cdots\\end{aligned}}}}$",
+              "on": "正切"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "端點 $x=\\pm1$：$\\pm\\sum\\frac{(-1)^n}{2n+1}$，交錯、遞減到 $0$，都收斂"
+          ],
+          "say": "端點正負 1，代出來都是交錯級數，2n 加 1 分之 1 遞減到 0，都收斂。",
           "board": [
-            {"do":"write","line":"$\\arctan\\frac{1}{\\sqrt{3}}={{k:\\frac{1}{\\sqrt{3}}}}\\sum\\frac{(-1)^n}{(2n+1)3^n}$"},
-            {"do":"focus","term":"k","label":"多乘一個","on":"再乘一個"}
-          ] },
-        { "show": ["$=\\frac{\\pi}{6}$，所求 $=\\frac{\\pi}{2\\sqrt{3}}$"],
-          "say": "arctan 根號三分之一是六分之 pi，兩邊乘根號三，得到二根號三分之 pi。",
+            {
+              "do": "write",
+              "line": "端點 $x=\\pm1$：$\\pm\\sum\\frac{(-1)^n}{2n+1}$，交錯、遞減到 $0$，都收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "成立範圍 $-1\\le x\\le1$"
+          ],
+          "say": "所以範圍是負 1 到 1，兩端都包含。原本的 1 加 t 平方分之 1 兩端都發散，積分讓端點變好了。",
           "board": [
-            {"do":"write","line":"$=\\frac{\\pi}{6}$，所求 $={{r:\\frac{\\pi}{2\\sqrt{3}}}}$","on":"六分之"},
-            {"do":"box","term":"r","color":"green","on":"得到二根號"}
-          ] },
-        { "show": ["$x=1$：$\\ln(1+x)$ 的級數呢？"],
-          "note": "逐項積分只保證半徑不變，端點要另外看。",
-          "say": "端點要小心。逐項積分不改半徑，可是端點要另外看：把 x 等於一代進去，會是什麼級數？",
+            {
+              "do": "write",
+              "line": "成立範圍 $-1\\le x\\le1$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　代 $x=1$：$1-\\frac13+\\frac15-\\cdots=\\arctan1=\\frac\\pi4$（同樣用 Abel 定理）",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "求和：逐項微分",
+      "beats": [
+        {
+          "show": [
+            "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n}{2^n}=\\frac12+\\frac24+\\frac38+\\cdots$"
+          ],
+          "say": "最後，用這些級數求數值級數的和。第一題：n 除以 2 的 n 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{s:x=1}}$：$\\ln(1+x)$ 的級數？","on":"端點要小心"},
-            {"do":"underline","term":"s","label":"另外看","on":"另外看"}
-          ] },
-        { "show": ["$x=1$：$1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$"],
-          "note": "收不收斂，小測再看。",
-          "say": "把 x 等於一代進去，是一減二分之一加三分之一，正負交錯，每一項越來越小。收不收斂，小測再看。",
+            {
+              "do": "write",
+              "line": "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n}{2^n}=\\frac12+\\frac24+\\frac38+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "想法：它是某個冪級數在特定 $x$ 的值"
+          ],
+          "say": "想法是：把它看成某個冪級數在特定 x 的值。這裡 x 是 2 分之 1。",
           "board": [
-            {"do":"write","line":"${{z:1-\\frac{1}{2}+\\frac{1}{3}-\\cdots}}$"},
-            {"do":"focus","term":"z","label":"交錯","on":"正負交錯"}
-          ] }
+            {
+              "do": "write",
+              "line": "想法：它是某個冪級數在特定 $x$ 的值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\sum_{n=1}^\\infty nx^n&=x\\sum_{n=1}^\\infty nx^{n-1}\\\\&=\\frac{x}{(1-x)^2},\\quad|x|<1\\end{aligned}$"
+          ],
+          "say": "剛才微分得到的級數，兩邊乘 x，就得到 n 乘 x 的 n 次方，等於 1 減 x 平方分之 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}\\sum_{n=1}^\\infty nx^n&=x\\sum_{n=1}^\\infty nx^{n-1}\\\\&=\\frac{x}{(1-x)^2},\\quad|x|<1\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=\\frac12$（在 $|x|<1$ 內）：",
+            "$\\sum_{n=1}^\\infty\\frac{n}{2^n}=\\frac{1/2}{(1/2)^2}=2$"
+          ],
+          "say": "2 分之 1 在範圍內，代進去：2 分之 1 除以 4 分之 1，等於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $x=\\frac12$（在 $|x|<1$ 內）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\sum_{n=1}^\\infty\\frac{n}{2^n}=\\frac{1/2}{(1/2)^2}=2}}$",
+              "color": "red",
+              "on": "圍內"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "除以"
+            },
+            {
+              "do": "write",
+              "line": "　數值檢查：前 $30$ 項和 $\\approx1.99999997$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "求和：逐項積分",
+      "beats": [
+        {
+          "show": [
+            "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{1}{n\\cdot2^n}$"
+          ],
+          "say": "第二題：n 乘 2 的 n 次方，分之 1。分母有 n，想到逐項積分出來的自然對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "求 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{1}{n\\cdot2^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln(1+x)=\\sum\\dfrac{(-1)^{n-1}x^n}{n}$，代 $x=-\\frac12$：",
+            "$\\ln\\frac12=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}(-1)^n}{n\\,2^n}=-\\sum_{n=1}^\\infty\\frac{1}{n\\,2^n}$"
+          ],
+          "say": "在自然對數 1 加 x 的級數裡，代 x 等於負 2 分之 1。兩個負號乘起來，每一項都是負的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ln(1+x)=\\sum\\dfrac{(-1)^{n-1}x^n}{n}$，代 $x=-\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\frac12=\\sum_{n=1}^\\infty\\frac{(-1)^{n-1}(-1)^n}{n\\,2^n}=-\\sum_{n=1}^\\infty\\frac{1}{n\\,2^n}$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac1{n\\cdot2^n}=-\\ln\\frac12=\\ln2$"
+          ],
+          "say": "所以和是負的自然對數 2 分之 1，也就是自然對數 2，大約 0.693。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\sum_{n=1}^\\infty\\frac1{n\\cdot2^n}=-\\ln\\frac12=\\ln2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\arctan$ 的級數：求 $\\displaystyle\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1)3^n}$"
+          ],
+          "say": "第三題，用反正切：負 1 的 n 次方，除以 2n 加 1，再除以 3 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\arctan$ 的級數：求 $\\displaystyle\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1)3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$3^n=(\\sqrt3)^{2n}$：代 $x=\\frac1{\\sqrt3}$，$x^{2n+1}=\\dfrac{1}{\\sqrt3\\cdot3^n}$"
+          ],
+          "say": "3 的 n 次方是根號 3 的 2n 次方，所以代 x 等於根號 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$3^n=(\\sqrt3)^{2n}$：代 $x=\\frac1{\\sqrt3}$，$x^{2n+1}=\\dfrac{1}{\\sqrt3\\cdot3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\arctan\\frac1{\\sqrt3}=\\frac{1}{\\sqrt3}\\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}$"
+          ],
+          "say": "代進反正切的級數，提出一個根號 3 分之 1，剩下的正好是要求的和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\arctan\\frac1{\\sqrt3}=\\frac{1}{\\sqrt3}\\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}=\\sqrt3\\cdot\\frac\\pi6=\\frac{\\sqrt3\\,\\pi}{6}$"
+          ],
+          "say": "反正切根號 3 分之 1 是 6 分之派，所以和是根號 3 乘 6 分之派，大約 0.907。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\sum_{n=0}^\\infty\\frac{(-1)^n}{(2n+1)3^n}=\\sqrt3\\cdot\\frac\\pi6=\\frac{\\sqrt3\\,\\pi}{6}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "和是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 半徑內可逐項微分、積分；半徑不變，端點要重判",
+            "• 無限和的導數不一定能拆；冪級數是好的情況"
+          ],
+          "say": "整理一下：半徑內可以逐項微分、積分，半徑不變，端點要重判。從幾何級數，微分、積分造出一整批級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 半徑內可逐項微分、積分；半徑不變，端點要重判"
+            },
+            {
+              "do": "write",
+              "line": "• 無限和的導數不一定能拆；冪級數是好的情況",
+              "on": "以逐"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{1}{(1-x)^2}=\\sum nx^{n-1}$，$|x|<1$",
+              "on": "徑不"
+            },
+            {
+              "do": "write",
+              "line": "• $\\ln(1+x)=\\sum\\frac{(-1)^{n-1}x^n}{n}$，$-1<x\\le1$",
+              "on": "從幾"
+            },
+            {
+              "do": "write",
+              "line": "• $\\arctan x=\\sum\\frac{(-1)^nx^{2n+1}}{2n+1}$，$-1\\le x\\le1$",
+              "on": "積分#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 求和：找冪級數，代進特定的 $x$"
+          ],
+          "say": "求數值級數的和，就是找一個冪級數，代進一個特定的 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 求和：找冪級數，代進特定的 $x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Taylor 多項式"
+          ],
+          "say": "下一課，反過來問：給一個函數，怎麼找它的冪級數？從泰勒多項式開始。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Taylor 多項式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

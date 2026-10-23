@@ -1,0 +1,547 @@
+{
+  "id": "quotient-rule",
+  "title": "除法法則",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "product-rule",
+    "derivative-trig",
+    "derivative-log"
+  ],
+  "next": [
+    "chain-rule"
+  ],
+  "related": [
+    "derivative-definition",
+    "increasing-decreasing"
+  ],
+  "objectives": [
+    "用 $\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}$ 微分兩個函數相除，分子的順序不寫反。",
+    "用除法法則推出 $(\\tan x)' = \\sec^2 x$。",
+    "認得出不必用除法法則的情形：分母是常數、可以先化簡、可以改寫成負次方。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 相除也不能各自微分",
+      "body": [
+        "$\\frac{x^2}{x} = x$（$x \\ne 0$），導數是 1。各自微分再相除會得到 $\\frac{2x}{1} = 2x$。不一樣，所以相除也要自己的規則。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式",
+      "body": [
+        "唸法：分母乘分子的導數，減掉分子乘分母的導數，整個除以分母的平方。這裡 $g(x) \\ne 0$。",
+        "跟乘法法則最大的不同是中間是減號，所以順序不能換：分子的導數 $f'$ 那一項在前。換了順序，答案差一個負號。",
+        "用 $\\frac{1}{x}$ 驗：$f = 1$、$g = x$，$\\frac{0 \\cdot x - 1 \\cdot 1}{x^2} = -\\frac{1}{x^2}$。跟冪次法則 $(x^{-1})' = -x^{-2}$ 一樣。"
+      ],
+      "tex": [
+        "\\left(\\frac{f}{g}\\right)'=\\frac{f'g-fg'}{g^2}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 用它得到 $\\tan x$ 的導數",
+      "body": [
+        "$\\tan x = \\sin x / \\cos x$。$f = \\sin x$、$g = \\cos x$，$f' = \\cos x$、$g' = -\\sin x$。",
+        "$\\frac{\\cos x \\cdot \\cos x - \\sin x \\cdot (-\\sin x)}{\\cos^2 x} = \\frac{\\cos^2 x + \\sin^2 x}{\\cos^2 x} = \\frac{1}{\\cos^2 x} = \\sec^2 x$（$\\cos x \\ne 0$）。"
+      ],
+      "tex": [
+        "(\\tan x)'=\\sec^2 x"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 先看看能不能不用",
+      "body": [
+        "分母是常數：$\\frac{x^3 + 4x}{2}$ 就是 $\\frac{1}{2}(x^3 + 4x)$，導數 $\\frac{1}{2}(3x^2 + 4)$。",
+        "分子是常數：$\\frac{3}{x^2} = 3x^{-2}$，導數 $-6x^{-3}$。",
+        "能約分就先約：$\\frac{x^2 + x}{x} = x + 1$（$x \\ne 0$），導數 1。",
+        "硬套除法法則也會對，只是步驟多、出錯的地方多。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 證明（從定義，加一項、減一項）",
+      "body": [
+        "設 $f$、$g$ 在 $x$ 可微，$g(x) \\ne 0$。$g$ 在 $x$ 可微所以連續，$h$ 夠小時 $g(x + h)$ 也不是 0。",
+        "通分：$\\frac{f(x + h)}{g(x + h)} - \\frac{f(x)}{g(x)} = [f(x + h)g(x) - f(x)g(x + h)] / [g(x + h)g(x)]$。",
+        "分子加減 $f(x)g(x)$：$[f(x + h) - f(x)]g(x) - f(x)[g(x + h) - g(x)]$。",
+        "除以 $h$，$h \\to 0$：分子 $\\to f'(x)g(x) - f(x)g'(x)$；分母 $g(x + h)g(x) \\to g(x)^2$（$g$ 連續）。得證。",
+        "另一個常見的推法是把 $q = \\frac{f}{g}$ 寫成 $f = qg$ 再用乘法法則，但那要先知道 $q$ 可微，等於把要證的東西先假設了，只能當記憶法。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "最基本的一題",
+      "prompt": "$\\frac{d}{dx} \\frac{x}{x + 1}$",
+      "problemId": "cx-der-005",
+      "steps": [
+        "$f = x$、$g = x + 1$，$f' = 1$、$g' = 1$。",
+        "$f'g - fg' = 1 \\cdot (x + 1) - x \\cdot 1 = 1$。",
+        "除以 $g^2 = (x + 1)^2$。"
+      ],
+      "answer": "$\\frac{1}{(x + 1)^2}$",
+      "claim": "D(x/(x+1)) == 1/(x+1)^2"
+    },
+    {
+      "title": "對數在分子",
+      "prompt": "$\\frac{d}{dx} \\frac{\\ln x}{x}$",
+      "problemId": "exam-der-003",
+      "steps": [
+        "$f = \\ln x$、$g = x$，$f' = \\frac{1}{x}$、$g' = 1$。",
+        "$f'g - fg' = \\left(\\frac{1}{x}\\right) \\cdot x - \\ln x \\cdot 1 = 1 - \\ln x$。",
+        "除以 $x^2$：$\\frac{1 - \\ln x}{x^2}$。"
+      ],
+      "answer": "$\\frac{1 - \\ln x}{x^2}$",
+      "note": "$x < e$ 時導數為正、$x > e$ 時為負，所以 $x = e$ 是 $\\frac{\\ln x}{x}$ 最大的地方；〈增減區間〉會正式講這件事。",
+      "claim": "D(ln(x)/x) == (1-ln(x))/x^2 ;; D(ln(x)/x, e) == 0"
+    },
+    {
+      "title": "分子分母都是多項式",
+      "prompt": "$\\frac{d}{dx} \\frac{x^2 + 1}{x - 1}$",
+      "problemId": "der-038",
+      "steps": [
+        "$f = x^2 + 1$、$g = x - 1$，$f' = 2x$、$g' = 1$。",
+        "$f'g = 2x(x - 1) = 2x^2 - 2x$；$fg' = x^2 + 1$。",
+        "相減時括號要整個減：$2x^2 - 2x - (x^2 + 1) = x^2 - 2x - 1$。",
+        "除以 $(x - 1)^2$。"
+      ],
+      "answer": "$\\frac{x^2 - 2x - 1}{(x - 1)^2}$",
+      "claim": "D((x^2+1)/(x-1)) == (x^2-2x-1)/(x-1)^2"
+    }
+  ],
+  "pitfalls": [
+    "分子順序寫反成 $fg' - f'g$，答案差一個負號。",
+    "分母忘了平方。",
+    "減 $fg'$ 時沒加括號：$2x(x - 1) - x^2 + 1$，最後一項的正負號錯。",
+    "寫成 $\\frac{f'}{g'}$。",
+    "分母是常數也套公式，平白多出出錯的機會。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{d}{dx} \\frac{x}{x + 2}$ 是？",
+      "options": [
+        {
+          "label": "$\\frac{2}{(x + 2)^2}$",
+          "correct": true
+        },
+        {
+          "label": "$-\\frac{2}{(x + 2)^2}$",
+          "why": "分子順序寫反了：要 $f'g - fg' = 1 \\cdot (x + 2) - x \\cdot 1$，$f'$ 那一項在前。"
+        },
+        {
+          "label": "1",
+          "why": "這是 $\\frac{f'}{g'} = \\frac{1}{1}$，各自微分再相除，不是除法法則。"
+        }
+      ]
+    },
+    {
+      "ask": "用除法法則算 $\\left(\\frac{1}{x}\\right)'$，得到？",
+      "options": [
+        {
+          "label": "$\\frac{1}{x^2}$",
+          "why": "順序反了：$(f'g - fg') = 0 \\cdot x - 1 \\cdot 1 = -1$，不是 $+1$。"
+        },
+        {
+          "label": "$-\\frac{1}{x^2}$",
+          "correct": true
+        },
+        {
+          "label": "0",
+          "why": "這是 $\\frac{f'}{g'} = \\frac{0}{1}$。分子是常數不代表整個分式的導數是 0。"
+        }
+      ]
+    },
+    {
+      "ask": "下面哪一個最不需要用除法法則？",
+      "options": [
+        {
+          "label": "$\\frac{x^3 + 4x}{2}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{x}{x + 1}$",
+          "why": "分母含 $x$，而且分子分母約不掉，要用除法法則（或改寫成 $1 - \\frac{1}{x + 1}$）。"
+        },
+        {
+          "label": "$\\frac{\\sin x}{x}$",
+          "why": "分母含 $x$，約不掉也改寫不了，要用除法法則。"
+        }
+      ]
+    },
+    {
+      "ask": "$f(x) = \\frac{e^x}{x}$，$f'(1)$ 是？",
+      "options": [
+        {
+          "label": "$e$",
+          "why": "這是 $\\frac{f'}{g'} = \\frac{e^x}{1}$ 代 1。"
+        },
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "$2e$",
+          "why": "中間的減號寫成了加號：$\\frac{e \\cdot 1 + e \\cdot 1}{1} = 2e$。應該是 $\\frac{e^x \\cdot x - e^x \\cdot 1}{x^2}$，代 1 得 0。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "相除的公式",
+      "beats": [
+        { "show": ["$\\frac{x^2}{x} = x$，導數是 1"],
+          "note": "各自微分再相除：$\\frac{2x}{1} = 2x$，不一樣。",
+          "say": "x 平方除以 x 就是 x，導數是一。可是各自微分再相除會得到二 x，對不上。",
+          "board": [
+            {"do":"write","line":"$\\frac{x^2}{x} = x$，導數是 1"},
+            {"do":"write","line":"$\\frac{2x}{1} = {{w:2x}}$","on":"各自微分"},
+            {"do":"strike","term":"w","label":"不對","on":"會得到"}
+          ] },
+        { "show": ["$\\left(\\frac{f}{g}\\right)'=\\frac{f'g-fg'}{g^2}$"],
+          "note": "這裡 $g(x) \\ne 0$。",
+          "say": "所以相除要有自己的規則：分母乘分子的導數，減掉分子乘分母的導數，再除以分母的平方。",
+          "board": [
+            {"do":"write","line":"$\\left(\\frac{f}{g}\\right)' = \\dfrac{ {{a:f'g}} - {{b:fg'}} }{ {{c:g^2}} }$"},
+            {"do":"focus","term":"a","on":"分母乘"},
+            {"do":"focus","term":"b","on":"減掉"},
+            {"do":"underline","term":"c","on":"再除以"}
+          ] },
+        { "show": ["中間是減號，順序不能換"],
+          "note": "$f'$ 那一項在前；換了差一個負號。",
+          "say": "跟乘法法則最大的不同是中間是減號。分子的導數那一項要放前面，換了順序答案就差一個負號。",
+          "board": [
+            {"do":"write","line":"${{a:f'g}} {{m:-}} {{b:fg'}}$"},
+            {"do":"focus","term":"m","on":"減號"},
+            {"do":"underline","term":"a","label":"放前面","on":"放前面"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "最基本的一題",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\frac{x}{x + 1}$"],
+          "note": "$f = x$、$g = x + 1$，$f' = 1$、$g' = 1$。",
+          "say": "先把分子分母叫出來：f 是 x，g 是 x 加一，兩個的導數都是一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\frac{ {{f:x}} }{ {{g:x+1}} }$","tint":{"f":"blue","g":"violet"}},
+            {"do":"focus","term":"f","color":"blue","on":"f 是"},
+            {"do":"focus","term":"g","color":"violet","on":"g 是"},
+            {"do":"write","line":"$f' = 1$，$g' = 1$","on":"兩個的導數"}
+          ] },
+        { "show": ["$f'g - fg' = 1 \\cdot (x + 1) - x \\cdot 1 = 1$"],
+          "say": "分子：一乘 x 加一，減掉 x 乘一，x 消掉，剩下一。",
+          "board": [
+            {"do":"write","line":"$f'g - fg' = 1 \\cdot (x+1) - x \\cdot 1$"},
+            {"do":"transform","line":"$= x + 1 - x = 1$","on":"消掉"}
+          ] },
+        { "show": ["$\\frac{1}{(x + 1)^2}$"],
+          "note": "除以 $g^2 = (x + 1)^2$。",
+          "say": "最後除以分母的平方，x 加一的平方。分母別忘了平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{d}{dx}\\frac{x}{x+1} = \\dfrac{1}{ {{d:(x+1)^2}} }$","on":"最後除以"},
+            {"do":"underline","term":"d","label":"別忘平方","on":"加一的平方"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "括號要整個減",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\frac{x^2 + 1}{x - 1}$"],
+          "note": "$f' = 2x$、$g' = 1$。",
+          "say": "分子分母都是多項式：f 是 x 平方加一，g 是 x 減一，導數分別是二 x 和一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\frac{ {{f:x^2+1}} }{ {{g:x-1}} }$","tint":{"f":"blue","g":"violet"}},
+            {"do":"write","line":"$f' = 2x$，$g' = 1$","on":"導數分別"}
+          ] },
+        { "show": ["$f'g = 2x^2 - 2x$","$fg' = x^2 + 1$"],
+          "say": "f prime 乘 g 展開是二 x 平方減二 x；f 乘 g prime 就是 x 平方加一。",
+          "board": [
+            {"do":"write","line":"$f'g = 2x^2 - 2x$"},
+            {"do":"write","line":"$fg' = {{b:x^2+1}}$","on":"f 乘 g prime"},
+            {"do":"underline","term":"b","label":"整個減","on":"就是"}
+          ] }
+      ],
+      "key": "$fg'$ 要整個括號減掉，每項變號",
+      "predict": {
+        "ask": "$f'g - fg'$ 是？",
+        "options": [
+          {
+            "label": "$x^2 - 2x - 1$",
+            "correct": true
+          },
+          {
+            "label": "$x^2 - 2x + 1$",
+            "why": "減 $x^2 + 1$ 時沒加括號，只減了 $x^2$，最後一項的正負號錯。"
+          },
+          {
+            "label": "$3x^2 - 2x + 1$",
+            "why": "中間的減號寫成了加號。除法法則是 $f'g - fg'$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "對數在分子",
+      "beats": [
+        { "show": ["$(e^x)' = e^x$"],
+          "note": "小測會用到這個事實。",
+          "say": "先補一個事實：e 的 x 次方的導數就是它自己。待會的小測會用到。",
+          "board": [
+            {"do":"write","line":"$({{e:e^x}})' = e^x$"}
+          ] },
+        { "show": ["$\\frac{d}{dx} \\frac{\\ln x}{x}$"],
+          "note": "$f' = \\frac{1}{x}$、$g' = 1$。",
+          "say": "f 是自然對數 x，導數 x 分之一；g 是 x，導數是一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\frac{ {{f:\\ln x}} }{ {{g:x}} }$","tint":{"f":"blue","g":"violet"}},
+            {"do":"write","line":"$f' = \\frac{1}{x}$，$g' = 1$","on":"分之一"}
+          ] },
+        { "show": ["$\\frac{1}{x} \\cdot x - \\ln x \\cdot 1 = 1 - \\ln x$"],
+          "say": "分子：x 分之一乘 x 是一，減掉自然對數 x 乘一，得到一減自然對數 x。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{x}\\cdot x - \\ln x \\cdot 1 = {{r:1 - \\ln x}}$"},
+            {"do":"box","term":"r","color":"green","on":"得到"}
+          ] },
+        { "show": ["$\\frac{1 - \\ln x}{x^2}$"],
+          "note": "$x = e$ 時導數是 0。",
+          "say": "再除以 x 平方。順便看到：x 等於 e 的時候分子是零，之後會知道那是最大的地方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{d}{dx}\\frac{\\ln x}{x} = \\dfrac{ {{n:1-\\ln x}} }{x^2}$","on":"再除以"},
+            {"do":"write","line":"$x = e$：分子是 0","on":"x 等於"},
+            {"do":"focus","term":"n","on":"分子是零"}
+          ] },
+        { "show": ["導數正：往上爬；導數負：往下掉"],
+          "note": "由正轉負的地方是山頂；〈增減區間〉會正式講。",
+          "say": "看圖：導數是正的，曲線往上爬；導數是負的，往下掉。所以在 e 這裡爬到頂。之後增減區間那一課會正式講。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6,-1,0.6],"curves":[{"expr":"log(x)/x","domain":[0.3,6],"color":"blue"}],"points":[{"x":2.718,"y":0.368}]}}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\tan x$ 的導數",
+      "beats": [
+        { "show": ["$\\tan x = \\frac{\\sin x}{\\cos x}$"],
+          "note": "$f' = \\cos x$、$g' = -\\sin x$。",
+          "say": "tangent 就是 sine 除以 cosine。sine 的導數是 cosine，cosine 的導數是負 sine。",
+          "board": [
+            {"do":"write","line":"$\\tan x = \\frac{ {{f:\\sin x}} }{ {{g:\\cos x}} }$","tint":{"f":"blue","g":"violet"}},
+            {"do":"write","line":"$f' = \\cos x$，$g' = -\\sin x$","on":"導數是 cosine"}
+          ] },
+        { "show": ["$\\frac{\\cos x \\cdot \\cos x - \\sin x \\cdot (-\\sin x)}{\\cos^2 x}$"],
+          "say": "套公式：cosine 乘 cosine，減掉 sine 乘負 sine，整個除以 cosine 平方。",
+          "board": [
+            {"do":"write","line":"$\\dfrac{ {{n:\\cos x\\cos x - \\sin x(-\\sin x)}} }{ {{d:\\cos^2 x}} }$"},
+            {"do":"underline","term":"n","on":"減掉"},
+            {"do":"underline","term":"d","on":"整個除以"}
+          ] }
+      ],
+      "predict": {
+        "ask": "化簡之後，$(\\tan x)'$ 是？",
+        "options": [
+          {
+            "label": "$\\sec^2 x$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{\\cos^2 x - \\sin^2 x}{\\cos^2 x}$",
+            "why": "減掉 $\\sin x \\cdot (-\\sin x)$ 是加上 $\\sin^2 x$；分子 $\\cos^2 x + \\sin^2 x = 1$。"
+          },
+          {
+            "label": "$-\\sec^2 x$",
+            "why": "分子順序寫反成 $fg' - f'g$，差一個負號。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "先看能不能不用",
+      "beats": [
+        { "show": ["分母是常數"],
+          "note": "$\\frac{x^3 + 4x}{2}$ 的導數 $\\frac{1}{2}(3x^2 + 4)$。",
+          "say": "分母是常數，就當成二分之一乘分子，直接微分就好。",
+          "board": [
+            {"do":"write","line":"$\\frac{f}{2} = {{h:\\frac{1}{2}}}\\cdot f$"},
+            {"do":"write","line":"$\\left(\\frac{f}{2}\\right)' = \\frac{1}{2}f'$","on":"直接微分"}
+          ] },
+        { "show": ["分子是常數"],
+          "note": "$\\frac{3}{x^2} = 3x^{-2}$，導數 $-6x^{-3}$。",
+          "say": "分子是常數，改寫成負次方，用冪次法則：三 x 的負二次方，導數負六 x 的負三次方。",
+          "board": [
+            {"do":"write","line":"$\\frac{3}{x^2} = {{p:3x^{-2}}}$"},
+            {"do":"write","line":"$(3x^{-2})' = -6x^{-3}$","on":"導數負六"}
+          ] },
+        { "show": ["$3 \\cdot (-2) = -6$，$-2 - 1 = -3$"],
+          "note": "冪次法則：指數乘下來，再減一。",
+          "say": "冪次法則：指數拿下來乘，三乘負二得負六，指數再減一，負二變成負三。",
+          "board": [
+            {"do":"write","line":"$3 \\cdot (-2) = {{c:-6}}$","on":"三乘負二"},
+            {"do":"write","line":"$-2 - 1 = {{d:-3}}$","on":"再減一"}
+          ] },
+        { "show": ["能約分就先約"],
+          "note": "$\\frac{x^2 + x}{x} = x + 1$，導數 1。",
+          "say": "能約分就先約，x 平方加 x 除以 x 是 x 加一，導數一。硬套公式也會對，只是容易出錯。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{x^2+x}{x} = {{r:x+1}}$","on":"能約分"},
+            {"do":"box","term":"r","color":"green","on":"x 加一"},
+            {"do":"write","line":"$(x+1)' = 1$","on":"導數一"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "證明：從定義",
+      "beats": [
+        { "show": ["先通分，分子加減 $f(x)g(x)$"],
+          "say": "策略：f、g 在 x 可微，g 在 x 不是零。先通分，再像乘法法則一樣，分子加一項減一項。",
+          "board": [
+            {"do":"write","line":"$f,g$ 在 $x$ 可微，$g(x)\\ne0$"},
+            {"do":"write","line":"先通分，分子加減 $f(x)g(x)$","on":"先通分"}
+          ] },
+        { "show": ["$h$ 夠小時 $g(x+h)\\ne0$"],
+          "note": "$g$ 可微所以連續，$x$ 附近不會是 $0$。",
+          "why": {"ask":"為什麼 $g(x+h)$ 不是 $0$？","say":"要除以 g 在 x 加 h，它為什麼不是零？","options":[{"label":"$g$ 在 $x$ 連續，而 $g(x)\\ne0$","correct":true},{"label":"$g(x)\\ne0$，所以每一點都不是 $0$","why":"$g(x)\\ne0$ 只管 $x$ 這一點；附近也不是 0，要靠連續。"},{"label":"分母本來就不能是 $0$","why":"那是要求，不是理由；要說明它真的不是 0，靠的是 $g$ 連續。"}]},
+          "say": "g 在 x 可微，所以連續；g 在 x 不是零，h 夠小時 g 在 x 加 h 也不是零，才能放在分母。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$h$ 夠小時 ${{gh:g(x+h)\\ne0}}$","on":"要除以"},
+            {"do":"underline","term":"gh","label":"g 連續","why":true,"on":"所以連續"}
+          ] },
+        { "show": ["$g(x+h) \\to g(x) \\ne 0$"],
+          "say": "連續是說 h 越小，g 在 x 加 h 越靠近 g 在 x。g 在 x 不是零，所以它不會掉到零，分母也靠近 g 在 x 的平方。",
+          "board": [
+            {"do":"write","line":"$h \\to 0$：${{n1:g(x+h)}} \\to g(x) \\ne 0$"},
+            {"do":"write","line":"$g(x+h)g(x) \\to {{n2:g(x)^2}}$","on":"分母"}
+          ] },
+        { "show": ["分子：$f(x+h)g(x)-f(x)g(x+h)$","分母：$g(x+h)g(x)$"],
+          "say": "兩個分式通分，分母是兩個 g 相乘，分子是交叉相乘再相減。",
+          "board": [
+            {"do":"write","line":"$\\dfrac{ {{num:f(x+h)g(x)-f(x)g(x+h)}} }{ {{den:g(x+h)g(x)}} }$","on":"通分"},
+            {"do":"underline","term":"den","on":"分母是"},
+            {"do":"underline","term":"num","on":"分子是"}
+          ] },
+        { "show": ["分子 $=[f(x+h)-f(x)]g(x)$","$\\ -f(x)[g(x+h)-g(x)]$"],
+          "say": "分子加一個 f 在 x 乘 g 在 x，再減一個，重新分組，就出現 f 的變化和 g 的變化。",
+          "board": [
+            {"do":"write","line":"分子 $={{df:[f(x+h)-f(x)]}}\\,g(x)$","tint":{"df":"blue"},"on":"重新分組"},
+            {"do":"write","line":"$\\quad-f(x)\\,{{dg:[g(x+h)-g(x)]}}$","tint":{"dg":"violet"},"on":"就出現"},
+            {"do":"focus","term":"df","on":"f 的變化"},
+            {"do":"focus","term":"dg","on":"g 的變化"}
+          ] },
+        { "show": ["除以 $h$，$h\\to0$：","$\\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}$"],
+          "note": "分母 $g(x+h)g(x)\\to g(x)^2$。",
+          "why": {"ask":"分母為什麼趨近 $g(x)^2$？","say":"分母裡有 g 在 x 加 h，它為什麼趨近 g 在 x 的平方？","options":[{"label":"$g$ 在 $x$ 連續","correct":true},{"label":"$f$ 在 $x$ 可微","why":"拿錯函數了：分母只有 $g$，要的是 $g$ 連續。"},{"label":"分母跟 $h$ 無關","why":"分母裡有 $g(x+h)$，會跟著 $h$ 變；它趨近 $g(x)$ 靠的是 $g$ 連續。"}]},
+          "say": "分子的兩個差商趨近 f prime 和 g prime；分母靠 g 連續，趨近 g 在 x 的平方。證完。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\dfrac{ {{fp:f'(x)}}g(x)-f(x){{gp:g'(x)}} }{ {{g2:g(x)^2}} }$","tint":{"fp":"blue","gp":"violet"},"on":"分母裡有"},
+            {"do":"underline","term":"g2","label":"g 連續","why":true,"on":"分母靠"}
+          ] }
+      ],
+      "key": "通分後分子加減 $f(x)g(x)$ 拆差商",
+      "proof": true,
+      "of": 4,
+      "skeleton": "直接",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "$h$ 夠小時 $g(x+h)\\ne0$"
+          },
+          {
+            "label": "通分",
+            "why": "要先確定 $g(x+h)$ 不是 0，才能把它放在分母通分。"
+          },
+          {
+            "label": "分子加減 $f(x)g(x)$",
+            "why": "要先通分，才有一個分子可以加減。"
+          },
+          {
+            "label": "除以 $h$，取極限",
+            "why": "要先拆出兩個變化，取極限才看得出 $f'$ 和 $g'$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "quotient-rule"
+    ],
+    "fine": [
+      "quotient-rule-basic",
+      "quotient-rule-sign-order",
+      "quotient-rule-trig",
+      "quotient-rule-avoid"
+    ]
+  },
+  "practice": [
+    {
+      "id": "cx-der-005",
+      "core": true,
+      "trains": "quotient-rule-basic"
+    },
+    {
+      "id": "lec-02-q2b",
+      "core": true,
+      "trains": "quotient-rule-sign-order"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-001",
+      "core": true,
+      "trains": "quotient-rule-basic"
+    },
+    {
+      "id": "exam-der-003",
+      "core": true,
+      "trains": "quotient-rule-basic"
+    },
+    {
+      "id": "der-038",
+      "core": true,
+      "trains": "quotient-rule-sign-order"
+    },
+    {
+      "id": "cx-der-006",
+      "core": true,
+      "trains": "quotient-rule-trig"
+    },
+    {
+      "id": "cg-2c-003",
+      "core": true,
+      "trains": "quotient-rule-avoid"
+    },
+    {
+      "id": "exam-der-009",
+      "trains": "quotient-rule-trig",
+      "note": "化簡時用 $\\sin^2 x + \\cos^2 x = 1$。"
+    },
+    {
+      "id": "exam-der-020",
+      "trains": "quotient-rule-basic"
+    },
+    {
+      "id": "cg-2c-004",
+      "trains": "quotient-rule-avoid"
+    },
+    {
+      "id": "dd-kin-005",
+      "challenge": true,
+      "trains": "quotient-rule-sign-order",
+      "note": "挑戰：位置函數的導數是速度，在 $t = 2$ 代值。"
+    }
+  ],
+  "gaps": []
+}

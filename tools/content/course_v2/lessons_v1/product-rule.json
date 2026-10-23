@@ -1,0 +1,517 @@
+{
+  "id": "product-rule",
+  "title": "乘法法則",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["derivative-power-rules", "derivative-trig", "derivative-exp", "derivative-log"],
+  "next": ["quotient-rule"],
+  "related": ["derivative-definition"],
+  "objectives": [
+    "知道 $(fg)'$ 不是 $f'g'$，並能用 $x \\cdot x$ 這個例子說出為什麼。",
+    "用 $(fg)' = f'g + fg'$ 微分兩個函數相乘，三個相乘時也會用。",
+    "算出導函數之後，在指定的點代值求導數。"
+  ],
+  "visual": "一個長方形，寬是 f(x)、高是 g(x)。拖動 x 往右一點（x → x + h），寬多出 Δf、高多出 Δg，新增的面積分成三塊並上色：右邊的長條 Δf · g、上面的長條 f · Δg、角落的小方塊 Δf · Δg。h 越拖越小時，旁邊即時顯示三塊各自除以 h 的值：兩條長條趨近 f′g 與 fg′，角落那塊趨近 0。",
+  "concept": [
+    {
+      "heading": "① 各自微分再相乘是錯的",
+      "body": [
+        "$x \\cdot x = x^2$，導數是 $2x$。如果「各自微分再相乘」，會得到 $1 \\cdot 1 = 1$。兩個不一樣，所以相乘的函數要有自己的規則。",
+        "正確的規則從哪裡來？把乘積 $f(x)g(x)$ 看成面積：面積變大來自兩件事——寬變長了（乘上原來的高），高變長了（乘上原來的寬）。下面把這兩塊畫出來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：長方形變大時，多出來的面積",
+      "body": [
+        "把 $f(x)$、$g(x)$ 想成長方形的寬和高，面積就是 $f(x)g(x)$。$x$ 往右走 $h$，寬多 $\\Delta f$、高多 $\\Delta g$。多出來的面積是三塊：$\\Delta f \\cdot g$、$f \\cdot \\Delta g$，和角落的 $\\Delta f \\cdot \\Delta g$。",
+        "除以 $h$：$\\frac{\\Delta f}{h} \\to f'$，$\\frac{\\Delta g}{h} \\to g'$；角落那塊是 $\\Delta f \\cdot \\left(\\frac{\\Delta g}{h}\\right)$，$\\Delta f \\to 0$、$\\frac{\\Delta g}{h} \\to g'$，乘起來 $\\to 0$。剩下 $f'g + fg'$。",
+        "這是直覺，不是證明：它把 $f$、$g$ 當成正的長度，也默認了 $\\Delta f \\to 0$（也就是 $f$ 連續）。完整證明在下面。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 公式",
+      "body": [
+        "前微後不微，加上前不微後微。用 $x \\cdot x$ 驗：$1 \\cdot x + x \\cdot 1 = 2x$，對了。",
+        "三個相乘就輪流微：每一項只微一個因式，其他兩個不動，所以有三項。"
+      ],
+      "tex": ["(fg)'=f'g+fg'", "(fgh)'=f'gh+fg'h+fgh'"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 什麼時候不用",
+      "body": [
+        "常數乘函數不必用：$(3x^2)' = 6x$。套乘法法則也對（常數的導數是 0，那一項消失），只是多寫。",
+        "多項式相乘，也可以先展開再微分；兩種做法答案一定一樣（範例 3）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 證明（加一項、減一項）",
+      "body": [
+        "設 $f$、$g$ 在 $x$ 可微。分子加減同一項 $f(x + h)g(x)$：",
+        "$f(x + h)g(x + h) - f(x)g(x) = f(x + h)[g(x + h) - g(x)] + g(x)[f(x + h) - f(x)]$。",
+        "兩邊除以 $h$：第一項是 $f(x + h) \\cdot \\frac{g(x + h) - g(x)}{h}$，第二項是 $g(x) \\cdot \\frac{f(x + h) - f(x)}{h}$。",
+        "$h \\to 0$ 時，$\\frac{g(x + h) - g(x)}{h} \\to g'(x)$，$\\frac{f(x + h) - f(x)}{h} \\to f'(x)$。還要 $f(x + h) \\to f(x)$：$f$ 在 $x$ 可微，所以 $f(x + h) - f(x) = h \\cdot \\frac{f(x + h) - f(x)}{h} \\to 0 \\cdot f'(x) = 0$，也就是 $f$ 在 $x$ 連續。",
+        "合起來得 $(fg)'(x) = f(x)g'(x) + g(x)f'(x)$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式乘指數",
+      "prompt": "$\\frac{d}{dx} (x e^x)$",
+      "problemId": "fd-der-009",
+      "steps": [
+        "$x$ 和 $e^x$ 都含 $x$，是兩個函數相乘。令 $f = x$、$g = e^x$。",
+        "$f' = 1$，$g' = e^x$。",
+        "$f'g + fg' = 1 \\cdot e^x + x \\cdot e^x$。",
+        "提出共同的 $e^x$：$(x + 1)e^x$。"
+      ],
+      "answer": "$(x + 1)e^x$",
+      "claim": "D(x*e^x) == (x+1)*e^x"
+    },
+    {
+      "title": "先求導函數，再代點",
+      "prompt": "$\\frac{d}{dx} (x^2 \\ln x)$ 在 $x = 1$ 的值",
+      "problemId": "cx-der-004",
+      "steps": [
+        "$f = x^2$、$g = \\ln x$，$f' = 2x$、$g' = \\frac{1}{x}$。",
+        "$f'g + fg' = 2x \\ln x + x^2 \\cdot \\left(\\frac{1}{x}\\right) = 2x \\ln x + x$（$x > 0$）。",
+        "代 $x = 1$：$2 \\cdot 1 \\cdot \\ln 1 + 1 = 0 + 1 = 1$。"
+      ],
+      "answer": "1",
+      "note": "要先微分再代值。先代 $x = 1$ 會得到常數 0，常數的導數是 0，錯的。",
+      "claim": "D(x^2*ln(x)) == 2x*ln(x)+x ;; D(x^2*ln(x), 1) == 1"
+    },
+    {
+      "title": "兩種做法對答案",
+      "prompt": "$y = (x^2 + 1)(x^3 - x)$，求 $y'$",
+      "problemId": "lec-02-q2a",
+      "steps": [
+        "乘法法則：$f = x^2 + 1$、$g = x^3 - x$，$f' = 2x$、$g' = 3x^2 - 1$。",
+        "$f'g = 2x(x^3 - x) = 2x^4 - 2x^2$；$fg' = (x^2 + 1)(3x^2 - 1) = 3x^4 - x^2 + 3x^2 - 1 = 3x^4 + 2x^2 - 1$。",
+        "相加：$2x^4 - 2x^2 + 3x^4 + 2x^2 - 1 = 5x^4 - 1$。",
+        "對答案：先展開 $(x^2 + 1)(x^3 - x) = x^5 - x^3 + x^3 - x = x^5 - x$，微分得 $5x^4 - 1$，一樣。"
+      ],
+      "answer": "$5x^4 - 1$",
+      "claim": "D((x^2+1)*(x^3-x)) == 5x^4-1"
+    }
+  ],
+  "pitfalls": [
+    "把 $(fg)'$ 寫成 $f'g'$。",
+    "只寫了一半：$x \\sin x$ 微分寫成 $x \\cos x$，漏掉 $1 \\cdot \\sin x$。",
+    "$x \\ln x$ 的第二項 $x \\cdot \\left(\\frac{1}{x}\\right)$ 沒化簡成 1。",
+    "三個相乘只寫兩項。",
+    "先代值再微分，得到 0。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{d}{dx} (x \\sin x)$ 是？",
+      "options": [
+        { "label": "$\\cos x$", "why": "這是各自微分再相乘：$1 \\cdot \\cos x$。相乘的導數不能這樣算，$x \\cdot x$ 就是反例。" },
+        { "label": "$\\sin x + x \\cos x$", "correct": true },
+        { "label": "$x \\cos x$", "why": "只做了「前不微後微」那一半，還要加上「前微後不微」$1 \\cdot \\sin x$。" }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} (x^2 e^x)$ 是？",
+      "options": [
+        { "label": "$(x^2 + 2x)e^x$", "correct": true },
+        { "label": "$2x e^x$", "why": "這只是 $f'g$，還要加上 $fg' = x^2 e^x$。" },
+        { "label": "$2x \\cdot e^x \\cdot x^2 \\cdot e^x$", "why": "把兩項乘起來了。乘法法則是兩項相加：$2x e^x + x^2 e^x$。" }
+      ]
+    },
+    {
+      "ask": "$f(x) = x \\ln x$，$f'(e)$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{e}$", "why": "這是各自微分再相乘：$1 \\cdot \\left(\\frac{1}{x}\\right)$，代 $e$ 得 $\\frac{1}{e}$。" },
+        { "label": "1", "why": "只算了 $f'g = \\ln x$，代 $e$ 得 1；還要加 $fg' = x \\cdot \\left(\\frac{1}{x}\\right) = 1$。" },
+        { "label": "2", "correct": true }
+      ]
+    },
+    {
+      "ask": "$(fgh)'$ 用乘法法則展開，有幾項？",
+      "options": [
+        { "label": "3 項", "correct": true },
+        { "label": "2 項", "why": "兩項是兩個因式的情形。三個因式要輪流微，每一個都輪到一次。" },
+        { "label": "1 項", "why": "那是 $f'g'h'$，各自微分再相乘，跟兩個因式時一樣是錯的。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "各自微分是錯的",
+      "beats": [
+        { "show": ["$x \\cdot x = x^2$，導數 $2x$"],
+          "say": "x 乘 x 就是 x 平方，導數是二 x。",
+          "board": [
+            {"do":"write","line":"$x\\cdot x=x^2$，導數 $2x$"}
+          ] },
+        { "show": ["各自微分再相乘：$1 \\cdot 1 = 1$"],
+          "note": "跟 $2x$ 不一樣。",
+          "say": "如果兩個 x 各自微分再相乘，得到一乘一等於一。跟二 x 對不上，所以乘積要有自己的規則。",
+          "board": [
+            {"do":"write","line":"各自微分：$(x)'\\cdot(x)'={{w:1\\cdot1=1}}$"},
+            {"do":"strike","term":"w","label":"對不上","on":"對不上"}
+          ] },
+        { "show": ["把 $f(x)g(x)$ 看成面積"],
+          "note": "寬是 $f(x)$，高是 $g(x)$。",
+          "say": "把乘積想成長方形的面積：寬是 f，高是 g。x 一變，寬和高都會跟著變。",
+          "board": [
+            {"do":"write","line":"面積 $={{f:f(x)}}\\cdot{{g:g(x)}}$"},
+            {"do":"focus","term":"f","color":"blue","label":"寬","on":"寬是"},
+            {"do":"focus","term":"g","color":"violet","label":"高","on":"高是"}
+          ] }
+      ],
+      "predict": {
+        "ask": "寬多 $\\Delta f$、高多 $\\Delta g$，多出來的面積分成幾塊？",
+        "options": [
+          {
+            "label": "3 塊",
+            "correct": true
+          },
+          {
+            "label": "2 塊",
+            "why": "右邊一條、上面一條之外，還有右上角的小方塊 $\\Delta f \\cdot \\Delta g$。"
+          },
+          {
+            "label": "1 塊",
+            "why": "寬和高都變長，右邊和上面各多一條，角落還有一小塊。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "長方形變大",
+      "beats": [
+        { "show": ["$\\Delta f \\cdot g$、$f \\cdot \\Delta g$、$\\Delta f \\cdot \\Delta g$"],
+          "say": "多出來的是右邊的長條、上面的長條，和角落的小方塊。",
+          "board": [
+            {"do":"write","line":"${{a:\\Delta f\\cdot g}}$、${{b:f\\cdot\\Delta g}}$、${{c:\\Delta f\\cdot\\Delta g}}$"},
+            {"do":"underline","term":"a","label":"右長條","on":"右邊"},
+            {"do":"underline","term":"b","label":"上長條","on":"上面"},
+            {"do":"circle","term":"c","label":"角落","on":"角落"}
+          ] },
+        { "show": ["÷ $h$：$\\frac{\\Delta f}{h} \\to f'$，$\\frac{\\Delta g}{h} \\to g'$"],
+          "say": "全部除以 h，再讓 h 趨近零。delta f 除以 h 趨近 f prime，delta g 除以 h 趨近 g prime。",
+          "board": [
+            {"do":"write","line":"除以 $h$，再讓 $h\\to0$"},
+            {"do":"write","line":"$\\frac{\\Delta f}{h}\\to f'$，$\\frac{\\Delta g}{h}\\to g'$","on":"delta f"}
+          ] },
+        { "show": ["$h\\to0$：$\\Delta f\\to0$"],
+          "note": "$x$ 只動一點，寬只多一點。",
+          "say": "delta f 是寬的增加量。h 很小，寬只多一點點，所以 delta f 趨近零。",
+          "board": [
+            {"do":"write","line":"$h\\to0$ 時，${{d:\\Delta f}}\\to0$"},
+            {"do":"focus","term":"d","color":"gold","label":"趨近零","on":"趨近零"}
+          ] },
+        { "show": ["兩條長條 → $f'g + fg'$"],
+          "say": "所以右邊長條變成 f prime 乘 g，上面長條變成 f 乘 g prime。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"右邊長條 → ${{a:f'g}}$","on":"右邊長條"},
+            {"do":"write","line":"上面長條 → ${{b:fg'}}$","on":"上面長條"}
+          ] },
+        { "show": ["角落 $= \\Delta f \\cdot \\left(\\frac{\\Delta g}{h}\\right)$"],
+          "note": "直覺，不是證明：默認 $f$ 連續、長度是正的。",
+          "say": "角落那塊寫成 delta f 乘 delta g 除以 h。它會怎樣？先猜猜看。",
+          "board": [
+            {"do":"write","line":"角落 $=\\Delta f\\cdot{{d:\\frac{\\Delta g}{h}}}$","tint":{"d":"blue"}},
+            {"do":"underline","term":"d","color":"blue","on":"delta g"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$h \\to 0$ 時，角落那塊除以 $h$ 趨近？",
+        "options": [
+          {
+            "label": "0",
+            "correct": true
+          },
+          {
+            "label": "$f'g'$",
+            "why": "只有一個 $\\Delta$ 除了 $h$：$\\frac{\\Delta g}{h} \\to g'$，但 $\\Delta f \\to 0$，乘起來 $\\to 0$。"
+          },
+          {
+            "label": "$\\infty$",
+            "why": "$\\frac{\\Delta g}{h}$ 趨近有限的 $g'$，再乘 $\\Delta f \\to 0$，是 0 不是無限大。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$(fg)'=f'g+fg'$"],
+          "note": "前微後不微，加上前不微後微。",
+          "say": "這就是乘法法則：前面微、後面不微，加上前面不微、後面微。",
+          "board": [
+            {"do":"write","line":"$(fg)'={{a:f'g}}+{{b:fg'}}$"},
+            {"do":"underline","term":"a","label":"前微後不微","on":"前面微"},
+            {"do":"underline","term":"b","label":"前不微後微","on":"加上前面不微"}
+          ] },
+        { "show": ["$x \\cdot x$：$1 \\cdot x + x \\cdot 1 = 2x$"],
+          "say": "用 x 乘 x 驗一下：一乘 x 加 x 乘一，等於二 x，對了。",
+          "board": [
+            {"do":"write","line":"$x\\cdot x$：$1\\cdot x+x\\cdot1={{r:2x}}$"},
+            {"do":"box","term":"r","color":"green","on":"等於二 x"}
+          ] },
+        { "show": ["$(3x^2)' = 6x$"],
+          "note": "常數乘函數不必用乘法法則。",
+          "say": "常數乘函數不必用它，常數倍留著就好。套乘法法則也對，常數微成零，只是多寫。",
+          "board": [
+            {"do":"write","line":"$({{c:3}}x^2)'=6x$"},
+            {"do":"focus","term":"c","label":"常數倍留著","on":"常數倍"}
+          ] },
+        { "show": ["$(\\sin x)'=\\cos x$"],
+          "note": "三角函數的導數，這裡直接用。",
+          "say": "sine x 的導數是 cosine x，這是三角函數導數那一課的結果，這裡直接用。",
+          "board": [
+            {"do":"write","line":"$({{s1:\\sin x}})'={{c1:\\cos x}}$"},
+            {"do":"focus","term":"c1","color":"green","label":"直接用","on":"直接用"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：加一項減一項",
+      "beats": [
+        { "show": ["分子加、減同一項 $f(x+h)g(x)$"],
+          "say": "策略：f 和 g 在 x 可微。分子加一項再減同一項，把乘積的變化拆成兩個差商。",
+          "board": [
+            {"do":"write","line":"$f(x+h)g(x+h)-f(x)g(x)$"},
+            {"do":"write","line":"加一項、減一項：${{m:f(x+h)g(x)}}$","on":"分子加一項"},
+            {"do":"underline","term":"m","on":"同一項"}
+          ] },
+        { "show": ["$=f(x+h)[g(x+h)-g(x)]$","$\\ +g(x)[f(x+h)-f(x)]$"],
+          "say": "f 在 x 加 h 乘 g 在 x 的那一項，加一次、減一次。重新分組，乘積的變化就拆成兩塊。",
+          "board": [
+            {"do":"write","line":"$=f(x+h)[g(x+h)-g(x)]$","on":"重新分組"},
+            {"do":"write","line":"$\\ +g(x)[f(x+h)-f(x)]$","on":"乘積的變化"}
+          ] },
+        { "show": ["除以 $h$：兩塊各有一個差商"],
+          "say": "兩邊除以 h，每一塊都出現一個差商：一個是 g 的，一個是 f 的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"除以 $h$：","on":"兩邊除以"},
+            {"do":"write","line":"${{fa:f(x+h)}}\\cdot{{dg:\\frac{g(x+h)-g(x)}{h}}}$","tint":{"dg":"blue"},"on":"每一塊"},
+            {"do":"write","line":"$+\\,g(x)\\cdot{{df:\\frac{f(x+h)-f(x)}{h}}}$","tint":{"df":"violet"},"on":"一個是 g"}
+          ] },
+        { "show": ["$f(x+h)\\to f(x)$"],
+          "note": "$f$ 在 $x$ 可微，所以在 $x$ 連續。",
+          "why": {"ask":"為什麼 $f(x+h)\\to f(x)$？","say":"前面那個 f 在 x 加 h，為什麼會趨近 f 在 x？","options":[{"label":"$f$ 在 $x$ 可微，可微一定連續","correct":true},{"label":"直接代 $h=0$ 就好","why":"直接代就是假設 $f$ 連續；這正是要說明的，理由是可微推得連續。"},{"label":"$g$ 在 $x$ 可微","why":"拿錯函數了：這一項是 $f(x+h)$，要的是 $f$ 連續。"}]},
+          "say": "f 在 x 可微，而可微一定連續，所以 f 在 x 加 h 趨近 f 在 x。這一步最容易被跳過。",
+          "board": [
+            {"do":"write","line":"${{fx:f(x+h)\\to f(x)}}$"},
+            {"do":"underline","term":"fx","label":"可微所以連續","why":true,"on":"可微一定連續"}
+          ] },
+        { "show": ["$f(x+h)-f(x)=h\\cdot$ 差商 $\\to0$"],
+          "say": "連續就是 h 趨近零時，f 的值不跳。變化量是 h 乘差商，趨近零乘 f prime x，就是零。",
+          "board": [
+            {"do":"focus","term":"fx","color":"green","label":"值不跳"}
+          ] },
+        { "show": ["$h\\to0$：$f(x)g'(x)+g(x)f'(x)$"],
+          "note": "兩個差商各自 $\\to g'(x)$、$f'(x)$。",
+          "why": {"ask":"為什麼可以拆開取極限？","say":"最後一步：為什麼可以每一塊分開取極限？","options":[{"label":"每個因子的極限都存在","correct":true},{"label":"$h$ 很小，$f(x+h)$ 就等於 $f(x)$","why":"很接近不等於相等；要的是極限存在，才能拆開相乘。"},{"label":"角落那塊太小，丟掉","why":"這裡沒有丟任何一項：加一項減一項是恆等式。"}]},
+          "say": "四個因子的極限都存在，和與積可以拆開取極限，合起來就是乘法法則。證完。",
+          "board": [
+            {"do":"keep","n":3},
+            {"do":"write","line":"$h\\to0$：${{r:f(x){{g1:g'(x)}}+g(x){{f1:f'(x)}}}}$","tint":{"g1":"blue","f1":"violet"},"on":"最後一步"},
+            {"do":"underline","term":"dg","color":"blue","why":true,"on":"四個因子"},
+            {"do":"underline","term":"df","color":"violet","why":true,"on":"極限都存在"},
+            {"do":"box","term":"r","color":"green","label":"乘法法則","why":true,"on":"合起來"}
+          ] }
+      ],
+      "key": "加減 $f(x+h)g(x)$，拆成兩個差商",
+      "proof": true,
+      "of": 4,
+      "skeleton": "直接",
+      "where": {
+        "ask": "「$f$ 在 $x$ 連續」用在哪一步？",
+        "steps": [
+          {
+            "label": "加減同一項 $f(x+h)g(x)$",
+            "why": "這只是代數：加了又減，值沒變。"
+          },
+          {
+            "label": "除以 $h$，拆成兩個差商",
+            "why": "這只用到 $h\\ne0$。"
+          },
+          {
+            "label": "$f(x+h)\\to f(x)$",
+            "correct": true
+          },
+          {
+            "label": "兩個差商 $\\to g'(x)$、$f'(x)$",
+            "why": "這直接是導數的定義，用的是可微，不是連續。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "多項式乘指數",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} (x e^x)$"],
+          "note": "$f = x$、$g = e^x$。",
+          "say": "x 乘 e 的 x 次方，兩個因子都有 x，是兩個函數相乘。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}({{f:x}}\\cdot{{g:e^x}})$","tint":{"f":"blue","g":"violet"}},
+            {"do":"focus","term":"f","color":"blue","label":"f","on":"兩個因子"},
+            {"do":"focus","term":"g","color":"violet","label":"g","on":"兩個函數"}
+          ] },
+        { "show": ["$f' = 1$，$g' = e^x$"],
+          "say": "x 微成一，e 的 x 次方微成自己。",
+          "board": [
+            {"do":"write","line":"$f'=1$，$g'=e^x$"}
+          ] },
+        { "show": ["$(e^x)'=e^x$：斜率等於高度"],
+          "note": "$e^x$ 的特別性質。",
+          "say": "e 的 x 次方是特別挑的數：它在每一點的斜率，剛好等於那一點的高度。推導在指數函數的導數那一課。",
+          "board": [
+            {"do":"write","line":"$({{e:e^x}})'=e^x$：斜率等於高度"},
+            {"do":"focus","term":"e","color":"gold","label":"自己","on":"斜率"}
+          ] },
+        { "show": ["$e^x$ 越往右越高，也越陡"],
+          "say": "看圖：e 的 x 次方往右越高，也越陡，斜率跟著高度一起變大。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,3,-1,10],"curves":[{"expr":"exp(x)","domain":[-2,3],"color":"blue"}]}}
+          ] },
+        { "show": ["$1 \\cdot e^x + x \\cdot e^x$"],
+          "say": "前微後不微是一乘 e 的 x 次方，前不微後微是 x 乘 e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"$={{a:1\\cdot e^x}}+{{b:x\\cdot e^x}}$"},
+            {"do":"underline","term":"a","on":"前微後不微"},
+            {"do":"underline","term":"b","on":"前不微後微"}
+          ] },
+        { "show": ["$= (x + 1)e^x$"],
+          "say": "兩項都有 e 的 x 次方，提出來，得 x 加一乘 e 的 x 次方。",
+          "board": [
+            {"do":"transform","line":"$={{r:(x+1)e^x}}$","on":"提出來"},
+            {"do":"box","term":"r","color":"green","on":"x 加一"}
+          ] }
+      ],
+      "solve": {
+        "check": 1,
+        "kind": "expression",
+        "answer": "(x^2+2x)e^x",
+        "claim": "D(x^2*e^x) == ANS",
+        "hint": "前微後不微，加上前不微後微。",
+        "steps": [
+          "$f = x^2$、$g = e^x$：$f' = 2x$，$g' = e^x$",
+          "$2x e^x + x^2 e^x$",
+          "$= (x^2 + 2x)e^x$"
+        ],
+        "wrong": [
+          {
+            "answer": "2x*e^x",
+            "why": "這只是 $f'g$，還要加上 $fg' = x^2 e^x$。"
+          },
+          {
+            "answer": "2x^3*e^(2x)",
+            "why": "把兩項乘起來了。乘法法則是兩項相加：$2x e^x + x^2 e^x$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "先微分，再代點",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} (x^2 \\ln x)$ 在 $x = 1$"],
+          "say": "x 平方乘自然對數 x，在 x 等於一的導數。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}(x^2\\ln x)$ 在 $x=1$"}
+          ] },
+        { "show": ["$2x \\ln x + x^2 \\cdot \\left(\\frac{1}{x}\\right)$"],
+          "note": "第二項化簡成 $x$（$x > 0$）。",
+          "say": "前微後不微是二 x 乘自然對數 x；前不微後微是 x 平方乘 x 分之一，化簡成 x。",
+          "board": [
+            {"do":"write","line":"$={{a:2x\\ln x}}+{{b:x^2\\cdot\\frac{1}{x}}}$"},
+            {"do":"underline","term":"a","label":"前微後不微","on":"前微後不微"},
+            {"do":"underline","term":"b","label":"前不微後微","on":"前不微後微"}
+          ] },
+        { "show": ["$(\\ln x)'=\\frac{1}{x}$"],
+          "note": "自然對數的導數。",
+          "say": "自然對數 x 的導數是 x 分之一，這是對數導數那一課學過的。x 越大，曲線越平，斜率越小。",
+          "board": [
+            {"do":"write","line":"$(\\ln x)'={{r:\\frac{1}{x}}}$"},
+            {"do":"focus","term":"r","color":"gold","label":"斜率","on":"x 越大"}
+          ] },
+        { "show": ["代 $x = 1$：$0 + 1 = 1$"],
+          "say": "代一：自然對數一是零，剩下一。",
+          "board": [
+            {"do":"write","line":"代 $x=1$：$0+1=1$","color":"green"}
+          ] },
+        { "show": ["$\\ln e=1$，因為 $e^1=e$"],
+          "say": "補一個值：自然對數 e 等於一，因為 e 的一次方就是 e。",
+          "board": [
+            {"do":"write","line":"$\\ln e=1$"},
+            {"do":"write","line":"因為 ${{p:e^1}}=e$","on":"因為"},
+            {"do":"underline","term":"p","color":"gold","on":"一次方"}
+          ] },
+        { "show": ["先代值再微分：得 0，錯"],
+          "note": "先代 $x = 1$ 會得到常數 0。",
+          "say": "順序不能反。先代一會得到常數零，常數的導數是零，就錯了。",
+          "board": [
+            {"do":"write","line":"先代值再微分：${{w:(1^2\\ln 1)'=0}}$","on":"先代一"},
+            {"do":"strike","term":"w","label":"錯","on":"常數的導數"}
+          ] }
+      ],
+      "key": "先微分再代點，順序不能反",
+      "check": 2
+    },
+    {
+      "title": "三個相乘、對答案",
+      "beats": [
+        { "show": ["$(fgh)'=f'gh+fg'h+fgh'$"],
+          "note": "輪流微：每一項只微一個。",
+          "say": "三個相乘就輪流微，每一項只微一個因式、其他不動，所以有三項。",
+          "board": [
+            {"do":"write","line":"$(fgh)'={{a:f'gh}}+{{b:fg'h}}+{{c:fgh'}}$"}
+          ] },
+        { "show": ["$y = (x^2 + 1)(x^3 - x)$"],
+          "note": "$f' = 2x$，$g' = 3x^2 - 1$。",
+          "say": "多項式相乘可以用乘法法則，也可以先展開。來看兩種做法會不會一樣。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y=({{f:x^2+1}})({{g:x^3-x}})$","tint":{"f":"blue","g":"violet"},"on":"多項式相乘"}
+          ] },
+        { "show": ["$(2x^4 - 2x^2) + (3x^4 + 2x^2 - 1)$"],
+          "note": "$f'g$ 加 $fg'$。",
+          "say": "乘法法則：f prime g 加 f g prime，展開相加，x 平方項剛好消掉。",
+          "board": [
+            {"do":"write","line":"$=({{a:2x^4-2x^2}})+({{b:3x^4+2x^2-1}})$"},
+            {"do":"underline","term":"a","on":"f prime g"},
+            {"do":"underline","term":"b","on":"f g prime"}
+          ] },
+        { "show": ["$= 5x^4 - 1$"],
+          "note": "先展開：$x^5 - x$，微分也是 $5x^4 - 1$。",
+          "say": "得五 x 四次方減一。先展開是 x 五次方減 x，微分一樣是五 x 四次方減一。",
+          "board": [
+            {"do":"transform","line":"$={{r:5x^4-1}}$"},
+            {"do":"box","term":"r","color":"green","on":"先展開"},
+            {"do":"write","line":"先展開：$(x^5-x)'=5x^4-1$","on":"x 五次方"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["product-rule"],
+    "fine": ["product-rule-basic", "product-rule-at-point", "product-rule-three-factors", "product-rule-expand-check"]
+  },
+  "practice": [
+    { "id": "fd-der-009", "core": true, "trains": "product-rule-basic" },
+    { "id": "fd-der-005", "core": true, "trains": "product-rule-basic" },
+    { "id": "lec-02-q2a", "core": true, "trains": "product-rule-expand-check" },
+    { "id": "rel-basic-012", "core": true, "trains": "product-rule-at-point" },
+    { "id": "cx-der-004", "core": true, "trains": "product-rule-at-point" },
+    { "id": "lec-02-m2", "core": true, "trains": "product-rule-basic" },
+    { "id": "cg-2c-002", "core": true, "trains": "product-rule-three-factors" },
+    { "id": "cx-exam-003", "trains": "product-rule-at-point", "note": "$e^{-x}$ 的導數是 $-e^{-x}$。" },
+    { "id": "cg-2c-001", "trains": "product-rule-three-factors" },
+    { "id": "exam-der-005", "challenge": true, "trains": "product-rule-three-factors", "note": "挑戰：三個因式相乘，其中 $e^{-x}$ 要用到 $(e^{-x})' = -e^{-x}$。" }
+  ],
+  "gaps": []
+}

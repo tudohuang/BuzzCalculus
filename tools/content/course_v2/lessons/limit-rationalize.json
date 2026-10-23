@@ -1,61 +1,115 @@
 {
   "id": "limit-rationalize",
   "title": "0/0：有理化",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 35,
-  "prerequisites": ["limit-factor"],
-  "next": ["limit-algebra-other"],
+  "prerequisites": [
+    "limit-factor"
+  ],
+  "next": [
+    "limit-algebra-other"
+  ],
   "related": [],
   "objectives": [
-    "看到「根號減一個數」造成 $\\frac{0}{0}$，知道要乘共軛。",
-    "會處理三種情況：根號在分子、兩個根號相減、$x \\to \\infty$ 的 $\\infty - \\infty$。",
-    "化簡之後再代入，不在 $\\frac{0}{0}$ 的狀態下代。"
+    "看到「根號減一個數」造成 $\\frac00$，知道要乘共軛",
+    "會處理三種情況：根號在分子、兩個根號相減、$x\\to\\infty$ 的 $\\infty-\\infty$",
+    "化簡之後再代入，不在 $\\frac00$ 的狀態下代"
   ],
   "visual": null,
-  "figures": [
-    {"caption":"x = 0 是一個洞，高度 1/6","after":2,"graph":{"window":[-8,8,0,0.35],"curves":[{"expr":"(sqrt(x+9)-3)/x","domain":[-8,8],"color":"blue"}],"points":[{"x":0,"y":0.16666666666666666,"open":true}],"labels":[{"x":0.6,"y":0.19,"text":"高度 1/6"}]}}
-  ],
   "concept": [
     {
       "heading": "① 因式分解不夠用的時候",
       "body": [
-        "$\\lim_{x\\to0} \\frac{\\sqrt{x + 9} - 3}{x}$：代 $x = 0$ 得 $\\frac{0}{0}$。",
-        "上一課的辦法是因式分解、約掉造成 0 的因子。但 $\\sqrt{x + 9} - 3$ 不是多項式，拆不出 $x$ 這個因子。我們需要把根號「趕出去」。"
+        "代 $0$：$\\dfrac{\\sqrt9-3}{0}=\\dfrac00$",
+        "但分子不是多項式，因式定理用不上",
+        "造成 $0$ 的是「$\\sqrt{x+9}$ 和 $3$ 抵消」：要把根號消掉"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{\\sqrt{x+9}-3}{x}"
+      ]
     },
     {
-      "heading": "② 共軛：利用平方差把根號消掉",
+      "heading": "② 共軛：用平方差消掉根號",
       "body": [
-        "平方差公式 $(A - B)(A + B) = A^2 - B^2$。如果 $A$ 是根號，$A^2$ 就沒有根號了：$(\\sqrt{x + 9} - 3)(\\sqrt{x + 9} + 3) = (x + 9) - 9 = x$。",
-        "$\\sqrt{x + 9} + 3$ 叫做 $\\sqrt{x + 9} - 3$ 的「共軛」。乘上共軛，根號消失，而且剛好冒出我們要的因子 $x$。"
+        "平方差：",
+        "$\\sqrt A+B$ 叫 $\\sqrt A-B$ 的共軛",
+        "分子分母同乘 $\\sqrt{x+9}+3$：",
+        "分母保持乘積的樣子，不要乘開：等一下要約分",
+        "現在可以代了："
       ],
-      "tex": ["\\left(\\sqrt{x+9}-3\\right)\\left(\\sqrt{x+9}+3\\right)=(x+9)-9=x"],
-      "collapsible": false
+      "tex": [
+        "(\\sqrt A-B)(\\sqrt A+B)=A-B^2",
+        "\\frac{\\sqrt{x+9}-3}{x}\\cdot\\frac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=\\frac{(x+9)-9}{x(\\sqrt{x+9}+3)}",
+        "=\\frac{x}{x(\\sqrt{x+9}+3)}=\\frac{1}{\\sqrt{x+9}+3}",
+        "\\lim_{x\\to0}\\frac{1}{\\sqrt{x+9}+3}=\\frac{1}{3+3}=\\frac16"
+      ]
     },
     {
-      "heading": "③ 為什麼可以乘：分子分母同乘一樣的東西",
+      "heading": "③ 為什麼可以乘？",
       "body": [
-        "分子分母同乘 $\\sqrt{x + 9} + 3$，等於乘 1，值不變。它在 $x$ 靠近 0 時約等於 6，不是 0，所以可以放心乘：$\\frac{\\sqrt{x + 9} - 3}{x} = \\frac{1}{\\sqrt{x + 9} + 3}$（$x \\ne 0$）。",
-        "現在可以代了：$\\frac{1}{3 + 3} = \\frac{1}{6}$。"
-      ],
-      "collapsible": false
+        "乘的其實是 $\\dfrac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=1$",
+        "前提：乘的東西不能是 $0$",
+        "$x$ 靠近 $0$ 時，$\\sqrt{x+9}+3\\approx6\\ne0$：安全",
+        "共軛裡面是「加」，兩個正的數相加，通常不會是 $0$",
+        "化簡之後再代，不在 $\\frac00$ 的狀態下代",
+        "上面的 predict：$\\dfrac{\\sqrt{x+1}-1}{x}=\\dfrac{1}{\\sqrt{x+1}+1}\\to\\dfrac12$"
+      ]
     },
     {
-      "heading": "④ 三種常見樣子",
+      "heading": "③ 另一個角度：分母也能拆",
       "body": [
-        "根號在分子：$\\frac{\\sqrt{x + a} - \\sqrt{a}}{x}$，乘 $\\sqrt{x + a} + \\sqrt{a}$。",
-        "兩個根號相減：$\\frac{\\sqrt{1 + x} - \\sqrt{1 - x}}{x}$，乘 $\\sqrt{1 + x} + \\sqrt{1 - x}$。",
-        "$x \\to \\infty$ 的 $\\infty - \\infty$：$\\sqrt{x^2 + 4x} - x$，看成分母是 1 的分式，一樣乘共軛；之後要把 $x$ 從根號裡提出來（範例 3）。"
+        "做法一：乘共軛 $\\sqrt x+2$",
+        "做法二：把 $x-4$ 看成平方差",
+        "兩個做法本質相同：都是平方差",
+        "$x\\ge0$ 才能這樣寫；$x\\to4$ 時 $x$ 是正的，沒問題"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to4}\\frac{\\sqrt x-2}{x-4}",
+        "\\frac{x-4}{(x-4)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14",
+        "x-4=(\\sqrt x)^2-2^2=(\\sqrt x-2)(\\sqrt x+2)",
+        "\\frac{\\sqrt x-2}{(\\sqrt x-2)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14"
+      ]
     },
     {
-      "heading": "⑤ 有理化之後，常常還要再做一件事",
+      "heading": "④ 兩個根號相減",
       "body": [
-        "乘完共軛只是把 $\\frac{0}{0}$（或 $\\infty - \\infty$）變成能處理的樣子，最後還是要約分，或同除以最高次，才能代入。"
+        "共軛：$\\sqrt{1+x}+\\sqrt{1-x}$；平方差把兩個根號都消掉：",
+        "根號在分母也一樣："
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{\\sqrt{1+x}-\\sqrt{1-x}}{x}",
+        "(\\sqrt{1+x})^2-(\\sqrt{1-x})^2=(1+x)-(1-x)=2x",
+        "\\frac{2x}{x(\\sqrt{1+x}+\\sqrt{1-x})}=\\frac{2}{\\sqrt{1+x}+\\sqrt{1-x}}\\to\\frac{2}{1+1}=1",
+        "\\lim_{x\\to0}\\frac{x}{\\sqrt{x+4}-2}"
+      ]
+    },
+    {
+      "heading": "④ $x\\to\\infty$ 的 $\\infty-\\infty$",
+      "body": [
+        "兩項都 $\\to\\infty$：$\\infty-\\infty$ 不知道是多少",
+        "$x$ 很大時 $\\sqrt{x^2+4x}\\approx x$，所以差可能是有限的數",
+        "乘共軛（分母是 $1$）：",
+        "⑤ 有理化之後，還要再做一件事：分子分母都除以 $x$",
+        "x 很大時 $\\frac4x\\to0$",
+        "$x>0$ 時 $\\sqrt{x^2}=|x|=x$，所以 $\\frac{\\sqrt{x^2+4x}}{x}=\\sqrt{1+\\frac4x}$"
+      ],
+      "tex": [
+        "\\lim_{x\\to\\infty}\\Big(\\sqrt{x^2+4x}-x\\Big)",
+        "\\frac{(x^2+4x)-x^2}{\\sqrt{x^2+4x}+x}=\\frac{4x}{\\sqrt{x^2+4x}+x}",
+        "=\\frac{4}{\\sqrt{1+\\frac4x}+1}\\ \\to\\ \\frac{4}{1+1}=2"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 「根號減一個數」造成 $\\frac00$：乘共軛",
+        "• $(\\sqrt A-B)(\\sqrt A+B)=A-B^2$：根號消掉",
+        "• 可以乘：乘的是 $\\frac{\\text{共軛}}{\\text{共軛}}=1$，共軛不是 $0$",
+        "• 三種樣子：根號在分子（或分母）、兩個根號相減、$\\infty-\\infty$",
+        "• 有理化之後：約掉 $x$，或分子分母除以 $x$；化簡完才代",
+        "下一課：其他代數化簡"
+      ]
     }
   ],
   "workedExamples": [
@@ -109,289 +163,738 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to0} \\frac{\\sqrt{1 + x} - 1}{x}$ 要乘什麼？",
+      "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{x}{\\sqrt{x+4}-2}=$？",
       "options": [
-        { "label": "$\\sqrt{1 + x} + 1$", "correct": true },
-        { "label": "$\\sqrt{1 + x} - 1$", "why": "乘自己會得到平方，根號還在交叉項裡，消不掉。" },
-        { "label": "$x$", "why": "乘 $x$ 不會讓根號消失，$\\frac{0}{0}$ 還在。" }
+        {
+          "label": "$4$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac14$",
+          "why": "這是把分子分母顛倒的結果；這裡根號在分母，答案會倒過來"
+        },
+        {
+          "label": "$0$",
+          "why": "分子趨近 $0$，但分母也是"
+        },
+        {
+          "label": "$2$",
+          "why": "約完是 $\\sqrt{x+4}+2$，代 $0$ 是 $2+2$"
+        }
       ]
     },
     {
-      "ask": "承上題，極限是？",
+      "ask": "$\\displaystyle\\lim_{x\\to\\infty}\\Big(\\sqrt{x^2+6x}-x\\Big)=$？",
       "options": [
-        { "label": "$\\frac{1}{2}$", "correct": true },
-        { "label": "0", "why": "$\\frac{0}{0}$ 不是 0。化簡後是 $\\frac{1}{\\sqrt{1 + x} + 1}$，代 0 得 $\\frac{1}{2}$。" },
-        { "label": "1", "why": "分母的共軛也有一個 1：$\\frac{1}{1 + 1} = \\frac{1}{2}$。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to\\infty} (\\sqrt{x^2 + 4x} - x)$ 是？",
-      "options": [
-        { "label": "2", "correct": true },
-        { "label": "0", "why": "$\\infty - \\infty$ 不能直接當 0。乘共軛之後是 $\\frac{4x}{\\sqrt{x^2 + 4x} + x} \\to 2$。" },
-        { "label": "4", "why": "同除以 $x$ 之後分母是 $\\sqrt{1 + \\frac{4}{x}} + 1 \\to 2$，不是 1。" }
-      ]
-    },
-    {
-      "ask": "$x > 0$ 時，$\\sqrt{x^2 + 4x}$ 等於？",
-      "options": [
-        { "label": "$x\\sqrt{1 + \\frac{4}{x}}$", "correct": true },
-        { "label": "$x + 2$", "why": "根號不能拆加法；$x + 2$ 平方是 $x^2 + 4x + 4$，多了 4。" },
-        { "label": "$x^2\\sqrt{1 + \\frac{4}{x}}$", "why": "從根號裡提出 $x^2$ 會變成 $x$，不是 $x^2$。" }
+        {
+          "label": "$3$",
+          "correct": true
+        },
+        {
+          "label": "$6$",
+          "why": "分母是 $\\sqrt{x^2+6x}+x\\approx2x$，不是 $x$"
+        },
+        {
+          "label": "$0$",
+          "why": "$\\infty-\\infty$ 不一定是 $0$：根號比 $x$ 多一點點"
+        },
+        {
+          "label": "$\\infty$",
+          "why": "有理化之後，分子分母同階，是有限的數"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "因式分解不夠用",
+      "title": "因式分解不夠用的時候",
       "beats": [
-        { "show": ["$\\lim_{x\\to0} \\frac{\\sqrt{x + 9} - 3}{x}$"],
-          "note": "代 $x = 0$ 得 $\\frac{0}{0}$。",
-          "say": "根號 x 加九減三，再除以 x。代零進去，又是零分之零。",
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{\\sqrt{x+9}-3}{x}$"
+          ],
+          "say": "看這個極限：根號 x 加 9 減 3，除以 x，x 趨近 0。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to0} \\frac{\\sqrt{x+9}-3}{x}$"},
-            {"do":"write","line":"代 $x=0$：$\\frac{0}{0}$","on":"代零進去"}
-          ] },
-        { "show": ["$\\sqrt{x + 9} - 3$ 不是多項式"],
-          "note": "拆不出 $x$ 這個因子。",
-          "say": "上一課的辦法是因式分解，可是根號 x 加九減三不是多項式，拆不出 x 這個因子。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{\\sqrt{x+9}-3}{x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $0$：$\\dfrac{\\sqrt9-3}{0}=\\dfrac00$"
+          ],
+          "say": "代 0 進去：根號 9 減 3 是 0，分母也是 0，又是 0 分之 0。",
           "board": [
-            {"do":"write","line":"${{r:\\sqrt{x+9}-3}}$ 不是多項式"},
-            {"do":"underline","term":"r","label":"拆不出x","on":"拆不出"}
-          ] },
-        { "show": ["要把根號「趕出去」"],
-          "say": "所以要先想辦法把根號趕出去。工具是一個老朋友：平方差公式。",
+            {
+              "do": "write",
+              "line": "代 $0$：$\\dfrac{\\sqrt9-3}{0}=\\dfrac00$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但分子不是多項式，因式定理用不上"
+          ],
+          "say": "但這次分子有根號，不是多項式，上一課的因式分解用不上。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"要把根號「趕出去」","on":"趕出去"},
-            {"do":"write","line":"工具：平方差公式","on":"工具是"}
-          ] }
+            {
+              "do": "write",
+              "line": "但分子不是多項式，因式定理用不上",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "造成 $0$ 的是「$\\sqrt{x+9}$ 和 $3$ 抵消」：要把根號消掉"
+          ],
+          "say": "分子會變成 0，是因為根號 x 加 9 跟 3 剛好抵消。要讓 x 冒出來，得先把根號消掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "造成 $0$ 的是「$\\sqrt{x+9}$ 和 $3$ 抵消」：要把根號消掉",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$(\\sqrt{x + 9} - 3)(\\sqrt{x + 9} + 3)$ 等於？",
+        "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{\\sqrt{x+1}-1}{x}$ 大約是多少？（可以代 $x=0.01$ 試試）",
         "options": [
           {
-            "label": "$x$",
+            "label": "$\\dfrac12$",
             "correct": true
           },
           {
-            "label": "$x + 9$",
-            "why": "平方差是 $A^2 - B^2$：$(x + 9) - 3^2$，9 要減掉。"
+            "label": "$0$",
+            "why": "分子趨近 $0$，但分母也是；比值不是 $0$"
           },
           {
-            "label": "$x - 6$",
-            "why": "$B = 3$ 要平方：減的是 $3^2 = 9$，不是 $3 + 3 = 6$。"
+            "label": "$1$",
+            "why": "根號長得比 $x$ 慢，差不多是一半"
           }
         ]
       }
     },
     {
-      "title": "共軛",
+      "title": "共軛：用平方差消掉根號",
       "beats": [
-        { "show": ["$(A - B)(A + B) = A^2 - B^2$"],
-          "note": "$A$ 是根號，$A^2$ 就沒有根號了。",
-          "say": "平方差公式：A 減 B 乘 A 加 B，等於 A 平方減 B 平方。A 是根號的話，平方完根號就不見了。",
+        {
+          "show": [
+            "平方差：",
+            "$(\\sqrt A-B)(\\sqrt A+B)=A-B^2$"
+          ],
+          "say": "工具是平方差：根號 A 減 B，乘上根號 A 加 B，等於 A 減 B 平方。根號平方以後就不見了。",
           "board": [
-            {"do":"write","line":"$(A-B)(A+B)={{s:A^2-B^2}}$"},
-            {"do":"box","term":"s","label":"沒有根號","on":"平方完"}
-          ] },
-        { "show": ["$(\\sqrt{x + 9} - 3)(\\sqrt{x + 9} + 3) = x$"],
-          "say": "所以乘上根號 x 加九加三，得到 x 加九減九，就是 x。根號消失，還剛好冒出因子 x。",
+            {
+              "do": "write",
+              "line": "平方差："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle (\\sqrt A-B)(\\sqrt A+B)=A-B^2}}$",
+              "on": "乘上"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt A+B$ 叫 $\\sqrt A-B$ 的共軛"
+          ],
+          "say": "根號 A 加 B，叫做根號 A 減 B 的共軛。只差中間的正負號。",
           "board": [
-            {"do":"write","line":"$(\\sqrt{x+9}-3)(\\sqrt{x+9}+3)$"},
-            {"do":"transform","line":"$(x+9)-9={{r:x}}$","on":"得到"},
-            {"do":"box","term":"r","color":"green","on":"剛好"}
-          ] },
-        { "show": ["$\\sqrt{x + 9} + 3$ 是 $\\sqrt{x + 9} - 3$ 的共軛"],
-          "say": "中間的減號換成加號，這個式子就叫做共軛。",
+            {
+              "do": "write",
+              "line": "$\\sqrt A+B$ 叫 $\\sqrt A-B$ 的共軛"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子分母同乘 $\\sqrt{x+9}+3$：",
+            "$\\frac{\\sqrt{x+9}-3}{x}\\cdot\\frac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=\\frac{(x+9)-9}{x(\\sqrt{x+9}+3)}$"
+          ],
+          "say": "分子分母同時乘上共軛，根號 x 加 9 加 3。分子變成 x 加 9 減 9，分母先不要展開。",
           "board": [
-            {"do":"write","line":"${{a:\\sqrt{x+9}-3}}$ 的共軛：${{b:\\sqrt{x+9}+3}}$"},
-            {"do":"underline","term":"b","label":"共軛","on":"換成"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "分子分母同乘 $\\sqrt{x+9}+3$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\sqrt{x+9}-3}{x}\\cdot\\frac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=\\frac{(x+9)-9}{x(\\sqrt{x+9}+3)}$",
+              "on": "分子#2"
+            },
+            {
+              "do": "write",
+              "line": "　分母保持乘積的樣子，不要乘開：等一下要約分",
+              "color": "violet",
+              "on": "分母#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{x}{x(\\sqrt{x+9}+3)}=\\frac{1}{\\sqrt{x+9}+3}$"
+          ],
+          "say": "分子就剩 x，跟分母的 x 約掉。造成 0 的因式又被找出來了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{x}{x(\\sqrt{x+9}+3)}=\\frac{1}{\\sqrt{x+9}+3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在可以代了：",
+            "$\\lim_{x\\to0}\\frac{1}{\\sqrt{x+9}+3}=\\frac{1}{3+3}=\\frac16$"
+          ],
+          "say": "現在分母代 0 是 6，不是 0，可以直接代。答案是 6 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "現在可以代了："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to0}\\frac{1}{\\sqrt{x+9}+3}=\\frac{1}{3+3}=\\frac16}}$",
+              "color": "red",
+              "on": "不是"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "分子分母同乘",
+      "title": "為什麼可以乘？",
       "beats": [
-        { "show": ["分子分母同乘 $\\sqrt{x + 9} + 3$"],
-          "note": "等於乘 1，值不變。",
-          "say": "分子分母同乘共軛，等於乘一，值不變。只有分子乘、分母沒乘，是常見的錯。",
+        {
+          "show": [
+            "乘的其實是 $\\dfrac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=1$"
+          ],
+          "say": "為什麼可以隨便乘一個東西？因為分子分母同乘一樣的東西，等於乘上 1，值完全不變。",
           "board": [
-            {"do":"write","line":"同乘 ${{k:\\frac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}}} = 1$"},
-            {"do":"underline","term":"k","label":"值不變","on":"等於乘一"}
-          ] },
-        { "show": ["$\\frac{x}{x(\\sqrt{x + 9} + 3)}$"],
-          "note": "$x \\ne 0$，約掉 $x$。",
-          "say": "分子變成 x，分母是 x 乘共軛。x 不等於零，約掉 x。",
+            {
+              "do": "write",
+              "line": "乘的其實是 $\\dfrac{\\sqrt{x+9}+3}{\\sqrt{x+9}+3}=1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前提：乘的東西不能是 $0$"
+          ],
+          "say": "唯一的前提，是乘的那個東西不能是 0，不然就變成 0 分之 0 了。",
           "board": [
-            {"do":"write","line":"$\\frac{{{n:x}}}{{{m:x}}(\\sqrt{x+9}+3)}$"},
-            {"do":"write","line":"$x\\ne0$","on":"不等於零"},
-            {"do":"focus","term":"m","color":"green","label":"約掉 x","on":"約掉"}
-          ] },
-        { "show": ["$\\frac{1}{\\sqrt{x + 9} + 3}$ → $\\frac{1}{3 + 3} = \\frac{1}{6}$"],
-          "say": "剩下一除以根號 x 加九加三，現在可以代零了：三加三分之一，六分之一。",
+            {
+              "do": "write",
+              "line": "前提：乘的東西不能是 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 靠近 $0$ 時，$\\sqrt{x+9}+3\\approx6\\ne0$：安全"
+          ],
+          "say": "這裡 x 靠近 0，根號 x 加 9 加 3 大約是 6，不是 0，所以很安全。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{\\sqrt{x+9}+3}$","on":"剩下"},
-            {"do":"write","line":"$x=0$：$\\frac{1}{3+3}={{r:\\frac{1}{6}}}$","on":"代零"},
-            {"do":"box","term":"r","color":"green","on":"三加三"}
-          ] },
-        { "show": ["x = 0 是洞，高度 1/6"],
-          "note": "曲線從兩邊靠向洞。",
-          "say": "畫出來看：x 等於零是一個洞，洞的高度是六分之一，曲線從兩邊靠過去。",
+            {
+              "do": "write",
+              "line": "$x$ 靠近 $0$ 時，$\\sqrt{x+9}+3\\approx6\\ne0$：安全"
+            },
+            {
+              "do": "write",
+              "line": "　共軛裡面是「加」，兩個正的數相加，通常不會是 $0$",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "化簡之後再代，不在 $\\frac00$ 的狀態下代"
+          ],
+          "say": "再強調一次：一定是化簡到分母不是 0 了，才代進去。不要在 0 分之 0 的狀態下代。",
           "board": [
-            {"do":"plot","graph":{"window":[-8,8,0,0.35],"curves":[{"expr":"(sqrt(x+9)-3)/x","domain":[-8,8],"color":"blue"}],"points":[{"x":0,"y":0.16666666666666666,"open":true}],"labels":[{"x":0.6,"y":0.19,"text":"高度 1/6"}]}}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "化簡之後再代，不在 $\\frac00$ 的狀態下代",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上面的 predict：$\\dfrac{\\sqrt{x+1}-1}{x}=\\dfrac{1}{\\sqrt{x+1}+1}\\to\\dfrac12$"
+          ],
+          "say": "回到一開始猜的那題：同樣乘共軛，化簡成根號 x 加 1 加 1 分之一，代 0 得到 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上面的 predict：$\\dfrac{\\sqrt{x+1}-1}{x}=\\dfrac{1}{\\sqrt{x+1}+1}\\to\\dfrac12$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "另一個角度：分母也能拆",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{x\\to4}\\frac{\\sqrt x-2}{x-4}$"
+          ],
+          "say": "再看一個經典的例子：根號 x 減 2，除以 x 減 4，x 趨近 4。代進去還是 0 分之 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to4}\\frac{\\sqrt x-2}{x-4}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法一：乘共軛 $\\sqrt x+2$",
+            "$\\frac{x-4}{(x-4)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14$"
+          ],
+          "say": "做法一，照今天的方法乘共軛：分子變成 x 減 4，跟分母約掉，剩下根號 x 加 2 分之一，代 4 得到 4 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做法一：乘共軛 $\\sqrt x+2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x-4}{(x-4)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14$",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法二：把 $x-4$ 看成平方差",
+            "$x-4=(\\sqrt x)^2-2^2=(\\sqrt x-2)(\\sqrt x+2)$"
+          ],
+          "say": "做法二：其實分母 x 減 4，就是根號 x 的平方減 2 的平方，可以直接用平方差拆開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做法二：把 $x-4$ 看成平方差"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x-4=(\\sqrt x)^2-2^2=(\\sqrt x-2)(\\sqrt x+2)$",
+              "on": "的平#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\sqrt x-2}{(\\sqrt x-2)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14$"
+          ],
+          "say": "約掉根號 x 減 2，結果一樣是 4 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{\\sqrt x-2}{(\\sqrt x-2)(\\sqrt x+2)}=\\frac1{\\sqrt x+2}\\to\\frac14}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "果一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個做法本質相同：都是平方差"
+          ],
+          "say": "兩個做法本質上一樣，都是在用平方差。看你覺得哪個順手。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個做法本質相同：都是平方差"
+            },
+            {
+              "do": "write",
+              "line": "　$x\\ge0$ 才能這樣寫；$x\\to4$ 時 $x$ 是正的，沒問題",
+              "color": "violet",
+              "on": "用平"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "兩個根號相減",
       "beats": [
-        { "show": ["$\\lim_{x\\to0} \\frac{\\sqrt{1 + x} - \\sqrt{1 - x}}{x}$"],
-          "note": "乘共軛 $\\sqrt{1 + x} + \\sqrt{1 - x}$。",
-          "say": "兩個根號相減也一樣，乘上把減號換成加號的共軛。",
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{\\sqrt{1+x}-\\sqrt{1-x}}{x}$"
+          ],
+          "say": "第二種樣子：兩個根號相減。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to0} \\frac{\\sqrt{1+x}-\\sqrt{1-x}}{x}$"},
-            {"do":"write","line":"乘 ${{c:\\sqrt{1+x}+\\sqrt{1-x}}}$","on":"換成加號"}
-          ] },
-        { "show": ["分子 $(1 + x) - (1 - x) = 2x$"],
-          "say": "分子兩個根號都平方掉，一加 x 減一減 x，等於二 x。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{\\sqrt{1+x}-\\sqrt{1-x}}{x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "共軛：$\\sqrt{1+x}+\\sqrt{1-x}$；平方差把兩個根號都消掉：",
+            "$(\\sqrt{1+x})^2-(\\sqrt{1-x})^2=(1+x)-(1-x)=2x$"
+          ],
+          "say": "共軛就是中間改成加號。平方差把兩個根號同時消掉：1 加 x 減 1 減 x，剩下 2x。",
           "board": [
-            {"do":"write","line":"$(1+x)-(1-x)={{r:2x}}$"},
-            {"do":"box","term":"r","color":"green","on":"減一減"}
-          ] },
-        { "show": ["$\\frac{2}{\\sqrt{1 + x} + \\sqrt{1 - x}}$"],
-          "note": "約掉 $x$ 之後。",
-          "say": "約掉 x，剩二除以兩個根號的和。代零進去會是多少？",
+            {
+              "do": "write",
+              "line": "共軛：$\\sqrt{1+x}+\\sqrt{1-x}$；平方差把兩個根號都消掉："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (\\sqrt{1+x})^2-(\\sqrt{1-x})^2=(1+x)-(1-x)=2x$",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{2x}{x(\\sqrt{1+x}+\\sqrt{1-x})}=\\frac{2}{\\sqrt{1+x}+\\sqrt{1-x}}\\to\\frac{2}{1+1}=1$"
+          ],
+          "say": "約掉 x，代 0：分母 1 加 1 是 2，答案是 1。",
           "board": [
-            {"do":"write","line":"$\\frac{2}{{{d:\\sqrt{1+x}+\\sqrt{1-x}}}}$"},
-            {"do":"underline","term":"d","label":"代零？","on":"兩個根號"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{2x}{x(\\sqrt{1+x}+\\sqrt{1-x})}=\\frac{2}{\\sqrt{1+x}+\\sqrt{1-x}}\\to\\frac{2}{1+1}=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分母"
+            },
+            {
+              "do": "write",
+              "line": "根號在分母也一樣：",
+              "on": "答案"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{x}{\\sqrt{x+4}-2}$",
+              "on": "案是"
+            }
+          ]
+        }
       ],
-      "key": "乘 $\\sqrt{1+x}+\\sqrt{1-x}$，分子剩 $2x$",
-      "solve": {
-        "ask": "$\\lim_{x\\to0} \\frac{\\sqrt{1 + x} - \\sqrt{1 - x}}{x}$ 是多少？",
-        "problemId": "cx-exam-001",
-        "answer": "1",
-        "claim": "LIM((sqrt(1+x)-sqrt(1-x))/x, 0) == ANS",
-        "hint": "約掉 $x$ 之後已經不是 $\\frac{0}{0}$，直接代 0。",
+      "check": 0
+    },
+    {
+      "title": "$x\\to\\infty$ 的 $\\infty-\\infty$",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}\\Big(\\sqrt{x^2+4x}-x\\Big)$"
+          ],
+          "say": "第三種：x 趨近無限大，根號 x 平方加 4x 減 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to\\infty}\\Big(\\sqrt{x^2+4x}-x\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩項都 $\\to\\infty$：$\\infty-\\infty$ 不知道是多少"
+          ],
+          "say": "兩項都往無限大跑，無限大減無限大，不知道是多少，要化簡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩項都 $\\to\\infty$：$\\infty-\\infty$ 不知道是多少",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$x$ 很大時 $\\sqrt{x^2+4x}\\approx x$，所以差可能是有限的數",
+              "color": "violet",
+              "on": "限大#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘共軛（分母是 $1$）：",
+            "$\\frac{(x^2+4x)-x^2}{\\sqrt{x^2+4x}+x}=\\frac{4x}{\\sqrt{x^2+4x}+x}$"
+          ],
+          "say": "把它看成分母是 1 的分式，乘上共軛。分子 x 平方加 4x 減 x 平方，剩 4x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘共軛（分母是 $1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(x^2+4x)-x^2}{\\sqrt{x^2+4x}+x}=\\frac{4x}{\\sqrt{x^2+4x}+x}$",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⑤ 有理化之後，還要再做一件事：分子分母都除以 $x$",
+            "$=\\frac{4}{\\sqrt{1+\\frac4x}+1}\\ \\to\\ \\frac{4}{1+1}=2$"
+          ],
+          "say": "有理化之後，還是無限大除以無限大。再做一件事：分子分母同除以 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⑤ 有理化之後，還要再做一件事：分子分母都除以 $x$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac{4}{\\sqrt{1+\\frac4x}+1}\\ \\to\\ \\frac{4}{1+1}=2}}$",
+              "color": "red",
+              "on": "除以#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "x 很大時 $\\frac4x\\to0$"
+          ],
+          "say": "根號裡面除以 x 平方，變成根號 1 加 x 分之 4。x 很大時，x 分之 4 趨近 0，答案是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "x 很大時 $\\frac4x\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "　$x>0$ 時 $\\sqrt{x^2}=|x|=x$，所以 $\\frac{\\sqrt{x^2+4x}}{x}=\\sqrt{1+\\frac4x}$",
+              "color": "violet",
+              "on": "很大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "x 越大，越貼近 2"
+          ],
+          "say": "圖上看，x 越大，曲線越貼近 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inf",
+                  "window": [
+                    0,
+                    60,
+                    0,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x^2+4*x)-x",
+                      "color": "blue",
+                      "label": "√(x²+4x) − x"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 2,
+                      "label": "y = 2",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "x 越大，越貼近 2",
+              "color": "violet",
+              "on": "曲線"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "練習與步驟",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\lim_{x\\to\\infty}\\Big(\\sqrt{x^2+6x}-x\\Big)=$？"
+          ],
+          "say": "照同樣的步驟試試。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "練習與步驟",
+      "beats": [
+        {
+          "show": [
+            "有理化求極限的步驟"
+          ],
+          "say": "排排看步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "有理化求極限的步驟",
         "steps": [
-          "乘共軛：分子 $(1 + x) - (1 - x) = 2x$",
-          "約掉 $x$：$\\frac{2}{\\sqrt{1 + x} + \\sqrt{1 - x}}$",
-          "代 0：$\\frac{2}{1 + 1} = 1$"
-        ],
-        "wrong": [
           {
-            "answer": "2",
-            "why": "分母兩個根號在 0 都是 1，和是 $1 + 1 = 2$，所以是 $\\frac{2}{2}$。"
+            "label": "代入，確認是 $\\frac00$ 或 $\\infty-\\infty$"
           },
           {
-            "answer": "0",
-            "why": "約掉 $x$ 之後已經不是 $\\frac{0}{0}$；代 0 得 $\\frac{2}{1 + 1}$。"
+            "label": "分子分母同乘共軛，用平方差消掉根號",
+            "why": "先要有上一步：代入，確認是 $\\frac00$ 或 $\\infty-\\infty$"
+          },
+          {
+            "label": "約掉造成 $0$ 的因式（或分子分母同除以 $x$）",
+            "why": "先要有上一步：分子分母同乘共軛，用平方差消掉根號"
+          },
+          {
+            "label": "再代入（或令 $x\\to\\infty$）",
+            "why": "先要有上一步：約掉造成 $0$ 的因式（或分子分母同除以 $x$）"
           }
         ]
       }
     },
     {
-      "title": "$\\infty - \\infty$ 也乘共軛",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\lim_{x\\to\\infty} (\\sqrt{x^2 + 4x} - x)$"],
-          "note": "$\\infty - \\infty$ 不能直接說是 0。",
-          "say": "x 趨近無窮大，根號 x 平方加四 x 減 x。兩項都往無窮大跑，不能直接說差是零。",
+        {
+          "show": [
+            "• 「根號減一個數」造成 $\\frac00$：乘共軛",
+            "• $(\\sqrt A-B)(\\sqrt A+B)=A-B^2$：根號消掉"
+          ],
+          "say": "整理一下：根號減一個數造成 0 分之 0，就乘共軛，用平方差消掉根號；乘共軛等於乘 1；有理化之後通常還要約分或除以 x，化簡完才代。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty}(\\sqrt{x^2+4x}-x)$"},
-            {"do":"write","line":"$\\infty-\\infty\\ne0$","on":"兩項都"}
-          ] },
-        { "show": ["$\\frac{4x}{\\sqrt{x^2 + 4x} + x}$"],
-          "note": "看成分母是 1 的分式，乘共軛。",
-          "say": "把它看成分母是一的分式，乘共軛。分子 x 平方加四 x 減 x 平方，剩四 x。",
+            {
+              "do": "write",
+              "line": "• 「根號減一個數」造成 $\\frac00$：乘共軛"
+            },
+            {
+              "do": "write",
+              "line": "• $(\\sqrt A-B)(\\sqrt A+B)=A-B^2$：根號消掉",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "• 可以乘：乘的是 $\\frac{\\text{共軛}}{\\text{共軛}}=1$，共軛不是 $0$",
+              "on": "用平"
+            },
+            {
+              "do": "write",
+              "line": "• 三種樣子：根號在分子（或分母）、兩個根號相減、$\\infty-\\infty$",
+              "on": "有理"
+            },
+            {
+              "do": "write",
+              "line": "• 有理化之後：約掉 $x$，或分子分母除以 $x$；化簡完才代",
+              "on": "約分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：其他代數化簡"
+          ],
+          "say": "下一課，看其他幾種代數化簡的技巧。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"乘共軛 $\\sqrt{x^2+4x}+x$","on":"乘共軛"},
-            {"do":"write","line":"分子 $(x^2+4x)-x^2={{r:4x}}$","on":"分子"},
-            {"do":"transform","line":"$\\frac{{{r:4x}}}{\\sqrt{x^2+4x}+x}$","on":"剩四"}
-          ] },
-        { "show": ["$x > 0$：$\\sqrt{x^2} = x$"],
-          "note": "$x \\to \\infty$，只看 $x > 0$。",
-          "say": "接著把 x 從根號裡提出來。x 往無窮大走，只看 x 大於零，根號 x 平方才等於 x。",
-          "board": [
-            {"do":"write","line":"${{p:x>0}}$：$\\sqrt{x^2}=x$"},
-            {"do":"focus","term":"p","label":"只看正的","on":"只看"}
-          ] },
-        { "show": ["$x^2+4x = x^2(1+\\frac{4}{x})$","$\\sqrt{x^2}\\cdot\\sqrt{1+\\frac{4}{x}}=x\\sqrt{1+\\frac{4}{x}}$"],
-          "note": "提出最大的項 $x^2$。",
-          "say": "提出 x 平方，因為它是最大的項，x 平方加四 x 就是 x 平方乘一加 x 分之四。根號拆開，x 平方的根號是 x。",
-          "board": [
-            {"do":"write","line":"$x^2+4x = x^2\\left(1+{{f:\\frac{4}{x}}}\\right)$"},
-            {"do":"underline","term":"f","label":"4x 除以 x²","on":"x 分之四"},
-            {"do":"write","line":"$\\sqrt{x^2}\\cdot\\sqrt{1+\\frac{4}{x}}$","on":"根號拆開"},
-            {"do":"write","line":"$= x\\sqrt{1+\\frac{4}{x}}$","on":"平方的根號"}
-          ] },
-        { "show": ["$x<0$ 時 $\\sqrt{x^2}=-x$"],
-          "note": "$x\\to\\infty$ 才能只看 $x>0$。",
-          "say": "為什麼只看 x 大於零？如果是趨近負無窮大，根號 x 平方要寫成負 x。但這題 x 趨近無窮大，夠大就是正的。",
-          "board": [
-            {"do":"write","line":"${{n:x<0}}$ 時 $\\sqrt{x^2}=-x$","on":"負無窮大"},
-            {"do":"focus","term":"n","color":"red","label":"這題不用","on":"夠大"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "最後再做一件事",
-      "beats": [
-        { "show": ["$\\frac{4x}{x\\sqrt{1 + \\frac{4}{x}} + x}$"],
-          "say": "提出來之後，分母是 x 乘根號一加 x 分之四，再加 x。",
-          "board": [
-            {"do":"write","line":"$\\frac{4x}{{{d:x\\sqrt{1+\\frac{4}{x}}}}+x}$"},
-            {"do":"underline","term":"d","on":"根號一加"}
-          ] },
-        { "show": ["分母每一項都有 $x$"],
-          "note": "分子是 $4x$。",
-          "say": "為什麼除以 x？因為分子是四 x，分母兩項也都有 x，每一項都能除掉 x。",
-          "board": [
-            {"do":"write","line":"分子 ${{a:4x}}$，分母每項有 ${{b:x}}$","on":"分子是"},
-            {"do":"focus","term":"b","label":"可除掉","on":"每一項"}
-          ] },
-        { "show": ["$\\frac{x\\sqrt{1+\\frac{4}{x}}}{x}=\\sqrt{1+\\frac{4}{x}}$"],
-          "note": "分母那項的 $x$ 約掉。",
-          "say": "分母第一項是 x 乘根號，除以 x，x 約掉，只剩根號一加 x 分之四。第二項 x 除以 x 是一。",
-          "board": [
-            {"do":"write","line":"$\\frac{x\\sqrt{1+\\frac{4}{x}}}{x}={{s:\\sqrt{1+\\frac{4}{x}}}}$","on":"約掉"},
-            {"do":"underline","term":"s","label":"x 約掉","on":"第二項"}
-          ] },
-        { "show": ["同除以 $x$：$\\frac{4}{\\sqrt{1 + \\frac{4}{x}} + 1}$"],
-          "note": "乘完共軛還要約分或同除，才能代。",
-          "say": "分子分母同除以 x。乘完共軛只是第一步，還要再整理一次才能代入。",
-          "board": [
-            {"do":"transform","line":"$\\frac{4}{\\sqrt{1+\\frac{4}{x}}+1}$"}
-          ] },
-        { "show": ["$x \\to \\infty$：$\\frac{4}{x} \\to 0$"],
-          "say": "x 趨近無窮大，x 分之四趨近零，根號裡剩下一。",
-          "board": [
-            {"do":"write","line":"$x\\to\\infty$：${{f:\\frac{4}{x}}}\\to0$"},
-            {"do":"circle","term":"f","on":"分之四"}
-          ] }
-      ],
-      "key": "乘完共軛還要同除以 $x$ 才能代",
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：其他代數化簡"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["rationalize", "rational-limit"],
-    "fine": ["rationalize-conjugate", "rationalize-two-roots", "rationalize-inf-minus-inf", "radical-factor-out"]
+    "coarse": [
+      "rationalize",
+      "rational-limit"
+    ],
+    "fine": [
+      "rationalize-conjugate",
+      "rationalize-two-roots",
+      "rationalize-inf-minus-inf",
+      "radical-factor-out"
+    ]
   },
   "practice": [
-    { "id": "rel-basic-005", "core": true, "trains": "rationalize-conjugate" },
-    { "id": "fd-lim-011", "core": true, "trains": "rationalize-conjugate" },
-    { "id": "cx-lim-006", "core": true, "trains": "rationalize-inf-minus-inf" },
-    { "id": "lim-037", "core": true, "trains": "rationalize-conjugate" },
-    { "id": "cx-exam-001", "core": true, "trains": "rationalize-two-roots" },
-    { "id": "lim-022", "core": true, "trains": "radical-factor-out" },
-    { "id": "lx-der-002", "trains": "rationalize-conjugate" },
-    { "id": "lx-hard-001", "challenge": true, "trains": "rationalize-conjugate", "note": "挑戰：立方根不能用平方根的共軛，要用 $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$。" }
+    {
+      "id": "rel-basic-005",
+      "core": true,
+      "trains": "rationalize-conjugate"
+    },
+    {
+      "id": "fd-lim-011",
+      "core": true,
+      "trains": "rationalize-conjugate"
+    },
+    {
+      "id": "cx-lim-006",
+      "core": true,
+      "trains": "rationalize-inf-minus-inf"
+    },
+    {
+      "id": "lim-037",
+      "core": true,
+      "trains": "rationalize-conjugate"
+    },
+    {
+      "id": "cx-exam-001",
+      "core": true,
+      "trains": "rationalize-two-roots"
+    },
+    {
+      "id": "lim-022",
+      "core": true,
+      "trains": "radical-factor-out"
+    },
+    {
+      "id": "lx-der-002",
+      "trains": "rationalize-conjugate"
+    },
+    {
+      "id": "lx-hard-001",
+      "challenge": true,
+      "trains": "rationalize-conjugate",
+      "note": "挑戰：立方根不能用平方根的共軛，要用 $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$。"
+    }
   ],
   "gaps": []
 }

@@ -1,50 +1,135 @@
 {
   "id": "higher-partials",
   "title": "高階偏導",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["partial-derivatives", "higher-derivatives"],
-  "next": ["clairaut"],
-  "related": ["hessian", "second-derivative-test-2d"],
+  "prerequisites": [
+    "partial-derivatives",
+    "higher-derivatives"
+  ],
+  "next": [
+    "clairaut"
+  ],
+  "related": [
+    "hessian",
+    "second-derivative-test-2d"
+  ],
   "objectives": [
-    "會算二變數函數的四個二階偏導數 $f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$。",
-    "分清楚兩種記號的順序：$f_{xy}$ 是先 $x$ 後 $y$，$\\frac{\\partial^2 f}{\\partial y\\partial x}$ 也是先 $x$ 後 $y$。",
-    "說得出 $f_{xx}$ 與 $f_{xy}$ 在圖上的意思，會算 Laplacian $f_{xx}+f_{yy}$。"
+    "會算二變數函數的四個二階偏導數 $f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$",
+    "分清楚兩種記號的順序：$f_{xy}$ 是先 $x$ 後 $y$，$\\frac{\\partial^2 f}{\\partial y\\,\\partial x}$ 也是先 $x$ 後 $y$（從右往左讀）",
+    "說得出 $f_{xx}$ 與 $f_{xy}$ 在圖上的意思，會算 Laplacian $f_{xx}+f_{yy}$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 偏導數還是函數，可以再微分",
+      "heading": "① 偏導數還是函數",
       "body": [
-        "$f_x(x,y)$ 本身也是 $x$、$y$ 的函數，可以再對 $x$ 或對 $y$ 偏微分。二變數函數因此有四個二階偏導數：$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$。",
-        "例：$f=x^3y^2+e^{2x}$。$f_x=3x^2y^2+2e^{2x}$，$f_y=2x^3y$。再微分一次：$f_{xx}=6xy^2+4e^{2x}$，$f_{xy}=6x^2y$，$f_{yx}=6x^2y$，$f_{yy}=2x^3$。"
+        "$f_x(x,y)$、$f_y(x,y)$ 本身又是二變數函數",
+        "每一個都能再對 $x$ 或 $y$ 微分：一共 $2\\times2=4$ 個二階偏導數",
+        "例：$f(x,y)=x^3y^2+e^{2x}$",
+        "先算一階：",
+        "從 $f_x$ 出發：",
+        "從 $f_y$ 出發：",
+        "驗算：$(x,y)=(0.7,1.3)$ 時 $f_{xy}=3.822$，用差商數值算也是 $3.822$"
       ],
-      "collapsible": false
+      "tex": [
+        "f_x=3x^2y^2+2e^{2x},\\qquad f_y=2x^3y",
+        "f_{xx}=6xy^2+4e^{2x},\\qquad f_{xy}=6x^2y",
+        "f_{yx}=6x^2y,\\qquad f_{yy}=2x^3",
+        "f_{xy}=f_{yx}=6x^2y"
+      ]
     },
     {
-      "heading": "② 記號的順序（最容易搞混）",
+      "heading": "② 記號的順序",
       "body": [
-        "下標寫法從左讀到右：$f_{xy}=(f_x)_y$，先對 $x$、再對 $y$。",
-        "分式寫法從右讀到左：$\\frac{\\partial^2 f}{\\partial y\\partial x}=\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right)$，最靠近 $f$ 的 $\\partial x$ 先做，所以也是先 $x$ 後 $y$。",
-        "兩種記號字母排列相反，意思卻一樣。看到題目先確定是哪一種。下一課〈Clairaut 定理〉會說明，大多數時候 $f_{xy}=f_{yx}$，順序不影響答案；但在那個定理的條件不成立時，順序真的會不一樣。"
+        "下標：從左往右讀",
+        "分數記號：從右往左讀（像函數合成）",
+        "靠近 $f$ 的先做；跟 $g(h(x))$ 先算 $h$ 一樣",
+        "先 $x$ 後 $y$：",
+        "先 $y$ 後 $x$：",
+        "$f_{xx}=\\dfrac{\\partial^2 f}{\\partial x^2}$，$f_{yy}=\\dfrac{\\partial^2 f}{\\partial y^2}$"
       ],
-      "tex": ["f_{xy}=\\left(f_x\\right)_y=\\frac{\\partial^2 f}{\\partial y\\,\\partial x}"],
-      "collapsible": false
+      "tex": [
+        "f_{xy}=(f_x)_y\\quad\\text{先 }x\\text{，後 }y",
+        "\\frac{\\partial^2 f}{\\partial y\\,\\partial x}=\\frac{\\partial}{\\partial y}\\Big(\\frac{\\partial f}{\\partial x}\\Big)=f_{xy}",
+        "f_{xy}=\\frac{\\partial^2 f}{\\partial y\\,\\partial x}",
+        "f_{yx}=\\frac{\\partial^2 f}{\\partial x\\,\\partial y}"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "例：$\\dfrac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}$：先 $y$ 後 $x$",
+        "先對 $y$：$\\dfrac{\\partial}{\\partial y}e^{xy}=xe^{xy}$",
+        "再對 $x$：$x$ 出現在兩處，用乘法法則",
+        "最常見的錯：忘了乘法法則，只寫 $xye^{xy}$"
+      ],
+      "tex": [
+        "\\frac{\\partial}{\\partial x}\\big(xe^{xy}\\big)=e^{xy}+x\\cdot ye^{xy}",
+        "\\frac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}=(1+xy)e^{xy}"
+      ]
     },
     {
       "heading": "③ 在圖上代表什麼",
       "body": [
-        "$f_{xx}$：沿 $x$ 方向切片曲線的二階導數，就是那條切片的凹向。$f_{xx}>0$，沿 $x$ 方向往上彎。",
-        "$f_{xy}$：先量 $x$ 方向的斜率 $f_x$，再看往 $y$ 方向挪一點，這個斜率變多少。它描述曲面「扭」的程度。〈Hessian〉會把四個二階偏導排成矩陣，用來判斷臨界點。"
-      ],
-      "collapsible": false
+        "例：$f(x,y)=x^2y$，看 $y=b$ 的切片 $z=bx^2$",
+        "$f_{xx}=2y$：切片的凹凸（跟一變數的 $f''$ 一樣）",
+        "$f_x(1,y)=2y$：$x$ 方向的斜率，隨著 $y$ 在變",
+        "$f_{xy}=2x$：往 $y$ 方向走時，$x$ 方向的斜率變多快",
+        "曲面會「扭轉」：各條切片的斜率不一樣"
+      ]
+    },
+    {
+      "heading": "③ 猜猜看",
+      "body": [
+        "沿 $x$ 方向：$z=x^2$，開口向上：$f_{xx}=2$",
+        "沿 $y$ 方向：$z=-y^2$，開口向下：$f_{yy}=-2$",
+        "一個方向是谷底、另一個方向是山頂：馬鞍",
+        "之後的「二階導數判別法」就是在比較這些二階偏導數"
+      ]
     },
     {
       "heading": "④ Laplacian",
       "body": [
-        "物理上常見的組合 $\\Delta f=f_{xx}+f_{yy}$ 叫 Laplacian（三變數再加 $f_{zz}$）。$\\Delta f=0$ 的函數叫調和函數，例如 $x^2-y^2$：$f_{xx}=2$，$f_{yy}=-2$，相加為 $0$。"
+        "定義：",
+        "意思：$f$ 在這一點，比周圍的平均高還是低",
+        "• $\\Delta f>0$：這一點比周圍平均低（像碗底）",
+        "• $\\Delta f<0$：這一點比周圍平均高（像山頂）",
+        "• $\\Delta f=0$：剛好等於周圍平均：叫調和函數",
+        "穩定狀態的溫度分布就是調和函數：每一點的溫度都等於周圍的平均",
+        "例：$f(x,y)=\\ln(x^2+y^2)$（原點以外）",
+        "連鎖律：",
+        "商法則："
       ],
-      "collapsible": false
+      "tex": [
+        "\\Delta f=f_{xx}+f_{yy}",
+        "f_x=\\frac{2x}{x^2+y^2}",
+        "f_{xx}=\\frac{2(x^2+y^2)-2x\\cdot2x}{(x^2+y^2)^2}=\\frac{2y^2-2x^2}{(x^2+y^2)^2}"
+      ]
+    },
+    {
+      "heading": "④ Laplacian（續）",
+      "body": [
+        "$x$、$y$ 對稱：把 $x$、$y$ 交換",
+        "相加：分子剛好抵消",
+        "數值驗算：$(0.7,1.3)$ 時 $f_{xx}\\approx0.505$，$f_{yy}\\approx-0.505$"
+      ],
+      "tex": [
+        "f_{yy}=\\frac{2x^2-2y^2}{(x^2+y^2)^2}",
+        "\\Delta f=\\frac{(2y^2-2x^2)+(2x^2-2y^2)}{(x^2+y^2)^2}=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 二變數有 4 個二階偏導：$f_{xx},f_{xy},f_{yx},f_{yy}$",
+        "• 下標從左往右：$f_{xy}$ 先 $x$ 後 $y$",
+        "• 分數從右往左：$\\dfrac{\\partial^2 f}{\\partial y\\,\\partial x}=f_{xy}$",
+        "• $f_{xx}$：切片的凹凸；$f_{xy}$：往 $y$ 走時 $x$ 方向斜率的變化率",
+        "• Laplacian $\\Delta f=f_{xx}+f_{yy}$；$=0$ 叫調和函數",
+        "下一課：Clairaut 定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -95,256 +180,911 @@
   ],
   "checks": [
     {
-      "ask": "$f=x^2y^3$，$f_{xy}$ 是？",
+      "ask": "$\\dfrac{\\partial^2 f}{\\partial x\\,\\partial y}$ 是哪一個？",
       "options": [
-        { "label": "$6xy^2$", "correct": true },
-        { "label": "$2y^3$", "why": "那是 $f_{xx}$：$f_x=2xy^3$ 再對 $x$ 微分。$f_{xy}$ 要對 $y$ 微分：$2x\\cdot 3y^2=6xy^2$。" },
-        { "label": "$6x^2y$", "why": "那是 $f_{yy}$：$f_y=3x^2y^2$ 再對 $y$ 微分。" }
+        {
+          "label": "$f_{yx}$：先對 $y$，再對 $x$",
+          "correct": true
+        },
+        {
+          "label": "$f_{xy}$：先對 $x$，再對 $y$",
+          "why": "把分數記號當成從左往右讀了"
+        },
+        {
+          "label": "$f_{xx}$ 乘 $f_{yy}$",
+          "why": "這不是乘積，是連續微分兩次"
+        },
+        {
+          "label": "兩次都對 $x$",
+          "why": "分母裡一個 $\\partial x$、一個 $\\partial y$，是混合偏導"
+        }
       ]
     },
     {
-      "ask": "$\\frac{\\partial^2 f}{\\partial y\\partial x}$ 表示？",
+      "ask": "哪一個是調和函數（$\\Delta f=0$）？",
       "options": [
-        { "label": "先對 $x$ 微分，再對 $y$ 微分", "correct": true },
-        { "label": "先對 $y$ 微分，再對 $x$ 微分", "why": "分式記號從右往左讀：$\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right)$，離 $f$ 最近的 $\\partial x$ 先做。" },
-        { "label": "對 $x$ 微分的結果乘上對 $y$ 微分的結果", "why": "高階偏導是一次接一次地微分，不是把兩個偏導數相乘。" }
-      ]
-    },
-    {
-      "ask": "$f=\\sin x+y^4$，$f_{xy}$ 是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$\\cos x$", "why": "那是 $f_x$。再對 $y$ 微分，$\\cos x$ 不含 $y$，得 $0$。" },
-        { "label": "$4y^3\\cos x$", "why": "兩個偏導數不是相乘。$f_x=\\cos x$ 不含 $y$，對 $y$ 微分是 $0$。" }
-      ]
-    },
-    {
-      "ask": "$f=x^2-y^2$，$f_{xx}+f_{yy}$ 是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$4$", "why": "$f_{yy}=-2$，不是 $2$：$-y^2$ 對 $y$ 微分兩次是 $-2$。" },
-        { "label": "$2x-2y$", "why": "那是 $f_x+f_y$（一階）。Laplacian 要二階。" }
+        {
+          "label": "$x^2-y^2$",
+          "correct": true
+        },
+        {
+          "label": "$x^2+y^2$",
+          "why": "$2+2=4$：兩個平方的二階導數都是正的，不會抵消"
+        },
+        {
+          "label": "$x^2y$",
+          "why": "$f_{xx}=2y$，$f_{yy}=0$，相加是 $2y$，不是處處 $0$"
+        },
+        {
+          "label": "$e^{x+y}$",
+          "why": "$f_{xx}=f_{yy}=e^{x+y}$，相加是 $2e^{x+y}>0$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "再微分一次",
+      "title": "偏導數還是函數",
       "beats": [
-        { "show": ["$f_x(x,y)$ 也是函數"],
-          "note": "可以再對 $x$ 或對 $y$ 偏微分。",
-          "say": "偏導數算出來還是 x、y 的函數，所以可以再微分一次，對 x 或對 y 都行。",
+        {
+          "show": [
+            "$f_x(x,y)$、$f_y(x,y)$ 本身又是二變數函數"
+          ],
+          "say": "上一課算出來的偏導數，本身又是一個二變數函數。既然是函數，就可以再對 x 或對 y 偏微分一次。",
           "board": [
-            {"do":"write","line":"${{f:f_x(x,y)}}$ 也是 $x,y$ 的函數"},
-            {"do":"write","line":"可再對 $x$ 或對 $y$ 微分","on":"再微分一次"}
-          ] },
-        { "show": ["$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$"],
-          "say": "兩個一階偏導數，各自再對兩個變數微分，一共四個二階偏導數。",
+            {
+              "do": "write",
+              "line": "$f_x(x,y)$、$f_y(x,y)$ 本身又是二變數函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一個都能再對 $x$ 或 $y$ 微分：一共 $2\\times2=4$ 個二階偏導數"
+          ],
+          "say": "兩個一階偏導數，每一個都有兩種微法，所以二階偏導數一共有四個。",
           "board": [
-            {"do":"write","line":"$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$"}
-          ] },
-        { "show": ["$f=x^3y^2+e^{2x}$","$f_x=3x^2y^2+2e^{2x}$"],
-          "say": "例如這個函數，先對 x：x 三次方變三 x 平方，e 的二 x 次方微分要乘二。",
+            {
+              "do": "write",
+              "line": "每一個都能再對 $x$ 或 $y$ 微分：一共 $2\\times2=4$ 個二階偏導數",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x,y)=x^3y^2+e^{2x}$"
+          ],
+          "say": "例子：x 三次方 y 平方，加上 e 的 2x 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=x^3y^2+e^{2x}$","on":"這個函數"},
-            {"do":"transform","line":"$f_x=3x^2y^2+{{e:2e^{2x}}}$","on":"先對"},
-            {"do":"focus","term":"e","label":"乘 2","on":"e 的二"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^3y^2+e^{2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先算一階：",
+            "$f_x=3x^2y^2+2e^{2x},\\qquad f_y=2x^3y$"
+          ],
+          "say": "先算一階。對 x：3x 平方 y 平方，加 2 倍 e 的 2x 次方。對 y：e 的 2x 次方是常數，微掉了，剩 2x 三次方 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先算一階："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x=3x^2y^2+2e^{2x},\\qquad f_y=2x^3y$",
+              "on": "2x#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從 $f_x$ 出發：",
+            "$f_{xx}=6xy^2+4e^{2x},\\qquad f_{xy}=6x^2y$"
+          ],
+          "say": "從 f 對 x 出發，再對 x 微分一次，得到 6x y 平方加 4 倍 e 的 2x 次方；改成對 y 微分，得到 6x 平方 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從 $f_x$ 出發："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{xx}=6xy^2+4e^{2x},\\qquad f_{xy}=6x^2y$",
+              "on": "2x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從 $f_y$ 出發：",
+            "$f_{yx}=6x^2y,\\qquad f_{yy}=2x^3$"
+          ],
+          "say": "從 f 對 y 出發，對 x 微分得到 6x 平方 y；對 y 微分得到 2x 三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從 $f_y$ 出發："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{yx}=6x^2y,\\qquad f_{yy}=2x^3$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}=f_{yx}=6x^2y$"
+          ],
+          "say": "注意：兩個混合偏導數，f x y 和 f y x，算出來一樣。這不是巧合，下一課的克萊洛定理會解釋。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f_{xy}=f_{yx}=6x^2y}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "算出"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(x,y)=(0.7,1.3)$ 時 $f_{xy}=3.822$，用差商數值算也是 $3.822$",
+              "color": "violet",
+              "on": "是巧"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "記號的順序",
+      "beats": [
+        {
+          "show": [
+            "下標：從左往右讀",
+            "$f_{xy}=(f_x)_y\\quad\\text{先 }x\\text{，後 }y$"
+          ],
+          "say": "記號是最容易搞混的地方。下標的寫法，從左往右讀：f x y，就是先對 x，再對 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下標：從左往右讀"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f_{xy}=(f_x)_y\\quad\\text{先 }x\\text{，後 }y}}$",
+              "on": "的寫"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分數記號：從右往左讀（像函數合成）",
+            "$\\frac{\\partial^2 f}{\\partial y\\,\\partial x}=\\frac{\\partial}{\\partial y}\\Big(\\frac{\\partial f}{\\partial x}\\Big)=f_{xy}$"
+          ],
+          "say": "分數的寫法剛好相反，要從右往左讀：偏 y 偏 x，是先把偏 x 作用在 f 上，再作用偏 y。所以它也是先 x 後 y，等於 f x y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分數記號：從右往左讀（像函數合成）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{\\partial^2 f}{\\partial y\\,\\partial x}=\\frac{\\partial}{\\partial y}\\Big(\\frac{\\partial f}{\\partial x}\\Big)=f_{xy}}}$",
+              "on": "是先#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "再作"
+            },
+            {
+              "do": "write",
+              "line": "　靠近 $f$ 的先做；跟 $g(h(x))$ 先算 $h$ 一樣",
+              "color": "violet",
+              "on": "是先#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先 $x$ 後 $y$：",
+            "$f_{xy}=\\frac{\\partial^2 f}{\\partial y\\,\\partial x}$"
+          ],
+          "say": "整理一下：先 x 後 y，下標寫 f x y，分數寫偏 y 偏 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先 $x$ 後 $y$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{xy}=\\frac{\\partial^2 f}{\\partial y\\,\\partial x}$",
+              "on": "分數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先 $y$ 後 $x$：",
+            "$f_{yx}=\\frac{\\partial^2 f}{\\partial x\\,\\partial y}$"
+          ],
+          "say": "先 y 後 x，下標寫 f y x，分數寫偏 x 偏 y。字母的順序剛好相反。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先 $y$ 後 $x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{yx}=\\frac{\\partial^2 f}{\\partial x\\,\\partial y}$",
+              "on": "數寫"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xx}=\\dfrac{\\partial^2 f}{\\partial x^2}$，$f_{yy}=\\dfrac{\\partial^2 f}{\\partial y^2}$"
+          ],
+          "say": "同一個變數微兩次就沒有順序問題，寫成偏平方 f 偏 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_{xx}=\\dfrac{\\partial^2 f}{\\partial x^2}$，$f_{yy}=\\dfrac{\\partial^2 f}{\\partial y^2}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{\\partial^2 f}{\\partial x\\,\\partial y}$ 是哪一個？"
+          ],
+          "say": "試一題：偏平方 f，偏 x 偏 y，是先對誰微分？"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "例：$\\dfrac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}$：先 $y$ 後 $x$"
+          ],
+          "say": "再一個例子：偏 x 偏 y，作用在 e 的 x y 次方。從右往左讀，先對 y，再對 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\dfrac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}$：先 $y$ 後 $x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先對 $y$：$\\dfrac{\\partial}{\\partial y}e^{xy}=xe^{xy}$"
+          ],
+          "say": "先對 y：連鎖律，裡面 x y 對 y 微分是 x，得到 x 乘 e 的 x y 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先對 $y$：$\\dfrac{\\partial}{\\partial y}e^{xy}=xe^{xy}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再對 $x$：$x$ 出現在兩處，用乘法法則",
+            "$\\frac{\\partial}{\\partial x}\\big(xe^{xy}\\big)=e^{xy}+x\\cdot ye^{xy}$"
+          ],
+          "say": "再對 x：x 出現在兩個地方，要用乘法法則。前面的 x 微分，得 e 的 x y 次方；後面微分，得 x 乘 y 乘 e 的 x y 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再對 $x$：$x$ 出現在兩處，用乘法法則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial}{\\partial x}\\big(xe^{xy}\\big)=e^{xy}+x\\cdot ye^{xy}$",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}=(1+xy)e^{xy}$"
+          ],
+          "say": "合起來是 1 加 x y，乘上 e 的 x y 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{\\partial^2}{\\partial x\\,\\partial y}e^{xy}=(1+xy)e^{xy}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "乘上"
+            },
+            {
+              "do": "write",
+              "line": "　最常見的錯：忘了乘法法則，只寫 $xye^{xy}$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "在圖上代表什麼",
+      "beats": [
+        {
+          "show": [
+            "例：$f(x,y)=x^2y$，看 $y=b$ 的切片 $z=bx^2$"
+          ],
+          "say": "二階偏導數在圖上是什麼意思？用 x 平方 y 當例子。把 y 凍在 b，切片是 z 等於 b 倍 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^2y$，看 $y=b$ 的切片 $z=bx^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切片 z = b x²：往 y 方向移動，形狀和斜率都會變"
+          ],
+          "say": "紅色是切片，虛線是它在 x 等於 1 的切線。現在 b 等於 1，切片開口向上。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "hp",
+                  "window": [
+                    -2,
+                    2,
+                    -3,
+                    3
+                  ],
+                  "ylabel": "z",
+                  "fn": [
+                    {
+                      "expr": "b*x^2",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "2*b*(x-1)+b",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": "b"
+                    }
+                  ],
+                  "params": {
+                    "b": {
+                      "min": -1.5,
+                      "max": 1.5,
+                      "value": 1,
+                      "label": "y = b"
+                    }
+                  },
+                  "readout": "在 x = 1 的切線斜率 = {2*b}",
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "在 x = 1 的切線斜率 = 2",
+              "on": "等於#1"
+            },
+            {
+              "do": "write",
+              "line": "切片 z = b x²：往 y 方向移動，形狀和斜率都會變",
+              "color": "violet",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xx}=2y$：切片的凹凸（跟一變數的 $f''$ 一樣）"
+          ],
+          "say": "f x x 等於 2y，就是切片的二階導數，代表切片的凹凸：y 是正的，開口向上；y 是負的，開口向下。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_{xx}=2y$：切片的凹凸（跟一變數的 $f''$ 一樣）",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在圖上代表什麼"
+          ],
+          "say": "把 b 拉到負 1，切片變成開口向下，f x x 從正 2 變成負 2。同時注意切線斜率也一直在變。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "hp",
+                  "window": [
+                    -2,
+                    2,
+                    -3,
+                    3
+                  ],
+                  "ylabel": "z",
+                  "fn": [
+                    {
+                      "expr": "b*x^2",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "2*b*(x-1)+b",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": "b"
+                    }
+                  ],
+                  "params": {
+                    "b": {
+                      "min": -1.5,
+                      "max": 1.5,
+                      "value": 1,
+                      "label": "y = b"
+                    }
+                  },
+                  "readout": "在 x = 1 的切線斜率 = {2*b}",
+                  "height": 270
+                },
+                "vals": {
+                  "b": -1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "在 x = 1 的切線斜率 = −2",
+              "on": "從正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_x(1,y)=2y$：$x$ 方向的斜率，隨著 $y$ 在變"
+          ],
+          "say": "在 x 等於 1，x 方向的斜率是 2y。b 從 1 走到負 1，斜率從 2 變成負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_x(1,y)=2y$：$x$ 方向的斜率，隨著 $y$ 在變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}=2x$：往 $y$ 方向走時，$x$ 方向的斜率變多快"
+          ],
+          "say": "f x y 等於 2x，它衡量的是：往 y 方向走的時候，x 方向的斜率變化得多快。在 x 等於 1，y 每增加 1，斜率增加 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_{xy}=2x$：往 $y$ 方向走時，$x$ 方向的斜率變多快",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　曲面會「扭轉」：各條切片的斜率不一樣",
+              "color": "violet",
+              "on": "的斜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "猜猜看",
+      "beats": [
+        {
+          "show": [
+            "$f(x,y)=x^2-y^2$（馬鞍面）在原點，$f_{xx}$ 和 $f_{yy}$ 的正負號？"
+          ],
+          "say": "先猜猜看：馬鞍面 x 平方減 y 平方，在原點，兩個二階偏導數的正負號？"
+        }
       ],
       "predict": {
-        "ask": "$f_{xx}$ 是？",
+        "ask": "$f(x,y)=x^2-y^2$（馬鞍面）在原點，$f_{xx}$ 和 $f_{yy}$ 的正負號？",
         "options": [
           {
-            "label": "$6xy^2+4e^{2x}$",
+            "label": "$f_{xx}>0$，$f_{yy}<0$",
             "correct": true
           },
           {
-            "label": "$6xy^2+2e^{2x}$",
-            "why": "$2e^{2x}$ 再對 $x$ 微分，連鎖律又乘一次 $2$，得 $4e^{2x}$。"
+            "label": "兩個都 $>0$",
+            "why": "$-y^2$ 那一項：$y$ 方向的切片開口向下"
           },
           {
-            "label": "$(3x^2y^2+2e^{2x})^2$",
-            "why": "$f_{xx}$ 是把 $f_x$ 再微分一次，不是平方。"
+            "label": "兩個都 $<0$",
+            "why": "$x^2$ 那一項：$x$ 方向的切片開口向上"
+          },
+          {
+            "label": "兩個都是 $0$",
+            "why": "原點的一階偏導數是 $0$，但二階不是"
           }
         ]
       }
     },
     {
-      "title": "混合偏導",
+      "title": "猜猜看",
       "beats": [
-        { "show": ["$f_{xy}$：$f_x$ 對 $y$ 微分 $=6x^2y$"],
-          "note": "$2e^{2x}$ 對 $y$ 是常數。",
-          "say": "把一階的 f 下標 x 對 y 微分：x 當常數，y 平方變二 y；e 的二 x 次方不含 y，消失。",
+        {
+          "show": [
+            "沿 $x$ 方向：$z=x^2$，開口向上：$f_{xx}=2$"
+          ],
+          "say": "沿 x 方向切，是 x 平方，開口向上，f x x 等於 2。",
           "board": [
-            {"do":"write","line":"$f_x=3x^2{{y2:y^2}}+{{ex:2e^{2x}}}$"},
-            {"do":"underline","term":"y2","on":"y 平方"},
-            {"do":"focus","term":"ex","label":"不含 y","on":"e 的二 x"},
-            {"do":"write","line":"$f_{xy}={{a:6x^2y}}$","on":"消失"}
-          ] },
-        { "show": ["$f_y=2x^3y$ → $f_{yx}=6x^2y$"],
-          "say": "反過來，先對 y 再對 x，也得到六 x 平方 y。",
+            {
+              "do": "write",
+              "line": "沿 $x$ 方向：$z=x^2$，開口向上：$f_{xx}=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿 $y$ 方向：$z=-y^2$，開口向下：$f_{yy}=-2$"
+          ],
+          "say": "沿 y 方向切，是負 y 平方，開口向下，f y y 等於負 2。",
           "board": [
-            {"do":"write","line":"$f_y=2x^3y$ → $f_{yx}={{b:6x^2y}}$"},
-            {"do":"focus","term":"b","on":"也得到"}
-          ] },
-        { "show": ["$f_{xy}=f_{yx}$"],
-          "note": "是個好的檢查；$f_{yy}=2x^3$。",
-          "say": "兩種順序一樣，這是很好的驗算。最後一個，f 下標 y y，是二 x 三次方。",
+            {
+              "do": "write",
+              "line": "沿 $y$ 方向：$z=-y^2$，開口向下：$f_{yy}=-2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一個方向是谷底、另一個方向是山頂：馬鞍"
+          ],
+          "say": "一個方向像谷底，另一個方向像山頂，所以叫馬鞍面。原點是平的，卻不是極大也不是極小。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{eq:f_{xy}=f_{yx}}}$","on":"兩種順序"},
-            {"do":"box","term":"eq","color":"green","on":"很好的驗算"},
-            {"do":"write","line":"$f_{yy}=2x^3$","on":"最後一個"}
-          ] },
-        { "show": ["一般 $f_{xy}=f_{yx}$，條件下一課說"],
-          "note": "這不是巧合，但有例外。",
-          "say": "這題相等不是巧合，函數夠平滑時一般都相等。條件不成立時才會不同，下一課會說明。",
-          "board": [
-            {"do":"write","line":"一般 $f_{xy}=f_{yx}$，條件見下一課"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "一個方向是谷底、另一個方向是山頂：馬鞍",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　之後的「二階導數判別法」就是在比較這些二階偏導數",
+              "color": "violet",
+              "on": "馬鞍"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "記號的順序",
+      "title": "Laplacian",
       "beats": [
-        { "show": ["$f_{xy}=(f_x)_y$"],
-          "note": "下標從左讀到右：先 $x$ 後 $y$。",
-          "say": "下標的寫法從左往右讀：先對 x，再對 y。",
+        {
+          "show": [
+            "定義：",
+            "$\\Delta f=f_{xx}+f_{yy}$"
+          ],
+          "say": "最後介紹一個很重要的組合：f x x 加 f y y，叫做拉普拉斯算子，記號是一個三角形。",
           "board": [
-            {"do":"write","line":"$f_{xy}=(f_x)_y$"},
-            {"do":"write","line":"先 $x$ 後 $y$","on":"先對"}
-          ] },
-        { "show": ["$\\frac{\\partial^2 f}{\\partial y\\partial x}=\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right)$"],
-          "note": "分式從右讀到左：最靠近 $f$ 的先做。",
-          "say": "分式寫法反過來，從右往左讀：最靠近 f 的 partial x 先做，所以也是先 x 後 y。",
+            {
+              "do": "write",
+              "line": "定義："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Delta f=f_{xx}+f_{yy}}}$",
+              "on": "叫做"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "普拉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：$f$ 在這一點，比周圍的平均高還是低"
+          ],
+          "say": "它的意思是：拿 f 在這一點的值，跟周圍一圈的平均值比較。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial^2 f}{{{b:\\partial y}}{{a:\\partial x}}}$"},
-            {"do":"focus","term":"a","color":"blue","label":"離 f 最近","on":"最靠近"}
-          ] },
-        { "show": ["$g(f(x))$：先 $f$ 後 $g$"],
-          "note": "離裡面最近的，先做。",
-          "say": "這跟合成函數一樣：g of f of x，貼著 x 的 f 先做。分式裡貼著 f 的是 partial x，所以先做它。",
+            {
+              "do": "write",
+              "line": "意思：$f$ 在這一點，比周圍的平均高還是低"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\Delta f>0$：這一點比周圍平均低（像碗底）",
+            "• $\\Delta f<0$：這一點比周圍平均高（像山頂）"
+          ],
+          "say": "拉普拉斯算子是正的，這一點比周圍的平均低，像碗底；是負的，比周圍高，像山頂；等於 0，剛好是周圍的平均，這種函數叫調和函數。",
           "board": [
-            {"do":"write","line":"$g({{n1:f}}(x))$：先 $f$ 後 $g$"},
-            {"do":"focus","term":"n1","color":"blue","label":"最近先做","on":"貼著#1"}
-          ] },
-        { "show": ["字母排列相反，意思一樣"],
-          "say": "兩種記號字母的順序剛好相反，意思卻相同。看到題目，先確定是哪一種寫法。",
+            {
+              "do": "write",
+              "line": "• $\\Delta f>0$：這一點比周圍平均低（像碗底）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Delta f<0$：這一點比周圍平均高（像山頂）",
+              "on": "圍的#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Delta f=0$：剛好等於周圍平均：叫調和函數",
+              "on": "圍高"
+            },
+            {
+              "do": "write",
+              "line": "　穩定狀態的溫度分布就是調和函數：每一點的溫度都等於周圍的平均",
+              "color": "violet",
+              "on": "周圍#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x,y)=\\ln(x^2+y^2)$（原點以外）"
+          ],
+          "say": "例子：自然對數 x 平方加 y 平方，原點以外。",
           "board": [
-            {"do":"write","line":"字母順序相反，意思相同"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=\\ln(x^2+y^2)$（原點以外）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "連鎖律：",
+            "$f_x=\\frac{2x}{x^2+y^2}$"
+          ],
+          "say": "先算 f 對 x：連鎖律，x 平方加 y 平方分之一，乘上裡面的導數 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x=\\frac{2x}{x^2+y^2}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "商法則：",
+            "$f_{xx}=\\frac{2(x^2+y^2)-2x\\cdot2x}{(x^2+y^2)^2}=\\frac{2y^2-2x^2}{(x^2+y^2)^2}$"
+          ],
+          "say": "再對 x 微一次，用商法則：分母的導數是 2x，分子化簡成 2y 平方減 2x 平方，分母是平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "商法則："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{xx}=\\frac{2(x^2+y^2)-2x\\cdot2x}{(x^2+y^2)^2}=\\frac{2y^2-2x^2}{(x^2+y^2)^2}$",
+              "on": "分子"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Laplacian（續）",
+      "beats": [
+        {
+          "show": [
+            "$x$、$y$ 對稱：把 $x$、$y$ 交換",
+            "$f_{yy}=\\frac{2x^2-2y^2}{(x^2+y^2)^2}$"
+          ],
+          "say": "這個函數 x 和 y 的地位一樣，所以 f y y 不用重算，把 x 和 y 交換就好：2x 平方減 2y 平方，除以同樣的分母。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x$、$y$ 對稱：把 $x$、$y$ 交換"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{yy}=\\frac{2x^2-2y^2}{(x^2+y^2)^2}$",
+              "on": "交換"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相加：分子剛好抵消",
+            "$\\Delta f=\\frac{(2y^2-2x^2)+(2x^2-2y^2)}{(x^2+y^2)^2}=0$"
+          ],
+          "say": "兩個相加，分子剛好抵消，拉普拉斯算子等於 0。所以自然對數 x 平方加 y 平方，在原點以外是調和函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相加：分子剛好抵消"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\Delta f=\\frac{(2y^2-2x^2)+(2x^2-2y^2)}{(x^2+y^2)^2}=0}}$",
+              "color": "red",
+              "on": "普拉"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "然對"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$(0.7,1.3)$ 時 $f_{xx}\\approx0.505$，$f_{yy}\\approx-0.505$",
+              "color": "violet",
+              "on": "在原"
+            }
+          ]
+        }
       ],
-      "key": "分式記號從右往左讀，下標從左往右",
       "check": 1
     },
     {
-      "title": "要用乘法法則",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\frac{\\partial^2}{\\partial x\\partial y}e^{xy}$：先 $y$ 後 $x$"],
-          "say": "分式寫法，從右往左讀：先對 y，再對 x。",
+        {
+          "show": [
+            "• 二變數有 4 個二階偏導：$f_{xx},f_{xy},f_{yx},f_{yy}$",
+            "• 下標從左往右：$f_{xy}$ 先 $x$ 後 $y$"
+          ],
+          "say": "整理一下：二變數有四個二階偏導數。下標從左往右讀，分數從右往左讀。f x x 是切片的凹凸。拉普拉斯算子等於 0 的，叫調和函數。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial^2}{{{a:\\partial x}}{{b:\\partial y}}}e^{xy}$"},
-            {"do":"underline","term":"b","color":"blue","on":"先對 y"}
-          ] },
-        { "show": ["$\\frac{\\partial}{\\partial y}e^{xy}=x\\,e^{xy}$"],
-          "say": "對 y 微分，連鎖律帶出一個 x。",
+            {
+              "do": "write",
+              "line": "• 二變數有 4 個二階偏導：$f_{xx},f_{xy},f_{yx},f_{yy}$"
+            },
+            {
+              "do": "write",
+              "line": "• 下標從左往右：$f_{xy}$ 先 $x$ 後 $y$",
+              "on": "偏導"
+            },
+            {
+              "do": "write",
+              "line": "• 分數從右往左：$\\dfrac{\\partial^2 f}{\\partial y\\,\\partial x}=f_{xy}$",
+              "on": "數從"
+            },
+            {
+              "do": "write",
+              "line": "• $f_{xx}$：切片的凹凸；$f_{xy}$：往 $y$ 走時 $x$ 方向斜率的變化率",
+              "on": "是切"
+            },
+            {
+              "do": "write",
+              "line": "• Laplacian $\\Delta f=f_{xx}+f_{yy}$；$=0$ 叫調和函數",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Clairaut 定理"
+          ],
+          "say": "今天兩個混合偏導數都相等，這是巧合嗎？下一課，克萊洛定理。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial y}e^{xy}={{c:x}}\\,e^{xy}$"},
-            {"do":"focus","term":"c","color":"blue","label":"連鎖律","on":"帶出"}
-          ] },
-        { "show": ["$e^{xy}+x\\cdot y\\,e^{xy}=e^{xy}(1+xy)$"],
-          "note": "$x$ 和 $e^{xy}$ 都含 $x$。",
-          "say": "再對 x 微分時要小心：前面的 x 和後面的 e 的 x y 次方都含 x，要用乘法法則。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial x}\\left({{p:x}}\\cdot{{q:e^{xy}}}\\right)$"},
-            {"do":"focus","term":"p","color":"blue","label":"含 x","on":"前面的"},
-            {"do":"focus","term":"q","color":"violet","on":"後面的"}
-          ] },
-        { "show": ["乘法法則：$(uv)'=u'v+uv'$"],
-          "note": "兩個因子都含 $x$ 時用。",
-          "say": "乘法法則是這樣：第一個的導數乘第二個，加上第一個乘第二個的導數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(uv)'={{n2:u'v}}+{{n3:uv'}}$","on":"個的#1"},
-            {"do":"underline","term":"n3","color":"blue","on":"第一個乘"}
-          ] },
-        { "show": ["$u=x$，$v=e^{xy}$"],
-          "note": "$x'=1$，$(e^{xy})'=y\\,e^{xy}$。",
-          "say": "這裡 u 是 x，導數是一；v 是 e 的 x y 次方，對 x 微分，連鎖律帶出 y。",
-          "board": [
-            {"do":"write","line":"$(x)'={{n4:1}}$，$(e^{xy})'={{n5:y\\,e^{xy}}}$"},
-            {"do":"write","line":"$1\\cdot e^{xy}+x\\cdot y\\,e^{xy}$","on":"連鎖律"}
-          ] }
-      ],
-      "key": "第一次帶出 $x$，第二次要用乘法法則",
-      "check": 2
-    },
-    {
-      "title": "圖上的意思",
-      "beats": [
-        { "show": ["$f_{xx}>0$：沿 $x$ 方向往上彎"],
-          "note": "$f_{xx}$ 是 $x$ 方向切片的凹向。",
-          "say": "f 下標 x x 是沿 x 方向那條切片的二階導數，也就是它往哪邊彎。",
-          "board": [
-            {"do":"write","line":"$f_{xx}>0$：沿 $x$ 方向往上彎"}
-          ] },
-        { "show": ["$x^2$：斜率變大，往上彎"],
-          "note": "二階導數正，就是斜率在變大。",
-          "say": "看 x 平方：斜率由負變正，一路變大，曲線往上彎。二階導數為正，就是斜率變大。",
-          "board": [
-            {"do":"plot","graph":{"window":[-3,3,-1,5],"curves":[{"expr":"x^2","domain":[-2.2,2.2],"color":"blue"}]}},
-            {"do":"write","line":"斜率變大 → 往上彎","on":"一路變大"}
-          ] },
-        { "show": ["$f_{xy}$：曲面扭的程度"],
-          "note": "往 $y$ 挪一點，$x$ 方向的斜率變多少。",
-          "say": "混合偏導看的是：往 y 方向挪一點，x 方向的斜率變了多少，描述曲面扭的程度。",
-          "board": [
-            {"do":"write","line":"$f_{xy}$：曲面扭的程度","on":"混合偏導"}
-          ] },
-        { "show": ["$f=xy$：$f_x=y$，$f_{xy}=1$"],
-          "note": "往 $y$ 挪，$x$ 方向的斜率跟著變。",
-          "say": "拿 f 等於 x 乘 y：x 方向的斜率是 y，往 y 挪，斜率跟著變，變化率是一，曲面就扭了。",
-          "board": [
-            {"do":"write","line":"$f=xy$，${{n6:f_x=y}}$"},
-            {"do":"write","line":"$f_{xy}=1$","on":"變化率"}
-          ] },
-        { "show": ["$\\Delta f=f_{xx}+f_{yy}$"],
-          "note": "$\\Delta f=0$ 的函數叫調和函數。",
-          "say": "物理上常見的組合：兩個純二階偏導相加，叫 Laplacian。等於零的函數叫調和函數。",
-          "board": [
-            {"do":"write","line":"$\\Delta f=f_{xx}+f_{yy}$","on":"兩個純二階"}
-          ] },
-        { "show": ["$\\ln(x^2+y^2)$：分子 $2(y^2-x^2)+2(x^2-y^2)=0$"],
-          "note": "原點以外。",
-          "say": "例如 x 平方加 y 平方的自然對數，兩個二階偏導數的分子剛好互相抵銷，是調和函數。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$f_{xx}=\\frac{{{a:2(y^2-x^2)}}}{(x^2+y^2)^2}$","on":"兩個二階"},
-            {"do":"write","line":"$f_{yy}=\\frac{{{b:2(x^2-y^2)}}}{(x^2+y^2)^2}$","on":"分子"},
-            {"do":"write","line":"分子相加 $=0$","color":"green","on":"互相抵銷"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：Clairaut 定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["mixed-partial", "second-derivative", "laplacian", "multivariable"],
-    "fine": ["second-partial-pure", "second-partial-mixed", "second-partial-notation-order", "laplacian-compute"]
+    "coarse": [
+      "mixed-partial",
+      "second-derivative",
+      "laplacian",
+      "multivariable"
+    ],
+    "fine": [
+      "second-partial-pure",
+      "second-partial-mixed",
+      "second-partial-notation-order",
+      "laplacian-compute"
+    ]
   },
   "practice": [
-    { "id": "der-033", "core": true, "trains": "second-partial-pure" },
-    { "id": "lec-16-m5", "core": true, "trains": "second-partial-mixed" },
-    { "id": "der-023", "core": true, "trains": "second-partial-mixed" },
-    { "id": "exam-multi-002", "core": true, "trains": "second-partial-mixed" },
-    { "id": "der-036", "core": true, "trains": "laplacian-compute" },
-    { "id": "vc-nab-008", "core": true, "trains": "laplacian-compute" },
-    { "id": "cg-8b-004", "core": true, "trains": "second-partial-notation-order" },
-    { "id": "cg-8b-005", "core": true, "trains": "second-partial-notation-order" },
-    { "id": "lec-16-q4b", "trains": "second-partial-mixed" },
-    { "id": "vc-nab-002", "trains": "laplacian-compute" },
-    { "id": "vc-nab-009", "challenge": true, "trains": "laplacian-compute", "note": "挑戰：先算 $\\Delta f$ 的式子再代點，比先代點快。" }
+    {
+      "id": "der-033",
+      "core": true,
+      "trains": "second-partial-pure"
+    },
+    {
+      "id": "lec-16-m5",
+      "core": true,
+      "trains": "second-partial-mixed"
+    },
+    {
+      "id": "der-023",
+      "core": true,
+      "trains": "second-partial-mixed"
+    },
+    {
+      "id": "exam-multi-002",
+      "core": true,
+      "trains": "second-partial-mixed"
+    },
+    {
+      "id": "der-036",
+      "core": true,
+      "trains": "laplacian-compute"
+    },
+    {
+      "id": "vc-nab-008",
+      "core": true,
+      "trains": "laplacian-compute"
+    },
+    {
+      "id": "cg-8b-004",
+      "core": true,
+      "trains": "second-partial-notation-order"
+    },
+    {
+      "id": "cg-8b-005",
+      "core": true,
+      "trains": "second-partial-notation-order"
+    },
+    {
+      "id": "lec-16-q4b",
+      "trains": "second-partial-mixed"
+    },
+    {
+      "id": "vc-nab-002",
+      "trains": "laplacian-compute"
+    },
+    {
+      "id": "vc-nab-009",
+      "challenge": true,
+      "trains": "laplacian-compute",
+      "note": "挑戰：先算 $\\Delta f$ 的式子再代點，比先代點快。"
+    }
   ],
   "gaps": []
 }

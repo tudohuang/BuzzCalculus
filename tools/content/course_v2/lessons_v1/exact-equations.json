@@ -1,0 +1,303 @@
+{
+  "id": "exact-equations",
+  "title": "正合方程",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["integrating-factor", "partial-derivatives", "clairaut", "implicit-differentiation"],
+  "next": ["second-order-linear"],
+  "related": ["conservative-fields", "potential-function", "first-order-linear", "separation-of-variables"],
+  "objectives": [
+    "把 $M\\,dx+N\\,dy=0$ 讀成「某個 $F(x,y)$ 的等高線」，說出解寫成 $F(x,y)=C$ 的理由。",
+    "用 $\\frac{\\partial M}{\\partial y}=\\frac{\\partial N}{\\partial x}$ 判斷是否正合，並知道這個判準需要什麼條件。",
+    "用「先對 $x$ 積分、再配 $y$」找出 $F$。"
+  ],
+  "visual": "畫出 F(x, y) = x²y + 3x − y 的等高線（C = −2 到 4）。點一條等高線，它被標成一條解曲線；旁邊顯示沿著這條曲線 dF = M dx + N dy = 0。",
+  "concept": [
+    {
+      "heading": "① 從等高線倒推回方程（本課選修）",
+      "body": [
+        "如果 $y(x)$ 讓 $F(x,y(x))=C$ 一直成立，對 $x$ 微分（〈隱函數微分〉）：$F_x+F_y\\cdot y'=0$，也就是 $F_x\\,dx+F_y\\,dy=0$。",
+        "倒過來看：一個寫成 $M\\,dx+N\\,dy=0$ 的方程，如果剛好有 $F$ 使 $M=F_x$、$N=F_y$，它就叫正合，解就是 $F(x,y)=C$ 這一族等高線。解法變成「找 $F$」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 怎麼知道 $F$ 存在：比對交叉偏導",
+      "body": [
+        "若 $M=F_x$、$N=F_y$，而且 $F$ 的二階偏導連續，〈Clairaut 定理〉給 $M_y=F_{xy}=F_{yx}=N_x$。所以正合的必要條件是 $\\frac{\\partial M}{\\partial y}=\\frac{\\partial N}{\\partial x}$。",
+        "反過來也成立，但要條件：$M$、$N$ 與它們的一階偏導在一個矩形（更一般地，沒有破洞的區域）上連續，且 $M_y=N_x$，那 $F$ 就存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 找 $F$：先對 $x$ 積分，再配 $y$",
+      "body": [
+        "1. $F=\\int M\\,dx$，對 $x$ 積分時把 $y$ 當常數，所以「積分常數」可以是 $y$ 的任意函數 $g(y)$。",
+        "2. 對 $y$ 偏微分，令它等於 $N$，解出 $g'(y)$。$g'(y)$ 一定只含 $y$；若出現 $x$，代表前面算錯了，或方程根本不正合。",
+        "3. 積出 $g(y)$，答案寫成 $F(x,y)=C$，有初始條件就代進去定 $C$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一階方程，先問三個問題",
+      "body": [
+        "能寫成 $g(x)h(y)$ 嗎？能就〈分離變數〉。能整理成 $y'+P(x)y=Q(x)$ 嗎？能就用〈積分因子〉。寫成 $M\\,dx+N\\,dy=0$ 之後 $M_y=N_x$ 嗎？是就找 $F$。三種都不是，這門課的工具就不夠了。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼要「沒有破洞」",
+      "body": [
+        "$M=-\\frac{y}{x^2+y^2}$、$N=\\frac{x}{x^2+y^2}$ 在去掉原點的平面上處處滿足 $M_y=N_x=\\frac{y^2-x^2}{(x^2+y^2)^2}$。但沒有一個在整個去掉原點的平面上都可微的 $F$：局部上 $F$ 就是極角 $\\theta$，繞原點一圈會多出 $2\\pi$，接不回來。限制在一個不含原點的矩形裡，$F$ 就存在。這和〈保守場〉與〈位勢函數〉是同一件事。",
+        "不正合的方程有時乘上一個因子就變成正合；〈一階線性〉方程乘上積分因子 $\\mu$ 之後就是正合的。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "判斷、找 $F$、寫解",
+      "prompt": "$(2xy+3)\\,dx+(x^2-1)\\,dy=0$",
+      "steps": [
+        "$M=2xy+3$，$N=x^2-1$。$M_y=2x$，$N_x=2x$，相等，正合（$M$、$N$ 是多項式，處處連續）。",
+        "對 $x$ 積分 $M$：$F=x^2y+3x+g(y)$。",
+        "對 $y$ 偏微分：$F_y=x^2+g'(y)$，令它等於 $N=x^2-1$，得 $g'(y)=-1$，$g(y)=-y$。",
+        "解：$x^2y+3x-y=C$。",
+        "需要的話可以解出 $y=\\frac{C-3x}{x^2-1}$（$x\\ne\\pm1$）。"
+      ],
+      "answer": "$x^2y+3x-y=C$",
+      "claim": "D(x^2*y+3x-y, , x) == 2x*y+3 ;; D(x^2*y+3x-y, , y) == x^2-1 ;; (x^2-1)*D((5-3x)/(x^2-1)) == -(2x*((5-3x)/(x^2-1))+3)",
+      "note": "第三條驗算取 $C=5$，把解出的 $y(x)$ 代回 $M+N\\,y'=0$。"
+    },
+    {
+      "title": "線性方程也可以是正合",
+      "prompt": "$xy'+y=x^2$，$y(1)=1$（$x>0$）。",
+      "problemId": "ode-lin-004",
+      "steps": [
+        "寫成 $(y-x^2)\\,dx+x\\,dy=0$：$M=y-x^2$，$N=x$。",
+        "$M_y=1$，$N_x=1$，正合。",
+        "$F=\\int(y-x^2)\\,dx=xy-\\frac{x^3}{3}+g(y)$。$F_y=x+g'(y)=x$，所以 $g'=0$，$g$ 是常數。",
+        "解：$xy-\\frac{x^3}{3}=C$。代 $(1,1)$：$1-\\frac{1}{3}=\\frac{2}{3}$。",
+        "$xy=\\frac{x^3}{3}+\\frac{2}{3}$，$y=\\frac{x^3+2}{3x}$，和用積分因子算的一樣。"
+      ],
+      "answer": "$y=\\frac{x^3+2}{3x}$",
+      "claim": "D(x*y-x^3/3, , x) == y-x^2 ;; D(x*y-x^3/3, , y) == x ;; SUB(x*((x^3+2)/(3x)) - x^3/3, 2) == 2/3"
+    },
+    {
+      "title": "含指數與三角",
+      "prompt": "$(e^x\\sin y+2x)\\,dx+e^x\\cos y\\,dy=0$，$y(0)=\\frac{\\pi}{2}$。",
+      "steps": [
+        "$M_y=e^x\\cos y$，$N_x=e^x\\cos y$，正合。",
+        "$F=\\int(e^x\\sin y+2x)\\,dx=e^x\\sin y+x^2+g(y)$。",
+        "$F_y=e^x\\cos y+g'(y)=e^x\\cos y$，$g'=0$。",
+        "$F=e^x\\sin y+x^2$。代 $\\left(0,\\frac{\\pi}{2}\\right)$：$1\\cdot1+0=1$。",
+        "解：$e^x\\sin y+x^2=1$。"
+      ],
+      "answer": "$e^x\\sin y+x^2=1$",
+      "claim": "D(e^x*sin(y)+x^2, , x) == e^x*sin(y)+2x ;; D(e^x*sin(y)+x^2, , y) == e^x*cos(y) ;; SUB(e^x*sin(pi/2)+x^2,0) == 1"
+    }
+  ],
+  "pitfalls": [
+    "比錯偏導：要比 $M_y$ 和 $N_x$，不是 $M_x$ 和 $N_y$。",
+    "對 $x$ 積分後只加常數 $C$，忘了它可以是 $g(y)$。",
+    "把 $g(y)$ 加進答案時又多加了一次重複的項（例如 $x^2$ 算兩次）。",
+    "答案寫成 $F(x,y)=0$：解是一整族等高線 $F=C$。"
+  ],
+  "checks": [
+    {
+      "ask": "$(3x^2+y)\\,dx+(x+2y)\\,dy=0$ 是正合方程嗎？",
+      "options": [
+        { "label": "是，$M_y=1=N_x$", "correct": true },
+        { "label": "不是，因為 $M$ 含 $x^2$", "why": "判準是交叉偏導相等，$x^2$ 對 $y$ 偏微分是 $0$，不影響。" },
+        { "label": "要先解出來才知道", "why": "正合的判斷不用解：直接比 $\\frac{\\partial M}{\\partial y}$ 與 $\\frac{\\partial N}{\\partial x}$。" }
+      ]
+    },
+    {
+      "ask": "$y\\,dx+2x\\,dy=0$ 是正合方程嗎？",
+      "options": [
+        { "label": "不是，$M_y=1$、$N_x=2$", "correct": true },
+        { "label": "是，因為 $M$、$N$ 都是一次式", "why": "一次式不保證正合，要看交叉偏導是否相等。" },
+        { "label": "是，因為 $M_x=N_y=0$", "why": "比錯了偏導：要比 $M$ 對 $y$、$N$ 對 $x$。" }
+      ]
+    },
+    {
+      "ask": "$F=\\int M\\,dx$ 時加上的「積分常數」應該是？",
+      "options": [
+        { "label": "$y$ 的任意函數 $g(y)$", "correct": true },
+        { "label": "一個數 $C$", "why": "對 $x$ 積分時 $y$ 被當成常數，所以任何只含 $y$ 的式子對 $x$ 偏微分都是 $0$。" },
+        { "label": "$x$ 的任意函數 $g(x)$", "why": "$g(x)$ 對 $x$ 偏微分不是 $0$，會改變 $F_x=M$。" }
+      ]
+    },
+    {
+      "ask": "正合方程 $M\\,dx+N\\,dy=0$ 的解怎麼寫？",
+      "options": [
+        { "label": "$F(x,y)=C$", "correct": true },
+        { "label": "$F(x,y)=0$", "why": "那只是其中一條等高線；每一個 $C$ 都給一條解。" },
+        { "label": "$y=F(x,y)$", "why": "$F$ 是位勢函數，解是它的等高線，不是 $y$ 等於它。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從等高線倒推",
+      "beats": [
+        { "show": ["$F(x,y(x))=C$ 一直成立"], "note": "本課選修。",
+          "say": "假設 y 讓 F 一直等於同一個常數，也就是 y 沿著 F 的一條等高線走。",
+          "board": [
+            { "do": "write", "line": "${{f:F(x, y(x)) = C}}$", "on": "一直等於" },
+            { "do": "underline", "term": "f", "label": "一條等高線", "on": "等高線" }
+          ] },
+        { "show": ["$F_x\\,dx+F_y\\,dy=0$"], "note": "對 $x$ 微分：〈隱函數微分〉。",
+          "say": "對 x 微分，用隱函數微分，得到 F 對 x 的偏導乘 d x，加 F 對 y 的偏導乘 d y，等於零。",
+          "board": [
+            { "do": "write", "line": "${{fx:F_x}}\\,dx + {{fy:F_y}}\\,dy = 0$", "tint": { "fx": "blue", "fy": "violet" }, "on": "得到" }
+          ] },
+        { "show": ["$M\\,dx+N\\,dy=0$，$M=F_x$、$N=F_y$"], "note": "這樣的方程叫正合。",
+          "say": "倒過來看：如果方程的 M 和 N 剛好是某個 F 的兩個偏導，就叫正合。",
+          "board": [
+            { "do": "write", "line": "${{m:M}}\\,dx + {{n:N}}\\,dy = 0$", "tint": { "m": "blue", "n": "violet" }, "on": "方程的 M" },
+            { "do": "arrow", "from": "fx", "to": "m", "on": "剛好是" },
+            { "do": "arrow", "from": "fy", "to": "n", "on": "兩個偏導" }
+          ] },
+        { "show": ["解：$F(x,y)=C$"], "note": "一整族等高線。",
+          "say": "那解就是 F 的一整族等高線。每一個常數 C 給一條，解法變成找 F。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "解：$F(x, y) = C$", "color": "green", "on": "那解就是" }
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "比對交叉偏導", "key": "交叉比：$M$ 對 $y$、$N$ 對 $x$",
+      "beats": [
+        { "show": ["$M_y=F_{xy}=F_{yx}=N_x$"], "note": "〈Clairaut 定理〉：二階偏導連續時可交換。",
+          "say": "如果 F 存在，M 對 y 偏微分和 N 對 x 偏微分，都是 F 的混合偏導，一定相等。",
+          "board": [
+            { "do": "write", "line": "${{my:M_y}} = {{mx:F_{xy} = F_{yx} }} = {{nx:N_x}}$", "tint": {"my":"blue","nx":"violet"} },
+            { "do": "underline", "term": "mx", "label": "混合偏導", "on": "都是" }
+          ] },
+        { "show": ["正合 ⇔ $\\frac{\\partial M}{\\partial y}=\\frac{\\partial N}{\\partial x}$"], "note": "反方向要連續、區域沒有破洞。",
+          "say": "反過來也成立，只要 M、N 連續，區域沒有破洞。條件的細節在全文。",
+          "board": [
+            { "do": "write", "line": "正合 $\\Leftrightarrow {{c:M_y = N_x}}$" },
+            { "do": "write", "line": "條件：$M$、$N$ 連續，區域沒有破洞", "on": "M、N 連續" }
+          ] },
+        { "show": ["比 $M_y$ 和 $N_x$，不是 $M_x$ 和 $N_y$"],
+          "say": "注意是交叉比：M 對 y，N 對 x。比錯就會判錯。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "交叉比：${{a:M_y}}$ 對 ${{b:N_x}}$", "tint": {"a":"blue","b":"violet"}, "on": "交叉比" },
+            { "do": "write", "line": "比 ${{w:M_x, N_y}}$ 就錯了", "on": "N 對 x" },
+            { "do": "strike", "term": "w", "on": "比錯" }
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "找 $F$", "key": "用 $F_y=N$ 回頭定出 $g(y)$",
+      "beats": [
+        { "show": ["$(2xy+3)\\,dx+(x^2-1)\\,dy=0$"], "note": "$M_y=2x$，$N_x=2x$，正合。",
+          "say": "先判斷：M 對 y 偏微分是二 x，N 對 x 偏微分也是二 x，正合。",
+          "board": [
+            { "do": "write", "line": "$({{m:2xy+3}})\\,dx + ({{n:x^2-1}})\\,dy = 0$", "tint": {"m":"blue","n":"violet"} },
+            { "do": "write", "line": "$M_y = 2x = N_x$：正合", "on": "M 對 y" }
+          ] },
+        { "show": ["$F=\\int M\\,dx=x^2y+3x+g(y)$"], "note": "對 $x$ 積分時 $y$ 當常數。",
+          "say": "M 對 x 積分，y 當常數。所以積分常數可以是任何只含 y 的函數 g。",
+          "board": [
+            { "do": "write", "line": "$F = \\int M\\,dx = x^2y + 3x + {{g:g(y)}}$" },
+            { "do": "underline", "term": "g", "label": "只含 y", "on": "任何" }
+          ] },
+        { "show": ["$F_y=x^2+g'(y)=x^2-1$"],
+          "say": "再對 y 偏微分，令它等於 N，x 平方消掉，g prime 只剩 y 的事。",
+          "board": [
+            { "do": "write", "line": "$F_y = x^2 + {{gp:g'(y)}} = x^2 - 1$", "tint": {"gp":"violet"} },
+            { "do": "focus", "term": "gp", "color": "violet", "label": "只剩 y", "on": "g prime" }
+          ] }
+      ],
+      "predict": {
+        "ask": "$g'(y)=-1$。所以解是？",
+        "options": [
+          { "label": "$x^2y+3x-y=C$", "correct": true },
+          { "label": "$x^2y+3x-y=0$", "why": "解是一整族等高線 $F=C$，不是只有 $C=0$ 那一條。" },
+          { "label": "$x^2y+3x+x^2-y=C$", "why": "$x^2$ 已經在 $F_y$ 裡配好了；$g(y)$ 只補 $-y$，不要重複加。" }
+        ]
+      }
+    },
+    {
+      "title": "積分常數是 $g(y)$",
+      "beats": [
+        { "show": ["$(e^x\\sin y+2x)\\,dx+e^x\\cos y\\,dy=0$"], "note": "$M_y=N_x=e^x\\cos y$，正合。",
+          "say": "再一題：M 對 y、N 對 x 偏微分，都是 e 的 x 次方乘 cosine y，正合。",
+          "board": [
+            { "do": "write", "line": "$({{m:e^x\\sin y + 2x}})\\,dx + {{n:e^x\\cos y}}\\,dy = 0$", "tint": { "m": "blue", "n": "violet" } },
+            { "do": "write", "line": "$M_y = N_x = e^x\\cos y$：正合", "on": "都是" }
+          ] },
+        { "show": ["$F=e^x\\sin y+x^2+g(y)$"],
+          "say": "M 對 x 積分。e 的 x 次方 sine y 積回自己，二 x 積成 x 平方。",
+          "board": [
+            { "do": "write", "line": "$F = {{a:e^x\\sin y}} + {{b:x^2}} + {{g:g(y)}}$" },
+            { "do": "focus", "term": "a", "label": "積回自己", "on": "積回自己" },
+            { "do": "focus", "term": "b", "on": "積成" }
+          ] },
+        { "show": ["$F_y=e^x\\cos y+g'(y)$，$g'=0$"],
+          "say": "對 y 偏微分已經等於 N，所以 g prime 是零，g 只是常數。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$F_y = {{n:e^x\\cos y}} + g'(y)$ ⇒ $g' = 0$", "on": "對 y 偏微分" },
+            { "do": "underline", "term": "g", "label": "只是常數", "on": "g 只是常數" }
+          ] },
+        { "show": ["$y(0)=\\frac{\\pi}{2}$：$e^x\\sin y+x^2=1$"],
+          "say": "代初始條件，e 的零次方乘 sine 二分之 pi，是一，所以常數是一。",
+          "board": [
+            { "do": "write", "line": "$y(0) = \\frac{\\pi}{2}$：$e^0\\sin\\frac{\\pi}{2} = 1$", "on": "代初始條件" },
+            { "do": "write", "line": "${{a:e^x\\sin y}} + {{b:x^2}} = 1$", "color": "green", "on": "所以常數" }
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "先問三個問題",
+      "beats": [
+        { "show": ["$g(x)h(y)$？→〈分離變數〉"],
+          "say": "拿到一階方程，先問：能拆成 x 的函數乘 y 的函數嗎？能就分離變數。",
+          "board": [
+            { "do": "write", "line": "① $g(x)h(y)$？→ 分離變數", "on": "能拆成" }
+          ] },
+        { "show": ["$y'+P(x)y=Q(x)$？→〈積分因子〉"],
+          "say": "能整理成一階線性嗎？能就乘積分因子。",
+          "board": [
+            { "do": "write", "line": "② ${{l2:y' + P(x)y = Q(x)}}$？→ 積分因子", "on": "一階線性" }
+          ] },
+        { "show": ["$M_y=N_x$？→ 找 $F$"],
+          "say": "寫成 M d x 加 N d y 之後，交叉偏導相等嗎？相等就找 F。",
+          "board": [
+            { "do": "write", "line": "③ ${{l3:M_y = N_x}}$？→ 找 $F$", "on": "交叉偏導" }
+          ] },
+        { "show": ["$xy'+y=x^2$：$M=y-x^2$，$N=x$"], "note": "$M_y=1=N_x$：線性方程也可以是正合。",
+          "say": "同一題可以有好幾條路。這個線性方程寫成這樣，交叉偏導都是一，也是正合。",
+          "board": [
+            { "do": "write", "line": "${{ex:xy' + y = x^2}}$：$M = y - x^2$，$N = x$", "on": "好幾條路" },
+            { "do": "focus", "term": "l2", "on": "線性方程" },
+            { "do": "focus", "term": "l3", "label": "都是 1", "on": "交叉偏導" }
+          ] }
+      ],
+      "check": 0
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "exact-form"],
+    "fine": ["exact-test", "exact-find-potential", "exact-implicit-solution"]
+  },
+  "practice": [
+    { "id": "ode-lin-004", "core": true, "trains": "exact-find-potential", "note": "寫成 $(y-x^2)\\,dx+x\\,dy=0$，或直接看出左邊是 $(xy)'$。" },
+    { "id": "cg-10a-025", "core": true, "trains": "exact-test" },
+    { "id": "cg-10a-027", "core": true, "trains": "exact-find-potential" },
+    { "id": "cg-10a-029", "core": true, "trains": "exact-find-potential" },
+    { "id": "cg-10a-026", "trains": "exact-test" },
+    { "id": "cg-10a-028", "trains": "exact-find-potential" },
+    { "id": "cl-int-034", "trains": "exact-implicit-solution" }
+  ],
+  "gaps": []
+}

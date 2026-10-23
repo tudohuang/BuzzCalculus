@@ -1,56 +1,146 @@
 {
   "id": "partial-fractions-linear",
   "title": "部分分式 I：相異一次因式",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["polynomial-rational", "indefinite-integral", "u-sub-recognize"],
-  "next": ["partial-fractions-repeated"],
-  "related": ["partial-fractions-quadratic"],
+  "prerequisites": [
+    "polynomial-rational",
+    "indefinite-integral",
+    "u-sub-recognize"
+  ],
+  "next": [
+    "partial-fractions-repeated"
+  ],
+  "related": [
+    "partial-fractions-quadratic"
+  ],
   "objectives": [
-    "先檢查是不是真分式；分子次數不小於分母時，先做長除法。",
-    "分母拆成相異一次因式時，會設 $\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$ 並求出係數。",
-    "會把每一項積成 $A\\ln|x-a|$。"
+    "先檢查是不是真分式",
+    "分子次數不小於分母時，先做長除法",
+    "分母拆成相異一次因式時，會設 $\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$ 並求出係數",
+    "會把每一項積成 $A\\ln|x-a|$"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 通分的反方向",
       "body": [
-        "$\\frac{1}{x-1}-\\frac{1}{x+1}$ 通分得 $\\frac{2}{x^2-1}$。通分大家都會；部分分式就是倒過來：給你 $\\frac{2}{x^2-1}$，把它拆回 $\\frac{1}{x-1}-\\frac{1}{x+1}$。",
-        "拆開的好處：每一塊都是 $\\frac{A}{x-a}$，積分就是 $A\\ln|x-a|$。"
+        "換元 $u=x^2-1$？$du=2x\\,dx$，分子沒有 $x$",
+        "但是通分我們很熟：",
+        "反過來讀，再除以 $2$：",
+        "把一個分式拆成分母較簡單的幾項，叫做部分分式"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{1}{x^2-1}\\,dx",
+        "\\frac{1}{x-1}-\\frac{1}{x+1}=\\frac{(x+1)-(x-1)}{(x-1)(x+1)}",
+        "=\\frac{2}{x^2-1}",
+        "\\frac{1}{x^2-1}=\\frac12\\cdot\\frac{1}{x-1}-\\frac12\\cdot\\frac{1}{x+1}"
+      ]
+    },
+    {
+      "heading": "① 每一項都好積",
+      "body": [
+        "每一項都好積（$u=x-a$，$du=dx$）："
+      ],
+      "tex": [
+        "\\int\\frac{1}{x-a}\\,dx=\\ln|x-a|+C",
+        "\\begin{aligned}\\int\\frac{dx}{x^2-1}&=\\tfrac12\\ln|x-1|-\\tfrac12\\ln|x+1|+C\\\\&=\\tfrac12\\ln\\left|\\frac{x-1}{x+1}\\right|+C\\end{aligned}"
+      ]
     },
     {
       "heading": "② 第零步：是不是真分式",
       "body": [
-        "分子次數 $<$ 分母次數才叫真分式，才能直接拆。否則先做多項式長除法：$P/Q=$ 商 $+$ 餘式 $/Q$，餘式的次數一定比 $Q$ 小。",
-        "例：$\\frac{x^2+1}{x^2-1}$ 分子分母都是二次，先除：$=1+\\frac{2}{x^2-1}$。"
+        "真分式：分子次數 $<$ 分母次數",
+        "$\\dfrac{x^2+1}{x^2-1}$：分子 $2$ 次，分母 $2$ 次 → 不是",
+        "為什麼一定要先處理？",
+        "每一項 $\\dfrac{A}{x-a}$ 都是真分式，加起來還是真分式",
+        "通分後分子次數 $\\le n-1$，分母次數 $n$",
+        "所以先做長除法：",
+        "剩下的真分式，用 ① 的結果："
       ],
-      "collapsible": false
+      "tex": [
+        "x^2+1=1\\cdot(x^2-1)+2",
+        "\\frac{x^2+1}{x^2-1}=1+\\frac{2}{x^2-1}",
+        "\\frac{2}{x^2-1}=\\frac{1}{x-1}-\\frac{1}{x+1}",
+        "\\begin{aligned}&\\int\\frac{x^2+1}{x^2-1}\\,dx\\\\&=x+\\ln|x-1|-\\ln|x+1|+C\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 設、求、積",
       "body": [
-        "設：把分母因式分解成相異的一次因式 $(x-a)(x-b)\\cdots$，寫成 $\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$，有幾個因式就有幾個未知數。",
-        "求：兩邊同乘分母，得到一個對所有 $x$ 都成立的多項式恆等式。代 $x=a$，除了 $A$ 那一項以外全部變 $0$，$A$ 直接出來；$B$ 同理。",
-        "積：每一項 $\\frac{A}{x-a}$ 積成 $A\\ln|x-a|$，絕對值不能省。"
+        "第零步：分子 $1$ 次 $<$ 分母 $2$ 次，是真分式",
+        "分解分母：$x^2+x-2=(x-1)(x+2)$",
+        "設：一個因式一項",
+        "兩邊乘 $(x-1)(x+2)$，去分母：",
+        "求：代讓某一項消失的 $x$",
+        "• $x=1$：$6=3A$，$A=2$",
+        "• $x=-2$：$3=-3B$，$B=-1$",
+        "驗算：代 $x=0$，左邊 $\\frac{5}{-2}=-2.5$，右邊 $-2-\\frac12=-2.5$",
+        "積："
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{x+5}{x^2+x-2}\\,dx",
+        "\\frac{x+5}{(x-1)(x+2)}=\\frac{A}{x-1}+\\frac{B}{x+2}",
+        "x+5=A(x+2)+B(x-1)",
+        "\\frac{x+5}{x^2+x-2}=\\frac{2}{x-1}-\\frac{1}{x+2}",
+        "\\begin{aligned}&\\int\\frac{x+5}{x^2+x-2}\\,dx\\\\&=2\\ln|x-1|-\\ln|x+2|+C\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 另一種求法：比較係數",
+      "body": [
+        "把右邊展開，照次數整理：",
+        "兩邊是同一個多項式，係數要一樣：",
+        "相加：$3A=6$，$A=2$，$B=-1$：一樣",
+        "疑問：$x=1$ 讓原式分母是 $0$，為什麼能代？",
+        "$x+5=A(x+2)+B(x-1)$ 在無限多個 $x$ 成立",
+        "→ 兩個一次多項式完全相同 → $x=1$ 也成立"
+      ],
+      "tex": [
+        "x+5=(A+B)x+(2A-B)",
+        "\\begin{aligned}A+B&=1\\\\2A-B&=5\\end{aligned}"
+      ]
     },
     {
       "heading": "④ 快速版：遮住法",
       "body": [
-        "求 $A$ 時，把原式分母裡的 $(x-a)$ 遮住，剩下的式子代 $x=a$，就是 $A$。例：$\\frac{1}{(x-1)(x+3)}$ 的 $A$：遮住 $x-1$，剩 $\\frac{1}{x+3}$，代 $x=1$ 得 $\\frac{1}{4}$。這只是「同乘再代根」的縮寫，只適用於相異一次因式。"
+        "$A$ = 把 $(x-a)$ 遮住，剩下的式子代 $x=a$",
+        "$\\dfrac{x+5}{(x-1)(x+2)}$ 求 $A$：遮住 $x-1$，代 $x=1$",
+        "求 $B$：遮住 $x+2$，代 $x=-2$",
+        "為什麼對？兩邊乘 $x-1$：",
+        "代 $x=1$：$B$ 那項乘了 $0$，只剩 $A$"
       ],
-      "collapsible": false
+      "tex": [
+        "A=\\frac{1+5}{1+2}=2",
+        "B=\\frac{-2+5}{-2-1}=-1",
+        "\\frac{x+5}{x+2}=A+\\frac{B(x-1)}{x+2}"
+      ]
     },
     {
-      "heading": "為什麼一定拆得開",
+      "heading": "④ 為什麼一定拆得開",
       "body": [
-        "代數上有一個定理：真分式 $\\frac{P}{Q}$，若 $Q$ 能分解成相異一次因式的乘積，則存在唯一一組常數使 $\\frac{P}{Q}=\\sum \\frac{A_i}{x-a_i}$。重複因式與不可約二次式的版本見〈部分分式 II：重複因式〉、〈部分分式 III：不可約二次式〉。"
+        "$Q(x)=(x-a_1)\\cdots(x-a_n)$，$a_k$ 相異；$\\deg P<n$",
+        "取遮住法的數：$A_k=\\dfrac{P(a_k)}{\\prod_{j\\ne k}(a_k-a_j)}$",
+        "令 $R(x)=\\displaystyle\\sum_k A_k\\frac{Q(x)}{x-a_k}$：每項是 $n-1$ 次",
+        "代 $x=a_k$：只有第 $k$ 項不是 $0$，$R(a_k)=P(a_k)$",
+        "$P-R$：次數 $\\le n-1$，卻有 $n$ 個根 → $P-R\\equiv0$",
+        "證明用到 $\\deg P\\le n-1$（所以要先變真分式）；係數也唯一：代 $x=a_k$ 只得到這個 $A_k$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{P(x)}{Q(x)}=\\frac{R(x)}{Q(x)}=\\sum_{k=1}^{n}\\frac{A_k}{x-a_k}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 部分分式：通分倒過來做",
+        "• 第零步：不是真分式，先長除法",
+        "• 設：一個一次因式一項 $\\frac{A}{x-a}$",
+        "• 求：代根、遮住法，或比較係數",
+        "• 積：$\\int\\frac{A}{x-a}dx=A\\ln|x-a|+C$",
+        "下一課：重複因式"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,35 +189,66 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{1}{(x-1)(x+3)}$ 應該設成？",
+      "ask": "下面哪一個積分，==必須先做長除法==？",
       "options": [
-        { "label": "$\\frac{A}{x-1}+\\frac{B}{x+3}$", "correct": true },
-        { "label": "$\\frac{A}{x-1}\\cdot\\frac{B}{x+3}$", "why": "部分分式是把分式拆成「相加」的幾塊，通分回去才會等於原式。" },
-        { "label": "$\\frac{Ax+B}{(x-1)(x+3)}$", "why": "那只是原式換個寫法，沒有拆開，積分還是做不了。" }
+        {
+          "label": "$\\displaystyle\\int\\frac{x^3}{x^2-4}\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{x+1}{x^2-4}\\,dx$",
+          "why": "分子 $1$ 次 $<2$ 次，已經是真分式，可以直接拆"
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{x^2}{x^3-x}\\,dx$",
+          "why": "看的是次數不是係數大小：分子 $2$ 次 $<3$ 次，是真分式"
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{3}{x^2-4}\\,dx$",
+          "why": "分子是常數，$0$ 次，當然是真分式"
+        }
       ]
     },
     {
-      "ask": "承上，$A$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{1}{x(x-1)}\\,dx=$？",
       "options": [
-        { "label": "$\\frac{1}{4}$", "correct": true },
-        { "label": "$1$", "why": "遮住 $x-1$ 後，剩下的 $\\frac{1}{x+3}$ 還要代 $x=1$：$\\frac{1}{4}$。" },
-        { "label": "$-\\frac{1}{4}$", "why": "那是 $B$：遮住 $x+3$，把 $x=-3$ 代進 $\\frac{1}{x-1}$ 得 $-\\frac{1}{4}$。" }
+        {
+          "label": "$\\ln|x-1|-\\ln|x|+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\ln|x|-\\ln|x-1|+C$",
+          "why": "正負號反了：代 $x=0$，$1=A(0-1)$，$A=-1$"
+        },
+        {
+          "label": "$\\ln|x(x-1)|+C$",
+          "why": "這是把 $\\frac{1}{u}$ 積成 $\\ln|u|$ 直接套在分母上；分子不是分母的導數"
+        },
+        {
+          "label": "$\\dfrac{\\ln|x^2-x|}{2x-1}+C$",
+          "why": "不能把分母的導數除到外面；$2x-1$ 不是常數"
+        }
       ]
     },
     {
-      "ask": "$\\int \\frac{x^2+1}{x^2-1}\\,dx$ 的第一步？",
+      "ask": "$\\dfrac{2x+1}{x(x-1)(x+1)}$ 拆開後，$\\dfrac{1}{x-1}$ 的係數是？",
       "options": [
-        { "label": "長除法", "correct": true },
-        { "label": "直接設 $\\frac{A}{x-1}+\\frac{B}{x+1}$", "why": "分子分母同次，這樣設會漏掉整式部分 $1$，解不出一致的 $A$、$B$。" },
-        { "label": "令 $u=x^2-1$", "why": "$du=2x\\,dx$，分子是 $x^2+1$，配不起來。" }
-      ]
-    },
-    {
-      "ask": "$\\int \\frac{3}{x-2}\\,dx$ 是？",
-      "options": [
-        { "label": "$3\\ln|x-2|+C$", "correct": true },
-        { "label": "$-\\frac{3}{(x-2)^2}+C$", "why": "那是 $\\frac{3}{x-2}$ 的導數，方向反了。" },
-        { "label": "$3\\ln(x-2)+C$", "why": "$x<2$ 時 $\\ln(x-2)$ 沒有定義，但被積函數在那裡有定義；要加絕對值。" }
+        {
+          "label": "$\\dfrac32$",
+          "correct": true
+        },
+        {
+          "label": "$3$",
+          "why": "只代了分子；分母剩下的 $x(x+1)$ 在 $x=1$ 是 $2$"
+        },
+        {
+          "label": "$-1$",
+          "why": "這是 $\\frac1x$ 那一項：遮住 $x$，代 $0$"
+        },
+        {
+          "label": "$-\\dfrac12$",
+          "why": "這是 $\\frac{1}{x+1}$ 那一項：遮住 $x+1$，代 $-1$"
+        }
       ]
     }
   ],
@@ -135,222 +256,913 @@
     {
       "title": "通分的反方向",
       "beats": [
-        { "show": ["$\\frac{1}{x-1}-\\frac{1}{x+1}=\\frac{2}{x^2-1}$"],
-          "note": "通分大家都會。",
-          "say": "x 減一分之一，減掉 x 加一分之一，通分得到 x 平方減一分之二。這個大家都會。",
+        {
+          "show": [
+            "$\\int\\frac{1}{x^2-1}\\,dx$"
+          ],
+          "say": "這一章要積有理函數，也就是多項式除以多項式。先看這一題：x 平方減 1 分之 1。",
           "board": [
-            {"do":"write","line":"${{l:\\frac{1}{x-1}-\\frac{1}{x+1}}}$"},
-            {"do":"transform","line":"${{l:\\frac{1}{x-1}-\\frac{1}{x+1}}}={{r:\\frac{2}{x^2-1}}}$","on":"通分得到"},
-            {"do":"circle","term":"r","on":"x 平方減一分之二"}
-          ] },
-        { "show": ["部分分式：倒過來拆"],
-          "note": "給你 $\\frac{2}{x^2-1}$，拆回兩塊。",
-          "say": "部分分式就是倒過來：給你通分後的樣子，把它拆回兩塊相加。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{1}{x^2-1}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換元 $u=x^2-1$？$du=2x\\,dx$，分子沒有 $x$"
+          ],
+          "say": "想換元，令 u 等於 x 平方減 1，可是 d u 是 2x d x，分子根本沒有 x，換不過去。",
           "board": [
-            {"do":"write","line":"${{r:\\frac{2}{x^2-1}}}$"},
-            {"do":"transform","line":"${{r:\\frac{2}{x^2-1}}}={{fa:\\frac{A}{x-1}}}+{{fb:\\frac{B}{x+1}}}$","on":"把它","tint":{"fa":"blue","fb":"violet"}}
-          ] },
-        { "show": ["$2=A(x+1)+B(x-1)$"],
-          "note": "代 $x=1$ 得 $A=1$，代 $x=-1$ 得 $B=-1$。",
-          "say": "同乘分母得二等於 A 乘 x 加一，加 B 乘 x 減一。代一得 A 是一，代負一得 B 是負一。",
+            {
+              "do": "write",
+              "line": "換元 $u=x^2-1$？$du=2x\\,dx$，分子沒有 $x$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但是通分我們很熟：",
+            "$\\frac{1}{x-1}-\\frac{1}{x+1}=\\frac{(x+1)-(x-1)}{(x-1)(x+1)}$"
+          ],
+          "say": "換個方向想。通分我們很熟：x 減 1 分之 1，減 x 加 1 分之 1，通分以後，分子剩下 2，分母是 x 平方減 1。",
           "board": [
-            {"do":"write","line":"$2=A(x+1)+B(x-1)$"},
-            {"do":"write","line":"$x=1$：$2=2{{n1:A}}$，$A=1$","on":"代一"},
-            {"do":"write","line":"$x=-1$：$2=-2{{n2:B}}$，$B=-1$","on":"代負一"}
-          ] },
-        { "show": ["$\\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|+C$"],
-          "note": "絕對值不能省。",
-          "say": "拆開的好處是每一塊都長這樣，積分就是 A 倍自然對數絕對值 x 減 a。",
+            {
+              "do": "write",
+              "line": "但是通分我們很熟："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{x-1}-\\frac{1}{x+1}=\\frac{(x+1)-(x-1)}{(x-1)(x+1)}$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{2}{x^2-1}$",
+              "on": "分子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來讀，再除以 $2$：",
+            "$\\frac{1}{x^2-1}=\\frac12\\cdot\\frac{1}{x-1}-\\frac12\\cdot\\frac{1}{x+1}$"
+          ],
+          "say": "把這個等式反過來讀，再兩邊除以 2：一個難積的分式，被拆成兩個簡單分式的差。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int\\frac{A}{x-a}\\,dx={{w:A\\ln{{v:|x-a|}}}}+C$","on":"每一塊"},
-            {"do":"underline","term":"v","label":"不能省","on":"絕對值"}
-          ] },
-        { "show": ["$x<1$：$x-1<0$，不加絕對值就無定義"],
-          "note": "加了絕對值，左右兩邊都有曲線。",
-          "say": "看 x 減一的情形：加了絕對值，x 小於一那邊也有曲線；沒有絕對值，左邊自然對數沒有定義。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,4,-3,3],"curves":[{"expr":"log(abs(x-1))","domain":[-2,0.99],"color":"blue"},{"expr":"log(abs(x-1))","domain":[1.01,4],"color":"blue"}],"dashed":[[[1,-3],[1,3]]]}},
-            {"do":"write","line":"$x<1$：$x-1<0$，無絕對值就無定義","on":"沒有絕對值"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "反過來讀，再除以 $2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{1}{x^2-1}=\\frac12\\cdot\\frac{1}{x-1}-\\frac12\\cdot\\frac{1}{x+1}}}$",
+              "on": "再兩"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "個難"
+            },
+            {
+              "do": "write",
+              "line": "　把一個分式拆成分母較簡單的幾項，叫做部分分式",
+              "color": "violet",
+              "on": "成兩"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "第零步：真分式",
+      "title": "每一項都好積",
       "beats": [
-        { "show": ["分子次數 $<$ 分母次數"],
-          "note": "這叫真分式，才能直接拆。",
-          "say": "開始拆之前先檢查：分子的次數要比分母小，叫真分式，才能直接拆。",
+        {
+          "show": [
+            "每一項都好積（$u=x-a$，$du=dx$）：",
+            "$\\int\\frac{1}{x-a}\\,dx=\\ln|x-a|+C$"
+          ],
+          "say": "拆完的每一項都好積：x 減 a 分之 1，積成自然對數絕對值 x 減 a。",
           "board": [
-            {"do":"write","line":"分子次數 $<$ 分母次數"},
-            {"do":"write","line":"⇒ 真分式","color":"green","on":"真分式"}
-          ] },
-        { "show": ["否則先長除法：商 $+$ 餘式 $/Q$"],
-          "note": "例：$\\frac{x^2+1}{x^2-1}=1+\\frac{2}{x^2-1}$。",
-          "say": "不是的話先做長除法，變成一個多項式，加上一個真分式，再拆後面那塊。",
+            {
+              "do": "write",
+              "line": "每一項都好積（$u=x-a$，$du=dx$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{1}{x-a}\\,dx=\\ln|x-a|+C$",
+              "on": "積成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int\\frac{dx}{x^2-1}&=\\tfrac12\\ln|x-1|-\\tfrac12\\ln|x+1|+C\\\\&=\\tfrac12\\ln\\left|\\frac{x-1}{x+1}\\right|+C\\end{aligned}$"
+          ],
+          "say": "所以答案是 2 分之 1 自然對數絕對值 x 減 1，減 2 分之 1 自然對數絕對值 x 加 1，也可以合成一個。",
           "board": [
-            {"do":"write","line":"$\\frac{N}{Q}$＝商 $+$ ${{r:\\frac{R}{Q}}}$"},
-            {"do":"box","term":"r","color":"green","on":"真分式"}
-          ] },
-        { "show": ["$x^2+1=1\\cdot(x^2-1)+2$"],
-          "note": "商 $1$，餘式 $2$。",
-          "say": "x 平方加一裡面有一個 x 平方減一，扣掉以後剩二。所以商是一，餘式是二。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}\\int\\frac{dx}{x^2-1}&=\\tfrac12\\ln|x-1|-\\tfrac12\\ln|x+1|+C\\\\&=\\tfrac12\\ln\\left|\\frac{x-1}{x+1}\\right|+C\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍 1/(x²−1) ＝ 紅 ½·1/(x−1) ＋ 綠 −½·1/(x+1)"
+          ],
+          "say": "圖上，藍色是原來的函數，等於紅色加綠色。每一條垂直漸近線，各由一個簡單分式負責。",
           "board": [
-            {"do":"write","line":"$x^2+1={{q:1}}\\cdot(x^2-1)+{{rr:2}}$"},
-            {"do":"circle","term":"q","on":"商是一"},
-            {"do":"circle","term":"rr","on":"餘式"}
-          ] },
-        { "show": ["$\\frac{x^2+1}{x^2-1}=1+\\frac{2}{x^2-1}$"],
-          "note": "餘式次數 $0$，比分母小。",
-          "say": "餘式二的次數是零，比分母小，所以二除以 x 平方減一是真分式，可以照設求積去拆。",
-          "board": [
-            {"do":"write","line":"$\\frac{x^2+1}{x^2-1}=1+{{f:\\frac{2}{x^2-1}}}$"},
-            {"do":"box","term":"f","color":"green","on":"真分式"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pf1",
+                  "window": [
+                    -3,
+                    3,
+                    -4,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/(x^2-1)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "0.5/(x-1)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-0.5/(x+1)",
+                      "color": "green",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    },
+                    {
+                      "x": -1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍 1/(x²−1) ＝ 紅 ½·1/(x−1) ＋ 綠 −½·1/(x+1)",
+              "color": "violet",
+              "on": "每一"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "設、求、積",
+      "title": "先猜猜看",
       "beats": [
-        { "show": ["設：$\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$"],
-          "note": "分母分解成相異一次因式；幾個因式，幾個未知數。",
-          "say": "第一步，設：分母分解成一次因式，每個因式配一個常數，寫成相加。",
-          "board": [
-            {"do":"write","line":"$\\frac{N}{(x-a)(x-b)}={{fa:\\frac{A}{x-a}}}+{{fb:\\frac{B}{x-b}}}$","tint":{"fa":"blue","fb":"violet"}},
-            {"do":"underline","term":"fa","color":"blue","label":"常數","on":"配一個"}
-          ] },
-        { "show": ["求：同乘分母，代 $x=a$"],
-          "note": "除了 $A$ 那一項，全部變 $0$。",
-          "say": "第二步，求：兩邊同乘分母，代 x 等於 a，其他項都是零，A 直接出來。",
-          "board": [
-            {"do":"write","line":"$N(x)={{ca:A}}(x-b)+{{z:B(x-a)}}$","tint":{"ca":"blue"}},
-            {"do":"write","line":"代 $x=a$","on":"代 x 等於 a"},
-            {"do":"circle","term":"z","label":"變 0","on":"其他項"},
-            {"do":"box","term":"ca","color":"green","on":"A 直接"}
-          ] },
-        { "show": ["積：每一項積成 $A\\ln|x-a|$"],
-          "say": "第三步，積：每一項都是自然對數，加起來再加 C。",
-          "board": [
-            {"do":"write","line":"$\\int\\cdots\\,dx={{la:A\\ln|x-a|}}+{{lb:B\\ln|x-b|}}+{{lc:C}}$","tint":{"la":"blue","lb":"violet"}},
-            {"do":"circle","term":"la","color":"blue","on":"自然對數"},
-            {"do":"circle","term":"lc","on":"加起來"}
-          ] }
+        {
+          "show": [
+            "$\\dfrac{1}{x-3}-\\dfrac{1}{x-1}$ 通分以後是？"
+          ],
+          "say": "先猜猜看。這一題是正方向：通分。這一課要學的，就是把它倒著做。"
+        }
       ],
-      "check": 0
-    },
-    {
-      "title": "分子有 $x$",
-      "beats": [
-        { "show": ["$\\frac{x+5}{x^2+x-2}=\\frac{A}{x-1}+\\frac{B}{x+2}$"],
-          "note": "$x^2+x-2=(x-1)(x+2)$。",
-          "say": "試一題：分母分解成 x 減一乘 x 加二，設成兩塊。",
-          "board": [
-            {"do":"write","line":"$x^2+x-2=(x-1)(x+2)$","on":"分母分解成"},
-            {"do":"write","line":"$\\frac{x+5}{x^2+x-2}=\\frac{{{a:A}}}{x-1}+\\frac{{{b:B}}}{x+2}$","on":"設成兩塊","tint":{"a":"blue","b":"violet"}}
-          ] },
-        { "show": ["$x+5=A(x+2)+B(x-1)$"],
-          "note": "對所有 $x$ 都成立。",
-          "say": "兩邊同乘分母，得到一個對所有 x 都成立的等式。",
-          "board": [
-            {"do":"write","line":"$x+5={{a:A}}(x+2)+{{b:B}}({{z:x-1}})$","on":"兩邊同乘"},
-            {"do":"underline","term":"z","on":"對所有","label":"對所有 x"}
-          ] },
-        { "show": ["代 $x=1$：$6=3A$，$A=2$"],
-          "say": "代 x 等於一，B 那一項變零，六等於三 A，A 是二。",
-          "board": [
-            {"do":"write","line":"代 $x=1$：$6=3{{a:A}}$，${{av:A=2}}$","on":"代 x 等於一"},
-            {"do":"focus","term":"z","on":"B 那一項"},
-            {"do":"box","term":"av","on":"三 A","color":"green"}
-          ] },
-        { "show": ["左邊 $1+5=6$，右邊 $3A$"],
-          "note": "$B$ 那項乘上 $0$。",
-          "say": "為什麼是六？x 等於一，左邊一加五是六；右邊 x 加二變成三，B 那項乘上零。",
-          "board": [
-            {"do":"write","line":"左：$1+5=6$"},
-            {"do":"write","line":"右：$A(1+2)+B\\cdot 0=3A$","on":"右邊"}
-          ] }
-      ],
-      "key": "同乘分母，代讓某個因式為 0 的根",
       "predict": {
-        "ask": "那 $B$ 呢？",
+        "ask": "$\\dfrac{1}{x-3}-\\dfrac{1}{x-1}$ 通分以後是？",
         "options": [
           {
-            "label": "代 $x=-2$：$3=-3B$，$B=-1$",
+            "label": "$\\dfrac{2}{(x-3)(x-1)}$",
             "correct": true
           },
           {
-            "label": "代 $x=2$",
-            "why": "要讓 $x+2=0$，代的是 $x=-2$，不是 $2$。"
+            "label": "$\\dfrac{-2}{(x-3)(x-1)}$",
+            "why": "減的順序反了：第一項的分子乘 $x-1$，所以是 $(x-1)-(x-3)$"
           },
           {
-            "label": "代 $x=-2$：$B=1$",
-            "why": "$3=-3B$，$B$ 是 $-1$，負號別丟。"
+            "label": "$0$",
+            "why": "兩個分母不一樣，不會互相抵消"
+          },
+          {
+            "label": "$\\dfrac{1}{(x-3)(x-1)}$",
+            "why": "分子不是 $1-1$，要各自乘上對方的分母"
           }
         ]
       }
     },
     {
+      "title": "第零步：是不是真分式",
+      "beats": [
+        {
+          "show": [
+            "真分式：分子次數 $<$ 分母次數"
+          ],
+          "say": "動手拆之前，有一個第零步：先看是不是真分式。真分式的意思是，分子的次數比分母小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真分式：分子次數 $<$ 分母次數",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{x^2+1}{x^2-1}$：分子 $2$ 次，分母 $2$ 次 → 不是"
+          ],
+          "say": "例如 x 平方加 1，除以 x 平方減 1。分子 2 次，分母也是 2 次，不是真分式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{x^2+1}{x^2-1}$：分子 $2$ 次，分母 $2$ 次 → 不是",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼一定要先處理？",
+            "每一項 $\\dfrac{A}{x-a}$ 都是真分式，加起來還是真分式"
+          ],
+          "say": "為什麼？拆出來的每一項都是真分式，加起來還是真分式，永遠湊不出假分式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼一定要先處理？"
+            },
+            {
+              "do": "write",
+              "line": "每一項 $\\dfrac{A}{x-a}$ 都是真分式，加起來還是真分式",
+              "on": "都是"
+            },
+            {
+              "do": "write",
+              "line": "　通分後分子次數 $\\le n-1$，分母次數 $n$",
+              "color": "violet",
+              "on": "分式#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以先做長除法：",
+            "$x^2+1=1\\cdot(x^2-1)+2$"
+          ],
+          "say": "所以分子次數不比分母小的時候，先做長除法。x 平方加 1，等於 1 倍的 x 平方減 1，再加餘數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以先做長除法："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^2+1=1\\cdot(x^2-1)+2$",
+              "on": "長除"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x^2+1}{x^2-1}=1+\\frac{2}{x^2-1}$",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "剩下的真分式，用 ① 的結果：",
+            "$\\frac{2}{x^2-1}=\\frac{1}{x-1}-\\frac{1}{x+1}$"
+          ],
+          "say": "商是 1，好積；剩下的 x 平方減 1 分之 2 是真分式，剛好就是 ① 拆過的那一個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "剩下的真分式，用 ① 的結果："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{2}{x^2-1}=\\frac{1}{x-1}-\\frac{1}{x+1}$",
+              "on": "是真"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\int\\frac{x^2+1}{x^2-1}\\,dx\\\\&=x+\\ln|x-1|-\\ln|x+1|+C\\end{aligned}$"
+          ],
+          "say": "合起來：積分是 x，加自然對數絕對值 x 減 1，減自然對數絕對值 x 加 1，再加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&\\int\\frac{x^2+1}{x^2-1}\\,dx\\\\&=x+\\ln|x-1|-\\ln|x+1|+C\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "減自"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "下面哪一個積分，必須先做長除法？"
+          ],
+          "say": "試一題：哪一個一定要先長除法？比的是次數。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "設、求、積",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\frac{x+5}{x^2+x-2}\\,dx$"
+          ],
+          "say": "現在看一題分子有 x 的：x 加 5，除以 x 平方加 x 減 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{x+5}{x^2+x-2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第零步：分子 $1$ 次 $<$ 分母 $2$ 次，是真分式",
+            "分解分母：$x^2+x-2=(x-1)(x+2)$"
+          ],
+          "say": "第零步，分子 1 次，是真分式。分母分解成 x 減 1 乘 x 加 2，兩個不一樣的一次因式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第零步：分子 $1$ 次 $<$ 分母 $2$ 次，是真分式"
+            },
+            {
+              "do": "write",
+              "line": "分解分母：$x^2+x-2=(x-1)(x+2)$",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設：一個因式一項",
+            "$\\frac{x+5}{(x-1)(x+2)}=\\frac{A}{x-1}+\\frac{B}{x+2}$"
+          ],
+          "say": "第一步，設：每一個一次因式給一項，分子是待定的常數 A 和 B。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設：一個因式一項"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{x+5}{(x-1)(x+2)}=\\frac{A}{x-1}+\\frac{B}{x+2}}}$",
+              "on": "次因"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "定的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊乘 $(x-1)(x+2)$，去分母：",
+            "$x+5=A(x+2)+B(x-1)$"
+          ],
+          "say": "兩邊同乘分母，把分母去掉：x 加 5，等於 A 乘 x 加 2，加上 B 乘 x 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊乘 $(x-1)(x+2)$，去分母："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x+5=A(x+2)+B(x-1)$",
+              "on": "加上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "求：代讓某一項消失的 $x$",
+            "• $x=1$：$6=3A$，$A=2$"
+          ],
+          "say": "第二步，求。代 x 等於 1，B 那項消失，A 是 2；代 x 等於負 2，A 那項消失，B 是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "求：代讓某一項消失的 $x$"
+            },
+            {
+              "do": "write",
+              "line": "• $x=1$：$6=3A$，$A=2$",
+              "on": "那項#1"
+            },
+            {
+              "do": "write",
+              "line": "• $x=-2$：$3=-3B$，$B=-1$",
+              "on": "那項#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{x+5}{x^2+x-2}=\\frac{2}{x-1}-\\frac{1}{x+2}$"
+          ],
+          "say": "所以拆成：x 減 1 分之 2，減 x 加 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x+5}{x^2+x-2}=\\frac{2}{x-1}-\\frac{1}{x+2}$"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：代 $x=0$，左邊 $\\frac{5}{-2}=-2.5$，右邊 $-2-\\frac12=-2.5$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積：",
+            "$\\begin{aligned}&\\int\\frac{x+5}{x^2+x-2}\\,dx\\\\&=2\\ln|x-1|-\\ln|x+2|+C\\end{aligned}$"
+          ],
+          "say": "第三步，積。每一項都是常數乘自然對數：2 倍自然對數絕對值 x 減 1，減自然對數絕對值 x 加 2，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}&\\int\\frac{x+5}{x^2+x-2}\\,dx\\\\&=2\\ln|x-1|-\\ln|x+2|+C\\end{aligned}}}}$",
+              "color": "red",
+              "on": "倍自"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "減自"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "另一種求法：比較係數",
+      "beats": [
+        {
+          "show": [
+            "把右邊展開，照次數整理：",
+            "$x+5=(A+B)x+(2A-B)$"
+          ],
+          "say": "求係數還有另一種方法：把右邊展開，照 x 的次數整理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把右邊展開，照次數整理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x+5=(A+B)x+(2A-B)$",
+              "on": "邊展"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊是同一個多項式，係數要一樣：",
+            "$\\begin{aligned}A+B&=1\\\\2A-B&=5\\end{aligned}$"
+          ],
+          "say": "兩邊是同一個多項式，係數要一樣，得到聯立方程式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊是同一個多項式，係數要一樣："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}A+B&=1\\\\2A-B&=5\\end{aligned}}$",
+              "on": "要一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相加：$3A=6$，$A=2$，$B=-1$：一樣"
+          ],
+          "say": "兩式相加，A 是 2，B 是負 1，跟代根一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相加：$3A=6$，$A=2$，$B=-1$：一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "疑問：$x=1$ 讓原式分母是 $0$，為什麼能代？"
+          ],
+          "say": "你可能會問：x 等於 1 讓原來的分母變成 0，為什麼可以代？",
+          "board": [
+            {
+              "do": "write",
+              "line": "疑問：$x=1$ 讓原式分母是 $0$，為什麼能代？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x+5=A(x+2)+B(x-1)$ 在無限多個 $x$ 成立"
+          ],
+          "say": "因為去分母以後，是兩個多項式在無限多個點相等，那就是同一個多項式，所以 x 等於 1 也成立。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x+5=A(x+2)+B(x-1)$ 在無限多個 $x$ 成立"
+            },
+            {
+              "do": "write",
+              "line": "→ 兩個一次多項式完全相同 → $x=1$ 也成立",
+              "color": "gold",
+              "on": "那就"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{1}{x(x-1)}\\,dx=$？"
+          ],
+          "say": "用設、求、積試一題。"
+        }
+      ],
+      "check": 1
+    },
+    {
       "title": "快速版：遮住法",
       "beats": [
-        { "show": ["遮住 $(x-a)$，剩下的代 $x=a$"],
-          "note": "只適用於相異一次因式。",
-          "say": "求 A 有快速版：把分母裡的 x 減 a 遮住，剩下的式子代 x 等於 a，就是 A。",
+        {
+          "show": [
+            "$A$ = 把 $(x-a)$ 遮住，剩下的式子代 $x=a$"
+          ],
+          "say": "代根的步驟還可以更快，叫遮住法：要找 x 減 a 那一項的係數，就把原式的 x 減 a 遮住，剩下的式子代 x 等於 a。",
           "board": [
-            {"do":"write","line":"$\\frac{N(x)}{{{c:(x-a)}}(x-b)}$"},
-            {"do":"box","term":"c","label":"遮住","on":"遮住"},
-            {"do":"write","line":"$A=\\frac{N(a)}{a-b}$","on":"代 x 等於 a","color":"green"}
-          ] },
-        { "show": ["其實是「同乘再代根」的縮寫"],
-          "say": "它不是新方法，就是同乘分母再代根的縮寫。",
+            {
+              "do": "write",
+              "line": "$A$ = 把 $(x-a)$ 遮住，剩下的式子代 $x=a$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{x+5}{(x-1)(x+2)}$ 求 $A$：遮住 $x-1$，代 $x=1$",
+            "$A=\\frac{1+5}{1+2}=2$"
+          ],
+          "say": "用剛剛那題試：求 A，遮住 x 減 1，代 1，得到 3 分之 6，等於 2。",
           "board": [
-            {"do":"write","line":"遮住法 ＝ 同乘分母再代根"}
-          ] },
-        { "show": ["$N(x)=A(x-b)+B(x-a)$"],
-          "note": "同乘分母後的恆等式。",
-          "say": "同乘分母得 N 等於 A 乘 x 減 b，加 B 乘 x 減 a。",
+            {
+              "do": "write",
+              "line": "$\\dfrac{x+5}{(x-1)(x+2)}$ 求 $A$：遮住 $x-1$，代 $x=1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A=\\frac{1+5}{1+2}=2$",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "求 $B$：遮住 $x+2$，代 $x=-2$",
+            "$B=\\frac{-2+5}{-2-1}=-1$"
+          ],
+          "say": "求 B，遮住 x 加 2，代負 2，得到負 3 分之 3，等於負 1。一行就算完。",
           "board": [
-            {"do":"write","line":"$N(x)=A(x-b)+{{bt:B(x-a)}}$"}
-          ] },
-        { "show": ["代 $x=a$：$N(a)=A(a-b)$"],
-          "note": "所以 $A=\\frac{N(a)}{a-b}$。",
-          "say": "代 x 等於 a，B 那項變零，N a 等於 A 乘 a 減 b，所以 A 等於 N a 除以 a 減 b。",
+            {
+              "do": "write",
+              "line": "求 $B$：遮住 $x+2$，代 $x=-2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle B=\\frac{-2+5}{-2-1}=-1$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼對？兩邊乘 $x-1$：",
+            "$\\frac{x+5}{x+2}=A+\\frac{B(x-1)}{x+2}$"
+          ],
+          "say": "為什麼可以這樣？把等式兩邊乘上 x 減 1。左邊的 x 減 1 消掉，就是遮住的樣子；右邊 A 單獨留下。",
           "board": [
-            {"do":"write","line":"代 $x=a$：$N(a)=A(a-b)+{{z1:B\\cdot 0}}$"},
-            {"do":"circle","term":"z1","on":"變零"},
-            {"do":"write","line":"$A=\\frac{N(a)}{a-b}$","color":"green","on":"所以"}
-          ] },
-        { "show": ["$\\frac{1}{(x-1)(x+3)}$：遮住 $x-1$"],
-          "say": "試試看：x 減一乘 x 加三分之一。遮住 x 減一，剩下的代 x 等於一。",
+            {
+              "do": "write",
+              "line": "為什麼對？兩邊乘 $x-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x+5}{x+2}=A+\\frac{B(x-1)}{x+2}$",
+              "on": "消掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=1$：$B$ 那項乘了 $0$，只剩 $A$"
+          ],
+          "say": "再代 x 等於 1，B 那一項有 x 減 1 的因子，變成 0，只剩下 A。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{{{d:(x-1)}}(x+3)}$","on":"試試看"},
-            {"do":"box","term":"d","on":"遮住"},
-            {"do":"write","line":"代 $x=1$","on":"剩下的"}
-          ] }
+            {
+              "do": "write",
+              "line": "代 $x=1$：$B$ 那項乘了 $0$，只剩 $A$"
+            }
+          ]
+        }
       ],
-      "key": "遮住 $x-a$ 就是同乘它再代 $x=a$",
-      "check": 1
+      "check": 2
+    },
+    {
+      "title": "為什麼一定拆得開",
+      "beats": [
+        {
+          "show": [
+            "$Q(x)=(x-a_1)\\cdots(x-a_n)$，$a_k$ 相異；$\\deg P<n$"
+          ],
+          "say": "最後回答一個問題：為什麼一定拆得開？設分母是 n 個相異一次因式的乘積，分子 P 的次數小於 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$Q(x)=(x-a_1)\\cdots(x-a_n)$，$a_k$ 相異；$\\deg P<n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取遮住法的數：$A_k=\\dfrac{P(a_k)}{\\prod_{j\\ne k}(a_k-a_j)}$"
+          ],
+          "say": "每一個 A k 就取遮住法算出來的數：P 在 a k 的值，除以其他因式在 a k 的乘積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取遮住法的數：$A_k=\\dfrac{P(a_k)}{\\prod_{j\\ne k}(a_k-a_j)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $R(x)=\\displaystyle\\sum_k A_k\\frac{Q(x)}{x-a_k}$：每項是 $n-1$ 次"
+          ],
+          "say": "令 R 是 A k 乘 Q 除以 x 減 a k 的總和。每一項都是少了一個因式的乘積，是 n 減 1 次多項式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $R(x)=\\displaystyle\\sum_k A_k\\frac{Q(x)}{x-a_k}$：每項是 $n-1$ 次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=a_k$：只有第 $k$ 項不是 $0$，$R(a_k)=P(a_k)$"
+          ],
+          "say": "代 x 等於 a k，其他項都含有 x 減 a k，全變 0；只剩第 k 項，剛好等於 P 在 a k 的值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $x=a_k$：只有第 $k$ 項不是 $0$，$R(a_k)=P(a_k)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P-R$：次數 $\\le n-1$，卻有 $n$ 個根 → $P-R\\equiv0$"
+          ],
+          "say": "所以 P 減 R 的次數最多 n 減 1，卻有 n 個不同的根。這樣的多項式只能是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P-R$：次數 $\\le n-1$，卻有 $n$ 個根 → $P-R\\equiv0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{P(x)}{Q(x)}=\\frac{R(x)}{Q(x)}=\\sum_{k=1}^{n}\\frac{A_k}{x-a_k}$"
+          ],
+          "say": "P 等於 R，兩邊除以 Q，就得到拆開的樣子。證明完畢：相異一次因式，一定拆得開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{P(x)}{Q(x)}=\\frac{R(x)}{Q(x)}=\\sum_{k=1}^{n}\\frac{A_k}{x-a_k}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "就得"
+            },
+            {
+              "do": "write",
+              "line": "　證明用到 $\\deg P\\le n-1$（所以要先變真分式）；係數也唯一：代 $x=a_k$ 只得到這個 $A_k$",
+              "color": "violet",
+              "on": "相異"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "整個流程",
+      "beats": [
+        {
+          "show": [
+            "積 $\\displaystyle\\int\\frac{P(x)}{Q(x)}\\,dx$（$Q$ 是相異一次因式）的步驟"
+          ],
+          "say": "把整個流程排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "積 $\\displaystyle\\int\\frac{P(x)}{Q(x)}\\,dx$（$Q$ 是相異一次因式）的步驟",
+        "steps": [
+          {
+            "label": "檢查真分式；不是就先長除法"
+          },
+          {
+            "label": "把分母分解成一次因式",
+            "why": "先要有上一步：檢查真分式；不是就先長除法"
+          },
+          {
+            "label": "設 $\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$",
+            "why": "先要有上一步：把分母分解成一次因式"
+          },
+          {
+            "label": "代根（遮住法）或比較係數，求出 $A,B,\\dots$",
+            "why": "先要有上一步：設 $\\frac{A}{x-a}+\\frac{B}{x-b}+\\cdots$"
+          },
+          {
+            "label": "每一項積成 $A\\ln|x-a|$",
+            "why": "先要有上一步：代根（遮住法）或比較係數，求出 $A,B,\\dots$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 部分分式：通分倒過來做",
+            "• 第零步：不是真分式，先長除法"
+          ],
+          "say": "整理一下：部分分式就是通分倒過來做。先檢查真分式，不是就長除法；每個一次因式設一項，用代根或遮住法求係數；最後每一項積成常數乘自然對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 部分分式：通分倒過來做"
+            },
+            {
+              "do": "write",
+              "line": "• 第零步：不是真分式，先長除法",
+              "on": "倒過"
+            },
+            {
+              "do": "write",
+              "line": "• 設：一個一次因式一項 $\\frac{A}{x-a}$",
+              "on": "就長"
+            },
+            {
+              "do": "write",
+              "line": "• 求：代根、遮住法，或比較係數",
+              "on": "用代"
+            },
+            {
+              "do": "write",
+              "line": "• 積：$\\int\\frac{A}{x-a}dx=A\\ln|x-a|+C$",
+              "on": "後每"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：重複因式"
+          ],
+          "say": "下一課，分母出現 x 減 a 的平方、三次方時，要怎麼設。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：重複因式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["partial-fraction", "rational-integral", "log"],
-    "fine": ["pf-proper-check", "pf-linear-setup", "pf-coefficients", "pf-log-integrate"]
+    "coarse": [
+      "partial-fraction",
+      "rational-integral",
+      "log"
+    ],
+    "fine": [
+      "pf-proper-check",
+      "pf-linear-setup",
+      "pf-coefficients",
+      "pf-log-integrate"
+    ]
   },
   "practice": [
-    { "id": "gap-int-pf-003", "core": true, "trains": "pf-coefficients" },
-    { "id": "gap-int-pf-007", "core": true, "trains": "pf-coefficients" },
-    { "id": "gap-int-pf-006", "core": true, "trains": "pf-coefficients" },
-    { "id": "lec-08-q1a", "core": true, "trains": "pf-linear-setup" },
-    { "id": "cx-pf-001", "core": true, "trains": "pf-log-integrate" },
-    { "id": "cx-pf-002", "core": true, "trains": "pf-log-integrate" },
-    { "id": "cg-4e-001", "core": true, "trains": "pf-proper-check" },
-    { "id": "tmpl-int-partialfrac-001", "trains": "pf-log-integrate" },
-    { "id": "gap-int-pf-004", "trains": "pf-linear-setup", "note": "分子剛好是分母的導數：拆或用 $\\frac{u'}{u}$ 都可以，比較一下哪個快。" },
-    { "id": "gap-int-pf-002", "trains": "pf-proper-check", "note": "先約分。" },
-    { "id": "cg-4e-002", "trains": "pf-proper-check" },
-    { "id": "hc-rad-003", "challenge": true, "trains": "pf-linear-setup", "note": "挑戰：分母 $x^3-x$ 拆成三個一次因式。" }
+    {
+      "id": "gap-int-pf-003",
+      "core": true,
+      "trains": "pf-coefficients"
+    },
+    {
+      "id": "gap-int-pf-007",
+      "core": true,
+      "trains": "pf-coefficients"
+    },
+    {
+      "id": "gap-int-pf-006",
+      "core": true,
+      "trains": "pf-coefficients"
+    },
+    {
+      "id": "lec-08-q1a",
+      "core": true,
+      "trains": "pf-linear-setup"
+    },
+    {
+      "id": "cx-pf-001",
+      "core": true,
+      "trains": "pf-log-integrate"
+    },
+    {
+      "id": "cx-pf-002",
+      "core": true,
+      "trains": "pf-log-integrate"
+    },
+    {
+      "id": "cg-4e-001",
+      "core": true,
+      "trains": "pf-proper-check"
+    },
+    {
+      "id": "tmpl-int-partialfrac-001",
+      "trains": "pf-log-integrate"
+    },
+    {
+      "id": "gap-int-pf-004",
+      "trains": "pf-linear-setup",
+      "note": "分子剛好是分母的導數：拆或用 $\\frac{u'}{u}$ 都可以，比較一下哪個快。"
+    },
+    {
+      "id": "gap-int-pf-002",
+      "trains": "pf-proper-check",
+      "note": "先約分。"
+    },
+    {
+      "id": "cg-4e-002",
+      "trains": "pf-proper-check"
+    },
+    {
+      "id": "hc-rad-003",
+      "challenge": true,
+      "trains": "pf-linear-setup",
+      "note": "挑戰：分母 $x^3-x$ 拆成三個一次因式。"
+    }
   ],
   "gaps": []
 }

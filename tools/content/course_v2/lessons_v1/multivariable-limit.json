@@ -1,0 +1,347 @@
+{
+  "id": "multivariable-limit",
+  "title": "多變數極限",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["two-variable-functions", "limit-intro", "squeeze-theorem", "limit-trig-standard"],
+  "next": ["path-test"],
+  "related": ["multivariable-continuity", "limit-factor", "limit-exp-log-standard"],
+  "objectives": [
+    "說得出 $\\lim_{(x,y)\\to(a,b)}f(x,y)=L$ 的意思：不管從哪個方向、沿什麼路線靠近，$f$ 都要靠近 $L$。",
+    "會用直接代入、化簡、換成一變數標準極限來算。",
+    "會用極座標配合夾擠證明極限存在，而且知道上界必須跟 $\\theta$ 無關。"
+  ],
+  "visual": "xy 平面上以 (a, b) 為圓心畫一個半徑 δ 的小圓盤，旁邊的數線標出 f 在這個圓盤上（圓心除外）取到的所有值。把 δ 縮小：f(x,y) = x²y/(x² + y²) 的值域區間跟著縮向 0；換成 xy/(x² + y²)，不管 δ 多小，值域都還是蓋住 [−1/2, 1/2]，縮不下去。",
+  "concept": [
+    {
+      "heading": "① 意思和一變數一樣",
+      "body": [
+        "$\\lim_{(x,y)\\to(a,b)}f(x,y)=L$：只要 $(x,y)$ 離 $(a,b)$ 夠近（但不等於它），$f(x,y)$ 就能要多靠近 $L$ 就多靠近 $L$。「離得近」量的是平面距離 $\\sqrt{(x-a)^2+(y-b)^2}$。和一變數一樣，完全不看 $(a,b)$ 那一點本身。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 但靠近的方式有無限多種",
+      "body": [
+        "一變數只能從左右兩邊靠近。平面上可以從任何方向、沿直線、沿拋物線、甚至繞著螺旋靠近。極限存在，代表所有靠近的方式都得到同一個 $L$。所以二變數的極限比較容易不存在，下一課〈路徑測試〉專門處理這件事。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 算法一：代入、化簡、換成一變數",
+      "body": [
+        "多項式、有理函數（分母不為 $0$）、以及它們和 $e^x$、$\\sin$、$\\ln$、$\\sqrt{\\ }$ 的合成，在定義域內直接代入就是極限（〈多變數連續〉）。",
+        "代入得 $\\frac{0}{0}$ 時，先試因式分解或有理化；或者整個式子只透過一個組合 $u=xy$、$u=x^2+y^2$ 出現時，令 $u$ 等於它，$u\\to0$，就變成一變數標準極限。例如 $\\frac{\\sin(xy)}{xy}$：$u=xy\\to0$，得 $1$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 算法二：極座標＋夾擠",
+      "body": [
+        "目標點是原點時，令 $x=r\\cos\\theta$、$y=r\\sin\\theta$。$(x,y)\\to(0,0)$ 等價於 $r\\to0$，而 $\\theta$ 可以任意變化。",
+        "如果能證明 $|f(x,y)-L|\\le g(r)$，$g(r)\\to0$，而且 $g$ 不含 $\\theta$，那麼極限就是 $L$。例：$\\frac{x^2y}{x^2+y^2}=r\\cos^2\\theta\\sin\\theta$，絕對值 $\\le r\\to0$，極限是 $0$。",
+        "直接用 $x$、$y$ 也可以：$x^2\\le x^2+y^2$，所以 $\\left|\\frac{x^2y}{x^2+y^2}\\right|\\le|y|\\to0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "【為什麼】上界不能跟 $\\theta$ 有關",
+      "body": [
+        "$f=\\frac{x^2y}{x^4+y^2}$ 換成極座標是 $\\frac{r\\cos^2\\theta\\sin\\theta}{r^2\\cos^4\\theta+\\sin^2\\theta}$。固定任何一個 $\\theta$，$r\\to0$ 時它都 $\\to0$：每一條射線都到 $0$。",
+        "但沿拋物線 $y=x^2$，$f=\\frac{x^4}{2x^4}=\\frac{1}{2}$。極限不存在。問題在於：$\\theta$ 越接近 $0$，要 $r$ 更小才能讓 $f$ 變小，沒有一個對所有 $\\theta$ 都管用的 $g(r)$。所以「每個固定 $\\theta$ 都 $\\to0$」不夠，必須有跟 $\\theta$ 無關的上界。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$\\frac{0}{0}$：先因式分解",
+      "prompt": "$\\lim_{(x,y)\\to(1,1)}\\frac{x^2-y^2}{x-y}$",
+      "steps": [
+        "代入得 $\\frac{0}{0}$（而且整條直線 $y=x$ 上都沒有定義）。",
+        "$x^2-y^2=(x-y)(x+y)$，在 $x\\ne y$ 的點約掉 $x-y$，剩 $x+y$。",
+        "$x+y$ 是多項式，直接代入：$1+1=2$。"
+      ],
+      "answer": "$2$",
+      "claim": "(x^2-y^2)/(x-y) == x+y ;; SUB(SUB(x+y,1,x),1,y) == 2"
+    },
+    {
+      "title": "換成一變數標準極限",
+      "prompt": "$\\lim_{(x,y)\\to(0,0)}\\frac{\\sin(xy)}{xy}$",
+      "problemId": "lim-025",
+      "steps": [
+        "$x$、$y$ 只透過乘積 $xy$ 出現。令 $u=xy$。",
+        "$(x,y)\\to(0,0)$ 時，$|u|=|x||y|\\to0$。",
+        "$\\lim_{u\\to0}\\frac{\\sin u}{u}=1$（〈三角標準極限〉）。"
+      ],
+      "answer": "$1$",
+      "claim": "LIM(sin(u)/u, 0) == 1"
+    },
+    {
+      "title": "極座標夾擠",
+      "prompt": "$\\lim_{(x,y)\\to(0,0)}\\frac{x^2y}{x^2+y^2}$",
+      "problemId": "lim-026",
+      "steps": [
+        "代入得 $\\frac{0}{0}$。目標是原點，換極座標：$x^2+y^2=r^2$，$x^2y=r^3\\cos^2\\theta\\sin\\theta$。",
+        "$f=\\frac{r^3\\cos^2\\theta\\sin\\theta}{r^2}=r\\cos^2\\theta\\sin\\theta$（$r>0$）。",
+        "$|\\cos^2\\theta\\sin\\theta|\\le 1$，所以 $|f|\\le r$。這個上界不含 $\\theta$。",
+        "$r\\to0$ 時 $r\\to0$，由夾擠，極限是 $0$。"
+      ],
+      "answer": "$0$",
+      "claim": "SUB(SUB(x^2*y/(x^2+y^2), r*cos(t), x), r*sin(t), y) == r*cos(t)^2*sin(t) ;; abs(x^2*y/(x^2+y^2)) <= abs(y)"
+    }
+  ],
+  "pitfalls": [
+    "只沿一兩條路徑算出相同的值，就宣稱極限存在。",
+    "極座標化簡後，上界還含 $\\theta$（例如分母有 $\\cos^2\\theta$），就直接讓 $r\\to0$。",
+    "以為 $(a,b)$ 沒有定義，極限就不存在。極限不看那一點本身。",
+    "化成 $u=xy$ 之後忘了確認 $u\\to0$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\lim_{(x,y)\\to(2,1)}(x^2y+3)$ 是？",
+      "options": [
+        { "label": "$7$", "correct": true },
+        { "label": "$5$", "why": "$x^2$ 要先平方：$2^2\\cdot1+3=7$，不是 $2\\cdot1+3$。" },
+        { "label": "不存在，因為要檢查所有路徑", "why": "多項式在每一點都連續，直接代入就是極限；路徑測試是用來處理 $\\frac{0}{0}$ 這類可疑情況的。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{(x,y)\\to(0,0)}\\frac{x^3}{x^2+y^2}=0$，哪一個理由正確？",
+      "options": [
+        { "label": "$\\left|\\frac{x^3}{x^2+y^2}\\right|\\le|x|$，而 $|x|\\to0$", "correct": true },
+        { "label": "代入 $(0,0)$ 得 $0$", "why": "代入得 $\\frac{0}{0}$，不是 $0$。$\\frac{0}{0}$ 本身不告訴你任何事。" },
+        { "label": "沿 $y=0$ 得 $x\\to0$，所以極限是 $0$", "why": "一條路徑只能告訴你「如果極限存在，它必須是 $0$」，不能證明它存在。" }
+      ]
+    },
+    {
+      "ask": "用極座標算 $(x,y)\\to(0,0)$ 的極限時，要怎麼取？",
+      "options": [
+        { "label": "$r\\to0$，$\\theta$ 可以任意變化", "correct": true },
+        { "label": "$r\\to0$，$\\theta$ 固定", "why": "$\\theta$ 固定只代表沿一條射線靠近，漏掉了曲線路徑（例如 $y=x^2$）。" },
+        { "label": "$\\theta\\to0$", "why": "$\\theta$ 是方向，不是離原點的距離；靠近原點的是 $r$。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{(x,y)\\to(0,0)}\\frac{e^{x^2+y^2}-1}{x^2+y^2}$ 是？",
+      "options": [
+        { "label": "$1$", "correct": true },
+        { "label": "$0$", "why": "$\\frac{0}{0}$ 不是 $0$。令 $u=x^2+y^2\\to0^+$，$\\frac{e^u-1}{u}\\to1$。" },
+        { "label": "$e$", "why": "標準極限 $\\frac{e^u-1}{u}$ 的值是 $1$，跟 $e$ 本身無關。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "意思和一變數一樣",
+      "beats": [
+        { "show": ["$\\lim_{(x,y)\\to(a,b)}f(x,y)=L$"],
+          "note": "$(x,y)$ 夠近，$f$ 就要多靠近 $L$ 就多靠近。",
+          "say": "意思跟一變數一樣：點離 a、b 夠近，函數值就能要多靠近 L 就多靠近。",
+          "board": [
+            {"do":"write","line":"$\\lim_{(x,y)\\to(a,b)}f(x,y)=L$"}
+          ] },
+        { "show": ["近：$\\sqrt{(x-a)^2+(y-b)^2}$ 小"],
+          "note": "完全不看 $(a,b)$ 那一點本身。",
+          "say": "只是近量的是平面上的距離。而且跟以前一樣，那一點本身是多少、有沒有定義，都不管。",
+          "board": [
+            {"do":"write","line":"近：$\\sqrt{(x-a)^2+(y-b)^2}$ 小"},
+            {"do":"write","line":"不看 ${{pt:(a,b)}}$ 那一點本身","on":"那一點本身"}
+          ] },
+        { "show": ["靠近的方式有無限多種"],
+          "note": "所有方式都要得到同一個 $L$。",
+          "say": "一變數只能從左右兩邊靠近；平面上可以從任何方向、沿拋物線、甚至繞螺旋進來，全部都要到同一個 L。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"靠近的路線有無限多條","on":"一變數"},
+            {"do":"write","line":"全部都要到同一個 ${{l:L}}$","color":"green","on":"全部都要"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f$ 在 $(a,b)$ 沒有定義，極限一定不存在嗎？",
+        "options": [
+          {
+            "label": "不一定：極限不看那一點本身",
+            "correct": true
+          },
+          {
+            "label": "一定不存在",
+            "why": "極限只看附近的點。$\\frac{x^2-y^2}{x-y}$ 在 $(1,1)$ 沒定義，極限卻是 $2$。"
+          },
+          {
+            "label": "存在，而且等於 $0$",
+            "why": "沒有定義不代表值是 $0$；極限要看附近的函數值怎麼走。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "代入、化簡",
+      "beats": [
+        { "show": ["連續的式子：直接代入"],
+          "note": "多項式、有理函數（分母不為 $0$）、和它們的合成。",
+          "say": "多項式、分母不是零的分式，還有它們跟指數、sine、自然對數、根號的合成，直接代進去就是極限。",
+          "board": [
+            {"do":"write","line":"連續的式子：直接代入"}
+          ] },
+        { "show": ["$\\lim_{(x,y)\\to(1,1)}\\frac{x^2-y^2}{x-y}$"],
+          "note": "代入得 $\\frac{0}{0}$。",
+          "say": "這一題代進去是零分之零，跟一變數一樣，先試因式分解。",
+          "board": [
+            {"do":"write","line":"$\\lim_{(x,y)\\to(1,1)}\\frac{x^2-y^2}{x-y}$"},
+            {"do":"transform","line":"$\\lim_{(x,y)\\to(1,1)}\\frac{x^2-y^2}{x-y}$：代入得 $\\frac{0}{0}$","on":"零分之零"}
+          ] },
+        { "show": ["$\\frac{(x-y)(x+y)}{x-y}=x+y$"],
+          "note": "在 $x\\ne y$ 的點約掉。",
+          "say": "分子拆成 x 減 y 乘 x 加 y，在 x 不等於 y 的點約掉，剩下 x 加 y。",
+          "board": [
+            {"do":"write","line":"$\\frac{(x-y)(x+y)}{{{c:x-y}}}=x+y$","on":"分子拆成"},
+            {"do":"underline","term":"c","label":"x ≠ y 約掉","on":"約掉"}
+          ] },
+        { "show": ["$1+1=2$"],
+          "say": "x 加 y 是多項式，直接代，得到二。",
+          "board": [
+            {"do":"write","line":"$\\to 1+1=2$","color":"green","on":"直接代"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "換成一變數",
+      "beats": [
+        { "show": ["$\\lim_{(x,y)\\to(0,0)}\\frac{\\sin(xy)}{xy}$"],
+          "say": "這個式子裡，x 和 y 永遠綁在一起，只透過乘積 x y 出現。",
+          "board": [
+            {"do":"write","line":"$\\lim_{(x,y)\\to(0,0)}\\frac{\\sin({{p:xy}})}{{{q:xy}}}$","tint":{"p":"blue","q":"blue"}},
+            {"do":"focus","term":"p","on":"綁在一起"},
+            {"do":"focus","term":"q","on":"乘積"}
+          ] },
+        { "show": ["令 $u=xy$，$u\\to0$"],
+          "note": "$|u|=|x||y|\\to0$。",
+          "say": "那就把它整包叫做 u。點跑向原點的時候，u 也跑向零。這一步要確認，不能省。",
+          "board": [
+            {"do":"write","line":"令 ${{u:u}}={{p:xy}}$，${{z:u\\to0}}$","tint":{"u":"violet"},"on":"整包叫做"},
+            {"do":"underline","term":"z","label":"要確認","on":"這一步要確認"}
+          ] },
+        { "show": ["標準極限只在 $u\\to0$ 成立"],
+          "note": "確認：$|x|,|y|\\to0$，乘積也 $\\to0$。",
+          "say": "標準極限只在 u 趨近零時成立。確認：x 和 y 的絕對值都趨近零，乘積也趨近零。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\sin u}{u}\\to1$ 只在 ${{n1:u\\to0}}$ 成立"},
+            {"do":"write","line":"$|x||y|\\to0$，所以 $|u|\\to0$","on":"絕對值"}
+          ] },
+        { "show": ["$\\lim_{u\\to0}\\frac{\\sin u}{u}=1$"],
+          "say": "變成一變數的標準極限，sine u 除以 u 趨近一。",
+          "board": [
+            {"do":"write","line":"$\\lim_{{{u:u}}\\to0}\\frac{\\sin u}{u}=1$","color":"green"}
+          ] },
+        { "show": ["$\\frac{e^u-1}{u}$：$e^x$ 在 $0$ 的差商"],
+          "note": "導數的定義，代進去算。",
+          "say": "e 的 u 次方減一除以 u，是 e 的 x 次方在零的差商。導數的定義你已經會，代進去算。",
+          "board": [
+            {"do":"write","line":"$\\frac{e^u-1}{u}$：${{n3:e^x}}$ 在 $0$ 的差商"},
+            {"do":"underline","term":"n3","color":"blue","on":"e 的 x 次方"}
+          ] }
+      ],
+      "key": "整塊 $xy$ 換成 $u$，變成一變數極限",
+      "check": 3
+    },
+    {
+      "title": "極座標",
+      "beats": [
+        { "show": ["$x=r\\cos\\theta$，$y=r\\sin\\theta$"],
+          "note": "目標點是原點時用。",
+          "say": "目標點是原點的時候，換成極座標：r 是到原點的距離，theta 是方向。",
+          "board": [
+            {"do":"write","line":"$x={{r:r}}\\cos{{t:\\theta}}$，$y=r\\sin\\theta$","tint":{"r":"blue","t":"violet"}},
+            {"do":"focus","term":"r","color":"blue","label":"距離","on":"到原點"},
+            {"do":"focus","term":"t","color":"violet","label":"方向","on":"theta"}
+          ] },
+        { "show": ["$(x,y)\\to(0,0)$ ⟺ $r\\to0$"],
+          "note": "$\\theta$ 可以任意變化。",
+          "say": "跑向原點，就是 r 趨近零；可是方向 theta 不固定，一路上可以隨便變。",
+          "board": [
+            {"do":"write","line":"$(x,y)\\to(0,0)$ ⟺ ${{rz:r\\to0}}$"},
+            {"do":"write","line":"${{th:\\theta}}$ 任意變化","on":"不固定"},
+            {"do":"underline","term":"th","color":"violet","on":"一路上"}
+          ] },
+        { "show": ["$|f-L|\\le g(r)\\to0$，$g$ 不含 $\\theta$"],
+          "say": "所以要找一個只跟 r 有關的上界，它趨近零，極限就是 L。上界不能跟 theta 有關，原因在全文。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|f-L|\\le {{g:g(r)}}\\to0$","on":"找一個"},
+            {"do":"underline","term":"g","color":"blue","label":"只跟 r 有關","on":"只跟"},
+            {"do":"write","line":"$g$ 不含 $\\theta$","color":"red","on":"不能跟"}
+          ] },
+        { "show": ["上界含 $\\theta$：夠小的 $r$ 隨 $\\theta$ 變"],
+          "note": "找不到一個 $r$ 對所有方向都管用。",
+          "say": "原因：上界含 theta，要多小的 r 才夠就會隨方向變，找不到一個 r 對所有方向都管用。",
+          "board": [
+            {"do":"write","line":"上界含 $\\theta$：夠小的 $r$ 隨 $\\theta$ 變"}
+          ] },
+        { "show": ["$\\frac{x^2y}{x^4+y^2}$：射線都到 $0$","沿 $y=x^2$：$\\frac{1}{2}$"],
+          "note": "每條射線都到 $0$，極限仍不存在。",
+          "say": "例：x 平方 y 除以 x 四次方加 y 平方，每條射線都趨近零，沿 y 等於 x 平方卻是二分之一。",
+          "board": [
+            {"do":"write","line":"$\\frac{x^2y}{x^4+y^2}$：射線都到 $0$"},
+            {"do":"write","line":"沿 $y=x^2$：$\\frac{1}{2}$","color":"red","on":"卻是"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "夾擠一題",
+      "beats": [
+        { "show": ["$\\lim_{(x,y)\\to(0,0)}\\frac{x^2y}{x^2+y^2}$"],
+          "say": "代進去是零分之零，目標是原點，換極座標。",
+          "board": [
+            {"do":"write","line":"$\\lim_{(x,y)\\to(0,0)}\\frac{x^2y}{x^2+y^2}$"}
+          ] },
+        { "show": ["$f=\\frac{r^3\\cos^2\\theta\\sin\\theta}{r^2}=r\\cos^2\\theta\\sin\\theta$"],
+          "say": "分母是 r 平方，分子是 r 三次方乘一串三角函數，約掉剩 r 乘那一串。",
+          "board": [
+            {"do":"write","line":"$f=\\frac{r^3\\cos^2\\theta\\sin\\theta}{r^2}=r{{tr:\\cos^2\\theta\\sin\\theta}}$","tint":{"tr":"violet"}}
+          ] },
+        { "show": ["$|f|\\le r\\to0$"],
+          "note": "$|\\cos^2\\theta\\sin\\theta|\\le 1$，上界不含 $\\theta$。",
+          "say": "那一串的絕對值不會超過一，所以函數被 r 夾住。r 趨近零，極限是零。",
+          "board": [
+            {"do":"underline","term":"tr","label":"不超過 1","on":"那一串"},
+            {"do":"write","line":"所以 $|f|\\le r\\to0$","on":"所以函數"}
+          ] },
+        { "show": ["$f$ 夾在 $-r$ 與 $r$ 之間"],
+          "say": "畫成圖：函數值被夾在負 r 和 r 之間，r 往零縮，整條帶子就縮到零。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,1,-1,1],"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"-x","domain":[0,1],"color":"blue"}],"fills":[{"expr":"x","expr2":"-x","from":0,"to":1,"color":"blue"}],"labels":[{"x":0.8,"y":0.9,"text":"r","anchor":"start"},{"x":0.8,"y":-0.9,"text":"-r","anchor":"start"}]}}
+          ] },
+        { "show": ["或：$\\left|\\frac{x^2y}{x^2+y^2}\\right|\\le|y|$"],
+          "note": "因為 $x^2\\le x^2+y^2$。",
+          "say": "不換極座標也行：x 平方不超過分母，所以整個不超過 y 的絕對值，一樣趨近零。",
+          "board": [
+            {"do":"write","line":"或：$\\left|\\frac{x^2y}{x^2+y^2}\\right|\\le|y|$","on":"不換極座標"}
+          ] }
+      ],
+      "key": "找不含 $\\theta$ 的上界，夾擠到 $0$",
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["multivariable", "multivariable-limit", "squeeze"],
+    "fine": ["mv-limit-direct", "mv-limit-one-variable", "mv-limit-squeeze-polar"]
+  },
+  "practice": [
+    { "id": "lim-025", "core": true, "trains": "mv-limit-one-variable" },
+    { "id": "lim-033", "core": true, "trains": "mv-limit-one-variable" },
+    { "id": "lim-026", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-034", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-031", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-028", "core": true, "trains": "mv-limit-one-variable", "note": "令 $u=x^2+y^2$，再有理化。" },
+    { "id": "cg-8a-018", "core": true, "trains": "mv-limit-direct" },
+    { "id": "cg-8a-019", "core": true, "trains": "mv-limit-direct" },
+    { "id": "lim-029", "trains": "mv-limit-squeeze-polar" },
+    { "id": "rel-hard-lim-008", "trains": "mv-limit-one-variable" },
+    { "id": "rel-hard-lim-007", "trains": "mv-limit-one-variable" },
+    { "id": "mob-limtrap-008", "challenge": true, "trains": "mv-limit-squeeze-polar", "note": "挑戰：令 $r=\\sqrt{x^2+y^2}$，$|\\sin|\\le 1$。" }
+  ],
+  "gaps": []
+}

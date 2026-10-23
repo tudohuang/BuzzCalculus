@@ -1,355 +1,133 @@
 {
   "id": "measurable-functions",
   "title": "可測函數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["sigma-algebra", "lebesgue-measure", "almost-everywhere"],
-  "next": ["simple-functions"],
-  "related": ["riemann-vs-lebesgue", "lebesgue-integral"],
-  "objectives": [
-    "寫得出可測函數的定義：對每個實數 $a$，$\\{f>a\\}$ 是可測集；並證明 $\\ge$、$<$、$\\le$ 的版本等價。",
-    "會判斷連續函數、單調函數、指示函數 $\\chi_E$ 是否可測，並算出具體的 $\\{f>a\\}$。",
-    "證明可測函數對 $+$、$\\times$、$\\max$、可數 $\\sup$／$\\inf$、$\\limsup$、極限封閉；並舉出 $|f|$ 可測而 $f$ 不可測的反例。"
+  "prerequisites": [
+    "sigma-algebra",
+    "lebesgue-measure",
+    "almost-everywhere"
   ],
-  "visual": "y = sin x 在 [0, 2π] 的圖，一條可拖動的水平線 y = a。x 軸上即時把 {sin x > a} 塗色並顯示總長度；a < −1 時整段塗滿，a ≥ 1 時全部消失。",
+  "next": [
+    "simple-functions"
+  ],
+  "related": [
+    "riemann-vs-lebesgue",
+    "lebesgue-integral"
+  ],
+  "objectives": [
+    "寫得出可測函數的定義：對每個實數 $a$，$\\{f>a\\}$ 是可測集",
+    "並證明 $\\ge$、$<$、$\\le$ 的版本等價",
+    "會判斷連續函數、單調函數、指示函數 $\\chi_E$ 是否可測，並算出具體的 $\\{f>a\\}$",
+    "證明可測函數對 $+$、$\\times$、$\\max$、可數 $\\sup$／$\\inf$、$\\limsup$、極限封閉，並知道 $|f|$ 可測推不出 $f$ 可測"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 能「按值分堆」的函數",
+      "heading": "① 按值分堆",
       "body": [
-        "〈Riemann 與 Lebesgue〉會看到，Lebesgue 積分是把函數值分成一段一段，再量「函數值落在這一段的點」構成的集合。所以最起碼要求：這些集合量得出來。",
-        "直覺，不是證明：可測函數就是「每一條水平線上方的部分，在 $x$ 軸上的投影都是可測集」的函數。"
+        "Riemann：把定義域切成小段，看每段的高度",
+        "Lebesgue：把值域切成小段，問「哪些 $x$ 的值落在這裡」",
+        "要能量這些 $x$ 的集合，至少要能量",
+        "這種集合叫「水平截集」：在高度 $a$ 切一刀，看哪些 $x$ 在上面"
       ],
-      "collapsible": false
+      "tex": [
+        "\\{f>a\\}=\\{x:\\ f(x)>a\\}"
+      ]
     },
     {
-      "heading": "② 定義與等價形式",
+      "heading": "② 定義",
       "body": [
-        "設 $(X,\\mathcal{M})$ 是可測空間。$f:X\\to[-\\infty,\\infty]$ 叫做可測，如果對每個 $a\\in\\mathbb{R}$，$\\{x:f(x)>a\\}\\in\\mathcal{M}$。",
-        "把 $>$ 換成 $\\ge$、$<$、$\\le$ 任何一個，得到的定義都等價。對實值的 $f$，等價於：每個 Borel 集 $B$ 的原像 $f^{-1}(B)$ 都可測。在 $\\mathbb{R}$ 上用 Lebesgue 可測集時叫 Lebesgue 可測，用 Borel 集時叫 Borel 可測。",
-        "注意是原像 $f^{-1}(B)$，不是像 $f(E)$。"
+        "$(X,\\mathcal{M})$ 可測空間。$f:X\\to\\mathbb{R}$ 是 可測函數，若",
+        "允許取值 $\\pm\\infty$ 時定義一樣；下面取 $\\sup$、$\\limsup$ 會用到",
+        "定理：下面四個條件等價（對所有 $a$）：",
+        "策略：補集互換 $>$ 與 $\\le$；可數交集把嚴格變不嚴格",
+        "證明（繞一圈）：",
+        "推論：$\\{a<f<b\\}=\\{f>a\\}\\cap\\{f<b\\}$ 也可測"
       ],
-      "tex": ["\\{f\\ge a\\}=\\bigcap_{n=1}^{\\infty}\\Big\\{f>a-\\tfrac1n\\Big\\},\\qquad \\Big\\{\\sup_n f_n>a\\Big\\}=\\bigcup_{n=1}^{\\infty}\\{f_n>a\\}"],
-      "collapsible": false
+      "tex": [
+        "\\{f>a\\}\\in\\mathcal{M}\\quad\\text{對每個}\\ a\\in\\mathbb{R}",
+        "\\{f>a\\},\\ \\{f\\ge a\\},\\ \\{f<a\\},\\ \\{f\\le a\\}\\in\\mathcal{M}",
+        "\\{f\\ge a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f>a-\\frac1n\\Big\\}",
+        "\\{f<a\\}=\\{f\\ge a\\}^c\\qquad\\{f\\le a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f<a+\\frac1n\\Big\\}",
+        "\\{f>a\\}=\\{f\\le a\\}^c\\quad\\blacksquare"
+      ]
     },
     {
-      "heading": "③ 哪些函數可測，運算後還可不可測",
+      "heading": "② 例：算出 $\\{f>a\\}$",
       "body": [
-        "連續的 $f:\\mathbb{R}\\to\\mathbb{R}$：$\\{f>a\\}$ 是開集，Borel 可測。單調函數：$\\{f>a\\}$ 是一條射線，可測。指示函數 $\\chi_E$：可測 $\\iff$ $E$ 可測。Dirichlet 函數：$\\{D>a\\}$ 是 $\\emptyset$、$\\mathbb{Q}$ 或 $\\mathbb{R}$ 之一，可測。",
-        "$f,g$ 可測（實值）$\\Rightarrow$ $f+g$、$fg$、$\\max(f,g)$、$f^+=\\max(f,0)$、$|f|$ 都可測。$f_n$ 可測 $\\Rightarrow$ $\\sup f_n$、$\\inf f_n$、$\\limsup f_n$、$\\liminf f_n$ 可測，所以逐點極限（存在時）也可測。在 Lebesgue 測度下，與可測函數 a.e. 相等的函數也可測（完備性）。"
+        "$f(x)=x^2$：",
+        "每一個都是開集，所以是 Borel 集 ⇒ $f$ 可測",
+        "一般的連續函數：$f(x_0)>a$ ⇒ $x_0$ 附近 $f>a$",
+        "所以 $\\{f>a\\}$ 是開集 ⇒ 連續函數可測",
+        "取 $\\varepsilon=f(x_0)-a>0$，用連續的 $\\varepsilon$–$\\delta$ 定義"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\{f>4\\}&=(-\\infty,-2)\\cup(2,\\infty)\\\\\\{f>-1\\}&=\\mathbb{R}\\end{aligned}"
+      ]
     },
     {
-      "heading": "證明：等價形式與封閉性",
+      "heading": "③ 哪些函數可測",
       "body": [
-        "等價：$\\{f\\ge a\\}=\\bigcap_n\\{f>a-\\frac{1}{n}\\}$（可數交集）；$\\{f<a\\}=\\{f\\ge a\\}^c$；$\\{f\\le a\\}=\\bigcap_n\\{f<a+\\frac{1}{n}\\}$；$\\{f>a\\}=\\{f\\le a\\}^c$。四種形式互推。Borel 版本：$\\{B:f^{-1}(B)\\in\\mathcal{M}\\}$ 是 $\\sigma$-代數（原像與補集、聯集可交換），含所有 $(a,\\infty)$ 與 $(-\\infty,b]$，所以含 $(a,b]$ 與 $(a,b)=\\bigcup(a,b-\\frac{1}{n}]$，於是含所有開集，進而含 $\\mathcal{B}(\\mathbb{R})$。",
-        "$\\sup$：$\\sup f_n(x)>a\\iff$ 某個 $f_n(x)>a$，所以 $\\{\\sup f_n>a\\}=\\bigcup\\{f_n>a\\}$。$\\inf$：$\\{\\inf f_n<a\\}=\\bigcup\\{f_n<a\\}$。$\\limsup f_n=\\inf_k(\\sup_{n\\ge k} f_n)$，$\\liminf$ 同理；極限存在時等於 $\\limsup$。$\\max(f,g)$ 是 $\\sup$ 的特例；$f^+=\\max(f,0)$，$|f|=\\max(f,-f)$（$\\{-f>a\\}=\\{f<-a\\}$）。",
-        "加法：$f(x)+g(x)>a\\iff$ 存在有理數 $q$ 使 $f(x)>q>a-g(x)$。所以 $\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}(\\{f>q\\}\\cap\\{g>a-q\\})$，可數聯集。乘法：$\\{f^2>a\\}$ 在 $a<0$ 時是 $X$，$a\\ge0$ 時是 $\\{f>\\sqrt{a}\\}\\cup\\{f<-\\sqrt{a}\\}$，所以 $f^2$ 可測；再用 $fg=\\frac{(f+g)^2-(f-g)^2}{4}$。"
+        "單調遞增：$x\\in\\{f>a\\}$、$y>x$ ⇒ $f(y)\\ge f(x)>a$",
+        "所以 $\\{f>a\\}$ 是區間（或空集合）⇒ 可測",
+        "指示函數 $\\chi_E$（$E$ 上是 $1$，其他是 $0$）：",
+        "所以 $\\chi_E$ 可測 ⟺ $E$ 可測",
+        "例：$f=\\sin x$ 在 $[0,2\\pi]$，正部 $f^+=\\max(f,0)$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "按值分堆",
-      "beats": [
-        { "show": ["Lebesgue 積分：按函數值分段"],
-          "note": "再量「值落在這段的點」。",
-          "say": "Lebesgue 積分是把函數值切成一段一段，再去量函數值落在這一段的那些點。",
-          "board": [
-            {"do":"write","line":"函數值切段，再量落在這段的點"}
-          ] },
-        { "show": ["最起碼：這些集合量得出來"],
-          "say": "所以最起碼的要求是：這些點組成的集合，量得出來。",
-          "board": [
-            {"do":"write","line":"要求：這些點的集合量得出來"}
-          ] },
-        { "show": ["每個 $a$：$\\{x:f(x)>a\\}\\in\\mathcal{M}$"],
-          "note": "看原像，不是像。",
-          "say": "定義：對每個實數 a，函數值大於 a 的點，組成一個可測集。這是在看原像，不是像。",
-          "board": [
-            {"do":"write","line":"對每個 $a$：${{s:\\{x:f(x)>a\\}\\in\\mathcal{M}}}$"},
-            {"do":"underline","term":"s","color":"gold","label":"看原像","on":"原像"}
-          ] },
-        { "show": ["$>$ 換成 $\\ge$、$<$、$\\le$ 都等價"],
-          "note": "$\\{f\\ge a\\}=\\bigcap_n\\{f>a-\\frac{1}{n}\\}$。",
-          "say": "大於換成大於等於、小於、小於等於，都等價，因為可以用可數交集、補集互相換。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$>$、$\\ge$、$<$、$\\le$ 都等價","on":"大於換成"},
-            {"do":"write","line":"$\\{f\\ge a\\}={{i:\\bigcap_n}}\\{f>a-\\frac{1}{n}\\}$","on":"因為"},
-            {"do":"focus","term":"i","color":"gold","on":"可數交集"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\{\\chi_E>a\\}=\\begin{cases}X,&a<0\\\\E,&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}",
+        "\\{f^+>a\\}=\\begin{cases}[0,2\\pi],&a<0\\\\(\\arcsin a,\\ \\pi-\\arcsin a),&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}"
+      ]
     },
     {
-      "title": "算出水平截集",
-      "beats": [
-        { "show": ["$f(x)=x^2$"],
-          "say": "拿 x 平方來算，看水平線上方的部分投影到 x 軸是什麼。",
-          "board": [
-            {"do":"plot","graph":{"ticks":false,"window":[-3.4,3.4,-1.1,6.2],"curves":[{"expr":"x^2","color":"blue"}],"dashed":[[[-3.4,4],[3.4,4]]],"arrows":[{"from":[2,0],"to":[3.3,0],"color":"green"},{"from":[-2,0],"to":[-3.3,0],"color":"green"}],"points":[{"x":2,"y":0,"open":true},{"x":-2,"y":0,"open":true}],"labels":[{"x":2,"y":-0.75,"text":"2","anchor":"middle"},{"x":-2,"y":-0.75,"text":"-2","anchor":"middle"},{"x":-3.2,"y":4.5,"text":"y = 4","anchor":"start"},{"x":2.6,"y":5.4,"text":"y = x²","anchor":"start"}]}}
-          ] },
-        { "show": ["$\\{x^2>4\\}=(-\\infty,-2)\\cup(2,\\infty)$"],
-          "note": "$x^2>4\\iff|x|>2$。",
-          "say": "x 平方大於四，就是 x 的絕對值大於二，兩條射線。",
-          "board": [
-            {"do":"write","line":"$\\{x^2>4\\}={{r:(-\\infty,-2)\\cup(2,\\infty)}}$"},
-            {"do":"underline","term":"r","color":"green","label":"兩條射線","on":"絕對值大於二"}
-          ] },
-        { "show": ["$\\{x^2>0\\}=\\mathbb{R}\\setminus\\{0\\}$"],
-          "say": "x 平方大於零，除了零以外都對。",
-          "board": [
-            {"do":"transform","line":"$\\{x^2>0\\}={{z:\\mathbb{R}\\setminus\\{0\\}}}$"},
-            {"do":"focus","term":"z","color":"green","label":"除了零","on":"除了零"}
-          ] },
-        { "show": ["$a\\ge0$：$(-\\infty,-\\sqrt{a})\\cup(\\sqrt{a},\\infty)$"],
-          "note": "都是開集，所以可測。",
-          "say": "一般 a 大於等於零時，是兩條開射線，都是開集，所以 x 平方可測。那 a 是負的呢？",
-          "board": [
-            {"do":"transform","line":"$a\\ge0$：$\\{x^2>a\\}={{g:(-\\infty,-\\sqrt{a})\\cup(\\sqrt{a},\\infty)}}$","on":"一般 a"},
-            {"do":"underline","term":"g","label":"開集，可測","on":"都是開集"}
-          ] }
+      "heading": "③ 試一題與運算",
+      "body": [
+        "運算後還可測（$f,g,f_n$ 可測）：",
+        "先 $\\sup$ 再 $\\inf$ ⇒ 可測；$\\lim f_n$ 存在時等於 $\\limsup$ ⇒ 極限可測"
       ],
-      "check": 3
+      "tex": [
+        "\\{\\max(f,g)>a\\}=\\{f>a\\}\\cup\\{g>a\\}",
+        "\\begin{aligned}\\Big\\{\\sup_n f_n>a\\Big\\}&=\\bigcup_n\\{f_n>a\\}\\\\\\Big\\{\\inf_n f_n<a\\Big\\}&=\\bigcup_n\\{f_n<a\\}\\end{aligned}",
+        "\\limsup_{n\\to\\infty}f_n=\\inf_k\\sup_{n\\ge k}f_n"
+      ]
     },
     {
-      "title": "哪些函數可測",
-      "beats": [
-        { "show": ["連續：$\\{f>a\\}$ 是開集"],
-          "say": "連續函數：水平線上方的部分是開集，可測。",
-          "board": [
-            {"do":"write","line":"連續：$\\{f>a\\}$ 是開集"}
-          ] },
-        { "show": ["單調：$\\{f>a\\}$ 是一條射線"],
-          "say": "單調函數：一過某一點就全部大於 a，是一條射線，可測。",
-          "board": [
-            {"do":"write","line":"單調：$\\{f>a\\}$ 是一條射線"}
-          ] },
-        { "show": ["$\\chi_E$ 可測 $\\iff E$ 可測"],
-          "say": "特徵函數可測，若且唯若那個集合本身可測。",
-          "board": [
-            {"do":"write","line":"$\\chi_E$ 可測 $\\iff$ $E$ 可測"}
-          ] },
-        { "show": ["Dirichlet $D$"],
-          "note": "處處不連續。",
-          "say": "那處處不連續的 Dirichlet 函數呢？看它大於二分之一的地方。",
-          "board": [
-            {"do":"write","line":"Dirichlet $D$：處處不連續"}
-          ] },
-        { "show": ["$D=1$（有理數），$D=0$（無理數）"],
-          "note": "D 是 Dirichlet 函數。",
-          "say": "Dirichlet 函數在有理數點等於一，在無理數點等於零。看哪些點的值大於二分之一？",
-          "board": [
-            {"do":"write","line":"$D(x)=1$（有理數）；$0$（無理數）"},
-            {"do":"write","line":"找 $D(x)>\\frac{1}{2}$ 的點","on":"大於二分之一"}
-          ] }
+      "heading": "證明：和與積",
+      "body": [
+        "和：$\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}\\big(\\{f>q\\}\\cap\\{g>a-q\\}\\big)$",
+        "• $\\supseteq$：$f>q$、$g>a-q$ ⇒ $f+g>a$",
+        "• $\\subseteq$：$f(x)>a-g(x)$，用有理數稠密取 $q$ 夾在中間：$a-g(x)<q<f(x)$",
+        "積：先證 $f^2$ 可測：",
+        "常數倍：$c>0$ 時 $\\{cf>a\\}=\\{f>\\frac ac\\}$；$-g$ 用 $\\{-g>a\\}=\\{g<-a\\}$"
       ],
-      "predict": {
-        "ask": "$\\{D>\\frac{1}{2}\\}$ 是？",
-        "options": [
-          {
-            "label": "$\\mathbb{Q}$：可測，所以 $D$ 可測",
-            "correct": true
-          },
-          {
-            "label": "$\\emptyset$",
-            "why": "有理點上 $D=1>\\frac{1}{2}$，所以是 $\\mathbb{Q}$。"
-          },
-          {
-            "label": "不可測，因為 $D$ 處處不連續",
-            "why": "可測不需要連續；$\\{D>a\\}$ 只會是 $\\emptyset$、$\\mathbb{Q}$ 或 $\\mathbb{R}$，都可測。"
-          }
-        ]
-      }
+      "tex": [
+        "\\{f^2>a\\}=\\begin{cases}X,&a<0\\\\\\{f>\\sqrt a\\}\\cup\\{f<-\\sqrt a\\},&a\\ge0\\end{cases}",
+        "fg=\\tfrac14\\big[(f+g)^2-(f-g)^2\\big]\\ \\Rightarrow\\ \\text{可測}\\quad\\blacksquare"
+      ]
     },
     {
-      "title": "運算後還可測",
-      "beats": [
-        { "show": ["$f+g$、$fg$、$\\max(f,g)$、$|f|$"],
-          "note": "$f$、$g$ 可測（實值）。",
-          "say": "可測函數相加、相乘、取較大的、取絕對值，都還是可測。",
-          "board": [
-            {"do":"write","line":"$f+g$、$fg$、$\\max(f,g)$、$|f|$：可測"}
-          ] },
-        { "show": ["$\\sup f_n$、$\\inf f_n$、$\\limsup$、$\\liminf$"],
-          "note": "所以逐點極限也可測。",
-          "say": "一列可測函數取上確界、下確界、上極限、下極限也都可測，逐點極限當然也是。和與積的證明在最後那節。",
-          "board": [
-            {"do":"write","line":"$\\sup f_n$、$\\inf f_n$、$\\limsup$、$\\liminf$"},
-            {"do":"write","line":"⇒ 逐點極限也可測","on":"逐點極限"}
-          ] },
-        { "show": ["$\\sup_n f_n(x)>a$：某一個 $f_n(x)>a$"],
-          "say": "關鍵是上確界大於 a，只需要某一個 f n 大於 a 就行。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sup_n f_n(x)>a$","on":"上確界"},
-            {"do":"write","line":"某個 $n$：${{c:f_n(x)>a}}$","on":"只需要"},
-            {"do":"underline","term":"c","color":"gold","label":"只要一個","on":"f n"}
-          ] }
+      "heading": "③ $|f|$ 可測，$f$ 卻不可測",
+      "body": [
+        "$V\\subseteq[0,1]$ 是 Vitali 集（不可測）。令",
+        "• $|f|=1$ 是常數 ⇒ 可測",
+        "• $\\{f>0\\}=V$ 不可測 ⇒ $f$ 不可測",
+        "單向：$f$ 可測 ⇒ $|f|$ 可測；反過來不對"
       ],
-      "check": 1
+      "tex": [
+        "f(x)=\\begin{cases}1,&x\\in V\\\\-1,&x\\in[0,1]\\setminus V\\end{cases}"
+      ]
     },
     {
-      "title": "正部",
-      "beats": [
-        { "show": ["$f^+=\\max(f,0)$"],
-          "note": "$f$ 可測 $\\Rightarrow f^+$ 可測。",
-          "say": "函數的正部，是 f 跟零取較大的。積分時要把 f 拆成正部減負部。",
-          "board": [
-            {"do":"write","line":"${{p:f^+}}=\\max(f,0)$","tint":{"p":"blue"}},
-            {"do":"transform","line":"${{p:f^+}}=\\max(f,0)$，$f=f^+-f^-$","on":"拆成"}
-          ] },
-        { "show": ["$f=\\sin x$，$[0,2\\pi]$"],
-          "say": "拿 sine x 在零到二 pi 看。",
-          "board": [
-            {"do":"plot","graph":{"ticks":false,"window":[-0.4,6.8,-1.35,1.45],"curves":[{"expr":"sin(x)","domain":[0,6.2832],"color":"muted","dashed":true},{"expr":"sin(x)","domain":[0,3.1416],"color":"blue","width":3},{"expr":"0","domain":[3.1416,6.2832],"color":"blue","width":3}],"labels":[{"x":3.1416,"y":-0.3,"text":"π","anchor":"middle"},{"x":6.2832,"y":-0.3,"text":"2π","anchor":"end"},{"x":1.7,"y":1.15,"text":"f⁺","anchor":"start"},{"x":4.9,"y":-0.75,"text":"sin x","anchor":"start"}]},"on":"sine x"}
-          ] },
-        { "show": ["$a\\ge0$：$f^+>a\\iff f>a$"],
-          "say": "a 大於等於零時，正部大於 a，跟 f 本身大於 a 是同一件事。",
-          "board": [
-            {"do":"write","line":"$a\\ge0$：${{p:f^+}}>a \\iff {{q:f>a}}$"},
-            {"do":"underline","term":"q","label":"同一件事","on":"f 本身"}
-          ] },
-        { "show": ["長度 ＝ 右端減左端","$\\sin x=\\frac{1}{2}$ 的兩點圍出區間"],
-          "say": "這裡 f 就是 sine x，長度是右端減左端。畫一條水平線二分之一，交在兩點，中間就是要量的區間。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"ticks":false,"window":[-0.4,6.8,-1.35,1.45],"curves":[{"expr":"sin(x)","domain":[0,6.2832],"color":"blue"}],"dashed":[[[-0.4,0.5],[6.8,0.5]]],"fills":[{"expr":"sin(x)","from":0.5236,"to":2.618,"color":"red"}],"labels":[{"x":0.5236,"y":-0.3,"text":"π/6","anchor":"middle"},{"x":2.618,"y":-0.3,"text":"5π/6","anchor":"middle"},{"x":4.6,"y":0.7,"text":"y = 1/2","anchor":"start"}]},"on":"水平線"}
-          ] }
-      ],
-      "key": "先看 $a$ 的正負，再解 $\\sin x$ 的不等式",
-      "predict": {
-        "ask": "$\\{f^+>\\frac{1}{2}\\}$ 的長度是？",
-        "options": [
-          {
-            "label": "$\\frac{2\\pi}{3}$：$(\\frac{\\pi}{6},\\frac{5\\pi}{6})$",
-            "correct": true
-          },
-          {
-            "label": "$2\\pi$",
-            "why": "那是 $\\{f^+>-1\\}$：$a<0$ 時處處成立。這裡要 $\\sin x>\\frac{1}{2}$。"
-          },
-          {
-            "label": "$\\frac{\\pi}{6}$",
-            "why": "$\\frac{\\pi}{6}$ 只是左端點；區間到 $\\frac{5\\pi}{6}$，長 $\\frac{2\\pi}{3}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "$|f|$ 可測不夠",
-      "beats": [
-        { "show": ["$f=\\chi_V-\\chi_{[0,1]\\setminus V}$"],
-          "note": "$V$ 是 Vitali 集，不可測。",
-          "say": "反過來呢？在 Vitali 集上取一，其他地方取負一。",
-          "board": [
-            {"do":"write","line":"$f=\\chi_V-\\chi_{[0,1]\\setminus V}$"}
-          ] },
-        { "show": ["Vitali 集：每一類挑一個代表"],
-          "say": "Vitali 集的做法：零到一的數裡，差是有理數的算同一類，每類挑一個代表湊成 V。",
-          "board": [
-            {"do":"write","line":"差是有理數 ⇒ 同一類"},
-            {"do":"write","line":"每類挑一個代表，湊成 $V$","on":"每類挑"}
-          ] },
-        { "show": ["平移 $V$ 蓋住 $[0,1]$，不重疊"],
-          "note": "直覺概要，不是完整證明。",
-          "say": "把 V 平移各個有理數，會蓋住零到一又互不重疊。V 若有長度，總長不是零就是無限，所以 V 不可測。",
-          "board": [
-            {"do":"write","line":"平移 $V$：蓋住、不重疊"},
-            {"do":"write","line":"總長 $0$ 或 $\\infty$：矛盾","on":"總長"}
-          ] },
-        { "show": ["$|f|\\equiv1$：可測"],
-          "say": "它的絕對值處處是一，常數函數，當然可測。",
-          "board": [
-            {"do":"write","line":"$|f|\\equiv1$：可測"}
-          ] },
-        { "show": ["$\\{f>0\\}=V$：不可測"],
-          "say": "可是 f 大於零的地方正是 Vitali 集，不可測，所以 f 本身不可測。",
-          "board": [
-            {"do":"write","line":"$\\{f>0\\}={{v:V}}$"},
-            {"do":"underline","term":"v","color":"red","label":"不可測","on":"Vitali 集"},
-            {"do":"write","line":"所以 $f$ 不可測","on":"所以"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：和與積可測",
-      "beats": [
-        { "show": ["把 $\\{f+g>a\\}$ 寫成可數聯集"],
-          "say": "策略：可測集對可數聯集、交集封閉。只要把 f 加 g 大於 a 的點，寫成可數多個可測集拼起來就好。",
-          "board": [
-            {"do":"write","line":"可測集：對可數聯集、交集封閉"},
-            {"do":"write","line":"$\\{f+g>a\\}$ ＝ 可數多個可測集拼起來","on":"只要把"}
-          ] },
-        { "show": ["$f(x)+g(x)>a\\iff$ 有 $q\\in\\mathbb{Q}$","使 $f(x)>q>a-g(x)$"],
-          "note": "兩個實數之間塞得進有理數。",
-          "why": {"ask":"為什麼一定找得到這樣的 $q$？","say":"f 在 x 的值大於 a 減 g 在 x 的值。為什麼中間一定有有理數 q？","options":[{"label":"有理數稠密：兩個實數之間有有理數","correct":true},{"label":"取 $q=f(x)$ 就好","why":"$q$ 要從一份固定的可數清單裡挑；取 $f(x)$ 會跟著 $x$ 變，拼起來就不是可數聯集了。"},{"label":"把 $a$ 平分給 $f$、$g$ 兩邊","why":"和大於 $a$ 不代表兩個各自大過一半：一個很大、一個很小也可以。要的是在中間塞一個有理數。"}]},
-          "say": "f 在 x 的值大於 a 減 g 在 x 的值，兩個實數之間一定有有理數，叫它 q。反過來有這樣的 q，相加就大於 a。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{fx:f(x)}}>{{ag:a-g(x)}}$","tint":{"fx":"blue","ag":"violet"},"on":"f 在 x 的值"},
-            {"do":"transform","line":"${{fx:f(x)}}>{{q:q}}>{{ag:a-g(x)}}$","on":"中間一定有"},
-            {"do":"focus","term":"q","label":"有理數稠密","why":true,"on":"一定有有理數"}
-          ] },
-        { "show": ["稠密：兩實數之間有有理數"],
-          "say": "稠密是說兩個實數再靠近，中間都有有理數。取 n 夠大，n 分之一比兩數的差小，n 分之整數就踩得進去。",
-          "board": [
-            {"do":"write","line":"$a<q<b$，$q=\\frac{m}{n}$"},
-            {"do":"write","line":"$\\frac{1}{n}<b-a$","on":"取 n"}
-          ] },
-        { "show": ["$\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}(\\{f>q\\}\\cap\\{g>a-q\\})$"],
-          "note": "每一塊可測，$\\mathbb{Q}$ 可數。",
-          "say": "所以這個集合是對每個有理數 q 取兩個可測集的交集，再聯集起來。有理數可數，聯集可測。",
-          "board": [
-            {"do":"write","line":"$\\{f+g>a\\}={{u:\\bigcup_{q\\in\\mathbb{Q}}}}({{fq:\\{f>q\\}}}\\cap{{gq:\\{g>a-q\\}}})$","tint":{"fq":"blue","gq":"violet"}},
-            {"do":"underline","term":"fq","color":"blue","on":"兩個可測集"},
-            {"do":"underline","term":"gq","color":"violet","on":"的交集"},
-            {"do":"focus","term":"u","on":"再聯集起來"}
-          ] },
-        { "show": ["$f^2$：$a<0$ 時是 $X$","$a\\ge0$ 時 $\\{f>\\sqrt{a}\\}\\cup\\{f<-\\sqrt{a}\\}$"],
-          "say": "再看平方。a 是負的，整個空間都大於 a；a 大於等於零，就是 f 大於根號 a 或小於負根號 a，兩塊都可測。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\{f^2>a\\}$：$a<0$ 時是 $X$","on":"a 是負的"},
-            {"do":"write","line":"$a\\ge0$：$\\{f>\\sqrt{a}\\}\\cup\\{f<-\\sqrt{a}\\}$","on":"a 大於等於零"}
-          ] },
-        { "show": ["$fg=\\frac{(f+g)^2-(f-g)^2}{4}$"],
-          "note": "加法、平方都已經可測。",
-          "why": {"ask":"為什麼 $fg$ 可測？","say":"最後是乘積。為什麼 f 乘 g 可測？","options":[{"label":"寫成和與差的平方相減，每一步都可測","correct":true},{"label":"$f$、$g$ 都可測，乘起來自然可測","why":"這正是要證的。可測只管原像，乘積的原像不能直接看出來，要化成已經證過的運算。"},{"label":"$\\{fg>a\\}=\\{f>a\\}\\cap\\{g>a\\}$","why":"乘積大於 $a$ 不需要兩個都大於 $a$：一個很大、一個比較小也可以，這個等式不對。"}]},
-          "say": "乘積寫成和的平方減差的平方，再除以四。和、差、平方剛剛都證過可測，所以乘積也可測。",
-          "board": [
-            {"do":"write","line":"$fg=\\frac{{{n:(f+g)^2-(f-g)^2}}}{4}$"},
-            {"do":"focus","term":"n","label":"都已證可測","why":true,"on":"和、差、平方"}
-          ] }
-      ],
-      "key": "中間塞有理數 $q$，拆成兩個截集的交集",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "下面幾步裡，哪一步要靠 $\\mathbb{Q}$ 可數？",
-        "steps": [
-          {
-            "label": "$f(x)+g(x)>a$ 時中間有有理數 $q$",
-            "why": "這只用到有理數稠密。"
-          },
-          {
-            "label": "$\\{f+g>a\\}$ 是聯集，所以可測",
-            "correct": true
-          },
-          {
-            "label": "$f^2$ 可測",
-            "why": "這只用到 $\\{f^2>a\\}$ 是兩個可測集的聯集。"
-          },
-          {
-            "label": "$fg$ 可測",
-            "why": "這只用到恆等式，加上和與平方已經可測。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 可測：每個 $\\{f>a\\}$ 都可測；$\\ge$、$<$、$\\le$ 版本等價",
+        "• 連續、單調函數可測；$\\chi_E$ 可測 ⟺ $E$ 可測",
+        "• 封閉：$+$、$\\times$、$\\max$、可數 $\\sup$／$\\inf$、$\\limsup$、極限",
+        "• $|f|$ 可測推不出 $f$ 可測（Vitali 集）",
+        "下一課：用可測集的指示函數組出簡單函數"
+      ]
     }
   ],
   "workedExamples": [
@@ -397,50 +175,816 @@
   ],
   "checks": [
     {
-      "ask": "$f:\\mathbb{R}\\to\\mathbb{R}$ 是 Lebesgue 可測的定義是？",
+      "ask": "$f(x)=x^2$，$\\{f>0\\}=$？",
       "options": [
-        { "label": "對每個 $a\\in\\mathbb{R}$，$\\{x:f(x)>a\\}$ 是可測集", "correct": true },
-        { "label": "$f$ 連續", "why": "連續是充分條件，不是定義；Dirichlet 函數不連續卻可測。" },
-        { "label": "對每個可測集 $E$，像 $f(E)$ 是可測集", "why": "你把原像換成了像。定義要求的是 $f^{-1}((a,\\infty))$ 可測。" }
+        {
+          "label": "$\\mathbb{R}$",
+          "why": "$f(0)=0$，不大於 $0$"
+        },
+        {
+          "label": "$\\mathbb{R}\\setminus\\{0\\}$",
+          "correct": true
+        },
+        {
+          "label": "$(0,\\infty)$",
+          "why": "負數的平方也是正的"
+        },
+        {
+          "label": "$\\emptyset$",
+          "why": "$x=1$ 就有 $1>0$"
+        }
       ]
     },
     {
-      "ask": "$\\{\\sup_n f_n>a\\}$ 等於？",
+      "ask": "$\\{f^+>\\frac12\\}$ 與 $\\{f^+>0\\}$ 是？",
       "options": [
-        { "label": "$\\bigcup_n\\{f_n>a\\}$", "correct": true },
-        { "label": "$\\bigcap_n\\{f_n>a\\}$", "why": "$\\sup$ 大於 $a$ 只需要某一個 $f_n(x)>a$，不必每一個都是；交集是「全部都 $>a$」。" },
-        { "label": "$\\{f_1>a\\}$", "why": "$\\sup$ 不一定在第一項取到；後面的 $f_n$ 可能才超過 $a$。" }
+        {
+          "label": "$(\\frac\\pi6,\\frac{5\\pi}6)$；$(0,\\pi)$",
+          "correct": true
+        },
+        {
+          "label": "$(\\frac\\pi6,\\frac{5\\pi}6)$；$[0,2\\pi]$",
+          "why": "$f^+=0$ 在 $[\\pi,2\\pi]$，不大於 $0$"
+        },
+        {
+          "label": "$(\\frac\\pi3,\\frac{2\\pi}3)$；$(0,\\pi)$",
+          "why": "把 $\\arcsin\\frac12$ 記成 $\\frac\\pi3$；那是 $\\arccos\\frac12$"
+        },
+        {
+          "label": "$(\\frac\\pi6,\\frac{5\\pi}6)\\cup(\\frac{7\\pi}6,\\frac{11\\pi}6)$；$(0,\\pi)$",
+          "why": "那是 $\\{|\\sin x|>\\frac12\\}$；正部在後半段是 $0$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "按值分堆",
+      "beats": [
+        {
+          "show": [
+            "Riemann：把定義域切成小段，看每段的高度"
+          ],
+          "say": "黎曼積分把定義域切成小段。之後的勒貝格積分反過來，把值域切成小段，問：哪些 x 的函數值落在這一層？",
+          "board": [
+            {
+              "do": "write",
+              "line": "Riemann：把定義域切成小段，看每段的高度"
+            },
+            {
+              "do": "write",
+              "line": "Lebesgue：把值域切成小段，問「哪些 $x$ 的值落在這裡」",
+              "on": "把值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要能量這些 $x$ 的集合，至少要能量",
+            "$\\{f>a\\}=\\{x:\\ f(x)>a\\}$"
+          ],
+          "say": "要量這些 x 的集合，最基本的是：函數值大於 a 的那些點，要是一個可測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要能量這些 $x$ 的集合，至少要能量"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\{f>a\\}=\\{x:\\ f(x)>a\\}}}$",
+              "on": "基本"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的那"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅色：{x² > 4} = (−∞, −2) ∪ (2, ∞)"
+          ],
+          "say": "圖上，函數是 x 平方，a 是 4。曲線高過紅色虛線的地方，投影到 x 軸，就是 x 平方大於 4 的集合：負 2 左邊，和 2 右邊。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lvl",
+                  "window": [
+                    -3.2,
+                    3.2,
+                    -1,
+                    9.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2",
+                      "color": "blue",
+                      "label": "y = x²"
+                    },
+                    {
+                      "expr": "4",
+                      "color": "red",
+                      "dash": true,
+                      "label": "y = 4"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        -3.2,
+                        0
+                      ],
+                      "to": [
+                        -2,
+                        0
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        2,
+                        0
+                      ],
+                      "to": [
+                        3.2,
+                        0
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": -2,
+                      "y": 0,
+                      "color": "red",
+                      "open": true
+                    },
+                    {
+                      "x": 2,
+                      "y": 0,
+                      "color": "red",
+                      "open": true
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅色：{x² > 4} = (−∞, −2) ∪ (2, ∞)",
+              "color": "violet",
+              "on": "紅色"
+            },
+            {
+              "do": "write",
+              "line": "　這種集合叫「水平截集」：在高度 $a$ 切一刀，看哪些 $x$ 在上面",
+              "color": "violet",
+              "on": "大於"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$|f|$ 可測，$f$ 一定可測嗎？",
-      "options": [
-        { "label": "不一定，$\\chi_V-\\chi_{V^c}$（$V$ 為 Vitali 集）是反例", "correct": true },
-        { "label": "一定，因為 $f=\\pm|f|$", "why": "正負號在哪裡取哪一個，本身就是一個集合 $\\{f>0\\}$，它可以不可測。" },
-        { "label": "$f$ 有界時一定", "why": "反例 $\\chi_V-\\chi_{V^c}$ 的值只有 $\\pm1$，是有界的。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$(X,\\mathcal{M})$ 可測空間。$f:X\\to\\mathbb{R}$ 是 可測函數，若",
+            "$\\{f>a\\}\\in\\mathcal{M}\\quad\\text{對每個}\\ a\\in\\mathbb{R}$"
+          ],
+          "say": "定義：f 是可測函數，如果對每一個實數 a，f 大於 a 的集合都在西格瑪代數裡。在實數線上，通常用勒貝格可測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(X,\\mathcal{M})$ 可測空間。$f:X\\to\\mathbb{R}$ 是 可測函數，若"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\{f>a\\}\\in\\mathcal{M}\\quad\\text{對每個}\\ a\\in\\mathbb{R}}}$",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "的集"
+            },
+            {
+              "do": "write",
+              "line": "　允許取值 $\\pm\\infty$ 時定義一樣；下面取 $\\sup$、$\\limsup$ 會用到",
+              "color": "violet",
+              "on": "實數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：下面四個條件等價（對所有 $a$）：",
+            "$\\{f>a\\},\\ \\{f\\ge a\\},\\ \\{f<a\\},\\ \\{f\\le a\\}\\in\\mathcal{M}$"
+          ],
+          "say": "定理：用大於、大於等於、小於、小於等於來定義，都一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：下面四個條件等價（對所有 $a$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{f>a\\},\\ \\{f\\ge a\\},\\ \\{f<a\\},\\ \\{f\\le a\\}\\in\\mathcal{M}$",
+              "on": "小於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：補集互換 $>$ 與 $\\le$；可數交集把嚴格變不嚴格"
+          ],
+          "say": "策略：取補集，大於就變成小於等於；用可數多個的交集，把嚴格不等式變成不嚴格。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：補集互換 $>$ 與 $\\le$；可數交集把嚴格變不嚴格"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明（繞一圈）：",
+            "$\\{f\\ge a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f>a-\\frac1n\\Big\\}$"
+          ],
+          "say": "證明繞一圈。f 大於等於 a，等於對每個 n，f 都大於 a 減 n 分之一。可數交集，所以可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明（繞一圈）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{f\\ge a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f>a-\\frac1n\\Big\\}$",
+              "on": "都大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\{f<a\\}=\\{f\\ge a\\}^c\\qquad\\{f\\le a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f<a+\\frac1n\\Big\\}$"
+          ],
+          "say": "小於 a 是它的補集。小於等於 a，又是一串小於 a 加 n 分之一的交集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{f<a\\}=\\{f\\ge a\\}^c\\qquad\\{f\\le a\\}=\\bigcap_{n=1}^\\infty\\Big\\{f<a+\\frac1n\\Big\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\{f>a\\}=\\{f\\le a\\}^c\\quad\\blacksquare$"
+          ],
+          "say": "最後，大於 a 是小於等於 a 的補集，回到起點。四個條件互相推得。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\{f>a\\}=\\{f\\le a\\}^c\\quad\\blacksquare}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　推論：$\\{a<f<b\\}=\\{f>a\\}\\cap\\{f<b\\}$ 也可測",
+              "color": "violet",
+              "on": "起點"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f(x)=x^2$，$\\{f>-1\\}$ 是？",
-      "options": [
-        { "label": "$\\mathbb{R}$", "correct": true },
-        { "label": "$\\emptyset$", "why": "你可能想到 $x^2=-1$ 無實數解。這裡問的是 $x^2>-1$，它對所有實數都成立。" },
-        { "label": "$(-1,1)$", "why": "你解的是 $x^2<1$。不等式方向與門檻都不同。" }
+      "title": "例：算出 $\\{f>a\\}$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=x^2$：",
+            "$\\begin{aligned}\\{f>4\\}&=(-\\infty,-2)\\cup(2,\\infty)\\\\\\{f>-1\\}&=\\mathbb{R}\\end{aligned}$"
+          ],
+          "say": "回到 x 平方。大於 4 的集合，剛剛看過。大於負 1：平方永遠不是負的，所以是整條實數線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\{f>4\\}&=(-\\infty,-2)\\cup(2,\\infty)\\\\\\{f>-1\\}&=\\mathbb{R}\\end{aligned}}$",
+              "on": "於負"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：算出 $\\{f>a\\}$",
+      "beats": [
+        {
+          "show": [
+            "每一個都是開集，所以是 Borel 集 ⇒ $f$ 可測"
+          ],
+          "say": "不管 a 是多少，得到的都是開集，所以 x 平方是可測函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一個都是開集，所以是 Borel 集 ⇒ $f$ 可測"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的連續函數：$f(x_0)>a$ ⇒ $x_0$ 附近 $f>a$"
+          ],
+          "say": "一般的連續函數也一樣：如果 x 0 的函數值大於 a，由連續性，x 0 附近的值也都大於 a。所以大於 a 的集合是開集，連續函數都可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的連續函數：$f(x_0)>a$ ⇒ $x_0$ 附近 $f>a$"
+            },
+            {
+              "do": "write",
+              "line": "所以 $\\{f>a\\}$ 是開集 ⇒ 連續函數可測",
+              "color": "gold",
+              "on": "由連"
+            },
+            {
+              "do": "write",
+              "line": "　取 $\\varepsilon=f(x_0)-a>0$，用連續的 $\\varepsilon$–$\\delta$ 定義",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "哪些函數可測",
+      "beats": [
+        {
+          "show": [
+            "單調遞增：$x\\in\\{f>a\\}$、$y>x$ ⇒ $f(y)\\ge f(x)>a$"
+          ],
+          "say": "單調遞增的函數：如果 x 在大於 a 的集合裡，右邊的 y 函數值更大，也在裡面。所以這個集合是一個往右延伸的區間，可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "單調遞增：$x\\in\\{f>a\\}$、$y>x$ ⇒ $f(y)\\ge f(x)>a$"
+            },
+            {
+              "do": "write",
+              "line": "所以 $\\{f>a\\}$ 是區間（或空集合）⇒ 可測",
+              "on": "函數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "指示函數 $\\chi_E$（$E$ 上是 $1$，其他是 $0$）：",
+            "$\\{\\chi_E>a\\}=\\begin{cases}X,&a<0\\\\E,&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}$"
+          ],
+          "say": "指示函數：a 小於 0，是全部；a 在 0 到 1 之間，正好是 E；a 大於等於 1，是空集合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "指示函數 $\\chi_E$（$E$ 上是 $1$，其他是 $0$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\{\\chi_E>a\\}={\\begin{cases}X,&a<0\\\\E,&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}}}}$",
+              "on": "之間"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\chi_E$ 可測 ⟺ $E$ 可測"
+          ],
+          "say": "所以指示函數可測，若且唯若 E 是可測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\chi_E$ 可測 ⟺ $E$ 可測",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f=\\sin x$ 在 $[0,2\\pi]$，正部 $f^+=\\max(f,0)$",
+            "紅色：{f⁺ > 1/2} = (π/6, 5π/6)"
+          ],
+          "say": "例子：正弦在 0 到 2 派上，取正部，負的部分壓成 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f=\\sin x$ 在 $[0,2\\pi]$，正部 $f^+=\\max(f,0)$"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sp",
+                  "window": [
+                    -0.2,
+                    6.5,
+                    -1.2,
+                    1.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "pencil",
+                      "dash": true,
+                      "domain": [
+                        0,
+                        6.2832
+                      ]
+                    },
+                    {
+                      "expr": "(sin(x)+abs(sin(x)))/2",
+                      "color": "blue",
+                      "label": "f⁺",
+                      "domain": [
+                        0,
+                        6.2832
+                      ]
+                    },
+                    {
+                      "expr": "0.5",
+                      "color": "red",
+                      "dash": true,
+                      "domain": [
+                        0,
+                        6.2832
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        0.5236,
+                        0
+                      ],
+                      "to": [
+                        2.618,
+                        0
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "height": 220
+                }
+              },
+              "on": "派上"
+            },
+            {
+              "do": "write",
+              "line": "紅色：{f⁺ > 1/2} = (π/6, 5π/6)",
+              "color": "violet",
+              "on": "負的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\{f^+>a\\}=\\begin{cases}[0,2\\pi],&a<0\\\\(\\arcsin a,\\ \\pi-\\arcsin a),&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}$"
+          ],
+          "say": "a 小於 0，是整段；a 在 0 到 1 之間，是反正弦 a 到派減反正弦 a；a 大於等於 1，是空集合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{f^+>a\\}={\\begin{cases}[0,2\\pi],&a<0\\\\(\\arcsin a,\\ \\pi-\\arcsin a),&0\\le a<1\\\\\\emptyset,&a\\ge1\\end{cases}}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題與運算",
+      "beats": [
+        {
+          "show": [
+            "$\\{f^+>\\frac12\\}$ 與 $\\{f^+>0\\}$ 是？"
+          ],
+          "say": "試一題：正部大於 2 分之一，和大於 0 的集合，各是什麼？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題與運算",
+      "beats": [
+        {
+          "show": [
+            "運算後還可測（$f,g,f_n$ 可測）：",
+            "$\\{\\max(f,g)>a\\}=\\{f>a\\}\\cup\\{g>a\\}$"
+          ],
+          "say": "接下來看運算。最大值大於 a，就是 f 大於 a 或 g 大於 a。可數多個的上確界大於 a，就是某一個大於 a，可數聯集。下確界小於 a 也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "運算後還可測（$f,g,f_n$ 可測）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{\\max(f,g)>a\\}=\\{f>a\\}\\cup\\{g>a\\}$",
+              "on": "大於#2"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}\\Big\\{\\sup_n f_n>a\\Big\\}&=\\bigcup_n\\{f_n>a\\}\\\\\\Big\\{\\inf_n f_n<a\\Big\\}&=\\bigcup_n\\{f_n<a\\}\\end{aligned}}}}$",
+              "on": "個的"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "可數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\limsup_{n\\to\\infty}f_n=\\inf_k\\sup_{n\\ge k}f_n$",
+            "先 $\\sup$ 再 $\\inf$ ⇒ 可測；$\\lim f_n$ 存在時等於 $\\limsup$ ⇒ 極限可測"
+          ],
+          "say": "上極限是先取上確界、再取下確界，所以可測。極限存在的時候，就等於上極限，所以可測函數列的極限也可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\limsup_{n\\to\\infty}f_n=\\inf_k\\sup_{n\\ge k}f_n$"
+            },
+            {
+              "do": "write",
+              "line": "先 $\\sup$ 再 $\\inf$ ⇒ 可測；$\\lim f_n$ 存在時等於 $\\limsup$ ⇒ 極限可測",
+              "on": "的時"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：和與積",
+      "beats": [
+        {
+          "show": [
+            "和：$\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}\\big(\\{f>q\\}\\cap\\{g>a-q\\}\\big)$"
+          ],
+          "say": "和的證明：f 加 g 大於 a，等於存在一個有理數 q，f 大於 q、而且 g 大於 a 減 q。右邊是可數聯集，可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "和：$\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}\\big(\\{f>q\\}\\cap\\{g>a-q\\}\\big)$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\supseteq$：$f>q$、$g>a-q$ ⇒ $f+g>a$",
+            "• $\\subseteq$：$f(x)>a-g(x)$，用有理數稠密取 $q$ 夾在中間：$a-g(x)<q<f(x)$"
+          ],
+          "say": "右邊包含於左邊很直接，兩個加起來。左邊包含於右邊：f of x 大於 a 減 g of x，中間夾一個有理數 q 就好，這裡用到有理數稠密。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\supseteq$：$f>q$、$g>a-q$ ⇒ $f+g>a$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\subseteq$：$f(x)>a-g(x)$，用有理數稠密取 $q$ 夾在中間：$a-g(x)<q<f(x)$",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積：先證 $f^2$ 可測：",
+            "$\\{f^2>a\\}=\\begin{cases}X,&a<0\\\\\\{f>\\sqrt a\\}\\cup\\{f<-\\sqrt a\\},&a\\ge0\\end{cases}$"
+          ],
+          "say": "積的證明：先看平方。a 是負的，是全部；a 不是負的，f 平方大於 a，就是 f 大於根號 a 或小於負根號 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積：先證 $f^2$ 可測："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\{f^2>a\\}={\\begin{cases}X,&a<0\\\\\\{f>\\sqrt a\\}\\cup\\{f<-\\sqrt a\\},&a\\ge0\\end{cases}}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$fg=\\tfrac14\\big[(f+g)^2-(f-g)^2\\big]\\ \\Rightarrow\\ \\text{可測}\\quad\\blacksquare$"
+          ],
+          "say": "再用這個恆等式：f 乘 g 等於 f 加 g 的平方減 f 減 g 的平方，再除以 4。和、平方都可測，所以積也可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle fg=\\tfrac14\\big[(f+g)^2-(f-g)^2\\big]\\ \\Rightarrow\\ \\text{可測}\\quad\\blacksquare}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "的平#1"
+            },
+            {
+              "do": "write",
+              "line": "　常數倍：$c>0$ 時 $\\{cf>a\\}=\\{f>\\frac ac\\}$；$-g$ 用 $\\{-g>a\\}=\\{g<-a\\}$",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$|f|$ 可測，$f$ 卻不可測",
+      "beats": [
+        {
+          "show": [
+            "$V\\subseteq[0,1]$ 是 Vitali 集（不可測）。令",
+            "$f(x)=\\begin{cases}1,&x\\in V\\\\-1,&x\\in[0,1]\\setminus V\\end{cases}$"
+          ],
+          "say": "最後一個例子。V 是上上一課的維塔利集，不可測。f 在 V 上是 1，在 0 到 1 的其他地方是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$V\\subseteq[0,1]$ 是 Vitali 集（不可測）。令"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x)={\\begin{cases}1,&x\\in V\\\\-1,&x\\in[0,1]\\setminus V\\end{cases}}$",
+              "on": "上是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $|f|=1$ 是常數 ⇒ 可測",
+            "• $\\{f>0\\}=V$ 不可測 ⇒ $f$ 不可測"
+          ],
+          "say": "f 的絕對值永遠是 1，常數函數，可測。可是 f 大於 0 的集合正好是 V，不可測，所以 f 不可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $|f|=1$ 是常數 ⇒ 可測"
+            },
+            {
+              "do": "write",
+              "line": "• $\\{f>0\\}=V$ 不可測 ⇒ $f$ 不可測",
+              "color": "red",
+              "on": "的集"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f$ 可測 ⇒ $|f|$ 可測，對嗎？",
+        "options": [
+          {
+            "label": "對",
+            "correct": true
+          },
+          {
+            "label": "不對，跟上面的例子一樣",
+            "why": "上面的例子是反方向：$|f|$ 可測推不出 $f$ 可測"
+          },
+          {
+            "label": "只有 $f$ 連續時才對",
+            "why": "不需要連續：$\\{|f|>a\\}=\\{f>a\\}\\cup\\{f<-a\\}$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$|f|$ 可測，$f$ 卻不可測",
+      "beats": [
+        {
+          "show": [
+            "單向：$f$ 可測 ⇒ $|f|$ 可測；反過來不對"
+          ],
+          "say": "所以這是單向的：f 可測推得絕對值可測，反過來不對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "單向：$f$ 可測 ⇒ $|f|$ 可測；反過來不對",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 可測：每個 $\\{f>a\\}$ 都可測；$\\ge$、$<$、$\\le$ 版本等價",
+            "• 連續、單調函數可測；$\\chi_E$ 可測 ⟺ $E$ 可測"
+          ],
+          "say": "整理：可測的意思是每個水平截集都可測，四種寫法等價。連續和單調函數都可測，指示函數看集合。可測函數對加、乘、最大值、上下確界、極限都封閉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 可測：每個 $\\{f>a\\}$ 都可測；$\\ge$、$<$、$\\le$ 版本等價"
+            },
+            {
+              "do": "write",
+              "line": "• 連續、單調函數可測；$\\chi_E$ 可測 ⟺ $E$ 可測",
+              "on": "四種"
+            },
+            {
+              "do": "write",
+              "line": "• 封閉：$+$、$\\times$、$\\max$、可數 $\\sup$／$\\inf$、$\\limsup$、極限",
+              "on": "可測#3"
+            },
+            {
+              "do": "write",
+              "line": "• $|f|$ 可測推不出 $f$ 可測（Vitali 集）",
+              "on": "最大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：用可測集的指示函數組出簡單函數"
+          ],
+          "say": "下一課，用指示函數組出簡單函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：用可測集的指示函數組出簡單函數"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["measure", "lebesgue"],
-    "fine": ["measf-definition", "measf-preimage-compute", "measf-closure", "measf-counterexample"]
+    "coarse": [
+      "measure",
+      "lebesgue"
+    ],
+    "fine": [
+      "measf-definition",
+      "measf-preimage-compute",
+      "measf-closure",
+      "measf-counterexample"
+    ]
   },
   "practice": [
-    { "id": "cg-12i-033", "core": true, "trains": "measf-preimage-compute" },
-    { "id": "cg-12i-036", "core": true, "trains": "measf-closure" },
-    { "id": "cg-12i-038", "core": true, "trains": "measf-counterexample" },
-    { "id": "cg-12i-034", "trains": "measf-preimage-compute" },
-    { "id": "cg-12i-035", "trains": "measf-preimage-compute" },
-    { "id": "cg-12i-037", "trains": "measf-closure" },
-    { "id": "cg-12i-039", "trains": "measf-counterexample" }
+    {
+      "id": "cg-12i-033",
+      "core": true,
+      "trains": "measf-preimage-compute"
+    },
+    {
+      "id": "cg-12i-036",
+      "core": true,
+      "trains": "measf-closure"
+    },
+    {
+      "id": "cg-12i-038",
+      "core": true,
+      "trains": "measf-counterexample"
+    },
+    {
+      "id": "cg-12i-034",
+      "trains": "measf-preimage-compute"
+    },
+    {
+      "id": "cg-12i-035",
+      "trains": "measf-preimage-compute"
+    },
+    {
+      "id": "cg-12i-037",
+      "trains": "measf-closure"
+    },
+    {
+      "id": "cg-12i-039",
+      "trains": "measf-counterexample"
+    }
   ],
   "gaps": []
 }

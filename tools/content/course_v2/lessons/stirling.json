@@ -1,51 +1,151 @@
 {
   "id": "stirling",
   "title": "Stirling 公式",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["big-o-little-o", "asymptotic-equivalence", "ibp-log-invtrig", "riemann-sum-intuition"],
-  "next": ["stolz-cesaro"],
-  "related": ["wallis-product", "euler-maclaurin-intro"],
-  "objectives": [
-    "寫得出 $n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$，並說清楚「$\\sim$」保證的是比值 $\\to 1$，不是差 $\\to 0$。",
-    "用 $\\ln n!=\\sum\\ln k$ 與 $\\int\\ln x\\,dx$ 的比較，說出 $\\left(\\frac{n}{e}\\right)^n$ 從哪裡來。",
-    "用 Stirling 算含階乘的極限：$\\frac{(n!)^{1/n}}{n}$、中央二項式係數 $\\binom{2n}{n}$。"
+  "prerequisites": [
+    "big-o-little-o",
+    "asymptotic-equivalence",
+    "ibp-log-invtrig",
+    "riemann-sum-intuition"
   ],
-  "visual": "橫軸 n = 1 到 30。上圖畫比值 n!/(√(2πn)(n/e)ⁿ)，點列從 1.084 往下貼近 1；下圖畫差 n! − √(2πn)(n/e)ⁿ（對數刻度），點列一路往上衝。兩張圖並排，看出「比值 → 1」與「差 → ∞」可以同時成立。",
+  "next": [
+    "stolz-cesaro"
+  ],
+  "related": [
+    "wallis-product",
+    "euler-maclaurin-intro"
+  ],
+  "objectives": [
+    "寫得出 $n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$，並說清楚「$\\sim$」是相對誤差 $\\to0$，絕對誤差可以 $\\to\\infty$",
+    "用 $\\ln n!=\\sum\\ln k$ 與 $\\int\\ln x\\,dx$ 的比較，說出 $\\left(\\frac{n}{e}\\right)^n$ 從哪裡來，並證明 $\\ln n!=n\\ln n-n+O(\\ln n)$",
+    "用 Stirling 算含階乘的極限：$\\frac{(n!)^{1/n}}{n}$、中央二項式係數 $\\binom{2n}{n}$"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 公式與它的意思",
       "body": [
-        "$n\\to\\infty$ 時 $n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$，也就是兩者的比值 $\\to 1$。",
-        "$n=10$：$10!=3{,}628{,}800$，右邊約 $3{,}598{,}696$，比值約 $1.0084$，相對誤差不到 1%。但差約 $30{,}104$，而且 $n$ 越大差越大（$n=20$ 時差約 $10^{16}$）。Stirling 是相對誤差小，不是絕對誤差小，所以只能用在乘、除、開 $n$ 次方這類看比值的地方。"
+        "$\\sim$ 的意思：比值 $\\to1$，也就是相對誤差 $\\to0$",
+        "例：$n=10$",
+        "• $10!=3\\,628\\,800$",
+        "• $\\sqrt{20\\pi}\\left(\\frac{10}{e}\\right)^{10}\\approx3\\,598\\,696$",
+        "• 相對誤差 $\\approx0.83\\%$（約 $\\frac1{12n}$）",
+        "• 絕對誤差 $\\approx30\\,104$",
+        "$n$ 越大：相對誤差 $\\to0$，絕對誤差 $\\approx\\dfrac{n!}{12n}\\to\\infty$",
+        "只能拿來算比值、乘積、開根號，不能拿來算 $n!$ 減掉別的東西"
       ],
-      "tex": ["n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^{n}"],
-      "collapsible": false
+      "tex": [
+        "n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n\\quad(n\\to\\infty)"
+      ]
     },
     {
-      "heading": "② $\\left(\\frac{n}{e}\\right)^n$ 從哪裡來（直覺，不是證明）",
+      "heading": "② $\\left(\\frac ne\\right)^n$ 從哪裡來",
       "body": [
-        "取對數，乘積變成和：$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$。這是 $y=\\ln x$ 在 $x=1,2,\\dots,n$ 的高度相加，很像 $\\int_1^n\\ln x\\,dx=n\\ln n-n+1$。",
-        "所以 $\\ln n!\\approx n\\ln n-n$，取指數得 $n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級。再用梯形法修正（端點各算一半）會多出 $\\frac{1}{2}\\ln n$，也就是 $\\sqrt{n}$ 這個因子。",
-        "這只是直覺：它說明了 $n^n$、$e^{-n}$、$\\sqrt{n}$ 三個因子，但沒有算出常數 $\\sqrt{2\\pi}$，也沒有證明誤差真的趨近 $0$。"
+        "取對數，乘積變成和：",
+        "和 ≈ 積分（4.6 的 Riemann 和）：",
+        "所以 $\\ln n!\\approx n\\ln n-n$：",
+        "$\\ln$ 遞增，每一格都夾得住："
       ],
-      "collapsible": false
+      "tex": [
+        "\\ln n!=\\ln1+\\ln2+\\cdots+\\ln n=\\sum_{k=1}^n\\ln k",
+        "\\int_1^n\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_1^n=n\\ln n-n+1",
+        "n!\\approx e^{n\\ln n-n}=\\left(\\frac ne\\right)^n",
+        "\\int_{k-1}^{k}\\ln x\\,dx\\le\\ln k\\le\\int_{k}^{k+1}\\ln x\\,dx"
+      ]
     },
     {
-      "heading": "③ 怎麼用：先把階乘換掉，再化簡",
+      "heading": "② 夾出來：$O(\\ln n)$",
       "body": [
-        "因為 $\\sim$ 可以在乘積與商裡替換（〈漸近等價〉），含階乘的比值可以把每個 $n!$ 換成 $\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$，然後把 $e$ 的次方、$n$ 的次方各自合併。開 $n$ 次方也可以：若 $a_n\\sim b_n$，則 $\\left(\\frac{a_n}{b_n}\\right)^{1/n}\\to 1$。",
-        "最常用的兩個結果：$(n!)^{1/n}\\sim\\frac{n}{e}$，以及 $\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$。"
+        "$k=2$ 到 $n$ 加起來（左邊）、$k=1$ 到 $n$ 加起來（右邊）：",
+        "右邊 $=\\int_1^{n+1}\\ln x\\,dx=(n+1)\\ln(n+1)-(n+1)+1$",
+        "右邊 $-\\,(n\\ln n-n)=n\\ln\\!\\left(1+\\frac1n\\right)+\\ln(n+1)\\le1+\\ln(n+1)$",
+        "從哪裡多出 $\\sqrt n$：梯形比長方形準",
+        "這一行是直覺；⑤ 會證明 $C$ 存在，並說明 $C=\\sqrt{2\\pi}$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}n\\ln n-n+1&\\le\\ln n!\\\\&\\le(n+1)\\ln(n+1)-n\\end{aligned}",
+        "\\ln n!=n\\ln n-n+O(\\ln n)",
+        "\\ln n!\\approx\\int_1^n\\ln x\\,dx+\\frac{\\ln1+\\ln n}{2}=n\\ln n-n+1+\\frac12\\ln n",
+        "n!\\approx C\\sqrt n\\left(\\frac ne\\right)^n"
+      ]
     },
     {
-      "heading": "證明的骨架：常數是怎麼定出來的",
+      "heading": "③ 用法：開 $n$ 次方",
       "body": [
-        "令 $d_n=\\ln n!-\\left(n+\\frac{1}{2}\\right)\\ln n+n$。用梯形法估 $\\int_k^{k+1}\\ln x\\,dx$ 的誤差，可以證明 $d_n-d_{n+1}=O\\left(\\frac{1}{n^2}\\right)$，而 $\\sum\\frac{1}{n^2}$ 收斂，所以 $d_n$ 收斂到某個常數 $C$，也就是 $n!\\sim e^C\\sqrt{n}\\left(\\frac{n}{e}\\right)^n$。",
-        "常數 $e^C=\\sqrt{2\\pi}$ 要另外決定：把這個式子代進〈Wallis 乘積〉$\\frac{\\pi}{2}=\\lim$ 的那個比值，就解出 $e^C$。更精細的展開 $n!=\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n\\left(1+\\frac{1}{12n}+O\\left(\\frac{1}{n^2}\\right)\\right)$ 來自〈Euler–Maclaurin 入門〉。"
+        "先把階乘換掉（乘積、開根號都可以換）：",
+        "$f\\sim g\\Rightarrow f^{1/n}\\sim g^{1/n}$？要小心：$\\left(\\frac fg\\right)^{1/n}\\to1$ 因為 $\\frac fg\\to1$ 而 $\\frac1n\\to0$",
+        "$(2\\pi n)^{\\frac1{2n}}=e^{\\frac{\\ln(2\\pi n)}{2n}}\\to e^0=1$",
+        "只需要 ② 的粗版本也行：",
+        "數值：$n=1000$ 時 $\\approx0.3695$；$\\frac1e\\approx0.3679$（收斂得慢，誤差 $\\sim\\frac{\\ln n}{2n}$）"
       ],
-      "collapsible": true
+      "tex": [
+        "\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}",
+        "\\frac{(n!)^{1/n}}{n}\\sim\\frac{(2\\pi n)^{\\frac1{2n}}\\cdot\\frac ne}{n}=\\frac{(2\\pi n)^{\\frac1{2n}}}{e}",
+        "\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}=\\frac1e",
+        "\\frac{\\ln n!}{n}-\\ln n=-1+O\\!\\left(\\frac{\\ln n}{n}\\right)\\to-1"
+      ]
+    },
+    {
+      "heading": "④ 中央二項式係數",
+      "body": [
+        "證明 $\\dbinom{2n}{n}\\sim\\dfrac{4^n}{\\sqrt{\\pi n}}$",
+        "三個階乘都換（全部是乘除）：",
+        "• 次方部分：$\\dfrac{(2n)^{2n}}{n^{2n}}=4^n$，$e^{2n}$ 消掉",
+        "• 根號部分：$\\dfrac{\\sqrt{4\\pi n}}{2\\pi n}=\\dfrac{1}{\\sqrt{\\pi n}}$",
+        "所以 $\\displaystyle\\lim_{n\\to\\infty}\\frac{\\sqrt n\\binom{2n}{n}}{4^n}=\\frac1{\\sqrt\\pi}$",
+        "$n=10$：$\\binom{20}{10}=184\\,756$，公式 $\\approx187\\,079$，相對誤差 $\\approx1.26\\%$（約 $\\frac1{8n}$）"
+      ],
+      "tex": [
+        "\\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}",
+        "\\sim\\frac{\\sqrt{4\\pi n}\\left(\\frac{2n}e\\right)^{2n}}{2\\pi n\\left(\\frac ne\\right)^{2n}}",
+        "\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "⑤ 證明的骨架：$C$ 存在",
+      "body": [
+        "令 $d_n=\\ln n!-\\left(n+\\tfrac12\\right)\\ln n+n$（想證 $d_n\\to\\ln C$）",
+        "令 $t=\\frac1{2n+1}$：",
+        "每一項 $>0$：$d_n$ 遞減；而且",
+        "$\\frac{t^2}{3(1-t^2)}$，$t=\\frac1{2n+1}$ ⇒ $(2n+1)^2-1=4n(n+1)$",
+        "所以 $d_n-\\frac1{12n}$ 遞增：$d_n\\ge d_1-\\frac1{12}=\\frac{11}{12}$"
+      ],
+      "tex": [
+        "d_n-d_{n+1}=\\left(n+\\tfrac12\\right)\\ln\\frac{n+1}{n}-1",
+        "\\frac{n+1}{n}=\\frac{1+t}{1-t},\\quad n+\\frac12=\\frac1{2t}",
+        "\\ln\\frac{1+t}{1-t}=2\\left(t+\\frac{t^3}3+\\frac{t^5}5+\\cdots\\right)",
+        "d_n-d_{n+1}=\\frac{t^2}3+\\frac{t^4}5+\\cdots",
+        "\\begin{aligned}d_n-d_{n+1}&\\le\\frac{t^2}{3}(1+t^2+t^4+\\cdots)\\\\&=\\frac1{12n}-\\frac1{12(n+1)}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑤ 骨架（續）：$C=\\sqrt{2\\pi}$",
+      "body": [
+        "遞減又有下界 ⇒ $d_n\\to d$，$C=e^d$：",
+        "還順便得到 $0\\le d_n-d\\le\\frac1{12n}$：這就是相對誤差約 $\\frac1{12n}$ 的來源",
+        "定常數：只用「$C$ 存在」重做 ④：",
+        "另一方面，Wallis 乘積（11.14）給：",
+        "比較兩式：$\\dfrac{\\sqrt2}{C}=\\dfrac1{\\sqrt\\pi}$ ⇒ $C=\\sqrt{2\\pi}$",
+        "數值：$d_{1000}\\approx0.91902$，$\\ln\\sqrt{2\\pi}\\approx0.91894$"
+      ],
+      "tex": [
+        "n!\\sim C\\sqrt n\\left(\\frac ne\\right)^n",
+        "\\binom{2n}{n}\\sim\\frac{\\sqrt2\\cdot4^n}{C\\sqrt n}",
+        "\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $n!\\sim\\sqrt{2\\pi n}\\left(\\frac ne\\right)^n$：相對誤差 $\\approx\\frac1{12n}\\to0$，絕對誤差 $\\to\\infty$",
+        "• $\\left(\\frac ne\\right)^n$：$\\ln n!=\\sum\\ln k\\approx\\int_1^n\\ln x\\,dx$，嚴格地 $=n\\ln n-n+O(\\ln n)$",
+        "• 用法：乘積、商、開根號裡把階乘換掉",
+        "• $\\frac{(n!)^{1/n}}n\\to\\frac1e$；$\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+        "• 證明：$d_n$ 遞減有下界 ⇒ $C$ 存在；Wallis ⇒ $C=\\sqrt{2\\pi}$",
+        "下一課：Stolz–Cesàro"
+      ]
     }
   ],
   "workedExamples": [
@@ -95,318 +195,925 @@
   ],
   "checks": [
     {
-      "ask": "Stirling 公式 $n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$ 保證的是哪一件事？",
+      "ask": "$\\displaystyle\\lim_{n\\to\\infty}\\frac{\\sqrt[n]{(2n)!}}{n^2}=$？",
       "options": [
-        { "label": "$\\frac{n!}{\\sqrt{2\\pi n}\\,(n/e)^n}\\to 1$", "correct": true },
-        { "label": "$n!-\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n\\to 0$", "why": "差其實越來越大：$n=10$ 時已經約 $30{,}104$。$\\sim$ 只保證比值 $\\to 1$。" },
-        { "label": "$n$ 夠大時 $n!=\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$", "why": "右邊從來不是整數，兩者永遠不相等，只是比值越來越接近 $1$。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}$ 是？",
-      "options": [
-        { "label": "$\\frac{1}{e}$", "correct": true },
-        { "label": "$1$", "why": "$(n!)^{1/n}\\sim\\frac{n}{e}$，不是 $\\sim n$；$e^{-n}$ 開 $n$ 次方剩 $\\frac{1}{e}$。" },
-        { "label": "$0$", "why": "$n!$ 比 $n^n$ 小得多是真的，但開 $n$ 次方之後差距只剩常數倍 $\\frac{1}{e}$。" }
-      ]
-    },
-    {
-      "ask": "$\\ln(n!)$ 的主項是？",
-      "options": [
-        { "label": "$n\\ln n$", "correct": true },
-        { "label": "$n$", "why": "後一半的 $\\frac{n}{2}$ 項每一項都至少 $\\ln\\frac{n}{2}$，總和至少 $\\frac{n}{2}\\ln\\frac{n}{2}$，比 $n$ 大得多。" },
-        { "label": "$n^2$", "why": "每一項 $\\ln k\\le\\ln n$，$n$ 項加起來最多 $n\\ln n$，到不了 $n^2$。" }
-      ]
-    },
-    {
-      "ask": "$\\binom{2n}{n}$ 漸近等價於？",
-      "options": [
-        { "label": "$\\frac{4^n}{\\sqrt{\\pi n}}$", "correct": true },
-        { "label": "$4^n$", "why": "所有 $\\binom{2n}{k}$ 加起來才是 $4^n$；中間這一項只佔其中約 $\\frac{1}{\\sqrt{\\pi n}}$ 的比例。" },
-        { "label": "$2^n$", "why": "太小了：$\\binom{2n}{n}$ 是 $2n+1$ 個加起來等於 $4^n$ 的數裡最大的，至少 $\\frac{4^n}{2n+1}$。" }
+        {
+          "label": "$\\dfrac4{e^2}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac1{e^2}$",
+          "why": "$(2n)!$ 開 $n$ 次方是 $\\left(\\frac{2n}{e}\\right)^{2}$：$2n$ 的平方是 $4n^2$"
+        },
+        {
+          "label": "$\\dfrac2{e}$",
+          "why": "$\\left(\\frac{2n}e\\right)^{2n}$ 開 $n$ 次方是平方，不是一次"
+        },
+        {
+          "label": "$0$",
+          "why": "分子也是 $n^2$ 階，比值是常數"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "公式在說什麼",
+      "title": "公式與它的意思",
       "beats": [
-        { "show": ["$n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$"],
-          "note": "$n\\to\\infty$ 時，兩者的比值 $\\to 1$。",
-          "say": "Stirling 公式說：n 很大的時候，n 階乘和右邊這一串的比值趨近一。",
+        {
+          "show": [
+            "$n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n\\quad(n\\to\\infty)$"
+          ],
+          "say": "斯特林公式：n 階乘，等價於根號 2 派 n，乘上 e 分之 n 的 n 次方。",
           "board": [
-            {"do":"write","line":"$n!{{s:\\sim}}\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$"},
-            {"do":"focus","term":"s","color":"gold","on":"比值"}
-          ] },
-        { "show": ["$a_n\\sim b_n$：比值 $\\to 1$"],
-          "note": "不是相等，也不是差 $\\to 0$。",
-          "say": "波浪號的意思：a n 波浪 b n，是 a n 除以 b n 趨近一。不是相等，也不是相減趨近零。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n\\quad(n\\to\\infty)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sim$ 的意思：比值 $\\to1$，也就是相對誤差 $\\to0$"
+          ],
+          "say": "波浪號是上一課的漸近等價：比值趨近 1，也就是相對誤差趨近 0。",
           "board": [
-            {"do":"write","line":"$a_n\\sim b_n\\iff\\frac{a_n}{b_n}\\to 1$"}
-          ] },
-        { "show": ["$n=10$：比值約 $1.0084$"],
-          "note": "$10!=3{,}628{,}800$，右邊約 $3{,}598{,}696$。",
-          "say": "拿 n 等於十試試：比值大約一點零零八四，相對誤差非常小。",
+            {
+              "do": "write",
+              "line": "$\\sim$ 的意思：比值 $\\to1$，也就是相對誤差 $\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$n=10$",
+            "• $10!=3\\,628\\,800$"
+          ],
+          "say": "用 n 等於 10 試試。10 階乘是三百六十二萬八千八百；公式給大約三百五十九萬八千七百。",
           "board": [
-            {"do":"write","line":"$n=10$：比值約 ${{r:1.0084}}$"},
-            {"do":"circle","term":"r","on":"相對誤差"}
-          ] },
-        { "show": ["但差約 $30{,}104$"],
-          "note": "而且 $n$ 越大，差越大。",
-          "say": "可是兩者的絕對差很大，而且 n 越大差越大。小的是相對誤差，不是絕對誤差。",
+            {
+              "do": "write",
+              "line": "例：$n=10$"
+            },
+            {
+              "do": "write",
+              "line": "• $10!=3\\,628\\,800$",
+              "on": "階乘"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sqrt{20\\pi}\\left(\\frac{10}{e}\\right)^{10}\\approx3\\,598\\,696$",
+              "on": "公式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 相對誤差 $\\approx0.83\\%$（約 $\\frac1{12n}$）",
+            "• 絕對誤差 $\\approx30\\,104$"
+          ],
+          "say": "相對誤差不到百分之一，大約是 12n 分之一。可是絕對誤差有三萬多。",
           "board": [
-            {"do":"write","line":"差約 ${{d:30{,}104}}$，$n$ 越大差越大"},
-            {"do":"underline","term":"d","label":"絕對差","on":"小的是"}
-          ] },
-        { "show": ["只能用在看比值的地方"],
-          "note": "乘、除、開 $n$ 次方。",
-          "say": "所以 Stirling 只能用在乘、除、開 n 次方這種看比值的地方，不能拿來算差。",
+            {
+              "do": "write",
+              "line": "• 相對誤差 $\\approx0.83\\%$（約 $\\frac1{12n}$）"
+            },
+            {
+              "do": "write",
+              "line": "• 絕對誤差 $\\approx30\\,104$",
+              "color": "gold",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 越大：相對誤差 $\\to0$，絕對誤差 $\\approx\\dfrac{n!}{12n}\\to\\infty$"
+          ],
+          "say": "n 越大，相對誤差越來越小，但絕對誤差大約是 12n 分之 n 階乘，反而衝到無限大。",
           "board": [
-            {"do":"write","line":"看比值：乘、除、開 $n$ 次方，不算差","color":"green"}
-          ] }
+            {
+              "do": "write",
+              "line": "$n$ 越大：相對誤差 $\\to0$，絕對誤差 $\\approx\\dfrac{n!}{12n}\\to\\infty$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只能拿來算比值、乘積、開根號，不能拿來算 $n!$ 減掉別的東西"
+          ],
+          "say": "所以斯特林只能用在乘積、商、開根號裡；拿來相減就不行，這正是相減不能替換的規則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只能拿來算比值、乘積、開根號，不能拿來算 $n!$ 減掉別的東西",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$\\left(\\frac ne\\right)^n$ 從哪裡來",
+      "beats": [
+        {
+          "show": [
+            "取對數，乘積變成和：",
+            "$\\ln n!=\\ln1+\\ln2+\\cdots+\\ln n=\\sum_{k=1}^n\\ln k$"
+          ],
+          "say": "為什麼是 e 分之 n 的 n 次方？取對數，乘積就變成和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取對數，乘積變成和："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln n!=\\ln1+\\ln2+\\cdots+\\ln n=\\sum_{k=1}^n\\ln k$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "和 ≈ 積分（4.6 的 Riemann 和）：",
+            "$\\int_1^n\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_1^n=n\\ln n-n+1$"
+          ],
+          "say": "和大約等於積分。用分部積分，從 1 積到 n，得 n 乘自然對數 n，減 n 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "和 ≈ 積分（4.6 的 Riemann 和）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_1^n\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_1^n=n\\ln n-n+1$",
+              "on": "乘自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\ln n!\\approx n\\ln n-n$：",
+            "$n!\\approx e^{n\\ln n-n}=\\left(\\frac ne\\right)^n$"
+          ],
+          "say": "指數回去，n 階乘大約是 e 的 n 自然對數 n 減 n 次方，正好是 e 分之 n 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\ln n!\\approx n\\ln n-n$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle n!\\approx e^{n\\ln n-n}=\\left(\\frac ne\\right)^n}}$",
+              "color": "red",
+              "on": "自然"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "好是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅色階梯面積 = ln 2 + … + ln 8 = ln 8!；藍色曲線下 = ∫₁⁸ ln x dx"
+          ],
+          "say": "圖上，紅色階梯的面積是自然對數 8 階乘，藍色曲線下的面積是積分，兩者差不多。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lnsum",
+                  "window": [
+                    0.5,
+                    8.5,
+                    -0.2,
+                    2.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "ln(x)",
+                      "color": "blue",
+                      "domain": [
+                        1,
+                        8
+                      ]
+                    },
+                    {
+                      "expr": "ln(floor(x)+1)",
+                      "color": "red",
+                      "domain": [
+                        1,
+                        7.999
+                      ]
+                    }
+                  ],
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅色階梯面積 = ln 2 + … + ln 8 = ln 8!；藍色曲線下 = ∫₁⁸ ln x dx",
+              "color": "violet",
+              "on": "藍色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln$ 遞增，每一格都夾得住：",
+            "$\\int_{k-1}^{k}\\ln x\\,dx\\le\\ln k\\le\\int_{k}^{k+1}\\ln x\\,dx$"
+          ],
+          "say": "而且夾得住：自然對數遞增，所以每一個自然對數 k，都夾在左右兩格的積分之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ln$ 遞增，每一格都夾得住："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_{k-1}^{k}\\ln x\\,dx\\le\\ln k\\le\\int_{k}^{k+1}\\ln x\\,dx}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "都夾"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "夾出來：$O(\\ln n)$",
+      "beats": [
+        {
+          "show": [
+            "$k=2$ 到 $n$ 加起來（左邊）、$k=1$ 到 $n$ 加起來（右邊）：",
+            "$\\begin{aligned}n\\ln n-n+1&\\le\\ln n!\\\\&\\le(n+1)\\ln(n+1)-n\\end{aligned}$"
+          ],
+          "say": "把 k 從 1 加到 n：左邊合成從 1 到 n 的積分，右邊合成從 1 到 n 加 1 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k=2$ 到 $n$ 加起來（左邊）、$k=1$ 到 $n$ 加起來（右邊）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}n\\ln n-n+1&\\le\\ln n!\\\\&\\le(n+1)\\ln(n+1)-n\\end{aligned}}}}$",
+              "on": "左邊"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "的積#1"
+            },
+            {
+              "do": "write",
+              "line": "　右邊 $=\\int_1^{n+1}\\ln x\\,dx=(n+1)\\ln(n+1)-(n+1)+1$",
+              "color": "violet",
+              "on": "的積#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊 $-\\,(n\\ln n-n)=n\\ln\\!\\left(1+\\frac1n\\right)+\\ln(n+1)\\le1+\\ln(n+1)$"
+          ],
+          "say": "右邊比主項只多了一點：一個不超過 1 的量，加上自然對數 n 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊 $-\\,(n\\ln n-n)=n\\ln\\!\\left(1+\\frac1n\\right)+\\ln(n+1)\\le1+\\ln(n+1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln n!=n\\ln n-n+O(\\ln n)$"
+          ],
+          "say": "所以自然對數 n 階乘，等於主項加上自然對數 n 的大 O。這是完整證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\ln n!=n\\ln n-n+O(\\ln n)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "自然#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從哪裡多出 $\\sqrt n$：梯形比長方形準",
+            "$\\ln n!\\approx\\int_1^n\\ln x\\,dx+\\frac{\\ln1+\\ln n}{2}=n\\ln n-n+1+\\frac12\\ln n$"
+          ],
+          "say": "根號 n 從哪裡來？用梯形代替長方形，多出兩端點的平均，也就是二分之一自然對數 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從哪裡多出 $\\sqrt n$：梯形比長方形準"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln n!\\approx\\int_1^n\\ln x\\,dx+\\frac{\\ln1+\\ln n}{2}=n\\ln n-n+1+\\frac12\\ln n$",
+              "on": "兩端"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n!\\approx C\\sqrt n\\left(\\frac ne\\right)^n$"
+          ],
+          "say": "指數回去，就多了一個根號 n，以及一個還不知道的常數 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle n!\\approx C\\sqrt n\\left(\\frac ne\\right)^n}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "個根"
+            },
+            {
+              "do": "write",
+              "line": "　這一行是直覺；⑤ 會證明 $C$ 存在，並說明 $C=\\sqrt{2\\pi}$",
+              "color": "violet",
+              "on": "還不"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用法：開 $n$ 次方",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}$"
+          ],
+          "say": "用法一：n 階乘開 n 次方，再除以 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先把階乘換掉（乘積、開根號都可以換）：",
+            "$\\frac{(n!)^{1/n}}{n}\\sim\\frac{(2\\pi n)^{\\frac1{2n}}\\cdot\\frac ne}{n}=\\frac{(2\\pi n)^{\\frac1{2n}}}{e}$"
+          ],
+          "say": "先把階乘換成斯特林。開 n 次方以後，e 分之 n 的 n 次方變成 e 分之 n，跟分母的 n 約掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先把階乘換掉（乘積、開根號都可以換）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(n!)^{1/n}}{n}\\sim\\frac{(2\\pi n)^{\\frac1{2n}}\\cdot\\frac ne}{n}=\\frac{(2\\pi n)^{\\frac1{2n}}}{e}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　$f\\sim g\\Rightarrow f^{1/n}\\sim g^{1/n}$？要小心：$\\left(\\frac fg\\right)^{1/n}\\to1$ 因為 $\\frac fg\\to1$ 而 $\\frac1n\\to0$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(2\\pi n)^{\\frac1{2n}}=e^{\\frac{\\ln(2\\pi n)}{2n}}\\to e^0=1$",
+            "$\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}=\\frac1e$"
+          ],
+          "say": "剩下的根號 2 派 n 開 n 次方，趨近 1。答案是 e 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(2\\pi n)^{\\frac1{2n}}=e^{\\frac{\\ln(2\\pi n)}{2n}}\\to e^0=1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}=\\frac1e}}$",
+              "color": "red",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只需要 ② 的粗版本也行：",
+            "$\\frac{\\ln n!}{n}-\\ln n=-1+O\\!\\left(\\frac{\\ln n}{n}\\right)\\to-1$"
+          ],
+          "say": "其實這題用第二節證過的粗版本就夠，答案一樣是 e 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只需要 ② 的粗版本也行："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\ln n!}{n}-\\ln n=-1+O\\!\\left(\\frac{\\ln n}{n}\\right)\\to-1$",
+              "on": "過的"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$n=1000$ 時 $\\approx0.3695$；$\\frac1e\\approx0.3679$（收斂得慢，誤差 $\\sim\\frac{\\ln n}{2n}$）",
+              "color": "violet",
+              "on": "一樣"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "從哪裡來（直覺）",
-      "beats": [
-        { "show": ["$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$"],
-          "note": "取對數，乘積變成和。",
-          "say": "先取自然對數，乘積就變成相加：自然對數曲線在一、二、一直到 n 的高度加起來。",
-          "board": [
-            {"do":"write","line":"$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$"},
-            {"do":"plot","graph":{"window":[0,6.6,-0.35,2.1],"curves":[{"expr":"log(x)","domain":[0.75,6.5],"color":"blue"}],"dashed":[[[2,0],[2,0.6931471805599453]],[[3,0],[3,1.0986122886681096]],[[4,0],[4,1.3862943611198906]],[[5,0],[5,1.6094379124341003]],[[6,0],[6,1.791759469228055]]],"points":[{"x":1,"y":0,"color":"violet"},{"x":2,"y":0.6931471805599453,"color":"violet"},{"x":3,"y":1.0986122886681096,"color":"violet"},{"x":4,"y":1.3862943611198906,"color":"violet"},{"x":5,"y":1.6094379124341003,"color":"violet"},{"x":6,"y":1.791759469228055,"color":"violet"}]},"on":"高度加起來"}
-          ] },
-        { "show": ["$\\int_1^n\\ln x\\,dx=n\\ln n-n+1$"],
-          "note": "這個和很像這個積分。",
-          "say": "這一排高度相加，很像自然對數從一積到 n，積出來是 n 自然對數 n 減 n 加一。",
-          "board": [
-            {"do":"write","line":"$\\int_1^n\\ln x\\,dx=n\\ln n-n+1$","on":"很像"}
-          ] },
-        { "show": ["$\\int\\ln x\\,dx=x\\ln x-x$"],
-          "note": "分部積分：$\\ln x$ 當一邊，$dx$ 當另一邊。",
-          "say": "這個積分用分部積分：自然對數當一邊，dx 當另一邊，得到 x 自然對數 x 減 x。",
-          "board": [
-            {"do":"write","line":"$\\int\\ln x\\,dx=x\\ln x-x$"}
-          ] },
-        { "show": ["代入 $1$ 到 $n$"],
-          "note": "下限 $x=1$ 時是 $0-1$。",
-          "say": "代進一到 n：下限 x 等於一時是零減一，減掉它就多加一。",
-          "board": [
-            {"do":"write","line":"$\\left[x\\ln x-x\\right]_1^n=(n\\ln n-n)-(-1)$"}
-          ] },
-        { "show": ["$\\ln n!\\approx n\\ln n-n$"],
-          "note": "取指數：$n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級。",
-          "say": "所以自然對數 n 階乘大約是 n 自然對數 n 減 n，取指數，就是 e 分之 n 的 n 次方這個量級。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\ln n!\\approx n\\ln n-n$","on":"所以自然對數"},
-            {"do":"write","line":"取指數：$n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級","on":"取指數"}
-          ] },
-        { "show": ["梯形法修正：多出 $\\frac{1}{2}\\ln n$"],
-          "note": "就是 $\\sqrt{n}$ 這個因子。",
-          "say": "再用梯形法把端點各算一半，多出二分之一自然對數 n，就是根號 n。常數根號二 pi 這個直覺算不出來，證明在下一節。",
-          "board": [
-            {"do":"write","line":"梯形法：多出 $\\frac{1}{2}\\ln n$ ⇒ $\\sqrt{n}$","on":"梯形法"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：先收斂再定值",
-      "beats": [
-        { "show": ["先證 $d_n$ 收斂，再用 Wallis 定常數"],
-          "say": "策略：直接證，分兩段。先證明一個差值數列收斂到某個常數，再用 Wallis 乘積把常數算出來。",
-          "board": [
-            {"do":"write","line":"先證 ${{d:d_n}}$ 收斂，再用 Wallis 定常數","tint":{"d":"blue"}}
-          ] },
-        { "show": ["$d_n=\\ln n!-\\left(n+\\frac{1}{2}\\right)\\ln n+n$"],
-          "note": "要證它收斂到某個常數 $C$。",
-          "say": "d n 是自然對數 n 階乘，減掉 n 加二分之一乘自然對數 n，再加 n，就是直覺那一串的誤差。",
-          "board": [
-            {"do":"write","line":"${{d:d_n}}=\\ln n!-\\left(n+\\frac{1}{2}\\right)\\ln n+n$"}
-          ] },
-        { "show": ["$d_n-d_{n+1}=O\\left(\\frac{1}{n^2}\\right)$"],
-          "note": "梯形法估 $\\int_k^{k+1}\\ln x\\,dx$ 的誤差。",
-          "say": "相鄰兩項的差，就是梯形法估自然對數積分的誤差，大小跟 n 平方分之一同級。",
-          "board": [
-            {"do":"write","line":"${{df:{{d:d_n}}-d_{n+1}}}=O\\left(\\frac{1}{n^2}\\right)$"},
-            {"do":"underline","term":"df","label":"梯形法誤差","on":"梯形法"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n^2}$ 收斂 ⇒ $d_n\\to C$"],
-          "note": "相鄰差的總和收斂，$d_n$ 就收斂。",
-          "why": {"ask":"為什麼 $d_n$ 收斂？","say":"憑什麼說 d n 收斂？","options":[{"label":"相鄰差的級數被 $\\sum\\frac{1}{n^2}$ 壓住，絕對收斂","correct":true},{"label":"相鄰差 $\\to0$ 就夠","why":"不夠：$\\ln n$ 的相鄰差也趨近零，$\\ln n$ 卻發散。要相鄰差加起來收斂。"},{"label":"$d_n$ 一直變小","why":"我們只估了差的大小，沒管正負；靠的是差的級數絕對收斂。"}]},
-          "say": "d n 等於第一項減掉前面所有相鄰差的和；差被 n 平方分之一壓住，總和收斂，d n 就收斂。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{d:d_n}}\\to C$","on":"憑什麼"},
-            {"do":"write","line":"$\\sum\\frac{1}{n^2}$ 收斂 ⇒ 相鄰差的總和收斂","why":true,"on":"差被"}
-          ] },
-        { "show": ["$n!\\sim e^C\\sqrt{n}\\left(\\frac{n}{e}\\right)^n$，$e^C=\\sqrt{2\\pi}$"],
-          "note": "代進〈Wallis 乘積〉那個比值，解出 $e^C$。",
-          "why": {"ask":"$e^C$ 怎麼定出來？","say":"常數 C 存在了，它的值要怎麼找？","options":[{"label":"代進 Wallis 乘積的極限，解出來","correct":true},{"label":"從梯形法的誤差算出來","why":"梯形法只證明了 $C$ 存在，給不出它的值。"},{"label":"就是 $d_1$","why":"$d_1$ 只是第一項；$C$ 是極限，要另一個已知的極限才解得出來。"}]},
-          "say": "取指數得到 n 階乘的形狀。把它代進 Wallis 乘積那個比值，二分之 pi 就解出 e 的 C 次方是根號二 pi。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$n!\\sim e^C\\sqrt{n}\\left(\\frac{n}{e}\\right)^n$","on":"常數 C"},
-            {"do":"write","line":"Wallis：$\\ {{c:e^C=\\sqrt{2\\pi}}}$","why":true,"on":"Wallis"},
-            {"do":"box","term":"c","color":"green","why":true,"on":"解出"}
-          ] },
-        { "show": ["Wallis：$\\frac{4^n(n!)^2}{(2n)!}\\sim\\sqrt{\\pi n}$"],
-          "note": "$n!$ 與 $(2n)!$ 都換成 Stirling 的形狀。",
-          "say": "Wallis 的結果：四的 n 次方乘 n 階乘平方，除以二 n 階乘，約根號 pi n。代入形狀，就解出 e 的 C 次方。",
-          "board": [
-            {"do":"write","line":"$\\frac{4^n(n!)^2}{(2n)!}\\sim\\sqrt{\\pi n}$"},
-            {"do":"write","line":"代入：$\\frac{e^C\\sqrt{n}}{\\sqrt{2}}=\\sqrt{\\pi n}$","on":"代入形狀"}
-          ] }
-      ],
-      "key": "相鄰差可加總，常數交給 Wallis",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "定義 $d_n$"
-          },
-          {
-            "label": "梯形法：$d_n-d_{n+1}=O\\left(\\frac{1}{n^2}\\right)$",
-            "why": "要先有 $d_n$，才能估相鄰兩項的差。"
-          },
-          {
-            "label": "$d_n\\to C$",
-            "why": "要先知道相鄰差是 $O\\left(\\frac{1}{n^2}\\right)$，差的總和才收斂。"
-          },
-          {
-            "label": "Wallis：$e^C=\\sqrt{2\\pi}$",
-            "why": "要先知道常數 $C$ 存在，才能用 Wallis 解出它。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "開 $n$ 次方",
-      "beats": [
-        { "show": ["先把階乘換掉，再化簡"],
-          "note": "$\\sim$ 在乘積與商裡可以替換。",
-          "say": "用法很固定：每個 n 階乘換成 Stirling 那一串，再把 e 的次方、n 的次方各自合併。",
-          "board": [
-            {"do":"write","line":"$n!\\sim{{s:\\sqrt{2\\pi n}}}{{p:\\left(\\frac{n}{e}\\right)^n}}$","tint":{"s":"blue","p":"violet"}},
-            {"do":"write","line":"$(n!)^{1/n}\\sim\\left[{{s:\\sqrt{2\\pi n}}}{{p:\\left(\\frac{n}{e}\\right)^n}}\\right]^{1/n}$","tint":{"s":"blue","p":"violet"},"on":"再把"}
-          ] },
-        { "show": ["$(n!)^{1/n}\\sim(2\\pi n)^{1/(2n)}\\cdot\\frac{n}{e}$"],
-          "say": "開 n 次方：根號二 pi n 變成二 pi n 的二 n 分之一次方，e 分之 n 的 n 次方變成 e 分之 n。",
-          "board": [
-            {"do":"transform","line":"$(n!)^{1/n}\\sim{{a:(2\\pi n)^{1/(2n)}}}\\cdot{{b:\\frac{n}{e}}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","color":"blue","on":"二 n 分之一次方"},
-            {"do":"focus","term":"b","color":"violet","on":"變成#2"}
-          ] },
-        { "show": ["$(2\\pi n)^{1/(2n)}\\to 1$"],
-          "note": "$\\frac{\\ln(2\\pi n)}{2n}\\to 0$：對數 $\\ll$ 冪次。",
-          "say": "前面那個因子取對數，是對數除以冪次，趨近零，所以它趨近一，可以丟掉。",
-          "board": [
-            {"do":"write","line":"${{l:\\frac{\\ln(2\\pi n)}{2n}}}\\to 0\\ \\Rightarrow\\ {{a:(2\\pi n)^{1/(2n)}}}\\to {{o:1}}$","tint":{"a":"blue"}},
-            {"do":"underline","term":"l","on":"對數除以冪次"},
-            {"do":"circle","term":"o","on":"趨近一"}
-          ] },
-        { "show": ["曲線一路往下，貼近零"],
-          "note": "對數長得比冪次慢。",
-          "say": "畫出來看：二 n 分之自然對數二 pi n 的曲線一路往下，貼近零。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,30,-0.2,1.2],"curves":[{"expr":"log(2*PI*x)/(2*x)","domain":[1,30],"color":"blue"}]}}
-          ] }
-      ],
-      "check": 1
-    },
-    {
       "title": "中央二項式係數",
       "beats": [
-        { "show": ["$\\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}$"],
-          "note": "分母的 $n!$ 有兩個，兩個都要換。",
-          "say": "二 n 取 n 是二 n 階乘除以 n 階乘的平方。分母有兩個 n 階乘，兩個都要換。",
+        {
+          "show": [
+            "證明 $\\dbinom{2n}{n}\\sim\\dfrac{4^n}{\\sqrt{\\pi n}}$",
+            "$\\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}$"
+          ],
+          "say": "用法二：中央二項式係數，2n 取 n。它等於 2n 階乘除以 n 階乘的平方。",
           "board": [
-            {"do":"write","line":"$\\binom{2n}{n}=\\frac{(2n)!}{ {{dd:(n!)^2}} }$"},
-            {"do":"underline","term":"dd","label":"兩個都要換","on":"兩個 n 階乘"}
-          ] },
-        { "show": ["分子 $\\sqrt{4\\pi n}\\left(\\frac{2n}{e}\\right)^{2n}$","分母 $2\\pi n\\left(\\frac{n}{e}\\right)^{2n}$"],
-          "say": "分子把 n 換成二 n；分母是 Stirling 的平方，根號部分平方變成二 pi n。",
+            {
+              "do": "write",
+              "line": "證明 $\\dbinom{2n}{n}\\sim\\dfrac{4^n}{\\sqrt{\\pi n}}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}$",
+              "on": "它等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三個階乘都換（全部是乘除）：",
+            "$\\sim\\frac{\\sqrt{4\\pi n}\\left(\\frac{2n}e\\right)^{2n}}{2\\pi n\\left(\\frac ne\\right)^{2n}}$"
+          ],
+          "say": "三個階乘都換成斯特林。全部是乘和除，可以放心換。",
           "board": [
-            {"do":"write","line":"分子 ${{r1:\\sqrt{4\\pi n}}}\\left(\\frac{2n}{e}\\right)^{2n}$","tint":{"r1":"blue"},"on":"分子"},
-            {"do":"write","line":"分母 ${{r2:2\\pi n}}\\left(\\frac{n}{e}\\right)^{2n}$","tint":{"r2":"violet"},"on":"分母是"}
-          ] },
-        { "show": ["根號部分：$\\frac{\\sqrt{4\\pi n}}{2\\pi n}=\\frac{1}{\\sqrt{\\pi n}}$"],
-          "say": "先算根號部分：根號四 pi n 除以二 pi n，等於根號 pi n 分之一。",
+            {
+              "do": "write",
+              "line": "三個階乘都換（全部是乘除）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sim\\frac{\\sqrt{4\\pi n}\\left(\\frac{2n}e\\right)^{2n}}{2\\pi n\\left(\\frac ne\\right)^{2n}}$",
+              "on": "部是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 次方部分：$\\dfrac{(2n)^{2n}}{n^{2n}}=4^n$，$e^{2n}$ 消掉",
+            "• 根號部分：$\\dfrac{\\sqrt{4\\pi n}}{2\\pi n}=\\dfrac{1}{\\sqrt{\\pi n}}$"
+          ],
+          "say": "次方的部分，2n 的 2n 次方除以 n 的 2n 次方，剩 4 的 n 次方；根號的部分剩根號派 n 分之一。證明完畢。",
           "board": [
-            {"do":"write","line":"根號部分：$\\frac{ {{r1:\\sqrt{4\\pi n}}} }{ {{r2:2\\pi n}} }=\\frac{1}{\\sqrt{\\pi n}}$"}
-          ] },
-        { "show": ["次方部分：$e$ 先約掉","再把底數相除"],
-          "note": "指數相同，可以合在一起。",
-          "say": "e 的二 n 次方上下約掉，剩二 n 的二 n 次方除以 n 的二 n 次方。指數相同，底數可以先相除。",
+            {
+              "do": "write",
+              "line": "• 次方部分：$\\dfrac{(2n)^{2n}}{n^{2n}}=4^n$，$e^{2n}$ 消掉"
+            },
+            {
+              "do": "write",
+              "line": "• 根號部分：$\\dfrac{\\sqrt{4\\pi n}}{2\\pi n}=\\dfrac{1}{\\sqrt{\\pi n}}$",
+              "on": "方除"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "次方#4"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "剩根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\displaystyle\\lim_{n\\to\\infty}\\frac{\\sqrt n\\binom{2n}{n}}{4^n}=\\frac1{\\sqrt\\pi}$"
+          ],
+          "say": "換句話說，根號 n 乘 2n 取 n，再除以 4 的 n 次方，趨近根號派分之一。",
           "board": [
-            {"do":"write","line":"$\\frac{(2n)^{2n}}{n^{2n}}$"},
-            {"do":"write","line":"$=\\left(\\frac{2n}{n}\\right)^{2n}$","on":"指數相同"}
-          ] }
+            {
+              "do": "write",
+              "line": "所以 $\\displaystyle\\lim_{n\\to\\infty}\\frac{\\sqrt n\\binom{2n}{n}}{4^n}=\\frac1{\\sqrt\\pi}$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$n=10$：$\\binom{20}{10}=184\\,756$，公式 $\\approx187\\,079$，相對誤差 $\\approx1.26\\%$（約 $\\frac1{8n}$）",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "擲 $2n$ 次公正硬幣，正反剛好各半的機率 $\\dfrac{\\binom{2n}{n}}{4^n}$ 大約是？"
+          ],
+          "say": "先猜猜看。擲 2n 次硬幣，正反剛好各一半的機率，n 很大時大約是多少？"
+        }
       ],
-      "key": "分母的兩個 $n!$ 都要換掉",
       "predict": {
-        "ask": "次方部分 $\\frac{(2n/e)^{2n}}{(n/e)^{2n}}$ 是？",
+        "ask": "擲 $2n$ 次公正硬幣，==正反剛好各半==的機率 $\\dfrac{\\binom{2n}{n}}{4^n}$ 大約是？",
         "options": [
           {
-            "label": "$4^n$",
+            "label": "$\\dfrac{1}{\\sqrt{\\pi n}}$，慢慢趨近 $0$",
             "correct": true
           },
           {
-            "label": "$2^n$",
-            "why": "底數相除得 $2$，但指數是 $2n$：$2^{2n}=4^n$。"
+            "label": "$\\dfrac12$",
+            "why": "直覺上「最可能的結果」，但可能的結果有 $2n+1$ 種，各半的機率會變小"
           },
           {
-            "label": "$\\frac{4^n}{e^n}$",
-            "why": "$e$ 的次方上下都是 $2n$，整個約掉了。"
+            "label": "趨近一個正的常數",
+            "why": "機率像 $\\frac1{\\sqrt n}$ 一樣衰減，極限是 $0$"
+          },
+          {
+            "label": "$\\dfrac{1}{2^n}$，很快趨近 $0$",
+            "why": "$\\binom{2n}{n}$ 本身就有 $\\frac{4^n}{\\sqrt{\\pi n}}$ 那麼大，不是 $2^n$"
           }
         ]
       }
     },
     {
-      "title": "合起來",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"],
-          "say": "兩部分乘起來，二 n 取 n 等價於四的 n 次方除以根號 pi n。",
-          "board": [
-            {"do":"write","line":"$\\binom{2n}{n}\\sim$ 根號部分 × 次方部分"}
-          ] },
-        { "show": ["$\\sqrt{n}\\cdot\\frac{\\binom{2n}{n}}{4^n}\\to\\frac{1}{\\sqrt{\\pi}}$"],
-          "say": "所以乘上根號 n 再除以四的 n 次方，極限是根號 pi 分之一。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{n}\\cdot\\frac{\\binom{2n}{n}}{4^n}\\to{{r:\\frac{1}{\\sqrt{\\pi}}}}$"},
-            {"do":"box","term":"r","color":"green","on":"極限是"}
-          ] },
-        { "show": ["漏了 $\\sqrt{2\\pi n}$，比值會錯"],
-          "note": "開 $n$ 次方時沒差，算比值時差一個 $\\sqrt{n}$ 的倍數。",
-          "say": "常見的錯：只寫 e 分之 n 的 n 次方。開 n 次方時沒差，算這種比值時答案就差了根號 n 的倍數。",
-          "board": [
-            {"do":"write","line":"只寫 ${{w:\\left(\\frac{n}{e}\\right)^n}}$：比值差 $\\sqrt{n}$ 倍"},
-            {"do":"strike","term":"w","label":"少了根號","on":"開 n 次方"}
-          ] }
+        {
+          "show": [
+            "用 Stirling 算含階乘的極限"
+          ],
+          "say": "排排看步驟。"
+        }
       ],
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "用 Stirling 算含階乘的極限",
+        "steps": [
+          {
+            "label": "確認階乘只出現在乘積、商或開根號裡"
+          },
+          {
+            "label": "把每個 $n!$ 換成 $\\sqrt{2\\pi n}\\left(\\frac ne\\right)^n$",
+            "why": "先要有上一步：確認階乘只出現在乘積、商或開根號裡"
+          },
+          {
+            "label": "先合併 $n^n$、$e^n$ 這些次方部分",
+            "why": "先要有上一步：把每個 $n!$ 換成 $\\sqrt{2\\pi n}\\left(\\frac ne\\right)^n$"
+          },
+          {
+            "label": "再處理根號與常數部分",
+            "why": "先要有上一步：先合併 $n^n$、$e^n$ 這些次方部分"
+          }
+        ]
+      }
+    },
+    {
+      "title": "證明的骨架：$C$ 存在",
+      "beats": [
+        {
+          "show": [
+            "令 $d_n=\\ln n!-\\left(n+\\tfrac12\\right)\\ln n+n$（想證 $d_n\\to\\ln C$）"
+          ],
+          "say": "最後看證明的骨架。令 d n 等於自然對數 n 階乘減掉直覺的主項。要證它收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $d_n=\\ln n!-\\left(n+\\tfrac12\\right)\\ln n+n$（想證 $d_n\\to\\ln C$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$d_n-d_{n+1}=\\left(n+\\tfrac12\\right)\\ln\\frac{n+1}{n}-1$"
+          ],
+          "say": "相鄰兩項相減，n 階乘的部分大多消掉，剩下 n 加二分之一乘自然對數 n 分之 n 加 1，減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle d_n-d_{n+1}=\\left(n+\\tfrac12\\right)\\ln\\frac{n+1}{n}-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $t=\\frac1{2n+1}$：",
+            "$\\frac{n+1}{n}=\\frac{1+t}{1-t},\\quad n+\\frac12=\\frac1{2t}$"
+          ],
+          "say": "令 t 等於 2n 加 1 分之一，比值變成 1 減 t 分之 1 加 t，它的自然對數有一個奇次方的級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $t=\\frac1{2n+1}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{n+1}{n}=\\frac{1+t}{1-t},\\quad n+\\frac12=\\frac1{2t}$",
+              "on": "比值"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\frac{1+t}{1-t}=2\\left(t+\\frac{t^3}3+\\frac{t^5}5+\\cdots\\right)$",
+              "on": "它的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$d_n-d_{n+1}=\\frac{t^2}3+\\frac{t^4}5+\\cdots$"
+          ],
+          "say": "代回去，d n 減 d n 加 1，等於 3 分之 t 平方，加 5 分之 t 四次方，一直下去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle d_n-d_{n+1}=\\frac{t^2}3+\\frac{t^4}5+\\cdots}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一項 $>0$：$d_n$ 遞減；而且",
+            "$\\begin{aligned}d_n-d_{n+1}&\\le\\frac{t^2}{3}(1+t^2+t^4+\\cdots)\\\\&=\\frac1{12n}-\\frac1{12(n+1)}\\end{aligned}$"
+          ],
+          "say": "每一項都是正的，所以 d n 遞減。又被一個幾何級數控制，算出來是兩個 12n 分之一的差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一項 $>0$：$d_n$ 遞減；而且"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}d_n-d_{n+1}&\\le\\frac{t^2}{3}(1+t^2+t^4+\\cdots)\\\\&=\\frac1{12n}-\\frac1{12(n+1)}\\end{aligned}}$",
+              "on": "遞減"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{t^2}{3(1-t^2)}$，$t=\\frac1{2n+1}$ ⇒ $(2n+1)^2-1=4n(n+1)$",
+              "color": "violet",
+              "on": "出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $d_n-\\frac1{12n}$ 遞增：$d_n\\ge d_1-\\frac1{12}=\\frac{11}{12}$"
+          ],
+          "say": "所以 d n 減 12n 分之一是遞增的，d n 有下界 12 分之 11。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $d_n-\\frac1{12n}$ 遞增：$d_n\\ge d_1-\\frac1{12}=\\frac{11}{12}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "骨架（續）：$C=\\sqrt{2\\pi}$",
+      "beats": [
+        {
+          "show": [
+            "遞減又有下界 ⇒ $d_n\\to d$，$C=e^d$：",
+            "$n!\\sim C\\sqrt n\\left(\\frac ne\\right)^n$"
+          ],
+          "say": "遞減又有下界，d n 收斂。令 C 等於 e 的極限次方，就證明了 C 存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遞減又有下界 ⇒ $d_n\\to d$，$C=e^d$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle n!\\sim C\\sqrt n\\left(\\frac ne\\right)^n}}$",
+              "on": "收斂"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "的極"
+            },
+            {
+              "do": "write",
+              "line": "　還順便得到 $0\\le d_n-d\\le\\frac1{12n}$：這就是相對誤差約 $\\frac1{12n}$ 的來源",
+              "color": "violet",
+              "on": "就證"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定常數：只用「$C$ 存在」重做 ④：",
+            "$\\binom{2n}{n}\\sim\\frac{\\sqrt2\\cdot4^n}{C\\sqrt n}$"
+          ],
+          "say": "剩下常數。把第四節重做一次，但只用 C：中央二項式係數等價於根號 2 乘 4 的 n 次方，除以 C 根號 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定常數：只用「$C$ 存在」重做 ④："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\binom{2n}{n}\\sim\\frac{\\sqrt2\\cdot4^n}{C\\sqrt n}$",
+              "on": "價於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另一方面，Wallis 乘積（11.14）給：",
+            "$\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"
+          ],
+          "say": "另一方面，瓦里斯乘積會獨立地給出同一個係數的漸近式。這要等到 11.14 才證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "另一方面，Wallis 乘積（11.14）給："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+              "on": "數的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較兩式：$\\dfrac{\\sqrt2}{C}=\\dfrac1{\\sqrt\\pi}$ ⇒ $C=\\sqrt{2\\pi}$"
+          ],
+          "say": "兩個式子一比，根號 2 除以 C 等於根號派分之一，所以 C 等於根號 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比較兩式：$\\dfrac{\\sqrt2}{C}=\\dfrac1{\\sqrt\\pi}$ ⇒ $C=\\sqrt{2\\pi}$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$d_{1000}\\approx0.91902$，$\\ln\\sqrt{2\\pi}\\approx0.91894$",
+              "color": "violet",
+              "on": "號派"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $n!\\sim\\sqrt{2\\pi n}\\left(\\frac ne\\right)^n$：相對誤差 $\\approx\\frac1{12n}\\to0$，絕對誤差 $\\to\\infty$",
+            "• $\\left(\\frac ne\\right)^n$：$\\ln n!=\\sum\\ln k\\approx\\int_1^n\\ln x\\,dx$，嚴格地 $=n\\ln n-n+O(\\ln n)$"
+          ],
+          "say": "整理：斯特林說的是相對誤差趨近 0；主項來自和與積分的比較；只在乘除和開根號裡換；常數由瓦里斯定出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $n!\\sim\\sqrt{2\\pi n}\\left(\\frac ne\\right)^n$：相對誤差 $\\approx\\frac1{12n}\\to0$，絕對誤差 $\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\left(\\frac ne\\right)^n$：$\\ln n!=\\sum\\ln k\\approx\\int_1^n\\ln x\\,dx$，嚴格地 $=n\\ln n-n+O(\\ln n)$",
+              "on": "對誤"
+            },
+            {
+              "do": "write",
+              "line": "• 用法：乘積、商、開根號裡把階乘換掉",
+              "on": "來自"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{(n!)^{1/n}}n\\to\\frac1e$；$\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+              "on": "只在"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$d_n$ 遞減有下界 ⇒ $C$ 存在；Wallis ⇒ $C=\\sqrt{2\\pi}$",
+              "on": "常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Stolz–Cesàro"
+          ],
+          "say": "下一課，學數列版的羅必達：施托爾茨切薩羅定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Stolz–Cesàro"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["stirling", "asymptotics", "central-binomial"],
-    "fine": ["stirling-ratio", "stirling-nth-root", "stirling-central-binomial", "stirling-log-factorial"]
+    "coarse": [
+      "stirling",
+      "asymptotics",
+      "central-binomial"
+    ],
+    "fine": [
+      "stirling-ratio",
+      "stirling-nth-root",
+      "stirling-central-binomial",
+      "stirling-log-factorial"
+    ]
   },
   "practice": [
-    { "id": "lm-nr-005", "core": true, "trains": "stirling-ratio" },
-    { "id": "cx-hl-004", "core": true, "trains": "stirling-nth-root" },
-    { "id": "lm-nr-004", "core": true, "trains": "stirling-nth-root" },
-    { "id": "world-035", "core": true, "trains": "stirling-nth-root" },
-    { "id": "fd-limx-609", "core": true, "trains": "stirling-ratio" },
-    { "id": "dm-seq-004", "core": true, "trains": "stirling-central-binomial" },
-    { "id": "cg-11a-007", "core": true, "trains": "stirling-log-factorial" },
-    { "id": "world-067", "trains": "stirling-nth-root" },
-    { "id": "cg-11a-008", "trains": "stirling-log-factorial" },
-    { "id": "world-074", "challenge": true, "trains": "stirling-central-binomial", "note": "挑戰：倒數形式，答案是 $\\sqrt{\\pi}$；$\\sqrt{n}$ 的位置要看清楚。" }
+    {
+      "id": "lm-nr-005",
+      "core": true,
+      "trains": "stirling-ratio"
+    },
+    {
+      "id": "cx-hl-004",
+      "core": true,
+      "trains": "stirling-nth-root"
+    },
+    {
+      "id": "lm-nr-004",
+      "core": true,
+      "trains": "stirling-nth-root"
+    },
+    {
+      "id": "world-035",
+      "core": true,
+      "trains": "stirling-nth-root"
+    },
+    {
+      "id": "fd-limx-609",
+      "core": true,
+      "trains": "stirling-ratio"
+    },
+    {
+      "id": "dm-seq-004",
+      "core": true,
+      "trains": "stirling-central-binomial"
+    },
+    {
+      "id": "cg-11a-007",
+      "core": true,
+      "trains": "stirling-log-factorial"
+    },
+    {
+      "id": "world-067",
+      "trains": "stirling-nth-root"
+    },
+    {
+      "id": "cg-11a-008",
+      "trains": "stirling-log-factorial"
+    },
+    {
+      "id": "world-074",
+      "challenge": true,
+      "trains": "stirling-central-binomial",
+      "note": "挑戰：倒數形式，答案是 $\\sqrt{\\pi}$；$\\sqrt{n}$ 的位置要看清楚。"
+    }
   ],
   "gaps": []
 }

@@ -1,58 +1,134 @@
 {
   "id": "sup-inf",
   "title": "上確界與下確界",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["bounds", "max-min"],
-  "next": ["completeness-axiom"],
-  "related": ["archimedean-property"],
-  "objectives": [
-    "說得出上確界的定義：最小的上界，而且它不一定屬於集合。",
-    "會用 $\\varepsilon$ 判準證明某個數就是 $\\sup S$：它是上界，而且任何比它小一點的數都不是上界。",
-    "分得清 $\\sup$ 與 $\\max$：$\\max$ 存在時兩者相等；$\\max$ 不存在時 $\\sup$ 仍可能存在。"
+  "prerequisites": [
+    "bounds",
+    "max-min"
   ],
-  "visual": "數線上畫出 S = {1 − 1/n} 的點：0, 1/2, 2/3, 3/4, … 越來越密地擠向 1。拖一條紅色直線 y = s：s ≥ 1 時所有點都在線的左邊（是上界）；把 s 拉到 1 − ε，立刻有點跑到右邊，並標出第一個越界的 n。",
+  "next": [
+    "completeness-axiom"
+  ],
+  "related": [
+    "archimedean-property"
+  ],
+  "objectives": [
+    "說得出上確界的定義：最小的上界，而且它不一定屬於集合",
+    "會用 $\\varepsilon$ 判準證明某個數就是 $\\sup S$：它是上界，而且任何比它小一點的數都不是上界",
+    "分得清 $\\sup$ 與 $\\max$：$\\max$ 存在時兩者相等",
+    "$\\max$ 不存在時 $\\sup$ 仍可能存在"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 沒有最大元，但有一個「天花板」",
+      "heading": "① 沒有最大元，但有天花板",
       "body": [
-        "$S=\\{1-\\frac{1}{n}:n\\in\\mathbb{N}\\}=\\{0,\\frac{1}{2},\\frac{2}{3},\\frac{3}{4},\\dots\\}$。每一項都小於 1，所以 1 是 $S$ 的上界；2、10 也都是上界。",
-        "$S$ 沒有最大元：任何一項 $1-\\frac{1}{n}$，下一項 $1-\\frac{1}{n+1}$ 都比它大。但所有上界裡有一個最小的，就是 1。這個「最小的上界」叫做 $S$ 的上確界，寫成 $\\sup S$。"
+        "上界們 $=[1,\\infty)$：這個集合有最小元 $1$",
+        "「最小的上界」叫上確界，記作 $\\sup S$",
+        "sup 是 supremum；也叫最小上界（least upper bound）"
       ],
-      "collapsible": false
+      "tex": [
+        "S=\\left\\{1-\\frac1n:n\\in\\mathbb{N}\\right\\}=\\left\\{0,\\ \\frac12,\\ \\frac23,\\ \\frac34,\\dots\\right\\}"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $S\\subseteq\\mathbb{R}$ 非空。實數 $s$ 叫做 $S$ 的上確界（最小上界），如果：(i) $s$ 是 $S$ 的上界，也就是對所有 $x\\in S$，$x\\le s$；(ii) 若 $b$ 是 $S$ 的任一上界，則 $s\\le b$。",
-        "下確界 $\\inf S$ 對稱地定義：最大的下界。由 (ii)，上確界若存在就唯一：兩個都是最小上界，就互相 $\\le$，所以相等。"
+        "$s=\\sup S$（$S$ 的上確界）：",
+        "下確界 $\\inf S$：(i) 是下界；(ii) 每個下界 $\\ell\\le\\inf S$",
+        "inf 是 infimum；也叫最大下界",
+        "唯一：$s,s'$ 都是上確界 ⇒ 互為上界 ⇒ $s\\le s'$ 且 $s'\\le s$",
+        "跟最大元比：沒有要求 $s\\in S$",
+        "(ii) 很難直接驗：「所有上界」是一大堆數",
+        "換個說法：比 $s$ 小的數都不是上界"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\text{(i)}\\ \\ \\forall x\\in S,\\ x\\le s\\\\&\\text{(ii)}\\ \\ \\text{若 }u\\text{ 是 }S\\text{ 的上界，則 }s\\le u\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 實際在用的版本：$\\varepsilon$ 判準",
+      "heading": "③ 實際在用的版本：ε 判準",
       "body": [
-        "條件 (ii) 很難直接檢查，因為上界有無限多個。等價的說法是：$s=\\sup S$ 若且唯若 (i) $s$ 是上界，而且 (ii′) 對每一個 $\\varepsilon>0$，都存在 $x\\in S$ 使得 $x>s-\\varepsilon$。",
-        "人話：$s$ 往下退任何一點點，就不再是上界了。注意量詞順序：先給 $\\varepsilon$，再找 $x$；不同的 $\\varepsilon$ 可以找不同的 $x$。"
+        "比 $s$ 小的數寫成 $s-\\varepsilon$（$\\varepsilon>0$）。它不是上界：",
+        "判準：設 $s$ 是 $S$ 的上界。則",
+        "人話：s 是天花板，而且集合貼得到 s 底下任何一點",
+        "證明的套路：給 $\\varepsilon$ → 找 $x$"
       ],
-      "tex": ["s=\\sup S\\iff\\begin{cases}\\forall x\\in S,\\ x\\le s\\\\ \\forall\\varepsilon>0\\ \\exists x\\in S,\\ x>s-\\varepsilon\\end{cases}"],
-      "collapsible": false
+      "tex": [
+        "\\text{(ii}'\\text{)}\\ \\ \\forall\\varepsilon>0\\ \\ \\exists x\\in S:\\ \\ x>s-\\varepsilon",
+        "\\begin{aligned}&s=\\sup S\\\\\\iff\\ &\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon\\end{aligned}"
+      ]
     },
     {
-      "heading": "證明：(ii) 與 (ii′) 等價",
+      "heading": "證明：兩種說法等價",
       "body": [
-        "(ii) $\\Rightarrow$ (ii′)：給定 $\\varepsilon>0$。$s-\\varepsilon<s$，由 (ii)，$s-\\varepsilon$ 不可能是上界（否則 $s\\le s-\\varepsilon$）。「不是上界」的意思正是：存在 $x\\in S$ 使 $x>s-\\varepsilon$。",
-        "(ii′) $\\Rightarrow$ (ii)：設 $b$ 是上界，要證 $s\\le b$。反設 $b<s$，取 $\\varepsilon=s-b>0$。由 (ii′) 有 $x\\in S$ 使 $x>s-\\varepsilon=b$，與 $b$ 是上界矛盾。所以 $s\\le b$。"
+        "策略：兩個方向都是反證：比 $s$ 小的上界會出矛盾",
+        "(ii) ⇒ (ii′)：給定 $\\varepsilon>0$。若 $s-\\varepsilon$ 是上界，由 (ii)：",
+        "矛盾。所以 $s-\\varepsilon$ 不是上界：$\\exists x\\in S,\\ x>s-\\varepsilon$",
+        "(ii′) ⇒ (ii)：設 $u$ 是上界。假設 $u<s$，取 $\\varepsilon=s-u>0$",
+        "由 (ii′)：$\\exists x\\in S$，",
+        "$x>u$ 跟「$u$ 是上界」矛盾。所以 $u\\ge s$　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "s\\le s-\\varepsilon\\ \\Rightarrow\\ \\varepsilon\\le0",
+        "x>s-\\varepsilon=s-(s-u)=u"
+      ]
     },
     {
-      "heading": "④ $\\sup$ 與 $\\max$ 的關係",
+      "heading": "③ 例：$\\sup\\{1-\\frac1n\\}=1$",
       "body": [
-        "如果 $S$ 有最大元 $m$，那麼 $\\sup S=m$：$m$ 是上界，而且任何上界 $b$ 都 $\\ge m$（因為 $m\\in S$）。反過來，$\\sup S$ 屬於 $S$ 時它就是最大元。",
-        "所以 $\\sup$ 是 $\\max$ 的推廣：$\\max$ 只在「天花板剛好被摸到」時存在，$\\sup$ 只要 $S$ 非空、有上界就存在——這件事不是證出來的，而是實數的公理，見〈完備性公理〉。"
+        "(i)：$1-\\dfrac1n<1$，所以 $1$ 是上界",
+        "(ii′)：給定 $\\varepsilon>0$，要找 $n$ 使",
+        "「有正整數比 $\\frac1\\varepsilon$ 大」：12.11 阿基米德性質",
+        "取這樣的 $n$，$x=1-\\frac1n\\in S$ 且 $x>1-\\varepsilon$。所以 $\\sup S=1$　$\\blacksquare$",
+        "例：$\\varepsilon=0.01$ → $n=101$：$1-\\frac1{101}\\approx0.9901>0.99$",
+        "下確界：$\\inf S=0=\\min S$（$n=1$ 取到）"
       ],
-      "collapsible": false
+      "tex": [
+        "1-\\frac1n>1-\\varepsilon\\iff\\frac1n<\\varepsilon\\iff n>\\frac1\\varepsilon"
+      ]
+    },
+    {
+      "heading": "④ sup 與 max",
+      "body": [
+        "定理：$\\max S$ 存在 ⇒ $\\sup S=\\max S$",
+        "證明：$m=\\max S$。(i) $m$ 是上界（最大元的定義）",
+        "(ii) 任一上界 $u$：$m\\in S$ ⇒ $m\\le u$　$\\blacksquare$",
+        "反過來：$\\sup S\\in S$ ⇒ 它就是 $\\max S$",
+        "例：$\\{(-1)^n(1+\\frac1n)\\}$：$\\sup=\\max=\\frac32$，$\\inf=\\min=-2$"
+      ],
+      "tex": [
+        "\\max S\\text{ 存在}\\iff\\sup S\\in S"
+      ]
+    },
+    {
+      "heading": "④ 例：先增後減",
+      "body": [
+        "猜 $\\sup S=\\frac12$，而且取得到：要證 $\\max S=\\frac12$",
+        "$\\frac12\\in S$（$n=1$）；要證",
+        "歸納：$n=1$：$1\\le1$。若 $n\\le2^{n-1}$，則",
+        "第一步用 $1\\le n$",
+        "所以 $\\sup S=\\max S=\\dfrac12$　$\\blacksquare$",
+        "$\\inf S=0$，取不到（要用 $\\frac n{2^n}\\to0$，留到數列極限）"
+      ],
+      "tex": [
+        "S=\\left\\{\\frac n{2^n}:n\\in\\mathbb{N}\\right\\}=\\left\\{\\frac12,\\ \\frac12,\\ \\frac38,\\ \\frac14,\\ \\frac5{32},\\dots\\right\\}",
+        "\\frac n{2^n}\\le\\frac12\\iff n\\le2^{n-1}",
+        "n+1\\le n+n=2n\\le2\\cdot2^{n-1}=2^n"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\sup S$：(i) 上界；(ii) 最小的上界。不必屬於 $S$",
+        "• 好用版 (ii′)：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon$",
+        "• 證明 $\\sup S=s$：驗上界，再「給 $\\varepsilon$、找 $x$」",
+        "• $\\max S$ 存在 $\\iff\\sup S\\in S$，這時兩者相等",
+        "• $\\inf S$：最大的下界；(ii′) 是 $x<\\ell+\\varepsilon$",
+        "下一課：上確界一定存在嗎？完備性公理"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,320 +180,769 @@
   ],
   "checks": [
     {
-      "ask": "$S=\\{1-\\frac{1}{n}:n\\in\\mathbb{N}\\}$。下列何者正確？",
+      "ask": "$S=\\left\\{-\\dfrac1n:n\\in\\mathbb{N}\\right\\}$，$\\sup S=$？",
       "options": [
-        { "label": "$\\sup S=1$，但 $S$ 沒有最大元", "correct": true },
-        { "label": "$\\sup S=1$，而且 1 是 $S$ 的最大元", "why": "你把 $\\sup$ 當成一定取得到。$1-\\frac{1}{n}=1$ 沒有自然數解，1 不在 $S$ 裡。" },
-        { "label": "$S$ 沒有上確界，因為沒有最大元", "why": "你把 $\\sup$ 跟 $\\max$ 混成一件事。沒有最大元，最小上界 1 仍然存在。" }
-      ]
-    },
-    {
-      "ask": "要證 $s=\\sup S$，除了「$s$ 是上界」，還要證哪一件？",
-      "options": [
-        { "label": "對每個 $\\varepsilon>0$，存在 $x\\in S$ 使 $x>s-\\varepsilon$", "correct": true },
-        { "label": "存在 $x\\in S$，使 $x>s-\\varepsilon$ 對每個 $\\varepsilon>0$ 都成立", "why": "量詞順序寫反了。同一個 $x$ 要對所有 $\\varepsilon$ 都成立，等於 $x\\ge s$，那是在證 $s$ 是最大元。" },
-        { "label": "$s\\in S$", "why": "那是最大元的條件。上確界可以不屬於 $S$，例如 $\\sup\\{1-\\frac{1}{n}\\}=1$。" }
-      ]
-    },
-    {
-      "ask": "$S=\\{(-1)^n(1+\\frac{1}{n}):n\\in\\mathbb{N}\\}$。$\\inf S$ 是？",
-      "options": [
-        { "label": "$-2$", "correct": true },
-        { "label": "$-1$", "why": "你看的是 $n\\to\\infty$ 時奇數項的去向（$-1$）。但 $n=1$ 這一項 $-2$ 比它更小，下確界要看整個集合。" },
-        { "label": "1", "why": "1 是偶數項往下靠近的值，跟下確界無關；奇數項全是負的。" }
-      ]
-    },
-    {
-      "ask": "$\\varepsilon=0.01$ 時，要讓 $1-\\frac{1}{n}>1-\\varepsilon$，$n$ 至少要多大？",
-      "options": [
-        { "label": "$n>100$，例如 $n=101$", "correct": true },
-        { "label": "$n>10$", "why": "你可能解成 $\\frac{1}{n^2}<\\varepsilon$。這裡是 $\\frac{1}{n}<0.01$，要 $n>100$。" },
-        { "label": "$n=100$ 就夠", "why": "$n=100$ 時 $\\frac{1}{n}=0.01$，不是嚴格小於 $\\varepsilon$；要 $n>100$。" }
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$-1$",
+          "why": "$-1$ 是 $n=1$ 那項，是最小元，也就是 $\\inf S$"
+        },
+        {
+          "label": "不存在，因為 $0\\notin S$",
+          "why": "$\\sup$ 不必屬於 $S$；沒有最大元，但有上確界"
+        },
+        {
+          "label": "$-\\frac12$",
+          "why": "$n=3$ 時 $-\\frac13>-\\frac12$，它不是上界"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "最低的天花板",
+      "title": "沒有最大元，但有天花板",
       "beats": [
-        { "show": ["$S=\\{0,\\frac{1}{2},\\frac{2}{3},\\frac{3}{4},\\dots\\}$"],
-          "note": "$1-\\frac{1}{n}$：每一項都小於 1。",
-          "say": "一減 n 分之一：零、二分之一、三分之二，一直往上爬，每一項都比一小。",
+        {
+          "show": [
+            "$S=\\left\\{1-\\frac1n:n\\in\\mathbb{N}\\right\\}=\\left\\{0,\\ \\frac12,\\ \\frac23,\\ \\frac34,\\dots\\right\\}$"
+          ],
+          "say": "看 1 減 n 分之 1 的集合：0、2 分之 1、3 分之 2、4 分之 3，一直往 1 爬。上一課說過，它沒有最大元。",
           "board": [
-            {"do":"write","line":"$S=\\{0,\\ \\frac{1}{2},\\ \\frac{2}{3},\\ \\dots\\}$"},
-            {"do":"write","line":"$1-\\frac{1}{n}<1$","on":"每一項"}
-          ] },
-        { "show": ["點越爬越高，貼近 1"],
-          "note": "橫軸是 $n$，縱軸是 $1-\\frac{1}{n}$。",
-          "say": "畫出來：每一項是一個點，往右一直爬，卻永遠碰不到虛線一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle S=\\left\\{1-\\frac1n:n\\in\\mathbb{N}\\right\\}=\\left\\{0,\\ \\frac12,\\ \\frac23,\\ \\frac34,\\dots\\right\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "但它有很多上界：1、1.5、2，所有大於等於 1 的數都是。而比 1 小的數，都會被後面的點超過，不是上界。",
           "board": [
-            {"do":"plot","graph":{"window":[0,9,-0.2,1.3],"points":[{"x":1,"y":0},{"x":2,"y":0.5},{"x":3,"y":0.6667},{"x":4,"y":0.75},{"x":5,"y":0.8},{"x":6,"y":0.8333},{"x":7,"y":0.8571},{"x":8,"y":0.875}],"dashed":[[[0,1],[9,1]]],"labels":[{"x":0.2,"y":1.1,"text":"1","anchor":"start"}]}}
-          ] },
-        { "show": ["上界：1、2、10 都是"],
-          "note": "沒有最大元：下一項總是更大。",
-          "say": "一、二、十都是上界。可是這個集合沒有最大元，任何一項的下一項都比它大。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"si-ub\" viewBox=\"0 0 640 130\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bsi-ubink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bsi-ubblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bsi-ubred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bsi-ubgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bsi-ubpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"78\" x2=\"626\" y2=\"78\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bsi-ubink)\"/><line x1=\"412.1\" y1=\"78\" x2=\"601.5\" y2=\"78\" stroke=\"var(--green)\" stroke-width=\"8\" stroke-linecap=\"butt\" opacity=\"0.6\"/><circle cx=\"73.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"242.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"299.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"327.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"344.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"355.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"363.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"369.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"374.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"378.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"381.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"383.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"386\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"387.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"389.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"390.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"392.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"393.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"394.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"395.1\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"396\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"396.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"397.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"398\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"398.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"399\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"399.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"400\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"400.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"400.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"401.1\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"401.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"401.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"402.1\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"402.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"402.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"402.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"403.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"403.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"403.6\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"403.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404.5\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"404.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.6\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.7\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.8\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"405.9\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"406\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"406.1\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"406.2\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"406.3\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"406.4\" cy=\"78\" r=\"5\" fill=\"var(--blue)\"/><line x1=\"73.8\" y1=\"72\" x2=\"73.8\" y2=\"84\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"73.8\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><line x1=\"242.9\" y1=\"72\" x2=\"242.9\" y2=\"84\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"242.9\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/2</tspan></text><circle cx=\"412.1\" cy=\"78\" r=\"7\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"412.1\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">1 = </tspan><tspan style=\"font-family:KaTeX_Main,serif\">sup</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan></text><text x=\"513.5\" y=\"52\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:inherit\">上界：</tspan><tspan style=\"font-family:KaTeX_Main,serif\">[1, ∞)</tspan></text><text x=\"215.9\" y=\"52\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">的點越來越擠向</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 1</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上界們 $=[1,\\infty)$：這個集合有最小元 $1$"
+          ],
+          "say": "所以上界全部放在一起，是 1 到無限大。這個上界的集合有最小元，就是 1。",
           "board": [
-            {"do":"write","line":"上界：1、2、10 都是"},
-            {"do":"write","line":"沒有最大元","on":"沒有最大元"}
-          ] },
-        { "show": ["所有上界裡最小的：1"],
-          "note": "記成 $\\sup S$，上確界。",
-          "say": "雖然摸不到天花板，但所有上界裡有一個最低的，就是一。這個最小的上界叫上確界。",
+            {
+              "do": "write",
+              "line": "上界們 $=[1,\\infty)$：這個集合有最小元 $1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「最小的上界」叫上確界，記作 $\\sup S$"
+          ],
+          "say": "最小的上界，就叫上確界，記作 sup S。這裡上確界是 1，而 1 不在 S 裡。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"最小的上界 ＝ ${{m:1}}$","on":"所有上界"},
-            {"do":"box","term":"m","color":"green","on":"就是一"},
-            {"do":"write","line":"$\\sup S$：上確界","on":"這個最小"}
-          ] }
+            {
+              "do": "write",
+              "line": "「最小的上界」叫上確界，記作 $\\sup S$"
+            },
+            {
+              "do": "write",
+              "line": "　sup 是 supremum；也叫最小上界（least upper bound）",
+              "color": "violet",
+              "on": "這裡"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$S=\\{1-\\frac1n:n\\in\\mathbb{N}\\}$ 的上界裡，最小的是？",
+        "options": [
+          {
+            "label": "$1$",
+            "correct": true
+          },
+          {
+            "label": "$0.999$",
+            "why": "$n=10000$ 時 $1-\\frac1n=0.9999>0.999$，所以它不是上界"
+          },
+          {
+            "label": "$2$",
+            "why": "$2$ 是上界，但 $1$ 也是，而且更小"
+          },
+          {
+            "label": "沒有最小的",
+            "why": "上界的集合是 $[1,\\infty)$，最小的就是 $1$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$s=\\sup S$（$S$ 的上確界）：",
+            "$\\begin{aligned}&\\text{(i)}\\ \\ \\forall x\\in S,\\ x\\le s\\\\&\\text{(ii)}\\ \\ \\text{若 }u\\text{ 是 }S\\text{ 的上界，則 }s\\le u\\end{aligned}$"
+          ],
+          "say": "定義：s 是 S 的上確界，要滿足兩件事。第一，s 是上界。第二，對 S 的任何一個上界 u，s 都小於等於 u：s 是最小的那個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s=\\sup S$（$S$ 的上確界）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\text{(i)}\\ \\ \\forall x\\in S,\\ x\\le s\\\\&\\text{(ii)}\\ \\ \\text{若 }u\\text{ 是 }S\\text{ 的上界，則 }s\\le u\\end{aligned}}}}$",
+              "on": "是上"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "都小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下確界 $\\inf S$：(i) 是下界；(ii) 每個下界 $\\ell\\le\\inf S$"
+          ],
+          "say": "下確界 inf S 反過來：它是下界，而且是最大的下界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下確界 $\\inf S$：(i) 是下界；(ii) 每個下界 $\\ell\\le\\inf S$"
+            },
+            {
+              "do": "write",
+              "line": "　inf 是 infimum；也叫最大下界",
+              "color": "violet",
+              "on": "它是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "唯一：$s,s'$ 都是上確界 ⇒ 互為上界 ⇒ $s\\le s'$ 且 $s'\\le s$"
+          ],
+          "say": "上確界如果存在，就是唯一的：兩個都是上確界，就互相小於等於，只能相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "唯一：$s,s'$ 都是上確界 ⇒ 互為上界 ⇒ $s\\le s'$ 且 $s'\\le s$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟最大元比：沒有要求 $s\\in S$"
+          ],
+          "say": "跟最大元比較：定義裡沒有要求 s 屬於 S。剛剛的例子，上確界 1 就不在集合裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟最大元比：沒有要求 $s\\in S$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii) 很難直接驗：「所有上界」是一大堆數"
+          ],
+          "say": "但第二個條件很難直接驗：要跟所有的上界比，而上界有一大堆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii) 很難直接驗：「所有上界」是一大堆數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換個說法：比 $s$ 小的數都不是上界"
+          ],
+          "say": "換個說法：s 是最小的上界，就是說比 s 小的數，都不是上界。下一節把它寫成好用的形式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換個說法：比 $s$ 小的數都不是上界",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "實際在用的版本：ε 判準",
+      "beats": [
+        {
+          "show": [
+            "比 $s$ 小的數寫成 $s-\\varepsilon$（$\\varepsilon>0$）。它不是上界：",
+            "$\\text{(ii}'\\text{)}\\ \\ \\forall\\varepsilon>0\\ \\ \\exists x\\in S:\\ \\ x>s-\\varepsilon$"
+          ],
+          "say": "比 s 小的數，都可以寫成 s 減艾普西隆，艾普西隆大於 0。它不是上界，意思是：存在屬於 S 的 x，x 大於 s 減艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比 $s$ 小的數寫成 $s-\\varepsilon$（$\\varepsilon>0$）。它不是上界："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\text{(ii}'\\text{)}\\ \\ \\forall\\varepsilon>0\\ \\ \\exists x\\in S:\\ \\ x>s-\\varepsilon}}$",
+              "on": "艾普#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "屬於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫成圖：從 s 往下退一點點，退艾普西隆那麼多，這一小段裡一定有 S 的點。退得再少都一樣。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"si-eps\" viewBox=\"0 0 640 135\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bsi-epsink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bsi-epsblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bsi-epsred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bsi-epsgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bsi-epspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><rect x=\"348\" y=\"66\" width=\"112\" height=\"44\" fill=\"#f5d56e\" opacity=\"0.5\"/><line x1=\"16\" y1=\"88\" x2=\"626\" y2=\"88\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bsi-epsink)\"/><circle cx=\"96\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"185.6\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"258.4\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"308.8\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"376\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"429.2\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"443.2\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"451\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"455.5\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"458.3\" cy=\"88\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"409.6\" cy=\"88\" r=\"6\" fill=\"var(--red)\"/><text x=\"409.6\" y=\"124\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan></text><line x1=\"460\" y1=\"82\" x2=\"460\" y2=\"94\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"460\" y=\"124\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan></text><line x1=\"348\" y1=\"82\" x2=\"348\" y2=\"94\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"348\" y=\"124\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> − </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan></text><path d=\"M348 60 L348 52 L460 52 L460 60\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><text x=\"404\" y=\"28\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">這一段裡一定有</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">的點</tspan></text><text x=\"185.6\" y=\"124\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">的點</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判準：設 $s$ 是 $S$ 的上界。則",
+            "$\\begin{aligned}&s=\\sup S\\\\\\iff\\ &\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon\\end{aligned}$"
+          ],
+          "say": "判準：如果 s 已經是上界，那 s 是上確界，等價於：對所有正的艾普西隆，都存在屬於 S 的 x，大於 s 減艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "判準：設 $s$ 是 $S$ 的上界。則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&s=\\sup S\\\\\\iff\\ &\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon\\end{aligned}}}}$",
+              "color": "red",
+              "on": "確界"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "屬於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "人話：s 是天花板，而且集合貼得到 s 底下任何一點"
+          ],
+          "say": "人話是：s 是天花板，而且集合可以貼到 s 底下任意近的地方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "人話：s 是天花板，而且集合貼得到 s 底下任何一點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明的套路：給 $\\varepsilon$ → 找 $x$"
+          ],
+          "say": "所以證明上確界的套路是：對手給一個艾普西隆，我們去找一個 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明的套路：給 $\\varepsilon$ → 找 $x$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：兩種說法等價",
+      "beats": [
+        {
+          "show": [
+            "策略：兩個方向都是反證：比 $s$ 小的上界會出矛盾"
+          ],
+          "say": "證明兩個條件等價。策略：兩個方向都用反證，看比 s 小的上界會出什麼矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：兩個方向都是反證：比 $s$ 小的上界會出矛盾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii) ⇒ (ii′)：給定 $\\varepsilon>0$。若 $s-\\varepsilon$ 是上界，由 (ii)：",
+            "$s\\le s-\\varepsilon\\ \\Rightarrow\\ \\varepsilon\\le0$"
+          ],
+          "say": "第一個方向：給定艾普西隆。如果 s 減艾普西隆是上界，由條件二，s 不超過它，推得艾普西隆小於等於 0，矛盾。所以它不是上界，有 x 超過它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii) ⇒ (ii′)：給定 $\\varepsilon>0$。若 $s-\\varepsilon$ 是上界，由 (ii)："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s\\le s-\\varepsilon\\ \\Rightarrow\\ \\varepsilon\\le0$",
+              "on": "是上#1"
+            },
+            {
+              "do": "write",
+              "line": "矛盾。所以 $s-\\varepsilon$ 不是上界：$\\exists x\\in S,\\ x>s-\\varepsilon$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii′) ⇒ (ii)：設 $u$ 是上界。假設 $u<s$，取 $\\varepsilon=s-u>0$"
+          ],
+          "say": "反方向：設 u 是一個上界。假設 u 比 s 小，取艾普西隆等於 s 減 u，是正的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii′) ⇒ (ii)：設 $u$ 是上界。假設 $u<s$，取 $\\varepsilon=s-u>0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由 (ii′)：$\\exists x\\in S$，",
+            "$x>s-\\varepsilon=s-(s-u)=u$"
+          ],
+          "say": "由判準，存在屬於 S 的 x，大於 s 減艾普西隆，算出來剛好是 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "由 (ii′)：$\\exists x\\in S$，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x>s-\\varepsilon=s-(s-u)=u$",
+              "on": "減艾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x>u$ 跟「$u$ 是上界」矛盾。所以 $u\\ge s$　$\\blacksquare$"
+          ],
+          "say": "x 大於 u，跟 u 是上界矛盾。所以每個上界都大於等於 s，這就是條件二。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x>u$ 跟「$u$ 是上界」矛盾。所以 $u\\ge s$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$\\sup\\{1-\\frac1n\\}=1$",
+      "beats": [
+        {
+          "show": [
+            "(i)：$1-\\dfrac1n<1$，所以 $1$ 是上界"
+          ],
+          "say": "用判準證明，1 減 n 分之 1 的上確界是 1。第一，每一項都小於 1，1 是上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(i)：$1-\\dfrac1n<1$，所以 $1$ 是上界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii′)：給定 $\\varepsilon>0$，要找 $n$ 使",
+            "$1-\\frac1n>1-\\varepsilon\\iff\\frac1n<\\varepsilon\\iff n>\\frac1\\varepsilon$"
+          ],
+          "say": "第二，給定艾普西隆，要找 n，讓 1 減 n 分之 1 大於 1 減艾普西隆。化簡，就是 n 大於艾普西隆分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii′)：給定 $\\varepsilon>0$，要找 $n$ 使"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1-\\frac1n>1-\\varepsilon\\iff\\frac1n<\\varepsilon\\iff n>\\frac1\\varepsilon$",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　「有正整數比 $\\frac1\\varepsilon$ 大」：12.11 阿基米德性質",
+              "color": "violet",
+              "on": "化簡"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取這樣的 $n$，$x=1-\\frac1n\\in S$ 且 $x>1-\\varepsilon$。所以 $\\sup S=1$　$\\blacksquare$"
+          ],
+          "say": "取這樣的 n，x 等於 1 減 n 分之 1 就在那一小段裡。所以上確界是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取這樣的 $n$，$x=1-\\frac1n\\in S$ 且 $x>1-\\varepsilon$。所以 $\\sup S=1$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\varepsilon=0.01$ → $n=101$：$1-\\frac1{101}\\approx0.9901>0.99$"
+          ],
+          "say": "舉個數字：艾普西隆是 0.01，n 取 101，1 減 101 分之 1 大約 0.9901，比 0.99 大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\varepsilon=0.01$ → $n=101$：$1-\\frac1{101}\\approx0.9901>0.99$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下確界：$\\inf S=0=\\min S$（$n=1$ 取到）"
+          ],
+          "say": "至於下確界，是 0，而且 n 等於 1 時取到，它同時是最小元。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下確界：$\\inf S=0=\\min S$（$n=1$ 取到）"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "定義與判準",
+      "title": "sup 與 max",
       "beats": [
-        { "show": ["(i) $s$ 是上界","(ii) 任一上界 $b$ 都有 $s\\le b$"],
-          "say": "上確界的定義兩條：它是上界；而且任何上界都不比它小。下確界對稱，是最大的下界。",
+        {
+          "show": [
+            "定理：$\\max S$ 存在 ⇒ $\\sup S=\\max S$"
+          ],
+          "say": "上確界跟最大元是什麼關係？定理：如果最大元存在，上確界就等於最大元。",
           "board": [
-            {"do":"write","line":"(i) $s$ 是上界"},
-            {"do":"write","line":"(ii) 任一上界 $b$ 都有 ${{ii:s\\le b}}$","on":"任何上界"},
-            {"do":"write","line":"下確界：最大的下界","on":"下確界"}
-          ] },
-        { "show": ["(ii) 很難直接查"],
-          "note": "上界有無限多個。",
-          "say": "第二條很難直接檢查，因為上界有無限多個，總不能一個一個比。",
+            {
+              "do": "write",
+              "line": "定理：$\\max S$ 存在 ⇒ $\\sup S=\\max S$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$m=\\max S$。(i) $m$ 是上界（最大元的定義）",
+            "(ii) 任一上界 $u$：$m\\in S$ ⇒ $m\\le u$　$\\blacksquare$"
+          ],
+          "say": "證明：m 是最大元，本來就是上界。任取一個上界 u，m 屬於 S，所以 m 小於等於 u。兩個條件都成立。",
           "board": [
-            {"do":"underline","term":"ii","label":"上界太多"}
-          ] },
-        { "show": ["(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ x>s-\\varepsilon$"],
-          "say": "實際用的是等價的版本：對每一個 epsilon，都找得到集合裡的 x，比 s 減 epsilon 還大。",
+            {
+              "do": "write",
+              "line": "證明：$m=\\max S$。(i) $m$ 是上界（最大元的定義）"
+            },
+            {
+              "do": "write",
+              "line": "(ii) 任一上界 $u$：$m\\in S$ ⇒ $m\\le u$　$\\blacksquare$",
+              "on": "屬於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來：$\\sup S\\in S$ ⇒ 它就是 $\\max S$",
+            "$\\max S\\text{ 存在}\\iff\\sup S\\in S$"
+          ],
+          "say": "反過來，如果上確界屬於 S，它就是屬於 S 的上界，也就是最大元。所以最大元存在，等價於上確界屬於 S。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ {{ex:x>s-\\varepsilon}}$","on":"對每一個"},
-            {"do":"underline","term":"ex","on":"比 s 減"}
-          ] },
-        { "show": ["$s$ 往下退一點點，就不再是上界"],
-          "note": "先給 $\\varepsilon$，再找 $x$。",
-          "say": "翻成人話：s 往下退任何一點點，就有元素穿過去。先給 epsilon，再找 x。兩者等價，下一節證明。",
+            {
+              "do": "write",
+              "line": "反過來：$\\sup S\\in S$ ⇒ 它就是 $\\max S$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\max S\\text{ 存在}\\iff\\sup S\\in S}}$",
+              "color": "red",
+              "on": "屬於#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "以最"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\{(-1)^n(1+\\frac1n)\\}$：$\\sup=\\max=\\frac32$，$\\inf=\\min=-2$"
+          ],
+          "say": "上一課的交錯集合，最大元 2 分之 3，最小元負 2，所以上確界和下確界就是它們。",
           "board": [
-            {"do":"write","line":"$s$ 往下退，就有 $x$ 穿過去"},
-            {"do":"write","line":"先給 $\\varepsilon$，再找 $x$","on":"先給"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\{(-1)^n(1+\\frac1n)\\}$：$\\sup=\\max=\\frac32$，$\\inf=\\min=-2$"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "證明：兩個版本等價",
-      "beats": [
-        { "show": ["(ii) ⇒ (ii′) 直接證；(ii′) ⇒ (ii) 反證"],
-          "note": "兩個方向都假設 (i)：$s$ 是上界。",
-          "say": "策略：兩個方向分開證。從二推二撇直接證；從二撇推二用反證，假設有比 s 小的上界。",
-          "board": [
-            {"do":"write","line":"(ii) ⇒ (ii′)：直接證","on":"從二推二撇"},
-            {"do":"write","line":"(ii′) ⇒ (ii)：反證","on":"從二撇推二"}
-          ] },
-        { "show": ["$s-\\varepsilon<s$，所以 $s-\\varepsilon$ 不是上界"],
-          "note": "否則由 (ii)，$s\\le s-\\varepsilon$。",
-          "why": {"ask":"為什麼 $s-\\varepsilon$ 不是上界？","say":"給定 epsilon。s 減 epsilon 為什麼不可能是上界？","options":[{"label":"由 (ii)，上界都 $\\ge s$，而 $s-\\varepsilon<s$","correct":true},{"label":"$s-\\varepsilon$ 在 $S$ 裡","why":"$s-\\varepsilon$ 不一定在 $S$ 裡；它不是上界，是因為它比 $s$ 小。"},{"label":"$\\varepsilon$ 很小","why":"$\\varepsilon$ 多大都對；關鍵是 $s-\\varepsilon<s$，而每個上界都 $\\ge s$。"}]},
-          "say": "第二條說每個上界都不比 s 小。s 減 epsilon 比 s 小，所以它不是上界。",
-          "board": [
-            {"do":"write","line":"$s-\\varepsilon<s$ ⇒ ${{nb:s-\\varepsilon}}$ 不是上界","on":"s 減 epsilon"},
-            {"do":"underline","term":"nb","label":"由 (ii)","why":true,"on":"第二條說"}
-          ] },
-        { "show": ["若 $s-\\varepsilon$ 是上界，由 (ii)：","$s\\le s-\\varepsilon$"],
-          "note": "但 $\\varepsilon>0$，這不可能。",
-          "say": "假設 s 減 epsilon 是上界，由第二條得 s 小於等於 s 減 epsilon。但 epsilon 是正的，所以不可能。",
-          "board": [
-            {"do":"write","line":"假設 $s-\\varepsilon$ 是上界"},
-            {"do":"write","line":"(ii) ⇒ ${{n1:s\\le s-\\varepsilon}}$","on":"第二條"},
-            {"do":"strike","term":"n1","label":"矛盾","on":"正的"}
-          ] },
-        { "show": ["不是上界：有 $x\\in S$，$x>s-\\varepsilon$"],
-          "note": "這正是 (ii′)。",
-          "say": "不是上界的意思，就是集合裡有某個 x 穿過它，比 s 減 epsilon 大。這就是二撇。",
-          "board": [
-            {"do":"write","line":"${{ex:\\exists x\\in S,\\ x>s-\\varepsilon}}$","on":"集合裡有"},
-            {"do":"box","term":"ex","color":"green","label":"(ii′)","on":"這就是"}
-          ] },
-        { "show": ["反過來：設上界 $b<s$，取 $\\varepsilon=s-b>0$"],
-          "note": "讓 $s-\\varepsilon$ 剛好等於 $b$。",
-          "why": {"ask":"為什麼取 $\\varepsilon=s-b$？","say":"反方向：假設有上界 b 比 s 小。epsilon 為什麼要取 s 減 b？","options":[{"label":"讓 $s-\\varepsilon$ 剛好等於 $b$","correct":true},{"label":"$\\varepsilon$ 越小越好","why":"越小不一定有用；要剛好讓 $s-\\varepsilon=b$，穿過去的 $x$ 才會比 $b$ 大。"},{"label":"任何 $\\varepsilon>0$ 都可以","why":"隨便取只得到 $x>s-\\varepsilon$，不一定 $>b$；取 $s-b$ 才剛好碰到 $b$。"}]},
-          "say": "取 epsilon 等於 s 減 b，它是正的，而且 s 減 epsilon 剛好是 b。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"反設上界 $b<s$","on":"假設有上界"},
-            {"do":"write","line":"取 ${{e:\\varepsilon=s-b}}>0$","on":"epsilon 為什麼"},
-            {"do":"write","line":"$s-\\varepsilon=b$","why":true,"on":"而且 s 減"}
-          ] },
-        { "show": ["由 (ii′)：有 $x\\in S$，$x>b$","與 $b$ 是上界矛盾，所以 $s\\le b$"],
-          "say": "二撇給出集合裡的 x 比 b 大，跟 b 是上界矛盾。所以每個上界都不比 s 小，這就是第二條。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"(ii′)：$\\exists x\\in S,\\ x>b$","on":"二撇給出"},
-            {"do":"write","line":"與 $b$ 是上界矛盾 ⇒ $\\;{{fin:s\\le b}}$","on":"跟 b 是上界矛盾"},
-            {"do":"box","term":"fin","color":"green","on":"所以每個上界"}
-          ] }
-      ],
-      "key": "反設上界 $b<s$，取 $\\varepsilon=s-b$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "反證",
-      "order": {
-        "ask": "把 (ii′) ⇒ (ii) 排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "設 $b$ 是上界，反設 $b<s$"
-          },
-          {
-            "label": "取 $\\varepsilon=s-b>0$",
-            "why": "要先有 $b$，而且知道 $b<s$，才取得出正的 $\\varepsilon$。"
-          },
-          {
-            "label": "由 (ii′)，有 $x\\in S$，$x>s-\\varepsilon=b$",
-            "why": "(ii′) 要先給定 $\\varepsilon$ 才能用。"
-          },
-          {
-            "label": "與 $b$ 是上界矛盾，所以 $s\\le b$",
-            "why": "要先找到穿過 $b$ 的 $x$，才有矛盾。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "證 $\\sup S=1$",
-      "beats": [
-        { "show": ["(i) $\\frac{1}{n}>0$ ⇒ $1-\\frac{1}{n}<1$"],
-          "say": "先證一是上界：n 分之一是正的，一減掉它一定小於一。",
-          "board": [
-            {"do":"write","line":"(i) ${{p:\\frac{1}{n}>0}}$ ⇒ $1-\\frac{1}{n}<1$"},
-            {"do":"underline","term":"p","on":"是正的"}
-          ] },
-        { "show": ["(ii′) 要 $1-\\frac{1}{n}>1-\\varepsilon$"],
-          "note": "也就是 $\\frac{1}{n}<\\varepsilon$，即 $n>\\frac{1}{\\varepsilon}$。",
-          "say": "再證退一點點就失守：給定 epsilon，要找 n 讓 n 分之一小於 epsilon，n 只要比 epsilon 分之一大。",
-          "board": [
-            {"do":"write","line":"(ii′) $1-\\frac{1}{n}>1-\\varepsilon$"},
-            {"do":"transform","line":"$\\frac{1}{n}<\\varepsilon$","on":"n 分之一小於"},
-            {"do":"write","line":"$n>\\frac{1}{\\varepsilon}$","on":"n 只要"}
-          ] },
-        { "show": ["這樣的自然數存在"],
-          "note": "靠〈阿基米德性質〉。",
-          "say": "比任何實數都大的自然數一定找得到，這要靠阿基米德性質。具體試一個 epsilon。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"自然數 $n>\\frac{1}{\\varepsilon}$ 存在","on":"比任何"},
-            {"do":"write","line":"靠〈阿基米德性質〉","on":"阿基米德性質"}
-          ] },
-        { "show": ["阿基米德性質：","任意實數 $r$，都有自然數 $n>r$"],
-          "note": "取 $r=\\frac{1}{\\varepsilon}$。",
-          "say": "阿基米德性質說：對任何實數 r，都有自然數 n 大於 r。把 r 取成 epsilon 分之一，就有 n 大於它。",
-          "board": [
-            {"do":"write","line":"${{ar:\\forall r\\in\\mathbb{R}\\ \\exists n\\in\\mathbb{N},\\ n>r}}$"},
-            {"do":"write","line":"取 $r=\\frac{1}{\\varepsilon}$ ⇒ $n>\\frac{1}{\\varepsilon}$","on":"取成"}
-          ] },
-        { "show": ["直覺：自然數一個接一個，沒有盡頭"],
-          "note": "嚴格版：$\\mathbb{N}$ 有上界會矛盾，靠完備性。",
-          "say": "為什麼一定有？直覺是自然數一個一個加一，沒有盡頭。嚴格要靠完備性：自然數若有上界，就會矛盾。",
-          "board": [
-            {"do":"write","line":"若 $\\mathbb{N}$ 有上界 ⇒ 矛盾","on":"自然數若"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "$\\sup$ 與 $\\max$",
-      "beats": [
-        { "show": ["$1\\notin S$"],
-          "note": "$1-\\frac{1}{n}=1$ 會推出 $\\frac{1}{n}=0$。",
-          "say": "還有，一不在集合裡：一減 n 分之一要等於一，n 分之一就得是零，做不到。",
-          "board": [
-            {"do":"write","line":"$1\\notin S$"},
-            {"do":"write","line":"$1-\\frac{1}{n}=1$ ⇒ $\\frac{1}{n}=0$","on":"一減 n"}
-          ] },
-        { "show": ["有最大元 $m$ ⇒ $\\sup S=m$"],
-          "note": "$\\sup S\\in S$ 時，它就是最大元。",
-          "say": "如果集合有最大元，最大元自動就是上確界。上確界是最大元的推廣。",
-          "board": [
-            {"do":"write","line":"有最大元 $m$ ⇒ $\\sup S=m$","on":"如果集合"}
-          ] },
-        { "show": ["$S=\\{(-1)^n(1+\\frac{1}{n})\\}$"],
-          "note": "$-2,\\frac{3}{2},-\\frac{4}{3},\\frac{5}{4},\\dots$",
-          "say": "看一個正負交錯的集合：負二、二分之三、負三分之四、四分之五。偶數項是正的，奇數項是負的。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$S=\\{(-1)^n(1+\\frac{1}{n})\\}$","on":"正負交錯"},
-            {"do":"write","line":"$-2,\\ {{t:\\frac{3}{2}}},\\ -\\frac{4}{3},\\ \\frac{5}{4},\\ \\dots$","on":"負二"}
-          ] },
-        { "show": ["$\\sup S=\\frac{3}{2}$（$n=2$ 取到）"],
-          "note": "取得到，就不必用 $\\varepsilon$ 判準。",
-          "say": "偶數項最大是 n 等於二的二分之三，負的更不用說，所以上確界二分之三，而且取得到。下確界呢？",
-          "board": [
-            {"do":"underline","term":"t","on":"n 等於二的"},
-            {"do":"write","line":"$\\sup S={{t:\\frac{3}{2}}}$（$n=2$ 取到）","on":"所以上確界"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "先增後減",
-      "beats": [
-        { "show": ["$S=\\{\\frac{n}{2^n}\\}$"],
-          "note": "$\\frac{1}{2},\\frac{1}{2},\\frac{3}{8},\\frac{1}{4},\\dots$",
-          "say": "最後一個：二的 n 次方分之 n。前幾項二分之一、二分之一、八分之三、四分之一，好像在變小。",
-          "board": [
-            {"do":"write","line":"$S=\\{\\frac{n}{2^n}\\}$"},
-            {"do":"write","line":"$\\frac{1}{2},\\ \\frac{1}{2},\\ \\frac{3}{8},\\ \\frac{1}{4},\\ \\dots$","on":"前幾項"}
-          ] },
-        { "show": ["比較相鄰兩項：$\\frac{a_{n+1}}{a_n}$"],
-          "say": "要確定，就拿後一項除以前一項，看比值有沒有小於一。",
-          "board": [
-            {"do":"write","line":"後一項 ÷ 前一項"},
-            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}<1\\ ?$","on":"比值"}
-          ] },
-        { "show": ["比值 $<1$：後一項較小，遞減","遞減：最大的在最前面"],
-          "note": "最大元就是上確界（觀念 ④）。",
-          "say": "如果比值小於一，後一項就比前一項小，數列遞減。最大的一項就在最前面，上確界就是它。",
-          "board": [
-            {"do":"write","line":"比值 $<1$ ⇒ 後一項較小，遞減"},
-            {"do":"write","line":"最大元在最前面 ⇒ $\\sup$ ＝ 最大元","on":"最大的"}
-          ] }
-      ],
-      "key": "相鄰比跟 1 比大小，找出轉折點",
       "predict": {
-        "ask": "$\\frac{a_{n+1}}{a_n}$ 是？",
+        "ask": "$S=[0,1)$，下面哪一句對？",
         "options": [
           {
-            "label": "$\\frac{n+1}{2n}$",
+            "label": "$\\sup S=1$，$\\max S$ 不存在",
             "correct": true
           },
           {
-            "label": "$\\frac{n+1}{n}$",
-            "why": "分母 $2^{n+1}$ 比 $2^n$ 多一個 2，相除留下 $\\frac{1}{2}$，你漏了。"
+            "label": "$\\sup S=\\max S=1$",
+            "why": "$1\\notin[0,1)$，不能是最大元"
           },
           {
-            "label": "$\\frac{2(n+1)}{n}$",
-            "why": "$\\frac{2^n}{2^{n+1}}=\\frac{1}{2}$，2 在分母，你乘反了。"
+            "label": "$\\max S=1$，$\\sup S$ 不存在",
+            "why": "剛好反過來：$\\max$ 要屬於集合，$\\sup$ 不必"
+          },
+          {
+            "label": "兩個都不存在",
+            "why": "上確界 $1$ 存在，只是取不到"
           }
         ]
       }
+    },
+    {
+      "title": "例：先增後減",
+      "beats": [
+        {
+          "show": [
+            "$S=\\left\\{\\frac n{2^n}:n\\in\\mathbb{N}\\right\\}=\\left\\{\\frac12,\\ \\frac12,\\ \\frac38,\\ \\frac14,\\ \\frac5{32},\\dots\\right\\}$"
+          ],
+          "say": "最後一例：2 的 n 次方分之 n。前幾項是 2 分之 1、2 分之 1、8 分之 3、4 分之 1，先持平再變小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle S=\\left\\{\\frac n{2^n}:n\\in\\mathbb{N}\\right\\}=\\left\\{\\frac12,\\ \\frac12,\\ \\frac38,\\ \\frac14,\\ \\frac5{32},\\dots\\right\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜 $\\sup S=\\frac12$，而且取得到：要證 $\\max S=\\frac12$"
+          ],
+          "say": "猜上確界是 2 分之 1，而且取得到。那只要證明它是最大元，上確界就跟著是它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "猜 $\\sup S=\\frac12$，而且取得到：要證 $\\max S=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac12\\in S$（$n=1$）；要證",
+            "$\\frac n{2^n}\\le\\frac12\\iff n\\le2^{n-1}$"
+          ],
+          "say": "2 分之 1 是第一項，屬於 S。剩下要證每一項都不超過 2 分之 1，化簡成 n 小於等於 2 的 n 減 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\frac12\\in S$（$n=1$）；要證"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac n{2^n}\\le\\frac12\\iff n\\le2^{n-1}$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "歸納：$n=1$：$1\\le1$。若 $n\\le2^{n-1}$，則",
+            "$n+1\\le n+n=2n\\le2\\cdot2^{n-1}=2^n$"
+          ],
+          "say": "用歸納法。n 等於 1 時成立。假設對 n 成立，n 加 1 不超過 2n，又不超過 2 乘 2 的 n 減 1 次方，也就是 2 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "歸納：$n=1$：$1\\le1$。若 $n\\le2^{n-1}$，則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle n+1\\le n+n=2n\\le2\\cdot2^{n-1}=2^n$",
+              "on": "不超#1"
+            },
+            {
+              "do": "write",
+              "line": "　第一步用 $1\\le n$",
+              "color": "violet",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\sup S=\\max S=\\dfrac12$　$\\blacksquare$"
+          ],
+          "say": "所以最大元是 2 分之 1，上確界也是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\sup S=\\max S=\\dfrac12$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\inf S=0$，取不到（要用 $\\frac n{2^n}\\to0$，留到數列極限）"
+          ],
+          "say": "下確界是 0，但取不到。這要用到 2 的 n 次方分之 n 趨近 0，留到數列極限再證。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\inf S=0$，取不到（要用 $\\frac n{2^n}\\to0$，留到數列極限）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\sup S$：(i) 上界；(ii) 最小的上界。不必屬於 $S$",
+            "• 好用版 (ii′)：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon$"
+          ],
+          "say": "整理：上確界是最小的上界，不必屬於集合。實際證明時用艾普西隆判準：先驗上界，再給艾普西隆、找 x。最大元存在，正好是上確界屬於集合的時候。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\sup S$：(i) 上界；(ii) 最小的上界。不必屬於 $S$"
+            },
+            {
+              "do": "write",
+              "line": "• 好用版 (ii′)：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x>s-\\varepsilon$",
+              "on": "不必"
+            },
+            {
+              "do": "write",
+              "line": "• 證明 $\\sup S=s$：驗上界，再「給 $\\varepsilon$、找 $x$」",
+              "on": "普西#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\max S$ 存在 $\\iff\\sup S\\in S$，這時兩者相等",
+              "on": "普西#2"
+            },
+            {
+              "do": "write",
+              "line": "• $\\inf S$：最大的下界；(ii′) 是 $x<\\ell+\\varepsilon$",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：上確界一定存在嗎？完備性公理"
+          ],
+          "say": "下一課要問：有上界的集合，上確界一定存在嗎？這就是完備性公理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：上確界一定存在嗎？完備性公理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["supremum", "infimum", "sequence"],
-    "fine": ["supinf-epsilon-characterization", "supinf-attained-vs-not", "supinf-sequence-set", "supinf-upper-bound-check"]
+    "coarse": [
+      "supremum",
+      "infimum",
+      "sequence"
+    ],
+    "fine": [
+      "supinf-epsilon-characterization",
+      "supinf-attained-vs-not",
+      "supinf-sequence-set",
+      "supinf-upper-bound-check"
+    ]
   },
   "practice": [
-    { "id": "an-sup-001", "core": true, "trains": "supinf-attained-vs-not" },
-    { "id": "an-sup-002", "core": true, "trains": "supinf-sequence-set" },
-    { "id": "an-sup-006", "core": true, "trains": "supinf-sequence-set" },
-    { "id": "an-sup-007", "core": true, "trains": "supinf-attained-vs-not" },
-    { "id": "cg-12b-011", "core": true, "trains": "supinf-epsilon-characterization" },
-    { "id": "cg-12b-014", "core": true, "trains": "supinf-upper-bound-check" },
-    { "id": "an-sup-005", "trains": "supinf-upper-bound-check" },
-    { "id": "cg-12b-012", "trains": "supinf-epsilon-characterization" },
-    { "id": "cg-12b-013", "trains": "supinf-epsilon-characterization" },
-    { "id": "cg-12b-015", "trains": "supinf-upper-bound-check" },
-    { "id": "an-sup-008", "challenge": true, "trains": "supinf-sequence-set", "note": "挑戰：$n^{1/n}$ 先增後減，比較 $n=2$ 與 $n=3$。" },
-    { "id": "an-sup-004", "challenge": true, "trains": "supinf-attained-vs-not", "note": "挑戰：$(1+\\frac{1}{n})^n$ 遞增，上確界是極限 $e$，取不到。" }
+    {
+      "id": "an-sup-001",
+      "core": true,
+      "trains": "supinf-attained-vs-not"
+    },
+    {
+      "id": "an-sup-002",
+      "core": true,
+      "trains": "supinf-sequence-set"
+    },
+    {
+      "id": "an-sup-006",
+      "core": true,
+      "trains": "supinf-sequence-set"
+    },
+    {
+      "id": "an-sup-007",
+      "core": true,
+      "trains": "supinf-attained-vs-not"
+    },
+    {
+      "id": "cg-12b-011",
+      "core": true,
+      "trains": "supinf-epsilon-characterization"
+    },
+    {
+      "id": "cg-12b-014",
+      "core": true,
+      "trains": "supinf-upper-bound-check"
+    },
+    {
+      "id": "an-sup-005",
+      "trains": "supinf-upper-bound-check"
+    },
+    {
+      "id": "cg-12b-012",
+      "trains": "supinf-epsilon-characterization"
+    },
+    {
+      "id": "cg-12b-013",
+      "trains": "supinf-epsilon-characterization"
+    },
+    {
+      "id": "cg-12b-015",
+      "trains": "supinf-upper-bound-check"
+    },
+    {
+      "id": "an-sup-008",
+      "challenge": true,
+      "trains": "supinf-sequence-set",
+      "note": "挑戰：$n^{1/n}$ 先增後減，比較 $n=2$ 與 $n=3$。"
+    },
+    {
+      "id": "an-sup-004",
+      "challenge": true,
+      "trains": "supinf-attained-vs-not",
+      "note": "挑戰：$(1+\\frac{1}{n})^n$ 遞增，上確界是極限 $e$，取不到。"
+    }
   ],
   "gaps": []
 }

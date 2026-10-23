@@ -1,0 +1,363 @@
+{
+  "id": "parametric-second-derivative",
+  "title": "參數式的二階導數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["parametric-derivative", "second-derivative", "concavity", "quotient-rule"],
+  "next": ["parametric-arc-length"],
+  "related": [],
+  "objectives": [
+    "用 $\\frac{d^2y}{dx^2}=\\left[\\frac{d}{dt}\\left(\\frac{dy}{dx}\\right)\\right]\\div\\frac{dx}{dt}$ 算參數曲線的二階導數。",
+    "避開最常見的錯：把 $\\frac{d^2y}{dx^2}$ 寫成 $\\frac{d^2y/dt^2}{d^2x/dt^2}$。",
+    "用二階導數的正負判斷參數曲線往上彎還是往下彎。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 二階導數是「斜率對 $x$ 的變化率」",
+      "body": [
+        "$\\frac{d^2y}{dx^2}$ 的意思是：把 $\\frac{dy}{dx}$ 這個斜率再對 $x$ 微分一次。它的正負告訴我們曲線凹向上還是凹向下（〈凹向上／凹向下〉）。",
+        "參數式的麻煩在於：$\\frac{dy}{dx}$ 算出來是 $t$ 的式子，例如 $x=t^2$、$y=t^3$ 時 $\\frac{dy}{dx}=\\frac{3t}{2}$。它不是 $x$ 的式子，不能直接對 $x$ 微分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 辦法：把 $\\frac{dy}{dx}$ 當成新的 $y$",
+      "body": [
+        "上一課的公式對任何「隨 $t$ 變化的量」都成立：某個量 $w$ 對 $x$ 的導數，等於 $\\frac{dw}{dt}$ 除以 $\\frac{dx}{dt}$。",
+        "令 $w=\\frac{dy}{dx}$，就得到二階導數的公式。步驟只有三步：先算 $\\frac{dy}{dx}$（$t$ 的式子）；再對 $t$ 微分；最後除以 $\\frac{dx}{dt}$。"
+      ],
+      "tex": ["\\frac{d^2y}{dx^2}=\\frac{d}{dx}\\!\\left(\\frac{dy}{dx}\\right)=\\frac{\\dfrac{d}{dt}\\!\\left(\\dfrac{dy}{dx}\\right)}{\\dfrac{dx}{dt}}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 不是兩個二階導數相除",
+      "body": [
+        "最常見的錯是寫成 $\\frac{d^2y/dt^2}{d^2x/dt^2}$。用 $x=t^2$、$y=t^3$ 檢查：這個錯誤的式子在 $t=1$ 給 $\\frac{6t}{2}=3$，正確答案是 $\\frac{3}{4}$（範例 1）。",
+        "原因：$\\frac{d^2y}{dx^2}$ 量的是斜率怎麼隨 $x$ 變，最後一定要除以 $\\frac{dx}{dt}$ 換成「對 $x$」。分母只有一次的 $\\frac{dx}{dt}$，不是二次的 $\\frac{d^2x}{dt^2}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 可以消去參數時，用來檢查",
+      "body": [
+        "$x=t^2$、$y=t^3$，在 $t>0$ 那一段可以寫成 $y=x^{3/2}$，直接對 $x$ 微分兩次：$y''=\\frac{3}{4}x^{-1/2}$，在 $x=1$（也就是 $t=1$）得 $\\frac{3}{4}$，跟參數公式一致。考試時消不掉的情況比較多，參數公式才是主力。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "照三步走",
+      "prompt": "$x=t^2$、$y=t^3$，求 $t=1$ 處的 $\\frac{d^2y}{dx^2}$。",
+      "problemId": "db-par-005",
+      "steps": [
+        "第一步：$\\frac{dy}{dx}=\\frac{3t^2}{2t}=\\frac{3t}{2}$。",
+        "第二步：對 $t$ 微分，$\\frac{d}{dt}\\left(\\frac{3t}{2}\\right)=\\frac{3}{2}$。",
+        "第三步：除以 $\\frac{dx}{dt}=2t$，得 $\\frac{d^2y}{dx^2}=\\frac{3/2}{2t}=\\frac{3}{4t}$。",
+        "代 $t=1$：$\\frac{3}{4}$。",
+        "檢查：$t>0$ 時 $y=x^{3/2}$，$y''=\\frac{3}{4}x^{-1/2}$，$x=1$ 時是 $\\frac{3}{4}$。"
+      ],
+      "answer": "$\\frac{3}{4}$",
+      "claim": "D(3t/2)/D(t^2) == 3/(4t) ;; D2(x^(3/2), 1) == 3/4"
+    },
+    {
+      "title": "擺線往哪邊彎",
+      "prompt": "擺線 $x=t-\\sin t$、$y=1-\\cos t$，求 $\\frac{d^2y}{dx^2}$（$0<t<2\\pi$），並判斷凹向。",
+      "problemId": "lec-10-q1b",
+      "steps": [
+        "$\\frac{dy}{dx}=\\frac{\\sin t}{1-\\cos t}$。",
+        "對 $t$ 微分（除法法則）：分子是 $\\cos t(1-\\cos t)-\\sin t\\cdot\\sin t=\\cos t-(\\cos^2 t+\\sin^2 t)=\\cos t-1$。所以 $\\frac{d}{dt}\\left(\\frac{dy}{dx}\\right)=\\frac{\\cos t-1}{(1-\\cos t)^2}=-\\frac{1}{1-\\cos t}$。",
+        "除以 $\\frac{dx}{dt}=1-\\cos t$：$\\frac{d^2y}{dx^2}=-\\frac{1}{(1-\\cos t)^2}$。",
+        "$0<t<2\\pi$ 時 $1-\\cos t>0$，平方後仍是正的，前面有負號，所以 $\\frac{d^2y}{dx^2}<0$：整個拱都凹向下。$t=\\frac{\\pi}{2}$ 時是 $-1$。"
+      ],
+      "answer": "$\\frac{d^2y}{dx^2}=-\\frac{1}{(1-\\cos t)^2}$，處處小於 0，凹向下。",
+      "claim": "D(sin(t)/(1-cos(t)))/(1-cos(t)) == -1/(1-cos(t))^2 ;; D(sin(t)/(1-cos(t)), pi/2)/D(t-sin(t), pi/2) == -1"
+    },
+    {
+      "title": "$x$ 是對數",
+      "prompt": "$x=\\ln t$、$y=t^2-1$，求 $t=1$ 處的 $\\frac{d^2y}{dx^2}$。",
+      "problemId": "db-par-008",
+      "steps": [
+        "$\\frac{dx}{dt}=\\frac{1}{t}$，$\\frac{dy}{dt}=2t$，$\\frac{dy}{dx}=2t\\div\\frac{1}{t}=2t^2$。",
+        "對 $t$ 微分：$4t$。",
+        "除以 $\\frac{dx}{dt}=\\frac{1}{t}$：$4t\\div\\frac{1}{t}=4t^2$。代 $t=1$ 得 4。",
+        "檢查：$t=e^x$，$y=e^{2x}-1$，$y''=4e^{2x}$，$x=0$（$t=1$）時是 4。"
+      ],
+      "answer": "4",
+      "claim": "D(2t^2)/D(ln(t)) == 4t^2 ;; D2(e^(2x)-1, 0) == 4"
+    }
+  ],
+  "pitfalls": [
+    "寫成 $\\frac{d^2y/dt^2}{d^2x/dt^2}$。",
+    "對 $t$ 微分完就停，忘了最後除以 $\\frac{dx}{dt}$。",
+    "把 $\\frac{dy}{dx}$ 這個 $t$ 的式子直接「對 $x$ 微分」，把 $t$ 當常數。",
+    "先代數字再微分：$\\frac{dy}{dx}$ 在 $t=1$ 是常數 $\\frac{3}{2}$，微分變 0。要先微分、最後才代 $t$。"
+  ],
+  "checks": [
+    {
+      "ask": "參數式的 $\\frac{d^2y}{dx^2}$ 等於？",
+      "options": [
+        { "label": "$\\left[\\frac{d}{dt}\\left(\\frac{dy}{dx}\\right)\\right]\\div\\frac{dx}{dt}$", "correct": true },
+        { "label": "$\\frac{d^2y}{dt^2}\\div\\frac{d^2x}{dt^2}$", "why": "看起來很對稱，但 $\\frac{d^2y}{dx^2}$ 是「斜率對 $x$ 的變化率」，只能除以一次的 $\\frac{dx}{dt}$。" },
+        { "label": "$\\frac{d}{dt}\\left(\\frac{dy}{dx}\\right)$", "why": "這是斜率對 $t$ 的變化率，還沒換成對 $x$：還要除以 $\\frac{dx}{dt}$。" }
+      ]
+    },
+    {
+      "ask": "$x=t^2$、$y=t^3$，$t=1$ 處的 $\\frac{d^2y}{dx^2}$ 是？",
+      "options": [
+        { "label": "$\\frac{3}{4}$", "correct": true },
+        { "label": "$\\frac{3}{2}$", "why": "$\\frac{3}{2}$ 是 $\\frac{d}{dt}\\left(\\frac{3t}{2}\\right)$，少了最後除以 $\\frac{dx}{dt}=2$。" },
+        { "label": "3", "why": "這是 $\\frac{d^2y/dt^2}{d^2x/dt^2}=\\frac{6t}{2}$ 在 $t=1$ 的值，用錯公式了。" }
+      ]
+    },
+    {
+      "ask": "$x=t$、$y=t^2$，$\\frac{d^2y}{dx^2}$ 是？",
+      "options": [
+        { "label": "2", "correct": true },
+        { "label": "$2t$", "why": "$2t$ 是 $\\frac{dy}{dx}$。還要對 $t$ 微分一次（得 2），再除以 $\\frac{dx}{dt}=1$。" },
+        { "label": "0", "why": "先把 $\\frac{dy}{dx}=2t$ 代了某個 $t$ 變成常數再微分，才會得到 0。要先微分再代。" }
+      ]
+    },
+    {
+      "ask": "擺線一個拱上 $\\frac{d^2y}{dx^2}=-\\frac{1}{(1-\\cos t)^2}$。這代表？",
+      "options": [
+        { "label": "整個拱都凹向下", "correct": true },
+        { "label": "整個拱都凹向上", "why": "分母是正的平方，前面有負號，整個式子是負的，凹向下。" },
+        { "label": "$t=\\pi$ 時有反曲點", "why": "反曲點要二階導數變號，這裡一直是負的，沒有變號。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "斜率再對 $x$ 微分",
+      "beats": [
+        { "show": ["$\\frac{d^2y}{dx^2}$：斜率對 $x$ 的變化率"],
+          "note": "正負告訴我們凹向上還是凹向下。",
+          "say": "二階導數，是把斜率再對 x 微分一次。它是正是負，告訴我們曲線往上彎還是往下彎。",
+          "board": [
+            {"do":"write","line":"$\\frac{d^2y}{dx^2}={{ddx:\\frac{d}{dx}}}\\Big({{s:\\frac{dy}{dx}}}\\Big)$","tint":{"s":"blue"}},
+            {"do":"focus","term":"s","on":"斜率"},
+            {"do":"underline","term":"ddx","on":"再對 x 微分"}
+          ] },
+        { "show": ["正：凹向上；負：凹向下"],
+          "note": "記法：正像碗口朝上，負像碗口朝下。",
+          "say": "正的二階導數，曲線凹向上，像碗口朝上；負的，凹向下，像碗口朝下。",
+          "board": [
+            {"do":"write","line":"${{p:\\frac{d^2y}{dx^2}>0}}$：凹向上"},
+            {"do":"write","line":"${{n:\\frac{d^2y}{dx^2}<0}}$：凹向下","on":"負的"}
+          ] },
+        { "show": ["$x = t^2$，$y = t^3$：$\\frac{dy}{dx} = \\frac{3t}{2}$"],
+          "note": "是 $t$ 的式子，不能直接對 $x$ 微分。",
+          "say": "麻煩在這裡：參數式算出來的斜率是 t 的式子，例如二分之三 t，它不是 x 的式子。",
+          "board": [
+            {"do":"write","line":"$x=t^2,\\;y=t^3$：${{s:\\frac{dy}{dx}}}={{st:\\frac{3t}{2}}}$","on":"參數式"},
+            {"do":"underline","term":"st","label":"t 的式子","on":"例如"}
+          ] },
+        { "show": ["$w$ 對 $x$ 的導數 $= \\frac{dw/dt}{dx/dt}$"],
+          "note": "對任何隨 $t$ 變的量都成立。",
+          "say": "辦法是上一課的公式：任何隨 t 變的量，對 x 的導數，都是它對 t 的導數除以 x 對 t 的導數。",
+          "board": [
+            {"do":"write","line":"$\\frac{d{{w:w}}}{dx}=\\frac{dw/dt}{{{xt:dx/dt}}}$","tint":{"w":"blue"},"on":"上一課"},
+            {"do":"underline","term":"xt","on":"除以"}
+          ] },
+        { "show": ["令 $w = \\frac{dy}{dx}$"],
+          "note": "先算 $\\frac{dy}{dx}$，對 $t$ 微分，再除以 $\\frac{dx}{dt}$。",
+          "say": "把斜率本身當成那個量，就得到三步：先算斜率，再對 t 微分，最後除以 x 對 t 的導數。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{w:w}}={{s:\\frac{dy}{dx}}}$","on":"把斜率"},
+            {"do":"write","line":"$\\frac{d^2y}{dx^2}=\\dfrac{{{ddt:\\frac{d}{dt}}}\\big({{s:\\frac{dy}{dx}}}\\big)}{{{xt:dx/dt}}}$","on":"三步"},
+            {"do":"focus","term":"ddt","on":"再對 t"},
+            {"do":"underline","term":"xt","on":"最後除以"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "照三步走",
+      "beats": [
+        { "show": ["① $\\frac{dy}{dx} = \\frac{3t^2}{2t} = \\frac{3t}{2}$"],
+          "say": "x 是 t 平方，y 是 t 三次方。第一步，斜率是三 t 平方除以二 t，等於二分之三 t。",
+          "board": [
+            {"do":"write","line":"$x=t^2,\\;y=t^3$"},
+            {"do":"write","line":"① ${{s:\\frac{dy}{dx}}}=\\frac{3t^2}{2t}={{a:\\frac{3t}{2}}}$","tint":{"s":"blue"},"on":"第一步"},
+            {"do":"focus","term":"a","on":"等於"}
+          ] },
+        { "show": ["② $\\frac{d}{dt}\\left(\\frac{3t}{2}\\right) = \\frac{3}{2}$"],
+          "say": "第二步，二分之三 t 對 t 微分，得到二分之三。",
+          "board": [
+            {"do":"write","line":"② $\\frac{d}{dt}\\Big({{a:\\frac{3t}{2}}}\\Big)={{b:\\frac{3}{2}}}$"},
+            {"do":"focus","term":"b","on":"得到"}
+          ] },
+        { "show": ["③ $\\frac{3/2}{2t} = \\frac{3}{4t}$"],
+          "note": "除以 $\\frac{dx}{dt} = 2t$。",
+          "say": "第三步，除以 x 對 t 的導數二 t，得到四 t 分之三。最後才代 t 等於一。",
+          "board": [
+            {"do":"write","line":"③ $\\dfrac{3/2}{{{xt:2t}}}={{r:\\frac{3}{4t}}}$"},
+            {"do":"underline","term":"xt","on":"二 t"},
+            {"do":"box","term":"r","color":"green","on":"四 t 分之三"}
+          ] },
+        { "show": ["$t>0$ 時，曲線往上彎"],
+          "say": "畫出來看，t 大於零這一段，曲線越走越陡，往上彎，所以二階導數是正的。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,3,-0.5,5],"curves":[{"expr":"x^(3/2)","domain":[0,3],"color":"blue"}]}}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "不是兩個二階相除",
+      "beats": [
+        { "show": ["錯：$\\frac{d^2y/dt^2}{d^2x/dt^2}$"],
+          "note": "在 $t = 1$ 給 $\\frac{6t}{2} = 3$，正確是 $\\frac{3}{4}$。",
+          "say": "最常見的錯，是把兩個二階導數相除。同一題它會給三，可是正確答案是四分之三。",
+          "board": [
+            {"do":"write","line":"錯：${{w:\\frac{d^2y/dt^2}{d^2x/dt^2}}}$"},
+            {"do":"strike","term":"w","on":"相除"},
+            {"do":"write","line":"$t=1$：$\\frac{6t}{2}=3$","color":"red","on":"它會給"},
+            {"do":"write","line":"正確：$\\frac{3}{4}$","color":"green","on":"正確答案"}
+          ] },
+        { "show": ["分母只有一次的 $\\frac{dx}{dt}$"],
+          "say": "因為我們量的是斜率隨 x 怎麼變，最後只要除一次 x 對 t 的導數，把對 t 換成對 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{d^2y}{dx^2}=\\dfrac{\\frac{d}{dt}\\big(\\frac{dy}{dx}\\big)}{{{xt:\\frac{dx}{dt}}}}$","on":"斜率隨"},
+            {"do":"underline","term":"xt","label":"只除一次","on":"除一次"}
+          ] },
+        { "show": ["對 $t$ 微分，再除以 $\\frac{dx}{dt}$"],
+          "note": "除一次，單位才從 $t$ 換成 $x$。",
+          "say": "斜率對 t 微分，是每單位 t 的變化。除以 x 每單位 t 走的量，才變成每單位 x 的變化。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{ds}{dt}\\div\\frac{dx}{dt}=\\frac{ds}{dx}$","on":"每單#2"}
+          ] },
+        { "show": ["$t=\\sqrt{x}$，代入 $y=t^3$"],
+          "note": "$t>0$ 時才能這樣消去。",
+          "say": "消去參數：t 大於零，x 等於 t 平方，所以 t 等於根號 x。代進 y 等於 t 三次方，就是 x 的二分之三次方。",
+          "board": [
+            {"do":"write","line":"$t=\\sqrt{x}$"},
+            {"do":"write","line":"$y=t^3=(\\sqrt{x})^3=x^{3/2}$","on":"代進"}
+          ] },
+        { "show": ["$y = x^{3/2}$，$y'' = \\frac{3}{4}x^{-1/2}$"],
+          "note": "$t > 0$ 時消去參數；$x = 1$ 時 $\\frac{3}{4}$。",
+          "say": "能消去參數時可以檢查：t 大於零那段是 y 等於 x 的二分之三次方，二階導數在一是四分之三，對上了。",
+          "board": [
+            {"do":"write","line":"$y=x^{3/2}$","on":"y 等於"},
+            {"do":"write","line":"$y''=\\frac{3}{4}x^{-1/2}$","on":"二階導數"},
+            {"do":"write","line":"$x=1$：${{r:\\frac{3}{4}}}$","on":"在一"},
+            {"do":"box","term":"r","color":"green","on":"四分之三"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$x$ 是對數",
+      "beats": [
+        { "show": ["$x = \\ln t$，$y = t^2 - 1$"],
+          "note": "求 $t = 1$ 處的 $\\frac{d^2y}{dx^2}$。",
+          "say": "再一題：x 是自然對數 t，y 是 t 平方減一，求 t 等於一的二階導數。",
+          "board": [
+            {"do":"write","line":"$x=\\ln t,\\;y=t^2-1$"},
+            {"do":"write","line":"求 $t=1$ 處的 $\\frac{d^2y}{dx^2}$","on":"求"}
+          ] },
+        { "show": ["$\\frac{dy}{dx} = 2t \\div \\frac{1}{t} = 2t^2$"],
+          "say": "x 的速度是 t 分之一，y 的速度是二 t，相除得斜率二 t 平方。",
+          "board": [
+            {"do":"write","line":"$\\frac{dx}{dt}=\\frac{1}{t},\\;\\frac{dy}{dt}=2t$"},
+            {"do":"write","line":"$\\frac{dy}{dx}=2t\\div\\frac{1}{t}={{a:2t^2}}$","on":"相除"}
+          ] },
+        { "show": ["對 $t$ 微分：$4t$；再除以 $\\frac{1}{t}$"],
+          "say": "對 t 微分是四 t，再除以 t 分之一。算到底，在 t 等於一是多少？",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{d}{dt}\\big({{a:2t^2}}\\big)=4t$","on":"對 t 微分"},
+            {"do":"write","line":"$\\dfrac{4t}{{{x:\\frac{1}{t}}}}$","on":"再除以"}
+          ] },
+        { "show": ["除以分數 = 乘它的倒數"],
+          "note": "化簡 $\\frac{4t}{1/t}$ 時用得到。",
+          "say": "提示：除以一個分數，等於乘它的倒數。除以 t 分之一，就是乘 t。",
+          "board": [
+            {"do":"write","line":"$\\div\\,{{d:\\frac{1}{t}}}\\;=\\;\\times\\,t$"},
+            {"do":"underline","term":"d","on":"倒數"}
+          ] }
+      ],
+      "key": "斜率對 $t$ 微分後，再除以 $\\frac{dx}{dt}$",
+      "predict": {
+        "ask": "$t = 1$ 處的 $\\frac{d^2y}{dx^2}$ 是？",
+        "options": [
+          {
+            "label": "4",
+            "correct": true
+          },
+          {
+            "label": "2",
+            "why": "2 是 $\\frac{dy}{dx} = 2t^2$ 在 $t = 1$ 的值，那是斜率，還沒微分。"
+          },
+          {
+            "label": "0",
+            "why": "先把 $t = 1$ 代進 $2t^2$ 變成常數再微分，才會得 0。要先微分、最後才代。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "擺線往哪邊彎",
+      "beats": [
+        { "show": ["$\\frac{dy}{dx} = \\frac{\\sin t}{1 - \\cos t}$"],
+          "note": "擺線 $x = t - \\sin t$、$y = 1 - \\cos t$。",
+          "say": "擺線的斜率是 sine t 除以一減 cosine t。照三步，先用除法法則對 t 微分。",
+          "board": [
+            {"do":"write","line":"${{s:\\frac{dy}{dx}}}=\\frac{\\sin t}{1-\\cos t}$","tint":{"s":"blue"}}
+          ] },
+        { "show": ["除法法則：分母平方在下面"],
+          "note": "分子：$f'g-fg'$。",
+          "say": "用除法法則：分子微分乘分母，減分子乘分母微分，再除以分母平方。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\cos t(1-\\cos t)-\\sin^2 t}{{{den:(1-\\cos t)^2}}}$"},
+            {"do":"underline","term":"den","label":"分母平方","on":"除以分母平方"}
+          ] },
+        { "show": ["$\\frac{d}{dt}\\left(\\frac{dy}{dx}\\right) = -\\frac{1}{1 - \\cos t}$"],
+          "note": "分子化簡用 $\\cos^2 t + \\sin^2 t = 1$。",
+          "say": "分子用平方和等於一化簡，得到負的一減 cosine t 分之一。",
+          "board": [
+            {"do":"write","line":"分子：$\\cos t\\,(1-\\cos t)-\\sin^2t$"},
+            {"do":"transform","line":"分子：$\\cos t-({{p:\\cos^2t+\\sin^2t}})$","on":"平方和"},
+            {"do":"write","line":"$\\frac{d}{dt}\\Big({{s:\\frac{dy}{dx}}}\\Big)={{r1:-\\frac{1}{1-\\cos t}}}$","on":"得到"}
+          ] },
+        { "show": ["$\\cos t-1=-(1-\\cos t)$，約掉一個"],
+          "say": "分子是 cosine t 減一，等於負的一減 cosine t。分母平方約掉一個，剩負的一減 cosine t 分之一。",
+          "board": [
+            {"do":"write","line":"$\\cos t-1=-(1-\\cos t)$"},
+            {"do":"write","line":"$\\frac{-(1-\\cos t)}{(1-\\cos t)^2}=-\\frac{1}{1-\\cos t}$","on":"約掉"}
+          ] },
+        { "show": ["$\\frac{d^2y}{dx^2} = -\\frac{1}{(1 - \\cos t)^2}$"],
+          "note": "除以 $\\frac{dx}{dt} = 1 - \\cos t$。",
+          "say": "再除以 x 的速度一減 cosine t，分母變成平方。前面有負號，分母是正的。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\frac{d^2y}{dx^2}={{neg:-}}\\dfrac{1}{{{sq:(1-\\cos t)^2}}}$","on":"再除以"},
+            {"do":"underline","term":"sq","on":"分母變成"},
+            {"do":"focus","term":"neg","on":"負號"}
+          ] }
+      ],
+      "key": "分子用 $\\cos^2 t+\\sin^2 t=1$ 化簡",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["parametric", "second-derivative"],
+    "fine": ["parametric-second-derivative-formula", "parametric-concavity"]
+  },
+  "practice": [
+    { "id": "gap-der-param-003", "core": true, "trains": "parametric-second-derivative-formula" },
+    { "id": "db-par-005", "core": true, "trains": "parametric-second-derivative-formula" },
+    { "id": "rel-hard-der-006", "core": true, "trains": "parametric-second-derivative-formula" },
+    { "id": "db-par-008", "core": true, "trains": "parametric-second-derivative-formula" },
+    { "id": "lec-10-q1b", "core": true, "trains": "parametric-second-derivative-formula" },
+    { "id": "cg-7a-011", "core": true, "trains": "parametric-concavity" },
+    { "id": "db-par-006", "trains": "parametric-second-derivative-formula" },
+    { "id": "cg-7a-010", "challenge": true, "trains": "parametric-concavity", "note": "挑戰：t < 0 時分母 4t³ 是負的，凹向上的範圍分成兩段。" }
+  ],
+  "gaps": []
+}

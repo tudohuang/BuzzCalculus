@@ -1,0 +1,439 @@
+{
+  "id": "change-of-variables",
+  "title": "變數變換",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["jacobian-determinant", "u-sub-definite"],
+  "next": ["triple-integral"],
+  "related": ["polar-double-integral", "jacobian-geometry"],
+  "objectives": [
+    "寫出二重積分的變數變換公式，並說出每一部分的來源（新區域、代換後的被積函數、$|J|$）。",
+    "從區域的邊界方程式選出新變數 $u$、$v$，把區域變成矩形或簡單形狀。",
+    "記得公式成立的條件：變換在區域內部一對一、Jacobian 不為 0。"
+  ],
+  "visual": "左邊是 xy 平面上一塊斜的平行四邊形區域，右邊是 uv 平面上對應的矩形。在右邊拖動一個小方格，左邊對應的小平行四邊形同步移動；旁邊的讀數顯示「f 的值 × 小方格面積 × |J|」，提醒每一格都要乘上放大倍率。",
+  "concept": [
+    {
+      "heading": "① 一維的換元，二維再來一次",
+      "body": [
+        "〈定積分換元〉：$x=g(u)$，$dx=g'(u)\\,du$，上下限跟著換。二維也一樣有三件事要換：區域、被積函數、面積元素。",
+        "面積元素怎麼換，前兩課已經準備好了：$uv$ 平面上一個 $du\\,dv$ 的小方格，被送到 $xy$ 平面後面積約 $\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|du\\,dv$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式",
+      "body": [
+        "下式右邊三個部分各有來源：$S$ 是同一塊區域在 $uv$ 平面的樣子；$f$ 裡的 $x$、$y$ 全部換成 $u$、$v$ 的式子；$|J|$ 是每個小方格的面積放大倍率，取絕對值是因為面積不能是負的。極座標正是 $|J|=r$ 的情形。",
+        "設 $x=x(u,v)$、$y=y(u,v)$ 把 $uv$ 平面的區域 $S$ 送到 $xy$ 平面的區域 $R$："
+      ],
+      "tex": ["\\iint_R f(x,y)\\,dA=\\iint_S f\\big(x(u,v),\\,y(u,v)\\big)\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|du\\,dv"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼選 $u$、$v$",
+      "body": [
+        "最常見的線索是區域的邊界。$R$ 由 $x-2y=0$、$x-2y=4$、$3x-y=1$、$3x-y=8$ 四條線圍成：令 $u=x-2y$、$v=3x-y$，四條邊就變成 $u=0$、$u=4$、$v=1$、$v=8$，$S$ 是矩形。",
+        "第二個線索是被積函數：裡面一直出現 $x+y$、$x-y$，就讓它們當新變數。",
+        "這種題通常給的是 $u$、$v$ 用 $x$、$y$ 表示，所以 Jacobian 用〈Jacobian 行列式〉的倒數關係算最快。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 四個步驟",
+      "body": [
+        "1. 選 $u$、$v$。2. 把 $R$ 的每一條邊界換成 $u$、$v$，畫出 $S$。3. 算 $\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|$。4. 被積函數換成 $u$、$v$，乘上 $|J|$，在 $S$ 上積分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 公式成立的條件（給想知道的人）",
+      "body": [
+        "變換的偏導數連續，在 $S$ 的內部一對一，Jacobian 在 $S$ 的內部不為 $0$；$S$、$R$ 的邊界是有限條光滑曲線。邊界上壞掉（不一對一或 $J=0$）沒關係，因為邊界的面積是 $0$。",
+        "極座標就是例子：$r=0$ 時 $J=0$，$\\theta=0$ 與 $\\theta=2\\pi$ 也重疊，但這些都只在邊界上，所以〈極座標二重積分〉照樣成立。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "斜的平行四邊形",
+      "prompt": "$\\iint_R\\frac{x-2y}{3x-y}\\,dA$，$R$ 由 $x-2y=0$、$x-2y=4$、$3x-y=1$、$3x-y=8$ 圍成。",
+      "steps": [
+        "令 $u=x-2y$、$v=3x-y$。$S=[0,4]\\times[1,8]$。",
+        "$\\frac{\\partial(u,v)}{\\partial(x,y)}=1\\cdot(-1)-(-2)\\cdot3=5$，所以 $\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|=\\frac{1}{5}$。",
+        "被積函數是 $\\frac{u}{v}$。積分 $=\\int_1^8\\int_0^4\\frac{u}{v}\\cdot\\frac{1}{5}\\,du\\,dv$。",
+        "可分離：$\\frac{1}{5}\\cdot\\left(\\int_0^4 u\\,du\\right)\\left(\\int_1^8\\frac{dv}{v}\\right)=\\frac{1}{5}\\cdot8\\cdot\\ln 8=\\frac{24\\ln 2}{5}$。"
+      ],
+      "answer": "$\\frac{8}{5}\\ln 8=\\frac{24\\ln 2}{5}$",
+      "claim": "INT(INT((u/v)/5, 0, 4, u), 1, 8, v) == 24*ln(2)/5"
+    },
+    {
+      "title": "新區域不是矩形",
+      "prompt": "$\\iint_R\\cos\\left(\\frac{x-y}{x+y}\\right)dA$，$R$ 是頂點 $(1,0)$、$(2,0)$、$(0,2)$、$(0,1)$ 的梯形。",
+      "steps": [
+        "被積函數裡有 $x-y$、$x+y$：令 $u=x-y$、$v=x+y$。$\\frac{\\partial(u,v)}{\\partial(x,y)}=-2$，$|J|=\\frac{1}{2}$。",
+        "四條邊：$x+y=1\\to v=1$；$x+y=2\\to v=2$；$y=0\\to u=v$；$x=0\\to u=-v$。",
+        "$S$：$1\\le v\\le 2$、$-v\\le u\\le v$。",
+        "$\\int_1^2\\int_{-v}^{v}\\cos\\left(\\frac{u}{v}\\right)\\frac{1}{2}\\,du\\,dv$。內層：$\\frac{1}{2}\\cdot v\\left[\\sin\\frac{u}{v}\\right]_{-v}^{v}=\\frac{1}{2}\\cdot2v\\sin 1=v\\sin 1$。",
+        "外層 $\\int_1^2 v\\sin 1\\,dv=\\frac{3}{2}\\sin 1$。"
+      ],
+      "answer": "$\\frac{3}{2}\\sin 1$",
+      "claim": "INT(INT(cos(u/v)/2,-v,v,u),1,2,v) == 3*sin(1)/2 ;; INT(INT(cos((x-y)/(x+y)),1-x,2-x,y),0,1,x)+INT(INT(cos((x-y)/(x+y)),0,2-x,y),1,2,x) == 3*sin(1)/2"
+    },
+    {
+      "title": "橢圓：拉伸後的極座標",
+      "prompt": "$\\iint_E x^2\\,dA$，$E$：$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
+      "steps": [
+        "令 $x=3r\\cos\\theta$、$y=2r\\sin\\theta$，$E$ 變成 $0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$。",
+        "Jacobian：$x_ry_\\theta-x_\\theta y_r=3\\cos\\theta\\cdot2r\\cos\\theta+3r\\sin\\theta\\cdot2\\sin\\theta=6r$。",
+        "$\\int_0^{2\\pi}\\int_0^1 9r^2\\cos^2\\theta\\cdot6r\\,dr\\,d\\theta=54\\cdot\\frac{1}{4}\\cdot\\pi=\\frac{27\\pi}{2}$。"
+      ],
+      "answer": "$\\frac{27\\pi}{2}$",
+      "claim": "INT(INT(9*r^2*cos(t)^2*6*r,0,1,r),0,2*pi,t) == 27*pi/2"
+    }
+  ],
+  "pitfalls": [
+    "忘了乘 $|J|$，等於假設面積沒有被放大。",
+    "乘成 $\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|$，差了一個倒數。",
+    "只換了被積函數，區域還用舊的 $x$、$y$ 範圍。",
+    "選的 $u$、$v$ 不獨立（例如 $u=x+y$、$v=2x+2y$），Jacobian 是 $0$，不能用。"
+  ],
+  "checks": [
+    {
+      "ask": "$R$：$0\\le x+y\\le 1$、$0\\le x-y\\le 1$。用 $u=x+y$、$v=x-y$，$\\iint_R 1\\,dA$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{2}$", "correct": true },
+        { "label": "$1$", "why": "那是 $S$ 的面積，忘了乘 $\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|=\\frac{1}{2}$。" },
+        { "label": "$2$", "why": "乘成了 $\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|=2$。要的是 $x$、$y$ 對 $u$、$v$ 的 Jacobian，是它的倒數。" }
+      ]
+    },
+    {
+      "ask": "$R$ 由 $x+2y=0$、$x+2y=3$、$x-y=1$、$x-y=4$ 圍成，最自然的換法是？",
+      "options": [
+        { "label": "$u=x+2y$、$v=x-y$", "correct": true },
+        { "label": "$u=x$、$v=y$", "why": "這等於沒換，區域還是斜的平行四邊形。" },
+        { "label": "$u=x+2y$、$v=2x+4y$", "why": "$v$ 是 $u$ 的 $2$ 倍，兩個新變數不獨立，Jacobian 為 $0$，不能當座標。" }
+      ]
+    },
+    {
+      "ask": "變數變換公式要求變換滿足哪一個條件？",
+      "options": [
+        { "label": "在新區域的內部一對一，而且 Jacobian 不為 0", "correct": true },
+        { "label": "必須是線性變換", "why": "極座標 $x=r\\cos\\theta$ 就不是線性，公式照樣成立。" },
+        { "label": "Jacobian 必須是常數", "why": "極座標的 Jacobian 是 $r$，會變；公式裡本來就是逐點乘 $|J|$。" }
+      ]
+    },
+    {
+      "ask": "用 $x=au$、$y=bv$（$a,b>0$）求橢圓 $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}\\le 1$ 的面積：",
+      "options": [
+        { "label": "$\\pi ab$", "correct": true },
+        { "label": "$\\pi(a+b)$", "why": "倍率是 Jacobian $ab$，相乘不是相加。" },
+        { "label": "$\\pi a^2b^2$", "why": "Jacobian 是 $a\\cdot b-0\\cdot0=ab$，不是 $a^2b^2$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "三件事要換",
+      "beats": [
+        { "show": ["$x=g(u)$，$dx=g'(u)\\,du$"],
+          "note": "一維換元：上下限跟著換。",
+          "say": "一維換元的時候，x 換成 g u，d x 換成 g prime u 乘 d u，上下限也跟著換。",
+          "board": [
+            {"do":"write","line":"$x=g(u)$"},
+            {"do":"write","line":"$dx=g'(u)\\,du$","on":"d x 換成"},
+            {"do":"write","line":"上下限跟著換","on":"上下限"}
+          ] },
+        { "show": ["區域、被積函數、面積元素"],
+          "say": "二維也一樣，三件事都要換：區域、被積函數，還有一小塊面積。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"區域 $R\\to S$","on":"區域"},
+            {"do":"write","line":"$f(x,y)\\to f(x(u,v),y(u,v))$","on":"被積函數"},
+            {"do":"write","line":"面積元素 $dA$ 也要換","on":"一小塊面積"}
+          ] },
+        { "show": ["$du\\,dv$ 的小方格 → 面積約 $|J|\\,du\\,dv$"],
+          "note": "前兩課已經準備好了。",
+          "say": "u v 平面上一個小方格，送到 x y 平面後，面積被放大 Jacobian 的絕對值倍。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$uv$ 平面：小方格 $du\\,dv$","on":"小方格"},
+            {"do":"write","line":"$xy$ 平面：面積放大 ${{j:|J|}}$ 倍","on":"放大"},
+            {"do":"circle","term":"j","color":"gold","on":"絕對值"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$dA$ 要換成？",
+        "options": [
+          {
+            "label": "$\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|du\\,dv$",
+            "correct": true
+          },
+          {
+            "label": "$du\\,dv$",
+            "why": "這等於假設面積沒有被放大；要乘上每個小方格的放大倍率 $|J|$。"
+          },
+          {
+            "label": "$\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|du\\,dv$",
+            "why": "方向反了，差一個倒數。放大倍率是從 $(u,v)$ 到 $(x,y)$ 的。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$\\iint_R f\\,dA$","$=\\iint_S f(x(u,v),y(u,v))\\,|J|\\,du\\,dv$"],
+          "note": "$S$ 是同一塊區域在 $uv$ 平面的樣子。",
+          "say": "右邊三個部分：S 是同一塊區域在 u v 平面的樣子；f 裡的 x、y 全部換掉；再乘放大倍率。",
+          "board": [
+            {"do":"write","line":"$\\iint_R f\\,dA$"},
+            {"do":"transform","line":"$=\\iint_{{{s:S}}} f({{xy:x(u,v),y(u,v)}})\\,{{j:|J|}}\\,du\\,dv$","on":"右邊三個部分"},
+            {"do":"focus","term":"s","color":"gold","on":"S 是同一塊"},
+            {"do":"focus","term":"xy","color":"gold","on":"全部換掉"},
+            {"do":"focus","term":"j","color":"gold","on":"再乘"}
+          ] },
+        { "show": ["$|J|$ 取絕對值"],
+          "note": "面積不能是負的。",
+          "say": "倍率取絕對值，因為面積不會是負的。",
+          "board": [
+            {"do":"write","line":"${{j:|J|}}$ 取絕對值：面積 $\\ge 0$"},
+            {"do":"underline","term":"j","color":"gold","on":"不會是負"}
+          ] },
+        { "show": ["極座標：$|J|=r$"],
+          "say": "極座標就是 Jacobian 等於 r 的情形，前面早就用過了。",
+          "board": [
+            {"do":"write","line":"極座標：$|J|={{r:r}}$"},
+            {"do":"focus","term":"r","color":"gold","on":"等於 r"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "怎麼選 $u$、$v$",
+      "beats": [
+        { "show": ["$x-2y=0,4$；$3x-y=1,8$ 圍成 $R$"],
+          "note": "線索一：區域的邊界。",
+          "say": "最常見的線索是邊界。這塊斜斜的四邊形，由兩組平行線圍成。",
+          "board": [
+            {"do":"write","line":"線索一：邊界"},
+            {"do":"write","line":"${{a:x-2y}}=0,4$","tint":{"a":"blue"},"on":"斜斜"},
+            {"do":"write","line":"${{b:3x-y}}=1,8$","tint":{"b":"violet"},"on":"兩組平行線"}
+          ] },
+        { "show": ["$R$ 是一塊斜的平行四邊形"],
+          "note": "兩組邊各自平行。",
+          "say": "畫出來看：四條線圍成一塊斜斜的平行四邊形，每組兩條邊互相平行。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,4,-3,3],"curves":[{"pts":[[0.4,0.2],[3.2,1.6],[2.4,-0.8],[-0.4,-2.2],[0.4,0.2]],"color":"blue"}],"fills":[{"pts":[[0.4,0.2],[3.2,1.6],[2.4,-0.8],[-0.4,-2.2]],"color":"blue"}]}}
+          ] },
+        { "show": ["$u=x-2y$、$v=3x-y$：$S=[0,4]\\times[1,8]$"],
+          "say": "讓兩組線的左邊當新變數，四條邊就變成 u 等於常數、v 等於常數，新區域是矩形。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{a:u=x-2y}}$，${{b:v=3x-y}}$","tint":{"a":"blue","b":"violet"},"on":"左邊"},
+            {"do":"write","line":"四條邊 → $u$、$v$ 等於常數","on":"四條邊"},
+            {"do":"write","line":"$S=[0,4]\\times[1,8]$","on":"新區域"}
+          ] },
+        { "show": ["線索二：被積函數裡一直出現的組合"],
+          "note": "例如 $x+y$、$x-y$。",
+          "say": "第二個線索是被積函數：裡面一直出現同樣的組合，就讓它們當新變數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"線索二：被積函數裡的組合","on":"被積函數"},
+            {"do":"write","line":"例如 $x+y$、$x-y$","on":"同樣的組合"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "斜的平行四邊形",
+      "beats": [
+        { "show": ["$\\iint_R\\frac{x-2y}{3x-y}\\,dA$"],
+          "note": "被積函數是 $\\frac{u}{v}$。",
+          "say": "回到這塊四邊形，被積函數正好是 u 除以 v。",
+          "board": [
+            {"do":"write","line":"$\\iint_R\\dfrac{ {{u:x-2y}} }{ {{v:3x-y}} }\\,dA$","tint":{"u":"blue","v":"violet"}},
+            {"do":"focus","term":"u","on":"u 除以"},
+            {"do":"focus","term":"v","on":"除以 v"}
+          ] },
+        { "show": ["$J=u_xv_y-u_yv_x$"],
+          "note": "四個偏導數排成 2×2 行列式。",
+          "say": "Jacobian 是把四個偏導數排成二乘二的方塊，左上乘右下，減掉右上乘左下。",
+          "board": [
+            {"do":"write","line":"${{j:J}}=u_xv_y-u_yv_x$"},
+            {"do":"underline","term":"j","color":"gold","on":"左上乘右下"}
+          ] },
+        { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=1\\cdot(-1)-(-2)\\cdot3=5$"],
+          "say": "題目給的是 u、v 用 x、y 表示，所以先算反方向的 Jacobian，得五。",
+          "board": [
+            {"do":"write","line":"${{jac:\\frac{\\partial(u,v)}{\\partial(x,y)}}}=1\\cdot(-1)-(-2)\\cdot3=5$","on":"所以"},
+            {"do":"underline","term":"jac","label":"反方向","on":"反方向"}
+          ] },
+        { "show": ["$xy\\to uv$ 放大 5 倍","$uv\\to xy$ 放大 $\\frac{1}{5}$ 倍"],
+          "say": "這個五是從 x y 到 u v 的放大倍數。要從 u v 回到 x y，方向倒過來，倍數就是五分之一。",
+          "board": [
+            {"do":"write","line":"$xy\\to uv$：放大 ${{k:5}}$ 倍"},
+            {"do":"write","line":"$uv\\to xy$：放大 $\\frac{1}{5}$ 倍","on":"倒過來"}
+          ] },
+        { "show": ["$|J|=\\frac{1}{5}$"],
+          "note": "取倒數，〈Jacobian 行列式〉。",
+          "say": "要的方向取倒數：五分之一。",
+          "board": [
+            {"do":"write","line":"$|J|={{inv:\\frac{1}{5}}}$"},
+            {"do":"focus","term":"inv","label":"取倒數","on":"取倒數"}
+          ] },
+        { "show": ["$\\frac{1}{5}\\cdot\\int_0^4 u\\,du\\cdot\\int_1^8\\frac{dv}{v}=\\frac{1}{5}\\cdot8\\cdot\\ln 8$"],
+          "note": "$=\\frac{24\\ln 2}{5}$",
+          "say": "新區域是矩形、被積函數可分離，拆成兩個一維積分相乘。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{5}\\cdot{{iu:\\int_0^4 u\\,du}}\\cdot{{iv:\\int_1^8\\frac{dv}{v}}}$","tint":{"iu":"blue","iv":"violet"},"on":"拆成"},
+            {"do":"focus","term":"iu","on":"兩個一維"},
+            {"do":"focus","term":"iv","on":"相乘"}
+          ] }
+      ],
+      "key": "先算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$，$|J|$ 是它的倒數",
+      "check": 0
+    },
+    {
+      "title": "新區域不是矩形",
+      "beats": [
+        { "show": ["$\\iint_R\\cos\\left(\\frac{x-y}{x+y}\\right)dA$"],
+          "note": "$R$：頂點 $(1,0)$、$(2,0)$、$(0,2)$、$(0,1)$ 的梯形。",
+          "say": "被積函數裡有 x 減 y、x 加 y，就讓它們當 u、v。倍率是二分之一。",
+          "board": [
+            {"do":"write","line":"$\\iint_R\\cos\\left(\\dfrac{ {{u:x-y}} }{ {{v:x+y}} }\\right)dA$","tint":{"u":"blue","v":"violet"}},
+            {"do":"write","line":"$u=x-y$，$v=x+y$，倍率 $\\frac{1}{2}$","on":"就讓"}
+          ] },
+        { "show": ["$y=0\\to u=v$；$x=0\\to u=-v$"],
+          "note": "$x+y=1,2\\to v=1,2$。",
+          "say": "四條邊逐一換：兩條斜邊變成 v 等於一、二；兩條座標軸變成 u 等於正負 v。",
+          "board": [
+            {"do":"write","line":"斜邊：$x+y=1,2\\to {{v1:v=1,2}}$","on":"兩條斜邊"},
+            {"do":"write","line":"軸：$y=0\\to u=v$；$x=0\\to u=-v$","on":"兩條座標軸"}
+          ] },
+        { "show": ["$S$：$1\\le v\\le 2$、$-v\\le u\\le v$"],
+          "say": "新區域不是矩形，但內層上下限很好寫。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-2.6,2.6,-0.35,2.4],"equal":true,"curves":[{"pts":[[-1,1],[1,1],[2,2],[-2,2],[-1,1]],"color":"blue"}],"fills":[{"pts":[[-1,1],[1,1],[2,2],[-2,2]],"color":"blue"}],"dashed":[[[0,0],[2.3,2.3]],[[0,0],[-2.3,2.3]]],"labels":[{"x":2.35,"y":1.95,"text":"u=v","anchor":"start"},{"x":-2.35,"y":1.95,"text":"u=−v","anchor":"end"}],"ticks":false},"on":"新區域"},
+            {"do":"write","line":"$S$：$1\\le v\\le 2$、${{in:-v\\le u\\le v}}$","on":"內層"}
+          ] },
+        { "show": ["$\\frac{d}{du}\\sin\\frac{u}{v}=\\frac{1}{v}\\cos\\frac{u}{v}$","$\\frac{1}{2}v[\\sin 1-\\sin(-1)]=v\\sin 1$"],
+          "note": "微分會多一個 $\\frac{1}{v}$，所以積分要補 $v$。",
+          "say": "sine u 除以 v 微分會多 v 分之一，所以前面補一個 v。代入上下限，再乘二分之一，得 v 乘 sine 一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{du}\\sin\\frac{u}{v}=\\frac{1}{v}\\cos\\frac{u}{v}$"},
+            {"do":"write","line":"$\\int\\cos\\frac{u}{v}\\,du={{a:v\\sin\\frac{u}{v}}}$","on":"所以"},
+            {"do":"underline","term":"a","color":"gold","on":"補一個"},
+            {"do":"write","line":"$\\frac{1}{2}v[\\sin 1-\\sin(-1)]=v\\sin 1$","on":"代入上下限"}
+          ] },
+        { "show": ["內層 $v\\sin 1$，外層 $\\frac{3}{2}\\sin 1$"],
+          "say": "內層對 u 積，得 v 乘 sine 一；外層再積，二分之三 sine 一。",
+          "board": [
+            {"do":"write","line":"內層 $v\\sin 1$，外層 $\\,{{out:\\frac{3}{2}\\sin 1}}$","on":"內層"},
+            {"do":"box","term":"out","color":"green","on":"二分之三"}
+          ] },
+        { "show": ["公式要變換滿足什麼條件？"],
+          "note": "邊界上壞掉沒關係，邊界面積是 $0$。",
+          "say": "最後想一想：這個公式要變換滿足什麼條件？提示是，只在邊界上壞掉沒關係。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"條件：？","on":"什麼條件"},
+            {"do":"write","line":"邊界上壞掉沒關係","on":"只在邊界上"}
+          ] }
+      ],
+      "key": "邊界一條條換到 $uv$ 平面，再定上下限",
+      "check": 2
+    },
+    {
+      "title": "證明：邊界不算",
+      "beats": [
+        { "show": ["條件只管內部；邊界的面積是 $0$"],
+          "say": "策略：直接看條件。公式要的好性質只管內部，壞掉的點只要都在邊界上就不影響。",
+          "board": [
+            {"do":"write","line":"條件只管內部"},
+            {"do":"write","line":"壞掉的點全在邊界：不影響","on":"壞掉的點"}
+          ] },
+        { "show": ["內部：偏導數連續、一對一、$J\\ne0$"],
+          "note": "$S$、$R$ 的邊界是有限條光滑曲線。",
+          "say": "在 S 的內部，變換的偏導數連續、一對一，Jacobian 不為零；邊界是有限條光滑曲線。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$S$ 內部：偏導數連續、一對一","on":"偏導數"},
+            {"do":"write","line":"$J\\ne0$","on":"Jacobian 不為零"},
+            {"do":"write","line":"邊界：有限條光滑曲線","on":"邊界是"}
+          ] },
+        { "show": ["偏導數連續：夠平順","一對一：不重複"],
+          "say": "偏導數連續是說變換很平順，小方格才會變成近似平行四邊形；一對一是不同的點不會被送到同一點，不然面積會重複算。",
+          "board": [
+            {"do":"write","line":"偏導數連續：變換夠平順"},
+            {"do":"write","line":"一對一：不同點不送到同一點","on":"一對一是"}
+          ] },
+        { "show": ["邊界上不一對一或 $J=0$：沒關係"],
+          "note": "邊界的面積是 $0$，積分不受影響。",
+          "why": {"ask":"為什麼邊界上壞掉沒關係？","say":"邊界上不一對一、甚至 Jacobian 是零，為什麼公式還成立？","options":[{"label":"邊界的面積是 $0$","correct":true},{"label":"倍率取了絕對值，就修好了","why":"絕對值只處理負號；$J=0$ 或不一對一，靠的是邊界面積是零。"},{"label":"邊界上的點不在區域裡","why":"區域通常包含邊界；不影響是因為那些點加起來面積是零。"}]},
+          "say": "光滑曲線的面積是零，在上面發生什麼事，都不會改變二重積分的值。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"邊界：不一對一或 $J=0$","on":"不一對一"},
+            {"do":"write","line":"邊界的面積 ${{z:=0}}$","why":true,"on":"面積是零"},
+            {"do":"box","term":"z","color":"green","why":true,"on":"不會改變"}
+          ] },
+        { "show": ["曲線面積 $=0$"],
+          "note": "用很窄的細長帶包住曲線。",
+          "say": "細長帶越畫越窄，面積任意小，所以曲線面積是零。極座標 r 等於零那條邊壓成一點，也不影響。",
+          "board": [
+            {"do":"write","line":"細長帶越窄，面積越小"},
+            {"do":"write","line":"曲線面積 ${{z:=0}}$","on":"面積是零"},
+            {"do":"write","line":"極座標 $r=0$：壓成一點","on":"極座標"}
+          ] },
+        { "show": ["極座標：$r=0$ 時 $J=0$","$\\theta=0$ 與 $\\theta=2\\pi$ 重疊"],
+          "say": "極座標就是例子：r 等於零時 Jacobian 是零，theta 等於零和二 pi 也疊在一起。",
+          "board": [
+            {"do":"write","line":"極座標：$r=0$ 時 $J=0$"},
+            {"do":"write","line":"$\\theta=0$ 與 $\\theta=2\\pi$ 重疊","on":"theta"}
+          ] }
+      ],
+      "key": "只看內部：邊界那一圈不貢獻面積",
+      "proof": true,
+      "of": 4,
+      "skeleton": "直接",
+      "predict": {
+        "ask": "那〈極座標二重積分〉還能用嗎？",
+        "options": [
+          {
+            "label": "能，壞掉的地方都只在邊界上",
+            "correct": true
+          },
+          {
+            "label": "不能，$J$ 必須處處不為 $0$",
+            "why": "只要求內部不為零；$r=0$ 只在邊界上，邊界面積是零。"
+          },
+          {
+            "label": "能，因為 $J=r$ 取了絕對值",
+            "why": "絕對值只處理負號；能用是因為 $r=0$ 與重疊的那條線都在邊界上。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["change-of-variables", "jacobian"],
+    "fine": ["cov-choose-uv", "cov-map-region", "cov-apply-abs-jacobian"]
+  },
+  "practice": [
+    { "id": "gap-int-cov-002", "core": true, "trains": "cov-apply-abs-jacobian" },
+    { "id": "lec-19-q4a", "core": true, "trains": "cov-map-region" },
+    { "id": "lec-19-q4c", "core": true, "trains": "cov-choose-uv" },
+    { "id": "lec-19-m5", "core": true, "trains": "cov-apply-abs-jacobian" },
+    { "id": "cg-9a2-013", "core": true, "trains": "cov-choose-uv" },
+    { "id": "rel-hard-mv-008", "trains": "cov-apply-abs-jacobian" },
+    { "id": "cg-9a2-014", "trains": "cov-choose-uv" },
+    { "id": "cg-9a2-016", "trains": "cov-map-region" },
+    { "id": "cg-9a2-017", "trains": "cov-map-region" },
+    { "id": "rel-boss-010", "challenge": true, "trains": "cov-choose-uv", "note": "挑戰：令 $x=uv$、$y=u(1-v)$，三角形變成正方形。" },
+    { "id": "cg-9a2-015", "challenge": true, "trains": "cov-choose-uv", "note": "挑戰：u = x² − y²、v = xy，Jacobian 剛好跟被積函數約掉。" }
+  ],
+  "gaps": []
+}

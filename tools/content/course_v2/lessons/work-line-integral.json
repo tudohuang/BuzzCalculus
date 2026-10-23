@@ -1,50 +1,131 @@
 {
   "id": "work-line-integral",
   "title": "功的線積分",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["scalar-line-integral", "vector-field", "work"],
-  "next": ["conservative-fields"],
-  "related": ["path-independence"],
-  "objectives": [
-    "說出 $\\int_C\\mathbf F\\cdot d\\mathbf r$ 是「沿著路徑，力在前進方向上的分量 $\\times$ 一小段距離」的總和。",
-    "用參數式算：$\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$；也會讀 $\\int_C P\\,dx+Q\\,dy$ 的寫法。",
-    "知道走反方向會變號，而且同樣的起點終點、不同的路徑，答案可能不同。"
+  "prerequisites": [
+    "scalar-line-integral",
+    "vector-field",
+    "work"
   ],
-  "visual": "一個力場的箭頭鋪在平面上，一條有方向的路徑 C 穿過其中。一個小車沿 C 前進，車上顯示當下的速度方向與力 F，並把 F 分解成沿路徑的分量（綠色，幫忙）與垂直的分量（灰色，不做功）。累計功的讀數隨車前進更新；按「反向」後讀數變號。",
+  "next": [
+    "conservative-fields"
+  ],
+  "related": [
+    "path-independence"
+  ],
+  "objectives": [
+    "說出 $\\int_C\\mathbf F\\cdot d\\mathbf r$ 是「沿著路徑，力在前進方向上的分量 $\\times$ 一小段長度」加起來，也就是力做的功",
+    "用參數式算：$\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$，也會用 $\\int_C P\\,dx+Q\\,dy$ 的寫法",
+    "知道走反方向會變號，而且同樣的起點終點、不同的路徑，答案可能不同"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從「力 $\\times$ 距離」開始",
+      "heading": "① 從「力 × 距離」開始",
       "body": [
-        "〈功〉：定力沿直線，功 $={}$ 力 $\\times$ 距離。力的方向跟位移不同時，只有沿著位移的分量在做功：$W=\\mathbf F\\cdot\\mathbf d$（點積）。",
-        "現在力是一個場 $\\mathbf F(x,y)$，路徑是曲線 $C$。切成很多小段，每段位移 $\\Delta\\mathbf r$，功約 $\\mathbf F\\cdot\\Delta\\mathbf r$，加起來取極限，記成 $\\int_C\\mathbf F\\cdot d\\mathbf r$。"
+        "5.11：定力 $F$、沿直線走距離 $d$：$W=Fd$",
+        "力跟位移不同方向：只有沿位移方向的分量在做功",
+        "例：$\\mathbf F=\\langle3,1\\rangle$ 牛頓，$\\mathbf D=\\langle4,0\\rangle$ 公尺"
       ],
-      "collapsible": false
+      "tex": [
+        "W=\\mathbf F\\cdot\\mathbf D=|\\mathbf F|\\,|\\mathbf D|\\cos\\theta",
+        "W=3\\cdot4+1\\cdot0=12\\ \\text{焦耳}"
+      ]
+    },
+    {
+      "heading": "① 沿曲線、力會變",
+      "body": [
+        "力場 $\\mathbf F(x,y)$：每一點的力不一樣；物體沿曲線 $C$ 走",
+        "切成小段：每段裡力差不多不變，路差不多是直的",
+        "第 $i$ 段：位移 $\\approx\\mathbf T\\,\\Delta s_i$（$\\mathbf T$：單位切向量）",
+        "簡寫：$d\\mathbf r=\\mathbf T\\,ds$（一小段有方向的位移）"
+      ],
+      "tex": [
+        "\\Delta W_i\\approx\\mathbf F\\cdot\\mathbf T\\,\\Delta s_i",
+        "W=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds",
+        "W=\\int_C\\mathbf F\\cdot d\\mathbf r"
+      ]
     },
     {
       "heading": "② 化成定積分",
       "body": [
-        "參數化 $\\mathbf r(t)$，$a\\le t\\le b$，方向跟 $C$ 一致（$t$ 增加就是往前走）。$d\\mathbf r=\\mathbf r'(t)\\,dt$。$\\mathbf F$ 要先代進曲線上的點："
+        "$\\mathbf T=\\dfrac{\\mathbf r'(t)}{|\\mathbf r'(t)|}$，$ds=|\\mathbf r'(t)|\\,dt$：",
+        "• 參數化 $C$",
+        "• 把 $\\mathbf r(t)$ 代進 $\\mathbf F$",
+        "• 算 $\\mathbf r'(t)$，做內積，對 $t$ 積分",
+        "例 1：$\\mathbf F=\\langle -y,x\\rangle$，$C$：單位圓逆時針一圈，求 $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$",
+        "$\\oint$：曲線是封閉的（繞一圈）",
+        "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le2\\pi$",
+        "$\\mathbf F(\\mathbf r(t))=\\langle-\\sin t,\\cos t\\rangle$",
+        "$\\mathbf r'(t)=\\langle-\\sin t,\\cos t\\rangle$"
       ],
-      "tex": ["\\int_C \\mathbf F\\cdot d\\mathbf r=\\int_a^b \\mathbf F\\big(\\mathbf r(t)\\big)\\cdot\\mathbf r'(t)\\,dt"],
-      "collapsible": false
+      "tex": [
+        "\\mathbf T\\,ds=\\mathbf r'(t)\\,dt",
+        "\\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt",
+        "\\oint_C\\mathbf F\\cdot d\\mathbf r=\\int_0^{2\\pi}(\\sin^2t+\\cos^2t)\\,dt=2\\pi"
+      ]
+    },
+    {
+      "heading": "② 例 1：為什麼是正的",
+      "body": [
+        "在圓上 $\\mathbf F$ 恰好等於 $\\mathbf r'$：力一路順著走，每一段都做正功",
+        "對照：$\\mathbf F=\\langle x,y\\rangle$（向外）沿同一個圓，$\\mathbf F\\perp\\mathbf r'$，功 $=0$"
+      ]
     },
     {
       "heading": "③ 另外兩種寫法",
       "body": [
-        "$\\mathbf F=\\langle P,Q\\rangle$、$d\\mathbf r=\\langle dx,dy\\rangle$，點積展開成 $\\int_C P\\,dx+Q\\,dy$。看到這種寫法，就代 $x=x(t)$、$y=y(t)$、$dx=x'(t)\\,dt$、$dy=y'(t)\\,dt$。",
-        "也可以寫成 $\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$，$\\mathbf T$ 是單位切向量：只取 $\\mathbf F$ 沿著前進方向的分量，再做〈純量線積分〉。這個寫法最能看出意義：$\\mathbf F$ 跟路徑垂直的地方不做功。"
+        "$\\mathbf F=\\langle P,Q\\rangle$，$d\\mathbf r=\\langle dx,dy\\rangle$：",
+        "算的時候：$dx=x'(t)\\,dt$，$dy=y'(t)\\,dt$",
+        "三維多一項：$\\int_C P\\,dx+Q\\,dy+R\\,dz$",
+        "例 2：$\\displaystyle\\int_C y^2\\,dx+x\\,dy$，從 $(0,0)$ 到 $(1,1)$",
+        "(a) 沿直線 $y=x$　(b) 沿拋物線 $y=x^2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\mathbf F\\cdot d\\mathbf r=P\\,dx+Q\\,dy",
+        "\\begin{aligned}\\int_C\\mathbf F\\cdot d\\mathbf r&=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds\\\\&=\\int_C P\\,dx+Q\\,dy\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 例 2：兩條路",
+      "body": [
+        "(a) $x=t,\\ y=t$，$dx=dt$，$dy=dt$，$0\\le t\\le1$：",
+        "(b) $x=t,\\ y=t^2$，$dx=dt$，$dy=2t\\,dt$：",
+        "$\\dfrac56\\ne\\dfrac{13}{15}$：同樣的起點終點，路徑不同，功可以不同",
+        "下一課：什麼樣的場，功只看起點終點"
+      ],
+      "tex": [
+        "\\int_0^1(t^2+t)\\,dt=\\frac13+\\frac12=\\frac56",
+        "\\int_0^1\\big(t^4+t\\cdot2t\\big)\\,dt=\\frac15+\\frac23=\\frac{13}{15}"
+      ]
     },
     {
       "heading": "④ 方向很重要",
       "body": [
-        "反方向走，每一段 $d\\mathbf r$ 都變號，所以 $\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r$。這跟純量線積分不同。",
-        "只要方向相同，換參數化（走快走慢）答案不變。",
-        "但同樣起點終點、不同路徑，答案一般不同（範例 2）。哪些場「只看起點終點」，是〈路徑無關〉的主題。"
+        "$-C$：同一條曲線，反著走",
+        "原因：$\\mathbf T$ 變成 $-\\mathbf T$，$ds$ 還是正的",
+        "用 $dx$ 寫：反著走 $dx$ 變號，就像 $\\int_b^a=-\\int_a^b$",
+        "物理上：順著力走，功是正的；逆著力走，功是負的",
+        "$\\int_C f\\,ds$（質量）反著走：不變",
+        "$\\int_C\\mathbf F\\cdot d\\mathbf r$（功）反著走：變號"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 功 $=$ 沿路徑加總「力在前進方向的分量 $\\times$ 一小段長度」",
+        "• 三種寫法：$\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F\\cdot\\mathbf T\\,ds$，$P\\,dx+Q\\,dy$",
+        "• 反著走變號；起點終點一樣、路徑不同，功可能不同",
+        "下一課：保守場：功只看起點終點的場"
+      ],
+      "tex": [
+        "\\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt"
+      ]
     }
   ],
   "workedExamples": [
@@ -81,253 +162,759 @@
   ],
   "checks": [
     {
-      "ask": "同一條路徑改成反方向走，$\\int_C\\mathbf F\\cdot d\\mathbf r$ 會？",
+      "ask": "$\\mathbf F=\\langle y,x\\rangle$，$C$：$\\mathbf r(t)=\\langle t,t^2\\rangle$，$0\\le t\\le1$。$\\displaystyle\\int_C\\mathbf F\\cdot d\\mathbf r=$？",
       "options": [
-        { "label": "變號", "correct": true },
-        { "label": "不變", "why": "不變的是純量線積分 $\\int f\\,ds$。這裡每一段位移 $d\\mathbf r$ 都反向，點積都變號。" },
-        { "label": "變成 $0$", "why": "去程與回程合起來才是 $0$；單獨反向只是變號。" }
+        {
+          "label": "$1$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac56$",
+          "why": "把 $\\mathbf r'$ 當成 $\\langle1,1\\rangle$：$y=t^2$ 的導數是 $2t$"
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "用了 $\\mathbf F\\cdot\\mathbf r$：要內積的是 $\\mathbf r'$（切線方向），不是 $\\mathbf r$"
+        },
+        {
+          "label": "$3$",
+          "why": "內積 $3t^2$ 沒有積分，直接代了 $t=1$"
+        }
       ]
     },
     {
-      "ask": "$\\mathbf F$ 在路徑上每一點都跟路徑垂直，功是？",
+      "ask": "例 1 改成==順時針==繞單位圓一圈，$\\displaystyle\\oint_C\\langle-y,x\\rangle\\cdot d\\mathbf r=$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$|\\mathbf F|$ 乘以路徑長", "why": "那是 $\\mathbf F$ 處處順著路徑時的值。垂直時 $\\mathbf F\\cdot\\mathbf T=0$，完全不做功。" },
-        { "label": "無法判斷", "why": "$\\mathbf F\\cdot\\mathbf T$ 處處為 $0$，積分就是 $0$，不需要其他資訊。" }
-      ]
-    },
-    {
-      "ask": "$\\oint_C x\\,dy$，$C$：$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le 2\\pi$，是？",
-      "options": [
-        { "label": "$\\pi$", "correct": true },
-        { "label": "$0$", "why": "$x\\,dy=\\cos t\\cdot\\cos t\\,dt=\\cos^2t\\,dt$，不是 $\\cos t\\,dt$；$\\cos^2t$ 不會抵消。" },
-        { "label": "$2\\pi$", "why": "$\\cos^2t$ 在一圈上的平均是 $\\frac{1}{2}$，不是 $1$：$\\int_0^{2\\pi}\\cos^2t\\,dt=\\pi$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_C\\mathbf F\\cdot d\\mathbf r$ 用參數式寫，被積函數是？",
-      "options": [
-        { "label": "$\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)$", "correct": true },
-        { "label": "$\\mathbf F(\\mathbf r(t))\\,|\\mathbf r'(t)|$", "why": "那是把 $d\\mathbf r$ 當成 $ds$ 的純量寫法，而且 $\\mathbf F$ 是向量，不能直接乘一個長度當答案。" },
-        { "label": "$\\mathbf F(t)\\cdot\\mathbf r(t)$", "why": "$\\mathbf F$ 要先代進曲線上的點 $\\mathbf r(t)$；跟它點積的是速度 $\\mathbf r'(t)$，不是位置 $\\mathbf r(t)$。" }
+        {
+          "label": "$-2\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pi$",
+          "why": "那是把它當成純量線積分；$\\mathbf F\\cdot d\\mathbf r$ 會變號"
+        },
+        {
+          "label": "$0$",
+          "why": "逆著走每一段都做負功，不會互相抵消"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "力乘距離，變成場",
+      "title": "從「力 × 距離」開始",
       "beats": [
-        { "show": ["$W=\\mathbf F\\cdot\\mathbf d$"],
-          "note": "只有沿著位移的分量在做功。",
-          "say": "定力沿直線推，功是力乘距離。力歪一邊的時候，只有沿著位移的那一份在做功，所以用點積。",
+        {
+          "show": [
+            "5.11：定力 $F$、沿直線走距離 $d$：$W=Fd$"
+          ],
+          "say": "5.11 學過：一個固定的力，沿著直線推了距離 d，做的功就是力乘距離。",
           "board": [
-            {"do":"write","line":"$W={{w:\\mathbf F\\cdot\\mathbf d}}$"},
-            {"do":"underline","term":"w","label":"沿位移的分量","on":"只有沿著"}
-          ] },
-        { "show": ["每段功約 $\\mathbf F\\cdot\\Delta\\mathbf r$，加起來：$\\int_C\\mathbf F\\cdot d\\mathbf r$"],
-          "say": "現在力是一個場，路徑是曲線。切成小段，每段的功是力點積位移，加起來取極限。",
+            {
+              "do": "write",
+              "line": "5.11：定力 $F$、沿直線走距離 $d$：$W=Fd$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "力跟位移不同方向：只有沿位移方向的分量在做功",
+            "$W=\\mathbf F\\cdot\\mathbf D=|\\mathbf F|\\,|\\mathbf D|\\cos\\theta$"
+          ],
+          "say": "如果力跟位移不同方向呢？只有沿著位移方向的那一個分量在做功。寫成向量，功就是力和位移的內積。",
           "board": [
-            {"do":"write","line":"$\\sum {{s:\\mathbf F\\cdot\\Delta\\mathbf r}}\\;\\to\\;{{i:\\int_C\\mathbf F\\cdot d\\mathbf r}}$"},
-            {"do":"underline","term":"s","label":"每段的功","on":"每段的功"},
-            {"do":"circle","term":"i","on":"加起來"}
-          ] },
-        { "show": ["$d\\mathbf r=\\mathbf r'(t)\\,dt$"],
-          "note": "參數方向要跟 $C$ 一致。",
-          "say": "參數化之後，一小段位移是 r prime 乘 d t。t 增加的方向，就是往前走的方向。",
+            {
+              "do": "write",
+              "line": "力跟位移不同方向：只有沿位移方向的分量在做功"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle W=\\mathbf F\\cdot\\mathbf D=|\\mathbf F|\\,|\\mathbf D|\\cos\\theta}}$",
+              "on": "著位"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "寫成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\mathbf F=\\langle3,1\\rangle$ 牛頓，$\\mathbf D=\\langle4,0\\rangle$ 公尺",
+            "$W=3\\cdot4+1\\cdot0=12\\ \\text{焦耳}$"
+          ],
+          "say": "例如力是 3 逗號 1，位移是 4 逗號 0。內積是 3 乘 4 加 1 乘 0，等於 12 焦耳。往上的那一份力，對水平移動沒有貢獻。",
           "board": [
-            {"do":"write","line":"${{d:d\\mathbf r}}={{v:\\mathbf r'(t)\\,dt}}$"},
-            {"do":"focus","term":"d","on":"一小段位移"},
-            {"do":"underline","term":"v","color":"blue","on":"r prime"}
-          ] },
-        { "show": ["$\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$"],
-          "note": "$\\mathbf F$ 先代進曲線上的點。",
-          "say": "場要先代進曲線上的點，再跟速度向量做點積，不是乘速率。",
-          "board": [
-            {"do":"write","line":"${{f:\\mathbf F}}$ 先代進曲線上的點，再點積速度"},
-            {"do":"underline","term":"f","color":"blue","label":"先代進去","on":"先代進"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\mathbf F=\\langle3,1\\rangle$ 牛頓，$\\mathbf D=\\langle4,0\\rangle$ 公尺"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W=3\\cdot4+1\\cdot0=12\\ \\text{焦耳}$",
+              "on": "等於"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "拉著行李箱往前走，手的力==垂直於==前進方向。這個力做的功是？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "正的",
+            "why": "力是存在的，但它沒有任何一份沿著前進方向"
+          },
+          {
+            "label": "負的",
+            "why": "負功要力有一份跟前進方向相反；垂直的力兩邊都沒有"
+          }
+        ]
+      }
     },
     {
-      "title": "順著旋轉場繞一圈",
+      "title": "沿曲線、力會變",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle -y,x\\rangle$，單位圓逆時針"],
-          "note": "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le 2\\pi$。",
-          "say": "旋轉場，沿單位圓逆時針繞一圈。",
+        {
+          "show": [
+            "力場 $\\mathbf F(x,y)$：每一點的力不一樣；物體沿曲線 $C$ 走"
+          ],
+          "say": "現在讓兩件事都變複雜：力是一個向量場，每一點都不一樣；物體也不是走直線，而是沿著一條曲線 C。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle -y,x\\rangle$，單位圓逆時針"},
-            {"do":"plot","graph":{"window":[-2.1,2.1,-1.35,1.35],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}],"arrows":[{"from":[1.204,0.282],"to":[1.051,0.652],"color":"violet"},{"from":[0.652,1.051],"to":[0.282,1.204],"color":"violet"},{"from":[-0.282,1.204],"to":[-0.652,1.051],"color":"violet"},{"from":[-1.051,0.652],"to":[-1.204,0.282],"color":"violet"},{"from":[-1.204,-0.282],"to":[-1.051,-0.652],"color":"violet"},{"from":[-0.652,-1.051],"to":[-0.282,-1.204],"color":"violet"},{"from":[0.282,-1.204],"to":[0.652,-1.051],"color":"violet"},{"from":[1.051,-0.652],"to":[1.204,-0.282],"color":"violet"}],"ticks":false},"on":"沿單位圓"}
-          ] },
-        { "show": ["$\\oint_C$：沿閉合曲線積分"],
-          "note": "起點等於終點；算法跟 $\\int_C$ 一樣。",
-          "say": "這個圓圈的積分號，意思是沿閉合曲線積分，起點和終點是同一點。算法跟一般的線積分完全一樣，只是路徑封閉。",
+            {
+              "do": "write",
+              "line": "力場 $\\mathbf F(x,y)$：每一點的力不一樣；物體沿曲線 $C$ 走"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切成小段：每段裡力差不多不變，路差不多是直的",
+            "第 $i$ 段：位移 $\\approx\\mathbf T\\,\\Delta s_i$（$\\mathbf T$：單位切向量）"
+          ],
+          "say": "老方法：切成很多小段。每一小段裡，力差不多是常數，路也差不多是直的。這一段的位移，大約是單位切向量 T 乘上長度德爾塔 s。",
           "board": [
-            {"do":"write","line":"${{n4:\\oint_C}}$：閉合曲線，起點與終點同一點"},
-            {"do":"circle","term":"n4","on":"圓圈"}
-          ] },
-        { "show": ["$\\mathbf F=\\langle -\\sin t,\\cos t\\rangle$，$\\mathbf r'=\\langle -\\sin t,\\cos t\\rangle$"],
-          "say": "圓上的場，跟速度向量完全一樣。",
+            {
+              "do": "write",
+              "line": "切成小段：每段裡力差不多不變，路差不多是直的"
+            },
+            {
+              "do": "write",
+              "line": "第 $i$ 段：位移 $\\approx\\mathbf T\\,\\Delta s_i$（$\\mathbf T$：單位切向量）",
+              "on": "直的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta W_i\\approx\\mathbf F\\cdot\\mathbf T\\,\\Delta s_i$"
+          ],
+          "say": "這一小段的功，就是力和位移的內積：F 點 T，乘上德爾塔 s。",
           "board": [
-            {"do":"write","line":"${{f:\\mathbf F=\\langle -\\sin t,\\cos t\\rangle}}$，${{v:\\mathbf r'=\\langle -\\sin t,\\cos t\\rangle}}$","tint":{"f":"violet","v":"blue"}},
-            {"do":"focus","term":"f","on":"圓上的場"},
-            {"do":"focus","term":"v","on":"速度向量"}
-          ] },
-        { "show": ["$\\mathbf F\\cdot\\mathbf r'=\\sin^2t+\\cos^2t=1$，功 $2\\pi$"],
-          "note": "力處處順著前進方向推。",
-          "say": "點積處處是一，積一圈得二 pi。力一直順著前進方向推，功是正的。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta W_i\\approx\\mathbf F\\cdot\\mathbf T\\,\\Delta s_i$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$"
+          ],
+          "say": "加起來、取極限，功就是 F 點 T 沿著 C 的純量線積分。",
           "board": [
-            {"do":"transform","line":"$\\mathbf F\\cdot\\mathbf r'=\\sin^2t+\\cos^2t=1$，功 ${{w:2\\pi}}$"},
-            {"do":"box","term":"w","color":"green","on":"積一圈得"}
-          ] }
-      ],
-      "key": "$\\mathbf F$ 先代成曲線上的點再內積",
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle W=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "沿著"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，F 點 T 就是紅色這一段：力在前進方向上的分量。只有這一份在推著物體往前。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"wkPiece\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2wkPiece\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2wkPieceblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2wkPiecered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2wkPiecegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2wkPiecepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2wkPieceink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2wkPiece30\"><rect x=\"36.8\" y=\"16\" width=\"552.4\" height=\"294\"/></clipPath><g clip-path=\"url(#cl9b2wkPiece30)\"></g><line x1=\"393.2\" y1=\"96.2\" x2=\"447.4\" y2=\"55\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPiecepencil)\"/><line x1=\"491.2\" y1=\"96.2\" x2=\"545.4\" y2=\"55\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPiecepencil)\"/><line x1=\"99.2\" y1=\"305.5\" x2=\"153.4\" y2=\"264.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPiecepencil)\"/><line x1=\"232.8\" y1=\"305.5\" x2=\"287.1\" y2=\"264.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPiecepencil)\"/><line x1=\"339.7\" y1=\"305.5\" x2=\"394\" y2=\"264.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPiecepencil)\"/><line x1=\"406.5\" y1=\"54.5\" x2=\"383.9\" y2=\"172.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-dasharray=\"8 7\"/><line x1=\"277.4\" y1=\"152.5\" x2=\"383.9\" y2=\"172.9\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"round\"/><line x1=\"277.4\" y1=\"152.5\" x2=\"406.5\" y2=\"54.5\" stroke=\"var(--ink)\" stroke-width=\"3\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPieceink)\"/><path d=\"M72.5 229.8L74.5 228.3L76.6 226.8L78.7 225.3L80.8 223.8L82.8 222.3L84.9 220.9L87 219.4L89.1 217.9L91.2 216.4L93.2 214.9L95.3 213.5L97.4 212L99.5 210.6L101.6 209.1L103.6 207.7L105.7 206.2L107.8 204.8L109.9 203.4L112 202L114 200.6L116.1 199.2L118.2 197.8L120.3 196.4L122.3 195.1L124.4 193.7L126.5 192.4L128.6 191.1L130.7 189.8L132.7 188.5L134.8 187.2L136.9 186L139 184.7L141.1 183.5L143.1 182.3L145.2 181.1L147.3 179.9L149.4 178.7L151.4 177.6L153.5 176.5L155.6 175.4L157.7 174.3L159.8 173.2L161.8 172.2L163.9 171.1L166 170.1L168.1 169.1L170.2 168.2L172.2 167.2L174.3 166.3L176.4 165.4L178.5 164.5L180.6 163.6L182.6 162.8L184.7 162L186.8 161.2L188.9 160.5L190.9 159.7L193 159L195.1 158.3L197.2 157.6L199.3 157L201.3 156.4L203.4 155.8L205.5 155.2L207.6 154.7L209.7 154.2L211.7 153.7L213.8 153.3L215.9 152.8L218 152.4L220 152L222.1 151.7L224.2 151.4L226.3 151.1L228.4 150.8L230.4 150.6L232.5 150.3L234.6 150.2L236.7 150L238.8 149.9L240.8 149.8L242.9 149.7L245 149.7L247.1 149.6L249.2 149.6L251.2 149.7L253.3 149.7L255.4 149.8L257.5 150L259.5 150.1L261.6 150.3L263.7 150.5L265.8 150.7L267.9 151L269.9 151.3L272 151.6L274.1 151.9L276.2 152.3L278.3 152.7L280.3 153.1L282.4 153.6L284.5 154L286.6 154.5L288.6 155.1L290.7 155.6L292.8 156.2L294.9 156.8L297 157.5L299 158.1L301.1 158.8L303.2 159.5L305.3 160.2L307.4 161L309.4 161.8L311.5 162.6L313.6 163.4L315.7 164.2L317.8 165.1L319.8 166L321.9 166.9L324 167.9L326.1 168.8L328.1 169.8L330.2 170.8L332.3 171.8L334.4 172.9L336.5 173.9L338.5 175L340.6 176.1L342.7 177.3L344.8 178.4L346.9 179.6L348.9 180.7L351 181.9L353.1 183.1L355.2 184.4L357.2 185.6L359.3 186.8L361.4 188.1L363.5 189.4L365.6 190.7L367.6 192L369.7 193.3L371.8 194.7L373.9 196L376 197.4L378 198.8L380.1 200.2L382.2 201.6L384.3 203L386.4 204.4L388.4 205.8L390.5 207.2L392.6 208.7L394.7 210.1L396.7 211.6L398.8 213L400.9 214.5L403 216L405.1 217.4L407.1 218.9L409.2 220.4L411.3 221.9L413.4 223.4L415.5 224.9L417.5 226.4L419.6 227.9L421.7 229.4L423.8 230.9L425.8 232.4L427.9 233.9L430 235.4L432.1 236.8L434.2 238.3L436.2 239.8L438.3 241.3L440.4 242.8L442.5 244.3L444.6 245.7L446.6 247.2L448.7 248.6L450.8 250.1L452.9 251.5L455 253L457 254.4L459.1 255.8L461.2 257.2L463.3 258.6L465.3 260L467.4 261.4L469.5 262.8L471.6 264.1L473.7 265.5L475.7 266.8L477.8 268.1L479.9 269.5L482 270.7L484.1 272L486.1 273.3L488.2 274.5L490.3 275.8L492.4 277L494.4 278.2L496.5 279.4L498.6 280.6L500.7 281.7L502.8 282.8L504.8 283.9L506.9 285L509 286.1L511.1 287.2L513.2 288.2L515.2 289.2L517.3 290.2L519.4 291.2L521.5 292.1L523.6 293.1L525.6 294L527.7 294.9L529.8 295.7L531.9 296.6L533.9 297.4L536 298.2L538.1 299L540.2 299.7L542.3 300.4L544.3 301.1L546.4 301.8L548.5 302.4L550.6 303.1L552.7 303.7L554.7 304.2L556.8 304.8L558.9 305.3L561 305.8L563 306.2L565.1 306.7L567.2 307.1L569.3 307.5L571.4 307.8\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M509 286.1L510.3 286.8L511.7 287.5L513 288.1L514.3 288.8L515.7 289.4L517 290.1L518.4 290.7L519.7 291.3L521 291.9L522.4 292.5L523.7 293.1L525 293.7L526.4 294.3L527.7 294.9L529 295.4L530.4 296L531.7 296.5L533.1 297L534.4 297.6L535.7 298.1\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPieceblue)\"/><circle cx=\"277.4\" cy=\"152.5\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"415.5\" y=\"59\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">F</tspan></text><text x=\"316.7\" y=\"195.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"24\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">F</tspan> · <tspan font-weight=\"bold\" font-style=\"normal\">T</tspan></text><text x=\"68\" y=\"198.6\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><text x=\"16\" y=\"34\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:inherit\">灰色箭頭：力場 F</text><text x=\"16\" y=\"64\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">紅色：F 沿前進方向的分量</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "簡寫：$d\\mathbf r=\\mathbf T\\,ds$（一小段有方向的位移）",
+            "$W=\\int_C\\mathbf F\\cdot d\\mathbf r$"
+          ],
+          "say": "把 T 乘 d s 簡寫成 d r，代表一小段有方向的位移。功就寫成 F 點 d r 的線積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "簡寫：$d\\mathbf r=\\mathbf T\\,ds$（一小段有方向的位移）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle W=\\int_C\\mathbf F\\cdot d\\mathbf r}}$",
+              "color": "red",
+              "on": "代表"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "寫成#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "另外兩種寫法",
+      "title": "化成定積分",
       "beats": [
-        { "show": ["$\\int_C P\\,dx+Q\\,dy$"],
-          "note": "代 $dx=x'(t)\\,dt$、$dy=y'(t)\\,dt$。",
-          "say": "把點積展開，寫成 P d x 加 Q d y。看到這種寫法，d x 和 d y 都要換成 t。",
+        {
+          "show": [
+            "$\\mathbf T=\\dfrac{\\mathbf r'(t)}{|\\mathbf r'(t)|}$，$ds=|\\mathbf r'(t)|\\,dt$：",
+            "$\\mathbf T\\,ds=\\mathbf r'(t)\\,dt$"
+          ],
+          "say": "怎麼算？單位切向量是 r prime 除以它的長度；d s 是長度乘 d t。兩個相乘，長度剛好約掉，剩下 r prime d t。",
           "board": [
-            {"do":"write","line":"$\\int_C {{p:P\\,dx}}+{{q:Q\\,dy}}$"},
-            {"do":"write","line":"$dx=x'(t)\\,dt$，$dy=y'(t)\\,dt$","on":"都要換成"}
-          ] },
-        { "show": ["$\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$"],
-          "note": "$\\mathbf T$ 是單位切向量。",
-          "say": "也可以寫成場在前進方向的分量，再做純量線積分。這個寫法最看得出意思。",
+            {
+              "do": "write",
+              "line": "$\\mathbf T=\\dfrac{\\mathbf r'(t)}{|\\mathbf r'(t)|}$，$ds=|\\mathbf r'(t)|\\,dt$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf T\\,ds=\\mathbf r'(t)\\,dt$",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$"
+          ],
+          "say": "所以只要算 F of r of t，點 r prime of t，對 t 積分。不用算速率的根號，比上一課還省事。",
           "board": [
-            {"do":"write","line":"$\\int_C{{c:\\mathbf F\\cdot\\mathbf T}}\\,ds$"},
-            {"do":"underline","term":"c","label":"前進方向分量","on":"前進方向"}
-          ] },
-        { "show": ["$\\mathbf T=\\frac{\\mathbf r'}{|\\mathbf r'|}$，$ds=|\\mathbf r'|\\,dt$"],
-          "note": "$\\mathbf T$ 長度是 1，$ds$ 是一小段弧長。",
-          "say": "T 是速度向量除以它的長度，長度一、指著前進方向。d s 是這一小段的弧長，等於速率乘 d t。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "of#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 參數化 $C$",
+            "• 把 $\\mathbf r(t)$ 代進 $\\mathbf F$"
+          ],
+          "say": "步驟：參數化；把 r of t 代進 F；算 r prime，做內積，再積分。",
           "board": [
-            {"do":"write","line":"$\\mathbf T={{n1:\\frac{\\mathbf r'}{|\\mathbf r'|}}}$"},
-            {"do":"underline","term":"n1","color":"blue","label":"長度 1","on":"長度一"},
-            {"do":"write","line":"$ds={{n2:|\\mathbf r'|\\,dt}}$","on":"d s 是"},
-            {"do":"focus","term":"n2","on":"弧長"}
-          ] },
-        { "show": ["$\\mathbf T\\,ds=\\mathbf r'(t)\\,dt=d\\mathbf r$"],
-          "note": "所以兩種寫法是同一個積分。",
-          "say": "兩個乘起來，長度約掉，剩 r prime 乘 d t，就是 d r。所以兩種寫法是同一個積分。",
+            {
+              "do": "write",
+              "line": "• 參數化 $C$"
+            },
+            {
+              "do": "write",
+              "line": "• 把 $\\mathbf r(t)$ 代進 $\\mathbf F$",
+              "on": "代進"
+            },
+            {
+              "do": "write",
+              "line": "• 算 $\\mathbf r'(t)$，做內積，對 $t$ 積分",
+              "on": "ri"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\mathbf F=\\langle -y,x\\rangle$，$C$：單位圓逆時針一圈，求 $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$"
+          ],
+          "say": "第一個例子：旋轉場 負 y 逗號 x，沿著單位圓逆時針繞一圈。積分號上的圈，表示曲線是封閉的。",
           "board": [
-            {"do":"write","line":"$\\mathbf T\\,ds={{n3:\\mathbf r'(t)\\,dt=d\\mathbf r}}$"},
-            {"do":"box","term":"n3","color":"green","on":"就是"}
-          ] },
-        { "show": ["$\\mathbf F\\perp$ 路徑：不做功"],
-          "say": "場跟路徑垂直的地方，前進方向的分量是零，那一段就不做功。",
+            {
+              "do": "write",
+              "line": "例 1：$\\mathbf F=\\langle -y,x\\rangle$，$C$：單位圓逆時針一圈，求 $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\oint$：曲線是封閉的（繞一圈）",
+              "color": "violet",
+              "on": "圓逆"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le2\\pi$",
+            "$\\mathbf F(\\mathbf r(t))=\\langle-\\sin t,\\cos t\\rangle$"
+          ],
+          "say": "參數化成餘弦 t、正弦 t。代進 F，得到負正弦逗號餘弦。r prime 也是負正弦逗號餘弦，兩個一模一樣。",
           "board": [
-            {"do":"write","line":"${{f:\\mathbf F\\perp}}$ 路徑：那一段不做功"},
-            {"do":"underline","term":"f","color":"red","label":"垂直","on":"垂直"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le2\\pi$"
+            },
+            {
+              "do": "write",
+              "line": "$\\mathbf F(\\mathbf r(t))=\\langle-\\sin t,\\cos t\\rangle$",
+              "on": "得到"
+            },
+            {
+              "do": "write",
+              "line": "$\\mathbf r'(t)=\\langle-\\sin t,\\cos t\\rangle$",
+              "on": "也是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\int_0^{2\\pi}(\\sin^2t+\\cos^2t)\\,dt=2\\pi$"
+          ],
+          "say": "內積是正弦平方加餘弦平方，等於 1。積一圈，答案是 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\oint_C\\mathbf F\\cdot d\\mathbf r=\\int_0^{2\\pi}(\\sin^2t+\\cos^2t)\\,dt=2\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "積一"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "方向很重要",
+      "title": "例 1：為什麼是正的",
       "beats": [
-        { "show": ["$\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r$"],
-          "say": "反方向走，每一小段位移都變號，整個功就變號。這跟純量線積分不一樣。",
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看圖：旋轉場的箭頭一圈一圈繞著原點轉，跟 C 逆時針的方向完全一致。",
           "board": [
-            {"do":"write","line":"${{l:\\int_{-C}\\mathbf F\\cdot d\\mathbf r}}$"},
-            {"do":"transform","line":"${{l:\\int_{-C}\\mathbf F\\cdot d\\mathbf r}}=-{{r:\\int_C\\mathbf F\\cdot d\\mathbf r}}$","on":"整個功"}
-          ] },
-        { "show": ["方向相同：換參數化，答案不變"],
-          "say": "只要方向一樣，走快走慢都不影響答案。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"wkRot\" viewBox=\"0 0 560 400\" width=\"560\" height=\"400\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2wkRot\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2wkRotblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2wkRotred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2wkRotgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2wkRotpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2wkRotink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2wkRot30\"><rect x=\"95.9\" y=\"16\" width=\"374.2\" height=\"354\"/></clipPath><g clip-path=\"url(#cl9b2wkRot30)\"><line x1=\"181.9\" y1=\"16\" x2=\"181.9\" y2=\"370\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"283\" y1=\"16\" x2=\"283\" y2=\"370\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"384.1\" y1=\"16\" x2=\"384.1\" y2=\"370\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"95.9\" y1=\"294.1\" x2=\"470.1\" y2=\"294.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"95.9\" y1=\"193\" x2=\"470.1\" y2=\"193\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"95.9\" y1=\"91.9\" x2=\"470.1\" y2=\"91.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"91.9\" y1=\"193\" x2=\"482.1\" y2=\"193\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2wkRot)\"/><line x1=\"283\" y1=\"374\" x2=\"283\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2wkRot)\"/><text x=\"480.1\" y=\"184\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"292\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"131.3\" y1=\"344.7\" x2=\"157\" y2=\"370.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"294.1\" x2=\"151.5\" y2=\"324.4\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"243.6\" x2=\"141.4\" y2=\"273.9\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"193\" x2=\"131.3\" y2=\"223.3\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"142.4\" x2=\"121.2\" y2=\"172.8\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"91.9\" x2=\"111.1\" y2=\"122.2\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"131.3\" y1=\"41.3\" x2=\"105.5\" y2=\"67\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"344.7\" x2=\"212.2\" y2=\"364.9\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"294.1\" x2=\"202.1\" y2=\"314.4\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"243.6\" x2=\"192\" y2=\"263.8\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"193\" x2=\"181.9\" y2=\"213.2\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"142.4\" x2=\"171.7\" y2=\"162.7\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"91.9\" x2=\"161.6\" y2=\"112.1\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"181.9\" y1=\"41.3\" x2=\"151.6\" y2=\"61.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"344.7\" x2=\"262.8\" y2=\"354.8\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"294.1\" x2=\"252.7\" y2=\"304.3\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"243.6\" x2=\"242.5\" y2=\"253.7\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"193\" x2=\"232.4\" y2=\"203.1\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"142.4\" x2=\"222.3\" y2=\"152.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"91.9\" x2=\"212.2\" y2=\"102\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"232.4\" y1=\"41.3\" x2=\"202.1\" y2=\"51.4\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"344.7\" x2=\"313.3\" y2=\"344.7\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"294.1\" x2=\"303.2\" y2=\"294.1\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"243.6\" x2=\"293.1\" y2=\"243.6\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"142.4\" x2=\"272.9\" y2=\"142.4\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"91.9\" x2=\"262.8\" y2=\"91.9\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"283\" y1=\"41.3\" x2=\"252.7\" y2=\"41.3\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"344.7\" x2=\"363.9\" y2=\"334.6\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"294.1\" x2=\"353.8\" y2=\"284\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"243.6\" x2=\"343.7\" y2=\"233.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"193\" x2=\"333.6\" y2=\"182.9\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"142.4\" x2=\"323.5\" y2=\"132.3\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"91.9\" x2=\"313.3\" y2=\"81.7\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"333.6\" y1=\"41.3\" x2=\"303.2\" y2=\"31.2\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"344.7\" x2=\"414.4\" y2=\"324.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"294.1\" x2=\"404.4\" y2=\"273.9\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"243.6\" x2=\"394.3\" y2=\"223.3\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"193\" x2=\"384.1\" y2=\"172.8\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"142.4\" x2=\"374\" y2=\"122.2\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"91.9\" x2=\"363.9\" y2=\"71.6\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"384.1\" y1=\"41.3\" x2=\"353.8\" y2=\"21.1\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"344.7\" x2=\"460.5\" y2=\"319\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"294.1\" x2=\"454.9\" y2=\"263.8\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"243.6\" x2=\"444.8\" y2=\"213.2\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"193\" x2=\"434.7\" y2=\"162.7\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"142.4\" x2=\"424.6\" y2=\"112.1\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"91.9\" x2=\"414.5\" y2=\"61.6\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><line x1=\"434.7\" y1=\"41.3\" x2=\"409\" y2=\"15.5\" stroke=\"var(--muted)\" stroke-width=\"1.7\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotpencil)\"/><path d=\"M384.1 193L384.1 190.4L384 187.7L383.8 185.1L383.6 182.4L383.3 179.8L382.9 177.2L382.4 174.6L381.9 172L381.3 169.4L380.7 166.8L380 164.3L379.2 161.7L378.3 159.2L377.4 156.8L376.4 154.3L375.4 151.9L374.3 149.5L373.1 147.1L371.9 144.7L370.6 142.4L369.2 140.2L367.8 137.9L366.4 135.7L364.8 133.5L363.2 131.4L361.6 129.3L359.9 127.3L358.2 125.3L356.4 123.4L354.5 121.5L352.6 119.6L350.7 117.8L348.7 116.1L346.7 114.4L344.6 112.8L342.5 111.2L340.3 109.6L338.1 108.2L335.8 106.8L333.6 105.4L331.3 104.1L328.9 102.9L326.5 101.7L324.1 100.6L321.7 99.6L319.2 98.6L316.8 97.7L314.3 96.8L311.7 96L309.2 95.3L306.6 94.7L304 94.1L301.4 93.6L298.8 93.1L296.2 92.7L293.6 92.4L290.9 92.2L288.3 92L285.6 91.9L283 91.9L280.4 91.9L277.7 92L275.1 92.2L272.4 92.4L269.8 92.7L267.2 93.1L264.6 93.6L262 94.1L259.4 94.7L256.8 95.3L254.3 96L251.7 96.8L249.2 97.7L246.8 98.6L244.3 99.6L241.9 100.6L239.5 101.7L237.1 102.9L234.7 104.1L232.4 105.4L230.2 106.8L227.9 108.2L225.7 109.6L223.5 111.2L221.4 112.8L219.3 114.4L217.3 116.1L215.3 117.8L213.4 119.6L211.5 121.5L209.6 123.4L207.8 125.3L206.1 127.3L204.4 129.3L202.8 131.4L201.2 133.5L199.6 135.7L198.2 137.9L196.8 140.2L195.4 142.4L194.1 144.7L192.9 147.1L191.7 149.5L190.6 151.9L189.6 154.3L188.6 156.8L187.7 159.2L186.8 161.7L186 164.3L185.3 166.8L184.7 169.4L184.1 172L183.6 174.6L183.1 177.2L182.7 179.8L182.4 182.4L182.2 185.1L182 187.7L181.9 190.4L181.9 193L181.9 195.6L182 198.3L182.2 200.9L182.4 203.6L182.7 206.2L183.1 208.8L183.6 211.4L184.1 214L184.7 216.6L185.3 219.2L186 221.7L186.8 224.3L187.7 226.8L188.6 229.2L189.6 231.7L190.6 234.1L191.7 236.5L192.9 238.9L194.1 241.3L195.4 243.6L196.8 245.8L198.2 248.1L199.6 250.3L201.2 252.5L202.8 254.6L204.4 256.7L206.1 258.7L207.8 260.7L209.6 262.6L211.5 264.5L213.4 266.4L215.3 268.2L217.3 269.9L219.3 271.6L221.4 273.2L223.5 274.8L225.7 276.4L227.9 277.8L230.2 279.2L232.4 280.6L234.7 281.9L237.1 283.1L239.5 284.3L241.9 285.4L244.3 286.4L246.8 287.4L249.2 288.3L251.7 289.2L254.3 290L256.8 290.7L259.4 291.3L262 291.9L264.6 292.4L267.2 292.9L269.8 293.3L272.4 293.6L275.1 293.8L277.7 294L280.4 294.1L283 294.1L285.6 294.1L288.3 294L290.9 293.8L293.6 293.6L296.2 293.3L298.8 292.9L301.4 292.4L304 291.9L306.6 291.3L309.2 290.7L311.7 290L314.3 289.2L316.8 288.3L319.2 287.4L321.7 286.4L324.1 285.4L326.5 284.3L328.9 283.1L331.3 281.9L333.6 280.6L335.8 279.2L338.1 277.8L340.3 276.4L342.5 274.8L344.6 273.2L346.7 271.6L348.7 269.9L350.7 268.2L352.6 266.4L354.5 264.5L356.4 262.6L358.2 260.7L359.9 258.7L361.6 256.7L363.2 254.6L364.8 252.5L366.4 250.3L367.8 248.1L369.2 245.8L370.6 243.6L371.9 241.3L373.1 238.9L374.3 236.5L375.4 234.1L376.4 231.7L377.4 229.2L378.3 226.8L379.2 224.3L380 221.7L380.7 219.2L381.3 216.6L381.9 214L382.4 211.4L382.9 208.8L383.3 206.2L383.6 203.6L383.8 200.9L384 198.3L384.1 195.6L384.1 193\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M361.3 129L360.3 127.8L359.3 126.7L358.3 125.5L357.3 124.4L356.3 123.3L355.2 122.2L354.2 121.1L353.1 120.1L352 119L350.9 118L349.7 117L348.6 116L347.4 115L346.2 114.1L345 113.1L343.8 112.2L342.6 111.3L341.4 110.4L340.1 109.5L338.9 108.7\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotblue)\"/><path d=\"M204.7 257L205.7 258.2L206.7 259.3L207.7 260.5L208.7 261.6L209.7 262.7L210.8 263.8L211.8 264.9L212.9 265.9L214 267L215.1 268L216.3 269L217.4 270L218.6 271L219.8 271.9L221 272.9L222.2 273.8L223.4 274.7L224.6 275.6L225.9 276.5L227.1 277.3\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkRotblue)\"/><text x=\"384.1\" y=\"63.5\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">C：逆時針</text><text x=\"106\" y=\"36.2\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">F</tspan> = ⟨−y, x⟩</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在圓上 $\\mathbf F$ 恰好等於 $\\mathbf r'$：力一路順著走，每一段都做正功"
+          ],
+          "say": "在單位圓上，F 剛好等於 r prime，力一路都順著前進方向推，每一小段都做正功，加起來是 2 派。",
           "board": [
-            {"do":"write","line":"方向相同：換參數化，答案不變"}
-          ] },
-        { "show": ["$\\mathbf r_1=\\langle t,t\\rangle$","$\\mathbf r_2=\\langle s^2,s^2\\rangle$"],
-          "note": "同一段直線，兩種參數化。",
-          "say": "換參數化，就是用另一個變數描述同一條路。第二種寫法 x 和 y 都是 s 平方，s 從零走到一，一樣從原點走到點一、一。",
-          "board": [
-            {"do":"write","line":"${{n5:\\mathbf r_1=\\langle t,t\\rangle}}$，${{n6:\\mathbf r_2=\\langle s^2,s^2\\rangle}}$"},
-            {"do":"focus","term":"n6","on":"s 平方"}
-          ] },
-        { "show": ["$dx=dy=2s\\,ds$","$\\int_0^1(2s^5+2s^3)\\,ds=\\frac{1}{3}+\\frac{1}{2}$"],
-          "note": "拿 $\\int y^2\\,dx+x\\,dy$ 來代。",
-          "say": "d x 和 d y 都是二 s d s，被積函數變成二 s 的五次加二 s 的三次，積出來還是六分之五。因為走過的點和方向都一樣。",
-          "board": [
-            {"do":"write","line":"$dx=dy=2s\\,ds$"},
-            {"do":"write","line":"$\\int_0^1(2s^5+2s^3)\\,ds={{n7:\\frac{1}{3}+\\frac{1}{2}}}$","on":"被積函數"},
-            {"do":"box","term":"n7","color":"green","on":"還是"}
-          ] }
+            {
+              "do": "write",
+              "line": "在圓上 $\\mathbf F$ 恰好等於 $\\mathbf r'$：力一路順著走，每一段都做正功"
+            },
+            {
+              "do": "write",
+              "line": "　對照：$\\mathbf F=\\langle x,y\\rangle$（向外）沿同一個圓，$\\mathbf F\\perp\\mathbf r'$，功 $=0$",
+              "color": "violet",
+              "on": "順著"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "同起點終點，不同路",
+      "title": "另外兩種寫法",
       "beats": [
-        { "show": ["$\\int_C y^2\\,dx+x\\,dy$，$(0,0)\\to(1,1)$"],
-          "say": "同樣從原點走到點一、一，走兩條不同的路。",
+        {
+          "show": [
+            "$\\mathbf F=\\langle P,Q\\rangle$，$d\\mathbf r=\\langle dx,dy\\rangle$：",
+            "$\\mathbf F\\cdot d\\mathbf r=P\\,dx+Q\\,dy$"
+          ],
+          "say": "第二種寫法：如果 F 的兩個分量叫 P 和 Q，d r 就是 d x 逗號 d y，內積是 P d x 加 Q d y。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.6,1.6,-0.15,1.2],"equal":true,"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"x^2","domain":[0,1],"color":"violet"}],"points":[{"x":0,"y":0},{"x":1,"y":1}],"ticks":false}},
-            {"do":"write","line":"$\\int_C y^2\\,dx+x\\,dy$，$(0,0)\\to(1,1)$","on":"原點"}
-          ] },
-        { "show": ["沿 $y=x$：$\\int_0^1(t^2+t)\\,dt=\\frac{5}{6}$"],
-          "say": "沿直線，d x、d y 都是 d t，積出來六分之五。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle P,Q\\rangle$，$d\\mathbf r=\\langle dx,dy\\rangle$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F\\cdot d\\mathbf r=P\\,dx+Q\\,dy$",
+              "on": "逗號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int_C\\mathbf F\\cdot d\\mathbf r&=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds\\\\&=\\int_C P\\,dx+Q\\,dy\\end{aligned}$"
+          ],
+          "say": "所以同一個積分有三種寫法：F 點 d r，F 點 T d s，還有 P d x 加 Q d y。意思都一樣。",
           "board": [
-            {"do":"write","line":"沿 ${{l:y=x}}$：$\\int_0^1(t^2+t)\\,dt={{a:\\frac{5}{6}}}$","tint":{"l":"blue"}}
-          ] },
-        { "show": ["沿 $y=x^2$：$dx=dt$、$dy=2t\\,dt$"],
-          "say": "沿拋物線，x 是 t、y 是 t 平方，d y 要換成二 t d t。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}\\int_C\\mathbf F\\cdot d\\mathbf r&=\\int_C\\mathbf F\\cdot\\mathbf T\\,ds\\\\&=\\int_C P\\,dx+Q\\,dy\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "還有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "算的時候：$dx=x'(t)\\,dt$，$dy=y'(t)\\,dt$"
+          ],
+          "say": "用第三種寫法算的時候，d x 換成 x prime d t，d y 換成 y prime d t，結果跟內積完全一樣。",
           "board": [
-            {"do":"transform","line":"${{l:y=x}}$：${{a:\\frac{5}{6}}}$；${{p:y=x^2}}$：${{dy:dy=2t\\,dt}}$","tint":{"p":"violet"}},
-            {"do":"underline","term":"dy","on":"d y 要換成"}
-          ] },
-        { "show": ["$y^2=(t^2)^2=t^4$，$dx=dt$"],
-          "note": "$x=t$，$y=t^2$，代進第一項。",
-          "say": "先代 y 平方：y 是 t 平方，平方再平方是 t 的四次，d x 是 d t，所以第一項是 t 四次 d t。",
+            {
+              "do": "write",
+              "line": "算的時候：$dx=x'(t)\\,dt$，$dy=y'(t)\\,dt$"
+            },
+            {
+              "do": "write",
+              "line": "　三維多一項：$\\int_C P\\,dx+Q\\,dy+R\\,dz$",
+              "color": "violet",
+              "on": "換成#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：$\\displaystyle\\int_C y^2\\,dx+x\\,dy$，從 $(0,0)$ 到 $(1,1)$",
+            "(a) 沿直線 $y=x$　(b) 沿拋物線 $y=x^2$"
+          ],
+          "say": "第二個例子：y 平方 d x 加 x d y，從原點走到 1 逗號 1。走兩條不同的路：直線和拋物線。",
           "board": [
-            {"do":"write","line":"${{n8:y^2}}=(t^2)^2=t^4$，$dx=dt$"},
-            {"do":"focus","term":"n8","on":"先代"}
-          ] },
-        { "show": ["$x\\,dy=t\\cdot2t\\,dt=2t^2\\,dt$","被積函數：$t^4+2t^2$，$t$ 從 0 到 1"],
-          "note": "各項用冪次法則積。",
-          "say": "第二項 x 是 t，d y 是二 t d t，相乘是二 t 平方 d t。兩項加起來積分，t 從零到一，各項用冪次法則積。",
+            {
+              "do": "write",
+              "line": "例 2：$\\displaystyle\\int_C y^2\\,dx+x\\,dy$，從 $(0,0)$ 到 $(1,1)$"
+            },
+            {
+              "do": "write",
+              "line": "(a) 沿直線 $y=x$　(b) 沿拋物線 $y=x^2$",
+              "on": "點走"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "灰色箭頭是這個場 y 平方逗號 x。兩條路的起點、終點都一樣。",
           "board": [
-            {"do":"write","line":"$x\\,dy=t\\cdot2t\\,dt=2t^2\\,dt$"},
-            {"do":"write","line":"被積函數：${{n9:t^4+2t^2}}$，$t$ 從 0 到 1","on":"兩項加起來"},
-            {"do":"box","term":"n9","on":"冪次法則"}
-          ] }
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"wkPaths\" viewBox=\"0 0 560 380\" width=\"560\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2wkPaths\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2wkPathsblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2wkPathsred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2wkPathsgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2wkPathspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2wkPathsink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2wkPaths30\"><rect x=\"98.7\" y=\"16\" width=\"368.6\" height=\"334\"/></clipPath><g clip-path=\"url(#cl9b2wkPaths30)\"><line x1=\"133.3\" y1=\"16\" x2=\"133.3\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"363.6\" y1=\"16\" x2=\"363.6\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"98.7\" y1=\"315.4\" x2=\"467.3\" y2=\"315.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"98.7\" y1=\"85.1\" x2=\"467.3\" y2=\"85.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"94.7\" y1=\"315.4\" x2=\"479.3\" y2=\"315.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2wkPaths)\"/><line x1=\"133.3\" y1=\"354\" x2=\"133.3\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2wkPaths)\"/><text x=\"363.6\" y=\"337.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"126.3\" y=\"92.1\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"477.3\" y=\"306.4\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"142.3\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"133.3\" y1=\"257.9\" x2=\"135.6\" y2=\"257.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"133.3\" y1=\"200.3\" x2=\"142.5\" y2=\"200.3\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"133.3\" y1=\"142.7\" x2=\"154\" y2=\"142.7\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"133.3\" y1=\"85.1\" x2=\"170.1\" y2=\"85.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"133.3\" y1=\"27.5\" x2=\"184\" y2=\"27.5\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"315.4\" x2=\"190.9\" y2=\"306.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"257.9\" x2=\"193.2\" y2=\"248.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"200.3\" x2=\"200.1\" y2=\"191.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"142.7\" x2=\"211.6\" y2=\"133.5\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"85.1\" x2=\"227.7\" y2=\"75.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"190.9\" y1=\"27.5\" x2=\"240.9\" y2=\"19.5\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"315.4\" x2=\"248.4\" y2=\"297\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"257.9\" x2=\"250.8\" y2=\"239.4\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"200.3\" x2=\"257.7\" y2=\"181.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"142.7\" x2=\"269.2\" y2=\"124.3\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"85.1\" x2=\"285.3\" y2=\"66.7\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"248.4\" y1=\"27.5\" x2=\"296.7\" y2=\"12.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"315.4\" x2=\"306\" y2=\"287.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"257.9\" x2=\"308.3\" y2=\"230.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"200.3\" x2=\"315.2\" y2=\"172.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"142.7\" x2=\"326.8\" y2=\"115\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"85.1\" x2=\"342.9\" y2=\"57.5\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"306\" y1=\"27.5\" x2=\"351.7\" y2=\"5.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"315.4\" x2=\"363.6\" y2=\"278.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"257.9\" x2=\"365.9\" y2=\"221\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"200.3\" x2=\"372.8\" y2=\"163.4\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"142.7\" x2=\"384.4\" y2=\"105.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"85.1\" x2=\"399.5\" y2=\"49.3\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"363.6\" y1=\"27.5\" x2=\"406.3\" y2=\"0.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"315.4\" x2=\"421.2\" y2=\"269.4\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"257.9\" x2=\"423.5\" y2=\"211.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"200.3\" x2=\"430.4\" y2=\"154.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"142.7\" x2=\"441.9\" y2=\"96.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"85.1\" x2=\"452.9\" y2=\"45.5\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><line x1=\"421.2\" y1=\"27.5\" x2=\"460.8\" y2=\"-4.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathspencil)\"/><path d=\"M133.3 315.4L134.2 314.5L135.2 313.5L136.2 312.6L137.1 311.6L138.1 310.6L139 309.7L140 308.7L141 307.8L141.9 306.8L142.9 305.9L143.8 304.9L144.8 303.9L145.8 303L146.7 302L147.7 301.1L148.6 300.1L149.6 299.1L150.6 298.2L151.5 297.2L152.5 296.3L153.4 295.3L154.4 294.3L155.4 293.4L156.3 292.4L157.3 291.5L158.2 290.5L159.2 289.5L160.1 288.6L161.1 287.6L162.1 286.7L163 285.7L164 284.7L164.9 283.8L165.9 282.8L166.9 281.9L167.8 280.9L168.8 279.9L169.7 279L170.7 278L171.7 277.1L172.6 276.1L173.6 275.1L174.5 274.2L175.5 273.2L176.5 272.3L177.4 271.3L178.4 270.3L179.3 269.4L180.3 268.4L181.3 267.5L182.2 266.5L183.2 265.5L184.1 264.6L185.1 263.6L186.1 262.7L187 261.7L188 260.7L188.9 259.8L189.9 258.8L190.9 257.9L191.8 256.9L192.8 255.9L193.7 255L194.7 254L195.7 253.1L196.6 252.1L197.6 251.1L198.5 250.2L199.5 249.2L200.5 248.3L201.4 247.3L202.4 246.3L203.3 245.4L204.3 244.4L205.3 243.5L206.2 242.5L207.2 241.5L208.1 240.6L209.1 239.6L210.1 238.7L211 237.7L212 236.7L212.9 235.8L213.9 234.8L214.9 233.9L215.8 232.9L216.8 231.9L217.7 231L218.7 230L219.7 229.1L220.6 228.1L221.6 227.1L222.5 226.2L223.5 225.2L224.5 224.3L225.4 223.3L226.4 222.4L227.3 221.4L228.3 220.4L229.3 219.5L230.2 218.5L231.2 217.6L232.1 216.6L233.1 215.6L234.1 214.7L235 213.7L236 212.8L236.9 211.8L237.9 210.8L238.9 209.9L239.8 208.9L240.8 208L241.7 207L242.7 206L243.6 205.1L244.6 204.1L245.6 203.2L246.5 202.2L247.5 201.2L248.4 200.3L249.4 199.3L250.4 198.4L251.3 197.4L252.3 196.4L253.2 195.5L254.2 194.5L255.2 193.6L256.1 192.6L257.1 191.6L258 190.7L259 189.7L260 188.8L260.9 187.8L261.9 186.8L262.8 185.9L263.8 184.9L264.8 184L265.7 183L266.7 182L267.6 181.1L268.6 180.1L269.6 179.2L270.5 178.2L271.5 177.2L272.4 176.3L273.4 175.3L274.4 174.4L275.3 173.4L276.3 172.4L277.2 171.5L278.2 170.5L279.2 169.6L280.1 168.6L281.1 167.6L282 166.7L283 165.7L284 164.8L284.9 163.8L285.9 162.8L286.8 161.9L287.8 160.9L288.8 160L289.7 159L290.7 158L291.6 157.1L292.6 156.1L293.6 155.2L294.5 154.2L295.5 153.2L296.4 152.3L297.4 151.3L298.4 150.4L299.3 149.4L300.3 148.4L301.2 147.5L302.2 146.5L303.2 145.6L304.1 144.6L305.1 143.6L306 142.7L307 141.7L308 140.8L308.9 139.8L309.9 138.9L310.8 137.9L311.8 136.9L312.8 136L313.7 135L314.7 134.1L315.6 133.1L316.6 132.1L317.6 131.2L318.5 130.2L319.5 129.3L320.4 128.3L321.4 127.3L322.4 126.4L323.3 125.4L324.3 124.5L325.2 123.5L326.2 122.5L327.1 121.6L328.1 120.6L329.1 119.7L330 118.7L331 117.7L331.9 116.8L332.9 115.8L333.9 114.9L334.8 113.9L335.8 112.9L336.7 112L337.7 111L338.7 110.1L339.6 109.1L340.6 108.1L341.5 107.2L342.5 106.2L343.5 105.3L344.4 104.3L345.4 103.3L346.3 102.4L347.3 101.4L348.3 100.5L349.2 99.5L350.2 98.5L351.1 97.6L352.1 96.6L353.1 95.7L354 94.7L355 93.7L355.9 92.8L356.9 91.8L357.9 90.9L358.8 89.9L359.8 88.9L360.7 88L361.7 87L362.7 86.1L363.6 85.1\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\"/><path d=\"M257.7 191.1L258.6 190.1L259.5 189.2L260.4 188.3L261.3 187.4L262.3 186.5L263.2 185.5L264.1 184.6L265 183.7L266 182.8L266.9 181.8L267.8 180.9L268.7 180L269.6 179.1L270.6 178.2L271.5 177.2L272.4 176.3L273.3 175.4L274.2 174.5L275.2 173.6L276.1 172.6\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathsblue)\"/><path d=\"M133.3 315.4L134.2 315.4L135.2 315.4L136.2 315.4L137.1 315.4L138.1 315.3L139 315.3L140 315.3L141 315.2L141.9 315.1L142.9 315L143.8 315L144.8 314.9L145.8 314.8L146.7 314.7L147.7 314.5L148.6 314.4L149.6 314.3L150.6 314.2L151.5 314L152.5 313.8L153.4 313.7L154.4 313.5L155.4 313.3L156.3 313.1L157.3 312.9L158.2 312.7L159.2 312.5L160.1 312.3L161.1 312.1L162.1 311.8L163 311.6L164 311.4L164.9 311.1L165.9 310.8L166.9 310.5L167.8 310.3L168.8 310L169.7 309.7L170.7 309.4L171.7 309L172.6 308.7L173.6 308.4L174.5 308.1L175.5 307.7L176.5 307.4L177.4 307L178.4 306.6L179.3 306.2L180.3 305.8L181.3 305.5L182.2 305L183.2 304.6L184.1 304.2L185.1 303.8L186.1 303.4L187 302.9L188 302.5L188.9 302L189.9 301.5L190.9 301.1L191.8 300.6L192.8 300.1L193.7 299.6L194.7 299.1L195.7 298.6L196.6 298L197.6 297.5L198.5 297L199.5 296.4L200.5 295.9L201.4 295.3L202.4 294.7L203.3 294.1L204.3 293.5L205.3 293L206.2 292.3L207.2 291.7L208.1 291.1L209.1 290.5L210.1 289.9L211 289.2L212 288.6L212.9 287.9L213.9 287.2L214.9 286.6L215.8 285.9L216.8 285.2L217.7 284.5L218.7 283.8L219.7 283.1L220.6 282.3L221.6 281.6L222.5 280.9L223.5 280.1L224.5 279.4L225.4 278.6L226.4 277.8L227.3 277L228.3 276.3L229.3 275.5L230.2 274.7L231.2 273.8L232.1 273L233.1 272.2L234.1 271.4L235 270.5L236 269.7L236.9 268.8L237.9 267.9L238.9 267.1L239.8 266.2L240.8 265.3L241.7 264.4L242.7 263.5L243.6 262.6L244.6 261.6L245.6 260.7L246.5 259.8L247.5 258.8L248.4 257.9L249.4 256.9L250.4 255.9L251.3 254.9L252.3 254L253.2 253L254.2 252L255.2 250.9L256.1 249.9L257.1 248.9L258 247.9L259 246.8L260 245.8L260.9 244.7L261.9 243.6L262.8 242.6L263.8 241.5L264.8 240.4L265.7 239.3L266.7 238.2L267.6 237.1L268.6 235.9L269.6 234.8L270.5 233.7L271.5 232.5L272.4 231.4L273.4 230.2L274.4 229L275.3 227.9L276.3 226.7L277.2 225.5L278.2 224.3L279.2 223.1L280.1 221.8L281.1 220.6L282 219.4L283 218.1L284 216.9L284.9 215.6L285.9 214.3L286.8 213.1L287.8 211.8L288.8 210.5L289.7 209.2L290.7 207.9L291.6 206.6L292.6 205.3L293.6 203.9L294.5 202.6L295.5 201.2L296.4 199.9L297.4 198.5L298.4 197.1L299.3 195.8L300.3 194.4L301.2 193L302.2 191.6L303.2 190.2L304.1 188.7L305.1 187.3L306 185.9L307 184.4L308 183L308.9 181.5L309.9 180.1L310.8 178.6L311.8 177.1L312.8 175.6L313.7 174.1L314.7 172.6L315.6 171.1L316.6 169.6L317.6 168L318.5 166.5L319.5 164.9L320.4 163.4L321.4 161.8L322.4 160.2L323.3 158.7L324.3 157.1L325.2 155.5L326.2 153.9L327.1 152.3L328.1 150.7L329.1 149L330 147.4L331 145.7L331.9 144.1L332.9 142.4L333.9 140.8L334.8 139.1L335.8 137.4L336.7 135.7L337.7 134L338.7 132.3L339.6 130.6L340.6 128.9L341.5 127.1L342.5 125.4L343.5 123.7L344.4 121.9L345.4 120.1L346.3 118.4L347.3 116.6L348.3 114.8L349.2 113L350.2 111.2L351.1 109.4L352.1 107.6L353.1 105.7L354 103.9L355 102.1L355.9 100.2L356.9 98.3L357.9 96.5L358.8 94.6L359.8 92.7L360.7 90.8L361.7 88.9L362.7 87L363.6 85.1\" stroke=\"var(--red)\" stroke-width=\"3.4\" stroke-linecap=\"round\"/><path d=\"M266.9 238L267.8 236.9L268.7 235.8L269.6 234.7L270.6 233.6L271.5 232.5L272.4 231.4L273.3 230.3L274.2 229.2L275.2 228L276.1 226.9L277 225.8L277.9 224.6L278.9 223.4L279.8 222.3L280.7 221.1L281.6 219.9L282.5 218.7L283.5 217.5L284.4 216.3L285.3 215.1\" stroke=\"var(--red)\" stroke-width=\"3.4\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2wkPathsred)\"/><circle cx=\"133.3\" cy=\"315.4\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"363.6\" cy=\"85.1\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"225.4\" y=\"172.6\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(a) y = x</text><text x=\"285.3\" y=\"269.4\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(b) y = x²</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 2：兩條路",
+      "beats": [
+        {
+          "show": [
+            "(a) $x=t,\\ y=t$，$dx=dt$，$dy=dt$，$0\\le t\\le1$：",
+            "$\\int_0^1(t^2+t)\\,dt=\\frac13+\\frac12=\\frac56$"
+          ],
+          "say": "直線：x 等於 t，y 等於 t，d x 和 d y 都是 d t。被積函數是 t 平方加 t，積出三分之一加二分之一，等於六分之五。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(a) $x=t,\\ y=t$，$dx=dt$，$dy=dt$，$0\\le t\\le1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^1(t^2+t)\\,dt=\\frac13+\\frac12=\\frac56}}$",
+              "on": "都是"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "積出"
+            }
+          ]
+        }
       ],
-      "key": "換路徑：$dx$、$dy$ 都用新參數改寫",
       "predict": {
-        "ask": "沿 $y=x^2$ 的結果是？",
+        "ask": "(b) 沿拋物線，起點終點都一樣。答案會是 $\\frac56$ 嗎？",
         "options": [
           {
-            "label": "$\\frac{13}{15}$",
+            "label": "不一定，要算了才知道",
             "correct": true
           },
           {
-            "label": "$\\frac{5}{6}$",
-            "why": "起點終點一樣，不代表功一樣：$\\int_0^1(t^4+2t^2)\\,dt=\\frac{1}{5}+\\frac{2}{3}$。"
+            "label": "一定是 $\\frac56$",
+            "why": "只有某些特別的場（下一課的保守場）才保證只看起點終點"
           },
           {
-            "label": "$\\frac{1}{5}+\\frac{1}{3}$",
-            "why": "$dy=2t\\,dt$ 的 $2$ 漏了：$x\\,dy=t\\cdot2t\\,dt$，積出 $\\frac{2}{3}$。"
+            "label": "一定是 $0$",
+            "why": "不是封閉曲線，沒有理由是 $0$"
           }
         ]
       }
+    },
+    {
+      "title": "例 2：兩條路",
+      "beats": [
+        {
+          "show": [
+            "(b) $x=t,\\ y=t^2$，$dx=dt$，$dy=2t\\,dt$：",
+            "$\\int_0^1\\big(t^4+t\\cdot2t\\big)\\,dt=\\frac15+\\frac23=\\frac{13}{15}$"
+          ],
+          "say": "拋物線：x 等於 t，y 等於 t 平方，d y 是 2t d t。被積函數是 t 四次方加 2 t 平方，積出五分之一加三分之二，等於十五分之十三。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(b) $x=t,\\ y=t^2$，$dx=dt$，$dy=2t\\,dt$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int_0^1\\big(t^4+t\\cdot2t\\big)\\,dt=\\frac15+\\frac23=\\frac{13}{15}}}$",
+              "on": "2t"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac56\\ne\\dfrac{13}{15}$：同樣的起點終點，路徑不同，功可以不同"
+          ],
+          "say": "六分之五不等於十五分之十三。同樣的起點、同樣的終點，走不同的路，功可以不一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac56\\ne\\dfrac{13}{15}$：同樣的起點終點，路徑不同，功可以不同",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　下一課：什麼樣的場，功只看起點終點",
+              "color": "violet",
+              "on": "同樣#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "方向很重要",
+      "beats": [
+        {
+          "show": [
+            "$-C$：同一條曲線，反著走",
+            "$\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r$"
+          ],
+          "say": "最後，方向。負 C 表示同一條曲線，反過來走。F 點 d r 的線積分會變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$-C$：同一條曲線，反著走"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r}}$",
+              "color": "red",
+              "on": "一條"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "的線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$\\mathbf T$ 變成 $-\\mathbf T$，$ds$ 還是正的"
+          ],
+          "say": "原因是：反著走，單位切向量 T 掉頭變成負 T，可是 d s 還是正的長度。所以 F 點 T d s 整個變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原因：$\\mathbf T$ 變成 $-\\mathbf T$，$ds$ 還是正的"
+            },
+            {
+              "do": "write",
+              "line": "　用 $dx$ 寫：反著走 $dx$ 變號，就像 $\\int_b^a=-\\int_a^b$",
+              "color": "violet",
+              "on": "還是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "物理上：順著力走，功是正的；逆著力走，功是負的"
+          ],
+          "say": "物理上也很合理：順著力走，力幫你做正功；逆著力走，你在對抗它，功是負的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "物理上：順著力走，功是正的；逆著力走，功是負的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_C f\\,ds$（質量）反著走：不變",
+            "$\\int_C\\mathbf F\\cdot d\\mathbf r$（功）反著走：變號"
+          ],
+          "say": "跟上一課比較：純量線積分反著走不變，功的線積分反著走會變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int_C f\\,ds$（質量）反著走：不變"
+            },
+            {
+              "do": "write",
+              "line": "$\\int_C\\mathbf F\\cdot d\\mathbf r$（功）反著走：變號",
+              "on": "不變"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 功 $=$ 沿路徑加總「力在前進方向的分量 $\\times$ 一小段長度」",
+            "$\\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$"
+          ],
+          "say": "整理一下：功的線積分，沿著路徑把力在前進方向的分量乘一小段長度加起來。計算時，F of r of t 點 r prime of t，對 t 積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 功 $=$ 沿路徑加總「力在前進方向的分量 $\\times$ 一小段長度」"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\int_C\\mathbf F\\cdot d\\mathbf r=\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt}}$",
+              "on": "量乘"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 三種寫法：$\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F\\cdot\\mathbf T\\,ds$，$P\\,dx+Q\\,dy$",
+            "• 反著走變號；起點終點一樣、路徑不同，功可能不同"
+          ],
+          "say": "有三種寫法，意思一樣。反著走會變號；同樣的起點終點，換一條路，功可能不同。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 三種寫法：$\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F\\cdot\\mathbf T\\,ds$，$P\\,dx+Q\\,dy$"
+            },
+            {
+              "do": "write",
+              "line": "• 反著走變號；起點終點一樣、路徑不同，功可能不同",
+              "on": "同樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：保守場：功只看起點終點的場"
+          ],
+          "say": "下一課，我們看哪一種場，功只看起點和終點，跟走哪條路無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：保守場：功只看起點終點的場"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["line-integral", "work", "vector-calculus"],
-    "fine": ["work-integral-parametrize", "work-integral-orientation", "work-integral-differential-form"]
+    "coarse": [
+      "line-integral",
+      "work",
+      "vector-calculus"
+    ],
+    "fine": [
+      "work-integral-parametrize",
+      "work-integral-orientation",
+      "work-integral-differential-form"
+    ]
   },
   "practice": [
-    { "id": "vc-work-001", "core": true, "trains": "work-integral-differential-form" },
-    { "id": "vc-work-003", "core": true, "trains": "work-integral-differential-form" },
-    { "id": "vc-work-004", "core": true, "trains": "work-integral-differential-form" },
-    { "id": "lec-20-q1b", "core": true, "trains": "work-integral-parametrize" },
-    { "id": "lec-20-q1c", "core": true, "trains": "work-integral-parametrize" },
-    { "id": "cg-9b2-003", "core": true, "trains": "work-integral-orientation" },
-    { "id": "vc-work-002", "trains": "work-integral-orientation" },
-    { "id": "cg-9b2-004", "trains": "work-integral-orientation" },
-    { "id": "cg-9b2-005", "trains": "work-integral-parametrize" },
-    { "id": "cg-9b2-006", "trains": "work-integral-parametrize" }
-  ]
+    {
+      "id": "vc-work-001",
+      "core": true,
+      "trains": "work-integral-differential-form"
+    },
+    {
+      "id": "vc-work-003",
+      "core": true,
+      "trains": "work-integral-differential-form"
+    },
+    {
+      "id": "vc-work-004",
+      "core": true,
+      "trains": "work-integral-differential-form"
+    },
+    {
+      "id": "lec-20-q1b",
+      "core": true,
+      "trains": "work-integral-parametrize"
+    },
+    {
+      "id": "lec-20-q1c",
+      "core": true,
+      "trains": "work-integral-parametrize"
+    },
+    {
+      "id": "cg-9b2-003",
+      "core": true,
+      "trains": "work-integral-orientation"
+    },
+    {
+      "id": "vc-work-002",
+      "trains": "work-integral-orientation"
+    },
+    {
+      "id": "cg-9b2-004",
+      "trains": "work-integral-orientation"
+    },
+    {
+      "id": "cg-9b2-005",
+      "trains": "work-integral-parametrize"
+    },
+    {
+      "id": "cg-9b2-006",
+      "trains": "work-integral-parametrize"
+    }
+  ],
+  "gaps": []
 }

@@ -1,52 +1,130 @@
 {
   "id": "conditional-convergence",
   "title": "條件收斂",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["absolute-convergence", "alternating-series-test"],
-  "next": ["rearrangement"],
-  "related": ["limit-comparison-test", "p-series", "divergence-test"],
-  "objectives": [
-    "說出條件收斂的定義：$\\sum a_n$ 收斂，但 $\\sum|a_n|$ 發散。",
-    "照固定的順序把一個級數分類成絕對收斂、條件收斂或發散。",
-    "記住 $\\sum\\frac{(-1)^n}{n^p}$ 的三段：$p>1$ 絕對收斂，$0<p\\le 1$ 條件收斂，$p\\le 0$ 發散。"
+  "prerequisites": [
+    "absolute-convergence",
+    "alternating-series-test"
   ],
-  "visual": "交錯調和級數拆成兩排：正項 1, 1/3, 1/5, … 的累加一路往上衝、負項 −1/2, −1/4, … 的累加一路往下衝，兩條曲線都沒有界。中間畫出兩者交替相加的部分和，卻穩穩地收向 ln 2。標題：兩個無限大，靠著一正一負的順序互相抵銷。",
+  "next": [
+    "rearrangement"
+  ],
+  "related": [
+    "limit-comparison-test",
+    "p-series",
+    "divergence-test"
+  ],
+  "objectives": [
+    "說出條件收斂的定義：$\\sum a_n$ 收斂，但 $\\sum|a_n|$ 發散",
+    "照固定的順序把一個級數分類成絕對收斂、條件收斂或發散",
+    "記住 $\\sum\\frac{(-1)^n}{n^p}$ 的三段：$p>1$ 絕對收斂，$0<p\\le 1$ 條件收斂，$p\\le 0$ 發散"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 定義",
       "body": [
-        "$\\sum a_n$ 收斂，但 $\\sum|a_n|$ 發散，就叫條件收斂。它的收斂完全靠正負抵銷：拿掉負號就加不完了。標準例子是交錯調和級數 $\\sum\\frac{(-1)^{n+1}}{n}$。"
+        "例：交錯調和級數 $\\sum\\frac{(-1)^{n+1}}n$",
+        "每一個級數恰好落在三類之一：",
+        "• 絕對收斂：$\\sum|a_n|$ 收斂",
+        "• 條件收斂：$\\sum a_n$ 收斂、$\\sum|a_n|$ 發散",
+        "• 發散：$\\sum a_n$ 發散",
+        "絕對收斂一定收斂，所以三類不會重疊"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\sum a_n\\ \\text{收斂，但}\\ \\sum|a_n|\\ \\text{發散}\\\\&\\Longrightarrow\\ \\textbf{條件收斂}\\end{aligned}"
+      ]
     },
     {
       "heading": "② 分類的順序",
       "body": [
-        "拿到一個有正有負的級數：",
-        "1. 各項 $\\to 0$ 嗎？不是 $\\to$ 發散（〈發散判別〉），結束。",
-        "2. 看 $\\sum|a_n|$，用正項級數的判別法（$p$ 級數、比較、〈極限比較判別〉、比值）。收斂 $\\to$ 絕對收斂，結束。",
-        "3. $\\sum|a_n|$ 發散時，回頭看 $\\sum a_n$ 本身，通常用交錯級數判別。收斂 $\\to$ 條件收斂；否則發散。",
-        "順序很重要：先檢查絕對收斂，因為它是比較強、也比較好的結論。"
+        "例 1：$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}$",
+        "第一步：$a_n\\to0$ 嗎？$\\frac1{\\sqrt n}\\to0$，過關",
+        "第二步：看絕對值 $\\sum\\frac1{\\sqrt n}=\\sum\\frac1{n^{1/2}}$",
+        "$p=\\frac12\\le1$，發散：不是絕對收斂",
+        "第三步：帶著正負號，用交錯級數判別",
+        "• $b_n=\\frac1{\\sqrt n}>0$",
+        "• $\\sqrt{n+1}>\\sqrt n$，所以 $b_{n+1}<b_n$",
+        "• $b_n\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}\\ \\text{收斂，所以}\\ \\textbf{條件收斂}"
+      ]
+    },
+    {
+      "heading": "② 排排看",
+      "body": [
+        "為什麼先看絕對值？",
+        "• 正項級數的工具多，容易判斷",
+        "• 絕對收斂已經包含收斂",
+        "第三步最常用：交錯級數判別",
+        "第二步發散時，用的是比值或根值判別（$L>1$），那原級數也直接發散"
+      ]
+    },
+    {
+      "heading": "② 例 2：絕對值用極限比較",
+      "body": [
+        "第一步：$\\frac{n}{n^2+1}\\to0$，過關",
+        "第二步：$|a_n|=\\dfrac{n}{n^2+1}$，主要項 $\\dfrac{n}{n^2}=\\dfrac1n$",
+        "極限是 $1$（$0<1<\\infty$），$\\sum\\frac1n$ 發散 $\\Rightarrow$ $\\sum|a_n|$ 發散",
+        "第三步：交錯級數判別，6.16 已證過遞減"
+      ],
+      "tex": [
+        "\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}",
+        "\\lim_{n\\to\\infty}\\frac{n/(n^2+1)}{1/n}=\\lim_{n\\to\\infty}\\frac{n^2}{n^2+1}=1",
+        "\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}\\ \\textbf{條件收斂}"
+      ]
     },
     {
       "heading": "③ 一整族的答案",
       "body": [
-        "$\\sum\\frac{(-1)^n}{n^p}$：",
-        "$p>1$：$\\sum\\frac{1}{n^p}$ 收斂，絕對收斂。",
-        "$0<p\\le 1$：$\\sum\\frac{1}{n^p}$ 發散（〈p 級數〉），但 $\\frac{1}{n^p}$ 遞減到 0，交錯級數判別給收斂，所以條件收斂。",
-        "$p\\le 0$：各項大小不趨近 0，發散。"
+        "$p>1$：$\\sum\\frac1{n^p}$ 收斂 → 絕對收斂",
+        "$0<p\\le1$：$\\sum\\frac1{n^p}$ 發散；但 $\\frac1{n^p}>0$、遞減、$\\to0$",
+        "→ 交錯判別收斂 → 條件收斂",
+        "$p\\le0$：$|a_n|=n^{-p}\\ge1$，$a_n\\not\\to0$ → 發散",
+        "邊界 $p=1$ 屬於條件收斂，$p=0$ 屬於發散",
+        "$p=0$：$-1+1-1+1-\\cdots$，部分和在 $-1$、$0$ 之間跳，不收斂"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^\\infty\\frac{(-1)^n}{n^p}\\quad\\text{對每個實數}\\ p"
+      ]
     },
     {
-      "heading": "④ 為什麼說它「有條件」",
+      "heading": "③ 試一題",
       "body": [
-        "直觀，不是證明：條件收斂的級數，正項部分加起來是 $+\\infty$，負項部分加起來是 $-\\infty$（如果有一邊有限，另一邊也會有限，整個就絕對收斂了）。它能收斂，靠的是「一正一負按某個順序」交替。換一個順序，兩個無限大抵銷的方式就變了，和也可能跟著變。這就是下一課〈重排的概念〉。"
+        "同樣的分法也適用於 $\\sum\\dfrac{(-1)^n}{n^p}$ 的變形：",
+        "$p=\\frac23\\in(0,1]$ $\\Rightarrow$ 條件收斂"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum\\frac{(-1)^n}{\\sqrt[3]{n^2}}=\\sum\\frac{(-1)^n}{n^{2/3}}"
+      ]
+    },
+    {
+      "heading": "④ 為什麼說「有條件」",
+      "body": [
+        "把正項、負項分開加：",
+        "$a_n=p_n-q_n$，$|a_n|=p_n+q_n$",
+        "條件收斂時，$\\sum p_n$ 和 $\\sum q_n$ 都發散",
+        "理由：若 $\\sum p_n$ 收斂，則 $\\sum q_n=\\sum p_n-\\sum a_n$ 也收斂",
+        "它的和是「$\\infty-\\infty$」靠順序抵消出來的",
+        "交錯調和級數：$1+\\frac13+\\frac15+\\cdots=\\infty$，$\\frac12+\\frac14+\\cdots=\\infty$"
+      ],
+      "tex": [
+        "p_n=\\frac{|a_n|+a_n}2,\\qquad q_n=\\frac{|a_n|-a_n}2",
+        "\\Rightarrow\\ \\sum|a_n|=\\sum p_n+\\sum q_n\\ \\text{收斂，矛盾}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 條件收斂：$\\sum a_n$ 收斂，$\\sum|a_n|$ 發散",
+        "• 分類順序：$a_n\\to0$？→ $\\sum|a_n|$？→ 帶正負號判斷",
+        "• $\\sum\\frac{(-1)^n}{n^p}$：$p>1$ 絕對、$0<p\\le1$ 條件、$p\\le0$ 發散",
+        "• 條件收斂：正項、負項的和都是 $\\infty$，靠順序抵消",
+        "下一課：重排"
+      ]
     }
   ],
   "workedExamples": [
@@ -98,254 +176,757 @@
   ],
   "checks": [
     {
-      "ask": "條件收斂的意思是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^\\infty(-1)^n\\frac{\\sqrt n}{n+1}$ 是？",
       "options": [
-        { "label": "$\\sum a_n$ 收斂，但 $\\sum|a_n|$ 發散", "correct": true },
-        { "label": "$\\sum a_n$ 發散，但 $\\sum|a_n|$ 收斂", "why": "不可能發生：$\\sum|a_n|$ 收斂就推得出 $\\sum a_n$ 收斂。" },
-        { "label": "$\\sum a_n$ 與 $\\sum|a_n|$ 都收斂", "why": "那是絕對收斂，比條件收斂更強。" }
+        {
+          "label": "條件收斂",
+          "correct": true
+        },
+        {
+          "label": "絕對收斂",
+          "why": "$\\frac{\\sqrt n}{n+1}$ 像 $\\frac1{\\sqrt n}$，$p=\\frac12$，絕對值的級數發散"
+        },
+        {
+          "label": "發散，因為 $\\sum\\frac{\\sqrt n}{n+1}$ 發散",
+          "why": "那只說明不是絕對收斂；還要帶著正負號看"
+        },
+        {
+          "label": "發散，因為分子 $\\sqrt n\\to\\infty$",
+          "why": "分母長得比較快，各項 $\\to0$"
+        }
       ]
     },
     {
-      "ask": "$\\sum\\frac{(-1)^n}{n^{0.5}}$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{n^{0.99}}$ 是？",
       "options": [
-        { "label": "條件收斂", "correct": true },
-        { "label": "絕對收斂", "why": "取絕對值是 $\\sum\\frac{1}{\\sqrt{n}}$，$p=\\frac{1}{2}\\le 1$，發散。" },
-        { "label": "發散", "why": "$\\frac{1}{\\sqrt{n}}$ 遞減到 0，交錯級數判別給收斂。" }
-      ]
-    },
-    {
-      "ask": "$\\sum\\frac{(-1)^n}{n^2}$ 是？",
-      "options": [
-        { "label": "絕對收斂", "correct": true },
-        { "label": "條件收斂", "why": "取絕對值 $\\sum\\frac{1}{n^2}$ 已經收斂，屬於更強的絕對收斂。" },
-        { "label": "發散", "why": "各項 $\\to 0$，而且絕對值級數收斂。" }
-      ]
-    },
-    {
-      "ask": "$\\sum(-1)^n\\frac{n+1}{n}$ 是？",
-      "options": [
-        { "label": "發散", "correct": true },
-        { "label": "條件收斂", "why": "各項大小 $\\frac{n+1}{n}\\to 1$，不是 0；發散判別第一步就出局。" },
-        { "label": "絕對收斂", "why": "$\\sum\\frac{n+1}{n}$ 的各項 $\\to 1$，絕對值級數顯然發散。" }
+        {
+          "label": "條件收斂",
+          "correct": true
+        },
+        {
+          "label": "絕對收斂",
+          "why": "$0.99$ 很接近 $1$，但 $p\\le1$ 時 $\\sum\\frac1{n^p}$ 就發散"
+        },
+        {
+          "label": "發散",
+          "why": "$p\\le1$ 時發散的是絕對值的級數；帶著正負號會收斂"
+        },
+        {
+          "label": "不能判斷，因為 $p$ 不是整數",
+          "why": "$p$ 級數與交錯判別對任何實數 $p$ 都能用"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "靠抵銷才收斂",
+      "title": "定義",
       "beats": [
-        { "show": ["$\\sum a_n$ 收斂，$\\sum|a_n|$ 發散"],
-          "note": "這叫條件收斂。",
-          "say": "級數本身收斂，可是取了絕對值就發散，這種情況叫條件收斂。",
+        {
+          "show": [
+            "$\\begin{aligned}&\\sum a_n\\ \\text{收斂，但}\\ \\sum|a_n|\\ \\text{發散}\\\\&\\Longrightarrow\\ \\textbf{條件收斂}\\end{aligned}$"
+          ],
+          "say": "上一課看到，收斂的級數不一定絕對收斂。收斂、但絕對值的級數發散，就叫做條件收斂。",
           "board": [
-            {"do":"write","line":"$\\sum a_n$ 收斂"},
-            {"do":"write","line":"$\\sum|a_n|$ 發散","on":"取了絕對值"},
-            {"do":"write","line":"條件收斂","color":"green","on":"這種情況"}
-          ] },
-        { "show": ["收斂完全靠正負抵銷"],
-          "say": "它能收斂，完全是靠正負互相抵銷；把負號拿掉，就加不完了。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\sum a_n\\ \\text{收斂，但}\\ \\sum|a_n|\\ \\text{發散}\\\\&\\Longrightarrow\\ \\textbf{條件收斂}\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "但絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：交錯調和級數 $\\sum\\frac{(-1)^{n+1}}n$"
+          ],
+          "say": "標準的例子是交錯調和級數：它本身收斂，取絕對值變成調和級數，發散。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"正 ＋ 負 ⇒ 互相抵銷","on":"靠正負"},
-            {"do":"write","line":"負號拿掉 ⇒ 加不完","on":"把負號拿掉"}
-          ] },
-        { "show": ["$\\sum\\frac{(-1)^{n+1}}{n}$"],
-          "note": "標準例子：交錯調和級數。",
-          "say": "標準例子就是交錯調和級數：本身收斂，取絕對值變成調和級數，發散。",
+            {
+              "do": "write",
+              "line": "例：交錯調和級數 $\\sum\\frac{(-1)^{n+1}}n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一個級數恰好落在三類之一：",
+            "• 絕對收斂：$\\sum|a_n|$ 收斂"
+          ],
+          "say": "這樣一來，每個級數都恰好屬於三類中的一類：絕對收斂、條件收斂、或者發散。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{(-1)^{n+1}}{n}$"},
-            {"do":"write","line":"取絕對值 ⇒ $\\sum\\frac{1}{n}$ 發散","on":"取絕對值"}
-          ] },
-        { "show": ["$\\frac{1}{x}$ 底下的面積沒有上限"],
-          "note": "直覺：面積加不完，調和級數就發散。",
-          "say": "畫出一的 x 分之一，曲線底下的面積一路往右累加，沒有上限，所以調和級數加不完。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,10,0,3],"curves":[{"expr":"1/x","domain":[1,9],"color":"blue"}],"fills":[{"expr":"1/x","from":1,"to":9,"color":"blue"}]}}
-          ] }
+            {
+              "do": "write",
+              "line": "每一個級數恰好落在三類之一："
+            },
+            {
+              "do": "write",
+              "line": "• 絕對收斂：$\\sum|a_n|$ 收斂",
+              "on": "級數"
+            },
+            {
+              "do": "write",
+              "line": "• 條件收斂：$\\sum a_n$ 收斂、$\\sum|a_n|$ 發散",
+              "on": "三類"
+            },
+            {
+              "do": "write",
+              "line": "• 發散：$\\sum a_n$ 發散",
+              "on": "絕對"
+            },
+            {
+              "do": "write",
+              "line": "　絕對收斂一定收斂，所以三類不會重疊",
+              "color": "violet",
+              "on": "收斂#2"
+            }
+          ]
+        }
       ],
-      "check": 0
-    },
-    {
-      "title": "分類的順序",
-      "beats": [
-        { "show": ["1. 各項 $\\to 0$ 嗎？"],
-          "note": "不是 → 發散，結束。",
-          "say": "第一步，先看各項有沒有趨近零。沒有的話，發散判別直接結束，省得做白工。",
-          "board": [
-            {"do":"write","line":"1. 各項 ${{z:\\to0}}$ 嗎？否 ⇒ 發散"},
-            {"do":"underline","term":"z","label":"結束","on":"沒有的話"}
-          ] },
-        { "show": ["2. 看 $\\sum|a_n|$"],
-          "note": "收斂 → 絕對收斂，結束。",
-          "say": "第二步，取絕對值，用正項級數的判別法。收斂的話就是絕對收斂，最好的結論。",
-          "board": [
-            {"do":"write","line":"2. ${{s:\\sum|a_n|}}$ 收斂 ⇒ 絕對收斂"},
-            {"do":"box","term":"s","color":"green","label":"絕對收斂","on":"收斂的話"}
-          ] },
-        { "show": ["3. 回頭看 $\\sum a_n$ 本身"],
-          "note": "通常用交錯級數判別。",
-          "say": "絕對值發散，才回頭看原來的級數，通常用交錯級數判別。收斂就是條件收斂，否則發散。",
-          "board": [
-            {"do":"write","line":"3. 回頭看 ${{t:\\sum a_n}}$：收斂 ⇒ 條件收斂"},
-            {"do":"underline","term":"t","color":"green","on":"收斂就是"},
-            {"do":"write","line":"否則 ⇒ 發散","on":"否則"}
-          ] },
-        { "show": ["不是正負交替，就換別的方法"],
-          "note": "交錯級數判別只管正負交替的級數。",
-          "say": "回頭看原級數時，交錯級數判別只在各項正負交替時能用。不是交替的話，要換別的判別法。",
-          "board": [
-            {"do":"write","line":"不是正負交替 ⇒ 換別的方法"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "$p=\\frac{1}{2}$",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt{n}}$"],
-          "note": "各項大小 $\\frac{1}{\\sqrt{n}}\\to 0$，第 1 步通過。",
-          "say": "照順序來。根號 n 分之一趨近零，第一步通過。",
-          "board": [
-            {"do":"write","line":"${{ser:\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt{n}}}}$"},
-            {"do":"write","line":"1. $\\frac{1}{\\sqrt{n}}\\to0$：通過","on":"根號 n 分之一"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{\\sqrt{n}}$：$p=\\frac{1}{2}\\le 1$，發散"],
-          "say": "取絕對值是 p 等於二分之一的 p 級數，p 小於等於一，發散，不是絕對收斂。",
-          "board": [
-            {"do":"write","line":"2. $\\sum\\frac{1}{\\sqrt{n}}$：${{p:p=\\frac{1}{2}}}\\le1$ ⇒ 發散","on":"取絕對值"},
-            {"do":"focus","term":"p","on":"p 等於二分之一"}
-          ] },
-        { "show": ["$\\frac{1}{\\sqrt{n}}$ 為正、遞減、$\\to 0$"],
-          "note": "交錯級數判別：收斂。和約為 $-0.605$。",
-          "say": "回頭用交錯級數判別：為正、遞減、趨近零，收斂。所以是條件收斂。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"3. 交錯級數判別 ⇒ 收斂","on":"回頭用"},
-            {"do":"write","line":"⇒ 條件收斂","color":"green","on":"所以是"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "絕對值用極限比較",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}$"],
-          "note": "各項大小 $\\frac{n}{n^2+1}\\to 0$。",
-          "say": "n 除以 n 平方加一，大小趨近零，第一步通過。",
-          "board": [
-            {"do":"write","line":"$\\sum(-1)^n\\frac{n}{n^2+1}$"},
-            {"do":"write","line":"1. $\\frac{n}{n^2+1}\\to0$：通過","on":"大小"}
-          ] },
-        { "show": ["極限比較：比值趨近正數，同斂散"],
-          "note": "比值趨近 1：後面的項幾乎一樣大。",
-          "say": "規則是這樣：兩個正項級數，各項比值趨近一個正數，就同收斂或同發散。因為後面的項差不多大。",
-          "board": [
-            {"do":"write","line":"比值 $\\to$ 正數 ⇒ 同斂散"}
-          ] },
-        { "show": ["$\\sum\\frac{n}{n^2+1}$ 跟 $\\frac{1}{n}$ 比"],
-          "note": "比值 $\\frac{n^2}{n^2+1}\\to 1$。",
-          "say": "絕對值級數跟 n 分之一做極限比較，比值趨近一。調和級數發散，所以絕對值級數發散。",
-          "board": [
-            {"do":"write","line":"2. $\\frac{n^2}{n^2+1}\\to1$（跟 $\\frac{1}{n}$ 比）"},
-            {"do":"write","line":"$\\sum\\frac{1}{n}$ 發散 ⇒ $\\sum|a_n|$ 發散","on":"調和級數發散"}
-          ] },
-        { "show": ["$\\frac{n}{n^2+1}$ 從 $n=1$ 起遞減到 0"],
-          "note": "〈交錯級數判別〉的範例已證明。",
-          "say": "上一課用導數證過，它從一開始就遞減到零。那結論是？",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{d:\\frac{n}{n^2+1}}}$ 從 $n=1$ 起遞減到 0","on":"導數"},
-            {"do":"underline","term":"d","label":"遞減","on":"從一開始"}
-          ] },
-        { "show": ["交錯級數判別：為正、遞減、趨近 0"],
-          "note": "遞減靠導數：分子 $1-n^2\\le 0$。",
-          "say": "交錯級數判別要三件事：為正、遞減、趨近零。遞減靠導數：分子是一減 n 平方，n 大於等於一時不為正。",
-          "board": [
-            {"do":"write","line":"導數分子 $1-n^2\\le0$（$n\\ge1$）"}
-          ] }
-      ],
-      "key": "絕對值跟 $\\frac{1}{n}$ 做極限比較",
       "predict": {
-        "ask": "$\\sum(-1)^n\\frac{n}{n^2+1}$ 是？",
+        "ask": "$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}$ 是哪一類？",
         "options": [
           {
             "label": "條件收斂",
             "correct": true
           },
           {
-            "label": "發散，因為 $\\sum|a_n|$ 發散",
-            "why": "絕對值發散之後，還要回頭看本身；交錯級數判別給收斂。"
+            "label": "絕對收斂",
+            "why": "$\\sum\\frac1{\\sqrt n}$ 是 $p=\\frac12\\le1$，發散"
           },
           {
-            "label": "絕對收斂，因為交錯級數判別成立",
-            "why": "交錯級數判別只給收斂；絕對值級數發散，所以不是絕對收斂。"
+            "label": "發散",
+            "why": "$p=\\frac12$ 發散的是絕對值的級數；加了正負號會抵消"
           }
         ]
       }
     },
     {
+      "title": "分類的順序",
+      "beats": [
+        {
+          "show": [
+            "例 1：$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}$"
+          ],
+          "say": "怎麼判斷？照一個固定的順序。用剛才的例子，負 1 的 n 次方除以根號 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一步：$a_n\\to0$ 嗎？$\\frac1{\\sqrt n}\\to0$，過關"
+          ],
+          "say": "第一步，先看各項趨不趨近 0。不趨近 0 就直接發散。這裡根號 n 分之 1 趨近 0，過關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第一步：$a_n\\to0$ 嗎？$\\frac1{\\sqrt n}\\to0$，過關"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二步：看絕對值 $\\sum\\frac1{\\sqrt n}=\\sum\\frac1{n^{1/2}}$",
+            "$p=\\frac12\\le1$，發散：不是絕對收斂"
+          ],
+          "say": "第二步，看絕對值的級數。它是 p 等於 2 分之 1 的 p 級數，發散，所以不是絕對收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二步：看絕對值 $\\sum\\frac1{\\sqrt n}=\\sum\\frac1{n^{1/2}}$"
+            },
+            {
+              "do": "write",
+              "line": "$p=\\frac12\\le1$，發散：不是絕對收斂",
+              "on": "級數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三步：帶著正負號，用交錯級數判別",
+            "• $b_n=\\frac1{\\sqrt n}>0$"
+          ],
+          "say": "第三步，帶著正負號看。它是交錯級數：b n 是正的；根號 n 加 1 比較大，所以 b n 遞減；而且趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第三步：帶著正負號，用交錯級數判別"
+            },
+            {
+              "do": "write",
+              "line": "• $b_n=\\frac1{\\sqrt n}>0$",
+              "on": "錯級"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sqrt{n+1}>\\sqrt n$，所以 $b_{n+1}<b_n$",
+              "on": "比較"
+            },
+            {
+              "do": "write",
+              "line": "• $b_n\\to0$",
+              "on": "遞減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}\\ \\text{收斂，所以}\\ \\textbf{條件收斂}$"
+          ],
+          "say": "所以它收斂，但不是絕對收斂，是條件收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\sum_{n=1}^\\infty\\frac{(-1)^n}{\\sqrt n}\\ \\text{收斂，所以}\\ \\textbf{條件收斂}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "對收"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "把一個級數 $\\sum a_n$ 分類"
+          ],
+          "say": "把順序排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "把一個級數 $\\sum a_n$ 分類",
+        "steps": [
+          {
+            "label": "看 $a_n\\to0$ 嗎？不是 → 發散"
+          },
+          {
+            "label": "用正項級數的判別法看 $\\sum|a_n|$",
+            "why": "先要有上一步：看 $a_n\\to0$ 嗎？不是 → 發散"
+          },
+          {
+            "label": "$\\sum|a_n|$ 收斂 → 絕對收斂",
+            "why": "先要有上一步：用正項級數的判別法看 $\\sum|a_n|$"
+          },
+          {
+            "label": "$\\sum|a_n|$ 發散 → 再帶著正負號判斷 $\\sum a_n$",
+            "why": "先要有上一步：$\\sum|a_n|$ 收斂 → 絕對收斂"
+          },
+          {
+            "label": "$\\sum a_n$ 收斂 → 條件收斂；發散 → 發散",
+            "why": "先要有上一步：$\\sum|a_n|$ 發散 → 再帶著正負號判斷 $\\sum a_n$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "為什麼先看絕對值？"
+          ],
+          "say": "為什麼先看絕對值？",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼先看絕對值？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 正項級數的工具多，容易判斷",
+            "• 絕對收斂已經包含收斂"
+          ],
+          "say": "因為正項級數的工具最多；而且一旦是絕對收斂，收斂也一起得到了，不用再做第三步。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 正項級數的工具多，容易判斷"
+            },
+            {
+              "do": "write",
+              "line": "• 絕對收斂已經包含收斂",
+              "on": "收斂#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三步最常用：交錯級數判別"
+          ],
+          "say": "第三步最常用的是交錯級數判別。如果正負號不是交替的，就要看情況想辦法了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第三步最常用：交錯級數判別",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　第二步發散時，用的是比值或根值判別（$L>1$），那原級數也直接發散",
+              "color": "violet",
+              "on": "負號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 2：絕對值用極限比較",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}$"
+          ],
+          "say": "例 2：負 1 的 n 次方，乘 n 平方加 1 分之 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一步：$\\frac{n}{n^2+1}\\to0$，過關"
+          ],
+          "say": "第一步，各項趨近 0，過關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第一步：$\\frac{n}{n^2+1}\\to0$，過關"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二步：$|a_n|=\\dfrac{n}{n^2+1}$，主要項 $\\dfrac{n}{n^2}=\\dfrac1n$",
+            "$\\lim_{n\\to\\infty}\\frac{n/(n^2+1)}{1/n}=\\lim_{n\\to\\infty}\\frac{n^2}{n^2+1}=1$"
+          ],
+          "say": "第二步，絕對值的主要項是 n 分之 1。跟 n 分之 1 做極限比較，比值是 n 平方加 1 分之 n 平方，趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二步：$|a_n|=\\dfrac{n}{n^2+1}$，主要項 $\\dfrac{n}{n^2}=\\dfrac1n$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{n\\to\\infty}\\frac{n/(n^2+1)}{1/n}=\\lim_{n\\to\\infty}\\frac{n^2}{n^2+1}=1$",
+              "on": "極限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限是 $1$（$0<1<\\infty$），$\\sum\\frac1n$ 發散 $\\Rightarrow$ $\\sum|a_n|$ 發散"
+          ],
+          "say": "極限是有限的正數，而 n 分之 1 的級數發散，所以絕對值的級數也發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極限是 $1$（$0<1<\\infty$），$\\sum\\frac1n$ 發散 $\\Rightarrow$ $\\sum|a_n|$ 發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三步：交錯級數判別，6.16 已證過遞減"
+          ],
+          "say": "第三步，交錯級數判別。b n 遞減在上上一課用導數證過了，三個條件都成立，所以收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第三步：交錯級數判別，6.16 已證過遞減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}\\ \\textbf{條件收斂}$"
+          ],
+          "say": "收斂但不絕對收斂：條件收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sum_{n=1}^\\infty(-1)^n\\frac{n}{n^2+1}\\ \\textbf{條件收斂}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "條件"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
       "title": "一整族的答案",
       "beats": [
-        { "show": ["$\\sum\\frac{(-1)^n}{n^p}$，$p>1$：絕對收斂"],
-          "say": "負一的 n 次方除以 n 的 p 次方。p 大於一，取絕對值是收斂的 p 級數，絕對收斂。",
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\frac{(-1)^n}{n^p}\\quad\\text{對每個實數}\\ p$"
+          ],
+          "say": "現在把一整族一起分類：負 1 的 n 次方除以 n 的 p 次方，p 是任意實數。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{(-1)^n}{n^{{{p:p}}}}$","tint":{"p":"blue"}},
-            {"do":"write","line":"$p>1$：絕對收斂","on":"p 大於一"}
-          ] },
-        { "show": ["$0<p\\le 1$：條件收斂"],
-          "note": "絕對值發散，交錯級數收斂。",
-          "say": "p 在零和一之間，含一不含零：絕對值發散，但交錯級數判別給收斂，條件收斂。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\frac{(-1)^n}{n^p}\\quad\\text{對每個實數}\\ p$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p>1$：$\\sum\\frac1{n^p}$ 收斂 → 絕對收斂"
+          ],
+          "say": "p 大於 1：絕對值是收斂的 p 級數，所以絕對收斂。",
           "board": [
-            {"do":"write","line":"$0<p\\le1$：條件收斂","on":"p 在零和一之間"}
-          ] },
-        { "show": ["$p\\le 0$：發散"],
-          "note": "$n^{-p}\\ge 1$，不趨近 0。",
-          "say": "p 小於等於零，各項大小至少是一，不趨近零，發散。",
+            {
+              "do": "write",
+              "line": "$p>1$：$\\sum\\frac1{n^p}$ 收斂 → 絕對收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0<p\\le1$：$\\sum\\frac1{n^p}$ 發散；但 $\\frac1{n^p}>0$、遞減、$\\to0$",
+            "→ 交錯判別收斂 → 條件收斂"
+          ],
+          "say": "p 在 0 和 1 之間，包含 1：絕對值的 p 級數發散。可是 n 的 p 次方分之一是正的、遞減、趨近 0，交錯判別說它收斂。所以是條件收斂。",
           "board": [
-            {"do":"write","line":"$p\\le0$：發散","on":"p 小於等於零"}
-          ] },
-        { "show": ["正項加起來 $+\\infty$，負項 $-\\infty$"],
-          "note": "直觀，不是證明：換順序，和可能跟著變。",
-          "say": "為什麼叫有條件？正項總和無限大，負項總和負無限大，靠交替的順序才抵銷。換順序，和可能就變了。",
+            {
+              "do": "write",
+              "line": "$0<p\\le1$：$\\sum\\frac1{n^p}$ 發散；但 $\\frac1{n^p}>0$、遞減、$\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "→ 交錯判別收斂 → 條件收斂",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p\\le0$：$|a_n|=n^{-p}\\ge1$，$a_n\\not\\to0$ → 發散"
+          ],
+          "say": "p 小於等於 0：每一項的絕對值是 n 的負 p 次方，至少是 1，不趨近 0，由發散判別，發散。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"正項總和 $=+\\infty$","on":"正項總和"},
-            {"do":"write","line":"負項總和 $=-\\infty$","on":"負項總和"},
-            {"do":"write","line":"換順序 ⇒ 和可能變","color":"red","on":"換順序"}
-          ] },
-        { "show": ["同樣的項，換排法：","$1+\\frac13-\\frac12+\\dots$"],
-          "note": "兩個正項配一個負項，和不再是原來的值。",
-          "say": "同樣這些項，換個排法：先兩個正項再一個負項，像一加三分之一減二分之一。和不再是原來的值。",
+            {
+              "do": "write",
+              "line": "$p\\le0$：$|a_n|=n^{-p}\\ge1$，$a_n\\not\\to0$ → 發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫在數線上：0 和 0 左邊發散；0 到 1，包含 1，條件收斂；1 的右邊絕對收斂。",
           "board": [
-            {"do":"write","line":"原本：$1-\\frac12+\\frac13-\\dots$"},
-            {"do":"write","line":"重排：$1+\\frac13-\\frac12+\\dots$","on":"像一加"}
-          ] },
-        { "show": ["有限項：順序無關","兩堆都無限大：比例會變"],
-          "say": "為什麼順序有影響？有限項相加，順序無關。但正負兩堆都加不完，每次多拿哪一堆，抵銷的比例就跟著變。",
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 400 140\" width=\"620\"><line x1=\"20\" y1=\"66\" x2=\"120\" y2=\"66\" stroke=\"var(--red)\" stroke-width=\"6\"/><line x1=\"120\" y1=\"66\" x2=\"220\" y2=\"66\" stroke=\"var(--blue)\" stroke-width=\"6\"/><line x1=\"220\" y1=\"66\" x2=\"362\" y2=\"66\" stroke=\"var(--green)\" stroke-width=\"6\"/><polygon points=\"378,66 362,58 362,74\" fill=\"var(--green)\"/><circle cx=\"120\" cy=\"66\" r=\"7\" fill=\"var(--red)\"/><circle cx=\"220\" cy=\"66\" r=\"7\" fill=\"var(--blue)\"/><text x=\"68\" y=\"42\" text-anchor=\"middle\" fill=\"var(--red)\" style=\"font-family:inherit;font-size:22px\">發散</text><text x=\"170\" y=\"42\" text-anchor=\"middle\" fill=\"var(--blue)\" style=\"font-family:inherit;font-size:22px\">條件收斂</text><text x=\"295\" y=\"42\" text-anchor=\"middle\" fill=\"var(--green)\" style=\"font-family:inherit;font-size:22px\">絕對收斂</text><text x=\"120\" y=\"98\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif;font-size:22px\">0</text><text x=\"220\" y=\"98\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Main,serif;font-size:22px\">1</text><text x=\"385\" y=\"98\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:22px\">p</text><text x=\"62\" y=\"128\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:inherit;font-size:15px\">各項不趨近 0</text><text x=\"170\" y=\"128\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:inherit;font-size:15px\">交錯判別</text><text x=\"295\" y=\"128\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:inherit;font-size:15px\">p 級數收斂</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界 $p=1$ 屬於條件收斂，$p=0$ 屬於發散"
+          ],
+          "say": "兩個端點要記清楚：p 等於 1 是交錯調和級數，條件收斂；p 等於 0 是正負 1 輪流，發散。",
           "board": [
-            {"do":"write","line":"有限項：順序無關"},
-            {"do":"write","line":"兩堆都無限大：比例會變","on":"但正負"}
-          ] }
+            {
+              "do": "write",
+              "line": "邊界 $p=1$ 屬於條件收斂，$p=0$ 屬於發散",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$p=0$：$-1+1-1+1-\\cdots$，部分和在 $-1$、$0$ 之間跳，不收斂",
+              "color": "violet",
+              "on": "條件"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=1}^\\infty\\frac{(-1)^n}{n^{0.99}}$ 是？"
+          ],
+          "say": "試一題。"
+        }
       ],
-      "check": 2
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "同樣的分法也適用於 $\\sum\\dfrac{(-1)^n}{n^p}$ 的變形：",
+            "$\\sum\\frac{(-1)^n}{\\sqrt[3]{n^2}}=\\sum\\frac{(-1)^n}{n^{2/3}}$"
+          ],
+          "say": "遇到根號的寫法，先化成 n 的 p 次方。例如三次根號 n 平方，就是 n 的 3 分之 2 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的分法也適用於 $\\sum\\dfrac{(-1)^n}{n^p}$ 的變形："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum\\frac{(-1)^n}{\\sqrt[3]{n^2}}=\\sum\\frac{(-1)^n}{n^{2/3}}$",
+              "on": "根號#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=\\frac23\\in(0,1]$ $\\Rightarrow$ 條件收斂"
+          ],
+          "say": "p 等於 3 分之 2，落在 0 到 1 之間，條件收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$p=\\frac23\\in(0,1]$ $\\Rightarrow$ 條件收斂",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼說「有條件」",
+      "beats": [
+        {
+          "show": [
+            "把正項、負項分開加：",
+            "$p_n=\\frac{|a_n|+a_n}2,\\qquad q_n=\\frac{|a_n|-a_n}2$"
+          ],
+          "say": "為什麼叫條件收斂？把正的項和負的項分開。p n 是 a n 的正的部分，q n 是負的部分的大小，兩個都不是負的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把正項、負項分開加："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle p_n=\\frac{|a_n|+a_n}2,\\qquad q_n=\\frac{|a_n|-a_n}2$",
+              "on": "的正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_n=p_n-q_n$，$|a_n|=p_n+q_n$"
+          ],
+          "say": "a n 等於 p n 減 q n；絕對值 a n 等於 p n 加 q n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n=p_n-q_n$，$|a_n|=p_n+q_n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "條件收斂時，$\\sum p_n$ 和 $\\sum q_n$ 都發散"
+          ],
+          "say": "重要的事實：條件收斂時，正項的和與負項的和，兩個都發散到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "條件收斂時，$\\sum p_n$ 和 $\\sum q_n$ 都發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "理由：若 $\\sum p_n$ 收斂，則 $\\sum q_n=\\sum p_n-\\sum a_n$ 也收斂",
+            "$\\Rightarrow\\ \\sum|a_n|=\\sum p_n+\\sum q_n\\ \\text{收斂，矛盾}$"
+          ],
+          "say": "理由：如果正項的和收斂，負項的和就是它減掉原級數，也收斂；兩個相加，絕對值的級數就收斂了，跟條件收斂矛盾。q n 也同理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "理由：若 $\\sum p_n$ 收斂，則 $\\sum q_n=\\sum p_n-\\sum a_n$ 也收斂"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Rightarrow\\ \\sum|a_n|=\\sum p_n+\\sum q_n\\ \\text{收斂，矛盾}$",
+              "on": "個相"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它的和是「$\\infty-\\infty$」靠順序抵消出來的"
+          ],
+          "say": "所以條件收斂的級數，是一個無限大減無限大，靠著正負項一個一個照順序抵消，才剛好停在一個數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它的和是「$\\infty-\\infty$」靠順序抵消出來的",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　交錯調和級數：$1+\\frac13+\\frac15+\\cdots=\\infty$，$\\frac12+\\frac14+\\cdots=\\infty$",
+              "color": "violet",
+              "on": "著正"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "如果把交錯調和級數的項==換個順序==加，和會？",
+        "options": [
+          {
+            "label": "可能變成別的數",
+            "correct": true
+          },
+          {
+            "label": "一定還是 $\\ln2$",
+            "why": "有限多項換順序不影響；無限多項就不一定了"
+          },
+          {
+            "label": "一定發散",
+            "why": "照某些順序排還是會收斂，只是和可能不同"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 條件收斂：$\\sum a_n$ 收斂，$\\sum|a_n|$ 發散",
+            "• 分類順序：$a_n\\to0$？→ $\\sum|a_n|$？→ 帶正負號判斷"
+          ],
+          "say": "整理：條件收斂是收斂但絕對值發散。分類照三步：先看各項趨近 0，再看絕對值，最後帶著正負號。記住 p 的三段。條件收斂的級數，正項和負項各自都發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 條件收斂：$\\sum a_n$ 收斂，$\\sum|a_n|$ 發散"
+            },
+            {
+              "do": "write",
+              "line": "• 分類順序：$a_n\\to0$？→ $\\sum|a_n|$？→ 帶正負號判斷",
+              "on": "類照"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sum\\frac{(-1)^n}{n^p}$：$p>1$ 絕對、$0<p\\le1$ 條件、$p\\le0$ 發散",
+              "on": "最後"
+            },
+            {
+              "do": "write",
+              "line": "• 條件收斂：正項、負項的和都是 $\\infty$，靠順序抵消",
+              "on": "條件#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：重排"
+          ],
+          "say": "下一課，看換順序會發生什麼事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：重排"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["absolute-conditional", "alternating-series", "convergence-test"],
-    "fine": ["cond-conv-classify", "cond-conv-p-family"]
+    "coarse": [
+      "absolute-conditional",
+      "alternating-series",
+      "convergence-test"
+    ],
+    "fine": [
+      "cond-conv-classify",
+      "cond-conv-p-family"
+    ]
   },
   "practice": [
-    { "id": "gap-ser-cond-001", "core": true, "trains": "cond-conv-classify" },
-    { "id": "lec-13-q1a", "core": true, "trains": "cond-conv-classify" },
-    { "id": "fd-serx-208", "core": true, "trains": "cond-conv-classify" },
-    { "id": "lec-13-q1d", "core": true, "trains": "cond-conv-classify" },
-    { "id": "mob-conv-003", "trains": "cond-conv-classify" },
-    { "id": "lec-13-m1", "trains": "cond-conv-classify" },
-    { "id": "rel-hard-ser-011", "trains": "cond-conv-classify" },
-    { "id": "cg-6d-012", "trains": "cond-conv-classify" },
-    { "id": "cg-6d-013", "trains": "cond-conv-classify" },
-    { "id": "cg-6d-011", "trains": "cond-conv-classify" },
-    { "id": "lec-13-q4a", "challenge": true, "trains": "cond-conv-p-family", "note": "挑戰：答案是一個區間，三段都要想清楚，尤其端點 $p=1$ 與 $p=0$。" }
+    {
+      "id": "gap-ser-cond-001",
+      "core": true,
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "lec-13-q1a",
+      "core": true,
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "fd-serx-208",
+      "core": true,
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "lec-13-q1d",
+      "core": true,
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "mob-conv-003",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "lec-13-m1",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "rel-hard-ser-011",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "cg-6d-012",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "cg-6d-013",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "cg-6d-011",
+      "trains": "cond-conv-classify"
+    },
+    {
+      "id": "lec-13-q4a",
+      "challenge": true,
+      "trains": "cond-conv-p-family",
+      "note": "挑戰：答案是一個區間，三段都要想清楚，尤其端點 $p=1$ 與 $p=0$。"
+    }
   ],
   "gaps": []
 }

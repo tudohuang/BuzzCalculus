@@ -1,49 +1,144 @@
 {
   "id": "parameter-integral",
   "title": "參數積分",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["improper-infinite", "multivariable-continuity", "partial-derivatives", "improper-comparison"],
-  "next": ["leibniz-rule"],
-  "related": ["dominated-convergence", "dirichlet-integral"],
-  "objectives": [
-    "把 $I(a)=\\int f(x,a)\\,dx$ 看成 $a$ 的函數：會求它的定義域（積分在哪些 $a$ 收斂）與公式。",
-    "說得出 $I(a)$ 連續的一個充分條件：$f$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續。",
-    "看出瑕積分的參數積分可能不連續，極限不能隨便搬進積分號（$\\int_0^{\\infty}ae^{-ax}\\,dx$ 的反例）。"
+  "prerequisites": [
+    "improper-infinite",
+    "multivariable-continuity",
+    "partial-derivatives",
+    "improper-comparison"
   ],
-  "visual": "x–a 平面上畫曲面 z = f(x, a)。拖動一條 a = 常數 的切片，切片下的面積就是 I(a)，旁邊同步畫出 I(a) 的圖形。切換到 f(x, a) = a e^{−ax}：a 越小，切片越扁越長，面積始終是 1，但 a = 0 的切片面積突然變成 0。",
+  "next": [
+    "leibniz-rule"
+  ],
+  "related": [
+    "dominated-convergence",
+    "dirichlet-integral"
+  ],
+  "objectives": [
+    "把 $I(a)=\\int f(x,a)\\,dx$ 看成 $a$ 的函數：會求它的定義域（積分在哪些 $a$ 收斂）與公式",
+    "說得出 $I(a)$ 連續的一個充分條件：$f$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續，並會證明",
+    "看出瑕積分的參數積分可能不連續，極限不能隨便搬進積分號（$\\int_0^{\\infty}ae^{-ax}\\,dx$ 的反例）"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 積分算完，還剩一個變數",
+      "heading": "① 積完還剩一個變數",
       "body": [
-        "$\\int_0^1 x^a\\,dx$：$x$ 被積掉了，$a$ 留下來，結果是 $\\frac{1}{a+1}$。一般地，$I(a)=\\int_c^d f(x,a)\\,dx$ 是 $a$ 的函數，叫參數積分。積分變數 $x$ 是「啞變數」，換成 $t$ 也一樣；$a$ 才是 $I$ 的自變數。",
-        "第一個問題是定義域：積分在哪些 $a$ 收斂。$\\int_0^1 x^a\\,dx$ 在 $a>-1$ 時收斂（$0$ 端 $p$ 判別），所以 $I(a)=\\frac{1}{a+1}$ 只在 $a>-1$ 有意義，不能代 $a=-2$ 得到 $-1$。"
+        "• $x$：積分變數，積完就消失",
+        "• $a$：參數，積分時當常數",
+        "例：$I(a)=\\displaystyle\\int_0^1 x^a\\,dx$",
+        "$a\\ne-1$ 時，把 $a$ 當常數：",
+        "問題在下限：$x\\to0^+$ 時 $x^{a+1}$ 怎麼走？",
+        "• $a+1>0$：$x^{a+1}\\to0$，得 $\\dfrac1{a+1}$",
+        "• $a+1<0$：$x^{a+1}\\to\\infty$，發散",
+        "• $a=-1$：$\\int_0^1\\frac{dx}x$，發散",
+        "這就是 p 判別：$\\int_0^1x^{-p}\\,dx$ 收斂 $\\iff p<1$"
       ],
-      "collapsible": false
+      "tex": [
+        "I(a)=\\int_c^d f(x,a)\\,dx",
+        "\\int_0^1x^a\\,dx=\\Big[\\frac{x^{a+1}}{a+1}\\Big]_{0^+}^{1}"
+      ]
     },
     {
-      "heading": "② 什麼時候 $I(a)$ 連續",
+      "heading": "① 定義域與圖",
       "body": [
-        "充分條件：$f(x,a)$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上（兩個變數一起）連續，則 $I(a)$ 在 $[\\alpha,\\beta]$ 上連續。換句話說，可以把極限搬進積分號：$\\lim_{a\\to a_0}\\int f(x,a)\\,dx=\\int f(x,a_0)\\,dx$。",
-        "只要求「每個固定的 $a$，$f$ 對 $x$ 連續」是不夠的；要的是兩個變數一起連續（閉矩形上會自動一致連續，這是證明的關鍵）。"
+        "定義域是「積分收斂的 $a$」，不是「公式有意義的 $a$」",
+        "被積函數 $x^{-2}>0$，「答案」卻是 $-1$：一看就不對",
+        "它的圖跟上面很像：$a\\to0^+$ 衝到無限大"
       ],
-      "collapsible": false
+      "tex": [
+        "I(a)=\\frac1{a+1},\\qquad\\text{定義域：}a>-1"
+      ]
+    },
+    {
+      "heading": "② 什麼時候連續",
+      "body": [
+        "問：$a\\to a_0$ 時，$I(a)\\to I(a_0)$ 嗎？也就是",
+        "定理：$f$ 在閉矩形 $R=[c,d]\\times[\\alpha,\\beta]$ 上連續，則",
+        "兩個重點：$f$ 要兩變數一起連續；$x$ 的區間要有限、閉",
+        "「兩變數一起連續」是 8.6 的意思：$(x,a)\\to(x_0,a_0)$ 沿任何路徑都行",
+        "例：$\\displaystyle\\lim_{a\\to0}\\int_0^1\\sqrt{x^2+a^2}\\,dx$",
+        "$\\sqrt{x^2+a^2}$ 在 $[0,1]\\times[-1,1]$ 上連續，可以搬：",
+        "驗算：直接積出 $I(a)=\\frac12\\big(\\sqrt{1+a^2}+a^2\\ln\\frac{1+\\sqrt{1+a^2}}{|a|}\\big)$，$I(0.01)\\approx0.50029$",
+        "不用算出 $I(a)$ 的公式，就知道極限"
+      ],
+      "tex": [
+        "\\lim_{a\\to a_0}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d f(x,a_0)\\,dx",
+        "I(a)=\\int_c^d f(x,a)\\,dx\\ \\text{在}\\ [\\alpha,\\beta]\\ \\text{上連續}",
+        "=\\int_0^1\\sqrt{x^2}\\,dx=\\int_0^1x\\,dx=\\frac12"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "檢查「閉矩形上連續」的習慣：",
+        "• 分母不為 $0$：$1+ax^2\\ge1$",
+        "• 沒有 $\\ln0$、$\\sqrt{\\text{負數}}$",
+        "• $x$ 的區間有限、包含端點",
+        "$a$ 的範圍可以自己挑：只要包住 $a_0$ 的一個閉區間就夠"
+      ]
     },
     {
       "heading": "③ 無窮區間會出事",
       "body": [
-        "$I(a)=\\int_0^{\\infty}ae^{-ax}\\,dx$：$a>0$ 時令 $u=ax$，得 $I(a)=1$；$a=0$ 時被積函數是 $0$，$I(0)=0$。所以 $\\lim_{a\\to 0^+}I(a)=1\\ne I(0)$。",
-        "圖像：$a$ 越小，曲線 $ae^{-ax}$ 越扁、拖得越長，面積 $1$ 被推到越來越遠的地方，最後「逃到無窮遠」。逐點看被積函數 $\\to 0$，面積卻沒有 $\\to 0$。",
-        "瑕積分要把極限搬進積分號，需要額外條件，例如存在一個不依賴 $a$、可積的 $g(x)$ 使 $|f(x,a)|\\le g(x)$（這是〈控制收斂定理〉的特例）。上面的反例找不到這樣的 $g$。"
+        "• $a>0$：$\\big[-e^{-ax}\\big]_0^{\\infty}=0-(-1)=1$",
+        "• $a=0$：被積函數是 $0$，$I(0)=0$",
+        "極限搬不進積分號：$\\lim\\int=1$，$\\int\\lim=0$",
+        "每個固定的 $x$，$a\\to0^+$ 時 $ae^{-ax}\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "I(a)=\\int_0^{\\infty}ae^{-ax}\\,dx,\\qquad a\\ge0",
+        "\\lim_{a\\to0^+}I(a)=1\\ne0=I(0)"
+      ]
     },
     {
-      "heading": "連續性的證明（閉矩形）",
+      "heading": "③ 哪裡出了問題",
       "body": [
-        "$f$ 在閉矩形上連續，因此一致連續：給 $\\varepsilon>0$，存在 $\\delta$，使 $|a-a_0|<\\delta$ 時對所有 $x\\in[c,d]$ 都有 $|f(x,a)-f(x,a_0)|<\\varepsilon$。於是 $|I(a)-I(a_0)|\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<\\varepsilon(d-c)$。關鍵是同一個 $\\delta$ 對所有 $x$ 都有效，這正是一致連續給的。"
+        "$ae^{-ax}$ 在 $[0,\\infty)\\times[0,1]$ 上連續，缺的是「區間有限」",
+        "④ 的證明會看到：誤差的估計是 $\\varepsilon\\cdot(d-c)$，區間無限長就失效",
+        "瑕積分要額外的條件，例如被一個可積的 $g(x)$ 控制：下一課 ③",
+        "又是同一件事：$J(0)=0$，面積逃到無限遠"
+      ]
+    },
+    {
+      "heading": "④ 證明（閉矩形）",
+      "body": [
+        "工具：閉矩形上連續 ⇒ 均勻連續",
+        "任給 $\\varepsilon>0$，有 $\\delta>0$，對 $R$ 上所有兩點：",
+        "這個事實（有界閉集上連續 ⇒ 均勻連續）要用緊緻性證明，留到高等微積分；這裡直接用",
+        "重點：$\\delta$ 不跟著點變",
+        "證明：固定 $a_0\\in[\\alpha,\\beta]$，給 $\\varepsilon>0$，取上面的 $\\delta$。",
+        "$a\\in[\\alpha,\\beta]$，$|a-a_0|<\\delta$ 時，對每個 $x\\in[c,d]$：",
+        "$(x,a)$ 與 $(x,a_0)$ 的距離 $=|a-a_0|<\\delta$，所以"
       ],
-      "collapsible": true
+      "tex": [
+        "|P-Q|<\\delta\\Rightarrow|f(P)-f(Q)|<\\varepsilon",
+        "|f(x,a)-f(x,a_0)|<\\varepsilon"
+      ]
+    },
+    {
+      "heading": "④ 證明（續）",
+      "body": [
+        "$\\varepsilon$ 任意 ⇒ $\\displaystyle\\lim_{a\\to a_0}I(a)=I(a_0)$　$\\blacksquare$",
+        "回頭看 ③：$d-c=\\infty$，最後一步就壞了"
+      ],
+      "tex": [
+        "\\begin{aligned}|I(a)-I(a_0)|&=\\Big|\\int_c^d\\big(f(x,a)-f(x,a_0)\\big)\\,dx\\Big|\\\\&\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx\\\\&\\le\\varepsilon\\,(d-c)\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $I(a)=\\int f(x,a)\\,dx$ 是 $a$ 的函數；定義域 = 積分收斂的 $a$",
+        "• $\\int_0^1x^a\\,dx=\\frac1{a+1}$，$a>-1$",
+        "• $f$ 在閉矩形上連續 ⇒ $I$ 連續 ⇒ 極限可以搬進積分號",
+        "• 證明：均勻連續，加上 $\\big|\\int\\big|\\le\\int|\\cdot|\\le\\varepsilon(d-c)$",
+        "• 無窮區間會出事：$\\int_0^\\infty ae^{-ax}\\,dx$ 在 $a=0$ 不連續",
+        "下一課：Leibniz 積分法則，把微分搬進積分號"
+      ]
     }
   ],
   "workedExamples": [
@@ -90,317 +185,1013 @@
   ],
   "checks": [
     {
-      "ask": "$I(a)=\\int_0^1 x^a\\,dx$ 的定義域是？",
+      "ask": "$\\displaystyle\\lim_{a\\to1}\\int_0^2\\frac{x}{1+ax^2}\\,dx=$？",
       "options": [
-        { "label": "$a>-1$", "correct": true },
-        { "label": "$a\\ne-1$", "why": "$a<-1$ 時 $x\\to 0^+$ 那端像 $\\frac{1}{x^{|a|}}$，次方大於 $1$，發散。" },
-        { "label": "所有實數 $a$", "why": "$a=-1$ 時是 $\\int_0^1\\frac{dx}{x}$，發散。" }
-      ]
-    },
-    {
-      "ask": "下列哪一個條件保證 $I(a)=\\int_c^d f(x,a)\\,dx$ 在 $[\\alpha,\\beta]$ 上連續？",
-      "options": [
-        { "label": "$f$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上兩變數一起連續", "correct": true },
-        { "label": "對每個固定的 $a$，$f$ 對 $x$ 連續", "why": "這只保證每個 $I(a)$ 有定義，不保證 $a$ 變動時 $I$ 連續。" },
-        { "label": "$f$ 對 $a$ 可微", "why": "只看 $a$ 不夠，還要控制 $x$ 方向；連續性的條件是兩變數一起連續。" }
-      ]
-    },
-    {
-      "ask": "$a>0$ 時 $\\int_0^{\\infty}ae^{-ax}\\,dx=1$。那 $\\lim_{a\\to 0^+}$ 與「把極限搬進積分」分別是？",
-      "options": [
-        { "label": "$1$ 與 $0$，兩者不同，所以不能搬", "correct": true },
-        { "label": "都是 $0$", "why": "對每個 $a>0$ 積分都是 $1$，極限是 $1$，不是 $0$。" },
-        { "label": "都是 $1$", "why": "被積函數逐點 $\\to 0$，搬進去得到 $\\int 0\\,dx=0$。" }
-      ]
-    },
-    {
-      "ask": "$I(a)=\\int_0^{\\infty}\\frac{\\sin(ax)}{x}\\,dx$（$a>0$ 時等於 $\\frac{\\pi}{2}$）。$I(-3)$ 是？",
-      "options": [
-        { "label": "$-\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$\\frac{\\pi}{2}$", "why": "$\\sin(-3x)=-\\sin(3x)$，積分整個變號。" },
-        { "label": "$0$", "why": "只有 $a=0$ 時被積函數 $\\equiv 0$。$a\\ne 0$ 時用 $u=|a|x$ 換元，大小都是 $\\frac{\\pi}{2}$。" }
+        {
+          "label": "$\\frac12\\ln5$",
+          "correct": true
+        },
+        {
+          "label": "$\\ln5$",
+          "why": "反導數是 $\\frac12\\ln(1+x^2)$：漏了 $\\frac12$"
+        },
+        {
+          "label": "$\\arctan2$",
+          "why": "那是 $\\int_0^2\\frac{dx}{1+x^2}$；這裡分子有 $x$"
+        },
+        {
+          "label": "不能確定，要先算出 $I(a)$",
+          "why": "閉矩形上連續，極限可以直接搬進去"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "還剩一個變數",
+      "title": "積完還剩一個變數",
       "beats": [
-        { "show": ["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],
-          "note": "$x$ 被積掉了，$a$ 留下來。",
-          "say": "x 的 a 次方從零積到一：x 被積掉了，a 留下來，答案是 a 加一分之一。",
+        {
+          "show": [
+            "$I(a)=\\int_c^d f(x,a)\\,dx$"
+          ],
+          "say": "被積函數有兩個變數，x 和 a。對 x 積分，x 被積掉了，剩下的東西只跟 a 有關，所以 I 是 a 的函數。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 x^{{{a:a}}}\\,dx=\\frac{1}{a+1}$"},
-            {"do":"focus","term":"a","color":"blue","on":"留下來"}
-          ] },
-        { "show": ["$I(a)=\\int_c^d f(x,a)\\,dx$"],
-          "note": "叫參數積分，是 $a$ 的函數。",
-          "say": "一般來說，這種積分算完是 a 的函數，叫參數積分。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle I(a)=\\int_c^d f(x,a)\\,dx}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $x$：積分變數，積完就消失",
+            "• $a$：參數，積分時當常數"
+          ],
+          "say": "x 叫積分變數，積完就消失；a 叫參數，積分的時候把它當常數，跟偏導數「動一個、固定其他」是同一個想法。",
           "board": [
-            {"do":"write","line":"${{i:I(a)}}=\\int_c^d f(x,a)\\,dx$"},
-            {"do":"underline","term":"i","color":"violet","label":"參數積分","on":"a 的函數"}
-          ] },
-        { "show": ["$x$ 是啞變數，$a$ 才是自變數"],
-          "note": "$x$ 換成 $t$ 也一樣。",
-          "say": "積分變數 x 換成 t 也一樣，它只是啞變數；真正的自變數是 a，算的時候要留意 a 的值和正負。",
+            {
+              "do": "write",
+              "line": "• $x$：積分變數，積完就消失"
+            },
+            {
+              "do": "write",
+              "line": "• $a$：參數，積分時當常數",
+              "on": "它當"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$I(a)=\\displaystyle\\int_0^1 x^a\\,dx$"
+          ],
+          "say": "第一個例子：x 的 a 次方，從 0 積到 1。",
           "board": [
-            {"do":"write","line":"$x$ 是啞變數，換成 $t$ 也一樣"},
-            {"do":"write","line":"真正的自變數：${{a:a}}$","on":"真正的"},
-            {"do":"focus","term":"a","color":"blue","on":"留意"}
-          ] },
-        { "show": ["$a<0$：先看 sine 裡的符號"],
-          "note": "別直接套 $a>0$ 的結果。",
-          "say": "遇到 a 是負的，先看 sine 裡面的符號，別急著套 a 大於零的結果。",
+            {
+              "do": "write",
+              "line": "例：$I(a)=\\displaystyle\\int_0^1 x^a\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a\\ne-1$ 時，把 $a$ 當常數：",
+            "$\\int_0^1x^a\\,dx=\\Big[\\frac{x^{a+1}}{a+1}\\Big]_{0^+}^{1}$"
+          ],
+          "say": "a 不等於負 1 的時候，把 a 當常數，用冪函數的積分：x 的 a 加 1 次方，除以 a 加 1。",
           "board": [
-            {"do":"write","line":"$\\sin({{n1:ax}})$，$a<0$"},
-            {"do":"focus","term":"n1","color":"blue","on":"裡面"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$a\\ne-1$ 時，把 $a$ 當常數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1x^a\\,dx=\\Big[\\frac{x^{a+1}}{a+1}\\Big]_{0^+}^{1}$",
+              "on": "的積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題在下限：$x\\to0^+$ 時 $x^{a+1}$ 怎麼走？",
+            "• $a+1>0$：$x^{a+1}\\to0$，得 $\\dfrac1{a+1}$"
+          ],
+          "say": "問題在下限 0。a 加 1 大於 0，下限代進去是 0，得到 a 加 1 分之 1；a 加 1 小於 0，衝到無限大；a 等於負 1 是 x 分之一。後兩種都發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題在下限：$x\\to0^+$ 時 $x^{a+1}$ 怎麼走？"
+            },
+            {
+              "do": "write",
+              "line": "• $a+1>0$：$x^{a+1}\\to0$，得 $\\dfrac1{a+1}$",
+              "on": "下限#2"
+            },
+            {
+              "do": "write",
+              "line": "• $a+1<0$：$x^{a+1}\\to\\infty$，發散",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "• $a=-1$：$\\int_0^1\\frac{dx}x$，發散",
+              "on": "衝到"
+            },
+            {
+              "do": "write",
+              "line": "　這就是 p 判別：$\\int_0^1x^{-p}\\,dx$ 收斂 $\\iff p<1$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "先問定義域",
+      "title": "定義域與圖",
       "beats": [
-        { "show": ["$\\int x^a\\,dx=\\frac{x^{a+1}}{a+1}$"],
-          "note": "$a\\ne-1$。",
-          "say": "第一個問題是：積分在哪些 a 收斂？先寫出反導函數，a 不等於負一。",
+        {
+          "show": [
+            "$I(a)=\\frac1{a+1},\\qquad\\text{定義域：}a>-1$"
+          ],
+          "say": "結論：I a 等於 a 加 1 分之 1，定義域是 a 大於負 1。",
           "board": [
-            {"do":"write","line":"$\\int x^a\\,dx=\\frac{x^{a+1}}{{{d:a+1}}}$","on":"反導函數"},
-            {"do":"underline","term":"d","on":"a 不等於","label":"a ≠ -1"}
-          ] },
-        { "show": ["$a+1>0$：$x^{a+1}\\to 0$，得 $\\frac{1}{a+1}$"],
-          "note": "$a+1\\le 0$：$0$ 那端發散。",
-          "say": "a 加一大於零，x 的 a 加一次方在零趨近零，積分是 a 加一分之一；否則零那端發散。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle I(a)=\\frac1{a+1},\\qquad\\text{定義域：}a>-1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "定義"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義域是「積分收斂的 $a$」，不是「公式有意義的 $a$」"
+          ],
+          "say": "注意，定義域是讓積分收斂的 a，不是讓公式有意義的 a。公式在 a 等於負 2 會給出負 1，但那時積分發散。",
           "board": [
-            {"do":"write","line":"$a+1>0$：$x^{a+1}\\to 0$，得 $\\frac{1}{a+1}$"},
-            {"do":"write","line":"$a+1\\le 0$：$0$ 那端發散","on":"否則"}
-          ] },
-        { "show": ["定義域 $a>-1$"],
-          "note": "不能代 $a=-2$ 得到 $-1$。",
-          "say": "所以這個公式只在 a 大於負一有意義。代 a 等於負二得到負一，是把公式用到定義域外了。",
+            {
+              "do": "write",
+              "line": "定義域是「積分收斂的 $a$」，不是「公式有意義的 $a$」"
+            },
+            {
+              "do": "write",
+              "line": "　被積函數 $x^{-2}>0$，「答案」卻是 $-1$：一看就不對",
+              "color": "violet",
+              "on": "公式#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只在 a > −1 有定義；a → −1⁺ 時衝到無限大"
+          ],
+          "say": "把 I 畫成 a 的函數：在 a 大於負 1 上連續、遞減；a 靠近負 1，面積越來越大，衝到無限大。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"定義域：${{dom:a>-1}}$","on":"所以這個公式"},
-            {"do":"box","term":"dom","on":"大於負一","color":"green"},
-            {"do":"write","line":"$a=-2$ 代進去得 ${{w:-1}}$","on":"代 a 等於負二"},
-            {"do":"strike","term":"w","on":"定義域外","label":"定義域外"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ia",
+                  "window": [
+                    -1.5,
+                    4,
+                    -0.5,
+                    5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/(x+1)",
+                      "color": "blue",
+                      "label": "I(a) = 1/(a+1)",
+                      "domain": [
+                        -0.8,
+                        4
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": -1,
+                      "label": "a = −1",
+                      "color": "red"
+                    }
+                  ],
+                  "xlabel": "a",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "只在 a > −1 有定義；a → −1⁺ 時衝到無限大",
+              "color": "violet",
+              "on": "遞減"
+            }
+          ]
+        }
       ],
-      "check": 0
+      "predict": {
+        "ask": "$I(a)=\\displaystyle\\int_0^{\\infty}e^{-ax}\\,dx$ 的定義域與公式？",
+        "options": [
+          {
+            "label": "$a>0$，$I(a)=\\dfrac1a$",
+            "correct": true
+          },
+          {
+            "label": "$a\\ge0$，$I(a)=\\dfrac1a$",
+            "why": "$a=0$ 時被積函數是 $1$，$\\int_0^\\infty1\\,dx$ 發散"
+          },
+          {
+            "label": "$a>0$，$I(a)=-\\dfrac1a$",
+            "why": "代下限時漏了負號：減掉的是 $-\\frac1a$"
+          },
+          {
+            "label": "所有 $a\\ne0$，$I(a)=\\dfrac1a$",
+            "why": "$a<0$ 時 $e^{-ax}\\to\\infty$，積分發散"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定義域與圖",
+      "beats": [
+        {
+          "show": [
+            "它的圖跟上面很像：$a\\to0^+$ 衝到無限大"
+          ],
+          "say": "答案是 a 大於 0，a 分之一。a 等於 0 時被積函數是常數 1，積分發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它的圖跟上面很像：$a\\to0^+$ 衝到無限大"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "什麼時候連續",
       "beats": [
-        { "show": ["$f$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續"],
-          "note": "兩個變數一起連續。",
-          "say": "充分條件是：f 在一個閉矩形上，x 和 a 兩個變數一起連續。",
+        {
+          "show": [
+            "問：$a\\to a_0$ 時，$I(a)\\to I(a_0)$ 嗎？也就是",
+            "$\\lim_{a\\to a_0}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d f(x,a_0)\\,dx$"
+          ],
+          "say": "I 連不連續，其實就是問：極限能不能搬進積分號。先積分再取極限，跟先取極限再積分，一樣嗎？",
           "board": [
-            {"do":"write","line":"$f$ 在閉矩形 ${{r:[c,d]\\times[\\alpha,\\beta]}}$ 上連續"},
-            {"do":"underline","term":"r","label":"一起連續","on":"兩個變數"}
-          ] },
-        { "show": ["閉：包含端點、範圍有限","開區間會漏掉端點"],
-          "note": "例：$x^a$ 在 $0$ 那端。",
-          "say": "閉矩形有兩個作用：範圍有限，端點也算進來。開區間會漏掉端點，像 x 的 a 次方在零那端。",
+            {
+              "do": "write",
+              "line": "問：$a\\to a_0$ 時，$I(a)\\to I(a_0)$ 嗎？也就是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{a\\to a_0}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d f(x,a_0)\\,dx$",
+              "on": "先積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$f$ 在閉矩形 $R=[c,d]\\times[\\alpha,\\beta]$ 上連續，則",
+            "$I(a)=\\int_c^d f(x,a)\\,dx\\ \\text{在}\\ [\\alpha,\\beta]\\ \\text{上連續}$"
+          ],
+          "say": "一個充分條件：f 在閉矩形，c 到 d 乘上 阿法 到 貝塔，上面連續，那 I 在 阿法 到 貝塔 上連續。",
           "board": [
-            {"do":"write","line":"閉：包含端點、範圍有限"},
-            {"do":"write","line":"開區間漏掉端點：${{n2:x^a}}$ 在 $0$ 端會爆掉","on":"開區間"},
-            {"do":"focus","term":"n2","color":"red","on":"零那端"}
-          ] },
-        { "show": ["$\\lim_{a\\to a_0}\\int f\\,dx=\\int f(x,a_0)\\,dx$"],
-          "note": "$I(a)$ 連續 = 極限可以搬進積分號。",
-          "say": "這時 I 對 a 連續，也就是說，極限可以搬進積分號裡面。",
+            {
+              "do": "write",
+              "line": "定理：$f$ 在閉矩形 $R=[c,d]\\times[\\alpha,\\beta]$ 上連續，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle I(a)=\\int_c^d f(x,a)\\,dx\\ \\text{在}\\ [\\alpha,\\beta]\\ \\text{上連續}}}$",
+              "on": "乘上"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "阿法#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個重點：$f$ 要兩變數一起連續；$x$ 的區間要有限、閉"
+          ],
+          "say": "兩個重點：f 要兩個變數一起連續，不是分別對 x、對 a 連續；而且 x 的區間要有限、閉。證明在 ④。",
           "board": [
-            {"do":"write","line":"${{l:\\lim_{a\\to a_0}}}\\int f\\,dx=\\int f(x,{{t:a_0}})\\,dx$"},
-            {"do":"arrow","from":"l","to":"t","label":"搬進去","on":"搬進積分號"}
-          ] },
-        { "show": ["只看「每個 $a$ 對 $x$ 連續」不夠"],
-          "say": "只知道每個固定的 a，f 對 x 連續，是不夠的。要兩個變數一起連續，證明在下一節。",
+            {
+              "do": "write",
+              "line": "兩個重點：$f$ 要兩變數一起連續；$x$ 的區間要有限、閉"
+            },
+            {
+              "do": "write",
+              "line": "　「兩變數一起連續」是 8.6 的意思：$(x,a)\\to(x_0,a_0)$ 沿任何路徑都行",
+              "color": "violet",
+              "on": "連續#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{a\\to0}\\int_0^1\\sqrt{x^2+a^2}\\,dx$"
+          ],
+          "say": "例子：根號 x 平方加 a 平方，從 0 積到 1，a 趨近 0。",
           "board": [
-            {"do":"write","line":"${{w:f(x,a)}}$ 對 $x$ 連續"},
-            {"do":"strike","term":"w","label":"不夠","on":"不夠的"},
-            {"do":"write","line":"要兩個變數一起連續","color":"green","on":"要兩個變數"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{a\\to0}\\int_0^1\\sqrt{x^2+a^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{x^2+a^2}$ 在 $[0,1]\\times[-1,1]$ 上連續，可以搬：",
+            "$=\\int_0^1\\sqrt{x^2}\\,dx=\\int_0^1x\\,dx=\\frac12$"
+          ],
+          "say": "它在 0 到 1 乘負 1 到 1 這個閉矩形上連續，所以極限可以搬進去：a 換成 0，根號 x 平方就是 x，積分是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt{x^2+a^2}$ 在 $[0,1]\\times[-1,1]$ 上連續，可以搬："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\int_0^1\\sqrt{x^2}\\,dx=\\int_0^1x\\,dx=\\frac12}}$",
+              "color": "red",
+              "on": "這個"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "搬進"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：直接積出 $I(a)=\\frac12\\big(\\sqrt{1+a^2}+a^2\\ln\\frac{1+\\sqrt{1+a^2}}{|a|}\\big)$，$I(0.01)\\approx0.50029$",
+              "color": "violet",
+              "on": "方就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不用算出 $I(a)$ 的公式，就知道極限"
+          ],
+          "say": "好處是：不必先算出 I a 的公式，就知道極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不用算出 $I(a)$ 的公式，就知道極限"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：同一個 $\\delta$",
+      "title": "試一題",
       "beats": [
-        { "show": ["一致連續給同一個 $\\delta$，再積分"],
-          "say": "策略：epsilon delta。先用一致連續拿到一個對所有 x 都有效的 delta，再把差積分起來。",
-          "board": [
-            {"do":"write","line":"一致連續給同一個 $\\delta$","on":"先用一致連續"},
-            {"do":"write","line":"再把差積分起來","on":"再把差"}
-          ] },
-        { "show": ["閉矩形上連續 ⇒ 一致連續"],
-          "note": "給 $\\varepsilon>0$，存在 $\\delta$。",
-          "say": "f 在閉矩形上兩變數一起連續，所以一致連續：給 epsilon，就有一個 delta。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"閉矩形上連續 ⇒ 一致連續","on":"f 在閉矩形"},
-            {"do":"write","line":"給 $\\varepsilon>0$，存在 ${{dl:\\delta}}$","on":"給 epsilon"}
-          ] },
-        { "show": ["連續：$\\delta$ 看點 $x$","一致連續：$\\delta$ 只看 $\\varepsilon$"],
-          "say": "一般的連續，delta 可以跟著點改；一致連續更強，同一個 delta 對所有點都管用。",
-          "board": [
-            {"do":"write","line":"連續：$\\delta$ 看點 $x$"},
-            {"do":"write","line":"一致連續：${{u1:\\delta}}$ 只看 $\\varepsilon$","on":"更強"}
-          ] },
-        { "show": ["直覺：$\\delta$ 縮不停，點擠到一處"],
-          "note": "直覺，不是證明。",
-          "say": "為什麼閉矩形夠？直覺是：若 delta 要越縮越小，那些點在有限的閉範圍裡會擠到某處，那裡連續就矛盾了。",
-          "board": [
-            {"do":"write","line":"直覺，不是證明","color":"red"},
-            {"do":"write","line":"$\\delta$ 越縮越小，點擠到一處","on":"擠到"}
-          ] },
-        { "show": ["$|a-a_0|<\\delta$ ⇒ 對所有 $x\\in[c,d]$","$|f(x,a)-f(x,a_0)|<\\varepsilon$"],
-          "note": "同一個 $\\delta$ 對所有 $x$ 都有效。",
-          "why": {"ask":"為什麼同一個 $\\delta$ 對所有 $x$ 都有效？","say":"這個 delta 為什麼不管 x 在哪裡都管用？","options":[{"label":"一致連續：$\\delta$ 不依賴點","correct":true},{"label":"每個 $x$ 各取一個 $\\delta$，再取最小的","why":"$x$ 有無限多個，最小的可能不存在、下確界可能是零；共同的 $\\delta$ 要靠一致連續。"},{"label":"$\\delta$ 本來就只跟 $\\varepsilon$ 有關","why":"一般的連續，$\\delta$ 會隨點改變；不依賴點，正是一致連續多給的。"}]},
-          "say": "這正是一致連續給的：delta 只看 epsilon，不看點，所以整段 x 一起管住。",
-          "board": [
-            {"do":"write","line":"$|a-a_0|<\\delta$ ⇒ 對所有 $x\\in[c,d]$","on":"這個 delta"},
-            {"do":"write","line":"$|f(x,a)-f(x,a_0)|<\\varepsilon$","on":"不管 x"},
-            {"do":"underline","term":"dl","on":"只看 epsilon","label":"不看點","why":true}
-          ] },
-        { "show": ["$|I(a)-I(a_0)|$","$\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<\\varepsilon(d-c)$"],
-          "note": "$\\varepsilon$ 任意，所以 $I$ 在 $a_0$ 連續。",
-          "say": "積分的差不超過差的絕對值的積分，每一點都小於 epsilon，乘上區間長度 d 減 c。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|I(a)-I(a_0)|$","on":"積分的差"},
-            {"do":"write","line":"$\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<{{e:\\varepsilon(d-c)}}$","on":"不超過"},
-            {"do":"underline","term":"e","on":"乘上區間長度"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\lim_{a\\to1}\\int_0^2\\frac{x}{1+ax^2}\\,dx=$？"
+          ],
+          "say": "試一題。先確認可以搬，再把 a 等於 1 代進去積分。"
+        }
       ],
-      "key": "一個 $\\delta$ 管住所有 $x$，再積分",
-      "proof": true,
-      "of": 3,
-      "skeleton": "ε-δ",
-      "where": {
-        "ask": "「閉矩形」用在哪一步？",
-        "steps": [
-          {
-            "label": "連續 ⇒ 一致連續",
-            "correct": true
-          },
-          {
-            "label": "對所有 $x$：$|f(x,a)-f(x,a_0)|<\\varepsilon$",
-            "why": "這只是把一致連續的定義寫出來。"
-          },
-          {
-            "label": "$|I(a)-I(a_0)|\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx$",
-            "why": "積分的絕對值不等式，任何可積函數都成立。"
-          },
-          {
-            "label": "$<\\varepsilon(d-c)$",
-            "why": "只用到被積函數處處小於 $\\varepsilon$，再乘區間長度。"
-          }
-        ]
-      }
+      "check": 0
     },
     {
-      "title": "把極限搬進去",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\lim_{a\\to 0}\\int_0^1\\sqrt{x^2+a^2}\\,dx$"],
-          "note": "$[0,1]\\times[-1,1]$ 上兩變數一起連續。",
-          "say": "根號 x 平方加 a 平方，在這個閉矩形上兩個變數一起連續，所以極限可以搬進去。",
+        {
+          "show": [
+            "檢查「閉矩形上連續」的習慣：",
+            "• 分母不為 $0$：$1+ax^2\\ge1$"
+          ],
+          "say": "檢查的習慣：分母會不會是 0，有沒有對數 0 或根號負數，區間是不是有限、閉的。",
           "board": [
-            {"do":"write","line":"${{l:\\lim_{a\\to 0}}}\\int_0^1\\sqrt{x^2+a^2}\\,dx$"},
-            {"do":"write","line":"$[0,1]\\times[-1,1]$ 上連續","on":"閉矩形"},
-            {"do":"underline","term":"l","color":"green","label":"可搬進去","on":"所以極限"}
-          ] },
-        { "show": ["$=\\int_0^1\\sqrt{x^2}\\,dx=\\int_0^1 x\\,dx$"],
-          "note": "$x\\ge 0$，$\\sqrt{x^2}=x$。",
-          "say": "a 代零，被積函數變成根號 x 平方。x 大於等於零，就是 x。",
-          "board": [
-            {"do":"write","line":"$=\\int_0^1 {{s:\\sqrt{x^2}}}\\,dx$"},
-            {"do":"write","line":"$=\\int_0^1 x\\,dx$","on":"x 大於等於零"}
-          ] }
-      ],
-      "predict": {
-        "ask": "這個極限是？",
-        "options": [
-          {
-            "label": "$\\frac{1}{2}$",
-            "correct": true
-          },
-          {
-            "label": "$0$",
-            "why": "$a\\to 0$ 不代表積分 $\\to 0$；被積函數變成 $x$，面積是 $\\frac{1}{2}$。"
-          },
-          {
-            "label": "不能搬，要先算出積分",
-            "why": "閉矩形上兩變數一起連續，正是可以搬的條件。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "檢查「閉矩形上連續」的習慣："
+            },
+            {
+              "do": "write",
+              "line": "• 分母不為 $0$：$1+ax^2\\ge1$",
+              "on": "會不"
+            },
+            {
+              "do": "write",
+              "line": "• 沒有 $\\ln0$、$\\sqrt{\\text{負數}}$",
+              "on": "沒有"
+            },
+            {
+              "do": "write",
+              "line": "• $x$ 的區間有限、包含端點",
+              "on": "根號"
+            },
+            {
+              "do": "write",
+              "line": "　$a$ 的範圍可以自己挑：只要包住 $a_0$ 的一個閉區間就夠",
+              "color": "violet",
+              "on": "不是"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "無窮區間會出事",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}ae^{-ax}\\,dx=1$（$a>0$）"],
-          "note": "令 $u=ax$。",
-          "say": "換成無窮區間：a 乘 e 的負 a x 次方，a 大於零時，令 u 等於 a x，面積都是一。",
+        {
+          "show": [
+            "$I(a)=\\int_0^{\\infty}ae^{-ax}\\,dx,\\qquad a\\ge0$"
+          ],
+          "say": "換成無窮區間，事情就不一樣了。看 a 乘 e 的負 a x 次方，從 0 積到無限大，a 大於等於 0。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}{{f:ae^{-ax}}}\\,dx=1$（$a>0$）","tint":{"f":"blue"}},
-            {"do":"underline","term":"f","on":"令 u","label":"令 u=ax"}
-          ] },
-        { "show": ["$a=0$：被積函數是 $0$，$I(0)=0$"],
-          "say": "可是 a 等於零時，被積函數整個是零，積分是零。左邊趨近一，那一點卻是零，不連續。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(a)=\\int_0^{\\infty}ae^{-ax}\\,dx,\\qquad a\\ge0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a>0$：$\\big[-e^{-ax}\\big]_0^{\\infty}=0-(-1)=1$",
+            "• $a=0$：被積函數是 $0$，$I(0)=0$"
+          ],
+          "say": "a 大於 0：反導數是負 e 的負 a x 次方，代無限大是 0，減掉代 0 的負 1，得到 1。a 等於 0：被積函數整個是 0，積分也是 0。",
           "board": [
-            {"do":"write","line":"$a=0$：被積函數是 $0$，$I(0)={{z:0}}$","on":"a 等於零"},
-            {"do":"circle","term":"z","on":"那一點","label":"不連續"}
-          ] },
-        { "show": ["面積逃到無窮遠"],
-          "note": "$a$ 越小，曲線越扁、拖得越長。",
-          "say": "看圖：a 越小，曲線越扁、拖得越長，面積一被推到越來越遠，最後逃到無窮遠。",
+            {
+              "do": "write",
+              "line": "• $a>0$：$\\big[-e^{-ax}\\big]_0^{\\infty}=0-(-1)=1$"
+            },
+            {
+              "do": "write",
+              "line": "• $a=0$：被積函數是 $0$，$I(0)=0$",
+              "on": "的負#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{a\\to0^+}I(a)=1\\ne0=I(0)$"
+          ],
+          "say": "所以 a 從右邊趨近 0，I 一直是 1；在 0 那一點卻是 0。I 在 0 不連續。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"plot","graph":{"window":[-0.3,8,-0.1,1.1],"ticks":false,"curves":[{"expr":"exp(-x)","domain":[0,8],"color":"blue"},{"expr":"exp(-x/2)/2","domain":[0,8],"color":"violet"},{"expr":"exp(-x/3)/3","domain":[0,8],"color":"gold"}],"labels":[{"x":3.4,"y":0.32,"text":"a 越小，越扁","anchor":"start"}]},"on":"看圖"},
-            {"do":"write","line":"面積逃到無窮遠","on":"逃到"}
-          ] },
-        { "show": ["從 $0$ 積到 $X$：$1-e^{-aX}$"],
-          "note": "$a\\to 0$：這一段 $\\to 0$。",
-          "say": "固定一個 X，從零積到 X，面積是一減 e 的負 a X 次方。a 趨近零，這段趨近零，面積全跑到 X 右邊。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\lim_{a\\to0^+}I(a)=1\\ne0=I(0)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "那一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限搬不進積分號：$\\lim\\int=1$，$\\int\\lim=0$"
+          ],
+          "say": "換句話說：先積分再取極限是 1，先取極限再積分是 0。極限不能隨便搬進積分號。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.3,8,-0.1,0.6],"ticks":false,"curves":[{"expr":"exp(-x/2)/2","domain":[0,8],"color":"violet"}],"fills":[{"expr":"exp(-x/2)/2","from":5,"to":8,"color":"gold"}]},"on":"固定"},
-            {"do":"write","line":"$\\int_0^X ae^{-ax}\\,dx=1-e^{-aX}$","on":"面積是"}
-          ] },
-        { "show": ["需要控制：$|f(x,a)|\\le g(x)$"],
-          "note": "$g$ 不依賴 $a$ 而且可積。",
-          "say": "瑕積分要搬極限，需要一個不依賴 a、而且可積的函數把它壓住。這個反例找不到。",
+            {
+              "do": "write",
+              "line": "極限搬不進積分號：$\\lim\\int=1$，$\\int\\lim=0$"
+            },
+            {
+              "do": "write",
+              "line": "　每個固定的 $x$，$a\\to0^+$ 時 $ae^{-ax}\\to0$",
+              "color": "violet",
+              "on": "限再"
+            }
+          ]
+        },
+        {
+          "show": [
+            "越壓越扁、越攤越遠：面積一直是 1"
+          ],
+          "say": "圖上是 a 乘 e 的負 a x 次方。a 等於 1，從高度 1 開始往下掉，面積是 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"需要控制：$|f(x,a)|\\le {{g:g(x)}}$","on":"瑕積分"},
-            {"do":"underline","term":"g","on":"不依賴 a","label":"可積"},
-            {"do":"write","line":"這個反例：找不到 $g$","on":"這個反例","color":"red"}
-          ] },
-        { "show": ["例：$a\\ge1$ 時 $e^{-ax}\\le e^{-x}$","反例：$g$ 至少約 $\\frac{1}{x}$，積分發散"],
-          "say": "例：a 大於等於一時，e 的負 a x 次方被 e 的負 x 次方壓住。反例要壓住，g 至少約 x 分之一，積到無窮發散。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "esc",
+                  "window": [
+                    0,
+                    12,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "from": 0,
+                      "to": 12,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.08,
+                      "max": 1,
+                      "value": 1,
+                      "label": "a"
+                    }
+                  },
+                  "readout": "高度 = {a}，面積（到 ∞）= 1",
+                  "xstep": 2,
+                  "ystep": 0.5,
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "高度 = 1，面積（到 ∞）= 1",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "越壓越扁、越攤越遠：面積一直是 1",
+              "color": "violet",
+              "on": "開始"
+            }
+          ]
+        },
+        {
+          "show": [
+            "無窮區間會出事"
+          ],
+          "say": "a 變小，曲線被壓扁，但往右攤得更遠；面積還是 1。",
           "board": [
-            {"do":"write","line":"例：$e^{-ax}\\le e^{-x}$（$a\\ge1$）"},
-            {"do":"write","line":"反例：$g$ 至少約 $\\frac{1}{x}$，發散","color":"red","on":"反例要"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "esc",
+                  "window": [
+                    0,
+                    12,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "from": 0,
+                      "to": 12,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.08,
+                      "max": 1,
+                      "value": 1,
+                      "label": "a"
+                    }
+                  },
+                  "readout": "高度 = {a}，面積（到 ∞）= 1",
+                  "xstep": 2,
+                  "ystep": 0.5,
+                  "height": 250
+                },
+                "vals": {
+                  "a": 0.3
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "高度 = 0.3，面積（到 ∞）= 1",
+              "on": "右攤"
+            }
+          ]
+        },
+        {
+          "show": [
+            "無窮區間會出事"
+          ],
+          "say": "a 再小，每一點的高度都趨近 0，可是面積跑到越來越遠的地方。面積逃到無限遠去了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "esc",
+                  "window": [
+                    0,
+                    12,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "a*exp(-a*x)",
+                      "from": 0,
+                      "to": 12,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.08,
+                      "max": 1,
+                      "value": 1,
+                      "label": "a"
+                    }
+                  },
+                  "readout": "高度 = {a}，面積（到 ∞）= 1",
+                  "xstep": 2,
+                  "ystep": 0.5,
+                  "height": 250
+                },
+                "vals": {
+                  "a": 0.08
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "高度 = 0.08，面積（到 ∞）= 1",
+              "on": "積跑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "哪裡出了問題",
+      "beats": [
+        {
+          "show": [
+            "$ae^{-ax}$ 在 $[0,\\infty)\\times[0,1]$ 上連續，缺的是「區間有限」"
+          ],
+          "say": "為什麼 ② 的定理救不了？a 乘 e 的負 a x 次方，對兩個變數一起連續，沒問題；缺的是 x 的區間有限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$ae^{-ax}$ 在 $[0,\\infty)\\times[0,1]$ 上連續，缺的是「區間有限」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "④ 的證明會看到：誤差的估計是 $\\varepsilon\\cdot(d-c)$，區間無限長就失效"
+          ],
+          "say": "等一下的證明會看到，誤差估計是艾普西隆乘上區間長度；長度是無限大，這個估計就沒用了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "④ 的證明會看到：誤差的估計是 $\\varepsilon\\cdot(d-c)$，區間無限長就失效"
+            },
+            {
+              "do": "write",
+              "line": "　瑕積分要額外的條件，例如被一個可積的 $g(x)$ 控制：下一課 ③",
+              "color": "violet",
+              "on": "區間"
+            }
+          ]
+        }
       ],
-      "key": "面積拖到無窮遠，需要不依賴 $a$ 的控制",
-      "check": 2
+      "predict": {
+        "ask": "$J(a)=\\displaystyle\\int_0^{\\infty}\\frac{a}{1+a^2x^2}\\,dx$（$a\\ge0$）。$\\displaystyle\\lim_{a\\to0^+}J(a)=$？",
+        "options": [
+          {
+            "label": "$\\frac\\pi2$",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "那是 $J(0)$：把極限搬進積分號了"
+          },
+          {
+            "label": "$\\infty$",
+            "why": "被積函數越來越扁，面積卻沒有變大"
+          },
+          {
+            "label": "不存在",
+            "why": "$a>0$ 時 $J(a)$ 是常數，極限存在"
+          }
+        ]
+      }
+    },
+    {
+      "title": "哪裡出了問題",
+      "beats": [
+        {
+          "show": [
+            "又是同一件事：$J(0)=0$，面積逃到無限遠"
+          ],
+          "say": "答案是 2 分之派；可是 J of 0 是 0。又是面積逃到無限遠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "又是同一件事：$J(0)=0$，面積逃到無限遠"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（閉矩形）",
+      "beats": [
+        {
+          "show": [
+            "工具：閉矩形上連續 ⇒ 均勻連續",
+            "任給 $\\varepsilon>0$，有 $\\delta>0$，對 $R$ 上所有兩點："
+          ],
+          "say": "證明要用一個工具：閉矩形上的連續函數是均勻連續的。意思是：同一個得塔，對矩形上所有的點都有效。",
+          "board": [
+            {
+              "do": "write",
+              "line": "工具：閉矩形上連續 ⇒ 均勻連續"
+            },
+            {
+              "do": "write",
+              "line": "任給 $\\varepsilon>0$，有 $\\delta>0$，對 $R$ 上所有兩點：",
+              "on": "閉矩"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle |P-Q|<\\delta\\Rightarrow|f(P)-f(Q)|<\\varepsilon}}$",
+              "on": "是均"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "同一"
+            },
+            {
+              "do": "write",
+              "line": "　這個事實（有界閉集上連續 ⇒ 均勻連續）要用緊緻性證明，留到高等微積分；這裡直接用",
+              "color": "violet",
+              "on": "形上#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重點：$\\delta$ 不跟著點變"
+          ],
+          "say": "重點是得塔不跟著點變。如果每一個 x 要不同的得塔，就沒辦法一次控制整條積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "重點：$\\delta$ 不跟著點變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：固定 $a_0\\in[\\alpha,\\beta]$，給 $\\varepsilon>0$，取上面的 $\\delta$。"
+          ],
+          "say": "證明：固定一個 a 0，給一個艾普西隆，取均勻連續的那個得塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：固定 $a_0\\in[\\alpha,\\beta]$，給 $\\varepsilon>0$，取上面的 $\\delta$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a\\in[\\alpha,\\beta]$，$|a-a_0|<\\delta$ 時，對每個 $x\\in[c,d]$：",
+            "$(x,a)$ 與 $(x,a_0)$ 的距離 $=|a-a_0|<\\delta$，所以"
+          ],
+          "say": "只要 a 跟 a 0 差不到得塔，對每一個 x，這兩點的距離就小於得塔，所以 f 的差小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a\\in[\\alpha,\\beta]$，$|a-a_0|<\\delta$ 時，對每個 $x\\in[c,d]$："
+            },
+            {
+              "do": "write",
+              "line": "$(x,a)$ 與 $(x,a_0)$ 的距離 $=|a-a_0|<\\delta$，所以",
+              "on": "對每"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x,a)-f(x,a_0)|<\\varepsilon$",
+              "on": "得塔#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}|I(a)-I(a_0)|&=\\Big|\\int_c^d\\big(f(x,a)-f(x,a_0)\\big)\\,dx\\Big|\\\\&\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx\\\\&\\le\\varepsilon\\,(d-c)\\end{aligned}$"
+          ],
+          "say": "兩個積分相減，合成一個積分；絕對值搬進積分號，變成小於等於；每一點都小於艾普西隆，積起來不超過艾普西隆乘區間長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}|I(a)-I(a_0)|&=\\Big|\\int_c^d\\big(f(x,a)-f(x,a_0)\\big)\\,dx\\Big|\\\\&\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx\\\\&\\le\\varepsilon\\,(d-c)\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varepsilon$ 任意 ⇒ $\\displaystyle\\lim_{a\\to a_0}I(a)=I(a_0)$　$\\blacksquare$"
+          ],
+          "say": "艾普西隆乘 d 減 c 要多小有多小，所以 I a 趨近 I a 0。I 在每一點都連續，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varepsilon$ 任意 ⇒ $\\displaystyle\\lim_{a\\to a_0}I(a)=I(a_0)$　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "把「$I$ 連續」的證明排順序",
+        "steps": [
+          {
+            "label": "閉矩形上連續 ⇒ 均勻連續，取 $\\delta$"
+          },
+          {
+            "label": "$|a-a_0|<\\delta$ ⇒ 每個 $x$ 都有 $|f(x,a)-f(x,a_0)|<\\varepsilon$",
+            "why": "先要有上一步：閉矩形上連續 ⇒ 均勻連續，取 $\\delta$"
+          },
+          {
+            "label": "兩個積分合併，絕對值搬進積分號",
+            "why": "先要有上一步：$|a-a_0|<\\delta$ ⇒ 每個 $x$ 都有 $|f(x,a)-f(x,a_0)|<\\varepsilon$"
+          },
+          {
+            "label": "得到 $|I(a)-I(a_0)|\\le\\varepsilon(d-c)$",
+            "why": "先要有上一步：兩個積分合併，絕對值搬進積分號"
+          }
+        ]
+      }
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "回頭看 ③：$d-c=\\infty$，最後一步就壞了"
+          ],
+          "say": "回頭看第三節的反例：區間無限長，最後一步艾普西隆乘長度就壞了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "回頭看 ③：$d-c=\\infty$，最後一步就壞了"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $I(a)=\\int f(x,a)\\,dx$ 是 $a$ 的函數；定義域 = 積分收斂的 $a$",
+            "• $\\int_0^1x^a\\,dx=\\frac1{a+1}$，$a>-1$"
+          ],
+          "say": "整理一下：定義域看積分在哪裡收斂；閉矩形上連續，極限就能搬進積分號，證明靠均勻連續；無窮區間上，面積可能逃到無限遠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $I(a)=\\int f(x,a)\\,dx$ 是 $a$ 的函數；定義域 = 積分收斂的 $a$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1x^a\\,dx=\\frac1{a+1}$，$a>-1$",
+              "on": "在哪"
+            },
+            {
+              "do": "write",
+              "line": "• $f$ 在閉矩形上連續 ⇒ $I$ 連續 ⇒ 極限可以搬進積分號",
+              "on": "極限"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：均勻連續，加上 $\\big|\\int\\big|\\le\\int|\\cdot|\\le\\varepsilon(d-c)$",
+              "on": "證明"
+            },
+            {
+              "do": "write",
+              "line": "• 無窮區間會出事：$\\int_0^\\infty ae^{-ax}\\,dx$ 在 $a=0$ 不連續",
+              "on": "面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Leibniz 積分法則，把微分搬進積分號"
+          ],
+          "say": "下一課，我們把微分搬進積分號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Leibniz 積分法則，把微分搬進積分號"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["parameter-integral", "improper-integral"],
-    "fine": ["param-integral-evaluate", "param-integral-domain", "param-integral-continuity", "param-limit-swap-trap"]
+    "coarse": [
+      "parameter-integral",
+      "improper-integral"
+    ],
+    "fine": [
+      "param-integral-evaluate",
+      "param-integral-domain",
+      "param-integral-continuity",
+      "param-limit-swap-trap"
+    ]
   },
   "practice": [
-    { "id": "burst-boss-param-002", "core": true, "trains": "param-integral-evaluate" },
-    { "id": "burst-boss-param-001", "core": true, "trains": "param-integral-evaluate" },
-    { "id": "burst-boss-param-003", "core": true, "trains": "param-integral-evaluate" },
-    { "id": "burst-rec-001", "core": true, "trains": "param-integral-evaluate" },
-    { "id": "cg-11e-001", "core": true, "trains": "param-integral-domain" },
-    { "id": "cg-11e-003", "core": true, "trains": "param-limit-swap-trap" },
-    { "id": "cg-11e-002", "trains": "param-integral-domain" },
-    { "id": "cg-11e-004", "trains": "param-limit-swap-trap" },
-    { "id": "lb-con-003", "challenge": true, "trains": "param-limit-swap-trap", "note": "挑戰：參數是 $n$，被積函數逐點 $\\to 0$，但積分的極限是 $\\frac{1}{2}$。" }
+    {
+      "id": "burst-boss-param-002",
+      "core": true,
+      "trains": "param-integral-evaluate"
+    },
+    {
+      "id": "burst-boss-param-001",
+      "core": true,
+      "trains": "param-integral-evaluate"
+    },
+    {
+      "id": "burst-boss-param-003",
+      "core": true,
+      "trains": "param-integral-evaluate"
+    },
+    {
+      "id": "burst-rec-001",
+      "core": true,
+      "trains": "param-integral-evaluate"
+    },
+    {
+      "id": "cg-11e-001",
+      "core": true,
+      "trains": "param-integral-domain"
+    },
+    {
+      "id": "cg-11e-003",
+      "core": true,
+      "trains": "param-limit-swap-trap"
+    },
+    {
+      "id": "cg-11e-002",
+      "trains": "param-integral-domain"
+    },
+    {
+      "id": "cg-11e-004",
+      "trains": "param-limit-swap-trap"
+    },
+    {
+      "id": "lb-con-003",
+      "challenge": true,
+      "trains": "param-limit-swap-trap",
+      "note": "挑戰：參數是 $n$，被積函數逐點 $\\to 0$，但積分的極限是 $\\frac{1}{2}$。"
+    }
   ],
   "gaps": []
 }

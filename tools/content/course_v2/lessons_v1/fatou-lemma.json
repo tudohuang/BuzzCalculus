@@ -1,0 +1,463 @@
+{
+  "id": "fatou-lemma",
+  "title": "Fatou 引理",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["monotone-convergence-theorem", "limsup-liminf"],
+  "next": ["dominated-convergence"],
+  "related": [],
+  "objectives": [
+    "寫得出 Fatou 引理：$f_n\\ge0$ 可測時，$\\int\\liminf f_n\\le\\liminf\\int f_n$，並說得出不等號的方向。",
+    "認得面積「跑掉」的三種方式：往無窮遠移動、擠成尖峰、來回跳。",
+    "會用 Fatou 引理給極限函數的積分一個上界，並知道非負的假設不能拿掉。"
+  ],
+  "visual": "y = n²x e^{−nx} 在 [0, 1] 上，n 從 1 拉到 40。尖峰位置 x = 1/n 往 0 靠、高度 n/e 往上衝，面積讀數停在接近 1；同時在任一個固定的 x（可拖動）旁邊顯示 fₙ(x) 的值，它最後掉到 0。",
+  "concept": [
+    {
+      "heading": "① 沒有單調，至少還有一個方向",
+      "body": [
+        "上一課的 $n x^n$ 不遞增，結果 $\\lim\\int f_n=1$，$\\int\\lim f_n=0$：面積不見了。反過來的事情會不會發生，極限函數憑空多出面積？不會。",
+        "直覺，不是證明：非負函數的面積可以在極限過程中「漏掉」（推到無窮遠、擠進越來越窄的尖峰），但每一點的極限值都是由 $f_n$ 自己的值決定，面積不可能憑空增加。Fatou 引理把這句話寫成不等式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 引理",
+      "body": [
+        "設 $f_n:X\\to[0,\\infty]$ 可測。則",
+        "這裡用 $\\liminf$ 而不是 $\\lim$，是因為 $f_n(x)$ 與 $\\int f_n$ 都不一定收斂；$\\liminf$ 永遠存在（在 $[0,\\infty]$ 裡），見〈上極限與下極限〉。若 $f_n\\to f$ 逐點收斂，左邊就是 $\\int f$。",
+        "記方向的方法：「極限的積分」比較小，因為面積只會漏掉。"
+      ],
+      "tex": ["\\int_X \\liminf_{n\\to\\infty} f_n\\,d\\mu\\ \\le\\ \\liminf_{n\\to\\infty}\\int_X f_n\\,d\\mu"],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：用單調收斂定理",
+      "body": [
+        "令 $g_k=\\inf_{n\\ge k} f_n$。$g_k$ 可測（可測函數列的下確界），非負，而且 $k$ 越大取下確界的範圍越小，所以 $g_1\\le g_2\\le\\cdots$，而 $\\lim g_k=\\liminf f_n$（這就是 $\\liminf$ 的定義）。",
+        "對每個 $n\\ge k$，$g_k\\le f_n$，所以 $\\int g_k\\le\\int f_n$。這對所有 $n\\ge k$ 成立，所以 $\\int g_k\\le\\inf_{n\\ge k}\\int f_n$。",
+        "對 $g_k$ 用〈單調收斂定理（測度版）〉：$\\int\\liminf f_n=\\lim_k\\int g_k\\le\\lim_k\\inf_{n\\ge k}\\int f_n=\\liminf\\int f_n$。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 面積跑掉的三種方式",
+      "body": [
+        "往無窮遠走：$\\chi_{[n,n+1]}$，每點最後是 0，$\\int=1$。",
+        "擠成尖峰：$n\\chi_{(0,1/n)}$，每點最後是 0，$\\int=n\\cdot\\frac{1}{n}=1$。",
+        "來回跳：奇數項 $\\chi_{[0,1]}$、偶數項 $\\chi_{[1,2]}$，$\\liminf f_n$ 只在 $x=1$ 是 1，積分 0；每個 $\\int f_n$ 都是 1。",
+        "三個例子都是嚴格不等式 $0<1$，所以 Fatou 一般不能改成等號。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 非負不能拿掉",
+      "body": [
+        "$f_n=-n\\chi_{(0,1/n)}$：每點 $f_n(x)\\to0$，所以 $\\int\\liminf f_n=0$；但每個 $\\int f_n=-1$。若 Fatou 仍成立就得到 $0\\le-1$，矛盾。負的尖峰讓「面積只會漏掉」變成「負面積只會漏掉」，方向就反了。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "面積只會漏掉",
+      "beats": [
+        { "show": ["$n x^n$：$\\lim\\int f_n=1$，$\\int\\lim f_n=0$"],
+          "note": "不遞增，面積不見了。",
+          "say": "上一課的 n 乘 x 的 n 次方不遞增，積分的極限是一，極限的積分是零，面積不見了。",
+          "board": [
+            {"do":"write","line":"$f_n=nx^n$"},
+            {"do":"write","line":"$\\lim\\int f_n={{a:1}}$","on":"積分的極限"},
+            {"do":"write","line":"$\\int\\lim f_n={{b:0}}$","on":"極限的積分"}
+          ] },
+        { "show": ["反過來：極限憑空多出面積？"],
+          "say": "那反過來會不會發生？極限函數憑空多出面積？不會。",
+          "board": [
+            {"do":"write","line":"${{bad:\\int\\lim f_n\\ >\\ \\lim\\int f_n}}$ ？"},
+            {"do":"strike","term":"bad","label":"不會","on":"憑空"}
+          ] },
+        { "show": ["$\\int_X \\liminf_{n\\to\\infty} f_n\\,d\\mu\\ \\le\\ \\liminf_{n\\to\\infty}\\int_X f_n\\,d\\mu$"],
+          "note": "$f_n\\ge0$ 可測。",
+          "say": "Fatou 引理：非負可測函數列，下極限的積分，不超過積分的下極限。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f_n\\ge0$ 可測","on":"非負可測"},
+            {"do":"write","line":"${{l:\\int\\liminf f_n}}\\le{{r:\\liminf\\int f_n}}$","on":"下極限的積分"},
+            {"do":"underline","term":"l","color":"blue","label":"較小","on":"不超過"}
+          ] },
+        { "show": ["極限的積分比較小"],
+          "note": "用 $\\liminf$：不必收斂。",
+          "say": "記法：極限的積分是比較小的那邊，因為面積只會漏掉。用下極限，是因為不必收斂。證明在最後那節。",
+          "board": [
+            {"do":"write","line":"極限的積分較小：面積只會漏掉"},
+            {"do":"write","line":"用 $\\liminf$：不必收斂","on":"用下極限"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "面積怎麼跑掉",
+      "beats": [
+        { "show": ["往無窮遠走：$\\chi_{[n,n+1]}$"],
+          "say": "面積怎麼跑掉？先是往無窮遠走：一塊方磚一直往右滑。",
+          "board": [
+            {"do":"write","line":"往無窮遠走：$\\chi_{[n,n+1]}$"}
+          ] },
+        { "show": ["擠成尖峰：$n\\chi_{(0,1/n)}$"],
+          "note": "每點最後是 0。",
+          "say": "或者擠成尖峰：高 n、寬 n 分之一，越來越高越來越窄，擠向零。",
+          "board": [
+            {"do":"write","line":"擠成尖峰：$n\\chi_{(0,1/n)}$"},
+            {"do":"write","line":"高 $n$、寬 $\\frac{1}{n}$","on":"越來越高"}
+          ] },
+        { "show": ["來回跳：$\\chi_{[0,1]}$、$\\chi_{[1,2]}$ 輪流"],
+          "say": "還有來回跳：奇數項在零到一，偶數項在一到二，輪流出現。",
+          "board": [
+            {"do":"write","line":"來回跳：$\\chi_{[0,1]}$、$\\chi_{[1,2]}$ 輪流"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "尖峰",
+      "beats": [
+        { "show": ["$f_n(x)=n^2x e^{-nx}$ 在 $[0,1]$"],
+          "note": "逐點極限 0。",
+          "say": "n 平方 x 乘 e 的負 n x 次方。固定 x，指數衰減贏過 n 平方，逐點極限是零。",
+          "board": [
+            {"do":"write","line":"$f_n(x)=n^2x\\,{{ex:e^{-nx}}}$ 在 $[0,1]$"},
+            {"do":"underline","term":"ex","label":"衰減","on":"指數衰減"},
+            {"do":"write","line":"逐點 $f_n(x)\\to{{z:0}}$","tint":{"z":"blue"},"on":"逐點極限"}
+          ] },
+        { "show": ["$\\int_0^1 f_n=1-(n+1)e^{-n}\\to1$"],
+          "note": "令 $u=nx$。",
+          "say": "令 u 等於 n x，積分是一減 n 加一倍的 e 的負 n 次方，趨近一。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1 f_n=1-(n+1)e^{-n}\\to{{one:1}}$","tint":{"one":"violet"},"on":"積分是"}
+          ] },
+        { "show": ["$=\\int_0^n u\\,e^{-u}\\,du$","反導函數：$-(u+1)e^{-u}$"],
+          "note": "$n^2x$ 變成 $nu$，$dx$ 變成 $du$ 除以 $n$。",
+          "say": "令 u 等於 n x，兩個 n 約掉，剩 u 乘 e 的負 u 次方。反導函數是負的 u 加一倍 e 的負 u 次方。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1 f_n=\\int_0^n u\\,e^{-u}\\,du$"},
+            {"do":"write","line":"$-(u+1)e^{-u}$ 的導數是 $ue^{-u}$","on":"反導函數"}
+          ] },
+        { "show": ["最大值在 $x=\\frac{1}{n}$，高度 $\\frac{n}{e}$"],
+          "say": "最高點在 n 分之一，高度 e 分之 n。尖峰越來越高、越靠近零，面積跟著它走。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"plot","on":"最高點","graph":{"window":[0,1,0,3.1],"ticks":false,"curves":[{"expr":"2^2*x*exp(-2*x)","domain":[0,1],"color":"muted"},{"expr":"exp(2)*x*exp(-exp(1)*x)","domain":[0,1],"color":"muted"},{"expr":"exp(2+2)*x*exp(-exp(2)*x)","domain":[0,1],"color":"violet"}],"points":[{"x":0.1353,"y":2.7183}],"labels":[{"x":0.19,"y":2.8,"text":"n 變大","anchor":"start"}]}}
+          ] },
+        { "show": ["$n=2,\\ e,\\ e^2$：峰越來越窄"],
+          "say": "圖上這幾條，依序是 n 等於二、e、e 平方。n 越大，峰越高、越靠近零，這是在看尖峰怎麼跑。",
+          "board": [
+            {"do":"write","line":"$n=2,\\ e,\\ e^2$：峰在 $x=\\frac{1}{n}$"}
+          ] },
+        { "show": ["Fatou：$0\\le1$，嚴格不等"],
+          "say": "對照 Fatou：左邊零，右邊一，嚴格不等，完全符合。",
+          "board": [
+            {"do":"write","line":"Fatou：${{l0:0}}\\le{{one:1}}$","tint":{"l0":"blue"}},
+            {"do":"underline","term":"l0","color":"blue","on":"左邊零"},
+            {"do":"underline","term":"one","color":"violet","label":"嚴格不等","on":"右邊一"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "不收斂也能用",
+      "beats": [
+        { "show": ["奇數項 $\\chi_{[0,1]}$，偶數項 $\\chi_{[1,2]}$"],
+          "note": "$f_n$ 不收斂。",
+          "say": "回到來回跳的例子。它根本不收斂，可是 Fatou 用的是下極限，照樣能用。",
+          "board": [
+            {"do":"write","line":"奇數項 $f_n=\\chi_{[0,1]}$"},
+            {"do":"write","line":"偶數項 $f_n=\\chi_{[1,2]}$","on":"它根本"}
+          ] },
+        { "show": ["$x\\in[0,1)$：1, 0, 1, 0, …"],
+          "say": "零到一裡的點，一下是一一下是零，下極限是零。一到二那邊也一樣。",
+          "board": [
+            {"do":"write","line":"$x\\in[0,1)$：1, 0, 1, 0, …"}
+          ] },
+        { "show": ["$x=1$：兩種都是 1"],
+          "say": "只有 x 等於一兩邊都碰到，一直是一。",
+          "board": [
+            {"do":"write","line":"$x=1$：1, 1, 1, …"}
+          ] },
+        { "show": ["點的面積 = 高 × 寬 = 高 × 0"],
+          "note": "一個點沒有寬度。",
+          "say": "只有一個點不是零的函數，面積是高乘寬，寬是零，高多少都是零。",
+          "board": [
+            {"do":"write","line":"點的面積 $=$ 高 $\\times 0$"}
+          ] }
+      ],
+      "key": "先逐點算 $\\liminf f_n$，再積分",
+      "predict": {
+        "ask": "$\\int\\liminf f_n$ 與 $\\liminf\\int f_n$ 是？",
+        "options": [
+          {
+            "label": "0 與 1",
+            "correct": true
+          },
+          {
+            "label": "1 與 1",
+            "why": "$\\liminf f_n=\\chi_{\\{1\\}}$，只有一個點，積分是 0。"
+          },
+          {
+            "label": "0 與 0",
+            "why": "每個 $\\int f_n$ 都是 1，下極限是 1。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "用 Fatou 給上界",
+      "beats": [
+        { "show": ["$f_n=(1-\\frac{x}{n})^n$（$0\\le x\\le n$）$\\to e^{-x}$"],
+          "say": "一減 n 分之 x 的 n 次方，在零到 n，其餘是零。它逐點收斂到 e 的負 x 次方。",
+          "board": [
+            {"do":"write","line":"$f_n=(1-\\frac{x}{n})^n$（$0\\le x\\le n$）"},
+            {"do":"write","line":"逐點 $f_n\\to{{l:e^{-x}}}$","on":"逐點收斂"},
+            {"do":"focus","term":"l","color":"blue","on":"e 的負"}
+          ] },
+        { "show": ["$\\int_0^n(1-\\frac{x}{n})^n\\,dx=\\frac{n}{n+1}$"],
+          "note": "令 $u=1-\\frac{x}{n}$。",
+          "say": "換變數，每一個的積分是 n 加一分之 n。",
+          "board": [
+            {"do":"write","line":"令 $u=1-\\frac{x}{n}$"},
+            {"do":"write","line":"$\\int_0^n f_n\\,dx={{v:\\frac{n}{n+1}}}$","on":"積分是"}
+          ] },
+        { "show": ["$\\int_0^\\infty e^{-x}\\,dx$ 是往右無限延伸的面積"],
+          "say": "無窮區間的積分，是先積到 M，再讓 M 趨近無窮。這塊面積就是 e 的負 x 次方底下，一路往右的那一塊。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6,0,1.2],"ticks":false,"curves":[{"expr":"exp(-x)","domain":[0,6],"color":"blue"}],"fills":[{"expr":"exp(-x)","from":0,"to":6,"color":"blue"}]}}
+          ] },
+        { "show": ["$\\liminf\\frac{n}{n+1}=1$"],
+          "note": "$n$ 很大時，$\\frac{n}{n+1}$ 靠近 1。",
+          "say": "n 加一分之 n，n 很大時越來越接近一，所以它的下極限是一。",
+          "board": [
+            {"do":"write","line":"$\\liminf\\frac{n}{n+1}={{one:1}}$","tint":{"one":"violet"}},
+            {"do":"underline","term":"one","color":"violet","label":"右邊","on":"下極限"}
+          ] }
+      ],
+      "predict": {
+        "ask": "Fatou 告訴我們 $\\int_0^\\infty e^{-x}\\,dx$？",
+        "options": [
+          {
+            "label": "$\\le1$",
+            "correct": true
+          },
+          {
+            "label": "$=1$",
+            "why": "Fatou 只給 $\\le\\liminf\\frac{n}{n+1}=1$；實際等於 1，但要更多資訊才證得到等號。"
+          },
+          {
+            "label": "$\\ge1$",
+            "why": "方向反了：極限函數的積分是比較小的那一邊。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "非負不能拿掉",
+      "beats": [
+        { "show": ["$f_n=-n\\chi_{(0,1/n)}$"],
+          "note": "每點 $f_n(x)\\to0$。",
+          "say": "把尖峰翻過來，變成負的：高度負 n，寬 n 分之一。每一點最後都是零。",
+          "board": [
+            {"do":"write","line":"$f_n={{h:-n}}\\,\\chi_{(0,1/n)}$"},
+            {"do":"focus","term":"h","on":"高度負"},
+            {"do":"write","line":"每點 $f_n(x)\\to 0$","on":"每一點"}
+          ] },
+        { "show": ["$\\int\\liminf f_n=0$，每個 $\\int f_n=-1$"],
+          "say": "左邊是零，右邊每一項積分都是負一。",
+          "board": [
+            {"do":"write","line":"$\\int\\liminf f_n={{l:0}}$，每個 $\\int f_n={{r:-1}}$","tint":{"l":"blue","r":"violet"}},
+            {"do":"underline","term":"r","color":"violet","on":"右邊每一項"}
+          ] },
+        { "show": ["硬套 Fatou：$0\\le-1$"],
+          "note": "負面積只會漏掉，方向反了。",
+          "say": "硬套就得到零小於等於負一，矛盾。負的面積漏掉，方向整個反過來。",
+          "board": [
+            {"do":"write","line":"硬套 Fatou：${{bad:0\\le -1}}$","on":"硬套"},
+            {"do":"strike","term":"bad","label":"矛盾","on":"矛盾"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明：用單調收斂",
+      "beats": [
+        { "show": ["造遞增的 $g_k$，再用單調收斂定理"],
+          "say": "策略：f n 不遞增，那就自己造一串遞增的函數，夾在 f n 底下，再借單調收斂定理。",
+          "board": [
+            {"do":"write","line":"造遞增的 ${{g:g_k}}\\le f_n$","tint":{"g":"blue"},"on":"自己造"},
+            {"do":"write","line":"再用單調收斂定理","on":"再借"}
+          ] },
+        { "show": ["$g_k=\\inf_{n\\ge k}f_n$：可測、非負、遞增"],
+          "note": "$k$ 越大，取下確界的範圍越小。",
+          "why": {"ask":"為什麼 $g_1\\le g_2\\le\\cdots$？","say":"g k 為什麼一個比一個大？","options":[{"label":"範圍越小，下確界只會越大","correct":true},{"label":"$f_n$ 遞增","why":"$f_n$ 不必遞增，那正是 Fatou 要處理的情形；遞增的是 $g_k$，靠的是取下確界的範圍在縮小。"},{"label":"$g_k$ 收斂到 $\\liminf f_n$","why":"收斂不代表遞增；倒過來，$g_k$ 是因為遞增才有極限。"}]},
+          "say": "g k 是第 k 項以後的下確界。k 變大，範圍少了前面幾項，下確界只會變大，所以遞增。",
+          "board": [
+            {"do":"write","line":"${{g:g_k}}=\\inf_{{{rng:n\\ge k}}}f_n$"},
+            {"do":"write","line":"${{g:g_k}}\\le g_{k+1}$","on":"一個比一個大"},
+            {"do":"underline","term":"rng","label":"範圍變小","why":true,"on":"範圍少了"}
+          ] },
+        { "show": ["$\\lim g_k=\\liminf f_n$"],
+          "note": "這就是 $\\liminf$ 的定義。",
+          "say": "而 g k 的極限，正是 f n 的下極限，這是定義。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\lim {{g:g_k}}=\\liminf f_n$","on":"下極限"}
+          ] },
+        { "show": ["$g\\le f\\ \\Rightarrow\\ \\int g\\le\\int f$"],
+          "note": "積分保持大小關係。",
+          "say": "先說一個性質：非負函數處處比另一個矮，它底下的面積就不會比較大，所以積分保持大小關係。",
+          "board": [
+            {"do":"write","line":"$g\\le f\\ \\Rightarrow\\ {{mono:\\int g\\le\\int f}}$"},
+            {"do":"underline","term":"mono","label":"保持順序","on":"保持大小"}
+          ] },
+        { "show": ["$n\\ge k$：$g_k\\le f_n$","所以 $\\int g_k\\le\\inf_{n\\ge k}\\int f_n$"],
+          "note": "對每個 $n\\ge k$ 都成立，取下確界。",
+          "why": {"ask":"為什麼 $\\int g_k\\le\\inf_{n\\ge k}\\int f_n$？","say":"右邊為什麼可以取下確界？","options":[{"label":"對每個 $n\\ge k$ 都有 $\\int g_k\\le\\int f_n$，它是一個下界","correct":true},{"label":"積分和下確界可以交換","why":"不能交換，只有一個方向；這裡只是說 $\\int g_k$ 是 $\\int f_n$ 的一個下界。"},{"label":"$g_k=f_k$","why":"$g_k$ 是第 $k$ 項以後的下確界，通常比 $f_k$ 小，不相等。"}]},
+          "say": "g k 不超過第 k 項以後的每一個 f n，積分也一樣。左邊是所有這些積分的一個下界，所以不超過下確界。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$n\\ge k$：${{g:g_k}}\\le f_n$","on":"右邊"},
+            {"do":"write","line":"${{lhs:\\int g_k}}\\le\\inf_{n\\ge k}\\int f_n$","on":"取下確界"},
+            {"do":"underline","term":"lhs","label":"一個下界","why":true,"on":"一個下界"}
+          ] },
+        { "show": ["$\\int\\liminf f_n=\\lim\\int g_k\\le\\liminf\\int f_n$"],
+          "note": "單調收斂定理用在 $g_k$。",
+          "say": "g k 非負遞增，用單調收斂定理，極限搬進積分。兩邊取極限，右邊正是積分的下極限。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{mct:\\int\\liminf f_n=\\lim\\int g_k}}$","on":"用單調收斂"},
+            {"do":"underline","term":"mct","label":"單調收斂","on":"極限搬進"},
+            {"do":"transform","line":"${{mct:\\int\\liminf f_n=\\lim\\int g_k}}\\le{{li:\\liminf\\int f_n}}$","color":"green","on":"兩邊取極限"}
+          ] }
+      ],
+      "key": "取 $g_k=\\inf_{n\\ge k}f_n$，造出遞增列",
+      "proof": true,
+      "of": 2,
+      "skeleton": "構造",
+      "where": {
+        "ask": "下面幾步裡，哪一步要靠 $f_n\\ge0$？",
+        "steps": [
+          {
+            "label": "$g_k$ 遞增",
+            "why": "這只用到取下確界的範圍在縮小，正負都成立。"
+          },
+          {
+            "label": "$\\lim g_k=\\liminf f_n$",
+            "why": "這只是下極限的定義。"
+          },
+          {
+            "label": "$\\int g_k\\le\\inf_{n\\ge k}\\int f_n$",
+            "why": "這只用到積分的單調性。"
+          },
+          {
+            "label": "$\\int\\liminf f_n=\\lim\\int g_k$",
+            "correct": true
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "尖峰：面積漏掉",
+      "prompt": "$f_n(x)=n^2x e^{-nx}$ 在 $[0,1]$。求逐點極限、$\\lim\\int_0^1 f_n$，並對照 Fatou 引理。",
+      "problemId": "lb-con-001",
+      "steps": [
+        "逐點：$x=0$ 時 $f_n=0$；$x>0$ 時 $e^{-nx}$ 衰減得比 $n^2$ 增長快，$f_n(x)\\to0$。極限函數是 0。",
+        "積分：令 $u=nx$，$\\int_0^1 n^2x e^{-nx}\\,dx=\\int_0^n u e^{-u}\\,du=1-(n+1)e^{-n}\\to1$。",
+        "Fatou：$\\int\\liminf f_n=0\\le1=\\liminf\\int f_n$，嚴格不等。",
+        "面積去哪了：$f_n'=n^2e^{-nx}(1-nx)$，最大值在 $x=\\frac{1}{n}$，高度 $\\frac{n}{e}$。尖峰越來越高、越來越靠近 0，面積跟著它走，極限函數看不見。"
+      ],
+      "answer": "逐點極限 0；$\\lim\\int f_n=1$；$0\\le1$ 是嚴格不等",
+      "claim": "INT(n^2*x*e^(-n*x), 0, 1) == 1-(n+1)*e^(-n) ;; LIM(1-(n+1)*e^(-n), inf) == 1 ;; SUB(n^2*x*e^(-n*x), 1/n) == n/e ;; D(n^2*x*e^(-n*x), 1/n) == 0"
+    },
+    {
+      "title": "來回跳的函數列",
+      "prompt": "$f_n=\\chi_{[0,1]}$（$n$ 奇數）、$\\chi_{[1,2]}$（$n$ 偶數）。求 $\\liminf f_n$、$\\int\\liminf f_n$ 與 $\\liminf\\int f_n$。",
+      "steps": [
+        "$x\\in[0,1)$：奇數項是 1、偶數項是 0，$\\liminf=0$。$x\\in(1,2]$：奇數項 0、偶數項 1，$\\liminf=0$。$x=1$：兩種都是 1，$\\liminf=1$。其餘 $x$ 恆為 0。",
+        "$\\liminf f_n=\\chi_{\\{1\\}}$，積分 $m(\\{1\\})=0$。",
+        "每個 $\\int f_n=1$，所以 $\\liminf\\int f_n=1$。$0\\le1$，嚴格。",
+        "這裡 $f_n$ 根本不收斂，Fatou 仍然適用，因為它用的是 $\\liminf$。"
+      ],
+      "answer": "$\\liminf f_n=\\chi_{\\{1\\}}$；$\\int\\liminf f_n=0$；$\\liminf\\int f_n=1$",
+      "claim": null,
+      "claimNote": "結論是指示函數的逐點 liminf 與單點測度 0，沒有可代入的數值式。"
+    },
+    {
+      "title": "用 Fatou 給上界",
+      "prompt": "$f_n(x)=(1-\\frac{x}{n})^n$（$0\\le x\\le n$）、其餘為 0。已知 $f_n(x)\\to e^{-x}$。不直接積 $e^{-x}$，用 Fatou 證明 $\\int_0^\\infty e^{-x}\\,dx\\le1$。",
+      "steps": [
+        "$f_n\\ge0$ 可測，逐點收斂到 $e^{-x}$，所以 $\\liminf f_n=e^{-x}$。",
+        "令 $u=1-\\frac{x}{n}$：$\\int_0^n(1-\\frac{x}{n})^n\\,dx=n\\int_0^1 u^n\\,du=\\frac{n}{n+1}$。",
+        "Fatou：$\\int_0^\\infty e^{-x}\\,dx\\le\\liminf\\frac{n}{n+1}=1$。",
+        "實際值正是 1。要得到等號需要更多資訊，例如下一課的控制收斂定理。"
+      ],
+      "answer": "$\\int_0^\\infty e^{-x}\\,dx\\le1$（實際等於 1）",
+      "claim": "INT((1-x/n)^n, 0, n) == n/(n+1) ;; INT(e^(-x), 0, inf) == 1"
+    }
+  ],
+  "pitfalls": [
+    "把不等號寫反。極限函數的積分是比較小的那一邊。",
+    "以為 $f_n$ 要收斂才能用。Fatou 用 $\\liminf$，任何非負可測函數列都適用。",
+    "拿掉非負假設。$-n\\chi_{(0,1/n)}$ 會給出 $0\\le-1$。",
+    "以為 Fatou 給的是等號。三種面積跑掉的例子都是嚴格不等。"
+  ],
+  "checks": [
+    {
+      "ask": "Fatou 引理（$f_n\\ge0$ 可測）說的是？",
+      "options": [
+        { "label": "$\\int\\liminf f_n\\le\\liminf\\int f_n$", "correct": true },
+        { "label": "$\\int\\liminf f_n\\ge\\liminf\\int f_n$", "why": "方向反了。$n\\chi_{(0,1/n)}$ 的左邊是 0、右邊是 1，$\\ge$ 不成立。" },
+        { "label": "$\\int\\liminf f_n=\\liminf\\int f_n$", "why": "等號一般不成立，$n^2x e^{-nx}$ 就是 0 對 1。等號需要單調或控制函數。" }
+      ]
+    },
+    {
+      "ask": "$f_n=n\\chi_{(0,1/n)}$。$\\int\\liminf f_n$ 與 $\\liminf\\int f_n$ 分別是？",
+      "options": [
+        { "label": "0 與 1", "correct": true },
+        { "label": "1 與 1", "why": "你把積分的極限當成極限的積分。每一個固定的 $x>0$，$n>\\frac{1}{x}$ 之後 $f_n(x)=0$，所以 $\\liminf f_n=0$。" },
+        { "label": "0 與 0", "why": "每個 $f_n$ 的積分是 $n\\cdot(\\frac{1}{n})=1$，不會隨 $n$ 變小。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=n x e^{-nx^2}$ 在 $[0,1]$ 上逐點收斂到 0，而 $\\int_0^1 f_n=\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。這跟 Fatou 的關係是？",
+      "options": [
+        { "label": "符合 Fatou：$0\\le\\frac{1}{2}$，而且是嚴格不等", "correct": true },
+        { "label": "違反 Fatou，因為兩邊不相等", "why": "Fatou 只保證 $\\le$，不保證相等；$0<\\frac{1}{2}$ 完全符合。" },
+        { "label": "Fatou 告訴我們 $\\lim\\int f_n$ 應該是 0", "why": "Fatou 只給「極限函數的積分 $\\le$ 積分的下極限」這個方向，推不出右邊等於 0。" }
+      ]
+    },
+    {
+      "ask": "$f_n=-n\\chi_{(0,1/n)}$ 為什麼不能用 Fatou？",
+      "options": [
+        { "label": "$f_n$ 不是非負的；硬套會得到 $0\\le-1$", "correct": true },
+        { "label": "$f_n$ 不是可測的", "why": "$-n$ 乘上區間的指示函數是可測的。出問題的是負號。" },
+        { "label": "$f_n$ 不逐點收斂", "why": "每點 $f_n(x)\\to0$，收斂得很好；而且 Fatou 本來就不需要收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["lebesgue", "fatou", "convergence-theorem"],
+    "fine": ["fatou-statement", "fatou-mass-escape", "fatou-strict-example", "fatou-upper-bound"]
+  },
+  "practice": [
+    { "id": "lb-con-001", "core": true, "trains": "fatou-strict-example" },
+    { "id": "lb-con-004", "core": true, "trains": "fatou-mass-escape" },
+    { "id": "lb-con-003", "core": true, "trains": "fatou-strict-example" },
+    { "id": "cg-12k-006", "core": true, "trains": "fatou-statement" },
+    { "id": "cg-12k-008", "core": true, "trains": "fatou-upper-bound" },
+    { "id": "cg-12k-010", "core": true, "trains": "fatou-mass-escape" },
+    { "id": "lb-con-005", "trains": "fatou-strict-example" },
+    { "id": "cg-12k-007", "trains": "fatou-statement" },
+    { "id": "cg-12k-011", "trains": "fatou-mass-escape" },
+    { "id": "cg-12k-009", "challenge": true, "trains": "fatou-upper-bound" }
+  ],
+  "gaps": []
+}

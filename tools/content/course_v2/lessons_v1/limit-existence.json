@@ -1,0 +1,352 @@
+{
+  "id": "limit-existence",
+  "title": "極限存在的條件",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["limit-one-sided"],
+  "next": ["limit-from-graph-table"],
+  "related": ["infinite-limits"],
+  "objectives": [
+    "會用「左極限 $=$ 右極限」判斷極限存不存在。",
+    "認得極限不存在的三種常見樣子：左右不等、往無窮跑、一直振盪。",
+    "會解「參數取多少，極限才存在」這類題目。"
+  ],
+  "visual": "y = sin(1/x) 的圖，按「放大」時鏡頭往 x = 0 推近：不管放大多少倍，曲線在 −1 與 1 之間擺盪得越來越密，從不往任何一個高度靠攏。",
+  "figures": [
+    {"caption":"放大幾倍都一樣：sin(1/x) 在 ±1 之間亂擺","after":2,"widget":{"type":"zoom","curves":[{"expr":"sin(1/x)","color":"blue","width":1.4,"steps":1600}],"center":[0,0],"window":[-1,1,-1.4,1.4],"levels":3,"axes":"x","point":false}}
+  ],
+  "concept": [
+    {
+      "heading": "① 判準：左右都存在，而且相等",
+      "body": [
+        "$\\lim_{x\\to a} f(x) = L$ 若且唯若 $\\lim_{x\\to a^-} f(x) = L$ 而且 $\\lim_{x\\to a^+} f(x) = L$。",
+        "道理：雙側極限要求「$x$ 夠靠近 $a$ 時 $f(x)$ 就靠近 $L$」，而 $a$ 的附近同時包含左邊和右邊，兩邊都得靠近同一個 $L$。"
+      ],
+      "tex": ["\\lim_{x\\to a}f(x)=L\\iff \\lim_{x\\to a^-}f(x)=L\\ \\text{ 且 }\\ \\lim_{x\\to a^+}f(x)=L"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 跟 $f(a)$ 無關",
+      "body": [
+        "判準裡沒有 $f(a)$。左右極限都是 2、$f(a) = 7$，極限照樣是 2；$f(a)$ 沒有定義，極限也可以存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 不存在的三種樣子",
+      "body": [
+        "左右不等：$|x|/x$ 在 0 的左極限 $-1$、右極限 1，極限不存在。圖形是跳開的。",
+        "往無窮跑：$\\frac{1}{x^2}$ 在 0 附近要多大有多大，不靠近任何數，極限不存在。習慣上寫 $\\lim_{x\\to0} \\frac{1}{x^2} = \\infty$，這只是在說明「它怎麼不存在」，$\\infty$ 不是一個數（〈無窮極限與垂直漸近線〉）。",
+        "振盪：$\\sin\\left(\\frac{1}{x}\\right)$ 在 0 附近不停在 $-1$ 與 1 之間來回，左右兩邊各自都沒有極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼 $\\sin\\left(\\frac{1}{x}\\right)$ 在 0 沒有極限",
+      "body": [
+        "取 $x = \\frac{1}{n\\pi}$（$n = 1, 2, 3, \\ldots$）：這些 $x$ 從右邊靠近 0，而 $\\sin\\left(\\frac{1}{x}\\right) = \\sin(n\\pi) = 0$。",
+        "取 $x = \\frac{2}{(4n + 1)\\pi}$：這些 $x$ 也從右邊靠近 0，而 $\\sin\\left(\\frac{1}{x}\\right) = \\sin\\left(\\frac{(4n + 1)\\pi}{2}\\right) = 1$。",
+        "如果右極限是某個 $L$，兩串 $x$ 上的值都得靠近 $L$，但一串一直是 0、一串一直是 1，不可能同時靠近同一個數。所以右極限不存在；左邊同理。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 什麼時候要拆兩邊算",
+      "body": [
+        "函數在 $a$ 的兩側由同一個式子給出、化簡後可以代入：直接算就好。",
+        "分段函數的分界點、絕對值裡面為 0 的點、取整函數的整數點：兩側的式子不一樣，一定要分開算再比較。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "絕對值造成左右不等",
+      "prompt": "$\\lim_{x\\to2} (x^2 - 4)/|x - 2|$ 存在嗎？",
+      "steps": [
+        "分子 $x^2 - 4 = (x - 2)(x + 2)$。分母有絕對值，分兩邊。",
+        "$x > 2$：$|x - 2| = x - 2$，式子 $= x + 2$，右極限 4。",
+        "$x < 2$：$|x - 2| = -(x - 2)$，式子 $= -(x + 2)$，左極限 $-4$。",
+        "$4 \\ne -4$，極限不存在。"
+      ],
+      "answer": "不存在（左極限 $-4$，右極限 4）",
+      "claim": "LIM((x^2-4)/abs(x-2), 2+) == 4 ;; LIM((x^2-4)/abs(x-2), 2-) == -4"
+    },
+    {
+      "title": "左右相等，函數值另外定義",
+      "prompt": "$f(x) = x^2 + 1$（$x < 1$），$3x - 1$（$x > 1$），$f(1) = 7$。求 $\\lim_{x\\to1} f(x)$。",
+      "steps": [
+        "左極限：$x^2 + 1 \\to 2$。",
+        "右極限：$3x - 1 \\to 2$。",
+        "左右都是 2，所以 $\\lim_{x\\to1} f(x) = 2$。$f(1) = 7$ 不影響極限。"
+      ],
+      "answer": "2",
+      "claim": "LIM(x^2+1, 1-) == 2 ;; LIM(3x-1, 1+) == 2"
+    },
+    {
+      "title": "參數取多少，極限才存在",
+      "prompt": "$f(x) = kx + 1$（$x < 2$），$x^2 - 1$（$x \\ge 2$）。$k$ 是多少時 $\\lim_{x\\to2} f(x)$ 存在？",
+      "steps": [
+        "右極限：$x^2 - 1 \\to 4 - 1 = 3$。",
+        "左極限：$kx + 1 \\to 2k + 1$。",
+        "要相等：$2k + 1 = 3$，$k = 1$。此時極限是 3。"
+      ],
+      "answer": "$k = 1$",
+      "claim": "LIM(x+1, 2-) == LIM(x^2-1, 2+) ;; LIM(x^2-1, 2+) == 3"
+    }
+  ],
+  "pitfalls": [
+    "只算一邊就說極限是多少。",
+    "看到 $f(a)$ 跟左右極限不一樣，就說極限不存在。",
+    "左右不等時取平均當答案。",
+    "把 $\\lim = \\infty$ 當成「極限存在」。",
+    "去絕對值時兩邊用了同一個號。"
+  ],
+  "checks": [
+    {
+      "ask": "左極限 3、右極限 3、$f(a) = 5$。$\\lim_{x\\to a} f(x)$ 是？",
+      "options": [
+        { "label": "3", "correct": true },
+        { "label": "不存在", "why": "判準只看左右極限；$f(a)$ 是多少都不影響。" },
+        { "label": "5", "why": "5 是函數值，不是極限。" }
+      ]
+    },
+    {
+      "ask": "左極限 1、右極限 2。$\\lim_{x\\to a} f(x)$ 是？",
+      "options": [
+        { "label": "1.5", "why": "極限不是左右取平均；左右不等，極限就不存在。" },
+        { "label": "不存在", "correct": true },
+        { "label": "2", "why": "只看了右邊。雙側極限要左右一起。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to0} \\sin\\left(\\frac{1}{x}\\right)$ 是？",
+      "options": [
+        { "label": "0", "why": "$\\sin\\left(\\frac{1}{x}\\right)$ 不會變小，它一直在 $-1$ 與 1 之間來回擺。" },
+        { "label": "1", "why": "只有某些 $x$ 讓 $\\sin\\left(\\frac{1}{x}\\right) = 1$，也有很多 $x$ 讓它等於 0 或 $-1$。" },
+        { "label": "不存在（振盪）", "correct": true }
+      ]
+    },
+    {
+      "ask": "$f(x) = |x|/x$。$\\lim_{x\\to0} f(x)$ 是？",
+      "options": [
+        { "label": "不存在", "correct": true },
+        { "label": "0", "why": "左 $-1$、右 1。兩者的平均是 0，但極限不是平均。" },
+        { "label": "1", "why": "只看了右邊；左邊 $x < 0$ 時比值是 $-1$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "左右都存在而且相等",
+      "beats": [
+        { "show": ["$\\lim_{x\\to a} f(x) = L$","⇔ 左極限 $= L$ 且右極限 $= L$"],
+          "say": "雙側極限存在，若且唯若左極限和右極限都存在，而且是同一個數 L。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to a} f(x) = {{l:L}}$"},
+            {"do":"write","line":"⇔ 左極限 $= L$ 且右極限 $= L$","on":"若且唯若"}
+          ] },
+        { "show": ["$a$ 的附近包含左邊和右邊"],
+          "note": "兩邊都得靠近同一個 $L$。",
+          "say": "道理很簡單：a 的附近同時有左邊和右邊，x 從哪邊來，f 都得靠近同一個 L。",
+          "board": [
+            {"do":"write","line":"$x\\to a^-$ 與 $x\\to a^+$ 都得靠近 ${{l:L}}$"},
+            {"do":"focus","term":"l","color":"green","on":"都得"}
+          ] },
+        { "show": ["判準裡沒有 $f(a)$"],
+          "note": "左右都是 2、$f(a) = 7$：極限照樣是 2。",
+          "say": "注意判準裡完全沒有 f 在 a 的值。左右都是二，就算 f 在 a 是七，極限還是二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"左 $2$、右 $2$、${{f:f(a)=7}}$","on":"左右都是"},
+            {"do":"focus","term":"f","color":"gold","label":"不影響","on":"就算"},
+            {"do":"write","line":"$\\lim_{x\\to a} f(x) = 2$","on":"極限還是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "左右不等",
+      "beats": [
+        { "show": ["$|x|/x$ 在 0"],
+          "note": "左極限 $-1$，右極限 1。",
+          "say": "第一種不存在的樣子：絕對值 x 除以 x。零的左邊一直是負一，右邊一直是一。",
+          "board": [
+            {"do":"write","line":"$\\frac{|x|}{x}$ 在 $0$：左 ${{l:-1}}$、右 ${{r:1}}$","tint":{"l":"blue","r":"violet"}},
+            {"do":"plot","graph":{"window":[-2.2,2.2,-1.6,1.6],"ticks":false,"curves":[{"expr":"-1","domain":[-2.1,-0.04],"color":"blue"},{"expr":"1","domain":[0.04,2.1],"color":"violet"}],"points":[{"x":0,"y":-1,"open":true},{"x":0,"y":1,"open":true}]},"on":"零的左邊"}
+          ] },
+        { "show": ["$-1 \\ne 1$：極限不存在"],
+          "note": "圖形是跳開的。",
+          "say": "左右不相等，雙側極限就不存在。圖上看，就是在零的地方跳開了。",
+          "board": [
+            {"do":"transform","line":"${{l:-1}}\\ne{{r:1}}$：極限不存在","on":"左右不相等"}
+          ] },
+        { "show": ["跳開：兩側高度不同","$f(0)$ 不影響極限"],
+          "note": "極限只看兩側靠近的高度。",
+          "say": "跳開的意思是，左邊靠近負一，右邊靠近一，高度不同。零那一點的函數值是多少，都不影響極限。",
+          "board": [
+            {"do":"write","line":"${{z1:f(0)}}$ 是多少，都不影響極限"},
+            {"do":"underline","term":"z1","color":"gold","on":"函數值"}
+          ] },
+        { "show": ["不要取平均"],
+          "note": "左右不等時，極限不是兩者的平均。",
+          "say": "常見的錯，是把負一和一平均，說極限是零。左右不等就是不存在，沒有平均這回事。",
+          "board": [
+            {"do":"write","line":"平均：${{w:\\frac{-1+1}{2}=0}}$","on":"把負一"},
+            {"do":"strike","term":"w","on":"說極限是零"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "絕對值造成左右不等",
+      "beats": [
+        { "show": ["$\\lim_{x\\to2} (x^2 - 4)/|x - 2|$"],
+          "note": "分子 $x^2 - 4 = (x - 2)(x + 2)$。",
+          "say": "這一題分母有絕對值，裡面在二變成零，所以兩邊分開算。分子先分解成 x 減二乘 x 加二。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to2}\\frac{x^2-4}{ {{a:|x-2|}} }$"},
+            {"do":"focus","term":"a","on":"分母有絕對值"},
+            {"do":"write","line":"$x^2-4=(x-2)(x+2)$","on":"分子先分解"}
+          ] },
+        { "show": ["$x > 2$：式子 $= x + 2$ → 4"],
+          "say": "右邊，x 減二是正的，絕對值直接拿掉，約掉之後剩 x 加二，右極限四。",
+          "board": [
+            {"do":"write","line":"$x>2$：式子 $=x+2\\to{{r:4}}$"},
+            {"do":"underline","term":"r","color":"violet","on":"右極限四"}
+          ] },
+        { "show": ["$x < 2$：式子 $= -(x + 2)$ → $-4$"],
+          "say": "左邊，絕對值要加負號，約掉之後是負的 x 加二，左極限負四。四不等於負四，極限不存在。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$x<2$：式子 $=-(x+2)\\to{{l:-4}}$","on":"左邊"},
+            {"do":"underline","term":"l","color":"blue","on":"左極限負四"},
+            {"do":"write","line":"$4\\ne-4$：極限不存在","on":"四不等於"}
+          ] }
+      ],
+      "key": "絕對值拆兩邊：$x<2$ 時要加負號",
+      "check": 1
+    },
+    {
+      "title": "跑到無窮、來回擺",
+      "beats": [
+        { "show": ["$\\frac{1}{x^2}$ 在 0：要多大有多大"],
+          "note": "寫 $= \\infty$ 只是說明它怎麼不存在。",
+          "say": "第二種：x 平方分之一在零附近要多大有多大，不靠近任何數。寫等於無窮大，只是在說它怎麼不存在。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{x^2}$ 在 $0$：越來越大"},
+            {"do":"write","line":"$\\lim_{x\\to0}\\frac{1}{x^2}={{i:\\infty}}$","on":"寫等於"},
+            {"do":"underline","term":"i","color":"gold","label":"不是數","on":"只是在說"}
+          ] },
+        { "show": ["$\\infty$ 只是描述，不是極限值"],
+          "note": "極限要是一個數，才算存在。",
+          "say": "寫等於無窮大，只是描述越來越大，不是說極限是無窮大這個數。極限要是一個數才算存在，所以這題還是不存在。",
+          "board": [
+            {"do":"write","line":"${{m1:\\infty}}$ 不是數，所以極限不存在"},
+            {"do":"focus","term":"m1","color":"red","on":"極限要是"}
+          ] },
+        { "show": ["$\\sin\\left(\\frac{1}{x}\\right)$ 在 0"],
+          "note": "在 $-1$ 與 1 之間來回擺。",
+          "fig": {"use":0,"to":0},
+          "say": "第三種是振盪。sine x 分之一在零附近，不停在負一和一之間來回擺。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin\\left(\\frac{1}{x}\\right)$ 在 $-1$ 與 $1$ 之間擺","on":"不停"}
+          ] },
+        { "show": ["放大幾倍都一樣亂"],
+          "fig": {"use":0,"to":3},
+          "say": "把鏡頭往零放大，再放大，它還是擠滿了上下來回的波，永遠不會安定到某一個高度。",
+          "board": [
+            {"do":"write","line":"放大再放大：還是來回擺"}
+          ] },
+        { "show": ["$x=\\frac{1}{n\\pi}$：值 0","$x=\\frac{2}{5\\pi}$：值 1"],
+          "note": "這些點都靠近 0，值卻不同。",
+          "say": "看圖上的點：x 取 pi 分之一、二 pi 分之一、三 pi 分之一，值全是零；取五 pi 分之二，值是一。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,0.4,-1.4,1.4],"curves":[{"expr":"sin(1/x)","domain":[0.05,0.4],"color":"blue"}],"points":[{"x":0.3183,"y":0},{"x":0.1592,"y":0},{"x":0.1061,"y":0},{"x":0.1273,"y":1}]}},
+            {"do":"write","line":"$x=\\frac{1}{\\pi},\\frac{1}{2\\pi},\\frac{1}{3\\pi}$：值 $0$","on":"值全是零"},
+            {"do":"write","line":"$x=\\frac{2}{5\\pi}$：值 $1$","on":"五 pi 分之二"}
+          ] },
+        { "show": ["左右兩邊各自都沒有極限"],
+          "note": "完整證明在全文。",
+          "say": "所以不只雙側，連左極限、右極限各自都不存在。",
+          "board": [
+            {"do":"write","line":"左極限、右極限：各自都不存在"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "參數取多少才存在",
+      "beats": [
+        { "show": ["分界點、絕對值為 0、整數點","一定要拆兩邊算"],
+          "say": "什麼時候要拆兩邊？分段函數的分界點、絕對值裡面是零的點、取整函數的整數點。",
+          "board": [
+            {"do":"write","line":"分段函數的分界點"},
+            {"do":"write","line":"絕對值 $=0$ 的點","on":"絕對值裡面"},
+            {"do":"write","line":"取整函數的整數點","on":"取整函數"}
+          ] },
+        { "show": ["$kx + 1$（$x < 2$），$x^2 - 1$（$x \\ge 2$）"],
+          "say": "來看一題：k 要是多少，x 趨近二的極限才存在？",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x<2$：${{a:kx+1}}$","on":"k 要是"},
+            {"do":"write","line":"$x\\ge2$：${{b:x^2-1}}$","on":"趨近二"}
+          ] },
+        { "show": ["右：$4 - 1 = 3$；左：$2k + 1$"],
+          "say": "右邊 x 平方減一靠近三；左邊 k x 加一靠近二 k 加一。兩邊要相等。",
+          "board": [
+            {"do":"write","line":"右：${{r:4-1=3}}$"},
+            {"do":"underline","term":"r","color":"violet","on":"靠近三"},
+            {"do":"write","line":"左：${{l:2k+1}}$","on":"左邊"}
+          ] },
+        { "show": ["左極限 $=$ 右極限","$2k+1=3$"],
+          "note": "不相等，極限就不存在。",
+          "say": "為什麼要相等？左右極限不一樣，極限就不存在。所以要讓左極限等於右極限，列出二k加一等於三。",
+          "board": [
+            {"do":"write","line":"左 $=$ 右：${{e1:2k+1=3}}$"}
+          ] },
+        { "show": ["舉例：$2k+1=5$","$2k=4$，$k=2$"],
+          "note": "這是舉例，不是這題。",
+          "say": "舉個例子，不是這題：右邊若是五，二k加一等於五，減一得二k等於四，除以二得k等於二。",
+          "board": [
+            {"do":"write","line":"例：$2k+1=5$，$2k=4$，$k=2$"}
+          ] }
+      ],
+      "key": "左右極限各自算，再令兩者相等",
+      "predict": {
+        "ask": "$k$ 是多少？",
+        "options": [
+          {
+            "label": "$k = 1$",
+            "correct": true
+          },
+          {
+            "label": "$k = 3$",
+            "why": "3 是右極限；要解的是 $2k + 1 = 3$。"
+          },
+          {
+            "label": "$k = 2$",
+            "why": "$2k + 1 = 3$ 先減 1 得 $2k = 2$，還要再除以 2。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["one-sided", "dne", "oscillation", "continuity"],
+    "fine": ["limit-exist-compare-sides", "limit-exist-ignore-value", "limit-dne-jump", "limit-dne-oscillation", "limit-exist-piecewise-param"]
+  },
+  "practice": [
+    { "id": "lm-os-005", "core": true, "trains": "limit-dne-jump" },
+    { "id": "lm-sq-006", "core": true, "trains": "limit-dne-oscillation" },
+    { "id": "lx-con-001", "core": true, "trains": "limit-exist-piecewise-param", "note": "題目問連續；$f(2)$ 由左段給，所以等於要求左右極限相等。" },
+    { "id": "cg-1a-011", "core": true, "trains": "limit-exist-piecewise-param" },
+    { "id": "cg-1a-013", "core": true, "trains": "limit-exist-ignore-value" },
+    { "id": "lm-os-002", "trains": "limit-exist-compare-sides", "note": "兩邊都要看：$x$ 是正是負，$x^2$ 都是正的。" },
+    { "id": "cg-1a-012", "trains": "limit-exist-piecewise-param" },
+    { "id": "cg-1a-014", "trains": "limit-exist-ignore-value" },
+    { "id": "lm-os-004", "challenge": true, "trains": "limit-dne-jump", "note": "挑戰：$x \\to 0^+$ 時 $\\frac{1}{x} \\to \\infty$，$x \\to 0^-$ 時 $\\frac{1}{x} \\to -\\infty$；$\\arctan$ 在兩端各往哪裡靠？" }
+  ],
+  "gaps": []
+}

@@ -1,61 +1,129 @@
 {
   "id": "linear-approximation",
   "title": "線性近似",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["secant-to-tangent", "derivative-definition", "derivative-power-rules", "derivative-trig"],
-  "next": ["differentials-error"],
-  "related": ["concavity", "taylor-polynomial", "taylor-error"],
+  "prerequisites": [
+    "secant-to-tangent",
+    "derivative-definition",
+    "derivative-power-rules",
+    "derivative-trig"
+  ],
+  "next": [
+    "differentials-error"
+  ],
+  "related": [
+    "concavity",
+    "taylor-polynomial",
+    "taylor-error"
+  ],
   "objectives": [
-    "寫出 $f$ 在 $x=a$ 的線性近似 $L(x)=f(a)+f'(a)(x-a)$，並用它估計 $\\sqrt{4.1}$、$\\sqrt[3]{8.06}$ 這類數。",
-    "選一個「好算又夠近」的 $a$。",
-    "從曲線的凹向判斷估計值偏高還是偏低。"
+    "寫出 $f$ 在 $x=a$ 的線性近似 $L(x)=f(a)+f'(a)(x-a)$，並用它估計 $\\sqrt{4.1}$ 這類的值",
+    "選一個「好算又夠近」的 $a$",
+    "從曲線的凹向判斷估計值偏高還是偏低",
+    "說明為什麼誤差比 $h$ 小得多"
   ],
-  "visual": "y = √x 與它在 x = 4 的切線。按「放大」，鏡頭往 (4, 2) 推近，曲線與切線越來越分不開。旁邊顯示 x = 4 + h 時兩者的高度與差距；h 縮成十分之一，差距大約縮成百分之一。",
-  "figures": [
-    {"caption":"放大到 (4, 2)，√x 和切線分不開","after":0,"widget":{"type":"zoom","curves":[{"expr":"sqrt(x)","color":"blue"},{"expr":"2+(x-4)/4","color":"red","dashed":true}],"center":[4,2],"window":[0,8,0,4],"levels":2}}
-  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 放大夠多，曲線看起來就是直線",
+      "heading": "① 放大就變直線",
       "body": [
-        "把一條光滑曲線在某一點附近一直放大，它會越來越像一條直線，那條直線就是切線。所以在 $a$ 附近，可以拿切線的高度代替曲線的高度。",
-        "這很有用：曲線的值常常難算（$\\sqrt{4.1}$ 是多少？），切線是一次函數，加減乘除就算得出來。"
-      ],
-      "collapsible": false
+        "$\\sqrt{4.1}$ 是多少？手邊沒有計算機",
+        "畫 $y=\\sqrt x$ 和它在 $x=4$ 的切線",
+        "可微的曲線，放大夠多看起來就是直線：它的切線",
+        "2.2 從割線走到切線，講的就是這件事"
+      ]
     },
     {
       "heading": "② 公式",
       "body": [
-        "切線通過 $(a,f(a))$、斜率 $f'(a)$，所以 $L(x)=f(a)+f'(a)(x-a)$。$L$ 叫做 $f$ 在 $a$ 的線性近似（或線性化）。",
-        "令 $x=a+h$，同一件事寫成 $f(a+h)\\approx f(a)+f'(a)h$：從已知的 $f(a)$ 出發，走 $h$，高度大約變 $f'(a)h$。"
+        "$f$ 在 $x=a$ 的切線，就是線性近似：",
+        "$x$ 靠近 $a$ 時：$f(x)\\approx L(x)$",
+        "寫成 $x=a+h$ 的樣子：",
+        "白話：新的值 ≈ 舊的值 ＋ 斜率 × 走的距離",
+        "例：$\\sqrt{4.1}$。$f(x)=\\sqrt x$，$a=4$，$h=0.1$",
+        "$f(4)=2$；$f'(x)=\\dfrac1{2\\sqrt x}$，$f'(4)=\\dfrac14$",
+        "真正的值：$\\sqrt{4.1}=2.02484\\ldots$，差 $0.00015$"
       ],
-      "tex": ["f(a+h)\\approx f(a)+f'(a)\\,h"],
-      "collapsible": false
+      "tex": [
+        "L(x)=f(a)+f'(a)(x-a)",
+        "f(a+h)\\approx f(a)+f'(a)\\,h",
+        "\\sqrt{4.1}\\approx2+\\frac14(0.1)=2.025"
+      ]
     },
     {
       "heading": "③ 怎麼選 $a$",
       "body": [
-        "兩個要求：$f(a)$ 和 $f'(a)$ 好算；$a$ 離要估的地方近。估 $\\sqrt{4.1}$ 選 $a=4$（$\\sqrt{4}=2$），估 $\\sqrt[3]{8.06}$ 選 $a=8$（$\\sqrt[3]{8}=2$）。",
-        "$a=0$ 附近有幾個常用的：$e^x\\approx 1+x$、$\\ln(1+x)\\approx x$、$\\sin x\\approx x$、$(1+x)^k\\approx 1+kx$。三角函數的 $h$ 要用弧度。"
+        "兩個條件：",
+        "• $f(a)$、$f'(a)$ 好算（例如完全平方、完全立方、特殊角）",
+        "• $a$ 夠靠近要估的 $x$（$h$ 小）",
+        "估 $\\sqrt{4.1}$ 若取 $a=1$：$1+\\frac12(3.1)=2.55$，離真值差很多",
+        "例：$\\sqrt[3]{8.06}$。$f(x)=x^{1/3}$，取 $a=8$，$h=0.06$",
+        "$f(8)=2$；$f'(x)=\\dfrac13x^{-2/3}$",
+        "真值 $2.004988\\ldots$，差約 $0.000012$"
       ],
-      "collapsible": false
+      "tex": [
+        "f'(8)=\\frac13\\cdot\\frac14=\\frac1{12}",
+        "\\sqrt[3]{8.06}\\approx2+\\frac{0.06}{12}=2.005"
+      ]
+    },
+    {
+      "heading": "③ 角度要換成弧度",
+      "body": [
+        "估 $\\sin31^\\circ$：取 $a=30^\\circ$，$f=\\sin$，$f'=\\cos$",
+        "但 $(\\sin x)'=\\cos x$ 只在弧度下成立",
+        "2.6 推導 $\\frac{d}{dx}\\sin x$ 時用了 $\\lim\\frac{\\sin x}{x}=1$，那是弧度",
+        "$a=\\dfrac\\pi6$，$h=1^\\circ=\\dfrac{\\pi}{180}\\approx0.017453$",
+        "真值 $0.51504\\ldots$",
+        "錯誤示範：$h$ 用 $1$（度）→ $\\frac12+\\frac{\\sqrt3}2\\approx1.366$"
+      ],
+      "tex": [
+        "\\sin31^\\circ\\approx\\sin\\frac\\pi6+\\cos\\frac\\pi6\\cdot\\frac\\pi{180}",
+        "=\\frac12+\\frac{\\sqrt3}2\\cdot\\frac{\\pi}{180}\\approx0.51511"
+      ]
     },
     {
       "heading": "④ 偏高還是偏低",
       "body": [
-        "曲線凹向下（像 $\\sqrt{x}$），切線在曲線上方，估計值偏高；凹向上（像 $e^x$），切線在曲線下方，估計值偏低（〈凹向上／凹向下〉）。",
-        "$\\sqrt{4.1}$ 的估計 $2.025$，真值約 $2.024846$，確實偏高，差約 $0.00015$。"
+        "看曲線往哪邊彎（凹向）：",
+        "• 往下彎（$f''<0$）：切線在曲線上面 → 估計偏高",
+        "• 往上彎（$f''>0$）：切線在曲線下面 → 估計偏低",
+        "二階導數與凹向在 3A 學過",
+        "$\\sqrt x$：$f''(x)=-\\frac14x^{-3/2}<0$，往下彎",
+        "$\\sin x$ 在 $\\frac\\pi6$：$f''=-\\sin\\frac\\pi6<0$ → $0.51511$ 也偏高"
       ],
-      "collapsible": false
+      "tex": [
+        "2.025>\\sqrt{4.1}\\quad\\text{（偏高）}"
+      ]
     },
     {
-      "heading": "為什麼誤差比 $h$ 小得多",
+      "heading": "⑤ 誤差比 $h$ 小得多",
       "body": [
-        "令誤差 $E(h)=f(a+h)-f(a)-f'(a)h$。兩邊除以 $h$：$\\frac{E(h)}{h}=\\frac{f(a+h)-f(a)}{h}-f'(a)$。$h\\to 0$ 時，第一項就是導數的定義，趨向 $f'(a)$，所以 $\\frac{E(h)}{h}\\to 0$。",
-        "這句話的意思是：誤差不只趨向 $0$，還比 $h$ 本身更快趨向 $0$。$f$ 有二階導數時可以說得更精確：誤差大約是 $\\frac{f''(a)h^2}{2}$，$h$ 縮成十分之一，誤差約縮成百分之一。精確的上界在〈Taylor 誤差〉。"
+        "誤差 $E(h)=f(a+h)-\\big[f(a)+f'(a)h\\big]$；$\\sqrt x$、$a=4$：",
+        "$h$ 變成 $\\frac1{10}$，誤差大約變成 $\\frac1{100}$",
+        "為什麼？ 誤差除以 $h$：",
+        "$h\\to0$：割線斜率 $\\to f'(a)$（導數的定義）",
+        "更精確：$E(h)\\approx\\frac12f''(a)h^2$；證明留到泰勒多項式",
+        "切線是唯一有這個性質的直線"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}h=1:&\\quad |E|\\approx0.014\\\\h=0.1:&\\quad |E|\\approx0.00015\\\\h=0.01:&\\quad |E|\\approx0.0000016\\end{aligned}",
+        "\\frac{E(h)}{h}=\\frac{f(a+h)-f(a)}{h}-f'(a)",
+        "\\lim_{h\\to0}\\frac{E(h)}{h}=f'(a)-f'(a)=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 線性近似：$L(x)=f(a)+f'(a)(x-a)$，就是切線",
+        "• $f(a+h)\\approx f(a)+f'(a)h$：舊值 ＋ 斜率 × 步長",
+        "• 選 $a$：$f(a)$、$f'(a)$ 好算，又靠近要估的點",
+        "• 三角函數：$h$ 一定用弧度",
+        "• 往下彎 → 偏高；往上彎 → 偏低",
+        "• 誤差 $\\frac{E(h)}{h}\\to0$：比 $h$ 小得多",
+        "下一課：微分與誤差估計"
+      ]
     }
   ],
   "workedExamples": [
@@ -106,312 +174,902 @@
   ],
   "checks": [
     {
-      "ask": "$f(x)=x^2$ 在 $a=3$ 的線性近似 $L(x)$ 是？",
+      "ask": "估計 $\\sqrt{26}$，最好的 $a$ 是？",
       "options": [
-        { "label": "$9+6(x-3)$", "correct": true },
-        { "label": "$9+3(x-3)$", "why": "斜率要用 $f'(3)=2\\cdot 3=6$，不是 $a=3$ 本身。" },
-        { "label": "$9+6x$", "why": "少了「$-a$」：切線是從 $x=3$ 出發走 $(x-3)$，不是從 $0$ 走 $x$。代 $x=3$ 檢查：$9+18\\ne 9$。" }
+        {
+          "label": "$a=25$，得 $5.1$",
+          "correct": true
+        },
+        {
+          "label": "$a=26$",
+          "why": "$\\sqrt{26}$ 正是我們不會算的，$f(a)$ 要好算"
+        },
+        {
+          "label": "$a=36$，得 $5\\frac16$",
+          "why": "$36$ 好算但離 $26$ 太遠：$6+\\frac1{12}(-10)\\approx5.17$，誤差大"
+        },
+        {
+          "label": "$a=16$，得 $5.25$",
+          "why": "太遠了：$4+\\frac18(10)=5.25$"
+        }
       ]
     },
     {
-      "ask": "用 $\\sqrt{x}$ 在 $4$ 的切線估計 $\\sqrt{4.1}$ 得 $2.025$。它比真值？",
+      "ask": "用 $x=0$ 的線性近似：$e^{0.1}\\approx1+0.1=1.1$。這個估計是？",
       "options": [
-        { "label": "偏高", "correct": true },
-        { "label": "偏低", "why": "$\\sqrt{x}$ 凹向下，曲線彎在切線下面，切線的高度比曲線高，所以估計偏高。" },
-        { "label": "剛好相等", "why": "只有直線的線性近似才完全準。$2.025^2=4.100625$，比 $4.1$ 多一點，所以 $2.025$ 偏高。" }
-      ]
-    },
-    {
-      "ask": "用 $a=0$ 的線性近似估計 $e^{0.05}$：",
-      "options": [
-        { "label": "$1.05$", "correct": true },
-        { "label": "$0.05$", "why": "漏了起點 $f(0)=e^0=1$。線性近似是 $f(0)+f'(0)h=1+0.05$。" },
-        { "label": "$1$", "why": "只寫了 $f(0)$，少了斜率那一項 $f'(0)h=1\\times 0.05$。" }
-      ]
-    },
-    {
-      "ask": "用 $30^\\circ$ 附近的線性近似估計 $\\sin 31^\\circ$，下面哪一個式子對？",
-      "options": [
-        { "label": "$\\frac{1}{2}+\\frac{\\sqrt{3}}{2}\\cdot\\frac{\\pi}{180}$", "correct": true },
-        { "label": "$\\frac{1}{2}+\\frac{\\sqrt{3}}{2}\\cdot 1$", "why": "$h$ 用了角度的 $1$。導數公式 $(\\sin x)'=\\cos x$ 是在弧度下推出來的，$1^\\circ$ 要寫成 $\\frac{\\pi}{180}$。" },
-        { "label": "$\\frac{1}{2}+\\frac{1}{2}\\cdot\\frac{\\pi}{180}$", "why": "斜率是 $\\cos 30^\\circ=\\frac{\\sqrt{3}}{2}$，你用成 $\\sin 30^\\circ=\\frac{1}{2}$ 了。" }
+        {
+          "label": "偏低",
+          "correct": true
+        },
+        {
+          "label": "偏高",
+          "why": "方向反了：$e^x$ 往上彎，切線在曲線下面"
+        },
+        {
+          "label": "剛好相等",
+          "why": "只有 $x=0$ 時相等"
+        },
+        {
+          "label": "不能判斷",
+          "why": "看二階導數的正負就能判斷"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "放大就是直線",
+      "title": "放大就變直線",
       "beats": [
-        { "show": ["$\\sqrt{x}$ 和它在 $(4, 2)$ 的切線"],
-          "fig": {"use":0,"to":0},
-          "say": "藍色是根號 x，紅色虛線是它在點四、二的切線。現在看得出來，曲線往下彎。",
+        {
+          "show": [
+            "$\\sqrt{4.1}$ 是多少？手邊沒有計算機"
+          ],
+          "say": "不用計算機，根號 4.1 大概是多少？這一課的想法很簡單：用切線代替曲線。",
           "board": [
-            {"do":"write","line":"$f(x)=\\sqrt{x}$，切點 $(4,2)$"}
-          ] },
-        { "show": ["一直放大"],
-          "note": "光滑曲線越放大越像一條直線。",
-          "fig": {"use":0,"to":1},
-          "say": "往點四、二放大。曲線越來越直，跟切線越貼越近。" },
-        { "show": ["那條直線就是切線"],
-          "note": "在 $a$ 附近，拿切線的高度代替曲線。",
-          "say": "放大到看不出彎的那條直線，就是切線。所以在 a 附近，可以用切線的高度代替曲線的高度。",
+            {
+              "do": "write",
+              "line": "$\\sqrt{4.1}$ 是多少？手邊沒有計算機"
+            }
+          ]
+        },
+        {
+          "show": [
+            "畫 $y=\\sqrt x$ 和它在 $x=4$ 的切線"
+          ],
+          "say": "先畫根號 x，和它在 x 等於 4 的切線。",
           "board": [
-            {"do":"write","line":"在 $a$ 附近：曲線 $\\approx$ 切線"}
-          ] },
-        { "show": ["$\\sqrt{4.1}$ 是多少？"],
-          "note": "切線是一次函數，加減乘除就算得出來。",
-          "say": "為什麼要這樣？根號四點一不好算，但切線是一次函數，加減乘除就算得出來。",
+            {
+              "do": "write",
+              "line": "畫 $y=\\sqrt x$ 和它在 $x=4$ 的切線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遠看：曲線和切線分得很開"
+          ],
+          "say": "遠遠看，曲線和切線分得很開：離 4 越遠，差越多。",
           "board": [
-            {"do":"write","line":"切線是一次函數，好算"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "wide",
+                  "window": [
+                    0,
+                    9,
+                    0,
+                    3.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "y = √x"
+                    },
+                    {
+                      "expr": "2+(x-4)/4",
+                      "color": "red",
+                      "dash": true,
+                      "label": "切線"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 4,
+                      "y": 2,
+                      "color": "ink"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "遠看：曲線和切線分得很開",
+              "color": "violet",
+              "on": "越遠"
+            }
+          ]
+        },
+        {
+          "show": [
+            "放大到 [3.8, 4.2]：幾乎疊在一起"
+          ],
+          "say": "可是把 4 附近放大，只看 3.8 到 4.2，兩條線幾乎疊在一起，分不出來。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "zoom",
+                  "window": [
+                    3.8,
+                    4.2,
+                    1.95,
+                    2.05
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "2+(x-4)/4",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 4,
+                      "y": 2,
+                      "color": "ink"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "放大到 [3.8, 4.2]：幾乎疊在一起",
+              "color": "violet",
+              "on": "兩條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可微的曲線，放大夠多看起來就是直線：它的切線"
+          ],
+          "say": "這是可微函數的特色：放大夠多，曲線看起來就是一條直線，也就是它的切線。所以在 4 附近，用切線算，就差不多是曲線的值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可微的曲線，放大夠多看起來就是直線：它的切線",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　2.2 從割線走到切線，講的就是這件事",
+              "color": "violet",
+              "on": "是它"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "先猜猜看",
+      "beats": [
+        {
+          "show": [
+            "用 $x=4$ 的切線估計 $\\sqrt{4.1}$，跟真正的值比？"
+          ],
+          "say": "先猜猜看：用切線估計出來的根號 4.1，會比真的值大還是小？"
+        }
       ],
-      "drag": {
-        "use": 0,
-        "ask": "自己把鏡頭放到最大，看曲線和切線還分不分得開",
-        "range": [
-          1.9,
-          2
+      "predict": {
+        "ask": "用 $x=4$ 的切線估計 $\\sqrt{4.1}$，跟真正的值比？",
+        "options": [
+          {
+            "label": "稍微偏高",
+            "correct": true
+          },
+          {
+            "label": "稍微偏低",
+            "why": "方向反了：$\\sqrt x$ 是往下彎的，切線在上面"
+          },
+          {
+            "label": "剛好相等",
+            "why": "只有在 $x=4$ 剛好相等；離開 $4$ 就有一點誤差"
+          }
         ]
       }
     },
     {
       "title": "公式",
       "beats": [
-        { "show": ["$L(x)=f(a)+f'(a)(x-a)$"],
-          "note": "$f$ 在 $a$ 的線性近似（線性化）。",
-          "say": "切線通過點 a、f 在 a 的值，斜率是 f prime 在 a 的值。寫出來就是 L，叫做線性近似。",
+        {
+          "show": [
+            "$f$ 在 $x=a$ 的切線，就是線性近似：",
+            "$L(x)=f(a)+f'(a)(x-a)$"
+          ],
+          "say": "f 在 x 等於 a 的切線，叫做線性近似，記作 L of x：f of a，加上 f prime a，乘上 x 減 a。",
           "board": [
-            {"do":"write","line":"$L(x)={{s:f(a)}}+{{m:f'(a)}}(x-a)$","tint":{"s":"blue","m":"violet"}},
-            {"do":"underline","term":"s","color":"blue","label":"起點","on":"f 在 a 的值"},
-            {"do":"underline","term":"m","color":"violet","label":"斜率","on":"斜率是"}
-          ] },
-        { "show": ["$(x^2)'=2x$"],
-          "note": "次方法則：次數拿下來乘，再減一。",
-          "say": "斜率要先有導數。以 x 平方為例，次方法則是把次數二拿下來乘，再減一，得到二 x。",
+            {
+              "do": "write",
+              "line": "$f$ 在 $x=a$ 的切線，就是線性近似："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle L(x)=f(a)+f'(a)(x-a)}}$",
+              "on": "記作"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 靠近 $a$ 時：$f(x)\\approx L(x)$"
+          ],
+          "say": "x 靠近 a 的時候，f of x 大約等於 L of x。",
           "board": [
-            {"do":"write","line":"$(x^2)'={{p1:2}}\\,x^{2-1}=2x$"},
-            {"do":"focus","term":"p1","color":"gold","label":"次數","on":"次數二"}
-          ] },
-        { "show": ["$f(a+h)\\approx f(a)+f'(a)\\,h$"],
-          "note": "令 $x=a+h$。",
-          "say": "把 x 寫成 a 加 h：從已知的 f 在 a 的值出發，走 h，高度大約變 f prime 在 a 乘 h。",
+            {
+              "do": "write",
+              "line": "$x$ 靠近 $a$ 時：$f(x)\\approx L(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寫成 $x=a+h$ 的樣子：",
+            "$f(a+h)\\approx f(a)+f'(a)\\,h$"
+          ],
+          "say": "把 x 寫成 a 加 h，h 是往右走的一小步，就是這個樣子：f of a 加 h，大約是 f of a，加上斜率乘 h。",
           "board": [
-            {"do":"write","line":"$f(a+h)\\approx {{s:f(a)}}+{{m:f'(a)}}\\,h$","tint":{"s":"blue","m":"violet"}},
-            {"do":"focus","term":"s","color":"blue","on":"從已知"},
-            {"do":"underline","term":"m","color":"violet","on":"高度大約變"}
-          ] },
-        { "show": ["起點 $f(a)$ 不能漏"],
-          "note": "斜率用 $f'(a)$，不是 $f'(x)$。",
-          "say": "兩個常見的錯：漏掉起點 f 在 a 的值；或把斜率寫成 f prime 在 x，那就不是一條直線了。",
+            {
+              "do": "write",
+              "line": "寫成 $x=a+h$ 的樣子："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f(a+h)\\approx f(a)+f'(a)\\,h}}$",
+              "on": "是往"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "of#1"
+            },
+            {
+              "do": "write",
+              "line": "　白話：新的值 ≈ 舊的值 ＋ 斜率 × 走的距離",
+              "color": "violet",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\sqrt{4.1}$。$f(x)=\\sqrt x$，$a=4$，$h=0.1$"
+          ],
+          "say": "回到根號 4.1。f 是根號 x，a 取 4，h 是 0.1。",
           "board": [
-            {"do":"write","line":"$L(x)={{z:f'(a)(x-a)}}$"},
-            {"do":"strike","term":"z","label":"少了起點","on":"漏掉起點"},
-            {"do":"write","line":"$L(x)={{w:f(a)+f'(x)(x-a)}}$","on":"斜率寫成"},
-            {"do":"strike","term":"w","label":"斜率錯","on":"f prime 在 x"}
-          ] }
-      ],
-      "key": "起點 $f(a)$ 不能漏，斜率代 $a$ 不代 $x$",
-      "check": 0
-    },
-    {
-      "title": "估計 $\\sqrt{4.1}$",
-      "beats": [
-        { "show": ["$a=4$，$h=0.1$"],
-          "note": "$f(4)=\\sqrt{4}=2$",
-          "say": "根號 x，選 a 等於四，因為根號四等於二很好算；要走的 h 是零點一。",
+            {
+              "do": "write",
+              "line": "例：$\\sqrt{4.1}$。$f(x)=\\sqrt x$，$a=4$，$h=0.1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(4)=2$；$f'(x)=\\dfrac1{2\\sqrt x}$，$f'(4)=\\dfrac14$"
+          ],
+          "say": "f of 4 是 2。根號 x 的導數是 2 根號 x 分之一，代 4 得到 4 分之 1。",
           "board": [
-            {"do":"write","line":"$f(x)=\\sqrt{x}$，${{a:a=4}}$，$h=0.1$"},
-            {"do":"underline","term":"a","label":"√4 = 2","on":"選 a"},
-            {"do":"write","line":"$f(4)=\\sqrt{4}=2$","on":"很好算"}
-          ] },
-        { "show": ["$\\sqrt{x}=x^{1/2}$","$(x^{1/2})'=\\frac{1}{2}x^{-1/2}$"],
-          "note": "$x^{-1/2}=\\frac{1}{\\sqrt{x}}$，下一句就得到導數。",
-          "say": "根號 x 其實是 x 的二分之一次方。用次方法則，次數二分之一拿下來乘，再減一，變成負二分之一次方。",
+            {
+              "do": "write",
+              "line": "$f(4)=2$；$f'(x)=\\dfrac1{2\\sqrt x}$，$f'(4)=\\dfrac14$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{4.1}\\approx2+\\frac14(0.1)=2.025$"
+          ],
+          "say": "所以根號 4.1，大約是 2 加 4 分之 1 乘 0.1，等於 2.025。",
           "board": [
-            {"do":"write","line":"$\\sqrt{x}=x^{1/2}$"},
-            {"do":"write","line":"$(x^{1/2})'=\\frac{1}{2}x^{-1/2}$","on":"次方法則"}
-          ] },
-        { "show": ["$f'(x)=\\frac{1}{2\\sqrt{x}}$"],
-          "say": "根號 x 的導數是二倍根號 x 分之一。斜率要在 a 等於四取值。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sqrt{4.1}\\approx2+\\frac14(0.1)=2.025}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真正的值：$\\sqrt{4.1}=2.02484\\ldots$，差 $0.00015$"
+          ],
+          "say": "真正的值是 2.02484 多一點，只差了大約一萬分之一點五。只用了一次除法，就準到小數第三位。",
           "board": [
-            {"do":"write","line":"$f'(x)=\\frac{1}{2\\sqrt{x}}$"},
-            {"do":"write","line":"斜率：在 $x=4$ 取值","on":"斜率要在"}
-          ] }
-      ],
-      "solve": {
-        "ask": "$f(x)=\\sqrt{x}$，切線斜率 $f'(4)$ 是多少？",
-        "kind": "numeric",
-        "answer": "1/4",
-        "claim": "D(sqrt(x), 4) == ANS",
-        "hint": "$f'(x)=\\frac{1}{2\\sqrt{x}}$，代 $x=4$。",
-        "steps": [
-          "$f'(x)=\\frac{1}{2\\sqrt{x}}$",
-          "$f'(4)=\\frac{1}{2\\cdot 2}=\\frac{1}{4}$"
-        ],
-        "wrong": [
-          {
-            "answer": "2",
-            "why": "2 是 $f(4)=\\sqrt{4}$，是切點的高度，不是斜率。"
-          },
-          {
-            "answer": "1/2",
-            "why": "只取了係數，$\\sqrt{4}=2$ 沒乘進分母：$\\frac{1}{2\\cdot 2}=\\frac{1}{4}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "偏高還是偏低",
-      "beats": [
-        { "show": ["$f'(4)=\\frac{1}{2\\cdot 2}=\\frac{1}{4}$"],
-          "say": "代進去，二乘根號四是四，斜率四分之一。",
-          "board": [
-            {"do":"write","line":"$f'(4)=\\frac{1}{2\\cdot 2}=\\frac{1}{4}$"}
-          ] },
-        { "show": ["$\\sqrt{4.1}\\approx 2+\\frac{1}{4}(0.1)=2.025$"],
-          "say": "從二出發，走零點一，高度多四分之一乘零點一。估計值是二點零二五。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{4.1}\\approx 2+\\frac{1}{4}(0.1)={{r:2.025}}$"},
-            {"do":"box","term":"r","color":"green","on":"估計值"}
-          ] },
-        { "show": ["凹向下：切線在曲線上方"],
-          "note": "估計值偏高；凹向上（像 $e^x$）就偏低。",
-          "say": "根號 x 凹向下，曲線彎在切線底下，所以切線的估計偏高。凹向上的曲線就反過來，偏低。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"凹向下：切線在曲線上方","on":"曲線彎在"},
-            {"do":"write","line":"凹向上（像 $e^x$）：反過來","on":"凹向上"}
-          ] },
-        { "show": ["看圖：切線在曲線上方"],
-          "say": "畫出來看：藍色是根號 x，紅色虛線是切線。切線整條都在曲線上面。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,8,0,4],"curves":[{"expr":"sqrt(x)","domain":[0,8],"color":"blue"},{"expr":"2+(x-4)/4","domain":[0,8],"color":"red","dashed":true}]}}
-          ] },
-        { "show": ["凹向下：斜率越走越小"],
-          "note": "凹向上相反：斜率越走越大。",
-          "say": "凹向下的意思是，往右走時斜率越來越小。根號 x 的斜率是二倍根號 x 分之一，x 變大它就變小。",
-          "board": [
-            {"do":"write","line":"凹向下：往右走，斜率越來越小"},
-            {"do":"write","line":"$f'(x)=\\frac{1}{2\\sqrt{x}}$，$x$ 越大越小","on":"根號 x 的斜率"}
-          ] },
-        { "show": ["真值約 $2.024846$"],
-          "note": "確實偏高，差約 $0.00015$。",
-          "say": "真值大約二點零二四八四六，估計確實偏高，只差零點零零零一五。",
-          "board": [
-            {"do":"write","line":"真值 $\\approx 2.024846$"},
-            {"do":"write","line":"差約 $0.00015$","on":"只差"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "真正的值：$\\sqrt{4.1}=2.02484\\ldots$，差 $0.00015$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "怎麼選 $a$",
       "beats": [
-        { "show": ["$f(a)$、$f'(a)$ 好算","$a$ 離目標近"],
-          "say": "選 a 有兩個要求：f 在 a 的值和斜率要好算，a 也要離要估的地方近。",
+        {
+          "show": [
+            "兩個條件：",
+            "• $f(a)$、$f'(a)$ 好算（例如完全平方、完全立方、特殊角）"
+          ],
+          "say": "a 要怎麼選？兩個條件。第一，f of a 和 f prime a 要好算，像完全平方數、完全立方數、特殊角。",
           "board": [
-            {"do":"write","line":"$f(a)$、$f'(a)$ 好算","on":"f 在 a"},
-            {"do":"write","line":"$a$ 離目標近","on":"a 也要離"}
-          ] },
-        { "show": ["$\\sqrt[3]{8.06}$：選 $a=8$，$h=0.06$"],
-          "note": "$\\sqrt[3]{8}=2$",
-          "say": "估三次根號八點零六，就選 a 等於八，因為八的三次根號是二。",
+            {
+              "do": "write",
+              "line": "兩個條件："
+            },
+            {
+              "do": "write",
+              "line": "• $f(a)$、$f'(a)$ 好算（例如完全平方、完全立方、特殊角）",
+              "on": "ri"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a$ 夠靠近要估的 $x$（$h$ 小）"
+          ],
+          "say": "第二，a 要夠靠近要估的那個數，h 越小越準。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sqrt[3]{8.06}$：選 ${{a:a=8}}$，$h=0.06$","on":"估三次根號"},
-            {"do":"underline","term":"a","label":"∛8 = 2","on":"因為八的"}
-          ] },
-        { "show": ["$f'(8)=\\frac{1}{3}\\cdot\\frac{1}{4}=\\frac{1}{12}$"],
-          "note": "$\\approx 2+\\frac{1}{12}(0.06)=2.005$",
-          "say": "斜率是三分之一乘四分之一，十二分之一。二加十二分之一乘零點零六，得二點零零五。",
+            {
+              "do": "write",
+              "line": "• $a$ 夠靠近要估的 $x$（$h$ 小）"
+            },
+            {
+              "do": "write",
+              "line": "　估 $\\sqrt{4.1}$ 若取 $a=1$：$1+\\frac12(3.1)=2.55$，離真值差很多",
+              "color": "violet",
+              "on": "的那"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\sqrt[3]{8.06}$。$f(x)=x^{1/3}$，取 $a=8$，$h=0.06$"
+          ],
+          "say": "例子：8.06 的立方根。f 是 x 的 3 分之 1 次方。8 是完全立方，又很靠近 8.06，所以取 a 等於 8，h 是 0.06。",
           "board": [
-            {"do":"write","line":"$f'(8)=\\frac{1}{3}\\cdot\\frac{1}{4}=\\frac{1}{12}$"},
-            {"do":"write","line":"$\\sqrt[3]{8.06}\\approx 2+\\frac{1}{12}(0.06)=2.005$","color":"green","on":"二加十二分之一"}
-          ] },
-        { "show": ["$a=0$：$e^x\\approx 1+x$","$\\ln(1+x)\\approx x$，$\\sin x\\approx x$"],
-          "say": "在零附近有幾個常用的：e 的 x 次方約一加 x，自然對數一加 x 約 x，sine x 約 x。",
+            {
+              "do": "write",
+              "line": "例：$\\sqrt[3]{8.06}$。$f(x)=x^{1/3}$，取 $a=8$，$h=0.06$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(8)=2$；$f'(x)=\\dfrac13x^{-2/3}$",
+            "$f'(8)=\\frac13\\cdot\\frac14=\\frac1{12}$"
+          ],
+          "say": "f of 8 是 2。導數是 3 分之 1 乘 x 的負 3 分之 2 次方；8 的 3 分之 2 次方是 4，所以斜率是 12 分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a=0$：$e^x\\approx 1+x$","on":"在零附近"},
-            {"do":"write","line":"$\\ln(1+x)\\approx x$，$\\sin x\\approx x$","on":"自然對數"}
-          ] },
-        { "show": ["$e^x$：$f(0)=1$，$f'(0)=1$","$L(x)=1+x$"],
-          "say": "e 的 x 次方在零的值是一，導數還是 e 的 x 次方，所以斜率也是一。代進公式，就是一加 x。",
+            {
+              "do": "write",
+              "line": "$f(8)=2$；$f'(x)=\\dfrac13x^{-2/3}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'(8)=\\frac13\\cdot\\frac14=\\frac1{12}$",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt[3]{8.06}\\approx2+\\frac{0.06}{12}=2.005$"
+          ],
+          "say": "立方根 8.06，大約是 2 加 12 分之 0.06，等於 2.005。",
           "board": [
-            {"do":"write","line":"$f(0)=1$，$f'(0)=1$"},
-            {"do":"write","line":"$L(x)=1+1\\cdot x=1+x$","on":"代進公式"}
-          ] },
-        { "show": ["$\\sin x\\approx 0+1\\cdot x$","$\\ln(1+x)\\approx 0+1\\cdot x$"],
-          "say": "sine x 在零是零，斜率 cosine 零是一，所以約 x。自然對數一加 x 在零是零，斜率也是一，同樣約 x。",
-          "board": [
-            {"do":"write","line":"$\\sin x\\approx 0+1\\cdot x$"},
-            {"do":"write","line":"$\\ln(1+x)\\approx 0+1\\cdot x$","on":"自然對數"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\sqrt[3]{8.06}\\approx2+\\frac{0.06}{12}=2.005}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "12"
+            },
+            {
+              "do": "write",
+              "line": "　真值 $2.004988\\ldots$，差約 $0.000012$",
+              "color": "violet",
+              "on": "06#2"
+            }
+          ]
+        }
       ],
-      "key": "選 $f(a)$、$f'(a)$ 好算又離目標近的 $a$",
-      "check": 2
+      "check": 0
     },
     {
-      "title": "角度換成弧度",
+      "title": "角度要換成弧度",
       "beats": [
-        { "show": ["估 $\\sin 31^\\circ$：$a=\\frac{\\pi}{6}$"],
-          "note": "$\\sin\\frac{\\pi}{6}=\\frac{1}{2}$",
-          "say": "估 sine 三十一度。從三十度出發，也就是六分之 pi，sine 值是二分之一。",
+        {
+          "show": [
+            "估 $\\sin31^\\circ$：取 $a=30^\\circ$，$f=\\sin$，$f'=\\cos$"
+          ],
+          "say": "再一個例子：正弦 31 度。取 a 等於 30 度，正弦和餘弦都是特殊角，很好算。",
           "board": [
-            {"do":"write","line":"估 $\\sin 31^\\circ$：$a=\\frac{\\pi}{6}$"},
-            {"do":"write","line":"$\\sin\\frac{\\pi}{6}=\\frac{1}{2}$","on":"sine 值是"}
-          ] },
-        { "show": ["$180^\\circ=\\pi$ 弧度"],
-          "note": "弧度：用圓弧的長度量角。",
-          "say": "弧度是用圓弧的長度來量角：半圓的弧長是 pi，半圓也是一百八十度。",
+            {
+              "do": "write",
+              "line": "估 $\\sin31^\\circ$：取 $a=30^\\circ$，$f=\\sin$，$f'=\\cos$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但 $(\\sin x)'=\\cos x$ 只在弧度下成立"
+          ],
+          "say": "但要小心：正弦的導數是餘弦，這個公式只在弧度下成立。所以 a 和 h 都要換成弧度。",
           "board": [
-            {"do":"write","line":"$180^\\circ=\\pi$ 弧度"}
-          ] },
-        { "show": ["$h=1^\\circ=\\frac{\\pi}{180}$"],
-          "note": "$(\\sin x)'=\\cos x$ 只在弧度下成立。",
-          "say": "多走的一度要換成弧度，是一百八十 分之 pi。sine 的導數是 cosine，這條公式只在弧度下成立。",
+            {
+              "do": "write",
+              "line": "但 $(\\sin x)'=\\cos x$ 只在弧度下成立",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　2.6 推導 $\\frac{d}{dx}\\sin x$ 時用了 $\\lim\\frac{\\sin x}{x}=1$，那是弧度",
+              "color": "violet",
+              "on": "度下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a=\\dfrac\\pi6$，$h=1^\\circ=\\dfrac{\\pi}{180}\\approx0.017453$"
+          ],
+          "say": "30 度是 6 分之派；走的一步是 1 度，換成弧度是 180 分之派，大約 0.017453。",
           "board": [
-            {"do":"write","line":"$h=1^\\circ={{h:\\frac{\\pi}{180}}}$","on":"多走的一度"},
-            {"do":"underline","term":"h","label":"弧度","on":"換成弧度"}
-          ] },
-        { "show": ["直接代 $1$ 會超過 $1$"],
-          "note": "$\\sin$ 的值不會大於 $1$。",
-          "say": "如果直接用一代入：二分之一加二分之根號三乘一，結果比一還大，sine 不可能這樣，所以非用弧度不可。",
+            {
+              "do": "write",
+              "line": "$a=\\dfrac\\pi6$，$h=1^\\circ=\\dfrac{\\pi}{180}\\approx0.017453$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin31^\\circ\\approx\\sin\\frac\\pi6+\\cos\\frac\\pi6\\cdot\\frac\\pi{180}$",
+            "$=\\frac12+\\frac{\\sqrt3}2\\cdot\\frac{\\pi}{180}\\approx0.51511$"
+          ],
+          "say": "代進公式：正弦 6 分之派是 2 分之 1，加上餘弦 6 分之派，2 分之根號 3，乘 180 分之派，大約是 0.51511。",
           "board": [
-            {"do":"write","line":"${{w:\\frac{1}{2}+\\frac{\\sqrt{3}}{2}\\cdot 1}}>1$"},
-            {"do":"strike","term":"w","label":"錯","on":"比一還大"}
-          ] },
-        { "show": ["斜率 $\\cos\\frac{\\pi}{6}=\\frac{\\sqrt{3}}{2}$","$\\sin 31^\\circ\\approx 0.51511$"],
-          "note": "真值約 $0.51504$。",
-          "say": "斜率是 cosine 三十度，二分之根號三。照線性近似組起來，大約零點五一五一一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sin31^\\circ\\approx\\sin\\frac\\pi6+\\cos\\frac\\pi6\\cdot\\frac\\pi{180}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac12+\\frac{\\sqrt3}2\\cdot\\frac{\\pi}{180}\\approx0.51511}}$",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之#4"
+            },
+            {
+              "do": "write",
+              "line": "　真值 $0.51504\\ldots$",
+              "color": "violet",
+              "on": "分之#5"
+            }
+          ]
+        },
+        {
+          "show": [
+            "錯誤示範：$h$ 用 $1$（度）→ $\\frac12+\\frac{\\sqrt3}2\\approx1.366$"
+          ],
+          "say": "如果忘了換，h 直接用 1，會得到 1.366。正弦不可能大於 1，一看就知道錯了。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"斜率 $\\cos\\frac{\\pi}{6}=\\frac{\\sqrt{3}}{2}$","on":"斜率是"},
-            {"do":"write","line":"$\\sin 31^\\circ\\approx 0.51511$","color":"green","on":"組起來"}
-          ] }
+            {
+              "do": "write",
+              "line": "錯誤示範：$h$ 用 $1$（度）→ $\\frac12+\\frac{\\sqrt3}2\\approx1.366$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "偏高還是偏低",
+      "beats": [
+        {
+          "show": [
+            "看曲線往哪邊彎（凹向）：",
+            "• 往下彎（$f''<0$）：切線在曲線上面 → 估計偏高"
+          ],
+          "say": "估計值偏高還是偏低，看曲線往哪邊彎。往下彎，也就是二階導數小於零，切線在曲線上面，估計偏高。往上彎，二階導數大於零，切線在曲線下面，估計偏低。",
+          "board": [
+            {
+              "do": "write",
+              "line": "看曲線往哪邊彎（凹向）："
+            },
+            {
+              "do": "write",
+              "line": "• 往下彎（$f''<0$）：切線在曲線上面 → 估計偏高",
+              "on": "往下"
+            },
+            {
+              "do": "write",
+              "line": "• 往上彎（$f''>0$）：切線在曲線下面 → 估計偏低",
+              "on": "在曲#1"
+            },
+            {
+              "do": "write",
+              "line": "　二階導數與凹向在 3A 學過",
+              "color": "violet",
+              "on": "數大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt x$：$f''(x)=-\\frac14x^{-3/2}<0$，往下彎",
+            "$2.025>\\sqrt{4.1}\\quad\\text{（偏高）}$"
+          ],
+          "say": "根號 x 的二階導數是負 4 分之 1 乘 x 的負 2 分之 3 次方，是負的，往下彎。所以 2.025 偏高，跟剛剛真值比的結果一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt x$：$f''(x)=-\\frac14x^{-3/2}<0$，往下彎"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle 2.025>\\sqrt{4.1}\\quad\\text{（偏高）}}}$",
+              "on": "的負"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "02"
+            }
+          ]
+        },
+        {
+          "show": [
+            "往下彎：切線兩邊都在曲線上面"
+          ],
+          "say": "圖上，根號 x 往下彎，切線不管往左往右，都在曲線上面。所以不管 h 是正是負，估計都偏高。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "conc",
+                  "window": [
+                    2,
+                    7,
+                    1.3,
+                    2.8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "y = √x"
+                    },
+                    {
+                      "expr": "2+(x-4)/4",
+                      "color": "red",
+                      "dash": true,
+                      "label": "切線"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 4,
+                      "y": 2,
+                      "color": "ink"
+                    }
+                  ],
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "往下彎：切線兩邊都在曲線上面",
+              "color": "violet",
+              "on": "曲線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin x$ 在 $\\frac\\pi6$：$f''=-\\sin\\frac\\pi6<0$ → $0.51511$ 也偏高"
+          ],
+          "say": "正弦 31 度那題也一樣：正弦的二階導數是負正弦，在 6 分之派是負的，所以 0.51511 也偏高。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin x$ 在 $\\frac\\pi6$：$f''=-\\sin\\frac\\pi6<0$ → $0.51511$ 也偏高"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用 $x=0$ 的線性近似：$e^{0.1}\\approx1+0.1=1.1$。這個估計是？"
+          ],
+          "say": "換你判斷。用 0 的切線估計 e 的 0.1 次方，得到 1.1。偏高還是偏低？"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "誤差比 $h$ 小得多",
+      "beats": [
+        {
+          "show": [
+            "誤差 $E(h)=f(a+h)-\\big[f(a)+f'(a)h\\big]$；$\\sqrt x$、$a=4$："
+          ],
+          "say": "最後看誤差。誤差 E of h 定義成真的值減掉線性近似。用根號 x、a 等於 4 來算幾個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "誤差 $E(h)=f(a+h)-\\big[f(a)+f'(a)h\\big]$；$\\sqrt x$、$a=4$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}h=1:&\\quad |E|\\approx0.014\\\\h=0.1:&\\quad |E|\\approx0.00015\\\\h=0.01:&\\quad |E|\\approx0.0000016\\end{aligned}$"
+          ],
+          "say": "h 是 1，誤差約 0.014；h 是 0.1，誤差約 0.00015；h 是 0.01，誤差約 0.0000016。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}h=1:&\\quad |E|\\approx0.014\\\\h=0.1:&\\quad |E|\\approx0.00015\\\\h=0.01:&\\quad |E|\\approx0.0000016\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h$ 變成 $\\frac1{10}$，誤差大約變成 $\\frac1{100}$"
+          ],
+          "say": "發現了嗎？h 縮小成 10 分之 1，誤差大約縮小成 100 分之 1。誤差跟 h 平方差不多大，比 h 小得多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h$ 變成 $\\frac1{10}$，誤差大約變成 $\\frac1{100}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼？ 誤差除以 $h$：",
+            "$\\frac{E(h)}{h}=\\frac{f(a+h)-f(a)}{h}-f'(a)$"
+          ],
+          "say": "為什麼？把誤差除以 h。式子變成：割線斜率，減掉切線斜率。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼？ 誤差除以 $h$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{E(h)}{h}=\\frac{f(a+h)-f(a)}{h}-f'(a)$",
+              "on": "變成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：割線斜率 $\\to f'(a)$（導數的定義）",
+            "$\\lim_{h\\to0}\\frac{E(h)}{h}=f'(a)-f'(a)=0$"
+          ],
+          "say": "h 趨近 0，割線斜率趨近 f prime a，這正是導數的定義。所以誤差除以 h 趨近 0：誤差跟 h 比起來，小到可以忽略。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：割線斜率 $\\to f'(a)$（導數的定義）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\lim_{h\\to0}\\frac{E(h)}{h}=f'(a)-f'(a)=0}}$",
+              "color": "red",
+              "on": "pr"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　更精確：$E(h)\\approx\\frac12f''(a)h^2$；證明留到泰勒多項式",
+              "color": "violet",
+              "on": "差跟"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切線是唯一有這個性質的直線"
+          ],
+          "say": "而且，換成任何其他斜率的直線，誤差除以 h 會趨近一個不是 0 的數。所以切線是最好的直線近似。",
+          "board": [
+            {
+              "do": "write",
+              "line": "切線是唯一有這個性質的直線"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 線性近似：$L(x)=f(a)+f'(a)(x-a)$，就是切線",
+            "• $f(a+h)\\approx f(a)+f'(a)h$：舊值 ＋ 斜率 × 步長"
+          ],
+          "say": "整理一下：線性近似就是切線；選 a 要好算又靠近；三角函數要用弧度；往下彎的曲線估計偏高，往上彎的偏低；誤差比 h 小得多，這就是切線好用的原因。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 線性近似：$L(x)=f(a)+f'(a)(x-a)$，就是切線"
+            },
+            {
+              "do": "write",
+              "line": "• $f(a+h)\\approx f(a)+f'(a)h$：舊值 ＋ 斜率 × 步長",
+              "on": "要好"
+            },
+            {
+              "do": "write",
+              "line": "• 選 $a$：$f(a)$、$f'(a)$ 好算，又靠近要估的點",
+              "on": "三角"
+            },
+            {
+              "do": "write",
+              "line": "• 三角函數：$h$ 一定用弧度",
+              "on": "彎的#1"
+            },
+            {
+              "do": "write",
+              "line": "• 往下彎 → 偏高；往上彎 → 偏低",
+              "on": "的偏"
+            },
+            {
+              "do": "write",
+              "line": "• 誤差 $\\frac{E(h)}{h}\\to0$：比 $h$ 小得多",
+              "on": "這就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：微分與誤差估計"
+          ],
+          "say": "下一課，我們把 f prime 乘 h 這一項取個名字，叫做微分，用它來估計量測誤差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：微分與誤差估計"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["linear-approximation", "tangent-normal"],
-    "fine": ["linapprox-formula", "linapprox-choose-base", "linapprox-radians", "linapprox-over-under"]
+    "coarse": [
+      "linear-approximation",
+      "tangent-normal"
+    ],
+    "fine": [
+      "linapprox-formula",
+      "linapprox-choose-base",
+      "linapprox-radians",
+      "linapprox-over-under"
+    ]
   },
   "practice": [
-    { "id": "lec-05-m3", "core": true, "trains": "linapprox-formula" },
-    { "id": "db-tan-004", "core": true, "trains": "linapprox-formula" },
-    { "id": "db-lin-001", "core": true, "trains": "linapprox-choose-base" },
-    { "id": "dd-lin-002", "core": true, "trains": "linapprox-choose-base" },
-    { "id": "lec-05-q4a", "trains": "linapprox-choose-base" },
-    { "id": "dd-lin-003", "core": true, "trains": "linapprox-choose-base" },
-    { "id": "tb-lin-002", "core": true, "trains": "linapprox-choose-base" },
-    { "id": "tb-lin-003", "trains": "linapprox-formula" },
-    { "id": "db-lin-003", "trains": "linapprox-choose-base" },
-    { "id": "db-lin-004", "core": true, "trains": "linapprox-radians" },
-    { "id": "cg-3d-001", "core": true, "trains": "linapprox-over-under" },
-    { "id": "tb-lin-004", "trains": "linapprox-choose-base" },
-    { "id": "cg-3d-002", "trains": "linapprox-over-under" },
-    { "id": "db-lin-008", "challenge": true, "trains": "linapprox-choose-base", "note": "挑戰：$\\arctan 1.1$，要記得 $\\arctan 1=\\frac{\\pi}{4}$ 與 $(\\arctan x)'$。" }
+    {
+      "id": "lec-05-m3",
+      "core": true,
+      "trains": "linapprox-formula"
+    },
+    {
+      "id": "db-tan-004",
+      "core": true,
+      "trains": "linapprox-formula"
+    },
+    {
+      "id": "db-lin-001",
+      "core": true,
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "dd-lin-002",
+      "core": true,
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "lec-05-q4a",
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "dd-lin-003",
+      "core": true,
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "tb-lin-002",
+      "core": true,
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "tb-lin-003",
+      "trains": "linapprox-formula"
+    },
+    {
+      "id": "db-lin-003",
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "db-lin-004",
+      "core": true,
+      "trains": "linapprox-radians"
+    },
+    {
+      "id": "cg-3d-001",
+      "core": true,
+      "trains": "linapprox-over-under"
+    },
+    {
+      "id": "tb-lin-004",
+      "trains": "linapprox-choose-base"
+    },
+    {
+      "id": "cg-3d-002",
+      "trains": "linapprox-over-under"
+    },
+    {
+      "id": "db-lin-008",
+      "challenge": true,
+      "trains": "linapprox-choose-base",
+      "note": "挑戰：$\\arctan 1.1$，要記得 $\\arctan 1=\\frac{\\pi}{4}$ 與 $(\\arctan x)'$。"
+    }
   ],
   "gaps": []
 }

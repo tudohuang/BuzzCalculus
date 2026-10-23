@@ -1,49 +1,128 @@
 {
   "id": "jacobian-geometry",
   "title": "Jacobian 的幾何意義",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["polar-double-integral", "multivariable-linearization"],
-  "next": ["jacobian-determinant"],
-  "related": ["change-of-variables", "r2-r3"],
-  "objectives": [
-    "說出一個座標變換把小正方形變成近似平行四邊形，面積放大倍率是 |行列式|。",
-    "會算線性變換把單位正方形送去的平行四邊形面積。",
-    "認出極座標的 $r$ 就是這個放大倍率的特例。"
+  "prerequisites": [
+    "polar-double-integral",
+    "multivariable-linearization"
   ],
-  "visual": "左邊是 uv 平面的方格紙，右邊是經過變換 (x, y) = T(u, v) 之後的 xy 平面，方格變成彎曲的網格。在左邊點選一個小方格，右邊對應的那一塊同步亮起，旁邊顯示兩者的面積比，並跟該點的 |J| 比較。線性變換時整張網格都是同樣大小的平行四邊形；換成極座標變換，越往外的格子越大。",
+  "next": [
+    "jacobian-determinant"
+  ],
+  "related": [
+    "change-of-variables",
+    "r2-r3"
+  ],
+  "objectives": [
+    "說出一個座標變換把小正方形變成近似平行四邊形，面積放大倍率是 ｜行列式｜",
+    "會算線性變換把單位正方形送去的平行四邊形面積",
+    "認出極座標的 $r$ 就是這個放大倍率的特例"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 先看線性變換",
       "body": [
-        "$T(u,v)=(au+bv,cu+dv)$。$uv$ 平面的單位正方形，兩條邊是 $(1,0)$ 與 $(0,1)$，被送到 $(a,c)$ 與 $(b,d)$。正方形變成以這兩個向量為邊的平行四邊形。",
-        "平行四邊形面積是 $|ad-bc|$。所以這個變換把每一塊面積都放大 $|ad-bc|$ 倍，處處一樣。"
+        "變換 $T$：把 $uv$ 平面的點送到 $xy$ 平面",
+        "單位正方形的四個角：",
+        "$(0,0)\\mapsto(0,0)$，$(1,0)\\mapsto(2,1)$",
+        "$(0,1)\\mapsto(1,3)$，$(1,1)\\mapsto(3,4)$",
+        "面積：外框減掉角落",
+        "這個 $5$ 就是行列式：",
+        "一般的 $(a,c)$、$(b,d)$ 用同樣的外框減角落，得到 $ad-bc$"
       ],
-      "tex": ["\\text{面積放大倍率}=\\left|\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}\\right|=|ad-bc|"],
-      "collapsible": false
+      "tex": [
+        "T(u,v)=(2u+v,\\ u+3v)",
+        "\\det\\begin{bmatrix}2&1\\\\1&3\\end{bmatrix}=2\\cdot3-1\\cdot1=5"
+      ]
+    },
+    {
+      "heading": "① 任何形狀都放大同樣倍數",
+      "body": [
+        "線性變換對每一個小正方形做的事都一樣",
+        "邊長 $h$ 的正方形 → 面積 $5h^2$ 的平行四邊形",
+        "任何區域切成小正方形 ⇒ 面積都放大 $5$ 倍",
+        "$T(u,v)=(au+bv,\\ cu+dv)$；為什麼是絕對值，下一節說"
+      ],
+      "tex": [
+        "\\text{面積}(T(S))=\\left|\\det\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}\\right|\\cdot\\text{面積}(S)"
+      ]
     },
     {
       "heading": "② 行列式的正負號",
       "body": [
-        "$ad-bc$ 可能是負的，例如 $(u,v)\\mapsto(v,u)$，行列式 $-1$。負號表示圖形被翻面（逆時針變順時針），面積本身不會是負的，所以放大倍率取絕對值。"
-      ],
-      "collapsible": false
+        "$T(u,v)=(u+2v,\\ 3u+v)$：",
+        "$\\det=1\\cdot1-2\\cdot3=-5$",
+        "• $\\det>0$：方向不變",
+        "• $\\det<0$：翻面（像照鏡子）",
+        "• 面積只看大小：$|{-5}|=5$",
+        "最簡單的翻面：$T(u,v)=(v,u)$，$\\det=-1$，對直線 $y=x$ 鏡射",
+        "$\\det=0$：兩條邊平行，整塊被壓扁成線段"
+      ]
     },
     {
-      "heading": "③ 非線性變換：每一點各有各的倍率",
+      "heading": "③ 非線性：每點倍率不同",
       "body": [
-        "一般的變換 $x=x(u,v)$、$y=y(u,v)$ 會把方格扭成彎的。但放大到夠小的一格，它看起來幾乎是線性的（跟〈多變數線性近似〉同一個道理）。",
-        "從 $(u,v)$ 走 $\\Delta u$，像點大約移動 $(x_u,y_u)\\,\\Delta u$；走 $\\Delta v$，大約移動 $(x_v,y_v)\\,\\Delta v$。小方格 $\\Delta u\\times\\Delta v$ 變成以這兩個向量為邊的近似平行四邊形，面積約 $|x_uy_v-x_vy_u|\\,\\Delta u\\,\\Delta v$。",
-        "這個 $x_uy_v-x_vy_u$ 叫做 Jacobian，記成 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。它隨點改變：有的地方放大，有的地方縮小。這是直觀，不是證明；誤差要比 $\\Delta u\\Delta v$ 小，需要偏導數連續，下一課〈Jacobian 行列式〉再整理。"
+        "例：$x=u^2-v^2$，$y=2uv$",
+        "但是放大來看：很小的一格，幾乎就是平行四邊形",
+        "在 $(u_0,v_0)$ 附近用線性近似（8.11）：",
+        "局部就是一個線性變換，係數是四個偏導數",
+        "小矩形 $\\Delta u\\times\\Delta v$ 的像，面積"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\Delta x&\\approx x_u\\,\\Delta u+x_v\\,\\Delta v\\\\ \\Delta y&\\approx y_u\\,\\Delta u+y_v\\,\\Delta v\\end{aligned}",
+        "\\Delta A_{xy}\\approx\\left|x_uy_v-x_vy_u\\right|\\,\\Delta u\\,\\Delta v"
+      ]
+    },
+    {
+      "heading": "③ Jacobian",
+      "body": [
+        "定義：$T(u,v)=(x(u,v),y(u,v))$ 的 Jacobian",
+        "上面的例子：",
+        "離原點越遠，倍率越大：圖上外圈的格子確實比較大",
+        "例：在 $(1,0.5)$ 倍率是 $5$；在 $(0.5,0.25)$ 只有 $1.25$",
+        "線性變換：偏導數是常數，Jacobian 就是 $ad-bc$"
+      ],
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}=x_uy_v-x_vy_u",
+        "\\Delta A_{xy}\\approx\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|\\Delta A_{uv}",
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}=4(u^2+v^2)"
+      ]
     },
     {
       "heading": "④ 回頭看極座標",
       "body": [
-        "$x=r\\cos\\theta$、$y=r\\sin\\theta$。算出 $\\frac{\\partial(x,y)}{\\partial(r,\\theta)}=r$（範例 2）。這正是〈極座標二重積分〉裡 $dA=r\\,dr\\,d\\theta$ 的那個 $r$：在半徑 $r$ 的地方，$\\Delta r\\times\\Delta\\theta$ 的小矩形被放大 $r$ 倍。"
+        "$x=r\\cos\\theta$，$y=r\\sin\\theta$：從 $r\\theta$ 平面送到 $xy$ 平面",
+        "所以 $dA=\\left|\\dfrac{\\partial(x,y)}{\\partial(r,\\theta)}\\right|dr\\,d\\theta=r\\,dr\\,d\\theta$",
+        "$r\\ge0$，所以 $|r|=r$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(r,\\theta)}=\\det\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{bmatrix}",
+        "=r\\cos^2\\theta+r\\sin^2\\theta=r"
+      ]
+    },
+    {
+      "heading": "④ 把圓拉成橢圓",
+      "body": [
+        "$x=3u$，$y=2v$：$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}3&0\\\\0&2\\end{bmatrix}=6$",
+        "單位圓盤 $u^2+v^2\\le1$ ⇒ $\\left(\\frac x3\\right)^2+\\left(\\frac y2\\right)^2\\le1$",
+        "一般：$\\dfrac{x^2}{a^2}+\\dfrac{y^2}{b^2}\\le1$ 的面積 $=\\pi ab$"
+      ],
+      "tex": [
+        "\\text{橢圓面積}=6\\cdot\\pi\\cdot1^2=6\\pi"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 線性變換：面積放大 $|ad-bc|$ 倍",
+        "• 行列式負：圖形翻面；行列式 $0$：壓扁",
+        "• 非線性：局部像線性，倍率是 Jacobian $\\left|\\dfrac{\\partial(x,y)}{\\partial(u,v)}\\right|$，每點不同",
+        "• 極座標的 Jacobian $=r$：這就是 $dA=r\\,dr\\,d\\theta$",
+        "下一課：Jacobian 行列式，練熟怎麼算"
+      ]
     }
   ],
   "workedExamples": [
@@ -88,274 +167,741 @@
   ],
   "checks": [
     {
-      "ask": "$T(u,v)=(u+v,u-v)$ 把單位正方形送去的圖形面積是？",
+      "ask": "$T(u,v)=(4u+v,\\ 2u+3v)$ 把單位正方形送到的平行四邊形，面積是？",
       "options": [
-        { "label": "$2$", "correct": true },
-        { "label": "$-2$", "why": "行列式 $1\\cdot(-1)-1\\cdot1=-2$，負號只代表翻面，面積是 $2$。" },
-        { "label": "$1$", "why": "這不只是旋轉；兩條邊變成 $(1,1)$ 與 $(1,-1)$，長度都是 $\\sqrt2$，面積 $2$。" }
+        {
+          "label": "$10$",
+          "correct": true
+        },
+        {
+          "label": "$14$",
+          "why": "是 $ad-bc$，不是 $ad+bc$"
+        },
+        {
+          "label": "$12$",
+          "why": "只算了 $4\\cdot3$，忘了減 $1\\cdot2$"
+        },
+        {
+          "label": "$5$",
+          "why": "那是兩邊向量圍成的三角形；平行四邊形不用除以 $2$"
+        }
       ]
     },
     {
-      "ask": "某點的 $\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|=3$，意思是？",
+      "ask": "橢圓 $\\dfrac{x^2}{16}+\\dfrac{y^2}{9}\\le1$ 的面積是？",
       "options": [
-        { "label": "那一點附近的小塊面積被放大約 $3$ 倍", "correct": true },
-        { "label": "整個區域的面積是 $3$", "why": "Jacobian 是逐點的倍率，會隨點改變。總面積要把它積分起來。" },
-        { "label": "那一點附近的曲線長度被放大 $3$ 倍", "why": "行列式量的是面積的倍率，不是長度。同一個變換在不同方向可以拉長不同倍數。" }
-      ]
-    },
-    {
-      "ask": "極座標在 $r=3$ 附近，一個 $\\Delta r\\times\\Delta\\theta$ 的小矩形對應的 $xy$ 面積約是？",
-      "options": [
-        { "label": "$3\\,\\Delta r\\,\\Delta\\theta$", "correct": true },
-        { "label": "$\\Delta r\\,\\Delta\\theta$", "why": "忽略了放大倍率 $r$。離原點越遠，同樣的 $\\Delta\\theta$ 張出越長的弧。" },
-        { "label": "$9\\,\\Delta r\\,\\Delta\\theta$", "why": "倍率是 $r$ 不是 $r^2$。" }
-      ]
-    },
-    {
-      "ask": "$x=2u$、$y=5v$ 的面積放大倍率是？",
-      "options": [
-        { "label": "$10$", "correct": true },
-        { "label": "$7$", "why": "兩個方向的倍率要相乘，不是相加：寬變 $2$ 倍、高變 $5$ 倍，面積變 $10$ 倍。" },
-        { "label": "$2.5$", "why": "沒有相除的道理；行列式是 $2\\cdot5-0\\cdot0=10$。" }
+        {
+          "label": "$12\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$7\\pi$",
+          "why": "倍率是 $a\\cdot b$，不是 $a+b$"
+        },
+        {
+          "label": "$144\\pi$",
+          "why": "用了 $a^2b^2=16\\cdot9$；拉長的倍數是 $4$ 和 $3$"
+        },
+        {
+          "label": "$6\\pi$",
+          "why": "那是上面 $3\\times2$ 的橢圓"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "線性變換放大面積",
+      "title": "先看線性變換",
       "beats": [
-        { "show": ["$T(u,v)=(au+bv,\\ cu+dv)$"],
-          "say": "先看最簡單的變換：x、y 都是 u、v 的一次式。",
+        {
+          "show": [
+            "變換 $T$：把 $uv$ 平面的點送到 $xy$ 平面",
+            "$T(u,v)=(2u+v,\\ u+3v)$"
+          ],
+          "say": "上一課的 r 從哪裡來？先看最簡單的情形：變換 T 把 u v 平面的點送到 x y 平面，例如 2u 加 v，逗號，u 加 3v。",
           "board": [
-            {"do":"write","line":"$T(u,v)=(au+bv,\\ cu+dv)$"}
-          ] },
-        { "show": ["$(1,0)\\to(a,c)$，$(0,1)\\to(b,d)$"],
-          "note": "單位正方形變成平行四邊形。",
-          "say": "單位正方形的兩條邊被送到這兩個向量，正方形就變成以它們為邊的平行四邊形。",
+            {
+              "do": "write",
+              "line": "變換 $T$：把 $uv$ 平面的點送到 $xy$ 平面"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle T(u,v)=(2u+v,\\ u+3v)$",
+              "on": "面的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "單位正方形的四個角：",
+            "$(0,0)\\mapsto(0,0)$，$(1,0)\\mapsto(2,1)$"
+          ],
+          "say": "看單位正方形的四個角被送到哪裡：原點不動；1 逗號 0 到 2 逗號 1；0 逗號 1 到 1 逗號 3；1 逗號 1 到 3 逗號 4。",
           "board": [
-            {"do":"write","line":"$(1,0)\\to({{ac:a,c}})$，$(0,1)\\to({{bd:b,d}})$","tint":{"ac":"blue","bd":"violet"}},
-            {"do":"focus","term":"ac","on":"這兩個向量"}
-          ] },
-        { "show": ["面積放大倍率 $|ad-bc|$"],
-          "note": "處處一樣。",
-          "say": "平行四邊形的面積是 a d 減 b c 的絕對值。每一塊面積都被放大這麼多倍，到處一樣。",
+            {
+              "do": "write",
+              "line": "單位正方形的四個角："
+            },
+            {
+              "do": "write",
+              "line": "$(0,0)\\mapsto(0,0)$，$(1,0)\\mapsto(2,1)$",
+              "on": "逗號#1"
+            },
+            {
+              "do": "write",
+              "line": "$(0,1)\\mapsto(1,3)$，$(1,1)\\mapsto(3,4)$",
+              "on": "逗號#4"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "線性變換把直線送到直線，所以正方形變成一個平行四邊形。兩條邊就是兩個向量：2 逗號 1，和 1 逗號 3。",
           "board": [
-            {"do":"write","line":"面積放大倍率 ${{det:|ad-bc|}}$","on":"平行四邊形的面積"},
-            {"do":"underline","term":"det","label":"到處一樣","on":"每一塊"}
-          ] },
-        { "show": ["長方形 $(a+b)(c+d)$ 減去四塊"],
-          "note": "高中的切補法。",
-          "say": "為什麼是這個式子？用高中的切補：先框一個大長方形，再把外面的小三角形和小長方形減掉。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgLinear\" viewBox=\"0 0 640 320\" width=\"640\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgLinear\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgLinearblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgLinearred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgLineargreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgLinearpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgLinearink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgLinear14\"><rect x=\"14\" y=\"65\" width=\"220\" height=\"220\"/></clipPath><g clip-path=\"url(#cl9a2jgLinear14)\"><line x1=\"55.9\" y1=\"65\" x2=\"55.9\" y2=\"285\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"160.7\" y1=\"65\" x2=\"160.7\" y2=\"285\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"243.1\" x2=\"234\" y2=\"243.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"138.3\" x2=\"234\" y2=\"138.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><polygon points=\"55.9,243.1 160.7,243.1 160.7,138.3 55.9,138.3\" fill=\"var(--green)\" fill-opacity=\"0.2\"/><path d=\"M55.9 243.1L160.7 243.1L160.7 138.3L55.9 138.3L55.9 243.1\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"10\" y1=\"243.1\" x2=\"246\" y2=\"243.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgLinear)\"/><line x1=\"55.9\" y1=\"289\" x2=\"55.9\" y2=\"53\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgLinear)\"/><text x=\"160.7\" y=\"265.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"48.9\" y=\"145.3\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"244\" y=\"234.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"64.9\" y=\"69\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><text x=\"108.3\" y=\"198.7\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"24\" style=\"font-family:KaTeX_Main,serif\">1</text><clipPath id=\"cl9a2jgLinear300\"><rect x=\"333\" y=\"10\" width=\"264\" height=\"300\"/></clipPath><g clip-path=\"url(#cl9a2jgLinear300)\"><line x1=\"357\" y1=\"10\" x2=\"357\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"417\" y1=\"10\" x2=\"417\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"477\" y1=\"10\" x2=\"477\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"537\" y1=\"10\" x2=\"537\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"597\" y1=\"10\" x2=\"597\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"286\" x2=\"597\" y2=\"286\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"226\" x2=\"597\" y2=\"226\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"166\" x2=\"597\" y2=\"166\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"106\" x2=\"597\" y2=\"106\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"46\" x2=\"597\" y2=\"46\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><polygon points=\"357,286 477,226 537,46 417,106\" fill=\"var(--blue)\" fill-opacity=\"0.2\"/><path d=\"M357 286L477 226L537 46L417 106L357 286\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"329\" y1=\"286\" x2=\"609\" y2=\"286\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgLinear)\"/><line x1=\"357\" y1=\"314\" x2=\"357\" y2=\"-2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgLinear)\"/><text x=\"417\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"477\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"537\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"350\" y=\"233\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"350\" y=\"173\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"350\" y=\"113\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"350\" y=\"53\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"607\" y=\"277\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"366\" y=\"14\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"477\" cy=\"226\" r=\"5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"537\" cy=\"46\" r=\"5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"417\" cy=\"106\" r=\"5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"487\" y=\"246\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(2, 1)</text><text x=\"407\" y=\"98\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(1, 3)</text><text x=\"547\" y=\"50\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(3, 4)</text><text x=\"447\" y=\"174\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\">5</text><line x1=\"238\" y1=\"165\" x2=\"300\" y2=\"165\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jgLinear)\"/><text x=\"269\" y=\"153\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"20\" y=\"30\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:inherit\">單位正方形</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積：外框減掉角落",
+            "圖"
+          ],
+          "say": "這個平行四邊形面積多少？用外框減掉角落：外框 3 乘 4 是 12，四個三角形和兩個小長方形加起來是 7，剩下 5。",
           "board": [
-            {"do":"write","line":"框住：寬 $a+b$、高 $c+d$"},
-            {"do":"write","line":"減去兩個三角形、兩個長方形","on":"減掉"}
-          ] },
-        { "show": ["$(a+b)(c+d)-ac-bd-2bc=ad-bc$"],
-          "note": "假設 $a,b,c,d>0$ 的圖。",
-          "say": "長方形面積展開後，減掉兩個三角形的 a c 與 b d，再減兩個長方形的 b c，剩下 a d 減 b c。",
+            {
+              "do": "write",
+              "line": "面積：外框減掉角落"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgBox\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgBox\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgBoxblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgBoxred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgBoxgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgBoxpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgBoxink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgBox30\"><rect x=\"94.9\" y=\"16\" width=\"436.2\" height=\"274\"/></clipPath><g clip-path=\"url(#cl9a2jgBox30)\"><polygon points=\"117.3,267.6 229.1,267.6 229.1,211.7\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"285,44 173.2,44 173.2,99.9\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"117.3,267.6 173.2,99.9 117.3,99.9\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"285,44 229.1,211.7 285,211.7\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"229.1,267.6 285,267.6 285,211.7 229.1,211.7\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"117.3,99.9 173.2,99.9 173.2,44 117.3,44\" fill=\"var(--muted)\" fill-opacity=\"0.2\"/><polygon points=\"117.3,267.6 229.1,211.7 285,44 173.2,99.9\" fill=\"var(--blue)\" fill-opacity=\"0.2\"/><path d=\"M117.3 267.6L285 267.6L285 44L117.3 44L117.3 267.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/><path d=\"M117.3 267.6L229.1 267.6L229.1 211.7L117.3 267.6\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M285 44L173.2 44L173.2 99.9L285 44\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M117.3 267.6L173.2 99.9L117.3 99.9L117.3 267.6\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M285 44L229.1 211.7L285 211.7L285 44\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M229.1 267.6L285 267.6L285 211.7L229.1 211.7L229.1 267.6\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M117.3 99.9L173.2 99.9L173.2 44L117.3 44L117.3 99.9\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M117.3 267.6L229.1 211.7L285 44L173.2 99.9L117.3 267.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"90.9\" y1=\"267.6\" x2=\"543.1\" y2=\"267.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgBox)\"/><line x1=\"117.3\" y1=\"294\" x2=\"117.3\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgBox)\"/><text x=\"173.2\" y=\"289.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"229.1\" y=\"289.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"285\" y=\"289.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"110.3\" y=\"218.7\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"110.3\" y=\"162.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"110.3\" y=\"106.9\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"110.3\" y=\"51\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"541.1\" y=\"258.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"126.3\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"201.2\" y=\"163.8\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Main,serif\">5</text><text x=\"606\" y=\"70\" text-anchor=\"end\" fill=\"var(--ink)\" font-size=\"24\" style=\"font-family:inherit\">外框 3 × 4 = 12</text><text x=\"606\" y=\"108\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">三角形 1 + 1 + 1.5 + 1.5</text><text x=\"606\" y=\"142\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">長方形 1 + 1</text><text x=\"606\" y=\"190\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:inherit\">12 − 7 = 5</text></svg>",
+              "on": "12"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個 $5$ 就是行列式：",
+            "$\\det\\begin{bmatrix}2&1\\\\1&3\\end{bmatrix}=2\\cdot3-1\\cdot1=5$"
+          ],
+          "say": "這個 5 正好是係數矩陣的行列式：2 乘 3 減 1 乘 1。",
           "board": [
-            {"do":"write","line":"${{e:(a+b)(c+d)-ac-bd-2bc}}$"},
-            {"do":"transform","line":"$={{r:ad-bc}}$","on":"剩下"},
-            {"do":"box","term":"r","color":"green","on":"a d 減 b c"}
-          ] },
-        { "show": ["$T(u,v)=(2u+v,\\ u+3v)$"],
-          "say": "試一個：a 是二、b 是一、c 是一、d 是三。",
+            {
+              "do": "write",
+              "line": "這個 $5$ 就是行列式："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\det{\\begin{bmatrix}2&1\\\\1&3\\end{bmatrix}}=2\\cdot3-1\\cdot1=5}}$",
+              "color": "red",
+              "on": "是係"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "1。"
+            },
+            {
+              "do": "write",
+              "line": "　一般的 $(a,c)$、$(b,d)$ 用同樣的外框減角落，得到 $ad-bc$",
+              "color": "violet",
+              "at": 0.75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "任何形狀都放大同樣倍數",
+      "beats": [
+        {
+          "show": [
+            "線性變換對每一個小正方形做的事都一樣",
+            "邊長 $h$ 的正方形 → 面積 $5h^2$ 的平行四邊形"
+          ],
+          "say": "線性變換在每個地方做的事都一樣：任何一個邊長 h 的小正方形，都被送到面積 5 h 平方的平行四邊形。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$T(u,v)=(2u+v,\\ u+3v)$","on":"試一個"},
-            {"do":"plot","graph":{"window":[-0.6,4.6,-0.4,4.2],"equal":true,"ticks":false,"fills":[{"pts":[[0,0],[1,0],[1,1],[0,1]],"color":"muted"},{"pts":[[0,0],[2,1],[3,4],[1,3]],"color":"blue"}],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,3],"color":"violet"}],"dashed":[[[2,1],[3,4]],[[1,3],[3,4]]]},"on":"a 是二"}
-          ] }
+            {
+              "do": "write",
+              "line": "線性變換對每一個小正方形做的事都一樣"
+            },
+            {
+              "do": "write",
+              "line": "邊長 $h$ 的正方形 → 面積 $5h^2$ 的平行四邊形",
+              "on": "的小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任何區域切成小正方形 ⇒ 面積都放大 $5$ 倍",
+            "$\\text{面積}(T(S))=\\left|\\det\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}\\right|\\cdot\\text{面積}(S)$"
+          ],
+          "say": "任何區域都可以切成很多小正方形，每一塊都放大 5 倍，所以整塊也放大 5 倍。一般的線性變換，面積放大的倍率是行列式的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任何區域切成小正方形 ⇒ 面積都放大 $5$ 倍"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\text{面積}(T(S))=\\left|\\det{\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}}\\right|\\cdot\\text{面積}(S)}}$",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "也放"
+            },
+            {
+              "do": "write",
+              "line": "　$T(u,v)=(au+bv,\\ cu+dv)$；為什麼是絕對值，下一節說",
+              "color": "violet",
+              "on": "面積"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "行列式的正負號",
+      "beats": [
+        {
+          "show": [
+            "$T(u,v)=(u+2v,\\ 3u+v)$："
+          ],
+          "say": "行列式可以是負的。例如 u 加 2v，逗號，3u 加 v：行列式是 1 乘 1 減 2 乘 3，負 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$T(u,v)=(u+2v,\\ 3u+v)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\det=1\\cdot1-2\\cdot3=-5$",
+              "on": "行列#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看兩條邊的方向。左邊，從紅色的邊轉到藍色的邊是逆時針；送過去以後，從紅色轉到藍色變成順時針。圖形被翻面了，像照鏡子。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgFlip\" viewBox=\"0 0 640 350\" width=\"640\" height=\"350\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgFlip\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgFlipblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgFlipred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgFlipgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgFlippencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgFlipink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgFlip14\"><rect x=\"14\" y=\"65\" width=\"220\" height=\"220\"/></clipPath><g clip-path=\"url(#cl9a2jgFlip14)\"><line x1=\"55.9\" y1=\"65\" x2=\"55.9\" y2=\"285\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"160.7\" y1=\"65\" x2=\"160.7\" y2=\"285\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"243.1\" x2=\"234\" y2=\"243.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"138.3\" x2=\"234\" y2=\"138.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><polygon points=\"55.9,243.1 160.7,243.1 160.7,138.3 55.9,138.3\" fill=\"var(--green)\" fill-opacity=\"0.1\"/></g><line x1=\"10\" y1=\"243.1\" x2=\"246\" y2=\"243.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgFlip)\"/><line x1=\"55.9\" y1=\"289\" x2=\"55.9\" y2=\"53\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgFlip)\"/><text x=\"244\" y=\"234.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"64.9\" y=\"69\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><line x1=\"55.9\" y1=\"243.1\" x2=\"160.7\" y2=\"243.1\" stroke=\"var(--red)\" stroke-width=\"4\" marker-end=\"url(#ah9a2jgFlipred)\"/><line x1=\"55.9\" y1=\"243.1\" x2=\"55.9\" y2=\"138.3\" stroke=\"var(--blue)\" stroke-width=\"4\" marker-end=\"url(#ah9a2jgFlipblue)\"/><text x=\"113.5\" y=\"273.1\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">①</text><text x=\"35.9\" y=\"185.5\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">②</text><clipPath id=\"cl9a2jgFlip300\"><rect x=\"333\" y=\"10\" width=\"264\" height=\"300\"/></clipPath><g clip-path=\"url(#cl9a2jgFlip300)\"><line x1=\"357\" y1=\"10\" x2=\"357\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"417\" y1=\"10\" x2=\"417\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"477\" y1=\"10\" x2=\"477\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"537\" y1=\"10\" x2=\"537\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"597\" y1=\"10\" x2=\"597\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"286\" x2=\"597\" y2=\"286\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"226\" x2=\"597\" y2=\"226\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"166\" x2=\"597\" y2=\"166\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"106\" x2=\"597\" y2=\"106\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"333\" y1=\"46\" x2=\"597\" y2=\"46\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><polygon points=\"357,286 417,106 537,46 477,226\" fill=\"var(--green)\" fill-opacity=\"0.1\"/></g><line x1=\"329\" y1=\"286\" x2=\"609\" y2=\"286\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgFlip)\"/><line x1=\"357\" y1=\"314\" x2=\"357\" y2=\"-2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgFlip)\"/><text x=\"417\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"477\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"537\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"350\" y=\"233\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"350\" y=\"173\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"350\" y=\"113\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"350\" y=\"53\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"607\" y=\"277\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"366\" y=\"14\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"357\" y1=\"286\" x2=\"417\" y2=\"106\" stroke=\"var(--red)\" stroke-width=\"4\" marker-end=\"url(#ah9a2jgFlipred)\"/><line x1=\"357\" y1=\"286\" x2=\"477\" y2=\"226\" stroke=\"var(--blue)\" stroke-width=\"4\" marker-end=\"url(#ah9a2jgFlipblue)\"/><text x=\"403\" y=\"102\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">①</text><text x=\"493\" y=\"240\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">②</text><line x1=\"238\" y1=\"165\" x2=\"300\" y2=\"165\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jgFlip)\"/><text x=\"269\" y=\"153\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"20\" y=\"30\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:inherit\">① 轉到 ②：逆時針</text><text x=\"630\" y=\"342\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">① 轉到 ②：順時針</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\det>0$：方向不變",
+            "• $\\det<0$：翻面（像照鏡子）"
+          ],
+          "say": "所以正負號說的是方向：正的，方向不變；負的，圖形翻面。面積只看大小，負 5 的面積還是 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\det>0$：方向不變"
+            },
+            {
+              "do": "write",
+              "line": "• $\\det<0$：翻面（像照鏡子）",
+              "on": "正的"
+            },
+            {
+              "do": "write",
+              "line": "• 面積只看大小：$|{-5}|=5$",
+              "color": "gold",
+              "on": "形翻"
+            },
+            {
+              "do": "write",
+              "line": "　最簡單的翻面：$T(u,v)=(v,u)$，$\\det=-1$，對直線 $y=x$ 鏡射",
+              "color": "violet",
+              "on": "的面"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "單位正方形的像面積是？",
+        "ask": "$T(u,v)=(u+2v,\\ 2u+4v)$，單位正方形會變成什麼？",
         "options": [
           {
-            "label": "$5$",
+            "label": "面積 $8$ 的平行四邊形",
+            "why": "那是 $ad+bc=4+4$；要相減"
+          },
+          {
+            "label": "面積 $4$ 的平行四邊形",
+            "why": "只算了 $ad=1\\cdot4$"
+          },
+          {
+            "label": "一條線段，面積 $0$",
             "correct": true
-          },
-          {
-            "label": "$7$",
-            "why": "交叉項要相減：$2\\cdot3-1\\cdot1=5$，不是相加。"
-          },
-          {
-            "label": "$6$",
-            "why": "只乘了主對角 $2\\cdot3$，還要減掉反對角 $1\\cdot1$。"
           }
         ]
       }
     },
     {
-      "title": "正負號：翻面",
+      "title": "行列式的正負號",
       "beats": [
-        { "show": ["$(u,v)\\mapsto(v,u)$：行列式 $-1$"],
-          "say": "a d 減 b c 可能是負的。例如把 u、v 對調，行列式是負一。",
+        {
+          "show": [
+            "$\\det=0$：兩條邊平行，整塊被壓扁成線段"
+          ],
+          "say": "行列式是 0，表示兩條邊的向量平行，正方形被壓扁成一條線段，面積是 0。這種變換不能拿來換變數。",
           "board": [
-            {"do":"write","line":"$ad-bc$ 可能是負的"},
-            {"do":"write","line":"$(u,v)\\mapsto(v,u)$：行列式 $-1$","on":"對調"}
-          ] },
-        { "show": ["對調 = 沿斜線翻過去"],
-          "say": "畫出來看：對調就是沿著斜線翻過去，藍色向量翻成紫色，順逆時針的方向就反過來了。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.5,3,-0.5,3],"equal":true,"ticks":false,"dashed":[[[0,0],[3,3]]],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,2],"color":"violet"}]}}
-          ] },
-        { "show": ["負號 = 翻面"],
-          "note": "逆時針變順時針；面積取絕對值。",
-          "say": "負號的意思是圖形被翻面，逆時針變成順時針。面積本身不會是負的，所以倍率取絕對值。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"負號 ＝ 翻面","on":"負號"},
-            {"do":"write","line":"逆時針 → 順時針","on":"逆時針"},
-            {"do":"write","line":"面積放大倍率 ${{a:|ad-bc|}}$","on":"倍率"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "$\\det=0$：兩條邊平行，整塊被壓扁成線段"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "彎的變換",
+      "title": "非線性：每點倍率不同",
       "beats": [
-        { "show": ["$x=x(u,v)$、$y=y(u,v)$"],
-          "note": "方格被扭成彎的。",
-          "say": "一般的變換會把方格扭彎。但放大到夠小的一格，它看起來幾乎是線性的。",
+        {
+          "show": [
+            "例：$x=u^2-v^2$，$y=2uv$"
+          ],
+          "say": "線性變換到處都放大同樣的倍數。非線性的變換呢？例如 x 等於 u 平方減 v 平方，y 等於 2uv。",
           "board": [
-            {"do":"write","line":"$x=x(u,v)$、$y=y(u,v)$"},
-            {"do":"write","line":"夠小的一格 ≈ 線性","on":"夠小的一格"}
-          ] },
-        { "show": ["偏導數：只動 $u$，$v$ 當常數"],
-          "note": "例：$x=u^2v$，$x_u=2uv$。",
-          "say": "偏導數就是只讓一個變數動，另一個當成常數。x 下標 u，是把 v 固定，只對 u 微分。",
+            {
+              "do": "write",
+              "line": "例：$x=u^2-v^2$，$y=2uv$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "左邊的直線格子，送過去變成彎曲的格子。外面的格子比裡面的大，每一個地方的放大倍率都不一樣。",
           "board": [
-            {"do":"write","line":"$x_u$：${{k:v}}$ 當常數，只對 $u$ 微分","tint":{"k":"blue"}},
-            {"do":"focus","term":"k","color":"blue","on":"常數"}
-          ] },
-        { "show": ["走 $\\Delta u$：移動 $(x_u,y_u)\\Delta u$","走 $\\Delta v$：移動 $(x_v,y_v)\\Delta v$"],
-          "say": "從一點往 u 方向走一小步，像點大約沿偏導數向量移動；往 v 方向也一樣。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgCurved\" viewBox=\"0 0 640 362\" width=\"640\" height=\"362\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgCurved\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgCurvedblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgCurvedred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgCurvedgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgCurvedpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgCurvedink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgCurved14\"><rect x=\"14\" y=\"98.3\" width=\"230\" height=\"163.4\"/></clipPath><g clip-path=\"url(#cl9a2jgCurved14)\"><polygon points=\"153.2,183 183.5,183 183.5,152.8 153.2,152.8\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><path d=\"M92.7 213.3L92.7 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M122.9 213.3L122.9 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M153.2 213.3L153.2 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M183.5 213.3L183.5 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M213.7 213.3L213.7 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M92.7 213.3L213.7 213.3\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M92.7 183L213.7 183\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M92.7 152.8L213.7 152.8\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M92.7 122.5L213.7 122.5\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M153.2 183L183.5 183L183.5 152.8L153.2 152.8L153.2 183\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"10\" y1=\"243.6\" x2=\"256\" y2=\"243.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgCurved)\"/><line x1=\"32.2\" y1=\"265.7\" x2=\"32.2\" y2=\"86.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgCurved)\"/><text x=\"153.2\" y=\"265.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"254\" y=\"234.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"41.2\" y=\"102.3\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><clipPath id=\"cl9a2jgCurved300\"><rect x=\"307.9\" y=\"10\" width=\"319.1\" height=\"310\"/></clipPath><g clip-path=\"url(#cl9a2jgCurved300)\"><polygon points=\"467.5,210.6 468.6,210 469.8,209.4 471,208.9 472.1,208.3 473.3,207.7 474.5,207.2 475.7,206.6 476.8,206 478,205.5 479.3,204.9 480.5,204.3 481.7,203.8 482.9,203.2 484.2,202.6 485.4,202 486.6,201.5 487.9,200.9 489.2,200.3 490.4,199.8 491.7,199.2 493,198.6 494.3,198.1 495.6,197.5 496.9,196.9 498.2,196.3 499.5,195.8 500.9,195.2 502.2,194.6 503.5,194.1 504.9,193.5 506.3,192.9 507.6,192.4 509,191.8 510.4,191.2 511.8,190.6 513.1,190.1 514.5,189.5 516,188.9 517.4,188.4 518.8,187.8 518.8,187.8 518.2,186.4 517.6,184.9 517,183.5 516.5,182.1 515.8,180.7 515.2,179.2 514.6,177.8 514,176.4 513.4,175 512.7,173.5 512.1,172.1 511.4,170.7 510.8,169.3 510.1,167.8 509.4,166.4 508.8,165 508.1,163.6 507.4,162.2 506.7,160.7 506,159.3 505.2,157.9 504.5,156.5 503.8,155 503.1,153.6 502.3,152.2 501.6,150.8 500.8,149.3 500,147.9 499.3,146.5 498.5,145.1 497.7,143.6 496.9,142.2 496.1,140.8 495.3,139.4 494.5,137.9 493.7,136.5 492.8,135.1 492,133.7 491.1,132.2 490.3,130.8 490.3,130.8 488.9,131.7 487.5,132.5 486.1,133.4 484.7,134.2 483.3,135.1 481.9,135.9 480.5,136.8 479.1,137.6 477.8,138.5 476.4,139.4 475.1,140.2 473.7,141.1 472.4,141.9 471,142.8 469.7,143.6 468.4,144.5 467.1,145.3 465.8,146.2 464.5,147 463.2,147.9 461.9,148.8 460.7,149.6 459.4,150.5 458.2,151.3 456.9,152.2 455.7,153 454.4,153.9 453.2,154.7 452,155.6 450.8,156.5 449.6,157.3 448.4,158.2 447.2,159 446,159.9 444.8,160.7 443.6,161.6 442.5,162.4 441.3,163.3 440.2,164.1 439,165 439,165 439.9,166.1 440.7,167.3 441.5,168.4 442.4,169.6 443.2,170.7 444,171.8 444.8,173 445.6,174.1 446.4,175.3 447.2,176.4 448,177.5 448.8,178.7 449.5,179.8 450.3,181 451,182.1 451.8,183.2 452.5,184.4 453.2,185.5 454,186.7 454.7,187.8 455.4,188.9 456.1,190.1 456.8,191.2 457.5,192.4 458.2,193.5 458.8,194.6 459.5,195.8 460.1,196.9 460.8,198.1 461.4,199.2 462.1,200.3 462.7,201.5 463.3,202.6 464,203.8 464.6,204.9 465.2,206 465.8,207.2 466.3,208.3 466.9,209.4 467.5,210.6\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><path d=\"M416.2 279L415.6 277.8L415 276.7L414.4 275.6L413.7 274.4L413 273.3L412.3 272.1L411.5 271L410.7 269.9L409.9 268.7L409.1 267.6L408.2 266.4L407.3 265.3L406.4 264.2L405.4 263L404.5 261.9L403.4 260.7L402.4 259.6L401.3 258.5L400.2 257.3L399.1 256.2L398 255L396.8 253.9L395.6 252.8L394.3 251.6L393.1 250.5L391.8 249.3L390.4 248.2L389.1 247.1L387.7 245.9L386.3 244.8L384.9 243.6L383.4 242.5L381.9 241.4L380.4 240.2L378.8 239.1L377.2 237.9L375.6 236.8L374 235.7L372.3 234.5L370.6 233.4L368.9 232.2L367.1 231.1L365.4 230L363.6 228.8L361.7 227.7L359.9 226.5L358 225.4L356 224.3L354.1 223.1L352.1 222L350.1 220.8L348.1 219.7L346 218.6L343.9 217.4L341.8 216.3L339.6 215.1L337.4 214L335.2 212.9L333 211.7L330.7 210.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M444.7 267.6L444.1 265.9L443.5 264.2L442.9 262.4L442.2 260.7L441.5 259L440.8 257.3L440 255.6L439.2 253.9L438.4 252.2L437.6 250.5L436.7 248.8L435.8 247.1L434.9 245.3L433.9 243.6L433 241.9L431.9 240.2L430.9 238.5L429.8 236.8L428.7 235.1L427.6 233.4L426.5 231.7L425.3 230L424.1 228.3L422.8 226.5L421.6 224.8L420.3 223.1L418.9 221.4L417.6 219.7L416.2 218L414.8 216.3L413.3 214.6L411.9 212.9L410.4 211.2L408.9 209.4L407.3 207.7L405.7 206L404.1 204.3L402.5 202.6L400.8 200.9L399.1 199.2L397.4 197.5L395.6 195.8L393.9 194.1L392.1 192.4L390.2 190.6L388.3 188.9L386.5 187.2L384.5 185.5L382.6 183.8L380.6 182.1L378.6 180.4L376.6 178.7L374.5 177L372.4 175.3L370.3 173.5L368.1 171.8L365.9 170.1L363.7 168.4L361.5 166.7L359.2 165\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M484.6 256.2L484 253.9L483.4 251.6L482.8 249.3L482.1 247.1L481.4 244.8L480.7 242.5L479.9 240.2L479.1 237.9L478.3 235.7L477.5 233.4L476.6 231.1L475.7 228.8L474.8 226.5L473.8 224.3L472.8 222L471.8 219.7L470.8 217.4L469.7 215.1L468.6 212.9L467.5 210.6L466.3 208.3L465.2 206L464 203.8L462.7 201.5L461.4 199.2L460.1 196.9L458.8 194.6L457.5 192.4L456.1 190.1L454.7 187.8L453.2 185.5L451.8 183.2L450.3 181L448.8 178.7L447.2 176.4L445.6 174.1L444 171.8L442.4 169.6L440.7 167.3L439 165L437.3 162.7L435.5 160.4L433.8 158.2L431.9 155.9L430.1 153.6L428.2 151.3L426.3 149L424.4 146.8L422.5 144.5L420.5 142.2L418.5 139.9L416.4 137.6L414.4 135.4L412.3 133.1L410.2 130.8L408 128.5L405.8 126.3L403.6 124L401.4 121.7L399.1 119.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M535.9 244.8L535.3 241.9L534.7 239.1L534 236.2L533.4 233.4L532.7 230.5L532 227.7L531.2 224.8L530.4 222L529.6 219.1L528.8 216.3L527.9 213.4L527 210.6L526.1 207.7L525.1 204.9L524.1 202L523.1 199.2L522.1 196.3L521 193.5L519.9 190.6L518.8 187.8L517.6 184.9L516.5 182.1L515.2 179.2L514 176.4L512.7 173.5L511.4 170.7L510.1 167.8L508.8 165L507.4 162.2L506 159.3L504.5 156.5L503.1 153.6L501.6 150.8L500 147.9L498.5 145.1L496.9 142.2L495.3 139.4L493.7 136.5L492 133.7L490.3 130.8L488.6 128L486.8 125.1L485 122.3L483.2 119.4L481.4 116.6L479.5 113.7L477.6 110.9L475.7 108L473.8 105.2L471.8 102.3L469.8 99.5L467.7 96.6L465.7 93.8L463.6 90.9L461.4 88.1L459.3 85.2L457.1 82.4L454.9 79.5L452.7 76.7L450.4 73.8\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M598.6 233.4L598 230L597.4 226.5L596.7 223.1L596.1 219.7L595.4 216.3L594.6 212.9L593.9 209.4L593.1 206L592.3 202.6L591.4 199.2L590.6 195.8L589.7 192.4L588.8 188.9L587.8 185.5L586.8 182.1L585.8 178.7L584.8 175.3L583.7 171.8L582.6 168.4L581.5 165L580.3 161.6L579.1 158.2L577.9 154.7L576.7 151.3L575.4 147.9L574.1 144.5L572.8 141.1L571.4 137.6L570.1 134.2L568.6 130.8L567.2 127.4L565.7 124L564.2 120.6L562.7 117.1L561.2 113.7L559.6 110.3L558 106.9L556.3 103.5L554.7 100L553 96.6L551.3 93.2L549.5 89.8L547.7 86.4L545.9 82.9L544.1 79.5L542.2 76.1L540.3 72.7L538.4 69.3L536.4 65.8L534.5 62.4L532.4 59L530.4 55.6L528.3 52.2L526.3 48.7L524.1 45.3L522 41.9L519.8 38.5L517.6 35.1L515.4 31.7L513.1 28.2\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M416.2 279L417.8 278.2L419.4 277.5L421 276.7L422.7 275.9L424.4 275.2L426.2 274.4L428.1 273.7L430 272.9L431.9 272.1L433.9 271.4L436 270.6L438.1 269.9L440.2 269.1L442.5 268.3L444.7 267.6L447 266.8L449.4 266.1L451.8 265.3L454.2 264.5L456.7 263.8L459.3 263L461.9 262.3L464.6 261.5L467.3 260.7L470 260L472.8 259.2L475.7 258.5L478.6 257.7L481.6 256.9L484.6 256.2L487.7 255.4L490.8 254.7L493.9 253.9L497.2 253.1L500.4 252.4L503.7 251.6L507.1 250.9L510.5 250.1L514 249.3L517.5 248.6L521.1 247.8L524.7 247.1L528.4 246.3L532.1 245.5L535.9 244.8L539.7 244L543.6 243.3L547.5 242.5L551.5 241.7L555.5 241L559.6 240.2L563.7 239.5L567.9 238.7L572.1 237.9L576.4 237.2L580.7 236.4L585.1 235.7L589.5 234.9L594 234.1L598.6 233.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M399.1 256.2L400.7 254.7L402.3 253.1L403.9 251.6L405.6 250.1L407.3 248.6L409.1 247.1L411 245.5L412.9 244L414.8 242.5L416.8 241L418.9 239.5L421 237.9L423.2 236.4L425.4 234.9L427.6 233.4L429.9 231.9L432.3 230.3L434.7 228.8L437.1 227.3L439.6 225.8L442.2 224.3L444.8 222.7L447.5 221.2L450.2 219.7L452.9 218.2L455.7 216.7L458.6 215.1L461.5 213.6L464.5 212.1L467.5 210.6L470.6 209.1L473.7 207.5L476.8 206L480.1 204.5L483.3 203L486.6 201.5L490 200L493.4 198.4L496.9 196.9L500.4 195.4L504 193.9L507.6 192.4L511.3 190.8L515 189.3L518.8 187.8L522.6 186.3L526.5 184.8L530.4 183.2L534.4 181.7L538.4 180.2L542.5 178.7L546.6 177.2L550.8 175.6L555 174.1L559.3 172.6L563.6 171.1L568 169.6L572.5 168L576.9 166.5L581.5 165\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M370.6 233.4L372.2 231.1L373.8 228.8L375.4 226.5L377.1 224.3L378.9 222L380.7 219.7L382.5 217.4L384.4 215.1L386.4 212.9L388.4 210.6L390.4 208.3L392.5 206L394.7 203.8L396.9 201.5L399.1 199.2L401.4 196.9L403.8 194.6L406.2 192.4L408.6 190.1L411.1 187.8L413.7 185.5L416.3 183.2L419 181L421.7 178.7L424.4 176.4L427.3 174.1L430.1 171.8L433 169.6L436 167.3L439 165L442.1 162.7L445.2 160.4L448.4 158.2L451.6 155.9L454.8 153.6L458.2 151.3L461.5 149L464.9 146.8L468.4 144.5L471.9 142.2L475.5 139.9L479.1 137.6L482.8 135.4L486.5 133.1L490.3 130.8L494.1 128.5L498 126.3L501.9 124L505.9 121.7L509.9 119.4L514 117.1L518.1 114.9L522.3 112.6L526.5 110.3L530.8 108L535.1 105.7L539.5 103.5L544 101.2L548.4 98.9L553 96.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M330.7 210.6L332.3 207.5L333.9 204.5L335.5 201.5L337.2 198.4L339 195.4L340.8 192.4L342.6 189.3L344.5 186.3L346.5 183.2L348.5 180.2L350.5 177.2L352.6 174.1L354.8 171.1L357 168L359.2 165L361.5 162L363.9 158.9L366.3 155.9L368.8 152.8L371.3 149.8L373.8 146.8L376.4 143.7L379.1 140.7L381.8 137.6L384.6 134.6L387.4 131.6L390.2 128.5L393.1 125.5L396.1 122.5L399.1 119.4L402.2 116.4L405.3 113.3L408.5 110.3L411.7 107.3L414.9 104.2L418.3 101.2L421.6 98.1L425.1 95.1L428.5 92.1L432 89L435.6 86L439.2 82.9L442.9 79.9L446.6 76.9L450.4 73.8L454.2 70.8L458.1 67.7L462 64.7L466 61.7L470 58.6L474.1 55.6L478.2 52.5L482.4 49.5L486.6 46.5L490.9 43.4L495.3 40.4L499.6 37.4L504.1 34.3L508.6 31.3L513.1 28.2\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M467.5 210.6L468.6 210L469.8 209.4L471 208.9L472.1 208.3L473.3 207.7L474.5 207.2L475.7 206.6L476.8 206L478 205.5L479.3 204.9L480.5 204.3L481.7 203.8L482.9 203.2L484.2 202.6L485.4 202L486.6 201.5L487.9 200.9L489.2 200.3L490.4 199.8L491.7 199.2L493 198.6L494.3 198.1L495.6 197.5L496.9 196.9L498.2 196.3L499.5 195.8L500.9 195.2L502.2 194.6L503.5 194.1L504.9 193.5L506.3 192.9L507.6 192.4L509 191.8L510.4 191.2L511.8 190.6L513.1 190.1L514.5 189.5L516 188.9L517.4 188.4L518.8 187.8L518.8 187.8L518.2 186.4L517.6 184.9L517 183.5L516.5 182.1L515.8 180.7L515.2 179.2L514.6 177.8L514 176.4L513.4 175L512.7 173.5L512.1 172.1L511.4 170.7L510.8 169.3L510.1 167.8L509.4 166.4L508.8 165L508.1 163.6L507.4 162.2L506.7 160.7L506 159.3L505.2 157.9L504.5 156.5L503.8 155L503.1 153.6L502.3 152.2L501.6 150.8L500.8 149.3L500 147.9L499.3 146.5L498.5 145.1L497.7 143.6L496.9 142.2L496.1 140.8L495.3 139.4L494.5 137.9L493.7 136.5L492.8 135.1L492 133.7L491.1 132.2L490.3 130.8L490.3 130.8L488.9 131.7L487.5 132.5L486.1 133.4L484.7 134.2L483.3 135.1L481.9 135.9L480.5 136.8L479.1 137.6L477.8 138.5L476.4 139.4L475.1 140.2L473.7 141.1L472.4 141.9L471 142.8L469.7 143.6L468.4 144.5L467.1 145.3L465.8 146.2L464.5 147L463.2 147.9L461.9 148.8L460.7 149.6L459.4 150.5L458.2 151.3L456.9 152.2L455.7 153L454.4 153.9L453.2 154.7L452 155.6L450.8 156.5L449.6 157.3L448.4 158.2L447.2 159L446 159.9L444.8 160.7L443.6 161.6L442.5 162.4L441.3 163.3L440.2 164.1L439 165L439 165L439.9 166.1L440.7 167.3L441.5 168.4L442.4 169.6L443.2 170.7L444 171.8L444.8 173L445.6 174.1L446.4 175.3L447.2 176.4L448 177.5L448.8 178.7L449.5 179.8L450.3 181L451 182.1L451.8 183.2L452.5 184.4L453.2 185.5L454 186.7L454.7 187.8L455.4 188.9L456.1 190.1L456.8 191.2L457.5 192.4L458.2 193.5L458.8 194.6L459.5 195.8L460.1 196.9L460.8 198.1L461.4 199.2L462.1 200.3L462.7 201.5L463.3 202.6L464 203.8L464.6 204.9L465.2 206L465.8 207.2L466.3 208.3L466.9 209.4L467.5 210.6L467.5 210.6\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M467.5 210.6L513.1 187.8L490.3 142.2L444.7 165L467.5 210.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"6 5\"/></g><line x1=\"303.9\" y1=\"301.8\" x2=\"639.1\" y2=\"301.8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgCurved)\"/><line x1=\"399.1\" y1=\"324\" x2=\"399.1\" y2=\"-2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgCurved)\"/><text x=\"490.3\" y=\"323.8\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"581.5\" y=\"323.8\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"392.1\" y=\"217.6\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"392.1\" y=\"126.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"392.1\" y=\"35.2\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"637.1\" y=\"292.8\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"408.1\" y=\"14\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"246\" y1=\"170\" x2=\"300\" y2=\"170\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jgCurved)\"/><text x=\"273\" y=\"158\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"20\" y=\"30\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">直線格子 → 彎曲格子</text><text x=\"630\" y=\"354\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">藍虛線：線性近似的平行四邊形</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但是放大來看：很小的一格，幾乎就是平行四邊形"
+          ],
+          "say": "但是把一小格放大來看，彎曲的邊幾乎是直的。紅色那格，跟藍色虛線的平行四邊形差不多。",
           "board": [
-            {"do":"write","line":"$\\Delta u$：$({{a:x_u,y_u}})\\Delta u$","tint":{"a":"blue"}},
-            {"do":"write","line":"$\\Delta v$：$({{b:x_v,y_v}})\\Delta v$","tint":{"b":"violet"},"on":"往 v"}
-          ] },
-        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$"],
-          "note": "小方格面積約放大 $|x_uy_v-x_vy_u|$ 倍。",
-          "say": "小方格變成以這兩個向量為邊的近似平行四邊形。倍率就是這個行列式，叫 Jacobian。",
+            {
+              "do": "write",
+              "line": "但是放大來看：很小的一格，幾乎就是平行四邊形"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $(u_0,v_0)$ 附近用線性近似（8.11）：",
+            "$\\begin{aligned}\\Delta x&\\approx x_u\\,\\Delta u+x_v\\,\\Delta v\\\\ \\Delta y&\\approx y_u\\,\\Delta u+y_v\\,\\Delta v\\end{aligned}$"
+          ],
+          "say": "為什麼？用線性近似：在一個點附近，x 的變化大約是 x 對 u 的偏導數乘德爾塔 u，加上 x 對 v 的偏導數乘德爾塔 v。y 也一樣。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"以 $({{a:x_u,y_u}})$、$({{b:x_v,y_v}})$ 為邊","tint":{"a":"blue","b":"violet"},"on":"小方格"},
-            {"do":"write","line":"$\\frac{\\partial(x,y)}{\\partial(u,v)}={{d:x_uy_v-x_vy_u}}$","on":"倍率"},
-            {"do":"box","term":"d","color":"green","on":"行列式"}
-          ] },
-        { "show": ["倍率隨點改變"],
-          "note": "直觀，不是證明。",
-          "say": "跟線性變換不同，它每一點各有各的倍率：有的地方放大，有的地方縮小。",
+            {
+              "do": "write",
+              "line": "在 $(u_0,v_0)$ 附近用線性近似（8.11）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\Delta x&\\approx x_u\\,\\Delta u+x_v\\,\\Delta v\\\\ \\Delta y&\\approx y_u\\,\\Delta u+y_v\\,\\Delta v\\end{aligned}}$",
+              "on": "導數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "局部就是一個線性變換，係數是四個偏導數"
+          ],
+          "say": "所以在這一點附近，變換就像一個線性變換，矩陣是四個偏導數。",
           "board": [
-            {"do":"write","line":"倍率隨 ${{p:(u,v)}}$ 改變"},
-            {"do":"focus","term":"p","on":"每一點"}
-          ] }
-      ],
-      "key": "小方塊被拉成平行四邊形，看行列式",
-      "check": 1
+            {
+              "do": "write",
+              "line": "局部就是一個線性變換，係數是四個偏導數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小矩形 $\\Delta u\\times\\Delta v$ 的像，面積",
+            "$\\Delta A_{xy}\\approx\\left|x_uy_v-x_vy_u\\right|\\,\\Delta u\\,\\Delta v$"
+          ],
+          "say": "套用剛才的結果：小矩形德爾塔 u 乘德爾塔 v，送過去的面積，大約是這個行列式的絕對值，乘上德爾塔 u 德爾塔 v。",
+          "board": [
+            {
+              "do": "write",
+              "line": "小矩形 $\\Delta u\\times\\Delta v$ 的像，面積"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\Delta A_{xy}\\approx\\left|x_uy_v-x_vy_u\\right|\\,\\Delta u\\,\\Delta v}}$",
+              "on": "爾塔#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "式的"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Jacobian",
+      "beats": [
+        {
+          "show": [
+            "定義：$T(u,v)=(x(u,v),y(u,v))$ 的 Jacobian",
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}=x_uy_v-x_vy_u$"
+          ],
+          "say": "這個行列式有一個名字，叫雅可比行列式，寫成偏 x y 偏 u v。矩陣第一列是 x 對 u、對 v 的偏導數，第二列是 y 的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義：$T(u,v)=(x(u,v),y(u,v))$ 的 Jacobian"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\det{\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}}=x_uy_v-x_vy_u}}$",
+              "color": "red",
+              "on": "矩陣"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "的偏"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta A_{xy}\\approx\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|\\Delta A_{uv}$"
+          ],
+          "say": "它的意思是：在這一點附近，面積被放大的倍率。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Delta A_{xy}\\approx\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|\\Delta A_{uv}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上面的例子：",
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}=4(u^2+v^2)$"
+          ],
+          "say": "剛才的例子：偏導數是 2u、負 2v、2v、2u，行列式是 4 乘 u 平方加 v 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上面的例子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\det{\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}}=4(u^2+v^2)$",
+              "on": "2u#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "離原點越遠，倍率越大：圖上外圈的格子確實比較大"
+          ],
+          "say": "離原點越遠，倍率越大，跟圖上外圈的格子比較大是一致的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "離原點越遠，倍率越大：圖上外圈的格子確實比較大"
+            },
+            {
+              "do": "write",
+              "line": "　例：在 $(1,0.5)$ 倍率是 $5$；在 $(0.5,0.25)$ 只有 $1.25$",
+              "color": "violet",
+              "on": "上外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "線性變換：偏導數是常數，Jacobian 就是 $ad-bc$"
+          ],
+          "say": "如果變換是線性的，偏導數都是常數，雅可比行列式就是剛才的 a d 減 b c。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線性變換：偏導數是常數，Jacobian 就是 $ad-bc$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "回頭看極座標",
       "beats": [
-        { "show": ["對 $\\theta$ 微分：$r$ 當常數"],
-          "note": "$x_\\theta$：$r$ 提到外面。",
-          "say": "先講規則：x 對 theta 微分時，r 當成常數，所以 r 留在外面，只微分 cosine theta。",
+        {
+          "show": [
+            "$x=r\\cos\\theta$，$y=r\\sin\\theta$：從 $r\\theta$ 平面送到 $xy$ 平面",
+            "$\\frac{\\partial(x,y)}{\\partial(r,\\theta)}=\\det\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{bmatrix}$"
+          ],
+          "say": "現在回頭看極座標。把 r 和西塔當成新的變數，x 等於 r 餘弦西塔，y 等於 r 正弦西塔。寫出雅可比矩陣。",
           "board": [
-            {"do":"write","line":"$x_\\theta=({{r:r}}\\cos\\theta)_\\theta$"},
-            {"do":"transform","line":"$={{r:r}}\\cdot(-\\sin\\theta)$","on":"留在外面"}
-          ] },
-        { "show": ["$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$","$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$"],
-          "say": "拿極座標來算。四個偏導數寫出來。",
+            {
+              "do": "write",
+              "line": "$x=r\\cos\\theta$，$y=r\\sin\\theta$：從 $r\\theta$ 平面送到 $xy$ 平面"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(x,y)}{\\partial(r,\\theta)}=\\det{\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{bmatrix}}$",
+              "on": "餘弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=r\\cos^2\\theta+r\\sin^2\\theta=r$"
+          ],
+          "say": "行列式是 r 餘弦平方加 r 正弦平方，等於 r。上一課的那個 r，就是極座標的雅可比行列式。",
           "board": [
-            {"do":"write","line":"$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$"},
-            {"do":"write","line":"$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$","on":"四個偏導數"}
-          ] },
-        { "show": ["$r(\\cos^2\\theta+\\sin^2\\theta)=r$"],
-          "say": "交叉相乘相減，cosine 平方加 sine 平方是一，剩下 r。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =r\\cos^2\\theta+r\\sin^2\\theta=r}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "上一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "左邊 r 西塔平面上，藍色和紅色是一樣大的矩形。送到 x y 平面，紅色在外圈，被放大比較多，倍率就是 r。",
           "board": [
-            {"do":"write","line":"${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}=r\\,{{c:(\\cos^2\\theta+\\sin^2\\theta)}}$","on":"交叉相乘"},
-            {"do":"underline","term":"c","label":"是 1","on":"sine 平方是一"},
-            {"do":"transform","line":"${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}={{rr:r}}$","on":"剩下"}
-          ] },
-        { "show": ["弧長 $=r\\,\\Delta\\theta$","$r=2$：$\\Delta r\\times2\\Delta\\theta$"],
-          "note": "半徑 $r$、角 $\\Delta\\theta$ 的圓弧。",
-          "say": "弧長是 r 乘 delta theta。半徑二時，這邊是二倍 delta theta，面積多乘二。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgPolar\" viewBox=\"0 0 640 350\" width=\"640\" height=\"350\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgPolar\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgPolarblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgPolarred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgPolargreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgPolarpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgPolarink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgPolar14\"><rect x=\"14\" y=\"66.5\" width=\"250\" height=\"205\"/></clipPath><g clip-path=\"url(#cl9a2jgPolar14)\"><polygon points=\"84,212.2 134,212.2 134,173 84,173\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><polygon points=\"184,212.2 234,212.2 234,173 184,173\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><path d=\"M34 251.5L34 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M84 251.5L84 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M134 251.5L134 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M184 251.5L184 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M234 251.5L234 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M34 251.5L234 251.5\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M34 212.2L234 212.2\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M34 173L234 173\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M34 133.7L234 133.7\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M34 94.4L234 94.4\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"10\" y1=\"251.5\" x2=\"276\" y2=\"251.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgPolar)\"/><line x1=\"34\" y1=\"275.5\" x2=\"34\" y2=\"54.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgPolar)\"/><text x=\"134\" y=\"273.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"234\" y=\"273.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"274\" y=\"242.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</text><text x=\"43\" y=\"70.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">θ</text><text x=\"26\" y=\"102.4\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">π/2</text><clipPath id=\"cl9a2jgPolar320\"><rect x=\"325\" y=\"10\" width=\"300\" height=\"300\"/></clipPath><g clip-path=\"url(#cl9a2jgPolar320)\"><polygon points=\"459.9,240.1 459.6,239.4 459.3,238.6 458.9,237.9 458.6,237.2 458.3,236.5 458,235.8 457.6,235 457.3,234.3 457,233.6 456.6,232.9 456.3,232.2 455.9,231.5 455.6,230.8 455.2,230.1 454.8,229.4 454.5,228.7 454.1,228.1 453.7,227.4 453.3,226.7 452.9,226 452.5,225.3 452.1,224.6 451.7,224 451.3,223.3 450.9,222.6 450.5,222 450.1,221.3 449.6,220.6 449.2,220 448.8,219.3 448.3,218.7 447.9,218 447.4,217.4 447,216.7 446.5,216.1 446.1,215.5 445.6,214.8 445.2,214.2 444.7,213.6 444.2,212.9 443.7,212.3 443.2,211.7 442.7,211.1 442.3,210.5 441.8,209.9 441.3,209.3 440.8,208.7 440.2,208.1 439.7,207.5 439.2,206.9 438.7,206.3 438.2,205.7 437.6,205.1 437.1,204.5 436.6,204 436,203.4 435.5,202.8 435,202.3 434.4,201.7 433.9,201.1 391.4,243.6 391.7,243.9 392,244.1 392.3,244.4 392.5,244.7 392.8,245 393.1,245.3 393.3,245.6 393.6,245.9 393.9,246.1 394.1,246.4 394.4,246.7 394.6,247 394.9,247.3 395.1,247.6 395.4,247.9 395.6,248.2 395.9,248.5 396.1,248.9 396.4,249.2 396.6,249.5 396.8,249.8 397.1,250.1 397.3,250.4 397.5,250.7 397.8,251.1 398,251.4 398.2,251.7 398.4,252 398.7,252.3 398.9,252.7 399.1,253 399.3,253.3 399.5,253.7 399.7,254 400,254.3 400.2,254.7 400.4,255 400.6,255.3 400.8,255.7 401,256 401.2,256.3 401.3,256.7 401.5,257 401.7,257.4 401.9,257.7 402.1,258.1 402.3,258.4 402.5,258.8 402.6,259.1 402.8,259.5 403,259.8 403.2,260.2 403.3,260.5 403.5,260.9 403.7,261.2 403.8,261.6 404,262 404.1,262.3 404.3,262.7 404.4,263\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><polygon points=\"570.7,194.2 570.1,192.7 569.5,191.3 568.9,189.8 568.3,188.4 567.6,187 567,185.5 566.3,184.1 565.6,182.7 564.9,181.3 564.2,179.9 563.6,178.4 562.8,177 562.1,175.6 561.4,174.3 560.7,172.9 559.9,171.5 559.2,170.1 558.4,168.7 557.6,167.4 556.8,166 556.1,164.6 555.3,163.3 554.4,161.9 553.6,160.6 552.8,159.3 552,157.9 551.1,156.6 550.3,155.3 549.4,154 548.6,152.7 547.7,151.4 546.8,150.1 545.9,148.8 545,147.5 544.1,146.2 543.2,144.9 542.2,143.7 541.3,142.4 540.4,141.1 539.4,139.9 538.4,138.7 537.5,137.4 536.5,136.2 535.5,135 534.5,133.7 533.5,132.5 532.5,131.3 531.5,130.1 530.5,128.9 529.4,127.8 528.4,126.6 527.4,125.4 526.3,124.2 525.2,123.1 524.2,121.9 523.1,120.8 522,119.7 520.9,118.5 519.8,117.4 518.7,116.3 476.3,158.7 477.1,159.6 477.9,160.4 478.8,161.2 479.6,162.1 480.4,163 481.2,163.8 482,164.7 482.8,165.6 483.6,166.4 484.3,167.3 485.1,168.2 485.9,169.1 486.6,170 487.4,170.9 488.1,171.8 488.9,172.7 489.6,173.6 490.4,174.6 491.1,175.5 491.8,176.4 492.5,177.4 493.2,178.3 493.9,179.2 494.6,180.2 495.3,181.2 496,182.1 496.7,183.1 497.3,184 498,185 498.7,186 499.3,187 500,188 500.6,189 501.2,189.9 501.9,190.9 502.5,192 503.1,193 503.7,194 504.3,195 504.9,196 505.5,197 506,198 506.6,199.1 507.2,200.1 507.7,201.1 508.3,202.2 508.8,203.2 509.4,204.3 509.9,205.3 510.4,206.4 511,207.4 511.5,208.5 512,209.6 512.5,210.6 513,211.7 513.4,212.8 513.9,213.9 514.4,214.9 514.8,216 515.3,217.1\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><path d=\"M409 286L409 284.4L408.9 282.9L408.8 281.3L408.7 279.7L408.5 278.2L408.3 276.6L408 275.1L407.7 273.5L407.3 272L407 270.5L406.5 269L406.1 267.5L405.6 266L405 264.5L404.4 263L403.8 261.6L403.2 260.2L402.5 258.8L401.7 257.4L401 256L400.2 254.7L399.3 253.3L398.4 252L397.5 250.7L396.6 249.5L395.6 248.2L394.6 247L393.6 245.9L392.5 244.7L391.4 243.6L390.3 242.5L389.1 241.4L388 240.4L386.8 239.4L385.5 238.4L384.3 237.5L383 236.6L381.7 235.7L380.3 234.8L379 234L377.6 233.3L376.2 232.5L374.8 231.8L373.4 231.2L372 230.6L370.5 230L369 229.4L367.5 228.9L366 228.5L364.5 228L363 227.7L361.5 227.3L359.9 227L358.4 226.7L356.8 226.5L355.3 226.3L353.7 226.2L352.1 226.1L350.6 226L349 226\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M469 286L469 282.9L468.8 279.7L468.6 276.6L468.3 273.5L468 270.3L467.5 267.2L467 264.1L466.4 261.1L465.7 258L464.9 254.9L464.1 251.9L463.1 248.9L462.1 245.9L461 243L459.9 240.1L458.6 237.2L457.3 234.3L455.9 231.5L454.5 228.7L452.9 226L451.3 223.3L449.6 220.6L447.9 218L446.1 215.5L444.2 212.9L442.3 210.5L440.2 208.1L438.2 205.7L436 203.4L433.9 201.1L431.6 199L429.3 196.8L426.9 194.8L424.5 192.7L422.1 190.8L419.5 188.9L417 187.1L414.4 185.4L411.7 183.7L409 182.1L406.3 180.5L403.5 179.1L400.7 177.7L397.8 176.4L394.9 175.1L392 174L389.1 172.9L386.1 171.9L383.1 170.9L380.1 170.1L377 169.3L373.9 168.6L370.9 168L367.8 167.5L364.7 167L361.5 166.7L358.4 166.4L355.3 166.2L352.1 166L349 166\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M529 286L528.9 281.3L528.8 276.6L528.4 271.9L528 267.2L527.5 262.5L526.8 257.8L526 253.2L525.1 248.6L524 244L522.9 239.4L521.6 234.9L520.2 230.4L518.7 225.9L517 221.5L515.3 217.1L513.4 212.8L511.5 208.5L509.4 204.3L507.2 200.1L504.9 196L502.5 192L500 188L497.3 184L494.6 180.2L491.8 176.4L488.9 172.7L485.9 169.1L482.8 165.6L479.6 162.1L476.3 158.7L472.9 155.4L469.4 152.2L465.9 149.1L462.3 146.1L458.6 143.2L454.8 140.4L451 137.7L447 135L443 132.5L439 130.1L434.9 127.8L430.7 125.6L426.5 123.5L422.2 121.6L417.9 119.7L413.5 118L409.1 116.3L404.6 114.8L400.1 113.4L395.6 112.1L391 111L386.4 109.9L381.8 109L377.2 108.2L372.5 107.5L367.8 107L363.1 106.6L358.4 106.2L353.7 106.1L349 106\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M589 286L588.9 279.7L588.7 273.4L588.3 267.2L587.7 260.9L586.9 254.7L586 248.5L585 242.3L583.8 236.1L582.4 230L580.8 223.9L579.1 217.8L577.3 211.8L575.2 205.9L573.1 200L570.7 194.2L568.3 188.4L565.6 182.7L562.8 177L559.9 171.5L556.8 166L553.6 160.6L550.3 155.3L546.8 150.1L543.2 144.9L539.4 139.9L535.5 135L531.5 130.1L527.4 125.4L523.1 120.8L518.7 116.3L514.2 111.9L509.6 107.6L504.9 103.5L500 99.5L495.1 95.6L490.1 91.8L484.9 88.2L479.7 84.7L474.4 81.4L469 78.2L463.5 75.1L458 72.2L452.3 69.4L446.6 66.7L440.8 64.3L435 61.9L429.1 59.8L423.2 57.7L417.2 55.9L411.1 54.2L405 52.6L398.9 51.2L392.7 50L386.5 49L380.3 48.1L374.1 47.3L367.8 46.7L361.6 46.3L355.3 46.1L349 46\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M349 286L589 286\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M349 286L570.7 194.2\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M349 286L518.7 116.3\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M349 286L440.8 64.3\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M349 286L349 46\" stroke=\"var(--muted)\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"321\" y1=\"286\" x2=\"637\" y2=\"286\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgPolar)\"/><line x1=\"349\" y1=\"314\" x2=\"349\" y2=\"-2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgPolar)\"/><text x=\"469\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"589\" y=\"308\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"635\" y=\"277\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"358\" y=\"14\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"266\" y1=\"165\" x2=\"318\" y2=\"165\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jgPolar)\"/><text x=\"292\" y=\"153\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"20\" y=\"26\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">兩塊一樣大</text><text x=\"630\" y=\"342\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">外圈那塊被放大較多</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $dA=\\left|\\dfrac{\\partial(x,y)}{\\partial(r,\\theta)}\\right|dr\\,d\\theta=r\\,dr\\,d\\theta$"
+          ],
+          "say": "所以 d A 等於雅可比行列式的絕對值乘 d r d 西塔，也就是 r d r d 西塔。上一課是從圖上看出來的，這裡用計算得到同樣的答案。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"弧長 $={{a:r\\,\\Delta\\theta}}$","on":"弧長"},
-            {"do":"focus","term":"a","color":"blue","on":"r 乘"},
-            {"do":"write","line":"$r=2$：$\\Delta r\\times{{b:2\\Delta\\theta}}$","on":"半徑二"},
-            {"do":"underline","term":"b","label":"面積乘 2","on":"這邊是"}
-          ] },
-        { "show": ["$dA=r\\,dr\\,d\\theta$ 的那個 $r$"],
-          "note": "$r=2$ 附近：面積約 $2\\,\\Delta r\\,\\Delta\\theta$。",
-          "say": "這正是極座標積分裡那個 r：在半徑二的地方，小矩形被放大兩倍。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$dA={{rr:r}}\\,dr\\,d\\theta$","on":"極座標積分"},
-            {"do":"write","line":"$r=2$：面積約 ${{two:2}}\\,\\Delta r\\,\\Delta\\theta$","on":"在半徑二"},
-            {"do":"focus","term":"two","on":"放大兩倍"}
-          ] }
-      ],
-      "key": "$dA$ 多出的 $r$ 就是極座標的 Jacobian",
-      "check": 2
+            {
+              "do": "write",
+              "line": "所以 $dA=\\left|\\dfrac{\\partial(x,y)}{\\partial(r,\\theta)}\\right|dr\\,d\\theta=r\\,dr\\,d\\theta$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$r\\ge0$，所以 $|r|=r$",
+              "color": "violet",
+              "on": "西塔#2"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "把圓拉成橢圓",
       "beats": [
-        { "show": ["$u=\\frac{x}{3}$，$v=\\frac{y}{2}$"],
-          "say": "先把 u、v 用 x、y 表示：u 是 x 除以三，v 是 y 除以二。",
+        {
+          "show": [
+            "$x=3u$，$y=2v$：$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}3&0\\\\0&2\\end{bmatrix}=6$"
+          ],
+          "say": "最後一個例子：x 等於 3u，y 等於 2v。橫向拉長 3 倍，縱向拉長 2 倍，雅可比行列式是 6。",
           "board": [
-            {"do":"write","line":"$u=\\frac{x}{3}$，$v=\\frac{y}{2}$"}
-          ] },
-        { "show": ["$(\\frac{x}{3})^2+(\\frac{y}{2})^2\\le 1$"],
-          "note": "分母各自平方：$9$、$4$。",
-          "say": "再代進 u 平方加 v 平方小於等於一，分母平方，就得到 x 平方除以九加 y 平方除以四。",
+            {
+              "do": "write",
+              "line": "$x=3u$，$y=2v$：$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=\\det{\\begin{bmatrix}3&0\\\\0&2\\end{bmatrix}}=6$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "單位圓盤 $u^2+v^2\\le1$ ⇒ $\\left(\\frac x3\\right)^2+\\left(\\frac y2\\right)^2\\le1$"
+          ],
+          "say": "單位圓盤被送到哪裡？u 是 3 分之 x，v 是 2 分之 y，代進去，得到一個橢圓：半長軸 3，半短軸 2。",
           "board": [
-            {"do":"write","line":"$({{p:\\frac{x}{3}}})^2+(\\frac{y}{2})^2\\le 1$"},
-            {"do":"transform","line":"$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$","on":"分母平方"}
-          ] },
-        { "show": ["$x=3u$、$y=2v$"],
-          "note": "單位圓盤 → $\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
-          "say": "u 方向拉長三倍、v 方向拉長兩倍，單位圓盤被拉成半軸三、二的橢圓。",
+            {
+              "do": "write",
+              "line": "單位圓盤 $u^2+v^2\\le1$ ⇒ $\\left(\\frac x3\\right)^2+\\left(\\frac y2\\right)^2\\le1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圓變成橢圓，面積放大 6 倍。",
           "board": [
-            {"do":"write","line":"$x={{a:3}}u$、$y={{b:2}}v$"},
-            {"do":"focus","term":"a","color":"blue","on":"三倍"},
-            {"do":"focus","term":"b","color":"violet","on":"兩倍"},
-            {"do":"write","line":"$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$","on":"半軸"}
-          ] },
-        { "show": ["Jacobian $=3\\cdot2-0\\cdot0=6$"],
-          "note": "面積倍率是相乘，不是相加。",
-          "say": "倍率是三乘二，等於六，到處一樣。注意是相乘，不是相加。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jgEllipse\" viewBox=\"0 0 640 290\" width=\"640\" height=\"290\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jgEllipse\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jgEllipseblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jgEllipsered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jgEllipsegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jgEllipsepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jgEllipseink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jgEllipse6\"><rect x=\"6\" y=\"68.1\" width=\"190\" height=\"173.9\"/></clipPath><g clip-path=\"url(#cl9a2jgEllipse6)\"><polygon points=\"157.4,155 157.3,153 157.2,151 157.1,148.9 156.8,146.9 156.6,144.9 156.2,142.9 155.8,141 155.3,139 154.8,137 154.2,135.1 153.5,133.2 152.8,131.3 152.1,129.4 151.2,127.6 150.3,125.8 149.4,124 148.4,122.2 147.3,120.5 146.2,118.8 145.1,117.1 143.8,115.5 142.6,113.9 141.3,112.4 139.9,110.9 138.5,109.5 137,108 135.5,106.7 134,105.4 132.4,104.1 130.8,102.9 129.2,101.7 127.5,100.6 125.7,99.6 124,98.6 122.2,97.6 120.4,96.7 118.5,95.9 116.7,95.1 114.8,94.4 112.9,93.7 110.9,93.2 109,92.6 107,92.1 105,91.7 103,91.4 101,91.1 99,90.9 97,90.7 95,90.6 92.9,90.6 90.9,90.6 88.9,90.7 86.9,90.9 84.9,91.1 82.9,91.4 80.9,91.7 78.9,92.1 76.9,92.6 75,93.2 73,93.7 71.1,94.4 69.2,95.1 67.4,95.9 65.5,96.7 63.7,97.6 61.9,98.6 60.2,99.6 58.4,100.6 56.7,101.7 55.1,102.9 53.5,104.1 51.9,105.4 50.4,106.7 48.9,108 47.4,109.5 46,110.9 44.6,112.4 43.3,113.9 42.1,115.5 40.8,117.1 39.7,118.8 38.6,120.5 37.5,122.2 36.5,124 35.6,125.8 34.7,127.6 33.8,129.4 33.1,131.3 32.4,133.2 31.7,135.1 31.1,137 30.6,139 30.1,141 29.7,142.9 29.3,144.9 29.1,146.9 28.8,148.9 28.7,151 28.6,153 28.5,155 28.6,157 28.7,159 28.8,161.1 29.1,163.1 29.3,165.1 29.7,167.1 30.1,169 30.6,171 31.1,173 31.7,174.9 32.4,176.8 33.1,178.7 33.8,180.6 34.7,182.4 35.6,184.2 36.5,186 37.5,187.8 38.6,189.5 39.7,191.2 40.8,192.9 42.1,194.5 43.3,196.1 44.6,197.6 46,199.1 47.4,200.5 48.9,202 50.4,203.3 51.9,204.6 53.5,205.9 55.1,207.1 56.7,208.3 58.4,209.4 60.2,210.4 61.9,211.4 63.7,212.4 65.5,213.3 67.4,214.1 69.2,214.9 71.1,215.6 73,216.3 75,216.8 76.9,217.4 78.9,217.9 80.9,218.3 82.9,218.6 84.9,218.9 86.9,219.1 88.9,219.3 90.9,219.4 92.9,219.4 95,219.4 97,219.3 99,219.1 101,218.9 103,218.6 105,218.3 107,217.9 109,217.4 110.9,216.8 112.9,216.3 114.8,215.6 116.7,214.9 118.5,214.1 120.4,213.3 122.2,212.4 124,211.4 125.7,210.4 127.5,209.4 129.2,208.3 130.8,207.1 132.4,205.9 134,204.6 135.5,203.3 137,202 138.5,200.5 139.9,199.1 141.3,197.6 142.6,196.1 143.8,194.5 145.1,192.9 146.2,191.2 147.3,189.5 148.4,187.8 149.4,186 150.3,184.2 151.2,182.4 152.1,180.6 152.8,178.7 153.5,176.8 154.2,174.9 154.8,173 155.3,171 155.8,169 156.2,167.1 156.6,165.1 156.8,163.1 157.1,161.1 157.2,159 157.3,157 157.4,155\" fill=\"var(--green)\" fill-opacity=\"0.2\"/><path d=\"M157.4 155L157.3 151.6L157 148.3L156.6 144.9L155.9 141.6L155.2 138.3L154.2 135.1L153.1 131.9L151.8 128.8L150.3 125.8L148.7 122.8L147 119.9L145.1 117.1L143 114.5L140.8 111.9L138.5 109.5L136 107.1L133.5 104.9L130.8 102.9L128 101L125.2 99.2L122.2 97.6L119.1 96.2L116 94.9L112.9 93.7L109.6 92.8L106.3 92L103 91.4L99.7 90.9L96.3 90.7L92.9 90.6L89.6 90.7L86.2 90.9L82.9 91.4L79.6 92L76.3 92.8L73 93.7L69.9 94.9L66.8 96.2L63.7 97.6L60.7 99.2L57.9 101L55.1 102.9L52.4 104.9L49.9 107.1L47.4 109.5L45.1 111.9L42.9 114.5L40.8 117.1L38.9 119.9L37.2 122.8L35.6 125.8L34.1 128.8L32.8 131.9L31.7 135.1L30.7 138.3L29.9 141.6L29.3 144.9L28.9 148.3L28.6 151.6L28.5 155L28.6 158.4L28.9 161.7L29.3 165.1L29.9 168.4L30.7 171.7L31.7 174.9L32.8 178.1L34.1 181.2L35.6 184.2L37.2 187.2L38.9 190.1L40.8 192.9L42.9 195.5L45.1 198.1L47.4 200.5L49.9 202.9L52.4 205.1L55.1 207.1L57.9 209L60.7 210.8L63.7 212.4L66.8 213.8L69.9 215.1L73 216.3L76.3 217.2L79.6 218L82.9 218.6L86.2 219.1L89.6 219.3L92.9 219.4L96.3 219.3L99.7 219.1L103 218.6L106.3 218L109.6 217.2L112.9 216.3L116 215.1L119.1 213.8L122.2 212.4L125.2 210.8L128 209L130.8 207.1L133.5 205.1L136 202.9L138.5 200.5L140.8 198.1L143 195.5L145.1 192.9L147 190.1L148.7 187.2L150.3 184.2L151.8 181.2L153.1 178.1L154.2 174.9L155.2 171.7L155.9 168.4L156.6 165.1L157 161.7L157.3 158.4L157.4 155\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"2\" y1=\"155\" x2=\"208\" y2=\"155\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgEllipse)\"/><line x1=\"92.9\" y1=\"245.9\" x2=\"92.9\" y2=\"56.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgEllipse)\"/><text x=\"206\" y=\"146\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"101.9\" y=\"72.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><text x=\"169.4\" y=\"179\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1</text><clipPath id=\"cl9a2jgEllipse270\"><rect x=\"270\" y=\"26.5\" width=\"362\" height=\"251\"/></clipPath><g clip-path=\"url(#cl9a2jgEllipse270)\"><polygon points=\"588.6,152 588.5,149 588.3,145.9 587.9,142.9 587.4,139.9 586.8,136.9 586,133.9 585.1,130.9 584,128 582.8,125.1 581.5,122.2 580,119.3 578.4,116.5 576.7,113.7 574.8,110.9 572.8,108.2 570.6,105.5 568.4,102.9 566,100.3 563.5,97.7 560.9,95.3 558.2,92.8 555.3,90.5 552.4,88.2 549.3,85.9 546.1,83.7 542.9,81.6 539.5,79.6 536.1,77.6 532.5,75.7 528.9,73.9 525.1,72.2 521.3,70.5 517.5,68.9 513.5,67.4 509.5,66 505.4,64.7 501.3,63.4 497.1,62.2 492.8,61.2 488.5,60.2 484.2,59.3 479.8,58.5 475.3,57.8 470.9,57.2 466.4,56.7 461.9,56.2 457.4,55.9 452.9,55.7 448.3,55.5 443.8,55.5 439.2,55.5 434.7,55.7 430.1,55.9 425.6,56.2 421.1,56.7 416.6,57.2 412.2,57.8 407.7,58.5 403.4,59.3 399,60.2 394.7,61.2 390.5,62.2 386.3,63.4 382.1,64.7 378,66 374,67.4 370.1,68.9 366.2,70.5 362.4,72.2 358.6,73.9 355,75.7 351.5,77.6 348,79.6 344.6,81.6 341.4,83.7 338.2,85.9 335.1,88.2 332.2,90.5 329.3,92.8 326.6,95.3 324,97.7 321.5,100.3 319.1,102.9 316.9,105.5 314.7,108.2 312.7,110.9 310.9,113.7 309.1,116.5 307.5,119.3 306,122.2 304.7,125.1 303.5,128 302.4,130.9 301.5,133.9 300.7,136.9 300.1,139.9 299.6,142.9 299.2,145.9 299,149 299,152 299,155 299.2,158.1 299.6,161.1 300.1,164.1 300.7,167.1 301.5,170.1 302.4,173.1 303.5,176 304.7,178.9 306,181.8 307.5,184.7 309.1,187.5 310.9,190.3 312.7,193.1 314.7,195.8 316.9,198.5 319.1,201.1 321.5,203.7 324,206.3 326.6,208.7 329.3,211.2 332.2,213.5 335.1,215.8 338.2,218.1 341.4,220.3 344.6,222.4 348,224.4 351.5,226.4 355,228.3 358.6,230.1 362.4,231.8 366.2,233.5 370.1,235.1 374,236.6 378,238 382.1,239.3 386.3,240.6 390.5,241.8 394.7,242.8 399,243.8 403.4,244.7 407.7,245.5 412.2,246.2 416.6,246.8 421.1,247.3 425.6,247.8 430.1,248.1 434.7,248.3 439.2,248.5 443.8,248.5 448.3,248.5 452.9,248.3 457.4,248.1 461.9,247.8 466.4,247.3 470.9,246.8 475.3,246.2 479.8,245.5 484.2,244.7 488.5,243.8 492.8,242.8 497.1,241.8 501.3,240.6 505.4,239.3 509.5,238 513.5,236.6 517.5,235.1 521.3,233.5 525.1,231.8 528.9,230.1 532.5,228.3 536.1,226.4 539.5,224.4 542.9,222.4 546.1,220.3 549.3,218.1 552.4,215.8 555.3,213.5 558.2,211.2 560.9,208.7 563.5,206.3 566,203.7 568.4,201.1 570.6,198.5 572.8,195.8 574.8,193.1 576.7,190.3 578.4,187.5 580,184.7 581.5,181.8 582.8,178.9 584,176 585.1,173.1 586,170.1 586.8,167.1 587.4,164.1 587.9,161.1 588.3,158.1 588.5,155 588.6,152\" fill=\"var(--blue)\" fill-opacity=\"0.2\"/><path d=\"M588.6 152L588.4 148.2L588.1 144.4L587.6 140.7L586.8 136.9L585.8 133.2L584.6 129.5L583.1 125.8L581.5 122.2L579.6 118.6L577.5 115.1L575.3 111.6L572.8 108.2L570.1 104.8L567.2 101.6L564.2 98.4L560.9 95.3L557.5 92.2L553.9 89.3L550.1 86.5L546.1 83.7L542.1 81.1L537.8 78.6L533.4 76.2L528.9 73.9L524.2 71.7L519.4 69.7L514.5 67.8L509.5 66L504.4 64.3L499.2 62.8L493.9 61.4L488.5 60.2L483.1 59.1L477.6 58.1L472 57.3L466.4 56.7L460.8 56.1L455.1 55.8L449.4 55.5L443.8 55.5L438.1 55.5L432.4 55.8L426.7 56.1L421.1 56.7L415.5 57.3L410 58.1L404.5 59.1L399 60.2L393.6 61.4L388.3 62.8L383.1 64.3L378 66L373 67.8L368.1 69.7L363.3 71.7L358.6 73.9L354.1 76.2L349.7 78.6L345.5 81.1L341.4 83.7L337.4 86.5L333.7 89.3L330 92.2L326.6 95.3L323.4 98.4L320.3 101.6L317.4 104.8L314.7 108.2L312.3 111.6L310 115.1L307.9 118.6L306 122.2L304.4 125.8L303 129.5L301.7 133.2L300.7 136.9L300 140.7L299.4 144.4L299.1 148.2L299 152L299.1 155.8L299.4 159.6L300 163.3L300.7 167.1L301.7 170.8L303 174.5L304.4 178.2L306 181.8L307.9 185.4L310 188.9L312.3 192.4L314.7 195.8L317.4 199.2L320.3 202.4L323.4 205.6L326.6 208.7L330 211.8L333.7 214.7L337.4 217.5L341.4 220.3L345.5 222.9L349.7 225.4L354.1 227.8L358.6 230.1L363.3 232.3L368.1 234.3L373 236.2L378 238L383.1 239.7L388.3 241.2L393.6 242.6L399 243.8L404.5 244.9L410 245.9L415.5 246.7L421.1 247.3L426.7 247.9L432.4 248.2L438.1 248.5L443.8 248.5L449.4 248.5L455.1 248.2L460.8 247.9L466.4 247.3L472 246.7L477.6 245.9L483.1 244.9L488.5 243.8L493.9 242.6L499.2 241.2L504.4 239.7L509.5 238L514.5 236.2L519.4 234.3L524.2 232.3L528.9 230.1L533.4 227.8L537.8 225.4L542.1 222.9L546.1 220.3L550.1 217.5L553.9 214.7L557.5 211.8L560.9 208.7L564.2 205.6L567.2 202.4L570.1 199.2L572.8 195.8L575.3 192.4L577.5 188.9L579.6 185.4L581.5 181.8L583.1 178.2L584.6 174.5L585.8 170.8L586.8 167.1L587.6 163.3L588.1 159.6L588.4 155.8L588.6 152\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"266\" y1=\"152\" x2=\"644\" y2=\"152\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgEllipse)\"/><line x1=\"443.8\" y1=\"281.5\" x2=\"443.8\" y2=\"14.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jgEllipse)\"/><text x=\"642\" y=\"143\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"452.8\" y=\"30.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"602.6\" y=\"176\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"431.8\" y=\"47.5\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">2</text><line x1=\"222\" y1=\"150\" x2=\"268\" y2=\"150\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jgEllipse)\"/><text x=\"245\" y=\"138\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"245\" y=\"180\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">× 6</text><text x=\"14\" y=\"28\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:inherit\">面積 π</text><text x=\"630\" y=\"284\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:inherit\">面積 6π</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\text{橢圓面積}=6\\cdot\\pi\\cdot1^2=6\\pi$"
+          ],
+          "say": "圓盤的面積是派，乘上 6，橢圓的面積是 6 派。",
           "board": [
-            {"do":"write","line":"$3\\cdot2-0\\cdot0={{s:6}}$"},
-            {"do":"box","term":"s","color":"green","on":"等於"}
-          ] },
-        { "show": ["橢圓面積 $6\\pi$"],
-          "say": "圓盤面積 pi，放大六倍，橢圓面積就是六 pi。",
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\text{橢圓面積}=6\\cdot\\pi\\cdot1^2=6\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "橢圓"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：$\\dfrac{x^2}{a^2}+\\dfrac{y^2}{b^2}\\le1$ 的面積 $=\\pi ab$"
+          ],
+          "say": "一般來說，半軸 a 和 b 的橢圓，用 x 等於 a u、y 等於 b v，倍率是 a b，面積是派 a b。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"圓盤面積 $\\pi$","on":"圓盤面積"},
-            {"do":"write","line":"$\\pi\\cdot{{s:6}}={{r:6\\pi}}$","on":"放大"},
-            {"do":"box","term":"r","color":"green","on":"橢圓面積"}
-          ] }
+            {
+              "do": "write",
+              "line": "一般：$\\dfrac{x^2}{a^2}+\\dfrac{y^2}{b^2}\\le1$ 的面積 $=\\pi ab$"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 線性變換：面積放大 $|ad-bc|$ 倍",
+            "• 行列式負：圖形翻面；行列式 $0$：壓扁"
+          ],
+          "say": "整理一下：線性變換把面積放大行列式的絕對值倍，負號代表翻面。非線性變換的局部倍率是雅可比行列式；極座標的雅可比行列式是 r。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 線性變換：面積放大 $|ad-bc|$ 倍"
+            },
+            {
+              "do": "write",
+              "line": "• 行列式負：圖形翻面；行列式 $0$：壓扁",
+              "on": "列式#1"
+            },
+            {
+              "do": "write",
+              "line": "• 非線性：局部像線性，倍率是 Jacobian $\\left|\\dfrac{\\partial(x,y)}{\\partial(u,v)}\\right|$，每點不同",
+              "on": "線性#2"
+            },
+            {
+              "do": "write",
+              "line": "• 極座標的 Jacobian $=r$：這就是 $dA=r\\,dr\\,d\\theta$",
+              "on": "極座"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Jacobian 行列式，練熟怎麼算"
+          ],
+          "say": "下一課，把雅可比行列式的計算練熟，也看看三個變數的情形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Jacobian 行列式，練熟怎麼算"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["jacobian", "change-of-variables", "area"],
-    "fine": ["jacobian-area-scale", "jacobian-linear-parallelogram", "jacobian-polar-r"]
+    "coarse": [
+      "jacobian",
+      "change-of-variables",
+      "area"
+    ],
+    "fine": [
+      "jacobian-area-scale",
+      "jacobian-linear-parallelogram",
+      "jacobian-polar-r"
+    ]
   },
   "practice": [
-    { "id": "gap-int-cov-002", "core": true, "trains": "jacobian-linear-parallelogram" },
-    { "id": "lec-19-m5", "core": true, "trains": "jacobian-area-scale" },
-    { "id": "cg-9a2-003", "core": true, "trains": "jacobian-linear-parallelogram" },
-    { "id": "cg-9a2-006", "core": true, "trains": "jacobian-area-scale" },
-    { "id": "der-071", "trains": "jacobian-polar-r" },
-    { "id": "gap-int-cov-001", "trains": "jacobian-linear-parallelogram" },
-    { "id": "cg-9a2-004", "trains": "jacobian-linear-parallelogram" },
-    { "id": "cg-9a2-005", "trains": "jacobian-linear-parallelogram" },
-    { "id": "cg-9a2-007", "trains": "jacobian-area-scale" }
+    {
+      "id": "gap-int-cov-002",
+      "core": true,
+      "trains": "jacobian-linear-parallelogram"
+    },
+    {
+      "id": "lec-19-m5",
+      "core": true,
+      "trains": "jacobian-area-scale"
+    },
+    {
+      "id": "cg-9a2-003",
+      "core": true,
+      "trains": "jacobian-linear-parallelogram"
+    },
+    {
+      "id": "cg-9a2-006",
+      "core": true,
+      "trains": "jacobian-area-scale"
+    },
+    {
+      "id": "der-071",
+      "trains": "jacobian-polar-r"
+    },
+    {
+      "id": "gap-int-cov-001",
+      "trains": "jacobian-linear-parallelogram"
+    },
+    {
+      "id": "cg-9a2-004",
+      "trains": "jacobian-linear-parallelogram"
+    },
+    {
+      "id": "cg-9a2-005",
+      "trains": "jacobian-linear-parallelogram"
+    },
+    {
+      "id": "cg-9a2-007",
+      "trains": "jacobian-area-scale"
+    }
   ],
   "gaps": []
 }

@@ -1,0 +1,352 @@
+{
+  "id": "parametric-arc-length",
+  "title": "參數式弧長",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["parametric-derivative", "arc-length", "u-sub-definite", "trig-identities"],
+  "next": ["parametric-area"],
+  "related": ["polar-arc-length"],
+  "objectives": [
+    "寫出 $L=\\int\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt$，說得出被積函數就是速率。",
+    "化簡根號時處理絕對值：$\\sqrt{4\\sin^2\\frac{t}{2}}=2\\left|\\sin\\frac{t}{2}\\right|$。",
+    "知道公式量的是「走過的距離」：曲線被重複走過時，要把 $t$ 的範圍縮成只走一次。"
+  ],
+  "visual": "一個點沿擺線移動，下方同步畫出速率 √(x′² + y′²) 對 t 的圖，曲線下的面積隨點前進一格一格填滿，旁邊顯示累積的路程。點在尖點 t = 0、2π 速率掉到 0，在拱頂 t = π 速率最大（等於 2）。",
+  "concept": [
+    {
+      "heading": "① 小段路程 $\\approx$ 斜邊",
+      "body": [
+        "在很短的時間 $\\Delta t$ 內，點在 $x$ 方向走了大約 $x'(t)\\Delta t$，在 $y$ 方向走了大約 $y'(t)\\Delta t$。這一小段幾乎是直的，長度用畢氏定理：$\\sqrt{(x'\\Delta t)^2+(y'\\Delta t)^2}=\\sqrt{x'^2+y'^2}\\,\\Delta t$。",
+        "把每一小段加起來，$\\Delta t\\to 0$，就是積分。這是直覺，不是證明；嚴格的版本要求 $x'$、$y'$ 連續，並且曲線在 $t$ 的範圍內沒有被重複走過。"
+      ],
+      "tex": ["L=\\int_a^b\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 被積函數是速率",
+      "body": [
+        "$(x'(t),y'(t))$ 是點的速度向量，$\\sqrt{x'^2+y'^2}$ 是它的長度，也就是速率。所以公式在說：路程 = 速率對時間積分。",
+        "〈弧長〉的公式 $\\int\\sqrt{1+(f')^2}\\,dx$ 是特例：令 $x=t$、$y=f(t)$，$x'=1$，就回到它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 根號開出來要記得絕對值",
+      "body": [
+        "能算出來的弧長題，根號裡幾乎都會湊成完全平方。開根號時 $\\sqrt{A^2}=|A|$，不是 $A$。要先看 $A$ 在積分範圍內的正負，必要時把區間切開。",
+        "例：$x=t^2$、$y=t^3$ 時 $x'^2+y'^2=t^2(4+9t^2)$，開根號是 $|t|\\sqrt{4+9t^2}$。在 $t\\ge 0$ 的區間寫成 $t\\sqrt{4+9t^2}$；如果積分區間是 $-1\\le t\\le 1$，要拆成兩段，或利用對稱把 $[0,1]$ 的結果乘 2。直接寫 $t\\sqrt{4+9t^2}$ 從 $-1$ 積到 1，會得到 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 公式量的是走過的距離",
+      "body": [
+        "$x=\\cos 2t$、$y=\\sin 2t$，$0\\le t\\le 2\\pi$，速率是 2，積分得 $4\\pi$。但單位圓周長是 $2\\pi$：點繞了兩圈，公式把兩圈都算進去。",
+        "所以題目問「曲線的長度」時，要先確定 $t$ 的範圍讓曲線恰好走一次。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "四分之一圓",
+      "prompt": "$x=3\\cos t$、$y=3\\sin t$，$0\\le t\\le\\frac{\\pi}{2}$，求弧長。",
+      "problemId": "cx-arc-003",
+      "steps": [
+        "$x'=-3\\sin t$，$y'=3\\cos t$。",
+        "$x'^2+y'^2=9\\sin^2 t+9\\cos^2 t=9$，速率是 3。",
+        "$L=\\int_0^{\\pi/2}3\\,dt=\\frac{3\\pi}{2}$。",
+        "檢查：半徑 3 的圓周長 $6\\pi$，四分之一是 $\\frac{3\\pi}{2}$。"
+      ],
+      "answer": "$\\frac{3\\pi}{2}$",
+      "claim": "INT(sqrt((3*sin(t))^2+(3*cos(t))^2), 0, pi/2) == 3*pi/2"
+    },
+    {
+      "title": "根號裡提出 $t^2$",
+      "prompt": "$x=t^2$、$y=t^3$，$0\\le t\\le 1$，求弧長。",
+      "steps": [
+        "$x'=2t$，$y'=3t^2$，$x'^2+y'^2=4t^2+9t^4=t^2(4+9t^2)$。",
+        "$\\sqrt{t^2(4+9t^2)}=|t|\\sqrt{4+9t^2}$。在 $0\\le t\\le 1$，$|t|=t$。",
+        "$L=\\int_0^1 t\\sqrt{4+9t^2}\\,dt$。令 $u=4+9t^2$，$du=18t\\,dt$，$t=0\\to u=4$，$t=1\\to u=13$。",
+        "$L=\\frac{1}{18}\\int_4^{13}\\sqrt{u}\\,du=\\frac{1}{18}\\cdot\\frac{2}{3}\\left[u^{3/2}\\right]_4^{13}=\\frac{1}{27}(13\\sqrt{13}-8)$。"
+      ],
+      "answer": "$\\frac{13\\sqrt{13}-8}{27}$",
+      "claim": "INT(sqrt((2t)^2+(3t^2)^2), 0, 1) == (13*sqrt(13)-8)/27"
+    },
+    {
+      "title": "擺線一拱",
+      "prompt": "擺線 $x=t-\\sin t$、$y=1-\\cos t$，求一拱（$0\\le t\\le 2\\pi$）的弧長。",
+      "problemId": "lec-10-q1c",
+      "steps": [
+        "$x'=1-\\cos t$，$y'=\\sin t$。",
+        "$x'^2+y'^2=1-2\\cos t+\\cos^2 t+\\sin^2 t=2-2\\cos t$。",
+        "半角公式 $1-\\cos t=2\\sin^2\\frac{t}{2}$，所以 $2-2\\cos t=4\\sin^2\\frac{t}{2}$，開根號得 $2\\left|\\sin\\frac{t}{2}\\right|$。",
+        "$0\\le t\\le 2\\pi$ 時 $0\\le\\frac{t}{2}\\le\\pi$，$\\sin\\frac{t}{2}\\ge 0$，絕對值可以拿掉。",
+        "$L=\\int_0^{2\\pi}2\\sin\\frac{t}{2}\\,dt=\\left[-4\\cos\\frac{t}{2}\\right]_0^{2\\pi}=-4(-1)+4(1)=8$。"
+      ],
+      "answer": "8",
+      "claim": "INT(sqrt((1-cos(t))^2+sin(t)^2), 0, 2*pi) == 8 ;; 2-2*cos(t) == 4*sin(t/2)^2"
+    }
+  ],
+  "pitfalls": [
+    "把根號裡寫成 $x'+y'$，或寫成 $(x'+y')^2$。是平方和再開根號。",
+    "$\\sqrt{A^2}$ 直接寫成 $A$，沒先確認 $A\\ge 0$。",
+    "$t$ 的範圍讓曲線走了兩次，算出兩倍長。",
+    "換元時忘了換積分上下限。"
+  ],
+  "checks": [
+    {
+      "ask": "$x=3t$、$y=4t$ 的速率 $\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}$ 是？",
+      "options": [
+        { "label": "5", "correct": true },
+        { "label": "7", "why": "這是 $3+4$。要先平方相加再開根號：$\\sqrt{9+16}=5$。" },
+        { "label": "25", "why": "$9+16=25$ 之後還要開根號。" }
+      ]
+    },
+    {
+      "ask": "在 $0\\le t\\le 2\\pi$ 上，$\\sqrt{4\\sin^2\\frac{t}{2}}$ 等於？",
+      "options": [
+        { "label": "$2\\sin\\frac{t}{2}$，因為這個範圍內 $\\sin\\frac{t}{2}\\ge 0$", "correct": true },
+        { "label": "$2|\\sin t|$", "why": "半角不能隨手變全角：根號裡是 $\\sin^2\\frac{t}{2}$，開出來是 $2\\left|\\sin\\frac{t}{2}\\right|$。" },
+        { "label": "$4\\sin\\frac{t}{2}$", "why": "$\\sqrt{4}=2$，係數也要開根號。" }
+      ]
+    },
+    {
+      "ask": "$x=\\cos 2t$、$y=\\sin 2t$，$0\\le t\\le 2\\pi$，速率積分得 $4\\pi$。單位圓的周長是 $2\\pi$，差在哪？",
+      "options": [
+        { "label": "點繞了兩圈，公式算的是走過的距離", "correct": true },
+        { "label": "公式錯了，要除以 2", "why": "公式沒錯，它忠實地量了路程。要改的是 $t$ 的範圍（$0\\le t\\le\\pi$ 只走一圈）。" },
+        { "label": "速率應該是 1 不是 2", "why": "$x'=-2\\sin 2t$、$y'=2\\cos 2t$，速率確實是 2。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個是參數式弧長的被積函數？",
+      "options": [
+        { "label": "$\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}$", "correct": true },
+        { "label": "$\\sqrt{1+\\left(\\frac{dy}{dt}\\right)^2}$", "why": "這是把 $y=f(x)$ 版本的 $\\sqrt{1+f'^2}$ 硬搬過來；只有 $x=t$ 時兩者才一樣。" },
+        { "label": "$\\sqrt{1+\\left(\\frac{dy}{dx}\\right)^2}$", "why": "這要對 $x$ 積分，配的是 $dx$ 不是 $dt$；用 $t$ 積分時就該用速率。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "小段路程是斜邊",
+      "beats": [
+        { "show": ["$\\Delta t$ 內：橫走 $x'\\Delta t$，直走 $y'\\Delta t$"],
+          "say": "很短的時間 delta t 裡，點往 x 方向走了 x prime 乘 delta t，往 y 方向走了 y prime 乘 delta t。",
+          "board": [
+            {"do":"write","line":"$\\Delta x\\approx{{a:x'\\Delta t}}$"},
+            {"do":"write","line":"$\\Delta y\\approx{{b:y'\\Delta t}}$","on":"往 y 方向"}
+          ] },
+        { "show": ["$\\sqrt{x'^2 + y'^2}\\,\\Delta t$"],
+          "note": "這一小段幾乎是直的，用畢氏定理。",
+          "say": "這一小段幾乎是直的，所以長度是斜邊：兩個方向平方相加再開根號，乘上 delta t。",
+          "board": [
+            {"do":"write","line":"$\\Delta s\\approx{{h:\\sqrt{x'^2+y'^2}}}\\,\\Delta t$"},
+            {"do":"underline","term":"h","color":"gold","label":"斜邊","on":"斜邊"}
+          ] },
+        { "show": ["$L = \\int_a^b \\sqrt{x'^2 + y'^2}\\,dt$"],
+          "note": "直覺，不是證明；完整條件在全文。",
+          "say": "每一小段加起來，讓 delta t 趨近零，就變成積分。這是直覺，嚴格的條件放在全文。",
+          "board": [
+            {"do":"transform","line":"$L=\\int_a^b{{h:\\sqrt{x'^2+y'^2}}}\\,dt$","on":"變成"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "被積函數是速率",
+      "beats": [
+        { "show": ["$(x', y')$ 是速度，$\\sqrt{x'^2 + y'^2}$ 是速率"],
+          "note": "路程 = 速率對時間積分。",
+          "say": "x prime、y prime 合起來是速度向量，根號那一串是它的長度，也就是速率。路程就是速率對時間積分。",
+          "board": [
+            {"do":"write","line":"$L=\\int_a^b{{sp:\\sqrt{x'^2+y'^2}}}\\,dt$","tint":{"sp":"blue"}},
+            {"do":"underline","term":"sp","label":"速率","on":"根號那一串"}
+          ] },
+        { "show": ["$x = 3\\cos t$，$y = 3\\sin t$"],
+          "note": "$0 \\le t \\le \\frac{\\pi}{2}$。",
+          "say": "例如半徑三的圓，t 從零走到二分之 pi，是四分之一圈。",
+          "board": [
+            {"do":"write","line":"$x=3\\cos t,\\ y=3\\sin t\\ \\ (0\\le t\\le\\frac{\\pi}{2})$","on":"例如"}
+          ] },
+        { "show": ["$9\\sin^2 t + 9\\cos^2 t = 9$，速率 3"],
+          "say": "兩個速度平方相加，九 sine 平方加九 cosine 平方等於九，速率一直是三。",
+          "board": [
+            {"do":"write","line":"$x'^2+y'^2=9\\sin^2 t+9\\cos^2 t=9$"},
+            {"do":"transform","line":"${{sp:\\sqrt{x'^2+y'^2}}}={{v:3}}$","on":"速率一直"}
+          ] },
+        { "show": ["$L = \\int_0^{\\pi/2} 3\\,dt = \\frac{3\\pi}{2}$"],
+          "note": "半徑 3 的圓周長 $6\\pi$，四分之一正好。",
+          "say": "速率三乘上時間二分之 pi，得二分之三 pi。周長六 pi 的四分之一，對得上。",
+          "board": [
+            {"do":"write","line":"$L=\\int_0^{\\pi/2}{{v:3}}\\,dt=\\;{{res:\\frac{3\\pi}{2}}}$","on":"速率三乘上"},
+            {"do":"box","term":"res","color":"green","label":"四分之一圈","on":"周長六 pi"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "開根號要絕對值",
+      "beats": [
+        { "show": ["$\\sqrt{A^2} = |A|$"],
+          "note": "根號裡常湊成完全平方，開出來先看正負。",
+          "say": "能算的弧長題，根號裡幾乎都湊成完全平方。開根號出來是絕對值，不是它自己。",
+          "board": [
+            {"do":"write","line":"$\\sqrt{A^2}={{abs:|A|}}$"},
+            {"do":"circle","term":"abs","label":"不是 A","on":"出來是絕對值"}
+          ] },
+        { "show": ["完全平方是挑好的，不是定理"],
+          "note": "一般的平方和開根號，往往積不出初等反導函數。",
+          "say": "這不是定理，是出題的人挑好算的。一般的平方和，開根號之後常常沒有初等反導函數。",
+          "board": [
+            {"do":"write","line":"完全平方：出題挑的，不是定理"}
+          ] },
+        { "show": ["$x = t^2$，$y = t^3$","$x'^2 + y'^2 = t^2(4 + 9t^2)$"],
+          "say": "x 是 t 平方，y 是 t 三次方。速度平方和是四 t 平方加九 t 四次方，提出 t 平方。",
+          "board": [
+            {"do":"write","line":"$x=t^2,\\ y=t^3$"},
+            {"do":"write","line":"$x'^2+y'^2=4t^2+9t^4$","on":"速度平方和"},
+            {"do":"transform","line":"$x'^2+y'^2={{t2:t^2}}(4+9t^2)$","on":"提出"}
+          ] },
+        { "show": ["$|t|\\sqrt{4 + 9t^2}$"],
+          "note": "$-1 \\le t \\le 1$ 時直接拿掉絕對值，會積出 0。",
+          "say": "開出來是絕對值 t 乘根號。t 在零到一，可以拿掉絕對值；如果範圍跨過零，就要拆開。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\sqrt{x'^2+y'^2}={{at:|t|}}\\sqrt{4+9t^2}$","on":"開出來"},
+            {"do":"underline","term":"at","label":"看正負","on":"絕對值 t"},
+            {"do":"write","line":"$0\\le t\\le1$：$|t|=t$","on":"t 在零到一"}
+          ] },
+        { "show": ["$L = \\int_0^1 t\\sqrt{4 + 9t^2}\\,dt$"],
+          "note": "令 $u = 4 + 9t^2$，$du = 18t\\,dt$。",
+          "say": "在零到一上積分，令 u 是四加九 t 平方。換元之後，上下限也要跟著換。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$L=\\int_0^1 t\\sqrt{{{u:4+9t^2}}}\\,dt$","on":"在零到一"},
+            {"do":"write","line":"${{u:4+9t^2}}=u$","tint":{"u":"violet"},"on":"令 u"}
+          ] },
+        { "show": ["$du = 18t\\,dt$","$t\\,dt = \\frac{1}{18}du$"],
+          "say": "u 是四加九 t 平方，微分得 d u 等於十八 t 乘 d t。所以 t 乘 d t，就是十八分之一的 d u。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$u=4+9t^2$，$du=18t\\,dt$","on":"得"},
+            {"do":"write","line":"$t\\,dt={{q1:\\frac{1}{18}du}}$","on":"所以"},
+            {"do":"underline","term":"q1","color":"gold","label":"換成 du","on":"十八分之一"}
+          ] }
+      ],
+      "key": "$\\sqrt{t^2}=|t|$：先看正負再拿掉絕對值",
+      "predict": {
+        "ask": "換成 $u$ 之後，積分從哪裡到哪裡？",
+        "options": [
+          {
+            "label": "$u$ 從 4 到 13",
+            "correct": true
+          },
+          {
+            "label": "$u$ 從 0 到 1",
+            "why": "0 到 1 是 $t$ 的範圍；換元後要代進 $u = 4 + 9t^2$：$t = 0$ 得 4，$t = 1$ 得 13。"
+          },
+          {
+            "label": "$u$ 從 4 到 9",
+            "why": "$t = 1$ 代進去是 $4 + 9 = 13$，不是只取 9。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "擺線一拱",
+      "beats": [
+        { "show": ["$x' = 1 - \\cos t$，$y' = \\sin t$"],
+          "note": "擺線 $x = t - \\sin t$、$y = 1 - \\cos t$，$0 \\le t \\le 2\\pi$。",
+          "say": "擺線的一拱，t 從零到二 pi。先把兩個速度寫出來。",
+          "board": [
+            {"do":"write","line":"$x=t-\\sin t,\\ y=1-\\cos t$"},
+            {"do":"write","line":"$x'=1-\\cos t,\\ y'=\\sin t$","on":"先把兩個速度"}
+          ] },
+        { "show": ["$x'^2 + y'^2 = 2 - 2\\cos t$"],
+          "say": "平方展開，cosine 平方加 sine 平方合成一，整理成二減二 cosine t。",
+          "board": [
+            {"do":"write","line":"$x'^2+y'^2=1-2\\cos t+{{cs:\\cos^2 t+\\sin^2 t}}$","on":"平方展開"},
+            {"do":"underline","term":"cs","label":"合成 1","on":"合成一"},
+            {"do":"transform","line":"$x'^2+y'^2=2-2\\cos t$","on":"整理成"}
+          ] },
+        { "show": ["$1-\\cos t = 2\\sin^2\\frac{t}{2}$"],
+          "note": "來自 $\\cos t = 1-2\\sin^2\\frac{t}{2}$。",
+          "say": "cosine t 是一減二倍 sine 二分之 t 的平方。移項，一減 cosine t 就等於二倍那個平方。",
+          "board": [
+            {"do":"write","line":"$\\cos t=1-2\\sin^2\\frac{t}{2}$"},
+            {"do":"transform","line":"$1-\\cos t={{k1:2\\sin^2\\frac{t}{2}}}$","on":"移項"}
+          ] },
+        { "show": ["$2-2\\cos t = 2(1-\\cos t)$","$= 4\\sin^2\\frac{t}{2}$"],
+          "say": "二減二 cosine t，先提出二，變成二乘一減 cosine t。再代入剛才的式子，二乘二就是四。",
+          "board": [
+            {"do":"write","line":"$2-2\\cos t=2(1-\\cos t)$"},
+            {"do":"write","line":"$=2\\cdot 2\\sin^2\\frac{t}{2}=4\\sin^2\\frac{t}{2}$","on":"再代入"}
+          ] },
+        { "show": ["$= 4\\sin^2\\frac{t}{2}$"],
+          "note": "半角公式 $1 - \\cos t = 2\\sin^2\\frac{t}{2}$。",
+          "say": "用半角公式湊成完全平方：四乘 sine 二分之 t 的平方。開根號時，別忘了絕對值。",
+          "board": [
+            {"do":"write","line":"$={{h:4\\sin^2\\frac{t}{2}}}$","on":"用半角公式"},
+            {"do":"box","term":"h","label":"完全平方","on":"完全平方"}
+          ] }
+      ],
+      "key": "用半角公式把 $1-\\cos t$ 化成平方",
+      "check": 1
+    },
+    {
+      "title": "量的是走過的距離",
+      "beats": [
+        { "show": ["擺線一拱：$L = 8$"],
+          "note": "$\\int_0^{2\\pi} 2\\sin\\frac{t}{2}\\,dt$。",
+          "say": "接上一節，二 sine 二分之 t 從零積到二 pi，擺線一拱的長度剛好是八。",
+          "board": [
+            {"do":"write","line":"$L=\\int_0^{2\\pi}2\\sin\\frac{t}{2}\\,dt={{r:8}}$"},
+            {"do":"box","term":"r","color":"green","on":"剛好是八"}
+          ] },
+        { "show": ["$\\int 2\\sin\\frac{t}{2}\\,dt = -4\\cos\\frac{t}{2}$"],
+          "note": "檢查：$-4\\cos\\frac{t}{2}$ 的導數是 $2\\sin\\frac{t}{2}$。",
+          "say": "反導函數是負四 cosine 二分之 t。微分檢查：負四乘負 sine 再乘二分之一，剛好是二 sine。",
+          "board": [
+            {"do":"write","line":"$\\int 2\\sin\\frac{t}{2}\\,dt={{an:-4\\cos\\frac{t}{2}}}$"},
+            {"do":"focus","term":"an","color":"gold","label":"反導函數","on":"微分檢查"}
+          ] },
+        { "show": ["$-4\\cos\\pi-(-4\\cos 0)=4+4=8$"],
+          "say": "上限二 pi，二分之 t 是 pi，cosine pi 是負一；下限零，cosine 零是一。四減負四，得八。",
+          "board": [
+            {"do":"write","line":"上限：$-4\\cos\\pi=4$"},
+            {"do":"write","line":"下限：$-4\\cos 0=-4$，$4-(-4)=8$","on":"下限零"}
+          ] },
+        { "show": ["$x = \\cos 2t$，$y = \\sin 2t$：速率 2"],
+          "note": "$0 \\le t \\le 2\\pi$，積分得 $4\\pi$。",
+          "say": "再看 cosine 二 t、sine 二 t，速率是二，從零積到二 pi，得到四 pi。",
+          "board": [
+            {"do":"write","line":"$x=\\cos 2t,\\ y=\\sin 2t$"},
+            {"do":"write","line":"$L=\\int_0^{2\\pi}2\\,dt={{f:4\\pi}}$","on":"從零積到"}
+          ] },
+        { "show": ["單位圓周長是 $2\\pi$"],
+          "say": "可是單位圓的周長是二 pi。多出來的那一份是哪裡來的？",
+          "board": [
+            {"do":"write","line":"單位圓周長 $={{c:2\\pi}}$"},
+            {"do":"arrow","from":"f","to":"c","color":"blue","label":"哪來的？","on":"多出來"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["parametric", "arc-length"],
+    "fine": ["parametric-speed", "parametric-arc-length-integral", "arc-length-sqrt-simplify", "parametric-arc-length-overlap"]
+  },
+  "practice": [
+    { "id": "gap-der-param-005", "core": true, "trains": "parametric-speed" },
+    { "id": "cx-arc-003", "core": true, "trains": "parametric-arc-length-integral" },
+    { "id": "lec-10-q1c", "core": true, "trains": "arc-length-sqrt-simplify" },
+    { "id": "cg-7a-012", "core": true, "trains": "parametric-arc-length-integral" },
+    { "id": "cg-7a-015", "core": true, "trains": "parametric-arc-length-overlap" },
+    { "id": "cg-7a-014", "trains": "parametric-arc-length-integral" },
+    { "id": "cg-7a-013", "trains": "parametric-arc-length-integral" }
+  ],
+  "gaps": []
+}

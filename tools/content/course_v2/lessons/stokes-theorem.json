@@ -1,7 +1,8 @@
 {
   "id": "stokes-theorem",
   "title": "Stokes 定理",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 45,
   "prerequisites": [
     "curl",
@@ -17,48 +18,137 @@
     "divergence"
   ],
   "objectives": [
-    "寫出 Stokes 定理與它的條件，特別是邊界方向與曲面法向量怎麼用右手定則配對。",
-    "把空間封閉曲線的環流換成旋度通量（或反過來），並挑一張好算的曲面。",
-    "說出 Green 定理是 Stokes 定理在平面上的特例。"
+    "寫出 Stokes 定理與它的條件，特別是邊界方向與曲面法向量怎麼用右手定則配對",
+    "把空間封閉曲線的環流換成旋度通量（或反過來），並挑一張好算的曲面",
+    "說出 Green 定理是 Stokes 定理在平面上的特例"
   ],
-  "visual": "一個上半球面像一頂帽子，帽沿是單位圓。曲面上鋪滿小格，每格邊界畫著依右手定則（拇指沿法向量）繞的小箭頭圈，相鄰兩格的共用邊互相抵消，最後只剩帽沿的環流。拖動滑桿把帽子壓扁成平圓盤，旋度通量的讀數始終不變；按「翻轉法向量」，帽沿的箭頭方向與讀數同時反向。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 把 Green 定理拿到空間裡",
+      "heading": "① 把 Green 拿到空間",
       "body": [
-        "〈Green 定理〉：平面區域邊界的環流 $={}$ 區域裡所有小漩渦（$Q_x-P_y$）的總和。",
-        "空間裡換成一張曲面 $S$，邊界是一條封閉曲線 $C$。把 $S$ 切成小片，每一小片邊界的環流 $\\approx(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\times{}$ 小片面積（〈旋度〉在 $\\mathbf n$ 方向的分量）。相鄰小片的共用邊抵消，只剩 $S$ 的邊界 $C$。這是直觀，不是證明。"
+        "Green 定理換個寫法：$Q_x-P_y=(\\nabla\\times\\mathbf F)\\cdot\\mathbf k$",
+        "平面區域換成空間裡的曲面 $S$，邊界是空間曲線 $C$",
+        "每一小片繞一圈（9.24 ⑤）：",
+        "相鄰兩片共用的邊：走兩次、方向相反，抵消；只剩外圍的 $C$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_D(\\nabla\\times\\mathbf F)\\cdot\\mathbf k\\,dA",
+        "\\oint_{\\text{小片}}\\mathbf F\\cdot d\\mathbf r\\approx(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,\\Delta S",
+        "\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,dS"
+      ]
     },
     {
       "heading": "② 定理與方向配對",
       "body": [
-        "先講方向怎麼配。右手定則：右手拇指指向曲面的法向量 $\\mathbf n$，四指彎曲的方向就是邊界 $C$ 的方向。等價的說法：頭朝 $\\mathbf n$ 的方向，沿 $C$ 走，曲面在你的左手邊。",
-        "例：上半球面、法向量朝上，邊界單位圓要「從上往下看逆時針」。",
-        "定理：$S$ 是可定向、分段光滑的曲面，邊界 $C$ 是分段光滑的簡單封閉曲線，$C$ 依右手定則跟 $\\mathbf n$ 配對；$\\mathbf F$ 的分量在一個包含 $S$ 的開集上有連續偏導。那麼"
+        "• $S$：有方向（選好 $\\mathbf n$）、分段光滑的曲面",
+        "• $C$：$S$ 的邊界，簡單封閉、分段光滑，正向",
+        "• $\\mathbf F$ 的分量在包含 $S$ 的開集上偏導連續",
+        "正向（右手定則）：拇指沿 $\\mathbf n$，四指彎的方向就是 $C$ 的方向",
+        "Green 是特例：$S$ 是 $xy$ 平面上的區域 $D$，$\\mathbf n=\\mathbf k$"
       ],
       "tex": [
-        "\\oint_C \\mathbf F\\cdot d\\mathbf r=\\iint_S (\\nabla\\times\\mathbf F)\\cdot d\\mathbf S"
-      ],
-      "collapsible": false
+        "\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S",
+        "(\\nabla\\times\\mathbf F)\\cdot\\mathbf k=Q_x-P_y,\\quad C\\text{ 逆時針}"
+      ]
     },
     {
-      "heading": "③ 兩個用法",
+      "heading": "② 證明（$S$ 是函數圖形）",
       "body": [
-        "線積分難、旋度簡單：把 $\\oint_C$ 換成曲面積分，而且曲面可以任選，只要邊界是 $C$、方向配好。通常選最平的那張（圓盤、平面上的一片）。",
-        "旋度通量難：反過來換成邊界的線積分。推論：兩張曲面邊界相同、方向一致，旋度通量一定相同。",
-        "Green 是特例：$S$ 是 $xy$ 平面上的區域、$\\mathbf n=\\mathbf k$，$(\\nabla\\times\\mathbf F)\\cdot\\mathbf k=Q_x-P_y$，$C$ 逆時針，就回到 Green。"
+        "設 $S$：$z=g(x,y)$，$(x,y)\\in D$，$\\mathbf n$ 朝上；$g$ 有連續二階偏導",
+        "右邊：朝上的圖形 $d\\mathbf S=\\langle -g_x,-g_y,1\\rangle\\,dA$（9.23）",
+        "左邊：$C$ 是 $D$ 的邊界 $C_1$ 抬上去，$z=g(x,y)$，$dz=g_x\\,dx+g_y\\,dy$",
+        "朝上的 $\\mathbf n$ 配上 $C_1$ 逆時針，正好是兩個定理要的方向"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S\\\\&=\\iint_D\\big[(Q_x-P_y)-(R_y-Q_z)g_x\\\\&\\qquad\\quad-(P_z-R_x)g_y\\big]\\,dA\\end{aligned}",
+        "\\begin{aligned}&\\oint_C P\\,dx+Q\\,dy+R\\,dz\\\\&=\\oint_{C_1}(P+Rg_x)\\,dx+(Q+Rg_y)\\,dy\\end{aligned}"
+      ]
     },
     {
-      "heading": "④ 封閉曲面與保守場（給想知道的人）",
+      "heading": "② 證明：用 Green",
       "body": [
-        "封閉曲面（像整個球面）沒有邊界，所以 $\\oiint(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=0$。這跟〈散度〉的 $\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$ 是同一件事的兩面。",
-        "如果在整個 $\\mathbb{R}^3$ 上 $\\nabla\\times\\mathbf F=\\mathbf 0$，任何封閉曲線都是某張曲面的邊界，環流都是 $0$，所以 $\\mathbf F$ 保守，這正是〈保守場〉那個充分條件在三維的理由。"
+        "對 $C_1$ 用 Green 定理：被積函數是",
+        "注意 $Q=Q(x,y,g(x,y))$，連鎖律：$\\dfrac{\\partial}{\\partial x}Q=Q_x+Q_zg_x$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{\\partial}{\\partial x}(Q+Rg_y)-\\frac{\\partial}{\\partial y}(P+Rg_x)",
+        "\\begin{aligned}\\tfrac{\\partial}{\\partial x}(Q+Rg_y)&=Q_x+Q_zg_x\\\\&\\quad+(R_x+R_zg_x)g_y+Rg_{yx}\\\\[4pt] \\tfrac{\\partial}{\\partial y}(P+Rg_x)&=P_y+P_zg_y\\\\&\\quad+(R_y+R_zg_y)g_x+Rg_{xy}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 證明（續）",
+      "body": [
+        "相減：$R_zg_xg_y$ 抵消；$g_{xy}=g_{yx}$（Clairaut）也抵消，剩",
+        "所以左邊 $=$ 右邊　$\\blacksquare$",
+        "一般的曲面：切成幾片，每片都是某個座標平面上的函數圖形；共用的邊抵消",
+        "每一片都要能寫成圖形、切開的邊要分段光滑；完全一般的版本要用參數式重做一次（同樣的連鎖律計算），或用 9.28 預告的微分形式"
+      ],
+      "tex": [
+        "Q_x-P_y+(Q_z-R_y)g_x+(R_x-P_z)g_y"
+      ]
+    },
+    {
+      "heading": "③ 用法一：換成一片平的",
+      "body": [
+        "$\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F=\\langle -y^2,\\ x,\\ z^2\\rangle$",
+        "$C$：平面 $y+z=2$ 與圓柱 $x^2+y^2=1$ 的交線，從上面看逆時針",
+        "$\\nabla\\times\\mathbf F=\\langle0-0,\\ 0-0,\\ 1-(-2y)\\rangle=\\langle0,0,1+2y\\rangle$",
+        "$S$：$z=2-y$，$C$ 逆時針 ⇒ $\\mathbf n$ 朝上：$d\\mathbf S=\\langle0,1,1\\rangle\\,dA$",
+        "直接參數化 $\\langle\\cos t,\\sin t,2-\\sin t\\rangle$ 硬算，也是 $\\pi$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\oint_C\\mathbf F\\cdot d\\mathbf r&=\\iint_{x^2+y^2\\le1}(1+2y)\\,dA\\\\&=\\pi+0=\\pi\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 用法二：通量換成邊界",
+      "body": [
+        "$\\displaystyle\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$，$\\mathbf F=\\langle xz^2-y,\\ x+e^{yz},\\ xyz\\rangle$",
+        "$S$：上半球面 $x^2+y^2+z^2=4$，$z\\ge0$，朝外",
+        "$\\nabla\\times\\mathbf F=\\langle xz-ye^{yz},\\ 2xz-yz,\\ 2\\rangle$：直接在球面上積很痛苦",
+        "邊界 $C$：$z=0$ 的圓 $\\langle2\\cos t,2\\sin t,0\\rangle$，從上面看逆時針",
+        "$z=0$：$\\mathbf F=\\langle -2\\sin t,\\ 2\\cos t+1,\\ 0\\rangle$，$\\mathbf r'=\\langle -2\\sin t,2\\cos t,0\\rangle$"
+      ],
+      "tex": [
+        "\\mathbf F\\cdot\\mathbf r'=4\\sin^2t+4\\cos^2t+2\\cos t=4+2\\cos t",
+        "\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=\\int_0^{2\\pi}(4+2\\cos t)\\,dt=8\\pi"
+      ]
+    },
+    {
+      "heading": "④ 封閉曲面",
+      "body": [
+        "旋度通量只看邊界：同一條 $C$、配對一致的兩張曲面，答案一樣",
+        "封閉曲面（例如球面）：",
+        "沿赤道切成上下兩半：兩半的邊界是同一個圓，但方向相反，兩個線積分抵消"
+      ],
+      "tex": [
+        "\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=0"
+      ]
+    },
+    {
+      "heading": "④ 旋度為 0 就保守",
+      "body": [
+        "保守場：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$",
+        "$C$ 任一封閉曲線，找一張以 $C$ 為邊界的曲面 $S$：",
+        "封閉曲線上的線積分都是 0 ⇒ 路徑無關 ⇒ 保守（9.18）",
+        "曲面可取「從一點連到 $C$ 上每一點」的錐面；$C$ 很複雜時錐面會自己交叉，嚴格處理要更多拓撲工具。定義域有洞時可能找不到這種曲面，這就是 9.24 反例的原因"
+      ],
+      "tex": [
+        "\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S\\mathbf 0\\cdot d\\mathbf S=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$",
+        "• 方向：拇指沿 $\\mathbf n$，四指沿 $C$（曲面在左手邊）",
+        "• Green 是平面上的特例（$\\mathbf n=\\mathbf k$）",
+        "• 用法：線積分難 → 挑一張好算的曲面；通量難 → 換成邊界",
+        "• 旋度通量只看邊界；封閉曲面上是 $0$",
+        "• 旋度 $=\\mathbf 0$ 在 $\\mathbb R^3$ ⇒ 保守",
+        "下一課：散度定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,275 +186,751 @@
   ],
   "checks": [
     {
-      "ask": "$S$ 是上半球面、法向量朝上。Stokes 定理裡邊界單位圓的方向是？",
+      "ask": "$S$：碗 $z=x^2+y^2$，$z\\le1$，法向量取==朝下、朝外==（$\\mathbf n$ 的 $z$ 分量是負的）。邊界 $C$ 要怎麼走？",
       "options": [
         {
-          "label": "從上往下看逆時針",
+          "label": "從上面看順時針",
           "correct": true
         },
         {
-          "label": "從上往下看順時針",
-          "why": "右手拇指朝上，四指彎曲的方向從上看是逆時針。順時針配的是朝下的法向量。"
+          "label": "從上面看逆時針",
+          "why": "那是法向量朝上（朝碗裡面）時的方向"
         },
         {
-          "label": "哪個方向都可以",
-          "why": "兩個方向差一個負號；方向必須跟法向量配對。"
-        }
-      ]
-    },
-    {
-      "ask": "兩張曲面 $S_1$、$S_2$ 有相同的邊界 $C$，方向也一致。它們的旋度通量？",
-      "options": [
-        {
-          "label": "一定相等",
-          "correct": true
-        },
-        {
-          "label": "一般不相等，要看曲面形狀",
-          "why": "兩者都等於 $\\oint_C\\mathbf F\\cdot d\\mathbf r$，只看邊界。這正是可以換成平坦曲面的理由。"
-        },
-        {
-          "label": "只有兩者都是平面時才相等",
-          "why": "Stokes 定理對任何（可定向、分段光滑）曲面都成立，不限平面。"
-        }
-      ]
-    },
-    {
-      "ask": "$S$ 是 $xy$ 平面上的區域、$\\mathbf n=\\mathbf k$。$(\\nabla\\times\\mathbf F)\\cdot\\mathbf k$ 等於？",
-      "options": [
-        {
-          "label": "$Q_x-P_y$",
-          "correct": true
-        },
-        {
-          "label": "$P_x+Q_y$",
-          "why": "那是平面上的散度，對應的是通量形式，不是環流。"
-        },
-        {
-          "label": "$R_z$",
-          "why": "旋度的 $\\mathbf k$ 分量是 $Q_x-P_y$，跟 $R$ 無關。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\mathbf F$ 在整個 $\\mathbb{R}^3$ 偏導連續，而且 $\\nabla\\times\\mathbf F=\\mathbf 0$。任一封閉曲線 $C$ 上的 $\\oint\\mathbf F\\cdot d\\mathbf r$ 是？",
-      "options": [
-        {
-          "label": "$0$",
-          "correct": true
-        },
-        {
-          "label": "$2\\pi$",
-          "why": "$2\\pi$ 來自有洞（例如去掉 $z$ 軸）的反例。這裡定義域是整個 $\\mathbb{R}^3$，沒有洞。"
-        },
-        {
-          "label": "無法判斷",
-          "why": "用 Stokes：環流 $={}$ 任一張以 $C$ 為邊界的曲面上旋度的通量 $=0$。"
+          "label": "兩個方向都可以",
+          "why": "方向反了，線積分會變號，只有一個對"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "Green 拿到空間",
+      "title": "把 Green 拿到空間",
       "beats": [
-        { "show": ["Green：邊界環流 = 小漩渦總和"],
-          "note": "平面區域、$Q_x-P_y$。",
-          "say": "Green 定理說：平面區域邊界的環流，等於裡面所有小漩渦的總和。",
+        {
+          "show": [
+            "Green 定理換個寫法：$Q_x-P_y=(\\nabla\\times\\mathbf F)\\cdot\\mathbf k$",
+            "$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_D(\\nabla\\times\\mathbf F)\\cdot\\mathbf k\\,dA$"
+          ],
+          "say": "先把格林定理換個寫法：Q x 減 P y 就是旋度點 k。所以邊界的環流量，等於旋度點 k 在區域上的積分。",
           "board": [
-            {"do":"write","line":"Green：邊界環流 ＝ 小漩渦總和"}
-          ] },
-        { "show": ["空間：曲面 $S$，邊界是封閉曲線 $C$"],
-          "say": "拿到空間裡，區域換成一張曲面，像一個碗，它的邊界是一條封閉曲線。",
+            {
+              "do": "write",
+              "line": "Green 定理換個寫法：$Q_x-P_y=(\\nabla\\times\\mathbf F)\\cdot\\mathbf k$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_D(\\nabla\\times\\mathbf F)\\cdot\\mathbf k\\,dA}}$",
+              "on": "就是"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "平面區域換成空間裡的曲面 $S$，邊界是空間曲線 $C$"
+          ],
+          "say": "現在把平面區域換成空間裡一張彎的曲面 S，它的邊界是一條空間曲線 C。",
           "board": [
-            {"do":"write","line":"空間：曲面 ${{s:S}}$，邊界是封閉曲線 ${{c:C}}$"},
-            {"do":"focus","term":"s","on":"一張曲面"},
-            {"do":"focus","term":"c","on":"邊界是"}
-          ] },
-        { "show": ["$x$ 分量 $R_y-Q_z$，$y$ 分量 $P_z-R_x$","$z$ 分量 $Q_x-P_y$"],
-          "note": "$\\mathbf F=\\langle P,Q,R\\rangle$，下標是偏微分。",
-          "say": "旋度有三個分量：x 分量是 R y 減 Q z，y 分量是 P z 減 R x，z 分量是 Q x 減 P y。",
+            {
+              "do": "write",
+              "line": "平面區域換成空間裡的曲面 $S$，邊界是空間曲線 $C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "一樣切成很多小片。每一小片幾乎是平的，有自己的法向量 n。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle P,Q,R\\rangle$"},
-            {"do":"write","line":"$x$ 分量 $R_y-Q_z$，$y$ 分量 $P_z-R_x$","on":"x 分量"},
-            {"do":"write","line":"$z$ 分量 $Q_x-P_y$","on":"z 分量"}
-          ] },
-        { "show": ["小片環流 $\\approx(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\times$ 面積"],
-          "note": "共用邊抵消，只剩邊界 $C$。直觀，不是證明。",
-          "say": "曲面切成小片，每片的環流是旋度在法向量方向的分量乘面積。共用邊抵消，只剩外圍的邊界。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"stkPatch\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b6stkPatch\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b6stkPatchblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b6stkPatchred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b6stkPatchgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b6stkPatchpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b6stkPatchink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><polygon points=\"235.5,99.3 239.6,118.3 202.7,117.6 204.7,98.7\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"204.7,98.7 202.7,117.6 166.6,120.9 174.6,101.4\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.9,103 274.8,122.8 239.6,118.3 235.5,99.3\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.6,101.4 166.6,120.9 133.8,127.8 147.3,107.2\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"290.8,109.8 306,130.9 274.8,122.8 264.9,103\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"147.3,107.2 133.8,127.8 106.5,138 124.6,115.7\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.4,85.4 235.5,99.3 204.7,98.7 206.8,85\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.8,85 204.7,98.7 174.6,101.4 182.7,87.2\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"254.9,88.5 264.9,103 235.5,99.3 231.4,85.4\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"311.7,119 331,142 306,130.9 290.8,109.8\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"182.7,87.2 174.6,101.4 147.3,107.2 160.9,91.8\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.7,93.8 290.8,109.8 264.9,103 254.9,88.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"124.6,115.7 106.5,138 86.7,150.7 108.1,126.3\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"160.9,91.8 147.3,107.2 124.6,115.7 142.7,98.6\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"325.9,130.1 348.1,155.3 331,142 311.7,119\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"227.3,76.8 231.4,85.4 206.8,85 208.8,76.5\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.3,101.2 311.7,119 290.8,109.8 275.7,93.8\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208.8,76.5 206.8,85 182.7,87.2 190.8,78.1\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"244.9,79 254.9,88.5 231.4,85.4 227.3,76.8\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"190.8,78.1 182.7,87.2 160.9,91.8 174.4,81.6\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.5,83.1 275.7,93.8 254.9,88.5 244.9,79\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"142.7,98.6 124.6,115.7 108.1,126.3 129.4,107\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"108.1,126.3 86.7,150.7 75.6,165 98.8,138.2\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.4,81.6 160.9,91.8 142.7,98.6 160.8,86.6\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.7,110.1 325.9,130.1 311.7,119 292.3,101.2\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"273,88.6 292.3,101.2 275.7,93.8 260.5,83.1\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.2,73.3 227.3,76.8 208.8,76.5 210.9,73.1\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.6,142.4 356.1,170 348.1,155.3 325.9,130.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"210.9,73.1 208.8,76.5 190.8,78.1 198.9,74.2\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"234.9,74.8 244.9,79 227.3,76.8 223.2,73.3\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"198.9,74.2 190.8,78.1 174.4,81.6 187.9,76.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"160.8,86.6 142.7,98.6 129.4,107 150.8,93\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.3,77.5 260.5,83.1 244.9,79 234.9,74.8\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"129.4,107 108.1,126.3 98.8,138.2 122,116.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.5,95.3 303.7,110.1 292.3,101.2 273,88.6\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"187.9,76.5 174.4,81.6 160.8,86.6 178.8,79.9\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"309,119.9 332.6,142.4 325.9,130.1 303.7,110.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.7,81.2 273,88.6 260.5,83.1 245.3,77.5\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"98.8,138.2 75.6,165 73.9,180 97.4,150.7\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"150.8,93 129.4,107 122,116.6 145.3,100.1\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"178.8,79.9 160.8,86.6 150.8,93 172.2,84.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.1,75 223.2,73.3 210.9,73.1 212.9,74.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"212.9,74.9 210.9,73.1 198.9,74.2 206.9,75.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225,75.7 234.9,74.8 223.2,73.3 219.1,75\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.4,85.6 281.5,95.3 273,88.6 253.7,81.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.9,75.4 198.9,74.2 187.9,76.5 201.5,76.6\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"285.5,102.6 309,119.9 303.7,110.1 281.5,95.3\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"331.2,154.9 354.4,185 356.1,170 332.6,142.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.2,77.1 245.3,77.5 234.9,74.8 225,75.7\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"122,116.6 98.8,138.2 97.4,150.7 121,126.6\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"201.5,76.6 187.9,76.5 178.8,79.9 196.9,78.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"234.3,78.9 253.7,81.2 245.3,77.5 230.2,77.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"172.2,84.1 150.8,93 145.3,100.1 168.5,88.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"196.9,78.3 178.8,79.9 172.2,84.1 193.6,80.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308,129.9 331.2,154.9 332.6,142.4 309,119.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262,90.5 285.5,102.6 281.5,95.3 259.4,85.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.2,81.2 259.4,85.6 253.7,81.2 234.3,78.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"145.3,100.1 122,116.6 121,126.6 144.5,107.7\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"193.6,80.4 172.2,84.1 168.5,88.9 191.8,82.8\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 219.1,75 212.9,74.9 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.7,110.1 308,129.9 309,119.9 285.5,102.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 212.9,74.9 206.9,75.4 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 225,75.7 219.1,75 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 206.9,75.4 201.5,76.6 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.5,83.6 262,90.5 259.4,85.6 237.2,81.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"168.5,88.9 145.3,100.1 144.5,107.7 168,93.9\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"97.4,150.7 73.9,180 81.9,194.7 104.1,163\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 230.2,77.1 225,75.7 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 201.5,76.6 196.9,78.3 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 234.3,78.9 230.2,77.1 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 196.9,78.3 193.6,80.4 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 237.2,81.2 234.3,78.9 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.5,95.5 284.7,110.1 285.5,102.6 262,90.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.8,82.8 168.5,88.9 168,93.9 191.5,85.3\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 193.6,80.4 191.8,82.8 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 238.5,83.6 237.2,81.2 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"121,126.6 97.4,150.7 104.1,163 126.3,136.4\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.2,86.1 261.5,95.5 262,90.5 238.5,83.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 191.8,82.8 191.5,85.3 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 238.2,86.1 238.5,83.6 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"321.9,166.8 343.3,199.3 354.4,185 331.2,154.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 191.5,85.3 192.8,87.7 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"144.5,107.7 121,126.6 126.3,136.4 148.5,115\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 236.4,88.5 238.2,86.1 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.5,85.3 168,93.9 170.6,98.8 192.8,87.7\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"168,93.9 144.5,107.7 148.5,115 170.6,98.8\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 192.8,87.7 195.7,90 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 233.1,90.6 236.4,88.5 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"300.6,139.5 321.9,166.8 331.2,154.9 308,129.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 195.7,90 199.8,91.8 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236.4,88.5 257.8,100.3 261.5,95.5 238.2,86.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 228.5,92.3 233.1,90.6 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.2,117.3 300.6,139.5 308,129.9 284.7,110.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 199.8,91.8 205,93.1 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.8,100.3 279.2,117.3 284.7,110.1 261.5,95.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 223.1,93.5 228.5,92.3 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 205,93.1 210.9,93.9 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 217.1,94 223.1,93.5 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,81.9 210.9,93.9 217.1,94 215,81.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.8,87.7 170.6,98.8 176.3,103.2 195.7,90\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.1,90.6 251.2,104.6 257.8,100.3 236.4,88.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"170.6,98.8 148.5,115 157,121.7 176.3,103.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"195.7,90 176.3,103.2 184.7,106.9 199.8,91.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"104.1,163 81.9,194.7 99,208 118.3,174.1\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"148.5,115 126.3,136.4 137.7,145.3 157,121.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"228.5,92.3 242.1,107.9 251.2,104.6 233.1,90.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"126.3,136.4 104.1,163 118.3,174.1 137.7,145.3\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.2,104.6 269.2,123.7 279.2,117.3 257.8,100.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"199.8,91.8 184.7,106.9 195.1,109.6 205,93.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.1,93.5 231.1,110.3 242.1,107.9 228.5,92.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.2,123.7 287.3,147.9 300.6,139.5 279.2,117.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"205,93.1 195.1,109.6 206.8,111.1 210.9,93.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"305.4,177.4 323.5,212 343.3,199.3 321.9,166.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287.3,147.9 305.4,177.4 321.9,166.8 300.6,139.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217.1,94 219.1,111.3 231.1,110.3 223.1,93.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"176.3,103.2 157,121.7 169.5,127.2 184.7,106.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"210.9,93.9 206.8,111.1 219.1,111.3 217.1,94\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.1,107.9 255.6,128.7 269.2,123.7 251.2,104.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"157,121.7 137.7,145.3 154.3,152.7 169.5,127.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"184.7,106.9 169.5,127.2 185.1,131.2 195.1,109.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.1,110.3 239.2,132.2 255.6,128.7 242.1,107.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"255.6,128.7 269.1,154.7 287.3,147.9 269.2,123.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"137.7,145.3 118.3,174.1 139.2,183.3 154.3,152.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"195.1,109.6 185.1,131.2 202.7,133.5 206.8,111.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"118.3,174.1 99,208 124,219.1 139.2,183.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.1,111.3 221.2,133.8 239.2,132.2 231.1,110.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.8,111.1 202.7,133.5 221.2,133.8 219.1,111.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.1,154.7 282.7,185.9 305.4,177.4 287.3,147.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.5,127.2 154.3,152.7 175.1,158.1 185.1,131.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,185.9 296.2,222.2 323.5,212 305.4,177.4\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.2,132.2 247.3,159.3 269.1,154.7 255.6,128.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"185.1,131.2 175.1,158.1 198.6,161.1 202.7,133.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"154.3,152.7 139.2,183.3 165.1,190 175.1,158.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"221.2,133.8 223.2,161.5 247.3,159.3 239.2,132.2\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"202.7,133.5 198.6,161.1 223.2,161.5 221.2,133.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"247.3,159.3 255.4,191.6 282.7,185.9 269.1,154.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"139.2,183.3 124,219.1 155.2,227.2 165.1,190\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"175.1,158.1 165.1,190 194.5,193.8 198.6,161.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"255.4,191.6 263.4,229.1 296.2,222.2 282.7,185.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.2,161.5 225.3,194.4 255.4,191.6 247.3,159.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"198.6,161.1 194.5,193.8 225.3,194.4 223.2,161.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"165.1,190 155.2,227.2 190.4,231.7 194.5,193.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225.3,194.4 227.3,232.4 263.4,229.1 255.4,191.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194.5,193.8 190.4,231.7 227.3,232.4 225.3,194.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><path d=\"M356.6 175L356.5 173.2L356.3 171.4L356 169.6L355.5 167.8L354.9 166L354.1 164.2L353.2 162.4L352.2 160.7L351 158.9L349.7 157.2L348.2 155.5L346.7 153.8L345 152.1L343.1 150.5L341.2 148.9L339.1 147.3L336.9 145.7L334.6 144.1L332.1 142.6L329.6 141.1L326.9 139.7L324.1 138.3L321.2 136.9L318.2 135.6L315.1 134.3L311.9 133L308.6 131.8L305.3 130.6L301.8 129.5L298.2 128.4L294.6 127.4L290.9 126.4L287.1 125.4L283.2 124.5L279.3 123.7L275.3 122.9L271.2 122.1L267.1 121.5L263 120.8L258.8 120.2L254.5 119.7L250.2 119.2L245.9 118.8L241.5 118.4L237.2 118.1L232.7 117.9L228.3 117.7L223.9 117.5L219.4 117.4L215 117.4L210.6 117.4L206.1 117.5L201.7 117.7L197.3 117.9L192.8 118.1L188.5 118.4L184.1 118.8L179.8 119.2L175.5 119.7L171.2 120.2L167 120.8L162.9 121.5L158.8 122.1L154.7 122.9L150.7 123.7L146.8 124.5L142.9 125.4L139.1 126.4L135.4 127.4L131.8 128.4L128.2 129.5L124.7 130.6L121.4 131.8L118.1 133L114.9 134.3L111.8 135.6L108.8 136.9L105.9 138.3L103.1 139.7L100.4 141.1L97.9 142.6L95.4 144.1L93.1 145.7L90.9 147.3L88.8 148.9L86.9 150.5L85 152.1L83.3 153.8L81.8 155.5L80.3 157.2L79 158.9L77.8 160.7L76.8 162.4L75.9 164.2L75.1 166L74.5 167.8L74 169.6L73.7 171.4L73.5 173.2L73.4 175\" stroke=\"var(--blue)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/><path d=\"M73.4 175L73.5 176.8L73.7 178.6L74 180.4L74.5 182.2L75.1 184L75.9 185.8L76.8 187.6L77.8 189.3L79 191.1L80.3 192.8L81.8 194.5L83.3 196.2L85 197.9L86.9 199.5L88.8 201.1L90.9 202.7L93.1 204.3L95.4 205.9L97.9 207.4L100.4 208.9L103.1 210.3L105.9 211.7L108.8 213.1L111.8 214.4L114.9 215.7L118.1 217L121.4 218.2L124.7 219.4L128.2 220.5L131.8 221.6L135.4 222.6L139.1 223.6L142.9 224.6L146.8 225.5L150.7 226.3L154.7 227.1L158.8 227.9L162.9 228.5L167 229.2L171.2 229.8L175.5 230.3L179.8 230.8L184.1 231.2L188.5 231.6L192.8 231.9L197.3 232.1L201.7 232.3L206.1 232.5L210.6 232.6L215 232.6L219.4 232.6L223.9 232.5L228.3 232.3L232.7 232.1L237.2 231.9L241.5 231.6L245.9 231.2L250.2 230.8L254.5 230.3L258.8 229.8L263 229.2L267.1 228.5L271.2 227.9L275.3 227.1L279.3 226.3L283.2 225.5L287.1 224.6L290.9 223.6L294.6 222.6L298.2 221.6L301.8 220.5L305.3 219.4L308.6 218.2L311.9 217L315.1 215.7L318.2 214.4L321.2 213.1L324.1 211.7L326.9 210.3L329.6 208.9L332.1 207.4L334.6 205.9L336.9 204.3L339.1 202.7L341.2 201.1L343.1 199.5L345 197.9L346.7 196.2L348.2 194.5L349.7 192.8L351 191.1L352.2 189.3L353.2 187.6L354.1 185.8L354.9 184L355.5 182.2L356 180.4L356.3 178.6L356.5 176.8L356.6 175\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"155.2\" y1=\"227.2\" x2=\"171\" y2=\"229.7\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchblue)\"/><line x1=\"345\" y1=\"197.8\" x2=\"350.8\" y2=\"191.3\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchblue)\"/><line x1=\"75\" y1=\"166.5\" x2=\"73.5\" y2=\"173.3\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchblue)\"/><path d=\"M226.1 111.9L225.5 110.8L224.8 109.7L224 108.7L223 107.7L221.9 106.8L220.8 106L219.5 105.3L218.2 104.7L216.8 104.3L215.3 103.9L213.8 103.6L212.2 103.4L210.7 103.4L209.1 103.5L207.6 103.7L206 104L204.6 104.4L203.1 104.9L201.8 105.6L200.5 106.3L199.3 107.1L198.2 108L197.2 109L196.3 110.1L195.6 111.2L194.9 112.3L194.5 113.5L194.1 114.7L194 116L193.9 117.2L194 118.4L194.3 119.6L194.7 120.8L195.2 122L195.9 123.1L196.7 124.1L197.7 125.1L198.7 126L199.9 126.8L201.1 127.5L202.4 128.1L203.8 128.6L205.3 129L206.8 129.3L208.3 129.5L209.9 129.6L211.5 129.5L213 129.3L214.6 129L216 128.6L217.5 128.1L218.9 127.5L220.2 126.8L221.4 126L222.5 125.1L223.5 124.1L224.4 123.1L225.2 122L225.8 120.8L226.3 119.6\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"225.5\" y1=\"121.5\" x2=\"226.3\" y2=\"119.6\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchred)\"/><path d=\"M309.5 146.6L308.3 145.7L307.1 144.9L305.9 144.1L304.7 143.6L303.4 143.1L302.2 142.7L301.1 142.5L299.9 142.4L298.8 142.5L297.8 142.7L296.8 143L295.9 143.4L295.1 144L294.4 144.6L293.7 145.4L293.2 146.3L292.8 147.3L292.5 148.4L292.3 149.5L292.2 150.8L292.3 152L292.4 153.4L292.7 154.7L293 156.1L293.5 157.5L294.1 158.9L294.8 160.2L295.6 161.6L296.5 162.9L297.4 164.1L298.4 165.3L299.5 166.4L300.6 167.4L301.8 168.4L303 169.2L304.2 169.9L305.4 170.5L306.6 171L307.8 171.4L309 171.6L310.2 171.7L311.3 171.7L312.3 171.5L313.3 171.3L314.2 170.8L315 170.3L315.8 169.7L316.4 168.9L317 168L317.4 167L317.7 166L318 164.8L318.1 163.6L318 162.4L317.9 161L317.7 159.7L317.3 158.3L316.8 156.9L316.3 155.6L315.6 154.2\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"316.6\" y1=\"156.4\" x2=\"315.6\" y2=\"154.2\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchred)\"/><path d=\"M126.3 151.2L126.9 149.9L127.5 148.5L127.9 147.2L128.3 145.9L128.5 144.7L128.6 143.4L128.7 142.3L128.6 141.2L128.4 140.3L128.1 139.4L127.7 138.6L127.2 137.9L126.6 137.3L125.9 136.9L125.1 136.5L124.3 136.3L123.3 136.2L122.4 136.3L121.3 136.4L120.2 136.7L119.1 137.2L118 137.7L116.9 138.4L115.7 139.1L114.6 140L113.5 140.9L112.4 142L111.3 143.1L110.3 144.3L109.3 145.5L108.5 146.8L107.6 148.1L106.9 149.5L106.3 150.8L105.7 152.2L105.2 153.5L104.9 154.8L104.6 156L104.5 157.3L104.4 158.4L104.5 159.5L104.7 160.5L105 161.4L105.4 162.2L105.9 162.9L106.4 163.5L107.1 164L107.9 164.3L108.7 164.6L109.6 164.7L110.6 164.6L111.6 164.5L112.7 164.2L113.8 163.8L114.9 163.3L116 162.7L117.2 161.9L118.3 161.1L119.5 160.1L120.6 159.1\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"118.8\" y1=\"160.7\" x2=\"120.6\" y2=\"159.1\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkPatchred)\"/><line x1=\"210.4\" y1=\"116.5\" x2=\"207.5\" y2=\"73.2\" stroke=\"var(--green)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6stkPatchgreen)\"/><text x=\"219.5\" y=\"71.2\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</text><text x=\"302.2\" y=\"116.6\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</text><text x=\"81.3\" y=\"214.4\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><text x=\"420\" y=\"70\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">紅：每一小片繞一圈</text><text x=\"420\" y=\"100\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">≈ (∇×F)·n ΔS</text><text x=\"420\" y=\"160\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">相鄰的邊抵消</text><text x=\"420\" y=\"220\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">藍：只剩邊界 C</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一小片繞一圈（9.24 ⑤）：",
+            "$\\oint_{\\text{小片}}\\mathbf F\\cdot d\\mathbf r\\approx(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,\\Delta S$"
+          ],
+          "say": "上一課說過，每一小片繞一圈的環流量，大約是旋度點 n，乘上這一片的面積。",
           "board": [
-            {"do":"write","line":"小片環流 $\\approx{{cu:(\\nabla\\times\\mathbf F)}}\\cdot{{n:\\mathbf n}}\\times$ 面積"},
-            {"do":"focus","term":"cu","on":"旋度"},
-            {"do":"write","line":"共用邊抵消，只剩邊界 $C$","on":"共用邊抵消"}
-          ] }
+            {
+              "do": "write",
+              "line": "每一小片繞一圈（9.24 ⑤）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\oint_{\\text{小片}}\\mathbf F\\cdot d\\mathbf r\\approx(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,\\Delta S$",
+              "on": "大約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相鄰兩片共用的邊：走兩次、方向相反，抵消；只剩外圍的 $C$"
+          ],
+          "say": "全部加起來，相鄰兩片共用的邊，一次往這邊走、一次往那邊走，抵消了，只剩最外圈的 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相鄰兩片共用的邊：走兩次、方向相反，抵消；只剩外圍的 $C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,dS$"
+          ],
+          "say": "切到無限細，就得到斯托克斯定理：沿 C 的環流量，等於旋度穿過 S 的通量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot\\mathbf n\\,dS}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "的環"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理與方向配對",
+      "beats": [
+        {
+          "show": [
+            "$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$"
+          ],
+          "say": "正式寫出來：沿 C 的線積分，等於旋度在 S 上的通量。d S 向量是 n 乘 d S。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "上的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $S$：有方向（選好 $\\mathbf n$）、分段光滑的曲面",
+            "• $C$：$S$ 的邊界，簡單封閉、分段光滑，正向"
+          ],
+          "say": "條件：S 選好法向量、分段光滑；C 是它的邊界，簡單封閉，取正向；F 的偏導在 S 附近連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $S$：有方向（選好 $\\mathbf n$）、分段光滑的曲面"
+            },
+            {
+              "do": "write",
+              "line": "• $C$：$S$ 的邊界，簡單封閉、分段光滑，正向",
+              "on": "是它"
+            },
+            {
+              "do": "write",
+              "line": "• $\\mathbf F$ 的分量在包含 $S$ 的開集上偏導連續",
+              "on": "的偏"
+            }
+          ]
+        },
+        {
+          "show": [
+            "正向（右手定則）：拇指沿 $\\mathbf n$，四指彎的方向就是 $C$ 的方向"
+          ],
+          "say": "最重要的是方向配對：右手拇指指向 n，四根手指彎的方向，就是 C 要走的方向。",
+          "board": [
+            {
+              "do": "write",
+              "line": "正向（右手定則）：拇指沿 $\\mathbf n$，四指彎的方向就是 $C$ 的方向",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "另一個說法：頭朝著 n 的方向，沿著 C 走，曲面要在你的左手邊。法向量朝上，C 就要從上面看逆時針。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"stkOrient\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b6stkOrient\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b6stkOrientblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b6stkOrientred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b6stkOrientgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b6stkOrientpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b6stkOrientink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><polygon points=\"234.4,115.5 238.3,133.6 203.3,132.9 205.2,115\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"205.2,115 203.3,132.9 169,136 176.7,117.6\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.3,119.1 271.8,137.8 238.3,133.6 234.4,115.5\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"176.7,117.6 169,136 137.9,142.6 150.8,123.1\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287,125.5 301.4,145.5 271.8,137.8 262.3,119.1\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"150.8,123.1 137.9,142.6 112,152.3 129.2,131.1\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.6,102.4 234.4,115.5 205.2,115 207.2,102\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.2,102 205.2,115 176.7,117.6 184.4,104\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.9,105.2 262.3,119.1 234.4,115.5 230.6,102.4\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"306.7,134.2 325.1,156 301.4,145.5 287,125.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"184.4,104 176.7,117.6 150.8,123.1 163.6,108.4\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.6,110.4 287,125.5 262.3,119.1 252.9,105.2\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"129.2,131.1 112,152.3 93.2,164.3 113.5,141.1\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"163.6,108.4 150.8,123.1 129.2,131.1 146.4,114.9\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,144.8 341.3,168.7 325.1,156 306.7,134.2\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"226.7,94.2 230.6,102.4 207.2,102 209.1,93.9\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"288.4,117.4 306.7,134.2 287,125.5 272.6,110.4\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"209.1,93.9 207.2,102 184.4,104 192,95.4\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.4,96.3 252.9,105.2 230.6,102.4 226.7,94.2\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192,95.4 184.4,104 163.6,108.4 176.5,98.7\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.2,100.2 272.6,110.4 252.9,105.2 243.4,96.3\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"146.4,114.9 129.2,131.1 113.5,141.1 133.8,122.9\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"113.5,141.1 93.2,164.3 82.6,177.9 104.7,152.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"176.5,98.7 163.6,108.4 146.4,114.9 163.5,103.5\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.2,125.8 320.2,144.8 306.7,134.2 288.4,117.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,105.4 288.4,117.4 272.6,110.4 258.2,100.2\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.8,90.9 226.7,94.2 209.1,93.9 211.1,90.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"326.6,156.4 348.9,182.6 341.3,168.7 320.2,144.8\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211.1,90.7 209.1,93.9 192,95.4 199.7,91.7\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.9,92.3 243.4,96.3 226.7,94.2 222.8,90.9\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"199.7,91.7 192,95.4 176.5,98.7 189.3,93.9\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"163.5,103.5 146.4,114.9 133.8,122.9 154.1,109.5\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.8,94.9 258.2,100.2 243.4,96.3 233.9,92.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"133.8,122.9 113.5,141.1 104.7,152.5 126.8,131.9\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.1,111.7 299.2,125.8 288.4,117.4 270,105.4\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"189.3,93.9 176.5,98.7 163.5,103.5 180.7,97.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.3,135.1 326.6,156.4 320.2,144.8 299.2,125.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.7,98.4 270,105.4 258.2,100.2 243.8,94.9\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"104.7,152.5 82.6,177.9 81.1,192.2 103.4,164.3\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"154.1,109.5 133.8,122.9 126.8,131.9 148.8,116.3\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"180.7,97.1 163.5,103.5 154.1,109.5 174.4,101.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.9,92.5 222.8,90.9 211.1,90.7 213,92.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"213,92.4 211.1,90.7 199.7,91.7 207.3,92.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.5,93.2 233.9,92.3 222.8,90.9 218.9,92.5\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"257.1,102.6 278.1,111.7 270,105.4 251.7,98.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.3,92.9 199.7,91.7 189.3,93.9 202.2,94\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.9,118.7 304.3,135.1 299.2,125.8 278.1,111.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"325.3,168.3 347.4,196.9 348.9,182.6 326.6,156.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"229.4,94.5 243.8,94.9 233.9,92.3 224.5,93.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"126.8,131.9 104.7,152.5 103.4,164.3 125.7,141.5\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"202.2,94 189.3,93.9 180.7,97.1 197.8,95.6\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.3,96.2 251.7,98.4 243.8,94.9 229.4,94.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.4,101.1 154.1,109.5 148.8,116.3 170.9,105.6\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.8,95.6 180.7,97.1 174.4,101.1 194.7,97.6\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.2,144.6 325.3,168.3 326.6,156.4 304.3,135.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.6,107.2 281.9,118.7 278.1,111.7 257.1,102.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236,98.3 257.1,102.6 251.7,98.4 233.3,96.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"148.8,116.3 126.8,131.9 125.7,141.5 148.1,123.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194.7,97.6 174.4,101.1 170.9,105.6 192.9,99.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 218.9,92.5 213,92.4 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.2,125.8 303.2,144.6 304.3,135.1 281.9,118.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 213,92.4 207.3,92.9 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 224.5,93.2 218.9,92.5 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 207.3,92.9 202.2,94 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.3,100.6 259.6,107.2 257.1,102.6 236,98.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"170.9,105.6 148.8,116.3 148.1,123.5 170.4,110.4\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"103.4,164.3 81.1,192.2 88.7,206.1 109.8,176\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 229.4,94.5 224.5,93.2 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 202.2,94 197.8,95.6 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 233.3,96.2 229.4,94.5 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 197.8,95.6 194.7,97.6 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 236,98.3 233.3,96.2 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.1,112 281.2,125.8 281.9,118.7 259.6,107.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.9,99.9 170.9,105.6 170.4,110.4 192.7,102.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 194.7,97.6 192.9,99.9 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 237.3,100.6 236,98.3 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"125.7,141.5 103.4,164.3 109.8,176 130.8,150.7\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.1,103 259.1,112 259.6,107.2 237.3,100.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 192.9,99.9 192.7,102.2 215,99\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 237.1,103 237.3,100.6 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.5,179.6 336.8,210.5 347.4,196.9 325.3,168.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 192.7,102.2 194,104.6 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"148.1,123.5 125.7,141.5 130.8,150.7 151.9,130.4\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 235.3,105.3 237.1,103 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.7,102.2 170.4,110.4 172.9,115 194,104.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"170.4,110.4 148.1,123.5 151.9,130.4 172.9,115\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 194,104.6 196.7,106.7 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 232.2,107.3 235.3,105.3 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.2,153.7 316.5,179.6 325.3,168.3 303.2,144.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 196.7,106.7 200.6,108.4 215,99\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235.3,105.3 255.6,116.5 259.1,112 237.1,103\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 227.8,108.9 232.2,107.3 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.9,132.6 296.2,153.7 303.2,144.6 281.2,125.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 200.6,108.4 205.5,109.7 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"255.6,116.5 275.9,132.6 281.2,125.8 259.1,112\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 222.7,110 227.8,108.9 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 205.5,109.7 211.1,110.4 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 217,110.5 222.7,110 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215,99 211.1,110.4 217,110.5 215,99\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194,104.6 172.9,115 178.3,119.3 196.7,106.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.2,107.3 249.3,120.5 255.6,116.5 235.3,105.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"172.9,115 151.9,130.4 160,136.8 178.3,119.3\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"196.7,106.7 178.3,119.3 186.2,122.8 200.6,108.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"109.8,176 88.7,206.1 104.9,218.7 123.3,186.5\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"151.9,130.4 130.8,150.7 141.6,159.2 160,136.8\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"227.8,108.9 240.7,123.7 249.3,120.5 232.2,107.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"130.8,150.7 109.8,176 123.3,186.5 141.6,159.2\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"249.3,120.5 266.5,138.7 275.9,132.6 255.6,116.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"200.6,108.4 186.2,122.8 196.1,125.3 205.5,109.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.7,110 230.3,125.9 240.7,123.7 227.8,108.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"266.5,138.7 283.6,161.7 296.2,153.7 275.9,132.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"205.5,109.7 196.1,125.3 207.2,126.8 211.1,110.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"300.8,189.7 318,222.5 336.8,210.5 316.5,179.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"283.6,161.7 300.8,189.7 316.5,179.6 296.2,153.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217,110.5 218.9,127 230.3,125.9 222.7,110\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"178.3,119.3 160,136.8 171.8,142 186.2,122.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211.1,110.4 207.2,126.8 218.9,127 217,110.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240.7,123.7 253.5,143.5 266.5,138.7 249.3,120.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"160,136.8 141.6,159.2 157.4,166.2 171.8,142\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"186.2,122.8 171.8,142 186.6,145.9 196.1,125.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.3,125.9 238,146.8 253.5,143.5 240.7,123.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.5,143.5 266.4,168.1 283.6,161.7 266.5,138.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"141.6,159.2 123.3,186.5 143,195.3 157.4,166.2\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"196.1,125.3 186.6,145.9 203.3,148 207.2,126.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"123.3,186.5 104.9,218.7 128.6,229.3 143,195.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.9,127 220.9,148.3 238,146.8 230.3,125.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.2,126.8 203.3,148 220.9,148.3 218.9,127\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"266.4,168.1 279.2,197.7 300.8,189.7 283.6,161.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"171.8,142 157.4,166.2 177.1,171.3 186.6,145.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.2,197.7 292.1,232.2 318,222.5 300.8,189.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238,146.8 245.6,172.5 266.4,168.1 253.5,143.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"186.6,145.9 177.1,171.3 199.4,174.2 203.3,148\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"157.4,166.2 143,195.3 167.7,201.7 177.1,171.3\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"220.9,148.3 222.8,174.6 245.6,172.5 238,146.8\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"203.3,148 199.4,174.2 222.8,174.6 220.9,148.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.6,172.5 253.3,203.2 279.2,197.7 266.4,168.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"143,195.3 128.6,229.3 158.2,236.9 167.7,201.7\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"177.1,171.3 167.7,201.7 195.6,205.2 199.4,174.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.3,203.2 261,238.8 292.1,232.2 279.2,197.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.8,174.6 224.8,205.8 253.3,203.2 245.6,172.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"199.4,174.2 195.6,205.2 224.8,205.8 222.8,174.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"167.7,201.7 158.2,236.9 191.7,241.2 195.6,205.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.8,205.8 226.7,241.8 261,238.8 253.3,203.2\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"195.6,205.2 191.7,241.2 226.7,241.8 224.8,205.8\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><path d=\"M349.4 187.4L349.3 185.7L349.1 184L348.8 182.2L348.3 180.5L347.7 178.8L347 177.1L346.2 175.5L345.2 173.8L344.1 172.1L342.8 170.5L341.5 168.9L340 167.3L338.3 165.7L336.6 164.1L334.8 162.6L332.8 161.1L330.7 159.6L328.5 158.1L326.2 156.7L323.7 155.3L321.2 153.9L318.6 152.5L315.8 151.2L313 150L310 148.7L307 147.5L303.9 146.4L300.7 145.3L297.4 144.2L294 143.2L290.5 142.2L287 141.2L283.4 140.3L279.7 139.5L276 138.7L272.2 137.9L268.4 137.2L264.5 136.6L260.5 136L256.5 135.4L252.5 134.9L248.4 134.4L244.3 134L240.2 133.7L236 133.4L231.8 133.2L227.6 133L223.4 132.8L219.2 132.8L215 132.7L210.8 132.8L206.6 132.8L202.4 133L198.2 133.2L194 133.4L189.8 133.7L185.7 134L181.6 134.4L177.5 134.9L173.5 135.4L169.5 136L165.5 136.6L161.6 137.2L157.8 137.9L154 138.7L150.3 139.5L146.6 140.3L143 141.2L139.5 142.2L136 143.2L132.6 144.2L129.3 145.3L126.1 146.4L123 147.5L120 148.7L117 150L114.2 151.2L111.4 152.5L108.8 153.9L106.3 155.3L103.8 156.7L101.5 158.1L99.3 159.6L97.2 161.1L95.2 162.6L93.4 164.1L91.7 165.7L90 167.3L88.5 168.9L87.2 170.5L85.9 172.1L84.8 173.8L83.8 175.5L83 177.1L82.3 178.8L81.7 180.5L81.2 182.2L80.9 184L80.7 185.7L80.6 187.4\" stroke=\"var(--blue)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/><path d=\"M80.6 187.4L80.7 189.1L80.9 190.8L81.2 192.5L81.7 194.2L82.3 195.9L83 197.6L83.8 199.3L84.8 201L85.9 202.6L87.2 204.3L88.5 205.9L90 207.5L91.7 209.1L93.4 210.7L95.2 212.2L97.2 213.7L99.3 215.2L101.5 216.7L103.8 218.1L106.3 219.5L108.8 220.9L111.4 222.2L114.2 223.5L117 224.8L120 226L123 227.2L126.1 228.4L129.3 229.5L132.6 230.6L136 231.6L139.5 232.6L143 233.5L146.6 234.4L150.3 235.3L154 236.1L157.8 236.9L161.6 237.6L165.5 238.2L169.5 238.8L173.5 239.4L177.5 239.9L181.6 240.3L185.7 240.7L189.8 241.1L194 241.4L198.2 241.6L202.4 241.8L206.6 241.9L210.8 242L215 242.1L219.2 242L223.4 241.9L227.6 241.8L231.8 241.6L236 241.4L240.2 241.1L244.3 240.7L248.4 240.3L252.5 239.9L256.5 239.4L260.5 238.8L264.5 238.2L268.4 237.6L272.2 236.9L276 236.1L279.7 235.3L283.4 234.4L287 233.5L290.5 232.6L294 231.6L297.4 230.6L300.7 229.5L303.9 228.4L307 227.2L310 226L313 224.8L315.8 223.5L318.6 222.2L321.2 220.9L323.7 219.5L326.2 218.1L328.5 216.7L330.7 215.2L332.8 213.7L334.8 212.2L336.6 210.7L338.3 209.1L340 207.5L341.5 205.9L342.8 204.3L344.1 202.6L345.2 201L346.2 199.3L347 197.6L347.7 195.9L348.3 194.2L348.8 192.5L349.1 190.8L349.3 189.1L349.4 187.4\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"158.2\" y1=\"236.9\" x2=\"173.2\" y2=\"239.3\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkOrientblue)\"/><line x1=\"338.4\" y1=\"209\" x2=\"343.9\" y2=\"202.9\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkOrientblue)\"/><line x1=\"82.1\" y1=\"179.3\" x2=\"80.7\" y2=\"185.8\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkOrientblue)\"/><line x1=\"215\" y1=\"99\" x2=\"215\" y2=\"42.7\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6stkOrientred)\"/><line x1=\"298.2\" y1=\"162.1\" x2=\"336.7\" y2=\"131.4\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6stkOrientred)\"/><line x1=\"123.6\" y1=\"154.2\" x2=\"81.4\" y2=\"119.8\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah9b6stkOrientred)\"/><text x=\"229\" y=\"42.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</text><text x=\"88.3\" y=\"226.1\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><text x=\"420\" y=\"70\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">法向量朝上</text><text x=\"420\" y=\"100\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">⇕</text><text x=\"420\" y=\"130\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">C 從上面看逆時針</text><text x=\"420\" y=\"200\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:inherit\">頭朝 n 沿 C 走，</text><text x=\"420\" y=\"230\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:inherit\">曲面在左手邊</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Green 是特例：$S$ 是 $xy$ 平面上的區域 $D$，$\\mathbf n=\\mathbf k$",
+            "$(\\nabla\\times\\mathbf F)\\cdot\\mathbf k=Q_x-P_y,\\quad C\\text{ 逆時針}$"
+          ],
+          "say": "如果 S 就是 x y 平面上的一塊區域，n 取 k，旋度點 k 就是 Q x 減 P y，C 逆時針：這就是格林定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Green 是特例：$S$ 是 $xy$ 平面上的區域 $D$，$\\mathbf n=\\mathbf k$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (\\nabla\\times\\mathbf F)\\cdot\\mathbf k=Q_x-P_y,\\quad C\\text{ 逆時針}$",
+              "on": "就是#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "方向配對：試一題",
+      "beats": [
+        {
+          "show": [
+            "$S$：碗 $z=x^2+y^2$，$z\\le1$，法向量取朝下、朝外（$\\mathbf n$ 的 $z$ 分量是負的）。邊界 $C$ 要怎麼走？"
+          ],
+          "say": "試一題：碗的法向量朝下、朝外，邊界要怎麼走？"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明（$S$ 是函數圖形）",
+      "beats": [
+        {
+          "show": [
+            "設 $S$：$z=g(x,y)$，$(x,y)\\in D$，$\\mathbf n$ 朝上；$g$ 有連續二階偏導"
+          ],
+          "say": "證明 S 是函數圖形的情形。S 是 z 等於 g，定義在平面區域 D 上，法向量朝上。g 的二階偏導連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $S$：$z=g(x,y)$，$(x,y)\\in D$，$\\mathbf n$ 朝上；$g$ 有連續二階偏導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊：朝上的圖形 $d\\mathbf S=\\langle -g_x,-g_y,1\\rangle\\,dA$（9.23）",
+            "$\\begin{aligned}&\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S\\\\&=\\iint_D\\big[(Q_x-P_y)-(R_y-Q_z)g_x\\\\&\\qquad\\quad-(P_z-R_x)g_y\\big]\\,dA\\end{aligned}$"
+          ],
+          "say": "右邊：朝上的函數圖形，d S 向量是負 g x、負 g y、1 乘 d A。跟旋度內積，得到這個二重積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊：朝上的圖形 $d\\mathbf S=\\langle -g_x,-g_y,1\\rangle\\,dA$（9.23）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S\\\\&=\\iint_D\\big[(Q_x-P_y)-(R_y-Q_z)g_x\\\\&\\qquad\\quad-(P_z-R_x)g_y\\big]\\,dA\\end{aligned}}$",
+              "on": "跟旋"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊：$C$ 是 $D$ 的邊界 $C_1$ 抬上去，$z=g(x,y)$，$dz=g_x\\,dx+g_y\\,dy$",
+            "$\\begin{aligned}&\\oint_C P\\,dx+Q\\,dy+R\\,dz\\\\&=\\oint_{C_1}(P+Rg_x)\\,dx+(Q+Rg_y)\\,dy\\end{aligned}$"
+          ],
+          "say": "左邊：C 是 D 的邊界 C 1 抬到曲面上，z 等於 g，所以 d z 等於 g x d x 加 g y d y。代進去，變成平面曲線 C 1 上的線積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊：$C$ 是 $D$ 的邊界 $C_1$ 抬上去，$z=g(x,y)$，$dz=g_x\\,dx+g_y\\,dy$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\oint_C P\\,dx+Q\\,dy+R\\,dz\\\\&=\\oint_{C_1}(P+Rg_x)\\,dx+(Q+Rg_y)\\,dy\\end{aligned}}$",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　朝上的 $\\mathbf n$ 配上 $C_1$ 逆時針，正好是兩個定理要的方向",
+              "color": "violet",
+              "on": "代進"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：用 Green",
+      "beats": [
+        {
+          "show": [
+            "對 $C_1$ 用 Green 定理：被積函數是",
+            "$\\frac{\\partial}{\\partial x}(Q+Rg_y)-\\frac{\\partial}{\\partial y}(P+Rg_x)$"
+          ],
+          "say": "對 C 1 用格林定理，被積函數是第二項對 x 偏微分，減第一項對 y 偏微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對 $C_1$ 用 Green 定理：被積函數是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial}{\\partial x}(Q+Rg_y)-\\frac{\\partial}{\\partial y}(P+Rg_x)$",
+              "on": "偏微#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意 $Q=Q(x,y,g(x,y))$，連鎖律：$\\dfrac{\\partial}{\\partial x}Q=Q_x+Q_zg_x$"
+          ],
+          "say": "小心：Q 裡面的 z 也是 x 的函數，所以對 x 偏微分要用連鎖律，多出 Q z 乘 g x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意 $Q=Q(x,y,g(x,y))$，連鎖律：$\\dfrac{\\partial}{\\partial x}Q=Q_x+Q_zg_x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\tfrac{\\partial}{\\partial x}(Q+Rg_y)&=Q_x+Q_zg_x\\\\&\\quad+(R_x+R_zg_x)g_y+Rg_{yx}\\\\[4pt] \\tfrac{\\partial}{\\partial y}(P+Rg_x)&=P_y+P_zg_y\\\\&\\quad+(R_y+R_zg_y)g_x+Rg_{xy}\\end{aligned}$"
+          ],
+          "say": "兩項都用連鎖律和乘積法則展開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\tfrac{\\partial}{\\partial x}(Q+Rg_y)&=Q_x+Q_zg_x\\\\&\\quad+(R_x+R_zg_x)g_y+Rg_{yx}\\\\[4pt] \\tfrac{\\partial}{\\partial y}(P+Rg_x)&=P_y+P_zg_y\\\\&\\quad+(R_y+R_zg_y)g_x+Rg_{xy}\\end{aligned}}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "相減：$R_zg_xg_y$ 抵消；$g_{xy}=g_{yx}$（Clairaut）也抵消，剩",
+            "$Q_x-P_y+(Q_z-R_y)g_x+(R_x-P_z)g_y$"
+          ],
+          "say": "相減的時候，R z g x g y 兩邊都有，抵消；g 的混合偏導相等，也抵消。剩下的這三項，跟右邊的被積函數一模一樣。所以兩邊相等，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相減：$R_zg_xg_y$ 抵消；$g_{xy}=g_{yx}$（Clairaut）也抵消，剩"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle Q_x-P_y+(Q_z-R_y)g_x+(R_x-P_z)g_y}}$",
+              "on": "的混"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "右邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以左邊 $=$ 右邊　$\\blacksquare$",
+            "一般的曲面：切成幾片，每片都是某個座標平面上的函數圖形；共用的邊抵消"
+          ],
+          "say": "一般的曲面，可以切成幾片，每一片都是對某個座標平面的函數圖形，各自成立再加起來，共用的邊一樣抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以左邊 $=$ 右邊　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "一般的曲面：切成幾片，每片都是某個座標平面上的函數圖形；共用的邊抵消",
+              "on": "都是"
+            },
+            {
+              "do": "write",
+              "line": "　每一片都要能寫成圖形、切開的邊要分段光滑；完全一般的版本要用參數式重做一次（同樣的連鎖律計算），或用 9.28 預告的微分形式",
+              "color": "violet",
+              "on": "自成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用法一：換成一片平的",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F=\\langle -y^2,\\ x,\\ z^2\\rangle$",
+            "$C$：平面 $y+z=2$ 與圓柱 $x^2+y^2=1$ 的交線，從上面看逆時針"
+          ],
+          "say": "用法一：把線積分換成一片好算的曲面。C 是平面 y 加 z 等於 2 跟圓柱的交線，從上面看逆時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F=\\langle -y^2,\\ x,\\ z^2\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$C$：平面 $y+z=2$ 與圓柱 $x^2+y^2=1$ 的交線，從上面看逆時針",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "C 是一個斜的橢圓。最好算的曲面，就是平面上被它圍住的那一片，平的橢圓。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"stkEx1\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b6stkEx1\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b6stkEx1blue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b6stkEx1red\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b6stkEx1green\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b6stkEx1pencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b6stkEx1ink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"230\" y1=\"275\" x2=\"121.1\" y2=\"304.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b6stkEx1ink)\"/><line x1=\"230\" y1=\"275\" x2=\"289.2\" y2=\"323.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b6stkEx1ink)\"/><line x1=\"230\" y1=\"275\" x2=\"230\" y2=\"46.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b6stkEx1ink)\"/><text x=\"108.3\" y=\"320.9\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"302.8\" y=\"334\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"230\" y=\"28.9\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><path d=\"M165.9 292.4L167.4 293.5L169 294.7L170.7 295.8L172.5 296.9L174.4 297.9L176.3 298.9L178.4 299.9L180.5 300.8L182.7 301.7L185 302.6L187.3 303.4L189.7 304.1L192.2 304.9L194.7 305.5L197.3 306.2L199.9 306.7L202.6 307.3L205.3 307.7L208.1 308.2L210.8 308.6L213.7 308.9L216.5 309.2L219.4 309.4L222.3 309.6L225.2 309.7L228.1 309.7L231 309.7L233.9 309.7L236.8 309.6L239.7 309.4L242.5 309.2L245.4 309L248.2 308.7L251 308.3L253.8 307.9L256.5 307.4L259.2 306.9L261.9 306.4L264.5 305.7L267 305.1L269.5 304.4L271.9 303.6L274.3 302.8L276.6 302L278.8 301.1L280.9 300.2L283 299.2L285 298.2L286.9 297.2L288.7 296.1L290.4 295.1L292.1 293.9L293.6 292.8L295 291.6L296.4 290.4L297.6 289.1L298.7 287.9L299.8 286.6L300.7 285.3L301.5 284L302.2 282.7L302.8 281.3L303.2 280L303.6 278.6L303.8 277.3L304 275.9L304 274.5L303.9 273.2L303.7 271.8L303.4 270.5L302.9 269.1L302.4 267.8L301.7 266.4L301 265.1L300.1 263.8L299.1 262.5L298 261.3L296.8 260L295.5 258.8L294.1 257.6L292.6 256.5L291 255.3L289.3 254.2L287.5 253.1L285.6 252.1L283.7 251.1L281.6 250.1L279.5 249.2L277.3 248.3L275 247.4L272.7 246.6L270.3 245.9L267.8 245.1L265.3 244.5L262.7 243.8L260.1 243.3L257.4 242.7L254.7 242.3L251.9 241.8L249.2 241.4L246.3 241.1L243.5 240.8L240.6 240.6L237.7 240.4L234.8 240.3L231.9 240.3L229 240.3L226.1 240.3L223.2 240.4L220.3 240.6L217.5 240.8L214.6 241L211.8 241.3L209 241.7L206.2 242.1L203.5 242.6L200.8 243.1L198.1 243.6L195.5 244.3L193 244.9L190.5 245.6L188.1 246.4L185.7 247.2L183.4 248L181.2 248.9L179.1 249.8L177 250.8L175 251.8L173.1 252.8L171.3 253.9L169.6 254.9L167.9 256.1L166.4 257.2L165 258.4L163.6 259.6L162.4 260.9L161.3 262.1L160.2 263.4L159.3 264.7L158.5 266L157.8 267.3L157.2 268.7L156.8 270L156.4 271.4L156.2 272.7L156 274.1L156 275.5L156.1 276.8L156.3 278.2L156.6 279.5L157.1 280.9L157.6 282.2L158.3 283.6L159 284.9L159.9 286.2L160.9 287.5L162 288.7L163.2 290L164.5 291.2L165.9 292.4\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"304\" y1=\"275\" x2=\"304\" y2=\"59.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"6 5\"/><line x1=\"156\" y1=\"275\" x2=\"156\" y2=\"59.4\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"6 5\"/><polygon points=\"165.9,161.7 169,169.1 172.5,176.4 176.3,183.5 180.5,190.3 185,196.9 189.7,203.1 194.7,209 199.9,214.5 205.3,219.5 210.8,224.1 216.5,228.2 222.3,231.7 228.1,234.8 233.9,237.2 239.7,239.1 245.4,240.4 251,241.2 256.5,241.3 261.9,240.8 267,239.7 271.9,238.1 276.6,235.9 280.9,233.1 285,229.7 288.7,225.8 292.1,221.5 295,216.6 297.6,211.3 299.8,205.6 301.5,199.5 302.8,193.1 303.6,186.4 304,179.4 303.9,172.2 303.4,164.8 302.4,157.3 301,149.7 299.1,142.1 296.8,134.5 294.1,127 291,119.5 287.5,112.2 283.7,105.2 279.5,98.3 275,91.8 270.3,85.5 265.3,79.7 260.1,74.2 254.7,69.1 249.2,64.6 243.5,60.5 237.7,56.9 231.9,53.9 226.1,51.4 220.3,49.5 214.6,48.2 209,47.5 203.5,47.4 198.1,47.8 193,48.9 188.1,50.6 183.4,52.8 179.1,55.6 175,58.9 171.3,62.8 167.9,67.2 165,72 162.4,77.3 160.2,83 158.5,89.1 157.2,95.6 156.4,102.3 156,109.3 156.1,116.5 156.6,123.9 157.6,131.4 159,138.9 160.9,146.6 163.2,154.2 165.9,161.7\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><path d=\"M165.9 161.7L167.4 165.4L169 169.1L170.7 172.8L172.5 176.4L174.4 180L176.3 183.5L178.4 186.9L180.5 190.3L182.7 193.6L185 196.9L187.3 200L189.7 203.1L192.2 206.1L194.7 209L197.3 211.8L199.9 214.5L202.6 217L205.3 219.5L208.1 221.9L210.8 224.1L213.7 226.2L216.5 228.2L219.4 230L222.3 231.7L225.2 233.3L228.1 234.8L231 236.1L233.9 237.2L236.8 238.3L239.7 239.1L242.5 239.9L245.4 240.4L248.2 240.9L251 241.2L253.8 241.3L256.5 241.3L259.2 241.1L261.9 240.8L264.5 240.4L267 239.7L269.5 239L271.9 238.1L274.3 237L276.6 235.9L278.8 234.5L280.9 233.1L283 231.5L285 229.7L286.9 227.8L288.7 225.8L290.4 223.7L292.1 221.5L293.6 219.1L295 216.6L296.4 214L297.6 211.3L298.7 208.5L299.8 205.6L300.7 202.6L301.5 199.5L302.2 196.3L302.8 193.1L303.2 189.8L303.6 186.4L303.8 182.9L304 179.4L304 175.8L303.9 172.2L303.7 168.5L303.4 164.8L302.9 161.1L302.4 157.3L301.7 153.5L301 149.7L300.1 145.9L299.1 142.1L298 138.3L296.8 134.5L295.5 130.7L294.1 127L292.6 123.2L291 119.5L289.3 115.9L287.5 112.2L285.6 108.7L283.7 105.2L281.6 101.7L279.5 98.3L277.3 95L275 91.8L272.7 88.6L270.3 85.5L267.8 82.5L265.3 79.7L262.7 76.9L260.1 74.2L257.4 71.6L254.7 69.1L251.9 66.8L249.2 64.6L246.3 62.5L243.5 60.5L240.6 58.6L237.7 56.9L234.8 55.3L231.9 53.9L229 52.6L226.1 51.4L223.2 50.4L220.3 49.5L217.5 48.8L214.6 48.2L211.8 47.8L209 47.5L206.2 47.3L203.5 47.4L200.8 47.5L198.1 47.8L195.5 48.3L193 48.9L190.5 49.7L188.1 50.6L185.7 51.6L183.4 52.8L181.2 54.1L179.1 55.6L177 57.2L175 58.9L173.1 60.8L171.3 62.8L169.6 64.9L167.9 67.2L166.4 69.6L165 72L163.6 74.6L162.4 77.3L161.3 80.1L160.2 83L159.3 86L158.5 89.1L157.8 92.3L157.2 95.6L156.8 98.9L156.4 102.3L156.2 105.8L156 109.3L156 112.9L156.1 116.5L156.3 120.1L156.6 123.9L157.1 127.6L157.6 131.4L158.3 135.1L159 138.9L159.9 142.7L160.9 146.6L162 150.4L163.2 154.2L164.5 157.9L165.9 161.7\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"198\" y1=\"212.5\" x2=\"206.2\" y2=\"220.3\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkEx1blue)\"/><line x1=\"264.7\" y1=\"79\" x2=\"256.7\" y2=\"70.9\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah9b6stkEx1blue)\"/><line x1=\"230\" y1=\"144.3\" x2=\"253.5\" y2=\"121.9\" stroke=\"var(--red)\" stroke-width=\"2.8\" marker-end=\"url(#ah9b6stkEx1red)\"/><text x=\"265.5\" y=\"117.9\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</text><text x=\"196.4\" y=\"73.6\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><text x=\"420\" y=\"80\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y + z = 2</text><text x=\"420\" y=\"120\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x² + y² = 1</text><text x=\"420\" y=\"190\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">S：橢圓那一片</text><text x=\"420\" y=\"222\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">（平的）</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\times\\mathbf F=\\langle0-0,\\ 0-0,\\ 1-(-2y)\\rangle=\\langle0,0,1+2y\\rangle$"
+          ],
+          "say": "先算旋度：只剩第三個分量，1 減負 2 y，等於 1 加 2 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\nabla\\times\\mathbf F=\\langle0-0,\\ 0-0,\\ 1-(-2y)\\rangle=\\langle0,0,1+2y\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$S$：$z=2-y$，$C$ 逆時針 ⇒ $\\mathbf n$ 朝上：$d\\mathbf S=\\langle0,1,1\\rangle\\,dA$"
+          ],
+          "say": "曲面是 z 等於 2 減 y。C 從上面看逆時針，配上朝上的法向量。d S 是 0、1、1 乘 d A。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$S$：$z=2-y$，$C$ 逆時針 ⇒ $\\mathbf n$ 朝上：$d\\mathbf S=\\langle0,1,1\\rangle\\,dA$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\oint_C\\mathbf F\\cdot d\\mathbf r&=\\iint_{x^2+y^2\\le1}(1+2y)\\,dA\\\\&=\\pi+0=\\pi\\end{aligned}$"
+          ],
+          "say": "內積是 1 加 2 y，在單位圓盤上積分。1 積出面積派；2 y 對稱，積出 0。答案是派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}\\oint_C\\mathbf F\\cdot d\\mathbf r&=\\iint_{x^2+y^2\\le1}(1+2y)\\,dA\\\\&=\\pi+0=\\pi\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "圓盤"
+            },
+            {
+              "do": "write",
+              "line": "　直接參數化 $\\langle\\cos t,\\sin t,2-\\sin t\\rangle$ 硬算，也是 $\\pi$",
+              "color": "violet",
+              "on": "對稱"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用法二：通量換成邊界",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$，$\\mathbf F=\\langle xz^2-y,\\ x+e^{yz},\\ xyz\\rangle$",
+            "$S$：上半球面 $x^2+y^2+z^2=4$，$z\\ge0$，朝外"
+          ],
+          "say": "用法二：反過來。求旋度穿過上半球面的通量，F 長得很醜，半徑 2，朝外。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$，$\\mathbf F=\\langle xz^2-y,\\ x+e^{yz},\\ xyz\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$S$：上半球面 $x^2+y^2+z^2=4$，$z\\ge0$，朝外",
+              "on": "通量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\times\\mathbf F=\\langle xz-ye^{yz},\\ 2xz-yz,\\ 2\\rangle$：直接在球面上積很痛苦"
+          ],
+          "say": "旋度算出來也很醜，在球面上直接積分很痛苦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\nabla\\times\\mathbf F=\\langle xz-ye^{yz},\\ 2xz-yz,\\ 2\\rangle$：直接在球面上積很痛苦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界 $C$：$z=0$ 的圓 $\\langle2\\cos t,2\\sin t,0\\rangle$，從上面看逆時針"
+          ],
+          "say": "改用邊界。半球的邊界是 z 等於 0、半徑 2 的圓。法向量朝外、朝上，所以從上面看逆時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "邊界 $C$：$z=0$ 的圓 $\\langle2\\cos t,2\\sin t,0\\rangle$，從上面看逆時針"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z=0$：$\\mathbf F=\\langle -2\\sin t,\\ 2\\cos t+1,\\ 0\\rangle$，$\\mathbf r'=\\langle -2\\sin t,2\\cos t,0\\rangle$",
+            "$\\mathbf F\\cdot\\mathbf r'=4\\sin^2t+4\\cos^2t+2\\cos t=4+2\\cos t$"
+          ],
+          "say": "在 z 等於 0 上，醜的部分都不見了：e 的零次方是 1，x y z 是 0。跟 r prime 內積，得到 4 加 2 餘弦 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z=0$：$\\mathbf F=\\langle -2\\sin t,\\ 2\\cos t+1,\\ 0\\rangle$，$\\mathbf r'=\\langle -2\\sin t,2\\cos t,0\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F\\cdot\\mathbf r'=4\\sin^2t+4\\cos^2t+2\\cos t=4+2\\cos t$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=\\int_0^{2\\pi}(4+2\\cos t)\\,dt=8\\pi$"
+          ],
+          "say": "積一圈，4 乘 2 派是 8 派，餘弦積出 0。答案 8 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=\\int_0^{2\\pi}(4+2\\cos t)\\,dt=8\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "餘弦"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "上半球面的邊界是？",
+        "ask": "同一個 $\\mathbf F$，改成穿過==圓盤== $x^2+y^2\\le4$（$z=0$，朝上）的旋度通量，會是？",
         "options": [
           {
-            "label": "赤道那一圈",
+            "label": "也是 $8\\pi$",
             "correct": true
           },
           {
-            "label": "北極那一點",
-            "why": "北極在曲面中間；邊界是曲面的邊緣，碗口那一圈。"
+            "label": "$0$，因為圓盤是平的",
+            "why": "平不平沒關係，只看邊界的環流量"
           },
           {
-            "label": "沒有邊界",
-            "why": "整個球面才沒有邊界；切掉下半之後，赤道就露出來了。"
+            "label": "比 $8\\pi$ 小，因為圓盤面積比半球小",
+            "why": "通量不是面積；邊界相同，旋度通量就相同"
           }
         ]
       }
     },
     {
-      "title": "方向怎麼配",
+      "title": "封閉曲面",
       "beats": [
-        { "show": ["右手定則：拇指沿 $\\mathbf n$，手指彎的方向是 $C$ 的方向"],
-          "say": "曲面的法向量和邊界的方向要配好。右手拇指指向法向量，手指彎的方向就是邊界的方向。",
+        {
+          "show": [
+            "旋度通量只看邊界：同一條 $C$、配對一致的兩張曲面，答案一樣"
+          ],
+          "say": "給想知道的人，兩個推論。第一：旋度通量只看邊界，同一條 C 圍出的兩張曲面，答案一樣。",
           "board": [
-            {"do":"write","line":"右手定則：拇指沿 ${{n:\\mathbf n}}$"},
-            {"do":"write","line":"手指彎向 ＝ ${{c:C}}$ 的方向","on":"手指彎的方向"},
-            {"do":"arrow","from":"n","to":"c","label":"配對","on":"就是"}
-          ] },
-        { "show": ["頭朝 $\\mathbf n$ 沿 $C$ 走：曲面在左手邊"],
-          "say": "另一個說法：頭朝法向量的方向，沿著邊界走，曲面在你的左手邊。",
-          "board": [
-            {"do":"write","line":"頭朝 ${{n:\\mathbf n}}$ 沿 $C$ 走：曲面在左手邊"},
-            {"do":"focus","term":"n","on":"法向量"}
-          ] },
-        { "show": ["上半球面、$\\mathbf n$ 朝上"],
-          "note": "邊界是單位圓。",
-          "say": "例如上半球面、法向量朝上，邊界的單位圓要怎麼走？",
-          "board": [
-            {"do":"write","line":"上半球面、${{n:\\mathbf n}}$ 朝上"},
-            {"do":"focus","term":"n","on":"法向量"}
-          ] }
+            {
+              "do": "write",
+              "line": "旋度通量只看邊界：同一條 $C$、配對一致的兩張曲面，答案一樣"
+            }
+          ]
+        }
       ],
-      "key": "拇指沿 $\\mathbf n$，四指彎向就是 $C$ 的方向",
-      "check": 0
+      "predict": {
+        "ask": "$S$ 是==整個==單位球面（朝外），$\\mathbf F$ 是任一個光滑的場。$\\displaystyle\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$4\\pi$",
+            "why": "那是點源場本身的通量，不是旋度的通量"
+          },
+          {
+            "label": "要看 $\\mathbf F$ 是什麼",
+            "why": "對每一個光滑的 $\\mathbf F$ 都一樣是 $0$"
+          }
+        ]
+      }
     },
     {
-      "title": "Stokes 定理",
+      "title": "封閉曲面",
       "beats": [
-        { "show": ["$\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$"],
-          "say": "邊界的環流，等於旋度穿過曲面的通量。這就是 Stokes 定理。",
+        {
+          "show": [
+            "封閉曲面（例如球面）：",
+            "$\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=0$"
+          ],
+          "say": "答案是 0：封閉曲面上，旋度的通量一定是 0。",
           "board": [
-            {"do":"write","line":"${{l:\\oint_C\\mathbf F\\cdot d\\mathbf r}}={{r:\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S}}$"},
-            {"do":"underline","term":"l","on":"環流"},
-            {"do":"underline","term":"r","on":"通量"}
-          ] },
-        { "show": ["$S$ 可定向、$C$ 用右手定則配對"],
-          "note": "$\\mathbf F$ 在包含 $S$ 的開集上偏導連續。",
-          "say": "條件：曲面可定向，邊界方向用右手定則配好，場的偏導數在曲面附近連續。",
+            {
+              "do": "write",
+              "line": "封閉曲面（例如球面）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=0}}$",
+              "on": "閉曲"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "通量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿赤道切成上下兩半：兩半的邊界是同一個圓，但方向相反，兩個線積分抵消"
+          ],
+          "say": "理由：沿赤道切成兩半，都朝外。上半的邊界從上面看逆時針，下半是順時針，同一個圓走相反方向，加起來是 0。",
           "board": [
-            {"do":"write","line":"$S$ 可定向、$C$ 用右手定則配對"},
-            {"do":"write","line":"$\\mathbf F$ 偏導連續（$S$ 附近）","on":"場的偏導數"}
-          ] },
-        { "show": ["$S$ 在 $xy$ 平面、$\\mathbf n=\\mathbf k$：回到 Green"],
-          "say": "曲面如果就躺在 x y 平面上、法向量朝上，旋度的 z 分量就是 Green 的被積函數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$S$ 在 $xy$ 平面、$\\mathbf n=\\mathbf k$：回到 Green","on":"躺在"},
-            {"do":"write","line":"$(\\nabla\\times\\mathbf F)\\cdot\\mathbf k$：Green 的被積函數","on":"旋度"}
-          ] },
-        { "show": ["Green 的被積函數：$Q_x-P_y$","正是旋度的 $z$ 分量"],
-          "say": "Green 的被積函數是 Q x 減 P y。這正是旋度的 z 分量，所以兩個定理對上了。",
-          "board": [
-            {"do":"write","line":"Green 的被積函數：${{g1:Q_x-P_y}}$"},
-            {"do":"write","line":"旋度的 $z$ 分量：${{g1:Q_x-P_y}}$","on":"旋度的 z 分量"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "沿赤道切成上下兩半：兩半的邊界是同一個圓，但方向相反，兩個線積分抵消"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "換一張平的曲面",
+      "title": "旋度為 0 就保守",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle -y^2,x,z^2\\rangle$","$C$：$y+z=2$ 與 $x^2+y^2=1$ 的交線"],
-          "note": "從上往下看逆時針。",
-          "say": "這條交線直接算線積分很麻煩。改算旋度的通量，而且曲面可以自己挑。",
+        {
+          "show": [
+            "保守場：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$",
+            "$C$ 任一封閉曲線，找一張以 $C$ 為邊界的曲面 $S$："
+          ],
+          "say": "第二：旋度處處是 0 的場是保守的。任取一條封閉曲線，找一張以它為邊界的曲面，旋度是 0，線積分就是 0。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle -y^2,x,z^2\\rangle$"},
-            {"do":"write","line":"$C$：$y+z=2$ 與 $x^2+y^2=1$ 的交線","on":"直接算"}
-          ] },
-        { "show": ["$\\nabla\\times\\mathbf F=\\langle 0,0,1+2y\\rangle$"],
-          "say": "先算旋度，只剩 z 分量，一加二 y。",
+            {
+              "do": "write",
+              "line": "保守場：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$"
+            },
+            {
+              "do": "write",
+              "line": "$C$ 任一封閉曲線，找一張以 $C$ 為邊界的曲面 $S$：",
+              "on": "是保"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S\\mathbf 0\\cdot d\\mathbf S=0}}$",
+              "on": "找一"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "旋度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "封閉曲線上的線積分都是 0 ⇒ 路徑無關 ⇒ 保守（9.18）"
+          ],
+          "say": "每條封閉曲線上都是 0，就是路徑無關，也就是保守。這補上了 9.24 欠的證明。",
           "board": [
-            {"do":"write","line":"$\\nabla\\times\\mathbf F=\\langle 0,0,{{k:1+2y}}\\rangle$"},
-            {"do":"underline","term":"k","label":"z 分量","on":"只剩"}
-          ] },
-        { "show": ["$Q_x=1$，$P_y=-2y$","$Q_x-P_y=1+2y$"],
-          "note": "這裡 $P=-y^2$、$Q=x$。",
-          "say": "z 分量是 Q x 減 P y。Q 是 x，對 x 微分得一；P 是負 y 平方，對 y 微分得負二 y，相減就是一加二 y。",
-          "board": [
-            {"do":"write","line":"$Q_x=1$，$P_y=-2y$"},
-            {"do":"write","line":"$Q_x-P_y=1-(-2y)=1+2y$","on":"相減"}
-          ] },
-        { "show": ["選平面 $y+z=2$ 在圓柱裡那一片，朝上"],
-          "note": "被積函數 $1+2y$。",
-          "say": "挑最平的那張：平面在圓柱裡的那一片。邊界方向是從上往下看逆時針，法向量朝上。",
-          "board": [
-            {"do":"write","line":"選平面 $y+z=2$ 在圓柱裡那一片，朝上","on":"挑最平的"}
-          ] },
-        { "show": ["$\\mathbf n$ 朝上：從上往下看逆時針"],
-          "note": "跟上半球面朝上是同一條規則。",
-          "say": "拇指朝上，四指從上往下看是逆時針。跟前面上半球面朝上的例子，是同一條右手定則。",
-          "board": [
-            {"do":"write","line":"$\\mathbf n$ 朝上：從上往下看逆時針","on":"拇指朝上"}
-          ] },
-        { "show": ["$\\iint_{x^2+y^2\\le1}(1+2y)\\,dA=\\pi$"],
-          "note": "$2y$ 對稱抵消；直接算線積分也是 $\\pi$。",
-          "say": "二 y 那一項上下對稱抵消，剩下圓盤面積 pi。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\iint_{x^2+y^2\\le1}(1+{{t:2y}})\\,dA={{res:\\pi}}$","on":"二 y"},
-            {"do":"focus","term":"t","label":"對稱抵消","on":"上下對稱"},
-            {"do":"box","term":"res","color":"green","on":"圓盤面積"}
-          ] }
-      ],
-      "key": "換成平面片：旋度只剩 $z$ 分量",
-      "check": 1
+            {
+              "do": "write",
+              "line": "封閉曲線上的線積分都是 0 ⇒ 路徑無關 ⇒ 保守（9.18）",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　曲面可取「從一點連到 $C$ 上每一點」的錐面；$C$ 很複雜時錐面會自己交叉，嚴格處理要更多拓撲工具。定義域有洞時可能找不到這種曲面，這就是 9.24 反例的原因",
+              "color": "violet",
+              "on": "就是#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "反過來換成邊界",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle xz,yz,xy\\rangle$，球面在圓柱裡的那片"],
-          "note": "$x^2+y^2+z^2=4$、$x^2+y^2\\le 1$、朝上。",
-          "say": "這次反過來：旋度的通量很難算，就換成邊界上的線積分。",
+        {
+          "show": [
+            "• $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$",
+            "• 方向：拇指沿 $\\mathbf n$，四指沿 $C$（曲面在左手邊）"
+          ],
+          "say": "整理一下：斯托克斯定理把邊界的環流量換成旋度通量，方向用右手定則配對，格林是它的平面特例。線積分難就換曲面，通量難就換成邊界。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle xz,yz,xy\\rangle$，球面在圓柱裡的那片"}
-          ] },
-        { "show": ["邊界：高度 $\\sqrt3$ 的圓，$\\langle\\cos t,\\sin t,\\sqrt3\\rangle$"],
-          "say": "球面被圓柱切出的邊界，是高度根號三的一個圓，從上往下看逆時針。",
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\oint_C\\mathbf F\\cdot d\\mathbf r=\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S$"
+            },
+            {
+              "do": "write",
+              "line": "• 方向：拇指沿 $\\mathbf n$，四指沿 $C$（曲面在左手邊）",
+              "on": "理把"
+            },
+            {
+              "do": "write",
+              "line": "• Green 是平面上的特例（$\\mathbf n=\\mathbf k$）",
+              "on": "度通"
+            },
+            {
+              "do": "write",
+              "line": "• 用法：線積分難 → 挑一張好算的曲面；通量難 → 換成邊界",
+              "on": "則配"
+            },
+            {
+              "do": "write",
+              "line": "• 旋度通量只看邊界；封閉曲面上是 $0$",
+              "on": "特例"
+            },
+            {
+              "do": "write",
+              "line": "• 旋度 $=\\mathbf 0$ 在 $\\mathbb R^3$ ⇒ 保守",
+              "on": "通量#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：散度定理"
+          ],
+          "say": "下一課，封閉曲面的通量：散度定理。",
           "board": [
-            {"do":"write","line":"邊界：$\\langle\\cos t,\\sin t,{{h:\\sqrt3}}\\rangle$"},
-            {"do":"focus","term":"h","label":"高度","on":"高度根號三"}
-          ] },
-        { "show": ["$\\mathbf F\\cdot\\mathbf r'=-\\sqrt3\\cos t\\sin t+\\sqrt3\\sin t\\cos t=0$"],
-          "say": "點積兩項剛好抵消，答案是零，完全不用算旋度。",
-          "board": [
-            {"do":"write","line":"$\\mathbf F\\cdot\\mathbf r'={{a:-\\sqrt3\\cos t\\sin t}}+{{b:\\sqrt3\\sin t\\cos t}}$"},
-            {"do":"underline","term":"a","on":"兩項"},
-            {"do":"underline","term":"b","on":"抵消"},
-            {"do":"write","line":"$={{z:0}}$","on":"答案是零"},
-            {"do":"box","term":"z","color":"green","on":"完全不用"}
-          ] },
-        { "show": ["處處 $\\nabla\\times\\mathbf F=\\mathbf 0$：每一圈都是某張曲面的邊界"],
-          "note": "在整個 $\\mathbb{R}^3$ 上。",
-          "say": "反過來想：旋度在整個空間都是零，任何一圈都能找一張曲面當它的邊界，通量是零，環流也就是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"處處 $\\nabla\\times\\mathbf F=\\mathbf 0$","on":"旋度在整個空間"},
-            {"do":"write","line":"每一圈都是某張曲面的邊界","on":"任何一圈"}
-          ] },
-        { "show": ["單位圓：補一張圓盤","彎曲的圈：張一片膜"],
-          "note": "直覺，不是證明。",
-          "say": "為什麼找得到曲面？單位圓補一張圓盤就好。彎曲的圈，也能像肥皂泡的膜一樣張一片。",
-          "board": [
-            {"do":"write","line":"單位圓：補一張圓盤"},
-            {"do":"write","line":"彎曲的圈：像肥皂膜張一片","on":"肥皂泡"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：散度定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

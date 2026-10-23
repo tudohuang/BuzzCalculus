@@ -1,7 +1,8 @@
 {
   "id": "epsilon-delta-linear",
   "title": "線性函數的 ε-δ",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "epsilon-delta-definition",
@@ -12,36 +13,102 @@
   ],
   "related": [],
   "objectives": [
-    "看出 $f(x)=mx+b$ 時 $|f(x)-L|=|m||x-a|$，因此 $\\delta=\\varepsilon/|m|$。",
-    "照固定格式寫出完整的 $\\varepsilon$-$\\delta$ 證明：給定 $\\varepsilon$、取 $\\delta$、由 $0<|x-a|<\\delta$ 推到 $|f(x)-L|<\\varepsilon$。",
-    "處理斜率為負、斜率為 0，以及化簡後是一次式的可去不連續點。"
+    "看出 $f(x)=mx+b$ 時 $|f(x)-L|=|m||x-a|$，因此 $\\delta=\\varepsilon/|m|$ 可行（而且是最大的）",
+    "照固定格式寫出完整的 $\\varepsilon$-$\\delta$ 證明：給定 $\\varepsilon$、取 $\\delta$、對 $0<|x-a|<\\delta$ 驗證 $|f(x)-L|<\\varepsilon$",
+    "處理斜率為負、斜率為 0，以及化簡後是一次式的可去不連續點"
   ],
-  "visual": "直線 y = mx + b 與兩條帶子。斜率 m 用滑桿調：m 越陡，同一條水平帶 L ± ε 能允許的垂直帶 a ± δ 越窄，旁邊即時顯示 δ = ε/|m|。m = 0 時垂直帶可以任意寬。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 斜率把誤差放大 $|m|$ 倍",
+      "heading": "① 斜率放大誤差",
       "body": [
-        "$f(x)=mx+b$，$L=ma+b$。直接算：$f(x)-L=m(x-a)$，所以 $|f(x)-L|=|m||x-a|$。$x$ 偏離 $a$ 一點點，$f(x)$ 就偏離 $L$ 那一點點的 $|m|$ 倍。",
-        "要 $|m||x-a|<\\varepsilon$，只要 $|x-a|<\\varepsilon/|m|$。所以 $m\\ne0$ 時取 $\\delta=\\varepsilon/|m|$，剛好就是最大可用的 $\\delta$。直線是唯一「左右對稱、而且一眼看出最大 $\\delta$」的情形，之後的二次、有理函數都要多做一步。"
+        "$f(x)=mx+b$，$L=f(a)=ma+b$",
+        "誤差 = $|m|$ 倍的距離",
+        "$x$ 離 $a$ 不到 $\\delta$ ⇒ $f(x)$ 離 $L$ 不到 $|m|\\delta$",
+        "要 $|m|\\delta\\le\\varepsilon$：取",
+        "這也是最大的 $\\delta$：$|m||x-a|<\\varepsilon\\iff|x-a|<\\frac\\varepsilon{|m|}$，兩個方向都成立",
+        "越陡，$\\delta$ 要越小；越平，$\\delta$ 可以越大"
       ],
-      "collapsible": false
+      "tex": [
+        "|f(x)-L|=|mx-ma|=|m|\\,|x-a|",
+        "\\delta=\\frac{\\varepsilon}{|m|}\\quad(m\\ne0)"
+      ]
     },
     {
-      "heading": "② 證明的固定格式",
+      "heading": "② 草稿：先倒推",
       "body": [
-        "草稿紙上：從 $|f(x)-L|<\\varepsilon$ 倒推出 $|x-a|$ 要多小。正式證明只寫正向的四句：",
-        "（1）給定 $\\varepsilon>0$。（2）取 $\\delta=$ ……（只能用 $\\varepsilon$ 與題目的常數）。（3）設 $0<|x-a|<\\delta$。（4）則 $|f(x)-L|=$ …… $<$ …… $=\\varepsilon$。",
-        "第 (4) 句是一條等式與不等式的鏈，起點是 $|f(x)-L|$，終點是 $\\varepsilon$，中間每一步都要說得出理由。"
+        "例：用定義證明 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$",
+        "跟 12.13 一樣，兩張紙：草稿倒推，證明正寫",
+        "草稿：要",
+        "所以 $\\delta$ 取 $\\dfrac\\varepsilon3$（或更小）",
+        "證明：給定 $\\varepsilon>0$。取 $\\delta=\\dfrac\\varepsilon3$，則 $\\delta>0$。",
+        "若 $0<|x-2|<\\delta$，則",
+        "所以 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$　$\\blacksquare$"
       ],
-      "collapsible": false
+      "tex": [
+        "|(3x-1)-5|=3|x-2|<\\varepsilon\\iff|x-2|<\\frac\\varepsilon3",
+        "|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon"
+      ]
     },
     {
-      "heading": "③ 兩個特殊情形",
+      "heading": "② 固定格式",
       "body": [
-        "$m=0$：$f$ 是常數 $b$，$|f(x)-L|=0<\\varepsilon$ 對所有 $x$ 成立，任何 $\\delta>0$ 都可以（例如 $\\delta=1$）。公式 $\\varepsilon/|m|$ 在這裡不能用。",
-        "化簡後是直線：$\\frac{x^2-1}{x-1}$ 在 $x\\ne1$ 時等於 $x+1$。定義只看 $0<|x-1|<\\delta$ 的 $x$，所以可以先約分，再當成直線 $x+1$ 處理，$\\delta=\\varepsilon$。"
+        "每份 $\\varepsilon$-$\\delta$ 證明都是三句：",
+        "$\\delta$ 只能依賴 $\\varepsilon$（和 $a$），不能依賴 $x$",
+        "量詞順序：$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$。$\\delta$ 先選好，才輪到 $x$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&1.\\ \\text{給定 }\\varepsilon>0\\\\&2.\\ \\text{取 }\\delta=\\cdots\\ (\\text{確認 }\\delta>0)\\\\&3.\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|\\le\\cdots<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 斜率為負",
+      "body": [
+        "例：證明 $\\displaystyle\\lim_{x\\to1}(4-5x)=-1$",
+        "放大倍數是 $|m|=5$，不是 $-5$",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon5>0$。若 $0<|x-1|<\\delta$：",
+        "$\\varepsilon=0.1$：最大的 $\\delta=\\dfrac{0.1}5=0.02$"
+      ],
+      "tex": [
+        "|(4-5x)-(-1)|=|5-5x|=5|x-1|",
+        "|(4-5x)+1|=5|x-1|<5\\delta=\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "③ 斜率為 0",
+      "body": [
+        "$f(x)=c$（常數），$L=c$：$|f(x)-L|=|c-c|=0<\\varepsilon$",
+        "公式 $\\dfrac\\varepsilon{|m|}$ 不能用（除以 $0$）；但任何 $\\delta$ 都行",
+        "例如取 $\\delta=1$",
+        "圖上：水平線整條都在橫帶裡，直帶畫多寬都可以",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=1$。若 $0<|x-a|<1$，則 $|c-c|=0<\\varepsilon$　$\\blacksquare$",
+        "這裡 $\\delta$ 連 $\\varepsilon$ 都不依賴，也完全合法"
+      ]
+    },
+    {
+      "heading": "③ 可去不連續點",
+      "body": [
+        "例：證明 $\\displaystyle\\lim_{x\\to1}\\frac{x^2-1}{x-1}=2$",
+        "$x=1$ 沒有定義；但定義只看 $0<|x-1|$，也就是 $x\\ne1$",
+        "$x\\ne1$ 時可以約分：",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon$。若 $0<|x-1|<\\delta$，則 $x\\ne1$，"
+      ],
+      "tex": [
+        "\\frac{x^2-1}{x-1}=\\frac{(x-1)(x+1)}{x-1}=x+1",
+        "\\left|\\frac{x^2-1}{x-1}-2\\right|=|x+1-2|=|x-1|",
+        "\\left|\\frac{x^2-1}{x-1}-2\\right|=|x-1|<\\delta=\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 直線：$|f(x)-L|=|m||x-a|$，取 $\\delta=\\dfrac\\varepsilon{|m|}$",
+        "• 格式：給定 $\\varepsilon$ → 取 $\\delta$（$>0$）→ $0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$",
+        "• 斜率負：用 $|m|$；斜率 $0$：任何 $\\delta$ 都行",
+        "• 可去不連續點：$0<|x-a|$ 讓我們約分，化成一次式",
+        "• $\\delta$ 只能依賴 $\\varepsilon$，不能依賴 $x$",
+        "練習：網站的 ε-δ 挑戰，用 $\\delta=\\varepsilon/|m|$ 接招"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,70 +158,23 @@
   ],
   "checks": [
     {
-      "ask": "證明 $\\lim_{x\\to3}(2x-1)=5$，$\\delta$ 應取？",
+      "ask": "這份證明裡，哪一步==用到了==「$0<|x-1|$」？",
       "options": [
         {
-          "label": "$\\frac{\\varepsilon}{2}$",
+          "label": "約分 $\\frac{(x-1)(x+1)}{x-1}=x+1$",
           "correct": true
         },
         {
-          "label": "$2\\varepsilon$",
-          "why": "$|(2x-1)-5|=2|x-3|$。取 $\\delta=2\\varepsilon$ 會得到 $2|x-3|<4\\varepsilon$，超過 $\\varepsilon$。斜率是除，不是乘。"
+          "label": "取 $\\delta=\\varepsilon$",
+          "why": "取 $\\delta$ 時還沒有 $x$，用不到任何關於 $x$ 的條件"
         },
         {
-          "label": "$\\varepsilon+1$",
-          "why": "$\\delta$ 必須跟著 $\\varepsilon$ 變小。$\\varepsilon+1$ 永遠大於 1：$\\varepsilon=0.1$ 時 $x=3.6$ 也被放進來，誤差 $2\\times0.6=1.2$，遠超過 0.1。"
-        }
-      ]
-    },
-    {
-      "ask": "正式證明的最後一步「$|f(x)-L|<\\varepsilon$」應該從哪裡推出來？",
-      "options": [
-        {
-          "label": "從假設 $0<|x-a|<\\delta$ 與 $\\delta$ 的選法",
-          "correct": true
+          "label": "$|x+1-2|=|x-1|$",
+          "why": "這只是移項化簡，對所有 $x$ 都成立"
         },
         {
-          "label": "從 $|f(x)-L|<\\varepsilon$ 倒推",
-          "why": "那是草稿的方向。正式證明不能假設結論。"
-        },
-        {
-          "label": "從 $f$ 在 $a$ 連續",
-          "why": "這正是我們要證的事（線性函數的極限等於函數值），不能拿來當理由。"
-        }
-      ]
-    },
-    {
-      "ask": "$f(x)=7$（常數），$\\lim_{x\\to2} f(x)=7$ 的證明中，$\\delta$ 可以取？",
-      "options": [
-        {
-          "label": "任何正數，例如 1",
-          "correct": true
-        },
-        {
-          "label": "$\\frac{\\varepsilon}{0}$",
-          "why": "斜率是 0，公式 $\\varepsilon/|m|$ 不能用。$|f(x)-7|=0<\\varepsilon$ 對所有 $x$ 都成立。"
-        },
-        {
-          "label": "只能取 $\\frac{\\varepsilon}{7}$",
-          "why": "7 是函數值，不是斜率。$\\frac{\\varepsilon}{7}$ 雖然可用，但說「只能」就錯了：常數函數任何 $\\delta$ 都行。"
-        }
-      ]
-    },
-    {
-      "ask": "$f(x)=3x+1$，$a=2$，$\\varepsilon=0.06$。$\\delta=0.03$ 可以嗎？",
-      "options": [
-        {
-          "label": "不可以，$x=2.025$ 時誤差 $0.075>0.06$",
-          "correct": true
-        },
-        {
-          "label": "可以，$\\delta$ 越大越好",
-          "why": "$\\delta$ 太大會把太遠的 $x$ 放進來。最大可用的是 $\\frac{\\varepsilon}{3}=0.02$。"
-        },
-        {
-          "label": "可以，因為 $x=2.01$ 時誤差 $0.03<0.06$",
-          "why": "只檢查一個點不夠；定義要求 $0<|x-2|<\\delta$ 的每一個 $x$ 都合格。"
+          "label": "$|x-1|<\\delta$",
+          "why": "這用的是 $|x-1|<\\delta$ 那一半，不是 $0<$ 那一半"
         }
       ]
     }
@@ -163,196 +183,704 @@
     {
       "title": "斜率放大誤差",
       "beats": [
-        { "show": ["$f(x)=mx+b$，$L=ma+b$"],
-          "say": "先處理最簡單的函數：直線。在 a 的極限就是 m 乘 a 加 b。",
+        {
+          "show": [
+            "$f(x)=mx+b$，$L=f(a)=ma+b$",
+            "$|f(x)-L|=|mx-ma|=|m|\\,|x-a|$"
+          ],
+          "say": "從最簡單的直線開始。f of x 等於 m x 加 b，在 a 的極限是 m a 加 b。誤差相減以後，b 消掉，剩下 m 乘 x 減 a，取絕對值，就是 m 的絕對值乘上距離。",
           "board": [
-            {"do":"write","line":"$f(x) = mx + b$，$L = ma + b$","on":"直線"}
-          ] },
-        { "show": ["$|f(x)-L|=|m||x-a|$"],
-          "note": "$x$ 偏一點，$f(x)$ 偏那一點的 $|m|$ 倍。",
-          "say": "直接相減，剛好提出 m。x 偏離 a 一點點，函數值就偏離那一點點的 m 的絕對值倍。",
+            {
+              "do": "write",
+              "line": "$f(x)=mx+b$，$L=f(a)=ma+b$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle |f(x)-L|=|mx-ma|=|m|\\,|x-a|}}$",
+              "on": "的極"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "取絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誤差 = $|m|$ 倍的距離"
+          ],
+          "say": "也就是說，直線把距離放大 m 的絕對值倍：x 離 a 不到得塔，f of x 離 L 就不到 m 的絕對值乘得塔。",
           "board": [
-            {"do":"write","line":"$|f(x) - L| = {{am:|m|}}\\,|x-a|$","tint":{"am":"violet"},"on":"直接相減"},
-            {"do":"underline","term":"am","label":"放大倍數","on":"m 的絕對值"}
-          ] },
-        { "show": ["取 $\\delta=\\varepsilon/|m|$"],
-          "note": "$m\\ne0$；剛好是最大可用的 $\\delta$。",
-          "say": "要誤差小於 epsilon，x 的距離就除以斜率的絕對值。陡的直線，delta 要更窄。",
+            {
+              "do": "write",
+              "line": "誤差 = $|m|$ 倍的距離"
+            },
+            {
+              "do": "write",
+              "line": "$x$ 離 $a$ 不到 $\\delta$ ⇒ $f(x)$ 離 $L$ 不到 $|m|\\delta$",
+              "on": "到得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要 $|m|\\delta\\le\\varepsilon$：取",
+            "$\\delta=\\frac{\\varepsilon}{|m|}\\quad(m\\ne0)$"
+          ],
+          "say": "要讓 m 的絕對值乘得塔不超過艾普西隆，得塔就取 m 的絕對值分之艾普西隆。",
           "board": [
-            {"do":"write","line":"取 ${{d:\\delta = \\varepsilon / {{am:|m|}}}}$","on":"除以斜率"},
-            {"do":"underline","term":"d","label":"陡就更窄","on":"陡的直線"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "要 $|m|\\delta\\le\\varepsilon$：取"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\delta=\\frac{\\varepsilon}{|m|}\\quad(m\\ne0)}}$",
+              "color": "red",
+              "on": "乘得"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "得塔#2"
+            },
+            {
+              "do": "write",
+              "line": "　這也是最大的 $\\delta$：$|m||x-a|<\\varepsilon\\iff|x-a|<\\frac\\varepsilon{|m|}$，兩個方向都成立",
+              "color": "violet",
+              "on": "絕對#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率 3：直帶多寬，橫帶就是 3 倍寬"
+          ],
+          "say": "看 3x 減 1 在 2 附近。藍色直帶的半寬是得塔，曲線在直帶裡的高度範圍，剛好是紅色、半寬 3 倍得塔的帶子。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "amp",
+                  "window": [
+                    1,
+                    3,
+                    2,
+                    8
+                  ],
+                  "area": [
+                    {
+                      "expr": "5+3*d",
+                      "from": 1,
+                      "to": 3,
+                      "color": "red",
+                      "under": "5-3*d"
+                    },
+                    {
+                      "expr": "8",
+                      "from": "2-d",
+                      "to": "2+d",
+                      "color": "blue",
+                      "under": "2"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "3*x-1",
+                      "color": "ink",
+                      "label": "y = 3x − 1"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 5,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "d": {
+                      "min": 0.1,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "直帶半寬 δ"
+                    }
+                  },
+                  "readout": "直帶半寬 δ = {d}　→　橫帶半寬 3δ = {3*d}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "直帶半寬 δ = 0.5　→　橫帶半寬 3δ = 1.5",
+              "on": "帶的"
+            },
+            {
+              "do": "write",
+              "line": "斜率 3：直帶多寬，橫帶就是 3 倍寬",
+              "color": "violet",
+              "on": "剛好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率放大誤差"
+          ],
+          "say": "把得塔縮小，紅帶也按 3 倍縮小。所以對手給艾普西隆，我們取 3 分之艾普西隆，紅帶就剛好是艾普西隆那麼寬。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "amp",
+                  "window": [
+                    1,
+                    3,
+                    2,
+                    8
+                  ],
+                  "area": [
+                    {
+                      "expr": "5+3*d",
+                      "from": 1,
+                      "to": 3,
+                      "color": "red",
+                      "under": "5-3*d"
+                    },
+                    {
+                      "expr": "8",
+                      "from": "2-d",
+                      "to": "2+d",
+                      "color": "blue",
+                      "under": "2"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "3*x-1",
+                      "color": "ink",
+                      "label": "y = 3x − 1"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 5,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "d": {
+                      "min": 0.1,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "直帶半寬 δ"
+                    }
+                  },
+                  "readout": "直帶半寬 δ = {d}　→　橫帶半寬 3δ = {3*d}",
+                  "height": 300
+                },
+                "vals": {
+                  "d": 0.15
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "直帶半寬 δ = 0.15　→　橫帶半寬 3δ = 0.45",
+              "on": "我們"
+            }
+          ]
+        },
+        {
+          "show": [
+            "越陡，$\\delta$ 要越小；越平，$\\delta$ 可以越大"
+          ],
+          "say": "直線越陡，誤差放大越多，得塔就要越小；越平，得塔可以越大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "越陡，$\\delta$ 要越小；越平，$\\delta$ 可以越大"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：正式四句",
+      "title": "草稿：先倒推",
       "beats": [
-        { "show": ["(1) 給定 $\\varepsilon>0$　(2) 取 $\\delta=\\dots$","(3) 設 $0<|x-a|<\\delta$　(4) 則 …"],
-          "say": "策略：草稿紙上從結論倒推出 delta；交出去的正式證明，只寫正向的四句話。",
+        {
+          "show": [
+            "例：用定義證明 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$"
+          ],
+          "say": "現在寫一份完整的證明：x 趨近 2 時，3x 減 1 趨近 5。",
           "board": [
-            {"do":"write","line":"草稿：從結論倒推 $\\delta$","on":"草稿紙上"},
-            {"do":"write","line":"正式：(1) → (2) → (3) → (4)","on":"正式證明"}
-          ] },
-        { "show": ["草稿：$|(3x-1)-5|=3|x-2|$"],
-          "note": "只要 $|x-2|<\\frac{\\varepsilon}{3}$。",
-          "say": "例子：三 x 減一在二的極限是五。草稿上距離是三倍的 x 減二，所以 x 減二小於三分之 epsilon 就夠。",
+            {
+              "do": "write",
+              "line": "例：用定義證明 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 12.13 一樣，兩張紙：草稿倒推，證明正寫"
+          ],
+          "say": "跟 12.13 的數列證明一樣，準備兩張紙：草稿倒著推，證明正著寫。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\lim_{x\\to 2}(3x-1) = 5$","on":"例子"},
-            {"do":"write","line":"草稿：$|(3x-1)-5| = 3|x-2|$","on":"草稿上"},
-            {"do":"write","line":"⇒ $|x-2| < \\frac{\\varepsilon}{3}$ 就夠","on":"所以 x 減二"}
-          ] },
-        { "show": ["草稿倒著走也成立"],
-          "say": "草稿能倒著走：x 減二小於三分之 epsilon，兩邊乘正數三，誤差就小於 epsilon。",
+            {
+              "do": "write",
+              "line": "跟 12.13 一樣，兩張紙：草稿倒推，證明正寫"
+            }
+          ]
+        },
+        {
+          "show": [
+            "草稿：要",
+            "$|(3x-1)-5|=3|x-2|<\\varepsilon\\iff|x-2|<\\frac\\varepsilon3$"
+          ],
+          "say": "先打草稿：要 3x 減 1 減 5 的絕對值小於艾普西隆。它等於 3 倍的 x 減 2 的絕對值，所以只要 x 減 2 的絕對值小於 3 分之艾普西隆。",
           "board": [
-            {"do":"write","line":"倒著走：$|x-2|<\\frac{\\varepsilon}{3}$ ⇒ $3|x-2|<\\varepsilon$"}
-          ] },
-        { "show": ["(1)(2) 給定 $\\varepsilon>0$，取 $\\delta=\\frac{\\varepsilon}{3}>0$"],
-          "note": "只用到 $\\varepsilon$。",
-          "why": {"ask":"為什麼 $\\delta$ 可以取 $\\frac{\\varepsilon}{3}$？","say":"第二句取 delta 等於三分之 epsilon。為什麼可以這樣取？","options":[{"label":"草稿算出 $|x-2|<\\frac{\\varepsilon}{3}$ 就夠，又只用到 $\\varepsilon$","correct":true},{"label":"$\\delta$ 一定要比 $\\varepsilon$ 小","why":"誰大不是重點；斜率小於 1 的直線，$\\delta$ 反而比 $\\varepsilon$ 大。"},{"label":"取 $\\frac{\\varepsilon}{3|x-2|}$ 更準","why":"$\\delta$ 裡不能有 $x$：它要在 $x$ 出場前決定。"}]},
-          "say": "草稿算出 x 減二小於三分之 epsilon 就夠，而且這個數只用到 epsilon，可以在 x 出場前交出去。",
+            {
+              "do": "write",
+              "line": "草稿：要"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |(3x-1)-5|=3|x-2|<\\varepsilon\\iff|x-2|<\\frac\\varepsilon3$",
+              "on": "的絕#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\delta$ 取 $\\dfrac\\varepsilon3$（或更小）"
+          ],
+          "say": "草稿的結論：得塔取 3 分之艾普西隆就行，更小也可以。草稿到這裡結束，不用交出去。",
           "board": [
-            {"do":"write","line":"(1)(2) 給定 $\\varepsilon > 0$，取 ${{d:\\delta = \\frac{\\varepsilon}{3}}}$","tint":{"d":"violet"},"on":"取 delta"},
-            {"do":"underline","term":"d","label":"只用到 ε","why":true,"on":"只用到"}
-          ] },
-        { "show": ["(3) 設 $0<|x-2|<\\delta$"],
-          "say": "第三句才讓 x 出場：x 跟二的距離大於零、小於 delta。",
+            {
+              "do": "write",
+              "line": "所以 $\\delta$ 取 $\\dfrac\\varepsilon3$（或更小）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$。取 $\\delta=\\dfrac\\varepsilon3$，則 $\\delta>0$。"
+          ],
+          "say": "正式證明。第一句：給定艾普西隆大於 0。第二句：宣布得塔等於 3 分之艾普西隆，它是正的。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"(3) 設 ${{h:0 < |x-2| < \\delta}}$","on":"x 跟二"}
-          ] },
-        { "show": ["(4) $|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$"],
-          "note": "第三句的 $|x-2|<\\delta$，兩邊乘 3。",
-          "why": {"ask":"為什麼 $3|x-2|<3\\delta$？","say":"第四句的小於號：三倍 x 減二，為什麼小於三倍 delta？","options":[{"label":"第三句的 $|x-2|<\\delta$，兩邊乘正數 3","correct":true},{"label":"斜率是 3，誤差放大 3 倍","why":"那解釋的是等號 $|(3x-1)-5|=3|x-2|$；小於號要靠 $|x-2|<\\delta$。"},{"label":"$x$ 很接近 2，誤差自然很小","why":"很接近不夠：要的是垂直帶裡每一個 $x$ 都成立的不等式。"}]},
-          "say": "第四句這條鏈：距離等於三倍的 x 減二，第三句給了小於 delta，乘三小於三倍 delta，剛好是 epsilon。",
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$。取 $\\delta=\\dfrac\\varepsilon3$，則 $\\delta>0$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若 $0<|x-2|<\\delta$，則",
+            "$|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$"
+          ],
+          "say": "第三句：只要 x 離 2 大於 0、小於得塔，誤差等於 3 倍的 x 減 2，小於 3 倍得塔，剛好等於艾普西隆。",
           "board": [
-            {"do":"write","line":"(4) $|(3x-1)-5| = {{lt:3|x-2| < 3\\delta}} = \\varepsilon$","on":"第四句的小於號"},
-            {"do":"focus","term":"lt","on":"為什麼小於"},
-            {"do":"underline","term":"h","label":"兩邊乘 3","why":true,"on":"第三句給了"}
-          ] }
+            {
+              "do": "write",
+              "line": "若 $0<|x-2|<\\delta$，則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$　$\\blacksquare$"
+          ],
+          "say": "這正是定義要的。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "固定格式",
+      "beats": [
+        {
+          "show": [
+            "每份 $\\varepsilon$-$\\delta$ 證明都是三句：",
+            "$\\begin{aligned}&1.\\ \\text{給定 }\\varepsilon>0\\\\&2.\\ \\text{取 }\\delta=\\cdots\\ (\\text{確認 }\\delta>0)\\\\&3.\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|\\le\\cdots<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "整理成固定格式，每份艾普西隆得塔證明都是三句：給定艾普西隆；取得塔，確認它是正的；對離 a 不到得塔的 x，一串不等式推到小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每份 $\\varepsilon$-$\\delta$ 證明都是三句："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&1.\\ \\text{給定 }\\varepsilon>0\\\\&2.\\ \\text{取 }\\delta=\\cdots\\ (\\text{確認 }\\delta>0)\\\\&3.\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|\\le\\cdots<\\varepsilon\\end{aligned}}}}$",
+              "on": "給定"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "不到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\delta$ 只能依賴 $\\varepsilon$（和 $a$），不能依賴 $x$"
+          ],
+          "say": "要注意：得塔寫在 x 之前，所以得塔只能依賴艾普西隆，不能依賴 x。下一課這件事會變得很重要。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\delta$ 只能依賴 $\\varepsilon$（和 $a$），不能依賴 $x$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　量詞順序：$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$。$\\delta$ 先選好，才輪到 $x$",
+              "color": "violet",
+              "on": "普西"
+            }
+          ]
+        }
       ],
-      "key": "草稿倒推找 $\\delta$，正式證明只往前推",
       "proof": true,
-      "of": "ex0",
-      "skeleton": "ε-δ",
-      "check": 1
-    },
-    {
-      "title": "斜率為負",
-      "beats": [
-        { "show": ["$\\lim_{x\\to1}(4-5x)=-1$"],
-          "say": "斜率是負的會怎樣？四減五 x 在一的極限是負一。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to1}(4-5x)=-1$"}
-          ] },
-        { "show": ["$|(4-5x)-(-1)|=|5-5x|=5|x-1|$"],
-          "note": "斜率 $-5$，取絕對值 5。",
-          "say": "距離化簡是五倍的 x 減一。斜率負五，但距離只看絕對值五。",
-          "board": [
-            {"do":"write","line":"$|(4-5x)-(-1)| = |5-5x| = {{a:5|x-1|}}$"},
-            {"do":"underline","term":"a","label":"只看絕對值","on":"絕對值"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\delta$ 取什麼？",
-        "options": [
+      "order": {
+        "ask": "把 $\\displaystyle\\lim_{x\\to2}(3x-1)=5$ 的正式證明排好",
+        "steps": [
           {
-            "label": "$\\frac{\\varepsilon}{5}$",
-            "correct": true
+            "label": "給定 $\\varepsilon>0$"
           },
           {
-            "label": "$\\frac{\\varepsilon}{-5}$",
-            "why": "那是負數，不是合法的 $\\delta$；要除以斜率的絕對值。"
+            "label": "取 $\\delta=\\frac\\varepsilon3$，則 $\\delta>0$",
+            "why": "先要有上一步：給定 $\\varepsilon>0$"
           },
           {
-            "label": "$5\\varepsilon$",
-            "why": "乘錯方向了：陡的直線需要更窄的 $\\delta$，所以是除以 5。"
+            "label": "設 $0<|x-2|<\\delta$",
+            "why": "先要有上一步：取 $\\delta=\\frac\\varepsilon3$，則 $\\delta>0$"
+          },
+          {
+            "label": "$|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$",
+            "why": "先要有上一步：設 $0<|x-2|<\\delta$"
+          },
+          {
+            "label": "由定義，$\\lim_{x\\to2}(3x-1)=5$",
+            "why": "先要有上一步：$|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$"
           }
         ]
       }
     },
     {
-      "title": "最大的 $\\delta$",
+      "title": "斜率為負",
       "beats": [
-        { "show": ["$\\varepsilon=0.1$：$\\delta=0.02$"],
-          "note": "$x=1.0201$ 時誤差 $0.1005>0.1$。",
-          "say": "誤差零點一，delta 是零點零二。再大一點點就不行，一點零二零一已經跑出去了。",
+        {
+          "show": [
+            "例：證明 $\\displaystyle\\lim_{x\\to1}(4-5x)=-1$"
+          ],
+          "say": "第一種特殊情形：斜率是負的。證明 x 趨近 1 時，4 減 5x 趨近負 1。",
           "board": [
-            {"do":"write","line":"$\\varepsilon = 0.1$：$\\delta = 0.02$"},
-            {"do":"write","line":"$x = {{x:1.0201}}$：誤差 $0.1005 > 0.1$","on":"再大一點點"},
-            {"do":"focus","term":"x","color":"red","label":"超過","on":"一點零二零一"}
-          ] },
-        { "show": ["$3x-1$，$\\varepsilon=0.06$：$\\delta=0.02$"],
-          "note": "$x=2\\pm0.0199$：誤差 $0.0597<0.06$。",
-          "say": "回到三 x 減一，誤差零點零六，delta 是零點零二。帶子邊緣的點，誤差零點零五九七，合格。",
+            {
+              "do": "write",
+              "line": "例：證明 $\\displaystyle\\lim_{x\\to1}(4-5x)=-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|(4-5x)-(-1)|=|5-5x|=5|x-1|$"
+          ],
+          "say": "誤差是 4 減 5x 加 1，等於 5 減 5x，提出負 5，取絕對值以後就是 5 倍的 x 減 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$3x-1$，$\\varepsilon = 0.06$：$\\delta = 0.02$","on":"回到"},
-            {"do":"write","line":"$x = 2 \\pm 0.0199$：誤差 ${{g:0.0597}} < 0.06$","on":"帶子邊緣"},
-            {"do":"box","term":"g","color":"green","label":"合格","on":"零點零五九七"}
-          ] },
-        { "show": ["帶子：$5\\pm0.06$、$2\\pm0.02$"],
-          "say": "畫出來：直線過二、五，水平帶是五上下零點零六，垂直帶是二上下零點零二。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle |(4-5x)-(-1)|=|5-5x|=5|x-1|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "放大倍數是 $|m|=5$，不是 $-5$"
+          ],
+          "say": "放大的倍數是斜率的絕對值 5，不是負 5。得塔一定要是正數，取負 5 分之艾普西隆就錯了。",
           "board": [
-            {"do":"plot","graph":{"window":[1.9,2.1,4.7,5.3],"curves":[{"expr":"3*x-1","domain":[1.9,2.1],"color":"blue"}],"dashed":[[[1.9,4.94],[2.1,4.94]],[[1.9,5.06],[2.1,5.06]],[[1.98,4.7],[1.98,5.3]],[[2.02,4.7],[2.02,5.3]]]}}
-          ] },
-        { "show": ["定義要的是帶子裡每一個 $x$"],
-          "note": "只檢查一個點不夠。",
-          "say": "判斷某個 delta 行不行，不能只挑一個點試，要帶子裡每一個 x 都合格。",
+            {
+              "do": "write",
+              "line": "放大倍數是 $|m|=5$，不是 $-5$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon5>0$。若 $0<|x-1|<\\delta$：",
+            "$|(4-5x)+1|=5|x-1|<5\\delta=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "證明：給定艾普西隆，取得塔等於 5 分之艾普西隆。x 離 1 不到得塔時，誤差等於 5 倍距離，小於 5 倍得塔，等於艾普西隆。證明完畢。",
           "board": [
-            {"do":"write","line":"對帶子裡每一個 $x$：${{r:0 < |x-a| < \\delta}}$"},
-            {"do":"underline","term":"r","label":"都要合格","on":"每一個"}
-          ] },
-        { "show": ["delta 是承諾：帶子裡每個 $x$ 都合格"],
-          "note": "一個點不合格，承諾就破了。",
-          "say": "為什麼每一個都要？delta 是一個承諾：帶子裡任何 x 都合格。只要有一個點不合格，承諾就破了。",
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon5>0$。若 $0<|x-1|<\\delta$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle |(4-5x)+1|=5|x-1|<5\\delta=\\varepsilon\\quad\\blacksquare}}$",
+              "on": "不到"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "小於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varepsilon=0.1$：最大的 $\\delta=\\dfrac{0.1}5=0.02$"
+          ],
+          "say": "艾普西隆 0.1 的時候，最大的得塔是 5 分之 0.1，等於 0.02。",
           "board": [
-            {"do":"write","line":"承諾：每個 $x$ 都 $|f(x)-L|<\\varepsilon$"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\varepsilon=0.1$：最大的 $\\delta=\\dfrac{0.1}5=0.02$",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{x\\to3}(7-2x)=1$，$\\varepsilon=0.5$ 時最大的 $\\delta$ 是？",
+        "options": [
+          {
+            "label": "$0.25$",
+            "correct": true
+          },
+          {
+            "label": "$-0.25$",
+            "why": "用了 $m=-2$ 而不是 $|m|=2$：$\\delta$ 必須是正數"
+          },
+          {
+            "label": "$1$",
+            "why": "乘反了：誤差是 $2$ 倍距離，所以距離要除以 $2$"
+          },
+          {
+            "label": "$0.5$",
+            "why": "直接取 $\\delta=\\varepsilon$：忘了斜率會放大誤差"
+          }
+        ]
+      }
     },
     {
-      "title": "兩個特殊情形",
+      "title": "斜率為 0",
       "beats": [
-        { "show": ["$m=0$：$|f(x)-L|=0<\\varepsilon$"],
-          "note": "任何 $\\delta>0$ 都可以，例如 $\\delta=1$。",
-          "say": "斜率是零，函數是常數，誤差永遠是零。這時任何正的 delta 都行，公式不能用，會除以零。",
+        {
+          "show": [
+            "$f(x)=c$（常數），$L=c$：$|f(x)-L|=|c-c|=0<\\varepsilon$"
+          ],
+          "say": "斜率是 0 的時候呢？f 是常數 c，誤差永遠是 0，不管 x 在哪裡，都小於艾普西隆。",
           "board": [
-            {"do":"write","line":"$m = 0$：$|f(x) - L| = 0 < \\varepsilon$","on":"誤差永遠"},
-            {"do":"write","line":"${{w:\\delta = \\varepsilon / |m|}}$","on":"公式"},
-            {"do":"strike","term":"w","label":"除以零","on":"會除以零"}
-          ] },
-        { "show": ["$\\frac{x^2-1}{x-1}=x+1$（$x\\ne1$）"],
-          "note": "定義只看 $0<|x-1|<\\delta$ 的 $x$。",
-          "say": "還有化簡後是直線的：x 平方減一除以 x 減一。定義只看 x 不等於一的點，所以可以先約分。",
+            {
+              "do": "write",
+              "line": "$f(x)=c$（常數），$L=c$：$|f(x)-L|=|c-c|=0<\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "公式 $\\dfrac\\varepsilon{|m|}$ 不能用（除以 $0$）；但任何 $\\delta$ 都行"
+          ],
+          "say": "這時候公式 m 的絕對值分之艾普西隆不能用，因為會除以 0。但根本不用算：任何正的得塔都行，例如取 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{x^2-1}{x-1}$","on":"x 平方減一"},
-            {"do":"transform","line":"$\\frac{x^2-1}{x-1} = x + 1$（${{ne:x \\ne 1}}$）","on":"定義只看"},
-            {"do":"underline","term":"ne","label":"可以約分","on":"可以先約分"}
-          ] },
-        { "show": ["$0<|x-1|$ 就是 $x\\ne1$"],
-          "note": "極限問的是靠近 1，不是剛好在 1。",
-          "say": "零小於 x 減一的絕對值，意思就是 x 不等於一。極限問的是靠近一，不是剛好在一。",
+            {
+              "do": "write",
+              "line": "公式 $\\dfrac\\varepsilon{|m|}$ 不能用（除以 $0$）；但任何 $\\delta$ 都行"
+            },
+            {
+              "do": "write",
+              "line": "例如取 $\\delta=1$",
+              "color": "gold",
+              "on": "隆不"
+            },
+            {
+              "do": "write",
+              "line": "　圖上：水平線整條都在橫帶裡，直帶畫多寬都可以",
+              "color": "violet",
+              "on": "用算"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=1$。若 $0<|x-a|<1$，則 $|c-c|=0<\\varepsilon$　$\\blacksquare$"
+          ],
+          "say": "證明一句話寫完：給定艾普西隆，取得塔等於 1，誤差是 0，小於艾普西隆。",
           "board": [
-            {"do":"write","line":"$0<|x-1|$ ⇔ $x\\ne1$"}
-          ] },
-        { "show": ["$x\\ne1$ 時，兩式處處相等"],
-          "note": "只差 $x=1$ 那一點，而那一點不在檢查範圍。",
-          "say": "x 不等於一時，兩個式子處處相等，只差在 x 等於一那一點，所以約分前後可以當同一個函數。",
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=1$。若 $0<|x-a|<1$，則 $|c-c|=0<\\varepsilon$　$\\blacksquare$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這裡 $\\delta$ 連 $\\varepsilon$ 都不依賴，也完全合法"
+          ],
+          "say": "這裡的得塔連艾普西隆都不依賴，也完全合法：定義只要求得塔存在。",
           "board": [
-            {"do":"write","line":"$x\\ne1$ 時：兩式相等"}
-          ] },
-        { "show": ["$|\\frac{x^2-1}{x-1}-2|=|x-1|$：$\\delta=\\varepsilon$"],
-          "say": "約完是 x 加一，跟二的距離就是 x 減一的絕對值，delta 取 epsilon 就好。",
+            {
+              "do": "write",
+              "line": "這裡 $\\delta$ 連 $\\varepsilon$ 都不依賴，也完全合法"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "可去不連續點",
+      "beats": [
+        {
+          "show": [
+            "例：證明 $\\displaystyle\\lim_{x\\to1}\\frac{x^2-1}{x-1}=2$"
+          ],
+          "say": "第二種特殊情形：化簡以後是一次式。證明 x 平方減 1 除以 x 減 1，在 1 的極限是 2。",
           "board": [
-            {"do":"write","line":"$\\left|\\frac{x^2-1}{x-1} - 2\\right| = |x-1|$","on":"跟二的距離"},
-            {"do":"write","line":"取 $\\delta = \\varepsilon$","color":"green","on":"delta 取"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：證明 $\\displaystyle\\lim_{x\\to1}\\frac{x^2-1}{x-1}=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=1$ 沒有定義；但定義只看 $0<|x-1|$，也就是 $x\\ne1$"
+          ],
+          "say": "這個函數在 1 沒有定義。不過定義只看 x 減 1 的絕對值大於 0 的點，也就是 x 不等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=1$ 沒有定義；但定義只看 $0<|x-1|$，也就是 $x\\ne1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\ne1$ 時可以約分：",
+            "$\\frac{x^2-1}{x-1}=\\frac{(x-1)(x+1)}{x-1}=x+1$"
+          ],
+          "say": "x 不等於 1，x 減 1 不是 0，可以約分，函數就等於 x 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\ne1$ 時可以約分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x^2-1}{x-1}=\\frac{(x-1)(x+1)}{x-1}=x+1$",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\left|\\frac{x^2-1}{x-1}-2\\right|=|x+1-2|=|x-1|$"
+          ],
+          "say": "所以誤差等於 x 加 1 減 2 的絕對值，就是 x 減 1 的絕對值：斜率是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{x^2-1}{x-1}-2\\right|=|x+1-2|=|x-1|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon$。若 $0<|x-1|<\\delta$，則 $x\\ne1$，",
+            "$\\left|\\frac{x^2-1}{x-1}-2\\right|=|x-1|<\\delta=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "證明：給定艾普西隆，取得塔等於艾普西隆。x 離 1 大於 0 小於得塔，x 不等於 1，約分以後誤差就是距離，小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon$。若 $0<|x-1|<\\delta$，則 $x\\ne1$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\left|\\frac{x^2-1}{x-1}-2\\right|=|x-1|<\\delta=\\varepsilon\\quad\\blacksquare}}$",
+              "on": "大於"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "約分"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 0
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 直線：$|f(x)-L|=|m||x-a|$，取 $\\delta=\\dfrac\\varepsilon{|m|}$",
+            "• 格式：給定 $\\varepsilon$ → 取 $\\delta$（$>0$）→ $0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$"
+          ],
+          "say": "整理一下：直線的誤差是斜率絕對值乘距離，得塔取 m 的絕對值分之艾普西隆。證明照三句格式寫。斜率負用絕對值，斜率 0 什麼得塔都行；可去不連續點，靠大於 0 約分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 直線：$|f(x)-L|=|m||x-a|$，取 $\\delta=\\dfrac\\varepsilon{|m|}$"
+            },
+            {
+              "do": "write",
+              "line": "• 格式：給定 $\\varepsilon$ → 取 $\\delta$（$>0$）→ $0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$",
+              "on": "乘距"
+            },
+            {
+              "do": "write",
+              "line": "• 斜率負：用 $|m|$；斜率 $0$：任何 $\\delta$ 都行",
+              "on": "艾普"
+            },
+            {
+              "do": "write",
+              "line": "• 可去不連續點：$0<|x-a|$ 讓我們約分，化成一次式",
+              "on": "用絕"
+            },
+            {
+              "do": "write",
+              "line": "• $\\delta$ 只能依賴 $\\varepsilon$，不能依賴 $x$",
+              "on": "可去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "練習：網站的 ε-δ 挑戰，用 $\\delta=\\varepsilon/|m|$ 接招"
+          ],
+          "say": "可以到網站的艾普西隆得塔挑戰練習接招。下一課，曲線來了，得塔不能依賴 x 這件事會變得關鍵。",
+          "board": [
+            {
+              "do": "write",
+              "line": "練習：網站的 ε-δ 挑戰，用 $\\delta=\\varepsilon/|m|$ 接招"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
@@ -410,6 +938,10 @@
     }
   ],
   "gaps": [
-    { "tag": "epsdelta-removable-simplify", "count": 1, "note": "白話證明：約分後是直線的可去不連續點（例如 (x² − 4)/(x − 2) → 4）。" }
+    {
+      "tag": "epsdelta-removable-simplify",
+      "count": 1,
+      "note": "白話證明：約分後是直線的可去不連續點（例如 (x² − 4)/(x − 2) → 4）。"
+    }
   ]
 }

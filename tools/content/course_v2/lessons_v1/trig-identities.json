@@ -1,0 +1,387 @@
+{
+  "id": "trig-identities",
+  "title": "三角恆等式",
+  "readMinutes": 9,
+  "totalMinutes": 25,
+  "prerequisites": ["trig-functions"],
+  "next": ["inverse-trig"],
+  "related": ["limit-trig-standard", "trig-identity-integrals"],
+  "objectives": [
+    "從單位圓說出 $\\sin^2x + \\cos^2x = 1$，並由它推出 $1 + \\tan^2x = \\sec^2x$。",
+    "會用倍角公式，並能把 $\\cos 2x$ 寫成三種形式。",
+    "會用半角（降次）公式把 $\\sin^2x$、$\\cos^2x$ 換成一次的 $\\cos 2x$。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 最基本的一條",
+      "body": [
+        "單位圓上的點 $(\\cos x, \\sin x)$ 到原點距離 1，畢氏定理給出 $\\sin^2x + \\cos^2x = 1$。$\\sin^2x$ 的意思是 $(\\sin x)^2$。",
+        "兩邊除以 $\\cos^2x$（$\\cos x \\ne 0$）：$\\tan^2x + 1 = \\sec^2x$，其中 $\\sec x = \\frac{1}{\\cos x}$。同樣，$\\csc x = \\frac{1}{\\sin x}$，$\\cot x = \\frac{\\cos x}{\\sin x}$。",
+        "知道 $\\sin x$ 就知道 $|\\cos x|$，正負號要看 $x$ 在哪個象限。"
+      ],
+      "tex": ["\\sin^2x+\\cos^2x=1,\\qquad 1+\\tan^2x=\\sec^2x"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 和角公式（工具，先接受）",
+      "body": [
+        "$\\sin(a + b) = \\sin a \\cos b + \\cos a \\sin b$，$\\cos(a + b) = \\cos a \\cos b - \\sin a \\sin b$。",
+        "它們不是 $\\sin a + \\sin b$：$\\sin(\\frac{\\pi}{2} + \\frac{\\pi}{2}) = \\sin \\pi = 0$，但 $\\sin\\left(\\frac{\\pi}{2}\\right) + \\sin\\left(\\frac{\\pi}{2}\\right) = 2$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 倍角：令 $a = b = x$",
+      "body": [
+        "$\\sin 2x = 2 \\sin x \\cos x$；$\\cos 2x = \\cos^2x - \\sin^2x$。",
+        "用 $\\sin^2x + \\cos^2x = 1$ 把 $\\cos 2x$ 改寫成只有一種函數：$\\cos 2x = 2\\cos^2x - 1 = 1 - 2\\sin^2x$。三種形式都對，看題目要什麼選哪一種。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 半角（降次）：把平方變成一次",
+      "body": [
+        "把 $\\cos 2x = 2\\cos^2x - 1$ 與 $\\cos 2x = 1 - 2\\sin^2x$ 各自解出平方項，就得到下面兩條。左邊是平方，右邊只有一次的 $\\cos 2x$。",
+        "這兩條之後很常用：〈三角標準極限〉用 $1 - \\cos x = 2 \\sin^2\\left(\\frac{x}{2}\\right)$；〈用三角恆等式積分〉用它們積 $\\sin^2x$、$\\cos^2x$。"
+      ],
+      "tex": ["\\cos^2x=\\frac{1+\\cos 2x}{2},\\qquad \\sin^2x=\\frac{1-\\cos 2x}{2}"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "由 $\\sin$ 求其他值",
+      "prompt": "$\\sin x = \\frac{3}{5}$，$x$ 在第二象限。求 $\\cos x$、$\\tan x$、$\\sin 2x$、$\\cos 2x$。",
+      "steps": [
+        "$\\cos^2x = 1 - \\frac{9}{25} = \\frac{16}{25}$，$|\\cos x| = \\frac{4}{5}$。第二象限 $\\cos$ 為負：$\\cos x = -\\frac{4}{5}$。",
+        "$\\tan x = \\left(\\frac{3}{5}\\right)/\\left(-\\frac{4}{5}\\right) = -\\frac{3}{4}$。",
+        "$\\sin 2x = 2 \\sin x \\cos x = 2 \\cdot \\left(\\frac{3}{5}\\right) \\cdot \\left(-\\frac{4}{5}\\right) = -\\frac{24}{25}$。",
+        "$\\cos 2x = 1 - 2\\sin^2x = 1 - \\frac{18}{25} = \\frac{7}{25}$。"
+      ],
+      "answer": "$\\cos x = -\\frac{4}{5}$，$\\tan x = -\\frac{3}{4}$，$\\sin 2x = -\\frac{24}{25}$，$\\cos 2x = \\frac{7}{25}$",
+      "claim": "SUB(cos(x), pi-arcsin(3/5)) == -4/5 ;; SUB(tan(x), pi-arcsin(3/5)) == -3/4 ;; SUB(sin(2x), pi-arcsin(3/5)) == -24/25 ;; SUB(cos(2x), pi-arcsin(3/5)) == 7/25"
+    },
+    {
+      "title": "半角求值",
+      "prompt": "求 $\\cos\\left(\\frac{\\pi}{8}\\right)$",
+      "steps": [
+        "$\\frac{\\pi}{8}$ 是 $\\frac{\\pi}{4}$ 的一半。用 $\\cos^2x = \\frac{1 + \\cos 2x}{2}$，$x = \\frac{\\pi}{8}$：$\\cos^2\\left(\\frac{\\pi}{8}\\right) = (1 + \\cos\\left(\\frac{\\pi}{4}\\right))/2 = (1 + \\frac{\\sqrt{2}}{2})/2 = \\frac{2 + \\sqrt{2}}{4}$。",
+        "開根號：$|\\cos\\left(\\frac{\\pi}{8}\\right)| = \\frac{\\sqrt{2 + \\sqrt{2}}}{2}$。",
+        "$\\frac{\\pi}{8}$ 在第一象限，$\\cos$ 為正：$\\cos\\left(\\frac{\\pi}{8}\\right) = \\frac{\\sqrt{2 + \\sqrt{2}}}{2} \\approx 0.924$。"
+      ],
+      "answer": "$\\frac{\\sqrt{2 + \\sqrt{2}}}{2}$",
+      "claim": "cos(pi/8)^2 == (2+sqrt(2))/4 ;; cos(pi/8) == sqrt(2+sqrt(2))/2"
+    },
+    {
+      "title": "化簡",
+      "prompt": "化簡 $\\frac{1 - \\cos 2x}{\\sin 2x}$",
+      "steps": [
+        "分子：$1 - \\cos 2x = 2 \\sin^2x$（由 $\\cos 2x = 1 - 2\\sin^2x$）。",
+        "分母：$\\sin 2x = 2 \\sin x \\cos x$。",
+        "相除：$2 \\sin^2x / (2 \\sin x \\cos x) = \\sin x / \\cos x = \\tan x$（在 $\\sin 2x \\ne 0$ 的地方）。"
+      ],
+      "answer": "$\\tan x$",
+      "claim": "(1-cos(2x))/sin(2x) == tan(x) ;; 1-cos(2x) == 2sin(x)^2"
+    }
+  ],
+  "pitfalls": [
+    "$\\sin 2x$ 寫成 $2 \\sin x$。",
+    "$\\sin(a + b)$ 寫成 $\\sin a + \\sin b$。",
+    "$\\cos^2x$ 跟 $\\cos(x^2)$ 搞混。",
+    "由 $\\sin^2x + \\cos^2x = 1$ 開根號時，沒依象限決定正負號。",
+    "降次公式把 $\\cos 2x$ 寫成 $\\cos x$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\cos 2x$ 等於下面哪一個？",
+      "options": [
+        { "label": "$2 \\cos x$", "why": "倍角不是把 2 提出來：$x = 0$ 時 $\\cos 0 = 1$，但 $2 \\cos 0 = 2$。" },
+        { "label": "$1 - 2\\sin^2x$", "correct": true },
+        { "label": "$\\cos^2x + \\sin^2x$", "why": "那恆等於 1；$\\cos 2x$ 是 $\\cos^2x$ 減 $\\sin^2x$。" }
+      ]
+    },
+    {
+      "ask": "$\\sin^2x$ 降次後是？",
+      "options": [
+        { "label": "$\\frac{1 - \\cos 2x}{2}$", "correct": true },
+        { "label": "$\\frac{1 + \\cos 2x}{2}$", "why": "那是 $\\cos^2x$。用 $x = 0$ 檢查：$\\sin^{2}0 = 0$，但 $\\frac{1 + \\cos 0}{2} = 1$。" },
+        { "label": "$\\frac{1 - \\cos x}{2}$", "why": "降次時角度要加倍。$x = \\pi$ 時 $\\sin^2\\pi = 0$，但 $\\frac{1 - \\cos \\pi}{2} = 1$。" }
+      ]
+    },
+    {
+      "ask": "$\\cos x = -\\frac{1}{3}$，而且 $\\pi < x < \\frac{3\\pi}{2}$。$\\sin x$ 是？",
+      "options": [
+        { "label": "$\\frac{2\\sqrt{2}}{3}$", "why": "$\\pi < x < \\frac{3\\pi}{2}$ 是第三象限，$\\sin$ 為負。" },
+        { "label": "$-\\frac{2}{3}$", "why": "$\\sin^2x = 1 - \\frac{1}{9} = \\frac{8}{9}$，開根號是 $\\frac{\\sqrt{8}}{3} = \\frac{2\\sqrt{2}}{3}$，不是 $\\frac{2}{3}$。" },
+        { "label": "$-\\frac{2\\sqrt{2}}{3}$", "correct": true }
+      ]
+    },
+    {
+      "ask": "$1 + \\tan^2x$ 等於？",
+      "options": [
+        { "label": "1", "why": "等於 1 的是 $\\sin^2x + \\cos^2x$；把它除以 $\\cos^2x$ 才得到 $1 + \\tan^2x$。" },
+        { "label": "$\\sec^2x$", "correct": true },
+        { "label": "$\\csc^2x$", "why": "那是 $1 + \\cot^2x$（把 $\\sin^2x + \\cos^2x = 1$ 除以 $\\sin^2x$）。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "最基本的一條",
+      "beats": [
+        { "show": ["$\\sin^2x + \\cos^2x = 1$"],
+          "note": "$\\sin^2x$ 的意思是 $(\\sin x)^2$。",
+          "say": "單位圓上的點，橫座標 cosine、縱座標 sine，到原點距離是一。畢氏定理一用，就是這一條。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1.25,1.65,-0.3,1.2],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[-0.3,3.44]},"color":"ink"}],"fills":[{"pts":[[0,0],[0.8,0],[0.8,0.6]],"color":"gold","opacity":0.3}],"dashed":[[[0,0],[0.8,0.6]],[[0.8,0],[0.8,0.6]]],"points":[{"x":0.8,"y":0.6}],"labels":[{"x":0.4,"y":-0.17,"text":"cos x","anchor":"middle"},{"x":1.04,"y":0.3,"text":"sin x","anchor":"start"},{"x":0.32,"y":0.42,"text":"1","anchor":"end"}]}},
+            {"do":"write","line":"${{s:\\sin^2x}} + {{c:\\cos^2x}} = {{o:1}}$","tint":{"s":"blue","c":"violet"},"on":"畢氏定理"}
+          ] },
+        { "show": ["兩邊同除以 $\\cos^2x$"],
+          "note": "$\\sec x = \\frac{1}{\\cos x}$，要 $\\cos x \\ne 0$。",
+          "say": "兩邊同除以 cosine 平方，每一項會變成什麼？想想 tangent 和 secant 是怎麼定義的。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\frac{{{s:\\sin^2x}}}{\\cos^2x} + \\frac{{{c:\\cos^2x}}}{\\cos^2x} = \\frac{{{o:1}}}{\\cos^2x}$","on":"兩邊同除以"},
+            {"do":"focus","term":"o","on":"每一項"}
+          ] },
+        { "show": ["$\\tan^2x + 1 = \\sec^2x$","$\\sec x = \\frac{1}{\\cos x}$"],
+          "say": "sine 平方除 cosine 平方是 tangent 平方，右邊是 secant 平方。secant 就是 cosine 的倒數。",
+          "board": [
+            {"do":"write","line":"${{t:\\tan^2x}} + 1 = {{e:\\sec^2x}}$"},
+            {"do":"write","line":"$\\sec x = \\frac{1}{\\cos x}$","on":"secant 就是"}
+          ] },
+        { "show": ["$\\csc x = \\frac{1}{\\sin x}$，$\\cot x = \\frac{\\cos x}{\\sin x}$"],
+          "say": "另外兩個名字：cosecant 是 sine 的倒數，cotangent 是 cosine 除以 sine。",
+          "board": [
+            {"do":"write","line":"$\\csc x = \\frac{1}{\\sin x}$，$\\cot x = \\frac{\\cos x}{\\sin x}$"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "正負號看象限",
+      "beats": [
+        { "show": ["$\\sin x = \\frac{3}{5}$，$x$ 在第二象限"],
+          "say": "知道 sine 是五分之三，x 在第二象限，求 cosine。",
+          "board": [
+            {"do":"write","line":"${{s:\\sin x = \\frac{3}{5}}}$，$x$ 在第二象限","tint":{"s":"blue"}}
+          ] },
+        { "show": ["$\\cos^2x = 1 - \\frac{9}{25} = \\frac{16}{25}$"],
+          "say": "一減掉 sine 平方，二十五分之九，剩二十五分之十六。開根號，大小是五分之四。",
+          "board": [
+            {"do":"write","line":"$\\cos^2x = 1 - \\frac{9}{25}$","on":"一減掉"},
+            {"do":"transform","line":"$\\cos^2x = 1 - \\frac{9}{25} = \\frac{16}{25}$","on":"剩"},
+            {"do":"write","line":"$|{{c:\\cos x}}| = \\frac{4}{5}$","tint":{"c":"violet"},"on":"開根號"}
+          ] },
+        { "show": ["$\\cos x = -\\frac{4}{5}$"],
+          "note": "第二象限 $\\cos$ 為負。",
+          "say": "開根號只給大小，正負號要看象限。第二象限橫座標是負的，所以是負五分之四。",
+          "board": [
+            {"do":"underline","term":"c","label":"只給大小"},
+            {"do":"transform","line":"${{c:\\cos x}} = \\,{{n:-\\frac{4}{5}}}$","on":"第二象限橫座標"},
+            {"do":"box","term":"n","color":"green","on":"所以是"}
+          ] },
+        { "show": ["第二象限：$\\sin$ 正、$\\cos$ 負","第三象限：兩個都負"],
+          "note": "第一象限都正；第四象限只有 $\\cos$ 正。",
+          "say": "第二象限 sine 正、cosine 負。第三象限兩個都負。第一象限都正，第四象限只有 cosine 正。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"第二象限：sin 正、cos 負","on":"第二象限"},
+            {"do":"write","line":"第三象限：sin 負、cos 負","on":"第三象限"},
+            {"do":"write","line":"第四象限：sin 負、cos 正","on":"第四象限"}
+          ] },
+        { "show": ["$\\tan x = -\\frac{3}{4}$"],
+          "say": "tangent 是 sine 除以 cosine，五分之三除以負五分之四，得負四分之三。",
+          "board": [
+            {"do":"write","line":"$\\tan x = \\frac{3}{5} \\div \\left(-\\frac{4}{5}\\right) = \\,{{a:-\\frac{3}{4}}}$","on":"五分之三除以"},
+            {"do":"box","term":"a","color":"green","on":"得負"}
+          ] }
+      ],
+      "key": "開平方有兩個號，由象限決定",
+      "check": 2
+    },
+    {
+      "title": "和角公式",
+      "beats": [
+        { "show": ["$\\sin(a + b) = \\sin a \\cos b + \\cos a \\sin b$"],
+          "note": "工具，先接受。",
+          "say": "和角公式先當工具用。sine a 加 b，是 sine a cosine b，加上 cosine a sine b。",
+          "board": [
+            {"do":"write","line":"$\\sin(a + b) = {{p:\\sin a \\cos b}} + {{q:\\cos a \\sin b}}$"},
+            {"do":"focus","term":"q","on":"加上"}
+          ] },
+        { "show": ["$\\cos(a + b) = \\cos a \\cos b - \\sin a \\sin b$"],
+          "say": "cosine 的和角：兩個 cosine 相乘，減掉兩個 sine 相乘。中間是減號。",
+          "board": [
+            {"do":"write","line":"$\\cos(a + b) = \\cos a \\cos b {{m:-}} \\sin a \\sin b$"},
+            {"do":"focus","term":"m","label":"減號","on":"減掉"}
+          ] },
+        { "show": ["$\\sin(\\frac{\\pi}{2} + \\frac{\\pi}{2}) = 0$，不是 2"],
+          "note": "$\\sin(a + b)$ 不是 $\\sin a + \\sin b$。",
+          "say": "它不是 sine a 加 sine b。二分之 pi 加二分之 pi 是 pi，sine pi 是零，但兩個 sine 相加是二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin(a + b) = {{w:\\sin a + \\sin b}}$","on":"它不是"},
+            {"do":"strike","term":"w","label":"不成立","on":"sine b"},
+            {"do":"write","line":"$\\sin(\\frac{\\pi}{2} + \\frac{\\pi}{2}) = \\sin\\pi = 0$","on":"二分之 pi 加二分之"},
+            {"do":"write","line":"$\\sin\\frac{\\pi}{2} + \\sin\\frac{\\pi}{2} = 2$","on":"但兩個"}
+          ] }
+      ],
+      "predict": {
+        "ask": "令 $a = b = x$，$\\sin 2x$ 是？",
+        "options": [
+          {
+            "label": "$2 \\sin x \\cos x$",
+            "correct": true
+          },
+          {
+            "label": "$2 \\sin x$",
+            "why": "倍角不是把 2 提出來；和角公式代 $a = b = x$，兩項都是 $\\sin x \\cos x$。"
+          },
+          {
+            "label": "$\\sin^2x + \\cos^2x$",
+            "why": "$\\sin a \\cos b$ 代進去是 $\\sin x \\cos x$，不是 $\\sin^2x$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\cos 2x$ 的三種寫法",
+      "beats": [
+        { "show": ["$\\cos 2x = \\cos^2x - \\sin^2x$"],
+          "say": "cosine 的和角公式，令 a、b 都是 x，得到 cosine 平方減 sine 平方。",
+          "board": [
+            {"do":"write","line":"$\\cos(a + b) = \\cos a \\cos b - \\sin a \\sin b$"},
+            {"do":"transform","line":"$\\cos 2x = {{c:\\cos^2x}} - {{s:\\sin^2x}}$","tint":{"c":"violet","s":"blue"},"on":"令 a"}
+          ] },
+        { "show": ["$= 2\\cos^2x - 1$"],
+          "note": "把 $\\sin^2x$ 換成 $1 - \\cos^2x$。",
+          "say": "用最基本那一條，把 sine 平方換成一減 cosine 平方，就只剩 cosine：二 cosine 平方減一。",
+          "board": [
+            {"do":"focus","term":"s","on":"把 sine 平方"},
+            {"do":"write","line":"$= \\cos^2x - ({{r:1 - \\cos^2x}})$","on":"換成"},
+            {"do":"underline","term":"r","label":"換掉 sin²x","on":"一減 cosine"},
+            {"do":"write","line":"$= 2\\cos^2x - 1$","on":"就只剩"}
+          ] },
+        { "show": ["$= 1 - 2\\sin^2x$"],
+          "note": "三種都對，看題目要什麼選哪一種。",
+          "say": "反過來把 cosine 平方換掉，就只剩 sine：一減二 sine 平方。三種形式看需要挑。",
+          "board": [
+            {"do":"focus","term":"c","on":"把 cosine 平方"},
+            {"do":"write","line":"$= 1 - 2\\sin^2x$","on":"一減二"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "降次：平方變一次",
+      "beats": [
+        { "show": ["$\\cos^2x = \\frac{1 + \\cos 2x}{2}$"],
+          "say": "把二 cosine 平方減一那條，解出 cosine 平方：一加 cosine 二 x，再除以二。",
+          "board": [
+            {"do":"write","line":"$\\cos 2x = 2{{c:\\cos^2x}} - 1$"},
+            {"do":"transform","line":"${{c:\\cos^2x}} = {{r:\\frac{1 + \\cos 2x}{2}}}$","on":"解出"},
+            {"do":"box","term":"r","color":"green","on":"cosine 二 x"}
+          ] },
+        { "show": ["$\\sin^2x = \\frac{1 - \\cos 2x}{2}$"],
+          "say": "一減二 sine 平方那條，解出 sine 平方：一減 cosine 二 x，除以二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\cos 2x = 1 - 2\\sin^2x$","on":"一減二"},
+            {"do":"transform","line":"$2{{s:\\sin^2x}} = 1 - \\cos 2x$","on":"解出"}
+          ] },
+        { "show": ["$\\sin^2x$ 與 $\\frac{1 - \\cos 2x}{2}$ 重合"],
+          "say": "畫出來看：藍色是 sine 平方，紅色虛線是一減 cosine 二 x 再除以二，兩條疊在一起。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,7,-0.3,1.3],"curves":[{"expr":"sin(x)^2","domain":[-1,7],"color":"blue"},{"expr":"(1-cos(2*x))/2","domain":[-1,7],"color":"red","dashed":true}]}}
+          ] },
+        { "show": ["左邊平方，右邊一次的 $\\cos 2x$"],
+          "note": "代價：角度要加倍。",
+          "say": "左邊是平方，右邊只剩一次的 cosine 二 x。之後積 sine 平方、cosine 平方，就靠這兩條。",
+          "board": [
+            {"do":"write","line":"$\\sin^2x,\\ \\cos^2x \\to$ 一次的 ${{k:\\cos 2x}}$"},
+            {"do":"focus","term":"k","label":"角度加倍","on":"cosine 二 x"}
+          ] },
+        { "show": ["積分 ＝ 找反導函數"],
+          "note": "$\\sin^2x$ 不好找，$\\cos 2x$ 容易。",
+          "say": "這裡的積，是之後要學的積分，也就是找反導函數。sine 平方不好找，換成一次的 cosine 二 x 就容易了。",
+          "board": [
+            {"do":"write","line":"積分 ＝ 找反導函數"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "化簡",
+      "beats": [
+        { "show": ["$\\frac{1 - \\cos 2x}{\\sin 2x}$"],
+          "say": "化簡這個分式。分子分母都有二 x，先全部換成 x 的式子。",
+          "board": [
+            {"do":"write","line":"$\\frac{1 - {{n:\\cos 2x}}}{{{d:\\sin 2x}}}$"},
+            {"do":"underline","term":"n","on":"分子分母"},
+            {"do":"underline","term":"d","on":"先全部"}
+          ] },
+        { "show": ["分子 $= 2 \\sin^2x$"],
+          "note": "由 $\\cos 2x = 1 - 2\\sin^2x$。",
+          "say": "分子用一減二 sine 平方那個寫法，一減掉它，剩下二 sine 平方。",
+          "board": [
+            {"do":"write","line":"$1 - \\cos 2x$"},
+            {"do":"transform","line":"$1 - (1 - 2\\sin^2x) = 2\\sin^2x$","on":"剩下"}
+          ] },
+        { "show": ["分母 $= 2 \\sin x \\cos x$"],
+          "say": "分母是 sine 的倍角，二 sine x cosine x。上下都有二 sine x，可以約。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin 2x = 2\\sin x \\cos x$","on":"分母是"},
+            {"do":"write","line":"$\\frac{{{a:2\\sin x}}\\cdot\\sin x}{{{b:2\\sin x}}\\cos x}$","on":"上下"},
+            {"do":"underline","term":"b","on":"二 sine x#2"}
+          ] },
+        { "show": ["約掉 $2\\sin x$：上剩 $\\sin x$，下剩 $\\cos x$"],
+          "say": "約掉上下的二 sine x，上面剩一個 sine x，下面剩一個 cosine x。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\sin x}{\\cos x}$"}
+          ] },
+        { "show": ["要求 $\\sin 2x \\ne 0$"],
+          "note": "分母是 0，式子本身沒有意義。",
+          "say": "能約是因為二 sine x 不是零。分母 sine 二 x 若是零，整個式子沒有意義，所以要排除這些 x。",
+          "board": [
+            {"do":"write","line":"分母 $\\sin 2x \\ne 0$"}
+          ] }
+      ],
+      "key": "分子分母都換成單倍角的 $\\sin$、$\\cos$",
+      "predict": {
+        "ask": "約完是？（$\\sin 2x \\ne 0$ 的地方）",
+        "options": [
+          {
+            "label": "$\\tan x$",
+            "correct": true
+          },
+          {
+            "label": "$\\sin x$",
+            "why": "分母還留著 $\\cos x$：$\\frac{2\\sin^2x}{2 \\sin x \\cos x} = \\frac{\\sin x}{\\cos x}$。"
+          },
+          {
+            "label": "$\\cot x$",
+            "why": "上下顛倒了：剩下的 $\\sin x$ 在分子、$\\cos x$ 在分母。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig"],
+    "fine": ["trig-pythagorean", "trig-double-angle", "trig-half-angle", "trig-identity-simplify"]
+  },
+  "practice": [
+    { "id": "cg-0c-017", "core": true, "trains": "trig-pythagorean" },
+    { "id": "cg-0c-019", "core": true, "trains": "trig-double-angle" },
+    { "id": "cg-0c-021", "core": true, "trains": "trig-half-angle" },
+    { "id": "cg-0c-023", "core": true, "trains": "trig-identity-simplify" },
+    { "id": "cg-0c-018", "trains": "trig-pythagorean" },
+    { "id": "cg-0c-020", "trains": "trig-double-angle" },
+    { "id": "cg-0c-022", "trains": "trig-half-angle" },
+    { "id": "cg-0c-024", "trains": "trig-identity-simplify" }
+  ],
+  "gaps": []
+}

@@ -1,52 +1,116 @@
 {
   "id": "uniform-continuity",
   "title": "一致連續",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 40,
-  "prerequisites": ["continuity-formal", "negation", "sequential-criterion"],
-  "next": ["heine-cantor"],
+  "prerequisites": [
+    "continuity-formal",
+    "negation",
+    "sequential-criterion"
+  ],
+  "next": [
+    "heine-cantor"
+  ],
   "related": [],
   "objectives": [
-    "寫得出一致連續的定義，說清楚它跟連續只差在量詞順序：$\\exists\\delta\\ \\forall x$ 而不是 $\\forall x\\ \\exists\\delta$。",
-    "會用「兩串越來越近、函數值卻不靠近的點」證明不一致連續。",
-    "會用 Lipschitz 條件或代數不等式證明一致連續，並寫出不依賴 $x$ 的 $\\delta$。"
+    "寫得出一致連續的定義，說清楚它跟連續只差在量詞順序：$\\exists\\delta\\ \\forall x$ 而不是 $\\forall x\\ \\exists\\delta$",
+    "會用「兩串越來越近、函數值卻不靠近的點」證明不一致連續",
+    "會用 Lipschitz 條件或代數不等式證明一致連續，並寫出不依賴 $x$ 的 $\\delta$"
   ],
-  "visual": "y = 1/x 在 (0, 1] 上，固定 ε = 0.5。學生把寬度 δ 的垂直帶沿 x 軸往左拖：在 x = 0.8 附近帶內曲線很平，輕鬆過關；越往 0 靠，同一個 δ 框住的曲線越陡，函數值的落差超過 ε 而變紅。旁邊換成 √x 在 [0, ∞) 上：同一個 δ 拖到哪裡都過關。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 連續的 $\\delta$ 可以看位置",
+      "heading": "① δ 可以看位置",
       "body": [
-        "$\\frac{1}{x}$ 在 $(0,1]$ 上每一點都連續。但在 $a$ 處（$\\varepsilon\\le1$ 時）可以取 $\\delta=\\frac{\\varepsilon a^2}{2}$：$a$ 越靠近 0，曲線越陡，$\\delta$ 就得越小。例如 $\\varepsilon=0.5$ 時，$a=0.5$ 可用 $\\delta=\\frac{1}{16}$，$a=0.01$ 只能用 $\\delta=\\frac{1}{40000}$。",
-        "所有點一起看，沒有一個 $\\delta$ 對每個 $a$ 都有效。一致連續問的正是：存不存在一個「全區通用」的 $\\delta$？"
-      ],
-      "collapsible": false
+        "$f(x)=\\dfrac1x$ 在 $(0,1]$ 上，每一點都連續。固定 $\\varepsilon=1$：",
+        "在 $a$ 點，可用的 $\\delta$ 最大是 $\\dfrac{a^2}{1+a}$",
+        "• $a=0.5$：$\\delta\\approx0.167$",
+        "• $a=0.1$：$\\delta\\approx0.0091$",
+        "• $a=0.01$：$\\delta\\approx0.000099$",
+        "沒有一個 $\\delta>0$ 能在每一點都用"
+      ]
     },
     {
-      "heading": "② 定義：量詞換一個位置",
+      "heading": "② 定義：量詞換位置",
       "body": [
-        "$f$ 在 $D$ 上一致連續，是指：對每一個 $\\varepsilon>0$，存在 $\\delta>0$，使得對所有 $x$、$y\\in D$，只要 $|x-y|<\\delta$，就有 $|f(x)-f(y)|<\\varepsilon$。",
-        "跟「在 $D$ 上連續」並排比較：連續是 $\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$，$\\delta$ 在 $a$ 之後選，可以依賴 $a$；一致連續是 $\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x\\ \\forall y$，$\\delta$ 在點之前選，只能依賴 $\\varepsilon$。一致連續 $\\Rightarrow$ 連續，反過來不對。"
+        "連續（在 $D$ 的每一點）：",
+        "一致連續：",
+        "差別只有一個：$\\delta$ 在點之前選，所以只依賴 $\\varepsilon$",
+        "一致連續 ⇒ 連續（令 $y=a$）；反過來不一定（$\\frac1x$）",
+        "「一致」是性質屬於整個集合 $D$；「在 $a$ 連續」是一點的性質"
       ],
       "tex": [
-        "\\text{連續：}\\ \\forall a\\in D\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon",
-        "\\text{一致連續：}\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y\\in D:\\ |x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon"
-      ],
-      "collapsible": false
+        "\\begin{aligned}&\\forall a\\in D\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon\\end{aligned}",
+        "\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y\\in D:\\\\&\\quad|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 怎麼證「不是」",
       "body": [
-        "否定：存在 $\\varepsilon>0$，對每一個 $\\delta>0$，都有 $x$、$y\\in D$，$|x-y|<\\delta$ 但 $|f(x)-f(y)|\\ge\\varepsilon$。",
-        "實用版：找兩串點 $x_n$、$y_n\\in D$，$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon$ 對所有 $n$ 成立。給定 $\\delta$，取 $n$ 大到 $|x_n-y_n|<\\delta$，這一對就是壞點。"
+        "否定（12.2）：",
+        "數列版：找 $x_n,y_n\\in D$，$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$",
+        "⇒ 不一致連續",
+        "為什麼：任給 $\\delta$，取 $n$ 夠大使 $|x_n-y_n|<\\delta$，這一對就是否定句要的 $x,y$",
+        "例：$\\frac1x$ 在 $(0,1]$。取 $x_n=\\frac1n$，$y_n=\\frac1{n+1}$",
+        "取 $\\varepsilon_0=1$ ⇒ $\\frac1x$ 在 $(0,1]$ 上不一致連續　$\\blacksquare$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x,y\\in D:\\\\&\\quad|x-y|<\\delta\\ \\text{且}\\ |f(x)-f(y)|\\ge\\varepsilon\\end{aligned}",
+        "|x_n-y_n|=\\frac1{n(n+1)}\\to0",
+        "|f(x_n)-f(y_n)|=|n-(n+1)|=1"
+      ]
     },
     {
-      "heading": "④ 怎麼證「是」：Lipschitz",
+      "heading": "③ 例：$x^2$ 在 $\\mathbb{R}$ 上",
       "body": [
-        "若存在 $K$ 使 $|f(x)-f(y)|\\le K|x-y|$ 對所有 $x$、$y\\in D$ 成立（Lipschitz 條件），取 $\\delta=\\frac{\\varepsilon}{K}$ 就對所有點有效（$K=0$ 時 $f$ 是常數，任何 $\\delta$ 都行；所以可以設 $K>0$）。可微時由均值定理，$K$ 可以取 $\\sup|f'|$。但 Lipschitz 只是充分條件：$\\sqrt{x}$ 在 $[0,\\infty)$ 上不是 Lipschitz（在 0 附近斜率無界），仍然一致連續（範例 1）。"
+        "策略：$x$ 越大，$x^2$ 越陡；固定的小距離換來不小的落差",
+        "取 $x_n=n+\\frac1n$，$y_n=n$：",
+        "取 $\\varepsilon_0=2$ ⇒ $x^2$ 在 $\\mathbb{R}$ 上不一致連續　$\\blacksquare$",
+        "但 $x^2$ 在 $[0,2]$ 上是一致連續的：有界的定義域上不會越來越陡（下一課）"
       ],
-      "collapsible": true
+      "tex": [
+        "|x_n-y_n|=\\frac1n\\to0",
+        "x_n^2-y_n^2=2+\\frac1{n^2}\\ge2"
+      ]
+    },
+    {
+      "heading": "④ 證「是」：Lipschitz",
+      "body": [
+        "Lipschitz 條件：存在 $K>0$，對所有 $x,y\\in D$：",
+        "⇒ 取 $\\delta=\\dfrac\\varepsilon K$：$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<K\\delta=\\varepsilon$",
+        "例：$\\sin x$ 在 $\\mathbb{R}$ 上（$K=1$）",
+        "均值定理：$|\\sin x-\\sin y|=|\\cos\\xi|\\,|x-y|\\le|x-y|$",
+        "導數有界 ⇒ Lipschitz：$|f'|\\le K$ 就行"
+      ],
+      "tex": [
+        "|f(x)-f(y)|\\le K|x-y|"
+      ]
+    },
+    {
+      "heading": "④ $\\sqrt x$ 也一致連續",
+      "body": [
+        "$\\sqrt x$ 在 $[0,\\infty)$：$\\dfrac{|\\sqrt x-\\sqrt0|}{|x-0|}=\\dfrac1{\\sqrt x}$ 無界，不是 Lipschitz",
+        "關鍵不等式：$|\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}$",
+        "證：設 $x\\ge y\\ge0$。",
+        "開根號：$\\sqrt x\\le\\sqrt y+\\sqrt{x-y}$",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon^2$。$|x-y|<\\delta$ 時"
+      ],
+      "tex": [
+        "\\big(\\sqrt y+\\sqrt{x-y}\\big)^2=x+2\\sqrt{y(x-y)}\\ge x",
+        "|\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}<\\sqrt{\\varepsilon^2}=\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$，$\\delta$ 可以看 $a$",
+        "• 一致連續：$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y$，一個 $\\delta$ 通用",
+        "• 證「不是」：$|x_n-y_n|\\to0$ 但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$",
+        "• 證「是」：Lipschitz 取 $\\delta=\\frac\\varepsilon K$；$\\sqrt x$ 用 $\\sqrt{|x-y|}$，取 $\\delta=\\varepsilon^2$",
+        "• 例：$\\frac1x$ 在 $(0,1]$、$x^2$ 在 $\\mathbb{R}$ 不一致；$\\sin x$、$\\sqrt x$ 一致",
+        "下一課：Heine–Cantor 定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -98,263 +162,892 @@
   ],
   "checks": [
     {
-      "ask": "一致連續與連續的定義差在哪裡？",
+      "ask": "「$f$ 在 $D$ 上一致連續」的量詞順序是？（後接 $|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$）",
       "options": [
-        { "label": "一致連續的 $\\delta$ 在選點之前決定，不能依賴點的位置", "correct": true },
-        { "label": "一致連續的 $\\varepsilon$ 可以依賴 $x$", "why": "$\\varepsilon$ 在兩個定義裡都是對手先給、任意的。差別在 $\\delta$ 能不能依賴點。" },
-        { "label": "一致連續要求 $f$ 可微", "why": "可微不是條件。$\\sqrt{x}$ 在 0 不可微仍一致連續；可微的 $x^2$ 在 $\\mathbb{R}$ 上反而不一致連續。" }
+        {
+          "label": "$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y$",
+          "correct": true
+        },
+        {
+          "label": "$\\forall\\varepsilon\\ \\forall x\\ \\exists\\delta\\ \\forall y$",
+          "why": "$\\delta$ 可以看 $x$：這只是「每一點都連續」"
+        },
+        {
+          "label": "$\\exists\\delta\\ \\forall\\varepsilon\\ \\forall x,y$",
+          "why": "一個 $\\delta$ 接住所有 $\\varepsilon$：只有常數函數做得到"
+        },
+        {
+          "label": "$\\forall x,y\\ \\forall\\varepsilon\\ \\exists\\delta$",
+          "why": "$\\delta$ 看了兩個點才選，取 $\\delta<|x-y|$ 就空洞成立"
+        }
       ]
     },
     {
-      "ask": "$f(x)=\\frac{1}{x}$ 在 $(0,1]$ 上，$x_n=\\frac{1}{n}$、$y_n=\\frac{1}{n+1}$。$|f(x_n)-f(y_n)|$ 是多少？",
+      "ask": "哪一對數列能證明 $x^2$ 在 $\\mathbb{R}$ 上==不一致連續==？",
       "options": [
-        { "label": "1", "correct": true },
-        { "label": "$\\frac{1}{n(n+1)}$", "why": "那是 $|x_n-y_n|$，點的距離。函數值是 $n$ 與 $n+1$，差 1。" },
-        { "label": "趨近 0", "why": "你可能以為點靠近函數值就靠近——這正是一致連續失敗的地方：點越靠越近，函數值的差卻一直是 1。" }
-      ]
-    },
-    {
-      "ask": "$f(x)=\\sqrt{x}$ 在 $[0,\\infty)$ 上，$\\varepsilon=0.1$ 時可以用哪個 $\\delta$？",
-      "options": [
-        { "label": "$\\delta=0.01$", "correct": true },
-        { "label": "$\\delta=0.1$", "why": "你直接讓 $\\delta=\\varepsilon$。由 $|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$，要 $\\sqrt{\\delta}\\le\\varepsilon$，$\\delta=\\varepsilon^2=0.01$。" },
-        { "label": "沒有，因為定義域無界", "why": "無界不代表不一致連續。$\\sqrt{x}$ 越往右越平，最難的是 0 附近，而 $\\delta=\\varepsilon^2$ 在那裡也有效。" }
-      ]
-    },
-    {
-      "ask": "下列哪一個函數在所給定義域上一致連續？",
-      "options": [
-        { "label": "$f(x)=3x+2$ 在 $\\mathbb{R}$ 上", "correct": true },
-        { "label": "$f(x)=x^2$ 在 $\\mathbb{R}$ 上", "why": "$x^2$ 在有界區間上一致連續，但在整條 $\\mathbb{R}$ 上越往外越陡；$x_n=n+\\frac{1}{n}$ 與 $n$ 的函數值差 $>2$。" },
-        { "label": "$f(x)=\\sin(\\frac{1}{x})$ 在 $(0,1]$ 上", "why": "你可能以為有界就夠。讓 $\\sin(\\frac{1}{x})=1$ 與 $-1$ 的兩串點越來越近，函數值差一直是 2。" }
+        {
+          "label": "$x_n=\\sqrt{n+1}$，$y_n=\\sqrt n$",
+          "correct": true
+        },
+        {
+          "label": "$x_n=n+1$，$y_n=n$",
+          "why": "平方差 $2n+1$ 很大，但距離恆為 $1$，沒有趨近 $0$"
+        },
+        {
+          "label": "$x_n=n+\\frac1{n^2}$，$y_n=n$",
+          "why": "距離縮太快：平方差 $\\frac2n+\\frac1{n^4}\\to0$"
+        },
+        {
+          "label": "$x_n=\\frac1n$，$y_n=0$",
+          "why": "在 $0$ 附近 $x^2$ 很平，平方差 $\\frac1{n^2}\\to0$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "$\\delta$ 看位置",
+      "title": "δ 可以看位置",
       "beats": [
-        { "show": ["$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續"],
-          "say": "x 分之一在零到一，每一點都連續。可是每一點能用的 delta 一樣大嗎？",
+        {
+          "show": [
+            "$f(x)=\\dfrac1x$ 在 $(0,1]$ 上，每一點都連續。固定 $\\varepsilon=1$："
+          ],
+          "say": "看 x 分之 1，在 0 到 1 的半開區間上。它每一點都連續。固定艾普西隆等於 1，看各點需要的得塔。",
           "board": [
-            { "do": "write", "line": "$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續" }
-          ] },
-        { "show": ["在 $a$：$\\delta=\\frac{\\varepsilon a^2}{2}$"], "note": "$\\varepsilon\\le1$ 時可用。",
-          "say": "在 a 這一點，delta 可以取 epsilon 乘 a 平方再除以二。裡面有 a：位置不同，delta 不同。",
+            {
+              "do": "write",
+              "line": "$f(x)=\\dfrac1x$ 在 $(0,1]$ 上，每一點都連續。固定 $\\varepsilon=1$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $a$ 點，可用的 $\\delta$ 最大是 $\\dfrac{a^2}{1+a}$"
+          ],
+          "say": "解不等式可以算出：在 a 這一點，可用的得塔最大是 1 加 a 分之 a 平方。",
           "board": [
-            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon\\,{{aa:a^2}}}{2}$" },
-            { "do": "underline", "term": "aa", "color": "blue", "label": "看位置", "on": "裡面有 a" }
-          ] },
-        { "show": ["$\\varepsilon=0.5$，$a=0.5$：$\\delta=\\frac{1}{16}$"],
-          "say": "誤差零點五，在零點五這一點，delta 是十六分之一。如果點移到零點零一呢？",
+            {
+              "do": "write",
+              "line": "在 $a$ 點，可用的 $\\delta$ 最大是 $\\dfrac{a^2}{1+a}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a=0.5$：$\\delta\\approx0.167$",
+            "• $a=0.1$：$\\delta\\approx0.0091$"
+          ],
+          "say": "a 等於 0.5，得塔大約 0.167；a 等於 0.1，只剩 0.009；a 等於 0.01，不到萬分之一。",
           "board": [
-            { "do": "write", "line": "$\\varepsilon=0.5$，$a=0.5$" },
-            { "do": "write", "line": "${{r:\\delta=\\frac{1}{16}}}$", "on": "delta 是" },
-            { "do": "box", "term": "r", "color": "green", "on": "十六分之一" }
-          ] }
-      ],
-      "predict": {
-        "ask": "$a=0.01$ 時 $\\delta$ 是？",
-        "options": [
-          { "label": "$\\frac{1}{40000}$", "correct": true },
-          { "label": "$\\frac{1}{16}$", "why": "$\\frac{1}{16}$ 是 $a=0.5$ 的；$a$ 越靠近 0，曲線越陡，$\\delta$ 要小得多。" },
-          { "label": "跟 $a=0.5$ 一樣", "why": "$\\delta=\\frac{\\varepsilon a^2}{2}$ 跟著 $a^2$ 變；$a$ 從 0.5 變成 0.01，$\\delta$ 小了很多倍。" }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "• $a=0.5$：$\\delta\\approx0.167$"
+            },
+            {
+              "do": "write",
+              "line": "• $a=0.1$：$\\delta\\approx0.0091$",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• $a=0.01$：$\\delta\\approx0.000099$",
+              "on": "等於#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：橫帶 1/a ± 1；藍：直帶 a ± δ"
+          ],
+          "say": "圖上，點在 0.5 的時候，藍色直帶還有一點寬度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv",
+                  "window": [
+                    0,
+                    1.05,
+                    0,
+                    10
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/a+1",
+                      "from": 0,
+                      "to": 1.05,
+                      "color": "red",
+                      "under": "1/a-1"
+                    },
+                    {
+                      "expr": "10",
+                      "from": "a/(1+a)",
+                      "to": "a+a^2/(1+a)",
+                      "color": "blue",
+                      "under": "0"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "ink",
+                      "domain": [
+                        0.09,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "1/a",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.12,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "位置 a"
+                    }
+                  },
+                  "readout": "a = {a}：δ = {a^2/(1+a)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "a = 0.5：δ = 0.1667",
+              "on": "的時"
+            },
+            {
+              "do": "write",
+              "line": "紅：橫帶 1/a ± 1；藍：直帶 a ± δ",
+              "color": "violet",
+              "on": "直帶"
+            }
+          ]
+        },
+        {
+          "show": [
+            "δ 可以看位置"
+          ],
+          "say": "往 0 移動，曲線越來越陡，直帶越來越窄。越靠近 0，得塔就得越小。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv",
+                  "window": [
+                    0,
+                    1.05,
+                    0,
+                    10
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/a+1",
+                      "from": 0,
+                      "to": 1.05,
+                      "color": "red",
+                      "under": "1/a-1"
+                    },
+                    {
+                      "expr": "10",
+                      "from": "a/(1+a)",
+                      "to": "a+a^2/(1+a)",
+                      "color": "blue",
+                      "under": "0"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "ink",
+                      "domain": [
+                        0.09,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "1/a",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0.12,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "位置 a"
+                    }
+                  },
+                  "readout": "a = {a}：δ = {a^2/(1+a)}",
+                  "height": 280
+                },
+                "vals": {
+                  "a": 0.12
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "a = 0.12：δ = 0.01286",
+              "on": "來越#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有一個 $\\delta>0$ 能在每一點都用"
+          ],
+          "say": "所以，沒有一個正的得塔能在每一點都用。連續允許得塔看位置；一致連續就是不准看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "沒有一個 $\\delta>0$ 能在每一點都用",
+              "color": "red"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "全區通用的 $\\delta$",
+      "title": "定義：量詞換位置",
       "beats": [
-        { "show": ["沒有一個 $\\delta$ 對每個 $a$ 都有效"],
-          "say": "越靠近零，delta 就得越小，所有點一起看，找不到一個大家都能用的 delta。",
+        {
+          "show": [
+            "連續（在 $D$ 的每一點）：",
+            "$\\begin{aligned}&\\forall a\\in D\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "先寫在 D 上每一點都連續：對所有 a、對所有艾普西隆，存在得塔，對所有 x。得塔出現在 a 後面，所以可以看 a。",
           "board": [
-            { "do": "write", "line": "$a\\to0$：$\\delta$ 要越來越小" },
-            { "do": "write", "line": "沒有一個 $\\delta$ 對每個 $a$ 都有效", "on": "找不到" }
-          ] },
-        { "show": ["$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y:$", "$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$"],
-          "say": "一致連續問的就是：有沒有一個全區通用的 delta？任意兩點只要夠近，函數值就夠近。",
+            {
+              "do": "write",
+              "line": "連續（在 $D$ 的每一點）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\forall a\\in D\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon\\end{aligned}}$",
+              "on": "在得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一致連續：",
+            "$\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y\\in D:\\\\&\\quad|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "一致連續：對所有艾普西隆，存在得塔，然後才對所有 x 和 y。得塔出現在點的前面，只能看艾普西隆。",
           "board": [
-            { "do": "write", "line": "$\\forall\\varepsilon\\ {{e:\\exists\\delta}}\\ \\forall x,y:$" },
-            { "do": "focus", "term": "e", "label": "全區一個", "on": "全區通用" },
-            { "do": "write", "line": "$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$", "on": "任意兩點" }
-          ] },
-        { "show": ["連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$"], "note": "$\\delta$ 在 $a$ 之後選，可以看位置。",
-          "say": "跟連續並排比：連續是先給點，再選 delta，delta 可以看位置；一致連續的 delta 在點出場前就選好。",
+            {
+              "do": "write",
+              "line": "一致連續："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y\\in D:\\\\&\\quad|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon\\end{aligned}}}}$",
+              "on": "然後"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "塔出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "差別只有一個：$\\delta$ 在點之前選，所以只依賴 $\\varepsilon$"
+          ],
+          "say": "兩句話的差別只有一個：得塔在點之前選。白話：同一個得塔，整個定義域通用。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "連續：$\\forall a\\ \\forall\\varepsilon\\ {{c:\\exists\\delta}}$", "on": "連續是先給點" },
-            { "do": "underline", "term": "c", "color": "blue", "label": "看位置", "on": "可以看位置" },
-            { "do": "write", "line": "一致連續：$\\forall\\varepsilon\\ {{u:\\exists\\delta}}\\ \\forall x,y$", "on": "一致連續的" },
-            { "do": "underline", "term": "u", "color": "violet", "on": "點出場前" }
-          ] },
-        { "show": ["一致連續 ⇒ 連續"], "note": "反過來不對。",
-          "say": "所以一致連續一定連續，反過來不對，x 分之一就是例子。",
+            {
+              "do": "write",
+              "line": "差別只有一個：$\\delta$ 在點之前選，所以只依賴 $\\varepsilon$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一致連續 ⇒ 連續（令 $y=a$）；反過來不一定（$\\frac1x$）"
+          ],
+          "say": "一致連續一定連續，把 y 取成 a 就好。反過來不一定，x 分之 1 就是例子。",
           "board": [
-            { "do": "write", "line": "一致連續 $\\Rightarrow$ 連續" },
-            { "do": "write", "line": "反過來不對：$\\frac{1}{x}$ 在 $(0,1]$", "on": "反過來不對" }
-          ] }
+            {
+              "do": "write",
+              "line": "一致連續 ⇒ 連續（令 $y=a$）；反過來不一定（$\\frac1x$）"
+            },
+            {
+              "do": "write",
+              "line": "　「一致」是性質屬於整個集合 $D$；「在 $a$ 連續」是一點的性質",
+              "color": "violet",
+              "on": "反過"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "怎麼證「不是」", "key": "找兩串越來越近、函數值卻不近的點",
+      "title": "怎麼證「不是」",
       "beats": [
-        { "show": ["找兩串點：$|x_n-y_n|\\to0$", "但 $|f(x_n)-f(y_n)|\\ge\\varepsilon$"],
-          "say": "要證不是一致連續，實用的做法：找兩串點，彼此越靠越近，函數值卻一直差至少 epsilon。",
+        {
+          "show": [
+            "否定（12.2）：",
+            "$\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x,y\\in D:\\\\&\\quad|x-y|<\\delta\\ \\text{且}\\ |f(x)-f(y)|\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "照 12.2 的規則否定：存在一個艾普西隆，對所有得塔，都找得到兩點，距離不到得塔，函數值卻差了至少艾普西隆。",
           "board": [
-            { "do": "write", "line": "找兩串點：${{d:|x_n-y_n|}}\\to0$", "tint": { "d": "blue" }, "on": "找兩串點" },
-            { "do": "write", "line": "但 ${{fd:|f(x_n)-f(y_n)|}}\\ge\\varepsilon$", "tint": { "fd": "violet" }, "on": "函數值卻" }
-          ] },
-        { "show": ["$x_n=\\frac{1}{n}$，$y_n=\\frac{1}{n+1}$"], "note": "$|x_n-y_n|=\\frac{1}{n(n+1)}\\to0$。",
-          "say": "x 分之一：取 n 分之一和 n 加一分之一，兩點的距離趨近零。函數值差多少？",
+            {
+              "do": "write",
+              "line": "否定（12.2）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x,y\\in D:\\\\&\\quad|x-y|<\\delta\\ \\text{且}\\ |f(x)-f(y)|\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "普西#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "離不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "數列版：找 $x_n,y_n\\in D$，$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$"
+          ],
+          "say": "實際上最好用的是數列版：找兩串點，彼此越來越近，函數值卻始終差至少艾普西隆零，就不一致連續。",
           "board": [
-            { "do": "write", "line": "$f(x)=\\frac{1}{x}$：$x_n=\\frac{1}{n}$，$y_n=\\frac{1}{n+1}$" },
-            { "do": "write", "line": "${{d:|x_n-y_n|}}=\\frac{1}{n(n+1)}\\to0$", "tint": { "d": "blue" }, "on": "兩點的距離" }
-          ] },
-        { "show": ["給定 $\\delta$：取 $n$ 讓距離 $<\\delta$"], "note": "這一對就是壞點。",
-          "say": "不管對方給多小的 delta，n 取夠大，這一對點就夠近，函數值卻差很多，就是壞點。",
+            {
+              "do": "write",
+              "line": "數列版：找 $x_n,y_n\\in D$，$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$"
+            },
+            {
+              "do": "write",
+              "line": "⇒ 不一致連續",
+              "color": "gold",
+              "on": "彼此"
+            },
+            {
+              "do": "write",
+              "line": "　為什麼：任給 $\\delta$，取 $n$ 夠大使 $|x_n-y_n|<\\delta$，這一對就是否定句要的 $x,y$",
+              "color": "violet",
+              "on": "差至"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\frac1x$ 在 $(0,1]$。取 $x_n=\\frac1n$，$y_n=\\frac1{n+1}$"
+          ],
+          "say": "例子：x 分之 1。取 n 分之 1 和 n 加 1 分之 1 這兩串點。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "給定 $\\delta$：取 $n$ 讓距離 $<\\delta$", "on": "n 取夠大" },
-            { "do": "write", "line": "函數值卻差很多 ⇒ 壞點", "on": "函數值卻" }
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\frac1x$ 在 $(0,1]$。取 $x_n=\\frac1n$，$y_n=\\frac1{n+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|x_n-y_n|=\\frac1{n(n+1)}\\to0$",
+            "$|f(x_n)-f(y_n)|=|n-(n+1)|=1$"
+          ],
+          "say": "兩點的距離是 n 乘 n 加 1 分之 1，趨近 0；函數值是 n 和 n 加 1，永遠差 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x_n-y_n|=\\frac1{n(n+1)}\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x_n)-f(y_n)|=|n-(n+1)|=1$",
+              "on": "函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\varepsilon_0=1$ ⇒ $\\frac1x$ 在 $(0,1]$ 上不一致連續　$\\blacksquare$"
+          ],
+          "say": "取艾普西隆零等於 1，就證明了 x 分之 1 在這個區間上不一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\varepsilon_0=1$ ⇒ $\\frac1x$ 在 $(0,1]$ 上不一致連續　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$x^2$ 在 $\\mathbb{R}$ 上",
+      "beats": [
+        {
+          "show": [
+            "策略：$x$ 越大，$x^2$ 越陡；固定的小距離換來不小的落差"
+          ],
+          "say": "第二個例子：x 平方在整條實數上。策略：x 越大，曲線越陡，同樣一小段距離，換來的落差不會變小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：$x$ 越大，$x^2$ 越陡；固定的小距離換來不小的落差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：x 的距離 1/n 越來越小；紅：x² 的落差始終 > 2"
+          ],
+          "say": "圖上，藍色的橫向距離越來越短，紅色的落差卻一直大於 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sq",
+                  "window": [
+                    0,
+                    4,
+                    0,
+                    13
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2",
+                      "color": "ink"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        1,
+                        1
+                      ],
+                      "to": [
+                        2,
+                        1
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        2,
+                        1
+                      ],
+                      "to": [
+                        2,
+                        4
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        2,
+                        4
+                      ],
+                      "to": [
+                        2.5,
+                        4
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        2.5,
+                        4
+                      ],
+                      "to": [
+                        2.5,
+                        6.25
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        3,
+                        9
+                      ],
+                      "to": [
+                        3.3333,
+                        9
+                      ],
+                      "color": "blue"
+                    },
+                    {
+                      "from": [
+                        3.3333,
+                        9
+                      ],
+                      "to": [
+                        3.3333,
+                        11.111
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：x 的距離 1/n 越來越小；紅：x² 的落差始終 > 2",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $x_n=n+\\frac1n$，$y_n=n$：",
+            "$|x_n-y_n|=\\frac1n\\to0$"
+          ],
+          "say": "取 n 加 n 分之 1 和 n。距離是 n 分之 1，趨近 0。平方差是 2 加 n 平方分之 1，永遠大於等於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $x_n=n+\\frac1n$，$y_n=n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x_n-y_n|=\\frac1n\\to0$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x_n^2-y_n^2=2+\\frac1{n^2}\\ge2$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\varepsilon_0=2$ ⇒ $x^2$ 在 $\\mathbb{R}$ 上不一致連續　$\\blacksquare$"
+          ],
+          "say": "取艾普西隆零等於 2，所以 x 平方在實數上不一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\varepsilon_0=2$ ⇒ $x^2$ 在 $\\mathbb{R}$ 上不一致連續　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　但 $x^2$ 在 $[0,2]$ 上是一致連續的：有界的定義域上不會越來越陡（下一課）",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題：挑對兩串點",
+      "beats": [
+        {
+          "show": [
+            "哪一對數列能證明 $x^2$ 在 $\\mathbb{R}$ 上不一致連續？"
+          ],
+          "say": "試一題：哪一對數列能證明 x 平方不一致連續？關鍵是距離要趨近 0，落差卻不能趨近 0。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "證明：Lipschitz", "key": "取 $\\delta=\\frac{\\varepsilon}{K}$：只看 $\\varepsilon$ 不看點",
-      "proof": true, "of": 3, "skeleton": "直接",
+      "title": "證「是」：Lipschitz",
       "beats": [
-        { "show": ["斜率有上限 $K$ ⇒ 一個 $\\delta$ 全區通用"],
-          "say": "策略：怎麼證是一致連續？斜率要是有上限，delta 就取 epsilon 除以那個上限，跟位置無關。",
+        {
+          "show": [
+            "Lipschitz 條件：存在 $K>0$，對所有 $x,y\\in D$：",
+            "$|f(x)-f(y)|\\le K|x-y|$"
+          ],
+          "say": "證明一致連續，最常用的是利普希茲條件：存在常數 K，函數值的差不超過 K 倍的距離，對所有的點都成立。",
           "board": [
-            { "do": "write", "line": "斜率有上限 ${{k:K}}$ ⇒ 一個 $\\delta$ 全區通用", "tint": { "k": "violet" } },
-            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon}{K}$，跟位置無關", "on": "delta 就取" }
-          ] },
-        { "show": ["$|f(x)-f(y)|\\le K|x-y|$，對所有 $x,y\\in D$"], "note": "可微時由均值定理，$K=\\sup|f'|$。",
-          "why": {
-            "ask": "可微時，為什麼 $K$ 可以取 $\\sup|f'|$？",
-            "say": "可微的時候，上限 K 為什麼可以取導數絕對值的上確界？",
-            "options": [
-              { "label": "均值定理：$f(x)-f(y)=f'(c)(x-y)$", "correct": true },
-              { "label": "$f'$ 就是斜率，斜率就是 $K$", "why": "$f'$ 每一點不同；把差寫成 $f'$ 乘距離要靠均值定理，再取所有點的上限。" },
-              { "label": "因為 $f'$ 連續", "why": "不需要 $f'$ 連續；均值定理只要可微。" }
-            ]
-          },
-          "say": "均值定理：兩點函數值的差，等於中間某點的導數乘距離。導數的絕對值不超過上確界，就是 K。",
+            {
+              "do": "write",
+              "line": "Lipschitz 條件：存在 $K>0$，對所有 $x,y\\in D$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle |f(x)-f(y)|\\le K|x-y|}}$",
+              "on": "存在"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ 取 $\\delta=\\dfrac\\varepsilon K$：$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<K\\delta=\\varepsilon$"
+          ],
+          "say": "這時取得塔等於 K 分之艾普西隆，距離小於得塔，差就小於艾普西隆。得塔完全沒用到 x 和 y。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$|f(x)-f(y)|\\le {{k:K}}|x-y|$", "tint": { "k": "violet" }, "on": "上限 K" },
-            { "do": "write", "line": "${{k:K}}=\\sup|f'|$", "tint": { "k": "violet" }, "on": "導數絕對值" },
-            { "do": "write", "line": "均值定理：$f(x)-f(y)=f'(c)(x-y)$", "why": true, "on": "均值定理" }
-          ] },
-        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\frac{\\varepsilon}{K}$"], "note": "只用到 $\\varepsilon$ 和 $K$，不看點。",
-          "say": "給定 epsilon，delta 取 epsilon 除以 K。這個數只看 epsilon 和 K，還沒有任何點出場。",
+            {
+              "do": "write",
+              "line": "⇒ 取 $\\delta=\\dfrac\\varepsilon K$：$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<K\\delta=\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\sin x$ 在 $\\mathbb{R}$ 上（$K=1$）"
+          ],
+          "say": "例如正弦 x 在整條實數上：由均值定理，差等於餘弦克賽乘距離，餘弦不超過 1，所以 K 等於 1，正弦一致連續。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "給定 $\\varepsilon>0$，取 ${{dl:\\delta=\\frac{\\varepsilon}{K}}}$", "on": "給定 epsilon" },
-            { "do": "underline", "term": "dl", "label": "不看點", "on": "還沒有任何點" }
-          ] },
-        { "show": ["$|x-y|<\\delta$ ⇒ $|f(x)-f(y)|\\le K|x-y|<\\varepsilon$"], "note": "$K$ 對所有點都成立。",
-          "why": {
-            "ask": "為什麼這個 $\\delta$ 對所有點都有效？",
-            "say": "為什麼這一個 delta，對定義域裡每一對點都有效？",
-            "options": [
-              { "label": "$K$ 對所有 $x,y$ 都成立，$\\delta$ 不看位置", "correct": true },
-              { "label": "$f$ 在每一點都連續", "why": "連續的 $\\delta$ 可以看位置：$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續，卻不一致連續。" },
-              { "label": "$D$ 是有界區間", "why": "沒用到有界：直線在整條實數線上也一樣，斜率的上限才是關鍵。" }
-            ]
-          },
-          "say": "任兩點距離小於 delta，差就不超過 K 倍距離，小於 K 乘 delta，也就是 epsilon。K 對每一對點都成立。",
+            {
+              "do": "write",
+              "line": "例：$\\sin x$ 在 $\\mathbb{R}$ 上（$K=1$）"
+            },
+            {
+              "do": "write",
+              "line": "均值定理：$|\\sin x-\\sin y|=|\\cos\\xi|\\,|x-y|\\le|x-y|$",
+              "on": "距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "導數有界 ⇒ Lipschitz：$|f'|\\le K$ 就行"
+          ],
+          "say": "一般來說，導數有界，就是利普希茲。x 平方在實數上導數無界，難怪不一致連續。",
           "board": [
-            { "do": "write", "line": "任兩點 $|x-y|<\\delta$" },
-            { "do": "write", "line": "$|f(x)-f(y)|\\le {{k:K}}|x-y|<K\\delta=\\varepsilon$", "tint": { "k": "violet" }, "on": "每一對點" },
-            { "do": "underline", "term": "k", "color": "violet", "label": "對所有點", "why": true, "on": "K 對每一對點" }
-          ] }
+            {
+              "do": "write",
+              "line": "導數有界 ⇒ Lipschitz：$|f'|\\le K$ 就行"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$\\sqrt x$ 也一致連續",
+      "beats": [
+        {
+          "show": [
+            "$\\sqrt x$ 在 $[0,\\infty)$：$\\dfrac{|\\sqrt x-\\sqrt0|}{|x-0|}=\\dfrac1{\\sqrt x}$ 無界，不是 Lipschitz"
+          ],
+          "say": "根號 x 在 0 到無限大上：跟 0 比，差除以距離是根號 x 分之 1，在 0 附近無界，所以不是利普希茲。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt x$ 在 $[0,\\infty)$：$\\dfrac{|\\sqrt x-\\sqrt0|}{|x-0|}=\\dfrac1{\\sqrt x}$ 無界，不是 Lipschitz"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵不等式：$|\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}$"
+          ],
+          "say": "但它還是一致連續。關鍵是這個不等式：根號的差，不超過距離的根號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵不等式：$|\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證：設 $x\\ge y\\ge0$。",
+            "$\\big(\\sqrt y+\\sqrt{x-y}\\big)^2=x+2\\sqrt{y(x-y)}\\ge x$"
+          ],
+          "say": "證明：設 x 大於等於 y。根號 y 加根號 x 減 y，平方展開等於 x 加一個非負的項，大於等於 x。開根號，就得到不等式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證：設 $x\\ge y\\ge0$。"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(\\sqrt y+\\sqrt{x-y}\\big)^2=x+2\\sqrt{y(x-y)}\\ge x$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "開根號：$\\sqrt x\\le\\sqrt y+\\sqrt{x-y}$",
+              "on": "負的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon^2$。$|x-y|<\\delta$ 時",
+            "$|\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}<\\sqrt{\\varepsilon^2}=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "證明：給定艾普西隆，取得塔等於艾普西隆平方。距離小於得塔，根號的差就小於艾普西隆。得塔不依賴 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=\\varepsilon^2$。$|x-y|<\\delta$ 時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle |\\sqrt x-\\sqrt y|\\le\\sqrt{|x-y|}<\\sqrt{\\varepsilon^2}=\\varepsilon\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "普西#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "差就"
+            }
+          ]
+        }
       ],
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          { "label": "有 $K$：$|f(x)-f(y)|\\le K|x-y|$" },
-          { "label": "給定 $\\varepsilon$，取 $\\delta=\\frac{\\varepsilon}{K}$", "why": "要先有 $K$，才能取 $\\frac{\\varepsilon}{K}$。" },
-          { "label": "任取 $x,y$，$|x-y|<\\delta$", "why": "點要在 $\\delta$ 決定之後才出場：這正是一致連續和連續的差別。" },
-          { "label": "$|f(x)-f(y)|<K\\delta=\\varepsilon$", "why": "要先有 $|x-y|<\\delta$，才能乘上 $K$。" }
+      "predict": {
+        "ask": "$\\sqrt x$ 在 $[0,\\infty)$，$\\varepsilon=0.1$。照這個證明，$\\delta=$？",
+        "options": [
+          {
+            "label": "$0.01$",
+            "correct": true
+          },
+          {
+            "label": "$0.1$",
+            "why": "當成 Lipschitz $K=1$：$x=0.09,\\ y=0$ 時距離 $0.09<0.1$，差卻是 $0.3$"
+          },
+          {
+            "label": "$0.2$",
+            "why": "用 $x=1$ 的斜率 $\\frac12$ 算的：只在 $x=1$ 附近有效，靠近 $0$ 會失敗"
+          }
         ]
       }
     },
     {
-      "title": "$\\sqrt{x}$ 是一致連續",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$"], "note": "兩邊非負，平方比較。",
-          "say": "定義域無界的也可能一致連續。根號 x 有個關鍵不等式：根號的差，不超過差的根號。",
+        {
+          "show": [
+            "• 連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$，$\\delta$ 可以看 $a$",
+            "• 一致連續：$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y$，一個 $\\delta$ 通用"
+          ],
+          "say": "整理一下：連續的得塔可以看位置；一致連續要一個得塔通用。證明不是，找兩串越來越近、函數值卻不靠近的點；證明是，用利普希茲或代數不等式，寫出只依賴艾普西隆的得塔。",
           "board": [
-            { "do": "write", "line": "$|{{l:\\sqrt{x}-\\sqrt{y}}}|\\le{{r:\\sqrt{|x-y|}}}$" },
-            { "do": "underline", "term": "l", "color": "blue", "on": "根號的差" },
-            { "do": "underline", "term": "r", "color": "violet", "on": "不超過" }
-          ] },
-        { "show": ["取 $\\delta=\\varepsilon^2$"], "note": "$\\delta$ 只依賴 $\\varepsilon$。",
-          "say": "所以 delta 取 epsilon 平方：兩點距離小於它，根號的差就小於 epsilon，跟位置無關。",
+            {
+              "do": "write",
+              "line": "• 連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$，$\\delta$ 可以看 $a$"
+            },
+            {
+              "do": "write",
+              "line": "• 一致連續：$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y$，一個 $\\delta$ 通用",
+              "on": "一致"
+            },
+            {
+              "do": "write",
+              "line": "• 證「不是」：$|x_n-y_n|\\to0$ 但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$",
+              "on": "找兩"
+            },
+            {
+              "do": "write",
+              "line": "• 證「是」：Lipschitz 取 $\\delta=\\frac\\varepsilon K$；$\\sqrt x$ 用 $\\sqrt{|x-y|}$，取 $\\delta=\\varepsilon^2$",
+              "on": "的點"
+            },
+            {
+              "do": "write",
+              "line": "• 例：$\\frac1x$ 在 $(0,1]$、$x^2$ 在 $\\mathbb{R}$ 不一致；$\\sin x$、$\\sqrt x$ 一致",
+              "on": "等式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Heine–Cantor 定理"
+          ],
+          "say": "下一課，海涅康托爾定理：閉區間上，連續就自動一致連續。",
           "board": [
-            { "do": "write", "line": "取 $\\delta=\\varepsilon^2$" },
-            { "do": "write", "line": "$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}<\\sqrt{\\delta}={{e:\\varepsilon}}$", "on": "兩點距離" },
-            { "do": "box", "term": "e", "color": "green", "on": "就小於" }
-          ] },
-        { "show": ["在 0 附近不是 Lipschitz"], "note": "斜率無界，仍然一致連續。",
-          "say": "根號 x 在零附近非常陡，斜率沒有上限，可是照樣一致連續。陡不一定壞事。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$(\\sqrt{x})'=\\frac{1}{2\\sqrt{x}}$", "on": "非常陡" },
-            { "do": "write", "line": "$x\\to0$：斜率 $\\to\\infty$", "on": "斜率沒有上限" },
-            { "do": "write", "line": "仍然一致連續", "color": "green", "on": "照樣" }
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "$x^2$ 在 $\\mathbb{R}$ 上",
-      "beats": [
-        { "show": ["$x_n=n+\\frac{1}{n}$，$y_n=n$"], "note": "$|x_n-y_n|=\\frac{1}{n}\\to0$。",
-          "say": "x 平方越往外越陡，壞點住在很遠的地方。取 n 加 n 分之一和 n，兩點越來越近。",
-          "board": [
-            { "do": "write", "line": "$x_n=n+\\frac{1}{n}$，$y_n=n$", "on": "取 n 加" },
-            { "do": "write", "line": "${{d:|x_n-y_n|}}=\\frac{1}{n}\\to0$", "tint": { "d": "blue" }, "on": "兩點越來越近" }
-          ] },
-        { "show": ["$x_n^2-y_n^2=2+\\frac{1}{n^2}>2$"], "note": "取 $\\varepsilon=2$：不一致連續。",
-          "say": "函數值的差卻是二加 n 平方分之一，永遠超過二。所以 x 平方在整條實數線上不一致連續。",
-          "board": [
-            { "do": "write", "line": "${{fd:x_n^2-y_n^2}}=2+\\frac{1}{n^2}{{g:>2}}$", "tint": { "fd": "violet" } },
-            { "do": "focus", "term": "g", "on": "永遠超過" },
-            { "do": "write", "line": "取 $\\varepsilon=2$：不一致連續", "on": "所以 x 平方" }
-          ] },
-        { "show": ["$[-R,R]$ 上：$|x^2-y^2|\\le2R|x-y|$"], "note": "Lipschitz，所以一致連續。",
-          "say": "但限制在有界區間上，差不超過常數倍的距離，delta 取 epsilon 除以那個常數，就一致連續了。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$[-R,R]$ 上：$|x^2-y^2|\\le {{c:2R}}|x-y|$", "on": "限制在" },
-            { "do": "focus", "term": "c", "label": "常數", "on": "常數倍" },
-            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon}{2R}$ ⇒ 一致連續", "color": "green", "on": "delta 取" }
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：Heine–Cantor 定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["uniform-continuity", "lipschitz"],
-    "fine": ["unifcont-quantifier-order", "unifcont-two-sequences", "unifcont-delta-independent", "unifcont-lipschitz"]
+    "coarse": [
+      "uniform-continuity",
+      "lipschitz"
+    ],
+    "fine": [
+      "unifcont-quantifier-order",
+      "unifcont-two-sequences",
+      "unifcont-delta-independent",
+      "unifcont-lipschitz"
+    ]
   },
   "practice": [
-    { "id": "an-uc-001", "core": true, "trains": "unifcont-two-sequences" },
-    { "id": "an-uc-002", "core": true, "trains": "unifcont-delta-independent" },
-    { "id": "an-uc-006", "core": true, "trains": "unifcont-lipschitz" },
-    { "id": "cg-12e-016", "core": true, "trains": "unifcont-quantifier-order" },
-    { "id": "cg-12e-019", "core": true, "trains": "unifcont-delta-independent" },
-    { "id": "an-uc-005", "trains": "unifcont-lipschitz" },
-    { "id": "cg-12e-017", "trains": "unifcont-quantifier-order" },
-    { "id": "cg-12e-020", "trains": "unifcont-delta-independent" },
-    { "id": "an-uc-003", "challenge": true, "trains": "unifcont-two-sequences", "note": "挑戰：$\\sin(x^2)$ 有界、處處可微，但振盪越來越快；取 $\\sqrt{2\\pi n+\\frac{\\pi}{2}}$ 與 $\\sqrt{2\\pi n}$。" },
-    { "id": "cg-12e-018", "challenge": true, "trains": "unifcont-quantifier-order" }
+    {
+      "id": "an-uc-001",
+      "core": true,
+      "trains": "unifcont-two-sequences"
+    },
+    {
+      "id": "an-uc-002",
+      "core": true,
+      "trains": "unifcont-delta-independent"
+    },
+    {
+      "id": "an-uc-006",
+      "core": true,
+      "trains": "unifcont-lipschitz"
+    },
+    {
+      "id": "cg-12e-016",
+      "core": true,
+      "trains": "unifcont-quantifier-order"
+    },
+    {
+      "id": "cg-12e-019",
+      "core": true,
+      "trains": "unifcont-delta-independent"
+    },
+    {
+      "id": "an-uc-005",
+      "trains": "unifcont-lipschitz"
+    },
+    {
+      "id": "cg-12e-017",
+      "trains": "unifcont-quantifier-order"
+    },
+    {
+      "id": "cg-12e-020",
+      "trains": "unifcont-delta-independent"
+    },
+    {
+      "id": "an-uc-003",
+      "challenge": true,
+      "trains": "unifcont-two-sequences",
+      "note": "挑戰：$\\sin(x^2)$ 有界、處處可微，但振盪越來越快；取 $\\sqrt{2\\pi n+\\frac{\\pi}{2}}$ 與 $\\sqrt{2\\pi n}$。"
+    },
+    {
+      "id": "cg-12e-018",
+      "challenge": true,
+      "trains": "unifcont-quantifier-order"
+    }
   ],
   "gaps": [
-    { "tag": "unifcont-two-sequences", "count": 2, "note": "白話證明：用兩串點證 x² 在 ℝ、1/x 在 (0, 1] 上不一致連續。" }
+    {
+      "tag": "unifcont-two-sequences",
+      "count": 2,
+      "note": "白話證明：用兩串點證 x² 在 ℝ、1/x 在 (0, 1] 上不一致連續。"
+    }
   ]
 }

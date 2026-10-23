@@ -1,304 +1,141 @@
 {
   "id": "uniform-convergence",
   "title": "一致收斂",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["pointwise-convergence", "uniform-continuity"],
-  "next": ["uniform-convergence-tests"],
-  "related": ["continuity-formal"],
-  "objectives": [
-    "寫出一致收斂的定義（$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x$），說得出它跟逐點收斂差在量詞順序。",
-    "用 $\\sup$ 範數 $\\|f_n-f\\|_\\infty$ 判斷一致收斂，並會寫出「不一致收斂」的否定句。",
-    "證明並使用：連續函數列一致收斂，極限仍連續。"
+  "prerequisites": [
+    "pointwise-convergence",
+    "uniform-continuity"
   ],
-  "visual": "畫出極限函數 f，以及上下各平移 ε 的一條「ε 管子」。n 用滑桿調大：xⁿ 在 [0, 1/2] 上整條曲線很快整段掉進管子；xⁿ 在 [0, 1] 上，不論 n 多大，靠近 x = 1 的那一小段總是翹出管子。ε 也可以調，管子越細，要的 N 越大。",
+  "next": [
+    "uniform-convergence-tests"
+  ],
+  "related": [
+    "continuity-formal"
+  ],
+  "objectives": [
+    "寫出一致收斂的定義（$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x\\in D$），說出它跟逐點收斂差在量詞順序",
+    "用 $\\sup$ 範數 $\\|f_n-f\\|_\\infty$ 判斷一致收斂，並會寫出「不一致收斂」的否定句",
+    "證明並使用：連續函數列一致收斂，極限仍連續"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 一根管子套住整條曲線",
       "body": [
-        "以極限函數 $f$ 為中心，畫一條上下寬 $\\varepsilon$ 的管子。一致收斂的意思是：從某個 $N$ 開始，每一個 $f_n$ 的整條圖形都落在管子裡。逐點收斂只要求每個 $x$ 各自最後落進去，各點可以有各自的 $N$。",
-        "直覺，不是證明：逐點收斂是「每個人最後都會到」，一致收斂是「同一個時刻，所有人都已經到了」。"
+        "逐點收斂：每個 $x$ 各自找 $N$",
+        "一致收斂：一個 $N$，所有 $x$ 一起進帶子",
+        "畫法：沿著 $f$ 上下各加 $\\varepsilon$，像一根管子"
       ],
-      "collapsible": false
+      "tex": [
+        "\\{(x,y):\\ x\\in D,\\ |y-f(x)|<\\varepsilon\\}"
+      ]
     },
     {
-      "heading": "② 定義與 $\\sup$ 範數",
+      "heading": "② 定義",
       "body": [
-        "$f_n$ 在 $D$ 上一致收斂到 $f$：對每個 $\\varepsilon>0$，存在只跟 $\\varepsilon$ 有關的 $N$，使得所有 $n\\ge N$ 與所有 $x\\in D$ 都有 $|f_n(x)-f(x)|<\\varepsilon$。",
-        "把「所有 $x$」收進一個數：$\\|f_n-f\\|_\\infty=\\sup_{x\\in D}|f_n(x)-f(x)|$。一致收斂若且唯若 $\\|f_n-f\\|_\\infty\\to0$。兩者等價，因為 $|f_n(x)-f(x)|<\\varepsilon$ 對所有 $x$ 成立推得 $\\sup\\le\\varepsilon$，而 $\\sup<\\varepsilon$ 又推回每一點都 $<\\varepsilon$；$\\varepsilon$ 可任取，差一個等號不影響。",
-        "否定（不一致收斂）：存在 $\\varepsilon_0>0$，對每個 $N$，都有 $n\\ge N$ 與 $x\\in D$ 使 $|f_n(x)-f(x)|\\ge\\varepsilon_0$。實務上就是找一串點 $x_n$，讓誤差停在 $\\varepsilon_0$ 以上。"
+        "跟逐點收斂只差一件事：$\\forall x$ 搬到 $\\exists N$ 後面",
+        "所以 $N=N(\\varepsilon)$，不准看 $x$",
+        "一致收斂 $\\Rightarrow$ 逐點收斂；反過來不對（$x^n$ 在 $[0,1)$）",
+        "跟 12.27 一模一樣：一致連續的 $\\delta$ 不准看點"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N\\ \\forall x\\in D:\\ |f_n(x)-f(x)|<\\varepsilon\\iff\\|f_n-f\\|_\\infty\\to0"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② $\\sup$ 範數",
+      "body": [
+        "定理：$f_n\\to f$ 一致 $\\iff\\|f_n-f\\|_\\infty\\to0$",
+        "證明 $(\\Rightarrow)$：給 $\\varepsilon$，用定義取 $\\frac\\varepsilon2$ 的 $N$。",
+        "$n\\ge N$ 時每個 $|f_n(x)-f(x)|<\\frac\\varepsilon2$",
+        "取上確界：$\\|f_n-f\\|_\\infty\\le\\frac\\varepsilon2<\\varepsilon$",
+        "每個值都 $<a$，上確界只保證 $\\le a$：所以先取 $\\frac\\varepsilon2$",
+        "$(\\Leftarrow)$：$n\\ge N$ 時 $\\|f_n-f\\|_\\infty<\\varepsilon$，",
+        "每一點 $|f_n(x)-f(x)|\\le\\|f_n-f\\|_\\infty<\\varepsilon$　$\\blacksquare$",
+        "否定（不一致收斂）：",
+        "白話：有一個 $\\varepsilon$，每一條（夠後面的）$f_n$ 上都找得到一個點跑出管子"
+      ],
+      "tex": [
+        "\\|g\\|_\\infty=\\sup_{x\\in D}|g(x)|\\quad(\\text{可以是 }\\infty)",
+        "\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N\\ \\exists x\\in D:\\\\&\\quad|f_n(x)-f(x)|\\ge\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 三個例子",
+      "body": [
+        "例一：$x^n$ 在 $[0,\\frac12]$，$f\\equiv0$",
+        "$\\varepsilon=0.01$：$(\\frac12)^7\\approx0.0078<0.01$，$N=7$ 對每個 $x$ 都有效",
+        "$(\\frac12)^6=0.015625>0.01$，所以 $7$ 是最小的",
+        "例二：$x^n$ 在 $[0,1)$，$f\\equiv0$（連續）",
+        "$\\|x^n\\|_\\infty=1\\not\\to0$：不一致",
+        "直接用否定句：取 $\\varepsilon=\\frac12$；任給 $N$，取 $n=N$、$x=(\\frac12)^{1/N}\\in[0,1)$：",
+        "極限連續，不代表收斂是一致的"
+      ],
+      "tex": [
+        "\\|x^n\\|_\\infty=\\sup_{[0,\\frac12]}x^n=\\Big(\\frac12\\Big)^n\\to0",
+        "\\sup_{[0,1)}x^n=1\\quad(\\text{取不到，但上確界是 }1)",
+        "x^n=\\frac12\\ge\\varepsilon"
+      ]
+    },
+    {
+      "heading": "② 例三：高峰越來越高",
+      "body": [
+        "$f_n'(x)=ne^{-nx^2}(1-2nx^2)=0\\iff x=\\dfrac1{\\sqrt{2n}}\\in(0,1]$",
+        "$n=100$：$\\sqrt{50/e}\\approx4.29$",
+        "三個例子的判斷，都只看一個數 $\\|f_n-f\\|_\\infty$",
+        "• $[0,\\frac12]$ 上 $x^n$：$(\\frac12)^n\\to0$，一致",
+        "• $[0,1)$ 上 $x^n$：一直是 $1$，不一致",
+        "• $nxe^{-nx^2}$：$\\sqrt{\\frac n{2e}}\\to\\infty$，不一致"
+      ],
+      "tex": [
+        "\\|f_n\\|_\\infty=f_n\\Big(\\frac1{\\sqrt{2n}}\\Big)=\\frac{n}{\\sqrt{2n}}e^{-\\frac12}=\\sqrt{\\frac n{2e}}\\to\\infty"
+      ]
     },
     {
       "heading": "③ 一致收斂保住連續",
       "body": [
-        "定理：若每個 $f_n$ 在 $D$ 上連續，且 $f_n$ 在 $D$ 上一致收斂到 $f$，則 $f$ 在 $D$ 上連續。",
-        "反過來用：連續函數列的逐點極限若不連續，收斂就一定不是一致的。$x^n$ 在 $[0,1]$ 上就是這樣。但注意逆命題不成立：極限連續，不代表收斂是一致的（範例 2）。"
-      ],
-      "collapsible": false
+        "定理：每個 $f_n$ 在 $c\\in D$ 連續，且 $f_n\\to f$ 在 $D$ 上一致收斂",
+        "$\\Rightarrow$ $f$ 在 $c$ 連續",
+        "策略：從 $f(x)$ 走到 $f(c)$，繞道 $f_N$，三段各 $<\\frac\\varepsilon3$",
+        "• ①③：一致收斂，同一個 $N$ 在 $x$ 和 $c$ 都有效",
+        "• ②：只用 一條 $f_N$ 的連續性"
+      ]
     },
     {
-      "heading": "證明：連續函數列的一致極限連續（$\\frac{\\varepsilon}{3}$ 論證）",
+      "heading": "③ 證明",
       "body": [
-        "固定 $a\\in D$ 與 $\\varepsilon>0$。由一致收斂，取一個 $N$ 使 $|f_N(x)-f(x)|<\\frac{\\varepsilon}{3}$ 對所有 $x\\in D$ 成立。$f_N$ 在 $a$ 連續，所以有 $\\delta>0$ 使 $x\\in D$、$|x-a|<\\delta$ 時 $|f_N(x)-f_N(a)|<\\frac{\\varepsilon}{3}$。",
-        "於是 $|x-a|<\\delta$ 時，$|f(x)-f(a)|\\le|f(x)-f_N(x)|+|f_N(x)-f_N(a)|+|f_N(a)-f(a)|<\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$。",
-        "一致性用在哪裡：第一項要在 $a$ 附近的每一個 $x$ 都小於 $\\frac{\\varepsilon}{3}$，而且用的是同一個 $N$（$\\delta$ 是由這個 $N$ 決定的）。如果只有逐點收斂，$N$ 會隨 $x$ 變，就沒有一個固定的 $f_N$ 可以拿來找 $\\delta$。"
+        "證明：給 $\\varepsilon>0$。",
+        "一致收斂：取 $N$，使 $\\forall y\\in D$：$|f_N(y)-f(y)|<\\frac\\varepsilon3$",
+        "$f_N$ 在 $c$ 連續：取 $\\delta>0$，$|x-c|<\\delta$，$x\\in D$ 時 $|f_N(x)-f_N(c)|<\\frac\\varepsilon3$",
+        "$|x-c|<\\delta$ 時：",
+        "為什麼逐點不夠？ 若只有逐點收斂，第①段的 $N$ 會依賴 $x$",
+        "換一個 $x$，就得換一條 $f_N$，第②段的 $\\delta$ 也跟著換",
+        "一致收斂把 $N$ 先固定，$\\delta$ 才有東西可以依靠"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "一根管子",
-      "beats": [
-        { "show": ["以 $f$ 為中心，上下寬 $\\varepsilon$ 的管子"],
-          "say": "以極限函數為中心，上下各畫寬 epsilon 的一根管子。",
-          "board": [
-            {"do":"write","line":"管子：$f-\\varepsilon<f_n<f+\\varepsilon$"}
-          ] },
-        { "show": ["從某個 $N$ 起，每個 $f_n$ 整條都在管子裡"],
-          "note": "逐點收斂：各點各自最後落進去。",
-          "say": "一致收斂是說：從某個 N 開始，每一個 f n 的整條圖形都塞進管子裡，不是各點各自慢慢進去。",
-          "board": [
-            {"do":"write","line":"$n\\ge N$：整條 $f_n$ 都在管子裡"}
-          ] },
-        { "show": ["逐點：每個人最後都會到","一致：同一刻，所有人都到了"],
-          "say": "打個比方，逐點收斂是每個人最後都會到；一致收斂是同一個時刻，所有人都已經到了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"逐點：每個人最後都會到","on":"逐點收斂"},
-            {"do":"write","line":"一致：同一刻，所有人都到了","on":"一致收斂是"}
-          ] },
-        { "show": ["$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x$"],
-          "note": "$N$ 要在 $x$ 之前選定。",
-          "say": "寫成量詞：先給 epsilon，找一個 N，然後對所有 n 跟所有 x 都成立。N 只跟 epsilon 有關。",
-          "board": [
-            {"do":"write","line":"$\\varepsilon\\to{{n:N}}\\to$ 所有 $n\\ge N$、所有 $x$","tint":{"n":"blue"}},
-            {"do":"underline","term":"n","color":"blue","label":"N 不隨 x 變","on":"找一個"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\begin{aligned}|f(x)-f(c)|&\\le|f(x)-f_N(x)|+|f_N(x)-f_N(c)|\\\\&\\quad+|f_N(c)-f(c)|\\\\&<\\tfrac\\varepsilon3+\\tfrac\\varepsilon3+\\tfrac\\varepsilon3=\\varepsilon\\quad\\blacksquare\\end{aligned}"
+      ]
     },
     {
-      "title": "收成一個數",
-      "beats": [
-        { "show": ["$\\|f_n-f\\|_\\infty=\\sup_{x\\in D}|f_n(x)-f(x)|$"],
-          "say": "把所有 x 的誤差收成一個數：取上確界，叫 sup 範數，也就是最大的那個誤差。",
-          "board": [
-            {"do":"write","line":"$\\|f_n-f\\|_\\infty={{sup:\\sup_{x\\in D}}}|f_n(x)-f(x)|$"},
-            {"do":"underline","term":"sup","label":"最大的誤差","on":"上確界"}
-          ] },
-        { "show": ["一致收斂 $\\iff\\|f_n-f\\|_\\infty\\to0$"],
-          "say": "一致收斂，就是這個最大誤差趨近零。判斷一致收斂，通常就是算它。",
-          "board": [
-            {"do":"write","line":"一致收斂 $\\iff{{z:\\|f_n-f\\|_\\infty\\to0}}$"},
-            {"do":"underline","term":"z","on":"趨近零"}
-          ] },
-        { "show": ["$x^n$ 在 $[0,\\frac{1}{2}]$：最大在右端"],
-          "note": "$x^n$ 在這裡遞增。",
-          "say": "例如 x 的 n 次方在零到二分之一，函數遞增，最大誤差發生在右端點。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.04,0.62,-0.03,0.3],"curves":[{"expr":"x^2","domain":[0,0.5],"color":"blue"},{"expr":"x^10","domain":[0,0.5],"color":"blue"}],"dashed":[[[0.5,0],[0.5,0.28]]],"points":[{"x":0.5,"y":0.25}],"labels":[{"x":0.52,"y":0.25,"text":"右端","anchor":"start"}],"ticks":false},"on":"x 的 n"},
-            {"do":"write","line":"$x^n$ 在 $[0,\\frac{1}{2}]$：最大在右端","on":"遞增"}
-          ] },
-        { "show": ["$(\\frac{1}{2})^{10}=\\frac{1}{1024}<0.001$"],
-          "note": "$\\varepsilon=0.001$ 時 $N=10$，每個 $x$ 都有效。",
-          "say": "epsilon 取零點零零一，二分之一的九次方還不夠，十次方是一千零二十四分之一，夠了，N 等於十。",
-          "board": [
-            {"do":"write","line":"$(\\frac{1}{2})^{10}=\\frac{1}{1024}<0.001,\\quad{{n:N=10}}$","on":"十次方"},
-            {"do":"box","term":"n","color":"green","on":"夠了"}
-          ] }
-      ],
-      "check": 1
+      "heading": "③ 推論：否定一致",
+      "body": [
+        "推論（逆否）：連續函數列的極限不連續 $\\Rightarrow$ 收斂不是一致的",
+        "推論只能否定一致：極限連續時，什麼也說不出（例二）",
+        "例二：$[0,1)$ 上極限連續，卻仍然不一致"
+      ]
     },
     {
-      "title": "一致收斂保住連續",
-      "beats": [
-        { "show": ["$f_n$ 都連續、一致收斂到 $f$","$\\Rightarrow f$ 連續"],
-          "say": "定理：每個 f n 都連續，又一致收斂到 f，那 f 也連續。",
-          "board": [
-            {"do":"write","line":"$f_n$ 都連續、一致收斂到 $f$"},
-            {"do":"write","line":"$\\Rightarrow f$ 連續","on":"又一致"}
-          ] },
-        { "show": ["$\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$"],
-          "note": "固定一個 $f_N$，誤差拆成三段。",
-          "say": "證明的點子是拿一個固定的 f N 當跳板，把誤差拆成三段，每段小於三分之 epsilon。證明在下一節。",
-          "board": [
-            {"do":"write","line":"固定 ${{fn:f_N}}$ 當跳板","tint":{"fn":"violet"}},
-            {"do":"write","line":"$\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$","on":"拆成三段"}
-          ] },
-        { "show": ["只有逐點：沒有固定的 $f_N$ 可用"],
-          "say": "一致性就用在這裡：N 不能隨 x 變，才有一個固定的 f N 可以拿來找 delta。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$N$ 不隨 $x$ 變：固定 ${{fn:f_N}}$","tint":{"fn":"violet"},"on":"一致性"},
-            {"do":"underline","term":"fn","color":"violet","label":"跳板","on":"固定的"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：拆成三段",
-      "beats": [
-        { "show": ["固定一個 $f_N$ 當跳板，誤差拆三段"],
-          "say": "策略：epsilon 三分法。固定一個 f N 當跳板，把 f 在 x 跟 f 在 a 的差拆成三段。",
-          "board": [
-            {"do":"write","line":"${{fn:f_N}}$ 當跳板，誤差拆三段","tint":{"fn":"violet"},"on":"固定"}
-          ] },
-        { "show": ["取 $N$：$|f_N(x)-f(x)|<\\frac{\\varepsilon}{3}$，$\\forall x\\in D$"],
-          "note": "一致：同一個 $N$。",
-          "say": "先用一致收斂取一個 N，讓 f N 跟 f 的距離，在每一個 x 都小於三分之 epsilon。",
-          "board": [
-            {"do":"write","line":"$|f_N(x)-f(x)|<\\frac{\\varepsilon}{3}$，${{all:\\forall x\\in D}}$","on":"取一個 N"},
-            {"do":"underline","term":"all","label":"同一個 N","on":"每一個 x"}
-          ] },
-        { "show": ["$f_N$ 在 $a$ 連續：取 $\\delta$"],
-          "note": "$|x-a|<\\delta$ ⇒ $|f_N(x)-f_N(a)|<\\frac{\\varepsilon}{3}$。",
-          "why": {"ask":"為什麼 $\\delta$ 要在 $N$ 之後才找？","say":"delta 為什麼要等 N 選好才找？","options":[{"label":"$\\delta$ 是從 $f_N$ 的連續找的，要先固定 $f_N$","correct":true},{"label":"$\\delta$ 只跟 $\\varepsilon$ 有關，先找後找都一樣","why":"這個 $\\delta$ 是 $f_N$ 在 $a$ 連續給的；換一個 $N$，可能就要換一個 $\\delta$。"},{"label":"要等 $f$ 連續才能找 $\\delta$","why":"$f$ 連續正是要證的結論；這裡能用的只有 $f_N$ 連續。"}]},
-          "say": "這個 delta 是 f N 在 a 連續給的，所以要先把 f N 固定下來，才找得到它。",
-          "board": [
-            {"do":"write","line":"${{fn:f_N}}$ 在 $a$ 連續：取 $\\delta$","on":"delta"},
-            {"do":"underline","term":"fn","label":"先固定","why":true,"on":"先把 f N"}
-          ] },
-        { "show": ["$|f(x)-f(a)|\\le|f(x)-f_N(x)|$","$+|f_N(x)-f_N(a)|+|f_N(a)-f(a)|$"],
-          "say": "三角不等式：中間插進 f N 在 x 跟 f N 在 a，拆成三段。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|f(x)-f(a)|\\le{{t1:|f(x)-f_N(x)|}}$","on":"三角不等式"},
-            {"do":"write","line":"$+{{t2:|f_N(x)-f_N(a)|}}+{{t3:|f_N(a)-f(a)|}}$","on":"中間插進"}
-          ] },
-        { "show": ["$<\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$"],
-          "note": "第一、三段靠 $N$，中間靠 $\\delta$。",
-          "why": {"ask":"第一段為什麼也 $<\\frac{\\varepsilon}{3}$？","say":"第一段是在 x 量的。它為什麼也小於三分之 epsilon？","options":[{"label":"$N$ 對每一個 $x$ 都有效，包括這個 $x$","correct":true},{"label":"$x$ 離 $a$ 很近，跟第三段差不多","why":"近不代表誤差一樣小；第一段是在 $x$ 量的，靠的是同一個 $N$ 對所有 $x$ 都成立。"},{"label":"$f_N$ 在 $a$ 連續","why":"連續管的是中間那段 $f_N(x)$ 與 $f_N(a)$；第一段比的是 $f$ 跟 $f_N$。"}]},
-          "say": "N 是一致收斂給的，對每一個 x 都有效，所以第一段也小於三分之 epsilon。三段加起來小於 epsilon。",
-          "board": [
-            {"do":"write","line":"$<\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$","on":"第一段"},
-            {"do":"underline","term":"t1","label":"N 對每個 x","why":true,"on":"對每一個 x"}
-          ] },
-        { "show": ["順序：ε → N → δ → x"],
-          "note": "δ 在 x 出現前就定了，不隨 x 變。",
-          "say": "順序是 epsilon、N、delta，最後才是 x。N 對 D 裡每個 x 都有效，所以 x 在 delta 範圍內，第一段照樣小。",
-          "board": [
-            {"do":"write","line":"$\\varepsilon\\to N\\to\\delta\\to x$"},
-            {"do":"underline","term":"t1","color":"blue","label":"同一個 N","on":"有效"}
-          ] }
-      ],
-      "key": "一致給同一個 $N$，固定 $f_N$ 當跳板",
-      "proof": true,
-      "of": 3,
-      "skeleton": "ε-δ",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "固定 $a$ 與 $\\varepsilon>0$"
-          },
-          {
-            "label": "由一致收斂取 $N$",
-            "why": "要先有 $\\varepsilon$，才知道 $N$ 要讓誤差小於多少。"
-          },
-          {
-            "label": "由 $f_N$ 在 $a$ 連續取 $\\delta$",
-            "why": "$\\delta$ 是 $f_N$ 給的：要先固定 $N$。"
-          },
-          {
-            "label": "$|x-a|<\\delta$ 時三段相加 $<\\varepsilon$",
-            "why": "要先有 $\\delta$，才知道哪些 $x$ 算數。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "極限連續也不保證",
-      "beats": [
-        { "show": ["$x^n$ 在 $[0,1]$：極限在 1 跳"],
-          "note": "所以不一致。",
-          "say": "反過來用：x 的 n 次方在零到一，極限在一跳了一下，所以收斂一定不一致。",
-          "board": [
-            {"do":"write","line":"$x^n$ 在 $[0,1]$：極限在 1 跳"},
-            {"do":"write","line":"$\\Rightarrow$ 收斂不一致","on":"所以收斂"}
-          ] },
-        { "show": ["$x^n$ 在 $[0,1)$：極限 $f\\equiv0$ 連續"],
-          "say": "把一拿掉，在零到一不含一，極限是零，連續了。那這樣就一致了嗎？",
-          "board": [
-            {"do":"write","line":"$x^n$ 在 $[0,1)$：極限 $f\\equiv0$ 連續"}
-          ] },
-        { "show": ["$\\sup_{0\\le x<1}x^n=1$"],
-          "note": "取不到，但 $\\sup$ 還是 1。",
-          "say": "x 往一靠，x 的 n 次方往一靠，所以最大誤差的上確界對每個 n 都是一，不趨近零。",
-          "board": [
-            {"do":"write","line":"$\\sup_{0\\le x<1}x^n={{s:1}}$"},
-            {"do":"underline","term":"s","label":"取不到","on":"上確界"}
-          ] },
-        { "show": ["每個 $x^n<1$，最小的上界是 1"],
-          "note": "sup ＝ 最小的上界。",
-          "say": "x 的 n 次方每一點都小於一，但 x 越靠近一，它越貼近一，所以比一小的數都擋不住，最小的上界就是一。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.1,1.1,-0.1,1.2],"curves":[{"expr":"x^2","domain":[0,0.999],"color":"blue"},{"expr":"x^10","domain":[0,0.999],"color":"blue"}],"dashed":[[[0,1],[1,1]]],"points":[{"x":1,"y":1,"open":true}],"labels":[{"x":0.05,"y":1.08,"text":"1","anchor":"start"}],"ticks":false}},
-            {"do":"write","line":"最小的上界 $=1$","on":"最小的上界"}
-          ] },
-        { "show": ["$\\sup=1$ 取不到，所以沒有最大值"],
-          "note": "sup 可以取不到，最大值一定要取得到。",
-          "say": "最大值要真的取得到，這裡 x 不能等於一，所以沒有最大值。sup 就是在這種時候補上的那個數。",
-          "board": [
-            {"do":"write","line":"$\\sup=1$，但取不到，沒有最大值","on":"最大值要"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "高峰越來越高",
-      "beats": [
-        { "show": ["$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$"],
-          "note": "逐點收斂到 0。",
-          "say": "上一課的 n x 乘 e 的負 n x 平方，逐點收斂到零。現在算它的最大誤差。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=nx\\,e^{-nx^2}$ 在 $[0,1]$"},
-            {"do":"write","line":"$\\|f_n\\|_\\infty=\\sup|f_n(x)|$","on":"現在算"}
-          ] },
-        { "show": ["乘積法則：$(uv)'=u'v+uv'$"],
-          "note": "$e^{-nx^2}$ 的導數：外層不變，乘 $-2nx$。",
-          "say": "乘積法則：先微 n x 得 n，再加 n x 乘指數部分的導數。指數是負 n x 平方，微分得負二 n x。",
-          "board": [
-            {"do":"write","line":"$(uv)'=u'v+uv'$"},
-            {"do":"write","line":"$f_n'=ne^{-nx^2}+nx\\,e^{-nx^2}(-2nx)$","on":"再加"}
-          ] },
-        { "show": ["$f_n'(x)=n e^{-nx^2}(1-2nx^2)$"],
-          "note": "最大值點 $x=\\frac{1}{\\sqrt{2n}}$。",
-          "say": "微分，導數在 x 等於根號二 n 分之一由正變負，那是最高點，不在端點。",
-          "board": [
-            {"do":"write","line":"$f_n'(x)=n e^{-nx^2}(1-2nx^2)$"},
-            {"do":"write","line":"${{h:x=\\frac{1}{\\sqrt{2n}}}}$","on":"根號"},
-            {"do":"box","term":"h","color":"gold","label":"最高點","on":"最高點"}
-          ] },
-        { "show": ["最高點的值 ＝ $\\|f_n\\|_\\infty$"],
-          "note": "把 $x$ 代回 $f_n$ 就是高度。",
-          "say": "導數前面是正、後面是負，其他點都不比最高點高。所以最大誤差，就是把這個 x 代回 f n 得到的高度。",
-          "board": [
-            {"do":"write","line":"最高點的值 $=\\|f_n\\|_\\infty$","on":"所以最大誤差"}
-          ] }
-      ],
-      "key": "微分找高峰位置，代回求最大值",
-      "predict": {
-        "ask": "$\\|f_n\\|_\\infty$ 是？",
-        "options": [
-          {
-            "label": "$\\sqrt{\\frac{n}{2}}\\cdot e^{-1/2}$，趨向無限大",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{1}{\\sqrt{2n}}$",
-            "why": "那是高峰的位置；高度要代回去：$n\\cdot\\frac{1}{\\sqrt{2n}}\\cdot e^{-1/2}$。"
-          },
-          {
-            "label": "0",
-            "why": "0 是逐點極限，也是 $f_n(0)$；$\\sup$ 要看內部的最大值點。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 一致收斂：$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x$：$N$ 不准看 $x$",
+        "• 圖：從某條起，整條 $f_n$ 都在 $f\\pm\\varepsilon$ 的管子裡",
+        "• 判斷：$\\|f_n-f\\|_\\infty=\\sup_D|f_n-f|\\to0$",
+        "• 否定：每條夠後面的 $f_n$ 上都有一點跑出管子",
+        "• 一致極限保住連續（$\\frac\\varepsilon3$ 論證）；逆否用來否定一致",
+        "下一課：怎麼判斷一致收斂"
+      ]
     }
   ],
   "workedExamples": [
@@ -348,52 +185,1047 @@
   ],
   "checks": [
     {
-      "ask": "下列哪一句是一致收斂？",
+      "ask": "$x^n$ 在 $[0,1]$ 上，用推論可以馬上得到什麼？",
       "options": [
-        { "label": "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N\\ \\forall x\\in D$：$|f_n(x)-f(x)|<\\varepsilon$", "correct": true },
-        { "label": "$\\forall x\\in D\\ \\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N$：$|f_n(x)-f(x)|<\\varepsilon$", "why": "你把 $\\forall x$ 放到最前面，$N$ 就可以隨 $x$ 變，這是逐點收斂。" },
-        { "label": "$\\exists N\\ \\forall\\varepsilon>0\\ \\forall n\\ge N\\ \\forall x\\in D$：$|f_n(x)-f(x)|<\\varepsilon$", "why": "你把 $\\exists N$ 移到 $\\forall\\varepsilon$ 前面，等於同一個 $N$ 要對所有 $\\varepsilon$ 都行，逼出 $n\\ge N$ 時 $f_n=f$，太強了。" }
+        {
+          "label": "不是一致收斂：極限在 $1$ 不連續",
+          "correct": true
+        },
+        {
+          "label": "是一致收斂：每個 $x^n$ 都連續",
+          "why": "每項連續推不出一致；推論是反方向用的"
+        },
+        {
+          "label": "在 $[0,1)$ 上也因此不一致",
+          "why": "$[0,1)$ 上極限 $0$ 是連續的，推論用不上；要另外算 $\\sup=1$"
+        },
+        {
+          "label": "推論說不出任何結論",
+          "why": "推論正好適用：$f_n$ 連續、$f$ 不連續"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "一根管子套住整條曲線",
+      "beats": [
+        {
+          "show": [
+            "逐點收斂：每個 $x$ 各自找 $N$"
+          ],
+          "say": "上一課的逐點收斂，每個 x 各自找自己的 N。這一課要求更強：一個 N，讓所有的 x 一起進帶子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐點收斂：每個 $x$ 各自找 $N$"
+            },
+            {
+              "do": "write",
+              "line": "一致收斂：一個 $N$，所有 $x$ 一起進帶子",
+              "on": "一課#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "畫法：沿著 $f$ 上下各加 $\\varepsilon$，像一根管子",
+            "$\\{(x,y):\\ x\\in D,\\ |y-f(x)|<\\varepsilon\\}$"
+          ],
+          "say": "畫成圖：沿著極限函數 f 上下各加艾普西隆，得到一根管子。一致收斂就是：從某個 N 開始，每一條 f n 的整條圖形都住在管子裡，不是只有某幾個點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "畫法：沿著 $f$ 上下各加 $\\varepsilon$，像一根管子"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\{(x,y):\\ x\\in D,\\ |y-f(x)|<\\varepsilon\\}}}$",
+              "on": "一根"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的整"
+            }
+          ]
+        },
+        {
+          "show": [
+            "綠色管子是 0 ± 0.1，藍線是 xⁿ 在 [0, b] 上"
+          ],
+          "say": "圖上是 x 的 n 次方，只看 0 到 2 分之 1 這一段，管子是 0 加減 0.1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube2",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": "b",
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    },
+                    "b": {
+                      "min": 0.5,
+                      "max": 0.999,
+                      "value": 0.5,
+                      "label": "右端點 b"
+                    }
+                  },
+                  "readout": "n = {floor(n)}，最高點 = {b^floor(n)}（管子半寬 0.1）",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1，最高點 = 0.5（管子半寬 0.1）",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "綠色管子是 0 ± 0.1，藍線是 xⁿ 在 [0, b] 上",
+              "color": "violet",
+              "on": "管子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一根管子套住整條曲線"
+          ],
+          "say": "n 增加，整條曲線一起被壓進管子。n 到 4 以後，最高點 2 分之 1 的 n 次方已經小於 0.1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube2",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": "b",
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    },
+                    "b": {
+                      "min": 0.5,
+                      "max": 0.999,
+                      "value": 0.5,
+                      "label": "右端點 b"
+                    }
+                  },
+                  "readout": "n = {floor(n)}，最高點 = {b^floor(n)}（管子半寬 0.1）",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 8
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 8，最高點 = 0.003906（管子半寬 0.1）",
+              "on": "最高"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一根管子套住整條曲線"
+          ],
+          "say": "把右端點拉到很靠近 1，曲線在右邊又翹出管子了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube2",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": "b",
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    },
+                    "b": {
+                      "min": 0.5,
+                      "max": 0.999,
+                      "value": 0.5,
+                      "label": "右端點 b"
+                    }
+                  },
+                  "readout": "n = {floor(n)}，最高點 = {b^floor(n)}（管子半寬 0.1）",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 8,
+                  "b": 0.999
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 8，最高點 = 0.992（管子半寬 0.1）",
+              "on": "曲線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一根管子套住整條曲線"
+          ],
+          "say": "不管 n 多大，靠近 1 的地方總是翹出去。這就是逐點收斂，但不是一致收斂。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube2",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": "b",
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        "b"
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    },
+                    "b": {
+                      "min": 0.5,
+                      "max": 0.999,
+                      "value": 0.5,
+                      "label": "右端點 b"
+                    }
+                  },
+                  "readout": "n = {floor(n)}，最高點 = {b^floor(n)}（管子半寬 0.1）",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 40,
+                  "b": 0.999
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 40，最高點 = 0.9608（管子半寬 0.1）",
+              "on": "出去"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f_n(x)=x^n$ 在 $[0,\\frac{1}{2}]$ 上，$\\|f_n-0\\|_\\infty$ 是？",
-      "options": [
-        { "label": "$(\\frac{1}{2})^n$", "correct": true },
-        { "label": "0", "why": "你代了左端點 $x=0$。$\\sup$ 要看整個區間，$x^n$ 遞增，最大在 $x=\\frac{1}{2}$。" },
-        { "label": "1", "why": "那是 $[0,1)$ 上的 $\\sup$。這裡 $x$ 最大只到 $\\frac{1}{2}$。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "正式定義：對所有正的艾普西隆，存在 N，使得 n 大於等於 N 時，對所有屬於 D 的 x，f n of x 跟 f of x 的距離都小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上一致收斂}\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N\\\\&\\quad\\forall x\\in D:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "屬於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟逐點收斂只差一件事：$\\forall x$ 搬到 $\\exists N$ 後面"
+          ],
+          "say": "跟逐點收斂比，只差對所有 x 的位置：它搬到了存在 N 的後面。所以 N 只能看艾普西隆，不准看 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟逐點收斂只差一件事：$\\forall x$ 搬到 $\\exists N$ 後面",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "所以 $N=N(\\varepsilon)$，不准看 $x$",
+              "color": "red",
+              "on": "的後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一致收斂 $\\Rightarrow$ 逐點收斂；反過來不對（$x^n$ 在 $[0,1)$）"
+          ],
+          "say": "一致一定是逐點：同一個 N 給每個 x 用就好。反過來不對，x 的 n 次方就是反例。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一致收斂 $\\Rightarrow$ 逐點收斂；反過來不對（$x^n$ 在 $[0,1)$）"
+            },
+            {
+              "do": "write",
+              "line": "　跟 12.27 一模一樣：一致連續的 $\\delta$ 不准看點",
+              "color": "violet",
+              "on": "就好"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "排出「$f_n\\to f$ 在 $D$ 上一致收斂」的量詞順序",
+        "steps": [
+          {
+            "label": "$\\forall\\varepsilon>0$"
+          },
+          {
+            "label": "$\\exists N\\in\\mathbb{N}$",
+            "why": "先要有上一步：$\\forall\\varepsilon>0$"
+          },
+          {
+            "label": "$\\forall n\\ge N$",
+            "why": "先要有上一步：$\\exists N\\in\\mathbb{N}$"
+          },
+          {
+            "label": "$\\forall x\\in D$",
+            "why": "先要有上一步：$\\forall n\\ge N$"
+          },
+          {
+            "label": "$|f_n(x)-f(x)|<\\varepsilon$",
+            "why": "先要有上一步：$\\forall x\\in D$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\sup$ 範數",
+      "beats": [
+        {
+          "show": [
+            "$\\|g\\|_\\infty=\\sup_{x\\in D}|g(x)|\\quad(\\text{可以是 }\\infty)$"
+          ],
+          "say": "檢查整條曲線，最方便的工具是上確界範數：g 的絕對值在 D 上的上確界，量的是兩條曲線之間最大的差距。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\|g\\|_\\infty=\\sup_{x\\in D}|g(x)|\\quad(\\text{可以是 }\\infty)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "值在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$f_n\\to f$ 一致 $\\iff\\|f_n-f\\|_\\infty\\to0$"
+          ],
+          "say": "定理：f n 一致收斂到 f，若且唯若 f n 減 f 的上確界範數趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f_n\\to f$ 一致 $\\iff\\|f_n-f\\|_\\infty\\to0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明 $(\\Rightarrow)$：給 $\\varepsilon$，用定義取 $\\frac\\varepsilon2$ 的 $N$。"
+          ],
+          "say": "往右：用定義拿 2 分之艾普西隆的 N。之後每一點的差都小於 2 分之艾普西隆，取上確界只保證小於等於，但仍然小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明 $(\\Rightarrow)$：給 $\\varepsilon$，用定義取 $\\frac\\varepsilon2$ 的 $N$。"
+            },
+            {
+              "do": "write",
+              "line": "$n\\ge N$ 時每個 $|f_n(x)-f(x)|<\\frac\\varepsilon2$",
+              "on": "隆的"
+            },
+            {
+              "do": "write",
+              "line": "取上確界：$\\|f_n-f\\|_\\infty\\le\\frac\\varepsilon2<\\varepsilon$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　每個值都 $<a$，上確界只保證 $\\le a$：所以先取 $\\frac\\varepsilon2$",
+              "color": "violet",
+              "on": "證小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(\\Leftarrow)$：$n\\ge N$ 時 $\\|f_n-f\\|_\\infty<\\varepsilon$，"
+          ],
+          "say": "往左：n 大於等於 N 時上確界小於艾普西隆，而每一點的差都不超過上確界，所以每一點都小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(\\Leftarrow)$：$n\\ge N$ 時 $\\|f_n-f\\|_\\infty<\\varepsilon$，"
+            },
+            {
+              "do": "write",
+              "line": "每一點 $|f_n(x)-f(x)|\\le\\|f_n-f\\|_\\infty<\\varepsilon$　$\\blacksquare$",
+              "on": "的差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定（不一致收斂）：",
+            "$\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N\\ \\exists x\\in D:\\\\&\\quad|f_n(x)-f(x)|\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "不一致收斂的否定句：存在艾普西隆，對所有 N，都有 n 大於等於 N 和一個點 x，差距大於等於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定（不一致收斂）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}&\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N\\ \\exists x\\in D:\\\\&\\quad|f_n(x)-f(x)|\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "對所"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "和一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "白話：有一個 $\\varepsilon$，每一條（夠後面的）$f_n$ 上都找得到一個點跑出管子"
+          ],
+          "say": "白話：有一根管子，不管多後面，總有一條 f n 在某一個點跑出管子。跑出去的點可以隨 n 換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "白話：有一個 $\\varepsilon$，每一條（夠後面的）$f_n$ 上都找得到一個點跑出管子"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "每個 $f_n$ 都連續，逐點極限 $f$ 在某點不連續。可以推出什麼？",
-      "options": [
-        { "label": "$f_n$ 不是一致收斂到 $f$", "correct": true },
-        { "label": "$f_n$ 不是逐點收斂", "why": "題目說了逐點極限存在。定理告訴你的是「不一致」，不是「不收斂」。" },
-        { "label": "什麼都推不出", "why": "連續函數列的一致極限必連續；取逆否，極限不連續就不可能一致。" }
+      "title": "三個例子",
+      "beats": [
+        {
+          "show": [
+            "例一：$x^n$ 在 $[0,\\frac12]$，$f\\equiv0$",
+            "$\\|x^n\\|_\\infty=\\sup_{[0,\\frac12]}x^n=\\Big(\\frac12\\Big)^n\\to0$"
+          ],
+          "say": "例一：x 的 n 次方在 0 到 2 分之 1 上。它遞增，最大值在右端點，是 2 分之 1 的 n 次方，趨近 0，所以一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例一：$x^n$ 在 $[0,\\frac12]$，$f\\equiv0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\|x^n\\|_\\infty=\\sup_{[0,\\frac12]}x^n=\\Big(\\frac12\\Big)^n\\to0$",
+              "on": "在右"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varepsilon=0.01$：$(\\frac12)^7\\approx0.0078<0.01$，$N=7$ 對每個 $x$ 都有效"
+          ],
+          "say": "艾普西隆給 0.01：2 分之 1 的 7 次方大約 0.0078，所以 N 等於 7，而且這一個 N 對每一個 x 都有效。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varepsilon=0.01$：$(\\frac12)^7\\approx0.0078<0.01$，$N=7$ 對每個 $x$ 都有效",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$(\\frac12)^6=0.015625>0.01$，所以 $7$ 是最小的",
+              "color": "violet",
+              "on": "78"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例二：$x^n$ 在 $[0,1)$，$f\\equiv0$（連續）",
+            "$\\sup_{[0,1)}x^n=1\\quad(\\text{取不到，但上確界是 }1)$"
+          ],
+          "say": "例二：x 的 n 次方在 0 到 1、不含 1。這次極限函數是 0，是連續的。但是 x 可以任意靠近 1，所以上確界是 1，雖然取不到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例二：$x^n$ 在 $[0,1)$，$f\\equiv0$（連續）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sup_{[0,1)}x^n=1\\quad(\\text{取不到，但上確界是 }1)$",
+              "on": "是連"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\|x^n\\|_\\infty=1\\not\\to0$：不一致"
+          ],
+          "say": "上確界範數一直是 1，不趨近 0，所以不一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\|x^n\\|_\\infty=1\\not\\to0$：不一致",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直接用否定句：取 $\\varepsilon=\\frac12$；任給 $N$，取 $n=N$、$x=(\\frac12)^{1/N}\\in[0,1)$：",
+            "$x^n=\\frac12\\ge\\varepsilon$"
+          ],
+          "say": "也可以直接用否定句：取艾普西隆 2 分之 1。任給 N，取 n 等於 N，x 取 2 分之 1 的 N 分之 1 次方，它小於 1，而 x 的 n 次方剛好是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直接用否定句：取 $\\varepsilon=\\frac12$；任給 $N$，取 $n=N$、$x=(\\frac12)^{1/N}\\in[0,1)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^n=\\frac12\\ge\\varepsilon$",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　極限連續，不代表收斂是一致的",
+              "color": "violet",
+              "on": "它小"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f_n(x)=nxe^{-nx^2}$ 在 $[0,1]$ 上逐點收斂到 $0$。$\\|f_n\\|_\\infty$ 會怎樣？",
+        "options": [
+          {
+            "label": "趨近 $\\infty$",
+            "correct": true
+          },
+          {
+            "label": "趨近 $0$",
+            "why": "每一點都趨近 $0$，但最高點不會：它一直往 $0$ 移動"
+          },
+          {
+            "label": "一直是 $\\frac12$",
+            "why": "那是上一課 $\\frac{nx}{1+n^2x^2}$ 的高峰"
+          },
+          {
+            "label": "趨近 $\\frac12$",
+            "why": "$\\frac12$ 是積分的極限，不是最大值"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例三：高峰越來越高",
+      "beats": [
+        {
+          "show": [
+            "$f_n'(x)=ne^{-nx^2}(1-2nx^2)=0\\iff x=\\dfrac1{\\sqrt{2n}}\\in(0,1]$"
+          ],
+          "say": "例三：微分，等於 0 的地方是 x 等於根號 2n 分之 1，它在 0 到 1 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_n'(x)=ne^{-nx^2}(1-2nx^2)=0\\iff x=\\dfrac1{\\sqrt{2n}}\\in(0,1]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\|f_n\\|_\\infty=f_n\\Big(\\frac1{\\sqrt{2n}}\\Big)=\\frac{n}{\\sqrt{2n}}e^{-\\frac12}=\\sqrt{\\frac n{2e}}\\to\\infty$"
+          ],
+          "say": "代進去，最大值是根號 2e 分之 n，趨近無限大。所以不一致收斂，而且差得很遠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\|f_n\\|_\\infty=f_n\\Big(\\frac1{\\sqrt{2n}}\\Big)=\\frac{n}{\\sqrt{2n}}e^{-\\frac12}=\\sqrt{\\frac n{2e}}\\to\\infty}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　$n=100$：$\\sqrt{50/e}\\approx4.29$",
+              "color": "violet",
+              "on": "以不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三個例子的判斷，都只看一個數 $\\|f_n-f\\|_\\infty$",
+            "• $[0,\\frac12]$ 上 $x^n$：$(\\frac12)^n\\to0$，一致"
+          ],
+          "say": "三個例子都只看一個數，就是上確界範數：第一個趨近 0，一致；第二個一直是 1，第三個趨近無限大，都不一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三個例子的判斷，都只看一個數 $\\|f_n-f\\|_\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "• $[0,\\frac12]$ 上 $x^n$：$(\\frac12)^n\\to0$，一致",
+              "on": "上確"
+            },
+            {
+              "do": "write",
+              "line": "• $[0,1)$ 上 $x^n$：一直是 $1$，不一致",
+              "on": "一致#1"
+            },
+            {
+              "do": "write",
+              "line": "• $nxe^{-nx^2}$：$\\sqrt{\\frac n{2e}}\\to\\infty$，不一致",
+              "on": "第三"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$x^n$ 在 $[0,1)$ 上逐點收斂到 0（連續函數）。收斂是一致的嗎？",
-      "options": [
-        { "label": "不是，$\\sup_{[0,1)} x^n=1$ 不趨近 0", "correct": true },
-        { "label": "是，因為極限函數 0 連續", "why": "你把定理反過來用了。「一致 $\\Rightarrow$ 極限連續」的逆命題不成立。" },
-        { "label": "是，因為每個 $x<1$ 都有 $x^n\\to0$", "why": "那只是逐點收斂。$x$ 越靠近 1 要的 $N$ 越大，沒有共用的 $N$。" }
+      "title": "一致收斂保住連續",
+      "beats": [
+        {
+          "show": [
+            "定理：每個 $f_n$ 在 $c\\in D$ 連續，且 $f_n\\to f$ 在 $D$ 上一致收斂"
+          ],
+          "say": "現在證明這一課最重要的定理：如果每一個 f n 都在 c 連續，而且一致收斂到 f，那 f 也在 c 連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：每個 $f_n$ 在 $c\\in D$ 連續，且 $f_n\\to f$ 在 $D$ 上一致收斂"
+            },
+            {
+              "do": "write",
+              "line": "$\\Rightarrow$ $f$ 在 $c$ 連續",
+              "color": "gold",
+              "on": "連續#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：從 $f(x)$ 走到 $f(c)$，繞道 $f_N$，三段各 $<\\frac\\varepsilon3$",
+            "圖"
+          ],
+          "say": "策略：從 f of x 走到 f of c，繞道走：先跳到 f N，沿著 f N 走到 c，再跳回 f。三段各控制在三分之艾普西隆以內。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：從 $f(x)$ 走到 $f(c)$，繞道 $f_N$，三段各 $<\\frac\\varepsilon3$"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 270\" width=\"640\" height=\"270\"><polyline points=\"40,188.3 45,188.2 50,188.0 55,187.9 60,187.7 65,187.6 70,187.4 75,187.2 80,187.0 85,186.8 90,186.5 95,186.3 100,186.0 105,185.8 110,185.4 115,185.1 120,184.8 125,184.4 130,184.0 135,183.6 140,183.2 145,182.7 150,182.2 155,181.7 160,181.1 165,180.5 170,179.8 175,179.2 180,178.4 185,177.7 190,176.9 195,176.0 200,175.1 205,174.2 210,173.2 215,172.2 220,171.1 225,169.9 230,168.7 235,167.5 240,166.2 245,164.8 250,163.4 255,161.9 260,160.4 265,158.8 270,157.2 275,155.6 280,153.8 285,152.1 290,150.3 295,148.5 300,146.6 305,144.7 310,142.8 315,140.9 320,138.9 325,137.0 330,135.0 335,133.0 340,131.1 345,129.1 350,127.2 355,125.3 360,123.4 365,121.5 370,119.7 375,117.9 380,116.2 385,114.4 390,112.8 395,111.2 400,109.6 405,108.1 410,106.6 415,105.2 420,103.8 425,102.5 430,101.3 435,100.1 440,98.9 445,97.8 450,96.8 455,95.8 460,94.9 465,94.0 470,93.1 475,92.3 480,91.6 485,90.8 490,90.2 495,89.5 500,88.9 505,88.3 510,87.8 515,87.3 520,86.8 525,86.4 530,86.0 535,85.6 540,85.2 545,84.9 550,84.6 555,84.2 560,84.0 565,83.7 570,83.5 575,83.2 580,83.0 585,82.8 590,82.6 595,82.4 600,82.3\" fill=\"none\" stroke=\"var(--ink)\" stroke-width=\"3\"/><polyline points=\"40,148.9 45,149.2 50,149.4 55,149.5 60,149.6 65,149.5 70,149.4 75,149.2 80,148.9 85,148.5 90,148.0 95,147.4 100,146.8 105,146.1 110,145.3 115,144.4 120,143.5 125,142.6 130,141.5 135,140.5 140,139.3 145,138.2 150,137.0 155,135.9 160,134.7 165,133.5 170,132.3 175,131.1 180,129.9 185,128.7 190,127.6 195,126.5 200,125.4 205,124.3 210,123.2 215,122.2 220,121.2 225,120.2 230,119.2 235,118.2 240,117.3 245,116.4 250,115.4 255,114.5 260,113.5 265,112.5 270,111.6 275,110.5 280,109.5 285,108.4 290,107.3 295,106.1 300,104.9 305,103.6 310,102.2 315,100.8 320,99.3 325,97.8 330,96.2 335,94.5 340,92.8 345,91.0 350,89.2 355,87.3 360,85.3 365,83.3 370,81.3 375,79.2 380,77.1 385,75.0 390,72.9 395,70.8 400,68.6 405,66.5 410,64.4 415,62.4 420,60.4 425,58.4 430,56.5 435,54.6 440,52.8 445,51.1 450,49.5 455,48.0 460,46.6 465,45.2 470,44.0 475,42.9 480,41.9 485,41.0 490,40.2 495,39.5 500,39.0 505,38.5 510,38.1 515,37.9 520,37.8 525,37.7 530,37.7 535,37.8 540,38.0 545,38.2 550,38.5 555,38.9 560,39.2 565,39.6 570,40.1 575,40.5 580,40.9 585,41.3 590,41.7 595,42.1 600,42.4\" fill=\"none\" stroke=\"var(--blue)\" stroke-width=\"3\"/><text x=\"606\" y=\"90.2\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"26\" fill=\"var(--ink)\">f</text><text x=\"606\" y=\"38.4\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"26\" fill=\"var(--blue)\">f<tspan font-size=\"18\" dy=\"6\">N</tspan></text><line x1=\"40\" y1=\"235\" x2=\"610\" y2=\"235\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"250\" y1=\"235\" x2=\"250\" y2=\"115.4\" stroke=\"var(--muted)\" stroke-dasharray=\"6 6\"/><line x1=\"380\" y1=\"235\" x2=\"380\" y2=\"77.1\" stroke=\"var(--muted)\" stroke-dasharray=\"6 6\"/><text x=\"250\" y=\"262\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"26\">c</text><text x=\"380\" y=\"262\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"26\">x</text><line x1=\"250\" y1=\"163.4\" x2=\"250\" y2=\"115.4\" stroke=\"var(--red)\" stroke-width=\"6\"/><line x1=\"380\" y1=\"116.1\" x2=\"380\" y2=\"77.1\" stroke=\"var(--red)\" stroke-width=\"6\"/><circle cx=\"250\" cy=\"163.4\" r=\"6\" fill=\"var(--ink)\"/><circle cx=\"250\" cy=\"115.4\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"380\" cy=\"116.1\" r=\"6\" fill=\"var(--ink)\"/><circle cx=\"380\" cy=\"77.1\" r=\"6\" fill=\"var(--blue)\"/><text x=\"260\" y=\"151.4\" font-size=\"22\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">①</text><text x=\"390\" y=\"104.6\" font-size=\"22\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">③</text><text x=\"315\" y=\"63.1\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">②</text></svg>",
+              "on": "沿著"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• ①③：一致收斂，同一個 $N$ 在 $x$ 和 $c$ 都有效",
+            "• ②：只用 一條 $f_N$ 的連續性"
+          ],
+          "say": "第一、三段靠一致收斂：同一個 N 在 x 和 c 都有效。第二段只用一條 f N 的連續性。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• ①③：一致收斂，同一個 $N$ 在 $x$ 和 $c$ 都有效"
+            },
+            {
+              "do": "write",
+              "line": "• ②：只用 一條 $f_N$ 的連續性",
+              "on": "都有"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明",
+      "beats": [
+        {
+          "show": [
+            "證明：給 $\\varepsilon>0$。"
+          ],
+          "say": "正式證明。給艾普西隆。由一致收斂取一個 N，讓每一點的差都小於三分之艾普西隆。再由 f N 在 c 連續取得塔，讓 f N 的變化也小於三分之艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給 $\\varepsilon>0$。"
+            },
+            {
+              "do": "write",
+              "line": "一致收斂：取 $N$，使 $\\forall y\\in D$：$|f_N(y)-f(y)|<\\frac\\varepsilon3$",
+              "on": "點的"
+            },
+            {
+              "do": "write",
+              "line": "$f_N$ 在 $c$ 連續：取 $\\delta>0$，$|x-c|<\\delta$，$x\\in D$ 時 $|f_N(x)-f_N(c)|<\\frac\\varepsilon3$",
+              "on": "連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|x-c|<\\delta$ 時：",
+            "$\\begin{aligned}|f(x)-f(c)|&\\le|f(x)-f_N(x)|+|f_N(x)-f_N(c)|\\\\&\\quad+|f_N(c)-f(c)|\\\\&<\\tfrac\\varepsilon3+\\tfrac\\varepsilon3+\\tfrac\\varepsilon3=\\varepsilon\\quad\\blacksquare\\end{aligned}$"
+          ],
+          "say": "那麼 x 離 c 不到得塔時，用三角不等式拆成三段，每段小於三分之艾普西隆，加起來小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|x-c|<\\delta$ 時："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}|f(x)-f(c)|&\\le|f(x)-f_N(x)|+|f_N(x)-f_N(c)|\\\\&\\quad+|f_N(c)-f(c)|\\\\&<\\tfrac\\varepsilon3+\\tfrac\\varepsilon3+\\tfrac\\varepsilon3=\\varepsilon\\quad\\blacksquare\\end{aligned}}}}$",
+              "on": "角不"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "西隆#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼逐點不夠？ 若只有逐點收斂，第①段的 $N$ 會依賴 $x$"
+          ],
+          "say": "為什麼逐點不夠？那樣第一段的 N 要看 x，換一個 x 就換一條 f N，第二段的得塔也跟著換，論證繞成一個圈。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼逐點不夠？ 若只有逐點收斂，第①段的 $N$ 會依賴 $x$"
+            },
+            {
+              "do": "write",
+              "line": "換一個 $x$，就得換一條 $f_N$，第②段的 $\\delta$ 也跟著換",
+              "on": "就換"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一致收斂把 $N$ 先固定，$\\delta$ 才有東西可以依靠"
+          ],
+          "say": "一致收斂讓我們先把 N 固定下來，得塔才有一條確定的函數可以依靠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一致收斂把 $N$ 先固定，$\\delta$ 才有東西可以依靠",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "推論：否定一致",
+      "beats": [
+        {
+          "show": [
+            "推論（逆否）：連續函數列的極限不連續 $\\Rightarrow$ 收斂不是一致的"
+          ],
+          "say": "推論，用逆否命題：如果連續函數列的極限不連續，收斂就一定不是一致的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論（逆否）：連續函數列的極限不連續 $\\Rightarrow$ 收斂不是一致的",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "推論：否定一致",
+      "beats": [
+        {
+          "show": [
+            "推論只能否定一致：極限連續時，什麼也說不出（例二）"
+          ],
+          "say": "注意推論只能用來否定一致。極限連續的時候，推論什麼也說不出，例二就是這樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論只能否定一致：極限連續時，什麼也說不出（例二）"
+            },
+            {
+              "do": "write",
+              "line": "　例二：$[0,1)$ 上極限連續，卻仍然不一致",
+              "color": "violet",
+              "on": "時候"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 一致收斂：$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x$：$N$ 不准看 $x$",
+            "• 圖：從某條起，整條 $f_n$ 都在 $f\\pm\\varepsilon$ 的管子裡"
+          ],
+          "say": "整理一下：一致收斂的 N 不准看 x，圖上就是整條曲線住進管子；判斷時算上確界範數；證明連續用三個三分之艾普西隆；反過來，極限不連續就一定不一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 一致收斂：$\\forall\\varepsilon\\ \\exists N\\ \\forall n\\ge N\\ \\forall x$：$N$ 不准看 $x$"
+            },
+            {
+              "do": "write",
+              "line": "• 圖：從某條起，整條 $f_n$ 都在 $f\\pm\\varepsilon$ 的管子裡",
+              "on": "准看"
+            },
+            {
+              "do": "write",
+              "line": "• 判斷：$\\|f_n-f\\|_\\infty=\\sup_D|f_n-f|\\to0$",
+              "on": "管子"
+            },
+            {
+              "do": "write",
+              "line": "• 否定：每條夠後面的 $f_n$ 上都有一點跑出管子",
+              "on": "明連"
+            },
+            {
+              "do": "write",
+              "line": "• 一致極限保住連續（$\\frac\\varepsilon3$ 論證）；逆否用來否定一致",
+              "on": "過來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：怎麼判斷一致收斂"
+          ],
+          "say": "下一課，我們整理判斷一致收斂的工具。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：怎麼判斷一致收斂"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["uniform-convergence", "sequence"],
-    "fine": ["uniformconv-quantifier-order", "uniformconv-sup-norm", "uniformconv-continuous-limit", "uniformconv-negation-witness"]
+    "coarse": [
+      "uniform-convergence",
+      "sequence"
+    ],
+    "fine": [
+      "uniformconv-quantifier-order",
+      "uniformconv-sup-norm",
+      "uniformconv-continuous-limit",
+      "uniformconv-negation-witness"
+    ]
   },
   "practice": [
-    { "id": "an-uf-002", "core": true, "trains": "uniformconv-sup-norm" },
-    { "id": "an-uf-001", "core": true, "trains": "uniformconv-continuous-limit" },
-    { "id": "an-uf-004", "core": true, "trains": "uniformconv-sup-norm" },
-    { "id": "an-uf-003", "core": true, "trains": "uniformconv-sup-norm" },
-    { "id": "cg-12f-009", "core": true, "trains": "uniformconv-quantifier-order" },
-    { "id": "cg-12f-006", "core": true, "trains": "uniformconv-negation-witness" },
-    { "id": "cg-12f-008", "trains": "uniformconv-quantifier-order" },
-    { "id": "an-uf-005", "challenge": true, "trains": "uniformconv-negation-witness", "note": "挑戰：用上一題的 $\\|f_n\\|_\\infty\\to\\infty$ 寫出否定句：取 $\\varepsilon_0$ 與 $x_n=\\frac{1}{\\sqrt{2n}}$。" },
-    { "id": "cg-12f-007", "challenge": true, "trains": "uniformconv-negation-witness" }
+    {
+      "id": "an-uf-002",
+      "core": true,
+      "trains": "uniformconv-sup-norm"
+    },
+    {
+      "id": "an-uf-001",
+      "core": true,
+      "trains": "uniformconv-continuous-limit"
+    },
+    {
+      "id": "an-uf-004",
+      "core": true,
+      "trains": "uniformconv-sup-norm"
+    },
+    {
+      "id": "an-uf-003",
+      "core": true,
+      "trains": "uniformconv-sup-norm"
+    },
+    {
+      "id": "cg-12f-009",
+      "core": true,
+      "trains": "uniformconv-quantifier-order"
+    },
+    {
+      "id": "cg-12f-006",
+      "core": true,
+      "trains": "uniformconv-negation-witness"
+    },
+    {
+      "id": "cg-12f-008",
+      "trains": "uniformconv-quantifier-order"
+    },
+    {
+      "id": "an-uf-005",
+      "challenge": true,
+      "trains": "uniformconv-negation-witness",
+      "note": "挑戰：用上一題的 $\\|f_n\\|_\\infty\\to\\infty$ 寫出否定句：取 $\\varepsilon_0$ 與 $x_n=\\frac{1}{\\sqrt{2n}}$。"
+    },
+    {
+      "id": "cg-12f-007",
+      "challenge": true,
+      "trains": "uniformconv-negation-witness"
+    }
   ],
   "gaps": []
 }

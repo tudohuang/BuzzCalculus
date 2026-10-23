@@ -1,272 +1,161 @@
 {
   "id": "complex-differentiability",
   "title": "複變可微",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["complex-limit", "derivative-definition", "jacobian-geometry"],
-  "next": ["cauchy-riemann"],
+  "prerequisites": [
+    "complex-limit",
+    "derivative-definition",
+    "jacobian-geometry"
+  ],
+  "next": [
+    "cauchy-riemann"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 $f'(z_0)=\\lim_{h\\to 0}\\frac{f(z_0+h)-f(z_0)}{h}$，並說清楚 $h$ 是複數、要從所有方向趨近。",
-    "用定義證明 $z^2$ 可微、$\\bar{z}$ 處處不可微、$|z|^2$ 只在 $0$ 可微。",
-    "說出 $f'(z_0)$ 的幾何意義：在 $z_0$ 附近，$f$ 把小圖形旋轉 $\\arg f'(z_0)$、放大 $|f'(z_0)|$ 倍。"
+    "寫得出 $f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}{h}$，並說清楚 $h$ 是複數、可以從任何方向趨近 $0$",
+    "用定義證明 $z^2$ 可微、$\\bar z$ 處處不可微、$|z|^2$ 只在 $0$ 可微",
+    "說出 $f'(z_0)$ 的幾何意義：在 $z_0$ 附近，$f$ 把小圖形旋轉 $\\arg f'(z_0)$、放大 $|f'(z_0)|$ 倍"
   ],
-  "visual": "z 平面上 z₀ 附近畫一個小方格與一個小圓，右邊畫它們在 f 之下的像。f = z² 時，小方格被轉了一個角度、等比例放大，仍然是小方格（角度保持）。f = z̄ 時小方格被鏡射，方向反了；f = x + 2iy 這類只在一個方向拉長的映射，小圓變成橢圓。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 定義跟實數長得一樣",
       "body": [
-        "$f'(z_0)=\\lim_{h\\to 0}\\frac{f(z_0+h)-f(z_0)}{h}$。差別在 $h$ 是複數：$h$ 可以沿實軸、虛軸、任何方向趨近 $0$，差商都要趨近同一個複數。",
-        "這個要求比看起來嚴格得多。在 $\\mathbb{R}^2$ 上可微（〈Jacobian 的幾何意義〉）只要求局部長得像一個 $2\\times 2$ 線性映射；複變可微要求這個線性映射是「乘以一個複數 $f'(z_0)$」，也就是旋轉加等比例縮放，不能拉成橢圓、不能鏡射。"
+        "$f$ 在 $z_0$ 的某個圓盤裡有定義：",
+        "這個極限存在，就說 $f$ 在 $z_0$ 可微",
+        "差別只有一個：$h$ 是複數",
+        "• $h\\to0$ 可以從任何方向、沿任何路徑",
+        "• 上一課：每條路都要給同一個極限",
+        "• 所以「可微」對 $f$ 的要求，比實數嚴格得多",
+        "除法要用複數除法：$h\\ne0$ 時 $\\frac1h=\\frac{\\bar h}{|h|^2}$"
       ],
-      "collapsible": false
+      "tex": [
+        "f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}{h}"
+      ]
     },
     {
-      "heading": "② 例子：$z^2$ 可以，$\\bar{z}$ 不行",
+      "heading": "① 兩個基本事實",
       "body": [
-        "$f(z)=z^2$：$\\frac{(z+h)^2-z^2}{h}=2z+h\\to 2z$，跟 $h$ 的方向無關。所以 $(z^2)'=2z$。",
-        "$f(z)=\\bar{z}$：差商是 $\\frac{\\bar{h}}{h}$。$h$ 沿實軸時 $\\frac{\\bar{h}}{h}=1$，沿虛軸時 $\\frac{\\bar{h}}{h}=-1$，沒有極限。所以 $\\bar{z}$ 在每一點都不可微——雖然它的實部 $x$、虛部 $-y$ 都是最平滑的函數。",
-        "$f(z)=|z|^2=z\\bar{z}$：差商 $=\\bar{z}+z\\frac{\\bar{h}}{h}+\\bar{h}$。$z\\ne 0$ 時中間那項跟方向有關，不可微；$z=0$ 時差商 $=\\bar{h}\\to 0$，可微，$f'(0)=0$。可微的點可以只有一個。"
+        "線性近似：$f$ 在 $z_0$ 可微、$f'(z_0)=a$ $\\iff$",
+        "定義 $\\eta(h)=\\frac{f(z_0+h)-f(z_0)}h-a$（$h\\ne0$），$\\eta(0)=0$；兩個敘述互相推得",
+        "可微 ⇒ 連續：$h\\to0$ 時",
+        "所以 $\\displaystyle\\lim_{z\\to z_0}f(z)=f(z_0)$　$\\blacksquare$",
+        "反過來不成立：第 ② 段的 $\\bar z$ 處處連續、處處不可微"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f(z_0+h)=f(z_0)+a\\,h+\\eta(h)\\,h\\\\&\\text{其中}\\ \\eta(h)\\to0\\ \\ (h\\to0)\\end{aligned}",
+        "f(z_0+h)-f(z_0)=\\big(a+\\eta(h)\\big)h\\to(a+0)\\cdot0=0"
+      ]
+    },
+    {
+      "heading": "② $z^2$ 可以",
+      "body": [
+        "差商（$h\\ne0$）：",
+        "不管 $h$ 從哪個方向來，$2z+h\\to2z$：",
+        "例：$f'(1+i)=2(1+i)=2+2i$",
+        "用實部虛部檢查：$u=x^2-y^2$，$v=2xy$",
+        "• $h$ 沿實軸（$h=t$）：差商 $\\to u_x+i\\,v_x=2x+2iy$",
+        "• $h$ 沿虛軸（$h=it$）：差商 $\\to\\dfrac{u_y+i\\,v_y}{i}=\\dfrac{-2y+2ix}{i}=2x+2iy$",
+        "在 $(1,1)$：兩個方向都是 $2+2i$"
+      ],
+      "tex": [
+        "\\frac{(z+h)^2-z^2}{h}=\\frac{2zh+h^2}{h}=2z+h",
+        "\\frac{d}{dz}z^2=2z\\quad\\text{（處處可微）}"
+      ]
+    },
+    {
+      "heading": "② $\\bar z$ 不行",
+      "body": [
+        "任何一點 $z$，差商是",
+        "上一課：$h$ 沿實軸 $\\to1$，沿虛軸 $\\to-1$",
+        "可是 $u=x$，$v=-y$ 是最平滑的實函數",
+        "把它看成 $\\mathbb R^2\\to\\mathbb R^2$ 的映射，它是對 $x$ 軸的鏡射，完全可微",
+        "複數可微 $\\ne$ 實部、虛部各自可微"
+      ],
+      "tex": [
+        "\\frac{\\overline{z+h}-\\bar z}{h}=\\frac{\\bar h}{h}",
+        "\\bar z\\ \\text{在}\\ \\text{每一點都不可微}"
+      ]
+    },
+    {
+      "heading": "② $|z|^2$ 只在 $0$ 可以",
+      "body": [
+        "$f(z)=|z|^2=z\\bar z$，展開 $|z+h|^2=(z+h)(\\bar z+\\bar h)$：",
+        "• 在 $z=0$：差商 $=\\bar h\\to0$，所以 $f'(0)=0$",
+        "• 在 $z\\ne0$：$\\bar z+\\bar h\\to\\bar z$，但 $z\\frac{\\bar h}{h}$ 沿實軸 $\\to z$、沿虛軸 $\\to-z$",
+        "例：在 $z=1$，沿實軸差商 $\\to2$，沿虛軸 $\\to0$"
+      ],
+      "tex": [
+        "\\frac{|z+h|^2-|z|^2}{h}=\\frac{z\\bar h+\\bar zh+h\\bar h}{h}=\\bar z+\\bar h+z\\,\\frac{\\bar h}{h}",
+        "|z|^2\\ \\text{只在}\\ z=0\\ \\text{可微}"
+      ]
     },
     {
       "heading": "③ 運算法則照搬",
       "body": [
-        "和、差、積、商、合成的微分法則，證明跟實數一字不差（只用到極限定律）。所以多項式處處可微、$(z^n)'=nz^{n-1}$，有理函數在分母不為 $0$ 處可微。$e^z$、$\\sin z$ 的可微性下一課用 Cauchy–Riemann 方程確認。"
+        "$f,g$ 在 $z_0$ 可微，則 $f\\pm g$、$fg$、$\\dfrac fg$（$g(z_0)\\ne0$）也可微",
+        "積的證明：",
+        "$h\\to0$：$f(z_0+h)\\to f(z_0)$（可微 ⇒ 連續），得 $f'g+fg'$　$\\blacksquare$",
+        "冪次：歸納，$(z^{n})'=(z\\cdot z^{n-1})'=z^{n-1}+z\\,(n-1)z^{n-2}=nz^{n-1}$",
+        "商的法則用 $\\big(\\frac1g\\big)'=-\\frac{g'}{g^2}$ 再乘；例：$\\big(\\frac1z\\big)'=-\\frac1{z^2}$（$z\\ne0$）"
       ],
-      "collapsible": false
+      "tex": [
+        "(fg)'=f'g+fg',\\quad\\Big(\\frac fg\\Big)'=\\frac{f'g-fg'}{g^2}",
+        "\\begin{aligned}\\frac{fg(z_0+h)-fg(z_0)}{h}=\\ &f(z_0+h)\\,\\frac{g(z_0+h)-g(z_0)}{h}\\\\&+g(z_0)\\,\\frac{f(z_0+h)-f(z_0)}{h}\\end{aligned}"
+      ]
     },
     {
-      "heading": "④ 幾何：局部是旋轉加縮放",
+      "heading": "③ 連鎖律",
       "body": [
-        "$f(z_0+h)\\approx f(z_0)+f'(z_0)h$。乘以 $f'(z_0)=re^{i\\varphi}$ 就是轉 $\\varphi$、放大 $r$ 倍。所以 $f'(z_0)\\ne 0$ 時，$f$ 在 $z_0$ 附近保持兩條曲線的夾角（含方向），這叫保角。"
+        "$f$ 在 $z_0$ 可微，$g$ 在 $w_0=f(z_0)$ 可微 ⇒",
+        "證明：用線性近似寫 $g$：",
+        "代 $k=f(z_0+h)-f(z_0)$，除以 $h$：",
+        "$h\\to0$：$k\\to0$（$f$ 連續）所以 $\\eta(k)\\to0$；$\\dfrac kh\\to f'(z_0)$　$\\blacksquare$",
+        "$k$ 可能等於 $0$：這就是要先寫線性近似的原因（$\\eta(0)=0$，式子照樣成立）"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "定義長得一樣",
-      "beats": [
-        { "show": ["$f'(z_0)=\\lim_{h\\to 0}\\frac{f(z_0+h)-f(z_0)}{h}$"],
-          "say": "複變的導數，定義跟實數一字不差：差商取極限。",
-          "board": [
-            {"do":"write","line":"$f'(z_0)=\\lim_{h\\to 0}{{q:\\frac{f(z_0+h)-f(z_0)}{h}}}$"},
-            {"do":"underline","term":"q","label":"差商","on":"差商"}
-          ] },
-        { "show": ["$h$ 是複數：任何方向趨近 $0$"],
-          "note": "每個方向的差商都要趨近同一個數。",
-          "say": "差別在 h 是複數，可以從任何方向趨近零，每個方向的差商都要趨近同一個複數。",
-          "board": [
-            {"do":"write","line":"$h$ 是複數：任何方向趨近 $0$"},
-            {"do":"write","line":"每個方向的差商 → 同一個複數","on":"每個方向"}
-          ] },
-        { "show": ["局部必須是：旋轉加等比例縮放"],
-          "note": "不能拉成橢圓、不能鏡射。",
-          "say": "這比看起來嚴格得多：局部的線性部分必須是乘一個複數，只能轉和等比例縮放。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"局部：$c\\,h$，$c$ 是複數","on":"局部"},
-            {"do":"write","line":"只能：旋轉＋等比例縮放","on":"只能轉"}
-          ] },
-        { "show": ["$f(z)=z^2$"],
-          "say": "先看一個可以的例子：z 平方。寫出差商，看看 h 的方向有沒有影響。",
-          "board": [
-            {"do":"write","line":"$f(z)=z^2$"},
-            {"do":"write","line":"看 $h$ 的方向有沒有影響","on":"看看"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\frac{(z+h)^2-z^2}{h}$ 化簡是？",
-        "options": [
-          {
-            "label": "$2z+h$，$h\\to 0$ 得 $2z$，跟方向無關",
-            "correct": true
-          },
-          {
-            "label": "$2zh+h^2$",
-            "why": "那是分子；除以 $h$ 得 $2z+h$。"
-          },
-          {
-            "label": "$\\frac{\\bar{h}}{h}$",
-            "why": "那是 $\\bar{z}$ 的差商。$(z+h)^2-z^2=2zh+h^2$，除以 $h$ 得 $2z+h$。"
-          }
-        ]
-      }
+      "tex": [
+        "(g\\circ f)'(z_0)=g'(w_0)\\,f'(z_0)",
+        "\\begin{aligned}&g(w_0+k)-g(w_0)=\\big(g'(w_0)+\\eta(k)\\big)k\\\\&\\eta(k)\\to0\\ \\ (k\\to0),\\quad\\eta(0)=0\\end{aligned}",
+        "\\frac{g(f(z_0+h))-g(w_0)}{h}=\\big(g'(w_0)+\\eta(k)\\big)\\frac{k}{h}"
+      ]
     },
     {
-      "title": "證明：$\\bar{z}$ 不行",
-      "beats": [
-        { "show": ["差商化簡，再找兩個方向"],
-          "note": "可微：每個方向的差商都趨近同一個數。",
-          "say": "換成共軛函數，證明它在每一點都不可微。策略：先化簡差商，再找兩個方向給出不同的值。",
-          "board": [
-            {"do":"write","line":"$f(z)=\\bar{z}$","on":"共軛函數"},
-            {"do":"write","line":"化簡差商，再找兩個方向","on":"策略"}
-          ] },
-        { "show": ["$\\frac{\\overline{z+h}-\\bar{z}}{h}=\\frac{\\bar{h}}{h}$"],
-          "note": "$\\overline{z+h}=\\bar{z}+\\bar{h}$，兩個 $\\bar{z}$ 相減。",
-          "why": {"ask":"差商為什麼跟 $z$ 無關？","say":"差商化簡後，z 不見了。為什麼？","options":[{"label":"共軛可以拆開：$\\overline{z+h}=\\bar{z}+\\bar{h}$","correct":true},{"label":"$\\bar{z}$ 是常數","why":"$\\bar{z}$ 跟著 $z$ 變；消掉是因為共軛拆開後兩個 $\\bar{z}$ 相減。"},{"label":"$h\\to0$ 時 $z$ 不重要","why":"$z^2$ 的差商是 $2z+h$，就跟 $z$ 有關；這裡是共軛拆開讓 $\\bar{z}$ 消掉。"}]},
-          "say": "共軛可以拆開，z 加 h 的共軛是 z 共軛加 h 共軛，兩個 z 共軛相減消掉，剩 h 共軛除以 h。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{\\overline{z+h}-\\bar{z}}{h}={{q:\\frac{\\bar{h}}{h}}}$","on":"差商化簡後"},
-            {"do":"underline","term":"q","label":"共軛拆開","on":"共軛可以拆開","why":true}
-          ] },
-        { "show": ["$h=t(1+im)$：實部 $\\frac{1-m^2}{1+m^2}$"],
-          "note": "$t$ 是實數 $\\to0$，約掉。",
-          "say": "讓 h 沿斜率 m 的直線趨近零，實數 t 約掉，實部是一加 m 平方分之一減 m 平方。",
-          "board": [
-            {"do":"write","line":"$h=t(1+im)$：實部 ${{re:\\frac{1-m^2}{1+m^2}}}$","on":"斜率 m"},
-            {"do":"underline","term":"re","on":"實部是"}
-          ] },
-        { "show": ["$\\frac{1-im}{1+im}$ 的實部與虛部"],
-          "say": "分子分母同乘一加 i m 的共軛，實部是一減 m 平方，虛部是負二 m，分母都是一加 m 平方。",
-          "board": [
-            {"do":"write","line":"$\\frac{1-im}{1+im}={{a1:\\frac{1-m^2}{1+m^2}}}-i\\frac{2m}{1+m^2}$"},
-            {"do":"underline","term":"a1","label":"實部","on":"實部是"}
-          ] },
-        { "show": ["實部不同，兩數就不同"],
-          "say": "兩個複數只要實部不一樣，就是不同的數。所以這裡只比實部，不必管虛部。",
-          "board": [
-            {"do":"write","line":"實部不同，兩數就不同"},
-            {"do":"write","line":"只比實部就夠","on":"只比"}
-          ] },
-        { "show": ["$m=0$ 得 $1$，$m=1$ 得 $0$"],
-          "note": "方向不同、值不同：極限不存在。",
-          "why": {"ask":"為什麼這樣就證完了？","say":"實軸得一，m 等於一得零。為什麼這樣就證完了？","options":[{"label":"可微要每個方向都趨近同一個數","correct":true},{"label":"沿 $m=0$ 一條就看得出來","why":"一條路徑只給一個值，看不出矛盾；要兩個方向給出不同的值。"},{"label":"$\\frac{\\bar{h}}{h}$ 在 $h=0$ 沒有定義","why":"差商本來就不看 $h=0$；問題是不同方向趨近的值不同。"}]},
-          "say": "兩個方向的值不同，差商沒有極限。差商又跟 z 無關，所以每一點都不可微。問題在它是鏡射，不是旋轉。",
-          "board": [
-            {"do":"write","line":"$m=0$ 得 ${{one:1}}$，$m=1$ 得 ${{zero:0}}$"},
-            {"do":"write","line":"差商 ${{q:\\frac{\\bar{h}}{h}}}$ 跟 $z$ 無關","on":"差商又跟","why":true}
-          ] }
+      "heading": "④ 幾何：旋轉加縮放",
+      "body": [
+        "線性近似：$f(z_0+h)\\approx f(z_0)+f'(z_0)\\,h$",
+        "乘一個複數 $a=\\rho e^{i\\varphi}$：$|ah|=\\rho|h|$，$\\arg(ah)=\\arg h+\\varphi$",
+        "所以夾角保持不變（保角）；$f'(z_0)=0$ 時不適用，例：$z^2$ 在 $0$ 把角度加倍",
+        "紅、藍箭頭是 $f'(z_0)h$；格線是 $f$ 真正的像，$h$ 越小越吻合"
       ],
-      "key": "差商只剩 $\\frac{\\bar h}{h}$，換方向就換值",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "直接",
-      "check": 0
+      "tex": [
+        "\\begin{aligned}&f'(z_0)\\ne0\\text{：小圖形轉}\\ \\arg f'(z_0)\\\\&\\text{放大}\\ |f'(z_0)|\\ \\text{倍}\\end{aligned}"
+      ]
     },
     {
-      "title": "只在一點可微",
-      "beats": [
-        { "show": ["$f(z)=|z|^2=z\\bar{z}$"],
-          "say": "再看 z 的長度平方，也就是 z 乘它的共軛。",
-          "board": [
-            {"do":"write","line":"$f(z)=|z|^2=z\\bar{z}$"}
-          ] },
-        { "show": ["先展開分子","$(z+h)(\\bar{z}+\\bar{h})-z\\bar{z}$"],
-          "say": "先展開分子：z 加 h 乘 z 共軛加 h 共軛，減 z 乘 z 共軛，這一項會消掉，剩三項。",
-          "board": [
-            {"do":"write","line":"$(z+h)(\\bar{z}+\\bar{h})-z\\bar{z}$"},
-            {"do":"write","line":"$=z\\bar{h}+h\\bar{z}+h\\bar{h}$","on":"這一項"}
-          ] },
-        { "show": ["每一項除以 $h$"],
-          "say": "每一項除以 h：h 乘 z 共軛約成 z 共軛，h 乘 h 共軛約成 h 共軛，z 乘 h 共軛不能約。",
-          "board": [
-            {"do":"write","line":"$\\frac{z\\bar{h}+h\\bar{z}+h\\bar{h}}{h}$"},
-            {"do":"write","line":"$=z\\frac{\\bar{h}}{h}+\\bar{z}+\\bar{h}$","on":"約成#1"}
-          ] },
-        { "show": ["差商 $=\\bar{z}+z\\frac{\\bar{h}}{h}+\\bar{h}$"],
-          "say": "差商有三項。中間那項帶著 h 共軛除以 h，會跟方向有關，除非前面的 z 是零。",
-          "board": [
-            {"do":"write","line":"差商 $=\\bar{z}+{{mid:{{zz:z}}\\frac{\\bar{h}}{h}}}+\\bar{h}$"},
-            {"do":"underline","term":"mid","label":"跟方向有關","on":"中間那項"},
-            {"do":"focus","term":"zz","on":"前面的 z"}
-          ] },
-        { "show": ["$z\\ne 0$：不可微","$z=0$：差商 $=\\bar{h}\\to 0$"],
-          "say": "所以 z 不是零時不可微；z 是零時只剩 h 共軛，趨近零。可微的點可以只有一個。",
-          "board": [
-            {"do":"write","line":"$z\\ne0$：不可微"},
-            {"do":"write","line":"$z=0$：差商 $=\\bar{h}\\to0$","on":"z 是零時"}
-          ] }
+      "heading": "④ 對照 Jacobian",
+      "body": [
+        "看成 $\\mathbb R^2\\to\\mathbb R^2$：乘 $a=p+iq$ 的矩陣是",
+        "複數可微 = Jacobian 是這種形狀",
+        "$\\det=p^2+q^2=|f'(z_0)|^2$：面積放大 $|f'|^2$ 倍；例：$z^2$ 在 $1+i$ 面積放大 $8$ 倍",
+        "$\\bar z$ 的 Jacobian $\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}$ 是鏡射：不是這種形狀",
+        "比較矩陣兩行：$u_x=v_y$、$u_y=-v_x$ ← 下一課"
       ],
-      "key": "展開差商，看 $\\frac{\\bar h}{h}$ 前面的係數",
-      "check": 3
+      "tex": [
+        "a(x+iy)=(px-qy)+i(qx+py)",
+        "\\Rightarrow\\ \\text{矩陣}\\ \\begin{pmatrix}p&-q\\\\q&p\\end{pmatrix}"
+      ]
     },
     {
-      "title": "運算法則照搬",
-      "beats": [
-        { "show": ["和、差、積、商、合成"],
-          "note": "證明只用到極限定律。",
-          "say": "和差積商、連鎖律，證明跟實數一字不差，因為只用到極限定律。" },
-        { "show": ["$(z^n)'=nz^{n-1}$"],
-          "note": "多項式處處可微。",
-          "say": "所以多項式處處可微，次方的微分公式照用；有理函數在分母不是零的地方可微。",
-          "board": [
-            {"do":"write","line":"$(z^n)'=nz^{n-1}$"}
-          ] },
-        { "show": ["$z^3=z^2\\cdot z$，用積的法則"],
-          "say": "用積的法則：z 三次方是 z 平方乘 z，導數是二 z 乘 z 加 z 平方乘一，等於三 z 平方。",
-          "board": [
-            {"do":"write","line":"$z^3=z^2\\cdot z$"},
-            {"do":"write","line":"$2z\\cdot z+z^2\\cdot 1=3z^2$","on":"導數是"}
-          ] },
-        { "show": ["每多乘一個 $z$，多推一步"],
-          "say": "每次多乘一個 z，積的法則就多推一步，一路推下去，就得到 n 乘 z 的 n 減一次方。",
-          "board": [
-            {"do":"write","line":"$z^{n+1}=z^n\\cdot z$"},
-            {"do":"write","line":"$nz^{n-1}z+z^n=(n+1)z^n$","on":"一路推下去"}
-          ] },
-        { "show": ["$f(z)=z^4$：$f'(1+i)=4(1+i)^3$"],
-          "note": "先算 $(1+i)^2=2i$。",
-          "say": "例如 z 四次方在一加 i：先算一加 i 的平方是二 i，比直接展開三次方不容易錯。",
-          "board": [
-            {"do":"write","line":"$f(z)=z^4$：$f'(1+i)=4(1+i)^3$","on":"例如"},
-            {"do":"write","line":"${{sq:(1+i)^2}}=2i$","on":"先算"}
-          ] },
-        { "show": ["$(1+i)^3=-2+2i$，$f'=-8+8i$"],
-          "say": "二 i 再乘一加 i 是負二加二 i，乘四得負八加八 i，實部是負八。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$(1+i)^3=2i(1+i)=-2+2i$","on":"二 i 再乘"},
-            {"do":"write","line":"$f'={{ans:-8+8i}}$","on":"乘四得"},
-            {"do":"box","term":"ans","color":"green","on":"實部是"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "旋轉加縮放",
-      "beats": [
-        { "show": ["$f(z_0+h)\\approx f(z_0)+f'(z_0)h$"],
-          "say": "在 z 零附近，f 差不多是 f 在 z 零的值，加上導數乘 h。",
-          "board": [
-            {"do":"write","line":"$f(z_0+h)\\approx {{v:f(z_0)}}+{{d:f'(z_0)h}}$"},
-            {"do":"underline","term":"d","color":"blue","label":"線性部分","on":"導數乘"}
-          ] },
-        { "show": ["$f'(z_0)=re^{i\\varphi}$：轉 $\\varphi$、放大 $r$ 倍"],
-          "say": "乘以導數，就是把小圖形轉一個角度、再等比例放大。小方格還是小方格。",
-          "board": [
-            {"do":"write","line":"$f'(z_0)={{r:r}}e^{i{{p:\\varphi}}}$"},
-            {"do":"focus","term":"p","label":"轉角","on":"轉一個角度"},
-            {"do":"focus","term":"r","label":"放大","on":"等比例放大"}
-          ] },
-        { "show": ["$f'(z_0)=2i$：$r=2$，$\\varphi=90^\\circ$","$1+i$ 方向的小向量 → $-2+2i$"],
-          "say": "例如導數是二 i，長度二、角度九十度。一加 i 方向的小向量乘二 i，變成負二加二 i。",
-          "board": [
-            {"do":"write","line":"$f'(z_0)=2i$：$r=2$，$\\varphi=90^\\circ$"},
-            {"do":"write","line":"$2i(1+i)=-2+2i$","on":"一加 i"},
-            {"do":"plot","graph":{"window":[-3,3,-3,3],"equal":true,"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"-x","domain":[-2,0],"color":"red"}]},"on":"變成"}
-          ] },
-        { "show": ["$f'(z_0)\\ne 0$：保角"],
-          "note": "兩條曲線的夾角（含方向）不變。",
-          "say": "導數不是零的地方，兩條曲線的夾角連方向都保持不變，這叫保角。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f'(z_0)\\ne0$：保角","on":"導數不是零"},
-            {"do":"write","line":"夾角（含方向）不變","on":"夾角"}
-          ] },
-        { "show": ["兩條線的方向乘同一個 $f'(z_0)$","$f'(z_0)=0$：全變 $0$"],
-          "say": "兩條曲線的方向都乘同一個導數，轉同樣角度，所以夾角連轉向都不變。導數是零就全變零，沒有方向。",
-          "board": [
-            {"do":"write","line":"兩條線的方向×同一個 $f'(z_0)$"},
-            {"do":"write","line":"同轉同放大，夾角不變","on":"夾角"},
-            {"do":"write","line":"$f'(z_0)=0$：全變 $0$，沒有方向","on":"導數是零"}
-          ] }
-      ],
-      "check": 2
+      "heading": "重點整理",
+      "body": [
+        "• $f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}h$，$h$ 從所有方向來",
+        "• 可微 ⇒ 連續；和差積商、連鎖律、冪次公式照搬",
+        "• $z^2$ 處處可微；$\\bar z$ 處處不可微；$|z|^2$ 只在 $0$ 可微",
+        "• 幾何：附近轉 $\\arg f'$、放大 $|f'|$；Jacobian 是旋轉加縮放",
+        "下一課：Cauchy–Riemann 方程"
+      ]
     }
   ],
   "workedExamples": [
@@ -313,50 +202,912 @@
   ],
   "checks": [
     {
-      "ask": "$f(z)=\\bar{z}$ 在哪些點複變可微？",
+      "ask": "$f(z)=|z|^2$ 在 $z=i$ 的差商，$h$ 沿實軸趨近 $0$ 的極限是？",
       "options": [
-        { "label": "沒有任何一點", "correct": true },
-        { "label": "處處可微，因為 $x$ 與 $-y$ 都可微", "why": "實部虛部可微只保證 $\\mathbb{R}^2$ 意義下可微；差商 $\\frac{\\bar{h}}{h}$ 沿不同方向是 $1$ 或 $-1$。" },
-        { "label": "只在 $0$", "why": "差商 $\\frac{\\bar{h}}{h}$ 跟 $z$ 無關，在 $0$ 也一樣沒有極限。只在 $0$ 可微的是 $|z|^2$。" }
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$2i$",
+          "why": "把 $\\bar z$ 當成 $z$：算成 $i+i$；$\\bar i=-i$"
+        },
+        {
+          "label": "$-2i$",
+          "why": "沿虛軸才是 $\\bar z-z=-2i$"
+        },
+        {
+          "label": "$2$",
+          "why": "把實數的 $(x^2)'=2x$ 搬過來，代 $|i|=1$；複數要重算差商"
+        }
       ]
     },
     {
-      "ask": "$(z^3)'$ 在 $z=i$ 的值是？",
+      "ask": "$f(z)=z^4$，$\\operatorname{Re}f'(1+i)=$？",
       "options": [
-        { "label": "$-3$", "correct": true },
-        { "label": "$3$", "why": "$3z^2$ 在 $z=i$ 是 $3i^2=-3$。" },
-        { "label": "$3i$", "why": "要代 $z^2=i^2=-1$，不是 $z=i$。" }
+        {
+          "label": "$-8$",
+          "correct": true
+        },
+        {
+          "label": "$8$",
+          "why": "那是虛部"
+        },
+        {
+          "label": "$4$",
+          "why": "$(1+i)^3=(2i)(1+i)=-2+2i$，不是 $1$"
+        },
+        {
+          "label": "$-2$",
+          "why": "忘了乘 $4$"
+        }
       ]
     },
     {
-      "ask": "$f'(z_0)=2i$ 的幾何意義是？",
+      "ask": "$f(z)=z^2$ 在 $z_0=i$ 附近，把小圖形怎麼變？",
       "options": [
-        { "label": "在 $z_0$ 附近把小圖形逆時針轉 $90^\\circ$、放大 $2$ 倍", "correct": true },
-        { "label": "往上平移 $2$", "why": "導數描述的是局部的線性部分（乘法），不是平移。" },
-        { "label": "在虛軸方向拉長 $2$ 倍、實軸方向不變", "why": "那種非等比例的拉伸不是複數乘法；複變可微要求各方向一樣伸縮。" }
+        {
+          "label": "轉 $90^\\circ$、放大 $2$ 倍",
+          "correct": true
+        },
+        {
+          "label": "轉 $45^\\circ$、放大 $2$ 倍",
+          "why": "$2i$ 的輻角是 $90^\\circ$；$45^\\circ$ 是在 $1+i$"
+        },
+        {
+          "label": "不轉、放大 $2$ 倍",
+          "why": "$f'(i)=2i$ 不是實數，有旋轉"
+        },
+        {
+          "label": "轉 $180^\\circ$、放大 $1$ 倍",
+          "why": "那是看 $f(i)=-1$；要看的是 $f'(i)$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義跟實數長得一樣",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $z_0$ 的某個圓盤裡有定義：",
+            "$f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}{h}$"
+          ],
+          "say": "複數的導數，定義跟實數一模一樣：差商的極限。f 要在 z 零周圍的圓盤裡有定義。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $z_0$ 的某個圓盤裡有定義："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}{h}}}$",
+              "on": "一樣"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "零周"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個極限存在，就說 $f$ 在 $z_0$ 可微",
+            "差別只有一個：$h$ 是複數"
+          ],
+          "say": "極限存在，就說 f 在 z 零可微。差別只有一個：h 是複數，而且是除以 h，不是除以 h 的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個極限存在，就說 $f$ 在 $z_0$ 可微"
+            },
+            {
+              "do": "write",
+              "line": "差別只有一個：$h$ 是複數",
+              "color": "red",
+              "on": "是複"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $h\\to0$ 可以從任何方向、沿任何路徑",
+            "• 上一課：每條路都要給同一個極限"
+          ],
+          "say": "上一課說過，h 可以從任何方向趨近 0，每一條路都要給出同一個極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $h\\to0$ 可以從任何方向、沿任何路徑"
+            },
+            {
+              "do": "write",
+              "line": "• 上一課：每條路都要給同一個極限",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 所以「可微」對 $f$ 的要求，比實數嚴格得多"
+          ],
+          "say": "實數的 h 只有左右兩個方向；這裡有無窮多個，要求嚴格得多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 所以「可微」對 $f$ 的要求，比實數嚴格得多"
+            },
+            {
+              "do": "write",
+              "line": "　除法要用複數除法：$h\\ne0$ 時 $\\frac1h=\\frac{\\bar h}{|h|^2}$",
+              "color": "violet",
+              "on": "這裡"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$|z|^2$ 在 $z=0$ 的導數是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "不存在", "why": "在 $0$ 的差商是 $\\frac{|h|^2}{h}=\\bar{h}\\to 0$，有極限。只有 $z\\ne 0$ 的點不可微。" },
-        { "label": "$2\\bar{z}$", "why": "$|z|^2$ 在 $z\\ne 0$ 根本不可微；在 $0$ 直接用定義算出 $0$。" }
+      "title": "兩個基本事實",
+      "beats": [
+        {
+          "show": [
+            "線性近似：$f$ 在 $z_0$ 可微、$f'(z_0)=a$ $\\iff$",
+            "$\\begin{aligned}&f(z_0+h)=f(z_0)+a\\,h+\\eta(h)\\,h\\\\&\\text{其中}\\ \\eta(h)\\to0\\ \\ (h\\to0)\\end{aligned}$"
+          ],
+          "say": "第一個事實：可微，等價於 f 在 z 零附近寫成常數，加 a 乘 h，再加一個趨近 0 的量乘 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線性近似：$f$ 在 $z_0$ 可微、$f'(z_0)=a$ $\\iff$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&f(z_0+h)=f(z_0)+a\\,h+\\eta(h)\\,h\\\\&\\text{其中}\\ \\eta(h)\\to0\\ \\ (h\\to0)\\end{aligned}}}}$",
+              "on": "零附"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "再加"
+            },
+            {
+              "do": "write",
+              "line": "　定義 $\\eta(h)=\\frac{f(z_0+h)-f(z_0)}h-a$（$h\\ne0$），$\\eta(0)=0$；兩個敘述互相推得",
+              "color": "violet",
+              "on": "一個#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可微 ⇒ 連續：$h\\to0$ 時",
+            "$f(z_0+h)-f(z_0)=\\big(a+\\eta(h)\\big)h\\to(a+0)\\cdot0=0$"
+          ],
+          "say": "第二個事實：可微一定連續。差等於 a 加誤差，乘上 h；h 趨近 0，整個趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可微 ⇒ 連續：$h\\to0$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(z_0+h)-f(z_0)=\\big(a+\\eta(h)\\big)h\\to(a+0)\\cdot0=0$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\displaystyle\\lim_{z\\to z_0}f(z)=f(z_0)$　$\\blacksquare$"
+          ],
+          "say": "證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\displaystyle\\lim_{z\\to z_0}f(z)=f(z_0)$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來不成立：第 ② 段的 $\\bar z$ 處處連續、處處不可微"
+          ],
+          "say": "反過來不對：等一下的 z bar，到處連續，卻到處不可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來不成立：第 ② 段的 $\\bar z$ 處處連續、處處不可微",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$z^2$ 可以",
+      "beats": [
+        {
+          "show": [
+            "差商（$h\\ne0$）：",
+            "$\\frac{(z+h)^2-z^2}{h}=\\frac{2zh+h^2}{h}=2z+h$"
+          ],
+          "say": "先看 z 平方。差商展開，分子是 2 z h 加 h 平方，除以 h，剩下 2z 加 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "差商（$h\\ne0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(z+h)^2-z^2}{h}=\\frac{2zh+h^2}{h}=2z+h$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不管 $h$ 從哪個方向來，$2z+h\\to2z$：",
+            "$\\frac{d}{dz}z^2=2z\\quad\\text{（處處可微）}$"
+          ],
+          "say": "不管 h 從哪個方向來，都趨近 2z。所以 z 平方處處可微，導數 2z，跟實數一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不管 $h$ 從哪個方向來，$2z+h\\to2z$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{d}{dz}z^2=2z\\quad\\text{（處處可微）}}}$",
+              "on": "2z#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "可微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f'(1+i)=2(1+i)=2+2i$"
+          ],
+          "say": "例如在 1 加 i，導數是 2 加 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f'(1+i)=2(1+i)=2+2i$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用實部虛部檢查：$u=x^2-y^2$，$v=2xy$"
+          ],
+          "say": "用實部虛部檢查：實部 x 平方減 y 平方，虛部 2 x y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用實部虛部檢查：$u=x^2-y^2$，$v=2xy$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $h$ 沿實軸（$h=t$）：差商 $\\to u_x+i\\,v_x=2x+2iy$",
+            "• $h$ 沿虛軸（$h=it$）：差商 $\\to\\dfrac{u_y+i\\,v_y}{i}=\\dfrac{-2y+2ix}{i}=2x+2iy$"
+          ],
+          "say": "h 沿實軸，差商趨近 u x 加 i 倍 v x，是 2x 加 2iy。h 沿虛軸，要除以 i，也是 2x 加 2iy。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $h$ 沿實軸（$h=t$）：差商 $\\to u_x+i\\,v_x=2x+2iy$"
+            },
+            {
+              "do": "write",
+              "line": "• $h$ 沿虛軸（$h=it$）：差商 $\\to\\dfrac{u_y+i\\,v_y}{i}=\\dfrac{-2y+2ix}{i}=2x+2iy$",
+              "on": "2i#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $(1,1)$：兩個方向都是 $2+2i$"
+          ],
+          "say": "在 1 逗號 1，兩個方向都給 2 加 2i。比較這兩個方向，就是下一課的主角。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在 $(1,1)$：兩個方向都是 $2+2i$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$\\bar z$ 不行",
+      "beats": [
+        {
+          "show": [
+            "$f(z)=\\bar z$ 在 $z_0=0$ 的差商 $\\dfrac{\\bar h}{h}$，$h\\to0$ 時會怎樣？"
+          ],
+          "say": "先猜猜看：z bar 的差商會怎樣？"
+        }
+      ],
+      "predict": {
+        "ask": "$f(z)=\\bar z$ 在 $z_0=0$ 的差商 $\\dfrac{\\bar h}{h}$，$h\\to0$ 時會怎樣？",
+        "options": [
+          {
+            "label": "趨近 $1$",
+            "why": "只有沿實軸是 $1$"
+          },
+          {
+            "label": "趨近 $0$",
+            "why": "$\\big|\\frac{\\bar h}h\\big|=1$，不會趨近 $0$"
+          },
+          {
+            "label": "沒有極限",
+            "correct": true
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\bar z$ 不行",
+      "beats": [
+        {
+          "show": [
+            "任何一點 $z$，差商是",
+            "$\\frac{\\overline{z+h}-\\bar z}{h}=\\frac{\\bar h}{h}$"
+          ],
+          "say": "在任何一點，共軛可以拆開，差商剛好是 h bar 除以 h，跟 z 無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任何一點 $z$，差商是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\overline{z+h}-\\bar z}{h}=\\frac{\\bar h}{h}$",
+              "on": "ba"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課：$h$ 沿實軸 $\\to1$，沿虛軸 $\\to-1$",
+            "$\\bar z\\ \\text{在}\\ \\text{每一點都不可微}$"
+          ],
+          "say": "上一課證過：沿實軸是 1，沿虛軸是負 1。所以 z bar 在每一點都不可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課：$h$ 沿實軸 $\\to1$，沿虛軸 $\\to-1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\bar z\\ \\text{在}\\ \\text{每一點都不可微}}}$",
+              "color": "red",
+              "on": "沿虛"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "ba"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可是 $u=x$，$v=-y$ 是最平滑的實函數"
+          ],
+          "say": "奇怪的是，它的實部 x、虛部負 y，都是最平滑的實函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可是 $u=x$，$v=-y$ 是最平滑的實函數"
+            },
+            {
+              "do": "write",
+              "line": "　把它看成 $\\mathbb R^2\\to\\mathbb R^2$ 的映射，它是對 $x$ 軸的鏡射，完全可微",
+              "color": "violet",
+              "on": "都是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "複數可微 $\\ne$ 實部、虛部各自可微"
+          ],
+          "say": "所以複數可微，不等於實部虛部各自可微。多要求的東西，第四段揭曉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數可微 $\\ne$ 實部、虛部各自可微",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$|z|^2$ 只在 $0$ 可以",
+      "beats": [
+        {
+          "show": [
+            "$f(z)=|z|^2=z\\bar z$，展開 $|z+h|^2=(z+h)(\\bar z+\\bar h)$：",
+            "$\\frac{|z+h|^2-|z|^2}{h}=\\frac{z\\bar h+\\bar zh+h\\bar h}{h}=\\bar z+\\bar h+z\\,\\frac{\\bar h}{h}$"
+          ],
+          "say": "再看 z 的絕對值平方，也就是 z 乘 z bar。展開除以 h，得到三項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(z)=|z|^2=z\\bar z$，展開 $|z+h|^2=(z+h)(\\bar z+\\bar h)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{|z+h|^2-|z|^2}{h}=\\frac{z\\bar h+\\bar zh+h\\bar h}{h}=\\bar z+\\bar h+z\\,\\frac{\\bar h}{h}$",
+              "on": "ba"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 在 $z=0$：差商 $=\\bar h\\to0$，所以 $f'(0)=0$"
+          ],
+          "say": "在 z 等於 0，只剩 h bar，趨近 0。所以在原點可微，導數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 在 $z=0$：差商 $=\\bar h\\to0$，所以 $f'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 在 $z\\ne0$：$\\bar z+\\bar h\\to\\bar z$，但 $z\\frac{\\bar h}{h}$ 沿實軸 $\\to z$、沿虛軸 $\\to-z$"
+          ],
+          "say": "在其他點，前兩項趨近 z bar；第三項沿實軸趨近 z，沿虛軸趨近負 z。z 不是 0，兩者不同。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 在 $z\\ne0$：$\\bar z+\\bar h\\to\\bar z$，但 $z\\frac{\\bar h}{h}$ 沿實軸 $\\to z$、沿虛軸 $\\to-z$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z|^2\\ \\text{只在}\\ z=0\\ \\text{可微}$"
+          ],
+          "say": "所以 z 的絕對值平方只在原點可微，其他點都不行。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle |z|^2\\ \\text{只在}\\ z=0\\ \\text{可微}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "值平"
+            },
+            {
+              "do": "write",
+              "line": "　例：在 $z=1$，沿實軸差商 $\\to2$，沿虛軸 $\\to0$",
+              "color": "violet",
+              "on": "其他"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "運算法則照搬",
+      "beats": [
+        {
+          "show": [
+            "$f,g$ 在 $z_0$ 可微，則 $f\\pm g$、$fg$、$\\dfrac fg$（$g(z_0)\\ne0$）也可微",
+            "$(fg)'=f'g+fg',\\quad\\Big(\\frac fg\\Big)'=\\frac{f'g-fg'}{g^2}$"
+          ],
+          "say": "運算法則全部照搬：和、差、積、商都可微，公式跟實數一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f,g$ 在 $z_0$ 可微，則 $f\\pm g$、$fg$、$\\dfrac fg$（$g(z_0)\\ne0$）也可微"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle (fg)'=f'g+fg',\\quad\\Big(\\frac fg\\Big)'=\\frac{f'g-fg'}{g^2}}}$",
+              "on": "商都"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "公式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積的證明：",
+            "$\\begin{aligned}\\frac{fg(z_0+h)-fg(z_0)}{h}=\\ &f(z_0+h)\\,\\frac{g(z_0+h)-g(z_0)}{h}\\\\&+g(z_0)\\,\\frac{f(z_0+h)-f(z_0)}{h}\\end{aligned}$"
+          ],
+          "say": "證明也一樣。積的差商，加一項減一項，拆成兩塊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積的證明："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\frac{fg(z_0+h)-fg(z_0)}{h}=\\ &f(z_0+h)\\,\\frac{g(z_0+h)-g(z_0)}{h}\\\\&+g(z_0)\\,\\frac{f(z_0+h)-f(z_0)}{h}\\end{aligned}}$",
+              "on": "加一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：$f(z_0+h)\\to f(z_0)$（可微 ⇒ 連續），得 $f'g+fg'$　$\\blacksquare$"
+          ],
+          "say": "h 趨近 0，可微一定連續，所以第一個因子趨近 f of z 零，合起來就是 f prime g 加 f g prime。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：$f(z_0+h)\\to f(z_0)$（可微 ⇒ 連續），得 $f'g+fg'$　$\\blacksquare$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪次：歸納，$(z^{n})'=(z\\cdot z^{n-1})'=z^{n-1}+z\\,(n-1)z^{n-2}=nz^{n-1}$"
+          ],
+          "say": "用積的法則歸納，z 的 n 次方導數是 n 乘 z 的 n 減 1 次方。所以多項式處處可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "冪次：歸納，$(z^{n})'=(z\\cdot z^{n-1})'=z^{n-1}+z\\,(n-1)z^{n-2}=nz^{n-1}$"
+            },
+            {
+              "do": "write",
+              "line": "　商的法則用 $\\big(\\frac1g\\big)'=-\\frac{g'}{g^2}$ 再乘；例：$\\big(\\frac1z\\big)'=-\\frac1{z^2}$（$z\\ne0$）",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "連鎖律",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $z_0$ 可微，$g$ 在 $w_0=f(z_0)$ 可微 ⇒",
+            "$(g\\circ f)'(z_0)=g'(w_0)\\,f'(z_0)$"
+          ],
+          "say": "連鎖律也成立：外層的導數，乘內層的導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $z_0$ 可微，$g$ 在 $w_0=f(z_0)$ 可微 ⇒"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle (g\\circ f)'(z_0)=g'(w_0)\\,f'(z_0)}}$",
+              "on": "外層"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "乘內"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：用線性近似寫 $g$：",
+            "$\\begin{aligned}&g(w_0+k)-g(w_0)=\\big(g'(w_0)+\\eta(k)\\big)k\\\\&\\eta(k)\\to0\\ \\ (k\\to0),\\quad\\eta(0)=0\\end{aligned}$"
+          ],
+          "say": "證明用線性近似，避開除以零的麻煩。g 的差，寫成 g prime 加一個趨近 0 的誤差，乘上 k。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：用線性近似寫 $g$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&g(w_0+k)-g(w_0)=\\big(g'(w_0)+\\eta(k)\\big)k\\\\&\\eta(k)\\to0\\ \\ (k\\to0),\\quad\\eta(0)=0\\end{aligned}}$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $k=f(z_0+h)-f(z_0)$，除以 $h$：",
+            "$\\frac{g(f(z_0+h))-g(w_0)}{h}=\\big(g'(w_0)+\\eta(k)\\big)\\frac{k}{h}$"
+          ],
+          "say": "把 k 取成 f 的差，兩邊除以 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $k=f(z_0+h)-f(z_0)$，除以 $h$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{g(f(z_0+h))-g(w_0)}{h}=\\big(g'(w_0)+\\eta(k)\\big)\\frac{k}{h}$",
+              "on": "的差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：$k\\to0$（$f$ 連續）所以 $\\eta(k)\\to0$；$\\dfrac kh\\to f'(z_0)$　$\\blacksquare$"
+          ],
+          "say": "h 趨近 0，f 連續，k 也趨近 0，誤差消失；k 除以 h 趨近 f prime。乘起來就是連鎖律。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：$k\\to0$（$f$ 連續）所以 $\\eta(k)\\to0$；$\\dfrac kh\\to f'(z_0)$　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$k$ 可能等於 $0$：這就是要先寫線性近似的原因（$\\eta(0)=0$，式子照樣成立）",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "幾何：旋轉加縮放",
+      "beats": [
+        {
+          "show": [
+            "線性近似：$f(z_0+h)\\approx f(z_0)+f'(z_0)\\,h$"
+          ],
+          "say": "最後看幾何。線性近似說：在 z 零附近，f 差不多是把 h 乘上 f prime z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線性近似：$f(z_0+h)\\approx f(z_0)+f'(z_0)\\,h$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘一個複數 $a=\\rho e^{i\\varphi}$：$|ah|=\\rho|h|$，$\\arg(ah)=\\arg h+\\varphi$"
+          ],
+          "say": "乘一個複數 a，等於長度放大肉倍、角度轉斐。極式那一課學過：乘法是長度相乘、角度相加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘一個複數 $a=\\rho e^{i\\varphi}$：$|ah|=\\rho|h|$，$\\arg(ah)=\\arg h+\\varphi$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&f'(z_0)\\ne0\\text{：小圖形轉}\\ \\arg f'(z_0)\\\\&\\text{放大}\\ |f'(z_0)|\\ \\text{倍}\\end{aligned}$"
+          ],
+          "say": "所以 f prime 不是 0 時，f 把 z 零附近的小圖形，旋轉 f prime 的輻角，放大 f prime 的絕對值倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}&f'(z_0)\\ne0\\text{：小圖形轉}\\ \\arg f'(z_0)\\\\&\\text{放大}\\ |f'(z_0)|\\ \\text{倍}\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "零附"
+            },
+            {
+              "do": "write",
+              "line": "　所以夾角保持不變（保角）；$f'(z_0)=0$ 時不適用，例：$z^2$ 在 $0$ 把角度加倍",
+              "color": "violet",
+              "on": "的輻"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上是 z 平方在 1 加 i，導數 2 加 2i：輻角 45 度，絕對值 2 根號 2。小正方形轉了 45 度、放大約 2.83 倍，還幾乎是正方形。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 380\" width=\"640\" height=\"380\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gbD\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gbDr\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gbDb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker></defs><rect x=\"30\" y=\"50\" width=\"260\" height=\"260\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><rect x=\"350\" y=\"50\" width=\"260\" height=\"260\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"220.0\" x2=\"120.0\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M480.0 280.0 L476.7 276.7 L473.3 273.3 L469.9 270.0 L466.4 266.7 L463.0 263.3 L459.5 260.0 L456.0 256.7 L452.4 253.3 L448.9 250.0 L445.3 246.7 L441.7 243.3 L438.0 240.0 L434.3 236.7 L430.6 233.3 L426.9 230.0 L423.1 226.7 L419.3 223.3 L415.5 220.0 L411.7 216.7 L407.8 213.3 L403.9 210.0 L399.9 206.7 L396.0 203.3 L392.0 200.0 L388.0 196.7 L383.9 193.3 L379.9 190.0 L375.8 186.7 L371.7 183.3 L367.5 180.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"220.0\" x2=\"170.0\" y2=\"220.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M480.0 280.0 L483.3 276.7 L486.7 273.3 L490.1 270.0 L493.6 266.7 L497.0 263.3 L500.5 260.0 L504.0 256.7 L507.6 253.3 L511.1 250.0 L514.7 246.7 L518.3 243.3 L522.0 240.0 L525.7 236.7 L529.4 233.3 L533.1 230.0 L536.9 226.7 L540.7 223.3 L544.5 220.0 L548.3 216.7 L552.2 213.3 L556.1 210.0 L560.1 206.7 L564.0 203.3 L568.0 200.0 L572.0 196.7 L576.1 193.3 L580.1 190.0 L584.2 186.7 L588.3 183.3 L592.5 180.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"132.5\" y1=\"220.0\" x2=\"132.5\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M505.8 255.0 L502.4 251.5 L499.1 247.9 L495.7 244.4 L492.2 240.8 L488.8 237.3 L485.3 233.7 L481.8 230.2 L478.2 226.7 L474.7 223.1 L471.1 219.6 L467.4 216.0 L463.8 212.5 L460.1 209.0 L456.4 205.4 L452.7 201.9 L448.9 198.3 L445.1 194.8 L441.3 191.3 L437.4 187.7 L433.6 184.2 L429.7 180.6 L425.7 177.1 L421.8 173.5 L417.8 170.0 L413.8 166.5 L409.7 162.9 L405.7 159.4 L401.6 155.8 L397.4 152.3 L393.3 148.8\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"207.5\" x2=\"170.0\" y2=\"207.5\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M454.2 255.0 L457.6 251.5 L460.9 247.9 L464.3 244.4 L467.8 240.8 L471.2 237.3 L474.7 233.7 L478.2 230.2 L481.8 226.7 L485.3 223.1 L488.9 219.6 L492.6 216.0 L496.2 212.5 L499.9 209.0 L503.6 205.4 L507.3 201.9 L511.1 198.3 L514.9 194.8 L518.7 191.3 L522.6 187.7 L526.4 184.2 L530.3 180.6 L534.3 177.1 L538.2 173.5 L542.2 170.0 L546.2 166.5 L550.3 162.9 L554.3 159.4 L558.4 155.8 L562.6 152.3 L566.7 148.8\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"145.0\" y1=\"220.0\" x2=\"145.0\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M533.1 230.0 L529.8 226.3 L526.4 222.5 L523.0 218.8 L519.6 215.0 L516.1 211.2 L512.6 207.5 L509.1 203.7 L505.6 200.0 L502.0 196.3 L498.4 192.5 L494.8 188.8 L491.1 185.0 L487.4 181.2 L483.7 177.5 L480.0 173.8 L476.2 170.0 L472.4 166.3 L468.6 162.5 L464.8 158.8 L460.9 155.0 L457.0 151.2 L453.1 147.5 L449.1 143.8 L445.1 140.0 L441.1 136.3 L437.1 132.5 L433.0 128.7 L428.9 125.0 L424.8 121.2 L420.6 117.5\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"195.0\" x2=\"170.0\" y2=\"195.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M426.9 230.0 L430.2 226.3 L433.6 222.5 L437.0 218.8 L440.4 215.0 L443.9 211.2 L447.4 207.5 L450.9 203.7 L454.4 200.0 L458.0 196.3 L461.6 192.5 L465.2 188.8 L468.9 185.0 L472.6 181.2 L476.3 177.5 L480.0 173.8 L483.8 170.0 L487.6 166.3 L491.4 162.5 L495.2 158.8 L499.1 155.0 L503.0 151.2 L506.9 147.5 L510.9 143.8 L514.9 140.0 L518.9 136.3 L522.9 132.5 L527.0 128.7 L531.1 125.0 L535.2 121.2 L539.4 117.5\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"157.5\" y1=\"220.0\" x2=\"157.5\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M562.0 205.0 L558.7 201.0 L555.3 197.1 L551.9 193.1 L548.5 189.2 L545.0 185.2 L541.5 181.3 L538.0 177.3 L534.5 173.3 L530.9 169.4 L527.3 165.4 L523.7 161.5 L520.0 157.5 L516.4 153.5 L512.6 149.6 L508.9 145.6 L505.1 141.7 L501.4 137.7 L497.5 133.8 L493.7 129.8 L489.8 125.8 L485.9 121.9 L482.0 117.9 L478.0 114.0 L474.0 110.0 L470.0 106.0 L466.0 102.1 L461.9 98.1 L457.8 94.2 L453.7 90.2 L449.5 86.2\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"182.5\" x2=\"170.0\" y2=\"182.5\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M398.0 205.0 L401.3 201.0 L404.7 197.1 L408.1 193.1 L411.5 189.2 L415.0 185.2 L418.5 181.3 L422.0 177.3 L425.5 173.3 L429.1 169.4 L432.7 165.4 L436.3 161.5 L440.0 157.5 L443.6 153.5 L447.4 149.6 L451.1 145.6 L454.9 141.7 L458.6 137.7 L462.5 133.8 L466.3 129.8 L470.2 125.8 L474.1 121.9 L478.0 117.9 L482.0 114.0 L486.0 110.0 L490.0 106.0 L494.0 102.1 L498.1 98.1 L502.2 94.2 L506.3 90.2 L510.5 86.2\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"170.0\" y1=\"220.0\" x2=\"170.0\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M592.5 180.0 L589.2 175.8 L585.8 171.7 L582.4 167.5 L578.9 163.3 L575.5 159.2 L572.0 155.0 L568.5 150.8 L564.9 146.7 L561.4 142.5 L557.8 138.3 L554.2 134.2 L550.5 130.0 L546.8 125.8 L543.1 121.7 L539.4 117.5 L535.6 113.3 L531.8 109.2 L528.0 105.0 L524.2 100.8 L520.3 96.7 L516.4 92.5 L512.4 88.3 L508.5 84.2 L504.5 80.0 L500.5 75.8 L496.4 71.7 L492.4 67.5 L488.3 63.3 L484.2 59.2 L480.0 55.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"170.0\" x2=\"170.0\" y2=\"170.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M367.5 180.0 L370.8 175.8 L374.2 171.7 L377.6 167.5 L381.1 163.3 L384.5 159.2 L388.0 155.0 L391.5 150.8 L395.1 146.7 L398.6 142.5 L402.2 138.3 L405.8 134.2 L409.5 130.0 L413.2 125.8 L416.9 121.7 L420.6 117.5 L424.4 113.3 L428.2 109.2 L432.0 105.0 L435.8 100.8 L439.7 96.7 L443.6 92.5 L447.6 88.3 L451.5 84.2 L455.5 80.0 L459.5 75.8 L463.6 71.7 L467.6 67.5 L471.7 63.3 L475.8 59.2 L480.0 55.0\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"120.0\" y1=\"220.0\" x2=\"170.0\" y2=\"220.0\" stroke=\"var(--red)\" stroke-width=\"3.5\" marker-end=\"url(#ah11gbDr)\"/><line x1=\"120.0\" y1=\"220.0\" x2=\"120.0\" y2=\"170.0\" stroke=\"var(--blue)\" stroke-width=\"3.5\" marker-end=\"url(#ah11gbDb)\"/><line x1=\"480.0\" y1=\"280.0\" x2=\"580.0\" y2=\"180.0\" stroke=\"var(--red)\" stroke-width=\"3.5\" marker-end=\"url(#ah11gbDr)\"/><line x1=\"480.0\" y1=\"280.0\" x2=\"380.0\" y2=\"180.0\" stroke=\"var(--blue)\" stroke-width=\"3.5\" marker-end=\"url(#ah11gbDb)\"/><circle cx=\"120.0\" cy=\"220.0\" r=\"5\" fill=\"var(--ink)\"/><circle cx=\"480.0\" cy=\"280.0\" r=\"5\" fill=\"var(--ink)\"/><text x=\"58.0\" y=\"228.0\" fill=\"var(--ink)\" font-size=\"24\" style=\"font-family:KaTeX_Main,serif\">1+<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"436.0\" y=\"288.0\" fill=\"var(--ink)\" font-size=\"24\" style=\"font-family:KaTeX_Main,serif\">2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"160\" y=\"36\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> 平面</text><text x=\"480\" y=\"36\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">w</tspan>＝<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>² 平面</text><path d=\"M296 180 Q318 150 340 180\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah11gbD)\"/><text x=\"320\" y=\"350\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">同一個比例尺：轉 45°、放大約 2.8 倍</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　紅、藍箭頭是 $f'(z_0)h$；格線是 $f$ 真正的像，$h$ 越小越吻合",
+              "color": "violet",
+              "on": "根號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "對照 Jacobian",
+      "beats": [
+        {
+          "show": [
+            "看成 $\\mathbb R^2\\to\\mathbb R^2$：乘 $a=p+iq$ 的矩陣是",
+            "$a(x+iy)=(px-qy)+i(qx+py)$"
+          ],
+          "say": "把乘以 a 看成平面到平面的線性映射。a 是 p 加 i q，乘開後，它的矩陣是 p 負 q、q p。",
+          "board": [
+            {
+              "do": "write",
+              "line": "看成 $\\mathbb R^2\\to\\mathbb R^2$：乘 $a=p+iq$ 的矩陣是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a(x+iy)=(px-qy)+i(qx+py)$",
+              "on": "乘開"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Rightarrow\\ \\text{矩陣}\\ {\\begin{pmatrix}p&-q\\\\q&p\\end{pmatrix}}$",
+              "on": "它的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "複數可微 = Jacobian 是這種形狀"
+          ],
+          "say": "所以複數可微，就是雅可比矩陣剛好長成這個形狀：只會旋轉加縮放。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數可微 = Jacobian 是這種形狀",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$\\det=p^2+q^2=|f'(z_0)|^2$：面積放大 $|f'|^2$ 倍；例：$z^2$ 在 $1+i$ 面積放大 $8$ 倍",
+              "color": "violet",
+              "on": "好長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\bar z$ 的 Jacobian $\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}$ 是鏡射：不是這種形狀"
+          ],
+          "say": "z bar 的雅可比矩陣是 1 0 0 負 1，是鏡射，不是旋轉加縮放，所以不可微。這就是第二段的謎底。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\bar z$ 的 Jacobian ${\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}}$ 是鏡射：不是這種形狀",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "對照 Jacobian",
+      "beats": [
+        {
+          "show": [
+            "比較矩陣兩行：$u_x=v_y$、$u_y=-v_x$ ← 下一課"
+          ],
+          "say": "把雅可比矩陣的元素對上這個形狀，就得到兩個等式。這就是下一課的柯西黎曼方程。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比較矩陣兩行：$u_x=v_y$、$u_y=-v_x$ ← 下一課",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}h$，$h$ 從所有方向來",
+            "• 可微 ⇒ 連續；和差積商、連鎖律、冪次公式照搬"
+          ],
+          "say": "整理：定義跟實數一樣，但 h 從所有方向來；運算法則照搬；z 平方可以，z bar 不行，絕對值平方只在原點；幾何上是局部旋轉加縮放。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f'(z_0)=\\lim_{h\\to0}\\frac{f(z_0+h)-f(z_0)}h$，$h$ 從所有方向來"
+            },
+            {
+              "do": "write",
+              "line": "• 可微 ⇒ 連續；和差積商、連鎖律、冪次公式照搬",
+              "on": "所有"
+            },
+            {
+              "do": "write",
+              "line": "• $z^2$ 處處可微；$\\bar z$ 處處不可微；$|z|^2$ 只在 $0$ 可微",
+              "on": "可以"
+            },
+            {
+              "do": "write",
+              "line": "• 幾何：附近轉 $\\arg f'$、放大 $|f'|$；Jacobian 是旋轉加縮放",
+              "on": "只在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Cauchy–Riemann 方程"
+          ],
+          "say": "下一課，把這個條件寫成偏微分方程。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Cauchy–Riemann 方程"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "complex-derivative"],
-    "fine": ["complex-derivative-definition", "complex-derivative-direction-test", "complex-derivative-rules", "complex-derivative-conformal"]
+    "coarse": [
+      "complex",
+      "complex-derivative"
+    ],
+    "fine": [
+      "complex-derivative-definition",
+      "complex-derivative-direction-test",
+      "complex-derivative-rules",
+      "complex-derivative-conformal"
+    ]
   },
   "practice": [
-    { "id": "der-085", "core": true, "trains": "complex-derivative-rules" },
-    { "id": "cg-11g-034", "core": true, "trains": "complex-derivative-direction-test" },
-    { "id": "cg-11g-036", "core": true, "trains": "complex-derivative-rules" },
-    { "id": "der-086", "trains": "complex-derivative-conformal" },
-    { "id": "cg-11g-035", "trains": "complex-derivative-direction-test" },
-    { "id": "cg-11g-037", "trains": "complex-derivative-rules" },
-    { "id": "cg-11g-038", "trains": "complex-derivative-rules" }
+    {
+      "id": "der-085",
+      "core": true,
+      "trains": "complex-derivative-rules"
+    },
+    {
+      "id": "cg-11g-034",
+      "core": true,
+      "trains": "complex-derivative-direction-test"
+    },
+    {
+      "id": "cg-11g-036",
+      "core": true,
+      "trains": "complex-derivative-rules"
+    },
+    {
+      "id": "der-086",
+      "trains": "complex-derivative-conformal"
+    },
+    {
+      "id": "cg-11g-035",
+      "trains": "complex-derivative-direction-test"
+    },
+    {
+      "id": "cg-11g-037",
+      "trains": "complex-derivative-rules"
+    },
+    {
+      "id": "cg-11g-038",
+      "trains": "complex-derivative-rules"
+    }
   ],
   "gaps": []
 }

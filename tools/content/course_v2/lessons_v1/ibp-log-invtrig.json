@@ -1,0 +1,378 @@
+{
+  "id": "ibp-log-invtrig",
+  "title": "ln x、反三角函數",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["integration-by-parts", "u-sub-recognize"],
+  "next": ["ibp-cyclic"],
+  "related": ["ibp-cyclic", "derivative-log", "inverse-trig-derivative"],
+  "objectives": [
+    "會積單獨的 $\\ln x$、$\\arctan x$、$\\arcsin x$：令 $dv=dx$。",
+    "$x^n\\ln x$、$x^n\\arctan x$ 會選 $\\ln$、$\\arctan$ 當 $u$。",
+    "分部之後剩下的積分常要再換元或做代數變形，會接著做完。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 為什麼它們要當 $u$",
+      "body": [
+        "$\\ln x$ 與反三角函數的反導函數不在基本表上，但它們的導數很簡單：$(\\ln x)'=\\frac{1}{x}$，$(\\arctan x)'=\\frac{1}{1+x^2}$，$(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}}$，都是代數式。",
+        "所以讓它們當 $u$：微分一次，超越函數就消失了，剩下的通常是代數式的積分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 單獨一個：看不見的 $dv=dx$",
+      "body": [
+        "$\\int \\ln x\\,dx$ 看起來沒有東西可以拆。把它看成 $\\ln x\\cdot 1$：$u=\\ln x$，$dv=dx$，$v=x$。",
+        "$\\int \\ln x\\,dx=x\\ln x-\\int x\\cdot\\frac{1}{x}\\,dx=x\\ln x-x+C$。$\\arctan x$、$\\arcsin x$ 一樣處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 乘上 $x^n$",
+      "body": [
+        "$x^n\\ln x$：$u=\\ln x$，$dv=x^n\\,dx$。新積分裡 $\\frac{1}{x}\\cdot\\frac{x^{n+1}}{n+1}$ 只剩冪次，一步積完。",
+        "$x^n\\arctan x$：$u=\\arctan x$，$dv=x^n\\,dx$。新積分是 $\\frac{x^{n+1}}{(n+1)(1+x^2)}$，要先做多項式除法或拆項。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一個小技巧：挑一個好用的 $v$",
+      "body": [
+        "〈分部積分推導〉說 $v$ 可以差任意常數。$\\int x\\arctan x\\,dx$ 取 $v=\\frac{x^2+1}{2}$ 而不是 $\\frac{x^2}{2}$：新積分變成 $\\int \\frac{x^2+1}{2}\\cdot\\frac{1}{1+x^2}\\,dx=\\int \\frac{1}{2}\\,dx$，分母直接消掉。",
+        "兩種選法算到最後是同一個答案，只是這樣少一步代數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 定義域",
+      "body": [
+        "$\\ln x$ 只在 $x>0$ 有定義，所以這些答案都預設 $x>0$；$\\arcsin x$ 只在 $|x|\\le 1$。$(\\ln x)^2$、$(\\ln x)^3$ 要做好幾次，放在〈重複分部與循環積分〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "單獨的 $\\ln x$",
+      "prompt": "$\\int \\ln x\\,dx$",
+      "problemId": "int-028",
+      "steps": [
+        "$u=\\ln x$，$dv=dx$。$du=\\frac{dx}{x}$，$v=x$。",
+        "$\\int \\ln x\\,dx=x\\ln x-\\int x\\cdot\\frac{1}{x}\\,dx=x\\ln x-\\int 1\\,dx$。",
+        "$=x\\ln x-x+C$。"
+      ],
+      "answer": "$x\\ln x-x+C$",
+      "claim": "D(x*ln(x)-x) == ln(x)"
+    },
+    {
+      "title": "負次方 $\\times$ $\\ln x$",
+      "prompt": "$\\int \\frac{\\ln x}{x^3}\\,dx$",
+      "steps": [
+        "$u=\\ln x$，$dv=x^{-3}\\,dx$。$du=\\frac{dx}{x}$，$v=\\frac{x^{-2}}{-2}=-\\frac{1}{2x^2}$。",
+        "$\\int=-\\frac{\\ln x}{2x^2}-\\int \\left(-\\frac{1}{2x^2}\\right)\\cdot\\frac{1}{x}\\,dx=-\\frac{\\ln x}{2x^2}+\\frac{1}{2}\\int x^{-3}\\,dx$。",
+        "$\\frac{1}{2}\\int x^{-3}\\,dx=\\frac{1}{2}\\cdot\\left(-\\frac{1}{2x^2}\\right)=-\\frac{1}{4x^2}$。",
+        "答案：$-\\frac{\\ln x}{2x^2}-\\frac{1}{4x^2}+C$。"
+      ],
+      "answer": "$-\\frac{\\ln x}{2x^2}-\\frac{1}{4x^2}+C$",
+      "claim": "D(-ln(x)/(2*x^2)-1/(4*x^2)) == ln(x)/x^3"
+    },
+    {
+      "title": "單獨的 $\\arctan x$，接著換元",
+      "prompt": "$\\int \\arctan x\\,dx$",
+      "problemId": "exam-int-013",
+      "steps": [
+        "$u=\\arctan x$，$dv=dx$。$du=\\frac{dx}{1+x^2}$，$v=x$。",
+        "$\\int \\arctan x\\,dx=x\\arctan x-\\int \\frac{x}{1+x^2}\\,dx$。",
+        "剩下的是 $\\frac{u'}{u}$ 形狀（〈換元：辨識〉）：$\\int \\frac{x}{1+x^2}\\,dx=\\frac{1}{2}\\ln(1+x^2)$。",
+        "答案：$x\\arctan x-\\frac{1}{2}\\ln(1+x^2)+C$。"
+      ],
+      "answer": "$x\\arctan x-\\frac{1}{2}\\ln(1+x^2)+C$",
+      "claim": "D(x*atan(x)-ln(1+x^2)/2) == atan(x)"
+    },
+    {
+      "title": "挑一個好用的 $v$",
+      "prompt": "$\\int x\\arctan x\\,dx$",
+      "problemId": "uni-int-012",
+      "steps": [
+        "$u=\\arctan x$，$dv=x\\,dx$。取 $v=\\frac{x^2+1}{2}$（也是 $x$ 的反導函數）。",
+        "$\\int x\\arctan x\\,dx=\\frac{x^2+1}{2}\\arctan x-\\int \\frac{x^2+1}{2}\\cdot\\frac{1}{1+x^2}\\,dx$。",
+        "剩下的積分是 $\\int \\frac{1}{2}\\,dx=\\frac{x}{2}$。",
+        "答案：$\\frac{x^2+1}{2}\\arctan x-\\frac{x}{2}+C$。"
+      ],
+      "answer": "$\\frac{x^2+1}{2}\\arctan x-\\frac{x}{2}+C$",
+      "claim": "D((x^2+1)/2*atan(x)-x/2) == x*atan(x)"
+    }
+  ],
+  "pitfalls": [
+    "$\\int \\ln x\\,dx$ 讓 $dv=\\ln x\\,dx$，結果需要先會 $\\int \\ln x$，繞回原點。",
+    "$x^n\\ln x$ 讓 $u=x^n$：$dv=\\ln x\\,dx$ 積不出來。",
+    "分部之後剩下 $\\int \\frac{x}{1+x^2}\\,dx$，積成 $\\arctan x$。",
+    "$v=-\\frac{1}{2x^2}$ 這種負次方，代進公式時負號漏掉。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int \\ln x\\,dx$ 做分部積分，$dv$ 是？",
+      "options": [
+        { "label": "$dx$", "correct": true },
+        { "label": "$\\ln x\\,dx$", "why": "那 $v$ 要是 $\\ln x$ 的反導函數，正是我們要求的東西，繞回原點。" },
+        { "label": "$\\frac{1}{x}\\,dx$", "why": "$\\frac{1}{x}$ 不在式子裡。它是 $u=\\ln x$ 微分後的 $du$，不是 $dv$。" }
+      ]
+    },
+    {
+      "ask": "$\\int x^3\\ln x\\,dx$，$u$ 應該選？",
+      "options": [
+        { "label": "$\\ln x$", "correct": true },
+        { "label": "$x^3$", "why": "那 $dv=\\ln x\\,dx$，又得先積 $\\ln x$，而且新積分裡 $x$ 的次方會升高。" },
+        { "label": "$x^3\\ln x$", "why": "那 $dv=dx$、$v=x$，新積分 $\\int x(3x^2\\ln x+x^2)\\,dx$ 比原來更複雜。" }
+      ]
+    },
+    {
+      "ask": "$\\int \\arctan x\\,dx$ 分部後剩下 $\\int \\frac{x}{1+x^2}\\,dx$，它等於？",
+      "options": [
+        { "label": "$\\frac{1}{2}\\ln(1+x^2)+C$", "correct": true },
+        { "label": "$\\arctan x+C$", "why": "$\\arctan$ 要分子是 $1$。分子是 $x$，正好是分母導數的一半，是 $\\frac{u'}{u}$ 形狀。" },
+        { "label": "$\\frac{x^2/2}{x+x^3/3}+C$", "why": "分子分母不能各自積分。令 $u=1+x^2$。" }
+      ]
+    },
+    {
+      "ask": "$\\int x\\arctan x\\,dx$ 取 $v=\\frac{x^2+1}{2}$ 而不是 $\\frac{x^2}{2}$。這樣：",
+      "options": [
+        { "label": "可以，$v$ 差一個常數不影響結果，而且剩下的積分更好算", "correct": true },
+        { "label": "不行，$\\int x\\,dx$ 只能寫 $\\frac{x^2}{2}$", "why": "$\\frac{x^2}{2}+\\frac{1}{2}$ 也是 $x$ 的反導函數，分部積分的 $v$ 可以任選其中一個。" },
+        { "label": "可以，但最後答案會不一樣", "why": "兩種選法算到底是同一個式子：$\\frac{x^2}{2}\\arctan x-\\frac{x}{2}+\\frac{1}{2}\\arctan x=\\frac{x^2+1}{2}\\arctan x-\\frac{x}{2}$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "看不見的 $dv=dx$",
+      "beats": [
+        { "show": ["$(\\ln x)'=\\frac{1}{x}$，$(\\arctan x)'=\\frac{1}{1+x^2}$"],
+          "note": "反導函數不在表上，導數卻是代數式。",
+          "say": "自然對數和反三角函數，反導函數不在表上，但導數很簡單，都是代數式。",
+          "board": [
+            {"do":"write","line":"$(\\ln x)'=\\frac{1}{x}$"},
+            {"do":"write","line":"$(\\arctan x)'=\\frac{1}{1+x^2}$","on":"但導數"}
+          ] },
+        { "show": ["$F'=f$：$F$ 是 $f$ 的反導函數"],
+          "note": "積分就是在找反導函數。",
+          "say": "反導函數的意思是：微分之後會變回原函數的函數。積分，就是在找反導函數。",
+          "board": [
+            {"do":"write","line":"$F'=f$：$F$ 是 $f$ 的反導函數"},
+            {"do":"write","line":"$\\int f\\,dx$：就是找 $F$","on":"積分"}
+          ] },
+        { "show": ["讓它們當 $u$"],
+          "note": "微分一次，超越函數就消失了。",
+          "say": "所以讓它們當 u：微分一次，它們就不見了，剩下代數式的積分。",
+          "board": [
+            {"do":"write","line":"讓它們當 $u$"},
+            {"do":"write","line":"微分後：變成代數式","on":"微分一次"}
+          ] },
+        { "show": ["藍：$\\ln x$　紅：$\\frac{1}{x}$"],
+          "note": "紅線是藍線的斜率。",
+          "say": "畫圖看：藍色是自然對數 x，越往右爬得越慢；紅色是它的導數 x 分之一，越來越小。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,4,-2,3],"curves":[{"expr":"log(x)","domain":[0.05,4],"color":"blue"},{"expr":"1/x","domain":[0.25,4],"color":"red"}]}}
+          ] },
+        { "show": ["$\\int\\ln x\\,dx$：看成 $\\ln x\\cdot 1$"],
+          "note": "$u=\\ln x$，$v=x$。",
+          "say": "單獨一個自然對數 x，看起來沒東西可拆。把它看成自然對數 x 乘一，一就是那個看不見的 dv。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int\\ln x\\,dx$","on":"單獨"},
+            {"do":"transform","line":"$\\ln x\\cdot{{d:1}}$","on":"把它看成"},
+            {"do":"underline","term":"d","color":"blue","label":"dv","on":"看不見的"}
+          ] },
+        { "show": ["$=x\\ln x-\\int x\\cdot\\frac{1}{x}\\,dx=x\\ln x-x+C$"],
+          "say": "代進公式，新積分裡 x 乘 x 分之一剛好是一，積出 x。",
+          "board": [
+            {"do":"write","line":"$=x\\ln x-\\int {{m:x\\cdot\\frac{1}{x}}}\\,dx$"},
+            {"do":"underline","term":"m","on":"x 乘"},
+            {"do":"write","line":"$=x\\ln x-x+C$","color":"green","on":"剛好是一"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "單獨的 $\\arctan x$",
+      "beats": [
+        { "show": ["$\\int\\arctan x\\,dx$：$u=\\arctan x$，$v=x$"],
+          "note": "一樣是看不見的 $dv=dx$。",
+          "say": "arctangent x 一樣處理：u 是 arctangent x，dv 是 dx，v 是 x。",
+          "board": [
+            {"do":"write","line":"$\\int\\arctan x\\,dx$"},
+            {"do":"write","line":"$u=\\arctan x$，$v=x$","on":"u 是"}
+          ] },
+        { "show": ["$=x\\arctan x-\\int\\frac{x}{1+x^2}\\,dx$"],
+          "note": "剩下的要換元。",
+          "say": "分部之後剩下這個積分。分子是 x，分母是一加 x 平方，想想是哪一種形狀。",
+          "board": [
+            {"do":"write","line":"$=x\\arctan x-\\int\\frac{{{n:x}}}{{{d:1+x^2}}}\\,dx$"},
+            {"do":"underline","term":"n","color":"blue","label":"分子","on":"分子是"},
+            {"do":"underline","term":"d","color":"violet","label":"分母","on":"分母是"}
+          ] },
+        { "show": ["$(1+x^2)'=2x$，分子只有 $x$"],
+          "note": "分子是分母導數的倍數，是換元的線索。",
+          "say": "分母是一加 x 平方，它的導數是二 x。分子只有 x，差一個二倍，這就是換元的線索。",
+          "board": [
+            {"do":"write","line":"$(1+x^2)'={{t:2x}}$"},
+            {"do":"focus","term":"t","color":"gold","label":"多2倍","on":"差一個"}
+          ] },
+        { "show": ["令 $u=1+x^2$，$du=2x\\,dx$","$x\\,dx=\\frac{1}{2}du$"],
+          "note": "剩下的積分，自己算算看。",
+          "say": "令 u 等於分母，微分得二 x dx，所以分子的 x dx 就是二分之一個 du。",
+          "board": [
+            {"do":"write","line":"令 $u=1+x^2$"},
+            {"do":"write","line":"$du=2x\\,dx$","on":"微分得"},
+            {"do":"write","line":"$x\\,dx=\\frac{1}{2}du$","on":"就是"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "乘上 $x^n$",
+      "beats": [
+        { "show": ["$x^n\\ln x$：$u=\\ln x$，$dv=x^n\\,dx$"],
+          "note": "新積分只剩冪次，一步積完。",
+          "say": "乘上 x 的 n 次方時，還是讓自然對數當 u，冪次當 dv。新積分只剩冪次，一步積完。",
+          "board": [
+            {"do":"write","line":"$x^n\\ln x$：${{u:u=\\ln x}}$，${{d:dv=x^n\\,dx}}$","tint":{"u":"blue","d":"violet"}},
+            {"do":"write","line":"新積分：只剩冪次","on":"新積分只剩"}
+          ] },
+        { "show": ["$x^n\\arctan x$：$u=\\arctan x$"],
+          "note": "新積分要先做多項式除法或拆項。",
+          "say": "arctangent 也一樣當 u。只是剩下的積分是有理式，要先做除法或拆項。",
+          "board": [
+            {"do":"write","line":"$x^n\\arctan x$：$u=\\arctan x$"},
+            {"do":"write","line":"剩下是有理式：先除法或拆項","on":"有理式"}
+          ] },
+        { "show": ["有理式 ＝ 多項式 ÷ 多項式","$\\frac{x^3}{1+x^2}$：分子次數比較大"],
+          "note": "分子次數大於等於分母，先除。",
+          "say": "有理式是多項式除以多項式。像 x 三次方除以一加 x 平方，分子次數比分母大，要先做除法。",
+          "board": [
+            {"do":"write","line":"有理式 ＝ 多項式 ÷ 多項式"},
+            {"do":"write","line":"$\\frac{x^3}{1+x^2}$","on":"像"}
+          ] },
+        { "show": ["$x^3=x(1+x^2)-x$","$\\frac{x^3}{1+x^2}=x-\\frac{x}{1+x^2}$"],
+          "note": "分子次數比分母小，就不用除。",
+          "say": "拆法：x 三次方等於 x 乘一加 x 平方，再減 x。所以除完是 x 減 x 除以一加 x 平方。",
+          "board": [
+            {"do":"write","line":"$x^3={{a:x(1+x^2)}}-x$"},
+            {"do":"underline","term":"a","color":"blue","label":"分出整數","on":"x 乘"},
+            {"do":"transform","line":"$\\frac{x^3}{1+x^2}=x-\\frac{x}{1+x^2}$","on":"所以除完"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "負次方乘 $\\ln x$",
+      "beats": [
+        { "show": ["$\\int\\frac{\\ln x}{x^3}\\,dx$：$dv=x^{-3}\\,dx$"],
+          "note": "$v=-\\frac{1}{2x^2}$：負次方，負號別漏。",
+          "say": "x 三次方分之自然對數 x。u 是自然對數 x，dv 是 x 的負三次方，積出負二 x 平方分之一。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{\\ln x}{x^3}\\,dx$"},
+            {"do":"write","line":"$u=\\ln x$，$dv=x^{-3}\\,dx$","on":"u 是"},
+            {"do":"write","line":"$v=-\\frac{1}{2x^2}$","on":"積出"}
+          ] },
+        { "show": ["$=-\\frac{\\ln x}{2x^2}+\\frac{1}{2}\\int x^{-3}\\,dx$"],
+          "note": "減掉一個負的，變成加。",
+          "say": "代進公式：u 乘 v 帶著負號；減掉的那個積分本身是負的，所以變成加。",
+          "board": [
+            {"do":"write","line":"$=-\\frac{\\ln x}{2x^2}{{p:+\\frac{1}{2}\\int x^{-3}\\,dx}}$"},
+            {"do":"focus","term":"p","color":"gold","label":"變成加","on":"減掉"}
+          ] },
+        { "show": ["$-\\int\\left(-\\frac{1}{2x^2}\\right)\\frac{1}{x}\\,dx$","$=+\\frac{1}{2}\\int x^{-3}\\,dx$"],
+          "note": "負負得正。",
+          "say": "再看一次：公式是 u v 減積分 v du。v 本身帶負號，前面又有減號，負負得正，所以變加。",
+          "board": [
+            {"do":"write","line":"$-\\int{{v:\\left(-\\frac{1}{2x^2}\\right)}}\\frac{1}{x}\\,dx$"},
+            {"do":"focus","term":"v","color":"gold","label":"本身負","on":"本身帶"},
+            {"do":"write","line":"$=+\\frac{1}{2}\\int x^{-3}\\,dx$","on":"所以變加"}
+          ] }
+      ],
+      "key": "$x^{-3}$ 積出負號，乘進去要顧好符號",
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          {
+            "label": "$-\\frac{\\ln x}{2x^2}-\\frac{1}{4x^2}+C$",
+            "correct": true
+          },
+          {
+            "label": "$-\\frac{\\ln x}{2x^2}+\\frac{1}{4x^2}+C$",
+            "why": "$\\int x^{-3}\\,dx=-\\frac{1}{2x^2}$ 本身是負的，乘 $\\frac{1}{2}$ 得 $-\\frac{1}{4x^2}$。"
+          },
+          {
+            "label": "$-\\frac{\\ln x}{2x^2}-\\frac{1}{2x^2}+C$",
+            "why": "漏了前面的 $\\frac{1}{2}$：$\\frac{1}{2}\\cdot\\left(-\\frac{1}{2x^2}\\right)$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "挑一個好用的 $v$",
+      "beats": [
+        { "show": ["$\\int x\\arctan x\\,dx$：$dv=x\\,dx$"],
+          "note": "$v$ 可以差任意常數。",
+          "say": "x 乘 arctangent x。dv 是 x dx，v 通常寫二分之 x 平方，但其實可以加任何常數。",
+          "board": [
+            {"do":"write","line":"$\\int x\\arctan x\\,dx$：$dv=x\\,dx$"},
+            {"do":"write","line":"$v=\\frac{x^2}{2}$","on":"v 通常"},
+            {"do":"transform","line":"$v=\\frac{x^2}{2}+{{k:c}}$","on":"但其實"},
+            {"do":"focus","term":"k","color":"gold","label":"任意常數","on":"加任何"}
+          ] },
+        { "show": ["取 $v=\\frac{x^2+1}{2}$"],
+          "note": "新積分 $\\int\\frac{x^2+1}{2}\\cdot\\frac{1}{1+x^2}\\,dx=\\int\\frac{1}{2}\\,dx$。",
+          "say": "挑二分之 x 平方加一，新積分裡的分母一加 x 平方就直接消掉，只剩二分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"取 $v=\\frac{x^2+1}{2}$","on":"挑"},
+            {"do":"write","line":"$\\int\\frac{x^2+1}{2}\\cdot\\frac{1}{{{d:1+x^2}}}\\,dx$","on":"新積分裡"},
+            {"do":"underline","term":"d","color":"blue","label":"消掉","on":"分母"},
+            {"do":"transform","line":"$=\\int\\frac{1}{2}\\,dx$","on":"只剩"}
+          ] },
+        { "show": ["$\\frac{x^2+1}{2}\\arctan x-\\frac{x}{2}+C$"],
+          "note": "這些答案都預設 $x>0$（$\\ln x$ 的定義域）。",
+          "say": "答案就出來了。另外提醒：有自然對數的答案都預設 x 大於零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{r:\\frac{x^2+1}{2}\\arctan x-\\frac{x}{2}+C}}$","color":"green","on":"答案就"},
+            {"do":"write","line":"有 $\\ln x$ 的答案：$x>0$","on":"預設"}
+          ] },
+        { "show": ["$e^{y}>0$，所以 $\\ln x$ 要 $x>0$"],
+          "note": "$x\\le 0$ 時 $\\ln x$ 沒有值。",
+          "say": "為什麼要 x 大於零？因為 e 的任何次方都是正的，所以自然對數只吃正數，x 小於等於零時沒有值。",
+          "board": [
+            {"do":"write","line":"$e^{y}>0$"},
+            {"do":"write","line":"所以 $\\ln x$ 需要 $x>0$","on":"所以自然"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["integration-by-parts", "ibp", "log", "inverse-trig"],
+    "fine": ["ibp-hidden-dv", "ibp-log-u", "ibp-invtrig-alone", "ibp-invtrig-times-poly", "ibp-smart-v"]
+  },
+  "practice": [
+    { "id": "int-009", "core": true, "trains": "ibp-log-u" },
+    { "id": "uni-int-011", "core": true, "trains": "ibp-log-u" },
+    { "id": "exam-int-004", "core": true, "trains": "ibp-log-u" },
+    { "id": "uni-int-003", "core": true, "trains": "ibp-log-u" },
+    { "id": "lec-07-q1d", "core": true, "trains": "ibp-log-u" },
+    { "id": "lec-07-q1c", "core": true, "trains": "ibp-invtrig-alone" },
+    { "id": "int-056", "core": true, "trains": "ibp-smart-v" },
+    { "id": "cg-4d-010", "core": true, "trains": "ibp-invtrig-alone" },
+    { "id": "hc-ibp-007", "trains": "ibp-log-u" },
+    { "id": "burst-int-039", "trains": "ibp-log-u" },
+    { "id": "burst-boss-anti-007", "trains": "ibp-invtrig-times-poly" },
+    { "id": "cg-4d-011", "trains": "ibp-invtrig-alone" },
+    { "id": "world-050", "challenge": true, "trains": "ibp-log-u", "note": "挑戰：下限是 $0$，邊界項 $x^4\\ln x$ 在 $x\\to 0^+$ 的極限要自己算。" },
+    { "id": "uni-int-004", "challenge": true, "trains": "ibp-invtrig-times-poly", "note": "挑戰：分部後剩下 $\\int \\frac{1}{x(1+x^2)}\\,dx$，要拆成部分分式。" },
+    { "id": "world-082", "challenge": true, "trains": "ibp-invtrig-alone", "note": "挑戰：$(\\arcsin x)^2$ 要分部兩次，或先令 $x=\\sin\\theta$。" }
+  ],
+  "gaps": []
+}

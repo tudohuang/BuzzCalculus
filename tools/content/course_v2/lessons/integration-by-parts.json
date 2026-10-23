@@ -1,57 +1,145 @@
 {
   "id": "integration-by-parts",
   "title": "分部積分推導",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["product-rule", "u-sub-basic", "ftc-part2"],
-  "next": ["ibp-poly-exp"],
-  "related": ["ibp-log-invtrig", "ibp-cyclic"],
-  "objectives": [
-    "從乘法法則推出 $\\int u\\,dv=uv-\\int v\\,du$。",
-    "會挑 $u$ 與 $dv$：$u$ 微分後變簡單，$dv$ 積得出來。",
-    "會做定積分版本：$\\int_a^b u\\,dv=[uv]_a^b-\\int_a^b v\\,du$。"
+  "prerequisites": [
+    "product-rule",
+    "u-sub-basic",
+    "ftc-part2"
   ],
-  "visual": "在 (v, u) 平面上畫一條曲線，從點 (v(a), u(a)) 走到 (v(b), u(b))。曲線左邊到 u 軸的區域塗一種顏色，標「∫ v du」；曲線下方到 v 軸的區域塗另一種顏色，標「∫ u dv」。兩塊合起來，正好是大矩形 u(b)v(b) 扣掉小矩形 u(a)v(a)。拖動端點，三個數字即時更新，等式 ∫ u dv + ∫ v du = [uv] 一直成立。",
+  "next": [
+    "ibp-poly-exp"
+  ],
+  "related": [
+    "ibp-log-invtrig",
+    "ibp-cyclic"
+  ],
+  "objectives": [
+    "從乘法法則推出 $\\int u\\,dv=uv-\\int v\\,du$",
+    "會挑 $u$ 與 $dv$：$u$ 微分後變簡單，$dv$ 積得出來",
+    "會做定積分版本：$\\int_a^b u\\,dv=[uv]_a^b-\\int_a^b v\\,du$"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 乘法法則倒過來",
       "body": [
-        "〈乘法法則〉：$(uv)'=u'v+uv'$。移項得 $uv'=(uv)'-u'v$，兩邊積分：$\\int u v'\\,dx=uv-\\int v u'\\,dx$。",
-        "用 $du=u'\\,dx$、$dv=v'\\,dx$ 的寫法，就是下面這行。換元是連鎖律倒過來，分部積分是乘法法則倒過來。"
+        "換元積不出來的乘積：",
+        "$x$ 不是裡面那層的導數，換元不行",
+        "乘法法則：",
+        "兩邊積分（左邊積回 $uv$）：",
+        "常數 $C$ 先不寫，最後的積分會帶",
+        "移項：",
+        "簡寫：$dv=v'\\,dx$、$du=u'\\,dx$",
+        "「分部」：把被積函數分成兩部分，$u$ 與 $dv$",
+        "口訣：一個微分、一個積分"
       ],
-      "tex": ["\\int u\\,dv = uv-\\int v\\,du"],
-      "collapsible": false
+      "tex": [
+        "\\int x e^{-x}\\,dx",
+        "\\big(uv\\big)'=u'v+uv'",
+        "uv=\\int u'v\\,dx+\\int uv'\\,dx",
+        "\\int uv'\\,dx=uv-\\int u'v\\,dx",
+        "\\int u\\,dv=uv-\\int v\\,du"
+      ]
     },
     {
       "heading": "② 它做了什麼交換",
       "body": [
-        "把被積函數拆成兩塊：一塊叫 $u$，另一塊連同 $dx$ 叫 $dv$。公式把 $\\int u\\,dv$ 換成 $\\int v\\,du$：$u$ 被微分了一次，$dv$ 被積分了一次。",
-        "所以要挑：$u$ 是「微分之後變簡單」的（$x\\to 1$、$\\ln x\\to \\frac{1}{x}$），$dv$ 是「積得出來、積完不變複雜」的（$e^x$、$\\sin x$、$\\cos x$）。"
+        "左邊：$u$ 乘 $dv$　→　右邊：$v$ 乘 $du$",
+        "$\\int x e^{-x}dx$：$u=x$、$dv=e^{-x}dx$",
+        "$v$ 是 $dv$ 的反導函數，挑一個就好（⑤ 說為什麼）",
+        "代公式：",
+        "新的積分沒有 $x$ 了，直接積：",
+        "檢查：$\\big[-(x+1)e^{-x}\\big]'=-e^{-x}+(x+1)e^{-x}=xe^{-x}$"
       ],
-      "collapsible": false
+      "tex": [
+        "du=dx,\\qquad v=-e^{-x}",
+        "\\int x e^{-x}dx=-xe^{-x}-\\int(-e^{-x})\\,dx",
+        "=-xe^{-x}-e^{-x}+C=-(x+1)e^{-x}+C"
+      ]
+    },
+    {
+      "heading": "② 再一例：$\\int x\\sin 2x\\,dx$",
+      "body": [
+        "$u=x$、$dv=\\sin 2x\\,dx$",
+        "反連鎖律：裡面是 $2x$，積完要除以 $2$",
+        "最常錯的兩個地方：$v$ 的負號、兩次除以 $2$",
+        "挑 $u$ 的原則：",
+        "• $u$：微分後變簡單（多項式會降次）",
+        "• $dv$：積得出來"
+      ],
+      "tex": [
+        "du=dx,\\qquad v=-\\tfrac12\\cos 2x",
+        "\\int x\\sin2x\\,dx=-\\tfrac12x\\cos2x+\\tfrac12\\int\\cos2x\\,dx",
+        "=-\\tfrac12x\\cos2x+\\tfrac14\\sin2x+C"
+      ]
     },
     {
       "heading": "③ 挑錯會怎樣",
       "body": [
-        "$\\int x e^x\\,dx$ 如果挑 $u=e^x$、$dv=x\\,dx$，得 $\\frac{x^2}{2}e^x-\\int \\frac{x^2}{2}e^x\\,dx$：新的積分次方升高，比原來更難。這時換一種挑法，不是公式錯了。",
-        "一個常用的經驗口訣：對數、反三角、代數（多項式）、三角、指數，越前面越適合當 $u$。它是經驗，不是定理，偶爾有例外（〈重複分部與循環積分〉）。"
+        "反過來挑：$u=e^{-x}$、$dv=x\\,dx$",
+        "多項式升了一次：越做越難",
+        "等式是對的，只是沒用；看到新積分變難，就回頭換一種拆法"
       ],
-      "collapsible": false
+      "tex": [
+        "du=-e^{-x}dx,\\qquad v=\\tfrac12x^2",
+        "\\int xe^{-x}dx=\\tfrac12x^2e^{-x}+\\tfrac12\\int x^2e^{-x}dx"
+      ]
     },
     {
       "heading": "④ 定積分版本",
       "body": [
-        "上下限照原來的 $x$ 走：$uv$ 那一項直接代上下限，剩下的積分也帶著同樣的上下限。"
+        "從 $(uv)'=u'v+uv'$ 在 $[a,b]$ 上積分（基本定理）：",
+        "$[uv]_a^b=u(b)v(b)-u(a)v(a)$",
+        "邊界項 $uv$ 直接代上下限，不用再積",
+        "例：$\\displaystyle\\int_0^\\pi x\\cos x\\,dx$，$u=x$、$v=\\sin x$",
+        "邊界項：$\\pi\\sin\\pi-0=0$",
+        "負的合理嗎？$x\\cos x$ 在 $(\\frac\\pi2,\\pi)$ 是負的，而且 $x$ 比較大，負的部分贏"
       ],
-      "tex": ["\\int_a^b u\\,dv = \\Big[uv\\Big]_a^b-\\int_a^b v\\,du"],
-      "collapsible": false
+      "tex": [
+        "\\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du",
+        "=\\Big[x\\sin x\\Big]_0^\\pi-\\int_0^\\pi\\sin x\\,dx",
+        "\\int_0^\\pi\\sin x\\,dx=\\Big[-\\cos x\\Big]_0^\\pi=1-(-1)=2",
+        "\\int_0^\\pi x\\cos x\\,dx=0-2=-2"
+      ]
     },
     {
-      "heading": "$v$ 為什麼不用加 $C$",
+      "heading": "④ 圖上看：兩塊面積",
       "body": [
-        "把 $v$ 換成 $v+C$：$u(v+C)-\\int (v+C)\\,du=uv+Cu-\\int v\\,du-Cu=uv-\\int v\\,du$。多出來的 $Cu$ 互相抵消，所以 $v$ 取最簡單的那個就好。最後的答案還是要加 $+C$。"
+        "藍 ＋ 紅 ＝ 大長方形 － 灰色",
+        "紅的難算，就改算藍的",
+        "圖上 $u$、$v$ 都遞增；一般情形面積帶正負號，公式一樣成立"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_a^b u\\,dv+\\int_a^b v\\,du=\\Big[uv\\Big]_a^b"
+      ]
+    },
+    {
+      "heading": "⑤ $v$ 為什麼不用加 $C$",
+      "body": [
+        "如果用 $v+C$ 代替 $v$：",
+        "$\\int C\\,du=Cu$（常數放到最後一起寫）",
+        "常數只在最後寫一次"
+      ],
+      "tex": [
+        "u(v+C)-\\int(v+C)\\,du",
+        "=uv+Cu-\\int v\\,du-Cu",
+        "=uv-\\int v\\,du"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 乘法法則倒過來：$\\int u\\,dv=uv-\\int v\\,du$",
+        "• 交換：$u$ 被微分、$v$ 被積分",
+        "• $u$ 選微分後變簡單的（多項式），$dv$ 選積得出來的",
+        "• 挑錯不會算錯，但新積分會變難：換一種拆法",
+        "• 定積分：$[uv]_a^b-\\int_a^b v\\,du$，邊界項直接代",
+        "• $v$ 不加 $C$，最後再加一次",
+        "下一課：多項式 × 指數"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,35 +188,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\int x e^{2x}\\,dx$，$u$ 應該選？",
+      "ask": "$\\displaystyle\\int x\\cos x\\,dx=$？",
       "options": [
-        { "label": "$u=x$", "correct": true },
-        { "label": "$u=e^{2x}$", "why": "那 $dv=x\\,dx$、$v=\\frac{x^2}{2}$，新積分是 $\\int \\frac{x^2}{2}\\cdot 2e^{2x}\\,dx$，次方反而升高。" },
-        { "label": "$u=x e^{2x}$", "why": "那 $dv=dx$、$v=x$，新積分是 $\\int x(e^{2x}+2x e^{2x})\\,dx$，比原來更複雜。" }
+        {
+          "label": "$x\\sin x+\\cos x+C$",
+          "correct": true
+        },
+        {
+          "label": "$x\\sin x-\\cos x+C$",
+          "why": "漏了一個負號：$-\\int\\sin x\\,dx=-(-\\cos x)=+\\cos x$"
+        },
+        {
+          "label": "$\\tfrac12x^2\\sin x+C$",
+          "why": "把 $x$ 拿去積分、$\\cos x$ 當常數，分部積分不是這樣用"
+        },
+        {
+          "label": "$-x\\sin x+\\cos x+C$",
+          "why": "$\\cos x$ 積分是 $+\\sin x$；把它當成微分了"
+        }
       ]
     },
     {
-      "ask": "$\\int u\\,dv=uv-\\int v\\,du$ 是哪一條微分規則倒過來？",
+      "ask": "$\\displaystyle\\int_0^1 x e^{x}\\,dx=$？",
       "options": [
-        { "label": "乘法法則", "correct": true },
-        { "label": "連鎖律", "why": "連鎖律倒過來是換元。分部積分來自 $(uv)'=u'v+uv'$。" },
-        { "label": "除法法則", "why": "推導只用到 $(uv)'=u'v+uv'$，移項再積分。" }
-      ]
-    },
-    {
-      "ask": "$\\int x\\cos x\\,dx$ 取 $u=x$、$dv=\\cos x\\,dx$，下一步是？",
-      "options": [
-        { "label": "$x\\sin x-\\int \\sin x\\,dx$", "correct": true },
-        { "label": "$x\\sin x+\\int \\sin x\\,dx$", "why": "公式中間是減號：$uv-\\int v\\,du$。" },
-        { "label": "$x\\sin x-\\int x\\sin x\\,dx$", "why": "$du=dx$，不是 $x\\,dx$。新積分是 $\\int v\\,du=\\int \\sin x\\cdot 1\\,dx$。" }
-      ]
-    },
-    {
-      "ask": "算 $v$ 的時候，為什麼可以不加常數？",
-      "options": [
-        { "label": "加了 $C$，$uv$ 與 $\\int v\\,du$ 各多出 $Cu$，互相抵消", "correct": true },
-        { "label": "因為分部積分規定 $C=0$", "why": "沒有這種規定；加任何 $C$ 結果都一樣，所以選最簡單的。" },
-        { "label": "其實一定要加，不加會錯", "why": "加了也會消掉：$u(v+C)-\\int (v+C)\\,du=uv-\\int v\\,du$。只有最後的答案要加 $+C$。" }
+        {
+          "label": "$1$",
+          "correct": true
+        },
+        {
+          "label": "$e$",
+          "why": "只算了邊界項，忘了減 $\\int_0^1 e^x dx$"
+        },
+        {
+          "label": "$2e-1$",
+          "why": "把減號當成加號：$e+(e-1)$"
+        },
+        {
+          "label": "$e-1$",
+          "why": "那是 $\\int_0^1 e^x dx$，只是後半段"
+        }
       ]
     }
   ],
@@ -136,224 +234,780 @@
     {
       "title": "乘法法則倒過來",
       "beats": [
-        { "show": ["$(uv)'=u'v+uv'$"],
-          "say": "先回想乘法法則：u 乘 v 的導數，是 u prime 乘 v，加上 u 乘 v prime。",
+        {
+          "show": [
+            "換元積不出來的乘積：",
+            "$\\int x e^{-x}\\,dx$"
+          ],
+          "say": "先看一個積分：x 乘上 e 的負 x 次方。這是兩個函數相乘，而且 x 不是 e 的負 x 次方裡面那層的導數，換元用不上。",
           "board": [
-            {"do":"write","line":"$(uv)' = {{a:u'v}} + {{b:uv'}}$"},
-            {"do":"focus","term":"b","on":"u 乘 v prime"}
-          ] },
-        { "show": ["$\\int uv'\\,dx=uv-\\int vu'\\,dx$"],
-          "note": "移項，兩邊積分。",
-          "say": "把 u 乘 v prime 移到一邊，兩邊積分。乘積的導數積回來，就是 u 乘 v 本身。",
+            {
+              "do": "write",
+              "line": "換元積不出來的乘積："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x e^{-x}\\,dx$",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 不是裡面那層的導數，換元不行"
+          ],
+          "say": "換元是連鎖律倒過來。乘積的積分，要找的是乘法法則倒過來。",
           "board": [
-            {"do":"write","line":"${{b:uv'}} = (uv)' - {{a:u'v}}$","on":"移到一邊"},
-            {"do":"write","line":"$\\int {{b:uv'}}\\,dx = {{p:uv}} - \\int vu'\\,dx$","on":"兩邊積分"},
-            {"do":"underline","term":"p","label":"積回來","on":"積回來"}
-          ] },
-        { "show": ["$\\int u\\,dv=uv-\\int v\\,du$"],
-          "note": "換元是連鎖律倒過來，這是乘法法則倒過來。",
-          "say": "用 du、dv 的寫法縮成一行，這就是分部積分。",
+            {
+              "do": "write",
+              "line": "$x$ 不是裡面那層的導數，換元不行",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘法法則：",
+            "$\\big(uv\\big)'=u'v+uv'$"
+          ],
+          "say": "回想乘法法則：u 乘 v 的導數，等於 u prime 乘 v，加上 u 乘 v prime。",
           "board": [
-            {"do":"write","line":"${{r:\\int u\\,dv = uv - \\int v\\,du}}$","on":"縮成一行"},
-            {"do":"box","term":"r","color":"green","label":"分部積分","on":"這就是"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "乘法法則："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(uv\\big)'=u'v+uv'$",
+              "on": "ri#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊積分（左邊積回 $uv$）：",
+            "$uv=\\int u'v\\,dx+\\int uv'\\,dx$"
+          ],
+          "say": "兩邊同時積分。左邊是一個導數，積回去就是 u 乘 v 本身。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊積分（左邊積回 $uv$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle uv=\\int u'v\\,dx+\\int uv'\\,dx$",
+              "on": "一個"
+            },
+            {
+              "do": "write",
+              "line": "　常數 $C$ 先不寫，最後的積分會帶",
+              "color": "violet",
+              "on": "本身"
+            }
+          ]
+        },
+        {
+          "show": [
+            "移項：",
+            "$\\int uv'\\,dx=uv-\\int u'v\\,dx$"
+          ],
+          "say": "把其中一項移到另一邊，就得到 u 乘 v prime 的積分，等於 u v 減掉 u prime 乘 v 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "移項："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int uv'\\,dx=uv-\\int u'v\\,dx$",
+              "on": "積分#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "簡寫：$dv=v'\\,dx$、$du=u'\\,dx$",
+            "$\\int u\\,dv=uv-\\int v\\,du$"
+          ],
+          "say": "把 v prime d x 寫成 d v，u prime d x 寫成 d u，就是分部積分公式：積分 u d v，等於 u v 減積分 v d u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "簡寫：$dv=v'\\,dx$、$du=u'\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int u\\,dv=uv-\\int v\\,du}}$",
+              "color": "red",
+              "on": "pr#2"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　「分部」：把被積函數分成兩部分，$u$ 與 $dv$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "口訣：一個微分、一個積分"
+          ],
+          "say": "用的時候，被積函數拆成兩塊：一塊叫 u，等一下要微分；另一塊叫 d v，等一下要積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "口訣：一個微分、一個積分",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "它做了什麼交換",
       "beats": [
-        { "show": ["拆兩塊：$u$，和連同 $dx$ 的 $dv$"],
-          "say": "把被積函數拆成兩塊：一塊叫 u，另一塊連同 dx 叫 dv。",
+        {
+          "show": [
+            "左邊：$u$ 乘 $dv$　→　右邊：$v$ 乘 $du$"
+          ],
+          "say": "公式做的事，是一個交換：原本是 u 乘 d v，換成 v 乘 d u。u 被微分，v 被積出來。",
           "board": [
-            {"do":"write","line":"$\\int {{u:u}}\\,{{dv:dv}}$","tint":{"u":"blue","dv":"violet"}},
-            {"do":"underline","term":"dv","color":"violet","label":"連同 dx","on":"連同"}
-          ] },
-        { "show": ["$\\int u\\,dv$ 換成 $\\int v\\,du$"],
-          "note": "$u$ 被微分一次，$dv$ 被積分一次。",
-          "say": "公式把原來的積分換成另一個：u 被微分了一次，dv 被積分了一次。",
+            {
+              "do": "write",
+              "line": "左邊：$u$ 乘 $dv$　→　右邊：$v$ 乘 $du$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int x e^{-x}dx$：$u=x$、$dv=e^{-x}dx$",
+            "$du=dx,\\qquad v=-e^{-x}$"
+          ],
+          "say": "回到開頭的例子。令 u 等於 x，d v 等於 e 的負 x 次方 d x。x 微分變成 1，e 的負 x 次方積分是負 e 的負 x 次方。",
           "board": [
-            {"do":"write","line":"$\\int {{u:u}}\\,{{dv:dv}} = uv - \\int {{v:v}}\\,{{du:du}}$","tint":{"u":"blue","dv":"violet","du":"blue","v":"violet"}},
-            {"do":"focus","term":"du","color":"blue","label":"微分一次","on":"微分了"},
-            {"do":"focus","term":"v","color":"violet","label":"積分一次","on":"積分了"}
-          ] },
-        { "show": ["$u$：微分變簡單","$dv$：積得出來、不變複雜"],
-          "note": "$x\\to 1$、$\\ln x\\to\\frac{1}{x}$；$e^x$、$\\sin x$。",
-          "say": "所以 u 要挑微分後變簡單的，像 x 變一；dv 要挑積得出來、積完不變複雜的，像 e 的 x 次方。",
+            {
+              "do": "write",
+              "line": "$\\int x e^{-x}dx$：$u=x$、$dv=e^{-x}dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=dx,\\qquad v=-e^{-x}$",
+              "on": "的負#1"
+            },
+            {
+              "do": "write",
+              "line": "　$v$ 是 $dv$ 的反導函數，挑一個就好（⑤ 說為什麼）",
+              "color": "violet",
+              "on": "的負#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代公式：",
+            "$\\int x e^{-x}dx=-xe^{-x}-\\int(-e^{-x})\\,dx$"
+          ],
+          "say": "代進公式：u v 是負 x 乘 e 的負 x 次方，再減掉 v d u 的積分。",
           "board": [
-            {"do":"write","line":"${{u:u}}$：微分後變簡單","tint":{"u":"blue"}},
-            {"do":"write","line":"${{dv:dv}}$：積得出來、不變複雜","tint":{"dv":"violet"},"on":"dv 要挑"}
-          ] },
-        { "show": ["$x\\to\\frac{x^2}{2}$：次方升高","$e^x\\to e^x$：不變"],
-          "note": "判斷複雜：看次方有沒有升高。",
-          "say": "看次方有沒有升高。x 積分變成 x 平方除以二，變複雜；e 的 x 次方積完還是自己，不變複雜。",
+            {
+              "do": "write",
+              "line": "代公式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x e^{-x}dx=-xe^{-x}-\\int(-e^{-x})\\,dx$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "新的積分沒有 $x$ 了，直接積：",
+            "$=-xe^{-x}-e^{-x}+C=-(x+1)e^{-x}+C$"
+          ],
+          "say": "關鍵在這裡：x 被微分成 1，新的積分只剩 e 的負 x 次方，一下就積出來。整理成負的 x 加 1，乘 e 的負 x 次方，加 C。",
           "board": [
-            {"do":"write","line":"$x \\to {{n1:\\frac{x^2}{2}}}$：次方升高"},
-            {"do":"underline","term":"n1","color":"red","label":"變複雜","on":"變複雜#1"},
-            {"do":"write","line":"$e^x \\to {{n2:e^x}}$：不變","on":"e 的 x 次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "新的積分沒有 $x$ 了，直接積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle =-xe^{-x}-e^{-x}+C=-(x+1)e^{-x}+C}}$",
+              "on": "的負#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "的負#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$\\big[-(x+1)e^{-x}\\big]'=-e^{-x}+(x+1)e^{-x}=xe^{-x}$"
+          ],
+          "say": "微分檢查：負 e 的負 x 次方，加上 x 加 1 乘 e 的負 x 次方，剛好剩 x 乘 e 的負 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$\\big[-(x+1)e^{-x}\\big]'=-e^{-x}+(x+1)e^{-x}=xe^{-x}$"
+            }
+          ]
+        }
       ],
-      "check": 0
-    },
-    {
-      "title": "多項式乘指數",
-      "beats": [
-        { "show": ["$\\int xe^{-x}\\,dx$：$u=x$，$dv=e^{-x}\\,dx$"],
-          "say": "試一題：x 乘 e 的負 x 次方。x 微分變一，當 u；指數積得出來，當 dv。",
-          "board": [
-            {"do":"write","line":"$\\int {{u:x}}\\,{{dv:e^{-x}\\,dx}}$","tint":{"u":"blue","dv":"violet"}},
-            {"do":"focus","term":"u","color":"blue","label":"當 u","on":"x 微分"},
-            {"do":"underline","term":"dv","color":"violet","label":"當 dv","on":"指數積"}
-          ] },
-        { "show": ["$du=dx$，$v=-e^{-x}$"],
-          "say": "u 微分得 dx；e 的負 x 次方積分，記得多一個負號。",
-          "board": [
-            {"do":"write","line":"$du = dx$，$v = {{v:-e^{-x}}}$","tint":{"v":"violet"}},
-            {"do":"underline","term":"v","color":"violet","label":"多一個負號","on":"記得多"}
-          ] },
-        { "show": ["$(-e^{-x})'=e^{-x}$"],
-          "note": "微分檢查 $v$。",
-          "say": "為什麼要多一個負號？因為 e 的負 x 次方微分會多一個負號，所以 v 要補負號，才能微分回來。",
-          "board": [
-            {"do":"write","line":"$(-e^{-x})' = {{n3:e^{-x}}}$"},
-            {"do":"focus","term":"n3","label":"微分回來","on":"補負號"}
-          ] },
-        { "show": ["$=-xe^{-x}+\\int e^{-x}\\,dx$"],
-          "note": "公式的減號碰上 $v$ 的負號，變成加。",
-          "say": "代進公式。u 乘 v 是負 x e 的負 x 次方；減掉的積分裡有負號，負負得正。",
-          "board": [
-            {"do":"write","line":"$= x({{v:-e^{-x}}}) - \\int (-e^{-x})\\,dx$"},
-            {"do":"transform","line":"$= -xe^{-x} {{s:+}} \\int e^{-x}\\,dx$","on":"減掉的"},
-            {"do":"focus","term":"s","label":"負負得正","on":"有負號"}
-          ] },
-        { "show": ["$=-xe^{-x}-e^{-x}+C$"],
-          "note": "微分檢查，回到 $xe^{-x}$。",
-          "say": "剩下的直接積，再加 C。微分回去檢查，剛好是 x 乘 e 的負 x 次方。",
-          "board": [
-            {"do":"write","line":"$= {{r:-xe^{-x} - e^{-x} + C}}$"},
-            {"do":"box","term":"r","color":"green","label":"微分回去檢查","on":"微分回去"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "挑錯會怎樣",
-      "beats": [
-        { "show": ["$\\int xe^x\\,dx$ 挑 $u=e^x$，$dv=x\\,dx$"],
-          "note": "得 $\\frac{x^2}{2}e^x-\\int\\frac{x^2}{2}e^x\\,dx$。",
-          "say": "如果反過來挑，讓 x 去積分，新的積分次方升高，比原來更難。這時換挑法，不是公式錯了。",
-          "board": [
-            {"do":"write","line":"$\\int xe^x\\,dx$，$u=e^x$，$dv=x\\,dx$"},
-            {"do":"write","line":"$= \\frac{x^2}{2}e^x - \\int {{w:\\frac{x^2}{2}}}e^x\\,dx$","on":"新的積分"},
-            {"do":"underline","term":"w","color":"red","label":"次方升高","on":"比原來"}
-          ] },
-        { "show": ["對數、反三角、代數、三角、指數"],
-          "note": "越前面越適合當 $u$。是經驗，不是定理。",
-          "say": "挑 u 有個常用口訣，就在畫面上：越前面越適合當 u，對數最優先，指數排最後。偶爾有例外。",
-          "board": [
-            {"do":"write","line":"對數 → 反三角 → 代數 → 三角 → 指數"}
-          ] },
-        { "show": ["$\\int xe^{x^2}\\,dx$：口訣失效"],
-          "note": "$dv$ 積不出來，就改用換元。",
-          "say": "口訣的例外：x 乘 e 的 x 平方次方，照口訣 dv 是 e 的 x 平方次方，卻積不出來。這時改用換元。",
-          "board": [
-            {"do":"write","line":"$dv = {{w2:e^{x^2}}}\\,dx$"},
-            {"do":"underline","term":"w2","color":"red","label":"積不出來","on":"積不出來"}
-          ] },
-        { "show": ["$\\int x\\sin 2x\\,dx$：$u=x$，$v=-\\frac{1}{2}\\cos 2x$"],
-          "say": "照口訣試一題：x 乘 sine 二 x。x 是代數，當 u；sine 二 x 積分是負二分之一 cosine 二 x。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int {{u:x}}\\,\\sin 2x\\,dx$","tint":{"u":"blue"},"on":"試一題"},
-            {"do":"focus","term":"u","color":"blue","label":"代數","on":"代數"},
-            {"do":"write","line":"$u = x$，$v = -\\frac{1}{2}\\cos 2x$","on":"積分是"}
-          ] }
-      ],
-      "key": "挑 $u$ 要讓微分後變簡單",
       "predict": {
-        "ask": "代進公式，下一步是？",
+        "ask": "$\\displaystyle\\int x e^{x}\\,dx$ 應該怎麼拆？",
         "options": [
           {
-            "label": "$-\\frac{x}{2}\\cos 2x+\\frac{1}{2}\\int\\cos 2x\\,dx$",
+            "label": "$u=x$，$dv=e^x dx$",
             "correct": true
           },
           {
-            "label": "$-\\frac{x}{2}\\cos 2x-\\frac{1}{2}\\int\\cos 2x\\,dx$",
-            "why": "$-\\int\\left(-\\frac{1}{2}\\cos 2x\\right)dx$：兩個負號變正。"
+            "label": "$u=e^x$，$dv=x\\,dx$",
+            "why": "$x$ 積分變 $\\frac{x^2}2$，次方升高，越做越難"
           },
           {
-            "label": "$-\\frac{x}{2}\\cos 2x+\\frac{1}{2}\\int x\\cos 2x\\,dx$",
-            "why": "$du=dx$，新積分裡不會再有 $x$。"
+            "label": "$u=xe^x$，$dv=dx$",
+            "why": "$u$ 微分還是乘積，等於沒拆"
           }
         ]
       }
     },
     {
+      "title": "再一例：$\\int x\\sin 2x\\,dx$",
+      "beats": [
+        {
+          "show": [
+            "$u=x$、$dv=\\sin 2x\\,dx$",
+            "$du=dx,\\qquad v=-\\tfrac12\\cos 2x$"
+          ],
+          "say": "再一個例子：x 乘正弦 2x。一樣讓 x 當 u。正弦 2x 積分，是負 2 分之 1 餘弦 2x，別忘了除以 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=x$、$dv=\\sin 2x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=dx,\\qquad v=-\\tfrac12\\cos 2x$",
+              "on": "正弦#2"
+            },
+            {
+              "do": "write",
+              "line": "　反連鎖律：裡面是 $2x$，積完要除以 $2$",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int x\\sin2x\\,dx=-\\tfrac12x\\cos2x+\\tfrac12\\int\\cos2x\\,dx$"
+          ],
+          "say": "代公式：u v 是負 2 分之 1 x 餘弦 2x。減掉 v d u，負負得正，變成加 2 分之 1 積分餘弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x\\sin2x\\,dx=-\\tfrac12x\\cos2x+\\tfrac12\\int\\cos2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=-\\tfrac12x\\cos2x+\\tfrac14\\sin2x+C$"
+          ],
+          "say": "餘弦 2x 積分是 2 分之 1 正弦 2x，再乘前面的 2 分之 1，得到 4 分之 1 正弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =-\\tfrac12x\\cos2x+\\tfrac14\\sin2x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "正弦#1"
+            },
+            {
+              "do": "write",
+              "line": "　最常錯的兩個地方：$v$ 的負號、兩次除以 $2$",
+              "color": "violet",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "挑 $u$ 的原則：",
+            "• $u$：微分後變簡單（多項式會降次）"
+          ],
+          "say": "所以挑法的原則有兩條：u 要選微分以後變簡單的，例如多項式；d v 要選你積得出來的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "挑 $u$ 的原則："
+            },
+            {
+              "do": "write",
+              "line": "• $u$：微分後變簡單（多項式會降次）",
+              "on": "選微"
+            },
+            {
+              "do": "write",
+              "line": "• $dv$：積得出來",
+              "on": "要選#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "挑錯會怎樣",
+      "beats": [
+        {
+          "show": [
+            "反過來挑：$u=e^{-x}$、$dv=x\\,dx$",
+            "$du=-e^{-x}dx,\\qquad v=\\tfrac12x^2$"
+          ],
+          "say": "如果反過來，讓 e 的負 x 次方當 u，x d x 當 d v 呢？x 積分變成 2 分之 1 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來挑：$u=e^{-x}$、$dv=x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=-e^{-x}dx,\\qquad v=\\tfrac12x^2$",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int xe^{-x}dx=\\tfrac12x^2e^{-x}+\\tfrac12\\int x^2e^{-x}dx$"
+          ],
+          "say": "代公式，新的積分變成 x 平方乘 e 的負 x 次方。次方從 1 變成 2，比原來還難。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int xe^{-x}dx=\\tfrac12x^2e^{-x}+\\tfrac12\\int x^2e^{-x}dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式升了一次：越做越難"
+          ],
+          "say": "公式本身沒有錯，等號也成立，只是把題目變難了。挑錯不會算錯，只是會卡住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多項式升了一次：越做越難",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　等式是對的，只是沒用；看到新積分變難，就回頭換一種拆法",
+              "color": "violet",
+              "on": "目變"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
       "title": "定積分版本",
       "beats": [
-        { "show": ["$\\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du$"],
-          "note": "$uv$ 那一項也要代上下限。",
-          "say": "定積分版本：上下限照原來的 x 走，u 乘 v 那一項直接代，剩下的積分也帶著同樣上下限。",
+        {
+          "show": [
+            "從 $(uv)'=u'v+uv'$ 在 $[a,b]$ 上積分（基本定理）：",
+            "$\\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du$"
+          ],
+          "say": "定積分版本：把乘法法則從 a 積到 b。用微積分基本定理，左邊變成 u v 在 b 減在 a。移項就得到這個公式。",
           "board": [
-            {"do":"write","line":"$\\int_a^b u\\,dv = {{e:\\Big[uv\\Big]_a^b}} - \\int_a^b v\\,du$"},
-            {"do":"underline","term":"e","label":"也要代上下限","on":"直接代"}
-          ] },
-        { "show": ["$x\\cos x$：前半在上、後半在下"],
-          "say": "先看被積函數的圖：x 乘 cosine x，前半段在 x 軸上方，後半段在下方，下方那塊比較大。",
+            {
+              "do": "write",
+              "line": "從 $(uv)'=u'v+uv'$ 在 $[a,b]$ 上積分（基本定理）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du}}$",
+              "on": "積到"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "左邊"
+            },
+            {
+              "do": "write",
+              "line": "　$[uv]_a^b=u(b)v(b)-u(a)v(a)$",
+              "color": "violet",
+              "on": "減在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界項 $uv$ 直接代上下限，不用再積"
+          ],
+          "say": "跟不定積分的差別只有一個：u v 那一項直接代上下限。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.5,3.5,-3,2],"curves":[{"expr":"x*cos(x)","domain":[0,3.1416],"color":"blue"}],"fills":[{"expr":"x*cos(x)","from":0,"to":1.5708,"color":"green"},{"expr":"x*cos(x)","from":1.5708,"to":3.1416,"color":"red"}]}}
-          ] },
-        { "show": ["$\\int_0^\\pi x\\cos x\\,dx=[x\\sin x]_0^\\pi-\\int_0^\\pi\\sin x\\,dx$"],
-          "say": "例如 x 乘 cosine x 從零到 pi。u 是 x，v 是 sine x。",
+            {
+              "do": "write",
+              "line": "邊界項 $uv$ 直接代上下限，不用再積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^\\pi x\\cos x\\,dx$，$u=x$、$v=\\sin x$"
+          ],
+          "say": "例子：x 乘餘弦 x，從 0 積到派。u 等於 x，v 等於正弦 x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^\\pi x\\cos x\\,dx$","on":"例如"},
-            {"do":"write","line":"$u = x$，${{v:v = \\sin x}}$","on":"u 是 x"}
-          ] },
-        { "show": ["$=0-2=-2$"],
-          "note": "$x\\cos x$ 後半段為負，那塊比較大。",
-          "say": "第一項代進去是零，sine 從零積到 pi 是二，答案負二。負的，因為後半段在下方的那塊比較大。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^\\pi x\\cos x\\,dx$，$u=x$、$v=\\sin x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\Big[x\\sin x\\Big]_0^\\pi-\\int_0^\\pi\\sin x\\,dx$"
+          ],
+          "say": "代公式：邊界項是 x 乘正弦 x 從 0 到派，再減掉正弦 x 從 0 到派的積分。",
           "board": [
-            {"do":"write","line":"$= {{b:[x\\sin x]_0^\\pi}} - \\int_0^\\pi\\sin x\\,dx$"},
-            {"do":"focus","term":"b","label":"代進去是零","on":"代進去是零"},
-            {"do":"write","line":"$= 0 - 2 = {{r:-2}}$","on":"答案負二"},
-            {"do":"box","term":"r","color":"green","label":"後半段比較大","on":"負的，因為"}
-          ] },
-        { "show": ["第一項 $0$，再減正的 $2$"],
-          "note": "負號來自公式中間的減號。",
-          "say": "注意公式中間是減號：第一項是零，再減掉正的二，所以是負二。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\Big[x\\sin x\\Big]_0^\\pi-\\int_0^\\pi\\sin x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界項：$\\pi\\sin\\pi-0=0$",
+            "$\\int_0^\\pi\\sin x\\,dx=\\Big[-\\cos x\\Big]_0^\\pi=1-(-1)=2$"
+          ],
+          "say": "正弦派是 0，所以邊界項是 0。正弦從 0 到派的積分是 2。",
           "board": [
-            {"do":"focus","term":"b"},
-            {"do":"underline","term":"r","color":"red","label":"零減二","on":"減掉"}
-          ] },
-        { "show": ["算 $v$ 時不用加 $C$"],
-          "note": "最後的答案才加 $+C$。",
-          "say": "最後一個小問題：算 v 的時候為什麼沒有加常數？",
+            {
+              "do": "write",
+              "line": "邊界項：$\\pi\\sin\\pi-0=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\pi\\sin x\\,dx=\\Big[-\\cos x\\Big]_0^\\pi=1-(-1)=2$",
+              "on": "正弦#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^\\pi x\\cos x\\,dx=0-2=-2$"
+          ],
+          "say": "答案是 0 減 2，等於負 2。",
           "board": [
-            {"do":"keep","n":3},
-            {"do":"focus","term":"v","on":"算 v"},
-            {"do":"write","line":"算 $v$ 時，為什麼不加常數？","on":"為什麼"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^\\pi x\\cos x\\,dx=0-2=-2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　負的合理嗎？$x\\cos x$ 在 $(\\frac\\pi2,\\pi)$ 是負的，而且 $x$ 比較大，負的部分贏",
+              "color": "violet",
+              "on": "於負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "圖上看：兩塊面積",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "用圖來看。橫軸是 u，縱軸是 v。藍色是曲線下面的面積，就是積分 v d u；紅色是曲線左邊的面積，就是積分 u d v。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 300\" width=\"620\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"60\" y=\"196\" width=\"120\" height=\"64\" fill=\"var(--muted)\" fill-opacity=\"0.1\"/><path d=\"M180,260 L180,196 C280,190 330,80 420,52 L420,260 Z\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><path d=\"M60,196 L180,196 C280,190 330,80 420,52 L60,52 Z\" fill=\"var(--red)\" fill-opacity=\"0.1\"/><line x1=\"60\" y1=\"260\" x2=\"500\" y2=\"260\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><line x1=\"60\" y1=\"260\" x2=\"60\" y2=\"20\" stroke=\"var(--ink)\" stroke-width=\"1.5\"/><path d=\"M180,196 C280,190 330,80 420,52\" fill=\"none\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"180\" y1=\"196\" x2=\"180\" y2=\"260\" stroke=\"var(--ink)\" stroke-dasharray=\"4 4\"/><line x1=\"420\" y1=\"52\" x2=\"420\" y2=\"260\" stroke=\"var(--ink)\" stroke-dasharray=\"4 4\"/><line x1=\"60\" y1=\"52\" x2=\"420\" y2=\"52\" stroke=\"var(--ink)\" stroke-dasharray=\"4 4\"/><text x=\"510\" y=\"265\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:20px\" fill=\"var(--ink)\">u</text><text x=\"52\" y=\"14\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:20px\" fill=\"var(--ink)\">v</text><text x=\"168\" y=\"284\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:18px\" fill=\"var(--ink)\">u(a)</text><text x=\"408\" y=\"284\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:18px\" fill=\"var(--ink)\">u(b)</text><text x=\"6\" y=\"202\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:18px\" fill=\"var(--ink)\">v(a)</text><text x=\"6\" y=\"58\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:18px\" fill=\"var(--ink)\">v(b)</text><text x=\"315\" y=\"225\" style=\"font-family:KaTeX_Main,serif;font-size:22px\" fill=\"var(--blue)\">∫ v du</text><text x=\"140\" y=\"125\" style=\"font-family:KaTeX_Main,serif;font-size:22px\" fill=\"var(--red)\">∫ u dv</text><text x=\"440\" y=\"120\" style=\"font-family:inherit;font-size:17px\" fill=\"var(--ink)\">大長方形 u(b)v(b)</text><text x=\"440\" y=\"200\" style=\"font-family:inherit;font-size:17px\" fill=\"var(--muted)\">灰色 u(a)v(a)</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍 ＋ 紅 ＝ 大長方形 － 灰色",
+            "$\\int_a^b u\\,dv+\\int_a^b v\\,du=\\Big[uv\\Big]_a^b$"
+          ],
+          "say": "藍色加紅色，剛好是大長方形減掉左下角的灰色長方形，也就是 u v 在 b 減在 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "藍 ＋ 紅 ＝ 大長方形 － 灰色"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_a^b u\\,dv+\\int_a^b v\\,du=\\Big[uv\\Big]_a^b}}$",
+              "on": "掉左"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "減在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅的難算，就改算藍的"
+          ],
+          "say": "這就是分部積分的交換：紅色那塊難算，就去算藍色那塊，再用長方形扣回來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "紅的難算，就改算藍的",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　圖上 $u$、$v$ 都遞增；一般情形面積帶正負號，公式一樣成立",
+              "color": "violet",
+              "on": "就去"
+            }
+          ]
+        }
       ],
-      "key": "定積分的 $uv$ 項也要代上下限",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "$v$ 為什麼不用加 $C$",
+      "beats": [
+        {
+          "show": [
+            "如果用 $v+C$ 代替 $v$：",
+            "$u(v+C)-\\int(v+C)\\,du$"
+          ],
+          "say": "最後一個問題：從 d v 積出 v 的時候，為什麼不用加 C？我們真的加加看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "如果用 $v+C$ 代替 $v$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle u(v+C)-\\int(v+C)\\,du$",
+              "on": "時候"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=uv+Cu-\\int v\\,du-Cu$"
+          ],
+          "say": "展開：多出一個 C 乘 u；後面的積分也多出 C 乘 u 的積分，就是 C u，但前面是減號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =uv+Cu-\\int v\\,du-Cu$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int C\\,du=Cu$（常數放到最後一起寫）",
+              "color": "violet",
+              "on": "的積#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=uv-\\int v\\,du$"
+          ],
+          "say": "兩個 C u 一加一減，剛好抵消。所以 v 的常數加了也是白加，挑最簡單的那個就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle =uv-\\int v\\,du}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "的常"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常數只在最後寫一次"
+          ],
+          "say": "整個分部積分做完、最後一個積分積出來，才寫一次加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常數只在最後寫一次",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用分部積分的步驟",
+        "steps": [
+          {
+            "label": "把被積函數拆成 $u$ 和 $dv$（$u$ 微分變簡單）"
+          },
+          {
+            "label": "算 $du$（微分）和 $v$（積分，不加 $C$）",
+            "why": "先要有上一步：把被積函數拆成 $u$ 和 $dv$（$u$ 微分變簡單）"
+          },
+          {
+            "label": "代 $uv-\\int v\\,du$",
+            "why": "先要有上一步：算 $du$（微分）和 $v$（積分，不加 $C$）"
+          },
+          {
+            "label": "積出新的積分，最後加 $C$",
+            "why": "先要有上一步：代 $uv-\\int v\\,du$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 乘法法則倒過來：$\\int u\\,dv=uv-\\int v\\,du$",
+            "• 交換：$u$ 被微分、$v$ 被積分"
+          ],
+          "say": "整理一下：分部積分把 u d v 換成 v d u。u 選微分後變簡單的，d v 選積得出來的。定積分時，u v 直接代上下限；v 不加常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 乘法法則倒過來：$\\int u\\,dv=uv-\\int v\\,du$"
+            },
+            {
+              "do": "write",
+              "line": "• 交換：$u$ 被微分、$v$ 被積分",
+              "on": "換成"
+            },
+            {
+              "do": "write",
+              "line": "• $u$ 選微分後變簡單的（多項式），$dv$ 選積得出來的",
+              "on": "選微"
+            },
+            {
+              "do": "write",
+              "line": "• 挑錯不會算錯，但新積分會變難：換一種拆法",
+              "on": "選積"
+            },
+            {
+              "do": "write",
+              "line": "• 定積分：$[uv]_a^b-\\int_a^b v\\,du$，邊界項直接代",
+              "on": "定積"
+            },
+            {
+              "do": "write",
+              "line": "• $v$ 不加 $C$，最後再加一次",
+              "on": "代上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：多項式 × 指數"
+          ],
+          "say": "下一課，多項式乘指數：要分部好幾次的時候，怎麼一次寫完。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：多項式 × 指數"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["integration-by-parts", "ibp"],
-    "fine": ["ibp-formula", "ibp-choose-u", "ibp-definite", "ibp-no-constant-v"]
+    "coarse": [
+      "integration-by-parts",
+      "ibp"
+    ],
+    "fine": [
+      "ibp-formula",
+      "ibp-choose-u",
+      "ibp-definite",
+      "ibp-no-constant-v"
+    ]
   },
   "practice": [
-    { "id": "lec-07-m1", "core": true, "trains": "ibp-formula" },
-    { "id": "int-038", "core": true, "trains": "ibp-formula" },
-    { "id": "int-017", "core": true, "trains": "ibp-definite" },
-    { "id": "exam-int-029", "core": true, "trains": "ibp-definite" },
-    { "id": "cg-4d-001", "core": true, "trains": "ibp-choose-u" },
-    { "id": "cg-4d-002", "core": true, "trains": "ibp-choose-u" },
-    { "id": "depth-int-016", "trains": "ibp-definite" },
-    { "id": "gap-tech-004", "trains": "ibp-choose-u" },
-    { "id": "cg-4d-003", "trains": "ibp-choose-u" },
-    { "id": "int-040", "challenge": true, "trains": "ibp-definite", "note": "挑戰：上限是 $\\infty$，$[-x e^{-x}]$ 在 $x\\to\\infty$ 的極限要自己算。" }
+    {
+      "id": "lec-07-m1",
+      "core": true,
+      "trains": "ibp-formula"
+    },
+    {
+      "id": "int-038",
+      "core": true,
+      "trains": "ibp-formula"
+    },
+    {
+      "id": "int-017",
+      "core": true,
+      "trains": "ibp-definite"
+    },
+    {
+      "id": "exam-int-029",
+      "core": true,
+      "trains": "ibp-definite"
+    },
+    {
+      "id": "cg-4d-001",
+      "core": true,
+      "trains": "ibp-choose-u"
+    },
+    {
+      "id": "cg-4d-002",
+      "core": true,
+      "trains": "ibp-choose-u"
+    },
+    {
+      "id": "depth-int-016",
+      "trains": "ibp-definite"
+    },
+    {
+      "id": "gap-tech-004",
+      "trains": "ibp-choose-u"
+    },
+    {
+      "id": "cg-4d-003",
+      "trains": "ibp-choose-u"
+    },
+    {
+      "id": "int-040",
+      "challenge": true,
+      "trains": "ibp-definite",
+      "note": "挑戰：上限是 $\\infty$，$[-x e^{-x}]$ 在 $x\\to\\infty$ 的極限要自己算。"
+    }
   ],
   "gaps": []
 }

@@ -1,43 +1,121 @@
 {
   "id": "function-composition",
   "title": "函數合成",
-  "readMinutes": 7,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 15,
-  "prerequisites": ["function-intro", "function-arithmetic"],
-  "next": ["inverse-function"],
-  "related": ["chain-rule"],
-  "objectives": [
-    "會算 $(f\\circ g)(x) = f(g(x))$：先算裡面的 $g$，再把結果放進 $f$。",
-    "看到一個式子能拆出「外面是誰、裡面是誰」。",
-    "會找合成函數的定義域，知道化簡後的式子可能比合成函數的定義域大。"
+  "prerequisites": [
+    "function-intro",
+    "function-arithmetic"
   ],
-  "visual": "兩台機器串在一起：x 先進 g，出來的 g(x) 再進 f。拖動 x，兩台機器的輸出同步更新；按「交換順序」，同一個 x 走 f 再走 g，最後的輸出通常不一樣。",
+  "next": [
+    "inverse-function"
+  ],
+  "related": [
+    "chain-rule"
+  ],
+  "objectives": [
+    "會算 $(f\\circ g)(x)=f(g(x))$：先算裡面的 $g$，再把結果放進 $f$",
+    "看到一個式子能拆出「外面是誰、裡面是誰」",
+    "會找合成函數的定義域，知道化簡後的式子可能比合成函數的定義域大"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 把一個函數的輸出餵給另一個",
+      "heading": "① 把輸出餵給另一個函數",
       "body": [
-        "$(f\\circ g)(x) = f(g(x))$，讀作「$f$ 合成 $g$」。順序是從裡到外：先算 $g(x)$，再把它整個放進 $f$。",
-        "$f(x) = \\sqrt{x}$、$g(x) = x^2 + 1$：$f(g(x)) = \\sqrt{x^2 + 1}$，$g(f(x)) = (\\sqrt{x})^2 + 1$。兩者通常不一樣：$x = 2$ 時一個是 $\\sqrt{5}$，一個是 3。",
-        "自己合成自己也可以：$f(x) = 2x + 1$ 時，$f(f(x)) = 2(2x + 1) + 1 = 4x + 3$。"
+        "上一課：相乘是兩台機器並排",
+        "合成：兩台機器串起來",
+        "念作「$f$ 合成 $g$」；注意是右邊的 $g$ 先做"
       ],
-      "tex": ["(f\\circ g)(x)=f\\big(g(x)\\big)"],
-      "collapsible": false
+      "tex": [
+        "(f\\circ g)(x)=f\\big(g(x)\\big)"
+      ]
+    },
+    {
+      "heading": "① 寫出合成的式子",
+      "body": [
+        "$f(x)=\\sqrt x$，$g(x)=x^2+1$",
+        "$f(g(x))$：把 $g(x)$ 整個放進 $f$ 的 $x$",
+        "跟第一課一樣：代進去的是整個括號裡的東西",
+        "$g(f(x))$：反過來，把 $f(x)$ 放進 $g$",
+        "後面的 $x\\ge0$ 第 ③ 節會解釋",
+        "順序不同，結果不同：$x=3$",
+        "一般 $f\\circ g\\ne g\\circ f$；不像加法、乘法可以交換"
+      ],
+      "tex": [
+        "f(g(x))=\\sqrt{g(x)}=\\sqrt{x^2+1}",
+        "g(f(x))=\\big(\\sqrt x\\big)^2+1=x+1\\quad(x\\ge0)",
+        "f(g(3))=\\sqrt{10}\\approx3.16,\\qquad g(f(3))=4"
+      ]
+    },
+    {
+      "heading": "① 裡面是 $x-c$：圖形平移",
+      "body": [
+        "裡面放一個最簡單的函數：$g(x)=x-c$",
+        "例：$f(x)=\\sqrt x$，看 $y=\\sqrt{x-c}$",
+        "為什麼是往右？",
+        "$\\sqrt{x-3}$ 要等 $x=3$，裡面才是 $0$：晚 3 格才開始",
+        "同理 $f(x+2)$ 往左移 $2$"
+      ],
+      "tex": [
+        "f(g(x))=f(x-c)"
+      ]
     },
     {
       "heading": "② 拆解：外面是誰，裡面是誰",
       "body": [
-        "倒過來，看到一個複雜的式子，把「最後做的那一步」當外層。$(3x - 1)^5$：先算 $3x - 1$，最後才五次方，所以外層 $f(u) = u^5$，裡層 $g(x) = 3x - 1$。",
-        "$\\frac{1}{x^2 + 4}$：外層 $f(u) = \\frac{1}{u}$，裡層 $g(x) = x^2 + 4$。這個習慣是〈連鎖律 I：兩層〉的基本功：連鎖律就是「合成函數怎麼微分」。"
+        "反過來：看到一個式子，拆成 $f(g(x))$",
+        "問自己：算的時候最後一步做什麼？ → 那就是外面",
+        "例：$h(x)=(3x-1)^5$",
+        "代 $x=1$：先算 $3\\cdot1-1=2$，最後算 $2^5$",
+        "外面的變數寫成 $u$，提醒自己「它吃的是裡面算出來的東西」",
+        "例：$k(x)=\\sqrt{1-x^2}$",
+        "最後一步：開根號",
+        "拆法不只一種：$1-x^2$ 還能再拆"
       ],
-      "collapsible": false
+      "tex": [
+        "\\text{裡面 } g(x)=3x-1,\\qquad \\text{外面 } f(u)=u^5",
+        "\\text{裡面 } g(x)=1-x^2,\\qquad \\text{外面 } f(u)=\\sqrt u"
+      ]
     },
     {
       "heading": "③ 定義域：兩關都要過",
       "body": [
-        "$x$ 要能放進 $g$，而且 $g(x)$ 要能放進 $f$。$f(x) = \\sqrt{x}$、$g(x) = x - 5$：$f(g(x)) = \\sqrt{x - 5}$ 要 $x - 5 \\ge 0$，所以是 $x \\ge 5$，不是 $x \\ge 0$。",
-        "化簡之後要記得原來的關卡。$g(f(x)) = (\\sqrt{x})^2 + 1$ 化簡成 $x + 1$，但 $x$ 必須先過 $\\sqrt{}$ 這關，定義域是 $x \\ge 0$，不是全體實數。"
+        "$x$ 要放進 $f(g(x))$，得過兩關",
+        "第 1 關：$x$ 在 $g$ 的定義域裡（$g(x)$ 算得出來）",
+        "第 2 關：$g(x)$ 在 $f$ 的定義域裡（$f$ 吃得下）",
+        "例：$f(x)=\\sqrt x$，$g(x)=1-x^2$，求 $f(g(x))$ 的定義域",
+        "第 1 關：$1-x^2$ 什麼 $x$ 都可以",
+        "第 2 關：$1-x^2\\ge0\\ \\Rightarrow\\ -1\\le x\\le1$"
       ],
-      "collapsible": false
+      "tex": [
+        "f(g(x))=\\sqrt{1-x^2},\\qquad \\text{定義域 }[-1,1]"
+      ]
+    },
+    {
+      "heading": "③ 化簡之後定義域變大？",
+      "body": [
+        "換個順序：$g(f(x))$",
+        "第 1 關：$x$ 要丟得進 $f(x)=\\sqrt x$ → $x\\ge0$",
+        "先找定義域，再化簡；化簡後的式子可能「看起來」定義域比較大",
+        "例：$g(f(-4))$ 要先算 $\\sqrt{-4}$，沒有定義"
+      ],
+      "tex": [
+        "g(f(x))=1-\\big(\\sqrt x\\big)^2=1-x",
+        "\\text{定義域 }[0,\\infty)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $(f\\circ g)(x)=f(g(x))$：裡面的 $g$ 先做，結果放進 $f$",
+        "• 順序重要：一般 $f\\circ g\\ne g\\circ f$",
+        "• 拆解：最後一步是外面，其他是裡面（之後的連鎖律會用到）",
+        "• 定義域兩關：$x$ 進得了 $g$，$g(x)$ 進得了 $f$",
+        "• 先找定義域，再化簡",
+        "下一課：反函數 —— 把機器倒著跑"
+      ]
     }
   ],
   "workedExamples": [
@@ -84,267 +162,829 @@
   ],
   "checks": [
     {
-      "ask": "$f(x) = x^3$、$g(x) = 2x$，$f(g(x))$ 是？",
+      "ask": "$f(x)=x^2$，$g(x)=x+3$，$(f\\circ g)(2)=$？",
       "options": [
-        { "label": "$2x^3$", "why": "那是 $g(f(x))$：先立方再乘 2。$f(g(x))$ 是先乘 2，再把整個 $2x$ 立方。" },
-        { "label": "$8x^3$", "correct": true },
-        { "label": "$2x^4$", "why": "那是 $f(x) \\cdot g(x)$，合成不是相乘。" }
+        {
+          "label": "$25$",
+          "correct": true
+        },
+        {
+          "label": "$7$",
+          "why": "這是 $g(f(2))=4+3$：順序反了，$f\\circ g$ 是 $g$ 先做"
+        },
+        {
+          "label": "$20$",
+          "why": "這是 $f(2)\\cdot g(2)=4\\cdot5$：相乘不是合成"
+        },
+        {
+          "label": "$9$",
+          "why": "這是 $f(2)+g(2)=4+5$：相加不是合成"
+        }
       ]
     },
     {
-      "ask": "$h(x) = \\sqrt{x^2 + 1}$ 寫成 $f(g(x))$，哪一組對？",
+      "ask": "把 $h(x)=(x^2+1)^3$ 寫成 $f(g(x))$，哪一組對？",
       "options": [
-        { "label": "外層 $f(u) = \\sqrt{u}$，裡層 $g(x) = x^2 + 1$", "correct": true },
-        { "label": "外層 $f(u) = u^2 + 1$，裡層 $g(x) = \\sqrt{x}$", "why": "合起來是 $(\\sqrt{x})^2 + 1 = x + 1$，不是 $h$。" },
-        { "label": "外層 $f(u) = u^2$，裡層 $g(x) = \\sqrt{x + 1}$", "why": "合起來是 $(\\sqrt{x + 1})^2 = x + 1$，也不是 $h$。" }
-      ]
-    },
-    {
-      "ask": "$f(x) = x + 2$、$g(x) = x^2$。$f(g(3))$ 與 $g(f(3))$ 依序是？",
-      "options": [
-        { "label": "25 和 11", "why": "順序反了：$f(g(3))$ 先算 $g(3) = 9$，再加 2 得 11。" },
-        { "label": "11 和 11", "why": "$g(f(3)) = g(5) = 25$。合成通常不能交換。" },
-        { "label": "11 和 25", "correct": true }
-      ]
-    },
-    {
-      "ask": "$f(x) = \\sqrt{x}$、$g(x) = x - 5$，$f(g(x))$ 的定義域？",
-      "options": [
-        { "label": "$x \\ge 0$", "why": "要非負的是放進 $\\sqrt{}$ 的東西 $g(x) = x - 5$，不是 $x$ 本身。" },
-        { "label": "$x \\ge 5$", "correct": true },
-        { "label": "所有實數", "why": "$x = 0$ 時 $g(0) = -5$，$\\sqrt{-5}$ 沒有定義。" }
+        {
+          "label": "$f(u)=u^3$，$g(x)=x^2+1$",
+          "correct": true
+        },
+        {
+          "label": "$f(u)=u^2+1$，$g(x)=x^3$",
+          "why": "內外反了：這樣得到 $(x^3)^2+1=x^6+1$"
+        },
+        {
+          "label": "$f(u)=u^3$，$g(x)=x^2$",
+          "why": "漏了 $+1$：$f(g(x))=x^6$"
+        },
+        {
+          "label": "$f(u)=u^3+1$，$g(x)=x^2$",
+          "why": "$+1$ 放錯層：$(x^2)^3+1=x^6+1$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "從裡到外",
+      "title": "把輸出餵給另一個函數",
       "beats": [
-        { "show": ["$(f\\circ g)(x) = f(g(x))$"],
-          "note": "讀作「$f$ 合成 $g$」。",
-          "say": "合成就是把一台機器的輸出，直接餵給另一台。順序從裡到外：先算 g，再把結果整個放進 f。",
+        {
+          "show": [
+            "上一課：相乘是兩台機器並排"
+          ],
+          "say": "上一課最後提到，相乘是兩台機器並排。這一課講另一種組合：把機器串起來。",
           "board": [
-            {"do":"write","line":"$(f\\circ g)(x) = {{f:f}}({{g:g(x)}})$","tint":{"f":"violet","g":"blue"},"on":"合成就是"},
-            {"do":"underline","term":"g","color":"blue","label":"先算","on":"先算 g"},
-            {"do":"focus","term":"f","color":"violet","label":"再放進 f","on":"再把結果"}
-          ] },
-        { "show": ["$f(x) = \\sqrt{x}$，$g(x) = x^2 + 1$"],
-          "say": "f 是根號 x，g 是 x 平方加一。",
+            {
+              "do": "write",
+              "line": "上一課：相乘是兩台機器並排"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合成：兩台機器串起來",
+            "圖"
+          ],
+          "say": "例如 g 是 x 平方加 1，f 是根號 x。3 先丟進 g，得到 10；再把 10 丟進 f，得到根號 10。",
           "board": [
-            {"do":"write","line":"${{f:f}}(x) = \\sqrt{x}$，$g(x) = x^2 + 1$"}
-          ] },
-        { "show": ["$f(g(x)) = \\sqrt{x^2 + 1}$"],
-          "say": "f 合成 g：先算 g，得到 x 平方加一，再整個開根號。",
+            {
+              "do": "write",
+              "line": "合成：兩台機器串起來"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 700 210\" width=\"660\" height=\"198\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"46\" cy=\"96\" r=\"34\" fill=\"var(--blue)\" fill-opacity=\".1\" stroke=\"var(--blue)\" stroke-width=\"3\"/><text x=\"46\" y=\"109\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"36\" style=\"font-family:KaTeX_Main,serif\">3</text><path d=\"M86 96 C100 92 112 92 124 96\" stroke=\"var(--ink)\" stroke-width=\"3\"/><path d=\"M126 96 l-13 -7 l3 7 l-3 7 z\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2\"/><rect x=\"134\" y=\"50\" width=\"160\" height=\"92\" rx=\"16\" stroke=\"var(--ink)\" stroke-width=\"3.5\" fill=\"var(--green)\" fill-opacity=\".12\"/><text x=\"214\" y=\"94\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"40\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">g</text><text x=\"214\" y=\"128\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan>² + 1</text><path d=\"M302 96 C318 92 330 92 344 96\" stroke=\"var(--ink)\" stroke-width=\"3\"/><path d=\"M346 96 l-13 -7 l3 7 l-3 7 z\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2\"/><text x=\"324\" y=\"70\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"28\" style=\"font-family:KaTeX_Main,serif\">10</text><rect x=\"356\" y=\"50\" width=\"160\" height=\"92\" rx=\"16\" stroke=\"var(--ink)\" stroke-width=\"3.5\" fill=\"#f5d56e\" fill-opacity=\".4\"/><text x=\"436\" y=\"94\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"40\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</text><text x=\"436\" y=\"128\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">√<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan></text><path d=\"M524 96 C540 92 552 92 566 96\" stroke=\"var(--ink)\" stroke-width=\"3\"/><path d=\"M568 96 l-13 -7 l3 7 l-3 7 z\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2\"/><circle cx=\"626\" cy=\"96\" r=\"44\" fill=\"var(--red)\" fill-opacity=\".1\" stroke=\"var(--red)\" stroke-width=\"3\"/><text x=\"626\" y=\"108\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"32\" style=\"font-family:KaTeX_Main,serif\">√10</text><text x=\"214\" y=\"182\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">裡面：先做</text><text x=\"436\" y=\"182\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">外面：後做</text></svg>",
+              "on": "得到#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(f\\circ g)(x)=f\\big(g(x)\\big)$"
+          ],
+          "say": "這叫做 f 合成 g，寫成 f 圈 g。意思是：先算裡面的 g，再把結果放進外面的 f。",
           "board": [
-            {"do":"write","line":"${{f:f}}({{g:g(x)}}) = \\sqrt{{{i:x^2 + 1}}}$","tint":{"i":"blue"}},
-            {"do":"underline","term":"i","color":"blue","label":"整個開根號","on":"得到"}
-          ] },
-        { "show": ["$g(f(x)) = (\\sqrt{x})^2 + 1$"],
-          "note": "$x = 2$ 時一個是 $\\sqrt{5}$，一個是 3。",
-          "say": "反過來先開根號，再平方加一。代二進去，一個是根號五，一個是三，順序不能交換。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$g(f(x)) = (\\sqrt{x})^2 + 1$","on":"反過來"},
-            {"do":"write","line":"$x = 2$：$\\sqrt{5}{{n:\\ne}}3$","on":"代二進去"},
-            {"do":"focus","term":"n","label":"不能交換","on":"順序不能"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle (f\\circ g)(x)=f\\big(g(x)\\big)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "意思"
+            },
+            {
+              "do": "write",
+              "line": "　念作「$f$ 合成 $g$」；注意是右邊的 $g$ 先做",
+              "color": "violet",
+              "on": "再把"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "括號是一整塊",
+      "title": "寫出合成的式子",
       "beats": [
-        { "show": ["$f(x) = 2x + 1$","$f(f(x)) = 2(2x + 1) + 1$"],
-          "note": "自己合成自己也可以。",
-          "say": "自己合成自己也行。把二 x 加一整包，放進規則裡 x 的位置：二乘這一包，再加一。",
+        {
+          "show": [
+            "$f(x)=\\sqrt x$，$g(x)=x^2+1$"
+          ],
+          "say": "用同一對函數，寫出合成的式子。",
           "board": [
-            {"do":"write","line":"$f(x) = 2x + 1$"},
-            {"do":"write","line":"$f(f(x)) = 2({{b:2x + 1}}) + 1$","on":"二 x 加一整包"},
-            {"do":"underline","term":"b","color":"blue","label":"一整塊","on":"放進"}
-          ] },
-        { "show": ["$= 4x + 3$"],
-          "say": "展開，二乘二 x 是四 x，二乘一是二，再加一，得到四 x 加三。",
+            {
+              "do": "write",
+              "line": "$f(x)=\\sqrt x$，$g(x)=x^2+1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(g(x))$：把 $g(x)$ 整個放進 $f$ 的 $x$",
+            "$f(g(x))=\\sqrt{g(x)}=\\sqrt{x^2+1}$"
+          ],
+          "say": "f of g of x：f 的規則是開根號，把 g of x 整個放進去，得到根號 x 平方加 1。",
           "board": [
-            {"do":"transform","line":"$= 4x + 2 + 1$","on":"二乘二"},
-            {"do":"transform","line":"$= {{r:4x + 3}}$","on":"再加一"},
-            {"do":"box","term":"r","color":"green","on":"得到"}
-          ] },
-        { "show": ["$x = 2$：$f(2) = 5$，$f(5) = 11$","$4 \\cdot 2 + 3 = 11$"],
-          "say": "代二檢查一下：f 在二是五，f 在五是十一。公式四 x 加三，代二也是十一，對得上。",
+            {
+              "do": "write",
+              "line": "$f(g(x))$：把 $g(x)$ 整個放進 $f$ 的 $x$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f(g(x))=\\sqrt{g(x)}=\\sqrt{x^2+1}}}$",
+              "on": "的規"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "of#3"
+            },
+            {
+              "do": "write",
+              "line": "　跟第一課一樣：代進去的是整個括號裡的東西",
+              "color": "violet",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g(f(x))$：反過來，把 $f(x)$ 放進 $g$",
+            "$g(f(x))=\\big(\\sqrt x\\big)^2+1=x+1\\quad(x\\ge0)$"
+          ],
+          "say": "反過來，g of f of x：把根號 x 放進 g，平方以後是 x，再加 1，得到 x 加 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(2) = 5$，$f(5) = 11$","on":"二是"},
-            {"do":"write","line":"$4 \\cdot 2 + 3 = {{c:11}}$","on":"公式四"},
-            {"do":"box","term":"c","color":"green","on":"也是"}
-          ] },
-        { "show": ["$f(g(x))$ 不是 $f(x)\\cdot g(x)$"],
-          "note": "合成是餵進去，不是乘起來。",
-          "say": "最常見的錯：把合成當成相乘。合成是把 g 的輸出餵進 f，兩個輸出沒有相乘。",
+            {
+              "do": "write",
+              "line": "$g(f(x))$：反過來，把 $f(x)$ 放進 $g$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle g(f(x))=\\big(\\sqrt x\\big)^2+1=x+1\\quad(x\\ge0)}}$",
+              "on": "把根"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "　後面的 $x\\ge0$ 第 ③ 節會解釋",
+              "color": "violet",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "順序不同，結果不同：$x=3$",
+            "$f(g(3))=\\sqrt{10}\\approx3.16,\\qquad g(f(3))=4$"
+          ],
+          "say": "代 3 比較：一個是根號 10，一個是 4。所以合成的順序不能隨便換。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(g(x)) = {{w:f(x)\\cdot g(x)}}$","on":"最常見的錯"},
-            {"do":"strike","term":"w","label":"錯","on":"當成相乘"},
-            {"do":"write","line":"$g$ 的輸出餵進 $f$","on":"餵進 f"}
-          ] }
+            {
+              "do": "write",
+              "line": "順序不同，結果不同：$x=3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(g(3))=\\sqrt{10}\\approx3.16,\\qquad g(f(3))=4$",
+              "color": "red",
+              "on": "10"
+            },
+            {
+              "do": "write",
+              "line": "　一般 $f\\circ g\\ne g\\circ f$；不像加法、乘法可以交換",
+              "color": "violet",
+              "on": "以合"
+            }
+          ]
+        }
       ],
-      "solve": {
-        "check": 0,
-        "kind": "expression",
-        "answer": "8x^3",
-        "claim": "SUB(x^3, 2x) == ANS",
-        "hint": "把 $2x$ 整塊放進 $x^3$ 裡 $x$ 的位置。",
-        "steps": [
-          "$f(g(x)) = f(2x)$",
-          "$= (2x)^3 = 8x^3$"
-        ],
-        "wrong": [
-          {
-            "answer": "2x^3",
-            "why": "那是 $g(f(x))$：先立方再乘 2。$f(g(x))$ 是先乘 2，再把整個 $2x$ 立方。"
-          },
-          {
-            "answer": "2x^4",
-            "why": "那是 $f(x) \\cdot g(x)$，合成不是相乘。"
-          }
-        ]
-      }
+      "check": 0
     },
     {
-      "title": "外層是誰，裡層是誰",
+      "title": "裡面是 $x-c$：圖形平移",
       "beats": [
-        { "show": ["最後做的那一步 = 外層"],
-          "say": "反過來拆一個複雜的式子：想像你在按計算機，最後按的那一步，就是外層。",
+        {
+          "show": [
+            "裡面放一個最簡單的函數：$g(x)=x-c$"
+          ],
+          "say": "來看一個很常用的合成：裡面放 x 減 c，c 是一個常數。",
           "board": [
-            {"do":"write","line":"最後做的那一步 ＝ 外層","on":"最後按"}
-          ] },
-        { "show": ["$(3x - 1)^5$：外 $u^5$，裡 $3x - 1$"],
-          "note": "括號是一整塊，不是 3 乘 $x^5$。",
-          "say": "三 x 減一的五次方，先算三 x 減一，最後才五次方。外層是 u 的五次方，裡層是三 x 減一。",
+            {
+              "do": "write",
+              "line": "裡面放一個最簡單的函數：$g(x)=x-c$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(g(x))=f(x-c)$"
+          ],
+          "say": "合成以後就是 f of x 減 c。",
           "board": [
-            {"do":"write","line":"$({{ia:3x - 1}})^{{{o:5}}}$","tint":{"ia":"blue","o":"violet"}},
-            {"do":"focus","term":"o","color":"violet","label":"外層","on":"外層是"},
-            {"do":"underline","term":"ia","color":"blue","label":"裡層","on":"裡層是"}
-          ] },
-        { "show": ["$\\frac{1}{x^2 + 4}$：外 $\\frac{1}{u}$，裡 $x^2 + 4$"],
-          "say": "x 平方加四分之一：最後一步是取倒數，所以外層是 u 分之一，裡層是 x 平方加四。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(g(x))=f(x-c)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\sqrt x$，看 $y=\\sqrt{x-c}$",
+            "整個圖形往右移 c"
+          ],
+          "say": "灰色是根號 x，紅色是根號 x 減 c。現在 c 是 0，兩條疊在一起。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{{{ib:x^2 + 4}}}$","tint":{"ib":"blue"}},
-            {"do":"underline","term":"ib","color":"blue","label":"裡層","on":"裡層是"}
-          ] },
-        { "show": ["$\\sqrt{1 - x^2}$：外 $\\sqrt{u}$，裡 $1 - x^2$"],
-          "note": "檢查：把裡層代回外層，要拿回原式。",
-          "say": "根號一減 x 平方，最後一步是開根號。拆完把裡層代回外層的 u，應該拿回原式。",
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\sqrt x$，看 $y=\\sqrt{x-c}$"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "shift",
+                  "window": [
+                    -1,
+                    8,
+                    -0.5,
+                    3.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "pencil",
+                      "label": "y = √x",
+                      "domain": [
+                        0,
+                        8
+                      ]
+                    },
+                    {
+                      "expr": "sqrt(x-c)",
+                      "color": "red",
+                      "label": "y = √(x − c)",
+                      "domain": [
+                        "c",
+                        8
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "pencil"
+                    },
+                    {
+                      "x": "c",
+                      "y": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0,
+                      "max": 4,
+                      "value": 0,
+                      "label": "c ="
+                    }
+                  },
+                  "readout": "起點從 x = 0 移到 x = {c}",
+                  "height": 280
+                }
+              },
+              "on": "色是#2"
+            },
+            {
+              "do": "write",
+              "line": "起點從 x = 0 移到 x = 0",
+              "on": "現在"
+            },
+            {
+              "do": "write",
+              "line": "整個圖形往右移 c",
+              "color": "violet",
+              "on": "兩條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "裡面是 $x-c$：圖形平移"
+          ],
+          "say": "把 c 調到 3，紅色整條往右移了 3。",
           "board": [
-            {"do":"write","line":"$\\sqrt{{{ic:1 - x^2}}}$","tint":{"ic":"blue"}},
-            {"do":"focus","term":"ic","color":"blue","label":"裡層","on":"裡層代回"}
-          ] },
-        { "show": ["外 $\\sqrt{u}$，把 $u$ 換成 $1 - x^2$"],
-          "say": "代回怎麼做：外層是根號 u，把 u 換成裡層一減 x 平方。得到的根號一減 x 平方，就是原式。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "shift",
+                  "window": [
+                    -1,
+                    8,
+                    -0.5,
+                    3.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "pencil",
+                      "label": "y = √x",
+                      "domain": [
+                        0,
+                        8
+                      ]
+                    },
+                    {
+                      "expr": "sqrt(x-c)",
+                      "color": "red",
+                      "label": "y = √(x − c)",
+                      "domain": [
+                        "c",
+                        8
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "pencil"
+                    },
+                    {
+                      "x": "c",
+                      "y": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0,
+                      "max": 4,
+                      "value": 0,
+                      "label": "c ="
+                    }
+                  },
+                  "readout": "起點從 x = 0 移到 x = {c}",
+                  "height": 280
+                },
+                "vals": {
+                  "c": 3
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "起點從 x = 0 移到 x = 3",
+              "on": "色整"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼是往右？"
+          ],
+          "say": "為什麼減 3 反而是往右？",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(u) = \\sqrt{u}$","on":"根號#1"},
-            {"do":"write","line":"$u = 1 - x^2$","on":"換成"},
-            {"do":"write","line":"$f(1 - x^2) = {{r:\\sqrt{1 - x^2}}}$","on":"得到的"},
-            {"do":"box","term":"r","color":"green","on":"根號一減"}
-          ] },
-        { "show": ["拿回原式，拆法才對"],
-          "note": "錯拆：裡層寫成 $1 - x$，代回得 $\\sqrt{1 - x}$。",
-          "say": "這個檢查是確認拆對了。要是裡層誤寫成一減 x，代回去就是根號一減 x，不是原式。",
+            {
+              "do": "write",
+              "line": "為什麼是往右？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{x-3}$ 要等 $x=3$，裡面才是 $0$：晚 3 格才開始"
+          ],
+          "say": "因為裡面要等 x 等於 3，才會變成 0，開始輸出。原本在 0 發生的事，現在要晚 3 格才發生，所以往右移。",
           "board": [
-            {"do":"write","line":"${{w:\\sqrt{1 - x}}} \\ne \\sqrt{1 - x^2}$"},
-            {"do":"strike","term":"w","label":"拆錯","on":"代回去"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\sqrt{x-3}$ 要等 $x=3$，裡面才是 $0$：晚 3 格才開始",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　同理 $f(x+2)$ 往左移 $2$",
+              "color": "violet",
+              "on": "本在"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "拆解：外面是誰，裡面是誰",
+      "beats": [
+        {
+          "show": [
+            "反過來：看到一個式子，拆成 $f(g(x))$"
+          ],
+          "say": "反過來的問題更重要：看到一個複雜的式子，把它拆成外面和裡面。以後學連鎖律，天天都要做這件事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來：看到一個式子，拆成 $f(g(x))$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問自己：算的時候最後一步做什麼？ → 那就是外面"
+          ],
+          "say": "訣竅是問：如果拿一個數去算，最後一步做的是什麼？最後一步就是外面，前面的就是裡面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問自己：算的時候最後一步做什麼？ → 那就是外面",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$h(x)=(3x-1)^5$"
+          ],
+          "say": "例子：3x 減 1 的五次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$h(x)=(3x-1)^5$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=1$：先算 $3\\cdot1-1=2$，最後算 $2^5$"
+          ],
+          "say": "拿 1 代進去：先算 3 減 1 等於 2，最後才做五次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $x=1$：先算 $3\\cdot1-1=2$，最後算 $2^5$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\text{裡面 } g(x)=3x-1,\\qquad \\text{外面 } f(u)=u^5$"
+          ],
+          "say": "所以裡面是 3x 減 1，外面是五次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\text{裡面 } g(x)=3x-1,\\qquad \\text{外面 } f(u)=u^5}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "3x"
+            },
+            {
+              "do": "write",
+              "line": "　外面的變數寫成 $u$，提醒自己「它吃的是裡面算出來的東西」",
+              "color": "violet",
+              "on": "外面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$k(x)=\\sqrt{1-x^2}$"
+          ],
+          "say": "再一個：根號 1 減 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$k(x)=\\sqrt{1-x^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最後一步：開根號",
+            "$\\text{裡面 } g(x)=1-x^2,\\qquad \\text{外面 } f(u)=\\sqrt u$"
+          ],
+          "say": "最後一步是開根號，所以外面是根號，裡面是 1 減 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最後一步：開根號"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\text{裡面 } g(x)=1-x^2,\\qquad \\text{外面 } f(u)=\\sqrt u}}$",
+              "color": "red",
+              "on": "以外"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "拆法不只一種：$1-x^2$ 還能再拆"
+          ],
+          "say": "拆法其實不只一種，裡面還可以繼續拆。但通常拆成最外面一層和其他部分，就最好用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "拆法不只一種：$1-x^2$ 還能再拆"
+            }
+          ]
+        }
       ],
-      "key": "最後做的那一步就是外層",
       "check": 1
     },
     {
       "title": "定義域：兩關都要過",
       "beats": [
-        { "show": ["$x$ 要能放進 $g$","$g(x)$ 要能放進 $f$"],
-          "say": "合成的定義域有兩關：x 要先放得進 g，算出來的 g 在 x 的值，還要放得進 f。",
+        {
+          "show": [
+            "$x$ 要放進 $f(g(x))$，得過兩關"
+          ],
+          "say": "最後是定義域。一個 x 要能算出 f of g of x，要過兩關。",
           "board": [
-            {"do":"write","line":"第一關：$x$ 放得進 $g$","on":"x 要先"},
-            {"do":"write","line":"第二關：$g(x)$ 放得進 $f$","on":"還要放得進"}
-          ] },
-        { "show": ["$f(x) = \\sqrt{x}$，$g(x) = x - 5$"],
-          "say": "f 是根號 x，g 是 x 減五。",
+            {
+              "do": "write",
+              "line": "$x$ 要放進 $f(g(x))$，得過兩關"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 1 關：$x$ 在 $g$ 的定義域裡（$g(x)$ 算得出來）",
+            "第 2 關：$g(x)$ 在 $f$ 的定義域裡（$f$ 吃得下）"
+          ],
+          "say": "第一關，x 丟得進 g，g of x 算得出來。第二關，g 吐出來的數，要丟得進 f。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x) = \\sqrt{x}$，$g(x) = x - 5$","on":"根號 x"}
-          ] },
-        { "show": ["$\\sqrt{x - 5}$：要 $x - 5 \\ge 0$"],
-          "note": "要非負的是放進根號的整塊。",
-          "say": "合成之後是根號 x 減五。要大於等於零的，是根號裡面那一整塊 x 減五，不是 x 本身。",
+            {
+              "do": "write",
+              "line": "第 1 關：$x$ 在 $g$ 的定義域裡（$g(x)$ 算得出來）"
+            },
+            {
+              "do": "write",
+              "line": "第 2 關：$g(x)$ 在 $f$ 的定義域裡（$f$ 吃得下）",
+              "color": "gold",
+              "on": "出來#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\sqrt x$，$g(x)=1-x^2$，求 $f(g(x))$ 的定義域"
+          ],
+          "say": "例子：f 是根號 x，g 是 1 減 x 平方。",
           "board": [
-            {"do":"write","line":"$\\sqrt{{{i:x - 5}}}$","on":"合成之後"},
-            {"do":"write","line":"要 $x - 5 \\ge 0$","on":"大於等於零"},
-            {"do":"underline","term":"i","color":"blue","label":"整塊","on":"一整塊"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\sqrt x$，$g(x)=1-x^2$，求 $f(g(x))$ 的定義域"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 1 關：$1-x^2$ 什麼 $x$ 都可以",
+            "第 2 關：$1-x^2\\ge0\\ \\Rightarrow\\ -1\\le x\\le1$"
+          ],
+          "say": "第一關，1 減 x 平方什麼 x 都算得出來。第二關，它要放進根號，所以要大於等於 0，解出 x 在負 1 到 1 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 1 關：$1-x^2$ 什麼 $x$ 都可以"
+            },
+            {
+              "do": "write",
+              "line": "第 2 關：$1-x^2\\ge0\\ \\Rightarrow\\ -1\\le x\\le1$",
+              "on": "進根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(g(x))=\\sqrt{1-x^2},\\qquad \\text{定義域 }[-1,1]$"
+          ],
+          "say": "所以 f of g of x 是根號 1 減 x 平方，定義域是負 1 到 1 的閉區間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle f(g(x))=\\sqrt{1-x^2},\\qquad \\text{定義域 }[-1,1]}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "化簡了，關卡還在",
+      "title": "化簡之後定義域變大？",
       "beats": [
-        { "show": ["$f(x) = \\sqrt{x}$，$g(x) = 1 - x^2$"],
-          "say": "換一組：f 是根號 x，g 是一減 x 平方。看 g 合成 f 的定義域。",
+        {
+          "show": [
+            "換個順序：$g(f(x))$",
+            "$g(f(x))=1-\\big(\\sqrt x\\big)^2=1-x$"
+          ],
+          "say": "再看反過來的順序：g of f of x，等於 1 減根號 x 的平方，化簡成 1 減 x。",
           "board": [
-            {"do":"write","line":"$f(x) = \\sqrt{x}$，$g(x) = 1 - x^2$"}
-          ] },
-        { "show": ["$g(f(x)) = 1 - (\\sqrt{x})^2$"],
-          "note": "$x$ 要先過 $\\sqrt{}$ 這一關。",
-          "say": "先算 f，所以 x 得先通過根號，這是第一關。",
-          "board": [
-            {"do":"write","line":"$g(f(x)) = 1 - ({{q:\\sqrt{x}}})^2$","on":"先算 f"},
-            {"do":"underline","term":"q","label":"第一關","on":"第一關"}
-          ] },
-        { "show": ["化簡：$= 1 - x$"],
-          "say": "過了關，根號 x 的平方就是 x，化簡成一減 x。這個式子看起來每個實數都能代。",
-          "board": [
-            {"do":"write","line":"化簡：$= {{s:1 - x}}$","on":"化簡成"},
-            {"do":"underline","term":"s","label":"關卡還在","on":"看起來"}
-          ] },
-        { "show": ["$x = -1$：$\\sqrt{-1}$ 沒有意義"],
-          "say": "試代負一：先算 f，根號負一沒有意思，第一關就過不了。所以化簡後的一減 x，不能當成每個數都能代。",
-          "board": [
-            {"do":"write","line":"$x = -1$：${{z:\\sqrt{-1}}}$ 沒有意義"},
-            {"do":"strike","term":"z","label":"過不了","on":"第一關"},
-            {"do":"write","line":"$1 - x$ 只在過關後才算","on":"化簡後"}
-          ] }
+            {
+              "do": "write",
+              "line": "換個順序：$g(f(x))$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle g(f(x))=1-\\big(\\sqrt x\\big)^2=1-x$",
+              "on": "減根"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$g(f(x))$ 的定義域是？",
+        "ask": "$g(f(x))=1-x$。它的定義域是所有實數嗎？",
         "options": [
           {
-            "label": "$[0, \\infty)$",
+            "label": "是，$1-x$ 什麼都能代",
+            "why": "化簡前的第 1 關是 $\\sqrt x$：$x$ 必須 $\\ge0$"
+          },
+          {
+            "label": "不是，只有 $x\\ge0$",
             "correct": true
           },
           {
-            "label": "所有實數",
-            "why": "那是只看化簡後的 $1 - x$；但 $x$ 得先放進 $\\sqrt{}$，負數過不了第一關。"
-          },
-          {
-            "label": "$[-1, 1]$",
-            "why": "那是 $f(g(x)) = \\sqrt{1 - x^2}$ 的定義域，順序反了。"
+            "label": "只有 $x\\le1$",
+            "why": "$x=5$ 時 $g(f(5))=1-5=-4$，算得出來"
           }
         ]
       }
+    },
+    {
+      "title": "化簡之後定義域變大？",
+      "beats": [
+        {
+          "show": [
+            "第 1 關：$x$ 要丟得進 $f(x)=\\sqrt x$ → $x\\ge0$"
+          ],
+          "say": "不是。第一關，x 要先丟進根號 x，所以 x 一定要大於等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 1 關：$x$ 要丟得進 $f(x)=\\sqrt x$ → $x\\ge0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\text{定義域 }[0,\\infty)$"
+          ],
+          "say": "所以定義域是 0 到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\text{定義域 }[0,\\infty)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "到無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先找定義域，再化簡；化簡後的式子可能「看起來」定義域比較大"
+          ],
+          "say": "跟上一課一樣的道理：定義域要用原來的合成來找。化簡完的 1 減 x 看起來什麼都能代，但負數根本過不了第一關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先找定義域，再化簡；化簡後的式子可能「看起來」定義域比較大"
+            },
+            {
+              "do": "write",
+              "line": "　例：$g(f(-4))$ 要先算 $\\sqrt{-4}$，沒有定義",
+              "color": "violet",
+              "on": "看起"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $(f\\circ g)(x)=f(g(x))$：裡面的 $g$ 先做，結果放進 $f$",
+            "• 順序重要：一般 $f\\circ g\\ne g\\circ f$"
+          ],
+          "say": "整理一下：合成是裡面先做；順序不能換；拆解看最後一步；定義域要過兩關，而且要在化簡前找。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $(f\\circ g)(x)=f(g(x))$：裡面的 $g$ 先做，結果放進 $f$"
+            },
+            {
+              "do": "write",
+              "line": "• 順序重要：一般 $f\\circ g\\ne g\\circ f$",
+              "on": "裡面"
+            },
+            {
+              "do": "write",
+              "line": "• 拆解：最後一步是外面，其他是裡面（之後的連鎖律會用到）",
+              "on": "拆解"
+            },
+            {
+              "do": "write",
+              "line": "• 定義域兩關：$x$ 進得了 $g$，$g(x)$ 進得了 $f$",
+              "on": "定義"
+            },
+            {
+              "do": "write",
+              "line": "• 先找定義域，再化簡",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：反函數 —— 把機器倒著跑"
+          ],
+          "say": "下一課，我們把機器倒過來跑，這就是反函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：反函數 —— 把機器倒著跑"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["composition"],
-    "fine": ["composition-evaluate", "composition-order", "composition-decompose", "composition-domain"]
+    "coarse": [
+      "composition"
+    ],
+    "fine": [
+      "composition-evaluate",
+      "composition-order",
+      "composition-decompose",
+      "composition-domain"
+    ]
   },
   "practice": [
-    { "id": "si-int-014", "core": true, "trains": "composition-domain" },
-    { "id": "cg-0b-005", "core": true, "trains": "composition-evaluate" },
-    { "id": "cg-0b-006", "core": true, "trains": "composition-order" },
-    { "id": "cg-0b-007", "core": true, "trains": "composition-decompose" },
-    { "id": "cg-0b-010", "core": true, "trains": "composition-domain" },
-    { "id": "cg-0b-008", "trains": "composition-decompose" },
-    { "id": "cg-0b-009", "trains": "composition-decompose" },
-    { "id": "cg-0b-011", "trains": "composition-domain" }
+    {
+      "id": "si-int-014",
+      "core": true,
+      "trains": "composition-domain"
+    },
+    {
+      "id": "cg-0b-005",
+      "core": true,
+      "trains": "composition-evaluate"
+    },
+    {
+      "id": "cg-0b-006",
+      "core": true,
+      "trains": "composition-order"
+    },
+    {
+      "id": "cg-0b-007",
+      "core": true,
+      "trains": "composition-decompose"
+    },
+    {
+      "id": "cg-0b-010",
+      "core": true,
+      "trains": "composition-domain"
+    },
+    {
+      "id": "cg-0b-008",
+      "trains": "composition-decompose"
+    },
+    {
+      "id": "cg-0b-009",
+      "trains": "composition-decompose"
+    },
+    {
+      "id": "cg-0b-011",
+      "trains": "composition-domain"
+    }
   ],
   "gaps": []
 }

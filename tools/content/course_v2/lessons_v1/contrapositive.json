@@ -1,0 +1,353 @@
+{
+  "id": "contrapositive",
+  "title": "逆否證明",
+  "readMinutes": 9,
+  "totalMinutes": 25,
+  "prerequisites": ["direct-proof"],
+  "next": ["contradiction"],
+  "related": ["negation"],
+  "objectives": [
+    "知道 $P\\Rightarrow Q$ 與 $\\neg Q\\Rightarrow\\neg P$ 等價，而逆命題 $Q\\Rightarrow P$ 不等價。",
+    "看出什麼時候「從結論的否定出發」比較好推，並正確寫出 $\\neg Q$ 與 $\\neg P$。",
+    "會用逆否證明分析裡最常用的一句：$|a|<\\varepsilon$ 對所有 $\\varepsilon>0$ 成立 $\\Rightarrow a=0$。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 換一個方向走",
+      "body": [
+        "要證「若 $n^2$ 是偶數，則 $n$ 是偶數」。直接證明要從 $n^2=2k$ 出發推出 $n$ 的事，但開根號 $\\sqrt{2k}$ 沒有用。反過來就順了：若 $n$ 是奇數，$n=2k+1$，平方一算就知道 $n^2$ 是奇數。",
+        "這就是逆否證明：不證 $P\\Rightarrow Q$，改證 $\\neg Q\\Rightarrow\\neg P$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼可以",
+      "body": [
+        "$P\\Rightarrow Q$ 只有在「$P$ 真、$Q$ 假」時為假；$\\neg Q\\Rightarrow\\neg P$ 只有在「$\\neg Q$ 真、$\\neg P$ 假」時為假，也就是同一個情況「$Q$ 假、$P$ 真」。兩者在每一種真假組合下都同真同假，所以等價。",
+        "逆命題 $Q\\Rightarrow P$ 不一樣：「若 $f$ 可微則 $f$ 連續」是真的，逆命題「若 $f$ 連續則 $f$ 可微」是假的（$f(x)=|x|$ 在 0 連續但不可微）。逆否可以換，逆命題不能換。"
+      ],
+      "tex": ["(P\\Rightarrow Q)\\equiv(\\neg Q\\Rightarrow\\neg P)\\qquad (P\\Rightarrow Q)\\not\\equiv(Q\\Rightarrow P)"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 什麼時候用",
+      "body": [
+        "訊號一：結論是「某個東西等於 0／是偶數／屬於某集合」，而它的否定（$\\ne0$、是奇數、不屬於）比較能寫成式子。訊號二：前提是「對所有 $\\varepsilon$」這種很強的條件，否定結論之後可以挑一個特定的 $\\varepsilon$ 來用。",
+        "寫法：第一句寫明「我們證明逆否命題：若 $\\neg Q$，則 $\\neg P$」，然後照直接證明的方式寫。$\\neg Q$、$\\neg P$ 照〈否定〉的規則寫，尤其「或」要變「且」。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$n^2$ 是偶數 $\\Rightarrow n$ 是偶數",
+      "prompt": "證明：對整數 $n$，若 $n^2$ 是偶數，則 $n$ 是偶數。",
+      "steps": [
+        "證逆否命題：若 $n$ 不是偶數（即 $n$ 是奇數），則 $n^2$ 不是偶數（即 $n^2$ 是奇數）。",
+        "$n$ 是奇數，存在整數 $k$ 使 $n=2k+1$。",
+        "$n^2=4k^2+4k+1=2(2k^2+2k)+1$，$2k^2+2k$ 是整數，所以 $n^2$ 是奇數。",
+        "逆否命題成立，原命題成立。"
+      ],
+      "answer": "逆否：$n$ 奇 $\\Rightarrow n^2=2(2k^2+2k)+1$ 是奇數",
+      "claim": "(2k+1)^2 == 2*(2k^2+2k)+1"
+    },
+    {
+      "title": "要多小就多小，就是 0",
+      "prompt": "設 $a$ 是實數。證明：若對所有 $\\varepsilon>0$ 都有 $|a|<\\varepsilon$，則 $a=0$。",
+      "steps": [
+        "證逆否命題：若 $a\\ne0$，則存在 $\\varepsilon>0$ 使 $|a|\\ge\\varepsilon$。（「對所有 $\\varepsilon$，$|a|<\\varepsilon$」的否定是「存在 $\\varepsilon$，$|a|\\ge\\varepsilon$」。）",
+        "$a\\ne0$，所以 $|a|>0$。取 $\\varepsilon=|a|$，它是正數。",
+        "此時 $|a|\\ge\\varepsilon$ 顯然成立（其實是等號）。逆否命題成立，原命題成立。"
+      ],
+      "answer": "若 $a\\ne0$，取 $\\varepsilon=|a|>0$，則 $|a|<\\varepsilon$ 不成立",
+      "note": "之後證「極限唯一」「$\\sup$ 唯一」都會在最後一步用到這句話。",
+      "claimNote": "這是對所有實數 a 的邏輯論證，沒有特定數值可算。",
+      "claim": null
+    },
+    {
+      "title": "和夠大，就有一個夠大",
+      "prompt": "證明：對實數 $a$、$b$，若 $a+b\\ge2$，則 $a\\ge1$ 或 $b\\ge1$。",
+      "steps": [
+        "結論是「或」，直接證要分情況。改證逆否：若 $a<1$ 且 $b<1$，則 $a+b<2$。（$\\neg(a\\ge1$ 或 $b\\ge1)$ 是 $a<1$ 且 $b<1$。）",
+        "$a<1$、$b<1$ 兩式相加：$a+b<2$。",
+        "逆否命題成立，原命題成立。"
+      ],
+      "answer": "逆否：$a<1$ 且 $b<1\\Rightarrow a+b<2$",
+      "claim": "(1-x) + (1-y) < 2"
+    }
+  ],
+  "pitfalls": [
+    "證成了逆命題 $Q\\Rightarrow P$（例如證「$n$ 偶 $\\Rightarrow n^2$ 偶」），以為就證完了原命題。",
+    "否定「或」時忘了換成「且」，寫成「$a<1$ 或 $b<1$」。",
+    "否定「對所有 $\\varepsilon$，$|a|<\\varepsilon$」寫成「對所有 $\\varepsilon$，$|a|\\ge\\varepsilon$」，量詞沒換。",
+    "沒寫「我們證明逆否命題」，讀者看不出你從哪裡出發。"
+  ],
+  "checks": [
+    {
+      "ask": "「若 $x^2\\ne1$，則 $x\\ne1$」的逆否命題是？",
+      "options": [
+        { "label": "若 $x=1$，則 $x^2=1$", "correct": true },
+        { "label": "若 $x\\ne1$，則 $x^2\\ne1$", "why": "那是逆命題（前後對調但沒否定），跟原命題不等價；$x=-1$ 就是反例。" },
+        { "label": "若 $x^2=1$，則 $x=1$", "why": "那是否命題（只否定、沒對調），也不等價；$x=-1$ 讓它為假。" }
+      ]
+    },
+    {
+      "ask": "「若 $f$ 可微，則 $f$ 連續」為真。下列哪一句也一定為真？",
+      "options": [
+        { "label": "若 $f$ 不連續，則 $f$ 不可微", "correct": true },
+        { "label": "若 $f$ 連續，則 $f$ 可微", "why": "這是逆命題。$f(x)=|x|$ 在 0 連續但不可微。" },
+        { "label": "若 $f$ 不可微，則 $f$ 不連續", "why": "這是否命題，跟逆命題等價，一樣被 $|x|$ 打掉。" }
+      ]
+    },
+    {
+      "ask": "證「若 $ab$ 是無理數，則 $a$ 或 $b$ 是無理數」，逆否命題要從哪裡出發？",
+      "options": [
+        { "label": "$a$ 與 $b$ 都是有理數", "correct": true },
+        { "label": "$a$ 或 $b$ 是有理數", "why": "「$a$ 或 $b$ 是無理數」的否定是「$a$ 且 $b$ 都不是無理數」，或要換成且。" },
+        { "label": "$ab$ 是有理數", "why": "那是否定前提，屬於逆否命題的結論那一端，不是出發點。" }
+      ]
+    },
+    {
+      "ask": "證「$|a|<\\varepsilon$ 對所有 $\\varepsilon>0\\Rightarrow a=0$」時，$a\\ne0$ 之後該取哪個 $\\varepsilon$？",
+      "options": [
+        { "label": "$\\varepsilon=|a|$", "correct": true },
+        { "label": "$\\varepsilon=a$", "why": "$a$ 可能是負的，$\\varepsilon$ 必須是正數；要取 $|a|$。" },
+        { "label": "$\\varepsilon=0$", "why": "前提只談 $\\varepsilon>0$，$\\varepsilon=0$ 不在範圍內，拿它來用不合法。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "證明：換一個方向走",
+      "beats": [
+        { "show": ["證：$n^2$ 偶數 ⇒ $n$ 偶數"],
+          "note": "從 $n^2=2k$ 開根號 $\\sqrt{2k}$ 沒有用：反過來走。",
+          "say": "要證 n 平方是偶數，n 就是偶數。從 n 平方等於二 k 開根號，什麼也看不出來。策略：反過來走。",
+          "board": [
+            {"do":"write","line":"證：$n^2$ 偶數 ⇒ $n$ 偶數"},
+            {"do":"write","line":"$n^2=2k$，${{r:\\sqrt{2k}}}$","on":"開根號"},
+            {"do":"strike","term":"r","label":"看不出","on":"什麼也"}
+          ] },
+        { "show": ["改證：$n$ 奇數 ⇒ $n^2$ 奇數"],
+          "note": "不證 $P\\Rightarrow Q$，改證 $\\neg Q\\Rightarrow\\neg P$。",
+          "why": {"ask":"反過來走，要從哪裡出發？","say":"反過來走，第一步要假設什麼？","options":[{"label":"否定結論：$n$ 不是偶數，也就是奇數","correct":true},{"label":"否定前提：$n^2$ 是奇數","why":"那是從 $\\neg P$ 出發；逆否是從結論的否定 $\\neg Q$ 出發，推到 $\\neg P$。"},{"label":"從結論出發：$n$ 是偶數","why":"從 $Q$ 推 $P$ 是逆命題，跟原命題不等價。"}]},
+          "say": "從結論的否定出發：假設 n 是奇數，去證 n 平方也是奇數。這就叫逆否證明。",
+          "board": [
+            {"do":"write","line":"反過來走：${{c:\\neg Q\\Rightarrow\\neg P}}$"},
+            {"do":"write","line":"假設 $n$ 奇數 ⇒ $n^2$ 奇數","why":true,"on":"假設"},
+            {"do":"focus","term":"c","color":"gold","label":"逆否","why":true,"on":"逆否證明"}
+          ] },
+        { "show": ["$n=2k+1$"],
+          "note": "奇數的定義，$k$ 是整數。",
+          "say": "n 是奇數，照定義寫成二 k 加一，k 是整數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$n={{d:2k+1}}$","on":"寫成"},
+            {"do":"underline","term":"d","label":"奇數定義","on":"二 k"}
+          ] },
+        { "show": ["$n^2=4k^2+4k+1=2(2k^2+2k)+1$"],
+          "note": "$2k^2+2k$ 是整數，所以 $n^2$ 是奇數。",
+          "say": "平方展開，前面兩項提出一個二，括號裡是整數，所以 n 平方是奇數，逆否成立。",
+          "board": [
+            {"do":"transform","line":"$n^2=4k^2+4k+1$"},
+            {"do":"transform","line":"$n^2=2{{t:(2k^2+2k)}}+1$","on":"提出"},
+            {"do":"circle","term":"t","color":"green","label":"整數","on":"括號裡"}
+          ] }
+      ],
+      "key": "奇數寫成 $2k+1$，平方後湊回奇數形",
+      "proof": true,
+      "of": "ex0",
+      "skeleton": "直接",
+      "where": {
+        "ask": "「$k$ 是整數」用在哪一步？",
+        "steps": [
+          {
+            "label": "改證：$n$ 奇數 ⇒ $n^2$ 奇數",
+            "why": "這只是邏輯：把 $P\\Rightarrow Q$ 換成 $\\neg Q\\Rightarrow\\neg P$。"
+          },
+          {
+            "label": "$n=2k+1$",
+            "why": "這一步是從奇數的定義拿到 $k$，還沒用到它是整數。"
+          },
+          {
+            "label": "展開：$n^2=4k^2+4k+1$",
+            "why": "展開對任何數 $k$ 都對，是代數。"
+          },
+          {
+            "label": "$2k^2+2k$ 是整數，所以 $n^2$ 是奇數",
+            "correct": true
+          }
+        ]
+      }
+    },
+    {
+      "title": "為什麼等價",
+      "beats": [
+        { "show": ["$P\\Rightarrow Q$ 假：$P$ 真、$Q$ 假"],
+          "say": "上一節的平方是二乘一個整數再加一，所以是奇數，逆否成立。可是為什麼這樣就算證完原命題？",
+          "board": [
+            {"do":"write","line":"$P\\Rightarrow Q$ 假：${{c1:P\\text{ 真、}Q\\text{ 假}}}$","on":"可是為什麼"}
+          ] },
+        { "show": ["$\\neg Q\\Rightarrow\\neg P$ 假：$\\neg Q$ 真、$\\neg P$ 假"],
+          "note": "也就是同一個情況：$Q$ 假、$P$ 真。",
+          "say": "逆否命題什麼時候是假的？非 Q 真、非 P 假，說穿了就是 Q 假、P 真，跟原命題一模一樣。",
+          "board": [
+            {"do":"write","line":"$\\neg Q\\Rightarrow\\neg P$ 假：$\\neg Q$ 真、$\\neg P$ 假","on":"逆否命題"},
+            {"do":"write","line":"就是 ${{c3:Q\\text{ 假、}P\\text{ 真}}}$","on":"說穿了"},
+            {"do":"focus","term":"c3","label":"跟原命題一樣","on":"Q 假"},
+            {"do":"focus","term":"c1","on":"跟原命題"}
+          ] },
+        { "show": ["P 真 Q 真：兩句都真","P 真 Q 假：兩句都假"],
+          "note": "先列 $P$ 為真的兩種組合。",
+          "say": "把四種組合全列出來。P 真 Q 真，原命題真，逆否也真。P 真 Q 假，兩句都假。",
+          "board": [
+            {"do":"write","line":"P 真 Q 真：兩句都真"},
+            {"do":"write","line":"P 真 Q 假：兩句都假","on":"P 真 Q 假"}
+          ] },
+        { "show": ["P 假 Q 真：兩句都真","P 假 Q 假：兩句都真"],
+          "note": "$P$ 假時，原命題一定真。",
+          "say": "P 假的時候，原命題一定真。逆否的結論非 P 是真的，所以也一定真。四種組合全部對上。",
+          "board": [
+            {"do":"write","line":"P 假 Q 真：兩句都真"},
+            {"do":"write","line":"P 假 Q 假：兩句都真","on":"逆否的結論"}
+          ] },
+        { "show": ["$(P\\Rightarrow Q)\\equiv(\\neg Q\\Rightarrow\\neg P)$"],
+          "say": "兩句話在每一種真假組合下都同真同假，所以等價。注意，是對調再加否定，兩個動作都要做。",
+          "board": [
+            {"do":"write","line":"$(P\\Rightarrow Q)\\equiv({{sw:\\neg Q\\Rightarrow\\neg P}})$","color":"green","on":"所以等價"},
+            {"do":"underline","term":"sw","label":"對調＋否定","on":"對調再加否定"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "逆命題不能換",
+      "beats": [
+        { "show": ["$Q\\Rightarrow P$ 是逆命題"],
+          "note": "只對調、沒否定：跟原命題不等價。",
+          "say": "只把前後對調、沒有否定，得到的是逆命題。它跟原命題不是同一句話。",
+          "board": [
+            {"do":"write","line":"逆命題：${{c:Q\\Rightarrow P}}$"},
+            {"do":"underline","term":"c","label":"只對調","on":"對調"}
+          ] },
+        { "show": ["可微 ⇒ 連續：真","連續 ⇒ 可微：假"],
+          "say": "可微就連續，這是對的。反過來，連續就可微，是錯的。",
+          "board": [
+            {"do":"write","line":"可微 ⇒ 連續：真"},
+            {"do":"write","line":"${{f:\\text{連續}\\Rightarrow\\text{可微}}}$：假","on":"反過來"},
+            {"do":"strike","term":"f","label":"錯","on":"連續就可微"}
+          ] },
+        { "show": ["$f(x)=|x|$ 在 0"],
+          "note": "連續，但不可微。",
+          "say": "反例是絕對值 x 在零：圖形連在一起，可是那裡是個尖角，不可微。逆否可以換，逆命題不能換。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f(x)=|x|$","on":"絕對值"},
+            {"do":"write","line":"在 0：連續，${{k:\\text{尖角}}}$","on":"圖形連在一起"},
+            {"do":"focus","term":"k","color":"red","label":"不可微","on":"尖角"},
+            {"do":"write","line":"逆否可換，逆命題不行","on":"逆否可以換"}
+          ] },
+        { "show": ["$|x|$ 的圖在 0 轉了個彎"],
+          "note": "沒有斷開，所以連續；尖角處沒有切線。",
+          "say": "畫出來看：左邊往下斜，右邊往上斜，在零接在一起，卻轉了個彎。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,2.5],"curves":[{"expr":"abs(x)","domain":[-2,2],"color":"blue"}]}}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "或要變且",
+      "beats": [
+        { "show": ["什麼時候用逆否？"],
+          "note": "結論的否定比較能寫成式子的時候。",
+          "say": "結論像是等於零、是偶數，它的否定反而比較好寫成式子，這時就換方向走。",
+          "board": [
+            {"do":"write","line":"${{q:\\neg Q}}$ 好寫 ⇒ 改證 $\\neg Q\\Rightarrow\\neg P$"},
+            {"do":"focus","term":"q","label":"結論否定","on":"否定反而"}
+          ] },
+        { "show": ["證：$a+b\\ge2$ ⇒ $a\\ge1$ 或 $b\\ge1$"],
+          "note": "結論是「或」，直接證要分情況。",
+          "say": "例子：a 加 b 大於等於二，則 a 或 b 至少一個大於等於一。直接證要分情況，很囉嗦。",
+          "board": [
+            {"do":"write","line":"$a+b\\ge2$ ⇒ $a\\ge1$ ${{o:\\text{或}}}$ $b\\ge1$"},
+            {"do":"underline","term":"o","label":"要分情況","on":"分情況"}
+          ] },
+        { "show": ["逆否：$a<1$ 且 $b<1$ ⇒ $a+b<2$"],
+          "note": "「或」的否定是「且」。",
+          "say": "改證逆否。或的否定要變成且：a 小於一而且 b 小於一。兩式一加，和就小於二。",
+          "board": [
+            {"do":"write","line":"逆否：$a<1$ ${{n:\\text{且}}}$ $b<1$ ⇒ $a+b<2$"},
+            {"do":"focus","term":"n","label":"或變且","on":"變成且"},
+            {"do":"write","line":"$a+b<1+1=2$","on":"兩式一加"}
+          ] },
+        { "show": ["第一句：「我們證明逆否命題」"],
+          "say": "寫的時候第一句就說明，你在證逆否命題，讀的人才知道你從哪裡出發。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"第一句：${{s:\\text{我們證明逆否命題}}}$","on":"第一句"},
+            {"do":"box","term":"s","color":"green","on":"逆否命題"}
+          ] }
+      ],
+      "key": "否定「或」要變成「且」",
+      "check": 2
+    },
+    {
+      "title": "要多小就多小",
+      "beats": [
+        { "show": ["證：對所有 $\\varepsilon>0$，$|a|<\\varepsilon$ ⇒ $a=0$"],
+          "say": "最後一個：如果 a 的絕對值比任何正數都小，那 a 一定是零。前提很強，是對所有 epsilon。",
+          "board": [
+            {"do":"write","line":"對所有 ${{e:\\varepsilon>0}}$：$|a|<\\varepsilon$"},
+            {"do":"write","line":"⇒ ${{z:a=0}}$","on":"一定是零"},
+            {"do":"focus","term":"e","label":"前提很強","on":"前提"}
+          ] },
+        { "show": ["逆否：$a\\ne0$ ⇒ 存在 $\\varepsilon>0$，$|a|\\ge\\varepsilon$"],
+          "note": "量詞也要換：對所有變存在。",
+          "say": "改證逆否：a 不是零，就找得到一個 epsilon，讓 a 的絕對值大於等於它。量詞也跟著換了。",
+          "board": [
+            {"do":"write","line":"逆否：$a\\ne0$ ⇒ ${{x:\\exists\\,\\varepsilon>0}}$，$|a|\\ge\\varepsilon$"},
+            {"do":"focus","term":"x","label":"量詞換了","on":"量詞"}
+          ] },
+        { "show": ["只要挑一個 $\\varepsilon$"],
+          "note": "之後證「極限唯一」也會用到這句話。",
+          "say": "否定結論之後，我們只要挑出一個 epsilon 就好。該挑哪一個？",
+          "board": [
+            {"do":"write","line":"只要挑一個 ${{p:\\varepsilon}}$"},
+            {"do":"focus","term":"p","label":"挑哪個","on":"epsilon"}
+          ] },
+        { "show": ["$\\varepsilon$ 要滿足兩件事"],
+          "note": "是正數，而且 $|a|\\ge\\varepsilon$。",
+          "say": "要挑的 epsilon 有兩個條件：它得是正數，因為前提只管正的 epsilon；還要讓 a 的絕對值大於等於它。",
+          "board": [
+            {"do":"write","line":"${{c1:\\varepsilon>0}}$"},
+            {"do":"write","line":"${{c2:|a|\\ge\\varepsilon}}$","on":"大於等於"}
+          ] },
+        { "show": ["挑好後，前提在這個 $\\varepsilon$ 上不成立"],
+          "note": "$a\\ne0$ 時，$|a|$ 是正數。",
+          "say": "挑好之後，前提在這個 epsilon 上就不成立。a 不是零，所以 a 的絕對值是正數，可以拿來比。",
+          "board": [
+            {"do":"write","line":"前提在這個 $\\varepsilon$ 上不成立"},
+            {"do":"write","line":"$a\\ne0$ ⇒ ${{p1:|a|>0}}$","on":"a 不是零"},
+            {"do":"focus","term":"p1","color":"gold","on":"正數"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["proof"],
+    "fine": ["contrapositive-form", "contrapositive-vs-converse", "contrapositive-epsilon-zero"]
+  },
+  "practice": [
+    { "id": "cg-12a-021", "core": true, "trains": "contrapositive-form" },
+    { "id": "cg-12a-022", "core": true, "trains": "contrapositive-form" },
+    { "id": "cg-12a-019", "core": true, "trains": "contrapositive-vs-converse" },
+    { "id": "cg-12a-020", "trains": "contrapositive-vs-converse" }
+  ],
+  "gaps": [
+    { "tag": "contrapositive-form", "count": 1, "note": "寫出逆否命題並證明（整數奇偶、整除、不等式）的白話證明題；選出逆否命題的選擇題已補。" },
+    { "tag": "contrapositive-epsilon-zero", "count": 1, "note": "「若 |a − b| < ε 對所有 ε > 0，則 a = b」的白話證明題。" }
+  ]
+}

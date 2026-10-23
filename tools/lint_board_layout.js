@@ -50,6 +50,8 @@ async function main() {
     await server.stop();
     release();
   }
+  // BOARD_LINT_OUT=檔名：全部問題寫進檔案（畫面只印前 80 個）
+  if (process.env.BOARD_LINT_OUT) fs.writeFileSync(process.env.BOARD_LINT_OUT, out.problems.join("\n"));
   if (out.problems.length) {
     out.problems.slice(0, 80).forEach((p) => console.error(`  XX ${p}`));
     if (out.problems.length > 80) console.error(`  …另有 ${out.problems.length - 80} 個`);

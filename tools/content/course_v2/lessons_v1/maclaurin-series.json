@@ -1,0 +1,347 @@
+{
+  "id": "maclaurin-series",
+  "title": "Maclaurin 級數",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["taylor-series"],
+  "next": ["binomial-series"],
+  "related": ["geometric-series", "power-series-calculus", "taylor-error"],
+  "objectives": [
+    "背熟五個基本 Maclaurin 級數與它們成立的範圍：$e^x$、$\\sin x$、$\\cos x$、$\\ln(1+x)$、$\\frac{1}{1-x}$。",
+    "用代換、乘 $x^k$、逐項微分積分、兩個級數相乘，造出新級數並讀出係數。",
+    "認出數值級數是哪個基本級數在某一點的值。"
+  ],
+  "visual": "五張小圖並排：eˣ、sin x、cos x、ln(1 + x)、1/(1 − x)，各自疊上前 1、3、5、9 項的多項式。前三張的多項式隨著項數增加，貼合範圍一路向兩側延伸到整條實數線；後兩張不管加多少項，都卡在 |x| < 1 以內，ln(1 + x) 在 x = 1 那一端勉強貼上、在 −1 那端甩開。",
+  "concept": [
+    {
+      "heading": "① 五個要背的",
+      "body": [
+        "Maclaurin 級數就是中心 $a=0$ 的 Taylor 級數。下面五個是所有計算的起點："
+      ],
+      "tex": [
+        "e^x=\\sum_{n=0}^{\\infty}\\frac{x^n}{n!}=1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots\\qquad(\\text{所有 } x)",
+        "\\sin x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n+1}}{(2n+1)!}=x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots\\qquad(\\text{所有 } x)",
+        "\\cos x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n}}{(2n)!}=1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots\\qquad(\\text{所有 } x)",
+        "\\ln(1+x)=\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}x^n}{n}=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots\\qquad(-1<x\\le 1)",
+        "\\frac{1}{1-x}=\\sum_{n=0}^{\\infty}x^n=1+x+x^2+\\cdots\\qquad(-1<x<1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 它們從哪裡來",
+      "body": [
+        "$e^x$：每一階導數都是 $e^x$，在 0 都是 1，係數 $\\frac{1}{n!}$。",
+        "$\\sin x$：導數在 0 依序是 $0,1,0,-1$ 循環，所以只有奇次項、正負交替。$\\cos x$ 是 $\\sin x$ 逐項微分的結果，只有偶次項。",
+        "$\\frac{1}{1-x}$：〈幾何級數〉。$\\ln(1+x)$：把 $\\frac{1}{1+t}$ 逐項積分（〈冪級數的微分與積分〉）。",
+        "前三個在所有 $x$ 都等於原函數，這需要證明餘項 $\\to 0$，在〈Taylor 誤差〉完成。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 造新級數的四招",
+      "body": [
+        "代換：$x$ 換成 $x^2$、$-x$、$2x$……，範圍跟著換。例如 $e^{-x^2}=\\sum \\frac{(-1)^n x^{2n}}{n!}$。",
+        "乘 $x^k$：每一項次方加 $k$。",
+        "逐項微分、積分。",
+        "兩個級數相乘：只展開到需要的次方。求 $x^3$ 的係數，就只收集次方加起來是 3 的乘積。",
+        "這些捷徑得到的都是真正的 Maclaurin 級數（〈Taylor 級數〉的唯一性），不必再微分驗證。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "代換",
+      "prompt": "求 $\\sin(x^2)$ 的 Maclaurin 級數中 $x^6$ 與 $x^{10}$ 的係數。",
+      "problemId": "rel-hard-ser-004",
+      "steps": [
+        "$\\sin u=u-\\frac{u^3}{3!}+\\frac{u^5}{5!}-\\cdots$，$u=x^2$。",
+        "$\\sin(x^2)=x^2-\\frac{x^6}{6}+\\frac{x^{10}}{120}-\\cdots$。",
+        "$x^6$ 的係數 $-\\frac{1}{6}$，$x^{10}$ 的係數 $\\frac{1}{120}$。（$x^8$ 的係數是 0：只有 $4k+2$ 次方的項。）"
+      ],
+      "answer": "$-\\frac{1}{6}$ 與 $\\frac{1}{120}$",
+      "claim": "LIM((sin(x^2)-x^2)/x^6, 0) == -1/6 ;; LIM((sin(x^2) - x^2 + x^6/6)/x^10, 0) == 1/120"
+    },
+    {
+      "title": "兩個級數相乘",
+      "prompt": "求 $e^x\\ln(1+x)$ 的 $x^3$ 係數。",
+      "problemId": "depth-ser-015",
+      "steps": [
+        "$e^x=1+x+\\frac{x^2}{2}+\\cdots$，$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$。",
+        "收集次方和為 3 的乘積：$1\\cdot\\frac{x^3}{3}+x\\cdot\\left(-\\frac{x^2}{2}\\right)+\\frac{x^2}{2}\\cdot x$。",
+        "係數 $=\\frac{1}{3}-\\frac{1}{2}+\\frac{1}{2}=\\frac{1}{3}$。"
+      ],
+      "answer": "$\\frac{1}{3}$",
+      "claim": "LIM((e^x*ln(1+x) - x - x^2/2)/x^3, 0) == 1/3"
+    },
+    {
+      "title": "認出是哪個級數",
+      "prompt": "求 $\\sum_{n=0}^{\\infty}\\frac{(-1)^n\\pi^{2n+1}}{6^{2n+1}(2n+1)!}$。",
+      "problemId": "lec-15-q3c",
+      "steps": [
+        "$\\frac{\\pi^{2n+1}}{6^{2n+1}}=\\left(\\frac{\\pi}{6}\\right)^{2n+1}$，所以這是 $\\sum \\frac{(-1)^n(\\pi/6)^{2n+1}}{(2n+1)!}$。",
+        "正是 $\\sin x$ 的級數在 $x=\\frac{\\pi}{6}$ 的值。",
+        "和 $=\\sin\\frac{\\pi}{6}=\\frac{1}{2}$。（只取到 $x^7$ 項：$\\frac{\\pi}{6}-\\frac{(\\pi/6)^3}{6}+\\frac{(\\pi/6)^5}{120}-\\frac{(\\pi/6)^7}{5040}\\approx 0.5000000$，已經非常準。）"
+      ],
+      "answer": "$\\frac{1}{2}$",
+      "claim": "SUB(x - x^3/6 + x^5/120 - x^7/5040, pi/6) == 0.5"
+    }
+  ],
+  "pitfalls": [
+    "$\\sin$、$\\cos$ 的奇偶次方或正負號記反。",
+    "代換 $2x$ 時只換了 $x$，沒把係數一起 $n$ 次方：$(2x)^n=2^nx^n$。",
+    "$\\ln(1+x)$ 的級數從 $n=0$ 開始，或以為它在所有 $x$ 都成立。",
+    "相乘時漏掉某一組次方和相同的乘積。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\cos x$ 的 Maclaurin 級數是？",
+      "options": [
+        { "label": "$\\sum \\frac{(-1)^n x^{2n}}{(2n)!}$", "correct": true },
+        { "label": "$\\sum \\frac{(-1)^n x^{2n+1}}{(2n+1)!}$", "why": "這是 $\\sin x$：$\\cos 0=1$，常數項不是 0，所以是偶次方。" },
+        { "label": "$\\sum \\frac{x^{2n}}{(2n)!}$", "why": "少了正負交替；$\\cos x$ 的二階導數在 0 是 $-1$，所以 $x^2$ 的係數是 $-\\frac{1}{2}$。" }
+      ]
+    },
+    {
+      "ask": "$\\ln(1+x)$ 的 Maclaurin 級數在哪裡成立？",
+      "options": [
+        { "label": "$-1<x\\le 1$", "correct": true },
+        { "label": "$-1<x<1$", "why": "$x=1$ 時是交錯調和級數 $1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$，收斂到 $\\ln 2$。" },
+        { "label": "所有實數", "why": "收斂半徑是 1；$|x|>1$ 時各項 $\\frac{x^n}{n}$ 不趨近 0。" }
+      ]
+    },
+    {
+      "ask": "$e^{2x}$ 的 Maclaurin 級數中，$x^4$ 的係數是？",
+      "options": [
+        { "label": "$\\frac{2}{3}$", "correct": true },
+        { "label": "$\\frac{1}{24}$", "why": "代換 $2x$ 時要整個 4 次方：$\\frac{(2x)^4}{4!}=\\frac{16x^4}{24}$。" },
+        { "label": "16", "why": "忘了除以 $4!=24$。" }
+      ]
+    },
+    {
+      "ask": "$\\sum_{n=0}^{\\infty}\\frac{3^n}{n!}=$？",
+      "options": [
+        { "label": "$e^3$", "correct": true },
+        { "label": "$3e$", "why": "$\\frac{3^n}{n!}$ 是 $\\frac{x^n}{n!}$ 在 $x=3$ 的值，和是 $e^3$，不是 $e$ 乘 3。" },
+        { "label": "發散", "why": "比值 $\\frac{3}{n+1}\\to 0$，收斂；這正是 $e^x$ 的級數。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "$e^x$、$\\sin$、$\\cos$",
+      "beats": [
+        { "show": ["$e^x=1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots$"],
+          "note": "每一階導數在 0 都是 1，係數 $\\frac{1}{n!}$。",
+          "say": "中心在零的泰勒級數叫馬克勞林級數。第一個：e 的 x 次方，係數就是 n 階乘分之一。",
+          "board": [
+            {"do":"write","line":"$e^x = 1 + x + \\frac{x^2}{2!} + {{c:\\frac{x^3}{3!}}} + \\cdots$","on":"第一個"},
+            {"do":"underline","term":"c","label":"除以階乘","on":"階乘分之一"}
+          ] },
+        { "show": ["多項式貼著 $e^x$"],
+          "note": "紅色只取到 $x^3$ 項。",
+          "say": "畫出來看：藍色是 e 的 x 次方，紅色是只取到三次項的多項式。原點附近兩條幾乎貼在一起。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,8],"curves":[{"expr":"exp(x)","domain":[-2,2],"color":"blue"},{"expr":"1+x+x^2/2+x^3/6","domain":[-2,2],"color":"red"}]}}
+          ] },
+        { "show": ["$\\sin x=x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots$"],
+          "note": "導數在 0：$0,1,0,-1$ 循環。",
+          "say": "sine 的導數在零是零、一、零、負一一直循環，所以只有奇次項，正負交替。",
+          "board": [
+            {"do":"write","line":"$\\sin x = {{s:x - \\frac{x^3}{3!} + \\frac{x^5}{5!} - \\cdots}}$","on":"一直循環"},
+            {"do":"underline","term":"s","label":"奇次、交替","on":"只有奇次項"}
+          ] },
+        { "show": ["$\\cos x=1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots$"],
+          "note": "$\\sin x$ 逐項微分得到。",
+          "say": "sine 逐項微分就是 cosine：只剩偶次項，常數項是一，一樣正負交替。",
+          "board": [
+            {"do":"write","line":"$\\cos x = {{one:1}} - \\frac{x^2}{2!} + \\frac{x^4}{4!} - \\cdots$","on":"就是 cosine"},
+            {"do":"focus","term":"one","label":"常數項","on":"常數項是一"}
+          ] },
+        { "show": ["三個都對所有 $x$ 成立"],
+          "note": "證明餘項 $\\to 0$ 在〈Taylor 誤差〉。",
+          "say": "這三個在整條實數線上都等於原函數，證明要等泰勒誤差那一課。",
+          "board": [
+            {"do":"write","line":"三個都對所有 $x$ 成立","color":"green","on":"整條實數線"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "有範圍的兩個",
+      "beats": [
+        { "show": ["$\\frac{1}{1-x}=1+x+x^2+\\cdots$"],
+          "note": "$-1<x<1$，幾何級數。",
+          "say": "一減 x 分之一就是幾何級數，只在負一到一之間成立，兩端都不含。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1-x} = 1 + x + x^2 + \\cdots$"},
+            {"do":"write","line":"$-1<x<1$","on":"只在"}
+          ] },
+        { "show": ["$\\frac{1}{1+t}=1-t+t^2-\\cdots$"],
+          "note": "在 $-1<t<1$ 可以逐項積分。",
+          "say": "在幾何級數裡把 x 換成負 t，就得到一加 t 分之一的級數。在負一到一之間，可以一項一項積分。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1+t} = 1 - t + t^2 - \\cdots$"},
+            {"do":"write","line":"$-1<t<1$：可逐項積分","on":"負一到一"}
+          ] },
+        { "show": ["$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
+          "note": "由 $\\frac{1}{1+t}$ 逐項積分。",
+          "say": "自然對數一加 x：把一加 t 分之一逐項積分，得到正負交錯、除以 n，從一次方開始。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{1+t}$ 逐項積分","on":"把一加"},
+            {"do":"write","line":"$\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\cdots$","on":"得到"}
+          ] },
+        { "show": ["成立範圍 $-1<x\\le 1$"],
+          "say": "它在 x 等於一那一端也成立，變成交錯調和級數；負一那端不行。",
+          "board": [
+            {"do":"write","line":"$x=1$：交錯調和級數"},
+            {"do":"write","line":"$x=-1$：不行","color":"red","on":"負一那端"}
+          ] },
+        { "show": ["$x=1$ 收斂；$x=-1$ 發散"],
+          "note": "$x=-1$ 時各項都是負的。",
+          "say": "x 等於一，項越來越小又正負交替，所以收斂。x 等於負一，每項都變負，成了調和級數的負數，發散。",
+          "board": [
+            {"do":"write","line":"$x=1$：$1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$ 收斂"},
+            {"do":"write","line":"$x=-1$：$-(1+\\frac{1}{2}+\\frac{1}{3}+\\cdots)$ 發散","color":"red","on":"負一"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "代換",
+      "beats": [
+        { "show": ["$x$ 換成 $x^2$、$-x$、$2x$……"],
+          "note": "範圍跟著換。",
+          "say": "造新級數第一招是代換：把 x 換成別的式子，成立的範圍也跟著換。",
+          "board": [
+            {"do":"write","line":"把 $x$ 換成 $x^2$、$-x$、$2x$"},
+            {"do":"write","line":"範圍跟著換","on":"範圍也"}
+          ] },
+        { "show": ["$e^{-x^2}=\\sum\\frac{(-1)^n x^{2n}}{n!}$"],
+          "say": "e 的負 x 平方次方：在 e 的 x 次方的級數裡，x 整個換成負 x 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$e^{x}=\\sum\\frac{{{b:x}}^n}{n!}$","on":"級數裡"},
+            {"do":"transform","line":"$e^{-x^2}=\\sum\\frac{({{s:-x^2}})^n}{n!}$","on":"整個換成"}
+          ] },
+        { "show": ["$\\sin(x^2)=x^2-\\frac{x^6}{6}+\\frac{x^{10}}{120}-\\cdots$"],
+          "note": "$\\sin u$ 裡 $u=x^2$。",
+          "say": "sine x 平方也一樣，u 換成 x 平方，次方全部加倍。x 的六次方係數是負六分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin u = u - \\frac{u^3}{3!} + \\frac{u^5}{5!} - \\cdots$","on":"也一樣"},
+            {"do":"write","line":"$\\sin(x^2) = {{a:x^2}} - {{c:\\frac{x^6}{6}}} + \\cdots$","on":"次方全部"},
+            {"do":"underline","term":"c","label":"六次方","on":"六次方"}
+          ] },
+        { "show": ["$x^8$ 的係數是 0"],
+          "note": "只有 $4k+2$ 次方的項。",
+          "say": "x 的八次方根本不會出現，係數是零。",
+          "board": [
+            {"do":"write","line":"$\\sin(x^2)$：只有 $4k+2$ 次方"},
+            {"do":"write","line":"$x^8$ 的係數 $=0$","on":"根本不會"}
+          ] }
+      ],
+      "key": "代換要整個代進次方，係數跟著乘",
+      "check": 2
+    },
+    {
+      "title": "兩個級數相乘",
+      "beats": [
+        { "show": ["$e^x\\ln(1+x)$ 的 $x^3$ 係數"],
+          "note": "只展開到需要的次方。",
+          "say": "兩個級數相乘，不用全部展開。要 x 的三次方，只收集次方加起來是三的乘積。",
+          "board": [
+            {"do":"write","line":"$e^x\\ln(1+x)$ 的 ${{x3:x^3}}$ 係數"},
+            {"do":"underline","term":"x3","label":"次方和是 3","on":"次方加起來"}
+          ] },
+        { "show": ["$e^x=1+x+\\frac{x^2}{2}+\\cdots$","$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
+          "say": "兩個都寫到三次就夠了。",
+          "board": [
+            {"do":"write","line":"$e^x = {{a0:1}} + {{a1:x}} + {{a2:\\frac{x^2}{2}}} + \\cdots$","tint":{"a0":"blue","a1":"blue","a2":"blue"}},
+            {"do":"write","line":"$\\ln(1+x) = {{b1:x}} - {{b2:\\frac{x^2}{2}}} + {{b3:\\frac{x^3}{3}}} - \\cdots$","tint":{"b1":"violet","b2":"violet","b3":"violet"},"on":"三次"}
+          ] },
+        { "show": ["$1\\cdot\\frac{x^3}{3}+x\\cdot\\left(-\\frac{x^2}{2}\\right)+\\frac{x^2}{2}\\cdot x$"],
+          "say": "零次乘三次、一次乘二次、二次乘一次，三組。中間那組帶負號。",
+          "board": [
+            {"do":"write","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}}$"},
+            {"do":"transform","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}}$","on":"一次乘二次"},
+            {"do":"transform","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}} + {{a2:\\frac{x^2}{2}}}\\cdot{{b1:x}}$","on":"二次乘一次"},
+            {"do":"underline","term":"g","label":"帶負號","on":"中間那組"}
+          ] },
+        { "show": ["把三組係數相加"],
+          "note": "算出來，再到選項裡找。",
+          "say": "把這三組的係數加起來，就是 x 三次方的係數。算完再到選項裡找對得上的。",
+          "board": [
+            {"do":"write","line":"係數 $=\\frac{1}{3}+\\left(-\\frac{1}{2}\\right)+\\frac{1}{2}$"}
+          ] }
+      ],
+      "key": "只配總次數為 $3$ 的乘積，一組都別漏",
+      "predict": {
+        "ask": "$x^3$ 的係數是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{1}{3}-\\frac{1}{2}$",
+            "why": "漏了第三組 $\\frac{x^2}{2}\\cdot x$，它貢獻 $+\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\frac{4}{3}$",
+            "why": "中間那組是 $-\\frac{1}{2}$，不是 $+\\frac{1}{2}$；正負抵掉。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "認出是哪個級數",
+      "beats": [
+        { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(-1)^n\\pi^{2n+1}}{6^{2n+1}(2n+1)!}$"],
+          "say": "反過來，看到一個數值級數，認出它是哪個基本級數在某一點的值。",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=0}^{\\infty}\\frac{(-1)^n{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}(2n+1)!}$"}
+          ] },
+        { "show": ["$\\frac{\\pi^{2n+1}}{6^{2n+1}}=\\left(\\frac{\\pi}{6}\\right)^{2n+1}$"],
+          "say": "分子分母次方一樣，合成六分之 pi 的二 n 加一次方。奇次方、正負交替、除以階乘。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}} = {{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}$","tint":{"u":"blue"}},
+            {"do":"write","line":"$= \\sum_{n=0}^{\\infty}\\frac{(-1)^n{{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}}{(2n+1)!}$","on":"奇次方"}
+          ] },
+        { "show": ["$\\sin\\frac{\\pi}{6}=\\frac{1}{2}$"],
+          "note": "$\\sin x$ 的級數在 $x=\\frac{\\pi}{6}$。",
+          "say": "這就是 sine 的級數在六分之 pi 的值，和是二分之一。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$= \\sin\\frac{\\pi}{6}$","on":"sine 的級數"},
+            {"do":"transform","line":"$= \\sin\\frac{\\pi}{6} = \\frac{1}{2}$","color":"green","on":"和是"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["taylor", "coefficient", "sum-series"],
+    "fine": ["maclaurin-five", "maclaurin-substitution", "maclaurin-product", "maclaurin-recognize-sum"]
+  },
+  "practice": [
+    { "id": "lec-15-m1", "core": true, "trains": "maclaurin-five" },
+    { "id": "ser-038", "core": true, "trains": "maclaurin-five" },
+    { "id": "ser-027", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "rel-adv-017", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "exam-ser-017", "core": true, "trains": "maclaurin-recognize-sum" },
+    { "id": "uni-ser-006", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "uni-ser-004", "trains": "maclaurin-substitution" },
+    { "id": "depth-ser-005", "trains": "maclaurin-substitution" },
+    { "id": "depth-ser-013", "trains": "maclaurin-recognize-sum" },
+    { "id": "depth-ser-018", "trains": "maclaurin-recognize-sum" },
+    { "id": "lec-15-q3c", "trains": "maclaurin-recognize-sum" },
+    { "id": "lec-15-q3d", "trains": "maclaurin-recognize-sum" },
+    { "id": "depth-ser-015", "trains": "maclaurin-product" },
+    { "id": "lec-14-q4d", "trains": "maclaurin-recognize-sum" },
+    { "id": "uni-ser-016", "challenge": true, "trains": "maclaurin-product", "note": "挑戰：$\\sin x\\cos x=\\frac{1}{2}\\sin 2x$，先用恆等式比直接相乘快得多。" },
+    { "id": "depth-ser-019", "challenge": true, "trains": "maclaurin-product" }
+  ],
+  "gaps": []
+}

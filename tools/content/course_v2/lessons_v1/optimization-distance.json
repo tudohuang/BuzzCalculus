@@ -1,0 +1,531 @@
+{
+  "id": "optimization-distance",
+  "title": "距離與工程最佳化",
+  "readMinutes": 9,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "optimization-geometry",
+    "chain-rule"
+  ],
+  "next": [
+    "related-rates"
+  ],
+  "related": [],
+  "objectives": [
+    "求曲線上離某一點最近的點：改求距離平方的最小值。",
+    "把「先走一段、再換方式走一段」寫成時間或成本函數，用畢氏定理表示斜的那一段。",
+    "在閉區間上把端點也算進來比較，避免漏掉「直接走到底」的答案。"
+  ],
+  "visual": "一座離岸 3 公里的小島，沿岸 8 公里外有小鎮。拖動岸上的登陸點 x，畫面畫出划船的斜線與跑步的直線，旁邊即時畫出總時間 T(x) 的曲線與目前的點；最低點在 x = 9/4。",
+  "concept": [
+    {
+      "heading": "① 最近的點：求距離平方",
+      "body": [
+        "點 $(x,y)$ 到 $(a,b)$ 的距離 $D=\\sqrt{(x-a)^2+(y-b)^2}$。帶根號不好微分。距離一定 $\\ge 0$，所以跟〈幾何最佳化〉一樣，改求 $D^2$ 的最小值，在同一個點取到。",
+        "點在曲線上，就用曲線方程式把 $y$ 換成 $x$，例如在 $y=x^2$ 上，$D^2=(x-a)^2+(x^2-b)^2$，只剩一個變數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 路線問題：時間 = 距離 ÷ 速度",
+      "body": [
+        "從離岸 3 公里的小島划船上岸，再沿岸跑到 8 公里外的小鎮。登陸點離島的正對點 $x$ 公里，划的那段是斜邊 $\\sqrt{9+x^2}$，跑的那段是 $8-x$。划船時速 3、跑步時速 5，總時間 $T(x)=\\frac{\\sqrt{9+x^2}}{3}+\\frac{8-x}{5}$。",
+        "成本題是同一個模型：每公里單價 × 長度，把「除以速度」換成「乘以單價」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 端點也是候選",
+      "body": [
+        "$x$ 的範圍是 $[0,8]$：$x=0$ 是先划到正對點再全程跑，$x=8$ 是直接划到小鎮。這兩種走法都可能是最好的（例如划得比跑得快時，答案就是直接划過去），所以一定要跟臨界點一起比。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一個好記的結果",
+      "body": [
+        "範例 2 的最佳點滿足 $\\frac{x}{\\sqrt{9+x^2}}=\\frac{3}{5}$：斜線與「垂直岸邊方向」夾角 $\\theta$ 的正弦，剛好等於兩種速度的比。光在兩種介質之間也走最省時間的路，用同樣的計算推出來的就是折射定律。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "拋物線上最近的點",
+      "prompt": "拋物線 $y=x^2$ 上哪些點離 $(0,3)$ 最近？最短距離是多少？",
+      "problemId": "dd-opt-004",
+      "steps": [
+        "$D^2=(x-0)^2+(x^2-3)^2=x^2+x^4-6x^2+9=x^4-5x^2+9$，$x$ 可以是任何實數。",
+        "$(D^2)'=4x^3-10x=2x(2x^2-5)=0$，得 $x=0$ 或 $x=\\pm\\sqrt{\\frac{5}{2}}$。",
+        "$D^2(0)=9$；$D^2\\left(\\pm\\sqrt{\\frac{5}{2}}\\right)=\\frac{25}{4}-\\frac{25}{2}+9=\\frac{11}{4}$。$(D^2)'$ 的正負：$x<-\\sqrt{\\frac{5}{2}}$ 負、$\\left(-\\sqrt{\\frac{5}{2}},0\\right)$ 正、$\\left(0,\\sqrt{\\frac{5}{2}}\\right)$ 負、$x>\\sqrt{\\frac{5}{2}}$ 正，所以 $x=\\pm\\sqrt{\\frac{5}{2}}$ 是谷底，$x=0$ 是局部山頂。$x\\to\\pm\\infty$ 時 $D^2\\to\\infty$，最小值是 $\\frac{11}{4}$。",
+        "最近的點是 $\\left(\\pm\\sqrt{\\frac{5}{2}},\\frac{5}{2}\\right)$，最短距離 $\\sqrt{\\frac{11}{4}}=\\frac{\\sqrt{11}}{2}\\approx 1.658$。"
+      ],
+      "answer": "$\\left(\\pm\\sqrt{\\frac{5}{2}},\\frac{5}{2}\\right)$，最短距離 $\\frac{\\sqrt{11}}{2}$",
+      "note": "$x=0$ 那一點 $(0,0)$ 也是臨界點，但它是局部最遠，不是最近。",
+      "claim": "D(x^4-5x^2+9, sqrt(5/2)) == 0 ;; SUB(x^4-5x^2+9, sqrt(5/2)) == 11/4 ;; SUB(sqrt(x^2+(x^2-3)^2), sqrt(5/2)) == sqrt(11)/2"
+    },
+    {
+      "title": "划船再跑步",
+      "prompt": "小島離岸 3 公里，沿岸 8 公里處有小鎮。划船時速 3 公里、跑步時速 5 公里。最短要多少小時？",
+      "problemId": "dd-opt-009",
+      "steps": [
+        "$T(x)=\\frac{\\sqrt{9+x^2}}{3}+\\frac{8-x}{5}$，$0\\le x\\le 8$。",
+        "$T'(x)=\\frac{x}{3\\sqrt{9+x^2}}-\\frac{1}{5}$（連鎖律）。令 $T'=0$：$5x=3\\sqrt{9+x^2}$。兩邊平方（兩邊都 $\\ge 0$，不會多出假解）：$25x^2=81+9x^2$，$x^2=\\frac{81}{16}$，$x=\\frac{9}{4}$。",
+        "候選值：$T(0)=1+\\frac{8}{5}=2.6$；$T\\left(\\frac{9}{4}\\right)=\\frac{\\sqrt{225/16}}{3}+\\frac{23/4}{5}=\\frac{5}{4}+\\frac{23}{20}=2.4$；$T(8)=\\frac{\\sqrt{73}}{3}\\approx 2.848$。",
+        "最少 $2.4$ 小時，也就是 $\\frac{12}{5}$ 小時：划到離正對點 $\\frac{9}{4}$ 公里處上岸。"
+      ],
+      "answer": "$\\frac{12}{5}$ 小時（$x=\\frac{9}{4}$）",
+      "claim": "D(sqrt(9+x^2)/3+(8-x)/5, 9/4) == 0 ;; SUB(sqrt(9+x^2)/3+(8-x)/5, 9/4) == 12/5 ;; SUB(sqrt(9+x^2)/3+(8-x)/5, 0) == 13/5 ;; SUB(sqrt(9+x^2)/3+(8-x)/5, 8) > 12/5"
+    },
+    {
+      "title": "兩盞燈之間最暗的點",
+      "prompt": "兩盞燈相距 10 公尺，亮度分別為 $1$ 與 $8$，照度與距離平方成反比。兩燈之間最暗的點離第一盞燈多遠？",
+      "problemId": "dx-eng-001",
+      "steps": [
+        "離第一盞燈 $x$ 公尺的照度 $I(x)=\\frac{1}{x^2}+\\frac{8}{(10-x)^2}$，$0<x<10$。",
+        "$I'(x)=-\\frac{2}{x^3}+\\frac{16}{(10-x)^3}$。令 $I'=0$：$(10-x)^3=8x^3$，兩邊開立方：$10-x=2x$，$x=\\frac{10}{3}$。",
+        "$I'$ 的兩項都隨 $x$ 遞增，所以 $I'$ 遞增，只變號一次：$x<\\frac{10}{3}$ 時 $I'<0$、$x>\\frac{10}{3}$ 時 $I'>0$。$x=\\frac{10}{3}$ 是整段的最小值。"
+      ],
+      "answer": "$\\frac{10}{3}$ 公尺",
+      "note": "最暗的點偏向比較暗的那盞燈，合理。",
+      "claim": "D(1/x^2+8/(10-x)^2, 10/3) == 0"
+    }
+  ],
+  "pitfalls": [
+    "直接對 $\\sqrt{\\dots}$ 微分，算到一半出錯；改求平方簡單得多。",
+    "時間寫成距離 × 速度。",
+    "兩邊平方解方程式之後，沒檢查有沒有多出不合的解。",
+    "閉區間題只算臨界點，忘了「直接划到底」的端點。",
+    "找到臨界點就當成最小值，沒有比較或檢查 $f'$ 的正負（範例 1 的 $x=0$ 是局部最遠）。"
+  ],
+  "checks": [
+    {
+      "ask": "求 $y=x^2$ 上離 $(0,3)$ 最近的點，要對哪個函數求最小值最方便？",
+      "options": [
+        {
+          "label": "$x^2+(x^2-3)^2$",
+          "correct": true
+        },
+        {
+          "label": "$x+(x^2-3)$",
+          "why": "距離不是水平差加垂直差。要用畢氏定理：兩個差的平方和，再開根號。"
+        },
+        {
+          "label": "$x^2+x^4+9$",
+          "why": "$(x^2-3)^2$ 展開漏了中間項：$x^4-6x^2+9$。"
+        }
+      ]
+    },
+    {
+      "ask": "划船時速 3 公里，划了 $\\sqrt{9+x^2}$ 公里。花的時間是？",
+      "options": [
+        {
+          "label": "$\\frac{\\sqrt{9+x^2}}{3}$ 小時",
+          "correct": true
+        },
+        {
+          "label": "$3\\sqrt{9+x^2}$ 小時",
+          "why": "時間是距離除以速度，不是乘。划 6 公里、時速 3，要 2 小時，不是 18 小時。"
+        },
+        {
+          "label": "$\\sqrt{9+x^2}-3$ 小時",
+          "why": "距離和速度單位不同，不能相減。時間 = 距離 ÷ 速度。"
+        }
+      ]
+    },
+    {
+      "ask": "$D^2=x^4-5x^2+9$ 的臨界點是 $0$ 與 $\\pm\\sqrt{\\frac{5}{2}}$。拋物線 $y=x^2$ 上離 $(0,3)$ 最近的距離是？",
+      "options": [
+        {
+          "label": "$\\frac{\\sqrt{11}}{2}$",
+          "correct": true
+        },
+        {
+          "label": "$3$",
+          "why": "$x=0$ 是臨界點，但 $D^2(0)=9$ 比 $D^2\\left(\\pm\\sqrt{\\frac{5}{2}}\\right)=\\frac{11}{4}$ 大，它是局部最遠。"
+        },
+        {
+          "label": "$\\frac{11}{4}$",
+          "why": "$\\frac{11}{4}$ 是距離的平方。最後要開根號：$\\sqrt{\\frac{11}{4}}=\\frac{\\sqrt{11}}{2}$。"
+        }
+      ]
+    },
+    {
+      "ask": "兩盞燈相距 10 公尺，亮度 $1$ 與 $8$。最暗的點離亮度 $1$ 的燈多遠？",
+      "options": [
+        {
+          "label": "$\\frac{10}{3}$ 公尺",
+          "correct": true
+        },
+        {
+          "label": "$5$ 公尺",
+          "why": "兩盞燈亮度不同，最暗的點不會在正中間。解 $I'=0$ 得 $10-x=2x$。"
+        },
+        {
+          "label": "$\\frac{20}{3}$ 公尺",
+          "why": "方向反了：$\\frac{20}{3}$ 公尺是靠近亮的那盞燈，那裡比較亮。最暗的點偏向暗的燈。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "求距離平方",
+      "beats": [
+        { "show": ["$D=\\sqrt{(x-a)^2+(y-b)^2}$"],
+          "note": "帶根號不好微分。",
+          "say": "兩點的距離是根號裡兩個差的平方和。帶著根號微分很麻煩。",
+          "board": [
+            {"do":"write","line":"$D={{r:\\sqrt{(x-a)^2+(y-b)^2}}}$"},
+            {"do":"underline","term":"r","color":"red","label":"難微分","on":"帶著"}
+          ] },
+        { "show": ["改求 $D^2$ 的最小值"],
+          "note": "$D\\ge 0$，在同一個點取到。",
+          "say": "距離一定大於等於零，跟上一課一樣，改求距離平方的最小值，會在同一個點取到。",
+          "board": [
+            {"do":"transform","line":"${{s:D^2}}=(x-a)^2+(y-b)^2$","on":"改求"},
+            {"do":"underline","term":"s","label":"求最小值","on":"最小值"}
+          ] },
+        { "show": ["$2<3$，平方後 $4<9$"],
+          "note": "非負的數，越大平方越大。",
+          "say": "距離不會是負的，非負的數越大，平方也越大。像二比三小，平方四也比九小。所以平方最小，距離就最小。",
+          "board": [
+            {"do":"write","line":"$2<3$"},
+            {"do":"write","line":"$2^2=4<9=3^2$","on":"平方四"}
+          ] },
+        { "show": ["在 $y=x^2$ 上：$D^2=(x-a)^2+(x^2-b)^2$"],
+          "note": "把 $y$ 換成 $x$，只剩一個變數。",
+          "say": "點在曲線上，就用曲線方程式把 y 換掉。在 x 平方的圖形上，y 換成 x 平方，只剩 x 一個變數。",
+          "board": [
+            {"do":"write","line":"$y=x^2$","on":"曲線方程式"},
+            {"do":"write","line":"$D^2=(x-a)^2+({{q:x^2}}-b)^2$","on":"換成"},
+            {"do":"focus","term":"q","label":"只剩 x","on":"只剩"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "拋物線上最近的點",
+      "beats": [
+        { "show": ["$D^2=x^4-5x^2+9$"],
+          "note": "到 $(0,3)$，$x$ 可以是任何實數。",
+          "say": "到點零、三的距離平方，展開整理成 x 四次方減五 x 平方加九。",
+          "board": [
+            {"do":"write","line":"$D^2=x^2+(x^2-3)^2$"},
+            {"do":"transform","line":"$D^2=x^4-5x^2+9$","on":"展開整理成"}
+          ] },
+        { "show": ["$(D^2)'=2x(2x^2-5)=0$"],
+          "note": "$x=0$ 或 $x=\\pm\\sqrt{\\frac{5}{2}}$。",
+          "say": "微分後分解，臨界點有三個：零，和正負根號二分之五。",
+          "board": [
+            {"do":"write","line":"$(D^2)'=2x(2x^2-5)=0$"},
+            {"do":"write","line":"$x=0$ 或 $x=\\pm\\sqrt{\\frac{5}{2}}$","on":"臨界點有三個"}
+          ] },
+        { "show": ["$D^2(0)=9$；$D^2(\\pm\\sqrt{\\frac{5}{2}})=\\frac{11}{4}$"],
+          "say": "代進去比：在零是九，在正負根號二分之五是四分之十一，比較小。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$D^2(0)=9$；$D^2(\\pm\\sqrt{\\frac{5}{2}})={{e:\\frac{11}{4}}}$","on":"代進去比"},
+            {"do":"circle","term":"e","label":"比較小","on":"四分之十一"}
+          ] },
+        { "show": ["$x=-1$：正；$x=1$：負"],
+          "note": "代數字看 $2x(2x^2-5)$ 的正負。",
+          "say": "代 x 等於負一：二 x 是負二，括號裡是負三，相乘為正。代 x 等於一：二 x 是二，括號裡還是負三，相乘為負。",
+          "board": [
+            {"do":"write","line":"$x=-1$：$(-2)(-3)$ 為正"},
+            {"do":"write","line":"$x=1$：$(2)(-3)$ 為負","on":"代 x 等於一"}
+          ] },
+        { "show": ["$x=0$ 是局部最遠"],
+          "note": "導數正負：兩側的點是谷底，$x=0$ 是山頂。",
+          "say": "x 等於零也是臨界點，可是導數在它左邊正、右邊負，是局部的山頂，最遠，不是最近。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","on":"x 等於零","graph":{"window":[-2.4,2.4,0,12],"ticks":false,"curves":[{"expr":"x^4-5*x^2+9","domain":[-2.3,2.3],"color":"blue"}],"points":[{"x":0,"y":9},{"x":-1.5811,"y":2.75},{"x":1.5811,"y":2.75}],"labels":[{"x":0,"y":10.4,"text":"山頂","anchor":"middle"},{"x":1.5811,"y":1.2,"text":"谷底","anchor":"middle"},{"x":-1.5811,"y":1.2,"text":"谷底","anchor":"middle"}]}},
+            {"do":"write","line":"${{x0:x=0}}$ 是局部最遠","on":"局部的山頂"},
+            {"do":"underline","term":"x0","label":"不是最近","on":"最遠"}
+          ] }
+      ],
+      "key": "算出 $D^2$ 的最小值後，別忘了開根號",
+      "check": 2
+    },
+    {
+      "title": "時間＝距離÷速度",
+      "beats": [
+        { "show": ["小島離岸 3 公里，小鎮在 8 公里外"],
+          "note": "先划船上岸，再沿岸跑。",
+          "say": "小島離岸三公里，沿岸八公里外有小鎮。先划船上岸，再沿著岸邊跑過去。",
+          "board": [
+            {"do":"write","line":"小島離岸 $3$ 公里，小鎮在 $8$ 公里外"},
+            {"do":"write","line":"先划船上岸，再沿岸跑","on":"先划船上岸"}
+          ] },
+        { "show": ["划 $\\sqrt{9+x^2}$，跑 $8-x$"],
+          "note": "登陸點離正對點 $x$ 公里。",
+          "say": "在離正對點 x 公里的地方上岸。划的那段是直角三角形的斜邊，跑的那段是八減 x。",
+          "board": [
+            {"do":"write","line":"划 ${{r:\\sqrt{9+x^2}}}$，跑 ${{p:8-x}}$","tint":{"r":"blue","p":"violet"},"on":"划的那段"},
+            {"do":"underline","term":"r","color":"blue","label":"斜邊","on":"斜邊"},
+            {"do":"underline","term":"p","color":"violet","on":"八減"}
+          ] },
+        { "show": ["$T(x)=\\frac{\\sqrt{9+x^2}}{3}+\\frac{8-x}{5}$"],
+          "note": "划船時速 3、跑步時速 5。",
+          "say": "每一段的時間都是距離除以速度。划船時速三、跑步時速五，加起來是總時間。",
+          "board": [
+            {"do":"write","line":"$T(x)={{a:\\frac{\\sqrt{9+x^2}}{3}}}+{{b:\\frac{8-x}{5}}}$","tint":{"a":"blue","b":"violet"},"on":"每一段"},
+            {"do":"underline","term":"a","color":"blue","label":"時速 3","on":"划船"},
+            {"do":"underline","term":"b","color":"violet","label":"時速 5","on":"跑步"}
+          ] },
+        { "show": ["成本題：單價 × 長度"],
+          "say": "成本題是同一個模型，只是把除以速度換成乘上每公里的單價。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"時間 ＝ 距離 ÷ 速度","on":"同一個模型"},
+            {"do":"write","line":"成本 ＝ 單價 × 長度","on":"乘上"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "端點也是候選",
+      "beats": [
+        { "show": ["$0\\le x\\le 8$"],
+          "note": "$x=0$ 全程跑；$x=8$ 直接划到小鎮。",
+          "say": "x 的範圍是零到八。零是先划到正對點再全程跑，八是直接划到小鎮。這兩種都可能最好，要一起比。",
+          "board": [
+            {"do":"write","line":"${{lo:0}}\\le x\\le {{hi:8}}$"},
+            {"do":"underline","term":"lo","label":"全程跑","on":"零是先划"},
+            {"do":"underline","term":"hi","label":"直接划","on":"八是直接"}
+          ] },
+        { "show": ["$T'(x)=\\frac{x}{3\\sqrt{9+x^2}}-\\frac{1}{5}$"],
+          "note": "連鎖律。",
+          "say": "根號那一項用連鎖律微分，跑步那一項的導數是負五分之一。",
+          "board": [
+            {"do":"write","line":"$T'(x)={{a:\\frac{x}{3\\sqrt{9+x^2}}}}-{{b:\\frac{1}{5}}}$"},
+            {"do":"underline","term":"a","label":"連鎖律","on":"連鎖律"},
+            {"do":"underline","term":"b","on":"跑步那一項"}
+          ] },
+        { "show": ["$(\\sqrt{u})'=\\frac{1}{2\\sqrt{u}}$，$u=9+x^2$"],
+          "note": "外層是根號 $u$。",
+          "say": "根號 u 的導數是二倍根號 u 分之一。這裡 u 是九加 x 平方，所以先得到二倍根號九加 x 平方分之一。",
+          "board": [
+            {"do":"write","line":"$(\\sqrt{u})'=\\frac{1}{2\\sqrt{u}}$，$u=9+x^2$"}
+          ] },
+        { "show": ["$\\frac{1}{2\\sqrt{u}}\\cdot 2x=\\frac{x}{\\sqrt{9+x^2}}$"],
+          "note": "裡層 $9+x^2$ 的導數是 $2x$。",
+          "say": "再乘裡面 u 的導數二 x，二約掉，剩根號分之 x。最後除以三，就是 T prime 的第一項。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{2\\sqrt{u}}\\cdot 2x$"},
+            {"do":"transform","line":"$=\\frac{x}{\\sqrt{9+x^2}}$","on":"二約掉"}
+          ] },
+        { "show": ["$5x=3\\sqrt{9+x^2}$ → $x=\\frac{9}{4}$"],
+          "note": "兩邊都 $\\ge 0$，平方不會多出假解。",
+          "say": "令導數為零，兩邊平方，兩邊都非負所以不會多出假解，解出 x 等於四分之九。",
+          "board": [
+            {"do":"write","line":"${{eq:5x=3\\sqrt{9+x^2}}}$"},
+            {"do":"underline","term":"eq","on":"兩邊都非負"},
+            {"do":"write","line":"$x={{r:\\frac{9}{4}}}$","on":"解出"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$T(0)=2.6$、$T\\left(\\frac{9}{4}\\right)=2.4$、$T(8)\\approx 2.848$。最短時間？",
+        "options": [
+          {
+            "label": "$2.4$ 小時，在 $x=\\frac{9}{4}$ 上岸",
+            "correct": true
+          },
+          {
+            "label": "$2.6$ 小時，划到正對點",
+            "why": "$2.6$ 是端點 $x=0$ 的值，比臨界點的 $2.4$ 慢。"
+          },
+          {
+            "label": "$\\frac{9}{4}$ 小時",
+            "why": "$\\frac{9}{4}$ 是上岸點的距離（公里），不是時間。時間是 $T\\left(\\frac{9}{4}\\right)=2.4$ 小時。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "好記的結果",
+      "beats": [
+        { "show": ["$\\frac{x}{\\sqrt{9+x^2}}=\\frac{3}{5}$"],
+          "note": "最佳點滿足的式子。",
+          "say": "把導數等於零整理一下，最佳上岸點滿足這個式子：左邊等於五分之三。",
+          "board": [
+            {"do":"write","line":"${{l:\\frac{x}{\\sqrt{9+x^2}}}}={{r:\\frac{3}{5}}}$","on":"整理"},
+            {"do":"focus","term":"l","on":"左邊"}
+          ] },
+        { "show": ["直角三角形：邊 3、$x$，斜邊 $\\sqrt{9+x^2}$"],
+          "note": "$\\theta$ 在島這一端。",
+          "say": "畫成直角三角形：垂直岸邊的邊是三，沿岸的邊是 x，斜邊是根號九加 x 平方。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,4,-1,4],"ticks":false,"dashed":[[[0,3],[0,0]],[[0,0],[2.25,0]]],"arrows":[{"from":[0,3],"to":[2.25,0],"color":"blue"}],"points":[{"x":0,"y":3},{"x":0,"y":0},{"x":2.25,"y":0}],"labels":[{"x":-0.4,"y":1.5,"text":"3","anchor":"middle"},{"x":1.1,"y":-0.5,"text":"x","anchor":"middle"},{"x":0.35,"y":2.3,"text":"θ","anchor":"start"}]}}
+          ] },
+        { "show": ["$\\sin\\theta=\\frac{x}{\\sqrt{9+x^2}}$"],
+          "note": "sine＝對邊除以斜邊。",
+          "say": "sine 的定義是對邊除以斜邊。theta 的對邊是 x，所以 sine theta 就是 x 除以根號九加 x 平方。",
+          "board": [
+            {"do":"write","line":"$\\sin\\theta=\\frac{\\text{對邊}}{\\text{斜邊}}$"},
+            {"do":"transform","line":"$=\\frac{x}{\\sqrt{9+x^2}}$","on":"所以"}
+          ] },
+        { "show": ["$\\sin\\theta=$ 兩種速度的比"],
+          "note": "$\\theta$：斜線與垂直岸邊方向的夾角。",
+          "say": "左邊是斜線跟垂直岸邊方向夾角 theta 的 sine，右邊是划船和跑步速度的比。",
+          "board": [
+            {"do":"transform","line":"${{s:\\sin\\theta}}={{r:\\frac{3}{5}}}$","on":"左邊是"},
+            {"do":"underline","term":"s","label":"夾角的 sine","on":"sine"},
+            {"do":"focus","term":"r","color":"green","label":"速度比","on":"划船和跑步"}
+          ] },
+        { "show": ["光走最省時間的路 → 折射定律"],
+          "say": "光在兩種介質之間也走最省時間的路，用一樣的計算推出來的，就是折射定律。",
+          "board": [
+            {"do":"write","line":"光走最省時間的路","on":"光在"},
+            {"do":"write","line":"$\\Rightarrow$ 折射定律","color":"green","on":"用一樣的計算"}
+          ] }
+      ],
+      "predict": {
+        "ask": "如果划得比跑得快，最佳走法是？",
+        "options": [
+          {
+            "label": "直接划到小鎮（端點 $x=8$）",
+            "correct": true
+          },
+          {
+            "label": "還是在 $x=\\frac{9}{4}$ 上岸",
+            "why": "$\\frac{9}{4}$ 是划船時速 3、跑步時速 5 的答案。划得比跑得快時，跑步只會更慢。"
+          },
+          {
+            "label": "先划到正對點再全程跑（$x=0$）",
+            "why": "划得快就該多划；全程跑最慢。答案在另一個端點：直接划過去。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "兩燈之間最暗處",
+      "beats": [
+        { "show": ["相距 10 公尺，亮度 $1$ 與 $8$"],
+          "note": "照度與距離平方成反比。",
+          "say": "兩盞燈相距十公尺，亮度一和八，照度跟距離平方成反比。兩燈之間哪裡最暗？",
+          "board": [
+            {"do":"write","line":"亮度 $1$ 與 $8$，相距 $10$ 公尺"},
+            {"do":"write","line":"照度 $\\propto \\frac{1}{d^2}$，$d$＝距離","on":"照度跟"}
+          ] },
+        { "show": ["$I(x)=\\frac{1}{x^2}+\\frac{8}{(10-x)^2}$"],
+          "note": "$0<x<10$",
+          "say": "離第一盞燈 x 公尺，照度是一除以 x 平方，加上八除以十減 x 的平方。",
+          "board": [
+            {"do":"write","line":"$I(x)={{a:\\frac{1}{x^2}}}+{{b:\\frac{8}{(10-x)^2}}}$","tint":{"a":"blue","b":"violet"},"on":"離第一盞燈"},
+            {"do":"circle","term":"a","color":"blue","label":"第一盞燈","on":"一除以"},
+            {"do":"circle","term":"b","color":"violet","label":"第二盞燈","on":"八除以"}
+          ] },
+        { "show": ["$I'(x)=-\\frac{2}{x^3}+\\frac{16}{(10-x)^3}$"],
+          "note": "第二項用連鎖律，裡層導數 $-1$。",
+          "say": "第一項微分得負二除以 x 三次方。第二項裡層十減 x 的導數是負一，所以得十六除以十減 x 的三次方。",
+          "board": [
+            {"do":"write","line":"$I'(x)=-\\frac{2}{x^3}+\\frac{16}{(10-x)^3}$"},
+            {"do":"write","line":"$(10-x)'=-1$","on":"裡層"}
+          ] },
+        { "show": ["$\\frac{2}{x^3}=\\frac{16}{(10-x)^3}$","$16x^3=2(10-x)^3$"],
+          "note": "兩邊除以 2：$8x^3=(10-x)^3$。",
+          "say": "令導數等於零，移項後交叉相乘，十六 x 三次方等於二乘十減 x 的三次方。兩邊除以二，就是八 x 三次方。",
+          "board": [
+            {"do":"write","line":"$\\frac{2}{x^3}=\\frac{16}{(10-x)^3}$"},
+            {"do":"transform","line":"$16x^3=2(10-x)^3$","on":"交叉相乘"}
+          ] },
+        { "show": ["$I'=0$：$(10-x)^3=8x^3$"],
+          "note": "開立方：$10-x=2x$。",
+          "say": "微分令它等於零，整理成十減 x 的三次方等於八 x 三次方。兩邊開立方，十減 x 等於二 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$I'=0$：$(10-x)^3={{e:8x^3}}$","on":"微分令它"},
+            {"do":"transform","line":"$10-x={{f:2x}}$","on":"兩邊開立方"}
+          ] },
+        { "show": ["$I'$ 遞增，只變號一次"],
+          "note": "唯一臨界點就是最小值。",
+          "say": "導數的兩項都跟著 x 變大，所以導數只變號一次，先負後正，這個臨界點就是最暗的地方。",
+          "board": [
+            {"do":"write","line":"$I'$ 遞增，只變號一次：先負後正","on":"兩項"},
+            {"do":"write","line":"臨界點 ＝ 最暗處","color":"green","on":"這個臨界點"}
+          ] }
+      ],
+      "key": "$I'=0$ 化成立方相等，再開立方",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "optimization"
+    ],
+    "fine": [
+      "optimization-distance-squared",
+      "optimization-path-time",
+      "optimization-path-cost",
+      "optimization-endpoint-check",
+      "optimization-physical-model"
+    ]
+  },
+  "practice": [
+    {
+      "id": "app-008",
+      "core": true,
+      "trains": "optimization-distance-squared"
+    },
+    {
+      "id": "lec-05-q3b",
+      "core": true,
+      "trains": "optimization-distance-squared"
+    },
+    {
+      "id": "lec-05-q3c",
+      "core": true,
+      "trains": "optimization-distance-squared"
+    },
+    {
+      "id": "db-opt-004",
+      "core": true,
+      "trains": "optimization-distance-squared"
+    },
+    {
+      "id": "db-opt-008",
+      "trains": "optimization-distance-squared"
+    },
+    {
+      "id": "dd-opt-009",
+      "core": true,
+      "trains": "optimization-path-time"
+    },
+    {
+      "id": "dd-opt-010",
+      "core": true,
+      "trains": "optimization-path-cost"
+    },
+    {
+      "id": "dx-eng-001",
+      "core": true,
+      "trains": "optimization-physical-model"
+    },
+    {
+      "id": "cg-3c-003",
+      "core": true,
+      "trains": "optimization-endpoint-check"
+    },
+    {
+      "id": "dx-eng-002",
+      "trains": "optimization-physical-model"
+    },
+    {
+      "id": "dd-opt-013",
+      "trains": "optimization-physical-model"
+    },
+    {
+      "id": "cg-3c-004",
+      "trains": "optimization-endpoint-check"
+    },
+    {
+      "id": "lec-05-q3d",
+      "challenge": true,
+      "trains": "optimization-distance-squared",
+      "note": "挑戰：點 $(0,a)$ 往下移，什麼時候最近的點變成原點？看 $x\\ne 0$ 的臨界點什麼時候消失。"
+    }
+  ],
+  "gaps": []
+}

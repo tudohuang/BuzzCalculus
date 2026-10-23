@@ -1,7 +1,8 @@
 {
   "id": "complex-taylor",
   "title": "複數上的 Taylor 級數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
   "prerequisites": [
     "cauchy-integral-formula",
@@ -17,224 +18,127 @@
     "taylor-limits-higher"
   ],
   "objectives": [
-    "說得出定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則它在整個圓盤上等於自己的 Taylor 級數，係數 $a_n=\\frac{f^{(n)}(z_0)}{n!}$。",
-    "用「收斂半徑 = 到最近奇異點的距離」直接讀出收斂半徑，包括實數函數的 Maclaurin 級數。",
-    "解釋 $\\frac{1}{1+x^2}$ 在實數線上處處光滑、Maclaurin 級數卻只在 $|x|<1$ 收斂的原因。"
+    "說得出定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則它在整個圓盤上等於自己的 Taylor 級數，係數 $a_n=\\frac{f^{(n)}(z_0)}{n!}$",
+    "用「收斂半徑 = 到最近奇異點的距離」直接讀出收斂半徑，包括實數函數的 Maclaurin 級數",
+    "解釋 $\\frac{1}{1+x^2}$ 在實數線上處處光滑、Maclaurin 級數卻只在 $|x|<1$ 收斂的原因：複數平面上 $\\pm i$ 是極點"
   ],
-  "visual": "複平面上標出 f 的奇異點（例如 1/(1 + z²) 的 ±i）。以展開中心 z₀ 為圓心畫圓，半徑自動停在碰到最近奇異點的地方；拖動 z₀，圓跟著變大變小。下方同步畫實數線上的部分和，圓的範圍以外部分和明顯發散。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 全純就能展開，而且展開到碰到奇異點為止",
+      "heading": "① 全純就能展開",
       "body": [
-        "定理：$f$ 在 $|z-z_0|<R$ 上全純，則 $f(z)=\\sum a_n(z-z_0)^n$ 對整個圓盤成立，$a_n=\\frac{f^{(n)}(z_0)}{n!}$。",
-        "所以收斂半徑至少是「$z_0$ 到最近奇異點的距離」；而級數在收斂圓盤裡定義一個全純函數，不可能跨過奇異點，所以收斂半徑正好就是這個距離（$f$ 在奇異點真的不能延伸時）。"
+        "定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則對圓盤裡每一個 $z$",
+        "實數做不到：$e^{-1/x^2}$（補 $0$）無窮次可微，Maclaurin 級數卻全是 $0$",
+        "實數「無窮次可微」不保證等於泰勒級數；複數「可微一次」就保證",
+        "複數裡，可微一次就換到全部：全純 ⇒ 解析",
+        "推論：收斂半徑 $\\ge$ 從 $z_0$ 到最近的奇異點的距離",
+        "如果那個奇異點附近 $|f|\\to\\infty$（極點），就剛好等於"
       ],
-      "collapsible": false
+      "tex": [
+        "f(z)=\\sum_{n=0}^{\\infty}a_n(z-z_0)^n,\\qquad a_n=\\frac{f^{(n)}(z_0)}{n!}"
+      ]
+    },
+    {
+      "heading": "① 為什麼剛好等於",
+      "body": [
+        "設最近的極點 $p$，距離 $d=|p-z_0|$",
+        "假設收斂半徑 $>d$：冪級數在收斂圓內連續，在 $p$ 附近有界",
+        "6.21：冪級數在收斂圓內部連續",
+        "但在 $|z-z_0|<d$ 上它等於 $f$，而 $z\\to p$ 時 $|f|\\to\\infty$：矛盾",
+        "所以收斂半徑 $=d$　$\\blacksquare$"
+      ]
     },
     {
       "heading": "② 解開實數的謎",
       "body": [
-        "$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$ 只在 $|x|<1$ 收斂。在實數線上看，$x=1$ 一點特別的事都沒有：函數光滑、有界。",
-        "答案在複平面：$\\frac{1}{1+z^2}$ 在 $z=\\pm i$ 有奇異點，到 $0$ 的距離是 $1$。收斂圓盤是圓，它在實數線上的部分就是 $(-1,1)$。實數上看不到的奇異點，控制了實數級數的收斂範圍。",
-        "同理，$\\tan x$ 的 Maclaurin 級數收斂半徑是 $\\frac{\\pi}{2}$（$\\cos z$ 在 $\\pm\\frac{\\pi}{2}$ 為 $0$），$e^x$、$\\sin x$ 的半徑是 $\\infty$（整函數）。"
+        "$x=0.5$：部分和 $1,\\ 0.75,\\ 0.8125,\\ 0.797,\\ \\dots\\to0.8$",
+        "$x=2$：部分和 $1,\\ -3,\\ 13,\\ -51,\\ \\dots$ 發散，但 $f(2)=0.2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{1}{1+x^2}=1-x^2+x^4-x^6+\\cdots"
+      ]
     },
     {
-      "heading": "③ 實際算係數：借用已知的級數",
+      "heading": "② 答案在複數平面上",
       "body": [
-        "係數公式 $\\frac{f^{(n)}(z_0)}{n!}$ 很少真的去微分。因為展開是唯一的（同一個圓盤上兩個冪級數相等，係數就逐項相等），任何方法得到的冪級數都是「那一個」Taylor 級數：代換（$e^{z^2}=\\sum\\frac{z^{2n}}{n!}$）、幾何級數（$\\frac{1}{1-z}$）、相乘相除、逐項微分或積分，全部合法，而且在圓盤裡處處成立，不只在實數線上。"
+        "$1+z^2=0\\iff z=\\pm i$：極點，距離原點 $1$",
+        "實數的 Maclaurin 級數，收斂半徑也由複數的奇異點決定",
+        "對照：$e^{-x^2}$ 在複數平面上處處全純，所以 Maclaurin 級數處處收斂",
+        "不在原點展開：$\\dfrac1{z^2+4}$ 在 $z_0=1$",
+        "奇異點 $\\pm2i$；距離 $|1-2i|=\\sqrt{1+4}=\\sqrt5$"
       ],
-      "collapsible": false
+      "tex": [
+        "R=\\sqrt5\\approx2.236"
+      ]
     },
     {
-      "heading": "為什麼可以展開：幾何級數 + Cauchy 公式",
+      "heading": "③ 實際算係數",
       "body": [
-        "取 $|z-z_0|<r<R$，在圓 $|w-z_0|=r$ 上用 Cauchy 積分公式 $f(z)=\\frac{1}{2\\pi i}\\oint\\frac{f(w)}{w-z}\\,dw$。",
-        "把 $\\frac{1}{w-z}$ 寫成 $\\frac{1}{w-z_0}\\cdot\\frac{1}{1-(z-z_0)/(w-z_0)}$，而 $\\left|\\frac{z-z_0}{w-z_0}\\right|<1$，展成〈幾何級數〉。級數在圓上一致收斂，可以逐項積分，每一項正好是 $a_n(z-z_0)^n$，$a_n=\\frac{1}{2\\pi i}\\oint\\frac{f(w)}{(w-z_0)^{n+1}}\\,dw=\\frac{f^{(n)}(z_0)}{n!}$。"
+        "不必真的算 $n$ 階導數：借用已知的級數",
+        "理由：係數唯一，$a_n=\\dfrac{f^{(n)}(z_0)}{n!}$；不管怎麼湊出來，都一樣",
+        "例：$\\tan z$ 在 $0$。奇函數，設",
+        "用 $\\sin z=\\tan z\\cdot\\cos z$：",
+        "比較係數：",
+        "• $z$：$a_1=1$",
+        "• $z^3$：$a_3-\\frac{a_1}{2}=-\\frac16\\Rightarrow a_3=\\frac13$",
+        "• $z^5$：$a_5-\\frac{a_3}{2}+\\frac{a_1}{24}=\\frac1{120}\\Rightarrow a_5=\\frac2{15}$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "全純就能展開",
-      "beats": [
-        { "show": ["$f$ 在 $|z-z_0|<R$ 全純"],
-          "say": "f 在以 z 零為圓心、半徑 R 的圓盤裡全純。",
-          "board": [
-            {"do":"write","line":"$f$ 在 $|z-z_0|<R$ 全純"}
-          ] },
-        { "show": ["全純：圓盤每一點都複可微"],
-          "note": "沒有奇異點，就是處處全純。",
-          "say": "全純的意思是，在圓盤的每一點都可以微分，微的是複數變數。沒有奇異點，就是處處全純。",
-          "board": [
-            {"do":"write","line":"全純 $=$ 每一點都複可微"}
-          ] },
-        { "show": ["$f(z)=\\sum a_n(z-z_0)^n$","$a_n=\\frac{f^{(n)}(z_0)}{n!}$"],
-          "note": "對整個圓盤成立。",
-          "say": "那它就等於自己的 Taylor 級數，而且是在整個圓盤裡都成立。證明在全文。",
-          "board": [
-            {"do":"write","line":"$f(z)=\\sum a_n(z-z_0)^n$","on":"Taylor 級數"}
-          ] },
-        { "show": ["收斂半徑 $=$ 到最近奇異點的距離"],
-          "say": "所以級數一路收斂，直到碰到最近的奇異點為止；收斂範圍是一個圓盤，不只一段實數線。",
-          "board": [
-            {"do":"write","line":"半徑 $=$ 到最近奇異點的距離","color":"green","on":"直到碰到"}
-          ] }
-      ],
-      "check": 3
+      "tex": [
+        "\\tan z=a_1z+a_3z^3+a_5z^5+\\cdots",
+        "z-\\frac{z^3}{6}+\\frac{z^5}{120}=\\Big(a_1z+a_3z^3+a_5z^5\\Big)\\Big(1-\\frac{z^2}{2}+\\frac{z^4}{24}\\Big)",
+        "\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots"
+      ]
     },
     {
-      "title": "解開實數的謎",
-      "beats": [
-        { "show": ["$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$"],
-          "note": "只在 $|x|<1$ 收斂。",
-          "say": "這個級數只在 x 的絕對值小於一時收斂。可是在 x 等於一，函數光滑又有界，什麼事都沒有。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$"},
-            {"do":"write","line":"只在 $|x|<1$ 收斂","on":"只在 x"}
-          ] },
-        { "show": ["$\\frac{1}{1+z^2}$：奇異點 $z=\\pm i$"],
-          "note": "到 $0$ 的距離是 $1$。",
-          "say": "答案在複平面：正負 i 是奇異點，到原點距離一。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2.2,2.2,-1.5,1.5],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue","dashed":true},{"expr":"0","domain":[-1,1],"color":"gold","width":3.5}],"points":[{"x":0,"y":1,"open":true},{"x":0,"y":-1,"open":true}],"labels":[{"x":0.13,"y":1.18,"text":"i","anchor":"start"},{"x":0.13,"y":-1.25,"text":"−i","anchor":"start"},{"x":1.02,"y":-0.28,"text":"1","anchor":"start"},{"x":-1.02,"y":-0.28,"text":"−1","anchor":"end"}]},"on":"答案在複平面"}
-          ] },
-        { "show": ["收斂圓盤與實數線的交集 $=(-1,1)$"],
-          "say": "收斂範圍是半徑一的圓盤，切到實數線上就是負一到一。實數上看不到的奇異點，控制了級數。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"圓盤 $\\cap$ 實數線 $=(-1,1)$","color":"gold","on":"切到實數線上"}
-          ] }
+      "heading": "③ $\\tan z$ 的收斂半徑",
+      "body": [
+        "奇異點：$\\cos z=0$ 的地方",
+        "實部 $=0$：$\\cosh y\\ge1$，所以 $\\cos x=0$，$\\sin x=\\pm1$；虛部 $=0$：$\\sinh y=0$，$y=0$",
+        "零點只有實數的 $\\frac\\pi2+k\\pi$；最近的是 $\\pm\\frac\\pi2$"
       ],
-      "key": "把 $x$ 換成 $z$，到複平面找奇異點",
-      "check": 0
+      "tex": [
+        "\\cos(x+iy)=\\cos x\\cosh y-i\\sin x\\sinh y",
+        "R=\\frac\\pi2\\approx1.571"
+      ]
     },
     {
-      "title": "常見函數的半徑",
-      "beats": [
-        { "show": ["$\\tan z$：$\\cos z$ 在 $\\pm\\frac{\\pi}{2}$ 為 $0$"],
-          "note": "收斂半徑 $\\frac{\\pi}{2}$。",
-          "say": "tangent 是 sine 除以 cosine，cosine 在正負二分之派是零，所以半徑二分之派。",
-          "board": [
-            {"do":"write","line":"$\\tan z=\\frac{\\sin z}{\\cos z}$"},
-            {"do":"write","line":"$\\cos z=0$：$z=\\pm\\frac{\\pi}{2}$","on":"cosine#2"},
-            {"do":"write","line":"半徑 $=\\frac{\\pi}{2}$","color":"green","on":"所以半徑"}
-          ] },
-        { "show": ["$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$","零點全在實數線上"],
-          "note": "複數的 $\\cos z$ 用 $e^z$ 來定義。",
-          "say": "複數的 cosine 定義成 e 的 i z 次方加 e 的負 i z 次方，再除以二。它的零點全在實數線上，就是二分之派的奇數倍。",
-          "board": [
-            {"do":"write","line":"$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$"},
-            {"do":"write","line":"零點：$\\pm\\frac{\\pi}{2},\\pm\\frac{3\\pi}{2},\\dots$","on":"零點"}
-          ] },
-        { "show": ["實數線上的 $\\tan x$"],
-          "note": "靠近 $\\pm\\frac{\\pi}{2}$ 就往上、往下衝。",
-          "say": "畫出實數線上的 tangent：愈靠近二分之派，圖形就愈往上衝，所以級數到這裡就停。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2.5,2.5,-4,4],"curves":[{"expr":"tan(x)","domain":[-1.45,1.45],"color":"blue"}],"dashed":[[[1.5708,-4],[1.5708,4]],[[-1.5708,-4],[-1.5708,4]]],"labels":[{"x":1.65,"y":-3,"text":"π/2","anchor":"start"},{"x":-1.65,"y":-3,"text":"−π/2","anchor":"end"}]}}
-          ] },
-        { "show": ["$e^z$、$\\sin z$：整函數"],
-          "note": "沒有奇異點，半徑沒有上限。",
-          "say": "e 的 z 次方、sine z 是整函數，沒有奇異點，所以半徑是無限大。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$e^z$、$\\sin z$：整函數","on":"e 的 z 次方"},
-            {"do":"write","line":"沒有奇異點","on":"沒有奇異點"},
-            {"do":"write","line":"半徑 $=\\infty$","color":"green","on":"所以半徑"}
-          ] }
+      "heading": "④ 為什麼可以展開",
+      "body": [
+        "取 $|z-z_0|<r<R$，圓 $\\Gamma:|w-z_0|=r$。Cauchy 積分公式：",
+        "關鍵：把 $\\frac1{w-z}$ 寫成幾何級數",
+        "$w$ 在圓上：$|q|=\\dfrac{|z-z_0|}{r}=\\rho<1$，對所有 $w$ 同一個 $\\rho$",
+        "代回去，前 $N+1$ 項正好是 $a_n(z-z_0)^n$：",
+        "11.44 的導數公式；所以 $a_n$ 跟 $r$ 取多少無關"
       ],
-      "check": 2
+      "tex": [
+        "f(z)=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{w-z}\\,dw",
+        "\\frac1{w-z}=\\frac{1}{(w-z_0)\\big(1-q\\big)},\\quad q=\\frac{z-z_0}{w-z_0}",
+        "\\frac1{w-z}=\\sum_{n=0}^{N}\\frac{(z-z_0)^n}{(w-z_0)^{n+1}}+E_N,\\quad |E_N|\\le\\frac{\\rho^{N+1}}{r(1-\\rho)}",
+        "a_n=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{(w-z_0)^{n+1}}dw=\\frac{f^{(n)}(z_0)}{n!}"
+      ]
     },
     {
-      "title": "不在原點展開",
-      "beats": [
-        { "show": ["$\\frac{1}{z^2+4}$ 在 $z_0=1$"],
-          "note": "奇異點 $z=\\pm 2i$。",
-          "say": "z 平方加四分之一，在 z 零等於一展開。奇異點是正負二 i。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{z^2+4}$，$z_0=1$"},
-            {"do":"write","line":"$z^2+4=0$ ⇒ $z=\\pm 2i$","on":"奇異點是"}
-          ] },
-        { "show": ["$|1-2i|=\\sqrt{1+4}=\\sqrt{5}$"],
-          "note": "距離是 $|$奇異點 $-z_0|$。",
-          "say": "量的是奇異點到展開中心的距離，不是到原點：一減二 i 的長度是根號五。",
-          "board": [
-            {"do":"write","line":"距離 $=|$奇異點$-z_0|$"},
-            {"do":"write","line":"$|1-2i|=\\sqrt{1+4}={{r:\\sqrt{5}}}$","on":"一減二"},
-            {"do":"box","term":"r","color":"green","on":"長度是"}
-          ] },
-        { "show": ["收斂半徑 $\\sqrt{5}$"],
-          "say": "所以半徑根號五。只看實數線，這個函數沒有奇異點，完全猜不到這個數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"半徑 $=\\sqrt{5}$","color":"green","on":"所以半徑"},
-            {"do":"write","line":"實數線上：沒有奇異點","on":"只看實數線"}
-          ] }
+      "heading": "④ 證明（續）：尾巴趨近 0",
+      "body": [
+        "$M=\\max_\\Gamma|f|$；ML 不等式（長度 $2\\pi r$）：",
+        "$r$ 可以取到任何 $<R$：圓盤裡每一點都成立　$\\blacksquare$",
+        "整個證明只用了：幾何級數 + Cauchy 公式"
       ],
-      "key": "先解 $z^2+4=0$，再量到 $z_0$ 的距離",
-      "check": 1
+      "tex": [
+        "\\Big|f(z)-\\sum_{n=0}^{N}a_n(z-z_0)^n\\Big|\\le\\frac{1}{2\\pi}\\cdot2\\pi r\\cdot M\\cdot\\frac{\\rho^{N+1}}{r(1-\\rho)}",
+        "=\\frac{M\\rho^{N+1}}{1-\\rho}\\ \\xrightarrow{N\\to\\infty}\\ 0"
+      ]
     },
     {
-      "title": "借用已知的級數",
-      "beats": [
-        { "show": ["展開是唯一的"],
-          "note": "同一個圓盤上兩個冪級數相等，係數逐項相等。",
-          "say": "係數很少真的去微分。展開是唯一的，用任何方法湊出來的冪級數，就是那一個 Taylor 級數。",
-          "board": [
-            {"do":"write","line":"展開是唯一的"},
-            {"do":"write","line":"任何方法湊出的冪級數 $=$ Taylor 級數","on":"用任何方法"}
-          ] },
-        { "show": ["兩個級數相減，恆為 $0$","$a_n=b_n$"],
-          "note": "逐項微分再代入 $z_0$。",
-          "say": "為什麼唯一？兩個級數相等，相減得到一個恆為零的級數。代 z 等於 z 零，常數項是零；微分後再代，每個係數都是零。",
-          "board": [
-            {"do":"write","line":"$\\sum(a_n-b_n)(z-z_0)^n=0$"},
-            {"do":"write","line":"代 $z_0$、逐項微分：$a_n=b_n$","on":"代 z"}
-          ] },
-        { "show": ["代換、幾何級數、相乘相除、逐項微積分"],
-          "note": "在圓盤裡處處成立。",
-          "say": "代換、幾何級數、相乘相除、逐項微分積分都合法，而且在整個圓盤成立。",
-          "board": [
-            {"do":"write","line":"代換、幾何級數、相乘相除"},
-            {"do":"write","line":"逐項微分積分","on":"逐項微分積分"}
-          ] },
-        { "show": ["$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$"],
-          "note": "sine 除以 cosine 相除展開。",
-          "say": "例如 tangent：sine 的級數除以 cosine 的級數，前三項是 z、三分之 z 三次方、十五分之二 z 五次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\tan z=\\frac{\\sin z}{\\cos z}$","on":"例如"},
-            {"do":"transform","line":"$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$","on":"前三項"}
-          ] },
-        { "show": ["$\\sin z=(z+cz^3)\\cos z$","$c-\\frac12=-\\frac{1}{3!}$"],
-          "note": "只比 $z^3$ 的係數。",
-          "say": "sine 等於 tangent 乘 cosine。比 z 三次方的係數：c 減二分之一等於負三階乘分之一，所以 c 是三分之一。",
-          "board": [
-            {"do":"write","line":"$\\sin z=z-\\frac{z^3}{3!}+\\cdots$"},
-            {"do":"write","line":"$\\cos z=1-\\frac{z^2}{2!}+\\cdots$","on":"tangent"},
-            {"do":"write","line":"$\\sin z=(z+cz^3)\\cos z$","on":"cosine"},
-            {"do":"write","line":"$c-\\frac12=-\\frac{1}{3!}$，$c=\\frac13$","on":"c 減"}
-          ] }
-      ],
-      "predict": {
-        "ask": "用代換，$e^{z^2}$ 在 $0$ 的級數是？",
-        "options": [
-          {
-            "label": "$\\sum\\frac{z^{2n}}{n!}$",
-            "correct": true
-          },
-          {
-            "label": "$\\sum\\frac{z^{2n}}{(2n)!}$",
-            "why": "把 $e^w=\\sum\\frac{w^n}{n!}$ 的 $w$ 換成 $z^2$：分母還是 $n!$。"
-          },
-          {
-            "label": "$\\sum\\frac{z^{n}}{n!}$",
-            "why": "那是 $e^z$；代換 $w=z^2$ 後每一項是 $(z^2)^n=z^{2n}$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 全純於 $|z-z_0|<R$ ⇒ 整個圓盤上等於 Taylor 級數",
+        "• 收斂半徑 = 到最近奇異點的距離（極點時剛好相等）",
+        "• 實數級數的半徑也看複數平面：$\\frac1{1+x^2}$ 卡在 $\\pm i$",
+        "• 算係數：借用已知級數、比較係數（係數唯一）",
+        "• 證明：$\\frac1{w-z}$ 展成幾何級數，代進 Cauchy 公式",
+        "下一課：Laurent 級數：允許負次方"
+      ]
     }
   ],
   "workedExamples": [
@@ -280,70 +184,730 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{1}{1+x^2}$ 的 Maclaurin 級數只在 $|x|<1$ 收斂，原因是？",
+      "ask": "$\\dfrac{e^z}{z^2+9}$ 在 $z_0=0$ 的 Taylor 級數，收斂半徑是？",
       "options": [
-        {
-          "label": "$\\frac{1}{1+z^2}$ 在 $\\pm i$ 有奇異點，距離原點 $1$",
-          "correct": true
-        },
-        {
-          "label": "$\\frac{1}{1+x^2}$ 在 $x=1$ 不可微",
-          "why": "它在實數線上處處無限次可微；限制來自複平面上的 $\\pm i$。"
-        },
-        {
-          "label": "因為 $x=1$ 時分母等於 $2$",
-          "why": "分母不為 $0$ 不構成任何限制；看的是複數的奇異點。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\frac{1}{z-3}$ 在 $z_0=i$ 的 Taylor 級數收斂半徑是？",
-      "options": [
-        {
-          "label": "$\\sqrt{10}$",
-          "correct": true
-        },
         {
           "label": "$3$",
-          "why": "$3$ 是奇異點到原點的距離；展開中心是 $i$，距離是 $|3-i|=\\sqrt{10}$。"
+          "correct": true
         },
         {
-          "label": "$1$",
-          "why": "$1$ 是 $|i|$，跟奇異點無關。"
-        }
-      ]
-    },
-    {
-      "ask": "$e^z$ 的 Maclaurin 級數收斂半徑是？",
-      "options": [
+          "label": "$9$",
+          "why": "是 $z^2=-9$，奇異點在 $\\pm3i$，距離是 $3$ 不是 $9$"
+        },
         {
           "label": "$\\infty$",
-          "correct": true
+          "why": "$e^z$ 的半徑是 $\\infty$，但分母在 $\\pm3i$ 會變 $0$"
         },
         {
           "label": "$1$",
-          "why": "$e^z$ 是整函數，沒有奇異點，半徑沒有上限。"
-        },
-        {
-          "label": "$2\\pi$",
-          "why": "週期 $2\\pi i$ 跟奇異點無關；$e^z$ 處處全純。"
+          "why": "那是 $\\frac1{1+z^2}$ 的答案；這裡零點在 $\\pm3i$"
         }
       ]
     },
     {
-      "ask": "$f$ 在 $|z|<2$ 全純，在 $z=2$ 有奇異點。它在 $0$ 的 Taylor 級數在 $z=1+i$ 收斂嗎？",
+      "ask": "實數函數 $\\dfrac1{x^2+4}$ 在 $x=1$ 的 Taylor 級數，在哪個區間收斂？",
       "options": [
         {
-          "label": "收斂：$|1+i|=\\sqrt{2}<2$",
+          "label": "$|x-1|<\\sqrt5$",
           "correct": true
         },
         {
-          "label": "發散：$1+i$ 不是實數",
-          "why": "收斂範圍是一個圓盤，不只實數線。"
+          "label": "$|x-1|<2$",
+          "why": "$2$ 是從 $0$ 到 $\\pm2i$ 的距離；展開點是 $1$"
         },
         {
-          "label": "不能判斷",
-          "why": "定理保證整個 $|z|<2$ 都收斂，$\\sqrt{2}<2$。"
+          "label": "$|x-1|<1$",
+          "why": "只看到 $\\pm2i$ 的虛部減 $1$；要算平面上的距離"
+        },
+        {
+          "label": "所有實數",
+          "why": "實數線上沒有壞點，但複數平面上有"
+        }
+      ]
+    },
+    {
+      "ask": "$\\tan z$ 的 Maclaurin 級數，收斂半徑是？",
+      "options": [
+        {
+          "label": "$\\dfrac\\pi2$",
+          "correct": true
+        },
+        {
+          "label": "$\\pi$",
+          "why": "$\\pi$ 是週期，不是到極點的距離"
+        },
+        {
+          "label": "$\\infty$",
+          "why": "$\\sin$、$\\cos$ 的半徑是 $\\infty$，但相除會在 $\\cos z=0$ 出問題"
+        },
+        {
+          "label": "$1$",
+          "why": "係數 $1,\\frac13,\\frac2{15}$ 在變小，半徑比 $1$ 大"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "全純就能展開",
+      "beats": [
+        {
+          "show": [
+            "定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則對圓盤裡每一個 $z$",
+            "$f(z)=\\sum_{n=0}^{\\infty}a_n(z-z_0)^n,\\qquad a_n=\\frac{f^{(n)}(z_0)}{n!}$"
+          ],
+          "say": "這一課的定理：f 在一個圓盤上全純，那在整個圓盤裡，f 都等於它自己的泰勒級數。係數就是熟悉的，第 n 階導數除以 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則對圓盤裡每一個 $z$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f(z)=\\sum_{n=0}^{\\infty}a_n(z-z_0)^n,\\qquad a_n=\\frac{f^{(n)}(z_0)}{n!}}}$",
+              "on": "個圓#2"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實數做不到：$e^{-1/x^2}$（補 $0$）無窮次可微，Maclaurin 級數卻全是 $0$"
+          ],
+          "say": "實數做不到。e 的負 x 平方分之一次方，在 0 補 0，無窮次可微，但泰勒級數全是 0。複數裡，只要可微一次，就保證等於泰勒級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實數做不到：$e^{-1/x^2}$（補 $0$）無窮次可微，Maclaurin 級數卻全是 $0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　實數「無窮次可微」不保證等於泰勒級數；複數「可微一次」就保證",
+              "color": "violet",
+              "on": "但泰"
+            }
+          ]
+        },
+        {
+          "show": [
+            "複數裡，可微一次就換到全部：全純 ⇒ 解析",
+            "推論：收斂半徑 $\\ge$ 從 $z_0$ 到最近的奇異點的距離"
+          ],
+          "say": "推論：圓盤可以一直放大，直到碰到第一個壞點。所以收斂半徑至少是 z 零到最近奇異點的距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數裡，可微一次就換到全部：全純 ⇒ 解析",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "推論：收斂半徑 $\\ge$ 從 $z_0$ 到最近的奇異點的距離",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果那個奇異點附近 $|f|\\to\\infty$（極點），就剛好等於"
+          ],
+          "say": "如果那個奇異點是會衝到無限大的那種，收斂半徑就剛好等於這個距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "如果那個奇異點附近 $|f|\\to\\infty$（極點），就剛好等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼剛好等於",
+      "beats": [
+        {
+          "show": [
+            "設最近的極點 $p$，距離 $d=|p-z_0|$"
+          ],
+          "say": "為什麼剛好等於？設最近的極點是 p，跟 z 零的距離是 d。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設最近的極點 $p$，距離 $d=|p-z_0|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "假設收斂半徑 $>d$：冪級數在收斂圓內連續，在 $p$ 附近有界"
+          ],
+          "say": "假設收斂半徑比 d 大，那 p 就在收斂圓的裡面。冪級數在收斂圓裡是連續的，所以在 p 附近有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "假設收斂半徑 $>d$：冪級數在收斂圓內連續，在 $p$ 附近有界"
+            },
+            {
+              "do": "write",
+              "line": "　6.21：冪級數在收斂圓內部連續",
+              "color": "violet",
+              "on": "冪級"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但在 $|z-z_0|<d$ 上它等於 $f$，而 $z\\to p$ 時 $|f|\\to\\infty$：矛盾"
+          ],
+          "say": "可是在半徑 d 的圓盤裡，級數就等於 f，往 p 走 f 衝到無限大。矛盾，所以半徑剛好是 d。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但在 $|z-z_0|<d$ 上它等於 $f$，而 $z\\to p$ 時 $|f|\\to\\infty$：矛盾",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "所以收斂半徑 $=d$　$\\blacksquare$",
+              "color": "gold",
+              "on": "衝到"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "解開實數的謎",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{1}{1+x^2}=1-x^2+x^4-x^6+\\cdots$"
+          ],
+          "say": "現在解開一個實數的謎。1 加 x 平方分之一，用幾何級數展開，是 1 減 x 平方加 x 的 4 次方，以此類推。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{1+x^2}=1-x^2+x^4-x^6+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=0.5$：部分和 $1,\\ 0.75,\\ 0.8125,\\ 0.797,\\ \\dots\\to0.8$"
+          ],
+          "say": "代 0.5，部分和慢慢收斂到 0.8，正是函數值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=0.5$：部分和 $1,\\ 0.75,\\ 0.8125,\\ 0.797,\\ \\dots\\to0.8$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=2$：部分和 $1,\\ -3,\\ 13,\\ -51,\\ \\dots$ 發散，但 $f(2)=0.2$"
+          ],
+          "say": "代 x 等於 2，部分和是 1、負 3、13、負 51，發散。可是函數在實數線上處處光滑，為什麼級數在 1 就停了？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=2$：部分和 $1,\\ -3,\\ 13,\\ -51,\\ \\dots$ 發散，但 $f(2)=0.2$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\dfrac1{1+x^2}$ 的 Maclaurin 級數，收斂半徑卡在 $1$ 的原因最可能是？",
+        "options": [
+          {
+            "label": "複數平面上 $z=\\pm i$ 讓分母變 $0$",
+            "correct": true
+          },
+          {
+            "label": "$x=\\pm1$ 時函數不連續",
+            "why": "$f(\\pm1)=\\frac12$，好好的"
+          },
+          {
+            "label": "分母在 $x=\\pm1$ 時導數為 $0$",
+            "why": "跟分母的導數無關"
+          }
+        ]
+      }
+    },
+    {
+      "title": "答案在複數平面上",
+      "beats": [
+        {
+          "show": [
+            "$1+z^2=0\\iff z=\\pm i$：極點，距離原點 $1$"
+          ],
+          "say": "答案藏在複數平面上。1 加 z 平方在 z 等於正負 i 時是 0，這兩個極點離原點的距離剛好是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$1+z^2=0\\iff z=\\pm i$：極點，距離原點 $1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，收斂的圓盤一直長大，直到碰到正負 i。實數線只看到中間綠色的那一段，所以看不到擋住它的東西。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ct_real\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11ict_real\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11ict_realink\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11ict_realblue\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11ict_realred\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11ict_realgreen\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11ict_realpencil\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><circle cx=\"310\" cy=\"160\" r=\"105.7\" stroke=\"var(--blue)\" stroke-width=\"2.5\" fill=\"var(--blue)\" fill-opacity=\"0.0\" stroke-linecap=\"round\"/><line x1=\"66.9\" y1=\"160\" x2=\"553.1\" y2=\"160\" stroke=\"var(--muted)\" stroke-width=\"1.6\" marker-end=\"url(#ah11ict_real)\"/><line x1=\"310\" y1=\"308\" x2=\"310\" y2=\"12\" stroke=\"var(--muted)\" stroke-width=\"1.6\" marker-end=\"url(#ah11ict_real)\"/><text x=\"549.1\" y=\"184\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif;font-style:normal\">Re</text><text x=\"318\" y=\"28\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif;font-style:normal\">Im</text><path d=\"M204.3 160 L415.7 160\" stroke=\"var(--green)\" stroke-width=\"6\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M303 47.3 L317 61.3 M303 61.3 L317 47.3\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M303 258.7 L317 272.7 M303 272.7 L317 258.7\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><text x=\"332\" y=\"48.3\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"284\" y=\"283.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">−</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"429.7\" y=\"186\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">1</tspan></text><text x=\"184.3\" y=\"186\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">−1</tspan></text><text x=\"463.3\" y=\"64.9\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan style=\"font-family:inherit;font-style:normal\">收斂的圓盤 </tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">|</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">|&lt;1</tspan></text><text x=\"357.6\" y=\"286.9\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"19\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan style=\"font-family:inherit;font-style:normal\">實數線上只看到綠色這一段</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實數的 Maclaurin 級數，收斂半徑也由複數的奇異點決定"
+          ],
+          "say": "結論：實數函數的泰勒級數，收斂半徑也是由複數平面上的奇異點決定的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實數的 Maclaurin 級數，收斂半徑也由複數的奇異點決定",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　對照：$e^{-x^2}$ 在複數平面上處處全純，所以 Maclaurin 級數處處收斂",
+              "color": "violet",
+              "on": "徑也"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不在原點展開：$\\dfrac1{z^2+4}$ 在 $z_0=1$"
+          ],
+          "say": "換一個不在原點的例子：z 平方加 4 分之一，在 z 零等於 1 展開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不在原點展開：$\\dfrac1{z^2+4}$ 在 $z_0=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "奇異點 $\\pm2i$；距離 $|1-2i|=\\sqrt{1+4}=\\sqrt5$",
+            "$R=\\sqrt5\\approx2.236$"
+          ],
+          "say": "奇異點在正負 2i。從 1 到 2i 的距離是根號 1 加 4，根號 5。所以收斂半徑是根號 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "奇異點 $\\pm2i$；距離 $|1-2i|=\\sqrt{1+4}=\\sqrt5$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle R=\\sqrt5\\approx2.236}}$",
+              "color": "red",
+              "on": "2i#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "根號#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "畫出來",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫出來：以 1 為圓心、半徑根號 5 的圓，剛好同時碰到 2i 和負 2i。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ct_shift\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11ict_shift\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11ict_shiftink\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11ict_shiftblue\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11ict_shiftred\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11ict_shiftgreen\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11ict_shiftpencil\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><circle cx=\"310\" cy=\"180\" r=\"142.8\" stroke=\"var(--blue)\" stroke-width=\"2.5\" fill=\"var(--blue)\" fill-opacity=\"0.0\" stroke-linecap=\"round\"/><line x1=\"118.5\" y1=\"180\" x2=\"501.5\" y2=\"180\" stroke=\"var(--muted)\" stroke-width=\"1.6\" marker-end=\"url(#ah11ict_shift)\"/><line x1=\"246.2\" y1=\"346\" x2=\"246.2\" y2=\"14\" stroke=\"var(--muted)\" stroke-width=\"1.6\" marker-end=\"url(#ah11ict_shift)\"/><text x=\"497.5\" y=\"204\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif;font-style:normal\">Re</text><text x=\"254.2\" y=\"30\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif;font-style:normal\">Im</text><path d=\"M310 180 L246.2 52.3\" stroke=\"var(--blue)\" stroke-width=\"2\" fill=\"none\" stroke-dasharray=\"6 5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"310\" cy=\"180\" r=\"5\" fill=\"var(--ink)\"/><path d=\"M239.2 45.3 L253.2 59.3 M239.2 59.3 L253.2 45.3\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M239.2 300.7 L253.2 314.7 M239.2 314.7 L253.2 300.7\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><text x=\"220.2\" y=\"48.3\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">2</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"214.2\" y=\"315.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">−2</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"322\" y=\"204\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan font-size='15' dy='5'>0</tspan></tspan></text><text x=\"300.1\" y=\"116.2\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">√5</tspan></text></svg>"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "實際算係數",
+      "beats": [
+        {
+          "show": [
+            "不必真的算 $n$ 階導數：借用已知的級數",
+            "理由：係數唯一，$a_n=\\dfrac{f^{(n)}(z_0)}{n!}$；不管怎麼湊出來，都一樣"
+          ],
+          "say": "實際算係數，不必一直微分，借用已知的級數就好。因為係數一定是 n 階導數除以 n 階乘，是唯一的，怎麼湊出來都一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不必真的算 $n$ 階導數：借用已知的級數"
+            },
+            {
+              "do": "write",
+              "line": "理由：係數唯一，$a_n=\\dfrac{f^{(n)}(z_0)}{n!}$；不管怎麼湊出來，都一樣",
+              "on": "階導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\tan z$ 在 $0$。奇函數，設",
+            "$\\tan z=a_1z+a_3z^3+a_5z^5+\\cdots$"
+          ],
+          "say": "例子：正切 z 在 0 展開。正切是奇函數，只有奇次方，設係數 a1、a3、a5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\tan z$ 在 $0$。奇函數，設"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\tan z=a_1z+a_3z^3+a_5z^5+\\cdots$",
+              "on": "只有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用 $\\sin z=\\tan z\\cdot\\cos z$：",
+            "$z-\\frac{z^3}{6}+\\frac{z^5}{120}=\\Big(a_1z+a_3z^3+a_5z^5\\Big)\\Big(1-\\frac{z^2}{2}+\\frac{z^4}{24}\\Big)$"
+          ],
+          "say": "不要做除法，改寫成乘法：正弦等於正切乘餘弦。把正弦、餘弦的級數寫出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用 $\\sin z=\\tan z\\cdot\\cos z$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle z-\\frac{z^3}{6}+\\frac{z^5}{120}=\\Big(a_1z+a_3z^3+a_5z^5\\Big)\\Big(1-\\frac{z^2}{2}+\\frac{z^4}{24}\\Big)$",
+              "on": "切乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較係數：",
+            "• $z$：$a_1=1$"
+          ],
+          "say": "兩邊比較係數。一次方：a1 是 1。三次方：a3 減 2 分之 a1 是負 6 分之一，a3 是 3 分之 1。五次方算出 a5 是 15 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比較係數："
+            },
+            {
+              "do": "write",
+              "line": "• $z$：$a_1=1$",
+              "on": "三次"
+            },
+            {
+              "do": "write",
+              "line": "• $z^3$：$a_3-\\frac{a_1}{2}=-\\frac16\\Rightarrow a_3=\\frac13$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "• $z^5$：$a_5-\\frac{a_3}{2}+\\frac{a_1}{24}=\\frac1{120}\\Rightarrow a_5=\\frac2{15}$",
+              "on": "五次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$"
+          ],
+          "say": "所以正切 z 等於 z，加 3 分之 z 的三次方，加 15 分之 2 倍 z 的五次方，以此類推。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "15"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$\\tan z$ 的收斂半徑",
+      "beats": [
+        {
+          "show": [
+            "奇異點：$\\cos z=0$ 的地方"
+          ],
+          "say": "收斂半徑呢？正切的奇異點，就是餘弦等於 0 的地方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "奇異點：$\\cos z=0$ 的地方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\cos(x+iy)=\\cos x\\cosh y-i\\sin x\\sinh y$"
+          ],
+          "say": "把餘弦拆成實部和虛部：餘弦 x 乘雙曲餘弦 y，減 i 乘正弦 x 乘雙曲正弦 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos(x+iy)=\\cos x\\cosh y-i\\sin x\\sinh y$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實部 $=0$：$\\cosh y\\ge1$，所以 $\\cos x=0$，$\\sin x=\\pm1$；虛部 $=0$：$\\sinh y=0$，$y=0$"
+          ],
+          "say": "實部是 0：雙曲餘弦至少是 1，所以餘弦 x 是 0，正弦 x 是正負 1。虛部是 0，就只能雙曲正弦 y 是 0，也就是 y 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實部 $=0$：$\\cosh y\\ge1$，所以 $\\cos x=0$，$\\sin x=\\pm1$；虛部 $=0$：$\\sinh y=0$，$y=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "零點只有實數的 $\\frac\\pi2+k\\pi$；最近的是 $\\pm\\frac\\pi2$",
+            "$R=\\frac\\pi2\\approx1.571$"
+          ],
+          "say": "所以餘弦沒有新的零點，只有實數的 2 分之派加 k 派。最近的是正負 2 分之派，收斂半徑是 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "零點只有實數的 $\\frac\\pi2+k\\pi$；最近的是 $\\pm\\frac\\pi2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle R=\\frac\\pi2\\approx1.571}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "為什麼可以展開",
+      "beats": [
+        {
+          "show": [
+            "取 $|z-z_0|<r<R$，圓 $\\Gamma:|w-z_0|=r$。Cauchy 積分公式：",
+            "$f(z)=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{w-z}\\,dw$"
+          ],
+          "say": "最後證明定理。在圓盤裡取一點 z，再取一個比 z 遠、但比 R 小的圓。柯西積分公式把 f of z 寫成圓上的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $|z-z_0|<r<R$，圓 $\\Gamma:|w-z_0|=r$。Cauchy 積分公式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(z)=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{w-z}\\,dw$",
+              "on": "小的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵：把 $\\frac1{w-z}$ 寫成幾何級數",
+            "$\\frac1{w-z}=\\frac{1}{(w-z_0)\\big(1-q\\big)},\\quad q=\\frac{z-z_0}{w-z_0}$"
+          ],
+          "say": "關鍵是把 w 減 z 分之一寫成幾何級數。分母拆成 w 減 z 零，乘上 1 減 q，q 是 z 減 z 零除以 w 減 z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵：把 $\\frac1{w-z}$ 寫成幾何級數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{w-z}=\\frac{1}{(w-z_0)\\big(1-q\\big)},\\quad q=\\frac{z-z_0}{w-z_0}$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$w$ 在圓上：$|q|=\\dfrac{|z-z_0|}{r}=\\rho<1$，對所有 $w$ 同一個 $\\rho$"
+          ],
+          "say": "w 在圓上時，q 的絕對值是固定的 肉，小於 1。重點是：每個 w 都是同一個 肉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$w$ 在圓上：$|q|=\\dfrac{|z-z_0|}{r}=\\rho<1$，對所有 $w$ 同一個 $\\rho$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac1{w-z}=\\sum_{n=0}^{N}\\frac{(z-z_0)^n}{(w-z_0)^{n+1}}+E_N,\\quad |E_N|\\le\\frac{\\rho^{N+1}}{r(1-\\rho)}$"
+          ],
+          "say": "展開到第 N 項，剩下的尾巴是幾何級數的尾巴，絕對值不超過 肉 的 N 加 1 次方，除以 r 乘 1 減 肉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{w-z}=\\sum_{n=0}^{N}\\frac{(z-z_0)^n}{(w-z_0)^{n+1}}+E_N,\\quad |E_N|\\le\\frac{\\rho^{N+1}}{r(1-\\rho)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回去，前 $N+1$ 項正好是 $a_n(z-z_0)^n$：",
+            "$a_n=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{(w-z_0)^{n+1}}dw=\\frac{f^{(n)}(z_0)}{n!}$"
+          ],
+          "say": "代回積分。前面每一項的積分，正好是 a n 乘 z 減 z 零的 n 次方，而 a n 由柯西公式的導數版本，等於 n 階導數除以 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代回去，前 $N+1$ 項正好是 $a_n(z-z_0)^n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a_n=\\frac1{2\\pi i}\\oint_\\Gamma\\frac{f(w)}{(w-z_0)^{n+1}}dw=\\frac{f^{(n)}(z_0)}{n!}$",
+              "on": "零的"
+            },
+            {
+              "do": "write",
+              "line": "　11.44 的導數公式；所以 $a_n$ 跟 $r$ 取多少無關",
+              "color": "violet",
+              "on": "公式"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）：尾巴趨近 0",
+      "beats": [
+        {
+          "show": [
+            "$M=\\max_\\Gamma|f|$；ML 不等式（長度 $2\\pi r$）：",
+            "$\\Big|f(z)-\\sum_{n=0}^{N}a_n(z-z_0)^n\\Big|\\le\\frac{1}{2\\pi}\\cdot2\\pi r\\cdot M\\cdot\\frac{\\rho^{N+1}}{r(1-\\rho)}$"
+          ],
+          "say": "剩下的誤差是 2 派 i 分之一，乘上 f 乘尾巴的積分。用 ML 不等式：長度 2 派 r，f 不超過 M，尾巴不超過剛才的界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$M=\\max_\\Gamma|f|$；ML 不等式（長度 $2\\pi r$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big|f(z)-\\sum_{n=0}^{N}a_n(z-z_0)^n\\Big|\\le\\frac{1}{2\\pi}\\cdot2\\pi r\\cdot M\\cdot\\frac{\\rho^{N+1}}{r(1-\\rho)}$",
+              "on": "不等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{M\\rho^{N+1}}{1-\\rho}\\ \\xrightarrow{N\\to\\infty}\\ 0$"
+          ],
+          "say": "r 消掉，得到 M 乘 肉 的 N 加 1 次方，除以 1 減 肉。肉 小於 1，N 趨近無限大時趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac{M\\rho^{N+1}}{1-\\rho}\\ \\xrightarrow{N\\to\\infty}\\ 0}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "小於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r$ 可以取到任何 $<R$：圓盤裡每一點都成立　$\\blacksquare$"
+          ],
+          "say": "而 r 可以取任何比 R 小的數，所以圓盤裡每一點都成立。整個證明只用了幾何級數和柯西公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r$ 可以取到任何 $<R$：圓盤裡每一點都成立　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "整個證明只用了：幾何級數 + Cauchy 公式",
+              "on": "一點"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 全純於 $|z-z_0|<R$ ⇒ 整個圓盤上等於 Taylor 級數",
+            "• 收斂半徑 = 到最近奇異點的距離（極點時剛好相等）"
+          ],
+          "say": "整理一下：全純就能展開，一路展到最近的奇異點；實數級數的半徑，也要到複數平面上找；算係數就借用已知級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 全純於 $|z-z_0|<R$ ⇒ 整個圓盤上等於 Taylor 級數"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂半徑 = 到最近奇異點的距離（極點時剛好相等）",
+              "on": "一路"
+            },
+            {
+              "do": "write",
+              "line": "• 實數級數的半徑也看複數平面：$\\frac1{1+x^2}$ 卡在 $\\pm i$",
+              "on": "異點"
+            },
+            {
+              "do": "write",
+              "line": "• 算係數：借用已知級數、比較係數（係數唯一）",
+              "on": "也要"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$\\frac1{w-z}$ 展成幾何級數，代進 Cauchy 公式",
+              "on": "算係"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Laurent 級數：允許負次方"
+          ],
+          "say": "下一課，如果圓盤中間有個洞，就允許負次方，這是洛朗級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Laurent 級數：允許負次方"
+            }
+          ]
         }
       ]
     }

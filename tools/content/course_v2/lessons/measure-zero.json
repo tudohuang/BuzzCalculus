@@ -1,313 +1,153 @@
 {
   "id": "measure-zero",
   "title": "測度為零的直觀",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["dirichlet-function", "continuous-integrable"],
-  "next": ["sigma-algebra"],
-  "related": ["null-sets", "lebesgue-measure"],
-  "objectives": [
-    "寫得出「測度為零」的定義：對每個 $\\varepsilon>0$，能用可數多個開區間蓋住、總長 $<\\varepsilon$。",
-    "用 $\\frac{\\varepsilon}{2^{k+1}}$ 的蓋法證明可數集測度為零，並算出 Cantor 集要做到第幾步才能蓋得比 $\\varepsilon$ 小。",
-    "會讀 Lebesgue 可積判準：有界函數 Riemann 可積若且唯若不連續點的集合測度為零。"
+  "prerequisites": [
+    "dirichlet-function",
+    "continuous-integrable"
   ],
-  "visual": "數線 [0, 1] 上，有理數 1/2, 1/3, 2/3, 1/4, … 依序出現，每出現一個就套上一個以它為中心的開區間，長度依序是 ε/4, ε/8, ε/16, …。上方即時顯示已用的總長：無論出現多少點，總長永遠停在 ε/2 以下。拖動 ε 滑桿，所有區間一起縮小。",
+  "next": [
+    "sigma-algebra"
+  ],
+  "related": [
+    "null-sets",
+    "lebesgue-measure"
+  ],
+  "objectives": [
+    "寫得出「測度為零」的定義：對每個 $\\varepsilon>0$，能用可數多個開區間蓋住、總長 $<\\varepsilon$",
+    "用 $\\frac{\\varepsilon}{2^{k+1}}$ 的蓋法證明可數集測度為零，並算出 Cantor 集要做到第幾步才能讓蓋子總長 $<\\varepsilon$",
+    "會讀 Lebesgue 可積判準：有界函數 Riemann 可積若且唯若不連續點的集合測度為零"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 用「總長度」衡量集合有多大",
+      "heading": "① 用總長度衡量大小",
       "body": [
-        "一個區間的大小是它的長度。一個點呢？它可以被一個長度 0.001 的區間蓋住，也可以被長度 $10^{-9}$ 的蓋住——要多小都行。我們說它「測度為零」。",
-        "直覺，不是證明：測度為零的集合，就是能用總長任意小的區間蓋住的集合。它可以有無限多個點，甚至在 $[0,1]$ 裡處處都有（像有理數），只要蓋得住。"
+        "上一課：$D$ 不可積，但直覺上 ℚ「很小」",
+        "區間 $(a,b)$ 的長度：$\\ell\\big((a,b)\\big)=b-a$",
+        "想法：用區間蓋住集合，看總長能壓到多小",
+        "例：$\\{c_1,\\dots,c_k\\}$，每點蓋一個長 $\\frac\\varepsilon{2k}$ 的開區間"
       ],
-      "collapsible": false
+      "tex": [
+        "\\text{總長}=k\\cdot\\frac\\varepsilon{2k}=\\frac\\varepsilon2<\\varepsilon"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "集合 $A\\subseteq\\mathbb{R}$ 測度為零，若對每一個 $\\varepsilon>0$，存在可數多個（有限或可數無限）開區間 $I_1,I_2,\\dots$ 使 $A\\subseteq\\bigcup I_k$，而且 $\\sum|I_k|<\\varepsilon$（$|I_k|$ 是區間長度）。",
-        "量詞：先給 $\\varepsilon$，再找蓋法。$\\varepsilon$ 越小，蓋法通常要換。"
+        "$A\\subseteq\\mathbb{R}$ 測度為零：對所有 $\\varepsilon>0$，存在可數多個開區間 $I_1,I_2,\\ldots$，使得",
+        "「可數多個」：有限個，或排成一列 $I_1,I_2,I_3,\\ldots$",
+        "$\\sum\\ell(I_k)$ 是正項級數，要收斂到 $<\\varepsilon$",
+        "否定（12A）：$A$ 不是測度為零 ⇔",
+        "測度為零的集合，它的子集也測度為零（同一組蓋子）",
+        "事實：$[a,b]$（$a<b$）不是測度為零：任何蓋子總長 $\\ge b-a$",
+        "證明要用緊緻性（Heine–Borel）：先取有限個蓋住，再比長度；這裡不證"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists\\ \\text{開區間 } I_1,I_2,\\dots:\\quad A\\subseteq\\bigcup_k I_k,\\quad \\sum_k |I_k|<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "A\\subseteq\\bigcup_k I_k,\\qquad\\sum_k\\ell(I_k)<\\varepsilon",
+        "\\begin{aligned}&\\exists\\varepsilon>0\\ \\text{使得每一組}\\\\&\\text{可數開區間蓋子}\\ \\text{總長}\\ge\\varepsilon\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 哪些集合測度為零",
+      "heading": "③ 可數集測度為零",
       "body": [
-        "可數集：把點排成 $a_1,a_2,\\dots$，第 $k$ 個用長度 $\\frac{\\varepsilon}{2^{k+1}}$ 的開區間蓋住，總長 $\\frac{\\varepsilon}{2}<\\varepsilon$。所以 $\\mathbb{Q}\\cap[0,1]$ 測度為零，雖然它稠密。同一招也證明：可數多個測度為零的集合，聯集仍測度為零（第 $k$ 個集合用總長 $<\\frac{\\varepsilon}{2^k}$ 的蓋法）。",
-        "Cantor 集：每一步去掉中間三分之一，第 $n$ 步剩 $2^n$ 段、每段長 $3^{-n}$，總長 $(\\frac{2}{3})^n\\to0$，所以測度為零；它卻是不可數的。",
-        "測度不為零：任何長度為正的區間。另外，每步去掉比較少的「胖 Cantor 集」（例如第 $n$ 步去掉 $2^{n-1}$ 段、每段長 $4^{-n}$，共去掉 $\\frac{1}{2}$）不含任何區間，剩下的部分卻有長度 $\\frac{1}{2}$，也不是測度為零（嚴格證明要等〈Lebesgue 測度〉）。"
+        "定理：$A=\\{a_1,a_2,a_3,\\ldots\\}$ 可數 ⇒ $A$ 測度為零",
+        "策略：預算 $\\varepsilon$，第 $k$ 個點分到 $\\frac\\varepsilon{2^{k+1}}$：每次砍半，總共只花 $\\frac\\varepsilon2$",
+        "證明：給定 $\\varepsilon>0$，令",
+        "$\\ell(I_k)=\\dfrac\\varepsilon{2^{k+1}}$；$a_k\\in I_k$，所以 $A\\subseteq\\bigcup I_k$"
       ],
-      "collapsible": false
+      "tex": [
+        "I_k=\\Big(a_k-\\frac\\varepsilon{2^{k+2}},\\ a_k+\\frac\\varepsilon{2^{k+2}}\\Big)",
+        "\\sum_{k=1}^\\infty\\frac\\varepsilon{2^{k+1}}=\\frac{\\varepsilon/4}{1-\\frac12}=\\frac\\varepsilon2<\\varepsilon\\quad\\blacksquare"
+      ]
     },
     {
-      "heading": "Lebesgue 可積判準（敘述，不證）",
+      "heading": "③ 例：把有理數蓋起來",
       "body": [
-        "$f$ 在 $[a,b]$ 上有界。則 $f$ Riemann 可積若且唯若 $f$ 的不連續點集合測度為零。",
-        "對照前面的例子：連續函數（不連續點是空集）可積；單調函數的跳躍點可數，可積；Dirichlet 函數處處不連續，而 $[0,1]$ 測度不為零，所以不可積。",
-        "$[0,1]$ 測度不為零的理由：若可數個開區間蓋住 $[0,1]$，由 Heine–Borel 定理可抽出有限個仍蓋住它，而有限個區間要蓋住長度 1 的區間，總長至少是 1。"
+        "$\\varepsilon=0.01$；$\\mathbb{Q}\\cap[0,1]$：$r_1=0,\\ r_2=1,\\ r_3=\\frac12,\\ r_4=\\frac13,\\ldots$",
+        "總長 $0.0025+0.00125+0.000625+\\cdots=0.005<0.01$",
+        "有理數處處稠密，卻被總長 $0.005$ 蓋住",
+        "這些區間蓋不滿 $[0,1]$：否則 $[0,1]$ 也測度為零，跟 ② 的事實矛盾",
+        "所以 $\\mathbb{Q}$ 測度為零；$\\mathbb{N}$、$\\mathbb{Z}$、$\\{\\frac1n\\}$ 也是"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "蓋得住就算小",
-      "beats": [
-        { "show": ["區間的大小：長度"],
-          "note": "一個點呢？",
-          "say": "一個區間有多大？看長度。那一個點呢？",
-          "board": [
-            {"do":"write","line":"區間的大小 ＝ 長度 $|I|$"}
-          ] },
-        { "show": ["一個點：用長 0.001 的區間蓋","或用長 $10^{-9}$ 的蓋"],
-          "say": "一個點可以被長零點零零一的區間蓋住，也可以被十的負九次方那麼短的蓋住。",
-          "board": [
-            {"do":"write","line":"點 $p$ ⊂ 長 $0.001$ 的區間"},
-            {"do":"write","line":"點 $p$ ⊂ 長 $10^{-9}$ 的區間","on":"十的負九次方"}
-          ] },
-        { "show": ["$\\forall\\varepsilon\\ \\exists I_1,I_2,\\dots$：$A\\subseteq\\bigcup I_k$，$\\sum|I_k|<\\varepsilon$"],
-          "say": "測度為零的定義：不管 epsilon 多小，都能用可數多個開區間蓋住它，總長小於 epsilon。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$A$ 測度為零 $\\iff$","on":"測度為零"},
-            {"do":"write","line":"$\\forall\\varepsilon>0$：${{c:A\\subseteq\\bigcup I_k}}$，${{s:\\sum|I_k|<\\varepsilon}}$","on":"不管"},
-            {"do":"underline","term":"c","label":"蓋住","on":"蓋住它"},
-            {"do":"box","term":"s","color":"green","label":"任意小","on":"總長小於"}
-          ] }
-      ],
-      "predict": {
-        "ask": "一個點能被多短的開區間蓋住？",
-        "options": [
-          {
-            "label": "要多短都行，所以它測度為零",
-            "correct": true
-          },
-          {
-            "label": "最短 $10^{-9}$",
-            "why": "$10^{-9}$ 只是舉例；任何正長度都蓋得住它。"
-          },
-          {
-            "label": "長度 0 的區間",
-            "why": "開區間長度一定是正的。測度為零說的是「任意小」，不是「長度 0 的蓋法」。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}I_1&=(-0.00125,\\ 0.00125)\\\\I_2&=(0.999375,\\ 1.000625)\\\\I_3&=(0.4996875,\\ 0.5003125)\\end{aligned}"
+      ]
     },
     {
-      "title": "可數集測度為零",
-      "beats": [
-        { "show": ["排成 $a_1,a_2,\\dots$，第 $k$ 個用長 $\\frac{\\varepsilon}{2^{k+1}}$"],
-          "say": "可數集把點排成一列，第 k 個點用長 epsilon 除以二的 k 加一次方的區間蓋住。",
-          "board": [
-            {"do":"write","line":"$A=\\{a_1,a_2,\\dots\\}$"},
-            {"do":"write","line":"第 $k$ 個：長 ${{l:\\frac{\\varepsilon}{2^{k+1}}}}$","on":"第 k 個點"},
-            {"do":"focus","term":"l","color":"gold","on":"除以"}
-          ] },
-        { "show": ["$\\sum\\frac{\\varepsilon}{2^{k+1}}=\\frac{\\varepsilon}{2}$"],
-          "note": "長度一路減半，總長才有限。",
-          "say": "把四分之一加八分之一，一直加下去，越來越接近二分之一。所以總長是 epsilon 的二分之一，小於 epsilon。",
-          "board": [
-            {"do":"write","line":"總長 $=\\varepsilon(\\frac14+\\frac18+\\cdots)$"},
-            {"do":"write","line":"$\\frac14+\\frac18+\\cdots\\to\\frac12$","on":"越來越接近"},
-            {"do":"write","line":"總長 $=\\frac{\\varepsilon}{2}<\\varepsilon$","color":"green","on":"所以總長"}
-          ] },
-        { "show": ["同樣長會失敗"],
-          "note": "無限多個同長區間，總長是無限大。",
-          "say": "為什麼長度要越來越短？無限多個一樣長的區間，總長會是無限大。",
-          "board": [
-            {"do":"write","line":"$|I_k|=\\delta$：$\\sum|I_k|=\\infty$","color":"red","on":"無限多個"}
-          ] },
-        { "show": ["$\\mathbb{Q}\\cap[0,1]$：$\\varepsilon=0.01$"],
-          "note": "依分母排：$0,1,\\frac{1}{2},\\frac{1}{3},\\frac{2}{3},\\dots$",
-          "say": "拿零到一的有理數試試，epsilon 零點零一。有理數可數，依分母排成一列。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\mathbb{Q}\\cap[0,1]$，$\\varepsilon=0.01$","on":"拿零到一"},
-            {"do":"write","line":"$a_1,a_2,\\dots=0,1,\\frac12,\\frac13,\\frac23,\\dots$","on":"依分母"}
-          ] },
-        { "show": ["總長 $0.005<0.01$"],
-          "note": "稠密，卻測度為零。",
-          "say": "照這個蓋法總長是零點零零五，小於零點零一。有理數到處都是，卻測度為零。",
-          "board": [
-            {"do":"write","line":"總長 ${{t:0.005}}<0.01$"},
-            {"do":"box","term":"t","color":"green","on":"零點零零五"},
-            {"do":"write","line":"有理數：稠密，卻測度為零","on":"到處都是"}
-          ] },
-        { "show": ["$[0,1]$＝有理數 ∪ 無理數"],
-          "note": "兩塊都是零，聯集也是零，會矛盾。",
-          "say": "零到一是有理數加無理數。若無理數也測度為零，聯集就是零，可是零到一總長至少是一，所以無理數不是零。",
-          "board": [
-            {"do":"write","line":"$[0,1]=\\mathbb{Q}\\cup$ 無理數"},
-            {"do":"write","line":"若無理數也零，則 ${{z:[0,1]}}$ 也零","on":"若無理數"},
-            {"do":"strike","term":"z","label":"矛盾","on":"可是零到一"}
-          ] }
+      "heading": "③ Cantor 集",
+      "body": [
+        "$[0,1]$ 拿掉中間三分之一，剩下的每段再拿掉中間三分之一，一直做下去",
+        "康托爾集 $C$：每一步都留下來的點",
+        "$0,\\frac13,\\frac23,1,\\frac19,\\ldots$ 都在 $C$ 裡；$C$ 其實不可數（用三進位證，這裡不證）"
       ],
-      "key": "第 $k$ 個區間長度減半，總長才會有限",
-      "check": 0
+      "tex": [
+        "C\\subseteq\\text{第 }n\\text{ 步的 }2^n\\text{ 段},\\quad\\text{總長}\\ \\Big(\\frac23\\Big)^n"
+      ]
     },
     {
-      "title": "Cantor 集",
-      "beats": [
-        { "show": ["每一步去掉中間三分之一"],
-          "say": "Cantor 集：從零到一開始，每一步把每一段中間的三分之一挖掉。",
-          "board": [
-            {"do":"write","line":"$C_0=[0,1]$"},
-            {"do":"write","line":"每步：去掉每段中間 $\\frac13$","on":"每一步"}
-          ] },
-        { "show": ["第 $n$ 步：$2^n$ 段，每段長 $3^{-n}$"],
-          "say": "第 n 步剩二的 n 次方段，每段長三的負 n 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"第 $n$ 步：${{a:2^n}}$ 段，每段 ${{b:3^{-n}}}$","tint":{"a":"blue","b":"violet"},"on":"第 n 步"},
-            {"do":"focus","term":"a","color":"blue","on":"二的"},
-            {"do":"focus","term":"b","color":"violet","on":"三的負"}
-          ] },
-        { "show": ["剩下總長 $(\\frac{2}{3})^n\\to0$"],
-          "note": "測度為零，卻不可數。",
-          "say": "剩下的總長是三分之二的 n 次方，趨近零，所以測度為零。可是它的點多到不可數。",
-          "board": [
-            {"do":"transform","line":"${{a:2^n}}\\cdot{{b:3^{-n}}}={{r:(\\frac{2}{3})^n}}$","tint":{"a":"blue","b":"violet"},"on":"剩下的總長"},
-            {"do":"box","term":"r","color":"green","on":"三分之二"},
-            {"do":"write","line":"測度為零，卻不可數","on":"可是它"}
-          ] },
-        { "show": ["三進位：每一位只有 0 或 2"],
-          "note": "直覺，不是證明；可數集排得成一列。",
-          "say": "為什麼不可數？直覺：留下的點，三進位每一位只有零或二兩種寫法。這樣的選法，沒辦法排成一列。",
-          "board": [
-            {"do":"write","line":"三進位 $x=0.d_1d_2d_3\\cdots$"},
-            {"do":"write","line":"每位 ${{d:d_k\\in\\{0,2\\}}}$ 兩種選法","on":"每一位"},
-            {"do":"underline","term":"d","color":"gold","label":"排不成列","on":"沒辦法"}
-          ] }
+      "heading": "③ 切到第幾步",
+      "body": [
+        "段是閉區間，要的是開區間：每段換成同中心、長兩倍的開區間",
+        "$\\varepsilon=0.01$：要 $2\\big(\\frac23\\big)^n<0.01$",
+        "一般的 $\\varepsilon$：$\\big(\\frac23\\big)^n\\to0$，總有 $n$ 讓 $2\\big(\\frac23\\big)^n<\\varepsilon$",
+        "$C$ 測度為零，但不可數：測度為零 $\\ne$ 可數"
       ],
-      "check": 3
+      "tex": [
+        "\\text{總長}=2\\Big(\\frac23\\Big)^n",
+        "\\begin{aligned}n=13:&\\ \\ 2\\Big(\\frac23\\Big)^{13}\\approx0.0103\\\\n=14:&\\ \\ 2\\Big(\\frac23\\Big)^{14}\\approx0.0069\\end{aligned}"
+      ]
     },
     {
-      "title": "Cantor 集：切幾步",
-      "beats": [
-        { "show": ["每段放大成兩倍長的開區間"],
-          "note": "總長 $2(\\frac{2}{3})^n$。",
-          "say": "定義要開區間，所以把每個閉區間放大成兩倍長的開區間，總長變成兩倍三分之二的 n 次方。",
-          "board": [
-            {"do":"write","line":"閉區間 $\\to$ 兩倍長開區間"},
-            {"do":"write","line":"總長 ${{o:2(\\frac{2}{3})^n}}$","on":"總長變成"},
-            {"do":"underline","term":"o","color":"gold","on":"三分之二"}
-          ] },
-        { "show": ["要 $(\\frac{2}{3})^n<0.005$"],
-          "note": "$n>\\ln 200/\\ln 1.5\\approx13.07$。",
-          "say": "要總長小於零點零一，也就是三分之二的 n 次方小於零點零零五。取對數，n 要大於十三點零七。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$2(\\frac{2}{3})^n<0.01$","on":"總長小於"},
-            {"do":"transform","line":"$(\\frac{2}{3})^n<0.005$","on":"也就是"},
-            {"do":"write","line":"$n>\\ln 200/\\ln 1.5$","on":"取對數"}
-          ] }
+      "heading": "④ Lebesgue 判準",
+      "body": [
+        "$f$ 在 $[a,b]$ 上有界。則",
+        "這一課只敘述、不證（證明要用振幅與緊緻性）",
+        "• 連續：不連續點 $=\\varnothing$ ⇒ 可積（12.39）",
+        "• 有限個點取 $1$：不連續點有限 ⇒ 可積",
+        "• 單調：不連續點可數 ⇒ 可積（12.38）",
+        "• $D$：處處不連續，$[0,1]$ 不是測度為零 ⇒ 不可積",
+        "單調函數每個跳躍裡都能挑一個不同的有理數，所以跳躍點可數"
       ],
-      "key": "取對數解指數不等式，再取最小整數",
-      "predict": {
-        "ask": "$n$ 最小是多少？",
-        "options": [
-          {
-            "label": "14",
-            "correct": true
-          },
-          {
-            "label": "13",
-            "why": "$n=13$ 時 $2(\\frac{2}{3})^{13}\\approx0.01028$，還不夠小。"
-          },
-          {
-            "label": "200",
-            "why": "200 是 $\\frac{1}{0.005}$；要的是次方數：$n>\\ln 200/\\ln 1.5\\approx13.07$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}&f\\ \\text{Riemann 可積}\\\\\\iff\\ &\\{x:f\\text{ 在 }x\\text{ 不連續}\\}\\ \\text{測度為零}\\end{aligned}"
+      ]
     },
     {
-      "title": "哪些不是",
-      "beats": [
-        { "show": ["長度為正的區間：不是"],
-          "note": "$[0,1]$ 蓋起來總長至少 1。",
-          "say": "長度是正的區間，測度就不是零：要蓋住零到一，總長至少是一。",
-          "board": [
-            {"do":"write","line":"$[0,1]$：蓋起來總長 $\\ge 1$"},
-            {"do":"write","line":"$|I|>0$：測度不為零","on":"測度就不是零"}
-          ] },
-        { "show": ["胖 Cantor 集：第 $n$ 步挖 $2^{n-1}$ 段"],
-          "note": "每段長 $4^{-n}$。",
-          "say": "再看胖 Cantor 集。第一步挖中間的四分之一，第 n 步挖二的 n 減一次方段，每段長四的負 n 次方。",
-          "board": [
-            {"do":"write","line":"第 1 步：挖中間 $\\frac14$"},
-            {"do":"write","line":"第 $n$ 步：$2^{n-1}$ 段，每段 $4^{-n}$","on":"第 n 步"}
-          ] },
-        { "show": ["胖 Cantor 集：剩下長度 $\\frac{1}{2}$"],
-          "note": "第 $n$ 步去掉 $2^{n-1}$ 段、每段長 $4^{-n}$。",
-          "say": "胖 Cantor 集每步挖得比較少，一共只挖掉二分之一。它不含任何區間，但剩下長度二分之一。",
-          "board": [
-            {"do":"write","line":"一共挖掉 $\\frac12$"},
-            {"do":"write","line":"不含區間，剩下 ${{r:\\frac12}}$","on":"它不含"},
-            {"do":"box","term":"r","color":"green","on":"但剩下"}
-          ] },
-        { "show": ["剩下的段越來越短"],
-          "note": "短過任何正長度，所以裡面被挖過。",
-          "say": "為什麼不含區間？每一步剩下的每段都更短。任何有長度的區間，切夠多步，剩的段比它短，裡面一定被挖過。",
-          "board": [
-            {"do":"write","line":"剩下的段長 $\\to 0$，短過 ${{l:\\ell>0}}$"},
-            {"do":"underline","term":"l","color":"gold","label":"被挖過","on":"有長度"}
-          ] },
-        { "show": ["稠密 ≠ 測度不為零","不含區間 ≠ 測度為零"],
-          "say": "所以稠密不代表大，不含區間也不代表小。要看的是蓋得住的總長。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"稠密 $\\ne$ 測度不為零","on":"稠密"},
-            {"do":"write","line":"不含區間 $\\ne$ 測度為零","on":"不含區間"},
-            {"do":"write","line":"看蓋得住的總長","color":"green","on":"要看的是"}
-          ] }
+      "heading": "④ Thomae 函數",
+      "body": [
+        "有理點不連續：$T(\\frac pq)=\\frac1q>0$，但旁邊有無理數，值是 $0$",
+        "無理點 $x_0$ 連續：給 $\\varepsilon$，$T\\ge\\varepsilon$ 的點只有有限個（$q\\le\\frac1\\varepsilon$）",
+        "取 $\\delta=x_0$ 到它們的最短距離 $>0$：$|x-x_0|<\\delta\\Rightarrow T(x)<\\varepsilon$",
+        "例：$\\varepsilon=0.2$，只要避開圖上那 $11$ 個紅點"
       ],
-      "check": 1
+      "tex": [
+        "T(x)=\\begin{cases}\\frac1q,&x=\\frac pq\\ \\text{既約},\\ q\\ge1\\\\0,&x\\notin\\mathbb{Q}\\end{cases}"
+      ]
     },
     {
-      "title": "誰能 Riemann 積分",
-      "beats": [
-        { "show": ["Riemann 積分：曲線下的面積"],
-          "note": "切成細條，高取最高點是上和。",
-          "say": "Riemann 積分就是曲線底下的面積。把區間切成細條，每條取最高點當高是上和，取最低點當高是下和。",
-          "board": [
-            {"do":"write","line":"Riemann 積分 ＝ 曲線下的面積"},
-            {"do":"plot","graph":{"window":[-0.2,1.2,-0.2,1.2],"curves":[{"expr":"x^2","domain":[0,1],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":1,"color":"blue"}]},"on":"切成細條"}
-          ] },
-        { "show": ["上和、下和越切越靠近：可積"],
-          "note": "到處亂跳：每條高低差撐著。",
-          "say": "上和下和越切越靠近，就是可積。函數到處亂跳，每條裡高低差都撐著，上和下和永遠差一大塊，就不可積。",
-          "board": [
-            {"do":"write","line":"可積：上和、下和越切越靠近"},
-            {"do":"write","line":"亂跳：每條高低差撐著，差一大塊","color":"red","on":"亂跳"}
-          ] },
-        { "show": ["$f$ 有界：可積 $\\iff$ 不連續點測度為零"],
-          "note": "Lebesgue 可積判準。",
-          "say": "這個概念的回報：有界函數 Riemann 可積，若且唯若它的不連續點測度為零。",
-          "board": [
-            {"do":"write","line":"$f$ 有界，$D_f$ ＝ 不連續點的集合"},
-            {"do":"write","line":"Riemann 可積 $\\iff {{d:D_f}}$ 測度為零","on":"Riemann 可積"},
-            {"do":"underline","term":"d","color":"gold","on":"不連續點"}
-          ] },
-        { "show": ["連續、單調：可積","Dirichlet：不可積"],
-          "note": "單調的跳躍點可數。",
-          "say": "連續函數沒有不連續點；單調函數的跳躍點可數；Dirichlet 處處不連續，零到一測度不是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"連續：$D_f=\\varnothing$","on":"連續函數"},
-            {"do":"write","line":"單調：跳躍點可數","on":"單調函數"},
-            {"do":"write","line":"Dirichlet：$D_f=[0,1]$","on":"Dirichlet"}
-          ] },
-        { "show": ["Thomae：$T(\\frac{p}{q})=\\frac{1}{q}$，無理點 $T=0$"],
-          "say": "再看 Thomae 函數：既約分數 q 分之 p 取 q 分之一，無理數取零。它只在有理點不連續。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"Thomae：$T(\\frac{p}{q})=\\frac{1}{q}$","on":"Thomae"},
-            {"do":"write","line":"無理點：$T=0$","on":"無理數取零"},
-            {"do":"write","line":"不連續：只在有理點","on":"有理點"}
-          ] }
+      "heading": "④ Thomae 可積",
+      "body": [
+        "不連續點 $=\\mathbb{Q}\\cap[0,1]$：可數，測度為零",
+        "每段都有無理數 ⇒ $L(T,P)=0$；可積 ⇒ $\\displaystyle\\int_0^1T=\\sup_PL(T,P)=0$",
+        "$T$ 和 $D$ 只差在有理點的值：$\\frac1q$ 會變小，$1$ 不會"
       ],
-      "check": 2
+      "tex": [
+        "\\Rightarrow\\ T\\ \\text{在}\\ [0,1]\\ \\text{上 Riemann 可積}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 測度為零：$\\forall\\varepsilon>0$，可數個開區間蓋住、總長 $<\\varepsilon$",
+        "• 可數集測度為零：第 $k$ 個給 $\\frac\\varepsilon{2^{k+1}}$，總長 $\\frac\\varepsilon2$",
+        "• Cantor 集：不可數，但測度為零（$2(\\frac23)^n\\to0$）",
+        "• $[a,b]$ 不是測度為零",
+        "• 勒貝格判準：有界 $f$ 可積 ⇔ 不連續點測度為零",
+        "下一課：σ-代數：哪些集合可以量長度"
+      ]
     }
   ],
   "workedExamples": [
@@ -358,53 +198,989 @@
   ],
   "checks": [
     {
-      "ask": "用 $\\frac{\\varepsilon}{2^{k+1}}$ 的開區間蓋可數集，總長是？",
+      "ask": "第 $n$ 步的總長 $\\big(\\frac23\\big)^n<0.01$，最小的 $n$ 是？",
       "options": [
-        { "label": "$\\frac{\\varepsilon}{2}$", "correct": true },
-        { "label": "$\\varepsilon$", "why": "你把級數從 $k=0$ 加起，或把長度寫成 $\\frac{\\varepsilon}{2^k}$。$\\sum_{k\\ge1}\\frac{1}{2^{k+1}}=\\frac{1}{2}$。" },
-        { "label": "0", "why": "每個區間長度都是正的，總長是正數 $\\frac{\\varepsilon}{2}$；「任意小」不是「等於 0」。" }
+        {
+          "label": "$12$",
+          "correct": true
+        },
+        {
+          "label": "$11$",
+          "why": "$\\big(\\frac23\\big)^{11}\\approx0.0116$，還比 $0.01$ 大"
+        },
+        {
+          "label": "$5$",
+          "why": "只看了 $3^n>100$，忘了段數 $2^n$ 也在變多"
+        },
+        {
+          "label": "$7$",
+          "why": "只看了 $2^n>100$；要看的是比值 $\\frac{2^n}{3^n}$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "用總長度衡量大小",
+      "beats": [
+        {
+          "show": [
+            "上一課：$D$ 不可積，但直覺上 ℚ「很小」"
+          ],
+          "say": "上一課說，直覺上有理數這個集合很小。這一課把「很小」說精確。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課：$D$ 不可積，但直覺上 ℚ「很小」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "區間 $(a,b)$ 的長度：$\\ell\\big((a,b)\\big)=b-a$",
+            "想法：用區間蓋住集合，看總長能壓到多小"
+          ],
+          "say": "我們只會量區間的長度。想法是：用一些區間把集合蓋住，看總長最小能壓到多小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "區間 $(a,b)$ 的長度：$\\ell\\big((a,b)\\big)=b-a$"
+            },
+            {
+              "do": "write",
+              "line": "想法：用區間蓋住集合，看總長能壓到多小",
+              "color": "gold",
+              "on": "區間#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\{c_1,\\dots,c_k\\}$，每點蓋一個長 $\\frac\\varepsilon{2k}$ 的開區間",
+            "$\\text{總長}=k\\cdot\\frac\\varepsilon{2k}=\\frac\\varepsilon2<\\varepsilon$"
+          ],
+          "say": "例如 k 個點，每點蓋一個長 2k 分之艾普西隆的小區間，總長是 2 分之艾普西隆。艾普西隆要多小都行。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\{c_1,\\dots,c_k\\}$，每點蓋一個長 $\\frac\\varepsilon{2k}$ 的開區間"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{總長}=k\\cdot\\frac\\varepsilon{2k}=\\frac\\varepsilon2<\\varepsilon$",
+              "on": "區間"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "ℚ∩[0,1] 在 [0,1] 裡處處稠密。能不能用總長 $<0.01$ 的開區間（可以無限多個）把它全部蓋住？",
+        "options": [
+          {
+            "label": "能",
+            "correct": true
+          },
+          {
+            "label": "不能：稠密就等於要蓋滿 $[0,1]$，總長至少 $1$",
+            "why": "稠密不是「全部」：蓋住有理數，不必蓋住無理數"
+          },
+          {
+            "label": "不能：無限多個點，總長一定是無限大",
+            "why": "長度可以越給越小，像 $\\frac1{2^k}$ 加起來是有限的"
+          },
+          {
+            "label": "只有用閉區間才能",
+            "why": "開或閉不是重點；開區間稍微放大就好"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$A\\subseteq\\mathbb{R}$ 測度為零：對所有 $\\varepsilon>0$，存在可數多個開區間 $I_1,I_2,\\ldots$，使得",
+            "$A\\subseteq\\bigcup_k I_k,\\qquad\\sum_k\\ell(I_k)<\\varepsilon$"
+          ],
+          "say": "定義：集合 A 測度為零，是說對所有正的艾普西隆，都存在可數多個開區間，蓋住 A，總長小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$A\\subseteq\\mathbb{R}$ 測度為零：對所有 $\\varepsilon>0$，存在可數多個開區間 $I_1,I_2,\\ldots$，使得"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle A\\subseteq\\bigcup_k I_k,\\qquad\\sum_k\\ell(I_k)<\\varepsilon}}$",
+              "color": "red",
+              "on": "所有"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "區間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「可數多個」：有限個，或排成一列 $I_1,I_2,I_3,\\ldots$",
+            "$\\sum\\ell(I_k)$ 是正項級數，要收斂到 $<\\varepsilon$"
+          ],
+          "say": "可數多個，就是有限個或排成一列。無限多個時，總長是正項級數，要收斂，而且和小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「可數多個」：有限個，或排成一列 $I_1,I_2,I_3,\\ldots$"
+            },
+            {
+              "do": "write",
+              "line": "$\\sum\\ell(I_k)$ 是正項級數，要收斂到 $<\\varepsilon$",
+              "on": "總長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定（12A）：$A$ 不是測度為零 ⇔",
+            "$\\begin{aligned}&\\exists\\varepsilon>0\\ \\text{使得每一組}\\\\&\\text{可數開區間蓋子}\\ \\text{總長}\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "否定：不是測度為零，就是存在一個艾普西隆，任何一組蓋子，總長都至少是它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定（12A）：$A$ 不是測度為零 ⇔"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&\\exists\\varepsilon>0\\ \\text{使得每一組}\\\\&\\text{可數開區間蓋子}\\ \\text{總長}\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "存在"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "組蓋"
+            }
+          ]
+        },
+        {
+          "show": [
+            "測度為零的集合，它的子集也測度為零（同一組蓋子）",
+            "事實：$[a,b]$（$a<b$）不是測度為零：任何蓋子總長 $\\ge b-a$"
+          ],
+          "say": "測度為零的子集也測度為零。但一段區間 a 到 b 不是：任何蓋住它的開區間，總長至少是 b 減 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "測度為零的集合，它的子集也測度為零（同一組蓋子）"
+            },
+            {
+              "do": "write",
+              "line": "事實：$[a,b]$（$a<b$）不是測度為零：任何蓋子總長 $\\ge b-a$",
+              "color": "red",
+              "on": "區間#1"
+            },
+            {
+              "do": "write",
+              "line": "　證明要用緊緻性（Heine–Borel）：先取有限個蓋住，再比長度；這裡不證",
+              "color": "violet",
+              "on": "的開"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "下列哪個集合測度不為零？",
-      "options": [
-        { "label": "$[0,1]$ 中的所有無理數", "correct": true },
-        { "label": "$[0,1]$ 中的所有有理數", "why": "有理數可數，用 $\\frac{\\varepsilon}{2^{k+1}}$ 的蓋法就蓋得住。稠密不影響。" },
-        { "label": "Cantor 集", "why": "Cantor 集不可數，但第 $n$ 步的區間總長 $(\\frac{2}{3})^n\\to0$，測度為零。" }
+      "title": "可數集測度為零",
+      "beats": [
+        {
+          "show": [
+            "定理：$A=\\{a_1,a_2,a_3,\\ldots\\}$ 可數 ⇒ $A$ 測度為零"
+          ],
+          "say": "定理：可數集測度為零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$A=\\{a_1,a_2,a_3,\\ldots\\}$ 可數 ⇒ $A$ 測度為零",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：預算 $\\varepsilon$，第 $k$ 個點分到 $\\frac\\varepsilon{2^{k+1}}$：每次砍半，總共只花 $\\frac\\varepsilon2$"
+          ],
+          "say": "策略：預算是艾普西隆。第一個點分到 4 分之艾普西隆，第二個 8 分之，每次砍半，總共只花一半的預算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：預算 $\\varepsilon$，第 $k$ 個點分到 $\\frac\\varepsilon{2^{k+1}}$：每次砍半，總共只花 $\\frac\\varepsilon2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖",
+            "證明：給定 $\\varepsilon>0$，令"
+          ],
+          "say": "證明。給定艾普西隆，第 k 個區間以 a k 為中心，左右各伸出 2 的 k 加 2 次方分之艾普西隆。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"mz-cover\" viewBox=\"0 0 640 200\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><line x1=\"20\" y1=\"110\" x2=\"620\" y2=\"110\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><rect x=\"32.5\" y=\"102\" width=\"115.0\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"521.3\" y=\"102\" width=\"57.5\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"305.6\" y=\"102\" width=\"28.8\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"236.1\" y=\"102\" width=\"14.4\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"393.1\" y=\"102\" width=\"7.2\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"203.2\" y=\"102\" width=\"3.6\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"434.1\" y=\"102\" width=\"1.8\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"181.6\" y=\"102\" width=\"0.9\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"273.8\" y=\"102\" width=\"0.4\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"365.9\" y=\"102\" width=\"0.2\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><rect x=\"457.9\" y=\"102\" width=\"0.1\" height=\"16\" fill=\"var(--blue)\" fill-opacity=\"0.3\" stroke=\"var(--blue)\" stroke-width=\"1.2\"/><circle cx=\"90.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"550.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"320.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"243.3\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"396.7\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"205.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"435.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"182.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"274.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"366.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><circle cx=\"458.0\" cy=\"110\" r=\"3.5\" fill=\"var(--red)\"/><text x=\"90.0\" y=\"88\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/4</tspan></text><text x=\"550.0\" y=\"88\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/8</tspan></text><text x=\"320.0\" y=\"88\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/16</tspan></text><text x=\"243.3\" y=\"88\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/32</tspan></text><text x=\"90.0\" y=\"146\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><text x=\"243.3\" y=\"146\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/3</tspan></text><text x=\"320.0\" y=\"146\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/2</tspan></text><text x=\"396.7\" y=\"146\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">2/3</tspan></text><text x=\"550.0\" y=\"146\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"320\" y=\"188\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--ink)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/4 + </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/8 + </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/16 + ⋯ = </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/2</tspan></text><text x=\"320\" y=\"30\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">第</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">個點分到的長度砍半再砍半</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，令",
+              "on": "為中"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I_k=\\Big(a_k-\\frac\\varepsilon{2^{k+2}},\\ a_k+\\frac\\varepsilon{2^{k+2}}\\Big)$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ell(I_k)=\\dfrac\\varepsilon{2^{k+1}}$；$a_k\\in I_k$，所以 $A\\subseteq\\bigcup I_k$"
+          ],
+          "say": "長度是 2 的 k 加 1 次方分之艾普西隆；每個 a k 都在自己的區間裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ell(I_k)=\\dfrac\\varepsilon{2^{k+1}}$；$a_k\\in I_k$，所以 $A\\subseteq\\bigcup I_k$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{k=1}^\\infty\\frac\\varepsilon{2^{k+1}}=\\frac{\\varepsilon/4}{1-\\frac12}=\\frac\\varepsilon2<\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "總長是等比級數，首項 4 分之艾普西隆，公比 2 分之 1，和是 2 分之艾普西隆，小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sum_{k=1}^\\infty\\frac\\varepsilon{2^{k+1}}=\\frac{\\varepsilon/4}{1-\\frac12}=\\frac\\varepsilon2<\\varepsilon\\quad\\blacksquare}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "和是"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "有界函數 $f$ 在 $[0,1]$ 上恰好在每個有理點不連續，在無理點連續。$f$ 是否 Riemann 可積？",
-      "options": [
-        { "label": "可積：不連續點可數，測度為零", "correct": true },
-        { "label": "不可積：不連續點在 $[0,1]$ 中稠密", "why": "Lebesgue 判準看的是測度，不是稠密。Thomae 函數就是這種情形，可積。" },
-        { "label": "無法判斷，要先算出上和", "why": "Lebesgue 判準不必算上和：有界、不連續點測度為零，就可積。" }
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "證明「可數集測度為零」"
+          ],
+          "say": "排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "證明「可數集測度為零」",
+        "steps": [
+          {
+            "label": "把 $A$ 排成一列 $a_1,a_2,\\ldots$，並給定 $\\varepsilon>0$"
+          },
+          {
+            "label": "在 $a_k$ 外面蓋長 $\\frac\\varepsilon{2^{k+1}}$ 的開區間 $I_k$",
+            "why": "先要有上一步：把 $A$ 排成一列 $a_1,a_2,\\ldots$，並給定 $\\varepsilon>0$"
+          },
+          {
+            "label": "每個 $a_k\\in I_k$，所以 $A\\subseteq\\bigcup I_k$",
+            "why": "先要有上一步：在 $a_k$ 外面蓋長 $\\frac\\varepsilon{2^{k+1}}$ 的開區間 $I_k$"
+          },
+          {
+            "label": "等比級數：總長 $=\\frac\\varepsilon2<\\varepsilon$",
+            "why": "先要有上一步：每個 $a_k\\in I_k$，所以 $A\\subseteq\\bigcup I_k$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：把有理數蓋起來",
+      "beats": [
+        {
+          "show": [
+            "$\\varepsilon=0.01$；$\\mathbb{Q}\\cap[0,1]$：$r_1=0,\\ r_2=1,\\ r_3=\\frac12,\\ r_4=\\frac13,\\ldots$",
+            "$\\begin{aligned}I_1&=(-0.00125,\\ 0.00125)\\\\I_2&=(0.999375,\\ 1.000625)\\\\I_3&=(0.4996875,\\ 0.5003125)\\end{aligned}$"
+          ],
+          "say": "具體做一次，艾普西隆是 0.01。第一個區間以 0 為中心，長 0.0025；第二個以 1 為中心，長 0.00125；第三個再減半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varepsilon=0.01$；$\\mathbb{Q}\\cap[0,1]$：$r_1=0,\\ r_2=1,\\ r_3=\\frac12,\\ r_4=\\frac13,\\ldots$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}I_1&=(-0.00125,\\ 0.00125)\\\\I_2&=(0.999375,\\ 1.000625)\\\\I_3&=(0.4996875,\\ 0.5003125)\\end{aligned}}$",
+              "on": "00#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "總長 $0.0025+0.00125+0.000625+\\cdots=0.005<0.01$"
+          ],
+          "say": "一直砍半下去，總長是 0.005，小於 0.01。",
+          "board": [
+            {
+              "do": "write",
+              "line": "總長 $0.0025+0.00125+0.000625+\\cdots=0.005<0.01$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理數處處稠密，卻被總長 $0.005$ 蓋住",
+            "這些區間蓋不滿 $[0,1]$：否則 $[0,1]$ 也測度為零，跟 ② 的事實矛盾"
+          ],
+          "say": "有理數處處稠密，卻被總長 0.005 蓋住。這些區間一定蓋不滿 0 到 1，否則 0 到 1 就測度為零，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有理數處處稠密，卻被總長 $0.005$ 蓋住",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "這些區間蓋不滿 $[0,1]$：否則 $[0,1]$ 也測度為零，跟 ② 的事實矛盾",
+              "on": "蓋不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\mathbb{Q}$ 測度為零；$\\mathbb{N}$、$\\mathbb{Z}$、$\\{\\frac1n\\}$ 也是"
+          ],
+          "say": "所以有理數測度為零；自然數、整數、n 分之 1 這些可數集也都是。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\mathbb{Q}$ 測度為零；$\\mathbb{N}$、$\\mathbb{Z}$、$\\{\\frac1n\\}$ 也是",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "Cantor 集的作法中，被去掉的區間總長是？",
-      "options": [
-        { "label": "1", "correct": true },
-        { "label": "$\\frac{1}{3}$", "why": "那只是第一步去掉的長度。之後每步去掉 $\\frac{2^{n-1}}{3^n}$，加起來 $\\sum=\\frac{\\frac{1}{3}}{1-\\frac{2}{3}}=1$。" },
-        { "label": "$\\frac{2}{3}$", "why": "你可能把剩下的 $(\\frac{2}{3})^n$ 在 $n=1$ 的值當成答案。總共去掉的是幾何級數的和 1。" }
+      "title": "Cantor 集",
+      "beats": [
+        {
+          "show": [
+            "$[0,1]$ 拿掉中間三分之一，剩下的每段再拿掉中間三分之一，一直做下去"
+          ],
+          "say": "測度為零一定可數嗎？看康托爾集：0 到 1 拿掉中間三分之一，剩下的每段再拿掉中間三分之一，一直做下去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$[0,1]$ 拿掉中間三分之一，剩下的每段再拿掉中間三分之一，一直做下去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "第 n 步剩 2 的 n 次方段，每段長 3 的 n 次方分之 1，總長是 3 分之 2 的 n 次方。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"mz-cantor\" viewBox=\"0 0 640 225\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect x=\"30.0\" y=\"22\" width=\"400.0\" height=\"13\" fill=\"var(--ink)\"/><text x=\"440\" y=\"35\" font-size=\"21\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 0</tspan></text><text x=\"625\" y=\"35\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 1</tspan></text><rect x=\"30.0\" y=\"64\" width=\"133.3\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"296.6\" y=\"64\" width=\"133.3\" height=\"13\" fill=\"var(--ink)\"/><text x=\"440\" y=\"77\" font-size=\"21\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 1</tspan></text><text x=\"625\" y=\"77\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 2/3</tspan></text><rect x=\"30.0\" y=\"106\" width=\"44.4\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"118.8\" y=\"106\" width=\"44.4\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"296.6\" y=\"106\" width=\"44.4\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"385.5\" y=\"106\" width=\"44.4\" height=\"13\" fill=\"var(--ink)\"/><text x=\"440\" y=\"119\" font-size=\"21\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 2</tspan></text><text x=\"625\" y=\"119\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 4/9</tspan></text><rect x=\"30.0\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"59.6\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"118.8\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"148.5\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"296.6\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"326.3\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"385.5\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"415.1\" y=\"148\" width=\"14.8\" height=\"13\" fill=\"var(--ink)\"/><text x=\"440\" y=\"161\" font-size=\"21\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 3</tspan></text><text x=\"625\" y=\"161\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 8/27</tspan></text><rect x=\"30.0\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"39.8\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"59.6\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"69.5\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"118.8\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"128.7\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"148.5\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"158.4\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"296.6\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"306.5\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"326.3\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"336.1\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"385.5\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"395.4\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"415.1\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><rect x=\"425.0\" y=\"190\" width=\"4.9\" height=\"13\" fill=\"var(--ink)\"/><text x=\"440\" y=\"203\" font-size=\"21\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 4</tspan></text><text x=\"625\" y=\"203\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">總長</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 16/81</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "康托爾集 $C$：每一步都留下來的點",
+            "$C\\subseteq\\text{第 }n\\text{ 步的 }2^n\\text{ 段},\\quad\\text{總長}\\ \\Big(\\frac23\\Big)^n$"
+          ],
+          "say": "康托爾集是每一步都留下來的點，所以它被每一步的那些段蓋住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "康托爾集 $C$：每一步都留下來的點"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle C\\subseteq\\text{第 }n\\text{ 步的 }2^n\\text{ 段},\\quad\\text{總長}\\ \\Big(\\frac23\\Big)^n$",
+              "on": "留下"
+            },
+            {
+              "do": "write",
+              "line": "　$0,\\frac13,\\frac23,1,\\frac19,\\ldots$ 都在 $C$ 裡；$C$ 其實不可數（用三進位證，這裡不證）",
+              "color": "violet",
+              "on": "每一#2"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "切到第幾步",
+      "beats": [
+        {
+          "show": [
+            "段是閉區間，要的是開區間：每段換成同中心、長兩倍的開區間",
+            "$\\text{總長}=2\\Big(\\frac23\\Big)^n$"
+          ],
+          "say": "但那些段是閉區間，定義要開區間。把每段換成同中心、長兩倍的開區間，總長變成兩倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "段是閉區間，要的是開區間：每段換成同中心、長兩倍的開區間"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{總長}=2\\Big(\\frac23\\Big)^n$",
+              "on": "成同"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varepsilon=0.01$：要 $2\\big(\\frac23\\big)^n<0.01$",
+            "$\\begin{aligned}n=13:&\\ \\ 2\\Big(\\frac23\\Big)^{13}\\approx0.0103\\\\n=14:&\\ \\ 2\\Big(\\frac23\\Big)^{14}\\approx0.0069\\end{aligned}$"
+          ],
+          "say": "艾普西隆是 0.01：第 13 步大約 0.0103，不夠；第 14 步大約 0.0069，夠了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varepsilon=0.01$：要 $2\\big(\\frac23\\big)^n<0.01$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}n=13:&\\ \\ 2\\Big(\\frac23\\Big)^{13}\\approx0.0103\\\\n=14:&\\ \\ 2\\Big(\\frac23\\Big)^{14}\\approx0.0069\\end{aligned}}$",
+              "on": "03"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的 $\\varepsilon$：$\\big(\\frac23\\big)^n\\to0$，總有 $n$ 讓 $2\\big(\\frac23\\big)^n<\\varepsilon$"
+          ],
+          "say": "一般的艾普西隆也一樣：3 分之 2 的 n 次方趨近 0，總有一步讓總長小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的 $\\varepsilon$：$\\big(\\frac23\\big)^n\\to0$，總有 $n$ 讓 $2\\big(\\frac23\\big)^n<\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C$ 測度為零，但不可數：測度為零 $\\ne$ 可數"
+          ],
+          "say": "所以康托爾集測度為零，但它不可數。測度為零比可數更廣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C$ 測度為零，但不可數：測度為零 $\\ne$ 可數",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lebesgue 判準",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $[a,b]$ 上有界。則",
+            "$\\begin{aligned}&f\\ \\text{Riemann 可積}\\\\\\iff\\ &\\{x:f\\text{ 在 }x\\text{ 不連續}\\}\\ \\text{測度為零}\\end{aligned}$"
+          ],
+          "say": "最後是勒貝格可積判準：有界函數黎曼可積，若且唯若不連續點的集合測度為零。壞點可以有，但要少到測度為零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $[a,b]$ 上有界。則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}&f\\ \\text{Riemann 可積}\\\\\\iff\\ &\\{x:f\\text{ 在 }x\\text{ 不連續}\\}\\ \\text{測度為零}\\end{aligned}}}}$",
+              "color": "red",
+              "on": "界函"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "連續"
+            },
+            {
+              "do": "write",
+              "line": "　這一課只敘述、不證（證明要用振幅與緊緻性）",
+              "color": "violet",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 連續：不連續點 $=\\varnothing$ ⇒ 可積（12.39）",
+            "• 有限個點取 $1$：不連續點有限 ⇒ 可積"
+          ],
+          "say": "對照以前的結果：連續、有限個點、單調，壞點都測度為零，可積；狄利克雷的壞點是整個 0 到 1，不可積。全部吻合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 連續：不連續點 $=\\varnothing$ ⇒ 可積（12.39）"
+            },
+            {
+              "do": "write",
+              "line": "• 有限個點取 $1$：不連續點有限 ⇒ 可積",
+              "on": "有限"
+            },
+            {
+              "do": "write",
+              "line": "• 單調：不連續點可數 ⇒ 可積（12.38）",
+              "on": "測度"
+            },
+            {
+              "do": "write",
+              "line": "• $D$：處處不連續，$[0,1]$ 不是測度為零 ⇒ 不可積",
+              "on": "雷的"
+            },
+            {
+              "do": "write",
+              "line": "　單調函數每個跳躍裡都能挑一個不同的有理數，所以跳躍點可數",
+              "color": "violet",
+              "on": "不可"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thomae 函數",
+      "beats": [
+        {
+          "show": [
+            "$T(x)=\\begin{cases}\\frac1q,&x=\\frac pq\\ \\text{既約},\\ q\\ge1\\\\0,&x\\notin\\mathbb{Q}\\end{cases}$"
+          ],
+          "say": "一個新例子：湯瑪伊函數。x 是既約分數 q 分之 p 時，值是 q 分之 1；x 是無理數時，值是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle T(x)={\\begin{cases}\\frac1q,&x=\\frac pq\\ \\text{既約},\\ q\\ge1\\\\0,&x\\notin\\mathbb{Q}\\end{cases}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "值是#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分母 q ≤ 8 的點；綠線 ε = 0.2，線上的紅點（T ≥ 0.2）只有 11 個"
+          ],
+          "say": "圖上畫出分母不超過 8 的點，分母越大，點越低。0.2 這條線上，只有 11 個紅點。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "thomae",
+                  "window": [
+                    -0.04,
+                    1.04,
+                    -0.08,
+                    1.1
+                  ],
+                  "points": [
+                    {
+                      "x": "0/1",
+                      "y": "1/1",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/1",
+                      "y": "1/1",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/2",
+                      "y": "1/2",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/3",
+                      "y": "1/3",
+                      "color": "red"
+                    },
+                    {
+                      "x": "2/3",
+                      "y": "1/3",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/4",
+                      "y": "1/4",
+                      "color": "red"
+                    },
+                    {
+                      "x": "3/4",
+                      "y": "1/4",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/5",
+                      "y": "1/5",
+                      "color": "red"
+                    },
+                    {
+                      "x": "2/5",
+                      "y": "1/5",
+                      "color": "red"
+                    },
+                    {
+                      "x": "3/5",
+                      "y": "1/5",
+                      "color": "red"
+                    },
+                    {
+                      "x": "4/5",
+                      "y": "1/5",
+                      "color": "red"
+                    },
+                    {
+                      "x": "1/6",
+                      "y": "1/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "5/6",
+                      "y": "1/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "1/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "2/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "3/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "4/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "5/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "6/7",
+                      "y": "1/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "1/8",
+                      "y": "1/8",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "3/8",
+                      "y": "1/8",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "5/8",
+                      "y": "1/8",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "7/8",
+                      "y": "1/8",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 0.2,
+                      "color": "green"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "0",
+                      "color": "pencil",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "分母 q ≤ 8 的點；綠線 ε = 0.2，線上的紅點（T ≥ 0.2）只有 11 個",
+              "color": "violet",
+              "on": "越低"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理點不連續：$T(\\frac pq)=\\frac1q>0$，但旁邊有無理數，值是 $0$"
+          ],
+          "say": "在有理點，值是 q 分之 1；但旁邊到處是值為 0 的無理數，所以不連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有理點不連續：$T(\\frac pq)=\\frac1q>0$，但旁邊有無理數，值是 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "無理點 $x_0$ 連續：給 $\\varepsilon$，$T\\ge\\varepsilon$ 的點只有有限個（$q\\le\\frac1\\varepsilon$）"
+          ],
+          "say": "在無理點連續：給定艾普西隆，值大於等於艾普西隆的點，分母不超過艾普西隆分之 1，只有有限個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "無理點 $x_0$ 連續：給 $\\varepsilon$，$T\\ge\\varepsilon$ 的點只有有限個（$q\\le\\frac1\\varepsilon$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\delta=x_0$ 到它們的最短距離 $>0$：$|x-x_0|<\\delta\\Rightarrow T(x)<\\varepsilon$"
+          ],
+          "say": "無理點 x0 不是其中之一，取得塔為 x0 到它們的最短距離，範圍內函數值都小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\delta=x_0$ 到它們的最短距離 $>0$：$|x-x_0|<\\delta\\Rightarrow T(x)<\\varepsilon$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\varepsilon=0.2$，只要避開圖上那 $11$ 個紅點",
+              "color": "violet",
+              "on": "到它"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thomae 可積",
+      "beats": [
+        {
+          "show": [
+            "不連續點 $=\\mathbb{Q}\\cap[0,1]$：可數，測度為零",
+            "$\\Rightarrow\\ T\\ \\text{在}\\ [0,1]\\ \\text{上 Riemann 可積}$"
+          ],
+          "say": "所以湯瑪伊函數的不連續點，剛好是 0 到 1 的有理數，可數，測度為零。由判準，它可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不連續點 $=\\mathbb{Q}\\cap[0,1]$：可數，測度為零"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\Rightarrow\\ T\\ \\text{在}\\ [0,1]\\ \\text{上 Riemann 可積}}}$",
+              "on": "好是"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "測度"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^1T(x)\\,dx=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "不存在：跟 $D$ 一樣在有理點取正值",
+            "why": "$D$ 的壞點是整個 $[0,1]$；$T$ 的壞點只有 $\\mathbb{Q}$"
+          },
+          {
+            "label": "$\\frac12$",
+            "why": "函數值大多是 $0$，不是平均分配在 $0$ 和 $1$ 之間"
+          },
+          {
+            "label": "$\\sum\\frac1q$",
+            "why": "積分不是把有理點的值加起來；這個和還是發散的"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Thomae 可積",
+      "beats": [
+        {
+          "show": [
+            "每段都有無理數 ⇒ $L(T,P)=0$；可積 ⇒ $\\displaystyle\\int_0^1T=\\sup_PL(T,P)=0$"
+          ],
+          "say": "每一段都有無理數，所以下和永遠是 0；它可積，積分就等於下和的上確界，也就是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每段都有無理數 ⇒ $L(T,P)=0$；可積 ⇒ $\\displaystyle\\int_0^1T=\\sup_PL(T,P)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$T$ 和 $D$ 只差在有理點的值：$\\frac1q$ 會變小，$1$ 不會"
+          ],
+          "say": "湯瑪伊和狄利克雷只差在有理點的值：一個越來越小，一個永遠是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$T$ 和 $D$ 只差在有理點的值：$\\frac1q$ 會變小，$1$ 不會"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 測度為零：$\\forall\\varepsilon>0$，可數個開區間蓋住、總長 $<\\varepsilon$",
+            "• 可數集測度為零：第 $k$ 個給 $\\frac\\varepsilon{2^{k+1}}$，總長 $\\frac\\varepsilon2$"
+          ],
+          "say": "整理：測度為零，就是能被總長任意小的可數個開區間蓋住。可數集都是，康托爾集也是。勒貝格判準說，有界函數可積，正好是不連續點測度為零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 測度為零：$\\forall\\varepsilon>0$，可數個開區間蓋住、總長 $<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• 可數集測度為零：第 $k$ 個給 $\\frac\\varepsilon{2^{k+1}}$，總長 $\\frac\\varepsilon2$",
+              "on": "長任"
+            },
+            {
+              "do": "write",
+              "line": "• Cantor 集：不可數，但測度為零（$2(\\frac23)^n\\to0$）",
+              "on": "可數#2"
+            },
+            {
+              "do": "write",
+              "line": "• $[a,b]$ 不是測度為零",
+              "on": "勒貝"
+            },
+            {
+              "do": "write",
+              "line": "• 勒貝格判準：有界 $f$ 可積 ⇔ 不連續點測度為零",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：σ-代數：哪些集合可以量長度"
+          ],
+          "say": "下一課，西格瑪代數：哪些集合可以量長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：σ-代數：哪些集合可以量長度"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["measure", "cantor", "geometric-series", "riemann-lebesgue"],
-    "fine": ["measure-zero-countable-cover", "measure-zero-cantor", "measure-zero-lebesgue-criterion", "measure-zero-fat-cantor"]
+    "coarse": [
+      "measure",
+      "cantor",
+      "geometric-series",
+      "riemann-lebesgue"
+    ],
+    "fine": [
+      "measure-zero-countable-cover",
+      "measure-zero-cantor",
+      "measure-zero-lebesgue-criterion",
+      "measure-zero-fat-cantor"
+    ]
   },
   "practice": [
-    { "id": "lb-mea-004", "core": true, "trains": "measure-zero-countable-cover" },
-    { "id": "lb-mea-001", "core": true, "trains": "measure-zero-cantor" },
-    { "id": "cg-12h-007", "core": true, "trains": "measure-zero-countable-cover" },
-    { "id": "cg-12h-009", "core": true, "trains": "measure-zero-lebesgue-criterion" },
-    { "id": "lb-mea-003", "trains": "measure-zero-fat-cantor" },
-    { "id": "lb-cmp-001", "trains": "measure-zero-lebesgue-criterion" },
-    { "id": "cg-12h-008", "trains": "measure-zero-countable-cover" },
-    { "id": "cg-12h-010", "trains": "measure-zero-lebesgue-criterion" },
-    { "id": "lb-mea-002", "challenge": true, "trains": "measure-zero-fat-cantor", "note": "挑戰：去掉的總長只有 $\\frac{1}{2}$，剩下的集合不含區間，卻不是測度為零。" },
-    { "id": "cg-12h-011", "challenge": true, "trains": "measure-zero-lebesgue-criterion" }
+    {
+      "id": "lb-mea-004",
+      "core": true,
+      "trains": "measure-zero-countable-cover"
+    },
+    {
+      "id": "lb-mea-001",
+      "core": true,
+      "trains": "measure-zero-cantor"
+    },
+    {
+      "id": "cg-12h-007",
+      "core": true,
+      "trains": "measure-zero-countable-cover"
+    },
+    {
+      "id": "cg-12h-009",
+      "core": true,
+      "trains": "measure-zero-lebesgue-criterion"
+    },
+    {
+      "id": "lb-mea-003",
+      "trains": "measure-zero-fat-cantor"
+    },
+    {
+      "id": "lb-cmp-001",
+      "trains": "measure-zero-lebesgue-criterion"
+    },
+    {
+      "id": "cg-12h-008",
+      "trains": "measure-zero-countable-cover"
+    },
+    {
+      "id": "cg-12h-010",
+      "trains": "measure-zero-lebesgue-criterion"
+    },
+    {
+      "id": "lb-mea-002",
+      "challenge": true,
+      "trains": "measure-zero-fat-cantor",
+      "note": "挑戰：去掉的總長只有 $\\frac{1}{2}$，剩下的集合不含區間，卻不是測度為零。"
+    },
+    {
+      "id": "cg-12h-011",
+      "challenge": true,
+      "trains": "measure-zero-lebesgue-criterion"
+    }
   ],
   "gaps": []
 }

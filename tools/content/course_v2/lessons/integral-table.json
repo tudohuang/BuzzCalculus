@@ -1,57 +1,138 @@
 {
   "id": "integral-table",
   "title": "基本積分表",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["indefinite-integral", "derivative-exp", "derivative-trig", "inverse-trig-derivative"],
-  "next": ["definite-signed-area"],
-  "related": ["reverse-chain", "u-sub-basic", "integration-by-parts"],
+  "prerequisites": [
+    "indefinite-integral",
+    "derivative-exp",
+    "derivative-trig",
+    "inverse-trig-derivative"
+  ],
+  "next": [
+    "definite-signed-area"
+  ],
+  "related": [
+    "reverse-chain",
+    "u-sub-basic",
+    "integration-by-parts"
+  ],
   "objectives": [
-    "把每一條基本積分公式對回它來自的微分公式，不靠死背。",
-    "分清楚容易混的幾條：$\\frac{1}{1+x^2}$ 是 $\\arctan$、不是 $\\ln$；$a^x$ 要除以 $\\ln a$。",
-    "會用代數變形，把不在表上的式子改成表上的樣子。"
+    "把每一條基本積分公式對回它來自的微分公式，不靠死背",
+    "分清楚容易混的幾條：$\\frac{1}{1+x^2}$ 是 $\\arctan$、不是 $\\ln$，$a^x$ 要除以 $\\ln a$，$\\sin$ 積出來有負號",
+    "會用代數變形，把不在表上的式子改成表上的樣子"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 每一行都是一條微分公式倒過來",
+      "heading": "① 微分公式倒過來",
       "body": [
-        "積分表不是新東西。你學過 $(\\sin x)'=\\cos x$，倒過來就是 $\\int\\cos x\\,dx=\\sin x+C$。下面每一行都可以這樣對回去："
+        "做法：把微分公式倒過來讀",
+        "冪次、對數",
+        "來自 $(x^{n+1})'=(n+1)x^n$、$(\\ln|x|)'=\\frac1x$",
+        "指數",
+        "來自 $(e^x)'=e^x$、$(a^x)'=a^x\\ln a$；$a>0$、$a\\ne1$"
       ],
       "tex": [
-        "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\ (n\\ne-1),\\qquad \\int\\frac{dx}{x}=\\ln|x|+C",
-        "\\int e^x\\,dx=e^x+C,\\qquad \\int a^x\\,dx=\\frac{a^x}{\\ln a}+C\\ (a>0,\\ a\\ne1)",
-        "\\int\\cos x\\,dx=\\sin x+C,\\qquad \\int\\sin x\\,dx=-\\cos x+C",
-        "\\int\\sec^2x\\,dx=\\tan x+C,\\qquad \\int\\sec x\\tan x\\,dx=\\sec x+C",
-        "\\int\\frac{dx}{1+x^2}=\\arctan x+C,\\qquad \\int\\frac{dx}{\\sqrt{1-x^2}}=\\arcsin x+C"
+        "F'=f\\iff\\int f(x)\\,dx=F(x)+C",
+        "\\begin{aligned}\\int x^n\\,dx&=\\frac{x^{n+1}}{n+1}+C\\ \\ (n\\ne-1)\\\\ \\int\\frac1x\\,dx&=\\ln|x|+C\\end{aligned}",
+        "\\begin{aligned}\\int e^x\\,dx&=e^x+C\\\\ \\int a^x\\,dx&=\\frac{a^x}{\\ln a}+C\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "① 三角函數",
+      "body": [
+        "來自 $(\\sin x)'=\\cos x$、$(\\cos x)'=-\\sin x$",
+        "來自 $(\\tan x)'=\\sec^2x$、$(\\cot x)'=-\\csc^2x$",
+        "來自 $(\\sec x)'=\\sec x\\tan x$、$(\\csc x)'=-\\csc x\\cot x$",
+        "規律：名字有「餘」的（$\\cos,\\cot,\\csc$），微分都帶負號"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\int\\cos x\\,dx&=\\sin x+C\\\\ \\int\\sin x\\,dx&=-\\cos x+C\\end{aligned}",
+        "\\begin{aligned}\\int\\sec^2x\\,dx&=\\tan x+C\\\\ \\int\\csc^2x\\,dx&=-\\cot x+C\\end{aligned}",
+        "\\begin{aligned}\\int\\sec x\\tan x\\,dx&=\\sec x+C\\\\ \\int\\csc x\\cot x\\,dx&=-\\csc x+C\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "① 反三角與檢查",
+      "body": [
+        "反三角函數",
+        "來自 $(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}}$、$(\\arctan x)'=\\frac{1}{1+x^2}$；$\\int\\frac{dx}{1+x^2}$ 是 $\\int\\frac{1}{1+x^2}\\,dx$ 的簡寫",
+        "忘了某一行？微分回去就能確認",
+        "例：逐項查表",
+        "• $e^x$ → $e^x$",
+        "• $\\dfrac{3}{1+x^2}$ → $3\\arctan x$",
+        "• $-2\\cos x$ → $-2\\sin x$",
+        "檢查：微分回去 $e^x+\\dfrac{3}{1+x^2}-2\\cos x$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\int\\frac{dx}{\\sqrt{1-x^2}}&=\\arcsin x+C\\\\ \\int\\frac{dx}{1+x^2}&=\\arctan x+C\\end{aligned}",
+        "\\int\\left(e^x+\\frac{3}{1+x^2}-2\\cos x\\right)dx",
+        "=e^x+3\\arctan x-2\\sin x+C"
+      ]
     },
     {
       "heading": "② 最容易混的地方",
       "body": [
-        "$\\frac{1}{1+x^2}$ 積出來是 $\\arctan x$，不是 $\\ln(1+x^2)$：$(\\ln(1+x^2))'=\\frac{2x}{1+x^2}$，分子多了 $2x$。",
-        "$a^x$ 要除以 $\\ln a$，因為 $(a^x)'=a^x\\ln a$。只有底數剛好是 $e$，$\\ln e=1$，才不用除。",
-        "$\\sin x$ 積出來有負號，$\\cos x$ 沒有。忘了哪個有，就微分檢查一次。"
+        "一、$\\frac{1}{1+x^2}$ 不是 $\\ln$",
+        "分子是常數、分母 $1+x^2$：是 $\\arctan$",
+        "二、$a^x$ 不是冪次",
+        "冪次規則是「底數是 $x$」：$x^2$；指數函數是「指數是 $x$」：$2^x$",
+        "三、$\\sin$ 積出來有負號",
+        "口訣：$\\sin\\xrightarrow{\\ \\text{微}\\ }\\cos\\xrightarrow{\\ \\text{微}\\ }-\\sin\\xrightarrow{\\ \\text{微}\\ }-\\cos$；積分往回走"
       ],
-      "collapsible": false
+      "tex": [
+        "\\big(\\ln(1+x^2)\\big)'=\\frac{2x}{1+x^2}\\ne\\frac{1}{1+x^2}",
+        "\\int2^x\\,dx=\\frac{2^x}{\\ln2}+C\\quad\\text{不是}\\ \\frac{2^{x+1}}{x+1}",
+        "\\int\\sin x\\,dx=-\\cos x+C"
+      ]
     },
     {
       "heading": "③ 帶常數 $a$ 的版本",
       "body": [
-        "分母是 $x^2+a^2$（$a>0$）時，答案是 $\\frac{1}{a}\\arctan\\frac{x}{a}$。檢查：$\\left(\\frac{1}{a}\\arctan\\frac{x}{a}\\right)'=\\frac{1}{a}\\cdot\\frac{1/a}{1+x^2/a^2}=\\frac{1}{a^2+x^2}$。",
-        "根號裡是 $a^2-x^2$ 時，答案是 $\\arcsin\\frac{x}{a}$，前面沒有 $\\frac{1}{a}$：$\\left(\\arcsin\\frac{x}{a}\\right)'=\\frac{1/a}{\\sqrt{1-x^2/a^2}}=\\frac{1}{\\sqrt{a^2-x^2}}$，兩個 $\\frac{1}{a}$ 剛好抵消。"
+        "問題：$\\displaystyle\\int\\frac{dx}{x^2+9}$，分母不是 $1+x^2$",
+        "猜：$\\arctan\\dfrac x3$。微分（連鎖律）：",
+        "多了 $3$，前面乘 $\\frac13$ 修正：",
+        "一般公式（$a>0$）：",
+        "證明：把右邊微分回去（連鎖律），用到 $a>0$ 時 $\\sqrt{a^2}=a$",
+        "裡面乘常數 $k$：多出的 $k$ 要除掉",
+        "$k\\ne0$"
       ],
-      "tex": ["\\int\\frac{dx}{x^2+a^2}=\\frac1a\\arctan\\frac xa+C,\\qquad \\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C"],
-      "collapsible": false
+      "tex": [
+        "\\left(\\arctan\\frac x3\\right)'=\\frac{1}{1+\\frac{x^2}{9}}\\cdot\\frac13=\\frac{3}{9+x^2}",
+        "\\int\\frac{dx}{x^2+9}=\\frac13\\arctan\\frac x3+C",
+        "\\int\\frac{dx}{a^2+x^2}=\\frac1a\\arctan\\frac xa+C",
+        "\\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C",
+        "\\int e^{kx}dx=\\frac{e^{kx}}{k}+C,\\quad\\int\\cos kx\\,dx=\\frac{\\sin kx}{k}+C"
+      ]
     },
     {
       "heading": "④ 不在表上的，先變形",
       "body": [
-        "$\\frac{x^2}{x^2+1}$ 不在表上，但 $x^2=(x^2+1)-1$，所以 $\\frac{x^2}{x^2+1}=1-\\frac{1}{x^2+1}$，兩項都在表上。",
-        "$e^{3x}$、$\\cos 3x$ 這種「裡面是 $ax$」的，下一步在〈反連鎖律〉處理；$\\tan x$、$\\ln x$ 也不在表上，要等〈換元：基礎〉與〈分部積分推導〉。"
+        "分子湊出分母：$x^2=(x^2+1)-1$",
+        "現在兩項都在表上：",
+        "檢查：$1-\\frac{1}{1+x^2}=\\frac{x^2}{x^2+1}$",
+        "三角恆等式也能變形：$\\displaystyle\\int\\tan^2x\\,dx$",
+        "$\\tan^2x=\\sec^2x-1$（由 $\\sin^2x+\\cos^2x=1$ 除以 $\\cos^2x$）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{x^2}{x^2+1}\\,dx",
+        "\\frac{x^2}{x^2+1}=\\frac{(x^2+1)-1}{x^2+1}=1-\\frac{1}{x^2+1}",
+        "=x-\\arctan x+C",
+        "\\int\\tan^2x\\,dx=\\tan x-x+C"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 表上每一行 = 一條微分公式倒過來",
+        "• $\\int\\frac{dx}{1+x^2}=\\arctan x$，不是 $\\ln$",
+        "• $\\int a^x\\,dx=\\frac{a^x}{\\ln a}$；$\\int\\sin x\\,dx=-\\cos x$",
+        "• $\\int\\frac{dx}{a^2+x^2}=\\frac1a\\arctan\\frac xa$；$\\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa$",
+        "• 不在表上：先變形（分子湊分母、恆等式）",
+        "下一課：定積分與有號面積"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,35 +181,66 @@
   ],
   "checks": [
     {
-      "ask": "$\\int\\frac{1}{1+x^2}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{dx}{\\sqrt{4-x^2}}=$？",
       "options": [
-        { "label": "$\\arctan x+C$", "correct": true },
-        { "label": "$\\ln(1+x^2)+C$", "why": "$(\\ln(1+x^2))'=\\frac{2x}{1+x^2}$，分子多了 $2x$。分子剛好是分母的導數時才會積出 $\\ln$。" },
-        { "label": "$\\frac{1}{x+x^3/3}+C$", "why": "你把分母積分之後再取倒數，這不是任何一條規則；微分回去對不上。" }
+        {
+          "label": "$\\arcsin\\dfrac x2+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac12\\arcsin\\dfrac x2+C$",
+          "why": "把 $\\arctan$ 的 $\\frac1a$ 搬過來了；微分回去少一半"
+        },
+        {
+          "label": "$\\dfrac12\\arctan\\dfrac x2+C$",
+          "why": "有根號、是相減：是 $\\arcsin$，不是 $\\arctan$"
+        },
+        {
+          "label": "$\\arcsin\\dfrac x4+C$",
+          "why": "$a^2=4$，所以 $a=2$，不是 $4$"
+        }
       ]
     },
     {
-      "ask": "$\\int 2^x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int e^{2x}\\,dx=$？",
       "options": [
-        { "label": "$\\frac{2^x}{\\ln 2}+C$", "correct": true },
-        { "label": "$2^x+C$", "why": "$(2^x)'=2^x\\ln 2$，多了 $\\ln 2$，要除掉。只有底數是 $e$ 才不用除。" },
-        { "label": "$\\frac{2^{x+1}}{x+1}+C$", "why": "你把冪次公式套到指數函數上了。冪次公式只管 $x^n$：底數是變數、指數是常數。" }
+        {
+          "label": "$\\dfrac12e^{2x}+C$",
+          "correct": true
+        },
+        {
+          "label": "$2e^{2x}+C$",
+          "why": "這是 $e^{2x}$ 的導數"
+        },
+        {
+          "label": "$e^{2x}+C$",
+          "why": "微分回去是 $2e^{2x}$，沒有修正"
+        },
+        {
+          "label": "$\\dfrac{e^{2x+1}}{2x+1}+C$",
+          "why": "把指數當成冪次"
+        }
       ]
     },
     {
-      "ask": "$\\int\\sec x\\tan x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{x^2+3}{x^2+1}\\,dx=$？",
       "options": [
-        { "label": "$\\sec x+C$", "correct": true },
-        { "label": "$\\tan x+C$", "why": "$(\\tan x)'=\\sec^2 x$，不是 $\\sec x\\tan x$。" },
-        { "label": "$\\frac{\\sec^2 x}{2}+C$", "why": "$\\left(\\frac{\\sec^2 x}{2}\\right)'=\\sec^2 x\\tan x$，多了一個 $\\sec x$。直接對回微分公式：$(\\sec x)'=\\sec x\\tan x$。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\frac{1}{\\sqrt{4-x^2}}\\,dx$ 是？",
-      "options": [
-        { "label": "$\\arcsin\\frac{x}{2}+C$", "correct": true },
-        { "label": "$\\frac{1}{2}\\arcsin\\frac{x}{2}+C$", "why": "你把 $\\arctan$ 版本的 $\\frac{1}{a}$ 帶過來了。$\\left(\\arcsin\\frac{x}{2}\\right)'=\\frac{1}{\\sqrt{4-x^2}}$，係數已經剛好。" },
-        { "label": "$\\frac{1}{2}\\arctan\\frac{x}{2}+C$", "why": "$\\arctan$ 對應的是 $x^2+a^2$、沒有根號；這題是根號裡的 $a^2-x^2$，對應 $\\arcsin$。" }
+        {
+          "label": "$x+2\\arctan x+C$",
+          "correct": true
+        },
+        {
+          "label": "$x+3\\arctan x+C$",
+          "why": "分子湊出 $x^2+1$ 之後剩 $2$，不是 $3$"
+        },
+        {
+          "label": "$\\ln(x^2+1)+C$",
+          "why": "分子不是分母的導數 $2x$"
+        },
+        {
+          "label": "$\\dfrac{x^3/3+3x}{x^3/3+x}+C$",
+          "why": "分子分母各自積：除法不能拆"
+        }
       ]
     }
   ],
@@ -136,256 +248,790 @@
     {
       "title": "微分公式倒過來",
       "beats": [
-        { "show": ["$(\\sin x)'=\\cos x$","⇒ $\\int\\cos x\\,dx=\\sin x+C$"],
-          "note": "積分表不是新東西。",
-          "say": "積分表不用另外背新東西。sine 微分是 cosine，倒過來，cosine 的積分就是 sine 加 C。",
+        {
+          "show": [
+            "做法：把微分公式倒過來讀",
+            "$F'=f\\iff\\int f(x)\\,dx=F(x)+C$"
+          ],
+          "say": "這一課要整理一張積分表。但不用死背：表上每一行，都是一條學過的微分公式，倒過來讀而已。",
           "board": [
-            {"do":"write","line":"$({{s:\\sin x}})'={{c:\\cos x}}$","on":"sine 微分","tint":{"s":"blue","c":"violet"}},
-            {"do":"write","line":"⇒ $\\int{{c:\\cos x}}\\,dx={{s:\\sin x}}+C$","on":"倒過來"}
-          ] },
-        { "show": ["$\\int e^x\\,dx=e^x+C$","$\\int\\frac{dx}{x}=\\ln|x|+C$"],
-          "note": "每一行都對得回一條微分公式。",
-          "say": "e 的 x 次方微分是自己，積分也是自己。x 分之一的積分是自然對數絕對值 x。",
+            {
+              "do": "write",
+              "line": "做法：把微分公式倒過來讀"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle F'=f\\iff\\int f(x)\\,dx=F(x)+C}}$",
+              "on": "用死"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "學過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪次、對數",
+            "$\\begin{aligned}\\int x^n\\,dx&=\\frac{x^{n+1}}{n+1}+C\\ \\ (n\\ne-1)\\\\ \\int\\frac1x\\,dx&=\\ln|x|+C\\end{aligned}$"
+          ],
+          "say": "先看冪次和對數，上一課已經做過：x 的 n 次方，次方加一再除；x 分之 1 是自然對數絕對值 x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int e^x\\,dx=e^x+C$","on":"e 的 x"},
-            {"do":"write","line":"$\\int\\frac{dx}{x}=\\ln{{a:|x|}}+C$","on":"x 分之一"},
-            {"do":"underline","term":"a","on":"絕對值"}
-          ] },
-        { "show": ["$\\int\\sec^2x\\,dx=\\tan x+C$","$\\int\\sec x\\tan x\\,dx=\\sec x+C$"],
-          "say": "tangent 微分是 secant 平方；secant 微分是 secant 乘 tangent。倒過來就是這兩行。",
+            {
+              "do": "write",
+              "line": "冪次、對數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int x^n\\,dx&=\\frac{x^{n+1}}{n+1}+C\\ \\ (n\\ne-1)\\\\ \\int\\frac1x\\,dx&=\\ln|x|+C\\end{aligned}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(x^{n+1})'=(n+1)x^n$、$(\\ln|x|)'=\\frac1x$",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "指數",
+            "$\\begin{aligned}\\int e^x\\,dx&=e^x+C\\\\ \\int a^x\\,dx&=\\frac{a^x}{\\ln a}+C\\end{aligned}$"
+          ],
+          "say": "指數：e 的 x 次方微分是自己，積分也是自己。a 的 x 次方微分會多出自然對數 a，所以積分要除以自然對數 a。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\tan x)'=\\sec^2x$","on":"tangent 微分"},
-            {"do":"write","line":"⇒ $\\int\\sec^2x\\,dx=\\tan x+C$","on":"secant 平方"},
-            {"do":"write","line":"$(\\sec x)'=\\sec x\\tan x$","on":"secant 微分"},
-            {"do":"write","line":"⇒ $\\int\\sec x\\tan x\\,dx=\\sec x+C$","on":"倒過來"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "指數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int e^x\\,dx&=e^x+C\\\\ \\int a^x\\,dx&=\\frac{a^x}{\\ln a}+C\\end{aligned}}$",
+              "on": "也是"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(e^x)'=e^x$、$(a^x)'=a^x\\ln a$；$a>0$、$a\\ne1$",
+              "color": "violet",
+              "on": "然對#1"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "$\\arctan$ 不是 $\\ln$",
+      "title": "三角函數",
       "beats": [
-        { "show": ["$\\int\\frac{dx}{1+x^2}=\\arctan x+C$"],
-          "note": "最容易混的一行。",
-          "say": "一加 x 平方分之一，積出來是 arctangent x。這一行最常被寫錯。",
+        {
+          "show": [
+            "$\\begin{aligned}\\int\\cos x\\,dx&=\\sin x+C\\\\ \\int\\sin x\\,dx&=-\\cos x+C\\end{aligned}$"
+          ],
+          "say": "三角函數：正弦微分是餘弦，所以餘弦積分是正弦。餘弦微分是負的正弦，所以正弦積分是負的餘弦。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{dx}{1+x^2}={{r:\\arctan x}}+C$"},
-            {"do":"box","term":"r","color":"green","on":"arctangent"}
-          ] },
-        { "show": ["$y=\\frac{1}{1+x^2}$ 的圖"],
-          "note": "永遠在 $x$ 軸上方。",
-          "say": "畫出來看：一加 x 平方分之一，是中間高、兩邊慢慢壓低的鐘形，永遠在 x 軸上方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int\\cos x\\,dx&=\\sin x+C\\\\ \\int\\sin x\\,dx&=-\\cos x+C\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(\\sin x)'=\\cos x$、$(\\cos x)'=-\\sin x$",
+              "color": "violet",
+              "on": "餘弦#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int\\sec^2x\\,dx&=\\tan x+C\\\\ \\int\\csc^2x\\,dx&=-\\cot x+C\\end{aligned}$"
+          ],
+          "say": "正切微分是正割平方，所以正割平方積分是正切；餘切那一行，一樣多一個負號。",
           "board": [
-            {"do":"plot","graph":{"window":[-4,4,-0.5,1.5],"curves":[{"expr":"1/(1+x^2)","domain":[-4,4],"color":"blue"}],"fills":[{"expr":"1/(1+x^2)","from":-3,"to":3,"color":"blue"}]}}
-          ] },
-        { "show": ["$(\\ln(1+x^2))'=\\frac{2x}{1+x^2}$"],
-          "note": "分子多了 $2x$。",
-          "say": "很多人寫成自然對數一加 x 平方。微分回去看，分子多了二 x，對不上。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int\\sec^2x\\,dx&=\\tan x+C\\\\ \\int\\csc^2x\\,dx&=-\\cot x+C\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(\\tan x)'=\\sec^2x$、$(\\cot x)'=-\\csc^2x$",
+              "color": "violet",
+              "on": "是正#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int\\sec x\\tan x\\,dx&=\\sec x+C\\\\ \\int\\csc x\\cot x\\,dx&=-\\csc x+C\\end{aligned}$"
+          ],
+          "say": "正割微分是正割乘正切，倒過來就是一行積分；餘割那一行也有負號。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{dx}{1+x^2}={{w:\\ln(1+x^2)}}+C$"},
-            {"do":"strike","term":"w","label":"錯","on":"一加"},
-            {"do":"write","line":"$(\\ln(1+x^2))'=\\frac{{{t:2x}}}{1+x^2}$","on":"微分回去看"},
-            {"do":"focus","term":"t","color":"red","on":"二 x"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int\\sec x\\tan x\\,dx&=\\sec x+C\\\\ \\int\\csc x\\cot x\\,dx&=-\\csc x+C\\end{aligned}}$"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(\\sec x)'=\\sec x\\tan x$、$(\\csc x)'=-\\csc x\\cot x$",
+              "color": "violet",
+              "on": "倒過"
+            },
+            {
+              "do": "write",
+              "line": "規律：名字有「餘」的（$\\cos,\\cot,\\csc$），微分都帶負號",
+              "on": "餘割"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "反三角與檢查",
+      "beats": [
+        {
+          "show": [
+            "反三角函數",
+            "$\\begin{aligned}\\int\\frac{dx}{\\sqrt{1-x^2}}&=\\arcsin x+C\\\\ \\int\\frac{dx}{1+x^2}&=\\arctan x+C\\end{aligned}$"
+          ],
+          "say": "最後是反三角函數：反正弦的導數，是根號 1 減 x 平方分之 1；反正切的導數，是 1 加 x 平方分之 1。倒過來，就是兩行很重要的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反三角函數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}\\int\\frac{dx}{\\sqrt{1-x^2}}&=\\arcsin x+C\\\\ \\int\\frac{dx}{1+x^2}&=\\arctan x+C\\end{aligned}}}}$",
+              "on": "根號"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "切的"
+            },
+            {
+              "do": "write",
+              "line": "　來自 $(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}}$、$(\\arctan x)'=\\frac{1}{1+x^2}$；$\\int\\frac{dx}{1+x^2}$ 是 $\\int\\frac{1}{1+x^2}\\,dx$ 的簡寫",
+              "color": "violet",
+              "on": "倒過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "忘了某一行？微分回去就能確認"
+          ],
+          "say": "如果哪一行忘了，或記不清楚有沒有負號，就把右邊微分回去，馬上知道。",
+          "board": [
+            {
+              "do": "write",
+              "line": "忘了某一行？微分回去就能確認"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：逐項查表",
+            "$\\int\\left(e^x+\\frac{3}{1+x^2}-2\\cos x\\right)dx$"
+          ],
+          "say": "例子：e 的 x 次方，加 1 加 x 平方分之 3，減 2 倍餘弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：逐項查表"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\left(e^x+\\frac{3}{1+x^2}-2\\cos x\\right)dx$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $e^x$ → $e^x$",
+            "• $\\dfrac{3}{1+x^2}$ → $3\\arctan x$"
+          ],
+          "say": "用線性，一項一項查表：e 的 x 次方積出來是自己；1 加 x 平方分之 3 是 3 倍反正切；負 2 倍餘弦是負 2 倍正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $e^x$ → $e^x$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{3}{1+x^2}$ → $3\\arctan x$",
+              "on": "來是"
+            },
+            {
+              "do": "write",
+              "line": "• $-2\\cos x$ → $-2\\sin x$",
+              "on": "倍反"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=e^x+3\\arctan x-2\\sin x+C$"
+          ],
+          "say": "合起來，再加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =e^x+3\\arctan x-2\\sin x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "再加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：微分回去 $e^x+\\dfrac{3}{1+x^2}-2\\cos x$"
+          ],
+          "say": "微分回去檢查，三項都對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：微分回去 $e^x+\\dfrac{3}{1+x^2}-2\\cos x$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "最容易混的地方",
+      "beats": [
+        {
+          "show": [
+            "一、$\\frac{1}{1+x^2}$ 不是 $\\ln$",
+            "$\\big(\\ln(1+x^2)\\big)'=\\frac{2x}{1+x^2}\\ne\\frac{1}{1+x^2}$"
+          ],
+          "say": "第一個陷阱：看到分母，就想寫自然對數。但自然對數 1 加 x 平方微分，連鎖律會多一個 2x，得不到 1 加 x 平方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一、$\\frac{1}{1+x^2}$ 不是 $\\ln$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big(\\ln(1+x^2)\\big)'=\\frac{2x}{1+x^2}\\ne\\frac{1}{1+x^2}$",
+              "on": "方微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子是常數、分母 $1+x^2$：是 $\\arctan$"
+          ],
+          "say": "記住：分子是常數，分母是 1 加 x 平方，答案是反正切，不是自然對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子是常數、分母 $1+x^2$：是 $\\arctan$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "二、$a^x$ 不是冪次",
+            "$\\int2^x\\,dx=\\frac{2^x}{\\ln2}+C\\quad\\text{不是}\\ \\frac{2^{x+1}}{x+1}$"
+          ],
+          "say": "第二個陷阱：2 的 x 次方，變數在指數上，不是冪次，不能用次方加一的規則。要除以自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "二、$a^x$ 不是冪次"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int2^x\\,dx=\\frac{2^x}{\\ln2}+C\\quad\\text{不是}\\ \\frac{2^{x+1}}{x+1}$",
+              "on": "數在"
+            },
+            {
+              "do": "write",
+              "line": "　冪次規則是「底數是 $x$」：$x^2$；指數函數是「指數是 $x$」：$2^x$",
+              "color": "violet",
+              "on": "加一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三、$\\sin$ 積出來有負號",
+            "$\\int\\sin x\\,dx=-\\cos x+C$"
+          ],
+          "say": "第三個陷阱：正弦積分是負的餘弦。很多人負號掉在微分那一邊，或積分那一邊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三、$\\sin$ 積出來有負號"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sin x\\,dx=-\\cos x+C$",
+              "on": "人負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "口訣：$\\sin\\xrightarrow{\\ \\text{微}\\ }\\cos\\xrightarrow{\\ \\text{微}\\ }-\\sin\\xrightarrow{\\ \\text{微}\\ }-\\cos$；積分往回走"
+          ],
+          "say": "可以記這個循環：正弦微分到餘弦，再到負正弦，再到負餘弦。積分就是在這個循環上往回走一格：正弦往回一格，是負餘弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "口訣：$\\sin\\xrightarrow{\\ \\text{微}\\ }\\cos\\xrightarrow{\\ \\text{微}\\ }-\\sin\\xrightarrow{\\ \\text{微}\\ }-\\cos$；積分往回走"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\int\\frac{5}{1+x^2}\\,dx=$？",
+        "options": [
+          {
+            "label": "$5\\arctan x+C$",
+            "correct": true
+          },
+          {
+            "label": "$5\\ln(1+x^2)+C$",
+            "why": "微分回去是 $\\frac{10x}{1+x^2}$，多了 $2x$"
+          },
+          {
+            "label": "$\\dfrac{5x}{x+\\frac{x^3}{3}}+C$",
+            "why": "分子分母各自積：除法不能拆"
+          },
+          {
+            "label": "$-\\dfrac{10x}{(1+x^2)^2}+C$",
+            "why": "這是微分，方向反了"
+          }
+        ]
+      }
+    },
+    {
+      "title": "帶常數 $a$ 的版本",
+      "beats": [
+        {
+          "show": [
+            "問題：$\\displaystyle\\int\\frac{dx}{x^2+9}$，分母不是 $1+x^2$"
+          ],
+          "say": "再來，常常遇到分母不是 1 加 x 平方，而是 x 平方加 9 這種樣子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題：$\\displaystyle\\int\\frac{dx}{x^2+9}$，分母不是 $1+x^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜：$\\arctan\\dfrac x3$。微分（連鎖律）：",
+            "$\\left(\\arctan\\frac x3\\right)'=\\frac{1}{1+\\frac{x^2}{9}}\\cdot\\frac13=\\frac{3}{9+x^2}$"
+          ],
+          "say": "用猜、微分、修正：猜反正切 3 分之 x。連鎖律微分，得到 1 加 9 分之 x 平方分之 1，乘 3 分之 1。通分以後，是 9 加 x 平方分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "猜：$\\arctan\\dfrac x3$。微分（連鎖律）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left(\\arctan\\frac x3\\right)'=\\frac{1}{1+\\frac{x^2}{9}}\\cdot\\frac13=\\frac{3}{9+x^2}$",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多了 $3$，前面乘 $\\frac13$ 修正：",
+            "$\\int\\frac{dx}{x^2+9}=\\frac13\\arctan\\frac x3+C$"
+          ],
+          "say": "比要的多了 3 倍，所以前面乘 3 分之 1。答案是 3 分之 1 倍反正切 3 分之 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多了 $3$，前面乘 $\\frac13$ 修正："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int\\frac{dx}{x^2+9}=\\frac13\\arctan\\frac x3+C}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "倍反"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般公式（$a>0$）：",
+            "$\\int\\frac{dx}{a^2+x^2}=\\frac1a\\arctan\\frac xa+C$"
+          ],
+          "say": "一般來說：a 平方加 x 平方分之 1，積出來是 a 分之 1 倍反正切 a 分之 x。根號 a 平方減 x 平方分之 1，是反正弦 a 分之 x，前面沒有 a 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般公式（$a>0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{dx}{a^2+x^2}=\\frac1a\\arctan\\frac xa+C$",
+              "on": "積出"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C}}$",
+              "on": "正切"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "平方#4"
+            },
+            {
+              "do": "write",
+              "line": "　證明：把右邊微分回去（連鎖律），用到 $a>0$ 時 $\\sqrt{a^2}=a$",
+              "color": "violet",
+              "on": "分之#5"
+            }
+          ]
+        },
+        {
+          "show": [
+            "裡面乘常數 $k$：多出的 $k$ 要除掉",
+            "$\\int e^{kx}dx=\\frac{e^{kx}}{k}+C,\\quad\\int\\cos kx\\,dx=\\frac{\\sin kx}{k}+C$"
+          ],
+          "say": "同樣的道理：裡面是 k x 的時候，微分會多出 k，積分就要除以 k。例如 e 的 k x 次方、餘弦 k x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "裡面乘常數 $k$：多出的 $k$ 要除掉"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^{kx}dx=\\frac{e^{kx}}{k}+C,\\quad\\int\\cos kx\\,dx=\\frac{\\sin kx}{k}+C$",
+              "on": "微分"
+            },
+            {
+              "do": "write",
+              "line": "　$k\\ne0$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{dx}{\\sqrt{4-x^2}}=$？"
+          ],
+          "say": "試一題：根號 4 減 x 平方分之 1。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "$a^x$ 與 $\\sin x$",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int a^x\\,dx=\\frac{a^x}{\\ln a}+C$"],
-          "note": "因為 $(a^x)'=a^x\\ln a$。",
-          "say": "a 的 x 次方微分會多出自然對數 a，所以積分要除掉它。",
-          "board": [
-            {"do":"write","line":"$(a^x)'=a^x{{l:\\ln a}}$"},
-            {"do":"underline","term":"l","on":"自然對數"},
-            {"do":"write","line":"$\\int a^x\\,dx=\\frac{a^x}{{{l:\\ln a}}}+C$","on":"積分要"}
-          ] },
-        { "show": ["$a^x=e^{x\\ln a}$","$(e^{x\\ln a})'=e^{x\\ln a}\\cdot\\ln a$"],
-          "note": "連鎖律：裡面 $x\\ln a$ 的導數是 $\\ln a$。",
-          "say": "為什麼多出自然對數 a？把 a 的 x 次方寫成 e 的 x 乘自然對數 a 次方，連鎖律就多乘一個自然對數 a。",
-          "board": [
-            {"do":"write","line":"$a^x=e^{x\\ln a}$"},
-            {"do":"write","line":"$(e^{x\\ln a})'=e^{x\\ln a}\\cdot{{n1:\\ln a}}$","on":"連鎖律"},
-            {"do":"underline","term":"n1","on":"多乘一個"}
-          ] },
-        { "show": ["底數是 $e$：$\\ln e=1$"],
-          "note": "只有這時才不用除。",
-          "say": "只有底數剛好是 e，自然對數 e 等於一，才不用除。",
-          "board": [
-            {"do":"write","line":"底數是 $e$：${{e:\\ln e=1}}$"},
-            {"do":"box","term":"e","on":"等於一","color":"green","label":"不用除"}
-          ] },
-        { "show": ["$\\int\\sin x\\,dx=-\\cos x+C$"],
-          "note": "$\\sin x$ 有負號，$\\cos x$ 沒有。",
-          "say": "還有 sine 的積分有負號、cosine 沒有。忘了哪個有，就微分檢查一次。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int\\sin x\\,dx={{m:-}}\\cos x+C$","on":"sine 的"},
-            {"do":"focus","term":"m","on":"有負號"},
-            {"do":"write","line":"$\\int\\cos x\\,dx=\\sin x+C$","on":"cosine 沒有"},
-            {"do":"write","line":"檢查：$(-\\cos x)'=\\sin x$","on":"微分檢查"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\int e^{2x}\\,dx=$？"
+          ],
+          "say": "再一題：e 的 2x 次方。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "帶常數 $a$：arctan",
+      "title": "不在表上的，先變形",
       "beats": [
-        { "show": ["$\\int\\frac{dx}{x^2+a^2}=\\frac1a\\arctan\\frac xa+C$"],
-          "note": "$a>0$。",
-          "say": "分母是 x 平方加 a 平方，答案是 a 分之一乘 arctangent a 分之 x。",
+        {
+          "show": [
+            "$\\int\\frac{x^2}{x^2+1}\\,dx$"
+          ],
+          "say": "最後，不在表上的式子，先用代數變形，改成表上的樣子。看 x 平方加 1 分之 x 平方。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{dx}{x^2+a^2}={{p:\\frac1a}}\\arctan\\frac xa+C$"},
-            {"do":"focus","term":"p","color":"blue","on":"a 分之一"}
-          ] },
-        { "show": ["$(\\arctan u)'=\\frac{1}{1+u^2}$"],
-          "note": "$u$ 可以是任何式子。",
-          "say": "先記一條：arctangent u 的微分，是一加 u 平方分之一。u 可以是任何式子。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{x^2}{x^2+1}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子湊出分母：$x^2=(x^2+1)-1$",
+            "$\\frac{x^2}{x^2+1}=\\frac{(x^2+1)-1}{x^2+1}=1-\\frac{1}{x^2+1}$"
+          ],
+          "say": "技巧是在分子湊出分母：x 平方等於 x 平方加 1 再減 1。這樣就拆成 1，減 x 平方加 1 分之 1。",
           "board": [
-            {"do":"write","line":"$(\\arctan u)'=\\frac{1}{1+u^2}$"}
-          ] },
-        { "show": ["$u=\\frac xa$，$u'=\\frac1a$"],
-          "note": "連鎖律：再乘 $u'$。",
-          "say": "這裡 u 是 a 分之 x，連鎖律要再乘 u 的導數，也就是 a 分之一。所以分子才會多出一個 a 分之一。",
+            {
+              "do": "write",
+              "line": "分子湊出分母：$x^2=(x^2+1)-1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x^2}{x^2+1}=\\frac{(x^2+1)-1}{x^2+1}=1-\\frac{1}{x^2+1}$",
+              "on": "這樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在兩項都在表上：",
+            "$=x-\\arctan x+C$"
+          ],
+          "say": "現在兩項都在表上：1 積出來是 x，x 平方加 1 分之 1 是反正切。答案是 x 減反正切 x 加 C。",
           "board": [
-            {"do":"write","line":"$u=\\frac xa$，${{q1:u'=\\frac1a}}$"},
-            {"do":"focus","term":"q1","color":"blue","on":"導數"}
-          ] },
-        { "show": ["微分回去：$\\frac{1}{a}\\cdot\\frac{1/a}{1+x^2/a^2}=\\frac{1}{a^2+x^2}$"],
-          "say": "前面這個 a 分之一不能少：微分回去，兩個 a 分之一乘起來，才剛好是 a 平方加 x 平方分之一。",
+            {
+              "do": "write",
+              "line": "現在兩項都在表上："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =x-\\arctan x+C}}$",
+              "color": "red",
+              "on": "來是"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$1-\\frac{1}{1+x^2}=\\frac{x^2}{x^2+1}$",
+              "color": "violet",
+              "on": "減反"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三角恆等式也能變形：$\\displaystyle\\int\\tan^2x\\,dx$"
+          ],
+          "say": "三角函數也一樣。正切平方不在表上，但我們有恆等式。",
           "board": [
-            {"do":"write","line":"${{p:\\frac1a}}\\cdot\\frac{1/a}{1+x^2/a^2}={{r:\\frac{1}{a^2+x^2}}}$","on":"微分回去"},
-            {"do":"focus","term":"p","color":"blue","on":"兩個"},
-            {"do":"box","term":"r","color":"green","on":"剛好是"}
-          ] },
-        { "show": ["$\\int\\frac{1}{x^2+9}\\,dx$"],
-          "note": "$a^2=9$，$a=3$。",
-          "say": "試一題：x 平方加九分之一。a 平方是九，所以 a 是三。",
+            {
+              "do": "write",
+              "line": "三角恆等式也能變形：$\\displaystyle\\int\\tan^2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\tan^2x=\\sec^2x-1$（由 $\\sin^2x+\\cos^2x=1$ 除以 $\\cos^2x$）"
+          ],
+          "say": "正弦平方加餘弦平方等於 1，兩邊除以餘弦平方，得到正切平方加 1 等於正割平方。所以正切平方等於正割平方減 1。",
           "board": [
-            {"do":"write","line":"$a^2=9$，${{k:a=3}}$","on":"a 平方是九"},
-            {"do":"focus","term":"k","on":"所以"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\tan^2x=\\sec^2x-1$（由 $\\sin^2x+\\cos^2x=1$ 除以 $\\cos^2x$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\tan^2x\\,dx=\\tan x-x+C$"
+          ],
+          "say": "正割平方在表上，積出來是正切；減 1 積出來是減 x。答案是正切 x 減 x 加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int\\tan^2x\\,dx=\\tan x-x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "來是#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{x^2+3}{x^2+1}\\,dx=$？"
+          ],
+          "say": "換你：分子湊出分母試試看。"
+        }
       ],
-      "key": "提出 $a^2$，化成 $1+(x/a)^2$ 的樣子",
-      "predict": {
-        "ask": "答案是？",
-        "options": [
+      "check": 2
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "遇到一個積分時的順序"
+          ],
+          "say": "最後，把面對一個積分的順序排一排。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "遇到一個積分時的順序",
+        "steps": [
           {
-            "label": "$\\frac{1}{3}\\arctan\\frac{x}{3}+C$",
-            "correct": true
+            "label": "先看能不能直接查表（含常數倍、逐項）"
           },
           {
-            "label": "$\\arctan\\frac{x}{3}+C$",
-            "why": "少了前面的 $\\frac{1}{a}$。$\\left(\\arctan\\frac{x}{3}\\right)'=\\frac{3}{9+x^2}$，多了 $3$ 倍。"
+            "label": "不行就變形：乘開、逐項除、分子湊分母、三角恆等式",
+            "why": "先要有上一步：先看能不能直接查表（含常數倍、逐項）"
           },
           {
-            "label": "$\\frac{1}{9}\\arctan\\frac{x}{9}+C$",
-            "why": "公式裡是 $a$ 不是 $a^2$：$a^2=9$，$a=3$。"
+            "label": "每一項查表積出來，加上 $+C$",
+            "why": "先要有上一步：不行就變形：乘開、逐項除、分子湊分母、三角恆等式"
+          },
+          {
+            "label": "微分回去檢查",
+            "why": "先要有上一步：每一項查表積出來，加上 $+C$"
           }
         ]
       }
     },
     {
-      "title": "帶常數 $a$：arcsin",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C$"],
-          "note": "前面沒有 $\\frac{1}{a}$。",
-          "say": "根號裡是 a 平方減 x 平方，答案是 arcsine a 分之 x，前面沒有 a 分之一。",
+        {
+          "show": [
+            "• 表上每一行 = 一條微分公式倒過來",
+            "• $\\int\\frac{dx}{1+x^2}=\\arctan x$，不是 $\\ln$"
+          ],
+          "say": "整理一下：積分表每一行都是微分倒過來；分子是常數、分母 1 加 x 平方是反正切；指數要除以自然對數 a；正弦積分有負號；帶常數 a 的版本用連鎖律修正；不在表上就先變形。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{dx}{\\sqrt{a^2-x^2}}={{r:\\arcsin\\frac xa}}+C$"},
-            {"do":"underline","term":"r","label":"沒有係數","on":"前面沒有"}
-          ] },
-        { "show": ["$(\\arcsin u)'=\\frac{1}{\\sqrt{1-u^2}}$"],
-          "note": "$u=\\frac xa$ 時，再乘 $\\frac1a$。",
-          "say": "arcsine u 的微分是根號一減 u 平方分之一。u 換成 a 分之 x，一樣要再乘 a 分之一。",
+            {
+              "do": "write",
+              "line": "• 表上每一行 = 一條微分公式倒過來"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\frac{dx}{1+x^2}=\\arctan x$，不是 $\\ln$",
+              "on": "分子"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int a^x\\,dx=\\frac{a^x}{\\ln a}$；$\\int\\sin x\\,dx=-\\cos x$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\frac{dx}{a^2+x^2}=\\frac1a\\arctan\\frac xa$；$\\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa$",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "• 不在表上：先變形（分子湊分母、恆等式）",
+              "on": "版本"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：定積分與有號面積"
+          ],
+          "say": "下一課，我們從反導函數換到另一個問題：曲線下面的面積。",
           "board": [
-            {"do":"write","line":"$(\\arcsin u)'=\\frac{1}{\\sqrt{1-u^2}}$"}
-          ] },
-        { "show": ["$\\left(\\arcsin\\frac{x}{a}\\right)'=\\frac{1/a}{\\sqrt{1-x^2/a^2}}$"],
-          "note": "兩個 $\\frac{1}{a}$ 剛好抵消。",
-          "say": "微分回去，分子一個 a 分之一，根號裡提出來又一個，剛好抵消，所以不用再補。",
-          "board": [
-            {"do":"write","line":"$\\left(\\arcsin\\frac xa\\right)'=\\frac{{{p:1/a}}}{\\sqrt{1-x^2/a^2}}$","on":"微分回去"},
-            {"do":"focus","term":"p","color":"blue","on":"分子一個"},
-            {"do":"write","line":"$=\\frac{1}{\\sqrt{a^2-x^2}}$","color":"green","on":"剛好抵消"}
-          ] },
-        { "show": ["$1-\\frac{x^2}{a^2}=\\frac{a^2-x^2}{a^2}$","$a>0$，開根號分母是 $a$"],
-          "note": "$\\sqrt{a^2}=a$，分母的 $a$ 與分子的 $\\frac1a$ 抵消。",
-          "say": "根號裡通分成 a 平方減 x 平方，除以 a 平方。a 大於零，開根號分母是 a，跟分子的 a 分之一抵消。",
-          "board": [
-            {"do":"write","line":"$1-\\frac{x^2}{a^2}=\\frac{a^2-x^2}{a^2}$"},
-            {"do":"write","line":"$\\sqrt{1-\\frac{x^2}{a^2}}=\\frac{\\sqrt{a^2-x^2}}{{{n2:a}}}$","on":"開根號"},
-            {"do":"focus","term":"n2","color":"blue","on":"分母是"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "不在表上，先變形",
-      "beats": [
-        { "show": ["$\\int\\frac{x^2}{x^2+1}\\,dx$"],
-          "note": "不在表上。",
-          "say": "x 平方除以 x 平方加一，表上找不到。那就先改寫成表上有的樣子。",
-          "board": [
-            {"do":"write","line":"$\\int{{z:\\frac{x^2}{x^2+1}}}\\,dx$"},
-            {"do":"underline","term":"z","label":"不在表上","on":"找不到"}
-          ] },
-        { "show": ["$x^2=(x^2+1)-1$"],
-          "note": "分子湊出一個分母。",
-          "say": "訣竅是在分子湊出分母：x 平方寫成 x 平方加一，再減一。",
-          "board": [
-            {"do":"write","line":"$x^2=({{d:x^2+1}})-1$"},
-            {"do":"underline","term":"d","color":"blue","label":"湊出分母","on":"x 平方加一"}
-          ] },
-        { "show": ["$\\int(f\\pm g)\\,dx=\\int f\\,dx\\pm\\int g\\,dx$","$\\int 1\\,dx=x+C$"],
-          "note": "逐項拆開；$x$ 的微分是 1。",
-          "say": "積分可以逐項拆開，常數倍也能提出來。一的積分是 x，因為 x 微分是一。",
-          "board": [
-            {"do":"write","line":"$\\int(f\\pm g)\\,dx=\\int f\\,dx\\pm\\int g\\,dx$"},
-            {"do":"write","line":"${{n3:\\int 1\\,dx=x+C}}$","on":"一的積分"},
-            {"do":"box","term":"n3","color":"green","on":"因為"}
-          ] }
-      ],
-      "key": "分子湊出分母：加一項再減一項",
-      "predict": {
-        "ask": "所以 $\\frac{x^2}{x^2+1}$ 等於？",
-        "options": [
-          {
-            "label": "$1-\\frac{1}{x^2+1}$，積出 $x-\\arctan x+C$",
-            "correct": true
-          },
-          {
-            "label": "$1-\\frac{1}{x^2}$",
-            "why": "拆開時分母要整個留著：$\\frac{(x^2+1)-1}{x^2+1}$，第二項的分母還是 $x^2+1$。"
-          },
-          {
-            "label": "$x^2-1$",
-            "why": "分母不能只約掉一部分。$x^2+1$ 是一整個分母，要拆成 $\\frac{x^2+1}{x^2+1}-\\frac{1}{x^2+1}$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：定積分與有號面積"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["basic-integral", "inverse-trig", "trig", "exponential"],
-    "fine": ["table-trig", "table-exp-base", "table-inverse-trig", "table-scaled-arctan", "table-algebra-first"]
+    "coarse": [
+      "basic-integral",
+      "inverse-trig",
+      "trig",
+      "exponential"
+    ],
+    "fine": [
+      "table-trig",
+      "table-exp-base",
+      "table-inverse-trig",
+      "table-scaled-arctan",
+      "table-algebra-first"
+    ]
   },
   "practice": [
-    { "id": "fd-int-009", "core": true, "trains": "table-trig" },
-    { "id": "cx-int-004", "core": true, "trains": "table-inverse-trig" },
-    { "id": "fd-int-010", "core": true, "trains": "table-inverse-trig" },
-    { "id": "int-011", "core": true, "trains": "table-scaled-arctan" },
-    { "id": "cx-trig-003", "core": true, "trains": "table-inverse-trig", "note": "根號裡是 $4-x^2$：對應 $\\arcsin\\frac{x}{2}$。" },
-    { "id": "exam-int-014", "core": true, "trains": "table-algebra-first" },
-    { "id": "cg-4a-010", "core": true, "trains": "table-exp-base" },
-    { "id": "mob-trap-003", "trains": "table-inverse-trig" },
-    { "id": "mob-trap-010", "trains": "table-trig" },
-    { "id": "cg-4a-011", "trains": "table-exp-base" },
-    { "id": "cg-4a-012", "trains": "table-algebra-first" },
-    { "id": "cg-4a-013", "trains": "table-algebra-first" }
+    {
+      "id": "fd-int-009",
+      "core": true,
+      "trains": "table-trig"
+    },
+    {
+      "id": "cx-int-004",
+      "core": true,
+      "trains": "table-inverse-trig"
+    },
+    {
+      "id": "fd-int-010",
+      "core": true,
+      "trains": "table-inverse-trig"
+    },
+    {
+      "id": "int-011",
+      "core": true,
+      "trains": "table-scaled-arctan"
+    },
+    {
+      "id": "cx-trig-003",
+      "core": true,
+      "trains": "table-inverse-trig",
+      "note": "根號裡是 $4-x^2$：對應 $\\arcsin\\frac{x}{2}$。"
+    },
+    {
+      "id": "exam-int-014",
+      "core": true,
+      "trains": "table-algebra-first"
+    },
+    {
+      "id": "cg-4a-010",
+      "core": true,
+      "trains": "table-exp-base"
+    },
+    {
+      "id": "mob-trap-003",
+      "trains": "table-inverse-trig"
+    },
+    {
+      "id": "mob-trap-010",
+      "trains": "table-trig"
+    },
+    {
+      "id": "cg-4a-011",
+      "trains": "table-exp-base"
+    },
+    {
+      "id": "cg-4a-012",
+      "trains": "table-algebra-first"
+    },
+    {
+      "id": "cg-4a-013",
+      "trains": "table-algebra-first"
+    }
   ],
   "gaps": []
 }

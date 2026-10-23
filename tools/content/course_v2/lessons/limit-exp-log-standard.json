@@ -1,59 +1,97 @@
 {
   "id": "limit-exp-log-standard",
   "title": "指數與對數標準極限",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 30,
-  "prerequisites": ["limit-trig-standard", "exp-log"],
-  "next": ["limit-e-type"],
+  "prerequisites": [
+    "limit-trig-standard",
+    "exp-log"
+  ],
+  "next": [
+    "limit-e-type"
+  ],
   "related": [],
   "objectives": [
-    "知道 $\\lim_{x\\to0} \\frac{e^x - 1}{x} = 1$ 與 $\\lim_{x\\to0} \\frac{\\ln(1 + x)}{x} = 1$。",
-    "會配湊出 $\\frac{e^{ax} - 1}{bx} \\to \\frac{a}{b}$、$\\frac{\\ln(1 + ax)}{bx} \\to \\frac{a}{b}$，以及 $\\frac{a^x - 1}{x} \\to \\ln a$。",
-    "會用 $t = \\frac{1}{x}$ 把 $x \\to \\infty$ 的式子換成 $t \\to 0$ 的標準形。"
+    "知道 $\\lim_{x\\to0}\\frac{e^x-1}{x}=1$ 與 $\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$",
+    "會配湊出 $\\frac{e^{ax}-1}{bx}\\to\\frac ab$、$\\frac{\\ln(1+ax)}{bx}\\to\\frac ab$",
+    "會用 $t=\\frac1x$ 把 $x\\to\\infty$ 的式子換成 $t\\to0$ 的標準形"
   ],
-  "visual": "畫出 y = eˣ 與它在 (0, 1) 的切線 y = 1 + x，再畫 y = ln(1 + x) 與 y = x。按「放大」，鏡頭往原點推近，曲線和切線越來越分不開；旁邊顯示 (eˣ − 1)/x 與 ln(1 + x)/x，兩個都往 1 靠。",
-  "figures": [
-    {"caption":"放大到 (0, 1)，eˣ 貼住切線 y = 1 + x","after":1,"widget":{"type":"zoom","curves":[{"expr":"exp(x)","color":"blue"},{"expr":"1+x","color":"red","dashed":true}],"center":[0,1],"window":[-2,2,-1,3],"levels":2}}
-  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 兩個新的標準極限",
       "body": [
-        "$x = 0.01$ 時，$\\frac{e^x - 1}{x} \\approx 1.005017$，$\\frac{\\ln(1 + x)}{x} \\approx 0.995033$；$x = -0.01$ 時分別是 0.995017 與 1.005034。兩邊都往 1 靠。"
+        "代 $0$ 都是 $\\dfrac00$",
+        "跟上一課對照：",
+        "共同的意思：在 $0$ 附近，分子幾乎就是 $x$"
       ],
-      "tex": ["\\lim_{x\\to0}\\frac{e^x-1}{x}=1,\\qquad \\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1"],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{e^x-1}{x}=1\\qquad \\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1",
+        "\\def\\arraystretch{1.3}\\begin{array}{c|ccc}x & 0.1 & 0.01 & 0.001\\\\\\hline \\dfrac{e^x-1}{x} & 1.0517 & 1.0050 & 1.0005\\\\[6pt] \\dfrac{\\ln(1+x)}{x} & 0.9531 & 0.9950 & 0.9995\\end{array}",
+        "\\frac{\\sin x}{x}\\to1,\\quad\\frac{e^x-1}{x}\\to1,\\quad\\frac{\\ln(1+x)}{x}\\to1"
+      ]
     },
     {
-      "heading": "② 直覺：靠近 0 時 $e^x \\approx 1 + x$、$\\ln(1 + x) \\approx x$",
+      "heading": "② 直覺：$e^x\\approx1+x$",
       "body": [
-        "$e^x$ 在 $(0, 1)$ 的切線是 $y = 1 + x$，斜率剛好是 1。曲線在切點附近看起來就是切線，所以 $e^x - 1 \\approx x$，比值靠近 1。$\\ln(1 + x)$ 是它的反函數，切線是 $y = x$。",
-        "這是直覺，不是證明：它假設了「$e^x$ 在 0 的切線斜率是 1」，而那正是要證的事。有些課本直接拿這件事當 $e$ 的定義；從 $e = \\lim (1 + \\frac{1}{n})^n$（〈e 型極限〉）出發也證得出來，但要多一些功夫，這裡先接受第一條。"
-      ],
-      "collapsible": false
+        "$y=1+x$ 是 $e^x$ 在 $(0,1)$ 的切線",
+        "$\\dfrac{e^x-1}{x}=\\dfrac{e^x-e^0}{x-0}$：割線斜率 → 切線斜率 $=1$",
+        "為什麼斜率剛好是 $1$？這就是 $e$ 的特別之處",
+        "換成 $2^x$，切線斜率是 $\\ln2\\approx0.693$；$e$ 是讓斜率剛好為 $1$ 的那個底數。嚴格的證明要等 $e$ 的定義（下一課）和導數"
+      ]
     },
     {
-      "heading": "由第一條推出第二條",
+      "heading": "② 由第一條推出第二條",
       "body": [
-        "令 $u = \\ln(1 + x)$，則 $x = e^u - 1$。$x \\to 0$ 時 $u = \\ln(1 + x) \\to \\ln 1 = 0$（$\\ln$ 連續），而且 $x \\ne 0$ 時 $u \\ne 0$。",
-        "所以 $\\frac{\\ln(1 + x)}{x} = \\frac{u}{e^u - 1} = 1 / \\left(\\frac{e^u - 1}{u}\\right) \\to \\frac{1}{1} = 1$。"
+        "令 $t=\\ln(1+x)$，則 $1+x=e^t$，$x=e^t-1$",
+        "$x\\to0$ 時 $t=\\ln(1+x)\\to\\ln1=0$",
+        "直覺：$\\ln(1+x)$ 和 $e^x-1$ 互為反函數，圖形對 $y=x$ 鏡射"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{\\ln(1+x)}{x}=\\frac{t}{e^t-1}=\\frac{1}{\\dfrac{e^t-1}{t}}",
+        "\\to\\frac11=1\\qquad\\blacksquare"
+      ]
     },
     {
       "heading": "③ 配湊",
       "body": [
-        "跟三角一樣：指數上、$\\ln$ 裡面是什麼，分母就配成什麼。$\\frac{e^{3x} - 1}{2x} = \\left(\\frac{3}{2}\\right) \\cdot \\frac{e^{3x} - 1}{3x} \\to \\frac{3}{2}$。一般地 $\\frac{e^{ax} - 1}{bx} \\to \\frac{a}{b}$，$\\frac{\\ln(1 + ax)}{bx} \\to \\frac{a}{b}$。",
-        "其他底數先換成 $e$：$a^x = e^{x \\ln a}$，所以 $\\frac{a^x - 1}{x} = \\ln a \\cdot \\frac{e^{x \\ln a} - 1}{x \\ln a} \\to \\ln a$。"
+        "規則一樣：分母跟指數一樣",
+        "一般結論：$\\frac{e^{ax}-1}{bx}\\to\\frac ab$，$\\frac{\\ln(1+ax)}{bx}\\to\\frac ab$",
+        "底數不是 $e$：$\\displaystyle\\lim_{x\\to0}\\frac{2^x-1}{x}$",
+        "換成 $e$：$2^x=e^{x\\ln2}$",
+        "一般：$\\frac{a^x-1}{x}\\to\\ln a$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{e^{3x}-1}{2x}",
+        "\\frac{e^{3x}-1}{2x}=\\frac{e^{3x}-1}{3x}\\cdot\\frac{3x}{2x}\\to1\\cdot\\frac32=\\frac32",
+        "\\frac{e^{x\\ln2}-1}{x}=\\frac{e^{x\\ln2}-1}{x\\ln2}\\cdot\\ln2\\to\\ln2"
+      ]
     },
     {
-      "heading": "④ $x \\to \\infty$ 的版本",
+      "heading": "④ $x\\to\\infty$ 的版本",
       "body": [
-        "$x \\ln(1 + \\frac{2}{x})$：$x \\to \\infty$ 時 $\\ln$ 那項 $\\to 0$、$x \\to \\infty$，是 $\\infty \\cdot 0$ 型。令 $t = \\frac{1}{x}$，$x \\to \\infty$ 時 $t \\to 0^+$，式子變成 $\\frac{\\ln(1 + 2t)}{t} \\to 2$。"
+        "$x\\to\\infty$，$\\frac2x\\to0$：$\\infty\\cdot0$，看不出來",
+        "換元：$t=\\dfrac1x$，$x\\to\\infty$ 時 $t\\to0^+$",
+        "這個結果下一課會用到：",
+        "所以 $\\Big(1+\\dfrac2x\\Big)^x\\to e^2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to\\infty}x\\ln\\Big(1+\\frac2x\\Big)",
+        "x\\ln\\Big(1+\\frac2x\\Big)=\\frac{\\ln(1+2t)}{t}",
+        "=\\frac{\\ln(1+2t)}{2t}\\cdot2\\to2",
+        "\\ln\\Big(1+\\frac2x\\Big)^x=x\\ln\\Big(1+\\frac2x\\Big)\\to2"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\displaystyle\\lim_{x\\to0}\\frac{e^x-1}{x}=1$：$1+x$ 是 $e^x$ 在 $0$ 的切線",
+        "• $\\displaystyle\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$：令 $t=\\ln(1+x)$ 由第一條推出",
+        "• 配湊：分母跟指數（或 $\\ln$ 裡面）一樣；$\\frac{a^x-1}x\\to\\ln a$",
+        "• $x\\to\\infty$：令 $t=\\frac1x$，換成 $t\\to0$ 的標準形",
+        "下一課：$e$ 型極限"
+      ]
     }
   ],
   "workedExamples": [
@@ -102,35 +140,24 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to0} \\frac{e^{5x} - 1}{x}$ 是？",
+      "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{\\ln(1+5x)}{x}=$？",
       "options": [
-        { "label": "1", "why": "分母要是 $5x$ 才是 1；這裡要配出一個 5。" },
-        { "label": "$e^5$", "why": "$x \\to 0$ 時 $e^{5x} \\to 1$，答案跟 $e^5$ 無關；配湊後是 5。" },
-        { "label": "5", "correct": true }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to0} \\frac{\\ln(1 + 3x)}{2x}$ 是？",
-      "options": [
-        { "label": "$\\frac{3}{2}$", "correct": true },
-        { "label": "$\\frac{2}{3}$", "why": "倒過來了：$\\ln$ 裡面的係數 3 在分子。" },
-        { "label": "3", "why": "分母還有 2：$\\frac{3}{2}$。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to0} \\frac{3^x - 1}{x}$ 是？",
-      "options": [
-        { "label": "3", "why": "$3^x = e^{x \\ln 3}$，配出來的係數是 $\\ln 3$。" },
-        { "label": "$\\ln 3$", "correct": true },
-        { "label": "1", "why": "只有底數是 $e$ 時才是 1。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to\\infty} x \\ln(1 + \\frac{1}{x})$ 是？",
-      "options": [
-        { "label": "0", "why": "$\\ln$ 那項 $\\to 0$，但 $x \\to \\infty$，是 $\\infty \\cdot 0$ 型，不能直接說 0。令 $t = \\frac{1}{x}$ 得 $\\frac{\\ln(1 + t)}{t} \\to 1$。" },
-        { "label": "1", "correct": true },
-        { "label": "$\\infty$", "why": "$\\ln(1 + \\frac{1}{x})$ 跟 $\\frac{1}{x}$ 一樣快趨近 0，乘上 $x$ 剛好抵消。" }
+        {
+          "label": "$5$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac15$",
+          "why": "倒過來了：分母要配成 $5x$，多出來的是 $5$"
+        },
+        {
+          "label": "$1$",
+          "why": "$\\ln$ 裡面是 $5x$，分母只有 $x$，還沒配好"
+        },
+        {
+          "label": "$\\ln5$",
+          "why": "$\\ln(1+5x)\\ne\\ln5+\\ln x$；要配湊，不是拆開"
+        }
       ]
     }
   ],
@@ -138,242 +165,673 @@
     {
       "title": "兩個新的標準極限",
       "beats": [
-        { "show": ["$\\lim_{x\\to0}\\frac{e^x-1}{x}=1$"],
-          "say": "跟 sine x 除以 x 一樣，指數和對數也各有一個標準極限。第一個：e 的 x 次方減一，除以 x，趨近一。",
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{e^x-1}{x}=1\\qquad \\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$"
+          ],
+          "say": "這一課的兩個標準極限：e 的 x 次方減 1 除以 x，以及自然對數 1 加 x 除以 x，x 趨近 0 時都是 1。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to0}{{a:\\frac{e^x-1}{x}}}=1$","tint":{"a":"blue"},"on":"第一個"}
-          ] },
-        { "show": ["$\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$"],
-          "say": "第二個：自然對數一加 x，除以 x，也趨近一。兩個都是零分之零，代不進去。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{x\\to0}\\frac{e^x-1}{x}=1\\qquad \\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "及自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $0$ 都是 $\\dfrac00$"
+          ],
+          "say": "兩個代 0 進去都是 0 分之 0，跟上一課的三角標準極限一樣，要另外處理。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to0}{{b:\\frac{\\ln(1+x)}{x}}}=1$","tint":{"b":"violet"}},
-            {"do":"underline","term":"a","color":"blue","on":"兩個都是"},
-            {"do":"underline","term":"b","color":"violet","label":"0/0","on":"零分之零"}
-          ] },
-        { "show": ["$x = 0.01$：$1.005017$、$0.995033$"],
-          "note": "近似值；兩邊都往 1 靠。",
-          "say": "看數字：x 取零點零一，第一個約一點零零五零一七，第二個約零點九九五零三三，都貼著一。",
+            {
+              "do": "write",
+              "line": "代 $0$ 都是 $\\dfrac00$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\def\\arraystretch{1.3}\\begin{array}{c|ccc}x & 0.1 & 0.01 & 0.001\\\\\\hline \\dfrac{e^x-1}{x} & 1.0517 & 1.0050 & 1.0005\\\\[6pt] \\dfrac{\\ln(1+x)}{x} & 0.9531 & 0.9950 & 0.9995\\end{array}$"
+          ],
+          "say": "先看表格：兩個都往 1 靠，一個從上面，一個從下面。",
           "board": [
-            {"do":"write","line":"$x=0.01$：","on":"x 取"},
-            {"do":"write","line":"${{p:1.005017}}$、${{q:0.995033}}$","tint":{"p":"blue","q":"violet"},"on":"第一個約"},
-            {"do":"focus","term":"p","on":"都貼著一"}
-          ] },
-        { "show": ["$x$ 是負的：分子負、分母也負"],
-          "note": "負除以負是正，所以比值是正的。",
-          "say": "x 換成負的，分子 e 的 x 次方減一也是負的，分母也是負的。負除以負是正，所以比值是正的。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\def\\arraystretch{1.3}{\\begin{array}{c|ccc}x & 0.1 & 0.01 & 0.001\\\\\\hline \\dfrac{e^x-1}{x} & 1.0517 & 1.0050 & 1.0005\\\\[6pt] \\dfrac{\\ln(1+x)}{x} & 0.9531 & 0.9950 & 0.9995\\end{array}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟上一課對照：",
+            "$\\frac{\\sin x}{x}\\to1,\\quad\\frac{e^x-1}{x}\\to1,\\quad\\frac{\\ln(1+x)}{x}\\to1$"
+          ],
+          "say": "跟上一課放在一起看：三條標準極限，形式都是某個東西除以 x，趨近 1。",
           "board": [
-            {"do":"write","line":"$x<0$：${{n1:\\text{分子負}}}$、分母負","on":"x 換成負的"},
-            {"do":"underline","term":"n1","on":"負除以負"}
-          ] },
-        { "show": ["兩邊都往 1 靠，$x=0$ 是個洞"],
-          "note": "左右兩邊的比值都貼著 1。",
-          "say": "畫成圖：這個比值左邊和右邊都往一靠，在零那裡只是一個洞。",
+            {
+              "do": "write",
+              "line": "跟上一課對照："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\sin x}{x}\\to1,\\quad\\frac{e^x-1}{x}\\to1,\\quad\\frac{\\ln(1+x)}{x}\\to1$",
+              "on": "形式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "共同的意思：在 $0$ 附近，分子幾乎就是 $x$"
+          ],
+          "say": "它們共同的意思是：在 0 附近，分子幾乎就等於 x。",
           "board": [
-            {"do":"plot","graph":{"window":[-2,2,0,3],"curves":[{"expr":"(exp(x)-1)/x","domain":[-2,-0.001],"color":"blue"},{"expr":"(exp(x)-1)/x","domain":[0.001,2],"color":"blue"}],"points":[{"x":0,"y":1,"open":true}],"dashed":[[[-2,1],[2,1]]]}}
-          ] }
+            {
+              "do": "write",
+              "line": "共同的意思：在 $0$ 附近，分子幾乎就是 $x$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "直覺：$e^x\\approx1+x$",
+      "beats": [
+        {
+          "show": [
+            "y = 1 + x 是 eˣ 在 (0, 1) 的切線"
+          ],
+          "say": "看圖：藍色是 e 的 x 次方，紅色虛線是 1 加 x。在 0 逗號 1 附近，兩條幾乎貼在一起。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tan",
+                  "window": [
+                    -1.5,
+                    1.5,
+                    -0.5,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(x)",
+                      "color": "blue",
+                      "label": "y = eˣ"
+                    },
+                    {
+                      "expr": "1+x",
+                      "color": "red",
+                      "dash": true,
+                      "label": "y = 1 + x"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "ink"
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "y = 1 + x 是 eˣ 在 (0, 1) 的切線",
+              "color": "violet",
+              "on": "逗號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=1+x$ 是 $e^x$ 在 $(0,1)$ 的切線"
+          ],
+          "say": "紅線其實就是 e 的 x 次方在 0 逗號 1 的切線，斜率剛好是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=1+x$ 是 $e^x$ 在 $(0,1)$ 的切線",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{e^x-1}{x}=\\dfrac{e^x-e^0}{x-0}$：割線斜率 → 切線斜率 $=1$"
+          ],
+          "say": "換個角度看：e 的 x 次方減 1 除以 x，其實就是 e 的 x 次方減 e 的 0 次方，除以 x 減 0，是割線的斜率。x 趨近 0，割線變成切線，斜率是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{e^x-1}{x}=\\dfrac{e^x-e^0}{x-0}$：割線斜率 → 切線斜率 $=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼斜率剛好是 $1$？這就是 $e$ 的特別之處"
+          ],
+          "say": "為什麼剛好是 1？這正是 e 這個數特別的地方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼斜率剛好是 $1$？這就是 $e$ 的特別之處"
+            },
+            {
+              "do": "write",
+              "line": "　換成 $2^x$，切線斜率是 $\\ln2\\approx0.693$；$e$ 是讓斜率剛好為 $1$ 的那個底數。嚴格的證明要等 $e$ 的定義（下一課）和導數",
+              "color": "violet",
+              "on": "這個"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "由第一條推出第二條",
+      "beats": [
+        {
+          "show": [
+            "令 $t=\\ln(1+x)$，則 $1+x=e^t$，$x=e^t-1$"
+          ],
+          "say": "第二條可以從第一條推出來。令 t 等於自然對數 1 加 x。那 1 加 x 就是 e 的 t 次方，x 等於 e 的 t 次方減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $t=\\ln(1+x)$，則 $1+x=e^t$，$x=e^t-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to0$ 時 $t=\\ln(1+x)\\to\\ln1=0$"
+          ],
+          "say": "x 趨近 0 的時候，t 趨近自然對數 1，也就是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\to0$ 時 $t=\\ln(1+x)\\to\\ln1=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\ln(1+x)}{x}=\\frac{t}{e^t-1}=\\frac{1}{\\dfrac{e^t-1}{t}}$"
+          ],
+          "say": "代進去，自然對數 1 加 x 除以 x，變成 t 除以 e 的 t 次方減 1，剛好是第一條的倒數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\ln(1+x)}{x}=\\frac{t}{e^t-1}=\\frac{1}{\\dfrac{e^t-1}{t}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\to\\frac11=1\\qquad\\blacksquare$"
+          ],
+          "say": "t 趨近 0，分母那塊趨近 1，倒數也是 1。第二條就證完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\to\\frac11=1\\qquad\\blacksquare}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "倒數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：$\\ln(1+x)$ 和 $e^x-1$ 互為反函數，圖形對 $y=x$ 鏡射"
+          ],
+          "say": "直覺上：e 的 x 次方減 1 和自然對數 1 加 x 互為反函數，圖形對 y 等於 x 鏡射。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直覺：$\\ln(1+x)$ 和 $e^x-1$ 互為反函數，圖形對 $y=x$ 鏡射"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩條都在原點貼著 y = x"
+          ],
+          "say": "兩條曲線都在原點貼著 y 等於 x，斜率都是 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "mir",
+                  "window": [
+                    -0.8,
+                    1.2,
+                    -0.8,
+                    1.2
+                  ],
+                  "equal": true,
+                  "fn": [
+                    {
+                      "expr": "exp(x)-1",
+                      "color": "blue",
+                      "label": "eˣ − 1"
+                    },
+                    {
+                      "expr": "ln(1+x)",
+                      "color": "red",
+                      "label": "ln(1+x)",
+                      "domain": [
+                        -0.7,
+                        1.2
+                      ]
+                    },
+                    {
+                      "expr": "x",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩條都在原點貼著 y = x",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "配湊",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{e^{3x}-1}{2x}$"
+          ],
+          "say": "跟三角一樣要配湊。e 的 3x 次方減 1，除以 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{e^{3x}-1}{2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則一樣：分母跟指數一樣",
+            "$\\frac{e^{3x}-1}{2x}=\\frac{e^{3x}-1}{3x}\\cdot\\frac{3x}{2x}\\to1\\cdot\\frac32=\\frac32$"
+          ],
+          "say": "規則一樣：分母要跟指數一模一樣。分母湊出 3x，前面那塊趨近 1，後面是 2 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則一樣：分母跟指數一樣"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{e^{3x}-1}{2x}=\\frac{e^{3x}-1}{3x}\\cdot\\frac{3x}{2x}\\to1\\cdot\\frac32=\\frac32}}$",
+              "color": "red",
+              "on": "一模"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "前面"
+            },
+            {
+              "do": "write",
+              "line": "　一般結論：$\\frac{e^{ax}-1}{bx}\\to\\frac ab$，$\\frac{\\ln(1+ax)}{bx}\\to\\frac ab$",
+              "color": "violet",
+              "on": "後面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "底數不是 $e$：$\\displaystyle\\lim_{x\\to0}\\frac{2^x-1}{x}$"
+          ],
+          "say": "底數不是 e 怎麼辦？例如 2 的 x 次方減 1，除以 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "底數不是 $e$：$\\displaystyle\\lim_{x\\to0}\\frac{2^x-1}{x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換成 $e$：$2^x=e^{x\\ln2}$"
+          ],
+          "say": "把 2 換成 e 的自然對數 2 次方，所以 2 的 x 次方等於 e 的 x 倍自然對數 2 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換成 $e$：$2^x=e^{x\\ln2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{e^{x\\ln2}-1}{x}=\\frac{e^{x\\ln2}-1}{x\\ln2}\\cdot\\ln2\\to\\ln2$"
+          ],
+          "say": "分母配成 x 乘自然對數 2，前面趨近 1，答案是自然對數 2，大約 0.693。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{e^{x\\ln2}-1}{x}=\\frac{e^{x\\ln2}-1}{x\\ln2}\\cdot\\ln2\\to\\ln2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "前面"
+            },
+            {
+              "do": "write",
+              "line": "　一般：$\\frac{a^x-1}{x}\\to\\ln a$",
+              "color": "violet",
+              "on": "對數#2"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "$x = -0.01$ 時，$\\frac{e^x - 1}{x}$ 約是？",
-        "options": [
+      "check": 0
+    },
+    {
+      "title": "$x\\to\\infty$ 的版本",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}x\\ln\\Big(1+\\frac2x\\Big)$"
+          ],
+          "say": "最後，x 趨近無限大的版本：x 乘自然對數 1 加 x 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to\\infty}x\\ln\\Big(1+\\frac2x\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to\\infty$，$\\frac2x\\to0$：$\\infty\\cdot0$，看不出來"
+          ],
+          "say": "x 往無限大跑，x 分之 2 趨近 0，自然對數那塊也趨近 0。無限大乘 0，看不出答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\to\\infty$，$\\frac2x\\to0$：$\\infty\\cdot0$，看不出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換元：$t=\\dfrac1x$，$x\\to\\infty$ 時 $t\\to0^+$"
+          ],
+          "say": "換元：令 t 等於 x 分之一。x 趨近無限大時，t 從正的那邊趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換元：$t=\\dfrac1x$，$x\\to\\infty$ 時 $t\\to0^+$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\ln\\Big(1+\\frac2x\\Big)=\\frac{\\ln(1+2t)}{t}$",
+            "$=\\frac{\\ln(1+2t)}{2t}\\cdot2\\to2$"
+          ],
+          "say": "式子變成自然對數 1 加 2t 除以 t。再配湊：分母配成 2t，答案是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle x\\ln\\Big(1+\\frac2x\\Big)=\\frac{\\ln(1+2t)}{t}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac{\\ln(1+2t)}{2t}\\cdot2\\to2}}$",
+              "color": "red",
+              "on": "2t#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "母配"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個結果下一課會用到：",
+            "$\\ln\\Big(1+\\frac2x\\Big)^x=x\\ln\\Big(1+\\frac2x\\Big)\\to2$"
+          ],
+          "say": "這個結果下一課馬上會用到：1 加 x 分之 2 的 x 次方，取自然對數就是剛才那個式子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個結果下一課會用到："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\Big(1+\\frac2x\\Big)^x=x\\ln\\Big(1+\\frac2x\\Big)\\to2$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\Big(1+\\dfrac2x\\Big)^x\\to e^2$"
+          ],
+          "say": "所以 1 加 x 分之 2 的 x 次方，趨近 e 平方。下一課細講。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\Big(1+\\dfrac2x\\Big)^x\\to e^2$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "練習",
+      "beats": [
+        {
+          "show": [
+            "用換元算 $\\displaystyle\\lim_{x\\to\\infty}x\\ln\\Big(1+\\frac2x\\Big)$ 的步驟"
+          ],
+          "say": "排排看剛才的步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用換元算 $\\displaystyle\\lim_{x\\to\\infty}x\\ln\\Big(1+\\frac2x\\Big)$ 的步驟",
+        "steps": [
           {
-            "label": "$0.995017$",
-            "correct": true
+            "label": "令 $t=\\frac1x$，$x\\to\\infty$ 變成 $t\\to0^+$"
           },
           {
-            "label": "$1.005017$",
-            "why": "那是 $x = 0.01$ 的值；從左邊來，比值在 1 的下面。"
+            "label": "改寫成 $\\frac{\\ln(1+2t)}{t}$",
+            "why": "先要有上一步：令 $t=\\frac1x$，$x\\to\\infty$ 變成 $t\\to0^+$"
           },
           {
-            "label": "0",
-            "why": "分子分母都趨近 0，但比值不是 0：它往 1 靠。"
+            "label": "分母配成 $2t$，多出一個 $2$",
+            "why": "先要有上一步：改寫成 $\\frac{\\ln(1+2t)}{t}$"
+          },
+          {
+            "label": "用 $\\frac{\\ln(1+u)}{u}\\to1$ 得到 $2$",
+            "why": "先要有上一步：分母配成 $2t$，多出一個 $2$"
           }
         ]
       }
     },
     {
-      "title": "放大看 $e^x$",
+      "title": "練習",
       "beats": [
-        { "show": ["$e^x$ 在 $(0, 1)$ 的切線：$y = 1 + x$"],
-          "note": "斜率剛好是 1。",
-          "fig": {"use":0,"to":0},
-          "say": "藍色是 e 的 x 次方，紅色虛線是它在零、一的切線，y 等於一加 x，斜率剛好是一。",
-          "board": [
-            {"do":"write","line":"切線：$y=1+{{s:x}}$"},
-            {"do":"focus","term":"s","label":"斜率 1","on":"斜率剛好"}
-          ] },
-        { "show": ["$e^x - 1 \\approx x$"],
-          "note": "所以比值靠近 1。",
-          "fig": {"use":0,"to":1},
-          "say": "往切點放大，曲線越來越像切線。所以 e 的 x 次方減一差不多就是 x，比值靠近一。",
-          "board": [
-            {"do":"write","line":"$e^x-1\\approx x$","on":"所以"}
-          ] },
-        { "show": ["$\\ln(1 + x) \\approx x$"],
-          "note": "反函數，切線是 $y = x$。",
-          "say": "自然對數一加 x 是它的反函數，在原點的切線是 y 等於 x，所以第二個比值也靠近一。",
-          "board": [
-            {"do":"write","line":"$\\ln(1+x)\\approx x$","on":"所以"}
-          ] },
-        { "show": ["直覺，不是證明"],
-          "note": "它假設了「切線斜率是 1」，那正是要證的事。",
-          "say": "注意這只是直覺：它先假設了切線斜率是一，而那正是要證明的事。這裡先接受第一條。",
-          "board": [
-            {"do":"write","line":"直覺，不是證明","color":"red"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\lim_{x\\to\\infty}x\\big(e^{1/x}-1\\big)$ 是多少？"
+          ],
+          "say": "先猜猜看，同樣換元試試。"
+        }
       ],
-      "drag": {
-        "use": 0,
-        "ask": "自己放大到最底，看 $e^x$ 和切線分不分得開",
-        "range": [
-          1.8,
-          2
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{x\\to\\infty}x\\big(e^{1/x}-1\\big)$ 是多少？",
+        "options": [
+          {
+            "label": "$1$",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "$e^{1/x}-1\\to0$，但乘上 $x\\to\\infty$，要換元才看得出來"
+          },
+          {
+            "label": "$\\infty$",
+            "why": "換元後是 $\\frac{e^t-1}{t}$，是有限的數"
+          },
+          {
+            "label": "$e$",
+            "why": "$e^{1/x}\\to e^0=1$，不是 $e$"
+          }
         ]
       }
     },
     {
-      "title": "配係數",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\lim_{x\\to0} \\frac{e^{3x} - 1}{2x}$"],
-          "note": "指數上是什麼，分母就配成什麼。",
-          "say": "e 的三 x 次方減一，除以二 x。指數上是三 x，分母卻是二 x，要配。",
+        {
+          "show": [
+            "• $\\displaystyle\\lim_{x\\to0}\\frac{e^x-1}{x}=1$：$1+x$ 是 $e^x$ 在 $0$ 的切線",
+            "• $\\displaystyle\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$：令 $t=\\ln(1+x)$ 由第一條推出"
+          ],
+          "say": "整理一下：兩條新的標準極限都趨近 1；第二條可以從第一條推出來；配湊的規則跟三角一樣；x 趨近無限大就換元成 t 趨近 0。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to0}\\frac{e^{{{t:3x}}}-1}{{{d:2x}}}$","tint":{"t":"blue"}},
-            {"do":"focus","term":"t","label":"三 x","on":"指數上是"},
-            {"do":"underline","term":"d","label":"要配","on":"分母卻是"}
-          ] },
-        { "show": ["$= \\left(\\frac{3}{2}\\right) \\cdot \\frac{e^{3x} - 1}{3x}$"],
-          "say": "分母配成三 x，多出來的二分之三放前面。",
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\lim_{x\\to0}\\frac{e^x-1}{x}=1$：$1+x$ 是 $e^x$ 在 $0$ 的切線"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}=1$：令 $t=\\ln(1+x)$ 由第一條推出",
+              "on": "第二"
+            },
+            {
+              "do": "write",
+              "line": "• 配湊：分母跟指數（或 $\\ln$ 裡面）一樣；$\\frac{a^x-1}x\\to\\ln a$",
+              "on": "配湊"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to\\infty$：令 $t=\\frac1x$，換成 $t\\to0$ 的標準形",
+              "on": "近無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：$e$ 型極限"
+          ],
+          "say": "下一課，我們來看 e 型極限。",
           "board": [
-            {"do":"write","line":"$={{k:\\left(\\frac{3}{2}\\right)}}\\cdot{{blk:\\frac{e^{{{t:3x}}}-1}{{{t2:3x}}}}}$","tint":{"t2":"blue"},"on":"分母配成"},
-            {"do":"circle","term":"k","label":"多出來的","on":"多出來的"}
-          ] },
-        { "show": ["檢查：$\\frac{3}{2}\\cdot\\frac{1}{3x}=\\frac{1}{2x}$"],
-          "note": "放前面的係數，剛好補回原本的分母。",
-          "say": "檢查一下：二分之三，乘上三 x 分之一，三約掉剩二 x 分之一，跟原本一樣。",
-          "board": [
-            {"do":"write","line":"$\\frac{3}{2}\\cdot{{n2:\\frac{1}{3x}}}=\\frac{1}{2x}$","on":"檢查一下"},
-            {"do":"underline","term":"n2","on":"三約掉"}
-          ] },
-        { "show": ["$3x \\to 0$，後面那塊 $\\to 1$","答案 $\\frac{3}{2}$"],
-          "say": "x 趨近零時三 x 也趨近零，後面那塊趨近一，答案是二分之三。",
-          "board": [
-            {"do":"write","line":"$3x\\to0$，後面那塊 $\\to1$"},
-            {"do":"underline","term":"blk","on":"後面那塊"},
-            {"do":"write","line":"答案 $\\frac{3}{2}$","color":"green","on":"答案是"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "$\\ln$ 也一樣配",
-      "beats": [
-        { "show": ["$\\frac{\\ln(1 + ax)}{bx} \\to \\frac{a}{b}$"],
-          "note": "$\\ln$ 裡面是什麼，分母就配成什麼。",
-          "say": "對數一樣：自然對數裡面是 a x，分母就配成 a x，極限是 b 分之 a。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to0}\\frac{\\ln(1+{{i:ax}})}{{{d:bx}}}=\\frac{a}{b}$","tint":{"i":"blue"}},
-            {"do":"focus","term":"i","color":"blue","on":"裡面是"},
-            {"do":"underline","term":"d","label":"配成一樣","on":"分母就配成"}
-          ] },
-        { "show": ["$\\ln(1 + 2x) \\ne \\ln 1 + \\ln 2x$"],
-          "note": "$\\ln$ 不能把加法拆開。",
-          "say": "常見的錯：把一加二 x 的對數，拆成一的對數加二 x 的對數。對數只能把乘法拆成加法。",
-          "board": [
-            {"do":"write","line":"$\\ln(1+2x)={{w:\\ln 1+\\ln 2x}}$"},
-            {"do":"strike","term":"w","label":"錯","on":"拆成一的對數"},
-            {"do":"write","line":"$\\ln(ab)=\\ln a+\\ln b$","on":"乘法"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "底數不是 $e$",
-      "beats": [
-        { "show": ["$\\lim_{x\\to0} \\frac{2^x - 1}{x}$"],
-          "note": "先換成 $e$：$2^x = e^{x \\ln 2}$。",
-          "say": "二的 x 次方減一，除以 x。底數不是 e，先換成 e：二的 x 次方，等於 e 的 x 乘自然對數二次方。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to0}\\frac{2^x-1}{x}$"},
-            {"do":"transform","line":"$\\lim_{x\\to0}\\frac{e^{{{u:x\\ln 2}}}-1}{x}$","tint":{"u":"blue"},"on":"先換成 e"}
-          ] },
-        { "show": ["$2=e^{\\ln 2}$，所以 $2^x=(e^{\\ln 2})^x$"],
-          "note": "$\\ln$ 是 $e^x$ 的反函數。",
-          "say": "為什麼可以換？自然對數二的意思，就是 e 要幾次方才會變成二。所以二等於 e 的自然對數二次方，再取 x 次方。",
-          "board": [
-            {"do":"write","line":"${{n1:2}}=e^{\\ln 2}$","on":"自然對數二的意思"},
-            {"do":"write","line":"$2^x=(e^{\\ln 2})^x={{n3:e^{x\\ln 2}}}$","on":"再取"},
-            {"do":"underline","term":"n3","color":"blue","label":"次方相乘","on":"取 x 次方"}
-          ] },
-        { "show": ["代 $x=1$：$e^{\\ln 2}=2$"],
-          "note": "拿一個數檢查換法。",
-          "say": "代 x 等於一檢查：e 的自然對數二次方就是二，跟原本的二的一次方對得上。",
-          "board": [
-            {"do":"write","line":"$x=1$：$e^{\\ln 2}={{c:2}}$","on":"代 x 等於一"},
-            {"do":"box","term":"c","color":"green","on":"就是二"}
-          ] },
-        { "show": ["$= \\ln 2 \\cdot \\frac{e^{x \\ln 2} - 1}{x \\ln 2}$"],
-          "say": "指數上是 x 乘自然對數二，分母就配成它，多出來的自然對數二放前面。",
-          "board": [
-            {"do":"write","line":"$={{k:\\ln 2}}\\cdot\\frac{e^{{{u:x\\ln 2}}}-1}{{{u2:x\\ln 2}}}$","tint":{"u2":"blue"},"on":"分母就配成"},
-            {"do":"underline","term":"k","label":"多出來的","on":"多出來的"}
-          ] },
-        { "show": ["答案 $\\ln 2 \\approx 0.693$"],
-          "note": "一般地 $\\frac{a^x - 1}{x} \\to \\ln a$，不是 $a$。",
-          "say": "後面那塊趨近一，答案是自然對數二，約零點六九三。換成別的底數也一樣，答案是自然對數 a。",
-          "board": [
-            {"do":"write","line":"答案 $\\ln 2\\approx0.693$","color":"green","on":"答案是自然#1"},
-            {"do":"write","line":"$\\frac{a^x-1}{x}\\to{{g:\\ln a}}$","on":"換成別的"},
-            {"do":"focus","term":"g","on":"自然對數 a"}
-          ] }
-      ],
-      "key": "先把 $2^x$ 寫成 $e^{x\\ln 2}$ 再配係數",
-      "check": 2
-    },
-    {
-      "title": "$x \\to \\infty$ 的版本",
-      "beats": [
-        { "show": ["$\\lim_{x\\to\\infty} x \\ln(1 + \\frac{2}{x})$"],
-          "note": "$\\infty \\cdot 0$ 型，不能直接當 0。",
-          "say": "x 趨近無限大，乘上自然對數一加 x 分之二。一個變大、一個趨近零，不能直接說是零。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty}{{a:x}}\\,{{l:\\ln(1+\\frac{2}{x})}}$"},
-            {"do":"focus","term":"a","label":"變大","on":"一個變大"},
-            {"do":"underline","term":"l","label":"趨近零","on":"趨近零"}
-          ] },
-        { "show": ["令 $t = \\frac{1}{x}$，$t \\to 0^+$"],
-          "say": "換元：令 t 是 x 分之一。x 趨近無限大，t 就從右邊趨近零。",
-          "board": [
-            {"do":"write","line":"令 ${{t:t}}=\\frac{1}{x}$，${{r:t\\to0^+}}$"},
-            {"do":"underline","term":"r","label":"右邊","on":"從右邊"}
-          ] },
-        { "show": ["$\\frac{\\ln(1 + 2t)}{t} = 2 \\cdot \\frac{\\ln(1 + 2t)}{2t} \\to 2$"],
-          "say": "式子變成自然對數一加二 t 除以 t，回到標準形。配出二 t，答案是二。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\ln(1+2t)}{t}$"},
-            {"do":"transform","line":"$=2\\cdot{{b:\\frac{\\ln(1+2t)}{2t}}}\\to{{z:2}}$","on":"配出"},
-            {"do":"underline","term":"b","label":"標準形","on":"二 t#2"},
-            {"do":"box","term":"z","color":"green","on":"答案是"}
-          ] }
-      ],
-      "key": "$\\infty\\cdot0$ 型：令 $t=\\frac{1}{x}$ 化成標準極限",
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：$e$ 型極限"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["standard-limit", "exponential-limit", "log"],
-    "fine": ["exp-limit-standard", "log-limit-standard", "exp-limit-rescale", "exp-limit-general-base", "log-limit-at-infinity"]
+    "coarse": [
+      "standard-limit",
+      "exponential-limit",
+      "log"
+    ],
+    "fine": [
+      "exp-limit-standard",
+      "log-limit-standard",
+      "exp-limit-rescale",
+      "exp-limit-general-base",
+      "log-limit-at-infinity"
+    ]
   },
   "practice": [
-    { "id": "lim-005", "core": true, "trains": "exp-limit-standard" },
-    { "id": "fd-lim-009", "core": true, "trains": "exp-limit-rescale" },
-    { "id": "rel-basic-003", "core": true, "trains": "exp-limit-rescale" },
-    { "id": "fd-lim-010", "core": true, "trains": "log-limit-standard" },
-    { "id": "rel-basic-004", "core": true, "trains": "log-limit-standard" },
-    { "id": "tmpl-lim-log-ratio-001", "core": true, "trains": "log-limit-standard" },
-    { "id": "exam-lim-019", "core": true, "trains": "log-limit-at-infinity", "note": "先合併：$\\ln(x + 1) - \\ln x = \\ln(1 + \\frac{1}{x})$。" },
-    { "id": "lim-006", "trains": "log-limit-standard" },
-    { "id": "tb-lh-004", "trains": "exp-limit-general-base", "note": "拆成 $\\frac{4^x - 1}{x} - \\frac{2^x - 1}{x}$。" },
-    { "id": "exam-lim-015", "challenge": true, "trains": "exp-limit-rescale", "note": "挑戰：寫成 $\\frac{e^{\\sin x} - 1}{\\sin x} \\cdot \\sin x / x$。" }
+    {
+      "id": "lim-005",
+      "core": true,
+      "trains": "exp-limit-standard"
+    },
+    {
+      "id": "fd-lim-009",
+      "core": true,
+      "trains": "exp-limit-rescale"
+    },
+    {
+      "id": "rel-basic-003",
+      "core": true,
+      "trains": "exp-limit-rescale"
+    },
+    {
+      "id": "fd-lim-010",
+      "core": true,
+      "trains": "log-limit-standard"
+    },
+    {
+      "id": "rel-basic-004",
+      "core": true,
+      "trains": "log-limit-standard"
+    },
+    {
+      "id": "tmpl-lim-log-ratio-001",
+      "core": true,
+      "trains": "log-limit-standard"
+    },
+    {
+      "id": "exam-lim-019",
+      "core": true,
+      "trains": "log-limit-at-infinity",
+      "note": "先合併：$\\ln(x + 1) - \\ln x = \\ln(1 + \\frac{1}{x})$。"
+    },
+    {
+      "id": "lim-006",
+      "trains": "log-limit-standard"
+    },
+    {
+      "id": "tb-lh-004",
+      "trains": "exp-limit-general-base",
+      "note": "拆成 $\\frac{4^x - 1}{x} - \\frac{2^x - 1}{x}$。"
+    },
+    {
+      "id": "exam-lim-015",
+      "challenge": true,
+      "trains": "exp-limit-rescale",
+      "note": "挑戰：寫成 $\\frac{e^{\\sin x} - 1}{\\sin x} \\cdot \\sin x / x$。"
+    }
   ],
   "gaps": []
 }

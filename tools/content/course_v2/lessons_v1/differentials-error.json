@@ -1,0 +1,414 @@
+{
+  "id": "differentials-error",
+  "title": "微分與誤差估計",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["linear-approximation"],
+  "next": ["rolle-theorem"],
+  "related": [],
+  "objectives": [
+    "分清楚 $dy$（沿切線的變化）與 $\\Delta y$（實際的變化），會算 $dy=f'(x)\\,dx$。",
+    "用 $dy$ 估計量測誤差傳到計算結果的大小。",
+    "算相對誤差與百分比誤差，看出 $y=x^n$ 的相對誤差會放大 $n$ 倍。"
+  ],
+  "visual": "曲線 y = f(x) 上一點，往右走 dx。畫面用兩段垂直線段標出 Δy（走到曲線上）與 dy（走到切線上），兩段之間的小縫就是誤差。拖動 dx 變小，小縫縮得比 dx 快得多。",
+  "concept": [
+    {
+      "heading": "① $\\Delta y$ 與 $dy$：真的走，和沿著切線走",
+      "body": [
+        "$x$ 變了一點點，記作 $dx$（也就是 $\\Delta x$）。$y$ 實際變了 $\\Delta y=f(x+dx)-f(x)$。",
+        "如果不沿著曲線、改沿著切線走，$y$ 變的是 $dy=f'(x)\\,dx$。這就是〈線性近似〉換個寫法：$\\Delta y\\approx dy$。",
+        "例：$y=x^2$，$x$ 從 $3$ 變成 $3.1$。$\\Delta y=9.61-9=0.61$；$dy=2\\cdot 3\\cdot 0.1=0.6$。差 $0.01$，正好是 $(dx)^2$。"
+      ],
+      "tex": ["dy=f'(x)\\,dx,\\qquad \\Delta y\\approx dy"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 量測誤差會傳下去",
+      "body": [
+        "量半徑量得 $r$，但可能差 $dr$。用 $r$ 算出來的體積 $V$ 會差多少？就是 $dV=V'(r)\\,dr$。",
+        "這是一個估計：它用切線代替曲線，$dr$ 越小越準。題目說「用微分估計誤差」，要的就是 $dV$，不是精確的 $\\Delta V$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 相對誤差：差多少，跟本身比",
+      "body": [
+        "差 1 公分，量的是 10 公分還是 10 公尺，意義完全不同。相對誤差 $\\frac{dy}{y}$ 把誤差跟本身的大小比，乘 $100\\%$ 就是百分比誤差。",
+        "$y=x^n$ 時，$dy=nx^{n-1}\\,dx$，除以 $y=x^n$ 得 $\\frac{dy}{y}=n\\cdot\\frac{dx}{x}$。半徑差 $1\\%$，面積（$r^2$）約差 $2\\%$，體積（$r^3$）約差 $3\\%$。指數越高，誤差放大越多。"
+      ],
+      "tex": ["\\frac{dy}{y}=n\\,\\frac{dx}{x}\\quad(y=x^n)"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "球的體積誤差",
+      "prompt": "量得球的半徑 10 公分，誤差最多 0.05 公分。用微分估計體積的最大誤差。",
+      "problemId": "dd-lin-004",
+      "steps": [
+        "$V=\\frac{4}{3}\\pi r^3$，$V'(r)=4\\pi r^2$。",
+        "$dV=4\\pi r^2\\,dr=4\\pi\\cdot 10^2\\cdot 0.05=20\\pi\\approx 62.8$ 立方公分。",
+        "相對誤差：$\\frac{dV}{V}=3\\cdot\\frac{dr}{r}=3\\cdot\\frac{0.05}{10}=0.015$，也就是 $1.5\\%$。半徑只差 $0.5\\%$，體積差了三倍。"
+      ],
+      "answer": "$20\\pi\\approx 62.8$ 立方公分（相對誤差約 $1.5\\%$）",
+      "note": "實際的 $\\Delta V=\\frac{4}{3}\\pi(10.05^3-10^3)\\approx 63.15$，跟 $dV\\approx 62.83$ 很接近，但不相等。",
+      "claim": "D((4/3)*pi*x^3, 10)*0.05 == 20*pi ;; D((4/3)*pi*x^3, 10)*0.05/SUB((4/3)*pi*x^3, 10) == 0.015"
+    },
+    {
+      "title": "正立方體",
+      "prompt": "正立方體的邊長量得 5 公分，誤差 0.02 公分。用微分估計體積的誤差。",
+      "problemId": "dd-lin-005",
+      "steps": [
+        "$V=s^3$，$dV=3s^2\\,ds$。",
+        "$dV=3\\cdot 5^2\\cdot 0.02=3\\cdot 25\\cdot 0.02=1.5$ 立方公分。"
+      ],
+      "answer": "$1.5$ 立方公分",
+      "claim": "D(x^3, 5)*0.02 == 1.5"
+    },
+    {
+      "title": "反過來：要量多準",
+      "prompt": "用 $A=\\pi r^2$ 算圓面積，要讓面積的相對誤差不超過 $1\\%$。半徑的相對誤差最多可以是多少？",
+      "steps": [
+        "$dA=2\\pi r\\,dr$，除以 $A=\\pi r^2$：$\\frac{dA}{A}=2\\cdot\\frac{dr}{r}$。",
+        "要 $\\left|\\frac{dA}{A}\\right|\\le 1\\%$，就要 $2\\left|\\frac{dr}{r}\\right|\\le 1\\%$。",
+        "所以 $\\left|\\frac{dr}{r}\\right|\\le 0.5\\%$。"
+      ],
+      "answer": "$0.5\\%$",
+      "claim": "D(pi*x^2)/(pi*x^2) == 2/x"
+    }
+  ],
+  "pitfalls": [
+    "把 $dy$ 當成精確的 $\\Delta y$。$dy$ 是沿切線的估計。",
+    "算相對誤差時用 $dy$ 除以 $dx$，應該是除以 $y$。",
+    "以為相對誤差在計算中保持不變；$y=x^n$ 會放大成 $n$ 倍。",
+    "$f'(x)$ 代錯點：要代量到的值（例如 $r=10$），不是誤差 $0.05$。"
+  ],
+  "checks": [
+    {
+      "ask": "$y=x^3$，$x=2$，$dx=0.1$。$dy$ 是？",
+      "options": [
+        { "label": "$1.2$", "correct": true },
+        { "label": "$1.261$", "why": "那是實際的變化 $\\Delta y=2.1^3-2^3=9.261-8$。$dy$ 是沿切線走：$3\\cdot 2^2\\cdot 0.1=1.2$。" },
+        { "label": "$0.3$", "why": "導數 $3x^2$ 要在 $x=2$ 取值，是 $12$，不是 $3$。$12\\times 0.1=1.2$。" }
+      ]
+    },
+    {
+      "ask": "球的半徑量測有 $2\\%$ 的相對誤差。用微分估計，體積的相對誤差大約是？",
+      "options": [
+        { "label": "$6\\%$", "correct": true },
+        { "label": "$2\\%$", "why": "相對誤差會被放大：$V$ 正比於 $r^3$，$\\frac{dV}{V}=3\\cdot\\frac{dr}{r}=3\\times 2\\%$。" },
+        { "label": "$8\\%$", "why": "你把 $2$ 取了三次方。指數 $3$ 是乘在相對誤差前面：$\\frac{dV}{V}=3\\cdot\\frac{dr}{r}$，不是 $\\left(\\frac{dr}{r}\\right)^3$ 或 $2^3$。" }
+      ]
+    },
+    {
+      "ask": "在 $y=f(x)$ 的圖上，$x$ 往右走 $dx$。沿著「切線」上升的高度是？",
+      "options": [
+        { "label": "$dy=f'(x)\\,dx$", "correct": true },
+        { "label": "$\\Delta y=f(x+dx)-f(x)$", "why": "$\\Delta y$ 是沿著曲線實際上升的高度。沿切線的是 $dy$，兩者只是近似相等。" },
+        { "label": "兩者完全一樣", "why": "只有 $f$ 是直線時才一樣。$y=x^2$ 從 $3$ 走 $0.1$，$\\Delta y=0.61$、$dy=0.6$。" }
+      ]
+    },
+    {
+      "ask": "正立方體邊長量得 2 公尺，誤差 0.01 公尺。表面積 $S=6s^2$。用微分估計 $S$ 的誤差：",
+      "options": [
+        { "label": "$0.24$ 平方公尺", "correct": true },
+        { "label": "$0.12$ 平方公尺", "why": "$S'=12s$，你可能把 $6s^2$ 微分成 $6s$，漏了乘 $2$。$12\\cdot 2\\cdot 0.01=0.24$。" },
+        { "label": "$0.04$ 平方公尺", "why": "那是只有一個面 $s^2$ 的 $dS=2s\\,ds$。表面積有 6 個面，要再乘 $6$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "真的走與沿切線走",
+      "beats": [
+        { "show": ["$x$ 變一點點：$dx$"],
+          "note": "也就是 $\\Delta x$。",
+          "say": "x 變了一點點，記作 d x，其實就是 delta x。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,3.4,-0.25,2],"curves":[{"expr":"x^2/4","color":"blue","width":3},{"expr":"x/2-1/4","color":"violet"}],"dashed":[[[1,0.25],[2.6,0.25]]],"arrows":[{"from":[2.8,0.25],"to":[2.8,1.69],"color":"blue"},{"from":[2.42,0.25],"to":[2.42,0.96],"color":"violet"}],"points":[{"x":1,"y":0.25},{"x":2.6,"y":1.69},{"x":2.6,"y":1.05}],"labels":[{"x":1.8,"y":0.05,"text":"dx"},{"x":2.88,"y":0.95,"text":"Δy","anchor":"start"},{"x":2.34,"y":0.6,"text":"dy","anchor":"end"}]},"on":"x 變了"}
+          ] },
+        { "show": ["$\\Delta y=f(x+dx)-f(x)$"],
+          "note": "沿著曲線，$y$ 實際變了多少。",
+          "say": "沿著曲線走，y 實際變的量叫 delta y：新的函數值減舊的函數值。",
+          "board": [
+            {"do":"write","line":"${{dy:\\Delta y}}=f(x+dx)-f(x)$","tint":{"dy":"blue"},"on":"沿著曲線"},
+            {"do":"underline","term":"dy","color":"blue","label":"沿曲線","on":"實際變的量"}
+          ] },
+        { "show": ["沿切線走，高度變多少？記作 $dy$"],
+          "note": "切線的斜率是 $f'(x)$。",
+          "say": "如果不沿曲線，改沿著切線走，高度變的量叫做 d y。切線的斜率，就是導數。",
+          "board": [
+            {"do":"write","line":"${{d:dy}}$：沿切線走，高度變多少？","tint":{"d":"violet"},"on":"改沿著切線"},
+            {"do":"focus","term":"d","color":"violet","label":"沿切線","on":"高度變的量"}
+          ] },
+        { "show": ["$dx=\\Delta x$，但 $dy\\ne\\Delta y$"],
+          "note": "$x$ 的一步只有一個量；$y$ 有兩種走法。",
+          "say": "x 這一步，d x 和 delta x 是同一個量。不同的是 y：沿曲線是 delta y，沿切線是 d y。",
+          "board": [
+            {"do":"write","line":"${{p1:dx}}={{p2:\\Delta x}}$：$x$ 走的一步"},
+            {"do":"write","line":"$dy\\ne\\Delta y$：$y$ 兩種走法","on":"不同的是"}
+          ] },
+        { "show": ["$\\Delta y\\approx dy$"],
+          "note": "就是〈線性近似〉換個寫法。",
+          "say": "切線在附近貼著曲線，所以 delta y 約等於 d y。這就是線性近似換個寫法。",
+          "board": [
+            {"do":"transform","line":"${{dy:\\Delta y}}\\approx{{d:dy}}$","on":"所以 delta y"},
+            {"do":"underline","term":"dy","color":"blue","label":"線性近似","on":"這就是"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "算一次看差多少",
+      "beats": [
+        { "show": ["$y=x^2$，$x$ 從 $3$ 到 $3.1$"],
+          "say": "y 等於 x 平方，x 從三走到三點一，d x 是零點一。",
+          "board": [
+            {"do":"write","line":"$y=x^2$：$x$ 從 $3$ 到 $3.1$，$dx=0.1$","on":"y 等於 x 平方"}
+          ] },
+        { "show": ["$\\Delta y=9.61-9=0.61$"],
+          "say": "真的走：三點一的平方是九點六一，減掉九，delta y 是零點六一。",
+          "board": [
+            {"do":"write","line":"$\\Delta y=9.61-9={{a:0.61}}$","tint":{"a":"blue"},"on":"真的走"}
+          ] },
+        { "show": ["$dy=2\\cdot 3\\cdot 0.1=0.6$"],
+          "say": "沿切線：斜率二乘三是六，乘零點一，d y 是零點六。",
+          "board": [
+            {"do":"write","line":"$dy=2\\cdot 3\\cdot 0.1={{b:0.6}}$","tint":{"b":"violet"},"on":"沿切線"}
+          ] },
+        { "show": ["差 $0.01$，正好是 $(dx)^2$"],
+          "say": "兩個只差零點零一，正好是 d x 的平方。d x 越小，這個差小得越快。",
+          "board": [
+            {"do":"write","line":"差 $0.01$，正好是 ${{s:(dx)^2}}$","on":"兩個只差"},
+            {"do":"underline","term":"s","label":"小得更快","on":"d x 的平方"}
+          ] },
+        { "show": ["$\\Delta y-dy=(dx)^2$"],
+          "note": "一般的 $x$，不只是 $3$。",
+          "say": "一般的 x：delta y 展開是二 x d x 加 d x 平方。d y 只有二 x d x，相減剩 d x 平方。",
+          "board": [
+            {"do":"write","line":"$\\Delta y=(x+dx)^2-x^2$"},
+            {"do":"transform","line":"$\\Delta y={{q1:2x\\,dx}}+{{q2:(dx)^2}}$","on":"展開是"},
+            {"do":"write","line":"$dy={{q3:2x\\,dx}}$","on":"d y 只有"},
+            {"do":"circle","term":"q2","color":"gold","label":"剩下的","on":"相減"}
+          ] },
+        { "show": ["$dx$ 變成 $\\frac{1}{10}$，差變成 $\\frac{1}{100}$"],
+          "note": "差比 $dx$ 本身縮得快。",
+          "say": "d x 縮成十分之一，d x 平方就縮成百分之一。差比 d x 本身縮得快，這就是小得更快。",
+          "board": [
+            {"do":"write","line":"$dx$ 變 ${{a1:\\frac{1}{10}}}$，差變 ${{b1:\\frac{1}{100}}}$"},
+            {"do":"circle","term":"b1","color":"gold","on":"百分之一"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "量測誤差傳下去",
+      "beats": [
+        { "show": ["$dV=V'(r)\\,dr$"],
+          "note": "半徑可能差 $dr$，體積差多少？",
+          "say": "量半徑可能差 d r。用它算出來的體積會差多少？用微分估：V prime 乘 d r。",
+          "board": [
+            {"do":"write","line":"$dV={{v:V'(r)}}\\,dr$"},
+            {"do":"focus","term":"v","color":"blue","label":"導數","on":"V prime"}
+          ] },
+        { "show": ["是估計，不是精確的 $\\Delta V$"],
+          "note": "用切線代替曲線，$dr$ 越小越準。",
+          "say": "這是用切線代替曲線的估計，d r 越小越準。題目說用微分估計，要的就是 d V。",
+          "board": [
+            {"do":"write","line":"${{dv:dV}}\\approx\\Delta V$"},
+            {"do":"underline","term":"dv","color":"gold","on":"題目說"}
+          ] },
+        { "show": ["切線高度是估計 $dV$，曲線高度是 $\\Delta V$"],
+          "note": "$dr$ 越小，兩者的縫越小。",
+          "say": "切線上的高度是估計 d V，曲線上的才是真的 delta V。d r 越小，縫越小，估計越準。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,3,-0.25,2],"curves":[{"expr":"x^2/4","domain":[0,3],"color":"blue","width":3},{"expr":"x/2-1/4","domain":[0,3],"color":"violet"}],"dashed":[[[1,0.25],[2,0.25]],[[2,0.75],[2,1]]],"points":[{"x":1,"y":0.25},{"x":2,"y":1},{"x":2,"y":0.75}],"labels":[{"x":1.5,"y":0.05,"text":"dr"},{"x":2.08,"y":1.1,"text":"ΔV","anchor":"start"},{"x":2.08,"y":0.65,"text":"dV","anchor":"start"}]}}
+          ] },
+        { "show": ["球：$r=10$，$dr=0.05$"],
+          "note": "$V=\\frac{4}{3}\\pi r^3$，$V'(r)=4\\pi r^2$",
+          "say": "例子：球的半徑量得十公分，誤差最多零點零五公分。體積的導數是四 pi r 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"球：$r=10$，$dr=0.05$","on":"球的半徑"},
+            {"do":"write","line":"$V=\\frac{4}{3}\\pi r^3$","on":"誤差最多"},
+            {"do":"write","line":"$V'(r)=4\\pi r^2$","on":"體積的導數"}
+          ] }
+      ],
+      "key": "$dV=V'(r)\\,dr$：導數在 $r$ 取值再乘 $dr$",
+      "predict": {
+        "ask": "$dV$ 是？",
+        "options": [
+          {
+            "label": "$4\\pi\\cdot 10^2\\cdot 0.05=20\\pi$",
+            "correct": true
+          },
+          {
+            "label": "$4\\pi\\cdot 0.05^2\\cdot 0.05$",
+            "why": "導數要代量到的值 $r=10$，不是誤差 $0.05$。"
+          },
+          {
+            "label": "$\\frac{4}{3}\\pi\\cdot 10^3$",
+            "why": "這是體積 $V$ 本身，不是體積的誤差。誤差要用 $V'(r)\\,dr$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "很接近，但不相等",
+      "beats": [
+        { "show": ["$dV=20\\pi\\approx 62.8$ 立方公分"],
+          "say": "四 pi 乘一百再乘零點零五，是二十 pi，大約六十二點八立方公分。",
+          "board": [
+            {"do":"write","line":"$dV=4\\pi\\cdot 10^2\\cdot 0.05$"},
+            {"do":"transform","line":"$dV={{d:20\\pi}}\\approx 62.8$","tint":{"d":"violet"},"on":"是二十"}
+          ] },
+        { "show": ["實際 $\\Delta V\\approx 63.15$"],
+          "note": "跟 $dV\\approx 62.83$ 很接近，但不相等。",
+          "say": "真的去算半徑十點零五的體積差，大約六十三點一五。很接近，但不相等。",
+          "board": [
+            {"do":"write","line":"實際 ${{t:\\Delta V}}\\approx 63.15$","tint":{"t":"blue"},"on":"真的去算"},
+            {"do":"underline","term":"t","color":"blue","label":"很接近，但不相等","on":"很接近"}
+          ] },
+        { "show": ["正立方體：$s=5$，$ds=0.02$"],
+          "note": "$V=s^3$，$dV=3s^2\\,ds$",
+          "say": "再一個：正立方體邊長五公分，誤差零點零二。體積 s 三次方，d V 是三 s 平方乘 d s。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"正立方體：$s=5$，$ds=0.02$","on":"正立方體"},
+            {"do":"write","line":"$V=s^3$，$dV=3s^2\\,ds$","on":"體積 s"}
+          ] },
+        { "show": ["$(s+ds)^3=s^3+3s^2\\,ds+\\cdots$"],
+          "note": "其餘的項都含 $(ds)^2$。",
+          "say": "三 s 平方怎麼來：展開 s 加 d s 的三次方，前兩項是 s 三次方加三 s 平方 d s。後面都含 d s 平方，很小，丟掉。",
+          "board": [
+            {"do":"write","line":"$(s+ds)^3=s^3+{{a2:3s^2\\,ds}}+\\cdots$"},
+            {"do":"underline","term":"a2","color":"gold","on":"前兩項"},
+            {"do":"write","line":"$\\cdots$ 含 $(ds)^2$，丟掉","on":"後面"}
+          ] },
+        { "show": ["$dV=3\\cdot 25\\cdot 0.02=1.5$"],
+          "note": "立方公分。",
+          "say": "三乘二十五乘零點零二，等於一點五立方公分。",
+          "board": [
+            {"do":"write","line":"$dV=3\\cdot 25\\cdot 0.02={{r:1.5}}$"},
+            {"do":"box","term":"r","color":"green","label":"立方公分","on":"等於一點五"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "相對誤差",
+      "beats": [
+        { "show": ["差 1 公分：量 10 公分？量 10 公尺？"],
+          "note": "意義完全不同。",
+          "say": "同樣差一公分，量的是十公分還是十公尺，意義完全不一樣。",
+          "board": [
+            {"do":"write","line":"差 $1$ 公分：量 $10$ 公分？量 $10$ 公尺？"}
+          ] },
+        { "show": ["相對誤差 $\\frac{dy}{y}$"],
+          "note": "乘 $100\\%$ 就是百分比誤差。",
+          "say": "所以把誤差除以本身的大小，叫相對誤差；乘一百就是百分比。注意是除以 y，不是除以 d x。",
+          "board": [
+            {"do":"write","line":"相對誤差 $=\\frac{dy}{{{y:y}}}$"},
+            {"do":"write","line":"百分比 $=\\frac{dy}{y}\\times 100\\%$","on":"乘一百"},
+            {"do":"underline","term":"y","color":"gold","label":"分母是 y","on":"除以 y"}
+          ] },
+        { "show": ["$\\frac{dy}{y}=n\\,\\frac{dx}{x}\\quad(y=x^n)$"],
+          "say": "y 等於 x 的 n 次方時，d y 除以 y 剛好是 n 倍的 d x 除以 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y=x^n$","on":"y 等於"},
+            {"do":"write","line":"$\\frac{dy}{y}={{n:n}}\\,\\frac{dx}{x}$","on":"剛好是"},
+            {"do":"focus","term":"n","color":"gold","label":"放大 n 倍","on":"n 倍"}
+          ] },
+        { "show": ["$\\frac{n x^{n-1}\\,dx}{x^n}=n\\,\\frac{dx}{x}$"],
+          "note": "$dy=n x^{n-1}\\,dx$，除以 $y=x^n$。",
+          "say": "d y 是 n 乘 x 的 n 減一次方乘 d x。除以 x 的 n 次方，x 少掉一次，剩 n 倍的 d x 除以 x。",
+          "board": [
+            {"do":"write","line":"$dy=n{{p3:x^{n-1}}}\\,dx$"},
+            {"do":"write","line":"$\\frac{n x^{n-1}dx}{x^n}=n\\frac{dx}{x}$","on":"除以#1"}
+          ] },
+        { "show": ["半徑差 $1\\%$：面積約 $2\\%$，體積約 $3\\%$"],
+          "note": "指數越高，誤差放大越多。",
+          "say": "半徑差百分之一，面積是平方，約差百分之二；體積是三次方，約差百分之三。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"半徑差 $1\\%$","on":"半徑差"},
+            {"do":"write","line":"面積 $\\propto r^2$：約 $2\\%$","on":"面積是平方"},
+            {"do":"write","line":"體積 $\\propto r^3$：約 $3\\%$","on":"體積是三次方"}
+          ] },
+        { "show": ["「約」：略掉 $(dx)^2$ 以上的項"],
+          "note": "$\\frac{dx}{x}$ 夠小才準。",
+          "say": "這個約，是丟掉了 d x 平方以上的項。d x 相對很小才準；半徑差百分之十，被丟掉的部分就不能不管了。",
+          "board": [
+            {"do":"write","line":"約：略掉 $(dx)^2$ 以上的項"},
+            {"do":"write","line":"要 $\\frac{dx}{x}$ 夠小才準","on":"相對很小"}
+          ] }
+      ],
+      "key": "比的是 $\\frac{dy}{y}$，不是 $dy$ 本身",
+      "predict": {
+        "ask": "球 $r=10$、$dr=0.05$，體積的相對誤差是？",
+        "options": [
+          {
+            "label": "$3\\cdot\\frac{0.05}{10}=1.5\\%$",
+            "correct": true
+          },
+          {
+            "label": "$0.5\\%$",
+            "why": "那是半徑的相對誤差 $\\frac{0.05}{10}$。體積是 $r^3$，要再乘 $3$。"
+          },
+          {
+            "label": "$0.05\\%$",
+            "why": "誤差 $0.05$ 要先除以半徑 $10$，才是相對誤差。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "反過來：要量多準",
+      "beats": [
+        { "show": ["球：$\\frac{dV}{V}=3\\cdot\\frac{0.05}{10}=0.015$"],
+          "note": "半徑只差 $0.5\\%$，體積差 $1.5\\%$。",
+          "say": "剛剛的球：三乘零點零五除以十，是零點零一五，也就是百分之一點五。半徑差的放大了三倍。",
+          "board": [
+            {"do":"write","line":"$\\frac{dV}{V}=3\\cdot\\frac{0.05}{10}$"},
+            {"do":"write","line":"$\\frac{dV}{V}=0.015={{r:1.5\\%}}$","on":"是零點零一五"},
+            {"do":"box","term":"r","color":"green","on":"百分之一點五"}
+          ] },
+        { "show": ["$A=\\pi r^2$：$\\frac{dA}{A}=2\\cdot\\frac{dr}{r}$"],
+          "say": "反過來問：圓面積要準到百分之一，半徑要量多準？面積的相對誤差是半徑的兩倍。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$A=\\pi r^2$","on":"圓面積"},
+            {"do":"write","line":"$\\frac{dA}{A}={{t:2}}\\cdot\\frac{dr}{r}$","on":"面積的相對誤差"},
+            {"do":"focus","term":"t","color":"gold","label":"兩倍","on":"半徑的"}
+          ] },
+        { "show": ["$2\\left|\\frac{dr}{r}\\right|\\le 1\\%$"],
+          "note": "所以 $\\left|\\frac{dr}{r}\\right|\\le 0.5\\%$。",
+          "say": "兩倍的半徑相對誤差不超過百分之一，所以半徑的相對誤差最多百分之零點五。",
+          "board": [
+            {"do":"write","line":"$2\\left|\\frac{dr}{r}\\right|\\le 1\\%$"},
+            {"do":"transform","line":"$\\left|\\frac{dr}{r}\\right|\\le {{r:0.5\\%}}$","on":"所以半徑"},
+            {"do":"box","term":"r","color":"green","on":"最多"}
+          ] }
+      ],
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["linear-approximation"],
+    "fine": ["differential-dy", "differential-error-propagation", "differential-relative-error"]
+  },
+  "practice": [
+    { "id": "lec-05-q4b", "core": true, "trains": "differential-error-propagation" },
+    { "id": "dd-lin-005", "core": true, "trains": "differential-error-propagation" },
+    { "id": "db-lin-006", "core": true, "trains": "differential-error-propagation" },
+    { "id": "db-lin-007", "core": true, "trains": "differential-error-propagation" },
+    { "id": "cg-3d-006", "core": true, "trains": "differential-dy" },
+    { "id": "cg-3d-003", "core": true, "trains": "differential-relative-error" },
+    { "id": "cg-3d-007", "trains": "differential-dy" },
+    { "id": "cg-3d-004", "trains": "differential-relative-error" },
+    { "id": "cg-3d-005", "trains": "differential-relative-error" }
+  ],
+  "gaps": []
+}

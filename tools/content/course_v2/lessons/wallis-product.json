@@ -1,50 +1,135 @@
 {
   "id": "wallis-product",
   "title": "Wallis 乘積",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["wallis-integral", "squeeze-theorem", "asymptotic-equivalence"],
-  "next": ["gamma-definition"],
-  "related": ["stirling"],
-  "objectives": [
-    "寫得出 $\\frac{\\pi}{2}=\\frac{2}{1}\\cdot\\frac{2}{3}\\cdot\\frac{4}{3}\\cdot\\frac{4}{5}\\cdot\\frac{6}{5}\\cdot\\frac{6}{7}\\cdots$，並認得它的另一個樣子 $\\prod\\left(1-\\frac{1}{4k^2}\\right)=\\frac{2}{\\pi}$。",
-    "用 $W_n$ 遞減與夾擠定理，從 Wallis 積分推出 Wallis 乘積。",
-    "用 $nW_nW_{n-1}=\\frac{\\pi}{2}$ 推出 $\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$，不需要 Stirling。"
+  "prerequisites": [
+    "wallis-integral",
+    "squeeze-theorem",
+    "asymptotic-equivalence"
   ],
-  "visual": "橫軸是乘進去的因子個數 m，縱軸畫部分乘積 Pₘ = Π_{k≤m} (2k)²/((2k − 1)(2k + 1))，水平虛線標 π/2 ≈ 1.5708。點列 1.333、1.422、1.463…… 慢慢爬向虛線，m = 10 時還差約 2.4%，m = 100 時差約 0.25%。",
+  "next": [
+    "gamma-definition"
+  ],
+  "related": [
+    "stirling"
+  ],
+  "objectives": [
+    "寫得出 $\\frac{\\pi}{2}=\\frac{2}{1}\\cdot\\frac{2}{3}\\cdot\\frac{4}{3}\\cdot\\frac{4}{5}\\cdot\\frac{6}{5}\\cdot\\frac{6}{7}\\cdots$，並說得出部分乘積 $P_n$ 的意思",
+    "用 $W_n$ 遞減與夾擠定理，從 Wallis 積分推出 Wallis 乘積",
+    "用 $nW_nW_{n-1}=\\frac{\\pi}{2}$ 推出 $\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$，並估計部分乘積的誤差"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 一個用整數乘出 $\\pi$ 的公式",
+      "heading": "① 用整數乘出 $\\pi$",
       "body": [
-        "把偶數平方除以左右兩個奇數，一直乘下去：$\\frac{2\\cdot 2}{1\\cdot 3}\\cdot\\frac{4\\cdot 4}{3\\cdot 5}\\cdot\\frac{6\\cdot 6}{5\\cdot 7}\\cdots$ 會收斂到 $\\frac{\\pi}{2}$。每個因子 $\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{4k^2}{4k^2-1}$ 都比 $1$ 大一點點，乘起來剛好停在 $\\frac{\\pi}{2}$。",
-        "等價的寫法：取倒數，$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)=\\frac{2}{\\pi}$。"
+        "規律：分子是偶數，每個重複兩次；分母是它兩旁的奇數",
+        "兩個一組，定義部分乘積：",
+        "定理：$\\displaystyle\\lim_{n\\to\\infty}P_n=\\frac\\pi2$",
+        "另一種寫法：每一組倒過來是 $1-\\dfrac1{4k^2}$",
+        "部分乘積是 $\\frac1{P_n}$；$n=10$ 時 $\\approx0.6520$，$\\frac2\\pi\\approx0.6366$"
       ],
-      "tex": ["\\frac{\\pi}{2}=\\prod_{k=1}^{\\infty}\\frac{(2k)^2}{(2k-1)(2k+1)}"],
-      "collapsible": false
+      "tex": [
+        "\\frac\\pi2=\\frac21\\cdot\\frac23\\cdot\\frac43\\cdot\\frac45\\cdot\\frac65\\cdot\\frac67\\cdots",
+        "P_n=\\prod_{k=1}^{n}\\frac{2k}{2k-1}\\cdot\\frac{2k}{2k+1}=\\prod_{k=1}^{n}\\frac{4k^2}{4k^2-1}",
+        "\\prod_{k=1}^{\\infty}\\Big(1-\\frac1{4k^2}\\Big)=\\frac2\\pi"
+      ]
     },
     {
       "heading": "② 證明的關鍵：$W_n$ 遞減",
       "body": [
-        "上一課：$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$ 隨 $n$ 遞減，所以 $W_{2m+1}\\le W_{2m}\\le W_{2m-1}$。",
-        "全部除以 $W_{2m+1}$：$1\\le\\frac{W_{2m}}{W_{2m+1}}\\le\\frac{W_{2m-1}}{W_{2m+1}}=\\frac{2m+1}{2m}$（遞迴 $W_{2m+1}=\\frac{2m}{2m+1}W_{2m-1}$）。右邊 $\\to 1$，由夾擠定理 $\\frac{W_{2m}}{W_{2m+1}}\\to 1$。",
-        "最後把兩個 Wallis 的值代進去：$\\frac{W_{2m}}{W_{2m+1}}=\\frac{\\pi}{2}\\cdot\\frac{1\\cdot 3\\cdot 3\\cdot 5\\cdots(2m-1)(2m+1)}{2\\cdot 2\\cdot 4\\cdot 4\\cdots(2m)(2m)}$，它 $\\to 1$，也就是 $\\frac{\\pi}{2}$ 等於那個乘積的極限。"
+        "上一課：",
+        "相除，$\\pi$ 留下來，其他的正好湊成 $P_n$：",
+        "$P_n=\\dfrac{(2\\cdot4\\cdots2n)^2}{\\big(1\\cdot3\\cdots(2n-1)\\big)\\big(3\\cdot5\\cdots(2n+1)\\big)}$",
+        "所以只要證明：$\\dfrac{W_{2n}}{W_{2n+1}}\\to1$",
+        "遞減：$0\\le\\sin x\\le1$ ⇒ $\\sin^{2n+1}x\\le\\sin^{2n}x\\le\\sin^{2n-1}x$",
+        "同除以 $W_{2n+1}>0$，再用遞迴 $W_{2n+1}=\\frac{2n}{2n+1}W_{2n-1}$：",
+        "右邊 $=1+\\frac1{2n}\\to1$，夾擠："
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}W_{2n}&=\\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}\\cdot\\frac\\pi2\\\\W_{2n+1}&=\\frac{2\\cdot4\\cdots(2n)}{3\\cdot5\\cdots(2n+1)}\\end{aligned}",
+        "\\frac{W_{2n}}{W_{2n+1}}=\\frac\\pi2\\cdot\\frac{1\\cdot3\\cdot3\\cdot5\\cdots(2n-1)(2n+1)}{2\\cdot2\\cdot4\\cdot4\\cdots(2n)(2n)}=\\frac{\\pi/2}{P_n}",
+        "W_{2n+1}\\le W_{2n}\\le W_{2n-1}",
+        "1\\le\\frac{W_{2n}}{W_{2n+1}}\\le\\frac{W_{2n-1}}{W_{2n+1}}=\\frac{2n+1}{2n}",
+        "\\frac{W_{2n}}{W_{2n+1}}\\to1\\ \\Rightarrow\\ P_n\\to\\frac\\pi2\\quad\\blacksquare"
+      ]
     },
     {
-      "heading": "③ 一個漂亮的不變量：$nW_nW_{n-1}=\\frac{\\pi}{2}$",
+      "heading": "② 整理證明",
       "body": [
-        "由 $W_n=\\frac{n-1}{n}W_{n-2}$，兩邊乘 $nW_{n-1}$：$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$。這個量不隨 $n$ 改變，等於 $1\\cdot W_1W_0=\\frac{\\pi}{2}$。",
-        "配合 $W_n\\sim W_{n-1}$（上面證的），得到 $W_n^2\\sim\\frac{\\pi}{2n}$，也就是 $W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$。"
+        "順便得到誤差：把 $\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$ 代回不等式",
+        "$P_n$ 從下面逼近；誤差 $\\dfrac\\pi2-P_n\\le\\dfrac{P_n}{2n}<\\dfrac{\\pi}{4n}$"
       ],
-      "collapsible": false
+      "tex": [
+        "P_n\\le\\frac\\pi2\\le P_n\\Big(1+\\frac1{2n}\\Big)"
+      ]
     },
     {
-      "heading": "④ 收斂得很慢，但很有用",
+      "heading": "③ 不變量：$nW_nW_{n-1}=\\frac\\pi2$",
       "body": [
-        "部分乘積的相對誤差大約是 $\\frac{1}{4m}$，拿來算 $\\pi$ 並不實際。它真正的用途是當橋樑：中央二項式係數、Stirling 公式裡的 $\\sqrt{2\\pi}$、$\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$，都靠它定出常數。"
+        "遞迴 $nW_n=(n-1)W_{n-2}$，兩邊乘 $W_{n-1}$：",
+        "左邊是「第 $n$ 項」，右邊是「第 $n-1$ 項」：這個量不隨 $n$ 變",
+        "例：$n=2$：$2\\cdot\\frac\\pi4\\cdot1=\\frac\\pi2$；$n=3$：$3\\cdot\\frac23\\cdot\\frac\\pi4=\\frac\\pi2$",
+        "$W_n$ 的大小：先證 $W_n\\sim W_{n-1}$",
+        "$nW_n^2=\\dfrac\\pi2\\cdot\\dfrac{W_n}{W_{n-1}}\\to\\dfrac\\pi2$，所以",
+        "數值：$n=10$ 時 $W_{10}\\big/\\sqrt{\\frac\\pi{20}}\\approx0.975$；$n=100$ 時 $\\approx0.9975$"
       ],
-      "collapsible": false
+      "tex": [
+        "nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}",
+        "nW_nW_{n-1}=1\\cdot W_1W_0=\\frac\\pi2",
+        "\\frac{n}{n+1}=\\frac{W_{n+1}}{W_{n-1}}\\le\\frac{W_n}{W_{n-1}}\\le1",
+        "W_n\\sim\\sqrt{\\frac{\\pi}{2n}}"
+      ]
+    },
+    {
+      "heading": "③ 中央二項式係數",
+      "body": [
+        "偶數的 Wallis 積分正好藏著 $\\binom{2n}{n}$：",
+        "$2\\cdot4\\cdots2n=2^n\\,n!$，平方是 $4^n(n!)^2$：",
+        "所以 $W_{2n}=\\dfrac{\\binom{2n}n}{4^n}\\cdot\\dfrac\\pi2$；把 $W_{2n}\\sim\\sqrt{\\frac{\\pi}{4n}}$ 代進去：",
+        "驗算 $n=10$：$\\binom{20}{10}=184756$，$\\dfrac{4^{10}}{\\sqrt{10\\pi}}\\approx187079$，比值 $\\approx0.988$",
+        "不需要 Stirling 公式；反過來，Stirling 公式裡的 $\\sqrt{2\\pi}$ 正是從 Wallis 乘積來的（之後會看到）"
+      ],
+      "tex": [
+        "\\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}=\\frac{(2n)!}{(2\\cdot4\\cdots2n)^2}",
+        "=\\frac{(2n)!}{4^n(n!)^2}=\\frac{1}{4^n}\\binom{2n}{n}",
+        "\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}"
+      ]
+    },
+    {
+      "heading": "④ 收斂得很慢",
+      "body": [
+        "誤差大約 $\\dfrac{\\pi}{8n}$：每多一位準確數字，項數要乘 $10$",
+        "證明過的上界是 $\\frac{\\pi}{4n}$；$\\frac\\pi{8n}$ 是數值觀察（$n=1000$：$0.000392$ 對 $\\frac\\pi{8000}\\approx0.000393$）",
+        "不適合用來算 $\\pi$：要 6 位小數，得乘上百萬項"
+      ],
+      "tex": [
+        "\\begin{array}{r|c|c}n&P_n&\\frac\\pi2-P_n\\\\\\hline1&1.3333&0.2375\\\\2&1.4222&0.1486\\\\10&1.5339&0.0369\\\\100&1.5669&0.0039\\end{array}"
+      ]
+    },
+    {
+      "heading": "④ 但很有用",
+      "body": [
+        "用處在漸近：$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$、$\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+        "機率：丟 $2n$ 次公正硬幣，恰好 $n$ 次正面的機率",
+        "$2^{2n}=4^n$"
+      ],
+      "tex": [
+        "\\frac{\\binom{2n}n}{2^{2n}}\\sim\\frac{1}{\\sqrt{\\pi n}}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\frac\\pi2=\\prod_{k\\ge1}\\frac{4k^2}{4k^2-1}$；也就是 $\\prod\\big(1-\\frac1{4k^2}\\big)=\\frac2\\pi$",
+        "• 關鍵：$\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$，再用 $W_n$ 遞減夾擠",
+        "• 誤差：$P_n\\le\\frac\\pi2\\le P_n(1+\\frac1{2n})$，收斂很慢",
+        "• 不變量：$nW_nW_{n-1}=\\frac\\pi2$ ⇒ $W_n\\sim\\sqrt{\\frac\\pi{2n}}$",
+        "• $\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+        "下一課：Gamma 函數"
+      ]
     }
   ],
   "workedExamples": [
@@ -93,314 +178,783 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{2}{1}\\cdot\\frac{2}{3}\\cdot\\frac{4}{3}\\cdot\\frac{4}{5}\\cdot\\frac{6}{5}\\cdot\\frac{6}{7}\\cdots$ 的值是？",
+      "ask": "$n$ 很大時，$\\dfrac{\\binom{2n}n}{4^n}$ 大約是？",
       "options": [
-        { "label": "$\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$\\frac{\\pi}{4}$", "why": "$\\frac{\\pi}{4}$ 是 Leibniz 級數 $1-\\frac{1}{3}+\\frac{1}{5}-\\cdots$ 的值，不是這個乘積。" },
-        { "label": "$\\frac{2}{\\pi}$", "why": "那是倒數 $\\prod\\left(1-\\frac{1}{4k^2}\\right)$ 的值；每個因子都大於 $1$，乘積應該大於 $1$。" }
+        {
+          "label": "$\\frac{1}{\\sqrt{\\pi n}}$",
+          "correct": true
+        },
+        {
+          "label": "$\\sqrt{\\frac{2}{\\pi n}}$",
+          "why": "用了 $W_{2n}\\sim\\sqrt{\\frac\\pi{2n}}$：$n$ 要換成 $2n$"
+        },
+        {
+          "label": "$\\frac1{\\pi n}$",
+          "why": "忘了開根號：$nW_n^2\\to\\frac\\pi2$ 給的是 $W_n^2$"
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "中間那項不會佔一半；它趨近 $0$，只是趨近得很慢"
+        }
       ]
     },
     {
-      "ask": "證明 $\\frac{W_{2m}}{W_{2m+1}}\\to 1$ 用到的關鍵事實是？",
+      "ask": "丟 $100$ 次公正硬幣，恰好 $50$ 次正面的機率大約是？",
       "options": [
-        { "label": "$W_n$ 隨 $n$ 遞減，再配上 $\\frac{W_{2m-1}}{W_{2m+1}}=\\frac{2m+1}{2m}\\to 1$", "correct": true },
-        { "label": "$W_n$ 隨 $n$ 遞增", "why": "方向反了：$0\\le\\sin x\\le 1$，次方越高越小，$W_n$ 遞減。" },
-        { "label": "$\\sin x$ 的 Taylor 展開", "why": "證明只用了遞迴、單調性與夾擠定理，沒有用到展開。" }
-      ]
-    },
-    {
-      "ask": "$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)$ 是？",
-      "options": [
-        { "label": "$\\frac{2}{\\pi}$", "correct": true },
-        { "label": "$\\frac{\\pi}{2}$", "why": "每個因子都小於 $1$，乘積小於 $1$；$\\frac{\\pi}{2}$ 是它的倒數。" },
-        { "label": "$\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 是 $\\prod_{k\\ge 2}\\left(1-\\frac{1}{k^2}\\right)$ 的值（望遠鏡乘積），分母是 $k^2$ 不是 $4k^2$。" }
-      ]
-    },
-    {
-      "ask": "$nW_nW_{n-1}$ 對所有 $n\\ge 1$ 都等於？",
-      "options": [
-        { "label": "$\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$1$", "why": "$n=1$ 時是 $1\\cdot W_1\\cdot W_0=1\\cdot 1\\cdot\\frac{\\pi}{2}=\\frac{\\pi}{2}$。" },
-        { "label": "隨 $n$ 遞減到 $0$", "why": "遞迴 $W_n=\\frac{n-1}{n}W_{n-2}$ 正好讓這個量不變：$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$。" }
+        {
+          "label": "$0.08$",
+          "correct": true
+        },
+        {
+          "label": "$0.5$",
+          "why": "「正反各半」最可能發生，但恰好 $50$ 次只是很多種結果的其中一種"
+        },
+        {
+          "label": "$0.0064$",
+          "why": "忘了開根號：$\\frac1{50\\pi}$"
+        },
+        {
+          "label": "$0.01$",
+          "why": "以為 $101$ 種結果差不多一樣可能；中間的機率比兩端大很多"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "整數乘出 $\\pi$",
+      "title": "用整數乘出 $\\pi$",
       "beats": [
-        { "show": ["$\\frac{2\\cdot 2}{1\\cdot 3}\\cdot\\frac{4\\cdot 4}{3\\cdot 5}\\cdot\\frac{6\\cdot 6}{5\\cdot 7}\\cdots$"],
-          "note": "偶數平方，除以左右兩個奇數。",
-          "say": "把每個偶數平方，除以它左右兩個奇數，一直乘下去。",
+        {
+          "show": [
+            "$\\frac\\pi2=\\frac21\\cdot\\frac23\\cdot\\frac43\\cdot\\frac45\\cdot\\frac65\\cdot\\frac67\\cdots$"
+          ],
+          "say": "這一課的主角是一個很神奇的公式：2 分之派，等於 1 分之 2 乘 3 分之 2，乘 3 分之 4 乘 5 分之 4，一直乘下去。",
           "board": [
-            {"do":"write","line":"$\\frac{{{a:2\\cdot2}}}{{{b:1\\cdot3}}}\\cdot\\frac{4\\cdot4}{3\\cdot5}\\cdot\\frac{6\\cdot6}{5\\cdot7}\\cdots$"},
-            {"do":"underline","term":"b","label":"奇數","on":"左右"}
-          ] },
-        { "show": ["$=\\frac{\\pi}{2}$"],
-          "say": "這個只用整數的乘積，會收斂到二分之 pi。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac\\pi2=\\frac21\\cdot\\frac23\\cdot\\frac43\\cdot\\frac45\\cdot\\frac65\\cdot\\frac67\\cdots}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規律：分子是偶數，每個重複兩次；分母是它兩旁的奇數"
+          ],
+          "say": "規律是：分子是偶數，每個偶數出現兩次；分母是這個偶數左右兩邊的奇數。",
           "board": [
-            {"do":"write","line":"$\\cdots={{p:\\frac{\\pi}{2}}}$"},
-            {"do":"box","term":"p","color":"green","on":"收斂到"}
-          ] },
-        { "show": ["$\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{4k^2}{4k^2-1}$"],
-          "note": "每個因子都比 $1$ 大一點點。",
-          "say": "每個因子是四 k 平方除以四 k 平方減一，都比一大一點點，乘起來剛好停在二分之 pi。",
+            {
+              "do": "write",
+              "line": "規律：分子是偶數，每個重複兩次；分母是它兩旁的奇數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個一組，定義部分乘積：",
+            "$P_n=\\prod_{k=1}^{n}\\frac{2k}{2k-1}\\cdot\\frac{2k}{2k+1}=\\prod_{k=1}^{n}\\frac{4k^2}{4k^2-1}$"
+          ],
+          "say": "兩個因子一組，乘到第 n 組，叫部分乘積 P n。每一組合起來，是 4k 平方減 1 分之 4k 平方。",
           "board": [
-            {"do":"write","line":"$\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{{{q:4k^2}}}{{{d:4k^2-1}}}$"},
-            {"do":"underline","term":"d","label":"比 1 大","on":"都比一大"}
-          ] },
-        { "show": ["$P_m$ = 乘到第 $m$ 個","$P_m\\to\\frac{\\pi}{2}$"],
-          "note": "收斂：$m$ 越大，$P_m$ 越靠近同一個數。",
-          "say": "乘無窮多個數，意思是看乘到第 m 個的部分乘積，m 越大是否越靠近某個數。為什麼是二分之 pi，後面用 W n 證。",
+            {
+              "do": "write",
+              "line": "兩個一組，定義部分乘積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle P_n=\\prod_{k=1}^{n}\\frac{2k}{2k-1}\\cdot\\frac{2k}{2k+1}=\\prod_{k=1}^{n}\\frac{4k^2}{4k^2-1}}}$",
+              "on": "分乘"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "4k#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$\\displaystyle\\lim_{n\\to\\infty}P_n=\\frac\\pi2$"
+          ],
+          "say": "瓦里斯乘積說的是：P n 的極限是 2 分之派。全部都是整數，乘出來卻是派。",
           "board": [
-            {"do":"write","line":"$P_m=\\prod_{k=1}^{m}\\frac{(2k)^2}{(2k-1)(2k+1)}$"},
-            {"do":"write","line":"$P_m\\to{{p:\\frac{\\pi}{2}}}$","on":"二分之"}
-          ] }
+            {
+              "do": "write",
+              "line": "定理：$\\displaystyle\\lim_{n\\to\\infty}P_n=\\frac\\pi2$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$P_2=\\dfrac21\\cdot\\dfrac23\\cdot\\dfrac43\\cdot\\dfrac45=$？",
+        "options": [
+          {
+            "label": "$\\frac{64}{45}\\approx1.422$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac43\\approx1.333$",
+            "why": "這是 $P_1$，只乘了第一組"
+          },
+          {
+            "label": "$\\frac{16}{15}\\approx1.067$",
+            "why": "只算了第二組 $\\frac{16}{15}$，忘了乘上第一組"
+          },
+          {
+            "label": "$\\frac{16}9\\approx1.778$",
+            "why": "只乘了前三個因子；兩個一組，要乘到 $\\frac45$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "用整數乘出 $\\pi$",
+      "beats": [
+        {
+          "show": [
+            "另一種寫法：每一組倒過來是 $1-\\dfrac1{4k^2}$",
+            "$\\prod_{k=1}^{\\infty}\\Big(1-\\frac1{4k^2}\\Big)=\\frac2\\pi$"
+          ],
+          "say": "另一種寫法：把每一組倒過來，4k 平方分之 4k 平方減 1，就是 1 減 4k 平方分之 1。所以這個乘積等於派分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "另一種寫法：每一組倒過來是 $1-\\dfrac1{4k^2}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\prod_{k=1}^{\\infty}\\Big(1-\\frac1{4k^2}\\Big)=\\frac2\\pi}}$",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　部分乘積是 $\\frac1{P_n}$；$n=10$ 時 $\\approx0.6520$，$\\frac2\\pi\\approx0.6366$",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明的關鍵：$W_n$ 遞減",
+      "beats": [
+        {
+          "show": [
+            "上一課：",
+            "$\\begin{aligned}W_{2n}&=\\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}\\cdot\\frac\\pi2\\\\W_{2n+1}&=\\frac{2\\cdot4\\cdots(2n)}{3\\cdot5\\cdots(2n+1)}\\end{aligned}$"
+          ],
+          "say": "證明要用上一課的瓦里斯積分。偶數 W 2n 是奇數連乘除以偶數連乘，再乘 2 分之派；奇數 W 2n 加 1 是偶數連乘除以奇數連乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}W_{2n}&=\\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}\\cdot\\frac\\pi2\\\\W_{2n+1}&=\\frac{2\\cdot4\\cdots(2n)}{3\\cdot5\\cdots(2n+1)}\\end{aligned}}}}$",
+              "on": "是奇"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "2n#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相除，$\\pi$ 留下來，其他的正好湊成 $P_n$：",
+            "$\\frac{W_{2n}}{W_{2n+1}}=\\frac\\pi2\\cdot\\frac{1\\cdot3\\cdot3\\cdot5\\cdots(2n-1)(2n+1)}{2\\cdot2\\cdot4\\cdot4\\cdots(2n)(2n)}=\\frac{\\pi/2}{P_n}$"
+          ],
+          "say": "把兩個相除。派留下來；剩下的分子是奇數兩兩相鄰相乘，分母是偶數的平方，正好是 P n 倒過來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相除，$\\pi$ 留下來，其他的正好湊成 $P_n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{W_{2n}}{W_{2n+1}}=\\frac\\pi2\\cdot\\frac{1\\cdot3\\cdot3\\cdot5\\cdots(2n-1)(2n+1)}{2\\cdot2\\cdot4\\cdot4\\cdots(2n)(2n)}=\\frac{\\pi/2}{P_n}$",
+              "on": "子是"
+            },
+            {
+              "do": "write",
+              "line": "　$P_n=\\dfrac{(2\\cdot4\\cdots2n)^2}{\\big(1\\cdot3\\cdots(2n-1)\\big)\\big(3\\cdot5\\cdots(2n+1)\\big)}$",
+              "color": "violet",
+              "on": "的平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以只要證明：$\\dfrac{W_{2n}}{W_{2n+1}}\\to1$"
+          ],
+          "say": "所以整個問題變成：證明 W 2n 除以 W 2n 加 1 趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以只要證明：$\\dfrac{W_{2n}}{W_{2n+1}}\\to1$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遞減：$0\\le\\sin x\\le1$ ⇒ $\\sin^{2n+1}x\\le\\sin^{2n}x\\le\\sin^{2n-1}x$",
+            "$W_{2n+1}\\le W_{2n}\\le W_{2n-1}$"
+          ],
+          "say": "關鍵是遞減：正弦在 0 到 1 之間，次方越高越小。積分以後，W 2n 被夾在 W 2n 加 1 和 W 2n 減 1 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遞減：$0\\le\\sin x\\le1$ ⇒ $\\sin^{2n+1}x\\le\\sin^{2n}x\\le\\sin^{2n-1}x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W_{2n+1}\\le W_{2n}\\le W_{2n-1}$",
+              "on": "2n#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同除以 $W_{2n+1}>0$，再用遞迴 $W_{2n+1}=\\frac{2n}{2n+1}W_{2n-1}$：",
+            "$1\\le\\frac{W_{2n}}{W_{2n+1}}\\le\\frac{W_{2n-1}}{W_{2n+1}}=\\frac{2n+1}{2n}$"
+          ],
+          "say": "全部除以 W 2n 加 1。右邊用遞迴：W 2n 減 1 除以 W 2n 加 1，正好是 2n 分之 2n 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同除以 $W_{2n+1}>0$，再用遞迴 $W_{2n+1}=\\frac{2n}{2n+1}W_{2n-1}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1\\le\\frac{W_{2n}}{W_{2n+1}}\\le\\frac{W_{2n-1}}{W_{2n+1}}=\\frac{2n+1}{2n}$",
+              "on": "除以#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊 $=1+\\frac1{2n}\\to1$，夾擠：",
+            "$\\frac{W_{2n}}{W_{2n+1}}\\to1\\ \\Rightarrow\\ P_n\\to\\frac\\pi2\\quad\\blacksquare$"
+          ],
+          "say": "右邊是 1 加 2n 分之 1，趨近 1。夾擠定理說中間也趨近 1，所以 P n 趨近 2 分之派。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊 $=1+\\frac1{2n}\\to1$，夾擠："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{W_{2n}}{W_{2n+1}}\\to1\\ \\Rightarrow\\ P_n\\to\\frac\\pi2\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "夾擠"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "趨近#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "整理證明",
+      "beats": [
+        {
+          "show": [
+            "從 Wallis 積分證明 Wallis 乘積"
+          ],
+          "say": "排排看，整個證明的步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "從 Wallis 積分證明 Wallis 乘積",
+        "steps": [
+          {
+            "label": "用 $0\\le\\sin x\\le1$ 得到 $W_{2n+1}\\le W_{2n}\\le W_{2n-1}$"
+          },
+          {
+            "label": "除以 $W_{2n+1}$，右邊用遞迴化成 $\\frac{2n+1}{2n}$",
+            "why": "先要有上一步：用 $0\\le\\sin x\\le1$ 得到 $W_{2n+1}\\le W_{2n}\\le W_{2n-1}$"
+          },
+          {
+            "label": "夾擠：$\\frac{W_{2n}}{W_{2n+1}}\\to1$",
+            "why": "先要有上一步：除以 $W_{2n+1}$，右邊用遞迴化成 $\\frac{2n+1}{2n}$"
+          },
+          {
+            "label": "用連乘公式算出這個比值是 $\\frac{\\pi/2}{P_n}$，所以 $P_n\\to\\frac\\pi2$",
+            "why": "先要有上一步：夾擠：$\\frac{W_{2n}}{W_{2n+1}}\\to1$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "整理證明",
+      "beats": [
+        {
+          "show": [
+            "順便得到誤差：把 $\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$ 代回不等式",
+            "$P_n\\le\\frac\\pi2\\le P_n\\Big(1+\\frac1{2n}\\Big)$"
+          ],
+          "say": "這個證明還順便給了誤差：把比值代回不等式，2 分之派被夾在 P n 和 P n 乘 1 加 2n 分之 1 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "順便得到誤差：把 $\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$ 代回不等式"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle P_n\\le\\frac\\pi2\\le P_n\\Big(1+\\frac1{2n}\\Big)}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "2n"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P_n$ 從下面逼近；誤差 $\\dfrac\\pi2-P_n\\le\\dfrac{P_n}{2n}<\\dfrac{\\pi}{4n}$"
+          ],
+          "say": "也就是說，P n 一直比 2 分之派小，從下面爬上去；誤差不超過 4n 分之派。第四節會用到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P_n$ 從下面逼近；誤差 $\\dfrac\\pi2-P_n\\le\\dfrac{P_n}{2n}<\\dfrac{\\pi}{4n}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "不變量：$nW_nW_{n-1}=\\frac\\pi2$",
+      "beats": [
+        {
+          "show": [
+            "遞迴 $nW_n=(n-1)W_{n-2}$，兩邊乘 $W_{n-1}$：",
+            "$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$"
+          ],
+          "say": "再看一個漂亮的性質。遞迴是 n 倍 W n 等於 n 減 1 倍 W n 減 2。兩邊同乘 W n 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遞迴 $nW_n=(n-1)W_{n-2}$，兩邊乘 $W_{n-1}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$",
+              "on": "兩邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊是「第 $n$ 項」，右邊是「第 $n-1$ 項」：這個量不隨 $n$ 變"
+          ],
+          "say": "仔細看：右邊就是左邊把 n 換成 n 減 1。所以這個量，每一步都不變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊是「第 $n$ 項」，右邊是「第 $n-1$ 項」：這個量不隨 $n$ 變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$nW_nW_{n-1}=1\\cdot W_1W_0=\\frac\\pi2$"
+          ],
+          "say": "一路退回 n 等於 1：1 乘 W 1 乘 W 0，等於 2 分之派。所以對所有 n，n 倍 W n 乘 W n 減 1 都等於 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle nW_nW_{n-1}=1\\cdot W_1W_0=\\frac\\pi2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "　例：$n=2$：$2\\cdot\\frac\\pi4\\cdot1=\\frac\\pi2$；$n=3$：$3\\cdot\\frac23\\cdot\\frac\\pi4=\\frac\\pi2$",
+              "color": "violet",
+              "on": "都等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W_n$ 的大小：先證 $W_n\\sim W_{n-1}$",
+            "$\\frac{n}{n+1}=\\frac{W_{n+1}}{W_{n-1}}\\le\\frac{W_n}{W_{n-1}}\\le1$"
+          ],
+          "say": "用它來估 W n 的大小。先用遞減：W n 除以 W n 減 1，被夾在 n 加 1 分之 n 和 1 之間，左邊也是遞迴。夾擠，比值趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$W_n$ 的大小：先證 $W_n\\sim W_{n-1}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{n}{n+1}=\\frac{W_{n+1}}{W_{n-1}}\\le\\frac{W_n}{W_{n-1}}\\le1$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$nW_n^2=\\dfrac\\pi2\\cdot\\dfrac{W_n}{W_{n-1}}\\to\\dfrac\\pi2$，所以",
+            "$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$"
+          ],
+          "say": "再把不變量改寫：n 倍 W n 平方，等於 2 分之派乘這個比值，趨近 2 分之派。開根號，W n 漸近等價於根號 2n 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$nW_n^2=\\dfrac\\pi2\\cdot\\dfrac{W_n}{W_{n-1}}\\to\\dfrac\\pi2$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle W_n\\sim\\sqrt{\\frac{\\pi}{2n}}}}$",
+              "color": "red",
+              "on": "平方"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "趨近"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$n=10$ 時 $W_{10}\\big/\\sqrt{\\frac\\pi{20}}\\approx0.975$；$n=100$ 時 $\\approx0.9975$",
+              "color": "violet",
+              "on": "漸近"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "中央二項式係數",
+      "beats": [
+        {
+          "show": [
+            "偶數的 Wallis 積分正好藏著 $\\binom{2n}{n}$：",
+            "$\\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}=\\frac{(2n)!}{(2\\cdot4\\cdots2n)^2}$"
+          ],
+          "say": "偶數的瓦里斯積分裡，藏著中央二項式係數。分子分母同乘偶數連乘，分子就湊成 2n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "偶數的 Wallis 積分正好藏著 $\\binom{2n}{n}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}=\\frac{(2n)!}{(2\\cdot4\\cdots2n)^2}$",
+              "on": "子分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2\\cdot4\\cdots2n=2^n\\,n!$，平方是 $4^n(n!)^2$：",
+            "$=\\frac{(2n)!}{4^n(n!)^2}=\\frac{1}{4^n}\\binom{2n}{n}$"
+          ],
+          "say": "偶數連乘，每一項提出一個 2，是 2 的 n 次方乘 n 階乘；平方以後是 4 的 n 次方乘 n 階乘平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$2\\cdot4\\cdots2n=2^n\\,n!$，平方是 $4^n(n!)^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{(2n)!}{4^n(n!)^2}=\\frac{1}{4^n}\\binom{2n}{n}$",
+              "on": "階乘#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $W_{2n}=\\dfrac{\\binom{2n}n}{4^n}\\cdot\\dfrac\\pi2$；把 $W_{2n}\\sim\\sqrt{\\frac{\\pi}{4n}}$ 代進去：",
+            "$\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"
+          ],
+          "say": "所以 W 2n 就是中央二項式係數除以 4 的 n 次方，再乘 2 分之派。代入漸近式，記得 n 換成 2n，就得到這個結果。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $W_{2n}=\\dfrac{\\binom{2n}n}{4^n}\\cdot\\dfrac\\pi2$；把 $W_{2n}\\sim\\sqrt{\\frac{\\pi}{4n}}$ 代進去："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}}}$",
+              "color": "red",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "記得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算 $n=10$：$\\binom{20}{10}=184756$，$\\dfrac{4^{10}}{\\sqrt{10\\pi}}\\approx187079$，比值 $\\approx0.988$"
+          ],
+          "say": "驗算 n 等於 10：精確值 184756，近似值大約 187079，比值 0.988，已經很接近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算 $n=10$：$\\binom{20}{10}=184756$，$\\dfrac{4^{10}}{\\sqrt{10\\pi}}\\approx187079$，比值 $\\approx0.988$"
+            },
+            {
+              "do": "write",
+              "line": "　不需要 Stirling 公式；反過來，Stirling 公式裡的 $\\sqrt{2\\pi}$ 正是從 Wallis 乘積來的（之後會看到）",
+              "color": "violet",
+              "on": "18#2"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "倒過來寫",
+      "title": "收斂得很慢",
       "beats": [
-        { "show": ["$1-\\frac{1}{4k^2}=\\frac{(2k-1)(2k+1)}{(2k)^2}$"],
-          "note": "正好是 Wallis 因子的倒數。",
-          "say": "一減四 k 平方分之一，通分之後剛好是 Wallis 因子上下顛倒。",
+        {
+          "show": [
+            "$\\begin{array}{r|c|c}n&P_n&\\frac\\pi2-P_n\\\\\\hline1&1.3333&0.2375\\\\2&1.4222&0.1486\\\\10&1.5339&0.0369\\\\100&1.5669&0.0039\\end{array}$"
+          ],
+          "say": "來看部分乘積有多準。P 1 差 0.24，P 2 差 0.15，P 10 還差 0.037，P 100 也還差 0.004。",
           "board": [
-            {"do":"write","line":"$1-\\frac{1}{4k^2}={{f:\\frac{(2k-1)(2k+1)}{(2k)^2}}}$"},
-            {"do":"underline","term":"f","label":"倒數","on":"Wallis 因子"}
-          ] },
-        { "show": ["$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)=\\frac{2}{\\pi}$"],
-          "note": "每個因子都小於 $1$，乘積小於 $1$。",
-          "say": "部分乘積互為倒數，所以這個乘積趨近 pi 分之二。每個因子小於一，答案也小於一，合理。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{array}{r|c|c}n&P_n&\\frac\\pi2-P_n\\\\\\hline1&1.3333&0.2375\\\\2&1.4222&0.1486\\\\10&1.5339&0.0369\\\\100&1.5669&0.0039\\end{array}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誤差大約 $\\dfrac{\\pi}{8n}$：每多一位準確數字，項數要乘 $10$"
+          ],
+          "say": "數值上，誤差大約是 8n 分之派。誤差只跟 n 分之 1 一樣慢，要多準一位，項數就要乘 10。",
           "board": [
-            {"do":"write","line":"$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)={{r:\\frac{2}{\\pi}}}$"},
-            {"do":"box","term":"r","color":"green","on":"每個因子"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "誤差大約 $\\dfrac{\\pi}{8n}$：每多一位準確數字，項數要乘 $10$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　證明過的上界是 $\\frac{\\pi}{4n}$；$\\frac\\pi{8n}$ 是數值觀察（$n=1000$：$0.000392$ 對 $\\frac\\pi{8000}\\approx0.000393$）",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，藍點是 P n，從下面慢慢爬向綠線 2 分之派；紅圈是上界，從上面壓下來。兩邊夾住，但靠得很慢。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pn\" viewBox=\"0 0 640 275\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"60\" y1=\"235\" x2=\"615\" y2=\"235\" stroke=\"var(--ink)\" stroke-width=\"1.2\"/><line x1=\"60\" y1=\"235\" x2=\"60\" y2=\"12\" stroke=\"var(--ink)\" stroke-width=\"1.2\"/><text x=\"622\" y=\"240\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" fill=\"var(--ink)\">n</text><line x1=\"56\" y1=\"206.3\" x2=\"60\" y2=\"206.3\" stroke=\"var(--ink)\"/><text x=\"50\" y=\"211.3\" text-anchor=\"end\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">1.4</text><line x1=\"56\" y1=\"149.0\" x2=\"60\" y2=\"149.0\" stroke=\"var(--ink)\"/><text x=\"50\" y=\"154.0\" text-anchor=\"end\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">1.6</text><line x1=\"56\" y1=\"91.7\" x2=\"60\" y2=\"91.7\" stroke=\"var(--ink)\"/><text x=\"50\" y=\"96.7\" text-anchor=\"end\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">1.8</text><line x1=\"56\" y1=\"34.3\" x2=\"60\" y2=\"34.3\" stroke=\"var(--ink)\"/><text x=\"50\" y=\"39.3\" text-anchor=\"end\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">2.0</text><line x1=\"87\" y1=\"235\" x2=\"87\" y2=\"239\" stroke=\"var(--ink)\"/><text x=\"87\" y=\"260\" text-anchor=\"middle\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">1</text><line x1=\"195\" y1=\"235\" x2=\"195\" y2=\"239\" stroke=\"var(--ink)\"/><text x=\"195\" y=\"260\" text-anchor=\"middle\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">5</text><line x1=\"330\" y1=\"235\" x2=\"330\" y2=\"239\" stroke=\"var(--ink)\"/><text x=\"330\" y=\"260\" text-anchor=\"middle\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">10</text><line x1=\"465\" y1=\"235\" x2=\"465\" y2=\"239\" stroke=\"var(--ink)\"/><text x=\"465\" y=\"260\" text-anchor=\"middle\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">15</text><line x1=\"600\" y1=\"235\" x2=\"600\" y2=\"239\" stroke=\"var(--ink)\"/><text x=\"600\" y=\"260\" text-anchor=\"middle\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\" fill=\"var(--ink)\">20</text><line x1=\"60\" y1=\"157.4\" x2=\"610\" y2=\"157.4\" stroke=\"var(--green)\" stroke-width=\"1.8\" stroke-dasharray=\"6 4\"/><line x1=\"325\" y1=\"78\" x2=\"345\" y2=\"78\" stroke=\"var(--green)\" stroke-width=\"1.8\" stroke-dasharray=\"6 4\"/><text x=\"355\" y=\"84\" font-size=\"19\" style=\"font-family:inherit\" fill=\"var(--green)\">π/2 ≈ 1.5</text><circle cx=\"87.0\" cy=\"34.3\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"114.0\" cy=\"98.0\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"141.0\" cy=\"118.4\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"168.0\" cy=\"128.4\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"195.0\" cy=\"134.3\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"222.0\" cy=\"138.2\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"249.0\" cy=\"141.0\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"276.0\" cy=\"143.1\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"303.0\" cy=\"144.7\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"330.0\" cy=\"146.0\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"357.0\" cy=\"147.0\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"384.0\" cy=\"147.9\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"411.0\" cy=\"148.6\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"438.0\" cy=\"149.3\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"465.0\" cy=\"149.8\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"492.0\" cy=\"150.3\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"519.0\" cy=\"150.7\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"546.0\" cy=\"151.1\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"573.0\" cy=\"151.4\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"600.0\" cy=\"151.7\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><circle cx=\"87.0\" cy=\"225.4\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"114.0\" cy=\"200.0\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"141.0\" cy=\"188.3\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"168.0\" cy=\"181.7\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"195.0\" cy=\"177.4\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"222.0\" cy=\"174.3\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"249.0\" cy=\"172.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"276.0\" cy=\"170.4\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"303.0\" cy=\"169.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"330.0\" cy=\"168.0\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"357.0\" cy=\"167.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"384.0\" cy=\"166.3\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"411.0\" cy=\"165.6\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"438.0\" cy=\"165.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"465.0\" cy=\"164.6\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"492.0\" cy=\"164.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"519.0\" cy=\"163.8\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"546.0\" cy=\"163.4\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"573.0\" cy=\"163.1\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"600.0\" cy=\"162.8\" r=\"3.6\" fill=\"var(--blue)\"/><circle cx=\"335\" cy=\"26\" r=\"3.6\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.7\"/><text x=\"355\" y=\"32\" font-size=\"19\" style=\"font-family:inherit\" fill=\"var(--red)\">上界 Pₙ·(2n+1)/(2n)</text><circle cx=\"335\" cy=\"52\" r=\"3.6\" fill=\"var(--blue)\"/><text x=\"355\" y=\"58\" font-size=\"19\" style=\"font-family:inherit\" fill=\"var(--blue)\">部分乘積 Pₙ</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不適合用來算 $\\pi$：要 6 位小數，得乘上百萬項"
+          ],
+          "say": "所以它不適合拿來算派：要準到小數點後六位，大約要乘一百萬組。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不適合用來算 $\\pi$：要 6 位小數，得乘上百萬項"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "關鍵：$W_n$ 遞減",
+      "title": "但很有用",
       "beats": [
-        { "show": ["$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$","多一次方，多乘一個 $\\le 1$ 的數"],
-          "note": "$W_n$ 是 $\\sin^n x$ 從 $0$ 到 $\\frac{\\pi}{2}$ 的面積。",
-          "say": "W n 是 sine x 的 n 次方，從零積到二分之 pi。次方多一次，就多乘一個不超過一的 sine，面積跟著變小。",
+        {
+          "show": [
+            "用處在漸近：$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$、$\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"
+          ],
+          "say": "它的價值不在算派，而在漸近估計：W n 和中央二項式係數的大小，都從它來。",
           "board": [
-            {"do":"write","line":"$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$"},
-            {"do":"write","line":"$\\sin^{n+1}x=\\sin^n x\\cdot\\sin x\\le\\sin^n x$","on":"多乘"}
-          ] },
-        { "show": ["$W_{2m+1}\\le W_{2m}\\le W_{2m-1}$"],
-          "note": "$0\\le\\sin x\\le 1$，次方越高越小。",
-          "say": "證明靠上一課的 Wallis 積分。sine 在零和一之間，次方越高越小，所以 W n 遞減。",
+            {
+              "do": "write",
+              "line": "用處在漸近：$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$、$\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "機率：丟 $2n$ 次公正硬幣，恰好 $n$ 次正面的機率",
+            "$\\frac{\\binom{2n}n}{2^{2n}}\\sim\\frac{1}{\\sqrt{\\pi n}}$"
+          ],
+          "say": "例如機率：丟 2n 次公正的硬幣，恰好一半正面的機率，就是中央二項式係數除以 4 的 n 次方，大約是根號派 n 分之 1。",
           "board": [
-            {"do":"write","line":"${{s:0\\le\\sin x\\le 1}}$：次方越高越小"},
-            {"do":"focus","term":"s","on":"sine 在零"},
-            {"do":"write","line":"$W_{2m+1}\\le {{w0:W_{2m}}}\\le W_{2m-1}$","tint":{"w0":"violet"},"on":"所以 W n"}
-          ] },
-        { "show": ["$W_n=\\frac{n-1}{n}W_{n-2}$","$\\frac{W_{2m-1}}{W_{2m+1}}=\\frac{2m+1}{2m}$"],
-          "note": "遞迴，$n$ 換成 $2m+1$。",
-          "say": "遞迴是 W n 等於 n 分之 n 減一乘 W n 減二。n 換成二 m 加一再倒過來比，得二 m 分之二 m 加一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$W_n=\\frac{n-1}{n}W_{n-2}$","on":"遞迴是"},
-            {"do":"write","line":"$W_{2m+1}=\\frac{2m}{2m+1}W_{2m-1}$","on":"換成"},
-            {"do":"write","line":"$\\frac{W_{2m-1}}{W_{2m+1}}=\\frac{2m+1}{2m}$","on":"倒過來"}
-          ] },
-        { "show": ["$1\\le\\frac{W_{2m}}{W_{2m+1}}\\le\\frac{2m+1}{2m}$"],
-          "note": "全部除以 $W_{2m+1}$，右邊用遞迴。",
-          "say": "全部除以 W 二 m 加一。右邊用遞迴算出來是二 m 分之二 m 加一，它趨近一。",
-          "board": [
-            {"do":"write","line":"$1\\le\\dfrac{{{w0:W_{2m}}}}{W_{2m+1}}\\le{{rt:\\dfrac{2m+1}{2m}}}$","on":"全部除以"},
-            {"do":"underline","term":"rt","label":"→ 1","on":"遞迴算出來"}
-          ] },
-        { "show": ["夾擠：$\\frac{W_{2m}}{W_{2m+1}}\\to 1$"],
-          "note": "把兩個 Wallis 的值代進去，就是 $\\frac{\\pi}{2}$ 乘上部分乘積的倒數。",
-          "say": "夾擠定理說中間的比值趨近一。把兩個 Wallis 的值代進去整理，就得到二分之 pi 等於那個乘積。",
-          "board": [
-            {"do":"write","line":"夾擠：$\\dfrac{{{w0:W_{2m}}}}{W_{2m+1}}\\to 1$","color":"green","on":"夾擠定理"}
-          ] }
+            {
+              "do": "write",
+              "line": "機率：丟 $2n$ 次公正硬幣，恰好 $n$ 次正面的機率"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\frac{\\binom{2n}n}{2^{2n}}\\sim\\frac{1}{\\sqrt{\\pi n}}}}$",
+              "on": "恰好"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "二項"
+            },
+            {
+              "do": "write",
+              "line": "　$2^{2n}=4^n$",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "一個不變量",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$"],
-          "note": "遞迴兩邊乘 $nW_{n-1}$。",
-          "say": "把遞迴兩邊都乘上 n 乘 W n 減一，左右變成同一個樣子，只是 n 往下退一格。",
+        {
+          "show": [
+            "• $\\frac\\pi2=\\prod_{k\\ge1}\\frac{4k^2}{4k^2-1}$；也就是 $\\prod\\big(1-\\frac1{4k^2}\\big)=\\frac2\\pi$",
+            "• 關鍵：$\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$，再用 $W_n$ 遞減夾擠"
+          ],
+          "say": "整理一下：證明是把乘積寫成兩個瓦里斯積分的比，再用遞減夾擠。不變量給出 W n 的大小和中央二項式係數的漸近式。收斂很慢，但很有用。",
           "board": [
-            {"do":"write","line":"${{l:nW_nW_{n-1}}}={{e:(n-1)W_{n-1}W_{n-2}}}$"},
-            {"do":"underline","term":"e","label":"n 退一格","on":"往下退"}
-          ] },
-        { "show": ["$=1\\cdot W_1W_0=\\frac{\\pi}{2}$"],
-          "note": "這個量不隨 $n$ 改變。",
-          "say": "所以這個量不管 n 是多少都一樣，一路退到 n 等於一，就是 W 一乘 W 零，二分之 pi。",
+            {
+              "do": "write",
+              "line": "• $\\frac\\pi2=\\prod_{k\\ge1}\\frac{4k^2}{4k^2-1}$；也就是 $\\prod\\big(1-\\frac1{4k^2}\\big)=\\frac2\\pi$"
+            },
+            {
+              "do": "write",
+              "line": "• 關鍵：$\\frac{W_{2n}}{W_{2n+1}}=\\frac{\\pi/2}{P_n}$，再用 $W_n$ 遞減夾擠",
+              "on": "兩個"
+            },
+            {
+              "do": "write",
+              "line": "• 誤差：$P_n\\le\\frac\\pi2\\le P_n(1+\\frac1{2n})$，收斂很慢",
+              "on": "減夾"
+            },
+            {
+              "do": "write",
+              "line": "• 不變量：$nW_nW_{n-1}=\\frac\\pi2$ ⇒ $W_n\\sim\\sqrt{\\frac\\pi{2n}}$",
+              "on": "的大"
+            },
+            {
+              "do": "write",
+              "line": "• $\\binom{2n}n\\sim\\frac{4^n}{\\sqrt{\\pi n}}$",
+              "on": "漸近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Gamma 函數"
+          ],
+          "say": "下一課，把階乘推廣到實數，認識伽瑪函數。",
           "board": [
-            {"do":"transform","line":"${{l:nW_nW_{n-1}}}={{b:1\\cdot W_1W_0}}$"},
-            {"do":"underline","term":"b","label":"退到底","on":"一路退到"}
-          ] },
-        { "show": ["$a_n\\sim b_n$：$\\frac{a_n}{b_n}\\to 1$"],
-          "note": "波浪號的意思：兩邊相除趨近 $1$。",
-          "say": "波浪號 a n 等價於 b n，意思是 a n 除以 b n 趨近一。",
-          "board": [
-            {"do":"write","line":"$a_n\\sim b_n\\iff\\frac{a_n}{b_n}\\to 1$"}
-          ] },
-        { "show": ["$W_{n-1}$ 換成 $W_n$：$nW_n^2\\sim\\frac{\\pi}{2}$"],
-          "note": "$\\frac{W_n}{W_{n-1}}\\to 1$，所以可以互換。",
-          "say": "W n 除以 W n 減一趨近一，所以把 W n 減一換成 W n，n 乘 W n 平方等價於二分之 pi。",
-          "board": [
-            {"do":"write","line":"$nW_n^2\\sim\\frac{\\pi}{2}$"}
-          ] },
-        { "show": ["$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$"],
-          "note": "配合 $W_n\\sim W_{n-1}$。",
-          "say": "再配合相鄰兩項等價，W n 平方等價於二 n 分之 pi，開根號就得到 W n 的大小。",
-          "board": [
-            {"do":"write","line":"${{s:W_n^2}}\\sim\\frac{\\pi}{2n}$"},
-            {"do":"transform","line":"${{w:W_n}}\\sim{{r:\\sqrt{\\frac{\\pi}{2n}}}}$","on":"開根號"},
-            {"do":"box","term":"r","color":"green","on":"就得到"}
-          ] }
-      ],
-      "key": "遞迴兩邊乘 $nW_{n-1}$，造出不變量",
-      "check": 3
-    },
-    {
-      "title": "很慢，但很有用",
-      "beats": [
-        { "show": ["$P_1=\\frac{4}{3}\\approx 1.3333$"],
-          "note": "跟 $\\frac{\\pi}{2}\\approx 1.5708$ 比。",
-          "say": "實際乘乘看。第一個因子是三分之四，大約一點三三三三，離一點五七零八還很遠。",
-          "board": [
-            {"do":"write","line":"$P_1={{a:\\frac{4}{3}}}\\approx 1.3333$"},
-            {"do":"write","line":"$\\frac{\\pi}{2}\\approx 1.5708$","on":"離"}
-          ] },
-        { "show": ["$P_{10}\\approx 1.5339$"],
-          "note": "相對誤差約 $\\frac{1}{4m}$，$m=10$ 時 $\\frac{1}{40}$。",
-          "say": "乘到第十個，還差百分之二點四左右。拿它算 pi 並不實際。",
-          "board": [
-            {"do":"write","line":"${{p:P_{10}}}\\approx 1.5339$"},
-            {"do":"underline","term":"p","label":"還差","on":"還差"}
-          ] },
-        { "show": ["$P_m$ 一點一點爬向 $\\frac{\\pi}{2}$"],
-          "note": "虛線是 $\\frac{\\pi}{2}\\approx 1.5708$。",
-          "say": "畫成圖：點是部分乘積，一個一個往上爬，虛線是二分之 pi。往上爬得很慢。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,11,1,1.7],"curves":[],"dashed":[[[0,1.5708],[11,1.5708]]],"points":[{"x":1,"y":1.3333},{"x":2,"y":1.4222},{"x":3,"y":1.4629},{"x":10,"y":1.5339}],"labels":[{"x":0.3,"y":1.6,"text":"π/2","anchor":"start"}]}}
-          ] },
-        { "show": ["用途：定出常數"],
-          "note": "$\\binom{2n}{n}$、Stirling 的 $\\sqrt{2\\pi}$、$\\Gamma\\left(\\frac{1}{2}\\right)$。",
-          "say": "它真正的用途是當橋樑：中央二項式係數、Stirling 公式的根號二 pi，都靠它定出常數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"用途：定出常數","on":"用途"},
-            {"do":"write","line":"$\\binom{2n}{n}$、Stirling 的 ${{s:\\sqrt{2\\pi}}}$","on":"中央二項式係數"},
-            {"do":"focus","term":"s","on":"根號二"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$P_2$（前兩個因子相乘）是？",
-        "options": [
-          {
-            "label": "$\\frac{64}{45}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{4}{3}$",
-            "why": "那是 $P_1$；還要乘第二個因子 $\\frac{16}{15}$。"
-          },
-          {
-            "label": "$\\frac{16}{15}$",
-            "why": "那只是第二個因子 $\\frac{4\\cdot 4}{3\\cdot 5}$，要乘上 $\\frac{4}{3}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "證明：中央二項式係數",
-      "beats": [
-        { "show": ["$\\frac{\\binom{2n}{n}}{4^n}$ 寫成 $W_{2n}$，再估 $W_{2n}$"],
-          "note": "不用 Stirling，只用不變量。",
-          "say": "策略：先把中央二項式係數除以四的 n 次方，寫成 Wallis 積分，再用不變量估它的大小。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\binom{2n}{n}}{4^n}$ → 寫成 ${{w:W_{2n}}}$ → 估大小","tint":{"w":"violet"}}
-          ] },
-        { "show": ["$\\frac{\\binom{2n}{n}}{4^n}=\\frac{2}{\\pi}W_{2n}$"],
-          "note": "分子分母同乘 $2\\cdot 4\\cdots(2n)$。",
-          "why": {"ask":"為什麼它會是 $W_{2n}$ 的倍數？","say":"中央二項式係數，怎麼會跟 W 二 n 扯上關係？","options":[{"label":"$W_{2n}$ 公式裡那串分數，就是 $\\frac{(2n)!}{(2^nn!)^2}$","correct":true},{"label":"$\\binom{2n}{n}\\le 4^n$","why":"那只說比值不超過 $1$，說不出它等於什麼。"},{"label":"Stirling 公式","why":"這個證明正是要繞開 Stirling；用到的只是 $W_{2n}$ 的公式。"}]},
-          "say": "W 二 n 是一串奇數除以偶數，再乘二分之 pi。分子分母同乘偶數的乘積，就變成中央二項式係數除以四的 n 次方。",
-          "board": [
-            {"do":"write","line":"$\\dfrac{\\binom{2n}{n}}{4^n}=\\dfrac{2}{\\pi}{{w:W_{2n}}}$"},
-            {"do":"write","line":"${{w:W_{2n}}}=\\dfrac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}\\cdot\\dfrac{\\pi}{2}$","why":true,"on":"一串奇數"}
-          ] },
-        { "show": ["分子：$(2n)!$","分母：$(2^nn!)^2$"],
-          "note": "分母每個偶數提出一個 $2$。",
-          "say": "分子分母同乘偶數。分子變成二 n 的階乘，分母每個偶數提出一個二，成了二的 n 次方乘 n 階乘再平方。",
-          "board": [
-            {"do":"write","line":"分子：$1\\cdot2\\cdot3\\cdots(2n)=(2n)!$"},
-            {"do":"write","line":"分母：$(2\\cdot4\\cdots(2n))^2=(2^nn!)^2$","on":"分母#2"}
-          ] },
-        { "show": ["$2nW_{2n}W_{2n-1}=\\frac{\\pi}{2}$"],
-          "note": "不變量 $nW_nW_{n-1}=\\frac{\\pi}{2}$，$n$ 換成 $2n$。",
-          "say": "不變量對每個 n 都成立，把 n 換成二 n。",
-          "board": [
-            {"do":"write","line":"$2n\\,{{w:W_{2n}}}\\,{{v:W_{2n-1}}}=\\frac{\\pi}{2}$","tint":{"v":"blue"}}
-          ] },
-        { "show": ["$W_{2n}\\sim W_{2n-1}$ ⇒ $W_{2n}^2\\sim\\frac{\\pi}{4n}$"],
-          "note": "$W_n$ 遞減，相鄰兩項的比值夾到 $1$。",
-          "say": "W n 遞減，相鄰兩項的比值被夾到一，乘積就可以換成平方：W 二 n 平方等價於四 n 分之 pi。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{w:W_{2n}}}\\sim {{v:W_{2n-1}}}$ ⇒ $W_{2n}^2\\sim\\frac{\\pi}{4n}$","on":"比值"}
-          ] },
-        { "show": ["$W_{2n}\\sim\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$","代回：$\\frac{\\binom{2n}{n}}{4^n}\\sim\\frac{1}{\\sqrt{\\pi n}}$"],
-          "note": "$\\frac{2}{\\pi}\\cdot\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}=\\frac{1}{\\sqrt{\\pi n}}$。",
-          "say": "開根號，再代回去：pi 分之二乘二分之一根號 n 分之 pi，就是根號 pi n 分之一。",
-          "board": [
-            {"do":"write","line":"${{w:W_{2n}}}\\sim\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$"},
-            {"do":"write","line":"$\\dfrac{\\binom{2n}{n}}{4^n}\\sim{{r:\\dfrac{1}{\\sqrt{\\pi n}}}}$","on":"再代回去"},
-            {"do":"box","term":"r","color":"green","on":"就是根號"}
-          ] }
-      ],
-      "key": "寫成 $W_{2n}$，用不變量估它的平方",
-      "proof": true,
-      "of": "ex2",
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$W_n$ 遞減」用在哪一步？",
-        "steps": [
-          {
-            "label": "$\\frac{\\binom{2n}{n}}{4^n}=\\frac{2}{\\pi}W_{2n}$",
-            "why": "這只用到 $W_{2n}$ 的公式，分子分母同乘偶數。"
-          },
-          {
-            "label": "$2nW_{2n}W_{2n-1}=\\frac{\\pi}{2}$",
-            "why": "不變量來自遞迴 $W_n=\\frac{n-1}{n}W_{n-2}$，不必遞減。"
-          },
-          {
-            "label": "$W_{2n}\\sim W_{2n-1}$，乘積換成平方",
-            "correct": true
-          },
-          {
-            "label": "代回得 $\\frac{1}{\\sqrt{\\pi n}}$",
-            "why": "代回只是代數：$\\frac{2}{\\pi}\\cdot\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：Gamma 函數"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["wallis", "infinite-product", "central-binomial"],
-    "fine": ["wallis-product-value", "wallis-squeeze-proof", "wallis-invariant", "wallis-central-binomial"]
+    "coarse": [
+      "wallis",
+      "infinite-product",
+      "central-binomial"
+    ],
+    "fine": [
+      "wallis-product-value",
+      "wallis-squeeze-proof",
+      "wallis-invariant",
+      "wallis-central-binomial"
+    ]
   },
   "practice": [
-    { "id": "putnam-006", "core": true, "trains": "wallis-product-value" },
-    { "id": "burst-rec-005", "core": true, "trains": "wallis-squeeze-proof" },
-    { "id": "burst-rec-006", "core": true, "trains": "wallis-squeeze-proof" },
-    { "id": "dm-seq-004", "core": true, "trains": "wallis-central-binomial" },
-    { "id": "cg-11c-005", "core": true, "trains": "wallis-invariant" },
-    { "id": "cg-11c-008", "core": true, "trains": "wallis-product-value" },
-    { "id": "cg-11c-006", "trains": "wallis-invariant" },
-    { "id": "world-074", "challenge": true, "trains": "wallis-central-binomial", "note": "挑戰：倒數形式，答案是 $\\sqrt{\\pi}$。" },
-    { "id": "cg-11c-007", "challenge": true, "trains": "wallis-product-value" }
+    {
+      "id": "putnam-006",
+      "core": true,
+      "trains": "wallis-product-value"
+    },
+    {
+      "id": "burst-rec-005",
+      "core": true,
+      "trains": "wallis-squeeze-proof"
+    },
+    {
+      "id": "burst-rec-006",
+      "core": true,
+      "trains": "wallis-squeeze-proof"
+    },
+    {
+      "id": "dm-seq-004",
+      "core": true,
+      "trains": "wallis-central-binomial"
+    },
+    {
+      "id": "cg-11c-005",
+      "core": true,
+      "trains": "wallis-invariant"
+    },
+    {
+      "id": "cg-11c-008",
+      "core": true,
+      "trains": "wallis-product-value"
+    },
+    {
+      "id": "cg-11c-006",
+      "trains": "wallis-invariant"
+    },
+    {
+      "id": "world-074",
+      "challenge": true,
+      "trains": "wallis-central-binomial",
+      "note": "挑戰：倒數形式，答案是 $\\sqrt{\\pi}$。"
+    },
+    {
+      "id": "cg-11c-007",
+      "challenge": true,
+      "trains": "wallis-product-value"
+    }
   ],
   "gaps": []
 }

@@ -1,0 +1,383 @@
+{
+  "id": "pointwise-convergence",
+  "title": "逐點收斂",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["epsilon-n-definition", "uniform-continuity", "heine-cantor"],
+  "next": ["uniform-convergence"],
+  "related": ["limit-integral-swap"],
+  "objectives": [
+    "把一列函數 $f_n$ 在每個固定的 $x$ 看成一個數列，求出極限函數 $f$。",
+    "寫出逐點收斂的量詞：$N$ 可以同時依賴 $\\varepsilon$ 與 $x$。",
+    "舉出三個例子：每個 $f_n$ 都連續，極限不連續；$f_n\\to0$ 但 $\\int f_n$ 不趨近 0；$f_n$ 的高峰一直不消失。"
+  ],
+  "visual": "在 [0, 1] 上畫 y = xⁿ，n 用滑桿從 1 拉到 200。曲線在 x < 1 的部分一路被壓向 0，但右端永遠釘在 (1, 1)，越來越像一個直角。旁邊固定 x = 0.5、0.9、0.99 三個點，各自顯示第幾項之後 xⁿ < 0.01（7、44、459）。",
+  "concept": [
+    {
+      "heading": "① 一列函數，在每個點各是一個數列",
+      "body": [
+        "函數列 $f_1,f_2,f_3,\\dots$ 是一串定義在同一個集合 $D$ 上的函數。固定一個 $x$，$f_1(x),f_2(x),f_3(x),\\dots$ 就是一個普通的數列，可以問它收不收斂。",
+        "例：$f_n(x)=x^n$，$x\\in[0,1]$。$x=0.5$ 時是 $0.5,0.25,0.125,\\dots\\to0$；$x=1$ 時是 $1,1,1,\\dots\\to1$。每個 $x$ 各算各的，得到極限函數 $f(x)=0$（$0\\le x<1$），$f(1)=1$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義",
+      "body": [
+        "$f_n$ 在 $D$ 上逐點收斂到 $f$，意思是對每一個 $x\\in D$，數列 $f_n(x)$ 收斂到 $f(x)$。把數列極限的 $\\varepsilon$-$N$ 定義展開：",
+        "量詞順序是「先固定 $x$，再給 $\\varepsilon$，再找 $N$」，所以 $N$ 可以隨 $x$ 改變。這一點下一課會變成關鍵。"
+      ],
+      "tex": ["\\forall x\\in D\\ \\ \\forall\\varepsilon>0\\ \\ \\exists N=N(\\varepsilon,x)\\ \\ \\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 逐點收斂會弄丟什麼",
+      "body": [
+        "連續：每個 $x^n$ 都連續，極限 $f$ 在 $x=1$ 跳了一下。",
+        "積分：$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$ 上逐點收斂到 0，但 $\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$，不是 $\\int_0^1 0\\,dx=0$（範例 3）。",
+        "直覺，不是證明：逐點收斂只保證每個點「最後」會靠近，但不同點靠近的速度可以差到沒有上限。高峰往 $x=0$ 擠、越來越窄，任何一個固定的點遲早都會被高峰甩在後面，但高峰本身從來沒消失。要把連續、積分保住，需要一個對所有 $x$ 共用的 $N$，那就是〈一致收斂〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "每個點一個數列",
+      "beats": [
+        { "show": ["$f_1,f_2,f_3,\\dots$ 定義在同一個 $D$"],
+          "note": "固定 $x$，$f_n(x)$ 就是一個數列。",
+          "say": "函數列是一串定義在同一個集合上的函數。固定一個 x，f n 在 x 的值排起來，就是一個普通數列。",
+          "board": [
+            {"do":"write","line":"$f_1,f_2,f_3,\\dots$ 定義在同一個 $D$"},
+            {"do":"write","line":"固定 $x$：${{s:f_n(x)}}$ 是一個數列","on":"固定一個 x"},
+            {"do":"underline","term":"s","on":"普通數列"}
+          ] },
+        { "show": ["$f_n(x)=x^n$，$x=0.5$：","$0.5,0.25,0.125,\\dots\\to0$"],
+          "say": "例如 x 的 n 次方。x 是零點五時，數列是零點五、零點二五、零點一二五，往零走。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f_n(x)=x^n$","on":"例如"},
+            {"do":"write","line":"$x=0.5$：$0.5,0.25,0.125,\\dots\\to{{z:0}}$","on":"x 是零點五時"},
+            {"do":"focus","term":"z","on":"往零走"}
+          ] },
+        { "show": ["$x=1$：$1,1,1,\\dots\\to1$"],
+          "say": "x 等於一時，每一項都是一，極限是一。每個 x 各算各的。",
+          "board": [
+            {"do":"write","line":"$x=1$：$1,1,1,\\dots\\to{{o:1}}$"},
+            {"do":"focus","term":"o","on":"極限是一"}
+          ] },
+        { "show": ["每個 $x$ 各自的極限，拼成 $f(x)$"],
+          "note": "$x$ 在 $0$ 到 $1$ 之間的每一點都要算。",
+          "say": "合起來，每個 x 各自算出的極限，拼成一個新的函數 f，這就是逐點極限。",
+          "board": [
+            {"do":"write","line":"每個 $x$ 的極限，拼成 ${{j:f(x)}}$","color":"green"},
+            {"do":"underline","term":"j","label":"逐點極限","on":"這就是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "定義：先固定 $x$",
+      "beats": [
+        { "show": ["每個 $x\\in D$：$f_n(x)\\to f(x)$"],
+          "say": "逐點收斂就是：對定義域裡每一個 x，那一串數列都收斂到 f 在 x 的值。",
+          "board": [
+            {"do":"write","line":"每個 $x\\in D$：$f_n(x)\\to {{f:f(x)}}$"},
+            {"do":"focus","term":"f","on":"收斂到"}
+          ] },
+        { "show": ["$\\forall x\\ \\forall\\varepsilon>0\\ \\exists N(\\varepsilon,x)$"],
+          "note": "$n\\ge N$ 時 $|f_n(x)-f(x)|<\\varepsilon$。",
+          "say": "把 epsilon N 定義寫開：先固定 x，再給 epsilon，再找 N。",
+          "board": [
+            {"do":"write","line":"$\\forall x\\ \\forall\\varepsilon>0\\ \\exists {{n:N(\\varepsilon,x)}}$"},
+            {"do":"write","line":"$n\\ge N$ 時 $|f_n(x)-f(x)|<\\varepsilon$","on":"再找"}
+          ] },
+        { "show": ["$N$ 可以隨 $x$ 改變"],
+          "note": "下一課這一點會變成關鍵。",
+          "say": "因為 x 先選好了，N 可以看 x 的臉色決定。這正是逐點收斂弱的地方。",
+          "board": [
+            {"do":"focus","term":"n","label":"弱的地方","on":"臉色"}
+          ] },
+        { "show": ["各有各的 $N$，沒有共同的 $N$"],
+          "say": "弱在哪裡？每個 x 各有自己的 N，可是沒有一個共同的 N，能保證所有的 x 同時靠近 f。",
+          "board": [
+            {"do":"write","line":"每個 $x$ 各有 $N$，沒有共同的 $N$"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$N$ 跟著 $x$ 跑",
+      "beats": [
+        { "show": ["$x^n<0.01$，找最小的 $N$"],
+          "note": "$0<x<1$ 時 $x^n$ 遞減。",
+          "say": "拿 x 的 n 次方，epsilon 取零點零一，在不同的點各找最小的 N。",
+          "board": [
+            {"do":"write","line":"$x^n<0.01$，找最小的 $N$"}
+          ] },
+        { "show": ["$\\ln x^n=n\\ln x$"],
+          "note": "$x^n$ 是 $n$ 個 $x$ 相乘。",
+          "say": "先補一步：x 的 n 次方是 n 個 x 相乘，取自然對數，相乘變相加，就得到 n 乘自然對數 x。",
+          "board": [
+            {"do":"write","line":"$\\ln x^n=\\ln x+\\cdots+\\ln x=n\\ln x$"}
+          ] },
+        { "show": ["$n>\\frac{\\ln 0.01}{\\ln x}$"],
+          "note": "$\\ln x<0$，除過去要變號。",
+          "say": "兩邊取自然對數。自然對數 x 是負的，除過去不等號要翻過來。",
+          "board": [
+            {"do":"write","line":"$n\\,{{l:\\ln x}}<\\ln 0.01$"},
+            {"do":"underline","term":"l","label":"負的","on":"是負的"},
+            {"do":"transform","line":"$n\\,{{g:>}}\\,\\frac{\\ln 0.01}{ {{l:\\ln x}} }$","on":"除過去"},
+            {"do":"focus","term":"g","on":"不等號"}
+          ] },
+        { "show": ["$6<7\\Rightarrow -6>-7$"],
+          "note": "乘或除以負數，方向反過來。",
+          "say": "除以負數為什麼要翻？六小於七，兩邊乘負一，變成負六大於負七，方向反了。",
+          "board": [
+            {"do":"write","line":"$6<7\\ \\Rightarrow\\ -6>-7$"}
+          ] },
+        { "show": ["$x=0.5$：$\\approx6.64$，$N=7$"],
+          "note": "$0.5^6=0.015625$，$0.5^7=0.0078125$。",
+          "say": "x 是零點五，算出約六點六四，所以 N 是七。六次方還太大，七次方才小於零點零一。",
+          "board": [
+            {"do":"write","line":"$x=0.5$：$\\frac{\\ln 0.01}{\\ln 0.5}\\approx6.64$，${{n:N=7}}$"},
+            {"do":"box","term":"n","color":"green","on":"所以 N 是七"},
+            {"do":"write","line":"$0.5^6=0.015625$，$0.5^7=0.0078125$","on":"六次方"}
+          ] }
+      ],
+      "key": "兩邊取對數，$\\ln x<0$ 不等號要翻",
+      "check": 1
+    },
+    {
+      "title": "$N$ 沒有上限",
+      "beats": [
+        { "show": ["$x=0.99$：$N=459$"],
+          "note": "$x=0.5$ 要 7，$x=0.9$ 要 44。",
+          "say": "x 推到零點九九，N 要四百五十九。越靠近一，要走的項數越多。",
+          "board": [
+            {"do":"write","line":"$x=0.99$：${{n:N=459}}$"},
+            {"do":"underline","term":"n","on":"四百五十九"},
+            {"do":"write","line":"越靠近 $1$，$N$ 越大","on":"越靠近一"}
+          ] },
+        { "show": ["$x^7$ 與 $x^{44}$"],
+          "note": "次方越大，越晚離開 0。",
+          "say": "看圖：藍色是 x 的七次方，紫色是 x 的四十四次方。次方越大，曲線貼到一附近才爬起來。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.05,1.05,-0.1,1.1],"curves":[{"expr":"x^7","domain":[0,1],"color":"blue"},{"expr":"x^44","domain":[0,1],"color":"violet"}]}}
+          ] },
+        { "show": ["取 $x=0.01^{1/N}<1$","$\\Rightarrow x^N=0.01$"],
+          "say": "而且沒有上限：你說一個 N，我就挑一個夠靠近一的 x，讓它的 N 次方剛好等於零點零一。",
+          "board": [
+            {"do":"write","line":"$x={{a:0.01^{1/N}}}<1$","on":"我就挑"},
+            {"do":"write","line":"$\\Rightarrow {{b:x^N=0.01}}$","on":"剛好"}
+          ] }
+      ],
+      "predict": {
+        "ask": "有沒有一個 $N$ 對所有 $x\\in[0,1)$ 都行？",
+        "options": [
+          {
+            "label": "沒有",
+            "correct": true
+          },
+          {
+            "label": "有，取 $N=459$",
+            "why": "459 只夠 $x=0.99$；$x$ 再靠近 1，$N$ 還要更大。"
+          },
+          {
+            "label": "有，取 $N=7$",
+            "why": "7 只夠 $x=0.5$；$x=0.9$ 就要 44。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "會移動的高峰",
+      "beats": [
+        { "show": ["$f_n(x)=\\frac{nx}{1+n^2x^2}$，$x\\in[0,1]$"],
+          "say": "再看一個例子：分子 n x，分母一加 n 平方 x 平方。",
+          "board": [
+            {"do":"write","line":"$f_n(x)=\\frac{nx}{1+n^2x^2}$，$x\\in[0,1]$"}
+          ] },
+        { "show": ["$0\\le f_n(x)\\le\\frac{1}{nx}\\to0$"],
+          "note": "$x=0$ 時本來就是 0。",
+          "say": "固定 x 大於零，它被 n x 分之一壓住，往零走；x 等於零時本來就是零。逐點極限是零。",
+          "board": [
+            {"do":"write","line":"$0\\le f_n(x)\\le{{b:\\frac{1}{nx}}}\\to{{z:0}}$","on":"固定 x"},
+            {"do":"underline","term":"b","on":"n x 分之一"},
+            {"do":"focus","term":"z","on":"往零走"}
+          ] },
+        { "show": ["分母變大，分數變小"],
+          "note": "上下夾擠：$0$ 與 $\\frac{1}{nx}$。",
+          "say": "分母多了一，比 n 平方 x 平方大，所以分數更小，不超過 n x 除以 n 平方 x 平方。又不小於零，被夾在中間。",
+          "board": [
+            {"do":"write","line":"$\\frac{nx}{1+n^2x^2}<\\frac{nx}{n^2x^2}=\\frac{1}{nx}$"}
+          ] },
+        { "show": ["$t=nx$：$\\frac{t}{1+t^2}\\le\\frac{1}{2}$"],
+          "note": "等號在 $x=\\frac{1}{n}$。",
+          "say": "可是令 t 等於 n x，它最大是二分之一，發生在 x 等於 n 分之一。",
+          "board": [
+            {"do":"write","line":"$t=nx$：${{m:\\frac{t}{1+t^2}\\le\\frac{1}{2}}}$","on":"令 t"},
+            {"do":"underline","term":"m","label":"x = 1/n","on":"發生在"}
+          ] },
+        { "show": ["高峰一直在，只是往 0 擠"],
+          "say": "每個 n 的高峰都是二分之一，只是位置往零擠，任何固定的點遲早被甩在後面。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"plot","graph":{"window":[-0.06,1.06,-0.08,0.62],"ticks":false,"curves":[{"expr":"x/(1+x^2)","domain":[0,1],"color":"muted"},{"expr":"2*x/(1+(2*x)^2)","domain":[0,1],"color":"violet"},{"expr":"7*x/(1+(7*x)^2)","domain":[0,1],"color":"blue"}],"dashed":[[[0,0.5],[1,0.5]]],"labels":[{"x":0.98,"y":0.54,"text":"1/2","anchor":"end"}]},"on":"高峰"}
+          ] },
+        { "show": ["最高點一直是 $\\frac{1}{2}$"],
+          "say": "不好在哪：每個點遲早會靠近零，可是整條曲線的最高處永遠離零二分之一，沒有一個 n 讓整條曲線同時貼近零。",
+          "board": [
+            {"do":"write","line":"最高點 $\\frac12$ 離 $0$ 不變，整條沒貼近"}
+          ] }
+      ],
+      "key": "代 $t=nx$：高峰值與 $n$ 無關",
+      "check": 3
+    },
+    {
+      "title": "積分也會掉",
+      "beats": [
+        { "show": ["$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$"],
+          "note": "固定 $x>0$，指數衰減贏過 $n$。",
+          "say": "最後一個：n x 乘 e 的負 n x 平方。固定 x，指數衰減贏過 n，逐點極限是零。",
+          "board": [
+            {"do":"write","line":"$f_n(x)=nx\\,e^{-nx^2}$，$[0,1]$"},
+            {"do":"write","line":"固定 $x>0$：$f_n(x)\\to{{z:0}}$","on":"固定 x"},
+            {"do":"focus","term":"z","on":"逐點極限"}
+          ] },
+        { "show": ["$\\int_0^1 0\\,dx=0$"],
+          "say": "所以先取極限再積分，得到零。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1 0\\,dx={{r:0}}$"}
+          ] },
+        { "show": ["$\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}$"],
+          "note": "令 $u=nx^2$。",
+          "say": "反過來先積分：令 u 等於 n x 平方，積出來是一減 e 的負 n 次方，再除以二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"令 $u=nx^2$","on":"令 u"},
+            {"do":"write","line":"$\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}$","on":"積出來"}
+          ] },
+        { "show": ["逐點極限看不到窄高峰的面積"],
+          "say": "如果兩種順序算出不同的值，原因就在高峰：逐點極限只看固定的點，窄窄的高峰面積被丟掉了。",
+          "board": [
+            {"do":"write","line":"逐點收斂：極限與積分不一定能交換"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$n\\to\\infty$，$\\int_0^1 f_n\\,dx$ 趨近？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}$",
+            "correct": true
+          },
+          {
+            "label": "0",
+            "why": "0 是先取極限再積分的結果；這裡 $e^{-n}\\to0$，所以 $\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。"
+          },
+          {
+            "label": "1",
+            "why": "別忘了除以 2：$\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$N$ 會隨 $x$ 改變",
+      "prompt": "$f_n(x)=x^n$，$\\varepsilon=0.01$。分別在 $x=0.5$、0.9、0.99 找最小的 $N$，使 $n\\ge N$ 時 $x^n<0.01$。",
+      "steps": [
+        "$0<x<1$ 時 $x^n$ 遞減，所以只要找第一個 $n$ 使 $x^n<0.01$。取對數：$n\\ln x<\\ln 0.01$，$\\ln x<0$，除過去要變號：$n>\\frac{\\ln 0.01}{\\ln x}$。",
+        "$x=0.5$：$\\frac{\\ln 0.01}{\\ln 0.5}\\approx6.64$，$N=7$。檢查：$0.5^6=0.015625\\ge0.01$，$0.5^7=0.0078125<0.01$。",
+        "$x=0.9$：$\\approx43.71$，$N=44$（$0.9^{43}\\approx0.01078$，$0.9^{44}\\approx0.00970$）。",
+        "$x=0.99$：$\\approx458.21$，$N=459$（$0.99^{458}\\approx0.01002$，$0.99^{459}\\approx0.00992$）。",
+        "$x$ 越靠近 1，$N$ 越大，而且沒有上限：給任何 $N$，取 $x=0.01^{1/N}<1$，就有 $x^N=0.01$，不小於 $\\varepsilon$。"
+      ],
+      "answer": "$N=7$、44、459；沒有一個 $N$ 對所有 $x\\in[0,1)$ 都行",
+      "claim": "0.5^7 < 0.01 ;; 0.5^6 >= 0.01 ;; 0.9^44 < 0.01 ;; 0.9^43 >= 0.01 ;; 0.99^459 < 0.01 ;; 0.99^458 >= 0.01"
+    },
+    {
+      "title": "會移動的高峰",
+      "prompt": "$f_n(x)=\\frac{nx}{1+n^2x^2}$，$x\\in[0,1]$。求逐點極限，並求 $f_n$ 在 $[0,1]$ 上的最大值。",
+      "problemId": "an-uf-004",
+      "steps": [
+        "$x=0$：$f_n(0)=0$。$x>0$：$0\\le f_n(x)\\le\\frac{nx}{n^2x^2}=\\frac{1}{nx}\\to0$。所以逐點極限 $f\\equiv0$。",
+        "最大值：令 $t=nx\\ge0$，$f_n=\\frac{t}{1+t^2}$。由 $(t-1)^2\\ge0$ 得 $1+t^2\\ge2t$，所以 $\\frac{t}{1+t^2}\\le\\frac{1}{2}$，等號在 $t=1$，也就是 $x=\\frac{1}{n}$（落在 $[0,1]$ 內）。",
+        "所以每個 $n$ 的最大值都是 $f_n(\\frac{1}{n})=\\frac{1}{2}$：高峰一直在，只是往 0 擠。"
+      ],
+      "answer": "逐點極限 0；每個 $f_n$ 的最大值都是 $\\frac{1}{2}$",
+      "claim": "SUB(n*x/(1+n^2*x^2), 1/n) == 1/2 ;; n*x/(1+n^2*x^2) <= 1/2 ;; LIM(0.3*n/(1+0.09*n^2), inf) == 0"
+    },
+    {
+      "title": "逐點極限是 0，積分卻不是",
+      "prompt": "$f_n(x)=nx e^{-nx^2}$，$x\\in[0,1]$。比較 $\\lim\\int_0^1 f_n\\,dx$ 與 $\\int_0^1(\\lim f_n)\\,dx$。",
+      "problemId": "lb-con-003",
+      "steps": [
+        "逐點：$x=0$ 時 $f_n=0$。$x>0$ 時固定 $x$，$n e^{-nx^2}$ 中指數衰減贏過 $n$，$\\to0$。所以 $\\lim f_n\\equiv0$，$\\int_0^1 0\\,dx=0$。",
+        "積分：令 $u=nx^2$，$du=2nx\\,dx$，$\\int_0^1 nx e^{-nx^2}\\,dx=(\\frac{1}{2})\\int_0^n e^{-u}\\,du=\\frac{1-e^{-n}}{2}$。",
+        "$n\\to\\infty$：$\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。",
+        "$\\frac{1}{2}\\ne0$：逐點收斂下，極限與積分不能隨便交換。"
+      ],
+      "answer": "$\\lim\\int f_n=\\frac{1}{2}$，$\\int\\lim f_n=0$",
+      "claim": "INT(n*x*e^(-n*x^2), 0, 1) == (1-e^(-n))/2 ;; LIM((1-e^(-n))/2, inf) == 1/2 ;; LIM(n*0.3*e^(-0.09*n), inf) == 0"
+    }
+  ],
+  "pitfalls": [
+    "把 $x^n$ 在 $[0,1]$ 的極限寫成 $f\\equiv0$，漏掉 $x=1$ 那一點 $1^n=1$。",
+    "以為「每個 $f_n$ 連續」就推得出「極限連續」。逐點收斂不保證。",
+    "以為逐點收斂就能交換極限與積分：$\\lim\\int f_n$ 與 $\\int\\lim f_n$ 可以不相等。",
+    "寫逐點收斂時把 $N$ 寫成只跟 $\\varepsilon$ 有關；它允許跟 $x$ 有關，這正是它弱的地方。"
+  ],
+  "checks": [
+    {
+      "ask": "$f_n(x)=x^n$ 在 $[0,1]$ 上的逐點極限 $f$ 是？",
+      "options": [
+        { "label": "$f(x)=0$（$0\\le x<1$），$f(1)=1$", "correct": true },
+        { "label": "$f\\equiv0$", "why": "你看了 $x<1$ 的部分就下結論。$x=1$ 時數列是 1, 1, 1, …，極限是 1。" },
+        { "label": "極限不存在，因為 $f$ 不連續", "why": "你把「極限函數不連續」當成「不收斂」。每個 $x$ 的數列都收斂，只是收斂到一個不連續的函數。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=x^n$，$x=0.9$，$\\varepsilon=0.01$。使 $n\\ge N$ 時 $x^n<\\varepsilon$ 的最小 $N$ 是？",
+      "options": [
+        { "label": "44", "correct": true },
+        { "label": "43", "why": "你把 $\\frac{\\ln 0.01}{\\ln 0.9}\\approx43.71$ 無條件捨去了。$0.9^{43}\\approx0.0108$ 還不小於 0.01，要進位成 44。" },
+        { "label": "7", "why": "那是 $x=0.5$ 的答案。逐點收斂的 $N$ 隨 $x$ 改變，不能拿別的點的 $N$ 來用。" }
+      ]
+    },
+    {
+      "ask": "逐點收斂的定義裡，$N$ 可以依賴什麼？",
+      "options": [
+        { "label": "$\\varepsilon$ 與 $x$ 都可以", "correct": true },
+        { "label": "只能依賴 $\\varepsilon$", "why": "那是一致收斂的要求（$\\forall\\varepsilon\\ \\exists N\\ \\forall x$）。逐點收斂先固定 $x$ 才找 $N$。" },
+        { "label": "只能依賴 $x$", "why": "$N$ 一定要能隨 $\\varepsilon$ 變大；$\\varepsilon$ 越小，通常要走越多項。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$ 上，下列何者正確？",
+      "options": [
+        { "label": "逐點收斂到 0，但每個 $f_n$ 的最大值都是 $\\frac{1}{2}$", "correct": true },
+        { "label": "逐點收斂到 $\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 是高峰的高度，可是高峰位置 $\\frac{1}{n}$ 一直在移動；任何固定的 $x$ 上，$f_n(x)\\le\\frac{1}{nx}\\to0$。" },
+        { "label": "在 $x$ 靠近 0 的地方不收斂", "why": "你把高峰往 0 擠誤當成某個點不收斂。$x=0$ 時 $f_n(0)=0$；$x>0$ 時也 $\\to0$。每個點都收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence", "convergence-theorem", "sequence"],
+    "fine": ["pointwise-limit-function", "pointwise-n-depends-on-x", "pointwise-moving-bump", "pointwise-integral-mismatch"]
+  },
+  "practice": [
+    { "id": "an-uf-004", "core": true, "trains": "pointwise-moving-bump" },
+    { "id": "lb-con-004", "core": true, "trains": "pointwise-integral-mismatch" },
+    { "id": "lb-con-003", "core": true, "trains": "pointwise-integral-mismatch" },
+    { "id": "cg-12f-002", "core": true, "trains": "pointwise-limit-function" },
+    { "id": "cg-12f-004", "core": true, "trains": "pointwise-n-depends-on-x" },
+    { "id": "cg-12f-001", "core": true, "trains": "pointwise-limit-function" },
+    { "id": "lb-con-005", "trains": "pointwise-integral-mismatch" },
+    { "id": "cg-12f-003", "trains": "pointwise-limit-function" },
+    { "id": "cg-12f-005", "trains": "pointwise-n-depends-on-x" },
+    { "id": "lb-con-001", "challenge": true, "trains": "pointwise-integral-mismatch", "note": "挑戰：$n^2x e^{-nx}$ 逐點收斂到 0，令 $u=nx$ 算出 $\\int_0^1=1-(n+1)e^{-n}$。" }
+  ],
+  "gaps": []
+}

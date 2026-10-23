@@ -1,49 +1,131 @@
 {
   "id": "continuity-formal",
   "title": "連續的正式定義",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["continuity-definition", "epsilon-delta-definition"],
-  "next": ["sequential-criterion"],
-  "related": ["epsilon-delta-quadratic", "negation", "uniform-continuity"],
-  "objectives": [
-    "寫得出 $f$ 在 $a$ 連續的 $\\varepsilon$-$\\delta$ 定義，量詞順序是 $\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$。",
-    "會對具體函數找出 $\\delta$，並說明這個 $\\delta$ 為什麼有效。",
-    "會寫出「不連續」的否定形式，並用它證明階梯函數在跳躍點不連續。"
+  "prerequisites": [
+    "continuity-definition",
+    "epsilon-delta-definition"
   ],
-  "visual": "y = f(x) 的圖上以 (a, f(a)) 為中心畫水平帶 f(a) ± ε 與垂直帶 a ± δ。ε 用滑桿縮小，δ 由學生拖動；垂直帶內的曲線只要有一段跑出水平帶就變紅。換成階梯函數時，ε 拉到 1/2 以下，δ 再小都有紅色段。",
+  "next": [
+    "sequential-criterion"
+  ],
+  "related": [
+    "epsilon-delta-quadratic",
+    "negation",
+    "uniform-continuity"
+  ],
+  "objectives": [
+    "寫得出 $f$ 在 $a$ 連續的 $\\varepsilon$-$\\delta$ 定義，量詞順序是 $\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$",
+    "會對具體函數找出 $\\delta$，並說明這個 $\\delta$ 為什麼有效",
+    "會寫出「不連續」的否定形式，並用它證明階梯函數在跳躍點不連續"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從「$\\lim f=f(a)$」到不用極限的說法",
+      "heading": "① 從極限出發",
       "body": [
-        "主線裡說 $f$ 在 $a$ 連續，是指 $\\lim_{x\\to a} f(x)=f(a)$：靠近 $a$ 時，函數值靠近 $a$ 這一點自己的值。",
-        "把「靠近」換成 $\\varepsilon$ 與 $\\delta$，就是正式定義。跟極限的 $\\varepsilon$-$\\delta$ 定義比，有兩個差別：目標值是 $f(a)$ 本身；而且不用排除 $x=a$，因為 $x=a$ 時 $|f(x)-f(a)|=0$，自動成立。"
+        "1.15：$f$ 在 $a$ 連續 $\\iff\\displaystyle\\lim_{x\\to a}f(x)=f(a)$",
+        "把 12.19 的定義代進去，$L$ 換成 $f(a)$：",
+        "被排除的 $x=a$：$|f(a)-f(a)|=0<\\varepsilon$，本來就成立",
+        "所以「$0<$」可以拿掉：寫 $|x-a|<\\delta$ 就好",
+        "極限故意不看 $f(a)$；連續拿 $f(a)$ 當目標"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $f$ 定義在 $D$ 上，$a\\in D$。$f$ 在 $a$ 連續，是指：對每一個 $\\varepsilon>0$，都存在 $\\delta>0$，使得對所有 $x\\in D$，只要 $|x-a|<\\delta$，就有 $|f(x)-f(a)|<\\varepsilon$。$f$ 在 $D$ 的每一點都連續，就說 $f$ 在 $D$ 上連續。",
-        "讀法：對手先出 $\\varepsilon$（容許的誤差），你再回答 $\\delta$（$x$ 可以離 $a$ 多遠）。$\\delta$ 可以依賴 $\\varepsilon$，也可以依賴 $a$；這一點在〈一致連續〉會變成關鍵。"
+        "設 $f:D\\to\\mathbb{R}$，$a\\in D$。$f$ 在 $a$ 連續：",
+        "• $\\varepsilon$ 對手給；$\\delta$ 我們找，可以看 $\\varepsilon$ 和 $a$ 再決定",
+        "• $x$ 最後才出現：$\\delta$ 要對範圍內每一個 $x$ 都有效",
+        "順序不能換。$\\exists\\delta\\ \\forall\\varepsilon$：同一個 $\\delta$ 對每個 $\\varepsilon$ 都行",
+        "⇒ $|f(x)-f(a)|$ 比每個正數都小 ⇒ $f(x)=f(a)$",
+        "意思變成「$f$ 在 $a$ 附近是常數」，跟連續差太多"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 例：線性函數",
+      "body": [
+        "證明 $f(x)=3x-1$ 在 $a=2$ 連續。",
+        "策略：誤差剛好是距離的 3 倍",
+        "所以距離只要小於 $\\frac\\varepsilon3$",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon3$。若 $|x-2|<\\delta$，",
+        "為什麼有效：誤差 $=3\\times$距離，距離打三折，誤差就剛好接住",
+        "這裡 $\\delta$ 跟 $a$ 無關：斜率處處一樣。下一個例子就不是了"
+      ],
+      "tex": [
+        "|f(x)-f(2)|=|3x-1-5|=3|x-2|",
+        "|f(x)-f(2)|=3|x-2|<3\\delta=\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "② 例：二次函數",
+      "body": [
+        "證明 $f(x)=x^2$ 在 $a=3$ 連續。",
+        "策略：$|x-3|$ 我們控制；$|x+3|$ 會變，先把它壓成常數",
+        "先要求 $\\delta\\le1$：$|x-3|<1\\Rightarrow2<x<4\\Rightarrow|x+3|<7$",
+        "證明：給定 $\\varepsilon>0$，取 $\\delta=\\min\\!\\left(1,\\dfrac\\varepsilon7\\right)$。若 $|x-3|<\\delta$：",
+        "$\\min$ 裡兩個數各管一件事：$1$ 管 $|x+3|<7$，$\\frac\\varepsilon7$ 管乘積"
+      ],
+      "tex": [
+        "|x^2-9|=|x-3|\\cdot|x+3|",
+        "|x^2-9|=|x-3|\\,|x+3|<\\frac\\varepsilon7\\cdot7=\\varepsilon\\quad\\blacksquare"
+      ]
     },
     {
       "heading": "③ 不連續寫成什麼",
       "body": [
-        "把定義整句否定（〈否定〉）：存在某個 $\\varepsilon>0$，使得對每一個 $\\delta>0$，都找得到 $x\\in D$，$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon$。",
-        "人話：有一個固定的誤差，不管把 $x$ 限制得多靠近 $a$，總有點的函數值偏離超過它。證明不連續就是要拿出這個 $\\varepsilon$，並對每個 $\\delta$ 指出那個 $x$。"
+        "照 12.2 否定：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變 $P$ 且 $\\neg Q$",
+        "白話：有一條橫帶，直帶再窄，裡面總有點跳出去",
+        "比 12.19 簡單：目標就是 $f(a)$，不用對每個 $L$ 證",
+        "例：$H(x)=\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}$，證明 $H$ 在 $0$ 不連續"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f\\text{ 在 }a\\text{ 不連續}\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\text{且}\\ |f(x)-f(a)|\\ge\\varepsilon\\end{aligned}"
+      ]
     },
     {
-      "heading": "細節：孤立點與極限版本的關係",
+      "heading": "③ 證明：跳躍點不連續",
       "body": [
-        "若 $a$ 是 $D$ 的孤立點（某個 $\\delta$ 內除了 $a$ 沒有別的 $D$ 的點），定義自動成立，$f$ 在 $a$ 連續；這時 $\\lim_{x\\to a} f(x)$ 根本沒有意義。所以「連續 $\\iff\\lim f=f(a)$」只在 $a$ 是 $D$ 的極限點時才是等價的說法，$\\varepsilon$-$\\delta$ 版本是更一般的定義。例如定義在 $\\mathbb{N}$ 上的任何數列，看成函數時處處連續。"
+        "證明：取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，取 $x=-\\frac\\delta2$：",
+        "• $|x-0|=\\frac\\delta2<\\delta$",
+        "• $|H(x)-H(0)|=|0-1|=1\\ge\\frac12$",
+        "這正是否定句：$\\varepsilon$ 我們挑，$\\delta$ 任給，$x$ 我們找　$\\blacksquare$"
+      ]
+    },
+    {
+      "heading": "④ 細節：孤立點",
+      "body": [
+        "定義只檢查 $x\\in D$。若 $a$ 是 $D$ 的孤立點：",
+        "取 $\\delta=r$：要檢查的 $x$ 只有 $a$，誤差 $0$",
+        "⇒ 任何函數在孤立點都連續",
+        "例：$D=\\mathbb{N}$，數列 $f(n)=a_n$ 看成函數：每一點都連續",
+        "極限版本要 $a$ 附近還有 $D$ 的其他點（$a$ 是聚點）",
+        "• $a$ 是聚點：連續 $\\iff\\lim_{x\\to a}f(x)=f(a)$（第 ① 節）",
+        "• $a$ 是孤立點：極限沒得談，但 $\\varepsilon$-$\\delta$ 版本照樣成立",
+        "例：$D=[0,1]\\cup\\{2\\}$，任何 $f$ 在 $2$ 都連續"
       ],
-      "collapsible": true
+      "tex": [
+        "\\exists r>0:\\ (a-r,\\ a+r)\\cap D=\\{a\\}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 連續：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$",
+        "• 跟極限比：目標是 $f(a)$，不必寫 $0<$",
+        "• 找 $\\delta$：把誤差寫成 $|x-a|\\times$（因子）；因子會變就先限 $\\delta\\le1$",
+        "• 不連續：$\\exists\\varepsilon\\ \\forall\\delta\\ \\exists x:\\ |x-a|<\\delta,\\ |f(x)-f(a)|\\ge\\varepsilon$",
+        "• 孤立點：任何函數都連續",
+        "下一課：數列判準"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,198 +178,546 @@
   ],
   "checks": [
     {
-      "ask": "$f$ 在 $a$ 連續的定義，量詞順序是哪一個？",
+      "ask": "哪一句是「$f$ 在 $a$ 連續」的量詞順序？（後面都接 $|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$）",
       "options": [
-        { "label": "$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D$：$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$", "correct": true },
-        { "label": "$\\exists\\delta>0\\ \\forall\\varepsilon>0\\ \\forall x\\in D$：$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$", "why": "你把 $\\delta$ 放到 $\\varepsilon$ 前面，變成同一個 $\\delta$ 要應付所有 $\\varepsilon$，這會逼 $f$ 在 $a$ 附近是常數。" },
-        { "label": "$\\forall\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D$：$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$", "why": "$\\delta$ 應該是你找的（$\\exists$），而且條件要對所有 $x$ 成立；這樣寫只要求找到一個好點，$x=a$ 就永遠滿足。" }
+        {
+          "label": "$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x$",
+          "correct": true
+        },
+        {
+          "label": "$\\exists\\delta\\ \\forall\\varepsilon\\ \\forall x$",
+          "why": "一個 $\\delta$ 接住所有 $\\varepsilon$：只有在 $a$ 附近是常數的函數才做得到"
+        },
+        {
+          "label": "$\\forall\\delta\\ \\exists\\varepsilon\\ \\forall x$",
+          "why": "角色反了：變成「給距離、找誤差」，有界函數全都滿足，連跳躍的也算"
+        },
+        {
+          "label": "$\\forall\\varepsilon\\ \\forall x\\ \\exists\\delta$",
+          "why": "$\\delta$ 可以看 $x$ 再挑：$x\\ne a$ 時取 $\\delta<|x-a|$ 就空洞成立，什麼函數都連續"
+        }
       ]
     },
     {
-      "ask": "證明 $f(x)=3x-1$ 在 2 連續，$\\varepsilon=0.06$ 時最大可以取的 $\\delta$ 是？",
+      "ask": "$G(x)=0$（$x\\le0$）、$G(x)=1$（$x>0$）。證明 $G$ 在 $0$ 不連續，給定 $\\delta$ 該挑哪個 $x$？",
       "options": [
-        { "label": "0.02", "correct": true },
-        { "label": "0.18", "why": "你把 $\\varepsilon$ 乘以 3。$|f(x)-5|=3|x-2|$，所以是 $\\delta=\\frac{\\varepsilon}{3}$。" },
-        { "label": "0.06", "why": "你直接讓 $\\delta=\\varepsilon$，忘了斜率 3 會把 $x$ 的誤差放大三倍。" }
-      ]
-    },
-    {
-      "ask": "證 $x^2$ 在 3 連續時，為什麼先限制 $\\delta\\le1$？",
-      "options": [
-        { "label": "為了讓 $|x+3|$ 有固定上界 7，才能解出 $\\delta$", "correct": true },
-        { "label": "因為 $\\varepsilon$ 一定小於 1", "why": "$\\varepsilon$ 可以是任何正數。限制 $\\delta\\le1$ 跟 $\\varepsilon$ 無關，是為了壓住 $|x+3|$。" },
-        { "label": "因為定義要求 $\\delta<1$", "why": "定義只要求 $\\delta>0$。$\\le1$ 是我們自己加的方便條件，換成 $\\le2$ 也行，只是上界變成 8。" }
-      ]
-    },
-    {
-      "ask": "要證 $f$ 在 $a$ 不連續，需要做到哪一件事？",
-      "options": [
-        { "label": "找一個 $\\varepsilon>0$，使每個 $\\delta>0$ 都有 $x$ 滿足 $|x-a|<\\delta$ 且 $|f(x)-f(a)|\\ge\\varepsilon$", "correct": true },
-        { "label": "對每個 $\\varepsilon>0$，找一個 $\\delta$ 使條件失敗", "why": "你只否定了一半。$\\varepsilon$ 很大時條件通常成立，所以要「存在」一個 $\\varepsilon$，而且對「每個」$\\delta$ 都失敗。" },
-        { "label": "找一個 $x$ 使 $f(x)\\ne f(a)$", "why": "連續函數也有 $f(x)\\ne f(a)$ 的點，例如 $x^2$。重點是靠多近都還差到 $\\varepsilon$ 以上。" }
+        {
+          "label": "$x=\\frac\\delta2$",
+          "correct": true
+        },
+        {
+          "label": "$x=-\\frac\\delta2$",
+          "why": "$G(-\\frac\\delta2)=0=G(0)$，誤差是 $0$：這次跳出去的是右邊"
+        },
+        {
+          "label": "$x=0$",
+          "why": "誤差 $|G(0)-G(0)|=0$，永遠不會跳出去"
+        },
+        {
+          "label": "$x=2\\delta$",
+          "why": "$|x-0|=2\\delta$，不在直帶裡"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "不用極限的說法",
+      "title": "從極限出發",
       "beats": [
-        { "show": ["連續：$\\lim_{x\\to a}f(x)=f(a)$"],
-          "note": "靠近 $a$ 時，函數值靠近 $f(a)$。",
-          "say": "以前說連續，是靠近 a 的時候，函數值靠近 a 這一點自己的值。把靠近換成 epsilon 和 delta。",
+        {
+          "show": [
+            "1.15：$f$ 在 $a$ 連續 $\\iff\\displaystyle\\lim_{x\\to a}f(x)=f(a)$"
+          ],
+          "say": "在 1.15，連續的意思是：x 趨近 a 的極限存在，而且就等於 f of a。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to a} f(x) = f(a)$","on":"以前說"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:$","$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$"],
-          "say": "對方出誤差 epsilon，你回答 delta：離 a 不到 delta 的 x，函數值都離 f 在 a 的值不到 epsilon。",
+            {
+              "do": "write",
+              "line": "1.15：$f$ 在 $a$ 連續 $\\iff\\displaystyle\\lim_{x\\to a}f(x)=f(a)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 12.19 的定義代進去，$L$ 換成 $f(a)$：",
+            "$\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "把 12.19 的艾普西隆得塔定義代進去，極限值 L 換成 f of a，就得到這一行。",
           "board": [
-            {"do":"write","line":"$\\forall{{e:\\varepsilon}}>0\\ \\exists{{d:\\delta}}>0\\ \\forall x\\in D:$","tint":{"e":"blue","d":"violet"},"on":"對方出"},
-            {"do":"write","line":"${{xa:|x-a|<{{d:\\delta}}}} \\Rightarrow |f(x)-{{fa:f(a)}}|<{{e:\\varepsilon}}$","on":"離 a 不到"}
-          ] },
-        { "show": ["目標值是 $f(a)$；不用排除 $x=a$"],
-          "note": "$x=a$ 時差是 0，自動成立。",
-          "say": "跟極限比有兩個差別：目標就是 f 在 a 的值；而且不必排除 x 等於 a，那一點的差是零，自動成立。",
+            {
+              "do": "write",
+              "line": "把 12.19 的定義代進去，$L$ 換成 $f(a)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}}$",
+              "on": "限值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被排除的 $x=a$：$|f(a)-f(a)|=0<\\varepsilon$，本來就成立"
+          ],
+          "say": "再看被排除的那一點，x 等於 a。它的誤差是 f of a 減 f of a，等於 0，本來就小於艾普西隆。",
           "board": [
-            {"do":"focus","term":"fa","label":"目標","on":"目標就是"},
-            {"do":"underline","term":"xa","label":"不排除 x=a","on":"不必排除"}
-          ] },
-        { "show": ["$\\delta$ 可以依賴 $\\varepsilon$ 和 $a$"],
-          "note": "這一點在〈一致連續〉會變成關鍵。",
-          "say": "delta 可以跟著 epsilon 變，也可以跟著 a 變。後面這一點，到一致連續會變成關鍵。",
+            {
+              "do": "write",
+              "line": "被排除的 $x=a$：$|f(a)-f(a)|=0<\\varepsilon$，本來就成立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以「$0<$」可以拿掉：寫 $|x-a|<\\delta$ 就好"
+          ],
+          "say": "所以那個大於 0 可以直接拿掉，把 x 等於 a 也放進來，什麼都不會變。這樣定義裡就不需要極限了。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{d:\\delta}}$ 可以依賴 ${{e:\\varepsilon}}$ 和 ${{aa:a}}$","on":"跟著 epsilon"},
-            {"do":"focus","term":"aa","label":"之後的關鍵","on":"跟著 a"}
-          ] },
-        { "show": ["$|x^2-a^2|=|x-a|\\,|x+a|$"],
-          "note": "$a$ 越大，$|x+a|$ 越大。",
-          "say": "拿 x 平方來看，距離是 x 減 a 乘 x 加 a。a 越大，x 加 a 越大，同一個 epsilon 就得配更小的 delta。",
+            {
+              "do": "write",
+              "line": "所以「$0<$」可以拿掉：寫 $|x-a|<\\delta$ 就好",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限故意不看 $f(a)$；連續拿 $f(a)$ 當目標"
+          ],
+          "say": "這也點出兩者的差別：極限故意不看 f of a；連續卻是拿 f of a 當目標，而且 a 這一點也要過關。",
           "board": [
-            {"do":"write","line":"$|x^2-a^2| = |x-a|\\,{{n1:|x+a|}}$"},
-            {"do":"focus","term":"n1","label":"a 大則大","on":"越大#1"}
-          ] }
+            {
+              "do": "write",
+              "line": "極限故意不看 $f(a)$；連續拿 $f(a)$ 當目標",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：橫帶 f(a) ± ε；藍：直帶 a ± δ；點 (a, f(a)) 在正中間"
+          ],
+          "say": "圖上，橫帶的中心就是 f of a，直帶的中心是 a，點 a 逗號 f of a 正好在十字的中心，而且是實心的。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cf",
+                  "window": [
+                    0,
+                    2,
+                    0,
+                    2
+                  ],
+                  "area": [
+                    {
+                      "expr": "1+e",
+                      "from": 0,
+                      "to": 2,
+                      "color": "red",
+                      "under": "1-e"
+                    },
+                    {
+                      "expr": "2",
+                      "from": "2-sqrt(1+2*e)",
+                      "to": "sqrt(1+2*e)",
+                      "color": "blue",
+                      "under": "0"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2/2+0.5",
+                      "color": "ink",
+                      "label": "y = f(x)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.08,
+                      "max": 0.4,
+                      "value": 0.3,
+                      "label": "誤差 ε"
+                    }
+                  },
+                  "readout": "ε = {e}，δ = {sqrt(1+2*e)-1}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.3，δ = 0.2649",
+              "on": "帶的#2"
+            },
+            {
+              "do": "write",
+              "line": "紅：橫帶 f(a) ± ε；藍：直帶 a ± δ；點 (a, f(a)) 在正中間",
+              "color": "violet",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從極限出發"
+          ],
+          "say": "艾普西隆縮小，直帶也跟著變窄，但總找得到。這就是連續。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cf",
+                  "window": [
+                    0,
+                    2,
+                    0,
+                    2
+                  ],
+                  "area": [
+                    {
+                      "expr": "1+e",
+                      "from": 0,
+                      "to": 2,
+                      "color": "red",
+                      "under": "1-e"
+                    },
+                    {
+                      "expr": "2",
+                      "from": "2-sqrt(1+2*e)",
+                      "to": "sqrt(1+2*e)",
+                      "color": "blue",
+                      "under": "0"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2/2+0.5",
+                      "color": "ink",
+                      "label": "y = f(x)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.08,
+                      "max": 0.4,
+                      "value": 0.3,
+                      "label": "誤差 ε"
+                    }
+                  },
+                  "readout": "ε = {e}，δ = {sqrt(1+2*e)-1}",
+                  "height": 300
+                },
+                "vals": {
+                  "e": 0.1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.1，δ = 0.09545",
+              "on": "但總"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "設 $f:D\\to\\mathbb{R}$，$a\\in D$。$f$ 在 $a$ 連續：",
+            "$\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "正式定義：f 在 a 連續，是說對所有艾普西隆，存在得塔，對所有屬於 D 的 x，x 離 a 不到得塔，推得 f of x 離 f of a 不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $f:D\\to\\mathbb{R}$，$a\\in D$。$f$ 在 $a$ 連續："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-f(a)|<\\varepsilon\\end{aligned}}}}$",
+              "on": "得塔#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "推得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\varepsilon$ 對手給；$\\delta$ 我們找，可以看 $\\varepsilon$ 和 $a$ 再決定",
+            "• $x$ 最後才出現：$\\delta$ 要對範圍內每一個 $x$ 都有效"
+          ],
+          "say": "量詞的角色：艾普西隆是對手給的；得塔是我們找的，可以看了艾普西隆和 a 再決定。x 最後才出現，所以得塔必須對範圍裡的每一個 x 都有效。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\varepsilon$ 對手給；$\\delta$ 我們找，可以看 $\\varepsilon$ 和 $a$ 再決定"
+            },
+            {
+              "do": "write",
+              "line": "• $x$ 最後才出現：$\\delta$ 要對範圍內每一個 $x$ 都有效",
+              "on": "再決"
+            }
+          ]
+        },
+        {
+          "show": [
+            "順序不能換。$\\exists\\delta\\ \\forall\\varepsilon$：同一個 $\\delta$ 對每個 $\\varepsilon$ 都行"
+          ],
+          "say": "順序不能換。如果先存在得塔，再對所有艾普西隆，誤差就得比每個正數都小，只能是 0：f 在 a 附近是常數。差太多了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "順序不能換。$\\exists\\delta\\ \\forall\\varepsilon$：同一個 $\\delta$ 對每個 $\\varepsilon$ 都行",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "⇒ $|f(x)-f(a)|$ 比每個正數都小 ⇒ $f(x)=f(a)$",
+              "color": "red",
+              "on": "普西"
+            },
+            {
+              "do": "write",
+              "line": "意思變成「$f$ 在 $a$ 附近是常數」，跟連續差太多",
+              "color": "red",
+              "on": "附近"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題：量詞順序",
+      "beats": [
+        {
+          "show": [
+            "哪一句是「$f$ 在 $a$ 連續」的量詞順序？（後面都接 $|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$）"
+          ],
+          "say": "試一題：哪一個量詞順序才是連續？"
+        }
       ],
       "check": 0
     },
     {
-      "title": "線性：除以斜率",
+      "title": "例：線性函數",
       "beats": [
-        { "show": ["$f(x)=3x-1$ 在 $a=2$"],
-          "note": "$f(2)=5$。",
-          "say": "證三 x 減一在二連續。f 在二的值是五。",
+        {
+          "show": [
+            "證明 $f(x)=3x-1$ 在 $a=2$ 連續。"
+          ],
+          "say": "第一個例子：證明 3x 減 1 在 2 連續。",
           "board": [
-            {"do":"write","line":"$f(x) = 3x-1$，$a = 2$"},
-            {"do":"write","line":"$f(2) = {{v:5}}$","on":"f 在二"}
-          ] },
-        { "show": ["$|f(x)-5|=3|x-2|$"],
-          "say": "化簡距離，是三倍的 x 減二。要它小於 epsilon，x 減二小於三分之 epsilon 就夠。",
+            {
+              "do": "write",
+              "line": "證明 $f(x)=3x-1$ 在 $a=2$ 連續。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：誤差剛好是距離的 3 倍",
+            "$|f(x)-f(2)|=|3x-1-5|=3|x-2|$"
+          ],
+          "say": "策略：先把誤差寫成距離的式子。f of 2 是 5，3x 減 1 減 5，等於 3 乘 x 減 2 的絕對值。誤差剛好是距離的 3 倍。",
           "board": [
-            {"do":"write","line":"$|f(x)-5| = 3|x-2|$"},
-            {"do":"write","line":"$|x-2| < \\frac{\\varepsilon}{3}$","on":"x 減二小於"}
-          ] },
-        { "show": ["取 $\\delta=\\frac{\\varepsilon}{3}$"],
-          "note": "$|f(x)-5|=3|x-2|<3\\delta=\\varepsilon$。",
-          "say": "所以 delta 取三分之 epsilon。驗證：距離小於三倍 delta，剛好等於 epsilon。",
+            {
+              "do": "write",
+              "line": "策略：誤差剛好是距離的 3 倍"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x)-f(2)|=|3x-1-5|=3|x-2|$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以距離只要小於 $\\frac\\varepsilon3$"
+          ],
+          "say": "要誤差小於艾普西隆，距離只要小於 3 分之艾普西隆。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{dl:\\delta = \\frac{\\varepsilon}{3}}}$","on":"所以"},
-            {"do":"box","term":"dl","color":"green","on":"三分之"},
-            {"do":"write","line":"$|f(x)-5| = 3|x-2| < 3\\delta = {{e:\\varepsilon}}$","on":"驗證"},
-            {"do":"focus","term":"e","color":"green","on":"剛好等於"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "所以距離只要小於 $\\frac\\varepsilon3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon3$。若 $|x-2|<\\delta$，",
+            "$|f(x)-f(2)|=3|x-2|<3\\delta=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "證明：給定艾普西隆，取得塔等於 3 分之艾普西隆。x 離 2 不到得塔，誤差是 3 倍距離，就小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=\\dfrac\\varepsilon3$。若 $|x-2|<\\delta$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle |f(x)-f(2)|=3|x-2|<3\\delta=\\varepsilon\\quad\\blacksquare}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "誤差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼有效：誤差 $=3\\times$距離，距離打三折，誤差就剛好接住"
+          ],
+          "say": "為什麼有效？誤差永遠是距離的 3 倍，距離縮到三分之一，誤差就剛好縮到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼有效：誤差 $=3\\times$距離，距離打三折，誤差就剛好接住"
+            },
+            {
+              "do": "write",
+              "line": "　這裡 $\\delta$ 跟 $a$ 無關：斜率處處一樣。下一個例子就不是了",
+              "color": "violet",
+              "on": "離縮"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：二次先壓住",
+      "title": "例：二次函數",
       "beats": [
-        { "show": ["$f(x)=x^2$ 在 $a=3$：先壓住 $|x+3|$"],
-          "note": "$|x^2-9|=|x-3|\\cdot|x+3|$。",
-          "say": "策略：x 平方在三，距離分解成 x 減三乘 x 加三。第二個因子會變，先壓成常數，再除。",
+        {
+          "show": [
+            "證明 $f(x)=x^2$ 在 $a=3$ 連續。",
+            "$|x^2-9|=|x-3|\\cdot|x+3|$"
+          ],
+          "say": "第二個例子：x 平方在 3 連續。誤差 x 平方減 9，分解成 x 減 3 乘 x 加 3。",
           "board": [
-            {"do":"write","line":"$|x^2 - 9| = |x-3|\\cdot{{k:|x+3|}}$","tint":{"k":"violet"},"on":"距離分解"},
-            {"do":"underline","term":"k","label":"先壓成常數","on":"第二個因子"}
-          ] },
-        { "show": ["先要求 $\\delta\\le1$：$2<x<4$"],
-          "note": "所以 $|x+3|<7$。",
-          "why": {"ask":"為什麼 $|x+3|<7$？","say":"x 加三的絕對值，為什麼小於七？","options":[{"label":"$x<4$，$x+3$ 不到 7","correct":true},{"label":"$x=3$ 時 $|x+3|=6<7$","why":"只看了中心點；$x$ 可以跑到 4 附近，要用整個範圍裡的最大值。"},{"label":"$\\varepsilon$ 很小，$x$ 離 3 很近","why":"$\\varepsilon$ 可以很大；把 $x$ 關在 $(2,4)$ 的是 $\\delta\\le1$。"}]},
-          "say": "先要求 delta 不超過一，x 就在二到四之間，x 加三小於七。",
+            {
+              "do": "write",
+              "line": "證明 $f(x)=x^2$ 在 $a=3$ 連續。"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x^2-9|=|x-3|\\cdot|x+3|$",
+              "on": "方減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：$|x-3|$ 我們控制；$|x+3|$ 會變，先把它壓成常數"
+          ],
+          "say": "策略：x 減 3 是我們能控制的距離；x 加 3 會跟著 x 變，要先把它壓成一個常數。",
           "board": [
-            {"do":"write","line":"${{k:|x+3|}} < 7$","on":"為什麼小於七"},
-            {"do":"transform","line":"$\\delta \\le 1$ ⇒ $2 < x < 4$ ⇒ ${{k:|x+3|}} < 7$","why":true,"on":"先要求"}
-          ] },
-        { "show": ["$2<x<4$，各加 3：$5<x+3<7$"],
-          "note": "都是正的，所以 $|x+3|<7$。",
-          "say": "x 在二到四之間，各加三，x 加三就在五到七之間。都是正的，所以絕對值小於七。",
+            {
+              "do": "write",
+              "line": "策略：$|x-3|$ 我們控制；$|x+3|$ 會變，先把它壓成常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先要求 $\\delta\\le1$：$|x-3|<1\\Rightarrow2<x<4\\Rightarrow|x+3|<7$"
+          ],
+          "say": "做法跟 12.21 一樣：先要求得塔不超過 1。x 離 3 不到 1，x 就在 2 到 4 之間，x 加 3 小於 7。",
           "board": [
-            {"do":"write","line":"$2<x<4$，各加 3：${{p1:5<x+3<7}}$"},
-            {"do":"focus","term":"p1","color":"green","on":"五到七"}
-          ] },
-        { "show": ["$|x^2-9|\\le7|x-3|$","再要 $|x-3|<\\frac{\\varepsilon}{7}$"],
-          "say": "距離不超過七倍的 x 減三。要它小於 epsilon，x 減三再小於七分之 epsilon 就夠。",
+            {
+              "do": "write",
+              "line": "先要求 $\\delta\\le1$：$|x-3|<1\\Rightarrow2<x<4\\Rightarrow|x+3|<7$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取 $\\delta=\\min\\!\\left(1,\\dfrac\\varepsilon7\\right)$。若 $|x-3|<\\delta$：",
+            "$|x^2-9|=|x-3|\\,|x+3|<\\frac\\varepsilon7\\cdot7=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "證明：得塔取 1 和 7 分之艾普西隆裡小的那個。x 離 3 不到得塔，x 加 3 就小於 7，距離又小於 7 分之艾普西隆，乘起來小於艾普西隆。",
           "board": [
-            {"do":"write","line":"$|x^2 - 9| \\le 7|x-3|$"},
-            {"do":"write","line":"再要 $|x-3| < \\frac{\\varepsilon}{7}$","on":"x 減三再"}
-          ] },
-        { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"],
-          "note": "兩個要求同時滿足。",
-          "say": "兩個要求都要成立，delta 取一和七分之 epsilon 裡比較小的。",
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取 $\\delta=\\min\\!\\left(1,\\dfrac\\varepsilon7\\right)$。若 $|x-3|<\\delta$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle |x^2-9|=|x-3|\\,|x+3|<\\frac\\varepsilon7\\cdot7=\\varepsilon\\quad\\blacksquare}}$",
+              "on": "不到"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\min$ 裡兩個數各管一件事：$1$ 管 $|x+3|<7$，$\\frac\\varepsilon7$ 管乘積"
+          ],
+          "say": "min 裡兩個數各管一件事：1 壓住 x 加 3，7 分之艾普西隆管乘積。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{dl:\\delta = \\min(1, \\tfrac{\\varepsilon}{7})}}$","on":"delta 取"},
-            {"do":"box","term":"dl","color":"green","on":"七分之"}
-          ] },
-        { "show": ["$|x-3|<\\delta$ ⇒ $|x^2-9|\\le7|x-3|<7\\delta\\le\\varepsilon$"],
-          "note": "$\\delta\\le\\frac{\\varepsilon}{7}$。",
-          "why": {"ask":"為什麼 $7\\delta\\le\\varepsilon$？","say":"驗證的最後一步：七倍 delta 為什麼不超過 epsilon？","options":[{"label":"$\\min$ 不超過 $\\frac{\\varepsilon}{7}$","correct":true},{"label":"$\\delta\\le1$，所以 $7\\delta\\le7$","why":"那只給 $7\\delta\\le7$；$\\varepsilon$ 比 7 小的時候不夠。"},{"label":"$\\varepsilon=0.25$ 時算過成立","why":"一個 $\\varepsilon$ 不算；定義要每一個 $\\varepsilon$ 都成立。"}]},
-          "say": "delta 取的是比較小的那個，不超過七分之 epsilon，所以七倍 delta 不超過 epsilon。證完。",
-          "board": [
-            {"do":"write","line":"$|x^2-9| \\le 7|x-3| < {{sd:7\\delta}} \\le \\varepsilon$","on":"七倍 delta"},
-            {"do":"underline","term":"dl","label":"不超過 ε/7","why":true,"on":"不超過七分之"}
-          ] }
-      ],
-      "key": "$|x^2-9|$ 拆成兩個因式，只控制一個",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "ε-δ",
-      "check": 2
+            {
+              "do": "write",
+              "line": "$\\min$ 裡兩個數各管一件事：$1$ 管 $|x+3|<7$，$\\frac\\varepsilon7$ 管乘積"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "代一個 $\\varepsilon$",
+      "title": "先猜猜看",
       "beats": [
-        { "show": ["$\\varepsilon=0.25$"],
-          "say": "代一個數：對方出零點二五。",
-          "board": [
-            {"do":"write","line":"$\\varepsilon = 0.25$"}
-          ] },
-        { "show": ["$\\frac{\\varepsilon}{7}\\approx0.0357<1$"],
-          "say": "七分之零點二五大約零點零三五七，比一小。那 delta 是多少？",
-          "board": [
-            {"do":"write","line":"$\\frac{\\varepsilon}{7} = \\frac{0.25}{7} {{c:< 1}}$"},
-            {"do":"underline","term":"c","label":"比 1 小","on":"比一小"}
-          ] },
-        { "show": ["$\\min$：取兩個數裡較小的"],
-          "note": "$\\frac{\\varepsilon}{7}<1$ 就取它，否則取 1。",
-          "say": "min 是取兩個數裡比較小的。epsilon 除以七如果比一小就取它，比一大就取一。",
-          "board": [
-            {"do":"write","line":"${{m1:\\min(1,\\tfrac{\\varepsilon}{7})}}$：取較小的"},
-            {"do":"underline","term":"m1","label":"取較小","on":"比較小的"}
-          ] }
+        {
+          "show": [
+            "照這個證明，$\\varepsilon=0.25$ 時取的 $\\delta$ 是？"
+          ],
+          "say": "先猜猜看：艾普西隆等於 0.25 時，得塔是多少？"
+        }
       ],
       "predict": {
-        "ask": "$\\delta=\\min(1,\\frac{\\varepsilon}{7})$ 是？",
+        "ask": "照這個證明，$\\varepsilon=0.25$ 時取的 $\\delta$ 是？",
         "options": [
           {
-            "label": "$\\frac{1}{28}\\approx0.0357$",
+            "label": "$\\frac1{28}\\approx0.0357$",
             "correct": true
           },
           {
-            "label": "$1$",
-            "why": "$\\min$ 取比較小的那個；$\\frac{0.25}{7}$ 比 1 小。"
+            "label": "$\\frac1{24}$",
+            "why": "用 $|x+3|\\approx6$ 算的：$x$ 稍大於 $3$ 時 $|x+3|>6$，例如 $x=3.04$ 誤差 $\\approx0.242$，再靠右一點就超過 $0.25$"
           },
           {
-            "label": "$\\frac{0.25}{6}$",
-            "why": "你用了 $x=3$ 時的 $|x+3|=6$；$x$ 可以到 4，上界要用 7。"
+            "label": "$0.25$",
+            "why": "把 $\\delta$ 取成 $\\varepsilon$：這裡誤差大約是距離的 $6$ 倍，不是 $1$ 倍"
+          },
+          {
+            "label": "$1$",
+            "why": "只看了 $\\min$ 的第一項；$1$ 只負責壓住 $|x+3|$"
           }
         ]
       }
@@ -295,73 +725,387 @@
     {
       "title": "不連續寫成什麼",
       "beats": [
-        { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D$"],
-          "note": "$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon$。",
-          "say": "把定義整句否定：有一個固定的誤差，不管 x 限制得多靠近 a，總有點偏離超過它。",
+        {
+          "show": [
+            "照 12.2 否定：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變 $P$ 且 $\\neg Q$",
+            "$\\begin{aligned}&f\\text{ 在 }a\\text{ 不連續}\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\text{且}\\ |f(x)-f(a)|\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "接著寫否定。對所有和存在互換，推得變成前提成立而且結論不成立：存在一個艾普西隆，對所有得塔，都找得到 x 離 a 不到得塔，誤差卻大於等於艾普西隆。",
           "board": [
-            {"do":"write","line":"${{q1:\\exists{{e:\\varepsilon}}>0}}\\ {{q2:\\forall{{d:\\delta}}>0}}\\ {{q3:\\exists x\\in D}}$","tint":{"e":"blue","d":"violet"},"on":"整句否定"},
-            {"do":"focus","term":"q1","on":"固定的誤差"},
-            {"do":"focus","term":"q2","on":"不管 x"},
-            {"do":"write","line":"$|x-a|<{{d:\\delta}}$ 但 $|f(x)-f(a)|\\ge{{e:\\varepsilon}}$","on":"總有點"}
-          ] },
-        { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）"],
-          "note": "取 $\\varepsilon=\\frac{1}{2}$。",
-          "say": "階梯函數在零：左邊是零，右邊和零本身是一。誤差取二分之一。",
+            {
+              "do": "write",
+              "line": "照 12.2 否定：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變 $P$ 且 $\\neg Q$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}&f\\text{ 在 }a\\text{ 不連續}\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D:\\\\&\\quad|x-a|<\\delta\\ \\text{且}\\ |f(x)-f(a)|\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "且結"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "不到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "白話：有一條橫帶，直帶再窄，裡面總有點跳出去"
+          ],
+          "say": "白話：有一條橫帶，不管直帶多窄，總有點跳出去。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$H(x) = 0$（$x<0$）、$1$（$x\\ge 0$）","on":"階梯函數"},
-            {"do":"write","line":"取 ${{e:\\varepsilon}} = \\frac{1}{2}$","on":"誤差取"}
-          ] },
-        { "show": ["任何 $\\delta$：取 $x=-\\frac{\\delta}{2}$"],
-          "note": "$|H(x)-H(0)|=1\\ge\\frac{1}{2}$。",
-          "say": "不管 delta 多小，取左邊二分之 delta 那一點，函數值是零，跟一差一。每個 delta 都失敗。",
+            {
+              "do": "write",
+              "line": "白話：有一條橫帶，直帶再窄，裡面總有點跳出去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比 12.19 簡單：目標就是 $f(a)$，不用對每個 $L$ 證"
+          ],
+          "say": "這比 12.19 證明極限不存在還簡單：目標固定是 f of a，不用對每一個 L 都證一遍。",
           "board": [
-            {"do":"write","line":"$x = -\\frac{{{d:\\delta}}}{2}$：$|H(x)-H(0)| = {{g:1 \\ge \\frac{1}{2}}}$","on":"取左邊"},
-            {"do":"underline","term":"g","label":"每個都失敗","on":"跟一差一"}
-          ] },
-        { "show": ["$|x-0|=\\frac{\\delta}{2}<\\delta$"],
-          "note": "所以這個 $x$ 在範圍裡。",
-          "say": "看圖：左邊是零，右邊是一。負的二分之 delta 離零只有二分之 delta，比 delta 小，一定在範圍裡。",
+            {
+              "do": "write",
+              "line": "比 12.19 簡單：目標就是 $f(a)$，不用對每個 $L$ 證"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$H(x)=\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}$，證明 $H$ 在 $0$ 不連續"
+          ],
+          "say": "例子：階梯函數 H，x 小於 0 是 0，x 大於等於 0 是 1。證明它在 0 不連續。",
           "board": [
-            {"do":"plot","graph":{"window":[-2,2,-1,2],"curves":[{"expr":"0","domain":[-2,0],"color":"blue"},{"expr":"1","domain":[0,2],"color":"blue"}],"points":[{"x":0,"y":0,"open":true},{"x":0,"y":1}]}},
-            {"do":"write","line":"$|x-0| = \\frac{\\delta}{2} < \\delta$","on":"離零"}
-          ] },
-        { "show": ["$\\varepsilon$ 要挑小的"],
-          "note": "$\\varepsilon>1$ 時每個 $\\delta$ 都行。",
-          "say": "誤差要挑小的：取大於一，每個 delta 都行，就證不出來了。",
+            {
+              "do": "write",
+              "line": "例：$H(x)={\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}}$，證明 $H$ 在 $0$ 不連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "橫帶 H(0) ± 1/2 ＝ (1/2, 3/2)；左邊整段都在帶子外"
+          ],
+          "say": "策略看圖：H of 0 是 1，取寬度 2 分之 1 的橫帶。0 左邊的函數值全是 0，整段都在帶子外面，直帶再窄都會碰到。",
           "board": [
-            {"do":"write","line":"${{w:{{e:\\varepsilon}} > 1}}$：每個 ${{d:\\delta}}$ 都行","on":"取大於一"},
-            {"do":"strike","term":"w","label":"證不出來","on":"每個 delta"}
-          ] },
-        { "show": ["$\\varepsilon>1$：差最多是 1，達不到"],
-          "note": "證不連續，$\\varepsilon$ 要挑在 1 以下。",
-          "say": "epsilon 大於一時，函數值最多差一，達不到 epsilon，壞點不存在。所以證不連續要挑小的，像二分之一。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "hs",
+                  "ystep": 0.5,
+                  "window": [
+                    -2,
+                    2,
+                    -0.4,
+                    1.6
+                  ],
+                  "area": [
+                    {
+                      "expr": "1.5",
+                      "from": -2,
+                      "to": 2,
+                      "color": "red",
+                      "under": "0.5"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "0",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        0
+                      ]
+                    },
+                    {
+                      "expr": "1",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        2
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "橫帶 H(0) ± 1/2 ＝ (1/2, 3/2)；左邊整段都在帶子外",
+              "color": "violet",
+              "on": "左邊"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：跳躍點不連續",
+      "beats": [
+        {
+          "show": [
+            "證明：取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，取 $x=-\\frac\\delta2$：",
+            "• $|x-0|=\\frac\\delta2<\\delta$"
+          ],
+          "say": "證明：取艾普西隆等於 2 分之 1。任給得塔，取 x 等於負的 2 分之得塔。它離 0 不到得塔，函數值卻是 0，跟 H of 0 差了 1。",
           "board": [
-            {"do":"write","line":"$|H(x)-H(0)| \\le {{n2:1}} < \\varepsilon$"},
-            {"do":"circle","term":"n2","label":"最多差 1","on":"最多差一"}
-          ] }
+            {
+              "do": "write",
+              "line": "證明：取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，取 $x=-\\frac\\delta2$："
+            },
+            {
+              "do": "write",
+              "line": "• $|x-0|=\\frac\\delta2<\\delta$",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• $|H(x)-H(0)|=|0-1|=1\\ge\\frac12$",
+              "on": "函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這正是否定句：$\\varepsilon$ 我們挑，$\\delta$ 任給，$x$ 我們找　$\\blacksquare$"
+          ],
+          "say": "這正是否定句的樣子：艾普西隆我們挑，得塔任給，x 我們找。所以 H 在 0 不連續。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這正是否定句：$\\varepsilon$ 我們挑，$\\delta$ 任給，$x$ 我們找　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "key": "$\\varepsilon$ 挑在跳躍高度以下，$x$ 取在左側",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "細節：孤立點",
+      "beats": [
+        {
+          "show": [
+            "定義只檢查 $x\\in D$。若 $a$ 是 $D$ 的孤立點：",
+            "$\\exists r>0:\\ (a-r,\\ a+r)\\cap D=\\{a\\}$"
+          ],
+          "say": "最後一個細節。定義只檢查 D 裡面的 x。如果 a 是 D 的孤立點，也就是 a 旁邊一小段裡，D 只有 a 自己。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義只檢查 $x\\in D$。若 $a$ 是 $D$ 的孤立點："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\exists r>0:\\ (a-r,\\ a+r)\\cap D=\\{a\\}$",
+              "on": "的孤"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\delta=r$：要檢查的 $x$ 只有 $a$，誤差 $0$"
+          ],
+          "say": "那就取得塔等於 r，要檢查的 x 只剩 a 自己，誤差是 0。所以任何函數在孤立點都自動連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\delta=r$：要檢查的 $x$ 只有 $a$，誤差 $0$"
+            },
+            {
+              "do": "write",
+              "line": "⇒ 任何函數在孤立點都連續",
+              "color": "gold",
+              "on": "誤差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$D=\\mathbb{N}$，數列 $f(n)=a_n$ 看成函數：每一點都連續"
+          ],
+          "say": "例如把數列看成定義在自然數上的函數，每一點都是孤立點，所以它處處連續，不管數列長什麼樣子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$D=\\mathbb{N}$，數列 $f(n)=a_n$ 看成函數：每一點都連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限版本要 $a$ 附近還有 $D$ 的其他點（$a$ 是聚點）"
+          ],
+          "say": "極限的版本就不一樣：要談 x 趨近 a，a 附近必須還有 D 的其他點，也就是 a 是 D 的聚點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極限版本要 $a$ 附近還有 $D$ 的其他點（$a$ 是聚點）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a$ 是聚點：連續 $\\iff\\lim_{x\\to a}f(x)=f(a)$（第 ① 節）",
+            "• $a$ 是孤立點：極限沒得談，但 $\\varepsilon$-$\\delta$ 版本照樣成立"
+          ],
+          "say": "所以：a 是聚點時，兩種說法等價，第一節已經證過；a 是孤立點時，極限沒得談，艾普西隆得塔的版本照樣能說。這就是為什麼正式定義不用極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $a$ 是聚點：連續 $\\iff\\lim_{x\\to a}f(x)=f(a)$（第 ① 節）"
+            },
+            {
+              "do": "write",
+              "line": "• $a$ 是孤立點：極限沒得談，但 $\\varepsilon$-$\\delta$ 版本照樣成立",
+              "on": "證過"
+            },
+            {
+              "do": "write",
+              "line": "　例：$D=[0,1]\\cup\\{2\\}$，任何 $f$ 在 $2$ 都連續",
+              "color": "violet",
+              "on": "的版"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 連續：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$",
+            "• 跟極限比：目標是 $f(a)$，不必寫 $0<$"
+          ],
+          "say": "整理一下：連續是對所有艾普西隆存在得塔，目標是 f of a。找得塔，先把誤差寫成距離乘因子，因子會變就先限制得塔。不連續是有一條橫帶總有點跳出去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 連續：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• 跟極限比：目標是 $f(a)$，不必寫 $0<$",
+              "on": "隆存"
+            },
+            {
+              "do": "write",
+              "line": "• 找 $\\delta$：把誤差寫成 $|x-a|\\times$（因子）；因子會變就先限 $\\delta\\le1$",
+              "on": "找得"
+            },
+            {
+              "do": "write",
+              "line": "• 不連續：$\\exists\\varepsilon\\ \\forall\\delta\\ \\exists x:\\ |x-a|<\\delta,\\ |f(x)-f(a)|\\ge\\varepsilon$",
+              "on": "因子#1"
+            },
+            {
+              "do": "write",
+              "line": "• 孤立點：任何函數都連續",
+              "on": "連續#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：數列判準"
+          ],
+          "say": "下一課，把艾普西隆得塔換成數列來檢查連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：數列判準"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["continuity", "epsilon-delta", "epsilon-game"],
-    "fine": ["continuity-formal-find-delta", "continuity-formal-bound-factor", "continuity-formal-negation", "continuity-formal-quantifier-order"]
+    "coarse": [
+      "continuity",
+      "epsilon-delta",
+      "epsilon-game"
+    ],
+    "fine": [
+      "continuity-formal-find-delta",
+      "continuity-formal-bound-factor",
+      "continuity-formal-negation",
+      "continuity-formal-quantifier-order"
+    ]
   },
   "practice": [
-    { "id": "ep-001", "core": true, "trains": "continuity-formal-find-delta" },
-    { "id": "ep-010", "core": true, "trains": "continuity-formal-bound-factor" },
-    { "id": "lx-eps-001", "core": true, "trains": "continuity-formal-find-delta" },
-    { "id": "px-eps-001", "core": true, "trains": "continuity-formal-find-delta" },
-    { "id": "px-eps-002", "core": true, "trains": "continuity-formal-bound-factor" },
-    { "id": "lx-eps-002", "trains": "continuity-formal-bound-factor" },
-    { "id": "ep-013", "trains": "continuity-formal-find-delta" },
-    { "id": "cg-12e-001", "trains": "continuity-formal-quantifier-order" },
-    { "id": "ep-006", "challenge": true, "trains": "continuity-formal-bound-factor", "note": "挑戰：$\\sqrt{x}$ 在 4，左右兩邊允許的 $\\delta$ 不一樣大，要取小的那邊。" },
-    { "id": "cg-12e-002", "challenge": true, "trains": "continuity-formal-quantifier-order" }
+    {
+      "id": "ep-001",
+      "core": true,
+      "trains": "continuity-formal-find-delta"
+    },
+    {
+      "id": "ep-010",
+      "core": true,
+      "trains": "continuity-formal-bound-factor"
+    },
+    {
+      "id": "lx-eps-001",
+      "core": true,
+      "trains": "continuity-formal-find-delta"
+    },
+    {
+      "id": "px-eps-001",
+      "core": true,
+      "trains": "continuity-formal-find-delta"
+    },
+    {
+      "id": "px-eps-002",
+      "core": true,
+      "trains": "continuity-formal-bound-factor"
+    },
+    {
+      "id": "lx-eps-002",
+      "trains": "continuity-formal-bound-factor"
+    },
+    {
+      "id": "ep-013",
+      "trains": "continuity-formal-find-delta"
+    },
+    {
+      "id": "cg-12e-001",
+      "trains": "continuity-formal-quantifier-order"
+    },
+    {
+      "id": "ep-006",
+      "challenge": true,
+      "trains": "continuity-formal-bound-factor",
+      "note": "挑戰：$\\sqrt{x}$ 在 4，左右兩邊允許的 $\\delta$ 不一樣大，要取小的那邊。"
+    },
+    {
+      "id": "cg-12e-002",
+      "challenge": true,
+      "trains": "continuity-formal-quantifier-order"
+    }
   ],
   "gaps": [
-    { "tag": "continuity-formal-negation", "count": 3, "note": "證明不連續（階梯、符號函數、Dirichlet 型）的白話證明題，要求寫出 ε 與每個 δ 的壞點。" }
+    {
+      "tag": "continuity-formal-negation",
+      "count": 3,
+      "note": "證明不連續（階梯、符號函數、Dirichlet 型）的白話證明題，要求寫出 ε 與每個 δ 的壞點。"
+    }
   ]
 }

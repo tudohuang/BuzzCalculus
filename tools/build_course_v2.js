@@ -98,7 +98,8 @@ const chapterFile = (code) => `ch-${String(code).toLowerCase().replace(/[^a-z0-9
 const nonEmpty = (list) => (Array.isArray(list) ? list.filter((item) => item !== null && item !== undefined && item !== "") : []);
 
 // 出貨的單課：只留畫面要用的欄位
-function shipLesson(lesson) {
+// nar／pub：旁白索引與已上傳的檔（預設是現在的；E2E 拿舊版課時帶舊的索引，tools/lib/course_v1_fixture.js）
+function shipLesson(lesson, nar = narration, pub = published) {
   return {
     id: lesson.id,
     prerequisites: nonEmpty(lesson.prerequisites),
@@ -127,7 +128,7 @@ function shipLesson(lesson) {
     // 男聲（上傳了才帶）同一套換個名字：課的 vm、句子的 tm、問句的 why.tm、黑板動作的 mm（男聲自己的逐字時間點換出來的錨點）。
     // 字改過、還沒重錄的句子不帶 t（播放時那一句只停一下）
     ...(Array.isArray(lesson.sections) && lesson.sections.length ? (() => {
-      const vs = [["f", voiceOf(narration, lesson, published, "f")], ["m", voiceOf(narration, lesson, published, "m")]].filter(([, x]) => x);
+      const vs = [["f", voiceOf(nar, lesson, pub, "f")], ["m", voiceOf(nar, lesson, pub, "m")]].filter(([, x]) => x);
       const F = { f: { lesson: "voice", t: "t", ms: "ms" }, m: { lesson: "vm", t: "tm", ms: "mm" } };
       return {
         ...Object.fromEntries(vs.map(([v, x]) => [F[v].lesson, x.f])),
@@ -224,7 +225,7 @@ const onMap = new Set(mapStages.flatMap((s) => s.chapters.flatMap((c) => c.lesso
 const mapLessons = Object.fromEntries(Object.entries(lessons).filter(([id]) => onMap.has(id)).map(([id, l]) => [id, { ...l, prerequisites: (l.prerequisites || []).filter((p) => onMap.has(p)) }]));
 const mapLayout = layoutCourseMap({ ...outline, stages: mapStages }, mapLessons);
 const { stats: mapStats, ...mapData } = mapLayout;
-if (!checkMode) console.log(`課程地圖：${mapStats.stageLayers} 層 Stage、整張 ${mapData.size.join(" × ")}、先修邊加權長度 ${mapStats.cost}`);
+if (!checkMode && require.main === module) console.log(`課程地圖：${mapStats.stageLayers} 層 Stage、整張 ${mapData.size.join(" × ")}、先修邊加權長度 ${mapStats.cost}`);
 outputs["map.js"] = `${HEADER}window.BUZZ_COURSE_MAP = ${JSON.stringify(mapData)};
 `;
 stages.forEach((s) => s.chapters.forEach((c) => {
@@ -236,8 +237,10 @@ stages.forEach((s) => s.chapters.forEach((c) => {
   outputs[name] = `${HEADER}window.BUZZ_COURSE_V2_LESSONS = Object.assign(window.BUZZ_COURSE_V2_LESSONS || {}, ${JSON.stringify(inChapter)});\n`;
 }));
 
+// 測試要用同一套出貨格式的（E2E 拿 lessons_v1/ 的舊版課塞進頁面，tools/lib/course_v1_fixture.js）：require 時只給函式、不寫檔
+module.exports = { shipLesson };
 const written = Object.keys(lessons).length;
-if (checkMode) {
+if (require.main !== module) { /* 被 require：不寫檔 */ } else if (checkMode) {
   const stale = [];
   Object.entries(outputs).forEach(([name, text]) => {
     const file = path.join(OUT, name);

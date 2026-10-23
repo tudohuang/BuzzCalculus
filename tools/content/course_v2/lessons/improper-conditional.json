@@ -1,58 +1,136 @@
 {
   "id": "improper-conditional",
   "title": "條件收斂的瑕積分",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["improper-comparison", "integration-by-parts", "alternating-series-test", "conditional-convergence"],
-  "next": ["reduction-formula"],
-  "related": ["dirichlet-integral"],
-  "objectives": [
-    "用分部積分證明 $\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 收斂，說得出為什麼比較判別在這裡失效。",
-    "證明 $\\int_1^{\\infty}\\frac{|\\sin x|}{x}\\,dx$ 發散，分清楚條件收斂與絕對收斂。",
-    "判斷 $\\int\\frac{\\sin x}{x^p}$、$\\int\\sin(x^2)$ 這類振盪積分是絕對收斂、條件收斂還是發散。"
+  "prerequisites": [
+    "improper-comparison",
+    "integration-by-parts",
+    "alternating-series-test",
+    "conditional-convergence"
   ],
-  "visual": "畫 y = sin x/x（x ≥ 0），每一個半週期的拱塗上顏色：正的拱藍色、負的拱紅色，旁邊標出每塊面積（約 1.85、−0.43、0.26、−0.18……）。下方畫累積面積 ∫₀ᵗ，曲線一上一下、振幅越來越小，收斂到 π/2。切換成 |sin x|/x，所有拱都變藍，累積面積像 ln t 一樣慢慢往上爬、沒有上限。",
+  "next": [
+    "reduction-formula"
+  ],
+  "related": [
+    "dirichlet-integral"
+  ],
+  "objectives": [
+    "用分部積分證明 $\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 收斂，說得出為什麼比較判別在這裡失靈",
+    "證明 $\\int_1^{\\infty}\\frac{|\\sin x|}{x}\\,dx$ 發散，分清楚條件收斂與絕對收斂",
+    "判斷 $\\int\\frac{\\sin x}{x^p}$、$\\int\\sin(x^2)$ 這類振盪積分是絕對收斂、條件收斂還是發散"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 比較判別在這裡失靈",
       "body": [
-        "$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$：在 $0$ 附近 $\\frac{\\sin x}{x}\\to 1$，沒有問題；麻煩在 $\\infty$ 那端。",
-        "想用比較：$\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$，可是 $\\int_1^{\\infty}\\frac{dx}{x}$ 發散，被發散的壓住什麼都說不出來。$\\frac{\\sin x}{x}$ 會變號，比較判別本來就不能直接用。"
+        "$x=0$ 不是瑕點：$\\dfrac{\\sin x}x\\to1$，$[0,1]$ 上是普通積分",
+        "比較判別要求非負，但 $\\dfrac{\\sin x}x$ 一正一負",
+        "退一步看 $|f|$：$\\left|\\dfrac{\\sin x}x\\right|\\le\\dfrac1x$，而 $\\displaystyle\\int_1^{\\infty}\\frac{dx}x$ 發散",
+        "比較判別只能看 $|f|$，看不到正負抵消"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx"
+      ]
     },
     {
-      "heading": "② 圖像：一正一負、越來越小的拱",
+      "heading": "② 圖像：一正一負的拱",
       "body": [
-        "$\\frac{\\sin x}{x}$ 的圖形是一串拱：$[0,\\pi]$ 正、$[\\pi,2\\pi]$ 負、$[2\\pi,3\\pi]$ 正……$[k\\pi,(k+1)\\pi]$ 那個拱的面積大約 $\\pm\\frac{2}{(k+1/2)\\pi}$（$k\\ge 1$），一直變小、正負交替。這就像交錯級數 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$（〈交錯級數判別〉），所以有理由相信它收斂。",
-        "直覺，不是證明：拱的面積不是剛好 $\\frac{2}{(k+1/2)\\pi}$，而且 $t$ 停在拱的中間時也要處理。下面用分部積分給出嚴格的論證。"
+        "第 $k$ 個拱的面積 $a_k=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}\\,dx$",
+        "• 越來越小：$a_{k+1}=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x+\\pi}dx<a_k$",
+        "• 趨近 $0$：$a_k\\le\\dfrac1{k\\pi}\\cdot2\\to0$（$k\\ge1$）",
+        "6.16 的交錯級數判別 ⇒ 收斂；這就是收斂的直覺",
+        "$a_0\\approx1.852$，$a_1\\approx0.434$，$a_2\\approx0.257$；$t$ 不是 $\\pi$ 的倍數時，$\\int_0^t$ 夾在相鄰兩個部分和之間，所以這也能寫成嚴格證明",
+        "$\\displaystyle\\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2}$",
+        "證明留到 Dirichlet 積分（11.30）；數值：積到 $200$ 約 $1.5684$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^{n\\pi}\\frac{\\sin x}{x}dx=a_0-a_1+a_2-\\cdots\\pm a_{n-1}"
+      ]
     },
     {
-      "heading": "③ 嚴格證明：分部積分把 $\\frac{1}{x}$ 變成 $\\frac{1}{x^2}$",
+      "heading": "③ 嚴格證明：分部積分",
       "body": [
-        "令 $u=\\frac{1}{x}$、$dv=\\sin x\\,dx$：$\\int_1^t\\frac{\\sin x}{x}\\,dx=\\left[-\\frac{\\cos x}{x}\\right]_1^t-\\int_1^t\\frac{\\cos x}{x^2}\\,dx$。",
-        "邊界項：$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to 0$，所以 $\\to\\cos 1$。剩下的積分：$\\left|\\frac{\\cos x}{x^2}\\right|\\le\\frac{1}{x^2}$，絕對收斂。兩項都有極限，所以 $\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 收斂。關鍵是分部積分把衰減從 $\\frac{1}{x}$ 提升到 $\\frac{1}{x^2}$。"
+        "目標：$\\displaystyle\\lim_{t\\to\\infty}\\int_1^t\\frac{\\sin x}{x}dx$ 存在",
+        "$u=\\dfrac1x$，$dv=\\sin x\\,dx$；$du=-\\dfrac{dx}{x^2}$，$v=-\\cos x$",
+        "逐項取極限：",
+        "• $\\left|\\dfrac{\\cos t}{t}\\right|\\le\\dfrac1t\\to0$（夾擠）",
+        "• $\\left|\\dfrac{\\cos x}{x^2}\\right|\\le\\dfrac1{x^2}$，$p=2>1$ ⇒ 絕對收斂",
+        "數值：$\\cos1\\approx0.5403$，$\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx\\approx-0.0844$，相減約 $0.6247$",
+        "分部積分讓分母多一個 $x$：從比不出來的 $\\frac1x$，變成能比的 $\\frac1{x^2}$"
       ],
-      "tex": ["\\int_1^{t}\\frac{\\sin x}{x}\\,dx=\\cos 1-\\frac{\\cos t}{t}-\\int_1^{t}\\frac{\\cos x}{x^{2}}\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\int_1^t\\frac{\\sin x}{x}dx=\\Big[-\\frac{\\cos x}{x}\\Big]_1^t-\\int_1^t\\frac{\\cos x}{x^2}dx",
+        "=\\cos1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}dx",
+        "\\int_1^{\\infty}\\frac{\\sin x}{x}dx=\\cos1-\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx"
+      ]
     },
     {
       "heading": "④ 但不是絕對收斂",
       "body": [
-        "$\\int_1^{\\infty}\\frac{|\\sin x|}{x}\\,dx$ 發散。所以 $\\frac{\\sin x}{x}$ 是條件收斂：$\\int f$ 收斂、$\\int|f|$ 發散，跟 $\\sum\\frac{(-1)^n}{n}$ 是同一類。",
-        "後果：正負面積互相抵銷才收斂，不能隨意拆成正部與負部分開算；值 $\\frac{\\pi}{2}$ 在〈Dirichlet 積分〉裡算。"
+        "證明 $\\displaystyle\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}dx$ 發散。在 $[k\\pi,(k+1)\\pi]$ 上 $x\\le(k+1)\\pi$：",
+        "把 $k=1,\\dots,n$ 加起來：",
+        "被積函數非負 ⇒ $\\int_\\pi^t$ 遞增又沒有上界 ⇒ 發散　$\\blacksquare$",
+        "數值：$n=1000$ 時下界約 $4.13$，長得像 $\\frac2\\pi\\ln n$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac1{(k+1)\\pi}\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx",
+        "=\\frac{2}{(k+1)\\pi}\\qquad\\Big(\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx=2\\Big)",
+        "\\int_\\pi^{(n+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac2\\pi\\Big(\\frac12+\\frac13+\\cdots+\\frac1{n+1}\\Big)\\to\\infty"
+      ]
     },
     {
-      "heading": "一般的 Dirichlet 判別法",
+      "heading": "④ 條件收斂",
       "body": [
-        "若 $f$ 在 $[a,\\infty)$ 上單調遞減到 $0$、$f'$ 連續，而 $G(t)=\\int_a^t g$ 有界，則 $\\int_a^{\\infty}fg\\,dx$ 收斂。證明就是上面的分部積分：$\\int fg=[fG]-\\int f'G$，而 $|f'G|\\le M|f'|=-Mf'$ 可積。",
-        "例：$\\int_1^{\\infty}\\frac{\\sin x}{x^p}\\,dx$ 對 $p>0$ 收斂；$p>1$ 時絕對收斂，$0<p\\le 1$ 時條件收斂。"
+        "定義：$\\int f$ 收斂，但 $\\int|f|$ 發散，叫條件收斂",
+        "跟 6.18 的級數一樣：絕對收斂 ⇒ 收斂，反過來不對"
+      ]
+    },
+    {
+      "heading": "⑤ Dirichlet 判別法",
+      "body": [
+        "定理：在 $[a,\\infty)$ 上",
+        "• $G(t)=\\int_a^tg$ 有界：$|G(t)|\\le M$",
+        "• $f$ 遞減、$f\\to0$（設 $f'$ 連續）",
+        "證明：分部積分（$u=f$，$dv=g\\,dx$，$v=G$）：",
+        "• $|f(t)G(t)|\\le M f(t)\\to0$",
+        "• $|f'G|\\le M(-f')$，$\\int_a^t(-f')=f(a)-f(t)\\le f(a)$ ⇒ 絕對收斂",
+        "兩項的極限都存在 ⇒ $\\int_a^{\\infty}fg$ 收斂　$\\blacksquare$",
+        "不假設 $f'$ 連續也成立，要用積分第二均值定理",
+        "例：$\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x^p}$：$p>1$ 絕對收斂；$0<p\\le1$ 條件收斂；$p\\le0$ 發散",
+        "$0<p\\le1$：$|\\sin x|\\ge\\sin^2x=\\frac{1-\\cos2x}2$，而 $\\int\\frac{\\cos2x}{x^p}$ 收斂、$\\int\\frac{dx}{x^p}$ 發散 ⇒ 絕對值發散"
       ],
-      "collapsible": true
+      "tex": [
+        "\\Rightarrow\\ \\int_a^{\\infty}f(x)g(x)\\,dx\\ \\text{收斂}",
+        "\\int_a^tfg\\,dx=f(t)G(t)-\\int_a^tf'(x)G(x)\\,dx"
+      ]
+    },
+    {
+      "heading": "⑤ $\\sin(x^2)$：不趨近 0 也收斂",
+      "body": [
+        "$\\sin(x^2)$ 在 $\\pm1$ 之間振盪，不趨近 $0$；但越來越快",
+        "$[1,t]$ 上令 $u=x^2$，$dx=\\dfrac{du}{2\\sqrt u}$：",
+        "Dirichlet：$f=\\frac1{2\\sqrt u}\\searrow0$，$|\\int_1^t\\sin u|\\le2$ ⇒ 收斂；$p=\\frac12$ ⇒ 條件收斂",
+        "值是 $\\sqrt{\\pi/8}\\approx0.6267$，要用之後的複變工具才算得出來",
+        "收斂不需要 $f\\to0$：第一課的反例是尖刺，這裡是振盪"
+      ],
+      "tex": [
+        "\\int_0^{\\infty}\\sin(x^2)\\,dx",
+        "\\int_1^t\\sin(x^2)dx=\\int_1^{t^2}\\frac{\\sin u}{2\\sqrt u}du"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\frac{\\sin x}x$ 會變號：比較判別只看 $|f|$，看不到抵消",
+        "• 分部積分：$\\int_1^t\\frac{\\sin x}x=\\cos1-\\frac{\\cos t}t-\\int_1^t\\frac{\\cos x}{x^2}$，三項都收斂",
+        "• $\\int\\frac{|\\sin x|}x$ 發散（拱 $\\ge\\frac2{(k+1)\\pi}$，調和級數）⇒ 條件收斂",
+        "• Dirichlet：$\\int_a^tg$ 有界、$f\\searrow0$ ⇒ $\\int fg$ 收斂",
+        "• $\\int\\frac{\\sin x}{x^p}$：$p>1$ 絕對、$0<p\\le1$ 條件；$\\int\\sin(x^2)$ 條件收斂",
+        "下一課：遞迴公式"
+      ]
     }
   ],
   "workedExamples": [
@@ -102,337 +180,883 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 是：",
+      "ask": "哪一個是==條件收斂==？",
       "options": [
-        { "label": "條件收斂", "correct": true },
-        { "label": "絕對收斂，因為 $\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$", "why": "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散，被它壓住推不出收斂；而且 $\\int\\frac{|\\sin x|}{x}$ 確實發散。" },
-        { "label": "發散，因為 $\\sin x$ 沒有極限", "why": "正負的拱互相抵銷，分部積分證明了它收斂。" }
-      ]
-    },
-    {
-      "ask": "「$\\int f$ 條件收斂」的意思是？",
-      "options": [
-        { "label": "$\\int f$ 收斂，但 $\\int|f|$ 發散", "correct": true },
-        { "label": "$\\int|f|$ 收斂，但 $\\int f$ 發散", "why": "不可能發生：絕對收斂一定收斂。" },
-        { "label": "在某些參數條件下才收斂", "why": "「條件」不是指參數，是指收斂要靠正負抵銷，拿掉符號就發散。" }
-      ]
-    },
-    {
-      "ask": "$\\int_1^{\\infty}\\frac{\\cos x}{x^2}\\,dx$ 是：",
-      "options": [
-        { "label": "絕對收斂", "correct": true },
-        { "label": "條件收斂", "why": "$\\left|\\frac{\\cos x}{x^2}\\right|\\le\\frac{1}{x^2}$，而 $\\int_1^{\\infty}\\frac{dx}{x^2}$ 收斂，所以連絕對值都收斂。" },
-        { "label": "發散", "why": "被 $\\frac{1}{x^2}$ 壓住，面積有限。" }
-      ]
-    },
-    {
-      "ask": "$\\int_1^{\\infty}\\frac{\\sin x}{x^{1/2}}\\,dx$ 是：",
-      "options": [
-        { "label": "條件收斂", "correct": true },
-        { "label": "絕對收斂", "why": "$x\\ge 1$ 時 $\\frac{|\\sin x|}{\\sqrt{x}}\\ge\\frac{|\\sin x|}{x}$，而後者的積分已經發散。" },
-        { "label": "發散", "why": "$\\frac{1}{\\sqrt{x}}$ 遞減到 $0$，跟 $\\frac{\\sin x}{x}$ 一樣分部積分就收斂；$p>0$ 都收斂。" }
+        {
+          "label": "$\\displaystyle\\int_1^{\\infty}\\frac{\\cos x}{x}dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx$",
+          "why": "$\\left|\\frac{\\cos x}{x^2}\\right|\\le\\frac1{x^2}$，這是絕對收斂"
+        },
+        {
+          "label": "$\\displaystyle\\int_1^{\\infty}\\frac{1}{x}dx$",
+          "why": "根本不收斂；條件收斂要先收斂"
+        },
+        {
+          "label": "$\\displaystyle\\int_1^{\\infty}\\frac{|\\sin x|}{x}dx$",
+          "why": "剛證明它發散"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "比較判別失靈",
+      "title": "比較判別在這裡失靈",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"],
-          "note": "$0$ 附近 $\\frac{\\sin x}{x}\\to 1$，麻煩在 $\\infty$ 那端。",
-          "say": "sine x 除以 x，在零附近趨近一，沒有問題。麻煩在無限遠那一端。",
+        {
+          "show": [
+            "$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"
+          ],
+          "say": "這一課的主角：正弦 x 除以 x，從 0 積到無限大。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"},
-            {"do":"write","line":"麻煩在 ${{inf:\\infty}}$ 那一端","on":"麻煩在"}
-          ] },
-        { "show": ["$\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$"],
-          "note": "可是 $\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
-          "say": "想用比較判別：它被 x 分之一壓住。可是 x 分之一的積分發散，被發散的壓住，說不出結論。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=0$ 不是瑕點：$\\dfrac{\\sin x}x\\to1$，$[0,1]$ 上是普通積分"
+          ],
+          "say": "先看 0：正弦 x 除以 x 趨近 1，補上這個值就連續，所以 0 到 1 是普通的積分。問題只在無限大那端。",
           "board": [
-            {"do":"write","line":"$\\left|\\frac{\\sin x}{x}\\right|\\le{{b:\\frac{1}{x}}}$","on":"比較判別"},
-            {"do":"underline","term":"b","label":"積分發散","on":"x 分之一的積分"}
-          ] },
-        { "show": ["一正一負、越來越小的拱"],
-          "note": "第 $k$ 個拱約 $\\pm\\frac{2}{(k+1/2)\\pi}$。",
-          "say": "換個角度看圖：它是一串拱，一個在上、一個在下，面積正負交替，而且越來越小。",
+            {
+              "do": "write",
+              "line": "$x=0$ 不是瑕點：$\\dfrac{\\sin x}x\\to1$，$[0,1]$ 上是普通積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較判別要求非負，但 $\\dfrac{\\sin x}x$ 一正一負"
+          ],
+          "say": "上一課的比較判別要求函數不是負的。這個函數卻一正一負，不能直接比。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.6,19.5,-0.3,1.05],"ticks":false,"curves":[{"expr":"sin(x)/x","domain":[0.001,18.85],"color":"ink"}],"fills":[{"expr":"sin(x)/x","from":0.001,"to":3.141592653589793,"color":"blue"},{"expr":"sin(x)/x","from":3.141592653589793,"to":6.283185307179586,"color":"violet"},{"expr":"sin(x)/x","from":6.283185307179586,"to":9.42477796076938,"color":"blue"},{"expr":"sin(x)/x","from":9.42477796076938,"to":12.566370614359172,"color":"violet"},{"expr":"sin(x)/x","from":12.566370614359172,"to":15.707963267948966,"color":"blue"},{"expr":"sin(x)/x","from":15.707963267948966,"to":18.84955592153876,"color":"violet"}]},"on":"一串拱"}
-          ] },
-        { "show": ["像 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$"],
-          "note": "直覺，不是證明。",
-          "say": "這就像交錯級數，所以有理由相信它收斂。不過這只是直覺，嚴格的論證要靠分部積分。",
+            {
+              "do": "write",
+              "line": "比較判別要求非負，但 $\\dfrac{\\sin x}x$ 一正一負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "退一步看 $|f|$：$\\left|\\dfrac{\\sin x}x\\right|\\le\\dfrac1x$，而 $\\displaystyle\\int_1^{\\infty}\\frac{dx}x$ 發散"
+          ],
+          "say": "退一步看絕對值：它不超過 x 分之一，可是 x 分之一的積分發散。被發散的壓住，什麼也推不出。",
           "board": [
-            {"do":"write","line":"像 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$","on":"交錯級數"}
-          ] }
+            {
+              "do": "write",
+              "line": "退一步看 $|f|$：$\\left|\\dfrac{\\sin x}x\\right|\\le\\dfrac1x$，而 $\\displaystyle\\int_1^{\\infty}\\frac{dx}x$ 發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較判別只能看 $|f|$，看不到正負抵消"
+          ],
+          "say": "問題在於，比較判別只看大小，看不到正負互相抵消。而這個積分收斂，靠的正是抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比較判別只能看 $|f|$，看不到正負抵消",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "只靠 $\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$ 能推出什麼？",
+        "ask": "$\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 會怎樣？",
         "options": [
           {
-            "label": "沒有結論",
+            "label": "收斂",
             "correct": true
           },
           {
-            "label": "收斂",
-            "why": "要被收斂的壓住才行；$\\int_1^{\\infty}\\frac{dx}{x}$ 發散。"
+            "label": "發散，因為 $\\int_1^{\\infty}\\frac{dx}x$ 發散",
+            "why": "那只說明 $|f|$ 被發散的壓住，推不出 $f$ 發散"
           },
           {
-            "label": "發散",
-            "why": "比發散的小，不代表發散；而且 $\\frac{\\sin x}{x}$ 會變號，本來就不能直接比較。"
+            "label": "發散，因為一直振盪",
+            "why": "振盪的幅度趨近 $0$，部分積分會穩定下來"
           }
         ]
       }
     },
     {
-      "title": "分部積分",
+      "title": "圖像：一正一負的拱",
       "beats": [
-        { "show": ["$u=\\frac{1}{x}$，$dv=\\sin x\\,dx$"],
-          "note": "$du=-\\frac{dx}{x^2}$，$v=-\\cos x$。",
-          "say": "分部積分：u 取 x 分之一，dv 取 sine x dx，v 是負 cosine x。",
+        {
+          "show": [
+            "每段 [kπ, (k+1)π] 一個拱，藍正紅負，越來越小"
+          ],
+          "say": "圖上，每一段派的長度是一個拱，藍色是正的，紅色是負的，一個比一個小。",
           "board": [
-            {"do":"write","line":"${{u:u=\\frac{1}{x}}}$，${{dv:dv=\\sin x\\,dx}}$"},
-            {"do":"write","line":"$du=-\\frac{dx}{x^2}$，$v=-\\cos x$","on":"v 是負"}
-          ] },
-        { "show": ["$\\int u\\,dv=uv-\\int v\\,du$"],
-          "note": "先把公式寫出來，下一句再代入。",
-          "say": "分部積分的公式是：u dv 的積分，等於 u 乘 v，減去 v du 的積分。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "arch",
+                  "window": [
+                    0,
+                    22.5,
+                    -0.3,
+                    1.05
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)/x",
+                      "from": 0.001,
+                      "to": "pi",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "pi",
+                      "to": "2*pi",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "2*pi",
+                      "to": "3*pi",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "3*pi",
+                      "to": "4*pi",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "4*pi",
+                      "to": "5*pi",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "5*pi",
+                      "to": "6*pi",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "sin(x)/x",
+                      "from": "6*pi",
+                      "to": "7*pi",
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)/x",
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每段 [kπ, (k+1)π] 一個拱，藍正紅負，越來越小",
+              "color": "violet",
+              "on": "是正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 $k$ 個拱的面積 $a_k=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}\\,dx$"
+          ],
+          "say": "把第 k 個拱的面積叫 a k。",
           "board": [
-            {"do":"write","line":"$\\int u\\,dv={{uv:uv}}-\\int v\\,du$"},
-            {"do":"focus","term":"uv","on":"u 乘 v"}
-          ] },
-        { "show": ["$uv$ 代上下限；$-\\int v\\,du$ 的符號"],
-          "note": "$v\\,du=(-\\cos x)\\left(-\\frac{dx}{x^2}\\right)$",
-          "say": "u 乘 v 從一代到 t，得到 cosine 一減 t 分之 cosine t。v du 兩個負號相乘變正，前面的減號留著。",
+            {
+              "do": "write",
+              "line": "第 $k$ 個拱的面積 $a_k=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 越來越小：$a_{k+1}=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x+\\pi}dx<a_k$",
+            "• 趨近 $0$：$a_k\\le\\dfrac1{k\\pi}\\cdot2\\to0$（$k\\ge1$）"
+          ],
+          "say": "平移一個派，可以看出下一個拱的分母更大，所以 a k 越來越小；而且每個拱不超過 k 派分之 2，趨近 0。",
           "board": [
-            {"do":"write","line":"$\\left[-\\frac{\\cos x}{x}\\right]_1^t=\\cos 1-\\frac{\\cos t}{t}$"},
-            {"do":"write","line":"$-\\int v\\,du=-\\int_1^t\\frac{\\cos x}{x^2}\\,dx$","on":"兩個負號"}
-          ] },
-        { "show": ["$\\cos 1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}\\,dx$"],
-          "note": "這是 $\\int_1^t\\frac{\\sin x}{x}\\,dx$。",
-          "say": "從一積到 t，變成三項：cosine 一，減 t 分之 cosine t，再減一個新的積分。",
+            {
+              "do": "write",
+              "line": "• 越來越小：$a_{k+1}=\\displaystyle\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x+\\pi}dx<a_k$"
+            },
+            {
+              "do": "write",
+              "line": "• 趨近 $0$：$a_k\\le\\dfrac1{k\\pi}\\cdot2\\to0$（$k\\ge1$）",
+              "on": "越來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{n\\pi}\\frac{\\sin x}{x}dx=a_0-a_1+a_2-\\cdots\\pm a_{n-1}$"
+          ],
+          "say": "所以積到 n 派，就是一個交錯級數的部分和：加、減、加、減，而且項越來越小、趨近 0。",
           "board": [
-            {"do":"write","line":"$\\int_1^t\\frac{\\sin x}{x}\\,dx$"},
-            {"do":"write","line":"$=\\cos 1{{bd:-\\frac{\\cos t}{t}}}{{nw:-\\int_1^t\\frac{\\cos x}{x^2}\\,dx}}$","on":"變成三項"},
-            {"do":"focus","term":"bd","on":"減 t 分之"},
-            {"do":"underline","term":"nw","label":"新的積分","on":"新的積分"}
-          ] },
-        { "show": ["$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to 0$"],
-          "say": "邊界項被 t 分之一壓著，趨近零。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_0^{n\\pi}\\frac{\\sin x}{x}dx=a_0-a_1+a_2-\\cdots\\pm a_{n-1}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "6.16 的交錯級數判別 ⇒ 收斂；這就是收斂的直覺"
+          ],
+          "say": "交錯級數判別說它收斂。這就是收斂的直覺：正負互相抵消，而且越抵越小。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to{{z:0}}$","on":"邊界項"},
-            {"do":"focus","term":"z","on":"趨近零"}
-          ] },
-        { "show": ["衰減從 $\\frac{1}{x}$ 變成 $\\frac{1}{x^2}$"],
-          "note": "剩下的積分被 $\\frac{1}{x^2}$ 壓住。",
-          "say": "關鍵在這裡：分部積分把分母從 x 變成 x 平方，剩下的積分降得夠快了。",
+            {
+              "do": "write",
+              "line": "6.16 的交錯級數判別 ⇒ 收斂；這就是收斂的直覺",
+              "color": "blue"
+            },
+            {
+              "do": "write",
+              "line": "　$a_0\\approx1.852$，$a_1\\approx0.434$，$a_2\\approx0.257$；$t$ 不是 $\\pi$ 的倍數時，$\\int_0^t$ 夾在相鄰兩個部分和之間，所以這也能寫成嚴格證明",
+              "color": "violet",
+              "on": "直覺"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2}$"
+          ],
+          "say": "它的值是 2 分之派。這個漂亮的結果，要用參數積分的技巧，留到狄利克雷積分那一課。",
           "board": [
-            {"do":"write","line":"衰減：$\\frac{1}{x}\\to{{sq:\\frac{1}{x^2}}}$","on":"關鍵"},
-            {"do":"focus","term":"nw","on":"剩下的積分"}
-          ] }
-      ],
-      "key": "分部把 $\\frac1x$ 微成衰減更快的項",
-      "check": 2
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2}$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　證明留到 Dirichlet 積分（11.30）；數值：積到 $200$ 約 $1.5684$",
+              "color": "violet",
+              "on": "用參"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "絕對值版發散",
+      "title": "嚴格證明：分部積分",
       "beats": [
-        { "show": ["$\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}\\,dx$"],
-          "note": "拿掉正負號，還收斂嗎？",
-          "say": "那加上絕對值呢？所有的拱都翻到上面，不再互相抵銷。",
+        {
+          "show": [
+            "目標：$\\displaystyle\\lim_{t\\to\\infty}\\int_1^t\\frac{\\sin x}{x}dx$ 存在"
+          ],
+          "say": "現在用分部積分給一個更俐落的嚴格證明。目標是證明，從 1 積到 t 的極限存在。",
           "board": [
-            {"do":"write","line":"$\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}\\,dx$"},
-            {"do":"write","line":"拱全翻到上面，不再抵銷","on":"所有的拱"}
-          ] },
-        { "show": ["$\\frac{|\\sin x|}{x}$ 的拱全在上面"],
-          "note": "沒有負的拱來抵銷。",
-          "say": "畫出來看：這是絕對值之後的圖，每一塊面積都只往上加，沒有負的來抵銷。",
+            {
+              "do": "write",
+              "line": "目標：$\\displaystyle\\lim_{t\\to\\infty}\\int_1^t\\frac{\\sin x}{x}dx$ 存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=\\dfrac1x$，$dv=\\sin x\\,dx$；$du=-\\dfrac{dx}{x^2}$，$v=-\\cos x$"
+          ],
+          "say": "令 u 是 x 分之一，d v 是正弦 x d x。那 d u 是負 x 平方分之 d x，v 是負餘弦 x。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.6,19.5,-0.3,1.05],"ticks":false,"curves":[{"expr":"abs(sin(x))/x","domain":[0.001,18.85],"color":"ink"}],"fills":[{"expr":"abs(sin(x))/x","from":0.001,"to":3.141592653589793,"color":"blue"},{"expr":"abs(sin(x))/x","from":3.141592653589793,"to":6.283185307179586,"color":"blue"},{"expr":"abs(sin(x))/x","from":6.283185307179586,"to":9.42477796076938,"color":"blue"},{"expr":"abs(sin(x))/x","from":9.42477796076938,"to":12.566370614359172,"color":"blue"},{"expr":"abs(sin(x))/x","from":12.566370614359172,"to":15.707963267948966,"color":"blue"},{"expr":"abs(sin(x))/x","from":15.707963267948966,"to":18.84955592153876,"color":"blue"}]}}
-          ] },
-        { "show": ["每一段 $\\ge\\frac{2}{(k+1)\\pi}$"],
-          "note": "$|\\sin x|$ 在長度 $\\pi$ 的區間上積分是 $2$。",
-          "say": "在第 k 段上，x 最多是 k 加一倍的 pi，絕對值 sine 在一段上積出二，所以這段至少這麼大。",
+            {
+              "do": "write",
+              "line": "$u=\\dfrac1x$，$dv=\\sin x\\,dx$；$du=-\\dfrac{dx}{x^2}$，$v=-\\cos x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^t\\frac{\\sin x}{x}dx=\\Big[-\\frac{\\cos x}{x}\\Big]_1^t-\\int_1^t\\frac{\\cos x}{x^2}dx$"
+          ],
+          "say": "在 1 到 t 上分部積分：邊界項是負的 x 分之餘弦 x，再減掉 x 平方分之餘弦 x 的積分。",
           "board": [
-            {"do":"write","line":"第 $k$ 段：$\\ge{{g:\\frac{2}{(k+1)\\pi}}}$"},
-            {"do":"box","term":"g","label":"至少這麼大","on":"積出二"}
-          ] },
-        { "show": ["$\\ge\\frac{2}{\\pi}\\left(\\frac{1}{2}+\\frac{1}{3}+\\dots+\\frac{1}{N+1}\\right)$"],
-          "note": "調和級數，$\\to\\infty$。",
-          "say": "加起來是調和級數的部分和，會衝到無限大。所以絕對值版本發散。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_1^t\\frac{\\sin x}{x}dx=\\Big[-\\frac{\\cos x}{x}\\Big]_1^t-\\int_1^t\\frac{\\cos x}{x^2}dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\cos1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}dx$"
+          ],
+          "say": "邊界項代進去：餘弦 1，減 t 分之餘弦 t。關鍵：x 分之一變成了 x 平方分之一。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\ge\\frac{2}{\\pi}\\left({{h:\\frac{1}{2}+\\frac{1}{3}+\\dots+\\frac{1}{N+1}}}\\right)$","on":"加起來"},
-            {"do":"underline","term":"h","label":"調和級數","on":"調和級數"},
-            {"do":"write","line":"$\\to\\infty$：絕對值版本發散","on":"衝到"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle =\\cos1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}dx}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "關鍵"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項取極限：",
+            "• $\\left|\\dfrac{\\cos t}{t}\\right|\\le\\dfrac1t\\to0$（夾擠）"
+          ],
+          "say": "現在逐項取極限。t 分之餘弦 t，被 t 分之一夾住，趨近 0。x 平方分之餘弦 x，絕對值不超過 x 平方分之一，絕對收斂，所以收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項取極限："
+            },
+            {
+              "do": "write",
+              "line": "• $\\left|\\dfrac{\\cos t}{t}\\right|\\le\\dfrac1t\\to0$（夾擠）",
+              "on": "之一#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\left|\\dfrac{\\cos x}{x^2}\\right|\\le\\dfrac1{x^2}$，$p=2>1$ ⇒ 絕對收斂",
+              "on": "值不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^{\\infty}\\frac{\\sin x}{x}dx=\\cos1-\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx$"
+          ],
+          "say": "每一項的極限都存在，所以原積分收斂，等於餘弦 1 減一個收斂的積分。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_1^{\\infty}\\frac{\\sin x}{x}dx=\\cos1-\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "積分#1"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$\\cos1\\approx0.5403$，$\\int_1^{\\infty}\\frac{\\cos x}{x^2}dx\\approx-0.0844$，相減約 $0.6247$",
+              "color": "violet",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分部積分讓分母多一個 $x$：從比不出來的 $\\frac1x$，變成能比的 $\\frac1{x^2}$"
+          ],
+          "say": "這個技巧的精神是：分部積分把振盪的正弦積掉，讓分母多一個 x，從比不出來的 x 分之一，變成可以比的 x 平方分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分部積分讓分母多一個 $x$：從比不出來的 $\\frac1x$，變成能比的 $\\frac1{x^2}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 收斂的步驟"
+          ],
+          "say": "排排看證明的步驟。"
+        }
       ],
-      "check": 0
+      "proof": true,
+      "order": {
+        "ask": "證明 $\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x}\\,dx$ 收斂的步驟",
+        "steps": [
+          {
+            "label": "在 $[1,t]$ 上分部積分：$u=\\frac1x$，$dv=\\sin x\\,dx$"
+          },
+          {
+            "label": "得到 $\\cos1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}dx$",
+            "why": "先要有上一步：在 $[1,t]$ 上分部積分：$u=\\frac1x$，$dv=\\sin x\\,dx$"
+          },
+          {
+            "label": "夾擠：$\\frac{\\cos t}{t}\\to0$",
+            "why": "先要有上一步：得到 $\\cos1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}dx$"
+          },
+          {
+            "label": "比較：$\\left|\\frac{\\cos x}{x^2}\\right|\\le\\frac1{x^2}$，絕對收斂",
+            "why": "先要有上一步：夾擠：$\\frac{\\cos t}{t}\\to0$"
+          },
+          {
+            "label": "每項的極限都存在，所以原積分收斂",
+            "why": "先要有上一步：比較：$\\left|\\frac{\\cos x}{x^2}\\right|\\le\\frac1{x^2}$，絕對收斂"
+          }
+        ]
+      }
+    },
+    {
+      "title": "但不是絕對收斂",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\displaystyle\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}dx$ 發散。在 $[k\\pi,(k+1)\\pi]$ 上 $x\\le(k+1)\\pi$：",
+            "$\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac1{(k+1)\\pi}\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx$"
+          ],
+          "say": "再看絕對值。在第 k 個拱上，x 不超過 k 加 1 倍的派，所以分母換成它，積分只會變小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明 $\\displaystyle\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}dx$ 發散。在 $[k\\pi,(k+1)\\pi]$ 上 $x\\le(k+1)\\pi$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac1{(k+1)\\pi}\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx$",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{2}{(k+1)\\pi}\\qquad\\Big(\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx=2\\Big)$"
+          ],
+          "say": "正弦絕對值在一個拱上的面積是 2，所以每個拱至少是 k 加 1 倍派分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{2}{(k+1)\\pi}\\qquad\\Big(\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx=2\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $k=1,\\dots,n$ 加起來：",
+            "$\\int_\\pi^{(n+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac2\\pi\\Big(\\frac12+\\frac13+\\cdots+\\frac1{n+1}\\Big)\\to\\infty$"
+          ],
+          "say": "把前 n 個拱加起來，至少是派分之 2 乘上調和級數的一段。調和級數發散，所以積分沒有上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把 $k=1,\\dots,n$ 加起來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_\\pi^{(n+1)\\pi}\\frac{|\\sin x|}{x}dx\\ge\\frac2\\pi\\Big(\\frac12+\\frac13+\\cdots+\\frac1{n+1}\\Big)\\to\\infty}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "調和#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數非負 ⇒ $\\int_\\pi^t$ 遞增又沒有上界 ⇒ 發散　$\\blacksquare$"
+          ],
+          "say": "被積函數不是負的，積分遞增又沒有上界，所以發散。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "被積函數非負 ⇒ $\\int_\\pi^t$ 遞增又沒有上界 ⇒ 發散　$\\blacksquare$"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$n=1000$ 時下界約 $4.13$，長得像 $\\frac2\\pi\\ln n$",
+              "color": "violet",
+              "on": "沒有"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "條件收斂",
       "beats": [
-        { "show": ["$\\int f$ 收斂，$\\int|f|$ 發散"],
-          "note": "跟 $\\sum\\frac{(-1)^n}{n}$ 同一類。",
-          "say": "積分收斂、絕對值的積分卻發散，這叫條件收斂，跟交錯調和級數同一類。",
+        {
+          "show": [
+            "定義：$\\int f$ 收斂，但 $\\int|f|$ 發散，叫條件收斂"
+          ],
+          "say": "定義：積分收斂，但絕對值的積分發散，叫做條件收斂。正弦 x 除以 x 就是標準的例子。",
           "board": [
-            {"do":"write","line":"${{a:\\int f}}$ 收斂，${{b:\\int|f|}}$ 發散"},
-            {"do":"write","line":"條件收斂","color":"green","on":"這叫條件收斂"}
-          ] },
-        { "show": ["靠正負抵銷才收斂"],
-          "note": "不能拆成正部與負部分開算。",
-          "say": "它是靠正負面積互相抵銷才收斂的，所以不能把正的、負的拆開各自算。",
+            {
+              "do": "write",
+              "line": "定義：$\\int f$ 收斂，但 $\\int|f|$ 發散，叫條件收斂",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 6.18 的級數一樣：絕對收斂 ⇒ 收斂，反過來不對"
+          ],
+          "say": "跟級數完全一樣：絕對收斂一定收斂，但收斂不一定絕對收斂。",
           "board": [
-            {"do":"write","line":"靠正負抵銷才收斂","on":"正負面積"},
-            {"do":"write","line":"不能拆開各自算","color":"red","on":"不能把"}
-          ] },
-        { "show": ["正部、負部各自都發散"],
-          "note": "$\\infty-\\infty$ 沒有意義。",
-          "say": "拆開後，正的拱加起來是無限大，負的拱是負無限大，跟調和級數一樣。無限大減無限大，沒有意義。",
-          "board": [
-            {"do":"write","line":"正的拱 $\\to\\infty$，負的拱 $\\to-\\infty$"},
-            {"do":"write","line":"$\\infty-\\infty$：沒有意義","color":"red","on":"無限大減"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$"],
-          "note": "在〈Dirichlet 積分〉裡算。",
-          "say": "它的值是二分之 pi，算法留到 Dirichlet 積分那一課。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx={{r:\\frac{\\pi}{2}}}$","on":"它的值"},
-            {"do":"box","term":"r","color":"green","on":"pi"}
-          ] }
+            {
+              "do": "write",
+              "line": "跟 6.18 的級數一樣：絕對收斂 ⇒ 收斂，反過來不對"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "check": 0
     },
     {
-      "title": "不趨近零也收斂",
+      "title": "Dirichlet 判別法",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}\\sin(x^2)\\,dx$"],
-          "note": "$\\sin(x^2)$ 不 $\\to 0$，但振盪越來越快。",
-          "say": "sine x 平方在負一和一之間晃，不趨近零，可是晃得越來越快，正負抵銷得越來越好。",
+        {
+          "show": [
+            "定理：在 $[a,\\infty)$ 上",
+            "• $G(t)=\\int_a^tg$ 有界：$|G(t)|\\le M$"
+          ],
+          "say": "把剛才的證明一般化，叫狄利克雷判別法。兩個條件：g 積到 t 的面積有界；f 遞減而且趨近 0。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}\\sin(x^2)\\,dx$"},
-            {"do":"write","line":"$-1\\le\\sin(x^2)\\le 1$，不趨近 $0$","on":"負一和一"}
-          ] },
-        { "show": ["$u=x^2$：$\\int_0^{\\infty}\\frac{\\sin u}{2\\sqrt{u}}\\,du$"],
-          "say": "令 u 等於 x 平方，變成 sine u 除以二根號 u，跟剛才那一題同一個樣子，分部積分就收斂。",
+            {
+              "do": "write",
+              "line": "定理：在 $[a,\\infty)$ 上"
+            },
+            {
+              "do": "write",
+              "line": "• $G(t)=\\int_a^tg$ 有界：$|G(t)|\\le M$",
+              "on": "別法"
+            },
+            {
+              "do": "write",
+              "line": "• $f$ 遞減、$f\\to0$（設 $f'$ 連續）",
+              "on": "面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow\\ \\int_a^{\\infty}f(x)g(x)\\,dx\\ \\text{收斂}$"
+          ],
+          "say": "那麼 f 乘 g 的積分收斂。正弦 x 除以 x，就是 g 等於正弦、f 等於 x 分之一。",
           "board": [
-            {"do":"write","line":"$u=x^2$：$\\int_0^{\\infty}{{s:\\frac{\\sin u}{2\\sqrt{u}}}}\\,du$"},
-            {"do":"underline","term":"s","label":"同一個樣子","on":"跟剛才"}
-          ] },
-        { "show": ["$du=2x\\,dx$，$dx=\\frac{du}{2\\sqrt{u}}$"],
-          "note": "上下限 $0\\to\\infty$ 不變。",
-          "say": "u 等於 x 平方，所以 du 是二 x dx。dx 是 du 除以二 x，而 x 是根號 u。上下限零到無限大不變。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Rightarrow\\ \\int_a^{\\infty}f(x)g(x)\\,dx\\ \\text{收斂}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：分部積分（$u=f$，$dv=g\\,dx$，$v=G$）：",
+            "$\\int_a^tfg\\,dx=f(t)G(t)-\\int_a^tf'(x)G(x)\\,dx$"
+          ],
+          "say": "證明一樣用分部積分。u 取 f，d v 取 g d x，v 就是 G。",
           "board": [
-            {"do":"write","line":"$du=2x\\,dx$"},
-            {"do":"write","line":"$dx=\\frac{du}{2x}=\\frac{du}{2\\sqrt{u}}$","on":"dx 是"},
-            {"do":"write","line":"$x:0\\to\\infty$，$u:0\\to\\infty$","on":"上下限"}
-          ] },
-        { "show": ["$\\int_1^{\\infty}\\frac{\\sin x}{x^p}\\,dx$：$p>0$ 收斂"],
-          "note": "$p>1$ 絕對收斂，$0<p\\le 1$ 條件收斂。",
-          "say": "一般來說，sine x 除以 x 的 p 次方，p 大於零就收斂；p 大於一才是絕對收斂。",
+            {
+              "do": "write",
+              "line": "證明：分部積分（$u=f$，$dv=g\\,dx$，$v=G$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^tfg\\,dx=f(t)G(t)-\\int_a^tf'(x)G(x)\\,dx$",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $|f(t)G(t)|\\le M f(t)\\to0$",
+            "• $|f'G|\\le M(-f')$，$\\int_a^t(-f')=f(a)-f(t)\\le f(a)$ ⇒ 絕對收斂"
+          ],
+          "say": "邊界項不超過 M 乘 f of t，趨近 0。積分那項：f 遞減，所以負 f prime 不是負的；它的積分不超過 f of a，所以整項絕對收斂。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_1^{\\infty}\\frac{\\sin x}{x^p}\\,dx$：$p>0$ 收斂","on":"一般來說"},
-            {"do":"write","line":"$p>1$ 絕對收斂；$0<p\\le1$ 條件收斂","color":"green","on":"p 大於一"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "• $|f(t)G(t)|\\le M f(t)\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "• $|f'G|\\le M(-f')$，$\\int_a^t(-f')=f(a)-f(t)\\le f(a)$ ⇒ 絕對收斂",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩項的極限都存在 ⇒ $\\int_a^{\\infty}fg$ 收斂　$\\blacksquare$"
+          ],
+          "say": "兩項的極限都存在，所以收斂。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩項的極限都存在 ⇒ $\\int_a^{\\infty}fg$ 收斂　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　不假設 $f'$ 連續也成立，要用積分第二均值定理",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x^p}$：$p>1$ 絕對收斂；$0<p\\le1$ 條件收斂；$p\\le0$ 發散"
+          ],
+          "say": "應用：正弦 x 除以 x 的 p 次方。p 大於 1 絕對收斂；p 大於 0 但不超過 1，條件收斂；p 不大於 0，拱不會變小，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_1^{\\infty}\\frac{\\sin x}{x^p}$：$p>1$ 絕對收斂；$0<p\\le1$ 條件收斂；$p\\le0$ 發散"
+            },
+            {
+              "do": "write",
+              "line": "　$0<p\\le1$：$|\\sin x|\\ge\\sin^2x=\\frac{1-\\cos2x}2$，而 $\\int\\frac{\\cos2x}{x^p}$ 收斂、$\\int\\frac{dx}{x^p}$ 發散 ⇒ 絕對值發散",
+              "color": "violet",
+              "on": "大於#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：一般判別法",
+      "title": "$\\sin(x^2)$：不趨近 0 也收斂",
       "beats": [
-        { "show": ["分部積分：把 $g$ 積成有界的 $G$"],
-          "note": "$f\\downarrow0$、$f'$ 連續、$|G|\\le M$。",
-          "say": "策略：跟 sine x 除以 x 同一招。分部積分，把 g 積成有界的 G，衰減交給 f prime。",
+        {
+          "show": [
+            "$\\int_0^{\\infty}\\sin(x^2)\\,dx$"
+          ],
+          "say": "最後一個例子：正弦 x 平方，從 0 積到無限大。",
           "board": [
-            {"do":"write","line":"把 $g$ 積成有界的 ${{gg:G}}$","tint":{"gg":"blue"}},
-            {"do":"write","line":"$f\\downarrow0$，$|{{gg:G}}|\\le M$","on":"衰減交給"}
-          ] },
-        { "show": ["$G(x)=\\int_a^x g$，$|G|\\le M$"],
-          "note": "有界是定理的假設。",
-          "say": "G 定義成 g 從 a 積到 x。有界是定理的假設，M 就是那個上界。例如 g 是 sine，G 最多差二，M 取二。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\infty}\\sin(x^2)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin(x^2)$ 在 $\\pm1$ 之間振盪，不趨近 $0$；但越來越快"
+          ],
+          "say": "正弦 x 平方一直在正負 1 之間振盪，不趨近 0；只是振盪得越來越快。",
           "board": [
-            {"do":"write","line":"$G(x)=\\int_a^x g$"},
-            {"do":"write","line":"$|G|\\le M$：M 是假設給的上界","on":"有界"},
-            {"do":"write","line":"例：$g=\\sin x$，$|G|\\le 2$","on":"例如"}
-          ] },
-        { "show": ["$\\int_a^t fg=\\big[fG\\big]_a^t-\\int_a^t f'G$"],
-          "note": "$G(t)=\\int_a^t g$，$G'=g$。",
-          "say": "G 的導數是 g。從 a 積到 t，分部積分變成邊界項，減掉 f prime 乘 G 的積分。",
+            {
+              "do": "write",
+              "line": "$\\sin(x^2)$ 在 $\\pm1$ 之間振盪，不趨近 $0$；但越來越快"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$[1,t]$ 上令 $u=x^2$，$dx=\\dfrac{du}{2\\sqrt u}$：",
+            "$\\int_1^t\\sin(x^2)dx=\\int_1^{t^2}\\frac{\\sin u}{2\\sqrt u}du$"
+          ],
+          "say": "在 1 到 t 上令 u 等於 x 平方，d x 等於 2 倍根號 u 分之 d u。積分變成正弦 u 除以 2 倍根號 u。",
           "board": [
-            {"do":"write","line":"$\\int_a^t fg={{bd:\\big[f{{gg:G}}\\big]_a^t}}-{{in:\\int_a^t f'G}}$"},
-            {"do":"underline","term":"bd","label":"邊界項","on":"邊界項"},
-            {"do":"underline","term":"in","on":"減掉"}
-          ] },
-        { "show": ["$|f(t)G(t)|\\le M|f(t)|\\to0$"],
-          "note": "$G$ 有界，$f(t)\\to0$。",
-          "why": {"ask":"為什麼邊界項 $\\to0$？","say":"先看邊界項。它為什麼會趨近零？","options":[{"label":"$|G|\\le M$，而且 $f(t)\\to0$","correct":true},{"label":"$G(t)\\to0$","why":"$G$ 只是有界，不必趨近 $0$：$g=\\sin x$ 時 $G$ 一直振盪。"},{"label":"$f$ 遞減，所以 $fG$ 也遞減","why":"$G$ 會正負振盪，乘起來不會單調；要的是 $f\\to0$ 乘上有界的 $G$。"}]},
-          "say": "G 被 M 壓住，f 又趨近零，乘起來趨近零。在 a 那一端 G 是零，邊界項只剩這一個。",
+            {
+              "do": "write",
+              "line": "$[1,t]$ 上令 $u=x^2$，$dx=\\dfrac{du}{2\\sqrt u}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_1^t\\sin(x^2)dx=\\int_1^{t^2}\\frac{\\sin u}{2\\sqrt u}du$",
+              "on": "根號#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Dirichlet：$f=\\frac1{2\\sqrt u}\\searrow0$，$|\\int_1^t\\sin u|\\le2$ ⇒ 收斂；$p=\\frac12$ ⇒ 條件收斂"
+          ],
+          "say": "這正是剛才 p 等於 2 分之一的情況：狄利克雷判別法說它收斂，而且是條件收斂。0 到 1 那段是普通積分。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"focus","term":"bd","on":"邊界項"},
-            {"do":"write","line":"$|f(t)G(t)|\\le M|f(t)|\\to0$","why":true,"on":"G 被 M 壓住"}
-          ] },
-        { "show": ["$|f'G|\\le M|f'|=-Mf'$"],
-          "note": "$f$ 遞減，$f'\\le0$。",
-          "why": {"ask":"為什麼 $M|f'|=-Mf'$？","say":"絕對值為什麼可以拿掉，換成負號？","options":[{"label":"$f$ 遞減，所以 $f'\\le0$","correct":true},{"label":"$|G|\\le M$","why":"那是前半個不等號的理由；拿掉 $f'$ 的絕對值，要看 $f'$ 的正負號。"},{"label":"$f\\to0$，所以 $f'\\to0$","why":"趨近 $0$ 不決定正負號；去掉絕對值靠的是 $f'\\le0$。"}]},
-          "say": "f 遞減，f prime 小於等於零，它的絕對值就是負 f prime。",
+            {
+              "do": "write",
+              "line": "Dirichlet：$f=\\frac1{2\\sqrt u}\\searrow0$，$|\\int_1^t\\sin u|\\le2$ ⇒ 收斂；$p=\\frac12$ ⇒ 條件收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　值是 $\\sqrt{\\pi/8}\\approx0.6267$，要用之後的複變工具才算得出來",
+              "color": "violet",
+              "on": "說它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "振幅不變，寬度越來越窄：正負的拱面積趨近 0"
+          ],
+          "say": "圖上看得出來：高度不變，但拱越來越窄，面積趨近 0，正負一樣互相抵消。",
           "board": [
-            {"do":"write","line":"$|f'G|\\le M|f'|={{n:-Mf'}}$"},
-            {"do":"write","line":"$f$ 遞減：$f'\\le0$","why":true,"on":"f 遞減"}
-          ] },
-        { "show": ["$\\int_a^{\\infty}(-Mf')=Mf(a)$ 有限"],
-          "note": "$\\int f'G$ 絕對收斂，原積分收斂。",
-          "say": "負 M f prime 從 a 積到無限大，等於 M 乘 f 在 a 的值，是有限的。兩項都有極限，原積分收斂。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fres",
+                  "window": [
+                    0,
+                    6,
+                    -1.2,
+                    1.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x^2)",
+                      "color": "blue",
+                      "label": "sin(x²)"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "振幅不變，寬度越來越窄：正負的拱面積趨近 0",
+              "color": "violet",
+              "on": "面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "收斂不需要 $f\\to0$：第一課的反例是尖刺，這裡是振盪"
+          ],
+          "say": "這回應了第一課的問題：積分收斂，被積函數不一定趨近 0。第一課的反例是尖刺，這裡是越來越快的振盪。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_a^{\\infty}(-Mf')=Mf(a)$ 有限","on":"負 M f prime"},
-            {"do":"write","line":"兩項都有極限：原積分收斂","color":"green","on":"兩項都有極限"}
-          ] }
-      ],
-      "key": "分部把振盪的 $g$ 積成有界的 $G$",
-      "proof": true,
-      "of": 4,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$f$ 遞減」用在哪一步？",
-        "steps": [
-          {
-            "label": "分部積分：$\\int fg=[fG]-\\int f'G$",
-            "why": "分部積分只要 $f'$ 連續、$G'=g$。"
-          },
-          {
-            "label": "邊界項 $f(t)G(t)\\to0$",
-            "why": "這一步只用到 $f(t)\\to0$ 和 $|G|\\le M$。"
-          },
-          {
-            "label": "$|f'G|\\le M|f'|=-Mf'$",
-            "correct": true
-          },
-          {
-            "label": "$\\int_a^{\\infty}(-Mf')=Mf(a)$",
-            "why": "這只是微積分基本定理，再加上 $f(t)\\to0$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "收斂不需要 $f\\to0$：第一課的反例是尖刺，這裡是振盪",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\frac{\\sin x}x$ 會變號：比較判別只看 $|f|$，看不到抵消",
+            "• 分部積分：$\\int_1^t\\frac{\\sin x}x=\\cos1-\\frac{\\cos t}t-\\int_1^t\\frac{\\cos x}{x^2}$，三項都收斂"
+          ],
+          "say": "整理一下：比較判別看不到抵消；分部積分把 x 分之一變成 x 平方分之一；絕對值版本用調和級數證明發散；一般化就是狄利克雷判別法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\frac{\\sin x}x$ 會變號：比較判別只看 $|f|$，看不到抵消"
+            },
+            {
+              "do": "write",
+              "line": "• 分部積分：$\\int_1^t\\frac{\\sin x}x=\\cos1-\\frac{\\cos t}t-\\int_1^t\\frac{\\cos x}{x^2}$，三項都收斂",
+              "on": "分部"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\frac{|\\sin x|}x$ 發散（拱 $\\ge\\frac2{(k+1)\\pi}$，調和級數）⇒ 條件收斂",
+              "on": "變成"
+            },
+            {
+              "do": "write",
+              "line": "• Dirichlet：$\\int_a^tg$ 有界、$f\\searrow0$ ⇒ $\\int fg$ 收斂",
+              "on": "值版"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\frac{\\sin x}{x^p}$：$p>1$ 絕對、$0<p\\le1$ 條件；$\\int\\sin(x^2)$ 條件收斂",
+              "on": "一般"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：遞迴公式"
+          ],
+          "say": "下一課，用分部積分推出積分的遞迴公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：遞迴公式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["improper-integral", "convergence-test"],
-    "fine": ["conditional-ibp-boundary", "conditional-not-absolute", "conditional-dirichlet-test", "conditional-vs-absolute-classify"]
+    "coarse": [
+      "improper-integral",
+      "convergence-test"
+    ],
+    "fine": [
+      "conditional-ibp-boundary",
+      "conditional-not-absolute",
+      "conditional-dirichlet-test",
+      "conditional-vs-absolute-classify"
+    ]
   },
   "practice": [
-    { "id": "lec-08-q3a", "core": true, "trains": "conditional-vs-absolute-classify" },
-    { "id": "cg-11b-023", "core": true, "trains": "conditional-vs-absolute-classify" },
-    { "id": "cg-11b-024", "core": true, "trains": "conditional-vs-absolute-classify" },
-    { "id": "cg-11b-026", "core": true, "trains": "conditional-vs-absolute-classify" },
-    { "id": "cg-11b-027", "core": true, "trains": "conditional-not-absolute" },
-    { "id": "cg-11b-025", "trains": "conditional-vs-absolute-classify" },
-    { "id": "cg-11b-028", "trains": "conditional-ibp-boundary" },
-    { "id": "dm-int-001", "challenge": true, "trains": "conditional-ibp-boundary", "note": "挑戰：$\\frac{\\sin^2 x}{x^2}$ 絕對收斂，分部積分後變成條件收斂的 $\\int\\frac{\\sin 2x}{x}$，再用 Dirichlet 積分的值。" },
-    { "id": "cg-11b-029", "challenge": true, "trains": "conditional-ibp-boundary" }
+    {
+      "id": "lec-08-q3a",
+      "core": true,
+      "trains": "conditional-vs-absolute-classify"
+    },
+    {
+      "id": "cg-11b-023",
+      "core": true,
+      "trains": "conditional-vs-absolute-classify"
+    },
+    {
+      "id": "cg-11b-024",
+      "core": true,
+      "trains": "conditional-vs-absolute-classify"
+    },
+    {
+      "id": "cg-11b-026",
+      "core": true,
+      "trains": "conditional-vs-absolute-classify"
+    },
+    {
+      "id": "cg-11b-027",
+      "core": true,
+      "trains": "conditional-not-absolute"
+    },
+    {
+      "id": "cg-11b-025",
+      "trains": "conditional-vs-absolute-classify"
+    },
+    {
+      "id": "cg-11b-028",
+      "trains": "conditional-ibp-boundary"
+    },
+    {
+      "id": "dm-int-001",
+      "challenge": true,
+      "trains": "conditional-ibp-boundary",
+      "note": "挑戰：$\\frac{\\sin^2 x}{x^2}$ 絕對收斂，分部積分後變成條件收斂的 $\\int\\frac{\\sin 2x}{x}$，再用 Dirichlet 積分的值。"
+    },
+    {
+      "id": "cg-11b-029",
+      "challenge": true,
+      "trains": "conditional-ibp-boundary"
+    }
   ],
   "gaps": []
 }

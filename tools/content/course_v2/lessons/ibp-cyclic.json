@@ -1,55 +1,157 @@
 {
   "id": "ibp-cyclic",
   "title": "重複分部與循環積分",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["ibp-log-invtrig", "ibp-poly-trig"],
-  "next": ["partial-fractions-linear"],
-  "related": ["reduction-formula", "trig-integral-tan-sec"],
+  "prerequisites": [
+    "ibp-log-invtrig",
+    "ibp-poly-trig"
+  ],
+  "next": [
+    "partial-fractions-linear"
+  ],
+  "related": [
+    "reduction-formula",
+    "trig-integral-tan-sec"
+  ],
   "objectives": [
-    "會積 $(\\ln x)^n$：每分部一次，次方降一。",
-    "會處理 $e^{ax}\\sin bx$、$e^{ax}\\cos bx$：分部兩次繞回原積分，再解方程式。",
-    "知道循環型兩次分部要「同一邊當 $u$」，換邊會白做。"
+    "會積 $(\\ln x)^n$：每分部一次，次方降一",
+    "會處理 $e^{ax}\\sin bx$、$e^{ax}\\cos bx$：分部兩次繞回原積分，再解方程式",
+    "知道循環型兩次分部要「同一邊當 $u$」，換邊會白做"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 重複分部：每次降一次方",
+      "heading": "① 重複分部：每次降一次",
       "body": [
-        "$\\int (\\ln x)^2\\,dx$：$u=(\\ln x)^2$，$dv=dx$。$du=2\\ln x\\cdot\\frac{1}{x}\\,dx$，$v=x$，新積分是 $\\int 2\\ln x\\,dx$，次方從 $2$ 降到 $1$。再做一次（上一課的 $\\int \\ln x\\,dx$）就結束。",
-        "一般地 $\\int (\\ln x)^n\\,dx=x(\\ln x)^n-n\\int (\\ln x)^{n-1}\\,dx$。這種「用小一號的自己表示自己」的式子叫遞迴公式，〈遞迴公式〉會專門處理。"
+        "上一課的做法：$u=(\\ln x)^2$、$dv=dx$",
+        "$x$ 約掉：剩 $2\\int\\ln x\\,dx$，次方降了一",
+        "$\\int\\ln x\\,dx=x\\ln x-x$（上一課）：",
+        "檢查：$\\big(x(\\ln x)^2\\big)'=(\\ln x)^2+2\\ln x$，$(-2x\\ln x+2x)'=-2\\ln x$",
+        "一般（遞迴公式）："
       ],
-      "collapsible": false
+      "tex": [
+        "\\int(\\ln x)^2\\,dx",
+        "du=\\frac{2\\ln x}{x}\\,dx,\\qquad v=x",
+        "\\int(\\ln x)^2dx=x(\\ln x)^2-\\int x\\cdot\\frac{2\\ln x}{x}\\,dx",
+        "\\begin{aligned}\\int(\\ln x)^2dx&=x(\\ln x)^2-2x\\ln x\\\\&\\quad+2x+C\\end{aligned}",
+        "\\int(\\ln x)^n dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}dx"
+      ]
     },
     {
-      "heading": "② 循環：做兩次，原題又出現了",
+      "heading": "① 試一題",
       "body": [
-        "$\\int e^x\\sin x\\,dx$：不管誰當 $u$，微分或積分 $e^x$ 都還是 $e^x$，$\\sin$ 變 $\\cos$ 再變回 $\\sin$。做兩次之後，原來的積分會帶著負號再出現一次。",
-        "這不是白做。把原積分叫 $I$，你會得到一個方程式 $I=$（已經算好的東西）$-I$，移項得 $2I=$（已經算好的東西），除以 $2$ 就解出 $I$。"
+        "係數規律：$1,\\ -3,\\ 3\\cdot2,\\ -3\\cdot2\\cdot1$",
+        "也可以換元 $x=e^t$：$\\int t^3e^t\\,dt$，變成上一課的多項式 $\\times$ 指數"
+      ]
+    },
+    {
+      "heading": "② 循環：原題又出現了",
+      "body": [
+        "誰當 $u$？微分、積分都不會變簡單",
+        "先試：$u=\\sin x$、$dv=e^xdx$",
+        "再做一次：$u=\\cos x$、$dv=e^xdx$",
+        "後面那個積分，就是 $I$"
       ],
-      "collapsible": false
+      "tex": [
+        "I=\\int e^x\\sin x\\,dx",
+        "I=e^x\\sin x-\\int e^x\\cos x\\,dx",
+        "\\int e^x\\cos x\\,dx=e^x\\cos x+\\int e^x\\sin x\\,dx"
+      ]
+    },
+    {
+      "heading": "② 解方程式",
+      "body": [
+        "代回第一式：",
+        "把 $I$ 當未知數，移到左邊：",
+        "檢查：$\\big[\\frac{e^x}2(\\sin x-\\cos x)\\big]'=\\frac{e^x}2(\\sin x-\\cos x+\\cos x+\\sin x)=e^x\\sin x$"
+      ],
+      "tex": [
+        "I=e^x\\sin x-\\big(e^x\\cos x+I\\big)",
+        "I=e^x\\sin x-e^x\\cos x-I",
+        "2I=e^x(\\sin x-\\cos x)",
+        "\\int e^x\\sin x\\,dx=\\frac{e^x}2(\\sin x-\\cos x)+C"
+      ]
     },
     {
       "heading": "③ 兩次要選同一邊",
       "body": [
-        "第一次讓三角當 $u$，第二次也要讓三角當 $u$。第二次如果換成 $e^x$ 當 $u$，等於把第一次的分部原封不動拆回去，得到 $I=I$，什麼也沒得到。"
+        "第一次讓三角當 $u$，第二次如果改讓 $e^x$ 當 $u$：",
+        "代回第一式：",
+        "$I=I$：完全白做",
+        "原因：第二次換邊，就是把第一次反向做回去",
+        "規則：哪一邊當 $u$，兩次都一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int e^x\\cos x\\,dx=e^x\\sin x-\\int e^x\\sin x\\,dx",
+        "I=e^x\\sin x-\\big(e^x\\sin x-I\\big)=I"
+      ]
     },
     {
       "heading": "④ 解方程式為什麼合法",
       "body": [
-        "兩邊的 $I$ 指的是同一個反導函數（等號成立到差一個常數），移項、除以 $2$ 都只是代數。最後補上 $+C$，再微分檢查一次。"
+        "$\\int e^x\\sin x\\,dx$ 是一群函數（差一個常數）",
+        "精確說法：取 $F$ 為任一反導函數，兩次分部給出",
+        "$F$ 是一個函數，可以移項：",
+        "唯一不行：$I$ 的係數變成 $0$",
+        "例如 $I=A+I$ 解不出 $I$；循環型做法要求兩邊係數不同",
+        "求出之後微分檢查，最保險"
       ],
-      "collapsible": false
+      "tex": [
+        "F=e^x\\sin x-e^x\\cos x-F+K",
+        "F=\\tfrac12e^x(\\sin x-\\cos x)+\\tfrac K2"
+      ]
     },
     {
-      "heading": "通用公式與另一個循環例子",
+      "heading": "④ 循環型的定積分",
       "body": [
-        "對 $a^2+b^2\\ne 0$：$\\int e^{ax}\\sin bx\\,dx=\\frac{e^{ax}(a\\sin bx-b\\cos bx)}{a^2+b^2}+C$，$\\int e^{ax}\\cos bx\\,dx=\\frac{e^{ax}(a\\cos bx+b\\sin bx)}{a^2+b^2}+C$。推導就是本課的兩次分部，把 $a$、$b$ 留著。不必背，記得「分部兩次、解方程式」就推得出來。",
-        "$\\int \\sec^3 x\\,dx$ 也是循環型：$u=\\sec x$、$dv=\\sec^2 x\\,dx$，分部一次後用 $\\tan^2 x=\\sec^2 x-1$，原積分又出現。結果是 $\\frac{1}{2}(\\sec x\\tan x+\\ln|\\sec x+\\tan x|)+C$，在〈tanᵐ x secⁿ x〉會用到。"
+        "$x=\\pi$：$\\tfrac{e^\\pi}2\\big(0-(-1)\\big)=\\tfrac{e^\\pi}2$",
+        "$x=0$：$\\tfrac12(0-1)=-\\tfrac12$",
+        "也可以直接在定積分上做兩次分部，邊界項一路帶著，結果一樣"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_0^\\pi e^x\\sin x\\,dx=\\Big[\\tfrac{e^x}2(\\sin x-\\cos x)\\Big]_0^\\pi",
+        "\\int_0^\\pi e^x\\sin x\\,dx=\\frac{e^\\pi+1}2\\approx12.07"
+      ]
+    },
+    {
+      "heading": "⑤ 通用公式",
+      "body": [
+        "同樣做兩次（$a^2+b^2\\ne0$）：",
+        "檢查：$a=b=1$ 就是 $\\frac{e^x}2(\\sin x-\\cos x)$",
+        "例：$a=2$、$b=3$"
+      ],
+      "tex": [
+        "\\int e^{ax}\\sin bx\\,dx=\\frac{e^{ax}(a\\sin bx-b\\cos bx)}{a^2+b^2}+C",
+        "\\int e^{ax}\\cos bx\\,dx=\\frac{e^{ax}(a\\cos bx+b\\sin bx)}{a^2+b^2}+C",
+        "\\int e^{2x}\\cos3x\\,dx=\\frac{e^{2x}(2\\cos3x+3\\sin3x)}{13}+C"
+      ]
+    },
+    {
+      "heading": "⑤ 另一個循環例子",
+      "body": [
+        "$\\int\\sin(\\ln x)\\,dx$：$u=\\sin(\\ln x)$、$dv=dx$",
+        "再一次（同一邊）：$u=\\cos(\\ln x)$、$dv=dx$",
+        "換元 $x=e^t$ 後就是 $\\int e^t\\sin t\\,dt$，難怪會循環"
+      ],
+      "tex": [
+        "I=x\\sin(\\ln x)-\\int\\cos(\\ln x)\\,dx",
+        "\\int\\cos(\\ln x)\\,dx=x\\cos(\\ln x)+I",
+        "I=x\\sin(\\ln x)-x\\cos(\\ln x)-I",
+        "\\begin{aligned}\\int\\sin(\\ln x)\\,dx&=\\frac x2\\big(\\sin(\\ln x)\\\\&\\qquad-\\cos(\\ln x)\\big)+C\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $(\\ln x)^n$：每分部一次降一次（遞迴公式）",
+        "• $e^{ax}\\sin bx$、$e^{ax}\\cos bx$：分部兩次，原題又出現",
+        "• 把原題當未知數 $I$，移項解出來，最後加 $C$",
+        "• 兩次要同一邊當 $u$；換邊得到 $I=I$，白做",
+        "• 通用公式分母 $a^2+b^2$；$\\sin(\\ln x)$ 也是循環型",
+        "下一課：部分分式"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,293 +202,982 @@
   ],
   "checks": [
     {
-      "ask": "$\\int e^x\\cos x\\,dx$ 第一次取 $u=\\cos x$。第二次分部 $u$ 應該選？",
+      "ask": "用遞迴公式，$\\displaystyle\\int(\\ln x)^3dx=$？",
       "options": [
-        { "label": "$\\sin x$（還是三角當 $u$）", "correct": true },
-        { "label": "$e^x$", "why": "換邊會把第一次的分部原封不動拆回去，最後得到 $I=I$。" },
-        { "label": "不需要第二次", "why": "一次之後剩 $\\int e^x\\sin x\\,dx$，還是同一型。要再做一次，原積分才會繞回來。" }
+        {
+          "label": "$x(\\ln x)^3-3x(\\ln x)^2+6x\\ln x-6x+C$",
+          "correct": true
+        },
+        {
+          "label": "$x(\\ln x)^3-3x(\\ln x)^2+C$",
+          "why": "只做了一次，$\\int(\\ln x)^2dx$ 還沒積"
+        },
+        {
+          "label": "$x(\\ln x)^3-3x(\\ln x)^2+6x\\ln x+6x+C$",
+          "why": "最後一項：$-3\\cdot(+2x)=-6x$，正負號錯了"
+        },
+        {
+          "label": "$\\tfrac14(\\ln x)^4+C$",
+          "why": "那是 $\\int\\frac{(\\ln x)^3}{x}dx$；這裡沒有 $\\frac1x$ 可以換元"
+        }
       ]
     },
     {
-      "ask": "算到 $I=e^x\\sin x+e^x\\cos x-I$。$I$ 是？",
+      "ask": "$\\int e^x\\cos x\\,dx$ 第一次取 $u=e^x$、$dv=\\cos x\\,dx$，第二次應該怎麼取？",
       "options": [
-        { "label": "$\\frac{e^x(\\sin x+\\cos x)}{2}+C$", "correct": true },
-        { "label": "$e^x(\\sin x+\\cos x)+C$", "why": "移項後左邊是 $2I$，還要除以 $2$。" },
-        { "label": "$0$", "why": "兩邊的 $I$ 不是消掉。右邊的 $-I$ 移到左邊，變成 $2I$。" }
+        {
+          "label": "$u=e^x$，$dv=\\sin x\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$u=\\sin x$，$dv=e^x\\,dx$",
+          "why": "換邊了，會把第一次還原，得到 $I=I$"
+        },
+        {
+          "label": "不用再分部，直接積",
+          "why": "剩下的 $\\int e^x\\sin x\\,dx$ 還是循環型，積不出來"
+        }
       ]
     },
     {
-      "ask": "$\\int (\\ln x)^3\\,dx$ 要分部幾次？",
+      "ask": "$\\displaystyle\\int e^x\\cos x\\,dx=$？",
       "options": [
-        { "label": "3 次", "correct": true },
-        { "label": "1 次", "why": "一次只把 $(\\ln x)^3$ 降成 $3(\\ln x)^2$，還要繼續。" },
-        { "label": "會無限循環", "why": "$\\ln$ 的次方每次降一，最後會停。循環的是 $e^{ax}$ 乘 $\\sin$、$\\cos$ 那種。" }
-      ]
-    },
-    {
-      "ask": "循環型裡「解方程式」求出積分，為什麼合法？",
-      "options": [
-        { "label": "兩邊的 $I$ 是同一個反導函數，移項只是代數；最後補 $+C$", "correct": true },
-        { "label": "不合法，只是剛好答案對", "why": "每一步都是等式（差一個常數），而且微分檢查答案確實回到被積函數。" },
-        { "label": "因為 $I$ 其實是 $0$", "why": "$I$ 不是 $0$。右邊的 $-I$ 移過去後解出 $I=\\frac{e^x(\\ldots)}{2}$。" }
+        {
+          "label": "$\\dfrac{e^x}2(\\cos x+\\sin x)+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{e^x}2(\\sin x-\\cos x)+C$",
+          "why": "那是 $\\int e^x\\sin x\\,dx$"
+        },
+        {
+          "label": "$e^x(\\cos x+\\sin x)+C$",
+          "why": "解方程式時是 $2I$，要除以 $2$"
+        },
+        {
+          "label": "$\\dfrac{e^x}2(\\cos x-\\sin x)+C$",
+          "why": "$\\cos$ 的公式裡是 $+b\\sin bx$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "每次降一次方",
+      "title": "重複分部：每次降一次",
       "beats": [
-        { "show": ["$\\int(\\ln x)^2\\,dx$：$u=(\\ln x)^2$，$dv=dx$"],
-          "say": "自然對數 x 的平方。跟上一課一樣，整個當 u，dv 是看不見的 dx。",
+        {
+          "show": [
+            "$\\int(\\ln x)^2\\,dx$"
+          ],
+          "say": "先看重複分部：自然對數 x 的平方。",
           "board": [
-            {"do":"write","line":"$\\int {{u:(\\ln x)^2}}\\,{{dv:dx}}$","tint":{"u":"blue","dv":"violet"}},
-            {"do":"underline","term":"u","color":"blue","label":"u","on":"整個當 u"},
-            {"do":"underline","term":"dv","color":"violet","label":"dv","on":"dv 是看不見的"}
-          ] },
-        { "show": ["$du=\\frac{2\\ln x}{x}\\,dx$，$v=x$"],
-          "note": "連鎖律的 $\\frac{1}{x}$ 別漏。",
-          "say": "u 微分要用連鎖律：先掉下一個二，再乘上 x 分之一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int(\\ln x)^2\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課的做法：$u=(\\ln x)^2$、$dv=dx$",
+            "$du=\\frac{2\\ln x}{x}\\,dx,\\qquad v=x$"
+          ],
+          "say": "照上一課的做法，整個自然對數平方當 u，d x 當 d v。u 微分用連鎖律，是 x 分之 2 倍自然對數 x；v 是 x。",
           "board": [
-            {"do":"write","line":"$du=\\frac{{{two:2}}\\ln x}{{{ix:x}}}\\,dx,\\quad v=x$"},
-            {"do":"focus","term":"two","on":"掉下一個二"},
-            {"do":"focus","term":"ix","label":"別漏","on":"x 分之一"}
-          ] },
-        { "show": ["$=x(\\ln x)^2-2\\int\\ln x\\,dx$"],
-          "note": "次方從 $2$ 降到 $1$。",
-          "say": "x 跟 x 分之一約掉，新積分只剩二倍自然對數 x，次方從二降到一。這個上一課做過。",
+            {
+              "do": "write",
+              "line": "上一課的做法：$u=(\\ln x)^2$、$dv=dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=\\frac{2\\ln x}{x}\\,dx,\\qquad v=x$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int(\\ln x)^2dx=x(\\ln x)^2-\\int x\\cdot\\frac{2\\ln x}{x}\\,dx$"
+          ],
+          "say": "代公式：x 乘自然對數平方，減掉 x 乘 x 分之 2 自然對數 x 的積分。",
           "board": [
-            {"do":"write","line":"$=x(\\ln x)^2-\\int {{xa:x}}\\cdot\\frac{2\\ln x}{{{xb:x}}}\\,dx$"},
-            {"do":"focus","term":"xa","on":"x 跟"},
-            {"do":"focus","term":"xb","on":"x 分之一"},
-            {"do":"transform","line":"$=x(\\ln x)^2-{{n:2\\int\\ln x\\,dx}}$","on":"新積分"},
-            {"do":"underline","term":"n","label":"降到一次","on":"次方從二"}
-          ] },
-        { "show": ["$=x(\\ln x)^2-2x\\ln x+2x+C$"],
-          "note": "把 $\\int\\ln x\\,dx=x\\ln x-x$ 代進去。",
-          "say": "代進去：負二乘括號裡的 x 自然對數 x 減 x，減號分配，負 x 變成正二 x。完整答案寫在這裡。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int(\\ln x)^2dx=x(\\ln x)^2-\\int x\\cdot\\frac{2\\ln x}{x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 約掉：剩 $2\\int\\ln x\\,dx$，次方降了一"
+          ],
+          "say": "x 剛好約掉，剩下 2 倍的自然對數 x 的積分。平方變成一次方，降了一次。",
           "board": [
-            {"do":"write","line":"$-2({{a:x\\ln x-x}})$","on":"負二乘"},
-            {"do":"focus","term":"a","label":"代入","on":"括號裡"},
-            {"do":"write","line":"$=x(\\ln x)^2-2x\\ln x+2x+C$","on":"完整答案"}
-          ] }
+            {
+              "do": "write",
+              "line": "$x$ 約掉：剩 $2\\int\\ln x\\,dx$，次方降了一",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\ln x\\,dx=x\\ln x-x$（上一課）：",
+            "$\\begin{aligned}\\int(\\ln x)^2dx&=x(\\ln x)^2-2x\\ln x\\\\&\\quad+2x+C\\end{aligned}$"
+          ],
+          "say": "自然對數 x 的積分上一課做過，是 x 自然對數 x 減 x。代回去，乘負 2，就是答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int\\ln x\\,dx=x\\ln x-x$（上一課）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}\\int(\\ln x)^2dx&=x(\\ln x)^2-2x\\ln x\\\\&\\quad+2x+C\\end{aligned}}}}$",
+              "on": "一課"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "對數#2"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$\\big(x(\\ln x)^2\\big)'=(\\ln x)^2+2\\ln x$，$(-2x\\ln x+2x)'=-2\\ln x$",
+              "color": "violet",
+              "on": "乘負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般（遞迴公式）：",
+            "$\\int(\\ln x)^n dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}dx$"
+          ],
+          "say": "一般來說，每分部一次，自然對數的次方就降一，前面多乘一個 n。這叫遞迴公式，一路降到 0 次方為止。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般（遞迴公式）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int(\\ln x)^n dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}dx}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "遞迴"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用遞迴公式，$\\displaystyle\\int(\\ln x)^3dx=$？"
+          ],
+          "say": "試一題：自然對數的三次方。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "係數規律：$1,\\ -3,\\ 3\\cdot2,\\ -3\\cdot2\\cdot1$"
+          ],
+          "say": "係數有規律：1，負 3，3 乘 2，負的 3 乘 2 乘 1。跟表格法一樣正負交錯。",
+          "board": [
+            {
+              "do": "write",
+              "line": "係數規律：$1,\\ -3,\\ 3\\cdot2,\\ -3\\cdot2\\cdot1$"
+            },
+            {
+              "do": "write",
+              "line": "　也可以換元 $x=e^t$：$\\int t^3e^t\\,dt$，變成上一課的多項式 $\\times$ 指數",
+              "color": "violet",
+              "on": "跟表"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "循環：原題又出現了",
+      "beats": [
+        {
+          "show": [
+            "$I=\\int e^x\\sin x\\,dx$"
+          ],
+          "say": "再來看一種完全不同的情況：e 的 x 次方乘正弦 x。把它叫做 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=\\int e^x\\sin x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誰當 $u$？微分、積分都不會變簡單"
+          ],
+          "say": "誰當 u？e 的 x 次方怎麼微分積分都是自己；正弦怎麼微分積分都是正弦餘弦。兩個都不會變簡單。",
+          "board": [
+            {
+              "do": "write",
+              "line": "誰當 $u$？微分、積分都不會變簡單"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先試：$u=\\sin x$、$dv=e^xdx$",
+            "$I=e^x\\sin x-\\int e^x\\cos x\\,dx$"
+          ],
+          "say": "硬做做看：讓正弦當 u，e 的 x 次方當 d v。得到 e 的 x 次方正弦 x，減掉 e 的 x 次方餘弦 x 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先試：$u=\\sin x$、$dv=e^xdx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=e^x\\sin x-\\int e^x\\cos x\\,dx$",
+              "on": "次方#2"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "代入 $\\int\\ln x\\,dx=x\\ln x-x$，答案是？",
+        "ask": "對 $\\int e^x\\cos x\\,dx$ 再分部一次（$u=\\cos x$），會得到什麼？",
         "options": [
           {
-            "label": "$x(\\ln x)^2-2x\\ln x+2x+C$",
+            "label": "原來的 $I$ 又出現了",
             "correct": true
           },
           {
-            "label": "$x(\\ln x)^2-2x\\ln x-2x+C$",
-            "why": "$-2(x\\ln x-x)$：減號要分配進去，$-x$ 變成 $+2x$。"
+            "label": "積分消失，直接得到答案",
+            "why": "三角函數微分不會變 $0$，積分一直都在"
           },
           {
-            "label": "$x(\\ln x)^2-x\\ln x+x+C$",
-            "why": "漏了係數 $2$：是 $-2\\int\\ln x\\,dx$。"
+            "label": "一個更難的新積分",
+            "why": "微分 $\\cos$ 只會回到 $\\sin$，不會更難"
           }
         ]
       }
     },
     {
-      "title": "遞迴公式",
+      "title": "循環：原題又出現了",
       "beats": [
-        { "show": ["$\\int(\\ln x)^n\\,dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}\\,dx$"],
-          "say": "一般來說，自然對數 x 的 n 次方，分部一次就變成 n 減一次方。",
+        {
+          "show": [
+            "再做一次：$u=\\cos x$、$dv=e^xdx$",
+            "$\\int e^x\\cos x\\,dx=e^x\\cos x+\\int e^x\\sin x\\,dx$"
+          ],
+          "say": "再分部一次，餘弦當 u。餘弦微分是負正弦，負負得正，後面變成加上 e 的 x 次方正弦 x 的積分。",
           "board": [
-            {"do":"write","line":"$\\int(\\ln x)^n\\,dx$"},
-            {"do":"write","line":"$=x(\\ln x)^n-n{{r:\\int(\\ln x)^{n-1}\\,dx}}$","on":"分部一次"}
-          ] },
-        { "show": ["用小一號的自己表示自己"],
-          "note": "這叫遞迴公式；每做一次，次方降一。",
-          "say": "用小一號的自己表示自己，這種式子叫遞迴公式。每做一次降一次，最後一定會停。",
+            {
+              "do": "write",
+              "line": "再做一次：$u=\\cos x$、$dv=e^xdx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^x\\cos x\\,dx=e^x\\cos x+\\int e^x\\sin x\\,dx$",
+              "on": "後面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "後面那個積分，就是 $I$"
+          ],
+          "say": "注意後面那個積分：它就是原題 I。做兩次，繞回來了。",
           "board": [
-            {"do":"underline","term":"r","label":"遞迴","on":"小一號"}
-          ] },
-        { "show": ["停在 $n=0$：$\\int(\\ln x)^0\\,dx=\\int 1\\,dx=x$"],
-          "note": "任何不是零的數的零次方是 1。",
-          "say": "那會停在哪裡？降到零次方，自然對數 x 的零次方是一，積分就是 x，這是遞迴的終點。",
-          "board": [
-            {"do":"write","line":"$n=0$：$\\int(\\ln x)^0\\,dx={{z:\\int 1\\,dx}}=x$","on":"降到零次方"},
-            {"do":"underline","term":"z","color":"green","label":"終點","on":"終點"}
-          ] },
-        { "show": ["$\\int(\\ln x)^3\\,dx$ 走到底"],
-          "note": "$n=3,2,1,0$ 各一步。",
-          "say": "拿三次方走一遍：先降成三倍二次方，再降成二倍一次方，最後是一倍零次方。係數是三乘二乘一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int(\\ln x)^3=x(\\ln x)^3-3\\int(\\ln x)^2$","on":"先降成"},
-            {"do":"write","line":"$\\int(\\ln x)^2=x(\\ln x)^2-2\\int\\ln x$","on":"再降成"},
-            {"do":"write","line":"$\\int\\ln x=x\\ln x-1\\cdot x$","on":"最後是"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "後面那個積分，就是 $I$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "做兩次，原題又出現",
+      "title": "解方程式",
       "beats": [
-        { "show": ["$\\int e^x\\sin x\\,dx$"],
-          "note": "$e^x$ 微分、積分都還是 $e^x$。",
-          "say": "換一種：e 的 x 次方乘 sine x。不管誰當 u，e 的 x 次方怎麼做都還是自己。",
+        {
+          "show": [
+            "代回第一式：",
+            "$I=e^x\\sin x-\\big(e^x\\cos x+I\\big)$"
+          ],
+          "say": "把它代回第一式：I 等於 e 的 x 次方正弦 x，減掉括號裡的 e 的 x 次方餘弦 x 加 I。",
           "board": [
-            {"do":"write","line":"$\\int {{e:e^x}}\\sin x\\,dx$"},
-            {"do":"focus","term":"e","label":"怎麼做都不變","on":"怎麼做"}
-          ] },
-        { "show": ["做兩次，原積分帶著負號再出現"],
-          "note": "$\\sin$ 變 $\\cos$，再變回 $\\sin$。",
-          "say": "sine 變 cosine，再變回 sine。做兩次之後，原來的積分會帶著負號再出現一次。",
+            {
+              "do": "write",
+              "line": "代回第一式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=e^x\\sin x-\\big(e^x\\cos x+I\\big)$",
+              "on": "減掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I=e^x\\sin x-e^x\\cos x-I$"
+          ],
+          "say": "展開。右邊出現了負 I。",
           "board": [
-            {"do":"write","line":"$\\sin x\\to\\cos x\\to\\sin x$"},
-            {"do":"write","line":"做兩次後：原積分 ${{m:-I}}$ 再出現","on":"做兩次"},
-            {"do":"focus","term":"m","label":"帶負號","on":"帶著負號"}
-          ] },
-        { "show": ["兩次要選同一邊當 $u$"],
-          "note": "第二次換邊，等於把第一次拆回去：$I=I$。",
-          "say": "關鍵是兩次要選同一邊。第二次如果換邊，就是把第一次原封不動拆回去，什麼也沒得到。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=e^x\\sin x-e^x\\cos x-I$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $I$ 當未知數，移到左邊：",
+            "$2I=e^x(\\sin x-\\cos x)$"
+          ],
+          "say": "把 I 當成未知數，移到左邊，得到 2 倍的 I。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"兩次選同一邊當 $u$","on":"兩次要選"},
-            {"do":"write","line":"第二次換邊：${{w:I=I}}$","on":"如果換邊"},
-            {"do":"strike","term":"w","label":"白做","on":"拆回去"}
-          ] }
-      ],
-      "key": "目標是讓原積分再出現，不是積完",
-      "check": 0
+            {
+              "do": "write",
+              "line": "把 $I$ 當未知數，移到左邊："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2I=e^x(\\sin x-\\cos x)$",
+              "on": "左邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int e^x\\sin x\\,dx=\\frac{e^x}2(\\sin x-\\cos x)+C$"
+          ],
+          "say": "除以 2，最後補上常數 C。完全沒有真的去積它，是解方程式解出來的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int e^x\\sin x\\,dx=\\frac{e^x}2(\\sin x-\\cos x)+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "完全"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$\\big[\\frac{e^x}2(\\sin x-\\cos x)\\big]'=\\frac{e^x}2(\\sin x-\\cos x+\\cos x+\\sin x)=e^x\\sin x$",
+              "color": "violet",
+              "on": "是解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅線的斜率，就是藍線的高度"
+          ],
+          "say": "圖上，紅線是解出來的反導函數，它每一點的斜率剛好是藍線的高度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "exs",
+                  "window": [
+                    -3,
+                    3.3,
+                    -6,
+                    13
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(x)*sin(x)",
+                      "color": "blue",
+                      "label": "eˣ sin x"
+                    },
+                    {
+                      "expr": "exp(x)*(sin(x)-cos(x))/2",
+                      "color": "red",
+                      "label": "反導函數"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅線的斜率，就是藍線的高度",
+              "color": "violet",
+              "on": "它每"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "解出 $I$",
+      "title": "兩次要選同一邊",
       "beats": [
-        { "show": ["$I=e^x\\sin x-\\int e^x\\cos x\\,dx$"],
-          "note": "第一次：$u=\\sin x$，$dv=e^x\\,dx$。",
-          "say": "把原積分叫 I。第一次讓 sine 當 u，剩下 e 的 x 次方乘 cosine。",
+        {
+          "show": [
+            "第一次讓三角當 $u$，第二次如果改讓 $e^x$ 當 $u$：",
+            "$\\int e^x\\cos x\\,dx=e^x\\sin x-\\int e^x\\sin x\\,dx$"
+          ],
+          "say": "如果第二次換邊，讓 e 的 x 次方當 u，餘弦當 d v 呢？得到 e 的 x 次方正弦 x，減掉 I。",
           "board": [
-            {"do":"write","line":"${{ii:I}}=\\int e^x{{s:\\sin x}}\\,dx$","tint":{"ii":"violet"}},
-            {"do":"underline","term":"s","label":"u","on":"sine 當 u"},
-            {"do":"transform","line":"${{ii:I}}=e^x\\sin x-{{c:\\int e^x\\cos x\\,dx}}$","on":"剩下"}
-          ] },
-        { "show": ["$\\int e^x\\cos x\\,dx=e^x\\cos x+I$"],
-          "note": "第二次：三角還是當 $u$。",
-          "say": "第二次讓 cosine 當 u。cosine 微分是負 sine，負負得正，原來的 I 出現了。",
+            {
+              "do": "write",
+              "line": "第一次讓三角當 $u$，第二次如果改讓 $e^x$ 當 $u$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^x\\cos x\\,dx=e^x\\sin x-\\int e^x\\sin x\\,dx$",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回第一式：",
+            "$I=e^x\\sin x-\\big(e^x\\sin x-I\\big)=I$"
+          ],
+          "say": "代回第一式：e 的 x 次方正弦 x 互相抵消，剩下 I 等於 I。",
           "board": [
-            {"do":"write","line":"${{c:\\int e^x\\cos x\\,dx}}=e^x\\cos x+{{ib:I}}$","tint":{"ib":"violet"}},
-            {"do":"underline","term":"ib","color":"violet","label":"又出現","on":"原來的 I"}
-          ] },
-        { "show": ["$I=e^x\\sin x-e^x\\cos x-I$"],
-          "say": "代回去，等號兩邊都有 I。這不是白做，這是一個方程式。",
+            {
+              "do": "write",
+              "line": "代回第一式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=e^x\\sin x-\\big(e^x\\sin x-I\\big)=I$",
+              "on": "互相"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I=I$：完全白做"
+          ],
+          "say": "I 等於 I，這句話當然對，但什麼都沒解出來。第二次分部，等於把第一次的分部倒回去。",
           "board": [
-            {"do":"write","line":"${{ic:I}}=e^x\\sin x-e^x\\cos x-{{ir:I}}$","tint":{"ic":"violet","ir":"violet"}},
-            {"do":"focus","term":"ic","on":"等號"},
-            {"do":"focus","term":"ir","label":"兩邊都有","on":"兩邊都有"}
-          ] },
-        { "show": ["$2I=e^x(\\sin x-\\cos x)$"],
-          "note": "除以 $2$，再補 $+C$。",
-          "say": "右邊的負 I 移到左邊變成二 I，再除以二，就解出來了。",
+            {
+              "do": "write",
+              "line": "$I=I$：完全白做",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：第二次換邊，就是把第一次反向做回去"
+          ],
+          "say": "原因是：第一次把 e 的 x 次方積分、正弦微分；第二次如果反過來，就剛好把第一次做的事還原。",
           "board": [
-            {"do":"transform","line":"${{tw:2I}}=e^x(\\sin x-\\cos x)$","tint":{"tw":"violet"},"on":"移到左邊"},
-            {"do":"underline","term":"tw","label":"再除以二","on":"再除以二"}
-          ] }
+            {
+              "do": "write",
+              "line": "原因：第二次換邊，就是把第一次反向做回去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：哪一邊當 $u$，兩次都一樣"
+          ],
+          "say": "所以規則是：第一次選三角當 u，第二次也選三角；第一次選指數當 u，第二次也選指數。兩種選法都可以，只是要一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則：哪一邊當 $u$，兩次都一樣",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "key": "把原積分當未知數 $I$，移項解方程",
       "check": 1
     },
     {
-      "title": "為什麼合法",
+      "title": "解方程式為什麼合法",
       "beats": [
-        { "show": ["$I$ 是同一個函數的名字"],
-          "note": "同一個被積函數，同一個符號。",
-          "say": "為什麼是同一個？因為 I 只是 e 的 x 次方乘 sine x 這個積分的名字，第二次出現的 I 也是它。",
+        {
+          "show": [
+            "$\\int e^x\\sin x\\,dx$ 是一群函數（差一個常數）"
+          ],
+          "say": "你可能會擔心：不定積分是一群函數，彼此差一個常數，可以這樣移項嗎？",
           "board": [
-            {"do":"write","line":"${{n:I}}=\\int e^x\\sin x\\,dx$"},
-            {"do":"underline","term":"n","color":"violet","label":"只是名字","on":"名字"}
-          ] },
-        { "show": ["兩邊的 $I$ 是同一個反導函數"],
-          "note": "等號成立到差一個常數。",
-          "say": "兩邊的 I 指的是同一個反導函數，移項、除以二都只是代數。",
+            {
+              "do": "write",
+              "line": "$\\int e^x\\sin x\\,dx$ 是一群函數（差一個常數）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "精確說法：取 $F$ 為任一反導函數，兩次分部給出",
+            "$F=e^x\\sin x-e^x\\cos x-F+K$"
+          ],
+          "say": "精確的說法是：取 F 是 e 的 x 次方正弦 x 的任何一個反導函數。兩次分部推出來的，是 F 等於這些項減 F，再加某個常數 K。",
           "board": [
-            {"do":"write","line":"${{l:I}}=e^x\\sin x-e^x\\cos x-{{r:I}}$"},
-            {"do":"focus","term":"l","color":"violet","on":"指的是"},
-            {"do":"focus","term":"r","color":"violet","label":"同一個","on":"同一個"},
-            {"do":"transform","line":"$2I=e^x(\\sin x-\\cos x)$","on":"移項"}
-          ] },
-        { "show": ["積分號還在時先不寫 $C$"],
-          "note": "最後一個積分算完才補一個 $C$。",
-          "say": "中間每一步的積分還沒算完，不用寫 C。解出 I 之後補一個就夠，因為那一個已經包含全部的常數。",
+            {
+              "do": "write",
+              "line": "精確說法：取 $F$ 為任一反導函數，兩次分部給出"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle F=e^x\\sin x-e^x\\cos x-F+K}}$",
+              "on": "的任"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F$ 是一個函數，可以移項：",
+            "$F=\\tfrac12e^x(\\sin x-\\cos x)+\\tfrac K2$"
+          ],
+          "say": "這時候 F 是一個確定的函數，可以放心移項、除以 2。常數 K 除以 2 還是常數，就是最後的加 C。",
           "board": [
-            {"do":"write","line":"解出 $I$ 之後，補一個 ${{c:+C}}$ 就夠","on":"解出"},
-            {"do":"focus","term":"c","color":"green","on":"補一個"}
-          ] },
-        { "show": ["最後補 $+C$，再微分檢查"],
-          "say": "最後補上 C，再微分檢查一次，確實回到被積函數。",
+            {
+              "do": "write",
+              "line": "$F$ 是一個函數，可以移項："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F=\\tfrac12e^x(\\sin x-\\cos x)+\\tfrac K2$",
+              "on": "常數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "唯一不行：$I$ 的係數變成 $0$"
+          ],
+          "say": "唯一會失敗的情況，是移項以後 I 的係數變成 0，也就是剛剛換邊得到的 I 等於 I。",
           "board": [
-            {"do":"write","line":"$I=\\frac{e^x(\\sin x-\\cos x)}{2}{{c:+C}}$"},
-            {"do":"box","term":"c","color":"green","on":"補上"},
-            {"do":"write","line":"$\\frac{d}{dx}I=e^x\\sin x$","on":"微分檢查"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "唯一不行：$I$ 的係數變成 $0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　例如 $I=A+I$ 解不出 $I$；循環型做法要求兩邊係數不同",
+              "color": "violet",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "求出之後微分檢查，最保險"
+          ],
+          "say": "最保險的方法：解出來以後微分一次，看是不是回到原函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "求出之後微分檢查，最保險"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "循環型的定積分",
       "beats": [
-        { "show": ["$\\int_0^\\pi e^x\\sin x\\,dx$"],
-          "note": "反導函數 $\\frac{e^x(\\sin x-\\cos x)}{2}$。",
-          "say": "最後用剛剛的反導函數算定積分，從零到 pi。",
+        {
+          "show": [
+            "$\\int_0^\\pi e^x\\sin x\\,dx=\\Big[\\tfrac{e^x}2(\\sin x-\\cos x)\\Big]_0^\\pi$"
+          ],
+          "say": "循環型的定積分：先用解出來的反導函數，再代上下限。",
           "board": [
-            {"do":"write","line":"$\\int_0^\\pi e^x\\sin x\\,dx$"},
-            {"do":"write","line":"$=\\Big[\\frac{e^x(\\sin x-\\cos x)}{2}\\Big]_0^\\pi$","on":"反導函數"}
-          ] },
-        { "show": ["代 $\\pi$：$\\frac{e^\\pi}{2}$；代 $0$：$-\\frac{1}{2}$"],
-          "note": "$\\cos\\pi=-1$，$\\cos 0=1$。",
-          "say": "代 pi，sine 是零、cosine 是負一，得二分之 e 的 pi 次方。代零，得負二分之一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\pi e^x\\sin x\\,dx=\\Big[\\tfrac{e^x}2(\\sin x-\\cos x)\\Big]_0^\\pi$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=\\pi$：$\\tfrac{e^\\pi}2\\big(0-(-1)\\big)=\\tfrac{e^\\pi}2$"
+          ],
+          "say": "代派：正弦派是 0，餘弦派是負 1，得 2 分之 e 的派次方。代 0：得負 2 分之 1。",
           "board": [
-            {"do":"write","line":"代 $\\pi$：$\\frac{e^\\pi}{2}$"},
-            {"do":"write","line":"代 $0$：$-\\frac{1}{2}$","on":"代零"}
-          ] },
-        { "show": ["$\\frac{e^\\pi}{2}-\\left(-\\frac{1}{2}\\right)=\\frac{e^\\pi+1}{2}$"],
-          "note": "上限減下限，減負的變加。",
-          "say": "上限減下限：二分之 e 的 pi 次方，減掉負二分之一，負負得正，所以是 e 的 pi 次方加一，除以二。你算的是對的。",
+            {
+              "do": "write",
+              "line": "$x=\\pi$：$\\tfrac{e^\\pi}2\\big(0-(-1)\\big)=\\tfrac{e^\\pi}2$"
+            },
+            {
+              "do": "write",
+              "line": "$x=0$：$\\tfrac12(0-1)=-\\tfrac12$",
+              "on": "的派"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^\\pi e^x\\sin x\\,dx=\\frac{e^\\pi+1}2\\approx12.07$"
+          ],
+          "say": "相減，答案是 2 分之 e 的派次方加 1，大約 12.07。",
           "board": [
-            {"do":"write","line":"$\\frac{e^\\pi}{2}-\\left(-\\frac{1}{2}\\right)$","on":"上限減下限"},
-            {"do":"write","line":"$=\\frac{e^\\pi+1}{2}$","on":"負負得正"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^\\pi e^x\\sin x\\,dx=\\frac{e^\\pi+1}2\\approx12.07}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "派次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "0 到 π 都在 x 軸上方，面積約 12.07"
+          ],
+          "say": "圖上，從 0 到派，函數都在 x 軸上方，所以答案是正的，面積大約 12。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "exsa",
+                  "window": [
+                    -0.2,
+                    3.4,
+                    -1,
+                    9
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(x)*sin(x)",
+                      "color": "blue",
+                      "label": "eˣ sin x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "exp(x)*sin(x)",
+                      "from": 0,
+                      "to": 3.14159265,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "0 到 π 都在 x 軸上方，面積約 12.07",
+              "color": "violet",
+              "on": "都在"
+            },
+            {
+              "do": "write",
+              "line": "　也可以直接在定積分上做兩次分部，邊界項一路帶著，結果一樣",
+              "color": "violet",
+              "on": "案是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "通用公式",
+      "beats": [
+        {
+          "show": [
+            "同樣做兩次（$a^2+b^2\\ne0$）：",
+            "$\\int e^{ax}\\sin bx\\,dx=\\frac{e^{ax}(a\\sin bx-b\\cos bx)}{a^2+b^2}+C$"
+          ],
+          "say": "對一般的 e 的 a x 次方，乘正弦 b x 或餘弦 b x，同樣做兩次，解出這兩個公式。分母是 a 平方加 b 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣做兩次（$a^2+b^2\\ne0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^{ax}\\sin bx\\,dx=\\frac{e^{ax}(a\\sin bx-b\\cos bx)}{a^2+b^2}+C$",
+              "on": "乘正"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^{ax}\\cos bx\\,dx=\\frac{e^{ax}(a\\cos bx+b\\sin bx)}{a^2+b^2}+C$",
+              "on": "同樣"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$a=b=1$ 就是 $\\frac{e^x}2(\\sin x-\\cos x)$",
+              "color": "violet",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a=2$、$b=3$",
+            "$\\int e^{2x}\\cos3x\\,dx=\\frac{e^{2x}(2\\cos3x+3\\sin3x)}{13}+C$"
+          ],
+          "say": "例如 e 的 2x 次方乘餘弦 3x：a 是 2，b 是 3，分母是 4 加 9 等於 13。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$a=2$、$b=3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int e^{2x}\\cos3x\\,dx=\\frac{e^{2x}(2\\cos3x+3\\sin3x)}{13}+C$",
+              "on": "分母"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "答案是？",
-        "options": [
+      "check": 2
+    },
+    {
+      "title": "另一個循環例子",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\sin(\\ln x)\\,dx$：$u=\\sin(\\ln x)$、$dv=dx$",
+            "$I=x\\sin(\\ln x)-\\int\\cos(\\ln x)\\,dx$"
+          ],
+          "say": "循環不只出現在指數乘三角。看正弦自然對數 x：讓它當 u，d x 當 d v。u 微分是餘弦自然對數 x 乘 x 分之 1，跟 v 等於 x 約掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int\\sin(\\ln x)\\,dx$：$u=\\sin(\\ln x)$、$dv=dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=x\\sin(\\ln x)-\\int\\cos(\\ln x)\\,dx$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再一次（同一邊）：$u=\\cos(\\ln x)$、$dv=dx$",
+            "$\\int\\cos(\\ln x)\\,dx=x\\cos(\\ln x)+I$"
+          ],
+          "say": "再分部一次，一樣讓三角當 u。又繞回 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再一次（同一邊）：$u=\\cos(\\ln x)$、$dv=dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\cos(\\ln x)\\,dx=x\\cos(\\ln x)+I$",
+              "on": "角當"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I=x\\sin(\\ln x)-x\\cos(\\ln x)-I$",
+            "$\\begin{aligned}\\int\\sin(\\ln x)\\,dx&=\\frac x2\\big(\\sin(\\ln x)\\\\&\\qquad-\\cos(\\ln x)\\big)+C\\end{aligned}$"
+          ],
+          "say": "移項除以 2：2 分之 x，乘正弦自然對數減餘弦自然對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=x\\sin(\\ln x)-x\\cos(\\ln x)-I$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}\\int\\sin(\\ln x)\\,dx&=\\frac x2\\big(\\sin(\\ln x)\\\\&\\qquad-\\cos(\\ln x)\\big)+C\\end{aligned}}}}$",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "乘正"
+            },
+            {
+              "do": "write",
+              "line": "　換元 $x=e^t$ 後就是 $\\int e^t\\sin t\\,dt$，難怪會循環",
+              "color": "violet",
+              "on": "減餘"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "循環積分的步驟",
+        "steps": [
           {
-            "label": "$\\frac{e^\\pi+1}{2}\\approx 12.07$",
-            "correct": true
+            "label": "把原積分叫 $I$，第一次分部"
           },
           {
-            "label": "$\\frac{e^\\pi-1}{2}$",
-            "why": "減掉的是 $-\\frac{1}{2}$，負負得正：$\\frac{e^\\pi}{2}+\\frac{1}{2}$。"
+            "label": "第二次分部，同一邊當 $u$",
+            "why": "先要有上一步：把原積分叫 $I$，第一次分部"
           },
           {
-            "label": "$\\frac{e^\\pi}{2}$",
-            "why": "代 $0$ 不是 $0$：$\\cos 0=1$，那一項是 $-\\frac{1}{2}$。"
+            "label": "看到 $I$ 又出現，代回第一式",
+            "why": "先要有上一步：第二次分部，同一邊當 $u$"
+          },
+          {
+            "label": "移項解出 $I$，最後加 $C$",
+            "why": "先要有上一步：看到 $I$ 又出現，代回第一式"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $(\\ln x)^n$：每分部一次降一次（遞迴公式）",
+            "• $e^{ax}\\sin bx$、$e^{ax}\\cos bx$：分部兩次，原題又出現"
+          ],
+          "say": "整理一下：自然對數的次方，每分部一次降一次。指數乘三角，分部兩次原題又出現，把它當未知數解出來。兩次一定要同一邊當 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $(\\ln x)^n$：每分部一次降一次（遞迴公式）"
+            },
+            {
+              "do": "write",
+              "line": "• $e^{ax}\\sin bx$、$e^{ax}\\cos bx$：分部兩次，原題又出現",
+              "on": "每分"
+            },
+            {
+              "do": "write",
+              "line": "• 把原題當未知數 $I$，移項解出來，最後加 $C$",
+              "on": "乘三"
+            },
+            {
+              "do": "write",
+              "line": "• 兩次要同一邊當 $u$；換邊得到 $I=I$，白做",
+              "on": "把它"
+            },
+            {
+              "do": "write",
+              "line": "• 通用公式分母 $a^2+b^2$；$\\sin(\\ln x)$ 也是循環型",
+              "on": "兩次#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：部分分式"
+          ],
+          "say": "分部積分到這裡告一段落。下一課，有理函數的積分：部分分式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：部分分式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["integration-by-parts", "ibp", "multi-ibp", "exponential", "trig", "log"],
-    "fine": ["ibp-repeat-log", "ibp-cyclic-exp-trig", "ibp-cyclic-solve", "ibp-cyclic-consistent-choice"]
+    "coarse": [
+      "integration-by-parts",
+      "ibp",
+      "multi-ibp",
+      "exponential",
+      "trig",
+      "log"
+    ],
+    "fine": [
+      "ibp-repeat-log",
+      "ibp-cyclic-exp-trig",
+      "ibp-cyclic-solve",
+      "ibp-cyclic-consistent-choice"
+    ]
   },
   "practice": [
-    { "id": "uni-int-010", "core": true, "trains": "ibp-cyclic-exp-trig" },
-    { "id": "exam-int-012", "core": true, "trains": "ibp-cyclic-exp-trig" },
-    { "id": "hc-ibp-006", "core": true, "trains": "ibp-cyclic-solve" },
-    { "id": "int-055", "core": true, "trains": "ibp-repeat-log" },
-    { "id": "burst-int-038", "core": true, "trains": "ibp-repeat-log" },
-    { "id": "cg-4d-012", "core": true, "trains": "ibp-cyclic-consistent-choice" },
-    { "id": "depth-int-006", "trains": "ibp-cyclic-solve" },
-    { "id": "burst-boss-anti-006", "trains": "ibp-repeat-log" },
-    { "id": "cg-4d-013", "trains": "ibp-cyclic-consistent-choice" },
-    { "id": "cg-4d-014", "trains": "ibp-cyclic-exp-trig" },
-    { "id": "depth-int-009", "challenge": true, "trains": "ibp-cyclic-consistent-choice", "note": "挑戰：$\\sin(\\ln x)$ 也會循環，$dv=dx$。" },
-    { "id": "hc-ibp-003", "challenge": true, "trains": "ibp-cyclic-solve", "note": "挑戰：多項式 $\\times$ $e^x\\sin x$，先處理 $e^x\\sin x$ 的循環，再處理多項式。" },
-    { "id": "world-027", "challenge": true, "trains": "ibp-cyclic-solve", "note": "挑戰：上限是 $\\infty$，邊界項要用極限。" }
+    {
+      "id": "uni-int-010",
+      "core": true,
+      "trains": "ibp-cyclic-exp-trig"
+    },
+    {
+      "id": "exam-int-012",
+      "core": true,
+      "trains": "ibp-cyclic-exp-trig"
+    },
+    {
+      "id": "hc-ibp-006",
+      "core": true,
+      "trains": "ibp-cyclic-solve"
+    },
+    {
+      "id": "int-055",
+      "core": true,
+      "trains": "ibp-repeat-log"
+    },
+    {
+      "id": "burst-int-038",
+      "core": true,
+      "trains": "ibp-repeat-log"
+    },
+    {
+      "id": "cg-4d-012",
+      "core": true,
+      "trains": "ibp-cyclic-consistent-choice"
+    },
+    {
+      "id": "depth-int-006",
+      "trains": "ibp-cyclic-solve"
+    },
+    {
+      "id": "burst-boss-anti-006",
+      "trains": "ibp-repeat-log"
+    },
+    {
+      "id": "cg-4d-013",
+      "trains": "ibp-cyclic-consistent-choice"
+    },
+    {
+      "id": "cg-4d-014",
+      "trains": "ibp-cyclic-exp-trig"
+    },
+    {
+      "id": "depth-int-009",
+      "challenge": true,
+      "trains": "ibp-cyclic-consistent-choice",
+      "note": "挑戰：$\\sin(\\ln x)$ 也會循環，$dv=dx$。"
+    },
+    {
+      "id": "hc-ibp-003",
+      "challenge": true,
+      "trains": "ibp-cyclic-solve",
+      "note": "挑戰：多項式 $\\times$ $e^x\\sin x$，先處理 $e^x\\sin x$ 的循環，再處理多項式。"
+    },
+    {
+      "id": "world-027",
+      "challenge": true,
+      "trains": "ibp-cyclic-solve",
+      "note": "挑戰：上限是 $\\infty$，邊界項要用極限。"
+    }
   ],
   "gaps": []
 }

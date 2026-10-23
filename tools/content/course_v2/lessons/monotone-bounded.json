@@ -1,43 +1,126 @@
 {
   "id": "monotone-bounded",
   "title": "單調與有界",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 25,
-  "prerequisites": ["sequence-limit", "increasing-decreasing"],
-  "next": ["monotone-convergence-sequence"],
-  "related": ["bounds"],
-  "objectives": [
-    "說出遞增、遞減、有上界、有下界、有界的定義，以及「從某一項開始」的意思。",
-    "用差、比值、導數三種方法判斷數列的單調性。",
-    "分清楚有界與收斂：收斂一定有界，有界不一定收斂。"
+  "prerequisites": [
+    "sequence-limit",
+    "increasing-decreasing"
   ],
-  "visual": "畫出 aₙ = (ln n)/n 的點，n = 1 到 30。相鄰兩點之間連一段短線，上升塗綠、下降塗紅：前兩段是綠的，從 n = 3 起全部變紅。上方畫一條可拖動的水平線當上界，拖到 0.37 附近就壓住所有點。",
+  "next": [
+    "monotone-convergence-sequence"
+  ],
+  "related": [
+    "bounds"
+  ],
+  "objectives": [
+    "說出遞增、遞減、有上界、有下界、有界的定義，以及「從某一項開始」的意思",
+    "用差、比值、導數三種方法判斷數列的單調性",
+    "分清楚有界與收斂：收斂一定有界，有界不一定收斂"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 定義",
+      "heading": "① 定義：單調",
       "body": [
-        "遞增：對所有 $n$，$a_{n+1}\\ge a_n$（嚴格遞增是 $>$）。遞減：$a_{n+1}\\le a_n$。兩者之一叫單調。",
-        "有上界：存在 $M$ 使所有 $a_n\\le M$。有下界：存在 $m$ 使所有 $a_n\\ge m$。兩個都有叫有界。",
-        "討論極限時，前面有限項怎麼亂跳都不影響，所以常說「從某一項開始遞減」（最終遞減）就夠了。"
+        "遞增：每一項都比前一項大",
+        "遞減：$a_n>a_{n+1}$ 對所有 $n$",
+        "遞增或遞減，合稱單調",
+        "允許等號（$a_n\\le a_{n+1}$）叫「非遞減」；下一課的定理對它一樣成立",
+        "從某一項開始：存在 $N$，$n\\ge N$ 時 $a_n>a_{n+1}$",
+        "上一課說過：極限只看尾巴；前面有限幾項怎麼走都不影響",
+        "例：$a_n=\\dfrac{\\ln n}{n}$：$0,\\ 0.347,\\ 0.366,\\ 0.347,\\ 0.322,\\ \\dots$"
       ],
-      "collapsible": false
+      "tex": [
+        "a_1<a_2<a_3<\\cdots,\\quad\\text{即 }a_n<a_{n+1}\\ \\text{對所有 }n"
+      ]
     },
     {
-      "heading": "② 判斷單調的三個方法",
+      "heading": "① 定義：有界",
       "body": [
-        "差：看 $a_{n+1}-a_n$ 的正負。適合有理式。",
-        "比值：各項都是正數時，看 $\\frac{a_{n+1}}{a_n}$ 跟 1 比。適合有 $2^n$、$n!$ 的式子，因為會大量約分。",
-        "導數：如果 $a_n=f(n)$，而 $f'(x)\\le 0$ 在 $x\\ge N$ 上成立，數列從第 $N$ 項開始遞減（〈增減區間〉）。適合有 $\\ln$、根號的式子。注意 $n!$ 不能這樣微分。"
+        "• 有上界：有一個數 $M$，所有 $a_n\\le M$",
+        "• 有下界：有一個數 $m$，所有 $a_n\\ge m$",
+        "有界：上下都有界，也就是",
+        "• $a_n=n$：有下界 $1$，沒有上界",
+        "• $a_n=(-1)^n$：有界（$|a_n|\\le1$），但不單調",
+        "• $a_n=\\dfrac1n$：遞減，有界（$0<a_n\\le1$）",
+        "界不唯一：$\\frac1n\\le1$，也 $\\le5$；只要找到一個就算有界"
       ],
-      "collapsible": false
+      "tex": [
+        "|a_n|\\le M\\quad\\text{對所有 }n"
+      ]
+    },
+    {
+      "heading": "② 方法一：看差",
+      "body": [
+        "$a_{n+1}-a_n>0$ ⇒ 遞增；$<0$ ⇒ 遞減",
+        "例：$a_n=\\dfrac{n}{n+1}$",
+        "通分：",
+        "分子 $=n^2+2n+1-n^2-2n=1$：",
+        "有界：$a_n=1-\\dfrac1{n+1}$，所以",
+        "遞增的數列，第一項自動就是下界"
+      ],
+      "tex": [
+        "a_{n+1}-a_n=\\frac{n+1}{n+2}-\\frac{n}{n+1}",
+        "=\\frac{(n+1)^2-n(n+2)}{(n+1)(n+2)}",
+        "a_{n+1}-a_n=\\frac{1}{(n+1)(n+2)}>0",
+        "\\frac12\\le a_n<1"
+      ]
+    },
+    {
+      "heading": "② 方法二：看比值",
+      "body": [
+        "各項都正時：$\\dfrac{a_{n+1}}{a_n}>1$ ⇒ 遞增；$<1$ ⇒ 遞減",
+        "有指數、階乘的數列，比值會約得很乾淨",
+        "例：$a_n=\\dfrac{n}{2^n}$",
+        "$\\dfrac{n+1}{2n}<1$ ⇔ $n+1<2n$ ⇔ $n>1$",
+        "$n=1$：比值 $=1$，$a_1=a_2=\\frac12$；從第 2 項開始嚴格遞減",
+        "有界：$0<a_n\\le\\dfrac12$"
+      ],
+      "tex": [
+        "\\frac{a_{n+1}}{a_n}=\\frac{n+1}{2^{n+1}}\\cdot\\frac{2^n}{n}=\\frac{n+1}{2n}"
+      ]
+    },
+    {
+      "heading": "② 方法三：借導數",
+      "body": [
+        "$a_n=f(n)$，$x\\ge N$ 時 $f'(x)<0$ ⇒ 從第 $N$ 項起遞減",
+        "3.2：$f'<0$ 的區間上 $f$ 遞減",
+        "例：$a_n=\\dfrac{\\ln n}{n}$，取 $f(x)=\\dfrac{\\ln x}{x}$",
+        "$x>e$ 時 $\\ln x>1$，$f'(x)<0$",
+        "$e\\approx2.718$，所以從第 $3$ 項起遞減",
+        "有界：$0\\le a_n\\le\\dfrac{\\ln3}{3}\\approx0.366$"
+      ],
+      "tex": [
+        "f'(x)=\\frac{\\frac1x\\cdot x-\\ln x}{x^2}=\\frac{1-\\ln x}{x^2}"
+      ]
     },
     {
       "heading": "③ 有界與收斂",
       "body": [
-        "收斂的數列一定有界：$n$ 夠大後 $a_n$ 都在 $L\\pm 1$ 裡，前面只剩有限項，取它們和 $L\\pm 1$ 中最大、最小的就是界。",
-        "反過來不行：$(-1)^n$ 有界但在 $-1$ 與 1 之間跳，不收斂。單調也不夠：$a_n=n$ 遞增但跑到 $\\infty$。下一課〈單調收斂定理〉說的是：兩個條件同時成立，就一定收斂。"
+        "收斂 ⇒ 有界",
+        "證明：$a_n\\to L$，取 $\\varepsilon=1$：有 $N$，$n>N$ 時",
+        "前面只剩有限多項 $a_1,\\dots,a_N$：",
+        "所有 $|a_n|\\le M$　$\\blacksquare$",
+        "反過來不對：$(-1)^n$ 有界，但發散",
+        "換個說法（逆否）：無界 ⇒ 發散",
+        "缺了什麼？單調 + 有界 就夠了：下一課"
       ],
-      "collapsible": false
+      "tex": [
+        "|a_n|\\le|a_n-L|+|L|<1+|L|",
+        "M=\\max\\{|a_1|,\\dots,|a_N|,\\ 1+|L|\\}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 單調：遞增 $a_n<a_{n+1}$、遞減 $a_n>a_{n+1}$；可以從某一項開始",
+        "• 有界：$|a_n|\\le M$；遞增的第一項是下界，遞減的第一項是上界",
+        "• 判斷單調：差、比值（各項為正）、導數（借 $f$）",
+        "• 收斂 ⇒ 有界；有界 ⇏ 收斂；無界 ⇒ 發散",
+        "下一課：單調收斂定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -82,242 +165,823 @@
   ],
   "checks": [
     {
-      "ask": "$a_n=\\frac{(-1)^n}{n}$ 是？",
+      "ask": "$a_n=\\dfrac{3^n}{n!}$ 從第幾項開始嚴格遞減？",
       "options": [
-        { "label": "不單調，有界", "correct": true },
-        { "label": "遞減，有界", "why": "正負交替：$a_1=-1$、$a_2=\\frac{1}{2}$、$a_3=-\\frac{1}{3}$，一下往上一下往下。" },
-        { "label": "不單調，無界", "why": "$|a_n|=\\frac{1}{n}\\le 1$，所有項都在 $-1$ 與 $\\frac{1}{2}$ 之間。" }
+        {
+          "label": "從第 $3$ 項開始",
+          "correct": true
+        },
+        {
+          "label": "從第 $1$ 項開始",
+          "why": "$a_1=3<a_2=4.5$，一開始是上升的"
+        },
+        {
+          "label": "從第 $2$ 項開始",
+          "why": "$\\frac{3}{n+1}$ 在 $n=2$ 等於 $1$：$a_2=a_3$，還沒嚴格變小"
+        },
+        {
+          "label": "一直遞增",
+          "why": "分母 $n!$ 長得比 $3^n$ 快，比值最後小於 $1$"
+        }
       ]
     },
     {
-      "ask": "判斷 $a_n=\\frac{3^n}{n!}$ 的單調性，最省事的方法是？",
+      "ask": "哪一個敘述正確？",
       "options": [
-        { "label": "比值 $\\frac{a_{n+1}}{a_n}$", "correct": true },
-        { "label": "對 $f(x)=\\frac{3^x}{x!}$ 微分", "why": "$x!$ 對非整數沒有定義，不能這樣微分。" },
-        { "label": "只算前三項看趨勢", "why": "$a_1=3$、$a_2=4.5$、$a_3=4.5$，看前三項會以為遞增；比值 $\\frac{3}{n+1}$ 才看得出 $n\\ge 3$ 開始遞減。" }
-      ]
-    },
-    {
-      "ask": "有界的數列一定收斂嗎？",
-      "options": [
-        { "label": "不一定，例如 $(-1)^n$", "correct": true },
-        { "label": "一定收斂", "why": "$(-1)^n$ 被 $\\pm 1$ 夾住，卻一直在兩個值之間跳，沒有極限。" },
-        { "label": "一定發散", "why": "$\\frac{1}{n}$ 有界而且收斂到 0。有界本身不決定收斂或發散。" }
-      ]
-    },
-    {
-      "ask": "$a_n=\\frac{n}{n+1}$ 是？",
-      "options": [
-        { "label": "遞增，有上界 1", "correct": true },
-        { "label": "遞減，有下界 0", "why": "$a_{n+1}-a_n=\\frac{1}{(n+1)(n+2)}>0$，是遞增。" },
-        { "label": "遞增，沒有上界", "why": "分子永遠比分母小 1，$a_n<1$。" }
+        {
+          "label": "收斂的數列一定有界",
+          "correct": true
+        },
+        {
+          "label": "有界的數列一定收斂",
+          "why": "$(-1)^n$ 有界但發散"
+        },
+        {
+          "label": "單調的數列一定收斂",
+          "why": "$a_n=n$ 遞增，卻衝到 $\\infty$"
+        },
+        {
+          "label": "發散的數列一定無界",
+          "why": "$(-1)^n$ 發散，卻有界"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "單調與有界",
+      "title": "定義：單調",
       "beats": [
-        { "show": ["遞增：$a_{n+1}\\ge a_n$","遞減：$a_{n+1}\\le a_n$"],
-          "note": "兩者之一叫單調。",
-          "say": "每一項都不比前一項小，叫遞增；都不比前一項大，叫遞減。只要是其中一種，就叫單調。",
+        {
+          "show": [
+            "遞增：每一項都比前一項大",
+            "$a_1<a_2<a_3<\\cdots,\\quad\\text{即 }a_n<a_{n+1}\\ \\text{對所有 }n$"
+          ],
+          "say": "上一課問數列最後往哪裡去；這一課先看兩個比較簡單的性質。第一個是單調。遞增的意思是：每一項都比前一項大。",
           "board": [
-            {"do":"write","line":"遞增：${{u:a_{n+1}\\ge a_n}}$"},
-            {"do":"write","line":"遞減：${{d:a_{n+1}\\le a_n}}$","on":"都不比前一項大"},
-            {"do":"write","line":"兩者之一 ＝ 單調","color":"green","on":"只要是其中一種"}
-          ] },
-        { "show": ["有上界：所有 $a_n\\le M$","有下界：所有 $a_n\\ge m$"],
-          "say": "所有的項都壓在某個 M 底下，叫有上界；都在某個 m 上面，叫有下界。兩個都有就是有界。",
+            {
+              "do": "write",
+              "line": "遞增：每一項都比前一項大"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a_1<a_2<a_3<\\cdots,\\quad\\text{即 }a_n<a_{n+1}\\ \\text{對所有 }n$",
+              "on": "第一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遞減：$a_n>a_{n+1}$ 對所有 $n$"
+          ],
+          "say": "遞減就反過來，每一項都比前一項小。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"有上界：所有 $a_n\\le M$","on":"所有的項"},
-            {"do":"write","line":"有下界：所有 $a_n\\ge m$","on":"都在某個"},
-            {"do":"write","line":"兩個都有 ＝ 有界","color":"green","on":"兩個都有"}
-          ] },
-        { "show": ["「從某一項開始遞減」就夠了"],
-          "note": "前面有限項怎麼跳，都不影響極限。",
-          "say": "討論極限的時候，前面有限幾項亂跳沒關係，只要從某一項開始一路遞減就夠了。",
+            {
+              "do": "write",
+              "line": "遞減：$a_n>a_{n+1}$ 對所有 $n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遞增或遞減，合稱單調"
+          ],
+          "say": "遞增和遞減，合稱單調。單調的數列，只往一個方向走，不會回頭。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"前面有限項亂跳：不影響極限","on":"討論極限"},
-            {"do":"write","line":"${{s:n\\ge N}}$：$a_{n+1}\\le a_n$","on":"從某一項開始"},
-            {"do":"underline","term":"s","label":"就夠了","on":"一路遞減"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "遞增或遞減，合稱單調",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　允許等號（$a_n\\le a_{n+1}$）叫「非遞減」；下一課的定理對它一樣成立",
+              "color": "violet",
+              "on": "只往"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從某一項開始：存在 $N$，$n\\ge N$ 時 $a_n>a_{n+1}$"
+          ],
+          "say": "很多數列一開始會亂走幾步，之後才乖乖往一個方向走。這叫從某一項開始遞減，或者說最終遞減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從某一項開始：存在 $N$，$n\\ge N$ 時 $a_n>a_{n+1}$"
+            },
+            {
+              "do": "write",
+              "line": "　上一課說過：極限只看尾巴；前面有限幾項怎麼走都不影響",
+              "color": "violet",
+              "on": "向走"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=\\dfrac{\\ln n}{n}$：$0,\\ 0.347,\\ 0.366,\\ 0.347,\\ 0.322,\\ \\dots$"
+          ],
+          "say": "例如 n 分之自然對數 n：先從 0 上升到 0.366，第三項以後才一路往下。等一下會用導數證明它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$a_n=\\dfrac{\\ln n}{n}$：$0,\\ 0.347,\\ 0.366,\\ 0.347,\\ 0.322,\\ \\dots$"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "用差判斷",
+      "title": "定義：有界",
       "beats": [
-        { "show": ["$a_n=\\frac{n}{n+1}$"],
-          "note": "有理式：看 $a_{n+1}-a_n$ 的正負。",
-          "say": "有理式最適合用差：後一項減前一項，看是正還是負。",
+        {
+          "show": [
+            "• 有上界：有一個數 $M$，所有 $a_n\\le M$",
+            "• 有下界：有一個數 $m$，所有 $a_n\\ge m$"
+          ],
+          "say": "第二個性質是有界。有上界，是說有一個數 M，所有的項都不超過它；有下界，是說有一個數 m，所有的項都不低於它。",
           "board": [
-            {"do":"write","line":"$a_n=\\frac{n}{n+1}$"},
-            {"do":"write","line":"看 $a_{n+1}-a_n$ 的正負","on":"後一項減"}
-          ] },
-        { "show": ["$a_{n+1}-a_n=\\frac{1}{(n+1)(n+2)}>0$"],
-          "note": "通分後分子剩 1。",
-          "say": "n 加一除以 n 加二，減掉 n 除以 n 加一。通分之後分子剛好剩一，整個是正的，所以嚴格遞增。",
+            {
+              "do": "write",
+              "line": "• 有上界：有一個數 $M$，所有 $a_n\\le M$"
+            },
+            {
+              "do": "write",
+              "line": "• 有下界：有一個數 $m$，所有 $a_n\\ge m$",
+              "on": "不超"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：上下都有界，也就是",
+            "$|a_n|\\le M\\quad\\text{對所有 }n$"
+          ],
+          "say": "上下都有界，就叫有界。等價的說法是：所有項的絕對值都不超過某一個 M，整個數列被關在一條帶子裡。",
           "board": [
-            {"do":"write","line":"${{d:a_{n+1}-a_n}}=\\frac{n+1}{n+2}-\\frac{n}{n+1}$"},
-            {"do":"transform","line":"${{d:a_{n+1}-a_n}}=\\frac{ {{one:1}} }{(n+1)(n+2)}>0$","on":"通分之後"},
-            {"do":"focus","term":"one","label":"分子剩 1","on":"分子剛好"}
-          ] },
-        { "show": ["$0<\\frac{n}{n+1}<1$"],
-          "note": "分子永遠比分母小 1。",
-          "say": "分子永遠比分母小一，所以每一項都在零和一之間，有界。",
+            {
+              "do": "write",
+              "line": "有界：上下都有界，也就是"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle |a_n|\\le M\\quad\\text{對所有 }n}}$",
+              "on": "所有"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "整個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a_n=n$：有下界 $1$，沒有上界",
+            "• $a_n=(-1)^n$：有界（$|a_n|\\le1$），但不單調"
+          ],
+          "say": "幾個例子：n 有下界 1，但沒有上界；負 1 的 n 次方有界，可是跳來跳去，不單調；n 分之 1 遞減，而且夾在 0 和 1 之間。",
           "board": [
-            {"do":"write","line":"${{bd:0<\\frac{n}{n+1}<1}}$"},
-            {"do":"underline","term":"bd","label":"有界","on":"每一項都在"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $a_n=n$：有下界 $1$，沒有上界"
+            },
+            {
+              "do": "write",
+              "line": "• $a_n=(-1)^n$：有界（$|a_n|\\le1$），但不單調",
+              "on": "上界"
+            },
+            {
+              "do": "write",
+              "line": "• $a_n=\\dfrac1n$：遞減，有界（$0<a_n\\le1$）",
+              "on": "是跳"
+            },
+            {
+              "do": "write",
+              "line": "　界不唯一：$\\frac1n\\le1$，也 $\\le5$；只要找到一個就算有界",
+              "color": "violet",
+              "on": "遞減"
+            }
+          ]
+        }
       ],
-      "check": 3
-    },
-    {
-      "title": "用比值判斷",
-      "beats": [
-        { "show": ["$a_n=\\frac{n}{2^n}$：看 $\\frac{a_{n+1}}{a_n}$"],
-          "note": "各項都是正數，比值跟 1 比。",
-          "say": "有二的 n 次方、n 階乘的式子，用比值最省事，因為一除下去會大量約分。前提是每一項都是正的。",
-          "board": [
-            {"do":"write","line":"$a_n=\\frac{n}{2^n}$：看 $\\frac{a_{n+1}}{a_n}$"}
-          ] },
-        { "show": ["$a_n>0$：比值 $\\le 1$ ⇒ 遞減"],
-          "note": "有負項時，乘負數不等號會反過來。",
-          "say": "各項是正的，比值小於等於一，兩邊乘 a n 就是遞減。有負項的話，乘負數不等號會反過來。",
-          "board": [
-            {"do":"write","line":"$a_n>0$：$\\frac{a_{n+1}}{a_n}\\le 1$ ⇒ $a_{n+1}\\le a_n$"},
-            {"do":"write","line":"$a_n<0$：乘下去不等號反過來","color":"red","on":"負項"}
-          ] },
-        { "show": ["$\\frac{a_{n+1}}{a_n}=\\frac{n+1}{2n}$"],
-          "say": "二的 n 次方和二的 n 加一次方約掉，只剩 n 加一除以二 n。",
-          "board": [
-            {"do":"write","line":"${{r:\\frac{a_{n+1}}{a_n}}}=\\frac{n+1}{2^{n+1}}\\cdot\\frac{2^n}{n}$"},
-            {"do":"transform","line":"${{r:\\frac{a_{n+1}}{a_n}}}=\\frac{n+1}{2n}$","on":"只剩"}
-          ] },
-        { "show": ["$\\frac{n+1}{2n}\\le 1\\iff n\\ge 1$"],
-          "note": "$a_1=a_2=\\frac{1}{2}$，之後嚴格遞減。",
-          "say": "這個比值永遠小於等於一，只有 n 等於一的時候相等。所以數列遞減，前兩項都是二分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{n+1}{2n}\\le 1\\iff n\\ge 1$"},
-            {"do":"write","line":"$a_1=a_2=\\frac{1}{2}$，之後遞減","on":"前兩項"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "用導數判斷",
-      "beats": [
-        { "show": ["$a_n=\\frac{\\ln n}{n}$，令 $f(x)=\\frac{\\ln x}{x}$"],
-          "note": "適合有 $\\ln$、根號的式子。",
-          "say": "有自然對數的式子，換成連續的 x 來微分，看導數的正負。",
-          "board": [
-            {"do":"write","line":"$a_n=\\frac{\\ln n}{n}$"},
-            {"do":"transform","line":"$a_n=\\frac{\\ln n}{n}$，令 $f(x)=\\frac{\\ln x}{x}$","on":"換成連續"}
-          ] },
-        { "show": ["$a_n=f(n)$：整數點在曲線上"],
-          "note": "前提：$f$ 可微。",
-          "say": "為什麼能換？因為 a n 就是 f 在整數 n 的值。f 整段下降，整數那幾點也跟著下降。",
-          "board": [
-            {"do":"write","line":"$a_n={{fn:f(n)}}$"},
-            {"do":"write","line":"$f$ 整段下降 ⇒ 整數點也下降","on":"整段下降"}
-          ] },
-        { "show": ["$f'(x)=\\frac{1-\\ln x}{x^2}$"],
-          "note": "$x>e$ 時 $\\ln x>1$，$f'<0$。",
-          "say": "分母是正的，只看分子：一減自然對數 x。x 超過 e 的時候它變負，函數開始往下走。",
-          "board": [
-            {"do":"write","line":"$f'(x)=\\frac{ {{num:1-\\ln x}} }{x^2}$"},
-            {"do":"underline","term":"num","label":"只看分子","on":"只看分子"},
-            {"do":"write","line":"$x>e$ ⇒ $f'(x)<0$","on":"x 超過 e"}
-          ] },
-        { "show": ["$f$ 過了 $e$ 一路往下"],
-          "say": "看圖：曲線過了 e 就一路往下。整數的點都在曲線上，所以比 e 大的項，一項比一項低。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,8,-0.2,0.5],"curves":[{"expr":"log(x)/x","domain":[0.5,8],"color":"blue"}],"dashed":[[[2.718,-0.2],[2.718,0.5]]],"labels":[{"x":2.9,"y":0.42,"text":"e","anchor":"start"}]}}
-          ] },
-        { "show": ["$e\\approx 2.718$"],
-          "say": "e 大約是二點七一八。那數列從第幾項開始遞減？",
-          "board": [
-            {"do":"write","line":"$e\\approx 2.718$"}
-          ] }
-      ],
-      "key": "改看 $f(x)$，由 $f'$ 的正負判斷",
       "predict": {
-        "ask": "$\\frac{\\ln n}{n}$ 從哪一項開始遞減？",
+        "ask": "$a_n=\\dfrac{n^2}{n+1}$ 有上界嗎？",
         "options": [
           {
-            "label": "$n=3$",
+            "label": "沒有",
             "correct": true
           },
           {
-            "label": "$n=1$",
-            "why": "$a_1=0$、$a_2\\approx 0.347$、$a_3\\approx 0.366$：前面還在升。$f'<0$ 要 $x>e$。"
+            "label": "有，上界是 $1$",
+            "why": "$n=2$ 時已經是 $\\frac43>1$"
           },
           {
-            "label": "$n=2$",
-            "why": "$a_2\\approx 0.347<a_3\\approx 0.366$，從 2 到 3 還在升。$e\\approx 2.718$，第一個大於 $e$ 的整數是 3。"
+            "label": "有，因為它是分數",
+            "why": "分子是二次、分母是一次，分子長得快"
           }
         ]
       }
     },
     {
-      "title": "有界不等於收斂",
+      "title": "方法一：看差",
       "beats": [
-        { "show": ["收斂到 $L$：項越來越靠近 $L$"],
-          "say": "先說收斂：n 越大，項越靠近某個固定的數 L，就說收斂到 L。",
+        {
+          "show": [
+            "$a_{n+1}-a_n>0$ ⇒ 遞增；$<0$ ⇒ 遞減"
+          ],
+          "say": "第二段，怎麼判斷單調。最直接的方法是相減：後一項減前一項，正的就是遞增，負的就是遞減。",
           "board": [
-            {"do":"write","line":"$n$ 越大，$a_n$ 靠近 ${{l:L}}$"},
-            {"do":"write","line":"收斂到 $L$","color":"green","on":"收斂到"}
-          ] },
-        { "show": ["收斂 ⇒ 有界"],
-          "note": "夠後面都在 $L\\pm 1$ 裡，前面只剩有限項。",
-          "say": "收斂的數列一定有界：夠後面的項都在 L 加減一之內，前面只剩有限幾項，取最大最小就是界。",
+            {
+              "do": "write",
+              "line": "$a_{n+1}-a_n>0$ ⇒ 遞增；$<0$ ⇒ 遞減",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=\\dfrac{n}{n+1}$"
+          ],
+          "say": "例子：n 加 1 分之 n。判斷它的單調性和有界性。",
           "board": [
-            {"do":"write","line":"收斂 ⇒ 有界","color":"green"},
-            {"do":"write","line":"夠後面：${{b:L-1<a_n<L+1}}$","on":"夠後面的項"},
-            {"do":"underline","term":"b","label":"都在 L±1","on":"加減一之內"}
-          ] },
-        { "show": ["$(-1)^n$：有界，不收斂"],
-          "say": "反過來不行。負一的 n 次方被正負一夾住，卻一直在兩個值之間跳。",
+            {
+              "do": "write",
+              "line": "例：$a_n=\\dfrac{n}{n+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_{n+1}-a_n=\\frac{n+1}{n+2}-\\frac{n}{n+1}$"
+          ],
+          "say": "寫出後一項：n 加 2 分之 n 加 1，減掉前一項。",
           "board": [
-            {"do":"write","line":"$-1\\le(-1)^n\\le 1$"},
-            {"do":"write","line":"一直在 $-1$、$1$ 之間跳","on":"一直在"}
-          ] },
-        { "show": ["$a_n=n$：遞增，不收斂"],
-          "note": "兩個條件同時成立才行：〈單調收斂定理〉。",
-          "say": "光是單調也不夠，n 一直遞增，跑到無限大。下一課會說：單調加上有界，才一定收斂。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle a_{n+1}-a_n=\\frac{n+1}{n+2}-\\frac{n}{n+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "通分：",
+            "$=\\frac{(n+1)^2-n(n+2)}{(n+1)(n+2)}$"
+          ],
+          "say": "通分，分母是 n 加 1 乘 n 加 2。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a_n=n$：遞增，${{inf:n\\to\\infty}}$","on":"n 一直遞增"},
-            {"do":"write","line":"單調 ＋ 有界 ⇒ 收斂","color":"green","on":"單調加上有界"}
-          ] },
-        { "show": ["遞增 ＋ 有上界：爬不過 $M$"],
-          "note": "直覺，不是證明；證明在下一課。",
-          "say": "為什麼單調加有界會收斂？直覺是：遞增的項不能下降，又被上界壓住，爬不上去，只好越靠越近某個值。",
+            {
+              "do": "write",
+              "line": "通分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{(n+1)^2-n(n+2)}{(n+1)(n+2)}$",
+              "on": "2。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子 $=n^2+2n+1-n^2-2n=1$：",
+            "$a_{n+1}-a_n=\\frac{1}{(n+1)(n+2)}>0$"
+          ],
+          "say": "分子展開，n 平方和 2n 都消掉，只剩 1。差是正的，所以嚴格遞增。",
           "board": [
-            {"do":"write","line":"遞增 ＋ 有上界 $M$"},
-            {"do":"write","line":"項爬不過 $M$，越靠越近","on":"爬不上去"}
-          ] }
+            {
+              "do": "write",
+              "line": "分子 $=n^2+2n+1-n^2-2n=1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle a_{n+1}-a_n=\\frac{1}{(n+1)(n+2)}>0}}$",
+              "on": "2n"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "差是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：$a_n=1-\\dfrac1{n+1}$，所以",
+            "$\\frac12\\le a_n<1$"
+          ],
+          "say": "有界性：把它改寫成 1 減 n 加 1 分之 1，一看就知道永遠小於 1；又因為遞增，最小的是第一項 2 分之 1。所以它有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有界：$a_n=1-\\dfrac1{n+1}$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac12\\le a_n<1}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "小於"
+            },
+            {
+              "do": "write",
+              "line": "　遞增的數列，第一項自動就是下界",
+              "color": "violet",
+              "on": "一項"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "方法二：看比值",
+      "beats": [
+        {
+          "show": [
+            "各項都正時：$\\dfrac{a_{n+1}}{a_n}>1$ ⇒ 遞增；$<1$ ⇒ 遞減"
+          ],
+          "say": "第二個方法是相除。每一項都是正的時候，後一項除以前一項，大於 1 就是遞增，小於 1 就是遞減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "各項都正時：$\\dfrac{a_{n+1}}{a_n}>1$ ⇒ 遞增；$<1$ ⇒ 遞減",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　有指數、階乘的數列，比值會約得很乾淨",
+              "color": "violet",
+              "on": "前一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=\\dfrac{n}{2^n}$",
+            "$\\frac{a_{n+1}}{a_n}=\\frac{n+1}{2^{n+1}}\\cdot\\frac{2^n}{n}=\\frac{n+1}{2n}$"
+          ],
+          "say": "例子：2 的 n 次方分之 n。後一項除以前一項，2 的次方約掉一大半，剩下 2n 分之 n 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$a_n=\\dfrac{n}{2^n}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=\\frac{n+1}{2^{n+1}}\\cdot\\frac{2^n}{n}=\\frac{n+1}{2n}$",
+              "on": "的次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{n+1}{2n}<1$ ⇔ $n+1<2n$ ⇔ $n>1$"
+          ],
+          "say": "這個比值什麼時候小於 1？n 加 1 小於 2n，也就是 n 大於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{n+1}{2n}<1$ ⇔ $n+1<2n$ ⇔ $n>1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=1$：比值 $=1$，$a_1=a_2=\\frac12$；從第 2 項開始嚴格遞減"
+          ],
+          "say": "n 等於 1 的時候比值剛好是 1，前兩項都是 2 分之 1；從第二項開始才嚴格遞減。這就是從某一項開始的例子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n=1$：比值 $=1$，$a_1=a_2=\\frac12$；從第 2 項開始嚴格遞減",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：$0<a_n\\le\\dfrac12$"
+          ],
+          "say": "有界性：每一項都是正的；而它從頭到尾不會變大，所以最大就是第一項 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有界：$0<a_n\\le\\dfrac12$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$a_n=\\dfrac{3^n}{n!}$ 從第幾項開始嚴格遞減？"
+          ],
+          "say": "試一題，用比值。"
+        }
       ],
-      "check": 2
+      "check": 0
+    },
+    {
+      "title": "方法三：借導數",
+      "beats": [
+        {
+          "show": [
+            "$a_n=f(n)$，$x\\ge N$ 時 $f'(x)<0$ ⇒ 從第 $N$ 項起遞減"
+          ],
+          "say": "第三個方法是借函數。a n 等於 f of n，如果 f prime 在 x 大於等於 N 時都是負的，數列從第 N 項起就遞減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n=f(n)$，$x\\ge N$ 時 $f'(x)<0$ ⇒ 從第 $N$ 項起遞減",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　3.2：$f'<0$ 的區間上 $f$ 遞減",
+              "color": "violet",
+              "on": "me"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=\\dfrac{\\ln n}{n}$，取 $f(x)=\\dfrac{\\ln x}{x}$",
+            "$f'(x)=\\frac{\\frac1x\\cdot x-\\ln x}{x^2}=\\frac{1-\\ln x}{x^2}$"
+          ],
+          "say": "例子：n 分之自然對數 n。借函數 x 分之自然對數 x，用商的微分法則，導數是 x 平方分之 1 減自然對數 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$a_n=\\dfrac{\\ln n}{n}$，取 $f(x)=\\dfrac{\\ln x}{x}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'(x)=\\frac{\\frac1x\\cdot x-\\ln x}{x^2}=\\frac{1-\\ln x}{x^2}$",
+              "on": "用商"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x>e$ 時 $\\ln x>1$，$f'(x)<0$"
+          ],
+          "say": "x 大於 e 的時候，自然對數 x 大於 1，分子是負的，導數小於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x>e$ 時 $\\ln x>1$，$f'(x)<0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e\\approx2.718$，所以從第 $3$ 項起遞減"
+          ],
+          "say": "e 大約是 2.718，大於 e 的第一個整數是 3。所以數列從第三項開始遞減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e\\approx2.718$，所以從第 $3$ 項起遞減",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "曲線在 x = e 登頂，整數點從 n = 3 起往下"
+          ],
+          "say": "圖上，曲線在 x 等於 e 的地方最高，之後一路往下；整數點從 3 開始一顆比一顆低。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lnn",
+                  "window": [
+                    0,
+                    9,
+                    -0.05,
+                    0.45
+                  ],
+                  "fn": [
+                    {
+                      "expr": "ln(x)/x",
+                      "color": "pencil",
+                      "domain": [
+                        0.7,
+                        9
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "e",
+                      "color": "red"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 2.85,
+                      "y": 0.43,
+                      "text": "x = e",
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 0,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": "ln(2)/2",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": "ln(3)/3",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": "ln(4)/4",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": "ln(5)/5",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": "ln(6)/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": "ln(7)/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": "ln(8)/8",
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "曲線在 x = e 登頂，整數點從 n = 3 起往下",
+              "color": "violet",
+              "on": "後一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：$0\\le a_n\\le\\dfrac{\\ln3}{3}\\approx0.366$"
+          ],
+          "say": "有界性也順便得到：最大的是第三項，大約 0.366，最小的是第一項 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有界：$0\\le a_n\\le\\dfrac{\\ln3}{3}\\approx0.366$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "有界與收斂",
+      "beats": [
+        {
+          "show": [
+            "收斂 ⇒ 有界"
+          ],
+          "say": "第三段，有界跟收斂是什麼關係。第一個事實：收斂的數列一定有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "收斂 ⇒ 有界",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$a_n\\to L$，取 $\\varepsilon=1$：有 $N$，$n>N$ 時",
+            "$|a_n|\\le|a_n-L|+|L|<1+|L|$"
+          ],
+          "say": "證明：取艾普西隆等於 1，有一個 N，n 大於 N 以後，a n 和 L 的距離小於 1。由三角不等式，a n 的絕對值小於 1 加 L 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$a_n\\to L$，取 $\\varepsilon=1$：有 $N$，$n>N$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_n|\\le|a_n-L|+|L|<1+|L|$",
+              "on": "的距"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前面只剩有限多項 $a_1,\\dots,a_N$：",
+            "$M=\\max\\{|a_1|,\\dots,|a_N|,\\ 1+|L|\\}$"
+          ],
+          "say": "尾巴被管住了，前面只剩有限多項。有限多個數一定有最大的，把它們跟 1 加 L 的絕對值一起取最大值，叫做 M。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前面只剩有限多項 $a_1,\\dots,a_N$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle M=\\max\\{|a_1|,\\dots,|a_N|,\\ 1+|L|\\}$",
+              "on": "把它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所有 $|a_n|\\le M$　$\\blacksquare$"
+          ],
+          "say": "那麼每一項的絕對值都不超過 M，數列有界。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所有 $|a_n|\\le M$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來不對：$(-1)^n$ 有界，但發散"
+          ],
+          "say": "反過來不對：負 1 的 n 次方有界，但是跳來跳去，不收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來不對：$(-1)^n$ 有界，但發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換個說法（逆否）：無界 ⇒ 發散"
+          ],
+          "say": "第一個事實換個說法：沒有界的數列一定發散。例如 n 平方，一看沒有上界，就不用再算了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換個說法（逆否）：無界 ⇒ 發散",
+              "color": "gold"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "有界與收斂",
+      "beats": [
+        {
+          "show": [
+            "缺了什麼？單調 + 有界 就夠了：下一課"
+          ],
+          "say": "有界不夠，單調也不夠。那兩個加在一起呢？下一課的單調收斂定理會告訴你：夠了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "缺了什麼？單調 + 有界 就夠了：下一課"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 單調：遞增 $a_n<a_{n+1}$、遞減 $a_n>a_{n+1}$；可以從某一項開始",
+            "• 有界：$|a_n|\\le M$；遞增的第一項是下界，遞減的第一項是上界"
+          ],
+          "say": "整理一下：判斷單調有三招，相減、相除、借導數；可以只從某一項開始。收斂一定有界，有界不一定收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 單調：遞增 $a_n<a_{n+1}$、遞減 $a_n>a_{n+1}$；可以從某一項開始"
+            },
+            {
+              "do": "write",
+              "line": "• 有界：$|a_n|\\le M$；遞增的第一項是下界，遞減的第一項是上界",
+              "on": "相減"
+            },
+            {
+              "do": "write",
+              "line": "• 判斷單調：差、比值（各項為正）、導數（借 $f$）",
+              "on": "以只"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂 ⇒ 有界；有界 ⇏ 收斂；無界 ⇒ 發散",
+              "on": "定有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：單調收斂定理"
+          ],
+          "say": "下一課，單調收斂定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：單調收斂定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["sequence"],
-    "fine": ["monotone-difference", "monotone-ratio", "monotone-derivative", "bounded-vs-convergent"]
+    "coarse": [
+      "sequence"
+    ],
+    "fine": [
+      "monotone-difference",
+      "monotone-ratio",
+      "monotone-derivative",
+      "bounded-vs-convergent"
+    ]
   },
   "practice": [
-    { "id": "lec-11-q3b", "core": true, "trains": "monotone-difference", "note": "用 $a_{n+1}^2-a_n^2$ 的正負判斷遞增；平方的差比根號的差好處理。" },
-    { "id": "cg-6a-004", "core": true, "trains": "monotone-difference" },
-    { "id": "cg-6a-006", "core": true, "trains": "monotone-ratio" },
-    { "id": "cg-6a-009", "core": true, "trains": "monotone-derivative" },
-    { "id": "cg-6a-010", "core": true, "trains": "bounded-vs-convergent" },
-    { "id": "lec-11-m5", "trains": "bounded-vs-convergent" },
-    { "id": "cg-6a-005", "trains": "monotone-difference" },
-    { "id": "cg-6a-007", "trains": "monotone-ratio" },
-    { "id": "cg-6a-011", "trains": "bounded-vs-convergent" },
-    { "id": "cg-6a-008", "challenge": true, "trains": "monotone-derivative", "note": "挑戰：導數只說 n ≥ 8 起遞減，但 e² 落在 7 與 8 之間，a₇ 和 a₈ 要直接比一次。" }
+    {
+      "id": "lec-11-q3b",
+      "core": true,
+      "trains": "monotone-difference",
+      "note": "用 $a_{n+1}^2-a_n^2$ 的正負判斷遞增；平方的差比根號的差好處理。"
+    },
+    {
+      "id": "cg-6a-004",
+      "core": true,
+      "trains": "monotone-difference"
+    },
+    {
+      "id": "cg-6a-006",
+      "core": true,
+      "trains": "monotone-ratio"
+    },
+    {
+      "id": "cg-6a-009",
+      "core": true,
+      "trains": "monotone-derivative"
+    },
+    {
+      "id": "cg-6a-010",
+      "core": true,
+      "trains": "bounded-vs-convergent"
+    },
+    {
+      "id": "lec-11-m5",
+      "trains": "bounded-vs-convergent"
+    },
+    {
+      "id": "cg-6a-005",
+      "trains": "monotone-difference"
+    },
+    {
+      "id": "cg-6a-007",
+      "trains": "monotone-ratio"
+    },
+    {
+      "id": "cg-6a-011",
+      "trains": "bounded-vs-convergent"
+    },
+    {
+      "id": "cg-6a-008",
+      "challenge": true,
+      "trains": "monotone-derivative",
+      "note": "挑戰：導數只說 n ≥ 8 起遞減，但 e² 落在 7 與 8 之間，a₇ 和 a₈ 要直接比一次。"
+    }
   ],
   "gaps": []
 }

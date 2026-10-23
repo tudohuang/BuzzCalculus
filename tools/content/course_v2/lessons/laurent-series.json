@@ -1,7 +1,8 @@
 {
   "id": "laurent-series",
   "title": "Laurent 級數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
   "prerequisites": [
     "complex-taylor",
@@ -16,238 +17,130 @@
     "contour-integral"
   ],
   "objectives": [
-    "說得出 Laurent 級數：在環形區域 $r<|z-z_0|<R$ 上全純的函數可以寫成 $\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n$。",
-    "用已知級數（$e^z$、$\\sin z$、幾何級數）算 Laurent 展開，讀出 $z^{-1}$ 的係數。",
-    "知道同一個函數在不同的環形區域有不同的 Laurent 展開，並會用 $\\frac{1}{1-w}$ 往兩個方向展。"
+    "說得出 Laurent 級數：在環形區域 $r<|z-z_0|<R$ 上全純的函數可以寫成 $\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n$，而且係數唯一",
+    "用已知級數（$e^z$、$\\sin z$、幾何級數）算 Laurent 展開，讀出 $z^{-1}$ 的係數",
+    "知道同一個函數在不同的環形區域有不同的 Laurent 展開，並會用 $\\frac{1}{1-w}$ 往兩個方向展"
   ],
-  "visual": "複平面上 1/(z(1 − z)) 的兩個奇異點 0 與 1。兩個以 0 為圓心的環：0 < |z| < 1 與 |z| > 1，各自上色，旁邊顯示該環上的 Laurent 展開前幾項。把滑鼠移到不同的環，展開式隨之切換。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 允許負次方",
       "body": [
-        "Taylor 級數只有非負次方，所以只能描述在 $z_0$ 全純的函數。$\\frac{e^z}{z^3}$ 在 $0$ 不全純，但把 $e^z$ 展開再除以 $z^3$：$\\frac{e^z}{z^3}=z^{-3}+z^{-2}+\\frac{z^{-1}}{2}+\\frac{1}{6}+\\frac{z}{24}+\\cdots$。多了負次方，就能描述奇異點附近的行為。",
-        "一般定理：$f$ 在環形區域 $r<|z-z_0|<R$ 全純（$r$ 可以是 $0$、$R$ 可以是 $\\infty$），則 $f$ 在這個環上可以唯一地寫成雙向無窮級數 $\\sum a_n(z-z_0)^n$。負次方的部分叫主要部分。"
+        "$\\dfrac{e^z}{z^3}$ 在 $0$ 沒有定義：沒有 Taylor 級數",
+        "但把 $e^z$ 的級數除以 $z^3$：",
+        "對所有 $z\\ne0$ 成立：$0<|z|<\\infty$",
+        "一般的樣子：在環形區域 $r<|z-z_0|<R$",
+        "$r$ 可以是 $0$（只挖掉 $z_0$ 一點），$R$ 可以是 $\\infty$"
       ],
       "tex": [
-        "f(z)=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n=\\underbrace{\\cdots+\\frac{a_{-2}}{(z-z_0)^2}+\\frac{a_{-1}}{z-z_0}}_{\\text{主要部分}}+a_0+a_1(z-z_0)+\\cdots"
-      ],
-      "collapsible": false
+        "\\frac{e^z}{z^3}=\\frac1{z^3}+\\frac1{z^2}+\\frac{1}{2z}+\\frac16+\\frac{z}{24}+\\cdots",
+        "f(z)=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n"
+      ]
+    },
+    {
+      "heading": "① 定理與兩個部分",
+      "body": [
+        "定理：$f$ 在 $r<|z-z_0|<R$ 全純 ⇒ 有 Laurent 展開，而且係數唯一",
+        "負次方那一段叫主要部分：$\\displaystyle\\sum_{n\\ge1}\\frac{a_{-n}}{(z-z_0)^n}$",
+        "非負次方那一段：在 $|z-z_0|<R$ 上全純",
+        "注意：$a_n$ 不是 $\\dfrac{f^{(n)}(z_0)}{n!}$"
+      ]
     },
     {
       "heading": "② 最重要的係數：$a_{-1}$",
       "body": [
-        "對以 $z_0$ 為圓心、落在環內的圓逐項積分，由〈圍道積分〉的 $\\oint(z-z_0)^n\\,dz$ 只有 $n=-1$ 時是 $2\\pi i$，得到 $\\oint f\\,dz=2\\pi i\\,a_{-1}$。整個級數只有 $a_{-1}$ 活下來。下一課開始，這個係數叫留數。"
+        "關鍵積分：圓 $|z-z_0|=\\rho$ 逆時針，$k$ 是整數",
+        "證明：$z=z_0+\\rho e^{i\\theta}$，$dz=i\\rho e^{i\\theta}d\\theta$",
+        "• $k=-1$：被積函數是 $1$，得 $i\\cdot2\\pi=2\\pi i$",
+        "• $k\\ne-1$：$e^{i(k+1)\\theta}$ 繞整數圈，積分 $=0$",
+        "$\\int_0^{2\\pi}e^{im\\theta}d\\theta=\\Big[\\frac{e^{im\\theta}}{im}\\Big]_0^{2\\pi}=0$（$m\\ne0$）",
+        "跟 $\\rho$ 無關！"
       ],
-      "collapsible": false
+      "tex": [
+        "\\oint(z-z_0)^k\\,dz=\\begin{cases}2\\pi i,&k=-1\\\\0,&k\\ne-1\\end{cases}",
+        "\\oint=\\int_0^{2\\pi}\\rho^ke^{ik\\theta}\\cdot i\\rho e^{i\\theta}\\,d\\theta=i\\rho^{k+1}\\int_0^{2\\pi}e^{i(k+1)\\theta}d\\theta"
+      ]
     },
     {
-      "heading": "③ 同一個函數，不同的環，不同的展開",
+      "heading": "② 逐項積分",
       "body": [
-        "$\\frac{1}{z(1-z)}=\\frac{1}{z}+\\frac{1}{1-z}$。",
-        "在 $0<|z|<1$：$|z|<1$，$\\frac{1}{1-z}=1+z+z^2+\\cdots$，所以 $f=\\frac{1}{z}+1+z+z^2+\\cdots$。",
-        "在 $|z|>1$：要讓幾何級數的公比小於 $1$，改寫 $\\frac{1}{1-z}=-\\frac{1}{z}\\cdot\\frac{1}{1-1/z}=-\\frac{1}{z}-\\frac{1}{z^2}-\\cdots$。於是 $f=-\\frac{1}{z^2}-\\frac{1}{z^3}-\\cdots$。",
-        "兩個展開都對，只是各自在自己的環上成立。展開之前一定要先說在哪個環。"
+        "Laurent 級數在環裡的圓上均勻收斂，可以逐項積：",
+        "均勻收斂：跟上一課一樣，用幾何級數的尾巴控制",
+        "繞一圈之後，只有 $a_{-1}$ 留下來：下下課叫它「留數」",
+        "例：$\\dfrac{\\sin z}{z^4}$",
+        "$a_{-1}=-\\dfrac16$，所以",
+        "數值積分驗算：$\\approx-1.0472\\,i$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\oint_{|z-z_0|=\\rho}f(z)\\,dz&=\\sum_n a_n\\oint(z-z_0)^n dz\\\\&=2\\pi i\\,a_{-1}\\end{aligned}",
+        "=\\frac{1}{z^4}\\Big(z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots\\Big)=\\frac1{z^3}-\\frac{1}{6z}+\\frac{z}{120}-\\cdots",
+        "\\oint_{|z|=1}\\frac{\\sin z}{z^4}\\,dz=2\\pi i\\cdot\\Big(-\\frac16\\Big)=-\\frac{\\pi i}{3}"
+      ]
     },
     {
-      "heading": "係數公式",
+      "heading": "③ 不同的環，不同的展開",
       "body": [
-        "$a_n=\\frac{1}{2\\pi i}\\oint\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$（任何落在環內、繞 $z_0$ 一圈的正向圓）。證明跟〈複數上的 Taylor 級數〉一樣：在環的外圓與內圓上各用一次 Cauchy 公式，外圓那一項展成正次方、內圓那一項展成負次方。實際計算幾乎都用已知級數代換，不用這個公式。"
+        "$f(z)=\\dfrac1{z(1-z)}$：壞點在 $0$ 和 $1$，切出兩個環",
+        "部分分式：$\\dfrac1{z(1-z)}=\\dfrac1z+\\dfrac1{1-z}$",
+        "環 $0<|z|<1$：$|z|<1$，直接用幾何級數"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "允許負次方",
-      "beats": [
-        { "show": ["Taylor：只有非負次方"],
-          "note": "只能描述在 $z_0$ 全純的函數。",
-          "say": "Taylor 級數只有非負次方，所以只能描述在中心全純的函數。",
-          "board": [
-            {"do":"write","line":"Taylor：$\\sum_{n\\ge0}a_n(z-z_0)^n$"}
-          ] },
-        { "show": ["$\\frac{e^z}{z^3}=z^{-3}+z^{-2}+\\frac{z^{-1}}{2}+\\frac{1}{6}+\\cdots$"],
-          "note": "把 $e^z$ 展開，再除以 $z^3$。",
-          "say": "e 的 z 次方除以 z 三次方，在零不全純。可是把 e 的 z 次方展開再除，就多出負次方。",
-          "board": [
-            {"do":"write","line":"$\\frac{e^z}{z^3}={{n:z^{-3}+z^{-2}+\\frac{z^{-1}}{2}}}+\\cdots$"},
-            {"do":"underline","term":"n","label":"負次方","on":"負次方"}
-          ] },
-        { "show": ["$r<|z-z_0|<R$ 上：$f=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n$"],
-          "note": "在環上唯一。",
-          "say": "一般地，f 在一個環形區域全純，就能唯一地寫成正負兩個方向都無窮的級數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r<|z-z_0|<R$ 上全純","on":"環形區域"},
-            {"do":"write","line":"$f=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n$","on":"唯一地"}
-          ] },
-        { "show": ["係數被 $f$ 決定，所以只有一種"],
-          "note": "同乘一個負次方再積分，只剩一項。",
-          "say": "為什麼只有一種？兩邊同乘 z 減 z 零的負 n 加一次方再積分，只剩 a n 活下來，係數就被 f 決定。",
-          "board": [
-            {"do":"write","line":"$a_n=\\frac{1}{2\\pi i}\\oint\\frac{f}{(z-z_0)^{n+1}}\\,dz$"}
-          ] },
-        { "show": ["負次方的部分：主要部分"],
-          "say": "負次方那一半叫主要部分，它描述的正是奇異點附近的行為。",
-          "board": [
-            {"do":"write","line":"主要部分：${{p:\\sum_{n<0}a_n(z-z_0)^n}}$"},
-            {"do":"underline","term":"p","label":"奇異點附近","on":"奇異點附近"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\frac1{1-z}=1+z+z^2+\\cdots",
+        "f=\\frac1z+1+z+z^2+\\cdots"
+      ]
     },
     {
-      "title": "最重要的係數",
-      "beats": [
-        { "show": ["沿環內的圓逐項積分"],
-          "say": "沿著環裡繞中心一圈的圓，把整個級數逐項積分。",
-          "board": [
-            {"do":"write","line":"$\\oint f\\,dz=\\oint{{s:\\sum a_n(z-z_0)^n}}\\,dz$"},
-            {"do":"underline","term":"s","label":"逐項積分","on":"整個級數"}
-          ] },
-        { "show": ["$\\oint(z-z_0)^n\\,dz$：只有 $n=-1$ 是 $2\\pi i$"],
-          "say": "還記得嗎？z 減 z 零的 n 次方繞一圈，只有負一次方不是零，是二派 i。",
-          "board": [
-            {"do":"write","line":"$\\oint(z-z_0)^n\\,dz=0$（$n\\ne-1$）"},
-            {"do":"write","line":"$\\oint(z-z_0)^{-1}\\,dz=2\\pi i$","on":"只有負一次方"}
-          ] },
-        { "show": ["$\\oint f\\,dz=2\\pi i\\,a_{-1}$"],
-          "note": "下一課起，$a_{-1}$ 叫留數。",
-          "say": "所以整個級數只有負一次方的係數活下來。這個係數，下一課起叫做留數。",
-          "board": [
-            {"do":"write","line":"只有 ${{a:a_{-1}}}$ 活下來"},
-            {"do":"focus","term":"a","label":"稱為留數","on":"下一課起"}
-          ] }
+      "heading": "③ 外面的環：往另一個方向展",
+      "body": [
+        "環 $|z|>1$：$|z|>1$，幾何級數不能直接用",
+        "改用 $\\left|\\frac1z\\right|<1$：",
+        "同一個 $f$：內環 $a_{-1}=1$，外環 $a_{-1}=0$",
+        "對照：繞 $|z|=2$ 積分是 $2\\pi i\\cdot0=0$；繞 $|z|=\\frac12$ 是 $2\\pi i$（數值驗算一致）",
+        "口訣：$\\dfrac1{1-w}$，$|w|<1$ 展 $w$；$|w|>1$ 先提出 $-\\dfrac1w$ 再展 $\\dfrac1w$"
       ],
-      "check": 2
+      "tex": [
+        "\\frac1{1-z}=\\frac{-1}{z}\\cdot\\frac{1}{1-\\frac1z}=-\\frac1z-\\frac1{z^2}-\\frac1{z^3}-\\cdots",
+        "f=\\frac1z-\\frac1z-\\frac1{z^2}-\\cdots=-\\frac1{z^2}-\\frac1{z^3}-\\cdots"
+      ]
     },
     {
-      "title": "找 $a_{-1}$",
-      "beats": [
-        { "show": ["$\\frac{e^z}{z^3}$：$a_{-1}=\\frac{1}{2}$"],
-          "note": "$e^z$ 的 $z^2$ 項除以 $z^3$。",
-          "say": "剛才的例子，負一次方來自 e 的 z 次方的平方項，係數二分之一。次方要對準。",
-          "board": [
-            {"do":"write","line":"$\\frac{e^z}{z^3}$：${{p:\\frac{z^2}{2}}}\\div z^3=\\frac{z^{-1}}{2}$"},
-            {"do":"underline","term":"p","on":"平方項"}
-          ] },
-        { "show": ["圓上均勻收斂，所以可逐項積分"],
-          "note": "正負兩半各自都成立。",
-          "say": "那個圓落在環內，是封閉有界的，級數在圓上均勻收斂，所以可以一項一項積。正負兩半都一樣。",
-          "board": [
-            {"do":"write","line":"圓在環內 ，級數在圓上均勻收斂"},
-            {"do":"write","line":"所以可以逐項積分","on":"一項一項積"}
-          ] },
-        { "show": ["$\\frac{\\sin z}{z^4}$"],
-          "note": "$\\sin z=z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots$",
-          "say": "換 sine z 除以 z 四次方。先寫出 sine 的級數，只有奇次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{\\sin z}{z^4}$","on":"sine z"},
-            {"do":"write","line":"$\\sin z=z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots$","on":"級數"}
-          ] },
-        { "show": ["除以 $z^4$：$z^{-3}-\\frac{z^{-1}}{6}+\\frac{z}{120}-\\cdots$"],
-          "say": "每一項次方減四：z 變成負三次方，z 三次方變成負一次方。",
-          "board": [
-            {"do":"write","line":"$z\\to z^{-3}$"},
-            {"do":"write","line":"$z^3\\to{{k:z^{-1}}}$","on":"z 三次方"},
-            {"do":"focus","term":"k","on":"負一次方"}
-          ] }
+      "heading": "④ 係數公式與為什麼",
+      "body": [
+        "對環裡任何一個圓 $|z-z_0|=\\rho$（$r<\\rho<R$）：",
+        "唯一性：把級數乘 $(z-z_0)^{-n-1}$ 逐項積",
+        "只有 $k=n$ 那一項變成 $(z-z_0)^{-1}$，積出 $2\\pi i\\,a_n$：係數被 $f$ 決定了",
+        "所以剛才用已知級數湊出來的，就是 Laurent 級數",
+        "存在：環上的 Cauchy 公式（$\\rho_1<|z-z_0|<\\rho_2$）",
+        "由 11.43 Cauchy 定理（環形區域的版本）推得",
+        "外圓：$|w-z_0|>|z-z_0|$，照上一課展成正次方"
       ],
-      "key": "先展開 $\\sin z$，再整項除以 $z^4$",
-      "predict": {
-        "ask": "$\\frac{\\sin z}{z^4}$ 的 $a_{-1}$ 是？",
-        "options": [
-          {
-            "label": "$-\\frac{1}{6}$",
-            "correct": true
-          },
-          {
-            "label": "$0$",
-            "why": "$0$ 是 $z^{-2}$ 的係數（$\\sin$ 沒有偶次方）；$z^{-1}$ 來自 $-\\frac{z^3}{6}$。"
-          },
-          {
-            "label": "$\\frac{1}{120}$",
-            "why": "$\\frac{z^5}{120}$ 除以 $z^4$ 是 $z^1$ 項；$z^{-1}$ 來自 $z^3$ 項。"
-          }
-        ]
-      }
+      "tex": [
+        "a_n=\\frac{1}{2\\pi i}\\oint_{|z-z_0|=\\rho}\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz",
+        "f(z)=\\frac1{2\\pi i}\\oint_{\\rho_2}\\frac{f(w)\\,dw}{w-z}-\\frac1{2\\pi i}\\oint_{\\rho_1}\\frac{f(w)\\,dw}{w-z}"
+      ]
     },
     {
-      "title": "不同的環",
-      "beats": [
-        { "show": ["$\\frac{1}{z(1-z)}=\\frac{1}{z}+\\frac{1}{1-z}$"],
-          "note": "奇異點 $0$ 與 $1$。",
-          "say": "這個函數有兩個奇異點，零和一。以零為中心，有兩個環：一以內，和一以外。",
-          "board": [
-            {"do":"write","line":"$\\dfrac{1}{z(1-z)}=\\dfrac{1}{z}+\\dfrac{1}{1-z}$"},
-            {"do":"plot","graph":{"window":[-2.4,2.4,-1.35,1.35],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted","dashed":true}],"fills":[{"polar":{"r":"1","t":[0,6.2832]},"color":"blue"}],"points":[{"x":0,"y":0,"open":true},{"x":1,"y":0,"open":true}],"labels":[{"x":0,"y":-0.3,"text":"0","anchor":"middle"},{"x":1.12,"y":-0.3,"text":"1","anchor":"start"}],"ticks":false},"on":"以零為中心"}
-          ] },
-        { "show": ["藍色圓盤挖掉中心 $0$ 是第一個環"],
-          "note": "圓外是第二個環。",
-          "say": "藍色圓盤挖掉中心零，就是第一個環；圓外是第二個環。",
-          "board": [
-            {"do":"write","line":"藍色：$0<|z|<1$"},
-            {"do":"write","line":"圓外：$|z|>1$","on":"圓外"}
-          ] },
-        { "show": ["空心點標出奇異點 $0$ 與 $1$"],
-          "say": "兩個空心點是奇異點：零在圓心，一正好在圓上。環不能包含它們。",
-          "board": [
-            {"do":"write","line":"空心點：$0$ 在圓心，$1$ 在圓上"}
-          ] },
-        { "show": ["$0<|z|<1$：$\\frac{1}{z}+1+z+z^2+\\cdots$"],
-          "say": "在一以內，z 的絕對值小於一，一減 z 分之一直接展成幾何級數。",
-          "board": [
-            {"do":"write","line":"$0<|z|<1$：$\\frac{1}{z}+{{g:1+z+z^2+\\cdots}}$","on":"在一以內"},
-            {"do":"underline","term":"g","label":"幾何級數","on":"幾何級數"}
-          ] },
-        { "show": ["$|z|>1$：$\\frac{1}{1-z}=-\\frac{1}{z}\\cdot\\frac{1}{1-1/z}$"],
-          "note": "公比改成 $\\frac{1}{z}$。",
-          "say": "在一以外，公比 z 太大會發散，要改寫成公比 z 分之一，前面提出負 z 分之一。",
-          "board": [
-            {"do":"transform","line":"$|z|>1$：$\\frac{1}{1-z}=-\\frac{1}{z}\\cdot\\dfrac{1}{1-{{q:1/z}}}$","on":"在一以外"},
-            {"do":"focus","term":"q","label":"公比","on":"公比 z 分之一"}
-          ] }
+      "heading": "④ 存在（續）：內圓給負次方",
+      "body": [
+        "內圓：$|w-z_0|<|z-z_0|$，反過來展：",
+        "代回去：負號抵銷，得到 $\\displaystyle\\sum_{m\\ge0}b_m(z-z_0)^{-m-1}$：負次方",
+        "尾巴的估計跟上一課一樣（幾何級數 + ML 不等式）　$\\blacksquare$",
+        "就是剛才的口訣：比值小於 1 的那個方向展"
       ],
-      "key": "$|z|>1$ 時提出 $-\\frac1z$，對 $\\frac1z$ 展開",
-      "check": 1
+      "tex": [
+        "\\frac{1}{w-z}=-\\frac{1}{z-z_0}\\cdot\\frac{1}{1-\\frac{w-z_0}{z-z_0}}=-\\sum_{m\\ge0}\\frac{(w-z_0)^m}{(z-z_0)^{m+1}}"
+      ]
     },
     {
-      "title": "先說在哪個環",
-      "beats": [
-        { "show": ["$|z|>1$：$f=-\\frac{1}{z^2}-\\frac{1}{z^3}-\\cdots$"],
-          "note": "$\\frac{1}{z}$ 與 $-\\frac{1}{z}$ 抵銷。",
-          "say": "加回 z 分之一，正好跟負 z 分之一抵銷，剩下從負二次方開始。",
-          "board": [
-            {"do":"write","line":"$|z|>1$：$f={{c:\\frac{1}{z}-\\frac{1}{z}}}-\\frac{1}{z^2}-\\cdots$"},
-            {"do":"strike","term":"c","label":"抵銷","on":"抵銷"},
-            {"do":"transform","line":"$f=-\\frac{1}{z^2}-\\frac{1}{z^3}-\\cdots$","on":"剩下"}
-          ] },
-        { "show": ["$z=3$：$-\\left(\\frac{1}{9}+\\frac{1}{27}+\\cdots\\right)=-\\frac{1}{6}$"],
-          "say": "代 z 等於三檢查：九分之一加二十七分之一一路加，取負號是負六分之一，對得上。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z=3$","on":"代 z"},
-            {"do":"write","line":"$-\\left(\\frac{1}{9}+\\frac{1}{27}+\\cdots\\right)={{r:-\\frac{1}{6}}}$","on":"九分之一"},
-            {"do":"box","term":"r","color":"green","on":"負六分之一"}
-          ] },
-        { "show": ["實數線上：只取前兩項就很貼近"],
-          "note": "藍：原函數；紅：前兩項。",
-          "say": "在實數線上看一看，藍色是原函數，紅色只取前兩項。x 大於一時，兩條線幾乎貼在一起。",
-          "board": [
-            {"do":"plot","graph":{"window":[1,4,-4,0.5],"curves":[{"expr":"1/(x*(1-x))","domain":[1.3,4],"color":"blue"},{"expr":"-1/(x^2)-1/(x^3)","domain":[1.3,4],"color":"red"}]}}
-          ] },
-        { "show": ["兩個展開都對"],
-          "note": "各自在自己的環上成立。",
-          "say": "兩個展開都對，只是各自在自己的環上成立。所以展開之前，一定先說在哪個環。",
-          "board": [
-            {"do":"write","line":"兩個展開：各自在自己的環"},
-            {"do":"write","line":"展開前，先說在哪個環","color":"green","on":"一定先說"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• 環形區域上全純 ⇒ $\\sum_{-\\infty}^{\\infty}a_n(z-z_0)^n$，係數唯一",
+        "• 負次方的部分叫主要部分",
+        "• $\\oint(z-z_0)^kdz$ 只有 $k=-1$ 不是 $0$ ⇒ $\\oint f=2\\pi i\\,a_{-1}$",
+        "• 算法：已知級數除以 $z^m$；有理函數用部分分式 + 幾何級數",
+        "• 不同的環，不同的展開：往比值 $<1$ 的方向展",
+        "下一課：用主要部分把奇異點分類"
+      ]
     }
   ],
   "workedExamples": [
@@ -295,70 +188,758 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{e^z}{z^2}$ 在 $0$ 附近的 Laurent 級數中，$z^{-1}$ 的係數是？",
+      "ask": "$\\dfrac{e^z}{z^3}$ 的 Laurent 級數裡，$z^{-1}$ 的係數是？",
       "options": [
+        {
+          "label": "$\\dfrac12$",
+          "correct": true
+        },
         {
           "label": "$1$",
-          "correct": true
+          "why": "那是 $z^{-3}$、$z^{-2}$ 的係數；$z^{-1}$ 來自 $z^2$ 項"
         },
         {
-          "label": "$\\frac{1}{2}$",
-          "why": "$e^z$ 的 $z^1$ 項係數 $1$，除以 $z^2$ 變成 $z^{-1}$；$\\frac{1}{2}$ 是 $z^2$ 項，除完變常數。"
-        },
-        {
-          "label": "$0$",
-          "why": "$e^z$ 有 $z^1$ 項，除以 $z^2$ 後正好落在 $z^{-1}$。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\frac{1}{1-z}$ 在 $|z|>1$ 的展開是？",
-      "options": [
-        {
-          "label": "$-\\frac{1}{z}-\\frac{1}{z^2}-\\frac{1}{z^3}-\\cdots$",
-          "correct": true
-        },
-        {
-          "label": "$1+z+z^2+\\cdots$",
-          "why": "那只在 $|z|<1$ 收斂；$|z|>1$ 時公比 $z$ 的絕對值大於 $1$，發散。"
-        },
-        {
-          "label": "$\\frac{1}{z}+\\frac{1}{z^2}+\\cdots$",
-          "why": "改寫成 $\\frac{-1/z}{1-1/z}$ 時有一個負號。"
-        }
-      ]
-    },
-    {
-      "ask": "對一個落在環內、繞 $z_0$ 的正向圓，$\\oint f\\,dz$ 等於？",
-      "options": [
-        {
-          "label": "$2\\pi i\\,a_{-1}$",
-          "correct": true
-        },
-        {
-          "label": "$2\\pi i\\,a_0$",
-          "why": "$\\oint(z-z_0)^0\\,dz=0$；只有 $n=-1$ 的那一項積分不為 $0$。"
+          "label": "$\\dfrac16$",
+          "why": "那是 $\\frac{z^3}{3!}$ 除以 $z^3$，是常數項"
         },
         {
           "label": "$0$",
-          "why": "$f$ 在 $z_0$ 可能不全純，負一次方那一項會留下 $2\\pi i\\,a_{-1}$。"
+          "why": "$e^z$ 有 $z^2$ 項，除以 $z^3$ 會留下 $z^{-1}$"
         }
       ]
     },
     {
-      "ask": "為什麼同一個函數可以有不同的 Laurent 級數？",
+      "ask": "$\\dfrac1{z-2}$ 在 $|z|>2$ 的 Laurent 級數，第一項是？",
       "options": [
         {
-          "label": "不同的環形區域上展開不同；每個環上的展開是唯一的",
+          "label": "$\\dfrac1z$",
           "correct": true
         },
         {
-          "label": "因為 Laurent 級數不唯一，怎麼展都可以",
-          "why": "在同一個環上展開是唯一的；不同的是環。"
+          "label": "$-\\dfrac12$",
+          "why": "那是 $|z|<2$ 的展開 $-\\frac12\\cdot\\frac1{1-z/2}$ 的第一項"
         },
         {
-          "label": "因為計算方法不同（代換或微分）",
-          "why": "方法不同，在同一個環上的答案一定相同。"
+          "label": "$-\\dfrac1z$",
+          "why": "這裡是 $z-2$ 不是 $2-z$，提出 $\\frac1z$ 不帶負號"
+        },
+        {
+          "label": "$\\dfrac2z$",
+          "why": "$2$ 跑到下一項 $\\frac{2}{z^2}$；第一項的係數是 $1$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "允許負次方",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{e^z}{z^3}$ 在 $0$ 沒有定義：沒有 Taylor 級數"
+          ],
+          "say": "上一課的泰勒級數，要求整個圓盤都全純。可是 z 三次方分之 e 的 z 次方，在 0 根本沒有定義，沒有泰勒級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{e^z}{z^3}$ 在 $0$ 沒有定義：沒有 Taylor 級數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但把 $e^z$ 的級數除以 $z^3$：",
+            "$\\frac{e^z}{z^3}=\\frac1{z^3}+\\frac1{z^2}+\\frac{1}{2z}+\\frac16+\\frac{z}{24}+\\cdots$"
+          ],
+          "say": "但是把 e 的 z 次方的級數，每一項除以 z 三次方，就得到一個級數：前面三項是負次方，後面是正次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但把 $e^z$ 的級數除以 $z^3$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{e^z}{z^3}=\\frac1{z^3}+\\frac1{z^2}+\\frac{1}{2z}+\\frac16+\\frac{z}{24}+\\cdots}}$",
+              "on": "一項"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "前面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對所有 $z\\ne0$ 成立：$0<|z|<\\infty$"
+          ],
+          "say": "它對所有不等於 0 的 z 都成立。允許負次方，就能處理中間有洞的情況。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對所有 $z\\ne0$ 成立：$0<|z|<\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的樣子：在環形區域 $r<|z-z_0|<R$",
+            "$f(z)=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n$"
+          ],
+          "say": "一般的樣子：在一個環形區域上，f 寫成從負無限大到正無限大的冪次總和。這叫洛朗級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的樣子：在環形區域 $r<|z-z_0|<R$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f(z)=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n}}$",
+              "on": "寫成"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "環形區域就是兩個同心圓中間的部分。內圓裡面可以有壞點，例如圖上的紅叉。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"la_ring\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11ila_ring\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11ila_ringink\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11ila_ringblue\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11ila_ringred\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11ila_ringgreen\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11ila_ringpencil\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><path d=\"M452.4 165 A142.4 142.4 0 1 0 167.6 165 A142.4 142.4 0 1 0 452.4 165 Z M368 165 A58 58 0 1 0 252 165 A58 58 0 1 0 368 165 Z\" fill=\"var(--blue)\" fill-opacity=\"0.1\" fill-rule=\"evenodd\" stroke=\"none\"/><circle cx=\"310\" cy=\"165\" r=\"58\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"7 5\" fill=\"none\"/><circle cx=\"310\" cy=\"165\" r=\"142.4\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"7 5\" fill=\"none\"/><circle cx=\"310\" cy=\"165\" r=\"5\" fill=\"var(--ink)\"/><text x=\"310\" y=\"191\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan font-size='15' dy='5'>0</tspan></tspan></text><path d=\"M310 165 L267.2 125.8\" stroke=\"var(--red)\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><text x=\"274.7\" y=\"131.2\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</tspan></text><path d=\"M310 165 L435 96.7\" stroke=\"var(--blue)\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><text x=\"394.4\" y=\"152.2\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">R</tspan></text><text x=\"104.2\" y=\"70\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit;font-style:normal\"><tspan style=\"font-family:inherit;font-style:normal\">環形區域</tspan></text><text x=\"104.2\" y=\"265.2\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit;font-style:normal\"><tspan style=\"font-family:inherit;font-style:normal\">中間可以有洞</tspan></text><path d=\"M315.7 177 L329.7 191 M315.7 191 L329.7 177\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　$r$ 可以是 $0$（只挖掉 $z_0$ 一點），$R$ 可以是 $\\infty$",
+              "color": "violet",
+              "on": "內圓"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理與兩個部分",
+      "beats": [
+        {
+          "show": [
+            "定理：$f$ 在 $r<|z-z_0|<R$ 全純 ⇒ 有 Laurent 展開，而且係數唯一"
+          ],
+          "say": "定理：f 在環形區域上全純，就一定有洛朗展開，而且係數是唯一的。證明在最後一節。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f$ 在 $r<|z-z_0|<R$ 全純 ⇒ 有 Laurent 展開，而且係數唯一",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "負次方那一段叫主要部分：$\\displaystyle\\sum_{n\\ge1}\\frac{a_{-n}}{(z-z_0)^n}$"
+          ],
+          "say": "負次方那一段叫主要部分，它描述 f 在洞附近怎麼壞掉。下一課就靠它分類奇異點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "負次方那一段叫主要部分：$\\displaystyle\\sum_{n\\ge1}\\frac{a_{-n}}{(z-z_0)^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "非負次方那一段：在 $|z-z_0|<R$ 上全純"
+          ],
+          "say": "剩下的非負次方，是一個普通的冪級數，在整個圓盤上都沒問題。",
+          "board": [
+            {
+              "do": "write",
+              "line": "非負次方那一段：在 $|z-z_0|<R$ 上全純"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意：$a_n$ 不是 $\\dfrac{f^{(n)}(z_0)}{n!}$"
+          ],
+          "say": "要注意，係數不再是 n 階導數除以 n 階乘，因為 f 在 z 零根本沒有定義。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意：$a_n$ 不是 $\\dfrac{f^{(n)}(z_0)}{n!}$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "最重要的係數：$a_{-1}$",
+      "beats": [
+        {
+          "show": [
+            "關鍵積分：圓 $|z-z_0|=\\rho$ 逆時針，$k$ 是整數",
+            "$\\oint(z-z_0)^k\\,dz=\\begin{cases}2\\pi i,&k=-1\\\\0,&k\\ne-1\\end{cases}$"
+          ],
+          "say": "為什麼 z 的負一次方特別？看這個積分：在圓上積 z 減 z 零的 k 次方。只有 k 等於負 1 時是 2 派 i，其他全部是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵積分：圓 $|z-z_0|=\\rho$ 逆時針，$k$ 是整數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\oint(z-z_0)^k\\,dz={\\begin{cases}2\\pi i,&k=-1\\\\0,&k\\ne-1\\end{cases}}}}$",
+              "on": "上積"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$z=z_0+\\rho e^{i\\theta}$，$dz=i\\rho e^{i\\theta}d\\theta$",
+            "$\\oint=\\int_0^{2\\pi}\\rho^ke^{ik\\theta}\\cdot i\\rho e^{i\\theta}\\,d\\theta=i\\rho^{k+1}\\int_0^{2\\pi}e^{i(k+1)\\theta}d\\theta$"
+          ],
+          "say": "證明：把圓參數化，z 等於 z 零加 肉 e 的 i 西塔次方。代進去，整理成 e 的 i 乘 k 加 1 乘西塔次方的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$z=z_0+\\rho e^{i\\theta}$，$dz=i\\rho e^{i\\theta}d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\oint=\\int_0^{2\\pi}\\rho^ke^{ik\\theta}\\cdot i\\rho e^{i\\theta}\\,d\\theta=i\\rho^{k+1}\\int_0^{2\\pi}e^{i(k+1)\\theta}d\\theta$",
+              "on": "代進"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $k=-1$：被積函數是 $1$，得 $i\\cdot2\\pi=2\\pi i$",
+            "• $k\\ne-1$：$e^{i(k+1)\\theta}$ 繞整數圈，積分 $=0$"
+          ],
+          "say": "k 等於負 1 時，指數是 0，被積函數是 1，得到 2 派 i。其他時候，它在單位圓上繞了整數圈，正負抵銷，積分是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $k=-1$：被積函數是 $1$，得 $i\\cdot2\\pi=2\\pi i$"
+            },
+            {
+              "do": "write",
+              "line": "• $k\\ne-1$：$e^{i(k+1)\\theta}$ 繞整數圈，積分 $=0$",
+              "on": "被積"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_0^{2\\pi}e^{im\\theta}d\\theta=\\Big[\\frac{e^{im\\theta}}{im}\\Big]_0^{2\\pi}=0$（$m\\ne0$）",
+              "color": "violet",
+              "on": "其他"
+            },
+            {
+              "do": "write",
+              "line": "跟 $\\rho$ 無關！",
+              "on": "了整"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "逐項積分",
+      "beats": [
+        {
+          "show": [
+            "Laurent 級數在環裡的圓上均勻收斂，可以逐項積：",
+            "$\\begin{aligned}\\oint_{|z-z_0|=\\rho}f(z)\\,dz&=\\sum_n a_n\\oint(z-z_0)^n dz\\\\&=2\\pi i\\,a_{-1}\\end{aligned}$"
+          ],
+          "say": "洛朗級數在環裡的每個圓上都均勻收斂，可以逐項積分。每一項都是 0，只剩負一次方那一項，貢獻 2 派 i 乘 a 負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Laurent 級數在環裡的圓上均勻收斂，可以逐項積："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}\\oint_{|z-z_0|=\\rho}f(z)\\,dz&=\\sum_n a_n\\oint(z-z_0)^n dz\\\\&=2\\pi i\\,a_{-1}\\end{aligned}}}}$",
+              "on": "收斂"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "只剩"
+            },
+            {
+              "do": "write",
+              "line": "　均勻收斂：跟上一課一樣，用幾何級數的尾巴控制",
+              "color": "violet",
+              "on": "1。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "繞一圈之後，只有 $a_{-1}$ 留下來：下下課叫它「留數」"
+          ],
+          "say": "繞一圈之後，所有係數都消失，只有 a 負 1 留下來。所以它有一個名字，叫留數，後面會專門講。",
+          "board": [
+            {
+              "do": "write",
+              "line": "繞一圈之後，只有 $a_{-1}$ 留下來：下下課叫它「留數」",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dfrac{\\sin z}{z^4}$",
+            "$=\\frac{1}{z^4}\\Big(z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots\\Big)=\\frac1{z^3}-\\frac{1}{6z}+\\frac{z}{120}-\\cdots$"
+          ],
+          "say": "例子：正弦 z 除以 z 的四次方。正弦的級數每一項除以 z 四次方，得到 z 三次方分之一，減 6z 分之一，加 120 分之 z。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\dfrac{\\sin z}{z^4}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{1}{z^4}\\Big(z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots\\Big)=\\frac1{z^3}-\\frac{1}{6z}+\\frac{z}{120}-\\cdots$",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_{-1}=-\\dfrac16$，所以",
+            "$\\oint_{|z|=1}\\frac{\\sin z}{z^4}\\,dz=2\\pi i\\cdot\\Big(-\\frac16\\Big)=-\\frac{\\pi i}{3}$"
+          ],
+          "say": "a 負 1 是負 6 分之一。所以繞單位圓積分，答案是 2 派 i 乘負 6 分之一，負 3 分之派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_{-1}=-\\dfrac16$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\oint_{|z|=1}\\frac{\\sin z}{z^4}\\,dz=2\\pi i\\cdot\\Big(-\\frac16\\Big)=-\\frac{\\pi i}{3}}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "乘負"
+            },
+            {
+              "do": "write",
+              "line": "　數值積分驗算：$\\approx-1.0472\\,i$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "不同的環，不同的展開",
+      "beats": [
+        {
+          "show": [
+            "$f(z)=\\dfrac1{z(1-z)}$：壞點在 $0$ 和 $1$，切出兩個環"
+          ],
+          "say": "同一個函數，在不同的環上，展開可以完全不一樣。看 z 乘 1 減 z 分之一，壞點在 0 和 1，以 0 為中心切出兩個環。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(z)=\\dfrac1{z(1-z)}$：壞點在 $0$ 和 $1$，切出兩個環"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "一個是 0 到 1 之間的環，挖掉圓心；另一個是 1 以外的整個區域。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"la_two\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11ila_two\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11ila_twoink\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11ila_twoblue\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11ila_twored\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11ila_twogreen\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11ila_twopencil\" viewBox=\"0 0 10 10\" refX=\"7\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><path d=\"M254 150 A93.3 93.3 0 1 0 67.3 150 A93.3 93.3 0 1 0 254 150 Z \" fill=\"var(--blue)\" fill-opacity=\"0.1\" fill-rule=\"evenodd\" stroke=\"none\"/><circle cx=\"160.7\" cy=\"150\" r=\"93.3\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"7 5\" fill=\"none\"/><circle cx=\"160.7\" cy=\"150\" r=\"93.3\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"7 5\"/><path d=\"M153.7 143 L167.7 157 M153.7 157 L167.7 143\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M247 143 L261 157 M247 157 L261 143\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><text x=\"160.7\" y=\"178\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">0</tspan></text><text x=\"266\" y=\"178\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">1</tspan></text><text x=\"160.7\" y=\"46.7\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">0&lt;|</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">|&lt;1</tspan></text><rect x=\"324\" y=\"10\" width=\"275.3\" height=\"280\" fill=\"var(--red)\" fill-opacity=\"0.1\" rx=\"6\"/><circle cx=\"459.3\" cy=\"150\" r=\"93.3\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-dasharray=\"7 5\"/><path d=\"M452.3 143 L466.3 157 M452.3 157 L466.3 143\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M545.7 143 L559.7 157 M545.7 157 L559.7 143\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><text x=\"459.3\" y=\"178\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">0</tspan></text><text x=\"566.7\" y=\"178\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">1</tspan></text><text x=\"459.3\" y=\"46.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif;font-style:normal\"><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">|</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">|&gt;1</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "部分分式：$\\dfrac1{z(1-z)}=\\dfrac1z+\\dfrac1{1-z}$"
+          ],
+          "say": "先用部分分式拆開：z 分之一，加 1 減 z 分之一。z 分之一已經是洛朗的樣子，只要處理第二項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "部分分式：$\\dfrac1{z(1-z)}=\\dfrac1z+\\dfrac1{1-z}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "環 $0<|z|<1$：$|z|<1$，直接用幾何級數",
+            "$\\frac1{1-z}=1+z+z^2+\\cdots$"
+          ],
+          "say": "在內環，z 的絕對值小於 1，直接用幾何級數。f 等於 z 分之一，加 1 加 z 加 z 平方，以此類推。這裡 a 負 1 是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "環 $0<|z|<1$：$|z|<1$，直接用幾何級數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{1-z}=1+z+z^2+\\cdots$",
+              "on": "接用"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle f=\\frac1z+1+z+z^2+\\cdots}}$",
+              "on": "平方"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "此類"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "外面的環：往另一個方向展",
+      "beats": [
+        {
+          "show": [
+            "環 $|z|>1$：$|z|>1$，幾何級數不能直接用"
+          ],
+          "say": "在外環，z 的絕對值大於 1，剛才的幾何級數發散，不能用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "環 $|z|>1$：$|z|>1$，幾何級數不能直接用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "改用 $\\left|\\frac1z\\right|<1$：",
+            "$\\frac1{1-z}=\\frac{-1}{z}\\cdot\\frac{1}{1-\\frac1z}=-\\frac1z-\\frac1{z^2}-\\frac1{z^3}-\\cdots$"
+          ],
+          "say": "改成用 z 分之一：先提出負 z 分之一，剩下 1 減 z 分之一分之一，這次 z 分之一的絕對值小於 1，可以用幾何級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "改用 $\\left|\\frac1z\\right|<1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{1-z}=\\frac{-1}{z}\\cdot\\frac{1}{1-\\frac1z}=-\\frac1z-\\frac1{z^2}-\\frac1{z^3}-\\cdots$",
+              "on": "之一#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f=\\frac1z-\\frac1z-\\frac1{z^2}-\\cdots=-\\frac1{z^2}-\\frac1{z^3}-\\cdots$"
+          ],
+          "say": "加上原來的 z 分之一，z 分之一剛好抵銷。外環的展開全是負次方，從負 2 次方開始，a 負 1 是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle f=\\frac1z-\\frac1z-\\frac1{z^2}-\\cdots=-\\frac1{z^2}-\\frac1{z^3}-\\cdots}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "開全"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同一個 $f$：內環 $a_{-1}=1$，外環 $a_{-1}=0$"
+          ],
+          "say": "同一個函數，內環的 a 負 1 是 1，外環是 0。所以談洛朗級數，一定要說清楚是哪一個環。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同一個 $f$：內環 $a_{-1}=1$，外環 $a_{-1}=0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　對照：繞 $|z|=2$ 積分是 $2\\pi i\\cdot0=0$；繞 $|z|=\\frac12$ 是 $2\\pi i$（數值驗算一致）",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "口訣：$\\dfrac1{1-w}$，$|w|<1$ 展 $w$；$|w|>1$ 先提出 $-\\dfrac1w$ 再展 $\\dfrac1w$"
+          ],
+          "say": "口訣：1 減 w 分之一，w 小的時候展 w 的次方；w 大的時候，先提出負 w 分之一，再展 w 分之一的次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "口訣：$\\dfrac1{1-w}$，$|w|<1$ 展 $w$；$|w|>1$ 先提出 $-\\dfrac1w$ 再展 $\\dfrac1w$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac1{z-2}$ 在 $|z|>2$ 的 Laurent 級數，第一項是？"
+          ],
+          "say": "先試一題：這次是 z 減 2 分之一，在 z 的絕對值大於 2 的地方。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "求 $\\dfrac1{z(1-z)}$ 在 $|z|>1$ 的 Laurent 級數"
+          ],
+          "say": "把外環的步驟排一排。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "求 $\\dfrac1{z(1-z)}$ 在 $|z|>1$ 的 Laurent 級數",
+        "steps": [
+          {
+            "label": "部分分式：$\\frac1z+\\frac1{1-z}$"
+          },
+          {
+            "label": "因為 $|z|>1$，把 $\\frac1{1-z}$ 寫成 $-\\frac1z\\cdot\\frac1{1-1/z}$",
+            "why": "先要有上一步：部分分式：$\\frac1z+\\frac1{1-z}$"
+          },
+          {
+            "label": "用幾何級數展開 $\\frac1{1-1/z}$",
+            "why": "先要有上一步：因為 $|z|>1$，把 $\\frac1{1-z}$ 寫成 $-\\frac1z\\cdot\\frac1{1-1/z}$"
+          },
+          {
+            "label": "合併同次項，讀出 $a_{-1}=0$",
+            "why": "先要有上一步：用幾何級數展開 $\\frac1{1-1/z}$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "係數公式與為什麼",
+      "beats": [
+        {
+          "show": [
+            "對環裡任何一個圓 $|z-z_0|=\\rho$（$r<\\rho<R$）：",
+            "$a_n=\\frac{1}{2\\pi i}\\oint_{|z-z_0|=\\rho}\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz$"
+          ],
+          "say": "係數公式：在環裡任取一個圓，a n 等於 2 派 i 分之一，乘上 f 除以 z 減 z 零的 n 加 1 次方的圍道積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對環裡任何一個圓 $|z-z_0|=\\rho$（$r<\\rho<R$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle a_n=\\frac{1}{2\\pi i}\\oint_{|z-z_0|=\\rho}\\frac{f(z)}{(z-z_0)^{n+1}}\\,dz}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "零的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "唯一性：把級數乘 $(z-z_0)^{-n-1}$ 逐項積"
+          ],
+          "say": "唯一性馬上可以證：如果 f 等於某個洛朗級數，乘上 z 減 z 零的負 n 減 1 次方，再逐項積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "唯一性：把級數乘 $(z-z_0)^{-n-1}$ 逐項積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有 $k=n$ 那一項變成 $(z-z_0)^{-1}$，積出 $2\\pi i\\,a_n$：係數被 $f$ 決定了"
+          ],
+          "say": "由關鍵積分，只有 k 等於 n 那一項變成負一次方，積出 2 派 i 乘 a n。所以係數完全由 f 決定，不管怎麼湊，答案唯一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只有 $k=n$ 那一項變成 $(z-z_0)^{-1}$，積出 $2\\pi i\\,a_n$：係數被 $f$ 決定了"
+            },
+            {
+              "do": "write",
+              "line": "　所以剛才用已知級數湊出來的，就是 Laurent 級數",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "存在：環上的 Cauchy 公式（$\\rho_1<|z-z_0|<\\rho_2$）",
+            "$f(z)=\\frac1{2\\pi i}\\oint_{\\rho_2}\\frac{f(w)\\,dw}{w-z}-\\frac1{2\\pi i}\\oint_{\\rho_1}\\frac{f(w)\\,dw}{w-z}$"
+          ],
+          "say": "存在性：在環上有柯西公式，f of z 是外圓的積分，減掉內圓的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "存在：環上的 Cauchy 公式（$\\rho_1<|z-z_0|<\\rho_2$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(z)=\\frac1{2\\pi i}\\oint_{\\rho_2}\\frac{f(w)\\,dw}{w-z}-\\frac1{2\\pi i}\\oint_{\\rho_1}\\frac{f(w)\\,dw}{w-z}$",
+              "on": "of"
+            },
+            {
+              "do": "write",
+              "line": "　由 11.43 Cauchy 定理（環形區域的版本）推得",
+              "color": "violet",
+              "on": "的積#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "外圓：$|w-z_0|>|z-z_0|$，照上一課展成正次方"
+          ],
+          "say": "外圓上，w 比 z 離圓心遠，跟上一課一樣展開，得到正次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "外圓：$|w-z_0|>|z-z_0|$，照上一課展成正次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "存在（續）：內圓給負次方",
+      "beats": [
+        {
+          "show": [
+            "內圓：$|w-z_0|<|z-z_0|$，反過來展：",
+            "$\\frac{1}{w-z}=-\\frac{1}{z-z_0}\\cdot\\frac{1}{1-\\frac{w-z_0}{z-z_0}}=-\\sum_{m\\ge0}\\frac{(w-z_0)^m}{(z-z_0)^{m+1}}$"
+          ],
+          "say": "內圓上，w 比 z 離圓心近，就反過來展：提出 z 減 z 零分之一，比值的絕對值小於 1，用幾何級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "內圓：$|w-z_0|<|z-z_0|$，反過來展："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{w-z}=-\\frac{1}{z-z_0}\\cdot\\frac{1}{1-\\frac{w-z_0}{z-z_0}}=-\\sum_{m\\ge0}\\frac{(w-z_0)^m}{(z-z_0)^{m+1}}$",
+              "on": "零分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回去：負號抵銷，得到 $\\displaystyle\\sum_{m\\ge0}b_m(z-z_0)^{-m-1}$：負次方"
+          ],
+          "say": "代回去，前面的負號抵銷，得到 z 減 z 零的負一次、負二次，一路下去，這就是負次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代回去：負號抵銷，得到 $\\displaystyle\\sum_{m\\ge0}b_m(z-z_0)^{-m-1}$：負次方",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "尾巴的估計跟上一課一樣（幾何級數 + ML 不等式）　$\\blacksquare$"
+          ],
+          "say": "尾巴的估計跟上一課一樣。兩部分合起來就是洛朗級數。其實就是剛才的口訣：往比值小於 1 的方向展。",
+          "board": [
+            {
+              "do": "write",
+              "line": "尾巴的估計跟上一課一樣（幾何級數 + ML 不等式）　$\\blacksquare$"
+            },
+            {
+              "do": "write",
+              "line": "就是剛才的口訣：比值小於 1 的那個方向展",
+              "on": "其實"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 環形區域上全純 ⇒ $\\sum_{-\\infty}^{\\infty}a_n(z-z_0)^n$，係數唯一",
+            "• 負次方的部分叫主要部分"
+          ],
+          "say": "整理一下：環上全純就有洛朗級數；繞一圈只有 a 負 1 留下來；算法是借用已知級數和幾何級數；不同的環，展開不同。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 環形區域上全純 ⇒ $\\sum_{-\\infty}^{\\infty}a_n(z-z_0)^n$，係數唯一"
+            },
+            {
+              "do": "write",
+              "line": "• 負次方的部分叫主要部分",
+              "on": "洛朗"
+            },
+            {
+              "do": "write",
+              "line": "• $\\oint(z-z_0)^kdz$ 只有 $k=-1$ 不是 $0$ ⇒ $\\oint f=2\\pi i\\,a_{-1}$",
+              "on": "留下"
+            },
+            {
+              "do": "write",
+              "line": "• 算法：已知級數除以 $z^m$；有理函數用部分分式 + 幾何級數",
+              "on": "是借"
+            },
+            {
+              "do": "write",
+              "line": "• 不同的環，不同的展開：往比值 $<1$ 的方向展",
+              "on": "不同#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：用主要部分把奇異點分類"
+          ],
+          "say": "下一課，用主要部分把奇異點分成三類。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：用主要部分把奇異點分類"
+            }
+          ]
         }
       ]
     }

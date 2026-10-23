@@ -479,20 +479,21 @@ id 定下來就不改；插課、移課只改 order。寫課時引用其他課�
 - 12.42 | sigma-algebra | σ-代數 |
 - 12.43 | measure | 測度 |
 - 12.44 | lebesgue-measure | Lebesgue 測度 |
-- 12.45 | null-sets | 零測集 |
-- 12.46 | almost-everywhere | 幾乎處處 |
-- 12.47 | measurable-functions | 可測函數 |
+- 12.45 | caratheodory-construction | 卡拉西奧多里構造 |
+- 12.46 | null-sets | 零測集 |
+- 12.47 | almost-everywhere | 幾乎處處 |
+- 12.48 | measurable-functions | 可測函數 |
 
 ### 12J Lebesgue 積分
-- 12.48 | simple-functions | 簡單函數 |
-- 12.49 | positive-measurable | 非負可測函數 |
-- 12.50 | lebesgue-integral | Lebesgue 積分 |
-- 12.51 | riemann-vs-lebesgue | Riemann 與 Lebesgue | 切 x 軸 vs 按函數值分類
+- 12.49 | simple-functions | 簡單函數 |
+- 12.50 | positive-measurable | 非負可測函數 |
+- 12.51 | lebesgue-integral | Lebesgue 積分 |
+- 12.52 | riemann-vs-lebesgue | Riemann 與 Lebesgue | 切 x 軸 vs 按函數值分類
 
 ### 12K 收斂定理
-- 12.52 | monotone-convergence-theorem | 單調收斂定理（測度版） |
-- 12.53 | fatou-lemma | Fatou 引理 |
-- 12.54 | dominated-convergence | 控制收斂定理 | 回到 lim ∫ fₙ =? ∫ lim fₙ
+- 12.53 | monotone-convergence-theorem | 單調收斂定理（測度版） |
+- 12.54 | fatou-lemma | Fatou 引理 |
+- 12.55 | dominated-convergence | 控制收斂定理 | 回到 lim ∫ fₙ =? ∫ lim fₙ
 
 ## Stage 13 微分幾何（Differential Geometry，支線，隱藏）
 

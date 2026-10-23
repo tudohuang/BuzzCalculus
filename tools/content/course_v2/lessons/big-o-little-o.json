@@ -1,64 +1,169 @@
 {
   "id": "big-o-little-o",
   "title": "Big-O 與 little-o",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["asymptotic-equivalence", "taylor-limits-higher", "taylor-error"],
-  "next": ["stirling"],
+  "prerequisites": [
+    "asymptotic-equivalence",
+    "taylor-limits-higher",
+    "taylor-error"
+  ],
+  "next": [
+    "stirling"
+  ],
   "related": [],
   "objectives": [
-    "分清楚 $f=o(g)$（比值 $\\to 0$）與 $f=O(g)$（被 $g$ 的常數倍控制），而且每次都說明 $x$ 往哪裡跑。",
+    "分清楚 $f=o(g)$（比值 $\\to 0$）與 $f=O(g)$（被 $g$ 的常數倍控制），而且每次都說明 $x$ 趨近哪裡",
     "會用 $o$、$O$ 的運算規則做展開的記帳：相加取低階、相乘次數相加、$o-o$ 不是 $0$。",
-    "會用「主項 $+$ 誤差項」的寫法算出 $n\\left(\\left(1+\\frac{1}{n}\\right)^n-e\\right)$ 這類極限。"
+    "會用「主項 $+$ 誤差項」的寫法算出 $n\\left(\\left(1+\\frac{1}{n}\\right)^n-e\\right)\\to-\\frac e2$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 為什麼需要記號：替「剩下的部分」記帳",
+      "heading": "① 為什麼需要記號",
       "body": [
-        "Taylor 展開寫「$\\sin x=x-\\frac{x^3}{6}+\\dots$」時，那個「$\\dots$」到底多小？相乘、相除、代進別的函數之後，它會不會長大到影響答案？$o$ 與 $O$ 就是用來精確回答這個問題的記號。"
+        "「剩下的」要說清楚兩件事：",
+        "• 在哪裡小：$x\\to0$？$x\\to\\infty$？",
+        "• 多小：只知道比 $x^3$ 小？還是不超過 $x^4$ 的幾倍？",
+        "兩個記號各回答一種：",
+        "• $o(g)$：比 $g$ 小得可以忽略",
+        "• $O(g)$：不超過 $g$ 的常數倍",
+        "讀法：little-o（小 o）、Big-O（大 O）",
+        "有了它們，每一步的誤差都能記帳，不會越算越模糊"
       ],
-      "collapsible": false
+      "tex": [
+        "e^x\\sin x=x+x^2+\\frac{x^3}{3}+\\text{（剩下的）}"
+      ]
     },
     {
-      "heading": "② 定義（$x\\to a$，$a$ 可以是數或 $\\pm\\infty$）",
+      "heading": "② 定義（$x\\to a$）",
       "body": [
-        "$f=o(g)$：$\\frac{f}{g}\\to 0$。讀作「$f$ 比 $g$ 小得多」。",
-        "$f=O(g)$：存在常數 $C$，使得在 $a$ 附近 $|f|\\le C|g|$。讀作「$f$ 最多跟 $g$ 一樣大（差一個常數倍）」。",
-        "跟上一課接起來：$f\\sim g$ 等於 $f=g+o(g)$。",
-        "方向一定要寫：$x\\to 0$ 時 $x^3=o(x^2)$（次方越高越小）；$x\\to\\infty$ 時反過來，$x^2=o(x^3)$。"
+        "$a$ 可以是一個數或 $\\pm\\infty$；$g\\ne0$ 在 $a$ 附近",
+        "$x\\to\\infty$ 的「鄰域」就是「$x>N$」",
+        "$o(g)$ ⇒ $O(g)$；$f\\sim g\\iff f-g=o(g)$",
+        "例：",
+        "• $x\\to0$：$x^3=o(x^2)$，$\\sin x=O(x)$，$1-\\cos x=O(x^2)$",
+        "• $x\\to\\infty$：$\\ln x=o(x)$，$3x^2+x=O(x^2)$",
+        "• $x\\to\\infty$：$x\\sin x=O(x)$，但不是 $o(x)$",
+        "一定要說 $x\\to$ 哪裡：$x\\to0$ 時 $x^2=o(x)$；$x\\to\\infty$ 時反過來 $x=o(x^2)$"
       ],
-      "collapsible": false
+      "tex": [
+        "f=o(g)\\iff\\lim_{x\\to a}\\frac{f(x)}{g(x)}=0",
+        "f=O(g)\\iff\\text{有 }C\\text{ 與 }a\\text{ 的鄰域，在其中 }|f|\\le C|g|"
+      ]
     },
     {
       "heading": "③ 等號只能從左讀到右",
       "body": [
-        "$o(x^2)$ 代表「某一個除以 $x^2$ 會 $\\to 0$ 的函數」，是一整類函數，不是一個數。所以 $x^3=o(x^2)$ 對，倒過來寫 $o(x^2)=x^3$ 沒有意義。兩個 $o(x^2)$ 也不一定是同一個函數：$o(x^2)-o(x^2)$ 還是 $o(x^2)$，不是 $0$。"
-      ],
-      "collapsible": false
+        "$x\\to0$：$x^2=o(x)$，$x^3=o(x)$",
+        "如果等號能倒過來讀：$x^2=o(x)=x^3$？",
+        "$o(g)$ 是一群函數；$f=o(g)$ 意思是 $f$ 屬於這一群",
+        "所以：",
+        "• $o(x^3)=o(x^2)$ 對（比 $x^3$ 小的都比 $x^2$ 小）",
+        "• $o(x^2)=o(x^3)$ 錯（例 $x^{5/2}$）",
+        "$\\frac{x^{5/2}}{x^2}=x^{1/2}\\to0$，但 $\\frac{x^{5/2}}{x^3}=x^{-1/2}\\to\\infty$（$x\\to0^+$）",
+        "$A+o(g)=B+o(g)$ 讀成：左邊那一群裡的每一個，都在右邊那一群"
+      ]
     },
     {
-      "heading": "④ 運算規則（$x\\to 0$，$m$、$n\\ge 0$）",
+      "heading": "④ 運算規則（$x\\to0$）",
       "body": [
-        "相加取低階：$o(x^m)+o(x^n)=o(x^{\\min(m,n)})$。常數倍不變：$c\\cdot o(x^n)=o(x^n)$。",
-        "相乘次數相加：$x^m\\cdot o(x^n)=o(x^{m+n})$，$o(x^m)\\cdot o(x^n)=o(x^{m+n})$。相除次數相減：$\\frac{o(x^n)}{x^m}=o(x^{n-m})$。",
-        "$O$ 的規則一模一樣。一個實用的對照：$o(x^n)$ 是「比 $x^n$ 小」，$O(x^{n+1})$ 是「最多跟 $x^{n+1}$ 一樣大」，後者是更精確的資訊。"
+        "$m$、$n\\ge0$：",
+        "證明（都只是極限定律）：",
+        "• 相加（$m\\le n$）：$\\dfrac{f+g}{x^m}=\\dfrac{f}{x^m}+\\dfrac{g}{x^n}\\cdot x^{n-m}\\to0$",
+        "• $o\\cdot O$：$\\left|\\dfrac{fg}{x^{m+n}}\\right|\\le\\left|\\dfrac{f}{x^m}\\right|\\cdot C\\to0$",
+        "• 吸收：$\\left|\\dfrac{f}{x^n}\\right|\\le C|x|^{m-n}\\to0$",
+        "$x^m\\cdot o(x^n)$ 是 $o\\cdot O$ 的特例（$x^m=O(x^m)$）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&o(x^m)+o(x^n)=o(x^{\\min(m,n)})\\\\&x^m\\cdot o(x^n)=o(x^{m+n})\\\\&o(x^m)\\cdot O(x^n)=o(x^{m+n})\\\\&m>n:\\ O(x^m)=o(x^n)\\end{aligned}",
+        "o(x^n)-o(x^n)=o(x^n)\\quad\\text{不是 }0"
+      ]
+    },
+    {
+      "heading": "④ 例：相乘時的記帳",
+      "body": [
+        "展開 $e^x\\sin x$ 到 $x^3$：$\\sin x$ 從 $x^1$ 開始 → $e^x$ 到 $x^2$",
+        "逐項記帳：",
+        "• $1\\cdot x+x\\cdot x+\\frac{x^2}2\\cdot x-\\frac{x^3}6=x+x^2+\\frac{x^3}{3}$",
+        "• $o(x^2)\\cdot x=o(x^3)$；$x^2\\cdot x^3$ 等五次項 $=o(x^3)$",
+        "• $1\\cdot o(x^3)$、$o(x^2)\\cdot o(x^3)$ 都是 $o(x^3)$",
+        "數值：$x=0.001$ 時 $\\approx0.333333$"
+      ],
+      "tex": [
+        "\\left(1+x+\\frac{x^2}2+o(x^2)\\right)\\left(x-\\frac{x^3}6+o(x^3)\\right)",
+        "e^x\\sin x=x+x^2+\\frac{x^3}3+o(x^3)",
+        "\\lim_{x\\to0}\\frac{e^x\\sin x-x-x^2}{x^3}=\\frac13"
+      ]
     },
     {
       "heading": "⑤ $x\\to\\infty$ 的成長階梯",
       "body": [
-        "對任何 $p>0$、$a>0$、$b>1$：$(\\ln x)^p=o(x^a)$，$x^a=o(b^x)$。也就是 對數 $\\ll$ 冪次 $\\ll$ 指數。這張表在比較判別、瑕積分、Stirling 公式裡會一直用到。"
+        "$a,b>0$，$c>1$，$x\\to\\infty$：",
+        "$f\\ll g$ 就是 $f=o(g)$；$x!$ 讀成整數 $n$ 的版本",
+        "證 $(\\ln x)^a=o(x^b)$：令 $x=e^t$",
+        "$\\frac{t}{e^{kt}}\\to0$（$k>0$）：L'Hôpital 一次得 $\\frac{1}{ke^{kt}}\\to0$",
+        "其他幾級：",
+        "• $\\dfrac{x^b}{c^x}$：L'Hôpital $\\lceil b\\rceil$ 次",
+        "• $\\dfrac{c^n}{n!}=\\dfrac{c}{1}\\cdots\\dfrac{c}{n}$：$k>2c$ 之後每個因子 $<\\frac12$",
+        "• $\\dfrac{n!}{n^n}=\\dfrac1n\\cdot\\dfrac2n\\cdots\\dfrac nn\\le\\dfrac1n$"
       ],
-      "collapsible": false
+      "tex": [
+        "(\\ln x)^a\\ll x^b\\ll c^x\\ll x!\\ll x^x",
+        "\\frac{(\\ln x)^a}{x^b}=\\frac{t^a}{e^{bt}}=\\left(\\frac{t}{e^{bt/a}}\\right)^a\\to0"
+      ]
     },
     {
-      "heading": "Peano 餘項與 Lagrange 餘項給的是哪一種",
+      "heading": "⑤ 主項與下一項",
       "body": [
-        "$f$ 在 $0$ 有 $n$ 階導數：$f(x)=T_n(x)+o(x^n)$（Peano）。若 $f^{(n+1)}$ 在 $0$ 附近有界，由 Lagrange 餘項 $\\frac{f^{(n+1)}(c)x^{n+1}}{(n+1)!}$ 得到更強的 $f(x)=T_n(x)+O(x^{n+1})$。〈Taylor 誤差〉裡的誤差上界，就是把 $O$ 裡的常數 $C$ 具體算出來。"
+        "$x\\to\\infty$：$f(x)=\\dfrac{x^3+\\ln x}{2x+\\sqrt x}$",
+        "$\\dfrac1{1+w}=1-w+O(w^2)$，$w=\\frac12x^{-1/2}\\to0$；$\\dfrac{\\ln x}{x^3}=o(x^{-1})$：",
+        "數值：$x=10^8$ 時 $\\frac{f-\\frac{x^2}2+\\frac{x^{3/2}}4}{x}\\approx0.125$，確實是 $O(x)$"
       ],
-      "collapsible": true
+      "tex": [
+        "f(x)=\\frac{x^2}{2}\\cdot\\frac{1+\\frac{\\ln x}{x^3}}{1+\\frac12x^{-1/2}}",
+        "f(x)=\\frac{x^2}2\\left(1-\\frac12x^{-1/2}+O(x^{-1})\\right)",
+        "f(x)=\\frac{x^2}{2}-\\frac{x^{3/2}}{4}+O(x)"
+      ]
+    },
+    {
+      "heading": "⑤ 經典：$n\\left(\\left(1+\\frac1n\\right)^n-e\\right)$",
+      "body": [
+        "先看指數：",
+        "$e^u=1+u+O(u^2)$，而 $u=-\\frac1{2n}+O(n^{-2})$ 時 $O(u^2)=O(n^{-2})$",
+        "數值：$n=10^5$ 時 $\\approx-1.35913$；與 $-\\frac e2$ 的差乘上 $n$ 約 $1.246$，確實是 $O(\\frac1n)$",
+        "比起「$\\to-\\frac e2$」，這裡多知道了收斂多快"
+      ],
+      "tex": [
+        "\\begin{aligned}n\\ln\\left(1+\\frac1n\\right)&=n\\left(\\frac1n-\\frac1{2n^2}+O\\!\\left(\\frac1{n^3}\\right)\\right)\\\\&=1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\end{aligned}",
+        "\\left(1+\\frac1n\\right)^n=e\\cdot e^{-\\frac1{2n}+O(n^{-2})}=e\\left(1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\right)",
+        "\\begin{aligned}n\\left(\\left(1+\\frac1n\\right)^n-e\\right)&=-\\frac e2+O\\!\\left(\\frac1n\\right)\\\\&\\to-\\frac e2\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑥ 兩種餘項是哪一種",
+      "body": [
+        "• Peano：$f^{(n)}(0)$ 存在 ⇒ $f=T_n+o(x^n)$",
+        "• Lagrange：$f^{(n+1)}$ 在 $0$ 附近有界（$\\le M$）⇒ $f=T_n+O(x^{n+1})$",
+        "Lagrange 的比較強：$O(x^{n+1})$ ⇒ $o(x^n)$，還給了常數 $\\dfrac{M}{(n+1)!}$",
+        "例：$\\sin x$ 的 $x^4$ 係數是 $0$，$T_4=T_3$：",
+        "$|\\sin^{(5)}|\\le1$，所以 $\\left|\\sin x-x+\\frac{x^3}6\\right|\\le\\frac{|x|^5}{120}$"
+      ],
+      "tex": [
+        "\\sin x=x-\\frac{x^3}{6}+O(x^5)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $o(g)$：$\\frac fg\\to0$；$O(g)$：$|f|\\le C|g|$；一定要說 $x\\to$ 哪裡",
+        "• 等號只能從左讀到右：$o(x^3)=o(x^2)$，反過來不行",
+        "• 相加取低階；相乘次數相加；$o-o=o$，不是 $0$",
+        "• $x\\to\\infty$：$(\\ln x)^a\\ll x^b\\ll c^x\\ll x!\\ll x^x$",
+        "• Peano 給 $o(x^n)$；Lagrange 給 $O(x^{n+1})$，比較強",
+        "下一課：Stirling 公式"
+      ]
     }
   ],
   "workedExamples": [
@@ -108,310 +213,955 @@
   ],
   "checks": [
     {
-      "ask": "$x\\to 0$ 時，下面哪一個成立？",
+      "ask": "$x\\to\\infty$ 時，下列哪一個==正確==？",
       "options": [
-        { "label": "$x^3=o(x^2)$", "correct": true },
-        { "label": "$x^2=o(x^3)$", "why": "$\\frac{x^2}{x^3}=\\frac{1}{x}\\to\\infty$。在 $0$ 附近次方越高越小，方向反了。" },
-        { "label": "$x=o(x)$", "why": "$\\frac{x}{x}=1$，不 $\\to 0$。$o$ 是「小得多」，不是「一樣大」。" }
+        {
+          "label": "$\\dfrac{x^2+\\sin x}{x}=O(x)$",
+          "correct": true
+        },
+        {
+          "label": "$x^2=O(x)$",
+          "why": "$\\frac{x^2}{x}=x$ 沒有上界，不可能被 $Cx$ 控制"
+        },
+        {
+          "label": "$x=o(x+1)$",
+          "why": "$\\frac{x}{x+1}\\to1$，不是 $0$：它們是等價的"
+        },
+        {
+          "label": "$\\ln x=O(1)$",
+          "why": "$\\ln x\\to\\infty$，沒有常數上界；它是 $o(x)$，不是 $O(1)$"
+        }
       ]
     },
     {
-      "ask": "$x\\to 0$ 時，$o(x^2)-o(x^2)$ 等於？",
+      "ask": "$x\\to0$：$\\big(x+o(x)\\big)\\big(x^2+o(x^2)\\big)=$？",
       "options": [
-        { "label": "$o(x^2)$", "correct": true },
-        { "label": "$0$", "why": "兩個 $o(x^2)$ 代表兩個不一定相同的函數，只知道各自比 $x^2$ 小得多，相減不會剛好抵銷。" },
-        { "label": "$o(x^4)$", "why": "相減不會讓階數變高；只能保證結果仍然比 $x^2$ 小得多。" }
-      ]
-    },
-    {
-      "ask": "$x\\to 0$ 時，$x^3\\cdot o(x^2)$ 等於？",
-      "options": [
-        { "label": "$o(x^5)$", "correct": true },
-        { "label": "$o(x^6)$", "why": "次數是相加，不是相乘：$x^3\\cdot x^2=x^5$。" },
-        { "label": "沒辦法化簡，只能保留 $x^3\\cdot o(x^2)$", "why": "可以化簡：$x^3\\cdot o(x^2)$ 除以 $x^5$ 等於 $\\frac{o(x^2)}{x^2}\\to 0$。" }
-      ]
-    },
-    {
-      "ask": "$x\\to\\infty$ 時，下面哪一個成立？",
-      "options": [
-        { "label": "$(\\ln x)^{10}=o(\\sqrt{x})$", "correct": true },
-        { "label": "$e^x=O(x^{100})$", "why": "指數成長比任何冪次快，$\\frac{e^x}{x^{100}}\\to\\infty$，找不到常數 $C$ 壓住。" },
-        { "label": "$\\sqrt{x}=o(\\ln x)$", "why": "方向反了：對數比任何正冪次都慢，是 $\\ln x=o(\\sqrt{x})$。" }
+        {
+          "label": "$x^3+o(x^3)$",
+          "correct": true
+        },
+        {
+          "label": "$x^3$",
+          "why": "$o$ 不會消失：誤差項相乘後還在"
+        },
+        {
+          "label": "$x^3+o(x^2)$",
+          "why": "太保守：誤差其實是 $o(x^3)$，次數要相加"
+        },
+        {
+          "label": "$x^3+o(x)$",
+          "why": "相乘時次數相加，不是取最低的"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "替剩下的記帳",
+      "title": "為什麼需要記號",
       "beats": [
-        { "show": ["$\\sin x=x-\\frac{x^3}{6}+\\dots$","那個 $\\dots$ 有多小？"],
-          "say": "Taylor 展開最後那串點點點到底多小？乘一乘、代進別的函數之後，會不會長大到影響答案？",
+        {
+          "show": [
+            "$e^x\\sin x=x+x^2+\\frac{x^3}{3}+\\text{（剩下的）}$"
+          ],
+          "say": "展開的時候，我們一直寫加上剩下的。可是剩下的到底多小？",
           "board": [
-            {"do":"write","line":"$\\sin x=x-\\frac{x^3}{6}+{{d:\\dots}}$"},
-            {"do":"circle","term":"d","on":"點點點","label":"多小？"}
-          ] },
-        { "show": ["$\\sin x$ 與 $x-\\frac{x^3}{6}$ 在 $0$ 附近","幾乎疊在一起"],
-          "say": "畫出來看：藍色是 sine x，紅色是 x 減六分之 x 三次方。在零附近兩條幾乎疊在一起，差的那一點就是點點點。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^x\\sin x=x+x^2+\\frac{x^3}{3}+\\text{（剩下的）}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「剩下的」要說清楚兩件事：",
+            "• 在哪裡小：$x\\to0$？$x\\to\\infty$？"
+          ],
+          "say": "要說清楚兩件事：在哪裡小，以及到底多小。",
           "board": [
-            {"do":"plot","graph":{"window":[-2,2,-2,2],"curves":[{"expr":"sin(x)","domain":[-2,2],"color":"blue"},{"expr":"x-x^3/6","domain":[-2,2],"color":"red"}]}}
-          ] },
-        { "show": ["$f=o(g)$：$\\frac{f}{g}\\to 0$"],
-          "note": "$f$ 比 $g$ 小得多。",
-          "say": "小 o 的意思是 f 除以 g 趨近零，也就是 f 比 g 小得多。",
+            {
+              "do": "write",
+              "line": "「剩下的」要說清楚兩件事："
+            },
+            {
+              "do": "write",
+              "line": "• 在哪裡小：$x\\to0$？$x\\to\\infty$？",
+              "on": "在哪"
+            },
+            {
+              "do": "write",
+              "line": "• 多小：只知道比 $x^3$ 小？還是不超過 $x^4$ 的幾倍？",
+              "on": "以及"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個記號各回答一種：",
+            "• $o(g)$：比 $g$ 小得可以忽略"
+          ],
+          "say": "小 o 說：它比 g 小得可以忽略。大 O 說：它最多是 g 的常數倍。",
           "board": [
-            {"do":"write","line":"$f=o(g)$：${{r:\\frac{f}{g}\\to 0}}$","on":"小 o"},
-            {"do":"underline","term":"r","on":"f 除以 g","label":"趨近零"}
-          ] },
-        { "show": ["$f=O(g)$：$|f|\\le C|g|$"],
-          "note": "在 $a$ 附近，差一個常數倍。",
-          "say": "大 O 是說，在那一點附近，f 的大小最多是 g 的常數倍，最多跟 g 一樣大。",
+            {
+              "do": "write",
+              "line": "兩個記號各回答一種："
+            },
+            {
+              "do": "write",
+              "line": "• $o(g)$：比 $g$ 小得可以忽略",
+              "on": "小得"
+            },
+            {
+              "do": "write",
+              "line": "• $O(g)$：不超過 $g$ 的常數倍",
+              "color": "gold",
+              "on": "以忽"
+            },
+            {
+              "do": "write",
+              "line": "　讀法：little-o（小 o）、Big-O（大 O）",
+              "color": "violet",
+              "on": "它最"
+            },
+            {
+              "do": "write",
+              "line": "有了它們，每一步的誤差都能記帳，不會越算越模糊",
+              "on": "的常"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義（$x\\to a$）",
+      "beats": [
+        {
+          "show": [
+            "$a$ 可以是一個數或 $\\pm\\infty$；$g\\ne0$ 在 $a$ 附近",
+            "$f=o(g)\\iff\\lim_{x\\to a}\\frac{f(x)}{g(x)}=0$"
+          ],
+          "say": "定義。a 可以是一個數，也可以是無限大。f 是 g 的小 o，意思是 f 除以 g 趨近 0。",
           "board": [
-            {"do":"write","line":"$f=O(g)$：$|f|\\le {{c:C}}|g|$","on":"大 O"},
-            {"do":"focus","term":"c","on":"常數倍"}
-          ] },
-        { "show": ["$x\\to 0$：次方越高越小","$x\\to\\infty$：反過來"],
-          "note": "方向一定要寫。",
-          "say": "x 趨近零的時候，次方越高越小；趨近無限大就反過來。所以一定要寫 x 往哪裡跑。",
+            {
+              "do": "write",
+              "line": "$a$ 可以是一個數或 $\\pm\\infty$；$g\\ne0$ 在 $a$ 附近"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f=o(g)\\iff\\lim_{x\\to a}\\frac{f(x)}{g(x)}=0}}$",
+              "on": "是無"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "意思"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f=O(g)\\iff\\text{有 }C\\text{ 與 }a\\text{ 的鄰域，在其中 }|f|\\le C|g|$"
+          ],
+          "say": "f 是 g 的大 O，意思是在 a 附近，f 的絕對值不超過 g 的常數倍。不要求比值有極限。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{z:x\\to 0}}$：次方越高越小","on":"x 趨近零","tint":{"z":"blue"}},
-            {"do":"write","line":"${{i:x\\to\\infty}}$：反過來","on":"無限大","tint":{"i":"blue"}},
-            {"do":"underline","term":"z","on":"一定要寫","label":"方向"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f=O(g)\\iff\\text{有 }C\\text{ 與 }a\\text{ 的鄰域，在其中 }|f|\\le C|g|}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "附近"
+            },
+            {
+              "do": "write",
+              "line": "　$x\\to\\infty$ 的「鄰域」就是「$x>N$」",
+              "color": "violet",
+              "on": "的常"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$o(g)$ ⇒ $O(g)$；$f\\sim g\\iff f-g=o(g)$"
+          ],
+          "say": "小 o 一定是大 O；上一課的等價，就是差是 g 的小 o。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$o(g)$ ⇒ $O(g)$；$f\\sim g\\iff f-g=o(g)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：",
+            "• $x\\to0$：$x^3=o(x^2)$，$\\sin x=O(x)$，$1-\\cos x=O(x^2)$"
+          ],
+          "say": "幾個例子。最後一個：x 乘正弦 x 是 x 的大 O；但比值是正弦 x，一直振盪，所以不是小 o。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例："
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to0$：$x^3=o(x^2)$，$\\sin x=O(x)$，$1-\\cos x=O(x^2)$",
+              "on": "乘正"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to\\infty$：$\\ln x=o(x)$，$3x^2+x=O(x^2)$",
+              "on": "但比"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to\\infty$：$x\\sin x=O(x)$，但不是 $o(x)$",
+              "on": "一直"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一定要說 $x\\to$ 哪裡：$x\\to0$ 時 $x^2=o(x)$；$x\\to\\infty$ 時反過來 $x=o(x^2)$"
+          ],
+          "say": "一定要說 x 趨近哪裡。在 0 附近，x 平方比 x 小；在無限大，反過來，x 比 x 平方小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一定要說 $x\\to$ 哪裡：$x\\to0$ 時 $x^2=o(x)$；$x\\to\\infty$ 時反過來 $x=o(x^2)$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$x\\to\\infty$ 時，下列哪一個正確？"
+          ],
+          "say": "試一題。x 趨近無限大，哪一個是對的？"
+        }
       ],
       "check": 0
     },
     {
-      "title": "等號只能往右讀",
+      "title": "等號只能從左讀到右",
       "beats": [
-        { "show": ["$o(x^2)$ 是一整類函數"],
-          "note": "不是一個數。",
-          "say": "小 o x 平方代表的是某一個除以 x 平方會趨近零的函數，是一整類，不是一個固定的東西。",
+        {
+          "show": [
+            "$x\\to0$：$x^2=o(x)$，$x^3=o(x)$"
+          ],
+          "say": "x 趨近 0 時，x 平方是 x 的小 o，x 立方也是 x 的小 o。",
           "board": [
-            {"do":"write","line":"${{c:o(x^2)}}$ ＝ 一整類函數"},
-            {"do":"underline","term":"c","label":"不是一個數","on":"一整類"}
-          ] },
-        { "show": ["$x^3=o(x^2)$ 對","$o(x^2)=x^3$ 沒有意義"],
-          "say": "所以這個等號只能從左讀到右：x 三次方屬於這一類，倒過來寫就沒有意義。",
+            {
+              "do": "write",
+              "line": "$x\\to0$：$x^2=o(x)$，$x^3=o(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果等號能倒過來讀：$x^2=o(x)=x^3$？"
+          ],
+          "say": "如果這裡的等號是真的等號，就會推出 x 平方等於 x 立方。荒謬。",
           "board": [
-            {"do":"write","line":"$x^3=o(x^2)$ 對"},
-            {"do":"write","line":"${{w:o(x^2)=x^3}}$ 沒有意義","on":"倒過來"},
-            {"do":"strike","term":"w","on":"寫就"}
-          ] },
-        { "show": ["兩個 $o(x^2)$ 不一定是同一個"],
-          "say": "式子裡出現兩次小 o x 平方，它們不一定是同一個函數，相減不會剛好抵銷。",
+            {
+              "do": "write",
+              "line": "如果等號能倒過來讀：$x^2=o(x)=x^3$？",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$o(g)$ 是一群函數；$f=o(g)$ 意思是 $f$ 屬於這一群"
+          ],
+          "say": "原因是：小 o g 不是一個函數，而是一群函數。f 等於小 o g，意思是 f 屬於這一群。",
           "board": [
-            {"do":"write","line":"${{a:o(x^2)}}-{{b:o(x^2)}}$"},
-            {"do":"focus","term":"a","color":"blue","on":"不一定"},
-            {"do":"focus","term":"b","color":"violet","on":"同一個"}
-          ] },
-        { "show": ["$o(x^m)-o(x^n)$ 也取低階"],
-          "note": "減掉小 o，就是加上負的小 o。",
-          "say": "減法跟加法一樣，因為減掉小 o，就是加上負的小 o。負的小 o 還是比 x 平方小得多，所以照加法取低階。",
+            {
+              "do": "write",
+              "line": "$o(g)$ 是一群函數；$f=o(g)$ 意思是 $f$ 屬於這一群",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：",
+            "• $o(x^3)=o(x^2)$ 對（比 $x^3$ 小的都比 $x^2$ 小）"
+          ],
+          "say": "所以比 x 立方小的，一定比 x 平方小；倒過來就錯了。",
           "board": [
-            {"do":"write","line":"$o(x^m)-o(x^n)=o(x^m)+{{n1:(-o(x^n))}}$"},
-            {"do":"focus","term":"n1","color":"blue","on":"加上負的"},
-            {"do":"write","line":"$o(x^m)-o(x^n)=o(x^{\\min(m,n)})$","on":"照加法"}
-          ] }
+            {
+              "do": "write",
+              "line": "所以："
+            },
+            {
+              "do": "write",
+              "line": "• $o(x^3)=o(x^2)$ 對（比 $x^3$ 小的都比 $x^2$ 小）",
+              "on": "立方"
+            },
+            {
+              "do": "write",
+              "line": "• $o(x^2)=o(x^3)$ 錯（例 $x^{5/2}$）",
+              "on": "一定"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{x^{5/2}}{x^2}=x^{1/2}\\to0$，但 $\\frac{x^{5/2}}{x^3}=x^{-1/2}\\to\\infty$（$x\\to0^+$）",
+              "color": "violet",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "$A+o(g)=B+o(g)$ 讀成：左邊那一群裡的每一個，都在右邊那一群",
+              "on": "過來"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "運算規則（$x\\to0$）",
+      "beats": [
+        {
+          "show": [
+            "$m$、$n\\ge0$：",
+            "$\\begin{aligned}&o(x^m)+o(x^n)=o(x^{\\min(m,n)})\\\\&x^m\\cdot o(x^n)=o(x^{m+n})\\\\&o(x^m)\\cdot O(x^n)=o(x^{m+n})\\\\&m>n:\\ O(x^m)=o(x^n)\\end{aligned}$"
+          ],
+          "say": "四條規則。相加取低階；相乘次數相加；小 o 乘大 O 還是小 o，次數相加；高次的大 O 被低次的小 o 吸收。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$m$、$n\\ge0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&o(x^m)+o(x^n)=o(x^{\\min(m,n)})\\\\&x^m\\cdot o(x^n)=o(x^{m+n})\\\\&o(x^m)\\cdot O(x^n)=o(x^{m+n})\\\\&m>n:\\ O(x^m)=o(x^n)\\end{aligned}}}}$",
+              "on": "乘大"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "高次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$o(x^n)-o(x^n)=o(x^n)\\quad\\text{不是 }0$"
+          ],
+          "say": "最容易犯的錯：小 o 減小 o 不是 0。兩個不同的未知函數，相減還是未知的小 o。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle o(x^n)-o(x^n)=o(x^n)\\quad\\text{不是 }0}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明（都只是極限定律）：",
+            "• 相加（$m\\le n$）：$\\dfrac{f+g}{x^m}=\\dfrac{f}{x^m}+\\dfrac{g}{x^n}\\cdot x^{n-m}\\to0$"
+          ],
+          "say": "證明都只是極限定律：相加時提出 x 的次方；小 o 乘大 O 是有界乘以趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明（都只是極限定律）："
+            },
+            {
+              "do": "write",
+              "line": "• 相加（$m\\le n$）：$\\dfrac{f+g}{x^m}=\\dfrac{f}{x^m}+\\dfrac{g}{x^n}\\cdot x^{n-m}\\to0$",
+              "on": "相加"
+            },
+            {
+              "do": "write",
+              "line": "• $o\\cdot O$：$\\left|\\dfrac{fg}{x^{m+n}}\\right|\\le\\left|\\dfrac{f}{x^m}\\right|\\cdot C\\to0$",
+              "on": "的次"
+            },
+            {
+              "do": "write",
+              "line": "• 吸收：$\\left|\\dfrac{f}{x^n}\\right|\\le C|x|^{m-n}\\to0$",
+              "on": "乘大"
+            },
+            {
+              "do": "write",
+              "line": "　$x^m\\cdot o(x^n)$ 是 $o\\cdot O$ 的特例（$x^m=O(x^m)$）",
+              "color": "violet",
+              "on": "有界"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：相乘時的記帳",
+      "beats": [
+        {
+          "show": [
+            "展開 $e^x\\sin x$ 到 $x^3$：$\\sin x$ 從 $x^1$ 開始 → $e^x$ 到 $x^2$",
+            "$\\left(1+x+\\frac{x^2}2+o(x^2)\\right)\\left(x-\\frac{x^3}6+o(x^3)\\right)$"
+          ],
+          "say": "用這些規則記帳。要乘積到三次，正弦從一次開始，所以 e 的 x 次方只要到二次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "展開 $e^x\\sin x$ 到 $x^3$：$\\sin x$ 從 $x^1$ 開始 → $e^x$ 到 $x^2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left(1+x+\\frac{x^2}2+o(x^2)\\right)\\left(x-\\frac{x^3}6+o(x^3)\\right)$",
+              "on": "開始"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項記帳：",
+            "• $1\\cdot x+x\\cdot x+\\frac{x^2}2\\cdot x-\\frac{x^3}6=x+x^2+\\frac{x^3}{3}$"
+          ],
+          "say": "主項乘出來是 x 加 x 平方加 3 分之 x 立方。其他每一項，按規則都是小 o x 立方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項記帳："
+            },
+            {
+              "do": "write",
+              "line": "• $1\\cdot x+x\\cdot x+\\frac{x^2}2\\cdot x-\\frac{x^3}6=x+x^2+\\frac{x^3}{3}$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "• $o(x^2)\\cdot x=o(x^3)$；$x^2\\cdot x^3$ 等五次項 $=o(x^3)$",
+              "on": "立方#1"
+            },
+            {
+              "do": "write",
+              "line": "• $1\\cdot o(x^3)$、$o(x^2)\\cdot o(x^3)$ 都是 $o(x^3)$",
+              "on": "則都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^x\\sin x=x+x^2+\\frac{x^3}3+o(x^3)$",
+            "$\\lim_{x\\to0}\\frac{e^x\\sin x-x-x^2}{x^3}=\\frac13$"
+          ],
+          "say": "加起來，相加取低階，全部的誤差合成一個小 o x 立方。極限是 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^x\\sin x=x+x^2+\\frac{x^3}3+o(x^3)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\lim_{x\\to0}\\frac{e^x\\sin x-x-x^2}{x^3}=\\frac13}}$",
+              "color": "red",
+              "on": "全部"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "立方"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$x=0.001$ 時 $\\approx0.333333$",
+              "color": "violet",
+              "on": "限是"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "運算規則",
+      "title": "$x\\to\\infty$ 的成長階梯",
       "beats": [
-        { "show": ["$o(x^m)+o(x^n)=o(x^{\\min(m,n)})$"],
-          "note": "相加取低階；常數倍不變。",
-          "say": "x 趨近零時，相加取比較低的那一階，乘上常數也不變。",
+        {
+          "show": [
+            "$a,b>0$，$c>1$，$x\\to\\infty$：",
+            "$(\\ln x)^a\\ll x^b\\ll c^x\\ll x!\\ll x^x$"
+          ],
+          "say": "x 趨近無限大的成長階梯：對數比次方慢，次方比指數慢，指數比階乘慢，階乘比 x 的 x 次方慢。",
           "board": [
-            {"do":"write","line":"$o(x^m)+o(x^n)=o(x^{{{mn:\\min(m,n)}}})$"},
-            {"do":"focus","term":"mn","on":"比較低"}
-          ] },
-        { "show": ["$x^m\\cdot o(x^n)=o(x^{m+n})$"],
-          "note": "相乘：次數相加。",
-          "say": "相乘的時候，次數相加。兩個小 o 相乘也一樣是次數相加。",
+            {
+              "do": "write",
+              "line": "$a,b>0$，$c>1$，$x\\to\\infty$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle (\\ln x)^a\\ll x^b\\ll c^x\\ll x!\\ll x^x}}$",
+              "on": "對數"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "數慢"
+            },
+            {
+              "do": "write",
+              "line": "　$f\\ll g$ 就是 $f=o(g)$；$x!$ 讀成整數 $n$ 的版本",
+              "color": "violet",
+              "on": "次方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證 $(\\ln x)^a=o(x^b)$：令 $x=e^t$",
+            "$\\frac{(\\ln x)^a}{x^b}=\\frac{t^a}{e^{bt}}=\\left(\\frac{t}{e^{bt/a}}\\right)^a\\to0$"
+          ],
+          "say": "證明第一級：令 x 等於 e 的 t 次方，化成一個括號的 a 次方，括號裡用一次羅必達就趨近 0。",
           "board": [
-            {"do":"write","line":"$x^m\\cdot o(x^n)=o(x^{{{s:m+n}}})$"},
-            {"do":"focus","term":"s","on":"次數相加#1"},
-            {"do":"write","line":"$o(x^m)\\cdot o(x^n)=o(x^{m+n})$","on":"兩個小 o"}
-          ] },
-        { "show": ["$\\frac{o(x^n)}{x^m}=o(x^{n-m})$"],
-          "note": "相除：次數相減。",
-          "say": "相除就是次數相減。大 O 的規則一模一樣。",
+            {
+              "do": "write",
+              "line": "證 $(\\ln x)^a=o(x^b)$：令 $x=e^t$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(\\ln x)^a}{x^b}=\\frac{t^a}{e^{bt}}=\\left(\\frac{t}{e^{bt/a}}\\right)^a\\to0$",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{t}{e^{kt}}\\to0$（$k>0$）：L'Hôpital 一次得 $\\frac{1}{ke^{kt}}\\to0$",
+              "color": "violet",
+              "on": "括號#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其他幾級：",
+            "• $\\dfrac{x^b}{c^x}$：L'Hôpital $\\lceil b\\rceil$ 次"
+          ],
+          "say": "其他幾級也證得出來：連用羅必達；把比值拆成很多個小於一半的因子；或直接估計不超過 n 分之一。",
           "board": [
-            {"do":"write","line":"$\\frac{o(x^n)}{x^m}=o(x^{{{d:n-m}}})$","on":"相除"},
-            {"do":"focus","term":"d","on":"次數相減"}
-          ] },
-        { "show": ["$O(x^{n+1})$ 比 $o(x^n)$ 精確"],
-          "say": "對照一下：小 o x 的 n 次方只說比它小，大 O x 的 n 加一次方說最多跟它一樣大，資訊更精確。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{a:O(x^{n+1})}}$ 比 ${{b:o(x^n)}}$ 精確","on":"對照"},
-            {"do":"underline","term":"b","on":"只說","label":"只說比它小"},
-            {"do":"underline","term":"a","on":"最多跟它","label":"最多一樣大"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "其他幾級："
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{x^b}{c^x}$：L'Hôpital $\\lceil b\\rceil$ 次",
+              "on": "用羅"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{c^n}{n!}=\\dfrac{c}{1}\\cdots\\dfrac{c}{n}$：$k>2c$ 之後每個因子 $<\\frac12$",
+              "on": "個小"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{n!}{n^n}=\\dfrac1n\\cdot\\dfrac2n\\cdots\\dfrac nn\\le\\dfrac1n$",
+              "on": "估計"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "相乘時記帳",
+      "title": "主項與下一項",
       "beats": [
-        { "show": ["$e^x\\sin x$ 展到 $x^3$"],
-          "note": "$\\sin x$ 從 $x$ 開始，$e^x$ 展到 $x^2$ 就夠。",
-          "say": "把 e 的 x 次方乘 sine x 展到三次方。sine x 從 x 開始，所以 e 的 x 次方只要展到平方。",
+        {
+          "show": [
+            "$x\\to\\infty$：$f(x)=\\dfrac{x^3+\\ln x}{2x+\\sqrt x}$"
+          ],
+          "say": "用大 O 寫出主項和下一項。x 立方加自然對數 x，除以 2x 加根號 x。",
           "board": [
-            {"do":"write","line":"${{e:e^x}}\\,{{s:\\sin x}}$ 展到 $x^3$","tint":{"e":"violet","s":"blue"}},
-            {"do":"focus","term":"s","color":"blue","on":"從 x 開始"},
-            {"do":"focus","term":"e","color":"violet","label":"展到平方","on":"只要展到"}
-          ] },
-        { "show": ["$1\\cdot\\left(x-\\frac{x^3}{6}\\right)+x\\cdot x+\\frac{x^2}{2}\\cdot x$"],
-          "say": "逐項相乘，只留三次方以內的：一乘 sine 的兩項，x 乘 x，二分之一 x 平方乘 x。",
+            {
+              "do": "write",
+              "line": "$x\\to\\infty$：$f(x)=\\dfrac{x^3+\\ln x}{2x+\\sqrt x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x)=\\frac{x^2}{2}\\cdot\\frac{1+\\frac{\\ln x}{x^3}}{1+\\frac12x^{-1/2}}$"
+          ],
+          "say": "分子提出 x 立方，分母提出 2x，剩下兩個趨近 1 的括號。",
           "board": [
-            {"do":"write","line":"${{a:1\\cdot\\left(x-\\frac{x^3}{6}\\right)}}+{{b:x\\cdot x}}+{{c:\\frac{x^2}{2}\\cdot x}}$"},
-            {"do":"focus","term":"a","on":"一乘"},
-            {"do":"focus","term":"b","on":"x 乘 x"},
-            {"do":"focus","term":"c","on":"二分之一"}
-          ] },
-        { "show": ["誤差合起來是 $o(x^3)$"],
-          "note": "例：$o(x^2)\\cdot x=o(x^3)$。",
-          "say": "誤差也要記帳：小 o x 平方乘 x 是小 o x 三次方，x 的四次方也屬於它。全部合起來還是小 o x 三次方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x)=\\frac{x^2}{2}\\cdot\\frac{1+\\frac{\\ln x}{x^3}}{1+\\frac12x^{-1/2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac1{1+w}=1-w+O(w^2)$，$w=\\frac12x^{-1/2}\\to0$；$\\dfrac{\\ln x}{x^3}=o(x^{-1})$：",
+            "$f(x)=\\frac{x^2}2\\left(1-\\frac12x^{-1/2}+O(x^{-1})\\right)$"
+          ],
+          "say": "分母用幾何級數，w 是二分之一 x 的負二分之一次方。分子那一項比 x 分之一小得多，也併進大 O。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$o(x^2)\\cdot x=o(x^3)$","on":"小 o x 平方乘 x"},
-            {"do":"write","line":"$x^4=o(x^3)$","on":"x 的四次方"},
-            {"do":"write","line":"誤差合起來是 $o(x^3)$","color":"green","on":"全部合起來"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\dfrac1{1+w}=1-w+O(w^2)$，$w=\\frac12x^{-1/2}\\to0$；$\\dfrac{\\ln x}{x^3}=o(x^{-1})$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x)=\\frac{x^2}2\\left(1-\\frac12x^{-1/2}+O(x^{-1})\\right)$",
+              "on": "分子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x)=\\frac{x^2}{2}-\\frac{x^{3/2}}{4}+O(x)$"
+          ],
+          "say": "乘開：主項是二分之 x 平方，下一項是負四分之 x 的二分之三次方，誤差不超過 x 的常數倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle f(x)=\\frac{x^2}{2}-\\frac{x^{3/2}}{4}+O(x)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "下一"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$x=10^8$ 時 $\\frac{f-\\frac{x^2}2+\\frac{x^{3/2}}4}{x}\\approx0.125$，確實是 $O(x)$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
       ],
-      "key": "兩邊展開，只收總次方到 $x^3$ 的交叉項",
       "predict": {
-        "ask": "$x^3$ 的係數是？",
+        "ask": "$x\\to\\infty$，$\\sqrt{x^2+x}=$？",
         "options": [
           {
-            "label": "$\\frac{1}{3}$",
+            "label": "$x+\\dfrac12+O\\!\\left(\\dfrac1x\\right)$",
             "correct": true
           },
           {
-            "label": "$\\frac{1}{2}$",
-            "why": "只算了 $\\frac{x^2}{2}\\cdot x$，漏了 $\\sin x$ 自己的 $-\\frac{x^3}{6}$。"
+            "label": "$x+O(1)$",
+            "why": "沒錯，但太粗：常數項 $\\frac12$ 算得出來"
           },
           {
-            "label": "$-\\frac{1}{6}$",
-            "why": "只看了 $\\sin x$ 的三次項；$e^x$ 的 $\\frac{x^2}{2}$ 乘上 $x$ 也是三次。"
+            "label": "$x+\\dfrac12$",
+            "why": "少了誤差項；$\\sqrt{x^2+x}$ 不完全等於 $x+\\frac12$"
+          },
+          {
+            "label": "$x+1+O\\!\\left(\\dfrac1x\\right)$",
+            "why": "$\\sqrt{1+u}=1+\\frac u2+\\cdots$，係數是 $\\frac12$ 不是 $1$"
           }
         ]
       }
     },
     {
-      "title": "$x\\to\\infty$ 的階梯",
+      "title": "經典：$n\\left(\\left(1+\\frac1n\\right)^n-e\\right)$",
       "beats": [
-        { "show": ["$f\\ll g$ 就是 $f=o(g)$"],
-          "note": "遠小於：比值趨近零。",
-          "say": "先說這個符號：f 遠小於 g，就是小 o 的另一種寫法，意思是 f 除以 g 趨近零。",
+        {
+          "show": [
+            "先看指數：",
+            "$\\begin{aligned}n\\ln\\left(1+\\frac1n\\right)&=n\\left(\\frac1n-\\frac1{2n^2}+O\\!\\left(\\frac1{n^3}\\right)\\right)\\\\&=1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\end{aligned}$"
+          ],
+          "say": "經典題。先處理指數：n 乘自然對數 1 加 n 分之一，展開成 1 減 2n 分之一，加上 n 平方分之一的大 O。",
           "board": [
-            {"do":"write","line":"${{n2:f\\ll g}}$ 就是 ${{n3:f=o(g)}}$"},
-            {"do":"underline","term":"n3","on":"小 o","label":"比值到零"}
-          ] },
-        { "show": ["對數 $\\ll$ 冪次 $\\ll$ 指數"],
-          "note": "$p>0$、$a>0$、$b>1$。",
-          "say": "x 趨近無限大，對數比任何正冪次慢，冪次又比任何指數慢。",
+            {
+              "do": "write",
+              "line": "先看指數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}n\\ln\\left(1+\\frac1n\\right)&=n\\left(\\frac1n-\\frac1{2n^2}+O\\!\\left(\\frac1{n^3}\\right)\\right)\\\\&=1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\end{aligned}}$",
+              "on": "開成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\left(1+\\frac1n\\right)^n=e\\cdot e^{-\\frac1{2n}+O(n^{-2})}=e\\left(1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\right)$"
+          ],
+          "say": "把 e 提出來，剩下的指數趨近 0，用 e 的 u 次方等於 1 加 u 加 u 平方的大 O。",
           "board": [
-            {"do":"write","line":"${{l:\\ln x}}\\ll {{p:x^a}}\\ll {{e:b^x}}$"},
-            {"do":"focus","term":"l","color":"blue","on":"對數"},
-            {"do":"focus","term":"p","color":"violet","on":"冪次#2"},
-            {"do":"focus","term":"e","color":"green","on":"指數"}
-          ] },
-        { "show": ["$(\\ln x)^p=o(x^a)$，$x^a=o(b^x)$"],
-          "say": "寫成小 o：自然對數的 p 次方比 x 的 a 次方小得多，x 的 a 次方又比 b 的 x 次方小得多。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left(1+\\frac1n\\right)^n=e\\cdot e^{-\\frac1{2n}+O(n^{-2})}=e\\left(1-\\frac1{2n}+O\\!\\left(\\frac1{n^2}\\right)\\right)$"
+            },
+            {
+              "do": "write",
+              "line": "　$e^u=1+u+O(u^2)$，而 $u=-\\frac1{2n}+O(n^{-2})$ 時 $O(u^2)=O(n^{-2})$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}n\\left(\\left(1+\\frac1n\\right)^n-e\\right)&=-\\frac e2+O\\!\\left(\\frac1n\\right)\\\\&\\to-\\frac e2\\end{aligned}$"
+          ],
+          "say": "減掉 e 再乘 n：答案趨近負 2 分之 e。而且大 O 還告訴我們：誤差跟 n 分之一同階。",
           "board": [
-            {"do":"write","line":"$(\\ln x)^p=o(x^a)$"},
-            {"do":"write","line":"$x^a=o(b^x)$","on":"又比"}
-          ] },
-        { "show": ["$=\\frac{x^2}{2}\\cdot\\frac{1}{1+w}$，$w=\\frac{1}{2\\sqrt{x}}$","$-\\frac{x^2}{2}\\cdot w=-\\frac{x^{3/2}}{4}$"],
-          "note": "$\\frac{1}{1+w}=1-w+O(w^2)$。",
-          "say": "提出二分之一 x 平方，剩下一除以一加 w，w 是二根號 x 分之一。一減 w 乘回去，就是下一項。",
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}n\\left(\\left(1+\\frac1n\\right)^n-e\\right)&=-\\frac e2+O\\!\\left(\\frac1n\\right)\\\\&\\to-\\frac e2\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$n=10^5$ 時 $\\approx-1.35913$；與 $-\\frac e2$ 的差乘上 $n$ 約 $1.246$，確實是 $O(\\frac1n)$",
+              "color": "violet",
+              "on": "訴我"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比起「$\\to-\\frac e2$」，這裡多知道了收斂多快"
+          ],
+          "say": "這就是主項加誤差項的好處：不只知道極限，還知道收斂得多快。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$=\\frac{x^2}{2}\\cdot\\frac{1}{1+{{n4:w}}}$","on":"剩下"},
-            {"do":"write","line":"$w=\\frac{1}{2\\sqrt{x}}$","on":"w 是"},
-            {"do":"write","line":"$-\\frac{x^2}{2}\\cdot w=-\\frac{x^{3/2}}{4}$","on":"一減 w"}
-          ] },
-        { "show": ["$\\frac{x^3+\\ln x}{2x+\\sqrt{x}}=\\frac{x^2}{2}-\\frac{x^{3/2}}{4}+O(x)$"],
-          "note": "$\\frac{\\ln x}{x^3}=o\\left(\\frac{1}{x}\\right)$，靠的就是這張表。",
-          "say": "這張表拿來找主項：這個分式的主項是二分之一 x 平方，下一項是負四分之一 x 的二分之三次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{x^3+\\ln x}{2x+\\sqrt{x}}$","on":"這個分式"},
-            {"do":"transform","line":"$={{m:\\frac{x^2}{2}}}-{{s:\\frac{x^{3/2}}{4}}}+O(x)$","on":"主項是"},
-            {"do":"box","term":"m","color":"green","on":"二分之一"},
-            {"do":"underline","term":"s","label":"下一項","on":"負四分之一"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "比起「$\\to-\\frac e2$」，這裡多知道了收斂多快"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "離 $e$ 多遠",
+      "title": "兩種餘項是哪一種",
       "beats": [
-        { "show": ["$\\left(1+\\frac{1}{n}\\right)^n=\\exp\\left(n\\ln\\left(1+\\frac{1}{n}\\right)\\right)$"],
-          "say": "一加 n 分之一的 n 次方會趨近 e，可是離 e 多遠？先寫成指數。",
+        {
+          "show": [
+            "• Peano：$f^{(n)}(0)$ 存在 ⇒ $f=T_n+o(x^n)$",
+            "• Lagrange：$f^{(n+1)}$ 在 $0$ 附近有界（$\\le M$）⇒ $f=T_n+O(x^{n+1})$"
+          ],
+          "say": "兩種餘項對上記號：皮亞諾給的是小 o x 的 n 次；拉格朗日要多一階導數有界，給的是大 O x 的 n 加 1 次。",
           "board": [
-            {"do":"write","line":"${{p:\\left(1+\\frac{1}{n}\\right)^n}}\\to e$"},
-            {"do":"write","line":"${{p:\\left(1+\\frac{1}{n}\\right)^n}}=\\exp\\left({{q:n\\ln\\left(1+\\frac{1}{n}\\right)}}\\right)$","on":"先寫成"}
-          ] },
-        { "show": ["$n\\ln\\left(1+\\frac{1}{n}\\right)=1-\\frac{1}{2n}+O\\left(\\frac{1}{n^2}\\right)$"],
-          "note": "$t=\\frac{1}{n}$，$\\ln(1+t)=t-\\frac{t^2}{2}+O(t^3)$。",
-          "say": "令 t 等於 n 分之一，展開自然對數再乘 n，得到一減二 n 分之一，再加大 O 的誤差。",
+            {
+              "do": "write",
+              "line": "• Peano：$f^{(n)}(0)$ 存在 ⇒ $f=T_n+o(x^n)$"
+            },
+            {
+              "do": "write",
+              "line": "• Lagrange：$f^{(n+1)}$ 在 $0$ 附近有界（$\\le M$）⇒ $f=T_n+O(x^{n+1})$",
+              "color": "gold",
+              "on": "朗日"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Lagrange 的比較強：$O(x^{n+1})$ ⇒ $o(x^n)$，還給了常數 $\\dfrac{M}{(n+1)!}$"
+          ],
+          "say": "拉格朗日的結果比較強：大 O x 的 n 加 1 次，一定是小 o x 的 n 次；而且連常數都給了。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{q:n\\ln\\left(1+\\frac{1}{n}\\right)}}=1-{{h:\\frac{1}{2n}}}+O\\left(\\frac{1}{n^2}\\right)$","on":"展開自然對數"},
-            {"do":"underline","term":"h","on":"二 n 分之一"}
-          ] },
-        { "show": ["$e^h=1+h+O(h^2)$"],
-          "note": "$h=-\\frac{1}{2n}+O\\left(\\frac{1}{n^2}\\right)\\to 0$。",
-          "say": "e 的一加 h 次方是 e 乘 e 的 h 次方，h 趨近零，就再展開一次。",
+            {
+              "do": "write",
+              "line": "Lagrange 的比較強：$O(x^{n+1})$ ⇒ $o(x^n)$，還給了常數 $\\dfrac{M}{(n+1)!}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\sin x$ 的 $x^4$ 係數是 $0$，$T_4=T_3$：",
+            "$\\sin x=x-\\frac{x^3}{6}+O(x^5)$"
+          ],
+          "say": "例如正弦沒有四次項，用拉格朗日的四階餘項，誤差是 x 五次的大 O，比小 o x 立方精確得多。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$e^{1+h}=e\\cdot {{eh:e^{h}}}$","on":"是 e 乘"},
-            {"do":"write","line":"${{eh:e^{h}}}=1+h+O(h^2)$","on":"再展開"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\sin x$ 的 $x^4$ 係數是 $0$，$T_4=T_3$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\sin x=x-\\frac{x^3}{6}+O(x^5)}}$",
+              "on": "格朗"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "五次"
+            },
+            {
+              "do": "write",
+              "line": "　$|\\sin^{(5)}|\\le1$，所以 $\\left|\\sin x-x+\\frac{x^3}6\\right|\\le\\frac{|x|^5}{120}$",
+              "color": "violet",
+              "on": "立方"
+            }
+          ]
+        }
       ],
-      "key": "先取對數展開，再用 $e^h=1+h$ 拉回",
-      "predict": {
-        "ask": "$\\lim n\\left(\\left(1+\\frac{1}{n}\\right)^n-e\\right)$ 是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "用 $o$、$O$ 記帳求極限",
+        "steps": [
           {
-            "label": "$-\\frac{e}{2}$",
-            "correct": true
+            "label": "說清楚 $x\\to$ 哪裡"
           },
           {
-            "label": "$0$",
-            "why": "只知道 $\\left(1+\\frac{1}{n}\\right)^n\\to e$；差是 $-\\frac{e}{2n}$，乘上 $n$ 不是 $0$。"
+            "label": "每個函數寫成主項 $+\\ o(\\cdot)$ 或 $O(\\cdot)$",
+            "why": "先要有上一步：說清楚 $x\\to$ 哪裡"
           },
           {
-            "label": "$-\\frac{1}{2}$",
-            "why": "忘了前面的 $e$：$\\exp(1+h)=e\\cdot e^h$，差是 $e\\cdot\\left(-\\frac{1}{2n}\\right)$。"
+            "label": "相乘：次數相加；相加：取低階",
+            "why": "先要有上一步：每個函數寫成主項 $+\\ o(\\cdot)$ 或 $O(\\cdot)$"
+          },
+          {
+            "label": "留下主項，誤差合成一個，取極限",
+            "why": "先要有上一步：相乘：次數相加；相加：取低階"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $o(g)$：$\\frac fg\\to0$；$O(g)$：$|f|\\le C|g|$；一定要說 $x\\to$ 哪裡",
+            "• 等號只能從左讀到右：$o(x^3)=o(x^2)$，反過來不行"
+          ],
+          "say": "整理：小 o 是比值趨近 0，大 O 是被常數倍控制，都要說 x 趨近哪裡；等號只能從左讀到右；相加取低階、相乘次數相加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $o(g)$：$\\frac fg\\to0$；$O(g)$：$|f|\\le C|g|$；一定要說 $x\\to$ 哪裡"
+            },
+            {
+              "do": "write",
+              "line": "• 等號只能從左讀到右：$o(x^3)=o(x^2)$，反過來不行",
+              "on": "是被"
+            },
+            {
+              "do": "write",
+              "line": "• 相加取低階；相乘次數相加；$o-o=o$，不是 $0$",
+              "on": "控制"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to\\infty$：$(\\ln x)^a\\ll x^b\\ll c^x\\ll x!\\ll x^x$",
+              "on": "等號"
+            },
+            {
+              "do": "write",
+              "line": "• Peano 給 $o(x^n)$；Lagrange 給 $O(x^{n+1})$，比較強",
+              "on": "相加#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Stirling 公式"
+          ],
+          "say": "下一課，用這些記號看懂斯特林公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Stirling 公式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["asymptotics", "asymptotic-expansion", "taylor"],
-    "fine": ["little-o-arithmetic", "big-o-bound", "o-expansion-at-infinity", "growth-ladder"]
+    "coarse": [
+      "asymptotics",
+      "asymptotic-expansion",
+      "taylor"
+    ],
+    "fine": [
+      "little-o-arithmetic",
+      "big-o-bound",
+      "o-expansion-at-infinity",
+      "growth-ladder"
+    ]
   },
   "practice": [
-    { "id": "mob-limtrap-005", "core": true, "trains": "little-o-arithmetic" },
-    { "id": "exam-lim-003", "core": true, "trains": "little-o-arithmetic" },
-    { "id": "exam-lim-007", "core": true, "trains": "o-expansion-at-infinity" },
-    { "id": "cx-hl-002", "core": true, "trains": "o-expansion-at-infinity" },
-    { "id": "world-091", "core": true, "trains": "o-expansion-at-infinity" },
-    { "id": "cg-11a-005", "core": true, "trains": "growth-ladder" },
-    { "id": "lm-nr-005", "trains": "growth-ladder" },
-    { "id": "dm-seq-010", "trains": "o-expansion-at-infinity" },
-    { "id": "depth-lim-012", "trains": "little-o-arithmetic" },
-    { "id": "cg-11a-003", "trains": "little-o-arithmetic" },
-    { "id": "cg-11a-004", "trains": "little-o-arithmetic" },
-    { "id": "cg-11a-006", "trains": "growth-ladder" },
-    { "id": "dm-seq-005", "challenge": true, "trains": "o-expansion-at-infinity", "note": "挑戰：$\\sqrt{n^2+n}=n+\\frac{1}{2}-\\frac{1}{8n}+O\\left(\\frac{1}{n^2}\\right)$，再用 $\\sin$ 的週期。" },
-    { "id": "rel-hard-lim-010", "challenge": true, "trains": "o-expansion-at-infinity", "note": "挑戰：比範例 3 多展一項，誤差要算到 $O\\left(\\frac{1}{n^3}\\right)$。" }
+    {
+      "id": "mob-limtrap-005",
+      "core": true,
+      "trains": "little-o-arithmetic"
+    },
+    {
+      "id": "exam-lim-003",
+      "core": true,
+      "trains": "little-o-arithmetic"
+    },
+    {
+      "id": "exam-lim-007",
+      "core": true,
+      "trains": "o-expansion-at-infinity"
+    },
+    {
+      "id": "cx-hl-002",
+      "core": true,
+      "trains": "o-expansion-at-infinity"
+    },
+    {
+      "id": "world-091",
+      "core": true,
+      "trains": "o-expansion-at-infinity"
+    },
+    {
+      "id": "cg-11a-005",
+      "core": true,
+      "trains": "growth-ladder"
+    },
+    {
+      "id": "lm-nr-005",
+      "trains": "growth-ladder"
+    },
+    {
+      "id": "dm-seq-010",
+      "trains": "o-expansion-at-infinity"
+    },
+    {
+      "id": "depth-lim-012",
+      "trains": "little-o-arithmetic"
+    },
+    {
+      "id": "cg-11a-003",
+      "trains": "little-o-arithmetic"
+    },
+    {
+      "id": "cg-11a-004",
+      "trains": "little-o-arithmetic"
+    },
+    {
+      "id": "cg-11a-006",
+      "trains": "growth-ladder"
+    },
+    {
+      "id": "dm-seq-005",
+      "challenge": true,
+      "trains": "o-expansion-at-infinity",
+      "note": "挑戰：$\\sqrt{n^2+n}=n+\\frac{1}{2}-\\frac{1}{8n}+O\\left(\\frac{1}{n^2}\\right)$，再用 $\\sin$ 的週期。"
+    },
+    {
+      "id": "rel-hard-lim-010",
+      "challenge": true,
+      "trains": "o-expansion-at-infinity",
+      "note": "挑戰：比範例 3 多展一項，誤差要算到 $O\\left(\\frac{1}{n^3}\\right)$。"
+    }
   ],
   "gaps": []
 }

@@ -1,7 +1,8 @@
 {
   "id": "higher-derivatives",
   "title": "高階導數",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
   "prerequisites": [
     "derivative-power-rules",
@@ -19,45 +20,127 @@
     "taylor-polynomial"
   ],
   "objectives": [
-    "求二階、三階導函數，看懂 $f''$、$f'''$、$f^{(n)}$、$\\frac{d^2y}{dx^2}$ 這些記號。",
-    "用位置、速度、加速度解釋 $s'$ 與 $s''$。",
-    "找出 $\\sin$、$\\cos$、$e^{kx}$、$x^n$ 的 $n$ 階導數規律，在 $x = 0$ 代值。"
+    "求二階、三階導函數，看懂 $f''$、$f'''$、$f^{(n)}$、$\\frac{d^2y}{dx^2}$ 這些記號",
+    "用位置、速度、加速度解釋 $s'$ 與 $s''$",
+    "找出 $\\sin$、$\\cos$、$e^{kx}$、$x^n$ 的 $n$ 階導數規律，在 $x=0$ 代值"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 導函數也是函數，可以再微分",
+      "heading": "① 導函數再微分",
       "body": [
-        "$f'$ 本身是一個函數，對它再微分一次，得到二階導函數 $f''$；再一次是 $f'''$；第 $n$ 次寫成 $f^{(n)}$（括號是為了跟 $n$ 次方分開）。用萊布尼茲記號寫成 $\\frac{d^2y}{dx^2}$、$\\frac{d^ny}{dx^n}$。",
-        "例：$f(x) = x^4$，$f' = 4x^3$，$f'' = 12x^2$，$f''' = 24x$，$f^{(4)} = 24$，$f^{(5)} = 0$。"
+        "$f'$ 本身也是一個函數：可以再微分一次",
+        "例：$f(x)=x^4-3x^2+5$",
+        "四階以上改寫成括號裡的數字：$f^{(4)}$，不寫四撇",
+        "記號（$y=f(x)$）：",
+        "$n$ 階：$f^{(n)}(x)=\\dfrac{d^ny}{dx^n}$",
+        "為什麼 $d^2$ 在 $y$ 前面、平方在 $x$ 後面？想成 $\\left(\\frac{d}{dx}\\right)^2y$"
       ],
-      "collapsible": false
+      "tex": [
+        "f'(x)=4x^3-6x,\\qquad f''(x)=12x^2-6",
+        "f'''(x)=24x,\\quad f^{(4)}(x)=24,\\quad f^{(5)}(x)=0",
+        "f''(x)=\\frac{d^2y}{dx^2}=\\frac{d}{dx}\\!\\left(\\frac{dy}{dx}\\right)"
+      ]
     },
     {
-      "heading": "② 意義：變化率的變化率",
+      "heading": "② 變化率的變化率",
       "body": [
-        "直線上運動的位置 $s(t)$。$s'(t)$ 是速度：位置變多快。$s''(t)$ 是加速度：速度變多快。",
-        "在圖形上，$f'$ 是切線斜率，$f''$ 就是「斜率變多快」。$f'' > 0$ 表示斜率越來越大，曲線往上彎；這是〈二階導數〉與〈凹向上／凹向下〉的主題。"
+        "位置 $s(t)$ → 速度 $v=s'$ → 加速度 $a=v'=s''$",
+        "例：$s(t)=t^3-6t^2+9t$（公尺，$t\\ge0$ 秒）"
       ],
-      "collapsible": false
+      "tex": [
+        "v(t)=3t^2-12t+9=3(t-1)(t-3)",
+        "a(t)=v'(t)=6t-12\\ \\ (\\text{m/s}^2)"
+      ]
     },
     {
-      "heading": "③ 每一次都是一次完整的微分",
+      "heading": "② 加速還是減速",
       "body": [
-        "第二次微分時，乘法法則、連鎖律照樣要用。$(x e^x)' = (x + 1)e^x$ 還是乘積，再微分一次要再用一次乘法法則。",
-        "$f''$ 不是 $(f')^2$。$f''$ 是「微分兩次」，$(f')^2$ 是「微分一次再平方」。"
-      ],
-      "collapsible": false
+        "看 $v$ 和 $a$ 的正負號：",
+        "• 同號：速率（速度的大小）變大，加速",
+        "• 異號：速率變小，減速",
+        "加速度是負的，不一定在「減速」：速度也是負的時候，其實越跑越快",
+        "這個例子：",
+        "• $0<t<1$：$v>0$、$a<0$：往前走，減速",
+        "• $1<t<2$：$v<0$、$a<0$：往回走，加速",
+        "• $2<t<3$：$v<0$、$a>0$：往回走，減速",
+        "• $t>3$：$v>0$、$a>0$：往前走，加速"
+      ]
     },
     {
-      "heading": "④ 會循環或有規律的家族",
+      "heading": "② 想一想",
       "body": [
-        "$\\sin x \\to \\cos x \\to -\\sin x \\to -\\cos x \\to \\sin x$：每 4 階回到原樣。第 $n$ 階看 $n$ 除以 4 的餘數。",
-        "$e^{kx}$ 每微分一次多乘一個 $k$：第 $n$ 階是 $k^n e^{kx}$。$\\sin(kx)$、$\\cos(kx)$ 也是每次多乘一個 $k$，同時照上面的順序循環。",
-        "$x^n$ 微分 $n$ 次得常數 $n!$，再多微一次就是 0。",
-        "這些在 $x = 0$ 的值，之後會用來寫〈Taylor 多項式〉。"
+        "二階導數還有幾何意義：圖形往上彎或往下彎（凹凸），第 3 章會用到"
+      ]
+    },
+    {
+      "heading": "③ 每次都是完整的微分",
+      "body": [
+        "第一次（乘法法則）：",
+        "第二次：$(x+1)e^x$ 還是乘積，再用一次乘法法則",
+        "規律：$\\dfrac{d^n}{dx^n}\\big(xe^x\\big)=(x+n)e^x$",
+        "檢查：在 $x=1$，$(1+2)e=3e\\approx8.15$；數值二階差商也約 $8.15$",
+        "先整理化簡，再微下一次",
+        "注意：$f'$ 存在，$f''$ 不一定存在",
+        "例：$f(x)=x|x|$，$f'(x)=2|x|$，在 $0$ 不可微"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{d^2}{dx^2}\\big(xe^x\\big)",
+        "\\frac{d}{dx}\\big(xe^x\\big)=1\\cdot e^x+x\\cdot e^x=(x+1)e^x",
+        "\\begin{aligned}\\frac{d}{dx}\\big((x+1)e^x\\big)&=e^x+(x+1)e^x\\\\&=(x+2)e^x\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "提示：",
+        "其實 $(fg)''=f''g+2f'g'+fg''$，跟 $(a+b)^2$ 的係數很像"
+      ],
+      "tex": [
+        "f'(x)=\\sin x+x\\cos x"
+      ]
+    },
+    {
+      "heading": "④ 會循環的家族",
+      "body": [
+        "$\\sin x$ 一直微：",
+        "所以看 $n$ 除以 $4$ 的餘數",
+        "例：$\\dfrac{d^4}{dx^4}\\cos(3x)$ 在 $x=0$",
+        "每微一次：循環一步，而且連鎖律多乘一個 $3$"
+      ],
+      "tex": [
+        "\\begin{aligned}&\\sin x\\to\\cos x\\to-\\sin x\\\\&\\to-\\cos x\\to\\sin x\\end{aligned}",
+        "\\begin{aligned}&\\cos3x\\to-3\\sin3x\\to-9\\cos3x\\\\&\\to27\\sin3x\\to81\\cos3x\\end{aligned}",
+        "\\left.\\frac{d^4}{dx^4}\\cos(3x)\\right|_{x=0}=81\\cos0=81"
+      ]
+    },
+    {
+      "heading": "④ 有規律的家族",
+      "body": [
+        "$x^n$：微 $n$ 次剩常數 $n!$，再微就是 $0$",
+        "例：$f(x)=\\dfrac1{1-x}=(1-x)^{-1}$，求 $f^{(7)}(0)$",
+        "算前幾階（連鎖律的 $-1$ 和指數的負號抵消）：",
+        "係數 $1,2,6=1!,2!,3!$：猜",
+        "嚴格說要用數學歸納法：$\\frac{d}{dx}\\,n!(1-x)^{-(n+1)}=(n+1)!\\,(1-x)^{-(n+2)}$"
+      ],
+      "tex": [
+        "\\frac{d^n}{dx^n}e^{kx}=k^ne^{kx}\\qquad\\text{（每次多乘一個 }k\\text{）}",
+        "x^n\\to nx^{n-1}\\to n(n-1)x^{n-2}\\to\\cdots\\to n!",
+        "\\begin{aligned}f'&=(1-x)^{-2}\\\\f''&=2(1-x)^{-3}\\\\f'''&=6(1-x)^{-4}\\end{aligned}",
+        "f^{(n)}(x)=\\frac{n!}{(1-x)^{n+1}}",
+        "f^{(7)}(0)=\\frac{7!}{1}=5040"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $f''$、$f'''$、$f^{(n)}$、$\\dfrac{d^2y}{dx^2}$：導函數再微分",
+        "• $s'=v$，$s''=v'=a$；$v$、$a$ 同號加速、異號減速",
+        "• 每一次都是完整的微分：該用乘法法則、連鎖律就要用",
+        "• $\\sin$、$\\cos$ 四次一循環；$e^{kx}$ 每次乘 $k$；$x^n$ 微 $n$ 次得 $n!$",
+        "• 找規律：算前幾階，猜一般式，代 $x=0$",
+        "下一課：臨界點"
+      ]
     }
   ],
   "workedExamples": [
@@ -121,335 +204,933 @@
   ],
   "checks": [
     {
-      "ask": "$f(x) = x^4$，$f'''(x)$ 是？",
+      "ask": "$f(x)=x^4$，$f'''(x)=$？",
       "options": [
-        {
-          "label": "$12x^2$",
-          "why": "這是 $f''$，只微分了兩次。"
-        },
         {
           "label": "$24x$",
           "correct": true
         },
         {
-          "label": "$64x^9$",
-          "why": "這是 $(f')^3 = (4x^3)^3$。$f'''$ 是微分三次，不是一階導數的三次方。"
+          "label": "$12x^2$",
+          "why": "只微了兩次；三撇是三次"
+        },
+        {
+          "label": "$24$",
+          "why": "微了四次，那是 $f^{(4)}$"
+        },
+        {
+          "label": "$4x^3$",
+          "why": "只微了一次"
         }
       ]
     },
     {
-      "ask": "$s(t) = t^3 - 3t^2$，$t = 2$ 時的加速度是？",
+      "ask": "$\\dfrac{d^2}{dx^2}\\big(x\\sin x\\big)=$？",
       "options": [
         {
-          "label": "0",
-          "why": "這是速度 $s'(2) = 3 \\cdot 4 - 6 \\cdot 2 = 0$。加速度要再微分一次。"
-        },
-        {
-          "label": "6",
+          "label": "$2\\cos x-x\\sin x$",
           "correct": true
         },
         {
-          "label": "$-4$",
-          "why": "這是位置 $s(2) = 8 - 12 = -4$，還沒微分。"
+          "label": "$-x\\sin x$",
+          "why": "只把 $\\sin x$ 微兩次，$x$ 不動：乘積不能這樣微"
+        },
+        {
+          "label": "$\\cos x-x\\sin x$",
+          "why": "第二次只微了 $x\\cos x$，漏了 $\\sin x$ 那一項"
+        },
+        {
+          "label": "$2\\cos x+x\\sin x$",
+          "why": "$(\\cos x)'=-\\sin x$，漏了負號"
         }
       ]
     },
     {
-      "ask": "$\\frac{d^{10}}{dx^{10}} \\sin x$ 是？",
+      "ask": "$\\dfrac{d^{2026}}{dx^{2026}}\\sin x=$？",
       "options": [
-        {
-          "label": "$\\sin x$",
-          "why": "以為偶數階都回到 $\\sin x$。其實每 4 階才回到原樣；10 除以 4 餘 2。"
-        },
-        {
-          "label": "$\\cos x$",
-          "why": "循環數錯了。10 除以 4 餘 2，對應第 2 階 $-\\sin x$。"
-        },
         {
           "label": "$-\\sin x$",
           "correct": true
-        }
-      ]
-    },
-    {
-      "ask": "$\\frac{d^5}{dx^5} e^{2x}$ 在 $x = 0$ 的值是？",
-      "options": [
-        {
-          "label": "32",
-          "correct": true
         },
         {
-          "label": "10",
-          "why": "每微分一次乘 2，五次是 $2^5 = 32$，不是 $2 \\times 5$。"
+          "label": "$\\sin x$",
+          "why": "餘數是 $2$ 不是 $0$；$2026$ 不是 $4$ 的倍數"
         },
         {
-          "label": "1",
-          "why": "忘了連鎖律：$e^{2x}$ 每微分一次都要乘裡層 $2x$ 的導數 2。"
+          "label": "$-\\cos x$",
+          "why": "走了三步；餘數是 $2$"
+        },
+        {
+          "label": "$\\cos x$",
+          "why": "走了一步；餘數是 $2$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "再微分一次",
+      "title": "導函數再微分",
       "beats": [
-        { "show": ["$f \\to f' \\to f'' \\to f''' \\to f^{(n)}$"],
-          "note": "括號是為了跟 $n$ 次方分開。",
-          "say": "導函數本身也是函數，可以再微分：二階 f double prime、三階，第 n 階的 n 要加括號，免得看成次方。",
+        {
+          "show": [
+            "$f'$ 本身也是一個函數：可以再微分一次"
+          ],
+          "say": "導函數 f prime 本身也是一個函數，所以可以再對它微分一次。",
           "board": [
-            {"do":"write","line":"$f \\to f' \\to f'' \\to f''' \\to {{fn:f^{(n)} }}$"},
-            {"do":"focus","term":"fn","label":"n 要括號","on":"加括號"}
-          ] },
-        { "show": ["$\\frac{d^2y}{dx^2}$、$\\frac{d^ny}{dx^n}$"],
-          "note": "萊布尼茲記號。",
-          "say": "萊布尼茲的寫法：d 平方 y 除以 d x 平方，就是微分兩次。",
+            {
+              "do": "write",
+              "line": "$f'$ 本身也是一個函數：可以再微分一次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=x^4-3x^2+5$",
+            "$f'(x)=4x^3-6x,\\qquad f''(x)=12x^2-6$"
+          ],
+          "say": "例如 x 的 4 次方減 3x 平方加 5。微一次得 4x 立方減 6x；再微一次，得 12x 平方減 6，這叫二階導函數。",
           "board": [
-            {"do":"write","line":"$\\frac{d^2y}{dx^2}$：微分兩次"},
-            {"do":"write","line":"$\\frac{d^ny}{dx^n}$：微分 $n$ 次","on":"除以"}
-          ] },
-        { "show": ["$(x^n)'=n\\,x^{n-1}$"],
-          "note": "微分一次：$n$ 拉到前面，次方減 1。",
-          "say": "先補一個規則：x 的 n 次方，把 n 拉到前面，次方減一。所以 x 四次方變成四 x 三次方。",
+            {
+              "do": "write",
+              "line": "例：$f(x)=x^4-3x^2+5$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'(x)=4x^3-6x,\\qquad f''(x)=12x^2-6$",
+              "on": "方減#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'''(x)=24x,\\quad f^{(4)}(x)=24,\\quad f^{(5)}(x)=0$"
+          ],
+          "say": "繼續微：三階是 24x，四階是 24，五階以後全部是 0。",
           "board": [
-            {"do":"write","line":"$(x^n)'={{a:n}}\\,x^{{{b:n-1}}}$"},
-            {"do":"focus","term":"a","label":"拉到前面","on":"拉到前面"},
-            {"do":"focus","term":"b","label":"次方減 1","on":"次方減一"}
-          ] },
-        { "show": ["$f(x) = x^4$","$f' = 4x^3$，$f'' = 12x^2$"],
-          "say": "例如 x 四次方：微一次是四 x 三次方，再微一次是十二 x 平方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'''(x)=24x,\\quad f^{(4)}(x)=24,\\quad f^{(5)}(x)=0$"
+            },
+            {
+              "do": "write",
+              "line": "　四階以上改寫成括號裡的數字：$f^{(4)}$，不寫四撇",
+              "color": "violet",
+              "on": "24#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "記號（$y=f(x)$）：",
+            "$f''(x)=\\frac{d^2y}{dx^2}=\\frac{d}{dx}\\!\\left(\\frac{dy}{dx}\\right)$"
+          ],
+          "say": "記號：二階導數寫成 f 雙撇，或是 d 平方 y，d x 平方。意思是對 d y d x 再做一次 d d x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x) = x^4$","on":"x 四次方"},
-            {"do":"write","line":"$f' = {{a:4x^3}}$","on":"四 x 三次方"},
-            {"do":"write","line":"$f'' = {{b:12x^2}}$","on":"再微一次"}
-          ] },
-        { "show": ["$(4x^3)'=4\\cdot3\\,x^{3-1}=12x^2$"],
-          "note": "同一個規則，再用一次。",
-          "say": "再微一次：把三拉到前面乘四，得十二，次方三減一是二。",
+            {
+              "do": "write",
+              "line": "記號（$y=f(x)$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f''(x)=\\frac{d^2y}{dx^2}=\\frac{d}{dx}\\!\\left(\\frac{dy}{dx}\\right)}}$",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "再做"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 階：$f^{(n)}(x)=\\dfrac{d^ny}{dx^n}$"
+          ],
+          "say": "一般的 n 階，寫成 f 右上角括號 n，或 d 的 n 次方 y，d x 的 n 次方。",
           "board": [
-            {"do":"write","line":"$(4x^3)'={{m:4\\cdot3}}\\,x^{{{e:3-1}}}=12x^2$"},
-            {"do":"focus","term":"m","on":"拉到前面"},
-            {"do":"focus","term":"e","on":"次方三"}
-          ] }
+            {
+              "do": "write",
+              "line": "$n$ 階：$f^{(n)}(x)=\\dfrac{d^ny}{dx^n}$"
+            },
+            {
+              "do": "write",
+              "line": "　為什麼 $d^2$ 在 $y$ 前面、平方在 $x$ 後面？想成 $\\left(\\frac{d}{dx}\\right)^2y$",
+              "color": "violet",
+              "on": "次方#1"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
       "title": "變化率的變化率",
       "beats": [
-        { "show": ["$s'(t)$ 速度，$s''(t)$ 加速度"],
-          "note": "速度：位置變多快；加速度：速度變多快。",
-          "say": "位置對時間微分是速度，位置變多快；再微分一次是加速度，速度變多快。",
+        {
+          "show": [
+            "位置 $s(t)$ → 速度 $v=s'$ → 加速度 $a=v'=s''$"
+          ],
+          "say": "二階導數最直接的意義：變化率的變化率。位置對時間微分是速度；速度再對時間微分，是加速度。",
           "board": [
-            {"do":"write","line":"${{sv:s'(t)}}$：速度","tint":{"sv":"blue"}},
-            {"do":"write","line":"${{sa:s''(t)}}$：加速度","tint":{"sa":"violet"},"on":"再微分一次"}
-          ] },
-        { "show": ["$s(t) = t^3 - 6t^2 + 9t$"],
-          "note": "$v(t) = 3t^2 - 12t + 9$",
-          "say": "位置是 t 三次方減六 t 平方加九 t，微一次得速度三 t 平方減十二 t 加九。",
+            {
+              "do": "write",
+              "line": "位置 $s(t)$ → 速度 $v=s'$ → 加速度 $a=v'=s''$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$s(t)=t^3-6t^2+9t$（公尺，$t\\ge0$ 秒）"
+          ],
+          "say": "例子：一個點在直線上運動，位置是 t 立方減 6t 平方加 9t，單位公尺，t 是秒。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$s(t)=t^3-6t^2+9t$","on":"位置是"},
-            {"do":"write","line":"${{v:v(t)}}=3t^2-12t+9$","tint":{"v":"blue"},"on":"微一次"}
-          ] },
-        { "show": ["$a(t) = 6t - 12$"],
-          "say": "速度再微一次，得到加速度六 t 減十二。",
+            {
+              "do": "write",
+              "line": "例：$s(t)=t^3-6t^2+9t$（公尺，$t\\ge0$ 秒）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$v(t)=3t^2-12t+9=3(t-1)(t-3)$"
+          ],
+          "say": "速度是 3t 平方減 12t 加 9，分解成 3 乘 t 減 1 乘 t 減 3。在 1 秒和 3 秒，速度是 0，停下來轉向。",
           "board": [
-            {"do":"write","line":"${{ac:a(t)}}=6t-12$","tint":{"ac":"violet"}}
-          ] },
-        { "show": ["$t = 1$：$v = 0$，$a = -6$"],
-          "note": "瞬間停住，速度正在往負的方向變。",
-          "say": "t 等於一的時候速度是零，瞬間停住；可是加速度負六，速度正要往負的方向走。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle v(t)=3t^2-12t+9=3(t-1)(t-3)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a(t)=v'(t)=6t-12\\ \\ (\\text{m/s}^2)$"
+          ],
+          "say": "加速度是速度再微分：6t 減 12，單位是每秒平方公尺。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$t=1$：${{v0:v=0}},\\quad {{a6:a=-6}}$","tint":{"v0":"blue","a6":"violet"},"on":"t 等於一"},
-            {"do":"underline","term":"v0","color":"blue","label":"瞬間停住","on":"速度是零"},
-            {"do":"underline","term":"a6","color":"violet","label":"往負的方向","on":"加速度負六"}
-          ] },
-        { "show": ["藍：位置　紅：速度"],
-          "note": "紅線穿過 0，藍線在最高或最低。",
-          "say": "看圖：藍線是位置，紅線是速度。紅線穿過零的地方，藍線剛好在最高或最低。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle a(t)=v'(t)=6t-12\\ \\ (\\text{m/s}^2)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "12"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：位置　綠：速度　紅：加速度"
+          ],
+          "say": "圖上藍色是位置，綠色是速度，紅色是加速度。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.5,4,-4,6],"curves":[{"expr":"x^3-6*x^2+9*x","domain":[-0.5,4],"color":"blue"},{"expr":"3*x^2-12*x+9","domain":[-0.5,4],"color":"red"}]},"on":"穿過"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sva",
+                  "window": [
+                    0,
+                    4.2,
+                    -13,
+                    13
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^3-6*x^2+9*x",
+                      "color": "blue",
+                      "label": "s"
+                    },
+                    {
+                      "expr": "3*x^2-12*x+9",
+                      "color": "green",
+                      "label": "v"
+                    },
+                    {
+                      "expr": "6*x-12",
+                      "color": "red",
+                      "label": "a"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "c"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0,
+                      "max": 4,
+                      "value": 0,
+                      "label": "t ="
+                    }
+                  },
+                  "readout": "t = {c}：s = {c^3-6*c^2+9*c}，v = {3*c^2-12*c+9}，a = {6*c-12}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "t = 0：s = 0，v = 9，a = −12",
+              "on": "綠色"
+            },
+            {
+              "do": "write",
+              "line": "藍：位置　綠：速度　紅：加速度",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "變化率的變化率"
+          ],
+          "say": "t 等於 1.5 秒：速度是負的，在往回走；加速度也是負的。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sva",
+                  "window": [
+                    0,
+                    4.2,
+                    -13,
+                    13
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^3-6*x^2+9*x",
+                      "color": "blue",
+                      "label": "s"
+                    },
+                    {
+                      "expr": "3*x^2-12*x+9",
+                      "color": "green",
+                      "label": "v"
+                    },
+                    {
+                      "expr": "6*x-12",
+                      "color": "red",
+                      "label": "a"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "c"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0,
+                      "max": 4,
+                      "value": 0,
+                      "label": "t ="
+                    }
+                  },
+                  "readout": "t = {c}：s = {c^3-6*c^2+9*c}，v = {3*c^2-12*c+9}，a = {6*c-12}",
+                  "height": 300
+                },
+                "vals": {
+                  "c": 1.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "t = 1.5：s = 3.375，v = −2.25，a = −3",
+              "on": "在往"
+            }
+          ]
+        },
+        {
+          "show": [
+            "變化率的變化率"
+          ],
+          "say": "t 等於 2.5 秒：速度還是負的，但加速度變成正的了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sva",
+                  "window": [
+                    0,
+                    4.2,
+                    -13,
+                    13
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^3-6*x^2+9*x",
+                      "color": "blue",
+                      "label": "s"
+                    },
+                    {
+                      "expr": "3*x^2-12*x+9",
+                      "color": "green",
+                      "label": "v"
+                    },
+                    {
+                      "expr": "6*x-12",
+                      "color": "red",
+                      "label": "a"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "c"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0,
+                      "max": 4,
+                      "value": 0,
+                      "label": "t ="
+                    }
+                  },
+                  "readout": "t = {c}：s = {c^3-6*c^2+9*c}，v = {3*c^2-12*c+9}，a = {6*c-12}",
+                  "height": 300
+                },
+                "vals": {
+                  "c": 2.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "t = 2.5：s = 0.625，v = −2.25，a = 3",
+              "on": "是負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "加速還是減速",
+      "beats": [
+        {
+          "show": [
+            "看 $v$ 和 $a$ 的正負號：",
+            "• 同號：速率（速度的大小）變大，加速"
+          ],
+          "say": "加速還是減速，要看速度和加速度的正負號。同號，速度的大小變大，是加速；異號，是減速。",
+          "board": [
+            {
+              "do": "write",
+              "line": "看 $v$ 和 $a$ 的正負號："
+            },
+            {
+              "do": "write",
+              "line": "• 同號：速率（速度的大小）變大，加速",
+              "on": "度和"
+            },
+            {
+              "do": "write",
+              "line": "• 異號：速率變小，減速",
+              "on": "速度#3"
+            },
+            {
+              "do": "write",
+              "line": "　加速度是負的，不一定在「減速」：速度也是負的時候，其實越跑越快",
+              "color": "violet",
+              "on": "是加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個例子：",
+            "• $0<t<1$：$v>0$、$a<0$：往前走，減速"
+          ],
+          "say": "套到這個例子：0 到 1 秒，往前走但在減速；1 到 2 秒，往回走而且越來越快；2 到 3 秒，往回走但在減速；3 秒以後，往前走並加速。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個例子："
+            },
+            {
+              "do": "write",
+              "line": "• $0<t<1$：$v>0$、$a<0$：往前走，減速",
+              "on": "往前#1"
+            },
+            {
+              "do": "write",
+              "line": "• $1<t<2$：$v<0$、$a<0$：往回走，加速",
+              "on": "往回#1"
+            },
+            {
+              "do": "write",
+              "line": "• $2<t<3$：$v<0$、$a>0$：往回走，減速",
+              "on": "往回#2"
+            },
+            {
+              "do": "write",
+              "line": "• $t>3$：$v>0$、$a>0$：往前走，加速",
+              "on": "秒以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "想一想",
+      "beats": [
+        {
+          "show": [
+            "某時刻 $s'(t)<0$、$s''(t)>0$，物體在做什麼？"
+          ],
+          "say": "先猜猜看：速度是負的、加速度是正的，物體在做什麼？"
+        }
       ],
-      "check": 1
+      "predict": {
+        "ask": "某時刻 $s'(t)<0$、$s''(t)>0$，物體在做什麼？",
+        "options": [
+          {
+            "label": "往負方向走，越走越慢",
+            "correct": true
+          },
+          {
+            "label": "往負方向走，越走越快",
+            "why": "要 $v$、$a$ 同號才是加速；這裡異號"
+          },
+          {
+            "label": "往正方向走，越走越快",
+            "why": "$s'<0$ 代表往負方向"
+          },
+          {
+            "label": "停住不動",
+            "why": "停住是 $s'=0$；這裡 $s'<0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "想一想",
+      "beats": [
+        {
+          "show": [
+            "二階導數還有幾何意義：圖形往上彎或往下彎（凹凸），第 3 章會用到"
+          ],
+          "say": "二階導數還有幾何上的意義：圖形往上彎還是往下彎，第三章會用到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "二階導數還有幾何意義：圖形往上彎或往下彎（凹凸），第 3 章會用到"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "每次都是完整的微分",
       "beats": [
-        { "show": ["$(x e^x)' = (x + 1)e^x$"],
-          "note": "乘法法則：$1 \\cdot e^x + x \\cdot e^x$。",
-          "say": "x 乘 e 的 x 次方，第一次用乘法法則，得到 x 加一乘 e 的 x 次方。",
+        {
+          "show": [
+            "$\\frac{d^2}{dx^2}\\big(xe^x\\big)$"
+          ],
+          "say": "再來看一個重點：每微一次，都是一次完整的微分，該用的法則一個都不能少。看 x 乘 e 的 x 次方，微兩次。",
           "board": [
-            {"do":"write","line":"$(xe^x)'={{p:1\\cdot e^x}}+{{q:x\\cdot e^x}}$"},
-            {"do":"underline","term":"p","label":"乘法法則","on":"乘法法則"},
-            {"do":"transform","line":"$(xe^x)'={{r:(x+1)e^x}}$","on":"得到"}
-          ] },
-        { "show": ["$(x + 1)e^x$ 還是乘積"],
-          "note": "第二次也要用乘法法則。",
-          "say": "注意，結果還是兩個東西相乘。第二次微分，乘法法則、連鎖律照樣要用。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d^2}{dx^2}\\big(xe^x\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一次（乘法法則）：",
+            "$\\frac{d}{dx}\\big(xe^x\\big)=1\\cdot e^x+x\\cdot e^x=(x+1)e^x$"
+          ],
+          "say": "第一次用乘法法則：x 的導數 1 乘 e 的 x 次方，加上 x 乘 e 的 x 次方，整理成 x 加 1 乘 e 的 x 次方。",
           "board": [
-            {"do":"write","line":"$({{a:x+1}})\\cdot{{b:e^x}}$：兩個相乘"},
-            {"do":"underline","term":"a","color":"blue","on":"兩個東西"},
-            {"do":"write","line":"第二次：又要乘法法則","on":"第二次微分"}
-          ] },
-        { "show": ["$f''$ 不是 $(f')^2$"],
-          "note": "微分兩次 ≠ 微分一次再平方。",
-          "say": "也別把 f double prime 看成 f prime 的平方：一個是微分兩次，一個是微一次再平方。",
+            {
+              "do": "write",
+              "line": "第一次（乘法法則）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\big(xe^x\\big)=1\\cdot e^x+x\\cdot e^x=(x+1)e^x$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二次：$(x+1)e^x$ 還是乘積，再用一次乘法法則",
+            "$\\begin{aligned}\\frac{d}{dx}\\big((x+1)e^x\\big)&=e^x+(x+1)e^x\\\\&=(x+2)e^x\\end{aligned}$"
+          ],
+          "say": "第二次：x 加 1 乘 e 的 x 次方，還是兩個函數相乘，要再用一次乘法法則。得到 x 加 2 乘 e 的 x 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{c:f''}}\\ne{{d:(f')^2}}$","on":"f double prime"},
-            {"do":"underline","term":"c","color":"blue","label":"微分兩次","on":"微分兩次"},
-            {"do":"underline","term":"d","color":"red","label":"先微再平方","on":"微一次"}
-          ] }
+            {
+              "do": "write",
+              "line": "第二次：$(x+1)e^x$ 還是乘積，再用一次乘法法則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}\\frac{d}{dx}\\big((x+1)e^x\\big)&=e^x+(x+1)e^x\\\\&=(x+2)e^x\\end{aligned}}}}$",
+              "color": "red",
+              "on": "還是"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規律：$\\dfrac{d^n}{dx^n}\\big(xe^x\\big)=(x+n)e^x$"
+          ],
+          "say": "看出規律了：每微一次，前面的常數就加 1。微 n 次就是 x 加 n 乘 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規律：$\\dfrac{d^n}{dx^n}\\big(xe^x\\big)=(x+n)e^x$"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：在 $x=1$，$(1+2)e=3e\\approx8.15$；數值二階差商也約 $8.15$",
+              "color": "violet",
+              "on": "次就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先整理化簡，再微下一次"
+          ],
+          "say": "小技巧：每微完一次，先整理化簡，再微下一次，算起來輕鬆很多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先整理化簡，再微下一次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意：$f'$ 存在，$f''$ 不一定存在",
+            "例：$f(x)=x|x|$，$f'(x)=2|x|$，在 $0$ 不可微"
+          ],
+          "say": "還要注意，每一次都要重新檢查可不可微。例如 x 乘絕對值 x，導數是 2 倍絕對值 x，在 0 有尖點，所以 f 雙撇在 0 不存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意：$f'$ 存在，$f''$ 不一定存在"
+            },
+            {
+              "do": "write",
+              "line": "例：$f(x)=x|x|$，$f'(x)=2|x|$，在 $0$ 不可微",
+              "color": "red",
+              "on": "倍絕"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{d^2}{dx^2}\\big(x\\sin x\\big)=$？"
+          ],
+          "say": "換你：x 乘正弦 x，微兩次。"
+        }
       ],
-      "key": "每一階都是乘積，每次都要乘法法則",
-      "predict": {
-        "ask": "$\\frac{d^2}{dx^2} (x e^x)$ 是？",
-        "options": [
-          {
-            "label": "$(x + 2)e^x$",
-            "correct": true
-          },
-          {
-            "label": "$(x + 1)e^x$",
-            "why": "只微分了 $e^x$ 那個因子。乘法法則還有 $(x + 1)' \\cdot e^x = e^x$ 那一項。"
-          },
-          {
-            "label": "$e^x$",
-            "why": "只微分了 $x + 1$ 那個因子，漏了 $(x + 1) \\cdot e^x$ 那一項。"
-          }
-        ]
-      }
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "提示：",
+            "$f'(x)=\\sin x+x\\cos x$"
+          ],
+          "say": "提示：第一次微完是正弦 x 加 x 乘餘弦 x。第二次，兩項都要微，第二項又是乘積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "提示："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'(x)=\\sin x+x\\cos x$",
+              "on": "乘餘"
+            },
+            {
+              "do": "write",
+              "line": "　其實 $(fg)''=f''g+2f'g'+fg''$，跟 $(a+b)^2$ 的係數很像",
+              "color": "violet",
+              "on": "兩項"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "會循環的家族",
       "beats": [
-        { "show": ["$\\sin x \\to \\cos x \\to -\\sin x \\to -\\cos x \\to \\sin x$"],
-          "say": "sine 微分是 cosine，再來是負 sine、負 cosine，第四次又回到 sine。",
+        {
+          "show": [
+            "$\\sin x$ 一直微：",
+            "$\\begin{aligned}&\\sin x\\to\\cos x\\to-\\sin x\\\\&\\to-\\cos x\\to\\sin x\\end{aligned}$"
+          ],
+          "say": "有些函數一直微下去，會出現規律。正弦一直微：餘弦、負正弦、負餘弦，第四次回到正弦。四次一個循環。",
           "board": [
-            {"do":"write","line":"$\\sin x\\to\\cos x\\to-\\sin x$"},
-            {"do":"write","line":"$\\to-\\cos x\\to{{s:\\sin x}}$","on":"負 cosine"},
-            {"do":"focus","term":"s","label":"第 4 次","on":"第四次"}
-          ] },
-        { "show": ["每 4 階回到原樣"],
-          "note": "第 $n$ 階看 $n$ 除以 4 的餘數。",
-          "say": "週期是四，不是二。要第 n 階，就看 n 除以四剩多少。",
+            {
+              "do": "write",
+              "line": "$\\sin x$ 一直微："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}&\\sin x\\to\\cos x\\to-\\sin x\\\\&\\to-\\cos x\\to\\sin x\\end{aligned}}}}$",
+              "on": "正弦#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "第四"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以看 $n$ 除以 $4$ 的餘數"
+          ],
+          "say": "所以要算很高階的導數，只要看 n 除以 4 的餘數。",
           "board": [
-            {"do":"write","line":"每 $4$ 階回到原樣"},
-            {"do":"write","line":"看 $n$ 除以 $4$ 的餘數","on":"要第"}
-          ] },
-        { "show": ["$x^n$ 微 $n$ 次得 $n!$"],
-          "note": "再多微一次就是 0。",
-          "say": "另一個規律：x 的 n 次方微 n 次，剩下常數 n 階乘，再微一次就是零。",
+            {
+              "do": "write",
+              "line": "所以看 $n$ 除以 $4$ 的餘數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dfrac{d^4}{dx^4}\\cos(3x)$ 在 $x=0$"
+          ],
+          "say": "例子：餘弦 3x，微四次，在 0 的值。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(x^n)^{(n)}={{f:n!}}$","on":"x 的 n 次方"},
-            {"do":"box","term":"f","color":"green","on":"n 階乘"},
-            {"do":"write","line":"再微一次：${{z:0}}$","on":"再微一次"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\dfrac{d^4}{dx^4}\\cos(3x)$ 在 $x=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每微一次：循環一步，而且連鎖律多乘一個 $3$",
+            "$\\begin{aligned}&\\cos3x\\to-3\\sin3x\\to-9\\cos3x\\\\&\\to27\\sin3x\\to81\\cos3x\\end{aligned}$"
+          ],
+          "say": "每微一次，循環走一步，連鎖律再多乘一個 3。四次之後回到餘弦 3x，前面是 3 的 4 次方，81。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每微一次：循環一步，而且連鎖律多乘一個 $3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\cos3x\\to-3\\sin3x\\to-9\\cos3x\\\\&\\to27\\sin3x\\to81\\cos3x\\end{aligned}}$",
+              "on": "後回"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\left.\\frac{d^4}{dx^4}\\cos(3x)\\right|_{x=0}=81\\cos0=81$"
+          ],
+          "say": "代 0 進去，餘弦 0 是 1，答案 81。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\left.\\frac{d^4}{dx^4}\\cos(3x)\\right|_{x=0}=81\\cos0=81}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        }
       ],
       "check": 2
     },
     {
-      "title": "每次多乘一個 $k$",
+      "title": "有規律的家族",
       "beats": [
-        { "show": ["$e^{kx}$ 的第 $n$ 階：$k^n e^{kx}$"],
-          "note": "連鎖律每次乘一個 $k$。",
-          "say": "e 的 k x 次方，每微分一次，連鎖律就多乘一個 k，n 次就是 k 的 n 次方。",
+        {
+          "show": [
+            "$\\frac{d^n}{dx^n}e^{kx}=k^ne^{kx}\\qquad\\text{（每次多乘一個 }k\\text{）}$"
+          ],
+          "say": "再看幾個有規律的家族。e 的 kx 次方，每微一次多乘一個 k，微 n 次就是 k 的 n 次方乘原函數。",
           "board": [
-            {"do":"write","line":"$(e^{kx})'={{k:k}}\\,e^{kx}$"},
-            {"do":"focus","term":"k","on":"多乘一個 k"},
-            {"do":"transform","line":"$(e^{kx})^{(n)}={{kn:k^n}}\\,e^{kx}$","on":"n 次就是"}
-          ] },
-        { "show": ["$\\cos(3x)$ 的第 4 階，在 $x = 0$"],
-          "note": "每次乘 3，同時照順序循環。",
-          "say": "cosine 三 x 也一樣，每次多乘三，同時照 cosine、負 sine 的順序循環。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d^n}{dx^n}e^{kx}=k^ne^{kx}\\qquad\\text{（每次多乘一個 }k\\text{）}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^n$：微 $n$ 次剩常數 $n!$，再微就是 $0$",
+            "$x^n\\to nx^{n-1}\\to n(n-1)x^{n-2}\\to\\cdots\\to n!$"
+          ],
+          "say": "x 的 n 次方，每微一次次數降 1，係數乘上去。微 n 次剩下常數 n 階乘，再微就是 0。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\cos(3x)$ 的第 4 階，在 $x=0$","on":"cosine 三 x"}
-          ] },
-        { "show": ["$-3 \\sin(3x)$，$-9 \\cos(3x)$","$27 \\sin(3x)$，$81 \\cos(3x)$"],
-          "say": "一階負三 sine，二階負九 cosine，三階二十七 sine，四階八十一 cosine。",
+            {
+              "do": "write",
+              "line": "$x^n$：微 $n$ 次剩常數 $n!$，再微就是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^n\\to nx^{n-1}\\to n(n-1)x^{n-2}\\to\\cdots\\to n!$",
+              "on": "次剩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\dfrac1{1-x}=(1-x)^{-1}$，求 $f^{(7)}(0)$"
+          ],
+          "say": "最後一個例子：1 減 x 分之 1，寫成 1 減 x 的負 1 次方，求七階導數在 0 的值。",
           "board": [
-            {"do":"write","line":"$-3\\sin(3x),\\quad -9\\cos(3x)$"},
-            {"do":"write","line":"$27\\sin(3x),\\quad {{c81:81}}\\cos(3x)$","on":"三階"},
-            {"do":"focus","term":"c81","on":"四階八十一"}
-          ] },
-        { "show": ["$81 \\cos 0 = 81$"],
-          "say": "最後才代 x 等於零：cosine 零是一，答案八十一。先代再微分會得到零。",
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\dfrac1{1-x}=(1-x)^{-1}$，求 $f^{(7)}(0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "算前幾階（連鎖律的 $-1$ 和指數的負號抵消）：",
+            "$\\begin{aligned}f'&=(1-x)^{-2}\\\\f''&=2(1-x)^{-3}\\\\f'''&=6(1-x)^{-4}\\end{aligned}$"
+          ],
+          "say": "先算前幾階。每次指數往下掉 1、乘到前面，內層 1 減 x 的導數是負 1，兩個負號抵消。係數是 1、2、6。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$81\\cos 0=\\;{{r:81}}$","on":"最後才代"},
-            {"do":"box","term":"r","color":"green","on":"答案八十一"},
-            {"do":"write","line":"先代再微分，得到 ${{w:0}}$","on":"先代再微分"},
-            {"do":"circle","term":"w","color":"red","label":"錯","on":"會得到"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "算前幾階（連鎖律的 $-1$ 和指數的負號抵消）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}f'&=(1-x)^{-2}\\\\f''&=2(1-x)^{-3}\\\\f'''&=6(1-x)^{-4}\\end{aligned}}$",
+              "on": "的導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "係數 $1,2,6=1!,2!,3!$：猜",
+            "$f^{(n)}(x)=\\frac{n!}{(1-x)^{n+1}}$"
+          ],
+          "say": "1、2、6 正好是 1 階乘、2 階乘、3 階乘。所以猜 n 階導數是 1 減 x 的 n 加 1 次方分之 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "係數 $1,2,6=1!,2!,3!$：猜"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle f^{(n)}(x)=\\frac{n!}{(1-x)^{n+1}}}}$",
+              "on": "階乘#2"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "階導"
+            },
+            {
+              "do": "write",
+              "line": "　嚴格說要用數學歸納法：$\\frac{d}{dx}\\,n!(1-x)^{-(n+1)}=(n+1)!\\,(1-x)^{-(n+2)}$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f^{(7)}(0)=\\frac{7!}{1}=5040$"
+          ],
+          "say": "代 x 等於 0，分母是 1，答案是 7 階乘，5040。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle f^{(7)}(0)=\\frac{7!}{1}=5040}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "從前幾階猜規律",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$f(x) = (1 - x)^{-1}$，求 $f^{(7)}(0)$"],
-          "say": "一減 x 分之一，寫成一減 x 的負一次方。目標是第七階在零的值。",
+        {
+          "show": [
+            "• $f''$、$f'''$、$f^{(n)}$、$\\dfrac{d^2y}{dx^2}$：導函數再微分",
+            "• $s'=v$，$s''=v'=a$；$v$、$a$ 同號加速、異號減速"
+          ],
+          "say": "整理：高階導數就是導函數再微分；二階導數是加速度；每一次都是完整的微分；正弦餘弦四次一循環，e 的 kx 次方每次乘 k。",
           "board": [
-            {"do":"write","line":"$f(x)=(1-x)^{-1}$，求 ${{t:f^{(7)}(0)}}$"},
-            {"do":"underline","term":"t","on":"目標是"}
-          ] },
-        { "show": ["$f' = (1 - x)^{-2}$"],
-          "note": "裡層的 $-1$ 跟拉下來的負號相乘，變正。",
-          "say": "連鎖律：裡層一減 x 的導數是負一，跟冪次拉下來的負號相乘，變成正的。",
+            {
+              "do": "write",
+              "line": "• $f''$、$f'''$、$f^{(n)}$、$\\dfrac{d^2y}{dx^2}$：導函數再微分"
+            },
+            {
+              "do": "write",
+              "line": "• $s'=v$，$s''=v'=a$；$v$、$a$ 同號加速、異號減速",
+              "on": "再微"
+            },
+            {
+              "do": "write",
+              "line": "• 每一次都是完整的微分：該用乘法法則、連鎖律就要用",
+              "on": "每一"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sin$、$\\cos$ 四次一循環；$e^{kx}$ 每次乘 $k$；$x^n$ 微 $n$ 次得 $n!$",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "• 找規律：算前幾階，猜一般式，代 $x=0$",
+              "on": "kx"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：臨界點"
+          ],
+          "say": "下一章，用導數找函數的極大和極小，從臨界點開始。",
           "board": [
-            {"do":"write","line":"$f'={{m:(-1)}}\\cdot{{i:(-1)}}\\,(1-x)^{-2}$"},
-            {"do":"underline","term":"i","label":"裡層","on":"導數是負一"},
-            {"do":"underline","term":"m","label":"拉下來","on":"拉下來的"},
-            {"do":"transform","line":"$f'=(1-x)^{{{e2:-2}}}$","on":"相乘"}
-          ] },
-        { "show": ["$f''=1\\cdot(-2)\\cdot(-1)\\cdot(1-x)^{-3}$"],
-          "note": "兩個負號相乘得正，係數 2。",
-          "say": "再微一次看細節：次方負二拉下來，乘裡層導數負一，兩個負號相乘得正二。",
-          "board": [
-            {"do":"write","line":"$f''=1\\cdot{{p:(-2)}}\\cdot{{q:(-1)}}\\cdot(1-x)^{-3}$"},
-            {"do":"focus","term":"p","on":"次方負二"},
-            {"do":"focus","term":"q","on":"裡層導數"}
-          ] },
-        { "show": ["$f'' = 2(1 - x)^{-3}$","$f''' = 6(1 - x)^{-4}$"],
-          "say": "每微一次，把目前的次方數乘到前面，次方再加一：二、二乘三是六。",
-          "board": [
-            {"do":"focus","term":"e2","on":"目前的"},
-            {"do":"write","line":"$f''={{c2:2}}\\,(1-x)^{-3}$","on":"乘到前面"},
-            {"do":"write","line":"$f'''={{c3:6}}\\,(1-x)^{-4}$","on":"二乘三"}
-          ] },
-        { "show": ["次方：$-2 \\to -3$"],
-          "note": "「次方加 1」是指絕對值加 1。",
-          "say": "所以前面說次方加一，是負二變成負三，也就是絕對值加一。",
-          "board": [
-            {"do":"write","line":"$(1-x)^{{{a:-2}}}\\to(1-x)^{{{b:-3}}}$"},
-            {"do":"focus","term":"a","on":"負二"},
-            {"do":"focus","term":"b","on":"負三"}
-          ] }
-      ],
-      "key": "係數與次方一起看，猜出第 $n$ 階",
-      "predict": {
-        "ask": "照這個規律，$f^{(n)}(x)$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{n!}{(1 - x)^{n+1}}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{n!}{(1 - x)^{n}}$",
-            "why": "$f'$ 的次方已經是 $-2$，每階再多 1，所以第 $n$ 階是 $n + 1$ 次。"
-          },
-          {
-            "label": "$\\frac{(-1)^n n!}{(1 - x)^{n+1}}$",
-            "why": "每次裡層的 $-1$ 都跟冪次的負號抵掉，所以全部是正的。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：臨界點"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

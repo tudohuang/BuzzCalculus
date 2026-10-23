@@ -1,49 +1,143 @@
 {
   "id": "taylor-limits",
   "title": "用 Taylor 求極限",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["maclaurin-series", "taylor-error"],
-  "next": ["parametric-curves"],
-  "related": ["lhopital", "taylor-limits-higher", "big-o-little-o"],
-  "objectives": [
-    "把 $x\\to 0$ 的 $\\frac{0}{0}$ 極限裡每個函數換成「Maclaurin 多項式 $+\\,o(x^n)$」，消去之後讀出第一個留下的項。",
-    "看分母的次方決定分子要展到第幾階。",
-    "會用 $o(x^n)$ 的三條基本規則，並知道這樣做為什麼合法。"
+  "prerequisites": [
+    "maclaurin-series",
+    "taylor-error"
   ],
-  "visual": "畫出 (x − sin x)/x³ 在 x = ±0.5 附近的圖形，0 處是個洞。旁邊把 sin x 依序換成 x、x − x³/6、x − x³/6 + x⁵/120：只換到 x 時，分子變成 0，什麼都讀不出；換到 x³ 那一項，分子立刻變成 x³/6，曲線的洞被補在高度 1/6。",
+  "next": [
+    "parametric-curves"
+  ],
+  "related": [
+    "lhopital",
+    "taylor-limits-higher",
+    "big-o-little-o"
+  ],
+  "objectives": [
+    "把 $x\\to 0$ 的 $\\frac{0}{0}$ 極限裡每個函數換成「Maclaurin 多項式 $+\\,o(x^n)$」再化簡",
+    "看分母的次方決定分子要展到第幾階",
+    "會用 $o(x^n)$ 的三條基本規則，並知道這樣做為什麼合法"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 想法：在 0 附近，函數就是多項式",
+      "heading": "① 想法：函數就是多項式",
       "body": [
-        "$x$ 很靠近 0 時，$\\sin x=x-\\frac{x^3}{6}+$（比 $x^3$ 更小的東西）。把極限裡的每個函數都換成這種「多項式 + 更小的東西」，$\\frac{0}{0}$ 的分子分母會消掉一大片，第一個留下來的項就決定了極限。",
-        "例：$\\frac{x-\\sin x}{x^3}$ 的分子 $=x-\\left(x-\\frac{x^3}{6}+\\cdots\\right)=\\frac{x^3}{6}+\\cdots$，除以 $x^3$ 得 $\\frac{1}{6}+$（$\\to 0$ 的東西），極限是 $\\frac{1}{6}$。用〈L'Hôpital 法則〉要連續微分三次。"
+        "用羅必達法則要連微三次；換個想法：",
+        "代進去，$x$ 互相抵消：",
+        "除以 $x^3$：",
+        "數值檢查：$x=0.001$ 時比值 $\\approx0.1666667$",
+        "換成多項式，約掉，看最低次",
+        "「更高次」要說清楚：下一節的 $o(x^n)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{x-\\sin x}{x^3}",
+        "\\sin x=x-\\frac{x^3}{6}+(\\text{更高次})",
+        "x-\\sin x=\\frac{x^3}{6}+(\\text{更高次})",
+        "\\frac{x-\\sin x}{x^3}=\\frac16+(\\text{趨近 }0\\text{ 的東西})\\to\\frac16"
+      ]
     },
     {
       "heading": "② 記號 $o(x^n)$",
       "body": [
-        "$o(x^n)$ 代表「除以 $x^n$ 之後 $\\to 0$ 的東西」（$x\\to 0$）。例如 $x^3$ 是 $o(x^2)$，因為 $\\frac{x^3}{x^2}=x\\to 0$。三條夠用的規則：",
-        "$o(x^n)\\pm o(x^n)$ 還是 $o(x^n)$；$x^k\\cdot o(x^n)=o(x^{n+k})$；比 $n$ 高次的 $x^m$（$m>n$）都是 $o(x^n)$。",
-        "寫法：$\\sin x=x-\\frac{x^3}{6}+o(x^3)$，$e^x=1+x+\\frac{x^2}{2}+o(x^2)$。更完整的規則在〈Big-O 與 little-o〉。"
+        "$f(x)=o(x^n)$（$x\\to0$）的意思：",
+        "例：$x^5=o(x^3)$，因為 $\\dfrac{x^5}{x^3}=x^2\\to0$",
+        "Taylor 定理寫成：",
+        "三條規則（$x\\to0$）",
+        "1. $o(x^n)\\pm o(x^n)=o(x^n)$，$c\\cdot o(x^n)=o(x^n)$",
+        "2. $x^m\\cdot o(x^n)=o(x^{m+n})$；$\\dfrac{o(x^n)}{x^m}=o(x^{n-m})$",
+        "3. $m>n$：$x^m$ 和 $o(x^m)$ 都是 $o(x^n)$（高次被吸收）",
+        "注意：$o(x^n)-o(x^n)$ 不是 $0$，是 $o(x^n)$",
+        "證明都只是極限的運算：例如 $\\frac{x^m\\,o(x^n)}{x^{m+n}}=\\frac{o(x^n)}{x^n}\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac{f(x)}{x^n}=0",
+        "f(x)=T_n(x)+o(x^n)"
+      ]
+    },
+    {
+      "heading": "② 例：分子分母都展開",
+      "body": [
+        "分子：$e^x=1+x+\\dfrac{x^2}2+o(x^2)$",
+        "分母：$\\cos x=1-\\dfrac{x^2}2+o(x^2)$",
+        "$\\cos x$ 的 $x^3$ 係數是 $0$，其實 $1-\\cos x=\\frac{x^2}2+o(x^3)$；這裡 $o(x^2)$ 就夠",
+        "分子分母同除以 $x^2$：",
+        "同除以最低次：每個小 o 就變成趨近 $0$ 的東西"
+      ],
+      "tex": [
+        "\\lim_{x\\to0}\\frac{e^x-1-x}{1-\\cos x}",
+        "e^x-1-x=\\frac{x^2}{2}+o(x^2)",
+        "1-\\cos x=\\frac{x^2}{2}+o(x^2)",
+        "\\frac{\\frac12+\\frac{o(x^2)}{x^2}}{\\frac12+\\frac{o(x^2)}{x^2}}\\to\\frac{\\frac12}{\\frac12}=1"
+      ]
     },
     {
       "heading": "③ 要展到第幾階",
       "body": [
-        "分母是 $x^k$，分子就要展到 $x^k$ 那一項。展得不夠，分子會只剩 $o(\\ldots)$，看起來像 $\\frac{0}{0}$，什麼都看不出來；展得太多不會錯，只是白算。",
-        "分母也是函數時（例如 $1-\\cos x$），兩邊都展開到各自第一個不為 0 的項。"
+        "看分母：分母是 $x^n$（或等價於 $x^n$），分子就展到 $x^n$",
+        "展太少：$\\sin x=x+o(x)$",
+        "$o(x)$ 只說「比 $x$ 小」，可能比 $x^3$ 大，也可能小：資訊不夠",
+        "展太多：不會錯，只是多算",
+        "例：代換後再展開",
+        "$e^u=1+u+o(u)$，$u$ 換成 $x^2$："
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{x-\\sin x}{x^3}=\\frac{o(x)}{x^3}\\ \\ ???",
+        "\\lim_{x\\to0}\\frac{e^{x^2}-\\cos x}{x^2}",
+        "e^{x^2}=1+x^2+o(x^2)",
+        "\\cos x=1-\\frac{x^2}{2}+o(x^2)",
+        "\\frac{\\frac32x^2+o(x^2)}{x^2}\\to\\frac32"
+      ]
+    },
+    {
+      "heading": "③ 試一試",
+      "body": [
+        "先自己展開 $\\ln(1+x)$：",
+        "$\\ln(1+x)=x-\\dfrac{x^2}{2}+o(x^2)$"
+      ],
+      "tex": [
+        "\\lim_{x\\to0}\\frac{x-\\ln(1+x)}{x^2}",
+        "\\frac{x-\\ln(1+x)}{x^2}=\\frac{\\frac{x^2}2+o(x^2)}{x^2}\\to\\frac12"
+      ]
+    },
+    {
+      "heading": "③ 再想一想",
+      "body": [
+        "代換時，小 o 也跟著換",
+        "$\\ln(1+u)=u-\\dfrac{u^2}{2}+o(u^2)$，$u=x^2$：",
+        "數值檢查：$x=0.01$ 時比值 $\\approx-0.49997$"
+      ],
+      "tex": [
+        "\\lim_{x\\to0}\\frac{\\ln(1+x^2)-x^2}{x^4}",
+        "\\ln(1+x^2)=x^2-\\frac{x^4}{2}+o(x^4)",
+        "\\frac{-\\frac{x^4}{2}+o(x^4)}{x^4}\\to-\\frac12"
+      ]
     },
     {
       "heading": "④ 為什麼可以這樣換",
       "body": [
-        "〈Taylor 誤差〉說 $f(x)=T_n(x)+R_n(x)$，$R_n(x)=\\frac{f^{(n+1)}(c)x^{n+1}}{(n+1)!}$。只要 $f^{(n+1)}$ 在 0 附近連續（五個基本函數都是），它在 0 附近就有界，所以 $|R_n(x)|\\le M|x|^{n+1}$，$\\frac{R_n(x)}{x^n}\\to 0$，也就是 $R_n(x)=o(x^n)$。這正是「多項式 $+\\,o(x^n)$」的意思，不是近似，是等式。"
+        "要證：$f(x)=T_n(x)+o(x^n)$",
+        "Lagrange 餘項：$R_n(x)=\\dfrac{f^{(n+1)}(c)}{(n+1)!}x^{n+1}$，$c$ 在 $0$ 與 $x$ 之間",
+        "若 $f^{(n+1)}$ 在 $0$ 附近連續，就有界：$|f^{(n+1)}|\\le M$",
+        "所以 $R_n(x)=o(x^n)$，換掉是等號，不是近似",
+        "五個基本函數在 $0$ 附近都可以無限次微分，條件都成立"
       ],
-      "collapsible": false
+      "tex": [
+        "\\left|\\frac{R_n(x)}{x^n}\\right|\\le\\frac{M}{(n+1)!}|x|\\to0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 在 $0$ 附近：$f(x)=T_n(x)+o(x^n)$（是等號）",
+        "• $o(x^n)$：除以 $x^n$ 趨近 $0$；$o-o$ 不是 $0$",
+        "• 分母是幾次，就展到幾次；展太少看不出來",
+        "• 合併、同除以最低次、取極限",
+        "下一章：參數曲線"
+      ]
     }
   ],
   "workedExamples": [
@@ -102,264 +196,824 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to 0}\\frac{\\ln(1+x)-x}{x^2}=$？",
+      "ask": "求 $\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos x}{x\\sin x}$，分子分母各要展到幾次？",
       "options": [
-        { "label": "$-\\frac{1}{2}$", "correct": true },
-        { "label": "$\\frac{1}{2}$", "why": "$\\ln(1+x)=x-\\frac{x^2}{2}+\\cdots$，$x^2$ 項是負的。" },
-        { "label": "0", "why": "只展到 $x+o(x)$ 的話，分子是 $o(x)$，跟 $x^2$ 比讀不出東西；要展到 $x^2$。" }
-      ]
-    },
-    {
-      "ask": "求 $\\lim_{x\\to 0}\\frac{\\sin x-x+x^3/6}{x^5}$，$\\sin x$ 至少要展到？",
-      "options": [
-        { "label": "$x^5$ 項", "correct": true },
-        { "label": "$x^3$ 項", "why": "到 $x^3$ 時分子全部消掉，只剩 $o(x^3)$，除以 $x^5$ 無法判斷。" },
-        { "label": "$x^7$ 項", "why": "不會錯，但 $x^7$ 項除以 $x^5\\to 0$，對答案沒有貢獻，是多餘的。" }
-      ]
-    },
-    {
-      "ask": "$x\\to 0$ 時，下列哪個是 $o(x^2)$？",
-      "options": [
-        { "label": "$x^3$", "correct": true },
-        { "label": "$x^2$", "why": "$\\frac{x^2}{x^2}=1$，不趨近 0。" },
-        { "label": "$5x$", "why": "$\\frac{5x}{x^2}=\\frac{5}{x}\\to\\infty$；$5x$ 比 $x^2$ 大得多。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to 0}\\frac{e^x-1-x}{x^2}=$？",
-      "options": [
-        { "label": "$\\frac{1}{2}$", "correct": true },
-        { "label": "1", "why": "$e^x$ 的 $x^2$ 係數是 $\\frac{1}{2!}$，不是 1。" },
-        { "label": "0", "why": "$e^x$ 只展到 $1+x$ 會看不到 $x^2$ 項；展到 $x^2$ 才有 $\\frac{x^2}{2}$。" }
+        {
+          "label": "都到 $x^2$",
+          "correct": true
+        },
+        {
+          "label": "都到 $x$",
+          "why": "$1-\\cos x$ 沒有一次項，展到 $x$ 只剩 $o(x)$，看不出來"
+        },
+        {
+          "label": "分子到 $x^4$，分母到 $x$",
+          "why": "分母 $x\\sin x$ 本身就是二次，分子跟著展到二次就夠"
+        },
+        {
+          "label": "只展分母",
+          "why": "分子也是 $\\frac00$ 的來源，不展開看不出最低次"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "換成多項式",
+      "title": "想法：函數就是多項式",
       "beats": [
-        { "show": ["$\\sin x=x-\\frac{x^3}{6}+$（更小的東西）"],
-          "note": "$x$ 很靠近 0 時。",
-          "say": "x 很靠近零的時候，sine x 就是 x 減六分之 x 立方，再加上比 x 立方還小的東西。",
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{x-\\sin x}{x^3}$"
+          ],
+          "say": "看這個極限：x 減正弦 x，除以 x 三次方。代 0 是 0 分之 0。",
           "board": [
-            {"do":"write","line":"$\\sin x={{p:{{x2:x}}-\\frac{x^3}{6}}}+$（更小的東西）","tint":{"p":"blue"}},
-            {"do":"underline","term":"p","color":"blue","label":"多項式","on":"x 減六分之"}
-          ] },
-        { "show": ["$\\lim_{x\\to 0}\\frac{x-\\sin x}{x^3}$"],
-          "note": "$\\frac{0}{0}$：把 $\\sin x$ 換成展開式。",
-          "say": "這個極限是零比零。不微分，直接把 sine x 換成它的展開式，看分子剩下什麼。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{x-\\sin x}{x^3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用羅必達法則要連微三次；換個想法：",
+            "$\\sin x=x-\\frac{x^3}{6}+(\\text{更高次})$"
+          ],
+          "say": "用羅必達要連續微分三次。換個想法：在 0 附近，正弦 x 就是 x 減 6 分之 x 三次方，再加上更高次的小東西。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to 0}\\frac{x-{{s:\\sin x}}}{x^3}$"},
-            {"do":"focus","term":"s","label":"換成展開式","on":"直接把"}
-          ] },
-        { "show": ["$x-\\left(x-\\frac{x^3}{6}+\\cdots\\right)$"],
-          "say": "x 減掉一整包展開式。x 跟 x 先消掉，剩下的第一項會決定極限。猜猜看是什麼。",
+            {
+              "do": "write",
+              "line": "用羅必達法則要連微三次；換個想法："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sin x=x-\\frac{x^3}{6}+(\\text{更高次})$",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代進去，$x$ 互相抵消：",
+            "$x-\\sin x=\\frac{x^3}{6}+(\\text{更高次})$"
+          ],
+          "say": "代進分子，x 跟 x 抵消，剩下 6 分之 x 三次方，加上更高次的項。",
           "board": [
-            {"do":"write","line":"${{x1:x}}-\\left({{p:{{x2:x}}-\\frac{x^3}{6}}}+\\cdots\\right)$"},
-            {"do":"focus","term":"x1","on":"x 跟 x"},
-            {"do":"focus","term":"x2","label":"先消掉","on":"先消掉"}
-          ] }
+            {
+              "do": "write",
+              "line": "代進去，$x$ 互相抵消："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x-\\sin x=\\frac{x^3}{6}+(\\text{更高次})$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以 $x^3$：",
+            "$\\frac{x-\\sin x}{x^3}=\\frac16+(\\text{趨近 }0\\text{ 的東西})\\to\\frac16$"
+          ],
+          "say": "除以 x 三次方，得到 6 分之 1，加上趨近 0 的東西。所以極限是 6 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除以 $x^3$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{x-\\sin x}{x^3}=\\frac16+(\\text{趨近 }0\\text{ 的東西})\\to\\frac16}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "趨近"
+            },
+            {
+              "do": "write",
+              "line": "　數值檢查：$x=0.001$ 時比值 $\\approx0.1666667$",
+              "color": "violet",
+              "on": "極限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換成多項式，約掉，看最低次"
+          ],
+          "say": "這就是這一課的方法：把函數換成多項式，抵消、約分，看剩下的最低次項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換成多項式，約掉，看最低次",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「更高次」要說清楚：下一節的 $o(x^n)$"
+          ],
+          "say": "但是「更高次的東西」要說清楚，才算嚴格。下一節介紹一個記號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「更高次」要說清楚：下一節的 $o(x^n)$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "記號 $o(x^n)$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=o(x^n)$（$x\\to0$）的意思：",
+            "$\\lim_{x\\to0}\\frac{f(x)}{x^n}=0$"
+          ],
+          "say": "f 是 小 o x 的 n 次方，意思是：f 除以 x 的 n 次方，在 x 趨近 0 時趨近 0。也就是 f 比 x 的 n 次方還小得多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=o(x^n)$（$x\\to0$）的意思："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to0}\\frac{f(x)}{x^n}=0}}$",
+              "on": "除以"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x^5=o(x^3)$，因為 $\\dfrac{x^5}{x^3}=x^2\\to0$"
+          ],
+          "say": "例如 x 的五次方是小 o x 三次方，因為相除是 x 平方，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x^5=o(x^3)$，因為 $\\dfrac{x^5}{x^3}=x^2\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Taylor 定理寫成：",
+            "$f(x)=T_n(x)+o(x^n)$"
+          ],
+          "say": "用這個記號，泰勒定理就是：f 等於 n 階馬克勞林多項式，加上小 o x 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Taylor 定理寫成："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle f(x)=T_n(x)+o(x^n)}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "加上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三條規則（$x\\to0$）",
+            "1. $o(x^n)\\pm o(x^n)=o(x^n)$，$c\\cdot o(x^n)=o(x^n)$"
+          ],
+          "say": "三條規則：第一，同階的小 o 相加減、乘常數，還是同階的小 o。第二，乘 x 的 m 次方，次數加 m；除以 x 的 m 次方，次數減 m。第三，比 n 高次的東西，都可以丟進小 o x 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三條規則（$x\\to0$）"
+            },
+            {
+              "do": "write",
+              "line": "1. $o(x^n)\\pm o(x^n)=o(x^n)$，$c\\cdot o(x^n)=o(x^n)$",
+              "on": "同階#2"
+            },
+            {
+              "do": "write",
+              "line": "2. $x^m\\cdot o(x^n)=o(x^{m+n})$；$\\dfrac{o(x^n)}{x^m}=o(x^{n-m})$",
+              "on": "除以"
+            },
+            {
+              "do": "write",
+              "line": "3. $m>n$：$x^m$ 和 $o(x^m)$ 都是 $o(x^n)$（高次被吸收）",
+              "on": "高次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意：$o(x^n)-o(x^n)$ 不是 $0$，是 $o(x^n)$"
+          ],
+          "say": "特別注意：小 o 減小 o 不是 0。它們是兩個不知道的小東西，相減還是小 o。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意：$o(x^n)-o(x^n)$ 不是 $0$，是 $o(x^n)$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　證明都只是極限的運算：例如 $\\frac{x^m\\,o(x^n)}{x^{m+n}}=\\frac{o(x^n)}{x^n}\\to0$",
+              "color": "violet",
+              "on": "們是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：分子分母都展開",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac{e^x-1-x}{1-\\cos x}$"
+          ],
+          "say": "例子：e 的 x 次方減 1 減 x，除以 1 減餘弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{e^x-1-x}{1-\\cos x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子：$e^x=1+x+\\dfrac{x^2}2+o(x^2)$",
+            "$e^x-1-x=\\frac{x^2}{2}+o(x^2)$"
+          ],
+          "say": "分子：e 的 x 次方展到二次，減掉 1 和 x，剩 2 分之 x 平方加小 o x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子：$e^x=1+x+\\dfrac{x^2}2+o(x^2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^x-1-x=\\frac{x^2}{2}+o(x^2)$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分母：$\\cos x=1-\\dfrac{x^2}2+o(x^2)$",
+            "$1-\\cos x=\\frac{x^2}{2}+o(x^2)$"
+          ],
+          "say": "分母：餘弦展到二次，1 減餘弦也是 2 分之 x 平方加小 o x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分母：$\\cos x=1-\\dfrac{x^2}2+o(x^2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1-\\cos x=\\frac{x^2}{2}+o(x^2)$",
+              "on": "減餘"
+            },
+            {
+              "do": "write",
+              "line": "　$\\cos x$ 的 $x^3$ 係數是 $0$，其實 $1-\\cos x=\\frac{x^2}2+o(x^3)$；這裡 $o(x^2)$ 就夠",
+              "color": "violet",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子分母同除以 $x^2$：",
+            "$\\frac{\\frac12+\\frac{o(x^2)}{x^2}}{\\frac12+\\frac{o(x^2)}{x^2}}\\to\\frac{\\frac12}{\\frac12}=1$"
+          ],
+          "say": "分子分母同除以 x 平方，小 o 除以 x 平方趨近 0，剩 2 分之 1 除以 2 分之 1，極限是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子分母同除以 $x^2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{\\frac12+\\frac{o(x^2)}{x^2}}{\\frac12+\\frac{o(x^2)}{x^2}}\\to\\frac{\\frac12}{\\frac12}=1}}$",
+              "color": "red",
+              "on": "平方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "除以#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同除以最低次：每個小 o 就變成趨近 $0$ 的東西"
+          ],
+          "say": "訣竅是同除以最低次，每一個小 o 就變成趨近 0 的東西，可以放心拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同除以最低次：每個小 o 就變成趨近 $0$ 的東西"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "要展到第幾階",
+      "beats": [
+        {
+          "show": [
+            "看分母：分母是 $x^n$（或等價於 $x^n$），分子就展到 $x^n$"
+          ],
+          "say": "第三節，要展到第幾階？看分母。分母是 x 的 n 次方，分子就要展到 x 的 n 次方，餘項寫小 o x 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "看分母：分母是 $x^n$（或等價於 $x^n$），分子就展到 $x^n$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "展太少：$\\sin x=x+o(x)$",
+            "$\\frac{x-\\sin x}{x^3}=\\frac{o(x)}{x^3}\\ \\ ???$"
+          ],
+          "say": "展太少會怎樣？如果正弦只展到 x 加小 o x，分子變成小 o x，除以 x 三次方，什麼也看不出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "展太少：$\\sin x=x+o(x)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x-\\sin x}{x^3}=\\frac{o(x)}{x^3}\\ \\ ???$",
+              "color": "red",
+              "on": "加小"
+            },
+            {
+              "do": "write",
+              "line": "　$o(x)$ 只說「比 $x$ 小」，可能比 $x^3$ 大，也可能小：資訊不夠",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "展太多：不會錯，只是多算"
+          ],
+          "say": "展太多不會錯，只是多寫幾項，最後都被小 o 吸收。",
+          "board": [
+            {
+              "do": "write",
+              "line": "展太多：不會錯，只是多算"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：代換後再展開",
+            "$\\lim_{x\\to0}\\frac{e^{x^2}-\\cos x}{x^2}$"
+          ],
+          "say": "例子：e 的 x 平方次方減餘弦 x，除以 x 平方。分母是 x 平方，所以都展到 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：代換後再展開"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{e^{x^2}-\\cos x}{x^2}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^u=1+u+o(u)$，$u$ 換成 $x^2$：",
+            "$e^{x^2}=1+x^2+o(x^2)$"
+          ],
+          "say": "e 的 x 平方次方，用代換：e 的 u 次方展到一次，u 換成 x 平方，得到 1 加 x 平方加小 o x 平方。餘弦展到二次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^u=1+u+o(u)$，$u$ 換成 $x^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^{x^2}=1+x^2+o(x^2)$",
+              "on": "方展"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\cos x=1-\\frac{x^2}{2}+o(x^2)$",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\frac32x^2+o(x^2)}{x^2}\\to\\frac32$"
+          ],
+          "say": "相減，1 抵消，x 平方加 2 分之 x 平方是 2 分之 3 x 平方。除以 x 平方，極限是 2 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{\\frac32x^2+o(x^2)}{x^2}\\to\\frac32}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "平方#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一試",
+      "beats": [
+        {
+          "show": [
+            "先自己展開 $\\ln(1+x)$：",
+            "$\\lim_{x\\to0}\\frac{x-\\ln(1+x)}{x^2}$"
+          ],
+          "say": "再一個：x 減自然對數 1 加 x，除以 x 平方。分母是二次，自然對數展到二次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先自己展開 $\\ln(1+x)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{x-\\ln(1+x)}{x^2}$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln(1+x)=x-\\dfrac{x^2}{2}+o(x^2)$",
+            "$\\frac{x-\\ln(1+x)}{x^2}=\\frac{\\frac{x^2}2+o(x^2)}{x^2}\\to\\frac12$"
+          ],
+          "say": "自然對數 1 加 x 等於 x 減 2 分之 x 平方，加小 o x 平方。x 抵消，剩 2 分之 x 平方，極限是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ln(1+x)=x-\\dfrac{x^2}{2}+o(x^2)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{x-\\ln(1+x)}{x^2}=\\frac{\\frac{x^2}2+o(x^2)}{x^2}\\to\\frac12}}$",
+              "color": "red",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "分子 $x-\\sin x$ 展開後的第一項是？",
+        "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{\\sin x-x\\cos x}{x^3}=$？",
         "options": [
           {
-            "label": "$\\frac{x^3}{6}$",
+            "label": "$\\dfrac13$",
             "correct": true
           },
           {
-            "label": "$-\\frac{x^3}{6}$",
-            "why": "減掉整包時，$-\\frac{x^3}{6}$ 前面的負號會變正。"
+            "label": "$0$",
+            "why": "只展到一次：$x-x=0$ 是展太少，$x^3$ 的項沒看到"
           },
           {
-            "label": "$0$",
-            "why": "$x$ 消掉之後還有 $x^3$ 項，展得夠深就不是 0。"
+            "label": "$-\\dfrac13$",
+            "why": "減反了：$-\\frac16-(-\\frac12)=+\\frac13$，不是 $-\\frac13$"
+          },
+          {
+            "label": "$\\dfrac23$",
+            "why": "$\\sin x$ 的 $x^3$ 項是 $-\\frac{x^3}6$，正負號寫反才會得到 $\\frac16+\\frac12$"
           }
         ]
       }
     },
     {
-      "title": "記號 $o(x^n)$",
+      "title": "再想一想",
       "beats": [
-        { "show": ["$\\frac{x^3/6+\\cdots}{x^3}\\to\\frac{1}{6}$"],
-          "note": "用 L'Hôpital 要連續微分三次。",
-          "say": "分子是六分之 x 立方，除以 x 立方，極限六分之一。換成羅必達，要連續微分三次。",
-          "board": [
-            {"do":"write","line":"$\\frac{{{a:x^3/6}}+\\cdots}{x^3}\\to {{r:\\frac{1}{6}}}$"},
-            {"do":"box","term":"r","color":"green","on":"極限六分之一"}
-          ] },
-        { "show": ["圖：0 處是洞，高度 $\\frac{1}{6}$"],
-          "say": "看圖：x 越靠近零，曲線越往六分之一靠，零那裡是個洞。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,2,-0.3,0.6],"curves":[{"expr":"(x-sin(x))/x^3","domain":[0.05,2],"color":"blue"},{"expr":"(x-sin(x))/x^3","domain":[-2,-0.05],"color":"blue"}],"points":[{"x":0,"y":0.16667,"open":true}]}}
-          ] },
-        { "show": ["$o(x^n)$：除以 $x^n$ 之後 $\\to 0$"],
-          "say": "那些更小的東西，記成小 o x 的 n 次方：除以 x 的 n 次方之後，會趨近零。",
-          "board": [
-            {"do":"write","line":"$\\cdots = {{o:o(x^n)}}$"},
-            {"do":"write","line":"$\\frac{{{o:o(x^n)}}}{x^n}\\to 0$","on":"除以"}
-          ] },
-        { "show": ["$x^3$ 是 $o(x^2)$"],
-          "note": "$\\frac{x^3}{x^2}=x\\to 0$。",
-          "say": "例如 x 立方除以 x 平方剩 x，趨近零，所以 x 立方是小 o x 平方。次方越高越小。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{x^3}{x^2}={{r:x}}\\to 0$","on":"例如"},
-            {"do":"underline","term":"r","color":"gold","label":"趨近 0","on":"趨近零"}
-          ] },
-        { "show": ["$o(x^n)\\pm o(x^n)=o(x^n)$","$x^k\\cdot o(x^n)=o(x^{n+k})$"],
-          "note": "兩個小量相減還是 $o$，不是 0。",
-          "say": "規則很少：同階的小 o 加減還是小 o，不會變成零；乘上 x 的 k 次方，次數加 k。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$o(x^n)\\pm o(x^n)={{r:o(x^n)}}$","on":"同階的"},
-            {"do":"underline","term":"r","color":"gold","label":"不是 0","on":"不會變成零"},
-            {"do":"write","line":"$x^k\\cdot o(x^n)=o(x^{n+k})$","on":"乘上"}
-          ] },
-        { "show": ["$2x^3-x^3=x^3$，仍是 $o(x^2)$"],
-          "note": "相減剩下的不是 0。",
-          "say": "例如二倍 x 立方和 x 立方，都是小 o x 平方。相減剩 x 立方，還是小 o，而且不是零。",
-          "board": [
-            {"do":"write","line":"$2x^3-x^3={{q1:x^3}}$"},
-            {"do":"underline","term":"q1","color":"gold","label":"不是 0","on":"而且不是零"}
-          ] }
+        {
+          "show": [
+            "求 $\\displaystyle\\lim_{x\\to0}\\frac{1-\\cos x}{x\\sin x}$，分子分母各要展到幾次？"
+          ],
+          "say": "再想一想：這一題要展到幾次？"
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "要展到第幾階",
-      "beats": [
-        { "show": ["分母 $x^k$ → 分子展到 $x^k$ 項"],
-          "say": "分母是 x 的 k 次方，分子就要展到 x 的 k 次方那一項，不能少。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\cdots}{{{d:x^k}}}$"},
-            {"do":"write","line":"分子展到 ${{n:x^k}}$ 項","tint":{"n":"blue"},"on":"分子就要"},
-            {"do":"underline","term":"n","color":"blue","label":"不能少","on":"展到"}
-          ] },
-        { "show": ["除以 $x^k$ 後，$x^k$ 項變常數"],
-          "note": "低次項會爆掉，高次項被壓成 0。",
-          "say": "因為除以 x 的 k 次方之後，這一項剛好變成常數，常數才讀得出極限。少一項就剩小 o，多的高次項會被壓成零。",
-          "board": [
-            {"do":"write","line":"$\\frac{{{c:c\\,x^k}}}{x^k}=c$"},
-            {"do":"underline","term":"c","color":"gold","label":"常數","on":"變成常數"}
-          ] },
-        { "show": ["展不夠：只剩 $o(\\ldots)$"],
-          "note": "看起來還是 $\\frac{0}{0}$，什麼都讀不出來。",
-          "say": "展得不夠，分子全部消光，只剩一個小 o，跟分母一比，什麼都看不出來。",
-          "board": [
-            {"do":"write","line":"$\\frac{{{r:o(x^k)}}}{x^k}$"},
-            {"do":"focus","term":"r","label":"只剩小 o","on":"只剩"}
-          ] },
-        { "show": ["展太多：不會錯，只是白算"],
-          "say": "展得太多不會錯，多出來的高次項除完都趨近零，只是白算。",
-          "board": [
-            {"do":"write","line":"$\\frac{{{h:x^{k+1}}}}{x^k}=x\\to 0$"},
-            {"do":"underline","term":"h","color":"gold","label":"趨近 0","on":"高次項"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "分子分母都展開",
-      "beats": [
-        { "show": ["$\\frac{e^x-1-x}{1-\\cos x}$"],
-          "note": "分母也是函數：兩邊各展到第一個不為 0 的項。",
-          "say": "這一次分母也是函數。分子分母都展開，各展到第一個不是零的那一項。",
-          "board": [
-            {"do":"write","line":"$\\frac{{{n:e^x-1-x}}}{{{d:1-\\cos x}}}$","tint":{"n":"blue","d":"violet"}},
-            {"do":"focus","term":"d","color":"violet","label":"也是函數","on":"分母也是"}
-          ] },
-        { "show": ["$e^x-1-x=\\frac{x^2}{2}+o(x^2)$"],
-          "say": "e 的 x 次方是一加 x 加二分之 x 平方，減掉一和 x，剩二分之 x 平方。",
-          "board": [
-            {"do":"write","line":"$e^x=1+x+\\frac{x^2}{2}+\\cdots$"},
-            {"do":"write","line":"${{n:e^x-1-x}}=\\frac{x^2}{2}+o(x^2)$","on":"減掉一和"}
-          ] },
-        { "show": ["$1-\\cos x=\\frac{x^2}{2}+o(x^2)$"],
-          "say": "cosine x 是一減二分之 x 平方，一減掉它，也剩二分之 x 平方。",
-          "board": [
-            {"do":"write","line":"${{d:1-\\cos x}}=\\frac{x^2}{2}+o(x^2)$"}
-          ] },
-        { "show": ["$\\frac{1/2+o(1)}{1/2+o(1)}\\to 1$"],
-          "note": "$o(1)$：趨近 0 的東西。",
-          "say": "上下同除以 x 平方，都是二分之一加上趨近零的東西，極限是一。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\frac{{{n2:1/2+o(1)}}}{{{d2:1/2+o(1)}}}\\to {{r:1}}$","tint":{"n2":"blue","d2":"violet"},"on":"上下同除"},
-            {"do":"box","term":"r","color":"green","on":"極限是一"}
-          ] }
-      ],
-      "key": "分子分母各展到第一個非零項",
-      "check": 3
-    },
-    {
-      "title": "代換後再展開",
-      "beats": [
-        { "show": ["$e^{x^2}=1+x^2+o(x^2)$"],
-          "note": "$e^u=1+u+o(u)$，$u$ 換成 $x^2$。",
-          "say": "e 的 x 平方次方不用重新微分：把 e 的 u 次方的展開，u 換成 x 平方就好。",
-          "board": [
-            {"do":"write","line":"$e^u=1+u+o(u)$"},
-            {"do":"transform","line":"$e^{x^2}=1+x^2+o(x^2)$","on":"u 換成"}
-          ] },
-        { "show": ["$u=x^2\\to 0$，所以 $o(u)=o(x^2)$"],
-          "say": "x 趨近零時，u 也就是 x 平方跟著趨近零。所以小 o u 除以 u 趨近零，正是小 o x 平方除以 x 平方趨近零。",
-          "board": [
-            {"do":"write","line":"$u=x^2\\to 0$"},
-            {"do":"write","line":"$\\frac{o(u)}{u}=\\frac{o(x^2)}{x^2}\\to 0$","on":"所以"}
-          ] },
-        { "show": ["分子 $=\\frac{3}{2}x^2+o(x^2)$"],
-          "note": "$(1+x^2)-\\left(1-\\frac{x^2}{2}\\right)$",
-          "say": "減掉 cosine x 的展開，一跟一消掉，x 平方加二分之 x 平方，是二分之三 x 平方。",
-          "board": [
-            {"do":"write","line":"$\\cos x=1-\\frac{x^2}{2}+o(x^2)$"},
-            {"do":"write","line":"$e^{x^2}-\\cos x=\\frac{3}{2}x^2+o(x^2)$","on":"是二分之三"}
-          ] },
-        { "show": ["$\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}=\\frac{3}{2}$"],
-          "say": "除以 x 平方，極限是二分之三。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}={{r:\\frac{3}{2}}}$"},
-            {"do":"box","term":"r","color":"green","on":"極限是"}
-          ] },
-        { "show": ["$f=T_n+R_n$：$R_n$ 是多項式沒蓋住的部分"],
-          "say": "先說餘項是什麼：函數等於 Maclaurin 多項式 T n 加餘項 R n。餘項就是多項式沒蓋住的那一塊。",
-          "board": [
-            {"do":"write","line":"$f(x)=T_n(x)+{{q2:R_n(x)}}$"},
-            {"do":"focus","term":"q2","label":"沒蓋住","on":"沒蓋住"}
-          ] },
-        { "show": ["$R_n(x)=o(x^n)$：是等式，不是近似"],
-          "note": "根據〈Taylor 誤差〉。",
-          "say": "為什麼可以這樣換？泰勒誤差告訴我們，餘項就是小 o x 的 n 次方，所以這是等式。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{rn:R_n(x)=o(x^n)}}$","on":"泰勒誤差"},
-            {"do":"box","term":"rn","color":"green","label":"是等式","on":"所以這是"}
-          ] }
-      ],
-      "key": "$e^u$ 的展開裡把 $u$ 換成 $x^2$",
       "check": 0
+    },
+    {
+      "title": "再想一想",
+      "beats": [
+        {
+          "show": [
+            "代換時，小 o 也跟著換",
+            "$\\lim_{x\\to0}\\frac{\\ln(1+x^2)-x^2}{x^4}$"
+          ],
+          "say": "最後一個例子：自然對數 1 加 x 平方，減 x 平方，除以 x 的四次方。分母是四次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代換時，小 o 也跟著換"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{\\ln(1+x^2)-x^2}{x^4}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln(1+u)=u-\\dfrac{u^2}{2}+o(u^2)$，$u=x^2$：",
+            "$\\ln(1+x^2)=x^2-\\frac{x^4}{2}+o(x^4)$"
+          ],
+          "say": "自然對數 1 加 u 展到 u 平方，u 換成 x 平方。注意小 o u 平方也跟著變成小 o x 的四次方，剛好是我們要的階數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ln(1+u)=u-\\dfrac{u^2}{2}+o(u^2)$，$u=x^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln(1+x^2)=x^2-\\frac{x^4}{2}+o(x^4)$",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{-\\frac{x^4}{2}+o(x^4)}{x^4}\\to-\\frac12$"
+          ],
+          "say": "減掉 x 平方，剩負 2 分之 x 四次方，極限是負 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\frac{-\\frac{x^4}{2}+o(x^4)}{x^4}\\to-\\frac12}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　數值檢查：$x=0.01$ 時比值 $\\approx-0.49997$",
+              "color": "violet",
+              "on": "極限"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼可以這樣換",
+      "beats": [
+        {
+          "show": [
+            "要證：$f(x)=T_n(x)+o(x^n)$"
+          ],
+          "say": "最後一節：為什麼可以把函數換成多項式加小 o？",
+          "board": [
+            {
+              "do": "write",
+              "line": "要證：$f(x)=T_n(x)+o(x^n)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Lagrange 餘項：$R_n(x)=\\dfrac{f^{(n+1)}(c)}{(n+1)!}x^{n+1}$，$c$ 在 $0$ 與 $x$ 之間"
+          ],
+          "say": "由上一課的拉格朗日餘項，餘項等於 n 加 1 階導數在 c 的值，除以 n 加 1 階乘，乘 x 的 n 加 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Lagrange 餘項：$R_n(x)=\\dfrac{f^{(n+1)}(c)}{(n+1)!}x^{n+1}$，$c$ 在 $0$ 與 $x$ 之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若 $f^{(n+1)}$ 在 $0$ 附近連續，就有界：$|f^{(n+1)}|\\le M$",
+            "$\\left|\\frac{R_n(x)}{x^n}\\right|\\le\\frac{M}{(n+1)!}|x|\\to0$"
+          ],
+          "say": "如果 n 加 1 階導數在 0 附近連續，它就有界，不超過某個 M。餘項除以 x 的 n 次方，絕對值不超過一個常數乘 x 的絕對值，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "若 $f^{(n+1)}$ 在 $0$ 附近連續，就有界：$|f^{(n+1)}|\\le M$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\left|\\frac{R_n(x)}{x^n}\\right|\\le\\frac{M}{(n+1)!}|x|\\to0}}$",
+              "on": "不超#1"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "絕對#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $R_n(x)=o(x^n)$，換掉是等號，不是近似"
+          ],
+          "say": "所以餘項就是小 o x 的 n 次方。把函數換成多項式加小 o，寫的是等號，不是近似，求極限完全合法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $R_n(x)=o(x^n)$，換掉是等號，不是近似",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　五個基本函數在 $0$ 附近都可以無限次微分，條件都成立",
+              "color": "violet",
+              "on": "項式"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用 Taylor 求 $\\frac00$ 極限的步驟",
+        "steps": [
+          {
+            "label": "看分母的最低次 $x^n$"
+          },
+          {
+            "label": "每個函數展成 Maclaurin 多項式 $+\\,o(x^n)$",
+            "why": "先要有上一步：看分母的最低次 $x^n$"
+          },
+          {
+            "label": "用規則合併，留下最低次項",
+            "why": "先要有上一步：每個函數展成 Maclaurin 多項式 $+\\,o(x^n)$"
+          },
+          {
+            "label": "同除以 $x^n$，令 $x\\to0$",
+            "why": "先要有上一步：用規則合併，留下最低次項"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 在 $0$ 附近：$f(x)=T_n(x)+o(x^n)$（是等號）",
+            "• $o(x^n)$：除以 $x^n$ 趨近 $0$；$o-o$ 不是 $0$"
+          ],
+          "say": "整理一下：在 0 附近，函數等於馬克勞林多項式加小 o；小 o 減小 o 不是 0；分母幾次就展到幾次；最後同除以最低次，取極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 在 $0$ 附近：$f(x)=T_n(x)+o(x^n)$（是等號）"
+            },
+            {
+              "do": "write",
+              "line": "• $o(x^n)$：除以 $x^n$ 趨近 $0$；$o-o$ 不是 $0$",
+              "on": "馬克"
+            },
+            {
+              "do": "write",
+              "line": "• 分母是幾次，就展到幾次；展太少看不出來",
+              "on": "減小"
+            },
+            {
+              "do": "write",
+              "line": "• 合併、同除以最低次、取極限",
+              "on": "到幾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一章：參數曲線"
+          ],
+          "say": "這一章到這裡結束。下一課，進入參數曲線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一章：參數曲線"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["taylor", "limit-trap"],
-    "fine": ["taylor-limit-expand-order", "taylor-limit-little-o", "taylor-limit-num-den"]
+    "coarse": [
+      "taylor",
+      "limit-trap"
+    ],
+    "fine": [
+      "taylor-limit-expand-order",
+      "taylor-limit-little-o",
+      "taylor-limit-num-den"
+    ]
   },
   "practice": [
-    { "id": "lim-024", "core": true, "trains": "taylor-limit-expand-order" },
-    { "id": "lec-15-q2b", "core": true, "trains": "taylor-limit-expand-order" },
-    { "id": "exam-lim-020", "core": true, "trains": "taylor-limit-expand-order" },
-    { "id": "mob-limtrap-005", "core": true, "trains": "taylor-limit-little-o" },
-    { "id": "uni-lim-012", "core": true, "trains": "taylor-limit-num-den" },
-    { "id": "lec-15-q2c", "trains": "taylor-limit-little-o" },
-    { "id": "mob-limtrap-006", "trains": "taylor-limit-little-o" },
-    { "id": "uni-lim-003", "trains": "taylor-limit-expand-order" },
-    { "id": "exam-lim-003", "trains": "taylor-limit-expand-order" },
-    { "id": "exam-lim-006", "trains": "taylor-limit-expand-order" },
-    { "id": "exam-lim-002", "trains": "taylor-limit-expand-order" },
-    { "id": "depth-lim-009", "trains": "taylor-limit-expand-order" },
-    { "id": "uni-lim-007", "trains": "taylor-limit-expand-order" },
-    { "id": "burst-boss-lim-002", "trains": "taylor-limit-little-o" },
-    { "id": "uni-lim-010", "challenge": true, "trains": "taylor-limit-expand-order", "note": "挑戰：$\\arctan x$ 與 $\\arcsin x$ 的一次項相同，要各展到 $x^3$：$x-\\frac{x^3}{3}$ 與 $x+\\frac{x^3}{6}$。" }
+    {
+      "id": "lim-024",
+      "core": true,
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "lec-15-q2b",
+      "core": true,
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "exam-lim-020",
+      "core": true,
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "mob-limtrap-005",
+      "core": true,
+      "trains": "taylor-limit-little-o"
+    },
+    {
+      "id": "uni-lim-012",
+      "core": true,
+      "trains": "taylor-limit-num-den"
+    },
+    {
+      "id": "lec-15-q2c",
+      "trains": "taylor-limit-little-o"
+    },
+    {
+      "id": "mob-limtrap-006",
+      "trains": "taylor-limit-little-o"
+    },
+    {
+      "id": "uni-lim-003",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "exam-lim-003",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "exam-lim-006",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "exam-lim-002",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "depth-lim-009",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "uni-lim-007",
+      "trains": "taylor-limit-expand-order"
+    },
+    {
+      "id": "burst-boss-lim-002",
+      "trains": "taylor-limit-little-o"
+    },
+    {
+      "id": "uni-lim-010",
+      "challenge": true,
+      "trains": "taylor-limit-expand-order",
+      "note": "挑戰：$\\arctan x$ 與 $\\arcsin x$ 的一次項相同，要各展到 $x^3$：$x-\\frac{x^3}{3}$ 與 $x+\\frac{x^3}{6}$。"
+    }
   ],
   "gaps": []
 }

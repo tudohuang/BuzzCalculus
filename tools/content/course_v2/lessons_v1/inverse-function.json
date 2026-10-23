@@ -1,0 +1,372 @@
+{
+  "id": "inverse-function",
+  "title": "反函數",
+  "readMinutes": 8,
+  "totalMinutes": 20,
+  "prerequisites": ["function-composition", "domain-range"],
+  "next": ["polynomial-rational"],
+  "related": ["inverse-trig", "inverse-trig-derivative", "exp-log"],
+  "objectives": [
+    "說得出 $f^{-1}$ 在做什麼：$f(a) = b$ 的時候，$f^{-1}(b) = a$。",
+    "用水平線測試判斷有沒有反函數；沒有時知道要限制定義域。",
+    "會求反函數的式子，並知道定義域與值域互換、圖形對 $y = x$ 對稱。"
+  ],
+  "visual": "畫出 y = f(x) 與直線 y = x。在 f 的圖形上拖一個點 (a, b)，它對 y = x 的鏡像 (b, a) 同步移動，鏡像點畫出的軌跡就是 f⁻¹ 的圖形。換成 y = x² 時，一條水平線同時碰到兩點，鏡像出來的圖形不通過鉛直線測試。",
+  "concept": [
+    {
+      "heading": "① 反函數把 $f$ 做的事倒回去",
+      "body": [
+        "$f(x) = 2x + 3$ 把 1 送到 5。反函數 $f^{-1}$ 要把 5 送回 1。一般來說：$f(a) = b$ 若且唯若 $f^{-1}(b) = a$。",
+        "所以 $f^{-1}(f(x)) = x$，$f(f^{-1}(y)) = y$：先做再倒回去，等於什麼都沒做。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 不是每個函數都倒得回去",
+      "body": [
+        "$f(x) = x^2$ 把 2 和 $-2$ 都送到 4。要倒回去時，4 該回到 2 還是 $-2$？沒辦法決定，所以 $x^2$ 在全體實數上沒有反函數。",
+        "能倒回去的條件是一對一：不同的 $x$ 一定給不同的輸出。圖形上就是水平線測試：每條水平線最多碰圖形一次。",
+        "不是一對一時，可以只取一部分：$x^2$ 限制在 $x \\ge 0$ 上就是一對一，它的反函數是 $\\sqrt{x}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼求",
+      "body": [
+        "寫 $y = f(x)$，把 $x$ 解成 $y$ 的式子，最後把字母名字換回 $x$。",
+        "定義域與值域互換：$f$ 的值域是 $f^{-1}$ 的定義域，$f$ 的定義域是 $f^{-1}$ 的值域。圖形上，$(a, b)$ 在 $f$ 上，$(b, a)$ 就在 $f^{-1}$ 上，兩張圖對直線 $y = x$ 對稱。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $f^{-1}$ 不是 $\\frac{1}{f}$",
+      "body": [
+        "$f^{-1}$ 的上標 $-1$ 表示反函數，不是倒數。$f(x) = x^3$ 時 $f^{-1}(8) = 2$，而 $\\frac{1}{f(8)} = \\frac{1}{512}$。",
+        "之後兩個最重要的反函數：$\\ln$ 是 $e^x$ 的反函數（〈指數與對數〉），$\\arcsin$ 是限制過的 $\\sin$ 的反函數（〈反三角函數〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一次函數",
+      "prompt": "$f(x) = 2x + 3$，求 $f^{-1}(x)$。",
+      "steps": [
+        "寫 $y = 2x + 3$。",
+        "解 $x$：$2x = y - 3$，$x = \\frac{y - 3}{2}$。",
+        "換回 $x$ 當變數名：$f^{-1}(x) = \\frac{x - 3}{2}$。",
+        "檢查：$f(f^{-1}(x)) = 2 \\cdot \\frac{x - 3}{2} + 3 = x$。"
+      ],
+      "answer": "$f^{-1}(x) = \\frac{x - 3}{2}$",
+      "claim": "SUB(2x+3, (x-3)/2) == x ;; SUB((x-3)/2, 2x+3) == x"
+    },
+    {
+      "title": "先限制定義域",
+      "prompt": "$f(x) = x^2 - 1$（$x \\ge 0$），求 $f^{-1}(x)$ 與它的定義域、值域。",
+      "steps": [
+        "$x \\ge 0$ 時 $x^2$ 一對一，可以倒回去。$f$ 的值域：$x^2 \\ge 0$，所以 $f(x) \\ge -1$，值域 $[-1, \\infty)$。",
+        "寫 $y = x^2 - 1$，$x^2 = y + 1$，$x = \\pm\\sqrt{y + 1}$。",
+        "原本規定 $x \\ge 0$，所以取正號：$x = \\sqrt{y + 1}$。",
+        "$f^{-1}(x) = \\sqrt{x + 1}$，定義域 $[-1, \\infty)$（原本的值域），值域 $[0, \\infty)$（原本的定義域）。"
+      ],
+      "answer": "$f^{-1}(x) = \\sqrt{x + 1}$，定義域 $[-1, \\infty)$，值域 $[0, \\infty)$",
+      "claim": "SUB(x^2-1, sqrt(x+1)) == x ;; SUB(sqrt(x+1), x^2-1) == x"
+    },
+    {
+      "title": "只求一個值，不必求式子",
+      "prompt": "$f(x) = x^3 + x$，求 $f^{-1}(2)$。",
+      "steps": [
+        "$f^{-1}(2)$ 問的是：哪個 $x$ 讓 $f(x) = 2$？也就是解 $x^3 + x = 2$。",
+        "試 $x = 1$：$1 + 1 = 2$，成立。",
+        "$f$ 是一對一的：$x$ 變大時 $x^3$ 與 $x$ 都變大，所以 $x^3 + x$ 也變大，不會有第二個解。",
+        "$f^{-1}(2) = 1$。"
+      ],
+      "answer": "1",
+      "note": "$x^3 + x = y$ 解不出好看的 $x$，但求單一個值時不需要。〈反函數與反三角函數微分〉會接著問 $(f^{-1})'(2)$，第一步就是這個。",
+      "claim": "SUB(x^3+x, 1) == 2"
+    }
+  ],
+  "pitfalls": [
+    "把 $f^{-1}(x)$ 當成 $\\frac{1}{f(x)}$。",
+    "沒有限制定義域就對 $x^2$ 求反函數。",
+    "解出 $\\pm$ 兩個根，沒有依原本的定義域挑號。",
+    "忘了定義域與值域要互換。"
+  ],
+  "checks": [
+    {
+      "ask": "$f(x) = x^3$，$f^{-1}(8)$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{512}$", "why": "那是 $\\frac{1}{f(8)}$。$f^{-1}$ 是反函數，不是倒數。" },
+        { "label": "2", "correct": true },
+        { "label": "512", "why": "那是 $f(8)$。$f^{-1}(8)$ 問的是哪個數的立方是 8。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個函數在全體實數上有反函數？",
+      "options": [
+        { "label": "$x^3$", "correct": true },
+        { "label": "$x^2$", "why": "$f(2) = f(-2) = 4$，水平線 $y = 4$ 碰到兩點，不是一對一。" },
+        { "label": "$|x|$", "why": "$|3| = |-3|$，同樣不是一對一。" }
+      ]
+    },
+    {
+      "ask": "$f(x) = \\frac{x - 1}{3}$，$f^{-1}(x)$ 是？",
+      "options": [
+        { "label": "$3x - 1$", "why": "解 $y = \\frac{x - 1}{3}$ 得 $x = 3y + 1$：倒回去時「減 1」要變「加 1」。" },
+        { "label": "$\\frac{3}{x - 1}$", "why": "那是 $\\frac{1}{f(x)}$，不是反函數。" },
+        { "label": "$3x + 1$", "correct": true }
+      ]
+    },
+    {
+      "ask": "$f$ 的定義域是 $[0, \\infty)$、值域是 $[2, \\infty)$。$f^{-1}$ 的定義域是？",
+      "options": [
+        { "label": "$[2, \\infty)$", "correct": true },
+        { "label": "$[0, \\infty)$", "why": "那是 $f^{-1}$ 的值域。$f^{-1}$ 吃進去的是 $f$ 吐出來的東西。" },
+        { "label": "所有實數", "why": "$f$ 只吐出 $\\ge 2$ 的值，$f^{-1}$ 也只能吃這些。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "倒回去",
+      "beats": [
+        { "show": ["$f(x) = 2x + 3$：1 → 5"],
+          "say": "二 x 加三這台機器，把一送到五：二乘一是二，加三是五。",
+          "board": [
+            {"do":"write","line":"$f(x) = 2x + 3$"},
+            {"do":"write","line":"${{a:1}} \\to {{b:5}}$","on":"送到"}
+          ] },
+        { "show": ["$f^{-1}$：5 → 1"],
+          "note": "反函數把 $f$ 做的事倒回去。",
+          "say": "反函數就是倒帶：把五送回一。f 做了什麼，f 的反函數就把它退回去。",
+          "board": [
+            {"do":"write","line":"$f^{-1}$：${{b:5}} \\to {{a:1}}$"}
+          ] },
+        { "show": ["$f(a) = b$ ⇔ $f^{-1}(b) = a$"],
+          "say": "一般來說，f 把 a 送到 b，就等於說反函數把 b 送回 a，兩句話講的是同一件事。",
+          "board": [
+            {"do":"write","line":"${{l:f(a) = b}}$ ⇔ ${{r:f^{-1}(b) = a}}$"},
+            {"do":"underline","term":"l","color":"blue","on":"送到"},
+            {"do":"underline","term":"r","color":"violet","on":"送回"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f^{-1}(f(x))$ 等於？",
+        "options": [
+          {
+            "label": "$x$",
+            "correct": true
+          },
+          {
+            "label": "$f(x)$",
+            "why": "$f^{-1}$ 把 $f(x)$ 倒回出發點，回到的是 $x$。"
+          },
+          {
+            "label": "1",
+            "why": "$f^{-1}$ 不是倒數，這裡沒有相乘；先做再倒回去，等於什麼都沒做。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "倒得回去嗎",
+      "beats": [
+        { "show": ["$x^2$：2 → 4，$-2$ → 4"],
+          "say": "x 平方把二和負二都送到四。現在要倒回去：四該回到二，還是負二？",
+          "board": [
+            {"do":"write","line":"$x^2$：${{p:2}} \\to {{q:4}}$，${{m:-2}} \\to 4$"},
+            {"do":"underline","term":"q","label":"回哪個?","on":"四該回到"}
+          ] },
+        { "show": ["沒辦法決定 → 沒有反函數"],
+          "note": "$x^2$ 在全體實數上沒有反函數。",
+          "say": "沒辦法決定，所以 x 平方在全體實數上沒有反函數。",
+          "board": [
+            {"do":"write","line":"沒辦法決定 → 沒有反函數","color":"red"}
+          ] },
+        { "show": ["一對一：不同的 $x$，不同的輸出"],
+          "note": "水平線測試：每條水平線最多碰圖形一次。",
+          "say": "能倒回去的條件叫一對一。看圖就用水平線測試：任何一條水平線，最多只碰到圖形一次。",
+          "board": [
+            {"do":"write","line":"一對一：不同 $x$ → 不同輸出"},
+            {"do":"write","line":"水平線：最多碰到一次","on":"水平線測試"}
+          ] },
+        { "show": ["$x^2$ 只取 $x \\ge 0$：反函數 $\\sqrt{x}$"],
+          "say": "不是一對一，可以只取一半。x 平方只看大於等於零那半邊，它就倒得回去，反函數是根號 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x^2$，${{d:x \\ge 0}}$","on":"x 平方"},
+            {"do":"focus","term":"d","color":"blue","on":"大於等於零"},
+            {"do":"write","line":"反函數：$\\sqrt{x}$","on":"反函數是"}
+          ] },
+        { "show": ["$y = x^2$（$x \\ge 0$）→ $x = \\sqrt{y}$"],
+          "note": "倒推：把 $x$ 解出來。",
+          "say": "倒推看看：y 等於 x 平方，x 又不是負的，所以開根號只留正的，x 就是根號 y。",
+          "board": [
+            {"do":"write","line":"$y = x^2$，$x \\ge 0$"},
+            {"do":"write","line":"$x = \\sqrt{y}$","color":"green","on":"開根號"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "怎麼求",
+      "beats": [
+        { "show": ["$y = 2x + 3$"],
+          "note": "寫成 $y = f(x)$，把 $x$ 解出來。",
+          "say": "求反函數三步：先寫 y 等於 f 在 x 的值，再把 x 解成 y 的式子，最後換回 x 當名字。",
+          "board": [
+            {"do":"write","line":"$y = 2x {{add:+ 3}}$"}
+          ] },
+        { "show": ["$x = \\frac{y - 3}{2}$"],
+          "say": "y 減三，再除以二，就把 x 解出來了。這正好是把加三、乘二倒著做一遍。",
+          "board": [
+            {"do":"write","line":"$x = \\frac{y {{sub:- 3}}}{2}$"},
+            {"do":"focus","term":"add","on":"把加三"},
+            {"do":"underline","term":"sub","label":"倒著做","on":"倒著做"}
+          ] },
+        { "show": ["$f^{-1}(x) = \\frac{x - 3}{2}$"],
+          "note": "檢查：$2 \\cdot \\frac{x - 3}{2} + 3 = x$。",
+          "say": "把字母換回 x，就是反函數。代回 f 檢查，乘二加三，剛好拿回 x。",
+          "board": [
+            {"do":"write","line":"$f^{-1}(x) = \\frac{x - 3}{2}$","color":"green"},
+            {"do":"write","line":"檢查：$2 \\cdot \\frac{x - 3}{2} + 3 = x$","on":"代回 f"}
+          ] },
+        { "show": ["$f^{-1}(y) = \\frac{y - 3}{2}$ → 換名字"],
+          "note": "$x$、$y$ 只是輸入的名字。",
+          "say": "名字不影響規則：輸入先減三再除以二，叫 y 或叫 x 都一樣。習慣把輸入叫 x，所以換名字。",
+          "board": [
+            {"do":"write","line":"$f^{-1}(y) = \\frac{y - 3}{2}$"},
+            {"do":"write","line":"$f^{-1}(x) = \\frac{x - 3}{2}$","on":"習慣"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "先限制定義域",
+      "beats": [
+        { "show": ["$f(x) = x^2 - 1$（$x \\ge 0$）"],
+          "note": "值域 $[-1, \\infty)$。",
+          "say": "這個 f 只管 x 大於等於零，所以一對一。x 平方至少是零，減一之後至少是負一。",
+          "board": [
+            {"do":"write","line":"$f(x) = x^2 - 1$，${{dom:x \\ge 0}}$","tint":{"dom":"blue"}},
+            {"do":"transform","line":"$f(x) = x^2 - 1$，${{dom:x \\ge 0}}$，值域 ${{rng:[-1, \\infty)}}$","tint":{"rng":"violet"},"on":"減一之後"}
+          ] },
+        { "show": ["$x^2 = y + 1$，$x = \\pm\\sqrt{y + 1}$"],
+          "say": "解 x：x 平方等於 y 加一，開根號會出來正負兩個。",
+          "board": [
+            {"do":"write","line":"$x^2 = y + 1$"},
+            {"do":"transform","line":"$x^2 = y + 1$ ⇒ $x = \\pm\\sqrt{y + 1}$","on":"開根號"}
+          ] },
+        { "show": ["$x \\ge 0$：取正號"],
+          "note": "$f^{-1}(x) = \\sqrt{x + 1}$",
+          "say": "原本規定 x 大於等於零，所以只留正號。反函數是根號 x 加一。",
+          "board": [
+            {"do":"focus","term":"dom"},
+            {"do":"transform","line":"$x = \\sqrt{y + 1}$（取正號）","on":"只留正號"},
+            {"do":"write","line":"$f^{-1}(x) = \\sqrt{x + 1}$","on":"反函數是"}
+          ] },
+        { "show": ["定義域、值域互換"],
+          "note": "圖形對直線 $y = x$ 對稱。",
+          "say": "f 的值域變成反函數的定義域，f 的定義域變成反函數的值域。圖形就是沿 y 等於 x 翻過去。",
+          "board": [
+            {"do":"write","line":"$f^{-1}$：定義域 ${{rng:[-1, \\infty)}}$，值域 ${{dom2:[0, \\infty)}}$","tint":{"dom2":"blue"},"on":"值域變成"}
+          ] },
+        { "show": ["藍：$x^2 - 1$，紅：$\\sqrt{x + 1}$"],
+          "note": "綠色虛線是 $y = x$。",
+          "say": "畫出來：藍色是 x 平方減一的右半邊，紅色是根號 x 加一，綠色虛線是 y 等於 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-2,4,-2,4],"equal":true,"curves":[{"expr":"x^2-1","domain":[0,2.2],"color":"blue"},{"expr":"sqrt(x+1)","domain":[-1,3],"color":"red"},{"expr":"x","domain":[-2,4],"color":"green","dashed":true}]},"on":"畫出來"}
+          ] },
+        { "show": ["$y = x$ 上橫座標 = 縱座標"],
+          "note": "$(1, 0)$ 翻過去是 $(0, 1)$。",
+          "say": "y 等於 x 這條斜線上，橫座標等於縱座標。座標一、零在 f 上，沿線翻過去變成零、一，就在反函數上。",
+          "board": [
+            {"do":"write","line":"$(1, 0)$ 在 $f$ 上","on":"座標一"},
+            {"do":"write","line":"$(0, 1)$ 在 $f^{-1}$ 上","on":"翻過去"}
+          ] }
+      ],
+      "key": "限制 $x\\ge 0$，決定根號取哪個號",
+      "check": 3
+    },
+    {
+      "title": "$f^{-1}$ 不是 $\\frac{1}{f}$",
+      "beats": [
+        { "show": ["上標 $-1$：反函數，不是倒數"],
+          "say": "f 右上角那個負一，意思是反函數，不是倒數。這個符號長得像，意思差很多。",
+          "board": [
+            {"do":"write","line":"${{a:f^{-1}}}(x)$ ≠ ${{b:\\frac{1}{f(x)}}}$"},
+            {"do":"underline","term":"a","color":"blue","label":"反函數","on":"意思是"},
+            {"do":"strike","term":"b","label":"不是倒數","on":"不是倒數"}
+          ] },
+        { "show": ["$f^{-1}(8)$：哪個數的立方是 8？"],
+          "note": "以 $f(x) = x^3$ 為例。",
+          "say": "f 是 x 三次方的話，反函數在八的值，問的是：哪一個數的立方是八。",
+          "board": [
+            {"do":"write","line":"$f(x) = x^3$"},
+            {"do":"write","line":"${{q:f^{-1}(8)}}$：什麼的立方是 8？","on":"反函數在八"},
+            {"do":"underline","term":"q","on":"立方"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "只求一個值",
+      "beats": [
+        { "show": ["$f(x) = x^3 + x$，求 $f^{-1}(2)$"],
+          "note": "$x^3 + x = y$ 解不出好看的 $x$。",
+          "say": "x 三次方加 x，要把 x 解成 y 的式子很難。但只問反函數在二的值，就不需要式子。",
+          "board": [
+            {"do":"write","line":"$f(x) = x^3 + x$"},
+            {"do":"write","line":"求 ${{q:f^{-1}(2)}}$","on":"反函數在二"},
+            {"do":"underline","term":"q","label":"只要一個值","on":"不需要"}
+          ] },
+        { "show": ["試 $x = 1$：$1 + 1 = 2$"],
+          "say": "代一進去試試：一的三次方加一，剛好是二。",
+          "board": [
+            {"do":"write","line":"試 $x = {{t:1}}$：$1^3 + 1 = 2$"},
+            {"do":"focus","term":"t","color":"blue","on":"三次方"}
+          ] },
+        { "show": ["$f(1) = 2$ ⇔ $f^{-1}(2) = 1$"],
+          "note": "用第一節的規則。",
+          "say": "f 把一送到二，照第一節的規則，反函數就把二送回一。",
+          "board": [
+            {"do":"write","line":"${{a:f(1) = 2}}$ ⇔ ${{b:f^{-1}(2) = 1}}$"},
+            {"do":"underline","term":"b","color":"green","on":"送回一"}
+          ] }
+      ],
+      "key": "不必解三次方程，試一個 $x$",
+      "predict": {
+        "ask": "試出 $x = 1$ 之後，還要確認什麼？",
+        "options": [
+          {
+            "label": "沒有第二個解：$f$ 是一對一的",
+            "correct": true
+          },
+          {
+            "label": "答案是不是 $\\frac{1}{f(2)}$",
+            "why": "$f^{-1}$ 不是倒數，跟 $\\frac{1}{f}$ 無關。"
+          },
+          {
+            "label": "$f(2)$ 是不是 1",
+            "why": "方向反了：要找的是被送到 2 的 $x$，不是 2 被送到哪。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["inverse-function"],
+    "fine": ["inverse-one-to-one", "inverse-solve-formula", "inverse-restrict-domain", "inverse-value"]
+  },
+  "practice": [
+    { "id": "cg-0b-012", "core": true, "trains": "inverse-solve-formula" },
+    { "id": "cg-0b-015", "core": true, "trains": "inverse-one-to-one" },
+    { "id": "cg-0b-017", "core": true, "trains": "inverse-value" },
+    { "id": "cg-0b-013", "trains": "inverse-solve-formula" },
+    { "id": "cg-0b-014", "trains": "inverse-solve-formula" },
+    { "id": "cg-0b-016", "trains": "inverse-one-to-one" },
+    { "id": "cg-0b-018", "trains": "inverse-value" }
+  ],
+  "gaps": []
+}

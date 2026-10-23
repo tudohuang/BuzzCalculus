@@ -12,7 +12,7 @@ const TYPES = {
   strike: ["term", "color", "label"],
   focus: ["term", "color", "label"],
   arrow: ["from", "to", "color", "label"],
-  plot: ["graph"],
+  plot: ["graph", "svg", "nb"],
   clear: [],
   keep: ["n"]
 };
@@ -84,9 +84,9 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
   // 拿掉 {{id:…}} 的標記，剩下畫面上的數學（數字規則、一般的 KaTeX 檢查用這個）
   const plain = (line) => board.tex(String(line)).replace(/\\htmlClass\{cvb-t-[a-z0-9]+\}/g, "");
   const idsIn = (line) => [...String(line).matchAll(ID)].map((m) => m[1]);
-  function checkLine(err, at, line) {
+  function checkLine(err, at, line, loose) {
     if (typeof line !== "string" || !line.trim()) { err(`${at} 的 line 是空的`); return null; }
-    if (cjkLen(plain(line)) > LINE_MAX) err(`${at} 的 line「${line}」超過 ${LINE_MAX} 字`);
+    if (!loose && cjkLen(plain(line)) > LINE_MAX) err(`${at} 的 line「${line}」超過 ${LINE_MAX} 字`);
     if (/\\(html|href|url|includegraphics|class|cssId|style|data)/.test(line)) err(`${at} 的 line 不能直接寫 \\html… 之類的指令：項的 id 用 {{id:…}}`);
     const parts = line.split(/(?<!\\)\$/);
     if (parts.length % 2 === 0) { err(`${at} 的 line「${line}」$ 不成對`); return null; }
@@ -110,7 +110,9 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
 
   // 一節：照順序走每一句的動作；回傳要算進數字規則的字（標記拿掉）
   // narrated：這一課有旁白（say）→ 動作要錨在念到的詞上
-  function checkSection(sec, where, err, narrated) {
+  // loose：交付的筆記本課（source: "notebook"，tools/import_notebook.js 轉的）—— 筆記本一課一塊、往下寫，
+  //   一行的字數、一句的動作數、板上的行數、一次一張圖都不限（版面由 lint_board_layout 在 Chrome 裡量）
+  function checkSection(sec, where, err, narrated, loose) {
     const texts = [];
     let lines = []; // [{ ids: [...], plot: bool }]
     const wrong = []; // [{ id, line }]：標成錯的項與它所在的那一行（同一個物件）
@@ -124,7 +126,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
       if (b.board === undefined) return;
       const at0 = `${where}第 ${bi + 1} 句的 board`;
       if (!Array.isArray(b.board) || !b.board.length) { err(`${at0} 要是非空的陣列`); return; }
-      if (b.board.length > MAX_ACTIONS) err(`${at0} 有 ${b.board.length} 個動作（一句 ≤ ${MAX_ACTIONS}）`);
+      if (!loose && b.board.length > MAX_ACTIONS) err(`${at0} 有 ${b.board.length} 個動作（一句 ≤ ${MAX_ACTIONS}）`);
       let lastAt = -1;
       let held = false;
       const lastOn = {};
@@ -182,7 +184,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
         if (a.do === "write" || a.do === "transform") {
           const eq = lines.map((l) => !l.plot).lastIndexOf(true);
           if (a.do === "transform" && eq < 0) err(`${at}：板上沒有式子可以變形（先 write）`);
-          const terms = checkLine(err, at, a.line);
+          const terms = checkLine(err, at, a.line, loose);
           if (typeof a.line === "string") texts.push(plain(a.line));
           if (terms) same(at, terms, -1);
           // 劃掉（或紅色記號）標成「錯」的項：那一行還在板上時，不能在別的行（或變形後的同一行）沒標記地再出現
@@ -199,8 +201,17 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
           need(a.to, "to");
           if (a.from && a.from === a.to) err(`${at}（arrow）的 from 跟 to 一樣`);
         } else if (a.do === "plot") {
-          if (lines.some((l) => l.plot)) err(`${at}：板上已經有一張圖（先 clear／keep）`);
-          if (!a.graph || typeof a.graph !== "object") err(`${at}（plot）沒有 graph`);
+          if (!loose && lines.some((l) => l.plot)) err(`${at}：板上已經有一張圖（先 clear／keep）`);
+          // svg：交付的筆記本課，圖在匯入時就畫好了（只收一整個 <svg>…</svg>，不收 script、事件、外部連結）
+          if (a.nb !== undefined) {
+            // nb：交付的筆記本課的函數圖（BuzzNotebook 的 plot 規格；網站上 src/course_board_nbplot.js 畫，匯入時畫過一次）
+            if (a.graph !== undefined || a.svg !== undefined) err(`${at}（plot）graph、svg、nb 只能寫一個`);
+            if (!a.nb || typeof a.nb !== "object" || !a.nb.spec || !Array.isArray(a.nb.spec.window)) err(`${at}（plot）的 nb 要有 spec.window`);
+          } else if (a.svg !== undefined) {
+            if (a.graph !== undefined) err(`${at}（plot）graph 跟 svg 只能寫一個`);
+            if (typeof a.svg !== "string" || !/^<svg[\s>][\s\S]*<\/svg>$/.test(a.svg.trim())) err(`${at}（plot）的 svg 要是一整個 <svg>…</svg>`);
+            else if (/<script|\son\w+\s*=|javascript:|<foreignObject|href\s*=\s*["']?(?!#)/i.test(a.svg)) err(`${at}（plot）的 svg 有 script、事件或外部連結`);
+          } else if (!a.graph || typeof a.graph !== "object") err(`${at}（plot）沒有 graph`);
           else {
             // 第三個參數是收錯誤的函式；以前漏傳，圖一有錯驗證器就丟 TypeError「e is not a function」而不是印出哪裡錯
             checkGraph(at, a.graph, err);
@@ -215,7 +226,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
           else lines = lines.slice(-a.n);
         }
         const load = lines.reduce((n, l) => n + (l.plot ? 2 : 1), 0);
-        if (load > MAX_LINES) err(`${at}：板上 ${load} 行（一張圖算 2 行；最多 ${MAX_LINES}，先 clear／keep）`);
+        if (!loose && load > MAX_LINES) err(`${at}：板上 ${load} 行（一張圖算 2 行；最多 ${MAX_LINES}，先 clear／keep）`);
       });
     });
     return texts;
@@ -298,6 +309,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
     eq("\\le 與 \\left 分得開", LY.relSplit("0\\le f_n\\le\\frac{1}{2}").length, 3);
     const u = LY.units("取 $k=g(x+h)-g(x)$，除以 $h$");
     eq("字＋式子：在 = 前、中文標點後可以換行", u.units.length, 3);
+    eq("長的一串中文每四個字可以換行（標點、空白黏前面）", LY.units("一二三四五六七八，九").units.map((x) => x.toks.map((t) => t.s).join("")), ["一二三四", "五六七八，", "九"]);
     eq("有中文的行不對齊", u.align, -1);
     eq("純式子對齊到第一個關係符號", LY.units("$y=f(u)$").align, 1);
     eq("⇒ 開頭的行不對齊", LY.units("$\\Rightarrow0\\le f_n$").align, -1);

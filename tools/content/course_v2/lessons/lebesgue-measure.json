@@ -1,336 +1,136 @@
 {
   "id": "lebesgue-measure",
   "title": "Lebesgue 測度",
-  "readMinutes": 13,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["measure", "measure-zero", "sigma-algebra"],
-  "next": ["null-sets"],
+  "prerequisites": [
+    "measure",
+    "measure-zero",
+    "sigma-algebra"
+  ],
+  "next": [
+    "null-sets"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 Lebesgue 外測度 $m^*(A)$ 的定義，並用它估計可數集、胖 Cantor 集的大小。",
-    "說得出 Lebesgue 測度的三個性質：區間的測度是長度、平移不變、可數可加。",
-    "說得出為什麼不是每個子集都可測（Vitali 集的想法），所以測度只定義在 $\\sigma$-代數上。"
+    "寫得出 Lebesgue 外測度 $m^*(A)$ 的定義，並用它估計可數集、胖 Cantor 集的大小",
+    "說得出 Lebesgue 測度的三個性質：區間的測度是長度、平移不變、可數可加",
+    "說得出為什麼不是每個子集都可測（Vitali 集的想法），所以測度只定義在 $\\sigma$-代數上"
   ],
-  "visual": "數線上一個集合 A（例如 [0, 1] 中的有理數，畫成點）。使用者一個一個放開區間去蓋，右上角顯示目前的總長度；按「縮小」時每個區間依 ε/2ᵏ 的規則變短，總長度跟著往 0 掉，但點仍全部被蓋住。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 用區間從外面去蓋",
+      "heading": "① 從外面去蓋",
       "body": [
-        "區間有長度。一般的集合 $A$，就用可數多個開區間把它蓋住，看總長度最少可以壓到多少。這個「最省的蓋法」的總長度，就是 $A$ 的外測度：",
-        "這跟〈測度為零的直觀〉的定義是同一種想法：那裡問「能不能壓到任意小」，這裡問「最小壓到多少」。$m^*(A)=0$ 正好就是測度為零。",
-        "$m^*$ 對每個子集都有定義，滿足 $m^*(\\emptyset)=0$、單調、可數次可加、平移不變，而且 $m^*([a,b])=b-a$（這是一個定理，$\\ge$ 那一半要用 Heine–Borel）。"
+        "想量 $A\\subseteq\\mathbb{R}$：用可數多個開區間蓋住它，加總長度",
+        "蓋法越省，總長越小 ⇒ 取下確界",
+        "$\\ell((c,d))=d-c$；總長可以是 $\\infty$。跟 12.41「測度為零」用的是同一種蓋法",
+        "• 對所有子集都有定義",
+        "• 單調：$A\\subseteq B$ ⇒ $m^*(A)\\le m^*(B)$（蓋住 $B$ 的就蓋住 $A$）",
+        "• 可數次可加：$m^*(\\bigcup A_k)\\le\\sum m^*(A_k)$",
+        "次可加的證法：每個 $A_k$ 取一組總長 $<m^*(A_k)+\\frac{\\varepsilon}{2^k}$ 的蓋法，全部合起來"
       ],
-      "tex": ["m^{*}(A)=\\inf\\Big\\{\\sum_{k=1}^{\\infty}\\ell(I_k)\\ :\\ A\\subseteq\\bigcup_{k=1}^{\\infty}I_k,\\ I_k\\text{ 為開區間}\\Big\\}"],
-      "collapsible": false
+      "tex": [
+        "m^*(A)=\\inf\\Big\\{\\sum_{k=1}^\\infty\\ell(I_k):\\ A\\subseteq\\bigcup_{k=1}^\\infty I_k,\\ I_k\\ \\text{開區間}\\Big\\}"
+      ]
     },
     {
-      "heading": "② 只保留「切得乾淨」的集合",
+      "heading": "① 可數集外測度是 0",
       "body": [
-        "$m^*$ 有一個缺點：對某些互不相交的集合，可加性會壞掉。解法是只保留切割得乾淨的集合。$E$ 叫做 Lebesgue 可測，如果它把任何集合 $A$ 切成兩半時，外測度剛好相加（Carathéodory 判準）：",
-        "可以證明（這裡不證）：可測集構成一個 $\\sigma$-代數，包含所有 Borel 集；$m^*$ 限制在上面是測度，叫 Lebesgue 測度 $m$。它滿足 $m($區間$)=$ 長度、$m(E+t)=m(E)$（平移不變）、可數可加。"
+        "例：$\\mathbb{Q}\\cap[0,1]$ 排成 $q_1,q_2,q_3,\\ldots$。給 $\\varepsilon>0$，第 $n$ 個用",
+        "所以 $m^*(\\mathbb{Q}\\cap[0,1])\\le\\varepsilon$ 對每個 $\\varepsilon>0$ ⇒ $m^*=0$　$\\blacksquare$",
+        "同一個證明：任何可數集的外測度都是 $0$"
       ],
-      "tex": ["m^{*}(A)=m^{*}(A\\cap E)+m^{*}(A\\setminus E)\\quad\\text{對所有 }A\\subseteq\\mathbb R"],
-      "collapsible": false
+      "tex": [
+        "I_n=\\Big(q_n-\\frac{\\varepsilon}{2^{n+1}},\\ q_n+\\frac{\\varepsilon}{2^{n+1}}\\Big)",
+        "\\sum_{n=1}^\\infty\\ell(I_n)=\\sum_{n=1}^\\infty\\frac{\\varepsilon}{2^n}=\\varepsilon"
+      ]
     },
     {
-      "heading": "③ 不是每個集合都可測",
+      "heading": "② 區間：外測度是長度",
       "body": [
-        "用選擇公理可以造出一個集合 $V\\subseteq[0,1]$（Vitali 集），它不是 Lebesgue 可測的。所以「量所有子集」做不到，$\\sigma$-代數是必要的。日常遇到的集合（Borel 集、它們跟零測集的差）全部可測。"
-      ],
-      "collapsible": false
+        "定理：$m^*([a,b])=b-a$",
+        "$\\le$：$(a-\\varepsilon,b+\\varepsilon)$ 一個就蓋住，總長 $b-a+2\\varepsilon$ ⇒ $m^*\\le b-a$",
+        "$\\ge$：任何蓋法 $\\{I_k\\}$ 都要 $\\sum\\ell(I_k)\\ge b-a$",
+        "策略：① 先砍成有限多個（緊緻性）② 有限個就能串成一條鏈",
+        "引理：開區間 $\\{I_k\\}$ 蓋住 $[a,b]$ ⇒ 其中有限多個就蓋住",
+        "證明：$T=\\{x\\in[a,b]:\\ [a,x]\\ \\text{被有限多個}\\ I_k\\ \\text{蓋住}\\}$，$a\\in T$，令 $s=\\sup T$",
+        "$s$ 在某個 $I_j=(c,d)$ 裡；取 $x\\in T$，$x>c$。$[a,x]$ 的有限多個再加 $I_j$，蓋住 $[a,y]$（$y<d$，$y\\le b$）",
+        "若 $s<b$：有 $y\\in T$、$y>s$，矛盾。所以 $s=b$，而且 $[a,b]$ 被蓋住　$\\blacksquare$"
+      ]
     },
     {
-      "heading": "證明概要：Vitali 集不可測",
+      "heading": "② 證明：串成一條鏈",
       "body": [
-        "在 $[0,1]$ 上定義 $x\\sim y\\iff x-y\\in\\mathbb{Q}$，這是等價關係。用選擇公理從每個等價類挑一個代表，組成 $V\\subseteq[0,1]$。",
-        "對每個 $r\\in\\mathbb{Q}\\cap[-1,1]$ 令 $V_r=V+r$。這些平移兩兩不相交：若 $v+r=v'+r'$，則 $v-v'\\in\\mathbb{Q}$，$v$ 與 $v'$ 同類，只能 $v=v'$，於是 $r=r'$。",
-        "$[0,1]\\subseteq\\bigcup_r V_r\\subseteq[-1,2]$：每個 $x\\in[0,1]$ 的代表 $v$ 滿足 $x-v\\in\\mathbb{Q}\\cap[-1,1]$；而 $V_r\\subseteq[0-1,1+1]$。",
-        "若 $V$ 可測，平移不變給 $m(V_r)=m(V)=c$，可數可加給 $1\\le\\sum_r c\\le3$。可數多個 $c$ 相加只能是 0（$c=0$）或 $\\infty$（$c>0$），都不在 $[1,3]$ 裡，矛盾。"
+        "設有限多個 $(a_k,b_k)$ 蓋住 $[a,b]$：",
+        "• 取一個含 $a$ 的：$a_1<a<b_1$",
+        "• 若 $b_1\\le b$：$b_1$ 在另一個裡：$a_2<b_1<b_2$",
+        "• 一直做；$b_k$ 遞增，每次用新的區間，有限步後 $b_K>b$",
+        "因為 $a_{k}<b_{k-1}$：",
+        "原來的可數蓋法總長 $\\ge$ 這有限個的總長 $>b-a$　$\\blacksquare$",
+        "開區間、半開區間也一樣：夾在 $[a+\\varepsilon,b-\\varepsilon]$ 和 $[a,b]$ 之間。無界區間的外測度是 $\\infty$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "從外面去蓋",
-      "beats": [
-        { "show": ["用可數多個開區間把 $A$ 蓋住"],
-          "say": "一般的集合怎麼量長度？用可數多個開區間從外面把它蓋住。",
-          "board": [
-            {"do":"plot","graph":{"window":[0.5,9,-1.55,1.55],"equal":true,"ticks":false,"curves":[{"pts":[[1.5,0],[3.4,0]],"color":"blue","width":5},{"pts":[[6,0],[7.6,0]],"color":"blue","width":5}],"fills":[{"pts":[[1.2,-0.42],[2.7,-0.42],[2.7,0.42],[1.2,0.42]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[2.4,-0.3],[3.8,-0.3],[3.8,0.3],[2.4,0.3]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[5.7,-0.36],[7.9,-0.36],[7.9,0.36],[5.7,0.36]],"color":"gold","opacity":0.22,"stroke":"gold"}],"labels":[{"x":2.45,"y":0.85,"text":"A","anchor":"middle"},{"x":6.8,"y":0.85,"text":"A","anchor":"middle"}]}},
-            {"do":"write","line":"用可數多個開區間把 $A$ 蓋住","on":"可數多個"}
-          ] },
-        { "show": ["$m^{*}(A)=\\inf\\sum\\ell(I_k)$"],
-          "note": "最省的蓋法的總長度。",
-          "say": "看總長度最少可以壓到多少。最省的蓋法的總長，叫做外測度。",
-          "board": [
-            {"do":"transform","line":"$m^{*}(A)={{inf:\\inf}}\\sum\\ell(I_k)$","on":"總長度"},
-            {"do":"underline","term":"inf","on":"最少","label":"最省"}
-          ] },
-        { "show": ["$m^*(A)=0$ 就是測度為零"],
-          "say": "測度為零問的是能不能壓到任意小；這裡問的是最小壓到多少，壓到零就是測度為零。",
-          "board": [
-            {"do":"write","line":"$m^*(A)={{z:0}}$ 就是測度為零","on":"這裡問的"},
-            {"do":"focus","term":"z","on":"壓到零"}
-          ] },
-        { "show": ["$m^*([a,b])=b-a$"],
-          "note": "每個子集都有定義、平移不變。",
-          "say": "外測度對每個子集都有定義，平移不會改變它，而且閉區間的外測度剛好是它的長度。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"每個子集都有定義、平移不變","on":"每個子集"},
-            {"do":"write","line":"$m^*([a,b])={{l:b-a}}$","on":"閉區間"},
-            {"do":"underline","term":"l","on":"剛好是","color":"green","label":"長度"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\begin{aligned}\\sum_{k=1}^K(b_k-a_k)&>(b_K-b_{K-1})+\\cdots+(b_1-a_1)\\\\&=b_K-a_1>b-a\\end{aligned}"
+      ]
     },
     {
-      "title": "有理數總長是 0",
-      "beats": [
-        { "show": ["$\\mathbb{Q}\\cap[0,1]$ 排成 $q_1,q_2,\\dots$"],
-          "say": "把零到一的有理數排成一列。",
-          "board": [
-            {"do":"write","line":"$\\mathbb{Q}\\cap[0,1]$ 排成 $q_1,q_2,\\dots$"}
-          ] },
-        { "show": ["第 $n$ 個用長 $\\frac{1}{100\\cdot2^n}$ 的區間"],
-          "say": "第 n 個用長度一百乘二的 n 次方分之一的開區間蓋住。",
-          "board": [
-            {"do":"write","line":"$q_n$ 用長 ${{l:\\frac{1}{100\\cdot2^n}}}$ 的開區間蓋"},
-            {"do":"underline","term":"l","label":"愈來愈短","on":"分之一"}
-          ] },
-        { "show": ["$\\frac{1}{100\\cdot2^n}$ 的 100 是隨便挑的"],
-          "note": "換成更大的數，區間更短，總長更小。",
-          "say": "這個一百只是隨便挑的。換成更大的數，每個區間會更短，總長也跟著變小。",
-          "board": [
-            {"do":"write","line":"長 $\\frac{1}{{{h:100}}\\cdot2^n}$，100 可以換"},
-            {"do":"focus","term":"h","on":"隨便挑"}
-          ] },
-        { "show": ["每個點都在自己的區間裡"],
-          "say": "看圖：每個點都被自己的區間蓋住，而且區間一個比一個短。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,8,-1.5,1.5],"ticks":false,"curves":[{"pts":[[1,0],[1.02,0]],"color":"blue","width":5},{"pts":[[3,0],[3.02,0]],"color":"blue","width":5},{"pts":[[4.5,0],[4.52,0]],"color":"blue","width":5},{"pts":[[5.5,0],[5.52,0]],"color":"blue","width":5},{"pts":[[6.2,0],[6.22,0]],"color":"blue","width":5}],"fills":[{"pts":[[0.4,-0.7],[1.6,-0.7],[1.6,0.7],[0.4,0.7]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[2.6,-0.5],[3.4,-0.5],[3.4,0.5],[2.6,0.5]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[4.2,-0.35],[4.8,-0.35],[4.8,0.35],[4.2,0.35]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[5.3,-0.22],[5.7,-0.22],[5.7,0.22],[5.3,0.22]],"color":"gold","opacity":0.22,"stroke":"gold"},{"pts":[[6.05,-0.12],[6.35,-0.12],[6.35,0.12],[6.05,0.12]],"color":"gold","opacity":0.22,"stroke":"gold"}]}}
-          ] }
+      "heading": "③ 只留切得乾淨的",
+      "body": [
+        "$m^*$ 對所有集合都有定義，但不是可數可加（④ 會看到）",
+        "Carathéodory 判準：$E$ 可測 ⟺ 對每個 $A\\subseteq\\mathbb{R}$",
+        "$\\le$ 由次可加永遠成立；真正要檢查的是 $\\ge$",
+        "定理（證明骨架）：可測集形成 $\\sigma$-代數 $\\mathcal{L}$，含所有 Borel 集；$m=m^*|_{\\mathcal{L}}$ 是測度",
+        "完整證明見下一課：卡拉西奧多里構造（關鍵一步是證明 $(a,\\infty)$ 滿足判準）",
+        "Lebesgue 測度 $m$ 的三個性質：",
+        "• 區間的測度是長度（②）",
+        "• 平移不變：$m(E+t)=m(E)$（蓋法平移，長度不變）",
+        "• 可數可加"
       ],
-      "key": "區間長度取等比遞減，總長可以任意小",
-      "predict": {
-        "ask": "這個蓋法的總長度是？",
-        "options": [
-          {
-            "label": "$\\frac{1}{100}$",
-            "correct": true
-          },
-          {
-            "label": "1",
-            "why": "那是 $\\sum2^{-n}$；別忘了每一項還乘了 $\\frac{1}{100}$。"
-          },
-          {
-            "label": "0",
-            "why": "每個區間長度都是正的，總長是 $\\frac{1}{100}$；把 $\\frac{1}{100}$ 換成任何 $\\varepsilon$，才推出外測度是 0。"
-          }
-        ]
-      }
+      "tex": [
+        "m^*(A)=m^*(A\\cap E)+m^*(A\\cap E^c)"
+      ]
     },
     {
-      "title": "切得乾淨的集合",
-      "beats": [
-        { "show": ["$m^{*}(A)=m^{*}(A\\cap E)+m^{*}(A\\setminus E)$"],
-          "note": "對所有 $A$ 成立：$E$ 叫 Lebesgue 可測。",
-          "say": "外測度有個缺點，可加性會壞掉。解法是只留切得乾淨的集合：拿它切任何集合，外測度剛好相加。",
-          "board": [
-            {"do":"write","line":"$m^{*}(A)={{a:m^{*}(A\\cap E)}}+{{b:m^{*}(A\\setminus E)}}$"},
-            {"do":"underline","term":"a","label":"切一刀","on":"切任何集合"}
-          ] },
-        { "show": ["可測集是 $\\sigma$-代數，含所有 Borel 集"],
-          "say": "這些可測集組成一個 sigma 代數，包含所有 Borel 集。外測度限制在上面，就是 Lebesgue 測度。",
-          "board": [
-            {"do":"write","line":"可測集是 $\\sigma$-代數，含所有 Borel 集"},
-            {"do":"write","line":"$m=m^{*}$ 限制在可測集上","on":"外測度"}
-          ] },
-        { "show": ["可測集：補集、可數聯集還是可測","Borel 集：從開區間出發"],
-          "note": "反覆取補集與可數聯集得到。",
-          "say": "可測集的意思：取補集、取可數個聯集，結果還是可測。Borel 集是從開區間出發，反覆做這兩件事得到的。",
-          "board": [
-            {"do":"write","line":"補集、可數聯集：還是可測"},
-            {"do":"write","line":"Borel 集：開區間出發，反覆做","on":"Borel"}
-          ] },
-        { "show": ["Vitali 集 $V\\subseteq[0,1]$：不可測"],
-          "note": "用選擇公理造出來。",
-          "say": "但不是每個集合都可測。用選擇公理可以造出 Vitali 集，它不可測。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"不是每個集合都可測","on":"但不是"},
-            {"do":"write","line":"用${{ac:\\text{選擇公理}}}$造出 Vitali 集 $V\\subseteq[0,1]$","on":"用選擇公理"},
-            {"do":"underline","term":"ac","on":"可以造出"}
-          ] },
-        { "show": ["$V_r\\subseteq[-1,2]$，$m(\\bigcup V_r)=\\sum c$"],
-          "say": "V 在零到一，r 在負一到一，所以 V r 落在負一到二。不重疊加上可數可加，聯集的測度等於各個測度 c 相加。",
-          "board": [
-            {"do":"write","line":"$V\\subseteq[0,1]$，$r\\in[-1,1]$"},
-            {"do":"write","line":"$V_r\\subseteq[-1,2]$","on":"落在"},
-            {"do":"write","line":"$m(\\bigcup V_r)=\\sum c$","on":"可數可加"}
-          ] },
-        { "show": ["$1\\le\\sum_r c\\le3$：矛盾"],
-          "note": "可數個 $c$ 相加，只能是 0 或 $\\infty$。",
-          "say": "它的可數個平移塞在一個長度三的區間裡又蓋住零到一，每個測度一樣，加起來只能是零或無限大，矛盾。",
-          "board": [
-            {"do":"write","line":"$V_r$ 可數個，每個測度都是 $c$"},
-            {"do":"write","line":"$1\\le{{s:\\sum_r c}}\\le3$","on":"加起來"},
-            {"do":"underline","term":"s","color":"red","label":"不可能","on":"只能是零"}
-          ] }
+      "heading": "③ 胖 Cantor 集",
+      "body": [
+        "$[0,1]$ 開始；第 $n$ 步從剩下的 $2^{n-1}$ 段，每段中間去掉長 $4^{-n}$ 的開區間",
+        "外測度估計：第 $n$ 步剩的段總長 $\\frac12+\\frac1{2^{n+1}}$ ⇒ $m^*(C)\\le\\frac12$",
+        "$C$ 是閉集（Borel）⇒ 可測，$m(C)=1-\\frac12=\\dfrac12$",
+        "每段長度 $\\to0$ ⇒ $C$ 不含任何區間，測度卻是 $\\frac12$",
+        "第 $n$ 步後每段長 $\\frac{2^n+1}{2^{2n+1}}$，比下一步要挖的 $4^{-(n+1)}$ 長，挖得下去"
       ],
-      "check": 2
+      "tex": [
+        "\\text{去掉的總長}=\\sum_{n=1}^\\infty2^{n-1}\\cdot4^{-n}=\\frac12\\sum_{n=1}^\\infty\\Big(\\frac12\\Big)^n=\\frac12"
+      ]
     },
     {
-      "title": "胖 Cantor 集",
-      "beats": [
-        { "show": ["第 $n$ 步去掉 $2^{n-1}$ 個長 $4^{-n}$ 的區間"],
-          "say": "從零到一開始，第 n 步從每一段中間挖掉長四的負 n 次方的開區間，一共二的 n 減一次方個。",
-          "board": [
-            {"do":"write","line":"第 $n$ 步：每段中間挖開區間"},
-            {"do":"write","line":"長 ${{a:4^{-n}}}$，共 ${{b:2^{n-1}}}$ 個","on":"長四的負"},
-            {"do":"underline","term":"b","on":"二的 n 減一"}
-          ] },
-        { "show": ["第 1 步：去掉 $\\frac{1}{4}$，剩兩段各長 $\\frac{3}{8}$"],
-          "say": "第一步挖掉中間四分之一，剩兩段各長八分之三。每次挖的都比剩下的段短，做得下去。",
-          "board": [
-            {"do":"write","line":"挖 ${{d:\\frac14}}$，剩兩段各長 ${{r:\\frac38}}$"},
-            {"do":"box","term":"r","color":"green","on":"八分之三"},
-            {"do":"write","line":"挖的比剩下的段短","on":"每次挖的"}
-          ] },
-        { "show": ["剩下的每段是閉區間，比要挖的長"],
-          "say": "為什麼挖得下去？剩下的每一段都是閉區間，比要挖的開區間長，所以中間還能再挖一個，兩邊各留一小段。",
-          "board": [
-            {"do":"write","line":"剩下的段：閉區間，比要挖的長","on":"閉區間"},
-            {"do":"write","line":"挖中間 → 兩邊還各剩一段","on":"中間"}
-          ] },
-        { "show": ["去掉的區間兩兩不相交"],
-          "note": "可數可加，總長是一個等比級數。",
-          "say": "挖掉的區間兩兩不相交，用可數可加，把它們的長度全部加起來。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"挖掉的區間兩兩不相交","on":"兩兩不相交"},
-            {"do":"write","line":"$m(\\text{挖掉})=\\sum_{n\\ge1}\\frac{2^{n-1}}{4^n}$","on":"可數可加"}
-          ] },
-        { "show": ["$[0,1]=F\\cup$ 挖掉的，$m(F)=1-$ 挖掉的"],
-          "say": "每項是前一項的二分之一，是等比級數。F 加上挖掉的部分不相交地拼成零到一，所以 F 的測度是一減去挖掉的總長。",
-          "board": [
-            {"do":"write","line":"$[0,1]=F\\cup\\text{挖掉的}$，不相交","on":"不相交"},
-            {"do":"write","line":"$m(F)=1-m(\\text{挖掉})$","on":"所以"}
-          ] }
+      "heading": "④ 不是每個集合都可測",
+      "body": [
+        "Vitali 集：在 $[0,1]$ 上，$x\\sim y\\iff x-y\\in\\mathbb{Q}$。每一類挑一個代表 ⇒ $V$",
+        "「每一類挑一個」要用選擇公理：類有不可數多個，沒有明確的挑法",
+        "對 $q\\in\\mathbb{Q}\\cap[-1,1]$，令 $V_q=V+q$",
+        "• 兩兩不交：$v+q=v'+q'$ ⇒ $v\\sim v'$ ⇒ $v=v'$，$q=q'$",
+        "• $[0,1]\\subseteq\\bigcup_q V_q\\subseteq[-1,2]$：$x$ 的代表是 $v$ ⇒ $x=v+(x-v)$",
+        "若 $V$ 可測，$m(V_q)=m(V)$（平移不變），可數可加：",
+        "可數多個相同的數加起來：$m(V)=0$ ⇒ 和是 $0$；$m(V)>0$ ⇒ 和是 $\\infty$。矛盾　$\\blacksquare$",
+        "所以：測度只能定義在 $\\sigma$-代數上，不能每個集合都量"
       ],
-      "key": "去掉的總長是等比級數，再用 $1$ 減掉",
-      "check": 1
+      "tex": [
+        "1\\le\\sum_{q}m(V)\\le3"
+      ]
     },
     {
-      "title": "無界但測度有限",
-      "beats": [
-        { "show": ["$E=\\bigcup_{n\\ge1}[n,n+2^{-n}]$"],
-          "say": "看這個集合：在每個正整數 n 後面，接一小段長二的負 n 次方。",
-          "board": [
-            {"do":"plot","graph":{"window":[0.5,6,-1,1],"equal":true,"curves":[{"pts":[[1,0],[1.5,0]],"color":"blue","width":5},{"pts":[[2,0],[2.25,0]],"color":"blue","width":5},{"pts":[[3,0],[3.125,0]],"color":"blue","width":5},{"pts":[[4,0],[4.0625,0]],"color":"blue","width":5},{"pts":[[5,0],[5.03125,0]],"color":"blue","width":5}]}},
-            {"do":"write","line":"$E=\\bigcup_{n\\ge1}[n,n+{{l:2^{-n}}}]$","on":"每個正整數"},
-            {"do":"focus","term":"l","on":"長二的負"}
-          ] },
-        { "show": ["$n+2^{-n}\\le n+\\frac{1}{2}<n+1$"],
-          "note": "兩兩不相交。",
-          "say": "每一段都不會碰到下一個整數，所以兩兩不相交，可以用可數可加。",
-          "board": [
-            {"do":"write","line":"$n+2^{-n}\\le n+\\frac{1}{2}<{{n1:n+1}}$","on":"每一段"},
-            {"do":"underline","term":"n1","on":"兩兩不相交","label":"不相交"}
-          ] },
-        { "show": ["$m([0,1]\\setminus\\mathbb{Q})=1-0=1$"],
-          "say": "順便一個：零到一拿掉有理數，有理數測度是零，所以剩下的無理數測度是一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$m([0,1]\\setminus\\mathbb{Q})=1-{{q:0}}=1$","on":"零到一"},
-            {"do":"focus","term":"q","on":"測度是零"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "證明：Vitali 集",
-      "beats": [
-        { "show": ["假設 $V$ 可測，夾出矛盾"],
-          "say": "策略：反證。先造出 V，假設它可測，再用平移不變和可數可加，把總長夾在不可能的地方。",
-          "board": [
-            {"do":"write","line":"假設 $V$ 可測","on":"假設它可測"},
-            {"do":"write","line":"平移不變＋可數可加 ⇒ 矛盾","on":"平移不變"}
-          ] },
-        { "show": ["$x\\sim y\\iff x-y\\in\\mathbb{Q}$","每一類挑一個代表，組成 $V$"],
-          "note": "挑代表要用選擇公理。",
-          "say": "差是有理數的兩個點算同一類。從每一類挑一個代表，放進 V，這一步要用選擇公理。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x\\sim y\\iff {{d:x-y\\in\\mathbb{Q}}}$","on":"差是有理數"},
-            {"do":"write","line":"每一類挑一個代表，組成 $V$","on":"從每一類"},
-            {"do":"write","line":"這一步要用 ${{ac:\\text{選擇公理}}}$","on":"這一步"},
-            {"do":"underline","term":"ac","on":"選擇公理"}
-          ] },
-        { "show": ["$V_r=V+r$，$r\\in\\mathbb{Q}\\cap[-1,1]$","兩兩不相交"],
-          "note": "$v+r=v'+r'$ 時 $v,v'$ 同類，只能 $v=v'$。",
-          "why": {"ask":"為什麼 $V_r$ 兩兩不相交？","say":"這些平移為什麼不會重疊？先想一想再選。","options":[{"label":"重疊就表示兩個代表同類，但每類只挑一個","correct":true},{"label":"平移量不同，集合就會分開","why":"一般的集合平移一點點還是會重疊，像區間；這裡靠的是 $V$ 每一類只有一個點。"},{"label":"因為 $V\\subseteq[0,1]$","why":"$V$ 在哪裡只管 $V_r$ 落在哪裡；不重疊靠的是每類只挑一個代表。"}]},
-          "say": "如果 v 加 r 等於 v 撇加 r 撇，v 和 v 撇的差就是有理數，同一類。可是每類只挑一個，所以 v 等於 v 撇，r 也相等。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$V_r=V+r,\\;r\\in\\mathbb{Q}\\cap[-1,1]$","on":"這些平移"},
-            {"do":"write","line":"兩兩不相交？","on":"不會重疊"},
-            {"do":"write","line":"$v+r=v'+r'$ ⇒ $v\\sim v'$ ⇒ ${{e:v=v'}}$","on":"同一類","why":true},
-            {"do":"underline","term":"e","on":"每類只挑","label":"只挑一個","why":true}
-          ] },
-        { "show": ["$[0,1]\\subseteq\\bigcup_r V_r\\subseteq[-1,2]$"],
-          "note": "$x$ 的代表 $v$ 滿足 $x-v\\in\\mathbb{Q}\\cap[-1,1]$。",
-          "why": {"ask":"為什麼 $V_r$ 蓋得住 $[0,1]$？","say":"左邊那個包含：零到一的每個點，為什麼都落在某個 V r 裡？","options":[{"label":"$x$ 跟它的代表差一個 $[-1,1]$ 裡的有理數","correct":true},{"label":"$V_r$ 有無限多個，總會蓋到","why":"個數多不代表蓋得到；要指出 $x$ 落在哪一個 $V_r$：$r$ 就是 $x$ 減掉它的代表。"},{"label":"因為 $V\\subseteq[0,1]$","why":"這給的是右邊的包含：$V_r$ 落在 $[-1,2]$ 裡。左邊要靠每個 $x$ 都有代表。"}]},
-          "say": "x 跟它的代表 v 同類，差 x 減 v 是有理數，兩個都在零到一，差就在負一到一之間，所以 x 在 V r 裡。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{in:[0,1]\\subseteq\\bigcup_r V_r}}\\subseteq[-1,2]$","on":"左邊那個"},
-            {"do":"underline","term":"in","on":"每個點"},
-            {"do":"write","line":"$x-v\\in\\mathbb{Q}\\cap[-1,1]$","on":"差 x 減 v","why":true}
-          ] },
-        { "show": ["$m(V_r)=m(V)=c$，$1\\le\\sum_r c\\le3$"],
-          "note": "平移不變、可數可加、單調。",
-          "say": "每個 V r 的測度都是 c。它們不重疊、可數個，夾在長一和長三的集合之間，總和就在一到三之間。",
-          "board": [
-            {"do":"write","line":"$m(V_r)=m(V)={{c:c}}$"},
-            {"do":"focus","term":"c","on":"都是 c"},
-            {"do":"write","line":"$1\\le\\sum_r c\\le3$","on":"夾在"}
-          ] },
-        { "show": ["$c=0$ 得 0，$c>0$ 得 $\\infty$：矛盾"],
-          "say": "可是可數多個 c 相加，c 是零就得零，c 大於零就是無限大，都不在一到三之間。V 不可測。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$c=0$：$\\sum_r c=0$","on":"c 是零"},
-            {"do":"write","line":"$c>0$：$\\sum_r c=\\infty$","on":"c 大於零"},
-            {"do":"write","line":"都不在 $[1,3]$：$V$ 不可測","on":"都不在","color":"green"}
-          ] }
-      ],
-      "key": "可數個不交的平移複本，總長卡在 $1$ 與 $3$ 之間",
-      "proof": true,
-      "of": 3,
-      "skeleton": "反證",
-      "where": {
-        "ask": "下面幾步裡，哪一步用到平移不變？",
-        "steps": [
-          {
-            "label": "$V_r$ 兩兩不相交",
-            "why": "這只用到每一類只挑一個代表，是集合的事。"
-          },
-          {
-            "label": "$[0,1]\\subseteq\\bigcup_r V_r\\subseteq[-1,2]$",
-            "why": "這只用到代表的定義和 $V\\subseteq[0,1]$，跟測度無關。"
-          },
-          {
-            "label": "$m(V_r)=m(V)=c$",
-            "correct": true
-          },
-          {
-            "label": "可數個 $c$ 相加只能是 0 或 $\\infty$",
-            "why": "這只是正項級數：同一個數加無限多次。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 外測度：可數個開區間蓋住，總長取 $\\inf$；對所有集合有定義",
+        "• 可數集：$m^*=0$（第 $n$ 個用長 $\\frac{\\varepsilon}{2^n}$）",
+        "• $m^*([a,b])=b-a$：有限覆蓋＋串鏈",
+        "• Carathéodory：切得乾淨的才可測；$m$ = 區間長度、平移不變、可數可加",
+        "• 胖 Cantor：不含區間，測度 $\\frac12$；Vitali 集不可測（選擇公理）",
+        "下一課：卡拉西奧多里構造（完整證明）"
+      ]
     }
   ],
   "workedExamples": [
@@ -379,51 +179,767 @@
   ],
   "checks": [
     {
-      "ask": "外測度 $m^*(A)$ 的定義用的是？",
+      "ask": "$E=\\bigcup_{n\\ge1}[n,\\,n+2^{-n}]$。$m(E)$ 與 $m(E\\cap[0,3])$ 是？",
       "options": [
-        { "label": "可數多個開區間覆蓋的總長度，取下確界", "correct": true },
-        { "label": "有限多個區間覆蓋的總長度，取下確界", "why": "有限覆蓋蓋 $\\mathbb{Q}\\cap[0,1]$ 至少要總長 1（區間閉包要蓋住 $[0,1]$），量不出有理數其實是 0。" },
-        { "label": "$A$ 裡面能放進的區間總長度，取上確界", "why": "那是從裡面量；$\\mathbb{Q}$ 或胖 Cantor 集裡面放不進任何區間，會一律得到 0。" }
+        {
+          "label": "$\\infty$；$\\frac34$",
+          "why": "$E$ 無界，但各段不交，長度加起來是 $\\sum2^{-n}=1$"
+        },
+        {
+          "label": "$1$；$\\frac34$",
+          "correct": true
+        },
+        {
+          "label": "$1$；$\\frac78$",
+          "why": "把 $[3,3\\frac18]$ 整段算進去了；只交到一個點"
+        },
+        {
+          "label": "$2$；$\\frac34$",
+          "why": "$\\sum_{n\\ge1}2^{-n}=1$，不是 $2$（$n$ 從 $1$ 開始）"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從外面去蓋",
+      "beats": [
+        {
+          "show": [
+            "想量 $A\\subseteq\\mathbb{R}$：用可數多個開區間蓋住它，加總長度"
+          ],
+          "say": "這一課把長度測度造出來。想量集合 A，就用可數多個開區間蓋住它，把長度加起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "想量 $A\\subseteq\\mathbb{R}$：用可數多個開區間蓋住它，加總長度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "蓋法越省，總長越小 ⇒ 取下確界",
+            "$m^*(A)=\\inf\\Big\\{\\sum_{k=1}^\\infty\\ell(I_k):\\ A\\subseteq\\bigcup_{k=1}^\\infty I_k,\\ I_k\\ \\text{開區間}\\Big\\}$"
+          ],
+          "say": "蓋得越省，總長越小。所有蓋法的總長取下確界，就是 A 的外測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "蓋法越省，總長越小 ⇒ 取下確界"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle m^*(A)=\\inf\\Big\\{\\sum_{k=1}^\\infty\\ell(I_k):\\ A\\subseteq\\bigcup_{k=1}^\\infty I_k,\\ I_k\\ \\text{開區間}\\Big\\}}}$",
+              "on": "所有"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "長取"
+            },
+            {
+              "do": "write",
+              "line": "　$\\ell((c,d))=d-c$；總長可以是 $\\infty$。跟 12.41「測度為零」用的是同一種蓋法",
+              "color": "violet",
+              "on": "的外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，紅色是 A，藍色的弧是蓋住它的開區間。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"lm-cover\" viewBox=\"0 0 640 170\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><line x1=\"30\" y1=\"110\" x2=\"610\" y2=\"110\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><line x1=\"190\" y1=\"110\" x2=\"320\" y2=\"110\" stroke=\"var(--red)\" stroke-width=\"6\"/><circle cx=\"112\" cy=\"110\" r=\"5\" fill=\"var(--red)\"/><circle cx=\"476\" cy=\"110\" r=\"5\" fill=\"var(--red)\"/><circle cx=\"382\" cy=\"110\" r=\"5\" fill=\"var(--red)\"/><path d=\"M95 110 Q112 70 129 110\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><path d=\"M175 110 Q255 30 335 110\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><path d=\"M368 110 Q382 78 396 110\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><path d=\"M466 110 Q476 86 486 110\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><text x=\"255\" y=\"150\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">A</tspan></text><text x=\"560\" y=\"60\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">I</tspan><tspan dy=\"6\" font-size=\"17\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 對所有子集都有定義",
+            "• 單調：$A\\subseteq B$ ⇒ $m^*(A)\\le m^*(B)$（蓋住 $B$ 的就蓋住 $A$）"
+          ],
+          "say": "外測度對每個子集都有定義，單調，而且可數次可加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 對所有子集都有定義"
+            },
+            {
+              "do": "write",
+              "line": "• 單調：$A\\subseteq B$ ⇒ $m^*(A)\\le m^*(B)$（蓋住 $B$ 的就蓋住 $A$）",
+              "on": "子集"
+            },
+            {
+              "do": "write",
+              "line": "• 可數次可加：$m^*(\\bigcup A_k)\\le\\sum m^*(A_k)$",
+              "on": "單調"
+            },
+            {
+              "do": "write",
+              "line": "　次可加的證法：每個 $A_k$ 取一組總長 $<m^*(A_k)+\\frac{\\varepsilon}{2^k}$ 的蓋法，全部合起來",
+              "color": "violet",
+              "on": "可數"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "胖 Cantor 集（第 $n$ 步去掉 $2^{n-1}$ 個長 $4^{-n}$ 的區間）的測度是？",
-      "options": [
-        { "label": "$\\frac{1}{2}$", "correct": true },
-        { "label": "0", "why": "你套用了一般 Cantor 集的結論。這裡去掉的總長只有 $\\sum\\frac{2^{n-1}}{4^n}=\\frac{1}{2}$，剩下 $\\frac{1}{2}$。" },
-        { "label": "1", "why": "去掉的部分有正的長度 $\\frac{1}{2}$，要從 1 扣掉。" }
+      "title": "可數集外測度是 0",
+      "beats": [
+        {
+          "show": [
+            "例：$\\mathbb{Q}\\cap[0,1]$ 排成 $q_1,q_2,q_3,\\ldots$。給 $\\varepsilon>0$，第 $n$ 個用",
+            "$I_n=\\Big(q_n-\\frac{\\varepsilon}{2^{n+1}},\\ q_n+\\frac{\\varepsilon}{2^{n+1}}\\Big)$"
+          ],
+          "say": "例子：0 到 1 的有理數排成一列。第 n 個用長度 2 的 n 次方分之艾普西隆的開區間蓋住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\mathbb{Q}\\cap[0,1]$ 排成 $q_1,q_2,q_3,\\ldots$。給 $\\varepsilon>0$，第 $n$ 個用"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I_n=\\Big(q_n-\\frac{\\varepsilon}{2^{n+1}},\\ q_n+\\frac{\\varepsilon}{2^{n+1}}\\Big)$",
+              "on": "長度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty\\ell(I_n)=\\sum_{n=1}^\\infty\\frac{\\varepsilon}{2^n}=\\varepsilon$"
+          ],
+          "say": "總長是艾普西隆乘以 2 分之一加 4 分之一加下去，正好是艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\ell(I_n)=\\sum_{n=1}^\\infty\\frac{\\varepsilon}{2^n}=\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $m^*(\\mathbb{Q}\\cap[0,1])\\le\\varepsilon$ 對每個 $\\varepsilon>0$ ⇒ $m^*=0$　$\\blacksquare$"
+          ],
+          "say": "外測度不超過艾普西隆，而艾普西隆可以任意小，外測度又不是負的，所以等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $m^*(\\mathbb{Q}\\cap[0,1])\\le\\varepsilon$ 對每個 $\\varepsilon>0$ ⇒ $m^*=0$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同一個證明：任何可數集的外測度都是 $0$"
+          ],
+          "say": "這個證明只用到可以排成一列，所以任何可數集的外測度都是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同一個證明：任何可數集的外測度都是 $0$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\mathbb{Q}\\cap[0,1]$ 在 $[0,1]$ 裡==稠密==。那 $m^*\\big([0,1]\\setminus\\mathbb{Q}\\big)$ 是？",
+        "options": [
+          {
+            "label": "$0$",
+            "why": "無理數不可數，上面的證明用不上；而且 $[0,1]$ 的外測度是 $1$"
+          },
+          {
+            "label": "$1$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac12$",
+            "why": "稠密不等於「佔一半」；有理數的外測度是 $0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "區間：外測度是長度",
+      "beats": [
+        {
+          "show": [
+            "定理：$m^*([a,b])=b-a$"
+          ],
+          "say": "定理：閉區間的外測度就是它的長度。看似當然，證明要用心。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$m^*([a,b])=b-a$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\le$：$(a-\\varepsilon,b+\\varepsilon)$ 一個就蓋住，總長 $b-a+2\\varepsilon$ ⇒ $m^*\\le b-a$"
+          ],
+          "say": "小於等於很容易：一個稍微大一點的區間就蓋住，總長 b 減 a 加 2 艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\le$：$(a-\\varepsilon,b+\\varepsilon)$ 一個就蓋住，總長 $b-a+2\\varepsilon$ ⇒ $m^*\\le b-a$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ge$：任何蓋法 $\\{I_k\\}$ 都要 $\\sum\\ell(I_k)\\ge b-a$"
+          ],
+          "say": "難的是大於等於：要證任何一種蓋法，總長都至少是 b 減 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\ge$：任何蓋法 $\\{I_k\\}$ 都要 $\\sum\\ell(I_k)\\ge b-a$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：① 先砍成有限多個（緊緻性）② 有限個就能串成一條鏈"
+          ],
+          "say": "策略分兩步：先證明只要有限多個區間就蓋得住；有限個區間，就可以串成一條鏈來比較長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：① 先砍成有限多個（緊緻性）② 有限個就能串成一條鏈"
+            }
+          ]
+        },
+        {
+          "show": [
+            "引理：開區間 $\\{I_k\\}$ 蓋住 $[a,b]$ ⇒ 其中有限多個就蓋住"
+          ],
+          "say": "引理：開區間蓋住閉區間，其中有限多個就夠了。用上確界證。",
+          "board": [
+            {
+              "do": "write",
+              "line": "引理：開區間 $\\{I_k\\}$ 蓋住 $[a,b]$ ⇒ 其中有限多個就蓋住"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$T=\\{x\\in[a,b]:\\ [a,x]\\ \\text{被有限多個}\\ I_k\\ \\text{蓋住}\\}$，$a\\in T$，令 $s=\\sup T$"
+          ],
+          "say": "令 T 是那些 x：a 到 x 被有限多個區間蓋住。a 在 T 裡，T 有上界 b，取上確界 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$T=\\{x\\in[a,b]:\\ [a,x]\\ \\text{被有限多個}\\ I_k\\ \\text{蓋住}\\}$，$a\\in T$，令 $s=\\sup T$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s$ 在某個 $I_j=(c,d)$ 裡；取 $x\\in T$，$x>c$。$[a,x]$ 的有限多個再加 $I_j$，蓋住 $[a,y]$（$y<d$，$y\\le b$）"
+          ],
+          "say": "s 落在某個區間 c 到 d 裡，T 裡有 x 大於 c。a 到 x 的有限多個再加上 c 到 d，就蓋住 a 到 d 之前的每一點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s$ 在某個 $I_j=(c,d)$ 裡；取 $x\\in T$，$x>c$。$[a,x]$ 的有限多個再加 $I_j$，蓋住 $[a,y]$（$y<d$，$y\\le b$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若 $s<b$：有 $y\\in T$、$y>s$，矛盾。所以 $s=b$，而且 $[a,b]$ 被蓋住　$\\blacksquare$"
+          ],
+          "say": "所以如果 s 小於 b，就有比 s 更大的點在 T 裡，矛盾。因此 s 等於 b，而 a 到 b 也被有限多個蓋住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "若 $s<b$：有 $y\\in T$、$y>s$，矛盾。所以 $s=b$，而且 $[a,b]$ 被蓋住　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "為什麼 Lebesgue 測度不定義在 $\\mathbb{R}$ 的所有子集上？",
-      "options": [
-        { "label": "存在不可測集：平移不變又可數可加的長度無法對所有子集同時成立", "correct": true },
-        { "label": "因為有些集合的測度是 $\\infty$", "why": "$\\infty$ 是允許的值，$m(\\mathbb{R})=\\infty$ 沒有問題。限制來自 Vitali 集這種反例。" },
-        { "label": "因為有些集合太複雜，算不出來", "why": "問題不是算不算得出來，而是任何滿足那三個要求的定義都會在 Vitali 集上自相矛盾。" }
+      "title": "證明：串成一條鏈",
+      "beats": [
+        {
+          "show": [
+            "設有限多個 $(a_k,b_k)$ 蓋住 $[a,b]$：",
+            "• 取一個含 $a$ 的：$a_1<a<b_1$"
+          ],
+          "say": "有限多個區間蓋住 a 到 b。先挑含 a 的，右端 b 1。b 1 還沒超過 b，就在另一個區間裡，右端 b 2 更大。有限多個，最後一定超過 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設有限多個 $(a_k,b_k)$ 蓋住 $[a,b]$："
+            },
+            {
+              "do": "write",
+              "line": "• 取一個含 $a$ 的：$a_1<a<b_1$",
+              "on": "右端#1"
+            },
+            {
+              "do": "write",
+              "line": "• 若 $b_1\\le b$：$b_1$ 在另一個裡：$a_2<b_1<b_2$",
+              "on": "就在"
+            },
+            {
+              "do": "write",
+              "line": "• 一直做；$b_k$ 遞增，每次用新的區間，有限步後 $b_K>b$",
+              "on": "更大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，每一段都蓋住前一段的右端，一路接到超過 b。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"lm-chain\" viewBox=\"0 0 640 200\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><line x1=\"138\" y1=\"170\" x2=\"502\" y2=\"170\" stroke=\"var(--red)\" stroke-width=\"6\"/><text x=\"138\" y=\"198\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan></text><text x=\"502\" y=\"198\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan></text><line x1=\"102\" y1=\"40\" x2=\"242\" y2=\"40\" stroke=\"var(--blue)\" stroke-width=\"5\" opacity=\"0.6\"/><line x1=\"216\" y1=\"75\" x2=\"346\" y2=\"75\" stroke=\"var(--blue)\" stroke-width=\"5\" opacity=\"0.6\"/><line x1=\"320\" y1=\"110\" x2=\"434\" y2=\"110\" stroke=\"var(--blue)\" stroke-width=\"5\" opacity=\"0.6\"/><line x1=\"403\" y1=\"145\" x2=\"538\" y2=\"145\" stroke=\"var(--blue)\" stroke-width=\"5\" opacity=\"0.6\"/><line x1=\"242\" y1=\"40\" x2=\"242\" y2=\"170\" stroke=\"var(--muted)\" stroke-width=\"1\" stroke-dasharray=\"4 4\"/><line x1=\"346\" y1=\"75\" x2=\"346\" y2=\"170\" stroke=\"var(--muted)\" stroke-width=\"1\" stroke-dasharray=\"4 4\"/><line x1=\"434\" y1=\"110\" x2=\"434\" y2=\"170\" stroke=\"var(--muted)\" stroke-width=\"1\" stroke-dasharray=\"4 4\"/><text x=\"254\" y=\"46\" font-size=\"20\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan dy=\"5\" font-size=\"15\" style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"358\" y=\"81\" font-size=\"20\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan dy=\"5\" font-size=\"15\" style=\"font-family:KaTeX_Main,serif\">2</tspan></text><text x=\"446\" y=\"116\" font-size=\"20\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan dy=\"5\" font-size=\"15\" style=\"font-family:KaTeX_Main,serif\">3</tspan></text><text x=\"550\" y=\"151\" font-size=\"20\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan dy=\"5\" font-size=\"15\" style=\"font-family:KaTeX_Main,serif\">4</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "因為 $a_{k}<b_{k-1}$：",
+            "$\\begin{aligned}\\sum_{k=1}^K(b_k-a_k)&>(b_K-b_{K-1})+\\cdots+(b_1-a_1)\\\\&=b_K-a_1>b-a\\end{aligned}$"
+          ],
+          "say": "每一段的左端在前一段右端的左邊，所以長度大於 b k 減 b k 減 1。加起來相消，剩 b K 減 a 1，比 b 減 a 大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "因為 $a_{k}<b_{k-1}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}\\sum_{k=1}^K(b_k-a_k)&>(b_K-b_{K-1})+\\cdots+(b_1-a_1)\\\\&=b_K-a_1>b-a\\end{aligned}}}}$",
+              "on": "加起"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原來的可數蓋法總長 $\\ge$ 這有限個的總長 $>b-a$　$\\blacksquare$"
+          ],
+          "say": "原來那組可數多個的總長，又不小於這有限幾個的總長，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原來的可數蓋法總長 $\\ge$ 這有限個的總長 $>b-a$　$\\blacksquare$"
+            },
+            {
+              "do": "write",
+              "line": "　開區間、半開區間也一樣：夾在 $[a+\\varepsilon,b-\\varepsilon]$ 和 $[a,b]$ 之間。無界區間的外測度是 $\\infty$",
+              "color": "violet",
+              "on": "於這"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "證明 $m^*([a,b])\\ge b-a$ 的順序",
+        "steps": [
+          {
+            "label": "任取一組蓋住 $[a,b]$ 的開區間"
+          },
+          {
+            "label": "用上確界證明：有限多個就蓋得住",
+            "why": "先要有上一步：任取一組蓋住 $[a,b]$ 的開區間"
+          },
+          {
+            "label": "從含 $a$ 的那一個開始，串成一條鏈",
+            "why": "先要有上一步：用上確界證明：有限多個就蓋得住"
+          },
+          {
+            "label": "長度相消，總長 $>b-a$",
+            "why": "先要有上一步：從含 $a$ 的那一個開始，串成一條鏈"
+          }
+        ]
+      }
+    },
+    {
+      "title": "只留切得乾淨的",
+      "beats": [
+        {
+          "show": [
+            "$m^*$ 對所有集合都有定義，但不是可數可加（④ 會看到）"
+          ],
+          "say": "外測度對每個集合都有定義，可是它在所有集合上不是可數可加的。所以要挑出好集合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$m^*$ 對所有集合都有定義，但不是可數可加（④ 會看到）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Carathéodory 判準：$E$ 可測 ⟺ 對每個 $A\\subseteq\\mathbb{R}$",
+            "$m^*(A)=m^*(A\\cap E)+m^*(A\\cap E^c)$"
+          ],
+          "say": "卡拉西奧多里判準：E 可測，如果用 E 去切任何集合 A，兩塊的外測度加起來正好等於 A 的外測度。切得乾淨，不多出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Carathéodory 判準：$E$ 可測 ⟺ 對每個 $A\\subseteq\\mathbb{R}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle m^*(A)=m^*(A\\cap E)+m^*(A\\cap E^c)}}$",
+              "on": "果用"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "塊的"
+            },
+            {
+              "do": "write",
+              "line": "　$\\le$ 由次可加永遠成立；真正要檢查的是 $\\ge$",
+              "color": "violet",
+              "on": "的外#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理（證明骨架）：可測集形成 $\\sigma$-代數 $\\mathcal{L}$，含所有 Borel 集；$m=m^*|_{\\mathcal{L}}$ 是測度"
+          ],
+          "say": "定理：可測集形成一個西格瑪代數，包含所有博雷爾集，而外測度限制在上面是一個測度，叫勒貝格測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理（證明骨架）：可測集形成 $\\sigma$-代數 $\\mathcal{L}$，含所有 Borel 集；$m=m^*|_{\\mathcal{L}}$ 是測度"
+            },
+            {
+              "do": "write",
+              "line": "　完整證明見下一課：卡拉西奧多里構造（關鍵一步是證明 $(a,\\infty)$ 滿足判準）",
+              "color": "violet",
+              "on": "而外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Lebesgue 測度 $m$ 的三個性質：",
+            "• 區間的測度是長度（②）"
+          ],
+          "say": "勒貝格測度的三個性質：區間的測度是長度，就是剛剛證的；平移不變，因為蓋法平移以後長度不變；可數可加，因為它是測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Lebesgue 測度 $m$ 的三個性質："
+            },
+            {
+              "do": "write",
+              "line": "• 區間的測度是長度（②）",
+              "on": "測度#2"
+            },
+            {
+              "do": "write",
+              "line": "• 平移不變：$m(E+t)=m(E)$（蓋法平移，長度不變）",
+              "on": "移不"
+            },
+            {
+              "do": "write",
+              "line": "• 可數可加",
+              "color": "gold",
+              "on": "不變#2"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$m(\\bigcup_{n\\ge1}[n,n+2^{-n}])=$ ？",
-      "options": [
-        { "label": "1", "correct": true },
-        { "label": "$\\infty$", "why": "你以為集合無界測度就是 $\\infty$。這些區間不相交，長度 $\\frac{1}{2}+\\frac{1}{4}+\\cdots=1$。" },
-        { "label": "$\\frac{1}{2}$", "why": "你只算了第一段 $[1,\\frac{3}{2}]$。可數可加要把每一段都加起來。" }
+      "title": "胖 Cantor 集",
+      "beats": [
+        {
+          "show": [
+            "$[0,1]$ 開始；第 $n$ 步從剩下的 $2^{n-1}$ 段，每段中間去掉長 $4^{-n}$ 的開區間"
+          ],
+          "say": "例子，胖康托爾集：從 0 到 1 開始，第 n 步，剩下的 2 的 n 減 1 次方段，每一段中間挖掉長度 4 的負 n 次方的開區間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$[0,1]$ 開始；第 $n$ 步從剩下的 $2^{n-1}$ 段，每段中間去掉長 $4^{-n}$ 的開區間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\text{去掉的總長}=\\sum_{n=1}^\\infty2^{n-1}\\cdot4^{-n}=\\frac12\\sum_{n=1}^\\infty\\Big(\\frac12\\Big)^n=\\frac12$"
+          ],
+          "say": "挖掉的總長是 2 的 n 減 1 次方，乘 4 的負 n 次方，加起來是 2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{去掉的總長}=\\sum_{n=1}^\\infty2^{n-1}\\cdot4^{-n}=\\frac12\\sum_{n=1}^\\infty\\Big(\\frac12\\Big)^n=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "外測度估計：第 $n$ 步剩的段總長 $\\frac12+\\frac1{2^{n+1}}$ ⇒ $m^*(C)\\le\\frac12$"
+          ],
+          "say": "用外測度估計：第 n 步剩下的段，總長是 2 分之一加一點點，蓋住了 C，所以外測度不超過 2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "外測度估計：第 $n$ 步剩的段總長 $\\frac12+\\frac1{2^{n+1}}$ ⇒ $m^*(C)\\le\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C$ 是閉集（Borel）⇒ 可測，$m(C)=1-\\frac12=\\dfrac12$"
+          ],
+          "say": "康托爾集是閉集，可測；挖掉的部分不相交，可數可加，所以它的測度正好是 1 減 2 分之一，2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C$ 是閉集（Borel）⇒ 可測，$m(C)=1-\\frac12=\\dfrac12$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每段長度 $\\to0$ ⇒ $C$ 不含任何區間，測度卻是 $\\frac12$"
+          ],
+          "say": "但每段越切越短，所以 C 一個區間都沒有，測度卻是 2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每段長度 $\\to0$ ⇒ $C$ 不含任何區間，測度卻是 $\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "　第 $n$ 步後每段長 $\\frac{2^n+1}{2^{2n+1}}$，比下一步要挖的 $4^{-(n+1)}$ 長，挖得下去",
+              "color": "violet",
+              "on": "間都"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "不是每個集合都可測",
+      "beats": [
+        {
+          "show": [
+            "Vitali 集：在 $[0,1]$ 上，$x\\sim y\\iff x-y\\in\\mathbb{Q}$。每一類挑一個代表 ⇒ $V$"
+          ],
+          "say": "最後，不是每個集合都可測。維塔利集：在 0 到 1 上，兩數相差有理數就算同一類。每一類挑一個代表，放進 V。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Vitali 集：在 $[0,1]$ 上，$x\\sim y\\iff x-y\\in\\mathbb{Q}$。每一類挑一個代表 ⇒ $V$"
+            },
+            {
+              "do": "write",
+              "line": "　「每一類挑一個」要用選擇公理：類有不可數多個，沒有明確的挑法",
+              "color": "violet",
+              "on": "兩數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $q\\in\\mathbb{Q}\\cap[-1,1]$，令 $V_q=V+q$",
+            "• 兩兩不交：$v+q=v'+q'$ ⇒ $v\\sim v'$ ⇒ $v=v'$，$q=q'$"
+          ],
+          "say": "把 V 平移有理數 q。這些平移兩兩不相交：兩個相等的話，代表相差有理數，只能是同一個。它們蓋滿 0 到 1，又落在負 1 到 2 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對 $q\\in\\mathbb{Q}\\cap[-1,1]$，令 $V_q=V+q$"
+            },
+            {
+              "do": "write",
+              "line": "• 兩兩不交：$v+q=v'+q'$ ⇒ $v\\sim v'$ ⇒ $v=v'$，$q=q'$",
+              "on": "個相"
+            },
+            {
+              "do": "write",
+              "line": "• $[0,1]\\subseteq\\bigcup_q V_q\\subseteq[-1,2]$：$x$ 的代表是 $v$ ⇒ $x=v+(x-v)$",
+              "on": "蓋滿"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若 $V$ 可測，$m(V_q)=m(V)$（平移不變），可數可加：",
+            "$1\\le\\sum_{q}m(V)\\le3$"
+          ],
+          "say": "如果 V 可測，平移不變，每一塊測度都一樣；可數可加，總和夾在 1 和 3 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "若 $V$ 可測，$m(V_q)=m(V)$（平移不變），可數可加："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle 1\\le\\sum_{q}m(V)\\le3}}$",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "總和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可數多個相同的數加起來：$m(V)=0$ ⇒ 和是 $0$；$m(V)>0$ ⇒ 和是 $\\infty$。矛盾　$\\blacksquare$"
+          ],
+          "say": "可是可數多個相同的數加起來，不是 0 就是無限大，不可能在 1 和 3 之間。矛盾。所以 V 不可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可數多個相同的數加起來：$m(V)=0$ ⇒ 和是 $0$；$m(V)>0$ ⇒ 和是 $\\infty$。矛盾　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：測度只能定義在 $\\sigma$-代數上，不能每個集合都量"
+          ],
+          "say": "這就是為什麼測度只定義在一個西格瑪代數上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以：測度只能定義在 $\\sigma$-代數上，不能每個集合都量",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 外測度：可數個開區間蓋住，總長取 $\\inf$；對所有集合有定義",
+            "• 可數集：$m^*=0$（第 $n$ 個用長 $\\frac{\\varepsilon}{2^n}$）"
+          ],
+          "say": "整理：外測度是蓋法總長的下確界；可數集是 0；區間是長度。切得乾淨的才可測，勒貝格測度平移不變、可數可加。維塔利集不可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 外測度：可數個開區間蓋住，總長取 $\\inf$；對所有集合有定義"
+            },
+            {
+              "do": "write",
+              "line": "• 可數集：$m^*=0$（第 $n$ 個用長 $\\frac{\\varepsilon}{2^n}$）",
+              "on": "下確"
+            },
+            {
+              "do": "write",
+              "line": "• $m^*([a,b])=b-a$：有限覆蓋＋串鏈",
+              "on": "間是"
+            },
+            {
+              "do": "write",
+              "line": "• Carathéodory：切得乾淨的才可測；$m$ = 區間長度、平移不變、可數可加",
+              "on": "勒貝"
+            },
+            {
+              "do": "write",
+              "line": "• 胖 Cantor：不含區間，測度 $\\frac12$；Vitali 集不可測（選擇公理）",
+              "on": "可數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：卡拉西奧多里構造（完整證明）"
+          ],
+          "say": "下一課，把卡拉西奧多里構造完整證明一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：卡拉西奧多里構造（完整證明）"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["measure", "lebesgue", "cantor", "geometric-series"],
-    "fine": ["lebm-outer-cover", "lebm-countable-additivity", "lebm-fat-cantor", "lebm-nonmeasurable"]
+    "coarse": [
+      "measure",
+      "lebesgue",
+      "cantor",
+      "geometric-series"
+    ],
+    "fine": [
+      "lebm-outer-cover",
+      "lebm-countable-additivity",
+      "lebm-fat-cantor",
+      "lebm-nonmeasurable"
+    ]
   },
   "practice": [
-    { "id": "lb-mea-004", "core": true, "trains": "lebm-outer-cover" },
-    { "id": "lb-mea-001", "core": true, "trains": "lebm-countable-additivity" },
-    { "id": "lb-mea-002", "core": true, "trains": "lebm-fat-cantor" },
-    { "id": "cg-12i-016", "core": true, "trains": "lebm-countable-additivity" },
-    { "id": "cg-12i-018", "core": true, "trains": "lebm-nonmeasurable" },
-    { "id": "lb-mea-003", "trains": "lebm-fat-cantor" },
-    { "id": "cg-12i-017", "trains": "lebm-countable-additivity" },
-    { "id": "cg-12i-019", "trains": "lebm-nonmeasurable" }
+    {
+      "id": "lb-mea-004",
+      "core": true,
+      "trains": "lebm-outer-cover"
+    },
+    {
+      "id": "lb-mea-001",
+      "core": true,
+      "trains": "lebm-countable-additivity"
+    },
+    {
+      "id": "lb-mea-002",
+      "core": true,
+      "trains": "lebm-fat-cantor"
+    },
+    {
+      "id": "cg-12i-016",
+      "core": true,
+      "trains": "lebm-countable-additivity"
+    },
+    {
+      "id": "cg-12i-018",
+      "core": true,
+      "trains": "lebm-nonmeasurable"
+    },
+    {
+      "id": "lb-mea-003",
+      "trains": "lebm-fat-cantor"
+    },
+    {
+      "id": "cg-12i-017",
+      "trains": "lebm-countable-additivity"
+    },
+    {
+      "id": "cg-12i-019",
+      "trains": "lebm-nonmeasurable"
+    }
   ],
   "gaps": []
 }

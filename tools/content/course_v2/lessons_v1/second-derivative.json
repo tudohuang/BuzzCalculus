@@ -1,0 +1,414 @@
+{
+  "id": "second-derivative",
+  "title": "二階導數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["higher-derivatives", "increasing-decreasing"],
+  "next": ["concavity"],
+  "related": ["first-derivative-test"],
+  "objectives": [
+    "說出 $f''$ 在問什麼：$f'$（斜率）變化得多快。",
+    "用 $f''$ 的正負判斷 $f'$ 在哪裡遞增、哪裡遞減。",
+    "在直線運動裡由位置求速度、加速度，並判斷速率在變大還是變小。"
+  ],
+  "visual": "f(x) = x e^{x} 的圖形上一條切線從左滑到右，旁邊的長條即時顯示切線斜率 f′(x)。x < −2 時長條越來越短（斜率在減少），過了 x = −2 之後越來越長（斜率在增加）；同時下方顯示 f″(x) 的正負，換號的地方正好是 x = −2。",
+  "concept": [
+    {
+      "heading": "① $f''$ 量的是「斜率怎麼變」",
+      "body": [
+        "$f'(x)$ 是切線斜率。把 $f'$ 當成一個新的函數，再微分一次，得到 $f''(x)$：斜率每往右一單位，變化多少。",
+        "最熟悉的例子是運動。位置 $s(t)$ 微分是速度 $v(t)=s'(t)$，再微分是加速度 $a(t)=s''(t)$。加速度不是「跑多快」，是「速度變化得多快」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② $f''$ 的正負 → $f'$ 的增減",
+      "body": [
+        "把〈增減區間〉用在 $f'$ 身上：$f''>0$ 的區間，$f'$ 遞增；$f''<0$ 的區間，$f'$ 遞減。",
+        "$f'$ 遞增的意思是切線越來越往上翹：斜率從 $-2$、$-1$、$0$、$1$、$2$ 一路變大，曲線像碗一樣往上彎。這就是下一課〈凹向上／凹向下〉的內容。",
+        "讀圖的版本：$f''$ 是 $f'$ 圖形的斜率。$f'$ 的圖往上走的地方，$f''>0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 加速與減速：看 $v$ 和 $a$ 是否同號",
+      "body": [
+        "「加速」在日常用語裡指速率 $|v|$ 變大，跟 $a$ 的正負不是同一件事。$v=-5$ 而 $a=-2$：速度往負方向越來越大，速率在變大。",
+        "規則：在一段時間裡 $v$ 與 $a$ 同號，速率增加；異號，速率減少。原因是 $(v^2)'=2va$。$va>0$ 時 $v^2$ 遞增，速率 $|v|=\\sqrt{v^2}$ 也跟著遞增；$va<0$ 時則遞減。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 記號，以及 $f''$ 可能不存在",
+      "body": [
+        "$f''(x)$、$y''$、$\\frac{d^2y}{dx^2}$ 都是同一個東西。$\\frac{d^2y}{dx^2}$ 的寫法來自把 $\\frac{d}{dx}$ 作用兩次：$\\frac{d}{dx}\\left(\\frac{dy}{dx}\\right)$。",
+        "$f'$ 存在，不保證 $f''$ 存在。$f(x)=x|x|$ 的導函數是 $f'(x)=2|x|$，在 $0$ 有尖角，所以 $f''(0)$ 不存在。之後找 $f''$ 換號的點時，這種點也要列進去。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "算 $f''$，看 $f'$ 的增減",
+      "prompt": "$f(x)=xe^x$。求 $f''$，並說出 $f'$ 在哪裡遞增。",
+      "problemId": "der-029",
+      "steps": [
+        "乘法法則：$f'(x)=e^x+xe^x=(x+1)e^x$。",
+        "再用一次乘法法則：$f''(x)=e^x+(x+1)e^x=(x+2)e^x$。",
+        "$e^x$ 恆正，$f''$ 的正負跟 $x+2$ 一樣：$x>-2$ 時 $f''>0$。",
+        "所以 $f'$ 在 $(-2,\\infty)$ 上遞增，在 $(-\\infty,-2)$ 上遞減。"
+      ],
+      "answer": "$f''(x)=(x+2)e^x$；$f'$ 在 $(-2,\\infty)$ 遞增",
+      "claim": "D(x*e^x) == (x+1)*e^x ;; D2(x*e^x) == (x+2)*e^x ;; D2(x*e^x, -3) < 0 ;; D2(x*e^x, -1) > 0"
+    },
+    {
+      "title": "直線運動：何時在加速",
+      "prompt": "質點位置 $s(t)=t^3-6t^2+9t$（$t\\ge 0$）。求 $a(4)$，以及速率增加的時段。",
+      "problemId": "lec-02-q4d",
+      "steps": [
+        "$v(t)=3t^2-12t+9=3(t-1)(t-3)$；$a(t)=6t-12=6(t-2)$。$a(4)=24-12=12$。",
+        "$v$ 在 $t=1$、$3$ 換號；$a$ 在 $t=2$ 換號。把 $t\\ge 0$ 切成四段看符號：",
+        "$(0,1)$：$v>0$、$a<0$，異號，減速。$(1,2)$：$v<0$、$a<0$，同號，加速。$(2,3)$：$v<0$、$a>0$，減速。$(3,\\infty)$：$v>0$、$a>0$，加速。",
+        "速率增加的時段是 $(1,2)$ 與 $(3,\\infty)$。"
+      ],
+      "answer": "$a(4)=12$；速率在 $(1,2)$、$(3,\\infty)$ 增加",
+      "note": "在 $(1,2)$ 裡 $a<0$，但質點正在加速：它往負方向跑得越來越快。",
+      "claim": "D(t^3-6t^2+9t) == 3*(t-1)*(t-3) ;; D2(t^3-6t^2+9t) == 6*(t-2) ;; D2(t^3-6t^2+9t, 4) == 12"
+    },
+    {
+      "title": "只給 $f'$",
+      "prompt": "$f'(x)=x^3-4x$。$f'$ 在哪些區間遞增？",
+      "steps": [
+        "$f''(x)=3x^2-4$。$f''=0$：$x^2=\\frac{4}{3}$，$x=\\pm\\frac{2}{\\sqrt{3}}\\approx\\pm 1.155$。",
+        "$3x^2-4$ 是開口向上的拋物線，在兩根之外為正、之間為負。",
+        "$f'$ 遞增：$(-\\infty,-\\frac{2}{\\sqrt{3}})$ 與 $(\\frac{2}{\\sqrt{3}},\\infty)$；遞減：$(-\\frac{2}{\\sqrt{3}},\\frac{2}{\\sqrt{3}})$。"
+      ],
+      "answer": "$(-\\infty,-\\frac{2}{\\sqrt{3}})$ 與 $(\\frac{2}{\\sqrt{3}},\\infty)$",
+      "claim": "D(x^3-4x) == 3x^2-4 ;; SUB(3x^2-4, 2/sqrt(3)) == 0 ;; SUB(3x^2-4, 0) < 0 ;; SUB(3x^2-4, 2) > 0"
+    }
+  ],
+  "pitfalls": [
+    "把 $f''>0$ 讀成「$f$ 遞增」。$f''>0$ 說的是 $f'$ 遞增，$f$ 本身可能正在下坡。",
+    "以為 $a<0$ 就是減速；要看 $v$ 和 $a$ 是否同號。",
+    "第二次微分時把第一次的結果抄錯，或乘法法則只做一半。",
+    "看 $f'$ 的圖找 $f''$ 的正負時，去看 $f'$ 在 $x$ 軸上方還是下方；要看的是 $f'$ 的圖往上還是往下走。"
+  ],
+  "checks": [
+    {
+      "ask": "某一段區間上 $f'<0$、$f''>0$。這段的 $f$：",
+      "options": [
+        { "label": "在下坡，但坡越來越緩", "correct": true },
+        { "label": "在上坡", "why": "上坡要 $f'>0$。$f''>0$ 只說斜率在變大（例如 $-3$ 變 $-1$），斜率本身仍是負的。" },
+        { "label": "在下坡，而且越來越陡", "why": "越來越陡是斜率越來越負，那是 $f'$ 遞減，要 $f''<0$。" }
+      ]
+    },
+    {
+      "ask": "某時刻 $v=-4$、$a=-3$。質點的速率：",
+      "options": [
+        { "label": "正在增加", "correct": true },
+        { "label": "正在減少，因為 $a<0$", "why": "$a$ 的正負只說速度往哪個方向變。$v$ 和 $a$ 都是負的，速度往負方向越來越大，速率在增加。" },
+        { "label": "不變", "why": "$a\\ne 0$，速度一定在變；$va=12>0$，所以 $v^2$ 在增加，速率也在增加。" }
+      ]
+    },
+    {
+      "ask": "$s(t)=t^3-6t^2+9t$。$a(t)$ 是？",
+      "options": [
+        { "label": "$6t-12$", "correct": true },
+        { "label": "$3t^2-12t+9$", "why": "這是 $v(t)=s'(t)$。加速度要再微分一次。" },
+        { "label": "$6t$", "why": "$-12t$ 微分是 $-12$，漏掉了。" }
+      ]
+    },
+    {
+      "ask": "圖上是 $f'$ 的圖形。$f''>0$ 的地方在哪？",
+      "options": [
+        { "label": "$f'$ 的圖往上走的地方", "correct": true },
+        { "label": "$f'$ 的圖在 $x$ 軸上方的地方", "why": "在 $x$ 軸上方是 $f'>0$，那說的是 $f$ 遞增。$f''$ 是 $f'$ 的斜率，要看 $f'$ 的圖往哪裡走。" },
+        { "label": "$f'$ 的圖穿過 $x$ 軸的地方", "why": "$f'$ 穿過 $x$ 軸是 $f$ 的臨界點，跟 $f''$ 的正負無關。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "斜率怎麼變",
+      "beats": [
+        { "show": ["$f'$ 再微分一次：$f''$"],
+          "note": "斜率每往右一單位，變化多少。",
+          "say": "f prime 是切線斜率。把它當成新的函數再微分一次，得到 f double prime：斜率變得多快。",
+          "board": [
+            {"do":"write","line":"${{fp:f'}}$ ＝ 切線斜率"},
+            {"do":"write","line":"$f''=({{fp:f'}})'$","on":"再微分一次"}
+          ] },
+        { "show": ["$s(t)$ → $v=s'$ → $a=s''$"],
+          "note": "位置 → 速度 → 加速度。",
+          "say": "最熟悉的例子是運動：位置微分是速度，速度再微分是加速度。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$s(t)$","on":"最熟悉"},
+            {"do":"write","line":"$v=s'(t)$","on":"位置微分"},
+            {"do":"write","line":"$a=v'=s''$","on":"速度再微分"}
+          ] },
+        { "show": ["加速度：速度變化得多快"],
+          "say": "所以加速度不是跑多快，而是速度本身變化得多快。" }
+      ],
+      "predict": {
+        "ask": "加速度 $a(t)=s''(t)$ 量的是？",
+        "options": [
+          {
+            "label": "速度變化得多快",
+            "correct": true
+          },
+          {
+            "label": "跑得多快",
+            "why": "跑得多快是速度 $v=s'$，只微分一次。"
+          },
+          {
+            "label": "位置在哪裡",
+            "why": "位置是 $s(t)$ 本身，一次都沒有微分。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$f''$ 管 $f'$ 的增減",
+      "beats": [
+        { "show": ["$f''>0$：$f'$ 遞增","$f''<0$：$f'$ 遞減"],
+          "note": "把〈增減區間〉用在 $f'$ 身上。",
+          "say": "上一課的規則換成用在 f prime 身上：f double prime 是正的，f prime 就遞增。",
+          "board": [
+            {"do":"write","line":"${{pp:f''>0}}$：$f'$ 遞增"},
+            {"do":"underline","term":"pp","on":"是正的"}
+          ] },
+        { "show": ["斜率 $-2$、$-1$、$0$、$1$、$2$"],
+          "note": "切線越來越往上翹，曲線像碗。",
+          "say": "f prime 遞增，就是切線一路往上翹：負二、負一、零、一、二，曲線像碗一樣往上彎。",
+          "board": [
+            {"do":"write","line":"斜率：$-2$、$-1$、$0$、$1$、$2$"},
+            {"do":"write","line":"曲線像碗：往上彎","on":"曲線像碗"}
+          ] },
+        { "show": ["$f''$ 是 $f'$ 圖形的斜率"],
+          "note": "$f'$ 的圖往上走的地方，$f''>0$。",
+          "say": "讀圖時，f double prime 是 f prime 那張圖的斜率。看的是它往上走還是往下走。",
+          "board": [
+            {"do":"write","line":"${{s:f''}}$ ＝ ${{g:f'}}$ 圖形的斜率"},
+            {"do":"focus","term":"g","on":"那張圖"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "算一次 $f''$",
+      "beats": [
+        { "show": ["$f(x)=xe^x$"],
+          "note": "$f'(x)=(x+1)e^x$",
+          "say": "x 乘 e 的 x 次方。用乘法法則，f prime 是 x 加一乘 e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"$f(x)=x\\,e^x$"},
+            {"do":"write","line":"$f'(x)=(x+1)\\,e^x$","on":"乘法法則"}
+          ] },
+        { "show": ["$f''(x)=(x+2)e^x$"],
+          "note": "再用一次乘法法則。",
+          "say": "再用一次乘法法則：e 的 x 次方加上 x 加一乘 e 的 x 次方，合起來是 x 加二乘 e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"$f''(x)=e^x+(x+1)\\,e^x$"},
+            {"do":"transform","line":"$f''(x)={{q:(x+2)}}\\,{{ex:e^x}}$","on":"合起來"}
+          ] },
+        { "show": ["$x>-2$：$f''>0$"],
+          "note": "$e^x$ 恆正，正負跟 $x+2$ 一樣。",
+          "say": "e 的 x 次方永遠是正的，所以 x 大於負二時 f double prime 是正的。",
+          "board": [
+            {"do":"underline","term":"ex","label":"永遠是正的"},
+            {"do":"write","line":"$x>-2$：$f''>0$","on":"所以 x"}
+          ] },
+        { "show": ["$f'$ 在 $(-2,\\infty)$ 遞增"],
+          "note": "是 $f'$ 遞增，不是 $f$ 遞增。",
+          "say": "結論是 f prime 在負二以右遞增。小心，這說的是斜率在變大，f 本身可能還在下坡。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"${{fp:f'}}$ 在 $(-2,\\infty)$ 遞增","on":"結論是"},
+            {"do":"focus","term":"fp","label":"斜率在變大","on":"斜率在變大"}
+          ] }
+      ],
+      "key": "$f''$ 是對 $f'$ 再用一次乘法法則",
+      "check": 0
+    },
+    {
+      "title": "加速還是減速",
+      "beats": [
+        { "show": ["加速：速率 $|v|$ 變大"],
+          "note": "跟 $a$ 的正負不是同一件事。",
+          "say": "日常說的加速，是速率變大，也就是速度的絕對值變大，跟 a 是正是負不是一回事。",
+          "board": [
+            {"do":"write","line":"加速：速率 $|v|$ 變大"}
+          ] },
+        { "show": ["$v=-5$，$a=-2$"],
+          "note": "往負方向越來越快。",
+          "say": "速度負五、加速度負二：速度往負方向越來越大，其實速率在變大。",
+          "board": [
+            {"do":"write","line":"$v=-5$，$a=-2$"},
+            {"do":"write","line":"${{r:|v|}}$ 變大","on":"其實"}
+          ] },
+        { "show": ["$v$、$a$ 同號：速率增加","異號：速率減少"],
+          "say": "規則是看 v 和 a 同不同號：同號，速率增加；異號，速率減少。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$v$、$a$ 同號：速率增加","on":"同號，速率增加"},
+            {"do":"write","line":"$v$、$a$ 異號：速率減少","on":"異號"}
+          ] },
+        { "show": ["$(v^2)'=2va$"],
+          "note": "$va>0$ 時 $v^2$ 遞增。",
+          "say": "原因：v 平方的導數是二 v a。v a 是正的，v 平方就遞增，速率跟著變大。",
+          "board": [
+            {"do":"write","line":"$(v^2)'={{t:2va}}$"},
+            {"do":"underline","term":"t","on":"二 v a"},
+            {"do":"write","line":"$va>0$：$v^2$ 遞增","on":"是正的"}
+          ] },
+        { "show": ["$(v^2)'=(v\\cdot v)'=v'v+vv'$","$=av+va=2va$"],
+          "note": "乘法法則，$v'=a$。",
+          "say": "把 v 平方寫成 v 乘 v，用乘法法則，每一項都有 v 和 a，合起來就是二 v a。",
+          "board": [
+            {"do":"write","line":"$(v\\cdot v)'=v'\\,v+v\\,v'$","on":"乘法法則"},
+            {"do":"write","line":"$=a\\,v+v\\,a=2va$","on":"合起來"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "直線運動",
+      "beats": [
+        { "show": ["$s(t)=t^3-6t^2+9t$"],
+          "note": "$v(t)=3(t-1)(t-3)$",
+          "say": "質點位置是 t 三次方減六 t 平方加九 t。微分一次是速度，分解成三倍的 t 減一乘 t 減三。",
+          "board": [
+            {"do":"write","line":"$s(t)=t^3-6t^2+9t$"},
+            {"do":"write","line":"$v(t)=3t^2-12t+9$","on":"微分一次"},
+            {"do":"transform","line":"$v(t)=3{{vr:(t-1)(t-3)}}$","tint":{"vr":"blue"},"on":"分解成"}
+          ] },
+        { "show": ["$a(t)=6(t-2)$，$a(4)=12$"],
+          "say": "再微分一次，加速度是六倍的 t 減二。t 等於四時，加速度是十二。",
+          "board": [
+            {"do":"write","line":"$a(t)=6{{ar:(t-2)}}$","tint":{"ar":"violet"}},
+            {"do":"transform","line":"$a(t)=6{{ar:(t-2)}}$，$a(4)=12$","on":"t 等於四"}
+          ] },
+        { "show": ["$(0,1)$ 減速，$(1,2)$ 加速","$(2,3)$ 減速，$(3,\\infty)$ 加速"],
+          "note": "$v$ 在 $1$、$3$ 換號，$a$ 在 $2$ 換號。",
+          "say": "v 在一和三換號，a 在二換號，切成四段比符號。同號的一到二、三以後，速率在增加。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"focus","term":"vr","color":"blue","on":"v 在一"},
+            {"do":"focus","term":"ar","color":"violet","on":"a 在二"},
+            {"do":"write","line":"$(0,1)$ 減速，${{u:(1,2)}}$ 加速","on":"切成四段"},
+            {"do":"write","line":"$(2,3)$ 減速，$(3,\\infty)$ 加速","on":"同號的"}
+          ] },
+        { "show": ["$v=0$ 在 $t=1$、$3$","$a=0$ 在 $t=2$"],
+          "note": "符號只會在這些點換。",
+          "say": "切法：v 等於零的地方是一和三，a 等於零的地方是二。符號只會在這些點換，所以切成四段。",
+          "board": [
+            {"do":"focus","term":"vr","color":"blue","on":"v 等於零"},
+            {"do":"focus","term":"ar","color":"violet","on":"a 等於零"}
+          ] },
+        { "show": ["每一段 $v$、$a$ 的符號"],
+          "note": "同號加速，異號減速。",
+          "say": "第一段 v 正 a 負，減速。第二段都負，加速。第三段 v 負 a 正，減速。第四段都正，加速。",
+          "board": [
+            {"do":"write","line":"$(0,1)$：$v>0$，$a<0$，減速"},
+            {"do":"write","line":"$(1,2)$：$v<0$，$a<0$，加速","on":"第二段"},
+            {"do":"write","line":"$(2,3)$：$v<0$，$a>0$，減速","on":"第三段"},
+            {"do":"write","line":"$(3,\\infty)$：$v>0$，$a>0$，加速","on":"第四段"}
+          ] },
+        { "show": ["$(1,2)$：$a<0$ 也在加速"],
+          "note": "往負方向跑得越來越快。",
+          "say": "注意一到二這段，加速度是負的，質點卻在加速，因為它往負方向越跑越快。",
+          "board": [
+            {"do":"box","term":"u","label":"a<0 仍加速","on":"一到二這段"}
+          ] }
+      ],
+      "key": "加速減速看 $v$、$a$ 同號，不只看 $a$",
+      "check": 2
+    },
+    {
+      "title": "記號與例外",
+      "beats": [
+        { "show": ["$f''(x)=y''=\\frac{d^2y}{dx^2}$"],
+          "note": "把 $\\frac{d}{dx}$ 作用兩次。",
+          "say": "f double prime、y double prime、d 平方 y d x 平方，都是同一個東西：微分兩次。",
+          "board": [
+            {"do":"write","line":"$f''(x)$"},
+            {"do":"transform","line":"$f''(x)=y''$","on":"y double"},
+            {"do":"transform","line":"$f''(x)=y''=\\frac{d^2y}{dx^2}$","on":"d 平方 y"}
+          ] },
+        { "show": ["$f(x)=x|x|$：$f'(x)=2|x|$"],
+          "note": "$f'$ 在 $0$ 有尖角，$f''(0)$ 不存在。",
+          "say": "f prime 存在，不保證 f double prime 存在。x 乘絕對值 x 的導數是二倍絕對值 x，在零是尖角。",
+          "board": [
+            {"do":"write","line":"$f(x)=x|x|$：$f'(x)={{fp:2|x|}}$","on":"x 乘絕對值"},
+            {"do":"underline","term":"fp","label":"在 0 是尖角","on":"二倍"}
+          ] },
+        { "show": ["$x>0$：$f=x^2$，$f'=2x$","$x<0$：$f=-x^2$，$f'=-2x$"],
+          "note": "$x<0$ 時 $|x|=-x$，所以 $-2x=2|x|$。",
+          "say": "x 大於零時 f 是 x 平方，導數二 x。x 小於零時 f 是負的 x 平方，導數負二 x，正好是二倍絕對值 x。",
+          "board": [
+            {"do":"write","line":"$x>0$：$f=x^2$，$f'=2x$"},
+            {"do":"write","line":"$x<0$：$f=-x^2$，$f'=-2x$","on":"x 小於零時"}
+          ] },
+        { "show": ["$f'$ 的圖是 V 形"],
+          "note": "左邊斜率 $-2$，右邊斜率 $2$。",
+          "say": "f prime 的圖是 V 形。零左邊斜率負二，右邊是二，尖角沒有單一斜率，所以 f double prime 在零不存在。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,5],"curves":[{"expr":"2*abs(x)","domain":[-2,2],"color":"blue"}]}}
+          ] },
+        { "show": ["$f'(x)=x^3-4x$"],
+          "note": "$f''(x)=3x^2-4$",
+          "say": "只給 f prime 也能問：f prime 是 x 三次方減四 x，再微分是三 x 平方減四。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f'(x)=x^3-4x$","on":"f prime 是"},
+            {"do":"write","line":"$f''(x)={{p:3x^2-4}}$","on":"再微分"}
+          ] },
+        { "show": ["$f''=0$：$x=\\pm\\frac{2}{\\sqrt{3}}\\approx\\pm 1.155$"],
+          "note": "開口向上的拋物線。",
+          "say": "等於零在正負二除以根號三，大約一點一五五。它是開口向上的拋物線。",
+          "board": [
+            {"do":"write","line":"$f''=0$：$x=\\pm\\frac{2}{\\sqrt{3}}\\approx\\pm 1.155$"},
+            {"do":"underline","term":"p","label":"開口向上","on":"開口向上"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f'(x)=x^3-4x$ 在哪裡遞增？",
+        "options": [
+          {
+            "label": "$(-\\infty,-\\frac{2}{\\sqrt{3}})$ 與 $(\\frac{2}{\\sqrt{3}},\\infty)$",
+            "correct": true
+          },
+          {
+            "label": "$(-\\frac{2}{\\sqrt{3}},\\frac{2}{\\sqrt{3}})$",
+            "why": "開口向上的拋物線在兩根之間是負的，那段 $f''<0$，$f'$ 遞減。"
+          },
+          {
+            "label": "全體實數",
+            "why": "$f''=3x^2-4$ 會變號；在 $x=0$ 是 $-4$，那附近 $f'$ 在遞減。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["second-derivative", "kinematics"],
+    "fine": ["second-deriv-compute", "second-deriv-fprime-monotone", "second-deriv-acceleration", "second-deriv-speeding-up"]
+  },
+  "practice": [
+    { "id": "lec-02-q4a", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "db-mot-002", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "der-029", "core": true, "trains": "second-deriv-compute" },
+    { "id": "dd-kin-004", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "exam-der-007", "core": true, "trains": "second-deriv-compute" },
+    { "id": "lec-02-q4d", "core": true, "trains": "second-deriv-speeding-up" },
+    { "id": "cg-3a-012", "core": true, "trains": "second-deriv-speeding-up" },
+    { "id": "cg-3a-014", "core": true, "trains": "second-deriv-fprime-monotone" },
+    { "id": "dd-kin-003", "trains": "second-deriv-acceleration" },
+    { "id": "uni-der-005", "trains": "second-deriv-compute" },
+    { "id": "cg-3a-013", "trains": "second-deriv-speeding-up" },
+    { "id": "cg-3a-015", "trains": "second-deriv-fprime-monotone" },
+    { "id": "gx-005", "challenge": true, "trains": "second-deriv-fprime-monotone", "note": "挑戰：圖上是 $f'=x^3-4x$；$f'$ 的山頂與谷底就是 $f''$ 換號的地方。" }
+  ],
+  "gaps": []
+}

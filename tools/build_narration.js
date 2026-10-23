@@ -413,6 +413,8 @@ function lessonsWithSay() {
   const hs = (text) => Object.fromEntries(VKEYS.map((v) => [v, hashOf(VOICES[v], RATE, text)]));
   fs.readdirSync(LESSONS).filter((n) => n.endsWith(".json")).sort().forEach((name) => {
     const L = JSON.parse(fs.readFileSync(path.join(LESSONS, name), "utf8"));
+    // 交付的筆記本課（tools/import_notebook.js）：旁白是交來的那一支，不合成；索引裡那一課標 external、原樣留著
+    if (L.source === "notebook") return;
     const beats = [];
     (L.sections || []).forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
       // 證明節的句子可以帶問句（why.say，key 是「節-句q」）：照播放的順序接在這一句的 say 前面（先問、答了才講）
@@ -547,7 +549,8 @@ function writeIndex(index) {
       const prev = e.prev ? `,\n        "prev": ${JSON.stringify(e.prev)}` : "";
       // 跟檔頭不同聲音錄的（換聲音之後、這一課還沒錄完新聲音，留著上一版）：自己寫明是哪一個聲音
       const voice = e.voice && e.voice !== VOICES[v] ? `"voice": ${JSON.stringify(e.voice)}, ` : "";
-      return `      ${JSON.stringify(v)}: {\n        ${voice}"f": ${JSON.stringify(e.f)}, "ms": ${e.ms}, "bytes": ${e.bytes}, "sha256": ${JSON.stringify(e.sha256)},\n        "beats": {\n${beats}\n        }${prev}\n      }`;
+      const ext = e.external ? "\"external\": true, " : "";
+      return `      ${JSON.stringify(v)}: {\n        ${voice}${ext}"f": ${JSON.stringify(e.f)}, "ms": ${e.ms}, "bytes": ${e.bytes}, "sha256": ${JSON.stringify(e.sha256)},\n        "beats": {\n${beats}\n        }${prev}\n      }`;
     });
     return `    ${JSON.stringify(id)}: {\n${per.join(",\n")}\n    }`;
   });
@@ -653,6 +656,8 @@ async function build({ dryRun = false, pruneCache = false, voices = VKEYS, only 
     }
     if (Object.keys(row).length) index.lessons[L.id] = row;
   }
+  // 交來的旁白（external）照舊留著
+  Object.entries(old.lessons).forEach(([id, row]) => { if (!index.lessons[id] && Object.values(row).some((e) => e && e.external)) index.lessons[id] = row; });
   // 本機留著的舊檔（字改過、句子刪了、舊的逐句資料夾）清掉：免得被列進 Release
   const want = new Set(Object.entries(index.lessons).flatMap(([id, row]) => Object.entries(row).flatMap(([v, e]) => [relName(v, id, e.f)].concat(e.prev ? [relName(v, id, e.prev.f)] : []))));
   if (fs.existsSync(OUT)) {
@@ -796,7 +801,7 @@ async function tryLesson(id, voice) {
   console.log(`  ${path.relative(ROOT, file)}  ${says.length} 句、${(mp3Ms(all) / 1000).toFixed(1)}s`);
 }
 
-module.exports = { hashOf, legacyHashOf, speakable, sentencesOf, synthBeat, isHD, mp3Ms, framesOf, pack, voiceOf, readIndex, relName, synthWords, audioOf, cacheOf, VOICE, VOICES, VKEYS, RATE };
+module.exports = { writeIndex, hashOf, legacyHashOf, speakable, sentencesOf, synthBeat, isHD, mp3Ms, framesOf, pack, voiceOf, readIndex, relName, synthWords, audioOf, cacheOf, VOICE, VOICES, VKEYS, RATE };
 
 if (require.main === module) {
   const argv = process.argv;

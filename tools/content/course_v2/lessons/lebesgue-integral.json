@@ -1,338 +1,145 @@
 {
   "id": "lebesgue-integral",
   "title": "Lebesgue 積分",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["positive-measurable", "almost-everywhere"],
-  "next": ["riemann-vs-lebesgue"],
-  "related": ["monotone-convergence-theorem", "dirichlet-integral"],
+  "prerequisites": [
+    "positive-measurable",
+    "almost-everywhere"
+  ],
+  "next": [
+    "riemann-vs-lebesgue"
+  ],
+  "related": [
+    "monotone-convergence-theorem",
+    "dirichlet-integral"
+  ],
   "objectives": [
-    "會把可測函數拆成 $f=f^+-f^-$，寫出 Lebesgue 可積的定義 $\\int|f|<\\infty$ 與 $\\int f=\\int f^+-\\int f^-$。",
-    "判斷一個函數是否 Lebesgue 可積，特別是瑕積分收斂但 $\\int|f|=\\infty$ 的情形。",
-    "會用「幾乎處處相等的函數積分相同」與「$\\int|f|=0\\iff f=0$ a.e.」簡化計算。"
+    "會把可測函數拆成 $f=f^+-f^-$，寫出 Lebesgue 可積的定義 $\\int|f|<\\infty$ 與 $\\int f=\\int f^+-\\int f^-$",
+    "判斷一個函數是否 Lebesgue 可積，特別是瑕積分收斂但 $\\int|f|=\\infty$ 的情形",
+    "會用「幾乎處處相等的函數積分相同」與「$\\int|f|=0\\iff f=0$ a.e.」簡化計算"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 有正有負：分成兩個非負函數",
+      "heading": "① 拆成兩個非負",
       "body": [
-        "上一課只處理 $f\\ge0$。有號的 $f$，自然的做法是正的部分與負的部分各算一次再相減，就像定積分的有號面積。",
-        "令 $f^+=\\max(f,0)$、$f^-=\\max(-f,0)$。兩者都是非負可測函數，而且 $f=f^+-f^-$、$|f|=f^++f^-$。"
+        "上一課只會積 $f\\ge0$。有正有負：拆成兩半",
+        "• 兩個都 $\\ge0$、都可測（12.47：$\\max$ 封閉）",
+        "• $f=f^+-f^-$，$|f|=f^++f^-$",
+        "每一點至少有一個是 $0$：$f(x)>0$ 時 $f^-(x)=0$，反之亦然",
+        "危險：$\\int f^+=\\int f^-=\\infty$ 時，$\\infty-\\infty$ 沒有意義"
       ],
-      "collapsible": false
+      "tex": [
+        "f^+=\\max(f,0),\\qquad f^-=\\max(-f,0)"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "可測函數 $f$ 叫做（Lebesgue）可積，寫成 $f\\in L^1(\\mu)$，如果 $\\int|f|\\,d\\mu<\\infty$。此時 $\\int f^+$ 與 $\\int f^-$ 都有限（各 $\\le\\int|f|$），定義",
-        "為什麼要求兩邊都有限：若 $\\int f^+=\\int f^-=\\infty$，相減得 $\\infty-\\infty$，沒有意義。所以 Lebesgue 積分天生是「絕對」的：$f$ 可積 $\\iff$ $|f|$ 可積。這跟瑕積分不同，瑕積分可以靠正負抵銷而收斂。",
-        "在可測集 $E$ 上積分定義為 $\\int_E f\\,d\\mu=\\int f\\chi_E\\,d\\mu$。"
+        "$f$ 可測。$f$ Lebesgue 可積（$f\\in L^1(\\mu)$）：",
+        "此時",
+        "為什麼兩項都有限？$f^\\pm\\le|f|$，用上一課的單調性",
+        "• 絕對可積：$f$ 可積 $\\iff|f|$ 可積",
+        "• 沒有「條件收斂」這回事",
+        "$\\int|f|=\\int f^++\\int f^-$ 要用可加性（單調收斂定理，證明在 12.52）；定義本身不需要它",
+        "只有一邊是 $\\infty$ 時，有時也寫 $\\int f=\\pm\\infty$"
       ],
-      "tex": ["\\int_X f\\,d\\mu=\\int_X f^{+}\\,d\\mu-\\int_X f^{-}\\,d\\mu"],
-      "collapsible": false
+      "tex": [
+        "\\int|f|\\,d\\mu<\\infty",
+        "\\int f\\,d\\mu=\\int f^+\\,d\\mu-\\int f^-\\,d\\mu"
+      ]
+    },
+    {
+      "heading": "② 例：拆正負部",
+      "body": [
+        "$f(x)=x$ 在 $[-1,2]$ 上",
+        "這裡先借用下一課：連續函數在閉區間上，Lebesgue 積分 $=$ Riemann 積分"
+      ],
+      "tex": [
+        "\\int f^+=\\int_0^2x\\,dx=2,\\qquad\\int f^-=\\int_{-1}^0(-x)\\,dx=\\frac12",
+        "\\int_{[-1,2]}f\\,dm=2-\\frac12=\\frac32"
+      ]
+    },
+    {
+      "heading": "② 例：$\\frac{\\sin x}{x}$",
+      "body": [
+        "瑕積分：$\\displaystyle\\lim_{b\\to\\infty}\\int_0^b\\frac{\\sin x}{x}\\,dx=\\frac\\pi2$（收斂）",
+        "證明 $\\int|f|=\\infty$：在 $I_k=[k\\pi+\\frac\\pi6,\\,k\\pi+\\frac{5\\pi}6]$ 上",
+        "簡單函數 $\\varphi_N=\\sum_{k=1}^N\\frac{1}{2(k+1)\\pi}\\chi_{I_k}\\le|f|$：",
+        "只取偶數 $k$（$\\sin>0$）也發散：$\\int f^+=\\int f^-=\\infty$，$\\int f$ 是 $\\infty-\\infty$"
+      ],
+      "tex": [
+        "|\\sin x|\\ge\\tfrac12,\\quad x\\le(k+1)\\pi\\ \\Rightarrow\\ |f|\\ge\\frac1{2(k+1)\\pi}",
+        "\\int\\varphi_N=\\sum_{k=1}^N\\frac{2\\pi/3}{2(k+1)\\pi}=\\sum_{k=1}^N\\frac1{3(k+1)}\\to\\infty"
+      ]
     },
     {
       "heading": "③ 性質",
       "body": [
-        "對 $f,g\\in L^1$ 與實數 $a,b$：$\\int(af+bg)=a\\int f+b\\int g$；$f\\le g\\Rightarrow\\int f\\le\\int g$；$|\\int f|\\le\\int|f|$。加法性的證明要用〈單調收斂定理（測度版）〉，後面會補上，證明那個定理不需要用到這裡的任何東西，所以不會循環。",
-        "最常用的一條：零測集上的值不影響積分。$f=g$ a.e. $\\Rightarrow\\int f=\\int g$；而且對可測 $f$，$\\int|f|=0\\iff f=0$ a.e."
-      ],
-      "collapsible": false
+        "$f,g$ 可積：",
+        "• 單調：$f\\le g\\Rightarrow\\int f\\le\\int g$",
+        "• $\\displaystyle\\Big|\\int f\\Big|\\le\\int|f|$",
+        "證：$f\\le g\\Rightarrow f^+\\le g^+,\\ f^-\\ge g^-$，兩項各自比",
+        "$\\big|\\int f^+-\\int f^-\\big|\\le\\max\\big(\\int f^+,\\int f^-\\big)\\le\\int|f|$",
+        "• 線性：$\\int(af+bg)=a\\int f+b\\int g$",
+        "證明在 12.52（單調收斂定理之後）",
+        "零測集不影響積分：",
+        "• $f=g$ a.e. ⇒ $\\int f=\\int g$",
+        "• $\\int|f|=0\\iff f=0$ a.e."
+      ]
     },
     {
-      "heading": "證明：零測集不影響積分",
+      "heading": "③ 證明：零測集",
       "body": [
-        "(a) $f,g\\ge0$、$f=g$ 在 $N$ 之外、$\\mu(N)=0$。取簡單函數 $0\\le\\varphi\\le f$。$\\varphi\\chi_{N^c}$ 也是簡單函數，而且 $\\le g$（在 $N^c$ 上 $\\varphi\\le f=g$，在 $N$ 上是 0）。$\\varphi$ 與 $\\varphi\\chi_{N^c}$ 只在 $N$ 的子集上不同，那些集合測度 0，所以兩者簡單積分相同。於是 $\\int\\varphi=\\int\\varphi\\chi_{N^c}\\le\\int g$；對 $\\varphi$ 取上確界得 $\\int f\\le\\int g$。對調 $f$、$g$ 得等號。一般 $f=g$ a.e. 時，$f^+=g^+$、$f^-=g^-$ a.e.，套用 (a) 再相減。",
-        "(b) 設 $f\\ge0$、$t>0$。$t\\chi_{\\{f\\ge t\\}}$ 是 $f$ 底下的簡單函數，所以 $t\\cdot\\mu(\\{f\\ge t\\})\\le\\int f$（Markov 不等式）。若 $\\int f=0$，則每個 $k$ 都有 $\\mu(\\{f\\ge\\frac{1}{k}\\})=0$，而 $\\{f>0\\}=\\bigcup_k\\{f\\ge\\frac{1}{k}\\}$，由可數次可加性 $\\mu(\\{f>0\\})=0$。反向：$f=0$ a.e. 時由 (a)，$\\int f=\\int0=0$。對 $|f|$ 套用即得 $\\int|f|=0\\iff f=0$ a.e."
+        "定理：$f,g\\ge0$ 可測，$N\\in\\mathcal{M}$，$\\mu(N)=0$，在 $N^c$ 上 $f=g$ ⇒ $\\int f=\\int g$",
+        "策略：$f$ 底下的 $\\varphi$，在 $N$ 上砍成 $0$，就跑到 $g$ 底下，而積分不變",
+        "給 $0\\le\\varphi\\le f$ 簡單，令 $\\varphi'=\\varphi\\,\\chi_{N^c}$：",
+        "• 在 $N^c$：$\\varphi'=\\varphi\\le f=g$；在 $N$：$\\varphi'=0\\le g$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "拆成正負兩半",
-      "beats": [
-        { "show": ["$f^+=\\max(f,0)$，$f^-=\\max(-f,0)$"],
-          "say": "有正有負的函數，就拆成正部和負部，兩個都是非負可測函數。",
-          "board": [
-            {"do":"write","line":"${{p:f^+}}=\\max(f,0)$，${{m:f^-}}=\\max(-f,0)$","tint":{"p":"blue","m":"violet"}}
-          ] },
-        { "show": ["$f=f^+-f^-$，$|f|=f^++f^-$"],
-          "say": "f 等於正部減負部；絕對值 f 等於正部加負部。",
-          "board": [
-            {"do":"write","line":"$f={{p:f^+}}-{{m:f^-}}$"},
-            {"do":"write","line":"$|f|={{p:f^+}}+{{m:f^-}}$","on":"絕對值 f"}
-          ] },
-        { "show": ["$\\int_X f\\,d\\mu=\\int_X f^{+}\\,d\\mu-\\int_X f^{-}\\,d\\mu$"],
-          "say": "各算一次再相減，就像定積分的有號面積。",
-          "board": [
-            {"do":"write","line":"$\\int_X f\\,d\\mu=\\int_X {{p:f^+}}\\,d\\mu-\\int_X {{m:f^-}}\\,d\\mu$"}
-          ] }
-      ],
-      "predict": {
-        "ask": "什麼情況下這個相減會沒有意義？",
-        "options": [
-          {
-            "label": "$\\int f^+$ 與 $\\int f^-$ 都是 $\\infty$",
-            "correct": true
-          },
-          {
-            "label": "$f$ 無界",
-            "why": "無界不要緊，例如 $\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$ 積分是 2。問題是 $\\infty-\\infty$。"
-          },
-          {
-            "label": "$\\int f^-$ 比 $\\int f^+$ 大",
-            "why": "那只是積分是負的，完全合法。沒意義的是 $\\infty-\\infty$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}\\int\\varphi&=\\int\\varphi'+\\int\\varphi\\chi_N\\\\0\\le\\int\\varphi\\chi_N&\\le(\\max\\varphi)\\,\\mu(N)=0\\end{aligned}",
+        "\\int\\varphi=\\int\\varphi'\\le\\int g"
+      ]
     },
     {
-      "title": "天生是絕對的",
-      "beats": [
-        { "show": ["$f\\in L^1(\\mu)$：$\\int|f|\\,d\\mu<\\infty$"],
-          "say": "所以定義：絕對值的積分有限，才叫 Lebesgue 可積。這時正部、負部的積分都有限。",
-          "board": [
-            {"do":"write","line":"$f\\in L^1(\\mu)$：${{a:\\int|f|\\,d\\mu<\\infty}}$"},
-            {"do":"underline","term":"a","label":"絕對值","on":"才叫"},
-            {"do":"write","line":"$\\int f^+<\\infty$，$\\int f^-<\\infty$","on":"正部"}
-          ] },
-        { "show": ["正部、負部積分都是 $\\infty$：相減沒有定義"],
-          "say": "如果正部和負部的積分都是無限大，無限減無限不是一個數，可以湊成任何值，所以沒辦法定義。",
-          "board": [
-            {"do":"write","line":"$\\int f^+=\\int f^-=\\infty$"},
-            {"do":"write","line":"$\\infty-\\infty$：不是一個數","on":"無限減無限"}
-          ] },
-        { "show": ["$f$ 可積 $\\iff|f|$ 可積"],
-          "note": "瑕積分可以靠正負抵銷，這裡不行。",
-          "say": "Lebesgue 積分天生是絕對的：f 可積，若且唯若絕對值 f 可積。這跟瑕積分不一樣。",
-          "board": [
-            {"do":"write","line":"$f$ 可積 $\\iff|f|$ 可積"},
-            {"do":"write","line":"瑕積分：可以正負抵銷","on":"瑕積分"}
-          ] },
-        { "show": ["$f\\equiv1$ 在 $\\mathbb{R}$：有界，不可積"],
-          "say": "有界也不保證：常數一在整條實數線上，積分是無限大，不可積。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f\\equiv1$ 在 $\\mathbb{R}$：${{b:\\int f=\\infty}}$","on":"常數一"},
-            {"do":"underline","term":"b","label":"不可積","on":"積分是無限大"}
-          ] }
+      "heading": "③ 證明（續）",
+      "body": [
+        "對所有 $\\varphi$ 取上確界：$\\int f\\le\\int g$；$f,g$ 對調：$\\int g\\le\\int f$　$\\blacksquare$",
+        "一般的 $f,g$：$f=g$ a.e. ⇒ $f^\\pm=g^\\pm$ a.e.",
+        "也一起得到：$\\int|f|=\\int|g|$，所以一個可積另一個也可積",
+        "$\\int|f|=0\\Rightarrow f=0$ a.e.：令 $E_k=\\{|f|\\ge\\frac1k\\}$",
+        "$\\{f\\ne0\\}=\\bigcup_kE_k$，可數次可加 ⇒ $\\mu(\\{f\\ne0\\})=0$　$\\blacksquare$",
+        "反方向：$|f|=0$ a.e. ⇒ $\\int|f|=\\int0=0$"
       ],
-      "check": 0
+      "tex": [
+        "\\int f=\\int f^+-\\int f^-=\\int g^+-\\int g^-=\\int g",
+        "\\frac1k\\chi_{E_k}\\le|f|\\ \\Rightarrow\\ \\frac1k\\,\\mu(E_k)\\le\\int|f|=0"
+      ]
     },
     {
-      "title": "算一個",
-      "beats": [
-        { "show": ["$f(x)=x$ 在 $[-1,2]$"],
-          "say": "f 等於 x，在負一到二。",
-          "board": [
-            {"do":"write","line":"$f(x)=x$ 在 $[-1,2]$"}
-          ] },
-        { "show": ["$f^+$：$x$ 在 $[0,2]$；$f^-$：$-x$ 在 $[-1,0]$"],
-          "say": "正部是零到二那一段的 x，負部是負一到零那一段的負 x。",
-          "board": [
-            {"do":"write","line":"${{p:f^+}}=x$，$x\\in[0,2]$","tint":{"p":"blue"}},
-            {"do":"write","line":"${{m:f^-}}=-x$，$x\\in[-1,0]$","tint":{"m":"violet"},"on":"負部"}
-          ] },
-        { "show": ["$\\int f^+=2$，$\\int f^-=\\frac{1}{2}$"],
-          "note": "$\\int|f|=\\frac{5}{2}<\\infty$，可積。",
-          "say": "正部積分是二，負部是二分之一。絕對值的積分是二分之五，有限，所以可積。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int {{p:f^+}}=2$，$\\int {{m:f^-}}=\\frac{1}{2}$","tint":{"p":"blue","m":"violet"},"on":"正部積分"},
-            {"do":"write","line":"${{r:\\int|f|=\\frac{5}{2}}}<\\infty$","on":"絕對值的積分"},
-            {"do":"box","term":"r","color":"green","on":"有限"}
-          ] }
+      "heading": "③ 例：改掉一個零測集",
+      "body": [
+        "$g(x)=\\begin{cases}x^2,&x\\notin\\mathbb{Q}\\\\5,&x\\in\\mathbb{Q}\\end{cases}$，$x\\in[0,3]$",
+        "$g\\ne x^2$ 的地方 $\\subseteq\\mathbb{Q}$，測度 $0$：$g=x^2$ a.e.",
+        "$g$ 不是 Riemann 可積：除了 $\\sqrt5$ 以外處處不連續",
+        "不連續點 $[0,3]\\setminus\\{\\sqrt5\\}$ 測度 $3>0$（12.41 的 Lebesgue 判準）"
       ],
-      "check": 1
+      "tex": [
+        "\\int_{[0,3]}g\\,dm=\\int_0^3x^2\\,dx=9"
+      ]
     },
     {
-      "title": "瑕積分收斂也不夠",
-      "beats": [
-        { "show": ["$\\int_0^\\infty\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$（瑕積分）"],
-          "note": "靠正負一段一段抵銷。",
-          "say": "sine x 除以 x，從零到無限大的瑕積分收斂到二分之 pi，靠的是正負一段一段抵銷。",
-          "board": [
-            {"do":"write","line":"$\\int_0^\\infty\\frac{\\sin x}{x}\\,dx={{r:\\frac{\\pi}{2}}}$（瑕積分）"},
-            {"do":"circle","term":"r","on":"二分之 pi"},
-            {"do":"write","line":"正負一段一段抵銷","on":"一段一段"}
-          ] },
-        { "show": ["$\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}\\,dx\\ge\\frac{2}{(k+1)\\pi}$"],
-          "say": "可是取絕對值，每一個 pi 長的拱，面積至少是 k 加一倍 pi 分之二。",
-          "board": [
-            {"do":"write","line":"$\\int_{k\\pi}^{(k+1)\\pi}\\frac{|\\sin x|}{x}\\,dx\\ge{{b:\\frac{2}{(k+1)\\pi}}}$"},
-            {"do":"underline","term":"b","label":"每拱下界","on":"面積至少"}
-          ] },
-        { "show": ["一個拱：$\\int|\\sin x|\\,dx=2$"],
-          "say": "下界怎麼來？先看一個拱，sine x 取絕對值，面積剛好是二。",
-          "board": [
-            {"do":"write","line":"$\\int_{k\\pi}^{(k+1)\\pi}|\\sin x|\\,dx={{a:2}}$"},
-            {"do":"circle","term":"a","on":"剛好是二"}
-          ] },
-        { "show": ["$x\\le(k+1)\\pi\\Rightarrow\\frac{1}{x}\\ge\\frac{1}{(k+1)\\pi}$"],
-          "say": "而 x 最大就是 k 加一倍 pi，所以 x 分之一至少是 k 加一倍 pi 分之一。二乘上它，就是下界。",
-          "board": [
-            {"do":"write","line":"$x\\le(k+1)\\pi\\Rightarrow\\frac{1}{x}\\ge\\frac{1}{(k+1)\\pi}$"}
-          ] }
-      ],
-      "key": "取絕對值後，每一拱各估一個下界",
-      "predict": {
-        "ask": "$\\int_0^\\infty\\frac{|\\sin x|}{x}\\,dx$ 是？",
-        "options": [
-          {
-            "label": "$\\infty$：調和級數發散，不是 Lebesgue 可積",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{\\pi}{2}$",
-            "why": "那是有正負抵銷的瑕積分；取絕對值後是 $\\frac{2}{\\pi}(\\frac{1}{2}+\\frac{1}{3}+\\cdots)=\\infty$。"
-          },
-          {
-            "label": "有限，因為 $\\frac{1}{x}\\to0$",
-            "why": "每段下界 $\\frac{2}{(k+1)\\pi}$ 相加是調和級數，發散。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "零測集看不見",
-      "beats": [
-        { "show": ["$f=g$ a.e. $\\Rightarrow\\int f=\\int g$"],
-          "say": "最常用的一條：兩個函數幾乎處處相等，積分就相同。為什麼，下一節一步一步證。",
-          "board": [
-            {"do":"write","line":"$f=g$ a.e. $\\Rightarrow\\int f=\\int g$"}
-          ] },
-        { "show": ["$g=x^2$（無理點），$g=5$（有理點）"],
-          "note": "在 $[0,1]$ 上。",
-          "say": "例子：無理點上取 x 平方，有理點上取五。它處處不連續，不是 Riemann 可積。",
-          "board": [
-            {"do":"write","line":"$g=x^2$（無理點），$g=5$（有理點）","on":"無理點上"},
-            {"do":"write","line":"處處不連續：不是 Riemann 可積","on":"處處不連續"}
-          ] },
-        { "show": ["$g=x^2$ a.e. $\\Rightarrow\\int g=\\frac{1}{3}$"],
-          "note": "有理數可數，測度 0。",
-          "say": "可是它只在有理數上跟 x 平方不同，那是零測集，所以積分就是三分之一。",
-          "board": [
-            {"do":"write","line":"$g=x^2$ a.e. $\\Rightarrow\\int_0^1 g=\\ {{r:\\frac{1}{3}}}$","on":"零測集"},
-            {"do":"box","term":"r","color":"green","on":"所以積分"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：零測集看不見",
-      "beats": [
-        { "show": ["$f,g\\ge0$，$f=g$ 在 $N$ 之外，$\\mu(N)=0$"],
-          "note": "把 $f$ 底下的簡單函數搬到 $g$ 底下。",
-          "say": "策略：先看兩個都非負。f 底下的每個簡單函數，在 N 上砍成零，就塞得進 g 底下，積分還不變。",
-          "board": [
-            {"do":"write","line":"$f,g\\ge0$，$f=g$ 在 $N$ 之外，$\\mu(N)=0$"},
-            {"do":"write","line":"把 $f$ 底下的簡單函數搬到 $g$ 底下","on":"f 底下的每個"}
-          ] },
-        { "show": ["簡單函數：只取有限個值，$\\int\\varphi=\\sum c_i\\,\\mu(A_i)$","$\\int f=\\sup\\{\\int\\varphi:0\\le\\varphi\\le f\\}$"],
-          "note": "上確界：最小的上界。",
-          "say": "簡單函數只取有限個值，積分是值乘集合測度再加起來。f 的積分，是底下這些積分的最小上界。",
-          "board": [
-            {"do":"write","line":"$\\int\\varphi=\\sum c_i\\,\\mu(A_i)$"},
-            {"do":"write","line":"$\\int f=\\sup\\{\\int\\varphi:0\\le\\varphi\\le f\\}$","on":"f 的積分"}
-          ] },
-        { "show": ["取 $0\\le\\varphi\\le f$：$\\varphi\\chi_{N^c}\\le g$"],
-          "note": "在 $N^c$ 上 $\\varphi\\le f=g$，在 $N$ 上是 0。",
-          "why": {"ask":"為什麼 $\\varphi\\chi_{N^c}\\le g$？","say":"砍掉 N 上的值之後，為什麼就塞在 g 底下？","options":[{"label":"$N$ 外 $f=g$，$N$ 上砍成 0","correct":true},{"label":"$\\varphi\\le f$，而 $f\\le g$","why":"沒有假設 $f\\le g$：在 $N$ 上 $f$ 可以比 $g$ 大，所以才要把那裡砍成 0。"},{"label":"簡單函數有界，一定比 $g$ 小","why":"有界不代表在 $g$ 底下：$g$ 也可以很小。要逐點比，$N$ 外靠 $f=g$。"}]},
-          "say": "在 N 外面，phi 不超過 f，而 f 等於 g；在 N 上已經砍成零，g 又非負。兩邊都塞在 g 底下。",
-          "board": [
-            {"do":"write","line":"取 $0\\le\\varphi\\le f$：${{c:\\varphi\\chi_{N^c}}}\\le g$","tint":{"c":"blue"},"on":"砍掉"},
-            {"do":"write","line":"$N^c$ 上 $\\varphi\\le f=g$；$N$ 上是 $0\\le g$","why":true,"on":"在 N 外面"}
-          ] },
-        { "show": ["$\\int\\varphi=\\int\\varphi\\chi_{N^c}$"],
-          "note": "兩者只在 $N$ 的子集上不同，測度 0。",
-          "why": {"ask":"為什麼砍掉之後積分不變？","say":"phi 在 N 上被砍成零，積分為什麼沒有變？","options":[{"label":"只差在 $N$ 的子集上，那些集合測度 0","correct":true},{"label":"$\\varphi$ 在 $N$ 上本來就是 0","why":"$\\varphi$ 在 $N$ 上可以不是 0；不變是因為那一塊的測度是 0，值乘上 0。"},{"label":"$N$ 只有有限個點","why":"零測集可以是不可數的，像 Cantor 集；要用的是測度 0，不是點少。"}]},
-          "say": "兩個簡單函數只在 N 的子集上不同。那些集合測度是零，值乘上零，簡單積分一樣。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\int\\varphi=\\int{{c:\\varphi\\chi_{N^c}}}$","on":"積分為什麼"},
-            {"do":"write","line":"只差在 $N$ 的子集：測度 $0$","why":true,"on":"只在 N 的子集"}
-          ] },
-        { "show": ["$\\int\\varphi\\le\\int g$；取上確界：$\\int f\\le\\int g$"],
-          "note": "$\\int f$ 是這些 $\\int\\varphi$ 的上確界。",
-          "say": "所以 f 底下每個簡單函數的積分，都不超過 g 的積分。對 phi 取上確界，就是 f 的積分。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\int\\varphi\\le\\int g$；取上確界：${{fg:\\int f\\le\\int g}}$","on":"所以 f 底下"},
-            {"do":"underline","term":"fg","on":"取上確界"}
-          ] },
-        { "show": ["對調 $f$、$g$ 得等號","一般情形：$f^\\pm=g^\\pm$ a.e.，再相減"],
-          "say": "f 和 g 的角色對調，得到反方向，所以相等。有正有負時，正部、負部各自幾乎處處相等，各用一次再相減。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"對調 $f$、$g$ ⇒ $\\ {{eq:\\int f=\\int g}}$","on":"角色對調"},
-            {"do":"box","term":"eq","color":"green","on":"所以相等"},
-            {"do":"write","line":"一般情形：$f^\\pm=g^\\pm$ a.e.，再相減","on":"有正有負"}
-          ] }
-      ],
-      "key": "從簡單函數下手，再取上確界",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "下面幾步裡，哪一步用到 $\\mu(N)=0$？",
-        "steps": [
-          {
-            "label": "$\\varphi\\chi_{N^c}\\le g$",
-            "why": "這只用到 $N$ 外 $f=g$，以及 $g\\ge0$。"
-          },
-          {
-            "label": "$\\int\\varphi=\\int\\varphi\\chi_{N^c}$",
-            "correct": true
-          },
-          {
-            "label": "取上確界：$\\int f\\le\\int g$",
-            "why": "這只用到積分的定義：$\\int f$ 是上確界。"
-          },
-          {
-            "label": "對調 $f$、$g$ 得等號",
-            "why": "這只是假設對 $f$、$g$ 對稱，同一個論證再做一次。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "積分是 0 的意思",
-      "beats": [
-        { "show": ["$t\\cdot\\mu(\\{f\\ge t\\})\\le\\int f$"],
-          "note": "Markov 不等式，$f\\ge0$。",
-          "say": "Markov 不等式：f 大於等於 t 的地方，測度乘 t，不超過 f 的積分。",
-          "board": [
-            {"do":"write","line":"$t\\cdot{{m:\\mu(\\{f\\ge t\\})}}\\le\\int f$"},
-            {"do":"underline","term":"m","on":"測度乘"}
-          ] },
-        { "show": ["$\\int|f|=0\\iff f=0$ a.e."],
-          "say": "所以絕對值積分是零時，f 大於任何正數的地方測度都是零，也就是 f 幾乎處處是零。",
-          "board": [
-            {"do":"write","line":"$\\int|f|=0\\Rightarrow\\mu(\\{f\\ge t\\})=0$"},
-            {"do":"write","line":"${{r:\\int|f|=0\\iff f=0}}$ a.e.","on":"也就是"},
-            {"do":"box","term":"r","color":"green","on":"幾乎處處"}
-          ] },
-        { "show": ["每個 $k$：$\\mu(\\{f\\ge\\frac{1}{k}\\})=0$"],
-          "say": "對每個正整數 k，取 t 等於 k 分之一，Markov 不等式說，f 大於等於 k 分之一的集合，測度是零。",
-          "board": [
-            {"do":"write","line":"$\\mu(\\{f\\ge\\frac{1}{k}\\})=0$，每個 $k$"}
-          ] },
-        { "show": ["$\\{f>0\\}=\\bigcup_k\\{f\\ge\\frac{1}{k}\\}$","所以 $\\mu(\\{f>0\\})=0$"],
-          "say": "f 大於零的地方，就是這些集合全部聯集起來。可數個測度零的集合，聯起來測度還是零。",
-          "board": [
-            {"do":"write","line":"$\\{f>0\\}=\\bigcup_k\\{f\\ge\\frac{1}{k}\\}$"},
-            {"do":"write","line":"$\\mu(\\{f>0\\})=0$","on":"聯起來"}
-          ] },
-        { "show": ["$\\chi_{\\mathbb{Q}}$：不是 0 函數，$\\int=0$"],
-          "say": "但不是處處是零：有理數的指示函數不是零函數，積分卻是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\chi_{\\mathbb{Q}}\\ne0$，但 ${{i:\\int\\chi_{\\mathbb{Q}}=0}}$","on":"不是處處"},
-            {"do":"underline","term":"i","on":"積分卻是"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• $f^+=\\max(f,0)$，$f^-=\\max(-f,0)$；$f=f^+-f^-$，$|f|=f^++f^-$",
+        "• 可積：$\\int|f|<\\infty$；$\\int f=\\int f^+-\\int f^-$",
+        "• 絕對可積：$\\frac{\\sin x}{x}$ 瑕積分收斂，但不是 Lebesgue 可積",
+        "• $f=g$ a.e. ⇒ $\\int f=\\int g$；$\\int|f|=0\\iff f=0$ a.e.",
+        "• 線性：等 12.52",
+        "下一課：Riemann 與 Lebesgue：直著切 vs 橫著切"
+      ]
     }
   ],
   "workedExamples": [
@@ -380,55 +187,868 @@
   ],
   "checks": [
     {
-      "ask": "可測函數 $f$ 是 Lebesgue 可積的，條件是？",
+      "ask": "同一個 $f(x)=x$ 在 $[-1,2]$ 上，$\\displaystyle\\int|f|\\,dm=$？",
       "options": [
-        { "label": "$\\int|f|\\,d\\mu<\\infty$", "correct": true },
-        { "label": "瑕積分 $\\lim\\int_0^b f$ 存在而且有限", "why": "你用的是瑕積分的收斂。$\\frac{\\sin x}{x}$ 的瑕積分收斂，但 $\\int|f|=\\infty$，不是 Lebesgue 可積。" },
-        { "label": "$f$ 有界", "why": "有界不夠也不必要：1 在 $\\mathbb{R}$ 上有界但積分是 $\\infty$；$\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$ 無界卻可積。" }
+        {
+          "label": "$\\frac52$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac32$",
+          "why": "那是 $\\int f$；$|f|$ 要把負的一半加回來，不是扣掉"
+        },
+        {
+          "label": "$2$",
+          "why": "只算了正部"
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "只算了負部"
+        }
       ]
     },
     {
-      "ask": "$f(x)=x$ 在 $[-1,2]$，$\\int f\\,dm$ 是？",
+      "ask": "$h(x)=\\begin{cases}1,&x\\in\\mathbb{Q}\\\\-2,&x\\notin\\mathbb{Q}\\end{cases}$，$\\displaystyle\\int_{[0,2]}h\\,dm=$？",
       "options": [
-        { "label": "$\\frac{3}{2}$", "correct": true },
-        { "label": "$\\frac{5}{2}$", "why": "你算的是 $\\int|f|=2+\\frac{1}{2}$。$\\int f$ 是 $\\int f^+-\\int f^-=2-\\frac{1}{2}$。" },
-        { "label": "2", "why": "你只算了正部 $\\int f^+$，忘了減去負部 $\\int f^-=\\frac{1}{2}$。" }
+        {
+          "label": "$-4$",
+          "correct": true
+        },
+        {
+          "label": "$-2$",
+          "why": "少乘了區間長度 $2$"
+        },
+        {
+          "label": "$-1$",
+          "why": "把有理數、無理數當成各佔一半：$\\frac{1+(-2)}{2}\\cdot2$"
+        },
+        {
+          "label": "不存在，因為處處不連續",
+          "why": "那是 Riemann 積分的問題；Lebesgue 只看零測集之外"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "拆成兩個非負",
+      "beats": [
+        {
+          "show": [
+            "上一課只會積 $f\\ge0$。有正有負：拆成兩半",
+            "$f^+=\\max(f,0),\\qquad f^-=\\max(-f,0)$"
+          ],
+          "say": "上一課只會積非負的函數。有正有負的，就拆成兩半：正部是 f 跟 0 取大的，負部是負 f 跟 0 取大的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課只會積 $f\\ge0$。有正有負：拆成兩半"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f^+=\\max(f,0),\\qquad f^-=\\max(-f,0)}}$",
+              "on": "就拆"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "大的#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 兩個都 $\\ge0$、都可測（12.47：$\\max$ 封閉）",
+            "• $f=f^+-f^-$，$|f|=f^++f^-$"
+          ],
+          "say": "兩半都是非負可測函數。f 是正部減負部，絕對值 f 是正部加負部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 兩個都 $\\ge0$、都可測（12.47：$\\max$ 封閉）"
+            },
+            {
+              "do": "write",
+              "line": "• $f=f^+-f^-$，$|f|=f^++f^-$",
+              "on": "是正#1"
+            },
+            {
+              "do": "write",
+              "line": "　每一點至少有一個是 $0$：$f(x)>0$ 時 $f^-(x)=0$，反之亦然",
+              "color": "violet",
+              "on": "是正#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "f(x) = x 在 [−1, 2]：負的那半翻上來變成 f⁻"
+          ],
+          "say": "圖上 f of x 等於 x。紅色是正部，藍色是負部：負的那一半翻上來，變成非負的函數。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pm",
+                  "window": [
+                    -1.4,
+                    2.4,
+                    -1.2,
+                    2.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x",
+                      "color": "pencil",
+                      "dash": true,
+                      "label": "f"
+                    },
+                    {
+                      "expr": "max(x,0)",
+                      "color": "red",
+                      "domain": [
+                        -1,
+                        2
+                      ]
+                    },
+                    {
+                      "expr": "max(-x,0)",
+                      "color": "blue",
+                      "domain": [
+                        -1,
+                        2
+                      ]
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 1.15,
+                      "y": 1.6,
+                      "text": "f⁺",
+                      "color": "red"
+                    },
+                    {
+                      "x": -0.95,
+                      "y": 1.25,
+                      "text": "f⁻",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "max(x,0)",
+                      "from": 0,
+                      "to": 2,
+                      "color": "red"
+                    },
+                    {
+                      "expr": "max(-x,0)",
+                      "from": -1,
+                      "to": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "f(x) = x 在 [−1, 2]：負的那半翻上來變成 f⁻",
+              "color": "violet",
+              "on": "色是#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "危險：$\\int f^+=\\int f^-=\\infty$ 時，$\\infty-\\infty$ 沒有意義"
+          ],
+          "say": "唯一的危險是：兩半的積分都是無限大，相減就是無限大減無限大，沒有意義。",
+          "board": [
+            {
+              "do": "write",
+              "line": "危險：$\\int f^+=\\int f^-=\\infty$ 時，$\\infty-\\infty$ 沒有意義",
+              "color": "red"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f=g$ a.e.，而且 $f$ 可積。下列何者一定對？",
-      "options": [
-        { "label": "$g$ 可積，而且 $\\int g=\\int f$", "correct": true },
-        { "label": "要 $f=g$ 處處成立，積分才會相同", "why": "零測集上的值不影響積分；改掉可數多個點的值，積分不變。" },
-        { "label": "$f$ 與 $g$ 都要連續，積分才相同", "why": "連續性跟這件事無關。$x^2$ 與「有理點改成 5」的 $g$ 積分都是 $\\frac{1}{3}$，$g$ 處處不連續。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$f$ 可測。$f$ Lebesgue 可積（$f\\in L^1(\\mu)$）：",
+            "$\\int|f|\\,d\\mu<\\infty$"
+          ],
+          "say": "定義：可測函數 f 勒貝格可積，是說絕對值 f 的積分有限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 可測。$f$ Lebesgue 可積（$f\\in L^1(\\mu)$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int|f|\\,d\\mu<\\infty}}$",
+              "color": "red",
+              "on": "勒貝"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "的積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "此時",
+            "$\\int f\\,d\\mu=\\int f^+\\,d\\mu-\\int f^-\\,d\\mu$"
+          ],
+          "say": "這時候 f 的積分定義成正部的積分減負部的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "此時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int f\\,d\\mu=\\int f^+\\,d\\mu-\\int f^-\\,d\\mu}}$",
+              "on": "分定"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼兩項都有限？$f^\\pm\\le|f|$，用上一課的單調性"
+          ],
+          "say": "為什麼兩項都有限？因為正部、負部都不超過絕對值 f，用上一課的單調性就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼兩項都有限？$f^\\pm\\le|f|$，用上一課的單調性"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 絕對可積：$f$ 可積 $\\iff|f|$ 可積",
+            "• 沒有「條件收斂」這回事"
+          ],
+          "say": "所以勒貝格積分是絕對的：f 可積，若且唯若絕對值 f 可積。它沒有條件收斂這種東西。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 絕對可積：$f$ 可積 $\\iff|f|$ 可積"
+            },
+            {
+              "do": "write",
+              "line": "• 沒有「條件收斂」這回事",
+              "on": "可積#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int|f|=\\int f^++\\int f^-$ 要用可加性（單調收斂定理，證明在 12.52）；定義本身不需要它",
+              "color": "violet",
+              "on": "它沒"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有一邊是 $\\infty$ 時，有時也寫 $\\int f=\\pm\\infty$"
+          ],
+          "say": "補充：如果只有一半是無限大，另一半有限，有時也允許寫積分等於正或負無限大，但那不叫可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只有一邊是 $\\infty$ 時，有時也寫 $\\int f=\\pm\\infty$"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "可測函數 $f$ 滿足 $\\int|f|\\,dm=0$，能推出什麼？",
-      "options": [
-        { "label": "$f=0$ 幾乎處處", "correct": true },
-        { "label": "$f$ 處處為 0", "why": "$\\chi_{\\mathbb{Q}}$ 不是 0 函數，但它只在測度 0 的 $\\mathbb{Q}$ 上非零，$\\int=0$。" },
-        { "label": "$f$ 只在有限多個點不為 0", "why": "非零的點可以有無限多個，甚至不可數（Cantor 集的指示函數），只要測度是 0。" }
+      "title": "例：拆正負部",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=x$ 在 $[-1,2]$ 上",
+            "$\\int f^+=\\int_0^2x\\,dx=2,\\qquad\\int f^-=\\int_{-1}^0(-x)\\,dx=\\frac12$"
+          ],
+          "say": "例子：x 在負 1 到 2。正部的積分是 0 到 2 積 x，等於 2；負部是負 1 到 0 積負 x，等於 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x$ 在 $[-1,2]$ 上"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int f^+=\\int_0^2x\\,dx=2,\\qquad\\int f^-=\\int_{-1}^0(-x)\\,dx=\\frac12$",
+              "on": "等於#1"
+            },
+            {
+              "do": "write",
+              "line": "　這裡先借用下一課：連續函數在閉區間上，Lebesgue 積分 $=$ Riemann 積分",
+              "color": "violet",
+              "on": "積負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_{[-1,2]}f\\,dm=2-\\frac12=\\frac32$"
+          ],
+          "say": "所以 f 的積分是 2 減 2 分之 1，等於 2 分之 3，跟黎曼積分一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_{[-1,2]}f\\,dm=2-\\frac12=\\frac32}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：$\\frac{\\sin x}{x}$",
+      "beats": [
+        {
+          "show": [
+            "瑕積分：$\\displaystyle\\lim_{b\\to\\infty}\\int_0^b\\frac{\\sin x}{x}\\,dx=\\frac\\pi2$（收斂）"
+          ],
+          "say": "有名的例子：正弦 x 除以 x，從 0 積到無限大。當作瑕積分，它收斂到 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "瑕積分：$\\displaystyle\\lim_{b\\to\\infty}\\int_0^b\\frac{\\sin x}{x}\\,dx=\\frac\\pi2$（收斂）"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f(x)=\\frac{\\sin x}{x}$ 在 $(0,\\infty)$ 上是 Lebesgue 可積的嗎？",
+        "options": [
+          {
+            "label": "不是：$\\int|f|=\\infty$",
+            "correct": true
+          },
+          {
+            "label": "是，積分 $=\\frac\\pi2$",
+            "why": "$\\frac\\pi2$ 靠的是正負一塊一塊抵消；Lebesgue 要先看 $|f|$"
+          },
+          {
+            "label": "是，因為 $|f|\\le1$ 有界",
+            "why": "有界不夠：$(0,\\infty)$ 的測度是 $\\infty$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：$\\frac{\\sin x}{x}$",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\int|f|=\\infty$：在 $I_k=[k\\pi+\\frac\\pi6,\\,k\\pi+\\frac{5\\pi}6]$ 上",
+            "$|\\sin x|\\ge\\tfrac12,\\quad x\\le(k+1)\\pi\\ \\Rightarrow\\ |f|\\ge\\frac1{2(k+1)\\pi}$"
+          ],
+          "say": "證明絕對值的積分是無限大。在每個波峰中間這一段，正弦的絕對值至少 2 分之 1，x 不超過 k 加 1 倍的派，所以絕對值 f 有個下界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明 $\\int|f|=\\infty$：在 $I_k=[k\\pi+\\frac\\pi6,\\,k\\pi+\\frac{5\\pi}6]$ 上"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |\\sin x|\\ge\\tfrac12,\\quad x\\le(k+1)\\pi\\ \\Rightarrow\\ |f|\\ge\\frac1{2(k+1)\\pi}$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "簡單函數 $\\varphi_N=\\sum_{k=1}^N\\frac{1}{2(k+1)\\pi}\\chi_{I_k}\\le|f|$：",
+            "$\\int\\varphi_N=\\sum_{k=1}^N\\frac{2\\pi/3}{2(k+1)\\pi}=\\sum_{k=1}^N\\frac1{3(k+1)}\\to\\infty$"
+          ],
+          "say": "把這些下界做成一個簡單函數，它在絕對值 f 底下。積分是 3 乘 k 加 1 分之 1 的和，調和級數，發散。所以絕對值 f 的積分是無限大，不可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "簡單函數 $\\varphi_N=\\sum_{k=1}^N\\frac{1}{2(k+1)\\pi}\\chi_{I_k}\\le|f|$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\varphi_N=\\sum_{k=1}^N\\frac{2\\pi/3}{2(k+1)\\pi}=\\sum_{k=1}^N\\frac1{3(k+1)}\\to\\infty}}$",
+              "on": "底下"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　只取偶數 $k$（$\\sin>0$）也發散：$\\int f^+=\\int f^-=\\infty$，$\\int f$ 是 $\\infty-\\infty$",
+              "color": "violet",
+              "on": "以絕"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "性質",
+      "beats": [
+        {
+          "show": [
+            "$f,g$ 可積：",
+            "• 單調：$f\\le g\\Rightarrow\\int f\\le\\int g$"
+          ],
+          "say": "性質。f、g 可積。第一，單調；第二，積分的絕對值不超過絕對值的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f,g$ 可積："
+            },
+            {
+              "do": "write",
+              "line": "• 單調：$f\\le g\\Rightarrow\\int f\\le\\int g$",
+              "on": "單調"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\Big|\\int f\\Big|\\le\\int|f|$",
+              "on": "對值#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證：$f\\le g\\Rightarrow f^+\\le g^+,\\ f^-\\ge g^-$，兩項各自比"
+          ],
+          "say": "單調的證明：f 小於等於 g，正部變大、負部變小，兩項各自比較就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證：$f\\le g\\Rightarrow f^+\\le g^+,\\ f^-\\ge g^-$，兩項各自比"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\big|\\int f^+-\\int f^-\\big|\\le\\max\\big(\\int f^+,\\int f^-\\big)\\le\\int|f|$"
+          ],
+          "say": "第二條：兩個非負數相減，絕對值不超過比較大的那個，而兩個都不超過絕對值 f 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\big|\\int f^+-\\int f^-\\big|\\le\\max\\big(\\int f^+,\\int f^-\\big)\\le\\int|f|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 線性：$\\int(af+bg)=a\\int f+b\\int g$"
+          ],
+          "say": "第三，線性。這一條要用到積分的可加性，所以證明要等單調收斂定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 線性：$\\int(af+bg)=a\\int f+b\\int g$"
+            },
+            {
+              "do": "write",
+              "line": "　證明在 12.52（單調收斂定理之後）",
+              "color": "violet",
+              "on": "加性"
+            }
+          ]
+        },
+        {
+          "show": [
+            "零測集不影響積分：",
+            "• $f=g$ a.e. ⇒ $\\int f=\\int g$"
+          ],
+          "say": "最重要的兩條：幾乎處處相等的函數，積分相同；絕對值的積分是 0，若且唯若 f 幾乎處處是 0。下面證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "零測集不影響積分："
+            },
+            {
+              "do": "write",
+              "line": "• $f=g$ a.e. ⇒ $\\int f=\\int g$",
+              "on": "積分#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int|f|=0\\iff f=0$ a.e.",
+              "color": "red",
+              "on": "唯若"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：零測集",
+      "beats": [
+        {
+          "show": [
+            "定理：$f,g\\ge0$ 可測，$N\\in\\mathcal{M}$，$\\mu(N)=0$，在 $N^c$ 上 $f=g$ ⇒ $\\int f=\\int g$"
+          ],
+          "say": "定理：兩個非負可測函數，除了一個零測集 N 以外都相等，積分就相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f,g\\ge0$ 可測，$N\\in\\mathcal{M}$，$\\mu(N)=0$，在 $N^c$ 上 $f=g$ ⇒ $\\int f=\\int g$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：$f$ 底下的 $\\varphi$，在 $N$ 上砍成 $0$，就跑到 $g$ 底下，而積分不變"
+          ],
+          "say": "策略：f 底下的簡單函數，把它在 N 上砍成 0，它就跑到 g 底下，而且積分不會變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：$f$ 底下的 $\\varphi$，在 $N$ 上砍成 $0$，就跑到 $g$ 底下，而積分不變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "給 $0\\le\\varphi\\le f$ 簡單，令 $\\varphi'=\\varphi\\,\\chi_{N^c}$：",
+            "• 在 $N^c$：$\\varphi'=\\varphi\\le f=g$；在 $N$：$\\varphi'=0\\le g$"
+          ],
+          "say": "證明：取 f 底下的 斐，在 N 上砍成 0，叫 斐 prime。N 外面它不超過 f，也就是 g；N 上是 0。所以它在 g 底下。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給 $0\\le\\varphi\\le f$ 簡單，令 $\\varphi'=\\varphi\\,\\chi_{N^c}$："
+            },
+            {
+              "do": "write",
+              "line": "• 在 $N^c$：$\\varphi'=\\varphi\\le f=g$；在 $N$：$\\varphi'=0\\le g$",
+              "on": "外面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int\\varphi&=\\int\\varphi'+\\int\\varphi\\chi_N\\\\0\\le\\int\\varphi\\chi_N&\\le(\\max\\varphi)\\,\\mu(N)=0\\end{aligned}$"
+          ],
+          "say": "簡單函數的線性：斐 的積分是 斐 prime 的積分，加上 N 上那一塊；那一塊不超過最大值乘 N 的測度，是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int\\varphi&=\\int\\varphi'+\\int\\varphi\\chi_N\\\\0\\le\\int\\varphi\\chi_N&\\le(\\max\\varphi)\\,\\mu(N)=0\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\varphi=\\int\\varphi'\\le\\int g$"
+          ],
+          "say": "所以 斐 的積分等於 斐 prime 的積分，不超過 g 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int\\varphi=\\int\\varphi'\\le\\int g}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "me"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "對所有 $\\varphi$ 取上確界：$\\int f\\le\\int g$；$f,g$ 對調：$\\int g\\le\\int f$　$\\blacksquare$"
+          ],
+          "say": "對所有 斐 取上確界，f 的積分不超過 g 的積分。f 和 g 對調，反方向也成立。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對所有 $\\varphi$ 取上確界：$\\int f\\le\\int g$；$f,g$ 對調：$\\int g\\le\\int f$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的 $f,g$：$f=g$ a.e. ⇒ $f^\\pm=g^\\pm$ a.e.",
+            "$\\int f=\\int f^+-\\int f^-=\\int g^+-\\int g^-=\\int g$"
+          ],
+          "say": "一般有正有負的函數：f 和 g 幾乎處處相等，正部、負部也幾乎處處相等，各自用定理，相減就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的 $f,g$：$f=g$ a.e. ⇒ $f^\\pm=g^\\pm$ a.e."
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int f=\\int f^+-\\int f^-=\\int g^+-\\int g^-=\\int g$",
+              "on": "幾乎#1"
+            },
+            {
+              "do": "write",
+              "line": "　也一起得到：$\\int|f|=\\int|g|$，所以一個可積另一個也可積",
+              "color": "violet",
+              "on": "處處#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int|f|=0\\Rightarrow f=0$ a.e.：令 $E_k=\\{|f|\\ge\\frac1k\\}$",
+            "$\\frac1k\\chi_{E_k}\\le|f|\\ \\Rightarrow\\ \\frac1k\\,\\mu(E_k)\\le\\int|f|=0$"
+          ],
+          "say": "再證第二條。令 E k 是絕對值 f 至少 k 分之 1 的地方。k 分之 1 乘 E k 的特徵函數在絕對值 f 底下，所以 E k 的測度是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int|f|=0\\Rightarrow f=0$ a.e.：令 $E_k=\\{|f|\\ge\\frac1k\\}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1k\\chi_{E_k}\\le|f|\\ \\Rightarrow\\ \\frac1k\\,\\mu(E_k)\\le\\int|f|=0$",
+              "on": "的特"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\{f\\ne0\\}=\\bigcup_kE_k$，可數次可加 ⇒ $\\mu(\\{f\\ne0\\})=0$　$\\blacksquare$"
+          ],
+          "say": "f 不等於 0 的地方，是這些 E k 的可數聯集，測度還是 0。反方向就是剛才的定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\{f\\ne0\\}=\\bigcup_kE_k$，可數次可加 ⇒ $\\mu(\\{f\\ne0\\})=0$　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　反方向：$|f|=0$ a.e. ⇒ $\\int|f|=\\int0=0$",
+              "color": "violet",
+              "on": "數聯"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：改掉一個零測集",
+      "beats": [
+        {
+          "show": [
+            "$g(x)=\\begin{cases}x^2,&x\\notin\\mathbb{Q}\\\\5,&x\\in\\mathbb{Q}\\end{cases}$，$x\\in[0,3]$"
+          ],
+          "say": "用起來很方便。g of x：無理數取 x 平方，有理數取 5，x 在 0 到 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g(x)={\\begin{cases}x^2,&x\\notin\\mathbb{Q}\\\\5,&x\\in\\mathbb{Q}\\end{cases}}$，$x\\in[0,3]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g\\ne x^2$ 的地方 $\\subseteq\\mathbb{Q}$，測度 $0$：$g=x^2$ a.e.",
+            "$\\int_{[0,3]}g\\,dm=\\int_0^3x^2\\,dx=9$"
+          ],
+          "say": "g 跟 x 平方只在有理數上不同，那是零測集，所以 g 幾乎處處等於 x 平方，積分就是 0 到 3 積 x 平方，等於 9。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g\\ne x^2$ 的地方 $\\subseteq\\mathbb{Q}$，測度 $0$：$g=x^2$ a.e."
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_{[0,3]}g\\,dm=\\int_0^3x^2\\,dx=9}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "例：改掉一個零測集",
+      "beats": [
+        {
+          "show": [
+            "$g$ 不是 Riemann 可積：除了 $\\sqrt5$ 以外處處不連續"
+          ],
+          "say": "對照一下：g 除了根號 5 那一點以外處處不連續，所以黎曼積分做不到；勒貝格積分只要改掉一個零測集就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g$ 不是 Riemann 可積：除了 $\\sqrt5$ 以外處處不連續"
+            },
+            {
+              "do": "write",
+              "line": "　不連續點 $[0,3]\\setminus\\{\\sqrt5\\}$ 測度 $3>0$（12.41 的 Lebesgue 判準）",
+              "color": "violet",
+              "on": "以黎"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $f^+=\\max(f,0)$，$f^-=\\max(-f,0)$；$f=f^+-f^-$，$|f|=f^++f^-$",
+            "• 可積：$\\int|f|<\\infty$；$\\int f=\\int f^+-\\int f^-$"
+          ],
+          "say": "整理：拆成正部和負部；絕對值積分有限才叫可積；勒貝格積分是絕對的，正弦 x 除以 x 不可積；零測集不影響積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f^+=\\max(f,0)$，$f^-=\\max(-f,0)$；$f=f^+-f^-$，$|f|=f^++f^-$"
+            },
+            {
+              "do": "write",
+              "line": "• 可積：$\\int|f|<\\infty$；$\\int f=\\int f^+-\\int f^-$",
+              "on": "絕對#1"
+            },
+            {
+              "do": "write",
+              "line": "• 絕對可積：$\\frac{\\sin x}{x}$ 瑕積分收斂，但不是 Lebesgue 可積",
+              "on": "勒貝"
+            },
+            {
+              "do": "write",
+              "line": "• $f=g$ a.e. ⇒ $\\int f=\\int g$；$\\int|f|=0\\iff f=0$ a.e.",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "• 線性：等 12.52",
+              "on": "可積#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Riemann 與 Lebesgue：直著切 vs 橫著切"
+          ],
+          "say": "下一課，比較黎曼和勒貝格：直著切和橫著切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Riemann 與 Lebesgue：直著切 vs 橫著切"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["lebesgue", "riemann-lebesgue", "lp-space", "improper-integral"],
-    "fine": ["lint-positive-negative-parts", "lint-integrability-check", "lint-ae-invariance", "lint-absolute-value"]
+    "coarse": [
+      "lebesgue",
+      "riemann-lebesgue",
+      "lp-space",
+      "improper-integral"
+    ],
+    "fine": [
+      "lint-positive-negative-parts",
+      "lint-integrability-check",
+      "lint-ae-invariance",
+      "lint-absolute-value"
+    ]
   },
   "practice": [
-    { "id": "lb-cmp-001", "core": true, "trains": "lint-ae-invariance" },
-    { "id": "lb-cmp-002", "core": true, "trains": "lint-integrability-check" },
-    { "id": "lb-lp-003", "core": true, "trains": "lint-absolute-value" },
-    { "id": "cg-12j-010", "core": true, "trains": "lint-positive-negative-parts" },
-    { "id": "cg-12j-013", "core": true, "trains": "lint-integrability-check" },
-    { "id": "cg-12j-011", "trains": "lint-positive-negative-parts" },
-    { "id": "cg-12j-012", "trains": "lint-positive-negative-parts" },
-    { "id": "cg-12j-014", "trains": "lint-integrability-check" },
-    { "id": "cg-12j-015", "trains": "lint-integrability-check" },
-    { "id": "cg-12j-016", "trains": "lint-ae-invariance" },
-    { "id": "cg-12j-017", "trains": "lint-ae-invariance" },
-    { "id": "lb-lp-005", "challenge": true, "trains": "lint-integrability-check", "note": "挑戰：$x^{-1/3}$ 在 $(0,1]$ 無界，$|f|^2=x^{-2/3}$ 的積分仍有限。" }
+    {
+      "id": "lb-cmp-001",
+      "core": true,
+      "trains": "lint-ae-invariance"
+    },
+    {
+      "id": "lb-cmp-002",
+      "core": true,
+      "trains": "lint-integrability-check"
+    },
+    {
+      "id": "lb-lp-003",
+      "core": true,
+      "trains": "lint-absolute-value"
+    },
+    {
+      "id": "cg-12j-010",
+      "core": true,
+      "trains": "lint-positive-negative-parts"
+    },
+    {
+      "id": "cg-12j-013",
+      "core": true,
+      "trains": "lint-integrability-check"
+    },
+    {
+      "id": "cg-12j-011",
+      "trains": "lint-positive-negative-parts"
+    },
+    {
+      "id": "cg-12j-012",
+      "trains": "lint-positive-negative-parts"
+    },
+    {
+      "id": "cg-12j-014",
+      "trains": "lint-integrability-check"
+    },
+    {
+      "id": "cg-12j-015",
+      "trains": "lint-integrability-check"
+    },
+    {
+      "id": "cg-12j-016",
+      "trains": "lint-ae-invariance"
+    },
+    {
+      "id": "cg-12j-017",
+      "trains": "lint-ae-invariance"
+    },
+    {
+      "id": "lb-lp-005",
+      "challenge": true,
+      "trains": "lint-integrability-check",
+      "note": "挑戰：$x^{-1/3}$ 在 $(0,1]$ 無界，$|f|^2=x^{-2/3}$ 的積分仍有限。"
+    }
   ],
   "gaps": []
 }

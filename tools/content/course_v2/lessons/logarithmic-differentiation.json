@@ -1,50 +1,138 @@
 {
   "id": "logarithmic-differentiation",
   "title": "對數微分",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["derivative-log", "derivative-exp", "chain-rule", "implicit-differentiation"],
-  "next": ["inverse-trig-derivative"],
+  "prerequisites": [
+    "derivative-log",
+    "derivative-exp",
+    "chain-rule",
+    "implicit-differentiation"
+  ],
+  "next": [
+    "inverse-trig-derivative"
+  ],
   "related": [],
   "objectives": [
-    "說出為什麼 $x^x$ 不能用冪次法則、也不能用指數函數的公式。",
-    "用「取 $\\ln$、兩邊微分、乘回 $y$」微分底與指數都含 $x$ 的函數。",
-    "用對數把很多因式的乘除變成加減，再微分。"
+    "說出為什麼 $x^x$ 不能用冪次法則、也不能用指數函數的公式",
+    "用「取 $\\ln$、兩邊微分、乘回 $y$」微分底與指數都含 $x$ 的函數",
+    "用對數把很多因式的乘除變成加減，再微分"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 兩條公式都不能套",
       "body": [
-        "冪次法則 $(x^n)' = n x^{n-1}$ 要指數是常數；$(a^x)' = a^x \\ln a$ 要底是常數。$x^x$ 的底和指數都在變，兩條都不適用。",
-        "硬套會得到 $x \\cdot x^{x-1} = x^x$，或 $x^x \\ln x$。正確答案是 $x^x(\\ln x + 1)$，剛好是這兩個錯誤答案相加：底在變的貢獻，加上指數在變的貢獻。這是直覺，不是證明；證明就是下面的計算。"
+        "冪次法則 $\\dfrac{d}{dx}x^n=nx^{n-1}$：要求指數是常數",
+        "指數公式 $\\dfrac{d}{dx}a^x=a^x\\ln a$：要求底是常數",
+        "硬套會錯：",
+        "• 當冪次：$x\\cdot x^{x-1}=x^x$",
+        "• 當指數：$x^x\\ln x$",
+        "底和指數都在變：需要新方法"
       ],
-      "collapsible": false
+      "tex": [
+        "y=x^x\\quad(x>0)"
+      ]
     },
     {
-      "heading": "② 方法：取 $\\ln$，把指數拉下來",
+      "heading": "② 取 $\\ln$，把指數拉下來",
       "body": [
-        "$y = x^x$（$x > 0$）。兩邊取 $\\ln$：$\\ln y = x \\ln x$。指數變成乘法了。",
-        "兩邊對 $x$ 微分。左邊是 $\\ln$ 套在 $y(x)$ 外面，連鎖律給 $\\frac{y'}{y}$；右邊用乘法法則給 $\\ln x + 1$。",
-        "$\\frac{y'}{y} = \\ln x + 1$，最後乘回 $y$：$y' = x^x(\\ln x + 1)$。"
+        "關鍵：$\\ln$ 能把指數拉到前面",
+        "$y=x^x$，兩邊取 $\\ln$（$x>0$，$y>0$）：",
+        "兩邊對 $x$ 微分（左邊用連鎖律，像隱函數微分）：",
+        "乘回 $y$：",
+        "$x=1$：$y'=1^1(\\ln1+1)=1$",
+        "$x=2$：$y'=4(\\ln2+1)\\approx6.77$",
+        "有趣：正確答案 $=x^x\\ln x+x\\cdot x^{x-1}$，剛好是兩個錯答案的和"
       ],
-      "tex": ["\\ln y=x\\ln x\\ \\Rightarrow\\ \\frac{y'}{y}=\\ln x+1\\ \\Rightarrow\\ y'=x^x(\\ln x+1)"],
-      "collapsible": false
+      "tex": [
+        "\\ln\\big(a^b\\big)=b\\ln a",
+        "\\ln y=x\\ln x",
+        "\\frac{y'}{y}=1\\cdot\\ln x+x\\cdot\\frac1x=\\ln x+1",
+        "y'=y(\\ln x+1)=x^x(\\ln x+1)"
+      ]
     },
     {
-      "heading": "③ 同一件事的另一種寫法",
+      "heading": "② 什麼時候斜率是 0",
       "body": [
-        "$x^x = e^{x \\ln x}$（因為 $e^{\\ln x} = x$）。直接用連鎖律：$(e^{x \\ln x})' = e^{x \\ln x} \\cdot (\\ln x + 1) = x^x(\\ln x + 1)$。兩種寫法本質相同，挑順手的用。"
+        "斜率什麼時候是 $0$？$x^x>0$，所以要",
+        "最低點的值 $\\left(\\frac1e\\right)^{1/e}=e^{-1/e}\\approx0.692$",
+        "$x<\\frac1e$：斜率負，往下；$x>\\frac1e$：斜率正，往上"
       ],
-      "collapsible": false
+      "tex": [
+        "\\ln x+1=0\\ \\Rightarrow\\ x=\\frac1e\\approx0.368"
+      ]
     },
     {
-      "heading": "④ 第二種用途：很多因式相乘除",
+      "heading": "② 例：指數是三角函數",
       "body": [
-        "$y = x^2 \\frac{\\sqrt{x + 1}}{(x - 1)^3}$。直接用乘法、除法法則很長。取 $\\ln$ 把乘除變加減：$\\ln y = 2 \\ln x + \\frac{1}{2} \\ln(x + 1) - 3 \\ln(x - 1)$。每一項都好微。",
-        "$\\ln$ 只對正數有定義。$y$ 可能是負的時候，改取 $\\ln|y|$：$(\\ln|u|)' = \\frac{u'}{u}$ 一樣成立，所以只要 $y \\ne 0$，最後的公式照樣對。"
+        "取 $\\ln$：",
+        "兩邊微分（右邊乘法法則）：",
+        "乘回 $y$："
       ],
-      "collapsible": false
+      "tex": [
+        "y=x^{\\sin x}\\quad(x>0)",
+        "\\ln y=\\sin x\\cdot\\ln x",
+        "\\frac{y'}{y}=\\cos x\\ln x+\\frac{\\sin x}{x}",
+        "y'=x^{\\sin x}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)"
+      ]
+    },
+    {
+      "heading": "③ 另一種寫法：$e^{\\ln}$",
+      "body": [
+        "任何正數：$a=e^{\\ln a}$，所以",
+        "現在是 $e^{u}$，$u=x\\ln x$：連鎖律",
+        "兩種方法是同一件事：",
+        "• 取 $\\ln$：$\\ln y=x\\ln x$，微分得 $\\frac{y'}{y}$",
+        "• 寫成 $e$：微分 $e^{x\\ln x}$，連鎖律多乘 $(x\\ln x)'$",
+        "一般公式（$u>0$）：",
+        "不用背：現場取 $\\ln$ 推一次就好"
+      ],
+      "tex": [
+        "x^x=e^{\\ln x^x}=e^{x\\ln x}",
+        "\\frac{d}{dx}e^{x\\ln x}=e^{x\\ln x}\\cdot(\\ln x+1)",
+        "=x^x(\\ln x+1)",
+        "\\frac{d}{dx}u^{v}=u^{v}\\left(v'\\ln u+\\frac{v\\,u'}{u}\\right)"
+      ]
+    },
+    {
+      "heading": "④ 很多因式相乘除",
+      "body": [
+        "直接微：商法則＋乘法法則＋連鎖律，很容易算錯",
+        "取 $\\ln$（$x>1$ 時每個因式都是正的）：",
+        "每一項各自微分：",
+        "乘回 $y$："
+      ],
+      "tex": [
+        "y=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\quad(x>1)",
+        "\\ln y=2\\ln x+\\tfrac12\\ln(x+1)-3\\ln(x-1)",
+        "\\frac{y'}{y}=\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}",
+        "y'=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\left(\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}\\right)"
+      ]
+    },
+    {
+      "heading": "④ 代一個點",
+      "body": [
+        "$x=3$：$y=\\dfrac{9\\cdot2}{8}=\\dfrac94$",
+        "括號：$\\dfrac23+\\dfrac18-\\dfrac32=\\dfrac{16+3-36}{24}=-\\dfrac{17}{24}$",
+        "數值檢查：$\\frac{y(3.001)-y(2.999)}{0.002}\\approx-1.594$",
+        "如果某些因式可能是負的：先取絕對值 $\\ln|y|$，微分結果一樣"
+      ],
+      "tex": [
+        "y'(3)=\\frac94\\cdot\\left(-\\frac{17}{24}\\right)=-\\frac{51}{32}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $x^x$：底、指數都在變，冪次法則與指數公式都不能用",
+        "• 步驟：取 $\\ln$ → 拉下指數（拆開乘除）→ 微分得 $\\dfrac{y'}{y}$ → 乘回 $y$",
+        "• $\\dfrac{d}{dx}x^x=x^x(\\ln x+1)$",
+        "• 另一種寫法：$u^v=e^{v\\ln u}$，用連鎖律，結果一樣",
+        "• 很多因式乘除：取 $\\ln$ 變加減，每項分開微",
+        "下一課：反函數與反三角函數微分"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,35 +184,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{d}{dx} x^x$（$x > 0$）是？",
+      "ask": "$y=x^{\\sin x}$，$y'\\!\\left(\\dfrac\\pi2\\right)=$？",
       "options": [
-        { "label": "$x \\cdot x^{x-1}$", "why": "這是冪次法則，它要指數是常數。$x^x$ 的指數也在變。" },
-        { "label": "$x^x \\ln x$", "why": "這是 $(a^x)' = a^x \\ln a$，它要底是常數。$x^x$ 的底也在變。" },
-        { "label": "$x^x(\\ln x + 1)$", "correct": true }
+        {
+          "label": "$1$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac2\\pi$",
+          "why": "只算了括號，忘了乘回 $y=\\frac\\pi2$"
+        },
+        {
+          "label": "$0$",
+          "why": "$\\cos\\frac\\pi2=0$ 只讓第一項消失，第二項 $\\frac{\\sin x}{x}$ 還在"
+        },
+        {
+          "label": "$\\dfrac\\pi2$",
+          "why": "這是 $y$ 本身的值，不是 $y'$"
+        }
       ]
     },
     {
-      "ask": "$y = x^{2x}$（$x > 0$），$y'$ 是？",
+      "ask": "$y=\\dfrac{(x-1)^4}{(x+2)^5}$，取 $\\ln$ 微分後 $\\dfrac{y'}{y}=$？",
       "options": [
-        { "label": "$x^{2x}(2 \\ln x + 2)$", "correct": true },
-        { "label": "$2 \\ln x + 2$", "why": "這是 $\\frac{y'}{y}$。算完 $\\ln y = 2x \\ln x$ 的導數之後還要乘回 $y$。" },
-        { "label": "$2x \\cdot x^{2x-1}$", "why": "把指數 $2x$ 當成常數用了冪次法則。" }
-      ]
-    },
-    {
-      "ask": "下面哪一個最需要用對數微分？",
-      "options": [
-        { "label": "$x^5$", "why": "指數是常數，冪次法則就夠：$5x^4$。" },
-        { "label": "$(\\sin x)^x$", "correct": true },
-        { "label": "$5^x$", "why": "底是常數，直接 $5^x \\ln 5$。" }
-      ]
-    },
-    {
-      "ask": "$f(x) = x^x$，$f'(2)$ 是？",
-      "options": [
-        { "label": "4", "why": "用了冪次法則 $x \\cdot x^{x-1}$，代 2 得 $2 \\cdot 2 = 4$。" },
-        { "label": "$4 \\ln 2$", "why": "用了 $a^x$ 的公式 $x^x \\ln x$，代 2 得 $4 \\ln 2$。" },
-        { "label": "$4(\\ln 2 + 1)$", "correct": true }
+        {
+          "label": "$\\dfrac4{x-1}-\\dfrac5{x+2}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac4{x-1}+\\dfrac5{x+2}$",
+          "why": "分母的因式取 $\\ln$ 後是==減==，不是加"
+        },
+        {
+          "label": "$4(x-1)^3-5(x+2)^4$",
+          "why": "這是直接微分 $(x-1)^4$；取了 $\\ln$ 之後微的是 $\\ln$"
+        },
+        {
+          "label": "$\\dfrac{4}{5}\\cdot\\dfrac{x+2}{x-1}$",
+          "why": "把係數相除了；$\\ln$ 把除法變成==相減=="
+        }
       ]
     }
   ],
@@ -132,228 +230,909 @@
     {
       "title": "兩條公式都不能套",
       "beats": [
-        { "show": ["$(x^n)' = n x^{n-1}$：指數要是常數"],
-          "say": "冪次法則只管指數是常數的情況，像 x 的五次方。",
+        {
+          "show": [
+            "$y=x^x\\quad(x>0)$"
+          ],
+          "say": "這一課的主角是 x 的 x 次方，x 大於 0。底是 x，指數也是 x。",
           "board": [
-            {"do":"write","line":"$(x^{{{n:n}}})'=n\\,x^{n-1}$"},
-            {"do":"underline","term":"n","color":"blue","label":"指數是常數","on":"常數"}
-          ] },
-        { "show": ["$(a^x)' = a^x \\ln a$：底要是常數"],
-          "say": "a 的 x 次方那條公式，反過來要底是常數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=x^x\\quad(x>0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪次法則 $\\dfrac{d}{dx}x^n=nx^{n-1}$：要求指數是常數"
+          ],
+          "say": "冪次法則，x 的 n 次方微成 n 乘 x 的 n 減 1 次方，前提是指數 n 是常數。這裡指數會動，不能用。",
           "board": [
-            {"do":"write","line":"$({{b:a}}^x)'=a^x\\ln a$"},
-            {"do":"focus","term":"b","color":"blue","label":"底是常數","on":"反過來"}
-          ] },
-        { "show": ["$x^x$：底和指數都在變"],
-          "note": "兩條都不適用。",
-          "say": "x 的 x 次方，底在變、指數也在變，兩條公式都不能直接套。",
+            {
+              "do": "write",
+              "line": "冪次法則 $\\dfrac{d}{dx}x^n=nx^{n-1}$：要求指數是常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "指數公式 $\\dfrac{d}{dx}a^x=a^x\\ln a$：要求底是常數"
+          ],
+          "say": "指數函數的公式，a 的 x 次方微成 a 的 x 次方乘自然對數 a，前提是底 a 是常數。這裡底也會動，也不能用。",
           "board": [
-            {"do":"write","line":"${{bx:x}}^{{{ex:x}}}$"},
-            {"do":"focus","term":"bx","color":"blue","label":"底在變","on":"底在變"},
-            {"do":"focus","term":"ex","color":"violet","label":"指數也在變","on":"指數也在變"},
-            {"do":"write","line":"兩條公式都不能套","color":"red","on":"兩條公式"}
-          ] }
+            {
+              "do": "write",
+              "line": "指數公式 $\\dfrac{d}{dx}a^x=a^x\\ln a$：要求底是常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "硬套會錯：",
+            "• 當冪次：$x\\cdot x^{x-1}=x^x$"
+          ],
+          "say": "硬套會得到兩個不同的錯答案：當成冪次，得到 x 的 x 次方；當成指數，得到 x 的 x 次方乘自然對數 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "硬套會錯："
+            },
+            {
+              "do": "write",
+              "line": "• 當冪次：$x\\cdot x^{x-1}=x^x$",
+              "on": "得到#2"
+            },
+            {
+              "do": "write",
+              "line": "• 當指數：$x^x\\ln x$",
+              "color": "red",
+              "on": "得到#3"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "predict": {
+        "ask": "$y=x^x$ 在 $x=2$ 的切線斜率大約是？",
+        "options": [
+          {
+            "label": "$6.77$",
+            "correct": true
+          },
+          {
+            "label": "$4$",
+            "why": "這是把 $x^x$ 當冪次：$x\\cdot x^{x-1}$，忽略了指數也在變"
+          },
+          {
+            "label": "$2.77$",
+            "why": "這是把 $x^x$ 當指數：$x^x\\ln x=4\\ln2$，忽略了底也在變"
+          },
+          {
+            "label": "$0$",
+            "why": "圖形在 $x=2$ 明顯往上爬，斜率不是 $0$"
+          }
+        ]
+      }
     },
     {
-      "title": "取 $\\ln$，拉下指數",
+      "title": "兩條公式都不能套",
       "beats": [
-        { "show": ["$y = x^x$，$\\ln y = x \\ln x$"],
-          "note": "$x > 0$。指數變成乘法了。",
-          "say": "兩邊取自然對數，指數就被拉下來，變成 x 乘自然對數 x，只剩乘法。",
+        {
+          "show": [
+            "底和指數都在變：需要新方法"
+          ],
+          "say": "底和指數都在變，兩條公式都不對，需要新的方法。",
           "board": [
-            {"do":"write","line":"$y=x^{{{e:x}}}$","tint":{"e":"blue"}},
-            {"do":"write","line":"$\\ln y={{e:x}}\\ln x$","on":"指數就被"},
-            {"do":"underline","term":"e","color":"blue","label":"拉下來了","on":"只剩乘法"}
-          ] },
-        { "show": ["$(\\ln y)' = \\frac{1}{y} \\cdot y'$"],
-          "note": "外層 $\\ln u$ 的導數 $\\frac{1}{u}$，內層是 $y$。",
-          "say": "外層是自然對數，導數是 u 分之一，這裡的 u 就是 y。內層是 y，導數是 y prime，兩個乘起來。",
+            {
+              "do": "write",
+              "line": "底和指數都在變：需要新方法",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "取 $\\ln$，把指數拉下來",
+      "beats": [
+        {
+          "show": [
+            "關鍵：$\\ln$ 能把指數拉到前面",
+            "$\\ln\\big(a^b\\big)=b\\ln a$"
+          ],
+          "say": "關鍵是對數律：自然對數可以把指數拉到前面當係數。",
           "board": [
-            {"do":"write","line":"$(\\ln y)'={{o1:\\frac{1}{y}}}\\cdot{{i1:y'}}$"},
-            {"do":"underline","term":"o1","color":"violet","label":"外層","on":"u 分之一"},
-            {"do":"underline","term":"i1","color":"blue","label":"內層","on":"y prime"}
-          ] },
-        { "show": ["左邊：$(\\ln y)' = \\frac{y'}{y}$"],
-          "note": "$\\ln$ 套在 $y(x)$ 外面：連鎖律。",
-          "say": "兩邊對 x 微分。左邊自然對數套在 y 外面，連鎖律給 y 分之 y prime，別漏了 y prime。",
+            {
+              "do": "write",
+              "line": "關鍵：$\\ln$ 能把指數拉到前面"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\ln\\big(a^b\\big)=b\\ln a}}$",
+              "on": "然對"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "拉到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=x^x$，兩邊取 $\\ln$（$x>0$，$y>0$）：",
+            "$\\ln y=x\\ln x$"
+          ],
+          "say": "兩邊取自然對數。x 是正的，y 也是正的，可以取。右邊的指數 x 被拉下來，變成 x 乘自然對數 x。",
           "board": [
-            {"do":"write","line":"左邊：$(\\ln y)'={{l:\\frac{y'}{y}}}$","on":"兩邊對 x"},
-            {"do":"focus","term":"l","label":"連鎖律","on":"連鎖律"}
-          ] },
-        { "show": ["右邊：$\\ln x + 1$"],
-          "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
-          "say": "右邊用乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得到自然對數 x 加一。",
+            {
+              "do": "write",
+              "line": "$y=x^x$，兩邊取 $\\ln$（$x>0$，$y>0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln y=x\\ln x$",
+              "on": "右邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊對 $x$ 微分（左邊用連鎖律，像隱函數微分）：",
+            "$\\frac{y'}{y}=1\\cdot\\ln x+x\\cdot\\frac1x=\\ln x+1$"
+          ],
+          "say": "兩邊對 x 微分。左邊自然對數 y，連鎖律得到 y 分之 y prime，跟上一課一樣。右邊用乘法法則，得到自然對數 x 加 1。",
           "board": [
-            {"do":"write","line":"右邊：$1\\cdot\\ln x+x\\cdot\\frac{1}{x}$"},
-            {"do":"transform","line":"右邊：$\\ln x+1$","on":"得到"}
-          ] },
-        { "show": ["$y' = x^x(\\ln x + 1)$"],
-          "note": "最後乘回 $y$。",
-          "say": "算到 y 分之 y prime 還沒完，兩邊乘回 y，才是答案。",
+            {
+              "do": "write",
+              "line": "兩邊對 $x$ 微分（左邊用連鎖律，像隱函數微分）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{y'}{y}=1\\cdot\\ln x+x\\cdot\\frac1x=\\ln x+1$",
+              "on": "ri"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘回 $y$：",
+            "$y'=y(\\ln x+1)=x^x(\\ln x+1)$"
+          ],
+          "say": "最後兩邊乘上 y，再把 y 換回 x 的 x 次方。答案是 x 的 x 次方，乘上自然對數 x 加 1。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$y'={{yy:x^x}}(\\ln x+1)$","color":"green","on":"還沒完"},
-            {"do":"underline","term":"yy","label":"乘回 y","on":"乘回 y"}
-          ] }
+            {
+              "do": "write",
+              "line": "乘回 $y$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y'=y(\\ln x+1)=x^x(\\ln x+1)}}$",
+              "color": "red",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=1$：$y'=1^1(\\ln1+1)=1$"
+          ],
+          "say": "x 等於 1 時，1 的 1 次方是 1，自然對數 1 是 0，所以斜率是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=1$：$y'=1^1(\\ln1+1)=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=2$：$y'=4(\\ln2+1)\\approx6.77$"
+          ],
+          "say": "x 等於 2 時，是 4 乘上自然對數 2 加 1，大約 6.77，就是剛才的答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=2$：$y'=4(\\ln2+1)\\approx6.77$"
+            },
+            {
+              "do": "write",
+              "line": "　有趣：正確答案 $=x^x\\ln x+x\\cdot x^{x-1}$，剛好是兩個錯答案的和",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "步驟整理",
+      "beats": [
+        {
+          "show": [
+            "對數微分的步驟"
+          ],
+          "say": "整理成步驟，排排看。"
+        }
       ],
-      "key": "左邊 $\\ln y$ 對 $x$ 微分要用連鎖律",
+      "proof": true,
+      "order": {
+        "ask": "對數微分的步驟",
+        "steps": [
+          {
+            "label": "兩邊取 $\\ln$"
+          },
+          {
+            "label": "用對數律把指數拉下來（或把乘除拆開）",
+            "why": "先要有上一步：兩邊取 $\\ln$"
+          },
+          {
+            "label": "兩邊對 $x$ 微分，左邊得 $\\dfrac{y'}{y}$",
+            "why": "先要有上一步：用對數律把指數拉下來（或把乘除拆開）"
+          },
+          {
+            "label": "兩邊乘回 $y$，再把 $y$ 換回原式",
+            "why": "先要有上一步：兩邊對 $x$ 微分，左邊得 $\\dfrac{y'}{y}$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "什麼時候斜率是 0",
+      "beats": [
+        {
+          "show": [
+            "y = xˣ 和它的切線"
+          ],
+          "say": "圖上是 x 的 x 次方。紅色虛線是 x 等於 1 的切線，斜率 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xx",
+                  "window": [
+                    -0.1,
+                    2.3,
+                    -0.5,
+                    5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(x*ln(x))",
+                      "color": "blue",
+                      "label": "y = xˣ",
+                      "domain": [
+                        0.01,
+                        2.3
+                      ]
+                    },
+                    {
+                      "expr": "exp(c*ln(c))*(1+(ln(c)+1)*(x-c))",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "c",
+                      "y": "exp(c*ln(c))",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0.15,
+                      "max": 2,
+                      "value": 1,
+                      "label": "x ="
+                    }
+                  },
+                  "readout": "x = {c}：斜率 xˣ(ln x + 1) = {exp(c*ln(c))*(ln(c)+1)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "x = 1：斜率 xˣ(ln x + 1) = 1",
+              "on": "紅色"
+            },
+            {
+              "do": "write",
+              "line": "y = xˣ 和它的切線",
+              "color": "violet",
+              "on": "的切"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率什麼時候是 $0$？$x^x>0$，所以要",
+            "$\\ln x+1=0\\ \\Rightarrow\\ x=\\frac1e\\approx0.368$"
+          ],
+          "say": "斜率什麼時候是 0？x 的 x 次方一定是正的，所以只能是自然對數 x 加 1 等於 0，x 等於 e 分之 1，大約 0.368。",
+          "board": [
+            {
+              "do": "write",
+              "line": "斜率什麼時候是 $0$？$x^x>0$，所以要"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\ln x+1=0\\ \\Rightarrow\\ x=\\frac1e\\approx0.368}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "什麼時候斜率是 0"
+          ],
+          "say": "把點移過去，切線變成水平的。這是 x 的 x 次方最低的地方。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xx",
+                  "window": [
+                    -0.1,
+                    2.3,
+                    -0.5,
+                    5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(x*ln(x))",
+                      "color": "blue",
+                      "label": "y = xˣ",
+                      "domain": [
+                        0.01,
+                        2.3
+                      ]
+                    },
+                    {
+                      "expr": "exp(c*ln(c))*(1+(ln(c)+1)*(x-c))",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "c",
+                      "y": "exp(c*ln(c))",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "c": {
+                      "min": 0.15,
+                      "max": 2,
+                      "value": 1,
+                      "label": "x ="
+                    }
+                  },
+                  "readout": "x = {c}：斜率 xˣ(ln x + 1) = {exp(c*ln(c))*(ln(c)+1)}",
+                  "height": 280
+                },
+                "vals": {
+                  "c": 0.3679
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "x = 0.3679：斜率 xˣ(ln x + 1) = 0.00003868",
+              "on": "水平"
+            },
+            {
+              "do": "write",
+              "line": "　最低點的值 $\\left(\\frac1e\\right)^{1/e}=e^{-1/e}\\approx0.692$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x<\\frac1e$：斜率負，往下；$x>\\frac1e$：斜率正，往上"
+          ],
+          "say": "在 e 分之 1 左邊，自然對數 x 加 1 是負的，圖往下；右邊是正的，圖往上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x<\\frac1e$：斜率負，往下；$x>\\frac1e$：斜率正，往上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：指數是三角函數",
+      "beats": [
+        {
+          "show": [
+            "$y=x^{\\sin x}\\quad(x>0)$"
+          ],
+          "say": "第二個例子：x 的正弦 x 次方，x 大於 0。又是底和指數都在變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=x^{\\sin x}\\quad(x>0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\ln$：",
+            "$\\ln y=\\sin x\\cdot\\ln x$"
+          ],
+          "say": "取自然對數，指數正弦 x 拉下來，變成正弦 x 乘自然對數 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\ln$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln y=\\sin x\\cdot\\ln x$",
+              "on": "變成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊微分（右邊乘法法則）：",
+            "$\\frac{y'}{y}=\\cos x\\ln x+\\frac{\\sin x}{x}$"
+          ],
+          "say": "兩邊微分。右邊用乘法法則：餘弦 x 乘自然對數 x，加上正弦 x 乘 x 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊微分（右邊乘法法則）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{y'}{y}=\\cos x\\ln x+\\frac{\\sin x}{x}$",
+              "on": "對數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘回 $y$：",
+            "$y'=x^{\\sin x}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)$"
+          ],
+          "say": "乘回 y，得到 x 的正弦 x 次方，乘上括號裡的兩項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘回 $y$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y'=x^{\\sin x}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)}}$",
+              "color": "red",
+              "on": "的正"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "乘上"
+            }
+          ]
+        }
+      ],
       "check": 0
     },
     {
-      "title": "另一種寫法",
+      "title": "另一種寫法：$e^{\\ln}$",
       "beats": [
-        { "show": ["$\\ln x$ 就是 $e$ 要乘的次方","$e^{\\ln x} = x$"],
-          "note": "先說 $e$ 與 $\\ln$ 的關係。",
-          "say": "先說 e。自然對數 x 的意思是：e 要乘幾次方才會等於 x。所以 e 的自然對數 x 次方，一定回到 x。",
+        {
+          "show": [
+            "任何正數：$a=e^{\\ln a}$，所以",
+            "$x^x=e^{\\ln x^x}=e^{x\\ln x}$"
+          ],
+          "say": "同一件事還有另一種寫法。任何正數 a，都等於 e 的自然對數 a 次方。所以 x 的 x 次方，等於 e 的 x 乘自然對數 x 次方。",
           "board": [
-            {"do":"write","line":"$\\ln x$ ＝ e 要乘的次方"},
-            {"do":"write","line":"$e^{{{p1:\\ln x}}}=x$","on":"一定回到"},
-            {"do":"focus","term":"p1","color":"blue","on":"回到"}
-          ] },
-        { "show": ["$x^x = e^{x \\ln x}$"],
-          "note": "因為 $e^{\\ln x} = x$。",
-          "say": "也可以把 x 的 x 次方寫成 e 的 x 自然對數 x 次方，因為 e 的自然對數 x 次方就是 x。",
+            {
+              "do": "write",
+              "line": "任何正數：$a=e^{\\ln a}$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle x^x=e^{\\ln x^x}=e^{x\\ln x}}}$",
+              "on": "的自"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在是 $e^{u}$，$u=x\\ln x$：連鎖律",
+            "$\\frac{d}{dx}e^{x\\ln x}=e^{x\\ln x}\\cdot(\\ln x+1)$"
+          ],
+          "say": "現在它是 e 的 u 次方，u 是 x 乘自然對數 x。用連鎖律：外層 e 的 u 次方不變，乘上內層的導數，自然對數 x 加 1。",
           "board": [
-            {"do":"write","line":"$x^x={{t:e^{x\\ln x}}}$"},
-            {"do":"write","line":"${{u:e^{\\ln x}}}=x$","on":"因為"}
-          ] },
-        { "show": ["$e^{x \\ln x} \\cdot (\\ln x + 1)$"],
-          "note": "直接用連鎖律，答案一樣。",
-          "say": "直接用連鎖律：外層不動，乘上指數的導數，得到一樣的答案。兩種挑順手的用。",
+            {
+              "do": "write",
+              "line": "現在是 $e^{u}$，$u=x\\ln x$：連鎖律"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}e^{x\\ln x}=e^{x\\ln x}\\cdot(\\ln x+1)$",
+              "on": "外層"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=x^x(\\ln x+1)$"
+          ],
+          "say": "把 e 的 x 乘自然對數 x 次方換回 x 的 x 次方，跟取對數得到的答案一模一樣。",
           "board": [
-            {"do":"write","line":"$(e^{x\\ln x})'={{o:e^{x\\ln x}}}\\cdot{{d:(\\ln x+1)}}$"},
-            {"do":"focus","term":"o","color":"violet","label":"外層不動","on":"外層不動"},
-            {"do":"circle","term":"d","color":"blue","on":"導數"}
-          ] },
-        { "show": ["$(x \\ln x)' = \\ln x + 1$"],
-          "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
-          "say": "指數是 x 乘自然對數 x。乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得自然對數 x 加一。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =x^x(\\ln x+1)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩種方法是同一件事：",
+            "• 取 $\\ln$：$\\ln y=x\\ln x$，微分得 $\\frac{y'}{y}$"
+          ],
+          "say": "兩種方法其實是同一件事：都是把指數 x 乘自然對數 x 拿出來微分。一個寫在左邊變成 y 分之 y prime，一個寫成 e 的次方用連鎖律。",
           "board": [
-            {"do":"write","line":"$(x\\ln x)'=1\\cdot\\ln x+x\\cdot\\frac{1}{x}$"},
-            {"do":"write","line":"$(x\\ln x)'={{q1:\\ln x+1}}$","on":"得自然對數"},
-            {"do":"box","term":"q1","color":"green","on":"加一"}
-          ] },
-        { "show": ["$x = 1$：$1^1 \\cdot (0 + 1) = 1$"],
-          "say": "代 x 等於一：一的一次方是一，自然對數一是零，所以導數是一。",
+            {
+              "do": "write",
+              "line": "兩種方法是同一件事："
+            },
+            {
+              "do": "write",
+              "line": "• 取 $\\ln$：$\\ln y=x\\ln x$，微分得 $\\frac{y'}{y}$",
+              "on": "對數"
+            },
+            {
+              "do": "write",
+              "line": "• 寫成 $e$：微分 $e^{x\\ln x}$，連鎖律多乘 $(x\\ln x)'$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般公式（$u>0$）：",
+            "$\\frac{d}{dx}u^{v}=u^{v}\\left(v'\\ln u+\\frac{v\\,u'}{u}\\right)$"
+          ],
+          "say": "一般來說，u 的 v 次方，u 是正的，導數就是 u 的 v 次方，乘上 v prime 乘自然對數 u，加上 u 分之 v 乘 u prime。",
           "board": [
-            {"do":"write","line":"$x=1$：$1^1\\cdot({{z:0}}+1)=1$"},
-            {"do":"focus","term":"z","on":"自然對數一"}
-          ] },
-        { "show": ["= 底在變 ＋ 指數在變"],
-          "note": "$x^x$ 加上 $x^x \\ln x$。直覺，不是證明。",
-          "say": "有趣的是，答案剛好是兩個硬套的錯誤答案相加：底在變的貢獻，加上指數在變的貢獻。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x^x(\\ln x+1)={{a:x^x}}+{{b:x^x\\ln x}}$","on":"答案剛好"},
-            {"do":"underline","term":"a","color":"blue","label":"底在變","on":"底在變"},
-            {"do":"underline","term":"b","color":"violet","label":"指數在變","on":"指數在變"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "指數是三角函數",
-      "beats": [
-        { "show": ["$y = x^{\\sin x}$，$\\ln y = \\sin x \\cdot \\ln x$"],
-          "say": "x 的 sine x 次方，一樣取自然對數，把 sine x 拉下來。",
-          "board": [
-            {"do":"write","line":"$y=x^{{{e:\\sin x}}}$","tint":{"e":"blue"}},
-            {"do":"write","line":"$\\ln y={{e:\\sin x}}\\cdot\\ln x$","on":"拉下來"}
-          ] },
-        { "show": ["$\\frac{y'}{y} = \\cos x \\ln x + \\frac{\\sin x}{x}$"],
-          "note": "右邊用乘法法則。",
-          "say": "右邊是乘積：cosine x 乘自然對數 x，加上 sine x 乘 x 分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{y'}{y}={{a:\\cos x\\ln x}}+{{b:\\frac{\\sin x}{x}}}$"},
-            {"do":"underline","term":"a","on":"cosine x 乘"},
-            {"do":"underline","term":"b","on":"加上"}
-          ] },
-        { "show": ["$y' = x^{\\sin x}(\\cos x \\ln x + \\frac{\\sin x}{x})$"],
-          "say": "最後一樣乘回 y，也就是原本的 x 的 sine x 次方。",
-          "board": [
-            {"do":"write","line":"$y'={{y:x^{\\sin x}}}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)$","color":"green"},
-            {"do":"underline","term":"y","label":"原本的 y","on":"原本的"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "一般公式（$u>0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}u^{v}=u^{v}\\left(v'\\ln u+\\frac{v\\,u'}{u}\\right)$",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "　不用背：現場取 $\\ln$ 推一次就好",
+              "color": "violet",
+              "on": "對數"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "很多因式相乘除",
       "beats": [
-        { "show": ["$y = x^2 \\frac{\\sqrt{x + 1}}{(x - 1)^3}$"],
-          "note": "$x > 1$，每個因式都是正的。",
-          "say": "第二種用途：很多因式乘乘除除，用乘法、除法法則會很長。",
+        {
+          "show": [
+            "$y=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\quad(x>1)$"
+          ],
+          "say": "對數微分還有第二個用途：很多因式乘乘除除。例如 x 平方乘根號 x 加 1，除以 x 減 1 的三次方，x 大於 1。",
           "board": [
-            {"do":"write","line":"$y=x^2\\dfrac{\\sqrt{x+1}}{(x-1)^3}$"}
-          ] },
-        { "show": ["$\\ln y = 2 \\ln x + \\frac{1}{2} \\ln(x + 1) - 3 \\ln(x - 1)$"],
-          "say": "取自然對數，乘除變加減，次方變係數：根號是二分之一，分母的三次方變成減三倍。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\quad(x>1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直接微：商法則＋乘法法則＋連鎖律，很容易算錯"
+          ],
+          "say": "直接微要用商法則，分子又要用乘法法則和連鎖律，算起來又長又容易錯。",
           "board": [
-            {"do":"transform","line":"$\\ln y=2\\ln x+{{h:\\frac{1}{2}}}\\ln(x+1)-{{c:3}}\\ln(x-1)$"},
-            {"do":"underline","term":"h","color":"blue","on":"根號"},
-            {"do":"underline","term":"c","color":"violet","label":"變係數","on":"三次方"}
-          ] },
-        { "show": ["$y$ 可能是負的：取 $\\ln|y|$"],
-          "note": "$(\\ln|u|)' = \\frac{u'}{u}$ 一樣成立。",
-          "say": "自然對數只吃正數。y 可能是負的時候，改取絕對值，微分出來的式子一樣。",
+            {
+              "do": "write",
+              "line": "直接微：商法則＋乘法法則＋連鎖律，很容易算錯",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\ln$（$x>1$ 時每個因式都是正的）：",
+            "$\\ln y=2\\ln x+\\tfrac12\\ln(x+1)-3\\ln(x-1)$"
+          ],
+          "say": "取自然對數。x 大於 1，每個因式都是正的，可以拆。乘變加，除變減，次方拉到前面。",
           "board": [
-            {"do":"write","line":"$y<0$：取 ${{a:\\ln|y|}}$"},
-            {"do":"underline","term":"a","color":"blue","label":"取絕對值","on":"絕對值"},
-            {"do":"write","line":"$(\\ln|u|)'=\\frac{u'}{u}$","on":"微分出來"}
-          ] },
-        { "show": ["$x<0$：$(\\ln(-x))' = \\frac{1}{-x}\\cdot(-1)$","$= \\frac{1}{x}$"],
-          "note": "外層與內層各出一個負號，抵消。",
-          "say": "x 小於零時，絕對值 x 是負 x。外層給負 x 分之一，內層負 x 的導數是負一，乘起來還是 x 分之一。",
+            {
+              "do": "write",
+              "line": "取 $\\ln$（$x>1$ 時每個因式都是正的）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\ln y=2\\ln x+\\tfrac12\\ln(x+1)-3\\ln(x-1)}}$",
+              "on": "每個"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "變加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一項各自微分：",
+            "$\\frac{y'}{y}=\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}$"
+          ],
+          "say": "每一項分開微分：2 乘 x 分之 1；2 分之 1 乘 x 加 1 分之 1；減掉 3 乘 x 減 1 分之 1。每一項都很簡單。",
           "board": [
-            {"do":"write","line":"$x<0$：$(\\ln(-x))'=\\frac{1}{-x}\\cdot{{m1:(-1)}}$"},
-            {"do":"write","line":"$={{r1:\\frac{1}{x}}}$","on":"乘起來"},
-            {"do":"box","term":"r1","color":"green","on":"還是"}
-          ] },
-        { "show": ["$\\ln|x|$ 左半邊往下掉"],
-          "say": "看圖：左半邊一路往下掉，斜率是負的，剛好就是 x 分之一在 x 小於零時的符號。",
+            {
+              "do": "write",
+              "line": "每一項各自微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{y'}{y}=\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}$",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘回 $y$：",
+            "$y'=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\left(\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}\\right)$"
+          ],
+          "say": "最後乘回 y。答案寫成原式乘上括號，就可以了，不用通分。",
           "board": [
-            {"do":"plot","graph":{"window":[-3,3,-3,3],"curves":[{"expr":"log(abs(x))","domain":[-3,-0.05],"color":"blue"},{"expr":"log(abs(x))","domain":[0.05,3],"color":"blue"}]}}
-          ] }
+            {
+              "do": "write",
+              "line": "乘回 $y$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle y'=\\frac{x^2\\sqrt{x+1}}{(x-1)^3}\\left(\\frac2x+\\frac{1}{2(x+1)}-\\frac{3}{x-1}\\right)}}$",
+              "color": "red",
+              "on": "寫成"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "就可"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "代一個點",
+      "beats": [
+        {
+          "show": [
+            "$x=3$：$y=\\dfrac{9\\cdot2}{8}=\\dfrac94$"
+          ],
+          "say": "代一個點看看，x 等於 3。y 是 9 乘 2 除以 8，等於 4 分之 9。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=3$：$y=\\dfrac{9\\cdot2}{8}=\\dfrac94$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "括號：$\\dfrac23+\\dfrac18-\\dfrac32=\\dfrac{16+3-36}{24}=-\\dfrac{17}{24}$"
+          ],
+          "say": "括號裡是 3 分之 2，加 8 分之 1，減 2 分之 3，通分得負 24 分之 17。",
+          "board": [
+            {
+              "do": "write",
+              "line": "括號：$\\dfrac23+\\dfrac18-\\dfrac32=\\dfrac{16+3-36}{24}=-\\dfrac{17}{24}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'(3)=\\frac94\\cdot\\left(-\\frac{17}{24}\\right)=-\\frac{51}{32}$"
+          ],
+          "say": "相乘，y prime 在 3 等於負 32 分之 51，大約負 1.59。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle y'(3)=\\frac94\\cdot\\left(-\\frac{17}{24}\\right)=-\\frac{51}{32}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　數值檢查：$\\frac{y(3.001)-y(2.999)}{0.002}\\approx-1.594$",
+              "color": "violet",
+              "on": "51"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果某些因式可能是負的：先取絕對值 $\\ln|y|$，微分結果一樣"
+          ],
+          "say": "如果因式可能是負的，就先取絕對值再取對數。因為自然對數絕對值 x 的導數也是 x 分之 1，結果完全一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "如果某些因式可能是負的：先取絕對值 $\\ln|y|$，微分結果一樣"
+            }
+          ]
+        }
       ],
-      "key": "取 $\\ln$ 把乘除拆成加減，再逐項微分",
-      "predict": {
-        "ask": "逐項微分，$-3 \\ln(x - 1)$ 那一項變成？",
-        "options": [
-          {
-            "label": "$-\\frac{3}{x - 1}$",
-            "correct": true
-          },
-          {
-            "label": "$-\\frac{3}{x}$",
-            "why": "把 $\\ln(x - 1)$ 拆成 $\\ln x - \\ln 1$ 了。$\\ln$ 只把乘除變加減，不拆加減。"
-          },
-          {
-            "label": "$-\\frac{3}{(x - 1)^3}$",
-            "why": "三次方已經被 $\\ln$ 拉成係數 3 了，分母只剩 $x - 1$。"
-          }
-        ]
-      }
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $x^x$：底、指數都在變，冪次法則與指數公式都不能用",
+            "• 步驟：取 $\\ln$ → 拉下指數（拆開乘除）→ 微分得 $\\dfrac{y'}{y}$ → 乘回 $y$"
+          ],
+          "say": "整理：底和指數都在變，就取自然對數，拉下指數，兩邊微分，最後乘回 y。很多因式乘除，也用取對數拆開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $x^x$：底、指數都在變，冪次法則與指數公式都不能用"
+            },
+            {
+              "do": "write",
+              "line": "• 步驟：取 $\\ln$ → 拉下指數（拆開乘除）→ 微分得 $\\dfrac{y'}{y}$ → 乘回 $y$",
+              "on": "就取"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{d}{dx}x^x=x^x(\\ln x+1)$",
+              "on": "指數#2"
+            },
+            {
+              "do": "write",
+              "line": "• 另一種寫法：$u^v=e^{v\\ln u}$，用連鎖律，結果一樣",
+              "on": "乘回"
+            },
+            {
+              "do": "write",
+              "line": "• 很多因式乘除：取 $\\ln$ 變加減，每項分開微",
+              "on": "也用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：反函數與反三角函數微分"
+          ],
+          "say": "下一課，反函數的微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：反函數與反三角函數微分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["log-differentiation", "logarithmic-differentiation"],
-    "fine": ["logdiff-variable-exponent", "logdiff-multiply-back", "logdiff-product-quotient", "logdiff-at-point"]
+    "coarse": [
+      "log-differentiation",
+      "logarithmic-differentiation"
+    ],
+    "fine": [
+      "logdiff-variable-exponent",
+      "logdiff-multiply-back",
+      "logdiff-product-quotient",
+      "logdiff-at-point"
+    ]
   },
   "practice": [
-    { "id": "lec-03-q2a", "core": true, "trains": "logdiff-variable-exponent" },
-    { "id": "cx-exam-004", "core": true, "trains": "logdiff-at-point" },
-    { "id": "dd-log-001", "core": true, "trains": "logdiff-multiply-back" },
-    { "id": "der-040", "core": true, "trains": "logdiff-variable-exponent" },
-    { "id": "lec-03-q2b", "core": true, "trains": "logdiff-variable-exponent" },
-    { "id": "lec-03-q2c", "core": true, "trains": "logdiff-product-quotient" },
-    { "id": "uni-der-002", "trains": "logdiff-variable-exponent" },
-    { "id": "depth-der-001", "trains": "logdiff-variable-exponent" },
-    { "id": "db-logd-002", "trains": "logdiff-variable-exponent" },
-    { "id": "dd-log-008", "trains": "logdiff-product-quotient" },
-    { "id": "db-logd-004", "challenge": true, "trains": "logdiff-variable-exponent", "note": "挑戰：$(1 + \\frac{1}{x})^x$，取 $\\ln$ 後的 $x \\ln(1 + \\frac{1}{x})$ 要小心微分。" },
-    { "id": "dd-imp-004", "challenge": true, "trains": "logdiff-at-point", "note": "挑戰：$x^y = y^x$，取 $\\ln$ 之後再隱函數微分。" }
+    {
+      "id": "lec-03-q2a",
+      "core": true,
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "cx-exam-004",
+      "core": true,
+      "trains": "logdiff-at-point"
+    },
+    {
+      "id": "dd-log-001",
+      "core": true,
+      "trains": "logdiff-multiply-back"
+    },
+    {
+      "id": "der-040",
+      "core": true,
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "lec-03-q2b",
+      "core": true,
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "lec-03-q2c",
+      "core": true,
+      "trains": "logdiff-product-quotient"
+    },
+    {
+      "id": "uni-der-002",
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "depth-der-001",
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "db-logd-002",
+      "trains": "logdiff-variable-exponent"
+    },
+    {
+      "id": "dd-log-008",
+      "trains": "logdiff-product-quotient"
+    },
+    {
+      "id": "db-logd-004",
+      "challenge": true,
+      "trains": "logdiff-variable-exponent",
+      "note": "挑戰：$(1 + \\frac{1}{x})^x$，取 $\\ln$ 後的 $x \\ln(1 + \\frac{1}{x})$ 要小心微分。"
+    },
+    {
+      "id": "dd-imp-004",
+      "challenge": true,
+      "trains": "logdiff-at-point",
+      "note": "挑戰：$x^y = y^x$，取 $\\ln$ 之後再隱函數微分。"
+    }
   ],
   "gaps": []
 }

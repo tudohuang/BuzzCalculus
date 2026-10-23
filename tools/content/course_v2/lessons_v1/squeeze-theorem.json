@@ -1,0 +1,446 @@
+{
+  "id": "squeeze-theorem",
+  "title": "夾擠定理",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["limit-laws-direct", "limit-existence", "trig-functions"],
+  "next": ["continuity-definition"],
+  "related": ["epsilon-delta-definition", "limit-trig-standard"],
+  "objectives": [
+    "說得出夾擠定理的條件與結論。",
+    "遇到「有界的東西 $\\times$ 趨近 0 的東西」，會寫出上下界把它夾到 0。",
+    "會用 $x - 1 < \\lfloor x\\rfloor \\le x$、$-1 \\le \\sin \\le 1$ 這類不等式，處理 $x \\to \\infty$ 與取整函數。"
+  ],
+  "visual": "畫出 y = x² sin(1/x)，以及上下兩條拋物線 y = x² 與 y = −x²。按「放大」，鏡頭往原點推近：中間的曲線擺盪得越來越密，但一直被兩條拋物線包住，三條線一起被擠進原點。",
+  "figures": [
+    {"caption":"±x² 把 x² sin(1/x) 夾進原點","after":1,"widget":{"type":"zoom","curves":[{"expr":"x^2*sin(1/x)","color":"blue","width":1.6,"steps":1600},{"expr":"x^2","color":"green"},{"expr":"-(x^2)","color":"green"}],"center":[0,0],"window":[-0.5,0.5,-0.3,0.3],"levels":2,"yPower":2,"point":false}}
+  ],
+  "concept": [
+    {
+      "heading": "① 敘述",
+      "body": [
+        "在 $a$ 附近（$a$ 本身可以除外）有 $g(x) \\le f(x) \\le h(x)$，而且 $\\lim_{x\\to a} g(x) = \\lim_{x\\to a} h(x) = L$。那麼 $\\lim_{x\\to a} f(x) = L$。",
+        "直覺：$f$ 被夾在兩條往同一點擠的曲線中間，沒有別的地方可去。結論不只說極限是 $L$，也保證了極限存在。"
+      ],
+      "tex": ["g(x)\\le f(x)\\le h(x),\\quad \\lim_{x\\to a}g=\\lim_{x\\to a}h=L\\ \\Longrightarrow\\ \\lim_{x\\to a}f=L"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼需要它",
+      "body": [
+        "$\\lim_{x\\to0} x^2 \\sin\\left(\\frac{1}{x}\\right)$：$\\sin\\left(\\frac{1}{x}\\right)$ 在 0 沒有極限（振盪），所以不能用乘積定律拆成 $\\lim x^2 \\cdot \\lim \\sin\\left(\\frac{1}{x}\\right)$。",
+        "但 $\\sin\\left(\\frac{1}{x}\\right)$ 雖然亂跳，大小一定在 $-1$ 與 1 之間。乘上 $x^2$（$\\ge 0$）：$-x^2 \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le x^2$。兩邊都 $\\to 0$，中間只好也 $\\to 0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 最常見的樣子：有界 $\\times$ 趨近 0",
+      "body": [
+        "$|f(x)| \\le |g(x)|$ 而且 $g(x) \\to 0$，就有 $f(x) \\to 0$。因為 $-|g(x)| \\le f(x) \\le |g(x)|$，兩側都 $\\to 0$。用絕對值寫比較不會搞錯不等式的方向（$x$ 可能是負的）。",
+        "這招只直接給出「$\\to 0$」。極限是 $L \\ne 0$ 時，改成夾 $|f(x) - L|$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $x \\to \\infty$ 也能用",
+      "body": [
+        "$\\sin x / x$：$x > 0$ 時 $-\\frac{1}{x} \\le \\sin x / x \\le \\frac{1}{x}$，兩邊 $\\to 0$，所以 $\\lim_{x\\to\\infty} \\sin x / x = 0$。",
+        "取整函數：$x - 1 < \\lfloor x\\rfloor \\le x$ 對所有 $x$ 成立，這是夾擠$\\lfloor x\\rfloor$最好用的不等式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明（用 $\\varepsilon\\text{-}\\delta$）",
+      "body": [
+        "給任意 $\\varepsilon > 0$。因為 $g \\to L$，存在 $\\delta_1$ 使 $0 < |x - a| < \\delta_1$ 時 $L - \\varepsilon < g(x)$；因為 $h \\to L$，存在 $\\delta_2$ 使 $0 < |x - a| < \\delta_2$ 時 $h(x) < L + \\varepsilon$；設不等式 $g \\le f \\le h$ 在 $0 < |x - a| < \\delta_3$ 成立。",
+        "取 $\\delta = \\min(\\delta_1, \\delta_2, \\delta_3)$。當 $0 < |x - a| < \\delta$：$L - \\varepsilon < g(x) \\le f(x) \\le h(x) < L + \\varepsilon$，也就是 $|f(x) - L| < \\varepsilon$。這正是 $\\lim_{x\\to a} f(x) = L$ 的定義（〈ε-δ 定義〉）。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有界乘以趨近 0",
+      "prompt": "$\\lim_{x\\to0} x^2 \\cos\\left(\\frac{5}{x}\\right)$",
+      "problemId": "lx-sq-001",
+      "steps": [
+        "$\\cos\\left(\\frac{5}{x}\\right)$ 在 0 附近振盪，沒有極限，不能拆開。",
+        "但 $|\\cos\\left(\\frac{5}{x}\\right)| \\le 1$，所以 $|x^2 \\cos\\left(\\frac{5}{x}\\right)| \\le x^2$，也就是 $-x^2 \\le x^2 \\cos\\left(\\frac{5}{x}\\right) \\le x^2$。",
+        "$\\lim_{x\\to0} (-x^2) = 0$，$\\lim_{x\\to0} x^2 = 0$。",
+        "由夾擠定理，極限是 0。"
+      ],
+      "answer": "0",
+      "claim": "abs(x^2*cos(5/x)) <= x^2 ;; LIM(x^2, 0) == 0"
+    },
+    {
+      "title": "$x \\to \\infty$，極限不是 0",
+      "prompt": "$\\lim_{x\\to\\infty} \\frac{2x + 3 \\sin x}{x + 5}$",
+      "problemId": "lx-sq-002",
+      "steps": [
+        "$-1 \\le \\sin x \\le 1$，所以 $2x - 3 \\le 2x + 3 \\sin x \\le 2x + 3$。",
+        "$x > 0$ 時 $x + 5 > 0$，除過去不等號不變：$\\frac{2x - 3}{x + 5} \\le$ 原式 $\\le \\frac{2x + 3}{x + 5}$。",
+        "兩邊都是同次有理函數，$x \\to \\infty$ 時都 $\\to \\frac{2}{1} = 2$。",
+        "由夾擠定理，極限是 2。"
+      ],
+      "answer": "2",
+      "claim": "(2x+3sin(x))/(x+5) <= (2x+3)/(x+5) ;; (2x+3sin(x))/(x+5) >= (2x-3)/(x+5) ;; LIM((2x-3)/(x+5), inf) == 2 ;; LIM((2x+3)/(x+5), inf) == 2"
+    },
+    {
+      "title": "取整函數",
+      "prompt": "$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$",
+      "problemId": "lm-fl-004",
+      "steps": [
+        "$x - 1 < \\lfloor x\\rfloor \\le x$。",
+        "$x > 0$ 時同除以 $x$：$\\frac{x - 1}{x} < \\lfloor x\\rfloor/x \\le 1$。",
+        "$\\frac{x - 1}{x} = 1 - \\frac{1}{x} \\to 1$，右邊是常數 1。",
+        "由夾擠定理，極限是 1。"
+      ],
+      "answer": "1",
+      "claim": "LIM((x-1)/x, inf) == 1",
+      "claimNote": "驗算器沒有取整函數；這裡只驗下界 (x − 1)/x 的極限，上界是常數 1。"
+    }
+  ],
+  "pitfalls": [
+    "寫 $\\lim x^2 \\sin\\left(\\frac{1}{x}\\right) = \\lim x^2 \\cdot \\lim \\sin\\left(\\frac{1}{x}\\right)$：後者不存在，不能拆。",
+    "上下界的極限不相等，還是套用定理。",
+    "乘上一個可能是負數的量時，忘了不等號會反向；用絕對值寫最安全。",
+    "以為夾擠只能證明極限是 0。"
+  ],
+  "checks": [
+    {
+      "ask": "在 0 附近 $-x^2 \\le f(x) \\le x^2$。$\\lim_{x\\to0} f(x)$ 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "不一定存在", "why": "夾擠定理正好保證它存在：兩側都 $\\to 0$。" },
+        { "label": "無法判斷，要知道 $f$ 的式子", "why": "不需要；被夾住就夠了。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to0} x \\sin\\left(\\frac{1}{x}\\right)$ 是？",
+      "options": [
+        { "label": "1", "why": "那是 $\\lim_{u\\to0} \\sin u / u$ 的樣子；這裡 $\\frac{1}{x} \\to \\infty$，不是 $\\to 0$。" },
+        { "label": "不存在", "why": "$\\sin\\left(\\frac{1}{x}\\right)$ 雖然振盪，但 $|x \\sin\\left(\\frac{1}{x}\\right)| \\le |x| \\to 0$，被壓到 0。" },
+        { "label": "0", "correct": true }
+      ]
+    },
+    {
+      "ask": "在 0 附近 $1 \\le f(x) \\le 1 + x^2$。$\\lim_{x\\to0} f(x)$ 是？",
+      "options": [
+        { "label": "0", "why": "下界是常數 1，$f$ 至少是 1，不會靠近 0。" },
+        { "label": "1", "correct": true },
+        { "label": "不一定存在", "why": "上下界都 $\\to 1$，夾擠定理保證極限存在。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to\\infty} \\cos x / x$ 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "1", "why": "$\\cos x$ 在 $-1$ 與 1 之間，除以越來越大的 $x$，會被壓到 0。" },
+        { "label": "不存在", "why": "$\\cos x$ 振盪，但 $|\\cos x / x| \\le \\frac{1}{x} \\to 0$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "被夾住，沒地方去",
+      "beats": [
+        { "show": ["$g(x) \\le f(x) \\le h(x)$"],
+          "note": "在 $a$ 附近成立，$a$ 本身可以除外。",
+          "say": "夾擠定理：在 a 附近，f 被夾在 g 和 h 中間，g 在下面，h 在上面。",
+          "board": [
+            {"do":"write","line":"${{g:g(x)}} \\le {{f:f(x)}} \\le {{h:h(x)}}$","tint":{"g":"blue","h":"violet"}},
+            {"do":"focus","term":"g","color":"blue","label":"下界","on":"在下面"},
+            {"do":"focus","term":"h","color":"violet","label":"上界","on":"在上面"}
+          ] },
+        { "show": ["$\\lim g = \\lim h = L$ → $\\lim f = L$"],
+          "say": "如果上下兩條在 a 都往同一個數 L 擠，中間的 f 沒有別的地方可去，極限也只好是 L。",
+          "board": [
+            {"do":"write","line":"$\\lim g = \\lim h = L$"},
+            {"do":"write","line":"$\\lim f = L$","color":"green","on":"沒有別的地方"}
+          ] },
+        { "show": ["上下都進窗，中間的 $f$ 也進窗"],
+          "note": "直覺，不是證明；嚴格版在最後一節。",
+          "say": "直覺是這樣：上下兩條都擠進 L 附近任何一個小範圍，中間的 f 也跟著進去，所以它不會亂跳，只能靠近 L。",
+          "board": [
+            {"do":"write","line":"$g,\\ h$ 都進窗 $\\Rightarrow$ ${{n1:f}}$ 也進窗"},
+            {"do":"write","line":"$f$ 不會亂跳","on":"所以它"}
+          ] },
+        { "show": ["也保證了極限存在"],
+          "note": "證明在最後一節。",
+          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明放在最後一節。",
+          "board": [
+            {"do":"write","line":"保證 $\\lim f$ 存在"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "為什麼需要它",
+      "beats": [
+        { "show": ["$\\lim_{x\\to0} x^2 \\sin\\left(\\frac{1}{x}\\right)$"],
+          "note": "$\\sin\\left(\\frac{1}{x}\\right)$ 在 0 振盪，沒有極限：不能拆開。",
+          "fig": {"use":0,"to":0},
+          "say": "看這一個：sine x 分之一在零附近一直亂跳，沒有極限，所以不能用乘積定律拆成兩個極限相乘。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to0} x^2 {{s:\\sin\\left(\\frac{1}{x}\\right)}}$"},
+            {"do":"underline","term":"s","color":"red","label":"沒有極限","on":"亂跳"}
+          ] },
+        { "show": ["$-x^2 \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le x^2$"],
+          "note": "$\\sin$ 在 $-1$ 與 1 之間，乘上 $x^2 \\ge 0$。",
+          "say": "但它再怎麼跳，大小都在負一和一之間。乘上 x 平方，就被夾在綠色的負 x 平方和 x 平方中間。",
+          "board": [
+            {"do":"write","line":"$-1\\le\\sin\\left(\\frac{1}{x}\\right)\\le 1$"},
+            {"do":"write","line":"${{a:-x^2}} \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le {{b:x^2}}$","on":"乘上"},
+            {"do":"focus","term":"a","color":"green","on":"綠色的"},
+            {"do":"focus","term":"b","color":"green","on":"平方和"}
+          ] },
+        { "show": ["兩邊都 $\\to 0$，中間只好也 $\\to 0$"],
+          "fig": {"use":0,"to":1},
+          "say": "往原點放大，藍色曲線一直被兩條綠線關在裡面，而綠線在原點擠成一點，所以極限是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$-x^2 \\to 0,\\ x^2 \\to 0$","on":"綠線在原點"},
+            {"do":"write","line":"所以 $\\lim = 0$","color":"green","on":"所以"}
+          ] }
+      ],
+      "drag": {
+        "use": 0,
+        "ask": "自己放大到最底，看藍色曲線有沒有跑出綠線",
+        "range": [
+          1.8,
+          2
+        ]
+      }
+    },
+    {
+      "title": "有界 $\\times$ 趨近 0",
+      "beats": [
+        { "show": ["$|f(x)| \\le |g(x)|$，$g(x) \\to 0$ → $f(x) \\to 0$"],
+          "note": "用絕對值寫，不會搞錯不等式的方向。",
+          "say": "最常見的樣子：f 的絕對值被 g 的絕對值壓住，g 又趨近零，f 就趨近零。用絕對值寫最安全。",
+          "board": [
+            {"do":"write","line":"$|f(x)|\\le|{{g:g(x)}}|$","tint":{"g":"blue"}},
+            {"do":"write","line":"${{g:g(x)}}\\to 0\\ \\Longrightarrow\\ {{r:f(x)\\to 0}}$","on":"g 又趨近零"},
+            {"do":"box","term":"r","color":"green","on":"f 就趨近零"}
+          ] },
+        { "show": ["$\\lim_{x\\to0} x^2 \\cos\\left(\\frac{5}{x}\\right)$"],
+          "say": "例如 x 平方乘 cosine x 分之五。cosine 那塊振盪沒有極限，不能拆。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{x\\to0} {{z:x^2}}{{c:\\cos\\left(\\frac{5}{x}\\right)}}$","tint":{"z":"blue","c":"violet"},"on":"例如"},
+            {"do":"underline","term":"c","label":"振盪，不能拆","on":"cosine 那塊"}
+          ] },
+        { "show": ["$|x^2 \\cos\\left(\\frac{5}{x}\\right)| \\le x^2 \\to 0$"],
+          "note": "由夾擠定理，極限是 0。",
+          "say": "但 cosine 的絕對值不超過一，整個的絕對值就不超過 x 平方，而 x 平方趨近零。答案是零。",
+          "board": [
+            {"do":"write","line":"$\\left|{{c:\\cos\\left(\\frac{5}{x}\\right)}}\\right|\\le 1$","on":"cosine 的絕對值"},
+            {"do":"write","line":"$\\left|{{z:x^2}}{{c:\\cos\\left(\\frac{5}{x}\\right)}}\\right|\\le {{b:x^2}}\\to\\,{{a:0}}$","tint":{"b":"blue"},"on":"整個的絕對值"},
+            {"do":"box","term":"a","color":"green","on":"而 x 平方趨近零"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "極限不是 0 也能夾",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty} \\frac{2x + 3 \\sin x}{x + 5}$"],
+          "say": "夾擠不只能證明極限是零。看這一個，x 趨近無限大。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty} \\frac{{{n:2x + 3 \\sin x}}}{x + 5}$","on":"看這一個"}
+          ] },
+        { "show": ["$2x - 3 \\le 2x + 3 \\sin x \\le 2x + 3$"],
+          "note": "$-1 \\le \\sin x \\le 1$。",
+          "say": "sine x 在負一和一之間，所以分子被夾在二 x 減三和二 x 加三之間。",
+          "board": [
+            {"do":"write","line":"$-1\\le{{s:\\sin x}}\\le 1$","tint":{"s":"violet"}},
+            {"do":"write","line":"${{lo:2x - 3}} \\le {{n:2x + 3 \\sin x}} \\le {{hi:2x + 3}}$","on":"分子被夾"},
+            {"do":"underline","term":"n","label":"分子","on":"二 x 減三"}
+          ] },
+        { "show": ["$\\frac{2x - 3}{x + 5} \\le$ 原式 $\\le \\frac{2x + 3}{x + 5}$"],
+          "note": "$x + 5 > 0$，除過去不等號不變。",
+          "say": "x 加五是正的，除過去不等號方向不變。上下兩邊都是同次有理函數，都趨近一分之二，也就是二。",
+          "board": [
+            {"do":"transform","line":"$\\frac{{{lo:2x - 3}}}{x + 5} \\le$ 原式 $\\le \\frac{{{hi:2x + 3}}}{x + 5}$","on":"除過去"},
+            {"do":"write","line":"兩邊都 $\\to \\frac{2}{1} =\\,{{t:2}}$","on":"上下兩邊"},
+            {"do":"box","term":"t","color":"green","on":"一分之二"}
+          ] }
+      ],
+      "key": "用 $-1\\le\\sin x\\le 1$ 夾分子，再同除",
+      "check": 2
+    },
+    {
+      "title": "$x \\to \\infty$ 也能用",
+      "beats": [
+        { "show": ["$-\\frac{1}{x} \\le \\sin x / x \\le \\frac{1}{x}$"],
+          "note": "$x > 0$ 時。",
+          "say": "x 趨近無限大也能夾。x 是正的時候，sine x 除以 x 被夾在負 x 分之一和 x 分之一中間。",
+          "board": [
+            {"do":"write","line":"$-\\frac{1}{x} \\le {{s:\\frac{\\sin x}{x}}} \\le \\frac{1}{x}$"},
+            {"do":"underline","term":"s","label":"被夾住","on":"被夾在"}
+          ] },
+        { "show": ["$\\sin x / x$ 被 $\\pm\\frac{1}{x}$ 夾住"],
+          "say": "畫出來看：藍色是 sine x 除以 x，被上面一條 x 分之一和下面一條負 x 分之一夾住，往右一起擠向零。",
+          "board": [
+            {"do":"plot","graph":{"window":[0.5,20,-1,1.2],"curves":[{"expr":"sin(x)/x","domain":[0.5,20],"color":"blue"},{"expr":"1/x","domain":[0.5,20],"color":"green"},{"expr":"-(1/x)","domain":[0.5,20],"color":"green"}]}}
+          ] },
+        { "show": ["兩邊 $\\to 0$：$\\lim_{x\\to\\infty} \\sin x / x = 0$"],
+          "say": "兩邊都趨近零，所以極限是零。它不是一，一是 x 趨近零的那個標準極限。",
+          "board": [
+            {"do":"write","line":"兩邊 $\\to 0$","on":"兩邊都"},
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{\\sin x}{x}={{r:0}}$","on":"所以極限"},
+            {"do":"box","term":"r","color":"green","on":"它不是"}
+          ] },
+        { "show": ["$x\\to0$ 與 $x\\to\\infty$ 是兩回事"],
+          "note": "現在不用記 $x\\to0$ 那一個。",
+          "say": "有人會問那個一。sine x 除以 x 在 x 趨近零時是一，那是另一個標準極限；這裡 x 趨近無限大，現在不用記。",
+          "board": [
+            {"do":"write","line":"$x\\to 0$：另一個標準極限"},
+            {"do":"write","line":"$x\\to\\infty$：夾擠，得 $0$","on":"無限大"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "取整函數",
+      "beats": [
+        { "show": ["$x - 1 < \\lfloor x\\rfloor \\le x$"],
+          "note": "對所有 $x$ 成立，夾取整函數最好用。",
+          "say": "取整函數最好用的不等式：它比 x 減一大，又不超過 x。",
+          "board": [
+            {"do":"write","line":"${{lo:x - 1}} < {{fl:\\lfloor x\\rfloor}} \\le {{hi:x}}$"},
+            {"do":"underline","term":"lo","color":"blue","label":"下界","on":"比 x 減一"},
+            {"do":"underline","term":"hi","color":"violet","label":"上界","on":"不超過"}
+          ] },
+        { "show": ["$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$"],
+          "note": "$x > 0$ 時同除以 $x$。",
+          "say": "求取整 x 除以 x 的極限。x 是正的，整條不等式同除以 x，不等號方向不變。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$"},
+            {"do":"write","line":"$x > 0$","on":"x 是正的"}
+          ] },
+        { "show": ["$\\frac{x - 1}{x} < \\lfloor x\\rfloor/x \\le 1$"],
+          "say": "右邊是常數一。左邊是 x 減一除以 x，想想它趨近多少。",
+          "board": [
+            {"do":"write","line":"${{lf:\\frac{x - 1}{x}}} < \\frac{\\lfloor x\\rfloor}{x} \\le {{one:1}}$"},
+            {"do":"focus","term":"one","on":"右邊是"},
+            {"do":"underline","term":"lf","label":"趨近多少","on":"左邊是"}
+          ] },
+        { "show": ["$\\frac{x-1}{x}=1-\\frac{1}{x}$"],
+          "note": "$x>0$，拆成兩項。",
+          "say": "先拆開再想。x 減一除以 x，等於一減 x 分之一。x 分之一在 x 越來越大時，會怎麼變？",
+          "board": [
+            {"do":"write","line":"$\\frac{x-1}{x}=1-{{u:\\frac{1}{x}}}$"},
+            {"do":"underline","term":"u","label":"怎麼變","on":"x 分之一#2"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$ 是？",
+        "options": [
+          {
+            "label": "1",
+            "correct": true
+          },
+          {
+            "label": "0",
+            "why": "$\\frac{x - 1}{x} = 1 - \\frac{1}{x} \\to 1$，右邊是常數 1；上下都往 1 擠。"
+          },
+          {
+            "label": "不存在",
+            "why": "取整函數會跳，但被夾在兩個都 $\\to 1$ 的式子中間，極限存在。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "證明：取最小的 $\\delta$",
+      "beats": [
+        { "show": ["三個條件各交一個 $\\delta$，取最小的"],
+          "say": "策略：別人先給 epsilon，三個條件各交出一個 delta，取最小的那個，f 就被夾進 L 左右 epsilon 以內。",
+          "board": [
+            {"do":"write","line":"給 $\\varepsilon$：三個條件各交一個 $\\delta$","on":"別人先給"},
+            {"do":"write","line":"目標：$|{{f:f(x)}}-L|<\\varepsilon$","on":"f 就被夾進"}
+          ] },
+        { "show": ["$g\\to L$：有 $\\delta_1$ 使 $L-\\varepsilon<g(x)$","$h\\to L$：有 $\\delta_2$ 使 $h(x)<L+\\varepsilon$"],
+          "say": "g 趨近 L，給一個 delta 一，讓 g 大於 L 減 epsilon；h 趨近 L，給 delta 二，讓 h 小於 L 加 epsilon。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\delta_1$：$L-\\varepsilon<{{g:g(x)}}$","tint":{"g":"blue"},"on":"給一個"},
+            {"do":"write","line":"$\\delta_2$：${{h:h(x)}}<L+\\varepsilon$","tint":{"h":"violet"},"on":"給 delta 二"}
+          ] },
+        { "show": ["$g\\le f\\le h$ 在 $0<|x-a|<\\delta_3$ 成立"],
+          "say": "第三個範圍 delta 三：夾住只要在 a 附近成立，在這裡面，f 真的被 g 和 h 夾住。",
+          "board": [
+            {"do":"write","line":"$\\delta_3$：${{g:g(x)}}\\le {{f:f(x)}}\\le {{h:h(x)}}$","on":"第三個範圍"},
+            {"do":"focus","term":"f","on":"f 真的被"}
+          ] },
+        { "show": ["取 $\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)$"],
+          "note": "三個範圍都包含它，三件事一起成立。",
+          "why": {"ask":"為什麼要取最小的？","say":"delta 為什麼要取三個裡面最小的那個？","options":[{"label":"要三個條件同時成立","correct":true},{"label":"取 $\\delta_1$ 就夠了，$g$ 已經 $\\to L$","why":"$\\delta_1$ 只管 $g$；$h$ 的上界和夾住本身，可能要更小的範圍。"},{"label":"$\\delta$ 越小，$\\varepsilon$ 就越小","why":"$\\varepsilon$ 是別人先給的，不跟著 $\\delta$ 變；取最小是為了三個範圍都管得到。"}]},
+          "say": "x 要同時落在三個範圍裡，三件事才一起成立。最小的那個 delta，三個範圍都包含它。",
+          "board": [
+            {"do":"keep","n":3},
+            {"do":"write","line":"取 $\\;{{m:\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)}}$","on":"最小的"},
+            {"do":"box","term":"m","color":"green","label":"三個範圍都包含","why":true,"on":"三個範圍都包含"}
+          ] },
+        { "show": ["取最大的不行"],
+          "say": "為什麼不取最大的？x 若只在 delta 二裡，卻不在 delta 一裡，g 那一條就沒保證。取最小的，三個都管得到。",
+          "board": [
+            {"do":"write","line":"取 ${{w:\\max}}$：$g$ 沒保證"},
+            {"do":"strike","term":"w","label":"不行","on":"沒保證"}
+          ] },
+        { "show": ["$L-\\varepsilon<g(x)\\le f(x)\\le h(x)<L+\\varepsilon$"],
+          "note": "即 $|f(x)-L|<\\varepsilon$，正是極限的定義。",
+          "why": {"ask":"為什麼 $f(x)$ 被夾在這裡？","say":"x 離 a 不到 delta 時，f 在 x 的值為什麼離 L 不到 epsilon？","options":[{"label":"下界來自 $g$、上界來自 $h$，中間靠 $g\\le f\\le h$","correct":true},{"label":"$f(x)$ 本身就趨近 $L$","why":"那正是要證的結論，不能拿來當理由。"},{"label":"$g(x)$ 和 $h(x)$ 都等於 $L$","why":"它們只是趨近 $L$，不一定等於；用的是它們離 $L$ 不到 $\\varepsilon$。"}]},
+          "say": "左端靠 g 的極限，右端靠 h 的極限，中間靠夾住，整串連起來，f 離 L 不到 epsilon。證完。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{lg:L-\\varepsilon<{{g:g(x)}}}}\\le {{f:f(x)}}\\le{{rh:{{h:h(x)}}<L+\\varepsilon}}$","on":"x 離 a"},
+            {"do":"write","line":"即 $|f(x)-L|<\\varepsilon$","color":"green","on":"為什麼離"},
+            {"do":"underline","term":"lg","color":"blue","why":true,"on":"左端"},
+            {"do":"underline","term":"rh","color":"violet","why":true,"on":"右端"}
+          ] }
+      ],
+      "key": "三個 $\\delta$ 取最小，三件事同時成立",
+      "proof": true,
+      "of": 4,
+      "skeleton": "ε-δ",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "給定 $\\varepsilon>0$"
+          },
+          {
+            "label": "由 $g$、$h$ 的極限取 $\\delta_1$、$\\delta_2$",
+            "why": "要先有 $\\varepsilon$，才知道 $\\delta_1$、$\\delta_2$ 要多小。"
+          },
+          {
+            "label": "取 $\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)$",
+            "why": "要先有三個 $\\delta$，才能取最小的。"
+          },
+          {
+            "label": "設 $0<|x-a|<\\delta$，串起來得 $|f(x)-L|<\\varepsilon$",
+            "why": "$x$ 要在 $\\delta$ 決定之後才出場。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["squeeze", "oscillation", "floor"],
+    "fine": ["squeeze-bounded-times-zero", "squeeze-at-infinity", "squeeze-floor", "squeeze-write-proof"]
+  },
+  "practice": [
+    { "id": "cx-lim-010", "core": true, "trains": "squeeze-bounded-times-zero" },
+    { "id": "lm-sq-002", "core": true, "trains": "squeeze-bounded-times-zero" },
+    { "id": "lec-01-q2b", "core": true, "trains": "squeeze-at-infinity" },
+    { "id": "lx-sq-005", "core": true, "trains": "squeeze-at-infinity" },
+    { "id": "lm-fl-007", "core": true, "trains": "squeeze-floor" },
+    { "id": "lec-01-q2a", "trains": "squeeze-write-proof" },
+    { "id": "px-sq-001", "trains": "squeeze-write-proof" },
+    { "id": "lm-sq-005", "challenge": true, "trains": "squeeze-bounded-times-zero", "note": "挑戰：先確認 $\\frac{1 - \\cos x}{x} \\to 0$（〈三角標準極限〉），再夾。" },
+    { "id": "lec-01-q2c", "challenge": true, "trains": "squeeze-floor", "note": "挑戰：令 $t = \\frac{1}{x}$，用 $t - 1 < \\lfloor t\\rfloor \\le t$，$x$ 的正負要分開處理。" }
+  ],
+  "gaps": []
+}

@@ -1,56 +1,134 @@
 {
   "id": "complex-roots",
   "title": "複數根",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["repeated-roots", "characteristic-equation"],
-  "next": ["undetermined-coefficients"],
-  "related": ["euler-formula", "complex-numbers", "harmonic-oscillator", "damped-oscillator"],
-  "objectives": [
-    "特徵方程的根是 $\\alpha\\pm i\\beta$（$\\beta>0$）時，寫出實數通解 $y=e^{\\alpha x}(C_1\\cos\\beta x+C_2\\sin\\beta x)$。",
-    "說得出為什麼複數解的實部與虛部各自是實數解。",
-    "從 $\\alpha$ 的正負與 $\\beta$ 的大小，看出解是衰減振盪、等幅振盪還是發散振盪。"
+  "prerequisites": [
+    "repeated-roots",
+    "characteristic-equation"
   ],
-  "visual": "畫 y = e^{αx}cos βx，旁邊用虛線畫出包絡線 ±e^{αx}。兩個滑桿：α 從 −1 拉到 1，β 從 0.5 拉到 4。α < 0 時波被包絡線壓扁到 0，α = 0 時等幅振盪，α > 0 時越振越大；β 只改變波的疏密。",
+  "next": [
+    "undetermined-coefficients"
+  ],
+  "related": [
+    "euler-formula",
+    "complex-numbers",
+    "harmonic-oscillator",
+    "damped-oscillator"
+  ],
+  "objectives": [
+    "特徵方程的根是 $\\alpha\\pm i\\beta$（$\\beta>0$）時，寫出實數通解 $y=e^{\\alpha x}(C_1\\cos\\beta x+C_2\\sin\\beta x)$",
+    "說得出為什麼複數解的實部與虛部各自是實數解",
+    "從 $\\alpha$ 的正負與 $\\beta$ 的大小，看出解是衰減振盪、等幅振盪還是發散振盪"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 判別式是負的時候",
       "body": [
-        "$y''+2y'+5y=0$ 的特徵方程 $r^2+2r+5=0$，判別式 $4-20=-16<0$。公式解給 $r=\\frac{-2\\pm4i}{2}=-1\\pm2i$。",
-        "$e^{(-1+2i)x}$ 是解，但它是複數值的函數。我們要的是實數的解。"
+        "$y''+2y'+5y=0$：$r^2+2r+5=0$",
+        "一般寫成 $r=\\alpha\\pm i\\beta$（$\\beta>0$）",
+        "$\\alpha=-\\frac b{2a}$，$\\beta=\\frac{\\sqrt{4ac-b^2}}{2a}$",
+        "$e^{(-1+2i)x}$ 確實是解，但它是複數",
+        "$(e^{rx})'=re^{rx}$ 對複數 $r$ 一樣成立，代進去一樣得到 $e^{rx}(ar^2+br+c)=0$",
+        "彈簧的位置是實數：要實數的解"
       ],
-      "collapsible": false
+      "tex": [
+        "r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i"
+      ]
     },
     {
-      "heading": "② Euler 公式把它拆開",
+      "heading": "② 尤拉公式把它拆開",
       "body": [
-        "Euler 公式 $e^{i\\theta}=\\cos\\theta+i\\sin\\theta$（〈Euler 公式〉）。所以根 $r=\\alpha+i\\beta$ 給："
+        "把 $i\\theta$ 代進 $e^z=\\sum\\frac{z^n}{n!}$，$i^2=-1$：",
+        "偶次項是 $\\cos\\theta$，奇次項是 $i\\sin\\theta$",
+        "套到 $r=\\alpha+i\\beta$："
       ],
-      "tex": ["e^{(\\alpha+i\\beta)x}=e^{\\alpha x}\\cos\\beta x + i\\,e^{\\alpha x}\\sin\\beta x"],
-      "collapsible": false
+      "tex": [
+        "e^{i\\theta}=\\cos\\theta+i\\sin\\theta",
+        "1+i\\theta-\\frac{\\theta^2}{2!}-i\\frac{\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots",
+        "e^{(\\alpha+i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x+i\\sin\\beta x\\big)"
+      ]
     },
     {
-      "heading": "③ 實部、虛部各自是實數解",
+      "heading": "③ 實部、虛部各自是解",
       "body": [
-        "方程的係數 $a$、$b$、$c$ 都是實數。把複數解寫成 $u+iv$，代入左邊得 $L[u]+iL[v]=0$，其中 $L[y]=ay''+by'+cy$。$L[u]$、$L[v]$ 都是實數，一個複數是 $0$ 必須實部虛部都是 $0$，所以 $L[u]=0$、$L[v]=0$。",
-        "於是 $e^{\\alpha x}\\cos\\beta x$ 與 $e^{\\alpha x}\\sin\\beta x$ 都是實數解，而且不是彼此的常數倍。通解："
+        "$z=u+iv$ 是解，$u,v$ 是實數函數",
+        "係數 $a,b,c$ 是實數 ⇒ $L[u]$、$L[v]$ 都是實數",
+        "實部、虛部都要是 $0$：$L[u]=0$，$L[v]=0$",
+        "$u=e^{\\alpha x}\\cos\\beta x$，$v=e^{\\alpha x}\\sin\\beta x$",
+        "$uv'-u'v=e^{2\\alpha x}\\big[\\cos\\beta x(\\alpha\\sin\\beta x+\\beta\\cos\\beta x)-(\\alpha\\cos\\beta x-\\beta\\sin\\beta x)\\sin\\beta x\\big]$"
       ],
-      "tex": ["y = e^{\\alpha x}\\left(C_1\\cos\\beta x + C_2\\sin\\beta x\\right)"],
-      "collapsible": false
+      "tex": [
+        "L[z]=L[u]+i\\,L[v]=0",
+        "W(u,v)=\\beta e^{2\\alpha x}\\ne0",
+        "y=e^{\\alpha x}\\big(C_1\\cos\\beta x+C_2\\sin\\beta x\\big)"
+      ]
+    },
+    {
+      "heading": "③ 純虛根：$y''+9y=0$",
+      "body": [
+        "$y(0)=0$，$y'(0)=3$",
+        "$r^2+9=0$，$r=\\pm3i$：$\\alpha=0$，$\\beta=3$",
+        "$y=C_1\\cos3x+C_2\\sin3x$",
+        "$y(0)=C_1=0$；$y'(0)=3C_2=3\\Rightarrow C_2=1$"
+      ],
+      "tex": [
+        "y=\\sin3x"
+      ]
     },
     {
       "heading": "④ 另一個根 $\\alpha-i\\beta$ 呢",
       "body": [
-        "它給的是 $e^{\\alpha x}\\cos\\beta x-i\\,e^{\\alpha x}\\sin\\beta x$，實部虛部跟上面一樣（差一個負號），沒有新東西。所以一對共軛根合起來給兩個實數解，正好是二階需要的數量。"
+        "實部還是 $u$，虛部是 $-v$：沒有新的解",
+        "反過來，$u$、$v$ 也能由兩個複數解組出來：",
+        "$z=e^{(\\alpha+i\\beta)x}$，$\\bar z=e^{(\\alpha-i\\beta)x}$",
+        "兩個根合起來，正好換成兩個實數解"
       ],
-      "collapsible": false
+      "tex": [
+        "e^{(\\alpha-i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x-i\\sin\\beta x\\big)",
+        "u=\\frac{z+\\bar z}{2},\\qquad v=\\frac{z-\\bar z}{2i}"
+      ]
     },
     {
       "heading": "⑤ 讀圖",
       "body": [
-        "$\\beta$ 決定振盪多快（週期 $\\frac{2\\pi}{\\beta}$）；$e^{\\alpha x}$ 是包絡線：$\\alpha<0$ 振幅衰減，$\\alpha=0$ 等幅，$\\alpha>0$ 越振越大。這就是〈簡諧振盪〉與〈阻尼振盪〉的數學。"
+        "$y=e^{\\alpha x}(\\cdots)$：$\\alpha$ 管振幅，$\\beta$ 管振盪快慢",
+        "• $\\alpha<0$：衰減振盪（有阻尼）",
+        "• $\\alpha=0$：等幅振盪",
+        "• $\\alpha>0$：發散振盪"
+      ]
+    },
+    {
+      "heading": "⑤ 衰減振盪",
+      "body": [
+        "$y''+2y'+5y=0$，$y(0)=1$，$y'(0)=-1$",
+        "$r=-1\\pm2i$：",
+        "$y(0)=C_1=1$",
+        "$y'(0)=-C_1+2C_2=-1\\Rightarrow C_2=0$"
       ],
-      "collapsible": false
+      "tex": [
+        "y=e^{-x}(C_1\\cos2x+C_2\\sin2x)",
+        "y=e^{-x}\\cos2x"
+      ]
+    },
+    {
+      "heading": "⑤ 試一題：$\\beta$ 帶根號",
+      "body": [
+        "解是衰減振盪，週期 $\\dfrac{2\\pi}{\\sqrt3/2}=\\dfrac{4\\pi}{\\sqrt3}$"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $r=\\alpha\\pm i\\beta$：$y=e^{\\alpha x}(C_1\\cos\\beta x+C_2\\sin\\beta x)$",
+        "• 尤拉公式：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$",
+        "• 實係數 ⇒ 複數解的實部、虛部各自是解",
+        "• 共軛根不給新解；$W=\\beta e^{2\\alpha x}\\ne0$",
+        "• $\\alpha<0$ 衰減、$=0$ 等幅、$>0$ 發散；週期 $\\frac{2\\pi}\\beta$",
+        "三種情況都學完了"
+      ]
     }
   ],
   "workedExamples": [
@@ -101,291 +179,915 @@
     {
       "ask": "$y''+4y=0$ 的通解是？",
       "options": [
-        { "label": "$C_1\\cos 2x+C_2\\sin 2x$", "correct": true },
-        { "label": "$C_1e^{2x}+C_2e^{-2x}$", "why": "那是 $y''-4y=0$（$r^2=4$）。這裡 $r^2=-4$，根是 $\\pm2i$。" },
-        { "label": "$C_1\\cos 4x+C_2\\sin 4x$", "why": "$r^2=-4$ 給 $r=\\pm2i$，$\\beta$ 是 $\\sqrt4=2$，不是 $4$。" }
+        {
+          "label": "$C_1\\cos2x+C_2\\sin2x$",
+          "correct": true
+        },
+        {
+          "label": "$C_1\\cos4x+C_2\\sin4x$",
+          "why": "忘了開根號：$r^2=-4$，$\\beta=\\sqrt4=2$"
+        },
+        {
+          "label": "$C_1e^{2x}+C_2e^{-2x}$",
+          "why": "把 $r^2=-4$ 當成 $r^2=4$；那是 $y''-4y=0$"
+        },
+        {
+          "label": "$e^{2x}(C_1\\cos x+C_2\\sin x)$",
+          "why": "這裡 $\\alpha=0$、$\\beta=2$，不要把 $\\beta$ 放到指數上"
+        }
       ]
     },
     {
-      "ask": "特徵方程的根是 $3\\pm2i$，通解是？",
+      "ask": "$y''+y'+y=0$ 的通解是？",
       "options": [
-        { "label": "$e^{3x}(C_1\\cos 2x+C_2\\sin 2x)$", "correct": true },
-        { "label": "$e^{2x}(C_1\\cos 3x+C_2\\sin 3x)$", "why": "實部虛部放反了：實部 $3$ 進指數，虛部 $2$ 是頻率。" },
-        { "label": "$C_1e^{3x}+C_2e^{2x}$", "why": "虛部不是另一個指數；$e^{2ix}$ 經 Euler 公式變成 $\\cos 2x$、$\\sin 2x$。" }
-      ]
-    },
-    {
-      "ask": "為什麼 $e^{\\alpha x}\\cos\\beta x$ 與 $e^{\\alpha x}\\sin\\beta x$ 都是解？",
-      "options": [
-        { "label": "方程係數是實數，複數解代入後實部、虛部要各自為 0", "correct": true },
-        { "label": "因為 $i$ 可以當成 $1$ 來算", "why": "$i^2=-1$，不能當 $1$；理由是 $L[u]+iL[v]=0$ 推出 $L[u]=L[v]=0$。" },
-        { "label": "只有實部是解，虛部是丟掉的部分", "why": "虛部 $e^{\\alpha x}\\sin\\beta x$ 也是解，丟掉它通解就少一個常數。" }
-      ]
-    },
-    {
-      "ask": "$y=e^{-x}(\\cos 2x+3\\sin 2x)$，$x\\to\\infty$ 時？",
-      "options": [
-        { "label": "一邊振盪一邊衰減到 $0$", "correct": true },
-        { "label": "振幅越來越大", "why": "$\\alpha=-1<0$，包絡線 $e^{-x}$ 在縮小。" },
-        { "label": "不振盪，直接衰減", "why": "$\\beta=2\\ne 0$，有 $\\cos 2x$、$\\sin 2x$，會一直穿過 $0$。" }
+        {
+          "label": "$e^{-x/2}\\big(C_1\\cos\\frac{\\sqrt3}2x+C_2\\sin\\frac{\\sqrt3}2x\\big)$",
+          "correct": true
+        },
+        {
+          "label": "$e^{-x/2}\\big(C_1\\cos\\sqrt3x+C_2\\sin\\sqrt3x\\big)$",
+          "why": "虛部也要除以 $2$：$\\beta=\\frac{\\sqrt3}{2}$"
+        },
+        {
+          "label": "$e^{x/2}\\big(C_1\\cos\\frac{\\sqrt3}2x+C_2\\sin\\frac{\\sqrt3}2x\\big)$",
+          "why": "$\\alpha=-\\frac b{2a}=-\\frac12$，正負號反了"
+        },
+        {
+          "label": "$e^{-x}\\big(C_1\\cos\\frac{\\sqrt3}2x+C_2\\sin\\frac{\\sqrt3}2x\\big)$",
+          "why": "$\\alpha$ 要除以 $2a=2$：$-\\frac12$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "判別式是負的",
+      "title": "判別式是負的時候",
       "beats": [
-        { "show": ["$y''+2y'+5y=0$","$r^2+2r+5=0$"],
-          "note": "判別式 $4-20=-16<0$。",
-          "say": "特徵方程 r 平方加二 r 加五，判別式四減二十，是負十六。",
+        {
+          "show": [
+            "$y''+2y'+5y=0$：$r^2+2r+5=0$"
+          ],
+          "say": "回到特徵方程那一課留下的例子：y 兩撇加 2 y 一撇加 5y。判別式是 4 減 20，負 16。",
           "board": [
-            {"do":"write","line":"$y''+2y'+5y=0$"},
-            {"do":"write","line":"$r^2+2r+5=0$","on":"r 平方"},
-            {"do":"write","line":"判別式 $4-20={{d:-16}}$","on":"判別式"},
-            {"do":"underline","term":"d","on":"是負"}
-          ] },
-        { "show": ["$r=\\frac{-2\\pm4i}{2}=-1\\pm2i$"],
-          "say": "照公式解，根號負十六是四 i，根是負一加減二 i。",
+            {
+              "do": "write",
+              "line": "$y''+2y'+5y=0$：$r^2+2r+5=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i$"
+          ],
+          "say": "根是負 1 加減 2i，一對共軛複數。",
           "board": [
-            {"do":"write","line":"$r=\\frac{-2\\pm{{s:4i}}}{2}={{r:-1\\pm2i}}$"},
-            {"do":"focus","term":"s","on":"四 i"},
-            {"do":"underline","term":"r","on":"根是"}
-          ] },
-        { "show": ["$e^{(-1+2i)x}$ 是複數值的函數"],
-          "note": "我們要的是實數的解。",
-          "say": "e 的負一加二 i 乘 x 次方是解，可是它是複數。我們要的是實數的解。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "2i"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般寫成 $r=\\alpha\\pm i\\beta$（$\\beta>0$）"
+          ],
+          "say": "一般寫成阿法加減 i 貝塔，貝塔取正的。這個例子阿法是負 1，貝塔是 2。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{e:e^{(-1+2i)x}}}$ 是複數值的函數","on":"e 的負一"},
-            {"do":"underline","term":"e","on":"可是它是複數"}
-          ] },
-        { "show": ["$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],
-          "note": "〈Euler 公式〉",
-          "say": "用尤拉公式拆開：e 的 i theta 次方，等於 cosine theta 加 i 倍的 sine theta。",
+            {
+              "do": "write",
+              "line": "一般寫成 $r=\\alpha\\pm i\\beta$（$\\beta>0$）"
+            },
+            {
+              "do": "write",
+              "line": "　$\\alpha=-\\frac b{2a}$，$\\beta=\\frac{\\sqrt{4ac-b^2}}{2a}$",
+              "color": "violet",
+              "on": "這個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{(-1+2i)x}$ 確實是解，但它是複數"
+          ],
+          "say": "照樣寫出 e 的 r x 次方，它確實滿足方程，但它是複數值的函數。",
           "board": [
-            {"do":"write","line":"$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$","on":"尤拉公式"}
-          ] },
-        { "show": ["$e^{(-1+2i)x}=e^{-x}\\cdot e^{2ix}$"],
-          "note": "指數相加，等於各自的 e 相乘。",
-          "say": "指數相加，等於各自的 e 相乘。把負 x 和二 i x 分開，就是 e 的負 x 乘 e 的二 i x 次方。",
+            {
+              "do": "write",
+              "line": "$e^{(-1+2i)x}$ 確實是解，但它是複數"
+            },
+            {
+              "do": "write",
+              "line": "　$(e^{rx})'=re^{rx}$ 對複數 $r$ 一樣成立，代進去一樣得到 $e^{rx}(ar^2+br+c)=0$",
+              "color": "violet",
+              "on": "確實"
+            }
+          ]
+        },
+        {
+          "show": [
+            "彈簧的位置是實數：要實數的解"
+          ],
+          "say": "可是彈簧的位置是實數。我們要想辦法，從複數解裡拿出實數解。第一步，先弄清楚虛數次方是什麼意思。",
           "board": [
-            {"do":"write","line":"$e^{a+b}=e^{a}\\cdot e^{b}$"},
-            {"do":"write","line":"$e^{(-1+2i)x}={{n1:e^{-x}}}\\cdot{{n2:e^{2ix}}}$","on":"把負"},
-            {"do":"focus","term":"n1","on":"e 的負 x"}
-          ] }
+            {
+              "do": "write",
+              "line": "彈簧的位置是實數：要實數的解",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "尤拉公式把它拆開",
+      "beats": [
+        {
+          "show": [
+            "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"
+          ],
+          "say": "工具是尤拉公式：e 的 i 西塔次方，等於餘弦西塔，加 i 乘正弦西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle e^{i\\theta}=\\cos\\theta+i\\sin\\theta}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $i\\theta$ 代進 $e^z=\\sum\\frac{z^n}{n!}$，$i^2=-1$：",
+            "$1+i\\theta-\\frac{\\theta^2}{2!}-i\\frac{\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"
+          ],
+          "say": "為什麼？把 i 西塔代進 e 的泰勒級數。i 平方是負 1，i 三次方是負 i，正負號會規律地輪流出現。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把 $i\\theta$ 代進 $e^z=\\sum\\frac{z^n}{n!}$，$i^2=-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1+i\\theta-\\frac{\\theta^2}{2!}-i\\frac{\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$",
+              "on": "三次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "偶次項是 $\\cos\\theta$，奇次項是 $i\\sin\\theta$"
+          ],
+          "say": "偶數次的項收集起來正好是餘弦的級數；奇數次的項是 i 乘正弦的級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "偶次項是 $\\cos\\theta$，奇次項是 $i\\sin\\theta$"
+            }
+          ]
+        }
       ],
-      "key": "用 Euler 公式拆開 $e^{i\\beta x}$",
       "predict": {
-        "ask": "$e^{(-1+2i)x}$ 拆開是？",
+        "ask": "$e^{i\\pi}=$？",
         "options": [
           {
-            "label": "$e^{-x}\\cos 2x+i\\,e^{-x}\\sin 2x$",
+            "label": "$-1$",
             "correct": true
           },
           {
-            "label": "$\\cos 2x+i\\sin 2x$",
-            "why": "實部 $-1$ 留在指數裡：先拆成 $e^{-x}\\cdot e^{2ix}$，$e^{-x}$ 不會不見。"
+            "label": "$1$",
+            "why": "$\\cos\\pi=-1$，不是 $1$；$\\cos0$ 才是 $1$"
           },
           {
-            "label": "$e^{2x}\\cos x+i\\,e^{2x}\\sin x$",
-            "why": "實部虛部放反了：實部 $-1$ 進指數，虛部 2 是頻率。"
+            "label": "$i$",
+            "why": "那是 $e^{i\\pi/2}=\\cos\\frac\\pi2+i\\sin\\frac\\pi2$"
+          },
+          {
+            "label": "$0$",
+            "why": "$e^{i\\theta}$ 的大小永遠是 $1$，不會是 $0$"
           }
         ]
       }
     },
     {
-      "title": "實部、虛部都是解",
+      "title": "尤拉公式把它拆開",
       "beats": [
-        { "show": ["複數解 $u+iv$：$L[u]+iL[v]=0$"],
-          "note": "$L[y]=ay''+by'+cy$，係數是實數。",
-          "say": "把複數解寫成實部 u 加 i 倍虛部 v，代進方程，左邊拆成兩塊。",
+        {
+          "show": [
+            "套到 $r=\\alpha+i\\beta$：",
+            "$e^{(\\alpha+i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x+i\\sin\\beta x\\big)$"
+          ],
+          "say": "套到我們的根：e 的阿法加 i 貝塔乘 x 次方，拆成 e 的阿法 x 次方，乘上餘弦貝塔 x 加 i 正弦貝塔 x。",
           "board": [
-            {"do":"write","line":"複數解 $y=u+iv$"},
-            {"do":"write","line":"$L[y]={{t:L[u]+i\\,L[v]}}=0$","on":"代進方程"},
-            {"do":"underline","term":"t","label":"兩塊","on":"左邊"}
-          ] },
-        { "show": ["$L[u+iv]=L[u]+iL[v]$"],
-          "note": "微分、乘係數、相加，都能拆開。",
-          "say": "L 只做微分、乘係數、再相加。這三件事對 u 加 i 倍 v 都能分開做，i 也能提出來。",
-          "board": [
-            {"do":"write","line":"$(u+iv)'=u'+i\\,v'$"},
-            {"do":"write","line":"$L[u+iv]={{n1:L[u]+i\\,L[v]}}$","on":"這三件事"},
-            {"do":"focus","term":"n1","on":"i 也能"}
-          ] },
-        { "show": ["$L[u]=0$、$L[v]=0$"],
-          "note": "複數是 0：實部虛部都要是 0。",
-          "say": "係數都是實數，所以兩塊都是實數。一個複數是零，實部虛部都得是零。",
-          "board": [
-            {"do":"write","line":"$L[u]$、$L[v]$ 都是實數"},
-            {"do":"write","line":"${{z:L[u]=0,\\ L[v]=0}}$","on":"一個複數是零"},
-            {"do":"box","term":"z","color":"green","on":"實部虛部"}
-          ] },
-        { "show": ["$e^{\\alpha x}\\cos\\beta x$ 與 $e^{\\alpha x}\\sin\\beta x$"],
-          "note": "都是實數解，不是彼此的常數倍。",
-          "say": "所以 cosine 那一項和 sine 那一項，各自都是實數解。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$u={{c:e^{\\alpha x}\\cos\\beta x}}$","on":"cosine"},
-            {"do":"write","line":"$v={{s:e^{\\alpha x}\\sin\\beta x}}$","on":"和 sine"},
-            {"do":"underline","term":"s","label":"實數解","on":"各自"}
-          ] },
-        { "show": ["另一個根 $\\alpha-i\\beta$：沒有新東西"],
-          "say": "共軛的另一個根，只差一個負號，給的還是這兩個。一對共軛根剛好給兩個實數解。",
-          "board": [
-            {"do":"write","line":"$\\alpha-i\\beta$ ⇒ 同樣給 ${{p:u,\\ v}}$"},
-            {"do":"box","term":"p","color":"green","on":"剛好給"}
-          ] },
-        { "show": ["$e^{-i\\beta x}=\\cos\\beta x-i\\sin\\beta x$"],
-          "note": "實部不變，虛部變號。",
-          "say": "把 beta 換成負 beta，cosine 不變，sine 變號。所以實部還是原來那個，虛部只多一個負號。",
-          "board": [
-            {"do":"write","line":"$e^{(\\alpha-i\\beta)x}=e^{\\alpha x}\\cdot e^{-i\\beta x}$"},
-            {"do":"write","line":"$e^{-i\\beta x}=\\cos\\beta x-i\\sin\\beta x$","on":"cosine"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "套到 $r=\\alpha+i\\beta$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle e^{(\\alpha+i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x+i\\sin\\beta x\\big)}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "乘上"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "通解",
+      "title": "實部、虛部各自是解",
       "beats": [
-        { "show": ["$y=e^{\\alpha x}\\left(C_1\\cos\\beta x+C_2\\sin\\beta x\\right)$"],
-          "say": "通解：實部 alpha 進指數，虛部 beta 當頻率，cosine 和 sine 各帶一個常數。",
+        {
+          "show": [
+            "$z=u+iv$ 是解，$u,v$ 是實數函數",
+            "$L[z]=L[u]+i\\,L[v]=0$"
+          ],
+          "say": "設複數解 z 等於 u 加 i v，u 和 v 都是實數函數。方程是線性的，L 作用在 z 上，拆成 L u 加 i 乘 L v。",
           "board": [
-            {"do":"write","line":"$y=e^{{{a:\\alpha}} x}(C_1\\cos {{b:\\beta}}x+C_2\\sin\\beta x)$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","on":"alpha"},
-            {"do":"focus","term":"b","on":"beta"}
-          ] },
-        { "show": ["$y''+y'+y=0$：$r=-\\frac{1}{2}\\pm\\frac{\\sqrt3}{2}i$"],
-          "say": "r 平方加 r 加一，判別式一減四是負的，根是負二分之一加減二分之根號三 i。",
+            {
+              "do": "write",
+              "line": "$z=u+iv$ 是解，$u,v$ 是實數函數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L[z]=L[u]+i\\,L[v]=0$",
+              "on": "程是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "係數 $a,b,c$ 是實數 ⇒ $L[u]$、$L[v]$ 都是實數"
+          ],
+          "say": "方程的係數是實數，所以 L u 和 L v 都是實數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r^2+r+1=0$","on":"r 平方"},
-            {"do":"write","line":"判別式 $1-4<0$","on":"判別式"},
-            {"do":"write","line":"$r={{ra:-\\frac12}}\\pm{{rb:\\frac{\\sqrt3}{2}}}i$","tint":{"ra":"blue","rb":"violet"},"on":"根是"}
-          ] },
-        { "show": ["$\\alpha=-\\frac{1}{2}$、$\\beta=\\frac{\\sqrt3}{2}$"],
-          "note": "$\\beta$ 帶根號也照放。",
-          "say": "alpha 是負二分之一，beta 是二分之根號三。帶根號也一樣照放。",
+            {
+              "do": "write",
+              "line": "係數 $a,b,c$ 是實數 ⇒ $L[u]$、$L[v]$ 都是實數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實部、虛部都要是 $0$：$L[u]=0$，$L[v]=0$"
+          ],
+          "say": "一個複數等於 0，實部和虛部都要是 0。所以 u 和 v 各自都是實數解。",
           "board": [
-            {"do":"write","line":"$\\alpha={{ra:-\\frac12}}$、$\\beta={{rb:\\frac{\\sqrt3}{2}}}$"},
-            {"do":"focus","term":"rb","color":"violet","on":"帶根號"}
-          ] },
-        { "show": ["$e^{-x/2}\\cos\\frac{\\sqrt3x}{2}$ 的圖"],
-          "say": "畫出來：實線是 e 的負二分之 x 乘 cosine，虛線是外框，越振越小。",
+            {
+              "do": "write",
+              "line": "實部、虛部都要是 $0$：$L[u]=0$，$L[v]=0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=e^{\\alpha x}\\cos\\beta x$，$v=e^{\\alpha x}\\sin\\beta x$",
+            "$W(u,v)=\\beta e^{2\\alpha x}\\ne0$"
+          ],
+          "say": "拿到兩個實數解：e 的阿法 x 次方乘餘弦，和乘正弦。它們的朗斯基行列式是貝塔乘 e 的 2 阿法 x 次方，貝塔不是 0，所以獨立。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.5,12.5,-1.2,1.2],"ticks":false,"curves":[{"expr":"exp(-x/2)*cos(sqrt(3)*x/2)","domain":[0,12],"color":"ink"},{"expr":"exp(-x/2)","domain":[0,12],"color":"blue","dashed":true},{"expr":"-exp(-x/2)","domain":[0,12],"color":"blue","dashed":true}]}}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "$u=e^{\\alpha x}\\cos\\beta x$，$v=e^{\\alpha x}\\sin\\beta x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W(u,v)=\\beta e^{2\\alpha x}\\ne0$",
+              "on": "和乘"
+            },
+            {
+              "do": "write",
+              "line": "　$uv'-u'v=e^{2\\alpha x}\\big[\\cos\\beta x(\\alpha\\sin\\beta x+\\beta\\cos\\beta x)-(\\alpha\\cos\\beta x-\\beta\\sin\\beta x)\\sin\\beta x\\big]$",
+              "color": "violet",
+              "on": "阿法#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=e^{\\alpha x}\\big(C_1\\cos\\beta x+C_2\\sin\\beta x\\big)$"
+          ],
+          "say": "所以實數通解是：e 的阿法 x 次方，乘上 C1 餘弦貝塔 x 加 C2 正弦貝塔 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y=e^{\\alpha x}\\big(C_1\\cos\\beta x+C_2\\sin\\beta x\\big)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "C1"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "純虛根",
+      "title": "純虛根：$y''+9y=0$",
       "beats": [
-        { "show": ["$y''+9y=0$：$r=\\pm3i$"],
-          "note": "$\\alpha=0$、$\\beta=3$。",
-          "say": "r 平方加九等於零，根是正負三 i。實部是零，沒有指數。",
+        {
+          "show": [
+            "$y(0)=0$，$y'(0)=3$",
+            "$r^2+9=0$，$r=\\pm3i$：$\\alpha=0$，$\\beta=3$"
+          ],
+          "say": "例子：y 兩撇加 9y 等於 0，初始值 0，初始斜率 3。特徵根是正負 3i，阿法是 0，貝塔是 3。",
           "board": [
-            {"do":"write","line":"$y''+9y=0$：$r=\\pm{{b:3}}i$","tint":{"b":"violet"}},
-            {"do":"write","line":"$\\alpha=0$：沒有指數","on":"實部是零"}
-          ] },
-        { "show": ["$y=C_1\\cos 3x+C_2\\sin 3x$"],
-          "note": "$\\beta$ 是 $\\sqrt9=3$，不是 9。",
-          "say": "通解就是 cosine 三 x 和 sine 三 x。頻率是開根號後的三，不是九。",
+            {
+              "do": "write",
+              "line": "$y(0)=0$，$y'(0)=3$"
+            },
+            {
+              "do": "write",
+              "line": "$r^2+9=0$，$r=\\pm3i$：$\\alpha=0$，$\\beta=3$",
+              "on": "特徵"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=C_1\\cos3x+C_2\\sin3x$"
+          ],
+          "say": "阿法是 0，指數那一項變成 1，通解就是 C1 餘弦 3x 加 C2 正弦 3x。",
           "board": [
-            {"do":"write","line":"$y=C_1\\cos {{b:3}}x+C_2\\sin 3x$"},
-            {"do":"focus","term":"b","label":"不是 9","on":"頻率是"}
-          ] },
-        { "show": ["$y'=-3C_1\\sin 3x+3C_2\\cos 3x$"],
-          "note": "裡面 $3x$ 的導數是 3，要乘出來。",
-          "say": "先求導數。cosine 三 x 微分，要再乘裡面三 x 的導數三，得負三 sine 三 x。sine 三 x 則得三 cosine 三 x。",
+            {
+              "do": "write",
+              "line": "$y=C_1\\cos3x+C_2\\sin3x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y(0)=C_1=0$；$y'(0)=3C_2=3\\Rightarrow C_2=1$",
+            "$y=\\sin3x$"
+          ],
+          "say": "代 0：C1 等於 0。導數在 0 是 3 C2，等於 3，所以 C2 是 1。解是正弦 3x，振幅不變，永遠振盪下去。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\cos 3x)'=-3\\sin 3x$","on":"cosine#1"},
-            {"do":"write","line":"$(\\sin 3x)'=3\\cos 3x$","on":"sine 三 x#2"},
-            {"do":"write","line":"$y'=-3C_1\\sin 3x+3C_2\\cos 3x$","on":"則得"}
-          ] },
-        { "show": ["$y(0)=0$：$C_1=0$；$y'(0)=3$：$C_2=1$"],
-          "say": "代零，cosine 那一項沒了。導數在零是三 C 二，等於三，C 二是一。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$y(0)=0$：${{c1:C_1=0}}$","on":"代零"},
-            {"do":"write","line":"$y'(0)={{d:3C_2}}=3$：${{c2:C_2=1}}$","on":"導數在零"},
-            {"do":"focus","term":"c2","on":"C 二是一"}
-          ] },
-        { "show": ["$y=\\sin 3x$"],
-          "note": "$\\alpha=0$：等幅振盪。",
-          "say": "答案是 sine 三 x，振幅永遠一樣，不衰減。",
-          "board": [
-            {"do":"write","line":"${{ans:y=\\sin 3x}}$"},
-            {"do":"box","term":"ans","color":"green","on":"sine 三 x"}
-          ] }
+            {
+              "do": "write",
+              "line": "$y(0)=C_1=0$；$y'(0)=3C_2=3\\Rightarrow C_2=1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y=\\sin3x}}$",
+              "color": "red",
+              "on": "C2#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "解是"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
+      "title": "另一個根 $\\alpha-i\\beta$ 呢",
+      "beats": [
+        {
+          "show": [
+            "$e^{(\\alpha-i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x-i\\sin\\beta x\\big)$"
+          ],
+          "say": "我們只用了一個根。另一個根阿法減 i 貝塔呢？用尤拉公式拆，餘弦不變，正弦前面變成負號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^{(\\alpha-i\\beta)x}=e^{\\alpha x}\\big(\\cos\\beta x-i\\sin\\beta x\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實部還是 $u$，虛部是 $-v$：沒有新的解"
+          ],
+          "say": "實部還是 u，虛部是負 v。跟剛剛同一對，沒有新東西。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實部還是 $u$，虛部是 $-v$：沒有新的解",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來，$u$、$v$ 也能由兩個複數解組出來：",
+            "$u=\\frac{z+\\bar z}{2},\\qquad v=\\frac{z-\\bar z}{2i}$"
+          ],
+          "say": "反過來看，把兩個複數解相加除以 2，得到 u；相減除以 2i，得到 v。由疊加原理，它們當然是解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來，$u$、$v$ 也能由兩個複數解組出來："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle u=\\frac{z+\\bar z}{2},\\qquad v=\\frac{z-\\bar z}{2i}$",
+              "on": "得到#1"
+            },
+            {
+              "do": "write",
+              "line": "　$z=e^{(\\alpha+i\\beta)x}$，$\\bar z=e^{(\\alpha-i\\beta)x}$",
+              "color": "violet",
+              "on": "由疊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個根合起來，正好換成兩個實數解"
+          ],
+          "say": "所以一對共軛根，正好換成兩個實數解。兩個常數，一個不多，一個不少。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個根合起來，正好換成兩個實數解",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "讀圖",
       "beats": [
-        { "show": ["$\\beta$：振盪多快，週期 $\\frac{2\\pi}{\\beta}$"],
-          "say": "beta 決定振盪多快，週期是 beta 分之二 pi。",
+        {
+          "show": [
+            "$y=e^{\\alpha x}(\\cdots)$：$\\alpha$ 管振幅，$\\beta$ 管振盪快慢"
+          ],
+          "say": "最後讀圖。e 的阿法 x 次方管振幅怎麼變；餘弦正弦管振盪，貝塔越大振得越快，週期是貝塔分之 2 派。",
           "board": [
-            {"do":"write","line":"振盪多快：週期 $\\frac{2\\pi}{ {{b:\\beta}} }$","tint":{"b":"violet"}}
-          ] },
-        { "show": ["$e^{\\alpha x}$ 是包絡線"],
-          "note": "$\\alpha<0$ 衰減，$\\alpha=0$ 等幅，$\\alpha>0$ 越振越大。",
-          "say": "e 的 alpha x 次方像一個外框。alpha 負的振幅縮小，零是等幅，正的越振越大。",
+            {
+              "do": "write",
+              "line": "$y=e^{\\alpha x}(\\cdots)$：$\\alpha$ 管振幅，$\\beta$ 管振盪快慢"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\alpha<0$：衰減振盪（有阻尼）",
+            "• $\\alpha=0$：等幅振盪"
+          ],
+          "say": "阿法小於 0，振幅越來越小；等於 0，振幅不變；大於 0，振幅越來越大。",
           "board": [
-            {"do":"write","line":"包絡線：$\\pm e^{ {{a:\\alpha}} x}$","tint":{"a":"blue"}},
-            {"do":"focus","term":"a","on":"alpha 負的"}
-          ] },
-        { "show": ["$y=e^{-x}P$，$y'=(e^{-x})'P+e^{-x}P'$"],
-          "note": "P 是括號裡的 $C_1\\cos 2x+C_2\\sin 2x$。",
-          "say": "y 是 e 的負 x 乘括號 P。乘法法則：前導乘後，加上前乘後導。",
+            {
+              "do": "write",
+              "line": "• $\\alpha<0$：衰減振盪（有阻尼）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\alpha=0$：等幅振盪",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "• $\\alpha>0$：發散振盪",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "虛線 ±eᵅˣ 是振幅的包絡線"
+          ],
+          "say": "圖上是 e 的阿法 x 次方乘餘弦貝塔 x。虛線是振幅。現在阿法是負 0 點 3，越振越小。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y=e^{-x}P$","on":"e 的負 x"},
-            {"do":"write","line":"$P=C_1\\cos 2x+C_2\\sin 2x$","on":"括號"},
-            {"do":"write","line":"$y'=(e^{-x})'P+e^{-x}P'$","on":"乘法法則"}
-          ] },
-        { "show": ["$P'=-2C_1\\sin 2x+2C_2\\cos 2x$"],
-          "note": "代 0：$\\sin 0=0$，$\\cos 0=1$。",
-          "say": "P 的導數是負二 C 一 sine 二 x 加二 C 二 cosine 二 x。代零剩二 C 二。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "osc",
+                  "window": [
+                    0,
+                    10,
+                    -3,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(a*x)*cos(b*x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.5,
+                      "max": 0.15,
+                      "value": -0.3,
+                      "label": "α"
+                    },
+                    "b": {
+                      "min": 1,
+                      "max": 4,
+                      "value": 2,
+                      "label": "β"
+                    }
+                  },
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "虛線 ±eᵅˣ 是振幅的包絡線",
+              "color": "violet",
+              "on": "線是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "讀圖"
+          ],
+          "say": "阿法調到 0，振幅固定。",
           "board": [
-            {"do":"write","line":"$P'=-2C_1\\sin 2x+2C_2\\cos 2x$"},
-            {"do":"write","line":"$P(0)=C_1$，$P'(0)=2C_2$","on":"代零"}
-          ] },
-        { "show": ["$y''+2y'+5y=0$，$y(0)=1$，$y'(0)=-1$"],
-          "note": "$y'(0)=-C_1+2C_2$。",
-          "say": "回到第一題。代條件，C 一是一；導數在零是負 C 一加二 C 二，所以 C 二是零。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "osc",
+                  "window": [
+                    0,
+                    10,
+                    -3,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(a*x)*cos(b*x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.5,
+                      "max": 0.15,
+                      "value": -0.3,
+                      "label": "α"
+                    },
+                    "b": {
+                      "min": 1,
+                      "max": 4,
+                      "value": 2,
+                      "label": "β"
+                    }
+                  },
+                  "height": 260
+                },
+                "vals": {
+                  "a": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "show": [
+            "讀圖"
+          ],
+          "say": "阿法調成正的，越振越大；貝塔調大，振得更密。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y(0)=1$ ⇒ ${{c1:C_1=1}}$","on":"代條件"},
-            {"do":"write","line":"$y'(0)=-C_1+2C_2=-1$ ⇒ ${{c2:C_2=0}}$","on":"導數在零"}
-          ] },
-        { "show": ["$y=e^{-x}\\cos 2x$"],
-          "say": "答案是 e 的負 x 乘 cosine 二 x：頻率二，外框 e 的負 x 一路往內收。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "osc",
+                  "window": [
+                    0,
+                    10,
+                    -3,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(a*x)*cos(b*x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-exp(a*x)",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.5,
+                      "max": 0.15,
+                      "value": -0.3,
+                      "label": "α"
+                    },
+                    "b": {
+                      "min": 1,
+                      "max": 4,
+                      "value": 2,
+                      "label": "β"
+                    }
+                  },
+                  "height": 260
+                },
+                "vals": {
+                  "a": 0.1,
+                  "b": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "衰減振盪",
+      "beats": [
+        {
+          "show": [
+            "$y''+2y'+5y=0$，$y(0)=1$，$y'(0)=-1$"
+          ],
+          "say": "回到開頭的例子，初始值 1，初始斜率負 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y={{env:e^{-x}}}\\cos {{w:2}}x$","tint":{"env":"blue","w":"violet"},"on":"答案是"},
-            {"do":"plot","graph":{"window":[-0.12,3.3,-1.1,1.1],"ticks":false,"curves":[{"expr":"exp(-x)*cos(2*x)","domain":[0,3.2],"color":"ink"},{"expr":"exp(-x)","domain":[0,3.2],"color":"blue","dashed":true},{"expr":"-exp(-x)","domain":[0,3.2],"color":"blue","dashed":true}]},"on":"頻率二"}
-          ] }
+            {
+              "do": "write",
+              "line": "$y''+2y'+5y=0$，$y(0)=1$，$y'(0)=-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=-1\\pm2i$：",
+            "$y=e^{-x}(C_1\\cos2x+C_2\\sin2x)$"
+          ],
+          "say": "阿法負 1，貝塔 2，通解是 e 的負 x 次方，乘上 C1 餘弦 2x 加 C2 正弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r=-1\\pm2i$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=e^{-x}(C_1\\cos2x+C_2\\sin2x)$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y(0)=C_1=1$",
+            "$y=e^{-x}\\cos2x$"
+          ],
+          "say": "C1 等於 1。導數用乘法法則，在 0 是負 C1 加 2 C2，等於負 1，所以 C2 是 0。解是 e 的負 x 次方乘餘弦 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y(0)=C_1=1$"
+            },
+            {
+              "do": "write",
+              "line": "$y'(0)=-C_1+2C_2=-1\\Rightarrow C_2=0$",
+              "on": "是負"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle y=e^{-x}\\cos2x}}$",
+              "color": "red",
+              "on": "於負"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "e⁻ˣ cos 2x：週期 π，振幅 e⁻ˣ"
+          ],
+          "say": "圖上，每隔派振盪一次，振幅被 e 的負 x 次方壓著，越來越小。這就是有阻尼的彈簧。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "damp",
+                  "window": [
+                    -0.2,
+                    4,
+                    -0.5,
+                    1.1
+                  ],
+                  "xstep": 1,
+                  "fn": [
+                    {
+                      "expr": "exp(-x)*cos(2*x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "exp(-x)",
+                      "color": "pencil",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-exp(-x)",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "e⁻ˣ cos 2x：週期 π，振幅 e⁻ˣ",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題：$\\beta$ 帶根號",
+      "beats": [
+        {
+          "show": [
+            "$y''+y'+y=0$ 的通解是？"
+          ],
+          "say": "最後一題，根號會出現在貝塔裡。"
+        }
       ],
-      "key": "初值先定 $C_1$，再用 $y'(0)$ 定 $C_2$",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "試一題：$\\beta$ 帶根號",
+      "beats": [
+        {
+          "show": [
+            "解是衰減振盪，週期 $\\dfrac{2\\pi}{\\sqrt3/2}=\\dfrac{4\\pi}{\\sqrt3}$"
+          ],
+          "say": "阿法是負 2 分之 1，所以是衰減振盪；週期是根號 3 分之 4 派，大約 7 點 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解是衰減振盪，週期 $\\dfrac{2\\pi}{\\sqrt3/2}=\\dfrac{4\\pi}{\\sqrt3}$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $r=\\alpha\\pm i\\beta$：$y=e^{\\alpha x}(C_1\\cos\\beta x+C_2\\sin\\beta x)$",
+            "• 尤拉公式：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"
+          ],
+          "say": "整理一下：複數根用尤拉公式拆開，實部和虛部各自是實數解；阿法決定振幅變大還是變小，貝塔決定振得多快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $r=\\alpha\\pm i\\beta$：$y=e^{\\alpha x}(C_1\\cos\\beta x+C_2\\sin\\beta x)$"
+            },
+            {
+              "do": "write",
+              "line": "• 尤拉公式：$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$",
+              "on": "拉公"
+            },
+            {
+              "do": "write",
+              "line": "• 實係數 ⇒ 複數解的實部、虛部各自是解",
+              "on": "部各"
+            },
+            {
+              "do": "write",
+              "line": "• 共軛根不給新解；$W=\\beta e^{2\\alpha x}\\ne0$",
+              "on": "決定#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\alpha<0$ 衰減、$=0$ 等幅、$>0$ 發散；週期 $\\frac{2\\pi}\\beta$",
+              "on": "貝塔"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三種情況都學完了"
+          ],
+          "say": "三種情況都學完了。下一步，處理右邊不是 0 的非齊次方程。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三種情況都學完了"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "constant-coefficients", "complex-roots"],
-    "fine": ["ode2-complex-general", "ode2-complex-ivp", "ode2-complex-why-real"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "constant-coefficients",
+      "complex-roots"
+    ],
+    "fine": [
+      "ode2-complex-general",
+      "ode2-complex-ivp",
+      "ode2-complex-why-real"
+    ]
   },
   "practice": [
-    { "id": "ode-h2-002", "core": true, "trains": "ode2-complex-ivp" },
-    { "id": "ode-h2-007", "core": true, "trains": "ode2-complex-ivp" },
-    { "id": "gap-der-ode-004", "trains": "ode2-complex-ivp" },
-    { "id": "ode-h2-005", "core": true, "trains": "ode2-complex-ivp" },
-    { "id": "cg-10b-017", "core": true, "trains": "ode2-complex-general" },
-    { "id": "cg-10b-019", "core": true, "trains": "ode2-complex-why-real" },
-    { "id": "cg-10b-018", "trains": "ode2-complex-general" },
-    { "id": "ode-h2-008", "challenge": true, "trains": "ode2-complex-ivp", "note": "挑戰：$\\alpha=2>0$，解一邊振盪一邊變大。" }
+    {
+      "id": "ode-h2-002",
+      "core": true,
+      "trains": "ode2-complex-ivp"
+    },
+    {
+      "id": "ode-h2-007",
+      "core": true,
+      "trains": "ode2-complex-ivp"
+    },
+    {
+      "id": "gap-der-ode-004",
+      "trains": "ode2-complex-ivp"
+    },
+    {
+      "id": "ode-h2-005",
+      "core": true,
+      "trains": "ode2-complex-ivp"
+    },
+    {
+      "id": "cg-10b-017",
+      "core": true,
+      "trains": "ode2-complex-general"
+    },
+    {
+      "id": "cg-10b-019",
+      "core": true,
+      "trains": "ode2-complex-why-real"
+    },
+    {
+      "id": "cg-10b-018",
+      "trains": "ode2-complex-general"
+    },
+    {
+      "id": "ode-h2-008",
+      "challenge": true,
+      "trains": "ode2-complex-ivp",
+      "note": "挑戰：$\\alpha=2>0$，解一邊振盪一邊變大。"
+    }
   ],
   "gaps": []
 }

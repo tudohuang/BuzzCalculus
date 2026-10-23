@@ -27,7 +27,10 @@ const SHOTS = process.argv.includes("--screenshots") ? path.join(ROOT, "docs", "
 const PHONE = { width: 390, height: 844, deviceScaleFactor: 2, mobile: true };
 const NARROW = { width: 360, height: 780, deviceScaleFactor: 2, mobile: true };
 const LESSON_DIR = path.join(ROOT, "tools", "content", "course_v2", "lessons");
-const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}.json`), "utf8"));
+// 網站上的課 2026-10-23 換成交付的筆記本課；這支照舊版的課（lessons_v1/）走一節，開頁時塞進頁面（tools/lib/course_v1_fixture.js）
+const FX = require("./lib/course_v1_fixture.js");
+const USED = new Set();
+const lessonOf = (id) => { USED.add(id); return FX.lessonOf(id); };
 const box = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, "src", "course_v2", "outline.js"), "utf8"), box);
 const OUTLINE = box.window.BUZZ_COURSE_V2;
@@ -78,6 +81,7 @@ async function run() {
   console.log("E2E 章首魔王題");
   const server = await staticServer.start(ROOT, 0);
   const chrome = await launch();
+  await chrome.send("Page.addScriptToEvaluateOnNewDocument", { source: FX.script([...USED]) });
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
   const sleep = (ms) => chrome.sleep(ms);
   const waitFor = async (expr, ms = 8000) => {

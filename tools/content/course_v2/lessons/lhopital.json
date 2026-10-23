@@ -1,7 +1,8 @@
 {
   "id": "lhopital",
   "title": "L'Hôpital 法則",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
   "prerequisites": [
     "limit-factor",
@@ -19,82 +20,205 @@
     "taylor-limits"
   ],
   "objectives": [
-    "每次使用前都先檢查是不是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$。",
-    "會處理 $\\frac{0}{0}$ 與 $\\frac{\\infty}{\\infty}$，必要時連續使用。",
-    "知道它什麼時候不能用、或用了沒有結論。"
+    "每次使用前都先檢查是不是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$",
+    "會處理 $\\frac{0}{0}$ 與 $\\frac{\\infty}{\\infty}$，必要時連續使用",
+    "知道它什麼時候不能用、或用了沒有結論"
   ],
-  "visual": "把 f 和 g 兩條曲線畫在同一張圖上，兩條都在 x = a 穿過 0。按「放大」，鏡頭往 (a, 0) 推近，兩條曲線越來越直，最後看起來就是兩條直線。旁邊即時顯示 f(x)/g(x) 與 f′(x)/g′(x)，兩個數字越來越接近。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 操作版：先檢查，再各自微分",
+      "heading": "① 操作版",
       "body": [
-        "第一步永遠是檢查：$x\\to a$ 時，分子分母是不是都 $\\to 0$，或都 $\\to\\pm\\infty$？",
-        "不是，就不能用。是，就把分子微分、分母微分，再取極限：$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$。$a$ 也可以是 $\\pm\\infty$。"
+        "$\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}$ 是 $\\dfrac00$ 或 $\\dfrac\\infty\\infty$ 時：",
+        "兩步：先檢查型，再各自微分",
+        "例 1：$\\displaystyle\\lim_{x\\to1}\\frac{\\ln x}{x-1}$",
+        "檢查：$\\ln1=0$，$1-1=0$：$\\dfrac00$",
+        "以前要靠 $\\lim_{u\\to0}\\frac{\\ln(1+u)}u=1$ 換變數；現在一步就到",
+        "例 2（分母是三角函數）：$\\displaystyle\\lim_{x\\to0}\\frac{e^{2x}-1}{\\sin3x}$",
+        "檢查：$e^0-1=0$，$\\sin0=0$：$\\dfrac00$"
       ],
       "tex": [
-        "\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}"
-      ],
-      "collapsible": false
+        "\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}",
+        "\\lim_{x\\to1}\\frac{\\ln x}{x-1}=\\lim_{x\\to1}\\frac{1/x}{1}=1",
+        "=\\lim_{x\\to0}\\frac{2e^{2x}}{3\\cos3x}=\\frac{2}{3}"
+      ]
     },
     {
-      "heading": "完整的定理條件",
+      "heading": "① 完整的定理",
       "body": [
-        "$f$、$g$ 在 $a$ 附近（$a$ 本身可以除外）可微；$g'(x)$ 在 $a$ 附近（$a$ 本身除外）不為 $0$；$x\\to a$ 時 $f$、$g$ 都 $\\to 0$，或都 $\\to\\pm\\infty$；而且 $\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$ 存在（或是 $\\pm\\infty$）。",
-        "滿足這些，$\\lim_{x\\to a}\\frac{f(x)}{g(x)}$ 也存在，而且等於 $\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$。$a$ 換成 $a^+$、$a^-$、$\\infty$、$-\\infty$ 也成立。"
-      ],
-      "collapsible": true
+        "L'Hôpital 法則：設在 $a$ 附近（$a$ 本身可以除外）",
+        "• $f$、$g$ 可微，而且 $g'(x)\\ne0$",
+        "• $\\displaystyle\\lim_{x\\to a}f(x)=\\lim_{x\\to a}g(x)=0$，或兩個都是 $\\pm\\infty$",
+        "• $\\displaystyle\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}=L$ 存在（或 $\\pm\\infty$）",
+        "則 $\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}=L$",
+        "$x\\to a^+$、$x\\to a^-$、$x\\to\\pm\\infty$ 都可以用",
+        "注意第三個條件：$\\frac{f'}{g'}$ 要有極限，才能下結論",
+        "例 3（$\\frac\\infty\\infty$）：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$，後面第 ⑥ 節算"
+      ]
     },
     {
-      "heading": "② 分子分母「各自」微分，不是用除法法則",
+      "heading": "② 各自微分，不是除法法則",
       "body": [
-        "不是對 $\\frac{f}{g}$ 整個用除法法則 $\\frac{f'g-fg'}{g^2}$。那是在求 $\\left(\\frac{f}{g}\\right)'$，跟極限無關。這是最常見的錯。"
-      ],
-      "collapsible": false
-    },
-    {
-      "heading": "③ 一個理解 L'Hôpital 的直覺（不是證明）",
-      "body": [
-        "以 $\\frac{0}{0}$ 為例，假設 $f(a)=g(a)=0$。在 $a$ 附近，曲線看起來像它的切線（〈線性近似〉）：$f(x)\\approx f'(a)(x-a)$，$g(x)\\approx g'(a)(x-a)$。",
-        "兩個相除，$(x-a)$ 約掉，剩 $\\frac{f'(a)}{g'(a)}$：兩條都從 $0$ 出發的直線，比值就是斜率的比。",
-        "這只是直覺：它假設了 $f'(a)$、$g'(a)$ 存在而且 $g'(a)\\ne 0$，「$\\approx$」差多少也沒有交代，而且沒有涵蓋 $\\frac{\\infty}{\\infty}$。"
-      ],
-      "collapsible": false
-    },
-    {
-      "heading": "嚴格證明（只證 $x\\to a^+$ 的 $\\frac{0}{0}$ 情況）",
-      "body": [
-        "設 $x\\to a^+$ 時 $f(x)\\to 0$、$g(x)\\to 0$；$f$、$g$ 在 $(a,a+\\delta)$ 可微，$g'$ 在那裡不為 $0$；$\\lim_{x\\to a^+}\\frac{f'(x)}{g'(x)}=L$。$x\\to a^-$ 的證法對稱，兩邊合起來就是雙邊版本；$\\frac{\\infty}{\\infty}$ 與 $a=\\pm\\infty$ 的情況另有證明。",
-        "第 1 步：補上端點。$f(a)$、$g(a)$ 可能沒有定義，或不是 $0$；不管原本是什麼，都把它們定成 $0$。極限不看 $a$ 這一點的值，所以這樣改不影響要求的極限。改完之後 $f$、$g$ 在 $a$ 右連續；在 $(a,a+\\delta)$ 可微所以連續。因此對每個 $x\\in(a,a+\\delta)$，$f$、$g$ 在 $[a,x]$ 連續、在 $(a,x)$ 可微。",
-        "第 2 步：$g(x)\\ne 0$。若某個 $x\\in(a,a+\\delta)$ 使 $g(x)=0=g(a)$，由〈Rolle 定理〉，$(a,x)$ 裡有一點 $g'=0$，跟假設矛盾。",
-        "第 3 步：柯西均值定理。固定 $x$，令 $h(t)=f(t)\\cdot g(x)-g(t)\\cdot f(x)$（$t\\in[a,x]$）。$h(a)=0-0=0$，$h(x)=f(x)g(x)-g(x)f(x)=0$，$h$ 在 $[a,x]$ 連續、$(a,x)$ 可微。由 Rolle 定理，存在 $c\\in(a,x)$ 使 $h'(c)=f'(c)g(x)-g'(c)f(x)=0$。$g'(c)\\ne 0$、$g(x)\\ne 0$，兩邊同除以 $g'(c)g(x)$，得 $\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$。這一步用到了 $f(a)=g(a)=0$；一般的柯西均值定理給的是 $\\frac{f(x)-f(a)}{g(x)-g(a)}$。",
-        "第 4 步：取極限。$c$ 跟著 $x$ 變，但永遠滿足 $a<c<x$。任給 $\\varepsilon>0$，因為 $\\frac{f'}{g'}\\to L$，可以找 $\\eta>0$（$\\eta\\le\\delta$）使得 $a<t<a+\\eta$ 時 $\\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$。那麼只要 $a<x<a+\\eta$，就有 $a<c<a+\\eta$，所以 $\\left|\\frac{f(x)}{g(x)}-L\\right|=\\left|\\frac{f'(c)}{g'(c)}-L\\right|<\\varepsilon$。這正是 $\\lim_{x\\to a^+}\\frac{f(x)}{g(x)}=L$。"
+        "分子分母是兩個獨立的函數，各自微分"
       ],
       "tex": [
-        "\\frac{f(x)}{g(x)}=\\frac{f(x)-f(a)}{g(x)-g(a)}=\\frac{f'(c)}{g'(c)},\\qquad a<c<x"
-      ],
-      "collapsible": true
+        "\\frac{f'}{g'}\\quad\\text{不是}\\quad\\left(\\frac fg\\right)'=\\frac{f'g-fg'}{g^2}"
+      ]
     },
     {
-      "heading": "④ 不是不定型就用，答案會錯",
+      "heading": "③ 直覺（不是證明）",
       "body": [
-        "$\\lim_{x\\to 0}\\frac{x+1}{x+2}=\\frac{1}{2}$（直接代入）。硬用 L'Hôpital：分子分母微分都是 $1$，得 $1$。錯的。"
+        "$f(a)=g(a)=0$ 時，用線性近似：",
+        "這只是直覺：它假設 $f'(a)$、$g'(a)$ 存在，而且 $g'(a)\\ne0$"
       ],
-      "collapsible": false
+      "tex": [
+        "f(x)\\approx f'(a)(x-a),\\qquad g(x)\\approx g'(a)(x-a)",
+        "\\frac{f(x)}{g(x)}\\approx\\frac{f'(a)(x-a)}{g'(a)(x-a)}=\\frac{f'(a)}{g'(a)}"
+      ]
     },
     {
-      "heading": "⑤ $\\frac{f'}{g'}$ 沒有極限時，L'Hôpital 不說任何事",
+      "heading": "③ 先證 Cauchy 均值定理",
       "body": [
-        "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$：同除以 $x$，得 $1+\\frac{\\sin x}{x}\\to 1$。",
-        "用 L'Hôpital：$\\frac{1+\\cos x}{1}$ 在 $0$ 到 $2$ 之間一直晃，沒有極限。這不代表原極限不存在，只代表這把鑰匙在這裡打不開，要換方法。"
+        "Cauchy 均值定理：$f$、$g$ 在 $[a,b]$ 連續、$(a,b)$ 可微，則有 $c\\in(a,b)$ 使",
+        "$g(x)=x$ 時就是原本的均值定理",
+        "證明：令",
+        "$h(a)=f(b)g(a)-g(b)f(a)$",
+        "$h(b)=-f(a)g(b)+g(a)f(b)$：跟 $h(a)$ 一樣",
+        "$h$ 連續、可微，Rolle ⇒ 有 $c$ 使 $h'(c)=0$："
       ],
-      "collapsible": false
+      "tex": [
+        "\\big(f(b)-f(a)\\big)g'(c)=\\big(g(b)-g(a)\\big)f'(c)",
+        "h(x)=\\big(f(b)-f(a)\\big)g(x)-\\big(g(b)-g(a)\\big)f(x)",
+        "\\big(f(b)-f(a)\\big)g'(c)-\\big(g(b)-g(a)\\big)f'(c)=0\\quad\\blacksquare"
+      ]
     },
     {
-      "heading": "⑥ 可以連續用，每一次都要重新檢查",
+      "heading": "③ 嚴格證明（$\\frac00$，$x\\to a^+$）",
       "body": [
-        "微分一次後還是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$，可以再用。用到三、四次通常很繁瑣，這時〈用 Taylor 求極限〉更快。"
+        "設 $f,g\\to0$（$x\\to a^+$），在 $(a,a+\\delta)$ 可微、$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$",
+        "補定義 $f(a)=g(a)=0$：$f$、$g$ 在 $[a,x]$ 連續",
+        "$f(a)$、$g(a)$ 原本的值不影響極限，可以這樣改",
+        "任取 $x\\in(a,a+\\delta)$。$g(x)\\ne0$：否則 $g(a)=g(x)=0$，Rolle 給出 $g'=0$ 的點，矛盾",
+        "在 $[a,x]$ 用 Cauchy 均值定理，有 $c_x\\in(a,x)$：",
+        "這個 $c_x$ 被夾在 $a$ 和 $x$ 之間",
+        "$c_x$ 跟著 $x$ 變，所以加下標"
       ],
-      "collapsible": false
+      "tex": [
+        "f(x)\\,g'(c_x)=g(x)\\,f'(c_x)\\ \\Rightarrow\\ \\frac{f(x)}{g(x)}=\\frac{f'(c_x)}{g'(c_x)}"
+      ]
+    },
+    {
+      "heading": "③ 證明（續）",
+      "body": [
+        "給定 $\\varepsilon>0$。因為 $\\dfrac{f'}{g'}\\to L$，有 $\\delta'$ 使",
+        "當 $a<x<a+\\delta'$：$a<c_x<x<a+\\delta'$",
+        "左極限同理；兩邊合起來就是雙邊極限　$\\blacksquare$",
+        "$\\frac\\infty\\infty$ 與 $x\\to\\infty$ 的證明在 ⑦、⑧"
+      ],
+      "tex": [
+        "a<t<a+\\delta'\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon",
+        "\\left|\\frac{f(x)}{g(x)}-L\\right|=\\left|\\frac{f'(c_x)}{g'(c_x)}-L\\right|<\\varepsilon"
+      ]
+    },
+    {
+      "heading": "④ 不是不定型就用：會錯",
+      "body": [
+        "代 $0$：$\\dfrac{1}{2}$，不是$\\frac00$、也不是 $\\frac\\infty\\infty$",
+        "各自微分得到 $1$：錯",
+        "先檢查，永遠是第一步"
+      ],
+      "tex": [
+        "\\lim_{x\\to0}\\frac{x+1}{x+2}"
+      ]
+    },
+    {
+      "heading": "⑤ $\\frac{f'}{g'}$ 沒有極限",
+      "body": [
+        "各自微分：$\\dfrac{1+\\cos x}{1}$：一直在 $0$ 到 $2$ 之間振盪，沒有極限",
+        "這不代表原來的極限不存在：L'Hôpital 只是不說話",
+        "換別的方法：",
+        "$\\left|\\frac{\\sin x}x\\right|\\le\\frac1x\\to0$：夾擠定理",
+        "「$\\frac{f'}{g'}$ 有極限」是充分條件，不是必要條件"
+      ],
+      "tex": [
+        "\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}\\qquad\\left(\\frac\\infty\\infty\\right)",
+        "\\frac{x+\\sin x}{x}=1+\\frac{\\sin x}{x}\\to1+0=1"
+      ]
+    },
+    {
+      "heading": "⑥ 連續用，每次都要檢查",
+      "body": [
+        "例 3：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$",
+        "檢查：$\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2x}{e^x}$",
+        "再檢查：還是 $\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2}{e^x}$",
+        "例：$x=20$ 時 $\\frac{x^2}{e^x}\\approx8.2\\times10^{-7}$",
+        "一旦不是不定型就停，直接代"
+      ],
+      "tex": [
+        "\\lim_{x\\to\\infty}\\frac{2}{e^x}=0"
+      ]
+    },
+    {
+      "heading": "⑦ 證明：∞/∞（策略）",
+      "body": [
+        "設 $x\\to a^+$ 時 $g(x)\\to\\pm\\infty$；$f$、$g$ 在 $(a,a+\\delta)$ 可微，$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$（實數）",
+        "困難：$f$、$g$ 在 $a$ 爆掉，不能補成 0，不能在 $[a,x]$ 上用 Cauchy",
+        "想法：固定 $c$（$a<x<c$），改在 $[x,c]$ 上用：",
+        "$g(x)\\ne g(c)$：否則 Rolle 給出 $g'=0$ 的點",
+        "把 $\\dfrac{f(x)}{g(x)}$ 跟它連起來（乘開可驗算）：",
+        "$c$ 固定、$g(x)\\to\\infty$：括號 $\\to1$，最後一項 $\\to0$",
+        "$c$ 靠近 $a$ ⇒ 第一個比值靠近 $L$"
+      ],
+      "tex": [
+        "\\frac{f(x)-f(c)}{g(x)-g(c)}=\\frac{f'(\\xi)}{g'(\\xi)},\\quad\\xi\\in(x,c)",
+        "\\begin{aligned}\\frac{f(x)}{g(x)}=\\;&\\frac{f(x)-f(c)}{g(x)-g(c)}\\Big(1-\\frac{g(c)}{g(x)}\\Big)\\\\&+\\frac{f(c)}{g(x)}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑦ ∞/∞：正式證明",
+      "body": [
+        "給定 $0<\\varepsilon<1$。取 $c\\in(a,a+\\delta)$ 使",
+        "$a<x<c$ 時，令 $Q=\\dfrac{f(x)-f(c)}{g(x)-g(c)}=\\dfrac{f'(\\xi)}{g'(\\xi)}$：",
+        "由上一頁的等式：",
+        "$c$ 已固定、$g(x)\\to\\pm\\infty$：有 $\\delta_2$ 使 $a<x<a+\\delta_2$ 時",
+        "$a<x<\\min(c,\\,a+\\delta_2)$ 時，三項各小於 $\\varepsilon$：",
+        "$L=\\pm\\infty$ 時想法相同：$Q$ 很大、括號 $\\to1$；證明從略"
+      ],
+      "tex": [
+        "a<t<c\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon",
+        "|Q-L|<\\varepsilon,\\qquad|Q|<|L|+1",
+        "\\frac{f(x)}{g(x)}-L=(Q-L)-Q\\,\\frac{g(c)}{g(x)}+\\frac{f(c)}{g(x)}",
+        "(|L|+1)\\left|\\frac{g(c)}{g(x)}\\right|<\\varepsilon,\\qquad\\left|\\frac{f(c)}{g(x)}\\right|<\\varepsilon",
+        "\\left|\\frac{f(x)}{g(x)}-L\\right|<3\\varepsilon\\qquad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "⑧ 證明：$x\\to\\infty$",
+      "body": [
+        "令 $x=\\dfrac1t$：$x\\to\\infty$ 就是 $t\\to0^+$。令",
+        "連鎖律：",
+        "$F$、$G$ 跟 $f$、$g$ 同型，套已證的右極限版本：",
+        "$x\\to-\\infty$ 同理，令 $t\\to0^-$"
+      ],
+      "tex": [
+        "F(t)=f\\Big(\\frac1t\\Big),\\qquad G(t)=g\\Big(\\frac1t\\Big)",
+        "\\begin{aligned}F'(t)&=f'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\\\G'(t)&=g'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\ne0\\end{aligned}",
+        "\\frac{F'(t)}{G'(t)}=\\frac{f'(1/t)}{g'(1/t)}\\to L\\quad(t\\to0^+)",
+        "\\lim_{x\\to\\infty}\\frac{f(x)}{g(x)}=\\lim_{t\\to0^+}\\frac{F(t)}{G(t)}=L\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 使用前先檢查：$\\frac00$ 或 $\\frac\\infty\\infty$",
+        "• 分子、分母各自微分，不是除法法則",
+        "• 證明：Cauchy 均值定理，$\\frac{f(x)}{g(x)}=\\frac{f'(c_x)}{g'(c_x)}$",
+        "• $\\frac\\infty\\infty$：在 $[x,c]$ 上用；$x\\to\\infty$：令 $x=\\frac1t$",
+        "• 不是不定型就用：答案會錯",
+        "• $\\frac{f'}{g'}$ 沒有極限：法則不說話，換方法",
+        "• 可以連續用，每次重新檢查",
+        "下一課：其他不定型"
+      ]
     }
   ],
   "workedExamples": [
@@ -155,386 +279,1200 @@
   ],
   "checks": [
     {
-      "ask": "下面哪一個可以直接用 L'Hôpital？",
+      "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{\\sin3x}{x}$ 用 L'Hôpital，第一步該寫成？",
       "options": [
         {
-          "label": "$\\lim_{x\\to 0}\\frac{\\sin x}{x}$",
+          "label": "$\\displaystyle\\lim_{x\\to0}\\frac{3\\cos3x}{1}$",
           "correct": true
         },
         {
-          "label": "$\\lim_{x\\to 0}\\frac{\\cos x}{x}$",
-          "why": "分子 $\\to\\cos 0=1$，是 $\\frac{1}{0}$ 型，不是 $\\frac{0}{0}$。你可能只看到分母 $\\to 0$ 就以為能用。"
+          "label": "$\\displaystyle\\lim_{x\\to0}\\frac{3x\\cos3x-\\sin3x}{x^2}$",
+          "why": "這是對整個分式用除法法則，不是 L'Hôpital"
         },
         {
-          "label": "$\\lim_{x\\to 1}\\frac{x+1}{x}$",
-          "why": "直接代入得 $2$，不是不定型。看到分式就想微分，是跳過了檢查。"
+          "label": "$\\displaystyle\\lim_{x\\to0}\\frac{\\cos3x}{1}$",
+          "why": "漏了連鎖律：$\\sin3x$ 微分要多乘 $3$"
+        },
+        {
+          "label": "$\\displaystyle\\lim_{x\\to0}\\frac{1}{3\\cos3x}$",
+          "why": "分子分母倒過來了"
         }
       ]
     },
     {
-      "ask": "用 L'Hôpital 時，分子分母要怎麼處理？",
+      "ask": "$\\displaystyle\\lim_{x\\to0}\\frac{e^x-1-x}{x^2}=$？",
       "options": [
         {
-          "label": "分子微分、分母微分，各自分開",
-          "correct": true
-        },
-        {
-          "label": "整個分式用除法法則微分",
-          "why": "那是求 $\\left(\\frac{f}{g}\\right)'$，不是 L'Hôpital。兩者長得都有「微分」，容易混在一起。"
-        },
-        {
-          "label": "分子分母同除以 $x$",
-          "why": "那是 $x\\to\\infty$ 時看最高次的方法，不是 L'Hôpital。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to 1}\\frac{x^5-1}{x^3-1}$ 是？",
-      "options": [
-        {
-          "label": "$\\frac{5}{3}$",
+          "label": "$\\dfrac12$",
           "correct": true
         },
         {
           "label": "$1$",
-          "why": "$\\frac{0}{0}$ 不是 $1$。微分後 $\\frac{5x^4}{3x^2}$，代 $1$ 得 $\\frac{5}{3}$。"
+          "why": "第二次微分時，分母 $2x$ 微分是 $2$，不是 $1$"
         },
         {
-          "label": "$\\frac{3}{5}$",
-          "why": "分子分母弄反了：分子 $x^5-1$ 微分是 $5x^4$，放在上面。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$ 用 L'Hôpital 得 $\\frac{1+\\cos x}{1}$，它沒有極限。所以原極限：",
-      "options": [
-        {
-          "label": "是 $1$，要用別的方法算",
-          "correct": true
+          "label": "$0$",
+          "why": "第一次微分後 $\\frac{e^x-1}{2x}$ 還是 $\\frac00$，不能直接說是 $0$"
         },
         {
           "label": "不存在",
-          "why": "$\\frac{f'}{g'}$ 沒有極限時 L'Hôpital 沒有結論，不是「原極限不存在」。同除以 $x$ 就知道是 $1$。"
-        },
-        {
-          "label": "是 $2$",
-          "why": "你可能把 $\\cos x$ 當成 $1$ 代進去。$\\cos x$ 不會停在 $1$，這個值沒有根據。"
+          "why": "$\\frac{e^x-1}{2x}$ 是 $\\frac00$ 不是 $\\frac k0$，要再用一次"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "先檢查，再微分",
+      "title": "操作版",
       "beats": [
-        { "show": ["第一步：檢查"],
-          "note": "分子分母都 $\\to 0$，或都 $\\to\\pm\\infty$？",
-          "say": "用羅必達法則，第一步永遠是檢查：分子分母是不是都趨近零，或都趨近無限大？",
+        {
+          "show": [
+            "$\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}$ 是 $\\dfrac00$ 或 $\\dfrac\\infty\\infty$ 時：",
+            "$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$"
+          ],
+          "say": "羅必達法則：代進去是 0 分之 0、或無限大分之無限大時，分子分母各自微分，再算極限。",
           "board": [
-            {"do":"write","line":"檢查：${{z:\\frac{0}{0}}}$ 或 $\\frac{\\infty}{\\infty}$"},
-            {"do":"focus","term":"z","label":"都趨近零","on":"都趨近零"}
-          ] },
-        { "show": ["不是，就不能用"],
-          "say": "不是不定型，就不能用。這一步跳過，答案會錯，等一下會看到例子。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}$ 是 $\\dfrac00$ 或 $\\dfrac\\infty\\infty$ 時："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}}}$",
+              "color": "red",
+              "on": "或無"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "分子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩步：先檢查型，再各自微分"
+          ],
+          "say": "兩步：先檢查型，再各自微分。第一步不能省。",
           "board": [
-            {"do":"write","line":"不是不定型 → 不能用","color":"red"}
-          ] },
-        { "show": ["$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$"],
-          "note": "$a$ 也可以是 $\\pm\\infty$。",
-          "say": "是的話，分子微分、分母微分，再取極限。x 趨近的也可以是正負無限大。",
+            {
+              "do": "write",
+              "line": "兩步：先檢查型，再各自微分",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\lim_{x\\to1}\\frac{\\ln x}{x-1}$",
+            "檢查：$\\ln1=0$，$1-1=0$：$\\dfrac00$"
+          ],
+          "say": "例一：x 趨近 1，上下都是 0，可以用。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{{{p:f'(x)}}}{{{q:g'(x)}}}$"},
-            {"do":"focus","term":"p","on":"分子微分"},
-            {"do":"focus","term":"q","on":"分母微分"}
-          ] }
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\lim_{x\\to1}\\frac{\\ln x}{x-1}$"
+            },
+            {
+              "do": "write",
+              "line": "檢查：$\\ln1=0$，$1-1=0$：$\\dfrac00$",
+              "on": "上下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{x\\to1}\\frac{\\ln x}{x-1}=\\lim_{x\\to1}\\frac{1/x}{1}=1$"
+          ],
+          "say": "分子微分是 x 分之 1，分母是 1，答案是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to1}\\frac{\\ln x}{x-1}=\\lim_{x\\to1}\\frac{1/x}{1}=1}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　以前要靠 $\\lim_{u\\to0}\\frac{\\ln(1+u)}u=1$ 換變數；現在一步就到",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2（分母是三角函數）：$\\displaystyle\\lim_{x\\to0}\\frac{e^{2x}-1}{\\sin3x}$",
+            "檢查：$e^0-1=0$，$\\sin0=0$：$\\dfrac00$"
+          ],
+          "say": "例二：x 趨近 0，上下也都是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2（分母是三角函數）：$\\displaystyle\\lim_{x\\to0}\\frac{e^{2x}-1}{\\sin3x}$"
+            },
+            {
+              "do": "write",
+              "line": "檢查：$e^0-1=0$，$\\sin0=0$：$\\dfrac00$",
+              "on": "上下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\lim_{x\\to0}\\frac{2e^{2x}}{3\\cos3x}=\\frac{2}{3}$"
+          ],
+          "say": "用連鎖律各自微分，代 0，得 3 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\lim_{x\\to0}\\frac{2e^{2x}}{3\\cos3x}=\\frac{2}{3}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "完整的定理",
+      "beats": [
+        {
+          "show": [
+            "L'Hôpital 法則：設在 $a$ 附近（$a$ 本身可以除外）",
+            "• $f$、$g$ 可微，而且 $g'(x)\\ne0$"
+          ],
+          "say": "完整的定理有三個條件：可微而且 g prime 不是 0；兩個都趨近 0 或都趨近無限大；微分後的比值有極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "L'Hôpital 法則：設在 $a$ 附近（$a$ 本身可以除外）"
+            },
+            {
+              "do": "write",
+              "line": "• $f$、$g$ 可微，而且 $g'(x)\\ne0$",
+              "on": "而且"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\lim_{x\\to a}f(x)=\\lim_{x\\to a}g(x)=0$，或兩個都是 $\\pm\\infty$",
+              "on": "兩個"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}=L$ 存在（或 $\\pm\\infty$）",
+              "on": "無限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "則 $\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}=L$"
+          ],
+          "say": "結論：原來的極限也是 L。單邊極限、趨近無限大，也都可以用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "則 $\\displaystyle\\lim_{x\\to a}\\frac{f(x)}{g(x)}=L$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to a^+$、$x\\to a^-$、$x\\to\\pm\\infty$ 都可以用",
+            "注意第三個條件：$\\frac{f'}{g'}$ 要有極限，才能下結論"
+          ],
+          "say": "注意第三個條件：微分後的比值要有極限，才能下結論。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\to a^+$、$x\\to a^-$、$x\\to\\pm\\infty$ 都可以用"
+            },
+            {
+              "do": "write",
+              "line": "注意第三個條件：$\\frac{f'}{g'}$ 要有極限，才能下結論",
+              "color": "red",
+              "on": "微分"
+            },
+            {
+              "do": "write",
+              "line": "例 3（$\\frac\\infty\\infty$）：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$，後面第 ⑥ 節算",
+              "on": "極限"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "各自微分，不是除法法則",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{f'}{g'}\\quad\\text{不是}\\quad\\left(\\frac fg\\right)'=\\frac{f'g-fg'}{g^2}$"
+          ],
+          "say": "最常見的錯：用除法法則。羅必達是分子、分母各算各的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{f'}{g'}\\quad\\text{不是}\\quad\\left(\\frac fg\\right)'=\\frac{f'g-fg'}{g^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "法法"
+            },
+            {
+              "do": "write",
+              "line": "分子分母是兩個獨立的函數，各自微分",
+              "on": "分母"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "各自微分",
+      "title": "直覺（不是證明）",
       "beats": [
-        { "show": ["不是除法法則 $\\frac{f'g-fg'}{g^2}$"],
-          "note": "那是在求 $\\left(\\frac{f}{g}\\right)'$，跟極限無關。",
-          "say": "注意是分子、分母各自微分。對整個分式用除法法則，是在求導數，跟這裡無關。這是最常見的錯。",
+        {
+          "show": [
+            "$f(a)=g(a)=0$ 時，用線性近似：",
+            "$f(x)\\approx f'(a)(x-a),\\qquad g(x)\\approx g'(a)(x-a)$"
+          ],
+          "say": "為什麼會對？先看直覺：a 點的值都是 0 時，用線性近似。",
           "board": [
-            {"do":"write","line":"各自微分：$\\frac{f'}{g'}$"},
-            {"do":"write","line":"除法法則 ${{q:\\frac{f'g-fg'}{g^2}}}$","on":"除法法則"},
-            {"do":"strike","term":"q","label":"不是這個","on":"求導數"}
-          ] },
-        { "show": ["$f(x)\\approx f'(a)(x-a)$","$g(x)\\approx g'(a)(x-a)$"],
-          "note": "以 $\\frac{0}{0}$ 為例，$f(a)=g(a)=0$。",
-          "say": "為什麼會對？看零比零的情況：在 a 附近，兩條曲線都像從零出發的切線。",
+            {
+              "do": "write",
+              "line": "$f(a)=g(a)=0$ 時，用線性近似："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x)\\approx f'(a)(x-a),\\qquad g(x)\\approx g'(a)(x-a)$",
+              "on": "的值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{f(x)}{g(x)}\\approx\\frac{f'(a)(x-a)}{g'(a)(x-a)}=\\frac{f'(a)}{g'(a)}$"
+          ],
+          "say": "相除，x 減 a 約掉，剩下兩個斜率的比。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x)\\approx f'(a)(x-a)$","on":"看零比零"},
-            {"do":"write","line":"$g(x)\\approx g'(a)(x-a)$","on":"兩條曲線"}
-          ] },
-        { "show": ["藍：$x^2-1$，紅：$2(x-1)$"],
-          "note": "靠近 $x=1$，兩條幾乎重合。",
-          "say": "先看圖：藍色是 x 平方減一，紅色是直線二乘 x 減一。在 x 等於一附近，兩條貼在一起。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{f(x)}{g(x)}\\approx\\frac{f'(a)(x-a)}{g'(a)(x-a)}=\\frac{f'(a)}{g'(a)}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：e^(2x) − 1（切線斜率 2）；紅：sin 3x（切線斜率 3）"
+          ],
+          "say": "看例二：藍色像斜率 2 的直線，紅色像斜率 3，比值 3 分之 2。",
           "board": [
-            {"do":"plot","graph":{"window":[0,2,-1,3],"curves":[{"expr":"x^2-1","domain":[0,2],"color":"blue"},{"expr":"2*(x-1)","domain":[0,2],"color":"red"}],"points":[{"x":1,"y":0}]}}
-          ] },
-        { "show": ["$x^2-1=(x-1)(x+1)$","$x^2-1\\approx 2(x-1)$"],
-          "note": "斜率 $2$ 就是 $f'(1)$。",
-          "say": "x 平方減一等於 x 減一乘 x 加一。x 靠近一，x 加一就靠近二，所以大約是二乘 x 減一。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lin",
+                  "window": [
+                    -0.35,
+                    0.35,
+                    -1,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "e^(2*x)-1",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(3*x)",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "2*x",
+                      "color": "blue",
+                      "dash": true
+                    },
+                    {
+                      "expr": "3*x",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：e^(2x) − 1（切線斜率 2）；紅：sin 3x（切線斜率 3）",
+              "color": "violet",
+              "on": "色像#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這只是直覺：它假設 $f'(a)$、$g'(a)$ 存在，而且 $g'(a)\\ne0$"
+          ],
+          "say": "但這只是直覺，它多假設了 a 點可微。要真正證明。",
           "board": [
-            {"do":"write","line":"$x^2-1=(x-1)(x+1)$"},
-            {"do":"write","line":"$x^2-1\\approx {{t1:2}}(x-1)$","on":"所以"},
-            {"do":"focus","term":"t1","label":"斜率","on":"二乘"}
-          ] },
-        { "show": ["$(x-a)$ 約掉，剩 $\\frac{f'(a)}{g'(a)}$"],
-          "note": "兩條直線的比，就是斜率的比。",
-          "say": "兩個相除，x 減 a 約掉，只剩斜率的比。",
-          "board": [
-            {"do":"write","line":"$\\frac{f'(a)\\,{{c:(x-a)}}}{g'(a)\\,{{d:(x-a)}}}$"},
-            {"do":"strike","term":"c","on":"x 減 a"},
-            {"do":"strike","term":"d","on":"約掉"},
-            {"do":"write","line":"$\\frac{f'(a)}{g'(a)}$","on":"只剩"}
-          ] },
-        { "show": ["直覺，不是證明"],
-          "note": "沒交代誤差，也沒涵蓋 $\\frac{\\infty}{\\infty}$。",
-          "say": "這只是直覺：它假設導數存在、分母斜率不是零，也沒處理無限大比無限大。嚴格證明在最後那節。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"直覺，不是證明","color":"red","on":"這只是直覺"},
-            {"do":"write","line":"假設 $f'$、$g'$ 存在，$g'(a)\\ne0$","on":"假設導數"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "這只是直覺：它假設 $f'(a)$、$g'(a)$ 存在，而且 $g'(a)\\ne0$"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "零比零",
+      "title": "先證 Cauchy 均值定理",
       "beats": [
-        { "show": ["$\\lim_{x\\to 1}\\frac{\\ln x}{x-1}$"],
-          "note": "$\\ln 1=0$、$1-1=0$：是 $\\frac{0}{0}$。",
-          "say": "自然對數 x 除以 x 減一，x 趨近一。先檢查：上面是零，下面也是零。",
+        {
+          "show": [
+            "Cauchy 均值定理：$f$、$g$ 在 $[a,b]$ 連續、$(a,b)$ 可微，則有 $c\\in(a,b)$ 使",
+            "$\\big(f(b)-f(a)\\big)g'(c)=\\big(g(b)-g(a)\\big)f'(c)$"
+          ],
+          "say": "證明要用柯西均值定理：兩個函數一起看，中間有一點 c，讓交叉相乘相等。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to 1}\\frac{\\ln x}{x-1}$"},
-            {"do":"write","line":"$\\ln 1=0$，$1-1=0$","on":"上面是零"}
-          ] },
-        { "show": ["分子 $\\frac{1}{x}$，分母 $1$"],
-          "say": "可以用。自然對數 x 的導數是 x 分之一，x 減一的導數是一。",
+            {
+              "do": "write",
+              "line": "Cauchy 均值定理：$f$、$g$ 在 $[a,b]$ 連續、$(a,b)$ 可微，則有 $c\\in(a,b)$ 使"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\big(f(b)-f(a)\\big)g'(c)=\\big(g(b)-g(a)\\big)f'(c)}}$",
+              "on": "定理"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "中間"
+            },
+            {
+              "do": "write",
+              "line": "　$g(x)=x$ 時就是原本的均值定理",
+              "color": "violet",
+              "on": "讓交"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：令",
+            "$h(x)=\\big(f(b)-f(a)\\big)g(x)-\\big(g(b)-g(a)\\big)f(x)$"
+          ],
+          "say": "證明：構造這個 h。",
           "board": [
-            {"do":"write","line":"$(\\ln x)'=\\frac{1}{x}$，$(x-1)'=1$"}
-          ] },
-        { "show": ["$\\lim_{x\\to 1}\\frac{1/x}{1}=1$"],
-          "note": "正好是 $\\ln x$ 在 $x=1$ 的導數。",
-          "say": "代 x 等於一，得一。這正好是自然對數在一的導數：很多零比零本身就是某個導數。",
+            {
+              "do": "write",
+              "line": "證明：令"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle h(x)=\\big(f(b)-f(a)\\big)g(x)-\\big(g(b)-g(a)\\big)f(x)$",
+              "on": "這個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h(a)=f(b)g(a)-g(b)f(a)$",
+            "$h(b)=-f(a)g(b)+g(a)f(b)$：跟 $h(a)$ 一樣"
+          ],
+          "say": "代 a、代 b，乘開後兩端一樣高。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to 1}\\frac{1/x}{1}={{r:1}}$"},
-            {"do":"box","term":"r","color":"green","on":"得一"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "$h(a)=f(b)g(a)-g(b)f(a)$"
+            },
+            {
+              "do": "write",
+              "line": "$h(b)=-f(a)g(b)+g(a)f(b)$：跟 $h(a)$ 一樣",
+              "on": "乘開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h$ 連續、可微，Rolle ⇒ 有 $c$ 使 $h'(c)=0$：",
+            "$\\big(f(b)-f(a)\\big)g'(c)-\\big(g(b)-g(a)\\big)f'(c)=0\\quad\\blacksquare$"
+          ],
+          "say": "羅爾定理給出 h prime 是 0 的點，正好是要的等式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h$ 連續、可微，Rolle ⇒ 有 $c$ 使 $h'(c)=0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\big(f(b)-f(a)\\big)g'(c)-\\big(g(b)-g(a)\\big)f'(c)=0\\quad\\blacksquare}}$",
+              "on": "ri"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "正好"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "連續用兩次",
+      "title": "嚴格證明（$\\frac00$，$x\\to a^+$）",
       "beats": [
-        { "show": ["$\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$"],
-          "note": "分子分母都 $\\to\\infty$。",
-          "say": "x 平方除以 e 的 x 次方，x 趨近無限大。兩個都衝向無限大，是無限大比無限大。",
+        {
+          "show": [
+            "設 $f,g\\to0$（$x\\to a^+$），在 $(a,a+\\delta)$ 可微、$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$"
+          ],
+          "say": "現在證明右極限、0 分之 0 的情況，條件寫在這裡。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$"},
-            {"do":"write","line":"型：$\\frac{\\infty}{\\infty}$","on":"兩個都衝向"}
-          ] },
-        { "show": ["微分一次：$\\frac{2x}{e^x}$"],
-          "say": "各自微分一次，得到二 x 除以 e 的 x 次方。",
+            {
+              "do": "write",
+              "line": "設 $f,g\\to0$（$x\\to a^+$），在 $(a,a+\\delta)$ 可微、$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "補定義 $f(a)=g(a)=0$：$f$、$g$ 在 $[a,x]$ 連續"
+          ],
+          "say": "補定義 f of a、g of a 是 0，就連續了。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{{{n:2x}}}{e^x}$"},
-            {"do":"underline","term":"n","on":"二 x"}
-          ] }
+            {
+              "do": "write",
+              "line": "補定義 $f(a)=g(a)=0$：$f$、$g$ 在 $[a,x]$ 連續"
+            },
+            {
+              "do": "write",
+              "line": "　$f(a)$、$g(a)$ 原本的值不影響極限，可以這樣改",
+              "color": "violet",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任取 $x\\in(a,a+\\delta)$。$g(x)\\ne0$：否則 $g(a)=g(x)=0$，Rolle 給出 $g'=0$ 的點，矛盾"
+          ],
+          "say": "任取 a 右邊一點 x。g of x 不是 0，否則羅爾定理給出 g prime 為 0 的點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任取 $x\\in(a,a+\\delta)$。$g(x)\\ne0$：否則 $g(a)=g(x)=0$，Rolle 給出 $g'=0$ 的點，矛盾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $[a,x]$ 用 Cauchy 均值定理，有 $c_x\\in(a,x)$：",
+            "$f(x)\\,g'(c_x)=g(x)\\,f'(c_x)\\ \\Rightarrow\\ \\frac{f(x)}{g(x)}=\\frac{f'(c_x)}{g'(c_x)}$"
+          ],
+          "say": "在 a 到 x 用柯西均值定理：原來的比值，等於中間某點 c 的導數比值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在 $[a,x]$ 用 Cauchy 均值定理，有 $c_x\\in(a,x)$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle f(x)\\,g'(c_x)=g(x)\\,f'(c_x)\\ \\Rightarrow\\ \\frac{f(x)}{g(x)}=\\frac{f'(c_x)}{g'(c_x)}}}$",
+              "on": "值定"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "中間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個 $c_x$ 被夾在 $a$ 和 $x$ 之間"
+          ],
+          "say": "關鍵是：c 被夾在 a 和 x 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個 $c_x$ 被夾在 $a$ 和 $x$ 之間"
+            },
+            {
+              "do": "write",
+              "line": "　$c_x$ 跟著 $x$ 變，所以加下標",
+              "color": "violet",
+              "on": "之間"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "給定 $\\varepsilon>0$。因為 $\\dfrac{f'}{g'}\\to L$，有 $\\delta'$ 使",
+            "$a<t<a+\\delta'\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$"
+          ],
+          "say": "給定艾普西隆。導數比值趨近 L，所以有得塔 prime，在這範圍內差小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給定 $\\varepsilon>0$。因為 $\\dfrac{f'}{g'}\\to L$，有 $\\delta'$ 使"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a<t<a+\\delta'\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "當 $a<x<a+\\delta'$：$a<c_x<x<a+\\delta'$"
+          ],
+          "say": "x 在這個範圍時，c 夾在 a 和 x 之間，也在範圍裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "當 $a<x<a+\\delta'$：$a<c_x<x<a+\\delta'$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\left|\\frac{f(x)}{g(x)}-L\\right|=\\left|\\frac{f'(c_x)}{g'(c_x)}-L\\right|<\\varepsilon$"
+          ],
+          "say": "所以 f of x 除以 g of x 跟 L 的差，小於艾普西隆：右極限是 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\left|\\frac{f(x)}{g(x)}-L\\right|=\\left|\\frac{f'(c_x)}{g'(c_x)}-L\\right|<\\varepsilon}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "的差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左極限同理；兩邊合起來就是雙邊極限　$\\blacksquare$"
+          ],
+          "say": "左極限一樣。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左極限同理；兩邊合起來就是雙邊極限　$\\blacksquare$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac\\infty\\infty$ 與 $x\\to\\infty$ 的證明在 ⑦、⑧",
+              "color": "violet",
+              "on": "證明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "不是不定型就用：會錯",
+      "beats": [
+        {
+          "show": [
+            "有人直接用 L'Hôpital：$\\displaystyle\\lim_{x\\to0}\\frac{1}{1}=1$。正確答案是？"
+          ],
+          "say": "陷阱一：有人直接各自微分，得到 1。正確答案是？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to0}\\frac{x+1}{x+2}$"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "下一步是？",
+        "ask": "有人直接用 L'Hôpital：$\\displaystyle\\lim_{x\\to0}\\frac{1}{1}=1$。正確答案是？",
         "options": [
           {
-            "label": "還是 $\\frac{\\infty}{\\infty}$，再用一次",
-            "correct": true
-          },
-          {
-            "label": "代入，答案是 $0$",
-            "why": "$2x$ 還是 $\\to\\infty$，現在仍是 $\\frac{\\infty}{\\infty}$，不能直接下結論。"
-          },
-          {
-            "label": "不能再用了",
-            "why": "可以連續用，只要每一次都重新檢查是不定型。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "連鎖律別漏",
-      "beats": [
-        { "show": ["再微分一次：$\\frac{2}{e^x}\\to 0$"],
-          "note": "指數成長比任何多項式都快。",
-          "say": "再微分一次，分子固定是二，分母衝向無限大，所以極限是零。",
-          "board": [
-            {"do":"write","line":"再微分：$\\frac{{{n:2}}}{e^x}\\to 0$"},
-            {"do":"focus","term":"n","on":"分子固定"}
-          ] },
-        { "show": ["$\\lim_{x\\to 0}\\frac{e^{2x}-1}{\\sin 3x}$"],
-          "note": "$e^0-1=0$、$\\sin 0=0$：是 $\\frac{0}{0}$。",
-          "say": "再一題：e 的二 x 次方減一，除以 sine 三 x。代零，上下都是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\lim_{x\\to 0}\\frac{e^{2x}-1}{\\sin 3x}$","on":"再一題"},
-            {"do":"write","line":"$e^0-1=0$，$\\sin 0=0$","on":"代零"}
-          ] },
-        { "show": ["連鎖律：外層微分，再乘裡層導數"],
-          "note": "$e^{2x}$：外層 $e^u$，裡層 $2x$。",
-          "say": "連鎖律：外層微分後，裡面原封不動，再乘裡層的導數。e 的二 x 次方，裡層二 x 的導數是二。",
-          "board": [
-            {"do":"write","line":"$(e^{2x})'=e^{2x}\\cdot{{d1:(2x)'}}$"},
-            {"do":"focus","term":"d1","label":"裡層導數","on":"再乘"}
-          ] },
-        { "show": ["$(\\sin 3x)'=\\cos 3x\\cdot 3$"],
-          "note": "外層 $\\sin u$ 變 $\\cos u$，裡層 $3x$。",
-          "say": "sine 三 x 也一樣：外層 sine 微分變 cosine，三 x 原封不動，再乘裡層的導數三。",
-          "board": [
-            {"do":"write","line":"$(\\sin 3x)'=\\cos 3x\\cdot{{t2:3}}$"},
-            {"do":"focus","term":"t2","label":"裡層導數","on":"再乘"}
-          ] },
-        { "show": ["分子 $2e^{2x}$，分母 $3\\cos 3x$"],
-          "note": "連鎖律：裡層的導數 $2$、$3$。",
-          "say": "微分要用連鎖律：分子多一個二，分母是三倍 cosine 三 x。",
-          "board": [
-            {"do":"write","line":"分子 ${{c:2}}e^{2x}$，分母 ${{d:3}}\\cos 3x$"},
-            {"do":"focus","term":"c","label":"裡層導數","on":"多一個二"},
-            {"do":"focus","term":"d","on":"三倍"}
-          ] }
-      ],
-      "key": "分子分母各自用連鎖律，裡層導數別丟",
-      "predict": {
-        "ask": "代入 $x=0$，極限是？",
-        "options": [
-          {
-            "label": "$\\frac{2}{3}$",
+            "label": "$\\dfrac12$",
             "correct": true
           },
           {
             "label": "$1$",
-            "why": "連鎖律漏掉了：$e^{2x}$ 微分寫成 $e^{2x}$、$\\sin 3x$ 寫成 $\\cos 3x$，才會得到 $\\frac{1}{1}$。"
+            "why": "這就是錯用 L'Hôpital 的結果：$\\frac12$ 不是 $\\frac00$"
           },
           {
-            "label": "$\\frac{3}{2}$",
-            "why": "分子分母弄反了：分子 $2e^{2x}$ 在上面，代入是 $\\frac{2}{3}$。"
+            "label": "不存在",
+            "why": "分母趨近 $2\\ne0$，直接代就有極限"
           }
         ]
       }
     },
     {
-      "title": "用錯和打不開",
+      "title": "不是不定型就用：會錯",
       "beats": [
-        { "show": ["$\\lim_{x\\to 0}\\frac{x+1}{x+2}=\\frac{1}{2}$"],
-          "note": "不是不定型，直接代入。",
-          "say": "x 加一除以 x 加二，x 趨近零。上面是一，下面是二，不是不定型，答案是二分之一。",
+        {
+          "show": [
+            "代 $0$：$\\dfrac{1}{2}$，不是$\\frac00$、也不是 $\\frac\\infty\\infty$",
+            "各自微分得到 $1$：錯"
+          ],
+          "say": "直接代 0 是 2 分之 1，它根本不是不定型。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to 0}{{fr:\\frac{x+1}{x+2}}}=\\frac{1}{2}$"},
-            {"do":"underline","term":"fr","label":"不是 0/0","on":"不是不定型"}
-          ] },
-        { "show": ["硬用：$\\frac{1}{1}=1$"],
-          "note": "錯的。",
-          "say": "沒檢查就硬微分，上下都變成一，得到一，是錯的。",
+            {
+              "do": "write",
+              "line": "代 $0$：$\\dfrac{1}{2}$，不是$\\frac00$、也不是 $\\frac\\infty\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "各自微分得到 $1$：錯",
+              "color": "red",
+              "on": "它根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先檢查，永遠是第一步"
+          ],
+          "say": "所以每次用之前，都要先代代看。",
           "board": [
-            {"do":"write","line":"硬用：${{w:\\frac{1}{1}=1}}$"},
-            {"do":"strike","term":"w","on":"得到一"}
-          ] },
-        { "show": ["$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$"],
-          "note": "同除以 $x$：$1+\\frac{\\sin x}{x}\\to 1$。",
-          "say": "另一種情況：x 加 sine x 除以 x。同除以 x，sine x 除以 x 趨近零，極限是一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$","on":"x 加 sine"},
-            {"do":"write","line":"$=\\lim_{x\\to\\infty}(1+\\frac{\\sin x}{x})=1$","on":"同除以"}
-          ] },
-        { "show": ["L'Hôpital：$\\frac{1+\\cos x}{1}$ 一直晃"],
-          "note": "在 $0$ 到 $2$ 之間，沒有極限。",
-          "say": "用羅必達會得到一加 cosine x，在零和二之間一直晃。這不是說原極限不存在，只是要換方法。",
-          "board": [
-            {"do":"write","line":"L'Hôpital：$\\frac{ {{cs:1+\\cos x}} }{1}$ 一直晃"},
-            {"do":"focus","term":"cs","label":"0 到 2 之間","on":"在零和二"}
-          ] }
-      ],
-      "key": "先確認是不定型；硬套會得出錯的值",
-      "check": 3
+            {
+              "do": "write",
+              "line": "先檢查，永遠是第一步",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：零比零",
+      "title": "$\\frac{f'}{g'}$ 沒有極限",
       "beats": [
-        { "show": ["補端點 → Rolle → 取極限"],
-          "note": "只證 $x\\to a^+$ 的 $\\frac{0}{0}$。",
-          "say": "策略：只證零比零、從右邊逼近。補好端點，用 Rolle 定理把比值換成導數的比，再取極限。",
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}\\qquad\\left(\\frac\\infty\\infty\\right)$",
+            "各自微分：$\\dfrac{1+\\cos x}{1}$：一直在 $0$ 到 $2$ 之間振盪，沒有極限"
+          ],
+          "say": "陷阱二：各自微分得 1 加餘弦 x，一直振盪，沒有極限。",
           "board": [
-            {"do":"write","line":"補端點 → Rolle → 取極限"}
-          ] },
-        { "show": ["定 $f(a)=g(a)=0$"],
-          "note": "改完 $f$、$g$ 在 $a$ 右連續。",
-          "why": {"ask":"為什麼可以把 $f(a)$、$g(a)$ 改成 $0$？","say":"第一步就去改 f 和 g 在 a 的值。這樣改，為什麼可以？","options":[{"label":"極限不看 $a$ 這一點的值","correct":true},{"label":"$f$、$g$ 在 $a$ 連續，本來就是 $0$","why":"沒假設 $f$、$g$ 在 $a$ 有定義，更沒說連續；是改了之後才右連續。"},{"label":"$f$、$g$ 在 $a$ 可微","why":"可微只假設在 $(a,a+\\delta)$；$a$ 這一點可以沒有定義。"}]},
-          "say": "把 f 和 g 在 a 的值都定成零。極限不看那一點，改了不影響，而且這樣在 a 右連續。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}\\qquad\\left(\\frac\\infty\\infty\\right)$"
+            },
+            {
+              "do": "write",
+              "line": "各自微分：$\\dfrac{1+\\cos x}{1}$：一直在 $0$ 到 $2$ 之間振盪，沒有極限",
+              "on": "一直"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這不代表原來的極限不存在：L'Hôpital 只是不說話"
+          ],
+          "say": "這不代表原來的極限不存在，羅必達法則只是不說話。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"定 $f(a)=g(a)=0$","on":"第一步"},
-            {"do":"write","line":"極限不看那一點；改完在 $a$ 右連續","why":true,"on":"極限不看"}
-          ] },
-        { "show": ["$g(x)\\ne0$"],
-          "note": "否則 Rolle 給出 $g'=0$ 的點。",
-          "say": "g 在 x 不會是零：不然兩端都是零，Rolle 定理給出導數是零的點，跟假設矛盾。",
+            {
+              "do": "write",
+              "line": "這不代表原來的極限不存在：L'Hôpital 只是不說話",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換別的方法：",
+            "$\\frac{x+\\sin x}{x}=1+\\frac{\\sin x}{x}\\to1+0=1$"
+          ],
+          "say": "換方法：拆成 1 加 x 分之正弦 x，後面趨近 0，答案是 1。",
           "board": [
-            {"do":"write","line":"${{gx:g(x)\\ne0}}$"},
-            {"do":"underline","term":"gx","label":"否則套 Rolle","on":"不然兩端"}
-          ] },
-        { "show": ["$h(t)=f(t)g(x)-g(t)f(x)$","$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，$a<c<x$"],
-          "note": "$h(a)=h(x)=0$，用 Rolle。",
-          "say": "固定 x 造 h，兩端都是零。Rolle 定理給出 c，同除之後，比值就換成導數的比。",
+            {
+              "do": "write",
+              "line": "換別的方法："
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\frac{x+\\sin x}{x}=1+\\frac{\\sin x}{x}\\to1+0=1}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "後面"
+            },
+            {
+              "do": "write",
+              "line": "　$\\left|\\frac{\\sin x}x\\right|\\le\\frac1x\\to0$：夾擠定理",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「$\\frac{f'}{g'}$ 有極限」是充分條件，不是必要條件"
+          ],
+          "say": "記住：導數比值有極限，才保證原來的有極限；反過來不一定。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{h:h(t)}}=f(t)g(x)-g(t)f(x)$","on":"固定 x"},
-            {"do":"underline","term":"h","label":"兩端都是 0","on":"兩端都是零"},
-            {"do":"write","line":"$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，${{c:a<c<x}}$","tint":{"c":"violet"},"on":"同除之後"}
-          ] },
-        { "show": ["Rolle"],
-          "say": "t 等於 a，f a 和 g a 是零；t 等於 x，兩項抵銷。Rolle 定理：兩端一樣高，中間有一點導數是零。",
+            {
+              "do": "write",
+              "line": "「$\\frac{f'}{g'}$ 有極限」是充分條件，不是必要條件"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "連續用，每次都要檢查",
+      "beats": [
+        {
+          "show": [
+            "例 3：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$",
+            "檢查：$\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2x}{e^x}$"
+          ],
+          "say": "例三：上下都趨近無限大，微分得 2x 除以 e 的 x 次方。",
           "board": [
-            {"do":"write","line":"$h(a)=0\\cdot g(x)-0\\cdot f(x)=0$"},
-            {"do":"write","line":"$h(x)=f(x)g(x)-g(x)f(x)=0$","on":"t 等於 x"},
-            {"do":"write","line":"Rolle：有 ${{c:a<c<x}}$，$h'(c)=0$","tint":{"c":"violet"},"on":"Rolle"}
-          ] },
-        { "show": ["$x\\to a^+$ ⇒ $c\\to a^+$","所以 $\\frac{f(x)}{g(x)}\\to L$"],
-          "note": "$x<a+\\eta$ 就有 $c<a+\\eta$。",
-          "why": {"ask":"為什麼導數比也 $\\to L$？","say":"c 會跟著 x 變。導數的比，為什麼還是靠近 L？","options":[{"label":"$a<c<x$，$c$ 被擠向 $a$","correct":true},{"label":"$c$ 是固定的一點","why":"$c$ 跟著 $x$ 變，不是固定的；是 $a<c<x$ 把它夾住。"},{"label":"$f'$、$g'$ 在 $a$ 連續","why":"定理沒假設導數連續，只假設 $\\frac{f'}{g'}$ 有極限 $L$。"}]},
-          "say": "c 夾在 a 和 x 中間。x 擠向 a，c 也被擠過去，導數的比靠近 L，原來的比值也一樣。",
+            {
+              "do": "write",
+              "line": "例 3：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$"
+            },
+            {
+              "do": "write",
+              "line": "檢查：$\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2x}{e^x}$",
+              "on": "2x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再檢查：還是 $\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2}{e^x}$"
+          ],
+          "say": "再檢查：還是同型，再用一次。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$x\\to a^+$ ⇒ $c\\to a^+$","on":"c 會跟著"},
-            {"do":"underline","term":"c","label":"夾在中間","why":true,"on":"夾在"},
-            {"do":"write","line":"所以 $\\frac{f(x)}{g(x)}\\to L$","color":"green","why":true,"on":"原來的"}
-          ] }
+            {
+              "do": "write",
+              "line": "再檢查：還是 $\\dfrac\\infty\\infty$ ⇒ $\\displaystyle\\lim_{x\\to\\infty}\\frac{2}{e^x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}\\frac{2}{e^x}=0$"
+          ],
+          "say": "答案是 0：指數函數長得比任何多項式都快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle \\lim_{x\\to\\infty}\\frac{2}{e^x}=0}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "數函"
+            },
+            {
+              "do": "write",
+              "line": "　例：$x=20$ 時 $\\frac{x^2}{e^x}\\approx8.2\\times10^{-7}$",
+              "color": "violet",
+              "on": "何多"
+            }
+          ]
+        }
       ],
-      "key": "造 $h(t)$ 讓兩端都是 $0$，套 Rolle",
-      "proof": true,
-      "of": 4,
-      "skeleton": "構造",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "定 $f(a)=g(a)=0$"
-          },
-          {
-            "label": "Rolle 推出 $g(x)\\ne0$",
-            "why": "要先有 $g(a)=0$，$g(x)=0$ 才會兩端等高、套得上 Rolle。"
-          },
-          {
-            "label": "造 $h$，得 $\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$",
-            "why": "同除以 $g(x)$ 之前，要先知道 $g(x)\\ne0$。"
-          },
-          {
-            "label": "$c$ 被夾向 $a$，取極限得 $L$",
-            "why": "要先有那個 $c$，才談得上 $c$ 被夾向 $a$。"
-          }
-        ]
-      }
+      "check": 1
+    },
+    {
+      "title": "連續用，每次都要檢查",
+      "beats": [
+        {
+          "show": [
+            "一旦不是不定型就停，直接代"
+          ],
+          "say": "不是不定型就停，直接代。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一旦不是不定型就停，直接代",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：∞/∞（策略）",
+      "beats": [
+        {
+          "show": [
+            "設 $x\\to a^+$ 時 $g(x)\\to\\pm\\infty$；$f$、$g$ 在 $(a,a+\\delta)$ 可微，$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$（實數）"
+          ],
+          "say": "現在證無限大分之無限大，一樣看右極限，只是 g 趨近無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $x\\to a^+$ 時 $g(x)\\to\\pm\\infty$；$f$、$g$ 在 $(a,a+\\delta)$ 可微，$g'\\ne0$，$\\dfrac{f'}{g'}\\to L$（實數）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "困難：$f$、$g$ 在 $a$ 爆掉，不能補成 0，不能在 $[a,x]$ 上用 Cauchy"
+          ],
+          "say": "困難：在 a 爆掉，不能補成 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "困難：$f$、$g$ 在 $a$ 爆掉，不能補成 0，不能在 $[a,x]$ 上用 Cauchy"
+            }
+          ]
+        },
+        {
+          "show": [
+            "想法：固定 $c$（$a<x<c$），改在 $[x,c]$ 上用：",
+            "$\\frac{f(x)-f(c)}{g(x)-g(c)}=\\frac{f'(\\xi)}{g'(\\xi)},\\quad\\xi\\in(x,c)$"
+          ],
+          "say": "想法：固定一點 c，改在 x 到 c 上用柯西均值定理：變化量的比值，等於中間某點克賽的導數比值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "想法：固定 $c$（$a<x<c$），改在 $[x,c]$ 上用："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{f(x)-f(c)}{g(x)-g(c)}=\\frac{f'(\\xi)}{g'(\\xi)},\\quad\\xi\\in(x,c)$",
+              "on": "上用"
+            },
+            {
+              "do": "write",
+              "line": "　$g(x)\\ne g(c)$：否則 Rolle 給出 $g'=0$ 的點",
+              "color": "violet",
+              "on": "比值#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $\\dfrac{f(x)}{g(x)}$ 跟它連起來（乘開可驗算）：",
+            "$\\begin{aligned}\\frac{f(x)}{g(x)}=\\;&\\frac{f(x)-f(c)}{g(x)-g(c)}\\Big(1-\\frac{g(c)}{g(x)}\\Big)\\\\&+\\frac{f(c)}{g(x)}\\end{aligned}$"
+          ],
+          "say": "把原來的比值改寫成這樣，乘開就能驗算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把 $\\dfrac{f(x)}{g(x)}$ 跟它連起來（乘開可驗算）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx12:\\displaystyle {\\begin{aligned}\\frac{f(x)}{g(x)}=\\;&\\frac{f(x)-f(c)}{g(x)-g(c)}\\Big(1-\\frac{g(c)}{g(x)}\\Big)\\\\&+\\frac{f(c)}{g(x)}\\end{aligned}}}}$",
+              "color": "red",
+              "on": "改寫"
+            },
+            {
+              "do": "box",
+              "term": "bx12",
+              "color": "red",
+              "on": "乘開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c$ 固定、$g(x)\\to\\infty$：括號 $\\to1$，最後一項 $\\to0$"
+          ],
+          "say": "c 固定，g 爆掉：括號趨近 1，最後一項趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c$ 固定、$g(x)\\to\\infty$：括號 $\\to1$，最後一項 $\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c$ 靠近 $a$ ⇒ 第一個比值靠近 $L$"
+          ],
+          "say": "而 c 靠近 a，第一個比值就靠近 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c$ 靠近 $a$ ⇒ 第一個比值靠近 $L$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "∞/∞：正式證明",
+      "beats": [
+        {
+          "show": [
+            "給定 $0<\\varepsilon<1$。取 $c\\in(a,a+\\delta)$ 使",
+            "$a<t<c\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$"
+          ],
+          "say": "正式寫：給定小於 1 的艾普西隆，選好 c，讓導數比值跟 L 差不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給定 $0<\\varepsilon<1$。取 $c\\in(a,a+\\delta)$ 使"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a<t<c\\ \\Rightarrow\\ \\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$",
+              "on": "讓導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a<x<c$ 時，令 $Q=\\dfrac{f(x)-f(c)}{g(x)-g(c)}=\\dfrac{f'(\\xi)}{g'(\\xi)}$：",
+            "$|Q-L|<\\varepsilon,\\qquad|Q|<|L|+1$"
+          ],
+          "say": "變化量比值叫 Q，它等於克賽的導數比值，所以跟 L 差不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a<x<c$ 時，令 $Q=\\dfrac{f(x)-f(c)}{g(x)-g(c)}=\\dfrac{f'(\\xi)}{g'(\\xi)}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |Q-L|<\\varepsilon,\\qquad|Q|<|L|+1$",
+              "on": "比值#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由上一頁的等式：",
+            "$\\frac{f(x)}{g(x)}-L=(Q-L)-Q\\,\\frac{g(c)}{g(x)}+\\frac{f(c)}{g(x)}$"
+          ],
+          "say": "用上一頁的等式減掉 L，拆成三項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "由上一頁的等式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{f(x)}{g(x)}-L=(Q-L)-Q\\,\\frac{g(c)}{g(x)}+\\frac{f(c)}{g(x)}$",
+              "on": "拆成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c$ 已固定、$g(x)\\to\\pm\\infty$：有 $\\delta_2$ 使 $a<x<a+\\delta_2$ 時",
+            "$(|L|+1)\\left|\\frac{g(c)}{g(x)}\\right|<\\varepsilon,\\qquad\\left|\\frac{f(c)}{g(x)}\\right|<\\varepsilon$"
+          ],
+          "say": "x 夠靠近 a 時，後兩項都小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c$ 已固定、$g(x)\\to\\pm\\infty$：有 $\\delta_2$ 使 $a<x<a+\\delta_2$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (|L|+1)\\left|\\frac{g(c)}{g(x)}\\right|<\\varepsilon,\\qquad\\left|\\frac{f(c)}{g(x)}\\right|<\\varepsilon$",
+              "on": "後兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a<x<\\min(c,\\,a+\\delta_2)$ 時，三項各小於 $\\varepsilon$：",
+            "$\\left|\\frac{f(x)}{g(x)}-L\\right|<3\\varepsilon\\qquad\\blacksquare$"
+          ],
+          "say": "三項加起來小於 3 倍艾普西隆，所以極限是 L。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a<x<\\min(c,\\,a+\\delta_2)$ 時，三項各小於 $\\varepsilon$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx13:\\displaystyle \\left|\\frac{f(x)}{g(x)}-L\\right|<3\\varepsilon\\qquad\\blacksquare}}$",
+              "color": "red",
+              "on": "倍艾"
+            },
+            {
+              "do": "box",
+              "term": "bx13",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　$L=\\pm\\infty$ 時想法相同：$Q$ 很大、括號 $\\to1$；證明從略",
+              "color": "violet",
+              "on": "證明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：$x\\to\\infty$",
+      "beats": [
+        {
+          "show": [
+            "令 $x=\\dfrac1t$：$x\\to\\infty$ 就是 $t\\to0^+$。令",
+            "$F(t)=f\\Big(\\frac1t\\Big),\\qquad G(t)=g\\Big(\\frac1t\\Big)$"
+          ],
+          "say": "最後，x 趨近無限大：令 x 等於 t 分之 1，變成 t 從右邊趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $x=\\dfrac1t$：$x\\to\\infty$ 就是 $t\\to0^+$。令"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F(t)=f\\Big(\\frac1t\\Big),\\qquad G(t)=g\\Big(\\frac1t\\Big)$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "連鎖律：",
+            "$\\begin{aligned}F'(t)&=f'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\\\G'(t)&=g'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\ne0\\end{aligned}$"
+          ],
+          "say": "連鎖律：各多乘一個負 t 平方分之 1，所以 G prime 也不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}F'(t)&=f'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\\\G'(t)&=g'\\Big(\\frac1t\\Big)\\cdot\\Big(-\\frac1{t^2}\\Big)\\ne0\\end{aligned}}$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{F'(t)}{G'(t)}=\\frac{f'(1/t)}{g'(1/t)}\\to L\\quad(t\\to0^+)$"
+          ],
+          "say": "相除就約掉，比值趨近 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{F'(t)}{G'(t)}=\\frac{f'(1/t)}{g'(1/t)}\\to L\\quad(t\\to0^+)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F$、$G$ 跟 $f$、$g$ 同型，套已證的右極限版本：",
+            "$\\lim_{x\\to\\infty}\\frac{f(x)}{g(x)}=\\lim_{t\\to0^+}\\frac{F(t)}{G(t)}=L\\quad\\blacksquare$"
+          ],
+          "say": "套已證的右極限版本，原來的極限就是 L。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$F$、$G$ 跟 $f$、$g$ 同型，套已證的右極限版本："
+            },
+            {
+              "do": "write",
+              "line": "${{bx14:\\displaystyle \\lim_{x\\to\\infty}\\frac{f(x)}{g(x)}=\\lim_{t\\to0^+}\\frac{F(t)}{G(t)}=L\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "限版"
+            },
+            {
+              "do": "box",
+              "term": "bx14",
+              "color": "red",
+              "on": "的極"
+            },
+            {
+              "do": "write",
+              "line": "　$x\\to-\\infty$ 同理，令 $t\\to0^-$",
+              "color": "violet",
+              "on": "證明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 使用前先檢查：$\\frac00$ 或 $\\frac\\infty\\infty$",
+            "• 分子、分母各自微分，不是除法法則"
+          ],
+          "say": "整理：先檢查型，再各自微分；證明靠柯西均值定理。下一課，其他不定型。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 使用前先檢查：$\\frac00$ 或 $\\frac\\infty\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "• 分子、分母各自微分，不是除法法則",
+              "on": "檢查"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：Cauchy 均值定理，$\\frac{f(x)}{g(x)}=\\frac{f'(c_x)}{g'(c_x)}$",
+              "on": "再各"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac\\infty\\infty$：在 $[x,c]$ 上用；$x\\to\\infty$：令 $x=\\frac1t$",
+              "on": "證明"
+            },
+            {
+              "do": "write",
+              "line": "• 不是不定型就用：答案會錯",
+              "on": "柯西"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{f'}{g'}$ 沒有極限：法則不說話，換方法",
+              "on": "定理"
+            },
+            {
+              "do": "write",
+              "line": "• 可以連續用，每次重新檢查",
+              "on": "一課"
+            },
+            {
+              "do": "write",
+              "line": "下一課：其他不定型",
+              "on": "他不"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

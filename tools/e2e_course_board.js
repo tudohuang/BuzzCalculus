@@ -24,10 +24,17 @@ const { charOf } = require("./lib/course_board_check.js");
 const ROOT = path.join(__dirname, "..");
 const PHONE = { width: 390, height: 844, deviceScaleFactor: 3, mobile: true };
 const LESSON_DIR = path.join(ROOT, "tools", "content", "course_v2", "lessons");
-const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}.json`), "utf8"));
+// 網站上的課 2026-10-23 換成交付的筆記本課；這支測的引擎功能用舊版的課（lessons_v1/）測，開頁時塞進頁面（tools/lib/course_v1_fixture.js）
+const FX = require("./lib/course_v1_fixture.js");
+const USED = new Set();
+const lessonOf = (id) => { USED.add(id); return FX.lessonOf(id); };
+// run 裡面才讀的課也要在開頁前塞：魔王章那一課（BOSS_BOARD）
+USED.add("power-series-calculus");
 // 沒有黑板的課：黑板會一批批鋪開，寫死一課遲早會被鋪到 —— 照檔名順序挑第一課整課都沒有 board 的
-const PLAIN = fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")).sort()
-  .map((f) => lessonOf(f.replace(/\.json$/, "")))
+// 黑板上有「$，$」那一行的課（CM，第 385 行附近用）：要在開頁前就塞進去
+const CM_ID = (() => { for (const L of FX.allIds().map((id) => FX.lessonOf(id))) for (const s of L.sections || []) if (s.beats.some((x) => (x.board || []).some((a) => /\$，\$/.test(a.line || "")))) return L.id; return null; })();
+const PLAIN = FX.allIds()
+  .map((id) => FX.lessonOf(id))
   .find((L) => (L.sections || []).length && !L.sections.some((s) => s.beats.some((b) => b.board)));
 const CHAIN = lessonOf("chain-rule");
 const FTC = lessonOf("ftc-part1");
@@ -108,6 +115,8 @@ async function run() {
   console.log("E2E 課程黑板 v2");
   const server = await staticServer.start(ROOT, 0);
   const chrome = await launch();
+  if (PLAIN) USED.add(PLAIN.id);
+  await chrome.send("Page.addScriptToEvaluateOnNewDocument", { source: FX.script([...USED, ...(CM_ID ? [CM_ID] : [])]) });
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
   const sleep = (ms) => chrome.sleep(ms);
   // 等的是「狀態到了」，逾時只是上限：慢的 runner／CPU 降速時放寬（不影響斷言本身）
@@ -382,7 +391,7 @@ async function run() {
     await motion(true);
 
     /* ── 全形逗號：正體字型把「，」擺在字格正中，夾在兩段式子之間看起來像乘號「·」；板上要換成貼基線的逗號 ── */
-    const CM = (() => { for (const L of fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")).sort().map((f) => lessonOf(f.replace(/\.json$/, "")))) for (let si = 0; si < (L.sections || []).length; si += 1) if (L.sections[si].beats.some((b) => (b.board || []).some((a) => /\$，\$/.test(a.line || "")))) return { L, si }; return null; })();
+    const CM = (() => { for (const L of FX.allIds().map((id) => FX.lessonOf(id))) for (let si = 0; si < (L.sections || []).length; si += 1) if (L.sections[si].beats.some((b) => (b.board || []).some((a) => /\$，\$/.test(a.line || "")))) return { L, si }; return null; })();
     check(`找得到式子之間夾「，」的黑板（${CM ? `${CM.L.id} 第 ${CM.si + 1} 節` : "沒有"}）`, Boolean(CM) && await openLesson(CM.L.id) && await go(CM.si, CM.L.id) && await waitFor(`window.__b.board() && window.__b.board().querySelector(".cvb-cm")`, 6000));
     const cm = await evaluate(`const b = window.__b.board(); const cx = document.createElement("canvas").getContext("2d"); const g = (n, t) => { const cs = getComputedStyle(n); cx.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily; const m = cx.measureText(t); return { up: m.actualBoundingBoxAscent / parseFloat(cs.fontSize), down: m.actualBoundingBoxDescent / parseFloat(cs.fontSize) }; }; const n = b.querySelector(".cvb-cm"); return { raw: [...b.querySelectorAll(".cvb-x")].filter((x) => x.textContent.includes("，")).length, text: n.textContent, ink: g(n, n.textContent), full: g(n, "，") };`);
     check("黑板上的「，」畫成貼基線的逗號（墨水從基線往下掛、頂不超過 0.3 字高），不是字格正中的小點", cm.raw === 0 && cm.text === "," && cm.ink.down > 0 && cm.ink.up < 0.3, JSON.stringify(cm));

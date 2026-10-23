@@ -1,49 +1,144 @@
 {
   "id": "ratio-test",
   "title": "比值判別",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["geometric-series", "comparison-test", "limit-e-type"],
-  "next": ["root-test"],
-  "related": ["absolute-convergence", "limit-comparison-test", "radius-of-convergence"],
-  "objectives": [
-    "算 $L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$，並說出 $L<1$、$L>1$、$L=1$ 各自的結論。",
-    "熟練約分 $\\frac{(n+1)!}{n!}$、$\\left(\\frac{n}{n+1}\\right)^n$ 這類比值。",
-    "看出什麼時候該用比值判別（階乘、$b^n$、$n^n$），什麼時候它一定失效（有理式、$p$ 級數）。"
+  "prerequisites": [
+    "geometric-series",
+    "comparison-test",
+    "limit-e-type"
   ],
-  "visual": "畫出 aₙ = n²/2ⁿ 的相鄰比值 aₙ₊₁/aₙ，n = 1 到 30：點先在 1 以上，很快掉到 1 以下並貼向 0.5。另一個面板把同一個級數的長條，和從第 N 項開始、公比 0.75 的幾何級數長條疊在一起：從那之後，原級數的長條都被幾何級數蓋住。",
+  "next": [
+    "root-test"
+  ],
+  "related": [
+    "absolute-convergence",
+    "limit-comparison-test",
+    "radius-of-convergence"
+  ],
+  "objectives": [
+    "算 $L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$，並說出 $L<1$、$L>1$、$L=1$ 各是什麼結論",
+    "熟練約分 $\\frac{(n+1)!}{n!}$、$\\left(\\frac{n}{n+1}\\right)^n$ 這類比值，並用 $e$ 型極限算出來",
+    "看出什麼時候該用比值判別（階乘、$b^n$、$n^n$），什麼時候它一定失效（有理式、$p$ 級數）"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 直觀：最後長得像幾何級數",
+      "heading": "① 最後像幾何級數",
       "body": [
-        "如果相鄰兩項的比 $\\frac{a_{n+1}}{a_n}$ 趨近 $L$，那麼 $n$ 很大時每一項大約是前一項的 $L$ 倍，級數的尾巴長得像公比 $L$ 的幾何級數（〈幾何級數〉）。$L<1$ 就收斂，$L>1$ 就發散。"
+        "幾何級數：後一項 ÷ 前一項 永遠是 $r$",
+        "如果比值不是常數，但趨近一個數 $L$ 呢？",
+        "例：$a_n=\\dfrac{n^2}{2^n}$",
+        "$n$ 很大時，每一項大約是前一項的 $\\frac12$：像公比 $\\frac12$ 的幾何級數",
+        "實際的和是 $6$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{a_{n+1}}{a_n}=r\\qquad|r|<1\\ \\text{收斂}",
+        "\\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}=\\frac12\\Big(\\frac{n+1}{n}\\Big)^2"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設 $L=\\lim_{n\\to\\infty}\\left|\\frac{a_{n+1}}{a_n}\\right|$（可以是 $\\infty$）。",
-        "$L<1$：$\\sum a_n$ 收斂，而且是絕對收斂（$\\sum|a_n|$ 也收斂，見〈絕對收斂〉；正項級數就是收斂）。",
-        "$L>1$ 或 $L=\\infty$：發散。此時從某一項起 $|a_{n+1}|>|a_n|$，各項不趨近 0。",
-        "$L=1$：沒有結論。$\\sum\\frac{1}{n}$ 和 $\\sum\\frac{1}{n^2}$ 的比值極限都是 1，一個發散、一個收斂。"
+        "• $L<1$：絕對收斂（正項級數就是收斂）",
+        "• $L>1$ 或 $L=\\infty$：發散",
+        "• $L=1$：沒有結論",
+        "「絕對收斂」6.17 才正式講；這一章都是正項級數，絕對值可以先不管"
       ],
-      "collapsible": false
+      "tex": [
+        "L=\\lim_{n\\to\\infty}\\left|\\frac{a_{n+1}}{a_n}\\right|"
+      ]
     },
     {
-      "heading": "③ 什麼時候用",
+      "heading": "② $L=1$ 的時候",
       "body": [
-        "有階乘、$b^n$、$n^n$ 的級數：比值會大量約分。$\\frac{(n+1)!}{n!}=n+1$；$\\frac{2^{n+1}}{2^n}=2$；$\\frac{(n+1)^{n+1}}{n^n}$ 要拆成 $(n+1)\\cdot\\left(\\frac{n+1}{n}\\right)^n$，後者 $\\to e$（〈e 型極限〉）。",
-        "有理式、根號、$p$ 級數：比值一定 $\\to 1$，比值判別必定失效。這類用〈極限比較判別〉。"
+        "$L=1$ 真的什麼都不知道",
+        "一定失效的類型：有理式、$p$ 級數",
+        "多項式的比值 $\\frac{P(n+1)}{P(n)}\\to1$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{n}{n+1}\\to1,\\quad\\frac{n^2}{(n+1)^2}\\to1"
+      ]
+    },
+    {
+      "heading": "③ 例：多項式 × 指數",
+      "body": [
+        "同底的指數先約：$\\dfrac{2^n}{2^{n+1}}=\\dfrac12$",
+        "$L=\\dfrac12<1$ ⇒ 收斂",
+        "多項式的比值 $\\to1$，指數的比值決定一切",
+        "同理 $\\sum n^{100}\\big(\\frac{9}{10}\\big)^n$：$L=\\frac9{10}$，收斂"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}",
+        "\\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}",
+        "=\\frac12\\Big(1+\\frac1n\\Big)^2\\to\\frac12"
+      ]
+    },
+    {
+      "heading": "③ 例：階乘配 $n^n$",
+      "body": [
+        "階乘：$\\dfrac{(n+1)!}{n!}=n+1$",
+        "$e$ 型極限（1.11）：",
+        "$L=\\dfrac1e\\approx0.368<1$ ⇒ 收斂",
+        "驗算：$n=10$ 時比值 $\\approx0.386$，已經很接近 $\\frac1e$"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}",
+        "\\frac{a_{n+1}}{a_n}=\\frac{(n+1)!}{(n+1)^{n+1}}\\cdot\\frac{n^n}{n!}",
+        "=\\frac{(n+1)\\,n^n}{(n+1)^{n+1}}=\\frac{n^n}{(n+1)^n}=\\Big(\\frac{n}{n+1}\\Big)^n",
+        "\\Big(\\frac{n}{n+1}\\Big)^n=\\frac{1}{\\big(1+\\frac1n\\big)^n}\\to\\frac1e"
+      ]
+    },
+    {
+      "heading": "③ 例：$L>1$",
+      "body": [
+        "同樣的約分，上下顛倒：",
+        "$L=e\\approx2.718>1$ ⇒ 發散",
+        "其實項本身就 $\\to\\infty$：$L>1$ 時項不會趨近 $0$",
+        "什麼時候用比值判別？",
+        "有階乘 $n!$、$(2n)!$",
+        "有指數 $b^n$、$n^n$",
+        "相鄰兩項約得掉"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{n^n}{n!}",
+        "\\frac{a_{n+1}}{a_n}=\\Big(\\frac{n+1}{n}\\Big)^n=\\Big(1+\\frac1n\\Big)^n\\to e"
+      ]
+    },
+    {
+      "heading": "③ 什麼時候失效",
+      "body": [
+        "有理式、$p$ 級數：$L=1$，改用比較判別"
+      ]
     },
     {
       "heading": "④ 證明",
       "body": [
-        "$L<1$：取 $r$ 滿足 $L<r<1$。存在 $N$ 使 $n\\ge N$ 時 $|a_{n+1}|\\le r|a_n|$，反覆用得 $|a_{N+k}|\\le r^k|a_N|$。$\\sum r^k|a_N|$ 是公比 $r<1$ 的幾何級數，由比較判別 $\\sum|a_n|$ 收斂；絕對收斂推出收斂。$L>1$：從某項起 $|a_{n+1}|>|a_n|>0$，$|a_n|$ 遞增而且不是 0，不可能 $\\to 0$，由發散判別發散。"
+        "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時",
+        "例：$L=\\frac12$ 取 $r=\\frac34$；設 $a_n>0$",
+        "一路用下去：",
+        "$\\sum_k a_Nr^k$：公比 $r<1$ 的幾何級數，收斂",
+        "⇒ 比較判別：$\\sum a_n$ 收斂",
+        "$L>1$：$n\\ge N$ 時 $a_{n+1}>a_n>0$",
+        "• 項越來越大，$a_n\\not\\to0$",
+        "• 發散判別 ⇒ 發散　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{a_{n+1}}{a_n}<r\\quad\\Rightarrow\\quad a_{n+1}<r\\,a_n",
+        "a_{N+k}<r\\,a_{N+k-1}<\\cdots<r^k a_N"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論",
+        "• 步驟：寫 $a_{n+1}$、乘倒數、同類約分、取極限",
+        "• $\\frac{(n+1)!}{n!}=n+1$，$\\big(\\frac{n}{n+1}\\big)^n\\to\\frac1e$",
+        "• 階乘、$b^n$、$n^n$：用比值判別",
+        "• 有理式、$p$ 級數：$L=1$，改用比較",
+        "下一課：根值判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -92,322 +187,826 @@
   ],
   "checks": [
     {
-      "ask": "比值判別得到 $L=1$，代表？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n!}{10^n}$ 收斂嗎？",
       "options": [
-        { "label": "這個判別法沒有結論", "correct": true },
-        { "label": "收斂", "why": "$\\sum\\frac{1}{n}$ 的 $L$ 也是 1，它發散。" },
-        { "label": "發散", "why": "$\\sum\\frac{1}{n^2}$ 的 $L$ 也是 1，它收斂。" }
+        {
+          "label": "發散：$L=\\infty$",
+          "correct": true
+        },
+        {
+          "label": "收斂：$L=\\frac1{10}$",
+          "why": "漏了階乘的比值 $n+1$"
+        },
+        {
+          "label": "收斂：分母 $10^n$ 長得很快",
+          "why": "階乘長得比任何 $b^n$ 都快"
+        },
+        {
+          "label": "沒有結論：$L=1$",
+          "why": "$\\frac{n+1}{10}$ 不是趨近 $1$"
+        }
       ]
     },
     {
-      "ask": "$\\sum\\frac{3^n}{n!}$ 用比值判別：",
+      "ask": "下面哪一個用比值判別==一定==得不到結論？",
       "options": [
-        { "label": "比值 $\\frac{3}{n+1}\\to 0$，收斂", "correct": true },
-        { "label": "比值 $\\to 3$，發散", "why": "只看了 $\\frac{3^{n+1}}{3^n}=3$，忘了階乘也要約：$\\frac{n!}{(n+1)!}=\\frac{1}{n+1}$。" },
-        { "label": "比值 $\\to 1$，無法判斷", "why": "$\\frac{3}{n+1}\\to 0$，不是 1；階乘長得比 $3^n$ 快。" }
-      ]
-    },
-    {
-      "ask": "$\\sum\\frac{n^2+1}{n^4+3}$ 該用什麼？",
-      "options": [
-        { "label": "極限比較（跟 $\\frac{1}{n^2}$ 比）；比值判別會得到 $L=1$", "correct": true },
-        { "label": "比值判別，$L<1$ 所以收斂", "why": "有理式的相鄰比值一定 $\\to 1$，比值判別在這裡沒有結論。" },
-        { "label": "比值判別，$L>1$ 所以發散", "why": "比值 $\\to 1$，不是大於 1；而且這個級數其實收斂。" }
-      ]
-    },
-    {
-      "ask": "$\\sum\\frac{(2n)!}{(n!)^2}$ 的比值極限是？",
-      "options": [
-        { "label": "4，所以發散", "correct": true },
-        { "label": "2，所以發散", "why": "$\\frac{(2n+2)!}{(2n)!}$ 有兩個因子 $(2n+2)(2n+1)$，不是一個；除以 $(n+1)^2$ 之後 $\\to 4$。" },
-        { "label": "1，無法判斷", "why": "分子分母都是 $n$ 的二次式，但領導係數 4 和 1 不同，極限是 4。" }
+        {
+          "label": "$\\displaystyle\\sum\\frac{n+1}{n^3+2}$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{3^n}{n!}$",
+          "why": "$L=\\lim\\frac3{n+1}=0<1$，收斂"
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{n}{5^n}$",
+          "why": "$L=\\frac15<1$，收斂"
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{2^n}{n^2}$",
+          "why": "$L=2>1$，發散"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "尾巴像幾何級數",
+      "title": "最後像幾何級數",
       "beats": [
-        { "show": ["$\\frac{a_{n+1}}{a_n}\\to L$"],
-          "note": "每一項大約是前一項的 $L$ 倍。",
-          "say": "看相鄰兩項的比。比值趨近 L，表示 n 很大時，每一項大約是前一項的 L 倍。",
+        {
+          "show": [
+            "幾何級數：後一項 ÷ 前一項 永遠是 $r$",
+            "$\\frac{a_{n+1}}{a_n}=r\\qquad|r|<1\\ \\text{收斂}$"
+          ],
+          "say": "回想幾何級數：後一項除以前一項，永遠是同一個公比 r。r 的絕對值小於 1 就收斂。",
           "board": [
-            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}\\to {{l:L}}$"},
-            {"do":"focus","term":"l","color":"gold","label":"每項約 L 倍","on":"每一項"}
-          ] },
-        { "show": ["尾巴像公比 $L$ 的幾何級數"],
-          "say": "那級數的尾巴就長得像公比 L 的幾何級數。公比小於一收斂，大於一發散。",
+            {
+              "do": "write",
+              "line": "幾何級數：後一項 ÷ 前一項 永遠是 $r$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=r\\qquad|r|<1\\ \\text{收斂}$",
+              "on": "個公"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果比值不是常數，但趨近一個數 $L$ 呢？"
+          ],
+          "say": "如果一個級數，後一項除以前一項不是常數，但是最後趨近一個數 L 呢？",
           "board": [
-            {"do":"write","line":"尾巴像公比 $L$ 的幾何級數"},
-            {"do":"write","line":"$L<1$ 收斂，$L>1$ 發散","on":"公比小於一"}
-          ] },
-        { "show": ["$4,\\ 2,\\ 1,\\ \\dots$：每項是前一項的 $\\frac{1}{2}$"],
-          "say": "舉例：四、二、一，每一項都是前一項的二分之一。點排在每次減半的曲線上，就是公比二分之一的幾何級數。",
+            {
+              "do": "write",
+              "line": "如果比值不是常數，但趨近一個數 $L$ 呢？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$a_n=\\dfrac{n^2}{2^n}$",
+            "$\\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}=\\frac12\\Big(\\frac{n+1}{n}\\Big)^2$"
+          ],
+          "say": "例如 2 的 n 次方分之 n 平方。後一項除以前一項，2 的次方約掉剩 2 分之 1，再乘上 n 分之 n 加 1 的平方。",
           "board": [
-            {"do":"write","line":"$4,\\ 2,\\ 1,\\ \\dots$"},
-            {"do":"plot","graph":{"window":[-1,4,-1,5],"curves":[{"expr":"4*(1/2)^x","domain":[0,4],"color":"blue"}],"points":[{"x":0,"y":4},{"x":1,"y":2},{"x":2,"y":1}]},"on":"點排在"},
-            {"do":"write","line":"每項是前一項的 $\\frac{1}{2}$","on":"每次減半"}
-          ] },
-        { "show": ["$L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$","$L<1$：絕對收斂；$L>1$：發散"],
-          "note": "$L>1$ 時各項不趨近 0。",
-          "say": "正式寫法加上絕對值。L 小於一，不只收斂，還是絕對收斂；L 大於一，各項不趨近零，發散。",
+            {
+              "do": "write",
+              "line": "例：$a_n=\\dfrac{n^2}{2^n}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}=\\frac12\\Big(\\frac{n+1}{n}\\Big)^2$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比值 a(n+1)/a(n) 趨近紅線 1/2，在 1 的下面"
+          ],
+          "say": "把比值畫出來：一開始是 2，後來越來越靠近 2 分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$","on":"正式寫法"},
-            {"do":"write","line":"$L<1$：絕對收斂","on":"不只收斂"},
-            {"do":"write","line":"$L>1$：發散","on":"各項不趨近零"}
-          ] },
-        { "show": ["$-|a_n|\\le a_n\\le|a_n|$"],
-          "note": "$\\sum|a_n|$ 收斂 ⇒ $\\sum a_n$ 收斂。",
-          "say": "為什麼絕對收斂就夠？每一項夾在負的絕對值和絕對值之間，絕對值那串收斂，原級數也收斂。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "rat",
+                  "window": [
+                    0,
+                    13,
+                    0,
+                    2.2
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 2,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 1.125,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 0.8889,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": 0.7813,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": 0.72,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": 0.6806,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": 0.6531,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": 0.6328,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 9,
+                      "y": 0.6173,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 10,
+                      "y": 0.605,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 11,
+                      "y": 0.595,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 12,
+                      "y": 0.5868,
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 0.5,
+                      "color": "red"
+                    },
+                    {
+                      "y": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "比值 a(n+1)/a(n) 趨近紅線 1/2，在 1 的下面",
+              "color": "violet",
+              "on": "後來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 很大時，每一項大約是前一項的 $\\frac12$：像公比 $\\frac12$ 的幾何級數"
+          ],
+          "say": "n 很大以後，每一項大約是前一項的一半。尾巴就像公比 2 分之 1 的幾何級數，應該收斂。",
           "board": [
-            {"do":"write","line":"$-|a_n|\\le a_n\\le|a_n|$","on":"夾在"},
-            {"do":"write","line":"$\\sum|a_n|$ 收斂 ⇒ $\\sum a_n$ 收斂","on":"絕對值那串"}
-          ] },
-        { "show": ["$L=1$：沒有結論"],
-          "note": "$\\sum\\frac{1}{n}$ 與 $\\sum\\frac{1}{n^2}$ 的 $L$ 都是 1。",
-          "say": "L 剛好等於一就沒結論。調和級數和 n 平方分之一，比值極限都是一，一個發散一個收斂。",
+            {
+              "do": "write",
+              "line": "$n$ 很大時，每一項大約是前一項的 $\\frac12$：像公比 $\\frac12$ 的幾何級數",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　實際的和是 $6$",
+              "color": "violet",
+              "on": "就像"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "$L=\\lim_{n\\to\\infty}\\left|\\frac{a_{n+1}}{a_n}\\right|$",
+            "• $L<1$：絕對收斂（正項級數就是收斂）"
+          ],
+          "say": "比值判別：算後一項除以前一項的絕對值，取極限叫 L。L 小於 1，級數收斂；L 大於 1 或是無限大，發散；L 等於 1，沒有結論。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{1}{n}$：$L=1$，發散","on":"調和級數"},
-            {"do":"write","line":"$\\sum\\frac{1}{n^2}$：$L=1$，收斂","on":"n 平方分之一"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\lim_{n\\to\\infty}\\left|\\frac{a_{n+1}}{a_n}\\right|$"
+            },
+            {
+              "do": "write",
+              "line": "• $L<1$：絕對收斂（正項級數就是收斂）",
+              "on": "項的"
+            },
+            {
+              "do": "write",
+              "line": "• $L>1$ 或 $L=\\infty$：發散",
+              "on": "小於"
+            },
+            {
+              "do": "write",
+              "line": "• $L=1$：沒有結論",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "　「絕對收斂」6.17 才正式講；這一章都是正項級數，絕對值可以先不管",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\sum\\frac1n$ 和 $\\displaystyle\\sum\\frac1{n^2}$ 的 $L$ 各是多少？",
+        "options": [
+          {
+            "label": "都是 $1$",
+            "correct": true
+          },
+          {
+            "label": "$1$ 和 $\\frac12$",
+            "why": "$\\frac{n^2}{(n+1)^2}$ 趨近 $1$，不是 $\\frac12$"
+          },
+          {
+            "label": "都是 $0$",
+            "why": "項趨近 $0$，但比值看的是「相鄰兩項差幾倍」"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$L=1$ 的時候",
+      "beats": [
+        {
+          "show": [
+            "$L=1$ 真的什麼都不知道",
+            "$\\frac{n}{n+1}\\to1,\\quad\\frac{n^2}{(n+1)^2}\\to1$"
+          ],
+          "say": "兩個都是 1。可是一個發散，一個收斂。所以 L 等於 1 的時候，比值判別真的什麼都不知道，要換方法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=1$ 真的什麼都不知道"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{n}{n+1}\\to1,\\quad\\frac{n^2}{(n+1)^2}\\to1}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "值判"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一定失效的類型：有理式、$p$ 級數"
+          ],
+          "say": "這也告訴我們：p 級數、有理式這類，相鄰兩項的比值一定趨近 1，用比值判別一定失效，該用比較判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一定失效的類型：有理式、$p$ 級數"
+            },
+            {
+              "do": "write",
+              "line": "　多項式的比值 $\\frac{P(n+1)}{P(n)}\\to1$",
+              "color": "violet",
+              "on": "值一"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：多項式 × 指數",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}$"
+          ],
+          "say": "現在正式算剛才的例子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}$"
+          ],
+          "say": "第一步：除法改成乘倒數。後一項，乘上前一項的倒數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同底的指數先約：$\\dfrac{2^n}{2^{n+1}}=\\dfrac12$",
+            "$=\\frac12\\Big(1+\\frac1n\\Big)^2\\to\\frac12$"
+          ],
+          "say": "第二步：同類的先約。2 的 n 次方除以 2 的 n 加 1 次方，剩 2 分之 1；n 分之 n 加 1，就是 1 加 n 分之一，趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同底的指數先約：$\\dfrac{2^n}{2^{n+1}}=\\dfrac12$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac12\\Big(1+\\frac1n\\Big)^2\\to\\frac12$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\dfrac12<1$ ⇒ 收斂"
+          ],
+          "say": "L 等於 2 分之 1，小於 1，收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=\\dfrac12<1$ ⇒ 收斂",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式的比值 $\\to1$，指數的比值決定一切"
+          ],
+          "say": "注意，多項式那一塊的比值趨近 1，等於沒作用；真正決定結果的是指數那一塊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多項式的比值 $\\to1$，指數的比值決定一切"
+            },
+            {
+              "do": "write",
+              "line": "　同理 $\\sum n^{100}\\big(\\frac{9}{10}\\big)^n$：$L=\\frac9{10}$，收斂",
+              "color": "violet",
+              "on": "於沒"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用比值判別算 $L$ 的步驟",
+        "steps": [
+          {
+            "label": "寫出 $a_{n+1}$：把每個 $n$ 換成 $n+1$"
+          },
+          {
+            "label": "除法改乘倒數：$a_{n+1}\\cdot\\frac1{a_n}$",
+            "why": "先要有上一步：寫出 $a_{n+1}$：把每個 $n$ 換成 $n+1$"
+          },
+          {
+            "label": "同類的放一起約分：指數、階乘、多項式",
+            "why": "先要有上一步：除法改乘倒數：$a_{n+1}\\cdot\\frac1{a_n}$"
+          },
+          {
+            "label": "取極限得到 $L$，跟 $1$ 比",
+            "why": "先要有上一步：同類的放一起約分：指數、階乘、多項式"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：階乘配 $n^n$",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}$"
+          ],
+          "say": "第二個例子：n 階乘除以 n 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{n!}{n^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{a_{n+1}}{a_n}=\\frac{(n+1)!}{(n+1)^{n+1}}\\cdot\\frac{n^n}{n!}$"
+          ],
+          "say": "一樣，除法改乘倒數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=\\frac{(n+1)!}{(n+1)^{n+1}}\\cdot\\frac{n^n}{n!}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "階乘：$\\dfrac{(n+1)!}{n!}=n+1$"
+          ],
+          "say": "階乘先約：n 加 1 階乘，除以 n 階乘，剩下 n 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "階乘：$\\dfrac{(n+1)!}{n!}=n+1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{(n+1)\\,n^n}{(n+1)^{n+1}}=\\frac{n^n}{(n+1)^n}=\\Big(\\frac{n}{n+1}\\Big)^n$"
+          ],
+          "say": "這個 n 加 1，跟分母的 n 加 1 的 n 加 1 次方，約掉一個，剩下 n 次方。合起來，是 n 加 1 分之 n，的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{(n+1)\\,n^n}{(n+1)^{n+1}}=\\frac{n^n}{(n+1)^n}=\\Big(\\frac{n}{n+1}\\Big)^n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e$ 型極限（1.11）：",
+            "$\\Big(\\frac{n}{n+1}\\Big)^n=\\frac{1}{\\big(1+\\frac1n\\big)^n}\\to\\frac1e$"
+          ],
+          "say": "這是 e 型的極限：倒過來看，是 1 加 n 分之一的 n 次方，分之一。1 加 n 分之一的 n 次方趨近 e，所以整個趨近 e 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e$ 型極限（1.11）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big(\\frac{n}{n+1}\\Big)^n=\\frac{1}{\\big(1+\\frac1n\\big)^n}\\to\\frac1e$",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\dfrac1e\\approx0.368<1$ ⇒ 收斂"
+          ],
+          "say": "e 分之一大約 0.368，小於 1，收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=\\dfrac1e\\approx0.368<1$ ⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$n=10$ 時比值 $\\approx0.386$，已經很接近 $\\frac1e$",
+              "color": "violet",
+              "on": "68"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$L>1$",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{n^n}{n!}$"
+          ],
+          "say": "把剛才的級數倒過來：n 的 n 次方除以 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{n^n}{n!}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的約分，上下顛倒：",
+            "$\\frac{a_{n+1}}{a_n}=\\Big(\\frac{n+1}{n}\\Big)^n=\\Big(1+\\frac1n\\Big)^n\\to e$"
+          ],
+          "say": "同樣的約分，只是上下顛倒，比值是 1 加 n 分之一的 n 次方，趨近 e。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的約分，上下顛倒："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}=\\Big(\\frac{n+1}{n}\\Big)^n=\\Big(1+\\frac1n\\Big)^n\\to e$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=e\\approx2.718>1$ ⇒ 發散"
+          ],
+          "say": "e 大約 2.718，大於 1，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=e\\approx2.718>1$ ⇒ 發散",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　其實項本身就 $\\to\\infty$：$L>1$ 時項不會趨近 $0$",
+              "color": "violet",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "什麼時候用比值判別？"
+          ],
+          "say": "什麼時候該用比值判別？看到階乘、看到 b 的 n 次方或 n 的 n 次方，相鄰兩項相除能大量約掉的時候。",
+          "board": [
+            {
+              "do": "write",
+              "line": "什麼時候用比值判別？"
+            },
+            {
+              "do": "write",
+              "line": "有階乘 $n!$、$(2n)!$",
+              "on": "階乘"
+            },
+            {
+              "do": "write",
+              "line": "有指數 $b^n$、$n^n$",
+              "on": "方或"
+            },
+            {
+              "do": "write",
+              "line": "相鄰兩項約得掉",
+              "color": "gold",
+              "on": "鄰兩"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "證明：跟幾何級數比",
+      "title": "什麼時候失效",
       "beats": [
-        { "show": ["夾一個公比 $r<1$，跟幾何級數比"],
-          "say": "策略：在 L 和一之間夾一個公比 r。n 夠大以後，各項被公比 r 的幾何級數壓住。",
-          "board": [
-            {"do":"write","line":"夾一個公比 ${{r:r}}<1$，跟幾何級數比","tint":{"r":"blue"}}
-          ] },
-        { "show": ["取 $L<r<1$","$n\\ge N$ 時 $|a_{n+1}|\\le r|a_n|$"],
-          "note": "比值趨近 $L$，夠後面就不超過 $r$。",
-          "why": {"ask":"為什麼要多夾一個 $r$，不直接用 $L$？","say":"為什麼要多夾一個 r，不直接拿 L 當公比？","options":[{"label":"比值只是趨近 $L$，可能一直比 $L$ 大一點","correct":true},{"label":"$L$ 可能是負的","why":"$L$ 是絕對值的極限，不會是負的；問題是比值只趨近 $L$，不一定 $\\le L$。"},{"label":"$r$ 比較好算","why":"不是為了好算：比值可能永遠略大於 $L$，只能保證夠後面不超過 $r$。"}]},
-          "say": "比值趨近 L，而 L 比 r 小，所以 n 夠大以後，比值都不超過 r。",
-          "board": [
-            {"do":"write","line":"取 $L<{{r:r}}<1$","on":"多夾一個"},
-            {"do":"write","line":"$n\\ge N$ 時 $|a_{n+1}|{{le:\\le {{r:r}}}}|a_n|$","on":"不直接拿"},
-            {"do":"focus","term":"le","label":"比值只趨近 L","why":true,"on":"比值趨近 L"}
-          ] },
-        { "show": ["$|a_{N+k}|\\le r^k|a_N|$"],
-          "note": "反覆用 $k$ 次。",
-          "say": "這個不等式一項接一項往後用，用 k 次，就得到 r 的 k 次方倍。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$|a_{N+2}|\\le r|a_{N+1}|\\le r^2|a_N|$","on":"一項接一項"},
-            {"do":"write","line":"$|a_{N+k}|\\le {{rk:r^k}}|a_N|$","on":"用 k 次"},
-            {"do":"underline","term":"rk","color":"blue","on":"r 的 k 次方"}
-          ] },
-        { "show": ["$\\sum r^k|a_N|$ 收斂 ⇒ $\\sum|a_n|$ 收斂"],
-          "note": "公比 $r<1$ 的幾何級數，加〈比較判別〉。",
-          "why": {"ask":"為什麼 $\\sum|a_n|$ 收斂？","say":"絕對值的級數，為什麼收斂？","options":[{"label":"被公比 $r<1$ 的幾何級數壓住，比較判別","correct":true},{"label":"$|a_n|\\to 0$","why":"各項趨近 0 不保證收斂，調和級數就是；要被一個收斂的級數壓住。"},{"label":"$r^k|a_N|\\to 0$","why":"那只說各項趨近 0；要用的是整個幾何級數收斂，再比較。"}]},
-          "say": "右邊是公比小於一的幾何級數，收斂。由比較判別，絕對值的級數收斂，原級數也收斂。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{s:\\sum|a_n|}}\\;\\;$ 收斂","on":"絕對值的級數"},
-            {"do":"write","line":"$\\sum r^k|a_N|$：公比 $r<1$，收斂","why":true,"on":"右邊是"},
-            {"do":"box","term":"s","color":"green","label":"比較判別","why":true,"on":"由比較判別"}
-          ] },
-        { "show": ["取 $1<r<L$，$n$ 夠大：比值 $>r>1$"],
-          "say": "L 大於一，所以取一個 r 夾在一和 L 之間。比值趨近 L，n 夠大以後就會大過 r，當然也大過一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"取 $1<r<L$","on":"夾在"},
-            {"do":"write","line":"$n$ 夠大：$\\frac{|a_{n+1}|}{|a_n|}>r>1$","on":"n 夠大"}
-          ] },
-        { "show": ["$L>1$：$|a_{n+1}|>|a_n|>0$"],
-          "note": "不可能 $\\to 0$，由發散判別發散。",
-          "say": "L 大於一：從某項起，每一項的絕對值都比前一項大，又不是零，不會趨近零，發散。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L>1$：$|a_{n+1}|>|a_n|>0$","on":"L 大於一"},
-            {"do":"write","line":"⇒ 不趨近 $0$，發散","on":"不會趨近零"}
-          ] }
-      ],
-      "key": "比值只趨近 $L$，所以多夾一個 $r$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "歸納",
-      "where": {
-        "ask": "「$r<1$」用在哪一步？",
-        "steps": [
-          {
-            "label": "$n\\ge N$ 時 $|a_{n+1}|\\le r|a_n|$",
-            "why": "找 $N$ 只用到 $L<r$：比值的極限比 $r$ 小。"
-          },
-          {
-            "label": "$|a_{N+k}|\\le r^k|a_N|$",
-            "why": "這只是把前一個不等式往後反覆用。"
-          },
-          {
-            "label": "幾何級數 $\\sum r^k|a_N|$ 收斂",
-            "correct": true
-          },
-          {
-            "label": "$L>1$ 時各項不 $\\to 0$",
-            "why": "這一半跟 $r$ 無關，只用到比值大於 1。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "大量約分",
-      "beats": [
-        { "show": ["$\\frac{(n+1)!}{n!}=n+1$，$\\frac{2^{n+1}}{2^n}=2$"],
-          "say": "階乘、次方這種東西，相鄰兩項一相除，幾乎全部約掉，只剩一小段。",
-          "board": [
-            {"do":"write","line":"$\\frac{(n+1)!}{n!}=n+1$"},
-            {"do":"write","line":"$\\frac{2^{n+1}}{2^n}=2$","on":"次方"}
-          ] },
-        { "show": ["$\\frac{(2n+2)!}{(2n)!}=(2n+2)(2n+1)$"],
-          "note": "階乘裡是 $2n$：往下展開兩項再約。",
-          "say": "如果階乘裡是二 n，二 n 加二的階乘，要先展開兩項：二 n 加二、二 n 加一，後面就是二 n 的階乘，整個約掉。",
-          "board": [
-            {"do":"write","line":"$(2n+2)!=(2n+2)(2n+1)\\,(2n)!$","on":"展開兩項"},
-            {"do":"write","line":"$\\frac{(2n+2)!}{(2n)!}=(2n+2)(2n+1)$","on":"整個約掉"}
-          ] },
-        { "show": ["$\\frac{(n+1)^{n+1}}{n^n}=(n+1)\\left(\\frac{n+1}{n}\\right)^n$"],
-          "note": "後者 $\\to e$（〈e 型極限〉）。",
-          "say": "n 的 n 次方要多拆一步：先拿出一個 n 加一，剩下的那一包趨近 e。",
-          "board": [
-            {"do":"write","line":"$\\frac{(n+1)^{n+1}}{n^n}=(n+1){{b:\\left(\\frac{n+1}{n}\\right)^n}}$"},
-            {"do":"underline","term":"b","label":"趨近 e","on":"剩下的"}
-          ] },
-        { "show": ["有階乘、$b^n$、$n^n$：用比值判別"],
-          "say": "所以看到階乘、指數、n 的 n 次方，第一個想到比值判別。",
-          "board": [
-            {"do":"write","line":"階乘、$b^n$、$n^n$：比值判別","color":"green"}
-          ] }
+        {
+          "show": [
+            "下面哪一個用比值判別一定得不到結論？"
+          ],
+          "say": "再一題：哪一個用比值判別一定失敗？"
+        }
       ],
       "check": 1
     },
     {
-      "title": "多項式乘指數",
+      "title": "什麼時候失效",
       "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{n^2}{2^n}$"],
-          "say": "n 平方除以二的 n 次方。分子是多項式，分母是指數，用比值。",
+        {
+          "show": [
+            "有理式、$p$ 級數：$L=1$，改用比較判別"
+          ],
+          "say": "有理式跟 p 級數，比值一定趨近 1。看到它們，直接用比較判別或極限比較判別，不要浪費時間算比值。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{{{p:n^2}}}{{{e:2^n}}}$","tint":{"p":"blue","e":"violet"}},
-            {"do":"focus","term":"p","color":"blue","label":"多項式","on":"分子是多項式"},
-            {"do":"focus","term":"e","color":"violet","label":"指數","on":"分母是指數"}
-          ] },
-        { "show": ["$\\frac{a_{n+1}}{a_n}=\\frac{(n+1)^2}{2^{n+1}}\\cdot\\frac{2^n}{n^2}$"],
-          "note": "除以 $a_n$ 就是乘它的倒數。",
-          "say": "後一項乘上前一項的倒數。二的次方約到只剩一個二，多項式那部分整理成一個比值的平方。",
-          "board": [
-            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}=\\frac{{{p1:(n+1)^2}}}{{{e1:2^{n+1}}}}\\cdot\\frac{{{e:2^n}}}{{{p:n^2}}}$","tint":{"p1":"blue","e1":"violet"}},
-            {"do":"focus","term":"e1","color":"violet","on":"二的次方"},
-            {"do":"focus","term":"p1","color":"blue","on":"多項式那部分"}
-          ] },
-        { "show": ["$=\\left(\\frac{n+1}{n}\\right)^2\\cdot\\frac{1}{2}$"],
-          "say": "n 加一除以 n 趨近一。那 L 是多少？",
-          "board": [
-            {"do":"write","line":"$={{q:\\left(\\frac{n+1}{n}\\right)^2}}\\cdot\\frac{1}{2}$"},
-            {"do":"underline","term":"q","label":"趨近 1","on":"趨近一"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$L$ 與結論是？",
-        "options": [
-          {
-            "label": "$L=\\frac{1}{2}$，收斂",
-            "correct": true
-          },
-          {
-            "label": "$L=1$，沒有結論",
-            "why": "$\\left(\\frac{n+1}{n}\\right)^2\\to 1$，但還要乘 $\\frac{1}{2}$。"
-          },
-          {
-            "label": "$L=2$，發散",
-            "why": "比值寫反了：$\\frac{2^n}{2^{n+1}}=\\frac{1}{2}$，不是 2。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "有理式、$p$ 級數：$L=1$，改用比較判別",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "階乘配 $n^n$",
+      "title": "證明",
       "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{n!}{n^n}$"],
-          "note": "比值整理成 $\\left(\\frac{n}{n+1}\\right)^n$。",
-          "say": "n 階乘除以 n 的 n 次方。階乘約掉剩 n 加一，再跟分母的 n 加一約掉。",
+        {
+          "show": [
+            "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時",
+            "$\\frac{a_{n+1}}{a_n}<r\\quad\\Rightarrow\\quad a_{n+1}<r\\,a_n$"
+          ],
+          "say": "證明 L 小於 1 的情況。在 L 和 1 中間挑一個 r。比值趨近 L，所以 n 夠大之後，比值都小於 r，也就是後一項小於 r 倍的前一項。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{n!}{n^n}$"},
-            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}=\\frac{(n+1)!}{n!}\\cdot\\frac{n^n}{(n+1)^{n+1}}$","on":"階乘約掉"},
-            {"do":"transform","line":"$\\frac{a_{n+1}}{a_n}=\\left(\\frac{n}{n+1}\\right)^n$","on":"再跟分母"}
-          ] },
-        { "show": ["$\\frac{1}{(1+1/n)^n}\\to\\frac{1}{e}\\approx 0.368$"],
-          "note": "$L<1$，收斂。",
-          "say": "分母就是趨近 e 的那一包，所以 L 是 e 分之一，大約零點三六八，收斂。",
+            {
+              "do": "write",
+              "line": "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_{n+1}}{a_n}<r\\quad\\Rightarrow\\quad a_{n+1}<r\\,a_n$",
+              "on": "挑一"
+            },
+            {
+              "do": "write",
+              "line": "　例：$L=\\frac12$ 取 $r=\\frac34$；設 $a_n>0$",
+              "color": "violet",
+              "on": "值都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一路用下去：",
+            "$a_{N+k}<r\\,a_{N+k-1}<\\cdots<r^k a_N$"
+          ],
+          "say": "一路往回用：第 N 加 k 項，小於 r 的 k 次方乘上 a N。",
           "board": [
-            {"do":"write","line":"$=\\frac{1}{{{b:(1+1/n)^n}}}\\to\\frac{1}{e}\\approx 0.368$"},
-            {"do":"underline","term":"b","label":"趨近 e","on":"趨近 e"},
-            {"do":"write","line":"$L<1$：收斂","color":"green","on":"大約零點"}
-          ] },
-        { "show": ["$\\sum\\frac{n^n}{n!}$：$L=e\\approx 2.718$"],
-          "note": "倒過來，比值 $\\left(1+\\frac{1}{n}\\right)^n$。",
-          "say": "上下顛倒，比值變成一加 n 分之一的 n 次方，趨近 e，大約二點七一八，大於一，發散。",
+            {
+              "do": "write",
+              "line": "一路用下去："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a_{N+k}<r\\,a_{N+k-1}<\\cdots<r^k a_N$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_k a_Nr^k$：公比 $r<1$ 的幾何級數，收斂",
+            "⇒ 比較判別：$\\sum a_n$ 收斂"
+          ],
+          "say": "右邊是公比 r 的幾何級數，r 小於 1，收斂。用比較判別，原級數收斂。這就是「最後像幾何級數」的精確版本。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{n^n}{n!}$","on":"上下顛倒"},
-            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}=\\left(1+\\frac{1}{n}\\right)^n\\to e$","on":"比值變成"},
-            {"do":"write","line":"$L=e\\approx 2.718>1$：發散","on":"大約二點"}
-          ] },
-        { "show": ["$\\frac{n^n}{n!}\\ge 1$"],
-          "note": "各項根本不趨近 0。",
-          "say": "其實這一題每一項都大於等於一，根本不趨近零，發散判別就看得出來。",
+            {
+              "do": "write",
+              "line": "$\\sum_k a_Nr^k$：公比 $r<1$ 的幾何級數，收斂"
+            },
+            {
+              "do": "write",
+              "line": "⇒ 比較判別：$\\sum a_n$ 收斂",
+              "color": "gold",
+              "on": "判別"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L>1$：$n\\ge N$ 時 $a_{n+1}>a_n>0$",
+            "• 項越來越大，$a_n\\not\\to0$"
+          ],
+          "say": "L 大於 1 的情況：n 夠大之後，後一項比前一項大，項越來越大，不可能趨近 0。由發散判別，發散。證明完畢。",
           "board": [
-            {"do":"write","line":"${{nz:\\frac{n^n}{n!}\\ge 1}}$"},
-            {"do":"underline","term":"nz","label":"不趨近 0","on":"根本不趨近零"}
-          ] }
-      ],
-      "key": "比值裡藏著 $(1+1/n)^n\\to e$",
-      "check": 3
+            {
+              "do": "write",
+              "line": "$L>1$：$n\\ge N$ 時 $a_{n+1}>a_n>0$"
+            },
+            {
+              "do": "write",
+              "line": "• 項越來越大，$a_n\\not\\to0$",
+              "on": "後一"
+            },
+            {
+              "do": "write",
+              "line": "• 發散判別 ⇒ 發散　$\\blacksquare$",
+              "on": "趨近"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "比值判別失效",
+      "title": "重點整理",
       "beats": [
-        { "show": ["有理式、根號、$p$ 級數：比值 $\\to 1$"],
-          "say": "反過來，有理式、根號、p 級數，相鄰兩項的比值一定趨近一，比值判別必定沒結論。",
+        {
+          "show": [
+            "• $L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論",
+            "• 步驟：寫 $a_{n+1}$、乘倒數、同類約分、取極限"
+          ],
+          "say": "整理一下：L 小於 1 收斂，大於 1 發散，等於 1 沒有結論。看到階乘和指數就用比值判別；有理式和 p 級數一定失效，改用比較。",
           "board": [
-            {"do":"write","line":"有理式、根號、$p$ 級數"},
-            {"do":"write","line":"比值 $\\to 1$","on":"一定趨近"}
-          ] },
-        { "show": ["這類用〈極限比較判別〉"],
-          "say": "這類級數不要用比值，直接抓主要項，用極限比較判別。",
+            {
+              "do": "write",
+              "line": "• $L=\\lim\\left|\\frac{a_{n+1}}{a_n}\\right|$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論"
+            },
+            {
+              "do": "write",
+              "line": "• 步驟：寫 $a_{n+1}$、乘倒數、同類約分、取極限",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{(n+1)!}{n!}=n+1$，$\\big(\\frac{n}{n+1}\\big)^n\\to\\frac1e$",
+              "on": "沒有"
+            },
+            {
+              "do": "write",
+              "line": "• 階乘、$b^n$、$n^n$：用比值判別",
+              "on": "數就"
+            },
+            {
+              "do": "write",
+              "line": "• 有理式、$p$ 級數：$L=1$，改用比較",
+              "on": "級數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：根值判別"
+          ],
+          "say": "下一課，看另一個跟幾何級數比的方法：根值判別。",
           "board": [
-            {"do":"write","line":"直接抓主要項"}
-          ] },
-        { "show": ["比值寫成 $\\frac{a_{n+1}}{a_n}$"],
-          "note": "寫反成 $\\frac{a_n}{a_{n+1}}$，結論跟著顛倒。",
-          "say": "還有一個常見的錯：後一項除以前一項，寫反了，結論就整個顛倒。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{c:\\frac{a_{n+1}}{a_n}}}$：後一項除以前一項","on":"後一項"},
-            {"do":"write","line":"${{w:\\frac{a_n}{a_{n+1}}}}$","on":"寫反了"},
-            {"do":"strike","term":"w","label":"寫反","on":"整個"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：根值判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ratio-test", "convergence-test"],
-    "fine": ["ratio-test-factorial", "ratio-test-exponential", "ratio-test-inconclusive"]
+    "coarse": [
+      "ratio-test",
+      "convergence-test"
+    ],
+    "fine": [
+      "ratio-test-factorial",
+      "ratio-test-exponential",
+      "ratio-test-inconclusive"
+    ]
   },
   "practice": [
-    { "id": "lec-13-q2a", "core": true, "trains": "ratio-test-exponential" },
-    { "id": "lec-13-q2b", "core": true, "trains": "ratio-test-factorial" },
-    { "id": "mob-conv-006", "core": true, "trains": "ratio-test-factorial" },
-    { "id": "lec-13-m2", "core": true, "trains": "ratio-test-factorial" },
-    { "id": "lec-13-m3", "core": true, "trains": "ratio-test-inconclusive" },
-    { "id": "fd-serx-305", "trains": "ratio-test-factorial" },
-    { "id": "cx-smid-011", "trains": "ratio-test-factorial" },
-    { "id": "lec-13-q2d", "trains": "ratio-test-factorial" },
-    { "id": "cg-6c-015", "trains": "ratio-test-inconclusive" },
-    { "id": "cg-6c-016", "trains": "ratio-test-inconclusive" }
+    {
+      "id": "lec-13-q2a",
+      "core": true,
+      "trains": "ratio-test-exponential"
+    },
+    {
+      "id": "lec-13-q2b",
+      "core": true,
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "mob-conv-006",
+      "core": true,
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "lec-13-m2",
+      "core": true,
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "lec-13-m3",
+      "core": true,
+      "trains": "ratio-test-inconclusive"
+    },
+    {
+      "id": "fd-serx-305",
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "cx-smid-011",
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "lec-13-q2d",
+      "trains": "ratio-test-factorial"
+    },
+    {
+      "id": "cg-6c-015",
+      "trains": "ratio-test-inconclusive"
+    },
+    {
+      "id": "cg-6c-016",
+      "trains": "ratio-test-inconclusive"
+    }
   ],
   "gaps": []
 }

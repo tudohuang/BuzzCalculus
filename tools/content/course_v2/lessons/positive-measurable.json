@@ -1,7 +1,8 @@
 {
   "id": "positive-measurable",
   "title": "非負可測函數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "simple-functions",
@@ -16,318 +17,124 @@
     "almost-everywhere"
   ],
   "objectives": [
-    "寫得出非負可測函數積分的定義：所有在它底下的非負簡單函數積分的上確界。",
-    "會寫出逼近定理的標準序列 $\\varphi_n$，算出它在某一點的值與誤差。",
-    "說得出為什麼從下面逼近、為什麼值可以是 $\\infty$，以及哪些性質要等到單調收斂定理才證得出來。"
+    "寫得出非負可測函數積分的定義：所有在它底下的非負簡單函數積分的上確界",
+    "會寫出逼近定理的標準序列 $\\varphi_n$，算出它在某一點的值與誤差",
+    "說得出為什麼從下面逼近、為什麼值可以是 $\\infty$，以及哪些性質要等到單調收斂定理才證得出來"
   ],
-  "visual": "y = x 在 [0, 1] 上的圖，y 軸被切成高度 2⁻ⁿ 的水平帶。滑桿調 n = 1, 2, 3, 4：每一條帶子裡的部分被壓到帶子的底，得到一個階梯 φₙ，面積即時顯示 (1 − 2⁻ⁿ)/2 往 1/2 爬。點一個 x，顯示 φₙ(x) 與誤差 x − φₙ(x) < 2⁻ⁿ。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 用底下的階梯去撐",
+      "heading": "① 用底下的階梯撐",
       "body": [
-        "上一課會算簡單函數的積分。一般的 $f\\ge0$ 怎麼辦？直覺，不是證明：在 $f$ 底下塞非負簡單函數，塞得越滿面積越接近 $f$ 的面積，取這些面積的上確界就好。",
-        "為什麼只從下面撐，不像 Darboux 那樣上下夾？因為簡單函數只取有限的值，像 $\\frac{1}{\\sqrt{x}}$ 這種無界函數，上面根本放不下任何簡單函數；而從下面永遠可以放 0。"
-      ],
-      "collapsible": false
+        "$f:X\\to[0,\\infty]$ 可測（值可以是 $\\infty$）",
+        "想法：在 $f$ 底下塞簡單函數 $0\\le\\varphi\\le f$，越塞越滿",
+        "跟黎曼的差別：不是切 $x$ 軸，是切 $y$ 軸",
+        "底 $\\{a\\le f<b\\}=\\{f\\ge a\\}\\cap\\{f<b\\}\\in\\mathcal{M}$"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $f:X\\to[0,\\infty]$ 可測（允許取 $\\infty$）。定義",
-        "值落在 $[0,\\infty]$。$f$ 本身是簡單函數時，由簡單積分的單調性，這個上確界就是 $f$ 自己的簡單積分，兩個定義一致。",
-        "立刻得到：$0\\le f\\le g\\Rightarrow\\int f\\le\\int g$（能塞在 $f$ 底下的都塞得進 $g$ 底下）；$c\\ge0$ 時 $\\int cf=c\\int f$。"
+        "$f:X\\to[0,\\infty]$ 可測：",
+        "• 值在 $[0,\\infty]$：上確界可以是 $\\infty$",
+        "• $\\int_E f\\,d\\mu=\\int_X f\\chi_E\\,d\\mu$",
+        "相容：$f$ 本身是簡單函數時，跟上一課的定義一樣",
+        "每個 $\\varphi\\le f$ 都有 $\\int\\varphi\\le\\int f$（簡單函數的單調性）；而 $\\varphi=f$ 本身就在集合裡，所以上確界取得到",
+        "為什麼從下面？",
+        "• 從下面的 $\\varphi$ 永遠是有限值，$f=\\infty$ 也照樣塞得進去",
+        "• 不用假設 $f$ 有界、$\\mu(X)$ 有限",
+        "例：$f\\equiv1$ 在 $\\mathbb{R}$ 上：$\\varphi_k=\\chi_{[-k,k]}\\le f$",
+        "馬上有：$0\\le f\\le g$ ⇒ $\\int f\\le\\int g$"
       ],
       "tex": [
-        "\\int_X f\\,d\\mu=\\sup\\Big\\{\\int_X\\varphi\\,d\\mu\\ :\\ 0\\le\\varphi\\le f,\\ \\varphi\\text{ 為簡單函數}\\Big\\}"
-      ],
-      "collapsible": false
+        "\\int_X f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ \\varphi\\ \\text{簡單},\\ 0\\le\\varphi\\le f\\Big\\}",
+        "\\int\\varphi_k\\,dm=2k\\to\\infty\\ \\Rightarrow\\ \\int_{\\mathbb{R}}1\\,dm=\\infty"
+      ]
     },
     {
-      "heading": "③ 逼近定理：一定有遞增的簡單函數列逼近 $f$",
+      "heading": "③ 逼近定理",
       "body": [
-        "把值域 $[0,n)$ 切成長 $2^{-n}$ 的小段，$f(x)$ 落在哪一段，就把它壓到那一段的下端；$f(x)\\ge n$ 的地方壓成 $n$：",
-        "那麼 $0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，且 $\\varphi_n(x)\\to f(x)$ 對每一點成立。$f$ 有界時還是一致收斂。"
+        "$f:X\\to[0,\\infty]$ 可測。令",
+        "則 $\\varphi_n$ 簡單、$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，而且 $\\varphi_n(x)\\to f(x)$",
+        "一行寫法：",
+        "$f(x)=\\infty$ 時取 $\\varphi_n(x)=n$；$f(x)<n$ 時 $j=\\lfloor2^nf(x)\\rfloor\\le n2^n-1$，兩種寫法一樣",
+        "策略：可測看「底」；遞增看「層變薄」；收斂看「誤差 $<$ 層厚」"
       ],
       "tex": [
-        "\\varphi_n=\\sum_{k=1}^{n2^n}\\frac{k-1}{2^n}\\,\\chi_{\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}}+n\\,\\chi_{\\{f\\ge n\\}}"
-      ],
-      "collapsible": false
+        "\\varphi_n(x)=\\begin{cases}\\dfrac{j}{2^n},&\\dfrac{j}{2^n}\\le f(x)<\\dfrac{j+1}{2^n},\\ \\ 0\\le j<n2^n\\\\[4pt] n,&f(x)\\ge n\\end{cases}",
+        "\\varphi_n(x)=\\min\\Big(n,\\ \\frac{\\lfloor 2^nf(x)\\rfloor}{2^n}\\Big)"
+      ]
     },
     {
-      "heading": "證明：$\\varphi_n$ 可測、遞增、收斂到 $f$",
+      "heading": "③ 證明",
       "body": [
-        "可測：每個集合 $\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}=\\{f\\ge\\frac{k-1}{2^n}\\}\\cap\\{f<\\frac{k}{2^n}\\}$ 與 $\\{f\\ge n\\}$ 都可測，且兩兩不交，所以 $\\varphi_n$ 是非負簡單函數，$\\varphi_n\\le f$ 由構造可見。",
-        "遞增：若 $f(x)<n$，$x$ 在第 $n$ 層某段 $[\\frac{k-1}{2^n},\\frac{k}{2^n})$；這段在第 $n+1$ 層被切成兩半，$\\varphi_{n+1}(x)$ 是 $\\frac{2k-2}{2^{n+1}}$ 或 $\\frac{2k-1}{2^{n+1}}$，都 $\\ge\\frac{k-1}{2^n}$。若 $n\\le f(x)<n+1$，$\\varphi_{n+1}(x)\\ge n=\\varphi_n(x)$；若 $f(x)\\ge n+1$，$\\varphi_{n+1}(x)=n+1>n$。",
-        "收斂：$f(x)<\\infty$ 時，只要 $n>f(x)$，就有 $0\\le f(x)-\\varphi_n(x)<2^{-n}\\to0$。$f(x)=\\infty$ 時，$\\varphi_n(x)=n\\to\\infty$。若 $f\\le M$，$n>M$ 之後誤差對所有 $x$ 都 $<2^{-n}$，即一致收斂。"
+        "簡單、可測：底",
+        "都在 $\\mathcal{M}$；$\\varphi_n=\\sum_j\\frac{j}{2^n}\\chi_{E_{n,j}}+n\\chi_{F_n}$，只有有限多個值",
+        "$\\varphi_n\\le f$：在 $E_{n,j}$ 上 $\\frac{j}{2^n}\\le f$；在 $F_n$ 上 $n\\le f$",
+        "遞增：$\\lfloor2y\\rfloor\\ge2\\lfloor y\\rfloor$，取 $y=2^nf(x)$：",
+        "又 $n<n+1$，兩邊取 $\\min$ ⇒ $\\varphi_n\\le\\varphi_{n+1}$",
+        "收斂：$f(x)<\\infty$ 時，$n>f(x)$ 起",
+        "$f(x)=\\infty$ 時 $\\varphi_n(x)=n\\to\\infty$　$\\blacksquare$",
+        "附帶：$f\\le M$ 的集合上，$n>M$ 起 $\\sup|f-\\varphi_n|\\le2^{-n}$，是均勻收斂"
       ],
-      "collapsible": true
+      "tex": [
+        "E_{n,j}=\\{f\\ge\\tfrac{j}{2^n}\\}\\cap\\{f<\\tfrac{j+1}{2^n}\\},\\quad F_n=\\{f\\ge n\\}",
+        "\\frac{\\lfloor2^{n}f\\rfloor}{2^{n}}\\le\\frac{\\lfloor2^{n+1}f\\rfloor}{2^{n+1}}",
+        "0\\le f(x)-\\varphi_n(x)<\\frac1{2^n}\\to0"
+      ]
+    },
+    {
+      "heading": "③ 例：$f(x)=x$",
+      "body": [
+        "$\\varphi_2(0.7)$：$2^2\\cdot0.7=2.8$，$\\lfloor2.8\\rfloor=2$ ⇒ $\\varphi_2(0.7)=\\frac24=0.5$，誤差 $0.2$",
+        "$\\varphi_3(0.7)=\\frac{\\lfloor5.6\\rfloor}{8}=\\frac58=0.625$，誤差 $0.075<\\frac18$",
+        "積分：$\\varphi_n$ 在 $[\\frac{j}{2^n},\\frac{j+1}{2^n})$ 上取 $\\frac j{2^n}$",
+        "$\\sum_{j=0}^{N-1}j=\\frac{N(N-1)}2$，$N=2^n$；$x=1$ 那一點測度 $0$。$n=1,2,3$：$\\frac14,\\frac38,\\frac7{16}$"
+      ],
+      "tex": [
+        "\\int\\varphi_n\\,dm=\\sum_{j=0}^{2^n-1}\\frac{j}{2^n}\\cdot\\frac1{2^n}=\\frac12-\\frac1{2^{n+1}}"
+      ]
+    },
+    {
+      "heading": "③ 例：積分是 $\\frac12$",
+      "body": [
+        "$\\int\\varphi_n\\to\\frac12$，所以 $\\int_{[0,1]}x\\,dm\\ge\\frac12$",
+        "另一邊：$\\psi_n=\\varphi_n+\\frac1{2^n}\\ge f$（在 $[0,1)$ 上），任何 $0\\le\\varphi\\le f$：",
+        "簡單函數的單調性；$x=1$ 那一點測度 $0$，不影響",
+        "$n\\to\\infty$：$\\int\\varphi\\le\\frac12$，取上確界：",
+        "在零測集上是 $\\infty$：$f=\\infty$ 在 $\\mathbb{Q}$ 上，$0$ 在 $\\mathbb{R}\\setminus\\mathbb{Q}$ 上",
+        "任何 $0\\le\\varphi\\le f$：$\\varphi\\le(\\max\\varphi)\\,\\chi_{\\mathbb{Q}}$ ⇒ $\\int\\varphi\\le\\max\\varphi\\cdot0=0$",
+        "$\\varphi_n=n\\chi_{\\mathbb{Q}}$，$\\int\\varphi_n=n\\cdot0=0$，也看得出來"
+      ],
+      "tex": [
+        "\\int\\varphi\\le\\int\\psi_n=\\frac12+\\frac1{2^{n+1}}",
+        "\\int_{[0,1]}x\\,dm=\\frac12"
+      ]
     },
     {
       "heading": "④ 還欠著的事",
       "body": [
-        "直接從定義證 $\\int(f+g)=\\int f+\\int g$ 並不容易：$\\ge$ 是對的（$\\varphi\\le f$、$\\psi\\le g$ 時 $\\varphi+\\psi\\le f+g$），$\\le$ 卻需要「$\\int\\varphi_n\\to\\int f$」。這正是〈單調收斂定理（測度版）〉要給的，所以加法性要等到那一課才完整。"
-      ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "從底下撐",
-      "beats": [
-        { "show": ["在 $f$ 底下塞簡單函數"],
-          "note": "塞得越滿，面積越接近。",
-          "say": "一般的非負函數怎麼積分？在它底下塞簡單函數，塞得越滿，面積越接近。",
-          "board": [
-            {"do":"write","line":"在 $f$ 底下塞簡單函數"}
-          ] },
-        { "show": ["$\\int_X f\\,d\\mu=\\sup\\{\\int_X\\varphi\\,d\\mu:0\\le\\varphi\\le f\\}$"],
-          "note": "$\\varphi$ 為簡單函數。",
-          "say": "定義：所有塞在 f 底下的非負簡單函數，積分取上確界。值可以是無限大。",
-          "board": [
-            {"do":"write","line":"$\\int_X f\\,d\\mu={{s:\\sup}}\\{\\int_X\\varphi\\,d\\mu:0\\le\\varphi\\le f\\}$"},
-            {"do":"underline","term":"s","label":"上確界","on":"上確界"},
-            {"do":"write","line":"值可以是 $\\infty$","on":"值可以"}
-          ] },
-        { "show": ["為什麼不上下夾？"],
-          "note": "例：$\\frac{1}{\\sqrt{x}}$。",
-          "say": "為什麼不像 Darboux 那樣從上下夾？想想一除以根號 x 這種函數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"不上下夾？","on":"Darboux"},
-            {"do":"write","line":"例：$\\frac{1}{\\sqrt{x}}$","on":"一除以根號"}
-          ] },
-        { "show": ["$0\\le f\\le g\\Rightarrow\\int f\\le\\int g$"],
-          "note": "$c\\ge0$ 時 $\\int cf=c\\int f$。",
-          "say": "定義立刻給出單調：塞得進 f 底下的，也塞得進 g 底下。",
-          "board": [
-            {"do":"write","line":"$0\\le f\\le g\\Rightarrow\\int f\\le\\int g$"},
-            {"do":"write","line":"塞進 $f$ 底下 ⇒ 塞進 $g$ 底下","on":"塞得進#1"}
-          ] }
-      ],
-      "check": 1
+        "直接從定義看得出來的：",
+        "• 單調：$f\\le g$ ⇒ $\\int f\\le\\int g$",
+        "• $c\\ge0$：$\\int cf=c\\int f$",
+        "• $\\int f+\\int g\\le\\int(f+g)$",
+        "最後一條：$\\varphi\\le f$、$\\psi\\le g$ ⇒ $\\varphi+\\psi\\le f+g$，用簡單函數的線性再取上確界",
+        "還欠著：",
+        "• $\\int(f+g)\\le\\int f+\\int g$：$f+g$ 底下的 $\\varphi$ 拆不成兩塊分別在 $f$、$g$ 底下",
+        "• $\\int\\varphi_n\\to\\int f$ 對每個 $f$ 都成立？",
+        "兩件都由單調收斂定理解決：證明在 12.52"
+      ]
     },
     {
-      "title": "一定撐得滿",
-      "beats": [
-        { "show": ["值域 $[0,n)$ 切成長 $2^{-n}$ 的小段"],
-          "say": "怎麼塞才夠滿？把值域零到 n 切成長二的負 n 次方的小段。",
-          "board": [
-            {"do":"write","line":"值域 $[0,n)$ 切成長 ${{l:2^{-n}}}$ 的小段","tint":{"l":"violet"},"on":"把值域"}
-          ] },
-        { "show": ["$f(x)$ 壓到所在段的下端；$f\\ge n$ 壓成 $n$"],
-          "say": "f 在 x 的值落在哪一段，就壓到那一段的下端；大於等於 n 的地方壓成 n。這就是 phi n。",
-          "board": [
-            {"do":"write","line":"${{fx:f(x)}}$ 壓到所在段的下端","tint":{"fx":"blue"}},
-            {"do":"write","line":"${{fx:f(x)}}\\ge n$ 壓成 $n$","on":"大於等於 n"}
-          ] },
-        { "show": ["$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，$\\varphi_n\\to f$"],
-          "note": "誤差 $<2^{-n}$。",
-          "say": "這串簡單函數一路遞增，每一點都收斂到 f，誤差小於二的負 n 次方。為什麼，下一節一步一步證。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，$\\varphi_n\\to f$","on":"這串"},
-            {"do":"write","line":"誤差 $<{{l:2^{-n}}}$","on":"誤差小於"}
-          ] },
-        { "show": ["$f(x)=x$：$\\varphi_3(0.7)=\\frac{5}{8}$"],
-          "note": "$0.7\\cdot8=5.6$，在 $[\\frac{5}{8},\\frac{6}{8})$。",
-          "say": "例如 f 等於 x，n 等於三，段長八分之一。零點七乘八是五點六，壓到下端八分之五。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x)=x$，$n=3$：段長 $\\frac{1}{8}$","on":"例如"},
-            {"do":"write","line":"$0.7\\cdot8=5.6$ ⇒ $\\varphi_3(0.7)=\\ {{r:\\frac{5}{8}}}$","on":"零點七乘八"},
-            {"do":"box","term":"r","color":"green","on":"壓到下端"}
-          ] }
-      ],
-      "key": "值域切小段，$f(x)$ 壓到所在段下端",
-      "check": 0
-    },
-    {
-      "title": "證明：真的撐得滿",
-      "beats": [
-        { "show": ["逐項驗：可測、遞增、收斂"],
-          "say": "策略：phi n 已經造好了，三件事一件一件驗。遞增要分 f 在 x 的值落在哪裡來看。",
-          "board": [
-            {"do":"write","line":"逐項驗：可測、遞增、收斂"}
-          ] },
-        { "show": ["$\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}$、$\\{f\\ge n\\}$ 可測"],
-          "note": "$f$ 可測。",
-          "say": "每一段的原像是 f 大於等於下端、交上 f 小於上端，都可測，而且互不相交，所以 phi n 是簡單函數。",
-          "board": [
-            {"do":"write","line":"$\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}$、$\\{f\\ge n\\}$ 可測","on":"每一段的原像"},
-            {"do":"write","line":"⇒ $\\varphi_n$ 是簡單函數","on":"所以 phi n"}
-          ] },
-        { "show": ["$f(x)<n$：那一段切成兩半","$\\varphi_{n+1}(x)\\ge\\varphi_n(x)$"],
-          "note": "$\\frac{2k-2}{2^{n+1}}=\\frac{k-1}{2^n}$：下端不變。",
-          "why": {"ask":"為什麼 $\\varphi_{n+1}(x)\\ge\\varphi_n(x)$？","say":"下一層的值，為什麼不會比這一層小？","options":[{"label":"那一段切成兩半，下半段的下端就是原來的下端","correct":true},{"label":"$f$ 遞增","why":"$f$ 不必遞增。這裡的遞增是同一個 $x$、$n$ 變大時 $\\varphi_n(x)$ 不變小，看的是段怎麼切。"},{"label":"$\\varphi_{n+1}$ 的值可以到 $n+1$，比較大","why":"上限比較高，不代表在這一點比較大；要看 $x$ 那一段切開後落在哪一半。"}]},
-          "say": "下一層把這一段切成兩半。落在下半段，壓到的下端跟原來一樣；落在上半段，還更高。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x)<n$：那一段切成兩半","on":"下一層"},
-            {"do":"write","line":"$\\varphi_{n+1}(x)\\ge\\varphi_n(x)$","on":"為什麼不會"},
-            {"do":"write","line":"$\\frac{2k-2}{2^{n+1}}=\\frac{k-1}{2^n}$：下端不變","why":true,"on":"壓到的下端"}
-          ] },
-        { "show": ["$f(x)\\ge n$：$\\varphi_{n+1}(x)\\ge n=\\varphi_n(x)$"],
-          "say": "f 在 x 的值大於等於 n 時，這一層壓成 n；下一層不是落在 n 以上某一段，就是壓成 n 加一，都不會比較小。",
-          "board": [
-            {"do":"write","line":"$f(x)\\ge n$：$\\varphi_{n+1}(x)\\ge n=\\varphi_n(x)$"}
-          ] },
-        { "show": ["$n>f(x)$：$0\\le f(x)-\\varphi_n(x)<2^{-n}$"],
-          "note": "$f(x)$ 和 $\\varphi_n(x)$ 在同一段。",
-          "why": {"ask":"為什麼誤差小於 $2^{-n}$？","say":"n 比 f 在 x 的值大以後，誤差為什麼小於二的負 n 次方？","options":[{"label":"$f(x)$ 和它的下端在同一段，段長 $2^{-n}$","correct":true},{"label":"$\\varphi_n$ 遞增，所以收斂到 $f$","why":"遞增又有上界只保證收斂到某個數，不保證是 $f(x)$；要靠段長趨近零。"},{"label":"$n$ 夠大時 $\\varphi_n(x)=f(x)$","why":"壓到下端通常差一點，不會剛好相等；差距被段長壓住，才趨近零。"}]},
-          "say": "n 比 f 在 x 的值大，x 就不會被壓成 n，而是壓到所在那段的下端。兩個在同一段，差距小於段長。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$n>f(x)$：$0\\le f(x)-\\varphi_n(x)<{{e:2^{-n}}}$","on":"n 比 f"},
-            {"do":"write","line":"$f(x)$、$\\varphi_n(x)$ 在同一段","why":true,"on":"兩個在同一段"},
-            {"do":"underline","term":"e","label":"段長","why":true,"on":"差距"}
-          ] },
-        { "show": ["$f(x)=\\infty$：$\\varphi_n(x)=n\\to\\infty$"],
-          "say": "f 在 x 是無限大的點，每一層都壓成 n，n 趨近無限大，也收斂。",
-          "board": [
-            {"do":"write","line":"$f(x)=\\infty$：$\\varphi_n(x)=n\\to\\infty$"}
-          ] }
-      ],
-      "key": "每段對半切：只增不減、誤差 $<2^{-n}$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "分情況",
-      "where": {
-        "ask": "下面幾步裡，哪一步用到 $f$ 可測？",
-        "steps": [
-          {
-            "label": "$\\varphi_n$ 是簡單函數",
-            "correct": true
-          },
-          {
-            "label": "$\\varphi_{n+1}\\ge\\varphi_n$",
-            "why": "這只用到段怎麼切：每一段切成兩半。"
-          },
-          {
-            "label": "$f(x)-\\varphi_n(x)<2^{-n}$",
-            "why": "這只用到段長，跟原像可不可測無關。"
-          },
-          {
-            "label": "$f(x)=\\infty$ 時 $\\varphi_n(x)=n$",
-            "why": "這只是構造：大於等於 $n$ 的地方壓成 $n$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "逼近序列的積分",
-      "beats": [
-        { "show": ["$\\varphi_n$ 在第 $k$ 段取 $\\frac{k-1}{2^n}$，段長 $\\frac{1}{2^n}$"],
-          "note": "$f(x)=x$ 在 $[0,1]$。",
-          "say": "f 等於 x 在零到一。phi n 在第 k 段取 k 減一除以二的 n 次方，每段長二的負 n 次方。",
-          "board": [
-            {"do":"write","line":"$f(x)=x$ 在 $[0,1]$"},
-            {"do":"write","line":"第 $k$ 段取 $\\frac{k-1}{2^n}$，段長 $\\frac{1}{2^n}$","on":"第 k 段"}
-          ] },
-        { "show": ["$\\int\\varphi_n\\,dm=\\frac{1-2^{-n}}{2}$"],
-          "note": "$n=3$：$\\frac{28}{64}=\\frac{7}{16}$。",
-          "say": "全部加起來，等於一減二的負 n 次方再除以二。n 等於三時是十六分之七。",
-          "board": [
-            {"do":"write","line":"$\\int\\varphi_n\\,dm=\\frac{1-2^{-n}}{2}$"},
-            {"do":"write","line":"$n=3$：$\\frac{28}{64}=\\frac{7}{16}$","on":"n 等於三"}
-          ] },
-        { "show": ["$f(x)=x$ 與 $\\varphi_3$ 的階梯"],
-          "say": "畫出來：藍色是 f 等於 x，紅色是 n 等於三的階梯，每一階都在線的下面。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,1.1,0,1.1],"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"0","domain":[0,0.125],"color":"red"},{"expr":"1/8","domain":[0.125,0.25],"color":"red"},{"expr":"2/8","domain":[0.25,0.375],"color":"red"},{"expr":"3/8","domain":[0.375,0.5],"color":"red"},{"expr":"4/8","domain":[0.5,0.625],"color":"red"},{"expr":"5/8","domain":[0.625,0.75],"color":"red"},{"expr":"6/8","domain":[0.75,0.875],"color":"red"},{"expr":"7/8","domain":[0.875,1],"color":"red"}]}}
-          ] },
-        { "show": ["遞增趨近 $\\frac{1}{2}=\\int_0^1 x\\,dx$"],
-          "say": "它遞增趨近二分之一，正是 x 從零到一的積分。等於，要靠單調收斂定理保證。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int\\varphi_n\\,dm\\to{{h:\\frac{1}{2}}}=\\int_0^1 x\\,dx$","on":"遞增趨近"},
-            {"do":"write","line":"等號要靠單調收斂定理","on":"要靠"}
-          ] },
-        { "show": ["$\\varphi_n\\uparrow f\\Rightarrow\\int\\varphi_n\\to\\int f$"],
-          "note": "單調收斂定理：非負可測、遞增趨近。",
-          "say": "單調收斂定理說：非負可測函數遞增趨近 f，積分也遞增趨近 f 的積分。這裡條件都符合。",
-          "board": [
-            {"do":"write","line":"${{m1:\\varphi_n\\uparrow f}}\\Rightarrow\\int\\varphi_n\\to\\int f$"},
-            {"do":"underline","term":"m1","label":"遞增趨近","on":"遞增趨近#1"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "值是 $\\infty$ 也可能積成 0",
-      "beats": [
-        { "show": ["$f=\\infty$ 在 $\\mathbb{Q}$，$f=0$ 在 $\\mathbb{R}\\setminus\\mathbb{Q}$"],
-          "say": "在有理數上取無限大，無理數上取零。這個函數的積分是多少？",
-          "board": [
-            {"do":"write","line":"$f=\\infty$ 在 $\\mathbb{Q}$"},
-            {"do":"write","line":"$f=0$ 在 $\\mathbb{R}\\setminus\\mathbb{Q}$","on":"無理數上"}
-          ] },
-        { "show": ["$0\\le\\varphi\\le f$：無理點上 $\\varphi=0$"],
-          "say": "塞在底下的簡單函數，在無理點上只能是零，非零的值只出現在有理數的子集上。",
-          "board": [
-            {"do":"write","line":"$0\\le\\varphi\\le f$：無理點上 ${{z:\\varphi=0}}$"},
-            {"do":"underline","term":"z","on":"只能是"}
-          ] },
-        { "show": ["那些集合測度 0"],
-          "say": "有理數的子集測度都是零，所以每個簡單函數的積分都是零乘什麼加零。",
-          "board": [
-            {"do":"write","line":"那些集合測度 $0$"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\int_{\\mathbb{R}} f\\,dm$ 是？",
-        "options": [
-          {
-            "label": "0",
-            "correct": true
-          },
-          {
-            "label": "$\\infty$",
-            "why": "函數值是 $\\infty$ 不代表積分是 $\\infty$；那些點的測度是 0。"
-          },
-          {
-            "label": "沒有定義",
-            "why": "$f$ 可測：$\\{f>a\\}$ 是 $\\mathbb{Q}$ 或 $\\mathbb{R}$。底下的簡單函數積分全是 0，上確界是 0。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "加法性還欠著",
-      "beats": [
-        { "show": ["$\\int(f+g)\\overset{?}{=}\\int f+\\int g$"],
-          "say": "最後一件事：兩個非負函數相加，積分會不會相加？從定義直接證，並不容易。",
-          "board": [
-            {"do":"write","line":"$\\int(f+g)\\overset{?}{=}\\int f+\\int g$"}
-          ] },
-        { "show": ["$\\varphi\\le f$、$\\psi\\le g\\Rightarrow\\varphi+\\psi\\le f+g$"],
-          "say": "f 底下塞一個、g 底下塞一個，加起來就塞在 f 加 g 底下。這給出其中一個方向。",
-          "board": [
-            {"do":"write","line":"${{p:\\varphi}}\\le f$、${{q:\\psi}}\\le g$","tint":{"p":"blue","q":"violet"}},
-            {"do":"write","line":"$\\Rightarrow\\varphi+\\psi\\le f+g$","on":"加起來"}
-          ] },
-        { "show": ["另一半要 $\\int\\varphi_n\\to\\int f$"],
-          "note": "要靠單調收斂定理。",
-          "say": "另一個方向，要知道逼近序列的積分真的收斂到 f 的積分，那是單調收斂定理的工作。",
-          "board": [
-            {"do":"write","line":"另一半要 ${{m:\\int\\varphi_n\\to\\int f}}$","on":"另一個方向"},
-            {"do":"underline","term":"m","label":"單調收斂定理","on":"單調收斂"}
-          ] },
-        { "show": ["$\\varphi_n+\\psi_n\\uparrow f+g$"],
-          "note": "各取 $f$、$g$ 的標準逼近序列。",
-          "say": "取 f 和 g 各自的標準逼近序列 phi n 與 psi n。相加還是簡單函數，遞增趨近 f 加 g。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\varphi_n+\\psi_n\\uparrow f+g$","on":"ph"},
-            {"do":"write","line":"$\\int(\\varphi_n+\\psi_n)=\\int\\varphi_n+\\int\\psi_n$","on":"相加"}
-          ] },
-        { "show": ["$n\\to\\infty$：$\\int(f+g)=\\int f+\\int g$"],
-          "say": "讓 n 趨近無限大，兩邊都用單調收斂定理，就得到等號，另一個方向補齊了。",
-          "board": [
-            {"do":"write","line":"$n\\to\\infty$：${{r1:\\int(f+g)=\\int f+\\int g}}$"},
-            {"do":"box","term":"r1","color":"green","on":"得到等號"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• $\\int f=\\sup\\{\\int\\varphi:0\\le\\varphi\\le f,\\ \\varphi$ 簡單$\\}\\in[0,\\infty]$",
+        "• 切的是 $y$ 軸：每一層的底 $\\{a\\le f<b\\}$ 可測",
+        "• 逼近：$\\varphi_n=\\min(n,2^{-n}\\lfloor2^nf\\rfloor)\\uparrow f$，誤差 $<2^{-n}$",
+        "• 從下面逼近：$f=\\infty$、無界、無限測度都不怕",
+        "• 可加性、$\\int\\varphi_n\\to\\int f$：等單調收斂定理",
+        "下一課：有正有負的函數：Lebesgue 積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -377,70 +184,1053 @@
   ],
   "checks": [
     {
-      "ask": "$f(x)=x$ 在 $[0,1]$，標準逼近序列的 $\\varphi_3(0.3)$ 是？",
+      "ask": "同一個 $\\varphi_n$ 公式，用在 $f(x)=x$ 的 $x=2.3$（$f$ 定義在 $[0,3]$ 上），$\\varphi_2(2.3)=$？",
       "options": [
         {
-          "label": "$\\frac{1}{4}$",
+          "label": "$2$",
           "correct": true
         },
         {
-          "label": "$\\frac{3}{8}$",
-          "why": "你把 0.3 往上取到段的右端。$0.3\\cdot8=2.4$，落在 $[\\frac{2}{8},\\frac{3}{8})$，要取下端 $\\frac{2}{8}=\\frac{1}{4}$。"
+          "label": "$2.25$",
+          "why": "忘了上限：$f\\ge n$ 時 $\\varphi_n=n$"
         },
         {
-          "label": "0.3",
-          "why": "$\\varphi_3$ 只能取 $\\frac{1}{8}$ 的倍數；它是把 $f$ 壓到所在段的下端，不是 $f$ 本身。"
+          "label": "$2.3$",
+          "why": "$\\varphi_n$ 只取 $\\frac{j}{2^n}$ 或 $n$，不會剛好等於 $f$"
+        },
+        {
+          "label": "$0$",
+          "why": "$2.3$ 不在任何 $j<n2^n$ 的層裡，但那是被截成 $n$，不是 $0$"
         }
       ]
     },
     {
-      "ask": "非負可測函數的積分為什麼定義成「底下的簡單函數」的上確界，而不用上面的？",
+      "ask": "哪一個==只用定義==（還沒有單調收斂定理）就證得出來？",
       "options": [
         {
-          "label": "無界的 $f$ 上面放不下只取有限值的簡單函數",
+          "label": "$0\\le f\\le g\\Rightarrow\\int f\\le\\int g$",
           "correct": true
-        },
-        {
-          "label": "因為上面的簡單函數積分一定比較大，會高估",
-          "why": "上下夾正是 Darboux 的做法，高估本身不是問題。真正的問題是無界函數上方根本沒有簡單函數可用。"
-        },
-        {
-          "label": "因為簡單函數不能比 $f$ 大",
-          "why": "簡單函數當然可以比 $f$ 大，例如 $2\\ge x$ 在 $[0,1]$。困難在 $f$ 無界時找不到。"
-        }
-      ]
-    },
-    {
-      "ask": "$f(x)=x$ 在 $[0,1]$，$\\int\\varphi_2\\,dm$ 是？",
-      "options": [
-        {
-          "label": "$\\frac{3}{8}$",
-          "correct": true
-        },
-        {
-          "label": "$\\frac{1}{2}$",
-          "why": "那是極限 $\\int f$。$\\varphi_2$ 在四段上取 0、$\\frac{1}{4}$、$\\frac{1}{2}$、$\\frac{3}{4}$，各乘 $\\frac{1}{4}$：$\\frac{0+1+2+3}{16}=\\frac{3}{8}$。"
-        },
-        {
-          "label": "$\\frac{5}{8}$",
-          "why": "你可能取了每段的右端 $\\frac{1}{4}$、$\\frac{1}{2}$、$\\frac{3}{4}$、1，那是從上面逼近，總和 $\\frac{10}{16}=\\frac{5}{8}$。$\\varphi_n$ 取下端。"
-        }
-      ]
-    },
-    {
-      "ask": "對非負可測 $f,g$，哪一個可以直接從定義推出（不需要單調收斂定理）？",
-      "options": [
-        {
-          "label": "$\\int(f+g)\\ge\\int f+\\int g$",
-          "correct": true
-        },
-        {
-          "label": "$\\int(f+g)\\le\\int f+\\int g$",
-          "why": "這一半要把 $f+g$ 底下的簡單函數拆成兩塊，一般做不到；要用逼近序列配合單調收斂定理。"
         },
         {
           "label": "$\\int(f+g)=\\int f+\\int g$",
-          "why": "等號包含上一個選項那一半，從定義直接推不出來。"
+          "why": "只證得出 $\\ge$ 的那一半；$\\le$ 要單調收斂定理"
+        },
+        {
+          "label": "$\\int\\varphi_n\\to\\int f$",
+          "why": "這正是單調收斂定理的特例"
+        },
+        {
+          "label": "$\\int|f-g|=0$ 的時候 $f=g$ 處處成立",
+          "why": "只能推出幾乎處處相等，而且這是下一課的事"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "用底下的階梯撐",
+      "beats": [
+        {
+          "show": [
+            "$f:X\\to[0,\\infty]$ 可測（值可以是 $\\infty$）"
+          ],
+          "say": "這一課的對象是非負可測函數：值在 0 到無限大之間，而且允許取到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f:X\\to[0,\\infty]$ 可測（值可以是 $\\infty$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "想法：在 $f$ 底下塞簡單函數 $0\\le\\varphi\\le f$，越塞越滿"
+          ],
+          "say": "想法跟下和很像：在 f 底下塞簡單函數，越塞越滿，看它們的積分最多能到多少。",
+          "board": [
+            {
+              "do": "write",
+              "line": "想法：在 $f$ 底下塞簡單函數 $0\\le\\varphi\\le f$，越塞越滿",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅色是 φₙ：永遠在 f 底下"
+          ],
+          "say": "圖上紅色是待會要定義的 斐 n。n 等於 1 時很粗，頂多到 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "stair",
+                  "window": [
+                    0,
+                    3.2,
+                    -0.2,
+                    3.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1.4+0.85*sin(4.2*x+0.4)+0.28*x",
+                      "label": "f"
+                    },
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "color": "red"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "from": 0,
+                      "to": 3.2,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 5.5,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "每層厚 1/2ⁿ = {1/2^floor(n)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每層厚 1/2ⁿ = 0.5",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "紅色是 φₙ：永遠在 f 底下",
+              "color": "violet",
+              "on": "時很"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用底下的階梯撐"
+          ],
+          "say": "n 變大，每一層變薄，紅色往上長。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "stair",
+                  "window": [
+                    0,
+                    3.2,
+                    -0.2,
+                    3.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1.4+0.85*sin(4.2*x+0.4)+0.28*x",
+                      "label": "f"
+                    },
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "color": "red"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "from": 0,
+                      "to": 3.2,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 5.5,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "每層厚 1/2ⁿ = {1/2^floor(n)}",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 2.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每層厚 1/2ⁿ = 0.25",
+              "on": "變薄"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用底下的階梯撐"
+          ],
+          "say": "n 等於 5，紅色已經幾乎貼著 f 了，而且一直都在 f 底下。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "stair",
+                  "window": [
+                    0,
+                    3.2,
+                    -0.2,
+                    3.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1.4+0.85*sin(4.2*x+0.4)+0.28*x",
+                      "label": "f"
+                    },
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "color": "red"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "min(floor(n),floor(2^floor(n)*(1.4+0.85*sin(4.2*x+0.4)+0.28*x))/2^floor(n))",
+                      "from": 0,
+                      "to": 3.2,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 5.5,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "每層厚 1/2ⁿ = {1/2^floor(n)}",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 5.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每層厚 1/2ⁿ = 0.03125",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟黎曼的差別：不是切 $x$ 軸，是切 $y$ 軸"
+          ],
+          "say": "跟黎曼的下和有個關鍵差別：這些階梯不是切 x 軸得來的，而是切 y 軸，按函數值分層。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟黎曼的差別：不是切 $x$ 軸，是切 $y$ 軸"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看黃色這一層：f 的值落在 a 和 b 之間的點，散在 x 軸上五小段紅色。它們合起來就是這一層的底，是可測集。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pm-band\" viewBox=\"0 0 640 330\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect x=\"70\" y=\"114.1\" width=\"520\" height=\"24.7\" fill=\"#f5d56e\" fill-opacity=\"0.5\"/><line x1=\"70\" y1=\"138.8\" x2=\"590\" y2=\"138.8\" stroke=\"var(--muted)\" stroke-dasharray=\"6 5\"/><line x1=\"70\" y1=\"114.1\" x2=\"590\" y2=\"114.1\" stroke=\"var(--muted)\" stroke-dasharray=\"6 5\"/><line x1=\"70\" y1=\"250\" x2=\"600\" y2=\"250\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"70\" y1=\"250\" x2=\"70\" y2=\"30\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><path d=\"M70 143.1L72.6 139.6L75.2 136.2L77.8 133L80.4 129.9L83 126.9L85.6 124.1L88.2 121.5L90.8 119L93.4 116.7L96 114.7L98.6 112.8L101.2 111.2L103.8 109.7L106.4 108.5L109 107.6L111.6 106.8L114.2 106.3L116.8 106.1L119.4 106.1L122 106.3L124.6 106.7L127.2 107.4L129.8 108.3L132.4 109.4L135 110.8L137.6 112.3L140.2 114.1L142.8 116L145.4 118.1L148 120.4L150.6 122.8L153.2 125.4L155.8 128.1L158.4 131L161 133.9L163.6 136.9L166.2 140L168.8 143.2L171.4 146.4L174 149.6L176.6 152.9L179.2 156.1L181.8 159.4L184.4 162.6L187 165.7L189.6 168.8L192.2 171.8L194.8 174.7L197.4 177.5L200 180.1L202.6 182.7L205.2 185L207.8 187.2L210.4 189.3L213 191.1L215.6 192.8L218.2 194.3L220.8 195.5L223.4 196.6L226 197.4L228.6 198L231.2 198.3L233.8 198.4L236.4 198.3L239 198L241.6 197.4L244.2 196.5L246.8 195.5L249.4 194.2L252 192.7L254.6 191L257.2 189L259.8 186.9L262.4 184.5L265 182L267.6 179.3L270.2 176.4L272.8 173.4L275.4 170.2L278 166.9L280.6 163.5L283.2 160L285.8 156.4L288.4 152.7L291 149L293.6 145.2L296.2 141.4L298.8 137.6L301.4 133.8L304 130L306.6 126.3L309.2 122.6L311.8 119L314.4 115.5L317 112L319.6 108.7L322.2 105.5L324.8 102.5L327.4 99.6L330 96.9L332.6 94.3L335.2 92L337.8 89.8L340.4 87.8L343 86.1L345.6 84.5L348.2 83.2L350.8 82.2L353.4 81.3L356 80.7L358.6 80.3L361.2 80.2L363.8 80.3L366.4 80.6L369 81.2L371.6 82L374.2 83L376.8 84.2L379.4 85.6L382 87.3L384.6 89.1L387.2 91.2L389.8 93.4L392.4 95.7L395 98.2L397.6 100.9L400.2 103.7L402.8 106.6L405.4 109.5L408 112.6L410.6 115.7L413.2 118.9L415.8 122.2L418.4 125.4L421 128.7L423.6 131.9L426.2 135.1L428.8 138.3L431.4 141.4L434 144.4L436.6 147.4L439.2 150.2L441.8 152.9L444.4 155.5L447 158L449.6 160.3L452.2 162.4L454.8 164.4L457.4 166.1L460 167.7L462.6 169.1L465.2 170.2L467.8 171.1L470.4 171.8L473 172.3L475.6 172.5L478.2 172.5L480.8 172.3L483.4 171.8L486 171.1L488.6 170.2L491.2 169L493.8 167.6L496.4 166L499 164.1L501.6 162.1L504.2 159.8L506.8 157.4L509.4 154.8L512 152L514.6 149L517.2 145.9L519.8 142.7L522.4 139.3L525 135.9L527.6 132.3L530.2 128.7L532.8 125L535.4 121.2L538 117.4L540.6 113.6L543.2 109.8L545.8 106L548.4 102.3L551 98.6L553.6 94.9L556.2 91.3L558.8 87.9L561.4 84.5L564 81.2L566.6 78.1L569.2 75.2L571.8 72.3L574.4 69.7L577 67.2L579.6 65L582.2 62.9L584.8 61.1L587.4 59.4L590 58\" stroke=\"var(--ink)\" stroke-width=\"2.6\" fill=\"none\"/><line x1=\"73.3\" y1=\"138.8\" x2=\"73.3\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"96.6\" y1=\"114.2\" x2=\"96.6\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"73.3\" y1=\"250\" x2=\"96.6\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"butt\"/><line x1=\"140.3\" y1=\"114.1\" x2=\"140.3\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"165.1\" y1=\"138.8\" x2=\"165.1\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"140.3\" y1=\"250\" x2=\"165.1\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"butt\"/><line x1=\"298\" y1=\"138.8\" x2=\"298\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"315.4\" y1=\"114.2\" x2=\"315.4\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"298\" y1=\"250\" x2=\"315.4\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"butt\"/><line x1=\"409.3\" y1=\"114.2\" x2=\"409.3\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"429.2\" y1=\"138.8\" x2=\"429.2\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"409.3\" y1=\"250\" x2=\"429.2\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"butt\"/><line x1=\"522.8\" y1=\"138.8\" x2=\"522.8\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"540.2\" y1=\"114.2\" x2=\"540.2\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"1.2\" stroke-dasharray=\"3 4\"/><line x1=\"522.8\" y1=\"250\" x2=\"540.2\" y2=\"250\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-linecap=\"butt\"/><text x=\"62\" y=\"145.8\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan></text><text x=\"62\" y=\"121.1\" text-anchor=\"end\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan></text><text x=\"71.5\" y=\"100.2\" font-size=\"22\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan></text><text x=\"320\" y=\"284\" text-anchor=\"middle\" font-size=\"21\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">紅色：</tspan><tspan style=\"font-family:KaTeX_Main,serif\">{</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> ≤ </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> &lt; </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan style=\"font-family:KaTeX_Main,serif\">}</tspan><tspan style=\"font-family:inherit\"> 底是好幾段</tspan></text><text x=\"320\" y=\"316\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">先切值（黃色那一層），再回頭看是哪些</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "底 $\\{a\\le f<b\\}=\\{f\\ge a\\}\\cap\\{f<b\\}\\in\\mathcal{M}$"
+          ],
+          "say": "因為 f 可測，這個底一定可測，所以量得出測度。這就是可測函數的定義派上用場的地方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "底 $\\{a\\le f<b\\}=\\{f\\ge a\\}\\cap\\{f<b\\}\\in\\mathcal{M}$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$f:X\\to[0,\\infty]$ 可測：",
+            "$\\int_X f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ \\varphi\\ \\text{簡單},\\ 0\\le\\varphi\\le f\\Big\\}$"
+          ],
+          "say": "定義：非負可測函數的積分，是所有在它底下的非負簡單函數，它們積分的上確界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f:X\\to[0,\\infty]$ 可測："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_X f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ \\varphi\\ \\text{簡單},\\ 0\\le\\varphi\\le f\\Big\\}}}$",
+              "color": "red",
+              "on": "是所"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "單函"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 值在 $[0,\\infty]$：上確界可以是 $\\infty$",
+            "• $\\int_E f\\,d\\mu=\\int_X f\\chi_E\\,d\\mu$"
+          ],
+          "say": "上確界可以是無限大，這也是合法的值。在子集 E 上的積分，一樣乘上 E 的特徵函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 值在 $[0,\\infty]$：上確界可以是 $\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_E f\\,d\\mu=\\int_X f\\chi_E\\,d\\mu$",
+              "on": "上的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相容：$f$ 本身是簡單函數時，跟上一課的定義一樣"
+          ],
+          "say": "先檢查相容：如果 f 本身就是簡單函數，新定義跟上一課的一樣嗎？",
+          "board": [
+            {
+              "do": "write",
+              "line": "相容：$f$ 本身是簡單函數時，跟上一課的定義一樣"
+            },
+            {
+              "do": "write",
+              "line": "　每個 $\\varphi\\le f$ 都有 $\\int\\varphi\\le\\int f$（簡單函數的單調性）；而 $\\varphi=f$ 本身就在集合裡，所以上確界取得到",
+              "color": "violet",
+              "on": "單函"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼從下面？",
+            "• 從下面的 $\\varphi$ 永遠是有限值，$f=\\infty$ 也照樣塞得進去"
+          ],
+          "say": "為什麼從下面？簡單函數只取有限值。f 是無限大的地方，從上面蓋不住，從下面卻塞得進去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼從下面？"
+            },
+            {
+              "do": "write",
+              "line": "• 從下面的 $\\varphi$ 永遠是有限值，$f=\\infty$ 也照樣塞得進去",
+              "on": "限值"
+            },
+            {
+              "do": "write",
+              "line": "• 不用假設 $f$ 有界、$\\mu(X)$ 有限",
+              "on": "上面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f\\equiv1$ 在 $\\mathbb{R}$ 上：$\\varphi_k=\\chi_{[-k,k]}\\le f$",
+            "$\\int\\varphi_k\\,dm=2k\\to\\infty\\ \\Rightarrow\\ \\int_{\\mathbb{R}}1\\,dm=\\infty$"
+          ],
+          "say": "例如常數 1 在整條實數線上：負 k 到 k 的特徵函數在它底下，積分是 2k，可以任意大，所以積分是無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f\\equiv1$ 在 $\\mathbb{R}$ 上：$\\varphi_k=\\chi_{[-k,k]}\\le f$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int\\varphi_k\\,dm=2k\\to\\infty\\ \\Rightarrow\\ \\int_{\\mathbb{R}}1\\,dm=\\infty}}$",
+              "on": "的特"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "2k"
+            }
+          ]
+        },
+        {
+          "show": [
+            "馬上有：$0\\le f\\le g$ ⇒ $\\int f\\le\\int g$"
+          ],
+          "say": "也馬上有單調性：f 小於等於 g，f 底下的簡單函數也在 g 底下，上確界只會更大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "馬上有：$0\\le f\\le g$ ⇒ $\\int f\\le\\int g$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "逼近定理",
+      "beats": [
+        {
+          "show": [
+            "$f:X\\to[0,\\infty]$ 可測。令",
+            "$\\varphi_n(x)=\\begin{cases}\\dfrac{j}{2^n},&\\dfrac{j}{2^n}\\le f(x)<\\dfrac{j+1}{2^n},\\ \\ 0\\le j<n2^n\\\\[4pt] n,&f(x)\\ge n\\end{cases}$"
+          ],
+          "say": "逼近定理：把 0 到 n 切成厚度 2 的 n 次方分之 1 的層。f 落在第 j 層，斐 n 就取那一層的下緣；f 大於等於 n，就取 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f:X\\to[0,\\infty]$ 可測。令"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\varphi_n(x)={\\begin{cases}\\dfrac{j}{2^n},&\\dfrac{j}{2^n}\\le f(x)<\\dfrac{j+1}{2^n},\\ \\ 0\\le j<n2^n\\\\[4pt] n,&f(x)\\ge n\\end{cases}}}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "就取#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "則 $\\varphi_n$ 簡單、$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，而且 $\\varphi_n(x)\\to f(x)$"
+          ],
+          "say": "結論：斐 n 是簡單函數，從下面一個比一個大，而且每一點都收斂到 f。",
+          "board": [
+            {
+              "do": "write",
+              "line": "則 $\\varphi_n$ 簡單、$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，而且 $\\varphi_n(x)\\to f(x)$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一行寫法：",
+            "$\\varphi_n(x)=\\min\\Big(n,\\ \\frac{\\lfloor 2^nf(x)\\rfloor}{2^n}\\Big)$"
+          ],
+          "say": "也可以寫成一行：2 的 n 次方乘 f，取整，再除回去，最後跟 n 取小的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一行寫法："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\varphi_n(x)=\\min\\Big(n,\\ \\frac{\\lfloor 2^nf(x)\\rfloor}{2^n}\\Big)$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "　$f(x)=\\infty$ 時取 $\\varphi_n(x)=n$；$f(x)<n$ 時 $j=\\lfloor2^nf(x)\\rfloor\\le n2^n-1$，兩種寫法一樣",
+              "color": "violet",
+              "on": "回去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：可測看「底」；遞增看「層變薄」；收斂看「誤差 $<$ 層厚」"
+          ],
+          "say": "證明的策略：可測，就看每一層的底；遞增，是因為層越切越薄；收斂，是因為誤差小於一層的厚度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：可測看「底」；遞增看「層變薄」；收斂看「誤差 $<$ 層厚」"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明",
+      "beats": [
+        {
+          "show": [
+            "簡單、可測：底",
+            "$E_{n,j}=\\{f\\ge\\tfrac{j}{2^n}\\}\\cap\\{f<\\tfrac{j+1}{2^n}\\},\\quad F_n=\\{f\\ge n\\}$"
+          ],
+          "say": "第一，簡單而且可測：每一層的底，以及 f 大於等於 n 的地方，都是可測集，斐 n 是有限多個特徵函數的組合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "簡單、可測：底"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle E_{n,j}=\\{f\\ge\\tfrac{j}{2^n}\\}\\cap\\{f<\\tfrac{j+1}{2^n}\\},\\quad F_n=\\{f\\ge n\\}$",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "都在 $\\mathcal{M}$；$\\varphi_n=\\sum_j\\frac{j}{2^n}\\chi_{E_{n,j}}+n\\chi_{F_n}$，只有有限多個值",
+              "on": "是有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varphi_n\\le f$：在 $E_{n,j}$ 上 $\\frac{j}{2^n}\\le f$；在 $F_n$ 上 $n\\le f$"
+          ],
+          "say": "第二，斐 n 在 f 底下：每一層取的是下緣，最上面取 n，都不超過 f。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varphi_n\\le f$：在 $E_{n,j}$ 上 $\\frac{j}{2^n}\\le f$；在 $F_n$ 上 $n\\le f$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遞增：$\\lfloor2y\\rfloor\\ge2\\lfloor y\\rfloor$，取 $y=2^nf(x)$：",
+            "$\\frac{\\lfloor2^{n}f\\rfloor}{2^{n}}\\le\\frac{\\lfloor2^{n+1}f\\rfloor}{2^{n+1}}$"
+          ],
+          "say": "第三，遞增：2y 取整，至少是 y 取整的兩倍，所以層切薄一半，下緣只會往上；上限從 n 變 n 加 1，也不會變小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遞增：$\\lfloor2y\\rfloor\\ge2\\lfloor y\\rfloor$，取 $y=2^nf(x)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\lfloor2^{n}f\\rfloor}{2^{n}}\\le\\frac{\\lfloor2^{n+1}f\\rfloor}{2^{n+1}}$",
+              "on": "整的"
+            },
+            {
+              "do": "write",
+              "line": "又 $n<n+1$，兩邊取 $\\min$ ⇒ $\\varphi_n\\le\\varphi_{n+1}$",
+              "on": "上限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "收斂：$f(x)<\\infty$ 時，$n>f(x)$ 起",
+            "$0\\le f(x)-\\varphi_n(x)<\\frac1{2^n}\\to0$"
+          ],
+          "say": "第四，收斂：f of x 有限時，n 超過 f of x 以後就不會被截，誤差小於一層的厚度，2 的 n 次方分之 1，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "收斂：$f(x)<\\infty$ 時，$n>f(x)$ 起"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle 0\\le f(x)-\\varphi_n(x)<\\frac1{2^n}\\to0}}$",
+              "on": "of#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "的厚"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x)=\\infty$ 時 $\\varphi_n(x)=n\\to\\infty$　$\\blacksquare$"
+          ],
+          "say": "f of x 是無限大的點，斐 n 等於 n，也趨近無限大。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\infty$ 時 $\\varphi_n(x)=n\\to\\infty$　$\\blacksquare$"
+            },
+            {
+              "do": "write",
+              "line": "　附帶：$f\\le M$ 的集合上，$n>M$ 起 $\\sup|f-\\varphi_n|\\le2^{-n}$，是均勻收斂",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$f(x)=x$",
+      "beats": [
+        {
+          "show": [
+            "f(x) = x 在 [0,1] 上的 φₙ"
+          ],
+          "say": "例子：f of x 等於 x，在 0 到 1 上。圖上是 n 等於 2，0.7 這一點的紅色高度是 0.5。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lin",
+                  "window": [
+                    -0.05,
+                    1.05,
+                    -0.08,
+                    1.08
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x",
+                      "label": "f(x) = x",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "floor(2^floor(n)*x)/2^floor(n)",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "floor(2^floor(n)*x)/2^floor(n)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.7,
+                      "color": "pencil"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.7,
+                      "y": "floor(2^floor(n)*0.7)/2^floor(n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 4.5,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "φₙ(0.7) = {floor(2^floor(n)*0.7)/2^floor(n)}",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "φₙ(0.7) = 0.5",
+              "on": "圖上"
+            },
+            {
+              "do": "write",
+              "line": "f(x) = x 在 [0,1] 上的 φₙ",
+              "color": "violet",
+              "on": "這一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varphi_2(0.7)$：$2^2\\cdot0.7=2.8$，$\\lfloor2.8\\rfloor=2$ ⇒ $\\varphi_2(0.7)=\\frac24=0.5$，誤差 $0.2$"
+          ],
+          "say": "算算看：4 乘 0.7 是 2.8，取整是 2，再除以 4，是 0.5，誤差 0.2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varphi_2(0.7)$：$2^2\\cdot0.7=2.8$，$\\lfloor2.8\\rfloor=2$ ⇒ $\\varphi_2(0.7)=\\frac24=0.5$，誤差 $0.2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varphi_3(0.7)=\\frac{\\lfloor5.6\\rfloor}{8}=\\frac58=0.625$，誤差 $0.075<\\frac18$"
+          ],
+          "say": "n 等於 3：8 乘 0.7 是 5.6，取整是 5，8 分之 5 是 0.625，誤差 0.075，比 8 分之 1 小。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lin",
+                  "window": [
+                    -0.05,
+                    1.05,
+                    -0.08,
+                    1.08
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x",
+                      "label": "f(x) = x",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "floor(2^floor(n)*x)/2^floor(n)",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "floor(2^floor(n)*x)/2^floor(n)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.7,
+                      "color": "pencil"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.7,
+                      "y": "floor(2^floor(n)*0.7)/2^floor(n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 4.5,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "φₙ(0.7) = {floor(2^floor(n)*0.7)/2^floor(n)}",
+                  "height": 250
+                },
+                "vals": {
+                  "n": 3.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "φₙ(0.7) = 0.625",
+              "on": "取整"
+            },
+            {
+              "do": "write",
+              "line": "$\\varphi_3(0.7)=\\frac{\\lfloor5.6\\rfloor}{8}=\\frac58=0.625$，誤差 $0.075<\\frac18$",
+              "color": "gold",
+              "on": "誤差"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：$f(x)=x$",
+      "beats": [
+        {
+          "show": [
+            "積分：$\\varphi_n$ 在 $[\\frac{j}{2^n},\\frac{j+1}{2^n})$ 上取 $\\frac j{2^n}$",
+            "$\\int\\varphi_n\\,dm=\\sum_{j=0}^{2^n-1}\\frac{j}{2^n}\\cdot\\frac1{2^n}=\\frac12-\\frac1{2^{n+1}}$"
+          ],
+          "say": "回到 0 到 1。斐 n 的積分是每一層的值乘寬度，加起來，算出來是 2 分之 1 減 2 的 n 加 1 次方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積分：$\\varphi_n$ 在 $[\\frac{j}{2^n},\\frac{j+1}{2^n})$ 上取 $\\frac j{2^n}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\varphi_n\\,dm=\\sum_{j=0}^{2^n-1}\\frac{j}{2^n}\\cdot\\frac1{2^n}=\\frac12-\\frac1{2^{n+1}}}}$",
+              "on": "分是"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "算出"
+            },
+            {
+              "do": "write",
+              "line": "　$\\sum_{j=0}^{N-1}j=\\frac{N(N-1)}2$，$N=2^n$；$x=1$ 那一點測度 $0$。$n=1,2,3$：$\\frac14,\\frac38,\\frac7{16}$",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：積分是 $\\frac12$",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\varphi_n\\to\\frac12$，所以 $\\int_{[0,1]}x\\,dm\\ge\\frac12$"
+          ],
+          "say": "斐 n 都在 f 底下，它們的積分趨近 2 分之 1，所以 f 的積分至少是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int\\varphi_n\\to\\frac12$，所以 $\\int_{[0,1]}x\\,dm\\ge\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另一邊：$\\psi_n=\\varphi_n+\\frac1{2^n}\\ge f$（在 $[0,1)$ 上），任何 $0\\le\\varphi\\le f$：",
+            "$\\int\\varphi\\le\\int\\psi_n=\\frac12+\\frac1{2^{n+1}}$"
+          ],
+          "say": "另一邊：斐 n 往上抬一層，叫 普賽 n，它蓋在 f 上面。f 底下的簡單函數也在 普賽 n 底下，積分不超過它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "另一邊：$\\psi_n=\\varphi_n+\\frac1{2^n}\\ge f$（在 $[0,1)$ 上），任何 $0\\le\\varphi\\le f$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\varphi\\le\\int\\psi_n=\\frac12+\\frac1{2^{n+1}}$",
+              "on": "它蓋"
+            },
+            {
+              "do": "write",
+              "line": "　簡單函數的單調性；$x=1$ 那一點測度 $0$，不影響",
+              "color": "violet",
+              "on": "數也"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\to\\infty$：$\\int\\varphi\\le\\frac12$，取上確界：",
+            "$\\int_{[0,1]}x\\,dm=\\frac12$"
+          ],
+          "say": "n 趨近無限大，就不超過 2 分之 1。取上確界，f 的積分正好是 2 分之 1，跟黎曼積分一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\to\\infty$：$\\int\\varphi\\le\\frac12$，取上確界："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_{[0,1]}x\\,dm=\\frac12}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "的積"
+            },
+            {
+              "do": "write",
+              "line": "在零測集上是 $\\infty$：$f=\\infty$ 在 $\\mathbb{Q}$ 上，$0$ 在 $\\mathbb{R}\\setminus\\mathbb{Q}$ 上",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "這個 $f$ 的積分 $\\displaystyle\\int_{\\mathbb{R}}f\\,dm$ 是？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$\\infty$",
+            "why": "$f$ 雖然取到 $\\infty$，但只在測度 $0$ 的集合上"
+          },
+          {
+            "label": "沒有定義：$\\infty\\cdot0$",
+            "why": "約定 $0\\cdot\\infty=0$；而且定義用的是上確界，一定有值"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：積分是 $\\frac12$",
+      "beats": [
+        {
+          "show": [
+            "任何 $0\\le\\varphi\\le f$：$\\varphi\\le(\\max\\varphi)\\,\\chi_{\\mathbb{Q}}$ ⇒ $\\int\\varphi\\le\\max\\varphi\\cdot0=0$"
+          ],
+          "say": "f 底下的簡單函數，在無理數上只能是 0，所以不超過最大值乘有理數的特徵函數，積分是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任何 $0\\le\\varphi\\le f$：$\\varphi\\le(\\max\\varphi)\\,\\chi_{\\mathbb{Q}}$ ⇒ $\\int\\varphi\\le\\max\\varphi\\cdot0=0$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$\\varphi_n=n\\chi_{\\mathbb{Q}}$，$\\int\\varphi_n=n\\cdot0=0$，也看得出來",
+              "color": "violet",
+              "on": "以不"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "還欠著的事",
+      "beats": [
+        {
+          "show": [
+            "直接從定義看得出來的：",
+            "• 單調：$f\\le g$ ⇒ $\\int f\\le\\int g$"
+          ],
+          "say": "從定義直接看得出來的有：單調性、正的常數可以提出來，還有 f 的積分加 g 的積分，不超過 f 加 g 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直接從定義看得出來的："
+            },
+            {
+              "do": "write",
+              "line": "• 單調：$f\\le g$ ⇒ $\\int f\\le\\int g$",
+              "on": "單調"
+            },
+            {
+              "do": "write",
+              "line": "• $c\\ge0$：$\\int cf=c\\int f$",
+              "on": "提出"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int f+\\int g\\le\\int(f+g)$",
+              "on": "分加"
+            },
+            {
+              "do": "write",
+              "line": "　最後一條：$\\varphi\\le f$、$\\psi\\le g$ ⇒ $\\varphi+\\psi\\le f+g$，用簡單函數的線性再取上確界",
+              "color": "violet",
+              "on": "的積#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "還欠著：",
+            "• $\\int(f+g)\\le\\int f+\\int g$：$f+g$ 底下的 $\\varphi$ 拆不成兩塊分別在 $f$、$g$ 底下"
+          ],
+          "say": "還欠著兩件：反方向的不等式，因為 f 加 g 底下的簡單函數不見得拆得開；還有，斐 n 的積分是不是一定趨近 f 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "還欠著："
+            },
+            {
+              "do": "write",
+              "line": "• $\\int(f+g)\\le\\int f+\\int g$：$f+g$ 底下的 $\\varphi$ 拆不成兩塊分別在 $f$、$g$ 底下",
+              "on": "底下"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\varphi_n\\to\\int f$ 對每個 $f$ 都成立？",
+              "color": "red",
+              "on": "的積#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩件都由單調收斂定理解決：證明在 12.52"
+          ],
+          "say": "這兩件事都要靠下下一課的單調收斂定理：遞增的非負可測函數列，積分的極限等於極限的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩件都由單調收斂定理解決：證明在 12.52",
+              "color": "gold"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\int f=\\sup\\{\\int\\varphi:0\\le\\varphi\\le f,\\ \\varphi$ 簡單$\\}\\in[0,\\infty]$",
+            "• 切的是 $y$ 軸：每一層的底 $\\{a\\le f<b\\}$ 可測"
+          ],
+          "say": "整理：非負可測函數的積分，是底下簡單函數積分的上確界。標準的逼近序列切 y 軸，一層一層從下面長上去，誤差小於一層的厚度。可加性要等單調收斂定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\int f=\\sup\\{\\int\\varphi:0\\le\\varphi\\le f,\\ \\varphi$ 簡單$\\}\\in[0,\\infty]$"
+            },
+            {
+              "do": "write",
+              "line": "• 切的是 $y$ 軸：每一層的底 $\\{a\\le f<b\\}$ 可測",
+              "on": "底下"
+            },
+            {
+              "do": "write",
+              "line": "• 逼近：$\\varphi_n=\\min(n,2^{-n}\\lfloor2^nf\\rfloor)\\uparrow f$，誤差 $<2^{-n}$",
+              "on": "的逼"
+            },
+            {
+              "do": "write",
+              "line": "• 從下面逼近：$f=\\infty$、無界、無限測度都不怕",
+              "on": "層從"
+            },
+            {
+              "do": "write",
+              "line": "• 可加性、$\\int\\varphi_n\\to\\int f$：等單調收斂定理",
+              "on": "厚度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：有正有負的函數：Lebesgue 積分"
+          ],
+          "say": "下一課，處理有正有負的函數，正式定義勒貝格積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：有正有負的函數：Lebesgue 積分"
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,366 @@
+{
+  "id": "partial-derivatives",
+  "title": "偏導數",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["two-variable-functions", "derivative-definition", "chain-rule"],
+  "next": ["higher-partials"],
+  "related": ["multivariable-continuity", "total-differential"],
+  "objectives": [
+    "說得出 $f_x(a,b)$ 的意思：$y$ 固定在 $b$，只讓 $x$ 動時的變化率；圖上是切片曲線的斜率。",
+    "會把其他變數當常數，用一變數的微分法則算偏導數（含三個變數）。",
+    "會用定義算分段函數在接縫點的偏導數，並知道偏導數存在不保證連續。"
+  ],
+  "visual": "曲面 z = f(x, y) 上有一點 P。一片平行於 xz 平面的平面 y = b 切過 P，切口曲線用亮色畫出，P 點畫出這條曲線的切線，旁邊顯示斜率 f_x(a, b)。按切換，改成平面 x = a 切過 P，顯示另一條切口與斜率 f_y(a, b)。",
+  "concept": [
+    {
+      "heading": "① 一次只動一個變數",
+      "body": [
+        "$f(x,y)$ 有兩個輸入。要問「變化率」，得先說往哪個方向動。最簡單的兩個方向：只動 $x$，或只動 $y$。",
+        "$f$ 對 $x$ 的偏導數：把 $y$ 固定在 $b$，只讓 $x$ 變："
+      ],
+      "tex": ["f_x(a,b)=\\lim_{h\\to0}\\frac{f(a+h,\\,b)-f(a,\\,b)}{h}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖上的意思：切片的斜率",
+      "body": [
+        "用平面 $y=b$ 切曲面 $z=f(x,y)$，得到一條曲線 $z=f(x,b)$。$f_x(a,b)$ 就是這條曲線在 $x=a$ 的切線斜率。$f_y(a,b)$ 則是用平面 $x=a$ 切，沿 $y$ 方向的斜率。",
+        "正負的讀法和一變數一樣：$f_x(a,b)>0$ 代表從 $(a,b)$ 往 $+x$ 方向走一小步，高度上升；$f_x(a,b)=3$ 代表 $x$ 多 $0.01$，$f$ 大約多 $0.03$（$y$ 不動）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼算：其他變數當常數",
+      "body": [
+        "算 $f_x$ 時 $y$ 是固定的數，所以把 $y$ 當常數，用一變數的所有法則（乘法、連鎖律……）對 $x$ 微分。",
+        "$f=x^2y^3+\\sin(xy)$：$f_x=2xy^3+y\\cos(xy)$（$y^3$ 是常數係數；$\\sin(xy)$ 的內層 $xy$ 對 $x$ 微分得 $y$）；$f_y=3x^2y^2+x\\cos(xy)$。",
+        "記號：$f_x$、$\\frac{\\partial f}{\\partial x}$、$\\frac{\\partial z}{\\partial x}$ 都是同一個東西。用 $\\partial$ 而不是 $d$，提醒你還有別的變數被固定住。三個變數時一樣，算 $f_z$ 就把 $x$、$y$ 都當常數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 偏導數只看兩個方向",
+      "body": [
+        "一變數裡，可微一定連續。二變數不是：$f_x$、$f_y$ 只看沿 $x$ 軸、$y$ 軸兩條線的變化，其他方向完全沒管。範例 3 的函數兩個偏導數都存在，卻在原點不連續。真正「在一點附近像一個平面」的可微概念，留到〈全微分〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩個偏導數",
+      "prompt": "$f(x,y)=x^2y^3+\\sin(xy)$，求 $f_x$ 與 $f_y$。",
+      "steps": [
+        "$f_x$：$y$ 當常數。$x^2y^3\\to 2x\\cdot y^3$；$\\sin(xy)\\to\\cos(xy)\\cdot{}$ ($xy$ 對 $x$ 微分 $=y$)。",
+        "$f_x=2xy^3+y\\cos(xy)$。",
+        "$f_y$：$x$ 當常數。$x^2y^3\\to x^2\\cdot 3y^2$；$\\sin(xy)\\to\\cos(xy)\\cdot x$。",
+        "$f_y=3x^2y^2+x\\cos(xy)$。"
+      ],
+      "answer": "$f_x=2xy^3+y\\cos(xy)$，$f_y=3x^2y^2+x\\cos(xy)$",
+      "claim": "D(x^2*y^3+sin(x*y), , x) == 2x*y^3 + y*cos(x*y) ;; D(x^2*y^3+sin(x*y), , y) == 3x^2*y^2 + x*cos(x*y)"
+    },
+    {
+      "title": "三個變數",
+      "prompt": "$f(x,y,z)=xy^2z^3$，求 $f_z(1,2,1)$。",
+      "steps": [
+        "$x$、$y$ 當常數，$xy^2$ 是係數。",
+        "$f_z=xy^2\\cdot 3z^2=3xy^2z^2$。",
+        "代 $(1,2,1)$：$3\\cdot 1\\cdot 4\\cdot 1=12$。"
+      ],
+      "answer": "$12$",
+      "claim": "D(x*y^2*z^3, , z) == 3x*y^2*z^2 ;; SUB(SUB(SUB(3x*y^2*z^2,1,x),2,y),1,z) == 12"
+    },
+    {
+      "title": "用定義算接縫點",
+      "prompt": "$f(x,y)=\\frac{xy}{x^2+y^2}$（原點以外），$f(0,0)=0$。求 $f_x(0,0)$、$f_y(0,0)$。",
+      "problemId": "lec-16-q2c",
+      "steps": [
+        "公式在原點不能用，回到定義。$f_x(0,0)=\\lim_{h\\to0}\\frac{f(h,0)-f(0,0)}{h}$。",
+        "$f(h,0)=\\frac{h\\cdot 0}{h^2+0}=0$（$h\\ne 0$），$f(0,0)=0$。所以分子恆為 $0$，極限是 $0$。",
+        "同理 $f(0,h)=0$，$f_y(0,0)=0$。",
+        "但〈多變數連續〉算過：這個 $f$ 在原點不連續（沿 $y=x$ 是 $\\frac{1}{2}$）。兩個偏導數都存在，函數卻不連續。"
+      ],
+      "answer": "$f_x(0,0)=0$，$f_y(0,0)=0$",
+      "claim": "LIM((SUB(x*y/(x^2+y^2), 0, y) - 0)/x, 0) == 0"
+    }
+  ],
+  "pitfalls": [
+    "算 $f_x$ 時把 $y^2$ 微分成 $2y$。$y$ 是常數，$y^2$ 對 $x$ 微分是 $0$。",
+    "內層有兩個變數時漏了連鎖律：$\\sin(xy)$ 對 $x$ 微分要乘 $y$。",
+    "接縫點直接套公式。公式在那一點沒有定義，要回到極限定義。",
+    "以為偏導數存在就連續。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{\\partial}{\\partial x}(y^2)$ 是？",
+      "options": [
+        { "label": "$0$", "correct": true },
+        { "label": "$2y$", "why": "那是對 $y$ 微分。對 $x$ 微分時 $y$ 是常數，$y^2$ 也是常數。" },
+        { "label": "$y^2$", "why": "常數對 $x$ 的導數是 $0$，不是它自己。" }
+      ]
+    },
+    {
+      "ask": "$f=x^3y+y^4$，$f_y$ 是？",
+      "options": [
+        { "label": "$x^3+4y^3$", "correct": true },
+        { "label": "$3x^2y$", "why": "那是 $f_x$（對 $x$ 微分，$y^4$ 消失）。" },
+        { "label": "$3x^2+4y^3$", "why": "對 $y$ 微分時 $x^3$ 是常數係數，$x^3y\\to x^3$，$x^3$ 不用再微分。" }
+      ]
+    },
+    {
+      "ask": "$f_y(1,2)$ 在圖上是什麼？",
+      "options": [
+        { "label": "用平面 $x=1$ 切曲面，切口在 $y=2$ 處的斜率", "correct": true },
+        { "label": "用平面 $y=2$ 切曲面，切口在 $x=1$ 處的斜率", "why": "固定 $y=2$ 只讓 $x$ 動，那是 $f_x(1,2)$。" },
+        { "label": "曲面在 $(1,2)$ 的高度", "why": "高度是 $f(1,2)$，偏導數是斜率。" }
+      ]
+    },
+    {
+      "ask": "$f_x(0,0)$ 與 $f_y(0,0)$ 都存在。$f$ 在原點一定連續嗎？",
+      "options": [
+        { "label": "不一定", "correct": true },
+        { "label": "一定，可微就連續", "why": "那是一變數的定理。兩個偏導數只看兩條座標軸，範例 3 的函數偏導數都是 $0$，卻不連續。" },
+        { "label": "一定不連續", "why": "$x^2+y^2$ 在原點偏導數都是 $0$，也連續。偏導數存在對連續沒有結論。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "一次只動一個變數",
+      "beats": [
+        { "show": ["變化率：先說往哪個方向動"],
+          "note": "最簡單的兩個方向：只動 $x$，或只動 $y$。",
+          "say": "兩個輸入的函數，問變化率之前得先說往哪裡動。最簡單的兩個選擇：只動 x，或只動 y。" },
+        { "show": ["$f_x(a,b)=\\lim_{h\\to0}\\frac{f(a+h,b)-f(a,b)}{h}$"],
+          "note": "$y$ 固定在 $b$，只讓 $x$ 變。",
+          "say": "對 x 的偏導數：把 y 釘在 b 不動，只讓 x 變，就是一變數的導數定義。",
+          "board": [
+            {"do":"write","line":"$f_x(a,b)=\\lim_{h\\to0}\\frac{f({{xh:a+h}},{{yb:b}})-f(a,b)}{h}$","tint":{"xh":"blue"}},
+            {"do":"focus","term":"yb","on":"把 y 釘在"},
+            {"do":"underline","term":"xh","label":"只動 x","on":"只讓 x 變"}
+          ] },
+        { "show": ["平面 $y=b$ 切曲面 → 曲線 $z=f(x,b)$"],
+          "note": "$f_x(a,b)$ 是這條切口的切線斜率。",
+          "say": "在圖上：用平面 y 等於 b 去切曲面，切出一條曲線，f 下標 x 就是它在 x 等於 a 的斜率。",
+          "board": [
+            {"do":"write","line":"平面 $y=b$ 切 → 曲線 $z=f(x,b)$","on":"用平面"}
+          ] },
+        { "show": ["$f_y(a,b)$：用平面 $x=a$ 切"],
+          "say": "對 y 的偏導數換成用 x 等於 a 的平面切，看沿 y 方向的斜率。",
+          "board": [
+            {"do":"write","line":"$f_y(a,b)$：用平面 $x=a$ 切","on":"換成用"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "讀出數字的意思",
+      "beats": [
+        { "show": ["$f_x(a,b)>0$：往 $+x$ 走，高度上升"],
+          "say": "正負的讀法跟一變數一樣：偏導數是正的，往正 x 方向走一小步，高度就上升。",
+          "board": [
+            {"do":"write","line":"$f_x(a,b)>0$"},
+            {"do":"write","line":"往 $+x$ 走 → 高度上升","on":"往正"}
+          ] },
+        { "show": ["變化量 ≈ 變化率 × 走的距離"],
+          "note": "小步之內，直覺：變化率當作不變。",
+          "say": "變化率是每走一單位多出多少。偏導數是三，x 多走一，函數大約多三；走小一點，就按比例縮小。",
+          "board": [
+            {"do":"write","line":"變化量 ≈ 變化率 × 走的距離"},
+            {"do":"write","line":"$f_x=3$，$x$ 多 1 → $f$ 約多 3","on":"偏導數是三"}
+          ] },
+        { "show": ["$f_x(a,b)=3$"],
+          "note": "$y$ 不動，$x$ 多 $0.01$。",
+          "say": "如果偏導數是三，y 不動、x 多走零點零一，函數大約會多多少？",
+          "board": [
+            {"do":"write","line":"$f_x(a,b)={{r:3}}$"},
+            {"do":"underline","term":"r","label":"變化率","on":"偏導數是三"},
+            {"do":"write","line":"$y$ 不動，$x$ 多 $0.01$","on":"y 不動"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f$ 大約多多少？",
+        "options": [
+          {
+            "label": "$0.03$",
+            "correct": true
+          },
+          {
+            "label": "$3$",
+            "why": "$3$ 是變化率；$x$ 只多 $0.01$，$f$ 大約多 $3\\times0.01$。"
+          },
+          {
+            "label": "$0.01$",
+            "why": "$0.01$ 是 $x$ 的變化；$f$ 的變化還要乘上變化率 $3$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "其他變數當常數",
+      "beats": [
+        { "show": ["算 $f_x$：$y$ 當常數"],
+          "note": "一變數的所有法則照用。",
+          "say": "怎麼算？算對 x 的偏導數時，y 是固定的數，就把它當常數，用一變數的法則對 x 微分。",
+          "board": [
+            {"do":"write","line":"算 $f_x$：${{y:y}}$ 當常數"},
+            {"do":"focus","term":"y","color":"blue","on":"y 是固定"},
+            {"do":"write","line":"用一變數的法則對 $x$ 微分","on":"用一變數"}
+          ] },
+        { "show": ["$f_x$、$\\frac{\\partial f}{\\partial x}$、$\\frac{\\partial z}{\\partial x}$"],
+          "note": "用 $\\partial$ 提醒：還有別的變數被固定住。",
+          "say": "這幾種寫法是同一個東西。用彎彎的 partial 而不是 d，提醒你還有別的變數被固定住。",
+          "board": [
+            {"do":"write","line":"$f_x=\\frac{\\partial f}{\\partial x}=\\frac{\\partial z}{\\partial x}$"},
+            {"do":"write","line":"用 $\\partial$ 不用 $d$：別的變數被固定","on":"用彎彎的"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算兩個偏導數",
+      "beats": [
+        { "show": ["$f=x^2y^3+\\sin(xy)$"],
+          "say": "實際算一題，兩個偏導數都要。",
+          "board": [
+            {"do":"write","line":"$f=x^2y^3+\\sin(xy)$"}
+          ] },
+        { "show": ["$x^2y^3\\to 2x\\cdot y^3$"],
+          "note": "$y^3$ 是常數係數。",
+          "say": "對 x：y 三次方是常數係數，x 平方微分成二 x。",
+          "board": [
+            {"do":"write","line":"$f_x=2x\\cdot{{ys:y^3}}$","on":"對 x"},
+            {"do":"underline","term":"ys","label":"常數","on":"y 三次方"}
+          ] },
+        { "show": ["$\\sin(xy)\\to\\cos(xy)\\cdot y$"],
+          "note": "內層 $xy$ 對 $x$ 微分得 $y$。",
+          "say": "sine x y 要用連鎖律：外層變 cosine，內層 x y 對 x 微分是 y，不要漏乘。",
+          "board": [
+            {"do":"transform","line":"$f_x=2x\\cdot{{ys:y^3}}+\\cos(xy)\\cdot{{yy:y}}$","on":"外層變"},
+            {"do":"underline","term":"yy","label":"不要漏乘","on":"內層 x y"}
+          ] },
+        { "show": ["連鎖律：外層導數 × 內層導數"],
+          "say": "連鎖律的想法：函數包了兩層，就先微外層，再乘內層的導數。sine 裡面包著 x y，所以外層 sine 變 cosine。",
+          "board": [
+            {"do":"write","line":"連鎖律：外層導數 × 內層導數"}
+          ] },
+        { "show": ["$y=2$：$(\\sin 2x)'=2\\cos 2x$"],
+          "note": "$xy$ 對 $x$ 微分，$y$ 就是係數。",
+          "say": "代一個數看看：y 是二，sine 二 x 對 x 微分，是二乘 cosine 二 x。所以 x y 對 x 微分，得到 y。",
+          "board": [
+            {"do":"write","line":"$y=2$：$(\\sin 2x)'={{n1:2}}\\cos 2x$"},
+            {"do":"underline","term":"n1","label":"係數 y","on":"是二乘"}
+          ] },
+        { "show": ["$f_y=3x^2y^2+x\\cos(xy)$"],
+          "say": "對 y 一樣：換成 x 當常數，y 三次方微分成三 y 平方，內層對 y 微分得 x。",
+          "board": [
+            {"do":"write","line":"$f_y=3x^2y^2+{{xx:x}}\\cos(xy)$","on":"對 y 一樣"},
+            {"do":"underline","term":"xx","label":"內層對 y","on":"內層對 y"}
+          ] }
+      ],
+      "key": "對 $x$ 微分時 $y$ 全是係數，內層別漏",
+      "check": 1
+    },
+    {
+      "title": "三個變數",
+      "beats": [
+        { "show": ["$f(x,y,z)=xy^2z^3$，求 $f_z(1,2,1)$"],
+          "say": "三個變數也一樣。算對 z 的偏導數，就把 x、y 都當常數。",
+          "board": [
+            {"do":"write","line":"$f(x,y,z)=xy^2z^3$，求 $f_z(1,2,1)$"},
+            {"do":"write","line":"$x,y$ 當常數","on":"就把"}
+          ] },
+        { "show": ["$f_z=xy^2\\cdot 3z^2=3xy^2z^2$"],
+          "note": "$xy^2$ 是係數。",
+          "say": "x y 平方是係數，z 三次方微分成三 z 平方。接著代點一、二、一。",
+          "board": [
+            {"do":"write","line":"$f_z={{c:xy^2}}\\cdot 3z^2=3xy^2z^2$"},
+            {"do":"underline","term":"c","label":"係數","on":"係數"}
+          ] },
+        { "show": ["代點：每個變數都要代"],
+          "say": "最後代點時，x 換成一，y 換成二，z 換成一。每個變數都要代進去，包括 y 平方裡的 y。",
+          "board": [
+            {"do":"write","line":"$x=1$，$y=2$，$z=1$"},
+            {"do":"write","line":"每個變數都要代","on":"每個變數"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f_z(1,2,1)$ 是？",
+        "options": [
+          {
+            "label": "$12$",
+            "correct": true
+          },
+          {
+            "label": "$3$",
+            "why": "$y^2$ 也要代：$y=2$ 時 $y^2=4$，$3\\cdot1\\cdot4\\cdot1=12$。"
+          },
+          {
+            "label": "$4$",
+            "why": "$4$ 是 $f(1,2,1)$，還沒對 $z$ 微分。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "只看兩個方向",
+      "beats": [
+        { "show": ["$f=\\frac{xy}{x^2+y^2}$，$f(0,0)=0$"],
+          "note": "公式在原點不能用，回到定義。",
+          "say": "接縫點要回到定義。這個函數在原點另外定義成零，公式在那裡不能套。",
+          "board": [
+            {"do":"write","line":"$f=\\frac{xy}{x^2+y^2}$，$f(0,0)=0$"},
+            {"do":"write","line":"原點：公式不能套，用定義","on":"公式在那裡"}
+          ] },
+        { "show": ["原點代進去是 $\\frac{0}{0}$"],
+          "say": "原點代進去是零分之零。公式和另外規定的值在這裡接起來，叫接縫點，要用極限定義算。",
+          "board": [
+            {"do":"write","line":"$\\frac{0}{0}$：沒有意義"},
+            {"do":"write","line":"接縫點：用極限定義","on":"接縫點"}
+          ] },
+        { "show": ["$f(h,0)=0$ → $f_x(0,0)=0$"],
+          "note": "同理 $f_y(0,0)=0$。",
+          "say": "沿 x 軸，函數值一直是零，分子恆為零，所以偏導數是零；對 y 也一樣。",
+          "board": [
+            {"do":"write","line":"$f(h,0)=0$"},
+            {"do":"write","line":"$f_x(0,0)=0$，$f_y(0,0)=0$","on":"所以偏導數"}
+          ] },
+        { "show": ["偏導數都存在，$f$ 卻不連續"],
+          "note": "沿 $y=x$ 是 $\\frac{1}{2}$。",
+          "say": "可是沿 y 等於 x，函數值是二分之一，在原點不連續。偏導數只看兩條線，其他方向完全沒管。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"沿 $y=x$：$f(x,x)={{h:\\frac{1}{2}}}$","on":"可是沿"},
+            {"do":"write","line":"$\\frac{1}{2}\\ne f(0,0)=0$","on":"在原點"},
+            {"do":"write","line":"偏導數只看兩條線","on":"偏導數只看"}
+          ] },
+        { "show": ["連續：靠近原點，值要靠近 $f(0,0)$"],
+          "say": "連續是說點靠近原點時，函數值要靠近原點的值。路徑不同值卻不同，就不連續。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,1],"curves":[{"expr":"0","domain":[-2,2],"color":"blue"},{"expr":"1/2","domain":[-2,2],"color":"red"}],"points":[{"x":0,"y":0}],"labels":[{"x":1,"y":-0.25,"text":"沿 x 軸","anchor":"start"},{"x":1,"y":0.7,"text":"沿 y=x","anchor":"start"}]}},
+            {"do":"write","line":"路徑不同、值不同 → 不連續","on":"路徑不同"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["partial-derivative", "multivariable"],
+    "fine": ["partial-hold-constant", "partial-chain-inner", "partial-from-definition", "partial-geometric-slice"]
+  },
+  "practice": [
+    { "id": "mob-trap-007", "core": true, "trains": "partial-hold-constant" },
+    { "id": "der-025", "core": true, "trains": "partial-chain-inner" },
+    { "id": "der-031", "core": true, "trains": "partial-chain-inner" },
+    { "id": "der-021", "core": true, "trains": "partial-chain-inner" },
+    { "id": "der-022", "core": true, "trains": "partial-chain-inner" },
+    { "id": "lec-16-q4a", "core": true, "trains": "partial-chain-inner" },
+    { "id": "cg-8b-001", "core": true, "trains": "partial-geometric-slice" },
+    { "id": "der-032", "trains": "partial-chain-inner" },
+    { "id": "cg-8b-002", "trains": "partial-geometric-slice" },
+    { "id": "cg-8b-003", "trains": "partial-from-definition" },
+    { "id": "lec-16-q2c", "challenge": true, "trains": "partial-from-definition", "note": "挑戰：公式在原點不能用，回到定義。" }
+  ],
+  "gaps": []
+}

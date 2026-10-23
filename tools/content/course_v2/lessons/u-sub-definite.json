@@ -1,57 +1,118 @@
 {
   "id": "u-sub-definite",
   "title": "定積分換元",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["u-sub-recognize", "ftc-part2"],
-  "next": ["u-sub-nonobvious"],
-  "related": ["u-sub-basic", "integral-properties", "improper-singular"],
-  "objectives": [
-    "會用「上下限跟著換」做定積分換元，換完之後不必換回 $x$。",
-    "上下限換完變成「大的在下面」時，知道怎麼處理、不會多丟一個負號。",
-    "不把 $u$ 的式子和 $x$ 的上下限混在一起用。"
+  "prerequisites": [
+    "u-sub-recognize",
+    "ftc-part2"
   ],
-  "visual": "左右兩張圖。左圖畫 y = 2x/(1 + x²)³，x 從 0 到 1 的區域塗色；右圖畫 y = 1/u³，u 從 1 到 2 的區域塗色。拖動左圖的 x，右圖同步標出 u = 1 + x²，兩邊已塗色部分的面積數字一起增加，而且永遠相等。兩塊區域的寬度都是 1，形狀卻完全不同：左邊從 0 升起再落下，右邊從 1 一路降到 1/8；面積卻始終相同，最後都是 3/8。",
+  "next": [
+    "u-sub-nonobvious"
+  ],
+  "related": [
+    "u-sub-basic",
+    "integral-properties",
+    "improper-singular"
+  ],
+  "objectives": [
+    "會用「上下限跟著換」做定積分換元，換完之後不必換回 $x$",
+    "上下限換完變成「大的在下面」時，知道怎麼處理、不會多丟一個負號",
+    "不把 $u$ 的式子和 $x$ 的上下限混在一起用"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 兩條路",
       "body": [
-        "定積分遇到換元，有兩種做法，擇一即可：",
-        "做法甲：先當成不定積分，換元、積完、換回 $x$，再代原來的上下限。",
-        "做法乙：換元的同時，上下限也換成 $u$ 的值：$x=a$ 時 $u=g(a)$，$x=b$ 時 $u=g(b)$。積完直接代 $u$ 的上下限，不必換回 $x$。乙通常比較快。"
+        "路一：先求不定積分，換回 $x$，再代上下限",
+        "$u=1+x^2$，$du=2x\\,dx$：",
+        "路二：上下限跟著換，不必換回 $x$",
+        "$x=0\\Rightarrow u=1$；$x=1\\Rightarrow u=2$"
       ],
-      "tex": ["\\int_a^b f(g(x))\\,g'(x)\\,dx=\\int_{g(a)}^{g(b)} f(u)\\,du"],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1\\frac{2x}{(1+x^2)^3}\\,dx",
+        "\\int u^{-3}\\,du=-\\frac{1}{2u^2}+C",
+        "\\Big[-\\frac{1}{2(1+x^2)^2}\\Big]_0^1=-\\frac18+\\frac12=\\frac38",
+        "\\int_1^2u^{-3}\\,du=\\Big[-\\frac1{2u^2}\\Big]_1^2=-\\frac18+\\frac12=\\frac38"
+      ]
     },
     {
-      "heading": "為什麼成立",
+      "heading": "① 為什麼成立",
       "body": [
-        "設 $F'=f$。由〈換元：基礎〉，$F(g(x))$ 是左邊被積函數的反導函數，所以左邊 $=F(g(b))-F(g(a))$。右邊用〈微積分基本定理 II〉也是 $F(g(b))-F(g(a))$。兩邊相等。",
-        "條件：$g'$ 在 $[a,b]$ 上連續，$f$ 在 $g$ 走過的範圍上連續。不需要 $g$ 是一對一的。"
+        "定理：$g'$ 連續、$f$ 連續，則",
+        "證明：取 $F'=f$。由連鎖律",
+        "左邊用微積分基本定理：",
+        "右邊也用微積分基本定理：",
+        "兩邊相等　$\\blacksquare$",
+        "兩條路都對；路二少了「換回 $x$」那一步，比較不容易算錯",
+        "重點：$u$ 的上下限就是 $g(a)$、$g(b)$：把 $x$ 的上下限代進 $u=g(x)$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_a^b f\\big(g(x)\\big)\\,g'(x)\\,dx=\\int_{g(a)}^{g(b)}f(u)\\,du",
+        "\\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)",
+        "\\int_a^b f\\big(g(x)\\big)g'(x)\\,dx=F(g(b))-F(g(a))",
+        "\\int_{g(a)}^{g(b)}f(u)\\,du=F(g(b))-F(g(a))"
+      ]
     },
     {
       "heading": "② 上下限可能顛倒",
       "body": [
-        "$u=\\cos x$，$x$ 從 $0$ 到 $\\frac{\\pi}{2}$，$u$ 從 $\\cos 0=1$ 走到 $\\cos\\frac{\\pi}{2}=0$。新積分是 $\\int_1^0$，下限比上限大。這完全合法，照寫就好。",
-        "如果想把它翻成 $\\int_0^1$，要乘一個負號（〈積分性質〉）。這時通常剛好和 $du=-\\sin x\\,dx$ 的負號抵消。兩個負號都要記帳，不要只處理一個。"
+        "$u=\\cos x$，$du=-\\sin x\\,dx$",
+        "上下限：$x=0\\Rightarrow u=1$，$x=\\frac\\pi2\\Rightarrow u=0$",
+        "不要自己把上下限調回來：照對應寫，下限 $1$、上限 $0$",
+        "處理方式：調換上下限，多一個負號",
+        "$\\int_a^b=-\\int_b^a$；直接算 $-\\big[\\frac{u^3}3\\big]_1^0=-(0-\\frac13)=\\frac13$ 也一樣",
+        "檢查正負：$[0,\\frac\\pi2]$ 上 $\\sin x\\cos^2x\\ge0$，答案應該 $>0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx",
+        "\\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx=-\\int_1^0u^2\\,du",
+        "-\\int_1^0u^2\\,du=\\int_0^1u^2\\,du=\\frac13"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "兩個負號：一個來自 $du$，一個來自上下限顛倒",
+        "被積函數 $\\ge0$，答案就該 $\\ge0$：用正負號檢查"
+      ]
     },
     {
       "heading": "③ 幾何上發生了什麼",
       "body": [
-        "換元把 $x$ 軸上的區間 $[a,b]$ 拉伸或壓縮成 $u$ 軸上的 $[g(a),g(b)]$，同時被積函數的高度乘上 $g'$ 的變化，剛好讓面積不變。區域的形狀變了，有號面積沒變。"
-      ],
-      "collapsible": false
+        "一小條：寬 $dx$、高 $f(g(x))\\,g'(x)$",
+        "對應到 $u$ 軸：寬 $du=g'(x)\\,dx$、高 $f(u)$",
+        "寬 × 高一樣：$g'(x)$ 只是從「高」搬到「寬」",
+        "$g'<0$ 時方向反過來，對應到「上下限顛倒」"
+      ]
     },
     {
       "heading": "④ 不要混用",
       "body": [
-        "最常見的錯：已經換成 $u$ 的式子，卻代 $x$ 的上下限；或換回 $x$ 之後，又代 $u$ 的上下限。換了變數，上下限就跟著那個變數走。"
+        "$u=\\ln x$，$du=\\dfrac1x\\,dx$",
+        "上下限：$x=e\\Rightarrow u=1$，$x=e^2\\Rightarrow u=2$",
+        "常見錯誤：換成 $u$，卻用 $x$ 的上下限",
+        "規則：寫 $u$ 就用 $u$ 的上下限；想用 $x$ 的上下限，就先換回 $x$",
+        "換回 $x$：$\\big[\\ln(\\ln x)\\big]_e^{e^2}=\\ln2-\\ln1=\\ln2$，跟路二一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx",
+        "\\int_1^2\\frac{du}{u}=\\ln2-\\ln1=\\ln2",
+        "\\Big[\\ln u\\Big]_e^{e^2}=\\ln e^2-\\ln e=1\\quad\\text{（錯）}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 兩條路：換回 $x$ 再代；或上下限跟著換",
+        "• 新上下限 = 把舊上下限代進 $u=g(x)$",
+        "• 照對應寫，大的可能在下面；調換要多一個負號",
+        "• 幾何上：$g'$ 從高度搬到寬度，面積不變",
+        "• 不要混用：$u$ 的式子配 $u$ 的上下限",
+        "下一課：非顯然的換元"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,35 +160,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^2 x e^{x^2}\\,dx$ 令 $u=x^2$，新的上下限是？",
+      "ask": "$\\displaystyle\\int_0^1 x(1-x^2)^3\\,dx=$？",
       "options": [
-        { "label": "$0$ 到 $4$", "correct": true },
-        { "label": "$0$ 到 $2$", "why": "換成 $u$ 之後，上下限也要換成 $u$ 的值：$x=2$ 時 $u=4$。" },
-        { "label": "$0$ 到 $\\sqrt{2}$", "why": "$u=x^2$，所以是把 $2$ 平方，不是開根號。" }
+        {
+          "label": "$\\dfrac18$",
+          "correct": true
+        },
+        {
+          "label": "$-\\dfrac18$",
+          "why": "上下限是 $1\\to0$，又有 $du=-2x\\,dx$ 的負號，兩個負號只算了一個"
+        },
+        {
+          "label": "$\\dfrac14$",
+          "why": "忘了 $x\\,dx=-\\frac12\\,du$ 的 $\\frac12$"
+        },
+        {
+          "label": "$-\\dfrac14$",
+          "why": "漏了 $\\frac12$，負號也只算了一個"
+        }
       ]
     },
     {
-      "ask": "$\\int_1^0 u^2\\,(-du)$ 等於？",
+      "ask": "$\\displaystyle\\int_1^{e}\\frac{(\\ln x)^2}{x}\\,dx=$？",
       "options": [
-        { "label": "$\\frac{1}{3}$", "correct": true },
-        { "label": "$-\\frac{1}{3}$", "why": "有兩個負號：上下限 $1\\to 0$ 是反著走，加上 $-du$。兩個相乘變正。" },
-        { "label": "$0$", "why": "上下限 $1$ 和 $0$ 不相同，不是 $\\int_a^a$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^\\pi \\sin x\\cos x\\,dx$，令 $u=\\sin x$，上下限都變成 $0$，所以答案是 $0$。對嗎？",
-      "options": [
-        { "label": "對，直接算 $\\left[\\frac{\\sin^2 x}{2}\\right]_0^\\pi$ 也是 $0$", "correct": true },
-        { "label": "不對，$\\sin x$ 在 $[0,\\pi]$ 不是一對一，不能換元", "why": "定積分換元公式不要求一對一，只要 $g'$ 連續、$f$ 連續。兩種算法都得 $0$。" },
-        { "label": "不對，應該是 $1$", "why": "$\\frac{\\sin^2\\pi}{2}-\\frac{\\sin^2 0}{2}=0-0$。$\\cos x$ 在 $\\left[\\frac{\\pi}{2},\\pi\\right]$ 為負，正負兩塊抵消。" }
-      ]
-    },
-    {
-      "ask": "換元積完之後，把 $u$ 換回 $x$，再代原來的上下限 $a$、$b$。可以嗎？",
-      "options": [
-        { "label": "可以，這是另一條正確的路，只是多一步", "correct": true },
-        { "label": "不行，定積分一定要換上下限", "why": "換回 $x$ 再代 $a$、$b$ 也是 $F(g(b))-F(g(a))$，一樣正確。" },
-        { "label": "可以，而且 $u$ 的式子也可以直接代 $a$、$b$", "why": "這就是混用：$u$ 的式子要代 $u$ 的上下限 $g(a)$、$g(b)$。" }
+        {
+          "label": "$\\dfrac13$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{e^3-1}{3}$",
+          "why": "換成了 $u$，卻用 $x$ 的上下限 $1$、$e$"
+        },
+        {
+          "label": "$1$",
+          "why": "把 $\\int_0^1u^2\\,du$ 當成 $\\int_0^1 du$；$u^2$ 不能丟"
+        },
+        {
+          "label": "$\\dfrac{e^2}{2}$",
+          "why": "把 $\\frac1x$ 的部分又積了一次；它已經變成 $du$"
+        }
       ]
     }
   ],
@@ -135,249 +206,774 @@
     {
       "title": "兩條路",
       "beats": [
-        { "show": ["甲：換元、積完、換回 $x$","再代原來的上下限"],
-          "say": "定積分遇到換元，有兩條路。第一條：先當不定積分做，換回 x，再代原來的上下限。",
+        {
+          "show": [
+            "$\\int_0^1\\frac{2x}{(1+x^2)^3}\\,dx$"
+          ],
+          "say": "定積分也能換元。看這一題：從 0 積到 1，1 加 x 平方的三次方，分之 2x。",
           "board": [
-            {"do":"write","line":"甲：換元、積完、換回 $x$"},
-            {"do":"write","line":"再代原來的上下限","on":"再代原來"}
-          ] },
-        { "show": ["乙：上下限也換成 $u$ 的值"],
-          "note": "$x=a$ 時 $u=g(a)$；不必換回 $x$。",
-          "say": "第二條：換元的同時，上下限也換成 u 的值，積完直接代，不用換回 x，通常比較快。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{2x}{(1+x^2)^3}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "路一：先求不定積分，換回 $x$，再代上下限",
+            "$u=1+x^2$，$du=2x\\,dx$："
+          ],
+          "say": "第一條路：先當不定積分做。令 u 等於 1 加 x 平方，d u 是 2x d x，積出來是負的 2 u 平方分之 1。",
           "board": [
-            {"do":"write","line":"乙：上下限也換成 ${{u:u}}$ 的值","tint":{"u":"blue"}},
-            {"do":"underline","term":"u","color":"blue","label":"不必換回","on":"不用換回"}
-          ] },
-        { "show": ["$\\int_a^b f(g(x))\\,g'(x)\\,dx$","$=\\int_{g(a)}^{g(b)} f(u)\\,du$"],
-          "say": "寫成公式就是這樣：x 從 a 到 b，u 就從 g 在 a 的值，走到 g 在 b 的值。",
+            {
+              "do": "write",
+              "line": "路一：先求不定積分，換回 $x$，再代上下限"
+            },
+            {
+              "do": "write",
+              "line": "$u=1+x^2$，$du=2x\\,dx$：",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int u^{-3}\\,du=-\\frac{1}{2u^2}+C$",
+              "on": "積出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Big[-\\frac{1}{2(1+x^2)^2}\\Big]_0^1=-\\frac18+\\frac12=\\frac38$"
+          ],
+          "say": "換回 x，再代上下限：代 1 得負 8 分之 1，代 0 得負 2 分之 1，相減是 8 分之 3。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_a^b f(g(x))\\,g'(x)\\,dx$","on":"寫成公式"},
-            {"do":"write","line":"$=\\int_{{{lo:g(a)}}}^{{{hi:g(b)}}} f(u)\\,du$","tint":{"lo":"blue","hi":"blue"},"on":"u 就從"},
-            {"do":"focus","term":"lo","color":"blue","on":"g 在 a"},
-            {"do":"focus","term":"hi","color":"blue","on":"g 在 b"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\Big[-\\frac{1}{2(1+x^2)^2}\\Big]_0^1=-\\frac18+\\frac12=\\frac38}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "得負#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "路二：上下限跟著換，不必換回 $x$",
+            "$x=0\\Rightarrow u=1$；$x=1\\Rightarrow u=2$"
+          ],
+          "say": "第二條路：上下限跟著換。x 等於 0 時，u 是 1；x 等於 1 時，u 是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "路二：上下限跟著換，不必換回 $x$"
+            },
+            {
+              "do": "write",
+              "line": "$x=0\\Rightarrow u=1$；$x=1\\Rightarrow u=2$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^2u^{-3}\\,du=\\Big[-\\frac1{2u^2}\\Big]_1^2=-\\frac18+\\frac12=\\frac38$"
+          ],
+          "say": "整個積分變成 u 從 1 積到 2。直接用 u 代上下限，一樣是 8 分之 3，而且不用換回 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_1^2u^{-3}\\,du=\\Big[-\\frac1{2u^2}\\Big]_1^2=-\\frac18+\\frac12=\\frac38}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "代上"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^2 x\\,e^{x^2}\\,dx$，令 $u=x^2$，新的上下限是？",
+        "options": [
+          {
+            "label": "從 $0$ 到 $4$",
+            "correct": true
+          },
+          {
+            "label": "從 $0$ 到 $2$",
+            "why": "沒有換：這是 $x$ 的上下限"
+          },
+          {
+            "label": "從 $1$ 到 $e^4$",
+            "why": "把 $e^{x^2}$ 當成 $u$ 來代了；這裡 $u=x^2$"
+          },
+          {
+            "label": "從 $0$ 到 $\\sqrt2$",
+            "why": "方向反了：是把 $x$ 代進 $u=x^2$，不是開根號"
+          }
+        ]
+      }
     },
     {
-      "title": "上下限跟著換",
+      "title": "為什麼成立",
       "beats": [
-        { "show": ["$\\int_0^1\\frac{2x}{(1+x^2)^3}\\,dx$"],
-          "note": "令 $u=1+x^2$，$du=2x\\,dx$。",
-          "say": "試一題。分母裡一加 x 平方的導數二 x 在分子，令 u 等於一加 x 平方。",
+        {
+          "show": [
+            "定理：$g'$ 連續、$f$ 連續，則",
+            "$\\int_a^b f\\big(g(x)\\big)\\,g'(x)\\,dx=\\int_{g(a)}^{g(b)}f(u)\\,du$"
+          ],
+          "say": "寫成定理：g prime 連續，f 連續。左邊對 x 從 a 積到 b，等於右邊對 u 從 g of a 積到 g of b。",
           "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{{{n:2x}}}{({{i:1+x^2}})^3}\\,dx$"},
-            {"do":"focus","term":"n","color":"blue","label":"導數","on":"二 x"},
-            {"do":"write","line":"$u={{i:1+x^2}}$，$du=2x\\,dx$","on":"令 u"}
-          ] },
-        { "show": ["$x=0\\to u=1$；$x=1\\to u=2$"],
-          "say": "上下限跟著換：x 是零時 u 是一，x 是一時 u 是二。",
+            {
+              "do": "write",
+              "line": "定理：$g'$ 連續、$f$ 連續，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_a^b f\\big(g(x)\\big)\\,g'(x)\\,dx=\\int_{g(a)}^{g(b)}f(u)\\,du}}$",
+              "on": "左邊"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "of#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：取 $F'=f$。由連鎖律",
+            "$\\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)$"
+          ],
+          "say": "證明很短。取 f 的一個反導函數 F。由連鎖律，F of g of x 的導數，正好是左邊的被積函數。",
           "board": [
-            {"do":"write","line":"$x=0\\to u=1$","on":"上下限"},
-            {"do":"write","line":"$x=1\\to u=2$","on":"x 是一時"}
-          ] },
-        { "show": ["u 從 1 到 2，面積在這裡"],
-          "note": "塗色的面積，就是換元後要算的積分。",
-          "say": "畫出來：u 從一到二，曲線是 u 的負三次方。塗色的面積，就是換元後要算的積分。",
+            {
+              "do": "write",
+              "line": "證明：取 $F'=f$。由連鎖律"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}F\\big(g(x)\\big)=f\\big(g(x)\\big)\\,g'(x)$",
+              "on": "of#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊用微積分基本定理：",
+            "$\\int_a^b f\\big(g(x)\\big)g'(x)\\,dx=F(g(b))-F(g(a))$"
+          ],
+          "say": "所以用微積分基本定理，左邊等於 F of g of b，減 F of g of a。",
           "board": [
-            {"do":"plot","graph":{"window":[0,3,0,2],"curves":[{"expr":"1/x^3","domain":[0.5,3],"color":"blue"}],"fills":[{"expr":"1/x^3","from":1,"to":2,"color":"blue"}]}}
-          ] }
+            {
+              "do": "write",
+              "line": "左邊用微積分基本定理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^b f\\big(g(x)\\big)g'(x)\\,dx=F(g(b))-F(g(a))$",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊也用微積分基本定理：",
+            "$\\int_{g(a)}^{g(b)}f(u)\\,du=F(g(b))-F(g(a))$"
+          ],
+          "say": "右邊對 u 積分，反導函數也是 F，代上下限，也是 F of g of b 減 F of g of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊也用微積分基本定理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{g(a)}^{g(b)}f(u)\\,du=F(g(b))-F(g(a))$",
+              "on": "of#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊相等　$\\blacksquare$"
+          ],
+          "say": "兩邊一樣，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊相等　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　兩條路都對；路二少了「換回 $x$」那一步，比較不容易算錯",
+              "color": "violet",
+              "on": "證明"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重點：$u$ 的上下限就是 $g(a)$、$g(b)$：把 $x$ 的上下限代進 $u=g(x)$"
+          ],
+          "say": "重點是：新的上下限，就是把舊的上下限代進 u 等於 g of x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "重點：$u$ 的上下限就是 $g(a)$、$g(b)$：把 $x$ 的上下限代進 $u=g(x)$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "上下限可能顛倒",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx$"
+          ],
+          "say": "第二件事：換完的上下限，可能是大的在下面。看正弦 x 乘餘弦平方，從 0 積到 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=\\cos x$，$du=-\\sin x\\,dx$"
+          ],
+          "say": "令 u 等於餘弦 x，d u 是負的正弦 x d x。x 等於 0 時 u 是 1，x 等於 2 分之派時 u 是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=\\cos x$，$du=-\\sin x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "上下限：$x=0\\Rightarrow u=1$，$x=\\frac\\pi2\\Rightarrow u=0$",
+              "on": "等於#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx=-\\int_1^0u^2\\,du$"
+          ],
+          "say": "正弦 x d x 是負的 d u，上下限照順序寫：下限是 x 等於 0 對應的 1，上限是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin x\\cos^2x\\,dx=-\\int_1^0u^2\\,du$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不要自己把上下限調回來：照對應寫，下限 $1$、上限 $0$"
+          ],
+          "say": "不要因為 1 比 0 大，就自己把上下限換回來。下限就是 x 下限對應的值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不要自己把上下限調回來：照對應寫，下限 $1$、上限 $0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "處理方式：調換上下限，多一個負號",
+            "$-\\int_1^0u^2\\,du=\\int_0^1u^2\\,du=\\frac13$"
+          ],
+          "say": "想要小的在下面，可以調換上下限，代價是多一個負號。兩個負號抵消，答案是 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "處理方式：調換上下限，多一個負號"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle -\\int_1^0u^2\\,du=\\int_0^1u^2\\,du=\\frac13}}$",
+              "color": "red",
+              "on": "調換"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "個負#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_a^b=-\\int_b^a$；直接算 $-\\big[\\frac{u^3}3\\big]_1^0=-(0-\\frac13)=\\frac13$ 也一樣",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查正負：$[0,\\frac\\pi2]$ 上 $\\sin x\\cos^2x\\ge0$，答案應該 $>0$"
+          ],
+          "say": "檢查正負號：在 0 到 2 分之派，被積函數不是負的，答案應該是正的。3 分之 1 是合理的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查正負：$[0,\\frac\\pi2]$ 上 $\\sin x\\cos^2x\\ge0$，答案應該 $>0$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1 x(1-x^2)^3\\,dx=$？"
+          ],
+          "say": "試一題：注意兩個負號，一個來自 d u，一個來自上下限。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "直接代 $u$ 的上下限",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_1^2 u^{-3}\\,du$"],
-          "note": "不必換回 $x$。",
-          "say": "整個積分變成 u 的負三次方，從一積到二。",
+        {
+          "show": [
+            "兩個負號：一個來自 $du$，一個來自上下限顛倒"
+          ],
+          "say": "這種題目常常同時有兩個負號：一個來自 d u，一個來自上下限顛倒。兩個都要算到。",
           "board": [
-            {"do":"write","line":"$\\int_{{{a:1}}}^{2} u^{-3}\\,du$"},
-            {"do":"underline","term":"a","color":"blue","label":"u 的上下限","on":"從一"}
-          ] },
-        { "show": ["區間變了，有號面積沒變"],
-          "note": "區間拉伸或壓縮，高度乘上 $g'$，剛好抵銷。",
-          "say": "幾何上，換元把區間拉長或壓扁，高度也跟著乘上 g prime 的變化，面積剛好不變。",
+            {
+              "do": "write",
+              "line": "兩個負號：一個來自 $du$，一個來自上下限顛倒",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數 $\\ge0$，答案就該 $\\ge0$：用正負號檢查"
+          ],
+          "say": "最快的檢查，是看被積函數的正負：在 0 到 1，x 乘 1 減 x 平方的三次方不是負的，答案就不會是負的。",
           "board": [
-            {"do":"write","line":"區間變了，有號面積沒變"},
-            {"do":"write","line":"高度乘 $g'$，剛好抵銷","on":"高度也"}
-          ] },
-        { "show": ["$u=1+x^2$，$du=2x\\,dx$"],
-          "note": "x 走一小段，u 走 $2x$ 倍。",
-          "say": "看一條細長條：x 走一小段 dx，u 走二 x 倍的 dx，這就是 du，u 軸上長條的寬。",
-          "board": [
-            {"do":"write","line":"$u=1+x^2$"},
-            {"do":"write","line":"$du={{g:2x}}\\,dx$","on":"二 x 倍"},
-            {"do":"circle","term":"g","color":"gold","on":"這就是"}
-          ] },
-        { "show": ["x 軸長條 $=u^{-3}\\cdot 2x\\,dx$","u 軸長條 $=u^{-3}\\,du$"],
-          "note": "兩條一樣大，所以面積相等。",
-          "say": "x 軸長條面積是 u 的負三次方乘二 x dx，u 軸長條是 u 的負三次方乘 du。一模一樣，每條都相等。",
-          "board": [
-            {"do":"write","line":"x 軸：$u^{-3}\\cdot 2x\\,dx$"},
-            {"do":"write","line":"u 軸：$u^{-3}\\,du$","on":"u 軸長條"}
-          ] },
-        { "show": ["反導函數：$-\\frac{1}{2u^2}$"],
-          "say": "負三次方的反導函數是負二 u 平方分之一，接下來代上下限。",
-          "board": [
-            {"do":"write","line":"反導函數：${{f:-\\frac{1}{2u^2}}}$"},
-            {"do":"box","term":"f","color":"green","on":"負二"}
-          ] }
-      ],
-      "key": "直接代 $u$ 的上下限，不必換回",
-      "predict": {
-        "ask": "結果是？",
-        "options": [
-          {
-            "label": "$\\left[-\\frac{1}{2u^2}\\right]_1^2=\\frac{3}{8}$",
-            "correct": true
-          },
-          {
-            "label": "$\\left[-\\frac{1}{2u^2}\\right]_0^1$",
-            "why": "換成 $u$ 了，上下限要用 $u$ 的值 $1$ 到 $2$，不是 $x$ 的 $0$ 到 $1$。"
-          },
-          {
-            "label": "$-\\frac{1}{8}$",
-            "why": "只代了上限，還要減掉下限的 $-\\frac{1}{2}$：$-\\frac{1}{8}+\\frac{1}{2}=\\frac{3}{8}$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "被積函數 $\\ge0$，答案就該 $\\ge0$：用正負號檢查"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "上下限顛倒",
+      "title": "幾何上發生了什麼",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin x\\cos^2 x\\,dx$：$u=\\cos x$"],
-          "note": "$du=-\\sin x\\,dx$，$\\sin x\\,dx=-du$。",
-          "say": "這一題令 u 等於 cosine x。du 有負號，所以 sine x dx 等於負 du。",
+        {
+          "show": [
+            "對 x：從 0 到 1，面積 3/8"
+          ],
+          "say": "從圖上看，這兩個積分是兩塊形狀不同的面積。上面是對 x 積分，從 0 到 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin x\\cos^2 x\\,dx$"},
-            {"do":"write","line":"$u=\\cos x$，$du={{m:-\\sin x\\,dx}}$","on":"令 u"},
-            {"do":"underline","term":"m","label":"負號","on":"有負號"}
-          ] },
-        { "show": ["$x=0\\to u=1$；$x=\\frac{\\pi}{2}\\to u=0$"],
-          "note": "下限比上限大，完全合法，照寫。",
-          "say": "上下限：x 是零時 u 是一，x 是二分之 pi 時 u 是零。下限比上限大，沒關係，照寫。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "gx",
+                  "window": [
+                    -0.05,
+                    1.2,
+                    -0.05,
+                    0.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2*x/(1+x^2)^3",
+                      "color": "blue",
+                      "label": "2x/(1+x²)³"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "2*x/(1+x^2)^3",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 210
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "對 x：從 0 到 1，面積 3/8",
+              "color": "violet",
+              "on": "上面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 u：從 1 到 2，面積也是 3/8"
+          ],
+          "say": "下面是對 u 積分，從 1 到 2。形狀完全不一樣，面積卻都是 8 分之 3。",
           "board": [
-            {"do":"write","line":"$x=0\\to u=1$"},
-            {"do":"write","line":"$x=\\frac{\\pi}{2}\\to {{z:u=0}}$","on":"二分之"},
-            {"do":"underline","term":"z","label":"下限比上限大","on":"沒關係"}
-          ] },
-        { "show": ["$\\int_1^0 u^2\\,(-du)$"],
-          "note": "兩個負號都要記帳。",
-          "say": "現在有兩個負號：一個是上下限反著走，一個是負 du。兩個都要算，不能只處理一個。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "gu",
+                  "window": [
+                    0.8,
+                    2.2,
+                    -0.05,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(-3)",
+                      "color": "red",
+                      "label": "u⁻³"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x^(-3)",
+                      "from": 1,
+                      "to": 2,
+                      "color": "red"
+                    }
+                  ],
+                  "xlabel": "u",
+                  "height": 210
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "對 u：從 1 到 2，面積也是 3/8",
+              "color": "violet",
+              "on": "狀完"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一小條：寬 $dx$、高 $f(g(x))\\,g'(x)$"
+          ],
+          "say": "為什麼？把左邊切成很多細條。一條寬 d x，高是 f of g of x 乘 g prime x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_{{{a:1}}}^{{{b:0}}} u^2\\,{{n:(-du)}}$","on":"現在有"},
-            {"do":"underline","term":"a","label":"第一個負號","on":"反著走"},
-            {"do":"underline","term":"n","label":"第二個負號","on":"負 du"}
-          ] },
-        { "show": ["$\\int_1^0 u^2(-du)=-\\int_1^0 u^2\\,du$"],
-          "note": "第一步：負號提到外面。",
-          "say": "第一步：把 du 前面的負號提到積分號外面。",
+            {
+              "do": "write",
+              "line": "一小條：寬 $dx$、高 $f(g(x))\\,g'(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對應到 $u$ 軸：寬 $du=g'(x)\\,dx$、高 $f(u)$"
+          ],
+          "say": "這一條搬到 u 軸上，寬度被拉伸成 d u，也就是 g prime x 乘 d x；高度變成 f of u。",
           "board": [
-            {"do":"write","line":"$\\int_1^0 u^2(-du)={{m:-}}\\int_1^0 u^2\\,du$"},
-            {"do":"focus","term":"m","color":"red","on":"提到"}
-          ] },
-        { "show": ["$-\\int_1^0 u^2\\,du=\\int_0^1 u^2\\,du$"],
-          "note": "第二步：對調上下限，再多一個負號。",
-          "say": "第二步：上下限對調，積分要再乘一個負號。兩個負號相乘變正，所以最後是從零積到一。",
+            {
+              "do": "write",
+              "line": "對應到 $u$ 軸：寬 $du=g'(x)\\,dx$、高 $f(u)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寬 × 高一樣：$g'(x)$ 只是從「高」搬到「寬」"
+          ],
+          "say": "兩條細條的面積一樣，因為 g prime x 只是從高度搬到寬度去了。每一條都一樣，加起來總面積也一樣。",
           "board": [
-            {"do":"write","line":"$\\int_1^0 u^2\\,du=-\\int_0^1 u^2\\,du$","on":"對調"},
-            {"do":"write","line":"$-\\int_1^0 u^2\\,du=\\int_0^1 u^2\\,du$","on":"兩個負號"}
-          ] }
-      ],
-      "key": "上下限照順序代，兩個負號都記帳",
-      "check": 1
+            {
+              "do": "write",
+              "line": "寬 × 高一樣：$g'(x)$ 只是從「高」搬到「寬」",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$g'<0$ 時方向反過來，對應到「上下限顛倒」",
+              "color": "violet",
+              "on": "高度"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "不要混用",
       "beats": [
-        { "show": ["上下限跟著變數走"],
-          "note": "$u$ 的式子代 $u$ 的上下限；換回 $x$ 就代 $x$ 的。",
-          "say": "最常見的錯，是 u 的式子卻代 x 的上下限。換了變數，上下限就跟著那個變數走。",
+        {
+          "show": [
+            "$\\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx$"
+          ],
+          "say": "最後一件事：不要把 u 的式子和 x 的上下限混在一起。看 x 乘自然對數 x 分之 1，從 e 積到 e 平方。",
           "board": [
-            {"do":"write","line":"上下限跟著變數走"},
-            {"do":"write","line":"$u$ 的式子 → $u$ 的上下限","on":"換了變數"}
-          ] },
-        { "show": ["$g$ 不必一對一"],
-          "note": "只要 $g'$ 連續、$f$ 連續。",
-          "say": "還有一個誤會：換元不需要 g 是一對一，只要 g prime 和 f 連續就好。理由在全文。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=\\ln x$，$du=\\dfrac1x\\,dx$"
+          ],
+          "say": "令 u 等於自然對數 x，d u 是 x 分之 1 d x。x 等於 e 時 u 是 1，x 等於 e 平方時 u 是 2。",
           "board": [
-            {"do":"write","line":"$g$ 不必一對一"},
-            {"do":"write","line":"只要 $g'$、$f$ 連續","on":"只要"}
-          ] },
-        { "show": ["證明只用到 $F(g(b))-F(g(a))$"],
-          "note": "沒有解出 $x$，也沒用到 $g$ 的反函數。",
-          "say": "原因：證明只用到 F of g x 的導數，從頭到尾沒有解出 x，所以不需要 g 的反函數，也就不必一對一。",
+            {
+              "do": "write",
+              "line": "$u=\\ln x$，$du=\\dfrac1x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "上下限：$x=e\\Rightarrow u=1$，$x=e^2\\Rightarrow u=2$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^2\\frac{du}{u}=\\ln2-\\ln1=\\ln2$"
+          ],
+          "say": "整個積分變成 u 分之 1，從 1 積到 2，答案是自然對數 2。",
           "board": [
-            {"do":"write","line":"$\\frac{d}{dx}F(g(x))=f(g(x))\\,g'(x)$"},
-            {"do":"write","line":"只看 $F(g(b))-F(g(a))$","on":"從頭到尾"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_1^2\\frac{du}{u}=\\ln2-\\ln1=\\ln2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常見錯誤：換成 $u$，卻用 $x$ 的上下限",
+            "$\\Big[\\ln u\\Big]_e^{e^2}=\\ln e^2-\\ln e=1\\quad\\text{（錯）}$"
+          ],
+          "say": "常見的錯誤：式子已經換成 u，上下限卻還是 x 的 e 和 e 平方。這樣算出來是 1，是錯的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常見錯誤：換成 $u$，卻用 $x$ 的上下限"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big[\\ln u\\Big]_e^{e^2}=\\ln e^2-\\ln e=1\\quad\\text{（錯）}$",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：寫 $u$ 就用 $u$ 的上下限；想用 $x$ 的上下限，就先換回 $x$"
+          ],
+          "say": "規則很簡單：式子是 u，就用 u 的上下限；想用原來的上下限，就先換回 x，兩條路選一條，不要混著走。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則：寫 $u$ 就用 $u$ 的上下限；想用 $x$ 的上下限，就先換回 $x$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　換回 $x$：$\\big[\\ln(\\ln x)\\big]_e^{e^2}=\\ln2-\\ln1=\\ln2$，跟路二一樣",
+              "color": "violet",
+              "on": "來的"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "$u$ 是 $\\ln x$",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx$"],
-          "note": "令 $u=\\ln x$，$du=\\frac{dx}{x}$。",
-          "say": "最後一題：x 乘自然對數 x 分之一。令 u 等於自然對數 x，du 是 x 分之 dx。",
-          "board": [
-            {"do":"write","line":"$\\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx$"},
-            {"do":"write","line":"$u=\\ln x$，$du=\\frac{dx}{x}$","on":"令 u"}
-          ] },
-        { "show": ["$x=e\\to u=1$；$x=e^2\\to u=2$"],
-          "say": "上下限：x 是 e 時 u 是一，x 是 e 平方時 u 是二。積分變成 u 分之 du。",
-          "board": [
-            {"do":"write","line":"$x=e\\to u=1$"},
-            {"do":"write","line":"$x=e^2\\to u=2$","on":"x 是 e 平方"}
-          ] },
-        { "show": ["$\\int\\frac{1}{u}\\,du=\\ln u$"],
-          "note": "因為 $\\ln u$ 的導數是 $\\frac{1}{u}$。",
-          "say": "u 分之一的反導函數是自然對數 u，因為自然對數 u 的導數就是 u 分之一。從一積到二，就是代二減掉代一。",
-          "board": [
-            {"do":"write","line":"$\\int\\frac{1}{u}\\,du=\\ln u$"},
-            {"do":"write","line":"代上限 2，減去代下限 1","on":"代二"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\int_1^{e}\\frac{(\\ln x)^2}{x}\\,dx=$？"
+          ],
+          "say": "試一題：先換上下限，再積。"
+        }
       ],
-      "predict": {
-        "ask": "答案是？",
-        "options": [
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "定積分換元（上下限跟著換）"
+          ],
+          "say": "排排看步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "定積分換元（上下限跟著換）",
+        "steps": [
           {
-            "label": "$\\left[\\ln u\\right]_1^2=\\ln 2$",
-            "correct": true
+            "label": "選 $u=g(x)$，算 $du$"
           },
           {
-            "label": "$\\left[\\ln u\\right]_e^{e^2}=1$",
-            "why": "這是混用：$u$ 的式子要代 $u$ 的上下限 $1$、$2$，不是 $x$ 的 $e$、$e^2$。"
+            "label": "把 $x$ 的上下限代進 $g$，得到 $u$ 的上下限",
+            "why": "先要有上一步：選 $u=g(x)$，算 $du$"
           },
           {
-            "label": "$\\left[\\frac{u^2}{2}\\right]_1^2$",
-            "why": "那是 $\\int u\\,du$；這裡 $u$ 在分母，是 $\\int\\frac{du}{u}$。"
+            "label": "整個積分換成 $u$（含上下限）",
+            "why": "先要有上一步：把 $x$ 的上下限代進 $g$，得到 $u$ 的上下限"
+          },
+          {
+            "label": "對 $u$ 積分、代 $u$ 的上下限，不必換回",
+            "why": "先要有上一步：整個積分換成 $u$（含上下限）"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 兩條路：換回 $x$ 再代；或上下限跟著換",
+            "• 新上下限 = 把舊上下限代進 $u=g(x)$"
+          ],
+          "say": "整理一下：定積分換元有兩條路，上下限跟著換比較省事；新的上下限就是代進 u 等於 g of x；顛倒了就照寫，調換要加負號；u 的式子只配 u 的上下限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 兩條路：換回 $x$ 再代；或上下限跟著換"
+            },
+            {
+              "do": "write",
+              "line": "• 新上下限 = 把舊上下限代進 $u=g(x)$",
+              "on": "上下#1"
+            },
+            {
+              "do": "write",
+              "line": "• 照對應寫，大的可能在下面；調換要多一個負號",
+              "on": "限就"
+            },
+            {
+              "do": "write",
+              "line": "• 幾何上：$g'$ 從高度搬到寬度，面積不變",
+              "on": "顛倒"
+            },
+            {
+              "do": "write",
+              "line": "• 不要混用：$u$ 的式子配 $u$ 的上下限",
+              "on": "的式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：非顯然的換元"
+          ],
+          "say": "下一課，看幾種一眼看不出 u 的換元。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：非顯然的換元"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["substitution", "u-sub", "definite-integral"],
-    "fine": ["u-sub-def-change-bounds", "u-sub-def-reversed-bounds", "u-sub-def-no-mixing"]
+    "coarse": [
+      "substitution",
+      "u-sub",
+      "definite-integral"
+    ],
+    "fine": [
+      "u-sub-def-change-bounds",
+      "u-sub-def-reversed-bounds",
+      "u-sub-def-no-mixing"
+    ]
   },
   "practice": [
-    { "id": "exam-int-021", "core": true, "trains": "u-sub-def-change-bounds" },
-    { "id": "int-030", "core": true, "trains": "u-sub-def-change-bounds" },
-    { "id": "lec-06-q3c", "core": true, "trains": "u-sub-def-change-bounds" },
-    { "id": "exam-int-024", "core": true, "trains": "u-sub-def-reversed-bounds" },
-    { "id": "cx-exam-005", "core": true, "trains": "u-sub-def-reversed-bounds", "note": "$\\tan x=\\frac{\\sin x}{\\cos x}$，$u=\\cos x$。" },
-    { "id": "hc-usub-009", "core": true, "trains": "u-sub-def-change-bounds" },
-    { "id": "cg-4c-008", "core": true, "trains": "u-sub-def-no-mixing" },
-    { "id": "int-020", "trains": "u-sub-def-change-bounds" },
-    { "id": "hc-usub-010", "trains": "u-sub-def-change-bounds" },
-    { "id": "hc-usub-007", "trains": "u-sub-def-change-bounds", "note": "$u=x^3$，換完是 $\\arcsin$ 的形狀。" },
-    { "id": "hc-rad-010", "trains": "u-sub-def-change-bounds" },
-    { "id": "cg-4c-009", "trains": "u-sub-def-no-mixing" },
-    { "id": "world-055", "challenge": true, "trains": "u-sub-def-change-bounds", "note": "挑戰：換完下限是 $u=0$，$\\ln u$ 在那裡沒有定義，這其實是瑕積分（〈瑕積分 II：奇異點〉）。" }
+    {
+      "id": "exam-int-021",
+      "core": true,
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "int-030",
+      "core": true,
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "lec-06-q3c",
+      "core": true,
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "exam-int-024",
+      "core": true,
+      "trains": "u-sub-def-reversed-bounds"
+    },
+    {
+      "id": "cx-exam-005",
+      "core": true,
+      "trains": "u-sub-def-reversed-bounds",
+      "note": "$\\tan x=\\frac{\\sin x}{\\cos x}$，$u=\\cos x$。"
+    },
+    {
+      "id": "hc-usub-009",
+      "core": true,
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "cg-4c-008",
+      "core": true,
+      "trains": "u-sub-def-no-mixing"
+    },
+    {
+      "id": "int-020",
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "hc-usub-010",
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "hc-usub-007",
+      "trains": "u-sub-def-change-bounds",
+      "note": "$u=x^3$，換完是 $\\arcsin$ 的形狀。"
+    },
+    {
+      "id": "hc-rad-010",
+      "trains": "u-sub-def-change-bounds"
+    },
+    {
+      "id": "cg-4c-009",
+      "trains": "u-sub-def-no-mixing"
+    },
+    {
+      "id": "world-055",
+      "challenge": true,
+      "trains": "u-sub-def-change-bounds",
+      "note": "挑戰：換完下限是 $u=0$，$\\ln u$ 在那裡沒有定義，這其實是瑕積分（〈瑕積分 II：奇異點〉）。"
+    }
   ],
   "gaps": []
 }

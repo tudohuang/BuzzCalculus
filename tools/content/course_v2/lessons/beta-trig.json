@@ -1,7 +1,8 @@
 {
   "id": "beta-trig",
   "title": "三角形式的 Beta",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 40,
   "prerequisites": [
     "beta-gamma-relation",
@@ -15,39 +16,109 @@
     "wallis-integral"
   ],
   "objectives": [
-    "用 $x=\\sin^2\\theta$ 推出 $\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\frac{1}{2}\\mathrm{B}(p,q)$。",
-    "看到 $\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta$ 就寫成 $\\frac{1}{2}\\mathrm{B}\\left(\\frac{m+1}{2},\\frac{n+1}{2}\\right)$，再用 Gamma 算。",
-    "從 $m$、$n$ 的奇偶預測答案有沒有 $\\pi$，處理分數次方（例如 $\\sqrt{\\tan\\theta}$）。"
+    "用 $x=\\sin^2\\theta$ 推出 $\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\frac12\\mathrm{B}(p,q)$",
+    "看到 $\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta$ 就寫成 $\\frac12\\mathrm{B}\\big(\\frac{m+1}2,\\frac{n+1}2\\big)$，再換成 Gamma 值",
+    "從 $m$、$n$ 的奇偶預測答案有沒有 $\\pi$，並處理分數次方（例如 $\\sqrt{\\tan\\theta}$）"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 從 $[0,1]$ 搬到 $\\left[0,\\frac{\\pi}{2}\\right]$",
+      "heading": "① 搬到 $[0,\\frac\\pi2]$",
       "body": [
-        "在 $\\mathrm{B}(p,q)=\\int_0^1 x^{p-1}(1-x)^{q-1}\\,dx$ 裡令 $x=\\sin^2\\theta$：$1-x=\\cos^2\\theta$，$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$，$x$ 從 $0$ 到 $1$ 對應 $\\theta$ 從 $0$ 到 $\\frac{\\pi}{2}$。",
-        "$x^{p-1}=\\sin^{2p-2}\\theta$，$(1-x)^{q-1}=\\cos^{2q-2}\\theta$，再乘上 $2\\sin\\theta\\cos\\theta$，次方各加 $1$："
+        "令 $x=\\sin^2\\theta$，$\\theta:0\\to\\frac\\pi2$：",
+        "$\\theta\\in(0,\\frac\\pi2)$ 時 $\\sin\\theta,\\cos\\theta>0$：",
+        "$\\theta\\mapsto\\sin^2\\theta$ 在 $(0,\\frac\\pi2)$ 上嚴格遞增、可微，對應到 $(0,1)$；瑕積分的端點先截掉再取極限",
+        "乘上 $dx$ 的 $2\\sin\\theta\\cos\\theta$，次方各加 $1$：",
+        "收斂條件跟 Beta 一樣：$p>0$、$q>0$",
+        "4.24 一題一題做的 $\\sin^m\\cos^n$，現在一條公式全包"
       ],
       "tex": [
-        "\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\,\\cos^{2q-1}\\theta\\,d\\theta=\\tfrac12\\,B(p,q)"
-      ],
-      "collapsible": false
+        "\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx",
+        "1-x=\\cos^2\\theta,\\qquad dx=2\\sin\\theta\\cos\\theta\\,d\\theta",
+        "x^{p-1}=\\sin^{2p-2}\\theta,\\qquad(1-x)^{q-1}=\\cos^{2q-2}\\theta",
+        "\\mathrm{B}(p,q)=2\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta",
+        "\\begin{aligned}\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta&=\\frac12\\mathrm{B}(p,q)\\\\&=\\frac{\\Gamma(p)\\Gamma(q)}{2\\,\\Gamma(p+q)}\\end{aligned}"
+      ]
     },
     {
-      "heading": "② 實際使用：次方加 1 再除以 2",
+      "heading": "② 次方加 1 再除以 2",
       "body": [
-        "題目是 $\\sin^m\\theta\\cos^n\\theta$ 時，令 $2p-1=m$、$2q-1=n$，也就是 $p=\\frac{m+1}{2}$、$q=\\frac{n+1}{2}$：",
-        "$\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta=\\frac{1}{2}\\mathrm{B}\\left(\\frac{m+1}{2},\\frac{n+1}{2}\\right)=\\frac{\\Gamma\\left(\\frac{m+1}{2}\\right)\\Gamma\\left(\\frac{n+1}{2}\\right)}{2\\Gamma\\left(\\frac{m+n+2}{2}\\right)}$。",
-        "條件：$m>-1$、$n>-1$（對應 $p$、$q>0$），所以分數次方、甚至負的次方（大於 $-1$）都可以。"
+        "$\\sin^m\\theta\\cos^n\\theta$：$2p-1=m$，$2q-1=n$",
+        "成立條件 $m>-1$、$n>-1$（就是 $p>0$、$q>0$）；$m,n$ 不必是整數",
+        "例 1：$\\displaystyle\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$",
+        "$p=3$，$q=2$：",
+        "驗算（4.24 的方法）：$u=\\sin\\theta$"
       ],
-      "collapsible": false
+      "tex": [
+        "p=\\frac{m+1}{2},\\qquad q=\\frac{n+1}{2}",
+        "\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta=\\frac{\\Gamma(\\frac{m+1}2)\\Gamma(\\frac{n+1}2)}{2\\,\\Gamma(\\frac{m+n}2+1)}",
+        "=\\frac12\\mathrm{B}(3,2)=\\frac12\\cdot\\frac{2!\\,1!}{4!}=\\frac1{24}",
+        "\\int_0^1u^5(1-u^2)\\,du=\\frac16-\\frac18=\\frac1{24}"
+      ]
+    },
+    {
+      "heading": "② 兩個都是偶數",
+      "body": [
+        "例 2：$\\displaystyle\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$",
+        "$p=\\frac52$，$q=\\frac32$，$p+q=4$：",
+        "用 4.24 的半角公式要降次兩輪；這裡一行"
+      ],
+      "tex": [
+        "=\\frac{\\Gamma(\\frac52)\\Gamma(\\frac32)}{2\\,\\Gamma(4)}=\\frac{\\frac{3\\sqrt\\pi}4\\cdot\\frac{\\sqrt\\pi}2}{2\\cdot6}=\\frac{\\pi}{32}"
+      ]
     },
     {
       "heading": "③ 從奇偶預測答案",
       "body": [
-        "$m$、$n$ 都是偶數：$\\frac{m+1}{2}$、$\\frac{n+1}{2}$ 都是半整數，各帶一個 $\\sqrt{\\pi}$，分母是整數點，答案帶 $\\pi$。",
-        "至少一個是奇數：那一個的 Gamma 是整數點；另一個的 $\\sqrt{\\pi}$ 會跟分母（也是半整數）的 $\\sqrt{\\pi}$ 約掉，答案是有理數。這跟〈sinᵐ x cosⁿ x〉裡「有奇數次方就用換元」的經驗一致。"
+        "半整數：$\\Gamma(k+\\frac12)=(\\text{有理數})\\cdot\\sqrt\\pi$；整數：$\\Gamma(k)$ 是整數",
+        "• $m,n$ 都是偶數：$p,q$ 都是半整數，$p+q$ 是整數",
+        "• 一個奇數、一個偶數：$\\frac{\\text{整數}\\cdot(\\cdot\\sqrt\\pi)}{(\\cdot\\sqrt\\pi)}$，$\\sqrt\\pi$ 消掉",
+        "• 兩個都是奇數：全是整數",
+        "只要有一個是奇數，答案就是有理數；兩個都是偶數，才有 $\\pi$",
+        "跟 4.24 一致：有奇數次方就換元，積出多項式；都是偶數才要半角公式，積出 $\\theta$，代 $\\frac\\pi2$ 出現 $\\pi$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{(\\cdot\\sqrt\\pi)(\\cdot\\sqrt\\pi)}{\\text{整數}}=\\text{有理數}\\cdot\\pi"
+      ]
+    },
+    {
+      "heading": "③ 分數次方",
+      "body": [
+        "$n=-\\frac12>-1$：在 $\\frac\\pi2$ 附近爆掉，但收斂",
+        "$p=\\frac34$，$q=\\frac14$，$p+q=1$：",
+        "用上一課預告的反射公式 $\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$：",
+        "不靠反射公式也驗得出來：令 $u=\\sqrt{\\tan\\theta}$ 得 $\\int_0^\\infty\\frac{2u^2}{1+u^4}du$，部分分式算出來也是 $\\frac\\pi{\\sqrt2}$",
+        "沒有反射公式時，答案就停在 Gamma 值：$\\frac12\\Gamma(\\frac14)\\Gamma(\\frac34)$"
+      ],
+      "tex": [
+        "\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\int_0^{\\pi/2}\\sin^{1/2}\\theta\\cos^{-1/2}\\theta\\,d\\theta",
+        "=\\frac{\\Gamma(\\frac34)\\Gamma(\\frac14)}{2\\,\\Gamma(1)}",
+        "\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\sqrt2\\,\\pi}{2}=\\frac{\\pi}{\\sqrt2}\\approx2.2214"
+      ]
+    },
+    {
+      "heading": "③ 遞迴讓 Gamma 消掉",
+      "body": [
+        "遞迴：$\\Gamma(\\frac{11}4)=\\frac74\\cdot\\frac34\\cdot\\Gamma(\\frac34)$",
+        "驗算：$u=\\cos\\theta$，$\\int_0^1(1-u^2)u^{1/2}du=\\frac23-\\frac27=\\frac8{21}$",
+        "有一個奇數次方時，兩個 Gamma 的參數差整數，遞迴就消得掉"
+      ],
+      "tex": [
+        "\\int_0^{\\pi/2}\\sin^3\\theta\\sqrt{\\cos\\theta}\\,d\\theta,\\quad p=2,\\ q=\\tfrac34",
+        "=\\frac{\\Gamma(2)\\Gamma(\\frac34)}{2\\,\\Gamma(\\frac{11}4)}",
+        "=\\frac{1}{2\\cdot\\frac{21}{16}}=\\frac{8}{21}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $x=\\sin^2\\theta$：$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\frac12\\mathrm{B}(p,q)$",
+        "• 用法：次方加 1 再除以 2，分母是 $\\Gamma(\\frac{m+n}2+1)$",
+        "• 收斂：$m>-1$、$n>-1$",
+        "• 有奇數次方 → 有理數；都是偶數 → 有理數 $\\times\\pi$",
+        "• 分數次方也能用；$p+q=1$ 時配反射公式",
+        "下一課：Wallis 與 Beta"
+      ]
     }
   ],
   "workedExamples": [
@@ -97,277 +168,741 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^{\\pi/2}\\sin^3\\theta\\cos^2\\theta\\,d\\theta$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\sin^2\\theta\\cos^2\\theta\\,d\\theta=$？",
       "options": [
         {
-          "label": "$\\frac{2}{15}$",
+          "label": "$\\dfrac{\\pi}{16}$",
           "correct": true
         },
         {
-          "label": "$\\frac{4}{15}$",
-          "why": "$\\mathrm{B}\\left(2,\\frac{3}{2}\\right)=\\frac{\\Gamma(2)\\Gamma(3/2)}{\\Gamma(7/2)}=\\frac{4}{15}$，但公式前面還有 $\\frac{1}{2}$。"
+          "label": "$\\dfrac\\pi8$",
+          "why": "忘了前面的 $\\frac12$：$\\frac\\pi8$ 是 $\\mathrm{B}(\\frac32,\\frac32)$ 本身"
         },
         {
-          "label": "$\\frac{2\\pi}{15}$",
-          "why": "$\\sin$ 的次方是奇數，$\\sqrt{\\pi}$ 會上下約掉，答案沒有 $\\pi$。"
+          "label": "$\\dfrac{\\pi}{48}$",
+          "why": "分母用了 $\\Gamma(4)$；$p+q=\\frac32+\\frac32=3$"
+        },
+        {
+          "label": "$\\dfrac14$",
+          "why": "兩個都是偶數，答案一定有 $\\pi$"
         }
       ]
     },
     {
-      "ask": "$\\int_0^{\\pi/2}\\sin^6\\theta\\cos^4\\theta\\,d\\theta$ 寫成 Beta 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\sqrt{\\cot\\theta}\\,d\\theta=$？",
       "options": [
         {
-          "label": "$\\frac{1}{2}\\mathrm{B}\\left(\\frac{7}{2},\\frac{5}{2}\\right)$",
+          "label": "$\\dfrac{\\pi}{\\sqrt2}$",
           "correct": true
         },
         {
-          "label": "$\\frac{1}{2}\\mathrm{B}(6,4)$",
-          "why": "要先加 $1$ 再除以 $2$：$p=\\frac{6+1}{2}=\\frac{7}{2}$。"
+          "label": "發散",
+          "why": "$\\theta=0$ 附近像 $\\theta^{-1/2}$，次方 $-\\frac12>-1$，收斂"
         },
         {
-          "label": "$\\mathrm{B}\\left(\\frac{7}{2},\\frac{5}{2}\\right)$",
-          "why": "$x=\\sin^2\\theta$ 換元時 $dx=2\\sin\\theta\\cos\\theta\\,d\\theta$，所以三角形式是 Beta 的一半。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\int_0^{\\pi/2}\\frac{d\\theta}{\\sqrt{\\sin\\theta}}$ 收斂嗎？",
-      "options": [
-        {
-          "label": "收斂：$m=-\\frac{1}{2}>-1$",
-          "correct": true
-        },
-        {
-          "label": "發散：被積函數在 $\\theta=0$ 無界",
-          "why": "無界不等於發散；$\\theta\\to 0$ 時 $\\sin\\theta\\sim\\theta$，被積函數像 $\\theta^{-1/2}$，$p=\\frac{1}{2}<1$。"
-        },
-        {
-          "label": "不能用 Beta，因為次方是負的",
-          "why": "次方大於 $-1$ 都可以：對應 $p=\\frac{1}{4}>0$。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^3\\theta\\,d\\theta$ 的答案：",
-      "options": [
-        {
-          "label": "是有理數（沒有 $\\pi$）",
-          "correct": true
-        },
-        {
-          "label": "帶 $\\pi$，因為 $\\sin$ 的次方是偶數",
-          "why": "只要有一個是奇數就沒有 $\\pi$：$\\Gamma\\left(\\frac{5}{2}\\right)$ 的 $\\sqrt{\\pi}$ 會被分母 $\\Gamma\\left(\\frac{9}{2}\\right)$ 的 $\\sqrt{\\pi}$ 約掉。實際值是 $\\frac{2}{35}$。"
-        },
-        {
-          "label": "帶 $\\sqrt{\\pi}$",
-          "why": "分子的 $\\sqrt{\\pi}$ 跟分母 $\\Gamma\\left(\\frac{9}{2}\\right)$ 的 $\\sqrt{\\pi}$ 正好約掉。"
+          "label": "$\\pi$",
+          "why": "那是 $p=q=\\frac12$ 的 $\\mathrm{B}(\\frac12,\\frac12)$；這裡是 $\\frac12\\mathrm{B}(\\frac14,\\frac34)$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "搬到 $\\left[0,\\frac{\\pi}{2}\\right]$",
+      "title": "搬到 $[0,\\frac\\pi2]$",
       "beats": [
-        { "show": ["令 $x=\\sin^2\\theta$"],
-          "note": "$1-x=\\cos^2\\theta$；$x:0\\to 1$ 對應 $\\theta:0\\to\\frac{\\pi}{2}$。",
-          "say": "在 Beta 的積分裡令 x 等於 sine 平方 theta，一減 x 就是 cosine 平方，區間變成零到二分之 pi。",
+        {
+          "show": [
+            "$\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$"
+          ],
+          "say": "從貝塔函數出發。x 和 1 減 x 加起來是 1，這讓人想到：正弦平方加餘弦平方也是 1。",
           "board": [
-            {"do":"write","line":"令 $x={{s:\\sin^2\\theta}}$","tint":{"s":"blue"}},
-            {"do":"write","line":"$1-x={{c:\\cos^2\\theta}}$","tint":{"c":"violet"},"on":"一減 x"},
-            {"do":"write","line":"$x:0\\to1$ ⇒ $\\theta:0\\to\\frac{\\pi}{2}$","on":"區間"}
-          ] },
-        { "show": ["theta 走完，x 從 0 到 1"],
-          "say": "看圖：theta 從零走到二分之 pi，x 等於 sine 平方 theta 從零慢慢爬到一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $x=\\sin^2\\theta$，$\\theta:0\\to\\frac\\pi2$：",
+            "$1-x=\\cos^2\\theta,\\qquad dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"
+          ],
+          "say": "所以令 x 等於正弦平方西塔。1 減 x 就是餘弦平方，d x 是 2 正弦餘弦 d 西塔。西塔從 0 走到 2 分之派。",
           "board": [
-            {"do":"plot","graph":{"window":[0,1.8,-0.2,1.2],"curves":[{"expr":"sin(x)^2","domain":[0,1.5708],"color":"blue"}],"dashed":[[[0,1],[1.5708,1]]]}}
-          ] },
-        { "show": ["$x^{p-1}=\\sin^{2p-2}\\theta$，$(1-x)^{q-1}=\\cos^{2q-2}\\theta$"],
-          "say": "x 的 p 減一次方變成 sine 的二 p 減二次方，cosine 那邊也一樣。",
+            {
+              "do": "write",
+              "line": "令 $x=\\sin^2\\theta$，$\\theta:0\\to\\frac\\pi2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1-x=\\cos^2\\theta,\\qquad dx=2\\sin\\theta\\cos\\theta\\,d\\theta$",
+              "on": "正弦#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\theta\\in(0,\\frac\\pi2)$ 時 $\\sin\\theta,\\cos\\theta>0$：",
+            "$x^{p-1}=\\sin^{2p-2}\\theta,\\qquad(1-x)^{q-1}=\\cos^{2q-2}\\theta$"
+          ],
+          "say": "在這個範圍，正弦和餘弦都是正的，所以 x 的 p 減 1 次方就是正弦的 2p 減 2 次方，餘弦那邊也一樣。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x^{p-1}={{a:\\sin^{2p-2}\\theta}}$","tint":{"a":"blue"},"on":"x 的 p"},
-            {"do":"write","line":"$(1-x)^{q-1}={{b:\\cos^{2q-2}\\theta}}$","tint":{"b":"violet"},"on":"cosine 那邊"}
-          ] },
-        { "show": ["$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"],
-          "say": "dx 也要換：它帶來一個二，還有一個 sine、一個 cosine。",
+            {
+              "do": "write",
+              "line": "$\\theta\\in(0,\\frac\\pi2)$ 時 $\\sin\\theta,\\cos\\theta>0$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^{p-1}=\\sin^{2p-2}\\theta,\\qquad(1-x)^{q-1}=\\cos^{2q-2}\\theta$",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\theta\\mapsto\\sin^2\\theta$ 在 $(0,\\frac\\pi2)$ 上嚴格遞增、可微，對應到 $(0,1)$；瑕積分的端點先截掉再取極限",
+              "color": "violet",
+              "on": "2p"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘上 $dx$ 的 $2\\sin\\theta\\cos\\theta$，次方各加 $1$：",
+            "$\\mathrm{B}(p,q)=2\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$"
+          ],
+          "say": "再乘上 d x 裡的 2 正弦餘弦，正弦和餘弦的次方各加 1，前面多一個 2。",
           "board": [
-            {"do":"write","line":"$dx={{two:2}}\\,{{sn:\\sin\\theta}}\\,{{cs:\\cos\\theta}}\\,d\\theta$"},
-            {"do":"focus","term":"two","on":"一個二"},
-            {"do":"focus","term":"sn","color":"blue","on":"一個 sine"},
-            {"do":"focus","term":"cs","color":"violet","on":"一個 cosine"}
-          ] }
+            {
+              "do": "write",
+              "line": "乘上 $dx$ 的 $2\\sin\\theta\\cos\\theta$，次方各加 $1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathrm{B}(p,q)=2\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$",
+              "on": "弦和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta&=\\frac12\\mathrm{B}(p,q)\\\\&=\\frac{\\Gamma(p)\\Gamma(q)}{2\\,\\Gamma(p+q)}\\end{aligned}$"
+          ],
+          "say": "移項：正弦的 2p 減 1 次方乘餘弦的 2q 減 1 次方，從 0 積到 2 分之派，等於 2 分之一貝塔 p q。再用上一課的公式換成伽瑪函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta&=\\frac12\\mathrm{B}(p,q)\\\\&=\\frac{\\Gamma(p)\\Gamma(q)}{2\\,\\Gamma(p+q)}\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "　收斂條件跟 Beta 一樣：$p>0$、$q>0$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "4.24 一題一題做的 $\\sin^m\\cos^n$，現在一條公式全包"
+          ],
+          "say": "以前正弦 m 次方乘餘弦 n 次方要分奇偶、一題一題做；現在一條公式全包。",
+          "board": [
+            {
+              "do": "write",
+              "line": "4.24 一題一題做的 $\\sin^m\\cos^n$，現在一條公式全包"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "次方加 1 再除以 2",
+      "beats": [
+        {
+          "show": [
+            "$\\sin^m\\theta\\cos^n\\theta$：$2p-1=m$，$2q-1=n$",
+            "$p=\\frac{m+1}{2},\\qquad q=\\frac{n+1}{2}$"
+          ],
+          "say": "實際使用時，倒過來讀：正弦的次方 m 等於 2p 減 1，所以 p 是 m 加 1 除以 2。餘弦也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin^m\\theta\\cos^n\\theta$：$2p-1=m$，$2q-1=n$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle p=\\frac{m+1}{2},\\qquad q=\\frac{n+1}{2}$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta=\\frac{\\Gamma(\\frac{m+1}2)\\Gamma(\\frac{n+1}2)}{2\\,\\Gamma(\\frac{m+n}2+1)}$"
+          ],
+          "say": "口訣：次方加 1 再除以 2。分母的伽瑪函數，參數是兩個參數的和，也就是 m 加 n 除以 2 再加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta=\\frac{\\Gamma(\\frac{m+1}2)\\Gamma(\\frac{n+1}2)}{2\\,\\Gamma(\\frac{m+n}2+1)}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "的伽"
+            },
+            {
+              "do": "write",
+              "line": "　成立條件 $m>-1$、$n>-1$（就是 $p>0$、$q>0$）；$m,n$ 不必是整數",
+              "color": "violet",
+              "on": "除以#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$",
+            "$p=3$，$q=2$："
+          ],
+          "say": "例一：正弦五次方乘餘弦三次方。p 是 6 除以 2 等於 3，q 是 4 除以 2 等於 2。2 分之一貝塔 3 2，等於 24 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$p=3$，$q=2$：",
+              "on": "除以#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\frac12\\mathrm{B}(3,2)=\\frac12\\cdot\\frac{2!\\,1!}{4!}=\\frac1{24}}}$",
+              "on": "除以#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "一貝"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算（4.24 的方法）：$u=\\sin\\theta$",
+            "$\\int_0^1u^5(1-u^2)\\,du=\\frac16-\\frac18=\\frac1{24}$"
+          ],
+          "say": "用以前的方法驗算：餘弦是奇數次方，留一個給 d u，令 u 等於正弦，得到 6 分之一減 8 分之一，也是 24 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算（4.24 的方法）：$u=\\sin\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1u^5(1-u^2)\\,du=\\frac16-\\frac18=\\frac1{24}$",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個都是偶數",
+      "beats": [
+        {
+          "show": [
+            "例 2：$\\displaystyle\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$",
+            "$p=\\frac52$，$q=\\frac32$，$p+q=4$："
+          ],
+          "say": "例二：正弦四次方乘餘弦平方。p 是 2 分之 5，q 是 2 分之 3，加起來是 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：$\\displaystyle\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$p=\\frac52$，$q=\\frac32$，$p+q=4$：",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{\\Gamma(\\frac52)\\Gamma(\\frac32)}{2\\,\\Gamma(4)}=\\frac{\\frac{3\\sqrt\\pi}4\\cdot\\frac{\\sqrt\\pi}2}{2\\cdot6}=\\frac{\\pi}{32}$"
+          ],
+          "say": "伽瑪函數 2 分之 5 是 4 分之 3 根號派，2 分之 3 是 2 分之根號派，伽瑪函數 4 是 6。答案是 32 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\frac{\\Gamma(\\frac52)\\Gamma(\\frac32)}{2\\,\\Gamma(4)}=\\frac{\\frac{3\\sqrt\\pi}4\\cdot\\frac{\\sqrt\\pi}2}{2\\cdot6}=\\frac{\\pi}{32}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "根號#1"
+            },
+            {
+              "do": "write",
+              "line": "　用 4.24 的半角公式要降次兩輪；這裡一行",
+              "color": "violet",
+              "on": "伽瑪#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積 = ½ B((m+1)/2, (n+1)/2)"
+          ],
+          "say": "圖上是正弦 m 次方乘餘弦 n 次方。現在是例一，五次方和三次方。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sc",
+                  "window": [
+                    0,
+                    1.5708,
+                    0,
+                    0.5
+                  ],
+                  "ystep": 0.1,
+                  "fn": [
+                    {
+                      "expr": "sin(x)^m*cos(x)^n",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)^m*cos(x)^n",
+                      "from": 0,
+                      "to": 1.5708,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "m": {
+                      "min": 0,
+                      "max": 6,
+                      "value": 5,
+                      "label": "m"
+                    },
+                    "n": {
+                      "min": 0,
+                      "max": 6,
+                      "value": 3,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "m = {m}，n = {n}",
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "m = 5，n = 3",
+              "on": "餘弦"
+            },
+            {
+              "do": "write",
+              "line": "面積 = ½ B((m+1)/2, (n+1)/2)",
+              "color": "violet",
+              "on": "例一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個都是偶數"
+          ],
+          "say": "換成例二，四次方和平方，面積是 32 分之派，大約 0.098。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sc",
+                  "window": [
+                    0,
+                    1.5708,
+                    0,
+                    0.5
+                  ],
+                  "ystep": 0.1,
+                  "fn": [
+                    {
+                      "expr": "sin(x)^m*cos(x)^n",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)^m*cos(x)^n",
+                      "from": 0,
+                      "to": 1.5708,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "m": {
+                      "min": 0,
+                      "max": 6,
+                      "value": 5,
+                      "label": "m"
+                    },
+                    "n": {
+                      "min": 0,
+                      "max": 6,
+                      "value": 3,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "m = {m}，n = {n}",
+                  "height": 220
+                },
+                "vals": {
+                  "m": 4,
+                  "n": 2
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "m = 4，n = 2",
+              "on": "32"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi/2}\\sin^2\\theta\\cos^2\\theta\\,d\\theta=$？"
+          ],
+          "say": "試一題：正弦平方乘餘弦平方。"
+        }
       ],
-      "key": "$x=\\sin^2\\theta$，$1-x$ 自動變 $\\cos^2\\theta$",
+      "check": 0
+    },
+    {
+      "title": "從奇偶預測答案",
+      "beats": [
+        {
+          "show": [
+            "半整數：$\\Gamma(k+\\frac12)=(\\text{有理數})\\cdot\\sqrt\\pi$；整數：$\\Gamma(k)$ 是整數"
+          ],
+          "say": "為什麼例一沒有派、例二有？關鍵是：半整數的伽瑪函數是有理數乘根號派，整數的伽瑪函數是整數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半整數：$\\Gamma(k+\\frac12)=(\\text{有理數})\\cdot\\sqrt\\pi$；整數：$\\Gamma(k)$ 是整數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $m,n$ 都是偶數：$p,q$ 都是半整數，$p+q$ 是整數",
+            "$\\frac{(\\cdot\\sqrt\\pi)(\\cdot\\sqrt\\pi)}{\\text{整數}}=\\text{有理數}\\cdot\\pi$"
+          ],
+          "say": "m、n 都是偶數：p 和 q 都是半整數，各帶一個根號派，乘起來是派；分母是整數。答案是有理數乘派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $m,n$ 都是偶數：$p,q$ 都是半整數，$p+q$ 是整數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(\\cdot\\sqrt\\pi)(\\cdot\\sqrt\\pi)}{\\text{整數}}=\\text{有理數}\\cdot\\pi$",
+              "on": "根號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 一個奇數、一個偶數：$\\frac{\\text{整數}\\cdot(\\cdot\\sqrt\\pi)}{(\\cdot\\sqrt\\pi)}$，$\\sqrt\\pi$ 消掉",
+            "• 兩個都是奇數：全是整數"
+          ],
+          "say": "一奇一偶：分子一個根號派，分母 p 加 q 也是半整數，也帶一個根號派，消掉了。兩個都是奇數：全部是整數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 一個奇數、一個偶數：$\\frac{\\text{整數}\\cdot(\\cdot\\sqrt\\pi)}{(\\cdot\\sqrt\\pi)}$，$\\sqrt\\pi$ 消掉"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個都是奇數：全是整數",
+              "on": "也帶"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只要有一個是奇數，答案就是有理數；兩個都是偶數，才有 $\\pi$"
+          ],
+          "say": "結論：只要有一個次方是奇數，答案就是有理數；兩個都是偶數，答案才帶派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只要有一個是奇數，答案就是有理數；兩個都是偶數，才有 $\\pi$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　跟 4.24 一致：有奇數次方就換元，積出多項式；都是偶數才要半角公式，積出 $\\theta$，代 $\\frac\\pi2$ 出現 $\\pi$",
+              "color": "violet",
+              "on": "是有"
+            }
+          ]
+        }
+      ],
       "predict": {
-        "ask": "全部乘起來，$\\sin\\theta$ 的次方是？",
+        "ask": "下面哪一個積分（$0$ 到 $\\frac\\pi2$）的答案裡有 $\\pi$？",
         "options": [
           {
-            "label": "$2p-1$",
+            "label": "$\\sin^2\\theta\\cos^4\\theta$",
             "correct": true
           },
           {
-            "label": "$2p-2$",
-            "why": "忘了 $dx$ 帶來的那一個 $\\sin\\theta$，次方要再加 $1$。"
+            "label": "$\\sin^3\\theta\\cos^4\\theta$",
+            "why": "$3$ 是奇數：答案是有理數（$\\frac2{35}$）"
           },
           {
-            "label": "$p-1$",
-            "why": "$x=\\sin^2\\theta$，所以 $x^{p-1}$ 是 $\\sin^{2p-2}\\theta$，次方要乘 $2$。"
+            "label": "$\\sin^5\\theta\\cos\\theta$",
+            "why": "兩個都是奇數：答案是 $\\frac16$"
           }
         ]
       }
     },
     {
-      "title": "加 1 再除以 2",
+      "title": "分數次方",
       "beats": [
-        { "show": ["Beta：零到一的積分"],
-          "say": "Beta 是零到一的積分，被積函數是 x 的 p 減一次方乘一減 x 的 q 減一次方。",
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\int_0^{\\pi/2}\\sin^{1/2}\\theta\\cos^{-1/2}\\theta\\,d\\theta$"
+          ],
+          "say": "公式不要求次方是整數。看根號正切：寫成正弦的 2 分之 1 次方，乘餘弦的負 2 分之 1 次方。",
           "board": [
-            {"do":"write","line":"$\\mathrm{B}(p,q)=\\int_0^1 x^{p-1}(1-x)^{q-1}\\,dx$"}
-          ] },
-        { "show": ["Gamma：零到無限大的積分","$\\mathrm{B}=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$"],
-          "say": "Gamma 是零到無限大的積分，兩個合起來有 B 等於 Gamma p 乘 Gamma q 除以 Gamma p 加 q。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\int_0^{\\pi/2}\\sin^{1/2}\\theta\\cos^{-1/2}\\theta\\,d\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=-\\frac12>-1$：在 $\\frac\\pi2$ 附近爆掉，但收斂"
+          ],
+          "say": "餘弦的次方是負的，在 2 分之派附近會爆掉；但負 2 分之 1 大於負 1，所以收斂。",
           "board": [
-            {"do":"write","line":"$\\Gamma(s)=\\int_0^{\\infty} t^{s-1}e^{-t}\\,dt$"},
-            {"do":"write","line":"$\\mathrm{B}(p,q)={{r1:\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}}}$","on":"兩個合起來"},
-            {"do":"box","term":"r1","color":"green","on":"B 等於"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$","$=\\frac{1}{2}\\mathrm{B}(p,q)$"],
-          "note": "$dx$ 的 $2$ 移到另一邊，變成 $\\frac{1}{2}$。",
-          "say": "dx 帶來的二移到另一邊，三角形式的積分就是 Beta 的一半。",
+            {
+              "do": "write",
+              "line": "$n=-\\frac12>-1$：在 $\\frac\\pi2$ 附近爆掉，但收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=\\frac34$，$q=\\frac14$，$p+q=1$：",
+            "$=\\frac{\\Gamma(\\frac34)\\Gamma(\\frac14)}{2\\,\\Gamma(1)}$"
+          ],
+          "say": "p 是 4 分之 3，q 是 4 分之 1，加起來剛好是 1，分母的伽瑪函數 1 等於 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$"},
-            {"do":"write","line":"$={{h:\\frac{1}{2}}}\\mathrm{B}(p,q)$","on":"移到另一邊"},
-            {"do":"focus","term":"h","label":"Beta 的一半","on":"Beta 的一半"}
-          ] },
-        { "show": ["$\\sin^m\\theta\\cos^n\\theta$：$p=\\frac{m+1}{2}$，$q=\\frac{n+1}{2}$"],
-          "say": "實際用的時候，題目是 sine 的 m 次方乘 cosine 的 n 次方，次方先加一，再除以二。",
+            {
+              "do": "write",
+              "line": "$p=\\frac34$，$q=\\frac14$，$p+q=1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{\\Gamma(\\frac34)\\Gamma(\\frac14)}{2\\,\\Gamma(1)}$",
+              "on": "起來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用上一課預告的反射公式 $\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$：",
+            "$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\sqrt2\\,\\pi}{2}=\\frac{\\pi}{\\sqrt2}\\approx2.2214$"
+          ],
+          "say": "用上一課預告的反射公式，伽瑪函數 4 分之 1 乘伽瑪函數 4 分之 3 是根號 2 派。答案是根號 2 分之派，大約 2.2214。",
           "board": [
-            {"do":"write","line":"$\\sin^m\\theta\\cos^n\\theta$：${{pp:p=\\frac{m+1}{2}}}$，$q=\\frac{n+1}{2}$","on":"sine 的 m"},
-            {"do":"underline","term":"pp","on":"次方先加一"}
-          ] },
-        { "show": ["條件：$m>-1$，$n>-1$"],
-          "note": "分數次方、負的次方都可以。",
-          "say": "條件是 m、n 都大於負一，對應 p、q 大於零。分數次方、甚至負的次方都能用。",
+            {
+              "do": "write",
+              "line": "用上一課預告的反射公式 $\\Gamma(\\frac14)\\Gamma(\\frac34)=\\dfrac{\\pi}{\\sin\\frac\\pi4}=\\sqrt2\\,\\pi$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\sqrt2\\,\\pi}{2}=\\frac{\\pi}{\\sqrt2}\\approx2.2214}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "是根#1"
+            },
+            {
+              "do": "write",
+              "line": "　不靠反射公式也驗得出來：令 $u=\\sqrt{\\tan\\theta}$ 得 $\\int_0^\\infty\\frac{2u^2}{1+u^4}du$，部分分式算出來也是 $\\frac\\pi{\\sqrt2}$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有反射公式時，答案就停在 Gamma 值：$\\frac12\\Gamma(\\frac14)\\Gamma(\\frac34)$"
+          ],
+          "say": "一般的分數次方，答案就停在伽瑪函數的值；剛好 p 加 q 等於 1 時，反射公式能把它化成派。",
           "board": [
-            {"do":"write","line":"條件：${{cm:m>-1}}$，${{cn:n>-1}}$"}
-          ] }
+            {
+              "do": "write",
+              "line": "沒有反射公式時，答案就停在 Gamma 值：$\\frac12\\Gamma(\\frac14)\\Gamma(\\frac34)$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "遞迴讓 Gamma 消掉",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin^3\\theta\\sqrt{\\cos\\theta}\\,d\\theta,\\quad p=2,\\ q=\\tfrac34$"
+          ],
+          "say": "再看一個：正弦三次方乘根號餘弦。p 是 2，q 是 4 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin^3\\theta\\sqrt{\\cos\\theta}\\,d\\theta,\\quad p=2,\\ q=\\tfrac34$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{\\Gamma(2)\\Gamma(\\frac34)}{2\\,\\Gamma(\\frac{11}4)}$"
+          ],
+          "say": "寫成伽瑪函數：分子有伽瑪函數 4 分之 3，分母是伽瑪函數 4 分之 11。這兩個都不知道值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{\\Gamma(2)\\Gamma(\\frac34)}{2\\,\\Gamma(\\frac{11}4)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "遞迴：$\\Gamma(\\frac{11}4)=\\frac74\\cdot\\frac34\\cdot\\Gamma(\\frac34)$",
+            "$=\\frac{1}{2\\cdot\\frac{21}{16}}=\\frac{8}{21}$"
+          ],
+          "say": "但 4 分之 11 和 4 分之 3 差 2，用遞迴往下兩步，伽瑪函數 4 分之 3 整個消掉。答案是 21 分之 8。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遞迴：$\\Gamma(\\frac{11}4)=\\frac74\\cdot\\frac34\\cdot\\Gamma(\\frac34)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =\\frac{1}{2\\cdot\\frac{21}{16}}=\\frac{8}{21}}}$",
+              "color": "red",
+              "on": "用遞"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "伽瑪"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$u=\\cos\\theta$，$\\int_0^1(1-u^2)u^{1/2}du=\\frac23-\\frac27=\\frac8{21}$",
+              "color": "violet",
+              "on": "消掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有一個奇數次方時，兩個 Gamma 的參數差整數，遞迴就消得掉"
+          ],
+          "say": "道理跟奇偶一樣：有一個奇數次方，分子分母的伽瑪函數參數差一個整數，遞迴就能消掉，答案是有理數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有一個奇數次方時，兩個 Gamma 的參數差整數，遞迴就消得掉",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "有奇數次方",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"],
-          "note": "$m=5$，$n=3$：$p=3$，$q=2$。",
-          "say": "sine 五次方乘 cosine 三次方：五加一除以二是三，三加一除以二是二。",
+        {
+          "show": [
+            "• $x=\\sin^2\\theta$：$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\frac12\\mathrm{B}(p,q)$",
+            "• 用法：次方加 1 再除以 2，分母是 $\\Gamma(\\frac{m+n}2+1)$"
+          ],
+          "say": "整理：令 x 等於正弦平方，貝塔就變成三角形式。次方加 1 再除以 2；有奇數次方答案是有理數，都是偶數才有派；分數次方也能算。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"},
-            {"do":"write","line":"$p=\\frac{5+1}{2}={{pp:3}}$","on":"五加一"},
-            {"do":"write","line":"$q=\\frac{3+1}{2}={{qq:2}}$","on":"三加一"}
-          ] },
-        { "show": ["$\\mathrm{B}(3,2)=\\frac{\\Gamma(3)\\Gamma(2)}{\\Gamma(5)}$","整數：$\\Gamma(n)=(n-1)!$"],
-          "say": "用 Gamma 算：Beta 三、二是 Gamma 三乘 Gamma 二，除以 Gamma 五。整數的 Gamma n 是 n 減一的階乘。",
+            {
+              "do": "write",
+              "line": "• $x=\\sin^2\\theta$：$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\frac12\\mathrm{B}(p,q)$"
+            },
+            {
+              "do": "write",
+              "line": "• 用法：次方加 1 再除以 2，分母是 $\\Gamma(\\frac{m+n}2+1)$",
+              "on": "貝塔"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂：$m>-1$、$n>-1$",
+              "on": "方加"
+            },
+            {
+              "do": "write",
+              "line": "• 有奇數次方 → 有理數；都是偶數 → 有理數 $\\times\\pi$",
+              "on": "數次#1"
+            },
+            {
+              "do": "write",
+              "line": "• 分數次方也能用；$p+q=1$ 時配反射公式",
+              "on": "數才"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Wallis 與 Beta"
+          ],
+          "say": "下一課，把瓦里斯積分放進這個框架裡。",
           "board": [
-            {"do":"write","line":"$\\mathrm{B}(3,2)=\\frac{\\Gamma(3)\\Gamma(2)}{\\Gamma(5)}$"},
-            {"do":"write","line":"$\\Gamma(n)=(n-1)!$，$\\Gamma(3)=2!$","on":"整數的"}
-          ] },
-        { "show": ["$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}=\\frac{1}{24}$"],
-          "say": "Beta 三、二是二十四分之二，也就是十二分之一，再乘二分之一，得二十四分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}$","on":"Beta"},
-            {"do":"transform","line":"$=\\frac{1}{2}\\cdot{{t:\\frac{1}{12}}}$","on":"也就是"},
-            {"do":"transform","line":"$={{r:\\frac{1}{24}}}$","color":"green","on":"再乘"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "從奇偶看答案",
-      "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"],
-          "note": "$p=\\frac{5}{2}$，$q=\\frac{3}{2}$。",
-          "say": "換成兩個都是偶數：sine 四次方乘 cosine 平方，p 是二分之五，q 是二分之三。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"},
-            {"do":"write","line":"$p=\\frac{5}{2}$，$q=\\frac{3}{2}$","on":"p 是"}
-          ] },
-        { "show": ["$\\Gamma(1/2)=\\sqrt{\\pi}$","$\\Gamma(x+1)=x\\,\\Gamma(x)$"],
-          "say": "Gamma 二分之一是根號 pi。再用 Gamma x 加一等於 x 乘 Gamma x，一路推到二分之五。",
-          "board": [
-            {"do":"write","line":"$\\Gamma(1/2)=\\sqrt{\\pi}$"},
-            {"do":"write","line":"$\\Gamma(x+1)=x\\,\\Gamma(x)$","on":"再用"},
-            {"do":"write","line":"$\\Gamma(3/2)=\\frac{1}{2}\\Gamma(1/2)=\\frac{\\sqrt{\\pi}}{2}$","on":"一路"},
-            {"do":"write","line":"$\\Gamma(5/2)=\\frac{3}{2}\\Gamma(3/2)=\\frac{3\\sqrt{\\pi}}{4}$","on":"推到"}
-          ] },
-        { "show": ["$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}=\\frac{\\pi}{32}$"],
-          "note": "跟 Wallis 的 $W_4-W_6$ 一樣。",
-          "say": "兩個半整數各帶一個根號 pi，分母 Gamma 四是六，答案三十二分之 pi，跟 Wallis 算的一樣。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}$","on":"兩個半整數"},
-            {"do":"write","line":"$\\Gamma(4)=6$","on":"分母"},
-            {"do":"write","line":"$={{r:\\frac{\\pi}{32}}}$","on":"答案"},
-            {"do":"box","term":"r","color":"green","on":"Wallis"}
-          ] },
-        { "show": ["都偶數：帶 $\\pi$","有奇數：有理數"],
-          "say": "規律是：兩個都偶數，答案帶 pi；只要有一個奇數，根號 pi 會上下約掉，答案是有理數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"都偶數：帶 $\\pi$","on":"兩個都偶數"},
-            {"do":"write","line":"有奇數：有理數","on":"只要有一個奇數"}
-          ] },
-        { "show": ["都偶數：分子 $\\sqrt{\\pi}\\cdot\\sqrt{\\pi}$","有奇數：分母也有 $\\sqrt{\\pi}$"],
-          "say": "為什麼：都偶數時分母是整數點，分子兩個根號 pi 留下 pi。有一個奇數，分母變半整數，根號 pi 就約掉。",
-          "board": [
-            {"do":"write","line":"都偶數：分子 $\\sqrt{\\pi}\\cdot\\sqrt{\\pi}$，分母整數"},
-            {"do":"write","line":"有奇數：分母也有 $\\sqrt{\\pi}$，約掉","on":"有一個奇數"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "分數次方",
-      "beats": [
-        { "show": ["$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\cos^{-1/2}\\theta$"],
-          "note": "$n=-\\frac{1}{2}>-1$，收斂。",
-          "say": "根號 tangent 寫成 sine 的二分之一次方乘 cosine 的負二分之一次方。負二分之一大於負一，收斂。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\,{{c:\\cos^{-1/2}\\theta}}$"},
-            {"do":"underline","term":"c","on":"cosine 的負"},
-            {"do":"write","line":"$n=-\\frac{1}{2}>-1$，收斂","on":"負二分之一#2"}
-          ] },
-        { "show": ["$=\\frac{1}{2}\\mathrm{B}\\left(\\frac{3}{4},\\frac{1}{4}\\right)$"],
-          "note": "$p=\\frac{3}{4}$，$q=\\frac{1}{4}$。",
-          "say": "次方加一再除以二：p 是四分之三，q 是四分之一。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{1}{2}\\mathrm{B}\\left({{p:\\frac{3}{4}}},{{q:\\frac{1}{4}}}\\right)$"},
-            {"do":"focus","term":"p","on":"p 是"},
-            {"do":"focus","term":"q","on":"q 是"}
-          ] },
-        { "show": ["$\\Gamma(s)\\Gamma(1-s)=\\frac{\\pi}{\\sin(\\pi s)}$"],
-          "say": "反射公式說，Gamma s 乘 Gamma 一減 s，等於 pi 除以 sine pi s。",
-          "board": [
-            {"do":"write","line":"$\\Gamma(s)\\Gamma(1-s)=\\frac{\\pi}{\\sin(\\pi s)}$"}
-          ] },
-        { "show": ["$s=\\frac{1}{4}$：$1-s=\\frac{3}{4}$","$\\mathrm{B}=\\frac{\\pi}{\\sin(\\pi/4)}=\\pi\\sqrt{2}$"],
-          "say": "取 s 等於四分之一，一減 s 就是四分之三。Gamma 一是一，所以乘積就是 pi 除以 sine 四分之 pi。",
-          "board": [
-            {"do":"write","line":"$s=\\frac{1}{4}$，$1-s=\\frac{3}{4}$"},
-            {"do":"write","line":"$\\mathrm{B}(\\frac{3}{4},\\frac{1}{4})=\\frac{\\Gamma(3/4)\\Gamma(1/4)}{\\Gamma(1)}$","on":"Gamma 一是一"},
-            {"do":"write","line":"$=\\frac{\\pi}{\\sin(\\pi/4)}=\\pi\\sqrt{2}$","on":"除以"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\pi}{\\sqrt{2}}$"],
-          "note": "用反射公式 $\\Gamma\\left(\\frac{1}{4}\\right)\\Gamma\\left(\\frac{3}{4}\\right)=\\pi\\sqrt{2}$。",
-          "say": "再借反射公式，答案是根號二分之 pi，大約二點二二一。",
-          "board": [
-            {"do":"write","line":"$=\\,{{ans:\\frac{\\pi}{\\sqrt{2}}}}$","on":"答案是"},
-            {"do":"box","term":"ans","color":"green","on":"根號二分之"}
-          ] }
-      ],
-      "key": "$\\tan$ 拆成 $\\sin$、$\\cos$ 的分數次方",
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：Wallis 與 Beta"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

@@ -1,0 +1,404 @@
+{
+  "id": "optimization-geometry",
+  "title": "幾何最佳化",
+  "readMinutes": 9,
+  "totalMinutes": 40,
+  "prerequisites": ["optimization-basics"],
+  "next": ["optimization-distance"],
+  "related": [],
+  "objectives": [
+    "畫圖、標變數，把盒子、圓柱、內接圖形的題目寫成一個變數的函數。",
+    "用限制條件（體積固定、周長固定、頂點在圓上）消去多餘的變數。",
+    "目標函數帶根號時，改求它的平方，並說得出為什麼可以。"
+  ],
+  "visual": "一張 12 × 12 的紙板，四角剪掉邊長 x 的小正方形後摺成無蓋盒子。拖動 x，盒子即時變形，旁邊畫出 V(x) = x(12 − 2x)² 的曲線與目前的點；x 太小盒子太扁、太大底太小，最高點在 x = 2。",
+  "concept": [
+    {
+      "heading": "① 幾何題難在設定，不在微分",
+      "body": [
+        "微分本身通常不難，卡住的地方是：哪個量當變數、目標函數長什麼樣、變數可以多大。先畫圖，把會變的長度標上字母，寫出要最大或最小的量。",
+        "常用的公式：無蓋方底盒 $V=$ 底面積 $\\times$ 高；圓柱 $V=\\pi r^2h$，有蓋圓柱表面積 $S=2\\pi r^2+2\\pi rh$；圓錐 $V=\\frac{1}{3}\\pi r^2h$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 限制條件用來消變數",
+      "body": [
+        "圓柱的表面積有 $r$、$h$ 兩個變數，但題目會給一個限制，例如體積固定 $\\pi r^2h=16\\pi$。從限制解出 $h=\\frac{16}{r^2}$，代進表面積，就只剩 $r$ 一個變數，可以用〈最佳化基本模型〉的方法。",
+        "內接圖形的限制是「頂點在曲線上」：半圓 $x^2+y^2=25$ 上的頂點滿足 $y=\\sqrt{25-x^2}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 有根號：改求平方",
+      "body": [
+        "$A(x)=2x\\sqrt{25-x^2}$ 微分要用乘法法則加連鎖律，容易算錯。因為 $A\\ge 0$，而 $t\\mapsto t^2$ 在 $t\\ge 0$ 上遞增，$A$ 越大 $A^2$ 就越大，兩者在同一個 $x$ 取到最大。所以改求 $A^2=4x^2(25-x^2)$ 的最大值，沒有根號。",
+        "前提是 $A\\ge 0$。會取負值的函數不能這樣做：$-3<1$，平方後卻是 $9>1$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 算完回頭看一眼",
+      "body": [
+        "答案要落在變數的範圍裡，也要合理：剪掉的角不能比紙板一半還大，半徑不能是負的。有些結果值得記住：周長固定的長方形，正方形面積最大；體積固定的有蓋圓柱，高等於直徑時最省材料。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "紙板摺盒子",
+      "prompt": "邊長 12 公分的正方形紙板，四角各剪去邊長 $x$ 的小正方形，摺成無蓋盒子。最大體積是多少？",
+      "problemId": "lec-05-q2b",
+      "steps": [
+        "盒底邊長 $12-2x$（每邊兩頭各剪 $x$），高 $x$。$V(x)=x(12-2x)^2$。",
+        "範圍：$x\\ge 0$ 且 $12-2x\\ge 0$，所以 $0\\le x\\le 6$。",
+        "乘法法則：$V'=(12-2x)^2+x\\cdot 2(12-2x)(-2)=(12-2x)[(12-2x)-4x]=(12-2x)(12-6x)$。",
+        "$V'=0$ 得 $x=6$ 或 $x=2$。比較候選值：$V(0)=0$、$V(6)=0$、$V(2)=2\\cdot 8^2=128$。"
+      ],
+      "answer": "$128$ 立方公分（$x=2$）",
+      "claim": "D(x*(12-2x)^2, 2) == 0 ;; SUB(x*(12-2x)^2, 2) == 128"
+    },
+    {
+      "title": "最省材料的罐子",
+      "prompt": "體積 $16\\pi$ 的有蓋圓柱罐，表面積最小是多少？",
+      "problemId": "db-opt-005",
+      "steps": [
+        "變數：底半徑 $r$、高 $h$。目標 $S=2\\pi r^2+2\\pi rh$；限制 $\\pi r^2h=16\\pi$，所以 $h=\\frac{16}{r^2}$。",
+        "代入：$S(r)=2\\pi r^2+2\\pi r\\cdot\\frac{16}{r^2}=2\\pi r^2+\\frac{32\\pi}{r}$，$r>0$。",
+        "$S'(r)=4\\pi r-\\frac{32\\pi}{r^2}=0$，得 $r^3=8$，$r=2$。$0<r<2$ 時 $S'<0$、$r>2$ 時 $S'>0$，所以 $r=2$ 是 $(0,\\infty)$ 上的最小值。",
+        "$h=\\frac{16}{4}=4$，$S=2\\pi\\cdot 4+\\frac{32\\pi}{2}=8\\pi+16\\pi=24\\pi$。"
+      ],
+      "answer": "$24\\pi$（$r=2$、$h=4$）",
+      "note": "$h=4=2r$：高等於直徑。換任何體積都是這個比例。",
+      "claim": "D(2*pi*x^2+32*pi/x, 2) == 0 ;; SUB(2*pi*x^2+32*pi/x, 2) == 24*pi ;; SUB(16/x^2, 2) == 4"
+    },
+    {
+      "title": "半圓內接矩形",
+      "prompt": "半徑 $5$ 的半圓內接矩形，一邊落在直徑上。最大面積是多少？",
+      "problemId": "dd-opt-005",
+      "steps": [
+        "圓心放原點，半圓是 $y=\\sqrt{25-x^2}$（$y\\ge 0$）。矩形右上頂點 $(x,\\sqrt{25-x^2})$，寬 $2x$、高 $\\sqrt{25-x^2}$，$0\\le x\\le 5$。",
+        "$A(x)=2x\\sqrt{25-x^2}\\ge 0$，改求 $A^2=4x^2(25-x^2)=100x^2-4x^4$。",
+        "$(A^2)'=200x-16x^3=8x(25-2x^2)=0$，在 $(0,5)$ 裡得 $x^2=\\frac{25}{2}$，$x=\\frac{5}{\\sqrt{2}}$。端點 $x=0$、$x=5$ 時 $A=0$。",
+        "$A=2\\cdot\\frac{5}{\\sqrt{2}}\\cdot\\sqrt{25-\\frac{25}{2}}=2\\cdot\\frac{5}{\\sqrt{2}}\\cdot\\frac{5}{\\sqrt{2}}=25$。"
+      ],
+      "answer": "$25$",
+      "claim": "D(4*x^2*(25-x^2), 5/sqrt(2)) == 0 ;; SUB(2x*sqrt(25-x^2), 5/sqrt(2)) == 25"
+    }
+  ],
+  "pitfalls": [
+    "紙板盒子的底寫成 $12-x$，忘了兩頭都剪。",
+    "保留兩個變數就開始微分，沒有先用限制條件消去。",
+    "有蓋、無蓋的表面積公式用錯。",
+    "對會取負值的函數也改求平方。",
+    "求出 $x$ 就停了，沒有回答題目問的面積或體積。"
+  ],
+  "checks": [
+    {
+      "ask": "$12\\times 12$ 紙板四角剪去邊長 $x$ 的正方形摺成無蓋盒。$x$ 的合理範圍是？",
+      "options": [
+        { "label": "$0\\le x\\le 6$", "correct": true },
+        { "label": "$0\\le x\\le 12$", "why": "每一邊兩頭各剪 $x$，底邊剩 $12-2x$，要 $\\ge 0$，所以 $x\\le 6$。" },
+        { "label": "$x>0$ 都可以", "why": "$x$ 大過 $6$，底邊 $12-2x$ 變成負的，盒子不存在。" }
+      ]
+    },
+    {
+      "ask": "周長 $24$ 的長方形，面積最大是多少？",
+      "options": [
+        { "label": "$36$", "correct": true },
+        { "label": "$144$", "why": "$12$ 是長加寬，不是邊長。長 $x$、寬 $12-x$，$A=x(12-x)$ 在 $x=6$ 最大，$6\\times 6=36$。" },
+        { "label": "$32$", "why": "$8\\times 4$ 是一組可能的長寬，但不是最大。$A'=12-2x=0$ 給正方形。" }
+      ]
+    },
+    {
+      "ask": "體積固定的有蓋圓柱罐，表面積最小時，高 $h$ 和半徑 $r$ 的關係是？",
+      "options": [
+        { "label": "$h=2r$", "correct": true },
+        { "label": "$h=r$", "why": "代 $V=\\pi r^2h$ 固定、$S=2\\pi r^2+\\frac{2V}{r}$，$S'=0$ 給 $2\\pi r^3=V=\\pi r^2h$，所以 $h=2r$，不是 $r$。" },
+        { "label": "$h=\\frac{r}{2}$", "why": "上下兩個蓋子的 $2\\pi r^2$ 已經算在 $S$ 裡；最省的是高等於直徑 $2r$，不是半徑的一半。" }
+      ]
+    },
+    {
+      "ask": "求 $A(x)=2x\\sqrt{25-x^2}$（$0\\le x\\le 5$）的最大值時，為什麼可以改求 $A^2$ 的最大值？",
+      "options": [
+        { "label": "因為 $A\\ge 0$，而平方在非負數上是遞增的，$A$ 和 $A^2$ 在同一個 $x$ 最大", "correct": true },
+        { "label": "因為 $A^2$ 比較好微分", "why": "這是改求平方的動機，不是它對的理由。好算但答案變了就沒用；保證答案不變的是 $A\\ge 0$。" },
+        { "label": "任何函數都可以改求平方", "why": "函數會取負值時不行：$-3<1$，平方後卻是 $9>1$，最大最小可能對調。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "難在設定",
+      "beats": [
+        { "show": ["微分不難，難在設定"],
+          "note": "先畫圖，會變的長度標上字母。",
+          "say": "幾何最佳化，微分通常不難，卡住的是設定：哪個量當變數、要最大的是什麼。所以先畫圖，把會變的長度標上字母。",
+          "board": [
+            {"do":"write","line":"卡住的是設定：變數 ＋ 目標"},
+            {"do":"write","line":"先畫圖，長度標字母","on":"先畫圖"}
+          ] },
+        { "show": ["12 公分紙板，四角剪掉邊長 $x$"],
+          "note": "摺成無蓋盒子，體積最大是多少？",
+          "say": "看這個例子：邊長十二公分的正方形紙板，四個角各剪掉邊長 x 的小正方形，摺成沒有蓋子的盒子。",
+          "board": [
+            {"do":"write","line":"$12\\times 12$ 紙板，剪角 ${{x:x}}$","tint":{"x":"blue"}},
+            {"do":"focus","term":"x","color":"blue","label":"剪掉邊長","on":"小正方形"}
+          ] },
+        { "show": ["$V(x)=x(12-2x)^2$"],
+          "note": "底邊 $12-2x$，高 $x$。",
+          "say": "每一邊兩頭各剪掉 x，盒底邊長剩十二減二 x；摺起來的高是 x。體積是底面積乘高。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"底邊 ${{b:12-2x}}$，高 ${{h:x}}$","on":"盒底邊長"},
+            {"do":"write","line":"$V(x)={{h:x}}\\,{{a:(12-2x)^2}}$","on":"體積是"},
+            {"do":"underline","term":"a","color":"blue","label":"底面積","on":"底面積"}
+          ] },
+        { "show": ["$x$ 太小：太扁","$x$ 太大：底太小"],
+          "say": "剪太少，盒子扁扁的；剪太多，底又太小。中間某個 x 體積最大。",
+          "board": [
+            {"do":"write","line":"$x$ 太小：太扁，$x$ 太大：底太小"},
+            {"do":"write","line":"中間某個 $x$：$V$ 最大","on":"中間某個"}
+          ] },
+        { "show": ["$V(x)$ 先升後降"],
+          "say": "把體積畫出來：x 從零到六，體積先升後降。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6.5,-10,150],"curves":[{"expr":"x*(12-2*x)^2","domain":[0,6],"color":"blue"}]}}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算出最大體積",
+      "beats": [
+        { "show": ["$V'=(12-2x)(12-6x)$"],
+          "note": "乘法法則，再提出 $12-2x$。",
+          "say": "用乘法法則微分，兩項都有十二減二 x，提出來，剩十二減六 x。",
+          "board": [
+            {"do":"write","line":"$V'=(12-2x)^2-4x(12-2x)$"},
+            {"do":"transform","line":"$V'={{f:(12-2x)}}\\,{{g:(12-6x)}}$","on":"提出來"},
+            {"do":"circle","term":"g","label":"剩下","on":"剩十二減六"}
+          ] },
+        { "show": ["$((12-2x)^2)'=-4(12-2x)$"],
+          "note": "平方的導數，要再乘裡面的導數。",
+          "say": "平方的導數，要乘裡面的導數。二乘十二減二 x，再乘負二，就是負四乘十二減二 x。",
+          "board": [
+            {"do":"write","line":"$((12-2x)^2)'=2(12-2x)\\cdot(-2)$"},
+            {"do":"write","line":"$=-{{m:4}}(12-2x)$","on":"負四"}
+          ] },
+        { "show": ["$V'=0$：$x=6$ 或 $x=2$"],
+          "say": "導數是零的地方有兩個：x 等於六，和 x 等於二。六剛好是範圍的端點。",
+          "board": [
+            {"do":"write","line":"$V'=0$：${{a:x=6}}$ 或 ${{b:x=2}}$"},
+            {"do":"focus","term":"a","color":"gold","label":"範圍端點","on":"六剛好"}
+          ] },
+        { "show": ["候選：$x=0,2,6$"],
+          "note": "最大值只在導數為零或端點。",
+          "say": "最大值只會在導數為零的點或端點。所以把 x 等於零、二、六都代回 V 比較。零和六的體積都是零。",
+          "board": [
+            {"do":"write","line":"候選：$x=0,2,6$"},
+            {"do":"write","line":"$V(0)=0$，$V(6)=0$","on":"零和六"}
+          ] }
+      ],
+      "predict": {
+        "ask": "範圍 $0\\le x\\le 6$。最大體積是？",
+        "options": [
+          {
+            "label": "$V(2)=2\\cdot 8^2=128$",
+            "correct": true
+          },
+          {
+            "label": "$x=2$",
+            "why": "$x=2$ 是剪掉的邊長，題目問的是體積。$V(2)=2\\cdot 8^2=128$ 立方公分。"
+          },
+          {
+            "label": "$V(6)=0$",
+            "why": "$x=6$ 時底邊 $12-2x=0$，盒子沒有底。比較 $V(0)=0$、$V(6)=0$、$V(2)=128$，最大是 $128$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "限制用來消變數",
+      "beats": [
+        { "show": ["$S=2\\pi r^2+2\\pi rh$"],
+          "note": "體積 $16\\pi$ 的有蓋圓柱罐。",
+          "say": "最省材料的罐子：體積十六 pi 的有蓋圓柱，表面積是上下兩個圓加側面，有 r 和 h 兩個變數。",
+          "board": [
+            {"do":"write","line":"$S={{c:2\\pi r^2}}+{{s:2\\pi r{{h:h}}}}$","tint":{"h":"violet"},"on":"表面積是"},
+            {"do":"underline","term":"c","label":"上下兩個圓","on":"上下兩個圓"},
+            {"do":"underline","term":"s","label":"側面","on":"加側面"}
+          ] },
+        { "show": ["$\\pi r^2h=16\\pi$ → $h=\\frac{16}{r^2}$"],
+          "say": "兩個變數沒辦法直接微分。用體積的限制解出 h，等於十六除以 r 平方。",
+          "board": [
+            {"do":"write","line":"$\\pi r^2h=16\\pi$","on":"用體積的限制"},
+            {"do":"transform","line":"$\\pi r^2h=16\\pi$ → ${{h:h}}={{hv:\\frac{16}{r^2}}}$","tint":{"hv":"violet"},"on":"解出 h"}
+          ] },
+        { "show": ["$S(r)=2\\pi r^2+\\frac{32\\pi}{r}$"],
+          "note": "$r>0$，只剩一個變數。",
+          "say": "代回表面積，只剩 r 一個變數：二 pi r 平方，加上 r 分之三十二 pi。",
+          "board": [
+            {"do":"write","line":"$S(r)=2\\pi r^2+{{t:\\frac{32\\pi}{r}}}$","tint":{"t":"violet"}},
+            {"do":"focus","term":"t","color":"violet","label":"h 代回來","on":"只剩 r"}
+          ] },
+        { "show": ["$S'=0$：$r^3=8$，$r=2$"],
+          "note": "$h=4$，$S=24\\pi$。",
+          "say": "微分令它等於零，r 三次方是八，r 等於二。左邊導數負、右邊正，是最小值。高是四，表面積二十四 pi。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$S'=0$：$r^3=8$，${{r:r=2}}$","on":"微分令它"},
+            {"do":"focus","term":"r","color":"green","label":"最小值","on":"是最小值"}
+          ] },
+        { "show": ["$S'<0$ 下降，$S'>0$ 上升"],
+          "note": "先降後升，最低點在 $r=2$。",
+          "say": "導數正，函數往上；導數負，往下。r 小於二往下降，r 大於二往上升，先降後升，所以二是最低點。",
+          "board": [
+            {"do":"write","line":"$S'<0$：下降；$S'>0$：上升"},
+            {"do":"write","line":"$r<2$ 下降，$r>2$ 上升","on":"r 小於二"}
+          ] }
+      ],
+      "key": "用體積限制把 $h$ 寫成 $r$ 的式子",
+      "check": 2
+    },
+    {
+      "title": "有根號：改求平方",
+      "beats": [
+        { "show": ["半徑 $5$ 的半圓內接矩形"],
+          "note": "頂點在 $y=\\sqrt{25-x^2}$ 上。",
+          "say": "半徑五的半圓裡放一個矩形，一邊貼著直徑。右上角的頂點在半圓上。",
+          "board": [
+            {"do":"write","line":"半圓半徑 $5$：${{c:y=\\sqrt{25-x^2}}}$"},
+            {"do":"focus","term":"c","color":"gold","label":"頂點在線上","on":"右上角"}
+          ] },
+        { "show": ["$x^2+y^2=25$ 的上半部"],
+          "note": "半圓在 $x$ 軸上方，$y\\ge 0$。",
+          "say": "半圓是 x 平方加 y 平方等於二十五的上半部。解出 y 平方，半圓在上方，y 不是負的，所以取正的根號。",
+          "board": [
+            {"do":"write","line":"$x^2+y^2=25$，$y^2=25-x^2$"},
+            {"do":"write","line":"$y\\ge 0$：$y=\\sqrt{25-x^2}$","on":"取正的"}
+          ] },
+        { "show": ["$A(x)=2x\\sqrt{25-x^2}$"],
+          "note": "$0\\le x\\le 5$",
+          "say": "寬是二 x，高是根號二十五減 x 平方。直接微分要乘法法則加連鎖律，容易錯。",
+          "board": [
+            {"do":"write","line":"寬 ${{w:2x}}$，高 ${{h:\\sqrt{25-x^2}}}$","tint":{"w":"blue","h":"violet"}},
+            {"do":"write","line":"$A(x)={{w:2x}}{{h:\\sqrt{25-x^2}}}$","on":"直接微分"}
+          ] },
+        { "show": ["$A\\ge 0$：$A$ 大，$A^2$ 就大"],
+          "note": "兩者在同一個 $x$ 取到最大。",
+          "say": "因為面積不會是負的，非負數越大平方就越大，所以改求 A 平方的最大值，答案在同一個 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$A\\ge 0$：$A$、$A^2$ 同一個 $x$ 最大","on":"非負數"},
+            {"do":"write","line":"改求 $A^2$ 的最大值","on":"改求"}
+          ] },
+        { "show": ["會取負值就不行"],
+          "note": "$-3<1$，平方後卻是 $9>1$。",
+          "say": "前提是非負。會取負值的函數不能這樣：負三比一小，平方以後九反而比一大。",
+          "board": [
+            {"do":"write","line":"會取負值：不能改求平方","color":"red"},
+            {"do":"write","line":"$-3<1$，但 $(-3)^2=9>1$","on":"負三比一小"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "算出內接矩形",
+      "beats": [
+        { "show": ["$A^2=100x^2-4x^4$"],
+          "say": "A 平方是四 x 平方乘二十五減 x 平方，展開沒有根號了。",
+          "board": [
+            {"do":"write","line":"$A^2=4x^2(25-x^2)$"},
+            {"do":"transform","line":"$A^2=100x^2-4x^4$","on":"展開"}
+          ] },
+        { "show": ["$(A^2)'=8x(25-2x^2)=0$"],
+          "note": "$x^2=\\frac{25}{2}$，$x=\\frac{5}{\\sqrt{2}}$。",
+          "say": "微分後分解，在零到五之間只有 x 平方等於二分之二十五，x 是根號二分之五。",
+          "board": [
+            {"do":"write","line":"$(A^2)'=8x(25-2x^2)=0$"},
+            {"do":"write","line":"$x^2=\\frac{25}{2}$，${{x:x=\\frac{5}{\\sqrt{2}}}}$","on":"x 平方等於"}
+          ] },
+        { "show": ["端點 $x=0$、$x=5$：$A=0$"],
+          "say": "兩個端點的面積都是零，所以最大值在這個臨界點。",
+          "board": [
+            {"do":"write","line":"端點 $x=0$、$x=5$：$A=0$"},
+            {"do":"focus","term":"x","color":"green","label":"最大值","on":"所以最大值"}
+          ] },
+        { "show": ["端點 $A=0$，中間 $A>0$"],
+          "note": "只有一個臨界點，就是最大值。",
+          "say": "A 不會是負的，中間比零大，所以最大值不在端點。最大值只可能在臨界點，而臨界點只有一個，就是它。",
+          "board": [
+            {"do":"write","line":"端點 $A=0$，中間 $A>0$"},
+            {"do":"write","line":"臨界點只有一個：它最大","on":"臨界點只有"}
+          ] }
+      ],
+      "key": "對 $A^2$ 微分，臨界點再代回原式",
+      "predict": {
+        "ask": "$x=\\frac{5}{\\sqrt{2}}$ 時，高 $\\sqrt{25-\\frac{25}{2}}$ 是多少？面積呢？",
+        "options": [
+          {
+            "label": "高 $\\frac{5}{\\sqrt{2}}$，面積 $25$",
+            "correct": true
+          },
+          {
+            "label": "高 $\\frac{25}{2}$，面積 $2\\cdot\\frac{5}{\\sqrt{2}}\\cdot\\frac{25}{2}$",
+            "why": "$25-\\frac{25}{2}=\\frac{25}{2}$ 還要開根號：高是 $\\frac{5}{\\sqrt{2}}$。面積 $2\\cdot\\frac{5}{\\sqrt{2}}\\cdot\\frac{5}{\\sqrt{2}}=25$。"
+          },
+          {
+            "label": "高 $\\frac{5}{\\sqrt{2}}$，面積 $\\frac{25}{2}$",
+            "why": "寬是 $2x$，不是 $x$：$2\\cdot\\frac{5}{\\sqrt{2}}\\cdot\\frac{5}{\\sqrt{2}}=25$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "回頭看一眼",
+      "beats": [
+        { "show": ["答案要在範圍裡、要合理"],
+          "note": "剪的角不能超過一半，半徑不能是負的。",
+          "say": "算完要回頭看：答案在不在變數的範圍裡？剪掉的角不能比紙板一半還大，半徑也不能是負的。",
+          "board": [
+            {"do":"write","line":"答案在範圍裡？合理嗎？"},
+            {"do":"write","line":"$0\\le x\\le 6$，$r>0$","on":"剪掉的角"}
+          ] },
+        { "show": ["體積固定的有蓋圓柱：高＝直徑"],
+          "note": "罐子 $h=4=2r$。",
+          "say": "有些結果值得記住。剛剛的罐子高四、半徑二，高剛好等於直徑；體積換多少都是這個比例。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"罐子：$h=4$，$r=2$","on":"剛剛的罐子"},
+            {"do":"write","line":"${{h:h=2r}}$（高＝直徑）","on":"高剛好"}
+          ] },
+        { "show": ["周長固定的長方形：正方形面積最大"],
+          "say": "另一個是：周長固定的長方形，正方形的面積最大。",
+          "board": [
+            {"do":"write","line":"周長固定的長方形：正方形最大"}
+          ] }
+      ],
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["optimization"],
+    "fine": ["optimization-geometry-setup", "optimization-eliminate-constraint", "optimization-inscribed", "optimization-square-trick"]
+  },
+  "practice": [
+    { "id": "tb-opt-001", "core": true, "trains": "optimization-eliminate-constraint" },
+    { "id": "db-opt-002", "core": true, "trains": "optimization-eliminate-constraint" },
+    { "id": "lec-05-q2b", "core": true, "trains": "optimization-geometry-setup" },
+    { "id": "db-opt-003", "core": true, "trains": "optimization-geometry-setup" },
+    { "id": "dd-opt-011", "trains": "optimization-geometry-setup" },
+    { "id": "db-opt-005", "core": true, "trains": "optimization-eliminate-constraint" },
+    { "id": "dd-opt-002", "core": true, "trains": "optimization-eliminate-constraint" },
+    { "id": "db-opt-006", "core": true, "trains": "optimization-inscribed" },
+    { "id": "dd-opt-005", "trains": "optimization-square-trick" },
+    { "id": "app-002", "trains": "optimization-inscribed" },
+    { "id": "dd-opt-007", "trains": "optimization-eliminate-constraint" },
+    { "id": "dd-opt-012", "trains": "optimization-geometry-setup" },
+    { "id": "dd-opt-006", "challenge": true, "trains": "optimization-inscribed", "note": "挑戰：球內接圓柱，半徑與半高滿足 $r^2+\\left(\\frac{h}{2}\\right)^2=9$。" },
+    { "id": "app-010", "challenge": true, "trains": "optimization-inscribed", "note": "挑戰：球內接圓錐，先把圓錐的半徑寫成高的函數。" }
+  ],
+  "gaps": []
+}

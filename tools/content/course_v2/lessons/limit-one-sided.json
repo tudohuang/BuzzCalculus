@@ -1,52 +1,109 @@
 {
   "id": "limit-one-sided",
   "title": "左極限與右極限",
-  "readMinutes": 7,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 25,
-  "prerequisites": ["limit-intro", "piecewise-function"],
-  "next": ["limit-existence"],
-  "related": ["infinite-limits"],
+  "prerequisites": [
+    "limit-intro",
+    "piecewise-function"
+  ],
+  "next": [
+    "limit-existence"
+  ],
+  "related": [
+    "infinite-limits"
+  ],
   "objectives": [
-    "看懂 $x \\to a^-$ 與 $x \\to a^+$：只從一邊靠近 $a$。",
-    "會算分段函數、絕對值、取整函數在分界點的左右極限。",
-    "知道函數只在一側有定義時，只能談那一側的極限。"
+    "看懂 $x\\to a^-$ 與 $x\\to a^+$：只從一邊靠近 $a$",
+    "會算分段函數、絕對值、取整函數在分界點的左右極限",
+    "知道函數只在一側有定義時，只能談那一側的極限"
   ],
-  "visual": "一個在 x = 2 跳開的分段函數：左段靠近高度 2，右段從高度 4 開始。左右各一個點沿曲線滑向 x = 2，各自顯示目前的 x 與 f(x)。左邊的讀數往 2 擠，右邊往 4 擠；f(2) 那個實心點另外標示，跟兩個讀數都分開看。",
-  "figures": [
-    {"caption":"左邊往 2、右邊往 4；f(2) = 4 是實心點","after":1,"widget":{"type":"approach","f":[{"expr":"x","domain":[0,2]},{"expr":"x+2","domain":[2,4]}],"a":2,"range":[0.001,1.5],"window":[0,4,-0.5,6.5],"extra":{"points":[{"x":2,"y":2,"open":true},{"x":2,"y":4}]}}}
-  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 只從一邊靠近",
       "body": [
-        "$\\lim_{x\\to a^-} f(x) = L$：$x$ 從 $a$ 的左邊（$x < a$）靠近 $a$ 時，$f(x)$ 靠近 $L$，叫左極限。$\\lim_{x\\to a^+}$ 是從右邊（$x > a$），叫右極限。",
-        "上標的 $-$ 與 $+$ 表示方向，不是負號：$x \\to 3^-$ 是「比 3 小一點點的地方」，跟 $-3$ 無關。"
+        "上一課：$x\\to a$ 是從兩邊靠近",
+        "左極限：$x$ 從左邊（$x<a$）靠近 $a$",
+        "右極限：$x$ 從右邊（$x>a$）靠近 $a$",
+        "$a^-$ 的「$-$」不是負數：$2^-$ 是「從比 $2$ 小的那邊靠近 $2$」",
+        "例：$f(x)=\\dfrac{|x|}{x}$，在 $0$",
+        "$x>0$：$|x|=x$，$f(x)=\\dfrac xx=1$",
+        "$x<0$：$|x|=-x$，$f(x)=\\dfrac{-x}x=-1$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to a^-}f(x)",
+        "\\lim_{x\\to a^+}f(x)",
+        "\\lim_{x\\to0^-}\\frac{|x|}x=-1,\\qquad \\lim_{x\\to0^+}\\frac{|x|}x=1"
+      ]
     },
     {
-      "heading": "② 為什麼需要它：兩邊可能去不同地方",
+      "heading": "② 為什麼需要它",
       "body": [
-        "$f(x) = x$（$x < 2$），$x + 2$（$x \\ge 2$）。$x$ 從左邊靠近 2 時用第一段，高度靠近 2；從右邊靠近時用第二段，高度靠近 4。",
-        "一個「兩邊一起看」的極限沒辦法描述這件事，拆成左、右各自說就清楚了：左極限 2，右極限 4。$f(2) = 4$ 是第三件事，跟左極限無關。"
-      ],
-      "collapsible": false
+        "剛才的例子：兩邊去不同的地方",
+        "$x\\to0$ 時，$\\dfrac{|x|}x$ 該靠近 $-1$ 還是 $1$？沒有一個答案",
+        "下一課的判準：雙邊極限存在 ⟺ 左、右極限都存在而且相等",
+        "左右極限是診斷工具：先分兩邊看，再決定雙邊極限",
+        "什麼時候要分兩邊？公式在那一點換了規則的時候：",
+        "• 分段函數的分界點",
+        "• 絕對值裡面變號的地方",
+        "• 取整函數的整數點",
+        "• 只有一側有定義的端點（④）"
+      ]
     },
     {
-      "heading": "③ 算法：在那一側用那一側的式子",
+      "heading": "③ 那一側用那一側的式子",
       "body": [
-        "左極限只看 $x < a$ 的部分，所以分段函數要用 $x < a$ 那一段；絕對值要先依正負拆開。例：$x > 0$ 時 $|x|/x = \\frac{x}{x} = 1$，$x < 0$ 時 $|x|/x = -\\frac{x}{x} = -1$，所以 0 的右極限是 1、左極限是 $-1$。",
-        "取整函數 $\\lfloor x\\rfloor$ 是「不超過 $x$ 的最大整數」：$\\lfloor1.7\\rfloor = 1$，$\\lfloor2\\rfloor = 2$，$\\lfloor-0.5\\rfloor = -1$。$x$ 在 $[1, 2)$ 裡 $\\lfloor x\\rfloor = 1$，所以 $\\lim_{x\\to2^-} \\lfloor x\\rfloor = 1$，而 $\\lim_{x\\to2^+} \\lfloor x\\rfloor = 2$。"
+        "左極限（$x<1$ 那段）：",
+        "右極限（$x>1$ 那段）：",
+        "兩段都是多項式，靠近時可以直接代：這件事之後會證明",
+        "$f(1)=5$ 跟右極限相等，但這是另一件事"
       ],
-      "collapsible": false
+      "tex": [
+        "f(x)=\\begin{cases}x^2+1, & x<1\\\\[4pt] 2x+3, & x\\ge1\\end{cases}",
+        "\\lim_{x\\to1^-}f(x)=\\lim_{x\\to1^-}(x^2+1)=2",
+        "\\lim_{x\\to1^+}f(x)=\\lim_{x\\to1^+}(2x+3)=5"
+      ]
+    },
+    {
+      "heading": "③ 取整函數",
+      "body": [
+        "$\\lfloor x\\rfloor$：不超過 $x$ 的最大整數",
+        "例：$\\lfloor2.7\\rfloor=2$，$\\lfloor2\\rfloor=2$，$\\lfloor-0.5\\rfloor=-1$",
+        "負數小心：$\\lfloor-0.5\\rfloor$ 是 $-1$，不是 $0$",
+        "在 $x=2$：",
+        "$x$ 從左邊靠近（像 $1.9$、$1.99$）：$\\lfloor x\\rfloor=1$",
+        "$x$ 從右邊靠近（像 $2.1$、$2.01$）：$\\lfloor x\\rfloor=2$"
+      ],
+      "tex": [
+        "\\lim_{x\\to2^-}\\lfloor x\\rfloor=1",
+        "\\lim_{x\\to2^+}\\lfloor x\\rfloor=2"
+      ]
     },
     {
       "heading": "④ 只有一側有定義",
       "body": [
-        "$\\sqrt{x}$ 在 $x < 0$ 沒有定義，在 0 只能談右極限：$\\lim_{x\\to0^+} \\sqrt{x} = 0$。$\\sqrt{x - 3}$ 在 3 也一樣。",
-        "單側極限也可以「跑到無窮」：$x \\to 0^+$ 時 $\\frac{1}{x}$ 越來越大，$x \\to 0^-$ 時越來越負。這種情況在〈無窮極限與垂直漸近線〉處理。"
+        "$f(x)=\\sqrt x$ 在 $x=0$",
+        "$x<0$：$\\sqrt x$ 沒有定義，左邊根本沒有東西可以靠近",
+        "$x>0$：$\\sqrt x$ 越來越小",
+        "只能談有定義的那一側的極限",
+        "有些課本會說「在定義域的端點，單側極限就當作極限」；寫題目時講清楚是哪一側最保險"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0^+}\\sqrt x=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $x\\to a^-$：從左（$x<a$）；$x\\to a^+$：從右（$x>a$）",
+        "• $\\dfrac{|x|}x$：左 $-1$、右 $1$",
+        "• 分段函數：那一側用那一側的式子",
+        "• $\\lfloor x\\rfloor$ 在整數 $n$：左極限 $n-1$，右極限 $n$",
+        "• 只有一側有定義：只能談那一側",
+        "下一課：極限存在的條件 —— 左右要相等"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,35 +151,62 @@
   ],
   "checks": [
     {
-      "ask": "$f(x) = x$（$x < 2$），$x + 2$（$x \\ge 2$）。$\\lim_{x\\to2^+} f(x)$ 是？",
+      "ask": "$g(x)=\\begin{cases}3-x, & x\\le2\\\\ x^2-1, & x>2\\end{cases}$，$\\displaystyle\\lim_{x\\to2^+}g(x)=$？",
       "options": [
-        { "label": "2", "why": "那是左極限。右極限要用 $x \\ge 2$ 那段：$x + 2 \\to 4$。" },
-        { "label": "不存在", "why": "題目只問右邊，右邊穩穩靠近 4，右極限存在。" },
-        { "label": "4", "correct": true }
+        {
+          "label": "$3$",
+          "correct": true
+        },
+        {
+          "label": "$1$",
+          "why": "這是左極限：用了 $x\\le2$ 那段的 $3-x$"
+        },
+        {
+          "label": "$1$ 和 $3$ 都對",
+          "why": "右極限只看右邊那一段，只有一個答案"
+        },
+        {
+          "label": "不存在，因為兩段不一樣",
+          "why": "兩段不一樣影響的是雙邊極限；右極限照樣存在"
+        }
       ]
     },
     {
-      "ask": "$x \\to 3^-$ 的意思是？",
+      "ask": "$\\displaystyle\\lim_{x\\to3^-}\\lfloor x\\rfloor=$？",
       "options": [
-        { "label": "$x$ 從比 3 小的那邊靠近 3", "correct": true },
-        { "label": "$x$ 靠近 $-3$", "why": "上標的 $-$ 表示方向，不是負號。" },
-        { "label": "$x$ 從比 3 大的那邊靠近 3", "why": "那是 $x \\to 3^+$。" }
+        {
+          "label": "$2$",
+          "correct": true
+        },
+        {
+          "label": "$3$",
+          "why": "這是右極限，也是 $\\lfloor3\\rfloor$；左邊的 $x$ 都小於 $3$"
+        },
+        {
+          "label": "不存在",
+          "why": "單側極限存在：左邊一路都是 $2$"
+        },
+        {
+          "label": "$2.99$",
+          "why": "取整的結果一定是整數"
+        }
       ]
     },
     {
-      "ask": "$\\lim_{x\\to0^-} |x|/x$ 是？",
+      "ask": "$\\displaystyle\\lim_{x\\to4^-}\\sqrt{4-x}$ 和 $\\displaystyle\\lim_{x\\to4^+}\\sqrt{4-x}$ 呢？",
       "options": [
-        { "label": "1", "why": "$x < 0$ 時 $|x| = -x$，比值是 $-1$；1 是右極限。" },
-        { "label": "$-1$", "correct": true },
-        { "label": "0", "why": "$\\frac{0}{0}$ 不是 0；而且這裡是先化簡成 $-1$ 再取極限。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to2^-} \\lfloor x\\rfloor$ 是？",
-      "options": [
-        { "label": "2", "why": "$\\lfloor2\\rfloor = 2$ 是函數值；在 2 的左邊（例如 1.99）$\\lfloor x\\rfloor = 1$。" },
-        { "label": "1.99", "why": "$\\lfloor x\\rfloor$ 永遠是整數。" },
-        { "label": "1", "correct": true }
+        {
+          "label": "左極限是 $0$；右極限沒有意義",
+          "correct": true
+        },
+        {
+          "label": "兩個都是 $0$",
+          "why": "$x>4$ 時 $4-x<0$，根號沒有定義"
+        },
+        {
+          "label": "右極限是 $0$；左極限沒有意義",
+          "why": "方向反了：$\\sqrt{4-x}$ 的定義域是 $x\\le4$"
+        }
       ]
     }
   ],
@@ -130,212 +214,1054 @@
     {
       "title": "只從一邊靠近",
       "beats": [
-        { "show": ["左極限 $\\lim_{x\\to a^-} f(x)$"],
-          "note": "$x$ 從 $a$ 的左邊（$x < a$）靠近。",
-          "say": "有時候只想看一邊。x 只從 a 的左邊、也就是比 a 小的地方靠近，得到的叫左極限。",
+        {
+          "show": [
+            "上一課：$x\\to a$ 是從兩邊靠近"
+          ],
+          "say": "上一課說，x 趨近 a，要從左右兩邊一起靠近。這一課把兩邊分開來看。",
           "board": [
-            {"do":"write","line":"左極限 $\\lim_{x\\to a^{{{m:-}}}} f(x)$","tint":{"m":"blue"},"on":"只從 a 的左邊"},
-            {"do":"focus","term":"m","color":"blue","label":"從左邊","on":"比 a 小的"}
-          ] },
-        { "show": ["右極限 $\\lim_{x\\to a^+} f(x)$"],
-          "note": "$x$ 從右邊（$x > a$）靠近。",
-          "say": "反過來，只從比 a 大的那一邊靠近，叫右極限。a 右上角的加號，就是在說從右邊來。",
+            {
+              "do": "write",
+              "line": "上一課：$x\\to a$ 是從兩邊靠近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左極限：$x$ 從左邊（$x<a$）靠近 $a$",
+            "$\\lim_{x\\to a^-}f(x)$"
+          ],
+          "say": "左極限：x 只從左邊，也就是比 a 小的那一側，靠近 a。記號是在 a 的右上角加一個負號。",
           "board": [
-            {"do":"write","line":"右極限 $\\lim_{x\\to a^{{{p:+}}}} f(x)$","tint":{"p":"violet"}},
-            {"do":"focus","term":"p","color":"violet","label":"從右邊","on":"右上角的加號"}
-          ] },
-        { "show": ["兩個箭頭，從兩邊走向 $a$"],
-          "note": "虛線是 $a$ 的位置。",
-          "say": "畫出來看：虛線是 a 的位置，左邊的箭頭從比 a 小的地方走過來，右邊的箭頭從比 a 大的地方走過來。",
+            {
+              "do": "write",
+              "line": "左極限：$x$ 從左邊（$x<a$）靠近 $a$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{x\\to a^-}f(x)}}$",
+              "on": "小的"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "號是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右極限：$x$ 從右邊（$x>a$）靠近 $a$",
+            "$\\lim_{x\\to a^+}f(x)$"
+          ],
+          "say": "右極限：x 只從右邊，比 a 大的那一側靠近，右上角加正號。",
           "board": [
-            {"do":"plot","graph":{"window":[0,4,0,3.5],"curves":[{"expr":"0.5*x+1","domain":[0,4],"color":"blue"}],"dashed":[[[2,0],[2,3.5]]],"arrows":[{"from":[0.3,0.4],"to":[1.7,0.4],"color":"green"},{"from":[3.7,0.4],"to":[2.3,0.4],"color":"violet"}],"labels":[{"x":1,"y":0.8,"text":"從左","anchor":"middle"},{"x":3,"y":0.8,"text":"從右","anchor":"middle"}]}}
-          ] },
-        { "show": ["$x \\to 3^-$：比 3 小一點點的地方"],
-          "note": "上標的 $-$ 是方向，不是負號。",
-          "say": "注意，右上角的減號是方向，不是負號。x 趨近三的左邊，是比三小一點點，跟負三無關。",
+            {
+              "do": "write",
+              "line": "右極限：$x$ 從右邊（$x>a$）靠近 $a$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to a^+}f(x)}}$",
+              "on": "從右"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大的"
+            },
+            {
+              "do": "write",
+              "line": "　$a^-$ 的「$-$」不是負數：$2^-$ 是「從比 $2$ 小的那邊靠近 $2$」",
+              "color": "violet",
+              "on": "右上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\dfrac{|x|}{x}$，在 $0$"
+          ],
+          "say": "例子：x 的絕對值除以 x，在 0 附近。",
           "board": [
-            {"do":"write","line":"$x\\to 3^{{{d:-}}}$：比 3 小一點點","on":"x 趨近三"},
-            {"do":"focus","term":"d","label":"方向","on":"是比三小"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\dfrac{|x|}{x}$，在 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x>0$：$|x|=x$，$f(x)=\\dfrac xx=1$",
+            "$x<0$：$|x|=-x$，$f(x)=\\dfrac{-x}x=-1$"
+          ],
+          "say": "x 是正的，絕對值就是 x 自己，除完是 1。x 是負的，絕對值是負 x，除完是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x>0$：$|x|=x$，$f(x)=\\dfrac xx=1$"
+            },
+            {
+              "do": "write",
+              "line": "$x<0$：$|x|=-x$，$f(x)=\\dfrac{-x}x=-1$",
+              "on": "是負#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{x\\to0^-}\\frac{|x|}x=-1,\\qquad \\lim_{x\\to0^+}\\frac{|x|}x=1$"
+          ],
+          "say": "所以左極限是負 1，右極限是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\lim_{x\\to0^-}\\frac{|x|}x=-1,\\qquad \\lim_{x\\to0^+}\\frac{|x|}x=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "右極"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊一直是 −1，右邊一直是 1；x = 0 沒定義"
+          ],
+          "say": "圖上很清楚：左邊一直是負 1，右邊一直是 1，在 0 斷成兩截。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sg",
+                  "window": [
+                    -2,
+                    2,
+                    -1.6,
+                    1.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "-1",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        0
+                      ]
+                    },
+                    {
+                      "expr": "1",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        2
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": -1,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "blue",
+                      "open": true
+                    }
+                  ],
+                  "height": 200
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "左邊一直是 −1，右邊一直是 1；x = 0 沒定義",
+              "color": "violet",
+              "on": "邊一#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "兩邊去不同地方",
+      "title": "為什麼需要它",
       "beats": [
-        { "show": ["$f(x) = x$（$x < 2$），$x + 2$（$x \\ge 2$）"],
-          "fig": {"use":0,"to":0},
-          "say": "看這個分段函數：二的左邊用 x，二和右邊用 x 加二。圖上兩個點分別從兩邊走向二。",
+        {
+          "show": [
+            "剛才的例子：兩邊去不同的地方"
+          ],
+          "say": "為什麼需要分左右？因為兩邊可能去不同的地方，就像剛才。",
           "board": [
-            {"do":"write","line":"$x<2$：${{u:x}}$","tint":{"u":"blue"}},
-            {"do":"write","line":"$x\\ge2$：${{v:x+2}}$","tint":{"v":"violet"},"on":"二和右邊"}
-          ] },
-        { "show": ["左邊：高度靠近 2"],
-          "fig": {"use":0,"to":0.3},
-          "say": "左邊那個點用第一段，x 靠近二，高度就靠近二。",
+            {
+              "do": "write",
+              "line": "剛才的例子：兩邊去不同的地方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to0$ 時，$\\dfrac{|x|}x$ 該靠近 $-1$ 還是 $1$？沒有一個答案"
+          ],
+          "say": "那 x 趨近 0 的時候，到底靠近負 1 還是 1？沒有單一答案，所以這時候雙邊的極限不存在。",
           "board": [
-            {"do":"write","line":"左邊：高度 $\\to {{a:2}}$","tint":{"a":"blue"}}
-          ] },
-        { "show": ["右邊：高度靠近 4"],
-          "fig": {"use":0,"to":1},
-          "say": "右邊那個點用第二段，x 加二靠近四。兩個點最後停在不一樣的高度。",
+            {
+              "do": "write",
+              "line": "$x\\to0$ 時，$\\dfrac{|x|}x$ 該靠近 $-1$ 還是 $1$？沒有一個答案",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　下一課的判準：雙邊極限存在 ⟺ 左、右極限都存在而且相等",
+              "color": "violet",
+              "on": "沒有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左右極限是診斷工具：先分兩邊看，再決定雙邊極限"
+          ],
+          "say": "所以左右極限是一個診斷工具：遇到可疑的點，先分兩邊算，再判斷雙邊極限存不存在。",
           "board": [
-            {"do":"write","line":"右邊：$x+2\\to {{b:4}}$","tint":{"b":"violet"}},
-            {"do":"focus","term":"b","color":"violet","on":"停在"}
-          ] },
-        { "show": ["左極限 2，右極限 4","$f(2) = 4$ 是第三件事"],
-          "say": "所以要分開說：左極限二，右極限四。f 在二的值是四，那是另外一件事，跟左極限無關。",
+            {
+              "do": "write",
+              "line": "左右極限是診斷工具：先分兩邊看，再決定雙邊極限",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "什麼時候要分兩邊？公式在那一點換了規則的時候：",
+            "• 分段函數的分界點"
+          ],
+          "say": "什麼時候需要分兩邊？公式在那一點換規則的時候：分段函數的分界點、絕對值裡面變號的地方、取整函數的整數點，還有只有一側有定義的端點。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"左極限 ${{l:2}}$，右極限 ${{r:4}}$","tint":{"l":"blue","r":"violet"},"on":"左極限二"},
-            {"do":"write","line":"$f(2)=4$：第三件事","on":"f 在二"}
-          ] }
+            {
+              "do": "write",
+              "line": "什麼時候要分兩邊？公式在那一點換了規則的時候："
+            },
+            {
+              "do": "write",
+              "line": "• 分段函數的分界點",
+              "on": "那一"
+            },
+            {
+              "do": "write",
+              "line": "• 絕對值裡面變號的地方",
+              "on": "數的#1"
+            },
+            {
+              "do": "write",
+              "line": "• 取整函數的整數點",
+              "on": "的地"
+            },
+            {
+              "do": "write",
+              "line": "• 只有一側有定義的端點（④）",
+              "on": "還有"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f(x)=\\dfrac{|x-3|}{x-3}$，$\\displaystyle\\lim_{x\\to3^+}f(x)=$？",
+        "options": [
+          {
+            "label": "$1$",
+            "correct": true
+          },
+          {
+            "label": "$-1$",
+            "why": "這是左極限：$x<3$ 時 $|x-3|=-(x-3)$"
+          },
+          {
+            "label": "$0$",
+            "why": "分子分母都趨近 $0$，但比值一直是 $1$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "那一側用那一側的式子",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\begin{cases}x^2+1, & x<1\\\\[4pt] 2x+3, & x\\ge1\\end{cases}$"
+          ],
+          "say": "分段函數在分界點的左右極限，算法很直接：哪一側，就用那一側的式子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x)={\\begin{cases}x^2+1, & x<1\\\\[4pt] 2x+3, & x\\ge1\\end{cases}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左極限（$x<1$ 那段）：",
+            "$\\lim_{x\\to1^-}f(x)=\\lim_{x\\to1^-}(x^2+1)=2$"
+          ],
+          "say": "左極限：x 比 1 小，用第一段，x 平方加 1。x 靠近 1，它靠近 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左極限（$x<1$ 那段）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to1^-}f(x)=\\lim_{x\\to1^-}(x^2+1)=2$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右極限（$x>1$ 那段）：",
+            "$\\lim_{x\\to1^+}f(x)=\\lim_{x\\to1^+}(2x+3)=5$"
+          ],
+          "say": "右極限：x 比 1 大，用第二段，2x 加 3，靠近 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右極限（$x>1$ 那段）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to1^+}f(x)=\\lim_{x\\to1^+}(2x+3)=5$",
+              "on": "用第"
+            },
+            {
+              "do": "write",
+              "line": "　兩段都是多項式，靠近時可以直接代：這件事之後會證明",
+              "color": "violet",
+              "on": "靠近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊往 2 走，右邊往 5 走"
+          ],
+          "say": "看圖：左邊一個黑點在藍線上，右邊一個黑點在紅線上。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pw",
+                  "window": [
+                    -1,
+                    2.5,
+                    -0.5,
+                    8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+1",
+                      "color": "blue",
+                      "label": "x² + 1",
+                      "domain": [
+                        -1,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "2*x+3",
+                      "color": "red",
+                      "label": "2x + 3",
+                      "domain": [
+                        1,
+                        2.5
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 2,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 1,
+                      "y": 5,
+                      "color": "red"
+                    },
+                    {
+                      "x": "a",
+                      "y": "a^2+1",
+                      "color": "ink"
+                    },
+                    {
+                      "x": "b",
+                      "y": "2*b+3",
+                      "color": "ink"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.8,
+                      "max": 0.98,
+                      "value": 0.2,
+                      "label": "左邊 x ="
+                    },
+                    "b": {
+                      "min": 1.02,
+                      "max": 2.3,
+                      "value": 2.2,
+                      "label": "右邊 x ="
+                    }
+                  },
+                  "readout": "左：f({a}) = {a^2+1}；右：f({b}) = {2*b+3}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "左：f(0.2) = 1.04；右：f(2.2) = 7.4",
+              "on": "點在#1"
+            },
+            {
+              "do": "write",
+              "line": "左邊往 2 走，右邊往 5 走",
+              "color": "violet",
+              "on": "一個#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那一側用那一側的式子"
+          ],
+          "say": "左邊快到了，高度接近 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pw",
+                  "window": [
+                    -1,
+                    2.5,
+                    -0.5,
+                    8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+1",
+                      "color": "blue",
+                      "label": "x² + 1",
+                      "domain": [
+                        -1,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "2*x+3",
+                      "color": "red",
+                      "label": "2x + 3",
+                      "domain": [
+                        1,
+                        2.5
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 2,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 1,
+                      "y": 5,
+                      "color": "red"
+                    },
+                    {
+                      "x": "a",
+                      "y": "a^2+1",
+                      "color": "ink"
+                    },
+                    {
+                      "x": "b",
+                      "y": "2*b+3",
+                      "color": "ink"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.8,
+                      "max": 0.98,
+                      "value": 0.2,
+                      "label": "左邊 x ="
+                    },
+                    "b": {
+                      "min": 1.02,
+                      "max": 2.3,
+                      "value": 2.2,
+                      "label": "右邊 x ="
+                    }
+                  },
+                  "readout": "左：f({a}) = {a^2+1}；右：f({b}) = {2*b+3}",
+                  "height": 300
+                },
+                "vals": {
+                  "a": 0.98
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "左：f(0.98) = 1.96；右：f(2.2) = 7.4",
+              "on": "高度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那一側用那一側的式子"
+          ],
+          "say": "換從右邊沿著紅線靠近 1，高度接近 5。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pw",
+                  "window": [
+                    -1,
+                    2.5,
+                    -0.5,
+                    8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+1",
+                      "color": "blue",
+                      "label": "x² + 1",
+                      "domain": [
+                        -1,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "2*x+3",
+                      "color": "red",
+                      "label": "2x + 3",
+                      "domain": [
+                        1,
+                        2.5
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 2,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 1,
+                      "y": 5,
+                      "color": "red"
+                    },
+                    {
+                      "x": "a",
+                      "y": "a^2+1",
+                      "color": "ink"
+                    },
+                    {
+                      "x": "b",
+                      "y": "2*b+3",
+                      "color": "ink"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": -0.8,
+                      "max": 0.98,
+                      "value": 0.2,
+                      "label": "左邊 x ="
+                    },
+                    "b": {
+                      "min": 1.02,
+                      "max": 2.3,
+                      "value": 2.2,
+                      "label": "右邊 x ="
+                    }
+                  },
+                  "readout": "左：f({a}) = {a^2+1}；右：f({b}) = {2*b+3}",
+                  "height": 300
+                },
+                "vals": {
+                  "a": 0.98,
+                  "b": 1.02
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "左：f(0.98) = 1.96；右：f(1.02) = 5.04",
+              "on": "高度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(1)=5$ 跟右極限相等，但這是另一件事"
+          ],
+          "say": "順帶一提，f of 1 等於 5，剛好跟右極限一樣，但這是另一件事，左右極限都不看 x 等於 1 本身。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(1)=5$ 跟右極限相等，但這是另一件事"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "練習一題",
+      "beats": [
+        {
+          "show": [
+            "$g(x)=\\begin{cases}3-x, & x\\le2\\\\ x^2-1, & x>2\\end{cases}$，$\\displaystyle\\lim_{x\\to2^+}g(x)=$？"
+          ],
+          "say": "練習一題：這次要的是右極限。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "絕對值先拆開",
+      "title": "取整函數",
       "beats": [
-        { "show": ["在那一側，用那一側的式子"],
-          "say": "算單側極限的方法：在哪一側，就用哪一側的式子。絕對值也要先依正負拆開。",
+        {
+          "show": [
+            "$\\lfloor x\\rfloor$：不超過 $x$ 的最大整數"
+          ],
+          "say": "再看取整函數，也叫高斯函數：不超過 x 的最大整數。",
           "board": [
-            {"do":"write","line":"在哪一側，用那一側的式子"},
-            {"do":"write","line":"$|x|$：先依正負拆開","on":"絕對值"}
-          ] },
-        { "show": ["$x > 0$：$|x|/x = \\frac{x}{x} = 1$"],
-          "note": "右極限是 1。",
-          "say": "x 大於零，絕對值 x 就是 x，除以 x 得一，所以零的右極限是一。",
+            {
+              "do": "write",
+              "line": "$\\lfloor x\\rfloor$：不超過 $x$ 的最大整數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\lfloor2.7\\rfloor=2$，$\\lfloor2\\rfloor=2$，$\\lfloor-0.5\\rfloor=-1$"
+          ],
+          "say": "例如 2.7 取整是 2；2 自己取整是 2；負 0.5 取整是負 1，因為負 1 才不超過它。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x>0$：$|x|=x$","on":"x 大於零"},
-            {"do":"transform","line":"$\\frac{|x|}{x}=\\frac{x}{x}={{r:1}}$","on":"除以 x"},
-            {"do":"box","term":"r","color":"green","on":"所以零的"}
-          ] },
-        { "show": ["$x < 0$：$|x| = -x$"],
-          "note": "絕對值沒拆開就約掉，是常見的錯。",
-          "say": "x 小於零，絕對值 x 要寫成負 x。接下來除以 x 會得到什麼？",
+            {
+              "do": "write",
+              "line": "例：$\\lfloor2.7\\rfloor=2$，$\\lfloor2\\rfloor=2$，$\\lfloor-0.5\\rfloor=-1$"
+            },
+            {
+              "do": "write",
+              "line": "　負數小心：$\\lfloor-0.5\\rfloor$ 是 $-1$，不是 $0$",
+              "color": "violet",
+              "on": "取整#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一階左端實心、右端空心"
+          ],
+          "say": "圖形是一階一階的樓梯，每一階左端是實心點，右端是空心點。",
           "board": [
-            {"do":"write","line":"$x<0$：$|x|={{n:-x}}$"},
-            {"do":"underline","term":"n","on":"要寫成"}
-          ] },
-        { "show": ["代入：$\\frac{|x|}{x}=\\frac{-x}{x}$"],
-          "note": "只換分子，分母的 $x$ 不動。",
-          "say": "把負 x 代進分子，式子就變成負 x 除以 x。分母的 x 照舊不動。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fl",
+                  "window": [
+                    -0.5,
+                    4,
+                    -0.6,
+                    3.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "0",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "1",
+                      "color": "blue",
+                      "domain": [
+                        1,
+                        2
+                      ]
+                    },
+                    {
+                      "expr": "2",
+                      "color": "blue",
+                      "domain": [
+                        2,
+                        3
+                      ]
+                    },
+                    {
+                      "expr": "3",
+                      "color": "blue",
+                      "domain": [
+                        3,
+                        4
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 2,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 3,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1,
+                      "y": 0,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 2,
+                      "y": 1,
+                      "color": "blue",
+                      "open": true
+                    },
+                    {
+                      "x": 3,
+                      "y": 2,
+                      "color": "blue",
+                      "open": true
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每一階左端實心、右端空心",
+              "color": "violet",
+              "on": "左端"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $x=2$：",
+            "$x$ 從左邊靠近（像 $1.9$、$1.99$）：$\\lfloor x\\rfloor=1$"
+          ],
+          "say": "在 2 這個整數點：x 從左邊靠近，像 1.9、1.99，取整都是 1。所以左極限是 1。",
           "board": [
-            {"do":"write","line":"$\\frac{|x|}{x}=\\frac{{{n2:-x}}}{x}$"},
-            {"do":"focus","term":"n2","color":"blue","label":"分子","on":"分子"}
-          ] },
-        { "show": ["極限只看 $x \\ne 0$，所以能約掉 $x$"],
-          "note": "趨近 0，但不等於 0。",
-          "say": "取極限時，x 只是靠近零，不會等於零。所以分子分母的 x 可以約掉，剩下的值留給你自己算。",
+            {
+              "do": "write",
+              "line": "在 $x=2$："
+            },
+            {
+              "do": "write",
+              "line": "$x$ 從左邊靠近（像 $1.9$、$1.99$）：$\\lfloor x\\rfloor=1$",
+              "on": "靠近"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to2^-}\\lfloor x\\rfloor=1$",
+              "on": "整都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 從右邊靠近（像 $2.1$、$2.01$）：$\\lfloor x\\rfloor=2$",
+            "$\\lim_{x\\to2^+}\\lfloor x\\rfloor=2$"
+          ],
+          "say": "從右邊靠近，像 2.1、2.01，取整都是 2，右極限是 2。每個整數點，左右極限都差 1。",
           "board": [
-            {"do":"write","line":"$x\\to0$：${{c2:x\\ne0}}$"},
-            {"do":"focus","term":"c2","color":"gold","on":"不會等於零"},
-            {"do":"write","line":"$\\frac{-x}{x}$：$x$ 可以約掉","on":"約掉"}
-          ] }
+            {
+              "do": "write",
+              "line": "$x$ 從右邊靠近（像 $2.1$、$2.01$）：$\\lfloor x\\rfloor=2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\lim_{x\\to2^+}\\lfloor x\\rfloor=2}}$",
+              "color": "red",
+              "on": "取整"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "每個"
+            }
+          ]
+        }
       ],
-      "key": "在哪一側，就用那一側去絕對值的式子",
+      "check": 1
+    },
+    {
+      "title": "只有一側有定義",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\sqrt x$ 在 $x=0$"
+          ],
+          "say": "最後一種情況：函數只在一側有定義。看根號 x 在 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\sqrt x$ 在 $x=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x<0$：$\\sqrt x$ 沒有定義，左邊根本沒有東西可以靠近"
+          ],
+          "say": "x 小於 0 的時候，根號 x 沒有定義。左邊根本沒有函數值，談不上靠近什麼。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x<0$：$\\sqrt x$ 沒有定義，左邊根本沒有東西可以靠近",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x>0$：$\\sqrt x$ 越來越小",
+            "$\\lim_{x\\to0^+}\\sqrt x=0$"
+          ],
+          "say": "右邊有定義，x 越靠近 0，根號 x 越小，右極限是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x>0$：$\\sqrt x$ 越來越小"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\lim_{x\\to0^+}\\sqrt x=0}}$",
+              "on": "靠近"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "越小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只能談有定義的那一側的極限"
+          ],
+          "say": "所以在定義域的端點，只能談有定義那一側的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只能談有定義的那一側的極限",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　有些課本會說「在定義域的端點，單側極限就當作極限」；寫題目時講清楚是哪一側最保險",
+              "color": "violet",
+              "on": "能談"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上看，根號 x 只畫在右邊，從原點開始往右延伸。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "rt",
+                  "window": [
+                    -1.5,
+                    3,
+                    -0.5,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "y = √x",
+                      "domain": [
+                        0,
+                        3
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": -1.3,
+                      "y": 0.4,
+                      "text": "左邊沒有圖形"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            }
+          ]
+        }
+      ],
       "check": 2
     },
     {
-      "title": "取整函數",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\lfloor x\\rfloor$：不超過 $x$ 的最大整數"],
-          "note": "$\\lfloor1.7\\rfloor = 1$，$\\lfloor2\\rfloor = 2$，$\\lfloor-0.5\\rfloor = -1$。",
-          "say": "取整函數是不超過 x 的最大整數。一點七取整是一，二取整是二，負零點五取整是負一。",
+        {
+          "show": [
+            "• $x\\to a^-$：從左（$x<a$）；$x\\to a^+$：從右（$x>a$）",
+            "• $\\dfrac{|x|}x$：左 $-1$、右 $1$"
+          ],
+          "say": "整理一下：左極限從比 a 小的一側，右極限從比 a 大的一側；分段函數那一側用那一側的式子；只有一側有定義，就只談那一側。",
           "board": [
-            {"do":"write","line":"$\\lfloor x\\rfloor$：不超過 $x$ 的最大整數"},
-            {"do":"write","line":"$\\lfloor1.7\\rfloor=1$，$\\lfloor2\\rfloor=2$，$\\lfloor-0.5\\rfloor=-1$","on":"一點七"}
-          ] },
-        { "show": ["左邊：1.9、1.99、1.999"],
-          "note": "都在 $[1, 2)$ 裡。",
-          "say": "從二的左邊靠近，一點九、一點九九、一點九九九，全都落在一到二之間，取整都是一。",
+            {
+              "do": "write",
+              "line": "• $x\\to a^-$：從左（$x<a$）；$x\\to a^+$：從右（$x>a$）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{|x|}x$：左 $-1$、右 $1$",
+              "on": "小的"
+            },
+            {
+              "do": "write",
+              "line": "• 分段函數：那一側用那一側的式子",
+              "on": "大的"
+            },
+            {
+              "do": "write",
+              "line": "• $\\lfloor x\\rfloor$ 在整數 $n$：左極限 $n-1$，右極限 $n$",
+              "on": "一側#3"
+            },
+            {
+              "do": "write",
+              "line": "• 只有一側有定義：只能談那一側",
+              "on": "一側#5"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：極限存在的條件 —— 左右要相等"
+          ],
+          "say": "下一課，我們用左右極限來判斷，雙邊的極限到底存不存在。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"左邊：1.9、1.99、1.999","on":"從二的左邊"},
-            {"do":"write","line":"都在 $[1,2)$ 裡","on":"全都落在"}
-          ] },
-        { "show": ["右邊：2.01、2.001 → 2"],
-          "note": "都在 $[2, 3)$ 裡。",
-          "say": "從右邊來，二點零一、二點零零一，落在二到三之間，取整都是二。右極限是二。",
-          "board": [
-            {"do":"write","line":"右邊：2.01、2.001 → ${{r:2}}$"},
-            {"do":"write","line":"都在 $[2,3)$ 裡","on":"落在"},
-            {"do":"focus","term":"r","color":"green","on":"取整"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "分界點的三個數",
-      "beats": [
-        { "show": ["$x^2 + 1$（$x < 1$），$2x + 3$（$x \\ge 1$）"],
-          "say": "再練一個分段函數：一的左邊用 x 平方加一，一和右邊用二 x 加三。",
-          "board": [
-            {"do":"write","line":"$x<1$：${{l:x^2+1}}$","tint":{"l":"blue"},"on":"一的左邊"},
-            {"do":"write","line":"$x\\ge1$：${{r:2x+3}}$","tint":{"r":"violet"},"on":"一和右邊"}
-          ] },
-        { "show": ["左極限：$1 + 1 = 2$"],
-          "note": "$x < 1$ 用 $x^2 + 1$。",
-          "say": "左極限用左邊那段，x 靠近一，x 平方加一靠近二。",
-          "board": [
-            {"do":"underline","term":"l","color":"blue","on":"左邊那段"},
-            {"do":"write","line":"左極限：$1+1=2$","on":"x 靠近一"}
-          ] },
-        { "show": ["右極限：$2 + 3 = 5$"],
-          "note": "$x > 1$ 用 $2x + 3$。",
-          "say": "右極限用右邊那段，二 x 加三靠近五。那 f 在一的值呢？",
-          "board": [
-            {"do":"underline","term":"r","color":"violet","on":"右邊那段"},
-            {"do":"write","line":"右極限：$2+3=5$","on":"二 x 加三"}
-          ] },
-        { "show": ["$x<1$ 不含 1；$x\\ge1$ 含 1"],
-          "note": "函數值：看 1 在哪一段。",
-          "say": "算 f 在一的值，不是看靠近，是看一這個點本身。一有沒有等號，決定它屬於哪一段。",
-          "board": [
-            {"do":"write","line":"$x<1$：不含 ${{e1:1}}$"},
-            {"do":"write","line":"$x\\ge1$：含 1，等號在這一段","on":"等號"}
-          ] },
-        { "show": ["極限看旁邊，$f(1)$ 看點本身"],
-          "say": "左右極限只看旁邊的點，f 在一的值只看一這個點。所以三個數可以各不相同，也可以其中兩個一樣。",
-          "board": [
-            {"do":"write","line":"極限看旁邊，${{f1:f(1)}}$ 看點本身"},
-            {"do":"focus","term":"f1","color":"gold","on":"f 在一的值"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$f(1)$ 是？",
-        "options": [
-          {
-            "label": "5",
-            "correct": true
-          },
-          {
-            "label": "2",
-            "why": "2 是左極限；1 屬於 $x \\ge 1$ 那段，要代 $2x + 3$。"
-          },
-          {
-            "label": "沒有定義",
-            "why": "左右極限不同不代表 $f(1)$ 沒定義；$f(1) = 2 + 3 = 5$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：極限存在的條件 —— 左右要相等"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["one-sided", "one-sided-limit", "floor", "graph-reading"],
-    "fine": ["one-sided-notation", "one-sided-piecewise", "one-sided-abs", "one-sided-floor", "one-sided-domain-edge"]
+    "coarse": [
+      "one-sided",
+      "one-sided-limit",
+      "floor",
+      "graph-reading"
+    ],
+    "fine": [
+      "one-sided-notation",
+      "one-sided-piecewise",
+      "one-sided-abs",
+      "one-sided-floor",
+      "one-sided-domain-edge"
+    ]
   },
   "practice": [
-    { "id": "gx-019", "core": true, "trains": "one-sided-piecewise" },
-    { "id": "gx-020", "core": true, "trains": "one-sided-piecewise" },
-    { "id": "gp-012", "core": true, "trains": "one-sided-piecewise" },
-    { "id": "cg-1a-006", "core": true, "trains": "one-sided-abs" },
-    { "id": "cg-1a-008", "core": true, "trains": "one-sided-piecewise" },
-    { "id": "cg-1a-010", "core": true, "trains": "one-sided-domain-edge" },
-    { "id": "cg-1a-007", "trains": "one-sided-abs" },
-    { "id": "cg-1a-009", "trains": "one-sided-piecewise" },
-    { "id": "lm-os-001", "challenge": true, "trains": "one-sided-domain-edge", "note": "挑戰：$x \\to 0^+$ 時 $-\\frac{1}{x}$ 往 $-\\infty$，$e$ 的很負次方往 0 靠。" }
+    {
+      "id": "gx-019",
+      "core": true,
+      "trains": "one-sided-piecewise"
+    },
+    {
+      "id": "gx-020",
+      "core": true,
+      "trains": "one-sided-piecewise"
+    },
+    {
+      "id": "gp-012",
+      "core": true,
+      "trains": "one-sided-piecewise"
+    },
+    {
+      "id": "cg-1a-006",
+      "core": true,
+      "trains": "one-sided-abs"
+    },
+    {
+      "id": "cg-1a-008",
+      "core": true,
+      "trains": "one-sided-piecewise"
+    },
+    {
+      "id": "cg-1a-010",
+      "core": true,
+      "trains": "one-sided-domain-edge"
+    },
+    {
+      "id": "cg-1a-007",
+      "trains": "one-sided-abs"
+    },
+    {
+      "id": "cg-1a-009",
+      "trains": "one-sided-piecewise"
+    },
+    {
+      "id": "lm-os-001",
+      "challenge": true,
+      "trains": "one-sided-domain-edge",
+      "note": "挑戰：$x \\to 0^+$ 時 $-\\frac{1}{x}$ 往 $-\\infty$，$e$ 的很負次方往 0 靠。"
+    }
   ],
   "gaps": []
 }

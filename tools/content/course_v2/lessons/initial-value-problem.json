@@ -1,56 +1,120 @@
 {
   "id": "initial-value-problem",
   "title": "初值問題",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["ode-intro"],
-  "next": ["separation-of-variables"],
-  "related": ["second-order-linear"],
-  "objectives": [
-    "用初始條件從一整族解裡定出常數，條件不在 $x=0$ 也會做。",
-    "說出解只在某個區間上存在，會找出含初始點的那段區間。",
-    "知道一階要一個條件、二階要兩個條件，並說得出存在唯一定理要求什麼。"
+  "prerequisites": [
+    "ode-intro"
   ],
-  "visual": "畫出 y = Ce^{2x} 的一整族曲線（C 從 −3 到 3）。拖動平面上的一個點 (x₀, y₀)，只有一條曲線被點亮：恰好通過該點的那條，旁邊顯示對應的 C。第二張圖畫 y = 1/(1 − x)：從 (0, 1) 出發往右走，在 x = 1 前衝上無窮大；x > 1 那一支用灰色畫，標示「不屬於這個初值問題」。",
+  "next": [
+    "separation-of-variables"
+  ],
+  "related": [
+    "second-order-linear"
+  ],
+  "objectives": [
+    "用初始條件從一整族解裡定出常數，條件不在 $x=0$ 也會做",
+    "說出解只在某個區間上存在，會找出含初始點的那段區間",
+    "知道一階要一個條件、二階要兩個條件，並說得出存在唯一定理要求什麼"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 從一族解裡挑一條",
       "body": [
-        "$y'=2y$ 的解是 $y=Ce^{2x}$，每個 $C$ 是一條曲線。再加一句「$y(0)=3$」，意思是：要通過點 $(0,3)$ 的那一條。代進去 $3=Ce^0=C$，答案 $y=3e^{2x}$。",
-        "微分方程加上初始條件，叫初值問題。做法永遠是兩步：先找出帶常數的一族解，再用條件定常數。"
+        "$y'=-2y$ 的解：$y=Ce^{-2x}$，一整族",
+        "再加一個條件：$y(0)=5$",
+        "初值問題 $=$ 微分方程 $+$ 初始條件",
+        "代 $x=0$：$Ce^{0}=C=5$",
+        "初始條件就是在一族曲線裡，指定要通過的那一點",
+        "最後要驗算：$y'=-10e^{-2x}=-2y$，$y(0)=5$"
       ],
-      "collapsible": false
+      "tex": [
+        "y'=-2y,\\qquad y(0)=5",
+        "y=5e^{-2x}"
+      ]
     },
     {
       "heading": "② 條件不在 $0$ 也一樣",
       "body": [
-        "$y(1)=2$ 就是代 $x=1$：$2=Ce^3$，$C=2e^{-3}$，$y=2e^{3(x-1)}$（以 $y'=3y$ 為例）。不要把 $2$ 直接當成 $C$；只有條件給在 $x=0$、而且一族解在 $0$ 的值剛好是 $C$ 時，兩者才相等。"
+        "$y'=3y$，$y(1)=2$",
+        "通解 $y=Ce^{3x}$，代 $x=1$：",
+        "檢查：$x=1$ 時指數是 $0$，$y=2$；這種寫法一眼看得出初始點",
+        "常見錯誤：直接寫 $C=2$",
+        "$C$ 是「$x=0$ 時的值」，不是「$x=1$ 時的值」"
       ],
-      "collapsible": false
+      "tex": [
+        "Ce^{3}=2\\quad\\Rightarrow\\quad C=2e^{-3}",
+        "y=2e^{-3}e^{3x}=2e^{3(x-1)}"
+      ]
     },
     {
       "heading": "③ 解不一定活在整條數線上",
       "body": [
-        "$y'=y^2$、$y(0)=1$ 的解是 $y=\\frac{1}{1-x}$（〈分離變數〉會推導）。代回去：$y'=\\frac{1}{(1-x)^2}=y^2$，$y(0)=1$。",
-        "但 $x\\to1^-$ 時 $y\\to\\infty$。公式在 $x>1$ 也有值，可是那一支和 $(0,1)$ 中間隔著一個斷點，解不能跳過去。所以這個初值問題的解只活在 $x<1$。方程看起來很溫和，解卻在有限的距離內衝到無窮大，這叫爆破。",
-        "所以初值問題的答案要包含區間：含初始點、而且解在上面好好定義的最大區間。"
+        "$y'=y^2$，$y(0)=1$。驗證 $y=\\dfrac1{1-x}$：",
+        "$(1-x)^{-1}$ 微分：$-1\\cdot(1-x)^{-2}\\cdot(-1)$，兩個負號抵消",
+        "$x$ 靠近 $1$：",
+        "• $x=0.5$：$y=2$",
+        "• $x=0.9$：$y=10$",
+        "• $x=0.99$：$y=100$",
+        "$x\\to1^-$ 時 $y\\to\\infty$：解爆掉了",
+        "解只活在含初始點的那段：$(-\\infty,1)$",
+        "方程 $y'=y^2$ 本身看不出 $x=1$ 有問題：爆破的位置跟初始值有關"
       ],
-      "collapsible": false
+      "tex": [
+        "y'=\\frac{1}{(1-x)^2}=y^2,\\qquad y(0)=\\frac11=1"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "初始值越大，爆得越早",
+        "驗算：$y'=\\frac{4}{(1-2x)^2}=y^2$"
+      ]
     },
     {
       "heading": "④ 二階要兩個條件",
       "body": [
-        "二階方程的一族解有兩個常數，例如 $y''+y=0$ 的解是 $A\\cos x+B\\sin x$。一個條件只定得出一個常數，所以要給兩個：通常是 $y(x_0)$ 與 $y'(x_0)$，物理上就是起始位置與起始速度（〈二階線性〉）。"
+        "$y''+4y=0$ 的通解：",
+        "兩項都可以代進去檢查；「這就是全部的解」留到二階線性的課",
+        "兩個常數，要兩個條件：$y(0)=1$，$y'(0)=4$",
+        "$y(0)=A=1$",
+        "$y'=-2A\\sin2x+2B\\cos2x$，$y'(0)=2B=4$，$B=2$",
+        "物理意思：彈簧要知道起點和初速",
+        "$n$ 階方程，通常要 $n$ 個條件"
       ],
-      "collapsible": false
+      "tex": [
+        "y=A\\cos2x+B\\sin2x",
+        "y=\\cos2x+2\\sin2x"
+      ]
     },
     {
-      "heading": "存在唯一定理（一階）",
+      "heading": "⑤ 存在唯一定理（一階）",
       "body": [
-        "考慮 $y'=f(x,y)$、$y(x_0)=y_0$。若 $f$ 與 $\\frac{\\partial f}{\\partial y}$ 在某個包含 $(x_0,y_0)$ 的矩形裡連續，則存在一個包含 $x_0$ 的區間，上面恰好有一個解。",
-        "注意兩點。第一，定理只保證「某個區間」，不保證整條數線：$y'=y^2$ 的 $f=y^2$ 處處連續，解仍然在 $x=1$ 爆破。第二，條件不成立時唯一性可能失敗：$y'=3y^{2/3}$、$y(0)=0$ 同時有 $y=0$ 與 $y=x^3$ 兩個解；這裡 $\\frac{\\partial f}{\\partial y}=2y^{-1/3}$ 在 $y=0$ 不連續。"
+        "$y'=f(x,y)$，$y(x_0)=y_0$。如果 $f$ 和 $\\dfrac{\\partial f}{\\partial y}$ 在含 $(x_0,y_0)$ 的一個矩形裡連續，",
+        "證明要用逐次逼近，留到微分方程的課；這裡先會用",
+        "• 只保證「某個區間」：像 ③ 會爆掉",
+        "• 唯一：解曲線不會交叉",
+        "反例：$y'=2\\sqrt y$，$y(0)=0$",
+        "• $y=0$：$0=2\\sqrt0$，是解",
+        "• $y=x^2$（$x\\ge0$）：$2x=2\\sqrt{x^2}$，也是解",
+        "$\\dfrac{\\partial f}{\\partial y}=\\dfrac1{\\sqrt y}$ 在 $y=0$ 不連續"
       ],
-      "collapsible": true
+      "tex": [
+        "\\text{在 }x_0\\text{ 附近某個區間上，恰有一個解}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 初值問題：方程 $+$ 初始條件；在一族解裡挑通過那一點的一條",
+        "• 條件在 $x_0$：把 $x_0$ 代進通解解 $C$，不要直接寫 $C=y_0$",
+        "• 解可能在有限處爆掉：只取含初始點的那段區間",
+        "• $n$ 階方程要 $n$ 個條件（二階：值和導數）",
+        "• 存在唯一：$f$、$\\frac{\\partial f}{\\partial y}$ 連續 ⇒ 附近恰有一個解",
+        "下一課：分離變數：第一個真正的解法"
+      ]
     }
   ],
   "workedExamples": [
@@ -112,222 +176,848 @@
   ],
   "checks": [
     {
-      "ask": "$y=Ce^{4x}$，$y(0)=7$，$C$ 是？",
+      "ask": "$y'=-y$，$y(2)=3$ 的解是？",
       "options": [
-        { "label": "$7$", "correct": true },
-        { "label": "$4$", "why": "$4$ 是指數裡的 $k$，由方程決定；$C$ 由條件決定。" },
-        { "label": "$7e^{-4}$", "why": "那是條件給在 $x=1$ 時的答案；這裡 $x=0$，$e^0=1$。" }
+        {
+          "label": "$y=3e^{-x}$",
+          "why": "把條件當成在 $x=0$：$y(2)=3e^{-2}\\ne3$"
+        },
+        {
+          "label": "$y=3e^{2-x}$",
+          "correct": true
+        },
+        {
+          "label": "$y=3e^{x-2}$",
+          "why": "指數的正負反了：這是 $y'=y$ 的解"
+        },
+        {
+          "label": "$y=3e^{-2}e^{-x}$",
+          "why": "$C$ 解錯方向：應該是 $C=3e^{2}$"
+        }
       ]
     },
     {
-      "ask": "$y=Ce^{2x}$，$y(1)=e^2$，$C$ 是？",
+      "ask": "存在唯一定理保證 $y'=y^2$，$y(0)=1$ 的解……",
       "options": [
-        { "label": "$1$", "correct": true },
-        { "label": "$e^2$", "why": "直接把 $y$ 值當成 $C$ 只在 $x=0$ 成立；這裡要解 $Ce^2=e^2$。" },
-        { "label": "$e^4$", "why": "$C$ 要除以 $e^{2\\cdot1}$，不是乘：$Ce^2=e^2$ 得 $C=1$。" }
-      ]
-    },
-    {
-      "ask": "$y'=y^2$、$y(0)=1$ 的解 $y=\\frac{1}{1-x}$，存在的區間是？",
-      "options": [
-        { "label": "$x<1$", "correct": true },
-        { "label": "所有實數", "why": "$x=1$ 時分母為 $0$，解在那裡衝到無窮大，過不去。" },
-        { "label": "$x>1$", "why": "那一支不含初始點 $x=0$，和 $(0,1)$ 隔著斷點，不是這個初值問題的解。" }
-      ]
-    },
-    {
-      "ask": "二階方程 $y''+y=0$ 要確定唯一一個解，需要什麼？",
-      "options": [
-        { "label": "$y(x_0)$ 與 $y'(x_0)$ 兩個條件", "correct": true },
-        { "label": "只要 $y(x_0)$", "why": "一族解 $A\\cos x+B\\sin x$ 有兩個常數，一個條件只能定一個。" },
-        { "label": "不需要條件，解是唯一的", "why": "$\\cos x$、$\\sin x$、$2\\cos x$ 都是解，沒有條件挑不出哪一個。" }
+        {
+          "label": "在整條數線上存在",
+          "why": "定理只保證「某個區間」；這個解在 $x=1$ 爆掉"
+        },
+        {
+          "label": "在 $0$ 附近某個區間上存在且唯一",
+          "correct": true
+        },
+        {
+          "label": "不唯一，因為會爆掉",
+          "why": "爆掉是存在區間有限，跟唯一性無關"
+        },
+        {
+          "label": "不存在，因為 $y^2$ 不是線性的",
+          "why": "定理不要求線性，只要求連續"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "從一族解挑一條",
+      "title": "從一族解裡挑一條",
       "beats": [
-        { "show": ["$y'=2y$：$y=Ce^{2x}$"],
-          "note": "每個 $C$ 是一條曲線。",
-          "say": "y prime 等於二 y 的解是一整族，每換一個常數 C，就是另一條曲線。",
+        {
+          "show": [
+            "$y'=-2y$ 的解：$y=Ce^{-2x}$，一整族"
+          ],
+          "say": "上一課說過，一階方程通常有一整族解。像 y prime 等於負 2y，解是 C 乘 e 的負 2x 次方，C 可以是任何數。",
           "board": [
-            {"do":"write","line":"$y'=2y$：$y={{c:C}}e^{2x}$","tint":{"c":"blue"}},
-            {"do":"focus","term":"c","label":"一族","on":"常數 C"}
-          ] },
-        { "show": ["$y'$ 是 $y$ 的導數：變化的快慢"],
-          "say": "y prime 是 y 的導數，意思是 y 隨 x 變化得多快。方程說：變化的快慢，是 y 本身的二倍。",
+            {
+              "do": "write",
+              "line": "$y'=-2y$ 的解：$y=Ce^{-2x}$，一整族"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再加一個條件：$y(0)=5$"
+          ],
+          "say": "如果再多知道一件事：x 等於 0 的時候，y 等於 5。",
           "board": [
-            {"do":"write","line":"${{n1:y'}}$：$y$ 變化的快慢"},
-            {"do":"underline","term":"n1","label":"導數","on":"導數"}
-          ] },
-        { "show": ["$(Ce^{2x})'=2Ce^{2x}=2y$"],
-          "note": "檢查：族裡每一條都滿足方程。",
-          "say": "檢查：C e 的二 x 次方微分，指數裡的二掉下來，變成二乘 C e 的二 x 次方，剛好是二 y。",
+            {
+              "do": "write",
+              "line": "再加一個條件：$y(0)=5$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "初值問題 $=$ 微分方程 $+$ 初始條件",
+            "$y'=-2y,\\qquad y(0)=5$"
+          ],
+          "say": "方程加上這種初始條件，叫做初值問題。條件在圖上的意思是：解曲線要通過 0 逗號 5 這一點。",
           "board": [
-            {"do":"write","line":"$(Ce^{2x})'={{n2:2Ce^{2x}}}=2y$"},
-            {"do":"box","term":"n2","color":"green","on":"剛好是"}
-          ] },
-        { "show": ["$y(0)=3$：通過點 $(0,3)$"],
-          "say": "再加一句 y 在零的值是三，意思是：只要通過零、三這個點的那一條。",
+            {
+              "do": "write",
+              "line": "初值問題 $=$ 微分方程 $+$ 初始條件"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle y'=-2y,\\qquad y(0)=5}}$",
+              "on": "問題"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "線要"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=0$：$Ce^{0}=C=5$",
+            "$y=5e^{-2x}$"
+          ],
+          "say": "把 x 等於 0 代進通解：e 的 0 次方是 1，所以 C 就等於 5。答案是 5 e 的負 2x 次方。",
           "board": [
-            {"do":"write","line":"$y(0)=3$：通過 $(0,3)$","on":"y 在零的值"}
-          ] },
-        { "show": ["$3=Ce^0=C$","$y=3e^{2x}$"],
-          "say": "x 代零，e 的零次方是一，所以 C 就是三。答案是三 e 的二 x 次方。",
+            {
+              "do": "write",
+              "line": "代 $x=0$：$Ce^{0}=C=5$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y=5e^{-2x}}}$",
+              "color": "red",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "灰色是同一族的其他解；只有紅色通過 (0, 5)"
+          ],
+          "say": "圖上灰色的都是這一族的解，每一條 C 不一樣。通過 0 逗號 5 的只有紅色那一條。",
           "board": [
-            {"do":"write","line":"$3=Ce^0={{c:C}}$","on":"x 代零"},
-            {"do":"write","line":"$y={{ans:3e^{2x}}}$","on":"答案是"},
-            {"do":"box","term":"ans","color":"green","on":"三 e 的"}
-          ] },
-        { "show": ["先找一族解，再用條件定常數"],
-          "note": "微分方程 + 初始條件 = 初值問題。",
-          "say": "這叫初值問題。做法永遠兩步：先找帶常數的一族解，最後才用條件把常數定下來。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fam",
+                  "window": [
+                    -0.6,
+                    2.2,
+                    -3,
+                    7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "3*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "-2*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "7*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "5*exp(-2*x)",
+                      "color": "red",
+                      "label": "y = 5e^(−2x)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 5,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "灰色是同一族的其他解；只有紅色通過 (0, 5)",
+              "color": "violet",
+              "on": "一條#1"
+            },
+            {
+              "do": "write",
+              "line": "　初始條件就是在一族曲線裡，指定要通過的那一點",
+              "color": "violet",
+              "on": "逗號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最後要驗算：$y'=-10e^{-2x}=-2y$，$y(0)=5$"
+          ],
+          "say": "最後驗算：微分得負 10 e 的負 2x 次方，正好是負 2 倍的 y；x 等於 0 時 y 等於 5。兩件事都對。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"① 先找一族解（帶 ${{c:C}}$）","tint":{"c":"blue"},"on":"先找"},
-            {"do":"write","line":"② 再用條件定 ${{c:C}}$","on":"最後才用"}
-          ] }
+            {
+              "do": "write",
+              "line": "最後要驗算：$y'=-10e^{-2x}=-2y$，$y(0)=5$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "條件不在 $0$ 也一樣",
+      "beats": [
+        {
+          "show": [
+            "$y'=3y$，$y(1)=2$"
+          ],
+          "say": "條件不一定在 x 等於 0。例如 y prime 等於 3y，而且 y of 1 等於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y'=3y$，$y(1)=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "通解 $y=Ce^{3x}$，代 $x=1$：",
+            "$Ce^{3}=2\\quad\\Rightarrow\\quad C=2e^{-3}$"
+          ],
+          "say": "通解是 C e 的 3x 次方。這次要代 x 等於 1：C 乘 e 的 3 次方等於 2，所以 C 是 2 乘 e 的負 3 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "通解 $y=Ce^{3x}$，代 $x=1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle Ce^{3}=2\\quad\\Rightarrow\\quad C=2e^{-3}$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=2e^{-3}e^{3x}=2e^{3(x-1)}$"
+          ],
+          "say": "代回去，兩個指數合併，得到 2 乘 e 的 3 括號 x 減 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle y=2e^{-3}e^{3x}=2e^{3(x-1)}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "括號"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$x=1$ 時指數是 $0$，$y=2$；這種寫法一眼看得出初始點",
+              "color": "violet",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常見錯誤：直接寫 $C=2$"
+          ],
+          "say": "最常見的錯，是看到 2 就直接寫 C 等於 2。那是把條件當成在 x 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常見錯誤：直接寫 $C=2$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C$ 是「$x=0$ 時的值」，不是「$x=1$ 時的值」"
+          ],
+          "say": "C 只有在 x 等於 0 的地方才等於 y 的值。條件在別的地方，就老老實實代進去解 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C$ 是「$x=0$ 時的值」，不是「$x=1$ 時的值」",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "條件不在 0",
+      "title": "解不一定活在整條數線上",
       "beats": [
-        { "show": ["$y'=3y$，$y(1)=2$"],
-          "note": "一族解：$y=Ce^{3x}$。",
-          "say": "這次條件給在 x 等於一。一族解一樣先寫出來：C e 的三 x 次方。",
+        {
+          "show": [
+            "$y'=y^2$，$y(0)=1$。驗證 $y=\\dfrac1{1-x}$："
+          ],
+          "say": "再看一個看起來很無害的方程：y prime 等於 y 平方，y of 0 等於 1。驗證 1 減 x 分之 1 是解。",
           "board": [
-            {"do":"write","line":"$y'=3y$，$y({{one:1}})=2$","tint":{"one":"violet"}},
-            {"do":"focus","term":"one","on":"x 等於一"},
-            {"do":"write","line":"$y={{c:C}}e^{3x}$","tint":{"c":"blue"},"on":"一族解"}
-          ] },
-        { "show": ["$2=Ce^3$，$C=2e^{-3}$"],
-          "note": "不要把 2 直接當成 $C$。",
-          "say": "代 x 等於一，得到二等於 C 乘 e 的三次方。C 是二除以 e 的三次方，不是二。",
+            {
+              "do": "write",
+              "line": "$y'=y^2$，$y(0)=1$。驗證 $y=\\dfrac1{1-x}$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'=\\frac{1}{(1-x)^2}=y^2,\\qquad y(0)=\\frac11=1$"
+          ],
+          "say": "微分：1 減 x 分之 1，導數是 1 減 x 平方分之 1，正好是 y 平方。x 等於 0 時 y 是 1。兩件事都成立，是解。",
           "board": [
-            {"do":"write","line":"$2={{c:C}}e^3$","on":"代 x 等於一"},
-            {"do":"write","line":"$C=2e^{-3}$，不是 ${{w:C=2}}$","on":"C 是二除以"},
-            {"do":"strike","term":"w","on":"不是二"}
-          ] },
-        { "show": ["族裡只有一條通過 $(1,2)$"],
-          "note": "灰線是 $C=1$，藍線通過那一點。",
-          "say": "畫出來看：這一族曲線裡，只有藍色這一條通過一、二這個點。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y'=\\frac{1}{(1-x)^2}=y^2,\\qquad y(0)=\\frac11=1}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "　$(1-x)^{-1}$ 微分：$-1\\cdot(1-x)^{-2}\\cdot(-1)$，兩個負號抵消",
+              "color": "violet",
+              "on": "兩件"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 靠近 $1$：",
+            "• $x=0.5$：$y=2$"
+          ],
+          "say": "x 往 1 靠近：0.5 時 y 是 2；0.9 時是 10；0.99 時已經是 100。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,2,-1,6],"curves":[{"expr":"2*exp(3*(x-1))","domain":[-1,2],"color":"blue"},{"expr":"exp(3*x)","domain":[-1,1.2],"color":"muted"}],"points":[{"x":1,"y":2}],"labels":[{"x":1.1,"y":1.4,"text":"(1, 2)","anchor":"start"}]}}
-          ] },
-        { "show": ["$y=2e^{3(x-1)}$"],
-          "note": "檢查：$x=1$ 時 $2e^0=2$。",
-          "say": "整理成二 e 的三乘 x 減一次方。代一回去檢查，指數是零，剛好是二。",
+            {
+              "do": "write",
+              "line": "$x$ 靠近 $1$："
+            },
+            {
+              "do": "write",
+              "line": "• $x=0.5$：$y=2$",
+              "on": "時是"
+            },
+            {
+              "do": "write",
+              "line": "• $x=0.9$：$y=10$",
+              "on": "10#1"
+            },
+            {
+              "do": "write",
+              "line": "• $x=0.99$：$y=100$",
+              "on": "99"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to1^-$ 時 $y\\to\\infty$：解爆掉了"
+          ],
+          "say": "x 從左邊靠近 1，y 衝向無限大。解在有限的時間內就爆掉了。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y=2e^{-3}e^{3x}={{ans:2e^{3(x-1)}}}$","on":"整理成"},
-            {"do":"write","line":"檢查：$x=1$ 時 $2e^0=2$","on":"代一回去"},
-            {"do":"box","term":"ans","color":"green","on":"剛好"}
-          ] }
-      ],
-      "key": "代 $x=1$ 解 $C$，不能把 $y$ 值當 $C$",
-      "check": 1
+            {
+              "do": "write",
+              "line": "$x\\to1^-$ 時 $y\\to\\infty$：解爆掉了",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實線是解；虛線雖然同一個公式，但不是這個初值問題的解"
+          ],
+          "say": "圖上看：藍色從初始點出發，往右走到 x 等於 1 之前就衝上去了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "blow",
+                  "window": [
+                    -2,
+                    2.5,
+                    -6,
+                    12
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/(1-x)",
+                      "color": "blue",
+                      "label": "解",
+                      "domain": [
+                        -2,
+                        0.995
+                      ]
+                    },
+                    {
+                      "expr": "1/(1-x)",
+                      "color": "pencil",
+                      "dash": true,
+                      "domain": [
+                        1.005,
+                        2.5
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 1.08,
+                      "y": 10,
+                      "text": "x = 1",
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "label": "(0, 1)",
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "實線是解；虛線雖然同一個公式，但不是這個初值問題的解",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "解只活在含初始點的那段：$(-\\infty,1)$"
+          ],
+          "say": "公式在 1 的右邊也有定義，但那一段跟初始點斷開了，不算。解存在的區間，是含初始點 0 的那一段：負無限大到 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解只活在含初始點的那段：$(-\\infty,1)$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　方程 $y'=y^2$ 本身看不出 $x=1$ 有問題：爆破的位置跟初始值有關",
+              "color": "violet",
+              "on": "解存"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "解會爆破",
+      "title": "試一題",
       "beats": [
-        { "show": ["$y'=y^2$，$y(0)=1$","解：$y=\\frac{1}{1-x}$"],
-          "note": "推導在〈分離變數〉。",
-          "say": "這一題的解是一減 x 分之一。代回去：導數是一減 x 平方分之一，剛好是 y 平方。",
-          "board": [
-            {"do":"write","line":"$y'=y^2$，$y(0)=1$：$y={{s:\\frac{1}{1-x}}}$"},
-            {"do":"underline","term":"s","label":"代回去成立","on":"剛好是 y"}
-          ] },
-        { "show": ["$y=(1-x)^{-1}$","$y'=(-1)(1-x)^{-2}\\cdot(-1)$"],
-          "note": "連鎖律：外層次方，裡層 $1-x$。",
-          "say": "導數怎麼算：把它寫成一減 x 的負一次方，用連鎖律。外層掉下負一，裡層一減 x 的導數也是負一，相乘變正的。",
-          "board": [
-            {"do":"write","line":"$y=(1-x)^{-1}$"},
-            {"do":"write","line":"$y'=(-1)\\,(1-x)^{-2}\\cdot{{n3:(-1)}}$","on":"外層掉下"},
-            {"do":"circle","term":"n3","color":"blue","label":"裡層導數","on":"裡層一減"}
-          ] },
-        { "show": ["$x\\to1^-$：$y\\to\\infty$"],
-          "say": "可是 x 從左邊靠近一，分母趨近零，y 衝到無限大。方程很溫和，解卻爆破了。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2.2,3.2,-4,5],"ticks":false,"curves":[{"expr":"1/(1-x)","domain":[-2.1,0.8],"color":"blue"},{"expr":"1/(1-x)","domain":[1.25,3.1],"color":"muted"}],"dashed":[[[1,-4],[1,5]]],"points":[{"x":0,"y":1}],"labels":[{"x":1.15,"y":4.3,"text":"x = 1","anchor":"start"}]},"on":"x 從左邊"}
-          ] },
-        { "show": ["$x=0.9$：$y=10$；$x=0.99$：$y=100$"],
-          "note": "分母越小，整個分數越大。",
-          "say": "拿數字看：x 取零點九，分母是零點一，y 是十；x 取零點九九，分母是零點零一，y 是一百。",
-          "board": [
-            {"do":"write","line":"$x=0.9$：$y=10$；$x=0.99$：$y=100$","on":"分母是零點一"}
-          ] },
-        { "show": ["$x>1$ 那一支：隔著斷點"],
-          "note": "解不能跳過斷點。",
-          "say": "公式在 x 大於一也有值，可是跟初始點中間隔著一個斷點，解跳不過去。",
-          "board": [
-            {"do":"write","line":"$x>1$ 那一支：隔著斷點","on":"公式在"}
-          ] },
-        { "show": ["答案要寫區間"],
-          "note": "含初始點、解好好定義的最大區間。",
-          "say": "所以初值問題的答案要附上區間：包含初始點，而且解在上面都好好定義。" }
+        {
+          "show": [
+            "$y'=y^2$，$y(0)=2$ 的解是 $y=\\dfrac{2}{1-2x}$。它活在哪個區間？"
+          ],
+          "say": "先猜猜看：初始值改成 2，解活在哪個區間？"
+        }
       ],
-      "key": "解爆掉的地方就是區間的邊界",
-      "check": 2
+      "predict": {
+        "ask": "$y'=y^2$，$y(0)=2$ 的解是 $y=\\dfrac{2}{1-2x}$。它活在哪個區間？",
+        "options": [
+          {
+            "label": "$\\left(-\\infty,\\tfrac12\\right)$",
+            "correct": true
+          },
+          {
+            "label": "$(-\\infty,1)$",
+            "why": "照抄上一題：初始值變大，爆得更早"
+          },
+          {
+            "label": "整條數線",
+            "why": "分母 $1-2x$ 會等於 $0$"
+          },
+          {
+            "label": "$\\left(\\tfrac12,\\infty\\right)$",
+            "why": "這段不含初始點 $x=0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "初始值越大，爆得越早"
+          ],
+          "say": "初始值是 2，在 2 分之 1 就爆了，比 1 還早。初始值越大，長得越快，爆得越早。",
+          "board": [
+            {
+              "do": "write",
+              "line": "初始值越大，爆得越早",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$y'=\\frac{4}{(1-2x)^2}=y^2$",
+              "color": "violet",
+              "on": "還早"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "二階要兩個條件",
       "beats": [
-        { "show": ["$y''+y=0$：$A\\cos x+B\\sin x$"],
-          "note": "兩個常數 $A$、$B$。",
-          "say": "二階方程的一族解有兩個常數。y 雙撇加 y 等於零，解是 A cosine x 加 B sine x。",
+        {
+          "show": [
+            "$y''+4y=0$ 的通解：",
+            "$y=A\\cos2x+B\\sin2x$"
+          ],
+          "say": "二階方程呢？y 兩撇加 4y 等於 0，通解是 A 餘弦 2x 加 B 正弦 2x，有兩個常數。",
           "board": [
-            {"do":"write","line":"$y''+y=0$：$y={{a:A}}\\cos x+{{b:B}}\\sin x$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","color":"blue","label":"常數一","on":"A cosine"},
-            {"do":"focus","term":"b","color":"violet","label":"常數二","on":"B sine"}
-          ] },
-        { "show": ["$(\\cos x)'=-\\sin x$","$(\\cos x)''=-\\cos x$"],
-          "note": "$y''$：導數再微分一次。",
-          "say": "y 雙撇是導數再微分一次。cosine x 微一次變負 sine x，再微一次變負 cosine x。",
+            {
+              "do": "write",
+              "line": "$y''+4y=0$ 的通解："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=A\\cos2x+B\\sin2x$",
+              "on": "通解"
+            },
+            {
+              "do": "write",
+              "line": "　兩項都可以代進去檢查；「這就是全部的解」留到二階線性的課",
+              "color": "violet",
+              "on": "正弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個常數，要兩個條件：$y(0)=1$，$y'(0)=4$"
+          ],
+          "say": "兩個常數，就要兩個條件。通常給 x 等於 0 時的值，和那時候的導數。",
           "board": [
-            {"do":"write","line":"$(\\cos x)'=-\\sin x$"},
-            {"do":"write","line":"$({{n4:\\cos x}})''=-\\cos x$","on":"再微一次"}
-          ] },
-        { "show": ["$y''=-A\\cos x-B\\sin x=-y$","$y''+y=0$"],
-          "note": "檢查：兩個常數都滿足方程。",
-          "say": "同理 sine x 微兩次變負 sine x。所以 y 雙撇是負 y，加上 y 剛好是零。",
+            {
+              "do": "write",
+              "line": "兩個常數，要兩個條件：$y(0)=1$，$y'(0)=4$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y(0)=A=1$"
+          ],
+          "say": "第一個條件：x 等於 0，餘弦是 1、正弦是 0，所以 A 等於 1。",
           "board": [
-            {"do":"write","line":"$y''=-A\\cos x-B\\sin x={{n5:-y}}$"},
-            {"do":"write","line":"${{n6:y''+y=0}}$","on":"加上"},
-            {"do":"box","term":"n6","color":"green","on":"剛好是零"}
-          ] },
-        { "show": ["一個條件只定得出一個常數"],
-          "say": "一個條件只能定一個常數，另一個還在晃，所以要給兩個條件。",
+            {
+              "do": "write",
+              "line": "$y(0)=A=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'=-2A\\sin2x+2B\\cos2x$，$y'(0)=2B=4$，$B=2$"
+          ],
+          "say": "第二個條件要先微分。x 等於 0 時，只剩 2B，等於 4，所以 B 等於 2。",
           "board": [
-            {"do":"write","line":"一個條件 → 定出 ${{a:A}}$，${{b:B}}$ 還在晃","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"b","color":"red","label":"還沒定","on":"另一個"}
-          ] },
-        { "show": ["$y(x_0)$ 與 $y'(x_0)$"],
-          "note": "物理上：起始位置與起始速度。",
-          "say": "通常是同一點的函數值和導數值，物理上就是起始位置和起始速度。",
+            {
+              "do": "write",
+              "line": "$y'=-2A\\sin2x+2B\\cos2x$，$y'(0)=2B=4$，$B=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\cos2x+2\\sin2x$"
+          ],
+          "say": "答案是餘弦 2x 加 2 倍正弦 2x。",
           "board": [
-            {"do":"write","line":"物理：起始位置、起始速度"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y=\\cos2x+2\\sin2x}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "倍正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "物理意思：彈簧要知道起點和初速"
+          ],
+          "say": "物理上很合理：彈簧怎麼振動，要知道它從哪裡出發，還要知道一開始的速度。少一個都不夠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "物理意思：彈簧要知道起點和初速"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 階方程，通常要 $n$ 個條件"
+          ],
+          "say": "一般來說，n 階方程有 n 個常數，就需要 n 個條件。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n$ 階方程，通常要 $n$ 個條件",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "存在唯一定理（一階）",
+      "beats": [
+        {
+          "show": [
+            "$y'=f(x,y)$，$y(x_0)=y_0$。如果 $f$ 和 $\\dfrac{\\partial f}{\\partial y}$ 在含 $(x_0,y_0)$ 的一個矩形裡連續，",
+            "$\\text{在 }x_0\\text{ 附近某個區間上，恰有一個解}$"
+          ],
+          "say": "存在唯一定理：如果 f 和 f 對 y 的偏導數，在初始點附近的矩形裡都連續，那在 x 0 附近某個區間上，恰好有一個解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y'=f(x,y)$，$y(x_0)=y_0$。如果 $f$ 和 $\\dfrac{\\partial f}{\\partial y}$ 在含 $(x_0,y_0)$ 的一個矩形裡連續，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\text{在 }x_0\\text{ 附近某個區間上，恰有一個解}}}$",
+              "on": "的偏"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "近的"
+            },
+            {
+              "do": "write",
+              "line": "　證明要用逐次逼近，留到微分方程的課；這裡先會用",
+              "color": "violet",
+              "on": "附近#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 只保證「某個區間」：像 ③ 會爆掉",
+            "• 唯一：解曲線不會交叉"
+          ],
+          "say": "注意兩點：它只保證在某個區間上，所以像剛剛會爆掉的情形並不矛盾。唯一的意思是，兩條解曲線不會交叉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 只保證「某個區間」：像 ③ 會爆掉"
+            },
+            {
+              "do": "write",
+              "line": "• 唯一：解曲線不會交叉",
+              "on": "的情"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反例：$y'=2\\sqrt y$，$y(0)=0$"
+          ],
+          "say": "條件不滿足會怎樣？看 y prime 等於 2 根號 y，y of 0 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反例：$y'=2\\sqrt y$，$y(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $y=0$：$0=2\\sqrt0$，是解",
+            "• $y=x^2$（$x\\ge0$）：$2x=2\\sqrt{x^2}$，也是解"
+          ],
+          "say": "y 等於 0 是解；x 平方，在 x 大於等於 0 的地方，也是解。同一個初始點，有兩個解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $y=0$：$0=2\\sqrt0$，是解"
+            },
+            {
+              "do": "write",
+              "line": "• $y=x^2$（$x\\ge0$）：$2x=2\\sqrt{x^2}$，也是解",
+              "on": "的地"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{\\partial f}{\\partial y}=\\dfrac1{\\sqrt y}$ 在 $y=0$ 不連續"
+          ],
+          "say": "原因是：f 對 y 的偏導數是根號 y 分之一，在 y 等於 0 根本沒有定義。定理的條件不成立，唯一性就保不住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{\\partial f}{\\partial y}=\\dfrac1{\\sqrt y}$ 在 $y=0$ 不連續",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "存在唯一定理保證 $y'=y^2$，$y(0)=1$ 的解……"
+          ],
+          "say": "最後一題：存在唯一定理對這個會爆掉的例子，保證了什麼？"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 初值問題：方程 $+$ 初始條件；在一族解裡挑通過那一點的一條",
+            "• 條件在 $x_0$：把 $x_0$ 代進通解解 $C$，不要直接寫 $C=y_0$"
+          ],
+          "say": "整理一下：初值問題是在一族解裡挑一條；條件在哪就代哪；解可能爆掉，只取含初始點的那段；n 階要 n 個條件；條件連續，解就存在唯一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 初值問題：方程 $+$ 初始條件；在一族解裡挑通過那一點的一條"
+            },
+            {
+              "do": "write",
+              "line": "• 條件在 $x_0$：把 $x_0$ 代進通解解 $C$，不要直接寫 $C=y_0$",
+              "on": "解裡"
+            },
+            {
+              "do": "write",
+              "line": "• 解可能在有限處爆掉：只取含初始點的那段區間",
+              "on": "解可"
+            },
+            {
+              "do": "write",
+              "line": "• $n$ 階方程要 $n$ 個條件（二階：值和導數）",
+              "on": "的那"
+            },
+            {
+              "do": "write",
+              "line": "• 存在唯一：$f$、$\\frac{\\partial f}{\\partial y}$ 連續 ⇒ 附近恰有一個解",
+              "on": "條件#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：分離變數：第一個真正的解法"
+          ],
+          "say": "下一課，學第一個真正的解法：分離變數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：分離變數：第一個真正的解法"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "ivp", "ode-intro"],
-    "fine": ["ivp-solve-constant", "ivp-interval-of-existence", "ivp-existence-uniqueness", "ivp-second-order-conditions"]
+    "coarse": [
+      "ode",
+      "ivp",
+      "ode-intro"
+    ],
+    "fine": [
+      "ivp-solve-constant",
+      "ivp-interval-of-existence",
+      "ivp-existence-uniqueness",
+      "ivp-second-order-conditions"
+    ]
   },
   "practice": [
-    { "id": "gap-der-ode-001", "core": true, "trains": "ivp-solve-constant" },
-    { "id": "cx-ode-002", "core": true, "trains": "ivp-solve-constant" },
-    { "id": "ode-val-001", "core": true, "trains": "ivp-solve-constant" },
-    { "id": "gap-der-ode-002", "core": true, "trains": "ivp-solve-constant" },
-    { "id": "cg-10a-012", "core": true, "trains": "ivp-solve-constant" },
-    { "id": "cg-10a-008", "core": true, "trains": "ivp-interval-of-existence" },
-    { "id": "cg-10a-010", "core": true, "trains": "ivp-existence-uniqueness" },
-    { "id": "cg-10a-009", "trains": "ivp-interval-of-existence" },
-    { "id": "cg-10a-011", "trains": "ivp-existence-uniqueness" },
-    { "id": "ode-sep-003", "challenge": true, "trains": "ivp-interval-of-existence", "note": "挑戰：要先會〈分離變數〉；注意解只活在 $x<1$。" }
+    {
+      "id": "gap-der-ode-001",
+      "core": true,
+      "trains": "ivp-solve-constant"
+    },
+    {
+      "id": "cx-ode-002",
+      "core": true,
+      "trains": "ivp-solve-constant"
+    },
+    {
+      "id": "ode-val-001",
+      "core": true,
+      "trains": "ivp-solve-constant"
+    },
+    {
+      "id": "gap-der-ode-002",
+      "core": true,
+      "trains": "ivp-solve-constant"
+    },
+    {
+      "id": "cg-10a-012",
+      "core": true,
+      "trains": "ivp-solve-constant"
+    },
+    {
+      "id": "cg-10a-008",
+      "core": true,
+      "trains": "ivp-interval-of-existence"
+    },
+    {
+      "id": "cg-10a-010",
+      "core": true,
+      "trains": "ivp-existence-uniqueness"
+    },
+    {
+      "id": "cg-10a-009",
+      "trains": "ivp-interval-of-existence"
+    },
+    {
+      "id": "cg-10a-011",
+      "trains": "ivp-existence-uniqueness"
+    },
+    {
+      "id": "ode-sep-003",
+      "challenge": true,
+      "trains": "ivp-interval-of-existence",
+      "note": "挑戰：要先會〈分離變數〉；注意解只活在 $x<1$。"
+    }
   ],
   "gaps": []
 }
