@@ -40,7 +40,8 @@ html.nb .cvb-p{--line:#1e2b4a14;--line-strong:#1e2b4abf;--muted:#566173}
 .cvb-opt{cursor:default;border-radius:10px}.cvb-opt[data-action]{cursor:pointer}.cvb-opt[data-action]:hover{background:#ffffff12}
 .cvb-no{color:var(--kr)}.cvb-no::after{content:"";position:absolute;left:4px;right:4px;top:52%;height:2.5px;border-radius:2px;background:var(--kr);transform:rotate(-2.5deg)}
 .cvb-yes{color:var(--kn)}.cvb-yes::before{content:"";position:absolute;inset:0 -6px;border:2.5px solid var(--kn);border-radius:50%;transform:rotate(-1.5deg);pointer-events:none}
-.cvb-onboard .course-check-ask,.cvb-onboard .course-check-options{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cvb-ord{color:var(--kn)}.cvb-ord::before{content:attr(data-ord);position:absolute;left:-1.5em;top:50%;width:1.25em;height:1.25em;margin-top:-.62em;border:2px solid var(--kn);border-radius:50%;font-size:.8em;line-height:1.1em;text-align:center;font-weight:700;pointer-events:none}
+.cvb-onboard .course-check-ask,.cvb-onboard .course-check-options,.cvb-onboard .cv2p-built,.cvb-onboard .cv2p-left{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .cvb-onboard .cvb-hint{margin:0;color:var(--muted);font-size:.9rem}
 .cvb-stage{position:relative}
 .cvb-whole .cv2s-beats,.cvb-whole .cv2s-bar,.cvb-whole .cv2s-cue{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -216,7 +217,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         const head = [{ do: "write", line: `${si + 1}.　${String(s.title || "").replace(/[{}]/g, "")}`, color: "gold", head: true }];
         beats.push({ ...b, board: (si ? [{ do: "clear" }] : []).concat(head, board || []) });
       });
-      // 板上出題：選擇題（小測、先猜）與證明的「用在哪一步」；拖圖、自己算、排順序還是在板子下面
+      // 板上出題：選擇題（小測、先猜）、證明的「用在哪一步」與「排順序」；拖圖還是在板子下面
       // 自己算（打字的）：題目寫上板，下面空兩行給輸入框（course_sections 把它疊在那兩行上）
       if (s.solve && bd && !s.drag) {
         const ck = Number.isInteger(s.solve.check) ? (data.checks || [])[s.solve.check] : null;
@@ -227,12 +228,17 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         beats.push({ say: "", show: [], quiz: tag, board: q });
         return;
       }
-      const kind = s.check !== undefined ? "check" : s.predict ? "predict" : s.where ? "where" : "";
-      const item = kind === "check" ? (data.checks || [])[s.check] : kind === "predict" ? s.predict : s.where && { ask: s.where.ask, options: s.where.steps };
-      if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve || s.order || !bd) { qz.push(-1); return; }
+      // 排順序（2026-10-23，使用者：「排證明順序會在筆記紙下面，我希望都在紙上」）：步驟洗牌寫上板（跟板下同一個洗法），
+      // 照順序點，點對的行首寫上第幾步、點錯的劃掉；理由疊在板子底部
+      const kind = s.order ? "order" : s.check !== undefined ? "check" : s.predict ? "predict" : s.where ? "where" : "";
+      const item = kind === "order" ? { ask: s.order.ask || "把證明排回順序：依序點每一步", options: s.order.steps } : kind === "check" ? (data.checks || [])[s.check] : kind === "predict" ? s.predict : s.where && { ask: s.where.ask, options: s.where.steps };
+      if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve) { qz.push(-1); return; }
       const tag = { kind, ci: kind === "check" ? s.check : si, si };
+      const order = kind === "order" ? (P && P.shuffle ? P.shuffle(item.options.length, `${data.id}#${si}`) : item.options.map((_o, oi) => oi)) : item.options.map((_o, oi) => oi);
+      // 這一節自己沒寫板（只有旁白的「試一題」：小測 242、先猜 59、排順序 67 節）：題目那一頁照樣換頁寫節名，不然題目只剩板下藏起來的那一份
+      const lead = bd ? [] : (si ? [{ do: "clear" }] : []).concat([{ do: "write", line: `${si + 1}.　${String(s.title || "").replace(/[{}]/g, "")}`, color: "gold", head: true }]);
       qz.push(beats.length);
-      beats.push({ say: "", show: [], quiz: tag, board: quizLines(tag, item.ask, { check: "小測", predict: "先猜", where: "隨堂" }[kind], item.options, item.options.map((_o, oi) => oi)) });
+      beats.push({ say: "", show: [], quiz: tag, board: lead.concat(quizLines(tag, item.ask, { check: "小測", predict: "先猜", where: "隨堂", order: "排順序" }[kind], item.options, order)) });
     });
     beats.forEach((_b, bi) => { let si = 0; while (si + 1 < off.length && off[si + 1] <= bi) si += 1; secOf[bi] = si; });
     const out = { beats, off, qz, secOf, figSec, anyFig: figSec.some(Boolean), pv: Boolean(P) };
@@ -778,6 +784,19 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       const a = v.it.a;
       if (typeof a.qz !== "number") return;
       const s = data.sections[a.si] || {};
+      if (a.kind === "order") {
+        const os = (st.sec.ord || {})[a.si] || {};
+        const got = os.got || [];
+        const done = Boolean(s.order) && got.length === s.order.steps.length;
+        const k = got.indexOf(a.qz);
+        v.el.classList.toggle("cvb-ord", k >= 0);
+        if (k >= 0 && /^\(/.test(String(a.line))) v.el.dataset.ord = String(k + 1); else delete v.el.dataset.ord;
+        v.el.classList.toggle("cvb-no", k < 0 && os.miss === a.qz);
+        const live = !done && k < 0 && a.si === B.si && B.at === B.qa && B.qOn;
+        if (live) Object.assign(v.el.dataset, { action: "course-s-ord", step: String(a.qz) });
+        else ["action", "step"].forEach((x) => delete v.el.dataset[x]);
+        return;
+      }
       const why = a.kind === "why" ? ((s.beats || [])[a.bi] || {}).why : null;
       const item = a.kind === "check" ? (data.checks || [])[a.ci] : a.kind === "predict" ? s.predict : a.kind === "where" ? s.where && { options: s.where.steps } : why;
       if (!item || !Array.isArray(item.options)) return;
@@ -913,6 +932,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const s = api.data.sections[si];
     if (s.check !== undefined) return (api.state.picks[s.check] || []).length > 0;
     if (s.where) return ((api.state.sec.whr || {})[si] || []).length > 0;
+    if (s.order) return (((api.state.sec.ord || {})[si] || {}).got || []).length > 0;
     if (s.solve) { const st = (api.state.cs || {})[si] || {}; return Boolean(st.tries || st.ok || st.shown || (window.BuzzCourseSolve && window.BuzzCourseSolve.resolved(api, si))); }
     return api.state.sec.pred[si] !== undefined;
   }
