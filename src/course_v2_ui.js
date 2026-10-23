@@ -980,7 +980,9 @@
         update(id, (entry) => ({ ...entry, openedAt: entry.openedAt || new Date().toISOString() }));
         // data-to="practice"（練完推薦題的「回到這一課」）：分節落在結算、全文捲到推薦題
         const land = data.to === "practice";
-        state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false, ...(land ? { land: "practice" } : {}) };
+        // data-section（全站搜尋點到課文的某一節）：分節直接落在那一節
+        const at = /^\d+$/.test(String(data.section || "")) ? `sec:${data.section}` : "";
+        state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false, ...(land ? { land: "practice" } : at ? { land: at } : {}) };
         reading.group = land ? "practice" : "concept";
         reading.mark = land ? "practice" : "c0";
         reading.land = land ? id : "";
@@ -1052,6 +1054,8 @@
       // 給測試與工具看的（不是給畫面用的）
       leftLesson,
       lessonMeta: (id) => meta[id] || null,
+      // 首頁「今天三件事」的下一課
+      nextInfo: (records) => { const n = nextLesson(records); return n ? { id: n.id, no: n.no, title: n.title } : null; },
       tierOf: (records, id) => (meta[id] ? tierOf(records, meta[id]) : 0)
     };
   }
