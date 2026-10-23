@@ -1,50 +1,118 @@
 {
   "id": "improper-p-test",
   "title": "p 判別",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["improper-infinite", "improper-singular"],
-  "next": ["improper-comparison"],
-  "related": ["p-series", "integral-test"],
-  "objectives": [
-    "背得出兩個方向相反的條件：$\\int_1^{\\infty}\\frac{dx}{x^p}$ 收斂 $\\iff p>1$；$\\int_0^1\\frac{dx}{x^p}$ 收斂 $\\iff p<1$。",
-    "會從反導函數推出這兩個條件，並算出收斂時的值 $\\frac{1}{p-1}$ 與 $\\frac{1}{1-p}$。",
-    "會把同一個想法用在 $(x-a)^p$ 與 $x(\\ln x)^p$ 這類變形上。"
+  "prerequisites": [
+    "improper-infinite",
+    "improper-singular"
   ],
-  "visual": "一條 p 的數線，滑桿拉動 p。上方顯示 y = 1/xᵖ 在 (0, 1] 與 [1, ∞) 兩段，兩段的面積各自標上「收斂：值」或「發散」。p 從 0.5 拉到 2 的過程中，右邊在 p 跨過 1 時變成收斂，左邊在 p 跨過 1 時變成發散；p = 1 時兩邊都發散。",
+  "next": [
+    "improper-comparison"
+  ],
+  "related": [
+    "p-series",
+    "integral-test"
+  ],
+  "objectives": [
+    "背得出兩個方向相反的條件：$\\int_1^{\\infty}\\frac{dx}{x^p}$ 收斂 $\\iff p>1$",
+    "$\\int_0^1\\frac{dx}{x^p}$ 收斂 $\\iff p<1$",
+    "會從反導函數推出這兩個條件，並算出收斂時的值 $\\frac{1}{p-1}$ 與 $\\frac{1}{1-p}$",
+    "會把同一個想法用在 $(x-a)^p$ 與 $x(\\ln x)^p$ 這類變形上"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 兩把最基本的尺",
       "body": [
-        "判斷瑕積分收不收斂，最常拿來比較的就是 $\\frac{1}{x^p}$。它在兩個地方會出問題：$x\\to\\infty$（區間無限）與 $x\\to 0^+$（$p>0$ 時函數無界）。兩個地方的條件剛好相反。"
+        "兩個條件方向相反；$p=1$ 兩邊都發散",
+        "之後的比較判別，幾乎都拿這兩把尺來量"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1",
+        "\\int_0^{1}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p<1"
+      ]
     },
     {
-      "heading": "② 直接算出來",
+      "heading": "② 直接算出來：∞ 那端",
       "body": [
-        "$p\\ne 1$ 時反導函數是 $\\frac{x^{1-p}}{1-p}$。",
-        "$\\infty$ 那端：$\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$。$p>1$ 時 $t^{1-p}\\to 0$，積分 $\\to\\frac{1}{p-1}$；$p<1$ 時 $t^{1-p}\\to\\infty$，發散。",
-        "$0$ 那端：$\\int_s^1 x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$。$p<1$ 時 $s^{1-p}\\to 0$，積分 $\\to\\frac{1}{1-p}$；$p>1$ 時 $s^{1-p}\\to\\infty$，發散。",
-        "$p=1$ 時反導函數是 $\\ln x$，兩端都發散（$\\ln t\\to\\infty$、$-\\ln s\\to\\infty$）。"
+        "$p\\ne1$：$\\displaystyle\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$",
+        "關鍵：$t^{q}=e^{q\\ln t}$，$t\\to\\infty$ 時 $\\to0$（$q<0$）或 $\\to\\infty$（$q>0$）",
+        "• $p>1$：$t^{1-p}\\to0$，積分 $\\to\\dfrac{-1}{1-p}=\\dfrac1{p-1}$",
+        "• $p<1$：$t^{1-p}\\to\\infty$：發散",
+        "• $p=1$：$\\int_1^t\\frac{dx}x=\\ln t\\to\\infty$：發散",
+        "例：$p=3$：$\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^3}=\\frac1{3-1}=\\frac12$",
+        "例：$p=\\frac12$：$\\displaystyle\\int_1^{t}\\frac{dx}{\\sqrt x}=2\\sqrt t-2\\to\\infty$，發散"
       ],
-      "tex": ["\\int_1^{\\infty}\\frac{dx}{x^{p}}\\ \\text{收斂}\\iff p>1,\\qquad \\int_0^{1}\\frac{dx}{x^{p}}\\ \\text{收斂}\\iff p<1"],
-      "collapsible": false
+      "tex": [
+        "\\int_1^{\\infty}\\frac{dx}{x^p}=\\frac1{p-1}\\quad(p>1)"
+      ]
     },
     {
-      "heading": "③ 怎麼記：遠方要瘦，近處不能太尖",
+      "heading": "② 直接算出來：0 那端",
       "body": [
-        "在 $\\infty$ 那端，$\\frac{1}{x^p}$ 要降得比 $\\frac{1}{x}$ 快（$p>1$）面積才有限；在 $0$ 那端，$\\frac{1}{x^p}$ 要衝得比 $\\frac{1}{x}$ 慢（$p<1$）尖刺才有限。$\\frac{1}{x}$ 剛好卡在兩邊的分界，兩邊都發散。所以 $\\int_0^{\\infty}\\frac{dx}{x^p}$ 對任何 $p$ 都發散：一端要 $p>1$，另一端要 $p<1$，不可能同時成立。"
+        "$p\\ne1$：$\\displaystyle\\int_s^1x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$",
+        "$s\\to0^+$ 時 $s^{q}\\to0$（$q>0$）或 $\\to\\infty$（$q<0$）：方向跟剛才相反",
+        "• $p<1$：$s^{1-p}\\to0$，積分 $\\to\\dfrac1{1-p}$",
+        "• $p>1$：$s^{1-p}\\to\\infty$：發散；$p=1$：$-\\ln s\\to\\infty$：發散",
+        "$p\\le0$ 時 $x^{-p}$ 在 $[0,1]$ 有界，根本不是瑕積分，公式照樣對"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^{1}\\frac{dx}{x^p}=\\frac1{1-p}\\quad(p<1)"
+      ]
+    },
+    {
+      "heading": "③ 怎麼記",
+      "body": [
+        "遠方要瘦：$[1,\\infty)$ 上，$p$ 越大尾巴越瘦，要 $p>1$ 才夠瘦",
+        "近處不能太尖：$(0,1]$ 上，$p$ 越大越尖，要 $p<1$ 才不會太尖",
+        "原因：$x>1$ 時 $x^p$ 隨 $p$ 變大；$0<x<1$ 時 $x^p$ 隨 $p$ 變小",
+        "例：$2^3>2^2$，但 $\\left(\\frac12\\right)^3<\\left(\\frac12\\right)^2$"
+      ],
+      "tex": [
+        "\\begin{array}{c|ccc}&p<1&p=1&p>1\\\\\\hline\\int_0^1&\\text{收斂}&\\text{發散}&\\text{發散}\\\\[6pt]\\int_1^{\\infty}&\\text{發散}&\\text{發散}&\\text{收斂}\\end{array}"
+      ]
     },
     {
       "heading": "④ 平移與對數的變形",
       "body": [
-        "瑕點在 $a$ 而不是 $0$：$\\int_a^b\\frac{dx}{(x-a)^p}$ 收斂 $\\iff p<1$（令 $u=x-a$）。",
-        "差一點點的情況要看對數：$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^p}$ 令 $u=\\ln x$ 變成 $\\int_{\\ln 2}^{\\infty}\\frac{du}{u^p}$，收斂 $\\iff p>1$。這跟〈p 級數〉與〈積分判別〉的結論一模一樣。"
+        "平移：$\\displaystyle\\int_a^b\\frac{dx}{(x-a)^p}$（$b>a$），令 $u=x-a$：",
+        "換元在 $[s,b]$ 上做，再讓 $s\\to a^+$；瑕點在右端 $(b-x)^p$ 也一樣",
+        "例：$\\displaystyle\\int_2^3\\frac{dx}{\\sqrt{x-2}}=\\int_0^1\\frac{du}{\\sqrt u}=2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_a^b\\frac{dx}{(x-a)^p}=\\int_0^{b-a}\\frac{du}{u^p}\\ \\text{收斂}\\iff p<1"
+      ]
+    },
+    {
+      "heading": "④ 對數的變形",
+      "body": [
+        "在 $[2,t]$ 上令 $u=\\ln x$，$du=\\dfrac{dx}x$：",
+        "$t\\to\\infty$ 時 $\\ln t\\to\\infty$：又是 ∞ 那端的尺，收斂 $\\iff p>1$",
+        "下限 $\\ln2>0$；$\\int_{\\ln2}^1$ 這段是普通的定積分，不影響收斂",
+        "例：$p=2$：",
+        "$p=1$：$\\displaystyle\\int_2^t\\frac{dx}{x\\ln x}=\\ln\\ln t-\\ln\\ln2\\to\\infty$",
+        "$t=10^{100}$ 時才約 $5.8$",
+        "比 $\\frac1x$ 瘦一點點還不夠：$\\frac1{x\\ln x}$ 比 $\\frac1x$ 瘦，仍然發散"
+      ],
+      "tex": [
+        "\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^p}",
+        "\\int_2^t\\frac{dx}{x(\\ln x)^p}=\\int_{\\ln2}^{\\ln t}\\frac{du}{u^p}",
+        "\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^2}=\\lim_{t\\to\\infty}\\Big(\\frac1{\\ln2}-\\frac1{\\ln t}\\Big)",
+        "=\\frac1{\\ln2}\\approx1.443"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^p}$：$p>1$ 收斂到 $\\dfrac1{p-1}$；$p\\le1$ 發散",
+        "• $\\displaystyle\\int_0^{1}\\frac{dx}{x^p}$：$p<1$ 收斂到 $\\dfrac1{1-p}$；$p\\ge1$ 發散",
+        "• 遠方要瘦，近處不能太尖；$p=1$ 兩邊都發散；$\\int_0^{\\infty}\\frac{dx}{x^p}$ 永遠發散",
+        "• 瑕點在 $a$：$(x-a)^p$ 用 0 那端的尺",
+        "• $\\dfrac1{x(\\ln x)^p}$：令 $u=\\ln x$，用 ∞ 那端的尺",
+        "下一課：比較判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,253 +159,851 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_1^{\\infty}\\frac{dx}{\\sqrt{x}}$：",
+      "ask": "$\\displaystyle\\int_0^1\\frac{dx}{x^{2/3}}=$？",
       "options": [
-        { "label": "發散", "correct": true },
-        { "label": "收斂到 $2$", "why": "$2$ 是 $\\int_0^1\\frac{dx}{\\sqrt{x}}$ 的值。在 $[1,\\infty)$ 上 $p=\\frac{1}{2}<1$，反導函數 $2\\sqrt{t}\\to\\infty$。" },
-        { "label": "收斂，因為 $\\frac{1}{\\sqrt{x}}\\to 0$", "why": "趨近 $0$ 不夠，要比 $\\frac{1}{x}$ 快；$\\frac{1}{\\sqrt{x}}$ 比 $\\frac{1}{x}$ 還慢。" }
+        {
+          "label": "$3$",
+          "correct": true
+        },
+        {
+          "label": "發散",
+          "why": "0 那端要 $p<1$ 才收斂，$\\frac23<1$"
+        },
+        {
+          "label": "$\\dfrac32$",
+          "why": "那是 $\\frac1p$；公式是 $\\frac1{1-p}$"
+        },
+        {
+          "label": "$-3$",
+          "why": "$\\frac1{p-1}$ 是 $\\infty$ 那端的公式；0 那端是 $\\frac1{1-p}$"
+        }
       ]
     },
     {
-      "ask": "$\\int_1^{\\infty}\\frac{dx}{x^4}$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\infty}\\frac{dx}{x^p}$ 在哪些 $p$ 收斂？",
       "options": [
-        { "label": "$\\frac{1}{3}$", "correct": true },
-        { "label": "$\\frac{1}{4}$", "why": "收斂值是 $\\frac{1}{p-1}$，不是 $\\frac{1}{p}$：反導函數 $-\\frac{1}{3x^3}$ 在 $1$ 的值決定答案。" },
-        { "label": "$-\\frac{1}{3}$", "why": "正函數的積分是正的；$\\left[-\\frac{1}{3x^3}\\right]_1^{\\infty}=0-\\left(-\\frac{1}{3}\\right)=\\frac{1}{3}$。" }
+        {
+          "label": "沒有任何 $p$",
+          "correct": true
+        },
+        {
+          "label": "$p>1$",
+          "why": "後半收斂，但前半 $\\int_0^1$ 在 $p>1$ 發散"
+        },
+        {
+          "label": "$p<1$",
+          "why": "前半收斂，但後半 $\\int_1^{\\infty}$ 在 $p<1$ 發散"
+        },
+        {
+          "label": "$p=1$",
+          "why": "$p=1$ 兩半都發散"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\infty}\\frac{dx}{x^2}$：",
+      "ask": "哪一個收斂？",
       "options": [
-        { "label": "發散", "correct": true },
-        { "label": "$1$", "why": "$1$ 只是 $[1,\\infty)$ 那一半。$[0,1]$ 那一半 $p=2>1$ 會發散，所以整個發散。" },
-        { "label": "收斂，因為 $p=2>1$", "why": "$p>1$ 只保證 $\\infty$ 那端；$0$ 那端要 $p<1$，兩端條件相反。" }
-      ]
-    },
-    {
-      "ask": "$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^p}$ 在什麼條件下收斂？",
-      "options": [
-        { "label": "$p>1$", "correct": true },
-        { "label": "$p\\ge 1$", "why": "$p=1$ 時令 $u=\\ln x$ 得 $\\int\\frac{du}{u}$，發散。" },
-        { "label": "對所有 $p$ 都收斂，因為多了 $\\frac{1}{x}$", "why": "$\\frac{1}{x}$ 已經被 $du=\\frac{dx}{x}$ 吃掉，剩下的是 $\\int\\frac{du}{u^p}$，還是要 $p>1$。" }
+        {
+          "label": "$\\displaystyle\\int_5^6\\frac{dx}{(6-x)^{0.9}}$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int_5^6\\frac{dx}{(x-5)^{1.1}}$",
+          "why": "瑕點在 $5$，$p=1.1>1$，太尖"
+        },
+        {
+          "label": "$\\displaystyle\\int_5^{\\infty}\\frac{dx}{(x-4)^{0.9}}$",
+          "why": "這是 $\\infty$ 那端，要 $p>1$"
+        },
+        {
+          "label": "$\\displaystyle\\int_5^6\\frac{dx}{x-5}$",
+          "why": "$p=1$，兩端都發散"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "遠方那一端",
+      "title": "兩把最基本的尺",
       "beats": [
-        { "show": ["比較的尺：$\\frac{1}{x^p}$"],
-          "note": "會出問題的地方：$x\\to\\infty$ 與 $x\\to 0^+$。",
-          "say": "判斷瑕積分最常拿來比的尺，就是 x 的 p 次方分之一。它在無限遠和零的右邊兩個地方會出問題。",
+        {
+          "show": [
+            "$\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1$"
+          ],
+          "say": "這一課要背兩把尺。第一把：x 的 p 次方分之一，從 1 積到無限大，收斂的條件是 p 大於 1。",
           "board": [
-            {"do":"write","line":"比較的尺：${{s:\\frac{1}{x^p}}}$"},
-            {"do":"write","line":"會出問題：$x\\to\\infty$、$x\\to0^+$","on":"兩個地方"}
-          ] },
-        { "show": ["$\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$"],
-          "note": "$p\\ne 1$。",
-          "say": "先看無限遠那端。p 不等於一的時候直接積，得到 t 的一減 p 次方減一，除以一減 p。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{1}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p<1$"
+          ],
+          "say": "第二把：同一個函數，從 0 積到 1，收斂的條件反過來，是 p 小於 1。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\int_1^t x^{-p}\\,dx=\\frac{ {{e:t^{1-p}}}-1}{1-p}$","on":"p 不等於一"},
-            {"do":"focus","term":"e","on":"t 的一減 p 次方"}
-          ] },
-        { "show": ["$x^{-3}$：次方加 1，再除以新次方"],
-          "note": "直接微分回去驗算。",
-          "say": "舉 p 是三。次方加一變成負二，再除以負二，微分回去剛好還原。這就是除以一減 p 的原因。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_0^{1}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p<1}}$",
+              "color": "blue"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "blue",
+              "on": "收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個條件方向相反；$p=1$ 兩邊都發散"
+          ],
+          "say": "注意兩個條件方向相反，而 p 等於 1，也就是 x 分之一，兩邊都發散，是共同的分界。",
           "board": [
-            {"do":"write","line":"$\\int {{a1:x^{-3}}}\\,dx=\\frac{x^{-2}}{-2}$"},
-            {"do":"write","line":"$\\left(\\frac{x^{-2}}{-2}\\right)'=x^{-3}$","on":"微分回去"}
-          ] },
-        { "show": ["$p>1$：$\\to\\frac{1}{p-1}$","$p<1$：發散"],
-          "say": "p 大於一，t 的一減 p 次方趨近零，積分收斂；p 小於一，它衝到無限大，發散。",
+            {
+              "do": "write",
+              "line": "兩個條件方向相反；$p=1$ 兩邊都發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "之後的比較判別，幾乎都拿這兩把尺來量"
+          ],
+          "say": "之後遇到算不出來的瑕積分，幾乎都是拿這兩把尺來比。所以先把它們弄清楚。",
           "board": [
-            {"do":"write","line":"$p>1$：${{e:t^{1-p}}}\\to0$，收斂到 $\\frac{1}{p-1}$"},
-            {"do":"write","line":"$p<1$：$t^{1-p}\\to\\infty$，發散","on":"p 小於一"}
-          ] },
-        { "show": ["$p=1$：$\\ln t\\to\\infty$"],
-          "note": "發散。",
-          "say": "p 等於一時反導函數是自然對數，也衝到無限大，所以也發散。",
+            {
+              "do": "write",
+              "line": "之後的比較判別，幾乎都拿這兩把尺來量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "綠色虛線是 p = 1；x = 1 左邊看尖，右邊看尾巴"
+          ],
+          "say": "圖上，綠色虛線是 x 分之一。拉動 p 看看。",
           "board": [
-            {"do":"keep","n":3},
-            {"do":"write","line":"$p=1$：$\\ln t\\to\\infty$，也發散","on":"自然對數"}
-          ] },
-        { "show": ["$p=1$：$1-p=0$，公式不能用","$(\\ln x)'=\\frac{1}{x}$"],
-          "say": "p 等於一時，一減 p 是零，不能除。要改找哪個函數微分得 x 分之一，答案就是自然對數。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pp",
+                  "window": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(-p)",
+                      "color": "blue",
+                      "label": "y = 1/xᵖ"
+                    },
+                    {
+                      "expr": "1/x",
+                      "color": "green",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "p": {
+                      "min": 0.2,
+                      "max": 2.5,
+                      "value": 1,
+                      "label": "p"
+                    }
+                  },
+                  "readout": "p = {p}",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "p = 1",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "綠色虛線是 p = 1；x = 1 左邊看尖，右邊看尾巴",
+              "color": "violet",
+              "on": "拉動"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩把最基本的尺"
+          ],
+          "say": "p 等於 2：右邊的尾巴變得更瘦、貼近 x 軸；但左邊靠近 0 的地方，衝得更高更尖。",
           "board": [
-            {"do":"write","line":"$p=1$：$1-p=0$，不能除"},
-            {"do":"write","line":"$(\\ln x)'=\\frac{1}{x}$","on":"微分得"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pp",
+                  "window": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(-p)",
+                      "color": "blue",
+                      "label": "y = 1/xᵖ"
+                    },
+                    {
+                      "expr": "1/x",
+                      "color": "green",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "p": {
+                      "min": 0.2,
+                      "max": 2.5,
+                      "value": 1,
+                      "label": "p"
+                    }
+                  },
+                  "readout": "p = {p}",
+                  "height": 260
+                },
+                "vals": {
+                  "p": 2
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "p = 2",
+              "on": "但左"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩把最基本的尺"
+          ],
+          "say": "p 等於 2 分之一：反過來，左邊比較不尖，右邊的尾巴卻變胖了。一個 p 不可能兩邊都顧到。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "pp",
+                  "window": [
+                    0,
+                    3,
+                    0,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(-p)",
+                      "color": "blue",
+                      "label": "y = 1/xᵖ"
+                    },
+                    {
+                      "expr": "1/x",
+                      "color": "green",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "p": {
+                      "min": 0.2,
+                      "max": 2.5,
+                      "value": 1,
+                      "label": "p"
+                    }
+                  },
+                  "readout": "p = {p}",
+                  "height": 260
+                },
+                "vals": {
+                  "p": 0.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "p = 0.5",
+              "on": "邊的"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "收斂值",
+      "title": "直接算出來：∞ 那端",
       "beats": [
-        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^p}=\\frac{1}{p-1}$（$p>1$）"],
-          "say": "收斂的時候，值就是 p 減一分之一。",
+        {
+          "show": [
+            "$p\\ne1$：$\\displaystyle\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$"
+          ],
+          "say": "證明只要直接算。p 不等於 1 時，x 的負 p 次方的反導函數，是 1 減 p 分之 x 的 1 減 p 次方。從 1 到 t，得到這個式子。",
           "board": [
-            {"do":"write","line":"$\\int_1^{\\infty}\\frac{dx}{x^p}={{f:\\frac{1}{p-1}}}$（$p>1$）"}
-          ] },
-        { "show": ["$p=3$：$\\frac{1}{3-1}=\\frac{1}{2}$"],
-          "say": "x 三次方分之一，p 是三，面積是二分之一。",
+            {
+              "do": "write",
+              "line": "$p\\ne1$：$\\displaystyle\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵：$t^{q}=e^{q\\ln t}$，$t\\to\\infty$ 時 $\\to0$（$q<0$）或 $\\to\\infty$（$q>0$）"
+          ],
+          "say": "關鍵是 t 的 q 次方：q 是負的，它趨近 0；q 是正的，它趨近無限大。這可以寫成 e 的 q 倍自然對數 t 來看。",
           "board": [
-            {"do":"write","line":"$p=3$：$\\frac{1}{3-1}=\\frac{1}{2}$"}
-          ] },
-        { "show": ["$p=\\frac{3}{2}$：$\\frac{1}{3/2-1}=2$"],
-          "note": "$p$ 越接近 $1$，面積越大。",
-          "say": "p 是二分之三，面積是二。p 越靠近一，曲線降得越慢，面積越大。",
+            {
+              "do": "write",
+              "line": "關鍵：$t^{q}=e^{q\\ln t}$，$t\\to\\infty$ 時 $\\to0$（$q<0$）或 $\\to\\infty$（$q>0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $p>1$：$t^{1-p}\\to0$，積分 $\\to\\dfrac{-1}{1-p}=\\dfrac1{p-1}$"
+          ],
+          "say": "p 大於 1，指數 1 減 p 是負的，t 那項消失，積分趨近 p 減 1 分之一。",
           "board": [
-            {"do":"write","line":"$p=\\frac{3}{2}$：$\\frac{1}{3/2-1}=2$"},
-            {"do":"write","line":"$p$ 越靠近 $1$，面積越大","on":"p 越靠近一"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $p>1$：$t^{1-p}\\to0$，積分 $\\to\\dfrac{-1}{1-p}=\\dfrac1{p-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $p<1$：$t^{1-p}\\to\\infty$：發散",
+            "• $p=1$：$\\int_1^t\\frac{dx}x=\\ln t\\to\\infty$：發散"
+          ],
+          "say": "p 小於 1，那項趨近無限大，發散。p 等於 1 另外算，是自然對數 t，也發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $p<1$：$t^{1-p}\\to\\infty$：發散"
+            },
+            {
+              "do": "write",
+              "line": "• $p=1$：$\\int_1^t\\frac{dx}x=\\ln t\\to\\infty$：發散",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^{\\infty}\\frac{dx}{x^p}=\\frac1{p-1}\\quad(p>1)$"
+          ],
+          "say": "所以 p 大於 1 時收斂，值是 p 減 1 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_1^{\\infty}\\frac{dx}{x^p}=\\frac1{p-1}\\quad(p>1)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "值是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$p=3$：$\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^3}=\\frac1{3-1}=\\frac12$"
+          ],
+          "say": "例子：p 等於 3，值是 2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$p=3$：$\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^3}=\\frac1{3-1}=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$p=\\frac12$：$\\displaystyle\\int_1^{t}\\frac{dx}{\\sqrt x}=2\\sqrt t-2\\to\\infty$，發散"
+          ],
+          "say": "p 等於 2 分之一：積到 t 是 2 倍根號 t 減 2，趨近無限大，發散。上一課在 0 到 1 收斂的根號 x 分之一，到了無限大這端卻發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$p=\\frac12$：$\\displaystyle\\int_1^{t}\\frac{dx}{\\sqrt x}=2\\sqrt t-2\\to\\infty$，發散"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "零那一端",
-      "beats": [
-        { "show": ["$\\int_s^1 x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$"],
-          "say": "再看零那一端，從 s 積到一，條件剛好反過來。",
-          "board": [
-            {"do":"write","line":"$\\int_s^1 x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$"}
-          ] },
-        { "show": ["$p<1$：$\\to\\frac{1}{1-p}$","$p\\ge 1$：發散"],
-          "say": "p 小於一，s 的一減 p 次方趨近零，收斂到一減 p 分之一；p 大於等於一就發散。",
-          "board": [
-            {"do":"write","line":"$p<1$：${{e:s^{1-p}}}\\to0$，收斂到 ${{f:\\frac{1}{1-p}}}$"},
-            {"do":"box","term":"f","color":"green","on":"收斂到"},
-            {"do":"write","line":"$p\\ge1$：發散","on":"大於等於一"}
-          ] },
-        { "show": ["$\\int_0^1\\frac{dx}{x^{2/3}}$"],
-          "note": "$p=\\frac{2}{3}<1$。",
-          "say": "例如 x 的三分之二次方分之一，在零無界，可是 p 是三分之二，小於一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{x^{2/3}}$ 在 $0$ 無界","on":"例如"},
-            {"do":"write","line":"$p=\\frac{2}{3}<1$","on":"p 是三分之二"}
-          ] },
-        { "show": ["$x\\to0^+$：值越來越大","先積 $[s,1]$，再 $s\\to0^+$"],
-          "say": "無界的意思是，x 越靠近零，值越大，沒有上限，零那一點也沒有定義。所以先積 s 到一，再讓 s 從右邊靠近零。",
-          "board": [
-            {"do":"write","line":"$x\\to0^+$：值越來越大"},
-            {"do":"write","line":"先積 $[s,1]$，再 $s\\to0^+$","on":"先積"}
-          ] }
-      ],
-      "key": "$0$ 端的值是 $\\frac{1}{1-p}$，和遠端相反",
       "predict": {
-        "ask": "$\\int_0^1\\frac{dx}{x^{2/3}}$ 是？",
+        "ask": "$\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^{1.001}}$ 會怎樣？",
         "options": [
           {
-            "label": "$3$",
+            "label": "收斂，值是 $1000$",
             "correct": true
           },
           {
-            "label": "$-3$",
-            "why": "套了 $\\infty$ 端的 $\\frac{1}{p-1}$；$0$ 端是 $\\frac{1}{1-p}=\\frac{1}{1-2/3}=3$。"
+            "label": "發散，因為跟 $\\frac1x$ 幾乎一樣",
+            "why": "只要 $p>1$ 就收斂，多一點點也算；只是值很大"
           },
           {
-            "label": "發散",
-            "why": "$0$ 端要 $p<1$，$\\frac{2}{3}<1$ 成立；$3x^{1/3}$ 在 $0^+$ 趨近 $0$。"
+            "label": "收斂，值大約是 $1$",
+            "why": "$\\frac1{p-1}$，$p$ 靠近 $1$ 時值很大"
           }
         ]
       }
     },
     {
-      "title": "遠方要瘦，近處別尖",
+      "title": "直接算出來：0 那端",
       "beats": [
-        { "show": ["$\\infty$ 端：降得比 $\\frac{1}{x}$ 快"],
-          "note": "$p>1$",
-          "say": "怎麼記？在遠方，曲線要降得比 x 分之一快，面積才有限。",
+        {
+          "show": [
+            "$p\\ne1$：$\\displaystyle\\int_s^1x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$"
+          ],
+          "say": "0 那端也一樣算，這次是從 s 積到 1，再讓 s 趨近 0。",
           "board": [
-            {"do":"write","line":"$\\infty$ 端：$p>1$，比 $\\frac{1}{x}$ 降得快"}
-          ] },
-        { "show": ["$0$ 端：衝得比 $\\frac{1}{x}$ 慢"],
-          "note": "$p<1$",
-          "say": "在零附近，尖刺要衝得比 x 分之一慢，面積才有限。x 分之一剛好卡在分界，兩邊都發散。",
+            {
+              "do": "write",
+              "line": "$p\\ne1$：$\\displaystyle\\int_s^1x^{-p}\\,dx=\\frac{1-s^{1-p}}{1-p}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s\\to0^+$ 時 $s^{q}\\to0$（$q>0$）或 $\\to\\infty$（$q<0$）：方向跟剛才相反"
+          ],
+          "say": "現在是 s 趨近 0：s 的 q 次方，q 是正的才趨近 0，q 是負的反而趨近無限大。方向剛好跟剛才相反。",
           "board": [
-            {"do":"write","line":"$0$ 端：$p<1$，比 $\\frac{1}{x}$ 衝得慢"},
-            {"do":"write","line":"$p=1$：分界，兩端都發散","on":"剛好卡在"}
-          ] },
-        { "show": ["三條曲線：$p=1$、$2$、$\\frac{1}{2}$"],
-          "say": "看圖：藍色是 x 分之一，紅色是 x 平方分之一，綠色是根號 x 分之一。",
+            {
+              "do": "write",
+              "line": "$s\\to0^+$ 時 $s^{q}\\to0$（$q>0$）或 $\\to\\infty$（$q<0$）：方向跟剛才相反"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $p<1$：$s^{1-p}\\to0$，積分 $\\to\\dfrac1{1-p}$",
+            "• $p>1$：$s^{1-p}\\to\\infty$：發散；$p=1$：$-\\ln s\\to\\infty$：發散"
+          ],
+          "say": "所以 p 小於 1 時收斂到 1 減 p 分之一；p 大於 1 發散；p 等於 1 是負的自然對數 s，也發散。",
           "board": [
-            {"do":"plot","graph":{"window":[0,4,0,4],"curves":[{"expr":"1/x","domain":[0.05,4],"color":"blue"},{"expr":"1/x^2","domain":[0.2,4],"color":"red"},{"expr":"1/sqrt(x)","domain":[0.05,4],"color":"green"}]}}
-          ] },
-        { "show": ["$\\int_0^{\\infty}\\frac{dx}{x^p}$：永遠發散"],
-          "note": "一端要 $p>1$，另一端要 $p<1$。",
-          "say": "所以從零積到無限大，對任何 p 都發散：兩端的條件不可能同時成立。",
+            {
+              "do": "write",
+              "line": "• $p<1$：$s^{1-p}\\to0$，積分 $\\to\\dfrac1{1-p}$"
+            },
+            {
+              "do": "write",
+              "line": "• $p>1$：$s^{1-p}\\to\\infty$：發散；$p=1$：$-\\ln s\\to\\infty$：發散",
+              "on": "發散#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{1}\\frac{dx}{x^p}=\\frac1{1-p}\\quad(p<1)$"
+          ],
+          "say": "結論：p 小於 1 時收斂，值是 1 減 p 分之一。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{dx}{x^p}$","on":"從零積到"},
-            {"do":"write","line":"$p>1$ 與 $p<1$ 不能同時成立","on":"不可能"}
-          ] },
-        { "show": ["拆成 $\\int_0^1+\\int_1^{\\infty}$","兩段都收斂，整個才收斂"],
-          "say": "從零積到無限大要拆成兩段，零到一和一到無限大。兩段都收斂才算收斂，所以要 p 大於一又 p 小於一。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_0^{1}\\frac{dx}{x^p}=\\frac1{1-p}\\quad(p<1)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "時收"
+            },
+            {
+              "do": "write",
+              "line": "　$p\\le0$ 時 $x^{-p}$ 在 $[0,1]$ 有界，根本不是瑕積分，公式照樣對",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "怎麼記",
+      "beats": [
+        {
+          "show": [
+            "遠方要瘦：$[1,\\infty)$ 上，$p$ 越大尾巴越瘦，要 $p>1$ 才夠瘦"
+          ],
+          "say": "怎麼記？遠方要瘦：在無限大那端，p 越大，函數掉得越快，尾巴越瘦。要比 x 分之一瘦，也就是 p 大於 1，面積才有限。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}=\\int_0^1+\\int_1^{\\infty}$"},
-            {"do":"write","line":"兩段都收斂，整個才收斂","on":"兩段都"}
-          ] }
+            {
+              "do": "write",
+              "line": "遠方要瘦：$[1,\\infty)$ 上，$p$ 越大尾巴越瘦，要 $p>1$ 才夠瘦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "近處不能太尖：$(0,1]$ 上，$p$ 越大越尖，要 $p<1$ 才不會太尖"
+          ],
+          "say": "近處不能太尖：在 0 那端，p 越大，衝得越高越尖。要比 x 分之一溫和，也就是 p 小於 1，面積才有限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "近處不能太尖：$(0,1]$ 上，$p$ 越大越尖，要 $p<1$ 才不會太尖"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$x>1$ 時 $x^p$ 隨 $p$ 變大；$0<x<1$ 時 $x^p$ 隨 $p$ 變小"
+          ],
+          "say": "背後的原因很簡單：x 大於 1，次方越高越大；x 在 0 和 1 之間，次方越高反而越小。所以兩端的條件方向相反。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原因：$x>1$ 時 $x^p$ 隨 $p$ 變大；$0<x<1$ 時 $x^p$ 隨 $p$ 變小"
+            },
+            {
+              "do": "write",
+              "line": "　例：$2^3>2^2$，但 $\\left(\\frac12\\right)^3<\\left(\\frac12\\right)^2$",
+              "color": "violet",
+              "on": "之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{array}{c|ccc}&p<1&p=1&p>1\\\\\\hline\\int_0^1&\\text{收斂}&\\text{發散}&\\text{發散}\\\\[6pt]\\int_1^{\\infty}&\\text{發散}&\\text{發散}&\\text{收斂}\\end{array}$"
+          ],
+          "say": "整理成表：0 到 1 只有 p 小於 1 收斂；1 到無限大只有 p 大於 1 收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{array}{c|ccc}&p<1&p=1&p>1\\\\\\hline\\int_0^1&\\text{收斂}&\\text{發散}&\\text{發散}\\\\[6pt]\\int_1^{\\infty}&\\text{發散}&\\text{發散}&\\text{收斂}\\end{array}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "收斂#1"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "平移與對數的變形",
+      "beats": [
+        {
+          "show": [
+            "平移：$\\displaystyle\\int_a^b\\frac{dx}{(x-a)^p}$（$b>a$），令 $u=x-a$：",
+            "$\\int_a^b\\frac{dx}{(x-a)^p}=\\int_0^{b-a}\\frac{du}{u^p}\\ \\text{收斂}\\iff p<1$"
+          ],
+          "say": "第一種變形是平移。瑕點不在 0，而在 a。令 u 等於 x 減 a，就變回 0 那端的尺：p 小於 1 才收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "平移：$\\displaystyle\\int_a^b\\frac{dx}{(x-a)^p}$（$b>a$），令 $u=x-a$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_a^b\\frac{dx}{(x-a)^p}=\\int_0^{b-a}\\frac{du}{u^p}\\ \\text{收斂}\\iff p<1}}$",
+              "on": "而在"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "就變"
+            },
+            {
+              "do": "write",
+              "line": "　換元在 $[s,b]$ 上做，再讓 $s\\to a^+$；瑕點在右端 $(b-x)^p$ 也一樣",
+              "color": "violet",
+              "on": "的尺"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_2^3\\frac{dx}{\\sqrt{x-2}}=\\int_0^1\\frac{du}{\\sqrt u}=2$"
+          ],
+          "say": "例子：根號 x 減 2 分之一，從 2 積到 3。換成 u，就是根號 u 分之一從 0 到 1，值是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_2^3\\frac{dx}{\\sqrt{x-2}}=\\int_0^1\\frac{du}{\\sqrt u}=2$"
+            }
+          ]
+        }
       ],
       "check": 2
     },
     {
       "title": "對數的變形",
       "beats": [
-        { "show": ["$\\int_a^b\\frac{dx}{(x-a)^p}$ 收斂 $\\iff p<1$"],
-          "note": "令 $u=x-a$。",
-          "say": "瑕點不在零而在 a，令 u 等於 x 減 a 平移過去，條件一樣是 p 小於一。",
+        {
+          "show": [
+            "$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^p}$"
+          ],
+          "say": "第二種變形是對數。x 乘自然對數 x 的 p 次方，分之一，從 2 積到無限大。",
           "board": [
-            {"do":"write","line":"$\\int_a^b\\frac{dx}{(x-a)^p}$"},
-            {"do":"write","line":"$u=x-a$","on":"令 u"},
-            {"do":"write","line":"收斂 $\\iff p<1$","on":"條件一樣"}
-          ] },
-        { "show": ["$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^2}$"],
-          "note": "令 $u=\\ln x$，$du=\\frac{dx}{x}$。",
-          "say": "差一點點的情況要看對數。令 u 等於自然對數 x，x 分之 dx 剛好變成 du。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_2^{\\infty}\\frac{dx}{x(\\ln x)^p}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $[2,t]$ 上令 $u=\\ln x$，$du=\\dfrac{dx}x$：",
+            "$\\int_2^t\\frac{dx}{x(\\ln x)^p}=\\int_{\\ln2}^{\\ln t}\\frac{du}{u^p}$"
+          ],
+          "say": "在 2 到 t 上令 u 等於自然對數 x，d u 是 x 分之 d x，剛好在分母。積分變成 u 的 p 次方分之一。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^2}$","on":"差一點點"},
-            {"do":"write","line":"$u={{l:\\ln x}}$，$du={{q:\\frac{dx}{x}}}$","on":"令 u"},
-            {"do":"box","term":"q","on":"剛好"}
-          ] },
-        { "show": ["$du=\\frac{dx}{x}$，所以 $\\frac{dx}{x(\\ln x)^2}=\\frac{du}{u^2}$"],
-          "note": "$\\ln x$ 的導數是 $\\frac{1}{x}$。",
-          "say": "u 等於自然對數 x，微分得 du 等於 x 分之一乘 dx。所以 x 分之 dx 整包換成 du，自然對數 x 換成 u。",
+            {
+              "do": "write",
+              "line": "在 $[2,t]$ 上令 $u=\\ln x$，$du=\\dfrac{dx}x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_2^t\\frac{dx}{x(\\ln x)^p}=\\int_{\\ln2}^{\\ln t}\\frac{du}{u^p}$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t\\to\\infty$ 時 $\\ln t\\to\\infty$：又是 ∞ 那端的尺，收斂 $\\iff p>1$"
+          ],
+          "say": "t 趨近無限大，自然對數 t 也趨近無限大，所以這又是無限大那端的尺：p 大於 1 才收斂。",
           "board": [
-            {"do":"write","line":"$\\frac{dx}{x(\\ln x)^2}=\\frac{1}{{{n1:(\\ln x)^2}}}\\cdot{{n2:\\frac{dx}{x}}}$"},
-            {"do":"underline","term":"n2","color":"blue","label":"換成 du","on":"整包"}
-          ] },
-        { "show": ["$=\\int_{\\ln 2}^{\\infty}\\frac{du}{u^2}=\\frac{1}{\\ln 2}$"],
-          "note": "$p=2>1$，收斂。",
-          "say": "變成 u 平方分之一，p 等於二，收斂，值是自然對數二分之一。",
+            {
+              "do": "write",
+              "line": "$t\\to\\infty$ 時 $\\ln t\\to\\infty$：又是 ∞ 那端的尺，收斂 $\\iff p>1$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　下限 $\\ln2>0$；$\\int_{\\ln2}^1$ 這段是普通的定積分，不影響收斂",
+              "color": "violet",
+              "on": "以這"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$p=2$：",
+            "$\\int_2^{\\infty}\\frac{dx}{x(\\ln x)^2}=\\lim_{t\\to\\infty}\\Big(\\frac1{\\ln2}-\\frac1{\\ln t}\\Big)$"
+          ],
+          "say": "p 等於 2：反導函數是負的自然對數 x 分之一，極限是自然對數 2 分之一，大約 1.443。",
           "board": [
-            {"do":"write","line":"$=\\int_{\\ln 2}^{\\infty}\\frac{du}{u^2}$","on":"變成"},
-            {"do":"write","line":"$p=2>1$：收斂，值 ${{r:\\frac{1}{\\ln 2}}}$","on":"p 等於二"},
-            {"do":"box","term":"r","color":"green","on":"值是"}
-          ] }
-      ],
-      "key": "令 $u=\\ln x$，化成 $p$ 判別的樣子",
-      "check": 3
+            {
+              "do": "write",
+              "line": "例：$p=2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_2^{\\infty}\\frac{dx}{x(\\ln x)^2}=\\lim_{t\\to\\infty}\\Big(\\frac1{\\ln2}-\\frac1{\\ln t}\\Big)$",
+              "on": "負的"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle =\\frac1{\\ln2}\\approx1.443}}$",
+              "color": "red",
+              "on": "極限"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "之一#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=1$：$\\displaystyle\\int_2^t\\frac{dx}{x\\ln x}=\\ln\\ln t-\\ln\\ln2\\to\\infty$"
+          ],
+          "say": "p 等於 1：積分是自然對數的自然對數 t，也趨近無限大，只是慢得驚人。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$p=1$：$\\displaystyle\\int_2^t\\frac{dx}{x\\ln x}=\\ln\\ln t-\\ln\\ln2\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "　$t=10^{100}$ 時才約 $5.8$",
+              "color": "violet",
+              "on": "也趨"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比 $\\frac1x$ 瘦一點點還不夠：$\\frac1{x\\ln x}$ 比 $\\frac1x$ 瘦，仍然發散"
+          ],
+          "say": "這告訴我們：x 乘自然對數 x 分之一，比 x 分之一瘦，卻還是發散。收斂和發散的分界非常細緻。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比 $\\frac1x$ 瘦一點點還不夠：$\\frac1{x\\ln x}$ 比 $\\frac1x$ 瘦，仍然發散"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^p}$：$p>1$ 收斂到 $\\dfrac1{p-1}$；$p\\le1$ 發散",
+            "• $\\displaystyle\\int_0^{1}\\frac{dx}{x^p}$：$p<1$ 收斂到 $\\dfrac1{1-p}$；$p\\ge1$ 發散"
+          ],
+          "say": "整理一下：無限大那端要 p 大於 1，0 那端要 p 小於 1；p 等於 1 兩邊都發散。平移和對數的變形，換元以後都回到這兩把尺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_1^{\\infty}\\frac{dx}{x^p}$：$p>1$ 收斂到 $\\dfrac1{p-1}$；$p\\le1$ 發散"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_0^{1}\\frac{dx}{x^p}$：$p<1$ 收斂到 $\\dfrac1{1-p}$；$p\\ge1$ 發散",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "• 遠方要瘦，近處不能太尖；$p=1$ 兩邊都發散；$\\int_0^{\\infty}\\frac{dx}{x^p}$ 永遠發散",
+              "on": "小於"
+            },
+            {
+              "do": "write",
+              "line": "• 瑕點在 $a$：$(x-a)^p$ 用 0 那端的尺",
+              "on": "兩邊"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac1{x(\\ln x)^p}$：令 $u=\\ln x$，用 ∞ 那端的尺",
+              "on": "換元"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：比較判別"
+          ],
+          "say": "下一課，拿這兩把尺去比較算不出來的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：比較判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["improper-integral", "p-series"],
-    "fine": ["p-test-infinity", "p-test-zero", "p-test-value", "p-test-log-scale"]
+    "coarse": [
+      "improper-integral",
+      "p-series"
+    ],
+    "fine": [
+      "p-test-infinity",
+      "p-test-zero",
+      "p-test-value",
+      "p-test-log-scale"
+    ]
   },
   "practice": [
-    { "id": "lec-08-m2", "core": true, "trains": "p-test-zero" },
-    { "id": "lec-12-q2b", "core": true, "trains": "p-test-log-scale" },
-    { "id": "cx-smid-012", "core": true, "trains": "p-test-log-scale" },
-    { "id": "cg-11b-008", "core": true, "trains": "p-test-infinity" },
-    { "id": "cg-11b-010", "core": true, "trains": "p-test-infinity" },
-    { "id": "cg-11b-011", "core": true, "trains": "p-test-zero" },
-    { "id": "lec-08-q3d", "trains": "p-test-log-scale" },
-    { "id": "cg-11b-009", "trains": "p-test-infinity" },
-    { "id": "cg-11b-012", "trains": "p-test-zero" },
-    { "id": "cg-11b-013", "trains": "p-test-zero" },
-    { "id": "cg-11b-014", "trains": "p-test-value" },
-    { "id": "cg-11b-015", "trains": "p-test-value" }
+    {
+      "id": "lec-08-m2",
+      "core": true,
+      "trains": "p-test-zero"
+    },
+    {
+      "id": "lec-12-q2b",
+      "core": true,
+      "trains": "p-test-log-scale"
+    },
+    {
+      "id": "cx-smid-012",
+      "core": true,
+      "trains": "p-test-log-scale"
+    },
+    {
+      "id": "cg-11b-008",
+      "core": true,
+      "trains": "p-test-infinity"
+    },
+    {
+      "id": "cg-11b-010",
+      "core": true,
+      "trains": "p-test-infinity"
+    },
+    {
+      "id": "cg-11b-011",
+      "core": true,
+      "trains": "p-test-zero"
+    },
+    {
+      "id": "lec-08-q3d",
+      "trains": "p-test-log-scale"
+    },
+    {
+      "id": "cg-11b-009",
+      "trains": "p-test-infinity"
+    },
+    {
+      "id": "cg-11b-012",
+      "trains": "p-test-zero"
+    },
+    {
+      "id": "cg-11b-013",
+      "trains": "p-test-zero"
+    },
+    {
+      "id": "cg-11b-014",
+      "trains": "p-test-value"
+    },
+    {
+      "id": "cg-11b-015",
+      "trains": "p-test-value"
+    }
   ],
   "gaps": []
 }

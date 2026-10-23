@@ -1,50 +1,164 @@
 {
   "id": "leibniz-rule",
   "title": "Leibniz 積分法則",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["parameter-integral", "ftc-part1", "chain-rule", "multivariable-chain-rule"],
-  "next": ["feynman-trick-basic"],
-  "related": ["dominated-convergence"],
-  "objectives": [
-    "說得出把微分搬進積分號的一個充分條件：$f$ 與 $\\frac{\\partial f}{\\partial a}$ 在閉矩形上連續；瑕積分還要一個可積的控制函數。",
-    "會用完整版 Leibniz 法則：上下限與被積函數都含參數時，三項都要寫。",
-    "把一個已知的積分公式對參數微分，生出新的積分公式（例如 $\\int_0^1 x^n\\ln x\\,dx=-\\frac{1}{(n+1)^2}$）。"
+  "prerequisites": [
+    "parameter-integral",
+    "ftc-part1",
+    "chain-rule",
+    "multivariable-chain-rule"
   ],
-  "visual": "曲線 y = f(x, a) 與兩條會動的直線 x = u(a)、x = v(a) 圍出一塊面積。a 增加一點點時，面積的變化拆成三塊並用三種顏色標出：右邊界外移多出的長條（f(v, a)v′）、左邊界外移少掉的長條（f(u, a)u′）、曲線本身上下移動造成的薄層（∫ ∂f/∂a dx）。",
+  "next": [
+    "feynman-trick-basic"
+  ],
+  "related": [
+    "dominated-convergence"
+  ],
+  "objectives": [
+    "說得出把微分搬進積分號的一個充分條件：$f$ 與 $\\frac{\\partial f}{\\partial a}$ 在閉矩形上連續，並會證明",
+    "會用完整版 Leibniz 法則：上下限與被積函數都含參數時，三項都要寫",
+    "把一個已知的積分公式對參數微分，生出新的積分公式（例如 $\\int_0^1 x^n\\ln x\\,dx=-\\frac{1}{(n+1)^2}$）",
+    "瑕積分要一個可積的控制函數，並認得條件不滿足時會錯的例子"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 微分能不能搬進積分號",
+      "heading": "① 微分能不能搬進去",
       "body": [
-        "$I(a)=\\int_c^d f(x,a)\\,dx$。直覺上，$I$ 的變化率就是每一條 $x$ 處的變化率 $\\frac{\\partial f}{\\partial a}$ 加起來，也就是 $I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}\\,dx$。這個「微分與積分交換」不是永遠成立，需要條件。",
-        "充分條件（區間有限）：$f$ 與 $\\frac{\\partial f}{\\partial a}$ 都在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續，則 $I$ 在 $(\\alpha,\\beta)$ 上可微，而且可以交換。"
+        "直覺：積分是「加總」，和的導數 = 導數的和",
+        "定理：$f$ 與 $\\dfrac{\\partial f}{\\partial a}$ 都在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續，則",
+        "偏微分拉下一個 $x$：$\\int_0^1 x\\,dx=\\frac12$",
+        "驗算：$I(a)=\\frac{e^a-1}a=1+\\frac a2+\\frac{a^2}6+\\cdots$，$I'(0)=\\frac12$"
       ],
-      "tex": ["\\frac{d}{da}\\int_c^{d}f(x,a)\\,dx=\\int_c^{d}\\frac{\\partial f}{\\partial a}(x,a)\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{da}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx",
+        "I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx"
+      ]
     },
     {
-      "heading": "② 上下限也會動：三項都要寫",
+      "heading": "① 證明",
       "body": [
-        "上下限是 $u(a)$、$v(a)$ 時，面積的變化有三個來源：右邊界移動（$f(v(a),a)\\,v'(a)$）、左邊界移動（$-f(u(a),a)\\,u'(a)$）、曲線本身移動（$\\int\\frac{\\partial f}{\\partial a}\\,dx$）。",
-        "$f$ 不含 $a$ 時只剩前兩項，就是〈微積分基本定理 I〉加上連鎖律；上下限不動時只剩第三項，就是 ①。"
+        "固定 $a$，$h\\ne0$ 很小：",
+        "對 $a$ 用均值定理（每個 $x$ 有自己的 $\\theta_x\\in(0,1)$）：",
+        "$f_a$ 在閉矩形上均勻連續：給 $\\varepsilon$，有 $\\delta$，$|h|<\\delta$ 時對所有 $x$",
+        "$\\theta_x$ 跟著 $x$ 變沒關係：估計只用到「每一點都 $<\\varepsilon$」"
       ],
-      "tex": ["\\frac{d}{da}\\int_{u(a)}^{v(a)}f(x,a)\\,dx=f(v,a)\\,v'(a)-f(u,a)\\,u'(a)+\\int_{u(a)}^{v(a)}\\frac{\\partial f}{\\partial a}\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\frac{I(a+h)-I(a)}h=\\int_c^d\\frac{f(x,a+h)-f(x,a)}h\\,dx",
+        "\\frac{f(x,a+h)-f(x,a)}h=f_a(x,\\,a+\\theta_xh)",
+        "|f_a(x,a+\\theta_xh)-f_a(x,a)|<\\varepsilon",
+        "\\begin{aligned}&\\Big|\\frac{I(a+h)-I(a)}h-\\int_c^df_a(x,a)\\,dx\\Big|\\\\&\\qquad\\le\\varepsilon(d-c)\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 瑕積分：要一個控制函數",
+      "heading": "② 上下限也會動",
       "body": [
-        "區間無限或端點無界時，閉矩形的條件用不上。一個常用的充分條件：在 $a_0$ 附近，存在不依賴 $a$ 的 $g(x)$，使 $\\left|\\frac{\\partial f}{\\partial a}(x,a)\\right|\\le g(x)$，而且 $\\int g$ 收斂（另外 $\\int f(x,a)\\,dx$ 本身收斂）。這是〈控制收斂定理〉的應用。",
-        "例：$I(a)=\\int_0^1 x^a\\,dx$，$a\\ge a_0>-1$ 時 $\\left|\\frac{\\partial(x^a)}{\\partial a}\\right|=x^a|\\ln x|\\le x^{a_0}|\\ln x|$，後者在 $[0,1]$ 可積，所以可以對 $a$ 微分。"
+        "看成三個變數：$G(u,v,x)=\\displaystyle\\int_u^vf(t,x)\\,dt$，$F(x)=G\\big(u(x),v(x),x\\big)$",
+        "• $G_v=f(v,x)$（微積分基本定理）",
+        "• $G_u=-f(u,x)$（上下限交換）",
+        "• $G_x=\\int_u^vf_x(t,x)\\,dt$（①）",
+        "多變數連鎖律：$F'=G_u\\,u'+G_v\\,v'+G_x$",
+        "連鎖律要 $G$ 的偏導數連續：$f$、$f_x$ 連續時三個都連續（第三個用上一課的定理）",
+        "• 上下限不動：只剩第三項（①）",
+        "• $f$ 不含 $x$：只剩前兩項"
       ],
-      "collapsible": false
+      "tex": [
+        "F(x)=\\int_{u(x)}^{v(x)}f(t,x)\\,dt",
+        "\\begin{aligned}F'(x)=\\ &f(v,x)\\,v'-f(u,x)\\,u'\\\\&+\\int_u^v\\frac{\\partial f}{\\partial x}(t,x)\\,dt\\end{aligned}"
+      ]
     },
     {
-      "heading": "條件不滿足時會錯的例子",
+      "heading": "② 範例：上下限在動",
       "body": [
-        "$I(a)=\\int_0^{\\infty}\\frac{\\sin(ax)}{x}\\,dx$：$a>0$ 時 $I(a)=\\frac{\\pi}{2}$ 是常數，$I'(a)=0$。硬把微分搬進去得到 $\\int_0^{\\infty}\\cos(ax)\\,dx$，這個積分根本不收斂。原因是 $\\left|\\frac{\\partial f}{\\partial a}\\right|=|\\cos(ax)|$ 找不到可積的控制函數。"
+        "被積函數不含 $x$，第三項 $=0$：",
+        "$\\frac{\\sin t}{t}$ 沒有初等反導數，但導數照樣算得出來"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}t\\,dt\\quad(x\\ne0)",
+        "=\\frac{\\sin2x}{2x}\\cdot2-\\frac{\\sin x}x\\cdot1=\\frac{\\sin2x-\\sin x}x"
+      ]
+    },
+    {
+      "heading": "② 範例：三項都有",
+      "body": [
+        "• 上限項：$e^{x-x}\\sin x\\cdot1=\\sin x$",
+        "• 下限項：$0$（下限不動）",
+        "• 第三項：$\\int_0^x e^{x-t}\\sin t\\,dt=F(x)$",
+        "驗算：$e^x$ 提出來直接積",
+        "$\\int_0^xe^{-t}\\sin t\\,dt=\\frac12\\big(1-e^{-x}(\\sin x+\\cos x)\\big)$"
+      ],
+      "tex": [
+        "F(x)=\\int_0^xe^{x-t}\\sin t\\,dt",
+        "F'(x)=\\sin x+F(x),\\qquad F(0)=0",
+        "F(x)=\\frac{e^x-\\sin x-\\cos x}2",
+        "\\begin{aligned}F'&=\\tfrac12\\big(e^x-\\cos x+\\sin x\\big)\\\\F+\\sin x&=\\tfrac12\\big(e^x+\\sin x-\\cos x\\big)\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 瑕積分：控制函數",
+      "body": [
+        "定理：$I(a)=\\int_c^\\infty f(x,a)\\,dx$ 對每個 $a\\in[\\alpha,\\beta]$ 收斂；$f,f_a$ 連續；而且有 $g$：",
+        "則 $I'(a)=\\int_c^\\infty f_a(x,a)\\,dx$",
+        "證明：差商 $-f_a=f_a(x,a+\\theta_xh)-f_a(x,a)$，絕對值 $\\le2g(x)$",
+        "• 尾巴：取 $R$ 使 $\\int_R^\\infty g<\\varepsilon$，這段 $\\le2\\varepsilon$",
+        "• $[c,R]$：閉矩形，用 ① 的論證，$\\le\\varepsilon$",
+        "端點是瑕點（例如 $x\\to0^+$ 爆掉）也一樣：在瑕點附近切一小段當「尾巴」"
+      ],
+      "tex": [
+        "|f_a(x,a)|\\le g(x)\\ \\ (\\text{所有 }a),\\qquad\\int_c^\\infty g<\\infty",
+        "\\Big|\\frac{I(a+h)-I(a)}h-\\int_c^\\infty f_a\\,dx\\Big|\\le3\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "③ 生出新公式",
+      "body": [
+        "對 $a$ 微分：$\\frac{\\partial}{\\partial a}x^a=x^a\\ln x$",
+        "$a=n$：$\\int_0^1x^n\\ln x\\,dx=-\\frac1{(n+1)^2}$；例 $\\int_0^1x\\ln x\\,dx=-\\frac14$",
+        "為什麼合法：$\\ln x$ 在 $0$ 爆掉，要控制函數",
+        "$a\\in[a_0,a_1]$，$a_0>-1$：$|x^a\\ln x|\\le x^{a_0}|\\ln x|$",
+        "$|\\ln x|\\le Cx^{-\\eta}$（$\\eta=\\frac{a_0+1}2$），所以 $g=Cx^{\\frac{a_0-1}2}$，次方 $>-1$，可積",
+        "再微分 $k$ 次："
+      ],
+      "tex": [
+        "\\int_0^1x^a\\,dx=\\frac1{a+1}\\quad(a>-1)",
+        "\\int_0^1x^a\\ln x\\,dx=-\\frac1{(a+1)^2}",
+        "\\int_0^1x^a(\\ln x)^k\\,dx=\\frac{(-1)^kk!}{(a+1)^{k+1}}"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "$a=0,\\ k=2$：$\\int_0^1(\\ln x)^2\\,dx=2$",
+        "分部積分兩次也得到 $2$"
+      ]
+    },
+    {
+      "heading": "④ 條件壞掉會錯",
+      "body": [
+        "換元 $u=ax$，$\\frac{dx}x=\\frac{du}u$：$I(a)=\\int_0^\\infty\\frac{\\sin u}u\\,du$，跟 $a$ 無關",
+        "這個積分條件收斂（11.11）；它的值 $\\frac\\pi2$ 之後再算，這裡用不到",
+        "硬搬進去：",
+        "$\\int_0^R\\cos ax\\,dx=\\frac{\\sin aR}a$ 一直振盪：發散",
+        "$x\\ge\\frac\\pi{\\beta-\\alpha}$ 時，$ax$ 掃過長 $\\ge\\pi$ 的區間，總有 $|\\cos ax|=1$，所以 $g(x)\\ge1$",
+        "條件不是裝飾：每次搬，都要說得出理由"
+      ],
+      "tex": [
+        "I(a)=\\int_0^\\infty\\frac{\\sin ax}x\\,dx\\quad(a>0)",
+        "\\int_0^\\infty\\frac{\\partial}{\\partial a}\\frac{\\sin ax}x\\,dx=\\int_0^\\infty\\cos ax\\,dx"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 閉矩形上 $f,f_a$ 連續 ⇒ $I'(a)=\\int f_a\\,dx$",
+        "• 證明：均值定理 + $f_a$ 均勻連續",
+        "• 上下限在動：$f(v,x)v'-f(u,x)u'+\\int_u^vf_x\\,dt$，三項",
+        "• 瑕積分：要可積的控制函數 $|f_a|\\le g$",
+        "• 對公式微分：$\\int_0^1x^a(\\ln x)^k\\,dx=\\frac{(-1)^kk!}{(a+1)^{k+1}}$",
+        "下一課：Feynman 積分法，故意放一個參數進去"
+      ]
     }
   ],
   "workedExamples": [
@@ -93,289 +207,904 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{d}{dx}\\int_0^{x^2}\\cos t\\,dt$ 是？",
+      "ask": "$\\dfrac{d}{dx}\\displaystyle\\int_0^x x\\cos t\\,dt=$？",
       "options": [
-        { "label": "$2x\\cos(x^2)$", "correct": true },
-        { "label": "$\\cos(x^2)$", "why": "上限是 $x^2$，要乘上它的導數 $2x$（連鎖律）。" },
-        { "label": "$\\sin(x^2)$", "why": "那是積分本身的值；題目問的是它對 $x$ 的導數。" }
+        {
+          "label": "$x\\cos x+\\sin x$",
+          "correct": true
+        },
+        {
+          "label": "$x\\cos x$",
+          "why": "只寫了上限項：被積函數也含 $x$，漏了第三項"
+        },
+        {
+          "label": "$\\sin x$",
+          "why": "只寫了第三項：上限也在動，漏了 $x\\cos x\\cdot1$"
+        }
       ]
     },
     {
-      "ask": "下面哪一個條件保證 $\\frac{d}{da}\\int_c^d f(x,a)\\,dx=\\int_c^d\\frac{\\partial f}{\\partial a}\\,dx$？",
+      "ask": "$\\displaystyle\\int_0^1x(\\ln x)^2\\,dx=$？",
       "options": [
-        { "label": "$f$ 與 $\\frac{\\partial f}{\\partial a}$ 在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續", "correct": true },
-        { "label": "$f$ 在閉矩形上連續就夠了", "why": "那只保證 $I(a)$ 連續；要交換微分，$\\frac{\\partial f}{\\partial a}$ 也要連續。" },
-        { "label": "$\\frac{\\partial f}{\\partial a}$ 存在就夠了", "why": "只存在不夠，需要連續（或被可積函數控制）才能保證積分後的導數正確。" }
-      ]
-    },
-    {
-      "ask": "$I(a)=\\int_0^1 e^{ax}\\,dx$，$I'(0)$ 是？",
-      "options": [
-        { "label": "$\\frac{1}{2}$", "correct": true },
-        { "label": "$1$", "why": "$I'(a)=\\int_0^1 xe^{ax}\\,dx$，在 $a=0$ 是 $\\int_0^1 x\\,dx=\\frac{1}{2}$。" },
-        { "label": "$e-1$", "why": "那是 $I(1)$。題目問的是對 $a$ 的導數在 $a=0$ 的值。" }
-      ]
-    },
-    {
-      "ask": "由 $\\int_0^{\\infty}e^{-ax}\\,dx=\\frac{1}{a}$（$a>0$）對 $a$ 微分一次，得到 $\\int_0^{\\infty}xe^{-ax}\\,dx$ 等於？",
-      "options": [
-        { "label": "$\\frac{1}{a^2}$", "correct": true },
-        { "label": "$-\\frac{1}{a^2}$", "why": "左邊微分得 $-\\int xe^{-ax}\\,dx$，右邊是 $-\\frac{1}{a^2}$，兩邊的負號約掉。" },
-        { "label": "$\\frac{1}{a}$", "why": "微分會讓 $a$ 的次方多一次：$\\frac{1}{a}$ 微分是 $-\\frac{1}{a^2}$。" }
+        {
+          "label": "$\\frac14$",
+          "correct": true
+        },
+        {
+          "label": "$-\\frac14$",
+          "why": "$(-1)^2=1$；而且被積函數 $\\ge0$，答案不會是負的"
+        },
+        {
+          "label": "$\\frac18$",
+          "why": "漏了 $k!=2$"
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "分母次方是 $k+1=3$，不是 $k=2$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "微分搬進積分號",
+      "title": "微分能不能搬進去",
       "beats": [
-        { "show": ["$I(a)=\\int_c^d f(x,a)\\,dx$"],
-          "note": "$I$ 的變化率是什麼？",
-          "say": "參數積分 I 是 a 的函數。a 動一點點，I 會怎麼變？",
+        {
+          "show": [
+            "$\\frac{d}{da}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx$"
+          ],
+          "say": "上一課搬極限；這一課搬微分：先積分再對 a 微分，跟先對 a 偏微分再積分，一樣嗎？",
           "board": [
-            {"do":"write","line":"$I(a)=\\int_c^d f(x,a)\\,dx$"}
-          ] },
-        { "show": ["每一條 $x$ 的變化率加起來"],
-          "note": "直覺：$\\frac{\\partial f}{\\partial a}$ 積起來。",
-          "say": "直覺上，每一個 x 那裡，f 對 a 的變化率加起來，就是 I 的變化率。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{da}\\int_c^d f(x,a)\\,dx\\overset{?}{=}\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：積分是「加總」，和的導數 = 導數的和"
+          ],
+          "say": "直覺上可以：積分是加總，和的導數是導數的和。但積分是極限，要條件。",
           "board": [
-            {"do":"write","line":"每一條 $x$ 的變化率加起來"},
-            {"do":"write","line":"$\\frac{\\partial f}{\\partial a}$ 積起來","on":"加起來"}
-          ] },
-        { "show": ["$f=ax^2$：$\\frac{\\partial f}{\\partial a}=x^2$"],
-          "note": "$\\partial$：只讓一個變數動。",
-          "say": "偏微分是只讓 a 動，x 當成常數。例如 f 等於 a 乘 x 平方，對 a 偏微分得 x 平方；對 x 才是二 a x。",
+            {
+              "do": "write",
+              "line": "直覺：積分是「加總」，和的導數 = 導數的和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$f$ 與 $\\dfrac{\\partial f}{\\partial a}$ 都在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續，則",
+            "$I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx$"
+          ],
+          "say": "定理：f 和 f 對 a 的偏導數，都在閉矩形上連續，那 I 可微，而且導數就是把偏導數積起來。",
           "board": [
-            {"do":"write","line":"$f=ax^2$"},
-            {"do":"write","line":"$\\frac{\\partial f}{\\partial a}=x^2$","on":"對 a 偏微分"},
-            {"do":"write","line":"$\\frac{\\partial f}{\\partial x}=2ax$","on":"對 x 才是"}
-          ] },
-        { "show": ["$I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}\\,dx$"],
-          "note": "微分與積分交換，需要條件。",
-          "say": "寫成式子：先對 a 偏微分，再對 x 積分。這叫微分與積分交換，不是永遠成立。",
-          "board": [
-            {"do":"write","line":"$I'(a)={{r:\\int_c^d\\frac{\\partial f}{\\partial a}\\,dx}}$"},
-            {"do":"underline","term":"r","label":"交換需條件","on":"交換"}
-          ] }
+            {
+              "do": "write",
+              "line": "定理：$f$ 與 $\\dfrac{\\partial f}{\\partial a}$ 都在閉矩形 $[c,d]\\times[\\alpha,\\beta]$ 上連續，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}(x,a)\\,dx}}$",
+              "on": "都在"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "而且"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "predict": {
+        "ask": "$I(a)=\\displaystyle\\int_0^1e^{ax}\\,dx$，$I'(0)=$？",
+        "options": [
+          {
+            "label": "$\\frac12$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "那是 $I(0)$，還沒微分"
+          },
+          {
+            "label": "$0$",
+            "why": "對 $a$ 微分會拉下一個 $x$，不是對常數微分"
+          }
+        ]
+      }
     },
     {
-      "title": "交換的條件",
+      "title": "微分能不能搬進去",
       "beats": [
-        { "show": ["$f$ 與 $\\frac{\\partial f}{\\partial a}$ 在閉矩形上連續"],
-          "note": "區間有限時的充分條件。",
-          "say": "區間有限的時候，充分條件是：f 和它對 a 的偏導數，都在閉矩形上連續。",
+        {
+          "show": [
+            "偏微分拉下一個 $x$：$\\int_0^1 x\\,dx=\\frac12$"
+          ],
+          "say": "對 a 偏微分拉下一個 x，再代 a 等於 0，積分是 2 分之 1。",
           "board": [
-            {"do":"write","line":"$f$ 與 ${{p:\\frac{\\partial f}{\\partial a}}}$ 在閉矩形上連續"},
-            {"do":"underline","term":"p","on":"偏導數"}
-          ] },
-        { "show": ["閉矩形 $[c,d]\\times[\\alpha,\\beta]$"],
-          "note": "連續：點稍微動，$f$ 也稍微動。",
-          "say": "閉矩形是 x 在 c 到 d、a 在 alpha 到 beta 的長方形，連邊界都算。點稍微動，f 的值也只稍微動，就是連續。",
-          "board": [
-            {"do":"write","line":"$[c,d]\\times[\\alpha,\\beta]$：長方形"},
-            {"do":"write","line":"點稍微動，$f$ 只稍微動","on":"點稍微動"}
-          ] },
-        { "show": ["瑕積分：$\\left|\\frac{\\partial f}{\\partial a}\\right|\\le g(x)$"],
-          "note": "$g$ 不依賴 $a$，而且 $\\int g$ 收斂。",
-          "say": "區間無限或端點無界時，要找一個不依賴 a、可積的函數 g，把偏導數壓住。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{\\partial f}{\\partial a}\\right|\\le {{g:g(x)}}$","tint":{"g":"blue"}},
-            {"do":"circle","term":"g","color":"blue","label":"不含 a","on":"不依賴"}
-          ] },
-        { "show": ["反例：$\\int_0^{\\infty}\\frac{\\sin(ax)}{x}\\,dx$"],
-          "note": "硬搬進去得到不收斂的 $\\int_0^{\\infty}\\cos(ax)\\,dx$。",
-          "say": "壓不住就會出錯：sine a x 除以 x 是常數，導數是零，硬搬進去卻得到一個不收斂的積分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\infty}\\frac{\\sin(ax)}{x}\\,dx$","on":"sine"},
-            {"do":"write","line":"硬搬進去：${{w:\\int_0^{\\infty}\\cos(ax)\\,dx}}$","on":"硬搬進去"},
-            {"do":"strike","term":"w","label":"不收斂","on":"得到"}
-          ] },
-        { "show": ["收斂：積到無限遠，面積趨近一個數"],
-          "note": "$\\cos(ax)$ 上下擺，積分值停不下來。",
-          "say": "收斂是說，積到無限遠，面積趨近一個確定的數。cosine a x 一直上下擺，積分值來回擺動，停不下來，所以不收斂。",
-          "board": [
-            {"do":"write","line":"收斂：面積趨近一個數"},
-            {"do":"write","line":"$\\cos(ax)$ 上下擺：不收斂","on":"cosine"}
-          ] }
-      ],
-      "key": "瑕積分要找不依賴 $a$ 的可積上界 $g$",
-      "check": 1
+            {
+              "do": "write",
+              "line": "偏微分拉下一個 $x$：$\\int_0^1 x\\,dx=\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$I(a)=\\frac{e^a-1}a=1+\\frac a2+\\frac{a^2}6+\\cdots$，$I'(0)=\\frac12$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "微分生出新公式",
+      "title": "證明",
       "beats": [
-        { "show": ["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],
-          "note": "兩邊都對 $a$ 微分。",
-          "say": "從一條已知的公式出發：x 的 a 次方從零積到一，等於 a 加一分之一。兩邊都對 a 微分。",
+        {
+          "show": [
+            "固定 $a$，$h\\ne0$ 很小：",
+            "$\\frac{I(a+h)-I(a)}h=\\int_c^d\\frac{f(x,a+h)-f(x,a)}h\\,dx$"
+          ],
+          "say": "證明。固定 a，看差商：兩個積分相減除以 h，可以合成一個積分。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"},
-            {"do":"write","line":"兩邊都對 $a$ 微分","on":"兩邊都對"}
-          ] },
-        { "show": ["$\\frac{\\partial(x^a)}{\\partial a}=x^a\\ln x$"],
-          "note": "$a\\ge a_0>-1$ 時被 $x^{a_0}|\\ln x|$ 控制。",
-          "say": "x 的 a 次方對 a 微分，多出自然對數 x。它被可積的函數壓住，可以交換。",
+            {
+              "do": "write",
+              "line": "固定 $a$，$h\\ne0$ 很小："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{I(a+h)-I(a)}h=\\int_c^d\\frac{f(x,a+h)-f(x,a)}h\\,dx$",
+              "on": "相減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $a$ 用均值定理（每個 $x$ 有自己的 $\\theta_x\\in(0,1)$）：",
+            "$\\frac{f(x,a+h)-f(x,a)}h=f_a(x,\\,a+\\theta_xh)$"
+          ],
+          "say": "每個 x 固定，對 a 用均值定理：差商等於中間某一點的偏導數。那一點跟 x 有關。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial a}x^a=x^a{{ln:\\ln x}}$"},
-            {"do":"focus","term":"ln","on":"多出"}
-          ] },
-        { "show": ["$x^a=e^{a\\ln x}$"],
-          "note": "對 $a$ 微分時，$x$ 當常數。",
-          "say": "先改寫成 e 的 a 乘自然對數 x 次方。對 a 微分，外層不變，裡面 a 乘自然對數 x 的導數是自然對數 x。",
+            {
+              "do": "write",
+              "line": "對 $a$ 用均值定理（每個 $x$ 有自己的 $\\theta_x\\in(0,1)$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{f(x,a+h)-f(x,a)}h=f_a(x,\\,a+\\theta_xh)$",
+              "on": "於中"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_a$ 在閉矩形上均勻連續：給 $\\varepsilon$，有 $\\delta$，$|h|<\\delta$ 時對所有 $x$",
+            "$|f_a(x,a+\\theta_xh)-f_a(x,a)|<\\varepsilon$"
+          ],
+          "say": "偏導數在閉矩形上均勻連續：h 夠小，不管中間點在哪，偏導數都差不到艾普西隆，對所有 x 同時成立。",
           "board": [
-            {"do":"write","line":"$x^a=e^{a\\ln x}$"},
-            {"do":"write","line":"$\\frac{\\partial}{\\partial a}e^{a\\ln x}=e^{a\\ln x}\\cdot{{l:\\ln x}}$","on":"對 a 微分"},
-            {"do":"focus","term":"l","on":"裡面"}
-          ] },
-        { "show": ["$g$ 不含 $a$，面積有限 ＝ 可積"],
-          "note": "$g$ 壓住偏導數的大小。",
-          "say": "不含 a 的上界叫 g，a 再變都壓得住偏導數。g 圍出的面積是有限數，這就叫可積。",
+            {
+              "do": "write",
+              "line": "$f_a$ 在閉矩形上均勻連續：給 $\\varepsilon$，有 $\\delta$，$|h|<\\delta$ 時對所有 $x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f_a(x,a+\\theta_xh)-f_a(x,a)|<\\varepsilon$",
+              "on": "偏導#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\Big|\\frac{I(a+h)-I(a)}h-\\int_c^df_a(x,a)\\,dx\\Big|\\\\&\\qquad\\le\\varepsilon(d-c)\\end{aligned}$"
+          ],
+          "say": "把兩個積分合併、絕對值搬進去，差就不超過艾普西隆乘區間長度。h 趨近 0，差商就趨近偏導數的積分。證明完畢。",
           "board": [
-            {"do":"write","line":"${{k:g}}$ 不含 $a$：面積有限"},
-            {"do":"underline","term":"k","label":"可積","on":"可積"}
-          ] },
-        { "show": ["$\\int_0^1 x^a\\ln x\\,dx=-\\frac{1}{(a+1)^2}$"],
-          "say": "右邊 a 加一分之一微分，得負的 a 加一平方分之一。一個新公式就這樣生出來。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1 x^a\\ln x\\,dx={{n:-\\frac{1}{(a+1)^2}}}$","on":"右邊"},
-            {"do":"box","term":"n","color":"green","on":"一個新公式"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&\\Big|\\frac{I(a+h)-I(a)}h-\\int_c^df_a(x,a)\\,dx\\Big|\\\\&\\qquad\\le\\varepsilon(d-c)\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "超過"
+            },
+            {
+              "do": "write",
+              "line": "　$\\theta_x$ 跟著 $x$ 變沒關係：估計只用到「每一點都 $<\\varepsilon$」",
+              "color": "violet",
+              "on": "差商"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "上下限也會動",
       "beats": [
-        { "show": ["$\\frac{d}{da}\\int_{u(a)}^{v(a)}f(x,a)\\,dx$"],
-          "note": "面積的變化有三個來源。",
-          "say": "上下限也跟著 a 動的時候，面積的變化有三個來源。",
+        {
+          "show": [
+            "$F(x)=\\int_{u(x)}^{v(x)}f(t,x)\\,dt$"
+          ],
+          "say": "再來，上下限也跟著變數動。",
           "board": [
-            {"do":"write","line":"$\\frac{d}{da}\\int_{ {{u:u(a)}} }^{ {{v:v(a)}} }f(x,a)\\,dx$","tint":{"u":"blue","v":"violet"}}
-          ] },
-        { "show": ["$f(v,a)\\,v'(a)-f(u,a)\\,u'(a)$"],
-          "note": "右邊界移動、左邊界移動。",
-          "say": "右邊界移動，加上 f 在上限的值乘 v prime；左邊界移動，減掉 f 在下限的值乘 u prime。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle F(x)=\\int_{u(x)}^{v(x)}f(t,x)\\,dt$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "看成三個變數：$G(u,v,x)=\\displaystyle\\int_u^vf(t,x)\\,dt$，$F(x)=G\\big(u(x),v(x),x\\big)$"
+          ],
+          "say": "技巧：把上限、下限、被積函數裡的 x，分開當成三個變數，叫 G。F 就是三個都換成 x。",
           "board": [
-            {"do":"write","line":"$={{tv:f(v,a)\\,v'(a)}}-{{tu:f(u,a)\\,u'(a)}}$"},
-            {"do":"underline","term":"tv","color":"violet","label":"右邊界","on":"右邊界移動"},
-            {"do":"underline","term":"tu","color":"blue","label":"左邊界","on":"左邊界移動"}
-          ] },
-        { "show": ["$+\\int_{u(a)}^{v(a)}\\frac{\\partial f}{\\partial a}\\,dx$"],
-          "note": "曲線本身移動。",
-          "say": "第三項是曲線本身在動，就是剛才的偏導數積分。f 不含 a 時，只剩前兩項，就是基本定理加連鎖律。",
+            {
+              "do": "write",
+              "line": "看成三個變數：$G(u,v,x)=\\displaystyle\\int_u^vf(t,x)\\,dt$，$F(x)=G\\big(u(x),v(x),x\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $G_v=f(v,x)$（微積分基本定理）",
+            "• $G_u=-f(u,x)$（上下限交換）"
+          ],
+          "say": "三個偏導數：對上限是 f 在上限的值，這是微積分基本定理；對下限多一個負號；對 x 就是 ① 的定理。",
           "board": [
-            {"do":"write","line":"$+\\int_{u(a)}^{v(a)}{{p:\\frac{\\partial f}{\\partial a}}}\\,dx$"},
-            {"do":"underline","term":"p","label":"曲線本身","on":"曲線本身"}
-          ] },
-        { "show": ["曲線底下夾在 $u(a)$、$v(a)$ 之間"],
-          "say": "畫成圖：曲線底下夾在兩條直線中間的面積。a 變動時，兩邊長條與曲線上下移動的薄層，加起來就是變化量。",
+            {
+              "do": "write",
+              "line": "• $G_v=f(v,x)$（微積分基本定理）"
+            },
+            {
+              "do": "write",
+              "line": "• $G_u=-f(u,x)$（上下限交換）",
+              "on": "這是"
+            },
+            {
+              "do": "write",
+              "line": "• $G_x=\\int_u^vf_x(t,x)\\,dt$（①）",
+              "on": "個負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多變數連鎖律：$F'=G_u\\,u'+G_v\\,v'+G_x$",
+            "$\\begin{aligned}F'(x)=\\ &f(v,x)\\,v'-f(u,x)\\,u'\\\\&+\\int_u^v\\frac{\\partial f}{\\partial x}(t,x)\\,dt\\end{aligned}$"
+          ],
+          "say": "用多變數連鎖律，三項加起來：上限的值乘上限的導數，減下限的值乘下限的導數，再加偏導數的積分。三項都要寫。",
           "board": [
-            {"do":"plot","graph":{"window":[0,3,0,6],"curves":[{"expr":"x^2+1","domain":[0,3],"color":"blue"}],"fills":[{"expr":"x^2+1","from":1,"to":2,"color":"violet"}],"dashed":[[[1,0],[1,6]],[[2,0],[2,6]]],"labels":[{"x":1,"y":0.4,"text":"u(a)","anchor":"end"},{"x":2,"y":0.4,"text":"v(a)","anchor":"start"}]}}
-          ] }
+            {
+              "do": "write",
+              "line": "多變數連鎖律：$F'=G_u\\,u'+G_v\\,v'+G_x$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}F'(x)=\\ &f(v,x)\\,v'-f(u,x)\\,u'\\\\&+\\int_u^v\\frac{\\partial f}{\\partial x}(t,x)\\,dt\\end{aligned}}}}$",
+              "color": "red",
+              "on": "上限#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "下限#1"
+            },
+            {
+              "do": "write",
+              "line": "　連鎖律要 $G$ 的偏導數連續：$f$、$f_x$ 連續時三個都連續（第三個用上一課的定理）",
+              "color": "violet",
+              "on": "偏導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 上下限不動：只剩第三項（①）",
+            "• $f$ 不含 $x$：只剩前兩項"
+          ],
+          "say": "特例：上下限不動，只剩第三項；被積函數不含 x，只剩前兩項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 上下限不動：只剩第三項（①）"
+            },
+            {
+              "do": "write",
+              "line": "• $f$ 不含 $x$：只剩前兩項",
+              "on": "被積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "範例：上下限在動",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}t\\,dt\\quad(x\\ne0)$"
+          ],
+          "say": "範例：正弦 t 除以 t，從 x 積到 2x，對 x 微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}t\\,dt\\quad(x\\ne0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數不含 $x$，第三項 $=0$：",
+            "$=\\frac{\\sin2x}{2x}\\cdot2-\\frac{\\sin x}x\\cdot1=\\frac{\\sin2x-\\sin x}x$"
+          ],
+          "say": "被積函數不含 x，第三項是 0。上限 2x 代進去，乘上 2x 的導數 2；減掉下限 x 代進去乘 1。整理成 x 分之正弦 2x 減正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "被積函數不含 $x$，第三項 $=0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\frac{\\sin2x}{2x}\\cdot2-\\frac{\\sin x}x\\cdot1=\\frac{\\sin2x-\\sin x}x}}$",
+              "color": "red",
+              "on": "2x#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "減掉"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{\\sin t}{t}$ 沒有初等反導數，但導數照樣算得出來",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "只有上下限在動",
+      "title": "範例：三項都有",
       "beats": [
-        { "show": ["$\\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}{t}\\,dt$"],
-          "note": "被積函數不含 $x$：第三項是 $0$。",
-          "say": "這一題被積函數不含 x，只有上下限在動，第三項是零。",
+        {
+          "show": [
+            "$F(x)=\\int_0^xe^{x-t}\\sin t\\,dt$"
+          ],
+          "say": "下一個例子：e 的 x 減 t 次方乘正弦 t，從 0 積到 x。上限和被積函數都有 x。",
           "board": [
-            {"do":"write","line":"$\\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}{t}\\,dt$"},
-            {"do":"write","line":"第三項：$\\int\\frac{\\partial f}{\\partial x}\\,dx=0$","on":"第三項"}
-          ] },
-        { "show": ["上限 $v=2x$，$v'=2$；下限 $u=x$，$u'=1$"],
-          "say": "上限是二 x，導數是二；下限是 x，導數是一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle F(x)=\\int_0^xe^{x-t}\\sin t\\,dt$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 上限項：$e^{x-x}\\sin x\\cdot1=\\sin x$",
+            "• 下限項：$0$（下限不動）"
+          ],
+          "say": "上限項：t 換成 x，剩正弦 x；下限不動，是 0；第三項：e 的 x 減 t 次方對 x 偏微分不變，積起來就是 F 自己。",
           "board": [
-            {"do":"write","line":"上限 ${{v:v=2x}}$，${{vp:v'=2}}$","tint":{"v":"violet","vp":"violet"}},
-            {"do":"focus","term":"vp","color":"violet","on":"導數是二"},
-            {"do":"write","line":"下限 ${{u:u=x}}$，${{up:u'=1}}$","tint":{"u":"blue","up":"blue"},"on":"下限"}
-          ] }
+            {
+              "do": "write",
+              "line": "• 上限項：$e^{x-x}\\sin x\\cdot1=\\sin x$"
+            },
+            {
+              "do": "write",
+              "line": "• 下限項：$0$（下限不動）",
+              "on": "第三"
+            },
+            {
+              "do": "write",
+              "line": "• 第三項：$\\int_0^x e^{x-t}\\sin t\\,dt=F(x)$",
+              "on": "偏微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F'(x)=\\sin x+F(x),\\qquad F(0)=0$"
+          ],
+          "say": "所以 F prime 等於正弦 x 加 F 自己，而且 F of 0 是 0。不用算出 F，就得到一條微分方程。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle F'(x)=\\sin x+F(x),\\qquad F(0)=0}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：$e^x$ 提出來直接積",
+            "$F(x)=\\frac{e^x-\\sin x-\\cos x}2$"
+          ],
+          "say": "驗算：把 e 的 x 次方提出來直接積，F 等於 2 分之 e 的 x 次方減正弦減餘弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：$e^x$ 提出來直接積"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F(x)=\\frac{e^x-\\sin x-\\cos x}2$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}F'&=\\tfrac12\\big(e^x-\\cos x+\\sin x\\big)\\\\F+\\sin x&=\\tfrac12\\big(e^x+\\sin x-\\cos x\\big)\\end{aligned}$"
+          ],
+          "say": "微分得到 2 分之 e 的 x 次方減餘弦加正弦；F 加正弦 x 也是這個。兩邊相等，萊布尼茲的結果對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}F'&=\\tfrac12\\big(e^x-\\cos x+\\sin x\\big)\\\\F+\\sin x&=\\tfrac12\\big(e^x+\\sin x-\\cos x\\big)\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "方減"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_0^xe^{-t}\\sin t\\,dt=\\frac12\\big(1-e^{-x}(\\sin x+\\cos x)\\big)$",
+              "color": "violet",
+              "on": "是這"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "瑕積分：控制函數",
+      "beats": [
+        {
+          "show": [
+            "定理：$I(a)=\\int_c^\\infty f(x,a)\\,dx$ 對每個 $a\\in[\\alpha,\\beta]$ 收斂；$f,f_a$ 連續；而且有 $g$：",
+            "$|f_a(x,a)|\\le g(x)\\ \\ (\\text{所有 }a),\\qquad\\int_c^\\infty g<\\infty$"
+          ],
+          "say": "無窮區間要多一個條件：偏導數被一個跟 a 無關、而且可積的函數 g 控制住。g 叫控制函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$I(a)=\\int_c^\\infty f(x,a)\\,dx$ 對每個 $a\\in[\\alpha,\\beta]$ 收斂；$f,f_a$ 連續；而且有 $g$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f_a(x,a)|\\le g(x)\\ \\ (\\text{所有 }a),\\qquad\\int_c^\\infty g<\\infty$",
+              "on": "一個#2"
+            },
+            {
+              "do": "write",
+              "line": "則 $I'(a)=\\int_c^\\infty f_a(x,a)\\,dx$",
+              "color": "gold",
+              "on": "控制#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：差商 $-f_a=f_a(x,a+\\theta_xh)-f_a(x,a)$，絕對值 $\\le2g(x)$"
+          ],
+          "say": "證明：跟剛才一樣，差商減偏導數，等於兩個偏導數相減，絕對值不超過 2 倍的 g。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：差商 $-f_a=f_a(x,a+\\theta_xh)-f_a(x,a)$，絕對值 $\\le2g(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 尾巴：取 $R$ 使 $\\int_R^\\infty g<\\varepsilon$，這段 $\\le2\\varepsilon$",
+            "• $[c,R]$：閉矩形，用 ① 的論證，$\\le\\varepsilon$"
+          ],
+          "say": "切成兩段。尾巴：g 可積，R 取夠大，這段不超過 2 艾普西隆。前面 c 到 R 是閉矩形，用 ① 的方法，h 夠小時不超過艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 尾巴：取 $R$ 使 $\\int_R^\\infty g<\\varepsilon$，這段 $\\le2\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• $[c,R]$：閉矩形，用 ① 的論證，$\\le\\varepsilon$",
+              "on": "是閉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Big|\\frac{I(a+h)-I(a)}h-\\int_c^\\infty f_a\\,dx\\Big|\\le3\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "合起來不超過 3 艾普西隆。上一課面積逃到無限遠的問題，就是被控制函數擋住的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\Big|\\frac{I(a+h)-I(a)}h-\\int_c^\\infty f_a\\,dx\\Big|\\le3\\varepsilon\\quad\\blacksquare}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "上一"
+            },
+            {
+              "do": "write",
+              "line": "　端點是瑕點（例如 $x\\to0^+$ 爆掉）也一樣：在瑕點附近切一小段當「尾巴」",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "生出新公式",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1x^a\\,dx=\\frac1{a+1}\\quad(a>-1)$",
+            "對 $a$ 微分：$\\frac{\\partial}{\\partial a}x^a=x^a\\ln x$"
+          ],
+          "say": "上一課的公式，兩邊對 a 微分。x 的 a 次方對 a 微分，多乘一個自然對數 x；右邊得負的 a 加 1 平方分之 1。新公式就生出來了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1x^a\\,dx=\\frac1{a+1}\\quad(a>-1)$"
+            },
+            {
+              "do": "write",
+              "line": "對 $a$ 微分：$\\frac{\\partial}{\\partial a}x^a=x^a\\ln x$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int_0^1x^a\\ln x\\,dx=-\\frac1{(a+1)^2}}}$",
+              "color": "red",
+              "on": "微分#2"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "右邊"
+            },
+            {
+              "do": "write",
+              "line": "　$a=n$：$\\int_0^1x^n\\ln x\\,dx=-\\frac1{(n+1)^2}$；例 $\\int_0^1x\\ln x\\,dx=-\\frac14$",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼合法：$\\ln x$ 在 $0$ 爆掉，要控制函數",
+            "$a\\in[a_0,a_1]$，$a_0>-1$：$|x^a\\ln x|\\le x^{a_0}|\\ln x|$"
+          ],
+          "say": "合法嗎？自然對數在 0 爆掉，要控制函數。a 在閉區間裡、下界 a 0 大於負 1，x 的 a 次方不超過 x 的 a 0 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼合法：$\\ln x$ 在 $0$ 爆掉，要控制函數"
+            },
+            {
+              "do": "write",
+              "line": "$a\\in[a_0,a_1]$，$a_0>-1$：$|x^a\\ln x|\\le x^{a_0}|\\ln x|$",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|\\ln x|\\le Cx^{-\\eta}$（$\\eta=\\frac{a_0+1}2$），所以 $g=Cx^{\\frac{a_0-1}2}$，次方 $>-1$，可積"
+          ],
+          "say": "對數長得比任何負次方都慢，所以控制函數是常數乘 x 的 2 分之 a 0 減 1 次方。次方大於負 1，可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|\\ln x|\\le Cx^{-\\eta}$（$\\eta=\\frac{a_0+1}2$），所以 $g=Cx^{\\frac{a_0-1}2}$，次方 $>-1$，可積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再微分 $k$ 次：",
+            "$\\int_0^1x^a(\\ln x)^k\\,dx=\\frac{(-1)^kk!}{(a+1)^{k+1}}$"
+          ],
+          "say": "同樣的理由可以一直微分下去，微分 k 次，得到這個一般公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再微分 $k$ 次："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\int_0^1x^a(\\ln x)^k\\,dx=\\frac{(-1)^kk!}{(a+1)^{k+1}}}}$",
+              "on": "分下"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "得到"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1x(\\ln x)^2\\,dx=$？"
+          ],
+          "say": "試一題：x 乘自然對數 x 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=0,\\ k=2$：$\\int_0^1(\\ln x)^2\\,dx=2$"
+            },
+            {
+              "do": "write",
+              "line": "　分部積分兩次也得到 $2$",
+              "color": "violet",
+              "on": "對數"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "條件壞掉會錯",
+      "beats": [
+        {
+          "show": [
+            "$I(a)=\\int_0^\\infty\\frac{\\sin ax}x\\,dx\\quad(a>0)$"
+          ],
+          "say": "最後看條件不滿足時會出什麼事。正弦 a x 除以 x，從 0 積到無限大，a 大於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I(a)=\\int_0^\\infty\\frac{\\sin ax}x\\,dx\\quad(a>0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換元 $u=ax$，$\\frac{dx}x=\\frac{du}u$：$I(a)=\\int_0^\\infty\\frac{\\sin u}u\\,du$，跟 $a$ 無關"
+          ],
+          "say": "換元 u 等於 a x，x 分之 d x 剛好等於 u 分之 d u。結果跟 a 無關，所以 I 是常數，導數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換元 $u=ax$，$\\frac{dx}x=\\frac{du}u$：$I(a)=\\int_0^\\infty\\frac{\\sin u}u\\,du$，跟 $a$ 無關"
+            },
+            {
+              "do": "write",
+              "line": "　這個積分條件收斂（11.11）；它的值 $\\frac\\pi2$ 之後再算，這裡用不到",
+              "color": "violet",
+              "on": "結果"
+            }
+          ]
+        },
+        {
+          "show": [
+            "硬搬進去：",
+            "$\\int_0^\\infty\\frac{\\partial}{\\partial a}\\frac{\\sin ax}x\\,dx=\\int_0^\\infty\\cos ax\\,dx$"
+          ],
+          "say": "如果硬把微分搬進去，偏導數是餘弦 a x，從 0 積到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "硬搬進去："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty\\frac{\\partial}{\\partial a}\\frac{\\sin ax}x\\,dx=\\int_0^\\infty\\cos ax\\,dx$",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^R\\cos ax\\,dx=\\frac{\\sin aR}a$ 一直振盪：發散"
+          ],
+          "say": "積到 R 是 a 分之正弦 a R，一直振盪，發散。導數明明是 0，搬進去卻得到發散的東西。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int_0^R\\cos ax\\,dx=\\frac{\\sin aR}a$ 一直振盪：發散",
+              "color": "red"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "答案是？",
+        "ask": "是哪個條件壞了？",
         "options": [
           {
-            "label": "$\\frac{\\sin 2x-\\sin x}{x}$",
+            "label": "沒有可積的控制函數",
             "correct": true
           },
           {
-            "label": "$\\frac{\\sin 2x}{2x}-\\frac{\\sin x}{x}$",
-            "why": "上限那一項要乘 $v'=2$：$\\frac{\\sin 2x}{2x}\\cdot 2=\\frac{\\sin 2x}{x}$。"
+            "label": "$f$ 不連續",
+            "why": "$\\frac{\\sin ax}x$ 補 $f(0,a)=a$ 就連續"
           },
           {
-            "label": "$\\frac{\\sin 2x+\\sin x}{x}$",
-            "why": "下限那一項是減號：$-f(u)\\,u'$。"
+            "label": "$I(a)$ 不收斂",
+            "why": "$I(a)$ 收斂（條件收斂），壞的是偏導數那邊"
           }
         ]
       }
     },
     {
-      "title": "三項都有",
+      "title": "條件壞掉會錯",
       "beats": [
-        { "show": ["$F(x)=\\int_0^x e^{x-t}\\sin t\\,dt$"],
-          "note": "上限和被積函數都含 $x$。",
-          "say": "這一題上限是 x，被積函數裡也有 x，要分開算。",
+        {
+          "show": [
+            "$x\\ge\\frac\\pi{\\beta-\\alpha}$ 時，$ax$ 掃過長 $\\ge\\pi$ 的區間，總有 $|\\cos ax|=1$，所以 $g(x)\\ge1$"
+          ],
+          "say": "理由：x 夠大時，a x 掃過的區間長度超過派，裡面有派的倍數，餘弦絕對值等於 1。所以控制函數至少是 1，不可積。",
           "board": [
-            {"do":"write","line":"$F(x)=\\int_0^{ {{up:x}} }e^{ {{ix:x}}-t}\\sin t\\,dt$","tint":{"up":"violet","ix":"blue"}},
-            {"do":"focus","term":"up","on":"上限是 x"},
-            {"do":"focus","term":"ix","on":"被積函數裡"}
-          ] },
-        { "show": ["上限項：$e^0\\sin x=\\sin x$"],
-          "note": "下限 $0$ 不動。",
-          "say": "上限項：t 代 x，e 的零次方是一，得 sine x。下限不動，沒有貢獻。",
+            {
+              "do": "write",
+              "line": "$x\\ge\\frac\\pi{\\beta-\\alpha}$ 時，$ax$ 掃過長 $\\ge\\pi$ 的區間，總有 $|\\cos ax|=1$，所以 $g(x)\\ge1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "條件不是裝飾：每次搬，都要說得出理由"
+          ],
+          "say": "結論：條件不是裝飾。每次把微分搬進積分號，都要說得出用的是哪個條件。",
           "board": [
-            {"do":"write","line":"上限項：$e^0\\sin x={{s:\\sin x}}$","on":"上限項"},
-            {"do":"underline","term":"s","color":"violet","on":"得 sine x"}
-          ] },
-        { "show": ["$\\frac{\\partial(e^{x-t}\\sin t)}{\\partial x}=e^{x-t}\\sin t$"],
-          "note": "積起來正好是 $F(x)$。",
-          "say": "被積函數對 x 偏微分，還是它自己，積起來正好是 F。",
+            {
+              "do": "write",
+              "line": "條件不是裝飾：每次搬，都要說得出理由",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 閉矩形上 $f,f_a$ 連續 ⇒ $I'(a)=\\int f_a\\,dx$",
+            "• 證明：均值定理 + $f_a$ 均勻連續"
+          ],
+          "say": "整理：閉矩形上連續就能搬；上下限在動，三項都要寫；瑕積分要控制函數；對公式微分能生出新公式。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial x}(e^{x-t}\\sin t)={{self:e^{x-t}\\sin t}}$"},
-            {"do":"underline","term":"self","color":"blue","label":"它自己","on":"還是它自己"}
-          ] }
-      ],
-      "key": "上限與被積函數都含 $x$：兩種來源都要算",
-      "predict": {
-        "ask": "$F'(x)$ 是？",
-        "options": [
-          {
-            "label": "$\\sin x+F(x)$",
-            "correct": true
-          },
-          {
-            "label": "$\\sin x$",
-            "why": "只用了基本定理，漏了被積函數本身含 $x$ 的那一項。"
-          },
-          {
-            "label": "$F(x)$",
-            "why": "漏了上限移動的那一項 $f(x,x)\\cdot 1=\\sin x$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "• 閉矩形上 $f,f_a$ 連續 ⇒ $I'(a)=\\int f_a\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：均值定理 + $f_a$ 均勻連續",
+              "on": "就能"
+            },
+            {
+              "do": "write",
+              "line": "• 上下限在動：$f(v,x)v'-f(u,x)u'+\\int_u^vf_x\\,dt$，三項",
+              "on": "三項"
+            },
+            {
+              "do": "write",
+              "line": "• 瑕積分：要可積的控制函數 $|f_a|\\le g$",
+              "on": "分要"
+            },
+            {
+              "do": "write",
+              "line": "• 對公式微分：$\\int_0^1x^a(\\ln x)^k\\,dx=\\frac{(-1)^kk!}{(a+1)^{k+1}}$",
+              "on": "式微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Feynman 積分法，故意放一個參數進去"
+          ],
+          "say": "下一課，我們反過來，故意放一個參數進去，用微分來算積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Feynman 積分法，故意放一個參數進去"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["parameter-integral", "fundamental-theorem", "moving-limits"],
-    "fine": ["leibniz-moving-limits", "leibniz-under-integral", "leibniz-full-three-terms", "leibniz-generate-formula"]
+    "coarse": [
+      "parameter-integral",
+      "fundamental-theorem",
+      "moving-limits"
+    ],
+    "fine": [
+      "leibniz-moving-limits",
+      "leibniz-under-integral",
+      "leibniz-full-three-terms",
+      "leibniz-generate-formula"
+    ]
   },
   "practice": [
-    { "id": "cx-ftc-004", "core": true, "trains": "leibniz-moving-limits" },
-    { "id": "exam-der-015", "core": true, "trains": "leibniz-moving-limits" },
-    { "id": "depth-der-005", "core": true, "trains": "leibniz-moving-limits" },
-    { "id": "burst-rec-001", "core": true, "trains": "leibniz-generate-formula" },
-    { "id": "burst-rec-002", "core": true, "trains": "leibniz-generate-formula" },
-    { "id": "int-057", "core": true, "trains": "leibniz-full-three-terms" },
-    { "id": "cg-11e-005", "core": true, "trains": "leibniz-under-integral" },
-    { "id": "int-058", "trains": "leibniz-full-three-terms" },
-    { "id": "int-059", "trains": "leibniz-full-three-terms" },
-    { "id": "burst-boss-param-002", "trains": "leibniz-under-integral" },
-    { "id": "cg-11e-006", "trains": "leibniz-under-integral" },
-    { "id": "burst-boss-param-006", "challenge": true, "trains": "leibniz-generate-formula", "note": "挑戰：從 $\\int_0^1 x^n\\,dx=\\frac{1}{n+1}$ 微分三次。" }
+    {
+      "id": "cx-ftc-004",
+      "core": true,
+      "trains": "leibniz-moving-limits"
+    },
+    {
+      "id": "exam-der-015",
+      "core": true,
+      "trains": "leibniz-moving-limits"
+    },
+    {
+      "id": "depth-der-005",
+      "core": true,
+      "trains": "leibniz-moving-limits"
+    },
+    {
+      "id": "burst-rec-001",
+      "core": true,
+      "trains": "leibniz-generate-formula"
+    },
+    {
+      "id": "burst-rec-002",
+      "core": true,
+      "trains": "leibniz-generate-formula"
+    },
+    {
+      "id": "int-057",
+      "core": true,
+      "trains": "leibniz-full-three-terms"
+    },
+    {
+      "id": "cg-11e-005",
+      "core": true,
+      "trains": "leibniz-under-integral"
+    },
+    {
+      "id": "int-058",
+      "trains": "leibniz-full-three-terms"
+    },
+    {
+      "id": "int-059",
+      "trains": "leibniz-full-three-terms"
+    },
+    {
+      "id": "burst-boss-param-002",
+      "trains": "leibniz-under-integral"
+    },
+    {
+      "id": "cg-11e-006",
+      "trains": "leibniz-under-integral"
+    },
+    {
+      "id": "burst-boss-param-006",
+      "challenge": true,
+      "trains": "leibniz-generate-formula",
+      "note": "挑戰：從 $\\int_0^1 x^n\\,dx=\\frac{1}{n+1}$ 微分三次。"
+    }
   ],
   "gaps": []
 }

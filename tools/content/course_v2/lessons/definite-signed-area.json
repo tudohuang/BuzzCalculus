@@ -1,53 +1,111 @@
 {
   "id": "definite-signed-area",
   "title": "定積分與有號面積",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["graph-features", "indefinite-integral"],
-  "next": ["integral-properties"],
-  "related": ["riemann-sum-intuition", "ftc-part2", "area-under-curve"],
+  "prerequisites": [
+    "graph-features",
+    "indefinite-integral"
+  ],
+  "next": [
+    "integral-properties"
+  ],
+  "related": [
+    "riemann-sum-intuition",
+    "ftc-part2",
+    "area-under-curve"
+  ],
   "objectives": [
-    "說得出 $\\int_a^b f(x)\\,dx$ 量的是有號面積：$x$ 軸上方算正、下方算負（$a<b$）。",
-    "分得清 $\\int_a^b f(x)\\,dx$ 與 $\\int_a^b |f(x)|\\,dx$，也就是位移與總路程。",
-    "圖形由直線、圓弧組成時，會用幾何面積算出定積分。"
+    "說得出 $\\int_a^b f(x)\\,dx$ 量的是有號面積：$x$ 軸上方算正、下方算負（$a<b$）",
+    "分得清 $\\int_a^b f(x)\\,dx$ 與 $\\int_a^b |f(x)|\\,dx$，也就是位移與總路程",
+    "圖形由直線、圓弧組成時，會用幾何面積算出定積分"
   ],
-  "visual": "畫一條會穿過 x 軸的曲線，下限固定在 a，拖動上限 b。曲線與 x 軸之間，在上方的部分塗藍色、標「＋」，在下方的部分塗紅色、標「−」。旁邊即時顯示三個數：藍色面積、紅色面積、以及「藍 − 紅」＝ ∫ₐᵇ f(x) dx。把 b 拖過一個零點時，可以看到有號面積開始變小，甚至變成負的，而總面積還是一直變大。",
-  "figures": [
-    {"caption":"藍 +4/3、紅 −4/3：積分是 0，面積是 8/3","after":1,"graph":{"window":[-0.5,3.5,-1.5,3.5],"curves":[{"expr":"x^2-2*x","domain":[-0.3,3.3],"color":"ink"}],"fills":[{"expr":"x^2-2*x","from":0,"to":2,"color":"red","opacity":0.25},{"expr":"x^2-2*x","from":2,"to":3,"color":"blue","opacity":0.25}],"labels":[{"x":1,"y":-0.5,"text":"−4/3","anchor":"middle","color":"red"},{"x":2.72,"y":0.45,"text":"+4/3","anchor":"middle","color":"blue"}]}}
-  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 要量的東西",
       "body": [
-        "給一個函數 $f$ 和一段區間 $[a,b]$。曲線 $y=f(x)$、$x$ 軸、直線 $x=a$ 與 $x=b$ 圍出一塊區域。$\\int_a^b f(x)\\,dx$ 量的是這塊區域，但有一個重要的規則：有正負號。",
-        "這一課先用圖形理解它；它真正的定義（用長條逼近）在〈Riemann 和直觀〉，有效率的算法在〈微積分基本定理 II〉。"
+        "函數 $f$，區間 $[a,b]$（$a<b$）：曲線和 $x$ 軸夾住的區域",
+        "• $a$：下限，$b$：上限",
+        "• 結果是一個數，不是一族函數，沒有 $+C$",
+        "精確的定義（用長方形逼近）在 4.6 Riemann 和；這一課先建立直覺",
+        "$f\\ge0$ 時，它就是區域的面積",
+        "積分變數用什麼字母都一樣",
+        "所以 $x$、$t$ 叫「啞變數」"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_a^b f(x)\\,dx",
+        "\\int_a^b f(x)\\,dx=\\int_a^b f(t)\\,dt"
+      ]
     },
     {
       "heading": "② 上方算正，下方算負",
       "body": [
-        "在 $a<b$ 的情況下：曲線在 $x$ 軸上方的部分，面積算正的；在 $x$ 軸下方的部分，面積算負的；全部加起來。",
-        "所以定積分不是「面積」，而是「上方面積 $-$ 下方面積」。上下一樣大時，定積分是 $0$，雖然圖上明明有東西被圍起來。",
-        "例：$\\int_{-3}^{3}x\\,dx$。左邊三角形在下方，面積 $\\frac{9}{2}$；右邊三角形在上方，面積 $\\frac{9}{2}$。相加是 $0$。"
+        "$f$ 跑到 $x$ 軸下方時：那一塊算負的",
+        "所以不要直接說成「面積」：它可以是負的，也可以是 $0$",
+        "例：$\\displaystyle\\int_{-1}^{2}x\\,dx$",
+        "紅色那塊是被扣掉，不是加上去"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_a^b f(x)\\,dx=(\\text{上方面積})-(\\text{下方面積})",
+        "\\int_{-1}^{2}x\\,dx=2-\\frac12=\\frac32"
+      ]
     },
     {
-      "heading": "③ 真正的面積要加絕對值",
+      "heading": "② 試一題",
       "body": [
-        "把下方那幾塊翻到上方，就是 $|f|$：$\\int_a^b |f(x)|\\,dx=$ 上方面積 $+$ 下方面積。這才是一般說的「面積」，〈曲線與 x 軸圍成的面積〉會正式處理。",
-        "物理上的對應：$v(t)$ 是速度。$\\int v\\,dt$ 是位移，往回走的路要扣掉；$\\int|v|\\,dt$ 是總路程，往回走的也算進去。"
+        "定積分是 $0$，不代表沒有面積"
+      ]
+    },
+    {
+      "heading": "③ 真正的面積：加絕對值",
+      "body": [
+        "要「真正的面積」，就把下方翻上來：",
+        "$|f|$ 永遠 $\\ge0$，所以每一塊都算正",
+        "例：$\\displaystyle\\int_{-1}^{2}|x|\\,dx=2+\\frac12=\\frac52$",
+        "對照：$\\displaystyle\\int_{-1}^{2}x\\,dx=\\frac32$",
+        "等號成立：$f$ 在 $[a,b]$ 上不變號"
       ],
-      "collapsible": false
+      "tex": [
+        "\\text{面積}=\\int_a^b|f(x)|\\,dx",
+        "\\int_a^b|f(x)|\\,dx\\ \\ge\\ \\Big|\\int_a^b f(x)\\,dx\\Big|"
+      ]
+    },
+    {
+      "heading": "③ 位移與總路程",
+      "body": [
+        "速度 $v(t)=2-t$（公尺／秒），$0\\le t\\le4$",
+        "• $0<t<2$：$v>0$，往前走",
+        "• $2<t<4$：$v<0$，往後走",
+        "位移 $=\\displaystyle\\int_0^4 v(t)\\,dt=2-2=0$",
+        "總路程 $=\\displaystyle\\int_0^4 |v(t)|\\,dt=2+2=4$"
+      ]
     },
     {
       "heading": "④ 目前能算的：靠幾何",
       "body": [
-        "圖形由矩形、三角形、梯形、圓的一部分組成時，算出每一塊的面積，再依上下加上正負號。一般的曲線要等 Riemann 和與基本定理。",
-        "定積分的結果是一個數，跟變數叫什麼無關：$\\int_0^1 x^2\\,dx$ 和 $\\int_0^1 t^2\\,dt$ 是同一個數。"
+        "還沒有計算工具，但圖形是直線、圓弧時，可以用幾何面積",
+        "例：$\\displaystyle\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$",
+        "$y=\\sqrt{4-x^2}$：$y\\ge0$ 且 $x^2+y^2=4$，是上半圓，半徑 $2$",
+        "例：$\\displaystyle\\int_0^3(2x+1)\\,dx$：梯形",
+        "$x=0$ 時高 $1$，$x=3$ 時高 $2\\cdot3+1=7$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx=\\frac12\\pi\\cdot2^2=2\\pi",
+        "\\frac{(1+7)\\cdot3}{2}=12"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\int_a^b f(x)\\,dx$：有號面積，結果是一個數",
+        "• $x$ 軸上方算正，下方算負；可以是負的或 $0$",
+        "• 真正的面積：$\\int_a^b|f(x)|\\,dx$",
+        "• 速度的積分是位移；速率 $|v|$ 的積分是總路程",
+        "• 直線、圓弧圍成的：用三角形、梯形、圓的面積算",
+        "下一課：積分性質"
+      ]
     }
   ],
   "workedExamples": [
@@ -95,35 +153,66 @@
   ],
   "checks": [
     {
-      "ask": "$f$ 在 $[0,5]$ 上：在 $x$ 軸上方的部分面積 $7$，在下方的部分面積 $3$。$\\int_0^5 f(x)\\,dx$ 是？",
+      "ask": "速度 $v(t)=t-1$（公尺／秒），$0\\le t\\le3$。位移是？",
       "options": [
-        { "label": "$4$", "correct": true },
-        { "label": "$10$", "why": "$10$ 是總面積，也就是 $\\int_0^5|f(x)|\\,dx$。定積分把下方那塊算成負的：$7-3$。" },
-        { "label": "$-4$", "why": "正負號放反了：上方算正、下方算負，是 $7-3$，不是 $3-7$。" }
+        {
+          "label": "$\\dfrac32$ 公尺",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac52$ 公尺",
+          "why": "這是總路程：把下方的 $\\frac12$ 也算成正的"
+        },
+        {
+          "label": "$2$ 公尺",
+          "why": "只算了上方的三角形，漏掉前 $1$ 秒往後退的 $\\frac12$"
+        },
+        {
+          "label": "$3$ 公尺",
+          "why": "不是 $v(3)\\cdot$ 時間；速度一直在變"
+        }
       ]
     },
     {
-      "ask": "承上題，$\\int_0^5|f(x)|\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_{0}^{3}\\sqrt{9-x^2}\\,dx=$？",
       "options": [
-        { "label": "$10$", "correct": true },
-        { "label": "$4$", "why": "加了絕對值，下方那塊被翻到上方，不再抵消：$7+3$。" },
-        { "label": "$7$", "why": "下方那塊也要算進去，只是翻成正的。你把它當成 $0$ 了。" }
+        {
+          "label": "$\\dfrac{9\\pi}{4}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{9\\pi}{2}$",
+          "why": "這是半圓；$0$ 到 $3$ 只有四分之一圓"
+        },
+        {
+          "label": "$9\\pi$",
+          "why": "這是整個圓"
+        },
+        {
+          "label": "$\\dfrac{3\\pi}{4}$",
+          "why": "面積要用半徑的平方 $9$，不是 $3$"
+        }
       ]
     },
     {
-      "ask": "$\\int_{-3}^{3}x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_{0}^{3}(x-1)\\,dx=$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$9$", "why": "$9$ 是兩個三角形面積 $\\frac{9}{2}+\\frac{9}{2}$ 的和。左邊那塊在 $x$ 軸下方，要算負的。" },
-        { "label": "不能算，因為 $x$ 在 $[-3,0]$ 是負的", "why": "負值完全可以積分，那一段只是貢獻負的有號面積 $-\\frac{9}{2}$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_{-1}^{1}\\sqrt{1-x^2}\\,dx$ 是？",
-      "options": [
-        { "label": "$\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$\\pi$", "why": "$\\pi$ 是整個單位圓的面積。$y=\\sqrt{1-x^2}$ 只有 $y\\ge 0$ 的上半圓。" },
-        { "label": "$2$", "why": "你把它當成底 $2$、高 $1$ 的矩形。曲線是圓弧，兩側低下去，面積比矩形小。" }
+        {
+          "label": "$\\dfrac32$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac52$",
+          "why": "下方那塊要減，不是加"
+        },
+        {
+          "label": "$2$",
+          "why": "漏了 $0$ 到 $1$ 那塊下方的三角形"
+        },
+        {
+          "label": "$-\\dfrac12$",
+          "why": "只算了下方那一塊"
+        }
       ]
     }
   ],
@@ -131,230 +220,913 @@
     {
       "title": "要量的東西",
       "beats": [
-        { "show": ["曲線、$x$ 軸、$x=a$、$x=b$ 圍出一塊"],
-          "say": "給一個函數和一段區間。曲線、x 軸，加上左右兩條直線，圍出一塊區域。",
+        {
+          "show": [
+            "函數 $f$，區間 $[a,b]$（$a<b$）：曲線和 $x$ 軸夾住的區域"
+          ],
+          "say": "前幾課的不定積分，是在找反導函數。這一課換一個問題：一條曲線，在 a 到 b 之間，和 x 軸夾住的區域，要怎麼量？",
           "board": [
-            {"do":"write","line":"$y=f(x)$，$x=a$，$x=b$"}
-          ] },
-        { "show": ["$\\int_a^b f(x)\\,dx$ 量這一塊"],
-          "note": "但有正負號。",
-          "say": "定積分量的就是這一塊。不過有一個重要的規則：它有正負號。",
+            {
+              "do": "write",
+              "line": "函數 $f$，區間 $[a,b]$（$a<b$）：曲線和 $x$ 軸夾住的區域"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_a^b f(x)\\,dx$"
+          ],
+          "say": "這個量寫成：積分從 a 到 b，f of x d x，叫做 f 從 a 到 b 的定積分。",
           "board": [
-            {"do":"write","line":"$\\int_a^b f(x)\\,dx$"},
-            {"do":"write","line":"有正負號","on":"規則"}
-          ] },
-        { "show": ["上方算正，下方算負"],
-          "note": "定積分＝上方面積 $-$ 下方面積。",
-          "say": "曲線在 x 軸上方的部分算正的，在下方的部分算負的，全部加起來。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_a^b f(x)\\,dx}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "叫做"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a$：下限，$b$：上限",
+            "• 結果是一個數，不是一族函數，沒有 $+C$"
+          ],
+          "say": "a 叫下限，b 叫上限。跟不定積分最大的不同是：定積分算出來是一個數，不是一族函數，沒有加 C。",
           "board": [
-            {"do":"write","line":"$\\int_a^b f(x)\\,dx = {{p:A_+}} - {{m:A_-}}$"},
-            {"do":"focus","term":"p","color":"blue","label":"上方面積","on":"算正的"},
-            {"do":"focus","term":"m","color":"violet","label":"下方面積","on":"算負的"}
-          ] },
-        { "show": ["$A_-$ 本身是正的面積","減號才讓它算負"],
-          "say": "這裡的下方面積，是一塊正的大小，跟一般面積一樣。它算負，是因為前面那個減號，不是它自己帶負號。",
+            {
+              "do": "write",
+              "line": "• $a$：下限，$b$：上限"
+            },
+            {
+              "do": "write",
+              "line": "• 結果是一個數，不是一族函數，沒有 $+C$",
+              "on": "分最"
+            },
+            {
+              "do": "write",
+              "line": "　精確的定義（用長方形逼近）在 4.6 Riemann 和；這一課先建立直覺",
+              "color": "violet",
+              "on": "個數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f\\ge0$ 時，它就是區域的面積"
+          ],
+          "say": "如果 f 一直在 x 軸上方，定積分就是那塊區域的面積。",
           "board": [
-            {"do":"write","line":"${{n1:A_-}}\\ge 0$，前面的減號使它算負"},
-            {"do":"underline","term":"n1","label":"正的大小","on":"正的大小"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "$f\\ge0$ 時，它就是區域的面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "虛線 x = a、x = b；f ≥ 0 時定積分 = 藍色面積"
+          ],
+          "say": "圖上，藍色區域就是 f 從 a 到 b 的定積分。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "reg",
+                  "window": [
+                    -0.5,
+                    4.5,
+                    -0.5,
+                    4.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1+x-0.25*x^2+0.5*sin(2*x)",
+                      "color": "blue",
+                      "label": "y = f(x)"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1+x-0.25*x^2+0.5*sin(2*x)",
+                      "from": 1,
+                      "to": 3.5,
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1
+                    },
+                    {
+                      "x": 3.5
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "虛線 x = a、x = b；f ≥ 0 時定積分 = 藍色面積",
+              "color": "violet",
+              "on": "的定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積分變數用什麼字母都一樣",
+            "$\\int_a^b f(x)\\,dx=\\int_a^b f(t)\\,dt$"
+          ],
+          "say": "還有一件小事：積分變數用什麼字母都可以。x 換成 t，量的還是同一塊區域，數字一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積分變數用什麼字母都一樣"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^b f(x)\\,dx=\\int_a^b f(t)\\,dt$",
+              "on": "字母"
+            },
+            {
+              "do": "write",
+              "line": "　所以 $x$、$t$ 叫「啞變數」",
+              "color": "violet",
+              "on": "的還"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "真正的面積",
+      "title": "上方算正，下方算負",
       "beats": [
-        { "show": ["$\\int_a^b|f(x)|\\,dx$"],
-          "note": "把下方那幾塊翻到上方。",
-          "say": "如果要一般說的面積，就加絕對值：把 x 軸下方那幾塊翻上來。",
+        {
+          "show": [
+            "$f$ 跑到 $x$ 軸下方時：那一塊算負的"
+          ],
+          "say": "如果曲線跑到 x 軸下方呢？定積分的規定是：x 軸上方的面積算正，下方的面積算負。",
           "board": [
-            {"do":"write","line":"$\\int_a^b {{a:|f(x)|}}\\,dx$"},
-            {"do":"underline","term":"a","label":"翻到上方","on":"絕對值"}
-          ] },
-        { "show": ["＝上方面積 $+$ 下方面積"],
-          "note": "翻上來就不再抵消。",
-          "say": "翻上來以後全部都是正的，上方跟下方的面積直接相加，不再互相抵消。",
+            {
+              "do": "write",
+              "line": "$f$ 跑到 $x$ 軸下方時：那一塊算負的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_a^b f(x)\\,dx=(\\text{上方面積})-(\\text{下方面積})$"
+          ],
+          "say": "所以定積分等於上方的面積，減掉下方的面積。這叫做有號面積。",
           "board": [
-            {"do":"transform","line":"$\\int_a^b|f(x)|\\,dx = {{s:A_+ + A_-}}$"},
-            {"do":"underline","term":"s","color":"green","label":"不抵消","on":"直接相加"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_a^b f(x)\\,dx=(\\text{上方面積})-(\\text{下方面積})}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "掉下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以不要直接說成「面積」：它可以是負的，也可以是 $0$"
+          ],
+          "say": "因為這樣，定積分不能直接說成面積。面積永遠不是負的，但定積分可以是負的，甚至是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以不要直接說成「面積」：它可以是負的，也可以是 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_{-1}^{2}x\\,dx$"
+          ],
+          "say": "例子：積分從負 1 到 2，x d x。直線 y 等於 x 在 0 的地方穿過 x 軸。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_{-1}^{2}x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍色 +2（算正），紅色 −½（算負）"
+          ],
+          "say": "右邊藍色三角形在上方，底 2 高 2，面積 2。左邊紅色三角形在下方，底 1 高 1，面積 2 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lin",
+                  "window": [
+                    -1.5,
+                    2.5,
+                    -1.5,
+                    2.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x",
+                      "color": "blue",
+                      "label": "y = x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x",
+                      "from": 0,
+                      "to": 2,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x",
+                      "from": -1,
+                      "to": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍色 +2（算正），紅色 −½（算負）",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_{-1}^{2}x\\,dx=2-\\frac12=\\frac32$"
+          ],
+          "say": "上方減下方：2 減 2 分之 1，等於 2 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_{-1}^{2}x\\,dx=2-\\frac12=\\frac32}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　紅色那塊是被扣掉，不是加上去",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "抵消成 $0$",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_{-3}^{3}x\\,dx$"],
-          "note": "左邊三角形在下方，右邊在上方。",
-          "say": "看 y 等於 x，從負三積到三。左邊一個三角形在下方，右邊一個在上方。",
-          "board": [
-            {"do":"write","line":"$\\int_{-3}^{3} x\\,dx$"},
-            {"do":"write","line":"$[-3,0]$ 在下方；$[0,3]$ 在上方","on":"左邊一個"}
-          ] },
-        { "show": ["y = x 在 $[-3,3]$ 的圖"],
-          "say": "畫出來看：y 等於 x，從負三到三。紅色在下方，藍色在上方，兩塊大小剛好一樣。",
-          "board": [
-            {"do":"plot","graph":{"window":[-4,4,-4,4],"curves":[{"expr":"x","domain":[-3,3],"color":"ink"}],"fills":[{"expr":"x","from":-3,"to":0,"color":"red","opacity":0.25},{"expr":"x","from":0,"to":3,"color":"blue","opacity":0.25}]}}
-          ] },
-        { "show": ["$-\\frac{9}{2}+\\frac{9}{2}=0$"],
-          "note": "圖上明明有東西被圍起來。",
-          "say": "兩塊面積都是二分之九，一負一正，加起來是零。積分是零，不代表什麼都沒圍到。",
-          "board": [
-            {"do":"write","line":"${{s:-\\frac{9}{2}+\\frac{9}{2}}}$"},
-            {"do":"underline","term":"s","label":"一負一正","on":"加起來"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{2\\pi}\\sin x\\,dx$ 是多少？"
+          ],
+          "say": "先猜猜看：正弦從 0 積到 2 派。"
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "靠幾何算",
-      "beats": [
-        { "show": ["$\\int_{-1}^{2}x\\,dx$"],
-          "note": "$y=x$ 在 $x=0$ 穿過 $x$ 軸。",
-          "say": "目前能算的，是拼得出幾何形狀的。y 等於 x，從負一到二，在零穿過 x 軸。",
-          "board": [
-            {"do":"write","line":"$\\int_{-1}^{2} x\\,dx$"},
-            {"do":"write","line":"在 ${{z:x=0}}$ 穿過 $x$ 軸","on":"穿過"}
-          ] },
-        { "show": ["$[-1,0]$：在下方，算 $-\\frac{1}{2}$"],
-          "note": "直角三角形，兩股都是 $1$。",
-          "say": "左邊是兩股都是一的直角三角形，面積二分之一，在下方，算負的。",
-          "board": [
-            {"do":"write","line":"$[-1,0]$：$-{{a:\\frac{1}{2}}}$"},
-            {"do":"focus","term":"a","color":"violet","label":"在下方","on":"在下方"}
-          ] },
-        { "show": ["$[0,2]$：在上方，算 $+2$"],
-          "note": "直角三角形，兩股都是 $2$。",
-          "say": "右邊兩股都是二，面積是二，在上方，算正的。",
-          "board": [
-            {"do":"write","line":"$[0,2]$：${{p:+2}}$"},
-            {"do":"focus","term":"p","color":"blue","label":"在上方","on":"在上方"}
-          ] },
-        { "show": ["$\\int x\\,dx$：上方 $-$ 下方","$\\int|x|\\,dx$：上方 $+$ 下方"],
-          "note": "兩個積分用同一張圖，只差下方那塊的正負。",
-          "say": "兩個積分用同一塊圖。沒有絕對值，下方那塊帶負號再加上方；有絕對值，兩塊都用正的面積相加。",
-          "board": [
-            {"do":"write","line":"$\\int x\\,dx$：上方 $-$ 下方"},
-            {"do":"write","line":"$\\int|x|\\,dx$：上方 $+$ 下方","on":"有絕對值#1"}
-          ] }
-      ],
-      "key": "在 $x=0$ 切開，下方那塊帶負號",
       "predict": {
-        "ask": "$\\int_{-1}^{2}x\\,dx$ 與 $\\int_{-1}^{2}|x|\\,dx$ 是？",
+        "ask": "$\\displaystyle\\int_0^{2\\pi}\\sin x\\,dx$ 是多少？",
         "options": [
           {
-            "label": "$\\frac{3}{2}$ 與 $\\frac{5}{2}$",
+            "label": "$0$",
             "correct": true
           },
           {
-            "label": "$\\frac{5}{2}$ 與 $\\frac{5}{2}$",
-            "why": "沒有絕對值時，下方那塊要算負的：$2-\\frac{1}{2}=\\frac{3}{2}$。"
+            "label": "$4$",
+            "why": "這是兩塊面積相加；下方那塊要算負的"
           },
           {
-            "label": "$\\frac{3}{2}$ 與 $\\frac{3}{2}$",
-            "why": "加了絕對值，下方那塊翻上來變正的：$2+\\frac{1}{2}=\\frac{5}{2}$。"
+            "label": "$2\\pi$",
+            "why": "區間長度是 $2\\pi$，但被積函數不是 $1$"
+          },
+          {
+            "label": "$-4$",
+            "why": "上方那塊算正，不會整個變負"
           }
         ]
       }
     },
     {
-      "title": "半圓",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$"],
-          "say": "這一個看起來很難，但先認出它是什麼形狀。",
+        {
+          "show": [
+            "兩塊大小一樣，一正一負"
+          ],
+          "say": "圖上，0 到派在上方，派到 2 派在下方，形狀完全一樣，一正一負剛好抵消，所以是 0。",
           "board": [
-            {"do":"write","line":"$\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$"}
-          ] },
-        { "show": ["$x^2+y^2=4$，$y\\ge 0$"],
-          "note": "半徑 $2$ 的圓的上半部。",
-          "say": "兩邊平方，得到 x 平方加 y 平方等於四，而且 y 大於等於零：半徑二的上半圓。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sn",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.4,
+                    1.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "blue",
+                      "label": "y = sin x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)",
+                      "from": 0,
+                      "to": "pi",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(x)",
+                      "from": "pi",
+                      "to": "2*pi",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩塊大小一樣，一正一負",
+              "color": "violet",
+              "on": "形狀"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定積分是 $0$，不代表沒有面積"
+          ],
+          "say": "定積分是 0，不代表曲線和 x 軸之間沒有面積，只是正負抵消了。",
           "board": [
-            {"do":"write","line":"$y=\\sqrt{4-x^2}$"},
-            {"do":"transform","line":"${{c:x^2+y^2=4}}$，$y\\ge 0$","on":"得到"},
-            {"do":"underline","term":"c","label":"半徑 2","on":"半徑二"}
-          ] },
-        { "show": ["$\\frac{1}{2}\\cdot\\pi\\cdot 2^2=2\\pi$"],
-          "note": "整個在 $x$ 軸上方，算正的。",
-          "say": "負二到二剛好是整個上半圓，全部在上方。面積是圓的一半，二 pi。",
+            {
+              "do": "write",
+              "line": "定積分是 $0$，不代表沒有面積",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "真正的面積：加絕對值",
+      "beats": [
+        {
+          "show": [
+            "要「真正的面積」，就把下方翻上來：",
+            "$\\text{面積}=\\int_a^b|f(x)|\\,dx$"
+          ],
+          "say": "那真正的面積怎麼算？把下方的部分翻到上方來，也就是對 f 取絕對值，再積分。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{2}\\cdot\\pi\\cdot 2^2={{r:2\\pi}}$","on":"剛好是"},
-            {"do":"box","term":"r","color":"green","on":"圓的一半"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "要「真正的面積」，就把下方翻上來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\text{面積}=\\int_a^b|f(x)|\\,dx}}$",
+              "on": "方的"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "取絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|f|$ 永遠 $\\ge0$，所以每一塊都算正"
+          ],
+          "say": "絕對值永遠不是負的，所以每一塊都算正的面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|f|$ 永遠 $\\ge0$，所以每一塊都算正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_{-1}^{2}|x|\\,dx=2+\\frac12=\\frac52$"
+          ],
+          "say": "剛才的例子：x 的絕對值從負 1 積到 2。左邊的三角形翻上來，變成加 2 分之 1。總共 2 分之 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_{-1}^{2}|x|\\,dx=2+\\frac12=\\frac52$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對照：$\\displaystyle\\int_{-1}^{2}x\\,dx=\\frac32$"
+          ],
+          "say": "跟剛才的 2 分之 3 不一樣。差了兩倍的紅色三角形：一次是從減變成零，一次是從零變成加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對照：$\\displaystyle\\int_{-1}^{2}x\\,dx=\\frac32$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊翻上來，兩塊都算正"
+          ],
+          "say": "圖上，原本在下方的紅色三角形，翻到上面變成藍色，兩塊都是正的。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "absx",
+                  "window": [
+                    -1.5,
+                    2.5,
+                    -0.5,
+                    2.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "abs(x)",
+                      "color": "blue",
+                      "label": "y = ｜x｜"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "abs(x)",
+                      "from": -1,
+                      "to": 2,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "左邊翻上來，兩塊都算正",
+              "color": "violet",
+              "on": "翻到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_a^b|f(x)|\\,dx\\ \\ge\\ \\Big|\\int_a^b f(x)\\,dx\\Big|$"
+          ],
+          "say": "一般來說，絕對值的積分，一定大於或等於積分的絕對值；等號在 f 不變號的時候成立。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^b|f(x)|\\,dx\\ \\ge\\ \\Big|\\int_a^b f(x)\\,dx\\Big|$"
+            },
+            {
+              "do": "write",
+              "line": "　等號成立：$f$ 在 $[a,b]$ 上不變號",
+              "color": "violet",
+              "on": "分的"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "位移與總路程",
       "beats": [
-        { "show": ["$v(t)=2-t$，$0\\le t\\le 4$"],
-          "note": "$v$ 在 $t=2$ 由正變負。",
-          "say": "速度是二減 t，走四秒。t 等於二的時候速度由正變負：前兩秒往前，後兩秒往回。",
+        {
+          "show": [
+            "速度 $v(t)=2-t$（公尺／秒），$0\\le t\\le4$"
+          ],
+          "say": "物理上，這兩個量有很清楚的意思。一個物體的速度是 2 減 t，單位是公尺每秒，看 t 從 0 到 4 秒。",
           "board": [
-            {"do":"write","line":"$v(t)=2-t$，$0\\le t\\le 4$"},
-            {"do":"write","line":"$t=2$：$v$ 由正變負","on":"t 等於二"}
-          ] },
-        { "show": ["$[0,2]$：$+2$；$[2,4]$：$-2$"],
-          "note": "兩個三角形都是底 $2$、高 $2$。",
-          "say": "兩個三角形面積都是二，一個在上方，一個在下方。",
+            {
+              "do": "write",
+              "line": "速度 $v(t)=2-t$（公尺／秒），$0\\le t\\le4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $0<t<2$：$v>0$，往前走",
+            "• $2<t<4$：$v<0$，往後走"
+          ],
+          "say": "前 2 秒速度是正的，往前走；後 2 秒速度是負的，往後退。",
           "board": [
-            {"do":"write","line":"$[0,2]$：${{p:+2}}$；$[2,4]$：${{m:-2}}$"},
-            {"do":"focus","term":"p","color":"blue","on":"在上方"},
-            {"do":"focus","term":"m","color":"violet","on":"在下方"}
-          ] },
-        { "show": ["三角形面積 $=\\frac{1}{2}\\cdot 2\\cdot 2=2$"],
-          "say": "面積為什麼是二？三角形是二分之一乘底乘高，底是二、高是二，乘起來就是二。",
+            {
+              "do": "write",
+              "line": "• $0<t<2$：$v>0$，往前走"
+            },
+            {
+              "do": "write",
+              "line": "• $2<t<4$：$v<0$，往後走",
+              "on": "秒速#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "位移 $=\\displaystyle\\int_0^4 v(t)\\,dt=2-2=0$"
+          ],
+          "say": "位移是速度的定積分，往前算正、往後算負：前 2 秒的三角形面積 2，後 2 秒也是 2 但算負的，位移是 0。它回到了原點。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{2}\\cdot 2\\cdot 2=2$"}
-          ] },
-        { "show": ["$\\int v\\,dt$ 是位移，$\\int|v|\\,dt$ 是總路程"],
-          "say": "速度的積分是位移，往回走的要扣掉；加絕對值才是總路程，往回走的也算。",
+            {
+              "do": "write",
+              "line": "位移 $=\\displaystyle\\int_0^4 v(t)\\,dt=2-2=0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "總路程 $=\\displaystyle\\int_0^4 |v(t)|\\,dt=2+2=4$"
+          ],
+          "say": "總路程是速率的積分，也就是速度的絕對值：往前 2 公尺加往後 2 公尺，一共走了 4 公尺。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int v\\,dt$：位移","on":"積分"},
-            {"do":"write","line":"$\\int|v|\\,dt$：總路程","on":"加絕對值"}
-          ] },
-        { "show": ["位移：兩塊帶正負號相加","總路程：兩塊都取正的面積相加"],
-          "say": "位移把兩塊帶著正負號相加。總路程是兩塊都取正的面積，再相加。",
+            {
+              "do": "write",
+              "line": "總路程 $=\\displaystyle\\int_0^4 |v(t)|\\,dt=2+2=4$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "v(t) = 2 − t：位移 0 公尺，總路程 4 公尺"
+          ],
+          "say": "圖上，藍色是往前的 2 公尺，紅色是往後的 2 公尺。",
           "board": [
-            {"do":"write","line":"位移：${{n2:\\int v\\,dt}}$ 帶正負號相加"},
-            {"do":"write","line":"總路程：${{n3:\\int|v|\\,dt}}$ 都取正再加","on":"總路程"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "vel",
+                  "window": [
+                    -0.3,
+                    4.5,
+                    -2.5,
+                    2.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2-x",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "2-x",
+                      "from": 0,
+                      "to": 2,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "2-x",
+                      "from": 2,
+                      "to": 4,
+                      "color": "red"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 0.6,
+                      "y": 0.8,
+                      "text": "+2"
+                    },
+                    {
+                      "x": 3.6,
+                      "y": -1.2,
+                      "text": "−2"
+                    }
+                  ],
+                  "ylabel": "v",
+                  "xlabel": "t",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "v(t) = 2 − t：位移 0 公尺，總路程 4 公尺",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        }
       ],
-      "key": "在 $v$ 變號處切開，分段算面積",
-      "predict": {
-        "ask": "位移與總路程是？",
-        "options": [
-          {
-            "label": "位移 $0$ 公尺，總路程 $4$ 公尺",
-            "correct": true
-          },
-          {
-            "label": "位移 $4$ 公尺，總路程 $4$ 公尺",
-            "why": "位移是 $\\int_0^4 v\\,dt$，往回走的要扣掉：$2-2=0$。"
-          },
-          {
-            "label": "位移 $0$ 公尺，總路程 $0$ 公尺",
-            "why": "總路程是 $\\int_0^4|v|\\,dt$，往回走的也算：$2+2=4$。"
-          }
-        ]
-      }
+      "check": 0
+    },
+    {
+      "title": "目前能算的：靠幾何",
+      "beats": [
+        {
+          "show": [
+            "還沒有計算工具，但圖形是直線、圓弧時，可以用幾何面積"
+          ],
+          "say": "現在我們還沒有計算定積分的一般方法，那要等微積分基本定理。但只要圖形是直線或圓弧，就可以用幾何面積算出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "還沒有計算工具，但圖形是直線、圓弧時，可以用幾何面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$"
+          ],
+          "say": "例子：根號 4 減 x 平方，從負 2 積到 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\sqrt{4-x^2}$：$y\\ge0$ 且 $x^2+y^2=4$，是上半圓，半徑 $2$"
+          ],
+          "say": "y 等於根號 4 減 x 平方，兩邊平方得 x 平方加 y 平方等於 4，而且 y 不是負的。所以它是半徑 2 的上半圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=\\sqrt{4-x^2}$：$y\\ge0$ 且 $x^2+y^2=4$，是上半圓，半徑 $2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx=\\frac12\\pi\\cdot2^2=2\\pi$"
+          ],
+          "say": "整塊都在上方，定積分就是半圓面積：2 分之 1 乘派乘 2 平方，等於 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_{-2}^{2}\\sqrt{4-x^2}\\,dx=\\frac12\\pi\\cdot2^2=2\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "乘派"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑 2 的上半圓，面積 2π"
+          ],
+          "say": "圖上，就是一個半圓。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "semi",
+                  "window": [
+                    -2.6,
+                    2.6,
+                    -0.6,
+                    2.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(4-x^2)",
+                      "color": "blue",
+                      "label": "y = √(4 − x²)",
+                      "domain": [
+                        -2,
+                        2
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sqrt(4-x^2)",
+                      "from": -2,
+                      "to": 2,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "半徑 2 的上半圓，面積 2π",
+              "color": "violet",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^3(2x+1)\\,dx$：梯形",
+            "$\\frac{(1+7)\\cdot3}{2}=12$"
+          ],
+          "say": "再一個：2x 加 1，從 0 積到 3。圖形是梯形：左邊高 1，右邊高 7，寬 3。上底加下底乘高除以 2，等於 12。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^3(2x+1)\\,dx$：梯形"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{(1+7)\\cdot3}{2}=12}}$",
+              "on": "積到"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "右邊"
+            },
+            {
+              "do": "write",
+              "line": "　$x=0$ 時高 $1$，$x=3$ 時高 $2\\cdot3+1=7$",
+              "color": "violet",
+              "on": "下底"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_{0}^{3}\\sqrt{9-x^2}\\,dx=$？"
+          ],
+          "say": "試一題：根號 9 減 x 平方，從 0 積到 3。先想它是什麼圖形。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_{0}^{3}(x-1)\\,dx=$？"
+          ],
+          "say": "再一題：x 減 1，從 0 積到 3。先找它在哪裡穿過 x 軸。"
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\int_a^b f(x)\\,dx$：有號面積，結果是一個數",
+            "• $x$ 軸上方算正，下方算負；可以是負的或 $0$"
+          ],
+          "say": "整理一下：定積分是有號面積，上方算正、下方算負，所以不能直接叫面積；真正的面積要加絕對值；速度積分是位移，速度絕對值積分是總路程；目前遇到直線和圓弧，就用幾何面積算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\int_a^b f(x)\\,dx$：有號面積，結果是一個數"
+            },
+            {
+              "do": "write",
+              "line": "• $x$ 軸上方算正，下方算負；可以是負的或 $0$",
+              "on": "算正"
+            },
+            {
+              "do": "write",
+              "line": "• 真正的面積：$\\int_a^b|f(x)|\\,dx$",
+              "on": "真正"
+            },
+            {
+              "do": "write",
+              "line": "• 速度的積分是位移；速率 $|v|$ 的積分是總路程",
+              "on": "是位"
+            },
+            {
+              "do": "write",
+              "line": "• 直線、圓弧圍成的：用三角形、梯形、圓的面積算",
+              "on": "前遇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：積分性質"
+          ],
+          "say": "下一課，看定積分有哪些好用的性質。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：積分性質"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["definite-integral", "area", "graph-reading"],
-    "fine": ["signed-area-meaning", "signed-area-geometry", "signed-area-cancellation", "signed-area-vs-area", "signed-area-displacement"]
+    "coarse": [
+      "definite-integral",
+      "area",
+      "graph-reading"
+    ],
+    "fine": [
+      "signed-area-meaning",
+      "signed-area-geometry",
+      "signed-area-cancellation",
+      "signed-area-vs-area",
+      "signed-area-displacement"
+    ]
   },
   "practice": [
-    { "id": "gx-013", "core": true, "trains": "signed-area-geometry" },
-    { "id": "gp-010", "core": true, "trains": "signed-area-geometry" },
-    { "id": "gx-014", "core": true, "trains": "signed-area-cancellation", "note": "$g(4)$ 就是 $\\int_0^4 f(t)\\,dt$：上方算正、下方算負。" },
-    { "id": "gx-015", "core": true, "trains": "signed-area-vs-area" },
-    { "id": "gp-007", "core": true, "trains": "signed-area-vs-area" },
-    { "id": "gx-016", "core": true, "trains": "signed-area-displacement" },
-    { "id": "cg-4a-014", "core": true, "trains": "signed-area-meaning" },
-    { "id": "gx-017", "trains": "signed-area-displacement" },
-    { "id": "cg-4a-015", "trains": "signed-area-meaning" },
-    { "id": "int-047", "challenge": true, "trains": "signed-area-geometry", "note": "挑戰：先認出曲線是什麼圖形，就不需要任何積分技巧。" }
+    {
+      "id": "gx-013",
+      "core": true,
+      "trains": "signed-area-geometry"
+    },
+    {
+      "id": "gp-010",
+      "core": true,
+      "trains": "signed-area-geometry"
+    },
+    {
+      "id": "gx-014",
+      "core": true,
+      "trains": "signed-area-cancellation",
+      "note": "$g(4)$ 就是 $\\int_0^4 f(t)\\,dt$：上方算正、下方算負。"
+    },
+    {
+      "id": "gx-015",
+      "core": true,
+      "trains": "signed-area-vs-area"
+    },
+    {
+      "id": "gp-007",
+      "core": true,
+      "trains": "signed-area-vs-area"
+    },
+    {
+      "id": "gx-016",
+      "core": true,
+      "trains": "signed-area-displacement"
+    },
+    {
+      "id": "cg-4a-014",
+      "core": true,
+      "trains": "signed-area-meaning"
+    },
+    {
+      "id": "gx-017",
+      "trains": "signed-area-displacement"
+    },
+    {
+      "id": "cg-4a-015",
+      "trains": "signed-area-meaning"
+    },
+    {
+      "id": "int-047",
+      "challenge": true,
+      "trains": "signed-area-geometry",
+      "note": "挑戰：先認出曲線是什麼圖形，就不需要任何積分技巧。"
+    }
   ],
   "gaps": []
 }

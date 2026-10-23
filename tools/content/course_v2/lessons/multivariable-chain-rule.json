@@ -1,61 +1,139 @@
 {
   "id": "multivariable-chain-rule",
   "title": "多變數連鎖律",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["chain-rule", "partial-derivatives", "total-differential"],
-  "next": ["gradient"],
-  "related": ["implicit-differentiation"],
+  "prerequisites": [
+    "chain-rule",
+    "partial-derivatives",
+    "total-differential"
+  ],
+  "next": [
+    "gradient"
+  ],
+  "related": [
+    "implicit-differentiation"
+  ],
   "objectives": [
-    "$z=f(x,y)$、$x$、$y$ 都是 $t$ 的函數時，寫出 $\\frac{dz}{dt}=f_x\\,x'(t)+f_y\\,y'(t)$。",
-    "$x$、$y$ 是 $s$、$t$ 兩個變數的函數時，用樹狀圖寫出 $\\frac{\\partial z}{\\partial s}$、$\\frac{\\partial z}{\\partial t}$。",
-    "用 $F(x,y)=0$ 推出隱函數的 $\\frac{dy}{dx}=-\\frac{F_x}{F_y}$。"
+    "$z=f(x,y)$、$x$、$y$ 都是 $t$ 的函數時，寫出 $\\frac{dz}{dt}=f_x\\,x'(t)+f_y\\,y'(t)$",
+    "$x$、$y$ 是 $s$、$t$ 兩個變數的函數時，用樹狀圖寫出 $\\frac{\\partial z}{\\partial s}$、$\\frac{\\partial z}{\\partial t}$",
+    "用 $F(x,y)=0$ 推出隱函數的 $\\frac{dy}{dx}=-\\frac{F_x}{F_y}$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 一個量透過兩條路受影響",
+      "heading": "① 一個量，兩條路",
       "body": [
-        "溫度 $z=f(x,y)$ 隨位置改變，你沿一條路走，位置 $(x(t),y(t))$ 隨時間改變。溫度隨時間變多快？",
-        "$t$ 動一點 $dt$，$x$ 動 $x'\\,dt$、$y$ 動 $y'\\,dt$。把這兩個變動放進全微分 $dz=f_x\\,dx+f_y\\,dy$："
+        "$z=f(x,y)$，而 $x=x(t)$、$y=y(t)$",
+        "$t$ 動 → $x$、$y$ 都動 → $z$ 動：兩條路",
+        "全微分 $dz=f_x\\,dx+f_y\\,dy$，兩邊除以 $dt$：",
+        "只有一條路時就是 2.11 的 $\\frac{dz}{dt}=\\frac{dz}{dx}\\frac{dx}{dt}$",
+        "例：$z=x^2y$，$x=t^2$，$y=e^t$",
+        "最後把 $x,y$ 換回 $t$：",
+        "驗算：$z=t^4e^t$ 直接微分，也是 $4t^3e^t+t^4e^t$"
       ],
-      "tex": ["\\frac{dz}{dt}=\\frac{\\partial f}{\\partial x}\\frac{dx}{dt}+\\frac{\\partial f}{\\partial y}\\frac{dy}{dt}"],
-      "collapsible": false
+      "tex": [
+        "\\frac{dz}{dt}=\\frac{\\partial z}{\\partial x}\\frac{dx}{dt}+\\frac{\\partial z}{\\partial y}\\frac{dy}{dt}",
+        "\\frac{\\partial z}{\\partial x}=2xy,\\quad\\frac{\\partial z}{\\partial y}=x^2,\\quad\\frac{dx}{dt}=2t,\\quad\\frac{dy}{dt}=e^t",
+        "\\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t",
+        "\\frac{dz}{dt}=2t^2e^t\\cdot2t+t^4e^t=(4t^3+t^4)\\,e^t"
+      ]
     },
     {
-      "heading": "② 樹狀圖：每條路乘起來，再把路加起來",
+      "heading": "① 試一題",
       "body": [
-        "畫一棵樹：$z$ 在上面，下一層是 $x$、$y$，最底下是 $t$。從 $z$ 走到 $t$ 有兩條路：$z\\to x\\to t$ 與 $z\\to y\\to t$。每條路把經過的導數相乘，再把所有路相加。",
-        "如果 $x=x(s,t)$、$y=y(s,t)$，最底層就有 $s$、$t$ 兩個點。求 $\\frac{\\partial z}{\\partial s}$ 只走到 $s$ 的路："
-      ],
-      "tex": ["\\frac{\\partial z}{\\partial s}=f_x\\,\\frac{\\partial x}{\\partial s}+f_y\\,\\frac{\\partial y}{\\partial s}"],
-      "collapsible": false
+        "為什麼是「加」？",
+        "$x$ 造成的變化、$y$ 造成的變化，同時發生，各算各的再合起來",
+        "這正是全微分 $df=f_x\\,dx+f_y\\,dy$ 的意思"
+      ]
     },
     {
-      "heading": "③ 條件：$f$ 要可微",
+      "heading": "② 樹狀圖",
       "body": [
-        "上面用到「$dz=f_x\\,dx+f_y\\,dy$ 是好近似」，所以需要 $f$ 在該點可微（〈全微分〉），$x$、$y$ 對 $t$ 可微。只有偏導數存在是不夠的。常見的多項式、指數、三角組合都滿足。",
-        "單變數的連鎖律只有一條路；多變數多出來的，就是「把每條路的貢獻加起來」這一步。"
+        "規則：每條路上的導數乘起來，再把所有路加起來",
+        "$x=x(s,t)$、$y=y(s,t)$：最底下有兩個變數",
+        "$x$ 同時依賴 $s$、$t$，所以寫 $\\partial$；上一個例子 $z$ 最後只依賴 $t$，才寫 $d$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial z}{\\partial s}=\\frac{\\partial z}{\\partial x}\\frac{\\partial x}{\\partial s}+\\frac{\\partial z}{\\partial y}\\frac{\\partial y}{\\partial s}"
+      ]
     },
     {
-      "heading": "為什麼可微就夠（證明）",
+      "heading": "② 例：兩個參數",
       "body": [
-        "$t$ 變 $\\Delta t$ 時，$x$、$y$ 變 $\\Delta x$、$\\Delta y$。$f$ 可微，所以 $\\Delta z=f_x\\Delta x+f_y\\Delta y+\\varepsilon\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$，其中 $(\\Delta x,\\Delta y)\\to(0,0)$ 時 $\\varepsilon\\to0$。",
-        "兩邊除以 $\\Delta t$：$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}\\pm\\varepsilon\\cdot\\sqrt{\\left(\\frac{\\Delta x}{\\Delta t}\\right)^2+\\left(\\frac{\\Delta y}{\\Delta t}\\right)^2}$。",
-        "$\\Delta t\\to0$ 時，$x$、$y$ 可微所以連續，$\\Delta x$、$\\Delta y\\to0$，因此 $\\varepsilon\\to0$；而 $\\sqrt{\\left(\\frac{\\Delta x}{\\Delta t}\\right)^2+\\left(\\frac{\\Delta y}{\\Delta t}\\right)^2}\\to\\sqrt{x'^2+y'^2}$ 是有限數。最後一項 $\\to0$，剩下 $\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$。"
+        "$z=x^2y+y^3$，$x=st$，$y=s+t$；求 $s=1$、$t=2$ 時的 $\\dfrac{\\partial z}{\\partial s}$、$\\dfrac{\\partial z}{\\partial t}$",
+        "先算這一點的 $x=2$、$y=3$",
+        "數值驗算：把 $z$ 寫成 $s,t$ 的函數，在 $(1,2)$ 差分，得 $55.000$、$43.000$",
+        "技巧：先代數字再相乘，不用把 $z$ 整個寫成 $s,t$ 的式子"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{\\partial z}{\\partial x}=2xy=12,\\qquad\\frac{\\partial z}{\\partial y}=x^2+3y^2=31",
+        "\\frac{\\partial x}{\\partial s}=t=2,\\ \\ \\frac{\\partial x}{\\partial t}=s=1,\\ \\ \\frac{\\partial y}{\\partial s}=\\frac{\\partial y}{\\partial t}=1",
+        "\\frac{\\partial z}{\\partial s}=12\\cdot2+31\\cdot1=55",
+        "\\frac{\\partial z}{\\partial t}=12\\cdot1+31\\cdot1=43"
+      ]
     },
     {
-      "heading": "④ 應用：隱函數微分的公式",
+      "heading": "③ 條件：f 要可微",
       "body": [
-        "曲線 $F(x,y)=0$ 上，$y$ 是 $x$ 的函數。把 $F(x,y(x))=0$ 對 $x$ 微分，用連鎖律：$F_x\\cdot1+F_y\\cdot y'=0$。所以只要 $F_y\\ne 0$：",
-        "這跟〈隱函數微分〉的結果一樣，只是一次寫成公式。三個變數的 $F(x,y,z)=0$ 也一樣：$z_x=-\\frac{F_x}{F_z}$。"
+        "推導用了全微分 → 需要 $f$ 可微",
+        "證明：$x,y$ 在 $t$ 可導，$f$ 在 $(x(t),y(t))$ 可微。由可微的定義：",
+        "除以 $\\Delta t$：",
+        "令 $\\Delta t\\to0$：",
+        "• $\\dfrac{\\Delta x}{\\Delta t}\\to x'(t)$，$\\dfrac{\\Delta y}{\\Delta t}\\to y'(t)$",
+        "• $x,y$ 可導 ⇒ 連續 ⇒ $\\Delta x,\\Delta y\\to0$ ⇒ $\\varepsilon_1,\\varepsilon_2\\to0$",
+        "$\\Delta x=\\Delta y=0$ 時令 $\\varepsilon_1=\\varepsilon_2=0$，式子照樣成立"
       ],
-      "tex": ["\\frac{dy}{dx}=-\\frac{F_x}{F_y}"],
-      "collapsible": false
+      "tex": [
+        "\\Delta z=f_x\\Delta x+f_y\\Delta y+\\varepsilon_1\\Delta x+\\varepsilon_2\\Delta y",
+        "\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}+\\varepsilon_1\\frac{\\Delta x}{\\Delta t}+\\varepsilon_2\\frac{\\Delta y}{\\Delta t}",
+        "\\frac{dz}{dt}=f_x\\,x'(t)+f_y\\,y'(t)\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "③ 只有偏導數不夠",
+      "body": [
+        "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$",
+        "走 $x=t$、$y=t$：公式給 $0\\cdot1+0\\cdot1=0$",
+        "$z=\\dfrac t2$，導數 $\\dfrac12\\ne0$：$f$ 在原點不可微，連鎖律失效",
+        "常見的函數偏導數連續 → 可微 → 放心用"
+      ],
+      "tex": [
+        "f(x,y)=\\frac{x^2y}{x^2+y^2},\\quad f(0,0)=0"
+      ]
+    },
+    {
+      "heading": "④ 隱函數微分的公式",
+      "body": [
+        "$F(x,y)=0$ 定義了 $y=y(x)$",
+        "$z=F(x,\\,y(x))\\equiv0$：$x$ 直接影響，也透過 $y$ 影響",
+        "例：$x^3+y^3=6xy$，$F=x^3+y^3-6xy$",
+        "$(3,3)$：$\\dfrac{6-9}{9-6}=-1$"
+      ],
+      "tex": [
+        "\\frac{dz}{dx}=F_x\\cdot1+F_y\\cdot\\frac{dy}{dx}=0",
+        "\\frac{dy}{dx}=-\\frac{F_x}{F_y}\\qquad(F_y\\ne0)",
+        "F_x=3x^2-6y,\\qquad F_y=3y^2-6x",
+        "\\frac{dy}{dx}=-\\frac{3x^2-6y}{3y^2-6x}=\\frac{2y-x^2}{y^2-2x}"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "跟以前的隱函數微分一樣，只是一步到位",
+        "圓：$-\\frac xy$，在 $(3,4)$ 切線垂直於半徑（半徑斜率 $\\frac43$）"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\dfrac{dz}{dt}=f_x\\dfrac{dx}{dt}+f_y\\dfrac{dy}{dt}$：兩條路",
+        "• 樹狀圖：每條路乘起來，再把路加起來",
+        "• 條件：$f$ 可微（偏導數存在不夠）",
+        "• 隱函數：$\\dfrac{dy}{dx}=-\\dfrac{F_x}{F_y}$",
+        "下一課：梯度，把 $f_x$、$f_y$ 排成一支向量"
+      ]
     }
   ],
   "workedExamples": [
@@ -107,312 +185,831 @@
   ],
   "checks": [
     {
-      "ask": "$z=f(x,y)$，$x=\\cos t$，$y=\\sin t$，$\\frac{dz}{dt}$ 是？",
+      "ask": "$z=xy$，$x=\\cos t$，$y=\\sin t$。$\\dfrac{dz}{dt}=$？",
       "options": [
-        { "label": "$-f_x\\sin t+f_y\\cos t$", "correct": true },
-        { "label": "$f_x+f_y$", "why": "每條路還要乘上內層導數：$(\\cos t)'=-\\sin t$，$(\\sin t)'=\\cos t$。" },
-        { "label": "$f_x\\cos t+f_y\\sin t$", "why": "乘的是 $x$、$y$ 本身，不是它們對 $t$ 的導數。" }
+        {
+          "label": "$\\cos^2t-\\sin^2t$",
+          "correct": true
+        },
+        {
+          "label": "$-\\sin^2t$",
+          "why": "只走了 $x$ 那一條路，漏了 $y$ 那一條"
+        },
+        {
+          "label": "$-\\sin t\\cos t$",
+          "why": "把 $\\frac{dx}{dt}$、$\\frac{dy}{dt}$ 直接相乘；要先乘 $z$ 的偏導數，再相加"
+        },
+        {
+          "label": "$1$",
+          "why": "$\\cos t$ 微分是 $-\\sin t$，漏了負號"
+        }
       ]
     },
     {
-      "ask": "$z=xy$，$x=t^2$，$y=t^3$，$\\frac{dz}{dt}$ 是？",
+      "ask": "用公式求 $x^2+y^2=25$ 在 $(3,4)$ 的 $\\dfrac{dy}{dx}$",
       "options": [
-        { "label": "$5t^4$", "correct": true },
-        { "label": "$6t^3$", "why": "那是把兩個內層導數 $2t$、$3t^2$ 相乘；連鎖律是 $y\\cdot2t+x\\cdot3t^2=2t^4+3t^4$。" },
-        { "label": "$t^5$", "why": "那是 $z$ 本身，還沒微分。" }
-      ]
-    },
-    {
-      "ask": "$z=f(x,y)$，$x=r\\cos\\theta$，$y=r\\sin\\theta$，$\\frac{\\partial z}{\\partial r}$ 是？",
-      "options": [
-        { "label": "$f_x\\cos\\theta+f_y\\sin\\theta$", "correct": true },
-        { "label": "$-f_x\\,r\\sin\\theta+f_y\\,r\\cos\\theta$", "why": "那是 $\\frac{\\partial z}{\\partial\\theta}$：你對 $\\theta$ 微分了內層，而題目問的是 $r$。" },
-        { "label": "$f_x+f_y$", "why": "漏了 $\\frac{\\partial x}{\\partial r}=\\cos\\theta$、$\\frac{\\partial y}{\\partial r}=\\sin\\theta$。" }
-      ]
-    },
-    {
-      "ask": "$x^2+y^2=25$ 上，用 $\\frac{dy}{dx}=-\\frac{F_x}{F_y}$ 得？",
-      "options": [
-        { "label": "$-\\frac{x}{y}$", "correct": true },
-        { "label": "$\\frac{x}{y}$", "why": "公式前面有負號：$F_x+F_y\\,y'=0$ 移項才得到 $y'$。" },
-        { "label": "$-\\frac{y}{x}$", "why": "分子分母放反了：$F_x=2x$ 在分子，$F_y=2y$ 在分母。" }
+        {
+          "label": "$-\\dfrac34$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac34$",
+          "why": "漏了公式前面的負號"
+        },
+        {
+          "label": "$-\\dfrac43$",
+          "why": "分子分母放反了：$F_x$ 在分子"
+        },
+        {
+          "label": "$-\\dfrac{3}{25}$",
+          "why": "分母是 $F_y=2y$，不是 $25$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "兩條路受影響",
+      "title": "一個量，兩條路",
       "beats": [
-        { "show": ["$z=f(x,y)$，位置 $(x(t),y(t))$"],
-          "note": "溫度隨位置變，位置隨時間變。",
-          "say": "溫度隨位置改變，你沿一條路走，位置又隨時間改變。溫度隨時間變多快？",
+        {
+          "show": [
+            "$z=f(x,y)$，而 $x=x(t)$、$y=y(t)$"
+          ],
+          "say": "現在 z 是 x 和 y 的函數，而 x 和 y 又都跟著 t 變。t 動一點點，z 會怎麼變？",
           "board": [
-            {"do":"write","line":"$z=f(x,y)$，位置 $(x(t),y(t))$"}
-          ] },
-        { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$"],
-          "say": "時間動一點點，x 跟著動 x prime 乘 d t，y 也跟著動 y prime 乘 d t。",
+            {
+              "do": "write",
+              "line": "$z=f(x,y)$，而 $x=x(t)$、$y=y(t)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t$ 動 → $x$、$y$ 都動 → $z$ 動：兩條路"
+          ],
+          "say": "t 一動，x 和 y 都會動，兩個都會帶動 z。所以 t 影響 z 有兩條路。",
           "board": [
-            {"do":"write","line":"${{a:dx=x'\\,dt}},\\quad {{b:dy=y'\\,dt}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"underline","term":"a","color":"blue","on":"x 跟著動"},
-            {"do":"underline","term":"b","color":"violet","on":"y 也跟著動"}
-          ] },
-        { "show": ["$dz\\approx f_x\\,dx+f_y\\,dy$"],
-          "note": "各走一步，貢獻是斜率乘位移。",
-          "say": "全微分的想法：x 動 d x，z 大約變 f x 乘 d x；y 動 d y，z 再大約變 f y 乘 d y。加起來就是 d z。",
+            {
+              "do": "write",
+              "line": "$t$ 動 → $x$、$y$ 都動 → $z$ 動：兩條路"
+            }
+          ]
+        },
+        {
+          "show": [
+            "全微分 $dz=f_x\\,dx+f_y\\,dy$，兩邊除以 $dt$：",
+            "$\\frac{dz}{dt}=\\frac{\\partial z}{\\partial x}\\frac{dx}{dt}+\\frac{\\partial z}{\\partial y}\\frac{dy}{dt}$"
+          ],
+          "say": "用上上一課的全微分：d z 等於 f x d x 加 f y d y。兩邊除以 d t，就得到多變數的連鎖律：兩條路各自乘起來，再相加。",
           "board": [
-            {"do":"write","line":"$dz\\approx {{m1:f_x\\,dx}}+{{m2:f_y\\,dy}}$"},
-            {"do":"underline","term":"m1","color":"blue","on":"大約變#1"},
-            {"do":"underline","term":"m2","color":"violet","on":"大約變#2"}
-          ] },
-        { "show": ["$\\frac{dz}{dt}=f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}$"],
-          "note": "放進全微分 $dz=f_x\\,dx+f_y\\,dy$。",
-          "say": "把這兩個變動放進全微分，再除以 d t：每個偏導數乘上它自己那個變數的變化率，加起來。",
+            {
+              "do": "write",
+              "line": "全微分 $dz=f_x\\,dx+f_y\\,dy$，兩邊除以 $dt$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{dz}{dt}=\\frac{\\partial z}{\\partial x}\\frac{dx}{dt}+\\frac{\\partial z}{\\partial y}\\frac{dy}{dt}}}$",
+              "on": "兩邊"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "邊除"
+            },
+            {
+              "do": "write",
+              "line": "　只有一條路時就是 2.11 的 $\\frac{dz}{dt}=\\frac{dz}{dx}\\frac{dx}{dt}$",
+              "color": "violet",
+              "on": "連鎖"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$z=x^2y$，$x=t^2$，$y=e^t$"
+          ],
+          "say": "例子：z 等於 x 平方 y，x 是 t 平方，y 是 e 的 t 次方。",
           "board": [
-            {"do":"write","line":"$dz=f_x\\,dx+f_y\\,dy$"},
-            {"do":"transform","line":"$\\frac{dz}{dt}={{r:f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}}}$","on":"除以"},
-            {"do":"box","term":"r","color":"green","on":"自己那個"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$z=x^2y$，$x=t^2$，$y=e^t$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial z}{\\partial x}=2xy,\\quad\\frac{\\partial z}{\\partial y}=x^2,\\quad\\frac{dx}{dt}=2t,\\quad\\frac{dy}{dt}=e^t$"
+          ],
+          "say": "四個導數先算好：z 對 x 是 2 x y，z 對 y 是 x 平方；x 對 t 是 2t，y 對 t 是 e 的 t 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial z}{\\partial x}=2xy,\\quad\\frac{\\partial z}{\\partial y}=x^2,\\quad\\frac{dx}{dt}=2t,\\quad\\frac{dy}{dt}=e^t$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t$"
+          ],
+          "say": "套公式：2 x y 乘 2t，加上 x 平方乘 e 的 t 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最後把 $x,y$ 換回 $t$：",
+            "$\\frac{dz}{dt}=2t^2e^t\\cdot2t+t^4e^t=(4t^3+t^4)\\,e^t$"
+          ],
+          "say": "最後把 x、y 都換回 t 的式子，整理得到 4 t 三次方加 t 四次方，乘 e 的 t 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最後把 $x,y$ 換回 $t$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{dz}{dt}=2t^2e^t\\cdot2t+t^4e^t=(4t^3+t^4)\\,e^t}}$",
+              "color": "red",
+              "on": "的式"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "三次"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$z=t^4e^t$ 直接微分，也是 $4t^3e^t+t^4e^t$",
+              "color": "violet",
+              "on": "次方#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$z=xy$，$x=\\cos t$，$y=\\sin t$。$\\dfrac{dz}{dt}=$？"
+          ],
+          "say": "試一題。兩條路都要走到。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "一個參數",
+      "title": "試一題",
       "beats": [
-        { "show": ["$z=x^2y$，$x=t^2$，$y=e^t$"],
-          "say": "算一題。外層對 x、y 的偏導數，和內層對 t 的導數，分開算。",
+        {
+          "show": [
+            "為什麼是「加」？"
+          ],
+          "say": "為什麼兩條路要加起來？",
           "board": [
-            {"do":"write","line":"$z=x^2y,\\quad {{x:x=t^2}},\\quad {{y:y=e^t}}$","tint":{"x":"blue","y":"violet"}}
-          ] },
-        { "show": ["$z_x=2xy$，$z_y=x^2$；$x'=2t$，$y'=e^t$"],
-          "say": "外層兩個偏導數是二 x y 和 x 平方；內層導數是二 t 和 e 的 t 次方。",
+            {
+              "do": "write",
+              "line": "為什麼是「加」？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 造成的變化、$y$ 造成的變化，同時發生，各算各的再合起來"
+          ],
+          "say": "因為 x 帶來的變化，和 y 帶來的變化，是同時發生的。全微分告訴我們，小變化可以各算各的，再加起來。",
           "board": [
-            {"do":"write","line":"${{zx:z_x=2xy}},\\quad {{zy:z_y=x^2}}$","tint":{"zx":"blue","zy":"violet"}},
-            {"do":"write","line":"${{xp:x'=2t}},\\quad {{yp:y'=e^t}}$","tint":{"xp":"blue","yp":"violet"},"on":"內層導數"}
-          ] },
-        { "show": ["$\\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t$"],
-          "say": "配對相乘再相加。這時候還混著 x、y、t，最後要全部換回 t。",
-          "board": [
-            {"do":"write","line":"$\\frac{dz}{dt}={{a:2xy\\cdot2t}}+{{b:x^2\\cdot e^t}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"underline","term":"a","color":"blue","on":"配對相乘"},
-            {"do":"underline","term":"b","color":"violet","label":"還混著 x、y","on":"還混著"}
-          ] },
-        { "show": ["$=4t^3e^t+t^4e^t$"],
-          "note": "直接代 $z=t^4e^t$ 微分：一樣。",
-          "say": "換回 t 得到這個。驗算：直接把 z 寫成 t 四次方乘 e 的 t 次方，用乘法法則，答案相同。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$=4t^3e^t+t^4e^t$","color":"green","on":"換回 t"},
-            {"do":"write","line":"驗算：$z=t^4e^t$，答案相同","on":"驗算"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "$x$ 造成的變化、$y$ 造成的變化，同時發生，各算各的再合起來",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　這正是全微分 $df=f_x\\,dx+f_y\\,dy$ 的意思",
+              "color": "violet",
+              "on": "生的"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "樹狀圖",
       "beats": [
-        { "show": ["$z\\to x\\to t$ 與 $z\\to y\\to t$"],
-          "note": "每條路的導數相乘，再把路加起來。",
-          "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。",
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "用樹狀圖畫路徑。最上面是 z，往下分到 x 和 y，再各自往下到 t。每一條邊寫上它的導數。",
           "board": [
-            {"do":"write","line":"${{p:z\\to x\\to t}}$"},
-            {"do":"write","line":"$z\\to y\\to t$","on":"兩條路"},
-            {"do":"write","line":"路上相乘，路與路相加","on":"乘起來"}
-          ] },
-        { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"],
-          "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
-          "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"chTree1\" viewBox=\"0 0 620 290\" width=\"620\" height=\"290\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8cchTree1\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8cchTree1blue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8cchTree1red\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8cchTree1green\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8cchTree1pencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8cchTree1ink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"292.0\" y1=\"48.3\" x2=\"188.0\" y2=\"130.7\" stroke=\"var(--green)\" stroke-width=\"3.2\"/><text x=\"226\" y=\"97.5\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂z/∂x</text><line x1=\"328.0\" y1=\"48.3\" x2=\"432.0\" y2=\"130.7\" stroke=\"var(--red)\" stroke-width=\"3.2\"/><text x=\"394\" y=\"97.5\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂z/∂y</text><line x1=\"170.0\" y1=\"168.0\" x2=\"170.0\" y2=\"233.0\" stroke=\"var(--green)\" stroke-width=\"3.2\"/><text x=\"156\" y=\"208.5\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dx/dt</text><line x1=\"450.0\" y1=\"168.0\" x2=\"450.0\" y2=\"233.0\" stroke=\"var(--red)\" stroke-width=\"3.2\"/><text x=\"464\" y=\"208.5\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dy/dt</text><circle cx=\"310\" cy=\"34\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"310\" y=\"43\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><circle cx=\"170\" cy=\"145\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--green)\" stroke-width=\"2.2\"/><text x=\"170\" y=\"154\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><circle cx=\"450\" cy=\"145\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><text x=\"450\" y=\"154\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"170\" cy=\"256\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"170\" y=\"265\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text><circle cx=\"450\" cy=\"256\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"450\" y=\"265\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：每條路上的導數乘起來，再把所有路加起來"
+          ],
+          "say": "規則只有一句：從 z 走到 t，每條路上的導數乘起來，再把所有路加起來。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{\\partial z}{\\partial s}={{r:f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}}}$","on":"最底層"},
-            {"do":"underline","term":"r","color":"gold","label":"通到 s 的路","on":"對 s 微分"}
-          ] },
-        { "show": ["條件：$f$ 可微"],
-          "note": "只有偏導數存在不夠。證明在下一節。",
-          "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。",
+            {
+              "do": "write",
+              "line": "規則：每條路上的導數乘起來，再把所有路加起來",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=x(s,t)$、$y=y(s,t)$：最底下有兩個變數",
+            "圖"
+          ],
+          "say": "如果 x 和 y 是 s 和 t 兩個變數的函數，樹的最下面就會分成 s 和 t。要求 z 對 s，就只走到 s 的路，綠色和紅色兩條。",
           "board": [
-            {"do":"write","line":"$\\Delta z\\approx f_x\\Delta x+f_y\\Delta y$"},
-            {"do":"write","line":"條件：$f$ 可微","color":"green","on":"所以 f"}
-          ] },
-        { "show": ["切線貼著曲線：誤差比位移小很多"],
-          "note": "一個變數的類比。尖角處放大也不貼。",
-          "say": "好近似的意思：放大看，曲線貼著切線，誤差比位移小很多。尖角處放大也不貼，近似失敗，連鎖律就不成立。",
+            {
+              "do": "write",
+              "line": "$x=x(s,t)$、$y=y(s,t)$：最底下有兩個變數"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"chTree2\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8cchTree2\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8cchTree2blue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8cchTree2red\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8cchTree2green\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8cchTree2pencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8cchTree2ink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"292.8\" y1=\"49.3\" x2=\"197.2\" y2=\"134.7\" stroke=\"var(--green)\" stroke-width=\"3.2\"/><text x=\"231\" y=\"100\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂z/∂x</text><line x1=\"327.2\" y1=\"49.3\" x2=\"422.8\" y2=\"134.7\" stroke=\"var(--red)\" stroke-width=\"3.2\"/><text x=\"389\" y=\"100\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂z/∂y</text><line x1=\"166.9\" y1=\"168.9\" x2=\"113.1\" y2=\"247.1\" stroke=\"var(--green)\" stroke-width=\"3.2\"/><text x=\"126\" y=\"216\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂x/∂s</text><line x1=\"193.1\" y1=\"168.9\" x2=\"246.9\" y2=\"247.1\" stroke=\"var(--muted)\" stroke-width=\"2\"/><text x=\"234\" y=\"216\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂x/∂t</text><line x1=\"426.9\" y1=\"168.9\" x2=\"373.1\" y2=\"247.1\" stroke=\"var(--red)\" stroke-width=\"3.2\"/><text x=\"386\" y=\"216\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂y/∂s</text><line x1=\"453.1\" y1=\"168.9\" x2=\"506.9\" y2=\"247.1\" stroke=\"var(--muted)\" stroke-width=\"2\"/><text x=\"494\" y=\"216\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∂y/∂t</text><circle cx=\"310\" cy=\"34\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"310\" y=\"43\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><circle cx=\"180\" cy=\"150\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--green)\" stroke-width=\"2.2\"/><text x=\"180\" y=\"159\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><circle cx=\"440\" cy=\"150\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><text x=\"440\" y=\"159\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"100\" cy=\"266\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--green)\" stroke-width=\"2.2\"/><text x=\"100\" y=\"275\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</text><circle cx=\"260\" cy=\"266\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"260\" y=\"275\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text><circle cx=\"360\" cy=\"266\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><text x=\"360\" y=\"275\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</text><circle cx=\"520\" cy=\"266\" r=\"23\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"520\" y=\"275\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text></svg>",
+              "on": "要求"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial z}{\\partial s}=\\frac{\\partial z}{\\partial x}\\frac{\\partial x}{\\partial s}+\\frac{\\partial z}{\\partial y}\\frac{\\partial y}{\\partial s}$"
+          ],
+          "say": "綠色那條是 z 對 x 乘 x 對 s，紅色那條是 z 對 y 乘 y 對 s，加起來。z 對 t 也一樣，只是走到 t。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,3,-1,5],"curves":[{"expr":"x^2","domain":[-1,3],"color":"blue"},{"expr":"2*x-1","domain":[-1,3],"color":"red"}]}}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{\\partial z}{\\partial s}=\\frac{\\partial z}{\\partial x}\\frac{\\partial x}{\\partial s}+\\frac{\\partial z}{\\partial y}\\frac{\\partial y}{\\partial s}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "紅色"
+            },
+            {
+              "do": "write",
+              "line": "　$x$ 同時依賴 $s$、$t$，所以寫 $\\partial$；上一個例子 $z$ 最後只依賴 $t$，才寫 $d$",
+              "color": "violet",
+              "on": "加起"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：誤差項消失",
+      "title": "例：兩個參數",
       "beats": [
-        { "show": ["全微分加誤差項，除以 $\\Delta t$，誤差 $\\to0$"],
-          "say": "策略：直接證。把可微寫成全微分加一個誤差項，兩邊除以 delta t，再證明誤差那一項趨近零。",
+        {
+          "show": [
+            "$z=x^2y+y^3$，$x=st$，$y=s+t$；求 $s=1$、$t=2$ 時的 $\\dfrac{\\partial z}{\\partial s}$、$\\dfrac{\\partial z}{\\partial t}$"
+          ],
+          "say": "例子：z 等於 x 平方 y 加 y 三次方，x 是 s t，y 是 s 加 t。求 s 等於 1、t 等於 2 時，z 的兩個偏導數。",
           "board": [
-            {"do":"write","line":"可微 ＝ 全微分 ＋ 誤差項","on":"把可微"},
-            {"do":"write","line":"除以 $\\Delta t$，誤差 $\\to0$","on":"兩邊除以"}
-          ] },
-        { "show": ["$\\Delta z=f_x\\Delta x+f_y\\Delta y$","$\\quad+\\varepsilon\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$"],
-          "note": "$(\\Delta x,\\Delta y)\\to(0,0)$ 時 $\\varepsilon\\to0$。",
-          "say": "f 可微：變動等於全微分，加上 epsilon 乘位移長度，位移趨近零時 epsilon 也趨近零。",
+            {
+              "do": "write",
+              "line": "$z=x^2y+y^3$，$x=st$，$y=s+t$；求 $s=1$、$t=2$ 時的 $\\dfrac{\\partial z}{\\partial s}$、$\\dfrac{\\partial z}{\\partial t}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先算這一點的 $x=2$、$y=3$"
+          ],
+          "say": "先算出這一點的 x 和 y：x 是 2，y 是 3。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\Delta z=f_x\\Delta x+f_y\\Delta y$","on":"f 可微"},
-            {"do":"write","line":"$\\quad+{{e:\\varepsilon}}\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$","on":"加上 epsilon"},
-            {"do":"focus","term":"e","label":"→ 0","on":"位移趨近零"}
-          ] },
-        { "show": ["$\\varepsilon=\\frac{\\text{誤差}}{\\sqrt{\\Delta x^2+\\Delta y^2}}$"],
-          "say": "epsilon 是誤差除以位移長度。f 可微，就是位移趨近零時，這個比值也趨近零。",
+            {
+              "do": "write",
+              "line": "先算這一點的 $x=2$、$y=3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial z}{\\partial x}=2xy=12,\\qquad\\frac{\\partial z}{\\partial y}=x^2+3y^2=31$"
+          ],
+          "say": "z 對 x 是 2 x y，等於 12；z 對 y 是 x 平方加 3 y 平方，4 加 27，等於 31。",
           "board": [
-            {"do":"write","line":"${{n1:\\varepsilon}}=\\frac{\\text{誤差}}{\\sqrt{\\Delta x^2+\\Delta y^2}}$"},
-            {"do":"focus","term":"n1","label":"→ 0","on":"位移趨近零"}
-          ] },
-        { "show": ["$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}\\pm\\varepsilon\\cdot\\sqrt{\\cdots}$"],
-          "say": "兩邊除以 delta t，除進根號裡，變成兩個變化率的平方和。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial z}{\\partial x}=2xy=12,\\qquad\\frac{\\partial z}{\\partial y}=x^2+3y^2=31$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial x}{\\partial s}=t=2,\\ \\ \\frac{\\partial x}{\\partial t}=s=1,\\ \\ \\frac{\\partial y}{\\partial s}=\\frac{\\partial y}{\\partial t}=1$"
+          ],
+          "say": "再算下面一層：x 對 s 是 t，等於 2；x 對 t 是 s，等於 1；y 對 s、對 t 都是 1。",
           "board": [
-            {"do":"write","line":"$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}$"},
-            {"do":"write","line":"$\\pm{{e:\\varepsilon}}\\cdot{{r:\\sqrt{\\left(\\frac{\\Delta x}{\\Delta t}\\right)^2+\\left(\\frac{\\Delta y}{\\Delta t}\\right)^2}}}$","on":"除進根號"},
-            {"do":"underline","term":"r","label":"變化率平方和","on":"變成兩個"}
-          ] },
-        { "show": ["$\\Delta t\\to0$：$\\Delta x$、$\\Delta y\\to0$，所以 $\\varepsilon\\to0$"],
-          "note": "$x$、$y$ 可微所以連續。",
-          "why": {"ask":"為什麼 $\\varepsilon\\to0$？","say":"delta t 趨近零，epsilon 為什麼也趨近零？","options":[{"label":"$x$、$y$ 連續，$\\Delta x$、$\\Delta y\\to0$","correct":true},{"label":"$\\Delta t\\to0$，$\\varepsilon$ 就直接 $\\to0$","why":"$\\varepsilon$ 是跟著 $(\\Delta x,\\Delta y)$ 走的；要先確定它們也趨近零。"},{"label":"$f$ 的偏導數連續","why":"這個證明沒用到偏導數連續；這裡靠的是內層 $x$、$y$ 連續。"}]},
-          "say": "x、y 可微所以連續，delta x、delta y 跟著趨近零，於是 epsilon 也趨近零。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial x}{\\partial s}=t=2,\\ \\ \\frac{\\partial x}{\\partial t}=s=1,\\ \\ \\frac{\\partial y}{\\partial s}=\\frac{\\partial y}{\\partial t}=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial z}{\\partial s}=12\\cdot2+31\\cdot1=55$"
+          ],
+          "say": "走到 s 的兩條路：12 乘 2，加 31 乘 1，等於 55。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\Delta t\\to0$：${{dxy:\\Delta x,\\Delta y\\to0}}$，所以 ${{e:\\varepsilon}}\\to0$","on":"delta t 趨近零"},
-            {"do":"underline","term":"dxy","label":"x、y 連續","why":true,"on":"可微所以連續"}
-          ] },
-        { "show": ["根號 $\\to\\sqrt{x'^2+y'^2}$，最後一項 $\\to0$","$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$"],
-          "note": "有限數乘趨近零的數。",
-          "why": {"ask":"為什麼最後一項 $\\to0$？","say":"最後那一項為什麼會消失？","options":[{"label":"$\\varepsilon\\to0$，根號趨近有限數","correct":true},{"label":"$\\varepsilon\\to0$ 就夠，乘什麼都 $\\to0$","why":"根號那一項要是跑到無限大，乘積不一定趨近零；要它趨近有限數。"},{"label":"根號那一項 $\\to0$","why":"它趨近 $\\sqrt{x'^2+y'^2}$，一般不是零；趨近零的是 $\\varepsilon$。"}]},
-          "say": "根號趨近 x prime 和 y prime 的平方和開根號，是有限數，乘上趨近零的 epsilon 就消失，剩下連鎖律。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{\\partial z}{\\partial s}=12\\cdot2+31\\cdot1=55}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "31"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial z}{\\partial t}=12\\cdot1+31\\cdot1=43$"
+          ],
+          "say": "走到 t 的兩條路：12 乘 1，加 31 乘 1，等於 43。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"根號 $\\to\\sqrt{x'^2+y'^2}$","on":"最後那一項"},
-            {"do":"underline","term":"r","label":"有限數","why":true,"on":"是有限數"},
-            {"do":"write","line":"$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$","color":"green","why":true,"on":"剩下"}
-          ] }
-      ],
-      "key": "除以 $\\Delta t$ 後，誤差乘有界量趨近 $0$",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$f$ 可微」用在哪一步？",
-        "steps": [
-          {
-            "label": "寫成全微分加誤差項 $\\varepsilon\\cdot\\sqrt{\\cdots}$",
-            "correct": true
-          },
-          {
-            "label": "兩邊除以 $\\Delta t$",
-            "why": "這只是代數，任何等式都能兩邊除。"
-          },
-          {
-            "label": "$\\Delta x$、$\\Delta y\\to0$",
-            "why": "這只用到 $x$、$y$ 可微所以連續，跟 $f$ 無關。"
-          },
-          {
-            "label": "根號 $\\to\\sqrt{x'^2+y'^2}$",
-            "why": "這只用到 $x$、$y$ 對 $t$ 可微。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{\\partial z}{\\partial t}=12\\cdot1+31\\cdot1=43}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "12"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：把 $z$ 寫成 $s,t$ 的函數，在 $(1,2)$ 差分，得 $55.000$、$43.000$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "技巧：先代數字再相乘，不用把 $z$ 整個寫成 $s,t$ 的式子"
+          ],
+          "say": "技巧是：先把這一點的數字代好，再相乘相加，不必把 z 整個展開成 s、t 的式子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "技巧：先代數字再相乘，不用把 $z$ 整個寫成 $s,t$ 的式子"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "在一點求值",
+      "title": "條件：f 要可微",
       "beats": [
-        { "show": ["$z=x^2y+y^3$，$x=st$，$y=s+t$"],
-          "note": "求 $s=1$、$t=2$ 時的 $\\frac{\\partial z}{\\partial s}$。",
-          "say": "要某一點的值，先把這一點的 x、y 算出來：x 是一乘二等於二，y 是一加二等於三。",
+        {
+          "show": [
+            "推導用了全微分 → 需要 $f$ 可微"
+          ],
+          "say": "剛剛的推導用了全微分，所以需要 f 可微。現在把它證明清楚。",
           "board": [
-            {"do":"write","line":"$z=x^2y+y^3$，$x=st$，$y=s+t$"},
-            {"do":"write","line":"${{x:x=1\\cdot2=2}}$，${{y:y=1+2=3}}$","tint":{"x":"blue","y":"violet"},"on":"x 是一乘二"},
-            {"do":"underline","term":"y","color":"violet","on":"y 是一加二"}
-          ] },
-        { "show": ["$z_x=2xy=12$，$z_y=x^2+3y^2=31$"],
-          "say": "外層的偏導數直接代 x 等於二、y 等於三，得十二和三十一。",
+            {
+              "do": "write",
+              "line": "推導用了全微分 → 需要 $f$ 可微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$x,y$ 在 $t$ 可導，$f$ 在 $(x(t),y(t))$ 可微。由可微的定義：",
+            "$\\Delta z=f_x\\Delta x+f_y\\Delta y+\\varepsilon_1\\Delta x+\\varepsilon_2\\Delta y$"
+          ],
+          "say": "設 x、y 對 t 可導，f 在對應的點可微。由可微的定義，德爾塔 z 等於 f x 德爾塔 x 加 f y 德爾塔 y，再加兩個艾普西隆項。",
           "board": [
-            {"do":"write","line":"${{zx:z_x=2xy=12}},\\quad {{zy:z_y=x^2+3y^2=31}}$","tint":{"zx":"blue","zy":"violet"}},
-            {"do":"underline","term":"zx","color":"blue","on":"得十二"},
-            {"do":"underline","term":"zy","color":"violet","on":"和三十一"}
-          ] },
-        { "show": ["$\\frac{\\partial x}{\\partial s}=t=2$，$\\frac{\\partial y}{\\partial s}=1$"],
-          "say": "內層對 s 微分：s t 對 s 是 t，等於二；s 加 t 對 s 是一。",
+            {
+              "do": "write",
+              "line": "證明：$x,y$ 在 $t$ 可導，$f$ 在 $(x(t),y(t))$ 可微。由可微的定義："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta z=f_x\\Delta x+f_y\\Delta y+\\varepsilon_1\\Delta x+\\varepsilon_2\\Delta y$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以 $\\Delta t$：",
+            "$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}+\\varepsilon_1\\frac{\\Delta x}{\\Delta t}+\\varepsilon_2\\frac{\\Delta y}{\\Delta t}$"
+          ],
+          "say": "兩邊除以德爾塔 t。",
           "board": [
-            {"do":"write","line":"${{xs:\\frac{\\partial x}{\\partial s}=t=2}}$，${{ys:\\frac{\\partial y}{\\partial s}=1}}$","tint":{"xs":"blue","ys":"violet"}},
-            {"do":"underline","term":"xs","color":"blue","on":"等於二"},
-            {"do":"underline","term":"ys","color":"violet","on":"s 加 t"}
-          ] }
+            {
+              "do": "write",
+              "line": "除以 $\\Delta t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}+\\varepsilon_1\\frac{\\Delta x}{\\Delta t}+\\varepsilon_2\\frac{\\Delta y}{\\Delta t}$",
+              "on": "爾塔"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $\\Delta t\\to0$：",
+            "• $\\dfrac{\\Delta x}{\\Delta t}\\to x'(t)$，$\\dfrac{\\Delta y}{\\Delta t}\\to y'(t)$"
+          ],
+          "say": "讓德爾塔 t 趨近 0：兩個比值趨近 x prime 和 y prime。x、y 可導就連續，德爾塔 x、y 趨近 0，所以艾普西隆也趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $\\Delta t\\to0$："
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{\\Delta x}{\\Delta t}\\to x'(t)$，$\\dfrac{\\Delta y}{\\Delta t}\\to y'(t)$",
+              "on": "me#1"
+            },
+            {
+              "do": "write",
+              "line": "• $x,y$ 可導 ⇒ 連續 ⇒ $\\Delta x,\\Delta y\\to0$ ⇒ $\\varepsilon_1,\\varepsilon_2\\to0$",
+              "on": "爾塔#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dz}{dt}=f_x\\,x'(t)+f_y\\,y'(t)\\quad\\blacksquare$"
+          ],
+          "say": "最後兩項變成 0 乘有限的數，消失。剩下的就是連鎖律。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{dz}{dt}=f_x\\,x'(t)+f_y\\,y'(t)\\quad\\blacksquare}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "有限"
+            },
+            {
+              "do": "write",
+              "line": "　$\\Delta x=\\Delta y=0$ 時令 $\\varepsilon_1=\\varepsilon_2=0$，式子照樣成立",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "只有偏導數不夠",
+      "beats": [
+        {
+          "show": [
+            "$f(x,y)=\\frac{x^2y}{x^2+y^2},\\quad f(0,0)=0$"
+          ],
+          "say": "如果 f 不可微呢？看這個函數：x 平方 y，除以 x 平方加 y 平方，原點補 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x,y)=\\frac{x^2y}{x^2+y^2},\\quad f(0,0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$"
+          ],
+          "say": "它在兩條軸上都是 0，所以原點的兩個偏導數都是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "走 $x=t$、$y=t$：公式給 $0\\cdot1+0\\cdot1=0$"
+          ],
+          "say": "讓 x 等於 t、y 等於 t，在 t 等於 0 套連鎖律：0 乘 1 加 0 乘 1，等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "走 $x=t$、$y=t$：公式給 $0\\cdot1+0\\cdot1=0$"
+            }
+          ]
+        }
       ],
-      "key": "每條路都乘內層導數，再全部相加",
       "predict": {
-        "ask": "$\\frac{\\partial z}{\\partial s}$ 是？",
+        "ask": "沿 $x=t$、$y=t$，$z=f(t,t)$ 在 $t=0$ 的導數==真正==是多少？",
         "options": [
           {
-            "label": "$55$",
+            "label": "$\\frac12$",
             "correct": true
           },
           {
-            "label": "$12+31$",
-            "why": "漏了內層導數：每條路要乘上 $\\frac{\\partial x}{\\partial s}=2$、$\\frac{\\partial y}{\\partial s}=1$。"
+            "label": "$0$",
+            "why": "這是套公式的結果；但 $f$ 在原點不可微，公式不能用"
           },
           {
-            "label": "$12\\cdot2+31\\cdot2$",
-            "why": "$y=s+t$ 對 $s$ 微分是 $1$，不是 $t$。"
+            "label": "$1$",
+            "why": "$z=\\frac t2$，斜率是 $\\frac12$"
+          },
+          {
+            "label": "不存在",
+            "why": "$z=\\frac t2$ 對所有 $t$ 都成立，是一條直線"
           }
         ]
       }
     },
     {
-      "title": "隱函數的公式",
+      "title": "只有偏導數不夠",
       "beats": [
-        { "show": ["$F(x,y(x))=0$ 對 $x$ 微分"],
-          "note": "$F_x\\cdot1+F_y\\cdot y'=0$。",
-          "say": "曲線上 y 是 x 的函數。把整個式子對 x 微分，用連鎖律：x 那條路乘一，y 那條路乘 y prime。",
+        {
+          "show": [
+            "$z=\\dfrac t2$，導數 $\\dfrac12\\ne0$：$f$ 在原點不可微，連鎖律失效"
+          ],
+          "say": "直接算，z 就是 2 分之 t，導數是 2 分之 1，不是 0。原因是 f 在原點不可微。條件不能省。",
           "board": [
-            {"do":"write","line":"$F(x,y(x))=0$"},
-            {"do":"write","line":"$F_x\\cdot{{one:1}}+F_y\\cdot{{yp:y'}}=0$","tint":{"one":"blue","yp":"violet"},"on":"用連鎖律"},
-            {"do":"focus","term":"one","label":"x 那條路","on":"x 那條路"},
-            {"do":"focus","term":"yp","label":"y 那條路","on":"y 那條路"}
-          ] },
-        { "show": ["$\\frac{dy}{dx}=-\\frac{F_x}{F_y}$"],
-          "note": "$F_y\\ne 0$ 時。",
-          "say": "移項就得到公式，前面有一個負號，別漏。",
+            {
+              "do": "write",
+              "line": "$z=\\dfrac t2$，導數 $\\dfrac12\\ne0$：$f$ 在原點不可微，連鎖律失效",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　常見的函數偏導數連續 → 可微 → 放心用",
+              "color": "violet",
+              "on": "不是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "隱函數微分的公式",
+      "beats": [
+        {
+          "show": [
+            "$F(x,y)=0$ 定義了 $y=y(x)$"
+          ],
+          "say": "最後一個應用：隱函數。方程式 F of x y 等於 0，定義了 y 是 x 的函數。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{dx}={{m:-\\frac{F_x}{F_y}}}$","on":"移項"},
-            {"do":"circle","term":"m","label":"負號別漏","on":"負號"}
-          ] },
-        { "show": ["$x^3+y^3=6xy$：$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$"],
-          "say": "例如這條曲線，F 對 x、對 y 各微一次，代進公式整理。",
+            {
+              "do": "write",
+              "line": "$F(x,y)=0$ 定義了 $y=y(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z=F(x,\\,y(x))\\equiv0$：$x$ 直接影響，也透過 $y$ 影響"
+          ],
+          "say": "把 F 看成 z。x 直接影響 z，也透過 y 影響 z，又是兩條路。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x^3+y^3=6xy$","on":"例如"},
-            {"do":"write","line":"$F_x=3x^2-6y,\\quad F_y=3y^2-6x$","on":"各微一次"},
-            {"do":"write","line":"$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$","on":"代進公式"}
-          ] },
-        { "show": ["$(3,3)$：$\\frac{6-9}{9-6}=-1$"],
-          "say": "點三、三在曲線上，代進去，切線斜率是負一。",
+            {
+              "do": "write",
+              "line": "$z=F(x,\\,y(x))\\equiv0$：$x$ 直接影響，也透過 $y$ 影響"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dz}{dx}=F_x\\cdot1+F_y\\cdot\\frac{dy}{dx}=0$"
+          ],
+          "say": "兩條路加起來：F x 乘 1，加 F y 乘 d y d x。而 z 永遠是 0，導數也是 0。",
           "board": [
-            {"do":"write","line":"$(3,3)$：$\\frac{6-9}{9-6}={{r:-1}}$"},
-            {"do":"box","term":"r","color":"green","on":"切線斜率"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dz}{dx}=F_x\\cdot1+F_y\\cdot\\frac{dy}{dx}=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=-\\frac{F_x}{F_y}\\qquad(F_y\\ne0)$"
+          ],
+          "say": "移項，d y d x 等於負的 F y 分之 F x。條件是 F y 不等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\frac{dy}{dx}=-\\frac{F_x}{F_y}\\qquad(F_y\\ne0)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x^3+y^3=6xy$，$F=x^3+y^3-6xy$",
+            "$F_x=3x^2-6y,\\qquad F_y=3y^2-6x$"
+          ],
+          "say": "例子：x 三次方加 y 三次方等於 6 x y。移成 F 等於 0，F x 是 3 x 平方減 6y，F y 是 3 y 平方減 6x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x^3+y^3=6xy$，$F=x^3+y^3-6xy$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F_x=3x^2-6y,\\qquad F_y=3y^2-6x$",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=-\\frac{3x^2-6y}{3y^2-6x}=\\frac{2y-x^2}{y^2-2x}$"
+          ],
+          "say": "代公式，約掉 3，整理成 2y 減 x 平方，除以 y 平方減 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dx}=-\\frac{3x^2-6y}{3y^2-6x}=\\frac{2y-x^2}{y^2-2x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(3,3)$：$\\dfrac{6-9}{9-6}=-1$"
+          ],
+          "say": "在 3 逗號 3，分子是負 3，分母是 3，斜率是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(3,3)$：$\\dfrac{6-9}{9-6}=-1$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上是這條曲線，在 3 逗號 3 的切線，斜率確實是負 1。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"chFolium\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8cchFolium\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8cchFoliumblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8cchFoliumred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8cchFoliumgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8cchFoliumpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8cchFoliumink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8cchFolium30\"><rect x=\"158.1\" y=\"16\" width=\"309.8\" height=\"284\"/></clipPath><g clip-path=\"url(#cl8cchFolium30)\"><line x1=\"164.5\" y1=\"16\" x2=\"164.5\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"196.8\" y1=\"16\" x2=\"196.8\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"229.1\" y1=\"16\" x2=\"229.1\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"261.4\" y1=\"16\" x2=\"261.4\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"293.6\" y1=\"16\" x2=\"293.6\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"325.9\" y1=\"16\" x2=\"325.9\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"358.2\" y1=\"16\" x2=\"358.2\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"390.5\" y1=\"16\" x2=\"390.5\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"422.7\" y1=\"16\" x2=\"422.7\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"455\" y1=\"16\" x2=\"455\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"293.5\" x2=\"467.9\" y2=\"293.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"261.3\" x2=\"467.9\" y2=\"261.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"229\" x2=\"467.9\" y2=\"229\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"196.7\" x2=\"467.9\" y2=\"196.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"164.5\" x2=\"467.9\" y2=\"164.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"132.2\" x2=\"467.9\" y2=\"132.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"99.9\" x2=\"467.9\" y2=\"99.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"67.6\" x2=\"467.9\" y2=\"67.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"158.1\" y1=\"35.4\" x2=\"467.9\" y2=\"35.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M71.2 4.3L89.6 22.2L105.6 37.7L119.6 51.2L132 63L143.2 73.5L153.3 82.8L162.5 91.2L171 98.8L178.9 105.6L186.2 111.8L193 117.5L199.5 122.7L205.6 127.4L211.5 131.8L217.1 135.8L222.4 139.4L227.7 142.8L232.7 145.8L237.7 148.6L242.5 151.2L247.2 153.5L251.9 155.5L256.5 157.4L261.1 159L265.6 160.4L270.1 161.6L274.6 162.6L279 163.4L283.5 163.9L288 164.3L292.4 164.4L296.9 164.4L301.3 164.1L305.8 163.7L310.2 163L314.7 162.2L319.1 161.1L323.5 159.8L327.9 158.4L332.2 156.7L336.5 154.9L340.7 152.8L344.9 150.6L349 148.2L353 145.7L356.8 143L360.6 140.2L364.2 137.3L367.6 134.3L370.9 131.1L374 127.9L377 124.7L379.7 121.4L382.3 118.1L384.6 114.8L386.7 111.5L388.6 108.2L390.3 105L391.7 101.8L393 98.8L394 95.8L394.8 92.9L395.4 90.1L395.8 87.5L396 84.9L396.1 82.5L396 80.3L395.7 78.2L395.2 76.2L394.7 74.4L394 72.7L393.2 71.1L392.2 69.7L391.2 68.5L390.1 67.3L389 66.3L387.7 65.4L386.4 64.6L385.1 64L383.7 63.4L382.3 63L380.9 62.6L379.4 62.3L377.9 62.1L376.4 62L375 62L373.5 62L372 62.1L370.5 62.3L369.1 62.5L367.6 62.8L366.2 63.1L364.7 63.4L363.3 63.8L362 64.2L360.6 64.7L359.3 65.1L358 65.7L356.7 66.2L355.4 66.7L354.2 67.3L352.9 67.9L351.7 68.5L350.6 69.1L349.4 69.7L348.3 70.4L347.2 71L346.2 71.7L345.1 72.3L344.1 73L343.1 73.6L342.1 74.3L341.2 75L340.3 75.6L339.4 76.3L338.5 77L337.6 77.6L336.8 78.3L336 79L335.2 79.6L334.4 80.3L333.6 80.9L332.9 81.6L332.2 82.2L331.5 82.8L330.8 83.5L330.1 84.1L329.4 84.7L328.8 85.3L328.2 85.9L327.6 86.6L327 87.2L326.4 87.7L325.8 88.3L325.3 88.9L324.7 89.5L324.2 90.1L323.7 90.6L323.2 91.2L322.7 91.7L322.2 92.3L321.7 92.8L321.3 93.4L320.8 93.9L320.4 94.4L320 94.9L319.5 95.4L319.1 95.9L318.7 96.4L318.3 96.9L318 97.4L317.6 97.9L317.2 98.4L316.9 98.8L316.5 99.3L316.2 99.8L315.8 100.2L315.5 100.7L315.2 101.1L314.9 101.5L314.6 102L314.3 102.4L314 102.8L313.7 103.2L313.4 103.6L313.1 104L312.8 104.5L312.6 104.8L312.3 105.2L312.1 105.6L311.8 106L311.6 106.4L311.3 106.8L311.1 107.1L310.8 107.5L310.6 107.9L310.4 108.2L310.2 108.6L310 108.9L309.8 109.3L309.5 109.6L309.3 110L309.1 110.3L308.9 110.6L308.8 110.9L308.6 111.3L308.4 111.6L308.2 111.9L308 112.2L307.8 112.5L307.7 112.8L307.5 113.1L307.3 113.4L307.2 113.7L307 114L306.9 114.3L306.7 114.6L306.6 114.9L306.4 115.2L306.3 115.4L306.1 115.7L306 116L305.8 116.3L305.7 116.5L305.6 116.8L305.4 117L305.3 117.3L305.2 117.6L305 117.8L304.9 118.1L304.8 118.3L304.7 118.6L304.5 118.8L304.4 119L304.3 119.3L304.2 119.5L304.1 119.7L304 120L303.9 120.2L303.8 120.4L303.7 120.6L303.6 120.9L303.5 121.1L303.4 121.3L303.3 121.5L303.2 121.7L303.1 121.9L303 122.2L302.9 122.4L302.8 122.6L302.7 122.8L302.6 123L302.5 123.2L302.4 123.4L302.4 123.6L302.3 123.8L302.2 124L302.1 124.1L302 124.3L301.9 124.5L301.9 124.7L301.8 124.9L301.7 125.1L301.6 125.2L301.6 125.4L301.5 125.6L301.4 125.8L301.4 126L301.3 126.1L301.2 126.3L301.1 126.5L301.1 126.6L301 126.8L300.9 127L300.9 127.1L300.8 127.3L300.8 127.5L300.7 127.6L300.6 127.8L300.6 127.9L300.5 128.1L300.5 128.2L300.4 128.4L300.3 128.5L300.3 128.7L300.2 128.8L300.2 129L300.1 129.1L300.1 129.3L300 129.4L300 129.6L299.9 129.7L299.9 129.9L299.8 130L299.8 130.1L299.7 130.3L299.7 130.4L299.6 130.5L299.6 130.7L299.5 130.8L299.5 131L299.4 131.1L299.4 131.2L299.3 131.3L299.3 131.5L299.2 131.6L299.2 131.7L299.2 131.9L299.1 132L299.1 132.1L299 132.2L299 132.3L298.9 132.5L298.9 132.6L298.9 132.7L298.8 132.8L298.8 132.9L298.7 133.1L298.7 133.2L298.7 133.3L298.6 133.4L298.6 133.5L298.6 133.6L298.5 133.7L298.5 133.8L298.5 134L298.4 134.1L298.4 134.2L298.4 134.3L298.3 134.4L298.3 134.5L298.3 134.6L298.2 134.7L298.2 134.8L298.2 134.9L298.1 135L298.1 135.1L298.1 135.2L298 135.3L298 135.4L298 135.5L297.9 135.6L297.9 135.7L297.9 135.8L297.9 135.9L297.8 136L297.8 136.1L297.8 136.2L297.7 136.3L297.7 136.4L297.7 136.5L297.7 136.6L297.6 136.7L297.6 136.8L297.6 136.8L297.6 136.9L297.5 137L297.5 137.1L297.5 137.2L297.5 137.3L297.4 137.4L297.4 137.5L297.4 137.5L297.4 137.6L297.3 137.7L297.3 137.8L297.3 137.9L297.3 138L297.2 138L297.2 138.1L297.2 138.2L297.2 138.3L297.2 138.4L297.1 138.5L297.1 138.5L297.1 138.6L297.1 138.7L297.1 138.8L297 138.8L297 138.9L297 139L297 139.1L296.9 139.2L296.9 139.2L296.9 139.3L296.9 139.4L296.9 139.5L296.9 139.5L296.8 139.6L296.8 139.7L296.8 139.7L296.8 139.8L296.8 139.9L296.7 140L296.7 140L296.7 140.1L296.7 140.2L296.7 140.2L296.7 140.3L296.6 140.4L296.6 140.5L296.6 140.5L296.6 140.6L296.6 140.7L296.6 140.7L296.5 140.8L296.5 140.9L296.5 140.9L296.5 141L296.5 141L296.5 141.1L296.4 141.2L296.4 141.2L296.4 141.3L296.4 141.4L296.4 141.4L296.4 141.5L296.3 141.6L296.3 141.6L296.3 141.7L296.3 141.7L296.3 141.8L296.3 141.9L296.3 141.9L296.2 142L296.2 142L296.2 142.1L296.2 142.2L296.2 142.2L296.2 142.3L296.2 142.3L296.2 142.4L296.1 142.5L296.1 142.5L296.1 142.6L296.1 142.6L296.1 142.7L296.1 142.7L296.1 142.8L296.1 142.8L296 142.9L296 143L296 143L296 143.1L296 143.1L296 143.2L296 143.2L296 143.3L295.9 143.3L295.9 143.4L295.9 143.4L295.9 143.5L295.9 143.5L295.9 143.6L295.9 143.6L295.9 143.7L295.9 143.7L295.8 143.8L295.8 143.9L295.8 143.9L295.8 144L295.8 144L295.8 144.1L295.8 144.1L295.8 144.1L295.8 144.2L295.7 144.2L295.7 144.3L295.7 144.3L295.7 144.4L295.7 144.4L295.7 144.5L295.7 144.5L295.7 144.6L295.7 144.6L295.7 144.7L295.6 144.7L295.6 144.8L295.6 144.8L295.6 144.9L295.6 144.9L295.6 144.9L295.6 145L295.6 145L295.6 145.1L295.6 145.1L295.6 145.2L295.5 145.2L295.5 145.3L295.5 145.3L295.5 145.3L295.5 145.4L295.5 145.4L295.5 145.5L295.5 145.5L295.5 145.6L295.5 145.6L295.5 145.6L295.5 145.7L295.4 145.7L295.4 145.8L295.4 145.8L295.4 145.9L295.4 145.9L295.4 145.9L295.4 146L295.4 146L295.4 146.1L295.4 146.1L295.4 146.1L295.4 146.2L295.4 146.2L295.3 146.3L295.3 146.3L295.3 146.3L295.3 146.4L295.3 146.4L295.3 146.4L295.3 146.5L295.3 146.5L295.3 146.6L295.3 146.6L295.3 146.6L295.3 146.7L295.3 146.7L295.3 146.8L295.2 146.8L295.2 146.8L295.2 146.9L295.2 146.9L295.2 146.9L295.2 147L295.2 147L295.2 147L295.2 147.1L295.2 147.1L295.2 147.2L295.2 147.2L295.2 147.2L295.2 147.3L295.2 147.3L295.2 147.3L295.1 147.4L295.1 147.4L295.1 147.4L295.1 147.5L295.1 147.5L295.1 147.5L295.1 147.6L295.1 147.6L295.1 147.6L295.1 147.7L295.1 147.7L295.1 147.7L295.1 147.8L295.1 147.8L295.1 147.8L295.1 147.9L295.1 147.9L295 147.9L295 148L295 148L295 148L295 148.1L295 148.1L295 148.1L295 148.2L295 148.2L295 148.2L295 148.2L295 148.3L295 148.3L295 148.3L295 148.4L295 148.4L295 148.4L295 148.5L295 148.5L294.9 148.5L294.9 148.6L294.9 148.6L294.9 148.6L294.9 148.6L294.9 148.7L294.9 148.7L294.9 148.7L294.9 148.8L294.9 148.8L294.9 148.8L294.9 148.9L294.9 148.9L294.9 148.9L294.9 148.9L294.9 149L294.9 149L294.9 149L294.9 149.1L294.9 149.1L294.9 149.1L294.8 149.1L294.8 149.2L294.8 149.2L294.8 149.2L294.8 149.2L294.8 149.3L294.8 149.3L294.8 149.3L294.8 149.4L294.8 149.4L294.8 149.4L294.8 149.4L294.8 149.5L294.8 149.5L294.8 149.5L294.8 149.5L294.8 149.6L294.8 149.6L294.8 149.6L294.8 149.6L294.8 149.7L294.8 149.7L294.8 149.7L294.8 149.7L294.7 149.8L294.7 149.8L294.7 149.8L294.7 149.9L294.7 149.9L294.7 149.9L294.7 149.9L294.7 150L294.7 150L294.7 150L294.7 150L294.7 150.1L294.7 150.1L294.7 150.1L294.7 150.1L294.7 150.1L294.7 150.2L294.7 150.2L294.7 150.2L294.7 150.2L294.7 150.3L294.7 150.3L294.7 150.3L294.7 150.3L294.7 150.4L294.7 150.4L294.7 150.4L294.7 150.4L294.6 150.5L294.6 150.5L294.6 150.5L294.6 150.5L294.6 150.6L294.6 150.6L294.6 150.6L294.6 150.6L294.6 150.6L294.6 150.7L294.6 150.7L294.6 150.7L294.6 150.7L294.6 150.8L294.6 150.8L294.6 150.8L294.6 150.8L294.6 150.8L294.6 150.9L294.6 150.9L294.6 150.9L294.6 150.9L294.6 151L294.6 151L294.6 151L294.6 151L294.6 151L294.6 151.1L294.6 151.1L294.6 151.1L294.6 151.1L294.6 151.1L294.5 151.2L294.5 151.2L294.5 151.2L294.5 151.2L294.5 151.2L294.5 151.3L294.5 151.3L294.5 151.3L294.5 151.3L294.5 151.4L294.5 151.4L294.5 151.4L294.5 151.4L294.5 151.4L294.5 151.5L294.5 151.5L294.5 151.5L294.5 151.5L294.5 151.5L294.5 151.6L294.5 151.6L294.5 151.6L294.5 151.6L294.5 151.6L294.5 151.7L294.5 151.7L294.5 151.7L294.5 151.7L294.5 151.7L294.5 151.7L294.5 151.8L294.5 151.8L294.5 151.8L294.5 151.8L294.5 151.8L294.5 151.9L294.5 151.9L294.5 151.9L294.4 151.9L294.4 151.9L294.4 152L294.4 152L294.4 152L294.4 152L294.4 152L294.4 152L294.4 152.1L294.4 152.1L294.4 152.1L294.4 152.1L294.4 152.1L294.4 152.2L294.4 152.2L294.4 152.2L294.4 152.2L294.4 152.2L294.4 152.2L294.4 152.3L294.4 152.3L294.4 152.3L294.4 152.3L294.4 152.3L294.4 152.4L294.4 152.4L294.4 152.4L294.4 152.4L294.4 152.4L294.4 152.4L294.4 152.5L294.4 152.5L294.4 152.5L294.4 152.5L294.4 152.5L294.4 152.5L294.4 152.6L294.4 152.6L294.4 152.6L294.4 152.6L294.4 152.6L294.4 152.6L294.4 152.7L294.4 152.7L294.4 152.7L294.3 152.7L294.3 152.7L294.3 152.7L294.3 152.8L294.3 152.8L294.3 152.8L294.3 152.8L294.3 152.8L294.3 152.8L294.3 152.9L294.3 152.9L294.3 152.9L294.3 152.9L294.3 152.9L294.3 152.9L294.3 152.9L294.3 153L294.3 153L294.3 153L294.3 153L294.3 153L294.3 153L294.3 153.1L294.3 153.1L294.3 153.1L294.3 153.1L294.3 153.1L294.3 153.1L294.3 153.1L294.3 153.2L294.3 153.2L294.3 153.2L294.3 153.2L294.3 153.2L294.3 153.2L294.3 153.3L294.3 153.3L294.3 153.3L294.3 153.3L294.3 153.3L294.3 153.3L294.3 153.3L294.3 153.4L294.3 153.4L294.3 153.4L294.3 153.4L294.3 153.4L294.3 153.4L294.3 153.4L294.3 153.5L294.3 153.5L294.3 153.5L294.3 153.5L294.3 153.5L294.3 153.5L294.3 153.5L294.2 153.6L294.2 153.6L294.2 153.6L294.2 153.6L294.2 153.6L294.2 153.6L294.2 153.6L294.2 153.7L294.2 153.7L294.2 153.7L294.2 153.7L294.2 153.7L294.2 153.7L294.2 153.7L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.8L294.2 153.9L294.2 153.9L294.2 153.9L294.2 153.9L294.2 153.9L294.2 153.9L294.2 153.9L294.2 154L294.2 154L294.2 154L294.2 154L294.2 154L294.2 154L294.2 154L294.2 154L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.1L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.2L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.3L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.4L294.2 154.5L294.2 154.5L294.2 154.5L294.1 154.5L294.1 154.5L294.1 154.5L294.1 154.5L294.1 154.5L294.1 154.5L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.6L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.7L294.1 154.8L294.1 154.8L294.1 154.8\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M293.8 169.3L293.8 169.3L293.8 169.3L293.8 169.3L293.8 169.3L293.8 169.3L293.8 169.3L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.4L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.5L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.6L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.7L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.8L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 169.9L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.1L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.2L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.3L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.4L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.5L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.6L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.7L293.8 170.8L293.8 170.8L293.8 170.8L293.8 170.8L293.8 170.8L293.8 170.8L293.8 170.8L293.8 170.9L293.8 170.9L293.8 170.9L293.9 170.9L293.9 170.9L293.9 170.9L293.9 170.9L293.9 170.9L293.9 171L293.9 171L293.9 171L293.9 171L293.9 171L293.9 171L293.9 171L293.9 171.1L293.9 171.1L293.9 171.1L293.9 171.1L293.9 171.1L293.9 171.1L293.9 171.2L293.9 171.2L293.9 171.2L293.9 171.2L293.9 171.2L293.9 171.2L293.9 171.2L293.9 171.3L293.9 171.3L293.9 171.3L293.9 171.3L293.9 171.3L293.9 171.3L293.9 171.4L293.9 171.4L293.9 171.4L293.9 171.4L293.9 171.4L293.9 171.4L293.9 171.4L293.9 171.5L293.9 171.5L293.9 171.5L293.9 171.5L293.9 171.5L293.9 171.5L293.9 171.6L293.9 171.6L293.9 171.6L293.9 171.6L293.9 171.6L293.9 171.6L293.9 171.7L293.9 171.7L293.9 171.7L293.9 171.7L293.9 171.7L293.9 171.8L293.9 171.8L293.9 171.8L293.9 171.8L293.9 171.8L293.9 171.8L293.9 171.9L293.9 171.9L293.9 171.9L293.9 171.9L293.9 171.9L293.9 172L293.9 172L293.9 172L293.9 172L293.9 172L293.9 172L293.9 172.1L293.9 172.1L293.9 172.1L293.9 172.1L293.9 172.1L293.9 172.2L293.9 172.2L293.9 172.2L293.9 172.2L293.9 172.2L294 172.3L294 172.3L294 172.3L294 172.3L294 172.3L294 172.4L294 172.4L294 172.4L294 172.4L294 172.5L294 172.5L294 172.5L294 172.5L294 172.5L294 172.6L294 172.6L294 172.6L294 172.6L294 172.6L294 172.7L294 172.7L294 172.7L294 172.7L294 172.8L294 172.8L294 172.8L294 172.8L294 172.9L294 172.9L294 172.9L294 172.9L294 172.9L294 173L294 173L294 173L294 173L294 173.1L294 173.1L294 173.1L294 173.1L294 173.2L294 173.2L294 173.2L294 173.2L294 173.3L294 173.3L294 173.3L294 173.4L294 173.4L294 173.4L294.1 173.4L294.1 173.5L294.1 173.5L294.1 173.5L294.1 173.5L294.1 173.6L294.1 173.6L294.1 173.6L294.1 173.6L294.1 173.7L294.1 173.7L294.1 173.7L294.1 173.8L294.1 173.8L294.1 173.8L294.1 173.9L294.1 173.9L294.1 173.9L294.1 173.9L294.1 174L294.1 174L294.1 174L294.1 174.1L294.1 174.1L294.1 174.1L294.1 174.2L294.1 174.2L294.1 174.2L294.1 174.2L294.1 174.3L294.1 174.3L294.1 174.3L294.1 174.4L294.1 174.4L294.2 174.4L294.2 174.5L294.2 174.5L294.2 174.5L294.2 174.6L294.2 174.6L294.2 174.6L294.2 174.7L294.2 174.7L294.2 174.8L294.2 174.8L294.2 174.8L294.2 174.9L294.2 174.9L294.2 174.9L294.2 175L294.2 175L294.2 175L294.2 175.1L294.2 175.1L294.2 175.2L294.2 175.2L294.2 175.2L294.2 175.3L294.2 175.3L294.2 175.3L294.3 175.4L294.3 175.4L294.3 175.5L294.3 175.5L294.3 175.6L294.3 175.6L294.3 175.6L294.3 175.7L294.3 175.7L294.3 175.8L294.3 175.8L294.3 175.8L294.3 175.9L294.3 175.9L294.3 176L294.3 176L294.3 176.1L294.3 176.1L294.3 176.2L294.3 176.2L294.4 176.2L294.4 176.3L294.4 176.3L294.4 176.4L294.4 176.4L294.4 176.5L294.4 176.5L294.4 176.6L294.4 176.6L294.4 176.7L294.4 176.7L294.4 176.8L294.4 176.8L294.4 176.9L294.4 176.9L294.4 177L294.5 177L294.5 177.1L294.5 177.1L294.5 177.2L294.5 177.3L294.5 177.3L294.5 177.4L294.5 177.4L294.5 177.5L294.5 177.5L294.5 177.6L294.5 177.6L294.5 177.7L294.6 177.8L294.6 177.8L294.6 177.9L294.6 177.9L294.6 178L294.6 178.1L294.6 178.1L294.6 178.2L294.6 178.3L294.6 178.3L294.6 178.4L294.6 178.4L294.7 178.5L294.7 178.6L294.7 178.6L294.7 178.7L294.7 178.8L294.7 178.8L294.7 178.9L294.7 179L294.7 179.1L294.7 179.1L294.8 179.2L294.8 179.3L294.8 179.3L294.8 179.4L294.8 179.5L294.8 179.6L294.8 179.6L294.8 179.7L294.9 179.8L294.9 179.9L294.9 180L294.9 180L294.9 180.1L294.9 180.2L294.9 180.3L294.9 180.4L295 180.5L295 180.5L295 180.6L295 180.7L295 180.8L295 180.9L295 181L295.1 181.1L295.1 181.2L295.1 181.3L295.1 181.4L295.1 181.5L295.1 181.5L295.2 181.6L295.2 181.7L295.2 181.8L295.2 181.9L295.2 182.1L295.3 182.2L295.3 182.3L295.3 182.4L295.3 182.5L295.3 182.6L295.4 182.7L295.4 182.8L295.4 182.9L295.4 183L295.4 183.1L295.5 183.3L295.5 183.4L295.5 183.5L295.5 183.6L295.6 183.7L295.6 183.9L295.6 184L295.6 184.1L295.7 184.3L295.7 184.4L295.7 184.5L295.7 184.7L295.8 184.8L295.8 184.9L295.8 185.1L295.9 185.2L295.9 185.4L295.9 185.5L296 185.7L296 185.8L296 186L296.1 186.1L296.1 186.3L296.1 186.4L296.2 186.6L296.2 186.8L296.2 186.9L296.3 187.1L296.3 187.3L296.4 187.4L296.4 187.6L296.4 187.8L296.5 188L296.5 188.2L296.6 188.4L296.6 188.6L296.7 188.8L296.7 189L296.8 189.2L296.8 189.4L296.9 189.6L296.9 189.8L297 190L297.1 190.2L297.1 190.4L297.2 190.7L297.2 190.9L297.3 191.1L297.4 191.4L297.4 191.6L297.5 191.9L297.6 192.1L297.7 192.4L297.7 192.6L297.8 192.9L297.9 193.2L298 193.5L298.1 193.8L298.1 194L298.2 194.3L298.3 194.6L298.4 194.9L298.5 195.3L298.6 195.6L298.7 195.9L298.8 196.2L298.9 196.6L299.1 196.9L299.2 197.3L299.3 197.7L299.4 198L299.6 198.4L299.7 198.8L299.8 199.2L300 199.6L300.1 200.1L300.3 200.5L300.5 200.9L300.6 201.4L300.8 201.8L301 202.3L301.2 202.8L301.4 203.3L301.6 203.8L301.8 204.4L302 204.9L302.2 205.5L302.5 206.1L302.7 206.7L303 207.3L303.3 207.9L303.6 208.5L303.9 209.2L304.2 209.9L304.5 210.6L304.8 211.4L305.2 212.1L305.6 212.9L306 213.7L306.4 214.6L306.8 215.5L307.3 216.4L307.8 217.3L308.3 218.3L308.9 219.3L309.4 220.4L310.1 221.5L310.7 222.7L311.4 223.9L312.1 225.2L312.9 226.5L313.7 227.9L314.6 229.3L315.6 230.9L316.6 232.5L317.7 234.2L318.9 236L320.2 237.9L321.6 239.9L323.1 242.1L324.7 244.4L326.5 246.8L328.4 249.5L330.5 252.3L332.9 255.4L335.5 258.7L338.4 262.3L341.6 266.3L345.2 270.7L349.4 275.6L354 281L359.4 287.2L365.7 294.2L373 302.3L381.7 311.8L392.3 323.1L405.3 336.8L421.8 354L443.3 376.2L472.6 406.1\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M332.4 9.5L332.8 10L333.3 10.5L333.8 11L334.3 11.5L334.8 12L335.3 12.4L335.8 12.9L336.2 13.4L336.7 13.9L337.2 14.4L337.7 14.9L338.2 15.4L338.7 15.8L339.1 16.3L339.6 16.8L340.1 17.3L340.6 17.8L341.1 18.3L341.6 18.7L342 19.2L342.5 19.7L343 20.2L343.5 20.7L344 21.2L344.5 21.6L345 22.1L345.4 22.6L345.9 23.1L346.4 23.6L346.9 24.1L347.4 24.6L347.9 25L348.3 25.5L348.8 26L349.3 26.5L349.8 27L350.3 27.5L350.8 27.9L351.2 28.4L351.7 28.9L352.2 29.4L352.7 29.9L353.2 30.4L353.7 30.8L354.1 31.3L354.6 31.8L355.1 32.3L355.6 32.8L356.1 33.3L356.6 33.7L357.1 34.2L357.5 34.7L358 35.2L358.5 35.7L359 36.2L359.5 36.7L360 37.1L360.4 37.6L360.9 38.1L361.4 38.6L361.9 39.1L362.4 39.6L362.9 40L363.3 40.5L363.8 41L364.3 41.5L364.8 42L365.3 42.5L365.8 42.9L366.3 43.4L366.7 43.9L367.2 44.4L367.7 44.9L368.2 45.4L368.7 45.9L369.2 46.3L369.6 46.8L370.1 47.3L370.6 47.8L371.1 48.3L371.6 48.8L372.1 49.2L372.5 49.7L373 50.2L373.5 50.7L374 51.2L374.5 51.7L375 52.1L375.4 52.6L375.9 53.1L376.4 53.6L376.9 54.1L377.4 54.6L377.9 55L378.4 55.5L378.8 56L379.3 56.5L379.8 57L380.3 57.5L380.8 58L381.3 58.4L381.7 58.9L382.2 59.4L382.7 59.9L383.2 60.4L383.7 60.9L384.2 61.3L384.6 61.8L385.1 62.3L385.6 62.8L386.1 63.3L386.6 63.8L387.1 64.2L387.5 64.7L388 65.2L388.5 65.7L389 66.2L389.5 66.7L390 67.2L390.5 67.6L390.9 68.1L391.4 68.6L391.9 69.1L392.4 69.6L392.9 70.1L393.4 70.5L393.8 71L394.3 71.5L394.8 72L395.3 72.5L395.8 73L396.3 73.4L396.7 73.9L397.2 74.4L397.7 74.9L398.2 75.4L398.7 75.9L399.2 76.3L399.7 76.8L400.1 77.3L400.6 77.8L401.1 78.3L401.6 78.8L402.1 79.3L402.6 79.7L403 80.2L403.5 80.7L404 81.2L404.5 81.7L405 82.2L405.5 82.6L405.9 83.1L406.4 83.6L406.9 84.1L407.4 84.6L407.9 85.1L408.4 85.5L408.8 86L409.3 86.5L409.8 87L410.3 87.5L410.8 88L411.3 88.5L411.8 88.9L412.2 89.4L412.7 89.9L413.2 90.4L413.7 90.9L414.2 91.4L414.7 91.8L415.1 92.3L415.6 92.8L416.1 93.3L416.6 93.8L417.1 94.3L417.6 94.7L418 95.2L418.5 95.7L419 96.2L419.5 96.7L420 97.2L420.5 97.6L421 98.1L421.4 98.6L421.9 99.1L422.4 99.6L422.9 100.1L423.4 100.6L423.9 101L424.3 101.5L424.8 102L425.3 102.5L425.8 103L426.3 103.5L426.8 103.9L427.2 104.4L427.7 104.9L428.2 105.4L428.7 105.9L429.2 106.4L429.7 106.8L430.2 107.3L430.6 107.8L431.1 108.3L431.6 108.8L432.1 109.3L432.6 109.8L433.1 110.2L433.5 110.7L434 111.2L434.5 111.7L435 112.2L435.5 112.7L436 113.1L436.4 113.6L436.9 114.1L437.4 114.6L437.9 115.1L438.4 115.6L438.9 116L439.3 116.5L439.8 117L440.3 117.5L440.8 118L441.3 118.5L441.8 118.9L442.3 119.4L442.7 119.9L443.2 120.4L443.7 120.9L444.2 121.4L444.7 121.9L445.2 122.3L445.6 122.8L446.1 123.3L446.6 123.8L447.1 124.3L447.6 124.8L448.1 125.2L448.5 125.7\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"10 8\"/></g><line x1=\"154.1\" y1=\"164.5\" x2=\"479.9\" y2=\"164.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8cchFolium)\"/><line x1=\"293.6\" y1=\"304\" x2=\"293.6\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8cchFolium)\"/><text x=\"390.5\" y=\"186.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"286.6\" y=\"74.6\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"477.9\" y=\"155.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"302.6\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"390.5\" cy=\"67.6\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"404.5\" y=\"55.6\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(3, 3)</text><text x=\"448.1\" y=\"119.3\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">斜率 −1</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用公式求 $x^2+y^2=25$ 在 $(3,4)$ 的 $\\dfrac{dy}{dx}$"
+          ],
+          "say": "試一題。"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "跟以前的隱函數微分一樣，只是一步到位"
+          ],
+          "say": "結果跟以前兩邊對 x 微分一樣，只是公式一步到位。記得前面的負號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟以前的隱函數微分一樣，只是一步到位"
+            },
+            {
+              "do": "write",
+              "line": "　圓：$-\\frac xy$，在 $(3,4)$ 切線垂直於半徑（半徑斜率 $\\frac43$）",
+              "color": "violet",
+              "on": "只是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\dfrac{dz}{dt}=f_x\\dfrac{dx}{dt}+f_y\\dfrac{dy}{dt}$：兩條路",
+            "• 樹狀圖：每條路乘起來，再把路加起來"
+          ],
+          "say": "整理一下：多變數連鎖律，每條路乘起來，再把路加起來；樹狀圖幫你找出所有路；f 要可微；用它可以一步推出隱函數的導數公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\dfrac{dz}{dt}=f_x\\dfrac{dx}{dt}+f_y\\dfrac{dy}{dt}$：兩條路"
+            },
+            {
+              "do": "write",
+              "line": "• 樹狀圖：每條路乘起來，再把路加起來",
+              "on": "乘起"
+            },
+            {
+              "do": "write",
+              "line": "• 條件：$f$ 可微（偏導數存在不夠）",
+              "on": "你找"
+            },
+            {
+              "do": "write",
+              "line": "• 隱函數：$\\dfrac{dy}{dx}=-\\dfrac{F_x}{F_y}$",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：梯度，把 $f_x$、$f_y$ 排成一支向量"
+          ],
+          "say": "下一課，把兩個偏導數排成一支向量，叫做梯度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：梯度，把 $f_x$、$f_y$ 排成一支向量"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["chain-rule", "multivariable", "partial-derivative"],
-    "fine": ["mv-chain-one-parameter", "mv-chain-two-parameters", "mv-chain-implicit"]
+    "coarse": [
+      "chain-rule",
+      "multivariable",
+      "partial-derivative"
+    ],
+    "fine": [
+      "mv-chain-one-parameter",
+      "mv-chain-two-parameters",
+      "mv-chain-implicit"
+    ]
   },
   "practice": [
-    { "id": "der-035", "core": true, "trains": "mv-chain-one-parameter" },
-    { "id": "lec-17-q2a", "core": true, "trains": "mv-chain-two-parameters" },
-    { "id": "lec-17-m5", "core": true, "trains": "mv-chain-two-parameters" },
-    { "id": "lec-17-m3", "core": true, "trains": "mv-chain-implicit" },
-    { "id": "cg-8c-008", "core": true, "trains": "mv-chain-one-parameter" },
-    { "id": "cg-8c-009", "trains": "mv-chain-one-parameter" },
-    { "id": "lec-17-q2b", "challenge": true, "trains": "mv-chain-implicit", "note": "挑戰：三個變數的隱函數，$z_x=-\\frac{F_x}{F_z}$。" }
+    {
+      "id": "der-035",
+      "core": true,
+      "trains": "mv-chain-one-parameter"
+    },
+    {
+      "id": "lec-17-q2a",
+      "core": true,
+      "trains": "mv-chain-two-parameters"
+    },
+    {
+      "id": "lec-17-m5",
+      "core": true,
+      "trains": "mv-chain-two-parameters"
+    },
+    {
+      "id": "lec-17-m3",
+      "core": true,
+      "trains": "mv-chain-implicit"
+    },
+    {
+      "id": "cg-8c-008",
+      "core": true,
+      "trains": "mv-chain-one-parameter"
+    },
+    {
+      "id": "cg-8c-009",
+      "trains": "mv-chain-one-parameter"
+    },
+    {
+      "id": "lec-17-q2b",
+      "challenge": true,
+      "trains": "mv-chain-implicit",
+      "note": "挑戰：三個變數的隱函數，$z_x=-\\frac{F_x}{F_z}$。"
+    }
   ],
   "gaps": []
 }

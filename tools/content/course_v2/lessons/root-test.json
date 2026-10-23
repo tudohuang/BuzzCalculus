@@ -1,49 +1,124 @@
 {
   "id": "root-test",
   "title": "根值判別",
-  "readMinutes": 7,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["ratio-test"],
-  "next": ["alternating-series-test"],
-  "related": ["sequence-limit", "limit-e-type"],
-  "objectives": [
-    "算 $L=\\lim|a_n|^{1/n}$，結論與比值判別相同：$L<1$ 絕對收斂，$L>1$ 發散，$L=1$ 沒有結論。",
-    "看到「整個式子的 $n$ 次方」就想到根值判別。",
-    "會用 $n^{1/n}\\to 1$、$C^{1/n}\\to 1$，把多項式因子開掉。"
+  "prerequisites": [
+    "ratio-test"
   ],
-  "visual": "畫出 |aₙ|^{1/n} 的點，aₙ = (n/(2n + 1))ⁿ：點從 1/3 往上爬，貼向 1/2。另一組畫 n^{1/n}：先升到 n = 3 附近的最高點約 1.44，再慢慢往下貼向 1。",
+  "next": [
+    "alternating-series-test"
+  ],
+  "related": [
+    "sequence-limit",
+    "limit-e-type"
+  ],
+  "objectives": [
+    "算 $L=\\lim|a_n|^{1/n}$，結論與比值判別相同：$L<1$ 絕對收斂，$L>1$ 發散，$L=1$ 沒有結論",
+    "看到「整個式子的 $n$ 次方」就想到根值判別",
+    "會用 $n^{1/n}\\to 1$、$C^{1/n}\\to 1$，把多項式因子開掉"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 直觀：每一項大約是 $L^n$",
+      "heading": "① 每一項大約是 $L^n$",
       "body": [
-        "如果 $|a_n|^{1/n}\\to L$，那麼 $n$ 很大時 $|a_n|\\approx L^n$，級數長得像公比 $L$ 的幾何級數。跟〈比值判別〉同一個想法，只是改用「開 $n$ 次方」去讀出公比。"
+        "幾何級數：$a_n=r^n$，開 $n$ 次方根：",
+        "如果 $\\sqrt[n]{a_n}\\to L$，那 $n$ 很大時",
+        "$L<1$ 應該收斂，$L>1$ 應該發散",
+        "比值判別：相鄰兩項差幾倍",
+        "根值判別：每一項是幾的 $n$ 次方"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sqrt[n]{a_n}=\\sqrt[n]{r^n}=r",
+        "a_n\\approx L^n"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設 $L=\\lim_{n\\to\\infty}|a_n|^{1/n}$（可以是 $\\infty$）。",
-        "$L<1$：絕對收斂。$L>1$ 或 $\\infty$：發散（從某項起 $|a_n|>1$，各項不趨近 0）。$L=1$：沒有結論；$p$ 級數全都給 1。"
+        "• $L<1$：絕對收斂（正項級數就是收斂）",
+        "• $L>1$ 或 $L=\\infty$：發散",
+        "• $L=1$：沒有結論",
+        "$L=1$ 一樣沒用：",
+        "這兩個極限用到下一節的 $n^{1/n}\\to1$",
+        "例：整個式子的 $n$ 次方 $\\displaystyle\\sum\\Big(\\frac{n}{2n+1}\\Big)^n$",
+        "用比值判別也行，但要約 $\\big(\\frac{n+1}{2n+3}\\big)^{n+1}\\big(\\frac{2n+1}{n}\\big)^n$，麻煩很多"
       ],
-      "collapsible": false
+      "tex": [
+        "L=\\lim_{n\\to\\infty}\\sqrt[n]{|a_n|}=\\lim_{n\\to\\infty}|a_n|^{1/n}",
+        "\\Big(\\frac1n\\Big)^{1/n}\\to1,\\quad\\Big(\\frac1{n^2}\\Big)^{1/n}\\to1",
+        "\\sqrt[n]{a_n}=\\frac{n}{2n+1}\\to\\frac12<1\\ \\Rightarrow\\ \\text{收斂}"
+      ]
+    },
+    {
+      "heading": "③ 兩個好用的極限",
+      "body": [
+        "為什麼 $n^{1/n}\\to1$：取自然對數",
+        "所以 $n^{1/n}=e^{\\ln n/n}\\to e^0=1$",
+        "$C^{1/n}=e^{\\ln C/n}\\to e^0=1$ 同理",
+        "數值感覺：",
+        "多項式因子開掉了：$(n^k)^{1/n}=\\big(n^{1/n}\\big)^k\\to1$"
+      ],
+      "tex": [
+        "n^{1/n}\\to1,\\qquad C^{1/n}\\to1\\ (C>0)",
+        "\\ln\\big(n^{1/n}\\big)=\\frac{\\ln n}{n}\\to0",
+        "\\begin{array}{c|ccc}n&10&100&1000\\\\\\hline n^{1/n}&1.259&1.047&1.007\\\\[2pt]n^{3/n}&1.995&1.148&1.021\\end{array}"
+      ]
+    },
+    {
+      "heading": "③ 例：多項式因子開掉",
+      "body": [
+        "$L=\\dfrac13<1$ ⇒ 收斂",
+        "實際的和是 $\\frac{33}8$",
+        "例：指數是 $n^2$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{(1+\\frac1n)^{n^2}}{3^n}$",
+        "$n$ 次方根：$n^2$ 次方變 $n$ 次方",
+        "$L=\\dfrac e3\\approx0.906<1$ ⇒ 收斂",
+        "雖然收斂，但 $L$ 很靠近 $1$，收斂得很慢：和約 $6.23$"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{n^3}{3^n}",
+        "\\sqrt[n]{\\frac{n^3}{3^n}}=\\frac{\\big(n^{1/n}\\big)^3}{3}\\to\\frac{1^3}{3}=\\frac13",
+        "\\sqrt[n]{a_n}=\\frac{(1+\\frac1n)^{n}}{3}\\to\\frac e3"
+      ]
     },
     {
       "heading": "③ 什麼時候用",
       "body": [
-        "$a_n$ 是「某個式子的 $n$ 次方」，例如 $\\left(\\frac{n}{2n+1}\\right)^n$、$\\frac{(1+1/n)^{n^2}}{3^n}$：開 $n$ 次方直接把指數拿掉。",
-        "兩個好用的極限（〈數列與數列極限〉）：$n^{1/n}\\to 1$，因為 $\\ln(n^{1/n})=\\frac{\\ln n}{n}\\to 0$；常數 $C>0$ 時 $C^{1/n}\\to 1$。所以多項式因子開 $n$ 次方之後都變成 1：$(n^3)^{1/n}=(n^{1/n})^3\\to 1$。",
-        "有階乘的時候反而用比值判別：$n!$ 開 $n$ 次方不好算，比值卻能直接約分。"
-      ],
-      "collapsible": false
+        "看到整個式子的 $n$ 次方：$(\\cdots)^n$、$(\\cdots)^{n^2}$",
+        "• 有階乘 $n!$：用比值（$n!$ 開根號不好算）",
+        "• 有理式、$p$ 級數：兩個都失效，用比較"
+      ]
     },
     {
-      "heading": "④ 證明與兩者的關係",
+      "heading": "④ 證明",
       "body": [
-        "$L<1$：取 $L<r<1$，從某項起 $|a_n|^{1/n}<r$，即 $|a_n|<r^n$。$\\sum r^n$ 收斂，由比較判別 $\\sum|a_n|$ 收斂。$L>1$：從某項起 $|a_n|>1$，發散判別。",
-        "另外可以證明：比值的極限存在時，根值的極限也存在而且相等。所以根值判別能處理的情況至少跟比值判別一樣多，只是計算不一定比較方便。"
+        "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時",
+        "$\\sum r^n$ 收斂（$r<1$）⇒ 比較判別 ⇒ $\\sum|a_n|$ 收斂",
+        "$L>1$：$n\\ge N$ 時 $|a_n|^{1/n}>1$，即 $|a_n|>1$",
+        "• 項不趨近 $0$ ⇒ 發散判別 ⇒ 發散　$\\blacksquare$",
+        "跟比值判別的關係",
+        "若 $\\left|\\frac{a_{n+1}}{a_n}\\right|\\to L$，則 $|a_n|^{1/n}\\to L$",
+        "證明要用到比較細的極限論證，這裡不證",
+        "反過來不成立：$a_n=2^{(-1)^n-n}$",
+        "• 比值：$\\frac18,2,\\frac18,2,\\dots$ 沒有極限",
+        "• 根值：$2^{\\frac{(-1)^n}n-1}\\to\\frac12$，收斂"
       ],
-      "collapsible": true
+      "tex": [
+        "|a_n|^{1/n}<r\\ \\Rightarrow\\ |a_n|<r^n"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $L=\\lim|a_n|^{1/n}$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論",
+        "• 看到整個式子的 $n$ 次方：用根值",
+        "• $n^{1/n}\\to1$，$C^{1/n}\\to1$：多項式因子開掉",
+        "• 階乘用比值；有理式、$p$ 級數用比較",
+        "• 比值的極限存在 ⇒ 根值的極限也是它",
+        "下一課：交錯級數判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,317 +166,676 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum\\left(\\frac{2n}{n+1}\\right)^n$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\Big(\\frac{3n-1}{n+2}\\Big)^n$ 收斂嗎？",
       "options": [
-        { "label": "發散：根值 $\\to 2>1$", "correct": true },
-        { "label": "收斂：根值 $\\to\\frac{1}{2}$", "why": "$\\frac{2n}{n+1}$ 的極限是 2，不是 $\\frac{1}{2}$；分子分母寫反了。" },
-        { "label": "無法判斷：根值 $\\to 1$", "why": "$\\frac{2n}{n+1}\\to\\frac{2}{1}=2$，領導係數不同，不是 1。" }
+        {
+          "label": "發散：$L=3$",
+          "correct": true
+        },
+        {
+          "label": "收斂：$L=\\frac13$",
+          "why": "分子分母弄反了：最高次係數是 $\\frac31$"
+        },
+        {
+          "label": "沒有結論：$L=1$",
+          "why": "開根號後剩 $\\frac{3n-1}{n+2}$，趨近 $3$ 不是 $1$"
+        },
+        {
+          "label": "收斂：項的底趨近常數",
+          "why": "底趨近 $3$，$3^n$ 越來越大，項不趨近 $0$"
+        }
       ]
     },
     {
-      "ask": "$\\lim_{n\\to\\infty}n^{1/n}=$？",
+      "ask": "下面哪一個最適合用根值判別？",
       "options": [
-        { "label": "1", "correct": true },
-        { "label": "$\\infty$", "why": "$n$ 雖然變大，開 $n$ 次方壓得更兇：$\\ln(n^{1/n})=\\frac{\\ln n}{n}\\to 0$，所以 $\\to e^0=1$。" },
-        { "label": "0", "why": "$n\\ge 1$ 時 $n^{1/n}\\ge 1$，不可能趨近 0。" }
-      ]
-    },
-    {
-      "ask": "下列哪一個最適合用根值判別？",
-      "options": [
-        { "label": "$\\sum\\left(\\frac{3n+1}{4n-1}\\right)^n$", "correct": true },
-        { "label": "$\\sum\\frac{n!}{5^n}$", "why": "有階乘時比值判別最省事：$\\frac{n+1}{5}$ 一步就出來；$n!$ 開 $n$ 次方很難算。" },
-        { "label": "$\\sum\\frac{n+1}{n^3+2}$", "why": "有理式的根值、比值都 $\\to 1$，兩個都沒結論；應該用極限比較。" }
-      ]
-    },
-    {
-      "ask": "對 $\\sum\\frac{1}{n^2}$ 用根值判別，得到？",
-      "options": [
-        { "label": "$L=1$，沒有結論", "correct": true },
-        { "label": "$L=0$，收斂", "why": "$\\left(\\frac{1}{n^2}\\right)^{1/n}=\\frac{1}{(n^{1/n})^2}\\to 1$，不是 0。" },
-        { "label": "$L=\\frac{1}{2}$，收斂", "why": "開 $n$ 次方不是把指數 2 除掉；$\\left(\\frac{1}{n^2}\\right)^{1/n}\\to 1$。" }
+        {
+          "label": "$\\displaystyle\\sum\\Big(\\frac{\\ln n}{n}\\Big)^n$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{n!}{5^n}$",
+          "why": "有階乘，用比值：$L=\\infty$，發散"
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{1}{n^2+1}$",
+          "why": "有理式，根值會得到 $1$；用比較"
+        },
+        {
+          "label": "$\\displaystyle\\sum\\frac{2^n}{(2n)!}$",
+          "why": "有階乘，用比值較方便"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "開 $n$ 次方讀公比",
+      "title": "每一項大約是 $L^n$",
       "beats": [
-        { "show": ["$|a_n|^{1/n}\\to L$ ⇒ $|a_n|\\approx L^n$"],
-          "say": "如果 a n 開 n 次方趨近 L，那 n 很大時，a n 大約就是 L 的 n 次方。",
+        {
+          "show": [
+            "幾何級數：$a_n=r^n$，開 $n$ 次方根：",
+            "$\\sqrt[n]{a_n}=\\sqrt[n]{r^n}=r$"
+          ],
+          "say": "再看一次幾何級數：第 n 項是 r 的 n 次方。開 n 次方根，就把公比直接拿出來了。",
           "board": [
-            {"do":"write","line":"$|a_n|^{1/n}\\to L$ ⇒ $|a_n|\\approx L^n$"}
-          ] },
-        { "show": ["像公比 $L$ 的幾何級數"],
-          "note": "跟〈比值判別〉同一個想法。",
-          "say": "也就是長得像公比 L 的幾何級數。跟比值判別同一個想法，只是改用開 n 次方讀出公比。",
+            {
+              "do": "write",
+              "line": "幾何級數：$a_n=r^n$，開 $n$ 次方根："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt[n]{a_n}=\\sqrt[n]{r^n}=r$",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果 $\\sqrt[n]{a_n}\\to L$，那 $n$ 很大時",
+            "$a_n\\approx L^n$"
+          ],
+          "say": "如果一個級數，每一項開 n 次方根之後趨近 L，那 n 很大時，每一項大約是 L 的 n 次方，就像公比 L 的幾何級數。",
           "board": [
-            {"do":"write","line":"像公比 $L$ 的幾何級數"}
-          ] },
-        { "show": ["$L<1$：絕對收斂；$L>1$：發散"],
-          "note": "$L=1$：沒有結論。",
-          "say": "L 小於一絕對收斂；大於一，從某項起每一項都大於一，發散；等於一沒結論。",
+            {
+              "do": "write",
+              "line": "如果 $\\sqrt[n]{a_n}\\to L$，那 $n$ 很大時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle a_n\\approx L^n}}$",
+              "on": "很大"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L<1$ 應該收斂，$L>1$ 應該發散"
+          ],
+          "say": "所以 L 小於 1，應該收斂；L 大於 1，應該發散。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L<1$：絕對收斂","on":"L 小於一"},
-            {"do":"write","line":"$L>1$：發散","on":"大於一，從"},
-            {"do":"write","line":"$L=1$：沒有結論","on":"等於一"}
-          ] },
-        { "show": ["$|a_n|^{1/n}>1$ ⇒ $|a_n|>1$"],
-          "note": "一的 $n$ 次方還是一。",
-          "say": "為什麼各項大於一？兩邊同取 n 次方，一的 n 次方還是一，所以 a n 的絕對值大於一。",
+            {
+              "do": "write",
+              "line": "$L<1$ 應該收斂，$L>1$ 應該發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比值判別：相鄰兩項差幾倍"
+          ],
+          "say": "比值判別問的是：相鄰兩項差幾倍。根值判別問的是：每一項大約是幾的 n 次方。兩個都是在找那個像公比的數。",
           "board": [
-            {"do":"write","line":"$|a_n|^{1/n}>1$"},
-            {"do":"write","line":"$|a_n|>{{o:1^n}}=1$","on":"同取 n 次方"}
-          ] },
-        { "show": ["收斂 ⇒ 各項趨近 $0$"],
-          "note": "各項都大於 1，離 0 很遠。",
-          "say": "級數若收斂，各項一定越來越小，趨近零。各項都大於一，離零很遠，所以發散。",
+            {
+              "do": "write",
+              "line": "比值判別：相鄰兩項差幾倍"
+            },
+            {
+              "do": "write",
+              "line": "根值判別：每一項是幾的 $n$ 次方",
+              "color": "gold",
+              "on": "項大"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\Big(\\frac{n}{2n+1}\\Big)^n$：開 $n$ 次方根後趨近多少？",
+        "options": [
+          {
+            "label": "$\\dfrac12$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "看成 $\\frac{n}{n}$ 了；分母是 $2n+1$"
+          },
+          {
+            "label": "$0$",
+            "why": "$n$ 次方根把外面的 $n$ 次方拿掉，剩 $\\frac{n}{2n+1}$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "$L=\\lim_{n\\to\\infty}\\sqrt[n]{|a_n|}=\\lim_{n\\to\\infty}|a_n|^{1/n}$",
+            "• $L<1$：絕對收斂（正項級數就是收斂）"
+          ],
+          "say": "根值判別：每一項取絕對值，開 n 次方根，極限叫 L。結論跟比值判別一模一樣：L 小於 1 收斂，大於 1 發散，等於 1 沒有結論。",
           "board": [
-            {"do":"write","line":"收斂 ⇒ $a_n\\to0$"},
-            {"do":"write","line":"$|a_n|>1$：離 $0$ 很遠 ⇒ 發散","on":"各項都大於一"}
-          ] },
-        { "show": ["$\\left(\\frac{n}{2n+1}\\right)^n$：$|a_n|^{1/n}=\\frac{n}{2n+1}$"],
-          "note": "$\\to\\frac{1}{2}<1$，收斂。",
-          "say": "整個式子的 n 次方，開 n 次方直接把指數拿掉。剩下的趨近二分之一，小於一，收斂。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\lim_{n\\to\\infty}\\sqrt[n]{|a_n|}=\\lim_{n\\to\\infty}|a_n|^{1/n}$"
+            },
+            {
+              "do": "write",
+              "line": "• $L<1$：絕對收斂（正項級數就是收斂）",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• $L>1$ 或 $L=\\infty$：發散",
+              "on": "別一"
+            },
+            {
+              "do": "write",
+              "line": "• $L=1$：沒有結論",
+              "on": "發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=1$ 一樣沒用：",
+            "$\\Big(\\frac1n\\Big)^{1/n}\\to1,\\quad\\Big(\\frac1{n^2}\\Big)^{1/n}\\to1$"
+          ],
+          "say": "L 等於 1 一樣沒用：n 分之一和 n 平方分之一，開 n 次方根都趨近 1，可是一個發散、一個收斂。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|a_n|^{1/n}=\\frac{n}{2n+1}$","on":"開 n 次方"},
-            {"do":"write","line":"$\\to{{r:\\frac{1}{2}}}<1$：收斂","on":"剩下的"},
-            {"do":"box","term":"r","color":"green","on":"小於一"}
-          ] }
+            {
+              "do": "write",
+              "line": "$L=1$ 一樣沒用："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Big(\\frac1n\\Big)^{1/n}\\to1,\\quad\\Big(\\frac1{n^2}\\Big)^{1/n}\\to1}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "　這兩個極限用到下一節的 $n^{1/n}\\to1$",
+              "color": "violet",
+              "on": "可是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：整個式子的 $n$ 次方 $\\displaystyle\\sum\\Big(\\frac{n}{2n+1}\\Big)^n$",
+            "$\\sqrt[n]{a_n}=\\frac{n}{2n+1}\\to\\frac12<1\\ \\Rightarrow\\ \\text{收斂}$"
+          ],
+          "say": "剛才的例子：整個分式的 n 次方，開根號直接拿掉外面的 n 次方，剩 2 n 加 1 分之 n，趨近 2 分之 1，收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：整個式子的 $n$ 次方 $\\displaystyle\\sum\\Big(\\frac{n}{2n+1}\\Big)^n$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sqrt[n]{a_n}=\\frac{n}{2n+1}\\to\\frac12<1\\ \\Rightarrow\\ \\text{收斂}}}$",
+              "color": "red",
+              "on": "開根"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "　用比值判別也行，但要約 $\\big(\\frac{n+1}{2n+3}\\big)^{n+1}\\big(\\frac{2n+1}{n}\\big)^n$，麻煩很多",
+              "color": "violet",
+              "on": "趨近"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個好用的極限",
+      "beats": [
+        {
+          "show": [
+            "$n^{1/n}\\to1,\\qquad C^{1/n}\\to1\\ (C>0)$"
+          ],
+          "say": "用根值判別之前，先準備兩個好用的極限：n 的 n 分之一次方趨近 1；任何正的常數 C，開 n 次方根也趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle n^{1/n}\\to1,\\qquad C^{1/n}\\to1\\ (C>0)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼 $n^{1/n}\\to1$：取自然對數",
+            "$\\ln\\big(n^{1/n}\\big)=\\frac{\\ln n}{n}\\to0$"
+          ],
+          "say": "為什麼 n 的 n 分之一次方趨近 1？取自然對數：變成 n 分之自然對數 n。對數長得比 n 慢得多，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼 $n^{1/n}\\to1$：取自然對數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\big(n^{1/n}\\big)=\\frac{\\ln n}{n}\\to0$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $n^{1/n}=e^{\\ln n/n}\\to e^0=1$"
+          ],
+          "say": "所以 n 的 n 分之一次方，等於 e 的這個次方，趨近 e 的 0 次方，也就是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $n^{1/n}=e^{\\ln n/n}\\to e^0=1$"
+            },
+            {
+              "do": "write",
+              "line": "　$C^{1/n}=e^{\\ln C/n}\\to e^0=1$ 同理",
+              "color": "violet",
+              "on": "個次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "數值感覺：",
+            "$\\begin{array}{c|ccc}n&10&100&1000\\\\\\hline n^{1/n}&1.259&1.047&1.007\\\\[2pt]n^{3/n}&1.995&1.148&1.021\\end{array}$"
+          ],
+          "say": "看數字：n 等於 1000 時，n 的 n 分之一次方已經只有 1.007。n 立方開 n 次方根也趨近 1，只是慢一點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "數值感覺："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{array}{c|ccc}n&10&100&1000\\\\\\hline n^{1/n}&1.259&1.047&1.007\\\\[2pt]n^{3/n}&1.995&1.148&1.021\\end{array}}$",
+              "on": "00#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式因子開掉了：$(n^k)^{1/n}=\\big(n^{1/n}\\big)^k\\to1$"
+          ],
+          "say": "結論：任何多項式因子，開 n 次方根之後都變成 1，等於消失了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多項式因子開掉了：$(n^k)^{1/n}=\\big(n^{1/n}\\big)^k\\to1$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：多項式因子開掉",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{n^3}{3^n}$"
+          ],
+          "say": "用根值判別判斷 3 的 n 次方分之 n 立方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{n^3}{3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt[n]{\\frac{n^3}{3^n}}=\\frac{\\big(n^{1/n}\\big)^3}{3}\\to\\frac{1^3}{3}=\\frac13$"
+          ],
+          "say": "開 n 次方根：分母 3 的 n 次方，開完剩 3；分子 n 立方，開完是 n 的 n 分之一次方的立方，趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt[n]{\\frac{n^3}{3^n}}=\\frac{\\big(n^{1/n}\\big)^3}{3}\\to\\frac{1^3}{3}=\\frac13$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\dfrac13<1$ ⇒ 收斂"
+          ],
+          "say": "L 等於 3 分之 1，收斂。跟比值判別的結論一樣：多項式不重要，指數說了算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=\\dfrac13<1$ ⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　實際的和是 $\\frac{33}8$",
+              "color": "violet",
+              "on": "別的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：指數是 $n^2$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{(1+\\frac1n)^{n^2}}{3^n}$"
+          ],
+          "say": "再一個：1 加 n 分之一的 n 平方次方，除以 3 的 n 次方。指數是 n 平方，比值判別會很難算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：指數是 $n^2$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{(1+\\frac1n)^{n^2}}{3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 次方根：$n^2$ 次方變 $n$ 次方",
+            "$\\sqrt[n]{a_n}=\\frac{(1+\\frac1n)^{n}}{3}\\to\\frac e3$"
+          ],
+          "say": "開 n 次方根，n 平方次方變成 n 次方，分母剩 3。1 加 n 分之一的 n 次方，趨近 e。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n$ 次方根：$n^2$ 次方變 $n$ 次方"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt[n]{a_n}=\\frac{(1+\\frac1n)^{n}}{3}\\to\\frac e3$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\dfrac e3\\approx0.906<1$ ⇒ 收斂"
+          ],
+          "say": "e 除以 3，大約 0.906，比 1 小一點，收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=\\dfrac e3\\approx0.906<1$ ⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　雖然收斂，但 $L$ 很靠近 $1$，收斂得很慢：和約 $6.23$",
+              "color": "violet",
+              "on": "06"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "什麼時候用",
+      "beats": [
+        {
+          "show": [
+            "看到整個式子的 $n$ 次方：$(\\cdots)^n$、$(\\cdots)^{n^2}$"
+          ],
+          "say": "什麼時候用根值判別？看到整個式子的 n 次方，或 n 平方次方，開 n 次方根正好把它拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "看到整個式子的 $n$ 次方：$(\\cdots)^n$、$(\\cdots)^{n^2}$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 有階乘 $n!$：用比值（$n!$ 開根號不好算）",
+            "• 有理式、$p$ 級數：兩個都失效，用比較"
+          ],
+          "say": "有階乘就用比值判別，因為階乘開 n 次方根不好算。有理式和 p 級數，比值和根值都會得到 1，改用比較判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 有階乘 $n!$：用比值（$n!$ 開根號不好算）"
+            },
+            {
+              "do": "write",
+              "line": "• 有理式、$p$ 級數：兩個都失效，用比較",
+              "on": "式和"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "證明：分兩種情況",
+      "title": "試一題",
       "beats": [
-        { "show": ["分 $L<1$、$L>1$ 兩種情況"],
-          "say": "策略：分兩種情況。L 小於一，跟公比 r 的幾何級數比；L 大於一，各項不趨近零。",
-          "board": [
-            {"do":"write","line":"$L<1$：跟幾何級數比"},
-            {"do":"write","line":"$L>1$：各項不趨近 $0$","on":"L 大於一"}
-          ] },
-        { "show": ["$L<1$：取 $L<r<1$","從某項起 $|a_n|^{1/n}<r$"],
-          "note": "開 $n$ 次方趨近 $L$，而 $L<r$。",
-          "say": "L 小於一：在 L 和一之間取 r。開 n 次方趨近 L，所以從某項起都小於 r。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L<1$：取 $L<r<1$","on":"L 小於一"},
-            {"do":"write","line":"從某項起 ${{q:|a_n|^{1/n}}}<r$","on":"開 n 次方"},
-            {"do":"underline","term":"q","label":"→ L","on":"所以從某項起"}
-          ] },
-        { "show": ["趨近 $L$：$n$ 夠大就貼近 $L$"],
-          "note": "$r$ 比 $L$ 大，貼近的項在 $r$ 左邊。",
-          "say": "趨近 L 的意思是，n 夠大以後，每一項都貼在 L 旁邊，要多近都行。r 比 L 大，所以這些項都在 r 的左邊。",
-          "board": [
-            {"do":"write","line":"$n$ 夠大：$|a_n|^{1/n}$ 貼近 $L$"},
-            {"do":"write","line":"$L<r$ ⇒ 都 $<r$","on":"r 比 L 大"}
-          ] },
-        { "show": ["$|a_n|<r^n$"],
-          "note": "兩邊都不是負的，同取 $n$ 次方。",
-          "why": {"ask":"從 $|a_n|^{1/n}<r$ 怎麼得到 $|a_n|<r^n$？","say":"開 n 次方小於 r，怎麼變成 a n 小於 r 的 n 次方？","options":[{"label":"兩邊都不是負的，同取 $n$ 次方，方向不變","correct":true},{"label":"$r<1$，所以 $r^n$ 很小","why":"$r^n$ 很小是下一步才用的事；這一步只是把開 $n$ 次方還原。"},{"label":"反覆用 $|a_{n+1}|\\le r|a_n|$","why":"那是比值判別的證法；這裡直接把開 $n$ 次方還原，不用一項一項推。"}]},
-          "say": "兩邊都不是負的，同取 n 次方，方向不變，a n 的絕對值就小於 r 的 n 次方。",
-          "board": [
-            {"do":"write","line":"$|a_n|<{{rn:r^n}}$"},
-            {"do":"focus","term":"rn","label":"同取 n 次方","why":true,"on":"同取 n 次方"}
-          ] },
-        { "show": ["$\\sum r^n$ 收斂 ⇒ $\\sum|a_n|$ 收斂"],
-          "note": "公比 $r<1$，再用比較判別。",
-          "say": "r 小於一，r 的 n 次方加起來是收斂的幾何級數。由比較判別，原級數絕對收斂。",
-          "board": [
-            {"do":"write","line":"${{g:\\sum r^n}}$ 收斂 ⇒ $\\sum|a_n|$ 收斂"},
-            {"do":"underline","term":"g","label":"幾何級數","on":"收斂的幾何級數"}
-          ] },
-        { "show": ["$L>1$：從某項起 $|a_n|>1$"],
-          "note": "各項不趨近 $0$，由發散判別發散。",
-          "why": {"ask":"為什麼 $L>1$ 就發散？","say":"那 L 大於一，為什麼就發散？","options":[{"label":"從某項起 $|a_n|>1$，各項不趨近 $0$","correct":true},{"label":"$|a_n|\\approx L^n$，部分和很大","why":"「差不多」不是證明；直接看各項：從某項起絕對值大於 1，不可能趨近 0。"},{"label":"跟公比 $r>1$ 的幾何級數比","why":"比較只推得出 $\\sum|a_n|$ 發散，說不出 $\\sum a_n$ 本身發散；要看各項不趨近 0。"}]},
-          "say": "L 大於一：開 n 次方從某項起大於一，a n 的絕對值也大於一，不會趨近零，發散。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L>1$：從某項起 ${{b:|a_n|>1}}$","on":"L 大於一"},
-            {"do":"underline","term":"b","why":true,"on":"也大於一"},
-            {"do":"write","line":"不會趨近 $0$ ⇒ 發散","color":"green","why":true,"on":"不會趨近零"}
-          ] }
-      ],
-      "key": "夾一個 $r$ 使 $|a_n|<r^n$，比幾何級數",
-      "proof": true,
-      "of": 3,
-      "skeleton": "分情況",
-      "where": {
-        "ask": "「$L<r$」用在哪一步？",
-        "steps": [
-          {
-            "label": "從某項起 $|a_n|^{1/n}<r$",
-            "correct": true
-          },
-          {
-            "label": "$|a_n|<r^n$",
-            "why": "這只是兩邊同取 $n$ 次方。"
-          },
-          {
-            "label": "$\\sum r^n$ 收斂",
-            "why": "這只用到 $r<1$：公比小於 1 的幾何級數。"
-          },
-          {
-            "label": "$L>1$ 時發散",
-            "why": "這一半沒有取 $r$，只看各項大於 1。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "指數是 $n^2$",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{(1+1/n)^{n^2}}{3^n}$"],
-          "say": "分子的指數是 n 平方，分母是三的 n 次方。比值判別在這裡會非常痛苦。",
-          "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{{{a:(1+1/n)^{n^2}}}}{{{b:3^n}}}$"},
-            {"do":"underline","term":"a","on":"分子的指數"},
-            {"do":"underline","term":"b","on":"分母是"}
-          ] },
-        { "show": ["$\\left(\\left(1+\\frac{1}{n}\\right)^{n^2}\\right)^{1/n}=\\left(1+\\frac{1}{n}\\right)^n$"],
-          "say": "開 n 次方，n 平方的指數變成 n，正好是趨近 e 的那一包。",
-          "board": [
-            {"do":"write","line":"$\\left(\\left(1+\\frac{1}{n}\\right)^{n^2}\\right)^{1/n}={{p:\\left(1+\\frac{1}{n}\\right)^n}}$"},
-            {"do":"underline","term":"p","on":"正好是"}
-          ] },
-        { "show": ["$\\left(1+\\frac1n\\right)^n\\to e$"],
-          "note": "$e$ 是固定的無理數；細節在〈e 型極限〉。",
-          "say": "這一包，一加 n 分之一的 n 次方，n 越大越貼近 e。e 是一個固定的數，細節在 e 型極限。",
-          "board": [
-            {"do":"write","line":"$\\left(1+\\frac1n\\right)^n\\to {{e:e}}$"},
-            {"do":"focus","term":"e","on":"固定的數"}
-          ] },
-        { "show": ["$(3^n)^{1/n}=3$"],
-          "note": "分母也要一起開。",
-          "say": "分母三的 n 次方也要一起開，剩下三。那 L 是多少？",
-          "board": [
-            {"do":"write","line":"$(3^n)^{1/n}={{t:3}}$"},
-            {"do":"focus","term":"t","on":"剩下三"},
-            {"do":"write","line":"$L=\\ ?$","on":"那 L"}
-          ] }
-      ],
-      "key": "開 $n$ 次方後指數 $n^2$ 降成 $n$",
-      "predict": {
-        "ask": "$L$ 與結論是？",
-        "options": [
-          {
-            "label": "$\\frac{e}{3}\\approx 0.906$，收斂",
-            "correct": true
-          },
-          {
-            "label": "$e$，大於 1，發散",
-            "why": "分母的 $3^n$ 忘了一起開；開完是 3，要除掉。"
-          },
-          {
-            "label": "$\\frac{1}{3}$，收斂",
-            "why": "$\\left(1+\\frac{1}{n}\\right)^n\\to e$，不是 1。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "$n^{1/n}\\to 1$",
-      "beats": [
-        { "show": ["$\\ln(n^{1/n})=\\frac{\\ln n}{n}\\to 0$"],
-          "say": "n 開 n 次方，取自然對數，變成自然對數 n 除以 n，趨近零。",
-          "board": [
-            {"do":"write","line":"$\\ln(n^{1/n})={{f:\\frac{\\ln n}{n}}}\\to0$"},
-            {"do":"underline","term":"f","on":"變成自然對數"}
-          ] },
-        { "show": ["$\\ln n$ 長得比 $n$ 慢很多"],
-          "note": "所以 $\\frac{\\ln n}{n}\\to0$。",
-          "say": "為什麼自然對數 n 除以 n 趨近零？n 長得比自然對數 n 快很多，分母跑得遠比分子快，比值被壓向零。",
-          "board": [
-            {"do":"write","line":"分母 $n$ 遠比分子 $\\ln n$ 快"},
-            {"do":"write","line":"$\\frac{\\ln n}{n}\\to0$","on":"比值被壓"}
-          ] },
-        { "show": ["所以 $n^{1/n}\\to e^0=1$"],
-          "say": "對數趨近零，本身就趨近 e 的零次方，也就是一。n 雖然變大，開 n 次方壓得更兇。",
-          "board": [
-            {"do":"write","line":"所以 $n^{1/n}\\to e^0=1$","on":"本身就趨近"}
-          ] },
-        { "show": ["$n^{1/n}$ 先升後降，貼向 $1$"],
-          "say": "畫出來看：n 的 n 分之一次方先升後降，慢慢貼向一。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,10,0,2],"curves":[{"expr":"x^(1/x)","domain":[0.5,10],"color":"blue"}],"dashed":[[[0,1],[10,1]]]}}
-          ] },
-        { "show": ["$C>0$：$C^{1/n}\\to 1$"],
-          "say": "常數開 n 次方也趨近一。這兩個極限在根值判別裡天天用。",
-          "board": [
-            {"do":"write","line":"$C>0$：$C^{1/n}\\to1$"}
-          ] }
+        {
+          "show": [
+            "下面哪一個最適合用根值判別？"
+          ],
+          "say": "再一題：哪一個最適合根值判別？"
+        }
       ],
       "check": 1
     },
     {
-      "title": "多項式因子開掉",
+      "title": "證明",
       "beats": [
-        { "show": ["$(n^3)^{1/n}=(n^{1/n})^3\\to 1$"],
-          "say": "多項式因子開 n 次方之後都變成一：n 三次方開 n 次方，是 n 的 n 分之一次方再三次方。",
+        {
+          "show": [
+            "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時",
+            "$|a_n|^{1/n}<r\\ \\Rightarrow\\ |a_n|<r^n$"
+          ],
+          "say": "證明。L 小於 1：在 L 和 1 之間挑一個 r。n 夠大以後，開 n 次方根小於 r，兩邊 n 次方，a n 的絕對值小於 r 的 n 次方。",
           "board": [
-            {"do":"write","line":"$(n^3)^{1/n}=(n^{1/n})^3\\to1$"}
-          ] },
-        { "show": ["$\\sum\\frac{n^3}{3^n}$：$\\frac{(n^{1/n})^3}{3}\\to\\frac{1}{3}$"],
-          "note": "比值判別也得到同一個 $L$。",
-          "say": "所以 n 三次方除以三的 n 次方，根值趨近三分之一，收斂。比值判別也是三分之一。",
+            {
+              "do": "write",
+              "line": "$L<1$：取 $r$ 使 $L<r<1$。有 $N$，$n\\ge N$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_n|^{1/n}<r\\ \\Rightarrow\\ |a_n|<r^n$",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum r^n$ 收斂（$r<1$）⇒ 比較判別 ⇒ $\\sum|a_n|$ 收斂"
+          ],
+          "say": "r 的 n 次方是收斂的幾何級數，用比較判別，原級數絕對收斂。這比比值判別的證明還直接。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{n^3}{3^n}$"},
-            {"do":"write","line":"$\\frac{(n^{1/n})^3}{3}\\to{{t:\\frac{1}{3}}}$","on":"根值趨近"},
-            {"do":"box","term":"t","color":"green","on":"收斂"}
-          ] },
-        { "show": ["$p$ 級數：根值全都給 1"],
-          "say": "反過來，p 級數只有多項式，開 n 次方全部變成一，根值判別沒結論。",
+            {
+              "do": "write",
+              "line": "$\\sum r^n$ 收斂（$r<1$）⇒ 比較判別 ⇒ $\\sum|a_n|$ 收斂",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L>1$：$n\\ge N$ 時 $|a_n|^{1/n}>1$，即 $|a_n|>1$",
+            "• 項不趨近 $0$ ⇒ 發散判別 ⇒ 發散　$\\blacksquare$"
+          ],
+          "say": "L 大於 1：n 夠大以後，a n 的絕對值大於 1，項不會趨近 0，發散。證明完畢。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$p$ 級數：根值全都給 1","on":"p 級數"},
-            {"do":"write","line":"$L=1$","on":"全部變成"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$L>1$：$n\\ge N$ 時 $|a_n|^{1/n}>1$，即 $|a_n|>1$"
+            },
+            {
+              "do": "write",
+              "line": "• 項不趨近 $0$ ⇒ 發散判別 ⇒ 發散　$\\blacksquare$",
+              "on": "值大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟比值判別的關係",
+            "若 $\\left|\\frac{a_{n+1}}{a_n}\\right|\\to L$，則 $|a_n|^{1/n}\\to L$"
+          ],
+          "say": "兩個判別的關係：只要比值的極限存在，根值的極限也存在，而且相等。所以兩個判別不會互相矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟比值判別的關係"
+            },
+            {
+              "do": "write",
+              "line": "若 $\\left|\\frac{a_{n+1}}{a_n}\\right|\\to L$，則 $|a_n|^{1/n}\\to L$",
+              "color": "gold",
+              "on": "存在#1"
+            },
+            {
+              "do": "write",
+              "line": "　證明要用到比較細的極限論證，這裡不證",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來不成立：$a_n=2^{(-1)^n-n}$",
+            "• 比值：$\\frac18,2,\\frac18,2,\\dots$ 沒有極限"
+          ],
+          "say": "反過來不一定。這個例子的比值在 8 分之 1 和 2 之間跳，比值判別不能用；但開 n 次方根趨近 2 分之 1，根值判別說它收斂。根值判別比較強。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來不成立：$a_n=2^{(-1)^n-n}$"
+            },
+            {
+              "do": "write",
+              "line": "• 比值：$\\frac18,2,\\frac18,2,\\dots$ 沒有極限",
+              "on": "之間"
+            },
+            {
+              "do": "write",
+              "line": "• 根值：$2^{\\frac{(-1)^n}n-1}\\to\\frac12$，收斂",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "根值還是比值",
+      "title": "重點整理",
       "beats": [
-        { "show": ["某個式子的 $n$ 次方：用根值"],
-          "say": "a n 是某個式子的 n 次方，開 n 次方就直接把指數拿掉，用根值判別最快。",
+        {
+          "show": [
+            "• $L=\\lim|a_n|^{1/n}$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論",
+            "• 看到整個式子的 $n$ 次方：用根值"
+          ],
+          "say": "整理一下：開 n 次方根取極限，小於 1 收斂，大於 1 發散，等於 1 沒有結論。看到整個式子的 n 次方就用根值；階乘用比值，有理式用比較。",
           "board": [
-            {"do":"write","line":"$a_n=(\\ldots)^n$：用根值"}
-          ] },
-        { "show": ["有階乘：用比值"],
-          "note": "$n!$ 開 $n$ 次方不好算，比值卻能直接約分。",
-          "say": "看到階乘就改用比值：階乘開 n 次方很難算，相鄰兩項一除卻全部約掉。",
+            {
+              "do": "write",
+              "line": "• $L=\\lim|a_n|^{1/n}$：$<1$ 收斂，$>1$ 發散，$=1$ 沒有結論"
+            },
+            {
+              "do": "write",
+              "line": "• 看到整個式子的 $n$ 次方：用根值",
+              "on": "小於"
+            },
+            {
+              "do": "write",
+              "line": "• $n^{1/n}\\to1$，$C^{1/n}\\to1$：多項式因子開掉",
+              "on": "發散"
+            },
+            {
+              "do": "write",
+              "line": "• 階乘用比值；有理式、$p$ 級數用比較",
+              "on": "到整"
+            },
+            {
+              "do": "write",
+              "line": "• 比值的極限存在 ⇒ 根值的極限也是它",
+              "on": "階乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：交錯級數判別"
+          ],
+          "say": "正項級數的判別到這裡告一段落。下一課，開始處理有正有負的級數：交錯級數判別。",
           "board": [
-            {"do":"write","line":"有階乘：用比值"},
-            {"do":"write","line":"$n!$ 開 $n$ 次方：難算","on":"階乘開"}
-          ] },
-        { "show": ["有理式：兩個都 $\\to 1$"],
-          "note": "用極限比較。",
-          "say": "有理式的根值和比值都趨近一，兩個都沒結論，要用極限比較。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"有理式：根值、比值都 $\\to 1$","on":"有理式的"},
-            {"do":"write","line":"$L=1$：沒有結論","on":"兩個都"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：交錯級數判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["root-test", "convergence-test"],
-    "fine": ["root-test-nth-power", "root-test-n-root-limit", "root-vs-ratio"]
+    "coarse": [
+      "root-test",
+      "convergence-test"
+    ],
+    "fine": [
+      "root-test-nth-power",
+      "root-test-n-root-limit",
+      "root-vs-ratio"
+    ]
   },
   "practice": [
-    { "id": "lec-13-q2c", "core": true, "trains": "root-test-nth-power" },
-    { "id": "rel-adv-015", "core": true, "trains": "root-test-nth-power" },
-    { "id": "lec-13-q2e", "core": true, "trains": "root-test-nth-power" },
-    { "id": "cg-6c-017", "core": true, "trains": "root-test-n-root-limit" },
-    { "id": "cg-6c-019", "core": true, "trains": "root-test-nth-power" },
-    { "id": "lec-11-m3", "trains": "root-test-n-root-limit" },
-    { "id": "gap-tech-005", "trains": "root-vs-ratio" },
-    { "id": "cg-6c-018", "trains": "root-test-n-root-limit" },
-    { "id": "cg-6c-020", "trains": "root-test-nth-power" }
+    {
+      "id": "lec-13-q2c",
+      "core": true,
+      "trains": "root-test-nth-power"
+    },
+    {
+      "id": "rel-adv-015",
+      "core": true,
+      "trains": "root-test-nth-power"
+    },
+    {
+      "id": "lec-13-q2e",
+      "core": true,
+      "trains": "root-test-nth-power"
+    },
+    {
+      "id": "cg-6c-017",
+      "core": true,
+      "trains": "root-test-n-root-limit"
+    },
+    {
+      "id": "cg-6c-019",
+      "core": true,
+      "trains": "root-test-nth-power"
+    },
+    {
+      "id": "lec-11-m3",
+      "trains": "root-test-n-root-limit"
+    },
+    {
+      "id": "gap-tech-005",
+      "trains": "root-vs-ratio"
+    },
+    {
+      "id": "cg-6c-018",
+      "trains": "root-test-n-root-limit"
+    },
+    {
+      "id": "cg-6c-020",
+      "trains": "root-test-nth-power"
+    }
   ],
   "gaps": []
 }

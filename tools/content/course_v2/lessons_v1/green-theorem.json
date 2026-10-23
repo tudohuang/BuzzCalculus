@@ -1,0 +1,456 @@
+{
+  "id": "green-theorem",
+  "title": "Green 定理",
+  "readMinutes": 12,
+  "totalMinutes": 45,
+  "prerequisites": ["work-line-integral", "nonrectangular-regions", "conservative-fields"],
+  "next": ["parametric-surfaces"],
+  "related": ["curl", "stokes-theorem", "divergence", "polar-double-integral"],
+  "objectives": [
+    "寫出 Green 定理並說出所有條件：簡單封閉、分段光滑、正向（逆時針）、$P$、$Q$ 在包含整塊區域的開集上偏導連續。",
+    "用它把封閉曲線上的線積分換成二重積分（或反過來），包括用線積分算面積。",
+    "處理順時針、以及區域裡有奇異點的情況。"
+  ],
+  "visual": "區域 D 被切成很多小方格，每個小方格的邊界上畫著逆時針的小箭頭圈，顯示「這一格的小環流 ≈ (Q_x − P_y) × 面積」。相鄰兩格共用的邊上，兩個箭頭方向相反、互相抵消（閃一下後消失），最後只剩外圍邊界的箭頭，拼成整條 C 的逆時針環流。",
+  "concept": [
+    {
+      "heading": "① 直觀：小漩渦加起來",
+      "body": [
+        "把 $D$ 切成很多小方格。在每個小方格的邊界上逆時針繞一圈，算 $\\mathbf F=\\langle P,Q\\rangle$ 的功（環流）。可以算出，小方格的環流約等於 $(Q_x-P_y)\\times{}$ 小方格面積；$Q_x-P_y$ 量的是那一點附近的場「轉了多少」。",
+        "把所有小方格的環流加起來：相鄰兩格共用的邊，一格往這邊走、另一格往那邊走，互相抵消。最後只剩最外圍的邊界。於是：外圍一圈的環流 $={}$ 所有小漩渦的總和。",
+        "這是直觀，不是證明：它沒交代「小方格的環流約等於 $(Q_x-P_y)\\times{}$ 面積」的誤差，也沒處理彎曲的邊界。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "條件：$C$ 是分段光滑的簡單封閉曲線（自己不相交），圍出區域 $D$；$C$ 取正向，也就是沿著 $C$ 走時 $D$ 在左手邊（對一般的外圍邊界就是逆時針）；$P$、$Q$ 的一階偏導在一個包含 $D$（連同邊界）的開集上連續。那麼"
+      ],
+      "tex": ["\\oint_C P\\,dx+Q\\,dy=\\iint_D\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)dA"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼用",
+      "body": [
+        "線積分很難、$Q_x-P_y$ 很簡單時：換成二重積分。常見情形是 $P$、$Q$ 裡有 $e^{\\sin x}$、$\\sqrt{y^4+1}$ 這種東西，偏微分之後卻消失。",
+        "順時針：先照逆時針算，再加負號。",
+        "算面積：挑 $Q_x-P_y=1$ 的 $P$、$Q$，例如 $\\oint x\\,dy$、$-\\oint y\\,dx$ 或 $\\frac{1}{2}\\oint(x\\,dy-y\\,dx)$，三個都等於 $D$ 的面積。",
+        "跟〈保守場〉的關係：在單連通區域上 $Q_x-P_y=0$，任何封閉曲線的環流都是 $0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 證明的骨架與兩個延伸（給想知道的人）",
+      "body": [
+        "$D$ 同時是鉛直線型與水平線型區域時，把定理拆成兩半證明：$-\\iint P_y\\,dA=\\oint P\\,dx$ 與 $\\iint Q_x\\,dA=\\oint Q\\,dy$。以前者為例，$D=\\{a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)\\}$，內層 $\\int P_y\\,dy=P(x,g_2(x))-P(x,g_1(x))$，再比對下緣（向右走）與上緣（向左走）兩段的 $\\oint P\\,dx$，左右兩條鉛直邊上 $dx=0$。一般區域切成這種小塊，共用邊抵消。",
+        "有洞的區域：邊界包含外圈（逆時針）與內圈（順時針），$D$ 仍然在左手邊，定理照樣成立。",
+        "通量形式：外法向量 $\\mathbf n$，$\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_D(P_x+Q_y)\\,dA$。這是〈散度〉在平面上的版本。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "三角形：兩邊都算一次",
+      "prompt": "$\\oint_C x^4\\,dx+xy\\,dy$，$C$ 是頂點 $(0,0)$、$(1,0)$、$(0,1)$ 的三角形，逆時針。",
+      "steps": [
+        "$P=x^4$、$Q=xy$。$Q_x-P_y=y-0=y$。",
+        "$\\iint_D y\\,dA=\\int_0^1\\int_0^{1-x}y\\,dy\\,dx=\\int_0^1\\frac{(1-x)^2}{2}\\,dx=\\frac{1}{6}$。",
+        "驗算，三條邊直接算：$(0,0)\\to(1,0)$ 上 $y=0$，只剩 $\\int_0^1 x^4\\,dx=\\frac{1}{5}$。$(1,0)\\to(0,1)$ 用 $\\mathbf r=\\langle 1-t,t\\rangle$：$\\int_0^1\\left[-(1-t)^4+(1-t)t\\right]dt=-\\frac{1}{5}+\\frac{1}{6}$。$(0,1)\\to(0,0)$ 上 $x=0$，被積函數為 $0$。",
+        "合計 $\\frac{1}{5}-\\frac{1}{5}+\\frac{1}{6}=\\frac{1}{6}$。一樣。"
+      ],
+      "answer": "$\\frac{1}{6}$",
+      "claim": "INT(INT(y,0,1-x,y),0,1,x) == 1/6 ;; INT(x^4,0,1) + INT(-(1-t)^4+(1-t)*t,0,1,t) == 1/6"
+    },
+    {
+      "title": "線積分很醜，二重積分很乾淨",
+      "prompt": "$\\oint_C(3y-e^{\\sin x})\\,dx+(7x+\\sqrt{y^4+1})\\,dy$，$C$ 是圓 $x^2+y^2=9$，逆時針。",
+      "steps": [
+        "直接參數化會遇到 $e^{\\sin(3\\cos t)}$，積不出來。",
+        "$Q_x-P_y=7-3=4$。$e^{\\sin x}$ 對 $y$ 偏微分是 $0$，$\\sqrt{y^4+1}$ 對 $x$ 偏微分也是 $0$。",
+        "$P$、$Q$ 在整個平面偏導連續，條件成立。$\\iint_D 4\\,dA=4\\times($圓面積 $9\\pi)=36\\pi$。"
+      ],
+      "answer": "$36\\pi$",
+      "claim": "INT((3*3*sin(t)-e^(sin(3*cos(t))))*(-3*sin(t)) + (7*3*cos(t)+sqrt((3*sin(t))^4+1))*(3*cos(t)),0,2*pi,t) == 36*pi",
+      "note": "claim 是沿圓直接數值積分，用來確認 Green 的答案。"
+    },
+    {
+      "title": "順時針",
+      "prompt": "$\\oint_C y\\,dx-x\\,dy$，$C$ 是單位圓，順時針。",
+      "steps": [
+        "先當逆時針算：$P=y$、$Q=-x$，$Q_x-P_y=-1-1=-2$，$\\iint(-2)\\,dA=-2\\pi$。",
+        "順時針是反方向，加負號：$2\\pi$。",
+        "驗算：順時針 $\\mathbf r(t)=\\langle\\cos t,-\\sin t\\rangle$，$y\\,dx-x\\,dy=(-\\sin t)(-\\sin t)\\,dt-\\cos t\\,(-\\cos t)\\,dt=dt$，$\\int_0^{2\\pi}dt=2\\pi$。"
+      ],
+      "answer": "$2\\pi$",
+      "claim": "INT((-sin(t))*(-sin(t)) - cos(t)*(-cos(t)),0,2*pi,t) == 2*pi"
+    }
+  ],
+  "pitfalls": [
+    "算成 $P_y-Q_x$ 或 $Q_x+P_y$：是 $Q$ 對 $x$ 減 $P$ 對 $y$。",
+    "曲線是順時針卻沒有加負號。",
+    "曲線沒有封閉（例如只有半圓）就直接用 Green；要先補一段封閉，再扣掉補的那段。",
+    "區域裡有 $P$、$Q$ 沒定義的點（像原點）還照用。"
+  ],
+  "checks": [
+    {
+      "ask": "Green 定理裡的「正向」是指？",
+      "options": [
+        { "label": "沿著 $C$ 走時，$D$ 在左手邊（外圍邊界就是逆時針）", "correct": true },
+        { "label": "一律順時針", "why": "方向反了。順時針走時 $D$ 在右手邊，答案會差一個負號。" },
+        { "label": "從 $x$ 最小的點開始走", "why": "從哪裡開始走不影響封閉曲線的積分，重要的是繞的方向。" }
+      ]
+    },
+    {
+      "ask": "$C$ 是簡單封閉曲線、逆時針，$\\oint_C x\\,dy$ 等於？",
+      "options": [
+        { "label": "$C$ 圍住的面積", "correct": true },
+        { "label": "$0$", "why": "$P=0$、$Q=x$，$Q_x-P_y=1$，不是 $0$。" },
+        { "label": "面積的 $2$ 倍", "why": "$\\frac{1}{2}\\oint(x\\,dy-y\\,dx)$ 才需要乘 $\\frac{1}{2}$；$\\oint x\\,dy$ 本身的 $Q_x-P_y$ 就是 $1$。" }
+      ]
+    },
+    {
+      "ask": "$\\oint_C y\\,dx+x\\,dy$，$C$ 是單位圓逆時針，是？",
+      "options": [
+        { "label": "$0$", "correct": true },
+        { "label": "$2\\pi$", "why": "$Q_x-P_y=1-1=0$。算成 $Q_x+P_y$ 才會得到 $2\\times{}$ 面積。" },
+        { "label": "$-2\\pi$", "why": "$y\\,dx+x\\,dy=d(xy)$ 是全微分，任何封閉曲線上都是 $0$。" }
+      ]
+    },
+    {
+      "ask": "$\\oint_C\\frac{-y\\,dx+x\\,dy}{x^2+y^2}$，$C$ 是單位圓。可以用 Green 定理說它等於 $0$ 嗎？",
+      "options": [
+        { "label": "不行：原點在 $D$ 裡，$P$、$Q$ 在那裡沒有定義，條件不成立（實際值是 $2\\pi$）", "correct": true },
+        { "label": "可以，因為 $Q_x-P_y=0$", "why": "$Q_x-P_y=0$ 只在原點以外成立；Green 要求偏導在整個 $D$ 上連續，原點不行。" },
+        { "label": "可以，答案是 $2$ 倍面積 $2\\pi$", "why": "數字碰巧對，理由錯：$Q_x-P_y$ 不是 $2$。這題不能用 Green，要直接參數化。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "小漩渦加起來",
+      "beats": [
+        { "show": ["$D$ 切成小方格，每格逆時針繞一圈"],
+          "say": "把區域切成很多小方格，在每一格的邊界上逆時針繞一圈，算場做的功，叫環流。",
+          "board": [
+            {"do":"write","line":"$D$ 切成小方格，逆時針繞一圈"},
+            {"do":"write","line":"環流 ＝ 繞一圈場做的功","on":"算場做的功"}
+          ] },
+        { "show": ["小方格環流 $\\approx(Q_x-P_y)\\times$ 面積"],
+          "note": "$Q_x-P_y$ 量的是那一點附近的場轉了多少。",
+          "say": "小方格的環流，大約是 Q 下標 x 減 P 下標 y，乘上小方格的面積。這個量描述場在那裡轉了多少。",
+          "board": [
+            {"do":"write","line":"環流 $\\approx({{c:Q_x-P_y}})\\times$ 面積"},
+            {"do":"underline","term":"c","label":"轉了多少","on":"描述場"}
+          ] },
+        { "show": ["底邊往右，頂邊往左"],
+          "say": "取很小的方格，寬 delta x。底邊往右，功約 P 乘 delta x；頂邊往左，剛好反號。",
+          "board": [
+            {"do":"write","line":"底邊 $\\approx P\\,\\Delta x$"},
+            {"do":"write","line":"頂邊 $\\approx -P\\,\\Delta x$","on":"頂邊往左"}
+          ] },
+        { "show": ["上下邊約 $-P_y$，左右邊約 $Q_x$"],
+          "note": "兩者的位置差一點，功就差一點。",
+          "say": "右邊往上、左邊往下，同樣道理。上下兩邊約負 P 下標 y 乘面積，左右兩邊約 Q 下標 x 乘面積。",
+          "board": [
+            {"do":"write","line":"上下邊 $\\approx -P_y\\,\\Delta x\\Delta y$","on":"上下兩邊"},
+            {"do":"write","line":"左右邊 $\\approx Q_x\\,\\Delta x\\Delta y$","on":"左右兩邊"}
+          ] },
+        { "show": ["相鄰兩格共用一條邊"],
+          "say": "現在把所有小方格的環流加起來。注意相鄰兩格共用的那條邊。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"所有小方格的環流相加","on":"把所有"},
+            {"do":"write","line":"相鄰兩格共用一條邊","on":"相鄰兩格"}
+          ] }
+      ],
+      "predict": {
+        "ask": "共用邊上的功，加起來會？",
+        "options": [
+          {
+            "label": "互相抵消，最後只剩最外圍",
+            "correct": true
+          },
+          {
+            "label": "算兩次，變成兩倍",
+            "why": "兩格都逆時針繞，共用邊上一格往這邊走、另一格往那邊走，功一正一負。"
+          },
+          {
+            "label": "都是 $0$",
+            "why": "單看一格，那條邊上的功不一定是 $0$；是兩格的相加才抵消。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Green 定理",
+      "beats": [
+        { "show": ["$\\oint_C P\\,dx+Q\\,dy=\\iint_D(Q_x-P_y)\\,dA$"],
+          "say": "外圍一圈的環流，等於裡面所有小漩渦的總和。這就是 Green 定理。",
+          "board": [
+            {"do":"write","line":"${{l:\\oint_C P\\,dx+Q\\,dy}}={{r:\\iint_D(Q_x-P_y)\\,dA}}$","tint":{"l":"blue","r":"violet"}},
+            {"do":"focus","term":"l","color":"blue","label":"外圍","on":"外圍一圈"},
+            {"do":"focus","term":"r","color":"violet","label":"小漩渦","on":"小漩渦"}
+          ] },
+        { "show": ["$C$：簡單封閉、正向"],
+          "note": "沿 $C$ 走時，$D$ 在左手邊。",
+          "say": "曲線要封閉、自己不相交，而且取正向：沿著走的時候，區域在你的左手邊。外圍就是逆時針。",
+          "board": [
+            {"do":"write","line":"$C$：封閉、自己不相交"},
+            {"do":"write","line":"取正向","on":"取正向"}
+          ] },
+        { "show": ["$P$、$Q$ 的偏導在包含 $D$ 的開集上連續"],
+          "note": "直觀，不是證明；證明在下一節。",
+          "say": "還有，P、Q 的偏導數要在整塊區域連同邊界上都連續。",
+          "board": [
+            {"do":"write","line":"$P$、$Q$ 的偏導在 $D$ 連同邊界上連續"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：拆成兩半",
+      "beats": [
+        { "show": ["先證 $-\\iint P_y\\,dA=\\oint P\\,dx$"],
+          "note": "另一半 $\\iint Q_x\\,dA=\\oint Q\\,dy$ 同理。",
+          "say": "策略：直接算。把定理拆成兩半，先證 P 那一半，兩邊各算一次再比對；Q 那一半同理。",
+          "board": [
+            {"do":"write","line":"$\\oint_C {{p:P\\,dx}}+Q\\,dy=\\iint_D(Q_x-{{py:P_y}})\\,dA$"},
+            {"do":"transform","line":"$\\oint_C {{p:P\\,dx}}=-\\iint_D {{py:P_y}}\\,dA$","on":"先證 P"}
+          ] },
+        { "show": ["$D=\\{a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)\\}$"],
+          "say": "把 D 看成鉛直線型區域：x 從 a 到 b，y 從下緣 g 一到上緣 g 二。",
+          "board": [
+            {"do":"write","line":"$D:\\ a\\le x\\le b,\\ \\ {{l:g_1(x)}}\\le y\\le {{u:g_2(x)}}$","tint":{"l":"blue","u":"violet"}},
+            {"do":"focus","term":"l","on":"下緣"},
+            {"do":"focus","term":"u","on":"上緣"}
+          ] },
+        { "show": ["內層 $\\int P_y\\,dy$","$=P(x,g_2(x))-P(x,g_1(x))$"],
+          "note": "對 $y$ 用微積分基本定理。",
+          "why": {"ask":"內層為什麼積得出來？","say":"P 下標 y 對 y 積分，為什麼直接得到上下緣的差？","options":[{"label":"$P$ 是 $P_y$ 對 $y$ 的反導數","correct":true},{"label":"Green 定理","why":"那正是要證的事，還不能拿來用。"},{"label":"$P_y$ 是常數","why":"$P_y$ 一般隨 $y$ 變；能積出來是因為 $P$ 就是它對 $y$ 的反導數。"}]},
+          "say": "x 固定，P 下標 y 對 y 積分，反導數就是 P，代上下緣相減。",
+          "board": [
+            {"do":"write","line":"內層：$\\int_{g_1(x)}^{g_2(x)}{{py:P_y}}\\,dy$"},
+            {"do":"write","line":"$=P(x,{{u:g_2(x)}})-P(x,{{l:g_1(x)}})$","on":"上下緣的差"},
+            {"do":"focus","term":"py","label":"P 的導數","why":true,"on":"反導數"}
+          ] },
+        { "show": ["$x$ 固定時，$P_y$ 是對 $y$ 的一般導數"],
+          "say": "x 固定時，P 只剩 y 一個變數，P 下標 y 就是對 y 的一般導數。所以從 g 一積到 g 二，就是 P 的增量。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x$ 固定：${{n1:P_y}}=\\frac{d}{dy}P(x,y)$","on":"下標"},
+            {"do":"write","line":"積分 $=P$ 的增量","on":"所以從"}
+          ] },
+        { "show": ["下緣向右、上緣向左走","左右兩條鉛直邊上 $dx=0$"],
+          "note": "正向：$D$ 在左手邊。",
+          "why": {"ask":"為什麼鉛直邊不算？","say":"左右兩條直直的邊，為什麼對 P d x 沒有貢獻？","options":[{"label":"鉛直邊上 $x$ 不變，$dx=0$","correct":true},{"label":"鉛直邊上 $P=0$","why":"$P$ 在那裡不一定是零；讓這一段消失的是 $dx=0$。"},{"label":"兩條鉛直邊方向相反，互相抵消","why":"兩條邊在不同的 $x$，$P$ 的值不一樣，不會抵消；是每一條本身就是零。"}]},
+          "say": "正向繞：下緣往右、上緣往左。鉛直邊上 x 不變，d x 是零，那兩段沒有貢獻。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"plot","graph":{"ticks":false,"window":[0,4.2,0,3.9],"curves":[{"expr":"1+(x-2)^2/4","domain":[0.6,3.4],"color":"blue"},{"expr":"3-(x-2)^2/5","domain":[0.6,3.4],"color":"violet"}],"fills":[{"expr":"3-(x-2)^2/5","expr2":"1+(x-2)^2/4","from":0.6,"to":3.4,"color":"gold","opacity":0.18}],"dashed":[[[0.6,1.49],[0.6,2.608]],[[3.4,1.49],[3.4,2.608]]],"arrows":[{"from":[1.45,1.076],"to":[2.55,1.076],"color":"blue"},{"from":[2.55,2.94],"to":[1.45,2.94],"color":"violet"}],"labels":[{"x":3.55,"y":1.45,"text":"下緣","anchor":"start"},{"x":3.55,"y":2.85,"text":"上緣","anchor":"start"},{"x":0.6,"y":1.1,"text":"a","anchor":"middle"},{"x":3.4,"y":1.1,"text":"b","anchor":"middle"}]},"on":"左右兩條"},
+            {"do":"write","line":"鉛直邊：$x$ 不變，${{dx:dx=0}}$","why":true,"on":"鉛直邊上"}
+          ] },
+        { "show": ["$\\oint P\\,dx=-\\iint P_y\\,dA$"],
+          "note": "一般區域切成這種小塊，共用邊抵消。",
+          "say": "下緣減上緣，正好是內層結果的負號，再對 x 積，就是負的 P 下標 y 的二重積分。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\oint P\\,dx=\\int_a^b[\\,P(x,{{l2:g_1}})-P(x,{{u2:g_2}})\\,]\\,dx$","tint":{"l2":"blue","u2":"violet"},"on":"下緣減上緣"},
+            {"do":"transform","line":"$\\oint P\\,dx={{ng:-}}\\int_a^b[\\,P(x,{{u2:g_2}})-P(x,{{l2:g_1}})\\,]\\,dx$","on":"負號"},
+            {"do":"write","line":"$=-{{res:\\iint_D P_y\\,dA}}$","on":"再對 x 積"},
+            {"do":"box","term":"res","color":"green","on":"就是負的"}
+          ] }
+      ],
+      "key": "內層對 $y$ 用基本定理，只剩上下兩條邊",
+      "proof": true,
+      "of": 3,
+      "skeleton": "直接",
+      "where": {
+        "ask": "「$C$ 取正向」用在哪一步？",
+        "steps": [
+          {
+            "label": "內層 $\\int P_y\\,dy$ 代上下緣",
+            "why": "這只用到微積分基本定理，跟曲線的方向無關。"
+          },
+          {
+            "label": "下緣向右、上緣向左",
+            "correct": true
+          },
+          {
+            "label": "鉛直邊上 $dx=0$",
+            "why": "不管往上還是往下走，鉛直邊上 $x$ 都不變。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "兩邊都算一次",
+      "beats": [
+        { "show": ["$\\oint_C x^4\\,dx+xy\\,dy$"],
+          "note": "$C$：$(0,0)$、$(1,0)$、$(0,1)$ 的三角形，逆時針。",
+          "say": "驗證一次：三角形的邊界逆時針繞一圈，線積分和二重積分各算一次。",
+          "board": [
+            {"do":"write","line":"$\\oint_C x^4\\,dx+xy\\,dy$"},
+            {"do":"write","line":"$C$：三角形，逆時針","on":"三角形"}
+          ] },
+        { "show": ["三角形，逆時針，區域在左手邊"],
+          "say": "三角形有三個頂點，沿著邊逆時針走一圈，區域一直在左手邊。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.4,1.5,-0.4,1.5],"curves":[{"expr":"0","domain":[0,1],"color":"blue"},{"expr":"1-x","domain":[0,1],"color":"violet"},{"param":{"x":"0","y":"t","t":[0,1]},"color":"green"}],"fills":[{"pts":[[0,0],[1,0],[0,1]],"color":"gold","opacity":0.18}],"arrows":[{"from":[0.3,0],"to":[0.65,0],"color":"blue"},{"from":[0.65,0.35],"to":[0.35,0.65],"color":"violet"},{"from":[0,0.65],"to":[0,0.3],"color":"green"}],"labels":[{"x":0,"y":-0.15,"text":"(0,0)","anchor":"middle"},{"x":1,"y":-0.15,"text":"(1,0)","anchor":"middle"},{"x":-0.05,"y":1.1,"text":"(0,1)","anchor":"end"}]}}
+          ] },
+        { "show": ["$P=x^4$，$Q=xy$"],
+          "note": "先算 $Q_x$ 和 $P_y$。",
+          "say": "dx 前面的是 P，是 x 四次方；dy 前面的是 Q，是 x y。",
+          "board": [
+            {"do":"write","line":"$P={{p:x^4}}$，$Q={{q:xy}}$"},
+            {"do":"focus","term":"p","on":"是 P"},
+            {"do":"focus","term":"q","on":"dy 前面"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$Q_x-P_y$ 是？",
+        "options": [
+          {
+            "label": "$y$",
+            "correct": true
+          },
+          {
+            "label": "$-y$",
+            "why": "順序反了：是 $Q$ 對 $x$ 減 $P$ 對 $y$。$Q_x=y$，$P_y=0$。"
+          },
+          {
+            "label": "$x$",
+            "why": "$xy$ 對 $x$ 偏微分，$y$ 是常數，得 $y$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "線積分醜，二重積分乾淨",
+      "beats": [
+        { "show": ["$Q_x=y$，$P_y=0$，所以 $Q_x-P_y=y$"],
+          "say": "回到三角形那題：Q 下標 x 是 y，P 下標 y 是零，相減得 y，代進二重積分。",
+          "board": [
+            {"do":"write","line":"$Q_x=y$，$P_y=0$"},
+            {"do":"write","line":"$Q_x-P_y=y$","on":"相減"},
+            {"do":"write","line":"$\\iint_D y\\,dA$","on":"二重積分"}
+          ] },
+        { "show": ["$\\iint_D y\\,dA=\\frac{1}{6}$"],
+          "note": "三條邊直接算：$\\frac{1}{5}-\\frac{1}{5}+\\frac{1}{6}$，一樣。",
+          "say": "三角形那一題，二重積分得六分之一；三條邊硬算，結果一樣。",
+          "board": [
+            {"do":"write","line":"$\\iint_D y\\,dA={{r:\\frac{1}{6}}}$"},
+            {"do":"focus","term":"r","color":"green","on":"六分之一"},
+            {"do":"write","line":"三條邊：$\\frac{1}{5}-\\frac{1}{5}+\\frac{1}{6}$","on":"三條邊"}
+          ] },
+        { "show": ["三條邊：$\\frac{1}{5}$、$-\\frac{1}{5}+\\frac{1}{6}$、$0$"],
+          "say": "底邊 y 是零，得五分之一。斜邊用一減 t 和 t，得負五分之一加六分之一。左邊 x 是零，貢獻零。",
+          "board": [
+            {"do":"write","line":"底邊 $y=0$：$\\int_0^1x^4dx=\\frac{1}{5}$"},
+            {"do":"write","line":"斜邊：$-\\frac{1}{5}+\\frac{1}{6}$","on":"斜邊"},
+            {"do":"write","line":"左邊 $x=0$：$0$","on":"左邊"}
+          ] },
+        { "show": ["$\\oint(3y-e^{\\sin x})\\,dx+(7x+\\sqrt{y^4+1})\\,dy$"],
+          "note": "$C$：圓 $x^2+y^2=9$，逆時針。",
+          "say": "這一題直接參數化會積不出來。可是醜的部分，偏微分之後就消失了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\oint(3y-{{ea:e^{\\sin x}}})\\,dx+(7x+{{sq:\\sqrt{y^4+1}}})\\,dy$","on":"這一題"},
+            {"do":"write","line":"$C$：$x^2+y^2=9$，逆時針","on":"參數化"},
+            {"do":"focus","term":"ea","on":"醜的部分"},
+            {"do":"focus","term":"sq","on":"偏微分"}
+          ] },
+        { "show": ["$Q_x-P_y=7-3=4$"],
+          "say": "e 的 sine x 次方對 y 微分是零，根號那一項對 x 微分也是零，剩下七減三。",
+          "board": [
+            {"do":"focus","term":"ea","label":"對 y：0"},
+            {"do":"focus","term":"sq","label":"對 x：0","on":"根號那一項"},
+            {"do":"write","line":"$Q_x-P_y=7-3={{f:4}}$","on":"剩下"}
+          ] },
+        { "show": ["$4\\times9\\pi=36\\pi$"],
+          "say": "四乘上圓面積九 pi，答案三十六 pi。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{f:4}}\\times 9\\pi={{ans:36\\pi}}$","on":"四乘上"},
+            {"do":"box","term":"ans","color":"green","on":"答案"}
+          ] }
+      ],
+      "key": "線積分醜就改算 $Q_x-P_y$ 的二重積分",
+      "check": 2
+    },
+    {
+      "title": "順時針與面積",
+      "beats": [
+        { "show": ["順時針：照逆時針算，再加負號"],
+          "say": "曲線是順時針的話，先當逆時針算，最後加一個負號。",
+          "board": [
+            {"do":"write","line":"順時針的值 ${{m:=\\,-}}$ 逆時針的值"},
+            {"do":"focus","term":"m","on":"加一個"}
+          ] },
+        { "show": ["$\\oint y\\,dx-x\\,dy$，單位圓順時針"],
+          "note": "逆時針：$\\iint(-2)\\,dA=-2\\pi$。",
+          "say": "例如這一題，Q 下標 x 減 P 下標 y 是負二，逆時針得負二 pi，順時針就是二 pi。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\oint y\\,dx-x\\,dy$，單位圓順時針","on":"例如"},
+            {"do":"write","line":"$Q_x-P_y=-2$","on":"是負二"},
+            {"do":"write","line":"逆時針：$-2\\pi$","on":"逆時針得"},
+            {"do":"write","line":"順時針：$2\\pi$","on":"順時針就是"}
+          ] },
+        { "show": ["挑 $Q_x-P_y=1$：二重積分就是面積"],
+          "note": "$-\\oint y\\,dx$、$\\frac{1}{2}\\oint(x\\,dy-y\\,dx)$ 都可以。",
+          "say": "反過來用：挑一組讓 Q 下標 x 減 P 下標 y 等於一，線積分就算出區域的面積。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"挑 $Q_x-P_y=1$","on":"挑一組"},
+            {"do":"write","line":"線積分 $=\\iint_D 1\\,dA=$ 面積","on":"線積分"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "區域裡有洞",
+      "beats": [
+        { "show": ["$P$、$Q$ 在 $D$ 裡有沒定義的點：不能用"],
+          "say": "最後一個陷阱：區域裡只要有一點，P 或 Q 沒有定義，定理的條件就不成立。",
+          "board": [
+            {"do":"write","line":"$D$ 裡有一點 $P$ 或 $Q$ 沒定義"},
+            {"do":"write","line":"條件不成立：不能用 Green 定理","color":"red","on":"條件就"}
+          ] },
+        { "show": ["單連通 + $Q_x-P_y=0$：環流都是 $0$"],
+          "note": "跟〈保守場〉接起來。",
+          "say": "這也解釋了保守場那一課：沒有洞、交叉偏導相等，任何一圈的環流都是零。有洞就不保證。",
+          "board": [
+            {"do":"write","line":"單連通、$Q_x-P_y=0$"},
+            {"do":"write","line":"環流 $=0$","color":"green","on":"任何一圈"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["green-theorem", "line-integral", "vector-calculus"],
+    "fine": ["green-circulation-form", "green-area-formula", "green-orientation-hypotheses"]
+  },
+  "practice": [
+    { "id": "lec-20-q3a", "core": true, "trains": "green-circulation-form" },
+    { "id": "vc-green-002", "core": true, "trains": "green-circulation-form" },
+    { "id": "vc-green-004", "core": true, "trains": "green-circulation-form" },
+    { "id": "lec-20-q3c", "core": true, "trains": "green-circulation-form" },
+    { "id": "vc-green-001", "core": true, "trains": "green-area-formula" },
+    { "id": "vc-green-006", "core": true, "trains": "green-area-formula" },
+    { "id": "cg-9b3-001", "core": true, "trains": "green-orientation-hypotheses" },
+    { "id": "lec-20-m4", "trains": "green-area-formula" },
+    { "id": "lec-20-q3b", "trains": "green-area-formula" },
+    { "id": "vc-work-002", "trains": "green-orientation-hypotheses" },
+    { "id": "vc-green-003", "trains": "green-circulation-form" },
+    { "id": "vc-green-005", "trains": "green-circulation-form", "note": "二重積分用極座標。" },
+    { "id": "vc-green-008", "trains": "green-circulation-form" },
+    { "id": "cg-9b3-002", "trains": "green-orientation-hypotheses" },
+    { "id": "vc-green-007", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：$e^{x^2}$、$\\ln(1+y^2)$ 在偏微分時消失。" },
+    { "id": "vc-flux-001", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：通量形式 $\\oint\\mathbf F\\cdot\\mathbf n\\,ds=\\iint(P_x+Q_y)\\,dA$（見可展開段落）。" },
+    { "id": "cg-9b3-003", "challenge": true, "trains": "green-orientation-hypotheses" }
+  ],
+  "gaps": []
+}

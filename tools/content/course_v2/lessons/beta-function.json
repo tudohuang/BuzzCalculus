@@ -1,51 +1,139 @@
 {
   "id": "beta-function",
   "title": "Beta 函數",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["gamma-scaled", "improper-p-test", "integration-by-parts", "u-sub-definite"],
-  "next": ["beta-gamma-relation"],
+  "prerequisites": [
+    "gamma-scaled",
+    "improper-p-test",
+    "integration-by-parts",
+    "u-sub-definite"
+  ],
+  "next": [
+    "beta-gamma-relation"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 $\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$，說得出它在 $p>0$、$q>0$ 時收斂，並且 $\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$。",
-    "從題目的次方正確讀出 $p$、$q$（次方加 1）。",
-    "用分部積分的遞迴算出整數點的值 $\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$，並認得 $[0,a]$ 與 $[0,\\infty)$ 上的變形。"
+    "寫得出 $\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$，說得出它在 $p>0$、$q>0$ 時收斂，而且 $\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$",
+    "從題目的次方正確讀出 $p$、$q$（次方加 1）",
+    "用分部積分的遞迴算出整數點的值 $\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$",
+    "會把 $[0,a]$ 與 $[0,\\infty)$ 上的積分化成 Beta"
   ],
-  "visual": "在 [0, 1] 上畫 y = x^{p−1}(1 − x)^{q−1}，p、q 各一個滑桿。p = q 時曲線左右對稱；p 大、q 小時峰往右邊擠；p 或 q 拉到 1 以下時，對應的端點衝上無窮高，但面積（即時顯示）仍然有限。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 另一整族積分：$[0,1]$ 上的 $x^a(1-x)^b$",
+      "heading": "① 另一整族積分",
       "body": [
-        "$\\int_0^1x^2(1-x)^3\\,dx$、$\\int_0^1\\sqrt{x}\\,(1-x)\\,dx$、$\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}$……展開或換元都能做，但每題都不同。Gamma 統一了 $[0,\\infty)$ 上的 $x^ke^{-x}$，Beta 統一 $[0,1]$ 上的 $x^a(1-x)^b$：",
-        "讀題方法跟 Gamma 一樣是「次方加 1」：$x^2$ 對應 $p=3$，$(1-x)^3$ 對應 $q=4$，所以 $\\int_0^1x^2(1-x)^3\\,dx=\\mathrm{B}(3,4)$。"
+        "都長成 $x^{a}(1-x)^{b}$：一端看 $x$，一端看 $1-x$",
+        "定義（Beta 函數）：",
+        "跟 $\\Gamma(s)=\\int_0^\\infty x^{s-1}e^{-x}dx$ 一樣，參數比次方多 1",
+        "讀法：次方加 1 就是參數"
       ],
-      "tex": ["B(p,q)=\\int_0^{1}x^{p-1}(1-x)^{q-1}\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1x^3(1-x)^4\\,dx,\\quad\\int_0^1\\sqrt{x(1-x)}\\,dx,\\quad\\int_0^1\\frac{dx}{\\sqrt x}",
+        "\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx",
+        "\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)"
+      ]
     },
     {
-      "heading": "② 收斂與對稱",
+      "heading": "② 什麼時候收斂",
       "body": [
-        "兩個端點都可能是瑕點。$x\\to 0^+$ 時被積函數像 $x^{p-1}$，由 $p$ 判別要 $p-1>-1$，即 $p>0$；$x\\to 1^-$ 時像 $(1-x)^{q-1}$，要 $q>0$。所以：此積分表示式在 $p>0$ 且 $q>0$ 時收斂。",
-        "令 $x=1-t$，兩個因子對調、區間不變：$\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$。"
+        "在 $\\frac12$ 切開，兩端分開看：",
+        "在 $(0,\\tfrac12]$ 上，$1-x\\in[\\tfrac12,1)$，所以 $(1-x)^{q-1}$ 夾在兩個正的常數之間",
+        "兩個常數是 $1$ 與 $2^{1-q}$（$t^{q-1}$ 單調，最值在兩端）",
+        "比較判別：左半收斂 $\\iff\\displaystyle\\int_0^{1/2}x^{p-1}\\,dx$ 收斂 $\\iff p>0$",
+        "右半用 $u=1-x$ 換過去，同樣得 $q>0$：",
+        "$p\\ge1$、$q\\ge1$ 時根本不是瑕積分；只有次方是負的那一端要擔心"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1=\\int_0^{1/2}+\\int_{1/2}^1",
+        "\\mathrm{B}(p,q)\\text{ 收斂}\\iff p>0\\text{ 且 }q>0"
+      ]
     },
     {
-      "heading": "③ 整數點：用分部積分降次",
+      "heading": "② 對稱",
       "body": [
-        "對 $\\mathrm{B}(p,q+1)=\\int_0^1x^{p-1}(1-x)^q\\,dx$ 取 $u=(1-x)^q$、$dv=x^{p-1}\\,dx$。邊界項 $\\left[\\frac{x^p(1-x)^q}{p}\\right]_0^1=0$，得 $\\mathrm{B}(p,q+1)=\\frac{q}{p}\\mathrm{B}(p+1,q)$：把 $(1-x)$ 的次數搬一個給 $x$。",
-        "一直搬到 $(1-x)$ 的次數變 $0$，再用 $\\mathrm{B}(p,1)=\\int_0^1x^{p-1}\\,dx=\\frac{1}{p}$，就得到整數點的公式（下一課會用 Gamma 給出所有 $p$、$q$ 的版本）。"
+        "令 $x=1-u$，$dx=-du$，$x:0\\to1$ 對應 $u:1\\to0$：",
+        "負號把上下限翻回來：",
+        "瑕積分的換元：先在 $[\\varepsilon,1-\\delta]$ 上換，再取極限，結論一樣",
+        "直覺：把圖左右翻過來，面積不變"
       ],
-      "tex": ["B(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}\\qquad(m,n\\ \\text{為正整數})"],
-      "collapsible": false
+      "tex": [
+        "\\mathrm{B}(p,q)=\\int_1^0(1-u)^{p-1}u^{q-1}(-du)",
+        "\\mathrm{B}(p,q)=\\int_0^1u^{q-1}(1-u)^{p-1}\\,du=\\mathrm{B}(q,p)"
+      ]
     },
     {
-      "heading": "④ 兩種常見的變形",
+      "heading": "③ 整數點：分部積分",
       "body": [
-        "區間 $[0,a]$：令 $x=at$，$\\int_0^ax^{p-1}(a-x)^{q-1}\\,dx=a^{p+q-1}\\mathrm{B}(p,q)$。",
-        "區間 $[0,\\infty)$：令 $x=\\frac{t}{1+t}$，$1-x=\\frac{1}{1+t}$，$dx=\\frac{dt}{(1+t)^2}$，得 $\\mathrm{B}(p,q)=\\int_0^{\\infty}\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt$。看到 $[0,\\infty)$ 上「冪次除以 $(1+t)$ 的冪次」也要想到 Beta。"
+        "取 $u=(1-x)^{q-1}$，$dv=x^{p-1}dx$（$p>0$，$q>1$）：",
+        "邊界項：$x=0$ 時 $x^p\\to0$（$p>0$），$x=1$ 時 $(1-x)^{q-1}\\to0$（$q>1$）",
+        "瑕積分時先在 $[\\varepsilon,1-\\delta]$ 上做，邊界項的極限正是上面這兩個",
+        "剩下的積分是 $\\mathrm{B}(p+1,q-1)$：",
+        "起點：$q=1$ 時"
       ],
-      "collapsible": false
+      "tex": [
+        "du=-(q-1)(1-x)^{q-2}dx,\\quad v=\\frac{x^p}{p}",
+        "\\mathrm{B}(p,q)=\\Big[\\frac{x^p(1-x)^{q-1}}{p}\\Big]_0^1+\\frac{q-1}{p}\\int_0^1x^{p}(1-x)^{q-2}dx",
+        "\\mathrm{B}(p,q)=\\frac{q-1}{p}\\,\\mathrm{B}(p+1,q-1)",
+        "\\mathrm{B}(s,1)=\\int_0^1x^{s-1}dx=\\frac1s"
+      ]
+    },
+    {
+      "heading": "③ 整數的公式",
+      "body": [
+        "$m,n$ 是正整數，做 $n-1$ 次：",
+        "分子是 $(n-1)!$；分母連同最後的 $\\frac1{m+n-1}$ 是 $\\dfrac{(m+n-1)!}{(m-1)!}$",
+        "下一課會看到它其實是 $\\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}$",
+        "例：$\\displaystyle\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)$",
+        "驗算：展開 $(1-x)^4$ 逐項積分，$\\frac14-\\frac45+1-\\frac47+\\frac18=\\frac1{280}$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\mathrm{B}(m,n)&=\\frac{n-1}{m}\\cdot\\frac{n-2}{m+1}\\cdots\\frac{1}{m+n-2}\\\\&\\quad\\cdot\\mathrm{B}(m+n-1,1)\\end{aligned}",
+        "\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}",
+        "=\\frac{3!\\,4!}{8!}=\\frac{144}{40320}=\\frac{1}{280}"
+      ]
+    },
+    {
+      "heading": "④ 變形一：區間 $[0,a]$",
+      "body": [
+        "令 $x=at$，$dx=a\\,dt$，$t:0\\to1$：",
+        "例：$p=3$、$q=4$、$a=2$：",
+        "次方檢查：$x$ 的次方共 $2+3=5$，加 $dx$ 的 $1$ 是 $6$"
+      ],
+      "tex": [
+        "\\int_0^2x^2(2-x)^3\\,dx",
+        "x^{p-1}(a-x)^{q-1}dx=a^{p-1}t^{p-1}\\cdot a^{q-1}(1-t)^{q-1}\\cdot a\\,dt",
+        "\\int_0^ax^{p-1}(a-x)^{q-1}dx=a^{p+q-1}\\,\\mathrm{B}(p,q)",
+        "\\int_0^2x^2(2-x)^3dx=2^6\\,\\mathrm{B}(3,4)=64\\cdot\\frac{2!\\,3!}{6!}=\\frac{16}{15}"
+      ]
+    },
+    {
+      "heading": "④ 變形二：$[0,\\infty)$",
+      "body": [
+        "令 $x=\\dfrac{t}{1+t}$：$x:0\\to1$ 對應 $t:0\\to\\infty$",
+        "代進去，$(1+t)$ 的次方：$-(p-1)-(q-1)-2=-(p+q)$",
+        "$t\\mapsto\\frac t{1+t}$ 嚴格遞增、可微，是 $[0,\\infty)$ 到 $[0,1)$ 的一對一對應；先在有限區間換元再取極限",
+        "例：$\\displaystyle\\int_0^\\infty\\frac{t}{(1+t)^5}\\,dt$：$p=2$，$p+q=5\\Rightarrow q=3$",
+        "收斂檢查：$t\\to\\infty$ 時像 $t^{-4}$，$t=0$ 附近有界"
+      ],
+      "tex": [
+        "1-x=\\frac1{1+t},\\qquad dx=\\frac{dt}{(1+t)^2}",
+        "\\mathrm{B}(p,q)=\\int_0^\\infty\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt",
+        "=\\mathrm{B}(2,3)=\\frac{1!\\,2!}{4!}=\\frac1{12}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}dx$：次方加 1 是參數",
+        "• 收斂 $\\iff p>0$ 且 $q>0$（兩端各用 $p$ 判別）",
+        "• 對稱：$\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$",
+        "• 遞迴 $\\mathrm{B}(p,q)=\\frac{q-1}{p}\\mathrm{B}(p+1,q-1)$，整數點 $\\frac{(m-1)!(n-1)!}{(m+n-1)!}$",
+        "• $[0,a]$：多一個 $a^{p+q-1}$；$[0,\\infty)$：$\\int_0^\\infty\\frac{t^{p-1}}{(1+t)^{p+q}}dt$",
+        "下一課：Beta 與 Gamma 的關係"
+      ]
     }
   ],
   "workedExamples": [
@@ -92,35 +180,58 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^1x^2(1-x)^3\\,dx$ 用 Beta 寫是？",
+      "ask": "$\\displaystyle\\int_0^1x^{2}(1-x)^{6}\\,dx$ 是哪一個？",
       "options": [
-        { "label": "$\\mathrm{B}(3,4)$", "correct": true },
-        { "label": "$\\mathrm{B}(2,3)$", "why": "$\\mathrm{B}(p,q)$ 的次方是 $p-1$ 與 $q-1$，所以要各加 1。" },
-        { "label": "$\\frac{\\mathrm{B}(2,3)}{2}$", "why": "不需要額外的係數；只要把次方加 1。" }
+        {
+          "label": "$\\mathrm{B}(3,7)$",
+          "correct": true
+        },
+        {
+          "label": "$\\mathrm{B}(2,6)$",
+          "why": "次方直接當參數：$\\mathrm{B}(2,6)$ 是 $x^1(1-x)^5$"
+        },
+        {
+          "label": "$\\mathrm{B}(3,6)$",
+          "why": "只有 $x$ 那邊加了 1，$1-x$ 那邊也要加"
+        },
+        {
+          "label": "$\\mathrm{B}(1,5)$",
+          "why": "方向反了：參數是次方「加」1，不是減 1"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$ 在什麼條件下收斂？",
+      "ask": "$\\displaystyle\\int_0^1x^2(1-x)^2\\,dx=$？",
       "options": [
-        { "label": "$p>0$ 而且 $q>0$", "correct": true },
-        { "label": "$p>1$ 而且 $q>1$", "why": "太嚴了：$p=\\frac{1}{2}$ 時 $x\\to 0$ 附近像 $x^{-1/2}$，$p$ 判別說收斂。" },
-        { "label": "$p+q>0$", "why": "兩端要分開檢查：$p=-\\frac{1}{2}$、$q=2$ 時 $p+q>0$，但 $0$ 那端像 $x^{-3/2}$，發散。" }
+        {
+          "label": "$\\dfrac1{30}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac16$",
+          "why": "這是 $\\mathrm{B}(2,2)$：次方忘了加 1"
+        },
+        {
+          "label": "$\\dfrac1{180}$",
+          "why": "分母寫成 $(m+n)!=6!$；應該是 $(m+n-1)!=5!$"
+        }
       ]
     },
     {
-      "ask": "$\\mathrm{B}(1,q)$ 是？",
+      "ask": "$\\displaystyle\\int_0^\\infty\\frac{t^2}{(1+t)^6}\\,dt=$？",
       "options": [
-        { "label": "$\\frac{1}{q}$", "correct": true },
-        { "label": "$q$", "why": "$\\int_0^1(1-x)^{q-1}\\,dx=\\frac{1}{q}$，積分會除以 $q$。" },
-        { "label": "$1$", "why": "只有 $q=1$ 時才是 $1$；一般是 $\\frac{1}{q}$。" }
-      ]
-    },
-    {
-      "ask": "$\\mathrm{B}(2,5)$ 與 $\\mathrm{B}(5,2)$ 的關係？",
-      "options": [
-        { "label": "相等", "correct": true },
-        { "label": "$\\mathrm{B}(2,5)$ 比較大，因為 $5$ 比較大的那邊在後面", "why": "令 $x=1-t$，兩個因子互換、區間不變，所以兩者相等。" },
-        { "label": "互為倒數", "why": "沒有這個關係；它們是同一個積分換了變數的名字。" }
+        {
+          "label": "$\\mathrm{B}(3,3)=\\dfrac1{30}$",
+          "correct": true
+        },
+        {
+          "label": "$\\mathrm{B}(3,6)$",
+          "why": "分母的次方是 $p+q$，不是 $q$"
+        },
+        {
+          "label": "$\\mathrm{B}(2,4)$",
+          "why": "分子次方要加 1：$p=3$，不是 $2$"
+        }
       ]
     }
   ],
@@ -128,246 +239,918 @@
     {
       "title": "另一整族積分",
       "beats": [
-        { "show": ["$\\int_0^1x^2(1-x)^3\\,dx$","$\\int_0^1\\sqrt{x}\\,(1-x)\\,dx$、…"],
-          "note": "展開或換元都能做，但每題都不同。",
-          "say": "零到一上，x 的幾次方乘一減 x 的幾次方，這種積分每題做法都不同。",
+        {
+          "show": [
+            "$\\int_0^1x^3(1-x)^4\\,dx,\\quad\\int_0^1\\sqrt{x(1-x)}\\,dx,\\quad\\int_0^1\\frac{dx}{\\sqrt x}$"
+          ],
+          "say": "伽瑪函數管零到無限大上的一族積分。這一課換一族：零到一上，x 的次方乘 1 減 x 的次方。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 x^{a}(1-x)^{b}\\,dx$"}
-          ] },
-        { "show": ["$\\mathrm{B}(p,q)=\\int_0^{1}x^{p-1}(1-x)^{q-1}\\,dx$"],
-          "note": "Gamma 管 $[0,\\infty)$，Beta 管 $[0,1]$。",
-          "say": "Gamma 統一了零到無限大的那一族，Beta 函數統一零到一的這一族。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1x^3(1-x)^4\\,dx,\\quad\\int_0^1\\sqrt{x(1-x)}\\,dx,\\quad\\int_0^1\\frac{dx}{\\sqrt x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "都長成 $x^{a}(1-x)^{b}$：一端看 $x$，一端看 $1-x$"
+          ],
+          "say": "左端靠近 0 由 x 的次方決定，右端靠近 1 由 1 減 x 的次方決定。",
           "board": [
-            {"do":"write","line":"${{bd:\\mathrm{B}(p,q)=\\int_0^1 x^{p-1}(1-x)^{q-1}\\,dx}}$"},
-            {"do":"box","term":"bd","color":"green","on":"Beta 函數"}
-          ] },
-        { "show": ["讀題：次方加 1"],
-          "note": "$x^2$ 對應 $p=3$，$(1-x)^3$ 對應 $q=4$。",
-          "say": "讀題的方法跟 Gamma 一樣，次方加一：x 平方對應 p 等於三，一減 x 的三次方對應 q 等於四。",
+            {
+              "do": "write",
+              "line": "都長成 $x^{a}(1-x)^{b}$：一端看 $x$，一端看 $1-x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義（Beta 函數）：",
+            "$\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx$"
+          ],
+          "say": "定義貝塔函數：貝塔 p q，等於 x 的 p 減 1 次方，乘 1 減 x 的 q 減 1 次方，從 0 積到 1。",
           "board": [
-            {"do":"write","line":"讀題：次方加 1"},
-            {"do":"write","line":"$x^{p-1}\\to p$，$(1-x)^{q-1}\\to q$","on":"x 平方"}
-          ] }
+            {
+              "do": "write",
+              "line": "定義（Beta 函數）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}\\,dx}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "　跟 $\\Gamma(s)=\\int_0^\\infty x^{s-1}e^{-x}dx$ 一樣，參數比次方多 1",
+              "color": "violet",
+              "on": "積到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "讀法：次方加 1 就是參數",
+            "$\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)$"
+          ],
+          "say": "讀題的方法：次方加 1 就是參數。三次方給 p 等於 4，四次方給 q 等於 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "讀法：次方加 1 就是參數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)}}$",
+              "color": "red",
+              "on": "是參"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "四次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積就是 B(p, q)；p、q 小於 1 時，端點往上衝"
+          ],
+          "say": "圖上的面積就是貝塔 p q。p 和 q 都是 1 時，被積函數是常數 1，面積是 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bet",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    2.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(p-1)*(1-x)^(q-1)",
+                      "color": "blue",
+                      "label": "x^(p−1)(1−x)^(q−1)"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x^(p-1)*(1-x)^(q-1)",
+                      "from": 0.002,
+                      "to": 0.998,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "p": {
+                      "min": 0.4,
+                      "max": 4,
+                      "value": 1,
+                      "label": "p"
+                    },
+                    "q": {
+                      "min": 0.4,
+                      "max": 4,
+                      "value": 1,
+                      "label": "q"
+                    }
+                  },
+                  "readout": "p = {p}，q = {q}",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "p = 1，q = 1",
+              "on": "都是"
+            },
+            {
+              "do": "write",
+              "line": "面積就是 B(p, q)；p、q 小於 1 時，端點往上衝",
+              "color": "violet",
+              "on": "積函"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另一整族積分"
+          ],
+          "say": "p 和 q 都小於 1，次方是負的，兩端往上衝。面積還有限嗎？下一節回答。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bet",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    2.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(p-1)*(1-x)^(q-1)",
+                      "color": "blue",
+                      "label": "x^(p−1)(1−x)^(q−1)"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x^(p-1)*(1-x)^(q-1)",
+                      "from": 0.002,
+                      "to": 0.998,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "p": {
+                      "min": 0.4,
+                      "max": 4,
+                      "value": 1,
+                      "label": "p"
+                    },
+                    "q": {
+                      "min": 0.4,
+                      "max": 4,
+                      "value": 1,
+                      "label": "q"
+                    }
+                  },
+                  "readout": "p = {p}，q = {q}",
+                  "height": 250
+                },
+                "vals": {
+                  "p": 0.5,
+                  "q": 0.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "p = 0.5，q = 0.5",
+              "on": "兩端"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1x^{2}(1-x)^{6}\\,dx$ 是哪一個？"
+          ],
+          "say": "試一題：這是哪一個貝塔？"
+        }
       ],
       "check": 0
     },
     {
       "title": "什麼時候收斂",
       "beats": [
-        { "show": ["$x\\to 0^+$：像 $x^{p-1}$，要 $p>0$"],
-          "say": "兩個端點都可能是瑕點。靠近零，被積函數像 x 的 p 減一次方，p 判別要 p 大於零。",
+        {
+          "show": [
+            "在 $\\frac12$ 切開，兩端分開看：",
+            "$\\int_0^1=\\int_0^{1/2}+\\int_{1/2}^1$"
+          ],
+          "say": "什麼時候收斂？兩端的問題不一樣，所以在 2 分之 1 切開。",
           "board": [
-            {"do":"write","line":"$\\int_0^1 {{xp:x^{p-1}}}{{xq:(1-x)^{q-1}}}\\,dx$","tint":{"xp":"blue","xq":"violet"}},
-            {"do":"write","line":"$x\\to 0^+$：像 ${{xp:x^{p-1}}}$","on":"靠近零"},
-            {"do":"transform","line":"$x\\to 0^+$：像 ${{xp:x^{p-1}}}$，要 $p>0$","on":"p 判別"}
-          ] },
-        { "show": ["$x\\to 1^-$：像 $(1-x)^{q-1}$，要 $q>0$"],
-          "say": "靠近一，像一減 x 的 q 減一次方，要 q 大於零。兩端分開檢查。",
+            {
+              "do": "write",
+              "line": "在 $\\frac12$ 切開，兩端分開看："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1=\\int_0^{1/2}+\\int_{1/2}^1$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $(0,\\tfrac12]$ 上，$1-x\\in[\\tfrac12,1)$，所以 $(1-x)^{q-1}$ 夾在兩個正的常數之間"
+          ],
+          "say": "在左半，1 減 x 介於 2 分之 1 和 1 之間，所以它的 q 減 1 次方被夾在兩個正的常數之間。",
           "board": [
-            {"do":"write","line":"$x\\to 1^-$：像 ${{xq:(1-x)^{q-1}}}$","on":"靠近一"},
-            {"do":"transform","line":"$x\\to 1^-$：像 ${{xq:(1-x)^{q-1}}}$，要 $q>0$","on":"要 q"}
-          ] },
-        { "show": ["看 $p=\\frac{1}{2}$，$q=2$ 的曲線"],
-          "note": "端點衝高，面積仍有限。",
-          "say": "看 p 是二分之一、q 是二的例子：零附近曲線衝得很高，面積仍然有限。",
+            {
+              "do": "write",
+              "line": "在 $(0,\\tfrac12]$ 上，$1-x\\in[\\tfrac12,1)$，所以 $(1-x)^{q-1}$ 夾在兩個正的常數之間"
+            },
+            {
+              "do": "write",
+              "line": "　兩個常數是 $1$ 與 $2^{1-q}$（$t^{q-1}$ 單調，最值在兩端）",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較判別：左半收斂 $\\iff\\displaystyle\\int_0^{1/2}x^{p-1}\\,dx$ 收斂 $\\iff p>0$"
+          ],
+          "say": "被積函數是正的，用比較判別：左半收斂，跟 x 的 p 減 1 次方收斂一樣。p 判別說：p 要大於 0。",
           "board": [
-            {"do":"plot","graph":{"window":[0,1,0,6],"curves":[{"expr":"(1-x)/sqrt(x)","domain":[0.02,1],"color":"blue"}],"fills":[{"expr":"(1-x)/sqrt(x)","from":0.02,"to":1,"color":"blue"}]}}
-          ] },
-        { "show": ["$p>0$ 且 $q>0$ 時收斂"],
-          "note": "小於 $1$ 也可以，只要大於 $0$。",
-          "say": "所以 p、q 都大於零就收斂。p 小於一只是端點衝到無限大，面積仍然有限。",
+            {
+              "do": "write",
+              "line": "比較判別：左半收斂 $\\iff\\displaystyle\\int_0^{1/2}x^{p-1}\\,dx$ 收斂 $\\iff p>0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右半用 $u=1-x$ 換過去，同樣得 $q>0$：",
+            "$\\mathrm{B}(p,q)\\text{ 收斂}\\iff p>0\\text{ 且 }q>0$"
+          ],
+          "say": "右半用 u 等於 1 減 x 換過去，同樣得到 q 大於 0。所以收斂，若且唯若 p 和 q 都大於 0。",
           "board": [
-            {"do":"write","line":"$p>0$ 且 $q>0$ 時收斂","color":"green","on":"所以"}
-          ] }
+            {
+              "do": "write",
+              "line": "右半用 $u=1-x$ 換過去，同樣得 $q>0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\mathrm{B}(p,q)\\text{ 收斂}\\iff p>0\\text{ 且 }q>0}}$",
+              "color": "red",
+              "on": "換過"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "大於#1"
+            },
+            {
+              "do": "write",
+              "line": "　$p\\ge1$、$q\\ge1$ 時根本不是瑕積分；只有次方是負的那一端要擔心",
+              "color": "violet",
+              "on": "都大"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}$ 收斂嗎？",
+        "options": [
+          {
+            "label": "收斂：它是 $\\mathrm{B}(\\tfrac12,\\tfrac12)$",
+            "correct": true
+          },
+          {
+            "label": "發散：兩端都趨近無限大",
+            "why": "被積函數無界，不代表面積無限；要看爆得多快"
+          },
+          {
+            "label": "只有 $x=0$ 那端收斂",
+            "why": "兩端對稱：$1-x$ 在 $x=1$ 附近的行為跟 $x$ 在 $0$ 一樣"
+          }
+        ]
+      }
     },
     {
       "title": "對稱",
       "beats": [
-        { "show": ["令 $x=1-t$"],
-          "note": "兩個因子對調，區間不變。",
-          "say": "令 x 等於一減 t，x 和一減 x 互換位置，零到一這段區間還是零到一。",
+        {
+          "show": [
+            "令 $x=1-u$，$dx=-du$，$x:0\\to1$ 對應 $u:1\\to0$：",
+            "$\\mathrm{B}(p,q)=\\int_1^0(1-u)^{p-1}u^{q-1}(-du)$"
+          ],
+          "say": "再看對稱。令 x 等於 1 減 u，d x 是負的 d u，上下限變成 1 到 0。",
           "board": [
-            {"do":"write","line":"令 $x=1-t$"},
-            {"do":"write","line":"$\\int_0^1 x^{p-1}(1-x)^{q-1}\\,dx$","on":"x 和"},
-            {"do":"transform","line":"$=\\int_0^1 (1-t)^{p-1}t^{q-1}\\,dt$","on":"互換位置"}
-          ] },
-        { "show": ["$\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$"],
-          "say": "所以 Beta 函數的兩個參數可以對調，是同一個積分換了變數的名字。",
+            {
+              "do": "write",
+              "line": "令 $x=1-u$，$dx=-du$，$x:0\\to1$ 對應 $u:1\\to0$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathrm{B}(p,q)=\\int_1^0(1-u)^{p-1}u^{q-1}(-du)$",
+              "on": "是負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "負號把上下限翻回來：",
+            "$\\mathrm{B}(p,q)=\\int_0^1u^{q-1}(1-u)^{p-1}\\,du=\\mathrm{B}(q,p)$"
+          ],
+          "say": "負號剛好把上下限翻回來，得到的正是貝塔 q p。兩個參數可以交換。",
           "board": [
-            {"do":"write","line":"${{sy:\\mathrm{B}(p,q)=\\mathrm{B}(q,p)}}$"},
-            {"do":"box","term":"sy","color":"green","on":"兩個參數"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "負號把上下限翻回來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\mathrm{B}(p,q)=\\int_0^1u^{q-1}(1-u)^{p-1}\\,du=\\mathrm{B}(q,p)}}$",
+              "color": "red",
+              "on": "翻回"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "是貝"
+            },
+            {
+              "do": "write",
+              "line": "　瑕積分的換元：先在 $[\\varepsilon,1-\\delta]$ 上換，再取極限，結論一樣",
+              "color": "violet",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：x(1−x)²；紅：x²(1−x)。對 x = 1/2 互為鏡像"
+          ],
+          "say": "直覺上，就是把圖左右翻過來。藍色是貝塔 2 3 的被積函數，紅色是貝塔 3 2 的，互為鏡像，面積一樣。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "mir",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    0.2
+                  ],
+                  "ystep": 0.05,
+                  "fn": [
+                    {
+                      "expr": "x*(1-x)^2",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x^2*(1-x)",
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.5,
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：x(1−x)²；紅：x²(1−x)。對 x = 1/2 互為鏡像",
+              "color": "violet",
+              "on": "貝塔#1"
+            },
+            {
+              "do": "write",
+              "line": "直覺：把圖左右翻過來，面積不變",
+              "color": "gold",
+              "on": "互為"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "整數點",
+      "title": "整數點：分部積分",
       "beats": [
-        { "show": ["$\\mathrm{B}(p,q+1)=\\frac{q}{p}\\mathrm{B}(p+1,q)$"],
-          "note": "分部積分：$u=(1-x)^q$，邊界項是 $0$。",
-          "say": "分部積分一次，把一減 x 的次數搬一個給 x，前面多出 p 分之 q。",
+        {
+          "show": [
+            "取 $u=(1-x)^{q-1}$，$dv=x^{p-1}dx$（$p>0$，$q>1$）：",
+            "$du=-(q-1)(1-x)^{q-2}dx,\\quad v=\\frac{x^p}{p}$"
+          ],
+          "say": "要算值，用分部積分降次。微分 1 減 x 的次方，讓它降一；積分 x 的次方，讓它升一。",
           "board": [
-            {"do":"write","line":"$\\mathrm{B}(p,{{q1:q+1}})={{fr:\\frac{q}{p}}}\\mathrm{B}({{p1:p+1}},q)$","tint":{"q1":"violet","p1":"blue"}},
-            {"do":"arrow","from":"q1","to":"p1","label":"搬一個","on":"搬一個"},
-            {"do":"focus","term":"fr","label":"多出來","on":"前面多出"}
-          ] },
-        { "show": ["$\\int u\\,dv=uv-\\int v\\,du$","$u=(1-x)^q$，$dv=x^{p-1}dx$"],
-          "note": "分部積分：先挑 $u$ 與 $dv$。",
-          "say": "分部積分是：積分 u dv 等於 u v 減積分 v du。u 取一減 x 的 q 次方，dv 取 x 的 p 減一次方 dx。",
+            {
+              "do": "write",
+              "line": "取 $u=(1-x)^{q-1}$，$dv=x^{p-1}dx$（$p>0$，$q>1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=-(q-1)(1-x)^{q-2}dx,\\quad v=\\frac{x^p}{p}$",
+              "on": "次方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathrm{B}(p,q)=\\Big[\\frac{x^p(1-x)^{q-1}}{p}\\Big]_0^1+\\frac{q-1}{p}\\int_0^1x^{p}(1-x)^{q-2}dx$"
+          ],
+          "say": "代進公式：邊界項，加上 p 分之 q 減 1，乘上一個新的積分。",
           "board": [
-            {"do":"write","line":"$\\int u\\,dv=uv-\\int v\\,du$"},
-            {"do":"write","line":"$u=(1-x)^q$，$dv=x^{p-1}dx$","on":"u 取"}
-          ] },
-        { "show": ["$v=\\frac{x^p}{p}$，$du=-q(1-x)^{q-1}dx$","$-\\int v\\,du=\\frac{q}{p}\\int x^p(1-x)^{q-1}dx$"],
-          "note": "後面那個積分就是 $\\mathrm{B}(p+1,q)$。",
-          "say": "dv 積分得 v，是 p 分之 x 的 p 次方。du 帶負號，減掉它就變正，係數 p 分之 q 跑出來。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathrm{B}(p,q)=\\Big[\\frac{x^p(1-x)^{q-1}}{p}\\Big]_0^1+\\frac{q-1}{p}\\int_0^1x^{p}(1-x)^{q-2}dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界項：$x=0$ 時 $x^p\\to0$（$p>0$），$x=1$ 時 $(1-x)^{q-1}\\to0$（$q>1$）"
+          ],
+          "say": "邊界項兩端都是 0：p 大於 0，x 的 p 次方在 0 趨近 0；q 大於 1，另一個因子在 1 趨近 0。",
           "board": [
-            {"do":"write","line":"$v=\\frac{x^p}{p}$，$du=-q(1-x)^{q-1}dx$"},
-            {"do":"write","line":"$-\\int v\\,du=\\frac{q}{p}\\int x^p(1-x)^{q-1}dx$","on":"減掉它"}
-          ] },
-        { "show": ["$\\mathrm{B}(p,1)=\\int_0^1x^{p-1}\\,dx=\\frac{1}{p}$"],
-          "say": "一直搬到一減 x 的次數變零，剩下 x 的 p 減一次方，積分是 p 分之一。",
+            {
+              "do": "write",
+              "line": "邊界項：$x=0$ 時 $x^p\\to0$（$p>0$），$x=1$ 時 $(1-x)^{q-1}\\to0$（$q>1$）"
+            },
+            {
+              "do": "write",
+              "line": "　瑕積分時先在 $[\\varepsilon,1-\\delta]$ 上做，邊界項的極限正是上面這兩個",
+              "color": "violet",
+              "on": "趨近#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "剩下的積分是 $\\mathrm{B}(p+1,q-1)$：",
+            "$\\mathrm{B}(p,q)=\\frac{q-1}{p}\\,\\mathrm{B}(p+1,q-1)$"
+          ],
+          "say": "剩下的積分正是貝塔 p 加 1 逗號 q 減 1。一個參數加 1，另一個減 1，總和不變。",
           "board": [
-            {"do":"write","line":"$\\mathrm{B}(p,{{one:1}})=\\int_0^1x^{p-1}\\,dx=\\frac{1}{p}$","tint":{"one":"violet"},"on":"一直搬到"},
-            {"do":"focus","term":"one","color":"violet","label":"次數變零","on":"次數變零"}
-          ] },
-        { "show": ["$\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$"],
-          "note": "$m$、$n$ 為正整數。",
-          "say": "整理起來，整數點的公式是兩個階乘相乘，除以 m 加 n 減一的階乘。",
+            {
+              "do": "write",
+              "line": "剩下的積分是 $\\mathrm{B}(p+1,q-1)$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\mathrm{B}(p,q)=\\frac{q-1}{p}\\,\\mathrm{B}(p+1,q-1)}}$",
+              "color": "red",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "另一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "起點：$q=1$ 時",
+            "$\\mathrm{B}(s,1)=\\int_0^1x^{s-1}dx=\\frac1s$"
+          ],
+          "say": "一直做到 q 等於 1。貝塔 s 逗號 1，就是 x 的 s 減 1 次方的積分，等於 s 分之一。",
           "board": [
-            {"do":"write","line":"${{bm:\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}}}$","on":"整理起來"},
-            {"do":"box","term":"bm","color":"green","on":"兩個階乘"}
-          ] }
+            {
+              "do": "write",
+              "line": "起點：$q=1$ 時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\mathrm{B}(s,1)=\\int_0^1x^{s-1}dx=\\frac1s}}$",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "整數的公式",
+      "beats": [
+        {
+          "show": [
+            "$m,n$ 是正整數，做 $n-1$ 次：",
+            "$\\begin{aligned}\\mathrm{B}(m,n)&=\\frac{n-1}{m}\\cdot\\frac{n-2}{m+1}\\cdots\\frac{1}{m+n-2}\\\\&\\quad\\cdot\\mathrm{B}(m+n-1,1)\\end{aligned}$"
+          ],
+          "say": "m 和 n 是正整數時，遞迴做 n 減 1 次。分子一路降到 1，分母一路升到 m 加 n 減 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$m,n$ 是正整數，做 $n-1$ 次："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\mathrm{B}(m,n)&=\\frac{n-1}{m}\\cdot\\frac{n-2}{m+1}\\cdots\\frac{1}{m+n-2}\\\\&\\quad\\cdot\\mathrm{B}(m+n-1,1)\\end{aligned}}$",
+              "on": "子一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子是 $(n-1)!$；分母連同最後的 $\\frac1{m+n-1}$ 是 $\\dfrac{(m+n-1)!}{(m-1)!}$",
+            "$\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$"
+          ],
+          "say": "分子是 n 減 1 階乘；分母從 m 乘到 m 加 n 減 1。整理得到這個階乘公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子是 $(n-1)!$；分母連同最後的 $\\frac1{m+n-1}$ 是 $\\dfrac{(m+n-1)!}{(m-1)!}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}}}$",
+              "color": "red",
+              "on": "階乘#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "整理"
+            },
+            {
+              "do": "write",
+              "line": "　下一課會看到它其實是 $\\frac{\\Gamma(m)\\Gamma(n)}{\\Gamma(m+n)}$",
+              "color": "violet",
+              "on": "理得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)$",
+            "$=\\frac{3!\\,4!}{8!}=\\frac{144}{40320}=\\frac{1}{280}$"
+          ],
+          "say": "開頭的例子：貝塔 4 5，等於 3 階乘乘 4 階乘除以 8 階乘，就是 280 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle =\\frac{3!\\,4!}{8!}=\\frac{144}{40320}=\\frac{1}{280}}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "階乘#2"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：展開 $(1-x)^4$ 逐項積分，$\\frac14-\\frac45+1-\\frac47+\\frac18=\\frac1{280}$",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
       ],
-      "key": "分部積分移一次方，一路降到 $\\mathrm{B}(p,1)$",
+      "check": 1
+    },
+    {
+      "title": "變形一：區間 $[0,a]$",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^2x^2(2-x)^3\\,dx$"
+          ],
+          "say": "常見的變形有兩種。第一種：區間不是 0 到 1，例如從 0 積到 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^2x^2(2-x)^3\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $x=at$，$dx=a\\,dt$，$t:0\\to1$：",
+            "$x^{p-1}(a-x)^{q-1}dx=a^{p-1}t^{p-1}\\cdot a^{q-1}(1-t)^{q-1}\\cdot a\\,dt$"
+          ],
+          "say": "令 x 等於 a t，縮回 0 到 1。兩個因子各拿出 a 的次方，d x 再給一個 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $x=at$，$dx=a\\,dt$，$t:0\\to1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^{p-1}(a-x)^{q-1}dx=a^{p-1}t^{p-1}\\cdot a^{q-1}(1-t)^{q-1}\\cdot a\\,dt$",
+              "on": "因子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^ax^{p-1}(a-x)^{q-1}dx=a^{p+q-1}\\,\\mathrm{B}(p,q)$"
+          ],
+          "say": "a 的次方加起來是 p 加 q 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\int_0^ax^{p-1}(a-x)^{q-1}dx=a^{p+q-1}\\,\\mathrm{B}(p,q)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "1。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$p=3$、$q=4$、$a=2$：",
+            "$\\int_0^2x^2(2-x)^3dx=2^6\\,\\mathrm{B}(3,4)=64\\cdot\\frac{2!\\,3!}{6!}=\\frac{16}{15}$"
+          ],
+          "say": "例子裡 p 是 3，q 是 4，a 是 2。64 乘貝塔 3 4，也就是 64 乘 60 分之一，等於 15 分之 16。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$p=3$、$q=4$、$a=2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\int_0^2x^2(2-x)^3dx=2^6\\,\\mathrm{B}(3,4)=64\\cdot\\frac{2!\\,3!}{6!}=\\frac{16}{15}}}$",
+              "on": "64#1"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "60"
+            }
+          ]
+        },
+        {
+          "show": [
+            "次方檢查：$x$ 的次方共 $2+3=5$，加 $dx$ 的 $1$ 是 $6$"
+          ],
+          "say": "檢查：被積函數長度的次方是 5，加上 d x 的一次，正好是 a 的 6 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "次方檢查：$x$ 的次方共 $2+3=5$，加 $dx$ 的 $1$ 是 $6$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "變形二：$[0,\\infty)$",
+      "beats": [
+        {
+          "show": [
+            "令 $x=\\dfrac{t}{1+t}$：$x:0\\to1$ 對應 $t:0\\to\\infty$",
+            "$1-x=\\frac1{1+t},\\qquad dx=\\frac{dt}{(1+t)^2}$"
+          ],
+          "say": "第二種變形：令 x 等於 1 加 t 分之 t。x 從 0 到 1，t 就從 0 跑到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $x=\\dfrac{t}{1+t}$：$x:0\\to1$ 對應 $t:0\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1-x=\\frac1{1+t},\\qquad dx=\\frac{dt}{(1+t)^2}$",
+              "on": "就從"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代進去，$(1+t)$ 的次方：$-(p-1)-(q-1)-2=-(p+q)$",
+            "$\\mathrm{B}(p,q)=\\int_0^\\infty\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt$"
+          ],
+          "say": "代進去，分母 1 加 t 的次方總共是 p 加 q。這是貝塔函數在 0 到無限大上的樣子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代進去，$(1+t)$ 的次方：$-(p-1)-(q-1)-2=-(p+q)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle \\mathrm{B}(p,q)=\\int_0^\\infty\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt}}$",
+              "color": "red",
+              "on": "的次"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "這是"
+            },
+            {
+              "do": "write",
+              "line": "　$t\\mapsto\\frac t{1+t}$ 嚴格遞增、可微，是 $[0,\\infty)$ 到 $[0,1)$ 的一對一對應；先在有限區間換元再取極限",
+              "color": "violet",
+              "on": "到無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^\\infty\\frac{t}{(1+t)^5}\\,dt$：$p=2$，$p+q=5\\Rightarrow q=3$",
+            "$=\\mathrm{B}(2,3)=\\frac{1!\\,2!}{4!}=\\frac1{12}$"
+          ],
+          "say": "讀法：分子次方加 1 是 p，等於 2；分母次方是 p 加 q，所以 q 是 3。答案 12 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^\\infty\\frac{t}{(1+t)^5}\\,dt$：$p=2$，$p+q=5\\Rightarrow q=3$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx12:\\displaystyle =\\mathrm{B}(2,3)=\\frac{1!\\,2!}{4!}=\\frac1{12}}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx12",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　收斂檢查：$t\\to\\infty$ 時像 $t^{-4}$，$t=0$ 附近有界",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ],
       "check": 2
     },
     {
-      "title": "算一個",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int_0^1x^3(1-x)^4\\,dx=\\mathrm{B}(4,5)$"],
-          "note": "次方加 1：$p=4$，$q=5$。",
-          "say": "x 三次方乘一減 x 的四次方，次方各加一，是 Beta 四、五。",
+        {
+          "show": [
+            "• $\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}dx$：次方加 1 是參數",
+            "• 收斂 $\\iff p>0$ 且 $q>0$（兩端各用 $p$ 判別）"
+          ],
+          "say": "整理：次方加 1 是參數；p、q 都大於 0 才收斂；參數可以交換；分部積分給出整數點的公式；還有兩種變形。",
           "board": [
-            {"do":"write","line":"$\\int_0^1x^{{{a:3}}}(1-x)^{{{b:4}}}dx={{r:\\mathrm{B}(4,5)}}$"},
-            {"do":"focus","term":"a","label":"加 1","on":"次方各"},
-            {"do":"focus","term":"b","label":"加 1","on":"加一"}
-          ] },
-        { "show": ["分子 $3!\\,4!=6\\cdot 24=144$"],
-          "say": "分子是三階乘乘四階乘，六乘二十四，一百四十四。",
+            {
+              "do": "write",
+              "line": "• $\\mathrm{B}(p,q)=\\int_0^1x^{p-1}(1-x)^{q-1}dx$：次方加 1 是參數"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂 $\\iff p>0$ 且 $q>0$（兩端各用 $p$ 判別）",
+              "on": "參數#1"
+            },
+            {
+              "do": "write",
+              "line": "• 對稱：$\\mathrm{B}(p,q)=\\mathrm{B}(q,p)$",
+              "on": "才收"
+            },
+            {
+              "do": "write",
+              "line": "• 遞迴 $\\mathrm{B}(p,q)=\\frac{q-1}{p}\\mathrm{B}(p+1,q-1)$，整數點 $\\frac{(m-1)!(n-1)!}{(m+n-1)!}$",
+              "on": "分部"
+            },
+            {
+              "do": "write",
+              "line": "• $[0,a]$：多一個 $a^{p+q-1}$；$[0,\\infty)$：$\\int_0^\\infty\\frac{t^{p-1}}{(1+t)^{p+q}}dt$",
+              "on": "的公"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Beta 與 Gamma 的關係"
+          ],
+          "say": "下一課，我們會發現貝塔函數可以用伽瑪函數寫出來。",
           "board": [
-            {"do":"write","line":"分子 ${{n:3!\\,4!}}=6\\cdot 24=144$"},
-            {"do":"underline","term":"n","on":"三階乘"}
-          ] },
-        { "show": ["分母：$(m+n-1)!$","代入 $m=4$，$n=5$"],
-          "note": "先自己算括號裡的數，再選。",
-          "say": "分母用上一節的公式，m 加 n 減一的階乘。把 m 是四、n 是五代進去，算出括號裡的數。",
-          "board": [
-            {"do":"write","line":"分母：$(m+n-1)!$"},
-            {"do":"write","line":"代入 $m=4$，$n=5$","on":"m 是四"}
-          ] }
-      ],
-      "predict": {
-        "ask": "分母是？",
-        "options": [
-          {
-            "label": "$8!$，答案 $\\frac{1}{280}$",
-            "correct": true
-          },
-          {
-            "label": "$(4+5)!$",
-            "why": "分母是 $(m+n-1)!$，$4+5-1=8$。"
-          },
-          {
-            "label": "$4!\\,5!$",
-            "why": "階乘的乘積在分子，而且是 $(m-1)!\\,(n-1)!$；分母是 $(m+n-1)!$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "兩種變形",
-      "beats": [
-        { "show": ["$\\int_0^ax^{p-1}(a-x)^{q-1}\\,dx$","$=a^{p+q-1}\\mathrm{B}(p,q)$"],
-          "note": "令 $x=at$。",
-          "say": "區間是零到 a，令 x 等於 a t，多出 a 的 p 加 q 減一次方。",
-          "board": [
-            {"do":"write","line":"$\\int_0^a x^{p-1}(a-x)^{q-1}\\,dx$"},
-            {"do":"write","line":"$= {{ap:a^{p+q-1}}}\\mathrm{B}(p,q)$","on":"令 x 等於"},
-            {"do":"focus","term":"ap","label":"多出來","on":"多出"}
-          ] },
-        { "show": ["$x=at$，$a-x=a(1-t)$，$dx=a\\,dt$","次數：$(p-1)+(q-1)+1=p+q-1$"],
-          "note": "$t$ 從 $0$ 跑到 $1$。",
-          "say": "x 變 a t，a 減 x 變 a 乘一減 t，dx 變 a dt。a 的次數：p 減一加 q 減一再加一。",
-          "board": [
-            {"do":"write","line":"$x=at$，$a-x=a(1-t)$，$dx=a\\,dt$"},
-            {"do":"write","line":"次數：$(p-1)+(q-1)+1=p+q-1$","on":"a 的次數"}
-          ] },
-        { "show": ["$\\int_0^2x^2(2-x)^3\\,dx=2^6\\,\\mathrm{B}(3,4)$","$=\\frac{16}{15}$"],
-          "say": "例如零到二：二的六次方乘 Beta 三、四，六十四乘六十分之一，得十五分之十六。",
-          "board": [
-            {"do":"write","line":"$\\int_0^2x^2(2-x)^3\\,dx=2^6\\,\\mathrm{B}(3,4)$","on":"例如"},
-            {"do":"write","line":"$=64\\cdot\\frac{1}{60}={{r:\\frac{16}{15}}}$","on":"六十四乘"},
-            {"do":"box","term":"r","color":"green","on":"得十五"}
-          ] },
-        { "show": ["$\\mathrm{B}(p,q)=\\int_0^{\\infty}\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt$"],
-          "note": "令 $x=\\frac{t}{1+t}$。",
-          "say": "令 x 等於一加 t 分之 t，Beta 也能寫成零到無限大的積分，分母是一加 t 的 p 加 q 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"令 $x=\\frac{t}{1+t}$","on":"令 x"},
-            {"do":"write","line":"$\\mathrm{B}(p,q)=\\int_0^{\\infty}\\frac{t^{p-1}}{(1+t)^{ {{pq:p+q}}}}\\,dt$","on":"Beta 也能"},
-            {"do":"focus","term":"pq","on":"分母是"}
-          ] },
-        { "show": ["$1-x=\\frac{1}{1+t}$，$dx=\\frac{dt}{(1+t)^2}$","$(p-1)+(q-1)+2=p+q$"],
-          "note": "分母每個因子的次數加起來。",
-          "say": "一減 x 變一加 t 分之一，dx 是 dt 除一加 t 的平方。分母次數 p 減一、q 減一再加二。",
-          "board": [
-            {"do":"write","line":"$1-x=\\frac{1}{1+t}$，$dx=\\frac{dt}{(1+t)^2}$"},
-            {"do":"write","line":"$(p-1)+(q-1)+2=p+q$","on":"分母次數"}
-          ] }
-      ],
-      "key": "代 $x=at$，把區間拉回 $[0,1]$",
-      "predict": {
-        "ask": "$\\int_0^{\\infty}\\frac{t}{(1+t)^5}\\,dt$ 是哪個 Beta？",
-        "options": [
-          {
-            "label": "$\\mathrm{B}(2,3)=\\frac{1}{12}$",
-            "correct": true
-          },
-          {
-            "label": "$\\mathrm{B}(1,5)$",
-            "why": "$t$ 的次方是 $p-1$，所以 $p=2$；$5$ 是 $p+q$，不是 $q$。"
-          },
-          {
-            "label": "$\\mathrm{B}(2,5)$",
-            "why": "分母的次方是 $p+q=5$，所以 $q=5-2=3$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：Beta 與 Gamma 的關係"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["beta-function", "special-functions"],
-    "fine": ["beta-read-exponents", "beta-integer-values", "beta-convergence", "beta-other-forms"]
+    "coarse": [
+      "beta-function",
+      "special-functions"
+    ],
+    "fine": [
+      "beta-read-exponents",
+      "beta-integer-values",
+      "beta-convergence",
+      "beta-other-forms"
+    ]
   },
   "practice": [
-    { "id": "mob-beta-001", "core": true, "trains": "beta-integer-values" },
-    { "id": "mob-beta-002", "core": true, "trains": "beta-integer-values" },
-    { "id": "mob-beta-003", "core": true, "trains": "beta-integer-values" },
-    { "id": "mob-beta-004", "core": true, "trains": "beta-integer-values" },
-    { "id": "burst-int-007", "core": true, "trains": "beta-read-exponents" },
-    { "id": "cg-11d-018", "core": true, "trains": "beta-convergence" },
-    { "id": "mob-beta-009", "trains": "beta-integer-values" },
-    { "id": "mob-beta-010", "trains": "beta-integer-values" },
-    { "id": "burst-rec-003", "trains": "beta-read-exponents" },
-    { "id": "mob-tech-015", "trains": "beta-read-exponents" },
-    { "id": "cg-11d-019", "trains": "beta-convergence" },
-    { "id": "cg-11d-020", "trains": "beta-other-forms" },
-    { "id": "cg-11d-021", "trains": "beta-other-forms" },
-    { "id": "cg-11d-022", "challenge": true, "trains": "beta-other-forms", "note": "挑戰：令 $x=4t$ 拉出 $64$，剩下 $B\\left(\\frac{5}{2},\\frac{3}{2}\\right)$ 要用半整數的 $\\Gamma$。" }
+    {
+      "id": "mob-beta-001",
+      "core": true,
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "mob-beta-002",
+      "core": true,
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "mob-beta-003",
+      "core": true,
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "mob-beta-004",
+      "core": true,
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "burst-int-007",
+      "core": true,
+      "trains": "beta-read-exponents"
+    },
+    {
+      "id": "cg-11d-018",
+      "core": true,
+      "trains": "beta-convergence"
+    },
+    {
+      "id": "mob-beta-009",
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "mob-beta-010",
+      "trains": "beta-integer-values"
+    },
+    {
+      "id": "burst-rec-003",
+      "trains": "beta-read-exponents"
+    },
+    {
+      "id": "mob-tech-015",
+      "trains": "beta-read-exponents"
+    },
+    {
+      "id": "cg-11d-019",
+      "trains": "beta-convergence"
+    },
+    {
+      "id": "cg-11d-020",
+      "trains": "beta-other-forms"
+    },
+    {
+      "id": "cg-11d-021",
+      "trains": "beta-other-forms"
+    },
+    {
+      "id": "cg-11d-022",
+      "challenge": true,
+      "trains": "beta-other-forms",
+      "note": "挑戰：令 $x=4t$ 拉出 $64$，剩下 $B\\left(\\frac{5}{2},\\frac{3}{2}\\right)$ 要用半整數的 $\\Gamma$。"
+    }
   ],
   "gaps": []
 }

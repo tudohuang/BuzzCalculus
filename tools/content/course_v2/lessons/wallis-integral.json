@@ -1,51 +1,140 @@
 {
   "id": "wallis-integral",
   "title": "Wallis 積分",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["reduction-formula", "trig-integral-sin-cos", "u-sub-definite"],
-  "next": ["wallis-product"],
-  "related": ["wallis-beta", "ibp-cyclic"],
-  "objectives": [
-    "推出 $W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$ 的遞迴 $W_n=\\frac{n-1}{n}W_{n-2}$，以及 $W_0=\\frac{\\pi}{2}$、$W_1=1$。",
-    "看 $n$ 的奇偶直接寫出值：偶數最後乘 $\\frac{\\pi}{2}$，奇數最後乘 $1$。",
-    "用對稱性處理 $\\cos^n$、$[0,\\pi]$ 的區間，以及 $\\sin^m\\cos^n$（偶數次方）的乘積。"
+  "prerequisites": [
+    "reduction-formula",
+    "trig-integral-sin-cos",
+    "u-sub-definite"
   ],
-  "visual": "在 [0, π/2] 上同時畫 y = sin x、sin² x、sin⁴ x、sin⁸ x。次方越高，曲線越貼著 x 軸，只在 x = π/2 附近才抬頭；旁邊列出面積 1、π/4、3π/16、35π/256，越來越小，而且相鄰兩個的比值越來越接近 1。",
+  "next": [
+    "wallis-product"
+  ],
+  "related": [
+    "wallis-beta",
+    "ibp-cyclic"
+  ],
+  "objectives": [
+    "推出 $W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$ 的遞迴 $W_n=\\frac{n-1}{n}W_{n-2}$，以及起點 $W_0=\\frac\\pi2$、$W_1=1$",
+    "看 $n$ 的奇偶直接寫出值：偶數最後乘 $\\frac{\\pi}{2}$，奇數最後乘 $1$",
+    "用對稱性處理 $\\cos^n$、$[0,\\pi]$ 的區間，以及 $\\sin^m\\cos^n$（偶數次方）的乘積"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 遞迴從哪裡來",
       "body": [
-        "把 $\\sin^n x$ 拆成 $\\sin^{n-1}x\\cdot\\sin x$，令 $u=\\sin^{n-1}x$、$dv=\\sin x\\,dx$，$du=(n-1)\\sin^{n-2}x\\cos x\\,dx$、$v=-\\cos x$。",
-        "邊界項 $\\left[-\\sin^{n-1}x\\cos x\\right]_0^{\\pi/2}$：$x=\\frac{\\pi}{2}$ 時 $\\cos=0$，$x=0$ 時 $\\sin=0$（$n\\ge 2$），所以是 $0$。剩下 $(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2 x\\,dx$。",
-        "把 $\\cos^2 x$ 換成 $1-\\sin^2 x$：$W_n=(n-1)(W_{n-2}-W_n)$。$W_n$ 出現在兩邊，移項（〈重複分部與循環積分〉的手法）得到遞迴。"
+        "起點：$W_0=\\dfrac\\pi2$，$W_1=\\Big[-\\cos x\\Big]_0^{\\pi/2}=1$",
+        "分部積分（$n\\ge2$）：$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$",
+        "邊界項 $=0$：$x=\\frac\\pi2$ 時 $\\cos=0$；$x=0$ 時 $\\sin^{n-1}0=0$（$n-1\\ge1$）"
       ],
-      "tex": ["W_n=\\frac{n-1}{n}\\,W_{n-2},\\qquad W_0=\\frac{\\pi}{2},\\quad W_1=1"],
-      "collapsible": false
+      "tex": [
+        "W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx,\\quad n=0,1,2,\\dots",
+        "du=(n-1)\\sin^{n-2}x\\cos x\\,dx,\\quad v=-\\cos x",
+        "\\begin{aligned}W_n&=\\Big[-\\sin^{n-1}x\\cos x\\Big]_0^{\\pi/2}+(n-1)\\,I\\\\I&=\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2x\\,dx\\end{aligned}"
+      ]
     },
     {
-      "heading": "② 一路降下去：奇偶決定有沒有 $\\pi$",
+      "heading": "① 解出 $W_n$",
       "body": [
-        "偶數：$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{5\\pi}{32}$。奇數：$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot 1=\\frac{16}{35}$。",
-        "規律：分子是比 $n$ 小的、跟 $n-1$ 同奇偶的數，分母是跟 $n$ 同奇偶的數。偶數時最後乘 $W_0=\\frac{\\pi}{2}$，奇數時最後乘 $W_1=1$，所以奇數次方的答案沒有 $\\pi$。"
+        "$\\cos^2x=1-\\sin^2x$，所以 $I=W_{n-2}-W_n$：",
+        "$W_n$ 兩邊都有：移項（跟 4.20 的循環積分一樣）",
+        "直覺：$\\sin^2+\\cos^2=1$，兩塊面積一樣，各佔一半",
+        "「面積一樣」在 ③ 會用換元證明"
       ],
-      "collapsible": false
+      "tex": [
+        "W_n=(n-1)\\big(W_{n-2}-W_n\\big)",
+        "nW_n=(n-1)W_{n-2}",
+        "W_n=\\frac{n-1}{n}\\,W_{n-2}\\quad(n\\ge2)"
+      ]
     },
     {
-      "heading": "③ 對稱性：$\\cos$、$[0,\\pi]$",
+      "heading": "② 一路降下去",
       "body": [
-        "令 $x=\\frac{\\pi}{2}-t$：$\\sin$ 變 $\\cos$，區間 $\\left[0,\\frac{\\pi}{2}\\right]$ 不變，所以 $\\int_0^{\\pi/2}\\cos^n x\\,dx=W_n$。",
-        "$[0,\\pi]$ 上：$\\sin^n$ 對 $x=\\frac{\\pi}{2}$ 對稱，$\\int_0^\\pi\\sin^n x\\,dx=2W_n$。$\\cos^n$ 在 $n$ 偶數時也是 $2W_n$；$n$ 奇數時 $\\cos(\\pi-x)=-\\cos x$，前後兩半抵銷，積分是 $0$。"
+        "偶數：",
+        "奇數：",
+        "一般式（對 $m$ 歸納，每降一步多乘一個因子）：",
+        "雙階乘記號：$W_{2m}=\\frac{(2m-1)!!}{(2m)!!}\\cdot\\frac\\pi2$，$W_{2m+1}=\\frac{(2m)!!}{(2m+1)!!}$",
+        "奇偶決定有沒有 $\\pi$：偶數落在 $W_0=\\frac\\pi2$，奇數落在 $W_1=1$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}W_6&=\\tfrac56W_4=\\tfrac56\\cdot\\tfrac34W_2\\\\&=\\tfrac56\\cdot\\tfrac34\\cdot\\tfrac12W_0=\\tfrac{15}{48}\\cdot\\tfrac\\pi2\\\\&=\\tfrac{5\\pi}{32}\\approx0.4909\\end{aligned}",
+        "W_5=\\tfrac45\\cdot\\tfrac23\\cdot W_1=\\tfrac8{15}",
+        "\\begin{aligned}W_{2m}&=\\frac{(2m-1)(2m-3)\\cdots1}{(2m)(2m-2)\\cdots2}\\cdot\\frac\\pi2\\\\[4pt]W_{2m+1}&=\\frac{(2m)(2m-2)\\cdots2}{(2m+1)(2m-1)\\cdots3}\\cdot1\\end{aligned}"
+      ]
     },
     {
-      "heading": "④ 乘積：偶數次方的 $\\cos$ 換成 $\\sin$",
+      "heading": "② 試一題",
       "body": [
-        "$\\int_0^{\\pi/2}\\sin^4 x\\cos^2 x\\,dx$：$\\cos^2 x=1-\\sin^2 x$，變成 $W_4-W_6$。一般的 $\\sin^m\\cos^n$（不一定是偶數，甚至不是整數）在〈Wallis 與 Beta〉用 Beta 函數一次處理。",
-        "另一個之後會用到的事實：$0\\le\\sin x\\le 1$，所以 $\\sin^{n+1}x\\le\\sin^n x$，$W_n$ 隨 $n$ 遞減。"
+        "檢查：$W_n$ 隨 $n$ 遞減",
+        "數值：$1.571,\\ 1,\\ 0.785,\\ 0.667,\\ 0.589,\\ 0.533,\\ 0.491$",
+        "原因：$0\\le\\sin x\\le1$ ⇒ $\\sin^{n+1}x\\le\\sin^nx$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\tfrac\\pi2>1>\\tfrac\\pi4>\\tfrac23\\\\&>\\tfrac{3\\pi}{16}>\\tfrac8{15}>\\tfrac{5\\pi}{32}>\\cdots\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 對稱性：$\\cos^n$",
+      "body": [
+        "令 $x=\\frac\\pi2-t$，$dx=-dt$，$\\cos(\\frac\\pi2-t)=\\sin t$：",
+        "區間 $[0,\\pi]$：$\\displaystyle\\int_0^\\pi\\cos^4x\\,dx$",
+        "拆成兩半；後半令 $x=\\pi-t$，$\\cos(\\pi-t)=-\\cos t$："
+      ],
+      "tex": [
+        "\\int_0^{\\pi/2}\\cos^nx\\,dx=\\int_{\\pi/2}^{0}\\sin^nt\\,(-dt)=W_n",
+        "\\int_{\\pi/2}^{\\pi}\\cos^4x\\,dx=\\int_0^{\\pi/2}(-\\cos t)^4\\,dt=W_4",
+        "\\int_0^\\pi\\cos^4x\\,dx=2W_4=2\\cdot\\tfrac34\\cdot\\tfrac12\\cdot\\tfrac\\pi2=\\tfrac{3\\pi}8"
+      ]
+    },
+    {
+      "heading": "③ 奇數次方會抵消",
+      "body": [
+        "$n$ 奇數：$(-\\cos t)^n=-\\cos^nt$，後半 $=-W_n$",
+        "$\\sin(\\pi-t)=\\sin t$，沒有負號："
+      ],
+      "tex": [
+        "\\int_0^\\pi\\cos^nx\\,dx=\\begin{cases}2W_n,&n\\text{ 偶數}\\\\0,&n\\text{ 奇數}\\end{cases}",
+        "\\int_0^\\pi\\sin^nx\\,dx=2W_n\\quad(\\text{所有 }n)"
+      ]
+    },
+    {
+      "heading": "④ 乘積：$\\sin^m x\\cos^n x$",
+      "body": [
+        "$\\cos$ 是偶數次方：$\\cos^2x=1-\\sin^2x$，全部換成 $\\sin$",
+        "一般：$\\cos^{2k}x=(1-\\sin^2x)^k$，二項式展開",
+        "例：$\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\cos^2x\\,dx=W_3-W_5=\\tfrac23-\\tfrac8{15}=\\tfrac2{15}$",
+        "也可以用 4.24：$\\cos$（或 $\\sin$）有奇數次方時，換元 $u=\\cos x$ 一樣得 $\\frac2{15}$",
+        "兩個都是奇數次方時，用 4.24 的換元比較快"
+      ],
+      "tex": [
+        "\\int_0^{\\pi/2}\\sin^4x\\cos^2x\\,dx",
+        "=\\int_0^{\\pi/2}\\big(\\sin^4x-\\sin^6x\\big)dx=W_4-W_6",
+        "=\\frac{3\\pi}{16}-\\frac{5\\pi}{32}=\\frac{\\pi}{32}"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "另一條路驗算：$\\sin x\\cos x=\\tfrac12\\sin2x$",
+        "一題兩種做法對得上，答案就很可靠"
+      ],
+      "tex": [
+        "\\begin{aligned}\\int_0^{\\pi/2}\\tfrac14\\sin^22x\\,dx&=\\tfrac14\\cdot\\tfrac12\\int_0^{\\pi}\\sin^2u\\,du\\\\&=\\tfrac18\\cdot2W_2=\\tfrac\\pi{16}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx$：$W_n=\\frac{n-1}{n}W_{n-2}$，$W_0=\\frac\\pi2$、$W_1=1$",
+        "• 偶數：最後乘 $\\frac\\pi2$；奇數：最後乘 $1$",
+        "• $\\cos^n$ 在 $[0,\\frac\\pi2]$ 上也是 $W_n$",
+        "• $[0,\\pi]$：$\\sin^n$ 是 $2W_n$；$\\cos^n$ 偶數 $2W_n$、奇數 $0$",
+        "• 乘積：偶數次方的 $\\cos$ 換成 $1-\\sin^2$，變成幾個 $W$",
+        "下一課：Wallis 乘積"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,35 +183,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^{\\pi/2}\\sin^5 x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\sin^7x\\,dx=$？",
       "options": [
-        { "label": "$\\frac{8}{15}$", "correct": true },
-        { "label": "$\\frac{8\\pi}{15}$", "why": "$5$ 是奇數，遞迴停在 $W_1=1$，答案沒有 $\\pi$。" },
-        { "label": "$\\frac{4}{5}$", "why": "只乘了第一個因子；還要乘 $\\frac{2}{3}$：$\\frac{4}{5}\\cdot\\frac{2}{3}=\\frac{8}{15}$。" }
+        {
+          "label": "$\\frac{16}{35}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{8\\pi}{35}$",
+          "why": "$7$ 是奇數，落在 $W_1=1$，不用乘 $\\frac\\pi2$"
+        },
+        {
+          "label": "$\\frac{8}{35}$",
+          "why": "多乘了一個 $\\frac12$：奇數鏈停在 $W_1$，沒有「$\\frac12W_0$」那一步"
+        },
+        {
+          "label": "$\\frac{5\\pi}{32}$",
+          "why": "這是 $W_6$；遞迴要從 $n=7$ 開始降"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\pi/2}\\cos^4 x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\sin^2x\\cos^2x\\,dx=$？",
       "options": [
-        { "label": "$\\frac{3\\pi}{16}$", "correct": true },
-        { "label": "$\\frac{3\\pi}{8}$", "why": "那是 $[0,\\pi]$ 上的值，多乘了 $2$。" },
-        { "label": "$\\frac{3}{8}$", "why": "偶數次方最後要乘 $W_0=\\frac{\\pi}{2}$：$\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{3\\pi}{16}$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^\\pi\\cos^3 x\\,dx$ 是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$\\frac{4}{3}$", "why": "那是 $2W_3$。但 $\\cos(\\pi-x)=-\\cos x$，奇數次方前後兩半正負抵銷。" },
-        { "label": "$\\frac{2}{3}$", "why": "$W_3=\\frac{2}{3}$ 是 $\\left[0,\\frac{\\pi}{2}\\right]$ 上的值；在 $[0,\\pi]$ 上後半段是負的，抵銷成 $0$。" }
-      ]
-    },
-    {
-      "ask": "為什麼 $\\int_0^{\\pi/2}\\cos^n x\\,dx=\\int_0^{\\pi/2}\\sin^n x\\,dx$？",
-      "options": [
-        { "label": "換元 $x=\\frac{\\pi}{2}-t$，$\\sin$ 變 $\\cos$，區間不變", "correct": true },
-        { "label": "因為 $\\sin x$ 和 $\\cos x$ 在 $\\left[0,\\frac{\\pi}{2}\\right]$ 上相等", "why": "兩者只在 $\\frac{\\pi}{4}$ 相等；是整段積分相等，不是函數相等。" },
-        { "label": "因為兩者週期都是 $2\\pi$", "why": "週期相同不夠；關鍵是 $\\left[0,\\frac{\\pi}{2}\\right]$ 這個區間在 $x\\mapsto\\frac{\\pi}{2}-x$ 下對調了 $\\sin$ 與 $\\cos$。" }
+        {
+          "label": "$\\frac{\\pi}{16}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\pi^2}{16}$",
+          "why": "把積分拆成 $W_2\\cdot W_2$：乘積的積分不是積分的乘積"
+        },
+        {
+          "label": "$\\frac{3\\pi}{16}$",
+          "why": "只算了 $W_4$；$\\cos^2=1-\\sin^2$ 還有 $W_2$ 那一項"
+        },
+        {
+          "label": "$\\frac{\\pi}{8}$",
+          "why": "$W_4$ 算錯成 $\\frac12W_2$：$W_4=\\frac34W_2$"
+        }
       ]
     }
   ],
@@ -130,249 +229,901 @@
     {
       "title": "遞迴從哪裡來",
       "beats": [
-        { "show": ["$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$"],
-          "note": "拆成 $\\sin^{n-1}x\\cdot\\sin x$。",
-          "say": "Wallis 積分是 sine 的 n 次方從零積到二分之 pi。先拆出一個 sine x 來做分部積分。",
+        {
+          "show": [
+            "$W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx,\\quad n=0,1,2,\\dots$"
+          ],
+          "say": "這一課的主角是 W n：正弦的 n 次方，從 0 積到 2 分之派。",
           "board": [
-            {"do":"write","line":"$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$"},
-            {"do":"transform","line":"$W_n=\\int_0^{\\pi/2}{{u:\\sin^{n-1}x}}\\,{{dv:\\sin x\\,dx}}$","tint":{"u":"blue","dv":"violet"},"on":"先拆出"}
-          ] },
-        { "show": ["$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$"],
-          "note": "邊界項：兩端一個 $\\cos=0$、一個 $\\sin=0$。",
-          "say": "u 取 sine 的 n 減一次方，v 是負 cosine x。邊界項在兩端剛好都是零。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx,\\quad n=0,1,2,\\dots}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "0 ≤ sin x ≤ 1，次方越高，面積 Wₙ 越小"
+          ],
+          "say": "圖上，正弦在 0 到 1 之間，次方越高，曲線越往下塌，只剩 2 分之派附近還高。面積 W n 越來越小。",
           "board": [
-            {"do":"write","line":"$u={{u:\\sin^{n-1}x}}$，$dv={{dv:\\sin x\\,dx}}$"},
-            {"do":"write","line":"邊界項：兩端都是 $0$","on":"邊界項"}
-          ] },
-        { "show": ["$du=(n-1)\\sin^{n-2}x\\cos x\\,dx$","$v=-\\cos x$"],
-          "note": "$u$ 微分、$dv$ 積分。",
-          "say": "u 微分，要用連鎖律，多出一個 cosine x。dv 積分得到負的 cosine x。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "wn",
+                  "window": [
+                    0,
+                    1.75,
+                    0,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)^n",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)^n",
+                      "from": 0,
+                      "to": "pi/2",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/2",
+                      "label": "π/2",
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 0,
+                      "max": 12,
+                      "value": 1,
+                      "label": "次數 n"
+                    }
+                  },
+                  "readout": "n = {n}",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1",
+              "on": "方越"
+            },
+            {
+              "do": "write",
+              "line": "0 ≤ sin x ≤ 1，次方越高，面積 Wₙ 越小",
+              "color": "violet",
+              "on": "派附"
+            }
+          ]
+        },
+        {
+          "show": [
+            "起點：$W_0=\\dfrac\\pi2$，$W_1=\\Big[-\\cos x\\Big]_0^{\\pi/2}=1$"
+          ],
+          "say": "兩個起點很好算：W 0 是區間長度 2 分之派；W 1 是負餘弦，代進去得 1。",
           "board": [
-            {"do":"write","line":"$du=(n-1)\\sin^{n-2}x\\cos x\\,dx$"},
-            {"do":"write","line":"$v=-\\cos x$","on":"積分得到"}
-          ] },
-        { "show": ["$(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2 x\\,dx$"],
-          "note": "$\\cos^2 x=1-\\sin^2 x$",
-          "say": "剩下的積分裡有 cosine 平方，換成一減 sine 平方，就拆回兩個 Wallis 積分。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "wn",
+                  "window": [
+                    0,
+                    1.75,
+                    0,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)^n",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)^n",
+                      "from": 0,
+                      "to": "pi/2",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/2",
+                      "label": "π/2",
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 0,
+                      "max": 12,
+                      "value": 1,
+                      "label": "次數 n"
+                    }
+                  },
+                  "readout": "n = {n}",
+                  "height": 230
+                },
+                "vals": {
+                  "n": 6
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 6",
+              "on": "區間"
+            },
+            {
+              "do": "write",
+              "line": "起點：$W_0=\\dfrac\\pi2$，$W_1=\\Big[-\\cos x\\Big]_0^{\\pi/2}=1$",
+              "on": "是負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分部積分（$n\\ge2$）：$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$",
+            "$du=(n-1)\\sin^{n-2}x\\cos x\\,dx,\\quad v=-\\cos x$"
+          ],
+          "say": "n 至少是 2 的時候分部積分：u 取正弦的 n 減 1 次方，d v 取正弦 x d x，所以 v 是負餘弦。",
           "board": [
-            {"do":"write","line":"$(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\,{{c:\\cos^2 x}}\\,dx$"},
-            {"do":"underline","term":"c","label":"1 − sin²","on":"換成"}
-          ] },
-        { "show": ["$W_n=(n-1)(W_{n-2}-W_n)$"],
-          "note": "$W_n$ 出現在兩邊。",
-          "say": "W n 出現在等號兩邊，跟循環積分一樣，移項就解出來。",
+            {
+              "do": "write",
+              "line": "分部積分（$n\\ge2$）：$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle du=(n-1)\\sin^{n-2}x\\cos x\\,dx,\\quad v=-\\cos x$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}W_n&=\\Big[-\\sin^{n-1}x\\cos x\\Big]_0^{\\pi/2}+(n-1)\\,I\\\\I&=\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2x\\,dx\\end{aligned}$"
+          ],
+          "say": "代進公式，負負得正。後面的積分先叫它 I：正弦的 n 減 2 次方乘餘弦平方。",
           "board": [
-            {"do":"keep","n":3},
-            {"do":"write","line":"${{wl:W_n}}=(n-1)(W_{n-2}-{{wn:W_n}})$","on":"W n 出現在"},
-            {"do":"focus","term":"wl","on":"等號兩邊"},
-            {"do":"focus","term":"wn","label":"移項","on":"跟循環積分"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}W_n&=\\Big[-\\sin^{n-1}x\\cos x\\Big]_0^{\\pi/2}+(n-1)\\,I\\\\I&=\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2x\\,dx\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界項 $=0$：$x=\\frac\\pi2$ 時 $\\cos=0$；$x=0$ 時 $\\sin^{n-1}0=0$（$n-1\\ge1$）"
+          ],
+          "say": "邊界項是 0：在 2 分之派，餘弦是 0；在 0，正弦的 n 減 1 次方是 0，因為 n 減 1 至少是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "邊界項 $=0$：$x=\\frac\\pi2$ 時 $\\cos=0$；$x=0$ 時 $\\sin^{n-1}0=0$（$n-1\\ge1$）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "解出 $W_n$",
+      "beats": [
+        {
+          "show": [
+            "$\\cos^2x=1-\\sin^2x$，所以 $I=W_{n-2}-W_n$：",
+            "$W_n=(n-1)\\big(W_{n-2}-W_n\\big)$"
+          ],
+          "say": "把餘弦平方換成 1 減正弦平方，I 拆成兩塊：W n 減 2，減掉 W n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\cos^2x=1-\\sin^2x$，所以 $I=W_{n-2}-W_n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W_n=(n-1)\\big(W_{n-2}-W_n\\big)$",
+              "on": "成兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W_n$ 兩邊都有：移項（跟 4.20 的循環積分一樣）",
+            "$nW_n=(n-1)W_{n-2}$"
+          ],
+          "say": "W n 在等號兩邊都出現，就像循環積分，移項：左邊變成 n 倍的 W n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$W_n$ 兩邊都有：移項（跟 4.20 的循環積分一樣）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle nW_n=(n-1)W_{n-2}$",
+              "on": "移項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W_n=\\frac{n-1}{n}\\,W_{n-2}\\quad(n\\ge2)$"
+          ],
+          "say": "得到瓦里斯積分的遞迴：W n 等於 n 分之 n 減 1，乘上 W n 減 2。步長是 2，所以剛好需要 W 0、W 1 兩個起點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle W_n=\\frac{n-1}{n}\\,W_{n-2}\\quad(n\\ge2)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "步長"
+            }
+          ]
+        }
       ],
-      "key": "分部後 $\\cos^2x=1-\\sin^2x$ 繞回 $W_n$",
       "predict": {
-        "ask": "移項之後，$W_n$ 是？",
+        "ask": "$W_2=\\displaystyle\\int_0^{\\pi/2}\\sin^2x\\,dx=$？",
         "options": [
           {
-            "label": "$\\frac{n-1}{n}W_{n-2}$",
+            "label": "$\\frac\\pi4$",
             "correct": true
           },
           {
-            "label": "$\\frac{n}{n-1}W_{n-2}$",
-            "why": "分子分母顛倒了；$\\sin^n$ 隨 $n$ 變小，$W_n$ 應該越來越小。"
+            "label": "$\\frac12$",
+            "why": "接到奇數鏈的 $W_1=1$ 了；$2$ 要接 $W_0$"
           },
           {
-            "label": "$(n-1)W_{n-2}$",
-            "why": "忘了右邊還有 $-(n-1)W_n$；移到左邊是 $nW_n$。"
+            "label": "$\\frac\\pi2$",
+            "why": "這是 $W_0$，忘了乘 $\\frac{n-1}{n}=\\frac12$"
+          },
+          {
+            "label": "$\\frac\\pi8$",
+            "why": "多乘了一個 $\\frac12$；$W_2$ 只降一步就到 $W_0$"
           }
         ]
       }
     },
     {
-      "title": "奇偶決定 $\\pi$",
+      "title": "解出 $W_n$",
       "beats": [
-        { "show": ["$W_0=\\frac{\\pi}{2}$，$W_1=1$"],
-          "note": "遞迴一次跳兩格，要兩個起點。",
-          "say": "遞迴一次跳兩格，所以有兩個起點：W 零是二分之 pi，W 一是一。",
+        {
+          "show": [
+            "直覺：$\\sin^2+\\cos^2=1$，兩塊面積一樣，各佔一半"
+          ],
+          "say": "直覺上也對：正弦平方加餘弦平方等於 1，而兩者面積一樣，所以各佔 2 分之派的一半。",
           "board": [
-            {"do":"write","line":"$W_0={{p:\\frac{\\pi}{2}}}$，$W_1={{q:1}}$","tint":{"p":"blue","q":"violet"}},
-            {"do":"focus","term":"p","label":"偶數的起點","on":"W 零"},
-            {"do":"focus","term":"q","label":"奇數的起點","on":"W 一"}
-          ] },
-        { "show": ["$W_0=\\int_0^{\\pi/2}1\\,dx=\\frac{\\pi}{2}$","$W_1=\\int_0^{\\pi/2}\\sin x\\,dx=1$"],
-          "note": "直接積分就得到。",
-          "say": "這兩個起點直接積。sine 的零次方是一，積分是二分之 pi；sine x 的積分是負 cosine x，代進去得一。",
+            {
+              "do": "write",
+              "line": "直覺：$\\sin^2+\\cos^2=1$，兩塊面積一樣，各佔一半"
+            },
+            {
+              "do": "write",
+              "line": "　「面積一樣」在 ③ 會用換元證明",
+              "color": "violet",
+              "on": "兩者"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "一路降下去",
+      "beats": [
+        {
+          "show": [
+            "偶數：",
+            "$\\begin{aligned}W_6&=\\tfrac56W_4=\\tfrac56\\cdot\\tfrac34W_2\\\\&=\\tfrac56\\cdot\\tfrac34\\cdot\\tfrac12W_0=\\tfrac{15}{48}\\cdot\\tfrac\\pi2\\\\&=\\tfrac{5\\pi}{32}\\approx0.4909\\end{aligned}$"
+          ],
+          "say": "偶數例子 W 6：一路降，6 分之 5，4 分之 3，2 分之 1，最後落在 W 0，乘上 2 分之派。答案 32 分之 5 派，大約 0.4909。",
           "board": [
-            {"do":"write","line":"$W_0=\\int_0^{\\pi/2}1\\,dx=\\frac{\\pi}{2}$"},
-            {"do":"write","line":"$W_1=[-\\cos x]_0^{\\pi/2}=1$","on":"負 cosine"}
-          ] },
-        { "show": ["次方越高，曲線越貼著 $x$ 軸"],
-          "note": "藍：$\\sin^2 x$，紅：$\\sin^4 x$。",
-          "say": "畫出來看：藍色是 sine 平方，紅色是 sine 四次方。次方越高，曲線越貼著 x 軸，面積越小。",
+            {
+              "do": "write",
+              "line": "偶數："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}W_6&=\\tfrac56W_4=\\tfrac56\\cdot\\tfrac34W_2\\\\&=\\tfrac56\\cdot\\tfrac34\\cdot\\tfrac12W_0=\\tfrac{15}{48}\\cdot\\tfrac\\pi2\\\\&=\\tfrac{5\\pi}{32}\\approx0.4909\\end{aligned}}}}$",
+              "color": "red",
+              "on": "分之#3"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "奇數：",
+            "$W_5=\\tfrac45\\cdot\\tfrac23\\cdot W_1=\\tfrac8{15}$"
+          ],
+          "say": "奇數例子 W 5：5 分之 4，乘 3 分之 2，最後落在 W 1 等於 1。答案 15 分之 8，沒有派。",
           "board": [
-            {"do":"plot","graph":{"window":[0,1.7,-0.1,1.1],"curves":[{"expr":"sin(x)^2","domain":[0,1.5708],"color":"blue"},{"expr":"sin(x)^4","domain":[0,1.5708],"color":"red"}]}}
-          ] },
-        { "show": ["$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{5\\pi}{32}$"],
-          "say": "偶數，例如六：六分之五、四分之三、二分之一一路乘下去，最後乘二分之 pi，得三十二分之五 pi。",
+            {
+              "do": "write",
+              "line": "奇數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W_5=\\tfrac45\\cdot\\tfrac23\\cdot W_1=\\tfrac8{15}$",
+              "on": "落在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般式（對 $m$ 歸納，每降一步多乘一個因子）：",
+            "$\\begin{aligned}W_{2m}&=\\frac{(2m-1)(2m-3)\\cdots1}{(2m)(2m-2)\\cdots2}\\cdot\\frac\\pi2\\\\[4pt]W_{2m+1}&=\\frac{(2m)(2m-2)\\cdots2}{(2m+1)(2m-1)\\cdots3}\\cdot1\\end{aligned}$"
+          ],
+          "say": "一般式：分子從 n 減 1 隔一個往下乘，分母從 n 隔一個往下乘。對 m 歸納：每降一步，就多乘一個遞迴的因子。",
           "board": [
-            {"do":"write","line":"$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot{{p:\\frac{\\pi}{2}}}={{r6:\\frac{5\\pi}{32}}}$"},
-            {"do":"box","term":"r6","color":"green","on":"得三十二"}
-          ] },
-        { "show": ["$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot 1=\\frac{16}{35}$"],
-          "note": "奇數最後乘 $W_1=1$：沒有 $\\pi$。",
-          "say": "奇數，例如七：乘到三分之二，最後乘的是一，所以答案三十五分之十六，裡面沒有 pi。",
+            {
+              "do": "write",
+              "line": "一般式（對 $m$ 歸納，每降一步多乘一個因子）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}W_{2m}&=\\frac{(2m-1)(2m-3)\\cdots1}{(2m)(2m-2)\\cdots2}\\cdot\\frac\\pi2\\\\[4pt]W_{2m+1}&=\\frac{(2m)(2m-2)\\cdots2}{(2m+1)(2m-1)\\cdots3}\\cdot1\\end{aligned}}}}$",
+              "on": "隔一#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "一個#2"
+            },
+            {
+              "do": "write",
+              "line": "　雙階乘記號：$W_{2m}=\\frac{(2m-1)!!}{(2m)!!}\\cdot\\frac\\pi2$，$W_{2m+1}=\\frac{(2m)!!}{(2m+1)!!}$",
+              "color": "violet",
+              "on": "降一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "奇偶決定有沒有 $\\pi$：偶數落在 $W_0=\\frac\\pi2$，奇數落在 $W_1=1$"
+          ],
+          "say": "所以奇偶決定答案裡有沒有派：偶數鏈落在 W 0，帶著 2 分之派；奇數鏈落在 W 1，答案是有理數。",
           "board": [
-            {"do":"write","line":"$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot{{q:1}}={{r7:\\frac{16}{35}}}$"},
-            {"do":"box","term":"r7","color":"green","label":"沒有 π","on":"所以答案"}
-          ] }
+            {
+              "do": "write",
+              "line": "奇偶決定有沒有 $\\pi$：偶數落在 $W_0=\\frac\\pi2$，奇數落在 $W_1=1$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi/2}\\sin^7x\\,dx=$？"
+          ],
+          "say": "試一題：正弦七次方。先看奇偶。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "換成 $\\cos$",
+      "title": "試一題",
       "beats": [
-        { "show": ["令 $x=\\frac{\\pi}{2}-t$"],
-          "note": "$\\sin$ 變 $\\cos$，區間 $\\left[0,\\frac{\\pi}{2}\\right]$ 不變。",
-          "say": "令 x 等於二分之 pi 減 t。sine 變成 cosine，而零到二分之 pi 這段區間剛好對調，還是自己。",
+        {
+          "show": [
+            "檢查：$W_n$ 隨 $n$ 遞減",
+            "$\\begin{aligned}&\\tfrac\\pi2>1>\\tfrac\\pi4>\\tfrac23\\\\&>\\tfrac{3\\pi}{16}>\\tfrac8{15}>\\tfrac{5\\pi}{32}>\\cdots\\end{aligned}$"
+          ],
+          "say": "檢查一下：把 W 0 到 W 6 排起來，真的一路遞減，跟圖上面積越來越小一致。",
           "board": [
-            {"do":"write","line":"$x=\\frac{\\pi}{2}-t$"},
-            {"do":"write","line":"$\\sin x=\\cos t$","on":"變成"},
-            {"do":"write","line":"區間 $\\left[0,\\frac{\\pi}{2}\\right]$ 不變","on":"對調"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}\\cos^n x\\,dx=W_n$"],
-          "say": "所以 cosine 的 n 次方在同一段上積分，答案跟 sine 一模一樣。不是函數相等，是整段的積分相等。",
+            {
+              "do": "write",
+              "line": "檢查：$W_n$ 隨 $n$ 遞減"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\tfrac\\pi2>1>\\tfrac\\pi4>\\tfrac23\\\\&>\\tfrac{3\\pi}{16}>\\tfrac8{15}>\\tfrac{5\\pi}{32}>\\cdots\\end{aligned}}$",
+              "on": "排起"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$1.571,\\ 1,\\ 0.785,\\ 0.667,\\ 0.589,\\ 0.533,\\ 0.491$",
+              "color": "violet",
+              "on": "跟圖"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$0\\le\\sin x\\le1$ ⇒ $\\sin^{n+1}x\\le\\sin^nx$"
+          ],
+          "say": "原因很簡單：正弦在 0 到 1 之間，多乘一個正弦只會變小。這個遞減，下一課會是證明瓦里斯乘積的關鍵。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\cos^n x\\,dx={{w:W_n}}$"},
-            {"do":"box","term":"w","color":"green","label":"一樣","on":"一模一樣"}
-          ] },
-        { "show": ["$n=2$：$W_2=\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{\\pi}{4}$"],
-          "note": "代一個數檢查。",
-          "say": "代 n 等於二檢查一下：W 二是二分之一乘二分之 pi，等於四分之 pi，跟圖上的面積合得起來。",
-          "board": [
-            {"do":"write","line":"$W_2=\\frac{1}{2}\\cdot\\frac{\\pi}{2}={{c:\\frac{\\pi}{4}}}$"},
-            {"do":"box","term":"c","color":"green","on":"四分之"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "原因：$0\\le\\sin x\\le1$ ⇒ $\\sin^{n+1}x\\le\\sin^nx$"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "區間 $[0,\\pi]$",
+      "title": "對稱性：$\\cos^n$",
       "beats": [
-        { "show": ["$\\int_0^\\pi\\sin^n x\\,dx=2W_n$"],
-          "note": "$\\sin^n$ 對 $x=\\frac{\\pi}{2}$ 對稱。",
-          "say": "區間拉長到零到 pi，sine 的 n 次方左右對稱，所以是兩倍的 W n。",
+        {
+          "show": [
+            "令 $x=\\frac\\pi2-t$，$dx=-dt$，$\\cos(\\frac\\pi2-t)=\\sin t$：",
+            "$\\int_0^{\\pi/2}\\cos^nx\\,dx=\\int_{\\pi/2}^{0}\\sin^nt\\,(-dt)=W_n$"
+          ],
+          "say": "餘弦的 n 次方呢？令 x 等於 2 分之派減 t。餘弦變成正弦，上下限對調，負號再把它翻回來。結果一模一樣，也是 W n。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.25,3.4,-0.2,1.2],"ticks":false,"curves":[{"expr":"sin(x)^4","domain":[0,3.1416],"color":"ink"}],"fills":[{"expr":"sin(x)^4","from":0,"to":1.5708,"color":"blue"},{"expr":"sin(x)^4","from":1.5708,"to":3.1416,"color":"violet"}],"dashed":[[[1.5708,0],[1.5708,1.1]]],"labels":[{"x":1.5708,"y":-0.15,"text":"π/2","anchor":"middle"},{"x":3.1416,"y":-0.15,"text":"π","anchor":"middle"}]}},
-            {"do":"write","line":"$\\int_0^\\pi\\sin^n x\\,dx={{w:2W_n}}$","on":"所以是"}
-          ] },
-        { "show": ["$\\int_0^\\pi\\cos^4 x\\,dx=2W_4$"],
-          "note": "偶數次方：$\\cos(\\pi-x)^4=\\cos^4 x$。",
-          "say": "cosine 四次方也是左右對稱，因為偶數次方把負號吃掉了。",
+            {
+              "do": "write",
+              "line": "令 $x=\\frac\\pi2-t$，$dx=-dt$，$\\cos(\\frac\\pi2-t)=\\sin t$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^{\\pi/2}\\cos^nx\\,dx=\\int_{\\pi/2}^{0}\\sin^nt\\,(-dt)=W_n}}$",
+              "on": "之派"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "再把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：sin⁴x；紅：cos⁴x。對 x = π/4 鏡射，兩塊面積一樣"
+          ],
+          "say": "圖上看，正弦四次方和餘弦四次方，對 4 分之派互相鏡射，面積當然一樣。",
           "board": [
-            {"do":"write","line":"$\\int_0^\\pi\\cos^4 x\\,dx={{w4:2W_4}}$"},
-            {"do":"underline","term":"w4","label":"也對稱","on":"左右對稱"}
-          ] },
-        { "show": ["$\\cos^4(\\pi-x)=(-\\cos x)^4=\\cos^4 x$"],
-          "note": "偶數次方，負號消失。",
-          "say": "為什麼對稱？pi 減 x 的 cosine 是負的 cosine x，四次方以後負號不見了，兩半一模一樣。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "mir",
+                  "window": [
+                    0,
+                    1.6,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)^4",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "cos(x)^4",
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/4",
+                      "label": "π/4",
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 210
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：sin⁴x；紅：cos⁴x。對 x = π/4 鏡射，兩塊面積一樣",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "區間 $[0,\\pi]$：$\\displaystyle\\int_0^\\pi\\cos^4x\\,dx$"
+          ],
+          "say": "再把區間換成 0 到派。看餘弦四次方。",
           "board": [
-            {"do":"write","line":"$\\cos^4(\\pi-x)=(-\\cos x)^4$"},
-            {"do":"write","line":"$=\\cos^4 x$","color":"green","on":"負號不見"}
-          ] },
-        { "show": ["$2W_4=\\frac{3\\pi}{8}$"],
-          "note": "這是整段 $[0,\\pi]$ 的值。",
-          "say": "W 四照前面的遞迴算，乘二得八分之三 pi。這是零到 pi 整段的答案。",
+            {
+              "do": "write",
+              "line": "區間 $[0,\\pi]$：$\\displaystyle\\int_0^\\pi\\cos^4x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "拆成兩半；後半令 $x=\\pi-t$，$\\cos(\\pi-t)=-\\cos t$：",
+            "$\\int_{\\pi/2}^{\\pi}\\cos^4x\\,dx=\\int_0^{\\pi/2}(-\\cos t)^4\\,dt=W_4$"
+          ],
+          "say": "拆成前後兩半。後半令 x 等於派減 t，餘弦變成負的餘弦。四次方把負號吃掉，後半也是 W 4。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$={{res:\\frac{3\\pi}{8}}}$","on":"乘二"},
-            {"do":"box","term":"res","color":"green","on":"八分之三"}
-          ] }
+            {
+              "do": "write",
+              "line": "拆成兩半；後半令 $x=\\pi-t$，$\\cos(\\pi-t)=-\\cos t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{\\pi/2}^{\\pi}\\cos^4x\\,dx=\\int_0^{\\pi/2}(-\\cos t)^4\\,dt=W_4$",
+              "on": "成負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^\\pi\\cos^4x\\,dx=2W_4=2\\cdot\\tfrac34\\cdot\\tfrac12\\cdot\\tfrac\\pi2=\\tfrac{3\\pi}8$"
+          ],
+          "say": "所以答案是 2 倍的 W 4，等於 8 分之 3 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^\\pi\\cos^4x\\,dx=2W_4=2\\cdot\\tfrac34\\cdot\\tfrac12\\cdot\\tfrac\\pi2=\\tfrac{3\\pi}8}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "奇數次方會抵消",
+      "beats": [
+        {
+          "show": [
+            "$n$ 奇數：$(-\\cos t)^n=-\\cos^nt$，後半 $=-W_n$",
+            "$\\int_0^\\pi\\cos^nx\\,dx=\\begin{cases}2W_n,&n\\text{ 偶數}\\\\0,&n\\text{ 奇數}\\end{cases}$"
+          ],
+          "say": "如果 n 是奇數，負號吃不掉，後半剛好是負的 W n，跟前半抵消，整個是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n$ 奇數：$(-\\cos t)^n=-\\cos^nt$，後半 $=-W_n$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^\\pi\\cos^nx\\,dx={\\begin{cases}2W_n,&n\\text{ 偶數}\\\\0,&n\\text{ 奇數}\\end{cases}}}}$",
+              "on": "後半"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "跟前"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin(\\pi-t)=\\sin t$，沒有負號：",
+            "$\\int_0^\\pi\\sin^nx\\,dx=2W_n\\quad(\\text{所有 }n)$"
+          ],
+          "say": "正弦就沒有這個問題：正弦派減 t 還是正弦 t，對 2 分之派左右對稱，所以不管奇偶，都是 2 倍的 W n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin(\\pi-t)=\\sin t$，沒有負號："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int_0^\\pi\\sin^nx\\,dx=2W_n\\quad(\\text{所有 }n)}}$",
+              "on": "是正"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "所以"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^\\pi\\cos^3x\\,dx=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac43$",
+            "why": "當成 $2W_3$：$\\cos$ 的奇數次方在後半是負的"
+          },
+          {
+            "label": "$\\frac23$",
+            "why": "只算了前半 $W_3$，忘了後半"
+          },
+          {
+            "label": "$\\frac{16}{15}$",
+            "why": "這是 $\\int_0^\\pi\\sin^5x\\,dx=2W_5$，次方和函數都換了"
+          }
+        ]
+      }
+    },
+    {
+      "title": "乘積：$\\sin^m x\\cos^n x$",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}\\sin^4x\\cos^2x\\,dx$"
+          ],
+          "say": "最後看乘積：正弦四次方乘餘弦平方，從 0 積到 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\sin^4x\\cos^2x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\cos$ 是偶數次方：$\\cos^2x=1-\\sin^2x$，全部換成 $\\sin$",
+            "$=\\int_0^{\\pi/2}\\big(\\sin^4x-\\sin^6x\\big)dx=W_4-W_6$"
+          ],
+          "say": "餘弦是偶數次方，就把它換成 1 減正弦平方。展開以後，每一項都是一個瓦里斯積分：W 4 減 W 6。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\cos$ 是偶數次方：$\\cos^2x=1-\\sin^2x$，全部換成 $\\sin$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int_0^{\\pi/2}\\big(\\sin^4x-\\sin^6x\\big)dx=W_4-W_6$",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{3\\pi}{16}-\\frac{5\\pi}{32}=\\frac{\\pi}{32}$"
+          ],
+          "say": "W 4 是 16 分之 3 派，W 6 是 32 分之 5 派，相減得 32 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle =\\frac{3\\pi}{16}-\\frac{5\\pi}{32}=\\frac{\\pi}{32}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "32#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：$\\cos^{2k}x=(1-\\sin^2x)^k$，二項式展開"
+          ],
+          "say": "一般來說，餘弦的 2k 次方等於 1 減正弦平方的 k 次方，用二項式展開，就變成好幾個瓦里斯積分的組合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般：$\\cos^{2k}x=(1-\\sin^2x)^k$，二項式展開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\cos^2x\\,dx=W_3-W_5=\\tfrac23-\\tfrac8{15}=\\tfrac2{15}$"
+          ],
+          "say": "正弦是奇數次方也可以：正弦三次方乘餘弦平方，就是 W 3 減 W 5，等於 15 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^{\\pi/2}\\sin^3x\\cos^2x\\,dx=W_3-W_5=\\tfrac23-\\tfrac8{15}=\\tfrac2{15}$"
+            },
+            {
+              "do": "write",
+              "line": "　也可以用 4.24：$\\cos$（或 $\\sin$）有奇數次方時，換元 $u=\\cos x$ 一樣得 $\\frac2{15}$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個都是奇數次方時，用 4.24 的換元比較快"
+          ],
+          "say": "如果兩個次方都是奇數，就沒有偶數次方可以換，回到 4.24 的換元比較快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個都是奇數次方時，用 4.24 的換元比較快"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi/2}\\sin^2x\\cos^2x\\,dx=$？"
+          ],
+          "say": "最後試一題：正弦平方乘餘弦平方。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "奇數次方抵銷",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\cos(\\pi-x)=-\\cos x$"],
-          "say": "cosine 不一樣：pi 減 x 的 cosine 是負的 cosine x，後半段跟前半段差一個負號。",
+        {
+          "show": [
+            "另一條路驗算：$\\sin x\\cos x=\\tfrac12\\sin2x$",
+            "$\\begin{aligned}\\int_0^{\\pi/2}\\tfrac14\\sin^22x\\,dx&=\\tfrac14\\cdot\\tfrac12\\int_0^{\\pi}\\sin^2u\\,du\\\\&=\\tfrac18\\cdot2W_2=\\tfrac\\pi{16}\\end{aligned}$"
+          ],
+          "say": "用倍角公式驗算：正弦乘餘弦是 2 分之 1 的正弦 2x。令 u 等於 2x，區間變成 0 到派，用剛剛的對稱性，得到同一個答案 16 分之派。",
           "board": [
-            {"do":"write","line":"$\\cos(\\pi-x)={{m:-\\cos x}}$"},
-            {"do":"focus","term":"m","label":"負號","on":"差一個"}
-          ] },
-        { "show": ["$n$ 奇數：前後兩半抵銷"],
-          "note": "例：$\\int_0^\\pi\\cos^3 x\\,dx=0$",
-          "say": "奇數次方保留這個負號，前半正、後半負，大小一樣，加起來是零。",
-          "board": [
-            {"do":"write","line":"$n$ 奇數：保留負號"},
-            {"do":"write","line":"前半 $+W_n$，後半 $-W_n$","on":"前半正"},
-            {"do":"write","line":"加起來 $=0$","color":"green","on":"大小一樣"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "另一條路驗算：$\\sin x\\cos x=\\tfrac12\\sin2x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int_0^{\\pi/2}\\tfrac14\\sin^22x\\,dx&=\\tfrac14\\cdot\\tfrac12\\int_0^{\\pi}\\sin^2u\\,du\\\\&=\\tfrac18\\cdot2W_2=\\tfrac\\pi{16}\\end{aligned}}$",
+              "on": "2x#1"
+            },
+            {
+              "do": "write",
+              "line": "　一題兩種做法對得上，答案就很可靠",
+              "color": "violet",
+              "on": "用剛"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "乘積",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^4 x\\cos^2 x\\,dx$"],
-          "note": "$\\cos^2 x=1-\\sin^2 x$",
-          "say": "sine 四次方乘 cosine 平方：把偶數次方的 cosine 換成一減 sine 平方。",
+        {
+          "show": [
+            "• $W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx$：$W_n=\\frac{n-1}{n}W_{n-2}$，$W_0=\\frac\\pi2$、$W_1=1$",
+            "• 偶數：最後乘 $\\frac\\pi2$；奇數：最後乘 $1$"
+          ],
+          "say": "整理一下：記住遞迴和兩個起點，偶數最後乘 2 分之派，奇數乘 1。餘弦用對稱性換成正弦，0 到派拆兩半，乘積把偶數次方的餘弦換掉。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^4 x\\,{{c:\\cos^2 x}}\\,dx$"},
-            {"do":"underline","term":"c","label":"偶數次方","on":"偶數次方"},
-            {"do":"write","line":"$=\\int_0^{\\pi/2}\\sin^4 x(1-\\sin^2 x)\\,dx$","on":"一減"}
-          ] },
-        { "show": ["$\\sin^4 x\\cos^2 x=\\sin^4 x-\\sin^6 x$"],
-          "note": "乘開，次方各自留下。",
-          "say": "乘開來：sine 四次方乘一，再減 sine 四次方乘 sine 平方，後者合起來是六次方。",
+            {
+              "do": "write",
+              "line": "• $W_n=\\int_0^{\\pi/2}\\sin^nx\\,dx$：$W_n=\\frac{n-1}{n}W_{n-2}$，$W_0=\\frac\\pi2$、$W_1=1$"
+            },
+            {
+              "do": "write",
+              "line": "• 偶數：最後乘 $\\frac\\pi2$；奇數：最後乘 $1$",
+              "on": "偶數#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\cos^n$ 在 $[0,\\frac\\pi2]$ 上也是 $W_n$",
+              "on": "奇數"
+            },
+            {
+              "do": "write",
+              "line": "• $[0,\\pi]$：$\\sin^n$ 是 $2W_n$；$\\cos^n$ 偶數 $2W_n$、奇數 $0$",
+              "on": "換成"
+            },
+            {
+              "do": "write",
+              "line": "• 乘積：偶數次方的 $\\cos$ 換成 $1-\\sin^2$，變成幾個 $W$",
+              "on": "乘積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Wallis 乘積"
+          ],
+          "say": "下一課，用 W n 遞減這件事，把派寫成一個無窮乘積。",
           "board": [
-            {"do":"write","line":"$\\sin^4 x(1-\\sin^2 x)$"},
-            {"do":"transform","line":"$={{s4:\\sin^4 x}}-{{s6:\\sin^6 x}}$","on":"合起來"}
-          ] },
-        { "show": ["$=W_4-W_6$"],
-          "note": "$W_4=\\frac{3\\pi}{16}$，$W_6=\\frac{5\\pi}{32}$。",
-          "say": "變成兩個 Wallis 積分相減：W 四減 W 六。",
-          "board": [
-            {"do":"write","line":"$={{a:W_4}}-{{b:W_6}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","color":"blue","on":"相減"}
-          ] }
-      ],
-      "key": "$\\cos^2x$ 換成 $1-\\sin^2x$，拆成兩個 $W$",
-      "predict": {
-        "ask": "$W_4-W_6$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{\\pi}{32}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{2\\pi}{16}$",
-            "why": "分母不同不能直接相減；先通分 $\\frac{6\\pi}{32}-\\frac{5\\pi}{32}$。"
-          },
-          {
-            "label": "$-\\frac{\\pi}{32}$",
-            "why": "減反了：$W_4=\\frac{6\\pi}{32}$ 比 $W_6=\\frac{5\\pi}{32}$ 大；被積函數非負，答案是正的。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：Wallis 乘積"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["wallis", "trig-power", "recurrence-formula"],
-    "fine": ["wallis-recursion", "wallis-even-odd", "wallis-symmetry-range", "wallis-mixed-even-powers"]
+    "coarse": [
+      "wallis",
+      "trig-power",
+      "recurrence-formula"
+    ],
+    "fine": [
+      "wallis-recursion",
+      "wallis-even-odd",
+      "wallis-symmetry-range",
+      "wallis-mixed-even-powers"
+    ]
   },
   "practice": [
-    { "id": "lec-07-q2a", "core": true, "trains": "wallis-recursion" },
-    { "id": "lec-07-q2c", "core": true, "trains": "wallis-recursion" },
-    { "id": "mob-wallis-003", "core": true, "trains": "wallis-even-odd" },
-    { "id": "mob-wallis-004", "core": true, "trains": "wallis-even-odd" },
-    { "id": "mob-wallis-006", "core": true, "trains": "wallis-symmetry-range" },
-    { "id": "world-010", "core": true, "trains": "wallis-symmetry-range" },
-    { "id": "mob-wallis-007", "core": true, "trains": "wallis-mixed-even-powers" },
-    { "id": "rel-hard-int-005", "trains": "wallis-even-odd" },
-    { "id": "burst-int-015", "trains": "wallis-even-odd" },
-    { "id": "burst-int-020", "trains": "wallis-symmetry-range" },
-    { "id": "rel-hard-int-007", "trains": "wallis-mixed-even-powers" },
-    { "id": "burst-rec-004", "trains": "wallis-recursion" },
-    { "id": "burst-int-013", "challenge": true, "trains": "wallis-symmetry-range", "note": "挑戰：先用 $x\\mapsto\\pi-x$ 把 $x$ 換成 $\\frac{\\pi}{2}$，再用 $[0,\\pi]$ 上的 Wallis。" }
+    {
+      "id": "lec-07-q2a",
+      "core": true,
+      "trains": "wallis-recursion"
+    },
+    {
+      "id": "lec-07-q2c",
+      "core": true,
+      "trains": "wallis-recursion"
+    },
+    {
+      "id": "mob-wallis-003",
+      "core": true,
+      "trains": "wallis-even-odd"
+    },
+    {
+      "id": "mob-wallis-004",
+      "core": true,
+      "trains": "wallis-even-odd"
+    },
+    {
+      "id": "mob-wallis-006",
+      "core": true,
+      "trains": "wallis-symmetry-range"
+    },
+    {
+      "id": "world-010",
+      "core": true,
+      "trains": "wallis-symmetry-range"
+    },
+    {
+      "id": "mob-wallis-007",
+      "core": true,
+      "trains": "wallis-mixed-even-powers"
+    },
+    {
+      "id": "rel-hard-int-005",
+      "trains": "wallis-even-odd"
+    },
+    {
+      "id": "burst-int-015",
+      "trains": "wallis-even-odd"
+    },
+    {
+      "id": "burst-int-020",
+      "trains": "wallis-symmetry-range"
+    },
+    {
+      "id": "rel-hard-int-007",
+      "trains": "wallis-mixed-even-powers"
+    },
+    {
+      "id": "burst-rec-004",
+      "trains": "wallis-recursion"
+    },
+    {
+      "id": "burst-int-013",
+      "challenge": true,
+      "trains": "wallis-symmetry-range",
+      "note": "挑戰：先用 $x\\mapsto\\pi-x$ 把 $x$ 換成 $\\frac{\\pi}{2}$，再用 $[0,\\pi]$ 上的 Wallis。"
+    }
   ],
   "gaps": []
 }

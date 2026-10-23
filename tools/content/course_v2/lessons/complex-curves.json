@@ -1,262 +1,155 @@
 {
   "id": "complex-curves",
   "title": "複平面上的曲線",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["holomorphic", "parametric-curves", "parametric-arc-length", "euler-formula"],
-  "next": ["contour-integral"],
-  "related": ["green-theorem"],
-  "objectives": [
-    "把平面曲線寫成複數值的參數式 $z(t)=x(t)+i\\,y(t)$，特別是圓 $z_0+re^{it}$ 與線段 $z_1+t(z_2-z_1)$。",
-    "知道 $z'(t)=x'(t)+i\\,y'(t)$ 是切向量，弧長是 $\\int|z'(t)|\\,dt$。",
-    "分清楚封閉、簡單、正向（逆時針，內部在左手邊），以及反向會發生什麼。"
+  "prerequisites": [
+    "holomorphic",
+    "parametric-curves",
+    "parametric-arc-length",
+    "euler-formula"
   ],
-  "visual": "複平面上一個點沿 z(t) 移動，同時畫出箭頭 z′(t)（切向量）。可以選圓、線段、螺線 e^{(1+i)t}；切換「反向」時箭頭全部轉 180°，曲線的形狀不變。",
+  "next": [
+    "contour-integral"
+  ],
+  "related": [
+    "green-theorem"
+  ],
+  "objectives": [
+    "把平面曲線寫成複數值的參數式 $z(t)=x(t)+i\\,y(t)$，特別是圓 $z_0+re^{it}$ 與線段 $z_1+t(z_2-z_1)$",
+    "知道 $z'(t)=x'(t)+i\\,y'(t)$ 是切向量，弧長是 $\\int_a^b|z'(t)|\\,dt$",
+    "分清楚封閉、簡單、正向（逆時針，內部在左手邊），以及反向會發生什麼"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 參數式就是複數值的函數",
+      "heading": "① 參數式就是複數值函數",
       "body": [
-        "〈參數曲線〉用 $(x(t),y(t))$ 描述平面曲線；在複平面上把它寫成一個複數 $z(t)=x(t)+i\\,y(t)$，$t\\in[a,b]$。",
-        "兩個最常用的：以 $z_0$ 為圓心、半徑 $r$ 的圓，逆時針一圈是 $z(t)=z_0+re^{it}$，$t\\in[0,2\\pi]$；從 $z_1$ 到 $z_2$ 的線段是 $z(t)=z_1+t(z_2-z_1)$，$t\\in[0,1]$。"
+        "平面上的點 $(x,y)$ 就是複數 $x+iy$，所以一條曲線可以寫成",
+        "跟 7.1 的參數曲線完全一樣，只是兩個座標合成一個複數",
+        "$t$ 是實數；$z(a)$ 是起點，$z(b)$ 是終點：參數式本身就帶著方向",
+        "圓：圓心 $z_0$、半徑 $r$，逆時針一圈",
+        "為什麼：$|z(t)-z_0|=|r|\\,|e^{it}|=r$，而輻角 $t$ 一路增加 → 逆時針",
+        "拆開就是 $x=x_0+r\\cos t$，$y=y_0+r\\sin t$（Euler 公式）",
+        "線段：從 $z_1$ 到 $z_2$，$0\\le t\\le1$",
+        "函數圖形 $y=f(x)$：$z(t)=t+i\\,f(t)$"
       ],
-      "collapsible": false
+      "tex": [
+        "z(t)=x(t)+i\\,y(t),\\qquad a\\le t\\le b",
+        "z(t)=z_0+re^{it},\\qquad 0\\le t\\le2\\pi",
+        "z(t)=z_1+t\\,(z_2-z_1)=(1-t)z_1+t\\,z_2"
+      ]
     },
     {
-      "heading": "② 導數、切向量、弧長",
+      "heading": "① 兩個例子",
       "body": [
-        "$z'(t)=x'(t)+i\\,y'(t)$，就是速度向量，指向曲線前進的方向。例：$z(t)=e^{it}$ 時 $z'(t)=ie^{it}$，等於把位置轉 $90^\\circ$——圓周運動的速度永遠垂直半徑。",
-        "弧長 $L=\\int_a^b|z'(t)|\\,dt=\\int_a^b\\sqrt{x'^2+y'^2}\\,dt$，跟〈參數式弧長〉一樣。",
-        "$z'$ 連續而且不為 $0$ 的曲線叫光滑；有限段光滑曲線接起來叫分段光滑曲線（例如三角形的邊界），下一課的積分都在這種曲線上做。"
+        "例 1：$|z-1|=2$，逆時針一圈",
+        "$t=0$：$3$；$t=\\frac\\pi2$：$1+2i$；$t=\\pi$：$-1$",
+        "例 2：從 $1$ 到 $i$ 的線段，$0\\le t\\le1$",
+        "$t=\\frac12$ 是中點 $\\frac12+\\frac12 i$"
       ],
-      "collapsible": false
+      "tex": [
+        "z(t)=1+2e^{it},\\qquad 0\\le t\\le2\\pi",
+        "z(t)=1+t\\,(i-1)=(1-t)+i\\,t"
+      ]
     },
     {
-      "heading": "③ 封閉、簡單、方向",
+      "heading": "② 導數就是切向量",
       "body": [
-        "$z(a)=z(b)$ 叫封閉；除了起點等於終點以外不自己相交叫簡單。簡單封閉曲線把平面分成內部與外部（Jordan 曲線定理，直覺明顯但證明不簡單）。",
-        "正向：沿曲線走時內部在左手邊，對圓來說就是逆時針。同一條曲線反著走記作 $-C$；下一課會看到，反向會讓積分變號。"
+        "$t$ 是實數，差商只有一個方向：",
+        "實部、虛部的極限分開算：11.37。和、積、連鎖律（$t=\\varphi(s)$ 是實函數）證法照抄",
+        "$z'(t)$ 就是向量 $(x'(t),y'(t))$：切向量，$|z'(t)|$ 是速率",
+        "最常用的一條：$c$ 是任意複數",
+        "證明：$c=a+ib$，$e^{ct}=e^{at}(\\cos bt+i\\sin bt)$，實部虛部各自微分：",
+        "驗算：$(a+ib)(\\cos bt+i\\sin bt)=(a\\cos bt-b\\sin bt)+i(a\\sin bt+b\\cos bt)$",
+        "光滑：$z'$ 連續而且 $z'(t)\\ne0$",
+        "$z'=0$ 的地方可能有尖點：例 $z(t)=t^2+i\\,t^3$ 在 $t=0$"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "參數式是複數函數",
-      "beats": [
-        { "show": ["$z(t)=x(t)+i\\,y(t)$，$t\\in[a,b]$"],
-          "say": "平面曲線用參數式描述，在複平面上就把 x 和 y 合成一個複數，z 是 t 的函數。",
-          "board": [
-            {"do":"write","line":"$z(t)={{xy:x(t)+i\\,y(t)}}$，$t\\in[a,b]$"},
-            {"do":"underline","term":"xy","on":"合成一個複數"}
-          ] },
-        { "show": ["圓：$z(t)=z_0+re^{it}$，$t\\in[0,2\\pi]$"],
-          "note": "以 $z_0$ 為圓心、半徑 $r$、逆時針。",
-          "say": "最常用的是圓：圓心 z 零，加上半徑 r 乘 e 的 i t 次方，t 從零到二派，逆時針一圈。",
-          "board": [
-            {"do":"write","line":"圓：$z(t)={{c:z_0}}+{{r:r}}e^{it}$"},
-            {"do":"focus","term":"c","on":"圓心 z 零"},
-            {"do":"focus","term":"r","on":"半徑 r"}
-          ] },
-        { "show": ["$e^{it}=\\cos t+i\\sin t$"],
-          "note": "這是 $e^{it}$ 的定義（〈Euler 公式〉）。",
-          "say": "e 的 i t 次方的定義是 cosine t 加 i 乘 sine t。長度是一，角度是 t，所以落在單位圓上。",
-          "board": [
-            {"do":"write","line":"$e^{it}={{n1:\\cos t+i\\sin t}}$"},
-            {"do":"underline","term":"n1","label":"長度 1","on":"長度是一"}
-          ] },
-        { "show": ["$t$ 從 $0$ 到 $2\\pi$：逆時針一圈"],
-          "say": "t 從零走到二派，角度轉一整圈，點沿著單位圓逆時針走回原處。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,2,-2,2],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}]}}
-          ] },
-        { "show": ["線段：$z(t)=z_1+t(z_2-z_1)$，$t\\in[0,1]$"],
-          "say": "從 z 一到 z 二的線段：起點加上 t 倍的位移，t 從零到一。",
-          "board": [
-            {"do":"write","line":"線段：$z(t)={{s:z_1}}+t\\,({{d:z_2-z_1}})$"},
-            {"do":"focus","term":"s","on":"起點"},
-            {"do":"underline","term":"d","label":"位移","on":"位移"}
-          ] },
-        { "show": ["$|z-1|=2$：$z(t)=1+2e^{it}$"],
-          "say": "例如到一的距離是二的圓：圓心一、半徑二，別忘了乘半徑。",
-          "board": [
-            {"do":"write","line":"$|z-1|=2$：$z(t)=1+{{two:2}}e^{it}$","on":"例如"},
-            {"do":"underline","term":"two","label":"半徑","on":"別忘了"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\begin{aligned}z'(t)&=\\lim_{h\\to0}\\frac{z(t+h)-z(t)}{h}\\\\&=x'(t)+i\\,y'(t)\\end{aligned}",
+        "\\frac{d}{dt}e^{ct}=c\\,e^{ct}",
+        "\\begin{aligned}\\tfrac{d}{dt}e^{ct}&=e^{at}\\big[(a\\cos bt-b\\sin bt)\\\\&\\qquad+i\\,(a\\sin bt+b\\cos bt)\\big]\\\\&=(a+ib)\\,e^{at}(\\cos bt+i\\sin bt)\\\\&=c\\,e^{ct}\\end{aligned}"
+      ]
     },
     {
-      "title": "切向量",
-      "beats": [
-        { "show": ["$z'(t)=x'(t)+i\\,y'(t)$"],
-          "note": "速度向量，指向前進的方向。",
-          "say": "對 t 微分，實部虛部各自微，得到速度向量，指向曲線前進的方向。",
-          "board": [
-            {"do":"write","line":"$z'(t)={{v:x'(t)+i\\,y'(t)}}$"},
-            {"do":"underline","term":"v","label":"速度向量","on":"速度向量"}
-          ] },
-        { "show": ["$z(t)=e^{it}$：$z'(t)=ie^{it}$"],
-          "say": "看單位圓：e 的 i t 次方微分，照常乘上係數 i。",
-          "board": [
-            {"do":"write","line":"$z(t)=e^{it}$"},
-            {"do":"transform","line":"$z'(t)={{k:i}}\\,e^{it}$","on":"微分"},
-            {"do":"focus","term":"k","label":"係數","on":"係數"}
-          ] },
-        { "show": ["$(e^{it})'=-\\sin t+i\\cos t$","$=i(\\cos t+i\\sin t)$"],
-          "note": "用定義，實部虛部各自微分。",
-          "say": "照常是實部虛部各自微分。cosine 變負 sine，sine 變 cosine，整理後正好是 i 乘原來的。",
-          "board": [
-            {"do":"write","line":"$(e^{it})'=-\\sin t+i\\cos t$"},
-            {"do":"transform","line":"$=i\\,(\\cos t+i\\sin t)$","on":"整理後"}
-          ] },
-        { "show": ["乘 $i$ ＝ 轉 $90^\\circ$"],
-          "note": "圓周運動的速度永遠垂直半徑。",
-          "say": "乘以 i 就是轉九十度，所以速度永遠垂直於半徑，這就是圓周運動。",
-          "board": [
-            {"do":"write","line":"乘 $i$ ＝ 轉 ${{r:90^\\circ}}$"},
-            {"do":"focus","term":"r","on":"九十度"},
-            {"do":"write","line":"速度永遠垂直半徑","on":"垂直於"}
-          ] },
-        { "show": ["$i=\\cos 90^\\circ+i\\sin 90^\\circ$"],
-          "note": "直覺：長度相乘、角度相加。",
-          "say": "i 的長度是一，角度是九十度。乘上去長度不變，角度多加九十度，位置就轉了九十度。",
-          "board": [
-            {"do":"write","line":"$i={{q:\\cos 90^\\circ+i\\sin 90^\\circ}}$"},
-            {"do":"underline","term":"q","label":"角度 90","on":"長度不變"}
-          ] }
+      "heading": "② 圓的切向量與弧長",
+      "body": [
+        "$z(t)=1+2e^{it}$：",
+        "乘 $i$ = 轉 $90^\\circ$：切向量垂直於半徑",
+        "$t=0$：在 $3$，$z'(0)=2i$ 朝上：逆時針",
+        "弧長：照 7.4，$\\int\\sqrt{x'^2+y'^2}\\,dt$，就是",
+        "例 1：$|z'(t)|=|2i|\\,|e^{it}|=2$",
+        "例 2：$z'(t)=i-1$，$|z'|=\\sqrt2$，$L=\\int_0^1\\sqrt2\\,dt=\\sqrt2$"
       ],
-      "check": 1
+      "tex": [
+        "z'(t)=2i\\,e^{it}=i\\,\\big(z(t)-1\\big)",
+        "L=\\int_a^b|z'(t)|\\,dt",
+        "L=\\int_0^{2\\pi}2\\,dt=4\\pi"
+      ]
     },
     {
-      "title": "弧長",
-      "beats": [
-        { "show": ["$L=\\int_a^b|z'(t)|\\,dt$"],
-          "note": "$|z'|=\\sqrt{x'^2+y'^2}$，不是 $|x'|+|y'|$。",
-          "say": "弧長是速度的長度積起來，跟參數式弧長一樣。長度是平方和開根號。",
-          "board": [
-            {"do":"write","line":"$L=\\int_a^b{{v:|z'(t)|}}\\,dt$"},
-            {"do":"underline","term":"v","label":"速度的長度","on":"速度的長度"},
-            {"do":"write","line":"$|z'|=\\sqrt{x'^2+y'^2}$","on":"平方和"}
-          ] },
-        { "show": ["$1+2e^{it}$：$|z'(t)|=2$，周長 $4\\pi$"],
-          "say": "剛才的圓，速度長度一直是二，積零到二派，周長四派。",
-          "board": [
-            {"do":"write","line":"$1+2e^{it}$：$|z'(t)|=2$"},
-            {"do":"write","line":"$L=\\int_0^{2\\pi}2\\,dt={{a:4\\pi}}$","on":"積零到二派"},
-            {"do":"box","term":"a","color":"green","on":"周長"}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}2\\,dt=2\\cdot2\\pi=4\\pi$"],
-          "note": "$\\int$ 是把每一小段加起來。",
-          "say": "積分符號是把每一小段的長度加起來。速度長度固定是二，所以就是二乘上時間長度二派，得到四派。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{2\\pi}2\\,dt={{m1:2\\cdot2\\pi}}=4\\pi$"},
-            {"do":"underline","term":"m1","label":"常數乘長度","on":"二乘上"}
-          ] },
-        { "show": ["$1$ 到 $i$：$z'(t)=-1+i$，長度 $\\sqrt{2}$"],
-          "say": "從一到 i 的線段，速度是負一加 i，長度根號二，就是兩點的距離。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1$ 到 $i$：$z(t)=1+t\\,(i-1)$","on":"從一到 i"},
-            {"do":"write","line":"$z'(t)=-1+i$，長度 ${{l:\\sqrt{2}}}$","on":"速度是"},
-            {"do":"underline","term":"l","label":"兩點距離","on":"兩點的距離"}
-          ] }
+      "heading": "② 螺線的弧長",
+      "body": [
+        "例 3：$z(t)=e^{(1+i)t}$，$0\\le t\\le1$",
+        "$z(t)=e^t\\,e^{it}$：長度 $e^t$、輻角 $t$，一邊轉一邊變大"
       ],
-      "check": 3
+      "tex": [
+        "z'(t)=(1+i)\\,e^{(1+i)t}",
+        "|z'(t)|=|1+i|\\cdot e^t\\cdot|e^{it}|=\\sqrt2\\,e^t",
+        "L=\\int_0^1\\sqrt2\\,e^t\\,dt=\\sqrt2\\,(e-1)\\approx2.430"
+      ]
     },
     {
-      "title": "封閉、簡單、方向",
-      "beats": [
-        { "show": ["光滑：$z'$ 連續而且不為 $0$"],
-          "note": "有限段接起來：分段光滑。",
-          "say": "速度連續又不為零的曲線叫光滑；幾段光滑曲線接起來，像三角形的邊，叫分段光滑。",
-          "board": [
-            {"do":"write","line":"光滑：${{c:z'}}$ 連續而且不為 $0$"},
-            {"do":"focus","term":"c","on":"連續又"},
-            {"do":"write","line":"分段光滑：有限段接起來","on":"三角形"}
-          ] },
-        { "show": ["封閉：$z(a)=z(b)$","簡單：不自己相交"],
-          "say": "終點回到起點叫封閉；除了起終點，不自己相交叫簡單。簡單封閉曲線把平面分成內外。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"封閉：$z(a)=z(b)$","on":"終點回到"},
-            {"do":"write","line":"簡單：不自己相交","on":"不自己相交"},
-            {"do":"write","line":"簡單封閉曲線：分成內外","on":"簡單封閉曲線"}
-          ] },
-        { "show": ["正向：內部在左手邊"],
-          "note": "對圓就是逆時針。",
-          "say": "沿著曲線走，內部在左手邊，叫正向；對圓來說就是逆時針。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"正向：內部在左手邊","on":"內部在左手邊"},
-            {"do":"write","line":"對圓：逆時針","on":"對圓來說"}
-          ] },
-        { "show": ["反著走：$-C$"],
-          "note": "下一課：反向讓積分變號。",
-          "say": "同一條曲線反著走記作負 C。點集合一樣，方向相反，下一課會看到積分會變號。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"反著走：${{n:-C}}$","on":"反著走"},
-            {"do":"focus","term":"n","on":"負 C"},
-            {"do":"write","line":"點集合一樣、方向相反","on":"方向相反"}
-          ] }
-      ],
-      "check": 2
+      "heading": "③ 封閉、簡單",
+      "body": [
+        "• 封閉：$z(a)=z(b)$（回到起點）",
+        "• 簡單：除了 $z(a)=z(b)$ 這一對，不會經過同一點兩次",
+        "$e^{it}$，$0\\le t\\le2\\pi$：簡單封閉；$0\\le t\\le4\\pi$：封閉、不簡單",
+        "Jordan 曲線定理：簡單封閉曲線把平面分成內部（有界）與外部",
+        "一般情形的證明要用拓樸，這裡承認它；圓、多邊形的內部一眼就看得出來",
+        "分段光滑（圍道）：幾段光滑曲線頭尾相接",
+        "例：$0\\to1\\to i\\to0$ 的三角形，長度 $1+\\sqrt2+1=2+\\sqrt2$"
+      ]
     },
     {
-      "title": "螺線的弧長",
-      "beats": [
-        { "show": ["$z(t)=e^{(1+i)t}$，$t\\in[0,1]$"],
-          "say": "最後算一條螺線：e 的一加 i 乘 t 次方，一邊轉一邊往外長。",
-          "board": [
-            {"do":"write","line":"$z(t)=e^{ {{k:(1+i)}}t}$，$t\\in[0,1]$"},
-            {"do":"focus","term":"k","on":"一加 i 乘 t"}
-          ] },
-        { "show": ["$z'(t)=(1+i)e^{(1+i)t}$"],
-          "say": "微分照常乘上係數一加 i。",
-          "board": [
-            {"do":"write","line":"$z'(t)={{k:(1+i)}}\\,e^{(1+i)t}$"},
-            {"do":"underline","term":"k","label":"係數","on":"係數"}
-          ] },
-        { "show": ["$e^{(1+i)t}=e^t\\cdot e^{it}$"],
-          "note": "指數相加，可以拆成相乘。",
-          "say": "指數相加可以拆成相乘，所以 e 的一加 i 乘 t 次方，等於 e 的 t 次方乘 e 的 i t 次方。",
-          "board": [
-            {"do":"write","line":"$e^{(1+i)t}={{p1:e^t}}\\cdot{{p2:e^{it}}}$"}
-          ] },
-        { "show": ["$|e^t|=e^t$，$|e^{it}|=1$"],
-          "say": "e 的 t 次方是正實數，長度就是自己。e 的 i t 次方的平方和是一，所以長度一。",
-          "board": [
-            {"do":"write","line":"$|e^t|=e^t$（正實數）"},
-            {"do":"write","line":"$|e^{it}|=\\sqrt{\\cos^2 t+\\sin^2 t}=1$","on":"平方和"}
-          ] },
-        { "show": ["$|z'(t)|=\\sqrt{2}\\,e^t$"],
-          "note": "$|1+i|=\\sqrt{2}$，$|e^{it}|=1$。",
-          "say": "長度相乘：一加 i 的長度根號二，e 的 i t 次方長度一，只剩 e 的 t 次方。",
-          "board": [
-            {"do":"write","line":"$|z'(t)|={{a:|1+i|}}\\cdot{{b:|e^{it}|}}\\cdot e^t$"},
-            {"do":"focus","term":"a","on":"根號二"},
-            {"do":"focus","term":"b","on":"e 的 i t 次方長度一"},
-            {"do":"transform","line":"$|z'(t)|={{r:\\sqrt{2}}}\\,e^t$","on":"只剩"}
-          ] }
+      "heading": "③ 方向：內部在左手邊",
+      "body": [
+        "正向：沿著曲線走，內部永遠在左手邊（逆時針）",
+        "左手邊的方向 = 切向量轉 $90^\\circ$ = $i\\,z'(t)$",
+        "圓的驗證：$z=z_0+re^{it}$",
+        "反向 $-C$：同一條路倒著走",
+        "$\\tilde z'(t)=-z'(a+b-t)$：切向量反過來；弧長不變",
+        "$\\int_a^b|z'(a+b-t)|\\,dt\\overset{s=a+b-t}{=}\\int_a^b|z'(s)|\\,ds$",
+        "例：圓的反向是 $z_0+re^{-it}$（順時針）"
       ],
-      "key": "$|e^{it}|=1$，模長只剩實部那一份",
-      "predict": {
-        "ask": "弧長是？",
-        "options": [
-          {
-            "label": "$\\sqrt{2}(e-1)\\approx 2.430$",
-            "correct": true
-          },
-          {
-            "label": "$\\sqrt{2}\\,e$",
-            "why": "$\\int_0^1 e^t\\,dt=e-1$，下限的 $e^0=1$ 要減掉。"
-          },
-          {
-            "label": "$e-1$",
-            "why": "漏了 $|1+i|=\\sqrt{2}$。"
-          }
-        ]
-      }
+      "tex": [
+        "i\\,z'(t)=i\\cdot ir\\,e^{it}=-re^{it}=z_0-z(t)",
+        "\\tilde z(t)=z(a+b-t),\\qquad a\\le t\\le b"
+      ]
+    },
+    {
+      "heading": "③ 換參數：路不變",
+      "body": [
+        "$\\varphi$ 遞增、可微，把 $[c,d]$ 映到 $[a,b]$：",
+        "$w(s)=z(\\varphi(s))$ 走同一條路、同一個方向",
+        "弧長也一樣（$\\varphi'\\ge0$）：$w'(s)=z'(\\varphi(s))\\,\\varphi'(s)$",
+        "弧長是「路」的性質，跟參數化無關；例：$e^{2\\pi i s}$，$0\\le s\\le1$ 也是單位圓一圈"
+      ],
+      "tex": [
+        "\\begin{aligned}\\int_c^d|w'(s)|\\,ds&=\\int_c^d|z'(\\varphi(s))|\\,\\varphi'(s)\\,ds\\\\&=\\int_a^b|z'(t)|\\,dt\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 曲線 = $z(t)=x(t)+iy(t)$；圓 $z_0+re^{it}$，線段 $z_1+t(z_2-z_1)$",
+        "• $z'(t)=x'+iy'$ 是切向量；$\\frac{d}{dt}e^{ct}=ce^{ct}$",
+        "• 弧長 $L=\\int_a^b|z'(t)|\\,dt$：圓 $2\\pi r$、螺線 $\\sqrt2(e-1)$",
+        "• 簡單封閉曲線有內部；正向 = 內部在左手邊 = 逆時針",
+        "• 反向 $-C$：切向量反號、弧長不變；遞增的換參數什麼都不變",
+        "下一課：圍道積分：把 $dz$ 換成 $z'(t)\\,dt$"
+      ]
     }
   ],
   "workedExamples": [
@@ -302,50 +195,907 @@
   ],
   "checks": [
     {
-      "ask": "以 $i$ 為圓心、半徑 $3$、逆時針一圈的參數式是？",
+      "ask": "圓 $|z+i|=3$，逆時針一圈的參數式是？",
       "options": [
-        { "label": "$z(t)=i+3e^{it}$，$t\\in[0,2\\pi]$", "correct": true },
-        { "label": "$z(t)=3ie^{it}$", "why": "那是以 $0$ 為圓心、半徑 $3$ 的圓（只是起點不同）；圓心要另外加上 $i$。" },
-        { "label": "$z(t)=i+3e^{-it}$", "why": "$e^{-it}$ 是順時針走。" }
+        {
+          "label": "$z(t)=-i+3e^{it}$，$0\\le t\\le2\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$z(t)=i+3e^{it}$，$0\\le t\\le2\\pi$",
+          "why": "圓心弄反了：$|z+i|=|z-(-i)|$，圓心是 $-i$ 不是 $i$"
+        },
+        {
+          "label": "$z(t)=-i+9e^{it}$，$0\\le t\\le2\\pi$",
+          "why": "半徑是 $3$；$9$ 是半徑的平方"
+        },
+        {
+          "label": "$z(t)=-i+3e^{-it}$，$0\\le t\\le2\\pi$",
+          "why": "輻角 $-t$ 一路減少，這是==順時針=="
+        }
       ]
     },
     {
-      "ask": "$z(t)=e^{it}$ 的切向量 $z'(t)$ 跟位置 $z(t)$ 的關係是？",
+      "ask": "哪一個是單位圓盤 $|z|<1$ 邊界的==正向==參數式？",
       "options": [
-        { "label": "$z'=iz$，也就是位置轉 $90^\\circ$", "correct": true },
-        { "label": "$z'=z$", "why": "對 $t$ 微分 $e^{it}$ 要乘上 $i$。" },
-        { "label": "$z'=-z$", "why": "那是二階導數 $z''=i^2z=-z$（向心加速度）。" }
+        {
+          "label": "$e^{2\\pi i s}$，$0\\le s\\le1$",
+          "correct": true
+        },
+        {
+          "label": "$e^{-it}$，$0\\le t\\le2\\pi$",
+          "why": "輻角遞減，是順時針：內部在右手邊"
+        },
+        {
+          "label": "$e^{2it}$，$0\\le t\\le2\\pi$",
+          "why": "逆時針沒錯，但走了兩圈：不簡單"
+        },
+        {
+          "label": "$1+e^{it}$，$0\\le t\\le2\\pi$",
+          "why": "這是圓心 $1$ 的圓，不是單位圓"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "參數式就是複數值函數",
+      "beats": [
+        {
+          "show": [
+            "平面上的點 $(x,y)$ 就是複數 $x+iy$，所以一條曲線可以寫成",
+            "$z(t)=x(t)+i\\,y(t),\\qquad a\\le t\\le b$"
+          ],
+          "say": "下一課要沿著曲線積分，先把曲線講清楚。點就是複數，所以曲線就是把實數 t 送到複數的函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "平面上的點 $(x,y)$ 就是複數 $x+iy$，所以一條曲線可以寫成"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle z(t)=x(t)+i\\,y(t),\\qquad a\\le t\\le b}}$",
+              "on": "講清"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "是把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 7.1 的參數曲線完全一樣，只是兩個座標合成一個複數"
+          ],
+          "say": "這跟以前的參數曲線一樣，只是把 x、y 打包成一個複數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 7.1 的參數曲線完全一樣，只是兩個座標合成一個複數"
+            },
+            {
+              "do": "write",
+              "line": "　$t$ 是實數；$z(a)$ 是起點，$z(b)$ 是終點：參數式本身就帶著方向",
+              "color": "violet",
+              "on": "打包"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓：圓心 $z_0$、半徑 $r$，逆時針一圈",
+            "$z(t)=z_0+re^{it},\\qquad 0\\le t\\le2\\pi$"
+          ],
+          "say": "最重要的是圓：圓心 z 零、半徑 r，寫成 z 零加 r 乘 e 的 i t 次方，t 從 0 到 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓：圓心 $z_0$、半徑 $r$，逆時針一圈"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle z(t)=z_0+re^{it},\\qquad 0\\le t\\le2\\pi}}$",
+              "on": "寫成"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼：$|z(t)-z_0|=|r|\\,|e^{it}|=r$，而輻角 $t$ 一路增加 → 逆時針"
+          ],
+          "say": "到圓心的距離永遠是 r；輻角就是 t，t 增加，點就逆時針轉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼：$|z(t)-z_0|=|r|\\,|e^{it}|=r$，而輻角 $t$ 一路增加 → 逆時針"
+            },
+            {
+              "do": "write",
+              "line": "　拆開就是 $x=x_0+r\\cos t$，$y=y_0+r\\sin t$（Euler 公式）",
+              "color": "violet",
+              "on": "增加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "線段：從 $z_1$ 到 $z_2$，$0\\le t\\le1$",
+            "$z(t)=z_1+t\\,(z_2-z_1)=(1-t)z_1+t\\,z_2$"
+          ],
+          "say": "第二個是線段：從 z 1 到 z 2，就是 z 1 加 t 倍的 z 2 減 z 1，t 從 0 到 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線段：從 $z_1$ 到 $z_2$，$0\\le t\\le1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle z(t)=z_1+t\\,(z_2-z_1)=(1-t)z_1+t\\,z_2}}$",
+              "on": "就是"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "倍的"
+            },
+            {
+              "do": "write",
+              "line": "函數圖形 $y=f(x)$：$z(t)=t+i\\,f(t)$",
+              "on": "1。"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "單位圓順時針走一圈，是正向還是負向？",
-      "options": [
-        { "label": "負向", "correct": true },
-        { "label": "正向", "why": "正向是內部在左手邊；順時針走時圓的內部在右手邊。" },
-        { "label": "圓沒有方向", "why": "曲線本身的點集合沒有方向，但參數式有；積分會受方向影響。" }
+      "title": "兩個例子",
+      "beats": [
+        {
+          "show": [
+            "例 1：$|z-1|=2$，逆時針一圈",
+            "$z(t)=1+2e^{it},\\qquad 0\\le t\\le2\\pi$"
+          ],
+          "say": "例一：圓心 1、半徑 2 的圓，逆時針一圈，就是 1 加 2 倍 e 的 i t 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$|z-1|=2$，逆時針一圈"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle z(t)=1+2e^{it},\\qquad 0\\le t\\le2\\pi}}$",
+              "on": "逆時"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t=0$：$3$；$t=\\frac\\pi2$：$1+2i$；$t=\\pi$：$-1$"
+          ],
+          "say": "檢查：t 等於 0 在 3，2 分之派在 1 加 2i，派在負 1。確實逆時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t=0$：$3$；$t=\\frac\\pi2$：$1+2i$；$t=\\pi$：$-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：從 $1$ 到 $i$ 的線段，$0\\le t\\le1$",
+            "$z(t)=1+t\\,(i-1)=(1-t)+i\\,t$"
+          ],
+          "say": "例二：從 1 到 i 的線段，整理成 1 減 t，加 i 倍的 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：從 $1$ 到 $i$ 的線段，$0\\le t\\le1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle z(t)=1+t\\,(i-1)=(1-t)+i\\,t}}$",
+              "on": "的線"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "倍的"
+            },
+            {
+              "do": "write",
+              "line": "　$t=\\frac12$ 是中點 $\\frac12+\\frac12 i$",
+              "color": "violet",
+              "on": "t。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "左邊是圓，紅色箭頭是切向量，等一下講。右邊是從 1 走到 i 的線段。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 300\" width=\"640\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hAb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11hAr\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11hAk\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11hAg\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker></defs><line x1=\"77\" y1=\"160\" x2=\"363\" y2=\"160\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hAk)\"/><line x1=\"165\" y1=\"292\" x2=\"165\" y2=\"19.8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hAk)\"/><circle cx=\"220\" cy=\"160\" r=\"110\" stroke=\"var(--blue)\" stroke-width=\"2.8\"/><circle cx=\"220\" cy=\"160\" r=\"4\" fill=\"var(--ink)\"/><path d=\"M114.3 190.3 A110 110 0 0 0 133.3 227.7\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hAb)\"/><line x1=\"220\" y1=\"160\" x2=\"297.8\" y2=\"82.2\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"6 5\"/><path d=\"M248 160 A28 28 0 0 0 239.8 140.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\"/><text x=\"254\" y=\"152\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text><line x1=\"297.8\" y1=\"82.2\" x2=\"254\" y2=\"38.4\" stroke=\"var(--red)\" stroke-width=\"2.6\" marker-end=\"url(#ah11hAr)\"/><text x=\"260\" y=\"36.4\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z′(t)</text><circle cx=\"297.8\" cy=\"82.2\" r=\"5\" fill=\"var(--blue)\"/><text x=\"310\" y=\"84\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z(t)</text><text x=\"214\" y=\"182\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"335\" y=\"182\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"80\" y=\"182\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">−1</text><circle cx=\"330\" cy=\"160\" r=\"4\" fill=\"var(--ink)\"/><circle cx=\"110\" cy=\"160\" r=\"4\" fill=\"var(--ink)\"/><text x=\"171\" y=\"182\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">0</text><text x=\"220\" y=\"300\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">｜<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan><tspan style=\"font-family:KaTeX_Main,serif\">−1</tspan>｜<tspan style=\"font-family:KaTeX_Main,serif\">= 2</tspan></text><line x1=\"415\" y1=\"225\" x2=\"619\" y2=\"225\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hAk)\"/><line x1=\"445\" y1=\"255\" x2=\"445\" y2=\"39\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hAk)\"/><line x1=\"565\" y1=\"225\" x2=\"508.6\" y2=\"168.6\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hAg)\"/><line x1=\"505\" y1=\"165\" x2=\"445\" y2=\"105\" stroke=\"var(--green)\" stroke-width=\"2.8\"/><circle cx=\"565\" cy=\"225\" r=\"5\" fill=\"var(--ink)\"/><circle cx=\"445\" cy=\"105\" r=\"5\" fill=\"var(--ink)\"/><text x=\"560\" y=\"249\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"427\" y=\"111\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</text><text x=\"519\" y=\"155\" fill=\"var(--green)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">t = ½</text><circle cx=\"505\" cy=\"165\" r=\"4\" fill=\"var(--green)\"/></svg>"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "導數就是切向量",
+      "beats": [
+        {
+          "show": [
+            "$t$ 是實數，差商只有一個方向：",
+            "$\\begin{aligned}z'(t)&=\\lim_{h\\to0}\\frac{z(t+h)-z(t)}{h}\\\\&=x'(t)+i\\,y'(t)\\end{aligned}$"
+          ],
+          "say": "曲線的導數。t 和 h 都是實數，實部、虛部分開取極限，導數就是 x prime 加 i 倍 y prime。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t$ 是實數，差商只有一個方向："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}z'(t)&=\\lim_{h\\to0}\\frac{z(t+h)-z(t)}{h}\\\\&=x'(t)+i\\,y'(t)\\end{aligned}}}}$",
+              "on": "是實"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "導數#2"
+            },
+            {
+              "do": "write",
+              "line": "　實部、虛部的極限分開算：11.37。和、積、連鎖律（$t=\\varphi(s)$ 是實函數）證法照抄",
+              "color": "violet",
+              "on": "pr#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z'(t)$ 就是向量 $(x'(t),y'(t))$：切向量，$|z'(t)|$ 是速率"
+          ],
+          "say": "z prime 就是切向量，它的長度是速率。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z'(t)$ 就是向量 $(x'(t),y'(t))$：切向量，$|z'(t)|$ 是速率"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最常用的一條：$c$ 是任意複數",
+            "$\\frac{d}{dt}e^{ct}=c\\,e^{ct}$"
+          ],
+          "say": "最常用的公式：c 是任意複數，e 的 c t 次方微分，拉下一個 c。c 是複數，所以要證。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最常用的一條：$c$ 是任意複數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\frac{d}{dt}e^{ct}=c\\,e^{ct}}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$c=a+ib$，$e^{ct}=e^{at}(\\cos bt+i\\sin bt)$，實部虛部各自微分：",
+            "$\\begin{aligned}\\tfrac{d}{dt}e^{ct}&=e^{at}\\big[(a\\cos bt-b\\sin bt)\\\\&\\qquad+i\\,(a\\sin bt+b\\cos bt)\\big]\\\\&=(a+ib)\\,e^{at}(\\cos bt+i\\sin bt)\\\\&=c\\,e^{ct}\\end{aligned}$"
+          ],
+          "say": "證明：c 寫成 a 加 i b，拆成 e 的 a t 次方乘餘弦加 i 正弦。實部虛部各用乘積法則，再提出 a 加 i b，剛好吻合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$c=a+ib$，$e^{ct}=e^{at}(\\cos bt+i\\sin bt)$，實部虛部各自微分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\tfrac{d}{dt}e^{ct}&=e^{at}\\big[(a\\cos bt-b\\sin bt)\\\\&\\qquad+i\\,(a\\sin bt+b\\cos bt)\\big]\\\\&=(a+ib)\\,e^{at}(\\cos bt+i\\sin bt)\\\\&=c\\,e^{ct}\\end{aligned}}}}$",
+              "on": "拆成"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(a+ib)(\\cos bt+i\\sin bt)=(a\\cos bt-b\\sin bt)+i(a\\sin bt+b\\cos bt)$",
+              "color": "violet",
+              "on": "再提"
+            }
+          ]
+        },
+        {
+          "show": [
+            "光滑：$z'$ 連續而且 $z'(t)\\ne0$"
+          ],
+          "say": "光滑，是指導數連續、而且不是 0，每一點都有確定的切線方向。",
+          "board": [
+            {
+              "do": "write",
+              "line": "光滑：$z'$ 連續而且 $z'(t)\\ne0$"
+            },
+            {
+              "do": "write",
+              "line": "　$z'=0$ 的地方可能有尖點：例 $z(t)=t^2+i\\,t^3$ 在 $t=0$",
+              "color": "violet",
+              "on": "每一"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "從 $0$ 到 $2+2i$ 的線段長度是？",
-      "options": [
-        { "label": "$2\\sqrt{2}$", "correct": true },
-        { "label": "$4$", "why": "長度是 $|z'|=|2+2i|=\\sqrt{8}$，不是 $|2|+|2|$。" },
-        { "label": "$\\sqrt{2}$", "why": "$\\sqrt{2}$ 是 $|1+i|$；這裡的位移是 $2+2i$。" }
+      "title": "圓的切向量與弧長",
+      "beats": [
+        {
+          "show": [
+            "$z(t)=1+2e^{it}$：",
+            "$z'(t)=2i\\,e^{it}=i\\,\\big(z(t)-1\\big)$"
+          ],
+          "say": "回到例一。導數是 2i 乘 e 的 i t 次方，也就是 i 乘上 z of t 減圓心。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z(t)=1+2e^{it}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle z'(t)=2i\\,e^{it}=i\\,\\big(z(t)-1\\big)}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘 $i$ = 轉 $90^\\circ$：切向量垂直於半徑"
+          ],
+          "say": "乘 i 就是轉 90 度，所以切向量垂直於半徑。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘 $i$ = 轉 $90^\\circ$：切向量垂直於半徑"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t=0$：在 $3$，$z'(0)=2i$ 朝上：逆時針"
+          ],
+          "say": "t 等於 0 時在 3，切向量 2i 朝上，確實是逆時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t=0$：在 $3$，$z'(0)=2i$ 朝上：逆時針"
+            }
+          ]
+        },
+        {
+          "show": [
+            "弧長：照 7.4，$\\int\\sqrt{x'^2+y'^2}\\,dt$，就是",
+            "$L=\\int_a^b|z'(t)|\\,dt$"
+          ],
+          "say": "弧長公式直接搬：根號 x prime 平方加 y prime 平方，就是 z prime 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "弧長：照 7.4，$\\int\\sqrt{x'^2+y'^2}\\,dt$，就是"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle L=\\int_a^b|z'(t)|\\,dt}}$",
+              "on": "me#1"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$|z'(t)|=|2i|\\,|e^{it}|=2$",
+            "$L=\\int_0^{2\\pi}2\\,dt=4\\pi$"
+          ],
+          "say": "例一：速率是 2，從 0 積到 2 派，周長 4 派，跟 2 派 r 一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$|z'(t)|=|2i|\\,|e^{it}|=2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle L=\\int_0^{2\\pi}2\\,dt=4\\pi}}$",
+              "color": "red",
+              "on": "積到"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "一致"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：$z'(t)=i-1$，$|z'|=\\sqrt2$，$L=\\int_0^1\\sqrt2\\,dt=\\sqrt2$"
+          ],
+          "say": "例二：導數是常數 i 減 1，長度根號 2，正好是 1 到 i 的距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：$z'(t)=i-1$，$|z'|=\\sqrt2$，$L=\\int_0^1\\sqrt2\\,dt=\\sqrt2$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "螺線的弧長",
+      "beats": [
+        {
+          "show": [
+            "例 3：$z(t)=e^{(1+i)t}$，$0\\le t\\le1$",
+            "$z(t)=e^t\\,e^{it}$：長度 $e^t$、輻角 $t$，一邊轉一邊變大"
+          ],
+          "say": "例三：e 的 1 加 i 乘 t 次方。拆成 e 的 t 次方乘 e 的 i t 次方：一邊轉，一邊往外跑，是螺線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 3：$z(t)=e^{(1+i)t}$，$0\\le t\\le1$"
+            },
+            {
+              "do": "write",
+              "line": "$z(t)=e^t\\,e^{it}$：長度 $e^t$、輻角 $t$，一邊轉一邊變大",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$z'(t)=(1+i)\\,e^{(1+i)t}$",
+            "$|z'(t)|=|1+i|\\cdot e^t\\cdot|e^{it}|=\\sqrt2\\,e^t$"
+          ],
+          "say": "導數是 1 加 i 乘自己。絕對值拆成乘積：根號 2，乘 e 的 t 次方，乘 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle z'(t)=(1+i)\\,e^{(1+i)t}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |z'(t)|=|1+i|\\cdot e^t\\cdot|e^{it}|=\\sqrt2\\,e^t$",
+              "on": "根號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\int_0^1\\sqrt2\\,e^t\\,dt=\\sqrt2\\,(e-1)\\approx2.430$"
+          ],
+          "say": "弧長就是根號 2 乘 e 減 1，大約 2.43。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx12:\\displaystyle L=\\int_0^1\\sqrt2\\,e^t\\,dt=\\sqrt2\\,(e-1)\\approx2.430}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx12",
+              "color": "red",
+              "on": "大約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，虛線是直線距離，大約 2.33，比螺線短一點，合理。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 290\" width=\"620\" height=\"290\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hBk\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11hBb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker></defs><line x1=\"42.5\" y1=\"255\" x2=\"308.5\" y2=\"255\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hBk)\"/><line x1=\"90\" y1=\"278.8\" x2=\"90\" y2=\"12.8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11hBk)\"/><path d=\"M185 255L185.9 254L186.9 253.1L187.8 252.1L188.8 251L189.7 250L190.7 249L191.6 247.9L192.6 246.8L193.5 245.7L194.5 244.5L195.4 243.4L196.3 242.2L197.3 241L198.2 239.8L199.1 238.5L200.1 237.2L201 235.9L201.9 234.6L202.8 233.3L203.7 231.9L204.6 230.6L205.5 229.2L206.4 227.7L207.3 226.3L208.2 224.8L209.1 223.3L209.9 221.8L210.8 220.3L211.7 218.7L212.5 217.1L213.4 215.5L214.2 213.8L215 212.2L215.8 210.5L216.6 208.8L217.4 207L218.2 205.3L219 203.5L219.8 201.7L220.5 199.8L221.3 197.9L222 196L222.7 194.1L223.5 192.2L224.2 190.2L224.8 188.2L225.5 186.2L226.2 184.1L226.8 182L227.5 179.9L228.1 177.8L228.7 175.6L229.3 173.4L229.8 171.2L230.4 168.9L230.9 166.7L231.4 164.3L231.9 162L232.4 159.7L232.9 157.3L233.3 154.8L233.7 152.4L234.1 149.9L234.5 147.4L234.9 144.9L235.2 142.3L235.5 139.7L235.8 137.1L236.1 134.4L236.3 131.8L236.5 129L236.7 126.3L236.9 123.5L237 120.7L237.2 117.9L237.2 115.1L237.3 112.2L237.3 109.3L237.3 106.3L237.3 103.3L237.2 100.3L237.2 97.3L237 94.2L236.9 91.1L236.7 88L236.5 84.9L236.2 81.7L235.9 78.5L235.6 75.2L235.2 72L234.9 68.7L234.4 65.3L233.9 62L233.4 58.6L232.9 55.2L232.3 51.7L231.7 48.3L231 44.8L230.3 41.3L229.5 37.7\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"227.5\" y1=\"179.9\" x2=\"230.9\" y2=\"166.7\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11hBb)\"/><line x1=\"185\" y1=\"255\" x2=\"229.5\" y2=\"37.7\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"6 5\"/><circle cx=\"185\" cy=\"255\" r=\"5\" fill=\"var(--ink)\"/><circle cx=\"229.5\" cy=\"37.7\" r=\"5\" fill=\"var(--ink)\"/><text x=\"180\" y=\"279\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"239.5\" y=\"41.7\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">e<tspan dy=\"-8\" font-size=\"15\">i</tspan><tspan dy=\"8\" style=\"font-family:KaTeX_Main,serif\"> · </tspan>e</text><text x=\"330\" y=\"150\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">螺線長 <tspan style=\"font-family:KaTeX_Main,serif\">√2 (e − 1) ≈ 2.4</tspan></text><text x=\"330\" y=\"185\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">虛線（弦）長 <tspan style=\"font-family:KaTeX_Main,serif\">≈ 2.3</tspan></text></svg>"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$z(t)=e^{it}$，$0\\le t\\le4\\pi$ 的弧長是？",
+        "options": [
+          {
+            "label": "$4\\pi$",
+            "correct": true
+          },
+          {
+            "label": "$2\\pi$",
+            "why": "那是單位圓的周長；但 $t$ 走到 $4\\pi$，繞了兩圈"
+          },
+          {
+            "label": "$0$",
+            "why": "起點、終點都是 $1$，但弧長算的是走過的路，不是位移"
+          },
+          {
+            "label": "$\\pi$",
+            "why": "$|z'(t)|=|ie^{it}|=1$，不是 $\\frac14$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "封閉、簡單",
+      "beats": [
+        {
+          "show": [
+            "• 封閉：$z(a)=z(b)$（回到起點）",
+            "• 簡單：除了 $z(a)=z(b)$ 這一對，不會經過同一點兩次"
+          ],
+          "say": "第三段。封閉：回到起點。簡單：自己不交叉，起點終點重合不算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 封閉：$z(a)=z(b)$（回到起點）"
+            },
+            {
+              "do": "write",
+              "line": "• 簡單：除了 $z(a)=z(b)$ 這一對，不會經過同一點兩次",
+              "on": "自己"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "左邊簡單封閉；中間的八字形自己交叉，不簡單；右邊不封閉。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 260\" width=\"640\" height=\"260\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hCb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11hCr\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11hCg\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker></defs><ellipse cx=\"125\" cy=\"112\" rx=\"80\" ry=\"65\" stroke=\"var(--blue)\" stroke-width=\"2.8\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><path d=\"M150.2 173.7 A80 65 0 0 0 171.5 164.9\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hCb)\"/><line x1=\"55.7\" y1=\"79.5\" x2=\"29.1\" y2=\"117\" stroke=\"var(--red)\" stroke-width=\"2.4\" marker-end=\"url(#ah11hCr)\"/><line x1=\"55.7\" y1=\"79.5\" x2=\"93.2\" y2=\"106.1\" stroke=\"var(--green)\" stroke-width=\"2.4\" marker-end=\"url(#ah11hCg)\"/><circle cx=\"55.7\" cy=\"79.5\" r=\"4\" fill=\"var(--ink)\"/><text x=\"23.1\" y=\"141\" fill=\"var(--red)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z′</text><text x=\"97.2\" y=\"124.1\" fill=\"var(--green)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">iz′</text><text x=\"125\" y=\"215\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:inherit\">簡單封閉（正向）</text><text x=\"125\" y=\"243\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"16\" style=\"font-family:inherit\">內部在左手邊</text><path d=\"M410 112L410 108.2L409.8 104.5L409.6 100.8L409.3 97.1L408.9 93.5L408.4 89.9L407.8 86.5L407.2 83.1L406.4 79.9L405.6 76.7L404.7 73.8L403.7 70.9L402.6 68.3L401.4 65.8L400.2 63.5L398.9 61.3L397.5 59.4L396 57.7L394.4 56.2L392.8 54.9L391.1 53.9L389.3 53.1L387.5 52.5L385.6 52.1L383.6 52L381.6 52.1L379.5 52.5L377.4 53.1L375.2 53.9L372.9 54.9L370.6 56.2L368.2 57.7L365.8 59.4L363.4 61.3L360.9 63.5L358.3 65.8L355.7 68.3L353.1 70.9L350.5 73.8L347.8 76.7L345.1 79.9L342.4 83.1L339.6 86.5L336.9 89.9L334.1 93.5L331.3 97.1L328.5 100.8L325.7 104.5L322.8 108.2L320 112L317.2 115.8L314.3 119.5L311.5 123.2L308.7 126.9L305.9 130.5L303.1 134.1L300.4 137.5L297.6 140.9L294.9 144.1L292.2 147.3L289.5 150.2L286.9 153.1L284.3 155.7L281.7 158.2L279.1 160.5L276.6 162.7L274.2 164.6L271.8 166.3L269.4 167.8L267.1 169.1L264.8 170.1L262.6 170.9L260.5 171.5L258.4 171.9L256.4 172L254.4 171.9L252.5 171.5L250.7 170.9L248.9 170.1L247.2 169.1L245.6 167.8L244 166.3L242.5 164.6L241.1 162.7L239.8 160.5L238.6 158.2L237.4 155.7L236.3 153.1L235.3 150.2L234.4 147.3L233.6 144.1L232.8 140.9L232.2 137.5L231.6 134.1L231.1 130.5L230.7 126.9L230.4 123.2L230.2 119.5L230 115.8L230 112L230 108.2L230.2 104.5L230.4 100.8L230.7 97.1L231.1 93.5L231.6 89.9L232.2 86.5L232.8 83.1L233.6 79.9L234.4 76.7L235.3 73.8L236.3 70.9L237.4 68.3L238.6 65.8L239.8 63.5L241.1 61.3L242.5 59.4L244 57.7L245.6 56.2L247.2 54.9L248.9 53.9L250.7 53.1L252.5 52.5L254.4 52.1L256.4 52L258.4 52.1L260.5 52.5L262.6 53.1L264.8 53.9L267.1 54.9L269.4 56.2L271.8 57.7L274.2 59.4L276.6 61.3L279.1 63.5L281.7 65.8L284.3 68.3L286.9 70.9L289.5 73.8L292.2 76.7L294.9 79.9L297.6 83.1L300.4 86.5L303.1 89.9L305.9 93.5L308.7 97.1L311.5 100.8L314.3 104.5L317.2 108.2L320 112L322.8 115.8L325.7 119.5L328.5 123.2L331.3 126.9L334.1 130.5L336.9 134.1L339.6 137.5L342.4 140.9L345.1 144.1L347.8 147.3L350.5 150.2L353.1 153.1L355.7 155.7L358.3 158.2L360.9 160.5L363.4 162.7L365.8 164.6L368.2 166.3L370.6 167.8L372.9 169.1L375.2 170.1L377.4 170.9L379.5 171.5L381.6 171.9L383.6 172L385.6 171.9L387.5 171.5L389.3 170.9L391.1 170.1L392.8 169.1L394.4 167.8L396 166.3L397.5 164.6L398.9 162.7L400.2 160.5L401.4 158.2L402.6 155.7L403.7 153.1L404.7 150.2L405.6 147.3L406.4 144.1L407.2 140.9L407.8 137.5L408.4 134.1L408.9 130.5L409.3 126.9L409.6 123.2L409.8 119.5L410 115.8L410 112\" stroke=\"var(--blue)\" stroke-width=\"2.8\"/><circle cx=\"320\" cy=\"112\" r=\"5\" fill=\"var(--red)\"/><text x=\"320\" y=\"215\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:inherit\">封閉、不簡單</text><text x=\"320\" y=\"243\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"16\" style=\"font-family:inherit\">中間自己交叉</text><path d=\"M460 150L462.5 146.2L465 142.4L467.5 138.6L470 134.8L472.5 131.1L475 127.4L477.5 123.8L480 120.2L482.5 116.7L485 113.3L487.5 110L490 106.8L492.5 103.7L495 100.7L497.5 97.8L500 95.1L502.5 92.5L505 90L507.5 87.7L510 85.5L512.5 83.5L515 81.7L517.5 80L520 78.6L522.5 77.3L525 76.2L527.5 75.2L530 74.5L532.5 74L535 73.6L537.5 73.5L540 73.5L542.5 73.8L545 74.2L547.5 74.9L550 75.7L552.5 76.8L555 78L557.5 79.4L560 81.1L562.5 82.9L565 84.9L567.5 87.1L570 89.5L572.5 92L575 94.7L577.5 97.6L580 100.7L582.5 103.8L585 107.2L587.5 110.7L590 114.3L592.5 118L595 121.9L597.5 125.9L600 130L602.5 134.2L605 138.4L607.5 142.8L610 147.2\" stroke=\"var(--blue)\" stroke-width=\"2.8\"/><circle cx=\"460\" cy=\"150\" r=\"5\" fill=\"var(--ink)\"/><circle cx=\"610\" cy=\"147.2\" r=\"5\" fill=\"var(--ink)\"/><text x=\"456\" y=\"176\" fill=\"var(--ink)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z(a)</text><text x=\"576\" y=\"173.2\" fill=\"var(--ink)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z(b)</text><text x=\"535\" y=\"215\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:inherit\">不封閉</text><text x=\"535\" y=\"243\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"16\" style=\"font-family:inherit\">起點 ≠ 終點</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{it}$，$0\\le t\\le2\\pi$：簡單封閉；$0\\le t\\le4\\pi$：封閉、不簡單"
+          ],
+          "say": "單位圓走一圈是簡單封閉；走兩圈，每一點都經過兩次，就不簡單。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{it}$，$0\\le t\\le2\\pi$：簡單封閉；$0\\le t\\le4\\pi$：封閉、不簡單"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Jordan 曲線定理：簡單封閉曲線把平面分成內部（有界）與外部"
+          ],
+          "say": "若爾當曲線定理：簡單封閉曲線把平面切成兩塊，有界的叫內部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Jordan 曲線定理：簡單封閉曲線把平面分成內部（有界）與外部",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　一般情形的證明要用拓樸，這裡承認它；圓、多邊形的內部一眼就看得出來",
+              "color": "violet",
+              "on": "把平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分段光滑（圍道）：幾段光滑曲線頭尾相接"
+          ],
+          "say": "下一課的路允許分段光滑：幾段光滑曲線頭尾相接，像三角形的邊，叫圍道。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分段光滑（圍道）：幾段光滑曲線頭尾相接"
+            },
+            {
+              "do": "write",
+              "line": "　例：$0\\to1\\to i\\to0$ 的三角形，長度 $1+\\sqrt2+1=2+\\sqrt2$",
+              "color": "violet",
+              "on": "線頭"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "方向：內部在左手邊",
+      "beats": [
+        {
+          "show": [
+            "正向：沿著曲線走，內部永遠在左手邊（逆時針）"
+          ],
+          "say": "正向：沿著曲線走，內部永遠在左手邊。對圓來說就是逆時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "正向：沿著曲線走，內部永遠在左手邊（逆時針）",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左手邊的方向 = 切向量轉 $90^\\circ$ = $i\\,z'(t)$"
+          ],
+          "say": "左手邊，就是切向量逆時針轉 90 度，也就是乘 i。圖上綠色的箭頭。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左手邊的方向 = 切向量轉 $90^\\circ$ = $i\\,z'(t)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓的驗證：$z=z_0+re^{it}$",
+            "$i\\,z'(t)=i\\cdot ir\\,e^{it}=-re^{it}=z_0-z(t)$"
+          ],
+          "say": "驗證圓：i 乘 z prime，等於負 r e 的 i t 次方，正好從 z of t 指回圓心。所以逆時針是正向。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓的驗證：$z=z_0+re^{it}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx13:\\displaystyle i\\,z'(t)=i\\cdot ir\\,e^{it}=-re^{it}=z_0-z(t)}}$",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx13",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反向 $-C$：同一條路倒著走",
+            "$\\tilde z(t)=z(a+b-t),\\qquad a\\le t\\le b$"
+          ],
+          "say": "反向，記作負 C：同一條路倒著走，t 換成 a 加 b 減 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反向 $-C$：同一條路倒著走"
+            },
+            {
+              "do": "write",
+              "line": "${{bx14:\\displaystyle \\tilde z(t)=z(a+b-t),\\qquad a\\le t\\le b}}$",
+              "on": "一條"
+            },
+            {
+              "do": "box",
+              "term": "bx14",
+              "on": "t。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\tilde z'(t)=-z'(a+b-t)$：切向量反過來；弧長不變"
+          ],
+          "say": "連鎖律多一個負號，切向量反過來；速率一樣，換個變數，弧長不變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\tilde z'(t)=-z'(a+b-t)$：切向量反過來；弧長不變"
+            },
+            {
+              "do": "write",
+              "line": "　$\\int_a^b|z'(a+b-t)|\\,dt\\overset{s=a+b-t}{=}\\int_a^b|z'(s)|\\,ds$",
+              "color": "violet",
+              "on": "速率"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：圓的反向是 $z_0+re^{-it}$（順時針）"
+          ],
+          "say": "例如圓倒著走是順時針。下一課會看到，倒著走，積分變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：圓的反向是 $z_0+re^{-it}$（順時針）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "換參數：路不變",
+      "beats": [
+        {
+          "show": [
+            "$\\varphi$ 遞增、可微，把 $[c,d]$ 映到 $[a,b]$：",
+            "$w(s)=z(\\varphi(s))$ 走同一條路、同一個方向"
+          ],
+          "say": "最後，換參數：用遞增的函數斐，把新參數 s 對到舊的 t。路一樣，方向也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varphi$ 遞增、可微，把 $[c,d]$ 映到 $[a,b]$："
+            },
+            {
+              "do": "write",
+              "line": "$w(s)=z(\\varphi(s))$ 走同一條路、同一個方向",
+              "on": "對到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "弧長也一樣（$\\varphi'\\ge0$）：$w'(s)=z'(\\varphi(s))\\,\\varphi'(s)$",
+            "$\\begin{aligned}\\int_c^d|w'(s)|\\,ds&=\\int_c^d|z'(\\varphi(s))|\\,\\varphi'(s)\\,ds\\\\&=\\int_a^b|z'(t)|\\,dt\\end{aligned}$"
+          ],
+          "say": "弧長也一樣：斐 prime 不是負的，可以拿出絕對值，再代換 t 等於斐 of s，就回到原來的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "弧長也一樣（$\\varphi'\\ge0$）：$w'(s)=z'(\\varphi(s))\\,\\varphi'(s)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx15:\\displaystyle {\\begin{aligned}\\int_c^d|w'(s)|\\,ds&=\\int_c^d|z'(\\varphi(s))|\\,\\varphi'(s)\\,ds\\\\&=\\int_a^b|z'(t)|\\,dt\\end{aligned}}}}$",
+              "on": "不是"
+            },
+            {
+              "do": "box",
+              "term": "bx15",
+              "on": "再代"
+            },
+            {
+              "do": "write",
+              "line": "　弧長是「路」的性質，跟參數化無關；例：$e^{2\\pi i s}$，$0\\le s\\le1$ 也是單位圓一圈",
+              "color": "violet",
+              "on": "就回"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 曲線 = $z(t)=x(t)+iy(t)$；圓 $z_0+re^{it}$，線段 $z_1+t(z_2-z_1)$",
+            "• $z'(t)=x'+iy'$ 是切向量；$\\frac{d}{dt}e^{ct}=ce^{ct}$"
+          ],
+          "say": "整理：曲線是複數值函數；導數是切向量，弧長是 z prime 絕對值的積分；正向是內部在左手邊；倒著走切向量反號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 曲線 = $z(t)=x(t)+iy(t)$；圓 $z_0+re^{it}$，線段 $z_1+t(z_2-z_1)$"
+            },
+            {
+              "do": "write",
+              "line": "• $z'(t)=x'+iy'$ 是切向量；$\\frac{d}{dt}e^{ct}=ce^{ct}$",
+              "on": "導數"
+            },
+            {
+              "do": "write",
+              "line": "• 弧長 $L=\\int_a^b|z'(t)|\\,dt$：圓 $2\\pi r$、螺線 $\\sqrt2(e-1)$",
+              "on": "pr"
+            },
+            {
+              "do": "write",
+              "line": "• 簡單封閉曲線有內部；正向 = 內部在左手邊 = 逆時針",
+              "on": "的積"
+            },
+            {
+              "do": "write",
+              "line": "• 反向 $-C$：切向量反號、弧長不變；遞增的換參數什麼都不變",
+              "on": "手邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：圍道積分：把 $dz$ 換成 $z'(t)\\,dt$"
+          ],
+          "say": "下一課，沿著這些曲線做積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：圍道積分：把 $dz$ 換成 $z'(t)\\,dt$"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["parametric", "arc-length", "complex"],
-    "fine": ["complex-curve-parametrize", "complex-curve-tangent", "complex-curve-orientation", "complex-curve-length"]
+    "coarse": [
+      "parametric",
+      "arc-length",
+      "complex"
+    ],
+    "fine": [
+      "complex-curve-parametrize",
+      "complex-curve-tangent",
+      "complex-curve-orientation",
+      "complex-curve-length"
+    ]
   },
   "practice": [
-    { "id": "cx-arc-003", "core": true, "trains": "complex-curve-length" },
-    { "id": "cg-11h-001", "core": true, "trains": "complex-curve-parametrize" },
-    { "id": "cg-11h-002", "core": true, "trains": "complex-curve-parametrize" },
-    { "id": "cg-11h-004", "core": true, "trains": "complex-curve-orientation" },
-    { "id": "lec-10-q1c", "trains": "complex-curve-length" },
-    { "id": "cg-11h-003", "trains": "complex-curve-parametrize" },
-    { "id": "cg-11h-005", "trains": "complex-curve-orientation" }
+    {
+      "id": "cx-arc-003",
+      "core": true,
+      "trains": "complex-curve-length"
+    },
+    {
+      "id": "cg-11h-001",
+      "core": true,
+      "trains": "complex-curve-parametrize"
+    },
+    {
+      "id": "cg-11h-002",
+      "core": true,
+      "trains": "complex-curve-parametrize"
+    },
+    {
+      "id": "cg-11h-004",
+      "core": true,
+      "trains": "complex-curve-orientation"
+    },
+    {
+      "id": "lec-10-q1c",
+      "trains": "complex-curve-length"
+    },
+    {
+      "id": "cg-11h-003",
+      "trains": "complex-curve-parametrize"
+    },
+    {
+      "id": "cg-11h-005",
+      "trains": "complex-curve-orientation"
+    }
   ],
   "gaps": []
 }

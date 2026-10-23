@@ -1,286 +1,121 @@
 {
   "id": "pointwise-convergence",
   "title": "逐點收斂",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["epsilon-n-definition", "uniform-continuity", "heine-cantor"],
-  "next": ["uniform-convergence"],
-  "related": ["limit-integral-swap"],
-  "objectives": [
-    "把一列函數 $f_n$ 在每個固定的 $x$ 看成一個數列，求出極限函數 $f$。",
-    "寫出逐點收斂的量詞：$N$ 可以同時依賴 $\\varepsilon$ 與 $x$。",
-    "舉出三個例子：每個 $f_n$ 都連續，極限不連續；$f_n\\to0$ 但 $\\int f_n$ 不趨近 0；$f_n$ 的高峰一直不消失。"
+  "prerequisites": [
+    "epsilon-n-definition",
+    "uniform-continuity",
+    "heine-cantor"
   ],
-  "visual": "在 [0, 1] 上畫 y = xⁿ，n 用滑桿從 1 拉到 200。曲線在 x < 1 的部分一路被壓向 0，但右端永遠釘在 (1, 1)，越來越像一個直角。旁邊固定 x = 0.5、0.9、0.99 三個點，各自顯示第幾項之後 xⁿ < 0.01（7、44、459）。",
+  "next": [
+    "uniform-convergence"
+  ],
+  "related": [
+    "limit-integral-swap"
+  ],
+  "objectives": [
+    "把一列函數 $f_n$ 在每個固定的 $x$ 看成一個數列，求出極限函數 $f$",
+    "寫出逐點收斂的量詞：$N$ 可以同時依賴 $\\varepsilon$ 與 $x$",
+    "舉出三個例子：每個 $f_n$ 都連續但極限不連續、$f_n\\to0$ 但 $\\int f_n$ 不趨近 $0$、$f_n\\to f$ 但 $f_n'$ 不趨近 $f'$"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 一列函數，在每個點各是一個數列",
+      "heading": "① 每個點各是一個數列",
       "body": [
-        "函數列 $f_1,f_2,f_3,\\dots$ 是一串定義在同一個集合 $D$ 上的函數。固定一個 $x$，$f_1(x),f_2(x),f_3(x),\\dots$ 就是一個普通的數列，可以問它收不收斂。",
-        "例：$f_n(x)=x^n$，$x\\in[0,1]$。$x=0.5$ 時是 $0.5,0.25,0.125,\\dots\\to0$；$x=1$ 時是 $1,1,1,\\dots\\to1$。每個 $x$ 各算各的，得到極限函數 $f(x)=0$（$0\\le x<1$），$f(1)=1$。"
+        "函數列：$f_1,f_2,f_3,\\dots$，每個 $f_n:D\\to\\mathbb{R}$",
+        "固定一個 $x\\in D$：$f_1(x),\\ f_2(x),\\ f_3(x),\\dots$ 是一個數列",
+        "例：$f_n(x)=x^n$，$D=[0,1]$",
+        "• $x=\\frac12$：$\\frac12,\\ \\frac14,\\ \\frac18,\\dots\\to0$",
+        "• $x=1$：$1,\\ 1,\\ 1,\\dots\\to1$",
+        "• $0\\le x<1$：$x^n\\to0$（12C：$|q|<1$ 時 $q^n\\to0$）",
+        "逐點極限："
       ],
-      "collapsible": false
+      "tex": [
+        "f(x)=\\lim_{n\\to\\infty}x^n=\\begin{cases}0,&0\\le x<1\\\\1,&x=1\\end{cases}"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "$f_n$ 在 $D$ 上逐點收斂到 $f$，意思是對每一個 $x\\in D$，數列 $f_n(x)$ 收斂到 $f(x)$。把數列極限的 $\\varepsilon$-$N$ 定義展開：",
-        "量詞順序是「先固定 $x$，再給 $\\varepsilon$，再找 $N$」，所以 $N$ 可以隨 $x$ 改變。這一點下一課會變成關鍵。"
+        "白話：對每一個 $x$，數列 $f_n(x)\\to f(x)$（12C 的 $\\varepsilon$-$N$）",
+        "$N$ 寫在 $x$ 和 $\\varepsilon$ 後面：",
+        "$N=N(\\varepsilon,x)$，可以看 $x$ 再決定"
       ],
-      "tex": ["\\forall x\\in D\\ \\ \\forall\\varepsilon>0\\ \\ \\exists N=N(\\varepsilon,x)\\ \\ \\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上逐點收斂}\\iff\\\\&\\forall x\\in D\\ \\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\\\&\\quad\\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 例：$N$ 會跟著 $x$ 跑",
+      "body": [
+        "$f_n(x)=x^n$，$\\varepsilon=0.01$，$0<x<1$：要 $x^n<0.01$",
+        "$\\ln x<0$，除過去不等號反向",
+        "• $x=0.5$：$n>6.64$，最小 $N=7$",
+        "• $x=0.9$：$n>43.7$，最小 $N=44$",
+        "• $x=0.99$：$n>458.2$，最小 $N=459$"
+      ],
+      "tex": [
+        "x^n<0.01\\iff n\\ln x<\\ln0.01\\iff n>\\frac{\\ln0.01}{\\ln x}"
+      ]
+    },
+    {
+      "heading": "② 沒有共同的 $N$",
+      "body": [
+        "每個 $x$ 都有 $N$，但 $\\sup_x N(x)=\\infty$：沒有一個 $N$ 管得了全部"
+      ]
+    },
+    {
+      "heading": "② 例：會移動的高峰",
+      "body": [
+        "逐點極限：$x=0$ 時 $f_n(0)=0$；$x>0$ 時",
+        "高峰：$f_n'(x)=\\dfrac{n(1-n^2x^2)}{(1+n^2x^2)^2}=0\\iff x=\\dfrac1n$"
+      ],
+      "tex": [
+        "f_n(x)=\\frac{nx}{1+n^2x^2},\\quad x\\in[0,1]",
+        "0\\le f_n(x)\\le\\frac{nx}{n^2x^2}=\\frac1{nx}\\to0",
+        "\\max_{[0,1]}f_n=f_n\\Big(\\frac1n\\Big)=\\frac12"
+      ]
     },
     {
       "heading": "③ 逐點收斂會弄丟什麼",
       "body": [
-        "連續：每個 $x^n$ 都連續，極限 $f$ 在 $x=1$ 跳了一下。",
-        "積分：$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$ 上逐點收斂到 0，但 $\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$，不是 $\\int_0^1 0\\,dx=0$（範例 3）。",
-        "直覺，不是證明：逐點收斂只保證每個點「最後」會靠近，但不同點靠近的速度可以差到沒有上限。高峰往 $x=0$ 擠、越來越窄，任何一個固定的點遲早都會被高峰甩在後面，但高峰本身從來沒消失。要把連續、積分保住，需要一個對所有 $x$ 共用的 $N$，那就是〈一致收斂〉。"
+        "一、連續：每個 $x^n$ 都連續，極限 $f$ 在 $1$ 不連續",
+        "換個說法：兩個極限不能交換",
+        "這一章每個問題都是「兩個極限能不能交換」",
+        "二、導數：$f_n(x)=\\dfrac{x^n}{n}$，$|f_n|\\le\\dfrac1n\\to0$，$f\\equiv0$",
+        "但 $f_n'(x)=x^{n-1}$，$f_n'(1)=1\\not\\to0=f'(1)$",
+        "三、積分：$f_n(x)=nxe^{-nx^2}$，$x\\in[0,1]$",
+        "$x>0$：令 $q=e^{-x^2}\\in(0,1)$，則 $f_n(x)=x\\cdot nq^n\\to0$",
+        "$nq^n\\to0$：比值 $\\frac{(n+1)q^{n+1}}{nq^n}\\to q<1$"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "每個點一個數列",
-      "beats": [
-        { "show": ["$f_1,f_2,f_3,\\dots$ 定義在同一個 $D$"],
-          "note": "固定 $x$，$f_n(x)$ 就是一個數列。",
-          "say": "函數列是一串定義在同一個集合上的函數。固定一個 x，f n 在 x 的值排起來，就是一個普通數列。",
-          "board": [
-            {"do":"write","line":"$f_1,f_2,f_3,\\dots$ 定義在同一個 $D$"},
-            {"do":"write","line":"固定 $x$：${{s:f_n(x)}}$ 是一個數列","on":"固定一個 x"},
-            {"do":"underline","term":"s","on":"普通數列"}
-          ] },
-        { "show": ["$f_n(x)=x^n$，$x=0.5$：","$0.5,0.25,0.125,\\dots\\to0$"],
-          "say": "例如 x 的 n 次方。x 是零點五時，數列是零點五、零點二五、零點一二五，往零走。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f_n(x)=x^n$","on":"例如"},
-            {"do":"write","line":"$x=0.5$：$0.5,0.25,0.125,\\dots\\to{{z:0}}$","on":"x 是零點五時"},
-            {"do":"focus","term":"z","on":"往零走"}
-          ] },
-        { "show": ["$x=1$：$1,1,1,\\dots\\to1$"],
-          "say": "x 等於一時，每一項都是一，極限是一。每個 x 各算各的。",
-          "board": [
-            {"do":"write","line":"$x=1$：$1,1,1,\\dots\\to{{o:1}}$"},
-            {"do":"focus","term":"o","on":"極限是一"}
-          ] },
-        { "show": ["每個 $x$ 各自的極限，拼成 $f(x)$"],
-          "note": "$x$ 在 $0$ 到 $1$ 之間的每一點都要算。",
-          "say": "合起來，每個 x 各自算出的極限，拼成一個新的函數 f，這就是逐點極限。",
-          "board": [
-            {"do":"write","line":"每個 $x$ 的極限，拼成 ${{j:f(x)}}$","color":"green"},
-            {"do":"underline","term":"j","label":"逐點極限","on":"這就是"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\lim_{x\\to1^-}\\lim_{n\\to\\infty}x^n=0\\ne1=\\lim_{n\\to\\infty}\\lim_{x\\to1^-}x^n",
+        "\\begin{aligned}\\int_0^1nxe^{-nx^2}\\,dx&=\\Big[-\\tfrac12e^{-nx^2}\\Big]_0^1\\\\&=\\frac{1-e^{-n}}2\\to\\frac12\\end{aligned}"
+      ]
     },
     {
-      "title": "定義：先固定 $x$",
-      "beats": [
-        { "show": ["每個 $x\\in D$：$f_n(x)\\to f(x)$"],
-          "say": "逐點收斂就是：對定義域裡每一個 x，那一串數列都收斂到 f 在 x 的值。",
-          "board": [
-            {"do":"write","line":"每個 $x\\in D$：$f_n(x)\\to {{f:f(x)}}$"},
-            {"do":"focus","term":"f","on":"收斂到"}
-          ] },
-        { "show": ["$\\forall x\\ \\forall\\varepsilon>0\\ \\exists N(\\varepsilon,x)$"],
-          "note": "$n\\ge N$ 時 $|f_n(x)-f(x)|<\\varepsilon$。",
-          "say": "把 epsilon N 定義寫開：先固定 x，再給 epsilon，再找 N。",
-          "board": [
-            {"do":"write","line":"$\\forall x\\ \\forall\\varepsilon>0\\ \\exists {{n:N(\\varepsilon,x)}}$"},
-            {"do":"write","line":"$n\\ge N$ 時 $|f_n(x)-f(x)|<\\varepsilon$","on":"再找"}
-          ] },
-        { "show": ["$N$ 可以隨 $x$ 改變"],
-          "note": "下一課這一點會變成關鍵。",
-          "say": "因為 x 先選好了，N 可以看 x 的臉色決定。這正是逐點收斂弱的地方。",
-          "board": [
-            {"do":"focus","term":"n","label":"弱的地方","on":"臉色"}
-          ] },
-        { "show": ["各有各的 $N$，沒有共同的 $N$"],
-          "say": "弱在哪裡？每個 x 各有自己的 N，可是沒有一個共同的 N，能保證所有的 x 同時靠近 f。",
-          "board": [
-            {"do":"write","line":"每個 $x$ 各有 $N$，沒有共同的 $N$"}
-          ] }
-      ],
-      "check": 2
+      "heading": "③ 共同的病因",
+      "body": [
+        "三個例子的共同點：",
+        "• 每個 $f_n$ 都很好（連續、可積、可微）",
+        "• 逐點極限存在",
+        "• 好性質不會自動傳到極限",
+        "問題出在：$N$ 可以隨 $x$ 變大，某一區域一直沒收好"
+      ]
     },
     {
-      "title": "$N$ 跟著 $x$ 跑",
-      "beats": [
-        { "show": ["$x^n<0.01$，找最小的 $N$"],
-          "note": "$0<x<1$ 時 $x^n$ 遞減。",
-          "say": "拿 x 的 n 次方，epsilon 取零點零一，在不同的點各找最小的 N。",
-          "board": [
-            {"do":"write","line":"$x^n<0.01$，找最小的 $N$"}
-          ] },
-        { "show": ["$\\ln x^n=n\\ln x$"],
-          "note": "$x^n$ 是 $n$ 個 $x$ 相乘。",
-          "say": "先補一步：x 的 n 次方是 n 個 x 相乘，取自然對數，相乘變相加，就得到 n 乘自然對數 x。",
-          "board": [
-            {"do":"write","line":"$\\ln x^n=\\ln x+\\cdots+\\ln x=n\\ln x$"}
-          ] },
-        { "show": ["$n>\\frac{\\ln 0.01}{\\ln x}$"],
-          "note": "$\\ln x<0$，除過去要變號。",
-          "say": "兩邊取自然對數。自然對數 x 是負的，除過去不等號要翻過來。",
-          "board": [
-            {"do":"write","line":"$n\\,{{l:\\ln x}}<\\ln 0.01$"},
-            {"do":"underline","term":"l","label":"負的","on":"是負的"},
-            {"do":"transform","line":"$n\\,{{g:>}}\\,\\frac{\\ln 0.01}{ {{l:\\ln x}} }$","on":"除過去"},
-            {"do":"focus","term":"g","on":"不等號"}
-          ] },
-        { "show": ["$6<7\\Rightarrow -6>-7$"],
-          "note": "乘或除以負數，方向反過來。",
-          "say": "除以負數為什麼要翻？六小於七，兩邊乘負一，變成負六大於負七，方向反了。",
-          "board": [
-            {"do":"write","line":"$6<7\\ \\Rightarrow\\ -6>-7$"}
-          ] },
-        { "show": ["$x=0.5$：$\\approx6.64$，$N=7$"],
-          "note": "$0.5^6=0.015625$，$0.5^7=0.0078125$。",
-          "say": "x 是零點五，算出約六點六四，所以 N 是七。六次方還太大，七次方才小於零點零一。",
-          "board": [
-            {"do":"write","line":"$x=0.5$：$\\frac{\\ln 0.01}{\\ln 0.5}\\approx6.64$，${{n:N=7}}$"},
-            {"do":"box","term":"n","color":"green","on":"所以 N 是七"},
-            {"do":"write","line":"$0.5^6=0.015625$，$0.5^7=0.0078125$","on":"六次方"}
-          ] }
-      ],
-      "key": "兩邊取對數，$\\ln x<0$ 不等號要翻",
-      "check": 1
-    },
-    {
-      "title": "$N$ 沒有上限",
-      "beats": [
-        { "show": ["$x=0.99$：$N=459$"],
-          "note": "$x=0.5$ 要 7，$x=0.9$ 要 44。",
-          "say": "x 推到零點九九，N 要四百五十九。越靠近一，要走的項數越多。",
-          "board": [
-            {"do":"write","line":"$x=0.99$：${{n:N=459}}$"},
-            {"do":"underline","term":"n","on":"四百五十九"},
-            {"do":"write","line":"越靠近 $1$，$N$ 越大","on":"越靠近一"}
-          ] },
-        { "show": ["$x^7$ 與 $x^{44}$"],
-          "note": "次方越大，越晚離開 0。",
-          "say": "看圖：藍色是 x 的七次方，紫色是 x 的四十四次方。次方越大，曲線貼到一附近才爬起來。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.05,1.05,-0.1,1.1],"curves":[{"expr":"x^7","domain":[0,1],"color":"blue"},{"expr":"x^44","domain":[0,1],"color":"violet"}]}}
-          ] },
-        { "show": ["取 $x=0.01^{1/N}<1$","$\\Rightarrow x^N=0.01$"],
-          "say": "而且沒有上限：你說一個 N，我就挑一個夠靠近一的 x，讓它的 N 次方剛好等於零點零一。",
-          "board": [
-            {"do":"write","line":"$x={{a:0.01^{1/N}}}<1$","on":"我就挑"},
-            {"do":"write","line":"$\\Rightarrow {{b:x^N=0.01}}$","on":"剛好"}
-          ] }
-      ],
-      "predict": {
-        "ask": "有沒有一個 $N$ 對所有 $x\\in[0,1)$ 都行？",
-        "options": [
-          {
-            "label": "沒有",
-            "correct": true
-          },
-          {
-            "label": "有，取 $N=459$",
-            "why": "459 只夠 $x=0.99$；$x$ 再靠近 1，$N$ 還要更大。"
-          },
-          {
-            "label": "有，取 $N=7$",
-            "why": "7 只夠 $x=0.5$；$x=0.9$ 就要 44。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "會移動的高峰",
-      "beats": [
-        { "show": ["$f_n(x)=\\frac{nx}{1+n^2x^2}$，$x\\in[0,1]$"],
-          "say": "再看一個例子：分子 n x，分母一加 n 平方 x 平方。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=\\frac{nx}{1+n^2x^2}$，$x\\in[0,1]$"}
-          ] },
-        { "show": ["$0\\le f_n(x)\\le\\frac{1}{nx}\\to0$"],
-          "note": "$x=0$ 時本來就是 0。",
-          "say": "固定 x 大於零，它被 n x 分之一壓住，往零走；x 等於零時本來就是零。逐點極限是零。",
-          "board": [
-            {"do":"write","line":"$0\\le f_n(x)\\le{{b:\\frac{1}{nx}}}\\to{{z:0}}$","on":"固定 x"},
-            {"do":"underline","term":"b","on":"n x 分之一"},
-            {"do":"focus","term":"z","on":"往零走"}
-          ] },
-        { "show": ["分母變大，分數變小"],
-          "note": "上下夾擠：$0$ 與 $\\frac{1}{nx}$。",
-          "say": "分母多了一，比 n 平方 x 平方大，所以分數更小，不超過 n x 除以 n 平方 x 平方。又不小於零，被夾在中間。",
-          "board": [
-            {"do":"write","line":"$\\frac{nx}{1+n^2x^2}<\\frac{nx}{n^2x^2}=\\frac{1}{nx}$"}
-          ] },
-        { "show": ["$t=nx$：$\\frac{t}{1+t^2}\\le\\frac{1}{2}$"],
-          "note": "等號在 $x=\\frac{1}{n}$。",
-          "say": "可是令 t 等於 n x，它最大是二分之一，發生在 x 等於 n 分之一。",
-          "board": [
-            {"do":"write","line":"$t=nx$：${{m:\\frac{t}{1+t^2}\\le\\frac{1}{2}}}$","on":"令 t"},
-            {"do":"underline","term":"m","label":"x = 1/n","on":"發生在"}
-          ] },
-        { "show": ["高峰一直在，只是往 0 擠"],
-          "say": "每個 n 的高峰都是二分之一，只是位置往零擠，任何固定的點遲早被甩在後面。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"plot","graph":{"window":[-0.06,1.06,-0.08,0.62],"ticks":false,"curves":[{"expr":"x/(1+x^2)","domain":[0,1],"color":"muted"},{"expr":"2*x/(1+(2*x)^2)","domain":[0,1],"color":"violet"},{"expr":"7*x/(1+(7*x)^2)","domain":[0,1],"color":"blue"}],"dashed":[[[0,0.5],[1,0.5]]],"labels":[{"x":0.98,"y":0.54,"text":"1/2","anchor":"end"}]},"on":"高峰"}
-          ] },
-        { "show": ["最高點一直是 $\\frac{1}{2}$"],
-          "say": "不好在哪：每個點遲早會靠近零，可是整條曲線的最高處永遠離零二分之一，沒有一個 n 讓整條曲線同時貼近零。",
-          "board": [
-            {"do":"write","line":"最高點 $\\frac12$ 離 $0$ 不變，整條沒貼近"}
-          ] }
-      ],
-      "key": "代 $t=nx$：高峰值與 $n$ 無關",
-      "check": 3
-    },
-    {
-      "title": "積分也會掉",
-      "beats": [
-        { "show": ["$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$"],
-          "note": "固定 $x>0$，指數衰減贏過 $n$。",
-          "say": "最後一個：n x 乘 e 的負 n x 平方。固定 x，指數衰減贏過 n，逐點極限是零。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=nx\\,e^{-nx^2}$，$[0,1]$"},
-            {"do":"write","line":"固定 $x>0$：$f_n(x)\\to{{z:0}}$","on":"固定 x"},
-            {"do":"focus","term":"z","on":"逐點極限"}
-          ] },
-        { "show": ["$\\int_0^1 0\\,dx=0$"],
-          "say": "所以先取極限再積分，得到零。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1 0\\,dx={{r:0}}$"}
-          ] },
-        { "show": ["$\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}$"],
-          "note": "令 $u=nx^2$。",
-          "say": "反過來先積分：令 u 等於 n x 平方，積出來是一減 e 的負 n 次方，再除以二。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"令 $u=nx^2$","on":"令 u"},
-            {"do":"write","line":"$\\int_0^1 f_n\\,dx=\\frac{1-e^{-n}}{2}$","on":"積出來"}
-          ] },
-        { "show": ["逐點極限看不到窄高峰的面積"],
-          "say": "如果兩種順序算出不同的值，原因就在高峰：逐點極限只看固定的點，窄窄的高峰面積被丟掉了。",
-          "board": [
-            {"do":"write","line":"逐點收斂：極限與積分不一定能交換"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$n\\to\\infty$，$\\int_0^1 f_n\\,dx$ 趨近？",
-        "options": [
-          {
-            "label": "$\\frac{1}{2}$",
-            "correct": true
-          },
-          {
-            "label": "0",
-            "why": "0 是先取極限再積分的結果；這裡 $e^{-n}\\to0$，所以 $\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。"
-          },
-          {
-            "label": "1",
-            "why": "別忘了除以 2：$\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 固定 $x$，$f_n(x)$ 是一個數列；它的極限就是 $f(x)$",
+        "• 逐點收斂：$\\forall x\\ \\forall\\varepsilon\\ \\exists N(\\varepsilon,x)\\ \\forall n\\ge N$",
+        "• $x^n$：$N$ 隨 $x\\to1$ 趨近 $\\infty$，沒有共同的 $N$",
+        "• 會弄丟：連續（$x^n$）、積分（$nxe^{-nx^2}$）、導數（$\\frac{x^n}n$）",
+        "• 都是「兩個極限能不能交換」",
+        "下一課：一致收斂：一個 $N$ 管全部"
+      ]
     }
   ],
   "workedExamples": [
@@ -331,53 +166,1143 @@
   ],
   "checks": [
     {
-      "ask": "$f_n(x)=x^n$ 在 $[0,1]$ 上的逐點極限 $f$ 是？",
+      "ask": "逐點收斂的定義裡，下面哪一句==正確==？",
       "options": [
-        { "label": "$f(x)=0$（$0\\le x<1$），$f(1)=1$", "correct": true },
-        { "label": "$f\\equiv0$", "why": "你看了 $x<1$ 的部分就下結論。$x=1$ 時數列是 1, 1, 1, …，極限是 1。" },
-        { "label": "極限不存在，因為 $f$ 不連續", "why": "你把「極限函數不連續」當成「不收斂」。每個 $x$ 的數列都收斂，只是收斂到一個不連續的函數。" }
+        {
+          "label": "同一個 $N$ 必須對所有 $x$ 都有效",
+          "why": "那是更強的要求（下一課的一致收斂）；這裡 $N$ 寫在 $\\forall x$ 後面"
+        },
+        {
+          "label": "不同的 $x$ 可以用不同的 $N$",
+          "correct": true
+        },
+        {
+          "label": "$N$ 只能依賴 $x$，不能依賴 $\\varepsilon$",
+          "why": "$N$ 寫在 $\\varepsilon$ 後面，一定可以依賴 $\\varepsilon$"
+        },
+        {
+          "label": "$f_n(x)$ 要隨 $n$ 遞減",
+          "why": "定義沒有要求單調，只要求最後落在帶子裡"
+        }
       ]
     },
     {
-      "ask": "$f_n(x)=x^n$，$x=0.9$，$\\varepsilon=0.01$。使 $n\\ge N$ 時 $x^n<\\varepsilon$ 的最小 $N$ 是？",
+      "ask": "$f_n(x)=nxe^{-nx^2}$ 在 $[0,1]$ 上，$\\displaystyle\\lim_{n\\to\\infty}\\int_0^1f_n$ 與 $\\displaystyle\\int_0^1\\lim_{n\\to\\infty}f_n$ 分別是？",
       "options": [
-        { "label": "44", "correct": true },
-        { "label": "43", "why": "你把 $\\frac{\\ln 0.01}{\\ln 0.9}\\approx43.71$ 無條件捨去了。$0.9^{43}\\approx0.0108$ 還不小於 0.01，要進位成 44。" },
-        { "label": "7", "why": "那是 $x=0.5$ 的答案。逐點收斂的 $N$ 隨 $x$ 改變，不能拿別的點的 $N$ 來用。" }
+        {
+          "label": "$\\frac12$ 與 $0$",
+          "correct": true
+        },
+        {
+          "label": "都是 $0$",
+          "why": "以為「每點都趨近 $0$，積分就趨近 $0$」：這正是逐點收斂會壞掉的地方"
+        },
+        {
+          "label": "都是 $\\frac12$",
+          "why": "逐點極限是 $0$ 函數，它的積分是 $0$"
+        },
+        {
+          "label": "$\\infty$ 與 $0$",
+          "why": "尖峰高度趨近 $\\infty$，但寬度同時變窄，面積趨近 $\\frac12$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "每個點各是一個數列",
+      "beats": [
+        {
+          "show": [
+            "函數列：$f_1,f_2,f_3,\\dots$，每個 $f_n:D\\to\\mathbb{R}$"
+          ],
+          "say": "這一章的主角是函數列：f 1、f 2、f 3，一直下去，每一個都是定義在同一個集合 D 上的函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "函數列：$f_1,f_2,f_3,\\dots$，每個 $f_n:D\\to\\mathbb{R}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "固定一個 $x\\in D$：$f_1(x),\\ f_2(x),\\ f_3(x),\\dots$ 是一個數列"
+          ],
+          "say": "關鍵的一步：把 x 固定住。f 1 of x、f 2 of x、f 3 of x，排起來就是一串數，也就是一個普通的數列。12C 的工具全部可以用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "固定一個 $x\\in D$：$f_1(x),\\ f_2(x),\\ f_3(x),\\dots$ 是一個數列",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f_n(x)=x^n$，$D=[0,1]$",
+            "• $x=\\frac12$：$\\frac12,\\ \\frac14,\\ \\frac18,\\dots\\to0$"
+          ],
+          "say": "例子：x 的 n 次方，在 0 到 1 上。x 是 2 分之 1，數列是 2 分之 1、4 分之 1、8 分之 1，趨近 0。x 是 1，每一項都是 1。一般來說，x 小於 1 時，x 的 n 次方趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f_n(x)=x^n$，$D=[0,1]$"
+            },
+            {
+              "do": "write",
+              "line": "• $x=\\frac12$：$\\frac12,\\ \\frac14,\\ \\frac18,\\dots\\to0$",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "• $x=1$：$1,\\ 1,\\ 1,\\dots\\to1$",
+              "on": "分之#4"
+            },
+            {
+              "do": "write",
+              "line": "• $0\\le x<1$：$x^n\\to0$（12C：$|q|<1$ 時 $q^n\\to0$）",
+              "on": "般來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅點：固定的 x 上，函數值往下走"
+          ],
+          "say": "圖上的紅點，是固定在 0.5 和 0.9 的兩個數列。讓 n 變大看看。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xn",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.1,
+                    1.12
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.5,
+                      "y": "0.5^floor(n)",
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.9,
+                      "y": "0.9^floor(n)",
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：0.9ⁿ = {0.9^floor(n)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1：0.9ⁿ = 0.9",
+              "on": "的兩"
+            },
+            {
+              "do": "write",
+              "line": "紅點：固定的 x 上，函數值往下走",
+              "color": "violet",
+              "on": "數列"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個點各是一個數列"
+          ],
+          "say": "0.5 那一點很快就貼到 0；0.9 那一點慢很多，但也在往下走。只有 x 等於 1 那一點一直停在 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xn",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.1,
+                    1.12
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.5,
+                      "y": "0.5^floor(n)",
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.9,
+                      "y": "0.9^floor(n)",
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：0.9ⁿ = {0.9^floor(n)}",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 40
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 40：0.9ⁿ = 0.01478",
+              "on": "但也"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐點極限：",
+            "$f(x)=\\lim_{n\\to\\infty}x^n=\\begin{cases}0,&0\\le x<1\\\\1,&x=1\\end{cases}$"
+          ],
+          "say": "每一點的極限收集起來，就得到極限函數 f：x 小於 1 時是 0，x 等於 1 時是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐點極限："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f(x)=\\lim_{n\\to\\infty}x^n={\\begin{cases}0,&0\\le x<1\\\\1,&x=1\\end{cases}}}}$",
+              "color": "red",
+              "on": "限函"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "逐點收斂的定義裡，$N$ 可以依賴什麼？",
-      "options": [
-        { "label": "$\\varepsilon$ 與 $x$ 都可以", "correct": true },
-        { "label": "只能依賴 $\\varepsilon$", "why": "那是一致收斂的要求（$\\forall\\varepsilon\\ \\exists N\\ \\forall x$）。逐點收斂先固定 $x$ 才找 $N$。" },
-        { "label": "只能依賴 $x$", "why": "$N$ 一定要能隨 $\\varepsilon$ 變大；$\\varepsilon$ 越小，通常要走越多項。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上逐點收斂}\\iff\\\\&\\forall x\\in D\\ \\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\\\&\\quad\\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "正式定義：f n 在 D 上逐點收斂到 f，意思是對所有屬於 D 的 x，對所有正的艾普西隆，存在 N，使得 n 大於等於 N 時，f n of x 跟 f of x 的距離小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&f_n\\to f\\ \\text{在 }D\\text{ 上逐點收斂}\\iff\\\\&\\forall x\\in D\\ \\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\\\&\\quad\\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "白話：對每一個 $x$，數列 $f_n(x)\\to f(x)$（12C 的 $\\varepsilon$-$N$）"
+          ],
+          "say": "白話說，就是每一個 x 各自用 12C 的艾普西隆 N 定義收斂。沒有新東西。",
+          "board": [
+            {
+              "do": "write",
+              "line": "白話：對每一個 $x$，數列 $f_n(x)\\to f(x)$（12C 的 $\\varepsilon$-$N$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$N$ 寫在 $x$ 和 $\\varepsilon$ 後面："
+          ],
+          "say": "重點在量詞的順序：N 寫在 x 和艾普西隆的後面，所以 N 可以同時依賴艾普西隆和 x。換一個點，可以換一個 N。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N$ 寫在 $x$ 和 $\\varepsilon$ 後面：",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "$N=N(\\varepsilon,x)$，可以看 $x$ 再決定",
+              "color": "red",
+              "on": "可以#1"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：$N$ 會跟著 $x$ 跑",
+      "beats": [
+        {
+          "show": [
+            "$f_n(x)=x^n$，$\\varepsilon=0.01$，$0<x<1$：要 $x^n<0.01$",
+            "$x^n<0.01\\iff n\\ln x<\\ln0.01\\iff n>\\frac{\\ln0.01}{\\ln x}$"
+          ],
+          "say": "用 x 的 n 次方、艾普西隆 0.01 來算。要 x 的 n 次方小於 0.01，兩邊取自然對數，再除以自然對數 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_n(x)=x^n$，$\\varepsilon=0.01$，$0<x<1$：要 $x^n<0.01$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^n<0.01\\iff n\\ln x<\\ln0.01\\iff n>\\frac{\\ln0.01}{\\ln x}$",
+              "on": "來算"
+            },
+            {
+              "do": "write",
+              "line": "　$\\ln x<0$，除過去不等號反向",
+              "color": "violet",
+              "on": "兩邊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $x=0.5$：$n>6.64$，最小 $N=7$",
+            "• $x=0.9$：$n>43.7$，最小 $N=44$"
+          ],
+          "say": "自然對數 x 是負的，除過去不等號反向。代進去：x 是 0.5，N 是 7；x 是 0.9，N 是 44；x 是 0.99，N 跳到 459。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $x=0.5$：$n>6.64$，最小 $N=7$"
+            },
+            {
+              "do": "write",
+              "line": "• $x=0.9$：$n>43.7$，最小 $N=44$",
+              "on": "44"
+            },
+            {
+              "do": "write",
+              "line": "• $x=0.99$：$n>458.2$，最小 $N=459$",
+              "on": "99"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$x=0.999$ 時，最小的 $N$ 大約是？",
+        "options": [
+          {
+            "label": "$459$",
+            "why": "那是 $x=0.99$ 的答案；$x$ 越靠近 $1$，要的 $N$ 越大"
+          },
+          {
+            "label": "$4603$",
+            "correct": true
+          },
+          {
+            "label": "$46$",
+            "why": "方向反了：$x$ 越接近 $1$，$x^n$ 掉得越慢"
+          },
+          {
+            "label": "不存在",
+            "why": "$0.999<1$，$0.999^n$ 還是會趨近 $0$，只是很慢"
+          }
+        ]
+      }
+    },
+    {
+      "title": "沒有共同的 $N$",
+      "beats": [
+        {
+          "show": [
+            "綠帶是 0 ± 0.1；虛線右邊還沒進帶子"
+          ],
+          "say": "用寬一點的帶子 0.1 來看。虛線右邊的點，還沒進帶子。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": 1,
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.995
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "0.1^(1/floor(n))",
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：x > {0.1^(1/floor(n))} 還在帶子外",
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 2：x > 0.3162 還在帶子外",
+              "on": "來看"
+            },
+            {
+              "do": "write",
+              "line": "綠帶是 0 ± 0.1；虛線右邊還沒進帶子",
+              "color": "violet",
+              "on": "邊的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有共同的 $N$"
+          ],
+          "say": "n 越大，虛線往右移，可是永遠到不了 1。總有一段靠近 1 的點還在外面。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tube",
+                  "window": [
+                    0,
+                    1.05,
+                    -0.15,
+                    1.1
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.1",
+                      "from": 0,
+                      "to": 1,
+                      "color": "green",
+                      "under": "-0.1"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^floor(n)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.995
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "0.1^(1/floor(n))",
+                      "color": "pencil"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：x > {0.1^(1/floor(n))} 還在帶子外",
+                  "height": 270
+                },
+                "vals": {
+                  "n": 60
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 60：x > 0.9624 還在帶子外",
+              "on": "總有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個 $x$ 都有 $N$，但 $\\sup_x N(x)=\\infty$：沒有一個 $N$ 管得了全部"
+          ],
+          "say": "所以每一個 x 都找得到 N，逐點收斂成立；但 N 對 x 取上確界是無限大，沒有一個共同的 N。下一課就專門處理這件事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個 $x$ 都有 $N$，但 $\\sup_x N(x)=\\infty$：沒有一個 $N$ 管得了全部",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f_n(x)=\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$ 上，下列何者正確？",
-      "options": [
-        { "label": "逐點收斂到 0，但每個 $f_n$ 的最大值都是 $\\frac{1}{2}$", "correct": true },
-        { "label": "逐點收斂到 $\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 是高峰的高度，可是高峰位置 $\\frac{1}{n}$ 一直在移動；任何固定的 $x$ 上，$f_n(x)\\le\\frac{1}{nx}\\to0$。" },
-        { "label": "在 $x$ 靠近 0 的地方不收斂", "why": "你把高峰往 0 擠誤當成某個點不收斂。$x=0$ 時 $f_n(0)=0$；$x>0$ 時也 $\\to0$。每個點都收斂。" }
+      "title": "例：會移動的高峰",
+      "beats": [
+        {
+          "show": [
+            "$f_n(x)=\\frac{nx}{1+n^2x^2},\\quad x\\in[0,1]$"
+          ],
+          "say": "再一個例子：1 加 n 平方 x 平方，分之 n x，x 在 0 到 1 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_n(x)=\\frac{nx}{1+n^2x^2},\\quad x\\in[0,1]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐點極限：$x=0$ 時 $f_n(0)=0$；$x>0$ 時",
+            "$0\\le f_n(x)\\le\\frac{nx}{n^2x^2}=\\frac1{nx}\\to0$"
+          ],
+          "say": "求逐點極限。x 等於 0，每一項都是 0。x 大於 0，把分母的 1 丟掉，分母變小，分數變大，得到不超過 n x 分之 1，趨近 0。所以極限函數是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐點極限：$x=0$ 時 $f_n(0)=0$；$x>0$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le f_n(x)\\le\\frac{nx}{n^2x^2}=\\frac1{nx}\\to0$",
+              "on": "母變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "高峰：$f_n'(x)=\\dfrac{n(1-n^2x^2)}{(1+n^2x^2)^2}=0\\iff x=\\dfrac1n$",
+            "$\\max_{[0,1]}f_n=f_n\\Big(\\frac1n\\Big)=\\frac12$"
+          ],
+          "say": "再求每個 f n 的最大值。微分等於 0 的地方是 x 等於 n 分之 1，代進去，最大值永遠是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "高峰：$f_n'(x)=\\dfrac{n(1-n^2x^2)}{(1+n^2x^2)^2}=0\\iff x=\\dfrac1n$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\max_{[0,1]}f_n=f_n\\Big(\\frac1n\\Big)=\\frac12}}$",
+              "on": "的地"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "代進"
+            }
+          ]
+        },
+        {
+          "show": [
+            "高峰往 0 擠，高度不變"
+          ],
+          "say": "圖上，高峰在 n 分之 1 的位置。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "peak",
+                  "window": [
+                    0,
+                    1.02,
+                    -0.08,
+                    0.62
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x/(1+n^2*x^2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "1/n",
+                      "y": 0.5,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {n}：高峰在 x = {1/n}，高度 0.5",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 2：高峰在 x = 0.5，高度 0.5",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "高峰往 0 擠，高度不變",
+              "color": "violet",
+              "on": "的位"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：會移動的高峰"
+          ],
+          "say": "n 變大，高峰被擠向 0，高度卻一直是 2 分之 1。每一個固定的 x 都被高峰掃過一次以後就回到 0，所以逐點收斂到 0；但每一條 f n 上都有一點高 2 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "peak",
+                  "window": [
+                    0,
+                    1.02,
+                    -0.08,
+                    0.62
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x/(1+n^2*x^2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    },
+                    {
+                      "expr": "0",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "1/n",
+                      "y": 0.5,
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 2,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {n}：高峰在 x = {1/n}，高度 0.5",
+                  "height": 260
+                },
+                "vals": {
+                  "n": 40
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 40：高峰在 x = 0.025，高度 0.5",
+              "on": "一次"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "逐點收斂會弄丟什麼",
+      "beats": [
+        {
+          "show": [
+            "一、連續：每個 $x^n$ 都連續，極限 $f$ 在 $1$ 不連續"
+          ],
+          "say": "逐點收斂很弱，好性質會在極限裡弄丟。第一，連續。每個 x 的 n 次方都連續，極限函數卻在 1 跳了一下。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一、連續：每個 $x^n$ 都連續，極限 $f$ 在 $1$ 不連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換個說法：兩個極限不能交換",
+            "$\\lim_{x\\to1^-}\\lim_{n\\to\\infty}x^n=0\\ne1=\\lim_{n\\to\\infty}\\lim_{x\\to1^-}x^n$"
+          ],
+          "say": "換個說法：先讓 n 趨近無限大、再讓 x 趨近 1，得到 0；反過來先讓 x 趨近 1，得到 1。兩個極限的順序不能隨便交換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換個說法：兩個極限不能交換"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\lim_{x\\to1^-}\\lim_{n\\to\\infty}x^n=0\\ne1=\\lim_{n\\to\\infty}\\lim_{x\\to1^-}x^n}}$",
+              "on": "再讓"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "反過"
+            },
+            {
+              "do": "write",
+              "line": "　這一章每個問題都是「兩個極限能不能交換」",
+              "color": "violet",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "二、導數：$f_n(x)=\\dfrac{x^n}{n}$，$|f_n|\\le\\dfrac1n\\to0$，$f\\equiv0$"
+          ],
+          "say": "第二，導數。n 分之 x 的 n 次方，絕對值不超過 n 分之 1，趨近 0。可是它的導數是 x 的 n 減 1 次方，在 1 那一點永遠是 1，不會趨近極限函數的導數 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "二、導數：$f_n(x)=\\dfrac{x^n}{n}$，$|f_n|\\le\\dfrac1n\\to0$，$f\\equiv0$"
+            },
+            {
+              "do": "write",
+              "line": "但 $f_n'(x)=x^{n-1}$，$f_n'(1)=1\\not\\to0=f'(1)$",
+              "on": "導數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三、積分：$f_n(x)=nxe^{-nx^2}$，$x\\in[0,1]$"
+          ],
+          "say": "第三，積分。n x 乘 e 的負 n x 平方次方。x 大於 0 時，把 e 的負 x 平方叫 q，它在 0 和 1 之間，函數值是 x 乘 n 乘 q 的 n 次方，趨近 0。x 等於 0 本來就是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三、積分：$f_n(x)=nxe^{-nx^2}$，$x\\in[0,1]$"
+            },
+            {
+              "do": "write",
+              "line": "$x>0$：令 $q=e^{-x^2}\\in(0,1)$，則 $f_n(x)=x\\cdot nq^n\\to0$",
+              "on": "的負#2"
+            },
+            {
+              "do": "write",
+              "line": "　$nq^n\\to0$：比值 $\\frac{(n+1)q^{n+1}}{nq^n}\\to q<1$",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int_0^1nxe^{-nx^2}\\,dx&=\\Big[-\\tfrac12e^{-nx^2}\\Big]_0^1\\\\&=\\frac{1-e^{-n}}2\\to\\frac12\\end{aligned}$"
+          ],
+          "say": "可是積分可以直接算：1 減 e 的負 n 次方，再除以 2，趨近 2 分之 1。極限函數的積分是 0，f n 的積分卻趨近 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}\\int_0^1nxe^{-nx^2}\\,dx&=\\Big[-\\tfrac12e^{-nx^2}\\Big]_0^1\\\\&=\\frac{1-e^{-n}}2\\to\\frac12\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "尖峰：面積還在",
+      "beats": [
+        {
+          "show": [
+            "尖峰變高變窄，面積不變小"
+          ],
+          "say": "圖上，尖峰越來越高、越來越窄，往 0 擠過去。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "spike",
+                  "window": [
+                    0,
+                    1,
+                    -0.3,
+                    4.6
+                  ],
+                  "area": [
+                    {
+                      "expr": "n*x*exp(-n*x^2)",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x*exp(-n*x^2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 100,
+                      "value": 3,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {(1-exp(-n))/2}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 3：面積 = 0.4751",
+              "on": "越高"
+            },
+            {
+              "do": "write",
+              "line": "尖峰變高變窄，面積不變小",
+              "color": "violet",
+              "on": "擠過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "尖峰：面積還在"
+          ],
+          "say": "函數在每一點都變回 0，面積卻一直守在 2 分之 1 附近。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "spike",
+                  "window": [
+                    0,
+                    1,
+                    -0.3,
+                    4.6
+                  ],
+                  "area": [
+                    {
+                      "expr": "n*x*exp(-n*x^2)",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x*exp(-n*x^2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 100,
+                      "value": 3,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {(1-exp(-n))/2}",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 100
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 100：面積 = 0.5",
+              "on": "一直"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "共同的病因",
+      "beats": [
+        {
+          "show": [
+            "三個例子的共同點：",
+            "• 每個 $f_n$ 都很好（連續、可積、可微）"
+          ],
+          "say": "三個例子的共同點：每一個 f n 都很好，逐點極限也存在，但好性質不會自動傳給極限函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三個例子的共同點："
+            },
+            {
+              "do": "write",
+              "line": "• 每個 $f_n$ 都很好（連續、可積、可微）",
+              "on": "都很"
+            },
+            {
+              "do": "write",
+              "line": "• 逐點極限存在",
+              "on": "點極"
+            },
+            {
+              "do": "write",
+              "line": "• 好性質不會自動傳到極限",
+              "on": "不會"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題出在：$N$ 可以隨 $x$ 變大，某一區域一直沒收好"
+          ],
+          "say": "問題出在 N 可以隨 x 變得很大：總有一塊地方，例如 1 的旁邊、或 0 的旁邊，一直沒收好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題出在：$N$ 可以隨 $x$ 變大，某一區域一直沒收好",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 固定 $x$，$f_n(x)$ 是一個數列；它的極限就是 $f(x)$",
+            "• 逐點收斂：$\\forall x\\ \\forall\\varepsilon\\ \\exists N(\\varepsilon,x)\\ \\forall n\\ge N$"
+          ],
+          "say": "整理一下：逐點收斂，就是每個 x 各自是一個收斂的數列，N 可以隨 x 改變。它太弱，連續、積分、導數都可能在極限裡壞掉，本質上都是兩個極限不能交換。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 固定 $x$，$f_n(x)$ 是一個數列；它的極限就是 $f(x)$"
+            },
+            {
+              "do": "write",
+              "line": "• 逐點收斂：$\\forall x\\ \\forall\\varepsilon\\ \\exists N(\\varepsilon,x)\\ \\forall n\\ge N$",
+              "on": "各自"
+            },
+            {
+              "do": "write",
+              "line": "• $x^n$：$N$ 隨 $x\\to1$ 趨近 $\\infty$，沒有共同的 $N$",
+              "on": "可以"
+            },
+            {
+              "do": "write",
+              "line": "• 會弄丟：連續（$x^n$）、積分（$nxe^{-nx^2}$）、導數（$\\frac{x^n}n$）",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "• 都是「兩個極限能不能交換」",
+              "on": "本質"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：一致收斂：一個 $N$ 管全部"
+          ],
+          "say": "下一課，我們要求一個 N 管住所有的 x，這就是一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：一致收斂：一個 $N$ 管全部"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["uniform-convergence", "convergence-theorem", "sequence"],
-    "fine": ["pointwise-limit-function", "pointwise-n-depends-on-x", "pointwise-moving-bump", "pointwise-integral-mismatch"]
+    "coarse": [
+      "uniform-convergence",
+      "convergence-theorem",
+      "sequence"
+    ],
+    "fine": [
+      "pointwise-limit-function",
+      "pointwise-n-depends-on-x",
+      "pointwise-moving-bump",
+      "pointwise-integral-mismatch"
+    ]
   },
   "practice": [
-    { "id": "an-uf-004", "core": true, "trains": "pointwise-moving-bump" },
-    { "id": "lb-con-004", "core": true, "trains": "pointwise-integral-mismatch" },
-    { "id": "lb-con-003", "core": true, "trains": "pointwise-integral-mismatch" },
-    { "id": "cg-12f-002", "core": true, "trains": "pointwise-limit-function" },
-    { "id": "cg-12f-004", "core": true, "trains": "pointwise-n-depends-on-x" },
-    { "id": "cg-12f-001", "core": true, "trains": "pointwise-limit-function" },
-    { "id": "lb-con-005", "trains": "pointwise-integral-mismatch" },
-    { "id": "cg-12f-003", "trains": "pointwise-limit-function" },
-    { "id": "cg-12f-005", "trains": "pointwise-n-depends-on-x" },
-    { "id": "lb-con-001", "challenge": true, "trains": "pointwise-integral-mismatch", "note": "挑戰：$n^2x e^{-nx}$ 逐點收斂到 0，令 $u=nx$ 算出 $\\int_0^1=1-(n+1)e^{-n}$。" }
+    {
+      "id": "an-uf-004",
+      "core": true,
+      "trains": "pointwise-moving-bump"
+    },
+    {
+      "id": "lb-con-004",
+      "core": true,
+      "trains": "pointwise-integral-mismatch"
+    },
+    {
+      "id": "lb-con-003",
+      "core": true,
+      "trains": "pointwise-integral-mismatch"
+    },
+    {
+      "id": "cg-12f-002",
+      "core": true,
+      "trains": "pointwise-limit-function"
+    },
+    {
+      "id": "cg-12f-004",
+      "core": true,
+      "trains": "pointwise-n-depends-on-x"
+    },
+    {
+      "id": "cg-12f-001",
+      "core": true,
+      "trains": "pointwise-limit-function"
+    },
+    {
+      "id": "lb-con-005",
+      "trains": "pointwise-integral-mismatch"
+    },
+    {
+      "id": "cg-12f-003",
+      "trains": "pointwise-limit-function"
+    },
+    {
+      "id": "cg-12f-005",
+      "trains": "pointwise-n-depends-on-x"
+    },
+    {
+      "id": "lb-con-001",
+      "challenge": true,
+      "trains": "pointwise-integral-mismatch",
+      "note": "挑戰：$n^2x e^{-nx}$ 逐點收斂到 0，令 $u=nx$ 算出 $\\int_0^1=1-(n+1)e^{-n}$。"
+    }
   ],
   "gaps": []
 }

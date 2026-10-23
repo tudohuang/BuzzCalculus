@@ -1,7 +1,8 @@
 {
   "id": "radius-of-convergence",
   "title": "收斂半徑",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
   "prerequisites": [
     "power-series",
@@ -15,47 +16,128 @@
     "sequence-limit"
   ],
   "objectives": [
-    "說出冪級數收斂範圍的三種可能：只有中心（$R=0$）、全部實數（$R=\\infty$）、或以中心為圓心半徑 $R$ 的區間。",
-    "用比值（或根值）判別對整個項做計算，求出 $R$。",
-    "處理只有偶次方的級數，以及 $R=0$、$R=\\infty$ 的情況。"
+    "說出冪級數收斂範圍的三種可能：只有中心（$R=0$）、全部實數（$R=\\infty$）、或以中心為圓心半徑 $R$ 的區間（端點另外判斷）",
+    "用比值（或根值）判別對整個項做計算，求出 $R$",
+    "處理只有偶次方的級數，以及 $R=0$、$R=\\infty$ 的情況"
   ],
-  "visual": "x 軸上以中心 a 為圓心畫一段可伸縮的區間。對 Σ xⁿ/(n·3ⁿ)，取不同的 x 點擊：|x| < 3 的點亮綠色並顯示部分和收斂，|x| > 3 的點亮紅色、部分和爆掉，正好落在 ±3 的兩個端點標成問號：收斂半徑只負責內部和外部，端點留給下一課。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 三種可能，沒有第四種",
+      "heading": "① 三種可能",
       "body": [
-        "冪級數 $\\sum c_n(x-a)^n$ 的收斂範圍只有三種樣子：",
-        "$R=0$：只在 $x=a$ 收斂。$R=\\infty$：所有實數都絕對收斂。$0<R<\\infty$：$|x-a|<R$ 時絕對收斂，$|x-a|>R$ 時發散；$|x-a|=R$ 的兩個端點，定理什麼都不說，要各自檢查（〈收斂區間〉）。",
-        "這個 $R$ 叫收斂半徑。收斂範圍不會是兩段分開的區間，也不會只在中心的一側。"
-      ],
-      "collapsible": false
+        "冪級數 $\\sum c_n(x-a)^n$ 收斂的地方，只有三種樣子：",
+        "• 只在中心 $x=a$ 收斂：$R=0$",
+        "• 對所有實數 $x$ 都收斂：$R=\\infty$",
+        "• 有一個 $R>0$：$|x-a|<R$ 收斂，$|x-a|>R$ 發散",
+        "$R$ 叫做收斂半徑",
+        "兩個端點 $x=a\\pm R$：什麼都有可能，要另外判斷",
+        "例：上一課 $\\sum x^n$ 的 $R=1$，端點 $\\pm1$ 都發散"
+      ]
     },
     {
-      "heading": "② 怎麼算：對整個項用比值判別",
+      "heading": "② 對整個項用比值判別",
       "body": [
-        "把 $x$ 當成固定的數，對 $\\sum|c_n(x-a)^n|$ 用〈比值判別〉。",
-        "若 $\\left|\\frac{c_{n+1}}{c_n}\\right|\\to L$，比值的極限是 $L|x-a|$。要它 $<1$，得 $|x-a|<\\frac{1}{L}$，所以 $R=\\frac{1}{L}$。$L=0$ 時 $R=\\infty$；$L=\\infty$ 時 $R=0$。",
-        "係數是「某某的 $n$ 次方」時，改用〈根值判別〉：$|c_n|^{1/n}\\to L$，一樣 $R=\\frac{1}{L}$。"
+        "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{x^n}{n\\cdot3^n}$",
+        "把 $x$ 固定，令 $a_n=\\dfrac{x^n}{n\\cdot 3^n}$，連 $x$ 一起算比值：",
+        "比值判別：$L<1$ 收斂，$L>1$ 發散",
+        "$L<1$ 時其實是 $\\sum|a_n|$ 收斂，所以絕對收斂",
+        "$|x|=3$ 時 $L=1$：比值判別沒有結論，端點留給下一課",
+        "一般的樣子：比值的極限是 $|x-a|\\cdot K$"
       ],
       "tex": [
-        "\\left|\\frac{c_{n+1}(x-a)^{n+1}}{c_n (x-a)^{n}}\\right| \\to L\\,\\lvert x-a\\rvert<1 \\iff \\lvert x-a\\rvert<\\frac{1}{L}"
-      ],
-      "collapsible": false
+        "\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)3^{n+1}}\\cdot\\frac{n\\cdot3^n}{|x|^n}=\\frac{|x|}{3}\\cdot\\frac{n}{n+1}",
+        "L=\\lim_{n\\to\\infty}\\frac{|x|}3\\cdot\\frac{n}{n+1}=\\frac{|x|}{3}",
+        "\\frac{|x|}3<1\\iff|x|<3\\qquad\\Rightarrow\\quad R=3",
+        "R=\\frac1K\\quad(K=0\\Rightarrow R=\\infty;\\ K=\\infty\\Rightarrow R=0)"
+      ]
     },
     {
-      "heading": "③ 兩個常見的細節",
+      "heading": "② 根值判別也行",
       "body": [
-        "多項式因子不影響 $R$：$\\sum n^5x^n$、$\\sum \\frac{x^n}{n^2}$ 的 $R$ 都是 1，因為 $\\frac{(n+1)^5}{n^5}\\to 1$（或 $n^{1/n}\\to 1$）。真正決定 $R$ 的是指數型的部分（$3^n$、$n!$ 之類）。",
-        "只有偶次方（例如 $\\sum \\frac{x^{2n}}{9^n}$）時，不要套 $\\frac{c_{n+1}}{c_n}$：奇數次的係數是 0，比值沒有意義。直接對整個項算比值：$\\left|\\frac{x^{2n+2}}{9^{n+1}}\\right|\\div\\left|\\frac{x^{2n}}{9^n}\\right|=\\frac{x^2}{9}<1$，得 $|x|<3$。"
+        "項裡有整個 $n$ 次方時，用根值比較快：",
+        "例：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{2n+1}\\Big)^nx^n$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sqrt[n]{|a_n|}=\\frac{n}{2n+1}|x|\\ \\to\\ \\frac{|x|}2",
+        "\\frac{|x|}{2}<1\\iff|x|<2\\qquad R=2"
+      ]
+    },
+    {
+      "heading": "③ 細節一：只有偶次方",
+      "body": [
+        "例：$\\displaystyle\\sum_{n=0}^\\infty\\frac{x^{2n}}{4^n}=1+\\frac{x^2}4+\\frac{x^4}{16}+\\cdots$",
+        "奇次方的係數是 $0$：$\\dfrac{c_{n+1}}{c_n}$ 根本不能算",
+        "照樣對整個項做比值：",
+        "也可以令 $u=\\frac{x^2}4$：幾何級數 $\\sum u^n$，$|u|<1$"
+      ],
+      "tex": [
+        "\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{x^{2n+2}}{4^{n+1}}\\cdot\\frac{4^n}{x^{2n}}=\\frac{x^2}4",
+        "\\frac{x^2}4<1\\iff x^2<4\\iff|x|<2\\qquad R=2"
+      ]
+    },
+    {
+      "heading": "③ 細節二：兩個極端",
+      "body": [
+        "$\\displaystyle\\sum_{n=0}^\\infty n!\\,x^n$：",
+        "只在 $x=0$ 收斂：$R=0$",
+        "$x=0$ 時比值是 $\\frac00$，不能用；但中心一定收斂",
+        "$\\displaystyle\\sum_{n=0}^\\infty \\frac{x^n}{n!}$：",
+        "對每個 $x$ 都 $L=0<1$：$R=\\infty$",
+        "以後會知道它的和是 $e^x$",
+        "階乘在分子：$R=0$；在分母：$R=\\infty$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(n+1)!\\,|x|^{n+1}}{n!\\,|x|^n}\\\\&=(n+1)|x|\\ \\to\\ \\infty\\quad(x\\ne0)\\end{aligned}",
+        "\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)!}\\cdot\\frac{n!}{|x|^n}=\\frac{|x|}{n+1}\\ \\to\\ 0"
+      ]
+    },
+    {
+      "heading": "③ 階乘的比值",
+      "body": [
+        "$\\displaystyle\\sum_{n=0}^\\infty\\frac{(2n)!}{(n!)^2}x^n$",
+        "檢查：$n=500$ 時比值係數 $\\frac{2\\cdot1001}{501}\\approx3.996$"
+      ],
+      "tex": [
+        "\\frac{(2n+2)!}{(2n)!}=(2n+2)(2n+1)",
+        "\\frac{(n!)^2}{((n+1)!)^2}=\\frac{1}{(n+1)^2}",
+        "\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(2n+2)(2n+1)}{(n+1)^2}|x|\\\\&=\\frac{2(2n+1)}{n+1}|x|\\ \\to\\ 4|x|\\end{aligned}",
+        "4|x|<1\\iff|x|<\\frac14\\qquad R=\\frac14"
+      ]
     },
     {
       "heading": "④ 為什麼只有三種",
       "body": [
-        "關鍵引理：若級數在某個 $x_0\\ne a$ 收斂，則所有 $|x-a|<|x_0-a|$ 的 $x$ 都絕對收斂。理由：收斂表示各項 $c_n(x_0-a)^n\\to 0$，所以有界，$|c_n(x_0-a)^n|\\le M$。於是 $|c_n(x-a)^n|\\le M\\cdot r^n$，其中 $r=\\frac{|x-a|}{|x_0-a|}<1$，跟幾何級數比較即得。收斂的點會把整個更靠近中心的範圍「拉進來」，取這些 $|x_0-a|$ 的最小上界就是 $R$。"
+        "關鍵引理：若 $\\sum c_nx^n$ 在 $x_0\\ne0$ 收斂，則",
+        "中心取 $0$ 寫起來簡單；中心是 $a$ 就把 $x$ 換成 $x-a$",
+        "證明：$\\sum c_nx_0^n$ 收斂 ⇒ 項 $c_nx_0^n\\to0$",
+        "趨近 $0$ 的數列有界：存在 $M$ 使 $|c_nx_0^n|\\le M$",
+        "$\\sum Mr^n$ 是收斂的幾何級數，由比較判別，$\\sum|c_nx^n|$ 收斂　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "|x|<|x_0|\\ \\Rightarrow\\ \\sum c_nx^n\\ \\text{絕對收斂}",
+        "|c_nx^n|=|c_nx_0^n|\\cdot\\Big|\\frac{x}{x_0}\\Big|^n\\le M\\,r^n,\\quad r=\\Big|\\frac{x}{x_0}\\Big|<1"
+      ]
+    },
+    {
+      "heading": "④ 為什麼只有三種（續）",
+      "body": [
+        "反過來：在 $x_1$ 發散，則 $|x|>|x_1|$ 都發散",
+        "令 $R=\\sup\\{|x|:\\sum c_nx^n\\text{ 收斂}\\}$",
+        "• 集合只有 $0$：$R=0$",
+        "• 沒有上界：$R=\\infty$，每個 $x$ 都比某個收斂點近",
+        "• 否則 $0<R<\\infty$：$|x|<R$ 收斂，$|x|>R$ 發散"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 三種：$R=0$、$R=\\infty$、$0<R<\\infty$（端點另判）",
+        "• 算法：對整個項用比值或根值，解 $L<1$",
+        "• 只有偶次方：照樣對整個項，最後開根號",
+        "• 階乘在分子 $R=0$；在分母 $R=\\infty$",
+        "• 為什麼：一點收斂 ⇒ 更近的點都絕對收斂",
+        "下一課：收斂區間（端點怎麼辦）"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,70 +186,44 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum \\frac{n x^n}{5^n}$ 的收斂半徑是？",
+      "ask": "$\\displaystyle\\sum_{n=0}^\\infty\\frac{n^2x^n}{5^n}$ 的收斂半徑 $R=$？",
       "options": [
         {
-          "label": "5",
+          "label": "$5$",
           "correct": true
         },
         {
-          "label": "$\\frac{1}{5}$",
-          "why": "比值 $\\to\\frac{|x|}{5}$，要 $<1$ 得 $|x|<5$。$L=\\frac{1}{5}$ 是比值的係數，$R$ 是它的倒數。"
+          "label": "$\\dfrac15$",
+          "why": "比值是 $\\frac{|x|}{5}$，要 $<1$ 解出 $|x|<5$，不是 $\\frac15$"
         },
         {
-          "label": "1",
-          "why": "$n$ 這個多項式因子不影響 $R$，但 $5^n$ 會。"
+          "label": "$25$",
+          "why": "$n^2$ 的比值趨近 $1$，不影響 $R$"
+        },
+        {
+          "label": "$1$",
+          "why": "分母的 $5^n$ 會改變半徑，不是只看 $x^n$"
         }
       ]
     },
     {
-      "ask": "$\\sum \\frac{x^{2n}}{n^2\\,9^n}$ 的收斂半徑是？",
+      "ask": "$\\dfrac{(2n+2)!}{(2n)!}$ 化簡是？",
       "options": [
         {
-          "label": "3",
+          "label": "$(2n+2)(2n+1)$",
           "correct": true
         },
         {
-          "label": "9",
-          "why": "每一項是 $(x^2)^n$，比值 $\\to\\frac{x^2}{9}$，條件是 $x^2<9$，也就是 $|x|<3$。"
+          "label": "$2n+2$",
+          "why": "從 $2n$ 到 $2n+2$ 差了兩個因數，不是一個"
         },
         {
-          "label": "$\\frac{1}{9}$",
-          "why": "$R$ 是 $x$ 能走多遠；$\\frac{x^2}{9}<1$ 給的是 $|x|<3$。"
-        }
-      ]
-    },
-    {
-      "ask": "某冪級數 $\\sum c_nx^n$ 的收斂半徑 $R=2$。在 $x=3$？",
-      "options": [
-        {
-          "label": "發散",
-          "correct": true
+          "label": "$2$",
+          "why": "階乘不能這樣相除；$\\frac{(2n+2)!}{(2n)!}$ 不是 $\\frac{2n+2}{2n}$"
         },
         {
-          "label": "收斂",
-          "why": "$|x|>R$ 時一定發散，這是定理的一部分。"
-        },
-        {
-          "label": "要另外檢查",
-          "why": "需要另外檢查的只有 $|x|=R$ 的兩個端點；$x=3$ 在外面，一定發散。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\sum \\frac{3^n x^n}{n^2}$ 的收斂半徑是？",
-      "options": [
-        {
-          "label": "$\\frac{1}{3}$",
-          "correct": true
-        },
-        {
-          "label": "3",
-          "why": "$3^n$ 在係數裡（分子），比值 $\\to 3|x|$，要 $<1$ 得 $|x|<\\frac{1}{3}$。"
-        },
-        {
-          "label": "1",
-          "why": "$n^2$ 不影響，但 $3^n$ 會讓半徑縮成 $\\frac{1}{3}$。"
+          "label": "$(n+1)(n+2)$",
+          "why": "這是 $\\frac{(n+2)!}{n!}$；這裡是 $2n$ 的階乘"
         }
       ]
     }
@@ -176,240 +232,736 @@
     {
       "title": "三種可能",
       "beats": [
-        { "show": ["$R=0$：只在 $x=a$ 收斂"],
-          "say": "冪級數收斂的地方只有三種樣子。第一種最窄：只在中心 a 收斂，其他地方全部發散。",
+        {
+          "show": [
+            "冪級數 $\\sum c_n(x-a)^n$ 收斂的地方，只有三種樣子："
+          ],
+          "say": "上一課說過，冪級數收斂的地方是以中心為中點的區間。精確地說，只有三種可能。",
           "board": [
-            {"do":"write","line":"${{r0:R=0}}$：只在 $x=a$ 收斂"},
-            {"do":"focus","term":"r0","on":"最窄"}
-          ] },
-        { "show": ["$R=\\infty$：所有實數都絕對收斂"],
-          "say": "第二種最寬：不管 x 是多少，都絕對收斂。",
+            {
+              "do": "write",
+              "line": "冪級數 $\\sum c_n(x-a)^n$ 收斂的地方，只有三種樣子："
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 只在中心 $x=a$ 收斂：$R=0$",
+            "• 對所有實數 $x$ 都收斂：$R=\\infty$"
+          ],
+          "say": "第一，只在中心收斂，說 R 等於 0。第二，所有實數都收斂，說 R 是無限大。第三，有一個正數 R，距離中心小於 R 就收斂，大於 R 就發散。",
           "board": [
-            {"do":"write","line":"${{ri:R=\\infty}}$：所有實數都絕對收斂"},
-            {"do":"focus","term":"ri","on":"最寬"}
-          ] },
-        { "show": ["$\\sum|a_n|$ 收斂 ⇒ $\\sum a_n$ 收斂"],
-          "note": "絕對收斂比普通收斂更強。",
-          "say": "絕對收斂是指每一項先取絕對值再加，也會收斂。這樣原本的級數一定也收斂，所以是比普通收斂更強的條件。",
+            {
+              "do": "write",
+              "line": "• 只在中心 $x=a$ 收斂：$R=0$"
+            },
+            {
+              "do": "write",
+              "line": "• 對所有實數 $x$ 都收斂：$R=\\infty$",
+              "on": "實數"
+            },
+            {
+              "do": "write",
+              "line": "• 有一個 $R>0$：$|x-a|<R$ 收斂，$|x-a|>R$ 發散",
+              "on": "距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$R$ 叫做收斂半徑"
+          ],
+          "say": "這個 R 叫做收斂半徑。沒有第四種，例如不會只在兩個分開的區間收斂。",
           "board": [
-            {"do":"write","line":"$\\sum|a_n|$ 收斂 ⇒ $\\sum a_n$ 收斂"}
-          ] },
-        { "show": ["$|x-a|<R$ 收斂，$|x-a|>R$ 發散"],
-          "note": "這個 $R$ 叫收斂半徑。",
-          "say": "第三種：離中心不到 R 就絕對收斂，超過 R 就發散。R 叫做收斂半徑。",
+            {
+              "do": "write",
+              "line": "$R$ 叫做收斂半徑",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫在數線上：中心 a 左右各 R 的範圍內，絕對收斂；範圍外發散。",
           "board": [
-            {"do":"write","line":"$|x-a|<{{rr:R}}$ 收斂，$|x-a|>R$ 發散"},
-            {"do":"underline","term":"rr","label":"收斂半徑","on":"R 叫做"}
-          ] },
-        { "show": ["$|x-a|=R$：兩個端點另外查"],
-          "note": "定理在端點什麼都不說，看〈收斂區間〉。",
-          "say": "剛好距離 R 的兩個端點，定理什麼都不說，要各自檢查。不會有兩段分開的區間。",
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 250\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"10\" y1=\"120\" x2=\"630\" y2=\"120\" stroke=\"var(--ink)\" stroke-width=\"3\"/><line x1=\"160\" y1=\"120\" x2=\"480\" y2=\"120\" stroke=\"var(--green)\" stroke-width=\"14\"/><line x1=\"15\" y1=\"120\" x2=\"135\" y2=\"120\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-dasharray=\"14 10\"/><line x1=\"505\" y1=\"120\" x2=\"625\" y2=\"120\" stroke=\"var(--red)\" stroke-width=\"7\" stroke-dasharray=\"14 10\"/><circle cx=\"320\" cy=\"120\" r=\"9\" fill=\"var(--ink)\"/><circle cx=\"160\" cy=\"120\" r=\"13\" fill=\"#f5d56e\" stroke=\"var(--ink)\" stroke-width=\"3\"/><circle cx=\"480\" cy=\"120\" r=\"13\" fill=\"#f5d56e\" stroke=\"var(--ink)\" stroke-width=\"3\"/><text x=\"320\" y=\"172\" text-anchor=\"middle\" font-size=\"38\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</text><text x=\"160\" y=\"172\" text-anchor=\"middle\" font-size=\"36\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">a−R</text><text x=\"480\" y=\"172\" text-anchor=\"middle\" font-size=\"36\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">a+R</text><text x=\"320\" y=\"80\" text-anchor=\"middle\" font-size=\"36\" fill=\"var(--green)\" style=\"font-family:inherit\">絕對收斂</text><text x=\"75\" y=\"80\" text-anchor=\"middle\" font-size=\"36\" fill=\"var(--red)\" style=\"font-family:inherit\">發散</text><text x=\"565\" y=\"80\" text-anchor=\"middle\" font-size=\"36\" fill=\"var(--red)\" style=\"font-family:inherit\">發散</text><text x=\"160\" y=\"228\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--muted)\" style=\"font-family:inherit\">端點？</text><text x=\"480\" y=\"228\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--muted)\" style=\"font-family:inherit\">端點？</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個端點 $x=a\\pm R$：什麼都有可能，要另外判斷"
+          ],
+          "say": "只有兩個端點，什麼情況都可能發生，要另外判斷。那是下一課的事。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"plot","graph":{"window":[0.4,5.6,-1,1],"ticks":false,"curves":[{"expr":"0","domain":[2,4],"color":"green"},{"expr":"0","domain":[0.5,2],"color":"red"},{"expr":"0","domain":[4,5.5],"color":"red"}],"points":[{"x":3,"y":0},{"x":2,"y":0,"open":true},{"x":4,"y":0,"open":true}],"labels":[{"x":2,"y":-0.6,"text":"a−R","anchor":"middle"},{"x":3,"y":-0.6,"text":"a","anchor":"middle"},{"x":4,"y":-0.6,"text":"a+R","anchor":"middle"},{"x":2,"y":0.4,"text":"?","anchor":"middle"},{"x":4,"y":0.4,"text":"?","anchor":"middle"}]},"on":"兩個端點"}
-          ] },
-        { "show": ["端點上比值剛好等於 1"],
-          "note": "判別法分不出來，所以端點各自查。",
-          "say": "端點上比值剛好等於一，判別法分不出來，所以要各自檢查。收斂的點會把靠近中心的全拉進來，所以範圍連成一段。",
-          "board": [
-            {"do":"write","line":"端點：比值 $=1$，判別不出來"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "兩個端點 $x=a\\pm R$：什麼都有可能，要另外判斷",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　例：上一課 $\\sum x^n$ 的 $R=1$，端點 $\\pm1$ 都發散",
+              "color": "violet",
+              "on": "要另"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "對整個項用比值",
+      "title": "對整個項用比值判別",
       "beats": [
-        { "show": ["比值 $\\rho<1$ 收斂，$\\rho>1$ 發散"],
-          "note": "直覺：像公比小於 1 的幾何級數。",
-          "say": "先複習比值判別：後一項除以前一項取絕對值，極限小於一就收斂，大於一就發散。直覺是像公比小於一的幾何級數。",
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{x^n}{n\\cdot3^n}$"
+          ],
+          "say": "怎麼算 R？看例子：x 的 n 次方，除以 n 乘 3 的 n 次方。",
           "board": [
-            {"do":"write","line":"$\\rho<1$ 收斂，$\\rho>1$ 發散"}
-          ] },
-        { "show": ["$\\left|\\frac{c_{n+1}}{c_n}\\right|\\to L$ ⇒ 比值 $\\to L|x-a|$"],
-          "note": "把 $x$ 當成固定的數，用〈比值判別〉。",
-          "say": "把 x 當成固定的數，整個項做比值判別。係數的比值趨近 L，整個比值就趨近 L 乘 x 減 a 的絕對值。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{x^n}{n\\cdot3^n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $x$ 固定，令 $a_n=\\dfrac{x^n}{n\\cdot 3^n}$，連 $x$ 一起算比值：",
+            "$\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)3^{n+1}}\\cdot\\frac{n\\cdot3^n}{|x|^n}=\\frac{|x|}{3}\\cdot\\frac{n}{n+1}$"
+          ],
+          "say": "把 x 固定，它就是一個數值級數。對整個項，連 x 一起，做比值判別。約一約，剩下 3 分之 x 的絕對值，乘 n 加 1 分之 n。",
           "board": [
-            {"do":"write","line":"${{c:\\left|\\frac{c_{n+1}}{c_n}\\right|}}\\to L$ ⇒ 比值 ${{lx:\\to L|x-a|}}$"},
-            {"do":"underline","term":"c","on":"係數的比值"},
-            {"do":"underline","term":"lx","on":"整個比值就"}
-          ] },
-        { "show": ["$L|x-a|<1$ ⇔ $|x-a|<\\frac{1}{L}$","$R=\\frac{1}{L}$"],
-          "say": "要它小於一，x 離中心就要小於 L 分之一。所以半徑是 L 的倒數，不是 L 本身。",
+            {
+              "do": "write",
+              "line": "把 $x$ 固定，令 $a_n=\\dfrac{x^n}{n\\cdot 3^n}$，連 $x$ 一起算比值："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)3^{n+1}}\\cdot\\frac{n\\cdot3^n}{|x|^n}=\\frac{|x|}{3}\\cdot\\frac{n}{n+1}$",
+              "on": "約一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\lim_{n\\to\\infty}\\frac{|x|}3\\cdot\\frac{n}{n+1}=\\frac{|x|}{3}$"
+          ],
+          "say": "n 趨近無限大，n 加 1 分之 n 趨近 1，所以極限 L 是 3 分之 x 的絕對值。",
           "board": [
-            {"do":"write","line":"$L|x-a|<1$ ⇔ $|x-a|<\\frac{1}{L}$","on":"要它小於一"},
-            {"do":"write","line":"$R={{r:\\frac{1}{L}}}$","on":"所以半徑"},
-            {"do":"box","term":"r","color":"green","label":"倒數","on":"L 的倒數"}
-          ] },
-        { "show": ["$\\sum\\frac{x^n}{n\\cdot 3^n}$：比值 $\\frac{n}{n+1}\\cdot\\frac{|x|}{3}$"],
-          "say": "例子：x 的 n 次方除以 n 乘三的 n 次方。整個項相除，得到 n 加一分之 n，乘上三分之 x 的絕對值。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\lim_{n\\to\\infty}\\frac{|x|}3\\cdot\\frac{n}{n+1}=\\frac{|x|}{3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比值判別：$L<1$ 收斂，$L>1$ 發散",
+            "$\\frac{|x|}3<1\\iff|x|<3\\qquad\\Rightarrow\\quad R=3$"
+          ],
+          "say": "比值判別說：L 小於 1 收斂，大於 1 發散。3 分之 x 的絕對值小於 1，就是 x 的絕對值小於 3。收斂半徑 R 等於 3。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{x^n}{n\\cdot 3^n}$","on":"例子"},
-            {"do":"write","line":"比值 ${{a:\\frac{n}{n+1}}}\\cdot{{b:\\frac{|x|}{3}}}$","on":"整個項相除"}
-          ] },
-        { "show": ["$\\to\\frac{|x|}{3}<1$，$R=3$"],
-          "note": "分母的 $n$ 不影響半徑，決定的是 $3^n$。",
-          "say": "n 加一分之 n 趨近一，剩下三分之 x 的絕對值小於一，所以半徑是三。",
+            {
+              "do": "write",
+              "line": "比值判別：$L<1$ 收斂，$L>1$ 發散"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{|x|}3<1\\iff|x|<3\\qquad\\Rightarrow\\quad R=3}}$",
+              "color": "red",
+              "on": "大於"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "對值#1"
+            },
+            {
+              "do": "write",
+              "line": "　$L<1$ 時其實是 $\\sum|a_n|$ 收斂，所以絕對收斂",
+              "color": "violet",
+              "on": "小於#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|x|=3$ 時 $L=1$：比值判別沒有結論，端點留給下一課"
+          ],
+          "say": "x 的絕對值等於 3 的時候，L 剛好是 1，比值判別沒有結論。這就是端點要另外判斷的原因。",
           "board": [
-            {"do":"focus","term":"a","label":"→ 1","on":"趨近一"},
-            {"do":"write","line":"$\\to{{b:\\frac{|x|}{3}}}<1$，${{res:R=3}}$","on":"剩下"},
-            {"do":"box","term":"res","color":"green","on":"所以半徑"}
-          ] }
+            {
+              "do": "write",
+              "line": "$|x|=3$ 時 $L=1$：比值判別沒有結論，端點留給下一課"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的樣子：比值的極限是 $|x-a|\\cdot K$",
+            "$R=\\frac1K\\quad(K=0\\Rightarrow R=\\infty;\\ K=\\infty\\Rightarrow R=0)$"
+          ],
+          "say": "一般來說，比值的極限會長成 x 減 a 的絕對值乘上一個常數 K，R 就是 K 分之 1。K 是 0，R 是無限大；K 是無限大，R 是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的樣子：比值的極限是 $|x-a|\\cdot K$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle R=\\frac1K\\quad(K=0\\Rightarrow R=\\infty;\\ K=\\infty\\Rightarrow R=0)}}$",
+              "on": "值乘"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "是無#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "根值判別也行",
+      "beats": [
+        {
+          "show": [
+            "項裡有整個 $n$ 次方時，用根值比較快："
+          ],
+          "say": "如果項裡有一整個 n 次方，用根值判別比較快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "項裡有整個 $n$ 次方時，用根值比較快："
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{2n+1}\\Big)^nx^n$"
+          ],
+          "say": "例如 2n 加 1 分之 n，整個的 n 次方，乘 x 的 n 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{2n+1}\\Big)^nx^n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt[n]{|a_n|}=\\frac{n}{2n+1}|x|\\ \\to\\ \\frac{|x|}2$"
+          ],
+          "say": "開 n 次方根，剩下 2n 加 1 分之 n 乘 x 的絕對值，趨近 2 分之 x 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt[n]{|a_n|}=\\frac{n}{2n+1}|x|\\ \\to\\ \\frac{|x|}2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{|x|}{2}<1\\iff|x|<2\\qquad R=2$"
+          ],
+          "say": "小於 1，就是 x 的絕對值小於 2，R 等於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{|x|}{2}<1\\iff|x|<2\\qquad R=2}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "值小"
+            }
+          ]
+        }
       ],
-      "key": "比值取整個項，連 $|x-a|$ 一起算",
       "check": 0
     },
     {
-      "title": "兩個極端",
+      "title": "細節一：只有偶次方",
       "beats": [
-        { "show": ["$\\sum n!\\,x^n$：比值 $(n+1)|x|$"],
-          "say": "n 階乘乘 x 的 n 次方：相鄰兩項一除，剩 n 加一乘 x 的絕對值。",
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=0}^\\infty\\frac{x^{2n}}{4^n}=1+\\frac{x^2}4+\\frac{x^4}{16}+\\cdots$"
+          ],
+          "say": "第一個常見的細節：只有偶次方的級數。例如 x 的 2n 次方除以 4 的 n 次方。",
           "board": [
-            {"do":"write","line":"$\\sum n!\\,x^n$"},
-            {"do":"write","line":"比值 ${{q:(n+1)|x|}}$","on":"相鄰兩項"},
-            {"do":"underline","term":"q","on":"n 加一乘"}
-          ] },
-        { "show": ["$x\\ne 0$ 就 $\\to\\infty$，$R=0$"],
-          "say": "只要 x 不是零，這個比值就衝向無限大，一定發散。半徑是零，只剩中心。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=0}^\\infty\\frac{x^{2n}}{4^n}=1+\\frac{x^2}4+\\frac{x^4}{16}+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "奇次方的係數是 $0$：$\\dfrac{c_{n+1}}{c_n}$ 根本不能算"
+          ],
+          "say": "它奇次方的係數都是 0。如果背公式，拿係數相除，會除以 0，根本不能算。",
           "board": [
-            {"do":"write","line":"$x\\ne 0$：${{q:(n+1)|x|}}\\to\\infty$"},
-            {"do":"write","line":"${{r:R=0}}$，只剩中心","on":"一定發散"},
-            {"do":"box","term":"r","color":"green","on":"半徑是零"}
-          ] },
-        { "show": ["$x=3$：比值 $\\frac{3}{n+1}$"],
-          "note": "n 越大，分母越大。",
-          "say": "拿 x 等於三試試：比值是 n 加一分之三。n 取一、二、三，分母越來越大，比值越來越小。",
+            {
+              "do": "write",
+              "line": "奇次方的係數是 $0$：$\\dfrac{c_{n+1}}{c_n}$ 根本不能算",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "照樣對整個項做比值：",
+            "$\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{x^{2n+2}}{4^{n+1}}\\cdot\\frac{4^n}{x^{2n}}=\\frac{x^2}4$"
+          ],
+          "say": "解法：照樣對整個項做比值。下一項除以這一項，剩下 4 分之 x 平方。",
           "board": [
-            {"do":"write","line":"$x=3$：比值 $\\frac{3}{n+1}$"}
-          ] },
-        { "show": ["$\\sum\\frac{x^n}{n!}$：比值 $\\frac{|x|}{n+1}$"],
-          "note": "階乘換到分母。",
-          "say": "階乘換到分母呢？比值變成 n 加一分之 x 的絕對值。x 固定，n 一直變大。",
+            {
+              "do": "write",
+              "line": "照樣對整個項做比值："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{x^{2n+2}}{4^{n+1}}\\cdot\\frac{4^n}{x^{2n}}=\\frac{x^2}4$",
+              "on": "以這"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{x^2}4<1\\iff x^2<4\\iff|x|<2\\qquad R=2$"
+          ],
+          "say": "4 分之 x 平方小於 1，就是 x 平方小於 4，x 的絕對值小於 2。R 等於 2，不是 4。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{x^n}{n!}$","on":"階乘換到"},
-            {"do":"write","line":"比值 ${{q:\\frac{|x|}{n+1}}}$","on":"比值變成"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{x^2}4<1\\iff x^2<4\\iff|x|<2\\qquad R=2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "平方#2"
+            },
+            {
+              "do": "write",
+              "line": "　也可以令 $u=\\frac{x^2}4$：幾何級數 $\\sum u^n$，$|u|<1$",
+              "color": "violet",
+              "on": "小於#3"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$\\sum\\frac{x^n}{n!}$ 的收斂半徑是？",
+        "ask": "$\\displaystyle\\sum_{n=0}^\\infty 9^nx^{2n+1}$ 的收斂半徑是？",
         "options": [
           {
-            "label": "$R=\\infty$",
+            "label": "$\\dfrac13$",
             "correct": true
           },
           {
-            "label": "$R=0$",
-            "why": "比值 $\\frac{|x|}{n+1}\\to 0<1$，不管 $x$ 多大都收斂。"
+            "label": "$\\dfrac19$",
+            "why": "忘了開根號：$9x^2<1$ 是 $x^2<\\frac19$"
           },
           {
-            "label": "$R=1$",
-            "why": "比值的極限是 0，不是 1；$R=\\frac{1}{L}$ 在 $L=0$ 時是 $\\infty$。"
+            "label": "$9$",
+            "why": "方向反了：係數大，半徑小"
+          },
+          {
+            "label": "$3$",
+            "why": "$9x^2<1$ 解出 $|x|<\\frac13$，不是 $3$"
           }
         ]
       }
     },
     {
-      "title": "誰決定 $R$",
+      "title": "細節二：兩個極端",
       "beats": [
-        { "show": ["$\\sum n^5x^n$、$\\sum\\frac{x^n}{n^2}$：$R=1$"],
-          "say": "n 的五次方、n 平方這種多項式因子，比值都趨近一，不會改變半徑。",
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=0}^\\infty n!\\,x^n$：",
+            "$\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(n+1)!\\,|x|^{n+1}}{n!\\,|x|^n}\\\\&=(n+1)|x|\\ \\to\\ \\infty\\quad(x\\ne0)\\end{aligned}$"
+          ],
+          "say": "第二個細節：兩個極端。n 階乘乘 x 的 n 次方。比值是 n 加 1 乘 x 的絕對值，只要 x 不是 0，就趨近無限大。",
           "board": [
-            {"do":"write","line":"$\\sum n^5x^n$、$\\sum\\frac{x^n}{n^2}$"},
-            {"do":"write","line":"多項式因子：比值 $\\to 1$","on":"多項式因子"},
-            {"do":"write","line":"$R=1$","on":"不會改變"}
-          ] },
-        { "show": ["$\\frac{(n+1)^5}{n^5}\\to 1$"],
-          "say": "n 加一的五次方除以 n 的五次方，n 很大時兩個差不多，比值就是一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum_{n=0}^\\infty n!\\,x^n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(n+1)!\\,|x|^{n+1}}{n!\\,|x|^n}\\\\&=(n+1)|x|\\ \\to\\ \\infty\\quad(x\\ne0)\\end{aligned}}$",
+              "on": "的絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只在 $x=0$ 收斂：$R=0$"
+          ],
+          "say": "所以除了中心 0，處處發散。R 等於 0。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{f:\\frac{(n+1)^5}{n^5}}}$","on":"除以"},
-            {"do":"transform","line":"${{f:\\frac{(n+1)^5}{n^5}}}=\\left(1+\\frac{1}{n}\\right)^5\\to 1$","on":"n 很大時"}
-          ] },
-        { "show": ["決定 $R$ 的是 $3^n$、$n!$ 之類"],
-          "note": "指數型的部分才會改變半徑。",
-          "say": "真正決定半徑的是指數型的部分，像三的 n 次方、n 階乘。",
+            {
+              "do": "write",
+              "line": "只在 $x=0$ 收斂：$R=0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$x=0$ 時比值是 $\\frac00$，不能用；但中心一定收斂",
+              "color": "violet",
+              "on": "處發"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=0}^\\infty \\frac{x^n}{n!}$：",
+            "$\\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)!}\\cdot\\frac{n!}{|x|^n}=\\frac{|x|}{n+1}\\ \\to\\ 0$"
+          ],
+          "say": "反過來，x 的 n 次方除以 n 階乘。比值是 n 加 1 分之 x 的絕對值，不管 x 多大，都趨近 0。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"決定 $R$ 的是指數型：${{a:3^n}}$、$n!$","on":"真正決定"},
-            {"do":"underline","term":"a","on":"三的"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "只有偶次方",
-      "beats": [
-        { "show": ["$\\sum\\frac{x^{2n}}{9^n}$"],
-          "note": "奇數次的係數是 0，$\\frac{c_{n+1}}{c_n}$ 沒有意義。",
-          "say": "只有偶次方的時候，奇數次的係數都是零，係數比值會除以零，不能套。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum_{n=0}^\\infty \\frac{x^n}{n!}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{a_{n+1}}{a_n}\\right|=\\frac{|x|^{n+1}}{(n+1)!}\\cdot\\frac{n!}{|x|^n}=\\frac{|x|}{n+1}\\ \\to\\ 0$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對每個 $x$ 都 $L=0<1$：$R=\\infty$"
+          ],
+          "say": "0 小於 1，所以每一個 x 都收斂，R 是無限大。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{x^{2n}}{9^n}$"},
-            {"do":"write","line":"奇數次的係數 $=0$","on":"奇數次"},
-            {"do":"write","line":"${{q:\\frac{c_{n+1}}{c_n}}}$","on":"係數比值"},
-            {"do":"strike","term":"q","label":"不能套","on":"除以零"}
-          ] },
-        { "show": ["$\\left|\\frac{x^{2n+2}}{9^{n+1}}\\right|\\div\\left|\\frac{x^{2n}}{9^n}\\right|=\\frac{x^2}{9}$"],
-          "say": "那就直接對整個項算比值：後一項除以前一項，剩下九分之 x 平方。",
+            {
+              "do": "write",
+              "line": "對每個 $x$ 都 $L=0<1$：$R=\\infty$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　以後會知道它的和是 $e^x$",
+              "color": "violet",
+              "on": "都收"
+            }
+          ]
+        },
+        {
+          "show": [
+            "階乘在分子：$R=0$；在分母：$R=\\infty$"
+          ],
+          "say": "記法：階乘在分子，長得比任何幾何級數快，R 是 0；在分母，R 是無限大。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{x^{2n+2}}{9^{n+1}}\\div\\frac{x^{2n}}{9^n}$","on":"後一項"},
-            {"do":"write","line":"$={{r:\\frac{x^2}{9}}}$","on":"剩下"}
-          ] },
-        { "show": ["$\\frac{x^2}{9}<1$ ⇔ $|x|<3$"],
-          "say": "九分之 x 平方小於一，就是 x 平方小於九，也就是 x 的絕對值小於三。",
-          "board": [
-            {"do":"write","line":"${{r:\\frac{x^2}{9}}}<1$ ⇔ $x^2<9$"},
-            {"do":"write","line":"${{a:|x|<3}}$","on":"也就是"},
-            {"do":"box","term":"a","color":"green","on":"x 的絕對值"}
-          ] }
-      ],
-      "key": "只有偶次方：比值是 $x^2$ 不是 $x$",
-      "check": 1
+            {
+              "do": "write",
+              "line": "階乘在分子：$R=0$；在分母：$R=\\infty$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "階乘的比值",
       "beats": [
-        { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(2n)!}{(n!)^2}x^n$"],
-          "say": "再一個：二 n 階乘，除以 n 階乘的平方。階乘遇到比值判別，大部分會消掉。",
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=0}^\\infty\\frac{(2n)!}{(n!)^2}x^n$"
+          ],
+          "say": "再看一個階乘的比值：2n 階乘，除以 n 階乘的平方，乘 x 的 n 次方。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{(2n)!}{(n!)^2}x^n$"},
-            {"do":"write","line":"比值判別：階乘大部分消掉","on":"比值判別"}
-          ] },
-        { "show": ["$\\frac{c_{n+1}}{c_n}=\\frac{(2n+2)(2n+1)}{(n+1)^2}$"],
-          "say": "相鄰係數一除，剩下二 n 加二乘二 n 加一，除以 n 加一的平方。分子分母都是二次。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum_{n=0}^\\infty\\frac{(2n)!}{(n!)^2}x^n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{(2n+2)!}{(2n)!}=(2n+2)(2n+1)$"
+          ],
+          "say": "關鍵是階乘的比值：2n 加 2 階乘除以 2n 階乘，只剩最後兩個因數，2n 加 2 乘 2n 加 1。",
           "board": [
-            {"do":"write","line":"$\\frac{c_{n+1}}{c_n}=\\frac{{{a:(2n+2)(2n+1)}}}{{{b:(n+1)^2}}}$"},
-            {"do":"underline","term":"a","on":"剩下"},
-            {"do":"underline","term":"b","on":"n 加一的平方"}
-          ] },
-        { "show": ["分子分母同除以 $n^2$"],
-          "note": "每個括號各除一個 $n$。",
-          "say": "怎麼求極限？分子分母同除以 n 平方，分子變成二加 n 分之二，乘二加 n 分之一，分母是一加 n 分之一的平方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(2n+2)!}{(2n)!}=(2n+2)(2n+1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{(n!)^2}{((n+1)!)^2}=\\frac{1}{(n+1)^2}$"
+          ],
+          "say": "n 階乘平方的比值，是 n 加 1 平方分之 1。",
           "board": [
-            {"do":"write","line":"同除以 $n^2$："},
-            {"do":"write","line":"$\\frac{(2+\\frac{2}{n})(2+\\frac{1}{n})}{(1+\\frac{1}{n})^2}$","on":"分子變成"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(n!)^2}{((n+1)!)^2}=\\frac{1}{(n+1)^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(2n+2)(2n+1)}{(n+1)^2}|x|\\\\&=\\frac{2(2n+1)}{n+1}|x|\\ \\to\\ 4|x|\\end{aligned}$"
+          ],
+          "say": "合起來，2n 加 2 跟一個 n 加 1 約掉，剩 n 加 1 分之 2 乘 2n 加 1，趨近 4。比值的極限是 4 倍 x 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\left|\\frac{a_{n+1}}{a_n}\\right|&=\\frac{(2n+2)(2n+1)}{(n+1)^2}|x|\\\\&=\\frac{2(2n+1)}{n+1}|x|\\ \\to\\ 4|x|\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$4|x|<1\\iff|x|<\\frac14\\qquad R=\\frac14$"
+          ],
+          "say": "4 倍 x 的絕對值小於 1，x 的絕對值小於 4 分之 1，R 等於 4 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle 4|x|<1\\iff|x|<\\frac14\\qquad R=\\frac14}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "的絕#2"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$n=500$ 時比值係數 $\\frac{2\\cdot1001}{501}\\approx3.996$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
       ],
-      "key": "$(2n+2)!$ 比 $(2n)!$ 多兩個因數",
-      "predict": {
-        "ask": "比值的極限與收斂半徑是？",
-        "options": [
+      "check": 1
+    },
+    {
+      "title": "為什麼只有三種",
+      "beats": [
+        {
+          "show": [
+            "關鍵引理：若 $\\sum c_nx^n$ 在 $x_0\\ne0$ 收斂，則",
+            "$|x|<|x_0|\\ \\Rightarrow\\ \\sum c_nx^n\\ \\text{絕對收斂}$"
+          ],
+          "say": "最後，為什麼只有三種？關鍵是這個引理：如果級數在某個 x 0 收斂，那麼比 x 0 更靠近中心的每一個 x，都絕對收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "關鍵引理：若 $\\sum c_nx^n$ 在 $x_0\\ne0$ 收斂，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle |x|<|x_0|\\ \\Rightarrow\\ \\sum c_nx^n\\ \\text{絕對收斂}}}$",
+              "on": "個引"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "收斂#1"
+            },
+            {
+              "do": "write",
+              "line": "　中心取 $0$ 寫起來簡單；中心是 $a$ 就把 $x$ 換成 $x-a$",
+              "color": "violet",
+              "on": "中心"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$\\sum c_nx_0^n$ 收斂 ⇒ 項 $c_nx_0^n\\to0$"
+          ],
+          "say": "證明：在 x 0 收斂，項就趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$\\sum c_nx_0^n$ 收斂 ⇒ 項 $c_nx_0^n\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "趨近 $0$ 的數列有界：存在 $M$ 使 $|c_nx_0^n|\\le M$"
+          ],
+          "say": "趨近 0 的數列一定有界，所以有一個 M，每一項的絕對值都不超過 M。",
+          "board": [
+            {
+              "do": "write",
+              "line": "趨近 $0$ 的數列有界：存在 $M$ 使 $|c_nx_0^n|\\le M$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|c_nx^n|=|c_nx_0^n|\\cdot\\Big|\\frac{x}{x_0}\\Big|^n\\le M\\,r^n,\\quad r=\\Big|\\frac{x}{x_0}\\Big|<1$"
+          ],
+          "say": "把 c n x 的 n 次方，寫成 c n x 0 的 n 次方，乘 x 0 分之 x 的 n 次方。前面不超過 M，後面的 r 小於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle |c_nx^n|=|c_nx_0^n|\\cdot\\Big|\\frac{x}{x_0}\\Big|^n\\le M\\,r^n,\\quad r=\\Big|\\frac{x}{x_0}\\Big|<1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum Mr^n$ 是收斂的幾何級數，由比較判別，$\\sum|c_nx^n|$ 收斂　$\\blacksquare$"
+          ],
+          "say": "而 M 乘 r 的 n 次方，是公比小於 1 的幾何級數，收斂。由比較判別，絕對值的級數收斂。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum Mr^n$ 是收斂的幾何級數，由比較判別，$\\sum|c_nx^n|$ 收斂　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼只有三種（續）",
+      "beats": [
+        {
+          "show": [
+            "反過來：在 $x_1$ 發散，則 $|x|>|x_1|$ 都發散"
+          ],
+          "say": "反過來也對：如果在 x 1 發散，那麼離中心更遠的 x 都發散。因為如果更遠的某一點收斂，引理會讓 x 1 也收斂，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來：在 $x_1$ 發散，則 $|x|>|x_1|$ 都發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $R=\\sup\\{|x|:\\sum c_nx^n\\text{ 收斂}\\}$"
+          ],
+          "say": "現在令 R 是所有收斂點，離中心距離的最小上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $R=\\sup\\{|x|:\\sum c_nx^n\\text{ 收斂}\\}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 集合只有 $0$：$R=0$",
+            "• 沒有上界：$R=\\infty$，每個 $x$ 都比某個收斂點近"
+          ],
+          "say": "只有 0，R 是 0；沒有上界，每個 x 都比某個收斂點更近，處處收斂；否則 R 內收斂、R 外發散。這就是三種情況。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 集合只有 $0$：$R=0$"
+            },
+            {
+              "do": "write",
+              "line": "• 沒有上界：$R=\\infty$，每個 $x$ 都比某個收斂點近",
+              "on": "都比"
+            },
+            {
+              "do": "write",
+              "line": "• 否則 $0<R<\\infty$：$|x|<R$ 收斂，$|x|>R$ 發散",
+              "on": "內收"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "證明「在 $x_0$ 收斂 ⇒ $|x|<|x_0|$ 絕對收斂」的順序",
+        "steps": [
           {
-            "label": "$\\to 4$，$R=\\frac{1}{4}$",
-            "correct": true
+            "label": "$\\sum c_nx_0^n$ 收斂，所以 $c_nx_0^n\\to0$"
           },
           {
-            "label": "$\\to 4$，$R=4$",
-            "why": "$R$ 是 $L$ 的倒數：$4|x|<1$ 給 $|x|<\\frac{1}{4}$。"
+            "label": "趨近 $0$ 的數列有界：$|c_nx_0^n|\\le M$",
+            "why": "先要有上一步：$\\sum c_nx_0^n$ 收斂，所以 $c_nx_0^n\\to0$"
           },
           {
-            "label": "$\\to 1$，$R=1$",
-            "why": "領導係數是 $2\\cdot 2=4$ 比 1，不是 1 比 1。"
+            "label": "$|c_nx^n|\\le M\\big|\\frac{x}{x_0}\\big|^n$，公比 $<1$",
+            "why": "先要有上一步：趨近 $0$ 的數列有界：$|c_nx_0^n|\\le M$"
+          },
+          {
+            "label": "和幾何級數比較，$\\sum|c_nx^n|$ 收斂",
+            "why": "先要有上一步：$|c_nx^n|\\le M\\big|\\frac{x}{x_0}\\big|^n$，公比 $<1$"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 三種：$R=0$、$R=\\infty$、$0<R<\\infty$（端點另判）",
+            "• 算法：對整個項用比值或根值，解 $L<1$"
+          ],
+          "say": "整理一下：收斂半徑只有三種情況；算法是對整個項做比值或根值判別，解 L 小於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 三種：$R=0$、$R=\\infty$、$0<R<\\infty$（端點另判）"
+            },
+            {
+              "do": "write",
+              "line": "• 算法：對整個項用比值或根值，解 $L<1$",
+              "on": "整個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 只有偶次方：照樣對整個項，最後開根號",
+            "• 階乘在分子 $R=0$；在分母 $R=\\infty$"
+          ],
+          "say": "只有偶次方時，最後記得開根號；三種情況的原因，是一點收斂，更近的點就絕對收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 只有偶次方：照樣對整個項，最後開根號"
+            },
+            {
+              "do": "write",
+              "line": "• 階乘在分子 $R=0$；在分母 $R=\\infty$",
+              "on": "三種"
+            },
+            {
+              "do": "write",
+              "line": "• 為什麼：一點收斂 ⇒ 更近的點都絕對收斂",
+              "on": "收斂#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：收斂區間（端點怎麼辦）"
+          ],
+          "say": "下一課，處理端點，寫出完整的收斂區間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：收斂區間（端點怎麼辦）"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

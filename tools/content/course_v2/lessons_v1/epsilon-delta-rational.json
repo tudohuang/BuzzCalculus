@@ -1,0 +1,453 @@
+{
+  "id": "epsilon-delta-rational",
+  "title": "有理函數的 ε-δ",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "epsilon-delta-quadratic",
+    "limit-rationalize"
+  ],
+  "next": [
+    "continuity-formal"
+  ],
+  "related": [
+    "epsilon-delta-definition"
+  ],
+  "objectives": [
+    "處理分母：先把 $x$ 關在一個不含分母零點的範圍裡，給分母一個正的下界。",
+    "寫出 $\\frac{1}{x}$、$\\frac{2x+1}{x+3}$ 這類有理函數的 $\\delta=\\min(r,c\\varepsilon)$，並說明 $r$ 為什麼不能太大。",
+    "用有理化處理 $\\sqrt{x}$ 的 $\\varepsilon$-$\\delta$，並注意定義域對 $\\delta$ 的限制。"
+  ],
+  "visual": "y = 1/x 在 a = 2 附近。先畫出限制範圍 |x − 2| < r 的灰色帶，r 用滑桿調：r < 2 時灰色帶不碰到 x = 0，畫面顯示 1/|x| 的上限 1/(2 − r)；r 拉到 2 以上，灰色帶碰到垂直漸近線，上限變成 ∞，δ 的公式跟著失效。",
+  "concept": [
+    {
+      "heading": "① 新的麻煩在分母",
+      "body": [
+        "$\\lim_{x\\to2}\\frac{1}{x}=\\frac{1}{2}$。草稿：$|\\frac{1}{x}-\\frac{1}{2}|=|2-x|/(2|x|)=|x-2|\\cdot\\frac{1}{2|x|}$。跟二次函數一樣，$|x-a|$ 乘上一個會變的因子；不同的是這個因子在分母裡，$x$ 靠近 0 時 $\\frac{1}{2|x|}$ 會爆掉。",
+        "所以這次要的是分母的下界：把 $x$ 關在離 0 有一段距離的地方，$|x|$ 就不會太小，$\\frac{1}{2|x|}$ 就有上限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 關起來的範圍不能碰到分母的零點",
+      "body": [
+        "限制 $|x-2|<1$，也就是 $1<x<3$。這時 $|x|>1$，$\\frac{1}{2|x|}<\\frac{1}{2}$，所以 $|\\frac{1}{x}-\\frac{1}{2}|<|x-2|/2$。要它 $<\\varepsilon$，只要 $|x-2|<2\\varepsilon$。取 $\\delta=\\min(1,2\\varepsilon)$。",
+        "限制的半徑 $r$ 要小於 $a$ 到分母零點的距離（這裡是 2）。取 $r=2$ 的話，範圍 $(0,4)$ 裡 $|x|$ 可以任意小，找不到上限。常見做法是取這段距離的一半，或任何更小的正數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 根號：先有理化，也要顧定義域",
+      "body": [
+        "$\\sqrt{x}$ 不是有理函數，但做法一樣：乘共軛，$|\\sqrt{x}-2|=|x-4|/(\\sqrt{x}+2)\\le|x-4|/2$，因為 $\\sqrt{x}\\ge0$。這個估計不需要限制範圍，可是 $\\sqrt{x}$ 只在 $x\\ge0$ 有定義，$\\delta$ 不能超過 4，否則垂直帶會伸進定義域外。取 $\\delta=\\min(4,2\\varepsilon)$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "完整證明 $\\lim\\frac{1}{x}=\\frac{1}{2}$",
+      "prompt": "用 $\\varepsilon$-$\\delta$ 定義證明 $\\lim_{x\\to2}\\frac{1}{x}=\\frac{1}{2}$，並跟 $\\varepsilon=0.1$ 時最大的 $\\delta$ 比較。",
+      "problemId": "an-ed-001",
+      "steps": [
+        "給定 $\\varepsilon>0$。取 $\\delta=\\min(1,2\\varepsilon)$。",
+        "設 $0<|x-2|<\\delta$。因為 $\\delta\\le1$，$1<x<3$，所以 $|x|>1$，$\\frac{1}{2|x|}<\\frac{1}{2}$。",
+        "因為 $\\delta\\le2\\varepsilon$，$|x-2|<2\\varepsilon$。於是 $|\\frac{1}{x}-\\frac{1}{2}|=|x-2|/(2|x|)<2\\varepsilon\\cdot\\frac{1}{2}=\\varepsilon$。",
+        "$\\varepsilon=0.1$：$\\delta=\\min(1,0.2)=0.2$。〈ε-δ 定義〉算過最大的 $\\delta$ 是 $\\frac{1}{3}$，0.2 比較保守但合法。"
+      ],
+      "answer": "得證，$\\delta=\\min(1,2\\varepsilon)$",
+      "claim": "abs(1/x-1/2) == abs(x-2)/(2*abs(x)) ;; 1/(2-0.2) - 1/2 < 0.1 ;; 1/2 - 1/(2+0.2) < 0.1"
+    },
+    {
+      "title": "一般的有理函數",
+      "prompt": "證明 $\\lim_{x\\to1}\\frac{2x+1}{x+3}=\\frac{3}{4}$。",
+      "steps": [
+        "草稿：$\\frac{2x+1}{x+3}-\\frac{3}{4}=\\frac{8x+4-3x-9}{4(x+3)}=\\frac{5(x-1)}{4(x+3)}$。",
+        "分母零點是 $x=-3$，離 $a=1$ 有 4，限制 $|x-1|<1$ 很安全：$0<x<2$，$x+3>3$，所以 $\\frac{5}{4|x+3|}<\\frac{5}{12}$。",
+        "取 $\\delta=\\min(1,\\frac{12\\varepsilon}{5})$。設 $0<|x-1|<\\delta$，則 $|\\frac{2x+1}{x+3}-\\frac{3}{4}|=5|x-1|/(4|x+3|)<(\\frac{12\\varepsilon}{5})\\cdot(\\frac{5}{12})=\\varepsilon$。",
+        "$\\varepsilon=0.1$：$\\delta=0.24$。檢查 $x=1.24$ 與 0.76，誤差約 0.0708 與 0.0798，都 $<0.1$。"
+      ],
+      "answer": "得證，$\\delta=\\min(1,\\frac{12\\varepsilon}{5})$",
+      "claim": "abs((2x+1)/(x+3)-3/4) == 5*abs(x-1)/(4*abs(x+3)) ;; abs((2*1.24+1)/(1.24+3)-3/4) < 0.1 ;; abs((2*0.76+1)/(0.76+3)-3/4) < 0.1"
+    },
+    {
+      "title": "根號：有理化",
+      "prompt": "證明 $\\lim_{x\\to4}\\sqrt{x}=2$，並求 $\\varepsilon=0.01$ 時的 $\\delta$。",
+      "problemId": "an-ed-002",
+      "steps": [
+        "$x\\ge0$ 時 $|\\sqrt{x}-2|=|x-4|/(\\sqrt{x}+2)$，而 $\\sqrt{x}+2\\ge2$，所以 $|\\sqrt{x}-2|\\le|x-4|/2$。",
+        "給定 $\\varepsilon>0$，取 $\\delta=\\min(4,2\\varepsilon)$。設 $0<|x-4|<\\delta$：$\\delta\\le4$ 保證 $x>0$ 在定義域內；$|\\sqrt{x}-2|\\le|x-4|/2<\\varepsilon$。",
+        "$\\varepsilon=0.01$：$\\delta=0.02$。最大的 $\\delta$ 是 0.0399（左側 $\\sqrt{x}=1.99$ 時 $x=3.9601$）；$\\delta=0.04$ 時左側就超出。"
+      ],
+      "answer": "$\\delta=\\min(4,2\\varepsilon)$；$\\varepsilon=0.01$ 時 $\\delta=0.02$",
+      "claim": "abs(sqrt(x)-2) == abs(x-4)/(sqrt(x)+2) ;; 2 - sqrt(4-0.02) < 0.01 ;; sqrt(4.02) - 2 < 0.01 ;; 2 - sqrt(4-0.04) > 0.01"
+    }
+  ],
+  "pitfalls": [
+    "用分母的上界去估計：$|x|<3$ 推不出 $1/|x|$ 有上限，要的是 $|x|$ 的下界。",
+    "限制範圍太大，碰到分母的零點（例如 $\\frac{1}{x}$ 在 $a=2$ 取 $|x-2|<2$），估計立刻失效。",
+    "$\\sqrt{x}$ 的題忘了定義域：$\\delta$ 太大時垂直帶伸進 $x<0$。",
+    "分子通分算錯，因子 $\\frac{5}{4|x+3|}$ 變成別的常數；寫完要代一個 $x$ 檢查。"
+  ],
+  "checks": [
+    {
+      "ask": "證明 $\\lim_{x\\to2}\\frac{1}{x}=\\frac{1}{2}$ 時，限制 $|x-2|<1$ 是為了什麼？",
+      "options": [
+        {
+          "label": "讓 $|x|>1$，給 $\\frac{1}{2|x|}$ 一個上限",
+          "correct": true
+        },
+        {
+          "label": "讓 $|x|<3$，給 $\\frac{1}{2|x|}$ 一個上限",
+          "why": "$|x|$ 的上界只給 $1/|x|$ 下界。因子在分母，要的是 $|x|$ 的下界 1。"
+        },
+        {
+          "label": "讓 $\\delta$ 小於 $\\varepsilon$",
+          "why": "$\\delta$ 跟 $\\varepsilon$ 比大小不是重點；限制是為了讓 $x$ 遠離分母的零點 0。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to3}\\frac{1}{x}=\\frac{1}{3}$。限制 $|x-3|<1$ 後，$\\delta$ 可取？",
+      "options": [
+        {
+          "label": "$\\min(1,6\\varepsilon)$",
+          "correct": true
+        },
+        {
+          "label": "$\\min(1,9\\varepsilon)$",
+          "why": "你用了 $x=3$ 時的 $3|x|=9$。範圍內 $x$ 可以接近 2，$3|x|$ 的下界是 6，因子 $\\frac{1}{3|x|}<\\frac{1}{6}$。"
+        },
+        {
+          "label": "$\\min(1,3\\varepsilon)$",
+          "why": "$|\\frac{1}{x}-\\frac{1}{3}|=|x-3|/(3|x|)$，分母的 3 不能漏。$x>2$ 時 $3|x|>6$，所以是 $6\\varepsilon$。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to1/2}\\frac{1}{x}=2$。下列哪個限制範圍可以用？",
+      "options": [
+        {
+          "label": "$|x-\\frac{1}{2}|<\\frac{1}{4}$",
+          "correct": true
+        },
+        {
+          "label": "$|x-\\frac{1}{2}|<1$",
+          "why": "這個範圍包含 $x=0$ 附近，$|x|$ 可以任意小，$1/|x|$ 沒有上限。半徑要小於 $\\frac{1}{2}$。"
+        },
+        {
+          "label": "$|x-\\frac{1}{2}|<\\frac{1}{2}$",
+          "why": "範圍 $(0,1)$ 不含 0，但 $x$ 可以任意接近 0，$1/|x|$ 仍然沒有上限。半徑要嚴格小於 $\\frac{1}{2}$。"
+        }
+      ]
+    },
+    {
+      "ask": "證明 $\\lim_{x\\to4}\\sqrt{x}=2$，$\\delta=\\min(4,2\\varepsilon)$ 裡的 4 是為了？",
+      "options": [
+        {
+          "label": "讓 $0<|x-4|<\\delta$ 的 $x$ 都 $>0$，在定義域內",
+          "correct": true
+        },
+        {
+          "label": "讓 $\\sqrt{x}+2\\ge2$",
+          "why": "這只需要 $\\sqrt{x}\\ge0$，對定義域內所有 $x$ 都成立，跟 4 無關。"
+        },
+        {
+          "label": "4 是極限點本身，習慣上寫進去",
+          "why": "不是習慣：$a=4$ 剛好是 $a$ 到定義域邊界 0 的距離，$\\delta$ 超過它，垂直帶就伸到 $x<0$。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "麻煩在分母",
+      "beats": [
+        { "show": ["$\\lim_{x\\to2}\\frac{1}{x}=\\frac{1}{2}$"],
+          "say": "這一課處理分式：x 分之一在二的極限是二分之一。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to2}\\frac{1}{x}=\\frac{1}{2}$"}
+          ] },
+        { "show": ["$|\\frac{1}{x}-\\frac{1}{2}|=|x-2|\\cdot\\frac{1}{2|x|}$"],
+          "note": "又是 $|x-a|$ 乘上一個會變的因子。",
+          "say": "通分之後，又是 x 減二乘上一個會變的因子。跟二次函數不同的是，這個因子在分母裡。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{1}{x}-\\frac{1}{2}\\right|={{d:|x-2|}}\\cdot{{f:\\frac{1}{2|x|}}}$","tint":{"f":"violet"},"on":"通分"},
+            {"do":"focus","term":"d","on":"x 減二"},
+            {"do":"underline","term":"f","color":"violet","label":"在分母","on":"這個因子"}
+          ] },
+        { "show": ["$x$ 靠近 0：$\\frac{1}{2|x|}$ 爆掉"],
+          "say": "x 一靠近零，二倍 x 的絕對值分之一就會爆掉。要讓這個因子有上限，該壓住 x 的哪一邊？",
+          "board": [
+            {"do":"write","line":"$x$ 靠近 $0$：${{f:\\frac{1}{2|x|}}}$ 爆掉","on":"x 一靠近零"},
+            {"do":"focus","term":"f","color":"red","on":"爆掉"}
+          ] }
+      ],
+      "predict": {
+        "ask": "要 $\\frac{1}{2|x|}$ 有上限，需要的是？",
+        "options": [
+          {
+            "label": "$|x|$ 的下界：$x$ 離 0 有一段距離",
+            "correct": true
+          },
+          {
+            "label": "$|x|$ 的上界",
+            "why": "$|x|<3$ 只給 $\\frac{1}{|x|}$ 一個下界；因子在分母，要的是 $|x|$ 不會太小。"
+          },
+          {
+            "label": "不用限制，$\\delta$ 小一點就好",
+            "why": "$\\delta$ 要在 $x$ 之前決定，而且要先知道因子的上限，才解得出 $\\delta$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "證明：關在離 0 遠處",
+      "beats": [
+        { "show": ["先把 $x$ 關在離 0 遠的地方，再除"],
+          "say": "策略：先把 x 關在離零夠遠的地方，讓分母有下界，因子就有上限，再除過去。",
+          "board": [
+            {"do":"write","line":"$|x-2|\\cdot{{f:\\frac{1}{2|x|}}}$","tint":{"f":"violet"}},
+            {"do":"underline","term":"f","color":"violet","label":"要有上限","on":"分母有下界"}
+          ] },
+        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\min(1,2\\varepsilon)$"],
+          "say": "正式寫。給定 epsilon，delta 取一和二倍 epsilon 裡比較小的那個。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"給定 $\\varepsilon>0$：$\\delta=\\min({{one:1}},{{two:2\\varepsilon}})$","tint":{"one":"blue","two":"violet"},"on":"給定"},
+            {"do":"focus","term":"one","on":"一和"},
+            {"do":"focus","term":"two","on":"二倍 epsilon"}
+          ] },
+        { "show": ["設 $0<|x-2|<\\delta$：$\\delta\\le1$ ⇒ $1<x<3$","$|x|>1$，所以 $\\frac{1}{2|x|}<\\frac{1}{2}$"],
+          "note": "$\\min$ 裡的 1 讓分母有下界。",
+          "why": {"ask":"為什麼 $\\frac{1}{2|x|}<\\frac{1}{2}$？","say":"因子為什麼小於二分之一？先想一想再選。","options":[{"label":"$\\delta\\le1$ 把 $x$ 關在 $(1,3)$，$|x|>1$","correct":true},{"label":"$x$ 在 2 附近，因子大約 $\\frac{1}{4}$","why":"只看了中心點；$x$ 可以靠近 1，要用整個範圍裡 $|x|$ 的下界。"},{"label":"$\\varepsilon$ 很小，$x$ 離 2 很近","why":"$\\varepsilon$ 可以很大；把 $x$ 關住的是 $\\min$ 裡的 1。"}]},
+          "say": "delta 不超過一，x 在一到三之間，絕對值大於一，因子就小於二分之一。",
+          "board": [
+            {"do":"write","line":"${{f:\\frac{1}{2|x|}}}<\\frac{1}{2}$","tint":{"f":"violet"}},
+            {"do":"write","line":"${{d1:\\delta\\le1}}$ ⇒ $1<x<3$ ⇒ $|x|>1$","tint":{"d1":"blue"},"why":true,"on":"delta 不超過一"}
+          ] },
+        { "show": ["$|x|>1$ ⇒ $2|x|>2$ ⇒ $\\frac{1}{2|x|}<\\frac{1}{2}$"],
+          "note": "分母越大，分數越小。",
+          "say": "x 在一到三之間，絕對值大於一，所以二倍的 x 絕對值大於二。分母變大，分數就變小，小於二分之一。",
+          "board": [
+            {"do":"write","line":"$|x|>1$ ⇒ ${{n1:2|x|}}>2$"},
+            {"do":"write","line":"$\\frac{1}{{{n2:2|x|}}}<\\frac{1}{2}$","on":"分母變大"}
+          ] },
+        { "show": ["$\\delta\\le2\\varepsilon$ ⇒ $|x-2|<2\\varepsilon$","$|\\frac{1}{x}-\\frac{1}{2}|=\\frac{|x-2|}{2|x|}<2\\varepsilon\\cdot\\frac{1}{2}=\\varepsilon$"],
+          "note": "兩個非負因子各自有上限。",
+          "why": {"ask":"為什麼乘起來 $<\\varepsilon$？","say":"兩個因子乘起來，為什麼小於 epsilon？","options":[{"label":"$|x-2|<2\\varepsilon$ 且 $\\frac{1}{2|x|}<\\frac{1}{2}$","correct":true},{"label":"$\\delta\\le1$ 就夠了","why":"那只管住分母；$|x-2|<2\\varepsilon$ 要靠 $\\min$ 裡的 $2\\varepsilon$。"},{"label":"只要 $|x-2|<2\\varepsilon$","why":"只管一個因子不夠：另一個因子也要有上限 $\\frac{1}{2}$，乘積才壓得住。"}]},
+          "say": "delta 不超過二倍 epsilon。因子一個小於二倍 epsilon，一個小於二分之一，相乘小於 epsilon。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\left|\\frac{1}{x}-\\frac{1}{2}\\right|=\\frac{|x-2|}{2|x|}<{{e:\\varepsilon}}$","on":"乘起來"},
+            {"do":"write","line":"${{d2:\\delta\\le2\\varepsilon}}$ ⇒ $|x-2|<2\\varepsilon$","tint":{"d2":"violet"},"why":true,"on":"delta 不超過二倍"}
+          ] },
+        { "show": ["$\\varepsilon=0.1$：$\\delta=0.2$"],
+          "note": "最大的是 $\\frac{1}{3}$：保守但合法。",
+          "say": "誤差零點一的時候 delta 是零點二，比最大的三分之一保守，但合法。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\varepsilon=0.1$：$\\delta=\\min(1,0.2)={{v:0.2}}$","on":"誤差零點一"},
+            {"do":"write","line":"最大可到 $\\frac{1}{3}$：保守但合法","on":"比最大的"}
+          ] }
+      ],
+      "key": "限制 $\\delta\\le1$，讓 $|x|$ 有下界",
+      "proof": true,
+      "of": "ex0",
+      "skeleton": "ε-δ",
+      "check": 0
+    },
+    {
+      "title": "不能碰到零點",
+      "beats": [
+        { "show": ["限制的半徑 $<$ $a$ 到分母零點的距離"],
+          "note": "這裡 $a=2$，零點是 0，距離 2。",
+          "say": "關起來的範圍有一條規矩：半徑要小於 a 到分母零點的距離。這裡是二。",
+          "board": [
+            {"do":"write","line":"半徑 $r<$ $a$ 到零點的距離"},
+            {"do":"write","line":"$a=2$，零點 $0$：$r<{{d:2}}$","on":"分母零點"}
+          ] },
+        { "show": ["範圍含 0 附近：$|x|$ 可以任意小","$\\frac{1}{2|x|}$ 沒有上限"],
+          "say": "範圍只要含零附近的點，x 就能任意靠近零，分母任意小，因子任意大，找不到上限。",
+          "board": [
+            {"do":"write","line":"範圍含 $0$ 附近 ⇒ $|x|$ 任意小"},
+            {"do":"write","line":"${{n4:\\frac{1}{2|x|}}}$ 沒有上限","on":"因子任意大"}
+          ] },
+        { "show": ["取 $r=2$：範圍 $(0,4)$"],
+          "note": "$|x|$ 可以任意小，找不到上限。",
+          "say": "半徑取到二，範圍是零到四，x 可以任意靠近零，因子又爆了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$r=2$：範圍 ${{b:(0,4)}}$","on":"半徑取到"},
+            {"do":"strike","term":"b","label":"不行","on":"任意靠近零"}
+          ] },
+        { "show": ["常見做法：取這段距離的一半"],
+          "note": "或任何更小的正數。",
+          "say": "常見的做法是取這段距離的一半，或任何更小的正數。",
+          "board": [
+            {"do":"write","line":"$r={{h:\\frac{1}{2}}}\\cdot$ 距離"},
+            {"do":"box","term":"h","color":"green","on":"一半"},
+            {"do":"write","line":"或更小的正數 $r$","on":"任何更小"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "一般的有理函數",
+      "beats": [
+        { "show": ["$\\lim_{x\\to1}\\frac{2x+1}{x+3}=\\frac{3}{4}$"],
+          "say": "一般的有理函數也一樣。分子二 x 加一，分母 x 加三，在一的極限是四分之三。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to1}\\frac{2x+1}{x+3}=\\frac{3}{4}$"}
+          ] },
+        { "show": ["$\\frac{2x+1}{x+3}-\\frac{3}{4}=\\frac{5(x-1)}{4(x+3)}$"],
+          "note": "寫完代一個 $x$ 檢查。",
+          "say": "通分整理，提出 x 減一，剩下的因子是四倍 x 加三分之五。",
+          "board": [
+            {"do":"write","line":"${{lhs:\\frac{2x+1}{x+3}-\\frac{3}{4}}}=\\frac{5(x-1)}{4(x+3)}$"},
+            {"do":"transform","line":"${{lhs:\\frac{2x+1}{x+3}-\\frac{3}{4}}}={{d:(x-1)}}\\cdot{{f:\\frac{5}{4(x+3)}}}$","tint":{"f":"violet"},"on":"提出"},
+            {"do":"underline","term":"f","color":"violet","label":"因子","on":"剩下的因子"}
+          ] },
+        { "show": ["零點 $-3$ 離 1 有 4：限制 $|x-1|<1$"],
+          "note": "$x+3>3$，因子 $<\\frac{5}{12}$。",
+          "say": "分母的零點負三，離一有四，限制離一不到一很安全。這時 x 加三大於三，因子小於十二分之五。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"零點 $-3$ 離 $1$ 有 $4$：限制 $|x-1|<1$","on":"分母的零點"},
+            {"do":"write","line":"$x+3>3$ ⇒ ${{f:\\frac{5}{4(x+3)}}}<\\frac{5}{12}$","on":"這時"}
+          ] },
+        { "show": ["$|x-1|<1$ ⇒ $0<x<2$","⇒ $x+3>3$"],
+          "say": "x 減一的絕對值小於一，x 就在零到二之間。再加三，x 加三就大於三。",
+          "board": [
+            {"do":"write","line":"$|x-1|<1$ ⇒ $0<x<2$"},
+            {"do":"write","line":"⇒ ${{n5:x+3>3}}$","on":"再加三"}
+          ] },
+        { "show": ["最左到 0，零點 $-3$，隔 3"],
+          "say": "範圍最左只到零，零點在負三，中間還隔三，所以安全。",
+          "board": [
+            {"do":"write","line":"最左到 $0$，零點 $-3$，隔 $3$"}
+          ] },
+        { "show": ["$\\delta=\\min(1,\\frac{12\\varepsilon}{5})$"],
+          "note": "$\\varepsilon=0.1$：$\\delta=0.24$。",
+          "say": "所以 delta 取一和五分之十二 epsilon 比較小的。誤差零點一，delta 是零點二四。",
+          "board": [
+            {"do":"write","line":"$\\delta=\\min(1,{{e:\\frac{12\\varepsilon}{5}}})$"},
+            {"do":"underline","term":"e","on":"五分之十二"}
+          ] }
+      ],
+      "key": "寫成 $|x-1|$ 乘因子，再給因子上限",
+      "check": 1
+    },
+    {
+      "title": "根號：顧定義域",
+      "beats": [
+        { "show": ["$|\\sqrt{x}-2|=\\frac{|x-4|}{\\sqrt{x}+2}\\le\\frac{|x-4|}{2}$"],
+          "note": "乘共軛；$\\sqrt{x}\\ge0$。",
+          "say": "根號 x 在四：乘共軛，分母是根號 x 加二，至少是二，所以距離不超過 x 減四的一半。",
+          "board": [
+            {"do":"write","line":"$|\\sqrt{x}-2|=\\frac{|x-4|}{{{s:\\sqrt{x}+2}}}$"},
+            {"do":"focus","term":"s","on":"分母是"},
+            {"do":"transform","line":"$|\\sqrt{x}-2|\\le{{h:\\frac{|x-4|}{2}}}$","on":"所以距離"}
+          ] },
+        { "show": ["這個估計不用限制範圍"],
+          "note": "但 $\\sqrt{x}$ 只在 $x\\ge0$ 有定義。",
+          "say": "這個估計不需要把 x 關起來。可是根號只在 x 大於等於零有定義，垂直帶不能伸出去。",
+          "board": [
+            {"do":"write","line":"不用把 $x$ 關起來"},
+            {"do":"write","line":"$\\sqrt{x}$ 只在 ${{d:x\\ge0}}$ 有定義","on":"可是根號"},
+            {"do":"underline","term":"d","color":"red","on":"大於等於零"}
+          ] },
+        { "show": ["$\\sqrt{x}$ 只畫在 $x\\ge0$"],
+          "note": "灰帶：$x$ 離 4 不到 $\\delta$。",
+          "say": "看圖：根號 x 只畫在零的右邊。灰色的垂直帶，是 x 離四不到 delta 的那一段。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,9,-1,4],"curves":[{"expr":"sqrt(x)","domain":[0,9],"color":"blue"}],"fills":[{"expr":"sqrt(x)","from":3,"to":5,"color":"gold"}],"dashed":[[[0,-1],[0,4]]]}}
+          ] },
+        { "show": ["$\\delta\\le4$ ⇒ $x>4-\\delta\\ge0$"],
+          "say": "delta 不超過四，x 就大於四減 delta，而四減 delta 大於等於零，所以 x 在定義域裡。",
+          "board": [
+            {"do":"write","line":"$\\delta\\le4$ ⇒ ${{n6:x>4-\\delta\\ge0}}$"}
+          ] },
+        { "show": ["$\\delta=\\min(4,2\\varepsilon)$"],
+          "note": "$\\varepsilon=0.01$：$\\delta=0.02$。",
+          "say": "所以 delta 取四和二倍 epsilon 比較小的。誤差零點零一，delta 是零點零二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\delta=\\min({{a:4}},{{b:2\\varepsilon}})$","tint":{"a":"blue","b":"violet"},"on":"所以"},
+            {"do":"focus","term":"a","on":"四和"},
+            {"do":"focus","term":"b","on":"二倍"},
+            {"do":"write","line":"$\\varepsilon=0.01$：$\\delta=0.02$","on":"誤差零點零一"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "epsilon-delta",
+      "epsilon-game",
+      "written-proof"
+    ],
+    "fine": [
+      "epsdelta-denominator-lower-bound",
+      "epsdelta-restrict-radius",
+      "epsdelta-rational",
+      "epsdelta-root-rationalize"
+    ]
+  },
+  "practice": [
+    {
+      "id": "ep-005",
+      "core": true,
+      "trains": "epsdelta-denominator-lower-bound"
+    },
+    {
+      "id": "an-ed-001",
+      "core": true,
+      "trains": "epsdelta-rational"
+    },
+    {
+      "id": "ep-012",
+      "core": true,
+      "trains": "epsdelta-denominator-lower-bound"
+    },
+    {
+      "id": "ep-006",
+      "core": true,
+      "trains": "epsdelta-root-rationalize"
+    },
+    {
+      "id": "cg-12d-013",
+      "core": true,
+      "trains": "epsdelta-restrict-radius"
+    },
+    {
+      "id": "an-ed-002",
+      "trains": "epsdelta-root-rationalize"
+    },
+    {
+      "id": "cg-12d-012",
+      "trains": "epsdelta-rational"
+    },
+    {
+      "id": "cg-12d-010",
+      "trains": "epsdelta-rational"
+    },
+    {
+      "id": "cg-12d-014",
+      "trains": "epsdelta-restrict-radius"
+    },
+    {
+      "id": "ep-014",
+      "challenge": true,
+      "trains": "epsdelta-restrict-radius",
+      "note": "挑戰：$\\ln(1+x)$ 在 $x\\to-1$ 時爆掉，$\\delta$ 要看左右哪一側比較緊。"
+    },
+    {
+      "id": "cg-12d-011",
+      "challenge": true,
+      "trains": "epsdelta-rational"
+    }
+  ],
+  "gaps": []
+}

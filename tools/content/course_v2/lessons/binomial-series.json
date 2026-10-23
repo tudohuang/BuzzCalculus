@@ -1,7 +1,8 @@
 {
   "id": "binomial-series",
   "title": "二項級數",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "maclaurin-series"
@@ -14,41 +15,125 @@
     "linear-approximation"
   ],
   "objectives": [
-    "會算廣義二項係數 $C(k,n)=\\frac{k(k-1)\\cdots(k-n+1)}{n!}$，$k$ 可以是負數或分數。",
-    "寫出 $(1+x)^k=\\sum C(k,n)x^n$（$|x|<1$），並知道 $k$ 是非負整數時它退化成有限的二項式定理。",
-    "用它展開 $\\sqrt{1+x}$、$\\frac{1}{\\sqrt{1+x}}$、$\\frac{1}{(1-x)^3}$，讀出係數或做近似。"
+    "會算廣義二項係數 $C(k,n)=\\frac{k(k-1)\\cdots(k-n+1)}{n!}$，$k$ 可以是負數或分數",
+    "寫出 $(1+x)^k=\\sum C(k,n)x^n$（$|x|<1$），並知道 $k$ 是非負整數時它退化成有限的二項式定理",
+    "用它展開 $\\sqrt{1+x}$、$\\frac{1}{\\sqrt{1+x}}$、$\\frac{1}{(1-x)^3}$ 等函數，並做近似計算"
   ],
-  "visual": "滑桿調指數 k（−3 到 3）。畫出 (1 + x)ᵏ 與前 2、3、5、10 項的部分和。k 停在 0、1、2、3 時，部分和到某一項以後就不再變（係數全變 0），整條實數線都貼合；k 是其他值時，只在 −1 < x < 1 內越貼越好。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 從二項式定理出發",
       "body": [
-        "$k$ 是正整數時，$(1+x)^k=\\sum_{n=0}^{k}C(k,n)x^n$，是有限和。把 $C(k,n)$ 寫成 $\\frac{k(k-1)\\cdots(k-n+1)}{n!}$，這個寫法對任何實數 $k$ 都有意義，叫廣義二項係數；規定 $C(k,0)=1$。",
-        "例：$C\\left(\\frac{1}{2},2\\right)=\\frac{(1/2)(-1/2)}{2!}=-\\frac{1}{8}$；$C(-1,n)=\\frac{(-1)(-2)\\cdots(-n)}{n!}=(-1)^n$。"
+        "$k$ 是正整數時：",
+        "把 $\\dbinom kn$ 寫成分子乘 $n$ 個數的樣子：",
+        "例：$\\dbinom52=\\dfrac{5\\cdot4}{2!}=10$",
+        "右邊這個寫法，$k$ 不必是整數也算得出來",
+        "廣義二項係數：對任何實數 $k$，",
+        "規定 $C(k,0)=1$"
       ],
-      "collapsible": false
+      "tex": [
+        "(1+x)^k=\\sum_{n=0}^{k}\\binom kn x^n",
+        "\\binom kn=\\frac{k!}{n!(k-n)!}=\\frac{k(k-1)\\cdots(k-n+1)}{n!}",
+        "C(k,n)=\\frac{k(k-1)(k-2)\\cdots(k-n+1)}{n!}"
+      ]
+    },
+    {
+      "heading": "① 算幾個看看",
+      "body": [
+        "$k=\\frac12$：",
+        "• $C(\\frac12,1)=\\frac12$",
+        "• $C(\\frac12,2)=\\dfrac{\\frac12\\cdot(-\\frac12)}{2!}=-\\dfrac18$",
+        "• $C(\\frac12,3)=\\dfrac{\\frac12\\cdot(-\\frac12)\\cdot(-\\frac32)}{3!}=\\dfrac1{16}$",
+        "分子每次往下減 $1$：$\\frac12,\\ -\\frac12,\\ -\\frac32,\\ -\\frac52,\\dots$",
+        "$k$ 是非負整數時，乘到 $(k-k)=0$ 之後全部是 $0$",
+        "例：$C(5,6)=\\frac{5\\cdot4\\cdot3\\cdot2\\cdot1\\cdot0}{6!}=0$",
+        "$k$ 是負數或分數：分子永遠不會碰到 $0$，級數無限長"
+      ]
     },
     {
       "heading": "② 二項級數",
       "body": [
-        "$f(x)=(1+x)^k$ 的 $n$ 階導數是 $k(k-1)\\cdots(k-n+1)(1+x)^{k-n}$，在 0 的值除以 $n!$ 正好是 $C(k,n)$。所以它的 Maclaurin 級數是 $(1+x)^k=\\sum C(k,n)x^n=1+kx+\\frac{k(k-1)x^2}{2!}+\\cdots$。",
-        "$k$ 不是非負整數時，係數永遠不會變 0，比值 $\\left|\\frac{C(k,n+1)}{C(k,n)}\\right|=\\frac{|k-n|}{n+1}\\to 1$，收斂半徑是 1。可以證明在 $|x|<1$ 內級數確實等於 $(1+x)^k$。端點的情況隨 $k$ 而不同，這裡不討論。",
-        "$k$ 是非負整數時，$n>k$ 的係數都含有因子 $(k-k)=0$，級數變成有限多項式，對所有 $x$ 成立，就是原本的二項式定理。"
+        "對任何實數 $k$，$|x|<1$ 時：",
+        "它就是 $(1+x)^k$ 的 Maclaurin 級數：",
+        "在 $0$：$f^{(n)}(0)=k(k-1)\\cdots(k-n+1)$，除以 $n!$ 正好是 $C(k,n)$",
+        "收斂半徑（$k$ 不是非負整數）：",
+        "半徑 $R=1$",
+        "端點 $x=\\pm1$ 收不收斂要看 $k$；這一課只用 $|x|<1$",
+        "它真的等於 $(1+x)^k$ 嗎？下一頁證明"
       ],
       "tex": [
-        "(1+x)^k=\\sum_{n=0}^{\\infty}\\binom{k}{n}x^n=1+kx+\\frac{k(k-1)}{2!}x^2+\\frac{k(k-1)(k-2)}{3!}x^3+\\cdots\\qquad(\\lvert x\\rvert<1)"
-      ],
-      "collapsible": false
+        "\\begin{aligned}(1+x)^k&=\\sum_{n=0}^\\infty C(k,n)x^n\\\\&=1+kx+\\frac{k(k-1)}{2!}x^2+\\cdots\\end{aligned}",
+        "f^{(n)}(x)=k(k-1)\\cdots(k-n+1)(1+x)^{k-n}",
+        "\\left|\\frac{C(k,n+1)x^{n+1}}{C(k,n)x^n}\\right|=\\frac{|k-n|}{n+1}|x|\\to|x|"
+      ]
     },
     {
-      "heading": "③ 幾個常用的",
+      "heading": "② 證明：級數等於 $(1+x)^k$",
       "body": [
-        "$k=-1$：$\\frac{1}{1+x}=1-x+x^2-\\cdots$，跟〈幾何級數〉一致。",
-        "$k=\\frac{1}{2}$：$\\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\frac{x^3}{16}-\\cdots$。前兩項就是〈線性近似〉的 $\\sqrt{1+x}\\approx 1+\\frac{x}{2}$。",
-        "$k=-\\frac{1}{2}$：$\\frac{1}{\\sqrt{1+x}}=1-\\frac{x}{2}+\\frac{3x^2}{8}-\\frac{5x^3}{16}+\\cdots$。",
-        "$(1-x)^k$ 就把 $x$ 換成 $-x$；$(a+x)^k$ 先提出 $a^k$：$(a+x)^k=a^k\\left(1+\\frac{x}{a}\\right)^k$，條件變成 $|x|<|a|$。"
+        "令 $g(x)=\\sum C(k,n)x^n$（$|x|<1$），目標：$g=(1+x)^k$",
+        "係數的關係：",
+        "逐項微分，算 $(1+x)g'(x)$ 的 $x^n$ 係數：",
+        "所以 $(1+x)g'(x)=k\\,g(x)$",
+        "令 $h(x)=\\dfrac{g(x)}{(1+x)^k}$，商的微分：",
+        "$h$ 是常數，$h(0)=g(0)=1$，所以"
       ],
-      "collapsible": false
+      "tex": [
+        "(n+1)\\,C(k,n+1)=(k-n)\\,C(k,n)",
+        "\\begin{aligned}&(n+1)C(k,n+1)+nC(k,n)\\\\&=(k-n)C(k,n)+nC(k,n)=k\\,C(k,n)\\end{aligned}",
+        "h'(x)=\\frac{(1+x)g'-kg}{(1+x)^{k+1}}=0",
+        "g(x)=(1+x)^k\\quad(|x|<1)\\ \\ \\blacksquare"
+      ]
+    },
+    {
+      "heading": "③ 幾個常用的：$\\sqrt{1+x}$",
+      "body": [
+        "$k=\\frac12$，係數剛才算過：$1,\\ \\frac12,\\ -\\frac18,\\ \\frac1{16}$",
+        "前兩項 $1+\\frac x2$ 就是線性近似",
+        "估計 $\\sqrt{1.1}$：$x=0.1$",
+        "真正 $\\sqrt{1.1}\\approx1.0488088$，誤差約 $3.7\\times10^{-6}$",
+        "想估 $\\sqrt{5}$？先寫成 $2\\sqrt{1+\\frac14}$，讓 $x=\\frac14$ 落在半徑內"
+      ],
+      "tex": [
+        "\\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\frac{x^3}{16}-\\cdots",
+        "\\begin{aligned}&1+0.05-0.00125+0.0000625\\\\&=1.0488125\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 負分數次方：$\\dfrac{1}{\\sqrt{1+x}}$",
+      "body": [
+        "$k=-\\frac12$：分子 $-\\frac12,\\ -\\frac32,\\ -\\frac52,\\dots$",
+        "• $C(-\\frac12,1)=-\\frac12$",
+        "• $C(-\\frac12,2)=\\dfrac{(-\\frac12)(-\\frac32)}{2!}=\\dfrac38$",
+        "• $C(-\\frac12,3)=\\dfrac{(-\\frac12)(-\\frac32)(-\\frac52)}{3!}$",
+        "$=-\\dfrac{15}{48}=-\\dfrac5{16}$"
+      ],
+      "tex": [
+        "\\frac{1}{\\sqrt{1+x}}=1-\\frac x2+\\frac38x^2-\\frac5{16}x^3+\\cdots"
+      ]
+    },
+    {
+      "heading": "③ 負整數次方：$\\dfrac{1}{(1-x)^3}$",
+      "body": [
+        "寫成 $(1+(-x))^{-3}$：$k=-3$，$x$ 換成 $-x$",
+        "$x^4$ 係數：$C(-3,4)\\cdot(-1)^4$",
+        "$(-1)^4=1$，所以係數是 $15$",
+        "一般地：$C(-3,n)(-1)^n=\\dfrac{(n+1)(n+2)}{2}$",
+        "檢查：把 $\\frac1{1-x}=\\sum x^n$ 微分兩次再除以 $2$，得到同樣的係數"
+      ],
+      "tex": [
+        "\\begin{aligned}C(-3,4)&=\\frac{(-3)(-4)(-5)(-6)}{4!}\\\\&=\\frac{360}{24}=15\\end{aligned}",
+        "\\begin{aligned}\\frac{1}{(1-x)^3}&=1+3x+6x^2\\\\&\\quad+10x^3+15x^4+\\cdots\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $C(k,n)=\\dfrac{k(k-1)\\cdots(k-n+1)}{n!}$：$k$ 可以是任何實數",
+        "• $(1+x)^k=\\sum C(k,n)x^n$，$|x|<1$；$k$ 是非負整數時有限項",
+        "• 證明：$(1+x)g'=kg$，所以 $\\frac{g}{(1+x)^k}$ 是常數",
+        "• $\\sqrt{1+x}=1+\\frac x2-\\frac{x^2}8+\\cdots$；負次方要小心正負號",
+        "下一課：近似得多準？Taylor 誤差"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,300 +181,801 @@
   ],
   "checks": [
     {
-      "ask": "$C\\left(\\frac{1}{2},2\\right)=$？",
+      "ask": "$C(-2,3)=$？",
       "options": [
         {
-          "label": "$-\\frac{1}{8}$",
+          "label": "$-4$",
           "correct": true
         },
         {
-          "label": "$\\frac{1}{8}$",
-          "why": "$\\frac{1}{2}\\left(\\frac{1}{2}-1\\right)=\\frac{1}{2}\\left(-\\frac{1}{2}\\right)=-\\frac{1}{4}$，有一個負號。"
+          "label": "$4$",
+          "why": "三個負數相乘是負的"
         },
         {
-          "label": "$-\\frac{1}{4}$",
-          "why": "還要除以 $2!=2$。"
+          "label": "$-24$",
+          "why": "忘了除以 $3!$"
+        },
+        {
+          "label": "$0$",
+          "why": "$k=-2$ 不是非負整數，分子永遠不會乘到 $0$"
         }
       ]
     },
     {
-      "ask": "$(1+x)^5$ 用二項級數展開，結果是？",
+      "ask": "$(1+x)^{1/3}$ 的 $x^2$ 係數是？",
       "options": [
         {
-          "label": "有限多項式，對所有 $x$ 成立",
+          "label": "$-\\dfrac19$",
           "correct": true
         },
         {
-          "label": "無窮級數，只在 $|x|<1$ 成立",
-          "why": "$k=5$ 是非負整數，$n>5$ 的係數都含有因子 0，級數在第 5 次就停了。"
+          "label": "$-\\dfrac29$",
+          "why": "忘了除以 $2!$"
         },
         {
-          "label": "無窮級數，對所有 $x$ 成立",
-          "why": "根本沒有無窮多項：$C(5,n)$ 在 $n\\ge 6$ 全是 0。"
-        }
-      ]
-    },
-    {
-      "ask": "用二項級數展開 $\\frac{1}{1-x}=(1-x)^{-1}$，得到？",
-      "options": [
-        {
-          "label": "$\\sum x^n$",
-          "correct": true
+          "label": "$\\dfrac19$",
+          "why": "第二個因子是 $\\frac13-1=-\\frac23$，是負的"
         },
         {
-          "label": "$\\sum (-1)^n x^n$",
-          "why": "那是 $\\frac{1}{1+x}$。$C(-1,n)=(-1)^n$，再乘 $(-x)^n$ 的 $(-1)^n$，兩個負號抵銷。"
-        },
-        {
-          "label": "$\\sum n x^n$",
-          "why": "$C(-1,n)$ 的大小是 1，不是 $n$；$\\sum n x^{n-1}$ 是 $\\frac{1}{(1-x)^2}$。"
-        }
-      ]
-    },
-    {
-      "ask": "用前兩項估計 $\\sqrt{1.02}$，得到？",
-      "options": [
-        {
-          "label": "1.01",
-          "correct": true
-        },
-        {
-          "label": "1.02",
-          "why": "一次項的係數是 $C\\left(\\frac{1}{2},1\\right)=\\frac{1}{2}$，不是 1：$1+\\frac{0.02}{2}$。"
-        },
-        {
-          "label": "1.001",
-          "why": "$x=0.02$，$\\frac{x}{2}=0.01$，不是 0.001。"
+          "label": "$\\dfrac13$",
+          "why": "那是 $x$ 的係數 $C(\\frac13,1)$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "廣義二項係數",
+      "title": "從二項式定理出發",
       "beats": [
-        { "show": ["$k$ 是正整數：$(1+x)^k=\\sum_{n=0}^{k}C(k,n)x^n$"],
-          "note": "有限和。",
-          "say": "k 是正整數的時候，一加 x 的 k 次方用二項式定理展開，是有限多項。",
+        {
+          "show": [
+            "$k$ 是正整數時：",
+            "$(1+x)^k=\\sum_{n=0}^{k}\\binom kn x^n$"
+          ],
+          "say": "先回想二項式定理：k 是正整數時，1 加 x 的 k 次方，等於 k 取 n 乘 x 的 n 次方，n 從 0 加到 k。",
           "board": [
-            {"do":"write","line":"$k$ 是正整數：$(1+x)^k={{s:\\sum_{n=0}^{k}}}{{c:C(k,n)}}x^n$","tint":{"c":"violet"}},
-            {"do":"underline","term":"s","label":"有限多項","on":"展開"}
-          ] },
-        { "show": ["$C(k,n)=\\frac{k(k-1)\\cdots(k-n+1)}{n!}$"],
-          "note": "任何實數 $k$ 都能算；$C(k,0)=1$。",
-          "say": "把係數寫成連乘：從 k 開始往下乘 n 個，再除以 n 階乘。這個寫法 k 是分數、負數都能算。",
+            {
+              "do": "write",
+              "line": "$k$ 是正整數時："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (1+x)^k=\\sum_{n=0}^{k}\\binom kn x^n$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $\\dbinom kn$ 寫成分子乘 $n$ 個數的樣子：",
+            "$\\binom kn=\\frac{k!}{n!(k-n)!}=\\frac{k(k-1)\\cdots(k-n+1)}{n!}$"
+          ],
+          "say": "把組合數換個寫法：k 階乘除以 n 階乘乘 k 減 n 階乘，約分以後，分子是從 k 往下乘 n 個數，分母是 n 階乘。",
           "board": [
-            {"do":"write","line":"${{c:C(k,n)}}=\\frac{{{p:k(k-1)\\cdots(k-n+1)}}}{{{f:n!}}}$","on":"寫成連乘"},
-            {"do":"underline","term":"p","label":"往下乘 n 個","on":"往下乘"},
-            {"do":"focus","term":"f","on":"再除以"}
-          ] },
-        { "show": ["$C\\left(\\frac{1}{2},2\\right)=\\frac{(1/2)(-1/2)}{2!}$"],
-          "say": "例如 k 是二分之一、n 是二：二分之一乘二分之一減一，也就是負二分之一，再除以二階乘。",
+            {
+              "do": "write",
+              "line": "把 $\\dbinom kn$ 寫成分子乘 $n$ 個數的樣子："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\binom kn=\\frac{k!}{n!(k-n)!}=\\frac{k(k-1)\\cdots(k-n+1)}{n!}}}$",
+              "on": "階乘#3"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "往下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dbinom52=\\dfrac{5\\cdot4}{2!}=10$"
+          ],
+          "say": "例如 5 取 2：分子是 5 乘 4，兩個數，除以 2 階乘，等於 10。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$C\\left(\\frac{1}{2},2\\right)=\\frac{(1/2){{b:(1/2-1)}}}{2!}$","on":"例如"},
-            {"do":"transform","line":"$C\\left(\\frac{1}{2},2\\right)=\\frac{(1/2){{b2:(-1/2)}}}{2!}$","on":"也就是負二分之一"}
-          ] },
-        { "show": ["$C(-1,n)=\\frac{(-1)(-2)\\cdots(-n)}{n!}=(-1)^n$"],
-          "say": "k 是負一：分子是負一乘負二一直乘到負 n，大小剛好是 n 階乘，只剩正負號。",
+            {
+              "do": "write",
+              "line": "例：$\\dbinom52=\\dfrac{5\\cdot4}{2!}=10$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊這個寫法，$k$ 不必是整數也算得出來"
+          ],
+          "say": "關鍵是：右邊這個寫法，只用到乘法和除法，k 不必是整數也算得出來。",
           "board": [
-            {"do":"write","line":"$C(-1,n)=\\frac{{{num:(-1)(-2)\\cdots(-n)}}}{{{f:n!}}}$"},
-            {"do":"underline","term":"num","on":"分子是"},
-            {"do":"transform","line":"$C(-1,n)=\\frac{{{num:(-1)(-2)\\cdots(-n)}}}{{{f:n!}}}=\\,{{r:(-1)^n}}$","on":"大小剛好"},
-            {"do":"box","term":"r","color":"green","on":"只剩"}
-          ] }
+            {
+              "do": "write",
+              "line": "右邊這個寫法，$k$ 不必是整數也算得出來",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "廣義二項係數：對任何實數 $k$，",
+            "$C(k,n)=\\frac{k(k-1)(k-2)\\cdots(k-n+1)}{n!}$"
+          ],
+          "say": "所以定義廣義二項係數：對任何實數 k，分子從 k 開始往下乘 n 個數，一直乘到 k 減 n 加 1，再除以 n 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "廣義二項係數：對任何實數 $k$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle C(k,n)=\\frac{k(k-1)(k-2)\\cdots(k-n+1)}{n!}}}$",
+              "color": "red",
+              "on": "分子"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "個數"
+            },
+            {
+              "do": "write",
+              "line": "　規定 $C(k,0)=1$",
+              "color": "violet",
+              "on": "再除"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "算幾個看看",
+      "beats": [
+        {
+          "show": [
+            "$k=\\frac12$：",
+            "• $C(\\frac12,1)=\\frac12$"
+          ],
+          "say": "算幾個看看。k 等於 2 分之 1：C 1 是 2 分之 1；C 2 是負 8 分之 1；C 3 再多乘一個負 2 分之 3，除以 6，等於 16 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k=\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "• $C(\\frac12,1)=\\frac12$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "• $C(\\frac12,2)=\\dfrac{\\frac12\\cdot(-\\frac12)}{2!}=-\\dfrac18$",
+              "on": "是負"
+            },
+            {
+              "do": "write",
+              "line": "• $C(\\frac12,3)=\\dfrac{\\frac12\\cdot(-\\frac12)\\cdot(-\\frac32)}{3!}=\\dfrac1{16}$",
+              "on": "再多"
+            },
+            {
+              "do": "write",
+              "line": "　分子每次往下減 $1$：$\\frac12,\\ -\\frac12,\\ -\\frac32,\\ -\\frac52,\\dots$",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$k$ 是非負整數時，乘到 $(k-k)=0$ 之後全部是 $0$"
+          ],
+          "say": "如果 k 是非負整數，分子乘到 k 減 k 就是 0，之後的係數全部是 0。級數自己停下來，就是原本有限的二項式定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k$ 是非負整數時，乘到 $(k-k)=0$ 之後全部是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "　例：$C(5,6)=\\frac{5\\cdot4\\cdot3\\cdot2\\cdot1\\cdot0}{6!}=0$",
+              "color": "violet",
+              "on": "的係"
+            }
+          ]
+        }
       ],
-      "key": "分子連乘 $n$ 個因子，每次減一",
       "check": 0
+    },
+    {
+      "title": "算幾個看看",
+      "beats": [
+        {
+          "show": [
+            "$k$ 是負數或分數：分子永遠不會碰到 $0$，級數無限長"
+          ],
+          "say": "反過來，k 是負數或分數，分子永遠不會碰到 0，級數就是無限長的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k$ 是負數或分數：分子永遠不會碰到 $0$，級數無限長",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "二項級數",
       "beats": [
-        { "show": ["$(1+x)^k=1+kx+\\frac{k(k-1)}{2!}x^2+\\cdots$"],
-          "note": "Maclaurin 係數正好是 $C(k,n)$。",
-          "say": "一加 x 的 k 次方微分 n 次，在零的值除以 n 階乘，剛好是廣義二項係數。",
+        {
+          "show": [
+            "對任何實數 $k$，$|x|<1$ 時：",
+            "$\\begin{aligned}(1+x)^k&=\\sum_{n=0}^\\infty C(k,n)x^n\\\\&=1+kx+\\frac{k(k-1)}{2!}x^2+\\cdots\\end{aligned}$"
+          ],
+          "say": "二項級數：對任何實數 k，只要 x 的絕對值小於 1，1 加 x 的 k 次方就等於 C k n 乘 x 的 n 次方的總和。",
           "board": [
-            {"do":"write","line":"$(1+x)^k=1+kx+\\frac{k(k-1)}{2!}x^2+\\cdots$"},
-            {"do":"write","line":"$\\frac{f^{(n)}(0)}{n!}={{c:C(k,n)}}$","tint":{"c":"violet"},"on":"在零的值"},
-            {"do":"box","term":"c","color":"green","on":"剛好是"}
-          ] },
-        { "show": ["$f'(0)=k$","$f''(0)/2!=C(k,2)$"],
-          "note": "一次一次微分，指數往下掉。",
-          "say": "微分一次代零得 k；再微分一次代零得 k 乘 k 減一，除以二階乘就是係數。",
+            {
+              "do": "write",
+              "line": "對任何實數 $k$，$|x|<1$ 時："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}(1+x)^k&=\\sum_{n=0}^\\infty C(k,n)x^n\\\\&=1+kx+\\frac{k(k-1)}{2!}x^2+\\cdots\\end{aligned}}}}$",
+              "color": "red",
+              "on": "值小"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它就是 $(1+x)^k$ 的 Maclaurin 級數：",
+            "$f^{(n)}(x)=k(k-1)\\cdots(k-n+1)(1+x)^{k-n}$"
+          ],
+          "say": "為什麼是這些係數？1 加 x 的 k 次方每微分一次，就把次方拿下來乘，次方減 1。",
           "board": [
-            {"do":"write","line":"$f'(0)=k(1+0)^{k-1}={{a:k}}$"},
-            {"do":"write","line":"$\\frac{f''(0)}{2!}=\\frac{k(k-1)}{2!}={{b:C(k,2)}}$","on":"再微分"},
-            {"do":"box","term":"b","color":"green","on":"就是係數"}
-          ] },
-        { "show": ["$\\frac{|k-n|}{n+1}\\to 1$：$R=1$"],
-          "note": "$k$ 不是非負整數時。",
-          "say": "k 不是非負整數，係數永遠不會變零。相鄰係數的比值趨近一，半徑是一。",
+            {
+              "do": "write",
+              "line": "它就是 $(1+x)^k$ 的 Maclaurin 級數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f^{(n)}(x)=k(k-1)\\cdots(k-n+1)(1+x)^{k-n}$",
+              "on": "每微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $0$：$f^{(n)}(0)=k(k-1)\\cdots(k-n+1)$，除以 $n!$ 正好是 $C(k,n)$"
+          ],
+          "say": "代 0，1 加 x 那一塊是 1。n 階導數除以 n 階乘，正好就是 C k n。",
           "board": [
-            {"do":"write","line":"$\\frac{|k-n|}{n+1}\\to 1$：${{rad:R=1}}$","on":"相鄰係數"},
-            {"do":"box","term":"rad","color":"green","on":"趨近一"}
-          ] },
-        { "show": ["$|x|<1$ 內等於 $(1+x)^k$"],
-          "note": "端點隨 $k$ 不同，這裡不討論。",
-          "say": "可以證明在 x 絕對值小於一的範圍裡，級數確實等於一加 x 的 k 次方。",
+            {
+              "do": "write",
+              "line": "在 $0$：$f^{(n)}(0)=k(k-1)\\cdots(k-n+1)$，除以 $n!$ 正好是 $C(k,n)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "收斂半徑（$k$ 不是非負整數）：",
+            "$\\left|\\frac{C(k,n+1)x^{n+1}}{C(k,n)x^n}\\right|=\\frac{|k-n|}{n+1}|x|\\to|x|$"
+          ],
+          "say": "收斂半徑用比值檢定：相鄰兩個係數的比，是 n 加 1 分之 k 減 n 的絕對值，n 很大時趨近 1。",
           "board": [
-            {"do":"write","line":"$|x|<1$ 內等於 $(1+x)^k$"}
-          ] },
-        { "show": ["項像 $x^n$：$|x|<1$ 才縮小"],
-          "note": "端點這裡不討論，等式直接接受。",
-          "say": "比值趨近一，項像 x 的 n 次方，x 絕對值小於一才縮小；等式請直接接受。",
+            {
+              "do": "write",
+              "line": "收斂半徑（$k$ 不是非負整數）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac{C(k,n+1)x^{n+1}}{C(k,n)x^n}\\right|=\\frac{|k-n|}{n+1}|x|\\to|x|$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑 $R=1$"
+          ],
+          "say": "所以半徑是 1，在負 1 到 1 之間收斂。",
           "board": [
-            {"do":"write","line":"項的大小像 ${{p:|x|^n}}$"},
-            {"do":"box","term":"p","on":"小於一"}
-          ] },
-        { "show": ["$k$ 是非負整數：$n>k$ 的係數含 $(k-k)=0$"],
-          "say": "k 是非負整數就不一樣了：連乘乘到 k 減 k 等於零，後面全部是零，級數停下來。",
+            {
+              "do": "write",
+              "line": "半徑 $R=1$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　端點 $x=\\pm1$ 收不收斂要看 $k$；這一課只用 $|x|<1$",
+              "color": "violet",
+              "on": "之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它真的等於 $(1+x)^k$ 嗎？下一頁證明"
+          ],
+          "say": "但收斂不代表等於。它真的等於 1 加 x 的 k 次方嗎？下一頁證明。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$k$ 是非負整數，$n>k$：","on":"非負整數"},
-            {"do":"write","line":"$C(k,n)=\\frac{k(k-1)\\cdots{{z:(k-k)}}\\cdots}{n!}=0$","on":"連乘"},
-            {"do":"circle","term":"z","on":"k 減 k"},
-            {"do":"write","line":"後面全部是零，級數停下來","on":"後面全部"}
-          ] }
+            {
+              "do": "write",
+              "line": "它真的等於 $(1+x)^k$ 嗎？下一頁證明"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：級數等於 $(1+x)^k$",
+      "beats": [
+        {
+          "show": [
+            "令 $g(x)=\\sum C(k,n)x^n$（$|x|<1$），目標：$g=(1+x)^k$"
+          ],
+          "say": "證明。令 g 是這個級數，在半徑之內。目標是證明 g 等於 1 加 x 的 k 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $g(x)=\\sum C(k,n)x^n$（$|x|<1$），目標：$g=(1+x)^k$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "係數的關係：",
+            "$(n+1)\\,C(k,n+1)=(k-n)\\,C(k,n)$"
+          ],
+          "say": "先看係數的關係：下一個係數，比這一個多乘了 k 減 n，多除了 n 加 1。移項就是這個式子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "係數的關係："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle (n+1)\\,C(k,n+1)=(k-n)\\,C(k,n)}}$",
+              "on": "這一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "移項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項微分，算 $(1+x)g'(x)$ 的 $x^n$ 係數：",
+            "$\\begin{aligned}&(n+1)C(k,n+1)+nC(k,n)\\\\&=(k-n)C(k,n)+nC(k,n)=k\\,C(k,n)\\end{aligned}$"
+          ],
+          "say": "逐項微分，看 1 加 x 乘 g prime 的 x 的 n 次方係數：一塊來自 g prime，一塊來自 x 乘 g prime。用剛才的關係，加起來是 k 乘 C k n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項微分，算 $(1+x)g'(x)$ 的 $x^n$ 係數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&(n+1)C(k,n+1)+nC(k,n)\\\\&=(k-n)C(k,n)+nC(k,n)=k\\,C(k,n)\\end{aligned}}$",
+              "on": "ri#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $(1+x)g'(x)=k\\,g(x)$"
+          ],
+          "say": "每一個係數都對上，所以 1 加 x 乘 g prime，等於 k 乘 g。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $(1+x)g'(x)=k\\,g(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $h(x)=\\dfrac{g(x)}{(1+x)^k}$，商的微分：",
+            "$h'(x)=\\frac{(1+x)g'-kg}{(1+x)^{k+1}}=0$"
+          ],
+          "say": "再令 h 是 g 除以 1 加 x 的 k 次方。用商的微分法則化簡，分子正好是 1 加 x 乘 g prime 減 k 乘 g，等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $h(x)=\\dfrac{g(x)}{(1+x)^k}$，商的微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle h'(x)=\\frac{(1+x)g'-kg}{(1+x)^{k+1}}=0$",
+              "on": "分子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h$ 是常數，$h(0)=g(0)=1$，所以",
+            "$g(x)=(1+x)^k\\quad(|x|<1)\\ \\ \\blacksquare$"
+          ],
+          "say": "導數是 0，h 是常數。h of 0 等於 g of 0，等於 1。所以 g 就等於 1 加 x 的 k 次方。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h$ 是常數，$h(0)=g(0)=1$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle g(x)=(1+x)^k\\quad(|x|<1)\\ \\ \\blacksquare}}$",
+              "color": "red",
+              "on": "of#2"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "等於#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "幾個常用的：$\\sqrt{1+x}$",
+      "beats": [
+        {
+          "show": [
+            "$k=\\frac12$，係數剛才算過：$1,\\ \\frac12,\\ -\\frac18,\\ \\frac1{16}$",
+            "$\\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\frac{x^3}{16}-\\cdots$"
+          ],
+          "say": "第三節，常用的幾個。根號 1 加 x 是 k 等於 2 分之 1，係數剛才算過了，寫出來就是這樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k=\\frac12$，係數剛才算過：$1,\\ \\frac12,\\ -\\frac18,\\ \\frac1{16}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\frac{x^3}{16}-\\cdots}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　前兩項 $1+\\frac x2$ 就是線性近似",
+              "color": "violet",
+              "on": "才算"
+            }
+          ]
+        },
+        {
+          "show": [
+            "估計 $\\sqrt{1.1}$：$x=0.1$",
+            "$\\begin{aligned}&1+0.05-0.00125+0.0000625\\\\&=1.0488125\\end{aligned}$"
+          ],
+          "say": "估計根號 1.1：代 x 等於 0.1。1 加 0.05，減 0.00125，加 0.0000625，得到 1.0488125。",
+          "board": [
+            {
+              "do": "write",
+              "line": "估計 $\\sqrt{1.1}$：$x=0.1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}&1+0.05-0.00125+0.0000625\\\\&=1.0488125\\end{aligned}}}}$",
+              "on": "05"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "00#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真正 $\\sqrt{1.1}\\approx1.0488088$，誤差約 $3.7\\times10^{-6}$"
+          ],
+          "say": "真正的值大約是 1.0488088，誤差只有百萬分之 3.7 左右。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真正 $\\sqrt{1.1}\\approx1.0488088$，誤差約 $3.7\\times10^{-6}$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 −1 到 1 之間越貼越緊；x = 1 之外不能保證"
+          ],
+          "say": "圖上，三次的紅色比切線貼得更好；但半徑是 1，過了 1 就不保證了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sq",
+                  "window": [
+                    -1,
+                    3,
+                    -0.2,
+                    2.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(1+x)",
+                      "color": "blue",
+                      "label": "√(1+x)"
+                    },
+                    {
+                      "expr": "1+x/2",
+                      "color": "green",
+                      "dash": true,
+                      "label": "T₁"
+                    },
+                    {
+                      "expr": "1+x/2-x^2/8+x^3/16",
+                      "color": "red",
+                      "label": "T₃"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "在 −1 到 1 之間越貼越緊；x = 1 之外不能保證",
+              "color": "violet",
+              "on": "貼得"
+            },
+            {
+              "do": "write",
+              "line": "　想估 $\\sqrt{5}$？先寫成 $2\\sqrt{1+\\frac14}$，讓 $x=\\frac14$ 落在半徑內",
+              "color": "violet",
+              "on": "過了"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "負分數次方：$\\dfrac{1}{\\sqrt{1+x}}$",
+      "beats": [
+        {
+          "show": [
+            "$k=-\\frac12$：分子 $-\\frac12,\\ -\\frac32,\\ -\\frac52,\\dots$"
+          ],
+          "say": "再來，根號 1 加 x 分之 1，就是 k 等於負 2 分之 1。分子從負 2 分之 1 開始，每次減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k=-\\frac12$：分子 $-\\frac12,\\ -\\frac32,\\ -\\frac52,\\dots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $C(-\\frac12,1)=-\\frac12$",
+            "• $C(-\\frac12,2)=\\dfrac{(-\\frac12)(-\\frac32)}{2!}=\\dfrac38$"
+          ],
+          "say": "C 1 是負 2 分之 1；C 2 是 8 分之 3；C 3 再乘負 2 分之 5，除以 6，等於負 48 分之 15，約分是負 16 分之 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $C(-\\frac12,1)=-\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "• $C(-\\frac12,2)=\\dfrac{(-\\frac12)(-\\frac32)}{2!}=\\dfrac38$",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "• $C(-\\frac12,3)=\\dfrac{(-\\frac12)(-\\frac32)(-\\frac52)}{3!}$",
+              "on": "分之#3"
+            },
+            {
+              "do": "write",
+              "line": "$=-\\dfrac{15}{48}=-\\dfrac5{16}$",
+              "on": "分之#4"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{1}{\\sqrt{1+x}}=1-\\frac x2+\\frac38x^2-\\frac5{16}x^3+\\cdots$"
+          ],
+          "say": "所以 x 三次方的係數是負 16 分之 5。正負交錯，因為分子每一個都是負的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\frac{1}{\\sqrt{1+x}}=1-\\frac x2+\\frac38x^2-\\frac5{16}x^3+\\cdots}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "正負"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "常用的幾個",
+      "title": "負整數次方：$\\dfrac{1}{(1-x)^3}$",
       "beats": [
-        { "show": ["$k=-1$：$\\frac{1}{1+x}=1-x+x^2-\\cdots$"],
-          "note": "跟〈幾何級數〉一致。",
-          "say": "k 是負一，係數是正負一交錯，得到一加 x 分之一，跟幾何級數一模一樣。",
+        {
+          "show": [
+            "寫成 $(1+(-x))^{-3}$：$k=-3$，$x$ 換成 $-x$"
+          ],
+          "say": "最後，1 減 x 的三次方分之 1。把它寫成 1 加負 x 的負 3 次方：k 是負 3，x 換成負 x。",
           "board": [
-            {"do":"write","line":"$k=-1$：$\\frac{1}{1+x}={{sa:1-x+x^2-\\cdots}}$"},
-            {"do":"underline","term":"sa","label":"正負交錯","on":"交錯"}
-          ] },
-        { "show": ["$k=-\\frac{1}{2}$：$1-\\frac{x}{2}+\\frac{3x^2}{8}-\\cdots$"],
-          "note": "這是 $\\frac{1}{\\sqrt{1+x}}$。",
-          "say": "k 是負二分之一，就是根號一加 x 分之一，係數也是正負交錯。",
+            {
+              "do": "write",
+              "line": "寫成 $(1+(-x))^{-3}$：$k=-3$，$x$ 換成 $-x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^4$ 係數：$C(-3,4)\\cdot(-1)^4$",
+            "$\\begin{aligned}C(-3,4)&=\\frac{(-3)(-4)(-5)(-6)}{4!}\\\\&=\\frac{360}{24}=15\\end{aligned}$"
+          ],
+          "say": "x 的四次方係數，是 C 負 3 取 4，乘上負 1 的 4 次方。分子是負 3、負 4、負 5、負 6 四個數相乘，360，除以 24，等於 15。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{\\sqrt{1+x}}={{sb:1-\\frac{x}{2}+\\frac{3x^2}{8}-\\cdots}}$"},
-            {"do":"underline","term":"sb","label":"係數交錯","on":"係數"}
-          ] },
-        { "show": ["$C\\left(-\\frac{1}{2},2\\right)=\\frac{3}{8}$"],
-          "say": "k 是負二分之一、n 是二：分子兩個負號變正，再除以二階乘，得八分之三。",
+            {
+              "do": "write",
+              "line": "$x^4$ 係數：$C(-3,4)\\cdot(-1)^4$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle {\\begin{aligned}C(-3,4)&=\\frac{(-3)(-4)(-5)(-6)}{4!}\\\\&=\\frac{360}{24}=15\\end{aligned}}}}$",
+              "on": "次方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "四個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(-1)^4=1$，所以係數是 $15$"
+          ],
+          "say": "負 1 的四次方是 1，所以係數是 15。",
           "board": [
-            {"do":"write","line":"$C\\left(-\\frac{1}{2},2\\right)=\\frac{(-1/2)(-3/2)}{2!}$"},
-            {"do":"write","line":"$={{r:\\frac{3}{8}}}$","on":"得八分之三"},
-            {"do":"box","term":"r","color":"green","on":"八分之三"}
-          ] },
-        { "show": ["$(1-x)^k$：$x$ 換成 $-x$"],
-          "note": "$(a+x)^k=a^k\\left(1+\\frac{x}{a}\\right)^k$，$|x|<|a|$。",
-          "say": "一減 x 就把 x 換成負 x，每一項多乘一個負一的 n 次方。a 加 x 先提出 a 的 k 次方。",
+            {
+              "do": "write",
+              "line": "$(-1)^4=1$，所以係數是 $15$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般地：$C(-3,n)(-1)^n=\\dfrac{(n+1)(n+2)}{2}$",
+            "$\\begin{aligned}\\frac{1}{(1-x)^3}&=1+3x+6x^2\\\\&\\quad+10x^3+15x^4+\\cdots\\end{aligned}$"
+          ],
+          "say": "一般來說，負號會兩兩抵消，係數是 2 分之 n 加 1 乘 n 加 2，依序是 1、3、6、10、15，全部是正的。",
           "board": [
-            {"do":"write","line":"$(1-x)^k=\\sum C(k,n){{m:(-x)^n}}$"},
-            {"do":"focus","term":"m","on":"換成負"},
-            {"do":"write","line":"$(a+x)^k={{p:a^k}}\\left(1+\\frac{x}{a}\\right)^k$","on":"a 加"},
-            {"do":"focus","term":"p","on":"提出"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "一般地：$C(-3,n)(-1)^n=\\dfrac{(n+1)(n+2)}{2}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle {\\begin{aligned}\\frac{1}{(1-x)^3}&=1+3x+6x^2\\\\&\\quad+10x^3+15x^4+\\cdots\\end{aligned}}}}$",
+              "on": "數是"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "依序"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：把 $\\frac1{1-x}=\\sum x^n$ 微分兩次再除以 $2$，得到同樣的係數",
+              "color": "violet",
+              "on": "10"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "$\\sqrt{1+x}$ 與近似",
+      "title": "步驟整理",
       "beats": [
-        { "show": ["$C\\left(\\frac{1}{2},3\\right)=\\frac{(1/2)(-1/2)(-3/2)}{6}$","$=\\frac{1}{16}$"],
-          "say": "k 是二分之一，再算第三個係數：連乘有兩個負號，是正的，得到十六分之一。",
-          "board": [
-            {"do":"write","line":"$C\\left(\\frac{1}{2},3\\right)=\\frac{(1/2){{m:(-1/2)(-3/2)}}}{6}$","on":"第三個係數"},
-            {"do":"underline","term":"m","label":"兩個負號","on":"兩個負號"},
-            {"do":"write","line":"$=\\,{{q:\\frac{1}{16}}}$","on":"得到"}
-          ] },
-        { "show": ["$\\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\frac{x^3}{16}-\\cdots$"],
-          "say": "根號一加 x：一加二分之 x，減八分之 x 平方，加十六分之 x 的三次方。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{1+x}={{two:1+\\frac{x}{2}}}-\\frac{x^2}{8}+{{t:\\frac{x^3}{16}}}-\\cdots$"},
-            {"do":"arrow","from":"q","to":"t","on":"加十六分之"}
-          ] },
-        { "show": ["$x=0.1$：$1+0.05-0.00125+0.0000625$"],
-          "note": "$=1.0488125$，真值 $\\approx 1.0488088$。",
-          "say": "估根號一點一，代零點一，加起來一點零四八八一二五，跟真正的值只差一點點。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$x=0.1$：$1+0.05-0.00125+0.0000625$","on":"代零點一"},
-            {"do":"write","line":"$=1.0488125$","on":"加起來"},
-            {"do":"transform","line":"$=1.0488125$，真值 $\\approx 1.0488088$","on":"真正的值"}
-          ] },
-        { "show": ["真值：計算機按 $\\sqrt{1.1}$"],
-          "note": "差在丟掉的 $x^4$ 以後的項。",
-          "say": "真值是計算機按出來的；差一點，是因為丟掉四次方以後的項，x 很小所以它們很小。",
-          "board": [
-            {"do":"write","line":"真值：計算機按 $\\sqrt{1.1}$"},
-            {"do":"write","line":"差：丟掉 ${{d:x^4}}$ 以後的項","on":"丟掉"},
-            {"do":"focus","term":"d","on":"四次方"}
-          ] },
-        { "show": ["前兩項：$\\sqrt{1+x}\\approx 1+\\frac{x}{2}$"],
-          "note": "就是〈線性近似〉。",
-          "say": "只取前兩項，就是線性近似學過的那一條。",
-          "board": [
-            {"do":"underline","term":"two","label":"前兩項"},
-            {"do":"write","line":"$\\sqrt{1+x}\\approx {{two:1+\\frac{x}{2}}}$","color":"green","on":"線性近似"}
-          ] },
-        { "show": ["藍：$\\sqrt{1+x}$；紅：到 $x^3$ 的多項式"],
-          "say": "畫出來：藍色是根號一加 x，紅色是到 x 三次方的多項式，靠近零兩條幾乎重疊。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-1,2,-1,3],"curves":[{"expr":"sqrt(1+x)","domain":[-1,2],"color":"blue"},{"expr":"1+x/2-(x^2)/8+x^3/16","domain":[-1,2],"color":"red"}]},"on":"藍色"}
-          ] }
+        {
+          "show": [
+            "用二項級數求 $(1+u)^k$ 中某一項的係數"
+          ],
+          "say": "排排看步驟。"
+        }
       ],
-      "check": 3
-    },
-    {
-      "title": "負的次方",
-      "beats": [
-        { "show": ["$C\\left(-\\frac{1}{2},3\\right)$","$=\\frac{(-1/2)(-3/2)(-5/2)}{3!}$"],
-          "say": "負二分之一的三次項：負二分之一、負二分之三、負二分之五，三個負號，是負的。",
-          "board": [
-            {"do":"write","line":"$C\\left(-\\frac{1}{2},3\\right)$"},
-            {"do":"write","line":"$=\\frac{{{p:(-1/2)(-3/2)(-5/2)}}}{3!}$","on":"負二分之一#2"},
-            {"do":"underline","term":"p","label":"三個負號","on":"三個負號"}
-          ] },
-        { "show": ["$=-\\frac{15}{8}\\div 6=-\\frac{5}{16}$"],
-          "say": "分子是負八分之十五，除以三階乘六，得到負十六分之五。",
-          "board": [
-            {"do":"transform","line":"$=-\\frac{15}{8}\\div 6$"},
-            {"do":"transform","line":"$=-\\frac{15}{8}\\div 6=-\\frac{5}{16}$","color":"green","on":"得到"}
-          ] },
-        { "show": ["$\\frac{1}{(1-x)^3}=(1+(-x))^{-3}$"],
-          "note": "求 $x^4$ 的係數。",
-          "say": "再看一減 x 的三次方分之一：k 是負三，x 換成負 x。要 x 的四次方係數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{(1-x)^3}=(1+{{m:(-x)}})^{-3}$","on":"再看"},
-            {"do":"write","line":"$k=-3$","on":"k 是負三"},
-            {"do":"focus","term":"m","on":"換成負"}
-          ] },
-        { "show": ["$C(-3,4)\\cdot(-1)^4$","$=\\frac{(-3)(-4)(-5)(-6)}{4!}$"],
-          "say": "負三、負四、負五、負六，四個負號；再乘負一的四次方，除以四階乘。",
-          "board": [
-            {"do":"write","line":"$C(-3,4)\\cdot{{e:(-1)^4}}$"},
-            {"do":"write","line":"$=\\frac{{{n:(-3)(-4)(-5)(-6)}}}{4!}$","on":"負四"},
-            {"do":"underline","term":"n","label":"四個負號","on":"四個負號"},
-            {"do":"focus","term":"e","on":"再乘"}
-          ] }
-      ],
-      "key": "把 $-x$ 當成 $x$ 代入，負號跟著次方走",
-      "predict": {
-        "ask": "$x^4$ 的係數是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "用二項級數求 $(1+u)^k$ 中某一項的係數",
+        "steps": [
           {
-            "label": "15",
-            "correct": true
+            "label": "認出 $k$ 和 $u$（例如 $u=-x$ 或 $u=x^2$）"
           },
           {
-            "label": "$-15$",
-            "why": "四個負號相乘是正的，$(-1)^4$ 也是正的。"
+            "label": "決定要第幾個 $C(k,n)$",
+            "why": "先要有上一步：認出 $k$ 和 $u$（例如 $u=-x$ 或 $u=x^2$）"
           },
           {
-            "label": "360",
-            "why": "360 是分子，還要除以 $4!=24$。"
+            "label": "分子從 $k$ 往下乘 $n$ 個數，除以 $n!$",
+            "why": "先要有上一步：決定要第幾個 $C(k,n)$"
+          },
+          {
+            "label": "乘上 $u$ 帶出來的常數（例如 $(-1)^n$）",
+            "why": "先要有上一步：分子從 $k$ 往下乘 $n$ 個數，除以 $n!$"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $C(k,n)=\\dfrac{k(k-1)\\cdots(k-n+1)}{n!}$：$k$ 可以是任何實數",
+            "• $(1+x)^k=\\sum C(k,n)x^n$，$|x|<1$；$k$ 是非負整數時有限項"
+          ],
+          "say": "整理一下：廣義二項係數，分子從 k 往下乘 n 個數；二項級數在負 1 到 1 之間成立；k 是非負整數時就是有限的二項式定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $C(k,n)=\\dfrac{k(k-1)\\cdots(k-n+1)}{n!}$：$k$ 可以是任何實數"
+            },
+            {
+              "do": "write",
+              "line": "• $(1+x)^k=\\sum C(k,n)x^n$，$|x|<1$；$k$ 是非負整數時有限項",
+              "on": "往下"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$(1+x)g'=kg$，所以 $\\frac{g}{(1+x)^k}$ 是常數",
+              "on": "之間"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sqrt{1+x}=1+\\frac x2-\\frac{x^2}8+\\cdots$；負次方要小心正負號",
+              "on": "非負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：近似得多準？Taylor 誤差"
+          ],
+          "say": "下一課，算算這些近似到底有多準。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：近似得多準？Taylor 誤差"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

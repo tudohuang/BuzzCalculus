@@ -1,58 +1,133 @@
 {
   "id": "total-differential",
   "title": "全微分",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["partial-derivatives", "differentials-error"],
-  "next": ["multivariable-linearization"],
-  "related": ["tangent-plane", "path-test"],
-  "objectives": [
-    "寫出 $df=f_x\\,dx+f_y\\,dy$，說得出每一項是哪個變數造成的變化。",
-    "用全微分估計 $\\Delta f$，以及量測誤差造成的最大誤差。",
-    "知道「偏導數存在」不保證可微；偏導數在附近連續才保證。"
+  "prerequisites": [
+    "partial-derivatives",
+    "differentials-error"
   ],
-  "visual": "曲面 z = x²y 在 (2, 1) 附近，從底下的點 (2, 1) 畫一個小箭頭 (dx, dy)。箭頭的 x 分量造成的高度變化 f_x dx 與 y 分量造成的 f_y dy 用兩段不同顏色的線疊起來，總長就是 df；旁邊同時畫曲面上真正的高度差 Δf。把箭頭縮短，兩者的差距縮得比箭頭本身快得多。",
+  "next": [
+    "multivariable-linearization"
+  ],
+  "related": [
+    "tangent-plane",
+    "path-test"
+  ],
+  "objectives": [
+    "寫出 $df=f_x\\,dx+f_y\\,dy$，說得出每一項是哪個變數造成的變化",
+    "用全微分估計 $\\Delta f$，以及量測誤差造成的最大誤差",
+    "知道「偏導數存在」不保證可微",
+    "偏導數在附近連續才保證"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 兩個變數同時動一點點",
+      "heading": "① 兩個變數同時動",
       "body": [
-        "單變數時，$x$ 動 $dx$，$f$ 大約變 $f'(x)\\,dx$（〈微分與誤差估計〉）。現在 $f(x,y)$ 有兩個輸入，$x$ 動 $dx$、$y$ 也動 $dy$，$f$ 變多少？",
-        "人話：$x$ 的變動貢獻 $f_x\\,dx$，$y$ 的變動貢獻 $f_y\\,dy$，兩份加起來："
+        "一個變數：$dy=f'(x)\\,dx$",
+        "長方形面積 $A=xy$：$x$ 多 $dx$、$y$ 多 $dy$",
+        "例：$x=5,\\ y=3,\\ dx=0.2,\\ dy=0.1$",
+        "角落 $dx\\,dy$ 是兩個小量相乘，丟掉：",
+        "$y=\\dfrac{\\partial A}{\\partial x}$、$x=\\dfrac{\\partial A}{\\partial y}$：係數正好是偏導數"
       ],
-      "tex": ["df = f_x\\,dx + f_y\\,dy"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\Delta A&=(x+dx)(y+dy)-xy\\\\&=y\\,dx+x\\,dy+dx\\,dy\\end{aligned}",
+        "\\Delta A=0.6+0.5+0.02=1.12",
+        "dA=y\\,dx+x\\,dy"
+      ]
     },
     {
-      "heading": "② 精確的 $\\Delta f$ 與線性的 $df$",
+      "heading": "② 精確 Δf 與線性 df",
       "body": [
-        "真正的變化是 $\\Delta f=f(a+dx,b+dy)-f(a,b)$。$df$ 只是它的線性部分，丟掉的是 $dx^2$、$dx\\cdot dy$ 這類更小的量。$dx$、$dy$ 越小，$df$ 越準。",
-        "例：$f=xy$，從 $(3,2)$ 走到 $(3.1,2.1)$。$df=y\\,dx+x\\,dy=2(0.1)+3(0.1)=0.5$；真正的 $\\Delta f=3.1\\times2.1-6=0.51$。差的 $0.01$ 正是 $dx\\cdot dy$。",
-        "圖像：$df$ 是沿著〈切平面〉走的高度差，$\\Delta f$ 是沿著曲面走的高度差。"
+        "精確的變化量：",
+        "全微分（線性的部分）：",
+        "• $f_x\\,dx$：只動 $x$ 造成的變化",
+        "• $f_y\\,dy$：只動 $y$ 造成的變化",
+        "$d f$ 對 $dx$、$dy$ 是線性的；$\\Delta f$ 一般不是",
+        "$dx,dy$ 很小時：$\\Delta f\\approx df$",
+        "算：$f_x=2xy=4$，$f_y=x^2=4$（在 $(2,1)$）",
+        "精確：$\\Delta f=2.01^2(0.98)-4=-0.040702$",
+        "差的 $0.0007$ 來自 $dx^2$、$dx\\,dy$ 這種二階小量"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Delta f=f(a+dx,\\,b+dy)-f(a,b)",
+        "df=f_x(a,b)\\,dx+f_y(a,b)\\,dy",
+        "df=4(0.01)+4(-0.02)=-0.04"
+      ]
     },
     {
-      "heading": "③ 誤差估計：最壞情況取絕對值",
+      "heading": "② 試一題",
       "body": [
-        "量測時只知道誤差的上限 $|dx|\\le 0.01$，不知道正負。最壞情況是每一項都往同一邊加：$|df|\\le|f_x||dx|+|f_y||dy|$。"
+        "寫出 $f(x,y)=e^{xy}$ 的 $df$：",
+        "寫 $df$ 時要留著 $dx$、$dy$：它是「變化量的公式」，不是一個數"
       ],
-      "collapsible": false
+      "tex": [
+        "f_x=y\\,e^{xy},\\qquad f_y=x\\,e^{xy}",
+        "df=e^{xy}\\,(y\\,dx+x\\,dy)"
+      ]
     },
     {
-      "heading": "④ 直覺，不是證明：為什麼可以把兩份加起來",
+      "heading": "③ 誤差估計：取絕對值",
       "body": [
-        "想像先動 $x$、再動 $y$：第一段 $f$ 約變 $f_x\\,dx$，第二段約變 $f_y\\,dy$。這個說法漏了一件事：第二段是在 $(a+dx,b)$ 量斜率，不是在 $(a,b)$。要讓這個差距可以忽略，需要比「偏導數存在」更強的條件。"
+        "量測有誤差，但不知道正負",
+        "最壞情況：每一份都往同一個方向加",
+        "圓柱體積 $V=\\pi r^2h$",
+        "$r=3$ cm、$h=10$ cm，$|dr|\\le0.01$、$|dh|\\le0.02$",
+        "驗算：$r=3.01$、$h=10.02$ 時真的 $\\Delta V\\approx2.457$",
+        "體積 $90\\pi\\approx282.7$，相對誤差 $\\dfrac{0.78\\pi}{90\\pi}\\approx0.87\\%$",
+        "捷徑：取 $\\ln$ 再微分，$\\frac{dV}V=2\\frac{dr}r+\\frac{dh}h=0.0087$",
+        "半徑的誤差貢獻 $0.6\\pi$，高只有 $0.18\\pi$：半徑要量得更準"
       ],
-      "collapsible": false
+      "tex": [
+        "|\\Delta f|\\lesssim|f_x|\\,|dx|+|f_y|\\,|dy|",
+        "V_r=2\\pi rh=60\\pi,\\qquad V_h=\\pi r^2=9\\pi",
+        "\\begin{aligned}|dV|&\\le60\\pi(0.01)+9\\pi(0.02)\\\\&=0.78\\pi\\approx2.45\\ \\text{cm}^3\\end{aligned}"
+      ]
     },
     {
-      "heading": "可微的正式條件",
+      "heading": "④ 為什麼可以加起來",
       "body": [
-        "$f$ 在 $(a,b)$ 可微，意思是 $f(a+h,b+k)=f(a,b)+f_xh+f_yk+\\varepsilon\\cdot\\sqrt{h^2+k^2}$，其中 $(h,k)\\to(0,0)$ 時 $\\varepsilon\\to0$。只有可微，$df$ 才是 $\\Delta f$ 的好近似。",
-        "偏導數存在不夠：$f=\\frac{xy}{x^2+y^2}$、$f(0,0)=0$。沿兩軸 $f$ 都是 $0$，所以 $f_x(0,0)=f_y(0,0)=0$；但沿 $y=x$ 時 $f=\\frac{1}{2}$，$f$ 在原點連第一步「連續」都沒有（〈路徑測試〉），更不可微。",
-        "常用的充分條件：$f_x$、$f_y$ 在 $(a,b)$ 附近存在而且連續，則 $f$ 在 $(a,b)$ 可微。"
+        "第一段 $\\approx f_x(a,b)\\,dx$",
+        "第二段 $\\approx f_y({\\color{red}a+dx},b)\\,dy$",
+        "要它 $\\approx f_y(a,b)$：需要 $f_y$ 在附近連續",
+        "嚴格版（均值定理，$0<\\theta_1,\\theta_2<1$）：",
+        "偏導數連續 → 兩個係數 $=f_x(a,b)+\\varepsilon_1$、$f_y(a,b)+\\varepsilon_2$，$\\varepsilon_1,\\varepsilon_2\\to0$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}\\Delta f&=\\underbrace{f(a+dx,b)-f(a,b)}_{\\text{只動 }x}\\\\&\\quad+\\underbrace{f(a+dx,b+dy)-f(a+dx,b)}_{\\text{只動 }y}\\end{aligned}",
+        "\\begin{aligned}\\text{第一段}&=f_x(a+\\theta_1dx,\\,b)\\,dx\\\\\\text{第二段}&=f_y(a+dx,\\,b+\\theta_2dy)\\,dy\\end{aligned}",
+        "\\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy"
+      ]
+    },
+    {
+      "heading": "⑤ 可微的正式條件",
+      "body": [
+        "定義：$f$ 在 $(a,b)$ 可微，是指",
+        "其中 $(dx,dy)\\to(0,0)$ 時 $\\varepsilon_1,\\varepsilon_2\\to0$",
+        "等價的說法：$\\dfrac{\\Delta f-df}{\\sqrt{dx^2+dy^2}}\\to0$",
+        "定理：$f_x,f_y$ 在 $(a,b)$ 附近存在，且在 $(a,b)$ 連續 ⇒ $f$ 在 $(a,b)$ 可微",
+        "多項式、$e^{xy}$、$\\sin(x+y)$ 都處處可微；可微 ⇒ 連續（$dx,dy\\to0$ 時 $\\Delta f\\to0$）",
+        "只有偏導數存在不夠：",
+        "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$，$df=0$",
+        "等高線全是從原點出發的射線：原點附近 $-\\frac12$ 到 $\\frac12$ 的值都有",
+        "離原點再近，$\\Delta f$ 都是 $\\frac12$，$df=0$：不可微，連連續都不是"
+      ],
+      "tex": [
+        "\\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy",
+        "f(x,y)=\\frac{xy}{x^2+y^2},\\quad f(0,0)=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 全微分：$df=f_x\\,dx+f_y\\,dy$，兩份各是只動一個變數的變化",
+        "• $dx,dy$ 很小：$\\Delta f\\approx df$，差的是二階小量",
+        "• 最大誤差：$|f_x||dx|+|f_y||dy|$（每一項取絕對值）",
+        "• 偏導數連續才保證可微；只存在不夠",
+        "下一課：多變數線性近似，把 $df$ 變成切平面"
+      ]
     }
   ],
   "workedExamples": [
@@ -101,258 +176,846 @@
   ],
   "checks": [
     {
-      "ask": "$f(x,y)=x^2+3y$，$df$ 是？",
+      "ask": "$f(x,y)=x\\ln y$，$df=$？",
       "options": [
-        { "label": "$2x\\,dx+3\\,dy$", "correct": true },
-        { "label": "$2x+3$", "why": "那是兩個偏導數相加，沒有乘上各自的變動量 $dx$、$dy$。" },
-        { "label": "$2x\\,dx$", "why": "$y$ 也在動，$f_y\\,dy=3\\,dy$ 不能漏。" }
+        {
+          "label": "$\\ln y\\,dx+\\dfrac xy\\,dy$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac1y\\,dx+\\ln y\\,dy$",
+          "why": "兩個偏導數對調了：$dx$ 前面放的是對 $x$ 的偏導數"
+        },
+        {
+          "label": "$\\ln y+\\dfrac xy$",
+          "why": "漏了 $dx$、$dy$：這是兩個偏導數相加，不是全微分"
+        },
+        {
+          "label": "$\\dfrac xy\\,dx\\,dy$",
+          "why": "不是相乘：全微分是兩份「加」起來"
+        }
       ]
     },
     {
-      "ask": "$f=xy$，從 $(3,2)$ 到 $(3.1,2.1)$，$df$ 是？",
+      "ask": "長方形量到 $x=5$、$y=3$，兩邊誤差都最多 $0.1$。面積 $A=xy$ 的最大誤差大約是？",
       "options": [
-        { "label": "$0.5$", "correct": true },
-        { "label": "$0.51$", "why": "那是精確的 $\\Delta f$；$df$ 只取線性部分 $y\\,dx+x\\,dy$，少了 $dx\\cdot dy=0.01$。" },
-        { "label": "$0.01$", "why": "那正好是 $df$ 丟掉的 $dx\\cdot dy$，不是 $df$ 本身。" }
+        {
+          "label": "$0.8$",
+          "correct": true
+        },
+        {
+          "label": "$0.2$",
+          "why": "只把兩個誤差加起來，沒乘上偏導數"
+        },
+        {
+          "label": "$0.3$",
+          "why": "只算了 $x$ 那一份：$y$ 的誤差也要算"
+        },
+        {
+          "label": "$1.5$",
+          "why": "把面積 $15$ 乘上 $0.1$：誤差不是面積的 $10\\%$"
+        }
       ]
     },
     {
-      "ask": "$V=\\pi r^2h$，$r$ 的相對誤差 $1\\%$、$h$ 的相對誤差 $2\\%$。$V$ 的相對誤差大約至多？",
+      "ask": "已知 $f_x(a,b)$、$f_y(a,b)$ 都存在。可以推出什麼？",
       "options": [
-        { "label": "$4\\%$", "correct": true },
-        { "label": "$3\\%$", "why": "$r$ 是平方：$\\frac{dV}{V}=2\\frac{dr}{r}+\\frac{dh}{h}$，$r$ 的 $1\\%$ 要算兩次。" },
-        { "label": "$2\\%$", "why": "誤差會累加，不是取最大的那一個。" }
-      ]
-    },
-    {
-      "ask": "$f_x(a,b)$、$f_y(a,b)$ 都存在，$f$ 在 $(a,b)$ 一定可微嗎？",
-      "options": [
-        { "label": "不一定；偏導數在附近連續才保證可微", "correct": true },
-        { "label": "一定", "why": "$\\frac{xy}{x^2+y^2}$ 在原點兩個偏導數都是 $0$，卻連連續都不是。" },
-        { "label": "一定不可微", "why": "大多數常見函數偏導數存在而且可微，例如多項式。" }
+        {
+          "label": "什麼都推不出：$f$ 不一定可微，也不一定連續",
+          "correct": true
+        },
+        {
+          "label": "$f$ 在 $(a,b)$ 可微",
+          "why": "偏導數只看兩條線上的行為，其他方向管不到"
+        },
+        {
+          "label": "$f$ 在 $(a,b)$ 連續",
+          "why": "一變數「可導 ⇒ 連續」，但兩個方向的偏導數不夠"
+        },
+        {
+          "label": "$f_x$、$f_y$ 在 $(a,b)$ 附近連續",
+          "why": "把定理反過來用了：定理是「連續 ⇒ 可微」"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "兩個變數一起動",
+      "title": "兩個變數同時動",
       "beats": [
-        { "show": ["單變數：$df\\approx f'(x)\\,dx$"],
-          "say": "單變數的時候，x 動一點點 d x，函數大約變 f prime 乘 d x。",
+        {
+          "show": [
+            "一個變數：$dy=f'(x)\\,dx$"
+          ],
+          "say": "一個變數時，3.16 學過：y 的變化大約是 f prime x 乘 d x。現在兩個變數同時動，會怎樣？",
           "board": [
-            {"do":"write","line":"$df\\approx {{fp:f'(x)}}\\,dx$"},
-            {"do":"underline","term":"fp","on":"f prime"}
-          ] },
-        { "show": ["$x$ 動 $dx$、$y$ 也動 $dy$"],
-          "note": "$f$ 變多少？",
-          "say": "現在有兩個輸入，x 動一點、y 也動一點，函數會變多少？",
+            {
+              "do": "write",
+              "line": "一個變數：$dy=f'(x)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "長方形面積 $A=xy$：$x$ 多 $dx$、$y$ 多 $dy$"
+          ],
+          "say": "先看一個看得見的例子：長方形面積 x 乘 y。寬多了 d x，高多了 d y，面積多了多少？",
           "board": [
-            {"do":"write","line":"$x$ 動 $dx$，$y$ 動 $dy$"},
-            {"do":"write","line":"$f$ 變多少？","on":"函數會"}
-          ] },
-        { "show": ["$df=f_x\\,dx+f_y\\,dy$"],
-          "note": "$x$ 的貢獻加上 $y$ 的貢獻。",
-          "say": "x 的變動貢獻偏導數乘 d x，y 的變動貢獻偏導數乘 d y，兩份加起來，叫全微分。",
+            {
+              "do": "write",
+              "line": "長方形面積 $A=xy$：$x$ 多 $dx$、$y$ 多 $dy$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，多出來的面積分成三塊：右邊綠色的長條是 y 乘 d x，上面紅色的長條是 x 乘 d y，右上角還有一小塊 d x 乘 d y。",
           "board": [
-            {"do":"write","line":"$df={{t:{{a:f_x\\,dx}}+{{b:f_y\\,dy}}}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","color":"blue","label":"x 的貢獻","on":"x 的變動"},
-            {"do":"focus","term":"b","color":"violet","label":"y 的貢獻","on":"y 的變動"},
-            {"do":"box","term":"t","color":"green","on":"兩份"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"tdRect\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ctdRect\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ctdRectblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ctdRectred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ctdRectgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ctdRectpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ctdRectink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8ctdRect30\"><rect x=\"85.3\" y=\"16\" width=\"455.5\" height=\"284\"/></clipPath><g clip-path=\"url(#cl8ctdRect30)\"><polygon points=\"133.5,251.8 401.4,251.8 401.4,91 133.5,91\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><polygon points=\"401.4,251.8 460.4,251.8 460.4,91 401.4,91\" fill=\"var(--green)\" fill-opacity=\"0.3\"/><polygon points=\"133.5,91 401.4,91 401.4,48.2 133.5,48.2\" fill=\"var(--red)\" fill-opacity=\"0.2\"/><polygon points=\"401.4,91 460.4,91 460.4,48.2 401.4,48.2\" fill=\"var(--muted)\" fill-opacity=\"0.3\"/></g><line x1=\"133.5\" y1=\"251.8\" x2=\"401.4\" y2=\"251.8\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><line x1=\"401.4\" y1=\"251.8\" x2=\"401.4\" y2=\"91\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><line x1=\"401.4\" y1=\"91\" x2=\"133.5\" y2=\"91\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><line x1=\"133.5\" y1=\"91\" x2=\"133.5\" y2=\"251.8\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><line x1=\"401.4\" y1=\"251.8\" x2=\"460.4\" y2=\"251.8\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><line x1=\"460.4\" y1=\"251.8\" x2=\"460.4\" y2=\"48.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><line x1=\"460.4\" y1=\"48.2\" x2=\"133.5\" y2=\"48.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><line x1=\"133.5\" y1=\"91\" x2=\"133.5\" y2=\"48.2\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><text x=\"267.5\" y=\"180.4\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"30\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">xy</text><text x=\"430.9\" y=\"173.4\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y dx</text><text x=\"267.5\" y=\"77.6\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x dy</text><text x=\"430.9\" y=\"76.6\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"15\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dx dy</text><text x=\"267.5\" y=\"279.8\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"430.9\" y=\"279.8\" text-anchor=\"middle\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dx</text><text x=\"119.5\" y=\"179.4\" text-anchor=\"end\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"119.5\" y=\"77.6\" text-anchor=\"end\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dy</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\Delta A&=(x+dx)(y+dy)-xy\\\\&=y\\,dx+x\\,dy+dx\\,dy\\end{aligned}$"
+          ],
+          "say": "用代數算也一樣：展開以後，x y 抵消，剩下三項：y d x，加 x d y，加 d x d y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\Delta A&=(x+dx)(y+dy)-xy\\\\&=y\\,dx+x\\,dy+dx\\,dy\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x=5,\\ y=3,\\ dx=0.2,\\ dy=0.1$",
+            "$\\Delta A=0.6+0.5+0.02=1.12$"
+          ],
+          "say": "代個數字：寬 5、高 3，寬多 0.2、高多 0.1。兩條長條分別是 0.6 和 0.5，角落只有 0.02。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x=5,\\ y=3,\\ dx=0.2,\\ dy=0.1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta A=0.6+0.5+0.02=1.12$",
+              "on": "兩條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "角落 $dx\\,dy$ 是兩個小量相乘，丟掉：",
+            "$dA=y\\,dx+x\\,dy$"
+          ],
+          "say": "角落是兩個小量相乘，比長條小得多，丟掉。剩下的 y d x 加 x d y，就是面積的全微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "角落 $dx\\,dy$ 是兩個小量相乘，丟掉："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle dA=y\\,dx+x\\,dy}}$",
+              "on": "長條"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　$y=\\dfrac{\\partial A}{\\partial x}$、$x=\\dfrac{\\partial A}{\\partial y}$：係數正好是偏導數",
+              "color": "violet",
+              "on": "是面"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "線性部分",
+      "title": "精確 Δf 與線性 df",
       "beats": [
-        { "show": ["$\\Delta f=f(a+dx,b+dy)-f(a,b)$"],
-          "note": "真正的變化。",
-          "say": "真正的變化是走完之後的函數值，減掉起點的函數值。",
+        {
+          "show": [
+            "精確的變化量：",
+            "$\\Delta f=f(a+dx,\\,b+dy)-f(a,b)$"
+          ],
+          "say": "一般的函數，在點 a b。x 動 d x、y 動 d y，真正的變化量叫德爾塔 f，就是兩個函數值相減。",
           "board": [
-            {"do":"write","line":"$\\Delta f={{e:f(a+dx,b+dy)}}-{{s:f(a,b)}}$","tint":{"e":"blue","s":"violet"}},
-            {"do":"focus","term":"e","color":"blue","label":"走完之後","on":"走完之後"},
-            {"do":"focus","term":"s","color":"violet","label":"起點","on":"起點"}
-          ] },
-        { "show": ["$df$：只留線性部分"],
-          "note": "丟掉 $dx^2$、$dx\\cdot dy$ 這類更小的量。",
-          "say": "全微分只是它的線性部分，把 d x 平方、d x 乘 d y 這種更小的東西都丟掉了。",
+            {
+              "do": "write",
+              "line": "精確的變化量："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta f=f(a+dx,\\,b+dy)-f(a,b)$",
+              "on": "真正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "全微分（線性的部分）：",
+            "$df=f_x(a,b)\\,dx+f_y(a,b)\\,dy$"
+          ],
+          "say": "全微分 d f 定義成：f 對 x 的偏導數乘 d x，加上 f 對 y 的偏導數乘 d y。",
           "board": [
-            {"do":"write","line":"$df={{l:f_x\\,dx+f_y\\,dy}}$"},
-            {"do":"underline","term":"l","label":"線性部分","on":"線性部分"},
-            {"do":"write","line":"丟掉：${{g:dx^2,\\ dx\\cdot dy}}$","on":"d x 平方"},
-            {"do":"strike","term":"g","on":"更小"}
-          ] },
-        { "show": ["$dx=0.1$ 時，$dx^2=0.01$"],
-          "note": "線性：$dx$ 變 2 倍，這一項也變 2 倍。",
-          "say": "線性的意思是 d x 變兩倍，這一項也跟著變兩倍。可是 d x 平方不是，d x 是零點一，它只有零點零一。",
+            {
+              "do": "write",
+              "line": "全微分（線性的部分）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle df=f_x(a,b)\\,dx+f_y(a,b)\\,dy}}$",
+              "on": "的偏#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "的偏#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $f_x\\,dx$：只動 $x$ 造成的變化",
+            "• $f_y\\,dy$：只動 $y$ 造成的變化"
+          ],
+          "say": "第一項是只動 x 造成的變化，第二項是只動 y 造成的變化。全微分就是兩份加起來。",
           "board": [
-            {"do":"write","line":"$dx=0.1$：${{q:dx^2}}=0.01$"},
-            {"do":"focus","term":"q","label":"更小","on":"d x 平方"}
-          ] },
-        { "show": ["$dx^2$ 比 $dx$ 小得多"],
-          "say": "畫出來：藍色是 d x，紅色是 d x 平方。越靠近零，紅色比藍色小得越多。",
+            {
+              "do": "write",
+              "line": "• $f_x\\,dx$：只動 $x$ 造成的變化"
+            },
+            {
+              "do": "write",
+              "line": "• $f_y\\,dy$：只動 $y$ 造成的變化",
+              "on": "第二"
+            },
+            {
+              "do": "write",
+              "line": "　$d f$ 對 $dx$、$dy$ 是線性的；$\\Delta f$ 一般不是",
+              "color": "violet",
+              "on": "變化#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$dx,dy$ 很小時：$\\Delta f\\approx df$"
+          ],
+          "say": "d x、d y 很小時，德爾塔 f 大約等於 d f。而 d f 只要兩個偏導數，乘一乘、加一加。",
           "board": [
-            {"do":"plot","graph":{"window":[0,1,0,1],"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"x^2","domain":[0,1],"color":"red"}]}}
-          ] },
-        { "show": ["$f=xy$：從 $(3,2)$ 走到 $(3.1,2.1)$"],
-          "say": "拿 x y 試試看：從點三、二，兩個座標各多零點一。先算全微分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=xy$：$(3,2)\\to(3.1,2.1)$","on":"從點"},
-            {"do":"write","line":"$dx=dy=0.1$","on":"各多"}
-          ] }
+            {
+              "do": "write",
+              "line": "$dx,dy$ 很小時：$\\Delta f\\approx df$",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "差多少",
-      "beats": [
-        { "show": ["$df=2(0.1)+3(0.1)=0.5$"],
-          "say": "偏導數是 y 和 x，代進去，全微分是零點五。",
-          "board": [
-            {"do":"write","line":"$f=xy$：$f_x=y$，$f_y=x$"},
-            {"do":"write","line":"$df={{fx:2}}(0.1)+{{fy:3}}(0.1)={{d:0.5}}$","tint":{"fx":"blue","fy":"violet"},"on":"代進去"},
-            {"do":"box","term":"d","color":"green","on":"全微分是"}
-          ] },
-        { "show": ["$\\Delta f=3.1\\times2.1-6=0.51$"],
-          "note": "差的 $0.01$ 正是 $dx\\cdot dy$。",
-          "say": "真正的變化是零點五一，只差零點零一，剛好就是被丟掉的 d x 乘 d y。",
-          "board": [
-            {"do":"write","line":"$\\Delta f=3.1\\times2.1-6=0.51$","on":"真正的變化"},
-            {"do":"write","line":"差 $0.01=dx\\cdot dy$","on":"只差"}
-          ] },
-        { "show": ["$f=x^2y$ 在 $(2,1)$：$f_x=4$，$f_y=4$"],
-          "note": "$dx=0.01$、$dy=-0.02$。",
-          "say": "再試一題：x 平方 y 在點二、一，兩個偏導數都是四；x 多零點零一，y 少零點零二。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=x^2y$ 在 $(2,1)$：$f_x=4$，$f_y=4$","on":"x 平方 y"},
-            {"do":"write","line":"$dx=0.01$，$dy=-0.02$","on":"x 多"}
-          ] }
-      ],
-      "key": "$df$ 丟掉 $dx\\,dy$，$\\Delta f$ 沒丟",
       "predict": {
-        "ask": "$df$ 是？",
+        "ask": "$f(x,y)=x^2y$ 在 $(2,1)$：$x$ 多 $0.01$、$y$ 少 $0.02$，$f$ 大約？",
         "options": [
           {
-            "label": "$-0.04$",
+            "label": "減少約 $0.04$",
             "correct": true
           },
           {
-            "label": "$0.04$",
-            "why": "只算了 $x$ 那一項。$y$ 那一項是 $4(-0.02)=-0.08$，加起來 $-0.04$。"
+            "label": "增加約 $0.04$",
+            "why": "只算了 $x$ 那一份，漏了 $y$ 變小的影響"
           },
           {
-            "label": "$-0.08$",
-            "why": "只算了 $y$ 那一項，還要加上 $x$ 的貢獻 $4(0.01)=0.04$。"
+            "label": "減少約 $0.02$",
+            "why": "直接把 $dx+dy$ 加起來，沒乘上偏導數"
+          },
+          {
+            "label": "增加約 $0.12$",
+            "why": "$dy=-0.02$ 是負的，正負號弄反了"
           }
         ]
       }
     },
     {
-      "title": "誤差：最壞情況",
+      "title": "精確 Δf 與線性 df",
       "beats": [
-        { "show": ["$|df|\\le|f_x||dx|+|f_y||dy|$"],
-          "note": "只知道誤差上限、不知道正負。",
-          "say": "量測時只知道誤差最多多少，不知道正負。最壞的情況是每一項都往同一邊加，所以取絕對值。",
+        {
+          "show": [
+            "算：$f_x=2xy=4$，$f_y=x^2=4$（在 $(2,1)$）",
+            "$df=4(0.01)+4(-0.02)=-0.04$"
+          ],
+          "say": "算一下：在 2 逗號 1，兩個偏導數都是 4。d f 等於 0.04 減 0.08，是負 0.04。",
           "board": [
-            {"do":"write","line":"$|df|\\le|f_x||dx|{{pl:+}}|f_y||dy|$"},
-            {"do":"focus","term":"pl","label":"同一邊加","on":"同一邊"}
-          ] },
-        { "show": ["$V=\\pi r^2h$，$r=3$、$h=10$"],
-          "note": "誤差至多 $0.01$ cm 與 $0.02$ cm。",
-          "say": "圓柱半徑三公分、高十公分，兩個量都有一點誤差。",
+            {
+              "do": "write",
+              "line": "算：$f_x=2xy=4$，$f_y=x^2=4$（在 $(2,1)$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle df=4(0.01)+4(-0.02)=-0.04$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "精確：$\\Delta f=2.01^2(0.98)-4=-0.040702$"
+          ],
+          "say": "跟精確值比：2.01 的平方乘 0.98 減 4，是負 0.040702。差不到千分之一。",
           "board": [
-            {"do":"write","line":"$V=\\pi r^2h$，$r=3$、$h=10$","on":"圓柱"},
-            {"do":"write","line":"誤差至多 $0.01$、$0.02$","on":"兩個量"}
-          ] },
-        { "show": ["相對誤差 $=\\frac{|dr|}{r}$","$1\\%$：$|dr|=0.01\\,r$"],
-          "note": "先換成 $dr$、$dh$，再代進公式。",
-          "say": "相對誤差是誤差除以量本身。r 的相對誤差百分之一，就是 d r 等於零點零一乘 r，這樣換出 d r 再代進公式。",
+            {
+              "do": "write",
+              "line": "精確：$\\Delta f=2.01^2(0.98)-4=-0.040702$"
+            },
+            {
+              "do": "write",
+              "line": "　差的 $0.0007$ 來自 $dx^2$、$dx\\,dy$ 這種二階小量",
+              "color": "violet",
+              "on": "是負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "寫出 $f(x,y)=e^{xy}$ 的 $df$：",
+            "$f_x=y\\,e^{xy},\\qquad f_y=x\\,e^{xy}$"
+          ],
+          "say": "再寫一個：e 的 x y 次方。對 x 偏微分，連鎖律拉出一個 y；對 y 偏微分，拉出一個 x。",
           "board": [
-            {"do":"write","line":"相對誤差 $=\\frac{|dr|}{r}$"},
-            {"do":"write","line":"$1\\%$：$|dr|=0.01\\,r$","on":"百分之一"}
-          ] },
-        { "show": ["$V_r=60\\pi$，$V_h=9\\pi$"],
-          "say": "體積對半徑的偏導數是六十 pi，對高的偏導數是九 pi。",
+            {
+              "do": "write",
+              "line": "寫出 $f(x,y)=e^{xy}$ 的 $df$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x=y\\,e^{xy},\\qquad f_y=x\\,e^{xy}$",
+              "on": "連鎖"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$df=e^{xy}\\,(y\\,dx+x\\,dy)$"
+          ],
+          "say": "所以 d f 等於 e 的 x y 次方，乘上 y d x 加 x d y。",
           "board": [
-            {"do":"write","line":"$V_r={{vr:60\\pi}}$，$V_h={{vh:9\\pi}}$","tint":{"vr":"blue","vh":"violet"}}
-          ] },
-        { "show": ["$|dV|\\le0.6\\pi+0.18\\pi=0.78\\pi$"],
-          "note": "約 $2.45\\ \\text{cm}^3$；半徑那一項是主要來源。",
-          "say": "乘上各自的誤差再相加，大約二點四五立方公分。半徑誤差小，可是乘上的係數大。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$|dV|\\le{{a:0.6\\pi}}+{{b:0.18\\pi}}=0.78\\pi$","tint":{"a":"blue","b":"violet"},"on":"乘上各自"},
-            {"do":"write","line":"$\\approx2.45\\ \\text{cm}^3$","color":"green","on":"大約"},
-            {"do":"focus","term":"a","on":"係數大"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle df=e^{xy}\\,(y\\,dx+x\\,dy)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "　寫 $df$ 時要留著 $dx$、$dy$：它是「變化量的公式」，不是一個數",
+              "color": "violet",
+              "on": "y。"
+            }
+          ]
+        }
       ],
-      "key": "最壞情況：每項取絕對值相加",
+      "check": 0
+    },
+    {
+      "title": "誤差估計：取絕對值",
+      "beats": [
+        {
+          "show": [
+            "量測有誤差，但不知道正負"
+          ],
+          "say": "全微分最常用在誤差估計。量測的誤差，我們只知道最多多大，不知道偏大還是偏小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "量測有誤差，但不知道正負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最壞情況：每一份都往同一個方向加",
+            "$|\\Delta f|\\lesssim|f_x|\\,|dx|+|f_y|\\,|dy|$"
+          ],
+          "say": "最壞的情況，是每一份誤差都往同一個方向加。所以每一項都取絕對值再相加，得到最大誤差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最壞情況：每一份都往同一個方向加"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle |\\Delta f|\\lesssim|f_x|\\,|dx|+|f_y|\\,|dy|}}$",
+              "on": "同一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "絕對"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓柱體積 $V=\\pi r^2h$",
+            "$r=3$ cm、$h=10$ cm，$|dr|\\le0.01$、$|dh|\\le0.02$"
+          ],
+          "say": "例子：圓柱體積派 r 平方 h。量到半徑 3 公分、高 10 公分；誤差最多分別是 0.01 和 0.02。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓柱體積 $V=\\pi r^2h$"
+            },
+            {
+              "do": "write",
+              "line": "$r=3$ cm、$h=10$ cm，$|dr|\\le0.01$、$|dh|\\le0.02$",
+              "on": "10"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$V_r=2\\pi rh=60\\pi,\\qquad V_h=\\pi r^2=9\\pi$"
+          ],
+          "say": "先算偏導數：對 r 是 2 派 r h，是 60 派；對 h 是派 r 平方，是 9 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle V_r=2\\pi rh=60\\pi,\\qquad V_h=\\pi r^2=9\\pi$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}|dV|&\\le60\\pi(0.01)+9\\pi(0.02)\\\\&=0.78\\pi\\approx2.45\\ \\text{cm}^3\\end{aligned}$"
+          ],
+          "say": "最大誤差是 60 派乘 0.01，加 9 派乘 0.02，等於 0.78 派，大約 2.45 立方公分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}|dV|&\\le60\\pi(0.01)+9\\pi(0.02)\\\\&=0.78\\pi\\approx2.45\\ \\text{cm}^3\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "派乘#2"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$r=3.01$、$h=10.02$ 時真的 $\\Delta V\\approx2.457$",
+              "color": "violet",
+              "on": "78"
+            }
+          ]
+        },
+        {
+          "show": [
+            "體積 $90\\pi\\approx282.7$，相對誤差 $\\dfrac{0.78\\pi}{90\\pi}\\approx0.87\\%$"
+          ],
+          "say": "體積本身是 90 派，大約 282.7。相對誤差不到百分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "體積 $90\\pi\\approx282.7$，相對誤差 $\\dfrac{0.78\\pi}{90\\pi}\\approx0.87\\%$"
+            },
+            {
+              "do": "write",
+              "line": "　捷徑：取 $\\ln$ 再微分，$\\frac{dV}V=2\\frac{dr}r+\\frac{dh}h=0.0087$",
+              "color": "violet",
+              "on": "82"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑的誤差貢獻 $0.6\\pi$，高只有 $0.18\\pi$：半徑要量得更準"
+          ],
+          "say": "還看得出來：半徑貢獻了 0.6 派，高只有 0.18 派。想讓結果更準，該先把半徑量好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半徑的誤差貢獻 $0.6\\pi$，高只有 $0.18\\pi$：半徑要量得更準"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "長方形量到 $x=5$、$y=3$，兩邊誤差都最多 $0.1$。面積 $A=xy$ 的最大誤差大約是？"
+          ],
+          "say": "試一題：長方形兩邊都可能量錯 0.1，面積最多錯多少？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "為什麼可以加起來",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "為什麼兩份可以直接加起來？把移動拆成兩段：先只動 x，從 a b 走到 a 加 d x 逗號 b；再只動 y，往上走 d y。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"tdPath\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ctdPath\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ctdPathblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ctdPathred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ctdPathgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ctdPathpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ctdPathink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8ctdPath30\"><rect x=\"59\" y=\"16\" width=\"508\" height=\"254\"/></clipPath><g clip-path=\"url(#cl8ctdPath30)\"></g><line x1=\"139.2\" y1=\"209.8\" x2=\"419.9\" y2=\"209.8\" stroke=\"var(--green)\" stroke-width=\"3.4\" marker-end=\"url(#ah8ctdPathgreen)\"/><line x1=\"446.7\" y1=\"209.8\" x2=\"446.7\" y2=\"69.5\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8ctdPathred)\"/><line x1=\"139.2\" y1=\"209.8\" x2=\"446.7\" y2=\"49.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><circle cx=\"139.2\" cy=\"209.8\" r=\"6\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"446.7\" cy=\"209.8\" r=\"6\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><circle cx=\"446.7\" cy=\"49.4\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"135.2\" y=\"239.8\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(a, b)</text><text x=\"454.7\" y=\"239.8\" text-anchor=\"middle\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(a+dx, b)</text><text x=\"460.7\" y=\"57.4\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(a+dx, b+dy)</text><text x=\"286.3\" y=\"241.8\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:inherit\">先動 x：≈ f<tspan baseline-shift=\"sub\" font-size=\"16\">x</tspan> dx</text><text x=\"460.7\" y=\"144.3\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">再動 y：≈ f<tspan baseline-shift=\"sub\" font-size=\"16\">y</tspan> dy</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\Delta f&=\\underbrace{f(a+dx,b)-f(a,b)}_{\\text{只動 }x}\\\\&\\quad+\\underbrace{f(a+dx,b+dy)-f(a+dx,b)}_{\\text{只動 }y}\\end{aligned}$"
+          ],
+          "say": "精確的變化量正好拆成兩段的和：中間那個函數值，一加一減抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\Delta f&=\\underbrace{f(a+dx,b)-f(a,b)}_{\\text{只動 }x}\\\\&\\quad+\\underbrace{f(a+dx,b+dy)-f(a+dx,b)}_{\\text{只動 }y}\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一段 $\\approx f_x(a,b)\\,dx$"
+          ],
+          "say": "第一段只有 x 在動，就是一變數的微分：大約 f x 乘 d x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第一段 $\\approx f_x(a,b)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二段 $\\approx f_y({\\color{red}a+dx},b)\\,dy$"
+          ],
+          "say": "第二段只有 y 在動，大約是 f y 乘 d y。但注意：這個偏導數是在新的點算的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二段 $\\approx f_y({\\color{red}a+dx},b)\\,dy$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要它 $\\approx f_y(a,b)$：需要 $f_y$ 在附近連續"
+          ],
+          "say": "要它接近原來那一點的 f y，f y 在附近必須連續，不會突然跳。條件就藏在這裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要它 $\\approx f_y(a,b)$：需要 $f_y$ 在附近連續",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "嚴格版（均值定理，$0<\\theta_1,\\theta_2<1$）：",
+            "$\\begin{aligned}\\text{第一段}&=f_x(a+\\theta_1dx,\\,b)\\,dx\\\\\\text{第二段}&=f_y(a+dx,\\,b+\\theta_2dy)\\,dy\\end{aligned}$"
+          ],
+          "say": "把約等於變成等號，用均值定理：每一段都是區間中某一點的偏導數，乘上 d x 或 d y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "嚴格版（均值定理，$0<\\theta_1,\\theta_2<1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\text{第一段}&=f_x(a+\\theta_1dx,\\,b)\\,dx\\\\\\text{第二段}&=f_y(a+dx,\\,b+\\theta_2dy)\\,dy\\end{aligned}}$",
+              "on": "中某"
+            }
+          ]
+        },
+        {
+          "show": [
+            "偏導數連續 → 兩個係數 $=f_x(a,b)+\\varepsilon_1$、$f_y(a,b)+\\varepsilon_2$，$\\varepsilon_1,\\varepsilon_2\\to0$"
+          ],
+          "say": "偏導數連續，這兩個係數就等於 a b 的偏導數，加上一點點艾普西隆 1、艾普西隆 2；d x、d y 趨近 0，它們也趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "偏導數連續 → 兩個係數 $=f_x(a,b)+\\varepsilon_1$、$f_y(a,b)+\\varepsilon_2$，$\\varepsilon_1,\\varepsilon_2\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy$"
+          ],
+          "say": "所以德爾塔 f 等於 d f，再加上兩個艾普西隆項：誤差比 d x、d y 本身還小得多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "西隆"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "可微的正式條件",
+      "beats": [
+        {
+          "show": [
+            "定義：$f$ 在 $(a,b)$ 可微，是指",
+            "$\\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy$"
+          ],
+          "say": "剛剛推出來的樣子，正是可微的正式定義：德爾塔 f 等於 d f 加上一個比 d x、d y 小得多的誤差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義：$f$ 在 $(a,b)$ 可微，是指"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta f=f_x\\,dx+f_y\\,dy+\\varepsilon_1dx+\\varepsilon_2dy$",
+              "on": "的正"
+            },
+            {
+              "do": "write",
+              "line": "其中 $(dx,dy)\\to(0,0)$ 時 $\\varepsilon_1,\\varepsilon_2\\to0$",
+              "color": "gold",
+              "on": "加上"
+            },
+            {
+              "do": "write",
+              "line": "　等價的說法：$\\dfrac{\\Delta f-df}{\\sqrt{dx^2+dy^2}}\\to0$",
+              "color": "violet",
+              "on": "小得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$f_x,f_y$ 在 $(a,b)$ 附近存在，且在 $(a,b)$ 連續 ⇒ $f$ 在 $(a,b)$ 可微"
+          ],
+          "say": "第四節的推導就是這個定理的證明：偏導數在附近存在，而且在這一點連續，f 就可微。課本上常見的函數，偏導數到處連續，所以到處可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f_x,f_y$ 在 $(a,b)$ 附近存在，且在 $(a,b)$ 連續 ⇒ $f$ 在 $(a,b)$ 可微",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　多項式、$e^{xy}$、$\\sin(x+y)$ 都處處可微；可微 ⇒ 連續（$dx,dy\\to0$ 時 $\\Delta f\\to0$）",
+              "color": "violet",
+              "on": "就可"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有偏導數存在不夠：",
+            "$f(x,y)=\\frac{xy}{x^2+y^2},\\quad f(0,0)=0$"
+          ],
+          "say": "只有偏導數存在，是不夠的。看這個反例：x y 除以 x 平方加 y 平方，原點補 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只有偏導數存在不夠："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x,y)=\\frac{xy}{x^2+y^2},\\quad f(0,0)=0$",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$，$df=0$"
+          ],
+          "say": "在兩條軸上，f 都是 0，所以兩個偏導數都存在，都是 0。全微分 d f 永遠是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "軸上 $f\\equiv0$ → $f_x(0,0)=f_y(0,0)=0$，$df=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "從上往下看：f 只跟方向有關，每條射線上都是常數。兩條軸上是 0，但 y 等於 x 上一直是 2 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"tdBad\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ctdBad\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ctdBadblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ctdBadred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ctdBadgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ctdBadpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ctdBadink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8ctdBad30\"><rect x=\"141.3\" y=\"16\" width=\"343.4\" height=\"284\"/></clipPath><g clip-path=\"url(#cl8ctdBad30)\"></g><line x1=\"320.9\" y1=\"158\" x2=\"435.2\" y2=\"158\" stroke=\"var(--green)\" stroke-width=\"3.4\"/><line x1=\"320.3\" y1=\"155\" x2=\"425.9\" y2=\"111.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"318.6\" y1=\"152.4\" x2=\"399.4\" y2=\"71.6\" stroke=\"var(--blue)\" stroke-width=\"3.4\"/><line x1=\"316\" y1=\"150.7\" x2=\"359.8\" y2=\"45.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"313\" y1=\"150.1\" x2=\"313\" y2=\"35.8\" stroke=\"var(--green)\" stroke-width=\"3.4\"/><line x1=\"310\" y1=\"150.7\" x2=\"266.2\" y2=\"45.1\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"307.4\" y1=\"152.4\" x2=\"226.6\" y2=\"71.6\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"305.7\" y1=\"155\" x2=\"200.1\" y2=\"111.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"305.1\" y1=\"158\" x2=\"190.8\" y2=\"158\" stroke=\"var(--green)\" stroke-width=\"3.4\"/><line x1=\"305.7\" y1=\"161\" x2=\"200.1\" y2=\"204.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"307.4\" y1=\"163.6\" x2=\"226.6\" y2=\"244.4\" stroke=\"var(--blue)\" stroke-width=\"3.4\"/><line x1=\"310\" y1=\"165.3\" x2=\"266.2\" y2=\"270.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"313\" y1=\"165.9\" x2=\"313\" y2=\"280.2\" stroke=\"var(--green)\" stroke-width=\"3.4\"/><line x1=\"316\" y1=\"165.3\" x2=\"359.8\" y2=\"270.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><line x1=\"318.6\" y1=\"163.6\" x2=\"399.4\" y2=\"244.4\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"320.3\" y1=\"161\" x2=\"425.9\" y2=\"204.8\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><circle cx=\"313\" cy=\"158\" r=\"5\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"452.5\" y=\"166\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">0</text><text x=\"313\" y=\"24.5\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">0</text><text x=\"173.5\" y=\"166\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">0</text><text x=\"313\" y=\"307.5\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">0</text><text x=\"418.3\" y=\"68.7\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">1/2</text><text x=\"207.7\" y=\"263.3\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">1/2</text><text x=\"203.7\" y=\"68.7\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">−1/2</text><text x=\"422.3\" y=\"263.3\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">−1/2</text><text x=\"482.4\" y=\"166\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"327\" y=\"14.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　等高線全是從原點出發的射線：原點附近 $-\\frac12$ 到 $\\frac12$ 的值都有",
+              "color": "violet",
+              "on": "軸上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "離原點再近，$\\Delta f$ 都是 $\\frac12$，$df=0$：不可微，連連續都不是"
+          ],
+          "say": "沿著對角線走一點點，德爾塔 f 就是 2 分之 1，不是小量。所以不可微，甚至不連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "離原點再近，$\\Delta f$ 都是 $\\frac12$，$df=0$：不可微，連連續都不是",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "已知 $f_x(a,b)$、$f_y(a,b)$ 都存在。可以推出什麼？"
+          ],
+          "say": "最後試一題：只知道兩個偏導數存在，能推出什麼？"
+        }
+      ],
       "check": 2
     },
     {
-      "title": "什麼時候算得準",
+      "title": "重點整理",
       "beats": [
-        { "show": ["先動 $x$、再動 $y$"],
-          "note": "直覺，不是證明。",
-          "say": "為什麼兩份可以加起來？想成先動 x、再動 y。但第二段的斜率是在挪過的點量的，不是原點。",
+        {
+          "show": [
+            "• 全微分：$df=f_x\\,dx+f_y\\,dy$，兩份各是只動一個變數的變化",
+            "• $dx,dy$ 很小：$\\Delta f\\approx df$，差的是二階小量"
+          ],
+          "say": "整理一下：全微分是兩份只動一個變數的變化加起來；變化很小時它接近真正的變化量；估最大誤差要每一項取絕對值；偏導數存在不保證可微，偏導數連續才保證。",
           "board": [
-            {"do":"write","line":"先動 $x$：$(a,b)\\to(a+dx,b)$"},
-            {"do":"write","line":"再動 $y$：$\\to(a+dx,b+dy)$","on":"再動"},
-            {"do":"write","line":"第二段：斜率在 $(a+dx,b)$ 量","on":"第二段"}
-          ] },
-        { "show": ["$f=xy$：第二段斜率 $f_y=x$","起點 $3$，挪過 $3.1$"],
-          "say": "用 x y 看，第二段斜率是 x。起點是三，挪過的點是三點一，差了零點一。這個差乘 d y，正是 d x 乘 d y。",
+            {
+              "do": "write",
+              "line": "• 全微分：$df=f_x\\,dx+f_y\\,dy$，兩份各是只動一個變數的變化"
+            },
+            {
+              "do": "write",
+              "line": "• $dx,dy$ 很小：$\\Delta f\\approx df$，差的是二階小量",
+              "on": "變化#1"
+            },
+            {
+              "do": "write",
+              "line": "• 最大誤差：$|f_x||dx|+|f_y||dy|$（每一項取絕對值）",
+              "on": "化量"
+            },
+            {
+              "do": "write",
+              "line": "• 偏導數連續才保證可微；只存在不夠",
+              "on": "導數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：多變數線性近似，把 $df$ 變成切平面"
+          ],
+          "say": "下一課，把全微分寫成一個近似公式，它的圖形就是切平面。",
           "board": [
-            {"do":"write","line":"$f=xy$：第二段斜率 ${{fy:f_y=x}}$"},
-            {"do":"write","line":"起點 $x=3$，挪過 $x=3.1$","on":"起點"},
-            {"do":"write","line":"差 $0.1$，再乘 $dy$ 就是 $dx\\cdot dy$","on":"差了"}
-          ] },
-        { "show": ["偏導數存在：不夠"],
-          "note": "$\\frac{xy}{x^2+y^2}$ 兩個偏導數都有，原點連續都沒有。",
-          "say": "要讓這個差距可以忽略，光有偏導數不夠：這個例子兩個偏導數都存在，卻連連續都沒有。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"偏導數存在 $\\nRightarrow$ 可微","on":"光有偏導數"},
-            {"do":"write","line":"$\\frac{xy}{x^2+y^2}$","on":"這個例子"},
-            {"do":"write","line":"原點：不連續","on":"連連續"}
-          ] },
-        { "show": ["沿 $y=x$：$f=\\frac{1}{2}$，原點 $0$","沿 $x$ 軸：$f=0$"],
-          "say": "沿 y 等於 x 走，函數值是二分之一，原點卻是零，所以不連續。沿 x 軸 f 一直是零，所以 f x 原點是零。",
-          "board": [
-            {"do":"write","line":"沿 $y=x$：$f=\\frac{1}{2}$"},
-            {"do":"write","line":"$f(0,0)=0$","on":"原點卻"},
-            {"do":"write","line":"沿 $x$ 軸：$f=0$，$f_x(0,0)=0$","on":"x 軸"}
-          ] },
-        { "show": ["$f_x$、$f_y$ 在附近連續 ⟹ 可微"],
-          "note": "可微，$df$ 才是 $\\Delta f$ 的好近似。",
-          "say": "常用的充分條件是偏導數在附近連續，這時函數可微，全微分才是好的近似。正式定義在全文。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{c:f_x,\\ f_y}}$ 在附近連續","on":"偏導數"},
-            {"do":"write","line":"$\\Rightarrow$ 可微，${{d:df}}\\approx\\Delta f$","on":"這時函數可微"},
-            {"do":"box","term":"d","color":"green","on":"好的近似"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：多變數線性近似，把 $df$ 變成切平面"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["total-differential", "linearization", "multivariable"],
-    "fine": ["total-differential-formula", "total-differential-estimate", "total-differential-error-bound", "differentiability-condition"]
+    "coarse": [
+      "total-differential",
+      "linearization",
+      "multivariable"
+    ],
+    "fine": [
+      "total-differential-formula",
+      "total-differential-estimate",
+      "total-differential-error-bound",
+      "differentiability-condition"
+    ]
   },
   "practice": [
-    { "id": "der-044", "core": true, "trains": "total-differential-formula" },
-    { "id": "der-041", "core": true, "trains": "total-differential-estimate" },
-    { "id": "der-042", "core": true, "trains": "total-differential-estimate" },
-    { "id": "der-043", "core": true, "trains": "total-differential-estimate" },
-    { "id": "lec-17-q1c", "core": true, "trains": "total-differential-error-bound" },
-    { "id": "cg-8c-001", "core": true, "trains": "differentiability-condition" },
-    { "id": "cg-8c-003", "core": true, "trains": "total-differential-error-bound" },
-    { "id": "der-045", "trains": "total-differential-formula" },
-    { "id": "cg-8c-002", "trains": "differentiability-condition" },
-    { "id": "cg-8c-004", "trains": "total-differential-error-bound" }
+    {
+      "id": "der-044",
+      "core": true,
+      "trains": "total-differential-formula"
+    },
+    {
+      "id": "der-041",
+      "core": true,
+      "trains": "total-differential-estimate"
+    },
+    {
+      "id": "der-042",
+      "core": true,
+      "trains": "total-differential-estimate"
+    },
+    {
+      "id": "der-043",
+      "core": true,
+      "trains": "total-differential-estimate"
+    },
+    {
+      "id": "lec-17-q1c",
+      "core": true,
+      "trains": "total-differential-error-bound"
+    },
+    {
+      "id": "cg-8c-001",
+      "core": true,
+      "trains": "differentiability-condition"
+    },
+    {
+      "id": "cg-8c-003",
+      "core": true,
+      "trains": "total-differential-error-bound"
+    },
+    {
+      "id": "der-045",
+      "trains": "total-differential-formula"
+    },
+    {
+      "id": "cg-8c-002",
+      "trains": "differentiability-condition"
+    },
+    {
+      "id": "cg-8c-004",
+      "trains": "total-differential-error-bound"
+    }
   ],
   "gaps": []
 }

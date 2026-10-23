@@ -1,0 +1,327 @@
+{
+  "id": "gamma-half-integer",
+  "title": "半整數的 Gamma",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["gamma-half", "gamma-recurrence-apps"],
+  "next": ["gamma-scaled"],
+  "related": [],
+  "objectives": [
+    "從 $\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$ 用遞迴算出 $\\Gamma\\left(\\frac{3}{2}\\right)$、$\\Gamma\\left(\\frac{5}{2}\\right)$、$\\Gamma\\left(\\frac{7}{2}\\right)$，並寫出一般式 $\\Gamma\\left(n+\\frac{1}{2}\\right)=\\frac{1\\cdot 3\\cdot 5\\cdots(2n-1)}{2^n}\\cdot\\sqrt{\\pi}$。",
+    "往左推出 $\\Gamma\\left(-\\frac{1}{2}\\right)=-2\\sqrt{\\pi}$、$\\Gamma\\left(-\\frac{3}{2}\\right)=\\frac{4\\sqrt{\\pi}}{3}$。",
+    "用 $\\int_0^{\\infty}x^me^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)$ 一次處理所有 $x^me^{-x^2}$：$m$ 奇數得到階乘，$m$ 偶數得到 $\\sqrt{\\pi}$。"
+  ],
+  "visual": "Γ(s) 的圖形，s 從 −3 到 5。在 s = 1, 2, 3, 4 標出 0!, 1!, 2!, 3!；在 s = 1/2, 3/2, 5/2, 7/2 標出 √π, √π/2, 3√π/4, 15√π/8；在 s = −1/2、−3/2 標出 −2√π 與 4√π/3。s = 0, −1, −2 畫垂直虛線，曲線在兩側衝向 ±∞。",
+  "concept": [
+    {
+      "heading": "① 從 $\\sqrt{\\pi}$ 往上爬",
+      "body": [
+        "每往上一格，乘上「前一格的參數」：$\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{1}{2}\\Gamma\\left(\\frac{1}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$；$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{3\\sqrt{\\pi}}{4}$；$\\Gamma\\left(\\frac{7}{2}\\right)=\\frac{5}{2}\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{15\\sqrt{\\pi}}{8}$。",
+        "一般式：分子是連續奇數的乘積，分母是 $2$ 的次方。也可以寫成 $\\Gamma\\left(n+\\frac{1}{2}\\right)=\\frac{(2n)!}{4^nn!}\\cdot\\sqrt{\\pi}$（分子分母同乘 $2\\cdot 4\\cdots(2n)$）。"
+      ],
+      "tex": ["\\Gamma\\!\\left(n+\\tfrac12\\right)=\\frac{1\\cdot3\\cdot5\\cdots(2n-1)}{2^{n}}\\sqrt{\\pi}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 往下推到負的半整數",
+      "body": [
+        "用 $\\Gamma(s)=\\frac{\\Gamma(s+1)}{s}$：$\\Gamma\\left(-\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)}{-1/2}=-2\\sqrt{\\pi}$；$\\Gamma\\left(-\\frac{3}{2}\\right)=\\frac{\\Gamma(-1/2)}{-3/2}=\\frac{4\\sqrt{\\pi}}{3}$。",
+        "往下是「除以」，往上是「乘以」，方向不要搞混。正負號每過一個負整數翻一次。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一條公式管所有 $x^me^{-x^2}$",
+      "body": [
+        "令 $u=x^2$，$x=u^{1/2}$，$dx=\\frac{du}{2\\sqrt{u}}$：$x^m\\,dx=u^{m/2}\\cdot\\frac{du}{2u^{1/2}}=\\frac{1}{2}u^{(m-1)/2}\\,du$。所以 $\\int_0^{\\infty}x^me^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)$（$m>-1$）。",
+        "$m$ 是奇數時 $\\frac{m+1}{2}$ 是整數，答案是階乘的一半，沒有 $\\pi$：例如 $m=3$ 得 $\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$。$m$ 是偶數時 $\\frac{m+1}{2}$ 是半整數，答案帶 $\\sqrt{\\pi}$：例如 $m=4$ 得 $\\frac{1}{2}\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3\\sqrt{\\pi}}{8}$。",
+        "這解釋了一個常見的現象：$x^3e^{-x^2}$ 用換元直接積得出來，$x^4e^{-x^2}$ 卻怎麼分部積分都會剩下一個 Gaussian。"
+      ],
+      "tex": ["\\int_0^{\\infty}x^{m}e^{-x^{2}}\\,dx=\\frac12\\,\\Gamma\\!\\left(\\frac{m+1}{2}\\right)"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$\\Gamma\\left(\\frac{7}{2}\\right)$",
+      "prompt": "$\\Gamma\\left(\\frac{7}{2}\\right)$",
+      "problemId": "mob-gamma-009",
+      "steps": [
+        "$\\Gamma\\left(\\frac{7}{2}\\right)=\\frac{5}{2}\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{5}{2}\\cdot\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{5}{2}\\cdot\\frac{3}{2}\\cdot\\frac{1}{2}\\Gamma\\left(\\frac{1}{2}\\right)$。",
+        "$\\frac{5\\cdot 3\\cdot 1}{2\\cdot 2\\cdot 2}=\\frac{15}{8}$。",
+        "$\\Gamma\\left(\\frac{7}{2}\\right)=\\frac{15\\sqrt{\\pi}}{8}\\approx 3.323$。"
+      ],
+      "answer": "$\\frac{15\\sqrt{\\pi}}{8}$",
+      "claim": "INT(x^(5/2)*e^(-x), 0, inf) == 15*sqrt(pi)/8"
+    },
+    {
+      "title": "偶數次方乘 Gaussian",
+      "prompt": "$\\int_0^{\\infty}x^4e^{-x^2}\\,dx$",
+      "problemId": "burst-int-009",
+      "steps": [
+        "$m=4$，用 $\\int_0^{\\infty}x^me^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)$：$\\frac{1}{2}\\Gamma\\left(\\frac{5}{2}\\right)$。",
+        "$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\cdot\\frac{1}{2}\\sqrt{\\pi}=\\frac{3\\sqrt{\\pi}}{4}$。",
+        "答案 $\\frac{1}{2}\\cdot\\frac{3\\sqrt{\\pi}}{4}=\\frac{3\\sqrt{\\pi}}{8}\\approx 0.6647$。"
+      ],
+      "answer": "$\\frac{3\\sqrt{\\pi}}{8}$",
+      "claim": "INT(x^4*e^(-x^2), 0, inf) == 3*sqrt(pi)/8 ;; INT(x^(3/2)*e^(-x), 0, inf)/2 == 3*sqrt(pi)/8"
+    },
+    {
+      "title": "負的半整數",
+      "prompt": "$\\Gamma\\left(-\\frac{3}{2}\\right)$",
+      "steps": [
+        "往下推要除：$\\Gamma\\left(-\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)}{-1/2}=-2\\sqrt{\\pi}$。",
+        "$\\Gamma\\left(-\\frac{3}{2}\\right)=\\frac{\\Gamma(-1/2)}{-3/2}=(-2\\sqrt{\\pi})\\cdot\\left(-\\frac{2}{3}\\right)=\\frac{4\\sqrt{\\pi}}{3}\\approx 2.363$。",
+        "正負號：$(-1,0)$ 這段是負的，$(-2,-1)$ 這段又變正，跟答案一致。"
+      ],
+      "answer": "$\\frac{4\\sqrt{\\pi}}{3}$",
+      "claim": "INT(x^(-1/2)*e^(-x), 0, inf)/(-1/2)/(-3/2) == 4*sqrt(pi)/3"
+    }
+  ],
+  "pitfalls": [
+    "往上乘錯數：$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)$，不是 $\\frac{5}{2}\\Gamma\\left(\\frac{3}{2}\\right)$。",
+    "往下推時用乘的：$\\Gamma\\left(-\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)}{-1/2}$，是除以 $-\\frac{1}{2}$，也就是乘 $-2$。",
+    "$x^me^{-x^2}$ 換元後漏了 $\\frac{1}{2}$，或把 $\\Gamma\\left(\\frac{m+1}{2}\\right)$ 寫成 $\\Gamma\\left(\\frac{m}{2}\\right)$。",
+    "以為所有 Gamma 值都帶 $\\sqrt{\\pi}$；整數點沒有，半整數點才有。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\Gamma\\left(\\frac{5}{2}\\right)$ 是？",
+      "options": [
+        { "label": "$\\frac{3\\sqrt{\\pi}}{4}$", "correct": true },
+        { "label": "$\\frac{3\\sqrt{\\pi}}{2}$", "why": "$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)$，而 $\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$，不是 $\\sqrt{\\pi}$。" },
+        { "label": "$\\frac{15\\sqrt{\\pi}}{4}$", "why": "多乘了 $\\frac{5}{2}$：遞迴乘的是 $s$，$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{\\infty}x^2e^{-x^2}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{\\sqrt{\\pi}}{4}$", "correct": true },
+        { "label": "$\\frac{\\sqrt{\\pi}}{2}$", "why": "公式是 $\\frac{1}{2}\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{1}{2}\\cdot\\frac{\\sqrt{\\pi}}{2}$，漏了前面的 $\\frac{1}{2}$。" },
+        { "label": "$\\frac{1}{2}$", "why": "那是 $m=3$ 的答案 $\\frac{1}{2}\\Gamma(2)$。$m=2$ 對應 $\\Gamma\\left(\\frac{3}{2}\\right)$，會帶 $\\sqrt{\\pi}$。" }
+      ]
+    },
+    {
+      "ask": "$\\Gamma\\left(-\\frac{1}{2}\\right)$ 是？",
+      "options": [
+        { "label": "$-2\\sqrt{\\pi}$", "correct": true },
+        { "label": "$2\\sqrt{\\pi}$", "why": "$\\Gamma\\left(-\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)}{-1/2}$，除以負數，結果是負的。" },
+        { "label": "$-\\frac{\\sqrt{\\pi}}{2}$", "why": "往下推要除以 $-\\frac{1}{2}$，不是乘以 $-\\frac{1}{2}$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{2}$", "correct": true },
+        { "label": "$\\frac{\\sqrt{\\pi}}{4}$", "why": "$m=3$ 對應 $\\Gamma\\left(\\frac{3+1}{2}\\right)=\\Gamma(2)=1$，是整數點，沒有 $\\sqrt{\\pi}$。" },
+        { "label": "$1$", "why": "公式前面有 $\\frac{1}{2}$：$\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從 $\\sqrt{\\pi}$ 往上爬",
+      "beats": [
+        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$"],
+          "note": "起點。",
+          "say": "起點是上一課的結果：Gamma 二分之一等於根號 pi。",
+          "board": [
+            {"do":"write","line":"${{g:\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}}}$"},
+            {"do":"underline","term":"g","label":"起點","on":"上一課"}
+          ] },
+        { "show": ["$\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{1}{2}\\Gamma\\left(\\frac{1}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$"],
+          "note": "乘上「前一格的參數」。",
+          "say": "每往上一格，就乘上前一格的參數。Gamma 二分之三是二分之一乘根號 pi。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(\\frac{3}{2}\\right)={{h:\\frac{1}{2}}}\\,\\Gamma\\left(\\frac{1}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$","on":"Gamma 二分之三"},
+            {"do":"focus","term":"h","label":"前一格","on":"二分之一乘"}
+          ] },
+        { "show": ["$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3}{2}\\Gamma\\left(\\frac{3}{2}\\right)$"],
+          "say": "再上一格，乘的是二分之三，不是二分之五。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(\\frac{5}{2}\\right)={{t:\\frac{3}{2}}}\\,\\Gamma\\left(\\frac{3}{2}\\right)$，不是 ${{w:\\frac{5}{2}}}$"},
+            {"do":"focus","term":"t","on":"乘的是"},
+            {"do":"strike","term":"w","on":"不是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "一般式",
+      "beats": [
+        { "show": ["$\\Gamma\\left(\\frac{7}{2}\\right)=\\frac{5}{2}\\cdot\\frac{3}{2}\\cdot\\frac{1}{2}\\Gamma\\left(\\frac{1}{2}\\right)$"],
+          "say": "Gamma 二分之七一路往下拆：乘二分之五、二分之三、二分之一，再乘 Gamma 二分之一。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(\\frac{7}{2}\\right)={{a:\\frac{5}{2}}}\\cdot{{b:\\frac{3}{2}}}\\cdot{{c:\\frac{1}{2}}}\\,\\Gamma\\left(\\frac{1}{2}\\right)$"},
+            {"do":"focus","term":"a","on":"二分之五"},
+            {"do":"focus","term":"b","on":"二分之三"},
+            {"do":"focus","term":"c","on":"二分之一#1"}
+          ] },
+        { "show": ["每個因子：分母 $2$，分子奇數","$n=3$：三個 $2$，$2^3=8$"],
+          "say": "看每個因子，分母都是二，分子是奇數。拆三個因子，就乘出三個二，也就是二的三次方。",
+          "board": [
+            {"do":"write","line":"每個因子 $\\frac{\\text{奇數}}{2}$"},
+            {"do":"write","line":"$n=3$：三個 $2$，${{e:2^3}}=8$","on":"三個二"},
+            {"do":"focus","term":"e","on":"二的三次方"}
+          ] },
+        { "show": ["$\\Gamma\\left(n+\\frac{1}{2}\\right)=\\frac{1\\cdot3\\cdot5\\cdots(2n-1)}{2^{n}}\\sqrt{\\pi}$"],
+          "note": "分子是連續奇數，分母是 $2$ 的次方。",
+          "say": "規律是：分子是連續奇數的乘積，分母是二的次方，最後乘根號 pi。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(n+\\frac{1}{2}\\right)=\\frac{{{p:1\\cdot3\\cdot5\\cdots(2n-1)}}}{{{q:2^{n}}}}\\sqrt{\\pi}$"},
+            {"do":"underline","term":"p","label":"連續奇數","on":"連續奇數"},
+            {"do":"underline","term":"q","label":"2 的次方","on":"二的次方"}
+          ] },
+        { "show": ["多一格：多乘 $\\frac{2n-1}{2}$","例：$n=2$，$2n-1=3$"],
+          "note": "所以分子多一個奇數、分母多一個 $2$。",
+          "say": "為什麼能套到每個 n？n 往上一格，就多乘二分之二 n 減一。例如 n 等於二，二 n 減一是三。",
+          "board": [
+            {"do":"write","line":"多一格：多乘 ${{f:\\frac{2n-1}{2}}}$","on":"多乘"},
+            {"do":"focus","term":"f","on":"二分之二"},
+            {"do":"write","line":"例：$n=2$，$2n-1=3$","on":"例如"}
+          ] }
+      ],
+      "key": "用 $\\Gamma(s+1)=s\\Gamma(s)$ 一路降到 $\\frac12$",
+      "predict": {
+        "ask": "$\\Gamma\\left(\\frac{7}{2}\\right)$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{15\\sqrt{\\pi}}{8}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{15\\sqrt{\\pi}}{4}$",
+            "why": "少了一個 $\\frac{1}{2}$：三個因子的分母是 $2\\cdot 2\\cdot 2=8$。"
+          },
+          {
+            "label": "$\\frac{15}{8}$",
+            "why": "最後要乘 $\\Gamma\\left(\\frac{1}{2}\\right)=\\sqrt{\\pi}$，半整數點的值帶 $\\sqrt{\\pi}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "往下推",
+      "beats": [
+        { "show": ["$\\Gamma(s)=\\frac{\\Gamma(s+1)}{s}$"],
+          "note": "往上是乘，往下是除。",
+          "say": "往負的方向推，要把遞迴倒過來：往上是乘，往下是除。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(s+1)=s\\,\\Gamma(s)$"},
+            {"do":"transform","line":"$\\Gamma(s)=\\dfrac{\\Gamma(s+1)}{ {{s:s}} }$","on":"倒過來"},
+            {"do":"focus","term":"s","label":"往下是除","on":"往下"}
+          ] },
+        { "show": ["$\\Gamma\\left(-\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)}{-1/2}$"],
+          "say": "Gamma 負二分之一，是 Gamma 二分之一除以負二分之一。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(-\\frac{1}{2}\\right)=\\dfrac{\\Gamma(1/2)}{ {{d:-1/2}} }$"},
+            {"do":"focus","term":"d","on":"除以負二分之一"}
+          ] },
+        { "show": ["$\\Gamma\\left(-\\frac{3}{2}\\right)=\\frac{\\Gamma(-1/2)}{-3/2}$"],
+          "note": "正負號每過一個負整數翻一次。",
+          "say": "再往下一格，再除以負二分之三。每除一次負數，正負號就翻一次。",
+          "board": [
+            {"do":"write","line":"$\\Gamma\\left(-\\frac{3}{2}\\right)=\\dfrac{\\Gamma(-1/2)}{ {{r:-3/2}} }$","on":"再往下"},
+            {"do":"underline","term":"r","label":"翻號","on":"就翻一次"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$x^me^{-x^2}$ 的公式",
+      "beats": [
+        { "show": ["令 $u=x^2$：$x^m\\,dx=\\frac{1}{2}u^{(m-1)/2}\\,du$"],
+          "note": "$dx=\\frac{du}{2\\sqrt{u}}$",
+          "say": "令 u 等於 x 平方，dx 是二根號 u 分之 du，x 的 m 次方 dx 整理成二分之一乘 u 的次方。",
+          "board": [
+            {"do":"write","line":"令 $u=x^2$，$dx=\\frac{du}{2\\sqrt{u}}$"},
+            {"do":"write","line":"$x^m\\,dx={{h:\\frac{1}{2}}}u^{(m-1)/2}\\,du$","on":"x 的 m 次方"},
+            {"do":"focus","term":"h","on":"二分之一乘"}
+          ] },
+        { "show": ["$\\int_0^{\\infty}x^me^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)$"],
+          "note": "$m>-1$。",
+          "say": "所以 x 的 m 次方乘 e 的負 x 平方次方，一條公式全部管：二分之一乘 Gamma 二分之 m 加一。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}x^me^{-x^2}\\,dx={{r:\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)}}$"},
+            {"do":"box","term":"r","color":"green","on":"一條公式"}
+          ] },
+        { "show": ["$m$ 奇數：整數點，沒有 $\\pi$"],
+          "note": "例：$m=5$ 得 $\\frac{1}{2}\\Gamma(3)=1$。",
+          "say": "m 是奇數，二分之 m 加一是整數，答案是階乘的一半，沒有 pi。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$m$ 奇數：${{k:\\frac{m+1}{2}}}$ 是整數","on":"m 是奇數"},
+            {"do":"focus","term":"k","on":"是整數"},
+            {"do":"write","line":"例：$m=5$：$\\frac{1}{2}\\Gamma(3)=1$","on":"階乘"}
+          ] },
+        { "show": ["$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$"],
+          "note": "整數點要從這裡起算。",
+          "say": "整數點要從 Gamma 一起算。它就是 e 的負 x 次方從零積到無窮，積出來等於一，所以 Gamma 一是一。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx={{o:1}}$"},
+            {"do":"box","term":"o","color":"green","on":"積出來"}
+          ] },
+        { "show": ["$\\Gamma(2)=1\\cdot\\Gamma(1)=1$","$\\Gamma(3)=2\\Gamma(2)=2$"],
+          "say": "再用遞迴往上：Gamma 二是一乘 Gamma 一，Gamma 三是二乘 Gamma 二，所以 m 等於五那題是二分之一乘二。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(2)=1\\cdot\\Gamma(1)=1$"},
+            {"do":"write","line":"$\\Gamma(3)=2\\,\\Gamma(2)={{t:2}}$","on":"Gamma 三是"},
+            {"do":"focus","term":"t","on":"m 等於五"}
+          ] }
+      ],
+      "key": "令 $u=x^2$，把 $x^m$ 的次方換成 Gamma 參數",
+      "check": 3
+    },
+    {
+      "title": "偶數次方帶 $\\sqrt{\\pi}$",
+      "beats": [
+        { "show": ["$m$ 偶數：半整數點，帶 $\\sqrt{\\pi}$"],
+          "say": "m 是偶數，二分之 m 加一是半整數，答案一定帶根號 pi。",
+          "board": [
+            {"do":"write","line":"$m$ 偶數：${{k:\\frac{m+1}{2}}}$ 是半整數"},
+            {"do":"focus","term":"k","on":"半整數"},
+            {"do":"write","line":"答案帶 $\\sqrt{\\pi}$","on":"答案一定"}
+          ] },
+        { "show": ["$\\int_0^{\\infty}x^4e^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{5}{2}\\right)$"],
+          "note": "$=\\frac{1}{2}\\cdot\\frac{3\\sqrt{\\pi}}{4}=\\frac{3\\sqrt{\\pi}}{8}$",
+          "say": "例如 m 等於四，是二分之一乘 Gamma 二分之五，得八分之三根號 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}x^4e^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{5}{2}\\right)$"},
+            {"do":"write","line":"$=\\frac{1}{2}\\cdot\\frac{3\\sqrt{\\pi}}{4}={{r:\\frac{3\\sqrt{\\pi}}{8}}}$","on":"Gamma 二分之五"},
+            {"do":"box","term":"r","color":"green","on":"八分之三"}
+          ] },
+        { "show": ["面積就是 $\\frac{3\\sqrt{\\pi}}{8}$"],
+          "say": "畫出來看：x 的四次方乘 e 的負 x 平方次方，從零鼓起來再落回去，面積就是八分之三根號 pi。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,3,-0.1,1],"curves":[{"expr":"x^4*exp(-(x^2))","domain":[0,3],"color":"blue"}],"fills":[{"expr":"x^4*exp(-(x^2))","from":0,"to":3,"color":"blue"}]}}
+          ] },
+        { "show": ["$x^3e^{-x^2}$ 換元積得出來","$x^4e^{-x^2}$ 總剩一個 Gaussian"],
+          "say": "這解釋了一件事：三次方用換元直接積得出來，四次方怎麼分部積分都會剩下一個鐘形積分。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x^3e^{-x^2}$：換元積得出來","on":"三次方"},
+            {"do":"write","line":"$x^4e^{-x^2}$：剩一個 Gaussian","on":"四次方"}
+          ] }
+      ],
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["gamma-function", "special-functions", "gaussian-integral"],
+    "fine": ["gamma-half-integer-chain", "gamma-half-integer-negative", "gamma-even-power-gaussian", "gamma-double-factorial"]
+  },
+  "practice": [
+    { "id": "mob-gamma-003", "core": true, "trains": "gamma-half-integer-chain" },
+    { "id": "mob-gamma-004", "core": true, "trains": "gamma-half-integer-chain" },
+    { "id": "mob-gamma-009", "core": true, "trains": "gamma-double-factorial" },
+    { "id": "rel-boss-004", "core": true, "trains": "gamma-half-integer-chain" },
+    { "id": "burst-int-009", "core": true, "trains": "gamma-even-power-gaussian" },
+    { "id": "burst-int-010", "core": true, "trains": "gamma-even-power-gaussian" },
+    { "id": "depth-int-026", "trains": "gamma-even-power-gaussian" },
+    { "id": "mob-gamma-007", "trains": "gamma-half-integer-chain" },
+    { "id": "cg-11d-009", "trains": "gamma-half-integer-negative" },
+    { "id": "cg-11d-010", "trains": "gamma-half-integer-negative" },
+    { "id": "td-int-006", "challenge": true, "trains": "gamma-even-power-gaussian", "note": "挑戰：整條實數線、指數有係數 3，先用偶函數變成兩倍，再縮放。" }
+  ],
+  "gaps": []
+}

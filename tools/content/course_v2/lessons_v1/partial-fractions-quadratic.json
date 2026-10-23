@@ -1,0 +1,367 @@
+{
+  "id": "partial-fractions-quadratic",
+  "title": "部分分式 III：不可約二次式",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["partial-fractions-repeated", "integral-table", "u-sub-recognize"],
+  "next": ["trig-integral-sin-cos"],
+  "related": ["trig-sub-x2-plus-a2"],
+  "objectives": [
+    "用判別式判斷二次式能不能再分解；不可約的那一項設成 $\\frac{Bx+C}{x^2+px+q}$。",
+    "會把 $\\frac{Bx+C}{x^2+q}$ 拆成「$\\ln$ 的部分」與「$\\arctan$ 的部分」。",
+    "分母是 $x^2+px+q$ 時，會配方，並把分子湊成分母的導數加一個常數。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 拆不開的二次式",
+      "body": [
+        "$x^2+1$、$x^2+2x+5$ 在實數裡分解不了：判別式 $b^2-4ac<0$，沒有實根。這種叫不可約二次式。",
+        "它在部分分式裡佔一項，分子要比分母低一次，所以是一次式：$\\frac{Bx+C}{x^2+px+q}$。只寫常數 $C$ 會少一個未知數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② $\\frac{Bx+C}{x^2+a^2}$ 拆成兩塊",
+      "body": [
+        "$\\frac{Bx}{x^2+a^2}$：分子是分母導數的倍數，$\\frac{u'}{u}$ 形狀，積成 $\\frac{B}{2}\\ln(x^2+a^2)$。$x^2+a^2>0$，不必加絕對值。",
+        "$\\frac{C}{x^2+a^2}$：表上的 $\\arctan$，積成 $\\frac{C}{a}\\arctan\\frac{x}{a}$。"
+      ],
+      "tex": ["\\int\\frac{Bx+C}{x^2+a^2}\\,dx=\\frac B2\\ln(x^2+a^2)+\\frac Ca\\arctan\\frac xa+C_0"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 分母是 $x^2+px+q$：先配方",
+      "body": [
+        "$x^2+2x+5=(x+1)^2+4$。分母的導數是 $2x+2$，把分子寫成「$(2x+2)$ 的倍數 $+$ 常數」：例如 $2x+5=(2x+2)+3$。",
+        "第一塊是 $\\frac{u'}{u}$，積成 $\\ln(x^2+2x+5)$；第二塊 $\\frac{3}{(x+1)^2+2^2}$ 令 $u=x+1$，積成 $\\frac{3}{2}\\arctan\\frac{x+1}{2}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 別忘了第零步",
+      "body": [
+        "$\\frac{x^3}{x^2+1}$ 這種分子次數不小於分母的，一樣要先長除法：$x^3=x(x^2+1)-x$，所以 $\\frac{x^3}{x^2+1}=x-\\frac{x}{x^2+1}$。",
+        "分母是 $(x^2+1)^2$ 這種重複的不可約二次式，部分分式要設兩項，而 $\\int\\frac{dx}{(x^2+1)^2}$ 通常用三角代換（〈√(x² + a²)〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一次因式 ＋ 不可約二次式",
+      "prompt": "$\\int\\frac{x+2}{x(x^2+1)}\\,dx$",
+      "steps": [
+        "$x^2+1$ 不可約。設 $\\frac{x+2}{x(x^2+1)}=\\frac{A}{x}+\\frac{Bx+C}{x^2+1}$。同乘分母：$x+2=A(x^2+1)+(Bx+C)x$。",
+        "代 $x=0$：$A=2$。比較 $x^2$ 係數：$0=A+B$，$B=-2$。比較 $x$ 係數：$1=C$。",
+        "式子 $=\\frac{2}{x}+\\frac{-2x+1}{x^2+1}=\\frac{2}{x}-\\frac{2x}{x^2+1}+\\frac{1}{x^2+1}$。",
+        "$\\int=2\\ln|x|-\\ln(x^2+1)+\\arctan x+C$。"
+      ],
+      "answer": "$2\\ln|x|-\\ln(x^2+1)+\\arctan x+C$",
+      "claim": "2/x+(-2*x+1)/(x^2+1) == (x+2)/(x*(x^2+1)) ;; D(2*ln(abs(x))-ln(x^2+1)+atan(x)) == (x+2)/(x*(x^2+1))"
+    },
+    {
+      "title": "配方，分子湊導數",
+      "prompt": "$\\int\\frac{2x+5}{x^2+2x+5}\\,dx$",
+      "steps": [
+        "判別式 $4-20<0$，不可約。分母導數 $2x+2$，分子寫成 $(2x+2)+3$。",
+        "$\\int\\frac{2x+2}{x^2+2x+5}\\,dx=\\ln(x^2+2x+5)$。",
+        "配方：$x^2+2x+5=(x+1)^2+4$。$\\int\\frac{3}{(x+1)^2+4}\\,dx=3\\cdot\\frac{1}{2}\\arctan\\frac{x+1}{2}$。",
+        "答案：$\\ln(x^2+2x+5)+\\frac{3}{2}\\arctan\\frac{x+1}{2}+C$。"
+      ],
+      "answer": "$\\ln(x^2+2x+5)+\\frac{3}{2}\\arctan\\frac{x+1}{2}+C$",
+      "claim": "D(ln(x^2+2*x+5)+(3/2)*atan((x+1)/2)) == (2*x+5)/(x^2+2*x+5)"
+    },
+    {
+      "title": "先長除法",
+      "prompt": "$\\int\\frac{x^3}{x^2+1}\\,dx$",
+      "problemId": "int-014",
+      "steps": [
+        "分子三次、分母二次，先除：$x^3=x(x^2+1)-x$，所以 $\\frac{x^3}{x^2+1}=x-\\frac{x}{x^2+1}$。",
+        "$\\int x\\,dx=\\frac{x^2}{2}$；$\\int\\frac{x}{x^2+1}\\,dx=\\frac{1}{2}\\ln(x^2+1)$。",
+        "答案：$\\frac{x^2}{2}-\\frac{1}{2}\\ln(x^2+1)+C$。"
+      ],
+      "answer": "$\\frac{x^2}{2}-\\frac{1}{2}\\ln(x^2+1)+C$",
+      "claim": "D(x^2/2-ln(x^2+1)/2) == x^3/(x^2+1)"
+    }
+  ],
+  "pitfalls": [
+    "不可約二次式那一項的分子只寫常數。",
+    "把 $\\frac{Bx}{x^2+a^2}$ 積成 $\\arctan$，或把 $\\frac{C}{x^2+a^2}$ 積成 $\\ln$。",
+    "$\\arctan$ 版本漏了 $\\frac{1}{a}$。",
+    "配方算錯：$x^2+4x+5$ 寫成 $(x+2)^2+5$。",
+    "還沒長除法就開始設部分分式。"
+  ],
+  "checks": [
+    {
+      "ask": "$x^2+4x+5$ 能分解成實係數一次式的乘積嗎？",
+      "options": [
+        { "label": "不能，判別式 $16-20<0$", "correct": true },
+        { "label": "能，$(x+5)(x-1)$", "why": "$(x+5)(x-1)=x^2+4x-5$，常數項正負不對。" },
+        { "label": "能，$(x+2)^2$", "why": "$(x+2)^2=x^2+4x+4$，差了 $1$：$x^2+4x+5=(x+2)^2+1$，是配方不是分解。" }
+      ]
+    },
+    {
+      "ask": "部分分式裡，不可約二次式那一項的分子要設成？",
+      "options": [
+        { "label": "$Bx+C$", "correct": true },
+        { "label": "$B$", "why": "分子要比分母低一次。二次分母配一次分子，只放常數會少一個未知數，一般解不出來。" },
+        { "label": "$Bx^2+Cx+D$", "why": "分子跟分母同次就不是真分式了，而且未知數太多。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{3x+2}{x^2+4}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{3}{2}\\ln(x^2+4)+\\arctan\\frac{x}{2}+C$", "correct": true },
+        { "label": "$\\frac{3}{2}\\ln(x^2+4)+2\\arctan\\frac{x}{2}+C$", "why": "$\\int\\frac{2}{x^2+4}\\,dx=2\\cdot\\frac{1}{2}\\arctan\\frac{x}{2}$：$a=2$ 的 $\\frac{1}{a}$ 漏了。" },
+        { "label": "$3\\ln(x^2+4)+\\arctan\\frac{x}{2}+C$", "why": "$u=x^2+4$，$du=2x\\,dx$，所以 $\\int\\frac{3x}{x^2+4}\\,dx=\\frac{3}{2}\\ln(x^2+4)$。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{1}{x^2+2x+5}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{2}\\arctan\\frac{x+1}{2}+C$", "correct": true },
+        { "label": "$\\ln(x^2+2x+5)+C$", "why": "分子是 $1$，不是分母的導數 $2x+2$，不是 $\\frac{u'}{u}$ 形狀。" },
+        { "label": "$\\arctan(x+1)+C$", "why": "配方後是 $(x+1)^2+2^2$，$a=2$，要寫 $\\frac{1}{2}\\arctan\\frac{x+1}{2}$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "拆不開的二次式",
+      "beats": [
+        { "show": ["$x^2+1$、$x^2+2x+5$"],
+          "note": "在實數裡分解不了。",
+          "say": "有些二次式在實數裡分解不了，像 x 平方加一、x 平方加二 x 加五。",
+          "board": [
+            {"do":"write","line":"$x^2+1$、$x^2+2x+5$"}
+          ] },
+        { "show": ["判別式 $b^2-4ac<0$：沒有實根"],
+          "note": "這種叫不可約二次式。",
+          "say": "判斷方法：判別式小於零，沒有實根，就拆不開，叫做不可約二次式。",
+          "board": [
+            {"do":"write","line":"${{dd:b^2-4ac<0}}$：沒有實根"},
+            {"do":"write","line":"拆不開：不可約二次式","on":"就拆不開"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "分子是一次式",
+      "beats": [
+        { "show": ["$\\frac{Bx+C}{x^2+px+q}$"],
+          "note": "分子比分母低一次。只寫常數會少一個未知數。",
+          "say": "它在部分分式裡佔一項。分子要比分母低一次，所以是一次式，兩個未知數。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{n:Bx+C}}}{x^2+px+q}$"},
+            {"do":"focus","term":"n","color":"blue","label":"一次式","on":"低一次"}
+          ] },
+        { "show": ["$\\frac{x+2}{x(x^2+1)}=\\frac{A}{x}+\\frac{Bx+C}{x^2+1}$"],
+          "say": "例如這一題：x 是一次因式，配一個常數；x 平方加一不可約，配一個一次式。",
+          "board": [
+            {"do":"write","line":"$\\frac{x+2}{x(x^2+1)}=\\frac{{{a:A}}}{x}+\\frac{{{bc:Bx+C}}}{x^2+1}$"},
+            {"do":"focus","term":"a","color":"blue","label":"常數","on":"常數"},
+            {"do":"box","term":"bc","color":"violet","on":"不可約"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "求係數、積分",
+      "beats": [
+        { "show": ["$x+2=A(x^2+1)+(Bx+C)x$"],
+          "note": "同乘分母。",
+          "say": "同乘分母，得到一個對所有 x 都成立的等式。",
+          "board": [
+            {"do":"write","line":"$x+2={{a:A(x^2+1)}}+{{b:(Bx+C)x}}$"},
+            {"do":"focus","term":"a","on":"同乘分母"}
+          ] },
+        { "show": ["代 $x=0$：$A=2$"],
+          "say": "代零，後面那項消失，A 是二。",
+          "board": [
+            {"do":"write","line":"代 $x=0$：${{av:A=2}}$"},
+            {"do":"underline","term":"b","label":"消失","on":"後面那項"},
+            {"do":"box","term":"av","color":"green","on":"A 是二"}
+          ] },
+        { "show": ["比較 $x^2$：$B=-2$；比較 $x$：$C=1$"],
+          "note": "$0=A+B$，$1=C$。",
+          "say": "其他的比較係數：左邊沒有 x 平方，所以 A 加 B 是零，B 是負二；x 的係數給 C 等於一。",
+          "board": [
+            {"do":"write","line":"比較 $x^2$：$0=A+B$，${{bv:B=-2}}$","on":"左邊沒有"},
+            {"do":"write","line":"比較 $x$：${{cv:C=1}}$","on":"x 的係數"}
+          ] },
+        { "show": ["$\\int f\\,dx$：找導數是 $f$ 的式子"],
+          "note": "$dx$ 表示對 $x$ 積分。",
+          "say": "積分的意思是倒著微分：找一個式子，它的導數正好是被積的那一項。dx 表示變數是 x。",
+          "board": [
+            {"do":"write","line":"$\\int {{f:f(x)}}\\,dx$：導數是 $f$ 的式子"},
+            {"do":"underline","term":"f","color":"gold","label":"被積的","on":"被積的"}
+          ] },
+        { "show": ["$(x^2)'=2x$，所以 $\\int 2x\\,dx=x^2$"],
+          "note": "積分結果可再加常數 $C$。",
+          "say": "例如 x 平方的導數是二 x，所以二 x 的積分就是 x 平方。這一節要做的，就是把三項各自倒著微分。",
+          "board": [
+            {"do":"write","line":"$(x^2)'=2x$"},
+            {"do":"write","line":"$\\int 2x\\,dx={{r:x^2}}$","on":"二 x 的積分"},
+            {"do":"box","term":"r","color":"green","on":"x 平方#2"}
+          ] }
+      ],
+      "key": "代根求 $A$，剩下的比較係數",
+      "predict": {
+        "ask": "$\\frac{2}{x}-\\frac{2x}{x^2+1}+\\frac{1}{x^2+1}$ 積分是？",
+        "options": [
+          {
+            "label": "$2\\ln|x|-\\ln(x^2+1)+\\arctan x+C$",
+            "correct": true
+          },
+          {
+            "label": "$2\\ln|x|-2\\arctan x+\\ln(x^2+1)+C$",
+            "why": "$\\frac{2x}{x^2+1}$ 分子是分母的導數，積成 $\\ln$；$\\frac{1}{x^2+1}$ 才是 $\\arctan$。"
+          },
+          {
+            "label": "$2\\ln|x|-2\\ln(x^2+1)+\\arctan x+C$",
+            "why": "$du=2x\\,dx$ 剛好配完，$\\int\\frac{2x}{x^2+1}\\,dx=\\ln(x^2+1)$，係數是 $1$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "拆成兩塊積",
+      "beats": [
+        { "show": ["$\\ln$：以 $e$ 為底的對數"],
+          "note": "$\\ln u$ 的導數是 $\\frac{1}{u}$。",
+          "say": "ln 是以 e 為底的對數，ln u 的導數是 u 分之一。所以 x 平方加 a 平方取 ln，微分得二 x 除以它。",
+          "board": [
+            {"do":"write","line":"$(\\ln u)'=\\frac{1}{u}$"},
+            {"do":"write","line":"$(\\ln(x^2+a^2))'=\\frac{{{n2:2x}}}{x^2+a^2}$","on":"微分得"},
+            {"do":"circle","term":"n2","color":"blue","label":"分母導數","on":"二 x"}
+          ] },
+        { "show": ["$\\frac{Bx}{x^2+a^2}\\to\\frac{B}{2}\\ln(x^2+a^2)$"],
+          "note": "分子是分母導數的倍數。$x^2+a^2>0$，不必加絕對值。",
+          "say": "一次式分子拆兩塊。有 x 的那塊，分子是分母導數的倍數，積成自然對數。",
+          "board": [
+            {"do":"write","line":"$\\frac{Bx+C}{x^2+a^2}=\\frac{Bx}{x^2+a^2}+\\frac{C}{x^2+a^2}$"},
+            {"do":"write","line":"$\\frac{Bx}{x^2+a^2}\\to{{l:\\frac{B}{2}\\ln(x^2+a^2)}}$","on":"有 x 的那塊"},
+            {"do":"box","term":"l","color":"green","on":"積成"}
+          ] },
+        { "show": ["$\\tan(\\arctan t)=t$"],
+          "note": "$\\arctan$ 是 $\\tan$ 的反函數。",
+          "say": "arctangent 是 tangent 的反函數。t 換成 x 除以 a，連鎖律多乘裡層導數 a 分之一，所以積分前補 a 分之一。",
+          "board": [
+            {"do":"write","line":"$(\\arctan t)'=\\frac{1}{1+t^2}$"},
+            {"do":"write","line":"$(\\arctan\\frac{x}{a})'={{n3:\\frac{1}{a}}}\\cdot\\frac{1}{1+(x/a)^2}$","on":"連鎖律"},
+            {"do":"circle","term":"n3","color":"blue","on":"a 分之一#1"}
+          ] },
+        { "show": ["$\\frac{C}{x^2+a^2}\\to\\frac{C}{a}\\arctan\\frac{x}{a}$"],
+          "note": "別漏了 $\\frac{1}{a}$。",
+          "say": "常數那塊是積分表上的 arctangent，記得前面有 a 分之一。",
+          "board": [
+            {"do":"write","line":"$\\frac{C}{x^2+a^2}\\to{{k:\\frac{C}{a}}}\\arctan\\frac{x}{a}$"},
+            {"do":"underline","term":"k","color":"gold","label":"別漏了","on":"記得"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "先配方",
+      "beats": [
+        { "show": ["$\\int\\frac{2x+5}{x^2+2x+5}\\,dx$"],
+          "note": "判別式 $4-20<0$，不可約。",
+          "say": "分母不是 x 平方加 a 平方的樣子時，先處理分子，再配方。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{2x+5}{x^2+2x+5}\\,dx$"}
+          ] },
+        { "show": ["分子 $2x+5=(2x+2)+3$"],
+          "note": "湊出分母的導數 $2x+2$。",
+          "say": "分母的導數是二 x 加二，把分子寫成它，再加剩下的三。第一塊就積成自然對數。",
+          "board": [
+            {"do":"write","line":"$2x+5={{d:(2x+2)}}+{{t:3}}$"},
+            {"do":"underline","term":"d","label":"分母的導數","on":"二 x 加二"},
+            {"do":"focus","term":"t","on":"剩下的三"}
+          ] },
+        { "show": ["$x^2+2x+5=(x+1)^2+4$"],
+          "note": "第二塊令 $u=x+1$，$a=2$。",
+          "say": "第二塊配方：x 加一的平方加四，令 u 等於 x 加一，就是 arctangent，a 是二。",
+          "board": [
+            {"do":"write","line":"$x^2+2x+5=(x+1)^2+4$"},
+            {"do":"write","line":"$u=x+1$，$a=2$","on":"令 u"}
+          ] },
+        { "show": ["$\\ln(x^2+2x+5)+\\frac{3}{2}\\arctan\\frac{x+1}{2}+C$"],
+          "say": "兩塊加起來就是答案。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\ln(x^2+2x+5)+\\frac{3}{2}\\arctan\\frac{x+1}{2}+C$","color":"green","on":"加起來"}
+          ] }
+      ],
+      "key": "分子湊成分母導數加常數，分母配方",
+      "check": 3
+    },
+    {
+      "title": "別忘了第零步",
+      "beats": [
+        { "show": ["$\\int\\frac{x^3}{x^2+1}\\,dx$"],
+          "note": "分子三次、分母二次：先長除法。",
+          "say": "分子次數不比分母小，一樣先做長除法。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{x^3}{x^2+1}\\,dx$"}
+          ] },
+        { "show": ["真分式：分子次數 $<$ 分母次數"],
+          "note": "部分分式只對真分式用。",
+          "say": "真分式的意思是分子次數比分母小。部分分式只能拆真分式，所以不是真分式時要先長除法。",
+          "board": [
+            {"do":"write","line":"真分式：分子次數 ${{s:<}}$ 分母次數"}
+          ] },
+        { "show": ["$x^3=x(x^2+1)-x$"],
+          "note": "$\\frac{x^3}{x^2+1}=x-\\frac{x}{x^2+1}$。",
+          "say": "x 三次方等於 x 乘 x 平方加一，再減 x。除完是 x 減一個真分式。",
+          "board": [
+            {"do":"write","line":"$x^3=x(x^2+1)-x$"},
+            {"do":"write","line":"$\\frac{x^3}{x^2+1}=x-{{f:\\frac{x}{x^2+1}}}$","on":"除完是"}
+          ] },
+        { "show": ["$\\frac{x}{x^2+1}$：分子一次、分母二次"],
+          "note": "所以餘下的是真分式。",
+          "say": "除完之後，x 平方加一分之 x，分子一次、分母二次，已經是真分式，不必再長除法。",
+          "board": [
+            {"do":"write","line":"$\\frac{x}{x^2+1}$：分子一次、分母二次"}
+          ] }
+      ],
+      "key": "分子次數不低於分母：先長除法",
+      "predict": {
+        "ask": "積分是？",
+        "options": [
+          {
+            "label": "$\\frac{x^2}{2}-\\frac{1}{2}\\ln(x^2+1)+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{x^2}{2}-\\arctan x+C$",
+            "why": "$\\frac{x}{x^2+1}$ 的分子是 $x$，是分母導數的一半，積成 $\\ln$。"
+          },
+          {
+            "label": "$\\frac{x^2}{2}+\\frac{1}{2}\\ln(x^2+1)+C$",
+            "why": "除完是 $x-\\frac{x}{x^2+1}$，第二項帶減號。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["partial-fraction", "rational-integral", "inverse-trig", "complete-square", "log"],
+    "fine": ["pf-quadratic-setup", "pf-quadratic-split-numerator", "pf-complete-square", "pf-long-division"]
+  },
+  "practice": [
+    { "id": "lec-08-q1c", "core": true, "trains": "pf-quadratic-setup" },
+    { "id": "hc-rad-004", "core": true, "trains": "pf-quadratic-setup", "note": "$x^4-1=(x-1)(x+1)(x^2+1)$。" },
+    { "id": "hc-rad-002", "core": true, "trains": "pf-complete-square" },
+    { "id": "uni-int-020", "core": true, "trains": "pf-complete-square" },
+    { "id": "uni-int-013", "core": true, "trains": "pf-long-division" },
+    { "id": "cg-4e-010", "core": true, "trains": "pf-quadratic-split-numerator" },
+    { "id": "cg-4e-013", "core": true, "trains": "pf-quadratic-setup" },
+    { "id": "cg-4e-011", "trains": "pf-quadratic-split-numerator" },
+    { "id": "cg-4e-012", "trains": "pf-quadratic-split-numerator" },
+    { "id": "cg-4e-014", "trains": "pf-quadratic-setup" },
+    { "id": "world-059", "challenge": true, "trains": "pf-quadratic-split-numerator", "note": "挑戰：$1+x^3=(1+x)(x^2-x+1)$，二次那一項要配方並拆分子。" },
+    { "id": "cx-hi-007", "challenge": true, "trains": "pf-quadratic-setup", "note": "挑戰：兩個不可約二次式，而且上限是 $\\infty$。" }
+  ],
+  "gaps": []
+}

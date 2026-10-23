@@ -1,0 +1,573 @@
+{
+  "id": "taylor-error",
+  "title": "Taylor 誤差",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "taylor-polynomial",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "taylor-limits"
+  ],
+  "related": [
+    "rolle-theorem",
+    "alternating-series-test",
+    "taylor-series",
+    "sequence-limit"
+  ],
+  "objectives": [
+    "寫出 Lagrange 餘項 $R_n(x)=\\frac{f^{(n+1)}(c)(x-a)^{n+1}}{(n+1)!}$，知道 $c$ 在 $a$ 與 $x$ 之間、但不知道確切位置。",
+    "用 Taylor 不等式 $|R_n(x)|\\le\\frac{M|x-a|^{n+1}}{(n+1)!}$ 估計誤差，並正確選 $M$。",
+    "反過來求「要幾階才夠準」，以及用 $R_n\\to 0$ 證明 $e^x$ 等於自己的級數。"
+  ],
+  "visual": "上方畫 sin x 與 T₃(x) = x − x³/6，下方畫兩者的差 |sin x − T₃(x)| 的曲線，再畫一條上界曲線 x⁵/120。拖動 x：誤差曲線永遠躲在上界曲線下面，在 x = 1 處讀數是 0.0081 對 0.0083。旁邊另一條較鬆的上界 sin(1)·x⁴/24 也畫出來，在 x = 1 是 0.035。",
+  "concept": [
+    {
+      "heading": "① 誤差長什麼樣子",
+      "body": [
+        "$R_n(x)=f(x)-T_n(x)$。Taylor 定理（Lagrange 形式）：若 $f$ 在 $a$ 與 $x$ 之間有 $n+1$ 階導數，則存在某個 $c$ 介於 $a$ 與 $x$ 之間，使 $R_n(x)=\\frac{f^{(n+1)}(c)(x-a)^{n+1}}{(n+1)!}$。",
+        "它長得就像 Taylor 多項式的「下一項」，只是導數不是在 $a$ 取值，而是在某個不知道確切位置的 $c$。$n=0$ 時這就是〈均值定理〉：$f(x)-f(a)=f'(c)(x-a)$。"
+      ],
+      "tex": [
+        "R_n(x)=\\frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② Taylor 不等式：把 $c$ 換成最壞情況",
+      "body": [
+        "不知道 $c$ 在哪，就用最壞的情況：若在 $a$ 與 $x$ 之間 $|f^{(n+1)}|\\le M$，則 $|R_n(x)|\\le\\frac{M|x-a|^{n+1}}{(n+1)!}$。",
+        "$M$ 要涵蓋整段區間，不能只看中心 $a$。$M$ 不必是最小的上界，取一個好算的也可以（例如 $|\\sin|\\le 1$、$e^c<3$），代價是估計比較鬆。",
+        "這是「保證不會更差」的上界，不是誤差本身；實際誤差通常小一些。"
+      ],
+      "tex": [
+        "\\lvert R_n(x)\\rvert\\le \\frac{M\\,\\lvert x-a\\rvert^{n+1}}{(n+1)!}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個常用的小技巧",
+      "body": [
+        "$\\sin x$ 的 $T_3$ 和 $T_4$ 是同一個多項式（$x^4$ 的係數是 0），所以可以把它當 $T_4$，用五階導數估誤差，得到更緊的上界（範例 3）。",
+        "如果代入後的級數是交錯的、各項遞減到 0，也可以直接用〈交錯級數判別〉的誤差：不超過第一個沒取的項。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼 $e^x$ 等於自己的級數",
+      "body": [
+        "固定 $x$。$e^x$ 的 $n+1$ 階導數是 $e^c$，$c$ 在 0 與 $x$ 之間，所以 $|e^c|\\le e^{|x|}$。$|R_n(x)|\\le\\frac{e^{|x|}|x|^{n+1}}{(n+1)!}$。階乘長得比任何 $|x|^n$ 快（〈數列與數列極限〉），所以 $R_n(x)\\to 0$，$e^x$ 在每一個 $x$ 都等於它的 Maclaurin 級數。$\\sin$、$\\cos$ 同理，$M$ 取 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ Lagrange 餘項的證明",
+      "body": [
+        "固定 $x\\ne a$。對 $t$ 定義 $g(t)=f(x)-\\sum_{k=0}^{n}\\frac{f^{(k)}(t)(x-t)^k}{k!}-K(x-t)^{n+1}$，選常數 $K$ 使 $g(a)=0$；而 $g(x)=f(x)-f(x)=0$ 自動成立。由〈Rolle 定理〉，$a$ 與 $x$ 之間有 $c$ 使 $g'(c)=0$。",
+        "對 $t$ 微分時，$\\sum$ 那一串相鄰兩項會互相抵銷，只剩 $g'(t)=-\\frac{f^{(n+1)}(t)(x-t)^n}{n!}+K(n+1)(x-t)^n$。$g'(c)=0$ 且 $x-c\\ne 0$，得 $K=\\frac{f^{(n+1)}(c)}{(n+1)!}$。再由 $g(a)=0$，$R_n(x)=f(x)-T_n(x)=K(x-a)^{n+1}$，就是所要的式子。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "要幾階才夠準",
+      "prompt": "用 $e^x$ 的 $n$ 次 Maclaurin 多項式 $T_n(1)$ 近似 $e$。已知 $e<3$，用 $|R_n(1)|\\le\\frac{3}{(n+1)!}$ 求誤差小於 $10^{-3}$ 的最小 $n$。",
+      "problemId": "lec-15-q4d",
+      "steps": [
+        "$M$：$n+1$ 階導數是 $e^c$，$0<c<1$，$e^c<e<3$，所以 $|R_n(1)|\\le\\frac{3\\cdot 1^{n+1}}{(n+1)!}$。",
+        "要 $\\frac{3}{(n+1)!}<0.001$，即 $(n+1)!>3000$。$6!=720$ 不夠，$7!=5040$ 夠。",
+        "$n+1=7$，$n=6$。實際誤差 $e-T_6(1)\\approx 0.00023$，確實小於上界 $\\frac{3}{5040}\\approx 0.0006$。"
+      ],
+      "answer": "$n=6$",
+      "claim": "3/720 > 0.001 ;; 3/5040 < 0.001 ;; abs(e - (1+1+1/2+1/6+1/24+1/120+1/720)) < 3/5040"
+    },
+    {
+      "title": "$M$ 取區間上的最大值",
+      "prompt": "用 $\\sqrt{x}$ 在 $a=4$ 的二次 Taylor 多項式估計 $\\sqrt{4.1}$，$M$ 取 $|f'''|$ 在 $[4,4.1]$ 的最大值，求誤差上界。",
+      "problemId": "lec-15-q1c",
+      "steps": [
+        "$f'''(x)=\\frac{3}{8}x^{-5/2}$，在 $[4,4.1]$ 上遞減，最大值在 $x=4$：$\\frac{3/8}{32}=\\frac{3}{256}$。",
+        "$|R_2(4.1)|\\le\\frac{(3/256)(0.1)^3}{3!}=\\frac{1}{512000}\\approx 1.95\\times 10^{-6}$。",
+        "對照〈Taylor 多項式〉的估計值 2.02484375：實際誤差約 $1.92\\times 10^{-6}$，在上界之內。"
+      ],
+      "answer": "$\\frac{1}{512000}$",
+      "claim": "(3/8)*4^(-5/2) == 3/256 ;; (3/256)*0.1^3/6 == 1/512000 ;; abs(sqrt(4.1) - 2.02484375) < 1/512000"
+    },
+    {
+      "title": "多用一階，上界更緊",
+      "prompt": "用 $x-\\frac{x^3}{6}$ 近似 $\\sin 1$，估計誤差。",
+      "steps": [
+        "當成 $T_3$：$f^{(4)}=\\sin$，在 $[0,1]$ 上最大是 $\\sin 1$，上界 $\\frac{\\sin 1}{4!}\\approx 0.035$。",
+        "當成 $T_4$（$x^4$ 的係數是 0，$T_3=T_4$）：$f^{(5)}=\\cos$，$|\\cos|\\le 1$，上界 $\\frac{1}{5!}=\\frac{1}{120}\\approx 0.0083$。",
+        "實際誤差 $\\sin 1-\\frac{5}{6}\\approx 0.0081$，第二個上界緊得多。"
+      ],
+      "answer": "誤差 $\\le\\frac{1}{120}$",
+      "claim": "abs(sin(1) - 5/6) < sin(1)/24 ;; abs(sin(1) - 5/6) < 1/120"
+    }
+  ],
+  "pitfalls": [
+    "階數差一：$T_n$ 的誤差用的是第 $n+1$ 階導數、除以 $(n+1)!$。",
+    "$M$ 只在中心 $a$ 取值，沒有涵蓋到 $x$ 的整段區間。",
+    "把上界當成實際誤差。",
+    "求「最小 $n$」時用了 $\\le$ 而題目要 $<$，或只試了一個 $n$ 就停。"
+  ],
+  "checks": [
+    {
+      "ask": "$T_n$ 的 Lagrange 餘項是？",
+      "options": [
+        {
+          "label": "$\\frac{f^{(n+1)}(c)(x-a)^{n+1}}{(n+1)!}$，$c$ 在 $a$ 與 $x$ 之間",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{f^{(n+1)}(a)(x-a)^{n+1}}{(n+1)!}$",
+          "why": "那只是 Taylor 級數的下一項；餘項的導數是在某個未知的 $c$ 取值。"
+        },
+        {
+          "label": "$\\frac{f^{(n)}(c)(x-a)^n}{n!}$",
+          "why": "階數少了一：$T_n$ 已經用到 $n$ 階，誤差由第 $n+1$ 階決定。"
+        }
+      ]
+    },
+    {
+      "ask": "估計 $T_n(x)$ 的誤差時，$M$ 應該是？",
+      "options": [
+        {
+          "label": "$|f^{(n+1)}|$ 在 $a$ 與 $x$ 之間整段的一個上界",
+          "correct": true
+        },
+        {
+          "label": "$|f^{(n+1)}(a)|$",
+          "why": "$c$ 不一定是 $a$；$M$ 要蓋住 $c$ 可能落在的整段區間。"
+        },
+        {
+          "label": "$|f(x)|$ 的最大值",
+          "why": "餘項裡的是第 $n+1$ 階導數，不是函數本身。"
+        }
+      ]
+    },
+    {
+      "ask": "$|R_n(1)|\\le\\frac{3}{(n+1)!}$，要小於 $10^{-3}$，最小的 $n$ 是？",
+      "options": [
+        {
+          "label": "6",
+          "correct": true
+        },
+        {
+          "label": "5",
+          "why": "$n=5$ 時上界是 $\\frac{3}{6!}=\\frac{3}{720}\\approx 0.0042$，還大於 0.001。"
+        },
+        {
+          "label": "7",
+          "why": "$n=6$ 時 $\\frac{3}{7!}\\approx 0.0006$ 已經 $<0.001$，7 不是最小。"
+        }
+      ]
+    },
+    {
+      "ask": "Taylor 不等式給出的上界跟實際誤差的關係是？",
+      "options": [
+        {
+          "label": "實際誤差 $\\le$ 上界，通常小一些",
+          "correct": true
+        },
+        {
+          "label": "兩者相等",
+          "why": "上界是把 $c$ 換成最壞情況得到的，一般會比實際誤差大，例如 $\\sin 1$ 的 0.035 對 0.0081。"
+        },
+        {
+          "label": "實際誤差可能比上界大",
+          "why": "那就不叫上界了；只要 $M$ 真的蓋住整段區間，實際誤差一定不超過它。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "誤差長什麼樣子",
+      "beats": [
+        { "show": ["$R_n(x)=f(x)-T_n(x)$"],
+          "say": "泰勒多項式和真正的函數差多少？這個差叫餘項，記作 R n。",
+          "board": [
+            {"do":"write","line":"$R_n(x)=f(x)-T_n(x)$"}
+          ] },
+        { "show": ["$R_n(x)=\\frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}$"],
+          "note": "$c$ 介於 $a$ 與 $x$ 之間。",
+          "say": "拉格朗日的形式：長得就像泰勒多項式的下一項，n 加一階導數、除以 n 加一階乘。",
+          "board": [
+            {"do":"write","line":"$R_n(x)=\\frac{f^{(n+1)}({{c:c}})}{(n+1)!}(x-a)^{n+1}$"}
+          ] },
+        { "show": ["導數在 $c$ 取值，不在 $a$"],
+          "note": "$c$ 存在，但不知道確切位置。",
+          "say": "唯一的差別：導數不是在中心 a 取值，而是在 a 和 x 中間某個點 c，我們不知道 c 在哪。",
+          "board": [
+            {"do":"focus","term":"c","color":"gold","label":"不知在哪","on":"某個點"},
+            {"do":"write","line":"$c$ 在 $a$ 與 $x$ 之間","on":"我們不知道"}
+          ] },
+        { "show": ["$n=0$：$f(x)-f(a)=f'(c)(x-a)$"],
+          "note": "就是〈均值定理〉。證明在下一節。",
+          "say": "n 等於零的時候，它就是均值定理。所以這是均值定理往高階的推廣。",
+          "board": [
+            {"do":"write","line":"$n=0$：$f(x)-f(a)=f'(c)(x-a)$"}
+          ] },
+        { "show": ["Rolle：兩端等高 ⇒ 中間有 $f'(c)=0$"],
+          "note": "下一節的證明會用到。",
+          "say": "Rolle 定理：函數兩端一樣高，中間又光滑，中間一定有一點，切線是水平的。",
+          "board": [
+            {"do":"write","line":"兩端等高、中間可導"},
+            {"do":"write","line":"⇒ 有一點 $f'(c)=0$","on":"中間一定"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：造一個 $g$",
+      "beats": [
+        { "show": ["造兩端為 $0$ 的 $g(t)$，用 Rolle"],
+          "say": "策略：構造。固定 x，對 t 造一個輔助函數，讓它在 a 和 x 兩端都是零，再用 Rolle 定理。",
+          "board": [
+            {"do":"write","line":"固定 $x$，對 $t$ 造 $g(t)$","on":"固定 x"},
+            {"do":"write","line":"$g(a) = g(x) = 0$ ⇒ Rolle","on":"兩端都是零"}
+          ] },
+        { "show": ["$g(t)=f(x)-\\sum\\frac{f^{(k)}(t)(x-t)^k}{k!}$","$\\quad-K(x-t)^{n+1}$"],
+          "note": "選常數 $K$ 使 $g(a)=0$。",
+          "say": "g 是 f 在 x 的值，減掉以 t 為中心的泰勒多項式，再減一項 K 乘 x 減 t 的 n 加一次方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$g(t)=f(x)-{{s:\\sum\\frac{f^{(k)}(t)(x-t)^k}{k!}}}$","on":"g 是"},
+            {"do":"underline","term":"s","label":"泰勒多項式","on":"以 t 為中心"},
+            {"do":"write","line":"$-\\,{{k:K}}(x-t)^{n+1}$","tint":{"k":"violet"},"on":"再減一項"},
+            {"do":"focus","term":"k","color":"violet","label":"常數","on":"K 乘"}
+          ] },
+        { "show": ["$g(x)=0$ ⇒ 有 $c$ 使 $g'(c)=0$"],
+          "note": "〈Rolle 定理〉。",
+          "why": {"ask":"為什麼有 $c$ 使 $g'(c)=0$？","say":"a 和 x 之間為什麼一定有一點，g prime 等於零？","options":[{"label":"$g(a)=g(x)=0$，用 Rolle 定理","correct":true},{"label":"$g'$ 有正有負，用中間值定理","why":"我們根本不知道 $g'$ 的正負號；手上有的是 $g$ 兩端等高。"},{"label":"$f$ 可微，所以 $g'$ 一定會等於 $0$","why":"可微只保證 $g'$ 存在，不保證它等於零；要兩端等高才有 Rolle。"}]},
+          "say": "t 等於 x 時泰勒多項式只剩 f 在 x 的值，g 是零；g 在 a 也是零。兩端等高，Rolle 給出 c。",
+          "board": [
+            {"do":"write","line":"⇒ 有 $c$ 使 $g'(c)=0$"},
+            {"do":"transform","line":"${{z:g(a)=g(x)=0}}$ ⇒ 有 $c$ 使 $g'(c)=0$","why":true,"on":"g 是零"},
+            {"do":"underline","term":"z","label":"兩端等高","why":true,"on":"兩端等高"}
+          ] },
+        { "show": ["$g'(t)=-\\frac{f^{(n+1)}(t)(x-t)^n}{n!}$","$\\quad+K(n+1)(x-t)^n$"],
+          "note": "相鄰兩項互相抵銷。",
+          "why": {"ask":"為什麼只剩一項？","say":"那一長串對 t 微分，為什麼最後只剩一項？","options":[{"label":"乘積律微分後，相鄰兩項抵銷","correct":true},{"label":"$x$ 固定，$(x-t)^k$ 微分是 $0$","why":"固定的是 $x$，$(x-t)^k$ 還是隨 $t$ 變；它微分出來的項正好跟前一項抵銷。"},{"label":"只有 $k=n$ 那一項要微分","why":"每一項都要微分；是相鄰兩項的正負互相抵銷，最後才只剩一項。"}]},
+          "say": "每一項用乘積律微分，會跟下一項的一部分抵銷，一路消下去，只剩最高階那一項。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$g'(t)={{one:-\\frac{f^{(n+1)}(t)(x-t)^n}{n!}}}$","on":"對 t 微分"},
+            {"do":"write","line":"$+\\,{{k:K}}(n+1)(x-t)^n$","on":"只剩一項"},
+            {"do":"underline","term":"one","label":"相鄰兩項抵銷","why":true,"on":"抵銷"}
+          ] },
+        { "show": ["$g'(c)=0$ ⇒ $K=\\frac{f^{(n+1)}(c)}{(n+1)!}$"],
+          "note": "$x-c\\ne0$，可以消去。",
+          "say": "代入 c，c 嚴格在 a 和 x 之間，x 減 c 不是零，可以消掉，就解出 K。",
+          "board": [
+            {"do":"write","line":"$g'(c)=0$ ⇒ ${{k:K}}=\\frac{f^{(n+1)}(c)}{(n+1)!}$","on":"代入 c"},
+            {"do":"focus","term":"k","color":"violet","label":"解出 K","on":"可以消掉"}
+          ] },
+        { "show": ["$g(a)=0$ ⇒ $R_n(x)=K(x-a)^{n+1}$"],
+          "say": "最後回到 g 在 a 等於零：f 減泰勒多項式，正好是 K 乘 x 減 a 的 n 加一次方。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$g(a)=0$ ⇒ ${{r:R_n(x)={{k:K}}(x-a)^{n+1}}}$","on":"回到"},
+            {"do":"box","term":"r","color":"green","label":"餘項","on":"正好是"}
+          ] }
+      ],
+      "key": "選 $K$ 讓 $g$ 兩端為 0，再用 Rolle",
+      "proof": true,
+      "of": 4,
+      "skeleton": "構造",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "定義 $g(t)$，選 $K$ 使 $g(a)=0$"
+          },
+          {
+            "label": "Rolle：有 $c$ 使 $g'(c)=0$",
+            "why": "要先有 $g(a)=g(x)=0$，兩端等高才能用 Rolle。"
+          },
+          {
+            "label": "抵銷後解出 $K=\\frac{f^{(n+1)}(c)}{(n+1)!}$",
+            "why": "要先有 $g'(c)=0$，才有方程式可以解 $K$。"
+          },
+          {
+            "label": "$g(a)=0$ 改寫成 $R_n(x)=K(x-a)^{n+1}$",
+            "why": "要先知道 $K$ 等於什麼，這個式子才是 Lagrange 餘項。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "把 $c$ 換成最壞情況",
+      "beats": [
+        { "show": ["$a$ 與 $x$ 之間 $|f^{(n+1)}|\\le M$"],
+          "say": "不知道 c 在哪，就用最壞的情況：找一個 M，蓋住 n 加一階導數在整段上的大小。",
+          "board": [
+            {"do":"write","line":"整段 $|f^{(n+1)}|\\le {{m:M}}$","tint":{"m":"violet"}}
+          ] },
+        { "show": ["$|R_n(x)|\\le\\frac{M|x-a|^{n+1}}{(n+1)!}$"],
+          "note": "Taylor 不等式。",
+          "say": "把導數換成 M，就得到泰勒不等式：誤差不會超過這個數。",
+          "board": [
+            {"do":"write","line":"$|R_n(x)|\\le\\frac{{{m:M}}|x-a|^{n+1}}{(n+1)!}$","tint":{"m":"violet"}}
+          ] },
+        { "show": ["$M$ 要涵蓋整段區間"],
+          "note": "不能只看中心 $a$。",
+          "say": "注意，M 要蓋住 a 到 x 的整段，因為 c 可能落在裡面任何地方，只看中心不夠。",
+          "board": [
+            {"do":"write","line":"$M$ 蓋住整段，不能只看 $a$"}
+          ] },
+        { "show": ["好算就好：$|\\sin|\\le 1$、$e^c<3$"],
+          "note": "代價是估計比較鬆。",
+          "say": "M 不必是最小的上界，取一個好算的也可以，只是估出來會比較鬆。",
+          "board": [
+            {"do":"write","line":"$|\\sin|\\le 1$、$e^c<3$"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "要幾階才夠準",
+      "beats": [
+        { "show": ["$T_n(1)$ 近似 $e$，誤差 $<10^{-3}$"],
+          "say": "用 e 的 x 次方的 n 次多項式在一的值估 e，要誤差小於十的負三次方，n 至少要多少？",
+          "board": [
+            {"do":"write","line":"$T_n(1) \\approx e$，誤差 $< 10^{-3}$"},
+            {"do":"write","line":"$n$ 至少要多少？","on":"n 至少"}
+          ] },
+        { "show": ["$n+1$ 階導數 $e^c$，$0<c<1$"],
+          "note": "$e^c<e<3$，所以 $M=3$。",
+          "say": "n 加一階導數還是 e 的 c 次方，c 在零到一之間，比 e 小，取 M 等於三。",
+          "board": [
+            {"do":"write","line":"$f^{(n+1)}(c) = e^c$，$0 < c < 1$"},
+            {"do":"write","line":"$e^c < e < 3$ ⇒ ${{m:M = 3}}$","tint":{"m":"violet"},"on":"比 e 小"}
+          ] },
+        { "show": ["$|R_n(1)|\\le\\frac{3}{(n+1)!}$"],
+          "say": "x 減 a 是一，一的幾次方都是一，上界就是三除以 n 加一階乘。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{rn:|R_n(1)|}} \\le \\frac{{{m3:3}} \\cdot {{o:1^{n+1}}}}{{{nf:(n+1)!}}}$","tint":{"m3":"violet"},"on":"x 減 a"},
+            {"do":"focus","term":"o","label":"都是一","on":"一的幾次方"},
+            {"do":"transform","line":"${{rn:|R_n(1)|}} \\le \\frac{{{m3:3}}}{{{nf:(n+1)!}}}$","on":"上界就是"}
+          ] },
+        { "show": ["要 $(n+1)!>3000$"],
+          "say": "要它小於零點零零一，就是 n 加一階乘要大於三千。從小的試起。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{m3:3}}}{(n+1)!} < 0.001$"},
+            {"do":"transform","line":"${{q:(n+1)! > 3000}}$","on":"就是 n 加一"},
+            {"do":"underline","term":"q","label":"從小的試","on":"從小的"}
+          ] }
+      ],
+      "key": "用 $e^c<3$ 換掉位置未知的 $c$",
+      "check": 2
+    },
+    {
+      "title": "$M$ 取最大值",
+      "beats": [
+        { "show": ["$\\sqrt{x}$ 在 $a=4$ 的 $T_2$，估 $\\sqrt{4.1}$"],
+          "note": "誤差由三階導數決定。",
+          "say": "根號 x 在四的二次泰勒多項式估根號四點一。二次的誤差，看三階導數。",
+          "board": [
+            {"do":"write","line":"$f(x)=\\sqrt{x}$，$a=4$"},
+            {"do":"write","line":"$T_2$ 估 $\\sqrt{4.1}$","on":"估根號"}
+          ] },
+        { "show": ["$f'''(x)=\\frac{3}{8}x^{-5/2}$"],
+          "note": "在 $[4,4.1]$ 上遞減。",
+          "say": "三階導數是八分之三乘 x 的負二分之五次方。x 越大它越小，在這段上遞減。",
+          "board": [
+            {"do":"write","line":"$f'''(x)=\\frac{3}{8}x^{-5/2}$"},
+            {"do":"write","line":"在 $[4,4.1]$ 上遞減","on":"越大"}
+          ] },
+        { "show": ["三階導數一路往下掉"],
+          "say": "畫出三階導數：往右一路往下掉，越往右越小，所以整段最大的值在最左邊的端點。",
+          "board": [
+            {"do":"plot","graph":{"window":[3.5,5,0,0.02],"curves":[{"expr":"3/8*x^(-5/2)","domain":[3.5,5],"color":"blue"}],"points":[{"x":4,"y":0.01171875}]}}
+          ] },
+        { "show": ["整段最大值在左端 $x=4$"],
+          "say": "這段的左端點是四，所以 M 取三階導數在四的值。數值請你自己算。",
+          "board": [
+            {"do":"write","line":"最大值在左端 ${{e:x=4}}$"},
+            {"do":"focus","term":"e","color":"gold","label":"左端點","on":"左端點"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$M$ 取多少？",
+        "options": [
+          {
+            "label": "$\\frac{3}{256}$（在 $x=4$）",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{3}{8}(4.1)^{-5/2}$",
+            "why": "遞減函數的最大值在左端 $x=4$；4.1 那端是最小值。"
+          },
+          {
+            "label": "$\\frac{3}{8}$",
+            "why": "忘了乘 $x^{-5/2}$：在 4 是 $\\frac{3/8}{32}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "上界不是誤差本身",
+      "beats": [
+        { "show": ["$|R_2(4.1)|\\le\\frac{1}{512000}\\approx 1.95\\times 10^{-6}$"],
+          "note": "實際誤差約 $1.92\\times 10^{-6}$。",
+          "say": "根號四點一的上界大約一點九五乘十的負六次方，實際誤差一點九二，在上界之內。",
+          "board": [
+            {"do":"write","line":"上界 $|R_2(4.1)| \\le {{u:1.95\\times 10^{-6}}}$","tint":{"u":"violet"}},
+            {"do":"write","line":"實際 ${{a:1.92\\times 10^{-6}}}$","tint":{"a":"blue"},"on":"實際誤差"}
+          ] },
+        { "show": ["$\\sin 1\\approx 1-\\frac{1}{6}$：當成 $T_3$"],
+          "note": "上界 $\\frac{\\sin 1}{4!}\\approx 0.035$。",
+          "say": "再看 sine 一，用 x 減六分之 x 的三次方。當成三階，四階導數是 sine，上界零點零三五。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin 1 \\approx 1 - \\frac{1}{6}$","on":"再看"},
+            {"do":"write","line":"當成 $T_3$：上界 $\\frac{\\sin 1}{4!} \\approx {{u3:0.035}}$","tint":{"u3":"violet"},"on":"當成三階"}
+          ] },
+        { "show": ["$f^{(4)}=\\sin x$ 在 $[0,1]$ 遞增"],
+          "note": "最大值在右端 $x=1$。",
+          "say": "為什麼是 sine 一？四階導數是 sine x，零到一它一路往上，最大在右端 x 等於一。",
+          "board": [
+            {"do":"write","line":"$f^{(4)}=\\sin x$，在 $[0,1]$ 遞增"},
+            {"do":"write","line":"最大在 ${{s1:x=1}}$：$\\sin 1$","on":"最大在"},
+            {"do":"focus","term":"s1","color":"gold","label":"右端","on":"右端"}
+          ] },
+        { "show": ["當成 $T_4$：上界 $\\frac{1}{5!}\\approx 0.0083$"],
+          "note": "$x^4$ 的係數是 0，$T_3=T_4$。",
+          "say": "可是 x 的四次方係數是零，它也是四階。改用五階導數 cosine，上界變成零點零零八三。",
+          "board": [
+            {"do":"write","line":"$x^4$ 的係數是 $0$ ⇒ $T_3 = T_4$"},
+            {"do":"write","line":"當成 $T_4$：上界 $\\frac{1}{5!} \\approx {{u4:0.0083}}$","tint":{"u4":"violet"},"on":"改用五階"}
+          ] },
+        { "show": ["實際誤差 $\\approx 0.0081$"],
+          "say": "實際誤差是零點零零八一。上界保證不會更差，實際通常小一些；第二個緊得多。",
+          "board": [
+            {"do":"keep","n":3},
+            {"do":"write","line":"實際誤差 $\\approx {{a2:0.0081}}$","tint":{"a2":"blue"},"on":"實際誤差"},
+            {"do":"underline","term":"u4","color":"violet","label":"緊得多","on":"第二個"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$e^x$ 等於自己的級數",
+      "beats": [
+        { "show": ["$|e^c|\\le e^{|x|}$"],
+          "note": "$c$ 在 0 與 $x$ 之間。",
+          "say": "固定一個 x。n 加一階導數是 e 的 c 次方，c 在零到 x 之間，不會超過 e 的 x 絕對值次方。",
+          "board": [
+            {"do":"write","line":"$f^{(n+1)}(c)=e^c$"},
+            {"do":"write","line":"$|e^c|\\le e^{|x|}$","on":"不會超過"}
+          ] },
+        { "show": ["$|R_n(x)|\\le\\frac{e^{|x|}|x|^{n+1}}{(n+1)!}$"],
+          "say": "代進泰勒不等式。x 固定，n 一直變大，分子是指數，分母是階乘。",
+          "board": [
+            {"do":"write","line":"$|R_n(x)|\\le\\frac{{{nu:e^{|x|}|x|^{n+1}}}}{{{de:(n+1)!}}}$"},
+            {"do":"underline","term":"nu","label":"指數","on":"分子"},
+            {"do":"underline","term":"de","label":"階乘","on":"分母"}
+          ] },
+        { "show": ["多一階：分子 $\\times|x|$，分母 $\\times(n+2)$"],
+          "say": "多一階，分子只多乘一個 x 絕對值，分母卻多乘 n 加二，這個因子會越來越大。",
+          "board": [
+            {"do":"write","line":"多一階：分子 $\\times|x|$，分母 $\\times{{d2:(n+2)}}$"},
+            {"do":"underline","term":"d2","color":"gold","label":"一直變大","on":"n 加二"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$n\\to\\infty$ 時這個上界？",
+        "options": [
+          {
+            "label": "$\\to 0$，所以 $e^x$ 等於它的級數",
+            "correct": true
+          },
+          {
+            "label": "$\\to\\infty$",
+            "why": "$|x|^{n+1}$ 會變大，但階乘長得比任何 $|x|^n$ 都快。"
+          },
+          {
+            "label": "只有 $|x|<1$ 時 $\\to 0$",
+            "why": "$|x|$ 再大也是固定的數，$(n+1)!$ 最後一定贏。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "error-bound",
+      "lagrange-remainder",
+      "taylor"
+    ],
+    "fine": [
+      "taylor-error-lagrange",
+      "taylor-error-choose-m",
+      "taylor-error-find-n"
+    ]
+  },
+  "practice": [
+    {
+      "id": "tr-bnd-001",
+      "core": true,
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-003",
+      "core": true,
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q1c",
+      "core": true,
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q4d",
+      "core": true,
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-err-001",
+      "core": true,
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-002",
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-005",
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "tr-err-002",
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-num-005",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-num-001",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-bnd-009",
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q3b",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-num-003",
+      "challenge": true,
+      "trains": "taylor-error-find-n",
+      "note": "挑戰：$\\sin x$ 的多項式只有奇次項，要注意 $T_n$ 與 $T_{n+1}$ 相同時可以用更高一階的導數估計。"
+    }
+  ],
+  "gaps": []
+}

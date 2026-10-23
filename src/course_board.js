@@ -301,7 +301,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       el.style.fontSize = `${F}px`;
       c.appendChild(el);
       if (it.kind === "plot") {
-        const g = window.BuzzBoardPlot.html(it.a.graph);
+        const g = window.BuzzBoardPlot.html(it.a.graph, it.a.svg, it.a.nb);
         let w = Math.min(roomOf(it), Math.max(320, Math.min(480, W * 0.62)));
         if (B.whole) w = Math.min(w, ((cap - 2 * pad[1] - 16) * g.w) / g.h);
         el.classList.add("cvb-p");

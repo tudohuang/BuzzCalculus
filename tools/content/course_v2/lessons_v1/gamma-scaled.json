@@ -1,0 +1,358 @@
+{
+  "id": "gamma-scaled",
+  "title": "縮放的 Gamma 積分",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["gamma-half-integer", "u-sub-definite"],
+  "next": ["beta-function"],
+  "related": ["feynman-trick-basic", "gamma-definition"],
+  "objectives": [
+    "推出並使用 $\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx=\\frac{\\Gamma(s)}{a^s}$（$a>0$）。",
+    "推出並使用 $\\int_0^{\\infty}x^{s-1}e^{-ax^p}\\,dx=\\frac{\\Gamma(s/p)}{p\\,a^{s/p}}$，處理 $e^{-x^3}$、$e^{-2x^2}$ 這類指數。",
+    "用「量綱」檢查答案：$x$ 的尺度是 $\\frac{1}{a}$，結果一定帶 $a$ 的 $-s$ 次方。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 指數裡有係數：令 $u=ax$",
+      "body": [
+        "$\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx$（$a>0$）：令 $u=ax$，$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$。$x^{s-1}\\,dx=\\left(\\frac{u}{a}\\right)^{s-1}\\frac{du}{a}=\\frac{u^{s-1}\\,du}{a^s}$。",
+        "所以結果是 $\\frac{\\Gamma(s)}{a^s}$。〈Gamma 函數：定義與遞迴〉裡的 $\\frac{\\Gamma(k+1)}{a^{k+1}}$ 是 $s=k+1$ 的特例。$a\\le 0$ 時 $e^{-ax}$ 不衰減，積分發散。"
+      ],
+      "tex": ["\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx=\\frac{\\Gamma(s)}{a^{s}}\\qquad(s>0,\\ a>0)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 指數裡是 $x^p$：令 $u=ax^p$",
+      "body": [
+        "$\\int_0^{\\infty}x^{s-1}e^{-ax^p}\\,dx$（$p>0$）：令 $u=ax^p$，$x=\\left(\\frac{u}{a}\\right)^{1/p}$，$dx=\\frac{1}{p}a^{-1/p}u^{1/p-1}\\,du$。",
+        "合併 $u$ 的次方：$x^{s-1}\\,dx=\\frac{1}{p}a^{-s/p}u^{s/p-1}\\,du$。結果是 $\\frac{\\Gamma(s/p)}{p\\,a^{s/p}}$。",
+        "$p=1$ 回到 ①；$p=2$ 就是上一課的 $\\int_0^{\\infty}x^me^{-x^2}\\,dx=\\frac{1}{2}\\Gamma\\left(\\frac{m+1}{2}\\right)$（$s=m+1$、$a=1$）。"
+      ],
+      "tex": ["\\int_0^{\\infty}x^{s-1}e^{-a x^{p}}\\,dx=\\frac{\\Gamma(s/p)}{p\\,a^{s/p}}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 量綱檢查",
+      "body": [
+        "如果 $x$ 帶單位（例如秒），$a$ 的單位就是 1/秒，指數 $ax$ 才是純數。積分 $\\int x^{s-1}\\,dx$ 的單位是 秒ˢ，所以答案一定長成「純數 $\\times\\,a^{-s}$」。寫出 $a^{-(s-1)}$ 或 $a^{-s-1}$，量綱就對不上，一定是 $dx$ 換錯了。$p$ 的情況同理：$ax^p$ 是純數，$x$ 的尺度是 $a^{-1/p}$，答案帶 $a^{-s/p}$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "半整數加係數",
+      "prompt": "$\\int_0^{\\infty}x^{3/2}e^{-4x}\\,dx$",
+      "problemId": "rel-hard-int-002",
+      "steps": [
+        "$x^{3/2}=x^{s-1}$，$s=\\frac{5}{2}$；$a=4$。",
+        "結果 $\\frac{\\Gamma(5/2)}{4^{5/2}}$。$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3\\sqrt{\\pi}}{4}$，$4^{5/2}=(\\sqrt{4})^5=32$。",
+        "答案 $\\frac{3\\sqrt{\\pi}/4}{32}=\\frac{3\\sqrt{\\pi}}{128}\\approx 0.0415$。"
+      ],
+      "answer": "$\\frac{3\\sqrt{\\pi}}{128}$",
+      "claim": "INT(x^(3/2)*e^(-4x), 0, inf) == 3*sqrt(pi)/128"
+    },
+    {
+      "title": "指數是 $x^3$",
+      "prompt": "$\\int_0^{\\infty}e^{-x^3}\\,dx$",
+      "steps": [
+        "$s-1=0$，$s=1$；$p=3$；$a=1$。",
+        "結果 $\\frac{\\Gamma(1/3)}{3}$。",
+        "用遞迴改寫：$\\Gamma\\left(\\frac{4}{3}\\right)=\\frac{1}{3}\\Gamma\\left(\\frac{1}{3}\\right)$，所以答案也是 $\\Gamma\\left(\\frac{4}{3}\\right)\\approx 0.8930$。這個值沒有更簡單的閉式。"
+      ],
+      "answer": "$\\frac{\\Gamma(1/3)}{3}=\\Gamma\\left(\\frac{4}{3}\\right)$",
+      "claim": "INT(e^(-x^3), 0, inf) == INT(x^(1/3)*e^(-x), 0, inf) ;; INT(e^(-x^3), 0, inf) == INT(x^(-2/3)*e^(-x), 0, inf)/3"
+    },
+    {
+      "title": "$x^2$ 指數又有係數",
+      "prompt": "$\\int_0^{\\infty}x^4e^{-2x^2}\\,dx$",
+      "problemId": "hc-spec-006",
+      "steps": [
+        "$x^4=x^{s-1}$，$s=5$；$p=2$；$a=2$。",
+        "結果 $\\frac{\\Gamma(5/2)}{2\\cdot 2^{5/2}}$。",
+        "$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3\\sqrt{\\pi}}{4}$；$2^{5/2}=4\\sqrt{2}$，所以分母 $2\\cdot 4\\sqrt{2}=8\\sqrt{2}$。",
+        "答案 $\\frac{3\\sqrt{\\pi}/4}{8\\sqrt{2}}=\\frac{3\\sqrt{\\pi}}{32\\sqrt{2}}\\approx 0.1175$。"
+      ],
+      "answer": "$\\frac{3\\sqrt{\\pi}}{32\\sqrt{2}}$",
+      "claim": "INT(x^4*e^(-2x^2), 0, inf) == 3*sqrt(pi)/(32*sqrt(2))"
+    }
+  ],
+  "pitfalls": [
+    "$a^s$ 寫成 $a^{s-1}$：漏了 $dx=\\frac{du}{a}$ 的那一個 $\\frac{1}{a}$。",
+    "指數是 $x^p$ 時忘了前面的 $\\frac{1}{p}$。",
+    "把 $s$ 讀錯：$x^{3/2}$ 對應 $s=\\frac{5}{2}$，不是 $\\frac{3}{2}$。",
+    "$a\\le 0$ 也套公式；積分只在 $a>0$ 收斂。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int_0^{\\infty}x^2e^{-5x}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{2}{125}$", "correct": true },
+        { "label": "$\\frac{2}{25}$", "why": "分母是 $a^s$，$s=3$，要 $5^3=125$；寫成 $5^2$ 是漏了 $dx=\\frac{du}{5}$。" },
+        { "label": "$250$", "why": "$a$ 在分母：指數衰減得越快，面積越小。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{\\infty}e^{-x^4}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\Gamma\\left(\\frac{5}{4}\\right)$", "correct": true },
+        { "label": "$\\Gamma\\left(\\frac{1}{4}\\right)$", "why": "公式是 $\\frac{\\Gamma(1/4)}{4}$，漏了 $\\frac{1}{p}$；$\\frac{\\Gamma(1/4)}{4}=\\Gamma\\left(\\frac{5}{4}\\right)$。" },
+        { "label": "$\\Gamma(4)$", "why": "$p=4$ 出現在 $\\Gamma$ 的分母位置：$\\Gamma\\left(\\frac{s}{p}\\right)=\\Gamma\\left(\\frac{1}{4}\\right)$，不是 $\\Gamma(4)$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx=\\frac{\\Gamma(s)}{a^s}$ 裡的 $a^s$ 是從哪裡來的？",
+      "options": [
+        { "label": "$x^{s-1}$ 貢獻 $a^{-(s-1)}$，$dx$ 再貢獻 $a^{-1}$", "correct": true },
+        { "label": "$e^{-ax}$ 換元後變成 $a^se^{-u}$", "why": "$e^{-ax}$ 換元後就是 $e^{-u}$，不帶 $a$；$a$ 全部來自 $x^{s-1}$ 與 $dx$。" },
+        { "label": "$\\Gamma$ 函數本身的性質 $\\Gamma(as)=a^s\\Gamma(s)$", "why": "沒有這個性質；Gamma 不是這樣縮放的。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{\\infty}xe^{-ax}\\,dx$ 對哪些 $a$ 收斂？",
+      "options": [
+        { "label": "$a>0$", "correct": true },
+        { "label": "$a\\ne 0$", "why": "$a<0$ 時 $e^{-ax}$ 是增長的指數，積分發散。" },
+        { "label": "所有實數 $a$", "why": "$a=0$ 時是 $\\int_0^{\\infty}x\\,dx$，發散。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "令 $u=ax$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx$"],
+          "note": "指數裡有係數 $a>0$。",
+          "say": "指數裡多了一個係數 a，令 u 等於 a x，把它變回標準的 Gamma。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}x^{s-1}e^{-{{ax:ax}}}\\,dx$"},
+            {"do":"underline","term":"ax","on":"多了一個係數"},
+            {"do":"write","line":"令 ${{u:u=ax}}$","on":"令 u","tint":{"u":"blue"}}
+          ] },
+        { "show": ["$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"],
+          "say": "x 是 a 分之 u，dx 是 a 分之 du，兩個地方都會吐出 a。",
+          "board": [
+            {"do":"write","line":"$x=\\frac{u}{{{a1:a}}}$，$dx=\\frac{du}{{{a2:a}}}$"},
+            {"do":"focus","term":"a1","on":"兩個地方"},
+            {"do":"focus","term":"a2","on":"吐出 a"}
+          ] },
+        { "show": ["$x^{s-1}\\,dx=\\frac{u^{s-1}\\,du}{a^s}$"],
+          "note": "$a^{-(s-1)}$ 再乘 $a^{-1}$。",
+          "say": "x 的 s 減一次方給出 a 的負 s 加一次方，dx 再給一個 a 分之一，合起來是 a 的 s 次方分之一。",
+          "board": [
+            {"do":"write","line":"${{xs:x^{s-1}}}\\,{{dx:dx}}=\\frac{u^{s-1}\\,du}{{{as:a^s}}}$"},
+            {"do":"underline","term":"xs","on":"負 s 加一次方"},
+            {"do":"underline","term":"dx","on":"再給一個"}
+          ] },
+        { "show": ["$=\\frac{\\Gamma(s)}{a^s}$"],
+          "note": "$s>0$，$a>0$。",
+          "say": "所以答案是 Gamma s 除以 a 的 s 次方。",
+          "board": [
+            {"do":"transform","line":"$\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx=\\frac{\\Gamma(s)}{{{as:a^s}}}$","on":"所以答案"},
+            {"do":"box","term":"as","on":"a 的 s 次方","color":"green"}
+          ] },
+        { "show": ["$s=1$：$a$ 越大，面積越小"],
+          "note": "藍色 $a=1$，紅色 $a=4$。",
+          "say": "畫 s 等於一的情況：藍色 a 等於一，紅色 a 等於四。a 越大衰減越快，面積越小，所以 a 在分母。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,3,0,1.2],"curves":[{"expr":"exp(-x)","domain":[0,3],"color":"blue"},{"expr":"exp(-4*x)","domain":[0,3],"color":"red"}],"fills":[{"expr":"exp(-4*x)","from":0,"to":3,"color":"red"}],"labels":[{"x":1.2,"y":0.45,"text":"a=1","anchor":"start"},{"x":0.4,"y":0.3,"text":"a=4","anchor":"start"}]}}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "讀出 $s$ 和 $a$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{3/2}e^{-4x}\\,dx$"],
+          "note": "$x^{3/2}=x^{s-1}$，所以 $s=\\frac{5}{2}$；$a=4$。",
+          "say": "先讀參數：x 的二分之三次方是 x 的 s 減一次方，所以 s 是二分之五，不是二分之三；a 是四。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}{{x:x^{3/2}}}e^{-4x}\\,dx$"},
+            {"do":"focus","term":"x","on":"二分之三次方"},
+            {"do":"write","line":"$s=\\frac{3}{2}+1=\\frac{5}{2}$，$a=4$","on":"所以 s"}
+          ] },
+        { "show": ["$\\Gamma(1/2)=\\sqrt{\\pi}$"],
+          "note": "令 $x=t^2$，$\\int_0^{\\infty}e^{-t^2}dt=\\frac{\\sqrt{\\pi}}{2}$。",
+          "say": "Gamma 二分之一，令 x 等於 t 平方，變成二乘 e 的負 t 平方的積分，那是二分之根號 pi，所以得根號 pi。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\Gamma(1/2)=\\int_0^{\\infty}x^{-1/2}e^{-x}\\,dx$","on":"等於"},
+            {"do":"transform","line":"$x=t^2$：$=2\\int_0^{\\infty}e^{-t^2}\\,dt$","on":"變成"},
+            {"do":"write","line":"$=2\\cdot\\frac{\\sqrt{\\pi}}{2}=\\sqrt{\\pi}$","color":"green","on":"所以得"}
+          ] },
+        { "show": ["$\\Gamma(5/2)=\\frac{3}{2}\\cdot\\frac{1}{2}\\Gamma(1/2)$"],
+          "note": "遞迴 $\\Gamma(x+1)=x\\Gamma(x)$ 用兩次。",
+          "say": "再用遞迴：Gamma 二分之五是二分之三乘二分之一乘 Gamma 二分之一，就是四分之三根號 pi。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(5/2)=\\frac{3}{2}\\cdot\\frac{1}{2}\\,\\Gamma(1/2)$"},
+            {"do":"write","line":"$=\\frac{3}{4}\\sqrt{\\pi}$","on":"四分之三"}
+          ] },
+        { "show": ["$\\frac{\\Gamma(5/2)}{4^{5/2}}$"],
+          "note": "$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3\\sqrt{\\pi}}{4}$，$4^{5/2}=32$。",
+          "say": "Gamma 二分之五是四分之三根號 pi，四的二分之五次方是根號四的五次方，三十二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{{{g:\\Gamma(5/2)}}}{{{d:4^{5/2}}}}$","on":"Gamma"},
+            {"do":"write","line":"${{g:\\Gamma(5/2)}}=\\frac{3\\sqrt{\\pi}}{4}$","on":"四分之三根號"},
+            {"do":"write","line":"${{d:4^{5/2}}}=(\\sqrt{4})^5=32$","on":"根號四的五次方"}
+          ] },
+        { "show": ["$=\\frac{3\\sqrt{\\pi}}{128}\\approx 0.0415$"],
+          "say": "相除得一百二十八分之三根號 pi。",
+          "board": [
+            {"do":"write","line":"$=\\frac{3\\sqrt{\\pi}}{4\\cdot 32}={{r:\\frac{3\\sqrt{\\pi}}{128}}}\\approx 0.0415$"},
+            {"do":"box","term":"r","color":"green","on":"一百二十八"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "量綱檢查",
+      "beats": [
+        { "show": ["$x$ 是秒，$a$ 就是 1/秒"],
+          "note": "指數 $ax$ 必須是純數。",
+          "say": "假設 x 的單位是秒，指數 a x 必須是純數，所以 a 的單位是每秒。",
+          "board": [
+            {"do":"write","line":"${{x:x}}$ 的單位：秒"},
+            {"do":"write","line":"${{ax:ax}}$ 必須是純數","on":"必須是純數"},
+            {"do":"write","line":"$a$ 的單位：1/秒","on":"所以"}
+          ] },
+        { "show": ["答案 = 純數 $\\times\\,a^{-s}$"],
+          "note": "$\\int x^{s-1}\\,dx$ 的單位是 秒ˢ。",
+          "say": "積分的單位是秒的 s 次方，所以答案一定長成純數乘 a 的負 s 次方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int x^{s-1}\\,dx$ 的單位：秒$^s$","on":"積分的單位"},
+            {"do":"write","line":"答案 = 純數 $\\times\\,{{k:a^{-s}}}$","on":"所以答案"}
+          ] },
+        { "show": ["寫出 $a^{-(s-1)}$：$dx$ 換錯了"],
+          "say": "寫出 a 的負 s 加一次方，量綱就對不上，一定是 dx 那一個 a 分之一漏了。",
+          "board": [
+            {"do":"write","line":"${{w:a^{-(s-1)}}}$"},
+            {"do":"strike","term":"w","label":"漏了 dx","on":"對不上"}
+          ] },
+        { "show": ["$a\\le 0$：積分發散"],
+          "note": "$e^{-ax}$ 不衰減。",
+          "say": "還有，a 小於等於零時，e 的負 a x 次方不會衰減，積分發散，公式不能用。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$a\\le 0$：${{d:e^{-ax}}}$ 不衰減","on":"還有"},
+            {"do":"focus","term":"d","on":"不會衰減"},
+            {"do":"write","line":"積分發散，公式不能用","on":"積分發散"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "指數是 $x^p$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{s-1}e^{-ax^p}\\,dx$"],
+          "note": "令 $u=ax^p$，$p>0$。",
+          "say": "指數裡是 x 的 p 次方，就令 u 等於 a 乘 x 的 p 次方。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}x^{s-1}e^{-a{{xp:x^p}}}\\,dx$"},
+            {"do":"underline","term":"xp","on":"是 x 的"},
+            {"do":"write","line":"令 ${{u:u=ax^p}}$","tint":{"u":"blue"},"on":"就令"}
+          ] },
+        { "show": ["$x=\\left(\\frac{u}{a}\\right)^{1/p}$","$dx=\\frac{1}{p}a^{-1/p}u^{1/p-1}du$"],
+          "note": "由 $u=ax^p$ 解出 $x$，再微分。",
+          "say": "由 u 等於 a x 的 p 次方解出 x，再微分得 dx。p 分之一就是這時候掉出來的。",
+          "board": [
+            {"do":"write","line":"$x=\\left(\\frac{u}{a}\\right)^{1/p}$"},
+            {"do":"write","line":"$dx=\\frac{1}{{{n2:p}}}a^{-1/p}u^{1/p-1}du$","on":"微分"},
+            {"do":"focus","term":"n2","on":"p 分之一"}
+          ] },
+        { "show": ["$u$ 次方：$\\frac{s}{p}-1$；$a$ 次方：$-\\frac{s}{p}$"],
+          "note": "$x^{s-1}$ 也用 $u$ 寫，再和 $dx$ 合併。",
+          "say": "u 的次方相加：p 分之 s 減一，加上 p 分之一，再減一，剩 p 分之 s 減一。a 的次方合起來是負 p 分之 s。",
+          "board": [
+            {"do":"write","line":"$u$ 的次方：$\\frac{s-1}{p}+\\frac1p-1=\\frac sp-1$"},
+            {"do":"write","line":"$a$ 的次方：$-\\frac{s-1}{p}-\\frac1p=-\\frac sp$","on":"a 的次方"}
+          ] },
+        { "show": ["$=\\frac{\\Gamma(s/p)}{p\\,a^{s/p}}$"],
+          "note": "$p=1$ 回到上面；$p=2$ 是上一課的公式。",
+          "say": "合併 u 的次方之後，答案是 Gamma p 分之 s，除以 p，再除以 a 的 p 分之 s 次方。",
+          "board": [
+            {"do":"write","line":"$=\\frac{\\Gamma({{q:s/p}})}{{{pp:p}}\\,a^{s/p}}$"},
+            {"do":"focus","term":"q","on":"Gamma p"},
+            {"do":"focus","term":"pp","on":"除以 p"}
+          ] },
+        { "show": ["$\\int_0^{\\infty}e^{-x^3}\\,dx=\\frac{\\Gamma(1/3)}{3}$"],
+          "note": "$=\\Gamma\\left(\\frac{4}{3}\\right)\\approx 0.8930$",
+          "say": "例如 e 的負 x 三次方：s 是一，p 是三，得三分之一乘 Gamma 三分之一，用遞迴就是 Gamma 三分之四。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^{\\infty}e^{-x^3}\\,dx$","on":"例如"},
+            {"do":"write","line":"$s=1$，$p=3$","on":"s 是一"},
+            {"do":"write","line":"$=\\frac{1}{3}\\Gamma(1/3)$","on":"得三分之一乘"},
+            {"do":"transform","line":"$=\\Gamma\\left(\\frac{4}{3}\\right)\\approx 0.8930$","color":"green","on":"用遞迴"}
+          ] }
+      ],
+      "key": "令 $u=x^p$，$s$ 和 $a$ 的次方都除以 $p$",
+      "check": 1
+    },
+    {
+      "title": "$x^2$ 加係數",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^4e^{-2x^2}\\,dx$"],
+          "note": "$p=2$，$a=2$。",
+          "say": "最後一題：x 四次方乘 e 的負二 x 平方次方，p 是二，a 是二。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}x^4e^{-{{a:2}}x^{{{p:2}}}}\\,dx$"},
+            {"do":"focus","term":"a","on":"負二"},
+            {"do":"focus","term":"p","on":"p 是"}
+          ] },
+        { "show": ["$2^{5/2}=2^2\\cdot 2^{1/2}=4\\sqrt{2}$","$2\\cdot 4\\sqrt{2}=8\\sqrt{2}$"],
+          "note": "分母先算這兩步。",
+          "say": "二的二分之五次方，拆成二的平方乘二的二分之一次方，就是四根號二。前面再乘一個二，分母是八根號二。",
+          "board": [
+            {"do":"write","line":"$2^{5/2}=2^2\\cdot 2^{1/2}=4\\sqrt{2}$"},
+            {"do":"write","line":"$2\\cdot 4\\sqrt{2}=8\\sqrt{2}$","on":"前面再乘"}
+          ] },
+        { "show": ["$\\frac{\\Gamma(5/2)}{2\\cdot 2^{5/2}}=\\frac{3\\sqrt{\\pi}}{32\\sqrt{2}}$"],
+          "note": "$2^{5/2}=4\\sqrt{2}$",
+          "say": "代進公式：Gamma 二分之五除以二，再除以二的二分之五次方，約零點一一七五。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\Gamma(5/2)}{2\\cdot {{d:2^{5/2}}}}$","on":"代進"},
+            {"do":"underline","term":"d","on":"再除以二的"},
+            {"do":"transform","line":"$={{r:\\frac{3\\sqrt{\\pi}}{32\\sqrt{2}}}}$","on":"約零點"},
+            {"do":"box","term":"r","color":"green","on":"一一七五"}
+          ] }
+      ],
+      "key": "先從 $x^{s-1}$ 讀出 $s$，再當 $p=2$ 套公式",
+      "predict": {
+        "ask": "這一題的 $s$ 是多少？",
+        "options": [
+          {
+            "label": "$5$",
+            "correct": true
+          },
+          {
+            "label": "$4$",
+            "why": "$x^4$ 是 $x^{s-1}$，所以 $s-1=4$，$s=5$。"
+          },
+          {
+            "label": "$\\frac{5}{2}$",
+            "why": "$\\frac{5}{2}$ 是 $\\frac{s}{p}$，是 $\\Gamma$ 裡面的參數；$s$ 本身是 $5$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["gamma-function", "special-functions", "improper-integral"],
+    "fine": ["gamma-scaled-linear", "gamma-scaled-power", "gamma-scaled-general", "gamma-scaled-parameter"]
+  },
+  "practice": [
+    { "id": "rel-adv-011", "core": true, "trains": "gamma-scaled-linear" },
+    { "id": "burst-int-001", "core": true, "trains": "gamma-scaled-linear" },
+    { "id": "rel-hard-int-001", "core": true, "trains": "gamma-scaled-linear" },
+    { "id": "rel-hard-int-002", "core": true, "trains": "gamma-scaled-general" },
+    { "id": "hc-spec-006", "core": true, "trains": "gamma-scaled-power" },
+    { "id": "burst-boss-param-002", "trains": "gamma-scaled-parameter" },
+    { "id": "cg-11d-016", "trains": "gamma-scaled-power" },
+    { "id": "cg-11d-017", "trains": "gamma-scaled-power" },
+    { "id": "td-int-006", "challenge": true, "trains": "gamma-scaled-power", "note": "挑戰：整條實數線，偶函數先乘 $2$，再套 $p=2$、$a=3$。" }
+  ],
+  "gaps": []
+}

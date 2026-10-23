@@ -1,52 +1,113 @@
 {
   "id": "infinite-limits",
   "title": "無窮極限與垂直漸近線",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 25,
-  "prerequisites": ["limit-one-sided", "limit-factor"],
-  "next": ["squeeze-theorem"],
-  "related": ["polynomial-rational", "asymptotes"],
+  "prerequisites": [
+    "limit-one-sided",
+    "limit-factor"
+  ],
+  "next": [
+    "squeeze-theorem"
+  ],
+  "related": [
+    "polynomial-rational",
+    "asymptotes"
+  ],
   "objectives": [
-    "說得出 $\\lim_{x\\to a} f(x) = \\infty$ 的意思，並知道它仍然是「極限不存在」的一種。",
-    "遇到 $\\frac{k}{0}$ 型（$k \\ne 0$），會分左右判斷是 $+\\infty$ 還是 $-\\infty$。",
-    "會找垂直漸近線，並排除約分後消失的洞。"
+    "說得出 $\\lim_{x\\to a}f(x)=\\infty$ 的意思，並知道它仍然是「極限不存在」的一種",
+    "遇到 $\\frac k0$ 型（$k\\ne0$），會分左右判斷是 $+\\infty$ 還是 $-\\infty$",
+    "會找垂直漸近線，並排除約分後消失的洞"
   ],
-  "visual": "畫出 y = (x + 1)/(x − 3)。左右各一個點沿曲線滑向 x = 3，旁邊顯示 x 與 f(x)：右邊的讀數 401、4001、40001 一路往上衝，左邊的讀數 −399、−3999、−39999 一路往下衝。虛線 x = 3 標成垂直漸近線。",
-  "figures": [
-    {"caption":"x → 3：右邊往上衝，左邊往下衝","after":0,"widget":{"type":"approach","f":"(x+1)/(x-3)","a":3,"range":[0.0001,2],"window":[-1,7,-12,14]}}
-  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 意思：要多大有多大",
       "body": [
-        "$\\lim_{x\\to a} f(x) = \\infty$：只要 $x$ 夠靠近 $a$（$x \\ne a$），$f(x)$ 就能大過任何指定的數，例如大過 1000、大過 $10^6$。$= -\\infty$ 是能小過任何指定的負數。",
-        "$f(x)$ 沒有靠近任何一個數，所以極限其實不存在；寫 $= \\infty$ 是在說「它怎麼不存在」：往正的方向無限變大。$\\infty$ 不是數，不能拿來做加減：$\\infty - \\infty$ 沒有意義。"
+        "意思：$x$ 夠靠近 $0$，$\\dfrac1{x^2}$ 就要多大有多大",
+        "例：$|x|<0.001$ 時 $\\frac1{x^2}>1\\,000\\,000$",
+        "它仍然是「極限不存在」",
+        "寫 $=\\infty$ 只是更精確地描述它怎麼不存在：一路往上衝"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to0}\\frac1{x^2}=\\infty"
+      ]
     },
     {
-      "heading": "② $\\frac{k}{0}$ 型：分子不是 0、分母靠近 0",
+      "heading": "② $\\frac k0$ 型：分左右看正負",
       "body": [
-        "代入時分子靠近 $k \\ne 0$、分母靠近 0：分母越小，商的絕對值越大，所以會往 $\\pm\\infty$ 跑。正負號要看兩側分母的符號。",
-        "$\\frac{1}{x}$：$x \\to 0^+$ 時分母是很小的正數，$\\frac{1}{x} \\to +\\infty$；$x \\to 0^-$ 時是很小的負數，$\\frac{1}{x} \\to -\\infty$。兩側不同，雙側寫不出一個 $\\pm\\infty$。$\\frac{1}{x^2}$：兩側分母都是正的，$\\lim_{x\\to0} \\frac{1}{x^2} = +\\infty$。"
+        "例：$\\displaystyle\\lim_{x\\to3}\\frac{x+1}{x-3}$",
+        "代 $3$：$\\dfrac{4}{0}$：分子不是 $0$，分母靠近 $0$",
+        "右邊 $x\\to3^+$：分子 $\\to4>0$，分母 $x-3\\to0^+$（正的小數）",
+        "左邊 $x\\to3^-$：分子 $>0$，分母 $\\to0^-$（負的小數）",
+        "判斷正負：分子的正負 × 分母靠近 0 的方向"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to3^+}\\frac{x+1}{x-3}=+\\infty",
+        "\\lim_{x\\to3^-}\\frac{x+1}{x-3}=-\\infty"
+      ]
+    },
+    {
+      "heading": "② 兩側同號",
+      "body": [
+        "例：$\\displaystyle\\lim_{x\\to2}\\frac{x-1}{(x-2)^2}$",
+        "分子 $\\to1>0$；分母 $(x-2)^2$ 兩邊都是正的",
+        "平方（偶次方）的分母兩側同號；一次（奇次方）的分母兩側異號"
+      ],
+      "tex": [
+        "\\lim_{x\\to2}\\frac{x-1}{(x-2)^2}=+\\infty"
+      ]
     },
     {
       "heading": "③ 垂直漸近線",
       "body": [
-        "只要左極限或右極限有一個是 $+\\infty$ 或 $-\\infty$，直線 $x = a$ 就叫垂直漸近線。",
-        "候選是分母為 0 的點，但先約分：$\\frac{x^2 - 1}{x^2 - 3x + 2} = \\frac{x + 1}{x - 2}$（$x \\ne 1$），$x = 1$ 約掉了，是洞不是漸近線（〈多項式與有理函數〉）。",
-        "不只有理函數：$\\ln x$ 在 $x \\to 0^+$ 時 $\\to -\\infty$，$\\tan x$ 在 $x \\to \\frac{\\pi}{2}^-$ 時 $\\to +\\infty$。"
+        "只要其中一側的極限是 $\\pm\\infty$：",
+        "有理函數：約分之後分母的零點",
+        "例：$r(x)=\\dfrac{x^2-1}{x^2-3x+2}$",
+        "• $x=2$：約完分母還是 $0$，分子 $3\\ne0$ → 垂直漸近線",
+        "• $x=1$：約掉了 → 洞在 $\\big(1,\\frac{1+1}{1-2}\\big)=(1,-2)$",
+        "0.8 學過同樣的判斷；這一課補上「漸近線兩側是 $+\\infty$ 還是 $-\\infty$」"
       ],
-      "collapsible": false
+      "tex": [
+        "x=a\\ \\text{是垂直漸近線}",
+        "=\\frac{(x-1)(x+1)}{(x-1)(x-2)}=\\frac{x+1}{x-2}\\quad(x\\ne1)"
+      ]
+    },
+    {
+      "heading": "③ 不只有理函數",
+      "body": [
+        "$\\ln x$ 在 $0^+$：",
+        "例：$\\ln0.000001\\approx-13.8$；只能談右極限，$x\\le0$ 沒有定義",
+        "$x=0$ 是 $\\ln x$ 的垂直漸近線",
+        "$\\tan x$ 在 $\\frac\\pi2$：$\\tan x=\\dfrac{\\sin x}{\\cos x}$",
+        "$x\\to\\frac\\pi2$：分子 $\\to1$，分母 $\\cos x\\to0$，又是 $\\frac k0$",
+        "左邊 $\\cos x>0$ → $+\\infty$；右邊 $\\cos x<0$ → $-\\infty$"
+      ],
+      "tex": [
+        "\\lim_{x\\to0^+}\\ln x=-\\infty"
+      ]
     },
     {
       "heading": "④ 判斷流程",
       "body": [
-        "代入。得到 $\\frac{k}{0}$（$k \\ne 0$）：一定是 $\\pm\\infty$，接著分左右看符號。得到 $\\frac{0}{0}$：先化簡，化簡後再看一次。"
-      ],
-      "collapsible": false
+        "算 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$，先代入：",
+        "• 得到一個數：就是答案",
+        "• 得到 $\\dfrac00$：約分，再代",
+        "• 得到 $\\dfrac k0$（$k\\ne0$）：分左右看正負，得 $\\pm\\infty$",
+        "$\\frac00$ 約完可能變成 $\\frac k0$，例如上面 $r(x)$ 在 $x=2$"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\lim f=\\infty$：要多大有多大；仍然是不存在",
+        "• $\\frac k0$ 型：分子正負 × 分母靠近 $0$ 的方向",
+        "• 分母一次方：兩側異號；平方：兩側同號",
+        "• 垂直漸近線：一側是 $\\pm\\infty$；有理函數看約分後分母的零點",
+        "• 約掉的零點是洞，不是漸近線",
+        "下一課：夾擠定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,250 +155,783 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to0} \\frac{1}{x^2}$ 是？",
+      "ask": "$\\displaystyle\\lim_{x\\to1^-}\\frac{2}{x-1}=$？",
       "options": [
-        { "label": "$+\\infty$（兩側都往正無窮）", "correct": true },
-        { "label": "左 $-\\infty$、右 $+\\infty$", "why": "那是 $\\frac{1}{x}$。$x^2$ 在 0 的兩側都是正的。" },
-        { "label": "0", "why": "是分母 $x^2$ 往 0 靠；整個分式往無窮大跑。" }
+        {
+          "label": "$-\\infty$",
+          "correct": true
+        },
+        {
+          "label": "$+\\infty$",
+          "why": "左邊 $x<1$，$x-1$ 是負的"
+        },
+        {
+          "label": "$0$",
+          "why": "分母趨近 $0$，比值變大，不是變小"
+        },
+        {
+          "label": "$2$",
+          "why": "分母不是 $1$，是趨近 $0$"
+        }
       ]
     },
     {
-      "ask": "$\\lim_{x\\to1^-} \\frac{2}{x - 1}$ 是？",
+      "ask": "$\\dfrac{x-3}{x^2-9}$ 的垂直漸近線是？",
       "options": [
-        { "label": "$+\\infty$", "why": "$x < 1$ 時 $x - 1$ 是很小的負數，2 除以小負數是很大的負數。" },
-        { "label": "$-\\infty$", "correct": true },
-        { "label": "2", "why": "分母往 0 靠，分式不會停在 2。" }
-      ]
-    },
-    {
-      "ask": "$f(x) = \\frac{x - 3}{x^2 - 9}$ 的垂直漸近線是？",
-      "options": [
-        { "label": "$x = 3$ 與 $x = -3$", "why": "$x = 3$ 約得掉：約分後 $\\frac{1}{x + 3}$ 在 3 是 $\\frac{1}{6}$，那裡是洞。" },
-        { "label": "沒有", "why": "$x = -3$ 約不掉：分子 $\\to -6$、分母 $\\to 0$，是 $\\frac{k}{0}$ 型。" },
-        { "label": "只有 $x = -3$", "correct": true }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to0^+} \\ln x$ 是？",
-      "options": [
-        { "label": "0", "why": "$\\ln 1 = 0$，不是 $\\ln 0$。$x$ 越靠近 0，$\\ln x$ 越負。" },
-        { "label": "$-\\infty$", "correct": true },
-        { "label": "$+\\infty$", "why": "$0 < x < 1$ 時 $\\ln x$ 是負的。" }
+        {
+          "label": "只有 $x=-3$",
+          "correct": true
+        },
+        {
+          "label": "$x=3$ 和 $x=-3$",
+          "why": "$x=3$ 約掉了：在那裡極限是 $\\frac16$，是洞"
+        },
+        {
+          "label": "只有 $x=3$",
+          "why": "$x=3$ 是洞；約完剩 $\\frac1{x+3}$，漸近線在 $-3$"
+        },
+        {
+          "label": "沒有",
+          "why": "約完分母 $x+3$ 在 $-3$ 是 $0$，分子是 $1$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "要多大有多大",
+      "title": "意思：要多大有多大",
       "beats": [
-        { "show": ["$\\lim_{x\\to a} f(x) = \\infty$"],
-          "note": "$x$ 夠靠近 $a$，$f(x)$ 就能大過任何指定的數。",
-          "fig": {"use":0,"to":0},
-          "say": "這一課的極限不是靠近一個數，而是越變越大：只要 x 夠靠近 a，函數值就能大過任何你指定的數。",
+        {
+          "show": [
+            "$\\lim_{x\\to0}\\frac1{x^2}=\\infty$"
+          ],
+          "say": "上一課是 x 往無限大跑；這一課反過來，是函數值往無限大跑。看 x 平方分之一，x 趨近 0。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to a} f(x) = {{inf:\\infty}}$"},
-            {"do":"focus","term":"inf","on":"越變越大"}
-          ] },
-        { "show": ["要大過 1000？再靠近 $a$ 一點就行"],
-          "note": "要求越高，$x$ 就要越靠近 $a$。",
-          "say": "例如你要它大過一千，只要 x 再靠近 a 一點就做得到。你把門檻訂得再高，也能做到，這就是要多大有多大。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{x\\to0}\\frac1{x^2}=\\infty}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "值往"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：$x$ 夠靠近 $0$，$\\dfrac1{x^2}$ 就要多大有多大"
+          ],
+          "say": "意思是：只要 x 夠靠近 0，x 平方分之一就可以大過任何你指定的數。要它大於一百萬，x 取在千分之一以內就做得到。",
           "board": [
-            {"do":"write","line":"大過 ${{t:1000}}$？$x$ 再靠近 $a$ 一點","on":"大過"},
-            {"do":"focus","term":"t","on":"一千"}
-          ] },
-        { "show": ["$\\frac{x + 1}{x - 3}$，$x \\to 3$"],
-          "fig": {"use":0,"to":0.5},
-          "say": "看圖，x 從兩邊往三靠近。右邊那一點往上衝，左邊那一點往下衝。",
+            {
+              "do": "write",
+              "line": "意思：$x$ 夠靠近 $0$，$\\dfrac1{x^2}$ 就要多大有多大"
+            },
+            {
+              "do": "write",
+              "line": "　例：$|x|<0.001$ 時 $\\frac1{x^2}>1\\,000\\,000$",
+              "color": "violet",
+              "on": "你指"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它仍然是「極限不存在」"
+          ],
+          "say": "要特別注意：寫等於無限大，並不是說極限存在、等於一個叫無限大的數。無限大不是數，這個極限仍然是不存在的。",
           "board": [
-            {"do":"write","line":"$\\frac{x+1}{x-3}$，$x\\to 3$"}
-          ] },
-        { "show": ["極限其實不存在"],
-          "note": "寫 $= \\infty$ 是在說「它怎麼不存在」。",
-          "say": "函數值沒有靠近任何一個數，所以嚴格說極限不存在。寫等於無限大，是在說它怎麼不存在。",
+            {
+              "do": "write",
+              "line": "它仍然是「極限不存在」",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寫 $=\\infty$ 只是更精確地描述它怎麼不存在：一路往上衝"
+          ],
+          "say": "寫等於無限大，只是更精確地描述它是怎麼不存在的：一路往上衝，不是振盪也不是跳躍。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"嚴格說：極限不存在","on":"嚴格說"},
-            {"do":"write","line":"寫 $=\\infty$：說它怎麼不存在","on":"寫等於無限大"}
-          ] },
-        { "show": ["$\\infty$ 不是數"],
-          "note": "$\\infty - \\infty$ 沒有意義。",
-          "say": "無限大不是一個數，不能拿來加減。無限大減無限大，不是零，是沒有意義。",
+            {
+              "do": "write",
+              "line": "寫 $=\\infty$ 只是更精確地描述它怎麼不存在：一路往上衝"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊都往上衝"
+          ],
+          "say": "圖上，兩邊都往上衝，沒有上限。",
           "board": [
-            {"do":"write","line":"${{i:\\infty}}$ 不是數"},
-            {"do":"write","line":"${{d:\\infty-\\infty}}$ 沒有意義","on":"無限大減無限大"},
-            {"do":"focus","term":"d","color":"red","on":"不是零"}
-          ] }
-      ],
-      "drag": {
-        "use": 0,
-        "ask": "自己把 $x$ 推到最靠近 3，看兩邊各衝向哪裡",
-        "range": [
-          0.95,
-          1
-        ]
-      }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv2",
+                  "window": [
+                    -3,
+                    3,
+                    -1,
+                    12
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x^2",
+                      "color": "blue",
+                      "label": "y = 1/x²"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩邊都往上衝",
+              "color": "violet",
+              "on": "上衝"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "$\\frac{k}{0}$ 型",
+      "title": "$\\frac k0$ 型：分左右看正負",
       "beats": [
-        { "show": ["分子 $\\to k \\ne 0$，分母 $\\to 0$"],
-          "note": "分母越小，商的絕對值越大。",
-          "say": "代進去，分子靠近一個不是零的數，分母靠近零。分母越小，商就越大，一定往正負無限大跑。",
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to3}\\frac{x+1}{x-3}$"
+          ],
+          "say": "例子：x 加 1，除以 x 減 3，x 趨近 3。",
           "board": [
-            {"do":"write","line":"分子 $\\to k\\ne 0$，分母 $\\to 0$"},
-            {"do":"write","line":"商的絕對值越大，$\\to\\pm\\infty$","on":"商就越大"}
-          ] },
-        { "show": ["$\\frac{1}{x}$：$0^+ \\to +\\infty$，$0^- \\to -\\infty$"],
-          "say": "正負號看分母。x 分之一，從右邊來分母是小正數，往正無限大；從左邊來是小負數，往負無限大。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to3}\\frac{x+1}{x-3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $3$：$\\dfrac{4}{0}$：分子不是 $0$，分母靠近 $0$"
+          ],
+          "say": "代進去分子是 4，分母是 0。這是非零除以零的型，比值會越來越大，問題只剩正負號。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{x}$：$x\\to 0^+$，$\\to {{p:+\\infty}}$"},
-            {"do":"focus","term":"p","on":"往正無限大"},
-            {"do":"write","line":"$x\\to 0^-$，$\\to {{m:-\\infty}}$","on":"從左邊來"}
-          ] },
-        { "show": ["兩側不同：雙側寫不出一個 $\\pm\\infty$"],
-          "note": "$\\frac{1}{x^2}$ 呢？",
-          "say": "兩側不一樣，雙側就寫不出一個無限大。那 x 平方分之一呢？想想 x 平方在零的兩側是正是負。",
+            {
+              "do": "write",
+              "line": "代 $3$：$\\dfrac{4}{0}$：分子不是 $0$，分母靠近 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊 $x\\to3^+$：分子 $\\to4>0$，分母 $x-3\\to0^+$（正的小數）",
+            "$\\lim_{x\\to3^+}\\frac{x+1}{x-3}=+\\infty$"
+          ],
+          "say": "右邊：x 比 3 大一點，分母是很小的正數；正的除以很小的正數，往正無限大跑。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"兩側不同：雙側寫不出 $\\pm\\infty$","on":"兩側不一樣"},
-            {"do":"write","line":"$\\frac{1}{x^2}$ 呢？","on":"x 平方分之一"}
-          ] }
+            {
+              "do": "write",
+              "line": "右邊 $x\\to3^+$：分子 $\\to4>0$，分母 $x-3\\to0^+$（正的小數）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to3^+}\\frac{x+1}{x-3}=+\\infty$",
+              "on": "正數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊 $x\\to3^-$：分子 $>0$，分母 $\\to0^-$（負的小數）",
+            "$\\lim_{x\\to3^-}\\frac{x+1}{x-3}=-\\infty$"
+          ],
+          "say": "左邊：x 比 3 小一點，分母是很小的負數；正的除以很小的負數，往負無限大跑。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊 $x\\to3^-$：分子 $>0$，分母 $\\to0^-$（負的小數）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to3^-}\\frac{x+1}{x-3}=-\\infty}}$",
+              "color": "red",
+              "on": "分母"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "很小#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊往上、左邊往下"
+          ],
+          "say": "圖上看得很清楚：右邊往上衝，左邊往下衝。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "k0",
+                  "window": [
+                    -1,
+                    7,
+                    -20,
+                    20
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(x+1)/(x-3)",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 3,
+                      "label": "x = 3",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "右邊往上、左邊往下",
+              "color": "violet",
+              "on": "往上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判斷正負：分子的正負 × 分母靠近 0 的方向"
+          ],
+          "say": "所以判斷的方法是：看分子的正負，再看分母從哪一邊靠近 0，兩個符號相乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "判斷正負：分子的正負 × 分母靠近 0 的方向",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩側同號",
+      "beats": [
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to2}\\frac{x-1}{(x-2)^2}$"
+          ],
+          "say": "再一個例子：x 減 1，除以 x 減 2 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to2}\\frac{x-1}{(x-2)^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子 $\\to1>0$；分母 $(x-2)^2$ 兩邊都是正的"
+          ],
+          "say": "分子趨近 1，是正的。分母是平方，不管 x 從左邊還是右邊靠近 2，都是正的小數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子 $\\to1>0$；分母 $(x-2)^2$ 兩邊都是正的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{x\\to2}\\frac{x-1}{(x-2)^2}=+\\infty$"
+          ],
+          "say": "所以兩邊都往正無限大跑，可以直接寫雙邊的極限等於正無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\lim_{x\\to2}\\frac{x-1}{(x-2)^2}=+\\infty}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "大跑"
+            },
+            {
+              "do": "write",
+              "line": "　平方（偶次方）的分母兩側同號；一次（奇次方）的分母兩側異號",
+              "color": "violet",
+              "on": "的極"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "左右符號不同",
+      "title": "垂直漸近線",
       "beats": [
-        { "show": ["$\\frac{x + 1}{x - 3}$：分子 $\\to 4$，分母 $\\to 0$"],
-          "say": "回到圖上那一個：x 趨近三，分子趨近四，分母趨近零，是 k 除以零型。",
+        {
+          "show": [
+            "只要其中一側的極限是 $\\pm\\infty$：",
+            "$x=a\\ \\text{是垂直漸近線}$"
+          ],
+          "say": "定義：x 趨近 a 的時候，只要有一側的極限是正無限大或負無限大，x 等於 a 就是一條垂直漸近線。",
           "board": [
-            {"do":"write","line":"$\\frac{{{n:x+1}}}{{{d:x-3}}}$，$x\\to 3$"},
-            {"do":"underline","term":"n","label":"趨近 4","on":"分子趨近四"},
-            {"do":"underline","term":"d","label":"趨近 0","on":"分母趨近零"}
-          ] },
-        { "show": ["$x=3$：分子 $3+1=4$，分母 $3-3=0$"],
-          "say": "把 x 換成三看看：分子三加一是四，分母三減三是零。所以是四除以零這一型。",
+            {
+              "do": "write",
+              "line": "只要其中一側的極限是 $\\pm\\infty$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle x=a\\ \\text{是垂直漸近線}}}$",
+              "on": "有一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理函數：約分之後分母的零點"
+          ],
+          "say": "有理函數的垂直漸近線，就是約分之後，分母的零點。",
           "board": [
-            {"do":"write","line":"$x=3$：${{a:3+1=4}}$，${{b:3-3=0}}$","on":"分子三加一"},
-            {"do":"underline","term":"b","color":"gold","on":"分母三減三"}
-          ] },
-        { "show": ["$x \\to 3^+$：$4/($小正數$) \\to +\\infty$"],
-          "say": "從右邊來，x 減三是很小的正數，四除以它，往正無限大。",
+            {
+              "do": "write",
+              "line": "有理函數：約分之後分母的零點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$r(x)=\\dfrac{x^2-1}{x^2-3x+2}$"
+          ],
+          "say": "例子：x 平方減 1，除以 x 平方減 3x 加 2。",
           "board": [
-            {"do":"write","line":"$x\\to 3^+$：$4$ ÷ 小正數 $\\to{{rp:+\\infty}}$"},
-            {"do":"focus","term":"rp","on":"往正"}
-          ] },
-        { "show": ["$x \\to 3^-$：$4/($小負數$) \\to -\\infty$"],
-          "note": "雙側極限不存在，$x = 3$ 是垂直漸近線。",
-          "say": "從左邊來，x 減三是很小的負數，往負無限大。兩邊不一樣，雙側極限不存在。",
+            {
+              "do": "write",
+              "line": "例：$r(x)=\\dfrac{x^2-1}{x^2-3x+2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{(x-1)(x+1)}{(x-1)(x-2)}=\\frac{x+1}{x-2}\\quad(x\\ne1)$"
+          ],
+          "say": "分子分母都分解：分子是 x 減 1 乘 x 加 1，分母是 x 減 1 乘 x 減 2。約掉 x 減 1。",
           "board": [
-            {"do":"write","line":"$x\\to 3^-$：$4$ ÷ 小負數 $\\to{{rm:-\\infty}}$"},
-            {"do":"focus","term":"rm","on":"往負"},
-            {"do":"write","line":"兩邊不一樣：雙側極限不存在","on":"兩邊不一樣"}
-          ] }
-      ],
-      "key": "看分母從哪一側靠近 $0$，決定正負",
-      "check": 1
-    },
-    {
-      "title": "垂直漸近線，先約分",
-      "beats": [
-        { "show": ["左或右極限是 $\\pm\\infty$：$x = a$ 是垂直漸近線"],
-          "say": "只要左極限或右極限有一個是正負無限大，直線 x 等於 a 就叫垂直漸近線。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{(x-1)(x+1)}{(x-1)(x-2)}=\\frac{x+1}{x-2}\\quad(x\\ne1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $x=2$：約完分母還是 $0$，分子 $3\\ne0$ → 垂直漸近線",
+            "• $x=1$：約掉了 → 洞在 $\\big(1,\\frac{1+1}{1-2}\\big)=(1,-2)$"
+          ],
+          "say": "x 等於 2：約完以後分母還是 0，分子是 3，所以是垂直漸近線。x 等於 1：被約掉了，只是一個洞，洞在 1 逗號負 2。",
           "board": [
-            {"do":"write","line":"左或右極限是 $\\pm\\infty$：${{va:x=a}}$ 是垂直漸近線"},
-            {"do":"underline","term":"va","on":"直線 x"}
-          ] },
-        { "show": ["$\\frac{x^2 - 1}{x^2 - 3x + 2}$：候選 $x = 1$、$x = 2$"],
-          "say": "候選是分母等於零的點。這一個分母分解成 x 減一乘 x 減二，候選是一和二。",
+            {
+              "do": "write",
+              "line": "• $x=2$：約完分母還是 $0$，分子 $3\\ne0$ → 垂直漸近線"
+            },
+            {
+              "do": "write",
+              "line": "• $x=1$：約掉了 → 洞在 $\\big(1,\\frac{1+1}{1-2}\\big)=(1,-2)$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "x = 2 是漸近線，x = 1 只是洞"
+          ],
+          "say": "圖上，x 等於 2 那裡往上下衝；x 等於 1 那裡平平順順地經過，只少了一點。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{x^2-1}{{{den:x^2-3x+2}}}$","on":"候選是#1"},
-            {"do":"transform","line":"$\\frac{x^2-1}{{{dn:({{a1:x-1}})({{a2:x-2}})}}}$","on":"分解成"},
-            {"do":"underline","term":"dn","label":"候選 1、2","on":"候選是一"}
-          ] },
-        { "show": ["$x=1$ 代入原式：$\\frac{0}{0}$"],
-          "note": "$\\frac{0}{0}$ 不能直接判斷，先化簡。",
-          "say": "一也是候選，可是代進原來的分式，分子分母都是零，是零分之零。這種不能直接判斷，要先化簡。",
-          "board": [
-            {"do":"write","line":"$x=1$：${{z:\\frac{0}{0}}}$，先化簡","on":"分子分母"},
-            {"do":"focus","term":"z","color":"gold","on":"零分之零"}
-          ] },
-        { "show": ["約分：$\\frac{x + 1}{x - 2}$（$x \\ne 1$）"],
-          "note": "$x = 1$ 約掉了：極限 $-2$，是洞。",
-          "say": "但要先約分。x 減一約掉了，在一的極限是負二，有限，所以那裡是洞，不是漸近線。",
-          "board": [
-            {"do":"transform","line":"$\\frac{({{c1:x-1}})(x+1)}{({{c2:x-1}})({{a2:x-2}})}$","on":"先約分"},
-            {"do":"strike","term":"c1","color":"gold","on":"x 減一"},
-            {"do":"strike","term":"c2","color":"gold","on":"約掉了"},
-            {"do":"transform","line":"$\\frac{x+1}{{{a2:x-2}}}$（$x\\ne 1$）","on":"在一的"},
-            {"do":"write","line":"$x=1$：極限 $-2$，是洞","on":"有限"}
-          ] },
-        { "show": ["$x = 2$：$\\frac{3}{0}$ 型 → 漸近線"],
-          "say": "x 等於二，分子三、分母零，是 k 除以零型，這才是垂直漸近線。",
-          "board": [
-            {"do":"write","line":"${{x2:x=2}}$：$\\frac{3}{0}$ 型"},
-            {"do":"underline","term":"x2","color":"green","label":"垂直漸近線","on":"這才是"}
-          ] }
-      ],
-      "key": "先約分：約得掉是洞，約不掉才是漸近線",
-      "check": 2
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "va",
+                  "window": [
+                    -3,
+                    6,
+                    -10,
+                    10
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(x^2-1)/(x^2-3*x+2)",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 2,
+                      "label": "x = 2",
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": -2,
+                      "color": "blue",
+                      "open": true
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "x = 2 是漸近線，x = 1 只是洞",
+              "color": "violet",
+              "on": "上下"
+            },
+            {
+              "do": "write",
+              "line": "　0.8 學過同樣的判斷；這一課補上「漸近線兩側是 $+\\infty$ 還是 $-\\infty$」",
+              "color": "violet",
+              "on": "平平"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "不只有理函數",
       "beats": [
-        { "show": ["$\\tan x$：$x \\to \\frac{\\pi}{2}^-$ 時 $\\to +\\infty$"],
-          "say": "垂直漸近線不只出現在分式。tangent x 在 x 從左邊靠近二分之 pi 時，往正無限大衝。",
+        {
+          "show": [
+            "$\\ln x$ 在 $0^+$：",
+            "$\\lim_{x\\to0^+}\\ln x=-\\infty$"
+          ],
+          "say": "垂直漸近線不只出現在有理函數。自然對數 x，x 從右邊趨近 0，往負無限大跑。",
           "board": [
-            {"do":"write","line":"$\\tan x$：$x\\to\\frac{\\pi}{2}^-$ 時 $\\to {{p:+\\infty}}$"},
-            {"do":"focus","term":"p","on":"往正無限大"}
-          ] },
-        { "show": ["代入：$\\frac{k}{0}$ → 分左右看符號","$\\frac{0}{0}$ → 先化簡再看"],
-          "say": "判斷流程：先代入。k 除以零，一定是正負無限大，分左右看符號；零分之零，先化簡再看一次。",
+            {
+              "do": "write",
+              "line": "$\\ln x$ 在 $0^+$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\lim_{x\\to0^+}\\ln x=-\\infty}}$",
+              "on": "在有"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "從右"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\ln0.000001\\approx-13.8$；只能談右極限，$x\\le0$ 沒有定義",
+              "color": "violet",
+              "on": "往負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=0$ 是 $\\ln x$ 的垂直漸近線"
+          ],
+          "say": "所以 x 等於 0 是自然對數的垂直漸近線，雖然左邊根本沒有定義。",
           "board": [
-            {"do":"write","line":"$\\frac{k}{0}$ → 分左右看符號","on":"k 除以零"},
-            {"do":"write","line":"$\\frac{0}{0}$ → 先化簡再看","on":"零分之零"}
-          ] },
-        { "show": ["$\\ln x$ 的圖：越靠近 0，越往下掉"],
-          "note": "圖只畫 $x>0$：$\\ln x$ 在 $x\\le 0$ 沒有定義。",
-          "say": "畫出自然對數的圖。x 從右邊往零靠近，曲線一路往下掉，而且沒有底，這條垂直漸近線就是 x 等於零。",
+            {
+              "do": "write",
+              "line": "$x=0$ 是 $\\ln x$ 的垂直漸近線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\tan x$ 在 $\\frac\\pi2$：$\\tan x=\\dfrac{\\sin x}{\\cos x}$"
+          ],
+          "say": "正切 x 也是：它是正弦除以餘弦。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-1,4,-5,3],"curves":[{"expr":"log(x)","domain":[0.01,4],"color":"blue"}],"dashed":[[[0,-5],[0,3]]]},"on":"畫出"},
-            {"do":"write","line":"$\\ln x$ 的圖：$x\\to 0^+$ 往下掉","on":"一路往下掉"}
-          ] },
-        { "show": ["$\\ln x$，$x \\to 0^+$"],
-          "note": "$\\ln 1 = 0$；$x$ 比 1 小時，$\\ln x$ 是負的。",
-          "say": "自然對數也有一條。x 從右邊靠近零，想想自然對數 x 會往哪裡去。",
+            {
+              "do": "write",
+              "line": "$\\tan x$ 在 $\\frac\\pi2$：$\\tan x=\\dfrac{\\sin x}{\\cos x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to\\frac\\pi2$：分子 $\\to1$，分母 $\\cos x\\to0$，又是 $\\frac k0$"
+          ],
+          "say": "x 趨近 2 分之派，分子趨近 1，分母餘弦趨近 0，又是非零除以零。",
           "board": [
-            {"do":"write","line":"$\\ln x$，$x\\to 0^+$"}
-          ] },
-        { "show": ["$0<x<1$：$\\ln x<0$，$\\ln 1=0$"],
-          "note": "所以 $\\lim_{x\\to0^+}\\ln x=-\\infty$。",
-          "say": "為什麼往下？x 比一小的時候，自然對數是負的，而且 x 越靠近零越負。所以往負無限大，不是正的。",
+            {
+              "do": "write",
+              "line": "$x\\to\\frac\\pi2$：分子 $\\to1$，分母 $\\cos x\\to0$，又是 $\\frac k0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊 $\\cos x>0$ → $+\\infty$；右邊 $\\cos x<0$ → $-\\infty$"
+          ],
+          "say": "左邊，x 比 2 分之派小，餘弦是正的，往正無限大；右邊餘弦是負的，往負無限大。",
           "board": [
-            {"do":"write","line":"$0<x<1$：${{ng:\\ln x<0}}$，$\\ln 1=0$"},
-            {"do":"focus","term":"ng","color":"red","on":"是負的"},
-            {"do":"write","line":"$\\lim_{x\\to0^+}\\ln x=-\\infty$","color":"green","on":"往負無限大"}
-          ] }
+            {
+              "do": "write",
+              "line": "左邊 $\\cos x>0$ → $+\\infty$；右邊 $\\cos x<0$ → $-\\infty$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每隔 π 就有一條垂直漸近線"
+          ],
+          "say": "正切的圖，每隔派就有一條垂直漸近線，在 2 分之派加 k 派的地方，也就是餘弦等於 0 的地方。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "tanva",
+                  "window": [
+                    -3.2,
+                    3.2,
+                    -6,
+                    6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "tan(x)",
+                      "color": "blue",
+                      "label": "y = tan x"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/2",
+                      "color": "red"
+                    },
+                    {
+                      "x": "-pi/2",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "每隔 π 就有一條垂直漸近線",
+              "color": "violet",
+              "on": "派加"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{x-3}{x^2-9}$ 的垂直漸近線是？"
+          ],
+          "say": "換你找找看。"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "判斷流程",
+      "beats": [
+        {
+          "show": [
+            "算 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$，先代入：",
+            "• 得到一個數：就是答案"
+          ],
+          "say": "整理成一個判斷流程：先代入。得到一個數，就是答案；得到 0 分之 0，先約分再代；得到非零除以零，就分左右看正負，答案是正無限大或負無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "算 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$，先代入："
+            },
+            {
+              "do": "write",
+              "line": "• 得到一個數：就是答案",
+              "on": "得到#1"
+            },
+            {
+              "do": "write",
+              "line": "• 得到 $\\dfrac00$：約分，再代",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "• 得到 $\\dfrac k0$（$k\\ne0$）：分左右看正負，得 $\\pm\\infty$",
+              "on": "到非"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac00$ 約完可能變成 $\\frac k0$，例如上面 $r(x)$ 在 $x=2$",
+              "color": "violet",
+              "on": "答案#2"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "判斷 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$ 的流程",
+        "steps": [
+          {
+            "label": "把 $a$ 代進去"
+          },
+          {
+            "label": "得到 $\\frac00$：因式分解、約分，再代一次",
+            "why": "先要有上一步：把 $a$ 代進去"
+          },
+          {
+            "label": "得到 $\\frac k0$：看分子正負、分母從哪一側靠近 $0$",
+            "why": "先要有上一步：得到 $\\frac00$：因式分解、約分，再代一次"
+          },
+          {
+            "label": "左右同號：雙邊是 $\\pm\\infty$；異號：只能分左右寫",
+            "why": "先要有上一步：得到 $\\frac k0$：看分子正負、分母從哪一側靠近 $0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\lim f=\\infty$：要多大有多大；仍然是不存在",
+            "• $\\frac k0$ 型：分子正負 × 分母靠近 $0$ 的方向"
+          ],
+          "say": "整理一下：等於無限大仍然是不存在；非零除以零，就看分子的正負和分母靠近零的方向；垂直漸近線看約分後分母的零點，約掉的是洞。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\lim f=\\infty$：要多大有多大；仍然是不存在"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac k0$ 型：分子正負 × 分母靠近 $0$ 的方向",
+              "on": "是不"
+            },
+            {
+              "do": "write",
+              "line": "• 分母一次方：兩側異號；平方：兩側同號",
+              "on": "看分"
+            },
+            {
+              "do": "write",
+              "line": "• 垂直漸近線：一側是 $\\pm\\infty$；有理函數看約分後分母的零點",
+              "on": "的方"
+            },
+            {
+              "do": "write",
+              "line": "• 約掉的零點是洞，不是漸近線",
+              "on": "後分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：夾擠定理"
+          ],
+          "say": "下一課，正式學夾擠定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：夾擠定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["asymptote", "one-sided"],
-    "fine": ["infinite-limit-k-over-zero", "infinite-limit-sign", "vertical-asymptote-find", "vertical-asymptote-vs-hole"]
+    "coarse": [
+      "asymptote",
+      "one-sided"
+    ],
+    "fine": [
+      "infinite-limit-k-over-zero",
+      "infinite-limit-sign",
+      "vertical-asymptote-find",
+      "vertical-asymptote-vs-hole"
+    ]
   },
   "practice": [
-    { "id": "cx-curve-006", "core": true, "trains": "vertical-asymptote-vs-hole" },
-    { "id": "cg-1d-005", "core": true, "trains": "infinite-limit-sign" },
-    { "id": "cg-1d-006", "core": true, "trains": "infinite-limit-sign" },
-    { "id": "cg-1d-008", "core": true, "trains": "infinite-limit-k-over-zero" },
-    { "id": "cg-1d-009", "core": true, "trains": "infinite-limit-k-over-zero" },
-    { "id": "lec-04-q3a", "trains": "vertical-asymptote-find" },
-    { "id": "si-set-003", "trains": "vertical-asymptote-find", "note": "題目問不連續點；再多想一步：哪一個是洞、哪一個是漸近線？" },
-    { "id": "sk-014", "trains": "infinite-limit-sign" },
-    { "id": "cg-1d-007", "trains": "infinite-limit-sign" }
+    {
+      "id": "cx-curve-006",
+      "core": true,
+      "trains": "vertical-asymptote-vs-hole"
+    },
+    {
+      "id": "cg-1d-005",
+      "core": true,
+      "trains": "infinite-limit-sign"
+    },
+    {
+      "id": "cg-1d-006",
+      "core": true,
+      "trains": "infinite-limit-sign"
+    },
+    {
+      "id": "cg-1d-008",
+      "core": true,
+      "trains": "infinite-limit-k-over-zero"
+    },
+    {
+      "id": "cg-1d-009",
+      "core": true,
+      "trains": "infinite-limit-k-over-zero"
+    },
+    {
+      "id": "lec-04-q3a",
+      "trains": "vertical-asymptote-find"
+    },
+    {
+      "id": "si-set-003",
+      "trains": "vertical-asymptote-find",
+      "note": "題目問不連續點；再多想一步：哪一個是洞、哪一個是漸近線？"
+    },
+    {
+      "id": "sk-014",
+      "trains": "infinite-limit-sign"
+    },
+    {
+      "id": "cg-1d-007",
+      "trains": "infinite-limit-sign"
+    }
   ],
   "gaps": []
 }

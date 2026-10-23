@@ -1,61 +1,142 @@
 {
   "id": "polar-double-integral",
   "title": "極座標二重積分",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 40,
-  "prerequisites": ["polar-coordinates", "polar-area", "nonrectangular-regions"],
-  "next": ["jacobian-geometry"],
-  "related": ["gaussian-integral", "change-of-variables"],
-  "objectives": [
-    "說得出 $dA=r\\,dr\\,d\\theta$ 裡那個 $r$ 從哪裡來：外圈的小塊比內圈大。",
-    "把圓盤、圓環、扇形寫成 $r$、$\\theta$ 的範圍，並把被積函數換成 $r$、$\\theta$。",
-    "看到 $x^2+y^2$ 或圓形邊界時，想到改用極座標。"
+  "prerequisites": [
+    "polar-coordinates",
+    "polar-area",
+    "nonrectangular-regions"
   ],
-  "visual": "極座標格線：同心圓加放射線。一塊「極座標矩形」被塗色，標出它的寬 Δr 與弧長 rΔθ。把這塊沿著放射線往外拖，Δr、Δθ 不變，但弧長與面積讀數跟著 r 成比例變大；拖回靠近原點時，小塊縮成細細的楔形。",
+  "next": [
+    "jacobian-geometry"
+  ],
+  "related": [
+    "gaussian-integral",
+    "change-of-variables"
+  ],
+  "objectives": [
+    "說得出 $dA=r\\,dr\\,d\\theta$ 裡那個 $r$ 從哪裡來：外圈的小塊比內圈大",
+    "把圓盤、圓環、扇形寫成 $r$、$\\theta$ 的範圍，並把被積函數換成 $r$、$\\theta$",
+    "看到 $x^2+y^2$ 或圓形邊界時，想到改用極座標"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 圓形區域在直角座標裡很難寫",
+      "heading": "① 圓在直角座標很難寫",
       "body": [
-        "單位圓盤用直角座標寫是 $\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}\\dots\\,dy\\,dx$，上下限帶根號，被積函數若也有 $x^2+y^2$，就更難積。",
-        "用〈極座標〉描述，同一塊圓盤只是 $0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$，像一個矩形。"
+        "例：$\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤 $x^2+y^2\\le1$",
+        "直角座標：先積 $y$，上下界是兩個根號",
+        "裡面要積 $e^{-y^2}$：沒有初等的反導函數",
+        "換成極座標：$x=r\\cos\\theta$，$y=r\\sin\\theta$",
+        "圓盤變成 $0\\le r\\le1$、$0\\le\\theta\\le2\\pi$：兩個常數範圍",
+        "圓形邊界、$x^2+y^2$ 出現在被積函數裡：都是換極座標的訊號",
+        "可是 $dA$ 要換成什麼？不是 $dr\\,d\\theta$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}e^{-x^2}e^{-y^2}\\,dy\\,dx",
+        "x^2+y^2=r^2"
+      ]
     },
     {
-      "heading": "② 小塊的面積：為什麼多一個 $r$",
+      "heading": "② 為什麼多一個 $r$",
       "body": [
-        "用同心圓與放射線把區域切開，每一小塊是「極座標矩形」：徑向寬 $\\Delta r$，角度張開 $\\Delta\\theta$。",
-        "它近似一個長方形：一邊是 $\\Delta r$，另一邊是半徑 $r$ 的圓上、角度 $\\Delta\\theta$ 對應的弧長 $r\\Delta\\theta$。所以面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$。",
-        "直觀上：同樣的 $\\Delta\\theta$，離原點越遠，張出來的弧越長，小塊越大。這個 $r$ 就是放大倍率。",
-        "以上是直觀，不是證明：小塊的兩條邊其實是彎的圓弧，「近似長方形」需要交代誤差。下面可展開的段落說明，取中間半徑時這個面積其實完全精確。"
+        "用圓（$r$ 固定）和射線（$\\theta$ 固定）切",
+        "每一小塊叫極矩形：$r$ 差 $\\Delta r$，$\\theta$ 差 $\\Delta\\theta$",
+        "兩邊：徑向的邊長 $\\Delta r$；圓弧長 $r\\,\\Delta\\theta$",
+        "很小的時候，幾乎是長方形：",
+        "多出來的 $r$：離原點越遠，同樣的 $\\Delta\\theta$ 張出越長的弧"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Delta A\\approx r\\,\\Delta r\\,\\Delta\\theta"
+      ]
     },
     {
       "heading": "③ 公式",
       "body": [
-        "$x=r\\cos\\theta$、$y=r\\sin\\theta$，$x^2+y^2=r^2$，$dA=r\\,dr\\,d\\theta$。區域寫成 $\\alpha\\le\\theta\\le\\beta$、$r_1(\\theta)\\le r\\le r_2(\\theta)$："
+        "$D$：$a\\le r\\le b$，$\\alpha\\le\\theta\\le\\beta$（$0\\le\\beta-\\alpha\\le2\\pi$）",
+        "角度範圍不超過一整圈，每一點才只算一次",
+        "三件事：換區域、換函數、$dA$ 換成 $r\\,dr\\,d\\theta$",
+        "更一般：$\\alpha\\le\\theta\\le\\beta$，$h_1(\\theta)\\le r\\le h_2(\\theta)$",
+        "特例 $f=1$，$h_1=0$，$h_2=h$："
       ],
-      "tex": ["\\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f(r\\cos\\theta,\\,r\\sin\\theta)\\,r\\,dr\\,d\\theta"],
-      "collapsible": false
+      "tex": [
+        "\\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_a^b f(r\\cos\\theta,r\\sin\\theta)\\,r\\,dr\\,d\\theta",
+        "\\iint_D f\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_{h_1(\\theta)}^{h_2(\\theta)}f\\,r\\,dr\\,d\\theta",
+        "\\text{面積}=\\int_\\alpha^\\beta\\!\\!\\int_0^{h(\\theta)}r\\,dr\\,d\\theta=\\int_\\alpha^\\beta\\frac12h(\\theta)^2\\,d\\theta"
+      ]
     },
     {
       "heading": "④ 三步驟",
       "body": [
-        "1. 畫區域，寫出 $\\theta$ 的範圍（外層，常數）與 $r$ 的範圍（內層，可以隨 $\\theta$ 變）。",
-        "2. 被積函數換掉：$x\\to r\\cos\\theta$、$y\\to r\\sin\\theta$、$x^2+y^2\\to r^2$。",
-        "3. 補上 $dA=r\\,dr\\,d\\theta$ 的 $r$，再積分。",
-        "$f=1$ 時，$\\iint r\\,dr\\,d\\theta=\\frac{1}{2}\\int r_2(\\theta)^2\\,d\\theta$（$r_1=0$ 時），就是〈極座標面積〉的公式。"
-      ],
-      "collapsible": false
+        "例 1　$\\displaystyle\\iint_D(3x+4y^2)\\,dA$，$D$：上半平面，$1\\le x^2+y^2\\le4$"
+      ]
     },
     {
-      "heading": "⑤ $r\\,\\Delta r\\,\\Delta\\theta$ 其實是精確的（給想知道的人）",
+      "heading": "④ 例 1（續）",
       "body": [
-        "極座標矩形 $r_1\\le r\\le r_2$、$\\theta_0\\le\\theta\\le\\theta_0+\\Delta\\theta$ 的面積是兩個扇形相減：$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta=\\frac{1}{2}(r_2+r_1)(r_2-r_1)\\Delta\\theta=\\bar r\\,\\Delta r\\,\\Delta\\theta$，其中 $\\bar r$ 是 $r_1$、$r_2$ 的平均。",
-        "所以取每一塊的中間半徑，Riemann 和裡的面積完全沒有誤差；剩下的只是 $f$ 取樣的誤差，切細就消失。下一課〈Jacobian 的幾何意義〉會把這個 $r$ 推廣到任意的座標變換。"
+        "第二步：$3x+4y^2=3r\\cos\\theta+4r^2\\sin^2\\theta$，再乘 $r$",
+        "先積 $r$：$\\left[r^3\\cos\\theta+r^4\\sin^2\\theta\\right]_1^2=7\\cos\\theta+15\\sin^2\\theta$",
+        "再積 $\\theta$：$\\int_0^\\pi\\cos\\theta\\,d\\theta=0$，$\\int_0^\\pi\\sin^2\\theta\\,d\\theta=\\frac\\pi2$",
+        "$\\sin^2\\theta=\\frac{1-\\cos2\\theta}2$；數值驗算：$\\approx23.56$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_0^\\pi\\!\\!\\int_1^2\\left(3r^2\\cos\\theta+4r^3\\sin^2\\theta\\right)dr\\,d\\theta",
+        "\\iint_D(3x+4y^2)\\,dA=\\frac{15\\pi}{2}"
+      ]
+    },
+    {
+      "heading": "④ 例：拋物面下的體積",
+      "body": [
+        "例 2　$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體",
+        "$\\int_0^1(r-r^3)\\,dr=\\frac12-\\frac14=\\frac14$",
+        "用直角座標要積 $\\int\\!\\!\\int(1-x^2-y^2)\\,dy\\,dx$，上下界又是根號"
+      ],
+      "tex": [
+        "V=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta",
+        "V=2\\pi\\cdot\\frac14=\\frac\\pi2"
+      ]
+    },
+    {
+      "heading": "④ 多出來的 $r$ 是幫手",
+      "body": [
+        "例 3　回到 ① 的 $\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$：$r\\le1$",
+        "多了一個 $r$：令 $u=r^2$，$du=2r\\,dr$",
+        "把半徑換成 $\\infty$，就得到 $\\iint_{\\mathbb R^2}e^{-(x^2+y^2)}dA=\\pi$，常態分布的關鍵"
+      ],
+      "tex": [
+        "\\int_0^{2\\pi}\\!\\!\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta",
+        "\\int_0^1e^{-r^2}r\\,dr=\\left[-\\tfrac12e^{-r^2}\\right]_0^1=\\tfrac12\\left(1-e^{-1}\\right)",
+        "\\iint_D e^{-(x^2+y^2)}\\,dA=\\pi\\left(1-\\frac1e\\right)\\approx1.986"
+      ]
+    },
+    {
+      "heading": "⑤ $r\\,\\Delta r\\,\\Delta\\theta$ 其實是精確的",
+      "body": [
+        "極矩形 $r_1\\le r\\le r_2$、角度 $\\Delta\\theta$：大扇形減小扇形",
+        "令 $\\bar r=\\frac{r_1+r_2}2$（中間半徑）：",
+        "所以黎曼和可以寫成",
+        "這是 $g(r,\\theta)=f(r\\cos\\theta,r\\sin\\theta)\\,r$ 在 $r\\theta$ 平面矩形上的黎曼和",
+        "⇒ 極限就是 $\\displaystyle\\int_\\alpha^\\beta\\!\\!\\int_a^b g\\,dr\\,d\\theta$",
+        "需要 $f$ 連續，才能讓兩種黎曼和的極限都存在且相等"
+      ],
+      "tex": [
+        "\\Delta A=\\tfrac12r_2^2\\Delta\\theta-\\tfrac12r_1^2\\Delta\\theta=\\tfrac12(r_2+r_1)(r_2-r_1)\\Delta\\theta",
+        "\\Delta A=\\bar r\\,\\Delta r\\,\\Delta\\theta\\quad\\text{（剛好相等）}",
+        "\\sum f(\\bar r_i\\cos\\theta_j^*,\\bar r_i\\sin\\theta_j^*)\\,\\bar r_i\\,\\Delta r\\,\\Delta\\theta"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 看到圓形邊界或 $x^2+y^2$：換極座標",
+        "• $dA=r\\,dr\\,d\\theta$：外圈的極矩形比較大，倍率是 $r$",
+        "• 三步驟：區域寫成 $r,\\theta$ 範圍 → 換 $x,y$、乘 $r$ → 累次積分",
+        "• 多出來的 $r$ 常常剛好讓 $e^{-r^2}$ 這類積分能換元",
+        "• 極矩形面積 $=\\bar r\\,\\Delta r\\,\\Delta\\theta$，用中間半徑就完全精確",
+        "下一課：Jacobian 的幾何意義：那個 $r$ 是一般規則的特例"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,260 +185,826 @@
   ],
   "checks": [
     {
-      "ask": "極座標下 $dA$ 等於？",
+      "ask": "$\\displaystyle\\iint_D(x^2+y^2)\\,dA$，$D$：$x^2+y^2\\le4$",
       "options": [
-        { "label": "$r\\,dr\\,d\\theta$", "correct": true },
-        { "label": "$dr\\,d\\theta$", "why": "漏了 $r$。同樣的 $\\Delta\\theta$，外圈的弧長 $r\\Delta\\theta$ 比內圈長，小塊面積跟 $r$ 成正比。" },
-        { "label": "$r^2\\,dr\\,d\\theta$", "why": "$r^2$ 常常來自被積函數 $x^2+y^2$，不是 $dA$ 本身。$dA$ 只有一個 $r$。" }
-      ]
-    },
-    {
-      "ask": "第一象限、$x^2+y^2\\le 9$ 的四分之一圓盤，$r$ 與 $\\theta$ 的範圍是？",
-      "options": [
-        { "label": "$0\\le r\\le 3$、$0\\le\\theta\\le\\frac{\\pi}{2}$", "correct": true },
-        { "label": "$0\\le r\\le 9$、$0\\le\\theta\\le\\frac{\\pi}{2}$", "why": "$x^2+y^2\\le 9$ 是 $r^2\\le 9$，半徑是 $3$。" },
-        { "label": "$0\\le r\\le 3$、$0\\le\\theta\\le 2\\pi$", "why": "那是整個圓盤。第一象限只有 $\\theta$ 從 $0$ 到 $\\frac{\\pi}{2}$。" }
-      ]
-    },
-    {
-      "ask": "用極座標算 $\\iint_{x^2+y^2\\le1}1\\,dA$，結果是？",
-      "options": [
-        { "label": "$\\pi$", "correct": true },
-        { "label": "$2\\pi$", "why": "漏了 $r$：$\\int_0^1 dr=1$，乘 $2\\pi$ 得 $2\\pi$。正確是 $\\int_0^1 r\\,dr=\\frac{1}{2}$。" },
-        { "label": "$\\frac{1}{2}$", "why": "內層 $\\frac{1}{2}$ 之後還要乘外層 $\\int_0^{2\\pi}d\\theta=2\\pi$。" }
-      ]
-    },
-    {
-      "ask": "$\\iint_{x^2+y^2\\le4}(x^2+y^2)\\,dA$ 是？",
-      "options": [
-        { "label": "$8\\pi$", "correct": true },
-        { "label": "$\\frac{16\\pi}{3}$", "why": "漏了 $dA$ 的 $r$，只積了 $r^2$：$\\int_0^2 r^2\\,dr=\\frac{8}{3}$。被積函數 $r^2$ 再乘 $r$ 是 $r^3$，$\\int_0^2 r^3\\,dr=4$。" },
-        { "label": "$4\\pi$", "why": "那是 $\\iint x^2\\,dA$，只有 $x^2+y^2$ 的一半（$x^2$ 與 $y^2$ 對稱，各佔一半）。" }
+        {
+          "label": "$8\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{16\\pi}{3}$",
+          "why": "忘了乘 $r$：積成了 $\\int_0^2r^2\\,dr$"
+        },
+        {
+          "label": "$4\\pi$",
+          "why": "$\\theta$ 只積到 $\\pi$，那是半個圓盤"
+        },
+        {
+          "label": "$32\\pi$",
+          "why": "$\\int_0^2r^3\\,dr$ 是 $\\frac{2^4}4=4$，不是 $16$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "圓形區域換座標",
+      "title": "圓在直角座標很難寫",
       "beats": [
-        { "show": ["$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}\\dots\\,dy\\,dx$"],
-          "note": "單位圓盤用直角座標寫。",
-          "say": "單位圓盤用直角座標寫，上下限都帶根號；被積函數要是也有 x 平方加 y 平方，就更難積。",
+        {
+          "show": [
+            "例：$\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤 $x^2+y^2\\le1$"
+          ],
+          "say": "先看一個積分：e 的負 x 平方加 y 平方次方，區域 D 是半徑 1 的圓盤。",
           "board": [
-            {"do":"write","line":"$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{{{t:\\sqrt{1-x^2}}}}\\,dy\\,dx$"},
-            {"do":"focus","term":"t","label":"帶根號","on":"根號"}
-          ] },
-        { "show": ["$0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$"],
-          "note": "在極座標裡像一個矩形。",
-          "say": "換成極座標，同一塊圓盤只是 r 從零到一、theta 繞一圈，像一個矩形。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤 $x^2+y^2\\le1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直角座標：先積 $y$，上下界是兩個根號",
+            "$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}e^{-x^2}e^{-y^2}\\,dy\\,dx$"
+          ],
+          "say": "用上一節的方法：x 從負 1 到 1，每一條直的長條，y 的上下界是正負根號 1 減 x 平方。",
           "board": [
-            {"do":"write","line":"${{a:0\\le r\\le 1}}$、${{b:0\\le\\theta\\le 2\\pi}}$"},
-            {"do":"underline","term":"a","on":"r 從零"},
-            {"do":"underline","term":"b","label":"繞一圈","on":"theta 繞"}
-          ] },
-        { "show": ["$x=r\\cos\\theta$，$y=r\\sin\\theta$，$x^2+y^2=r^2$"],
-          "say": "換的規則：x 是 r cosine theta，y 是 r sine theta，x 平方加 y 平方就是 r 平方。",
+            {
+              "do": "write",
+              "line": "直角座標：先積 $y$，上下界是兩個根號"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}e^{-x^2}e^{-y^2}\\,dy\\,dx$",
+              "on": "長條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上的藍色長條就是一條。圓的邊界寫成 y 的函數，一定會帶根號。",
           "board": [
-            {"do":"write","line":"$x=r\\cos\\theta$，$y=r\\sin\\theta$"},
-            {"do":"write","line":"$x^2+y^2={{q:r^2}}$","on":"x 平方加"},
-            {"do":"box","term":"q","on":"就是"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pdDisk\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2pdDisk\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2pdDiskblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2pdDiskred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2pdDiskgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2pdDiskpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2pdDiskink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2pdDisk30\"><rect x=\"69.2\" y=\"16\" width=\"487.7\" height=\"254\"/></clipPath><g clip-path=\"url(#cl9a2pdDisk30)\"><polygon points=\"323.2,143 323.1,139.8 323,136.6 322.7,133.4 322.4,130.3 321.9,127.1 321.4,124 320.7,120.8 320,117.7 319.1,114.7 318.2,111.6 317.2,108.6 316,105.6 314.8,102.6 313.5,99.7 312.1,96.9 310.6,94.1 309,91.3 307.3,88.6 305.6,85.9 303.8,83.3 301.8,80.7 299.8,78.2 297.8,75.8 295.6,73.5 293.4,71.2 291.1,68.9 288.7,66.8 286.3,64.7 283.8,62.7 281.3,60.8 278.7,59 276,57.2 273.3,55.5 270.5,54 267.7,52.5 264.8,51.1 261.9,49.8 259,48.5 256,47.4 253,46.4 249.9,45.4 246.8,44.6 243.7,43.8 240.6,43.2 237.5,42.7 234.3,42.2 231.1,41.9 227.9,41.6 224.8,41.5 221.6,41.4 218.4,41.5 215.2,41.6 212,41.9 208.8,42.2 205.7,42.7 202.5,43.2 199.4,43.8 196.3,44.6 193.2,45.4 190.2,46.4 187.1,47.4 184.2,48.5 181.2,49.8 178.3,51.1 175.4,52.5 172.6,54 169.8,55.5 167.1,57.2 164.5,59 161.8,60.8 159.3,62.7 156.8,64.7 154.4,66.8 152,68.9 149.7,71.2 147.5,73.5 145.3,75.8 143.3,78.2 141.3,80.7 139.4,83.3 137.5,85.9 135.8,88.6 134.1,91.3 132.5,94.1 131,96.9 129.6,99.7 128.3,102.6 127.1,105.6 126,108.6 124.9,111.6 124,114.7 123.2,117.7 122.4,120.8 121.8,124 121.2,127.1 120.8,130.3 120.4,133.4 120.2,136.6 120,139.8 120,143 120,146.2 120.2,149.4 120.4,152.6 120.8,155.7 121.2,158.9 121.8,162 122.4,165.2 123.2,168.3 124,171.3 124.9,174.4 126,177.4 127.1,180.4 128.3,183.4 129.6,186.3 131,189.1 132.5,191.9 134.1,194.7 135.8,197.4 137.5,200.1 139.4,202.7 141.3,205.3 143.3,207.8 145.3,210.2 147.5,212.5 149.7,214.8 152,217.1 154.4,219.2 156.8,221.3 159.3,223.3 161.8,225.2 164.5,227 167.1,228.8 169.8,230.5 172.6,232 175.4,233.5 178.3,234.9 181.2,236.2 184.2,237.5 187.1,238.6 190.2,239.6 193.2,240.6 196.3,241.4 199.4,242.2 202.5,242.8 205.7,243.3 208.8,243.8 212,244.1 215.2,244.4 218.4,244.5 221.6,244.6 224.8,244.5 227.9,244.4 231.1,244.1 234.3,243.8 237.5,243.3 240.6,242.8 243.7,242.2 246.8,241.4 249.9,240.6 253,239.6 256,238.6 259,237.5 261.9,236.2 264.8,234.9 267.7,233.5 270.5,232 273.3,230.5 276,228.8 278.7,227 281.3,225.2 283.8,223.3 286.3,221.3 288.7,219.2 291.1,217.1 293.4,214.8 295.6,212.5 297.8,210.2 299.8,207.8 301.8,205.3 303.8,202.7 305.6,200.1 307.3,197.4 309,194.7 310.6,191.9 312.1,189.1 313.5,186.3 314.8,183.4 316,180.4 317.2,177.4 318.2,174.4 319.1,171.3 320,168.3 320.7,165.2 321.4,162 321.9,158.9 322.4,155.7 322.7,152.6 323,149.4 323.1,146.2 323.2,143\" fill=\"var(--green)\" fill-opacity=\"0.1\"/><polygon points=\"264.2,235.2 278.5,227.2 278.5,58.8 264.2,50.8\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><path d=\"M323.2 143L323.1 139L322.8 135L322.5 131.1L321.9 127.1L321.2 123.2L320.4 119.3L319.3 115.4L318.2 111.6L316.9 107.8L315.4 104.1L313.8 100.5L312.1 96.9L310.2 93.4L308.2 89.9L306 86.6L303.8 83.3L301.3 80.1L298.8 77L296.2 74L293.4 71.2L290.5 68.4L287.5 65.7L284.5 63.2L281.3 60.8L278 58.5L274.6 56.4L271.2 54.4L267.7 52.5L264.1 50.7L260.4 49.1L256.7 47.7L253 46.4L249.1 45.2L245.3 44.2L241.4 43.4L237.5 42.7L233.5 42.1L229.5 41.7L225.5 41.5L221.6 41.4L217.6 41.5L213.6 41.7L209.6 42.1L205.7 42.7L201.7 43.4L197.8 44.2L194 45.2L190.2 46.4L186.4 47.7L182.7 49.1L179 50.7L175.4 52.5L171.9 54.4L168.5 56.4L165.1 58.5L161.8 60.8L158.7 63.2L155.6 65.7L152.6 68.4L149.7 71.2L147 74L144.3 77L141.8 80.1L139.4 83.3L137.1 86.6L134.9 89.9L132.9 93.4L131 96.9L129.3 100.5L127.7 104.1L126.2 107.8L124.9 111.6L123.8 115.4L122.8 119.3L121.9 123.2L121.2 127.1L120.7 131.1L120.3 135L120 139L120 143L120 147L120.3 151L120.7 154.9L121.2 158.9L121.9 162.8L122.8 166.7L123.8 170.6L124.9 174.4L126.2 178.2L127.7 181.9L129.3 185.5L131 189.1L132.9 192.6L134.9 196.1L137.1 199.4L139.4 202.7L141.8 205.9L144.3 209L147 212L149.7 214.8L152.6 217.6L155.6 220.3L158.7 222.8L161.8 225.2L165.1 227.5L168.5 229.6L171.9 231.6L175.4 233.5L179 235.3L182.7 236.9L186.4 238.3L190.2 239.6L194 240.8L197.8 241.8L201.7 242.6L205.7 243.3L209.6 243.9L213.6 244.3L217.6 244.5L221.6 244.6L225.5 244.5L229.5 244.3L233.5 243.9L237.5 243.3L241.4 242.6L245.3 241.8L249.1 240.8L253 239.6L256.7 238.3L260.4 236.9L264.1 235.3L267.7 233.5L271.2 231.6L274.6 229.6L278 227.5L281.3 225.2L284.5 222.8L287.5 220.3L290.5 217.6L293.4 214.8L296.2 212L298.8 209L301.3 205.9L303.8 202.7L306 199.4L308.2 196.1L310.2 192.6L312.1 189.1L313.8 185.5L315.4 181.9L316.9 178.2L318.2 174.4L319.3 170.6L320.4 166.7L321.2 162.8L321.9 158.9L322.5 154.9L322.8 151L323.1 147L323.2 143\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M264.2 235.2L278.5 227.2L278.5 58.8L264.2 50.8L264.2 235.2\" stroke=\"var(--blue)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"65.2\" y1=\"143\" x2=\"568.8\" y2=\"143\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdDisk)\"/><line x1=\"221.6\" y1=\"274\" x2=\"221.6\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdDisk)\"/><text x=\"566.8\" y=\"134\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"230.6\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><circle cx=\"271.3\" cy=\"54.4\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"271.3\" cy=\"231.6\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"287.3\" y=\"46.4\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y = √(1 − x²)</text><text x=\"287.3\" y=\"253.6\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y = −√(1 − x²)</text><text x=\"604\" y=\"104\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"26\" style=\"font-family:inherit\">上下界都帶根號</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "裡面要積 $e^{-y^2}$：沒有初等的反導函數"
+          ],
+          "say": "更糟的是，裡面要對 y 積 e 的負 y 平方次方，這個函數沒有初等的反導函數。直角座標卡住了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "裡面要積 $e^{-y^2}$：沒有初等的反導函數",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換成極座標：$x=r\\cos\\theta$，$y=r\\sin\\theta$",
+            "$x^2+y^2=r^2$"
+          ],
+          "say": "回想極座標：x 是 r 餘弦西塔，y 是 r 正弦西塔，所以 x 平方加 y 平方就是 r 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換成極座標：$x=r\\cos\\theta$，$y=r\\sin\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle x^2+y^2=r^2}}$",
+              "on": "正弦"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓盤變成 $0\\le r\\le1$、$0\\le\\theta\\le2\\pi$：兩個常數範圍"
+          ],
+          "say": "在極座標裡，單位圓盤就是 r 從 0 到 1、西塔從 0 到 2 派。兩個範圍都是常數，像一個矩形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓盤變成 $0\\le r\\le1$、$0\\le\\theta\\le2\\pi$：兩個常數範圍"
+            },
+            {
+              "do": "write",
+              "line": "　圓形邊界、$x^2+y^2$ 出現在被積函數裡：都是換極座標的訊號",
+              "color": "violet",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可是 $dA$ 要換成什麼？不是 $dr\\,d\\theta$"
+          ],
+          "say": "問題是，d A 要換成什麼？直覺會猜 d r d 西塔，但這是錯的。下一節看為什麼。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可是 $dA$ 要換成什麼？不是 $dr\\,d\\theta$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "為什麼多一個 $r$",
       "beats": [
-        { "show": ["極座標矩形：徑向寬 $\\Delta r$，張開 $\\Delta\\theta$"],
-          "say": "用同心圓和放射線把區域切開，每一小塊叫極座標矩形。",
+        {
+          "show": [
+            "用圓（$r$ 固定）和射線（$\\theta$ 固定）切",
+            "每一小塊叫極矩形：$r$ 差 $\\Delta r$，$\\theta$ 差 $\\Delta\\theta$"
+          ],
+          "say": "極座標的切法，是用一圈一圈的圓，和一根一根的射線。切出來的每一小塊叫極矩形：半徑差德爾塔 r，角度差德爾塔西塔。",
           "board": [
-            {"do":"write","line":"極座標矩形：寬 $\\Delta r$、張開 $\\Delta\\theta$"}
-          ] },
-        { "show": ["一邊 $\\Delta r$，一邊弧長 $r\\Delta\\theta$"],
-          "note": "面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$。",
-          "say": "它差不多是一個長方形：一邊是 delta r，另一邊是半徑 r 的圓上的一段弧，長 r 乘 delta theta。",
+            {
+              "do": "write",
+              "line": "用圓（$r$ 固定）和射線（$\\theta$ 固定）切"
+            },
+            {
+              "do": "write",
+              "line": "每一小塊叫極矩形：$r$ 差 $\\Delta r$，$\\theta$ 差 $\\Delta\\theta$",
+              "on": "的每"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上藍色和紅色兩塊，德爾塔 r 和德爾塔西塔都一樣。但紅色在外圈，明顯大得多。",
           "board": [
-            {"do":"write","line":"邊長：$\\Delta r$ 與弧長 ${{arc:r\\Delta\\theta}}$"},
-            {"do":"underline","term":"arc","label":"弧長","on":"一段弧"},
-            {"do":"write","line":"面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$","on":"長 r 乘"}
-          ] },
-        { "show": ["$dA=r\\,dr\\,d\\theta$"],
-          "note": "離原點越遠，同樣的 $\\Delta\\theta$ 張出越大的塊。",
-          "say": "同樣的角度，離原點越遠，弧越長、小塊越大。這個 r 就是放大倍率。這其實是精確的，看全文。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pdGrid\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2pdGrid\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2pdGridblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2pdGridred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2pdGridgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2pdGridpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2pdGridink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2pdGrid30\"><rect x=\"65.5\" y=\"16\" width=\"495\" height=\"294\"/></clipPath><g clip-path=\"url(#cl9a2pdGrid30)\"><polygon points=\"190.4,229 189.9,228.1 189.4,227.2 188.8,226.3 188.3,225.4 187.7,224.5 187.1,223.6 186.6,222.8 186,221.9 185.4,221 184.8,220.2 184.2,219.3 183.6,218.5 183,217.6 182.3,216.8 181.7,215.9 181.1,215.1 180.4,214.3 179.8,213.5 179.1,212.7 178.4,211.9 177.7,211.1 177.1,210.3 176.4,209.5 175.7,208.7 175,207.9 174.3,207.2 173.5,206.4 172.8,205.6 172.1,204.9 171.4,204.1 170.6,203.4 169.9,202.7 169.1,202 168.3,201.2 167.6,200.5 166.8,199.8 166,199.1 165.2,198.4 164.4,197.8 163.6,197.1 162.8,196.4 162,195.7 161.2,195.1 160.4,194.4 159.6,193.8 158.7,193.2 157.9,192.5 157,191.9 156.2,191.3 155.3,190.7 154.5,190.1 153.6,189.5 152.7,188.9 151.9,188.4 151,187.8 150.1,187.2 149.2,186.7 148.3,186.1 147.4,185.6 146.5,185.1 116.5,237 117,237.3 117.4,237.6 117.8,237.8 118.3,238.1 118.7,238.4 119.2,238.7 119.6,239 120.1,239.3 120.5,239.6 120.9,239.9 121.3,240.2 121.8,240.5 122.2,240.8 122.6,241.1 123,241.4 123.4,241.7 123.9,242 124.3,242.4 124.7,242.7 125.1,243 125.5,243.4 125.9,243.7 126.3,244.1 126.6,244.4 127,244.8 127.4,245.1 127.8,245.5 128.2,245.8 128.6,246.2 128.9,246.6 129.3,246.9 129.7,247.3 130,247.7 130.4,248.1 130.7,248.5 131.1,248.9 131.4,249.2 131.8,249.6 132.1,250 132.5,250.4 132.8,250.8 133.1,251.2 133.5,251.6 133.8,252.1 134.1,252.5 134.4,252.9 134.7,253.3 135,253.7 135.3,254.2 135.6,254.6 135.9,255 136.2,255.4 136.5,255.9 136.8,256.3 137.1,256.8 137.4,257.2 137.7,257.7 137.9,258.1 138.2,258.5 138.5,259\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><polygon points=\"294.3,169 293.3,167.2 292.2,165.4 291.1,163.6 290,161.8 288.9,160 287.8,158.3 286.6,156.5 285.5,154.8 284.3,153.1 283.1,151.3 281.9,149.6 280.7,147.9 279.4,146.2 278.2,144.6 276.9,142.9 275.6,141.2 274.3,139.6 273,138 271.7,136.3 270.4,134.7 269,133.1 267.6,131.5 266.2,130 264.9,128.4 263.4,126.9 262,125.3 260.6,123.8 259.1,122.3 257.7,120.8 256.2,119.3 254.7,117.8 253.2,116.4 251.7,114.9 250.2,113.5 248.6,112.1 247.1,110.6 245.5,109.3 244,107.9 242.4,106.5 240.8,105.1 239.2,103.8 237.5,102.5 235.9,101.2 234.3,99.9 232.6,98.6 230.9,97.3 229.3,96.1 227.6,94.8 225.9,93.6 224.2,92.4 222.4,91.2 220.7,90 219,88.9 217.2,87.7 215.5,86.6 213.7,85.5 211.9,84.4 210.1,83.3 208.3,82.2 206.5,81.2 176.5,133.1 177.9,133.9 179.2,134.7 180.5,135.5 181.9,136.4 183.2,137.2 184.5,138 185.8,138.9 187.2,139.8 188.5,140.7 189.7,141.6 191,142.5 192.3,143.4 193.6,144.3 194.8,145.2 196.1,146.2 197.3,147.2 198.6,148.1 199.8,149.1 201,150.1 202.2,151.1 203.4,152.1 204.6,153.2 205.8,154.2 206.9,155.2 208.1,156.3 209.3,157.4 210.4,158.4 211.5,159.5 212.7,160.6 213.8,161.7 214.9,162.8 216,164 217.1,165.1 218.1,166.2 219.2,167.4 220.3,168.6 221.3,169.7 222.3,170.9 223.4,172.1 224.4,173.3 225.4,174.5 226.4,175.7 227.4,176.9 228.3,178.2 229.3,179.4 230.3,180.7 231.2,181.9 232.1,183.2 233,184.5 233.9,185.8 234.8,187 235.7,188.3 236.6,189.7 237.5,191 238.3,192.3 239.1,193.6 240,195 240.8,196.3 241.6,197.6 242.4,199\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><path d=\"M146.5 289L146.5 287.4L146.4 285.9L146.3 284.3L146.2 282.7L146 281.2L145.8 279.6L145.5 278.1L145.2 276.5L144.8 275L144.5 273.5L144 272L143.6 270.5L143.1 269L142.5 267.5L141.9 266L141.3 264.6L140.7 263.2L140 261.8L139.2 260.4L138.5 259L137.7 257.7L136.8 256.3L135.9 255L135 253.7L134.1 252.5L133.1 251.2L132.1 250L131.1 248.9L130 247.7L128.9 246.6L127.8 245.5L126.6 244.4L125.5 243.4L124.3 242.4L123 241.4L121.8 240.5L120.5 239.6L119.2 238.7L117.8 237.8L116.5 237L115.1 236.3L113.7 235.5L112.3 234.8L110.9 234.2L109.5 233.6L108 233L106.5 232.4L105 231.9L103.5 231.5L102 231L100.5 230.7L99 230.3L97.4 230L95.9 229.7L94.3 229.5L92.8 229.3L91.2 229.2L89.6 229.1L88.1 229L86.5 229\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M206.5 289L206.5 285.9L206.3 282.7L206.1 279.6L205.8 276.5L205.5 273.3L205 270.2L204.5 267.1L203.9 264.1L203.2 261L202.4 257.9L201.6 254.9L200.6 251.9L199.6 248.9L198.5 246L197.4 243.1L196.1 240.2L194.8 237.3L193.4 234.5L192 231.7L190.4 229L188.8 226.3L187.1 223.6L185.4 221L183.6 218.5L181.7 215.9L179.8 213.5L177.7 211.1L175.7 208.7L173.5 206.4L171.4 204.1L169.1 202L166.8 199.8L164.4 197.8L162 195.7L159.6 193.8L157 191.9L154.5 190.1L151.9 188.4L149.2 186.7L146.5 185.1L143.8 183.5L141 182.1L138.2 180.7L135.3 179.4L132.4 178.1L129.5 177L126.6 175.9L123.6 174.9L120.6 173.9L117.6 173.1L114.5 172.3L111.4 171.6L108.4 171L105.3 170.5L102.2 170L99 169.7L95.9 169.4L92.8 169.2L89.6 169L86.5 169\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M266.5 289L266.4 284.3L266.3 279.6L265.9 274.9L265.5 270.2L265 265.5L264.3 260.8L263.5 256.2L262.6 251.6L261.5 247L260.4 242.4L259.1 237.9L257.7 233.4L256.2 228.9L254.5 224.5L252.8 220.1L250.9 215.8L249 211.5L246.9 207.3L244.7 203.1L242.4 199L240 195L237.5 191L234.8 187L232.1 183.2L229.3 179.4L226.4 175.7L223.4 172.1L220.3 168.6L217.1 165.1L213.8 161.7L210.4 158.4L206.9 155.2L203.4 152.1L199.8 149.1L196.1 146.2L192.3 143.4L188.5 140.7L184.5 138L180.5 135.5L176.5 133.1L172.4 130.8L168.2 128.6L164 126.5L159.7 124.6L155.4 122.7L151 121L146.6 119.3L142.1 117.8L137.6 116.4L133.1 115.1L128.5 114L123.9 112.9L119.3 112L114.7 111.2L110 110.5L105.3 110L100.6 109.6L95.9 109.2L91.2 109.1L86.5 109\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M326.5 289L326.4 282.7L326.2 276.4L325.8 270.2L325.2 263.9L324.4 257.7L323.5 251.5L322.5 245.3L321.3 239.1L319.9 233L318.3 226.9L316.6 220.8L314.8 214.8L312.7 208.9L310.6 203L308.2 197.2L305.8 191.4L303.1 185.7L300.3 180L297.4 174.5L294.3 169L291.1 163.6L287.8 158.3L284.3 153.1L280.7 147.9L276.9 142.9L273 138L269 133.1L264.9 128.4L260.6 123.8L256.2 119.3L251.7 114.9L247.1 110.6L242.4 106.5L237.5 102.5L232.6 98.6L227.6 94.8L222.4 91.2L217.2 87.7L211.9 84.4L206.5 81.2L201 78.1L195.5 75.2L189.8 72.4L184.1 69.7L178.3 67.3L172.5 64.9L166.6 62.8L160.7 60.7L154.7 58.9L148.6 57.2L142.5 55.6L136.4 54.2L130.2 53L124 52L117.8 51.1L111.6 50.3L105.3 49.7L99.1 49.3L92.8 49.1L86.5 49\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M86.5 289L347.5 289\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M86.5 289L312.5 158.5\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M86.5 289L217 63\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M86.5 289L86.5 28\" stroke=\"var(--muted)\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.7\"/><path d=\"M190.4 229L189.9 228.1L189.4 227.2L188.8 226.3L188.3 225.4L187.7 224.5L187.1 223.6L186.6 222.8L186 221.9L185.4 221L184.8 220.2L184.2 219.3L183.6 218.5L183 217.6L182.3 216.8L181.7 215.9L181.1 215.1L180.4 214.3L179.8 213.5L179.1 212.7L178.4 211.9L177.7 211.1L177.1 210.3L176.4 209.5L175.7 208.7L175 207.9L174.3 207.2L173.5 206.4L172.8 205.6L172.1 204.9L171.4 204.1L170.6 203.4L169.9 202.7L169.1 202L168.3 201.2L167.6 200.5L166.8 199.8L166 199.1L165.2 198.4L164.4 197.8L163.6 197.1L162.8 196.4L162 195.7L161.2 195.1L160.4 194.4L159.6 193.8L158.7 193.2L157.9 192.5L157 191.9L156.2 191.3L155.3 190.7L154.5 190.1L153.6 189.5L152.7 188.9L151.9 188.4L151 187.8L150.1 187.2L149.2 186.7L148.3 186.1L147.4 185.6L146.5 185.1L116.5 237L117 237.3L117.4 237.6L117.8 237.8L118.3 238.1L118.7 238.4L119.2 238.7L119.6 239L120.1 239.3L120.5 239.6L120.9 239.9L121.3 240.2L121.8 240.5L122.2 240.8L122.6 241.1L123 241.4L123.4 241.7L123.9 242L124.3 242.4L124.7 242.7L125.1 243L125.5 243.4L125.9 243.7L126.3 244.1L126.6 244.4L127 244.8L127.4 245.1L127.8 245.5L128.2 245.8L128.6 246.2L128.9 246.6L129.3 246.9L129.7 247.3L130 247.7L130.4 248.1L130.7 248.5L131.1 248.9L131.4 249.2L131.8 249.6L132.1 250L132.5 250.4L132.8 250.8L133.1 251.2L133.5 251.6L133.8 252.1L134.1 252.5L134.4 252.9L134.7 253.3L135 253.7L135.3 254.2L135.6 254.6L135.9 255L136.2 255.4L136.5 255.9L136.8 256.3L137.1 256.8L137.4 257.2L137.7 257.7L137.9 258.1L138.2 258.5L138.5 259L190.4 229\" stroke=\"var(--blue)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M294.3 169L293.3 167.2L292.2 165.4L291.1 163.6L290 161.8L288.9 160L287.8 158.3L286.6 156.5L285.5 154.8L284.3 153.1L283.1 151.3L281.9 149.6L280.7 147.9L279.4 146.2L278.2 144.6L276.9 142.9L275.6 141.2L274.3 139.6L273 138L271.7 136.3L270.4 134.7L269 133.1L267.6 131.5L266.2 130L264.9 128.4L263.4 126.9L262 125.3L260.6 123.8L259.1 122.3L257.7 120.8L256.2 119.3L254.7 117.8L253.2 116.4L251.7 114.9L250.2 113.5L248.6 112.1L247.1 110.6L245.5 109.3L244 107.9L242.4 106.5L240.8 105.1L239.2 103.8L237.5 102.5L235.9 101.2L234.3 99.9L232.6 98.6L230.9 97.3L229.3 96.1L227.6 94.8L225.9 93.6L224.2 92.4L222.4 91.2L220.7 90L219 88.9L217.2 87.7L215.5 86.6L213.7 85.5L211.9 84.4L210.1 83.3L208.3 82.2L206.5 81.2L176.5 133.1L177.9 133.9L179.2 134.7L180.5 135.5L181.9 136.4L183.2 137.2L184.5 138L185.8 138.9L187.2 139.8L188.5 140.7L189.7 141.6L191 142.5L192.3 143.4L193.6 144.3L194.8 145.2L196.1 146.2L197.3 147.2L198.6 148.1L199.8 149.1L201 150.1L202.2 151.1L203.4 152.1L204.6 153.2L205.8 154.2L206.9 155.2L208.1 156.3L209.3 157.4L210.4 158.4L211.5 159.5L212.7 160.6L213.8 161.7L214.9 162.8L216 164L217.1 165.1L218.1 166.2L219.2 167.4L220.3 168.6L221.3 169.7L222.3 170.9L223.4 172.1L224.4 173.3L225.4 174.5L226.4 175.7L227.4 176.9L228.3 178.2L229.3 179.4L230.3 180.7L231.2 181.9L232.1 183.2L233 184.5L233.9 185.8L234.8 187L235.7 188.3L236.6 189.7L237.5 191L238.3 192.3L239.1 193.6L240 195L240.8 196.3L241.6 197.6L242.4 199L294.3 169\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"61.5\" y1=\"289\" x2=\"572.5\" y2=\"289\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdGrid)\"/><line x1=\"86.5\" y1=\"314\" x2=\"86.5\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdGrid)\"/><text x=\"146.5\" y=\"311\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"206.5\" y=\"311\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"266.5\" y=\"311\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"326.5\" y=\"311\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"570.5\" y=\"280\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"95.5\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"282.4\" y=\"204\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"24\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δr</text><text x=\"280.2\" y=\"113.3\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"24\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r Δθ</text><text x=\"150.1\" y=\"233.4\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"20\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">小</text><text x=\"235\" y=\"148.5\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">大</text><text x=\"604\" y=\"70\" text-anchor=\"end\" fill=\"var(--ink)\" font-size=\"25\" style=\"font-family:inherit\">同樣的 Δr、Δθ</text><text x=\"604\" y=\"104\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"25\" style=\"font-family:inherit\">藍：1 ≤ r ≤ 2</text><text x=\"604\" y=\"138\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"25\" style=\"font-family:inherit\">紅：3 ≤ r ≤ 4</text><text x=\"604\" y=\"190\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"24\" style=\"font-family:inherit\">弧長 = 半徑 × 角度</text><text x=\"604\" y=\"222\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"24\" style=\"font-family:inherit\">外圈的弧比較長</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊：徑向的邊長 $\\Delta r$；圓弧長 $r\\,\\Delta\\theta$"
+          ],
+          "say": "看一小塊的兩個邊：往外的那一邊長德爾塔 r；繞圈的那一邊是圓弧，弧長等於半徑乘角度，r 乘德爾塔西塔。",
           "board": [
-            {"do":"write","line":"$dA={{r:r}}\\,dr\\,d\\theta$","on":"小塊越大"},
-            {"do":"focus","term":"r","label":"放大倍率","on":"這個 r"}
-          ] },
-        { "show": ["大扇形減小扇形：$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta$"],
-          "say": "直接算：大扇形減小扇形，面積是二分之一乘外圈半徑平方減內圈半徑平方，再乘 delta theta。",
+            {
+              "do": "write",
+              "line": "兩邊：徑向的邊長 $\\Delta r$；圓弧長 $r\\,\\Delta\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "很小的時候，幾乎是長方形：",
+            "$\\Delta A\\approx r\\,\\Delta r\\,\\Delta\\theta$"
+          ],
+          "say": "切得很小時，這塊幾乎是一個長方形，面積大約是兩邊相乘：r 德爾塔 r 德爾塔西塔。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{2}(r_2^2-r_1^2)\\Delta\\theta$"}
-          ] },
-        { "show": ["$=\\frac{1}{2}(r_2+r_1)(r_2-r_1)\\Delta\\theta=\\bar r\\,\\Delta r\\,\\Delta\\theta$"],
-          "note": "取中間半徑 $\\bar r$，面積完全沒有誤差。",
-          "say": "平方差拆開，r 二加 r 一的一半是平均半徑，r 二減 r 一是 delta r。所以取中間半徑，面積完全精確。",
-          "board": [
-            {"do":"write","line":"$=\\frac{1}{2}{{s:(r_2+r_1)}}(r_2-r_1)\\Delta\\theta$"},
-            {"do":"underline","term":"s","label":"平均半徑","on":"平均半徑"},
-            {"do":"write","line":"$=\\bar r\\,\\Delta r\\,\\Delta\\theta$","on":"所以取"}
-          ] }
+            {
+              "do": "write",
+              "line": "很小的時候，幾乎是長方形："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Delta A\\approx r\\,\\Delta r\\,\\Delta\\theta}}$",
+              "color": "red",
+              "on": "是一"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "約是"
+            },
+            {
+              "do": "write",
+              "line": "　多出來的 $r$：離原點越遠，同樣的 $\\Delta\\theta$ 張出越長的弧",
+              "color": "violet",
+              "on": "爾塔#1"
+            }
+          ]
+        }
       ],
-      "key": "小塊另一邊是弧長 $r\\Delta\\theta$",
-      "check": 0
-    },
-    {
-      "title": "公式與三步",
-      "beats": [
-        { "show": ["$\\iint_D f\\,dA$","$=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f\\,r\\,dr\\,d\\theta$"],
-          "say": "公式：外層是 theta，從 alpha 到 beta；內層是 r，可以隨 theta 變。",
-          "board": [
-            {"do":"write","line":"$\\iint_D f\\,dA$"},
-            {"do":"write","line":"$=\\,{{o:\\int_\\alpha^\\beta}}\\!{{n:\\int_{r_1(\\theta)}^{r_2(\\theta)}}} f\\,r\\,dr\\,d\\theta$","on":"外層是"},
-            {"do":"underline","term":"o","label":"外層","on":"從 alpha"},
-            {"do":"underline","term":"n","label":"內層","on":"內層是"}
-          ] },
-        { "show": ["① 畫區域，寫 $\\theta$、$r$ 的範圍"],
-          "note": "例：$x^2+y^2\\le 9$ 是 $r\\le 3$，不是 $r\\le 9$。",
-          "say": "第一步畫區域。小心，x 平方加 y 平方小於等於九，是 r 小於等於三。",
-          "board": [
-            {"do":"write","line":"① 區域：$\\theta$、$r$ 的範圍"},
-            {"do":"write","line":"$x^2+y^2\\le 9\\Rightarrow {{r:r\\le 3}}$","on":"x 平方加"},
-            {"do":"circle","term":"r","on":"是 r"}
-          ] },
-        { "show": ["② 被積函數換掉  ③ 補上 $r$"],
-          "say": "第二步把 x、y 全部換掉，一個都不留。第三步，補上那個 r，這是最常漏掉的。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"② 把 $x$、$y$ 全換掉","on":"第二步"},
-            {"do":"write","line":"③ 補上 ${{rr:r}}$","on":"第三步"},
-            {"do":"circle","term":"rr","label":"最常漏掉","on":"那個 r"}
-          ] },
-        { "show": ["單位圓盤面積：漏掉 $r$ 得 $2\\pi$，補上 $r$ 得 $\\pi$"],
-          "say": "拿單位圓盤面積試試：漏掉 r 會得到二 pi，這是錯的；補上 r 才是 pi。",
-          "board": [
-            {"do":"write","line":"漏掉 $r$：${{w:2\\pi}}$"},
-            {"do":"strike","term":"w","label":"錯","on":"這是錯的"},
-            {"do":"write","line":"補上 $r$：$\\pi$","on":"補上"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "拋物面下的體積",
-      "beats": [
-        { "show": ["$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體"],
-          "note": "$z\\ge 0$：單位圓盤。",
-          "say": "拋物面在 x y 平面上方的部分，影子是單位圓盤。",
-          "board": [
-            {"do":"write","line":"$z=1-x^2-y^2$"},
-            {"do":"write","line":"影子：$x^2+y^2\\le 1$","on":"影子"}
-          ] },
-        { "show": ["沿 $x$ 軸切開：高度 $1-x^2$"],
-          "note": "到圓盤邊緣高度降到零。",
-          "say": "沿 x 軸切開看：高度是一減 x 平方，到圓盤邊緣掉到零。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.5,1.5,-0.5,1.5],"curves":[{"expr":"1-(x^2)","domain":[-1,1],"color":"blue"}],"fills":[{"expr":"1-(x^2)","from":-1,"to":1,"color":"blue"}]}}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$"],
-          "note": "高度 $1-r^2$。",
-          "say": "高度換成一減 r 平方，再乘上 d A 的那個 r。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{2\\pi}\\int_0^1 ({{h:1-r^2}})\\,{{rr:r}}\\,dr\\,d\\theta$"},
-            {"do":"underline","term":"h","label":"高度","on":"一減"},
-            {"do":"focus","term":"rr","label":"來自 dA","on":"那個 r"}
-          ] },
-        { "show": ["內層 $\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$，外層 $\\times2\\pi$：$\\frac{\\pi}{2}$"],
-          "say": "內層得四分之一，外層 theta 繞一圈乘二 pi，體積是二分之 pi。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"內層：$\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$","on":"內層"},
-            {"do":"write","line":"$\\frac{1}{4}\\cdot 2\\pi={{v:\\frac{\\pi}{2}}}$","on":"外層"},
-            {"do":"box","term":"v","color":"green","on":"體積是"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "多出來的 $r$ 幫了忙",
-      "beats": [
-        { "show": ["$\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤"],
-          "note": "直角座標：$e^{-x^2}$ 沒有初等反導函數。",
-          "say": "這一題用直角座標做不動，因為 e 的負 x 平方次方沒有初等反導函數。",
-          "board": [
-            {"do":"write","line":"$\\iint_D e^{-(x^2+y^2)}\\,dA$"},
-            {"do":"write","line":"${{b:e^{-x^2}}}$ 沒有初等反導函數","on":"因為"},
-            {"do":"underline","term":"b","label":"做不動","on":"沒有初等"}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$"],
-          "say": "換成極座標，多出來的 r 剛好配上 r 平方，可以換元。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{2\\pi}\\int_0^1 {{q:e^{-r^2}}}\\,{{r:r}}\\,dr\\,d\\theta$"},
-            {"do":"focus","term":"r","label":"多出來","on":"多出來的"},
-            {"do":"underline","term":"q","on":"配上"}
-          ] },
-        { "show": ["反導函數：微分後變回它","初等：多項式、指數、三角的組合"],
-          "note": "$e^{-x^2}$ 有反導函數，但寫不成初等函數。",
-          "say": "反導函數是微分之後會變回它的函數。初等是指只用多項式、指數、三角這類函數組合出來的。",
-          "board": [
-            {"do":"write","line":"反導函數：微分後變回它"},
-            {"do":"write","line":"初等：多項式、指數、三角的組合","on":"初等是指"}
-          ] },
-        { "show": ["$u=r^2$：$\\int_0^1 e^{-r^2}r\\,dr=\\frac{1}{2}(1-e^{-1})$"],
-          "say": "令 u 等於 r 平方，內層得到二分之一乘上一減 e 的負一次方。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"令 $u=r^2$","on":"令"},
-            {"do":"write","line":"$\\int_0^1 e^{-r^2}r\\,dr={{w:\\frac{1}{2}(1-e^{-1})}}$","on":"內層得到"},
-            {"do":"box","term":"w","on":"二分之一"}
-          ] },
-        { "show": ["$du=2r\\,dr$，$r\\,dr=\\frac{1}{2}du$","上下限：$0\\to0$，$1\\to1$"],
-          "note": "$\\frac{1}{2}\\int_0^1 e^{-u}\\,du$",
-          "say": "du 是二 r dr，所以 r dr 是二分之一 du，上下限還是零到一。一半提出來，e 的負 u 積分得一減 e 的負一次方。",
-          "board": [
-            {"do":"write","line":"$du=2r\\,dr$，$r\\,dr=\\frac{1}{2}du$"},
-            {"do":"write","line":"上下限：$0\\to0$，$1\\to1$","on":"上下限"},
-            {"do":"write","line":"$\\frac{1}{2}\\int_0^1 e^{-u}\\,du$","on":"一半提出來"}
-          ] }
-      ],
-      "key": "多出的 $r$ 讓 $u=r^2$ 換元可做",
       "predict": {
-        "ask": "整個積分是？",
+        "ask": "同樣 $\\Delta r=1$、$\\Delta\\theta=\\frac\\pi6$：$3\\le r\\le4$ 那塊是 $1\\le r\\le2$ 那塊的幾倍大？",
         "options": [
           {
-            "label": "$\\pi\\left(1-\\frac{1}{e}\\right)$",
+            "label": "$1$ 倍",
+            "why": "$\\Delta r$、$\\Delta\\theta$ 一樣，但外圈的弧比較長"
+          },
+          {
+            "label": "$3$ 倍",
+            "why": "用了內緣半徑的比 $3:1$；弧長要看中間半徑"
+          },
+          {
+            "label": "$\\frac73$ 倍",
             "correct": true
           },
           {
-            "label": "$\\frac{1}{2}\\left(1-\\frac{1}{e}\\right)$",
-            "why": "那只是內層；外層對 $\\theta$ 從 $0$ 積到 $2\\pi$，還要乘 $2\\pi$。"
-          },
-          {
-            "label": "$2\\pi\\left(1-\\frac{1}{e}\\right)$",
-            "why": "內層有 $\\frac{1}{2}$（$du=2r\\,dr$），乘 $2\\pi$ 之後是 $\\pi$。"
+            "label": "$4$ 倍",
+            "why": "那是外緣半徑平方的比 $16:4$"
           }
         ]
       }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        {
+          "show": [
+            "$D$：$a\\le r\\le b$，$\\alpha\\le\\theta\\le\\beta$（$0\\le\\beta-\\alpha\\le2\\pi$）",
+            "$\\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_a^b f(r\\cos\\theta,r\\sin\\theta)\\,r\\,dr\\,d\\theta$"
+          ],
+          "say": "公式：區域是 r 從 a 到 b、西塔從阿法到貝塔。把 x、y 換成 r 餘弦西塔、r 正弦西塔，再乘上一個 r，做累次積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$D$：$a\\le r\\le b$，$\\alpha\\le\\theta\\le\\beta$（$0\\le\\beta-\\alpha\\le2\\pi$）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_a^b f(r\\cos\\theta,r\\sin\\theta)\\,r\\,dr\\,d\\theta}}$",
+              "color": "red",
+              "on": "西塔#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "換成"
+            },
+            {
+              "do": "write",
+              "line": "　角度範圍不超過一整圈，每一點才只算一次",
+              "color": "violet",
+              "on": "再乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三件事：換區域、換函數、$dA$ 換成 $r\\,dr\\,d\\theta$"
+          ],
+          "say": "一共換三件事：區域換成 r 和西塔的範圍，函數換成 r 和西塔，d A 換成 r d r d 西塔。最容易忘的是那個 r。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三件事：換區域、換函數、$dA$ 換成 $r\\,dr\\,d\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "更一般：$\\alpha\\le\\theta\\le\\beta$，$h_1(\\theta)\\le r\\le h_2(\\theta)$",
+            "$\\iint_D f\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_{h_1(\\theta)}^{h_2(\\theta)}f\\,r\\,dr\\,d\\theta$"
+          ],
+          "say": "區域不是極矩形也可以：西塔固定時，r 從 h 1 走到 h 2，就跟上一課的第一型區域一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "更一般：$\\alpha\\le\\theta\\le\\beta$，$h_1(\\theta)\\le r\\le h_2(\\theta)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_D f\\,dA=\\int_\\alpha^\\beta\\!\\!\\int_{h_1(\\theta)}^{h_2(\\theta)}f\\,r\\,dr\\,d\\theta$",
+              "on": "走到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "特例 $f=1$，$h_1=0$，$h_2=h$：",
+            "$\\text{面積}=\\int_\\alpha^\\beta\\!\\!\\int_0^{h(\\theta)}r\\,dr\\,d\\theta=\\int_\\alpha^\\beta\\frac12h(\\theta)^2\\,d\\theta$"
+          ],
+          "say": "檢查一下：f 等於 1、r 從 0 到 h，裡面積出 2 分之 1 h 平方。這正是極座標面積的公式，兩邊對得上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "特例 $f=1$，$h_1=0$，$h_2=h$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\text{面積}=\\int_\\alpha^\\beta\\!\\!\\int_0^{h(\\theta)}r\\,dr\\,d\\theta=\\int_\\alpha^\\beta\\frac12h(\\theta)^2\\,d\\theta}}$",
+              "on": "裡面"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "這正"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "三步驟",
+      "beats": [
+        {
+          "show": [
+            "用極座標算 $\\iint_D f\\,dA$，照順序"
+          ],
+          "say": "整理成三個步驟，排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用極座標算 $\\iint_D f\\,dA$，照順序",
+        "steps": [
+          {
+            "label": "畫圖，把 $D$ 寫成 $r$、$\\theta$ 的範圍"
+          },
+          {
+            "label": "換 $x=r\\cos\\theta$、$y=r\\sin\\theta$，再==乘上 $r$==",
+            "why": "先要有上一步：畫圖，把 $D$ 寫成 $r$、$\\theta$ 的範圍"
+          },
+          {
+            "label": "先對 $r$ 積，再對 $\\theta$ 積",
+            "why": "先要有上一步：換 $x=r\\cos\\theta$、$y=r\\sin\\theta$，再乘上 $r$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "三步驟",
+      "beats": [
+        {
+          "show": [
+            "例 1　$\\displaystyle\\iint_D(3x+4y^2)\\,dA$，$D$：上半平面，$1\\le x^2+y^2\\le4$"
+          ],
+          "say": "例一：3x 加 4 y 平方，D 是上半平面裡，夾在半徑 1 和半徑 2 兩個圓之間的半圓環。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1　$\\displaystyle\\iint_D(3x+4y^2)\\,dA$，$D$：上半平面，$1\\le x^2+y^2\\le4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "第一步，畫圖。半圓環在極座標裡是 r 從 1 到 2，西塔從 0 到派。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pdAnnulus\" viewBox=\"0 0 620 290\" width=\"620\" height=\"290\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2pdAnnulus\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2pdAnnulusblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2pdAnnulusred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2pdAnnulusgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2pdAnnuluspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2pdAnnulusink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2pdAnnulus30\"><rect x=\"73.4\" y=\"16\" width=\"479.1\" height=\"244\"/></clipPath><g clip-path=\"url(#cl9a2pdAnnulus30)\"><polygon points=\"490.5,224.5 490.2,215.2 489.5,206 488.3,196.7 486.6,187.6 484.4,178.6 481.8,169.7 478.7,160.9 475.1,152.3 471.1,143.9 466.7,135.8 461.8,127.9 456.6,120.2 450.9,112.8 444.9,105.8 438.5,99 431.7,92.6 424.7,86.6 417.3,80.9 409.6,75.7 401.7,70.8 393.6,66.4 385.2,62.4 376.6,58.8 367.8,55.7 358.9,53.1 349.9,50.9 340.8,49.2 331.5,48 322.3,47.3 313,47.1 303.7,47.3 294.5,48 285.2,49.2 276.1,50.9 267.1,53.1 258.2,55.7 249.4,58.8 240.8,62.4 232.4,66.4 224.3,70.8 216.4,75.7 208.7,80.9 201.3,86.6 194.3,92.6 187.5,99 181.1,105.8 175.1,112.8 169.4,120.2 164.2,127.9 159.3,135.8 154.9,143.9 150.9,152.3 147.3,160.9 144.2,169.7 141.6,178.6 139.4,187.6 137.7,196.7 136.5,206 135.8,215.2 135.5,224.5 224.3,224.5 224.4,219.9 224.8,215.2 225.4,210.6 226.2,206.1 227.3,201.5 228.6,197.1 230.2,192.7 231.9,188.4 233.9,184.2 236.2,180.1 238.6,176.2 241.2,172.4 244,168.7 247.1,165.1 250.3,161.8 253.6,158.6 257.2,155.6 260.8,152.7 264.7,150.1 268.6,147.7 272.7,145.5 276.9,143.5 281.2,141.7 285.6,140.1 290,138.8 294.6,137.7 299.1,136.9 303.7,136.3 308.4,135.9 313,135.8 317.6,135.9 322.3,136.3 326.9,136.9 331.4,137.7 336,138.8 340.4,140.1 344.8,141.7 349.1,143.5 353.3,145.5 357.4,147.7 361.3,150.1 365.2,152.7 368.8,155.6 372.4,158.6 375.7,161.8 378.9,165.1 382,168.7 384.8,172.4 387.4,176.2 389.8,180.1 392.1,184.2 394.1,188.4 395.8,192.7 397.4,197.1 398.7,201.5 399.8,206.1 400.6,210.6 401.2,215.2 401.6,219.9 401.7,224.5\" fill=\"var(--green)\" fill-opacity=\"0.2\"/><path d=\"M490.5 224.5L490.2 215.2L489.5 206L488.3 196.7L486.6 187.6L484.4 178.6L481.8 169.7L478.7 160.9L475.1 152.3L471.1 143.9L466.7 135.8L461.8 127.9L456.6 120.2L450.9 112.8L444.9 105.8L438.5 99L431.7 92.6L424.7 86.6L417.3 80.9L409.6 75.7L401.7 70.8L393.6 66.4L385.2 62.4L376.6 58.8L367.8 55.7L358.9 53.1L349.9 50.9L340.8 49.2L331.5 48L322.3 47.3L313 47.1L303.7 47.3L294.5 48L285.2 49.2L276.1 50.9L267.1 53.1L258.2 55.7L249.4 58.8L240.8 62.4L232.4 66.4L224.3 70.8L216.4 75.7L208.7 80.9L201.3 86.6L194.3 92.6L187.5 99L181.1 105.8L175.1 112.8L169.4 120.2L164.2 127.9L159.3 135.8L154.9 143.9L150.9 152.3L147.3 160.9L144.2 169.7L141.6 178.6L139.4 187.6L137.7 196.7L136.5 206L135.8 215.2L135.5 224.5L224.3 224.5L224.4 219.9L224.8 215.2L225.4 210.6L226.2 206.1L227.3 201.5L228.6 197.1L230.2 192.7L231.9 188.4L233.9 184.2L236.2 180.1L238.6 176.2L241.2 172.4L244 168.7L247.1 165.1L250.3 161.8L253.6 158.6L257.2 155.6L260.8 152.7L264.7 150.1L268.6 147.7L272.7 145.5L276.9 143.5L281.2 141.7L285.6 140.1L290 138.8L294.6 137.7L299.1 136.9L303.7 136.3L308.4 135.9L313 135.8L317.6 135.9L322.3 136.3L326.9 136.9L331.4 137.7L336 138.8L340.4 140.1L344.8 141.7L349.1 143.5L353.3 145.5L357.4 147.7L361.3 150.1L365.2 152.7L368.8 155.6L372.4 158.6L375.7 161.8L378.9 165.1L382 168.7L384.8 172.4L387.4 176.2L389.8 180.1L392.1 184.2L394.1 188.4L395.8 192.7L397.4 197.1L398.7 201.5L399.8 206.1L400.6 210.6L401.2 215.2L401.6 219.9L401.7 224.5L490.5 224.5\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"69.4\" y1=\"224.5\" x2=\"564.6\" y2=\"224.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdAnnulus)\"/><line x1=\"313\" y1=\"264\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdAnnulus)\"/><text x=\"135.5\" y=\"246.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"224.3\" y=\"246.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"401.7\" y=\"246.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"490.5\" y=\"246.5\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"562.6\" y=\"215.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"450.5\" y=\"93\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r = 2</text><text x=\"355.4\" y=\"173.7\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r = 1</text><text x=\"313\" y=\"99.4\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"28\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D</text><text x=\"14\" y=\"40\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"28\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">1 ≤ r ≤ 2</text><text x=\"14\" y=\"80\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"28\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">0 ≤ θ ≤ π</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 1（續）",
+      "beats": [
+        {
+          "show": [
+            "第二步：$3x+4y^2=3r\\cos\\theta+4r^2\\sin^2\\theta$，再乘 $r$",
+            "$\\int_0^\\pi\\!\\!\\int_1^2\\left(3r^2\\cos\\theta+4r^3\\sin^2\\theta\\right)dr\\,d\\theta$"
+          ],
+          "say": "第二步，換函數：3x 變 3 r 餘弦西塔，4 y 平方變 4 r 平方正弦平方西塔。再乘上 r，r 的次方都多 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二步：$3x+4y^2=3r\\cos\\theta+4r^2\\sin^2\\theta$，再乘 $r$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\pi\\!\\!\\int_1^2\\left(3r^2\\cos\\theta+4r^3\\sin^2\\theta\\right)dr\\,d\\theta$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先積 $r$：$\\left[r^3\\cos\\theta+r^4\\sin^2\\theta\\right]_1^2=7\\cos\\theta+15\\sin^2\\theta$"
+          ],
+          "say": "第三步，先對 r 積：得到 r 立方餘弦西塔加 r 四次方正弦平方，代 2 減代 1，是 7 餘弦西塔加 15 正弦平方西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先積 $r$：$\\left[r^3\\cos\\theta+r^4\\sin^2\\theta\\right]_1^2=7\\cos\\theta+15\\sin^2\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再積 $\\theta$：$\\int_0^\\pi\\cos\\theta\\,d\\theta=0$，$\\int_0^\\pi\\sin^2\\theta\\,d\\theta=\\frac\\pi2$",
+            "$\\iint_D(3x+4y^2)\\,dA=\\frac{15\\pi}{2}$"
+          ],
+          "say": "再對西塔積：餘弦從 0 積到派是 0；正弦平方用半角公式，積出 2 分之派。答案是 2 分之 15 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再積 $\\theta$：$\\int_0^\\pi\\cos\\theta\\,d\\theta=0$，$\\int_0^\\pi\\sin^2\\theta\\,d\\theta=\\frac\\pi2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\iint_D(3x+4y^2)\\,dA=\\frac{15\\pi}{2}}}$",
+              "color": "red",
+              "on": "到派"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "公式"
+            },
+            {
+              "do": "write",
+              "line": "　$\\sin^2\\theta=\\frac{1-\\cos2\\theta}2$；數值驗算：$\\approx23.56$",
+              "color": "violet",
+              "on": "案是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：拋物面下的體積",
+      "beats": [
+        {
+          "show": [
+            "例 2　$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體"
+          ],
+          "say": "例二：拋物面 z 等於 1 減 x 平方減 y 平方，和 x y 平面圍成的立體，體積是多少？",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2　$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "拋物面在 z 等於 0 的地方，x 平方加 y 平方等於 1。所以底是單位圓盤，高度是 1 減 r 平方。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pdPara\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2pdPara\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2pdParablue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2pdParared\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2pdParagreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2pdParapencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2pdParaink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"310\" y1=\"220\" x2=\"206\" y2=\"287.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdParaink)\"/><line x1=\"310\" y1=\"220\" x2=\"490.1\" y2=\"259\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdParaink)\"/><line x1=\"310\" y1=\"220\" x2=\"310\" y2=\"57.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdParaink)\"/><text x=\"202\" y=\"313.5\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"506.1\" y=\"267\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"310\" y=\"47.3\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><path d=\"M245 262.2L249.5 263.1L254 264L258.7 264.7L263.4 265.5L268.2 266.1L273.1 266.7L278 267.2L283 267.6L288 268L293 268.3L298.1 268.5L303.2 268.6L308.3 268.7L313.4 268.7L318.5 268.6L323.6 268.4L328.7 268.2L333.7 267.9L338.7 267.5L343.6 267L348.6 266.5L353.4 265.9L358.2 265.2L362.9 264.5L367.5 263.7L372 262.8L376.5 261.9L380.8 260.8L385 259.8L389.1 258.6L393.1 257.4L397 256.2L400.7 254.9L404.3 253.5L407.7 252.1L411 250.6L414.2 249.1L417.1 247.6L419.9 246L422.6 244.3L425 242.7L427.3 241L429.4 239.2L431.4 237.5L433.1 235.7L434.6 233.8L436 232L437.2 230.1L438.1 228.2L438.9 226.4L439.5 224.5L439.8 222.5L440 220.6L440 218.7L439.7 216.8L439.3 214.9L438.7 213L437.8 211.1L436.8 209.3L435.6 207.4L434.2 205.6L432.5 203.7L430.7 202L428.8 200.2L426.6 198.5L424.2 196.8L421.7 195.1L419 193.5L416.2 191.9L413.1 190.4L409.9 188.9L406.6 187.4L403.1 186L399.5 184.7L395.7 183.4L391.8 182.2L387.8 181L383.6 179.9L379.4 178.8L375 177.8L370.5 176.9L366 176L361.3 175.3L356.6 174.5L351.8 173.9L346.9 173.3L342 172.8L337 172.4L332 172L327 171.7L321.9 171.5L316.8 171.4L311.7 171.3L306.6 171.3L301.5 171.4L296.4 171.6L291.3 171.8L286.3 172.1L281.3 172.5L276.4 173L271.4 173.5L266.6 174.1L261.8 174.8L257.1 175.5L252.5 176.3L248 177.2L243.5 178.1L239.2 179.2L235 180.2L230.9 181.4L226.9 182.6L223 183.8L219.3 185.1L215.7 186.5L212.3 187.9L209 189.4L205.8 190.9L202.9 192.4L200.1 194L197.4 195.7L195 197.3L192.7 199L190.6 200.8L188.6 202.5L186.9 204.3L185.4 206.2L184 208L182.8 209.9L181.9 211.8L181.1 213.6L180.5 215.5L180.2 217.5L180 219.4L180 221.3L180.3 223.2L180.7 225.1L181.3 227L182.2 228.9L183.2 230.7L184.4 232.6L185.8 234.4L187.5 236.3L189.3 238L191.2 239.8L193.4 241.5L195.8 243.2L198.3 244.9L201 246.5L203.8 248.1L206.9 249.6L210.1 251.1L213.4 252.6L216.9 254L220.5 255.3L224.3 256.6L228.2 257.8L232.2 259L236.4 260.1L240.6 261.2L245 262.2\" stroke=\"var(--green)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"var(--green)\" fill-opacity=\"0.1\"/><polygon points=\"325.3,153.6 327,171.7 301.5,171.4 302.3,153.4\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"302.3,153.4 301.5,171.4 276.4,173 279.7,154.8\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"347.6,155.6 351.8,173.9 327,171.7 325.3,153.6\" fill=\"color-mix(in srgb, var(--blue) 40%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.7,154.8 276.4,173 252.5,176.3 258.3,157.8\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"368.5,159.1 375,177.8 351.8,173.9 347.6,155.6\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.3,157.8 252.5,176.3 230.9,181.4 238.8,162.3\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"323.6,138 325.3,153.6 302.3,153.4 303.2,137.7\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"387.1,164.1 395.7,183.4 375,177.8 368.5,159.1\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.2,137.7 302.3,153.4 279.7,154.8 283.1,139\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"343.4,139.7 347.6,155.6 325.3,153.6 323.6,138\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"283.1,139 279.7,154.8 258.3,157.8 264,141.7\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"362,142.9 368.5,159.1 347.6,155.6 343.4,139.7\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"238.8,162.3 230.9,181.4 212.3,187.9 222,168.2\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"402.8,170.4 413.1,190.4 395.7,183.4 387.1,164.1\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264,141.7 258.3,157.8 238.8,162.3 246.7,145.7\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"378.6,147.3 387.1,164.1 368.5,159.1 362,142.9\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"321.9,124.7 323.6,138 303.2,137.7 304,124.5\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304,124.5 303.2,137.7 283.1,139 286.4,125.6\" fill=\"color-mix(in srgb, var(--blue) 40%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.3,126.2 343.4,139.7 323.6,138 321.9,124.7\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.4,125.6 283.1,139 264,141.7 269.8,128\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222,168.2 212.3,187.9 197.4,195.7 208.7,175.2\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"246.7,145.7 238.8,162.3 222,168.2 231.8,150.9\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"355.5,129 362,142.9 343.4,139.7 339.3,126.2\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.5,152.9 402.8,170.4 387.1,164.1 378.6,147.3\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"414.9,177.7 426.6,198.5 413.1,190.4 402.8,170.4\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.8,128 264,141.7 246.7,145.7 254.6,131.5\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"370,132.9 378.6,147.3 362,142.9 355.5,129\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,113.9 321.9,124.7 304,124.5 304.9,113.7\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.9,113.7 304,124.5 286.4,125.6 289.8,114.6\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"335.1,115.2 339.3,126.2 321.9,124.7 320.2,113.9\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.8,150.9 222,168.2 208.7,175.2 219.9,157.1\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"289.8,114.6 286.4,125.6 269.8,128 275.5,116.7\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"254.6,131.5 246.7,145.7 231.8,150.9 241.6,136.1\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"349,117.6 355.5,129 339.3,126.2 335.1,115.2\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208.7,175.2 197.4,195.7 186.9,204.3 199.2,183\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"403.3,159.4 414.9,177.7 402.8,170.4 392.5,152.9\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.2,137.8 392.5,152.9 378.6,147.3 370,132.9\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.5,116.7 269.8,128 254.6,131.5 262.5,119.7\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"423,185.8 435.6,207.4 426.6,198.5 414.9,177.7\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"361.4,120.9 370,132.9 355.5,129 349,117.6\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"318.5,105.5 320.2,113.9 304.9,113.7 305.7,105.3\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"305.7,105.3 304.9,113.7 289.8,114.6 293.2,106.1\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.6,136.1 231.8,150.9 219.9,157.1 231.2,141.5\" fill=\"color-mix(in srgb, var(--blue) 40%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"330.9,106.5 335.1,115.2 320.2,113.9 318.5,105.5\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.5,119.7 254.6,131.5 241.6,136.1 251.4,123.6\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.9,157.1 208.7,175.2 199.2,183 211.5,164.1\" fill=\"color-mix(in srgb, var(--blue) 40%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"293.2,106.1 289.8,114.6 275.5,116.7 281.3,107.8\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"391.6,143.5 403.3,159.4 392.5,152.9 382.2,137.8\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"342.5,108.5 349,117.6 335.1,115.2 330.9,106.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"371.9,125.1 382.2,137.8 370,132.9 361.4,120.9\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"410.5,166.5 423,185.8 414.9,177.7 403.3,159.4\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"281.3,107.8 275.5,116.7 262.5,119.7 270.4,110.3\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"199.2,183 186.9,204.3 181.1,213.6 194,191.4\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"352.9,111.3 361.4,120.9 349,117.6 342.5,108.5\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.4,123.6 241.6,136.1 231.2,141.5 242.5,128.2\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.2,141.5 219.9,157.1 211.5,164.1 223.8,147.6\" fill=\"color-mix(in srgb, var(--blue) 39%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.8,99.4 318.5,105.5 305.7,105.3 306.6,99.3\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"306.6,99.3 305.7,105.3 293.2,106.1 296.5,99.9\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270.4,110.3 262.5,119.7 251.4,123.6 261.1,113.5\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"426.7,194.2 439.7,216.8 435.6,207.4 423,185.8\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"326.7,100.3 330.9,106.5 318.5,105.5 316.8,99.4\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"380,129.9 391.6,143.5 382.2,137.8 371.9,125.1\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.5,99.9 293.2,106.1 281.3,107.8 287,101.3\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"361.6,114.8 371.9,125.1 361.4,120.9 352.9,111.3\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.9,149.7 410.5,166.5 403.3,159.4 391.6,143.5\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"336,101.9 342.5,108.5 330.9,106.5 326.7,100.3\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"211.5,164.1 199.2,183 194,191.4 206.9,171.5\" fill=\"color-mix(in srgb, var(--blue) 38%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287,101.3 281.3,107.8 270.4,110.3 278.3,103.3\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.3,104.1 352.9,111.3 342.5,108.5 336,101.9\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.1,113.5 251.4,123.6 242.5,128.2 253.7,117.4\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.5,128.2 231.2,141.5 223.8,147.6 236.1,133.5\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"413.8,174.1 426.7,194.2 423,185.8 410.5,166.5\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"368.3,118.8 380,129.9 371.9,125.1 361.6,114.8\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.3,103.3 270.4,110.3 261.1,113.5 270.9,105.9\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.3,135.3 397.9,149.7 391.6,143.5 380,129.9\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.1,95.8 316.8,99.4 306.6,99.3 307.4,95.7\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.8,147.6 211.5,164.1 206.9,171.5 219.8,154.1\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"194,191.4 181.1,213.6 180.3,223.2 193.3,200\" fill=\"color-mix(in srgb, var(--blue) 37%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"307.4,95.7 306.6,99.3 296.5,99.9 299.9,96.2\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.5,96.5 326.7,100.3 316.8,99.4 315.1,95.8\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.3,106.9 361.6,114.8 352.9,111.3 344.3,104.1\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.9,96.2 296.5,99.9 287,101.3 292.8,97.2\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"329.5,97.7 336,101.9 326.7,100.3 322.5,96.5\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.8,156.3 413.8,174.1 410.5,166.5 397.9,149.7\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.7,117.4 242.5,128.2 236.1,133.5 248.4,121.8\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.8,97.2 287,101.3 278.3,103.3 286.3,98.7\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270.9,105.9 261.1,113.5 253.7,117.4 265,109\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"426,202.8 438.9,226.4 439.7,216.8 426.7,194.2\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"335.7,99.3 344.3,104.1 336,101.9 329.5,97.7\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.9,171.5 194,191.4 193.3,200 206.2,179.2\" fill=\"color-mix(in srgb, var(--blue) 36%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.6,110.1 368.3,118.8 361.6,114.8 351.3,106.9\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236.1,133.5 223.8,147.6 219.8,154.1 232.7,139\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"372.8,123.3 385.3,135.3 380,129.9 368.3,118.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.3,98.7 278.3,103.3 270.9,105.9 280.7,100.7\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.9,101.4 351.3,106.9 344.3,104.1 335.7,99.3\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"387.8,140.9 400.8,156.3 397.9,149.7 385.3,135.3\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"313.4,94.6 315.1,95.8 307.4,95.7 308.3,94.6\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.3,94.6 307.4,95.7 299.9,96.2 303.3,94.9\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"318.4,95.1 322.5,96.5 315.1,95.8 313.4,94.6\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"265,109 253.7,117.4 248.4,121.8 260.8,112.5\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"413.1,181.7 426,202.8 426.7,194.2 413.8,174.1\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.3,94.9 299.9,96.2 292.8,97.2 298.5,95.6\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.7,100.7 270.9,105.9 265,109 276.2,103\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"323,95.9 329.5,97.7 322.5,96.5 318.4,95.1\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.8,154.1 206.9,171.5 206.2,179.2 219.2,160.8\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"248.4,121.8 236.1,133.5 232.7,139 245.6,126.4\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"360.2,113.7 372.8,123.3 368.3,118.8 356.6,110.1\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.5,95.6 292.8,97.2 286.3,98.7 294.2,96.6\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"345,103.9 356.6,110.1 351.3,106.9 340.9,101.4\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.1,97 335.7,99.3 329.5,97.7 323,95.9\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"374.9,128 387.8,140.9 385.3,135.3 372.8,123.3\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"193.3,200 180.3,223.2 184.4,232.6 197,208.4\" fill=\"color-mix(in srgb, var(--blue) 35%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"294.2,96.6 286.3,98.7 280.7,100.7 290.5,97.9\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.2,163 413.1,181.7 413.8,174.1 400.8,156.3\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"330.6,98.4 340.9,101.4 335.7,99.3 327.1,97\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"276.2,103 265,109 260.8,112.5 273.1,105.6\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.7,139 219.8,154.1 219.2,160.8 232.2,144.8\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,112.5 248.4,121.8 245.6,126.4 258.4,116.2\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"347.7,106.5 360.2,113.7 356.6,110.1 345,103.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"290.5,97.9 280.7,100.7 276.2,103 287.5,99.4\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"311.7,95.8 313.4,94.6 308.3,94.6 309.1,95.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"333.3,100 345,103.9 340.9,101.4 330.6,98.4\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"309.1,95.8 308.3,94.6 303.3,94.9 306.6,96\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"361.9,117.5 374.9,128 372.8,123.3 360.2,113.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"314.2,96.1 318.4,95.1 313.4,94.6 311.7,95.8\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.2,179.2 193.3,200 197,208.4 209.5,186.7\" fill=\"color-mix(in srgb, var(--blue) 34%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"420.8,211.2 433.1,235.7 438.9,226.4 426,202.8\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"387.3,146.7 400.2,163 400.8,156.3 387.8,140.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"306.6,96 303.3,94.9 298.5,95.6 304.3,96.3\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.5,96.5 323,95.9 318.4,95.1 314.2,96.1\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.6,126.4 232.7,139 232.2,144.8 245.1,131.2\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.3,96.3 298.5,95.6 294.2,96.6 302.1,96.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"318.6,97 327.1,97 323,95.9 316.5,96.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"273.1,105.6 260.8,112.5 258.4,116.2 271.3,108.4\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"287.5,99.4 276.2,103 273.1,105.6 285.4,101.2\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"302.1,96.8 294.2,96.6 290.5,97.9 300.2,97.5\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"335.1,101.8 347.7,106.5 345,103.9 333.3,100\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.3,97.7 330.6,98.4 327.1,97 318.6,97\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"348.9,109.4 361.9,117.5 360.2,113.7 347.7,106.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"219.2,160.8 206.2,179.2 209.5,186.7 222.1,167.4\" fill=\"color-mix(in srgb, var(--blue) 33%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"374.4,132.8 387.3,146.7 387.8,140.9 374.9,128\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"408.5,189.1 420.8,211.2 426,202.8 413.1,181.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.4,116.2 245.6,126.4 245.1,131.2 258.1,120\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"300.2,97.5 290.5,97.9 287.5,99.4 298.7,98.2\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"321.7,98.5 333.3,100 330.6,98.4 320.3,97.7\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"285.4,101.2 273.1,105.6 271.3,108.4 284.2,103\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.7,98.2 287.5,99.4 285.4,101.2 297.7,99.1\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"361.6,121.3 374.4,132.8 374.9,128 361.9,117.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"335.9,103.7 348.9,109.4 347.7,106.5 335.1,101.8\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.2,144.8 219.2,160.8 222.1,167.4 234.7,150.4\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.6,99.4 335.1,101.8 333.3,100 321.7,98.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"271.3,108.4 258.4,116.2 258.1,120 271.1,111.3\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"396.2,169.5 408.5,189.1 413.1,181.7 400.2,163\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 311.7,95.8 309.1,95.8 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 309.1,95.8 306.6,96 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 314.2,96.1 311.7,95.8 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 306.6,96 304.3,96.3 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 316.5,96.5 314.2,96.1 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 304.3,96.3 302.1,96.8 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297.7,99.1 285.4,101.2 284.2,103 297.1,100\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 318.6,97 316.5,96.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"348.7,112.2 361.6,121.3 361.9,117.5 348.9,109.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 302.1,96.8 300.2,97.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 320.3,97.7 318.6,97 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"323,100.4 335.9,103.7 335.1,101.8 322.6,99.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.2,103 271.3,108.4 271.1,111.3 284.1,104.9\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"245.1,131.2 232.2,144.8 234.7,150.4 247.2,135.9\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197,208.4 184.4,232.6 193.4,241.5 205.1,216.5\" fill=\"color-mix(in srgb, var(--blue) 32%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 300.2,97.5 298.7,98.2 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 321.7,98.5 320.3,97.7 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"383.9,152.3 396.2,169.5 400.2,163 387.3,146.7\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 298.7,98.2 297.7,99.1 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 322.6,99.4 321.7,98.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"335.8,105.6 348.7,112.2 348.9,109.4 335.9,103.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297.1,100 284.2,103 284.1,104.9 297,101\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 297.7,99.1 297.1,100 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 323,100.4 322.6,99.4 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.1,120 245.1,131.2 247.2,135.9 259.8,123.8\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.9,101.3 335.8,105.6 335.9,103.7 323,100.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 297.1,100 297,101 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 322.9,101.3 323,100.4 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"371.6,137.4 383.9,152.3 387.3,146.7 374.4,132.8\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"209.5,186.7 197,208.4 205.1,216.5 216.7,193.8\" fill=\"color-mix(in srgb, var(--blue) 31%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 297,101 297.4,101.9 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"271.1,111.3 258.1,120 259.8,123.8 272.3,114.1\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 322.3,102.2 322.9,101.3 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297,101 284.1,104.9 284.9,106.8 297.4,101.9\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.1,104.9 271.1,111.3 272.3,114.1 284.9,106.8\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 297.4,101.9 298.3,102.8 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 321.3,103.1 322.3,102.2 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"359.2,125 371.6,137.4 374.4,132.8 361.6,121.3\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.3,102.2 334.6,107.4 335.8,105.6 322.9,101.3\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 298.3,102.8 299.7,103.6 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"411.3,219 422.6,244.3 433.1,235.7 420.8,211.2\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 319.8,103.9 321.3,103.1 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"346.9,115 359.2,125 361.6,121.3 348.7,112.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"334.6,107.4 346.9,115 348.7,112.2 335.8,105.6\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 299.7,103.6 301.4,104.3 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 317.9,104.5 319.8,103.9 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.1,167.4 209.5,186.7 216.7,193.8 228.4,173.6\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 301.4,104.3 303.5,104.9 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 315.7,105 317.9,104.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297.4,101.9 284.9,106.8 286.7,108.6 298.3,102.8\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 303.5,104.9 305.8,105.3 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 313.4,105.4 315.7,105 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 305.8,105.3 308.3,105.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 310.9,105.5 313.4,105.4 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310,99.5 308.3,105.5 310.9,105.5 310,99.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"321.3,103.1 332.5,109.2 334.6,107.4 322.3,102.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"234.7,150.4 222.1,167.4 228.4,173.6 240,155.8\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.1,196.1 411.3,219 420.8,211.2 408.5,189.1\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.9,106.8 272.3,114.1 275,116.8 286.7,108.6\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.3,102.8 286.7,108.6 289.4,110.2 299.7,103.6\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"247.2,135.9 234.7,150.4 240,155.8 251.7,140.4\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.3,114.1 259.8,123.8 263.4,127.4 275,116.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.8,123.8 247.2,135.9 251.7,140.4 263.4,127.4\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,109.2 343.8,117.6 346.9,115 334.6,107.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"319.8,103.9 329.5,110.7 332.5,109.2 321.3,103.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"388.8,175.6 400.1,196.1 408.5,189.1 396.2,169.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.7,103.6 289.4,110.2 292.9,111.6 301.4,104.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"343.8,117.6 355,128.5 359.2,125 346.9,115\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.5,157.5 388.8,175.6 396.2,169.5 383.9,152.3\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"317.9,104.5 325.8,112 329.5,110.7 319.8,103.9\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"355,128.5 366.3,141.8 371.6,137.4 359.2,125\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"366.3,141.8 377.5,157.5 383.9,152.3 371.6,137.4\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.7,108.6 275,116.8 279.1,119.2 289.4,110.2\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.4,104.3 292.9,111.6 297,112.7 303.5,104.9\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.7,105 321.5,113 325.8,112 317.9,104.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"329.5,110.7 339.3,119.9 343.8,117.6 332.5,109.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,104.9 297,112.7 301.6,113.5 305.8,105.3\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"313.4,105.4 316.7,113.7 321.5,113 315.7,105\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275,116.8 263.4,127.4 268.7,130.6 279.1,119.2\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"205.1,216.5 193.4,241.5 206.9,249.6 217.2,223.8\" fill=\"color-mix(in srgb, var(--blue) 30%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"305.8,105.3 301.6,113.5 306.6,113.9 308.3,105.5\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"310.9,105.5 311.7,114 316.7,113.7 313.4,105.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.3,105.5 306.6,113.9 311.7,114 310.9,105.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"289.4,110.2 279.1,119.2 284.3,121.3 292.9,111.6\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.3,119.9 349.1,131.6 355,128.5 343.8,117.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"263.4,127.4 251.7,140.4 258.4,144.4 268.7,130.6\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"216.7,193.8 205.1,216.5 217.2,223.8 227.5,200.3\" fill=\"color-mix(in srgb, var(--blue) 29%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"325.8,112 333.7,121.9 339.3,119.9 329.5,110.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.7,140.4 240,155.8 248.1,160.6 258.4,144.4\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"228.4,173.6 216.7,193.8 227.5,200.3 237.8,179.3\" fill=\"color-mix(in srgb, var(--blue) 28%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240,155.8 228.4,173.6 237.8,179.3 248.1,160.6\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.9,111.6 284.3,121.3 290.5,123 297,112.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"349.1,131.6 358.9,145.7 366.3,141.8 355,128.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"321.5,113 327.2,123.4 333.7,121.9 325.8,112\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"398,226 407.7,252.1 422.6,244.3 411.3,219\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"279.1,119.2 268.7,130.6 275.7,133.4 284.3,121.3\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"358.9,145.7 368.6,162.1 377.5,157.5 366.3,141.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"388.2,202.3 398,226 411.3,219 400.1,196.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297,112.7 290.5,123 297.5,124.1 301.6,113.5\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"333.7,121.9 341.7,134.2 349.1,131.6 339.3,119.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"368.6,162.1 378.4,181 388.8,175.6 377.5,157.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"378.4,181 388.2,202.3 400.1,196.1 388.8,175.6\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.7,113.7 320.1,124.4 327.2,123.4 321.5,113\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.6,113.5 297.5,124.1 304.9,124.8 306.6,113.9\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"311.7,114 312.6,124.9 320.1,124.4 316.7,113.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"306.6,113.9 304.9,124.8 312.6,124.9 311.7,114\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"268.7,130.6 258.4,144.4 267.1,147.9 275.7,133.4\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.3,121.3 275.7,133.4 284,135.6 290.5,123\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"341.7,134.2 349.6,148.9 358.9,145.7 349.1,131.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.2,123.4 333,136.2 341.7,134.2 333.7,121.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.4,144.4 248.1,160.6 258.6,164.8 267.1,147.9\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"290.5,123 284,135.6 293.3,137.2 297.5,124.1\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"248.1,160.6 237.8,179.3 250,184.2 258.6,164.8\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.1,124.4 323.5,137.6 333,136.2 327.2,123.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"349.6,148.9 357.5,166 368.6,162.1 358.9,145.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217.2,223.8 206.9,249.6 224.3,256.6 232.9,230.1\" fill=\"color-mix(in srgb, var(--blue) 27%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"275.7,133.4 267.1,147.9 277.5,150.7 284,135.6\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"237.8,179.3 227.5,200.3 241.4,205.9 250,184.2\" fill=\"color-mix(in srgb, var(--blue) 25%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"227.5,200.3 217.2,223.8 232.9,230.1 241.4,205.9\" fill=\"color-mix(in srgb, var(--blue) 26%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"297.5,124.1 293.3,137.2 303.2,138.1 304.9,124.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"312.6,124.9 313.4,138.2 323.5,137.6 320.1,124.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"333,136.2 338.7,151.4 349.6,148.9 341.7,134.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.9,124.8 303.2,138.1 313.4,138.2 312.6,124.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"357.5,166 365.4,185.6 378.4,181 368.6,162.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"365.4,185.6 373.3,207.5 388.2,202.3 378.4,181\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.1,147.9 258.6,164.8 271,168.2 277.5,150.7\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"381.2,231.9 389.1,258.6 407.7,252.1 398,226\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.3,207.5 381.2,231.9 398,226 388.2,202.3\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284,135.6 277.5,150.7 289.1,152.7 293.3,137.2\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"323.5,137.6 326.8,153.1 338.7,151.4 333,136.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"338.7,151.4 344.5,169.1 357.5,166 349.6,148.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"293.3,137.2 289.1,152.7 301.5,153.7 303.2,138.1\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.6,164.8 250,184.2 264.5,188 271,168.2\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"313.4,138.2 314.3,153.9 326.8,153.1 323.5,137.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.2,138.1 301.5,153.7 314.3,153.9 313.4,138.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,150.7 271,168.2 284.9,170.5 289.1,152.7\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.5,169.1 350.2,189.1 365.4,185.6 357.5,166\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"250,184.2 241.4,205.9 258,210.3 264.5,188\" fill=\"color-mix(in srgb, var(--blue) 23%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"326.8,153.1 330.2,171.1 344.5,169.1 338.7,151.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"241.4,205.9 232.9,230.1 251.5,235.1 258,210.3\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.9,230.1 224.3,256.6 245,262.2 251.5,235.1\" fill=\"color-mix(in srgb, var(--blue) 24%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.2,189.1 356,211.5 373.3,207.5 365.4,185.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"289.1,152.7 284.9,170.5 299.8,171.8 301.5,153.7\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"314.3,153.9 315.1,172 330.2,171.1 326.8,153.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"271,168.2 264.5,188 280.7,190.8 284.9,170.5\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"301.5,153.7 299.8,171.8 315.1,172 314.3,153.9\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356,211.5 361.7,236.4 381.2,231.9 373.3,207.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"330.2,171.1 333.6,191.5 350.2,189.1 344.5,169.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"361.7,236.4 367.5,263.7 389.1,258.6 381.2,231.9\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.5,188 258,210.3 276.6,213.5 280.7,190.8\" fill=\"color-mix(in srgb, var(--blue) 21%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.9,170.5 280.7,190.8 298.1,192.3 299.8,171.8\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.1,172 316,192.5 333.6,191.5 330.2,171.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"333.6,191.5 336.9,214.2 356,211.5 350.2,189.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"299.8,171.8 298.1,192.3 316,192.5 315.1,172\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258,210.3 251.5,235.1 272.4,238.6 276.6,213.5\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.5,235.1 245,262.2 268.2,266.1 272.4,238.6\" fill=\"color-mix(in srgb, var(--blue) 22%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"280.7,190.8 276.6,213.5 296.4,215.2 298.1,192.3\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"336.9,214.2 340.3,239.4 361.7,236.4 356,211.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316,192.5 316.8,215.5 336.9,214.2 333.6,191.5\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"298.1,192.3 296.4,215.2 316.8,215.5 316,192.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"340.3,239.4 343.6,267 367.5,263.7 361.7,236.4\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"276.6,213.5 272.4,238.6 294.7,240.6 296.4,215.2\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"316.8,215.5 317.7,240.8 340.3,239.4 336.9,214.2\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.4,215.2 294.7,240.6 317.7,240.8 316.8,215.5\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.4,238.6 268.2,266.1 293,268.3 294.7,240.6\" fill=\"color-mix(in srgb, var(--blue) 20%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"317.7,240.8 318.5,268.6 343.6,267 340.3,239.4\" fill=\"color-mix(in srgb, var(--blue) 18%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"294.7,240.6 293,268.3 318.5,268.6 317.7,240.8\" fill=\"color-mix(in srgb, var(--blue) 19%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><text x=\"12\" y=\"36\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"27\" style=\"font-family:inherit\">z = 1 − x² − y²</text><text x=\"12\" y=\"74\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"27\" style=\"font-family:inherit\">底：單位圓盤 r ≤ 1</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$V=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$"
+          ],
+          "say": "體積就是高度在底上的二重積分。換成極座標：1 減 r 平方，乘 r，r 從 0 到 1，西塔從 0 到 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle V=\\int_0^{2\\pi}\\!\\!\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1(r-r^3)\\,dr=\\frac12-\\frac14=\\frac14$",
+            "$V=2\\pi\\cdot\\frac14=\\frac\\pi2$"
+          ],
+          "say": "裡面積 r 減 r 立方，得 4 分之 1。外面的西塔沒有東西可積，就是乘 2 派。體積是 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int_0^1(r-r^3)\\,dr=\\frac12-\\frac14=\\frac14$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle V=2\\pi\\cdot\\frac14=\\frac\\pi2}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "塔沒"
+            },
+            {
+              "do": "write",
+              "line": "　用直角座標要積 $\\int\\!\\!\\int(1-x^2-y^2)\\,dy\\,dx$，上下界又是根號",
+              "color": "violet",
+              "on": "體積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "多出來的 $r$ 是幫手",
+      "beats": [
+        {
+          "show": [
+            "例 3　回到 ① 的 $\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$：$r\\le1$",
+            "$\\int_0^{2\\pi}\\!\\!\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$"
+          ],
+          "say": "例三：回到一開始卡住的積分。換成極座標，e 的負 r 平方次方，乘上 r。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 3　回到 ① 的 $\\displaystyle\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$：$r\\le1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{2\\pi}\\!\\!\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多了一個 $r$：令 $u=r^2$，$du=2r\\,dr$",
+            "$\\int_0^1e^{-r^2}r\\,dr=\\left[-\\tfrac12e^{-r^2}\\right]_0^1=\\tfrac12\\left(1-e^{-1}\\right)$"
+          ],
+          "say": "這個多出來的 r 正好是 r 平方的導數的一半，所以可以換元，令 u 等於 r 平方。積出來是 2 分之 1，乘上 1 減 e 的負 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多了一個 $r$：令 $u=r^2$，$du=2r\\,dr$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1e^{-r^2}r\\,dr=\\left[-\\tfrac12e^{-r^2}\\right]_0^1=\\tfrac12\\left(1-e^{-1}\\right)$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\iint_D e^{-(x^2+y^2)}\\,dA=\\pi\\left(1-\\frac1e\\right)\\approx1.986$"
+          ],
+          "say": "再乘上 2 派，答案是派乘 1 減 e 分之 1，大約 1.986。直角座標積不出來的，極座標一下就算完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\iint_D e^{-(x^2+y^2)}\\,dA=\\pi\\left(1-\\frac1e\\right)\\approx1.986}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　把半徑換成 $\\infty$，就得到 $\\iint_{\\mathbb R^2}e^{-(x^2+y^2)}dA=\\pi$，常態分布的關鍵",
+              "color": "violet",
+              "on": "座標#1"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$r\\,\\Delta r\\,\\Delta\\theta$ 其實是精確的",
+      "beats": [
+        {
+          "show": [
+            "極矩形 $r_1\\le r\\le r_2$、角度 $\\Delta\\theta$：大扇形減小扇形",
+            "圖"
+          ],
+          "say": "最後，給想知道的人：剛才說極矩形的面積大約是 r 德爾塔 r 德爾塔西塔。其實只要 r 取對，它是精確的。極矩形就是大扇形減掉小扇形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極矩形 $r_1\\le r\\le r_2$、角度 $\\Delta\\theta$：大扇形減小扇形"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pdExact\" viewBox=\"0 0 620 320\" width=\"620\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2pdExact\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2pdExactblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2pdExactred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2pdExactgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2pdExactpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2pdExactink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2pdExact30\"><rect x=\"42.9\" y=\"16\" width=\"540.2\" height=\"274\"/></clipPath><g clip-path=\"url(#cl9a2pdExact30)\"><polygon points=\"66.4,266.5 213.5,212.8 212.8,211.1 212.2,209.4 211.5,207.7 210.8,206 210.1,204.3 209.4,202.7 208.6,201 207.8,199.4 207,197.7 206.2,196.1 205.4,194.4 204.5,192.8 203.7,191.2 202.8,189.6 201.9,188 201,186.5 200,184.9 199.1,183.3 198.1,181.8 197.1,180.3 196.1,178.8 195,177.2 194,175.8 192.9,174.3 191.8,172.8 190.7,171.3 189.6,169.9 188.5,168.5 187.3,167.1 186.2,165.6 185,164.3 183.8,162.9 182.5,161.5 181.3,160.2 180.1,158.8 178.8,157.5 177.5,156.2 176.2,154.9 174.9,153.7 173.6,152.4 172.3,151.2 170.9,149.9 169.5,148.7 168.2,147.5 166.8,146.3 165.4,145.2 163.9,144 162.5,142.9 161,141.8 159.6,140.7 158.1,139.6 156.6,138.6 155.1,137.5 153.6,136.5 152.1,135.5 150.6,134.5 149,133.5 147.5,132.6 145.9,131.6 144.3,130.7\" fill=\"var(--muted)\" fill-opacity=\"0.1\"/><polygon points=\"287,186 286.1,183.4 285.1,180.9 284.1,178.3 283,175.8 281.9,173.3 280.8,170.7 279.7,168.3 278.6,165.8 277.4,163.3 276.1,160.8 274.9,158.4 273.6,156 272.3,153.6 271,151.2 269.6,148.8 268.2,146.4 266.8,144.1 265.4,141.8 263.9,139.4 262.4,137.2 260.9,134.9 259.3,132.6 257.8,130.4 256.2,128.1 254.5,125.9 252.9,123.8 251.2,121.6 249.5,119.4 247.8,117.3 246,115.2 244.3,113.1 242.4,111.1 240.6,109 238.8,107 236.9,105 235,103 233.1,101.1 231.1,99.1 229.2,97.2 227.2,95.3 225.2,93.5 223.2,91.6 221.1,89.8 219,88 216.9,86.3 214.8,84.5 212.7,82.8 210.5,81.1 208.4,79.4 206.2,77.8 204,76.2 201.7,74.6 199.5,73 197.2,71.5 194.9,70 192.6,68.5 190.3,67 188,65.6 185.6,64.2 183.3,62.8 144.3,130.7 145.9,131.6 147.5,132.6 149,133.5 150.6,134.5 152.1,135.5 153.6,136.5 155.1,137.5 156.6,138.6 158.1,139.6 159.6,140.7 161,141.8 162.5,142.9 163.9,144 165.4,145.2 166.8,146.3 168.2,147.5 169.5,148.7 170.9,149.9 172.3,151.2 173.6,152.4 174.9,153.7 176.2,154.9 177.5,156.2 178.8,157.5 180.1,158.8 181.3,160.2 182.5,161.5 183.8,162.9 185,164.3 186.2,165.6 187.3,167.1 188.5,168.5 189.6,169.9 190.7,171.3 191.8,172.8 192.9,174.3 194,175.8 195,177.2 196.1,178.8 197.1,180.3 198.1,181.8 199.1,183.3 200,184.9 201,186.5 201.9,188 202.8,189.6 203.7,191.2 204.5,192.8 205.4,194.4 206.2,196.1 207,197.7 207.8,199.4 208.6,201 209.4,202.7 210.1,204.3 210.8,206 211.5,207.7 212.2,209.4 212.8,211.1 213.5,212.8\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><path d=\"M66.4 266.5L287 186L286.1 183.4L285.1 180.9L284.1 178.3L283 175.8L281.9 173.3L280.8 170.7L279.7 168.3L278.6 165.8L277.4 163.3L276.1 160.8L274.9 158.4L273.6 156L272.3 153.6L271 151.2L269.6 148.8L268.2 146.4L266.8 144.1L265.4 141.8L263.9 139.4L262.4 137.2L260.9 134.9L259.3 132.6L257.8 130.4L256.2 128.1L254.5 125.9L252.9 123.8L251.2 121.6L249.5 119.4L247.8 117.3L246 115.2L244.3 113.1L242.4 111.1L240.6 109L238.8 107L236.9 105L235 103L233.1 101.1L231.1 99.1L229.2 97.2L227.2 95.3L225.2 93.5L223.2 91.6L221.1 89.8L219 88L216.9 86.3L214.8 84.5L212.7 82.8L210.5 81.1L208.4 79.4L206.2 77.8L204 76.2L201.7 74.6L199.5 73L197.2 71.5L194.9 70L192.6 68.5L190.3 67L188 65.6L185.6 64.2L183.3 62.8L66.4 266.5\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M287 186L286.1 183.4L285.1 180.9L284.1 178.3L283 175.8L281.9 173.3L280.8 170.7L279.7 168.3L278.6 165.8L277.4 163.3L276.1 160.8L274.9 158.4L273.6 156L272.3 153.6L271 151.2L269.6 148.8L268.2 146.4L266.8 144.1L265.4 141.8L263.9 139.4L262.4 137.2L260.9 134.9L259.3 132.6L257.8 130.4L256.2 128.1L254.5 125.9L252.9 123.8L251.2 121.6L249.5 119.4L247.8 117.3L246 115.2L244.3 113.1L242.4 111.1L240.6 109L238.8 107L236.9 105L235 103L233.1 101.1L231.1 99.1L229.2 97.2L227.2 95.3L225.2 93.5L223.2 91.6L221.1 89.8L219 88L216.9 86.3L214.8 84.5L212.7 82.8L210.5 81.1L208.4 79.4L206.2 77.8L204 76.2L201.7 74.6L199.5 73L197.2 71.5L194.9 70L192.6 68.5L190.3 67L188 65.6L185.6 64.2L183.3 62.8L144.3 130.7L145.9 131.6L147.5 132.6L149 133.5L150.6 134.5L152.1 135.5L153.6 136.5L155.1 137.5L156.6 138.6L158.1 139.6L159.6 140.7L161 141.8L162.5 142.9L163.9 144L165.4 145.2L166.8 146.3L168.2 147.5L169.5 148.7L170.9 149.9L172.3 151.2L173.6 152.4L174.9 153.7L176.2 154.9L177.5 156.2L178.8 157.5L180.1 158.8L181.3 160.2L182.5 161.5L183.8 162.9L185 164.3L186.2 165.6L187.3 167.1L188.5 168.5L189.6 169.9L190.7 171.3L191.8 172.8L192.9 174.3L194 175.8L195 177.2L196.1 178.8L197.1 180.3L198.1 181.8L199.1 183.3L200 184.9L201 186.5L201.9 188L202.8 189.6L203.7 191.2L204.5 192.8L205.4 194.4L206.2 196.1L207 197.7L207.8 199.4L208.6 201L209.4 202.7L210.1 204.3L210.8 206L211.5 207.7L212.2 209.4L212.8 211.1L213.5 212.8L287 186\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M250.2 199.4L249.5 197.3L248.6 195.1L247.8 193L246.9 190.9L246 188.8L245.1 186.7L244.2 184.6L243.2 182.6L242.2 180.5L241.2 178.5L240.1 176.4L239.1 174.4L238 172.4L236.9 170.4L235.8 168.4L234.6 166.5L233.4 164.5L232.2 162.6L231 160.6L229.7 158.7L228.5 156.8L227.2 154.9L225.9 153.1L224.5 151.2L223.2 149.4L221.8 147.6L220.4 145.7L219 144L217.6 142.2L216.1 140.4L214.6 138.7L213.1 137L211.6 135.3L210 133.6L208.5 131.9L206.9 130.3L205.3 128.6L203.7 127L202.1 125.4L200.4 123.9L198.7 122.3L197 120.8L195.3 119.3L193.6 117.8L191.9 116.3L190.1 114.8L188.3 113.4L186.5 112L184.7 110.6L182.9 109.2L181 107.9L179.2 106.6L177.3 105.3L175.4 104L173.5 102.7L171.6 101.5L169.7 100.3L167.7 99.1L165.8 97.9L163.8 96.7\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/></g><line x1=\"38.9\" y1=\"266.5\" x2=\"595.1\" y2=\"266.5\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdExact)\"/><line x1=\"66.4\" y1=\"294\" x2=\"66.4\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2pdExact)\"/><text x=\"593.1\" y=\"257.5\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"75.4\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"217.5\" y=\"238.8\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r<tspan baseline-shift=\"sub\" font-size=\"16\">1</tspan></text><text x=\"256.2\" y=\"225.4\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r̄</text><text x=\"295\" y=\"212\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r<tspan baseline-shift=\"sub\" font-size=\"16\">2</tspan></text><text x=\"109.5\" y=\"236.8\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δθ</text><text x=\"604\" y=\"60\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"25\" style=\"font-family:inherit\">藍 = 大扇形 − 小扇形</text><text x=\"604\" y=\"96\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"25\" style=\"font-family:inherit\">紅虛線：中間半徑 r̄</text></svg>",
+              "on": "塔西"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta A=\\tfrac12r_2^2\\Delta\\theta-\\tfrac12r_1^2\\Delta\\theta=\\tfrac12(r_2+r_1)(r_2-r_1)\\Delta\\theta$"
+          ],
+          "say": "扇形面積是 2 分之 1 r 平方德爾塔西塔。相減以後，平方差分解成 r 2 加 r 1，乘 r 2 減 r 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta A=\\tfrac12r_2^2\\Delta\\theta-\\tfrac12r_1^2\\Delta\\theta=\\tfrac12(r_2+r_1)(r_2-r_1)\\Delta\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $\\bar r=\\frac{r_1+r_2}2$（中間半徑）：",
+            "$\\Delta A=\\bar r\\,\\Delta r\\,\\Delta\\theta\\quad\\text{（剛好相等）}$"
+          ],
+          "say": "r 2 減 r 1 是德爾塔 r；r 1 加 r 2 的一半是中間半徑 r bar。所以面積剛好是 r bar 德爾塔 r 德爾塔西塔，沒有誤差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $\\bar r=\\frac{r_1+r_2}2$（中間半徑）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\Delta A=\\bar r\\,\\Delta r\\,\\Delta\\theta\\quad\\text{（剛好相等）}}}$",
+              "color": "red",
+              "on": "的一"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "ba#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以黎曼和可以寫成",
+            "$\\sum f(\\bar r_i\\cos\\theta_j^*,\\bar r_i\\sin\\theta_j^*)\\,\\bar r_i\\,\\Delta r\\,\\Delta\\theta$"
+          ],
+          "say": "樣本點的半徑取中間半徑，二重積分的黎曼和就變成這個樣子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以黎曼和可以寫成"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum f(\\bar r_i\\cos\\theta_j^*,\\bar r_i\\sin\\theta_j^*)\\,\\bar r_i\\,\\Delta r\\,\\Delta\\theta$",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這是 $g(r,\\theta)=f(r\\cos\\theta,r\\sin\\theta)\\,r$ 在 $r\\theta$ 平面矩形上的黎曼和",
+            "⇒ 極限就是 $\\displaystyle\\int_\\alpha^\\beta\\!\\!\\int_a^b g\\,dr\\,d\\theta$"
+          ],
+          "say": "仔細看，它正是 g 等於 f 乘 r 這個函數，在 r 西塔平面的矩形上的黎曼和。取極限，就是 g 的累次積分。公式證完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這是 $g(r,\\theta)=f(r\\cos\\theta,r\\sin\\theta)\\,r$ 在 $r\\theta$ 平面矩形上的黎曼和"
+            },
+            {
+              "do": "write",
+              "line": "⇒ 極限就是 $\\displaystyle\\int_\\alpha^\\beta\\!\\!\\int_a^b g\\,dr\\,d\\theta$",
+              "color": "gold",
+              "on": "個函"
+            },
+            {
+              "do": "write",
+              "line": "　需要 $f$ 連續，才能讓兩種黎曼和的極限都存在且相等",
+              "color": "violet",
+              "on": "取極"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 看到圓形邊界或 $x^2+y^2$：換極座標",
+            "• $dA=r\\,dr\\,d\\theta$：外圈的極矩形比較大，倍率是 $r$"
+          ],
+          "say": "整理一下：看到圓形邊界或 x 平方加 y 平方，就換極座標。d A 換成 r d r d 西塔，因為外圈的小塊比較大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 看到圓形邊界或 $x^2+y^2$：換極座標"
+            },
+            {
+              "do": "write",
+              "line": "• $dA=r\\,dr\\,d\\theta$：外圈的極矩形比較大，倍率是 $r$",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "• 三步驟：區域寫成 $r,\\theta$ 範圍 → 換 $x,y$、乘 $r$ → 累次積分",
+              "on": "就換"
+            },
+            {
+              "do": "write",
+              "line": "• 多出來的 $r$ 常常剛好讓 $e^{-r^2}$ 這類積分能換元",
+              "on": "西塔"
+            },
+            {
+              "do": "write",
+              "line": "• 極矩形面積 $=\\bar r\\,\\Delta r\\,\\Delta\\theta$，用中間半徑就完全精確",
+              "on": "因為"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Jacobian 的幾何意義：那個 $r$ 是一般規則的特例"
+          ],
+          "say": "下一課我們會看到，這個 r 其實是一個更一般的規則：雅可比行列式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Jacobian 的幾何意義：那個 $r$ 是一般規則的特例"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["polar", "polar-coordinates", "double-integral"],
-    "fine": ["polar-area-element", "polar-region-bounds", "polar-integrand-convert"]
+    "coarse": [
+      "polar",
+      "polar-coordinates",
+      "double-integral"
+    ],
+    "fine": [
+      "polar-area-element",
+      "polar-region-bounds",
+      "polar-integrand-convert"
+    ]
   },
   "practice": [
-    { "id": "int-035", "core": true, "trains": "polar-area-element" },
-    { "id": "lec-19-m3", "core": true, "trains": "polar-area-element" },
-    { "id": "int-025", "core": true, "trains": "polar-integrand-convert" },
-    { "id": "int-032", "core": true, "trains": "polar-region-bounds" },
-    { "id": "lec-19-m4", "core": true, "trains": "polar-integrand-convert" },
-    { "id": "lec-19-q2a", "core": true, "trains": "polar-region-bounds" },
-    { "id": "cg-9a2-001", "core": true, "trains": "polar-region-bounds" },
-    { "id": "lec-19-q2b", "trains": "polar-region-bounds" },
-    { "id": "int-033", "trains": "polar-integrand-convert" },
-    { "id": "rel-hard-mv-009", "trains": "polar-integrand-convert" },
-    { "id": "rel-hard-mv-002", "trains": "polar-integrand-convert" },
-    { "id": "cg-9a2-002", "trains": "polar-region-bounds" },
-    { "id": "lec-19-q2c", "challenge": true, "trains": "polar-region-bounds", "note": "挑戰：體積 $=2\\times\\iint\\sqrt{4-r^2}$，$r$ 從 $1$ 到 $2$。" },
-    { "id": "world-090", "challenge": true, "trains": "polar-integrand-convert", "note": "挑戰：令 $I=\\int_0^\\infty e^{-x^2}\\,dx$，算 $I^2$ 寫成第一象限上的二重積分，再換極座標。" }
+    {
+      "id": "int-035",
+      "core": true,
+      "trains": "polar-area-element"
+    },
+    {
+      "id": "lec-19-m3",
+      "core": true,
+      "trains": "polar-area-element"
+    },
+    {
+      "id": "int-025",
+      "core": true,
+      "trains": "polar-integrand-convert"
+    },
+    {
+      "id": "int-032",
+      "core": true,
+      "trains": "polar-region-bounds"
+    },
+    {
+      "id": "lec-19-m4",
+      "core": true,
+      "trains": "polar-integrand-convert"
+    },
+    {
+      "id": "lec-19-q2a",
+      "core": true,
+      "trains": "polar-region-bounds"
+    },
+    {
+      "id": "cg-9a2-001",
+      "core": true,
+      "trains": "polar-region-bounds"
+    },
+    {
+      "id": "lec-19-q2b",
+      "trains": "polar-region-bounds"
+    },
+    {
+      "id": "int-033",
+      "trains": "polar-integrand-convert"
+    },
+    {
+      "id": "rel-hard-mv-009",
+      "trains": "polar-integrand-convert"
+    },
+    {
+      "id": "rel-hard-mv-002",
+      "trains": "polar-integrand-convert"
+    },
+    {
+      "id": "cg-9a2-002",
+      "trains": "polar-region-bounds"
+    },
+    {
+      "id": "lec-19-q2c",
+      "challenge": true,
+      "trains": "polar-region-bounds",
+      "note": "挑戰：體積 $=2\\times\\iint\\sqrt{4-r^2}$，$r$ 從 $1$ 到 $2$。"
+    },
+    {
+      "id": "world-090",
+      "challenge": true,
+      "trains": "polar-integrand-convert",
+      "note": "挑戰：令 $I=\\int_0^\\infty e^{-x^2}\\,dx$，算 $I^2$ 寫成第一象限上的二重積分，再換極座標。"
+    }
   ],
   "gaps": []
 }

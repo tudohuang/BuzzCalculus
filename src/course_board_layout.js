@@ -37,13 +37,14 @@
   const IMPL = new Set(["\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies"]);
   const isRel = (s) => { const t = s.trim(); const m = /^\\[a-zA-Z]+/.exec(t); return /^[=<>]/.test(t) || Boolean(m && REL.has(m[0])); };
 
-  // 一行 → 單位（可以在單位之間換行）：每個單位是 [{m: 數學?, s}]。換行點：中文標點之後、最外層的關係符號之前。
+  // 一行 → 單位（可以在單位之間換行）：每個單位是 [{m: 數學?, s}]。換行點：中文標點之後、最外層的關係符號之前、中文每四字
+  const CJK = /[「『（]*[㐀-鿿]{1,4}[，、：；。！？」』）\s]*|[^㐀-鿿「『（]+|./g;
   function units(line) {
     const toks = [];
     String(line).split(/(?<!\\)\$/).forEach((p, i) => {
       if (!p) return;
       if (i % 2) relSplit(p).forEach((s, k) => toks.push({ m: true, s, rel: isRel(s), brk: k > 0 }));
-      else p.split(/(?<=[，、：；。！？])/).forEach((s, k) => { if (s) toks.push({ m: false, s, brk: k > 0 }); });
+      else p.split(/(?<=[，、：；。！？])/).forEach((s, k) => { (s.match(CJK) || []).forEach((c, j) => toks.push({ m: false, s: c, brk: k > 0 || j > 0 })); });
     });
     const out = [];
     toks.forEach((t, k) => {

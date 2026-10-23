@@ -1,44 +1,134 @@
 {
   "id": "surface-area",
   "title": "曲面面積",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["parametric-surfaces", "jacobian-geometry", "polar-double-integral"],
-  "next": ["surface-integral"],
-  "related": ["surface-area-revolution"],
-  "objectives": [
-    "說出 $A=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA$ 的來源：小方格被送成近似平行四邊形。",
-    "函數圖形 $z=g(x,y)$ 時用 $\\sqrt{1+g_x^2+g_y^2}$。",
-    "算出球面、拋物面、斜平面的面積。"
+  "prerequisites": [
+    "parametric-surfaces",
+    "jacobian-geometry",
+    "polar-double-integral"
   ],
-  "visual": "參數區域 D 上的一個小方格 Δu × Δv，被送到曲面上變成一小片微微彎曲的四邊形；旁邊畫出由 r_u Δu、r_v Δv 張成的切平面上的平行四邊形，兩者幾乎重合。把方格縮小，平行四邊形面積與曲面小片面積的比值趨近 1。",
+  "next": [
+    "surface-integral"
+  ],
+  "related": [
+    "surface-area-revolution"
+  ],
+  "objectives": [
+    "說出 $A=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA$ 的來源：小方格被送成近似的小平行四邊形，面積是 $|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$",
+    "函數圖形 $z=g(x,y)$ 時用 $\\sqrt{1+g_x^2+g_y^2}$",
+    "算出球面、拋物面、斜平面的面積"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 小方格變成小平行四邊形",
+      "heading": "① 小方格變平行四邊形",
       "body": [
-        "參數曲面 $\\mathbf r(u,v)$，$(u,v)\\in D$。$uv$ 平面上一個 $\\Delta u\\times\\Delta v$ 的小方格，被送到曲面上的一小片。",
-        "這一小片的兩條邊，近似於向量 $\\mathbf r_u\\Delta u$ 與 $\\mathbf r_v\\Delta v$（就像〈Jacobian 的幾何意義〉的線性近似）。所以它近似一個由這兩個向量張成的平行四邊形，面積是 $|\\mathbf r_u\\Delta u\\times\\mathbf r_v\\Delta v|=|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$。",
-        "加起來取極限："
+        "參數平面上一個小方格：$\\Delta u\\times\\Delta v$",
+        "兩條邊用線性近似：",
+        "小片 $\\approx$ 這兩個向量張出的平行四邊形：",
+        "叉積的長度 $=$ 平行四邊形面積（向量那一章）"
       ],
-      "tex": ["A(S)=\\iint_D \\big|\\mathbf r_u\\times\\mathbf r_v\\big|\\,dA"],
-      "collapsible": false
+      "tex": [
+        "\\mathbf r(u_0+\\Delta u,v_0)-\\mathbf r(u_0,v_0)\\approx\\mathbf r_u\\,\\Delta u",
+        "\\mathbf r(u_0,v_0+\\Delta v)-\\mathbf r(u_0,v_0)\\approx\\mathbf r_v\\,\\Delta v",
+        "\\Delta S\\approx|\\mathbf r_u\\Delta u\\times\\mathbf r_v\\Delta v|=|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v"
+      ]
+    },
+    {
+      "heading": "① 加起來取極限",
+      "body": [
+        "所有小片加起來，切到無限細：",
+        "$|\\mathbf r_u\\times\\mathbf r_v|$：參數平面的面積被放大幾倍",
+        "跟 9.6 一樣：平面的換變數，放大倍率是 $|J|$",
+        "平面的情形 $\\mathbf r=\\langle x(u,v),y(u,v),0\\rangle$：$\\mathbf r_u\\times\\mathbf r_v=\\langle0,0,J\\rangle$，長度正是 $|J|$"
+      ],
+      "tex": [
+        "A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA"
+      ]
     },
     {
       "heading": "② 函數圖形的特例",
       "body": [
-        "$z=g(x,y)$：$\\mathbf r=\\langle x,y,g\\rangle$，$\\mathbf r_x=\\langle 1,0,g_x\\rangle$，$\\mathbf r_y=\\langle 0,1,g_y\\rangle$。外積 $\\langle -g_x,-g_y,1\\rangle$，長度 $\\sqrt{1+g_x^2+g_y^2}$。",
-        "檢查直觀：平的曲面 $z={}$ 常數，$g_x=g_y=0$，因子是 $1$，面積就是 $D$ 的面積。越陡，因子越大。"
+        "$z=g(x,y)$：$\\mathbf r_x\\times\\mathbf r_y=\\langle-g_x,-g_y,1\\rangle$（上一課）",
+        "放大倍率 $\\ge1$：越陡，倍率越大",
+        "$g$ 是常數（水平面）時倍率是 $1$：面積就是影子 $D$ 的面積",
+        "例：斜平面 $z=1+2x+2y$，$D=[0,1]\\times[0,1]$",
+        "$g_x=2$，$g_y=2$：$\\sqrt{1+4+4}=3$"
       ],
-      "tex": ["A=\\iint_D\\sqrt{1+g_x^2+g_y^2}\\,dA"],
-      "collapsible": false
+      "tex": [
+        "A=\\iint_D\\sqrt{1+g_x^2+g_y^2}\\,dA",
+        "A=\\iint_D3\\,dA=3\\cdot1=3"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "另一個檢查：圓柱側面",
+        "$\\mathbf r=\\langle a\\cos\\theta,a\\sin\\theta,z\\rangle$，$0\\le\\theta\\le2\\pi$，$0\\le z\\le h$",
+        "$|\\mathbf r_\\theta\\times\\mathbf r_z|=|\\langle a\\cos\\theta,a\\sin\\theta,0\\rangle|=a$"
+      ],
+      "tex": [
+        "A=\\int_0^{2\\pi}\\!\\!\\int_0^h a\\,dz\\,d\\theta=2\\pi ah"
+      ]
     },
     {
       "heading": "③ 三步驟",
       "body": [
-        "1. 參數化曲面，寫出 $D$。2. 算 $\\mathbf r_u\\times\\mathbf r_v$ 與它的長度（圖形就直接用 $\\sqrt{1+g_x^2+g_y^2}$）。3. 在 $D$ 上做二重積分；$D$ 是圓盤時通常接著換〈極座標二重積分〉。",
-        "這也統一了〈旋轉曲面面積〉：把旋轉曲面參數化，套這個公式，就得到那裡的 $2\\pi\\int y\\,ds$。"
+        "• 參數化：寫出 $\\mathbf r(u,v)$ 和參數區域 $D$",
+        "• 算 $\\mathbf r_u$、$\\mathbf r_v$，叉積的長度",
+        "• 在 $D$ 上積分（$D$ 是圓盤就用極座標）",
+        "例：半徑 $a$ 的球面",
+        "上一課：$|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|=a^2\\sin\\varphi$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}A&=\\int_0^{2\\pi}\\!\\!\\int_0^\\pi a^2\\sin\\varphi\\,d\\varphi\\,d\\theta\\\\&=a^2\\cdot\\big[-\\cos\\varphi\\big]_0^\\pi\\cdot2\\pi\\\\&=a^2\\cdot2\\cdot2\\pi=4\\pi a^2\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 例：拋物面",
+      "body": [
+        "$z=x^2+y^2$，$z\\le9$：$D$ 是 $x^2+y^2\\le9$（半徑 $3$ 的圓盤）",
+        "$g_x=2x$，$g_y=2y$：",
+        "圓盤 → 極座標，$dA=r\\,dr\\,d\\theta$：",
+        "令 $w=1+4r^2$，$dw=8r\\,dr$：",
+        "檢查：影子面積 $9\\pi\\approx28.3$；碗很陡，面積大約是影子的 $4$ 倍，合理"
+      ],
+      "tex": [
+        "A=\\iint_D\\sqrt{1+4x^2+4y^2}\\,dA",
+        "A=\\int_0^{2\\pi}\\!\\!\\int_0^3\\sqrt{1+4r^2}\\;r\\,dr\\,d\\theta",
+        "\\begin{aligned}\\int_0^3\\sqrt{1+4r^2}\\,r\\,dr&=\\frac1{12}\\Big[(1+4r^2)^{3/2}\\Big]_0^3\\\\&=\\frac{37\\sqrt{37}-1}{12}\\end{aligned}",
+        "\\begin{aligned}A&=2\\pi\\cdot\\frac{37\\sqrt{37}-1}{12}\\\\&=\\frac\\pi6\\big(37\\sqrt{37}-1\\big)\\approx117.3\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 例：圓錐，跟幾何對答案",
+      "body": [
+        "圓錐 $z=\\sqrt{x^2+y^2}$，$z\\le2$：影子是半徑 $2$ 的圓盤",
+        "幾何：圓錐側面攤開是扇形，面積 $=\\pi R\\ell$",
+        "底半徑 $R=2$，斜高 $\\ell=\\sqrt{2^2+2^2}=2\\sqrt2$：",
+        "倍率 $\\sqrt2$ 的意思：圓錐每一處的坡度都是 $45^\\circ$",
+        "原點是尖點，$g_x,g_y$ 在那裡沒有定義；只差一個點，不影響積分"
+      ],
+      "tex": [
+        "g_x=\\frac{x}{\\sqrt{x^2+y^2}},\\quad g_y=\\frac{y}{\\sqrt{x^2+y^2}}",
+        "1+g_x^2+g_y^2=1+\\frac{x^2+y^2}{x^2+y^2}=2",
+        "A=\\sqrt2\\cdot\\pi\\cdot2^2=4\\sqrt2\\,\\pi\\approx17.77",
+        "\\pi\\cdot2\\cdot2\\sqrt2=4\\sqrt2\\,\\pi"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 來源：小方格 → 小平行四邊形，面積 $|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$",
+        "• 函數圖形：$\\sqrt{1+g_x^2+g_y^2}$，$D$ 是影子",
+        "• 球面 $4\\pi a^2$；斜平面、圓錐倍率是常數；圓盤影子用極座標",
+        "下一課：曲面積分：每一小片再乘上密度"
+      ],
+      "tex": [
+        "A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA"
+      ]
     }
   ],
   "workedExamples": [
@@ -85,35 +175,24 @@
   ],
   "checks": [
     {
-      "ask": "$z=g(x,y)$ 的曲面面積元素是？",
+      "ask": "平面 $z=5-2x$ 在 $D=[0,1]\\times[0,3]$ 上方那一片的面積？",
       "options": [
-        { "label": "$\\sqrt{1+g_x^2+g_y^2}\\,dA$", "correct": true },
-        { "label": "$\\sqrt{g_x^2+g_y^2}\\,dA$", "why": "漏了 $1$。平面 $z={}$ 常數 的 $g_x=g_y=0$，面積應該等於 $D$ 的面積，不是 $0$。" },
-        { "label": "$(1+g_x+g_y)\\,dA$", "why": "要平方再開根號（是外積 $\\langle -g_x,-g_y,1\\rangle$ 的長度），不是直接相加。" }
-      ]
-    },
-    {
-      "ask": "平面 $z=2x$ 在單位正方形 $[0,1]^2$ 上方的面積是？",
-      "options": [
-        { "label": "$\\sqrt5$", "correct": true },
-        { "label": "$2$", "why": "斜率 $2$ 不是面積的放大倍率；倍率是 $\\sqrt{1+2^2+0^2}=\\sqrt5$。" },
-        { "label": "$3$", "why": "要先平方再開根號：$\\sqrt{1+4}$，不是 $1+2$。" }
-      ]
-    },
-    {
-      "ask": "球面參數式的 $|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|$ 是？",
-      "options": [
-        { "label": "$a^2\\sin\\varphi$", "correct": true },
-        { "label": "$a^2$", "why": "漏了 $\\sin\\varphi$：靠近兩極的格子很窄，面積很小。少了它會算出 $2\\pi^2a^2$。" },
-        { "label": "$a\\sin\\varphi$", "why": "兩條邊 $\\mathbf r_\\varphi$、$\\mathbf r_\\theta$ 的長度分別是 $a$ 與 $a\\sin\\varphi$，相乘有兩個 $a$。" }
-      ]
-    },
-    {
-      "ask": "為什麼面積元素是 $|\\mathbf r_u\\times\\mathbf r_v|\\,dA$？",
-      "options": [
-        { "label": "小方格被送成以 $\\mathbf r_u\\Delta u$、$\\mathbf r_v\\Delta v$ 為邊的近似平行四邊形，外積的長度就是它的面積", "correct": true },
-        { "label": "因為 $\\mathbf r_u\\cdot\\mathbf r_v$ 是兩條邊的夾角", "why": "點積給的是夾角的餘弦乘長度，不是面積；面積要用外積的長度。" },
-        { "label": "因為面積是兩條邊長相加", "why": "平行四邊形的面積是底 $\\times$ 高（外積長度），不是邊長相加。" }
+        {
+          "label": "$3\\sqrt5$",
+          "correct": true
+        },
+        {
+          "label": "$3$",
+          "why": "那是影子 $D$ 的面積；斜面比影子大"
+        },
+        {
+          "label": "$\\sqrt5$",
+          "why": "忘了乘 $D$ 的面積 $3$"
+        },
+        {
+          "label": "$15$",
+          "why": "忘了開根號：倍率是 $\\sqrt{1+g_x^2}$，不是 $1+g_x^2$"
+        }
       ]
     }
   ],
@@ -121,212 +200,726 @@
     {
       "title": "小方格變平行四邊形",
       "beats": [
-        { "show": ["$uv$ 平面的 $\\Delta u\\times\\Delta v$ → 曲面上一小片"],
-          "say": "參數平面上一個小方格，被送到曲面上變成一小片。" },
-        { "show": ["兩條邊 $\\approx\\mathbf r_u\\Delta u$、$\\mathbf r_v\\Delta v$"],
-          "note": "線性近似，跟〈Jacobian 的幾何意義〉一樣。",
-          "say": "這一小片的兩條邊，近似於兩個切向量各乘上 delta u、delta v。",
+        {
+          "show": [
+            "參數平面上一個小方格：$\\Delta u\\times\\Delta v$"
+          ],
+          "say": "參數平面上，切一個小方格，寬德爾塔 u、高德爾塔 v。",
           "board": [
-            {"do":"write","line":"兩條邊 $\\approx{{ru:\\mathbf r_u}}\\Delta u$ 與 ${{rv:\\mathbf r_v}}\\Delta v$","tint":{"ru":"blue","rv":"violet"}}
-          ] },
-        { "show": ["外積：第一個分量 $a_2b_3-a_3b_2$","第二、第三個分量，下標輪流換"],
-          "note": "$\\mathbf a\\times\\mathbf b$ 用分量算出來。",
-          "say": "外積用分量算：第一個分量是 a 二 b 三 減 a 三 b 二，第二、第三個分量把下標輪流往後換。",
+            {
+              "do": "write",
+              "line": "參數平面上一個小方格：$\\Delta u\\times\\Delta v$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "r 把它送到曲面上，變成一小片彎彎的四邊形。",
           "board": [
-            {"do":"write","line":"$(\\mathbf a\\times\\mathbf b)_1=a_2b_3-a_3b_2$"},
-            {"do":"write","line":"$(\\mathbf a\\times\\mathbf b)_2=a_3b_1-a_1b_3$","on":"第二"},
-            {"do":"write","line":"$(\\mathbf a\\times\\mathbf b)_3=a_1b_2-a_2b_1$","on":"第三個"}
-          ] },
-        { "show": ["面積 $\\approx|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$"],
-          "note": "外積的長度 = 平行四邊形面積。",
-          "say": "兩個向量張成的平行四邊形，面積是外積的長度。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"saPatch\" viewBox=\"0 0 640 340\" width=\"640\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b4saPatch\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b4saPatchblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b4saPatchred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b4saPatchgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b4saPatchpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b4saPatchink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><g transform=\"translate(0,0)\"><clipPath id=\"cl9b4saPatch6\"><rect x=\"16\" y=\"70\" width=\"220\" height=\"220\"/></clipPath><g clip-path=\"url(#cl9b4saPatch6)\"><polygon points=\"38,268 214,268 214,92 38,92\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><polygon points=\"104,202 155.3,202 155.3,150.7 104,150.7\" fill=\"var(--red)\" fill-opacity=\"0.3\"/></g><line x1=\"12\" y1=\"268\" x2=\"248\" y2=\"268\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b4saPatch)\"/><line x1=\"38\" y1=\"294\" x2=\"38\" y2=\"58\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b4saPatch)\"/><text x=\"246\" y=\"259\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"47\" y=\"74\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><line x1=\"104\" y1=\"202\" x2=\"155.3\" y2=\"202\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><line x1=\"104\" y1=\"202\" x2=\"104\" y2=\"150.7\" stroke=\"var(--green)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><text x=\"129.7\" y=\"218.1\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δu</text><text x=\"98.1\" y=\"180\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"18\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δv</text><text x=\"184.7\" y=\"117.7\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D</text></g><g transform=\"translate(260,0)\"><polygon points=\"132.2,111.6 149.5,110.7 158.7,99.1 141.4,99.9\" fill=\"color-mix(in srgb, var(--blue) 17%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"149.5,110.7 166.8,110.3 176,98.7 158.7,99.1\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"123,121.4 140.3,120.6 149.5,110.7 132.2,111.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"166.8,110.3 184.1,110.8 193.3,99.2 176,98.7\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"140.3,120.6 157.6,120.2 166.8,110.3 149.5,110.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"113.8,129.6 131.1,128.8 140.3,120.6 123,121.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"184.1,110.8 201.4,112.6 210.6,100.9 193.3,99.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"157.6,120.2 174.9,120.7 184.1,110.8 166.8,110.3\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"131.1,128.8 148.4,128.4 157.6,120.2 140.3,120.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"104.6,136.4 121.9,135.6 131.1,128.8 113.8,129.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"201.4,112.6 218.7,115.8 227.9,104.2 210.6,100.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"174.9,120.7 192.2,122.4 201.4,112.6 184.1,110.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"148.4,128.4 165.7,128.9 174.9,120.7 157.6,120.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"218.7,115.8 236.1,120.8 245.3,109.2 227.9,104.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"121.9,135.6 139.2,135.2 148.4,128.4 131.1,128.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"192.2,122.4 209.5,125.7 218.7,115.8 201.4,112.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"236.1,120.8 253.4,127.5 262.6,115.9 245.3,109.2\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"95.4,142.1 112.7,141.3 121.9,135.6 104.6,136.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"165.7,128.9 183,130.6 192.2,122.4 174.9,120.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"253.4,127.5 270.7,135.9 279.9,124.3 262.6,115.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"209.5,125.7 226.9,130.6 236.1,120.8 218.7,115.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"139.2,135.2 156.5,135.7 165.7,128.9 148.4,128.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270.7,135.9 288,145.9 297.2,134.3 279.9,124.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"183,130.6 200.3,133.9 209.5,125.7 192.2,122.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"288,145.9 305.3,157.2 314.5,145.6 297.2,134.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"226.9,130.6 244.2,137.4 253.4,127.5 236.1,120.8\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"112.7,141.3 130,140.9 139.2,135.2 121.9,135.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"305.3,157.2 322.6,169.3 331.8,157.7 314.5,145.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"322.6,169.3 339.9,182 349.1,170.4 331.8,157.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"86.2,147.2 103.5,146.3 112.7,141.3 95.4,142.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"244.2,137.4 261.5,145.8 270.7,135.9 253.4,127.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"156.5,135.7 173.8,137.4 183,130.6 165.7,128.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"200.3,133.9 217.6,138.9 226.9,130.6 209.5,125.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.5,145.8 278.8,155.8 288,145.9 270.7,135.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"130,140.9 147.3,141.4 156.5,135.7 139.2,135.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"278.8,155.8 296.1,167 305.3,157.2 288,145.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"217.6,138.9 235,145.6 244.2,137.4 226.9,130.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.1,167 313.4,179.2 322.6,169.3 305.3,157.2\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"173.8,137.4 191.1,140.7 200.3,133.9 183,130.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"313.4,179.2 330.7,191.8 339.9,182 322.6,169.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"103.5,146.3 120.8,145.9 130,140.9 112.7,141.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235,145.6 252.3,154 261.5,145.8 244.2,137.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"147.3,141.4 164.6,143.1 173.8,137.4 156.5,135.7\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"77,152 94.3,151.2 103.5,146.3 86.2,147.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"191.1,140.7 208.4,145.6 217.6,138.9 200.3,133.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"252.3,154 269.6,164 278.8,155.8 261.5,145.8\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"269.6,164 286.9,175.2 296.1,167 278.8,155.8\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"120.8,145.9 138.1,146.4 147.3,141.4 130,140.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.9,175.2 304.2,187.4 313.4,179.2 296.1,167\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"208.4,145.6 225.8,152.4 235,145.6 217.6,138.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"304.2,187.4 321.5,200.1 330.7,191.8 313.4,179.2\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"164.6,143.1 181.9,146.4 191.1,140.7 173.8,137.4\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"94.3,151.2 111.6,150.8 120.8,145.9 103.5,146.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"225.8,152.4 243.1,160.8 252.3,154 235,145.6\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"138.1,146.4 155.4,148.2 164.6,143.1 147.3,141.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"243.1,160.8 260.4,170.8 269.6,164 252.3,154\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"181.9,146.4 199.2,151.3 208.4,145.6 191.1,140.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"67.8,157.1 85.1,156.3 94.3,151.2 77,152\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.4,170.8 277.7,182 286.9,175.2 269.6,164\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.7,182 295,194.2 304.2,187.4 286.9,175.2\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"295,194.2 312.3,206.8 321.5,200.1 304.2,187.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"111.6,150.8 128.9,151.3 138.1,146.4 120.8,145.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"199.2,151.3 216.6,158.1 225.8,152.4 208.4,145.6\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"155.4,148.2 172.7,151.4 181.9,146.4 164.6,143.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"216.6,158.1 233.9,166.5 243.1,160.8 225.8,152.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"85.1,156.3 102.4,155.9 111.6,150.8 94.3,151.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"233.9,166.5 251.2,176.5 260.4,170.8 243.1,160.8\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"128.9,151.3 146.2,153 155.4,148.2 138.1,146.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"172.7,151.4 190,156.4 199.2,151.3 181.9,146.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"58.6,163 75.9,162.2 85.1,156.3 67.8,157.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.2,176.5 268.5,187.7 277.7,182 260.4,170.8\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"268.5,187.7 285.8,199.9 295,194.2 277.7,182\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"285.8,199.9 303.1,212.5 312.3,206.8 295,194.2\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"190,156.4 207.4,163.1 216.6,158.1 199.2,151.3\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"102.4,155.9 119.7,156.4 128.9,151.3 111.6,150.8\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"146.2,153 163.5,156.3 172.7,151.4 155.4,148.2\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"207.4,163.1 224.7,171.5 233.9,166.5 216.6,158.1\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"75.9,162.2 93.2,161.8 102.4,155.9 85.1,156.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"224.7,171.5 242,181.5 251.2,176.5 233.9,166.5\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"49.4,170.1 66.7,169.3 75.9,162.2 58.6,163\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"119.7,156.4 137,158.1 146.2,153 128.9,151.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"163.5,156.3 180.8,161.2 190,156.4 172.7,151.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242,181.5 259.3,192.8 268.5,187.7 251.2,176.5\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,192.8 276.6,204.9 285.8,199.9 268.5,187.7\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"276.6,204.9 293.9,217.6 303.1,212.5 285.8,199.9\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"93.2,161.8 110.5,162.3 119.7,156.4 102.4,155.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"180.8,161.2 198.1,167.9 207.4,163.1 190,156.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"137,158.1 154.3,161.4 163.5,156.3 146.2,153\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"66.7,169.3 84,168.9 93.2,161.8 75.9,162.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"198.1,167.9 215.5,176.4 224.7,171.5 207.4,163.1\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"40.2,178.7 57.5,177.8 66.7,169.3 49.4,170.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"215.5,176.4 232.8,186.4 242,181.5 224.7,171.5\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"110.5,162.3 127.8,164 137,158.1 119.7,156.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"154.3,161.4 171.6,166.4 180.8,161.2 163.5,156.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"232.8,186.4 250.1,197.6 259.3,192.8 242,181.5\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"250.1,197.6 267.4,209.8 276.6,204.9 259.3,192.8\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"84,168.9 101.3,169.4 110.5,162.3 93.2,161.8\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.4,209.8 284.7,222.4 293.9,217.6 276.6,204.9\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"171.6,166.4 188.9,173.1 198.1,167.9 180.8,161.2\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"127.8,164 145.1,167.3 154.3,161.4 137,158.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"57.5,177.8 74.8,177.5 84,168.9 66.7,169.3\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"31,188.9 48.3,188.1 57.5,177.8 40.2,178.7\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"188.9,173.1 206.3,181.5 215.5,176.4 198.1,167.9\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"101.3,169.4 118.6,171.1 127.8,164 110.5,162.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"206.3,181.5 223.6,191.5 232.8,186.4 215.5,176.4\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"145.1,167.3 162.4,172.3 171.6,166.4 154.3,161.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"223.6,191.5 240.9,202.7 250.1,197.6 232.8,186.4\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"74.8,177.5 92.1,177.9 101.3,169.4 84,168.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240.9,202.7 258.2,214.9 267.4,209.8 250.1,197.6\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.2,214.9 275.5,227.6 284.7,222.4 267.4,209.8\" fill=\"color-mix(in srgb, var(--blue) 8%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"48.3,188.1 65.6,187.7 74.8,177.5 57.5,177.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"162.4,172.3 179.7,179 188.9,173.1 171.6,166.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"118.6,171.1 135.9,174.4 145.1,167.3 127.8,164\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"179.7,179 197.1,187.4 206.3,181.5 188.9,173.1\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"92.1,177.9 109.4,179.7 118.6,171.1 101.3,169.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"197.1,187.4 214.4,197.4 223.6,191.5 206.3,181.5\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"135.9,174.4 153.2,179.3 162.4,172.3 145.1,167.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"65.6,187.7 82.9,188.2 92.1,177.9 74.8,177.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"214.4,197.4 231.7,208.6 240.9,202.7 223.6,191.5\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"231.7,208.6 249,220.8 258.2,214.9 240.9,202.7\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"249,220.8 266.3,233.5 275.5,227.6 258.2,214.9\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"153.2,179.3 170.5,186.1 179.7,179 162.4,172.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"109.4,179.7 126.7,182.9 135.9,174.4 118.6,171.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"82.9,188.2 100.2,189.9 109.4,179.7 92.1,177.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"170.5,186.1 187.8,194.5 197.1,187.4 179.7,179\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"126.7,182.9 144,187.9 153.2,179.3 135.9,174.4\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"187.8,194.5 205.2,204.5 214.4,197.4 197.1,187.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"205.2,204.5 222.5,215.7 231.7,208.6 214.4,197.4\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"100.2,189.9 117.5,193.2 126.7,182.9 109.4,179.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"222.5,215.7 239.8,227.9 249,220.8 231.7,208.6\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"144,187.9 161.3,194.6 170.5,186.1 153.2,179.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"239.8,227.9 257.1,240.5 266.3,233.5 249,220.8\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"161.3,194.6 178.6,203.1 187.8,194.5 170.5,186.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"117.5,193.2 134.8,198.1 144,187.9 126.7,182.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"178.6,203.1 196,213 205.2,204.5 187.8,194.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"196,213 213.3,224.3 222.5,215.7 205.2,204.5\" fill=\"color-mix(in srgb, var(--blue) 9%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"134.8,198.1 152.1,204.9 161.3,194.6 144,187.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"213.3,224.3 230.6,236.4 239.8,227.9 222.5,215.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"230.6,236.4 247.9,249.1 257.1,240.5 239.8,227.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"152.1,204.9 169.4,213.3 178.6,203.1 161.3,194.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"169.4,213.3 186.8,223.3 196,213 178.6,203.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"186.8,223.3 204.1,234.5 213.3,224.3 196,213\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"204.1,234.5 221.4,246.7 230.6,236.4 213.3,224.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"221.4,246.7 238.7,259.3 247.9,249.1 230.6,236.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.3\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"150.3,156.9 155.3,157.9 160.4,159.1 165.4,160.4 170.5,161.9 175.5,163.5 180.6,165.2 185.6,167.1 190.7,169.2 195.7,171.4 200.8,173.8 205.8,176.3 210.9,178.9 210.9,178.9 213.5,177.4 216.2,176 218.9,174.6 221.6,173.1 224.3,171.7 227,170.3 229.6,168.9 232.3,167.4 235,165.8 237.7,164.2 240.4,162.6 243.1,160.8 243.1,160.8 238,158.2 233,155.7 227.9,153.3 222.9,151.1 217.8,149.1 212.8,147.2 207.7,145.4 202.7,143.8 197.6,142.3 192.6,141 187.5,139.9 182.5,138.9 182.5,138.9 179.8,140.6 177.1,142.3 174.4,143.9 171.8,145.4 169.1,146.9 166.4,148.4 163.7,149.8 161,151.2 158.3,152.6 155.7,154 153,155.5 150.3,156.9\" fill=\"var(--red)\" fill-opacity=\"0.3\"/><polygon points=\"150.3,156.9 210.9,168.3 243.1,150.4 182.5,139\" fill=\"none\" fill-opacity=\"0.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\"/><line x1=\"150.3\" y1=\"156.9\" x2=\"210.9\" y2=\"168.3\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah9b4saPatchred)\"/><line x1=\"150.3\" y1=\"156.9\" x2=\"182.5\" y2=\"139\" stroke=\"var(--green)\" stroke-width=\"3\" marker-end=\"url(#ah9b4saPatchgreen)\"/><circle cx=\"150.3\" cy=\"156.9\" r=\"4.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"214.9\" y=\"196.3\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">r</tspan><tspan baseline-shift=\"sub\" font-size=\"15\">u</tspan> Δu</text><text x=\"174.5\" y=\"127\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">r</tspan><tspan baseline-shift=\"sub\" font-size=\"15\">v</tspan> Δv</text></g><text x=\"262\" y=\"175\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"34\" style=\"font-family:KaTeX_Main,serif\">→</text><text x=\"262\" y=\"145\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\"><tspan font-weight=\"bold\" font-style=\"normal\">r</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩條邊用線性近似：",
+            "$\\mathbf r(u_0+\\Delta u,v_0)-\\mathbf r(u_0,v_0)\\approx\\mathbf r_u\\,\\Delta u$"
+          ],
+          "say": "這一小片的兩條邊，用線性近似：u 方向那條邊，大約是 r u 乘德爾塔 u；v 方向那條邊，大約是 r v 乘德爾塔 v。",
           "board": [
-            {"do":"write","line":"面積 $\\approx{{cr:|{{ru:\\mathbf r_u}}\\times{{rv:\\mathbf r_v}}|}}\\,\\Delta u\\,\\Delta v$","on":"兩個向量"},
-            {"do":"underline","term":"cr","label":"外積的長度","on":"面積是"}
-          ] },
-        { "show": ["$|\\mathbf a\\times\\mathbf b|=|\\mathbf a||\\mathbf b|\\sin\\theta$"],
-          "note": "長度正好是底乘高。",
-          "say": "外積的長度剛好是兩邊長相乘，再乘夾角的 sine，也就是底乘高，所以等於平行四邊形的面積。",
+            {
+              "do": "write",
+              "line": "兩條邊用線性近似："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf r(u_0+\\Delta u,v_0)-\\mathbf r(u_0,v_0)\\approx\\mathbf r_u\\,\\Delta u$",
+              "on": "條邊#2"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf r(u_0,v_0+\\Delta v)-\\mathbf r(u_0,v_0)\\approx\\mathbf r_v\\,\\Delta v$",
+              "on": "方向#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小片 $\\approx$ 這兩個向量張出的平行四邊形：",
+            "$\\Delta S\\approx|\\mathbf r_u\\Delta u\\times\\mathbf r_v\\Delta v|=|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$"
+          ],
+          "say": "所以這一小片，差不多是這兩個向量張出的平行四邊形。平行四邊形的面積，是叉積的長度，德爾塔 u 和德爾塔 v 可以提出來。",
           "board": [
-            {"do":"write","line":"${{x:|\\mathbf a\\times\\mathbf b|=|\\mathbf a||\\mathbf b|\\sin\\theta}}$"},
-            {"do":"underline","term":"x","label":"底乘高","on":"底乘高"}
-          ] },
-        { "show": ["$A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA$"],
-          "say": "全部加起來取極限，就是曲面面積。",
-          "board": [
-            {"do":"write","line":"${{as:A(S)=\\iint_D|{{ru:\\mathbf r_u}}\\times{{rv:\\mathbf r_v}}|\\,dA}}$","on":"全部加起來"},
-            {"do":"box","term":"as","color":"green","on":"就是曲面"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "小片 $\\approx$ 這兩個向量張出的平行四邊形："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\Delta S\\approx|\\mathbf r_u\\Delta u\\times\\mathbf r_v\\Delta v|=|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v}}$",
+              "on": "量張"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的面"
+            },
+            {
+              "do": "write",
+              "line": "　叉積的長度 $=$ 平行四邊形面積（向量那一章）",
+              "color": "violet",
+              "on": "和德"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "函數圖形",
+      "title": "加起來取極限",
       "beats": [
-        { "show": ["$\\mathbf r_x=\\langle 1,0,g_x\\rangle$，$\\mathbf r_y=\\langle 0,1,g_y\\rangle$"],
-          "note": "$z=g(x,y)$，參數是 $x$、$y$。",
-          "say": "函數圖形用 x、y 當參數，兩個切向量很簡單。",
+        {
+          "show": [
+            "所有小片加起來，切到無限細：",
+            "$A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA$"
+          ],
+          "say": "把所有小片加起來，切到無限細，就得到曲面面積：參數區域上，叉積長度的二重積分。",
           "board": [
-            {"do":"write","line":"${{rx:\\mathbf r_x}}=\\langle 1,0,g_x\\rangle$","tint":{"rx":"blue"}},
-            {"do":"write","line":"${{ry:\\mathbf r_y}}=\\langle 0,1,g_y\\rangle$","tint":{"ry":"violet"},"on":"兩個切向量"}
-          ] },
-        { "show": ["第一個分量：$0\\cdot g_y-g_x\\cdot1=-g_x$","第二個分量：$g_x\\cdot0-1\\cdot g_y=-g_y$"],
-          "say": "代進外積：第一個分量是零乘 g 下標 y，減 g 下標 x 乘一，得負 g 下標 x。第二個分量類似，得負 g 下標 y。",
+            {
+              "do": "write",
+              "line": "所有小片加起來，切到無限細："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA}}$",
+              "color": "red",
+              "on": "就得"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "域上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|\\mathbf r_u\\times\\mathbf r_v|$：參數平面的面積被放大幾倍"
+          ],
+          "say": "叉積的長度，就是參數平面上的面積，到了曲面上被放大幾倍。",
           "board": [
-            {"do":"write","line":"第一：$0\\cdot g_y-g_x\\cdot1=-g_x$"},
-            {"do":"write","line":"第二：$g_x\\cdot0-1\\cdot g_y=-g_y$","on":"第二個分量"}
-          ] },
-        { "show": ["第三個分量：$1\\cdot1-0\\cdot0=1$"],
-          "say": "第三個分量是一乘一減零乘零，等於一。三個放在一起，就是負 g x、負 g y、一。",
+            {
+              "do": "write",
+              "line": "$|\\mathbf r_u\\times\\mathbf r_v|$：參數平面的面積被放大幾倍"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 9.6 一樣：平面的換變數，放大倍率是 $|J|$"
+          ],
+          "say": "這跟 9.6 的雅可比行列式是同一個想法：換變數時，小方格的面積被放大雅可比行列式的絕對值倍。",
           "board": [
-            {"do":"write","line":"第三：$1\\cdot1-0\\cdot0=1$"}
-          ] },
-        { "show": ["外積 $\\langle -g_x,-g_y,1\\rangle$，長 $\\sqrt{1+g_x^2+g_y^2}$"],
-          "say": "外積是負 g 下標 x、負 g 下標 y、一，長度是根號一加兩個偏導數的平方。",
+            {
+              "do": "write",
+              "line": "跟 9.6 一樣：平面的換變數，放大倍率是 $|J|$"
+            },
+            {
+              "do": "write",
+              "line": "　平面的情形 $\\mathbf r=\\langle x(u,v),y(u,v),0\\rangle$：$\\mathbf r_u\\times\\mathbf r_v=\\langle0,0,J\\rangle$，長度正是 $|J|$",
+              "color": "violet",
+              "on": "數時"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "半徑 $1$ 的球面，$|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|=\\sin\\varphi$。參數平面上一樣大的小方格，送到球面上哪裡最大？",
+        "options": [
+          {
+            "label": "赤道（$\\varphi=\\frac\\pi2$）",
+            "correct": true
+          },
+          {
+            "label": "南北極",
+            "why": "極點 $\\sin\\varphi=0$：整排方格被壓成一點，面積趨近 $0$"
+          },
+          {
+            "label": "到處一樣大",
+            "why": "那要 $|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|$ 是常數；這裡會隨 $\\varphi$ 變"
+          }
+        ]
+      }
+    },
+    {
+      "title": "函數圖形的特例",
+      "beats": [
+        {
+          "show": [
+            "$z=g(x,y)$：$\\mathbf r_x\\times\\mathbf r_y=\\langle-g_x,-g_y,1\\rangle$（上一課）"
+          ],
+          "say": "函數圖形的情形，上一課算過，叉積是負 g x、負 g y、1。",
           "board": [
-            {"do":"write","line":"${{rx:\\mathbf r_x}}\\times{{ry:\\mathbf r_y}}={{n:\\langle -g_x,-g_y,1\\rangle}}$","tint":{"rx":"blue","ry":"violet"}},
-            {"do":"write","line":"長度 ＝ $|{{n:\\langle -g_x,-g_y,1\\rangle}}|$","on":"長度是"}
-          ] },
-        { "show": ["平的曲面：因子是 $1$；越陡，因子越大"],
-          "say": "檢查直觀：曲面是平的，偏導數都是零，因子是一，面積就是影子的面積。越陡，放大越多。",
+            {
+              "do": "write",
+              "line": "$z=g(x,y)$：$\\mathbf r_x\\times\\mathbf r_y=\\langle-g_x,-g_y,1\\rangle$（上一課）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$A=\\iint_D\\sqrt{1+g_x^2+g_y^2}\\,dA$"
+          ],
+          "say": "長度開根號，得到 1 加 g x 平方加 g y 平方。這就是函數圖形的面積公式，D 是曲面在 x y 平面上的影子。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"平的：$g_x=g_y=0$","on":"偏導數"},
-            {"do":"write","line":"因子 $={{f:1}}$","on":"因子是"},
-            {"do":"write","line":"面積 ＝ 影子的面積","on":"面積就是"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle A=\\iint_D\\sqrt{1+g_x^2+g_y^2}\\,dA}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "放大倍率 $\\ge1$：越陡，倍率越大"
+          ],
+          "say": "根號裡至少是 1，所以曲面面積至少跟影子一樣大；越陡，放大越多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "放大倍率 $\\ge1$：越陡，倍率越大"
+            },
+            {
+              "do": "write",
+              "line": "　$g$ 是常數（水平面）時倍率是 $1$：面積就是影子 $D$ 的面積",
+              "color": "violet",
+              "on": "少跟"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：斜平面 $z=1+2x+2y$，$D=[0,1]\\times[0,1]$"
+          ],
+          "say": "例子：斜平面 z 等於 1 加 2x 加 2y，在單位正方形上方那一片。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：斜平面 $z=1+2x+2y$，$D=[0,1]\\times[0,1]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "藍色是影子，紅色是那一片斜平面。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"saGraph\" viewBox=\"0 0 560 400\" width=\"560\" height=\"400\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b4saGraph\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b4saGraphblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b4saGraphred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b4saGraphgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b4saGraphpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b4saGraphink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"250\" y1=\"350\" x2=\"195.6\" y2=\"376.9\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b4saGraphink)\"/><line x1=\"250\" y1=\"350\" x2=\"337\" y2=\"366.8\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b4saGraphink)\"/><line x1=\"250\" y1=\"350\" x2=\"250\" y2=\"52.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b4saGraphink)\"/><text x=\"187.3\" y=\"393\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"352.2\" y=\"375.8\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"250\" y=\"31.2\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><polygon points=\"250,350 221.4,364.2 267.2,373 295.8,358.8\" fill=\"var(--blue)\" fill-opacity=\"0.2\" stroke=\"var(--blue)\" stroke-width=\"1.8\"/><line x1=\"250\" y1=\"350\" x2=\"250\" y2=\"298.6\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"7 6\"/><line x1=\"221.4\" y1=\"364.2\" x2=\"221.4\" y2=\"210.1\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"7 6\"/><line x1=\"267.2\" y1=\"373\" x2=\"267.2\" y2=\"116.2\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"7 6\"/><line x1=\"295.8\" y1=\"358.8\" x2=\"295.8\" y2=\"204.8\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"7 6\"/><polygon points=\"250,298.6 242.8,276.5 254.3,253 261.4,275.2\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"261.4,275.2 254.3,253 265.7,229.6 272.9,251.7\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"242.8,276.5 235.7,254.4 247.1,230.9 254.3,253\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"272.9,251.7 265.7,229.6 277.2,206.1 284.3,228.2\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"254.3,253 247.1,230.9 258.6,207.4 265.7,229.6\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"235.7,254.4 228.5,232.2 240,208.8 247.1,230.9\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"284.3,228.2 277.2,206.1 288.6,182.6 295.8,204.8\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"265.7,229.6 258.6,207.4 270,184 277.2,206.1\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"247.1,230.9 240,208.8 251.4,185.3 258.6,207.4\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"228.5,232.2 221.4,210.1 232.8,186.6 240,208.8\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.2,206.1 270,184 281.5,160.5 288.6,182.6\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"258.6,207.4 251.4,185.3 262.9,161.8 270,184\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"240,208.8 232.8,186.6 244.3,163.1 251.4,185.3\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,184 262.9,161.8 274.3,138.3 281.5,160.5\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"251.4,185.3 244.3,163.1 255.7,139.7 262.9,161.8\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.9,161.8 255.7,139.7 267.2,116.2 274.3,138.3\" fill=\"color-mix(in srgb, var(--red) 33%, var(--paper))\" stroke=\"var(--red)\" stroke-opacity=\"0.5\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><text x=\"281.2\" y=\"120.2\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z = 1 + 2x + 2y</text><text x=\"258.6\" y=\"369.5\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D</text><text x=\"211.4\" y=\"382.2\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"303.8\" y=\"376.8\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\">1</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g_x=2$，$g_y=2$：$\\sqrt{1+4+4}=3$",
+            "$A=\\iint_D3\\,dA=3\\cdot1=3$"
+          ],
+          "say": "g x 和 g y 都是 2，根號 1 加 4 加 4 等於 3。倍率是常數，面積就是 3 乘影子面積 1，等於 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g_x=2$，$g_y=2$：$\\sqrt{1+4+4}=3$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle A=\\iint_D3\\,dA=3\\cdot1=3}}$",
+              "color": "red",
+              "on": "等於#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "面積#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "平面 $z=5-2x$ 在 $D=[0,1]\\times[0,3]$ 上方那一片的面積？"
+          ],
+          "say": "試一題。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "斜平面",
+      "title": "試一題",
       "beats": [
-        { "show": ["$z=1+2x+2y$，在 $[0,1]^2$ 上方"],
-          "say": "一片斜平面，在單位正方形上方。",
+        {
+          "show": [
+            "另一個檢查：圓柱側面",
+            "$\\mathbf r=\\langle a\\cos\\theta,a\\sin\\theta,z\\rangle$，$0\\le\\theta\\le2\\pi$，$0\\le z\\le h$"
+          ],
+          "say": "再檢查一個熟悉的：半徑 a、高 h 的圓柱側面。上一課的叉積，乘上半徑 a，長度就是 a。",
           "board": [
-            {"do":"write","line":"$z=1+2x+2y$ 在 $[0,1]^2$ 上方"}
-          ] },
-        { "show": ["$\\sqrt{1+4+4}=3$：常數"],
-          "say": "兩個偏導數都是二，因子是根號九，等於三，處處一樣。",
+            {
+              "do": "write",
+              "line": "另一個檢查：圓柱側面"
+            },
+            {
+              "do": "write",
+              "line": "$\\mathbf r=\\langle a\\cos\\theta,a\\sin\\theta,z\\rangle$，$0\\le\\theta\\le2\\pi$，$0\\le z\\le h$",
+              "on": "的圓"
+            },
+            {
+              "do": "write",
+              "line": "$|\\mathbf r_\\theta\\times\\mathbf r_z|=|\\langle a\\cos\\theta,a\\sin\\theta,0\\rangle|=a$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$A=\\int_0^{2\\pi}\\!\\!\\int_0^h a\\,dz\\,d\\theta=2\\pi ah$"
+          ],
+          "say": "積分起來是 2 派 a h，就是把側面攤開成長方形的面積。",
           "board": [
-            {"do":"write","line":"$g_x=g_y=2$","on":"兩個偏導數"},
-            {"do":"write","line":"因子 $\\sqrt{1+4+4}={{f:3}}$","on":"因子是"},
-            {"do":"underline","term":"f","label":"處處一樣","on":"處處"}
-          ] },
-        { "show": ["$A=3\\times1=3$"],
-          "note": "斜面比它的影子大 $3$ 倍。",
-          "say": "所以面積是三乘上正方形的面積一，斜面比影子大三倍。",
-          "board": [
-            {"do":"write","line":"$A={{f:3}}\\times1=\\;{{a:3}}$","on":"所以面積"},
-            {"do":"box","term":"a","color":"green","label":"影子的 3 倍","on":"斜面比影子"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle A=\\int_0^{2\\pi}\\!\\!\\int_0^h a\\,dz\\,d\\theta=2\\pi ah}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "球面面積",
+      "title": "三步驟",
       "beats": [
-        { "show": ["$\\mathbf r(\\varphi,\\theta)$：半徑 $a$ 的球面"],
-          "say": "用球面的參數式，對兩個角各偏微分，再做外積。",
+        {
+          "show": [
+            "• 參數化：寫出 $\\mathbf r(u,v)$ 和參數區域 $D$",
+            "• 算 $\\mathbf r_u$、$\\mathbf r_v$，叉積的長度"
+          ],
+          "say": "計算曲面面積只有三步：參數化，算叉積的長度，在參數區域上積分。",
           "board": [
-            {"do":"write","line":"$\\mathbf r(\\varphi,\\theta)$：半徑 $a$ 的球面"},
-            {"do":"write","line":"對 $\\varphi$、$\\theta$ 各偏微分，再外積","on":"偏微分"}
-          ] },
-        { "show": ["$x=a\\sin\\varphi\\cos\\theta$","$y=a\\sin\\varphi\\sin\\theta$，$z=a\\cos\\varphi$"],
-          "note": "微分時，另一個角當常數。",
-          "say": "先寫出 x、y、z 各自的式子。對 phi 微分，theta 當常數；對 theta 微分，phi 當常數。",
+            {
+              "do": "write",
+              "line": "• 參數化：寫出 $\\mathbf r(u,v)$ 和參數區域 $D$"
+            },
+            {
+              "do": "write",
+              "line": "• 算 $\\mathbf r_u$、$\\mathbf r_v$，叉積的長度",
+              "on": "參數#1"
+            },
+            {
+              "do": "write",
+              "line": "• 在 $D$ 上積分（$D$ 是圓盤就用極座標）",
+              "on": "在參"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：半徑 $a$ 的球面",
+            "上一課：$|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|=a^2\\sin\\varphi$"
+          ],
+          "say": "例子：半徑 a 的球面。上一課算過，叉積的長度是 a 平方正弦斐。",
           "board": [
-            {"do":"write","line":"$x=a\\sin\\varphi\\cos\\theta$"},
-            {"do":"write","line":"$y=a\\sin\\varphi\\sin\\theta$","on":"y"},
-            {"do":"write","line":"$z=a\\cos\\varphi$","on":"z"},
-            {"do":"write","line":"對 $\\varphi$：$z_\\varphi=-a\\sin\\varphi$","on":"phi 微分"},
-            {"do":"write","line":"對 $\\theta$：$z_\\theta=0$","on":"theta 微分"}
-          ] },
-        { "show": ["前兩個帶 $a^2\\sin^2\\varphi$","第三個：$a^2\\sin\\varphi\\cos\\varphi$"],
-          "note": "提出 $a^2\\sin\\varphi$，括號平方和是 $1$。",
-          "say": "算完外積，前兩個分量帶 sine phi 平方，第三個帶 sine phi cosine phi。提出來，平方和是一。",
+            {
+              "do": "write",
+              "line": "例：半徑 $a$ 的球面"
+            },
+            {
+              "do": "write",
+              "line": "上一課：$|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|=a^2\\sin\\varphi$",
+              "on": "叉積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}A&=\\int_0^{2\\pi}\\!\\!\\int_0^\\pi a^2\\sin\\varphi\\,d\\varphi\\,d\\theta\\\\&=a^2\\cdot\\big[-\\cos\\varphi\\big]_0^\\pi\\cdot2\\pi\\\\&=a^2\\cdot2\\cdot2\\pi=4\\pi a^2\\end{aligned}$"
+          ],
+          "say": "斐從 0 到派，西塔從 0 到 2 派。對斐積分，負餘弦從 0 到派，得到 2。再乘 2 派，球面面積是 4 派 a 平方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"前兩個帶 $a^2\\sin^2\\varphi$","on":"前兩個"},
-            {"do":"write","line":"第三個：$a^2\\sin\\varphi\\cos\\varphi$","on":"第三個"},
-            {"do":"write","line":"括號平方和 $=1$","on":"平方和"}
-          ] },
-        { "show": ["$\\mathbf r_\\varphi\\times\\mathbf r_\\theta=a^2\\sin\\varphi\\,\\langle\\dots\\rangle$"],
-          "note": "括號裡是單位向量；$\\sin\\varphi\\ge 0$。",
-          "say": "外積整理成 a 平方 sine phi 乘一個單位向量，所以長度就是 a 平方 sine phi。",
-          "board": [
-            {"do":"write","line":"${{x:\\mathbf r_\\varphi\\times\\mathbf r_\\theta}}$ ＝ 長度 × 單位向量"}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}\\int_0^\\pi a^2\\sin\\varphi\\,d\\varphi\\,d\\theta=4\\pi a^2$"],
-          "note": "$a=2$：$16\\pi$。",
-          "say": "sine phi 從零積到 pi 是二，再乘二 pi，得四 pi a 平方。漏了 sine phi 就錯了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^\\pi\\sin\\varphi\\,d\\varphi={{t:2}}$","on":"從零積到"},
-            {"do":"write","line":"$2\\cdot 2\\pi\\cdot a^2={{r:4\\pi a^2}}$","on":"再乘"},
-            {"do":"box","term":"r","color":"green","on":"得四"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}A&=\\int_0^{2\\pi}\\!\\!\\int_0^\\pi a^2\\sin\\varphi\\,d\\varphi\\,d\\theta\\\\&=a^2\\cdot\\big[-\\cos\\varphi\\big]_0^\\pi\\cdot2\\pi\\\\&=a^2\\cdot2\\cdot2\\pi=4\\pi a^2\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "到派#2"
+            }
+          ]
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "拋物面",
-      "beats": [
-        { "show": ["$z=x^2+y^2$，$z\\le 9$"],
-          "note": "$g_x=2x$、$g_y=2y$。",
-          "say": "拋物面在高度九以下的部分。兩個偏導數是二 x、二 y。",
-          "board": [
-            {"do":"write","line":"$z=x^2+y^2$，$z\\le 9$"},
-            {"do":"write","line":"$g_x=2x$，$g_y=2y$","on":"兩個偏導數"}
-          ] },
-        { "show": ["側面：$z=x^2$，高度停在 $9$"],
-          "note": "影子的半徑是 $3$。",
-          "say": "把拋物面沿 x 軸切開看側面。高度到九就停，影子的半徑是三。",
-          "board": [
-            {"do":"plot","graph":{"window":[-4,4,-1,10],"curves":[{"expr":"x^2","domain":[-3,3],"color":"blue"}],"dashed":[[[-4,9],[4,9]]]}}
-          ] },
-        { "show": ["因子 $\\sqrt{1+4x^2+4y^2}=\\sqrt{1+4r^2}$"],
-          "note": "$D$：$x^2+y^2\\le 9$，換極座標。",
-          "say": "影子是半徑三的圓盤，因子只跟 x 平方加 y 平方有關，換成極座標。",
-          "board": [
-            {"do":"write","line":"$D$：$x^2+y^2\\le 9$（半徑 3）"},
-            {"do":"write","line":"因子 $\\sqrt{1+4{{s:x^2+y^2}}}=\\sqrt{1+4r^2}$","on":"因子只跟"},
-            {"do":"focus","term":"s","label":"換極座標","on":"x 平方加"}
-          ] }
-      ],
-      "key": "$g_x^2+g_y^2$ 正好是 $4r^2$：換極座標",
-      "predict": {
-        "ask": "面積的積分式是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "求曲面面積的順序",
+        "steps": [
           {
-            "label": "$\\int_0^{2\\pi}\\int_0^3\\sqrt{1+4r^2}\\,r\\,dr\\,d\\theta$",
-            "correct": true
+            "label": "寫出參數式 $\\mathbf r(u,v)$ 與參數區域 $D$"
           },
           {
-            "label": "$\\int_0^{2\\pi}\\int_0^3\\sqrt{1+4r^2}\\,dr\\,d\\theta$",
-            "why": "換極座標要補 $dA=r\\,dr\\,d\\theta$ 的 $r$。"
+            "label": "算偏導 $\\mathbf r_u$、$\\mathbf r_v$",
+            "why": "先要有上一步：寫出參數式 $\\mathbf r(u,v)$ 與參數區域 $D$"
           },
           {
-            "label": "$\\int_0^{2\\pi}\\int_0^3 2r\\cdot r\\,dr\\,d\\theta$",
-            "why": "漏了根號裡的 $1$：$\\sqrt{4r^2}=2r$ 不是面積元素。"
+            "label": "算叉積的長度 $|\\mathbf r_u\\times\\mathbf r_v|$",
+            "why": "先要有上一步：算偏導 $\\mathbf r_u$、$\\mathbf r_v$"
+          },
+          {
+            "label": "在 $D$ 上積分（必要時換極座標）",
+            "why": "先要有上一步：算叉積的長度 $|\\mathbf r_u\\times\\mathbf r_v|$"
           }
         ]
       }
+    },
+    {
+      "title": "例：拋物面",
+      "beats": [
+        {
+          "show": [
+            "$z=x^2+y^2$，$z\\le9$：$D$ 是 $x^2+y^2\\le9$（半徑 $3$ 的圓盤）"
+          ],
+          "say": "例子：拋物面 z 等於 x 平方加 y 平方，z 小於等於 9 的部分。影子是半徑 3 的圓盤。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z=x^2+y^2$，$z\\le9$：$D$ 是 $x^2+y^2\\le9$（半徑 $3$ 的圓盤）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g_x=2x$，$g_y=2y$：",
+            "$A=\\iint_D\\sqrt{1+4x^2+4y^2}\\,dA$"
+          ],
+          "say": "g x 是 2x，g y 是 2y。被積函數是根號 1 加 4 x 平方加 4 y 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g_x=2x$，$g_y=2y$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A=\\iint_D\\sqrt{1+4x^2+4y^2}\\,dA$",
+              "on": "是根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓盤 → 極座標，$dA=r\\,dr\\,d\\theta$：",
+            "$A=\\int_0^{2\\pi}\\!\\!\\int_0^3\\sqrt{1+4r^2}\\;r\\,dr\\,d\\theta$"
+          ],
+          "say": "區域是圓盤，換極座標，x 平方加 y 平方變成 r 平方，別忘了 d A 要多乘一個 r。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓盤 → 極座標，$dA=r\\,dr\\,d\\theta$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A=\\int_0^{2\\pi}\\!\\!\\int_0^3\\sqrt{1+4r^2}\\;r\\,dr\\,d\\theta$",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $w=1+4r^2$，$dw=8r\\,dr$：",
+            "$\\begin{aligned}\\int_0^3\\sqrt{1+4r^2}\\,r\\,dr&=\\frac1{12}\\Big[(1+4r^2)^{3/2}\\Big]_0^3\\\\&=\\frac{37\\sqrt{37}-1}{12}\\end{aligned}$"
+          ],
+          "say": "內層用代換，w 等於 1 加 4 r 平方。反導數是十二分之一乘 1 加 4 r 平方的二分之三次方，代 3 和 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $w=1+4r^2$，$dw=8r\\,dr$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int_0^3\\sqrt{1+4r^2}\\,r\\,dr&=\\frac1{12}\\Big[(1+4r^2)^{3/2}\\Big]_0^3\\\\&=\\frac{37\\sqrt{37}-1}{12}\\end{aligned}}$",
+              "on": "之一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}A&=2\\pi\\cdot\\frac{37\\sqrt{37}-1}{12}\\\\&=\\frac\\pi6\\big(37\\sqrt{37}-1\\big)\\approx117.3\\end{aligned}$"
+          ],
+          "say": "再乘上外層的 2 派，答案是六分之派，乘 37 根號 37 減 1，大約 117.3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}A&=2\\pi\\cdot\\frac{37\\sqrt{37}-1}{12}\\\\&=\\frac\\pi6\\big(37\\sqrt{37}-1\\big)\\approx117.3\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "六分"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：影子面積 $9\\pi\\approx28.3$；碗很陡，面積大約是影子的 $4$ 倍，合理",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：圓錐，跟幾何對答案",
+      "beats": [
+        {
+          "show": [
+            "圓錐 $z=\\sqrt{x^2+y^2}$，$z\\le2$：影子是半徑 $2$ 的圓盤"
+          ],
+          "say": "最後一個例子，可以跟幾何公式對答案：圓錐 z 等於根號 x 平方加 y 平方，z 小於等於 2 的部分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "圓錐 $z=\\sqrt{x^2+y^2}$，$z\\le2$：影子是半徑 $2$ 的圓盤"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g_x=\\frac{x}{\\sqrt{x^2+y^2}},\\quad g_y=\\frac{y}{\\sqrt{x^2+y^2}}$"
+          ],
+          "say": "對 x 偏微分，是 x 除以根號 x 平方加 y 平方；對 y 也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle g_x=\\frac{x}{\\sqrt{x^2+y^2}},\\quad g_y=\\frac{y}{\\sqrt{x^2+y^2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$1+g_x^2+g_y^2=1+\\frac{x^2+y^2}{x^2+y^2}=2$"
+          ],
+          "say": "平方相加，分子分母一樣，等於 1。所以根號裡是 2，倍率是常數根號 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1+g_x^2+g_y^2=1+\\frac{x^2+y^2}{x^2+y^2}=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$A=\\sqrt2\\cdot\\pi\\cdot2^2=4\\sqrt2\\,\\pi\\approx17.77$"
+          ],
+          "say": "面積就是根號 2 乘影子面積 4 派，等於 4 根號 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle A=\\sqrt2\\cdot\\pi\\cdot2^2=4\\sqrt2\\,\\pi\\approx17.77}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "幾何：圓錐側面攤開是扇形，面積 $=\\pi R\\ell$"
+          ],
+          "say": "用幾何驗算：圓錐的側面剪開攤平，是一個扇形，面積是派乘底半徑乘斜高。",
+          "board": [
+            {
+              "do": "write",
+              "line": "幾何：圓錐側面攤開是扇形，面積 $=\\pi R\\ell$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "底半徑 $R=2$，斜高 $\\ell=\\sqrt{2^2+2^2}=2\\sqrt2$：",
+            "$\\pi\\cdot2\\cdot2\\sqrt2=4\\sqrt2\\,\\pi$"
+          ],
+          "say": "底半徑 2，斜高是 2 根號 2，相乘也是 4 根號 2 派。兩種方法一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "底半徑 $R=2$，斜高 $\\ell=\\sqrt{2^2+2^2}=2\\sqrt2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\pi\\cdot2\\cdot2\\sqrt2=4\\sqrt2\\,\\pi}}$",
+              "on": "根號#1"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "兩種"
+            }
+          ]
+        },
+        {
+          "show": [
+            "倍率 $\\sqrt2$ 的意思：圓錐每一處的坡度都是 $45^\\circ$"
+          ],
+          "say": "倍率是根號 2，因為圓錐每一個地方的坡度都是 45 度，斜面是影子的根號 2 倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "倍率 $\\sqrt2$ 的意思：圓錐每一處的坡度都是 $45^\\circ$"
+            },
+            {
+              "do": "write",
+              "line": "　原點是尖點，$g_x,g_y$ 在那裡沒有定義；只差一個點，不影響積分",
+              "color": "violet",
+              "on": "都是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "$A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA$",
+            "• 來源：小方格 → 小平行四邊形，面積 $|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$"
+          ],
+          "say": "整理一下：小方格被送成小平行四邊形，面積是叉積長度乘德爾塔 u 德爾塔 v，加起來就是曲面面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle A(S)=\\iint_D|\\mathbf r_u\\times\\mathbf r_v|\\,dA}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "面積#1"
+            },
+            {
+              "do": "write",
+              "line": "• 來源：小方格 → 小平行四邊形，面積 $|\\mathbf r_u\\times\\mathbf r_v|\\,\\Delta u\\,\\Delta v$",
+              "on": "德爾#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 函數圖形：$\\sqrt{1+g_x^2+g_y^2}$，$D$ 是影子",
+            "• 球面 $4\\pi a^2$；斜平面、圓錐倍率是常數；圓盤影子用極座標"
+          ],
+          "say": "函數圖形用根號 1 加 g x 平方加 g y 平方，D 是影子。影子是圓盤，就換極座標。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 函數圖形：$\\sqrt{1+g_x^2+g_y^2}$，$D$ 是影子"
+            },
+            {
+              "do": "write",
+              "line": "• 球面 $4\\pi a^2$；斜平面、圓錐倍率是常數；圓盤影子用極座標",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：曲面積分：每一小片再乘上密度"
+          ],
+          "say": "下一課，每一小片再乘上一個密度，就是曲面積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：曲面積分：每一小片再乘上密度"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["surface-area", "surface-integral", "vector-calculus"],
-    "fine": ["surface-area-cross-product", "surface-area-graph", "surface-area-sphere"]
+    "coarse": [
+      "surface-area",
+      "surface-integral",
+      "vector-calculus"
+    ],
+    "fine": [
+      "surface-area-cross-product",
+      "surface-area-graph",
+      "surface-area-sphere"
+    ]
   },
   "practice": [
-    { "id": "lec-16-m2", "core": true, "trains": "surface-area-cross-product", "note": "平行四邊形面積 $=|\\mathbf a\\times\\mathbf b|$，正是曲面面積元素的來源。" },
-    { "id": "vc-surf-003", "core": true, "trains": "surface-area-graph" },
-    { "id": "cg-9b4-008", "core": true, "trains": "surface-area-graph" },
-    { "id": "cg-9b4-011", "core": true, "trains": "surface-area-sphere" },
-    { "id": "cx-sa-002", "trains": "surface-area-sphere", "note": "半徑 $2$ 的球面：可以用本課的 $4\\pi a^2$ 核對。" },
-    { "id": "cg-9b4-009", "trains": "surface-area-graph" },
-    { "id": "cg-9b4-010", "trains": "surface-area-graph" },
-    { "id": "cg-9b4-012", "trains": "surface-area-sphere" }
+    {
+      "id": "lec-16-m2",
+      "core": true,
+      "trains": "surface-area-cross-product",
+      "note": "平行四邊形面積 $=|\\mathbf a\\times\\mathbf b|$，正是曲面面積元素的來源。"
+    },
+    {
+      "id": "vc-surf-003",
+      "core": true,
+      "trains": "surface-area-graph"
+    },
+    {
+      "id": "cg-9b4-008",
+      "core": true,
+      "trains": "surface-area-graph"
+    },
+    {
+      "id": "cg-9b4-011",
+      "core": true,
+      "trains": "surface-area-sphere"
+    },
+    {
+      "id": "cx-sa-002",
+      "trains": "surface-area-sphere",
+      "note": "半徑 $2$ 的球面：可以用本課的 $4\\pi a^2$ 核對。"
+    },
+    {
+      "id": "cg-9b4-009",
+      "trains": "surface-area-graph"
+    },
+    {
+      "id": "cg-9b4-010",
+      "trains": "surface-area-graph"
+    },
+    {
+      "id": "cg-9b4-012",
+      "trains": "surface-area-sphere"
+    }
   ],
   "gaps": []
 }

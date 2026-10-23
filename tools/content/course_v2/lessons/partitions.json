@@ -1,249 +1,106 @@
 {
   "id": "partitions",
   "title": "分割",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["riemann-sum-notation", "sup-inf"],
-  "next": ["upper-lower-sums"],
-  "related": ["riemann-integrability"],
-  "objectives": [
-    "寫得出分割的定義，算得出每段長度 $\\Delta x_i$ 與分割的寬度 $\\|P\\|$。",
-    "判斷一個分割是不是另一個的加細，會寫出兩個分割的共同加細 $P\\cup Q$。",
-    "說得出為什麼嚴格的積分理論要允許不等長的分割。"
+  "prerequisites": [
+    "riemann-sum-notation",
+    "sup-inf"
   ],
-  "visual": "區間 [0, 1] 上畫一組分割點，可以點擊加點、拖動點。旁邊即時列出每段長度與最長那段（‖P‖）。另一列畫第二個分割 Q，按一下把兩列的點合併成 P ∪ Q，顯示加細之後最長段只會變短或不變。",
+  "next": [
+    "upper-lower-sums"
+  ],
+  "related": [
+    "riemann-integrability"
+  ],
+  "objectives": [
+    "寫得出分割的定義，算得出每段長度 $\\Delta x_i$ 與分割的寬度 $\\|P\\|$",
+    "判斷一個分割是不是另一個的加細，會寫出兩個分割的共同加細 $P\\cup Q$",
+    "說得出為什麼嚴格的積分理論要允許不等長的分割"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 為什麼要重新談「切區間」",
+      "heading": "① 為什麼重談切區間",
       "body": [
-        "在〈用和式寫定積分〉裡，我們把 $[a,b]$ 切成 $n$ 段等長的小區間，取點、相加、讓 $n\\to\\infty$。算題夠用，但當成定義有兩個問題：第一，函數在某處變化劇烈時，自然會想在那裡切細一點；第二，要比較兩種切法誰比較好，需要一個「把兩種切法合在一起」的操作。等長切法對這兩件事都不方便，所以嚴格版從任意切法開始。"
+        "主線的做法：$[a,b]$ 等分成 $n$ 段，每段取一點 $t_i$",
+        "這個定義留下兩個問題：",
+        "• 每段取哪一點，答案會不會不同？",
+        "• 為什麼一定要等分？",
+        "第一個問題下一課用「上和、下和」解決；這一課處理第二個",
+        "理由二：兩種等分合在一起就不等長了",
+        "所以嚴格的理論：允許任意的切法"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(t_i)\\,\\Delta x",
+        "P_2\\cup P_3=\\{0,\\tfrac13,\\tfrac12,\\tfrac23,1\\}"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "$[a,b]$ 的一個分割是有限個點 $P=\\{x_0,x_1,\\dots,x_n\\}$，滿足 $a=x_0<x_1<\\dots<x_n=b$。第 $i$ 段是 $[x_{i-1},x_i]$，長度 $\\Delta x_i=x_i-x_{i-1}$，各段長度加起來是 $b-a$。",
-        "分割的寬度 $\\|P\\|=\\max\\Delta x_i$，也就是最長那一段的長度。等長分割 $P_n$ 的點是 $x_i=a+\\frac{i(b-a)}{n}$，寬度 $\\frac{b-a}{n}$。"
+        "$[a,b]$ 的分割：有限個點",
+        "第 $i$ 段 $[x_{i-1},x_i]$，長度 $\\Delta x_i=x_i-x_{i-1}$",
+        "寬度：最長的那一段",
+        "長度總和：$\\displaystyle\\sum_{i=1}^n\\Delta x_i=x_n-x_0=b-a$",
+        "相消（telescoping）：$(x_1-x_0)+(x_2-x_1)+\\dots+(x_n-x_{n-1})$",
+        "例：$P=\\{0,\\frac14,\\frac12,1\\}$ 是 $[0,1]$ 的分割"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&P=\\{x_0,x_1,\\dots,x_n\\}\\\\&a=x_0<x_1<\\dots<x_n=b\\end{aligned}",
+        "\\|P\\|=\\max_{1\\le i\\le n}\\Delta x_i",
+        "\\|P\\|=\\max\\{\\tfrac14,\\tfrac14,\\tfrac12\\}=\\tfrac12"
+      ]
     },
     {
-      "heading": "③ 加細與共同加細",
+      "heading": "③ 加細",
       "body": [
-        "若 $P\\subseteq P^*$（$P$ 的點全部也是 $P^*$ 的點），稱 $P^*$ 是 $P$ 的加細：$P^*$ 只是在 $P$ 的基礎上多切幾刀。加細之後每一段只會被切短，所以 $\\|P^*\\|\\le\\|P\\|$。",
-        "任給兩個分割 $P$、$Q$，$P\\cup Q$ 同時是兩者的加細，叫共同加細。這是整個 Darboux 理論最常用的一招：兩個分割各有好處時，取聯集就能同時擁有。",
-        "注意反過來不成立：$\\|Q\\|$ 比 $\\|P\\|$ 小，不代表 $Q$ 是 $P$ 的加細。$P_3=\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$ 的寬度 $\\frac{1}{3}$ 比 $P_2=\\{0,\\frac{1}{2},1\\}$ 的 $\\frac{1}{2}$ 小，但 $\\frac{1}{2}\\notin P_3$，所以 $P_3$ 不是 $P_2$ 的加細。"
-      ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "任意切法",
-      "beats": [
-        { "show": ["等長切法：算題夠用"],
-          "note": "當定義不方便：想局部切細、想合併兩種切法。",
-          "say": "以前把區間切成 n 段等長。算題夠用，可是函數變化劇烈的地方會想切細一點，等長就不方便。",
-          "board": [
-            {"do":"write","line":"等長切法：算題夠用"}
-          ] },
-        { "show": ["$a=x_0<x_1<\\dots<x_n=b$"],
-          "note": "有限個點，一定包含 $a$ 與 $b$。",
-          "say": "所以嚴格版從任意切法開始：在 a 到 b 之間挑有限個點，由小排到大，頭尾一定是 a 和 b。",
-          "board": [
-            {"do":"write","line":"$a=x_0<x_1<\\dots<x_n=b$","on":"任意切法"},
-            {"do":"plot","graph":{"window":[-0.4,5.4,-1,1],"equal":true,"ticks":false,"curves":[{"expr":"0","domain":[0,5],"color":"blue"}],"points":[{"x":0,"y":0},{"x":0.7,"y":0},{"x":1.2,"y":0},{"x":2.6,"y":0},{"x":3.1,"y":0},{"x":4.3,"y":0},{"x":5,"y":0}],"labels":[{"x":0,"y":-0.6,"text":"a","anchor":"middle"},{"x":0.7,"y":-0.6,"text":"x₁","anchor":"middle"},{"x":1.2,"y":-0.6,"text":"x₂","anchor":"middle"},{"x":5,"y":-0.6,"text":"b","anchor":"middle"}]},"on":"挑有限個點"}
-          ] },
-        { "show": ["$\\Delta x_i=x_i-x_{i-1}$，加起來是 $b-a$"],
-          "say": "第 i 段的長度是相鄰兩點的差，全部加起來剛好是區間長 b 減 a。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{d:\\Delta x_i=x_i-x_{i-1}}}$，加起來是 $b-a$","on":"第 i 段"}
-          ] },
-        { "show": ["寬度 $\\|P\\|=\\max\\Delta x_i$"],
-          "note": "最長那一段，不是平均。",
-          "say": "分割的寬度，是最長那一段的長度，不是平均長度。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"寬度 $\\|P\\|={{m:\\max}}\\Delta x_i$","on":"分割的寬度"},
-            {"do":"focus","term":"m","label":"最長那一段","on":"最長那一段"}
-          ] }
-      ],
-      "check": 0
+        "$P^*$ 是 $P$ 的加細：$P\\subseteq P^*$",
+        "意思：原來的每一段，被切成更小的幾段",
+        "所以 $\\|P^*\\|\\le\\|P\\|$",
+        "反過來不對：$\\|Q\\|\\le\\|P\\|$ 不代表 $Q\\supseteq P$（下面就有例子）",
+        "共同加細：$P\\cup Q$",
+        "兩個分割不一定比得出誰細，但一定有共同加細",
+        "例：$P=\\{0,\\frac12,1\\}$，$Q=\\{0,\\frac13,\\frac23,1\\}$",
+        "$P\\cup Q$ 的四段：$\\frac13,\\ \\frac16,\\ \\frac16,\\ \\frac13$，寬度 $\\frac13$"
+      ]
     },
     {
-      "title": "加細：多切幾刀",
-      "beats": [
-        { "show": ["$P\\subseteq P^*$：$P^*$ 是 $P$ 的加細"],
-          "say": "如果 P 的點全部都在 P 星裡，P 星就叫 P 的加細，等於在 P 上多切了幾刀。",
-          "board": [
-            {"do":"write","line":"${{s:P\\subseteq P^*}}$：$P^*$ 是 $P$ 的加細"},
-            {"do":"underline","term":"s","label":"點都包含","on":"全部都在"}
-          ] },
-        { "show": ["$P=\\{0,\\frac{1}{4},\\frac{1}{2},1\\}$，$\\|P\\|=\\frac{1}{2}$"],
-          "note": "長度 $\\frac{1}{4}$、$\\frac{1}{4}$、$\\frac{1}{2}$。",
-          "say": "例如零、四分之一、二分之一、一，三段長四分之一、四分之一、二分之一，寬度二分之一。",
-          "board": [
-            {"do":"write","line":"$P=\\{0,\\frac{1}{4},\\frac{1}{2},1\\}$，${{w:\\|P\\|=\\frac{1}{2}}}$"},
-            {"do":"write","line":"長度 $\\frac{1}{4}$、$\\frac{1}{4}$、$\\frac{1}{2}$","on":"三段長"},
-            {"do":"circle","term":"w","on":"二分之一#2"}
-          ] },
-        { "show": ["加入 $\\frac{3}{4}$：$\\|P^*\\|=\\frac{1}{4}$"],
-          "say": "加入四分之三，最長那段被切成兩半，新的寬度是四分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$P^*=\\{0,\\frac{1}{4},\\frac{1}{2},{{n:\\frac{3}{4}}},1\\}$","on":"加入"},
-            {"do":"focus","term":"n","label":"切一刀","on":"切成兩半"},
-            {"do":"write","line":"$\\|P^*\\|=\\frac{1}{4}$","on":"新的"}
-          ] },
-        { "show": ["每一段只會被切短"],
-          "say": "多切幾刀，每一段只會變短，不會變長。但要是刀不落在最長那段呢？",
-          "board": [
-            {"do":"write","line":"每一段只會變短，不會變長"},
-            {"do":"write","line":"刀不在最長那段呢？","on":"但要是"}
-          ] },
-        { "show": ["加入 $\\frac{1}{3}$：$\\|P\\|$ 還是 $\\frac{1}{2}$"],
-          "note": "刀沒落在最長段，寬度沒變。",
-          "say": "反過來，在 P 加入三分之一，它落在四分之一和二分之一之間，最長那段沒動，寬度還是二分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.1,1.1,-0.5,0.5],"ticks":false,"curves":[{"expr":"0","domain":[0,1],"color":"blue"}],"points":[{"x":0,"y":0},{"x":0.25,"y":0},{"x":0.3333,"y":0},{"x":0.5,"y":0},{"x":1,"y":0}],"labels":[{"x":0.3333,"y":-0.3,"text":"1/3","anchor":"middle"},{"x":0.5,"y":0.25,"text":"1/2","anchor":"middle"}]},"on":"加入"},
-            {"do":"write","line":"最長段 $[\\frac{1}{2},1]$ 沒動","on":"最長那段"}
-          ] },
-        { "show": ["切到最長那段，寬度才會變小"],
-          "say": "所以寬度有沒有變小，要看新的點有沒有切到最長那一段。",
-          "board": [
-            {"do":"write","line":"切到最長段，寬度才會變小"}
-          ] }
+      "heading": "③ 等長分割誰加細誰",
+      "body": [
+        "$[a,b]$ 等分成 $n$ 段：",
+        "$\\|P_n\\|=\\dfrac{b-a}n\\to0$：主線的 $n\\to\\infty$，重點是寬度趨近 $0$",
+        "命題：$P_{2n}$ 是 $P_n$ 的加細",
+        "策略：把 $P_n$ 的點，寫成 $P_{2n}$ 的樣子",
+        "證明：$P_n$ 的任一點（$0\\le i\\le n$）",
+        "所以 $P_n\\subseteq P_{2n}$　$\\blacksquare$",
+        "例：$[1,2]$ 上的 $P_2$、$P_4$、$P_3$"
       ],
-      "check": 2
+      "tex": [
+        "P_n=\\Big\\{a+\\tfrac{i(b-a)}{n}:\\ i=0,1,\\dots,n\\Big\\}",
+        "\\begin{aligned}a+\\frac{i(b-a)}{n}&=a+\\frac{(2i)(b-a)}{2n}\\in P_{2n}\\\\&(\\text{因為 }0\\le2i\\le2n)\\end{aligned}"
+      ]
     },
     {
-      "title": "寬度小不等於加細",
-      "beats": [
-        { "show": ["$P_2=\\{0,\\frac{1}{2},1\\}$","$P_3=\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$"],
-          "say": "比較兩個等長分割：切兩段的，和切三段的。",
-          "board": [
-            {"do":"write","line":"$P_2=\\{0,\\frac{1}{2},1\\}$"},
-            {"do":"write","line":"$P_3=\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$","on":"切兩段的"}
-          ] },
-        { "show": ["$\\|P_3\\|=\\frac{1}{3}<\\frac{1}{2}=\\|P_2\\|$"],
-          "note": "但 $\\frac{1}{2}\\notin P_3$。",
-          "say": "切三段的寬度三分之一比較小，可是它沒有二分之一這個點，所以它不是 P 二的加細。",
-          "board": [
-            {"do":"write","line":"$\\|P_3\\|=\\frac{1}{3}<\\frac{1}{2}=\\|P_2\\|$"},
-            {"do":"write","line":"${{ni:\\frac{1}{2}\\notin P_3}}$","on":"沒有二分之一"},
-            {"do":"underline","term":"ni","color":"red","label":"不是加細","on":"不是"}
-          ] },
-        { "show": ["加細＝點的集合包含"],
-          "say": "記住：加細看的是點有沒有全部包含進去，跟寬度大小是兩回事。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"加細 ＝ 點的集合包含","on":"加細看"},
-            {"do":"write","line":"$P\\subseteq P^*$","on":"全部包含"},
-            {"do":"write","line":"寬度小 $\\neq$ 加細","on":"寬度大小"}
-          ] }
-      ],
-      "key": "加細看點集合的包含，不看寬度",
-      "check": 1
+      "heading": "③ 一般：看整除",
+      "body": [
+        "一般：$P_m\\supseteq P_n\\iff n\\mid m$",
+        "• $\\Leftarrow$：$m=kn$，同乘 $k$ 改寫，跟上面一樣",
+        "• $\\Rightarrow$：$a+\\frac{b-a}n\\in P_m$，即 $\\frac{b-a}n=\\frac{j(b-a)}m$，得 $m=jn$"
+      ]
     },
     {
-      "title": "共同加細",
-      "beats": [
-        { "show": ["$P\\cup Q$ 同時加細 $P$ 和 $Q$"],
-          "note": "Darboux 理論最常用的一招。",
-          "say": "兩個分割各有好處時，把點合起來，取聯集，就同時是兩者的加細，兩邊的好處都拿到。",
-          "board": [
-            {"do":"write","line":"${{u:P\\cup Q}}$ 同時加細 $P$ 和 $Q$"},
-            {"do":"circle","term":"u","on":"取聯集"}
-          ] },
-        { "show": ["$\\{0,\\frac{1}{2},1\\}\\cup\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$","$=\\{0,\\frac{1}{3},\\frac{1}{2},\\frac{2}{3},1\\}$"],
-          "say": "把剛剛兩個分割合併，由小排到大：零、三分之一、二分之一、三分之二、一。",
-          "board": [
-            {"do":"write","line":"$\\{0,\\frac{1}{2},1\\}\\cup\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$"},
-            {"do":"write","line":"$=\\{0,\\frac{1}{3},\\frac{1}{2},\\frac{2}{3},1\\}$","on":"由小排到大"}
-          ] },
-        { "show": ["長度 $\\frac{1}{3}$、$\\frac{1}{6}$、$\\frac{1}{6}$、$\\frac{1}{3}$"],
-          "note": "寬度 $\\frac{1}{3}$。",
-          "say": "四段長是三分之一、六分之一、六分之一、三分之一，加起來是一，寬度三分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"長度 $\\frac{1}{3},\\frac{1}{6},\\frac{1}{6},\\frac{1}{3}$","on":"四段長"},
-            {"do":"write","line":"${{w:\\|P\\cup Q\\|=\\frac{1}{3}}}$","on":"加起來"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "證明：等長誰加細誰",
-      "beats": [
-        { "show": ["證 $P_{2n}$ 加細 $P_n$：$P_n$ 每個點都在 $P_{2n}$"],
-          "note": "加細＝點的集合包含。",
-          "say": "策略：加細看的是點有沒有全部包含進去。所以把 P n 的每一個點，都在 P 二 n 裡找出來。",
-          "board": [
-            {"do":"write","line":"證 ${{p2:P_{2n}}}$ 加細 ${{p1:P_n}}$","tint":{"p1":"blue","p2":"violet"}},
-            {"do":"write","line":"${{p1:P_n}}$ 每個點都在 ${{p2:P_{2n}}}$","on":"所以把"}
-          ] },
-        { "show": ["$P_n$ 的點：$a+\\frac{i(b-a)}{n}$，$i=0,\\dots,n$"],
-          "note": "寬度 $\\frac{b-a}{n}$。",
-          "say": "等長分割 P n 的第 i 個點，是 a 加上 i 倍的 n 分之 b 減 a。",
-          "board": [
-            {"do":"write","line":"${{p1:P_n}}$ 的點：$a+\\frac{i(b-a)}{n}$，$i=0,\\dots,n$"}
-          ] },
-        { "show": ["$=a+(2i)\\frac{b-a}{2n}$：$P_{2n}$ 的第 $2i$ 個點"],
-          "note": "$2i$ 是 0 到 $2n$ 之間的整數。",
-          "why": {"ask":"為什麼它是 $P_{2n}$ 的點？","say":"改寫之後，這個點為什麼一定在 P 二 n 裡？","options":[{"label":"$2i$ 是 0 到 $2n$ 的整數，正好是 $P_{2n}$ 的一個編號","correct":true},{"label":"$\\|P_{2n}\\|$ 比 $\\|P_n\\|$ 小","why":"寬度小不等於加細：$\\|P_3\\|<\\|P_2\\|$，$P_3$ 卻不是 $P_2$ 的加細。"},{"label":"$P_{2n}$ 的點比較多","why":"點多不等於包含：$P_3$ 比 $P_2$ 多一個點，卻沒有 $\\frac{1}{2}$。"}]},
-          "say": "分子分母同乘二，它正是 P 二 n 的第二 i 個點，而二 i 落在零到二 n 之間，是合法的編號。",
-          "board": [
-            {"do":"write","line":"$=a+{{k:(2i)}}\\frac{b-a}{2n}$","on":"改寫之後"},
-            {"do":"underline","term":"k","label":"0≤2i≤2n","on":"二 i 落在","why":true}
-          ] },
-        { "show": ["$P_n\\subseteq P_{2n}$"],
-          "note": "$P_{2n}$ 是 $P_n$ 的加細。",
-          "say": "每一個 i 都這樣，所以 n 段的點，切二 n 段時全都還在，P 二 n 是 P n 的加細。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{res:{{p1:P_n}}\\subseteq{{p2:P_{2n}}}}}$","on":"每一個 i"},
-            {"do":"box","term":"res","color":"green","on":"全都還在"}
-          ] },
-        { "show": ["$P_2\\subseteq P_6$：$\\frac{1}{2}=\\frac{3}{6}$"],
-          "note": "六是二的三倍。",
-          "say": "不只兩倍：二分之一等於六分之三，是 P 六的第三個點，因為六是二的三倍。",
-          "board": [
-            {"do":"write","line":"${{q:\\frac{1}{2}=\\frac{3}{6}}}$：$P_6$ 的第 3 個點","on":"二分之一"},
-            {"do":"underline","term":"q","color":"green","label":"在 P 六","on":"第三個點"}
-          ] },
-        { "show": ["$[1,3]$、$n=4$：$\\|P_4\\|=\\frac{1}{2}$"],
-          "note": "點是 $1,\\frac{3}{2},2,\\frac{5}{2},3$。",
-          "say": "算一個：一到三切四段，寬度二分之一，點是一、二分之三、二、二分之五、三。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$[1,3]$、$n=4$：$\\|P_4\\|=\\frac{1}{2}$","on":"一到三"},
-            {"do":"write","line":"點：$1,\\frac{3}{2},2,\\frac{5}{2},3$","on":"點是"}
-          ] }
-      ],
-      "key": "$P_n$ 第 $i$ 點正是 $P_{2n}$ 第 $2i$ 點",
-      "proof": true,
-      "of": "ex2",
-      "skeleton": "直接",
-      "predict": {
-        "ask": "$P_m$ 什麼時候是 $P_n$ 的加細？",
-        "options": [
-          {
-            "label": "$n$ 整除 $m$",
-            "correct": true
-          },
-          {
-            "label": "$m>n$ 就是",
-            "why": "$P_3$ 不是 $P_2$ 的加細：中點 $\\frac{1}{2}$ 不在 $P_3$ 裡。"
-          },
-          {
-            "label": "只有 $m=2n$",
-            "why": "$m=2n$ 是一個例子，但任何 $n$ 的倍數都行：$a+\\frac{i(b-a)}{n}$ 都會出現在 $P_m$ 裡。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 分割：$a=x_0<\\dots<x_n=b$；$\\Delta x_i=x_i-x_{i-1}$，$\\sum\\Delta x_i=b-a$",
+        "• 寬度 $\\|P\\|$：最長的一段",
+        "• 加細 $P^*\\supseteq P$：只加點；$\\|P^*\\|\\le\\|P\\|$，反過來不對",
+        "• 共同加細 $P\\cup Q$：任兩個分割都有",
+        "• 等長分割：$P_m\\supseteq P_n\\iff n\\mid m$",
+        "• 允許不等長：切法可以配合函數；合併兩個分割才不會出界",
+        "下一課：用分割定義上和與下和"
+      ]
     }
   ],
   "workedExamples": [
@@ -289,51 +146,687 @@
   ],
   "checks": [
     {
-      "ask": "$P=\\{0,0.2,0.7,1\\}$，$\\|P\\|$ 是？",
+      "ask": "$P=\\{0,\\,0.1,\\,0.5,\\,0.6,\\,1\\}$，$\\|P\\|=$？",
       "options": [
-        { "label": "0.5", "correct": true },
-        { "label": "$\\frac{1}{3}$", "why": "你用了 $\\frac{b-a}{n}$ 的平均長度。寬度是最長那段 $0.7-0.2=0.5$。" },
-        { "label": "0.2", "why": "那是最短的一段（也是第一段）。寬度取最大值。" }
+        {
+          "label": "$0.4$",
+          "correct": true
+        },
+        {
+          "label": "$0.1$",
+          "why": "那是最短的一段；寬度取最長的"
+        },
+        {
+          "label": "$0.25$",
+          "why": "把它當成等分 $4$ 段了；這個分割不等長"
+        },
+        {
+          "label": "$1$",
+          "why": "那是所有段加起來，也就是區間長 $b-a$"
+        }
       ]
     },
     {
-      "ask": "$P=\\{0,\\frac{1}{2},1\\}$。下列哪一個是 $P$ 的加細？",
+      "ask": "在 $[0,1]$ 上，下面哪一個是 $P_6$ 的加細？",
       "options": [
-        { "label": "$\\{0,\\frac{1}{4},\\frac{1}{2},1\\}$", "correct": true },
-        { "label": "$\\{0,\\frac{1}{3},\\frac{2}{3},1\\}$", "why": "它的寬度比較小，但沒有包含 $\\frac{1}{2}$，所以不是加細。" },
-        { "label": "$\\{0,1\\}$", "why": "這是少切了刀，$P$ 才是它的加細，方向反了。" }
+        {
+          "label": "$P_{12}$",
+          "correct": true
+        },
+        {
+          "label": "$P_3$",
+          "why": "方向反了：$P_3\\subseteq P_6$，是 $P_6$ 加細 $P_3$"
+        },
+        {
+          "label": "$P_8$",
+          "why": "$6\\nmid8$：$\\frac16\\notin P_8$"
+        },
+        {
+          "label": "$P_9$",
+          "why": "$9$ 比 $6$ 大，但 $6\\nmid9$：$\\frac16\\notin P_9$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "為什麼重談切區間",
+      "beats": [
+        {
+          "show": [
+            "主線的做法：$[a,b]$ 等分成 $n$ 段，每段取一點 $t_i$",
+            "$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(t_i)\\,\\Delta x$"
+          ],
+          "say": "主線定義定積分的方法是：把 a 到 b 等分成 n 段，每段取一個點，算黎曼和，再讓 n 趨近無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "主線的做法：$[a,b]$ 等分成 $n$ 段，每段取一點 $t_i$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(t_i)\\,\\Delta x$",
+              "on": "每段"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個定義留下兩個問題：",
+            "• 每段取哪一點，答案會不會不同？"
+          ],
+          "say": "這個定義留下兩個問題。第一，每段取哪一個點，會不會影響答案？第二，為什麼一定要等分？",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個定義留下兩個問題："
+            },
+            {
+              "do": "write",
+              "line": "• 每段取哪一點，答案會不會不同？",
+              "on": "第一"
+            },
+            {
+              "do": "write",
+              "line": "• 為什麼一定要等分？",
+              "on": "會不"
+            },
+            {
+              "do": "write",
+              "line": "　第一個問題下一課用「上和、下和」解決；這一課處理第二個",
+              "color": "violet",
+              "on": "為什"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切點 0, 1/16, 1/4, 9/16, 1：每段都上升 1/4"
+          ],
+          "say": "看根號 x：在 0 附近很陡，後面很平。合理的切法是陡的地方切細、平的地方切粗。這樣每一段都剛好上升 4 分之 1。等分做不到這件事。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ptsq",
+                  "window": [
+                    -0.06,
+                    1.1,
+                    -0.1,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)",
+                      "color": "blue",
+                      "label": "y = √x",
+                      "domain": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0.0625
+                    },
+                    {
+                      "x": 0.25
+                    },
+                    {
+                      "x": 0.5625
+                    },
+                    {
+                      "x": 1
+                    }
+                  ],
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "切點 0, 1/16, 1/4, 9/16, 1：每段都上升 1/4",
+              "color": "violet",
+              "on": "平的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "理由二：兩種等分合在一起就不等長了",
+            "$P_2\\cup P_3=\\{0,\\tfrac13,\\tfrac12,\\tfrac23,1\\}$"
+          ],
+          "say": "更重要的理由在後面的證明裡：我們常把兩個切法的點合在一起。二等分和三等分合起來，就已經不等長了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "理由二：兩種等分合在一起就不等長了"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle P_2\\cup P_3=\\{0,\\tfrac13,\\tfrac12,\\tfrac23,1\\}$",
+              "on": "合在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以嚴格的理論：允許任意的切法"
+          ],
+          "say": "所以嚴格的理論，從一開始就允許任意切法，每段長短都可以不一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以嚴格的理論：允許任意的切法",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$P^*$ 是 $P$ 的加細，那麼：",
-      "options": [
-        { "label": "$\\|P^*\\|\\le\\|P\\|$", "correct": true },
-        { "label": "$\\|P^*\\|<\\|P\\|$", "why": "加的點若不在最長那段裡，最長段不變，寬度相等。所以只能保證 $\\le$。" },
-        { "label": "$\\|P^*\\|\\ge\\|P\\|$", "why": "多切幾刀只會把段切短，寬度不會變大。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$[a,b]$ 的分割：有限個點",
+            "$\\begin{aligned}&P=\\{x_0,x_1,\\dots,x_n\\}\\\\&a=x_0<x_1<\\dots<x_n=b\\end{aligned}$"
+          ],
+          "say": "定義：閉區間 a b 的一個分割，是有限個點，從小排到大。第一個一定是 a，最後一個一定是 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$[a,b]$ 的分割：有限個點"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&P=\\{x_0,x_1,\\dots,x_n\\}\\\\&a=x_0<x_1<\\dots<x_n=b\\end{aligned}}}}$",
+              "on": "是有"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "一定#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 $i$ 段 $[x_{i-1},x_i]$，長度 $\\Delta x_i=x_i-x_{i-1}$"
+          ],
+          "say": "相鄰兩點圍出一段。第 i 段從 x i 減 1 到 x i，長度叫德爾塔 x i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 $i$ 段 $[x_{i-1},x_i]$，長度 $\\Delta x_i=x_i-x_{i-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寬度：最長的那一段",
+            "$\\|P\\|=\\max_{1\\le i\\le n}\\Delta x_i$"
+          ],
+          "say": "分割的寬度，是所有段裡最長的那一段。記號是 P 的兩邊各加兩條直線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寬度：最長的那一段"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\|P\\|=\\max_{1\\le i\\le n}\\Delta x_i}}$",
+              "on": "最長"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "的兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "長度總和：$\\displaystyle\\sum_{i=1}^n\\Delta x_i=x_n-x_0=b-a$"
+          ],
+          "say": "所有段的長度加起來，中間的點前後相消，剛好是 b 減 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "長度總和：$\\displaystyle\\sum_{i=1}^n\\Delta x_i=x_n-x_0=b-a$"
+            },
+            {
+              "do": "write",
+              "line": "　相消（telescoping）：$(x_1-x_0)+(x_2-x_1)+\\dots+(x_n-x_{n-1})$",
+              "color": "violet",
+              "on": "前後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$P=\\{0,\\frac14,\\frac12,1\\}$ 是 $[0,1]$ 的分割",
+            "圖"
+          ],
+          "say": "例子：0、4 分之 1、2 分之 1、1，是 0 到 1 的分割。三段的長度是 4 分之 1、4 分之 1、2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$P=\\{0,\\frac14,\\frac12,1\\}$ 是 $[0,1]$ 的分割"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pt-ex\" viewBox=\"0 0 640 200\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12pt-exink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12pt-exblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12pt-exred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12pt-exgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12pt-expencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"46\" y1=\"95\" x2=\"604\" y2=\"95\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#g12pt-exink)\"/><path d=\"M62 75 L62 67 L190.5 67 L190.5 75\" stroke=\"var(--blue)\" stroke-width=\"1.6\"/><text x=\"126.3\" y=\"59\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/4</tspan></text><path d=\"M194.5 75 L194.5 67 L323 67 L323 75\" stroke=\"var(--blue)\" stroke-width=\"1.6\"/><text x=\"258.8\" y=\"59\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/4</tspan></text><path d=\"M327 75 L327 67 L588 67 L588 75\" stroke=\"var(--red)\" stroke-width=\"1.6\"/><text x=\"457.5\" y=\"59\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/2 = ‖</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan style=\"font-family:KaTeX_Main,serif\">‖</tspan></text><line x1=\"60\" y1=\"86\" x2=\"60\" y2=\"104\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"60\" y=\"131\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><text x=\"60\" y=\"173\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></tspan></text><line x1=\"192.5\" y1=\"86\" x2=\"192.5\" y2=\"104\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"192.5\" y=\"131\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/4</tspan></text><text x=\"192.5\" y=\"173\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></tspan></text><line x1=\"325\" y1=\"86\" x2=\"325\" y2=\"104\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"325\" y=\"131\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/2</tspan></text><text x=\"325\" y=\"173\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">2</tspan></tspan></text><line x1=\"590\" y1=\"86\" x2=\"590\" y2=\"104\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"590\" y=\"131\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"590\" y=\"173\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">3</tspan></tspan></text></svg>",
+              "on": "分割"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\|P\\|=\\max\\{\\tfrac14,\\tfrac14,\\tfrac12\\}=\\tfrac12$"
+          ],
+          "say": "最長的是最後一段，寬度是 2 分之 1。三段加起來是 1，正好是區間的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\|P\\|=\\max\\{\\tfrac14,\\tfrac14,\\tfrac12\\}=\\tfrac12}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "三段"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "加細",
+      "beats": [
+        {
+          "show": [
+            "$P^*$ 是 $P$ 的加細：$P\\subseteq P^*$"
+          ],
+          "say": "加細的定義很簡單：P 星包含 P。也就是說，P 的點全部留著，再加一些新的點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P^*$ 是 $P$ 的加細：$P\\subseteq P^*$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：原來的每一段，被切成更小的幾段"
+          ],
+          "say": "換句話說，原來的每一段，被新加的點切成更小的幾段。",
+          "board": [
+            {
+              "do": "write",
+              "line": "意思：原來的每一段，被切成更小的幾段"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\|P^*\\|\\le\\|P\\|$"
+          ],
+          "say": "每一段只會被切短，不會變長，所以加細的寬度不會變大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\|P^*\\|\\le\\|P\\|$"
+            },
+            {
+              "do": "write",
+              "line": "　反過來不對：$\\|Q\\|\\le\\|P\\|$ 不代表 $Q\\supseteq P$（下面就有例子）",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "共同加細：$P\\cup Q$"
+          ],
+          "say": "兩個分割 P 和 Q，把點合在一起，得到 P 聯集 Q。它同時包含 P 和 Q，所以同時是兩個的加細，叫共同加細。",
+          "board": [
+            {
+              "do": "write",
+              "line": "共同加細：$P\\cup Q$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個分割不一定比得出誰細，但一定有共同加細"
+          ],
+          "say": "兩個分割，不一定比得出誰比較細；但是一定有共同加細。後面的證明，常常就靠這一招。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個分割不一定比得出誰細，但一定有共同加細",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$P=\\{0,\\frac12,1\\}$，$Q=\\{0,\\frac13,\\frac23,1\\}$",
+            "圖"
+          ],
+          "say": "例子：P 是二等分，Q 是三等分。把點合起來，得到 0、3 分之 1、2 分之 1、3 分之 2、1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$P=\\{0,\\frac12,1\\}$，$Q=\\{0,\\frac13,\\frac23,1\\}$"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pt-refine\" viewBox=\"0 0 640 270\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12pt-refineink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12pt-refineblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12pt-refinered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12pt-refinegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12pt-refinepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"150\" y1=\"30\" x2=\"150\" y2=\"205\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"300\" y1=\"30\" x2=\"300\" y2=\"205\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"375\" y1=\"30\" x2=\"375\" y2=\"205\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"450\" y1=\"30\" x2=\"450\" y2=\"205\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"600\" y1=\"30\" x2=\"600\" y2=\"205\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"150\" y1=\"45\" x2=\"600\" y2=\"45\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"66\" y=\"56\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan></text><line x1=\"150\" y1=\"34\" x2=\"150\" y2=\"56\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"375\" y1=\"34\" x2=\"375\" y2=\"56\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"600\" y1=\"34\" x2=\"600\" y2=\"56\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"150\" y1=\"120\" x2=\"600\" y2=\"120\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"66\" y=\"131\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">Q</tspan></text><line x1=\"150\" y1=\"109\" x2=\"150\" y2=\"131\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"300\" y1=\"109\" x2=\"300\" y2=\"131\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"450\" y1=\"109\" x2=\"450\" y2=\"131\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"600\" y1=\"109\" x2=\"600\" y2=\"131\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"150\" y1=\"195\" x2=\"600\" y2=\"195\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"66\" y=\"206\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> ∪ </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">Q</tspan></text><line x1=\"150\" y1=\"184\" x2=\"150\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"300\" y1=\"184\" x2=\"300\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"375\" y1=\"184\" x2=\"375\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"450\" y1=\"184\" x2=\"450\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"600\" y1=\"184\" x2=\"600\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"3\"/><text x=\"150\" y=\"248\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><text x=\"300\" y=\"248\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/3</tspan></text><text x=\"375\" y=\"248\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/2</tspan></text><text x=\"450\" y=\"248\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">2/3</tspan></text><text x=\"600\" y=\"248\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text></svg>",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P\\cup Q$ 的四段：$\\frac13,\\ \\frac16,\\ \\frac16,\\ \\frac13$，寬度 $\\frac13$"
+          ],
+          "say": "共同加細有四段，長度是 3 分之 1、6 分之 1、6 分之 1、3 分之 1，寬度是 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P\\cup Q$ 的四段：$\\frac13,\\ \\frac16,\\ \\frac16,\\ \\frac13$，寬度 $\\frac13$"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\|Q\\|=\\frac13<\\|P\\|=\\frac12$。$Q$ 是 $P$ 的加細嗎？",
+        "options": [
+          {
+            "label": "不是：$\\frac12\\notin Q$",
+            "correct": true
+          },
+          {
+            "label": "是：寬度比較小，就是切得比較細",
+            "why": "加細看「點有沒有包含」，不是看寬度"
+          },
+          {
+            "label": "是：$Q$ 的點比較多",
+            "why": "點多不代表包含 $P$ 的每一點；$\\frac12$ 就不在 $Q$ 裡"
+          }
+        ]
+      }
+    },
+    {
+      "title": "等長分割誰加細誰",
+      "beats": [
+        {
+          "show": [
+            "$[a,b]$ 等分成 $n$ 段：",
+            "$P_n=\\Big\\{a+\\tfrac{i(b-a)}{n}:\\ i=0,1,\\dots,n\\Big\\}$"
+          ],
+          "say": "等分是一種特別的分割，記作 P n：a 加上 i 倍的 n 分之 b 減 a，i 從 0 到 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$[a,b]$ 等分成 $n$ 段："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle P_n=\\Big\\{a+\\tfrac{i(b-a)}{n}:\\ i=0,1,\\dots,n\\Big\\}$",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\|P_n\\|=\\dfrac{b-a}n\\to0$：主線的 $n\\to\\infty$，重點是寬度趨近 $0$"
+          ],
+          "say": "它每段一樣長，寬度是 n 分之 b 減 a。主線說 n 趨近無限大，真正重要的是寬度趨近 0。這一點到 12.38 會再回來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\|P_n\\|=\\dfrac{b-a}n\\to0$：主線的 $n\\to\\infty$，重點是寬度趨近 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "命題：$P_{2n}$ 是 $P_n$ 的加細"
+          ],
+          "say": "命題：切 2n 段，是切 n 段的加細。",
+          "board": [
+            {
+              "do": "write",
+              "line": "命題：$P_{2n}$ 是 $P_n$ 的加細"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：把 $P_n$ 的點，寫成 $P_{2n}$ 的樣子"
+          ],
+          "say": "策略：把 P n 的每一點，改寫成 P 2n 的樣子，分子分母同乘 2 就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：把 $P_n$ 的點，寫成 $P_{2n}$ 的樣子"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$P_n$ 的任一點（$0\\le i\\le n$）",
+            "$\\begin{aligned}a+\\frac{i(b-a)}{n}&=a+\\frac{(2i)(b-a)}{2n}\\in P_{2n}\\\\&(\\text{因為 }0\\le2i\\le2n)\\end{aligned}$"
+          ],
+          "say": "證明：P n 的任一點，分子分母同乘 2，就是 P 2n 裡第 2i 個點，而 2i 在 0 到 2n 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$P_n$ 的任一點（$0\\le i\\le n$）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}a+\\frac{i(b-a)}{n}&=a+\\frac{(2i)(b-a)}{2n}\\in P_{2n}\\\\&(\\text{因為 }0\\le2i\\le2n)\\end{aligned}}}}$",
+              "on": "就是"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "2i#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $P_n\\subseteq P_{2n}$　$\\blacksquare$"
+          ],
+          "say": "所以 P n 的每一點都在 P 2n 裡，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $P_n\\subseteq P_{2n}$　$\\blacksquare$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$[1,2]$ 上的 $P_2$、$P_4$、$P_3$",
+            "圖"
+          ],
+          "say": "在 1 到 2 上看：P 4 有 P 2 的每一點，是加細；P 3 沒有 2 分之 3 這一點，所以 P 3 不是 P 2 的加細。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$[1,2]$ 上的 $P_2$、$P_4$、$P_3$"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pt-pn\" viewBox=\"0 0 640 290\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12pt-pnink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12pt-pnblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12pt-pnred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12pt-pngreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12pt-pnpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"130\" y1=\"28\" x2=\"130\" y2=\"225\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"360\" y1=\"28\" x2=\"360\" y2=\"225\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"590\" y1=\"28\" x2=\"590\" y2=\"225\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"5 4\"/><line x1=\"130\" y1=\"40\" x2=\"590\" y2=\"40\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"60\" y=\"51\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">2</tspan></tspan></text><line x1=\"130\" y1=\"29\" x2=\"130\" y2=\"51\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"360\" y1=\"29\" x2=\"360\" y2=\"51\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"590\" y1=\"29\" x2=\"590\" y2=\"51\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"130\" y1=\"125\" x2=\"590\" y2=\"125\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"60\" y=\"136\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">4</tspan></tspan></text><line x1=\"130\" y1=\"114\" x2=\"130\" y2=\"136\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"245\" y1=\"114\" x2=\"245\" y2=\"136\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"360\" y1=\"114\" x2=\"360\" y2=\"136\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"475\" y1=\"114\" x2=\"475\" y2=\"136\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"590\" y1=\"114\" x2=\"590\" y2=\"136\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"130\" y1=\"215\" x2=\"590\" y2=\"215\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"60\" y=\"226\" text-anchor=\"middle\" font-size=\"32\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">3</tspan></tspan></text><line x1=\"130\" y1=\"204\" x2=\"130\" y2=\"226\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"283.3\" y1=\"204\" x2=\"283.3\" y2=\"226\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"436.7\" y1=\"204\" x2=\"436.7\" y2=\"226\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"590\" y1=\"204\" x2=\"590\" y2=\"226\" stroke=\"var(--red)\" stroke-width=\"3\"/><text x=\"130\" y=\"76\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"360\" y=\"76\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">3/2</tspan></text><text x=\"590\" y=\"76\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">2</tspan></text><text x=\"245\" y=\"161\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">5/4</tspan></text><text x=\"475\" y=\"161\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">7/4</tspan></text><text x=\"283.3\" y=\"253\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">4/3</tspan></text><text x=\"436.7\" y=\"253\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:KaTeX_Main,serif\">5/3</tspan></text><circle cx=\"360\" cy=\"215\" r=\"9\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"360\" y=\"194\" text-anchor=\"middle\" font-size=\"25\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\"><tspan style=\"font-family:inherit\">沒有</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 3/2</tspan></text></svg>",
+              "on": "沒有"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$P=\\{0,\\frac{1}{2},1\\}$、$Q=\\{0,\\frac{1}{4},1\\}$。$P\\cup Q$ 的寬度是？",
-      "options": [
-        { "label": "$\\frac{1}{2}$", "correct": true },
-        { "label": "$\\frac{1}{4}$", "why": "那是最短段。$P\\cup Q=\\{0,\\frac{1}{4},\\frac{1}{2},1\\}$，最長段 $[\\frac{1}{2},1]$ 長 $\\frac{1}{2}$。" },
-        { "label": "$\\frac{3}{4}$", "why": "那是 $Q$ 自己的最長段 $[\\frac{1}{4},1]$。合併後 $\\frac{1}{2}$ 把它切開了。" }
+      "title": "一般：看整除",
+      "beats": [
+        {
+          "show": [
+            "一般：$P_m\\supseteq P_n\\iff n\\mid m$"
+          ],
+          "say": "一般的結論：P m 是 P n 的加細，若且唯若 n 整除 m。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般：$P_m\\supseteq P_n\\iff n\\mid m$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\Leftarrow$：$m=kn$，同乘 $k$ 改寫，跟上面一樣",
+            "• $\\Rightarrow$：$a+\\frac{b-a}n\\in P_m$，即 $\\frac{b-a}n=\\frac{j(b-a)}m$，得 $m=jn$"
+          ],
+          "say": "反方向也不難：P n 的第一個切點在 P m 裡，就是 n 分之 b 減 a 等於 m 分之 j 倍的 b 減 a，所以 m 等於 j 乘 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\Leftarrow$：$m=kn$，同乘 $k$ 改寫，跟上面一樣"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Rightarrow$：$a+\\frac{b-a}n\\in P_m$，即 $\\frac{b-a}n=\\frac{j(b-a)}m$，得 $m=jn$",
+              "on": "等於#1"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 分割：$a=x_0<\\dots<x_n=b$；$\\Delta x_i=x_i-x_{i-1}$，$\\sum\\Delta x_i=b-a$",
+            "• 寬度 $\\|P\\|$：最長的一段"
+          ],
+          "say": "整理：分割就是從 a 到 b 的有限個點，寬度是最長的一段。加細就是加點，寬度跟著變小；但寬度小，不代表是加細。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 分割：$a=x_0<\\dots<x_n=b$；$\\Delta x_i=x_i-x_{i-1}$，$\\sum\\Delta x_i=b-a$"
+            },
+            {
+              "do": "write",
+              "line": "• 寬度 $\\|P\\|$：最長的一段",
+              "on": "個點"
+            },
+            {
+              "do": "write",
+              "line": "• 加細 $P^*\\supseteq P$：只加點；$\\|P^*\\|\\le\\|P\\|$，反過來不對",
+              "on": "寬度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 共同加細 $P\\cup Q$：任兩個分割都有",
+            "• 等長分割：$P_m\\supseteq P_n\\iff n\\mid m$"
+          ],
+          "say": "任兩個分割都有共同加細；等長分割之間，看整除。允許不等長，是為了配合函數，也是為了合併兩個分割時不出界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 共同加細 $P\\cup Q$：任兩個分割都有"
+            },
+            {
+              "do": "write",
+              "line": "• 等長分割：$P_m\\supseteq P_n\\iff n\\mid m$",
+              "on": "看整"
+            },
+            {
+              "do": "write",
+              "line": "• 允許不等長：切法可以配合函數；合併兩個分割才不會出界",
+              "on": "函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：用分割定義上和與下和"
+          ],
+          "say": "下一課，用分割來定義上和與下和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：用分割定義上和與下和"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["riemann-sum", "darboux"],
-    "fine": ["partition-mesh", "partition-refinement", "partition-common-refinement", "partition-equal-points"]
+    "coarse": [
+      "riemann-sum",
+      "darboux"
+    ],
+    "fine": [
+      "partition-mesh",
+      "partition-refinement",
+      "partition-common-refinement",
+      "partition-equal-points"
+    ]
   },
   "practice": [
-    { "id": "ig-num-003", "core": true, "trains": "partition-equal-points" },
-    { "id": "ig-num-004", "core": true, "trains": "partition-equal-points" },
-    { "id": "cg-12g-001", "core": true, "trains": "partition-mesh" },
-    { "id": "cg-12g-003", "core": true, "trains": "partition-refinement" },
-    { "id": "cg-12g-004", "core": true, "trains": "partition-refinement" },
-    { "id": "lec-06-q1a", "trains": "partition-equal-points" },
-    { "id": "cg-12g-002", "trains": "partition-mesh" },
-    { "id": "cg-12g-005", "trains": "partition-refinement" }
+    {
+      "id": "ig-num-003",
+      "core": true,
+      "trains": "partition-equal-points"
+    },
+    {
+      "id": "ig-num-004",
+      "core": true,
+      "trains": "partition-equal-points"
+    },
+    {
+      "id": "cg-12g-001",
+      "core": true,
+      "trains": "partition-mesh"
+    },
+    {
+      "id": "cg-12g-003",
+      "core": true,
+      "trains": "partition-refinement"
+    },
+    {
+      "id": "cg-12g-004",
+      "core": true,
+      "trains": "partition-refinement"
+    },
+    {
+      "id": "lec-06-q1a",
+      "trains": "partition-equal-points"
+    },
+    {
+      "id": "cg-12g-002",
+      "trains": "partition-mesh"
+    },
+    {
+      "id": "cg-12g-005",
+      "trains": "partition-refinement"
+    }
   ],
   "gaps": []
 }

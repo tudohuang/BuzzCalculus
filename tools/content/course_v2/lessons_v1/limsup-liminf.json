@@ -1,0 +1,409 @@
+{
+  "id": "limsup-liminf",
+  "title": "上極限與下極限",
+  "readMinutes": 13,
+  "totalMinutes": 40,
+  "prerequisites": ["bolzano-weierstrass", "sup-inf", "monotone-convergence-proof"],
+  "next": ["epsilon-delta-definition"],
+  "related": ["root-test", "radius-of-convergence"],
+  "objectives": [
+    "用尾巴的上確界 $s_n=\\sup\\{a_k:k\\ge n\\}$ 定義 $\\limsup$，說得出為什麼這個極限一定存在（有界時）。",
+    "分清楚 $\\sup S$ 與 $\\limsup$：前者看所有項，後者只看「最後」的行為。",
+    "會用「最大／最小的子數列極限」算 $\\limsup$、$\\liminf$，並用 $\\limsup=\\liminf$ 判斷收斂。"
+  ],
+  "visual": "畫出 aₙ = (−1)ⁿ + 1/n 的散點，再疊一條階梯線 sₙ = sup{a_k : k ≥ n}：它從 3/2 開始一路往下走，貼著偶數項的上緣降到 1；另一條 tₙ = inf{a_k : k ≥ n} 從下方升到 −1。兩條線之間的縫就是數列「最後還在振盪的幅度」。",
+  "concept": [
+    {
+      "heading": "① 不收斂的數列，也有「最後的天花板」",
+      "body": [
+        "$(-1)^n+\\frac{1}{n}$ 不收斂，但它最後在 1 與 $-1$ 附近來回跳。上極限 $\\limsup$ 就是在描述「最後上緣在哪裡」，下極限 $\\liminf$ 描述「最後下緣在哪裡」。",
+        "它跟 $\\sup$ 不一樣：這個數列的 $\\sup$ 是 $a_2=\\frac{3}{2}$，但那只是前面某一項偶然很大；往後看，數列再也不會超過 1 太多。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義：尾巴的上確界，再取極限",
+      "body": [
+        "設 $(a_n)$ 有界。對每個 $n$，令 $s_n=\\sup\\{a_k:k\\ge n\\}$（第 $n$ 項以後的上確界）、$t_n=\\inf\\{a_k:k\\ge n\\}$。",
+        "$n$ 變大時取 $\\sup$ 的集合變小，所以 $s_n$ 遞減，而且有下界；由單調收斂定理，$s_n$ 收斂。同理 $t_n$ 遞增有上界。定義",
+        "若數列沒有上界，約定 $\\limsup a_n=+\\infty$；沒有下界時 $\\liminf a_n=-\\infty$。"
+      ],
+      "tex": ["\\limsup_{n\\to\\infty}a_n=\\lim_{n\\to\\infty}\\,\\sup_{k\\ge n}a_k,\\qquad \\liminf_{n\\to\\infty}a_n=\\lim_{n\\to\\infty}\\,\\inf_{k\\ge n}a_k"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際在用的兩個事實",
+      "body": [
+        "(a) 有界時，$\\limsup$ 是所有子數列極限中最大的那一個，$\\liminf$ 是最小的那一個。所以實際計算常常是：找出各個子數列的極限，取最大與最小。",
+        "(b) $\\liminf a_n\\le\\limsup a_n$，而且 $a_n$ 收斂若且唯若兩者相等（都是實數），這時共同的值就是極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：$\\limsup$ 是最大的子數列極限",
+      "body": [
+        "記 $L=\\lim s_n$。上界：若 $a_{n_k}\\to\\ell$，則 $a_{n_k}\\le s_{n_k}$（$a_{n_k}$ 屬於第 $n_k$ 項以後的那個集合）。$s_{n_k}$ 是 $(s_n)$ 的子數列，$\\to L$；取極限得 $\\ell\\le L$。",
+        "取得到：由 $\\varepsilon$ 判準取 $n_1$ 使 $a_{n_1}>s_1-1$。有了 $n_k$，看 $s_{n_k+1}=\\sup\\{a_j:j>n_k\\}$，取 $n_{k+1}>n_k$ 使 $a_{n_{k+1}}>s_{n_k+1}-\\frac{1}{k+1}$。又 $a_{n_{k+1}}\\le s_{n_k+1}$。夾在中間的兩端都 $\\to L$（$s_{n_k+1}$ 是 $(s_n)$ 的子數列），由夾擠 $a_{n_k}\\to L$。",
+        "(b) 的證明：若 $\\limsup=\\liminf=L$，由 $t_n\\le a_n\\le s_n$ 夾擠得 $a_n\\to L$。反之若 $a_n\\to L$，每個子數列都 $\\to L$，最大與最小的子數列極限都是 $L$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "上確界取不到，但每條尾巴都一樣",
+      "prompt": "求 $\\limsup$ 與 $\\liminf$：$a_n=(-1)^n\\frac{n}{n+1}$。",
+      "problemId": "an-ls-001",
+      "steps": [
+        "偶數項 $\\frac{2k}{2k+1}<1$，遞增 $\\to1$；奇數項 $-\\frac{2k-1}{2k}$，遞減 $\\to-1$。",
+        "尾巴的上確界：任何 $n$ 之後都還有偶數項，而偶數項任意靠近 1、但都小於 1，所以 $s_n=1$ 對每個 $n$ 都成立。$\\limsup=1$。",
+        "同理 $t_n=-1$，$\\liminf=-1$。兩者不相等，數列發散。"
+      ],
+      "answer": "$\\limsup=1$，$\\liminf=-1$",
+      "claim": "(2n)/(2n+1) < 1 ;; LIM((2n)/(2n+1), inf) == 1 ;; LIM(-(2n-1)/(2n), inf) == -1"
+    },
+    {
+      "title": "$\\sup$ 與 $\\limsup$ 不一樣",
+      "prompt": "$a_n=(-1)^n+\\frac{1}{n}$。求 $\\sup\\{a_n\\}$、$\\limsup a_n$、$\\liminf a_n$。",
+      "problemId": "an-ls-002",
+      "steps": [
+        "前幾項：$0,\\frac{3}{2},-\\frac{2}{3},\\frac{5}{4},-\\frac{4}{5},\\frac{7}{6},\\dots$。偶數項 $1+\\frac{1}{n}$ 遞減，奇數項 $-1+\\frac{1}{n}$ 也遞減。",
+        "$\\sup$：偶數項最大的是 $a_2=\\frac{3}{2}$，奇數項都 $\\le0$，所以 $\\sup=\\frac{3}{2}$。",
+        "子數列極限：偶數項 $1+\\frac{1}{2k}\\to1$，奇數項 $-1+\\frac{1}{2k-1}\\to-1$。每個子數列要嘛有無限多個偶數項、要嘛有無限多個奇數項，所以子數列極限只可能是 1 或 $-1$。$\\limsup=1$，$\\liminf=-1$。",
+        "$\\sup=\\frac{3}{2}>\\limsup=1$：$\\sup$ 被 $a_2$ 這一項拉高，$\\limsup$ 不在乎前面有限多項。"
+      ],
+      "answer": "$\\sup=\\frac{3}{2}$，$\\limsup=1$，$\\liminf=-1$",
+      "claim": "SUB((-1)^n+1/n, 2) == 3/2 ;; (-1)^n+1/n <= 3/2 ;; LIM(1+1/(2n), inf) == 1 ;; LIM(-1+1/(2n-1), inf) == -1"
+    },
+    {
+      "title": "$\\limsup$ 的用處：根值判別",
+      "prompt": "冪級數 $\\sum a_nx^n$，$a_n=2^n$（$n$ 偶數）、$3^n$（$n$ 奇數）。求收斂半徑。",
+      "problemId": "an-ls-004",
+      "steps": [
+        "$|a_n|^{1/n}$ 在 $n$ 偶數時是 2、$n$ 奇數時是 3，沒有極限，所以「$\\lim|a_n|^{1/n}$」用不了。",
+        "收斂半徑的完整公式是 $\\frac{1}{R}=\\limsup|a_n|^{1/n}$。子數列極限只有 2 與 3，$\\limsup=3$。",
+        "$R=\\frac{1}{3}$。比值 $\\frac{a_{n+1}}{a_n}$ 在 $n$ 偶數時是 $\\frac{3^{n+1}}{2^n}$（$\\to\\infty$）、$n$ 奇數時是 $\\frac{2^{n+1}}{3^n}$（$\\to0$），比值判別完全失效。"
+      ],
+      "answer": "$R=\\frac{1}{3}$",
+      "claim": "(3^n)^(1/n) == 3 ;; (2^n)^(1/n) == 2"
+    }
+  ],
+  "pitfalls": [
+    "把 $\\limsup$ 算成 $\\sup$。前面有限多項可以把 $\\sup$ 拉高，$\\limsup$ 完全不受影響。",
+    "以為 $\\limsup$ 一定是數列裡的某一項。$(-1)^n\\frac{n}{n+1}$ 的 $\\limsup=1$，沒有任何一項等於 1。",
+    "$s_n$ 寫成 $\\sup\\{a_n,a_{n+1}\\}$（只看兩項）。$s_n$ 是整條尾巴的上確界。",
+    "$\\limsup=\\liminf$ 時忘了要求是實數：$a_n=n$ 的兩者都是 $+\\infty$，但數列不收斂（發散到 $\\infty$）。"
+  ],
+  "checks": [
+    {
+      "ask": "$a_n=(-1)^n+\\frac{1}{n}$。$\\limsup a_n$ 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "$\\frac{3}{2}$", "why": "那是 $\\sup$，被 $a_2$ 一項拉高。$\\limsup$ 看的是最後的上緣：偶數項 $1+\\frac{1}{n}\\to1$。" },
+        { "label": "不存在，因為數列發散", "why": "有界數列的 $\\limsup$ 一定存在（$s_n$ 遞減有下界）。發散只表示 $\\limsup\\ne\\liminf$。" }
+      ]
+    },
+    {
+      "ask": "為什麼 $s_n=\\sup\\{a_k:k\\ge n\\}$ 是遞減的？",
+      "options": [
+        { "label": "$n$ 變大時，取 $\\sup$ 的集合變小", "correct": true },
+        { "label": "因為 $a_n$ 遞減", "why": "$a_n$ 不必遞減；$(-1)^n+\\frac{1}{n}$ 就上下跳。$s_n$ 遞減是因為集合 $\\{a_k:k\\ge n+1\\}\\subseteq\\{a_k:k\\ge n\\}$。" },
+        { "label": "因為 $s_n$ 收斂", "why": "倒果為因：是先有遞減且有下界，才由單調收斂定理得到收斂。" }
+      ]
+    },
+    {
+      "ask": "有界數列 $(a_n)$ 收斂的充要條件是？",
+      "options": [
+        { "label": "$\\limsup a_n=\\liminf a_n$", "correct": true },
+        { "label": "$\\limsup a_n$ 存在", "why": "有界時 $\\limsup$ 永遠存在，$(-1)^n$ 也有 $\\limsup=1$。要上下兩個相等才收斂。" },
+        { "label": "$\\sup=\\inf$", "why": "$\\sup=\\inf$ 表示數列是常數，太強了；$\\frac{1}{n}$ 收斂但 $\\sup=1$、$\\inf=0$。" }
+      ]
+    },
+    {
+      "ask": "$a_n=2^n$（$n$ 偶）、$3^n$（$n$ 奇），$\\limsup|a_n|^{1/n}$ 是？",
+      "options": [
+        { "label": "3", "correct": true },
+        { "label": "2", "why": "那是 $\\liminf$。$\\limsup$ 取最大的子數列極限，奇數項給 3。" },
+        { "label": "$\\frac{5}{2}$", "why": "$\\limsup$ 不是把兩個子數列極限平均；它是最大的那一個。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "最後的上緣",
+      "beats": [
+        { "show": ["$(-1)^n+\\frac{1}{n}$：不收斂"],
+          "note": "最後在 1 與 $-1$ 附近來回跳。",
+          "say": "這個數列不收斂，但它最後就在一和負一附近來回跳。上緣跟下緣，最後在哪裡？",
+          "board": [
+            {"do":"write","line":"$a_n=(-1)^n+\\frac{1}{n}$"},
+            {"do":"write","line":"最後在 $1$ 與 $-1$ 附近跳","on":"最後就在"}
+          ] },
+        { "show": ["$s_n=\\sup\\{a_k:k\\ge n\\}$"],
+          "note": "第 $n$ 項以後那條尾巴的上確界。",
+          "say": "辦法是看尾巴：把第 n 項以後的所有項拿出來，取上確界，叫 s n。",
+          "board": [
+            {"do":"write","line":"$s_n=\\sup\\lbrace {{tl:a_k:k\\ge n}}\\rbrace$"},
+            {"do":"underline","term":"tl","label":"尾巴","on":"第 n 項以後"}
+          ] },
+        { "show": ["$\\limsup a_n=\\lim s_n$","$\\liminf a_n=\\lim t_n$"],
+          "note": "$t_n$：尾巴的下確界。",
+          "say": "n 越來越大，看 s n 的極限，就是上極限；尾巴的下確界取極限，就是下極限。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\limsup a_n=\\lim {{s:s_n}}$","tint":{"s":"blue"},"on":"越來越大"},
+            {"do":"write","line":"$\\liminf a_n=\\lim {{t:t_n}}$","tint":{"t":"violet"},"on":"尾巴的下確界"}
+          ] },
+        { "show": ["$s_n$ 遞減、有下界 ⇒ 收斂"],
+          "note": "沒有上界時約定 $\\limsup=+\\infty$。",
+          "say": "有界的數列，s n 一定遞減又有下界，由單調收斂定理，這個極限一定存在。為什麼遞減？",
+          "board": [
+            {"do":"write","line":"$s_n$ 遞減、有下界 ⇒ ${{r:\\lim s_n}}$ 存在"},
+            {"do":"box","term":"r","color":"green","on":"一定存在"}
+          ] },
+        { "show": ["例：$s_2=\\frac{3}{2}$，$s_3=\\frac{5}{4}$"],
+          "say": "代數字看：例子裡 s 二是二分之三，s 三是四分之五，確實往下走。",
+          "board": [
+            {"do":"write","line":"$s_2=\\frac{3}{2}$，$s_3=\\frac{5}{4}$"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "兩個好用的事實",
+      "beats": [
+        { "show": ["$\\limsup$ = 最大的子數列極限","$\\liminf$ = 最小的子數列極限"],
+          "note": "證明在下一節。",
+          "say": "實際計算靠這一條：上極限是所有子數列極限裡最大的，下極限是最小的。",
+          "board": [
+            {"do":"write","line":"$\\limsup$ = 最大的子數列極限"},
+            {"do":"write","line":"$\\liminf$ = 最小的子數列極限","on":"下極限"}
+          ] },
+        { "show": ["找出各子數列的極限，取最大與最小"],
+          "say": "所以先把數列拆成幾個子數列，各自求極限，再挑最大和最小。",
+          "board": [
+            {"do":"write","line":"拆子數列 → 求極限 → 挑最大、最小"}
+          ] },
+        { "show": ["$\\liminf a_n\\le\\limsup a_n$"],
+          "note": "收斂 ⇔ 兩者相等（而且是實數）。",
+          "say": "下極限永遠不超過上極限。兩個相等而且是實數，數列就收斂，共同的值就是極限。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\liminf a_n\\le\\limsup a_n$","on":"下極限永遠"},
+            {"do":"write","line":"$\\liminf=\\limsup\\in\\mathbb{R}$ ⇒ 收斂","on":"兩個相等"},
+            {"do":"write","line":"共同的值 ＝ $\\lim a_n$","color":"green","on":"共同的值"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "證明：最大的子數列極限",
+      "beats": [
+        { "show": ["記 $L=\\lim s_n$：先證上界，再造子數列"],
+          "say": "策略：分兩半。先證每個子數列的極限都不超過 L，再一項一項造出一個趨近 L 的子數列。",
+          "board": [
+            {"do":"write","line":"記 ${{lm:L}}=\\lim s_n$","tint":{"lm":"violet"}},
+            {"do":"write","line":"先證上界，再造子數列","on":"先證"}
+          ] },
+        { "show": ["$a_{n_k}\\to\\ell$：$a_{n_k}\\le s_{n_k}$"],
+          "note": "$a_{n_k}$ 就在第 $n_k$ 項以後那條尾巴裡。",
+          "why": {"ask":"為什麼 $a_{n_k}\\le s_{n_k}$？","say":"第一步：子數列的每一項，為什麼不超過 s n k？","options":[{"label":"$a_{n_k}$ 屬於 $s_{n_k}$ 取上確界的那條尾巴","correct":true},{"label":"子數列越往後越大，最後才到 $\\ell$","why":"子數列不必遞增；這裡靠的只是 $a_{n_k}$ 自己就在那條尾巴裡，而上確界是那條尾巴的上界。"},{"label":"因為 $\\ell\\le L$","why":"$\\ell\\le L$ 正是這一半要證的結論，拿來當理由就繞圈了。"}]},
+          "say": "a n k 本身就在第 n k 項以後的那條尾巴裡，所以不超過那條尾巴的上確界。",
+          "board": [
+            {"do":"write","line":"$a_{n_k}\\to\\ell$：${{le:a_{n_k}\\le s_{n_k}}}$","on":"子數列的每一項"},
+            {"do":"underline","term":"le","on":"尾巴裡","label":"在尾巴裡","why":true}
+          ] },
+        { "show": ["取極限：$\\ell\\le L$"],
+          "note": "$(s_{n_k})$ 是 $(s_n)$ 的子數列，也 $\\to L$。",
+          "say": "s n k 是 s n 的子數列，也趨近 L。不等式取極限還成立，所以 l 不超過 L。",
+          "board": [
+            {"do":"write","line":"取極限：${{res:\\ell\\le {{lm:L}}}}$","on":"取極限"},
+            {"do":"box","term":"res","on":"所以 l","color":"green"}
+          ] },
+        { "show": ["取 $n_{k+1}>n_k$ 使","$a_{n_{k+1}}>s_{n_k+1}-\\frac{1}{k+1}$"],
+          "note": "上確界的 $\\varepsilon$ 判準；$n_1$ 用 $s_1-1$。",
+          "why": {"ask":"為什麼找得到這樣的 $n_{k+1}$？","say":"另一半要自己造。下一項為什麼一定找得到？","options":[{"label":"$s_{n_k+1}$ 是上確界，減一點就不是上界","correct":true},{"label":"$(a_n)$ 有界，總有一項很大","why":"有界只給一個上界，不保證有一項貼近某個特定的數；靠的是上確界的定義：比它小一點就不再是上界。"},{"label":"$s_n$ 遞減，越後面越接近 $L$","why":"遞減說的是 $s_n$ 自己；這一步要找的是一項 $a_j$ 貼近 $s_{n_k+1}$，靠上確界的判準。"}]},
+          "say": "第 n k 項以後的上確界，減掉 k 加一分之一就不是上界了，所以後面有一項比它大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"取 $n_{k+1}>n_k$ 使","on":"另一半"},
+            {"do":"write","line":"$a_{n_{k+1}}>{{lo:s_{n_k+1}-\\frac{1}{k+1}}}$","on":"下一項"},
+            {"do":"underline","term":"lo","on":"就不是上界","label":"不是上界","why":true}
+          ] },
+        { "show": ["$s_{n_k+1}-\\frac{1}{k+1}<a_{n_{k+1}}\\le s_{n_k+1}$"],
+          "note": "兩端都 $\\to L$：由夾擠，$a_{n_k}\\to L$。",
+          "say": "這一項又不超過同一個上確界。左右兩端都趨近 L，夾擠，造出來的子數列趨近 L。",
+          "board": [
+            {"do":"write","line":"${{lo:s_{n_k+1}-\\frac{1}{k+1}}}<a_{n_{k+1}}\\le{{hi:s_{n_k+1}}}$"},
+            {"do":"underline","term":"hi","on":"同一個上確界"},
+            {"do":"write","line":"兩端 $\\to L$ ⇒ ${{res2:a_{n_k}\\to {{lm:L}}}}$","on":"左右兩端"},
+            {"do":"box","term":"res2","on":"夾擠","color":"green"}
+          ] },
+        { "show": ["$\\frac{1}{k+1}\\to0$，$s_{n_k+1}\\to L$"],
+          "note": "下標往後挪一格，極限不變。",
+          "say": "k 加一分之一趨近零，s n k 加一也趨近 L。所以 a n k 加一趨近 L，往後挪一格，a n k 也是。",
+          "board": [
+            {"do":"write","line":"$a_{n_{k+1}}\\to L$，所以 ${{q1:a_{n_k}\\to L}}$"},
+            {"do":"underline","term":"q1","on":"往後挪一格"}
+          ] }
+      ],
+      "key": "每條尾巴挑一項貼近 $s_n$，夾擠到 $L$",
+      "proof": true,
+      "of": 3,
+      "skeleton": "構造",
+      "order": {
+        "ask": "把子數列的造法排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "取 $n_1$ 使 $a_{n_1}>s_1-1$"
+          },
+          {
+            "label": "有了 $n_k$，看尾巴的上確界 $s_{n_k+1}$",
+            "why": "要先選好 $n_k$，才知道要看第幾項以後的尾巴。"
+          },
+          {
+            "label": "取 $n_{k+1}>n_k$ 使 $a_{n_{k+1}}>s_{n_k+1}-\\frac{1}{k+1}$",
+            "why": "要先有上確界 $s_{n_k+1}$，才能往下減一點去找項。"
+          },
+          {
+            "label": "兩端都 $\\to L$，夾擠得 $a_{n_k}\\to L$",
+            "why": "夾擠要等每一項都選好、兩邊的不等式都有了才能用。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "每條尾巴都一樣",
+      "beats": [
+        { "show": ["$a_n=(-1)^n\\frac{n}{n+1}$"],
+          "say": "看一個例子：正負交錯，大小是 n 加一分之 n。",
+          "board": [
+            {"do":"write","line":"$a_n=(-1)^n\\frac{n}{n+1}$"}
+          ] },
+        { "show": ["偶數項 $\\frac{2k}{2k+1}<1$，遞增 $\\to1$"],
+          "note": "奇數項遞減 $\\to-1$。",
+          "say": "偶數項都比一小，一路往一爬；奇數項往負一走。",
+          "board": [
+            {"do":"write","line":"偶數項：$\\frac{2k}{2k+1}<1$，$\\to1$"},
+            {"do":"write","line":"奇數項：$\\to-1$","on":"奇數項"}
+          ] },
+        { "show": ["兩串點往 1 與 $-1$ 靠"],
+          "say": "畫出來看：上面一串點往一靠，下面一串往負一靠，而上面的點都在一的下面。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,13,-1.4,1.4],"ticks":false,"dashed":[[[0,1],[13,1]],[[0,-1],[13,-1]]],"points":[{"x":1,"y":-0.5,"color":"blue"},{"x":2,"y":0.6667,"color":"gold"},{"x":3,"y":-0.75,"color":"blue"},{"x":4,"y":0.8,"color":"gold"},{"x":5,"y":-0.8333,"color":"blue"},{"x":6,"y":0.8571,"color":"gold"},{"x":7,"y":-0.875,"color":"blue"},{"x":8,"y":0.8889,"color":"gold"},{"x":9,"y":-0.9,"color":"blue"},{"x":10,"y":0.9091,"color":"gold"},{"x":11,"y":-0.9167,"color":"blue"},{"x":12,"y":0.9231,"color":"gold"}]}}
+          ] },
+        { "show": ["任何 $n$ 之後都還有偶數項"],
+          "say": "不管從第幾項切下尾巴，後面都還有偶數項，而且要多靠近一就有多靠近。",
+          "board": [
+            {"do":"write","line":"任何 $n$ 之後都還有偶數項"}
+          ] }
+      ],
+      "predict": {
+        "ask": "尾巴的上確界 $s_n$ 是多少？",
+        "options": [
+          {
+            "label": "對每個 $n$ 都是 1",
+            "correct": true
+          },
+          {
+            "label": "越來越小，最後趨近 1",
+            "why": "每條尾巴裡的偶數項都任意靠近 1，又都小於 1，所以每個 $s_n$ 剛好就是 1，不會先大後小。"
+          },
+          {
+            "label": "就是 $a_n$",
+            "why": "$s_n$ 是整條尾巴的上確界，不是第 $n$ 項；奇數的 $n$ 時 $a_n$ 是負的，差得遠。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\sup$ 不是 $\\limsup$",
+      "beats": [
+        { "show": ["$\\limsup=1$，$\\liminf=-1$"],
+          "note": "不相等：發散。上極限 1 不是任何一項。",
+          "say": "所以上極限是一，下極限是負一，不相等，數列發散。注意，沒有任何一項等於一。",
+          "board": [
+            {"do":"write","line":"$\\limsup={{u:1}}$，$\\liminf=-1$"},
+            {"do":"focus","term":"u","on":"沒有任何一項"}
+          ] },
+        { "show": ["每個 $s_n=1$：最小上界，但取不到"],
+          "say": "為什麼每個 s n 都是一？偶數項都比一小，又任意靠近一，所以一是最小的上界，而且取不到。",
+          "board": [
+            {"do":"write","line":"每個 $n$：$s_n={{s1:1}}$"},
+            {"do":"underline","term":"s1","label":"取不到","on":"最小的上界"}
+          ] },
+        { "show": ["$a_n=(-1)^n+\\frac{1}{n}$","$0,\\frac{3}{2},-\\frac{2}{3},\\frac{5}{4},\\dots$"],
+          "say": "回到開頭的數列。前幾項：零、二分之三、負三分之二、四分之五。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$a_n=(-1)^n+\\frac{1}{n}$","on":"回到開頭"},
+            {"do":"plot","graph":{"window":[0,13,-1.4,1.8],"ticks":false,"dashed":[[[0,1],[13,1]],[[0,-1],[13,-1]]],"points":[{"x":1,"y":0,"color":"blue"},{"x":2,"y":1.5,"color":"gold"},{"x":3,"y":-0.6667,"color":"blue"},{"x":4,"y":1.25,"color":"blue"},{"x":5,"y":-0.8,"color":"blue"},{"x":6,"y":1.1667,"color":"blue"},{"x":7,"y":-0.8571,"color":"blue"},{"x":8,"y":1.125,"color":"blue"},{"x":9,"y":-0.8889,"color":"blue"},{"x":10,"y":1.1,"color":"blue"},{"x":11,"y":-0.9091,"color":"blue"},{"x":12,"y":1.0833,"color":"blue"}],"labels":[{"x":12.9,"y":1.1,"text":"1","anchor":"end"},{"x":12.9,"y":-1.25,"text":"-1","anchor":"end"}]},"on":"前幾項"}
+          ] },
+        { "show": ["$\\sup=a_2=\\frac{3}{2}$"],
+          "note": "被前面某一項偶然拉高。",
+          "say": "上確界是第二項，二分之三。但它只是前面某一項偶然很大，往後再也不會超過一太多。",
+          "board": [
+            {"do":"write","line":"$\\sup={{s:a_2}}=\\frac{3}{2}$","on":"上確界"},
+            {"do":"underline","term":"s","on":"前面某一項","label":"偶然拉高"}
+          ] }
+      ],
+      "key": "前面的項會被丟掉，只看尾巴的上緣",
+      "check": 0
+    },
+    {
+      "title": "根值判別",
+      "beats": [
+        { "show": ["$a_n=2^n$（$n$ 偶）、$3^n$（$n$ 奇）"],
+          "note": "冪級數 $\\sum a_nx^n$ 的收斂半徑？",
+          "say": "上極限真正派上用場的地方：這個冪級數的係數，偶數項是二的 n 次方，奇數項是三的 n 次方。",
+          "board": [
+            {"do":"write","line":"$\\sum a_nx^n$"},
+            {"do":"write","line":"$a_n=2^n$（$n$ 偶）、$3^n$（$n$ 奇）","on":"偶數項"}
+          ] },
+        { "show": ["$|a_n|^{1/n}$：2, 3, 2, 3, …"],
+          "note": "沒有極限，$\\lim$ 用不了。",
+          "say": "開 n 次方根，一下二、一下三，沒有極限。比值判別更糟，一下趨近無限大、一下趨近零。",
+          "board": [
+            {"do":"write","line":"$|a_n|^{1/n}$：2, 3, 2, 3, …"},
+            {"do":"write","line":"沒有極限，$\\lim$ 用不了","color":"red","on":"沒有極限"}
+          ] },
+        { "show": ["$|x|\\cdot\\limsup>1$ ⇒ 發散"],
+          "say": "為什麼取最大的？最大的那串無限多次出現，x 的絕對值乘上它若大於一，這些項就不趨近零，級數發散。",
+          "board": [
+            {"do":"write","line":"$|x|\\cdot\\limsup>1$ ⇒ 發散"}
+          ] },
+        { "show": ["邊界：$|x|=\\frac{1}{\\limsup}=R$"],
+          "say": "剛好等於一的地方就是邊界，x 的絕對值等於它的倒數，所以半徑 R 是上極限的倒數。",
+          "board": [
+            {"do":"write","line":"$|x|\\cdot\\limsup=1$"},
+            {"do":"write","line":"$R={{c1:\\frac{1}{\\limsup}}}$","on":"所以半徑"},
+            {"do":"underline","term":"c1","label":"倒數","on":"上極限的倒數"}
+          ] },
+        { "show": ["$\\frac{1}{R}=\\limsup|a_n|^{1/n}$"],
+          "say": "收斂半徑完整的公式用的是上極限。子數列極限只有兩個，上極限是哪一個？",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{R}={{l:\\limsup|a_n|^{1/n}}}$","on":"完整"},
+            {"do":"circle","term":"l","on":"上極限#1"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["limsup", "sequence"],
+    "fine": ["limsup-tail-sup", "limsup-vs-sup", "limsup-subsequence-limits", "limsup-root-test-radius"]
+  },
+  "practice": [
+    { "id": "an-ls-001", "core": true, "trains": "limsup-subsequence-limits" },
+    { "id": "an-ls-002", "core": true, "trains": "limsup-vs-sup" },
+    { "id": "an-ls-004", "core": true, "trains": "limsup-root-test-radius" },
+    { "id": "cg-12c-022", "core": true, "trains": "limsup-tail-sup" },
+    { "id": "an-sup-002", "trains": "limsup-vs-sup", "note": "對照：這題問的是 $\\inf$（含前面的項），不是 $\\liminf$。" },
+    { "id": "cg-12c-023", "trains": "limsup-tail-sup" },
+    { "id": "cg-12c-024", "trains": "limsup-vs-sup" },
+    { "id": "cg-12c-025", "trains": "limsup-vs-sup" },
+    { "id": "an-ls-003", "challenge": true, "trains": "limsup-subsequence-limits", "note": "挑戰：$\\sin n$ 的子數列極限填滿 $[-1,1]$（因為 $\\pi$ 是無理數），$\\limsup=1$。" }
+  ],
+  "gaps": []
+}

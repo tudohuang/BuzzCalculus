@@ -1,0 +1,622 @@
+{
+  "id": "lhopital",
+  "title": "L'Hôpital 法則",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "limit-factor",
+    "limit-trig-standard",
+    "derivative-power-rules",
+    "chain-rule",
+    "linear-approximation",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "indeterminate-other"
+  ],
+  "related": [
+    "rolle-theorem",
+    "taylor-limits"
+  ],
+  "objectives": [
+    "每次使用前都先檢查是不是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$。",
+    "會處理 $\\frac{0}{0}$ 與 $\\frac{\\infty}{\\infty}$，必要時連續使用。",
+    "知道它什麼時候不能用、或用了沒有結論。"
+  ],
+  "visual": "把 f 和 g 兩條曲線畫在同一張圖上，兩條都在 x = a 穿過 0。按「放大」，鏡頭往 (a, 0) 推近，兩條曲線越來越直，最後看起來就是兩條直線。旁邊即時顯示 f(x)/g(x) 與 f′(x)/g′(x)，兩個數字越來越接近。",
+  "concept": [
+    {
+      "heading": "① 操作版：先檢查，再各自微分",
+      "body": [
+        "第一步永遠是檢查：$x\\to a$ 時，分子分母是不是都 $\\to 0$，或都 $\\to\\pm\\infty$？",
+        "不是，就不能用。是，就把分子微分、分母微分，再取極限：$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$。$a$ 也可以是 $\\pm\\infty$。"
+      ],
+      "tex": [
+        "\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "完整的定理條件",
+      "body": [
+        "$f$、$g$ 在 $a$ 附近（$a$ 本身可以除外）可微；$g'(x)$ 在 $a$ 附近（$a$ 本身除外）不為 $0$；$x\\to a$ 時 $f$、$g$ 都 $\\to 0$，或都 $\\to\\pm\\infty$；而且 $\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$ 存在（或是 $\\pm\\infty$）。",
+        "滿足這些，$\\lim_{x\\to a}\\frac{f(x)}{g(x)}$ 也存在，而且等於 $\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$。$a$ 換成 $a^+$、$a^-$、$\\infty$、$-\\infty$ 也成立。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "② 分子分母「各自」微分，不是用除法法則",
+      "body": [
+        "不是對 $\\frac{f}{g}$ 整個用除法法則 $\\frac{f'g-fg'}{g^2}$。那是在求 $\\left(\\frac{f}{g}\\right)'$，跟極限無關。這是最常見的錯。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一個理解 L'Hôpital 的直覺（不是證明）",
+      "body": [
+        "以 $\\frac{0}{0}$ 為例，假設 $f(a)=g(a)=0$。在 $a$ 附近，曲線看起來像它的切線（〈線性近似〉）：$f(x)\\approx f'(a)(x-a)$，$g(x)\\approx g'(a)(x-a)$。",
+        "兩個相除，$(x-a)$ 約掉，剩 $\\frac{f'(a)}{g'(a)}$：兩條都從 $0$ 出發的直線，比值就是斜率的比。",
+        "這只是直覺：它假設了 $f'(a)$、$g'(a)$ 存在而且 $g'(a)\\ne 0$，「$\\approx$」差多少也沒有交代，而且沒有涵蓋 $\\frac{\\infty}{\\infty}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "嚴格證明（只證 $x\\to a^+$ 的 $\\frac{0}{0}$ 情況）",
+      "body": [
+        "設 $x\\to a^+$ 時 $f(x)\\to 0$、$g(x)\\to 0$；$f$、$g$ 在 $(a,a+\\delta)$ 可微，$g'$ 在那裡不為 $0$；$\\lim_{x\\to a^+}\\frac{f'(x)}{g'(x)}=L$。$x\\to a^-$ 的證法對稱，兩邊合起來就是雙邊版本；$\\frac{\\infty}{\\infty}$ 與 $a=\\pm\\infty$ 的情況另有證明。",
+        "第 1 步：補上端點。$f(a)$、$g(a)$ 可能沒有定義，或不是 $0$；不管原本是什麼，都把它們定成 $0$。極限不看 $a$ 這一點的值，所以這樣改不影響要求的極限。改完之後 $f$、$g$ 在 $a$ 右連續；在 $(a,a+\\delta)$ 可微所以連續。因此對每個 $x\\in(a,a+\\delta)$，$f$、$g$ 在 $[a,x]$ 連續、在 $(a,x)$ 可微。",
+        "第 2 步：$g(x)\\ne 0$。若某個 $x\\in(a,a+\\delta)$ 使 $g(x)=0=g(a)$，由〈Rolle 定理〉，$(a,x)$ 裡有一點 $g'=0$，跟假設矛盾。",
+        "第 3 步：柯西均值定理。固定 $x$，令 $h(t)=f(t)\\cdot g(x)-g(t)\\cdot f(x)$（$t\\in[a,x]$）。$h(a)=0-0=0$，$h(x)=f(x)g(x)-g(x)f(x)=0$，$h$ 在 $[a,x]$ 連續、$(a,x)$ 可微。由 Rolle 定理，存在 $c\\in(a,x)$ 使 $h'(c)=f'(c)g(x)-g'(c)f(x)=0$。$g'(c)\\ne 0$、$g(x)\\ne 0$，兩邊同除以 $g'(c)g(x)$，得 $\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$。這一步用到了 $f(a)=g(a)=0$；一般的柯西均值定理給的是 $\\frac{f(x)-f(a)}{g(x)-g(a)}$。",
+        "第 4 步：取極限。$c$ 跟著 $x$ 變，但永遠滿足 $a<c<x$。任給 $\\varepsilon>0$，因為 $\\frac{f'}{g'}\\to L$，可以找 $\\eta>0$（$\\eta\\le\\delta$）使得 $a<t<a+\\eta$ 時 $\\left|\\frac{f'(t)}{g'(t)}-L\\right|<\\varepsilon$。那麼只要 $a<x<a+\\eta$，就有 $a<c<a+\\eta$，所以 $\\left|\\frac{f(x)}{g(x)}-L\\right|=\\left|\\frac{f'(c)}{g'(c)}-L\\right|<\\varepsilon$。這正是 $\\lim_{x\\to a^+}\\frac{f(x)}{g(x)}=L$。"
+      ],
+      "tex": [
+        "\\frac{f(x)}{g(x)}=\\frac{f(x)-f(a)}{g(x)-g(a)}=\\frac{f'(c)}{g'(c)},\\qquad a<c<x"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 不是不定型就用，答案會錯",
+      "body": [
+        "$\\lim_{x\\to 0}\\frac{x+1}{x+2}=\\frac{1}{2}$（直接代入）。硬用 L'Hôpital：分子分母微分都是 $1$，得 $1$。錯的。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ $\\frac{f'}{g'}$ 沒有極限時，L'Hôpital 不說任何事",
+      "body": [
+        "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$：同除以 $x$，得 $1+\\frac{\\sin x}{x}\\to 1$。",
+        "用 L'Hôpital：$\\frac{1+\\cos x}{1}$ 在 $0$ 到 $2$ 之間一直晃，沒有極限。這不代表原極限不存在，只代表這把鑰匙在這裡打不開，要換方法。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑥ 可以連續用，每一次都要重新檢查",
+      "body": [
+        "微分一次後還是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$，可以再用。用到三、四次通常很繁瑣，這時〈用 Taylor 求極限〉更快。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$\\frac{0}{0}$",
+      "prompt": "$\\lim_{x\\to 1}\\frac{\\ln x}{x-1}$",
+      "problemId": "cx-lh-007",
+      "steps": [
+        "檢查：$\\ln 1=0$、$1-1=0$，是 $\\frac{0}{0}$。",
+        "分子微分 $\\frac{1}{x}$，分母微分 $1$。",
+        "$\\lim_{x\\to 1}\\frac{1/x}{1}=1$。"
+      ],
+      "answer": "$1$",
+      "note": "這正好是 $\\ln x$ 在 $x=1$ 的導數。很多 $\\frac{0}{0}$ 本身就是某個導數。",
+      "claim": "LIM(ln(x)/(x-1), 1) == 1 ;; D(ln(x), 1) == 1"
+    },
+    {
+      "title": "$\\frac{\\infty}{\\infty}$，用兩次",
+      "prompt": "$\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$",
+      "problemId": "cx-lh-004",
+      "steps": [
+        "檢查：分子分母都 $\\to\\infty$，是 $\\frac{\\infty}{\\infty}$。",
+        "微分一次：$\\frac{2x}{e^x}$。分子分母還是都 $\\to\\infty$，再檢查一次，仍是 $\\frac{\\infty}{\\infty}$。",
+        "再微分一次：$\\frac{2}{e^x}$。分母 $\\to\\infty$、分子固定是 $2$，所以 $\\to 0$。"
+      ],
+      "answer": "$0$",
+      "note": "指數成長比任何多項式都快。",
+      "claim": "LIM(x^2/e^x, inf) == 0 ;; LIM(2x/e^x, inf) == 0 ;; LIM(2/e^x, inf) == 0"
+    },
+    {
+      "title": "分母是三角函數",
+      "prompt": "$\\lim_{x\\to 0}\\frac{e^{2x}-1}{\\sin 3x}$",
+      "problemId": "tb-lh-001",
+      "steps": [
+        "檢查：$e^0-1=0$、$\\sin 0=0$，是 $\\frac{0}{0}$。",
+        "分子微分 $2e^{2x}$（連鎖律，裡層 $2x$ 的導數是 $2$），分母微分 $3\\cos 3x$（裡層 $3x$ 的導數是 $3$）。",
+        "新的分式在 $x=0$ 連續，直接代入：$\\frac{2e^0}{3\\cos 0}=\\frac{2}{3}$。"
+      ],
+      "answer": "$\\frac{2}{3}$",
+      "claim": "LIM((e^(2x)-1)/sin(3x), 0) == 2/3 ;; SUB(2*e^(2x)/(3*cos(3x)), 0) == 2/3"
+    },
+    {
+      "title": "用錯的例子",
+      "prompt": "$\\lim_{x\\to 0}\\frac{x+1}{x+2}$",
+      "steps": [
+        "檢查：$x=0$ 時分子是 $1$、分母是 $2$，不是不定型，不能用。",
+        "直接代入，答案 $\\frac{1}{2}$。沒檢查就用，會得到 $\\frac{1}{1}=1$，是錯的。"
+      ],
+      "answer": "$\\frac{1}{2}$",
+      "claim": "LIM((x+1)/(x+2), 0) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "沒檢查就用（範例 4）。",
+    "用除法法則對整個分式微分。",
+    "連鎖律漏掉，例如 $e^{2x}$ 微分寫成 $e^{2x}$。",
+    "$\\frac{f'}{g'}$ 沒有極限，就以為原極限不存在（觀念 ⑤）。"
+  ],
+  "checks": [
+    {
+      "ask": "下面哪一個可以直接用 L'Hôpital？",
+      "options": [
+        {
+          "label": "$\\lim_{x\\to 0}\\frac{\\sin x}{x}$",
+          "correct": true
+        },
+        {
+          "label": "$\\lim_{x\\to 0}\\frac{\\cos x}{x}$",
+          "why": "分子 $\\to\\cos 0=1$，是 $\\frac{1}{0}$ 型，不是 $\\frac{0}{0}$。你可能只看到分母 $\\to 0$ 就以為能用。"
+        },
+        {
+          "label": "$\\lim_{x\\to 1}\\frac{x+1}{x}$",
+          "why": "直接代入得 $2$，不是不定型。看到分式就想微分，是跳過了檢查。"
+        }
+      ]
+    },
+    {
+      "ask": "用 L'Hôpital 時，分子分母要怎麼處理？",
+      "options": [
+        {
+          "label": "分子微分、分母微分，各自分開",
+          "correct": true
+        },
+        {
+          "label": "整個分式用除法法則微分",
+          "why": "那是求 $\\left(\\frac{f}{g}\\right)'$，不是 L'Hôpital。兩者長得都有「微分」，容易混在一起。"
+        },
+        {
+          "label": "分子分母同除以 $x$",
+          "why": "那是 $x\\to\\infty$ 時看最高次的方法，不是 L'Hôpital。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to 1}\\frac{x^5-1}{x^3-1}$ 是？",
+      "options": [
+        {
+          "label": "$\\frac{5}{3}$",
+          "correct": true
+        },
+        {
+          "label": "$1$",
+          "why": "$\\frac{0}{0}$ 不是 $1$。微分後 $\\frac{5x^4}{3x^2}$，代 $1$ 得 $\\frac{5}{3}$。"
+        },
+        {
+          "label": "$\\frac{3}{5}$",
+          "why": "分子分母弄反了：分子 $x^5-1$ 微分是 $5x^4$，放在上面。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$ 用 L'Hôpital 得 $\\frac{1+\\cos x}{1}$，它沒有極限。所以原極限：",
+      "options": [
+        {
+          "label": "是 $1$，要用別的方法算",
+          "correct": true
+        },
+        {
+          "label": "不存在",
+          "why": "$\\frac{f'}{g'}$ 沒有極限時 L'Hôpital 沒有結論，不是「原極限不存在」。同除以 $x$ 就知道是 $1$。"
+        },
+        {
+          "label": "是 $2$",
+          "why": "你可能把 $\\cos x$ 當成 $1$ 代進去。$\\cos x$ 不會停在 $1$，這個值沒有根據。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "先檢查，再微分",
+      "beats": [
+        { "show": ["第一步：檢查"],
+          "note": "分子分母都 $\\to 0$，或都 $\\to\\pm\\infty$？",
+          "say": "用羅必達法則，第一步永遠是檢查：分子分母是不是都趨近零，或都趨近無限大？",
+          "board": [
+            {"do":"write","line":"檢查：${{z:\\frac{0}{0}}}$ 或 $\\frac{\\infty}{\\infty}$"},
+            {"do":"focus","term":"z","label":"都趨近零","on":"都趨近零"}
+          ] },
+        { "show": ["不是，就不能用"],
+          "say": "不是不定型，就不能用。這一步跳過，答案會錯，等一下會看到例子。",
+          "board": [
+            {"do":"write","line":"不是不定型 → 不能用","color":"red"}
+          ] },
+        { "show": ["$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}$"],
+          "note": "$a$ 也可以是 $\\pm\\infty$。",
+          "say": "是的話，分子微分、分母微分，再取極限。x 趨近的也可以是正負無限大。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{{{p:f'(x)}}}{{{q:g'(x)}}}$"},
+            {"do":"focus","term":"p","on":"分子微分"},
+            {"do":"focus","term":"q","on":"分母微分"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "各自微分",
+      "beats": [
+        { "show": ["不是除法法則 $\\frac{f'g-fg'}{g^2}$"],
+          "note": "那是在求 $\\left(\\frac{f}{g}\\right)'$，跟極限無關。",
+          "say": "注意是分子、分母各自微分。對整個分式用除法法則，是在求導數，跟這裡無關。這是最常見的錯。",
+          "board": [
+            {"do":"write","line":"各自微分：$\\frac{f'}{g'}$"},
+            {"do":"write","line":"除法法則 ${{q:\\frac{f'g-fg'}{g^2}}}$","on":"除法法則"},
+            {"do":"strike","term":"q","label":"不是這個","on":"求導數"}
+          ] },
+        { "show": ["$f(x)\\approx f'(a)(x-a)$","$g(x)\\approx g'(a)(x-a)$"],
+          "note": "以 $\\frac{0}{0}$ 為例，$f(a)=g(a)=0$。",
+          "say": "為什麼會對？看零比零的情況：在 a 附近，兩條曲線都像從零出發的切線。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f(x)\\approx f'(a)(x-a)$","on":"看零比零"},
+            {"do":"write","line":"$g(x)\\approx g'(a)(x-a)$","on":"兩條曲線"}
+          ] },
+        { "show": ["藍：$x^2-1$，紅：$2(x-1)$"],
+          "note": "靠近 $x=1$，兩條幾乎重合。",
+          "say": "先看圖：藍色是 x 平方減一，紅色是直線二乘 x 減一。在 x 等於一附近，兩條貼在一起。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,2,-1,3],"curves":[{"expr":"x^2-1","domain":[0,2],"color":"blue"},{"expr":"2*(x-1)","domain":[0,2],"color":"red"}],"points":[{"x":1,"y":0}]}}
+          ] },
+        { "show": ["$x^2-1=(x-1)(x+1)$","$x^2-1\\approx 2(x-1)$"],
+          "note": "斜率 $2$ 就是 $f'(1)$。",
+          "say": "x 平方減一等於 x 減一乘 x 加一。x 靠近一，x 加一就靠近二，所以大約是二乘 x 減一。",
+          "board": [
+            {"do":"write","line":"$x^2-1=(x-1)(x+1)$"},
+            {"do":"write","line":"$x^2-1\\approx {{t1:2}}(x-1)$","on":"所以"},
+            {"do":"focus","term":"t1","label":"斜率","on":"二乘"}
+          ] },
+        { "show": ["$(x-a)$ 約掉，剩 $\\frac{f'(a)}{g'(a)}$"],
+          "note": "兩條直線的比，就是斜率的比。",
+          "say": "兩個相除，x 減 a 約掉，只剩斜率的比。",
+          "board": [
+            {"do":"write","line":"$\\frac{f'(a)\\,{{c:(x-a)}}}{g'(a)\\,{{d:(x-a)}}}$"},
+            {"do":"strike","term":"c","on":"x 減 a"},
+            {"do":"strike","term":"d","on":"約掉"},
+            {"do":"write","line":"$\\frac{f'(a)}{g'(a)}$","on":"只剩"}
+          ] },
+        { "show": ["直覺，不是證明"],
+          "note": "沒交代誤差，也沒涵蓋 $\\frac{\\infty}{\\infty}$。",
+          "say": "這只是直覺：它假設導數存在、分母斜率不是零，也沒處理無限大比無限大。嚴格證明在最後那節。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"直覺，不是證明","color":"red","on":"這只是直覺"},
+            {"do":"write","line":"假設 $f'$、$g'$ 存在，$g'(a)\\ne0$","on":"假設導數"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "零比零",
+      "beats": [
+        { "show": ["$\\lim_{x\\to 1}\\frac{\\ln x}{x-1}$"],
+          "note": "$\\ln 1=0$、$1-1=0$：是 $\\frac{0}{0}$。",
+          "say": "自然對數 x 除以 x 減一，x 趨近一。先檢查：上面是零，下面也是零。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to 1}\\frac{\\ln x}{x-1}$"},
+            {"do":"write","line":"$\\ln 1=0$，$1-1=0$","on":"上面是零"}
+          ] },
+        { "show": ["分子 $\\frac{1}{x}$，分母 $1$"],
+          "say": "可以用。自然對數 x 的導數是 x 分之一，x 減一的導數是一。",
+          "board": [
+            {"do":"write","line":"$(\\ln x)'=\\frac{1}{x}$，$(x-1)'=1$"}
+          ] },
+        { "show": ["$\\lim_{x\\to 1}\\frac{1/x}{1}=1$"],
+          "note": "正好是 $\\ln x$ 在 $x=1$ 的導數。",
+          "say": "代 x 等於一，得一。這正好是自然對數在一的導數：很多零比零本身就是某個導數。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to 1}\\frac{1/x}{1}={{r:1}}$"},
+            {"do":"box","term":"r","color":"green","on":"得一"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "連續用兩次",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$"],
+          "note": "分子分母都 $\\to\\infty$。",
+          "say": "x 平方除以 e 的 x 次方，x 趨近無限大。兩個都衝向無限大，是無限大比無限大。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{x^2}{e^x}$"},
+            {"do":"write","line":"型：$\\frac{\\infty}{\\infty}$","on":"兩個都衝向"}
+          ] },
+        { "show": ["微分一次：$\\frac{2x}{e^x}$"],
+          "say": "各自微分一次，得到二 x 除以 e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{{{n:2x}}}{e^x}$"},
+            {"do":"underline","term":"n","on":"二 x"}
+          ] }
+      ],
+      "predict": {
+        "ask": "下一步是？",
+        "options": [
+          {
+            "label": "還是 $\\frac{\\infty}{\\infty}$，再用一次",
+            "correct": true
+          },
+          {
+            "label": "代入，答案是 $0$",
+            "why": "$2x$ 還是 $\\to\\infty$，現在仍是 $\\frac{\\infty}{\\infty}$，不能直接下結論。"
+          },
+          {
+            "label": "不能再用了",
+            "why": "可以連續用，只要每一次都重新檢查是不定型。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "連鎖律別漏",
+      "beats": [
+        { "show": ["再微分一次：$\\frac{2}{e^x}\\to 0$"],
+          "note": "指數成長比任何多項式都快。",
+          "say": "再微分一次，分子固定是二，分母衝向無限大，所以極限是零。",
+          "board": [
+            {"do":"write","line":"再微分：$\\frac{{{n:2}}}{e^x}\\to 0$"},
+            {"do":"focus","term":"n","on":"分子固定"}
+          ] },
+        { "show": ["$\\lim_{x\\to 0}\\frac{e^{2x}-1}{\\sin 3x}$"],
+          "note": "$e^0-1=0$、$\\sin 0=0$：是 $\\frac{0}{0}$。",
+          "say": "再一題：e 的二 x 次方減一，除以 sine 三 x。代零，上下都是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{x\\to 0}\\frac{e^{2x}-1}{\\sin 3x}$","on":"再一題"},
+            {"do":"write","line":"$e^0-1=0$，$\\sin 0=0$","on":"代零"}
+          ] },
+        { "show": ["連鎖律：外層微分，再乘裡層導數"],
+          "note": "$e^{2x}$：外層 $e^u$，裡層 $2x$。",
+          "say": "連鎖律：外層微分後，裡面原封不動，再乘裡層的導數。e 的二 x 次方，裡層二 x 的導數是二。",
+          "board": [
+            {"do":"write","line":"$(e^{2x})'=e^{2x}\\cdot{{d1:(2x)'}}$"},
+            {"do":"focus","term":"d1","label":"裡層導數","on":"再乘"}
+          ] },
+        { "show": ["$(\\sin 3x)'=\\cos 3x\\cdot 3$"],
+          "note": "外層 $\\sin u$ 變 $\\cos u$，裡層 $3x$。",
+          "say": "sine 三 x 也一樣：外層 sine 微分變 cosine，三 x 原封不動，再乘裡層的導數三。",
+          "board": [
+            {"do":"write","line":"$(\\sin 3x)'=\\cos 3x\\cdot{{t2:3}}$"},
+            {"do":"focus","term":"t2","label":"裡層導數","on":"再乘"}
+          ] },
+        { "show": ["分子 $2e^{2x}$，分母 $3\\cos 3x$"],
+          "note": "連鎖律：裡層的導數 $2$、$3$。",
+          "say": "微分要用連鎖律：分子多一個二，分母是三倍 cosine 三 x。",
+          "board": [
+            {"do":"write","line":"分子 ${{c:2}}e^{2x}$，分母 ${{d:3}}\\cos 3x$"},
+            {"do":"focus","term":"c","label":"裡層導數","on":"多一個二"},
+            {"do":"focus","term":"d","on":"三倍"}
+          ] }
+      ],
+      "key": "分子分母各自用連鎖律，裡層導數別丟",
+      "predict": {
+        "ask": "代入 $x=0$，極限是？",
+        "options": [
+          {
+            "label": "$\\frac{2}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "連鎖律漏掉了：$e^{2x}$ 微分寫成 $e^{2x}$、$\\sin 3x$ 寫成 $\\cos 3x$，才會得到 $\\frac{1}{1}$。"
+          },
+          {
+            "label": "$\\frac{3}{2}$",
+            "why": "分子分母弄反了：分子 $2e^{2x}$ 在上面，代入是 $\\frac{2}{3}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "用錯和打不開",
+      "beats": [
+        { "show": ["$\\lim_{x\\to 0}\\frac{x+1}{x+2}=\\frac{1}{2}$"],
+          "note": "不是不定型，直接代入。",
+          "say": "x 加一除以 x 加二，x 趨近零。上面是一，下面是二，不是不定型，答案是二分之一。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to 0}{{fr:\\frac{x+1}{x+2}}}=\\frac{1}{2}$"},
+            {"do":"underline","term":"fr","label":"不是 0/0","on":"不是不定型"}
+          ] },
+        { "show": ["硬用：$\\frac{1}{1}=1$"],
+          "note": "錯的。",
+          "say": "沒檢查就硬微分，上下都變成一，得到一，是錯的。",
+          "board": [
+            {"do":"write","line":"硬用：${{w:\\frac{1}{1}=1}}$"},
+            {"do":"strike","term":"w","on":"得到一"}
+          ] },
+        { "show": ["$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$"],
+          "note": "同除以 $x$：$1+\\frac{\\sin x}{x}\\to 1$。",
+          "say": "另一種情況：x 加 sine x 除以 x。同除以 x，sine x 除以 x 趨近零，極限是一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$","on":"x 加 sine"},
+            {"do":"write","line":"$=\\lim_{x\\to\\infty}(1+\\frac{\\sin x}{x})=1$","on":"同除以"}
+          ] },
+        { "show": ["L'Hôpital：$\\frac{1+\\cos x}{1}$ 一直晃"],
+          "note": "在 $0$ 到 $2$ 之間，沒有極限。",
+          "say": "用羅必達會得到一加 cosine x，在零和二之間一直晃。這不是說原極限不存在，只是要換方法。",
+          "board": [
+            {"do":"write","line":"L'Hôpital：$\\frac{ {{cs:1+\\cos x}} }{1}$ 一直晃"},
+            {"do":"focus","term":"cs","label":"0 到 2 之間","on":"在零和二"}
+          ] }
+      ],
+      "key": "先確認是不定型；硬套會得出錯的值",
+      "check": 3
+    },
+    {
+      "title": "證明：零比零",
+      "beats": [
+        { "show": ["補端點 → Rolle → 取極限"],
+          "note": "只證 $x\\to a^+$ 的 $\\frac{0}{0}$。",
+          "say": "策略：只證零比零、從右邊逼近。補好端點，用 Rolle 定理把比值換成導數的比，再取極限。",
+          "board": [
+            {"do":"write","line":"補端點 → Rolle → 取極限"}
+          ] },
+        { "show": ["定 $f(a)=g(a)=0$"],
+          "note": "改完 $f$、$g$ 在 $a$ 右連續。",
+          "why": {"ask":"為什麼可以把 $f(a)$、$g(a)$ 改成 $0$？","say":"第一步就去改 f 和 g 在 a 的值。這樣改，為什麼可以？","options":[{"label":"極限不看 $a$ 這一點的值","correct":true},{"label":"$f$、$g$ 在 $a$ 連續，本來就是 $0$","why":"沒假設 $f$、$g$ 在 $a$ 有定義，更沒說連續；是改了之後才右連續。"},{"label":"$f$、$g$ 在 $a$ 可微","why":"可微只假設在 $(a,a+\\delta)$；$a$ 這一點可以沒有定義。"}]},
+          "say": "把 f 和 g 在 a 的值都定成零。極限不看那一點，改了不影響，而且這樣在 a 右連續。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"定 $f(a)=g(a)=0$","on":"第一步"},
+            {"do":"write","line":"極限不看那一點；改完在 $a$ 右連續","why":true,"on":"極限不看"}
+          ] },
+        { "show": ["$g(x)\\ne0$"],
+          "note": "否則 Rolle 給出 $g'=0$ 的點。",
+          "say": "g 在 x 不會是零：不然兩端都是零，Rolle 定理給出導數是零的點，跟假設矛盾。",
+          "board": [
+            {"do":"write","line":"${{gx:g(x)\\ne0}}$"},
+            {"do":"underline","term":"gx","label":"否則套 Rolle","on":"不然兩端"}
+          ] },
+        { "show": ["$h(t)=f(t)g(x)-g(t)f(x)$","$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，$a<c<x$"],
+          "note": "$h(a)=h(x)=0$，用 Rolle。",
+          "say": "固定 x 造 h，兩端都是零。Rolle 定理給出 c，同除之後，比值就換成導數的比。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{h:h(t)}}=f(t)g(x)-g(t)f(x)$","on":"固定 x"},
+            {"do":"underline","term":"h","label":"兩端都是 0","on":"兩端都是零"},
+            {"do":"write","line":"$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，${{c:a<c<x}}$","tint":{"c":"violet"},"on":"同除之後"}
+          ] },
+        { "show": ["Rolle"],
+          "say": "t 等於 a，f a 和 g a 是零；t 等於 x，兩項抵銷。Rolle 定理：兩端一樣高，中間有一點導數是零。",
+          "board": [
+            {"do":"write","line":"$h(a)=0\\cdot g(x)-0\\cdot f(x)=0$"},
+            {"do":"write","line":"$h(x)=f(x)g(x)-g(x)f(x)=0$","on":"t 等於 x"},
+            {"do":"write","line":"Rolle：有 ${{c:a<c<x}}$，$h'(c)=0$","tint":{"c":"violet"},"on":"Rolle"}
+          ] },
+        { "show": ["$x\\to a^+$ ⇒ $c\\to a^+$","所以 $\\frac{f(x)}{g(x)}\\to L$"],
+          "note": "$x<a+\\eta$ 就有 $c<a+\\eta$。",
+          "why": {"ask":"為什麼導數比也 $\\to L$？","say":"c 會跟著 x 變。導數的比，為什麼還是靠近 L？","options":[{"label":"$a<c<x$，$c$ 被擠向 $a$","correct":true},{"label":"$c$ 是固定的一點","why":"$c$ 跟著 $x$ 變，不是固定的；是 $a<c<x$ 把它夾住。"},{"label":"$f'$、$g'$ 在 $a$ 連續","why":"定理沒假設導數連續，只假設 $\\frac{f'}{g'}$ 有極限 $L$。"}]},
+          "say": "c 夾在 a 和 x 中間。x 擠向 a，c 也被擠過去，導數的比靠近 L，原來的比值也一樣。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$x\\to a^+$ ⇒ $c\\to a^+$","on":"c 會跟著"},
+            {"do":"underline","term":"c","label":"夾在中間","why":true,"on":"夾在"},
+            {"do":"write","line":"所以 $\\frac{f(x)}{g(x)}\\to L$","color":"green","why":true,"on":"原來的"}
+          ] }
+      ],
+      "key": "造 $h(t)$ 讓兩端都是 $0$，套 Rolle",
+      "proof": true,
+      "of": 4,
+      "skeleton": "構造",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "定 $f(a)=g(a)=0$"
+          },
+          {
+            "label": "Rolle 推出 $g(x)\\ne0$",
+            "why": "要先有 $g(a)=0$，$g(x)=0$ 才會兩端等高、套得上 Rolle。"
+          },
+          {
+            "label": "造 $h$，得 $\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$",
+            "why": "同除以 $g(x)$ 之前，要先知道 $g(x)\\ne0$。"
+          },
+          {
+            "label": "$c$ 被夾向 $a$，取極限得 $L$",
+            "why": "要先有那個 $c$，才談得上 $c$ 被夾向 $a$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "lhopital"
+    ],
+    "fine": [
+      "lhopital-check-form",
+      "lhopital-0-0",
+      "lhopital-inf-inf",
+      "lhopital-repeat",
+      "lhopital-chain-rule",
+      "lhopital-inconclusive"
+    ]
+  },
+  "practice": [
+    {
+      "id": "cx-lh-007",
+      "core": true,
+      "trains": "lhopital-0-0"
+    },
+    {
+      "id": "lec-05-m2",
+      "core": true,
+      "trains": "lhopital-inf-inf",
+      "note": "先改寫成 $\\frac{x}{e^x}$。"
+    },
+    {
+      "id": "cx-lh-013",
+      "core": true,
+      "trains": "lhopital-0-0",
+      "note": "先改寫成分式。"
+    },
+    {
+      "id": "tb-lh-003",
+      "core": true,
+      "trains": "lhopital-0-0"
+    },
+    {
+      "id": "cx-lh-010",
+      "core": true,
+      "trains": "lhopital-chain-rule"
+    },
+    {
+      "id": "lec-05-q1b",
+      "core": true,
+      "trains": "lhopital-inf-inf"
+    },
+    {
+      "id": "tb-lh-002",
+      "core": true,
+      "trains": "lhopital-chain-rule"
+    },
+    {
+      "id": "cg-3e-008",
+      "core": true,
+      "trains": "lhopital-check-form"
+    },
+    {
+      "id": "cg-3e-010",
+      "core": true,
+      "trains": "lhopital-inconclusive"
+    },
+    {
+      "id": "cx-lh-002",
+      "trains": "lhopital-repeat",
+      "note": "連用三次，每次都要重新檢查。"
+    },
+    {
+      "id": "cx-lh-001",
+      "trains": "lhopital-repeat"
+    },
+    {
+      "id": "cg-3e-009",
+      "trains": "lhopital-check-form"
+    },
+    {
+      "id": "cg-3e-011",
+      "challenge": true,
+      "trains": "lhopital-inconclusive",
+      "note": "挑戰：L'Hôpital 之後冒出 cos(1/x)，法則失效；拆成 (x/sin x)·(x sin(1/x)) 再夾擠。"
+    }
+  ],
+  "gaps": []
+}

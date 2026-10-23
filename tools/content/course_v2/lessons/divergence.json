@@ -1,7 +1,8 @@
 {
   "id": "divergence",
   "title": "散度",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "flux",
@@ -16,46 +17,107 @@
     "green-theorem"
   ],
   "objectives": [
-    "算 $\\nabla\\cdot\\mathbf F$，並知道結果是一個純量函數。",
-    "說出散度的意義：每單位體積的淨流出量；正是源、負是匯。",
-    "知道 $\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$、$\\nabla\\cdot\\nabla f=\\nabla^2f$，並分清楚「箭頭往外」與「散度為正」不是同一件事。"
+    "算 $\\nabla\\cdot\\mathbf F$，並知道結果是一個純量函數",
+    "說出散度的意義：每單位體積的淨流出量",
+    "正是源、負是匯",
+    "知道 $\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$、$\\nabla\\cdot\\nabla f=\\nabla^2f$，並看出「箭頭往外」不代表散度為正"
   ],
-  "visual": "流場中放一個可拖動的小方框（或小圓），邊界上畫出每一處流進、流出的量，旁邊顯示淨流出除以面積的讀數，並跟該點的 P_x + Q_y 比較。在 ⟨x, y⟩ 裡處處淨流出；在 ⟨−y, x⟩ 裡流進等於流出；在 ⟨x, y⟩/(x² + y²) 裡，方框不包含原點時箭頭雖然往外，讀數仍是 0。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 小方塊的淨流出",
       "body": [
-        "在一點旁邊放一個小方塊，量它表面的通量（〈通量〉，朝外）：流出去的減掉流進來的。再除以方塊體積，讓方塊縮到一點：這個極限就是散度。",
-        "散度 $>0$：那裡像水龍頭，淨流出（源）。散度 $<0$：像排水孔，淨流入（匯）。散度 $=0$：流進多少就流出多少，例如不可壓縮的水。"
+        "旋度問「會不會轉」；散度問：這一點附近，流體是冒出來還是被吸走？",
+        "在點 $(x,y,z)$ 放一個 $\\Delta x\\times\\Delta y\\times\\Delta z$ 的小方塊，先看 $x$ 方向的兩面",
+        "$x$ 方向的淨流出（出去的減進來的）：",
+        "另外兩個方向同理，加起來：",
+        "除以 $\\Delta V$：每單位體積的淨流出，就是散度",
+        "跟 Green 定理的小方格同一招：旋度是「繞一圈 ÷ 面積」，散度是「流出 ÷ 體積」"
       ],
-      "collapsible": false
+      "tex": [
+        "\\big[P(x+\\Delta x,y,z)-P(x,y,z)\\big]\\Delta y\\Delta z\\approx\\frac{\\partial P}{\\partial x}\\,\\Delta V",
+        "\\text{小方塊的淨流出}\\approx\\Big(\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}\\Big)\\Delta V"
+      ]
     },
     {
       "heading": "② 公式",
       "body": [
-        "$\\mathbf F=\\langle P,Q,R\\rangle$。為什麼是這三項：看 $x$ 方向的一對面，右面流出約 $P(x+\\Delta x)\\,\\Delta y\\Delta z$，左面流進約 $P(x)\\,\\Delta y\\Delta z$，淨流出約 $P_x\\,\\Delta x\\Delta y\\Delta z$。三個方向加起來除以體積，得到 $P_x+Q_y+R_z$。這是直觀，不是證明；精確的版本就是〈散度定理〉。"
+        "結果是純量（每一點一個數），不是向量",
+        "• $\\nabla\\cdot\\mathbf F>0$：源，淨流出（像水龍頭）",
+        "• $\\nabla\\cdot\\mathbf F<0$：匯，淨流入（像排水孔）",
+        "• $\\nabla\\cdot\\mathbf F=0$：流進多少、流出多少",
+        "也寫 $\\operatorname{div}\\mathbf F$；處處 $\\nabla\\cdot\\mathbf F=0$ 的流叫「不可壓縮」",
+        "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$（上一課求過旋度）",
+        "在 $(1,2,3)$：$3\\cdot2=6>0$，是源；在 $z<0$、$x>-1$ 的地方是匯",
+        "例 2：$\\langle x,y,z\\rangle$ 的散度是 $3$，處處是源；旋轉 $\\langle -y,x,0\\rangle$ 的散度是 $0$"
       ],
       "tex": [
-        "\\nabla\\cdot\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}"
-      ],
-      "collapsible": false
+        "\\nabla\\cdot\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}",
+        "\\nabla\\cdot\\mathbf F=z+xz+0=z(1+x)"
+      ]
     },
     {
-      "heading": "③ 箭頭往外，不代表散度為正",
+      "heading": "③ 往外，不代表為正",
       "body": [
-        "$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F=3$，處處淨流出，箭頭也確實往外。",
-        "$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F=0$，純粹旋轉，沒有源。",
-        "$\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$（像點電荷的電場）：箭頭全部往外，但在原點以外散度是 $0$（範例 2）。往外流的量被「越遠越弱」剛好補回來：任何不含原點的小方塊，流進等於流出。源全部集中在原點那一點，見〈散度定理〉。"
+        "點源場：$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$，$\\rho=\\sqrt{x^2+y^2+z^2}$",
+        "所有箭頭都往外指，長度 $\\dfrac1{\\rho^2}$",
+        "$P=x\\rho^{-3}$，$\\dfrac{\\partial\\rho}{\\partial x}=\\dfrac x\\rho$：",
+        "$Q_y$、$R_z$ 同理，三個加起來："
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial P}{\\partial x}=\\rho^{-3}-3x^2\\rho^{-5}",
+        "\\begin{aligned}\\nabla\\cdot\\mathbf F&=3\\rho^{-3}-3(x^2+y^2+z^2)\\rho^{-5}\\\\&=3\\rho^{-3}-3\\rho^{2}\\rho^{-5}=0\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 為什麼是 0",
+      "body": [
+        "半徑 $a$ 的球面：$\\mathbf F\\cdot\\mathbf n=\\dfrac1{a^2}$，面積 $4\\pi a^2$",
+        "兩層球面之間：內層流進 $4\\pi$，外層流出 $4\\pi$，淨流出 $0$",
+        "那 $4\\pi$ 從哪裡來？全部來自原點（$\\mathbf F$ 在那裡沒有定義）",
+        "反過來：箭頭全部同方向，散度也可以是正的",
+        "$\\mathbf F=\\langle x,0,0\\rangle$（$x>0$）：全部往右，$\\nabla\\cdot\\mathbf F=1$",
+        "散度看的是「出去的比進來的多多少」，不是箭頭指哪裡"
+      ],
+      "tex": [
+        "\\text{通量}=\\frac1{a^2}\\cdot4\\pi a^2=4\\pi\\quad(\\text{跟 }a\\text{ 無關})"
+      ]
     },
     {
       "heading": "④ 兩個恆等式",
       "body": [
-        "$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$（$\\mathbf F$ 的二階偏導連續）：展開之後是三對混合偏導相減，由 Clairaut 抵消。",
-        "$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$，記作 $\\nabla^2f$ 或 $\\Delta f$，叫 Laplacian。$\\nabla^2f=0$ 的函數叫調和函數，例如 $\\frac{1}{\\sqrt{x^2+y^2+z^2}}$（原點以外）。"
+        "旋度的散度是 0：$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$",
+        "驗算：$\\mathbf F=\\langle xz,xyz,-y^2\\rangle$，$\\nabla\\times\\mathbf F=\\langle -2y-xy,\\ x,\\ yz\\rangle$",
+        "所以 $\\nabla\\cdot\\mathbf G\\ne0$ 的場不可能是旋度，例如 $\\langle x,y,z\\rangle$",
+        "梯度的散度：$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}=\\nabla^2f$",
+        "• $f=x^2+y^2+z^2$：$\\nabla^2f=2+2+2=6$",
+        "• $f=\\frac1\\rho$：$\\nabla f=-\\frac{\\langle x,y,z\\rangle}{\\rho^3}$（負的點源場），由 ③：$\\nabla^2\\frac1\\rho=0$（$\\rho\\ne0$）",
+        "$\\nabla^2f=0$ 叫 Laplace 方程；靜電位、穩定的溫度分布都滿足它"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\partial_x(R_y-Q_z)+\\partial_y(P_z-R_x)+\\partial_z(Q_x-P_y)\\\\&=(R_{yx}-R_{xy})+(P_{zy}-P_{yz})+(Q_{xz}-Q_{zx})=0\\end{aligned}",
+        "\\nabla\\cdot(\\nabla\\times\\mathbf F)=-y+0+y=0"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "三種運算吃什麼、吐什麼：",
+        "• 梯度 $\\nabla f$：純量 → 向量",
+        "• 旋度 $\\nabla\\times\\mathbf F$：向量 → 向量",
+        "• 散度 $\\nabla\\cdot\\mathbf F$：向量 → 純量"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$，是純量",
+        "• 意義：每單位體積的淨流出；正是源、負是匯",
+        "• 箭頭往外 ≠ 散度為正：點源場 $\\frac{\\langle x,y,z\\rangle}{\\rho^3}$ 在原點外散度是 $0$",
+        "• $\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$；$\\nabla\\cdot(\\nabla f)=\\nabla^2f$",
+        "• 梯度：純量 → 向量；旋度：向量 → 向量；散度：向量 → 純量",
+        "下一課：Stokes 定理"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,70 +161,44 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathbf F=\\langle x^2,y^2,z^2\\rangle$ 在 $(1,1,1)$ 的散度是？",
-      "options": [
-        {
-          "label": "$6$",
-          "correct": true
-        },
-        {
-          "label": "$3$",
-          "why": "$x^2$ 對 $x$ 微分是 $2x$，在 $x=1$ 是 $2$，不是 $1$。三項各 $2$，合計 $6$。"
-        },
-        {
-          "label": "$\\langle 2,2,2\\rangle$",
-          "why": "散度是三項相加的純量，不是向量。"
-        }
-      ]
-    },
-    {
-      "ask": "某點的散度為正，意思是？",
-      "options": [
-        {
-          "label": "那一點附近淨流出（像源）",
-          "correct": true
-        },
-        {
-          "label": "流體在那裡旋轉",
-          "why": "旋轉是旋度量的。純旋轉的 $\\langle -y,x,0\\rangle$ 散度是 $0$。"
-        },
-        {
-          "label": "流速在那裡很大",
-          "why": "均勻的快速流動 $\\langle 100,0,0\\rangle$ 散度是 $0$：流進多少流出多少。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$ 在原點以外的散度是？",
+      "ask": "$\\mathbf F=\\langle x^2,\\ xy,\\ -3xz\\rangle$，$\\nabla\\cdot\\mathbf F=$？",
       "options": [
         {
           "label": "$0$",
           "correct": true
         },
         {
-          "label": "正的，因為箭頭全部往外",
-          "why": "箭頭往外，但越外越弱，小方塊流進與流出剛好抵消。"
+          "label": "$6x$",
+          "why": "$R=-3xz$ 對 $z$ 是 $-3x$，負號漏了"
         },
         {
-          "label": "處處沒有定義",
-          "why": "只有原點沒有定義；其他地方算得出來，結果是 $0$。"
+          "label": "$\\langle 2x,\\ x,\\ -3x\\rangle$",
+          "why": "散度是三個偏導==加起來==的一個數，不是向量"
+        },
+        {
+          "label": "$2x+y-3z$",
+          "why": "偏導取錯變數：$Q$ 要對 $y$、$R$ 要對 $z$ 微分"
         }
       ]
     },
     {
-      "ask": "$\\nabla\\cdot(\\nabla\\times\\mathbf F)$ 等於？（$\\mathbf F$ 的二階偏導連續）",
+      "ask": "$f$ 是純量函數、$\\mathbf F$ 是向量場。哪一個式子==沒有意義==？",
       "options": [
         {
-          "label": "$0$",
+          "label": "$\\nabla\\times(\\nabla\\cdot\\mathbf F)$",
           "correct": true
         },
         {
-          "label": "$\\nabla^2\\mathbf F$",
-          "why": "那是另一個運算。展開 $\\nabla\\cdot(\\nabla\\times\\mathbf F)$ 會得到三對混合偏導相減，全部抵消。"
+          "label": "$\\nabla\\cdot(\\nabla\\times\\mathbf F)$",
+          "why": "有意義：旋度是向量場，可以取散度（而且是 $0$）"
         },
         {
-          "label": "$|\\nabla\\times\\mathbf F|$",
-          "why": "$\\nabla\\times\\mathbf F$ 的長度一般不是 $0$；但先取旋度再取散度，展開後每一項都被另一項抵消，結果恆為 $0$。"
+          "label": "$\\nabla(\\nabla\\cdot\\mathbf F)$",
+          "why": "有意義：散度是純量，可以取梯度"
+        },
+        {
+          "label": "$\\nabla\\times(\\nabla f)$",
+          "why": "有意義：梯度是向量場，可以取旋度（而且是 $\\mathbf 0$）"
         }
       ]
     }
@@ -171,225 +207,613 @@
     {
       "title": "小方塊的淨流出",
       "beats": [
-        { "show": ["小方塊表面的通量（朝外）"],
-          "note": "流出去的減掉流進來的。",
-          "say": "在一點旁邊放一個小方塊，量它表面朝外的通量：流出去的減掉流進來的。",
+        {
+          "show": [
+            "旋度問「會不會轉」；散度問：這一點附近，流體是冒出來還是被吸走？"
+          ],
+          "say": "旋度問的是：水流會不會讓槳輪轉。散度問另一件事：在這一點附近，水是冒出來的，還是被吸走的？",
           "board": [
-            {"do":"write","line":"朝外通量 ＝ 流出 − 流進"}
-          ] },
-        { "show": ["除以體積，縮到一點：散度"],
-          "say": "再除以方塊的體積，讓方塊縮成一點，這個極限就叫散度。",
+            {
+              "do": "write",
+              "line": "旋度問「會不會轉」；散度問：這一點附近，流體是冒出來還是被吸走？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在點 $(x,y,z)$ 放一個 $\\Delta x\\times\\Delta y\\times\\Delta z$ 的小方塊，先看 $x$ 方向的兩面"
+          ],
+          "say": "在這一點放一個很小的方塊，邊長德爾塔 x、德爾塔 y、德爾塔 z。先只看左右兩面。",
           "board": [
-            {"do":"write","line":"朝外通量 ÷ 體積，縮成一點"},
-            {"do":"write","line":"散度 ${{d:\\nabla\\cdot\\mathbf F}}$ ＝ 這個極限","on":"這個極限"}
-          ] },
-        { "show": ["$\\langle x,y,z\\rangle$，方塊邊長 $s$","右面流出 $s^3$，左面 $0$"],
-          "note": "拿最簡單的場，真的算一次。",
-          "say": "場是 x、y、z，方塊邊長 s。右面 x 等於 s，面積 s 平方，流出 s 三次方；左面 x 是零，流進零。",
+            {
+              "do": "write",
+              "line": "在點 $(x,y,z)$ 放一個 $\\Delta x\\times\\Delta y\\times\\Delta z$ 的小方塊，先看 $x$ 方向的兩面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "只有 x 方向的分量 P 會穿過左右兩面。左面流進來 P 乘面積，右面流出去的是 x 加德爾塔 x 那裡的 P 乘面積。",
           "board": [
-            {"do":"write","line":"場 $\\langle x,y,z\\rangle$，邊長 $s$"},
-            {"do":"write","line":"右面 $s\\cdot s^2=s^3$，左面 $0$","on":"右面"}
-          ] },
-        { "show": ["三方向共 $3s^3$，除以 $s^3$ 得 $3$"],
-          "note": "$s$ 再小，比值還是 3。",
-          "say": "三個方向加起來是三倍的 s 三次方，除以體積 s 三次方，永遠是三。s 縮多小都一樣，所以極限就是三。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"divBox\" viewBox=\"0 0 600 330\" width=\"600\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b5divBox\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b5divBoxblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b5divBoxred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b5divBoxgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b5divBoxpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b5divBoxink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><polygon points=\"230,205 278.6,163.8 278.6,64 230,105.2\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><line x1=\"230\" y1=\"205\" x2=\"405.1\" y2=\"229.2\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"230\" y1=\"205\" x2=\"278.6\" y2=\"163.8\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"6 5\"/><line x1=\"230\" y1=\"205\" x2=\"230\" y2=\"105.2\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"230\" y1=\"105.2\" x2=\"405.1\" y2=\"129.4\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"230\" y1=\"105.2\" x2=\"278.6\" y2=\"64\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"278.6\" y1=\"163.8\" x2=\"453.7\" y2=\"188\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"6 5\"/><line x1=\"278.6\" y1=\"163.8\" x2=\"278.6\" y2=\"64\" stroke=\"var(--muted)\" stroke-width=\"1.4\" stroke-dasharray=\"6 5\"/><line x1=\"278.6\" y1=\"64\" x2=\"453.7\" y2=\"88.2\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"405.1\" y1=\"229.2\" x2=\"453.7\" y2=\"188\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"405.1\" y1=\"229.2\" x2=\"405.1\" y2=\"129.4\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"405.1\" y1=\"129.4\" x2=\"453.7\" y2=\"88.2\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"453.7\" y1=\"188\" x2=\"453.7\" y2=\"88.2\" stroke=\"var(--ink)\" stroke-width=\"2\"/><polygon points=\"405.1,229.2 453.7,188 453.7,88.2 405.1,129.4\" fill=\"var(--red)\" fill-opacity=\"0.1\"/><line x1=\"172.3\" y1=\"123.2\" x2=\"254.3\" y2=\"134.5\" stroke=\"var(--blue)\" stroke-width=\"3.2\" marker-end=\"url(#ah9b5divBoxblue)\"/><line x1=\"429.4\" y1=\"158.7\" x2=\"555.2\" y2=\"176.1\" stroke=\"var(--red)\" stroke-width=\"3.2\" marker-end=\"url(#ah9b5divBoxred)\"/><text x=\"317.5\" y=\"243.1\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">Δx</text><text x=\"455.4\" y=\"220.6\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">Δy</text><text x=\"204\" y=\"161.1\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">Δz</text><text x=\"24\" y=\"42\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">左面流進</text><text x=\"24\" y=\"72\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P(x, y, z) ΔyΔz</text><text x=\"400\" y=\"42\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">右面流出</text><text x=\"400\" y=\"72\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P(x+Δx, y, z) ΔyΔz</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 方向的淨流出（出去的減進來的）：",
+            "$\\big[P(x+\\Delta x,y,z)-P(x,y,z)\\big]\\Delta y\\Delta z\\approx\\frac{\\partial P}{\\partial x}\\,\\Delta V$"
+          ],
+          "say": "出去的減進來的，就是 P 的差乘面積。P 的差，大約是 P 對 x 的偏導乘德爾塔 x，所以是 P x 乘體積。",
           "board": [
-            {"do":"write","line":"$3s^3\\div s^3=3$"},
-            {"do":"write","line":"$s\\to0$：比值 $\\to3$","on":"縮多小"}
-          ] },
-        { "show": ["$>0$：源；$<0$：匯；$=0$：進出相等"],
-          "note": "像水龍頭、排水孔、不可壓縮的水。",
-          "say": "散度正的地方像水龍頭，淨流出；負的像排水孔；零就是流進多少流出多少。",
+            {
+              "do": "write",
+              "line": "$x$ 方向的淨流出（出去的減進來的）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\big[P(x+\\Delta x,y,z)-P(x,y,z)\\big]\\Delta y\\Delta z\\approx\\frac{\\partial P}{\\partial x}\\,\\Delta V$",
+              "on": "的偏"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另外兩個方向同理，加起來：",
+            "$\\text{小方塊的淨流出}\\approx\\Big(\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}\\Big)\\Delta V$"
+          ],
+          "say": "上下兩面、前後兩面一樣算，分別得到 Q y 和 R z 乘體積。三個加起來，就是小方塊的淨流出。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F>0$：源（水龍頭）","on":"正的"},
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F<0$：匯（排水孔）","on":"負的像"},
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F=0$：進出相等","on":"零就是"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "另外兩個方向同理，加起來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\text{小方塊的淨流出}\\approx\\Big(\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}\\Big)\\Delta V}}$",
+              "color": "red",
+              "on": "乘體"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "三個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以 $\\Delta V$：每單位體積的淨流出，就是散度"
+          ],
+          "say": "除以體積，得到每單位體積的淨流出量。這個數就叫散度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除以 $\\Delta V$：每單位體積的淨流出，就是散度",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　跟 Green 定理的小方格同一招：旋度是「繞一圈 ÷ 面積」，散度是「流出 ÷ 體積」",
+              "color": "violet",
+              "on": "淨流"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "公式",
       "beats": [
-        { "show": ["$P_x$：只對 $x$ 微分，其他字母當常數"],
-          "note": "這叫偏導數。",
-          "say": "P 下標 x，念成 P 對 x 的偏導數：只把 x 當變數，y 和 z 都當成固定的數。",
+        {
+          "show": [
+            "$\\nabla\\cdot\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}$"
+          ],
+          "say": "散度寫成 del 點 F：把 del 跟 F 做內積，P 對 x、Q 對 y、R 對 z，三個偏導加起來。",
           "board": [
-            {"do":"write","line":"${{n0:P_x}}$：$x$ 當變數，$y$、$z$ 當常數"},
-            {"do":"focus","term":"n0","on":"偏導數"}
-          ] },
-        { "show": ["$P=xz$：$P_x=z$，$P_z=x$"],
-          "note": "對誰微分，誰才是變數。",
-          "say": "例如 P 是 x 乘 z。對 x 微分時 z 像常數，就像三 x 微分得三，所以得 z；對 z 微分則得 x。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\nabla\\cdot\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "三個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "結果是純量（每一點一個數），不是向量"
+          ],
+          "say": "注意，內積的結果是一個數，所以散度是純量函數，不是向量場。這跟旋度不一樣。",
           "board": [
-            {"do":"write","line":"$P=xz$：$P_x={{n1:z}}$，$P_z={{n2:x}}$"},
-            {"do":"focus","term":"n1","on":"對 x 微分時"},
-            {"do":"focus","term":"n2","on":"對 z 微分則"}
-          ] },
-        { "show": ["$x$ 方向：右面流出 − 左面流進 $\\approx P_x\\,\\Delta x\\Delta y\\Delta z$"],
-          "note": "直觀，不是證明。",
-          "say": "看 x 方向的一對面：右面流出、左面流進，差大約是 P 對 x 的偏導數乘體積。",
+            {
+              "do": "write",
+              "line": "結果是純量（每一點一個數），不是向量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\nabla\\cdot\\mathbf F>0$：源，淨流出（像水龍頭）",
+            "• $\\nabla\\cdot\\mathbf F<0$：匯，淨流入（像排水孔）"
+          ],
+          "say": "散度是正的，這點是源，像水龍頭，有東西冒出來；負的是匯，像排水孔；等於 0，就是流進多少流出多少。",
           "board": [
-            {"do":"write","line":"$x$ 方向：右面 − 左面 $\\approx{{px:P_x}}\\,\\Delta x\\Delta y\\Delta z$"},
-            {"do":"focus","term":"px","on":"P 對 x 的偏導數"}
-          ] },
-        { "show": ["$\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$"],
-          "note": "是一個數，不是向量。",
-          "say": "三個方向加起來，再除以體積。散度是三項相加，是一個數，不是向量。",
+            {
+              "do": "write",
+              "line": "• $\\nabla\\cdot\\mathbf F>0$：源，淨流出（像水龍頭）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla\\cdot\\mathbf F<0$：匯，淨流入（像排水孔）",
+              "on": "水龍"
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla\\cdot\\mathbf F=0$：流進多少、流出多少",
+              "on": "的是"
+            },
+            {
+              "do": "write",
+              "line": "　也寫 $\\operatorname{div}\\mathbf F$；處處 $\\nabla\\cdot\\mathbf F=0$ 的流叫「不可壓縮」",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$（上一課求過旋度）",
+            "$\\nabla\\cdot\\mathbf F=z+xz+0=z(1+x)$"
+          ],
+          "say": "例一，用上一課同一個場。P 對 x 是 z，Q 對 y 是 x z，R 跟 z 無關。散度是 z 乘 1 加 x。",
           "board": [
-            {"do":"write","line":"${{div:\\nabla\\cdot\\mathbf F}}={{px:P_x}}+Q_y+R_z$","on":"三個方向"},
-            {"do":"underline","term":"div","label":"一個數","on":"是一個數"}
-          ] },
-        { "show": ["$\\langle xz,xyz,-y^2\\rangle$：$z+xz+0$"],
-          "say": "例如這個場：P 對 x 得 z，Q 對 y 得 x z，R 不含 z，得零。各對自己的變數微分，不交叉。",
+            {
+              "do": "write",
+              "line": "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$（上一課求過旋度）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\nabla\\cdot\\mathbf F=z+xz+0=z(1+x)}}$",
+              "on": "無關"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "散度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $(1,2,3)$：$3\\cdot2=6>0$，是源；在 $z<0$、$x>-1$ 的地方是匯"
+          ],
+          "say": "在 1、2、3 這一點，散度是 6，是源。在 z 是負的、x 大於負 1 的地方，散度是負的，是匯。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle {{p:xz}},{{q:xyz}},{{r:-y^2}}\\rangle$","on":"例如"},
-            {"do":"write","line":"$\\nabla\\cdot\\mathbf F={{a:z}}+{{b:xz}}+{{c:0}}$","on":"P 對 x 得"},
-            {"do":"focus","term":"r","on":"R 不含 z"},
-            {"do":"focus","term":"c","on":"得零"}
-          ] }
+            {
+              "do": "write",
+              "line": "在 $(1,2,3)$：$3\\cdot2=6>0$，是源；在 $z<0$、$x>-1$ 的地方是匯"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 2：$\\langle x,y,z\\rangle$ 的散度是 $3$，處處是源；旋轉 $\\langle -y,x,0\\rangle$ 的散度是 $0$"
+          ],
+          "say": "例二：x、y、z 這個往外噴的場，散度處處是 3。旋轉的場，散度是 0：只轉圈，沒有冒出也沒有吸走。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：$\\langle x,y,z\\rangle$ 的散度是 $3$，處處是源；旋轉 $\\langle -y,x,0\\rangle$ 的散度是 $0$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbf F=\\langle x^2,\\ xy,\\ -3xz\\rangle$，$\\nabla\\cdot\\mathbf F=$？"
+          ],
+          "say": "試一題。"
+        }
       ],
-      "key": "散度是純量：各分量對自己的變數偏微",
       "check": 0
     },
     {
-      "title": "箭頭往外不等於正",
+      "title": "往外，不代表為正",
       "beats": [
-        { "show": ["$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F=3$"],
-          "note": "處處淨流出，箭頭也往外。",
-          "say": "發散場的散度是三，處處淨流出，箭頭也確實往外。",
+        {
+          "show": [
+            "點源場：$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$，$\\rho=\\sqrt{x^2+y^2+z^2}$"
+          ],
+          "say": "現在看一個會騙人的例子：x、y、z 除以肉三次方，肉是到原點的距離。",
           "board": [
-            {"do":"write","line":"$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F={{t:3}}$"},
-            {"do":"circle","term":"t","color":"green","on":"散度是三"}
-          ] },
-        { "show": ["$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F=0$"],
-          "note": "純粹旋轉，沒有源。",
-          "say": "旋轉場的散度是零，只是在轉，沒有源。",
+            {
+              "do": "write",
+              "line": "點源場：$\\mathbf F=\\dfrac{\\langle x,y,z\\rangle}{\\rho^3}$，$\\rho=\\sqrt{x^2+y^2+z^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所有箭頭都往外指，長度 $\\dfrac1{\\rho^2}$"
+          ],
+          "say": "每個箭頭都從原點往外指，長度是肉平方分之一。電荷的電場、星球的重力場，都是這個樣子。",
           "board": [
-            {"do":"write","line":"$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F={{z:0}}$"},
-            {"do":"focus","term":"z","label":"沒有源","on":"只是在轉"}
-          ] },
-        { "show": ["$\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$：箭頭全部往外"],
-          "note": "像點電荷的電場。",
-          "say": "那點電荷的電場呢？箭頭全部往外指，越遠越弱。",
-          "board": [
-            {"do":"write","line":"$\\dfrac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$"},
-            {"do":"write","line":"箭頭全部往外，越遠越弱","on":"箭頭全部往外"}
-          ] }
+            {
+              "do": "write",
+              "line": "所有箭頭都往外指，長度 $\\dfrac1{\\rho^2}$"
+            }
+          ]
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "證明：往外卻沒有源",
-      "beats": [
-        { "show": ["記 $\\rho^2=x^2+y^2+z^2$，$P=x\\rho^{-3}$"],
-          "note": "三個方向各微分一次，再加起來。",
-          "say": "策略：把分母記成 rho 的三次方，三個方向各算一次偏導數，再加起來。",
-          "board": [
-            {"do":"write","line":"$\\rho^2=x^2+y^2+z^2$，$P=x\\,{{r:\\rho^{-3}}}$","tint":{"r":"violet"}},
-            {"do":"focus","term":"r","on":"rho 的三次方"}
-          ] },
-        { "show": ["$(x^2+1)^3$ 的導數","$3(x^2+1)^2\\cdot 2x$"],
-          "note": "外層的導數，乘裡層的導數。",
-          "say": "連鎖律先看簡單的：x 平方加一的三次方。外層三次方，微分得三乘平方；裡層 x 平方加一，再乘它的導數二 x。",
-          "board": [
-            {"do":"write","line":"$(x^2+1)^3$ 的導數：$3(x^2+1)^2\\cdot 2x$"},
-            {"do":"plot","graph":{"window":[-1.5,1.5,0,12],"curves":[{"expr":"(x^2+1)^3","domain":[-1.5,1.5],"color":"blue"}]},"on":"裡層"}
-          ] },
-        { "show": ["$\\rho^{-3}$ 對 $x$：$-3\\rho^{-4}\\cdot\\rho_x$","$\\rho_x=\\frac{x}{\\rho}$"],
-          "say": "rho 負三次方：外層得負三乘 rho 負四次方，再乘 rho 對 x 的導數，那是 x 除以 rho。",
-          "board": [
-            {"do":"write","line":"$\\rho^{-3}$ 對 $x$：$-3\\rho^{-4}\\cdot\\rho_x$"},
-            {"do":"write","line":"$2\\rho\\rho_x=2x\\Rightarrow\\rho_x=\\frac{x}{\\rho}$","on":"那是"}
-          ] },
-        { "show": ["$P_x=\\rho^{-3}-3x^2\\rho^{-5}$"],
-          "note": "乘法法則＋連鎖律：$\\rho$ 也跟著 $x$ 變。",
-          "why": {"ask":"為什麼有第二項 $-3x^2\\rho^{-5}$？","say":"P 對 x 微分，為什麼多出第二項？","options":[{"label":"$\\rho$ 裡有 $x$，連鎖律帶出 $\\frac{x}{\\rho}$","correct":true},{"label":"$Q$、$R$ 也含 $x$，要一起微分","why":"散度裡 $Q$ 只對 $y$、$R$ 只對 $z$ 微分，不交叉；第二項來自 $P$ 自己的分母。"},{"label":"$x$ 對 $x$ 微分兩次","why":"$x$ 只微分一次，得到第一項；第二項是分母 $\\rho^{-3}$ 被微分出來的。"}]},
-          "say": "乘法法則給出兩項：x 微分得到第一項；rho 裡也有 x，連鎖律帶出第二項。",
-          "board": [
-            {"do":"write","line":"$P_x={{t1:\\rho^{-3}}}{{t2:-3x^2\\rho^{-5}}}$"},
-            {"do":"focus","term":"t2","on":"第二項"},
-            {"do":"underline","term":"t2","label":"連鎖律","why":true,"on":"連鎖律"}
-          ] },
-        { "show": ["同理 $Q_y$、$R_z$，三項相加：","$3\\rho^{-3}-3\\rho^{-3}=0$"],
-          "note": "$x^2+y^2+z^2=\\rho^2$，正好消掉。",
-          "why": {"ask":"這個結論只在哪裡成立？","say":"三項加起來是零。這句話在哪裡成立？","options":[{"label":"原點以外：原點 $\\rho=0$，$\\mathbf F$ 沒有定義","correct":true},{"label":"處處成立，原點也是","why":"原點代進去分母是零，$\\mathbf F$ 沒有定義，散度也無從算起。"},{"label":"只在離原點很遠的地方","why":"推導沒有用到距離大小，只要 $\\rho\\ne0$ 就成立。"}]},
-          "say": "y、z 同理。三項加起來，分子剛好是 rho 平方，互相抵消：原點以外散度是零。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$Q_y$、$R_z$ 同理，三項相加：","on":"三項加起來"},
-            {"do":"write","line":"$3\\rho^{-3}-3{{s:\\rho^2}}\\rho^{-5}={{z:0}}$","on":"是零"},
-            {"do":"write","line":"只在原點以外：$\\rho\\ne0$","why":true,"on":"原點以外"}
-          ] },
-        { "show": ["往外流的量，被越遠越弱補回來"],
-          "say": "往外流的量，被越遠越弱剛好補回來：任何不含原點的小方塊，流進多少就流出多少。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"往外流的量，被越遠越弱補回來","on":"往外流的量"},
-            {"do":"write","line":"不含原點的小方塊：流進 $=$ 流出","on":"任何不含原點"}
-          ] }
-      ],
-      "key": "$\\rho$ 也跟著 $x$ 變，三項用 $\\rho^2$ 合併",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "直接",
       "predict": {
-        "ask": "那這個場的「源」在哪裡？",
+        "ask": "在原點以外的點（例如 $(1,1,1)$），$\\nabla\\cdot\\mathbf F$ 是？",
         "options": [
           {
-            "label": "全部集中在原點那一點",
+            "label": "$0$",
             "correct": true
           },
           {
-            "label": "到處都是，因為箭頭往外",
-            "why": "原點以外散度處處是 $0$，那些地方沒有源。"
+            "label": "正的，因為箭頭都往外",
+            "why": "往外不等於淨流出：箭頭越往外越短"
           },
           {
-            "label": "沒有源，總流出是 $0$",
-            "why": "包住原點的曲面通量不是 $0$；源全部集中在原點，見〈散度定理〉。"
+            "label": "負的，因為箭頭越來越短",
+            "why": "變短是真的，但球面越來越大，剛好補回來"
+          },
+          {
+            "label": "沒有定義",
+            "why": "只有原點沒定義；$(1,1,1)$ 好好的"
           }
         ]
       }
     },
     {
+      "title": "往外，不代表為正",
+      "beats": [
+        {
+          "show": [
+            "$P=x\\rho^{-3}$，$\\dfrac{\\partial\\rho}{\\partial x}=\\dfrac x\\rho$：",
+            "$\\frac{\\partial P}{\\partial x}=\\rho^{-3}-3x^2\\rho^{-5}$"
+          ],
+          "say": "直接算。P 是 x 乘肉的負三次方。肉對 x 偏微分是肉分之 x，用乘積法則和連鎖律，得到這兩項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P=x\\rho^{-3}$，$\\dfrac{\\partial\\rho}{\\partial x}=\\dfrac x\\rho$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial P}{\\partial x}=\\rho^{-3}-3x^2\\rho^{-5}$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$Q_y$、$R_z$ 同理，三個加起來：",
+            "$\\begin{aligned}\\nabla\\cdot\\mathbf F&=3\\rho^{-3}-3(x^2+y^2+z^2)\\rho^{-5}\\\\&=3\\rho^{-3}-3\\rho^{2}\\rho^{-5}=0\\end{aligned}$"
+          ],
+          "say": "Q y、R z 一樣，只是 x 平方換成 y 平方、z 平方。加起來，第二項是 3 乘肉平方乘肉的負五次方，剛好跟第一項抵消，散度是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$Q_y$、$R_z$ 同理，三個加起來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}\\nabla\\cdot\\mathbf F&=3\\rho^{-3}-3(x^2+y^2+z^2)\\rho^{-5}\\\\&=3\\rho^{-3}-3\\rho^{2}\\rho^{-5}=0\\end{aligned}}}}$",
+              "color": "red",
+              "on": "平方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "乘肉#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼是 0",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "為什麼？箭頭越往外越短，長度是肉平方分之一；可是球面越往外越大，面積是 4 派肉平方。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"divPoint\" viewBox=\"0 0 600 320\" width=\"600\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b5divPoint\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b5divPointblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b5divPointred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b5divPointgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b5divPointpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b5divPointink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b5divPoint30\"><rect x=\"94.7\" y=\"16\" width=\"416.6\" height=\"274\"/></clipPath><g clip-path=\"url(#cl9b5divPoint30)\"><path d=\"M290.4 153L290.4 151.5L290.3 149.9L290.2 148.4L290.1 146.9L289.9 145.3L289.7 143.8L289.4 142.3L289.1 140.8L288.8 139.3L288.4 137.8L288 136.3L287.5 134.9L287.1 133.4L286.5 132L285.9 130.5L285.3 129.1L284.7 127.7L284 126.3L283.3 125L282.6 123.6L281.8 122.3L280.9 121L280.1 119.7L279.2 118.5L278.3 117.3L277.3 116L276.4 114.9L275.3 113.7L274.3 112.6L273.2 111.5L272.1 110.4L271 109.4L269.8 108.4L268.7 107.4L267.4 106.4L266.2 105.5L265 104.6L263.7 103.8L262.4 102.9L261.1 102.2L259.7 101.4L258.4 100.7L257 100L255.6 99.4L254.2 98.8L252.7 98.2L251.3 97.7L249.8 97.2L248.4 96.7L246.9 96.3L245.4 95.9L243.9 95.6L242.4 95.3L240.9 95L239.4 94.8L237.8 94.6L236.3 94.5L234.8 94.4L233.2 94.3L231.7 94.3L230.2 94.3L228.6 94.4L227.1 94.5L225.6 94.6L224 94.8L222.5 95L221 95.3L219.5 95.6L218 95.9L216.5 96.3L215 96.7L213.6 97.2L212.1 97.7L210.7 98.2L209.2 98.8L207.8 99.4L206.4 100L205 100.7L203.7 101.4L202.3 102.2L201 102.9L199.7 103.8L198.4 104.6L197.2 105.5L196 106.4L194.8 107.4L193.6 108.4L192.4 109.4L191.3 110.4L190.2 111.5L189.1 112.6L188.1 113.7L187.1 114.9L186.1 116L185.1 117.3L184.2 118.5L183.3 119.7L182.5 121L181.6 122.3L180.9 123.6L180.1 125L179.4 126.3L178.7 127.7L178.1 129.1L177.5 130.5L176.9 132L176.4 133.4L175.9 134.9L175.4 136.3L175 137.8L174.6 139.3L174.3 140.8L174 142.3L173.7 143.8L173.5 145.3L173.3 146.9L173.2 148.4L173.1 149.9L173 151.5L173 153L173 154.5L173.1 156.1L173.2 157.6L173.3 159.1L173.5 160.7L173.7 162.2L174 163.7L174.3 165.2L174.6 166.7L175 168.2L175.4 169.7L175.9 171.1L176.4 172.6L176.9 174L177.5 175.5L178.1 176.9L178.7 178.3L179.4 179.7L180.1 181L180.9 182.4L181.6 183.7L182.5 185L183.3 186.3L184.2 187.5L185.1 188.7L186.1 190L187.1 191.1L188.1 192.3L189.1 193.4L190.2 194.5L191.3 195.6L192.4 196.6L193.6 197.6L194.8 198.6L196 199.6L197.2 200.5L198.4 201.4L199.7 202.2L201 203.1L202.3 203.8L203.7 204.6L205 205.3L206.4 206L207.8 206.6L209.2 207.2L210.7 207.8L212.1 208.3L213.6 208.8L215 209.3L216.5 209.7L218 210.1L219.5 210.4L221 210.7L222.5 211L224 211.2L225.6 211.4L227.1 211.5L228.6 211.6L230.2 211.7L231.7 211.7L233.2 211.7L234.8 211.6L236.3 211.5L237.8 211.4L239.4 211.2L240.9 211L242.4 210.7L243.9 210.4L245.4 210.1L246.9 209.7L248.4 209.3L249.8 208.8L251.3 208.3L252.7 207.8L254.2 207.2L255.6 206.6L257 206L258.4 205.3L259.7 204.6L261.1 203.8L262.4 203.1L263.7 202.2L265 201.4L266.2 200.5L267.4 199.6L268.7 198.6L269.8 197.6L271 196.6L272.1 195.6L273.2 194.5L274.3 193.4L275.3 192.3L276.4 191.1L277.3 190L278.3 188.7L279.2 187.5L280.1 186.3L280.9 185L281.8 183.7L282.6 182.4L283.3 181L284 179.7L284.7 178.3L285.3 176.9L285.9 175.5L286.5 174L287.1 172.6L287.5 171.1L288 169.7L288.4 168.2L288.8 166.7L289.1 165.2L289.4 163.7L289.7 162.2L289.9 160.7L290.1 159.1L290.2 157.6L290.3 156.1L290.4 154.5L290.4 153\" stroke=\"var(--red)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"6 5\"/><path d=\"M363.1 153L363.1 149.6L362.9 146.1L362.7 142.7L362.4 139.3L362 135.8L361.5 132.4L360.9 129.1L360.2 125.7L359.5 122.3L358.6 119L357.7 115.7L356.7 112.4L355.6 109.1L354.4 105.9L353.1 102.7L351.8 99.6L350.3 96.4L348.8 93.3L347.2 90.3L345.5 87.3L343.7 84.3L341.9 81.4L340 78.6L338 75.8L336 73L333.8 70.3L331.6 67.7L329.4 65.1L327 62.5L324.6 60.1L322.2 57.7L319.6 55.3L317 53.1L314.4 50.9L311.7 48.7L308.9 46.7L306.1 44.7L303.3 42.8L300.4 41L297.4 39.2L294.4 37.5L291.4 35.9L288.3 34.4L285.2 33L282 31.6L278.8 30.3L275.6 29.1L272.3 28L269 27L265.7 26.1L262.4 25.2L259 24.5L255.7 23.8L252.3 23.2L248.9 22.7L245.4 22.3L242 22L238.6 21.8L235.1 21.6L231.7 21.6L228.3 21.6L224.8 21.8L221.4 22L218 22.3L214.6 22.7L211.1 23.2L207.8 23.8L204.4 24.5L201 25.2L197.7 26.1L194.4 27L191.1 28L187.8 29.1L184.6 30.3L181.4 31.6L178.3 33L175.1 34.4L172 35.9L169 37.5L166 39.2L163 41L160.1 42.8L157.3 44.7L154.5 46.7L151.7 48.7L149 50.9L146.4 53.1L143.8 55.3L141.2 57.7L138.8 60.1L136.4 62.5L134 65.1L131.8 67.7L129.6 70.3L127.5 73L125.4 75.8L123.4 78.6L121.5 81.4L119.7 84.3L117.9 87.3L116.2 90.3L114.6 93.3L113.1 96.4L111.7 99.6L110.3 102.7L109 105.9L107.8 109.1L106.7 112.4L105.7 115.7L104.8 119L103.9 122.3L103.2 125.7L102.5 129.1L101.9 132.4L101.4 135.8L101 139.3L100.7 142.7L100.5 146.1L100.3 149.6L100.3 153L100.3 156.4L100.5 159.9L100.7 163.3L101 166.7L101.4 170.2L101.9 173.6L102.5 176.9L103.2 180.3L103.9 183.7L104.8 187L105.7 190.3L106.7 193.6L107.8 196.9L109 200.1L110.3 203.3L111.7 206.4L113.1 209.6L114.6 212.7L116.2 215.7L117.9 218.7L119.7 221.7L121.5 224.6L123.4 227.4L125.4 230.2L127.5 233L129.6 235.7L131.8 238.3L134 240.9L136.4 243.5L138.8 245.9L141.2 248.3L143.8 250.7L146.4 252.9L149 255.1L151.7 257.3L154.5 259.3L157.3 261.3L160.1 263.2L163 265L166 266.8L169 268.5L172 270.1L175.1 271.6L178.3 273L181.4 274.4L184.6 275.7L187.8 276.9L191.1 278L194.4 279L197.7 279.9L201 280.8L204.4 281.5L207.8 282.2L211.1 282.8L214.6 283.3L218 283.7L221.4 284L224.8 284.2L228.3 284.4L231.7 284.4L235.1 284.4L238.6 284.2L242 284L245.4 283.7L248.9 283.3L252.3 282.8L255.7 282.2L259 281.5L262.4 280.8L265.7 279.9L269 279L272.3 278L275.6 276.9L278.8 275.7L282 274.4L285.2 273L288.3 271.6L291.4 270.1L294.4 268.5L297.4 266.8L300.4 265L303.3 263.2L306.1 261.3L308.9 259.3L311.7 257.3L314.4 255.1L317 252.9L319.6 250.7L322.2 248.3L324.6 245.9L327 243.5L329.4 240.9L331.6 238.3L333.8 235.7L336 233L338 230.2L340 227.4L341.9 224.6L343.7 221.7L345.5 218.7L347.2 215.7L348.8 212.7L350.3 209.6L351.8 206.4L353.1 203.3L354.4 200.1L355.6 196.9L356.7 193.6L357.7 190.3L358.6 187L359.5 183.7L360.2 180.3L360.9 176.9L361.5 173.6L362 170.2L362.4 166.7L362.7 163.3L362.9 159.9L363.1 156.4L363.1 153\" stroke=\"var(--red)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"6 5\"/></g><line x1=\"268.1\" y1=\"153\" x2=\"311.2\" y2=\"153\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"263.2\" y1=\"134.8\" x2=\"300.6\" y2=\"113.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"249.9\" y1=\"121.5\" x2=\"271.5\" y2=\"84.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"231.7\" y1=\"116.7\" x2=\"231.7\" y2=\"73.5\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"213.5\" y1=\"121.5\" x2=\"192\" y2=\"84.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"200.2\" y1=\"134.8\" x2=\"162.9\" y2=\"113.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"195.4\" y1=\"153\" x2=\"152.2\" y2=\"153\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"200.2\" y1=\"171.2\" x2=\"162.9\" y2=\"192.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"213.5\" y1=\"184.5\" x2=\"192\" y2=\"221.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"231.7\" y1=\"189.3\" x2=\"231.7\" y2=\"232.5\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"249.9\" y1=\"184.5\" x2=\"271.5\" y2=\"221.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"263.2\" y1=\"171.2\" x2=\"300.6\" y2=\"192.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"301.9\" y1=\"134.2\" x2=\"319.6\" y2=\"129.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"283.1\" y1=\"101.6\" x2=\"296.1\" y2=\"88.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"250.5\" y1=\"82.8\" x2=\"255.3\" y2=\"65.1\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"212.9\" y1=\"82.8\" x2=\"208.1\" y2=\"65.1\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"180.3\" y1=\"101.6\" x2=\"167.3\" y2=\"88.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"161.5\" y1=\"134.2\" x2=\"143.8\" y2=\"129.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"161.5\" y1=\"171.8\" x2=\"143.8\" y2=\"176.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"180.3\" y1=\"204.4\" x2=\"167.3\" y2=\"217.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"212.9\" y1=\"223.2\" x2=\"208.1\" y2=\"240.9\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"250.5\" y1=\"223.2\" x2=\"255.3\" y2=\"240.9\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"283.1\" y1=\"204.4\" x2=\"296.1\" y2=\"217.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"301.9\" y1=\"171.8\" x2=\"319.6\" y2=\"176.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"340.7\" y1=\"153\" x2=\"354.5\" y2=\"153\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"326.1\" y1=\"98.5\" x2=\"338\" y2=\"91.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"286.2\" y1=\"58.6\" x2=\"293.1\" y2=\"46.7\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"231.7\" y1=\"44\" x2=\"231.7\" y2=\"30.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"177.2\" y1=\"58.6\" x2=\"170.3\" y2=\"46.7\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"137.3\" y1=\"98.5\" x2=\"125.4\" y2=\"91.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"122.7\" y1=\"153\" x2=\"108.9\" y2=\"153\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"137.3\" y1=\"207.5\" x2=\"125.4\" y2=\"214.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"177.2\" y1=\"247.4\" x2=\"170.3\" y2=\"259.3\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"231.7\" y1=\"262\" x2=\"231.7\" y2=\"275.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"286.2\" y1=\"247.4\" x2=\"293.1\" y2=\"259.3\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><line x1=\"326.1\" y1=\"207.5\" x2=\"338\" y2=\"214.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5divPointblue)\"/><circle cx=\"231.7\" cy=\"153\" r=\"4.5\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"395\" y=\"70\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:inherit\">箭頭長 ∝ 1/ρ²</text><text x=\"395\" y=\"105\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">球面面積 ∝ ρ²</text><text x=\"395\" y=\"160\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">每一層球面：</text><text x=\"395\" y=\"192\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">通量都是 4π</text><text x=\"395\" y=\"245\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">兩層之間：</text><text x=\"395\" y=\"277\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">流進 = 流出</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半徑 $a$ 的球面：$\\mathbf F\\cdot\\mathbf n=\\dfrac1{a^2}$，面積 $4\\pi a^2$",
+            "$\\text{通量}=\\frac1{a^2}\\cdot4\\pi a^2=4\\pi\\quad(\\text{跟 }a\\text{ 無關})$"
+          ],
+          "say": "半徑 a 的球面上，F 點 n 是 a 平方分之一，乘上面積，通量是 4 派，跟半徑無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半徑 $a$ 的球面：$\\mathbf F\\cdot\\mathbf n=\\dfrac1{a^2}$，面積 $4\\pi a^2$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\text{通量}=\\frac1{a^2}\\cdot4\\pi a^2=4\\pi\\quad(\\text{跟 }a\\text{ 無關})}}$",
+              "on": "平方"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "通量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩層球面之間：內層流進 $4\\pi$，外層流出 $4\\pi$，淨流出 $0$"
+          ],
+          "say": "所以兩層球面之間的空殼：從內層流進 4 派，從外層流出 4 派，淨流出是 0。這正是散度等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩層球面之間：內層流進 $4\\pi$，外層流出 $4\\pi$，淨流出 $0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那 $4\\pi$ 從哪裡來？全部來自原點（$\\mathbf F$ 在那裡沒有定義）"
+          ],
+          "say": "那 4 派是從哪裡冒出來的？全部來自原點。F 在原點沒有定義，下一課的散度定理會仔細處理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "那 $4\\pi$ 從哪裡來？全部來自原點（$\\mathbf F$ 在那裡沒有定義）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來：箭頭全部同方向，散度也可以是正的",
+            "$\\mathbf F=\\langle x,0,0\\rangle$（$x>0$）：全部往右，$\\nabla\\cdot\\mathbf F=1$"
+          ],
+          "say": "反過來，箭頭全部往同一個方向，散度也可以是正的。x、0、0 在右半邊全部往右，但越往右越快，右面流出的比左面流進的多，散度是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來：箭頭全部同方向，散度也可以是正的"
+            },
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle x,0,0\\rangle$（$x>0$）：全部往右，$\\nabla\\cdot\\mathbf F=1$",
+              "on": "正的"
+            },
+            {
+              "do": "write",
+              "line": "　散度看的是「出去的比進來的多多少」，不是箭頭指哪裡",
+              "color": "violet",
+              "on": "越快"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "兩個恆等式",
       "beats": [
-        { "show": ["$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"],
-          "note": "三對混合偏導相減，Clairaut 抵消。",
-          "say": "旋度的散度一定是零：展開是三對混合偏導相減，兩兩抵消。",
+        {
+          "show": [
+            "旋度的散度是 0：$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"
+          ],
+          "say": "最後兩個恆等式。第一個：旋度的散度永遠是 0。",
           "board": [
-            {"do":"write","line":"$\\nabla\\cdot(\\nabla\\times\\mathbf F)={{z:0}}$"},
-            {"do":"write","line":"三對混合偏導相減，兩兩抵消","on":"展開是"}
-          ] },
-        { "show": ["旋度是向量，量流體繞著轉多快"],
-          "say": "旋度是向量，量繞著轉多快。分量依序：R 對 y 減 Q 對 z，P 對 z 減 R 對 x，Q 對 x 減 P 對 y。",
+            {
+              "do": "write",
+              "line": "旋度的散度是 0：$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\partial_x(R_y-Q_z)+\\partial_y(P_z-R_x)+\\partial_z(Q_x-P_y)\\\\&=(R_{yx}-R_{xy})+(P_{zy}-P_{yz})+(Q_{xz}-Q_{zx})=0\\end{aligned}$"
+          ],
+          "say": "證明：把旋度三個分量各自對 x、y、z 偏微分加起來，重新配對，每一對都是混合偏導相減。P、Q、R 有連續二階偏導，克萊洛定理說每一對都是 0。",
           "board": [
-            {"do":"write","line":"旋度 $=\\langle R_y-Q_z,P_z-R_x,Q_x-P_y\\rangle$"}
-          ] },
-        { "show": ["第一分量 $-2y-xy=-y(2+x)$"],
-          "say": "R 對 y 是負二 y，Q 對 z 是 x y，第一項負 y 乘二加 x。P 對 z 是 x，Q 對 x 是 y z，其他項是零。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\partial_x(R_y-Q_z)+\\partial_y(P_z-R_x)+\\partial_z(Q_x-P_y)\\\\&=(R_{yx}-R_{xy})+(P_{zy}-P_{yz})+(Q_{xz}-Q_{zx})=0\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：$\\mathbf F=\\langle xz,xyz,-y^2\\rangle$，$\\nabla\\times\\mathbf F=\\langle -2y-xy,\\ x,\\ yz\\rangle$",
+            "$\\nabla\\cdot(\\nabla\\times\\mathbf F)=-y+0+y=0$"
+          ],
+          "say": "驗算上一課的例子：旋度是負 2 y 減 x y、x、y z。對 x、y、z 分別偏微分，負 y 加 0 加 y，等於 0。",
           "board": [
-            {"do":"write","line":"第一：$-2y-xy=-y(2+x)$"},
-            {"do":"write","line":"第二：$x-0$；第三：$yz-0$","on":"P 對 z"}
-          ] },
-        { "show": ["$\\langle -y(2+x),x,yz\\rangle$：$-y+0+y=0$"],
-          "note": "〈旋度〉算過的那個場。",
-          "say": "拿旋度那一課算過的結果驗算：三項是負 y、零、y，加起來是零。",
+            {
+              "do": "write",
+              "line": "驗算：$\\mathbf F=\\langle xz,xyz,-y^2\\rangle$，$\\nabla\\times\\mathbf F=\\langle -2y-xy,\\ x,\\ yz\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\nabla\\cdot(\\nabla\\times\\mathbf F)=-y+0+y=0}}$",
+              "on": "分別"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "偏微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\nabla\\cdot\\mathbf G\\ne0$ 的場不可能是旋度，例如 $\\langle x,y,z\\rangle$"
+          ],
+          "say": "所以散度不是 0 的場，不可能是任何場的旋度。例如 x、y、z，散度是 3，就不是旋度。",
           "board": [
-            {"do":"write","line":"$\\langle -y(2+x),x,yz\\rangle$"},
-            {"do":"write","line":"散度 $={{a:-y}}+0+{{b:y}}=0$","on":"三項是"}
-          ] },
-        { "show": ["$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$"],
-          "note": "Laplacian；$=0$ 叫調和函數。",
-          "say": "另一個：梯度的散度，是三個純二階偏導相加，叫 Laplacian。等於零的叫調和函數。",
+            {
+              "do": "write",
+              "line": "所以 $\\nabla\\cdot\\mathbf G\\ne0$ 的場不可能是旋度，例如 $\\langle x,y,z\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "梯度的散度：$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}=\\nabla^2f$"
+          ],
+          "say": "第二個：梯度的散度，是 f 對三個變數的二階偏導加起來，叫拉普拉斯算子，寫成 del 平方 f。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$","on":"梯度的散度"},
-            {"do":"write","line":"$=0$：調和函數","on":"等於零的"}
-          ] }
+            {
+              "do": "write",
+              "line": "梯度的散度：$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}=\\nabla^2f$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $f=x^2+y^2+z^2$：$\\nabla^2f=2+2+2=6$",
+            "• $f=\\frac1\\rho$：$\\nabla f=-\\frac{\\langle x,y,z\\rangle}{\\rho^3}$（負的點源場），由 ③：$\\nabla^2\\frac1\\rho=0$（$\\rho\\ne0$）"
+          ],
+          "say": "例如 x 平方加 y 平方加 z 平方，拉普拉斯算子是 6。肉分之一的梯度，正好是負的點源場，所以由剛才的結果，它的拉普拉斯算子是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f=x^2+y^2+z^2$：$\\nabla^2f=2+2+2=6$"
+            },
+            {
+              "do": "write",
+              "line": "• $f=\\frac1\\rho$：$\\nabla f=-\\frac{\\langle x,y,z\\rangle}{\\rho^3}$（負的點源場），由 ③：$\\nabla^2\\frac1\\rho=0$（$\\rho\\ne0$）",
+              "on": "拉斯#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\nabla^2f=0$ 叫 Laplace 方程；靜電位、穩定的溫度分布都滿足它",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$f$ 是純量函數、$\\mathbf F$ 是向量場。哪一個式子沒有意義？"
+          ],
+          "say": "試一題：哪一個式子沒有意義？先想想每一步吃進去的是純量還是向量。"
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "三種運算吃什麼、吐什麼：",
+            "• 梯度 $\\nabla f$：純量 → 向量"
+          ],
+          "say": "三種運算，記住吃進去和吐出來的東西：梯度把純量變向量，旋度把向量變向量，散度把向量變純量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三種運算吃什麼、吐什麼："
+            },
+            {
+              "do": "write",
+              "line": "• 梯度 $\\nabla f$：純量 → 向量",
+              "on": "吐出"
+            },
+            {
+              "do": "write",
+              "line": "• 旋度 $\\nabla\\times\\mathbf F$：向量 → 向量",
+              "on": "量變#1"
+            },
+            {
+              "do": "write",
+              "line": "• 散度 $\\nabla\\cdot\\mathbf F$：向量 → 純量",
+              "on": "向量#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$，是純量",
+            "• 意義：每單位體積的淨流出；正是源、負是匯"
+          ],
+          "say": "整理一下：散度是三個偏導加起來，是純量，代表每單位體積的淨流出。箭頭往外不代表散度為正。旋度的散度是 0，梯度的散度是拉普拉斯算子。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$，是純量"
+            },
+            {
+              "do": "write",
+              "line": "• 意義：每單位體積的淨流出；正是源、負是匯",
+              "on": "起來"
+            },
+            {
+              "do": "write",
+              "line": "• 箭頭往外 ≠ 散度為正：點源場 $\\frac{\\langle x,y,z\\rangle}{\\rho^3}$ 在原點外散度是 $0$",
+              "on": "積的"
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$；$\\nabla\\cdot(\\nabla f)=\\nabla^2f$",
+              "on": "散度#2"
+            },
+            {
+              "do": "write",
+              "line": "• 梯度：純量 → 向量；旋度：向量 → 向量；散度：向量 → 純量",
+              "on": "梯度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Stokes 定理"
+          ],
+          "say": "下一課，把格林定理搬到空間裡：斯托克斯定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Stokes 定理"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

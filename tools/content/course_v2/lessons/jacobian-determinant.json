@@ -1,53 +1,148 @@
 {
   "id": "jacobian-determinant",
   "title": "Jacobian 行列式",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["jacobian-geometry", "partial-derivatives"],
-  "next": ["change-of-variables"],
-  "related": ["multivariable-chain-rule", "spherical-coordinates", "cylindrical-coordinates"],
+  "prerequisites": [
+    "jacobian-geometry",
+    "partial-derivatives"
+  ],
+  "next": [
+    "change-of-variables"
+  ],
+  "related": [
+    "multivariable-chain-rule",
+    "spherical-coordinates",
+    "cylindrical-coordinates"
+  ],
   "objectives": [
-    "照定義算 $2\\times2$ 的 Jacobian $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
-    "已知 $u$、$v$ 是 $x$、$y$ 的函數時，用倒數關係 $\\frac{\\partial(x,y)}{\\partial(u,v)}=1\\big/\\frac{\\partial(u,v)}{\\partial(x,y)}$，不必先解出 $x$、$y$。",
-    "知道三變數的 Jacobian 也是行列式，柱座標是 $r$、球座標是 $\\rho^2\\sin\\varphi$。"
+    "照定義算 $2\\times2$ 的 Jacobian $\\frac{\\partial(x,y)}{\\partial(u,v)}$",
+    "已知 $u$、$v$ 是 $x$、$y$ 的函數時，用倒數關係 $\\frac{\\partial(x,y)}{\\partial(u,v)}=1\\Big/\\frac{\\partial(u,v)}{\\partial(x,y)}$ 求 Jacobian，不必解出 $x$、$y$",
+    "知道三變數的 Jacobian 也是行列式，柱座標是 $r$、球座標是 $\\rho^2\\sin\\varphi$"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 定義",
       "body": [
-        "變換 $x=x(u,v)$、$y=y(u,v)$，偏導數連續。把四個偏導數排成矩陣：第一列是 $x$ 對 $u$、$v$ 的偏導，第二列是 $y$ 對 $u$、$v$ 的偏導。它的行列式就是 Jacobian（下式）。",
-        "上一課看到，$|J|$ 是 $(u,v)$ 附近小方格被放大的倍率；$J$ 的正負號表示有沒有翻面。"
+        "$x=x(u,v)$，$y=y(u,v)$：",
+        "怎麼排：上面的變數當列，下面的變數當行",
+        "行列互換（轉置）行列式不變，所以排成 $\\begin{bmatrix}x_u&y_u\\\\x_v&y_v\\end{bmatrix}$ 也一樣",
+        "意思（上一課）：$(u,v)$ 附近，面積的放大倍率"
       ],
-      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}=x_u\\,y_v-x_v\\,y_u"],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}\\dfrac{\\partial x}{\\partial u}&\\dfrac{\\partial x}{\\partial v}\\\\[2mm]\\dfrac{\\partial y}{\\partial u}&\\dfrac{\\partial y}{\\partial v}\\end{bmatrix}=x_uy_v-x_vy_u",
+        "dA_{xy}=\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|dA_{uv}"
+      ]
     },
     {
       "heading": "② 計算步驟",
       "body": [
-        "1. 寫出 $x$、$y$ 各自對 $u$、$v$ 的四個偏導數。",
-        "2. 交叉相乘相減：主對角線 $x_uy_v$，減去反對角線 $x_vy_u$。",
-        "3. 化簡。答案通常還是 $u$、$v$ 的函數。",
-        "例：$x=2u+v$、$y=u-v$。$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$，$J=2\\cdot(-1)-1\\cdot1=-3$。面積放大 $|J|=3$ 倍，而且翻面。"
+        "1. 算四個偏導數 $x_u,\\ x_v,\\ y_u,\\ y_v$",
+        "2. 排成 $2\\times2$ 矩陣（$x$ 在上、$u$ 在左）",
+        "3. 主對角相乘 $-$ 副對角相乘",
+        "例 1　$x=u^2-v^2$，$y=2uv$",
+        "$x_u=2u$，$x_v=-2v$，$y_u=2v$，$y_v=2u$",
+        "最常錯的地方：$x_v$ 帶著負號，減掉它要變號",
+        "在原點是 $0$：那裡面積被壓扁，其他點都 $>0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}",
+        "=(2u)(2u)-(-2v)(2v)=4u^2+4v^2"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "$x_u=e^u\\cos v$，$x_v=-e^u\\sin v$",
+        "$y_u=e^u\\sin v$，$y_v=e^u\\cos v$",
+        "這其實是極座標，$r=e^u$、$\\theta=v$"
+      ],
+      "tex": [
+        "e^{2u}\\cos^2v+e^{2u}\\sin^2v=e^{2u}"
+      ]
     },
     {
       "heading": "③ 反方向：倒數關係",
       "body": [
-        "很多題目給的是 $u=u(x,y)$、$v=v(x,y)$（從區域邊界讀出來的），要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。不必先解出 $x$、$y$，直接取倒數（下式）。",
-        "直觀理由：從 $(x,y)$ 到 $(u,v)$ 把面積放大 $k$ 倍，反過來就縮小成 $\\frac{1}{k}$ 倍。正式的理由是〈多變數連鎖律〉：兩個變換合成是恆等映射，兩個 Jacobian 矩陣相乘是單位矩陣，行列式相乘等於 $1$。條件是 $J\\ne 0$。"
+        "常見的情形：題目給的是 $u=u(x,y)$，$v=v(x,y)$",
+        "要的是 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$，但解出 $x,y$ 可能很麻煩",
+        "定理",
+        "前提：兩邊都不是 $0$",
+        "直覺：去程放大 $k$ 倍，回程一定縮小成 $\\dfrac1k$",
+        "證明：連鎖律，$x$ 對 $x$ 微分：",
+        "$y$ 也一樣 ⇒ 兩個矩陣相乘是單位矩陣：",
+        "取行列式：$\\det(AB)=\\det A\\cdot\\det B=1$　$\\blacksquare$"
       ],
-      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}"],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}\\cdot\\frac{\\partial(u,v)}{\\partial(x,y)}=1",
+        "1=\\frac{\\partial x}{\\partial x}=x_u\\,u_x+x_v\\,v_x,\\quad 0=\\frac{\\partial x}{\\partial y}=x_u\\,u_y+x_v\\,v_y",
+        "\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}\\begin{bmatrix}u_x&u_y\\\\v_x&v_y\\end{bmatrix}=\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}"
+      ]
+    },
+    {
+      "heading": "③ 例：兩種方法對答案",
+      "body": [
+        "例 2　$u=x+y$，$v=x-y$，求 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$",
+        "方法一：解出 $x=\\dfrac{u+v}2$，$y=\\dfrac{u-v}2$",
+        "方法二：直接算反方向",
+        "負號表示翻面；換積分時取絕對值 $\\frac12$"
+      ],
+      "tex": [
+        "\\det\\begin{bmatrix}\\frac12&\\frac12\\\\[1mm]\\frac12&-\\frac12\\end{bmatrix}=-\\frac14-\\frac14=-\\frac12",
+        "\\frac{\\partial(u,v)}{\\partial(x,y)}=\\det\\begin{bmatrix}1&1\\\\1&-1\\end{bmatrix}=-2",
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{-2}=-\\frac12"
+      ]
+    },
+    {
+      "heading": "③ 解不出來也沒關係",
+      "body": [
+        "例 3　$u=xy$，$v=\\dfrac yx$（$x,y>0$）",
+        "$\\dfrac yx$ 剛好就是 $v$：",
+        "驗算：$x=\\sqrt{u/v}$，$y=\\sqrt{uv}$，直接算也得 $\\frac1{2v}$",
+        "面積 $=\\displaystyle\\int_1^3\\!\\!\\int_1^2\\frac{1}{2v}\\,du\\,dv=\\frac12\\ln3$",
+        "$\\frac12\\ln3\\approx0.549$，數值積分驗算一致"
+      ],
+      "tex": [
+        "\\frac{\\partial(u,v)}{\\partial(x,y)}=\\det\\begin{bmatrix}y&x\\\\-\\frac{y}{x^2}&\\frac1x\\end{bmatrix}=\\frac yx+\\frac yx=\\frac{2y}x",
+        "\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{2v}"
+      ]
     },
     {
       "heading": "④ 三個變數",
       "body": [
-        "$x$、$y$、$z$ 都是 $u$、$v$、$w$ 的函數時，Jacobian 是 $3\\times3$ 的行列式，$|J|$ 是小方塊的體積放大倍率。兩個以後會一直用到：〈柱座標〉的 Jacobian 是 $r$，〈球座標〉的是 $\\rho^2\\sin\\varphi$。"
+        "柱座標 $x=r\\cos\\theta$，$y=r\\sin\\theta$，$z=z$：",
+        "所以 $dV=r\\,dr\\,d\\theta\\,dz$（9.10 會用）",
+        "球座標：",
+        "$x=\\rho\\sin\\varphi\\cos\\theta$，$y=\\rho\\sin\\varphi\\sin\\theta$，$z=\\rho\\cos\\varphi$"
       ],
-      "tex": ["\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det\\begin{pmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{pmatrix}"],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det\\begin{bmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{bmatrix}",
+        "\\det\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta&0\\\\\\sin\\theta&r\\cos\\theta&0\\\\0&0&1\\end{bmatrix}=r"
+      ]
+    },
+    {
+      "heading": "④ 球座標的倍率",
+      "body": [
+        "第三列展開（$\\cos^2\\theta+\\sin^2\\theta=1$ 會一直出現）：",
+        "$0\\le\\varphi\\le\\pi$ 時 $\\sin\\varphi\\ge0$；所以 $dV=\\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$（9.10 會用）"
+      ],
+      "tex": [
+        "\\frac{\\partial(x,y,z)}{\\partial(\\rho,\\varphi,\\theta)}=\\det\\begin{bmatrix}\\sin\\varphi\\cos\\theta&\\rho\\cos\\varphi\\cos\\theta&-\\rho\\sin\\varphi\\sin\\theta\\\\\\sin\\varphi\\sin\\theta&\\rho\\cos\\varphi\\sin\\theta&\\rho\\sin\\varphi\\cos\\theta\\\\\\cos\\varphi&-\\rho\\sin\\varphi&0\\end{bmatrix}",
+        "=\\cos\\varphi\\cdot\\rho^2\\sin\\varphi\\cos\\varphi+\\rho\\sin\\varphi\\cdot\\rho\\sin^2\\varphi",
+        "=\\rho^2\\sin\\varphi\\,(\\cos^2\\varphi+\\sin^2\\varphi)=\\rho^2\\sin\\varphi"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\dfrac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$：上面的變數當列",
+        "• 小心負號：減掉一個負的變成加",
+        "• 反方向好算時：$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=1\\Big/\\dfrac{\\partial(u,v)}{\\partial(x,y)}$",
+        "• 三變數：$3\\times3$ 行列式；柱座標 $r$，球座標 $\\rho^2\\sin\\varphi$",
+        "下一課：變數變換，用 Jacobian 換二重積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -93,191 +188,593 @@
   ],
   "checks": [
     {
-      "ask": "$x=3u+v$、$y=u+2v$，$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+      "ask": "$x=e^u\\cos v$，$y=e^u\\sin v$，$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=$？",
       "options": [
-        { "label": "$5$", "correct": true },
-        { "label": "$7$", "why": "那是 $3\\cdot2+1\\cdot1$，用了相加。行列式是主對角線減反對角線：$6-1$。" },
-        { "label": "$-5$", "why": "順序反了：是 $x_uy_v-x_vy_u=6-1$，不是 $1-6$。" }
+        {
+          "label": "$e^{2u}$",
+          "correct": true
+        },
+        {
+          "label": "$-e^{2u}$",
+          "why": "減反了：是 $x_uy_v-x_vy_u$"
+        },
+        {
+          "label": "$e^{2u}\\cos2v$",
+          "why": "$x_v=-e^u\\sin v$ 帶負號，減掉它要變成加"
+        },
+        {
+          "label": "$e^u$",
+          "why": "兩個偏導數相乘，$e^u\\cdot e^u=e^{2u}$"
+        }
       ]
     },
     {
-      "ask": "已知 $\\frac{\\partial(u,v)}{\\partial(x,y)}=4$（處處），那 $\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+      "ask": "$u=2x-y$，$v=x+3y$，$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=$？",
       "options": [
-        { "label": "$\\frac{1}{4}$", "correct": true },
-        { "label": "$4$", "why": "這是反方向的 Jacobian。從 $(x,y)$ 到 $(u,v)$ 放大 $4$ 倍，反過來是縮小成 $\\frac{1}{4}$。" },
-        { "label": "$-4$", "why": "倒數不會變號；兩者相乘等於 $1$。" }
-      ]
-    },
-    {
-      "ask": "$x=r\\cos\\theta$、$y=r\\sin\\theta$ 的 $\\frac{\\partial(x,y)}{\\partial(r,\\theta)}$ 是？",
-      "options": [
-        { "label": "$r$", "correct": true },
-        { "label": "$1$", "why": "$\\cos^2\\theta+\\sin^2\\theta=1$ 前面還有一個 $r$：$r\\cos^2\\theta+r\\sin^2\\theta=r$。" },
-        { "label": "$r^2$", "why": "四個偏導裡只有 $x_\\theta$、$y_\\theta$ 帶 $r$，每一項只乘到一次 $r$。" }
-      ]
-    },
-    {
-      "ask": "換變數公式裡乘的是什麼？",
-      "options": [
-        { "label": "$\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|$", "correct": true },
-        { "label": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$，正負號要保留", "why": "負號只表示翻面。面積是正的，所以取絕對值。" },
-        { "label": "$\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|$", "why": "方向反了。$dA=dx\\,dy$ 要換成 $du\\,dv$，倍率是 $x$、$y$ 對 $u$、$v$ 的 Jacobian。" }
+        {
+          "label": "$\\frac17$",
+          "correct": true
+        },
+        {
+          "label": "$7$",
+          "why": "那是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；還要取倒數"
+        },
+        {
+          "label": "$\\frac15$",
+          "why": "漏了 $u_y=-1$ 的負號：$6-(-1)=7$"
+        },
+        {
+          "label": "$-\\frac17$",
+          "why": "$6-(-1)\\cdot1=+7$，是正的"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "定義與算法",
+      "title": "定義",
       "beats": [
-        { "show": ["$\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}$","$=x_uy_v-x_vy_u$"],
-          "note": "第一列是 $x$ 的偏導，第二列是 $y$ 的偏導。",
-          "say": "四個偏導數排成矩陣：第一列是 x 對 u、對 v，第二列是 y 對 u、對 v。行列式就是 Jacobian。",
+        {
+          "show": [
+            "$x=x(u,v)$，$y=y(u,v)$：",
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}\\dfrac{\\partial x}{\\partial u}&\\dfrac{\\partial x}{\\partial v}\\\\[2mm]\\dfrac{\\partial y}{\\partial u}&\\dfrac{\\partial y}{\\partial v}\\end{bmatrix}=x_uy_v-x_vy_u$"
+          ],
+          "say": "上一課看了雅可比行列式的意思，這一課練怎麼算。x 和 y 是 u、v 的函數。雅可比行列式是四個偏導數排成的行列式。",
           "board": [
-            {"do":"write","line":"$J=\\det\\begin{pmatrix}{{xu:x_u}}&{{xv:x_v}}\\\\{{yu:y_u}}&{{yv:y_v}}\\end{pmatrix}$","tint":{"xu":"blue","xv":"blue","yu":"violet","yv":"violet"}},
-            {"do":"write","line":"$={{xu:x_u}}{{yv:y_v}}-{{xv:x_v}}{{yu:y_u}}$","on":"行列式就是"}
-          ] },
-        { "show": ["$|J|$：放大倍率；正負號：有沒有翻面"],
-          "say": "上一課看過：它的絕對值是小方格的放大倍率，正負號表示有沒有翻面。",
+            {
+              "do": "write",
+              "line": "$x=x(u,v)$，$y=y(u,v)$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\det{\\begin{bmatrix}\\dfrac{\\partial x}{\\partial u}&\\dfrac{\\partial x}{\\partial v}\\\\[2mm]\\dfrac{\\partial y}{\\partial u}&\\dfrac{\\partial y}{\\partial v}\\end{bmatrix}}=x_uy_v-x_vy_u}}$",
+              "color": "red",
+              "on": "怎麼"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "雅可#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "怎麼排：上面的變數當列，下面的變數當行"
+          ],
+          "say": "怎麼排？記號上面的 x、y 各占一列；下面的 u、v 各占一行。第一列是 x 對 u、x 對 v。",
           "board": [
-            {"do":"write","line":"$|J|$：放大倍率；正負號：有沒有翻面","on":"上一課"}
-          ] },
-        { "show": ["$x=2u$、$y=3v$：$J=2\\cdot3=6$"],
-          "note": "寬 $1$、高 $1$ 的小方格，變成寬 $2$、高 $3$。",
-          "say": "舉例：一格寬一高一的小方格，被拉成寬二高三的長方形，面積變六倍。J 就是二乘三。",
+            {
+              "do": "write",
+              "line": "怎麼排：上面的變數當列，下面的變數當行"
+            },
+            {
+              "do": "write",
+              "line": "　行列互換（轉置）行列式不變，所以排成 ${\\begin{bmatrix}x_u&y_u\\\\x_v&y_v\\end{bmatrix}}$ 也一樣",
+              "color": "violet",
+              "on": "各占#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思（上一課）：$(u,v)$ 附近，面積的放大倍率",
+            "$dA_{xy}=\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|dA_{uv}$"
+          ],
+          "say": "它的意思是：在 u v 的某一點附近，變換把面積放大的倍率。換積分的時候用的是它的絕對值。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=2u$、$y=3v$","on":"一格"},
-            {"do":"plot","graph":{"window":[-1,4,-1,4],"fills":[{"pts":[[0,0],[2,0],[2,3],[0,3]],"color":"blue"}],"dashed":[[[0,1],[1,1]],[[1,0],[1,1]]]},"on":"拉成"},
-            {"do":"write","line":"$J=2\\cdot3=6$","on":"面積變六倍"}
-          ] },
-        { "show": ["$x=u$、$y=-v$：$J=1\\cdot(-1)=-1$"],
-          "note": "方格上下顛倒，面積沒變。",
-          "say": "如果 y 等於負 v，方格上下顛倒，面積沒變，J 是負一。負號就是翻面。",
+            {
+              "do": "write",
+              "line": "意思（上一課）：$(u,v)$ 附近，面積的放大倍率"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle dA_{xy}=\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|dA_{uv}}}$",
+              "on": "點附"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "換積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "計算步驟",
+      "beats": [
+        {
+          "show": [
+            "1. 算四個偏導數 $x_u,\\ x_v,\\ y_u,\\ y_v$",
+            "2. 排成 $2\\times2$ 矩陣（$x$ 在上、$u$ 在左）"
+          ],
+          "say": "計算的步驟：先算四個偏導數，排成矩陣，再用主對角線的乘積，減掉另一條對角線的乘積。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=u$、$y=-v$","on":"如果"},
-            {"do":"write","line":"$J=1\\cdot(-1)=-1$","on":"J 是負一"}
-          ] },
-        { "show": ["$x=2u+v$、$y=u-v$"],
-          "note": "$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$。",
-          "say": "照步驟：先寫出四個偏導數。",
+            {
+              "do": "write",
+              "line": "1. 算四個偏導數 $x_u,\\ x_v,\\ y_u,\\ y_v$"
+            },
+            {
+              "do": "write",
+              "line": "2. 排成 $2\\times2$ 矩陣（$x$ 在上、$u$ 在左）",
+              "on": "排成"
+            },
+            {
+              "do": "write",
+              "line": "3. 主對角相乘 $-$ 副對角相乘",
+              "on": "減掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1　$x=u^2-v^2$，$y=2uv$"
+          ],
+          "say": "例一：x 等於 u 平方減 v 平方，y 等於 2uv。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=2u+v$、$y=u-v$","on":"照步驟"},
-            {"do":"write","line":"$x_u=2$，$x_v=1$，$y_u=1$，$y_v=-1$","on":"四個偏導數"}
-          ] },
-        { "show": ["$J=2\\cdot(-1)-1\\cdot1=-3$"],
-          "note": "放大 $3$ 倍，而且翻面。",
-          "say": "主對角相乘，減掉反對角相乘，得負三：面積放大三倍，而且翻面。",
+            {
+              "do": "write",
+              "line": "例 1　$x=u^2-v^2$，$y=2uv$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x_u=2u$，$x_v=-2v$，$y_u=2v$，$y_v=2u$"
+          ],
+          "say": "四個偏導數：x 對 u 是 2u，x 對 v 是負 2v，y 對 u 是 2v，y 對 v 是 2u。",
           "board": [
-            {"do":"write","line":"$J=2\\cdot(-1)-1\\cdot1={{j:-3}}$","on":"主對角"},
-            {"do":"box","term":"j","color":"green","on":"得負三"},
-            {"do":"write","line":"放大 $3$ 倍，而且翻面","on":"面積放大"}
-          ] }
+            {
+              "do": "write",
+              "line": "$x_u=2u$，$x_v=-2v$，$y_u=2v$，$y_v=2u$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}$"
+          ],
+          "say": "排成矩陣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\det{\\begin{bmatrix}2u&-2v\\\\2v&2u\\end{bmatrix}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=(2u)(2u)-(-2v)(2v)=4u^2+4v^2$"
+          ],
+          "say": "2u 乘 2u，減掉負 2v 乘 2v。減一個負的變成加：答案是 4 u 平方加 4 v 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =(2u)(2u)-(-2v)(2v)=4u^2+4v^2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "2v#2"
+            },
+            {
+              "do": "write",
+              "line": "　最常錯的地方：$x_v$ 帶著負號，減掉它要變號",
+              "color": "violet",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在原點是 $0$：那裡面積被壓扁，其他點都 $>0$"
+          ],
+          "say": "在原點雅可比行列式是 0，附近被壓扁；其他地方都是正的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在原點是 $0$：那裡面積被壓扁，其他點都 $>0$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$x=e^u\\cos v$，$y=e^u\\sin v$，$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=$？"
+          ],
+          "say": "試一題，小心負號。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "答案通常還有變數",
+      "title": "試一題",
       "beats": [
-        { "show": ["$x=u^2-v^2$、$y=2uv$"],
-          "say": "非線性的變換，Jacobian 通常還是 u、v 的函數。",
+        {
+          "show": [
+            "$x_u=e^u\\cos v$，$x_v=-e^u\\sin v$",
+            "$y_u=e^u\\sin v$，$y_v=e^u\\cos v$"
+          ],
+          "say": "四個偏導數裡，x 對 v 帶負號。主對角是 e 的 2u 次方乘餘弦平方；減掉副對角，負負得正，加上正弦平方，合起來是 e 的 2u 次方。",
           "board": [
-            {"do":"write","line":"$x=u^2-v^2$、$y=2uv$"},
-            {"do":"write","line":"Jacobian 通常還有 $u$、$v$","on":"Jacobian 通常"}
-          ] },
-        { "show": ["$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"],
-          "say": "四個偏導數寫出來。",
-          "board": [
-            {"do":"write","line":"$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"}
-          ] },
-        { "show": ["$2u\\cdot2u-(-2v)(2v)=4(u^2+v^2)$"],
-          "note": "交叉相乘要相減，不是相加。",
-          "say": "交叉相乘相減。減掉一個負的，變成加，得四乘 u 平方加 v 平方。",
-          "board": [
-            {"do":"write","line":"$2u\\cdot2u-{{neg:(-2v)(2v)}}={{r:4(u^2+v^2)}}$"},
-            {"do":"focus","term":"neg","label":"減掉負的","on":"減掉一個負的"},
-            {"do":"box","term":"r","color":"green","on":"得四乘"}
-          ] }
-      ],
-      "key": "答案帶變數：放大倍率隨點而變",
-      "check": 2
+            {
+              "do": "write",
+              "line": "$x_u=e^u\\cos v$，$x_v=-e^u\\sin v$"
+            },
+            {
+              "do": "write",
+              "line": "$y_u=e^u\\sin v$，$y_v=e^u\\cos v$",
+              "on": "負號"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle e^{2u}\\cos^2v+e^{2u}\\sin^2v=e^{2u}}}$",
+              "color": "red",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "負負"
+            },
+            {
+              "do": "write",
+              "line": "　這其實是極座標，$r=e^u$、$\\theta=v$",
+              "color": "violet",
+              "on": "起來"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "反方向：取倒數",
+      "title": "反方向：倒數關係",
       "beats": [
-        { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"],
-          "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
-          "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。",
+        {
+          "show": [
+            "常見的情形：題目給的是 $u=u(x,y)$，$v=v(x,y)$"
+          ],
+          "say": "實際換變數的時候，常常拿到的是反方向：u 和 v 寫成 x、y 的函數。因為區域的邊界長得像 u 等於常數。",
           "board": [
-            {"do":"write","line":"$u=u(x,y)$、$v=v(x,y)$"},
-            {"do":"write","line":"要的：$\\frac{\\partial(x,y)}{\\partial(u,v)}$","on":"反方向"}
-          ] },
-        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"],
-          "note": "條件：$J\\ne 0$。",
-          "say": "不必先解出 x、y，直接算反方向再取倒數。",
+            {
+              "do": "write",
+              "line": "常見的情形：題目給的是 $u=u(x,y)$，$v=v(x,y)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要的是 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$，但解出 $x,y$ 可能很麻煩"
+          ],
+          "say": "可是我們要的是 x y 對 u v 的雅可比行列式。要先解出 x 和 y，有時候很麻煩，甚至解不出來。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{{{d:\\partial(u,v)/\\partial(x,y)}}}$"},
-            {"do":"underline","term":"d","color":"gold","label":"先算這個","on":"反方向"}
-          ] },
-        { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"],
-          "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
-          "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。",
+            {
+              "do": "write",
+              "line": "要的是 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$，但解出 $x,y$ 可能很麻煩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理",
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}\\cdot\\frac{\\partial(u,v)}{\\partial(x,y)}=1$"
+          ],
+          "say": "好消息：兩個方向的雅可比行列式相乘等於 1。所以只要算反方向的，再取倒數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"去程：放大 $k$ 倍","on":"去程"},
-            {"do":"write","line":"回程：縮成 $\\frac{1}{k}$","on":"回程"}
-          ] },
-        { "show": ["$u=\\frac{x}{2}$、$v=\\frac{y}{3}$：$J=\\frac{1}{6}$"],
-          "note": "前面 $x=2u$、$y=3v$ 的反方向。",
-          "say": "回到 x 等於二 u、y 等於三 v。反過來 u 是 x 的二分之一，v 是 y 的三分之一，Jacobian 是六分之一。",
+            {
+              "do": "write",
+              "line": "定理"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}\\cdot\\frac{\\partial(u,v)}{\\partial(x,y)}=1}}$",
+              "color": "red",
+              "on": "雅可"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　前提：兩邊都不是 $0$",
+              "color": "violet",
+              "on": "反方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：去程放大 $k$ 倍，回程一定縮小成 $\\dfrac1k$"
+          ],
+          "say": "直覺很簡單：從 u v 到 x y 面積放大 k 倍，走回去一定縮小成 k 分之一，才能回到原來的大小。",
           "board": [
-            {"do":"write","line":"$u=\\frac{x}{2}$、$v=\\frac{y}{3}$"},
-            {"do":"write","line":"$J=\\frac{1}{2}\\cdot\\frac{1}{3}=\\frac{1}{6}$","on":"Jacobian"}
-          ] },
-        { "show": ["$6\\cdot\\frac{1}{6}=1$：回到原來大小"],
-          "say": "去程放大六倍，回程縮成六分之一，兩個倍率乘起來是一。所以知道一個，另一個就是它的倒數。",
+            {
+              "do": "write",
+              "line": "直覺：去程放大 $k$ 倍，回程一定縮小成 $\\dfrac1k$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：連鎖律，$x$ 對 $x$ 微分：",
+            "$1=\\frac{\\partial x}{\\partial x}=x_u\\,u_x+x_v\\,v_x,\\quad 0=\\frac{\\partial x}{\\partial y}=x_u\\,u_y+x_v\\,v_y$"
+          ],
+          "say": "證明用連鎖律。x 透過 u、v 再變回 x：x 對 x 的偏導數是 1，展開是 x u 乘 u x 加 x v 乘 v x。x 對 y 是 0。",
           "board": [
-            {"do":"write","line":"$6\\cdot\\frac{1}{6}=1$"},
-            {"do":"write","line":"知道一個，另一個取倒數","on":"所以"}
-          ] }
+            {
+              "do": "write",
+              "line": "證明：連鎖律，$x$ 對 $x$ 微分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1=\\frac{\\partial x}{\\partial x}=x_u\\,u_x+x_v\\,v_x,\\quad 0=\\frac{\\partial x}{\\partial y}=x_u\\,u_y+x_v\\,v_y$",
+              "on": "展開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y$ 也一樣 ⇒ 兩個矩陣相乘是單位矩陣：",
+            "$\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}\\begin{bmatrix}u_x&u_y\\\\v_x&v_y\\end{bmatrix}=\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}$"
+          ],
+          "say": "y 也同樣處理。四條式子合起來，正好是兩個偏導數矩陣相乘等於單位矩陣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y$ 也一樣 ⇒ 兩個矩陣相乘是單位矩陣："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{bmatrix}x_u&x_v\\\\y_u&y_v\\end{bmatrix}}{\\begin{bmatrix}u_x&u_y\\\\v_x&v_y\\end{bmatrix}}={\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}}$",
+              "on": "好是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取行列式：$\\det(AB)=\\det A\\cdot\\det B=1$　$\\blacksquare$"
+          ],
+          "say": "兩邊取行列式。乘積的行列式等於行列式的乘積，所以兩個雅可比行列式相乘是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取行列式：$\\det(AB)=\\det A\\cdot\\det B=1$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：兩種方法對答案",
+      "beats": [
+        {
+          "show": [
+            "例 2　$u=x+y$，$v=x-y$，求 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$"
+          ],
+          "say": "例二：u 等於 x 加 y，v 等於 x 減 y。用兩種方法算，對答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2　$u=x+y$，$v=x-y$，求 $\\dfrac{\\partial(x,y)}{\\partial(u,v)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方法一：解出 $x=\\dfrac{u+v}2$，$y=\\dfrac{u-v}2$",
+            "$\\det\\begin{bmatrix}\\frac12&\\frac12\\\\[1mm]\\frac12&-\\frac12\\end{bmatrix}=-\\frac14-\\frac14=-\\frac12$"
+          ],
+          "say": "方法一：兩式相加除以 2 得 x，相減除以 2 得 y。偏導數都是正負 2 分之 1，行列式是負 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "方法一：解出 $x=\\dfrac{u+v}2$，$y=\\dfrac{u-v}2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\det{\\begin{bmatrix}\\frac12&\\frac12\\\\[1mm]\\frac12&-\\frac12\\end{bmatrix}}=-\\frac14-\\frac14=-\\frac12$",
+              "on": "偏導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方法二：直接算反方向",
+            "$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\det\\begin{bmatrix}1&1\\\\1&-1\\end{bmatrix}=-2$"
+          ],
+          "say": "方法二：不用解。u、v 對 x、y 的偏導數都是正負 1，行列式是負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "方法二：直接算反方向"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(u,v)}{\\partial(x,y)}=\\det{\\begin{bmatrix}1&1\\\\1&-1\\end{bmatrix}}=-2$",
+              "on": "的偏"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{-2}=-\\frac12$"
+          ],
+          "say": "取倒數，負 2 分之 1。兩種方法一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{-2}=-\\frac12}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　負號表示翻面；換積分時取絕對值 $\\frac12$",
+              "color": "violet",
+              "on": "兩種"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
       "title": "解不出來也沒關係",
       "beats": [
-        { "show": ["$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"],
-          "say": "這一題要解出 x、y 很麻煩，直接算反方向。",
+        {
+          "show": [
+            "例 3　$u=xy$，$v=\\dfrac yx$（$x,y>0$）"
+          ],
+          "say": "例三：u 等於 x y，v 等於 x 分之 y，x 和 y 都是正的。",
           "board": [
-            {"do":"write","line":"$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"},
-            {"do":"write","line":"算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$","on":"很麻煩"}
-          ] },
-        { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}$"],
-          "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。",
+            {
+              "do": "write",
+              "line": "例 3　$u=xy$，$v=\\dfrac yx$（$x,y>0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\det\\begin{bmatrix}y&x\\\\-\\frac{y}{x^2}&\\frac1x\\end{bmatrix}=\\frac yx+\\frac yx=\\frac{2y}x$"
+          ],
+          "say": "反方向的偏導數：u 對 x 是 y，對 y 是 x；v 對 x 是負的 x 平方分之 y，對 y 是 x 分之 1。行列式是 2 倍的 x 分之 y。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$u_x=y$，$u_y=x$","on":"u、v"},
-            {"do":"write","line":"$v_x=-\\frac{y}{x^2}$，$v_y=\\frac{1}{x}$","on":"偏導數"},
-            {"do":"write","line":"$=\\frac{y}{x}+\\frac{y}{x}={{r:\\frac{2y}{x}}}$","on":"交叉相乘"},
-            {"do":"box","term":"r","color":"green","on":"得到"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(u,v)}{\\partial(x,y)}=\\det{\\begin{bmatrix}y&x\\\\-\\frac{y}{x^2}&\\frac1x\\end{bmatrix}}=\\frac yx+\\frac yx=\\frac{2y}x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac yx$ 剛好就是 $v$：",
+            "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{2v}$"
+          ],
+          "say": "x 分之 y 就是 v，所以它等於 2v。取倒數，x y 對 u v 的雅可比行列式是 2v 分之 1。完全不用解出 x 和 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac yx$ 剛好就是 $v$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{2v}}}$",
+              "color": "red",
+              "on": "2v#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "的雅"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$x=\\sqrt{u/v}$，$y=\\sqrt{uv}$，直接算也得 $\\frac1{2v}$",
+              "color": "violet",
+              "on": "完全"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "這組變數的用處：x y 等於 1、2 兩條雙曲線，和 y 等於 x、y 等於 3x 兩條直線圍成的彎曲區域，在 u v 平面變成矩形。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jdHyper\" viewBox=\"0 0 640 356\" width=\"640\" height=\"356\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jdHyper\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jdHyperblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jdHyperred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jdHypergreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jdHyperpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jdHyperink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9a2jdHyper10\"><rect x=\"42.3\" y=\"30\" width=\"215.4\" height=\"290\"/></clipPath><g clip-path=\"url(#cl9a2jdHyper10)\"><polygon points=\"141.7,220.6 142.4,219.9 143.1,219.2 143.8,218.5 144.4,217.9 145.1,217.2 145.8,216.5 146.4,215.9 147.1,215.2 147.7,214.6 148.4,213.9 149,213.3 149.6,212.7 150.3,212 150.9,211.4 151.5,210.8 152.1,210.2 152.7,209.6 153.3,209 153.9,208.4 154.5,207.8 155.1,207.2 155.7,206.6 156.3,206 156.9,205.4 157.5,204.8 158.1,204.2 158.6,203.7 159.2,203.1 159.8,202.5 160.3,201.9 160.9,201.4 161.5,200.8 162,200.3 162.6,199.7 163.1,199.2 163.7,198.6 164.2,198.1 164.8,197.5 165.3,197 165.8,196.5 166.4,195.9 166.9,195.4 167.4,194.9 167.9,194.3 168.5,193.8 169,193.3 169.5,192.8 170,192.3 170.5,191.8 171,191.2 171.6,190.7 172.1,190.2 172.6,189.7 173.1,189.2 173.6,188.7 174.1,188.2 174.6,187.7 175.1,187.2 175.5,186.7 176,186.3 176,186.3 174.1,184.3 172.3,182.4 170.6,180.5 168.9,178.7 167.3,176.9 165.8,175.1 164.4,173.3 163,171.5 161.6,169.8 160.3,168.1 159.1,166.4 157.9,164.8 156.7,163.1 155.6,161.5 154.5,159.9 153.5,158.3 152.5,156.8 151.5,155.2 150.5,153.7 149.6,152.2 148.7,150.6 147.9,149.2 147,147.7 146.2,146.2 145.4,144.8 144.6,143.3 143.9,141.9 143.1,140.5 142.4,139.1 141.7,137.7 141,136.3 140.4,135 139.7,133.6 139.1,132.3 138.5,130.9 137.9,129.6 137.3,128.3 136.7,127 136.1,125.7 135.6,124.4 135,123.2 134.5,121.9 134,120.6 133.5,119.4 133,118.2 132.5,116.9 132,115.7 131.5,114.5 131.1,113.3 130.6,112.1 130.2,110.9 129.7,109.7 129.3,108.5 128.9,107.4 128.5,106.2 128.1,105 127.7,103.9 127.3,102.7 126.9,101.6 126.5,100.5 126.5,100.5 126.2,101.3 125.9,102.2 125.7,103 125.4,103.9 125.1,104.7 124.8,105.6 124.5,106.5 124.2,107.4 123.9,108.2 123.6,109.1 123.3,110 123,110.9 122.7,111.8 122.4,112.7 122.1,113.6 121.8,114.5 121.5,115.4 121.2,116.3 120.9,117.2 120.6,118.2 120.3,119.1 120,120 119.7,121 119.4,121.9 119.1,122.8 118.7,123.8 118.4,124.8 118.1,125.7 117.8,126.7 117.4,127.7 117.1,128.6 116.8,129.6 116.5,130.6 116.1,131.6 115.8,132.6 115.5,133.6 115.1,134.6 114.8,135.7 114.4,136.7 114.1,137.7 113.7,138.8 113.4,139.8 113,140.9 112.7,141.9 112.3,143 112,144 111.6,145.1 111.3,146.2 110.9,147.3 110.5,148.4 110.2,149.5 109.8,150.6 109.4,151.8 109,152.9 108.6,154.1 108.3,155.2 107.9,156.4 107.5,157.5 107.1,158.7 106.7,159.9 106.7,159.9 107,160.7 107.2,161.5 107.5,162.3 107.8,163.1 108.1,164 108.4,164.8 108.7,165.6 109,166.4 109.3,167.3 109.6,168.1 109.9,169 110.2,169.8 110.6,170.7 110.9,171.5 111.3,172.4 111.6,173.3 112,174.2 112.3,175.1 112.7,176 113.1,176.9 113.5,177.8 113.9,178.7 114.3,179.6 114.7,180.5 115.1,181.5 115.6,182.4 116,183.4 116.5,184.3 117,185.3 117.4,186.3 117.9,187.2 118.4,188.2 119,189.2 119.5,190.2 120.1,191.2 120.6,192.3 121.2,193.3 121.8,194.3 122.4,195.4 123,196.5 123.7,197.5 124.4,198.6 125.1,199.7 125.8,200.8 126.5,201.9 127.3,203.1 128.1,204.2 128.9,205.4 129.7,206.6 130.6,207.8 131.5,209 132.5,210.2 133.5,211.4 134.5,212.7 135.6,213.9 136.7,215.2 137.9,216.5 139.1,217.9 140.4,219.2 141.7,220.6\" fill=\"var(--blue)\" fill-opacity=\"0.3\"/><path d=\"M85.4 44.5L88.2 69.8L91.1 90.6L94 108L96.9 122.8L99.7 135.5L102.6 146.5L105.5 156.2L108.4 164.7L111.2 172.3L114.1 179.1L117 185.3L119.8 190.9L122.7 195.9L125.6 200.5L128.5 204.8L131.3 208.7L134.2 212.3L137.1 215.7L139.9 218.8L142.8 221.7L145.7 224.4L148.6 226.9L151.4 229.3L154.3 231.5L157.2 233.6L160.1 235.6L162.9 237.5L165.8 239.2L168.7 240.9L171.5 242.5L174.4 244L177.3 245.5L180.2 246.8L183 248.1L185.9 249.4L188.8 250.6L191.6 251.7L194.5 252.8L197.4 253.9L200.3 254.9L203.1 255.8L206 256.8L208.9 257.7L211.8 258.5L214.6 259.4L217.5 260.2L220.4 260.9L223.2 261.7L226.1 262.4L229 263.1L231.9 263.7L234.7 264.4L237.6 265L240.5 265.6L243.4 266.2L246.2 266.8L249.1 267.3L252 267.9L254.8 268.4L257.7 268.9\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M110.2 36.1L112.7 48.4L115.1 59.5L117.6 69.7L120.1 79.1L122.5 87.7L125 95.8L127.4 103.2L129.9 110.1L132.4 116.6L134.8 122.6L137.3 128.3L139.7 133.6L142.2 138.6L144.6 143.4L147.1 147.8L149.6 152L152 156L154.5 159.8L156.9 163.4L159.4 166.9L161.8 170.1L164.3 173.2L166.8 176.2L169.2 179L171.7 181.7L174.1 184.3L176.6 186.8L179.1 189.2L181.5 191.5L184 193.7L186.4 195.8L188.9 197.8L191.3 199.8L193.8 201.7L196.3 203.5L198.7 205.3L201.2 207L203.6 208.6L206.1 210.2L208.6 211.7L211 213.2L213.5 214.6L215.9 216L218.4 217.4L220.8 218.7L223.3 219.9L225.8 221.2L228.2 222.4L230.7 223.5L233.1 224.6L235.6 225.7L238 226.8L240.5 227.8L243 228.8L245.4 229.8L247.9 230.8L250.3 231.7L252.8 232.6L255.3 233.5L257.7 234.4\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M58.9 303.4L257.7 104.6\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M58.9 303.4L150 30\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M141.7 220.6L142.4 219.9L143.1 219.2L143.8 218.5L144.4 217.9L145.1 217.2L145.8 216.5L146.4 215.9L147.1 215.2L147.7 214.6L148.4 213.9L149 213.3L149.6 212.7L150.3 212L150.9 211.4L151.5 210.8L152.1 210.2L152.7 209.6L153.3 209L153.9 208.4L154.5 207.8L155.1 207.2L155.7 206.6L156.3 206L156.9 205.4L157.5 204.8L158.1 204.2L158.6 203.7L159.2 203.1L159.8 202.5L160.3 201.9L160.9 201.4L161.5 200.8L162 200.3L162.6 199.7L163.1 199.2L163.7 198.6L164.2 198.1L164.8 197.5L165.3 197L165.8 196.5L166.4 195.9L166.9 195.4L167.4 194.9L167.9 194.3L168.5 193.8L169 193.3L169.5 192.8L170 192.3L170.5 191.8L171 191.2L171.6 190.7L172.1 190.2L172.6 189.7L173.1 189.2L173.6 188.7L174.1 188.2L174.6 187.7L175.1 187.2L175.5 186.7L176 186.3L176 186.3L174.1 184.3L172.3 182.4L170.6 180.5L168.9 178.7L167.3 176.9L165.8 175.1L164.4 173.3L163 171.5L161.6 169.8L160.3 168.1L159.1 166.4L157.9 164.8L156.7 163.1L155.6 161.5L154.5 159.9L153.5 158.3L152.5 156.8L151.5 155.2L150.5 153.7L149.6 152.2L148.7 150.6L147.9 149.2L147 147.7L146.2 146.2L145.4 144.8L144.6 143.3L143.9 141.9L143.1 140.5L142.4 139.1L141.7 137.7L141 136.3L140.4 135L139.7 133.6L139.1 132.3L138.5 130.9L137.9 129.6L137.3 128.3L136.7 127L136.1 125.7L135.6 124.4L135 123.2L134.5 121.9L134 120.6L133.5 119.4L133 118.2L132.5 116.9L132 115.7L131.5 114.5L131.1 113.3L130.6 112.1L130.2 110.9L129.7 109.7L129.3 108.5L128.9 107.4L128.5 106.2L128.1 105L127.7 103.9L127.3 102.7L126.9 101.6L126.5 100.5L126.5 100.5L126.2 101.3L125.9 102.2L125.7 103L125.4 103.9L125.1 104.7L124.8 105.6L124.5 106.5L124.2 107.4L123.9 108.2L123.6 109.1L123.3 110L123 110.9L122.7 111.8L122.4 112.7L122.1 113.6L121.8 114.5L121.5 115.4L121.2 116.3L120.9 117.2L120.6 118.2L120.3 119.1L120 120L119.7 121L119.4 121.9L119.1 122.8L118.7 123.8L118.4 124.8L118.1 125.7L117.8 126.7L117.4 127.7L117.1 128.6L116.8 129.6L116.5 130.6L116.1 131.6L115.8 132.6L115.5 133.6L115.1 134.6L114.8 135.7L114.4 136.7L114.1 137.7L113.7 138.8L113.4 139.8L113 140.9L112.7 141.9L112.3 143L112 144L111.6 145.1L111.3 146.2L110.9 147.3L110.5 148.4L110.2 149.5L109.8 150.6L109.4 151.8L109 152.9L108.6 154.1L108.3 155.2L107.9 156.4L107.5 157.5L107.1 158.7L106.7 159.9L106.7 159.9L107 160.7L107.2 161.5L107.5 162.3L107.8 163.1L108.1 164L108.4 164.8L108.7 165.6L109 166.4L109.3 167.3L109.6 168.1L109.9 169L110.2 169.8L110.6 170.7L110.9 171.5L111.3 172.4L111.6 173.3L112 174.2L112.3 175.1L112.7 176L113.1 176.9L113.5 177.8L113.9 178.7L114.3 179.6L114.7 180.5L115.1 181.5L115.6 182.4L116 183.4L116.5 184.3L117 185.3L117.4 186.3L117.9 187.2L118.4 188.2L119 189.2L119.5 190.2L120.1 191.2L120.6 192.3L121.2 193.3L121.8 194.3L122.4 195.4L123 196.5L123.7 197.5L124.4 198.6L125.1 199.7L125.8 200.8L126.5 201.9L127.3 203.1L128.1 204.2L128.9 205.4L129.7 206.6L130.6 207.8L131.5 209L132.5 210.2L133.5 211.4L134.5 212.7L135.6 213.9L136.7 215.2L137.9 216.5L139.1 217.9L140.4 219.2L141.7 220.6L141.7 220.6\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"38.3\" y1=\"303.4\" x2=\"269.7\" y2=\"303.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdHyper)\"/><line x1=\"58.9\" y1=\"324\" x2=\"58.9\" y2=\"18\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdHyper)\"/><text x=\"141.7\" y=\"325.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"224.6\" y=\"325.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"51.9\" y=\"227.6\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"51.9\" y=\"144.7\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"51.9\" y=\"61.9\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"267.7\" y=\"294.4\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"67.9\" y=\"34\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"241.1\" y=\"257.8\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"18\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">xy = 1</text><text x=\"237\" y=\"218.4\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"18\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">xy = 2</text><text x=\"226.9\" y=\"119.4\" text-anchor=\"end\" fill=\"var(--muted)\" font-size=\"18\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y = x</text><text x=\"155.9\" y=\"42.4\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"18\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y = 3x</text><clipPath id=\"cl9a2jdHyper370\"><rect x=\"389.3\" y=\"30\" width=\"221.3\" height=\"290\"/></clipPath><g clip-path=\"url(#cl9a2jdHyper370)\"><polygon points=\"488.6,220.8 564.9,220.8 564.9,68.2 488.6,68.2\" fill=\"var(--green)\" fill-opacity=\"0.2\"/><path d=\"M488.6 220.8L564.9 220.8L564.9 68.2L488.6 68.2L488.6 220.8\" stroke=\"var(--green)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"385.3\" y1=\"297.1\" x2=\"622.7\" y2=\"297.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdHyper)\"/><line x1=\"412.2\" y1=\"324\" x2=\"412.2\" y2=\"18\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdHyper)\"/><text x=\"488.6\" y=\"319.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"564.9\" y=\"319.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"405.2\" y=\"227.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"405.2\" y=\"75.2\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"620.7\" y=\"288.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"421.2\" y=\"34\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><line x1=\"300\" y1=\"170\" x2=\"362\" y2=\"170\" stroke=\"var(--ink)\" stroke-width=\"2.2\" marker-end=\"url(#ah9a2jdHyper)\"/><text x=\"14\" y=\"348\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">四條彎的邊界</text><text x=\"632\" y=\"348\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:inherit\">變成矩形</text><text x=\"331\" y=\"150\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u = xy</text><text x=\"331\" y=\"200\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"19\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v = y/x</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積 $=\\displaystyle\\int_1^3\\!\\!\\int_1^2\\frac{1}{2v}\\,du\\,dv=\\frac12\\ln3$"
+          ],
+          "say": "所以這塊區域的面積，就是 2v 分之 1 在矩形上的積分，等於 2 分之 1 自然對數 3，大約 0.549。下一課會專門練這種換法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "面積 $=\\displaystyle\\int_1^3\\!\\!\\int_1^2\\frac{1}{2v}\\,du\\,dv=\\frac12\\ln3$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac12\\ln3\\approx0.549$，數值積分驗算一致",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "方法整理",
+      "beats": [
+        {
+          "show": [
+            "已知 $u(x,y)$、$v(x,y)$，求 $\\frac{\\partial(x,y)}{\\partial(u,v)}$"
+          ],
+          "say": "排排看這個方法的步驟。"
+        }
       ],
-      "key": "先算反向的再取倒數，最後寫成 $u$、$v$",
-      "predict": {
-        "ask": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "已知 $u(x,y)$、$v(x,y)$，求 $\\frac{\\partial(x,y)}{\\partial(u,v)}$",
+        "steps": [
           {
-            "label": "$\\frac{1}{2v}$",
-            "correct": true
+            "label": "算 $u_x,\\ u_y,\\ v_x,\\ v_y$"
           },
           {
-            "label": "$2v$",
-            "why": "$\\frac{2y}{x}=2v$ 是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；要的是反方向，取倒數。"
+            "label": "算行列式 $\\frac{\\partial(u,v)}{\\partial(x,y)}=u_xv_y-u_yv_x$",
+            "why": "先要有上一步：算 $u_x,\\ u_y,\\ v_x,\\ v_y$"
           },
           {
-            "label": "$\\frac{x}{2y}$",
-            "why": "倒數對了，但答案要用 $u$、$v$ 寫：$\\frac{y}{x}=v$，所以是 $\\frac{1}{2v}$。"
+            "label": "取倒數",
+            "why": "先要有上一步：算行列式 $\\frac{\\partial(u,v)}{\\partial(x,y)}=u_xv_y-u_yv_x$"
+          },
+          {
+            "label": "把剩下的 $x,y$ 寫成 $u,v$",
+            "why": "先要有上一步：取倒數"
           }
         ]
       }
@@ -285,66 +782,260 @@
     {
       "title": "三個變數",
       "beats": [
-        { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"],
-          "note": "$|J|$ 是小方塊的體積放大倍率。",
-          "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。",
+        {
+          "show": [
+            "$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det\\begin{bmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{bmatrix}$"
+          ],
+          "say": "三個變數完全一樣：九個偏導數排成 3 乘 3 的行列式。意思是小方塊變成小平行六面體，體積的放大倍率。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det(3\\times3)$"},
-            {"do":"write","line":"$|J|$：體積放大倍率","on":"絕對值"}
-          ] },
-        { "show": ["$J=x_u(y_vz_w-y_wz_v)$","$-x_v(y_uz_w-y_wz_u)+x_w(y_uz_v-y_vz_u)$"],
-          "note": "沿第一列展開，正負號交替。",
-          "say": "三乘三要沿第一列展開：x u 乘掉它那一列那一行剩下的二乘二行列式，減 x v 乘它的，再加 x w 乘它的。",
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det{\\begin{bmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{bmatrix}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "列式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "柱座標 $x=r\\cos\\theta$，$y=r\\sin\\theta$，$z=z$：",
+            "$\\det\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta&0\\\\\\sin\\theta&r\\cos\\theta&0\\\\0&0&1\\end{bmatrix}=r$"
+          ],
+          "say": "柱座標就是極座標再加一個 z。最後一列只有一個 1，沿著它展開，剩下的就是極座標的行列式，等於 r。",
           "board": [
-            {"do":"write","line":"$J=x_u(y_vz_w-y_wz_v)$"},
-            {"do":"write","line":"$-x_v(y_uz_w-y_wz_u)$","on":"減 x v"},
-            {"do":"write","line":"$+x_w(y_uz_v-y_vz_u)$","on":"再加"}
-          ] },
-        { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$"],
-          "note": "$z$ 只跟自己有關。",
-          "say": "柱座標的 z 只跟自己有關，展開剩一乘二乘二行列式，得 r。球座標也這樣算，只是代數多一點。",
+            {
+              "do": "write",
+              "line": "柱座標 $x=r\\cos\\theta$，$y=r\\sin\\theta$，$z=z$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\det{\\begin{bmatrix}\\cos\\theta&-r\\sin\\theta&0\\\\\\sin\\theta&r\\cos\\theta&0\\\\0&0&1\\end{bmatrix}}=r}}$",
+              "color": "red",
+              "on": "最後"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "沿著"
+            },
+            {
+              "do": "write",
+              "line": "　所以 $dV=r\\,dr\\,d\\theta\\,dz$（9.10 會用）",
+              "color": "violet",
+              "on": "極座#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "球座標：",
+            "圖"
+          ],
+          "say": "球座標用三個數描述一點：肉 是到原點的距離，斐 是跟 z 軸的夾角，西塔 跟極座標一樣。寫成 x、y、z，就是這三條式子。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","on":"柱座標"},
-            {"do":"write","line":"$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$","on":"展開"}
-          ] },
-        { "show": ["柱座標：$r$；球座標：$\\rho^2\\sin\\varphi$"],
-          "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。",
+            {
+              "do": "write",
+              "line": "球座標："
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"jdSphere\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9a2jdSphere\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9a2jdSphereblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9a2jdSpherered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9a2jdSpheregreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9a2jdSpherepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9a2jdSphereink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"280\" y1=\"262\" x2=\"164.3\" y2=\"336.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdSphereink)\"/><line x1=\"280\" y1=\"262\" x2=\"517.3\" y2=\"305.2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdSphereink)\"/><line x1=\"280\" y1=\"262\" x2=\"280\" y2=\"41\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9a2jdSphereink)\"/><text x=\"160.3\" y=\"362.4\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"533.3\" y=\"313.2\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"280\" y=\"31\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><line x1=\"280\" y1=\"262\" x2=\"334\" y2=\"310.9\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"7 6\"/><line x1=\"334\" y1=\"310.9\" x2=\"334\" y2=\"156.8\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"7 6\"/><line x1=\"280\" y1=\"262\" x2=\"334\" y2=\"156.8\" stroke=\"var(--blue)\" stroke-width=\"3.2\"/><path d=\"M280 183.1L280.1 183.2L280.3 183.3L280.4 183.5L280.6 183.6L280.7 183.7L280.8 183.9L281 184L281.1 184.1L281.3 184.3L281.4 184.4L281.5 184.6L281.7 184.7L281.8 184.8L281.9 185L282.1 185.1L282.2 185.3L282.4 185.5L282.5 185.6L282.6 185.8L282.8 185.9L282.9 186.1L283.1 186.3L283.2 186.4L283.3 186.6L283.5 186.7L283.6 186.9L283.7 187.1L283.9 187.3L284 187.4L284.2 187.6L284.3 187.8L284.4 188L284.6 188.1L284.7 188.3L284.8 188.5L285 188.7L285.1 188.9L285.3 189.1L285.4 189.3L285.5 189.5L285.7 189.7L285.8 189.8L285.9 190L286.1 190.2L286.2 190.4L286.4 190.6L286.5 190.8L286.6 191.1L286.8 191.3L286.9 191.5L287 191.7L287.2 191.9L287.3 192.1L287.4 192.3L287.6 192.5L287.7 192.7L287.8 193L288 193.2L288.1 193.4L288.2 193.6L288.4 193.9L288.5 194.1L288.6 194.3L288.8 194.5L288.9 194.8L289 195L289.2 195.2L289.3 195.5L289.4 195.7L289.6 195.9L289.7 196.2L289.8 196.4L290 196.7L290.1 196.9L290.2 197.1L290.4 197.4L290.5 197.6L290.6 197.9L290.7 198.1L290.9 198.4L291 198.6L291.1 198.9L291.3 199.2L291.4 199.4L291.5 199.7L291.6 199.9L291.8 200.2L291.9 200.5L292 200.7L292.2 201L292.3 201.3L292.4 201.5L292.5 201.8L292.7 202.1L292.8 202.3L292.9 202.6L293 202.9L293.2 203.2L293.3 203.4L293.4 203.7L293.5 204L293.7 204.3L293.8 204.6L293.9 204.8L294 205.1L294.2 205.4L294.3 205.7L294.4 206L294.5 206.3L294.6 206.6L294.8 206.9L294.9 207.2L295 207.5L295.1 207.8L295.2 208.1L295.4 208.4L295.5 208.7L295.6 209L295.7 209.3L295.8 209.6L296 209.9L296.1 210.2L296.2 210.5L296.3 210.8L296.4 211.1L296.5 211.4L296.7 211.7L296.8 212L296.9 212.3L297 212.7L297.1 213L297.2 213.3L297.3 213.6L297.4 213.9L297.6 214.2L297.7 214.6L297.8 214.9L297.9 215.2L298 215.5L298.1 215.9L298.2 216.2L298.3 216.5L298.4 216.8L298.6 217.2L298.7 217.5L298.8 217.8L298.9 218.2L299 218.5L299.1 218.8L299.2 219.2L299.3 219.5L299.4 219.8L299.5 220.2L299.6 220.5L299.7 220.9L299.8 221.2L299.9 221.5L300 221.9L300.1 222.2L300.2 222.6\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M243.2 285.7L243.6 285.7L243.9 285.8L244.3 285.9L244.7 285.9L245 286L245.4 286.1L245.8 286.1L246.2 286.2L246.5 286.3L246.9 286.3L247.3 286.4L247.7 286.4L248.1 286.5L248.4 286.5L248.8 286.6L249.2 286.7L249.6 286.7L250 286.8L250.4 286.8L250.7 286.9L251.1 286.9L251.5 287L251.9 287L252.3 287.1L252.7 287.1L253.1 287.2L253.5 287.2L253.9 287.3L254.3 287.3L254.6 287.4L255 287.4L255.4 287.5L255.8 287.5L256.2 287.6L256.6 287.6L257 287.6L257.4 287.7L257.8 287.7L258.2 287.8L258.6 287.8L259 287.8L259.4 287.9L259.8 287.9L260.2 287.9L260.6 288L261 288L261.4 288.1L261.8 288.1L262.3 288.1L262.7 288.2L263.1 288.2L263.5 288.2L263.9 288.2L264.3 288.3L264.7 288.3L265.1 288.3L265.5 288.4L265.9 288.4L266.3 288.4L266.7 288.4L267.2 288.5L267.6 288.5L268 288.5L268.4 288.5L268.8 288.5L269.2 288.6L269.6 288.6L270 288.6L270.4 288.6L270.9 288.6L271.3 288.6L271.7 288.7L272.1 288.7L272.5 288.7L272.9 288.7L273.3 288.7L273.8 288.7L274.2 288.7L274.6 288.8L275 288.8L275.4 288.8L275.8 288.8L276.3 288.8L276.7 288.8L277.1 288.8L277.5 288.8L277.9 288.8L278.3 288.8L278.8 288.8L279.2 288.8L279.6 288.8L280 288.8L280.4 288.8L280.8 288.8L281.3 288.8L281.7 288.8L282.1 288.8L282.5 288.8L282.9 288.8L283.3 288.8L283.8 288.8L284.2 288.8L284.6 288.8L285 288.8L285.4 288.8L285.8 288.7L286.2 288.7L286.7 288.7L287.1 288.7L287.5 288.7L287.9 288.7L288.3 288.7L288.7 288.6L289.1 288.6L289.6 288.6L290 288.6L290.4 288.6L290.8 288.6L291.2 288.5L291.6 288.5L292 288.5L292.4 288.5L292.9 288.5L293.3 288.4L293.7 288.4L294.1 288.4L294.5 288.4L294.9 288.3L295.3 288.3L295.7 288.3L296.1 288.2L296.5 288.2L296.9 288.2L297.4 288.1L297.8 288.1L298.2 288.1L298.6 288.1L299 288L299.4 288L299.8 287.9L300.2 287.9L300.6 287.9L301 287.8L301.4 287.8L301.8 287.8L302.2 287.7L302.6 287.7L303 287.6L303.4 287.6L303.8 287.6L304.2 287.5L304.6 287.5L305 287.4L305.4 287.4L305.8 287.3L306.1 287.3L306.5 287.2L306.9 287.2L307.3 287.1L307.7 287.1\" stroke=\"var(--green)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"334\" cy=\"156.8\" r=\"5.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><text x=\"348\" y=\"150.8\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</text><text x=\"322.9\" y=\"229.3\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">ρ</text><text x=\"289.8\" y=\"169.4\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">φ</text><text x=\"267.2\" y=\"314.3\" text-anchor=\"middle\" fill=\"var(--green)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">θ</text><text x=\"612\" y=\"40\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"24\" style=\"font-family:inherit\">ρ：到原點的距離</text><text x=\"612\" y=\"72\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"24\" style=\"font-family:inherit\">φ：跟 z 軸的夾角</text><text x=\"612\" y=\"104\" text-anchor=\"end\" fill=\"var(--green)\" font-size=\"24\" style=\"font-family:inherit\">θ：跟極座標一樣</text></svg>",
+              "on": "是跟"
+            },
+            {
+              "do": "write",
+              "line": "$x=\\rho\\sin\\varphi\\cos\\theta$，$y=\\rho\\sin\\varphi\\sin\\theta$，$z=\\rho\\cos\\varphi$",
+              "on": "標一"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "球座標的倍率",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{\\partial(x,y,z)}{\\partial(\\rho,\\varphi,\\theta)}=\\det\\begin{bmatrix}\\sin\\varphi\\cos\\theta&\\rho\\cos\\varphi\\cos\\theta&-\\rho\\sin\\varphi\\sin\\theta\\\\\\sin\\varphi\\sin\\theta&\\rho\\cos\\varphi\\sin\\theta&\\rho\\sin\\varphi\\cos\\theta\\\\\\cos\\varphi&-\\rho\\sin\\varphi&0\\end{bmatrix}$"
+          ],
+          "say": "九個偏導數排起來。第三列有一個 0，沿第三列展開最省事。",
           "board": [
-            {"do":"write","line":"柱座標：$J=r$"},
-            {"do":"write","line":"球座標：${{s:J=\\rho^2\\sin\\varphi}}$","on":"球座標"},
-            {"do":"box","term":"s","color":"green","on":"rho"}
-          ] },
-        { "show": ["換變數：用 $|J|$，不是 $J$"],
-          "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial(x,y,z)}{\\partial(\\rho,\\varphi,\\theta)}=\\det{\\begin{bmatrix}\\sin\\varphi\\cos\\theta&\\rho\\cos\\varphi\\cos\\theta&-\\rho\\sin\\varphi\\sin\\theta\\\\\\sin\\varphi\\sin\\theta&\\rho\\cos\\varphi\\sin\\theta&\\rho\\sin\\varphi\\cos\\theta\\\\\\cos\\varphi&-\\rho\\sin\\varphi&0\\end{bmatrix}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三列展開（$\\cos^2\\theta+\\sin^2\\theta=1$ 會一直出現）：",
+            "$=\\cos\\varphi\\cdot\\rho^2\\sin\\varphi\\cos\\varphi+\\rho\\sin\\varphi\\cdot\\rho\\sin^2\\varphi$"
+          ],
+          "say": "每一個二乘二的小行列式，都會出現餘弦平方西塔加正弦平方西塔，等於 1。兩項分別是 肉 平方正弦 斐 餘弦平方 斐，和 肉 平方正弦立方 斐。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"換變數時乘 $|J|$，不是 $J$","on":"乘的是"},
-            {"do":"write","line":"面積、體積不會是負的","on":"因為"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "第三列展開（$\\cos^2\\theta+\\sin^2\\theta=1$ 會一直出現）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\cos\\varphi\\cdot\\rho^2\\sin\\varphi\\cos\\varphi+\\rho\\sin\\varphi\\cdot\\rho\\sin^2\\varphi$",
+              "on": "兩項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\rho^2\\sin\\varphi\\,(\\cos^2\\varphi+\\sin^2\\varphi)=\\rho^2\\sin\\varphi$"
+          ],
+          "say": "提出 肉 平方正弦 斐，括號裡又是 1。球座標的雅可比行列式是 肉 平方正弦 斐。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle =\\rho^2\\sin\\varphi\\,(\\cos^2\\varphi+\\sin^2\\varphi)=\\rho^2\\sin\\varphi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "red",
+              "on": "號裡"
+            },
+            {
+              "do": "write",
+              "line": "　$0\\le\\varphi\\le\\pi$ 時 $\\sin\\varphi\\ge0$；所以 $dV=\\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$（9.10 會用）",
+              "color": "violet",
+              "on": "行列"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\dfrac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$：上面的變數當列",
+            "• 小心負號：減掉一個負的變成加"
+          ],
+          "say": "整理一下：雅可比行列式是四個偏導數的行列式，小心負號。反方向好算時，算完取倒數。柱座標的倍率是 r，球座標是 肉 平方正弦 斐。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\dfrac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$：上面的變數當列"
+            },
+            {
+              "do": "write",
+              "line": "• 小心負號：減掉一個負的變成加",
+              "on": "數的"
+            },
+            {
+              "do": "write",
+              "line": "• 反方向好算時：$\\dfrac{\\partial(x,y)}{\\partial(u,v)}=1\\Big/\\dfrac{\\partial(u,v)}{\\partial(x,y)}$",
+              "on": "算完"
+            },
+            {
+              "do": "write",
+              "line": "• 三變數：$3\\times3$ 行列式；柱座標 $r$，球座標 $\\rho^2\\sin\\varphi$",
+              "on": "球座"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：變數變換，用 Jacobian 換二重積分"
+          ],
+          "say": "下一課，正式用雅可比行列式換二重積分的變數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：變數變換，用 Jacobian 換二重積分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["jacobian", "jacobian-chain"],
-    "fine": ["jacobian-2x2-compute", "jacobian-inverse-reciprocal", "jacobian-3x3"]
+    "coarse": [
+      "jacobian",
+      "jacobian-chain"
+    ],
+    "fine": [
+      "jacobian-2x2-compute",
+      "jacobian-inverse-reciprocal",
+      "jacobian-3x3"
+    ]
   },
   "practice": [
-    { "id": "der-034", "core": true, "trains": "jacobian-2x2-compute" },
-    { "id": "der-069", "core": true, "trains": "jacobian-2x2-compute" },
-    { "id": "cg-9a2-008", "core": true, "trains": "jacobian-inverse-reciprocal" },
-    { "id": "rel-adv-005", "trains": "jacobian-2x2-compute" },
-    { "id": "rel-hard-mv-005", "trains": "jacobian-2x2-compute" },
-    { "id": "der-072", "trains": "jacobian-2x2-compute" },
-    { "id": "lec-19-q4b", "trains": "jacobian-inverse-reciprocal" },
-    { "id": "gap-int-cov-001", "trains": "jacobian-inverse-reciprocal" },
-    { "id": "cg-9a2-009", "trains": "jacobian-inverse-reciprocal" },
-    { "id": "cg-9a2-010", "trains": "jacobian-inverse-reciprocal" },
-    { "id": "cg-9a2-011", "trains": "jacobian-3x3" },
-    { "id": "cg-9a2-012", "trains": "jacobian-3x3" },
-    { "id": "der-070", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：兩層變換，Jacobian 相乘（連鎖律）。" },
-    { "id": "der-074", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：合成映射的 Jacobian 行列式等於各自行列式相乘。" }
+    {
+      "id": "der-034",
+      "core": true,
+      "trains": "jacobian-2x2-compute"
+    },
+    {
+      "id": "der-069",
+      "core": true,
+      "trains": "jacobian-2x2-compute"
+    },
+    {
+      "id": "cg-9a2-008",
+      "core": true,
+      "trains": "jacobian-inverse-reciprocal"
+    },
+    {
+      "id": "rel-adv-005",
+      "trains": "jacobian-2x2-compute"
+    },
+    {
+      "id": "rel-hard-mv-005",
+      "trains": "jacobian-2x2-compute"
+    },
+    {
+      "id": "der-072",
+      "trains": "jacobian-2x2-compute"
+    },
+    {
+      "id": "lec-19-q4b",
+      "trains": "jacobian-inverse-reciprocal"
+    },
+    {
+      "id": "gap-int-cov-001",
+      "trains": "jacobian-inverse-reciprocal"
+    },
+    {
+      "id": "cg-9a2-009",
+      "trains": "jacobian-inverse-reciprocal"
+    },
+    {
+      "id": "cg-9a2-010",
+      "trains": "jacobian-inverse-reciprocal"
+    },
+    {
+      "id": "cg-9a2-011",
+      "trains": "jacobian-3x3"
+    },
+    {
+      "id": "cg-9a2-012",
+      "trains": "jacobian-3x3"
+    },
+    {
+      "id": "der-070",
+      "challenge": true,
+      "trains": "jacobian-2x2-compute",
+      "note": "挑戰：兩層變換，Jacobian 相乘（連鎖律）。"
+    },
+    {
+      "id": "der-074",
+      "challenge": true,
+      "trains": "jacobian-2x2-compute",
+      "note": "挑戰：合成映射的 Jacobian 行列式等於各自行列式相乘。"
+    }
   ],
   "gaps": []
 }

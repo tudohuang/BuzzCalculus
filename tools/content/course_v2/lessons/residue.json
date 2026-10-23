@@ -1,286 +1,130 @@
 {
   "id": "residue",
   "title": "留數",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 45,
-  "prerequisites": ["singularities", "laurent-series", "lhopital"],
-  "next": ["residue-theorem"],
-  "related": ["cauchy-integral-formula"],
+  "prerequisites": [
+    "singularities",
+    "laurent-series",
+    "lhopital"
+  ],
+  "next": [
+    "residue-theorem"
+  ],
+  "related": [
+    "cauchy-integral-formula"
+  ],
   "objectives": [
-    "說得出留數的定義 $\\operatorname{Res}_{z_0}f=a_{-1}$，以及它的意義：繞 $z_0$ 一小圈的積分除以 $2\\pi i$。",
-    "用三個公式算留數：簡單極點 $\\lim(z-z_0)f$；$f=\\frac{g}{h}$ 型 $\\frac{g(z_0)}{h'(z_0)}$；$m$ 階極點的導數公式。",
-    "公式不好用時直接從 Laurent 級數讀 $a_{-1}$；可去奇異點的留數是 $0$。"
+    "說得出留數的定義 $\\operatorname{Res}_{z_0}f=a_{-1}$，以及它的意義：繞 $z_0$ 一小圈的積分等於 $2\\pi i\\operatorname{Res}_{z_0}f$",
+    "用三個公式算留數：簡單極點 $\\lim(z-z_0)f$、$f=\\frac{g}{h}$ 型 $\\frac{g(z_0)}{h'(z_0)}$、$m$ 階極點的導數公式",
+    "公式不好用時直接從 Laurent 級數讀 $a_{-1}$，並知道可去奇異點的留數是 $0$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 定義：Laurent 級數裡唯一留下來的係數",
+      "heading": "① 定義",
       "body": [
-        "$z_0$ 是 $f$ 的孤立奇異點，$f$ 在 $0<|z-z_0|<r$ 的 Laurent 級數是 $\\sum a_n(z-z_0)^n$。定義 $\\operatorname{Res}_{z_0}f=a_{-1}$。",
-        "名字的由來：繞 $z_0$ 一小圈積分，所有其他項都積成 $0$，只「留下」$2\\pi i\\,a_{-1}$（〈Laurent 級數〉）。所以 $\\operatorname{Res}_{z_0}f=\\frac{1}{2\\pi i}\\oint f\\,dz$。",
-        "可去奇異點沒有負次方，留數是 $0$。"
+        "$z_0$ 是孤立奇異點，在 $0<|z-z_0|<R$ 上 $f=\\sum a_n(z-z_0)^n$：",
+        "意義：繞 $z_0$ 一小圈",
+        "• 可去奇異點：沒有負次方 ⇒ 留數 $=0$",
+        "• 本性奇異點也有留數：$e^{1/z}=1+\\frac1z+\\cdots$，$\\operatorname{Res}_0=1$",
+        "所以算留數 = 算出 $a_{-1}$；不必把整個級數寫出來"
       ],
-      "collapsible": false
+      "tex": [
+        "\\operatorname{Res}_{z_0}f=a_{-1}",
+        "\\oint_{|z-z_0|=\\rho}f\\,dz=2\\pi i\\operatorname{Res}_{z_0}f"
+      ]
     },
     {
-      "heading": "② 簡單極點的兩個公式",
+      "heading": "② 簡單極點：公式 1",
       "body": [
-        "$z_0$ 是簡單（1 階）極點：$f=\\frac{a_{-1}}{z-z_0}+a_0+\\cdots$，乘上 $(z-z_0)$ 再取極限，$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$。",
-        "$f=\\frac{g}{h}$，$g(z_0)\\ne 0$，$h$ 在 $z_0$ 是 1 階零點（$h(z_0)=0$、$h'(z_0)\\ne 0$）：$\\operatorname{Res}=\\frac{g(z_0)}{h'(z_0)}$。理由：$\\frac{(z-z_0)g}{h}=\\frac{g}{(h(z)-h(z_0))/(z-z_0)}\\to\\frac{g(z_0)}{h'(z_0)}$。這個公式不用因式分解，最常用。"
+        "理由：$(z-z_0)f=a_{-1}+a_0(z-z_0)+\\cdots\\to a_{-1}$",
+        "例：$\\operatorname{Res}_{z=i}\\dfrac1{z^2+1}$，$z^2+1=(z-i)(z+i)$",
+        "數值驗算：$\\frac1{2\\pi i}\\oint_{|z-i|=0.01}\\approx-0.5\\,i$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\operatorname{Res}_{z_0}f=\\lim_{z\\to z_0}(z-z_0)f(z)",
+        "\\lim_{z\\to i}\\frac{z-i}{(z-i)(z+i)}=\\frac{1}{2i}=-\\frac i2"
+      ]
+    },
+    {
+      "heading": "② 簡單極點：公式 2",
+      "body": [
+        "$f=\\dfrac gh$，$g(z_0)\\ne0$，$h(z_0)=0$，$h'(z_0)\\ne0$：",
+        "證明：用公式 1，再用導數的定義：",
+        "跟羅必達的想法一樣；分母不必分解",
+        "例：$\\operatorname{Res}_{z=0}\\cot z=\\operatorname{Res}_{z=0}\\dfrac{\\cos z}{\\sin z}$",
+        "$g=\\cos z$，$h=\\sin z$，$h'=\\cos z$：",
+        "同樣的算法：在每個 $k\\pi$，$\\dfrac{\\cos k\\pi}{\\cos k\\pi}=1$",
+        "對照：$\\frac1{z^2+1}$ 用公式 2：$\\frac{1}{2z}\\big|_{z=i}=\\frac1{2i}$，跟公式 1 一樣"
+      ],
+      "tex": [
+        "\\operatorname{Res}_{z_0}\\frac gh=\\frac{g(z_0)}{h'(z_0)}",
+        "\\lim_{z\\to z_0}\\frac{(z-z_0)\\,g(z)}{h(z)}=\\lim\\frac{g(z)}{\\frac{h(z)-h(z_0)}{z-z_0}}=\\frac{g(z_0)}{h'(z_0)}",
+        "\\operatorname{Res}_0\\cot z=\\frac{\\cos0}{\\cos0}=1"
+      ]
+    },
+    {
+      "heading": "② 公式 2 的威力",
+      "body": [
+        "例：$\\dfrac1{1+z^4}$ 在 $z_0=e^{i\\pi/4}$（$z_0^4=-1$）",
+        "$g=1$，$h=1+z^4$，$h'=4z^3$：",
+        "數值驗算：$\\frac1{2\\pi i}\\oint_{|z-z_0|=0.01}\\frac{dz}{1+z^4}$ 一致；最後一課會用到",
+        "不用把 $1+z^4$ 分解成四個一次因式"
+      ],
+      "tex": [
+        "\\operatorname{Res}_{z_0}=\\frac1{4z_0^3}=\\frac{z_0}{4z_0^4}=-\\frac{z_0}{4}",
+        "-\\frac{z_0}4=-\\frac{1+i}{4\\sqrt2}\\approx-0.1768-0.1768\\,i"
+      ]
     },
     {
       "heading": "③ $m$ 階極點",
       "body": [
-        "$(z-z_0)^m f=a_{-m}+\\cdots+a_{-1}(z-z_0)^{m-1}+\\cdots$ 是全純的，$a_{-1}$ 是它的第 $m-1$ 個 Taylor 係數，所以下面的公式成立。",
-        "$m$ 大時微分很累，這時直接展開 Laurent 級數往往比較快，例如 $\\frac{e^z}{z^4}$ 的留數就是 $e^z$ 的 $z^3$ 係數 $\\frac{1}{3!}=\\frac{1}{6}$。"
+        "理由：$(z-z_0)^mf=a_{-m}+\\cdots+a_{-1}(z-z_0)^{m-1}+a_0(z-z_0)^m+\\cdots$",
+        "$a_{-1}$ 是這個冪級數的第 $m-1$ 個係數 $=\\dfrac{(\\cdots)^{(m-1)}(z_0)}{(m-1)!}$",
+        "例：$\\operatorname{Res}_{z=1}\\dfrac{e^z}{(z-1)^2}$，$m=2$",
+        "$(z-1)^2f=e^z$，微分一次："
       ],
-      "tex": ["\\operatorname{Res}_{z_0}f=\\frac{1}{(m-1)!}\\lim_{z\\to z_0}\\frac{d^{\\,m-1}}{dz^{\\,m-1}}\\Bigl[(z-z_0)^{m}f(z)\\Bigr]"],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "唯一留下來的係數",
-      "beats": [
-        { "show": ["$\\frac{1}{z}$ 在 $0$ 出問題"],
-          "note": "去心圓盤：挖掉圓心。",
-          "say": "奇異點是函數出問題的點，像 z 分之一在零。去心圓盤是挖掉圓心的圓盤，Laurent 級數在裡面可以有負次方。",
-          "board": [
-            {"do":"plot","graph":{"window":[-3,3,-4,4],"curves":[{"expr":"1/x","domain":[-3,-0.25],"color":"blue"},{"expr":"1/x","domain":[0.25,3],"color":"blue"}]}}
-          ] },
-        { "show": ["$f=\\sum a_n(z-z_0)^n$，$0<|z-z_0|<r$"],
-          "note": "孤立奇異點的 Laurent 級數。",
-          "say": "z 零是孤立奇異點，f 在它周圍的去心圓盤上有 Laurent 級數。",
-          "board": [
-            {"do":"write","line":"$f=\\sum a_n(z-z_0)^n$，${{disk:0<|z-z_0|<r}}$"},
-            {"do":"underline","term":"disk","on":"去心圓盤"}
-          ] },
-        { "show": ["$\\operatorname{Res}_{z_0}f=a_{-1}$"],
-          "say": "留數的定義很簡單：就是負一次方那一項的係數。",
-          "board": [
-            {"do":"write","line":"$f=\\cdots+\\frac{a_{-2}}{(z-z_0)^2}+{{am:\\frac{a_{-1}}{z-z_0}}}+a_0+\\cdots$"},
-            {"do":"underline","term":"am","on":"負一次方"},
-            {"do":"write","line":"$\\operatorname{Res}_{z_0}f={{c:a_{-1}}}$","on":"係數"}
-          ] },
-        { "show": ["$\\operatorname{Res}_{z_0}f=\\frac{1}{2\\pi i}\\oint f\\,dz$"],
-          "note": "繞一小圈，其他項都積成 $0$。",
-          "say": "名字的由來：繞 z 零一小圈積分，其他項都積成零，只留下二派 i 乘這個係數。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\oint f\\,dz=2\\pi i\\cdot{{c:a_{-1}}}$","on":"繞 z 零"},
-            {"do":"focus","term":"c","on":"二派 i 乘"}
-          ] },
-        { "show": ["$n\\ne -1$：積分 $0$","$n=-1$：多出 $2\\pi i$"],
-          "note": "反導函數繞一圈回得到原值嗎？",
-          "say": "其他項有單值的反導函數，繞一圈回到起點，積分就是零。負一次方的反導函數是對數，繞一圈多出二派 i。",
-          "board": [
-            {"do":"write","line":"$\\oint(z-z_0)^n\\,dz=0$，$n\\ne -1$"},
-            {"do":"write","line":"$n=-1$：${{lg:\\ln(z-z_0)}}$ 繞一圈多 $2\\pi i$","on":"負一次方的"},
-            {"do":"underline","term":"lg","on":"對數"}
-          ] }
-      ],
-      "check": 2
+      "tex": [
+        "\\operatorname{Res}_{z_0}f=\\frac{1}{(m-1)!}\\lim_{z\\to z_0}\\frac{d^{m-1}}{dz^{m-1}}\\Big[(z-z_0)^mf(z)\\Big]",
+        "\\operatorname{Res}_1=\\frac1{1!}\\,\\frac{d}{dz}e^z\\Big|_{z=1}=e"
+      ]
     },
     {
-      "title": "簡單極點",
-      "beats": [
-        { "show": ["$f=\\frac{a_{-1}}{z-z_0}+a_0+\\cdots$"],
-          "note": "1 階極點。",
-          "say": "簡單極點，也就是一階極點：主要部分只有負一次方那一項。",
-          "board": [
-            {"do":"write","line":"$f={{pp:\\frac{a_{-1}}{z-z_0}}}+a_0+\\cdots$"},
-            {"do":"underline","term":"pp","on":"只有負一次方"}
-          ] },
-        { "show": ["$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$"],
-          "say": "乘上 z 減 z 零，把那一項變成常數，其他項都趨近零，取極限就拿到留數。",
-          "board": [
-            {"do":"write","line":"$(z-z_0)f=a_{-1}+{{rest:a_0(z-z_0)+\\cdots}}$","on":"乘上"},
-            {"do":"underline","term":"rest","label":"→ 0","on":"其他項"},
-            {"do":"write","line":"$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$","on":"取極限"}
-          ] },
-        { "show": ["$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{h'(z_0)}$"],
-          "note": "$g(z_0)\\ne 0$，$h$ 在 $z_0$ 是 1 階零點。",
-          "say": "更常用的：分母在 z 零是一階零點，留數就是 g 在 z 零的值除以 h prime。不用因式分解。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{{{hp:h'(z_0)}}}$","on":"更常用的"},
-            {"do":"focus","term":"hp","on":"h prime"}
-          ] },
-        { "show": ["$h(z_0)=0$，所以 $h(z)=h(z)-h(z_0)$"],
-          "note": "乘上 $(z-z_0)$，分母變差商。",
-          "say": "為什麼？h 在 z 零是零，所以 h 的值就是 h 的增量。乘上 z 減 z 零，分母變成差商，趨近 h prime。",
-          "board": [
-            {"do":"write","line":"$(z-z_0)\\frac{g}{h}=\\frac{g}{{{dq:\\frac{h(z)-h(z_0)}{z-z_0}}}}$"},
-            {"do":"focus","term":"dq","on":"差商"},
-            {"do":"write","line":"$\\to\\frac{g(z_0)}{h'(z_0)}$","on":"趨近"}
-          ] }
+      "heading": "③ 直接讀係數",
+      "body": [
+        "例：$\\operatorname{Res}_{z=0}\\dfrac{e^z}{z^4}$（四階極點）",
+        "公式很難用時：$\\operatorname{Res}_{z=0}\\dfrac{1}{z^2\\sin z}$（三階極點）",
+        "$\\sin z=z\\big(1-\\frac{z^2}{6}+\\cdots\\big)$，用 $\\frac1{1-w}=1+w+\\cdots$：",
+        "$\\operatorname{Res}_0=\\dfrac16$",
+        "數值驗算：$\\frac1{2\\pi i}\\oint_{|z|=0.01}\\approx0.16667$"
       ],
-      "check": 0
+      "tex": [
+        "\\frac{e^z}{z^4}=\\frac1{z^4}+\\frac1{z^3}+\\frac1{2z^2}+\\frac{1}{6z}+\\cdots",
+        "\\operatorname{Res}_0\\frac{e^z}{z^4}=\\frac1{3!}=\\frac16",
+        "\\frac{1}{z^3}\\Big(1+\\frac{z^2}{6}+\\cdots\\Big)=\\frac1{z^3}+\\frac{1}{6z}+\\cdots"
+      ]
     },
     {
-      "title": "兩個簡單極點",
-      "beats": [
-        { "show": ["$\\operatorname{Res}_{z=i}\\frac{1}{z^2+1}=\\frac{1}{2i}=-\\frac{i}{2}$"],
-          "note": "$h'=2z$。",
-          "say": "z 平方加一分之一在 i：h prime 是二 z，代 i 得二 i，留數是二 i 分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{z^2+1}$ 在 $i$：$h'={{hp:2z}}$"},
-            {"do":"write","line":"$\\operatorname{Res}=\\frac{1}{{{hi:2i}}}=-\\frac{i}{2}$","on":"代 i"},
-            {"do":"focus","term":"hi","on":"得二 i"}
-          ] },
-        { "show": ["檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"],
-          "note": "Cauchy 積分公式算過 $\\pi$。",
-          "say": "對照上一章：繞 i 一圈的積分是派，剛好等於二派 i 乘這個留數。",
-          "board": [
-            {"do":"write","line":"檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"}
-          ] },
-        { "show": ["$\\cot z=\\frac{\\cos z}{\\sin z}$ 在 $0$"],
-          "note": "$\\sin 0=0$，$\\cos 0=1\\ne 0$。",
-          "say": "再看 cotangent 在零：分母 sine z 在零是一階零點，因為它的導數 cosine 零是一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\cot z=\\frac{\\cos z}{{{s:\\sin z}}}$","on":"cotangent"},
-            {"do":"write","line":"$\\sin 0=0$，${{c:\\cos 0=1}}\\ne 0$","on":"一階零點"},
-            {"do":"focus","term":"c","on":"導數"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\operatorname{Res}_{z=0}\\cot z$ 是？",
-        "options": [
-          {
-            "label": "$1$",
-            "correct": true
-          },
-          {
-            "label": "$0$",
-            "why": "$\\frac{g(0)}{h'(0)}=\\frac{\\cos 0}{\\cos 0}=1$；檢查 $z\\cot z\\to 1$。"
-          },
-          {
-            "label": "不存在",
-            "why": "簡單極點一定有留數：$\\frac{\\cos 0}{\\cos 0}=1$。"
-          }
-        ]
-      }
+      "heading": "③ 常見錯誤：展開的位置",
+      "body": [
+        "$\\operatorname{Res}_{z_0}$ 要用以 $z_0$ 為中心、挖掉中心的圓盤上的展開",
+        "例：$\\dfrac{1}{z(1-z)}$。上一課外環 $|z|>1$ 的展開裡 $a_{-1}=0$",
+        "但 $\\operatorname{Res}_0=\\displaystyle\\lim_{z\\to0}\\frac{1}{1-z}=1$（內環 $0<|z|<1$ 的 $a_{-1}$）",
+        "$\\operatorname{Res}_1=\\lim_{z\\to1}\\frac{z-1}{z(1-z)}=-1$；下一課會看到為什麼外環的 $a_{-1}$ 是總和"
+      ]
     },
     {
-      "title": "$m$ 階極點",
-      "beats": [
-        { "show": ["$\\operatorname{Res}=\\frac{1}{(m-1)!}\\lim\\frac{d^{\\,m-1}}{dz^{\\,m-1}}$","$\\Bigl[(z-z_0)^{m}f(z)\\Bigr]$"],
-          "note": "$a_{-1}$ 是第 $m-1$ 個 Taylor 係數。",
-          "say": "m 階極點：乘上 m 次方變全純，留數是它的第 m 減一個 Taylor 係數，所以微 m 減一次。",
-          "board": [
-            {"do":"write","line":"$g={{b:(z-z_0)^{m}f}}$ 全純","on":"乘上"},
-            {"do":"write","line":"$\\operatorname{Res}=\\frac{1}{(m-1)!}\\,{{d:g^{(m-1)}(z_0)}}$","on":"留數是"},
-            {"do":"underline","term":"d","label":"微m-1次","on":"所以微"}
-          ] },
-        { "show": ["全純：附近每點可微","$g=c_0+c_1(z-z_0)+\\cdots$"],
-          "note": "$c_k=\\frac{g^{(k)}(z_0)}{k!}$",
-          "say": "全純就是附近每點可微，能展開成 Taylor 級數。第 k 個係數是微 k 次除以 k 階乘，留數是第 m 減一個。",
-          "board": [
-            {"do":"write","line":"$g=c_0+c_1(z-z_0)+c_2(z-z_0)^2+\\cdots$"},
-            {"do":"write","line":"$c_k=\\frac{g^{(k)}(z_0)}{k!}$","on":"第 k 個係數"},
-            {"do":"write","line":"$a_{-1}=c_{m-1}$","on":"留數是"}
-          ] },
-        { "show": ["$\\operatorname{Res}_{z=1}\\frac{e^z}{(z-1)^2}$"],
-          "note": "2 階極點，$(z-1)^2f=e^z$。",
-          "say": "例如 e 的 z 次方除以 z 減一的平方：在一是二階極點，乘上平方剩下 e 的 z 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=\\frac{e^z}{{{p:(z-1)^2}}}$","on":"例如"},
-            {"do":"underline","term":"p","label":"二階","on":"二階極點"},
-            {"do":"write","line":"$(z-1)^2f={{g:e^z}}$","on":"乘上平方"},
-            {"do":"focus","term":"g","on":"剩下"}
-          ] },
-        { "show": ["$m=2$：微分一次，在 $z=1$ 取值"],
-          "say": "m 等於二，所以微分一次、除以一階乘，再代 z 等於一。",
-          "board": [
-            {"do":"write","line":"${{fa:\\frac{1}{1!}}}\\,\\frac{d}{dz}\\bigl[{{g:e^z}}\\bigr]$"},
-            {"do":"focus","term":"fa","on":"除以一階乘"},
-            {"do":"write","line":"再代 $z=1$ 取值","on":"再代"}
-          ] }
-      ],
-      "key": "先乘 $(z-z_0)^m$ 消掉極點再微分",
-      "predict": {
-        "ask": "留數是？",
-        "options": [
-          {
-            "label": "$e$",
-            "correct": true
-          },
-          {
-            "label": "不存在：$\\lim\\frac{e^z}{z-1}$ 發散",
-            "why": "那是用了簡單極點的公式；這是 2 階極點，要乘 $(z-1)^2$ 再微分一次。"
-          },
-          {
-            "label": "$\\frac{e}{2}$",
-            "why": "前面是 $\\frac{1}{(m-1)!}=\\frac{1}{1!}=1$，不是 $\\frac{1}{2}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "直接讀 Laurent 係數",
-      "beats": [
-        { "show": ["$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$"],
-          "note": "$m=4$，要微三次。",
-          "say": "m 大的時候微分很累。e 的 z 次方除以 z 四次方，用公式要微三次。",
-          "board": [
-            {"do":"write","line":"$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$"},
-            {"do":"write","line":"公式：$m=4$，要微三次","on":"用公式"}
-          ] },
-        { "show": ["$z^{-4}\\left(1+z+\\frac{z^2}{2}+\\frac{z^3}{6}+\\cdots\\right)$"],
-          "say": "直接展開比較快：除以 z 四次方，負一次方來自 z 三次方那一項。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z^{-4}\\bigl(1+z+\\frac{z^2}{2}+{{c:\\frac{z^3}{6}}}+\\cdots\\bigr)$","on":"直接展開"},
-            {"do":"underline","term":"c","label":"負一次方","on":"z 三次方"}
-          ] },
-        { "show": ["$\\sin z=z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots$"],
-          "note": "只有奇次方。",
-          "say": "sine z 展開成 z 減 z 三次方除以六，加 z 五次方除以一百二十，只有奇次方。偶次方的項不會出現。",
-          "board": [
-            {"do":"write","line":"$\\sin z=z-\\frac{z^3}{6}+\\frac{z^5}{120}-\\cdots$"},
-            {"do":"write","line":"只有奇次方：$z,\\ z^3,\\ z^5$","on":"只有奇次方"}
-          ] },
-        { "show": ["$\\operatorname{Res}=\\frac{1}{6}$"],
-          "say": "所以留數就是 e 的 z 次方的三次項係數，三階乘分之一，六分之一。",
-          "board": [
-            {"do":"write","line":"$z^{-4}\\cdot{{c:\\frac{z^3}{6}}}=\\frac{1}{6}z^{-1}$","on":"三次項係數"},
-            {"do":"write","line":"$\\operatorname{Res}=\\frac{1}{6}$","color":"green","on":"三階乘"}
-          ] }
-      ],
-      "key": "展開後找 $z^{-1}$ 那一項的係數",
-      "check": 3
-    },
-    {
-      "title": "留數可以是 0",
-      "beats": [
-        { "show": ["可去奇異點：留數 $0$"],
-          "note": "沒有負次方。",
-          "say": "可去奇異點沒有負次方，留數當然是零。",
-          "board": [
-            {"do":"write","line":"可去奇異點：沒有負次方"},
-            {"do":"write","line":"$\\operatorname{Res}=0$","on":"留數"}
-          ] },
-        { "show": ["$\\frac{1}{z^2}$：二階極點，留數 $0$"],
-          "note": "只有 $z^{-2}$ 一項。",
-          "say": "可是極點的留數也可能是零：z 平方分之一只有負二次方，負一次方的係數是零。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{z^2}=z^{-2}$"},
-            {"do":"write","line":"$a_{-2}=1$，${{am:a_{-1}=0}}$","tint":{"am":"green"},"on":"負一次方的"}
-          ] },
-        { "show": ["分母為 $0$ $\\ne$ 留數不為 $0$"],
-          "say": "所以別看到分母是零，就以為留數一定不是零。展開來看負一次方那一項。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"分母為 $0$ $\\ne$ 留數不為 $0$","on":"別看到"},
-            {"do":"write","line":"展開看 ${{c:z^{-1}}}$ 的係數","on":"展開來看"},
-            {"do":"focus","term":"c","on":"負一次方"}
-          ] }
-      ],
-      "check": 1
+      "heading": "重點整理",
+      "body": [
+        "• $\\operatorname{Res}_{z_0}f=a_{-1}$；繞一小圈的積分 $=2\\pi i\\operatorname{Res}$",
+        "• 可去：留數 $0$",
+        "• 簡單極點：$\\lim(z-z_0)f$，或 $\\dfrac{g(z_0)}{h'(z_0)}$",
+        "• $m$ 階極點：$\\dfrac{1}{(m-1)!}\\lim\\big[(z-z_0)^mf\\big]^{(m-1)}$",
+        "• 公式麻煩時：直接展開，讀 $a_{-1}$",
+        "下一課：留數定理：把所有留數加起來"
+      ]
     }
   ],
   "workedExamples": [
@@ -341,59 +185,797 @@
   ],
   "checks": [
     {
-      "ask": "$\\operatorname{Res}_{z=2i}\\frac{1}{z^2+4}$ 是？",
+      "ask": "$\\operatorname{Res}_{z=-i}\\dfrac1{z^2+1}=$？",
       "options": [
-        { "label": "$\\frac{1}{4i}$", "correct": true },
-        { "label": "$\\frac{1}{4}$", "why": "$h'(z)=2z$，在 $z=2i$ 是 $4i$，不是 $4$。" },
-        { "label": "$\\frac{1}{2}$", "why": "用 $\\frac{g}{h'}$：$\\frac{1}{2\\cdot 2i}=\\frac{1}{4i}$。" }
+        {
+          "label": "$\\dfrac i2$",
+          "correct": true
+        },
+        {
+          "label": "$-\\dfrac i2$",
+          "why": "那是 $z=i$ 的留數；在 $-i$ 剩下的是 $\\frac1{z-i}$"
+        },
+        {
+          "label": "$\\dfrac1{2i}$",
+          "why": "要約掉的是 $z+i$，剩 $\\frac1{z-i}$，代 $-i$ 得 $\\frac1{-2i}$"
+        },
+        {
+          "label": "$0$",
+          "why": "$-i$ 是簡單極點，不是可去"
+        }
       ]
     },
     {
-      "ask": "$\\operatorname{Res}_{z=0}\\frac{\\sin z}{z^5}$ 是？",
+      "ask": "$\\operatorname{Res}_{z=2}\\dfrac{z}{(z-2)^2}=$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$\\frac{1}{24}$", "why": "$z^{-1}$ 項要來自 $\\sin z$ 的 $z^4$ 項，但 $\\sin z$ 只有奇次方，所以係數是 $0$。" },
-        { "label": "$\\frac{1}{120}$", "why": "$\\frac{z^5}{120}$ 除以 $z^5$ 是常數項，不是 $z^{-1}$ 項。" }
+        {
+          "label": "$1$",
+          "correct": true
+        },
+        {
+          "label": "$2$",
+          "why": "把它當成簡單極點、直接代 $z=2$；這是二階極點"
+        },
+        {
+          "label": "$0$",
+          "why": "要微分的是 $z$，不是常數；$z=2+(z-2)$ 給出 $\\frac{1}{z-2}$ 項"
+        },
+        {
+          "label": "$\\infty$",
+          "why": "留數是一個係數，一定是有限的數"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$z_0$ 是孤立奇異點，在 $0<|z-z_0|<R$ 上 $f=\\sum a_n(z-z_0)^n$：",
+            "$\\operatorname{Res}_{z_0}f=a_{-1}$"
+          ],
+          "say": "定義：z 零是 f 的孤立奇異點，在挖掉中心的圓盤上展開成洛朗級數。負一次方的係數 a 負 1，就叫 f 在 z 零的留數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z_0$ 是孤立奇異點，在 $0<|z-z_0|<R$ 上 $f=\\sum a_n(z-z_0)^n$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\operatorname{Res}_{z_0}f=a_{-1}}}$",
+              "on": "中心"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "就叫"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意義：繞 $z_0$ 一小圈",
+            "$\\oint_{|z-z_0|=\\rho}f\\,dz=2\\pi i\\operatorname{Res}_{z_0}f$"
+          ],
+          "say": "意義在前一課就看過：繞 z 零一小圈積分，其他係數全部積成 0，只剩 2 派 i 乘留數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "意義：繞 $z_0$ 一小圈"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\oint_{|z-z_0|=\\rho}f\\,dz=2\\pi i\\operatorname{Res}_{z_0}f}}$",
+              "on": "一小"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "只剩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 可去奇異點：沒有負次方 ⇒ 留數 $=0$",
+            "• 本性奇異點也有留數：$e^{1/z}=1+\\frac1z+\\cdots$，$\\operatorname{Res}_0=1$"
+          ],
+          "say": "兩個特別情況：可去奇異點沒有負次方，留數是 0。本性奇異點也有留數，例如 e 的 z 分之一次方，z 分之一的係數是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 可去奇異點：沒有負次方 ⇒ 留數 $=0$"
+            },
+            {
+              "do": "write",
+              "line": "• 本性奇異點也有留數：$e^{1/z}=1+\\frac1z+\\cdots$，$\\operatorname{Res}_0=1$",
+              "on": "有留"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以算留數 = 算出 $a_{-1}$；不必把整個級數寫出來"
+          ],
+          "say": "所以算留數，就是想辦法得到 a 負 1。重點是，不必把整個級數都寫出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以算留數 = 算出 $a_{-1}$；不必把整個級數寫出來",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\operatorname{Res}_{z=0}\\dfrac{\\sin z}{z}$ 是多少？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "$1$ 是 $\\lim\\frac{\\sin z}z$，是常數項 $a_0$，不是 $a_{-1}$"
+          },
+          {
+            "label": "不存在",
+            "why": "$0$ 是孤立奇異點，留數一定有定義"
+          }
+        ]
+      }
+    },
+    {
+      "title": "簡單極點：公式 1",
+      "beats": [
+        {
+          "show": [
+            "$\\operatorname{Res}_{z_0}f=\\lim_{z\\to z_0}(z-z_0)f(z)$"
+          ],
+          "say": "簡單極點有兩個公式。第一個：z 減 z 零乘 f，取極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\operatorname{Res}_{z_0}f=\\lim_{z\\to z_0}(z-z_0)f(z)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "零乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "理由：$(z-z_0)f=a_{-1}+a_0(z-z_0)+\\cdots\\to a_{-1}$"
+          ],
+          "say": "理由：簡單極點的洛朗級數從負一次方開始，乘上 z 減 z 零之後，a 負 1 變成常數項，其他都趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "理由：$(z-z_0)f=a_{-1}+a_0(z-z_0)+\\cdots\\to a_{-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\operatorname{Res}_{z=i}\\dfrac1{z^2+1}$，$z^2+1=(z-i)(z+i)$"
+          ],
+          "say": "例子：z 平方加 1 分之一，在 i 的留數。分母分解成 z 減 i 乘 z 加 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Res}_{z=i}\\dfrac1{z^2+1}$，$z^2+1=(z-i)(z+i)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{z\\to i}\\frac{z-i}{(z-i)(z+i)}=\\frac{1}{2i}=-\\frac i2$"
+          ],
+          "say": "乘上 z 減 i，約掉，剩下 z 加 i 分之一。代 i 進去，是 2i 分之一，也就是負 2 分之 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\lim_{z\\to i}\\frac{z-i}{(z-i)(z+i)}=\\frac{1}{2i}=-\\frac i2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$\\frac1{2\\pi i}\\oint_{|z-i|=0.01}\\approx-0.5\\,i$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "簡單極點：公式 2",
+      "beats": [
+        {
+          "show": [
+            "$f=\\dfrac gh$，$g(z_0)\\ne0$，$h(z_0)=0$，$h'(z_0)\\ne0$：",
+            "$\\operatorname{Res}_{z_0}\\frac gh=\\frac{g(z_0)}{h'(z_0)}$"
+          ],
+          "say": "第二個公式：f 是 g 除以 h，h 在 z 零是簡單零點。留數就是 g of z 零，除以 h prime of z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f=\\dfrac gh$，$g(z_0)\\ne0$，$h(z_0)=0$，$h'(z_0)\\ne0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\operatorname{Res}_{z_0}\\frac gh=\\frac{g(z_0)}{h'(z_0)}}}$",
+              "on": "零是"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "除以#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：用公式 1，再用導數的定義：",
+            "$\\lim_{z\\to z_0}\\frac{(z-z_0)\\,g(z)}{h(z)}=\\lim\\frac{g(z)}{\\frac{h(z)-h(z_0)}{z-z_0}}=\\frac{g(z_0)}{h'(z_0)}$"
+          ],
+          "say": "證明：用公式 1。h of z 零是 0，所以 h 除以 z 減 z 零，正好是差商，趨近 h prime。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：用公式 1，再用導數的定義："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{z\\to z_0}\\frac{(z-z_0)\\,g(z)}{h(z)}=\\lim\\frac{g(z)}{\\frac{h(z)-h(z_0)}{z-z_0}}=\\frac{g(z_0)}{h'(z_0)}$",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　跟羅必達的想法一樣；分母不必分解",
+              "color": "violet",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\operatorname{Res}_{z=0}\\cot z=\\operatorname{Res}_{z=0}\\dfrac{\\cos z}{\\sin z}$"
+          ],
+          "say": "例子：餘切 z 在 0 的留數。餘切是餘弦除以正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Res}_{z=0}\\cot z=\\operatorname{Res}_{z=0}\\dfrac{\\cos z}{\\sin z}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g=\\cos z$，$h=\\sin z$，$h'=\\cos z$：",
+            "$\\operatorname{Res}_0\\cot z=\\frac{\\cos0}{\\cos0}=1$"
+          ],
+          "say": "g 是餘弦，h 是正弦，h prime 也是餘弦。代 0 進去，1 除以 1，留數是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g=\\cos z$，$h=\\sin z$，$h'=\\cos z$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\operatorname{Res}_0\\cot z=\\frac{\\cos0}{\\cos0}=1}}$",
+              "color": "red",
+              "on": "ri"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的算法：在每個 $k\\pi$，$\\dfrac{\\cos k\\pi}{\\cos k\\pi}=1$"
+          ],
+          "say": "而且在每一個 k 派，算出來都是 1。正弦根本不用分解，這就是公式 2 的好處。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的算法：在每個 $k\\pi$，$\\dfrac{\\cos k\\pi}{\\cos k\\pi}=1$"
+            },
+            {
+              "do": "write",
+              "line": "　對照：$\\frac1{z^2+1}$ 用公式 2：$\\frac{1}{2z}\\big|_{z=i}=\\frac1{2i}$，跟公式 1 一樣",
+              "color": "violet",
+              "on": "弦根"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\operatorname{Res}_{z=0}\\frac{1}{z^2}$ 是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$1$", "why": "$\\frac{1}{z^2}$ 的 Laurent 級數只有 $z^{-2}$ 一項，$z^{-1}$ 的係數是 $0$。" },
-        { "label": "不存在，因為是二階極點", "why": "極點一定有留數；這裡剛好是 0。" }
+      "title": "公式 2 的威力",
+      "beats": [
+        {
+          "show": [
+            "例：$\\dfrac1{1+z^4}$ 在 $z_0=e^{i\\pi/4}$（$z_0^4=-1$）"
+          ],
+          "say": "公式 2 最有威力的時候，是分母很難分解的時候。看 1 加 z 四次方分之一，在 e 的 i 4 分之派次方。它的四次方是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\dfrac1{1+z^4}$ 在 $z_0=e^{i\\pi/4}$（$z_0^4=-1$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g=1$，$h=1+z^4$，$h'=4z^3$：",
+            "$\\operatorname{Res}_{z_0}=\\frac1{4z_0^3}=\\frac{z_0}{4z_0^4}=-\\frac{z_0}{4}$"
+          ],
+          "say": "g 是 1，h prime 是 4 z 三次方。上下同乘 z 零，分母出現 z 零的四次方，就是負 1，留數是負 4 分之 z 零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g=1$，$h=1+z^4$，$h'=4z^3$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\operatorname{Res}_{z_0}=\\frac1{4z_0^3}=\\frac{z_0}{4z_0^4}=-\\frac{z_0}{4}}}$",
+              "on": "上下"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$-\\frac{z_0}4=-\\frac{1+i}{4\\sqrt2}\\approx-0.1768-0.1768\\,i$"
+          ],
+          "say": "z 零是根號 2 分之 1 加 i，所以留數大約是負 0.1768，減 0.1768 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle -\\frac{z_0}4=-\\frac{1+i}{4\\sqrt2}\\approx-0.1768-0.1768\\,i$"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$\\frac1{2\\pi i}\\oint_{|z-z_0|=0.01}\\frac{dz}{1+z^4}$ 一致；最後一課會用到",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不用把 $1+z^4$ 分解成四個一次因式"
+          ],
+          "say": "完全不用把 1 加 z 四次方分解成四個一次因式。最後一課算實積分，就會用到這個留數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不用把 $1+z^4$ 分解成四個一次因式"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\operatorname{Res}_{z=0}\\frac{e^{2z}-1}{z^3}$ 是？",
-      "options": [
-        { "label": "$2$", "correct": true },
-        { "label": "$4$", "why": "$e^{2z}-1=2z+2z^2+\\frac{4}{3}z^3+\\cdots$，$z^2$ 項的係數是 $\\frac{(2z)^2}{2!}$ 的 $2$，不是 $4$。" },
-        { "label": "$\\frac{1}{2}$", "why": "$z^{-1}$ 項來自分子的 $z^2$ 項，係數 $\\frac{2^2}{2!}=2$。" }
+      "title": "$m$ 階極點",
+      "beats": [
+        {
+          "show": [
+            "$\\operatorname{Res}_{z_0}f=\\frac{1}{(m-1)!}\\lim_{z\\to z_0}\\frac{d^{m-1}}{dz^{m-1}}\\Big[(z-z_0)^mf(z)\\Big]$"
+          ],
+          "say": "m 階極點的公式：先乘上 z 減 z 零的 m 次方，微分 m 減 1 次，取極限，再除以 m 減 1 階乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\operatorname{Res}_{z_0}f=\\frac{1}{(m-1)!}\\lim_{z\\to z_0}\\frac{d^{m-1}}{dz^{m-1}}\\Big[(z-z_0)^mf(z)\\Big]}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "理由：$(z-z_0)^mf=a_{-m}+\\cdots+a_{-1}(z-z_0)^{m-1}+a_0(z-z_0)^m+\\cdots$"
+          ],
+          "say": "理由：乘上 m 次方之後，變成普通的冪級數，a 負 1 跑到 m 減 1 次方的位置。",
+          "board": [
+            {
+              "do": "write",
+              "line": "理由：$(z-z_0)^mf=a_{-m}+\\cdots+a_{-1}(z-z_0)^{m-1}+a_0(z-z_0)^m+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_{-1}$ 是這個冪級數的第 $m-1$ 個係數 $=\\dfrac{(\\cdots)^{(m-1)}(z_0)}{(m-1)!}$"
+          ],
+          "say": "冪級數的第 m 減 1 個係數，就是 m 減 1 階導數除以 m 減 1 階乘。公式就是這樣來的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_{-1}$ 是這個冪級數的第 $m-1$ 個係數 $=\\dfrac{(\\cdots)^{(m-1)}(z_0)}{(m-1)!}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\operatorname{Res}_{z=1}\\dfrac{e^z}{(z-1)^2}$，$m=2$"
+          ],
+          "say": "例子：e 的 z 次方，除以 z 減 1 的平方。在 1 是二階極點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Res}_{z=1}\\dfrac{e^z}{(z-1)^2}$，$m=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(z-1)^2f=e^z$，微分一次：",
+            "$\\operatorname{Res}_1=\\frac1{1!}\\,\\frac{d}{dz}e^z\\Big|_{z=1}=e$"
+          ],
+          "say": "乘上 z 減 1 的平方，剩下 e 的 z 次方。微分一次還是 e 的 z 次方，代 1，留數是 e。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(z-1)^2f=e^z$，微分一次："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\operatorname{Res}_1=\\frac1{1!}\\,\\frac{d}{dz}e^z\\Big|_{z=1}=e}}$",
+              "color": "red",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "次方#2"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用公式算 $m$ 階極點的留數",
+        "steps": [
+          {
+            "label": "確定階數 $m$"
+          },
+          {
+            "label": "乘上 $(z-z_0)^m$，化簡",
+            "why": "先要有上一步：確定階數 $m$"
+          },
+          {
+            "label": "微分 $m-1$ 次",
+            "why": "先要有上一步：乘上 $(z-z_0)^m$，化簡"
+          },
+          {
+            "label": "取 $z\\to z_0$ 的極限，再除以 $(m-1)!$",
+            "why": "先要有上一步：微分 $m-1$ 次"
+          }
+        ]
+      }
+    },
+    {
+      "title": "直接讀係數",
+      "beats": [
+        {
+          "show": [
+            "例：$\\operatorname{Res}_{z=0}\\dfrac{e^z}{z^4}$（四階極點）"
+          ],
+          "say": "公式不一定最快。例子：e 的 z 次方除以 z 的四次方，在 0 是四階極點，公式要微分三次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\operatorname{Res}_{z=0}\\dfrac{e^z}{z^4}$（四階極點）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{e^z}{z^4}=\\frac1{z^4}+\\frac1{z^3}+\\frac1{2z^2}+\\frac{1}{6z}+\\cdots$"
+          ],
+          "say": "直接展開：e 的 z 次方每一項除以 z 四次方。z 分之一那一項，來自 e 的 z 次方的三次項，6 分之 z 三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{e^z}{z^4}=\\frac1{z^4}+\\frac1{z^3}+\\frac1{2z^2}+\\frac{1}{6z}+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\operatorname{Res}_0\\frac{e^z}{z^4}=\\frac1{3!}=\\frac16$"
+          ],
+          "say": "所以留數是 3 階乘分之一，6 分之一。用公式算，三次微分也是 e 的 z 次方，答案一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle \\operatorname{Res}_0\\frac{e^z}{z^4}=\\frac1{3!}=\\frac16}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "red",
+              "on": "三次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "公式很難用時：$\\operatorname{Res}_{z=0}\\dfrac{1}{z^2\\sin z}$（三階極點）"
+          ],
+          "say": "再看一個公式很難用的：z 平方乘正弦 z，分之一。分母是三階零點，要微分兩次，很麻煩。",
+          "board": [
+            {
+              "do": "write",
+              "line": "公式很難用時：$\\operatorname{Res}_{z=0}\\dfrac{1}{z^2\\sin z}$（三階極點）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sin z=z\\big(1-\\frac{z^2}{6}+\\cdots\\big)$，用 $\\frac1{1-w}=1+w+\\cdots$：",
+            "$\\frac{1}{z^3}\\Big(1+\\frac{z^2}{6}+\\cdots\\Big)=\\frac1{z^3}+\\frac{1}{6z}+\\cdots$"
+          ],
+          "say": "改成展開：正弦提出 z，剩下 1 減 6 分之 z 平方。用幾何級數倒過來，變成 1 加 6 分之 z 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin z=z\\big(1-\\frac{z^2}{6}+\\cdots\\big)$，用 $\\frac1{1-w}=1+w+\\cdots$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{1}{z^3}\\Big(1+\\frac{z^2}{6}+\\cdots\\Big)=\\frac1{z^3}+\\frac{1}{6z}+\\cdots$",
+              "on": "用幾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\operatorname{Res}_0=\\dfrac16$"
+          ],
+          "say": "除以 z 三次方，z 分之一的係數是 6 分之一，這就是留數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\operatorname{Res}_0=\\dfrac16$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$\\frac1{2\\pi i}\\oint_{|z|=0.01}\\approx0.16667$",
+              "color": "violet",
+              "on": "係數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\operatorname{Res}_{z=2}\\dfrac{z}{(z-2)^2}=$？"
+          ],
+          "say": "換你算。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "常見錯誤：展開的位置",
+      "beats": [
+        {
+          "show": [
+            "$\\operatorname{Res}_{z_0}$ 要用以 $z_0$ 為中心、挖掉中心的圓盤上的展開"
+          ],
+          "say": "最後提醒一個常見錯誤：留數一定要用以 z 零為中心、挖掉中心的那個小圓盤上的展開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\operatorname{Res}_{z_0}$ 要用以 $z_0$ 為中心、挖掉中心的圓盤上的展開",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dfrac{1}{z(1-z)}$。上一課外環 $|z|>1$ 的展開裡 $a_{-1}=0$"
+          ],
+          "say": "例如 z 乘 1 減 z 分之一。上一課算過，在 z 的絕對值大於 1 的外環，a 負 1 是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\dfrac{1}{z(1-z)}$。上一課外環 $|z|>1$ 的展開裡 $a_{-1}=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但 $\\operatorname{Res}_0=\\displaystyle\\lim_{z\\to0}\\frac{1}{1-z}=1$（內環 $0<|z|<1$ 的 $a_{-1}$）"
+          ],
+          "say": "但它在 0 的留數是 1，來自內環的展開。外環的 0，其實是 0 和 1 兩個留數加起來，1 加負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但 $\\operatorname{Res}_0=\\displaystyle\\lim_{z\\to0}\\frac{1}{1-z}=1$（內環 $0<|z|<1$ 的 $a_{-1}$）",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$\\operatorname{Res}_1=\\lim_{z\\to1}\\frac{z-1}{z(1-z)}=-1$；下一課會看到為什麼外環的 $a_{-1}$ 是總和",
+              "color": "violet",
+              "on": "其實"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\operatorname{Res}_{z_0}f=a_{-1}$；繞一小圈的積分 $=2\\pi i\\operatorname{Res}$",
+            "• 可去：留數 $0$"
+          ],
+          "say": "整理一下：留數就是 a 負 1；可去的留數是 0；簡單極點用極限或 g 除以 h prime；m 階極點用導數公式；公式麻煩時，直接展開讀係數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\operatorname{Res}_{z_0}f=a_{-1}$；繞一小圈的積分 $=2\\pi i\\operatorname{Res}$"
+            },
+            {
+              "do": "write",
+              "line": "• 可去：留數 $0$",
+              "on": "可去"
+            },
+            {
+              "do": "write",
+              "line": "• 簡單極點：$\\lim(z-z_0)f$，或 $\\dfrac{g(z_0)}{h'(z_0)}$",
+              "on": "點用#1"
+            },
+            {
+              "do": "write",
+              "line": "• $m$ 階極點：$\\dfrac{1}{(m-1)!}\\lim\\big[(z-z_0)^mf\\big]^{(m-1)}$",
+              "on": "im"
+            },
+            {
+              "do": "write",
+              "line": "• 公式麻煩時：直接展開，讀 $a_{-1}$",
+              "on": "公式#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：留數定理：把所有留數加起來"
+          ],
+          "say": "下一課，把一條曲線裡面所有的留數加起來，就是留數定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：留數定理：把所有留數加起來"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["residue", "laurent", "complex"],
-    "fine": ["residue-simple-pole", "residue-g-over-hprime", "residue-higher-order", "residue-laurent-read"]
+    "coarse": [
+      "residue",
+      "laurent",
+      "complex"
+    ],
+    "fine": [
+      "residue-simple-pole",
+      "residue-g-over-hprime",
+      "residue-higher-order",
+      "residue-laurent-read"
+    ]
   },
   "practice": [
-    { "id": "rel-boss-009", "core": true, "trains": "residue-laurent-read" },
-    { "id": "rel-boss-008", "core": true, "trains": "residue-laurent-read" },
-    { "id": "rel-hard-cpx-006", "core": true, "trains": "residue-higher-order" },
-    { "id": "rel-hard-cpx-008", "core": true, "trains": "residue-g-over-hprime" },
-    { "id": "rel-hard-cpx-005", "core": true, "trains": "residue-higher-order" },
-    { "id": "rel-hard-cpx-009", "core": true, "trains": "residue-laurent-read" },
-    { "id": "cg-11i-016", "core": true, "trains": "residue-simple-pole" },
-    { "id": "rel-boss-020", "trains": "residue-laurent-read" },
-    { "id": "rel-hard-cpx-002", "trains": "residue-laurent-read" },
-    { "id": "rel-hard-cpx-003", "trains": "residue-laurent-read" },
-    { "id": "rel-hard-cpx-004", "trains": "residue-laurent-read" },
-    { "id": "der-081", "trains": "residue-simple-pole" },
-    { "id": "der-082", "trains": "residue-higher-order" },
-    { "id": "cg-11i-017", "trains": "residue-simple-pole" },
-    { "id": "cg-11i-018", "trains": "residue-simple-pole" },
-    { "id": "rel-hard-cpx-007", "challenge": true, "trains": "residue-g-over-hprime", "note": "挑戰：$\\frac{z}{\\sin^2 z}$ 在 $0$ 是簡單極點，但分母是 2 階零點，$\\frac{g}{h'}$ 不能直接用；改用 $\\lim z\\cdot\\frac{z}{\\sin^2 z}$。" }
+    {
+      "id": "rel-boss-009",
+      "core": true,
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "rel-boss-008",
+      "core": true,
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "rel-hard-cpx-006",
+      "core": true,
+      "trains": "residue-higher-order"
+    },
+    {
+      "id": "rel-hard-cpx-008",
+      "core": true,
+      "trains": "residue-g-over-hprime"
+    },
+    {
+      "id": "rel-hard-cpx-005",
+      "core": true,
+      "trains": "residue-higher-order"
+    },
+    {
+      "id": "rel-hard-cpx-009",
+      "core": true,
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "cg-11i-016",
+      "core": true,
+      "trains": "residue-simple-pole"
+    },
+    {
+      "id": "rel-boss-020",
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "rel-hard-cpx-002",
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "rel-hard-cpx-003",
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "rel-hard-cpx-004",
+      "trains": "residue-laurent-read"
+    },
+    {
+      "id": "der-081",
+      "trains": "residue-simple-pole"
+    },
+    {
+      "id": "der-082",
+      "trains": "residue-higher-order"
+    },
+    {
+      "id": "cg-11i-017",
+      "trains": "residue-simple-pole"
+    },
+    {
+      "id": "cg-11i-018",
+      "trains": "residue-simple-pole"
+    },
+    {
+      "id": "rel-hard-cpx-007",
+      "challenge": true,
+      "trains": "residue-g-over-hprime",
+      "note": "挑戰：$\\frac{z}{\\sin^2 z}$ 在 $0$ 是簡單極點，但分母是 2 階零點，$\\frac{g}{h'}$ 不能直接用；改用 $\\lim z\\cdot\\frac{z}{\\sin^2 z}$。"
+    }
   ],
   "gaps": []
 }

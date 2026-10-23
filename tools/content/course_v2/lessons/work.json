@@ -1,45 +1,137 @@
 {
   "id": "work",
   "title": "功",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["riemann-sum-intuition", "ftc-part2"],
-  "next": ["spring-work"],
-  "related": ["work-line-integral"],
-  "objectives": [
-    "力隨位置改變時，用 $W=\\int F(x)\\,dx$ 算功。",
-    "搬運鏈條、抽水這類問題：把物體切片，每片的重量乘上它要移動的距離，再積分。",
-    "自己設座標，寫出每一片的重量與距離。"
+  "prerequisites": [
+    "riemann-sum-intuition",
+    "ftc-part2"
   ],
-  "visual": "一個裝滿水的圓柱水槽被切成很多水平薄層，每一層旁邊標出它到槽頂的距離 y。按下播放，各層依序被抽到槽頂：靠上的層很快就到，越深的層走越久。旁邊累加每層的功 ρg · πr² dy · y，最後停在總功。",
+  "next": [
+    "spring-work"
+  ],
+  "related": [
+    "work-line-integral"
+  ],
+  "objectives": [
+    "力隨位置改變時，用 $W=\\int_a^b F(x)\\,dx$ 算功",
+    "搬運鏈條、抽水這類問題：把物體切片，每片的重量乘上它要移動的距離，再積分",
+    "自己設座標，寫出每一片的重量與距離"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 從「力乘距離」開始",
       "body": [
-        "力 $F$ 固定、物體沿力的方向移動距離 $d$，功 $W=F\\cdot d$。單位：牛頓 $\\times$ 公尺 = 焦耳（J）。",
-        "力會變的時候不能直接相乘。把路徑切成小段 $\\Delta x$，每一小段上力幾乎不變，約 $F(x_i)\\Delta x$，全部加起來就是一個 Riemann 和："
+        "力 $F$ 不變，沿著力的方向移動距離 $d$：",
+        "單位：牛頓 × 公尺 = 焦耳（J）",
+        "例：$20$ N 推 $3$ m，$W=60$ J",
+        "重量也是力：質量 $m$ 的東西重 $mg$（$g=9.8\\ \\mathrm{m/s^2}$）",
+        "如果力隨位置改變，$F=F(x)$？",
+        "把 $[a,b]$ 切成小段，每段上力幾乎不變："
       ],
-      "tex": ["W=\\int_a^b F(x)\\,dx"],
-      "collapsible": false
+      "tex": [
+        "W=F\\cdot d",
+        "\\Delta W_i\\approx F(x_i)\\,\\Delta x",
+        "W=\\lim_{n\\to\\infty}\\sum F(x_i)\\Delta x=\\int_a^b F(x)\\,dx"
+      ]
     },
     {
-      "heading": "② 另一種情況：力不變，距離在變",
+      "heading": "① 例：變力",
       "body": [
-        "把一條垂下來的鏈條拉上樓頂：每一小段受的重力一樣，但靠近頂端的只要抬一點點，最底下的要抬整條長。把水抽出水槽也一樣：每層水一樣重，但深度不同。",
-        "這時改成切物體，不是切路徑：第 $i$ 片的功 = 這一片的重量 $\\times$ 這一片要移動的距離。重量 = 質量 $\\times\\,g$；水的話質量 = 密度 $\\rho\\times$ 體積。"
+        "$F(x)=3x^2$（N），從 $x=0$ 移到 $x=2$（m）",
+        "功 = $F$–$x$ 圖下的面積"
       ],
-      "collapsible": false
+      "tex": [
+        "W=\\int_0^2 3x^2\\,dx=\\Big[x^3\\Big]_0^2=8\\ \\text{J}"
+      ]
+    },
+    {
+      "heading": "② 力不變，距離在變",
+      "body": [
+        "把鏈條拉上樓頂：每一小段的重量一樣",
+        "可是每一段要移動的距離不一樣：底下的要拉很遠",
+        "做法：切片，每片的重量 × 它要移動的距離"
+      ]
+    },
+    {
+      "heading": "② 例：拉起鏈條",
+      "body": [
+        "長 $20$ m、線密度 $2$ kg/m，$g=9.8$：每公尺重 $2\\times9.8=19.6$ N",
+        "設 $y$：從樓頂往下量的深度，$0\\le y\\le20$",
+        "深度 $y$ 那一片，長 $dy$：",
+        "• 重量 $19.6\\,dy$",
+        "• 要往上移 $y$",
+        "檢查：$3920=392\\times10$，總重 × 平均距離（鏈條中點在深 $10$ m）"
+      ],
+      "tex": [
+        "W=\\int_0^{20}19.6\\,y\\,dy=19.6\\cdot\\frac{20^2}{2}=3920\\ \\text{J}"
+      ]
     },
     {
       "heading": "③ 抽水題的四步驟",
       "body": [
-        "1. 設座標：通常令 $y$ 是「到出水口的距離」，向下為正，這樣距離就是 $y$（或 $y$ 加上出水口高出槽頂的那段）。",
-        "2. 在 $y$ 處切一片厚 $dy$ 的薄層，寫出體積（截面積 $\\times\\,dy$）。",
-        "3. 重量 = $\\rho g\\times$ 體積。",
-        "4. $W=\\int$（重量）$\\times$（距離），上下限是水所在的 $y$ 範圍。",
-        "槽不是圓柱（例如圓錐）時，截面積會跟著 $y$ 變，步驟不變。"
+        "1. 設座標：$y$ 從哪裡量、往哪個方向",
+        "2. 一片的重量：體積 × $\\rho g$",
+        "3. 這一片要移動的距離",
+        "4. 積分：重量 × 距離，積過整個水的範圍",
+        "水的密度 $\\rho=1000\\ \\mathrm{kg/m^3}$，$\\rho g=9800\\ \\mathrm{N/m^3}$"
+      ]
+    },
+    {
+      "heading": "③ 例：圓柱水槽",
+      "body": [
+        "半徑 $1$ m、高 $4$ m，裝滿水，全部從頂端抽出",
+        "1. $y$：從槽頂往下量，水在 $0\\le y\\le4$",
+        "2. 深度 $y$ 的一片：圓盤，厚 $dy$",
+        "3. 這一片要抬高 $y$ 公尺"
       ],
-      "collapsible": false
+      "tex": [
+        "\\text{體積}=\\pi\\cdot1^2\\,dy,\\quad\\text{重量}=9800\\pi\\,dy"
+      ]
+    },
+    {
+      "heading": "③ 例：積分",
+      "body": [
+        "4. 重量 × 距離，從 $0$ 積到 $4$：",
+        "檢查：水重 $9800\\cdot4\\pi$，平均抬高 $2$ m，相乘一樣是 $78400\\pi$",
+        "要抽到槽頂上方 $1$ m：距離改成 $y+1$",
+        "重點：積分範圍是有水的地方，距離永遠量到出水口"
+      ],
+      "tex": [
+        "W=\\int_0^4 9800\\pi\\,y\\,dy=9800\\pi\\cdot\\frac{4^2}{2}",
+        "W=78400\\pi\\approx2.46\\times10^5\\ \\text{J}",
+        "W=\\int_0^4 9800\\pi\\,(y+1)\\,dy=117600\\pi"
+      ]
+    },
+    {
+      "heading": "③ 例：圓錐水槽",
+      "body": [
+        "圓錐水槽頂點朝下，高 $4$ m、頂端半徑 $2$ m，裝滿水，從頂端抽出",
+        "1. $y$ 從槽頂往下量；深度 $y$ 處離頂點 $4-y$",
+        "2. 相似形：$\\dfrac{r}{4-y}=\\dfrac{2}{4}$，所以 $r=\\dfrac{4-y}{2}$",
+        "一片的重量：",
+        "3. 距離還是 $y$；4. 積分：",
+        "展開 $y(4-y)^2=16y-8y^2+y^3$，積分 $128-\\frac{512}{3}+64=\\frac{64}{3}$",
+        "形狀變了，只有一片的重量跟著變"
+      ],
+      "tex": [
+        "9800\\pi\\Big(\\frac{4-y}{2}\\Big)^2dy=2450\\pi(4-y)^2\\,dy",
+        "W=2450\\pi\\int_0^4 y(4-y)^2\\,dy=2450\\pi\\cdot\\frac{64}{3}",
+        "W=\\frac{156800\\pi}{3}\\approx1.64\\times10^5\\ \\text{J}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 變力：$W=\\int_a^b F(x)\\,dx$（$F$–$x$ 圖下面積）",
+        "• 搬東西：切片，重量 × 移動距離，再積分",
+        "• 鏈條：每片 $19.6\\,dy$，距離 $y$",
+        "• 抽水四步：設座標 → 一片重量 → 移動距離 → 積分",
+        "• 範圍看有水的地方，距離量到出水口",
+        "下一課：彈簧做功"
+      ]
     }
   ],
   "workedExamples": [
@@ -88,260 +180,840 @@
   ],
   "checks": [
     {
-      "ask": "$F(x)=2x$（N），物體從 $x=1$ 移到 $x=3$（m），功是？",
+      "ask": "力 $F(x)=x^2$（N），從 $x=0$ 移到 $x=3$（m），功是？",
       "options": [
-        { "label": "8 J", "correct": true },
-        { "label": "12 J", "why": "這是終點的力 $F(3)=6$ 乘距離 2；力一路在變，要積分 $\\int_1^3 2x\\,dx=8$。" },
-        { "label": "4 J", "why": "這是起點的力 $F(1)=2$ 乘距離 2；同樣不能用單一點的力代表整段。" }
+        {
+          "label": "$9$ J",
+          "correct": true
+        },
+        {
+          "label": "$27$ J",
+          "why": "把終點的力 $F(3)=9$ 當成全程的力，再乘 $3$"
+        },
+        {
+          "label": "$6.75$ J",
+          "why": "用中點的力 $F(1.5)=2.25$ 乘 $3$；力不是線性變化，這樣不準"
+        },
+        {
+          "label": "$4.5$ J",
+          "why": "積成 $\\int_0^3 x\\,dx$：把 $F$ 寫成 $x$ 了，要積的是 $x^2$"
+        }
       ]
     },
     {
-      "ask": "抽圓柱水槽裡的水時，為什麼要把水切成水平薄層？",
+      "ask": "同一個水槽只裝了==下半==（水深 $2$ m），全部從頂端抽出，功是？",
       "options": [
-        { "label": "每一層要移動的距離不同", "correct": true },
-        { "label": "每一層的重量不同", "why": "圓柱水槽每層截面一樣，重量一樣；不同的是要抬多高。" },
-        { "label": "水受的重力會隨深度改變", "why": "每一層受的重力就是 $\\rho g\\times$ 體積，是常數；變的是距離。" }
-      ]
-    },
-    {
-      "ask": "長 10 m、線密度 1 kg/m 的鏈條垂下（$g=10$），整條拉上來的功是？",
-      "options": [
-        { "label": "500 J", "correct": true },
-        { "label": "1000 J", "why": "這是把整條 100 N 都抬 10 m；其實靠上的部分只要抬一點點，$\\int_0^{10}10y\\,dy=500$。" },
-        { "label": "100 J", "why": "100 N 是整條的重量，還沒乘上距離。" }
-      ]
-    },
-    {
-      "ask": "水要抽到槽頂上方 1 m 的出水口。深度 $y$ 的那一層要移動多遠？",
-      "options": [
-        { "label": "$y+1$", "correct": true },
-        { "label": "$y$", "why": "$y$ 只到槽頂，還要再往上 1 m 才到出水口。" },
-        { "label": "1", "why": "只算了槽頂到出水口那段，漏了從深度 $y$ 到槽頂的 $y$。" }
+        {
+          "label": "$58800\\pi$ J",
+          "correct": true
+        },
+        {
+          "label": "$19600\\pi$ J",
+          "why": "積成 $\\int_0^2$：那是上半的水；水在底下，$y$ 從 $2$ 到 $4$"
+        },
+        {
+          "label": "$39200\\pi$ J",
+          "why": "以為水少一半、功就少一半；下半的水要抬得比較高"
+        },
+        {
+          "label": "$78400\\pi$ J",
+          "why": "那是裝滿的情況"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "力乘距離",
+      "title": "從「力乘距離」開始",
       "beats": [
-        { "show": ["$W=F\\cdot d$"],
-          "note": "牛頓 $\\times$ 公尺 = 焦耳（J）。",
-          "say": "力固定、物體沿力的方向走一段距離，功就是力乘距離，單位是焦耳。",
+        {
+          "show": [
+            "力 $F$ 不變，沿著力的方向移動距離 $d$：",
+            "$W=F\\cdot d$"
+          ],
+          "say": "物理裡的功：一個不變的力，沿著它的方向把東西推了一段距離，功就是力乘距離。",
           "board": [
-            {"do":"write","line":"$W={{f:F}}\\cdot{{d:d}}$","tint":{"f":"blue","d":"violet"}},
-            {"do":"focus","term":"f","on":"力固定"},
-            {"do":"focus","term":"d","on":"走一段"}
-          ] },
-        { "show": ["力會變：切成小段，每段約 $F(x_i)\\Delta x$"],
-          "say": "力會變的時候不能直接乘。把路徑切成小段，每一小段上力幾乎不變。",
+            {
+              "do": "write",
+              "line": "力 $F$ 不變，沿著力的方向移動距離 $d$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle W=F\\cdot d}}$",
+              "on": "沿著"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "一段"
+            }
+          ]
+        },
+        {
+          "show": [
+            "單位：牛頓 × 公尺 = 焦耳（J）"
+          ],
+          "say": "力用牛頓，距離用公尺，功的單位是焦耳。",
           "board": [
-            {"do":"write","line":"力會變：每段約 ${{f2:F(x_i)}}\\,{{dx:\\Delta x}}$","tint":{"f2":"blue","dx":"violet"},"on":"切成小段"},
-            {"do":"underline","term":"f2","color":"blue","label":"幾乎不變","on":"幾乎不變"}
-          ] },
-        { "show": ["$W=\\int_a^b F(x)\\,dx$"],
-          "say": "全部加起來是一個黎曼和，取極限就是力的積分。",
+            {
+              "do": "write",
+              "line": "單位：牛頓 × 公尺 = 焦耳（J）"
+            },
+            {
+              "do": "write",
+              "line": "　例：$20$ N 推 $3$ m，$W=60$ J",
+              "color": "violet",
+              "on": "功的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重量也是力：質量 $m$ 的東西重 $mg$（$g=9.8\\ \\mathrm{m/s^2}$）"
+          ],
+          "say": "把東西抬高，要對抗的是重量，也就是質量乘 g，g 是 9.8。",
           "board": [
-            {"do":"write","line":"$W=\\int_a^b {{f3:F(x)}}\\,{{dx2:dx}}$","tint":{"f3":"blue","dx2":"violet"},"on":"取極限"}
-          ] },
-        { "show": ["$F(x)=3x^2$，$0\\to 2$：$W=[x^3]_0^2=8$ J"],
-          "say": "例如力是三 x 平方，從零推到二，積分得八焦耳。",
+            {
+              "do": "write",
+              "line": "重量也是力：質量 $m$ 的東西重 $mg$（$g=9.8\\ \\mathrm{m/s^2}$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果力隨位置改變，$F=F(x)$？"
+          ],
+          "say": "問題來了：如果力會隨著位置改變呢？例如越拉越吃力。這時候不能直接乘。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$F(x)=3x^2$，$0\\to2$：$W=[x^3]_0^2=\\,{{r:8\\ \\mathrm{J}}}$","on":"例如"},
-            {"do":"box","term":"r","color":"green","on":"積分得"}
-          ] },
-        { "show": ["$[x^3]_0^2=2^3-0^3$"],
-          "note": "方括號：先求反導函數，再代上下限。",
-          "say": "方括號零到二的意思：先找反導函數 x 三次方，代上限二，再減掉代下限零。",
+            {
+              "do": "write",
+              "line": "如果力隨位置改變，$F=F(x)$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把 $[a,b]$ 切成小段，每段上力幾乎不變：",
+            "$\\Delta W_i\\approx F(x_i)\\,\\Delta x$"
+          ],
+          "say": "跟黎曼和一樣：切成很多小段。每一小段很短，力幾乎不變，就可以用力乘距離。",
           "board": [
-            {"do":"write","line":"$[x^3]_0^2={{u:2^3}}-{{l:0^3}}$"},
-            {"do":"underline","term":"u","color":"blue","label":"上限","on":"代上限"},
-            {"do":"underline","term":"l","color":"violet","label":"下限","on":"代下限"}
-          ] },
-        { "show": ["終點值 − 起點值 $=8-0$"],
-          "note": "反導函數的增加量，就是累積量。",
-          "say": "為什麼相減？反導函數在終點與起點的差，就是這段路累積的量。八減零就是八。",
+            {
+              "do": "write",
+              "line": "把 $[a,b]$ 切成小段，每段上力幾乎不變："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta W_i\\approx F(x_i)\\,\\Delta x$",
+              "on": "很短"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=\\lim_{n\\to\\infty}\\sum F(x_i)\\Delta x=\\int_a^b F(x)\\,dx$"
+          ],
+          "say": "加起來，再讓小段越切越細，就變成積分。功是力對位置的積分。",
           "board": [
-            {"do":"write","line":"終點值 − 起點值 $=8-0$"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle W=\\lim_{n\\to\\infty}\\sum F(x_i)\\Delta x=\\int_a^b F(x)\\,dx}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "變成"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：變力",
+      "beats": [
+        {
+          "show": [
+            "$F(x)=3x^2$（N），從 $x=0$ 移到 $x=2$（m）"
+          ],
+          "say": "例子：力是 3 x 平方牛頓，把物體從 x 等於 0 移到 2 公尺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$F(x)=3x^2$（N），從 $x=0$ 移到 $x=2$（m）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=\\int_0^2 3x^2\\,dx=\\Big[x^3\\Big]_0^2=8\\ \\text{J}$"
+          ],
+          "say": "積分：3 x 平方的反導數是 x 立方，代 2 減代 0，功是 8 焦耳。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle W=\\int_0^2 3x^2\\,dx=\\Big[x^3\\Big]_0^2=8\\ \\text{J}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "減代"
+            }
+          ]
+        },
+        {
+          "show": [
+            "功 = $F$–$x$ 圖下的面積"
+          ],
+          "say": "從圖上看，功就是力對位置的圖，曲線下面的面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "功 = $F$–$x$ 圖下的面積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍色面積 = 8 J"
+          ],
+          "say": "藍色的面積就是 8 焦耳。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "fx",
+                  "window": [
+                    -0.2,
+                    2.4,
+                    -1,
+                    13
+                  ],
+                  "area": [
+                    {
+                      "expr": "3*x^2",
+                      "from": 0,
+                      "to": 2,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "3*x^2",
+                      "color": "blue",
+                      "label": "F = 3x²",
+                      "domain": [
+                        0,
+                        2.2
+                      ]
+                    }
+                  ],
+                  "xlabel": "x（m）",
+                  "ylabel": "F（N）",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍色面積 = 8 J",
+              "color": "violet",
+              "on": "焦耳"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
       "title": "力不變，距離在變",
       "beats": [
-        { "show": ["鏈條：每段一樣重，要抬的距離不同"],
-          "note": "靠近頂端的只抬一點點，最底下的要抬整條長。",
-          "say": "另一種情況：把垂下的鏈條拉上樓頂，每一段一樣重，但靠上的只抬一點點，最底下的要抬整條長。",
+        {
+          "show": [
+            "把鏈條拉上樓頂：每一小段的重量一樣"
+          ],
+          "say": "另一種情況：把一條垂下來的鏈條拉上樓頂。每一小段鏈條的重量都一樣。",
           "board": [
-            {"do":"write","line":"鏈條：每段一樣重"},
-            {"do":"write","line":"靠上的：抬一點點","on":"靠上的"},
-            {"do":"write","line":"最底下：抬整條長","on":"最底下的"}
-          ] },
-        { "show": ["改成切物體：重量 $\\times$ 這一片的距離"],
-          "note": "重量 = 質量 $\\times g$；水：質量 = $\\rho\\times$ 體積。",
-          "say": "這時改成切物體：每一片的功，是這一片的重量乘它要移動的距離。抽水也一樣。",
+            {
+              "do": "write",
+              "line": "把鏈條拉上樓頂：每一小段的重量一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "可是每一段要移動的距離不一樣：底下的要拉很遠"
+          ],
+          "say": "可是每一段要走的距離不一樣：靠近樓頂的只要拉一點點，最底下的要拉整整 20 公尺。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"每片的功 ＝ 重量 × 距離","on":"每一片的功"},
-            {"do":"write","line":"重量 ＝ 質量 × $g$","on":"重量乘"}
-          ] }
+            {
+              "do": "write",
+              "line": "可是每一段要移動的距離不一樣：底下的要拉很遠",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法：切片，每片的重量 × 它要移動的距離"
+          ],
+          "say": "所以換個切法：把鏈條切成很多小片，每一片的重量乘上它要移動的距離，再全部加起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做法：切片，每片的重量 × 它要移動的距離",
+              "color": "gold"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "長 $20$ m、重 $392$ N 的鏈條從樓頂垂下，全部拉上去要多少功？",
+        "options": [
+          {
+            "label": "$7840$ J",
+            "why": "那是把整條都當成要拉 $20$ m；上面的段落其實走得很短"
+          },
+          {
+            "label": "$3920$ J",
+            "correct": true
+          },
+          {
+            "label": "$1960$ J",
+            "why": "少算了一半：平均要移動 $10$ m，不是 $5$ m"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：拉起鏈條",
+      "beats": [
+        {
+          "show": [
+            "長 $20$ m、線密度 $2$ kg/m，$g=9.8$：每公尺重 $2\\times9.8=19.6$ N"
+          ],
+          "say": "鏈條長 20 公尺，每公尺 2 公斤，乘上 9.8，每公尺重 19.6 牛頓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "長 $20$ m、線密度 $2$ kg/m，$g=9.8$：每公尺重 $2\\times9.8=19.6$ N"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $y$：從樓頂往下量的深度，$0\\le y\\le20$"
+          ],
+          "say": "設座標：y 是從樓頂往下量的深度，從 0 到 20。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $y$：從樓頂往下量的深度，$0\\le y\\le20$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "深度 $y$ 那一片，長 $dy$：",
+            "• 重量 $19.6\\,dy$"
+          ],
+          "say": "在深度 y 的地方切一小片，長度 d y。它的重量是 19.6 d y，要往上拉的距離就是 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "深度 $y$ 那一片，長 $dy$："
+            },
+            {
+              "do": "write",
+              "line": "• 重量 $19.6\\,dy$",
+              "on": "它的"
+            },
+            {
+              "do": "write",
+              "line": "• 要往上移 $y$",
+              "on": "要往"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=\\int_0^{20}19.6\\,y\\,dy=19.6\\cdot\\frac{20^2}{2}=3920\\ \\text{J}$"
+          ],
+          "say": "重量乘距離，從 0 積到 20：19.6 乘 2 分之 20 平方，等於 3920 焦耳。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle W=\\int_0^{20}19.6\\,y\\,dy=19.6\\cdot\\frac{20^2}{2}=3920\\ \\text{J}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，黃色那一片在深度 y，要被往上拉 y 公尺才到樓頂。越下面的片，要走越遠。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 270\" width=\"620\"><rect x=\"60\" y=\"30\" width=\"230\" height=\"230\" fill=\"var(--muted)\" fill-opacity=\"0.1\" stroke=\"var(--muted)\" stroke-width=\"2\"/><line x1=\"40\" y1=\"30\" x2=\"360\" y2=\"30\" stroke=\"var(--ink)\" stroke-width=\"3\"/><line x1=\"320\" y1=\"30\" x2=\"320\" y2=\"250\" stroke=\"var(--blue)\" stroke-width=\"5\" stroke-dasharray=\"3 3\"/><rect x=\"311\" y=\"157\" width=\"18\" height=\"12\" fill=\"#f5d56e\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"380\" y1=\"34\" x2=\"380\" y2=\"161\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><polygon points=\"380,34 373,48 387,48\" fill=\"var(--red)\"/><text x=\"392\" y=\"105\" style=\"font-family:inherit;font-size:24px;fill:var(--red)\">往上拉 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</tspan></text><text x=\"345\" y=\"188\" style=\"font-family:inherit;font-size:22px;fill:var(--ink)\">一片：長 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">dy</tspan>，重 <tspan style=\"font-family:KaTeX_Main,serif\">19.6</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\"> dy</tspan></text><text x=\"80\" y=\"62\" style=\"font-family:inherit;font-size:22px;fill:var(--ink)\">樓頂 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 0</tspan></text><text x=\"80\" y=\"245\" style=\"font-family:inherit;font-size:22px;fill:var(--ink)\">鏈條底 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 20</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$3920=392\\times10$，總重 × 平均距離（鏈條中點在深 $10$ m）",
+              "color": "violet",
+              "on": "公尺"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "抽水題的四步驟",
+      "beats": [
+        {
+          "show": [
+            "1. 設座標：$y$ 從哪裡量、往哪個方向",
+            "2. 一片的重量：體積 × $\\rho g$"
+          ],
+          "say": "抽水題也是同一招，整理成四個步驟：設座標；寫出一片水的重量；寫出這一片要移動的距離；最後重量乘距離，積過有水的範圍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. 設座標：$y$ 從哪裡量、往哪個方向"
+            },
+            {
+              "do": "write",
+              "line": "2. 一片的重量：體積 × $\\rho g$",
+              "on": "步驟"
+            },
+            {
+              "do": "write",
+              "line": "3. 這一片要移動的距離",
+              "on": "寫出#2"
+            },
+            {
+              "do": "write",
+              "line": "4. 積分：重量 × 距離，積過整個水的範圍",
+              "on": "後重"
+            }
+          ]
+        },
+        {
+          "show": [
+            "水的密度 $\\rho=1000\\ \\mathrm{kg/m^3}$，$\\rho g=9800\\ \\mathrm{N/m^3}$"
+          ],
+          "say": "水的密度是每立方公尺 1000 公斤，乘上 g，每立方公尺重 9800 牛頓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "水的密度 $\\rho=1000\\ \\mathrm{kg/m^3}$，$\\rho g=9800\\ \\mathrm{N/m^3}$"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "抽水題的步驟",
+        "steps": [
+          {
+            "label": "設座標：例如 $y$ 從水槽頂往下量"
+          },
+          {
+            "label": "寫出深度 $y$ 那一片的體積與重量",
+            "why": "先要有上一步：設座標：例如 $y$ 從水槽頂往下量"
+          },
+          {
+            "label": "寫出那一片要被抬高的距離",
+            "why": "先要有上一步：寫出深度 $y$ 那一片的體積與重量"
+          },
+          {
+            "label": "重量 × 距離，對有水的範圍積分",
+            "why": "先要有上一步：寫出那一片要被抬高的距離"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：圓柱水槽",
+      "beats": [
+        {
+          "show": [
+            "半徑 $1$ m、高 $4$ m，裝滿水，全部從頂端抽出"
+          ],
+          "say": "例子：圓柱水槽半徑 1 公尺、高 4 公尺，裝滿水，要把水全部從頂端抽出去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半徑 $1$ m、高 $4$ m，裝滿水，全部從頂端抽出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1. $y$：從槽頂往下量，水在 $0\\le y\\le4$"
+          ],
+          "say": "第一步，設 y 從槽頂往下量，水從 y 等於 0 到 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. $y$：從槽頂往下量，水在 $0\\le y\\le4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. 深度 $y$ 的一片：圓盤，厚 $dy$",
+            "$\\text{體積}=\\pi\\cdot1^2\\,dy,\\quad\\text{重量}=9800\\pi\\,dy$"
+          ],
+          "say": "第二步，深度 y 的那一片水，是半徑 1、厚 d y 的圓盤。體積是派 d y，重量是 9800 派 d y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "2. 深度 $y$ 的一片：圓盤，厚 $dy$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{體積}=\\pi\\cdot1^2\\,dy,\\quad\\text{重量}=9800\\pi\\,dy$",
+              "on": "的圓"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. 這一片要抬高 $y$ 公尺"
+          ],
+          "say": "第三步，這一片在槽頂下方 y 公尺，要抬高 y 公尺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "3. 這一片要抬高 $y$ 公尺"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，黃色的圓盤是深度 y 的那一片，紅色箭頭是它要被抬高的距離。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 300\" width=\"620\"><path d=\"M 110 40 L 110 260 A 110 22 0 0 0 330 260 L 330 40\" fill=\"var(--blue)\" fill-opacity=\"0.1\" stroke=\"none\"/><ellipse cx=\"220\" cy=\"40\" rx=\"110\" ry=\"22\" fill=\"var(--blue)\" fill-opacity=\"0.1\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"110\" y1=\"40\" x2=\"110\" y2=\"260\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"330\" y1=\"40\" x2=\"330\" y2=\"260\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><path d=\"M 110 260 A 110 22 0 0 0 330 260\" fill=\"none\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><ellipse cx=\"220\" cy=\"172\" rx=\"110\" ry=\"22\" fill=\"#f5d56e\" fill-opacity=\"0.7\" stroke=\"var(--red)\" stroke-width=\"3.5\"/><line x1=\"220\" y1=\"40\" x2=\"330\" y2=\"40\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"6 4\"/><text x=\"275\" y=\"92\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif;font-size:22px;fill:var(--ink)\">1</text><line x1=\"400\" y1=\"40\" x2=\"400\" y2=\"260\" stroke=\"var(--muted)\" stroke-width=\"2\"/><text x=\"412\" y=\"47\" style=\"font-family:KaTeX_Main,serif;font-size:22px;fill:var(--ink)\">0</text><text x=\"412\" y=\"267\" style=\"font-family:KaTeX_Main,serif;font-size:22px;fill:var(--ink)\">4</text><text x=\"396\" y=\"290\" text-anchor=\"middle\" style=\"font-family:inherit;font-size:20px;fill:var(--ink)\">往下量 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</tspan></text><line x1=\"365\" y1=\"44\" x2=\"365\" y2=\"168\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><polygon points=\"365,44 358,58 372,58\" fill=\"var(--red)\"/><text x=\"450\" y=\"115\" style=\"font-family:inherit;font-size:24px;fill:var(--red)\">抬高 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</tspan></text><text x=\"450\" y=\"180\" style=\"font-family:inherit;font-size:22px;fill:var(--ink)\">一片：厚 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">dy</tspan></text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：積分",
+      "beats": [
+        {
+          "show": [
+            "4. 重量 × 距離，從 $0$ 積到 $4$：",
+            "$W=\\int_0^4 9800\\pi\\,y\\,dy=9800\\pi\\cdot\\frac{4^2}{2}$"
+          ],
+          "say": "第四步，重量乘距離，從 0 積到 4：9800 派乘 2 分之 4 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "4. 重量 × 距離，從 $0$ 積到 $4$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W=\\int_0^4 9800\\pi\\,y\\,dy=9800\\pi\\cdot\\frac{4^2}{2}$",
+              "on": "98"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=78400\\pi\\approx2.46\\times10^5\\ \\text{J}$"
+          ],
+          "say": "等於 78400 派焦耳，大約 24.6 萬焦耳。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle W=78400\\pi\\approx2.46\\times10^5\\ \\text{J}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "派焦"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：水重 $9800\\cdot4\\pi$，平均抬高 $2$ m，相乘一樣是 $78400\\pi$",
+              "color": "violet",
+              "on": "24"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要抽到槽頂上方 $1$ m：距離改成 $y+1$",
+            "$W=\\int_0^4 9800\\pi\\,(y+1)\\,dy=117600\\pi$"
+          ],
+          "say": "如果出水口在槽頂上方 1 公尺，每一片的距離都多 1，變成 y 加 1，功變成 117600 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要抽到槽頂上方 $1$ m：距離改成 $y+1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W=\\int_0^4 9800\\pi\\,(y+1)\\,dy=117600\\pi$",
+              "on": "變成#1"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "拉起鏈條",
+      "title": "例：積分",
       "beats": [
-        { "show": ["長 20 m、2 kg/m，$g=9.8$"],
-          "note": "$y$ = 到樓頂的距離，向下為正。",
-          "say": "鏈條長二十公尺，每公尺二公斤。設 y 是到樓頂的距離，往下算正的。",
+        {
+          "show": [
+            "重點：積分範圍是有水的地方，距離永遠量到出水口"
+          ],
+          "say": "記住：積分的範圍是有水的地方；距離，永遠是量到出水口。",
           "board": [
-            {"do":"write","line":"長 20 m、2 kg/m、$g=9.8$"},
-            {"do":"write","line":"${{y:y}}$ ＝ 到樓頂的距離","tint":{"y":"blue"},"on":"設 y"}
-          ] },
-        { "show": ["一小段：重 $19.6\\,dy$ N，抬 $y$ m"],
-          "say": "y 那裡長 dy 的一小段，質量二 dy，乘 g 是十九點六 dy 牛頓，要抬 y 公尺。",
-          "board": [
-            {"do":"write","line":"重 $=2\\,dy\\cdot g={{w:19.6\\,dy}}$ N","tint":{"w":"violet"}},
-            {"do":"write","line":"抬 ${{y2:y}}$ m","tint":{"y2":"blue"},"on":"要抬"}
-          ] },
-        { "show": ["圖：$19.6\\,y$，從 $0$ 到 $20$ 的面積"],
-          "note": "橫軸 $y$，縱軸是每小段的重量乘距離。",
-          "say": "畫成圖：橫軸是 y，縱軸是十九點六 y，也就是每一小段的重量乘距離。零到二十底下的面積，就是功。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,22,-30,420],"curves":[{"expr":"19.6*x","domain":[0,20],"color":"blue"}],"fills":[{"expr":"19.6*x","from":0,"to":20,"color":"blue"}]}},
-            {"do":"write","line":"面積 ＝ 功","on":"面積"}
-          ] },
-        { "show": ["$\\int y\\,dy=\\frac{y^2}{2}$，代入 $20$ 減 $0$ 得 $200$"],
-          "note": "再乘 $19.6$。",
-          "say": "y 乘 dy 的反導函數是二分之 y 平方。代入二十減零，得兩百，再乘十九點六，就是三千九百二十。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{20}19.6\\,y\\,dy=19.6\\left[\\frac{y^2}{2}\\right]_0^{20}$","on":"是二"},
-            {"do":"write","line":"$\\left[\\frac{y^2}{2}\\right]_0^{20}=\\frac{20^2}{2}-0=200$","on":"代入"},
-            {"do":"write","line":"$19.6\\times200=3920$","on":"再乘"}
-          ] },
-        { "show": ["$W=\\int_0^{20}19.6\\,y\\,dy=3920$ J"],
-          "note": "檢查：重 392 N，重心抬 10 m。",
-          "say": "積分得三千九百二十焦耳。檢查：整條重三百九十二牛頓，重心在中點，抬十公尺，對得上。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$W=\\int_0^{20}19.6\\,y\\,dy$","on":"積分得"},
-            {"do":"transform","line":"$W={{r:3920\\ \\mathrm{J}}}$","color":"green","on":"三千九百二十"},
-            {"do":"write","line":"檢查：$392\\times10=3920$","on":"整條重"}
-          ] }
-      ],
-      "key": "每小段一樣重，抬的距離是 $y$",
-      "check": 2
+            {
+              "do": "write",
+              "line": "重點：積分範圍是有水的地方，距離永遠量到出水口",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "抽水四步驟",
+      "title": "例：圓錐水槽",
       "beats": [
-        { "show": ["① $y$ = 到出水口的距離"],
-          "note": "向下為正；出水口在槽頂上方，要加那一段。",
-          "say": "抽水題四步。第一步設座標：y 是到出水口的距離，往下算正的。",
+        {
+          "show": [
+            "圓錐水槽頂點朝下，高 $4$ m、頂端半徑 $2$ m，裝滿水，從頂端抽出"
+          ],
+          "say": "再一個例子：圓錐形的水槽，頂點朝下，高 4 公尺，頂端半徑 2 公尺，裝滿水，從頂端抽出。",
           "board": [
-            {"do":"write","line":"① ${{y:y}}$ ＝ 到出水口的距離","tint":{"y":"blue"}}
-          ] },
-        { "show": ["原點在出水口，距離最單純"],
-          "note": "出水口高出槽頂，距離要多加那一段。",
-          "say": "原點選在出水口，距離最單純。出水口就在槽頂，距離就是 y；高出一公尺，距離是 y 加一。",
+            {
+              "do": "write",
+              "line": "圓錐水槽頂點朝下，高 $4$ m、頂端半徑 $2$ m，裝滿水，從頂端抽出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1. $y$ 從槽頂往下量；深度 $y$ 處離頂點 $4-y$",
+            "2. 相似形：$\\dfrac{r}{4-y}=\\dfrac{2}{4}$，所以 $r=\\dfrac{4-y}{2}$"
+          ],
+          "say": "一樣從槽頂往下量 y。這次每一片的半徑不一樣：用相似三角形，半徑比高度是 2 比 4，所以半徑是 2 分之 4 減 y。",
           "board": [
-            {"do":"write","line":"出水口在槽頂：距離 ＝ $y$"},
-            {"do":"write","line":"高出 1 m：距離 ＝ $y+1$","on":"高出"}
-          ] },
-        { "show": ["② 在 $y$ 切一片薄層，厚 $dy$"],
-          "note": "體積 = 截面積 $\\times dy$。",
-          "say": "第二步，在 y 切一片厚 dy 的薄層，體積是截面積乘 dy。",
+            {
+              "do": "write",
+              "line": "1. $y$ 從槽頂往下量；深度 $y$ 處離頂點 $4-y$"
+            },
+            {
+              "do": "write",
+              "line": "2. 相似形：$\\dfrac{r}{4-y}=\\dfrac{2}{4}$，所以 $r=\\dfrac{4-y}{2}$",
+              "on": "半徑#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一片的重量：",
+            "$9800\\pi\\Big(\\frac{4-y}{2}\\Big)^2dy=2450\\pi(4-y)^2\\,dy$"
+          ],
+          "say": "那一片的重量是 9800 派乘半徑平方乘 d y，整理成 2450 派乘 4 減 y 的平方。",
           "board": [
-            {"do":"write","line":"② 切薄層：體積 ＝ 截面積 × ${{v:dy}}$"},
-            {"do":"focus","term":"v","on":"體積是"}
-          ] },
-        { "show": ["水平切：同一層距離都是 $y$"],
-          "note": "所以整層可以用同一個距離算。",
-          "say": "為什麼水平切？同一層每一點離出水口一樣遠，整層走同樣的距離，才能用一個 y 代表。",
+            {
+              "do": "write",
+              "line": "一片的重量："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 9800\\pi\\Big(\\frac{4-y}{2}\\Big)^2dy=2450\\pi(4-y)^2\\,dy$",
+              "on": "整理"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. 距離還是 $y$；4. 積分：",
+            "$W=2450\\pi\\int_0^4 y(4-y)^2\\,dy=2450\\pi\\cdot\\frac{64}{3}$"
+          ],
+          "say": "距離還是 y。乘起來積分，y 乘 4 減 y 平方，從 0 積到 4 得到 3 分之 64。",
           "board": [
-            {"do":"write","line":"同一層：距離都是 ${{y3:y}}$"},
-            {"do":"underline","term":"y3","label":"同一個","on":"一個 y"}
-          ] },
-        { "show": ["③ 重量 = $\\rho g\\times$ 體積","④ $W=\\int$ 重量 $\\times$ 距離"],
-          "say": "第三步，重量是密度乘 g 乘體積。第四步，重量乘距離，在水所在的範圍積分。",
+            {
+              "do": "write",
+              "line": "3. 距離還是 $y$；4. 積分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle W=2450\\pi\\int_0^4 y(4-y)^2\\,dy=2450\\pi\\cdot\\frac{64}{3}$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=\\frac{156800\\pi}{3}\\approx1.64\\times10^5\\ \\text{J}$"
+          ],
+          "say": "功是 3 分之 156800 派，大約 16.4 萬焦耳。",
           "board": [
-            {"do":"write","line":"③ 重量 ＝ $\\rho g\\times$ 體積"},
-            {"do":"write","line":"④ $W=\\int$ 重量 × 距離","on":"第四步"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle W=\\frac{156800\\pi}{3}\\approx1.64\\times10^5\\ \\text{J}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "56"
+            },
+            {
+              "do": "write",
+              "line": "　展開 $y(4-y)^2=16y-8y^2+y^3$，積分 $128-\\frac{512}{3}+64=\\frac{64}{3}$",
+              "color": "violet",
+              "on": "16"
+            }
+          ]
+        },
+        {
+          "show": [
+            "形狀變了，只有一片的重量跟著變"
+          ],
+          "say": "水槽的形狀改變，四個步驟都一樣，只有一片的重量要重寫。",
+          "board": [
+            {
+              "do": "write",
+              "line": "形狀變了，只有一片的重量跟著變"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "抽空圓柱水槽",
+      "title": "重點整理",
       "beats": [
-        { "show": ["半徑 1 m、高 4 m，裝滿水"],
-          "note": "$\\rho=1000$，$g=9.8$，從槽頂抽出。",
-          "say": "圓柱水槽，半徑一公尺、高四公尺，裝滿水，要全部從槽頂抽出去。",
+        {
+          "show": [
+            "• 變力：$W=\\int_a^b F(x)\\,dx$（$F$–$x$ 圖下面積）",
+            "• 搬東西：切片，重量 × 移動距離，再積分"
+          ],
+          "say": "整理一下：力在變，就積力；距離在變，就切片，重量乘距離再積分。抽水題記住四步，範圍看有水的地方。",
           "board": [
-            {"do":"write","line":"半徑 1 m、高 4 m，裝滿水"},
-            {"do":"write","line":"$\\rho=1000$，$g=9.8$","on":"裝滿水"},
-            {"do":"write","line":"${{y:y}}$ ＝ 到槽頂的距離","tint":{"y":"blue"},"on":"從槽頂"}
-          ] },
-        { "show": ["圓面積 $=\\pi\\cdot1^2=\\pi$","薄層體積 $=\\pi\\,dy$"],
-          "note": "體積 = 截面積 $\\times$ 厚度。",
-          "say": "半徑一的圓，面積是 pi 乘一的平方，就是 pi。薄層厚 dy，體積是面積乘厚度，所以是 pi dy。",
+            {
+              "do": "write",
+              "line": "• 變力：$W=\\int_a^b F(x)\\,dx$（$F$–$x$ 圖下面積）"
+            },
+            {
+              "do": "write",
+              "line": "• 搬東西：切片，重量 × 移動距離，再積分",
+              "on": "就積"
+            },
+            {
+              "do": "write",
+              "line": "• 鏈條：每片 $19.6\\,dy$，距離 $y$",
+              "on": "切片"
+            },
+            {
+              "do": "write",
+              "line": "• 抽水四步：設座標 → 一片重量 → 移動距離 → 積分",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "• 範圍看有水的地方，距離量到出水口",
+              "on": "範圍"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：彈簧做功"
+          ],
+          "say": "下一課，看最常見的變力：彈簧。",
           "board": [
-            {"do":"write","line":"圓面積 $=\\pi\\cdot1^2=\\pi$"},
-            {"do":"write","line":"體積 ＝ 面積 × 厚 ＝ $\\pi\\,dy$","on":"體積是"}
-          ] },
-        { "show": ["薄層重 $9800\\pi\\,dy$ N，抬 $y$ m"],
-          "note": "截面是半徑 $1$ 的圓：體積 $\\pi\\,dy$。",
-          "say": "深度 y 的薄層，體積 pi dy，重量九千八百 pi dy 牛頓，要抬 y 公尺到槽頂。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"體積 $=\\pi\\,dy$","on":"體積"},
-            {"do":"write","line":"重 $=1000\\cdot9.8\\cdot\\pi\\,dy={{w:9800\\pi\\,dy}}$ N","tint":{"w":"violet"},"on":"重量九千八百"},
-            {"do":"write","line":"抬 ${{y2:y}}$ m 到槽頂","tint":{"y2":"blue"},"on":"要抬"}
-          ] },
-        { "show": ["質量 $=\\rho\\times$ 體積","重量 $=$ 質量 $\\times g$"],
-          "note": "$\\rho=1000$：每 $\\mathrm{m^3}$ 有 1000 kg。",
-          "say": "密度一千是每立方公尺一千公斤。乘體積得質量，再乘 g 得重量，單位是牛頓。",
-          "board": [
-            {"do":"write","line":"質量 ＝ $\\rho\\times$ 體積"},
-            {"do":"write","line":"重量 ＝ 質量 × $g$","on":"再乘"}
-          ] }
-      ],
-      "key": "薄層體積 $\\pi\\,dy$，乘 $\\rho g$ 得重量",
-      "predict": {
-        "ask": "功是？",
-        "options": [
-          {
-            "label": "$\\int_0^4 9800\\pi y\\,dy=78400\\pi$ J",
-            "correct": true
-          },
-          {
-            "label": "$9800\\pi\\cdot 4\\cdot 4$",
-            "why": "那是整槽水都抬 4 m；越上層的水要搬的距離越短。"
-          },
-          {
-            "label": "$1000\\pi\\cdot 8$",
-            "why": "用了質量沒乘 $g=9.8$，單位不是牛頓。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：彈簧做功"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["work-integral", "work"],
-    "fine": ["work-variable-force", "work-slice-lift", "work-pumping"]
+    "coarse": [
+      "work-integral",
+      "work"
+    ],
+    "fine": [
+      "work-variable-force",
+      "work-slice-lift",
+      "work-pumping"
+    ]
   },
   "practice": [
-    { "id": "lec-10-q3c", "core": true, "trains": "work-slice-lift" },
-    { "id": "ap-work-003", "core": true, "trains": "work-slice-lift" },
-    { "id": "lec-10-q3b", "core": true, "trains": "work-pumping" },
-    { "id": "cg-5d-003", "core": true, "trains": "work-variable-force" },
-    { "id": "cg-5d-006", "core": true, "trains": "work-pumping" },
-    { "id": "ap-work-004", "trains": "work-pumping" },
-    { "id": "cg-5d-004", "trains": "work-variable-force" },
-    { "id": "cg-5d-005", "trains": "work-variable-force" },
-    { "id": "cg-5d-007", "challenge": true, "trains": "work-pumping", "note": "挑戰：半滿的球形水槽、出水口高出槽頂，截面積與升高距離都隨高度改變。" }
+    {
+      "id": "lec-10-q3c",
+      "core": true,
+      "trains": "work-slice-lift"
+    },
+    {
+      "id": "ap-work-003",
+      "core": true,
+      "trains": "work-slice-lift"
+    },
+    {
+      "id": "lec-10-q3b",
+      "core": true,
+      "trains": "work-pumping"
+    },
+    {
+      "id": "cg-5d-003",
+      "core": true,
+      "trains": "work-variable-force"
+    },
+    {
+      "id": "cg-5d-006",
+      "core": true,
+      "trains": "work-pumping"
+    },
+    {
+      "id": "ap-work-004",
+      "trains": "work-pumping"
+    },
+    {
+      "id": "cg-5d-004",
+      "trains": "work-variable-force"
+    },
+    {
+      "id": "cg-5d-005",
+      "trains": "work-variable-force"
+    },
+    {
+      "id": "cg-5d-007",
+      "challenge": true,
+      "trains": "work-pumping",
+      "note": "挑戰：半滿的球形水槽、出水口高出槽頂，截面積與升高距離都隨高度改變。"
+    }
   ],
   "gaps": []
 }

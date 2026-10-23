@@ -1,0 +1,510 @@
+{
+  "id": "chain-rule",
+  "title": "連鎖律 I：兩層",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["function-composition", "derivative-power-rules", "derivative-trig", "derivative-exp", "derivative-log", "product-rule"],
+  "next": ["chain-rule-nested"],
+  "related": [],
+  "objectives": [
+    "把一個函數拆成外層與裡層：找「最後一步做的運算」。",
+    "用 $(f(g(x)))' = f'(g(x)) \\cdot g'(x)$ 微分兩層的合成函數。",
+    "分清楚 $\\sin^2 x$ 與 $\\sin(x^2)$、$e^{x^2}$ 與 $e^{2x}$ 這幾對長得像的函數。"
+  ],
+  "visual": "三條平行的數線：x、u = g(x)、y = f(u)。在 x 上取一小段，畫出它被 g 送到 u 線上的那一段、再被 f 送到 y 線上的那一段，旁邊顯示每一段的長度比。把 x 那一段縮小，兩個比值分別趨近 g′(x) 與 f′(u)，總比值趨近兩者相乘。",
+  "concept": [
+    {
+      "heading": "① 裡面不是單純的 $x$",
+      "body": [
+        "$e^{2x}$ 不是 $e^x$。直接套 $(e^x)' = e^x$ 會得到 $e^{2x}$，是錯的。",
+        "用已經會的方法算一次：$e^{2x} = e^x \\cdot e^x$，乘法法則給 $e^x \\cdot e^x + e^x \\cdot e^x = 2e^{2x}$。多出來的 2，正好是裡面 $2x$ 的導數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 人話：變化率相乘",
+      "body": [
+        "寫成兩層：$y = f(u)$，$u = g(x)$。$x$ 動一點點，$u$ 大約動 $g'(x)$ 倍；$u$ 動一點點，$y$ 大約動 $f'(u)$ 倍。所以 $x$ 動一點點，$y$ 大約動 $f'(u) \\cdot g'(x)$ 倍。",
+        "像齒輪：第一個齒輪轉一圈帶第二個轉 3 圈，第二個轉一圈帶第三個轉 2 圈，第一個轉一圈，第三個就轉 6 圈。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 公式",
+      "body": [
+        "外層照公式微分，裡面整包原封不動；再乘上裡層的導數。"
+      ],
+      "tex": ["\\frac{d}{dx}f(g(x))=f'(g(x))\\cdot g'(x)", "\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dx}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 怎麼拆外層、裡層",
+      "body": [
+        "想像拿計算機算這個函數，最後按的那個鍵就是外層。",
+        "$(x^2 + 1)^4$：先算 $x^2 + 1$，最後四次方。外層 $u^4$，裡層 $x^2 + 1$。",
+        "$\\sin^2 x$ 是 $(\\sin x)^2$：最後平方。外層 $u^2$，裡層 $\\sin x$。",
+        "$\\sin(x^2)$：最後取 $\\sin$。外層 $\\sin u$，裡層 $x^2$。",
+        "如果裡層就是單純的 $x$，裡層導數是 1，連鎖律不改變任何事。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 直覺版的推導，以及它漏了什麼",
+      "body": [
+        "常見的推法：$\\frac{\\Delta y}{\\Delta x} = \\left(\\frac{\\Delta y}{\\Delta u}\\right) \\cdot \\left(\\frac{\\Delta u}{\\Delta x}\\right)$，取極限得 $\\frac{dy}{du} \\cdot \\frac{du}{dx}$。這是直覺，不是證明：要除以 $\\Delta u$，就得有 $\\Delta u \\ne 0$。但有些函數在 $x$ 附近 $\\Delta u$ 會一再等於 0（例如 $g$ 是常數，或 $g(x) = x^2 \\sin\\left(\\frac{1}{x}\\right)$、$g(0) = 0$ 在 $x = 0$：$h = \\frac{1}{n\\pi}$ 時 $\\Delta u = g(h) - g(0) = 0$，這樣的 $h$ 要多靠近 0 都有），這時這個寫法根本沒有定義。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "⑥ 證明（用輔助函數避開 $\\Delta u = 0$）",
+      "body": [
+        "設 $g$ 在 $x$ 可微，$f$ 在 $a = g(x)$ 可微。定義 $\\varphi(k) = \\frac{f(a + k) - f(a)}{k}$（$k \\ne 0$），$\\varphi(0) = f'(a)$。因為 $f$ 在 $a$ 可微，$k \\to 0$ 時 $\\varphi(k) \\to f'(a) = \\varphi(0)$，所以 $\\varphi$ 在 0 連續。",
+        "對每一個 $k$（包括 $k = 0$）都有 $f(a + k) - f(a) = \\varphi(k) \\cdot k$：$k \\ne 0$ 是 $\\varphi$ 的定義，$k = 0$ 兩邊都是 0。",
+        "取 $k = g(x + h) - g(x)$，則 $f(g(x + h)) - f(g(x)) = \\varphi(k) \\cdot (g(x + h) - g(x))$。除以 $h$（$h \\ne 0$）：",
+        "$\\frac{f(g(x + h)) - f(g(x))}{h} = \\varphi(k) \\cdot \\frac{g(x + h) - g(x)}{h}$。",
+        "$h \\to 0$：$g$ 在 $x$ 可微所以連續，$k \\to 0$；$\\varphi$ 在 0 連續，所以 $\\varphi(k) \\to \\varphi(0) = f'(g(x))$，就算某些 $h$ 讓 $k = 0$ 也沒關係。第二個因子 $\\to g'(x)$。相乘得 $f'(g(x)) \\cdot g'(x)$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "外層是次方",
+      "prompt": "$\\frac{d}{dx} (x^2 + 1)^4$",
+      "problemId": "fd-der-006",
+      "steps": [
+        "最後一步是四次方。外層 $u^4$，裡層 $u = x^2 + 1$。",
+        "外層微分：$4u^3 = 4(x^2 + 1)^3$，裡面原封不動。",
+        "裡層微分：$(x^2 + 1)' = 2x$。",
+        "相乘：$4(x^2 + 1)^3 \\cdot 2x = 8x(x^2 + 1)^3$。"
+      ],
+      "answer": "$8x(x^2 + 1)^3$",
+      "claim": "D((x^2+1)^4) == 8x*(x^2+1)^3"
+    },
+    {
+      "title": "外層是根號，再代點",
+      "prompt": "$f(x) = \\sqrt{3x + 1}$，求 $f'(1)$",
+      "problemId": "cx-der-007",
+      "steps": [
+        "外層 $\\sqrt{u}$，導數 $\\frac{1}{2\\sqrt{u}}$；裡層 $u = 3x + 1$，導數 3。",
+        "$f'(x) = \\frac{1}{2\\sqrt{3x + 1}} \\cdot 3 = \\frac{3}{2\\sqrt{3x + 1}}$。",
+        "代 $x = 1$：$\\sqrt{4} = 2$，$f'(1) = \\frac{3}{2 \\cdot 2} = \\frac{3}{4}$。"
+      ],
+      "answer": "$\\frac{3}{4}$",
+      "claim": "D(sqrt(3x+1)) == 3/(2*sqrt(3x+1)) ;; D(sqrt(3x+1), 1) == 3/4"
+    },
+    {
+      "title": "$\\sin^2 x$：外層是平方",
+      "prompt": "$\\frac{d}{dx} \\sin^2 x$",
+      "problemId": "der-039",
+      "steps": [
+        "$\\sin^2 x = (\\sin x)^2$，最後一步是平方。外層 $u^2$，裡層 $u = \\sin x$。",
+        "外層微分：$2u = 2 \\sin x$。",
+        "裡層微分：$(\\sin x)' = \\cos x$。",
+        "相乘：$2 \\sin x \\cos x$（也可以寫成 $\\sin 2x$）。"
+      ],
+      "answer": "$2 \\sin x \\cos x$",
+      "note": "比較 $\\sin(x^2)$：外層 $\\sin$、裡層 $x^2$，導數是 $2x \\cos(x^2)$。兩個完全不同。",
+      "claim": "D(sin(x)^2) == 2*sin(x)*cos(x) ;; D(sin(x^2)) == 2x*cos(x^2)"
+    }
+  ],
+  "pitfalls": [
+    "忘了乘裡層的導數：$\\sin 2x$ 微分寫成 $\\cos 2x$。",
+    "外層微分時把裡面也換掉：$(x^2 + 1)^4$ 寫成 $4(2x)^3$。",
+    "把 $\\sin^2 x$ 當成 $\\sin(x^2)$。",
+    "把 $e^{x^2}$ 的導數寫成 $e^{2x}$，或 $2x \\cdot e^{2x}$。",
+    "裡層的導數乘到外層的裡面去：寫成 $\\cos(2 \\cdot 2x)$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{d}{dx} \\sin(5x)$ 是？",
+      "options": [
+        { "label": "$\\cos(5x)$", "why": "外層對了，但忘了乘裡層 $5x$ 的導數 5。" },
+        { "label": "$5 \\cos x$", "why": "外層微分時把裡面換成了 $x$。裡面要原封不動留著 $5x$。" },
+        { "label": "$5 \\cos(5x)$", "correct": true }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} (x^3 + 1)^2$ 是？",
+      "options": [
+        { "label": "$6x^2(x^3 + 1)$", "correct": true },
+        { "label": "$2(x^3 + 1)$", "why": "只做了外層，還要乘裡層 $x^3 + 1$ 的導數 $3x^2$。" },
+        { "label": "$2(3x^2)$", "why": "外層 $u^2$ 微分是 $2u$，$u$ 要留原樣 $x^3 + 1$，不是換成裡層的導數 $3x^2$。" }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} \\sin^2 x$ 是？",
+      "options": [
+        { "label": "$2x \\cos(x^2)$", "why": "這是 $\\sin(x^2)$ 的導數。$\\sin^2 x$ 是 $(\\sin x)^2$，外層是平方。" },
+        { "label": "$2 \\sin x \\cos x$", "correct": true },
+        { "label": "$2 \\sin x$", "why": "外層 $u^2$ 微分得 $2u = 2 \\sin x$ 沒錯，但還要乘裡層 $\\sin x$ 的導數 $\\cos x$。" }
+      ]
+    },
+    {
+      "ask": "$f(x) = e^{x^2}$，$f'(1)$ 是？",
+      "options": [
+        { "label": "$e$", "why": "只做了外層 $e^{x^2}$，忘了乘裡層 $x^2$ 的導數 $2x$。" },
+        { "label": "$e^2$", "why": "把 $e^{x^2}$ 看成了 $e^{2x}$。$f'(x) = 2x e^{x^2}$，代 1 得 $2e$。" },
+        { "label": "$2e$", "correct": true }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "裡面不是單純的 $x$",
+      "beats": [
+        { "show": ["$e^{2x}$ 不是 $e^x$"],
+          "note": "直接套 $(e^x)' = e^x$ 得 $e^{2x}$，是錯的。",
+          "say": "e 的二 x 次方，裡面不是單純的 x。直接照 e 的 x 次方的公式抄，會得到錯的答案。",
+          "board": [
+            {"do":"write","line":"$(e^{{{i:2x}}})'$","tint":{"i":"blue"}},
+            {"do":"focus","term":"i","color":"blue","label":"裡面","on":"裡面"},
+            {"do":"transform","line":"$(e^{{{i:2x}}})' = {{w:e^{2x}}}$","on":"直接照"},
+            {"do":"strike","term":"w","label":"錯","on":"錯的答案"}
+          ] },
+        { "show": ["$e^{2x} = e^x \\cdot e^x$"],
+          "note": "用已經會的乘法法則算一次。",
+          "say": "那就用已經會的方法：把它拆成 e 的 x 次方乘 e 的 x 次方，再用乘法法則。",
+          "board": [
+            {"do":"write","line":"$e^{2x} = {{m:{{p:e^x}} \\cdot {{q:e^x}}}}$","on":"拆成"},
+            {"do":"underline","term":"m","label":"乘法法則","on":"乘法法則"}
+          ] },
+        { "show": ["$e^{2x}$ 比 $e^x$ 陡"],
+          "say": "畫出來看：藍色是 e 的 x 次方，紅色是 e 的二 x 次方。同一個 x，紅色爬得更陡。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,2,-1,8],"curves":[{"expr":"exp(x)","domain":[-1,2],"color":"blue"},{"expr":"exp(2*x)","domain":[-1,2],"color":"red"}]}}
+          ] }
+      ],
+      "predict": {
+        "ask": "乘法法則算出來，$(e^{2x})'$ 是？",
+        "options": [
+          {
+            "label": "$2e^{2x}$",
+            "correct": true
+          },
+          {
+            "label": "$e^{2x}$",
+            "why": "乘法法則有兩項：$e^x \\cdot e^x + e^x \\cdot e^x$，加起來是兩倍。"
+          },
+          {
+            "label": "$e^x$",
+            "why": "兩個因子各自微分還是 $e^x$，但乘法法則是 $f'g + fg'$，不是只微分一次。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "變化率相乘",
+      "beats": [
+        { "show": ["多出來的 2 = 裡面 $2x$ 的導數"],
+          "say": "多出來的那個二，正好是裡面二 x 的導數。這不是巧合。",
+          "board": [
+            {"do":"write","line":"$(e^{2x})' = {{t:2}}\\,e^{2x}$"},
+            {"do":"circle","term":"t","on":"那個二"},
+            {"do":"write","line":"$({{i:2x}})' = {{d:2}}$","tint":{"i":"blue"},"on":"裡面二"},
+            {"do":"arrow","from":"d","to":"t","label":"不是巧合","on":"導數"}
+          ] },
+        { "show": ["$x$ 動一點，$2x$ 動 2 倍"],
+          "note": "外面的 $e$ 再放大，所以多乘 2。",
+          "say": "x 走一小步，裡面的二 x 就走兩倍遠，外面的 e 再放大，所以整個多乘一個二。",
+          "board": [
+            {"do":"write","line":"$x$ 動一點，${{n1:2x}}$ 動 ${{n2:2}}$ 倍"},
+            {"do":"circle","term":"n2","on":"整個多乘"}
+          ] },
+        { "show": ["$y = f(u)$，$u = g(x)$"],
+          "note": "寫成兩層。",
+          "say": "把函數寫成兩層：x 先變成 u，u 再變成 y。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y = f({{u:u}})$","tint":{"u":"blue"},"on":"寫成"},
+            {"do":"write","line":"${{u:u}} = g(x)$","on":"x 先變成"}
+          ] },
+        { "show": ["$x$ 動一點，$u$ 動 $g'(x)$ 倍","$u$ 動一點，$y$ 動 $f'(u)$ 倍"],
+          "say": "x 動一點點，u 大約動 g prime 倍；u 動一點點，y 大約動 f prime 倍。兩個倍數乘起來。",
+          "board": [
+            {"do":"write","line":"$x$ 動一點，$u$ 動 ${{gp:g'(x)}}$ 倍","tint":{"gp":"blue"}},
+            {"do":"write","line":"$u$ 動一點，$y$ 動 ${{fp:f'(u)}}$ 倍","tint":{"fp":"violet"},"on":"u 動一點點"},
+            {"do":"circle","term":"gp","color":"blue","on":"兩個倍數"},
+            {"do":"circle","term":"fp","color":"violet","on":"乘起來"}
+          ] },
+        { "show": ["放大再放大：倍數相乘"],
+          "note": "不是相加。",
+          "say": "為什麼是乘不是加？放大是一層接一層，先放大一次，結果再放大一次，所以倍數相乘。",
+          "board": [
+            {"do":"write","line":"${{n3:f'(u)\\cdot g'(x)}}$"},
+            {"do":"write","line":"${{n4:f'(u)+g'(x)}}$","on":"不是加"},
+            {"do":"strike","term":"n4","label":"錯","on":"一層接一層"}
+          ] },
+        { "show": ["齒輪：3 圈、2 圈"],
+          "note": "第一個帶第二個轉 3 圈，第二個帶第三個轉 2 圈。",
+          "say": "像齒輪：第一個轉一圈，第二個轉三圈；第二個轉一圈，第三個轉兩圈。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"齒輪：${{a:3}}$ 圈、${{b:2}}$ 圈","on":"像齒輪"},
+            {"do":"focus","term":"a","label":"第一帶第二","on":"三圈"},
+            {"do":"focus","term":"b","label":"第二帶第三","on":"兩圈"}
+          ] }
+      ],
+      "predict": {
+        "ask": "第一個齒輪轉一圈，第三個轉幾圈？",
+        "options": [
+          {
+            "label": "6 圈",
+            "correct": true
+          },
+          {
+            "label": "5 圈",
+            "why": "倍數要相乘，不是相加：第二個每轉一圈第三個轉 2 圈，第二個轉了 3 圈。"
+          },
+          {
+            "label": "3 圈",
+            "why": "3 圈是第二個齒輪；還要再乘第二個帶第三個的 2 倍。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$\\frac{d}{dx}f(g(x))=f'(g(x))\\cdot g'(x)$"],
+          "say": "寫成公式：外層的導數，裡面整包原封不動，再乘上裡層的導數。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}f(g(x))={{o:f'}}({{j:g(x)}})\\cdot {{d:g'(x)}}$","tint":{"o":"violet","j":"blue","d":"blue"}},
+            {"do":"box","term":"o","color":"violet","label":"外層","on":"外層的導數"},
+            {"do":"underline","term":"j","color":"blue","label":"原封不動","on":"整包"},
+            {"do":"circle","term":"d","color":"blue","label":"裡層","on":"裡層的導數"}
+          ] },
+        { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dx}$"],
+          "note": "這是直覺；證明在最後一節。",
+          "say": "也可以寫成 d y d u 乘 d u d x。看起來像約分，但那只是直覺，不是證明。",
+          "board": [
+            {"do":"write","line":"$\\frac{dy}{dx}=\\frac{dy}{{{a:du}}}\\cdot\\frac{{{b:du}}}{dx}$"},
+            {"do":"strike","term":"a","on":"約分"},
+            {"do":"strike","term":"b","label":"只是直覺","on":"直覺"}
+          ] },
+        { "show": ["約分要 $\\Delta u \\ne 0$"],
+          "note": "直覺：看起來合理。證明：每步有理由。",
+          "say": "約分要求分母不是零。可是 delta u 是 u 的變化量，有時就是零，那就不能約。所以要證明。",
+          "board": [
+            {"do":"write","line":"約分要求 ${{n5:\\Delta u}} \\ne 0$"},
+            {"do":"underline","term":"n5","color":"red","label":"可能是 0","on":"有時就是零"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "外層是次方",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} (x^2 + 1)^4$"],
+          "note": "外層 $u^4$，裡層 $u = x^2 + 1$。",
+          "say": "最後一步是四次方，所以外層是 u 的四次方，裡層是 x 平方加一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\,{{i:(x^2+1)}}^{{{n:4}}}$","tint":{"i":"blue","n":"violet"}},
+            {"do":"focus","term":"n","color":"violet","label":"外層","on":"外層是"},
+            {"do":"underline","term":"i","color":"blue","label":"裡層","on":"裡層是"}
+          ] },
+        { "show": ["外層：$4(x^2 + 1)^3$"],
+          "note": "裡面原封不動。",
+          "say": "外層微分：四乘 u 的三次方，u 還是原本的 x 平方加一，不要換掉。",
+          "board": [
+            {"do":"transform","line":"${{n:4}}\\,{{i:(x^2+1)}}^{3}$","on":"四乘"},
+            {"do":"underline","term":"i","color":"blue","label":"原封不動","on":"原本的"}
+          ] },
+        { "show": ["裡層：$(x^2 + 1)' = 2x$"],
+          "say": "裡層 x 平方加一，導數是二 x。",
+          "board": [
+            {"do":"write","line":"${{i:(x^2+1)}}' = {{d:2x}}$"},
+            {"do":"circle","term":"d","color":"blue","on":"二 x"}
+          ] },
+        { "show": ["$4(x^2 + 1)^3 \\cdot 2x = 8x(x^2 + 1)^3$"],
+          "say": "兩個相乘，整理成八 x 乘 x 平方加一的三次方。",
+          "board": [
+            {"do":"write","line":"${{n:4}}{{i:(x^2+1)}}^3 \\cdot {{d:2x}}$"},
+            {"do":"transform","line":"${{e:8x}}\\,{{i:(x^2+1)}}^3$","on":"整理成"},
+            {"do":"box","term":"e","color":"green","on":"八 x"}
+          ] }
+      ],
+      "key": "外層微完，別忘了乘裡層的導數",
+      "solve": {
+        "check": 1,
+        "kind": "expression",
+        "answer": "6x^2(x^3+1)",
+        "claim": "D((x^3+1)^2) == ANS",
+        "hint": "外層 $u^2$ 微完，還要乘裡層的導數。",
+        "steps": [
+          "外層 $u^2$：$2(x^3 + 1)$",
+          "裡層：$(x^3 + 1)' = 3x^2$",
+          "相乘：$2(x^3 + 1) \\cdot 3x^2 = 6x^2(x^3 + 1)$"
+        ],
+        "wrong": [
+          {
+            "answer": "2(x^3+1)",
+            "why": "只做了外層，還要乘裡層 $x^3 + 1$ 的導數 $3x^2$。"
+          },
+          {
+            "answer": "6x^2",
+            "why": "外層 $u^2$ 微分是 $2u$，$u$ 要留原樣 $x^3 + 1$，不是換成裡層的導數 $3x^2$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "怎麼拆外層、裡層",
+      "beats": [
+        { "show": ["最後按的那個鍵 = 外層"],
+          "note": "想像拿計算機算這個函數。",
+          "say": "怎麼分外層裡層？想像拿計算機算，最後按的那個鍵就是外層。",
+          "board": [
+            {"do":"write","line":"最後按的那個鍵 ＝ 外層","on":"最後按"}
+          ] },
+        { "show": ["$\\sin^2 x = (\\sin x)^2$"],
+          "note": "最後平方：外層 $u^2$，裡層 $\\sin x$。",
+          "say": "sine 平方 x，先算 sine x，最後才平方，所以外層是平方，裡層是 sine x。",
+          "board": [
+            {"do":"write","line":"$\\sin^2 x = ({{i:\\sin x}})^{{{o:2}}}$","tint":{"i":"blue","o":"violet"}},
+            {"do":"focus","term":"o","color":"violet","label":"外層","on":"最後才平方"},
+            {"do":"underline","term":"i","color":"blue","label":"裡層","on":"裡層是"}
+          ] },
+        { "show": ["$2 \\sin x \\cdot \\cos x$"],
+          "note": "外層 $2u$，乘裡層導數 $\\cos x$。",
+          "say": "外層微分得二倍的 sine x，再乘裡層的導數 cosine x。",
+          "board": [
+            {"do":"write","line":"$2{{i:\\sin x}} \\cdot {{d:\\cos x}}$","tint":{"d":"blue"},"on":"外層微分"},
+            {"do":"underline","term":"d","color":"blue","label":"裡層的導數","on":"cosine"}
+          ] },
+        { "show": ["$\\sin(x^2)$：$2x \\cos(x^2)$"],
+          "note": "最後取 $\\sin$：外層 $\\sin u$，裡層 $x^2$。",
+          "say": "對照 sine x 平方：最後按的是 sine，外層是 sine、裡層是 x 平方，答案完全不同。",
+          "board": [
+            {"do":"write","line":"$\\sin({{q:x^2}})$：$2x \\cos(x^2)$","tint":{"q":"blue"},"on":"對照"},
+            {"do":"underline","term":"q","color":"blue","label":"裡層","on":"裡層是"}
+          ] }
+      ],
+      "key": "先認外層：最後才做的那個運算",
+      "check": 2
+    },
+    {
+      "title": "根號，再代點",
+      "beats": [
+        { "show": ["$f(x) = \\sqrt{3x + 1}$，求 $f'(1)$"],
+          "note": "外層 $\\sqrt{u}$，裡層 $3x + 1$。",
+          "say": "根號三 x 加一，最後一步是開根號。外層是根號 u，裡層是三 x 加一。",
+          "board": [
+            {"do":"write","line":"$f(x) = \\sqrt{{{i:3x + 1}}}$，求 $f'(1)$","tint":{"i":"blue"}},
+            {"do":"underline","term":"i","color":"blue","label":"裡層","on":"裡層是"}
+          ] },
+        { "show": ["$\\frac{1}{2\\sqrt{3x + 1}} \\cdot 3$"],
+          "note": "根號的導數 $\\frac{1}{2\\sqrt{u}}$；裡層導數 3。",
+          "say": "根號 u 的導數是二倍根號 u 分之一，再乘裡層的導數三。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{2\\sqrt{{{i:3x + 1}}}} \\cdot {{d:3}}$","tint":{"d":"blue"},"on":"根號 u 的導數"},
+            {"do":"circle","term":"d","color":"blue","label":"裡層的導數","on":"裡層的導數"}
+          ] },
+        { "show": ["$f'(1) = \\frac{3}{2 \\cdot 2} = \\frac{3}{4}$"],
+          "note": "$x = 1$：$\\sqrt{4} = 2$。",
+          "say": "先求導數再代點：x 等於一，根號四是二，所以答案是四分之三。",
+          "board": [
+            {"do":"write","line":"$x = 1$：$\\sqrt{4} = 2$","on":"x 等於一"},
+            {"do":"write","line":"$f'(1) = \\frac{3}{2 \\cdot 2} = {{r:\\frac{3}{4}}}$","on":"所以答案"},
+            {"do":"box","term":"r","color":"green","on":"四分之三"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明：不除以 $\\Delta u$",
+      "beats": [
+        { "show": ["造一個 $\\varphi$，不必除以 $\\Delta u$"],
+          "say": "策略：直覺版要除以 delta u，可是 delta u 可能一再等於零。改造一個輔助函數 phi，根本不除。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\Delta y}{{{u:\\Delta u}}}\\cdot\\frac{\\Delta u}{\\Delta x}$","on":"直覺版"},
+            {"do":"strike","term":"u","label":"可能是 0","on":"可能一再"},
+            {"do":"write","line":"改造一個 $\\varphi$","on":"改造"}
+          ] },
+        { "show": ["$\\varphi(k)=\\frac{f(a+k)-f(a)}{k}$，$\\varphi(0)=f'(a)$"],
+          "note": "$a=g(x)$；$\\varphi(k)\\to f'(a)=\\varphi(0)$。",
+          "why": {"ask":"為什麼 $\\varphi$ 在 $0$ 連續？","say":"phi 在零補上 f prime a。這樣補，為什麼 phi 在零連續？","options":[{"label":"$f$ 在 $a$ 可微，$\\varphi(k)\\to f'(a)$","correct":true},{"label":"$g$ 在 $x$ 可微","why":"拿錯函數了：$\\varphi$ 只跟 $f$ 有關，要的是 $f$ 在 $a$ 可微。"},{"label":"$\\varphi$ 是分式，分式都連續","why":"分式在 $k=0$ 沒有定義；$\\varphi(0)$ 是補上的值，補得剛好靠的是可微。"}]},
+          "say": "f 在 a 可微，k 趨近零時 phi of k 趨近 f prime a，正好是補上的值，所以 phi 在零連續。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\varphi(k)=\\frac{f(a+k)-f(a)}{k}$","on":"phi 在零#1"},
+            {"do":"write","line":"${{z:\\varphi(0)=f'(a)}}$","on":"補上"},
+            {"do":"write","line":"$k\\to0$：$\\varphi(k)\\to {{fa:f'(a)}}$","why":true,"on":"k 趨近零"},
+            {"do":"box","term":"z","why":true,"color":"green","label":"補得剛好","on":"正好是"}
+          ] },
+        { "show": ["$f(a+k)-f(a)=\\varphi(k)\\cdot k$（含 $k=0$）"],
+          "say": "k 不是零，這就是 phi 的定義；k 是零，兩邊都是零。這條式子沒有除法，k 等於零也不怕。",
+          "board": [
+            {"do":"write","line":"$f(a+k)-f(a)={{pk:\\varphi(k)\\cdot k}}$"},
+            {"do":"underline","term":"pk","label":"沒有除法","on":"沒有除法"}
+          ] },
+        { "show": ["取 $k=g(x+h)-g(x)$，除以 $h$：","$\\varphi(k)\\cdot\\frac{g(x+h)-g(x)}{h}$"],
+          "say": "取 k 等於 g 的變化量，左邊就是合成函數的變化。除以 h，右邊是 phi of k 乘 g 的差商。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"取 $k=g(x+h)-g(x)$，除以 $h$","on":"取 k"},
+            {"do":"write","line":"${{p:\\varphi(k)}}\\cdot{{q:\\frac{g(x+h)-g(x)}{h}}}$","on":"右邊是"}
+          ] },
+        { "show": ["$h\\to0$：$k\\to0$，$\\varphi(k)\\to f'(g(x))$"],
+          "note": "$g$ 連續，$k\\to0$；$\\varphi$ 在 $0$ 連續。",
+          "why": {"ask":"某些 $h$ 讓 $k=0$，為什麼沒關係？","say":"有些 h 會讓 k 剛好是零。為什麼這次沒關係？","options":[{"label":"$\\varphi$ 在 $0$ 有定義，而且連續","correct":true},{"label":"$h$ 夠小時 $k$ 就不會是 $0$","why":"不一定：$g(x)=x^2\\sin\\left(\\frac{1}{x}\\right)$ 的 $k$ 一再等於 0，所以才要 $\\varphi$。"},{"label":"那種 $h$ 只有幾個，略過就好","why":"可以有無限多個，要多靠近 0 都有；靠的是 $\\varphi(0)$ 補得剛好。"}]},
+          "say": "g 連續，k 趨近零；phi 在零有定義又連續，k 剛好是零也照樣趨近 f prime 在 g x 的值。",
+          "board": [
+            {"do":"write","line":"$h\\to0$：$k\\to0$，${{p:\\varphi(k)}}\\to{{f:f'(g(x))}}$"},
+            {"do":"circle","term":"p","why":true,"label":"在 0 連續","on":"有定義又連續"}
+          ] },
+        { "show": ["相乘：$f'(g(x))\\cdot g'(x)$"],
+          "say": "第二個因子是 g 的差商，趨近 g prime x。兩個相乘，就是連鎖律。證完。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"相乘：${{r:{{f:f'(g(x))}}\\cdot g'(x)}}$","on":"兩個相乘"},
+            {"do":"box","term":"r","color":"green","label":"連鎖律","on":"就是連鎖律"}
+          ] }
+      ],
+      "key": "$\\Delta u$ 可能為 $0$：把差商補成 $\\varphi(k)$",
+      "proof": true,
+      "of": 5,
+      "skeleton": "構造",
+      "where": {
+        "ask": "「$f$ 在 $a$ 可微」用在哪一步？",
+        "steps": [
+          {
+            "label": "$\\varphi$ 在 $0$ 連續",
+            "correct": true
+          },
+          {
+            "label": "$f(a+k)-f(a)=\\varphi(k)\\cdot k$",
+            "why": "這只用到 $\\varphi$ 的定義；$k=0$ 時兩邊都是 0。"
+          },
+          {
+            "label": "$h\\to0$ 時 $k\\to0$",
+            "why": "這靠的是 $g$ 在 $x$ 連續（$g$ 可微）。"
+          },
+          {
+            "label": "$\\frac{g(x+h)-g(x)}{h}\\to g'(x)$",
+            "why": "這是 $g$ 在 $x$ 可微。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["chain-rule"],
+    "fine": ["chain-rule-linear-inner", "chain-rule-power-outer", "chain-rule-function-outer", "chain-rule-at-point"]
+  },
+  "practice": [
+    { "id": "tmpl-der-sin-001", "core": true, "trains": "chain-rule-linear-inner" },
+    { "id": "fd-der-003", "core": true, "trains": "chain-rule-linear-inner" },
+    { "id": "fd-der-004", "core": true, "trains": "chain-rule-linear-inner" },
+    { "id": "fd-der-006", "core": true, "trains": "chain-rule-power-outer" },
+    { "id": "fd-der-011", "core": true, "trains": "chain-rule-function-outer" },
+    { "id": "lec-03-m2", "core": true, "trains": "chain-rule-function-outer" },
+    { "id": "cx-der-007", "core": true, "trains": "chain-rule-at-point" },
+    { "id": "der-039", "core": true, "trains": "chain-rule-power-outer" },
+    { "id": "cx-der-003", "trains": "chain-rule-at-point" },
+    { "id": "tmpl-der-chain-exp-001", "trains": "chain-rule-function-outer" },
+    { "id": "db-chain-004", "trains": "chain-rule-function-outer" },
+    { "id": "der-026", "challenge": true, "trains": "chain-rule-linear-inner", "note": "挑戰：外層是乘法，先用乘法法則；$\\sin(3x)$ 那一項再用連鎖律。" }
+  ],
+  "gaps": []
+}

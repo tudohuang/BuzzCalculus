@@ -1,52 +1,121 @@
 {
   "id": "indefinite-integral",
   "title": "不定積分",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["antiderivative"],
-  "next": ["integral-table"],
-  "related": ["u-sub-basic", "integration-by-parts", "derivative-log", "riemann-sum-notation"],
+  "prerequisites": [
+    "antiderivative"
+  ],
+  "next": [
+    "integral-table"
+  ],
+  "related": [
+    "u-sub-basic",
+    "integration-by-parts",
+    "derivative-log",
+    "riemann-sum-notation"
+  ],
   "objectives": [
-    "讀得懂 $\\int f(x)\\,dx=F(x)+C$ 每個符號的意思。",
-    "會用線性把積分拆成一項一項，並知道乘積不能這樣拆。",
-    "會先把式子化簡成冪次的和再積；知道 $\\int\\frac{1}{x}\\,dx=\\ln|x|+C$。"
+    "讀得懂 $\\int f(x)\\,dx=F(x)+C$ 每個符號的意思",
+    "會用線性把積分拆成一項一項，並知道乘積不能這樣拆",
+    "會先把式子化簡成冪次的和再積",
+    "知道 $\\int\\frac{1}{x}\\,dx=\\ln|x|+C$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 一個記號，代表一整族",
+      "heading": "① 一個記號，一整族",
       "body": [
-        "$\\int f(x)\\,dx=F(x)+C$ 的意思是：$f$ 的反導函數全部都長成 $F(x)+C$。這叫做 $f$ 的不定積分。",
-        "$\\int$ 是積分號，$f(x)$ 是被積函數，$dx$ 說明「對 $x$ 積分」，也就是 $x$ 是變數。$\\int xt\\,dx=\\frac{tx^2}{2}+C$，而 $\\int xt\\,dt=\\frac{xt^2}{2}+C$：$dx$ 換成 $dt$，答案就不一樣。",
-        "為什麼長成一個拉長的 $S$ 加上 $dx$，要到〈用和式寫定積分〉才看得出來；目前把它當成記號就好。"
+        "上一課：$f$ 的反導函數全部是 $F(x)+C$",
+        "• $\\displaystyle\\int$：積分號（拉長的 S，來自「和」）",
+        "• $f(x)$：被積函數",
+        "• $dx$：對 $x$ 積分（變數是 $x$）",
+        "• $C$：積分常數，代表一整族",
+        "為什麼是 S、為什麼有 $dx$：學到定積分與 Riemann 和就會明白",
+        "例：$\\displaystyle\\int 6x^2\\,dx=2x^3+C$",
+        "它說的是一句微分：",
+        "不寫 $+C$ 就不完整：只寫出了其中一個"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int f(x)\\,dx=F(x)+C",
+        "\\frac{d}{dx}\\big(2x^3+C\\big)=6x^2"
+      ]
     },
     {
       "heading": "② 可以一項一項積",
       "body": [
-        "因為微分可以一項一項做，積分也可以：$\\int(f+g)\\,dx=\\int f\\,dx+\\int g\\,dx$，常數倍可以提出來：$\\int kf\\,dx=k\\int f\\,dx$。",
-        "每一項各有一個常數，加起來還是一個常數，所以最後只寫一個 $C$。"
+        "微分是線性的：$(aF+bG)'=aF'+bG'$。倒過來：",
+        "$a$、$b$ 是常數；各項的常數合併成一個 $C$",
+        "為什麼對？把右邊微分：$aF'+bG'=af+bg$，正好是左邊的被積函數",
+        "冪次規則：",
+        "例：$\\displaystyle\\int(3x^2-4x+5)\\,dx$",
+        "一項一項：",
+        "檢查：$(x^3-2x^2+5x)'=3x^2-4x+5$"
       ],
-      "tex": ["\\int \\big(a f(x) + b g(x)\\big)\\,dx = a\\int f(x)\\,dx + b\\int g(x)\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\int\\big(af+bg\\big)\\,dx=a\\!\\int\\! f\\,dx+b\\!\\int\\! g\\,dx",
+        "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\quad(n\\ne-1)",
+        "=3\\cdot\\frac{x^3}{3}-4\\cdot\\frac{x^2}{2}+5x+C",
+        "=x^3-2x^2+5x+C"
+      ]
     },
     {
       "heading": "③ 乘積不能拆",
       "body": [
-        "$\\int x\\cdot x\\,dx$ 不是 $\\left(\\frac{x^2}{2}\\right)\\left(\\frac{x^2}{2}\\right)$。微分的乘法法則不是「各自微分再相乘」，積分也沒有這種拆法。",
-        "能做的是先把式子乘開、拆開，變成冪次的和：$\\int x\\cdot x\\,dx=\\int x^2\\,dx=\\frac{x^3}{3}+C$。處理乘積的正式工具在後面（〈換元：基礎〉、〈分部積分推導〉）。"
+        "反例：$f=g=x$",
+        "• 左邊：$\\displaystyle\\int x\\cdot x\\,dx=\\int x^2\\,dx=\\frac{x^3}{3}+C$",
+        "• 右邊：$\\dfrac{x^2}{2}\\cdot\\dfrac{x^2}{2}=\\dfrac{x^4}{4}$",
+        "原因：微分的乘法規則是 $(FG)'=F'G+FG'$，不是 $F'G'$",
+        "處理乘積的方法（代換、分部積分）在後面幾章",
+        "今天的辦法：先乘開，變成冪次的和",
+        "例：$\\displaystyle\\int\\sqrt{x}\\,(x+1)\\,dx$",
+        "$\\sqrt x=x^{1/2}$，乘開：$x^{3/2}+x^{1/2}$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int f(x)g(x)\\,dx\\ \\ne\\ \\int f\\,dx\\cdot\\int g\\,dx",
+        "=\\frac{x^{5/2}}{5/2}+\\frac{x^{3/2}}{3/2}+C",
+        "=\\frac25x^{5/2}+\\frac23x^{3/2}+C"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "先化簡、再積的常見樣子：",
+        "• 乘積：乘開，例 $(x+1)^2=x^2+2x+1$",
+        "• 分式（分母一項）：逐項除",
+        "• 根號：寫成分數次方",
+        "化簡之後，每一項都是 $ax^n$，就能套冪次規則"
+      ]
     },
     {
       "heading": "④ 唯一的例外：$\\frac{1}{x}$",
       "body": [
-        "冪次公式 $\\frac{x^{n+1}}{n+1}$ 在 $n=-1$ 要除以 $0$，不能用。但 $\\frac{1}{x}$ 還是有反導函數：〈對數函數微分〉說 $(\\ln x)'=\\frac{1}{x}$。",
-        "$x<0$ 時 $\\ln x$ 沒有定義，而 $(\\ln(-x))'=\\frac{-1}{-x}=\\frac{1}{x}$。兩邊合起來寫成 $\\ln|x|$。"
+        "冪次規則在 $n=-1$ 不能用：$\\dfrac{x^0}{0}$ 沒有意義",
+        "誰的導數是 $\\dfrac1x$？$(\\ln x)'=\\dfrac1x$，但只在 $x>0$",
+        "$x<0$：$\\big(\\ln(-x)\\big)'=\\dfrac{1}{-x}\\cdot(-1)=\\dfrac1x$",
+        "兩邊合起來：",
+        "嚴格說，$x>0$ 與 $x<0$ 是兩個區間，各自可以有不同的常數",
+        "例：$\\displaystyle\\int\\frac{x^2+1}{x}\\,dx$",
+        "先拆開：$\\dfrac{x^2+1}{x}=x+\\dfrac1x$",
+        "檢查：$\\left(\\dfrac{x^2}{2}+\\ln|x|\\right)'=x+\\dfrac1x$"
       ],
-      "tex": ["\\int \\frac{1}{x}\\,dx = \\ln|x| + C"],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac1x\\,dx=\\ln|x|+C",
+        "=\\frac{x^2}{2}+\\ln|x|+C"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\int f(x)\\,dx=F(x)+C$：$f$ 的所有反導函數",
+        "• 線性：加減可以拆，常數可以提出去",
+        "• $\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C$（$n\\ne-1$）",
+        "• 乘積、商不能拆：先乘開、逐項除、寫成冪次",
+        "• $\\int\\frac1x\\,dx=\\ln|x|+C$",
+        "• 答案都可以微分回去檢查",
+        "下一課：基本積分表"
+      ]
     }
   ],
   "workedExamples": [
@@ -95,35 +164,66 @@
   ],
   "checks": [
     {
-      "ask": "$\\int(4x^3+2)\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\left(x^3-\\frac{2}{x^2}\\right)dx=$？",
       "options": [
-        { "label": "$x^4+2x+C$", "correct": true },
-        { "label": "$x^4+2+C$", "why": "常數 $2$ 的反導函數是 $2x$：$(2x)'=2$。你把常數項照抄了。" },
-        { "label": "$12x^2+C$", "why": "$12x^2$ 是 $4x^3$ 的導數，你往前微分了。" }
+        {
+          "label": "$\\dfrac{x^4}{4}+\\dfrac{2}{x}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{x^4}{4}-\\dfrac{2}{x}+C$",
+          "why": "除以 $-1$ 時漏了負號"
+        },
+        {
+          "label": "$\\dfrac{x^4}{4}-2\\ln x^2+C$",
+          "why": "$\\frac1{x^2}$ 不是 $\\frac1x$，冪次規則照用"
+        },
+        {
+          "label": "$3x^2+\\dfrac{4}{x^3}+C$",
+          "why": "這是微分，方向反了"
+        }
       ]
     },
     {
-      "ask": "$\\int x\\cdot x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{x-1}{\\sqrt x}\\,dx=$？",
       "options": [
-        { "label": "$\\frac{x^3}{3}+C$", "correct": true },
-        { "label": "$\\frac{x^4}{4}+C$", "why": "你把兩個 $x$ 各自積成 $\\frac{x^2}{2}$ 再相乘。積分不能拆乘法，要先乘成 $x^2$ 再積。" },
-        { "label": "$x^2+C$", "why": "$x\\cdot x=x^2$ 只是化簡，還沒積分；$(x^2)'=2x$，不是 $x^2$。" }
+        {
+          "label": "$\\dfrac23x^{3/2}-2x^{1/2}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\frac12x^2-x}{\\frac23x^{3/2}}+C$",
+          "why": "分子、分母各自積再相除：除法跟乘法一樣不能拆"
+        },
+        {
+          "label": "$\\dfrac23x^{3/2}+2x^{1/2}+C$",
+          "why": "$-x^{-1/2}$ 積出來是 $-2x^{1/2}$，負號掉了"
+        },
+        {
+          "label": "$\\dfrac12x^{-1/2}+\\dfrac12x^{-3/2}+C$",
+          "why": "這是微分，方向反了"
+        }
       ]
     },
     {
-      "ask": "$\\int\\frac{1}{x}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{3}{x}\\,dx=$？",
       "options": [
-        { "label": "$\\ln|x|+C$", "correct": true },
-        { "label": "不存在，因為冪次公式要除以 $0$", "why": "公式不適用，不代表沒有反導函數：$(\\ln|x|)'=\\frac{1}{x}$。" },
-        { "label": "$\\ln x+C$", "why": "$\\frac{1}{x}$ 在 $x<0$ 也有定義，$\\ln x$ 在那裡卻沒有定義；加上絕對值才兩邊都涵蓋。" }
-      ]
-    },
-    {
-      "ask": "$\\int xt\\,dx$ 裡的 $dx$ 告訴你什麼？",
-      "options": [
-        { "label": "$x$ 是積分的變數，$t$ 當常數", "correct": true },
-        { "label": "沒有意義，可以省略", "why": "$\\int xt\\,dx=\\frac{tx^2}{2}+C$，$\\int xt\\,dt=\\frac{xt^2}{2}+C$，答案不同。省略 $dx$ 就不知道誰是變數。" },
-        { "label": "一個很小的數，可以跟分母的 $x$ 隨便約掉", "why": "目前 $dx$ 是記號，說明對誰積分。它在換元時的用法有連鎖律當根據，不是一般的數。" }
+        {
+          "label": "$3\\ln|x|+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{3x^0}{0}+C$",
+          "why": "$n=-1$ 正是冪次規則不能用的情況"
+        },
+        {
+          "label": "$-\\dfrac{3}{x^2}+C$",
+          "why": "這是 $\\frac3x$ 的導數，方向反了"
+        },
+        {
+          "label": "$3\\ln x+C$",
+          "why": "少了絕對值：$x<0$ 時 $\\ln x$ 沒有定義"
+        }
       ]
     }
   ],
@@ -131,225 +231,760 @@
     {
       "title": "一個記號，一整族",
       "beats": [
-        { "show": ["$\\int f(x)\\,dx=F(x)+C$"],
-          "note": "$f$ 的反導函數全部，叫 $f$ 的不定積分。",
-          "say": "上一課找到的一整族反導函數，用一個記號寫成 F 加 C，叫做 f 的不定積分。",
+        {
+          "show": [
+            "上一課：$f$ 的反導函數全部是 $F(x)+C$"
+          ],
+          "say": "上一課知道：只要找到一個反導函數 F，全部的反導函數就是 F 加 C。這一整族，我們給它一個記號。",
           "board": [
-            {"do":"write","line":"$\\int {{fx:f(x)}}\\,dx={{cap:F(x)+C}}$"},
-            {"do":"underline","term":"cap","label":"一整族","on":"一整族"}
-          ] },
-        { "show": ["積分號 $\\int$、被積函數 $f(x)$、$dx$"],
-          "note": "$dx$ 說明「對 $x$ 積分」。",
-          "say": "長長的 S 是積分號，中間是被積函數，最後的 dx 告訴你：變數是 x。",
+            {
+              "do": "write",
+              "line": "上一課：$f$ 的反導函數全部是 $F(x)+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int f(x)\\,dx=F(x)+C$"
+          ],
+          "say": "寫成積分 f of x d x，等於 F of x 加 C。這叫做 f 的不定積分。",
           "board": [
-            {"do":"write","line":"${{s:\\int}}\\,{{fx:f(x)}}\\,{{d:dx}}$"},
-            {"do":"focus","term":"s","label":"積分號","on":"積分號"},
-            {"do":"circle","term":"fx","label":"被積函數","on":"被積函數"},
-            {"do":"underline","term":"d","label":"變數是 x","on":"dx"}
-          ] },
-        { "show": ["$\\int xt\\,dx=\\frac{tx^2}{2}+C$","$\\int xt\\,dt=\\frac{xt^2}{2}+C$"],
-          "note": "$dx$ 換成 $dt$，答案就不一樣。",
-          "say": "同一個 x 乘 t，對 x 積分時 t 是常數；換成對 t 積分，x 變成常數，答案就不一樣。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int f(x)\\,dx=F(x)+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\displaystyle\\int$：積分號（拉長的 S，來自「和」）",
+            "• $f(x)$：被積函數"
+          ],
+          "say": "每個符號的意思：長長的 S 是積分號；中間的 f of x 叫被積函數；d x 說明變數是 x；C 是積分常數，提醒我們答案是一整族。",
           "board": [
-            {"do":"write","line":"$\\int xt\\,{{a:dx}}=\\frac{tx^2}{2}+C$"},
-            {"do":"focus","term":"a","label":"t 是常數","on":"t 是常數"},
-            {"do":"write","line":"$\\int xt\\,{{b:dt}}=\\frac{xt^2}{2}+C$","on":"換成"},
-            {"do":"focus","term":"b","label":"x 是常數","on":"x 變成常數"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int$：積分號（拉長的 S，來自「和」）"
+            },
+            {
+              "do": "write",
+              "line": "• $f(x)$：被積函數",
+              "on": "是積#1"
+            },
+            {
+              "do": "write",
+              "line": "• $dx$：對 $x$ 積分（變數是 $x$）",
+              "on": "叫被"
+            },
+            {
+              "do": "write",
+              "line": "• $C$：積分常數，代表一整族",
+              "on": "說明"
+            },
+            {
+              "do": "write",
+              "line": "　為什麼是 S、為什麼有 $dx$：學到定積分與 Riemann 和就會明白",
+              "color": "violet",
+              "on": "常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int 6x^2\\,dx=2x^3+C$"
+          ],
+          "say": "例如：積分 6 x 平方 d x，等於 2 x 三次方加 C。這跟上一課說的「6 x 平方的所有反導函數」是同一件事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int 6x^2\\,dx=2x^3+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它說的是一句微分：",
+            "$\\frac{d}{dx}\\big(2x^3+C\\big)=6x^2$"
+          ],
+          "say": "一條不定積分，其實就是一條微分公式倒過來寫。要檢查，就把右邊微分，看會不會回到被積函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它說的是一句微分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{d}{dx}\\big(2x^3+C\\big)=6x^2}}$",
+              "on": "分公"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "邊微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不寫 $+C$ 就不完整：只寫出了其中一個"
+          ],
+          "say": "注意：不寫加 C，答案就不完整，因為你只寫出了一整族裡面的一個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不寫 $+C$ 就不完整：只寫出了其中一個",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "$\\displaystyle\\int x^4\\,dx=$？",
+        "options": [
+          {
+            "label": "$\\dfrac{x^5}{5}+C$",
+            "correct": true
+          },
+          {
+            "label": "$4x^3+C$",
+            "why": "這是 $x^4$ 的==導數==，方向反了"
+          },
+          {
+            "label": "$x^5+C$",
+            "why": "微分回去是 $5x^4$，忘了除以 $5$"
+          },
+          {
+            "label": "$\\dfrac{x^5}{5}$",
+            "why": "少了 $+C$，只是其中一個反導函數"
+          }
+        ]
+      }
     },
     {
-      "title": "一項一項積",
+      "title": "可以一項一項積",
       "beats": [
-        { "show": ["$\\int(f+g)\\,dx=\\int f\\,dx+\\int g\\,dx$","$\\int kf\\,dx=k\\int f\\,dx$"],
-          "note": "因為微分可以一項一項做。",
-          "say": "微分可以一項一項做，積分也可以；常數倍也可以先提到外面。",
+        {
+          "show": [
+            "微分是線性的：$(aF+bG)'=aF'+bG'$。倒過來：",
+            "$\\int\\big(af+bg\\big)\\,dx=a\\!\\int\\! f\\,dx+b\\!\\int\\! g\\,dx$"
+          ],
+          "say": "微分可以一項一項做，常數也可以提出來。倒過來，積分也一樣：加減可以拆開，常數可以提出去。",
           "board": [
-            {"do":"write","line":"$\\int(f+g)\\,dx=\\int f\\,dx+\\int g\\,dx$"},
-            {"do":"write","line":"$\\int kf\\,dx={{k:k}}\\int f\\,dx$","on":"常數倍"},
-            {"do":"focus","term":"k","label":"提到外面","on":"也可以先"}
-          ] },
-        { "show": ["$\\int(3x^2-4x+5)\\,dx$"],
-          "note": "拆成三項。",
-          "say": "試一題：三 x 平方減四 x 加五，拆成三項分別積。",
+            {
+              "do": "write",
+              "line": "微分是線性的：$(aF+bG)'=aF'+bG'$。倒過來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int\\big(af+bg\\big)\\,dx=a\\!\\int\\! f\\,dx+b\\!\\int\\! g\\,dx}}$",
+              "on": "數也"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "　$a$、$b$ 是常數；各項的常數合併成一個 $C$",
+              "color": "violet",
+              "on": "拆開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼對？把右邊微分：$aF'+bG'=af+bg$，正好是左邊的被積函數"
+          ],
+          "say": "為什麼？因為右邊微分，用微分的線性，正好回到 a f 加 b g。",
           "board": [
-            {"do":"write","line":"$\\int(3x^2-4x+5)\\,dx$"},
-            {"do":"transform","line":"$=\\int 3x^2\\,dx-\\int 4x\\,dx+\\int 5\\,dx$","on":"拆成"}
-          ] },
-        { "show": ["$3x^2\\to x^3$；$4x\\to 2x^2$；$5\\to 5x$"],
-          "note": "常數 $5$ 的反導函數是 $5x$，不是 $5$。",
-          "say": "三 x 平方來自 x 三次方，四 x 來自二 x 平方。小心常數五，它來自五 x，不是五。",
+            {
+              "do": "write",
+              "line": "為什麼對？把右邊微分：$aF'+bG'=af+bg$，正好是左邊的被積函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪次規則：",
+            "$\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\quad(n\\ne-1)$"
+          ],
+          "say": "再配上冪次規則：次方加一，除以新的次方，n 不等於負 1。這兩個合起來，所有多項式都能積。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$3x^2\\to x^3$","on":"三 x 平方"},
-            {"do":"write","line":"$4x\\to 2x^2$","on":"四 x 來自"},
-            {"do":"write","line":"$5\\to {{c:5x}}$","on":"小心常數"},
-            {"do":"focus","term":"c","label":"不是 5","on":"來自五"}
-          ] },
-        { "show": ["$x^3-2x^2+5x+C$"],
-          "note": "每一項的常數加起來還是常數，只寫一個 $C$。",
-          "say": "合起來只寫一個 C，因為三個常數加起來還是一個常數。微分回去檢查，剛好對。",
+            {
+              "do": "write",
+              "line": "冪次規則："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\quad(n\\ne-1)}}$",
+              "on": "新的"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int(3x^2-4x+5)\\,dx$"
+          ],
+          "say": "例子：積分 3 x 平方減 4x 加 5。",
           "board": [
-            {"do":"write","line":"${{r:x^3-2x^2+5x+C}}$"},
-            {"do":"box","term":"r","color":"green","label":"只寫一個 C","on":"一個 C"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int(3x^2-4x+5)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一項一項：",
+            "$=3\\cdot\\frac{x^3}{3}-4\\cdot\\frac{x^2}{2}+5x+C$"
+          ],
+          "say": "一項一項積：3 乘 3 分之 x 三次方，減 4 乘 2 分之 x 平方，常數 5 積出來是 5x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一項一項："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =3\\cdot\\frac{x^3}{3}-4\\cdot\\frac{x^2}{2}+5x+C$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=x^3-2x^2+5x+C$"
+          ],
+          "say": "化簡得到 x 三次方減 2 x 平方加 5x 加 C。三項的常數合成一個 C 就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =x^3-2x^2+5x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "三項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$(x^3-2x^2+5x)'=3x^2-4x+5$"
+          ],
+          "say": "微分回去檢查：3 x 平方減 4x 加 5，對了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$(x^3-2x^2+5x)'=3x^2-4x+5$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\left(x^3-\\frac{2}{x^2}\\right)dx=$？"
+          ],
+          "say": "試一題。分母的 x 平方，先寫成負 2 次方。"
+        }
       ],
       "check": 0
     },
     {
       "title": "乘積不能拆",
       "beats": [
-        { "show": ["$\\int x\\cdot x\\,dx$ 不是 $\\frac{x^2}{2}\\cdot\\frac{x^2}{2}$"],
-          "note": "微分沒有「各自微分再相乘」，積分也沒有。",
-          "say": "乘積不能各自積分再相乘。微分的乘法法則不是這樣，積分也沒有這種拆法。",
+        {
+          "show": [
+            "$\\int f(x)g(x)\\,dx\\ \\ne\\ \\int f\\,dx\\cdot\\int g\\,dx$"
+          ],
+          "say": "加法可以拆，但乘法不行：乘積的積分，不等於積分的乘積。",
           "board": [
-            {"do":"write","line":"$\\int x\\cdot x\\,dx$"},
-            {"do":"write","line":"$\\ne {{w:\\frac{x^2}{2}\\cdot\\frac{x^2}{2}}}$","on":"各自積分"},
-            {"do":"strike","term":"w","label":"錯","on":"不是這樣"}
-          ] },
-        { "show": ["$\\frac{x^2}{2}\\cdot\\frac{x^2}{2}=\\frac{x^4}{4}$","$\\left(\\frac{x^4}{4}\\right)'=x^3\\ne x\\cdot x$"],
-          "note": "微分回去檢查，兩邊對不上。",
-          "say": "拿微分檢查。錯的那個乘起來是 x 四次方除以四，微分得 x 三次方，不是 x 乘 x。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int f(x)g(x)\\,dx\\ \\ne\\ \\int f\\,dx\\cdot\\int g\\,dx}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "積的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反例：$f=g=x$",
+            "• 左邊：$\\displaystyle\\int x\\cdot x\\,dx=\\int x^2\\,dx=\\frac{x^3}{3}+C$"
+          ],
+          "say": "看一個反例：x 乘 x。左邊是 x 平方的積分，3 分之 x 三次方；右邊兩個積分相乘，是 4 分之 x 四次方。次方都不一樣。",
           "board": [
-            {"do":"write","line":"$\\frac{x^2}{2}\\cdot\\frac{x^2}{2}=\\frac{x^4}{4}$"},
-            {"do":"write","line":"$\\left(\\frac{x^4}{4}\\right)'={{n1:x^3}}\\ne x\\cdot x$","on":"微分得"},
-            {"do":"underline","term":"n1","color":"red","label":"對不上","on":"三次方"}
-          ] },
-        { "show": ["先乘開：$\\int x^2\\,dx=\\frac{x^3}{3}+C$"],
-          "note": "處理乘積的正式工具在後面的課。",
-          "say": "能做的是先把式子乘開，變成冪次，再一項一項積。正式處理乘積的工具，後面的課會教。",
+            {
+              "do": "write",
+              "line": "反例：$f=g=x$"
+            },
+            {
+              "do": "write",
+              "line": "• 左邊：$\\displaystyle\\int x\\cdot x\\,dx=\\int x^2\\,dx=\\frac{x^3}{3}+C$",
+              "on": "積分#1"
+            },
+            {
+              "do": "write",
+              "line": "• 右邊：$\\dfrac{x^2}{2}\\cdot\\dfrac{x^2}{2}=\\dfrac{x^4}{4}$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：微分的乘法規則是 $(FG)'=F'G+FG'$，不是 $F'G'$"
+          ],
+          "say": "原因很簡單：微分的乘法規則本來就不是導數相乘。倒過來，積分當然也不能這樣拆。除法也一樣。",
           "board": [
-            {"do":"write","line":"$x\\cdot x=x^2$"},
-            {"do":"write","line":"$\\int x^2\\,dx$","on":"一項一項"}
-          ] }
+            {
+              "do": "write",
+              "line": "原因：微分的乘法規則是 $(FG)'=F'G+FG'$，不是 $F'G'$"
+            },
+            {
+              "do": "write",
+              "line": "　處理乘積的方法（代換、分部積分）在後面幾章",
+              "color": "violet",
+              "on": "倒過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "今天的辦法：先乘開，變成冪次的和"
+          ],
+          "say": "那遇到乘積怎麼辦？今天的辦法是：先乘開，寫成一項一項的冪次，再用冪次規則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "今天的辦法：先乘開，變成冪次的和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\sqrt{x}\\,(x+1)\\,dx$"
+          ],
+          "say": "例子：根號 x 乘上 x 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\sqrt{x}\\,(x+1)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt x=x^{1/2}$，乘開：$x^{3/2}+x^{1/2}$"
+          ],
+          "say": "根號 x 寫成 x 的 2 分之 1 次方。乘開：x 的 2 分之 3 次方，加 x 的 2 分之 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt x=x^{1/2}$，乘開：$x^{3/2}+x^{1/2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{x^{5/2}}{5/2}+\\frac{x^{3/2}}{3/2}+C$"
+          ],
+          "say": "一項一項積：次方加一，變成 2 分之 5 和 2 分之 3，再除以它們。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac{x^{5/2}}{5/2}+\\frac{x^{3/2}}{3/2}+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac25x^{5/2}+\\frac23x^{3/2}+C$"
+          ],
+          "say": "除以 2 分之 5 就是乘 5 分之 2。答案是 5 分之 2 x 的 2 分之 5 次方，加 3 分之 2 x 的 2 分之 3 次方，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle =\\frac25x^{5/2}+\\frac23x^{3/2}+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之#4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{x-1}{\\sqrt x}\\,dx=$？"
+          ],
+          "say": "分式也是一樣：先拆成冪次的和，再積。"
+        }
       ],
-      "key": "積分不能拆乘法，先乘開再積",
       "check": 1
     },
     {
-      "title": "先乘開，寫成冪次",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int\\sqrt{x}\\,(x+1)\\,dx$"],
-          "note": "根號乘括號，不能拆開各自積。",
-          "say": "根號 x 乘上 x 加一，是乘積，所以先乘開。",
+        {
+          "show": [
+            "先化簡、再積的常見樣子：",
+            "• 乘積：乘開，例 $(x+1)^2=x^2+2x+1$"
+          ],
+          "say": "整理一下，先化簡的三種常見樣子：乘積就乘開；分母只有一項的分式，就逐項除；根號就寫成分數次方。",
           "board": [
-            {"do":"write","line":"$\\int{{p:\\sqrt{x}\\,(x+1)}}\\,dx$"},
-            {"do":"underline","term":"p","label":"乘積","on":"乘積"}
-          ] },
-        { "show": ["$\\sqrt{x}\\cdot x+\\sqrt{x}=x^{3/2}+x^{1/2}$"],
-          "note": "$\\sqrt{x}\\cdot x=x^{1/2}\\cdot x^1=x^{3/2}$。",
-          "say": "根號 x 是 x 的二分之一次方，乘上 x，指數相加變成二分之三。",
+            {
+              "do": "write",
+              "line": "先化簡、再積的常見樣子："
+            },
+            {
+              "do": "write",
+              "line": "• 乘積：乘開，例 $(x+1)^2=x^2+2x+1$",
+              "on": "三種"
+            },
+            {
+              "do": "write",
+              "line": "• 分式（分母一項）：逐項除",
+              "on": "就乘"
+            },
+            {
+              "do": "write",
+              "line": "• 根號：寫成分數次方",
+              "on": "的分"
+            },
+            {
+              "do": "write",
+              "line": "　化簡之後，每一項都是 $ax^n$，就能套冪次規則",
+              "color": "violet",
+              "on": "根號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "唯一的例外：$\\frac{1}{x}$",
+      "beats": [
+        {
+          "show": [
+            "冪次規則在 $n=-1$ 不能用：$\\dfrac{x^0}{0}$ 沒有意義"
+          ],
+          "say": "冪次規則有一個漏洞：n 等於負 1 的時候，要除以 0，不能用。也就是 x 分之 1 的積分。",
           "board": [
-            {"do":"write","line":"$\\sqrt{x}=x^{1/2}$"},
-            {"do":"write","line":"$\\sqrt{x}\\cdot x=x^{1/2}\\cdot x^1={{e:x^{3/2}}}$","on":"乘上"},
-            {"do":"focus","term":"e","label":"指數相加","on":"指數相加"}
-          ] },
-        { "show": ["$x^{1/2}\\to\\frac{x^{3/2}}{3/2}=\\frac{2}{3}x^{3/2}$"],
-          "note": "指數加一，除以新指數。",
-          "say": "二分之一次方：指數加一變二分之三，再除以二分之三，就是乘三分之二。",
+            {
+              "do": "write",
+              "line": "冪次規則在 $n=-1$ 不能用：$\\dfrac{x^0}{0}$ 沒有意義"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誰的導數是 $\\dfrac1x$？$(\\ln x)'=\\dfrac1x$，但只在 $x>0$"
+          ],
+          "say": "我們知道自然對數 x 的導數是 x 分之 1，但自然對數只在 x 大於 0 有定義。x 是負的怎麼辦？",
           "board": [
-            {"do":"write","line":"$x^{1/2}\\to\\frac{ {{a:x^{3/2}}} }{ {{b:3/2}} }={{r:\\frac{2}{3}x^{3/2}}}$"},
-            {"do":"focus","term":"a","label":"指數加一","on":"指數加一"},
-            {"do":"focus","term":"b","label":"除以它","on":"再除以"},
-            {"do":"box","term":"r","color":"green","on":"就是乘"}
-          ] },
-        { "show": ["$x^2\\to\\frac{x^3}{3}$：指數加一，除以新指數","分數次方照做"],
-          "note": "除以分數，就是乘它的倒數。",
-          "say": "整數次方也是這招：x 平方，指數加一變三，再除以三。分數次方照做，只是除以分數，就是乘它的倒數。",
+            {
+              "do": "write",
+              "line": "誰的導數是 $\\dfrac1x$？$(\\ln x)'=\\dfrac1x$，但只在 $x>0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x<0$：$\\big(\\ln(-x)\\big)'=\\dfrac{1}{-x}\\cdot(-1)=\\dfrac1x$"
+          ],
+          "say": "x 小於 0 時，看自然對數負 x。用連鎖律：負 x 分之 1，再乘上負 x 的導數負 1，又得到 x 分之 1。",
           "board": [
-            {"do":"write","line":"$x^2\\to\\frac{ {{q1:x^3}} }{ {{q2:3}} }$"},
-            {"do":"focus","term":"q1","color":"blue","on":"指數加一"},
-            {"do":"focus","term":"q2","color":"violet","on":"除以三"},
-            {"do":"write","line":"分數次方：除以分數＝乘倒數","on":"分數次方照做"}
-          ] }
+            {
+              "do": "write",
+              "line": "$x<0$：$\\big(\\ln(-x)\\big)'=\\dfrac{1}{-x}\\cdot(-1)=\\dfrac1x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊合起來：",
+            "$\\int\\frac1x\\,dx=\\ln|x|+C$"
+          ],
+          "say": "兩種情況合起來，寫成自然對數 x 的絕對值。所以積分 x 分之 1，等於自然對數絕對值 x 加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊合起來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int\\frac1x\\,dx=\\ln|x|+C}}$",
+              "color": "red",
+              "on": "對數#1"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　嚴格說，$x>0$ 與 $x<0$ 是兩個區間，各自可以有不同的常數",
+              "color": "violet",
+              "on": "然對#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\frac{x^2+1}{x}\\,dx$"
+          ],
+          "say": "例子：x 平方加 1，除以 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\frac{x^2+1}{x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先拆開：$\\dfrac{x^2+1}{x}=x+\\dfrac1x$"
+          ],
+          "say": "分母只有一項，先逐項除：x 平方除以 x 是 x，1 除以 x 是 x 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先拆開：$\\dfrac{x^2+1}{x}=x+\\dfrac1x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{x^2}{2}+\\ln|x|+C$"
+          ],
+          "say": "x 積出來是 2 分之 x 平方，x 分之 1 積出來是自然對數絕對值 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle =\\frac{x^2}{2}+\\ln|x|+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$\\left(\\dfrac{x^2}{2}+\\ln|x|\\right)'=x+\\dfrac1x$"
+          ],
+          "say": "微分回去檢查：x 加 x 分之 1，對了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查：$\\left(\\dfrac{x^2}{2}+\\ln|x|\\right)'=x+\\dfrac1x$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{3}{x}\\,dx=$？"
+          ],
+          "say": "最後一題。"
+        }
       ],
-      "key": "根號先寫成分數次方，再用冪次公式",
-      "predict": {
-        "ask": "那 $x^{3/2}$ 的反導函數是？",
-        "options": [
+      "check": 2
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "算 $\\displaystyle\\int\\frac{(x+2)^2}{x}\\,dx$ 的步驟"
+          ],
+          "say": "把步驟排一排。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "算 $\\displaystyle\\int\\frac{(x+2)^2}{x}\\,dx$ 的步驟",
+        "steps": [
           {
-            "label": "$\\frac{2}{5}x^{5/2}$",
-            "correct": true
+            "label": "分子乘開：$x^2+4x+4$"
           },
           {
-            "label": "$\\frac{3}{2}x^{1/2}$",
-            "why": "那是 $x^{3/2}$ 的導數，你往前微分了。積分是指數加一，再除以新指數。"
+            "label": "逐項除以 $x$：$x+4+\\frac4x$",
+            "why": "先要有上一步：分子乘開：$x^2+4x+4$"
           },
           {
-            "label": "$\\frac{x^{5/2}}{5}$",
-            "why": "新指數是 $\\frac{5}{2}$，不是 $5$。除以 $\\frac{5}{2}$ 等於乘 $\\frac{2}{5}$。"
+            "label": "一項一項積：$\\frac{x^2}{2}+4x+4\\ln|x|$",
+            "why": "先要有上一步：逐項除以 $x$：$x+4+\\frac4x$"
+          },
+          {
+            "label": "加上 $+C$，再微分回去檢查",
+            "why": "先要有上一步：一項一項積：$\\frac{x^2}{2}+4x+4\\ln|x|$"
           }
         ]
       }
     },
     {
-      "title": "唯一的例外 $\\frac{1}{x}$",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$n=-1$：冪次公式要除以 $0$"],
-          "note": "公式不能用，不代表沒有反導函數。",
-          "say": "冪次公式在 n 等於負一的時候要除以零，不能用。但 x 分之一還是有反導函數。",
+        {
+          "show": [
+            "• $\\int f(x)\\,dx=F(x)+C$：$f$ 的所有反導函數",
+            "• 線性：加減可以拆，常數可以提出去"
+          ],
+          "say": "整理一下：不定積分代表所有的反導函數，記得加 C；加減可以拆，常數可以提，乘除不能拆，要先化簡成冪次的和；x 分之 1 是例外，積出來是自然對數絕對值 x。",
           "board": [
-            {"do":"write","line":"$\\int x^n\\,dx=\\dfrac{x^{n+1}}{ {{d:n+1}} }+C$"},
-            {"do":"focus","term":"d","color":"red","label":"n=−1 時是 0","on":"除以零"}
-          ] },
-        { "show": ["$(\\ln x)'=\\frac{1}{x}$"],
-          "say": "還記得自然對數的導數嗎？自然對數 x 微分剛好是 x 分之一。",
+            {
+              "do": "write",
+              "line": "• $\\int f(x)\\,dx=F(x)+C$：$f$ 的所有反導函數"
+            },
+            {
+              "do": "write",
+              "line": "• 線性：加減可以拆，常數可以提出去",
+              "on": "的反"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C$（$n\\ne-1$）",
+              "on": "減可"
+            },
+            {
+              "do": "write",
+              "line": "• 乘積、商不能拆：先乘開、逐項除、寫成冪次",
+              "on": "不能"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\frac1x\\,dx=\\ln|x|+C$",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "• 答案都可以微分回去檢查",
+              "on": "出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：基本積分表"
+          ],
+          "say": "下一課，把學過的微分公式全部倒過來，整理成一張積分表。",
           "board": [
-            {"do":"write","line":"$({{l:\\ln x}})'=\\frac{1}{x}$","on":"自然對數 x"}
-          ] },
-        { "show": ["$(\\ln x)'=\\frac{1}{x}$ 是已知結果"],
-          "note": "推導在〈對數函數微分〉，這裡直接用。",
-          "say": "這是對數函數微分那課推導過的結果，直接用。看圖，藍線自然對數 x 越爬越慢，斜率就是 x 分之一。",
-          "board": [
-            {"do":"write","line":"已知：$(\\ln x)'=\\frac{1}{x}$"},
-            {"do":"plot","graph":{"window":[-1,5,-3,3],"curves":[{"expr":"log(x)","domain":[0.1,5],"color":"blue"},{"expr":"1/x","domain":[0.3,5],"color":"red"}]},"on":"看圖"}
-          ] },
-        { "show": ["$x<0$：$(\\ln(-x))'=\\frac{1}{x}$"],
-          "note": "兩邊合起來寫成 $\\ln|x|$。",
-          "say": "x 是負的時候自然對數 x 沒有定義，改用自然對數負 x，微分也是 x 分之一。兩邊合起來就加絕對值。",
-          "board": [
-            {"do":"write","line":"$x<0$：$(\\ln(-x))'=\\frac{1}{x}$","on":"改用"},
-            {"do":"write","line":"合起來：${{ab:\\ln|x|}}$","on":"合起來"},
-            {"do":"underline","term":"ab","label":"絕對值","on":"絕對值"}
-          ] },
-        { "show": ["$(\\ln(-x))'=\\frac{1}{-x}\\cdot(-1)=\\frac{1}{x}$"],
-          "note": "連鎖律：外層 $\\ln u$，裡層 $-x$。",
-          "say": "外層是自然對數 u，微分是 u 分之一，u 是負 x；裡層負 x 的導數是負一，兩個負號消掉，剩 x 分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\ln(-x))'=\\frac{1}{ {{m1:-x}} }\\cdot{{m2:(-1)}}$","on":"外層"},
-            {"do":"focus","term":"m2","color":"blue","label":"裡層導數","on":"裡層"},
-            {"do":"write","line":"$=\\frac{1}{x}$","on":"兩個負號"}
-          ] },
-        { "show": ["$\\int\\frac{x^2+1}{x}\\,dx=\\frac{x^2}{2}+\\ln|x|+C$"],
-          "note": "先拆成 $x+\\frac{1}{x}$。",
-          "say": "分母只有一項，可以拆給分子每一項，變成 x 加 x 分之一，再分別積。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int\\frac{x^2+1}{x}\\,dx=\\int\\left(x+\\frac{1}{x}\\right)dx$","on":"拆給"},
-            {"do":"write","line":"$=\\frac{x^2}{2}+\\ln|x|+C$","on":"再分別"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：基本積分表"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["basic-integral", "power-rule", "log"],
-    "fine": ["indefinite-notation", "indefinite-linearity", "indefinite-simplify-first", "indefinite-no-product-split", "indefinite-log-abs"]
+    "coarse": [
+      "basic-integral",
+      "power-rule",
+      "log"
+    ],
+    "fine": [
+      "indefinite-notation",
+      "indefinite-linearity",
+      "indefinite-simplify-first",
+      "indefinite-no-product-split",
+      "indefinite-log-abs"
+    ]
   },
   "practice": [
-    { "id": "fd-int-002", "core": true, "trains": "indefinite-linearity" },
-    { "id": "tmpl-int-power-002", "core": true, "trains": "indefinite-linearity" },
-    { "id": "tmpl-int-power-004", "core": true, "trains": "indefinite-linearity" },
-    { "id": "int-003", "core": true, "trains": "indefinite-log-abs" },
-    { "id": "fd-int-013", "core": true, "trains": "indefinite-simplify-first", "note": "先寫成 $x^{3/2}$。" },
-    { "id": "cg-4a-005", "core": true, "trains": "indefinite-simplify-first" },
-    { "id": "cg-4a-007", "core": true, "trains": "indefinite-simplify-first" },
-    { "id": "cg-4a-009", "core": true, "trains": "indefinite-no-product-split" },
-    { "id": "tmpl-int-power-005", "trains": "indefinite-linearity" },
-    { "id": "cg-4a-006", "trains": "indefinite-simplify-first" },
-    { "id": "cg-4a-008", "trains": "indefinite-no-product-split" }
+    {
+      "id": "fd-int-002",
+      "core": true,
+      "trains": "indefinite-linearity"
+    },
+    {
+      "id": "tmpl-int-power-002",
+      "core": true,
+      "trains": "indefinite-linearity"
+    },
+    {
+      "id": "tmpl-int-power-004",
+      "core": true,
+      "trains": "indefinite-linearity"
+    },
+    {
+      "id": "int-003",
+      "core": true,
+      "trains": "indefinite-log-abs"
+    },
+    {
+      "id": "fd-int-013",
+      "core": true,
+      "trains": "indefinite-simplify-first",
+      "note": "先寫成 $x^{3/2}$。"
+    },
+    {
+      "id": "cg-4a-005",
+      "core": true,
+      "trains": "indefinite-simplify-first"
+    },
+    {
+      "id": "cg-4a-007",
+      "core": true,
+      "trains": "indefinite-simplify-first"
+    },
+    {
+      "id": "cg-4a-009",
+      "core": true,
+      "trains": "indefinite-no-product-split"
+    },
+    {
+      "id": "tmpl-int-power-005",
+      "trains": "indefinite-linearity"
+    },
+    {
+      "id": "cg-4a-006",
+      "trains": "indefinite-simplify-first"
+    },
+    {
+      "id": "cg-4a-008",
+      "trains": "indefinite-no-product-split"
+    }
   ],
   "gaps": []
 }

@@ -1,325 +1,170 @@
 {
   "id": "monotone-convergence-theorem",
   "title": "單調收斂定理（測度版）",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["positive-measurable", "lebesgue-integral", "measure"],
-  "next": ["fatou-lemma"],
-  "related": ["limit-integral-swap", "basel-problem"],
-  "objectives": [
-    "寫得出單調收斂定理的完整假設：非負、可測、逐點遞增；結論允許兩邊都是 $\\infty$。",
-    "會用它逐項積分非負級數：$\\int\\sum g_k=\\sum\\int g_k$。",
-    "遇到 $\\lim\\int f_n$ 的題目，先檢查遞增與非負；並能舉出少一個假設就失敗的例子。"
+  "prerequisites": [
+    "positive-measurable",
+    "lebesgue-integral",
+    "measure"
   ],
-  "visual": "y = x^{1/n} 在 [0, 1] 上，n 用滑桿從 1 拉到 30：曲線一條一條往上貼向 y = 1，底下面積 n/(n + 1) 即時顯示往 1 爬。旁邊對照 y = n xⁿ：曲線在 x = 1 附近越來越尖，面積停在接近 1，但除了 x = 1 之外每一點的值都掉回 0。",
+  "next": [
+    "fatou-lemma"
+  ],
+  "related": [
+    "limit-integral-swap",
+    "basel-problem"
+  ],
+  "objectives": [
+    "寫得出單調收斂定理的完整假設：非負、可測、逐點遞增，結論允許兩邊都是 $\\infty$",
+    "會用它逐項積分非負級數：$\\int\\sum g_k=\\sum\\int g_k$",
+    "遇到 $\\lim\\int f_n$ 的題目，先檢查遞增與非負，並能舉出少一個假設就失敗的例子"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 老問題：極限能不能搬進積分",
+      "heading": "① 老問題",
       "body": [
-        "〈極限與積分交換〉要求 $f_n$ 在 $[a,b]$ 上一致收斂，條件很強：$x^{1/n}$ 在 $[0,1]$ 上就不一致收斂（極限在 0 跳了一下），但面積 $\\frac{n}{n+1}$ 明明收斂到 1。",
-        "Lebesgue 理論的第一個回答：只要函數非負、而且一個比一個大，就可以交換，不需要一致收斂，連極限是 $\\infty$ 都沒關係。"
+        "往右跑的方塊：在 $\\mathbb{R}$ 上，$f_n=\\chi_{[n,n+1]}$",
+        "• 每個 $n$：$\\int f_n\\,dm=m([n,n+1])=1$",
+        "• 固定 $x$：$n>x$ 之後 $f_n(x)=0$，所以 $f_n\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\overset{?}{=}\\int\\lim_{n\\to\\infty}f_n\\,d\\mu"
+      ]
+    },
+    {
+      "heading": "① 遞增就不會跑掉",
+      "body": [
+        "例：$f_n(x)=x^{1/n}$，$x\\in[0,1]$",
+        "$0\\le x\\le1$ 時 $x^{1/n}\\le x^{1/(n+1)}$：逐點遞增",
+        "極限：$x\\in(0,1]$ 時 $\\to1$；$x=0$ 時 $=0$",
+        "差別：方塊離開時，原來的地方變小了",
+        "遞增的列，每一點只會長高，面積沒有地方逃"
+      ],
+      "tex": [
+        "\\int_0^1x^{1/n}dx=\\frac{n}{n+1}\\to1",
+        "\\int\\lim f_n\\,dm=m\\big((0,1]\\big)=1"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設 $f_n:X\\to[0,\\infty]$ 可測，且對每個 $x$，$0\\le f_1(x)\\le f_2(x)\\le\\cdots$。令 $f(x)=\\lim f_n(x)$（遞增數列的極限，可能是 $\\infty$）。則 $f$ 可測，而且",
-        "兩邊都可以是 $\\infty$。$f$ 可測是因為 $f=\\sup f_n$，而可測函數列的上確界可測。"
+        "單調收斂定理：$(X,\\mathcal{M},\\mu)$ 是測度空間，$f_n:X\\to[0,\\infty]$ 可測，",
+        "則 $f$ 可測，而且",
+        "兩邊可以同時是 $\\infty$；$f$ 的值也可以是 $\\infty$",
+        "回憶定義（12.49）：",
+        "策略：",
+        "• $\\le$：積分的單調性就夠",
+        "• $\\ge$：對每個 $\\varphi\\le f$ 證 $\\int\\varphi\\le\\lim\\int f_n$",
+        "• 把 $\\varphi$ 打個折，看 $f_n$ 在哪裡超過它；再用測度由下連續"
       ],
-      "tex": ["\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu"],
-      "collapsible": false
+      "tex": [
+        "0\\le f_1\\le f_2\\le\\cdots,\\qquad f_n(x)\\to f(x)\\ \\ \\forall x",
+        "\\lim_{n\\to\\infty}\\int f_n\\,d\\mu=\\int f\\,d\\mu",
+        "\\int f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ 0\\le\\varphi\\le f,\\ \\varphi\\text{ 簡單}\\Big\\}"
+      ]
     },
     {
-      "heading": "證明",
+      "heading": "② 證明：容易的一半",
       "body": [
-        "$\\le$：$f_n\\le f_{n+1}\\le f$，所以 $\\int f_n$ 遞增且每項 $\\le\\int f$，極限 $L$ 存在（在 $[0,\\infty]$ 裡）且 $L\\le\\int f$。",
-        "$\\ge$：取簡單函數 $0\\le\\varphi=\\sum a_k\\chi_{A_k}\\le f$（標準形）與常數 $0<c<1$。令 $E_n=\\{x:f_n(x)\\ge c\\varphi(x)\\}$，可測。$f_n$ 遞增，所以 $E_n\\subseteq E_{n+1}$。而 $\\bigcup E_n=X$：$\\varphi(x)=0$ 時 $x\\in E_1$；$\\varphi(x)>0$ 時 $f(x)\\ge\\varphi(x)>c\\varphi(x)$，而 $f_n(x)\\uparrow f(x)$，所以某個 $n$ 起 $f_n(x)>c\\varphi(x)$。",
-        "於是 $\\int f_n\\ge\\int f_n\\chi_{E_n}\\ge c\\int\\varphi\\chi_{E_n}=c\\sum_k a_k\\mu(A_k\\cap E_n)$。對每個 $k$，$A_k\\cap E_n$ 遞增到 $A_k$，由測度的「由下連續」，$\\mu(A_k\\cap E_n)\\to\\mu(A_k)$。令 $n\\to\\infty$：$L\\ge c\\sum a_k\\mu(A_k)=c\\int\\varphi$。",
-        "$c$ 可以任意接近 1，得 $L\\ge\\int\\varphi$；再對所有這樣的 $\\varphi$ 取上確界，$L\\ge\\int f$。注意整個證明只用到簡單函數的性質與測度的連續性，沒有用到一般函數積分的加法性。"
+        "$f=\\sup_nf_n$ 可測（12.47）",
+        "單調性：$g\\le h$ ⇒ $\\int g\\le\\int h$（墊在 $g$ 底下的也墊在 $h$ 底下）",
+        "$f_n\\le f_{n+1}\\le f$，所以 $\\int f_n$ 遞增、都 $\\le\\int f$：",
+        "遞增數列在 $[0,\\infty]$ 裡一定有極限（可以是 $\\infty$）",
+        "剩下：對每個簡單函數 $0\\le\\varphi\\le f$，證 $\\int\\varphi\\,d\\mu\\le L$",
+        "固定 $\\varphi=\\sum_{k=1}^ma_k\\chi_{A_k}$（標準形，$0\\le a_k<\\infty$），固定 $0<\\alpha<1$",
+        "• $E_n$ 可測（$f_n$、$\\varphi$ 可測）；$f_n$ 遞增 ⇒ $E_1\\subseteq E_2\\subseteq\\cdots$"
       ],
-      "collapsible": true
+      "tex": [
+        "L:=\\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\ \\le\\ \\int f\\,d\\mu",
+        "E_n=\\{x:\\ f_n(x)\\ge\\alpha\\,\\varphi(x)\\}"
+      ]
+    },
+    {
+      "heading": "② 證明：$E_n$ 長滿 $X$",
+      "body": [
+        "$\\displaystyle\\bigcup_nE_n=X$：取任一點 $x$",
+        "• $\\varphi(x)=0$：$f_1(x)\\ge0$，$x\\in E_1$",
+        "• $\\varphi(x)>0$：$\\alpha\\varphi(x)<\\varphi(x)\\le f(x)=\\lim f_n(x)$",
+        "所以某個 $n$ 有 $f_n(x)>\\alpha\\varphi(x)$，$x\\in E_n$",
+        "這裡用到 $\\varphi(x)<\\infty$：簡單函數只取有限值",
+        "$f_n\\ge f_n\\chi_{E_n}\\ge\\alpha\\varphi\\chi_{E_n}$，後者是簡單函數："
+      ],
+      "tex": [
+        "\\int f_n\\,d\\mu\\ge\\int\\alpha\\varphi\\chi_{E_n}\\,d\\mu=\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k\\cap E_n)"
+      ]
+    },
+    {
+      "heading": "② 證明：取極限",
+      "body": [
+        "$A_k\\cap E_n\\uparrow A_k$，由下連續（12.43）：",
+        "有限和，可以逐項取極限：",
+        "$\\alpha$ 是任意的，令 $\\alpha\\to1^-$：$L\\ge\\int\\varphi\\,d\\mu$",
+        "對所有 $\\varphi$ 取上確界：",
+        "整個證明只用了：積分的定義、單調性、測度由下連續"
+      ],
+      "tex": [
+        "\\mu(A_k\\cap E_n)\\to\\mu(A_k)\\quad(n\\to\\infty)",
+        "L\\ge\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k)=\\alpha\\int\\varphi\\,d\\mu",
+        "L\\ge\\int f\\,d\\mu,\\quad\\text{合起來 }L=\\int f\\,d\\mu\\quad\\blacksquare"
+      ]
     },
     {
       "heading": "③ 兩個立刻得到的結果",
       "body": [
-        "加法性：$f,g\\ge0$ 可測，取遞增簡單函數 $\\varphi_n\\uparrow f$、$\\psi_n\\uparrow g$，則 $\\varphi_n+\\psi_n\\uparrow f+g$。簡單函數可以相加，兩邊取極限得 $\\int(f+g)=\\int f+\\int g$。這補上〈非負可測函數〉欠的那一半。",
-        "逐項積分：$g_k\\ge0$ 可測，部分和 $\\sum_{k\\le n} g_k$ 遞增，所以 $\\int\\sum_{k=1}^\\infty g_k=\\sum_{k=1}^\\infty\\int g_k$。不需要檢查任何一致收斂。"
+        "加法：$f,g\\ge0$ 可測 ⇒ $\\int(f+g)=\\int f+\\int g$",
+        "由 12.49 取簡單函數 $\\varphi_n\\uparrow f$、$\\psi_n\\uparrow g$，則 $\\varphi_n+\\psi_n\\uparrow f+g$",
+        "$n\\to\\infty$，三處都用單調收斂：$\\int(f+g)=\\int f+\\int g$",
+        "逐項積分：$g_k\\ge0$ 可測 ⇒",
+        "部分和 $S_n=\\sum_{k\\le n}g_k$ 遞增到 $\\sum g_k$；",
+        "由加法 $\\int S_n=\\sum_{k\\le n}\\int g_k$，再用單調收斂",
+        "兩邊可以同時是 $\\infty$：等式在 $[0,\\infty]$ 裡照樣成立"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int(\\varphi_n+\\psi_n)=\\int\\varphi_n+\\int\\psi_n",
+        "\\int\\sum_{k=1}^\\infty g_k\\,d\\mu=\\sum_{k=1}^\\infty\\int g_k\\,d\\mu"
+      ]
+    },
+    {
+      "heading": "③ 例：逐項積分出 $\\frac{\\pi^2}6$",
+      "body": [
+        "$x\\in[0,1)$：$-\\ln(1-x)=\\sum_{k\\ge1}\\dfrac{x^k}k$，所以",
+        "逐項積分（非負，不用檢查一致）：",
+        "$x=1$ 一點測度為 $0$，不影響積分；在 $[0,1)$ 上級數不一致收斂，12F 的方法不能直接用"
+      ],
+      "tex": [
+        "\\int_0^1\\frac{-\\ln(1-x)}{x}\\,dx=\\ ?",
+        "\\frac{-\\ln(1-x)}x=\\sum_{k=1}^\\infty\\frac{x^{k-1}}k\\qquad(\\text{每項}\\ge0)",
+        "\\int_0^1\\frac{x^{k-1}}k\\,dx=\\frac1{k^2}",
+        "\\begin{aligned}\\int_0^1\\frac{-\\ln(1-x)}x\\,dx&=\\sum_{k=1}^\\infty\\frac1{k^2}\\\\&=\\frac{\\pi^2}6\\approx1.645\\end{aligned}"
+      ]
     },
     {
       "heading": "④ 少一個假設就不行",
       "body": [
-        "不遞增：$f_n=\\chi_{[n,n+1]}$。每點 $f_n(x)\\to0$（$n>x$ 之後就是 0），但 $\\int f_n=1$。",
-        "不非負：$f_n=-\\chi_{[n,\\infty)}$ 遞增到 0，但每個 $\\int f_n=-m([n,\\infty))=-\\infty$（負部的積分是 $\\infty$），極限不等於 $\\int0=0$。只要 $f_1$ 可積，對 $f_n-f_1\\ge0$ 用定理就沒事；問題出在 $f_1$ 的負部積分無限。"
+        "不遞增：$f_n(x)=nx^n$，$x\\in[0,1]$",
+        "逐點：$x<1$ 時 $nx^n\\to0$；$x=1$ 時 $=n\\to\\infty$",
+        "不遞增：$x=\\frac12$ 時依序是 $\\frac12,\\frac12,\\frac38,\\frac14,\\ldots$",
+        "不非負：$f_n=-\\chi_{[n,\\infty)}$ 遞增到 $0$",
+        "但 $\\int f_n\\,dm=-\\infty$，$\\int0=0$",
+        "遞減也不行：$\\chi_{[n,\\infty)}\\downarrow0$，每個積分都是 $\\infty$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "一個比一個大就能換",
-      "beats": [
-        { "show": ["一致收斂：條件太強"],
-          "note": "$x^{1/n}$ 不一致收斂，面積卻收斂到 1。",
-          "say": "Riemann 那邊，極限搬進積分要一致收斂，條件很強，很多明明沒問題的例子都卡住。",
-          "board": [
-            {"do":"write","line":"Riemann：要一致收斂（條件太強）"}
-          ] },
-        { "show": ["$0\\le f_1\\le f_2\\le\\cdots$，$f=\\lim f_n$"],
-          "note": "$f_n$ 可測；極限可以是 $\\infty$。",
-          "say": "Lebesgue 的第一個回答：函數非負、而且一個比一個大，就可以交換。極限是無限大也沒關係。",
-          "board": [
-            {"do":"write","line":"${{nn:0\\le}} {{inc:f_1\\le f_2\\le\\cdots}}$，$f=\\lim f_n$","on":"Lebesgue"},
-            {"do":"underline","term":"nn","on":"非負"},
-            {"do":"underline","term":"inc","on":"一個比一個大"}
-          ] },
-        { "show": ["$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu$"],
-          "say": "這就是單調收斂定理。兩邊都可以是無限大，不需要一致收斂。",
-          "board": [
-            {"do":"write","line":"${{th:\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu}}$"},
-            {"do":"box","term":"th","color":"green","on":"單調收斂定理"}
-          ] },
-        { "show": ["$f=\\sup f_n$，可測"],
-          "say": "極限函數是上確界，可測函數列的上確界可測，所以右邊有意義。為什麼能換，最後那節一步一步證。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$f={{s:\\sup f_n}}$：可測","on":"極限函數是"},
-            {"do":"underline","term":"s","on":"上確界可測"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "\\int_0^1nx^n\\,dx=\\frac{n}{n+1}\\to1",
+        "f=0\\ \\text{a.e.}\\ \\Rightarrow\\ \\int f\\,dm=0\\ne1"
+      ]
     },
     {
-      "title": "$x^{1/n}$",
-      "beats": [
-        { "show": ["$x^{1/n}\\le x^{1/(n+1)}$ 在 $[0,1]$"],
-          "note": "$x=0.5$：0.5, 0.7071, 0.7937, …",
-          "say": "x 的 n 分之一次方，在零到一上非負、遞增。例如零點五，開越多次方根越往上爬。",
-          "board": [
-            {"do":"write","line":"${{p:x^{1/n}}}\\le x^{1/(n+1)}$ 在 $[0,1]$","tint":{"p":"blue"}},
-            {"do":"plot","graph":{"window":[0,1.05,0,1.08],"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"sqrt(x)","domain":[0,1],"color":"blue"},{"expr":"x^(1/3)","domain":[0,1],"color":"blue"},{"expr":"sqrt(sqrt(sqrt(x)))","domain":[0,1],"color":"blue"}],"points":[{"x":0.5,"y":0.5},{"x":0.5,"y":0.7071},{"x":0.5,"y":0.7937}]},"on":"開越多次方根"}
-          ] },
-        { "show": ["極限 $f=\\chi_{(0,1]}$"],
-          "note": "$x=0$ 恆為 0。",
-          "say": "x 大於零時趨近一，x 等於零時一直是零。極限只跟常數一差一個點。",
-          "board": [
-            {"do":"transform","line":"${{p:x^{1/n}}}\\to {{f:\\chi_{(0,1]}}}$"},
-            {"do":"underline","term":"f","label":"差一個點","on":"極限只跟"}
-          ] },
-        { "show": ["一個點的測度是 0，不影響積分"],
-          "note": "$\\int_0^1\\chi_{(0,1]}=1$",
-          "say": "一個點的寬度是零，測度是零，高度再不同，面積也是零。所以極限換成 chi 不影響積分，還是一。",
-          "board": [
-            {"do":"write","line":"$m(\\{0\\})=0$"},
-            {"do":"write","line":"$\\int_0^1\\chi_{(0,1]}=1$","on":"不影響"}
-          ] },
-        { "show": ["核對：$\\int_0^1 x^{1/n}\\,dx=\\frac{n}{n+1}$"],
-          "say": "直接算也行，積分是 n 加一分之 n。看看定理給的答案對不對得上。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1 {{p:x^{1/n}}}\\,dx=\\frac{n}{n+1}$"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "非負級數逐項積分",
-      "beats": [
-        { "show": ["$\\int\\sum_{k=1}^\\infty g_k=\\sum_{k=1}^\\infty\\int g_k$"],
-          "note": "$g_k\\ge0$：部分和遞增。",
-          "say": "定理立刻給出：非負的級數可以逐項積分，因為部分和一路遞增。不用檢查一致收斂。",
-          "board": [
-            {"do":"write","line":"$\\int\\sum_{k=1}^\\infty g_k=\\sum_{k=1}^\\infty\\int g_k$"},
-            {"do":"write","line":"$g_k\\ge0$ ⇒ 部分和遞增","on":"因為部分和"}
-          ] },
-        { "show": ["$\\frac{-\\ln(1-x)}{x}=\\sum_{k\\ge1}\\frac{x^{k-1}}{k}$"],
-          "note": "每一項在 $[0,1)$ 上 $\\ge0$。",
-          "say": "負的自然對數一減 x，再除以 x，展開成 x 的 k 減一次方除以 k，每一項都非負。",
-          "board": [
-            {"do":"write","line":"$\\frac{-\\ln(1-x)}{x}=\\sum_{k\\ge1}{{s:\\frac{x^{k-1}}{k}}}$"},
-            {"do":"underline","term":"s","label":"每項非負","on":"展開成"}
-          ] },
-        { "show": ["$\\int_0^1\\frac{x^{k-1}}{k}\\,dx=\\frac{1}{k^2}$"],
-          "say": "每一項積分是 k 平方分之一。被積函數在一附近衝到無限大，也不用另外處理。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^1\\frac{x^{k-1}}{k}\\,dx={{r:\\frac{1}{k^2}}}$","on":"每一項積分"},
-            {"do":"circle","term":"r","on":"k 平方分之一"},
-            {"do":"write","line":"$=\\sum_{k\\ge1}\\frac{1}{k^2}$","on":"被積函數"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{k^2}$ 是有限的數"],
-          "note": "值在〈Basel 問題〉。",
-          "say": "這個和是有限的數，不是無限大：k 平方分之一縮得很快。它的值在 Basel 問題那一課算過。",
-          "board": [
-            {"do":"write","line":"$\\sum_{k\\ge1}\\frac{1}{k^2}<\\infty$"}
-          ] }
-      ],
-      "key": "非負項的部分和遞增，就能逐項積分",
-      "check": 3
-    },
-    {
-      "title": "不遞增就不行",
-      "beats": [
-        { "show": ["$f_n(x)=n x^n$ 在 $[0,1]$"],
-          "say": "看 n 乘 x 的 n 次方。它的積分是 n 加一分之 n，趨近一。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=n x^n$ 在 $[0,1]$"},
-            {"do":"write","line":"$\\int_0^1 f_n=\\frac{n}{n+1}\\to1$","on":"它的積分"}
-          ] },
-        { "show": ["$\\lim f_n=0$ a.e.，$\\int\\lim f_n=0$"],
-          "note": "$x=1$ 時 $f_n(1)=n\\to\\infty$，只是一點。",
-          "say": "可是逐點極限幾乎處處是零，積分是零。一不等於零，定理錯了嗎？",
-          "board": [
-            {"do":"write","line":"$\\lim f_n=0$ a.e.，$\\int\\lim f_n=0$"},
-            {"do":"write","line":"$\\lim\\int f_n=1\\ne0$","on":"一不等於零"}
-          ] },
-        { "show": ["面積擠進 $x=1$ 旁的尖峰"],
-          "note": "$f_2$、$f_3$ 的圖。",
-          "say": "畫 n 等於二和三：峰往一的旁邊擠，越來越窄，面積卻留在那裡。逐點極限看不到這個尖峰。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,1.05,0,3.2],"curves":[{"expr":"2*x^2","domain":[0,1],"color":"blue"},{"expr":"3*x^3","domain":[0,1],"color":"red"}]}}
-          ] },
-        { "show": ["$x=\\frac{1}{2}$：$f_2=\\frac{1}{2}$，$f_3=\\frac{3}{8}$"],
-          "say": "在二分之一看：第二項是二分之一，第三項是八分之三。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x=\\frac{1}{2}$","on":"在二分之一"},
-            {"do":"write","line":"$f_2=\\frac{1}{2}$","on":"第二項"},
-            {"do":"write","line":"$f_3=\\frac{3}{8}$","on":"第三項"}
-          ] }
-      ],
-      "predict": {
-        "ask": "所以定理為什麼不能用？",
-        "options": [
-          {
-            "label": "函數列沒有遞增",
-            "correct": true
-          },
-          {
-            "label": "函數不是非負的",
-            "why": "$n x^n\\ge0$ 在 $[0,1]$ 上成立；問題是 $f_3(\\frac{1}{2})<f_2(\\frac{1}{2})$，在變小。"
-          },
-          {
-            "label": "極限在 $x=1$ 是 $\\infty$",
-            "why": "定理允許 $\\infty$，而且一個點不影響積分。缺的是遞增。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "少一個假設",
-      "beats": [
-        { "show": ["$f_n=\\chi_{[n,n+1]}$"],
-          "note": "每點 $f_n(x)\\to0$，但 $\\int f_n=1$。",
-          "say": "再一個：n 到 n 加一的指示函數，一塊方磚往右滑。每一點最後都是零，面積卻一直是一。",
-          "board": [
-            {"do":"write","line":"$f_n=\\chi_{[n,n+1]}$"},
-            {"do":"write","line":"$f_n(x)\\to0$，$\\int f_n={{a:1}}$","on":"每一點"},
-            {"do":"underline","term":"a","on":"面積卻"}
-          ] },
-        { "show": ["$n>x$ 之後，$f_n(x)=0$"],
-          "note": "每一點最後都是 0。",
-          "say": "為什麼每一點最後都是零？因為方磚往右滑，n 比 x 大以後，x 就不在 n 到 n 加一裡了。",
-          "board": [
-            {"do":"write","line":"$n>x$ ⇒ $f_n(x)=0$","on":"n 比 x 大"}
-          ] },
-        { "show": ["$f_n=-\\chi_{[n,\\infty)}$ 遞增到 0"],
-          "note": "每個 $\\int f_n=-\\infty$。",
-          "say": "拿掉非負也不行：負的 n 到無限大指示函數，遞增到零，可是每一項積分都是負無限大。",
-          "board": [
-            {"do":"write","line":"$f_n={{m:-\\chi_{[n,\\infty)}}}$ 遞增到 0"},
-            {"do":"underline","term":"m","label":"不再非負","on":"負的"},
-            {"do":"write","line":"$\\int f_n=-\\infty$","on":"每一項積分"}
-          ] },
-        { "show": ["$f_1$ 可積就沒事"],
-          "note": "對 $f_n-f_1\\ge0$ 用定理。",
-          "say": "補救：只要第一項可積，減掉它就變成非負遞增，定理照樣能用。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f_1$ 可積","on":"第一項"},
-            {"do":"write","line":"${{d:f_n-f_1}}\\ge0$，遞增","on":"減掉它"},
-            {"do":"box","term":"d","color":"green","on":"非負遞增"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：讓 $f_n$ 追上",
-      "beats": [
-        { "show": ["$\\le$ 直接；$\\ge$ 造 $E_n$，讓 $f_n$ 追上 $c\\varphi$"],
-          "say": "策略：兩個方向。小於等於很直接；大於等於，要造一串集合，看 f n 什麼時候追上 f 底下的簡單函數。",
-          "board": [
-            {"do":"write","line":"$\\le$：直接","on":"小於等於"},
-            {"do":"write","line":"$\\ge$：造 $E_n$，讓 $f_n$ 追上 $c{{p:\\varphi}}$","tint":{"p":"blue"},"on":"大於等於"}
-          ] },
-        { "show": ["$\\int f_n$ 遞增、$\\le\\int f$：$L\\le\\int f$"],
-          "note": "$f_n\\le f_{n+1}\\le f$，積分單調。",
-          "say": "f n 一個比一個大，又都不超過 f，所以積分遞增、有上界，極限 L 存在，不超過 f 的積分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int f_n$ 遞增、$\\le\\int f$","on":"所以積分"},
-            {"do":"write","line":"⇒ ${{lim:L}}\\le\\int f$","tint":{"lim":"violet"},"on":"極限 L"}
-          ] },
-        { "show": ["取 $0\\le\\varphi\\le f$、$0<c<1$","$E_n=\\{f_n\\ge c\\varphi\\}$ 遞增"],
-          "say": "反方向。取 f 底下的簡單函數 phi，和一個小於一的正數 c。E n 是 f n 追上 c 倍 phi 的點，f n 遞增，所以 E n 遞增。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"取 $0\\le{{p:\\varphi}}\\le f$、$0<c<1$","on":"取 f 底下"},
-            {"do":"write","line":"$E_n=\\{f_n\\ge c{{p:\\varphi}}\\}$ 遞增","on":"E n 是"}
-          ] },
-        { "show": ["$\\bigcup E_n=X$"],
-          "note": "$\\varphi(x)>0$ 時 $f(x)>c\\varphi(x)$，$f_n(x)$ 追得上。",
-          "why": {"ask":"為什麼 $\\bigcup E_n=X$？","say":"每一個點，為什麼遲早會進到某個 E n？","options":[{"label":"$f(x)>c\\varphi(x)$ 嚴格大，$f_n(x)$ 某一項起超過","correct":true},{"label":"$f_n\\to f\\ge\\varphi$，總有一項 $f_n\\ge\\varphi$","why":"極限大於等於 $\\varphi$，不代表某一項就大於等於：$f_n$ 可能一直差一點。所以才乘 $c<1$ 留空隙。"},{"label":"$E_n$ 遞增，聯集就是全部","why":"遞增的集合聯集不一定是全部；要逐點看，每個 $x$ 什麼時候進來。"}]},
-          "say": "phi 是零的點一開始就在。phi 大於零的點，f 嚴格大於 c 倍 phi，而 f n 遞增趨近 f，某一項起就超過。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\bigcup E_n=X$","on":"遲早"},
-            {"do":"write","line":"${{p:\\varphi}}(x)>0$ ⇒ $f(x)>c\\varphi(x)$","why":true,"on":"phi 大於零的點"}
-          ] },
-        { "show": ["$\\int f_n\\ge c\\sum a_k\\mu(A_k\\cap E_n)\\to c\\int\\varphi$"],
-          "note": "由下連續：$A_k\\cap E_n$ 遞增到 $A_k$。",
-          "why": {"ask":"為什麼 $\\mu(A_k\\cap E_n)\\to\\mu(A_k)$？","say":"A k 交 E n 的測度，為什麼趨近 A k 的測度？","options":[{"label":"測度由下連續：$A_k\\cap E_n$ 遞增到 $A_k$","correct":true},{"label":"用單調收斂定理","why":"這正是要證的定理，不能拿來用；這裡只用到測度本身的由下連續。"},{"label":"$\\mu(A_k\\cap E_n)\\le\\mu(A_k)$","why":"單調只給 $\\le$，證不出極限；要靠集合遞增、聯集是 $A_k$。"}]},
-          "say": "在 E n 上 f n 至少是 c 倍 phi，積分至少是那個和。A k 交 E n 遞增到 A k，由下連續，極限是 c 倍 phi 的積分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int f_n\\ge c\\sum a_k\\,\\mu({{a:A_k\\cap E_n}})$","on":"A k 交 E n 的測度"},
-            {"do":"write","line":"$\\to c\\int{{p:\\varphi}}$","on":"趨近 A k"},
-            {"do":"write","line":"${{a:A_k\\cap E_n}}\\nearrow A_k$：由下連續","why":true,"on":"由下連續"}
-          ] },
-        { "show": ["$c\\to1$、對 $\\varphi$ 取上確界：$L\\ge\\int f$"],
-          "say": "c 可以任意接近一，得到 L 至少是 phi 的積分；再對所有 phi 取上確界，就是 f 的積分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{lim:L}}\\ge {{c:c}}\\int{{p:\\varphi}}$","on":"c 可以"},
-            {"do":"transform","line":"${{lim:L}}\\ge\\int{{p:\\varphi}}$","on":"得到 L"},
-            {"do":"write","line":"對所有 $\\varphi$ 取上確界：$L\\ge\\int f$","color":"green","on":"對所有 phi"}
-          ] }
-      ],
-      "key": "取 $c<1$，讓 $f_n$ 追上 $c\\varphi$",
-      "proof": true,
-      "of": 2,
-      "skeleton": "構造",
-      "order": {
-        "ask": "把大於等於那一半排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "取 $\\varphi$、$c$，令 $E_n=\\{f_n\\ge c\\varphi\\}$"
-          },
-          {
-            "label": "$\\bigcup E_n=X$",
-            "why": "要先有 $E_n$，才談得上它們的聯集。"
-          },
-          {
-            "label": "$L\\ge c\\int\\varphi$",
-            "why": "取極限要用 $A_k\\cap E_n$ 遞增到 $A_k$，那要先知道 $\\bigcup E_n=X$。"
-          },
-          {
-            "label": "$c\\to1$、取上確界：$L\\ge\\int f$",
-            "why": "要先對每個 $c$、每個 $\\varphi$ 有 $L\\ge c\\int\\varphi$，才能讓 $c\\to1$ 再取上確界。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 假設：$f_n\\ge0$、可測、逐點遞增；結論 $\\lim\\int f_n=\\int\\lim f_n$（可以是 $\\infty$）",
+        "• 證明：打折 $\\alpha\\varphi$、集合 $E_n\\uparrow X$、測度由下連續",
+        "• 推論：非負函數的積分可加；非負級數可以逐項積分",
+        "• 反例：方塊往右跑、$nx^n$ 擠成尖刺、$-\\chi_{[n,\\infty)}$",
+        "下一課：沒有單調時，還剩下什麼？法圖引理"
+      ]
     }
   ],
   "workedExamples": [
@@ -370,54 +215,1266 @@
   ],
   "checks": [
     {
-      "ask": "單調收斂定理的假設是？",
+      "ask": "證明裡為什麼要打折 $\\alpha<1$，不直接用 $\\{f_n\\ge\\varphi\\}$？",
       "options": [
-        { "label": "$f_n$ 可測、非負，而且對每個 $x$ 遞增", "correct": true },
-        { "label": "$f_n$ 一致收斂到 $f$", "why": "那是 Riemann 理論的交換條件。單調收斂定理不需要一致收斂，$x^{1/n}$ 就不一致收斂。" },
-        { "label": "$|f_n|\\le g$ 且 $g$ 可積", "why": "那是控制收斂定理的假設。單調收斂定理靠的是遞增與非負，極限甚至可以是 $\\infty$。" }
+        {
+          "label": "$f_n$ 可能從下面嚴格逼近 $\\varphi$，這些集合可能一直是空的",
+          "correct": true
+        },
+        {
+          "label": "為了讓 $E_n$ 可測",
+          "why": "不打折，$\\{f_n\\ge\\varphi\\}$ 也一樣可測"
+        },
+        {
+          "label": "因為 $\\varphi$ 可能取 $\\infty$",
+          "why": "簡單函數只取有限值；問題出在嚴格逼近"
+        },
+        {
+          "label": "為了讓 $E_n$ 遞增",
+          "why": "不打折也是遞增；問題是聯集可能不是 $X$"
+        }
       ]
     },
     {
-      "ask": "$\\lim_{n\\to\\infty}\\int_0^1 x^{1/n}\\,dx$ 是？",
+      "ask": "用同樣的方法：$\\displaystyle\\int_0^\\infty\\frac{x}{e^{2x}-1}\\,dx=$？（提示：$\\frac{x}{e^{2x}-1}=\\sum_{k\\ge1}xe^{-2kx}$）",
       "options": [
-        { "label": "1", "correct": true },
-        { "label": "0", "why": "你把 $x^{1/n}$ 想成往 0 走。底數在 $(0,1]$ 時開 $n$ 次方根會往 1 走。" },
-        { "label": "無法確定，因為極限函數在 $x=0$ 跳了一下", "why": "$x=0$ 只是一個點，測度 0，不影響積分；定理照樣適用。" }
+        {
+          "label": "$\\dfrac{\\pi^2}{24}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\pi^2}{6}$",
+          "why": "忘了指數裡的 $2$：$\\int xe^{-2kx}=\\frac1{(2k)^2}$"
+        },
+        {
+          "label": "$\\dfrac{\\pi^2}{12}$",
+          "why": "$(2k)^2=4k^2$，不是 $2k^2$"
+        },
+        {
+          "label": "$\\dfrac14$",
+          "why": "只算了 $k=1$ 那一項"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "老問題",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\overset{?}{=}\\int\\lim_{n\\to\\infty}f_n\\,d\\mu$"
+          ],
+          "say": "回到 12F 的老問題：積分的極限，等不等於極限的積分？這一章要找勒貝格積分版的條件。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\overset{?}{=}\\int\\lim_{n\\to\\infty}f_n\\,d\\mu}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "於極"
+            }
+          ]
+        },
+        {
+          "show": [
+            "往右跑的方塊：在 $\\mathbb{R}$ 上，$f_n=\\chi_{[n,n+1]}$",
+            "• 每個 $n$：$\\int f_n\\,dm=m([n,n+1])=1$"
+          ],
+          "say": "先看會壞的例子：n 到 n 加 1 的特徵函數，一個寬 1 高 1 的方塊。每個積分都是 1；可是固定 x，方塊跑過去以後就永遠是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "往右跑的方塊：在 $\\mathbb{R}$ 上，$f_n=\\chi_{[n,n+1]}$"
+            },
+            {
+              "do": "write",
+              "line": "• 每個 $n$：$\\int f_n\\,dm=m([n,n+1])=1$",
+              "on": "一個"
+            },
+            {
+              "do": "write",
+              "line": "• 固定 $x$：$n>x$ 之後 $f_n(x)=0$，所以 $f_n\\to0$",
+              "on": "可是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方塊往右跑，每一點最後都歸零"
+          ],
+          "say": "看圖：方塊一路往右跑。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "run",
+                  "window": [
+                    -0.3,
+                    9,
+                    -0.25,
+                    1.5
+                  ],
+                  "area": [
+                    {
+                      "expr": "1",
+                      "from": "n",
+                      "to": "n+1",
+                      "color": "red"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "n",
+                        0
+                      ],
+                      "to": [
+                        "n",
+                        1
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "n",
+                        1
+                      ],
+                      "to": [
+                        "n+1",
+                        1
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "n+1",
+                        1
+                      ],
+                      "to": [
+                        "n+1",
+                        0
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 0,
+                      "label": "x",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 0,
+                      "max": 7.5,
+                      "value": 0,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "方塊在 [{n}, {n+1}]，面積永遠是 1",
+                  "xstep": 1,
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "方塊在 [0, 1]，面積永遠是 1",
+              "on": "方塊"
+            },
+            {
+              "do": "write",
+              "line": "方塊往右跑，每一點最後都歸零",
+              "color": "violet",
+              "on": "往右"
+            }
+          ]
+        },
+        {
+          "show": [
+            "老問題"
+          ],
+          "say": "藍色那一點，方塊經過時是 1，走了之後就一直是 0。面積沒有消失，是跑到無窮遠去了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "run",
+                  "window": [
+                    -0.3,
+                    9,
+                    -0.25,
+                    1.5
+                  ],
+                  "area": [
+                    {
+                      "expr": "1",
+                      "from": "n",
+                      "to": "n+1",
+                      "color": "red"
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "n",
+                        0
+                      ],
+                      "to": [
+                        "n",
+                        1
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "n",
+                        1
+                      ],
+                      "to": [
+                        "n+1",
+                        1
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "n+1",
+                        1
+                      ],
+                      "to": [
+                        "n+1",
+                        0
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 0,
+                      "label": "x",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 0,
+                      "max": 7.5,
+                      "value": 0,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "方塊在 [{n}, {n+1}]，面積永遠是 1",
+                  "xstep": 1,
+                  "height": 250
+                },
+                "vals": {
+                  "n": 7.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "方塊在 [7.5, 8.5]，面積永遠是 1",
+              "on": "直是"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "這個例子裡，$\\lim\\int f_n\\,dm$ 與 $\\int\\lim f_n\\,dm$ 各是多少？",
+        "options": [
+          {
+            "label": "$1$ 與 $0$",
+            "correct": true
+          },
+          {
+            "label": "$0$ 與 $0$",
+            "why": "每個 $\\int f_n$ 都是 $1$，不是越來越小"
+          },
+          {
+            "label": "$1$ 與 $1$",
+            "why": "極限函數是 $0$：每一點最後都歸零"
+          },
+          {
+            "label": "$\\infty$ 與 $0$",
+            "why": "每個方塊寬 $1$、高 $1$，面積是 $1$ 不是 $\\infty$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "遞增就不會跑掉",
+      "beats": [
+        {
+          "show": [
+            "例：$f_n(x)=x^{1/n}$，$x\\in[0,1]$",
+            "$0\\le x\\le1$ 時 $x^{1/n}\\le x^{1/(n+1)}$：逐點遞增"
+          ],
+          "say": "再看好的例子：x 的 n 分之 1 次方。0 到 1 之間的數，開越高次的根號越大，所以逐點遞增。極限在 0 以外都是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f_n(x)=x^{1/n}$，$x\\in[0,1]$"
+            },
+            {
+              "do": "write",
+              "line": "$0\\le x\\le1$ 時 $x^{1/n}\\le x^{1/(n+1)}$：逐點遞增",
+              "on": "之間"
+            },
+            {
+              "do": "write",
+              "line": "極限：$x\\in(0,1]$ 時 $\\to1$；$x=0$ 時 $=0$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1x^{1/n}dx=\\frac{n}{n+1}\\to1$",
+            "$\\int\\lim f_n\\,dm=m\\big((0,1]\\big)=1$"
+          ],
+          "say": "每個積分是 n 加 1 分之 n，趨近 1；極限函數的積分是 0 到 1 的長度，也是 1。兩邊相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1x^{1/n}dx=\\frac{n}{n+1}\\to1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int\\lim f_n\\,dm=m\\big((0,1]\\big)=1}}$",
+              "color": "red",
+              "on": "趨近"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "的長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一條都比上一條高，面積往 1 長"
+          ],
+          "say": "圖上，每一條都壓在下一條底下，面積一路往 1 長上去。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "root",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "x^(1/n)",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(1/n)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "1",
+                      "color": "ink",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {floor(n)/(floor(n)+1)}",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1：面積 = 0.5",
+              "on": "下一"
+            },
+            {
+              "do": "write",
+              "line": "每一條都比上一條高，面積往 1 長",
+              "color": "violet",
+              "on": "路往"
+            }
+          ]
+        },
+        {
+          "show": [
+            "差別：方塊離開時，原來的地方變小了"
+          ],
+          "say": "差別在哪？方塊搬走時，原來位置的值掉下來，不是遞增。遞增的列只會長高，面積沒地方逃。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "root",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "x^(1/n)",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^(1/n)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "1",
+                      "color": "ink",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 40,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {floor(n)/(floor(n)+1)}",
+                  "height": 260
+                },
+                "vals": {
+                  "n": 40
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 40：面積 = 0.9756",
+              "on": "原來"
+            },
+            {
+              "do": "write",
+              "line": "差別：方塊離開時，原來的地方變小了",
+              "on": "不是"
+            },
+            {
+              "do": "write",
+              "line": "遞增的列，每一點只會長高，面積沒有地方逃",
+              "color": "gold",
+              "on": "會長"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f_n=\\chi_{[n,n+1]}$：每點 $f_n\\to0$，但 $\\int f_n=1$。這跟單調收斂定理衝突嗎？",
-      "options": [
-        { "label": "不衝突，$f_n$ 不是遞增的", "correct": true },
-        { "label": "衝突，所以定理要再加「定義域有限」", "why": "定義域無限不是問題：$\\chi_{[0,n]}$ 在 $[0,\\infty)$ 上遞增到 1，$\\int=n\\to\\infty=\\int1$，定理照樣成立。這裡出問題的是不遞增。" },
-        { "label": "不衝突，因為 $f_n$ 不是非負的", "why": "指示函數是非負的。失敗的原因是 $f_n$ 在 $[n,n+1]$ 上是 1、下一項變成 0，不遞增。" }
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "單調收斂定理：$(X,\\mathcal{M},\\mu)$ 是測度空間，$f_n:X\\to[0,\\infty]$ 可測，",
+            "$0\\le f_1\\le f_2\\le\\cdots,\\qquad f_n(x)\\to f(x)\\ \\ \\forall x$"
+          ],
+          "say": "單調收斂定理：在一個測度空間上，f n 非負、可測、逐點遞增，收斂到 f。那麼 f 可測，而且積分的極限等於極限的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "單調收斂定理：$(X,\\mathcal{M},\\mu)$ 是測度空間，$f_n:X\\to[0,\\infty]$ 可測，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le f_1\\le f_2\\le\\cdots,\\qquad f_n(x)\\to f(x)\\ \\ \\forall x$",
+              "on": "測度"
+            },
+            {
+              "do": "write",
+              "line": "則 $f$ 可測，而且",
+              "on": "非負"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\lim_{n\\to\\infty}\\int f_n\\,d\\mu=\\int f\\,d\\mu}}$",
+              "color": "red",
+              "on": "收斂#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "可測#2"
+            },
+            {
+              "do": "write",
+              "line": "　兩邊可以同時是 $\\infty$；$f$ 的值也可以是 $\\infty$",
+              "color": "violet",
+              "on": "極限#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "回憶定義（12.49）：",
+            "$\\int f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ 0\\le\\varphi\\le f,\\ \\varphi\\text{ 簡單}\\Big\\}$"
+          ],
+          "say": "策略：小於等於用單調性就有。大於等於要對每個墊在底下的斐證明：把斐打個折，看 f n 在哪裡超過它，再用由下連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "回憶定義（12.49）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int f\\,d\\mu=\\sup\\Big\\{\\int\\varphi\\,d\\mu:\\ 0\\le\\varphi\\le f,\\ \\varphi\\text{ 簡單}\\Big\\}$",
+              "on": "調性"
+            },
+            {
+              "do": "write",
+              "line": "策略：",
+              "on": "對每"
+            },
+            {
+              "do": "write",
+              "line": "• $\\le$：積分的單調性就夠",
+              "on": "證明"
+            },
+            {
+              "do": "write",
+              "line": "• $\\ge$：對每個 $\\varphi\\le f$ 證 $\\int\\varphi\\le\\lim\\int f_n$",
+              "on": "在哪"
+            },
+            {
+              "do": "write",
+              "line": "• 把 $\\varphi$ 打個折，看 $f_n$ 在哪裡超過它；再用測度由下連續",
+              "on": "過它"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\int_0^1\\sum_{k\\ge1}\\frac{x^{k-1}}{k}\\,dx$ 是？",
-      "options": [
-        { "label": "$\\frac{\\pi^2}{6}$", "correct": true },
-        { "label": "$\\infty$，因為級數在 $x=1$ 發散", "why": "$x=1$ 只是一個點。逐項積分得 $\\sum\\frac{1}{k^2}$，收斂。" },
-        { "label": "1", "why": "你只積了第一項 $\\frac{x^0}{1}$。每一項非負，可以全部逐項積：$\\sum\\frac{1}{k^2}$。" }
+      "title": "證明：容易的一半",
+      "beats": [
+        {
+          "show": [
+            "$f=\\sup_nf_n$ 可測（12.47）"
+          ],
+          "say": "先做容易的一半。f 是可測函數列的上確界，所以可測。積分有單調性：墊在 g 底下的簡單函數，也墊在 h 底下。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f=\\sup_nf_n$ 可測（12.47）"
+            },
+            {
+              "do": "write",
+              "line": "單調性：$g\\le h$ ⇒ $\\int g\\le\\int h$（墊在 $g$ 底下的也墊在 $h$ 底下）",
+              "on": "分有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_n\\le f_{n+1}\\le f$，所以 $\\int f_n$ 遞增、都 $\\le\\int f$：",
+            "$L:=\\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\ \\le\\ \\int f\\,d\\mu$"
+          ],
+          "say": "所以 f n 的積分遞增，有極限，可能是無限大，叫它 L。L 不超過 f 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_n\\le f_{n+1}\\le f$，所以 $\\int f_n$ 遞增、都 $\\le\\int f$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle L:=\\lim_{n\\to\\infty}\\int f_n\\,d\\mu\\ \\le\\ \\int f\\,d\\mu}}$",
+              "on": "遞增"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "無限"
+            },
+            {
+              "do": "write",
+              "line": "　遞增數列在 $[0,\\infty]$ 裡一定有極限（可以是 $\\infty$）",
+              "color": "violet",
+              "on": "不超"
+            }
+          ]
+        },
+        {
+          "show": [
+            "剩下：對每個簡單函數 $0\\le\\varphi\\le f$，證 $\\int\\varphi\\,d\\mu\\le L$",
+            "固定 $\\varphi=\\sum_{k=1}^ma_k\\chi_{A_k}$（標準形，$0\\le a_k<\\infty$），固定 $0<\\alpha<1$"
+          ],
+          "say": "剩下要證：墊在 f 底下的每個斐，積分不超過 L。把斐寫成標準形，固定一個 0 到 1 之間的折扣阿法。E n 是 f n 至少有阿法倍斐的點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "剩下：對每個簡單函數 $0\\le\\varphi\\le f$，證 $\\int\\varphi\\,d\\mu\\le L$"
+            },
+            {
+              "do": "write",
+              "line": "固定 $\\varphi=\\sum_{k=1}^ma_k\\chi_{A_k}$（標準形，$0\\le a_k<\\infty$），固定 $0<\\alpha<1$",
+              "on": "把斐"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle E_n=\\{x:\\ f_n(x)\\ge\\alpha\\,\\varphi(x)\\}$",
+              "on": "扣阿"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $E_n$ 可測（$f_n$、$\\varphi$ 可測）；$f_n$ 遞增 ⇒ $E_1\\subseteq E_2\\subseteq\\cdots$"
+          ],
+          "say": "E n 可測；而且 f n 遞增，所以 E n 一個包一個，越來越大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $E_n$ 可測（$f_n$、$\\varphi$ 可測）；$f_n$ 遞增 ⇒ $E_1\\subseteq E_2\\subseteq\\cdots$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：$E_n$ 長滿 $X$",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\bigcup_nE_n=X$：取任一點 $x$",
+            "• $\\varphi(x)=0$：$f_1(x)\\ge0$，$x\\in E_1$"
+          ],
+          "say": "E n 最後會長滿 X。斐是 0 的點，已經在 E 1 裡。斐是正的點，打折以後嚴格小於 f，而 f n 趨近 f，總有一個 n 超過它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\bigcup_nE_n=X$：取任一點 $x$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\varphi(x)=0$：$f_1(x)\\ge0$，$x\\in E_1$",
+              "on": "的點#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\varphi(x)>0$：$\\alpha\\varphi(x)<\\varphi(x)\\le f(x)=\\lim f_n(x)$",
+              "on": "斐是#2"
+            },
+            {
+              "do": "write",
+              "line": "所以某個 $n$ 有 $f_n(x)>\\alpha\\varphi(x)$，$x\\in E_n$",
+              "on": "格小"
+            },
+            {
+              "do": "write",
+              "line": "　這裡用到 $\\varphi(x)<\\infty$：簡單函數只取有限值",
+              "color": "violet",
+              "on": "總有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_n\\ge f_n\\chi_{E_n}\\ge\\alpha\\varphi\\chi_{E_n}$，後者是簡單函數：",
+            "$\\int f_n\\,d\\mu\\ge\\int\\alpha\\varphi\\chi_{E_n}\\,d\\mu=\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k\\cap E_n)$"
+          ],
+          "say": "在 E n 上，f n 至少是阿法倍斐。所以阿法斐乘 E n 的特徵函數，墊在 f n 底下，f n 的積分至少是它的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_n\\ge f_n\\chi_{E_n}\\ge\\alpha\\varphi\\chi_{E_n}$，後者是簡單函數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int f_n\\,d\\mu\\ge\\int\\alpha\\varphi\\chi_{E_n}\\,d\\mu=\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k\\cap E_n)$",
+              "on": "的特"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：取極限",
+      "beats": [
+        {
+          "show": [
+            "$A_k\\cap E_n\\uparrow A_k$，由下連續（12.43）：",
+            "$\\mu(A_k\\cap E_n)\\to\\mu(A_k)\\quad(n\\to\\infty)$"
+          ],
+          "say": "現在讓 n 趨近無限大。A k 交 E n 一路長大到 A k，由測度的由下連續，它的測度趨近 A k 的測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$A_k\\cap E_n\\uparrow A_k$，由下連續（12.43）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mu(A_k\\cap E_n)\\to\\mu(A_k)\\quad(n\\to\\infty)$",
+              "on": "由測"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有限和，可以逐項取極限：",
+            "$L\\ge\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k)=\\alpha\\int\\varphi\\,d\\mu$"
+          ],
+          "say": "右邊只有有限多項，可以逐項取極限。左邊趨近 L，得到 L 至少是阿法倍斐的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有限和，可以逐項取極限："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle L\\ge\\alpha\\sum_{k=1}^ma_k\\,\\mu(A_k)=\\alpha\\int\\varphi\\,d\\mu}}$",
+              "on": "取極"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "至少"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\alpha$ 是任意的，令 $\\alpha\\to1^-$：$L\\ge\\int\\varphi\\,d\\mu$",
+            "對所有 $\\varphi$ 取上確界："
+          ],
+          "say": "讓阿法趨近 1，L 至少是斐的積分。再對所有斐取上確界，就是 f 的積分。兩個方向合起來，證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\alpha$ 是任意的，令 $\\alpha\\to1^-$：$L\\ge\\int\\varphi\\,d\\mu$"
+            },
+            {
+              "do": "write",
+              "line": "對所有 $\\varphi$ 取上確界：",
+              "on": "至少"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle L\\ge\\int f\\,d\\mu,\\quad\\text{合起來 }L=\\int f\\,d\\mu\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "所有"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "的積#2"
+            },
+            {
+              "do": "write",
+              "line": "　整個證明只用了：積分的定義、單調性、測度由下連續",
+              "color": "violet",
+              "on": "向合"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個立刻得到的結果",
+      "beats": [
+        {
+          "show": [
+            "加法：$f,g\\ge0$ 可測 ⇒ $\\int(f+g)=\\int f+\\int g$"
+          ],
+          "say": "第一個結果：非負可測函數的積分可以相加。這是 12.49 還欠著的事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "加法：$f,g\\ge0$ 可測 ⇒ $\\int(f+g)=\\int f+\\int g$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由 12.49 取簡單函數 $\\varphi_n\\uparrow f$、$\\psi_n\\uparrow g$，則 $\\varphi_n+\\psi_n\\uparrow f+g$",
+            "$\\int(\\varphi_n+\\psi_n)=\\int\\varphi_n+\\int\\psi_n$"
+          ],
+          "say": "用 12.49 的逼近定理，各取一列遞增的簡單函數。簡單函數的積分可以相加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "由 12.49 取簡單函數 $\\varphi_n\\uparrow f$、$\\psi_n\\uparrow g$，則 $\\varphi_n+\\psi_n\\uparrow f+g$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int(\\varphi_n+\\psi_n)=\\int\\varphi_n+\\int\\psi_n$",
+              "on": "增的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\to\\infty$，三處都用單調收斂：$\\int(f+g)=\\int f+\\int g$"
+          ],
+          "say": "讓 n 趨近無限大，三個地方都用單調收斂定理，就得到等式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\to\\infty$，三處都用單調收斂：$\\int(f+g)=\\int f+\\int g$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項積分：$g_k\\ge0$ 可測 ⇒",
+            "$\\int\\sum_{k=1}^\\infty g_k\\,d\\mu=\\sum_{k=1}^\\infty\\int g_k\\,d\\mu$"
+          ],
+          "say": "第二個結果：非負函數的級數，可以逐項積分。不用檢查任何一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項積分：$g_k\\ge0$ 可測 ⇒"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int\\sum_{k=1}^\\infty g_k\\,d\\mu=\\sum_{k=1}^\\infty\\int g_k\\,d\\mu}}$",
+              "color": "red",
+              "on": "的級"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "不用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "部分和 $S_n=\\sum_{k\\le n}g_k$ 遞增到 $\\sum g_k$；"
+          ],
+          "say": "證明：部分和是遞增的。有限和的積分用剛才的加法拆開，再對部分和用單調收斂定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "部分和 $S_n=\\sum_{k\\le n}g_k$ 遞增到 $\\sum g_k$；"
+            },
+            {
+              "do": "write",
+              "line": "由加法 $\\int S_n=\\sum_{k\\le n}\\int g_k$，再用單調收斂",
+              "on": "和的"
+            },
+            {
+              "do": "write",
+              "line": "　兩邊可以同時是 $\\infty$：等式在 $[0,\\infty]$ 裡照樣成立",
+              "color": "violet",
+              "on": "再對"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：逐項積分出 $\\frac{\\pi^2}6$",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\frac{-\\ln(1-x)}{x}\\,dx=\\ ?$",
+            "$x\\in[0,1)$：$-\\ln(1-x)=\\sum_{k\\ge1}\\dfrac{x^k}k$，所以"
+          ],
+          "say": "例子：負的自然對數 1 減 x，除以 x。展開成 k 分之 x 的 k 減 1 次方的總和，每一項都非負。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{-\\ln(1-x)}{x}\\,dx=\\ ?$"
+            },
+            {
+              "do": "write",
+              "line": "$x\\in[0,1)$：$-\\ln(1-x)=\\sum_{k\\ge1}\\dfrac{x^k}k$，所以",
+              "on": "展開"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{-\\ln(1-x)}x=\\sum_{k=1}^\\infty\\frac{x^{k-1}}k\\qquad(\\text{每項}\\ge0)$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1\\frac{x^{k-1}}k\\,dx=\\frac1{k^2}$",
+            "逐項積分（非負，不用檢查一致）："
+          ],
+          "say": "每一項積分是 k 平方分之 1。非負，直接逐項積分：答案是 6 分之派平方，大約 1.645。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{x^{k-1}}k\\,dx=\\frac1{k^2}$"
+            },
+            {
+              "do": "write",
+              "line": "逐項積分（非負，不用檢查一致）：",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\int_0^1\\frac{-\\ln(1-x)}x\\,dx&=\\sum_{k=1}^\\infty\\frac1{k^2}\\\\&=\\frac{\\pi^2}6\\approx1.645\\end{aligned}}}}$",
+              "color": "red",
+              "on": "直接"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　$x=1$ 一點測度為 $0$，不影響積分；在 $[0,1)$ 上級數不一致收斂，12F 的方法不能直接用",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用同樣的方法：$\\displaystyle\\int_0^\\infty\\frac{x}{e^{2x}-1}\\,dx=$？（提示：$\\frac{x}{e^{2x}-1}=\\sum_{k\\ge1}xe^{-2kx}$）"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "少一個假設就不行",
+      "beats": [
+        {
+          "show": [
+            "不遞增：$f_n(x)=nx^n$，$x\\in[0,1]$",
+            "$\\int_0^1nx^n\\,dx=\\frac{n}{n+1}\\to1$"
+          ],
+          "say": "拿掉假設會怎樣？先拿掉遞增：n 乘 x 的 n 次方，積分是 n 加 1 分之 n，趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不遞增：$f_n(x)=nx^n$，$x\\in[0,1]$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1nx^n\\,dx=\\frac{n}{n+1}\\to1$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐點：$x<1$ 時 $nx^n\\to0$；$x=1$ 時 $=n\\to\\infty$",
+            "$f=0\\ \\text{a.e.}\\ \\Rightarrow\\ \\int f\\,dm=0\\ne1$"
+          ],
+          "say": "x 小於 1 都趨近 0，只有 x 等於 1 衝到無限大。極限幾乎處處是 0，積分是 0，不是 1。問題出在它不遞增。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐點：$x<1$ 時 $nx^n\\to0$；$x=1$ 時 $=n\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle f=0\\ \\text{a.e.}\\ \\Rightarrow\\ \\int f\\,dm=0\\ne1}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "極限"
+            },
+            {
+              "do": "write",
+              "line": "　不遞增：$x=\\frac12$ 時依序是 $\\frac12,\\frac12,\\frac38,\\frac14,\\ldots$",
+              "color": "violet",
+              "on": "不是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積被擠到 x = 1 那一點"
+          ],
+          "say": "圖上，面積被擠到右邊 x 等於 1 那裡，變成一根越來越高越窄的尖刺。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "nxn",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    12.5
+                  ],
+                  "area": [
+                    {
+                      "expr": "n*x^n",
+                      "from": 0,
+                      "to": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x^n",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 12,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {n/(n+1)}",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1：面積 = 0.5",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "面積被擠到 x = 1 那一點",
+              "color": "violet",
+              "on": "一根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不非負：$f_n=-\\chi_{[n,\\infty)}$ 遞增到 $0$"
+          ],
+          "say": "第二個：拿掉非負。負的、n 到無限大的特徵函數，逐點遞增到 0。可是每個積分都是負無限大，極限函數的積分卻是 0。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "nxn",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    12.5
+                  ],
+                  "area": [
+                    {
+                      "expr": "n*x^n",
+                      "from": 0,
+                      "to": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "n*x^n",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 12,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：面積 = {n/(n+1)}",
+                  "height": 260
+                },
+                "vals": {
+                  "n": 12
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 12：面積 = 0.9231",
+              "on": "到無"
+            },
+            {
+              "do": "write",
+              "line": "不非負：$f_n=-\\chi_{[n,\\infty)}$ 遞增到 $0$",
+              "on": "逐點"
+            },
+            {
+              "do": "write",
+              "line": "但 $\\int f_n\\,dm=-\\infty$，$\\int0=0$",
+              "color": "gold",
+              "on": "每個"
+            },
+            {
+              "do": "write",
+              "line": "　遞減也不行：$\\chi_{[n,\\infty)}\\downarrow0$，每個積分都是 $\\infty$",
+              "color": "violet",
+              "on": "極限"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 假設：$f_n\\ge0$、可測、逐點遞增；結論 $\\lim\\int f_n=\\int\\lim f_n$（可以是 $\\infty$）",
+            "• 證明：打折 $\\alpha\\varphi$、集合 $E_n\\uparrow X$、測度由下連續"
+          ],
+          "say": "整理：非負、可測、逐點遞增，就能交換極限與積分。關鍵是打折和由下連續。少了遞增或非負，都有反例。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 假設：$f_n\\ge0$、可測、逐點遞增；結論 $\\lim\\int f_n=\\int\\lim f_n$（可以是 $\\infty$）"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：打折 $\\alpha\\varphi$、集合 $E_n\\uparrow X$、測度由下連續",
+              "on": "就能"
+            },
+            {
+              "do": "write",
+              "line": "• 推論：非負函數的積分可加；非負級數可以逐項積分",
+              "on": "關鍵"
+            },
+            {
+              "do": "write",
+              "line": "• 反例：方塊往右跑、$nx^n$ 擠成尖刺、$-\\chi_{[n,\\infty)}$",
+              "on": "了遞"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：沒有單調時，還剩下什麼？法圖引理"
+          ],
+          "say": "下一課：沒有單調，還剩下法圖引理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：沒有單調時，還剩下什麼？法圖引理"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["lebesgue", "monotone-convergence", "convergence-theorem"],
-    "fine": ["mct-hypothesis-check", "mct-increasing-limit", "mct-series-termwise", "mct-truncation"]
+    "coarse": [
+      "lebesgue",
+      "monotone-convergence",
+      "convergence-theorem"
+    ],
+    "fine": [
+      "mct-hypothesis-check",
+      "mct-increasing-limit",
+      "mct-series-termwise",
+      "mct-truncation"
+    ]
   },
   "practice": [
-    { "id": "lb-con-006", "core": true, "trains": "mct-increasing-limit" },
-    { "id": "lb-lp-004", "core": true, "trains": "mct-truncation" },
-    { "id": "lb-lp-006", "core": true, "trains": "mct-truncation" },
-    { "id": "lb-con-005", "core": true, "trains": "mct-hypothesis-check" },
-    { "id": "cg-12k-001", "core": true, "trains": "mct-hypothesis-check" },
-    { "id": "cg-12k-004", "core": true, "trains": "mct-series-termwise" },
-    { "id": "cg-12k-002", "trains": "mct-hypothesis-check" },
-    { "id": "world-061", "challenge": true, "trains": "mct-series-termwise", "note": "挑戰：$\\frac{\\ln(1-x)}{x}=-\\sum\\frac{x^{k-1}}{k}$，每項同號，逐項積分。" },
-    { "id": "burst-boss-int-010", "challenge": true, "trains": "mct-series-termwise", "note": "挑戰：$\\frac{\\ln x}{1-x}=\\sum x^k\\ln x$，每項 $\\le0$；對負號那一列用定理，$\\int_0^1 x^k\\ln x\\,dx=-\\frac{1}{(k+1)^2}$。" },
-    { "id": "cg-12k-003", "challenge": true, "trains": "mct-hypothesis-check" },
-    { "id": "cg-12k-005", "challenge": true, "trains": "mct-series-termwise" }
+    {
+      "id": "lb-con-006",
+      "core": true,
+      "trains": "mct-increasing-limit"
+    },
+    {
+      "id": "lb-lp-004",
+      "core": true,
+      "trains": "mct-truncation"
+    },
+    {
+      "id": "lb-lp-006",
+      "core": true,
+      "trains": "mct-truncation"
+    },
+    {
+      "id": "lb-con-005",
+      "core": true,
+      "trains": "mct-hypothesis-check"
+    },
+    {
+      "id": "cg-12k-001",
+      "core": true,
+      "trains": "mct-hypothesis-check"
+    },
+    {
+      "id": "cg-12k-004",
+      "core": true,
+      "trains": "mct-series-termwise"
+    },
+    {
+      "id": "cg-12k-002",
+      "trains": "mct-hypothesis-check"
+    },
+    {
+      "id": "world-061",
+      "challenge": true,
+      "trains": "mct-series-termwise",
+      "note": "挑戰：$\\frac{\\ln(1-x)}{x}=-\\sum\\frac{x^{k-1}}{k}$，每項同號，逐項積分。"
+    },
+    {
+      "id": "burst-boss-int-010",
+      "challenge": true,
+      "trains": "mct-series-termwise",
+      "note": "挑戰：$\\frac{\\ln x}{1-x}=\\sum x^k\\ln x$，每項 $\\le0$；對負號那一列用定理，$\\int_0^1 x^k\\ln x\\,dx=-\\frac{1}{(k+1)^2}$。"
+    },
+    {
+      "id": "cg-12k-003",
+      "challenge": true,
+      "trains": "mct-hypothesis-check"
+    },
+    {
+      "id": "cg-12k-005",
+      "challenge": true,
+      "trains": "mct-series-termwise"
+    }
   ],
   "gaps": []
 }

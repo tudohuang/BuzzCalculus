@@ -1,0 +1,398 @@
+{
+  "id": "secant-to-tangent",
+  "title": "割線到切線",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["average-rate", "limit-intro", "limit-factor"],
+  "next": ["derivative-definition"],
+  "related": ["limit-one-sided", "limit-rationalize"],
+  "objectives": [
+    "說出切線斜率是「割線斜率在 $h \\to 0$ 時的極限」。",
+    "用這個極限算出多項式、$\\frac{1}{x}$ 在某一點的切線斜率。",
+    "用點斜式寫出切線方程式。",
+    "知道切線不是「只碰曲線一次的直線」。"
+  ],
+  "visual": "y = x² 的圖形，固定點 P(1, 1)，另一點 Q(1 + h, (1 + h)²) 可以沿曲線拖動。P、Q 連成割線，旁邊顯示 h 與斜率 2 + h。把 Q 從右邊拖向 P，再從左邊拖向 P，割線轉向同一條直線，斜率讀數往 2 擠；Q 碰到 P 時讀數消失（0/0）。另一個按鈕把鏡頭往 P 推近，曲線越來越像那條直線。",
+  "figures": [
+    {"caption":"拖 h 讓 Q 滑向 P，割線轉成切線","after":1,"widget":{"type":"secant-tangent","f":"x^2","a":1,"h":[-1.5,1.5],"value":1,"window":[-1,3,-1,6]}}
+  ],
+  "concept": [
+    {
+      "heading": "① 一點算不出斜率",
+      "body": [
+        "曲線在某一點有多斜？直覺上是那一點切線的斜率。問題是斜率要兩個點才算得出來，切線上我們只知道一個點 $P$。",
+        "辦法是先借第二個點。$P = (a, f(a))$，$Q = (a + h, f(a + h))$，割線 $PQ$ 的斜率就是上一課的平均變化率 $\\frac{f(a + h) - f(a)}{h}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 讓 $Q$ 滑向 $P$",
+      "body": [
+        "以 $f(x) = x^2$、$a = 1$ 為例：割線斜率 $= \\frac{(1 + h)^2 - 1}{h} = \\frac{2h + h^2}{h} = 2 + h$（$h \\ne 0$）。",
+        "$h = 0.1$、0.01 得 2.1、2.01；$h = -0.01$、$-0.1$ 得 1.99、1.9。$Q$ 從兩邊靠近 $P$，割線斜率都往 2 擠。",
+        "$h$ 不能直接代 0：$Q$ 跟 $P$ 重合時只剩一個點，式子是 $\\frac{0}{0}$。所以這是一個極限：切線斜率 $= \\lim_{h\\to0}$ 割線斜率。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 切線的定義",
+      "body": [
+        "曲線在 $P$ 的切線，是通過 $P$、斜率等於下面這個極限的直線（極限要存在）。",
+        "國中的圓「只碰一次」的說法，對一般曲線不對：$y = x^3$ 在 $(1, 1)$ 的切線會在 $x = -2$ 再碰到曲線（範例 3）；反過來，鉛直線 $x = 1$ 只碰 $y = x^2$ 一次，卻不是切線。"
+      ],
+      "tex": ["m=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 有了斜率，寫出直線",
+      "body": [
+        "通過 $(a, f(a))$、斜率 $m$ 的直線：$y - f(a) = m(x - a)$。上面 $y = x^2$ 在 $(1, 1)$ 的切線是 $y - 1 = 2(x - 1)$，也就是 $y = 2x - 1$。",
+        "左右兩邊的割線斜率擠向不同的數時（例如 $|x|$ 在 0，右邊一直是 1、左邊一直是 $-1$，見〈左極限與右極限〉），極限不存在，那一點就沒有切線。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$y = x^2$ 在 $x = 1$",
+      "prompt": "求 $y = x^2$ 在 $x = 1$ 的切線斜率與切線方程式。",
+      "steps": [
+        "割線斜率：$\\frac{(1 + h)^2 - 1^2}{h} = \\frac{1 + 2h + h^2 - 1}{h} = \\frac{2h + h^2}{h}$。",
+        "$h \\ne 0$，約掉 $h$：$2 + h$。",
+        "$h \\to 0$：斜率 $m = 2$。",
+        "點斜式：$y - 1 = 2(x - 1)$，即 $y = 2x - 1$。"
+      ],
+      "answer": "斜率 2；$y = 2x - 1$",
+      "claim": "LIM(((1+x)^2-1)/x, 0) == 2 ;; SUB(2x-1, 1) == 1"
+    },
+    {
+      "title": "$y = \\frac{1}{x}$ 在 $x = 2$：要先通分",
+      "prompt": "求 $y = \\frac{1}{x}$ 在 $x = 2$ 的切線斜率與切線方程式。",
+      "steps": [
+        "割線斜率：$(\\frac{1}{2 + h} - \\frac{1}{2})/h$。",
+        "分子通分：$\\frac{1}{2 + h} - \\frac{1}{2} = \\frac{2 - (2 + h)}{2(2 + h)} = -\\frac{h}{2(2 + h)}$。",
+        "除以 $h$（$h \\ne 0$）：$-\\frac{1}{2(2 + h)}$。",
+        "$h \\to 0$：$m = -\\frac{1}{2 \\cdot 2} = -\\frac{1}{4}$。",
+        "切點是 $(2, \\frac{1}{2})$：$y - \\frac{1}{2} = -\\left(\\frac{1}{4}\\right)(x - 2)$，即 $y = -\\frac{x}{4} + 1$。"
+      ],
+      "answer": "斜率 $-\\frac{1}{4}$；$y = -\\frac{x}{4} + 1$",
+      "claim": "LIM((1/(2+x)-1/2)/x, 0) == -1/4 ;; SUB(-x/4+1, 2) == 1/2"
+    },
+    {
+      "title": "切線可以再碰到曲線",
+      "prompt": "求 $y = x^3$ 在 $x = 1$ 的切線，並找出它和曲線的其他交點。",
+      "steps": [
+        "割線斜率：$\\frac{(1 + h)^3 - 1}{h} = \\frac{3h + 3h^2 + h^3}{h} = 3 + 3h + h^2$（$h \\ne 0$）。$h \\to 0$ 得 $m = 3$。",
+        "切線：$y - 1 = 3(x - 1)$，即 $y = 3x - 2$。",
+        "交點：$x^3 = 3x - 2$，也就是 $x^3 - 3x + 2 = 0$。$x = 1$ 一定是根，分解得 $(x - 1)^2(x + 2) = 0$。",
+        "所以除了切點，切線還在 $x = -2$、點 $(-2, -8)$ 穿過曲線。"
+      ],
+      "answer": "$y = 3x - 2$；另一交點 $(-2, -8)$",
+      "claim": "LIM(((1+x)^3-1)/x, 0) == 3 ;; SUB(x^3-3x+2, -2) == 0 ;; SUB(3x-2, -2) == -8"
+    }
+  ],
+  "pitfalls": [
+    "在割線斜率裡直接代 $h = 0$，得到 $\\frac{0}{0}$ 就停住。要先化簡、約掉 $h$。",
+    "只從一邊看（只試 $h > 0$），沒有確認左右擠向同一個數。",
+    "斜率算對了，切線卻寫成 $y = mx$，忘了要通過切點 $(a, f(a))$。",
+    "以為切線只能碰曲線一次。",
+    "展開 $(a + h)^2$ 漏掉 $2ah$ 那一項。"
+  ],
+  "checks": [
+    {
+      "ask": "$y = x^2$ 在 $x = 3$ 的切線斜率是？",
+      "options": [
+        { "label": "6", "correct": true },
+        { "label": "9", "why": "9 是 $f(3)$，是切點的高度，不是斜率。割線斜率 $\\frac{(3 + h)^2 - 9}{h} = 6 + h \\to 6$。" },
+        { "label": "$6 + h$", "why": "$6 + h$ 是割線斜率；切線斜率要再讓 $h \\to 0$。" }
+      ]
+    },
+    {
+      "ask": "為什麼不能直接把 $h = 0$ 代進 $\\frac{f(a + h) - f(a)}{h}$？",
+      "options": [
+        { "label": "$h = 0$ 時 $Q$ 和 $P$ 重合，式子變成 $\\frac{0}{0}$，沒有意義", "correct": true },
+        { "label": "因為 $f(a)$ 可能不存在", "why": "$P$ 就在曲線上，$f(a)$ 是存在的；問題出在分母 $h = 0$。" },
+        { "label": "代進去會得到 0，答案太小", "why": "代進去不是 0，是 $\\frac{0}{0}$，根本不是一個數。" }
+      ]
+    },
+    {
+      "ask": "某曲線在 $(2, 5)$ 的切線斜率是 3。切線方程式是？",
+      "options": [
+        { "label": "$y = 3x - 1$", "correct": true },
+        { "label": "$y = 3x$", "why": "$y = 3x$ 通過原點，不通過 $(2, 5)$。用點斜式 $y - 5 = 3(x - 2)$。" },
+        { "label": "$y = 3x + 5$", "why": "5 是切點的 $y$ 座標，不是 $y$ 截距。$y - 5 = 3(x - 2)$ 整理成 $y = 3x - 1$。" }
+      ]
+    },
+    {
+      "ask": "下面哪一句對？",
+      "options": [
+        { "label": "切線可能在別的地方再和曲線相交", "correct": true },
+        { "label": "只和曲線碰一次的直線就是切線", "why": "鉛直線 $x = 1$ 只碰 $y = x^2$ 一次，但它不是切線；切線是用割線斜率的極限定義的。" },
+        { "label": "每一條曲線在每一點都有切線", "why": "$|x|$ 在 0：右邊割線斜率都是 1、左邊都是 $-1$，極限不存在，沒有切線。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "一點算不出斜率",
+      "beats": [
+        { "show": ["斜率要兩個點"],
+          "note": "切線上我們只知道一個點 $P$。",
+          "say": "曲線在一個點有多斜？斜率要兩個點才算得出來，可是切線上我們只知道一個點 P。",
+          "board": [
+            {"do":"write","line":"斜率要兩個點，切線上只知道 ${{p:P}}$"},
+            {"do":"focus","term":"p","label":"一個點","on":"只知道"}
+          ] },
+        { "show": ["先借第二個點 $Q = (a + h, f(a + h))$"],
+          "fig": {"use":0,"to":1},
+          "say": "那就先借第二個點：從 P 往右走 h，曲線上那一點叫 Q。",
+          "board": [
+            {"do":"write","line":"$Q = ({{x:a + h}}, f(a + h))$"},
+            {"do":"focus","term":"x","label":"右移 h","on":"往右走"}
+          ] },
+        { "show": ["割線斜率 $\\frac{f(a + h) - f(a)}{h}$"],
+          "note": "就是平均變化率。",
+          "say": "通過 P 和 Q 的直線叫割線。它的斜率是函數值的差除以 h，也就是平均變化率。",
+          "board": [
+            {"do":"write","line":"割線斜率 $={{f:\\frac{f(a + h) - f(a)}{h}}}$"},
+            {"do":"underline","term":"f","label":"平均變化率","on":"差除以"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$y = x^2$，$P = (1, 1)$，$h = 1$。割線斜率是？",
+        "options": [
+          {
+            "label": "3",
+            "correct": true
+          },
+          {
+            "label": "2",
+            "why": "2 是切線斜率。$h = 1$ 時 $\\frac{(1 + 1)^2 - 1}{1} = 3$。"
+          },
+          {
+            "label": "4",
+            "why": "4 是 $Q$ 的高度 $f(2)$；斜率要先減 $f(1)$ 再除以 $h$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "讓 $Q$ 滑向 $P$",
+      "beats": [
+        { "show": ["$\\frac{(1 + h)^2 - 1}{h} = 2 + h$"],
+          "note": "以 $f(x) = x^2$、$a = 1$ 為例，$h \\ne 0$。",
+          "fig": {"use":0,"to":1},
+          "say": "用 x 平方、a 等於一來看。割線斜率化簡完是二加 h，前提是 h 不等於零。",
+          "board": [
+            {"do":"write","line":"$\\frac{(1 + h)^2 - 1}{h} = {{s:{{t:2}} + h}}$","on":"割線斜率"},
+            {"do":"underline","term":"s","label":"h ≠ 0","on":"前提是"}
+          ] },
+        { "show": ["$h = 0.1$ → 2.1"],
+          "fig": {"use":0,"to":0.1},
+          "say": "h 取零點一，Q 靠近了，斜率是二點一。",
+          "board": [
+            {"do":"write","line":"$h = 0.1$ → $2.1$","on":"h 取"}
+          ] },
+        { "show": ["$h = 0.01$ → 2.01"],
+          "fig": {"use":0,"to":0.01},
+          "say": "h 再縮到零點零一，斜率二點零一，割線幾乎貼著曲線。",
+          "board": [
+            {"do":"write","line":"$h = 0.01$ → $2.01$","on":"h 再縮到"}
+          ] },
+        { "show": ["$h = -0.1$ → 1.9"],
+          "note": "從左邊靠近，一樣往 2 擠。",
+          "fig": {"use":0,"to":-0.1},
+          "say": "從左邊來，h 是負零點一，斜率一點九。兩邊都往二擠。",
+          "board": [
+            {"do":"write","line":"$h = -0.1$ → $1.9$","on":"從左邊"},
+            {"do":"focus","term":"t","label":"兩邊都往 2 擠","on":"兩邊都往"}
+          ] }
+      ],
+      "drag": {
+        "use": 0,
+        "ask": "自己拖 $h$，讓 $Q$ 貼到 $P$ 旁邊",
+        "range": [
+          -0.05,
+          0.05
+        ]
+      }
+    },
+    {
+      "title": "這是一個極限",
+      "beats": [
+        { "show": ["$h$ 不能直接代 0"],
+          "note": "$Q$ 跟 $P$ 重合，式子是 $\\frac{0}{0}$。",
+          "say": "為什麼不直接讓 h 等於零？因為 Q 會跟 P 重合，只剩一個點，式子變成零分之零。",
+          "board": [
+            {"do":"write","line":"$h = {{z:0}}$：$Q$ 和 $P$ 重合"},
+            {"do":"focus","term":"z","label":"不行","on":"重合"},
+            {"do":"write","line":"$\\frac{0}{0}$","color":"red","on":"式子變成"}
+          ] },
+        { "show": ["割線 $y = 3x - 2$ 轉成 $y = 2x - 1$"],
+          "say": "畫在 x 平方上：h 等於一時，割線斜率是三，比較陡。h 越縮越小，割線一直轉，最後貼成斜率二的那條線。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,3,-2,6],"curves":[{"expr":"x^2","color":"blue","width":3},{"expr":"3*x-2","color":"violet"},{"expr":"2*x-1","color":"gold"}],"points":[{"x":1,"y":1},{"x":2,"y":4}]}},
+            {"do":"write","line":"割線一直轉，貼成 $y = 2x - 1$","on":"最後貼成"}
+          ] },
+        { "show": ["$m=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}$"],
+          "note": "切線：通過 $P$、斜率等於這個極限的直線。",
+          "fig": {"use":0,"to":0},
+          "say": "所以切線斜率要用極限：h 趨近零時，割線斜率的極限。通過 P、斜率是這個極限的直線，就是切線。",
+          "board": [
+            {"do":"write","line":"$m=\\lim_{{{h:h\\to0}}}\\frac{f(a+h)-f(a)}{h}$"},
+            {"do":"underline","term":"h","label":"趨近 0","on":"趨近零"},
+            {"do":"write","line":"切線：過 $P$，斜率 $m$","on":"通過"}
+          ] },
+        { "show": ["直覺：$Q$ 越近，割線越貼近切線"],
+          "note": "這是直覺，不是證明。",
+          "say": "為什麼這樣定？直覺上，Q 越靠近 P，割線就越貼著曲線在 P 的方向。這是直覺，不是證明，所以用極限來定義。",
+          "board": [
+            {"do":"write","line":"直覺：$Q \\to P$，割線貼近切線方向"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "算一個",
+      "beats": [
+        { "show": ["$y = x^2$ 在 $x = 1$"],
+          "say": "實際算一次：y 等於 x 平方，在 x 等於一的切線斜率。",
+          "board": [
+            {"do":"write","line":"$y = x^2$ 在 $x = 1$"}
+          ] },
+        { "show": ["$\\frac{(1 + h)^2 - 1^2}{h} = \\frac{2h + h^2}{h}$"],
+          "note": "展開 $(1 + h)^2 = 1 + 2h + h^2$。",
+          "say": "一加 h 的平方展開是一加二 h 加 h 平方，減掉一，分子剩二 h 加 h 平方。",
+          "board": [
+            {"do":"write","line":"$\\frac{(1 + h)^2 - 1^2}{h} = \\frac{{{n:2h + h^2}}}{h}$"},
+            {"do":"focus","term":"n","on":"分子剩"}
+          ] },
+        { "show": ["約掉 $h$：$2 + h$"],
+          "note": "$h \\ne 0$ 才能約。",
+          "say": "h 不等於零，才可以把 h 約掉，剩下二加 h。",
+          "board": [
+            {"do":"transform","line":"$\\frac{{{c:h}}(2 + h)}{{{d:h}}} = {{s:2 + h}}$"},
+            {"do":"strike","term":"c","on":"把 h"},
+            {"do":"strike","term":"d","label":"約掉","on":"約掉"},
+            {"do":"focus","term":"s","color":"green","on":"剩下"}
+          ] },
+        { "show": ["$h \\to 0$：斜率 $m = 2$"],
+          "say": "最後讓 h 趨近零，二加 h 就趨近二。切線斜率是二。",
+          "board": [
+            {"do":"write","line":"$h \\to 0$：${{s:2 + h}} \\to {{r:2}}$"},
+            {"do":"focus","term":"s","on":"二加 h"},
+            {"do":"box","term":"r","color":"green","label":"斜率","on":"切線斜率"}
+          ] }
+      ],
+      "key": "先約掉 $h$，再讓 $h\\to0$",
+      "check": 0
+    },
+    {
+      "title": "寫出切線",
+      "beats": [
+        { "show": ["$y - f(a) = m(x - a)$"],
+          "note": "通過 $(a, f(a))$、斜率 $m$ 的直線。",
+          "say": "有了斜率，用點斜式寫直線：y 減 f 在 a 的值，等於 m 乘上 x 減 a。",
+          "board": [
+            {"do":"write","line":"$y - {{fa:f(a)}} = {{m:m}}(x - {{a:a}})$","tint":{"fa":"blue","a":"blue","m":"violet"},"on":"點斜式"},
+            {"do":"focus","term":"fa","color":"blue","label":"切點","on":"f 在 a"},
+            {"do":"focus","term":"m","color":"violet","label":"斜率","on":"等於 m"}
+          ] },
+        { "show": ["$y - 1 = 2(x - 1)$"],
+          "note": "$y = x^2$ 在 $(1, 1)$。",
+          "say": "y 等於 x 平方在點一、一，斜率二，代進去是 y 減一，等於二乘 x 減一。",
+          "board": [
+            {"do":"write","line":"$y = x^2$ 在 $({{p:1}}, {{q:1}})$，${{n:m = 2}}$","tint":{"p":"blue","q":"blue","n":"violet"}},
+            {"do":"write","line":"$y - {{q:1}} = 2(x - {{p:1}})$","on":"代進去"}
+          ] },
+        { "show": ["$y = 2x - 1$"],
+          "say": "整理一下，切線就是 y 等於二 x 減一。",
+          "board": [
+            {"do":"write","line":"${{r:y = 2x - 1}}$","on":"整理"},
+            {"do":"box","term":"r","color":"green","label":"切線","on":"切線就是"}
+          ] },
+        { "show": ["鉛直線 $x = 1$ 沒有斜率 $m$"],
+          "note": "割線斜率往 2 擠，不是鉛直。",
+          "say": "點斜式要有斜率 m。鉛直線 x 等於一，x 不動，沒有斜率可代；x 平方在這點的割線斜率往二擠，不是鉛直。",
+          "board": [
+            {"do":"write","line":"鉛直線 ${{v:x = 1}}$：沒有斜率 $m$"},
+            {"do":"strike","term":"v","label":"無斜率","on":"沒有斜率可代"},
+            {"do":"write","line":"割線斜率 $\\to 2$，不是鉛直","on":"往二擠"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "不是只碰一次",
+      "beats": [
+        { "show": ["$y = x^3$ 在 $(1, 1)$：切線 $y = 3x - 2$"],
+          "say": "切線一定只碰曲線一次嗎？y 等於 x 三次方，在點一、一的切線是 y 等於三 x 減二。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,2.5,-10,6],"curves":[{"expr":"x^3","color":"blue","width":3},{"expr":"3*x-2","color":"gold"}],"points":[{"x":1,"y":1},{"x":-2,"y":-8}]},"on":"y 等於 x 三次方"},
+            {"do":"write","line":"$y = x^3$ 在 $(1, 1)$：切線 $y = 3x - 2$","on":"的切線是"}
+          ] },
+        { "show": ["$(x - 1)^2(x + 2) = 0$"],
+          "note": "切線在 $x = -2$ 又穿過曲線。",
+          "say": "把曲線和切線聯立，分解成 x 減一的平方乘 x 加二。所以在 x 等於負二，切線又穿過曲線。",
+          "board": [
+            {"do":"write","line":"${{d:(x - 1)^2}}{{e:(x + 2)}} = 0$","on":"分解成"},
+            {"do":"underline","term":"e","label":"x = −2","on":"等於負二"}
+          ] },
+        { "show": ["$(x-1)^2$ 不變號：只碰","$x+2$ 變號：穿過"],
+          "say": "x 減一的平方是重根，平方不變號，切線在這裡只是碰到。x 加二是單根，會變號，所以在負二穿過去。",
+          "board": [
+            {"do":"write","line":"${{n1:(x-1)^2}} \\ge 0$：不變號，只碰"},
+            {"do":"focus","term":"n1","label":"重根","on":"重根"},
+            {"do":"write","line":"${{n2:x + 2}}$：正負互換，穿過","on":"單根"},
+            {"do":"focus","term":"n2","label":"單根","on":"會變號"}
+          ] },
+        { "show": ["鉛直線 $x = 1$ 只碰 $y = x^2$ 一次"],
+          "note": "但它不是切線。",
+          "say": "反過來，鉛直線 x 等於一只碰 x 平方的圖形一次，但它不是切線。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-1.5,2.5,-1,5],"curves":[{"expr":"x^2","color":"blue","width":3}],"dashed":[[[1,-1],[1,5]]],"points":[{"x":1,"y":1}],"labels":[{"x":1.1,"y":4.3,"text":"x = 1","anchor":"start"}]},"on":"鉛直線"},
+            {"do":"write","line":"鉛直線 $x = 1$ 只碰 $y = x^2$ 一次","on":"只碰"},
+            {"do":"write","line":"但它不是切線","on":"但它不是"}
+          ] },
+        { "show": ["$|x|$ 在 0：沒有切線"],
+          "note": "右邊割線斜率一直是 1，左邊一直是 $-1$。",
+          "say": "絕對值 x 在零：右邊的割線斜率一直是一，左邊一直是負一，擠不到同一個數，所以沒有切線。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-2,2,-0.5,2],"curves":[{"expr":"abs(x)","color":"blue","width":3}],"points":[{"x":0,"y":0}]},"on":"絕對值"},
+            {"do":"write","line":"$|x|$ 在 0：右邊 ${{r:1}}$，左邊 ${{l:-1}}$","on":"右邊的"},
+            {"do":"focus","term":"l","on":"左邊一直"},
+            {"do":"write","line":"擠不到同一個數：沒有切線","on":"擠不到"}
+          ] },
+        { "show": ["$\\frac{|0+h|-|0|}{h}=\\frac{|h|}{h}$","$h>0$ 得 1；$h<0$ 得 $-1$"],
+          "say": "算算看：零加 h 的絕對值減零，除以 h。h 大於零得一；h 小於零，絕對值是負 h，得負一。",
+          "board": [
+            {"do":"write","line":"$\\frac{|0+h|-|0|}{h}=\\frac{|h|}{h}$"},
+            {"do":"write","line":"$h>0$ 得 $1$；$h<0$ 得 $-1$","on":"h 大於零"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["tangent-normal", "slope"],
+    "fine": ["tangent-secant-limit", "tangent-line-equation", "tangent-graph-estimate"]
+  },
+  "practice": [
+    { "id": "gi-101", "core": true, "trains": "tangent-graph-estimate" },
+    { "id": "tb-tan-001", "core": true, "trains": "tangent-secant-limit" },
+    { "id": "tb-tan-002", "core": true, "trains": "tangent-secant-limit" },
+    { "id": "gx-031", "core": true, "trains": "tangent-graph-estimate" },
+    { "id": "lec-02-q1d", "core": true, "trains": "tangent-line-equation" },
+    { "id": "cg-2a-010", "core": true, "trains": "tangent-secant-limit" },
+    { "id": "cg-2a-012", "core": true, "trains": "tangent-line-equation" },
+    { "id": "tb-tan-006", "trains": "tangent-secant-limit", "note": "割線斜率要先有理化，見〈0/0：有理化〉。" },
+    { "id": "gi-104", "trains": "tangent-graph-estimate" },
+    { "id": "gx-033", "trains": "tangent-graph-estimate" },
+    { "id": "cg-2a-011", "trains": "tangent-secant-limit" },
+    { "id": "cg-2a-013", "trains": "tangent-line-equation" },
+    { "id": "db-tan-001", "challenge": true, "trains": "tangent-secant-limit", "note": "挑戰：$(2 + h)^4$ 要用二項式展開。" }
+  ],
+  "gaps": []
+}

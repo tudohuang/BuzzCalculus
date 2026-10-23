@@ -1,7 +1,8 @@
 {
   "id": "scalar-line-integral",
   "title": "純量線積分",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "parametric-arc-length",
@@ -14,48 +15,134 @@
     "center-of-mass"
   ],
   "objectives": [
-    "說出 $\\int_C f\\,ds$ 的意思：沿曲線把「密度 $\\times$ 一小段長度」加起來，像一條鐵絲的質量。",
-    "把曲線參數化，用 $ds=|\\mathbf r'(t)|\\,dt$ 化成一般的定積分。",
-    "知道純量線積分跟曲線走的方向、參數化的選法都無關。"
+    "說出 $\\int_C f\\,ds$ 的意思：沿曲線把「密度 $\\times$ 一小段長度」加起來，像一條鐵絲的質量",
+    "把曲線參數化，用 $ds=|\\mathbf r'(t)|\\,dt$ 化成一般的定積分",
+    "知道純量線積分跟曲線走的方向、參數化的選法都無關"
   ],
-  "visual": "xy 平面上一條曲線 C，上方畫出曲面 z = f(x, y)。沿著 C 立起一道「圍籬」，高度是 f 在曲線上的值；圍籬的面積就是 ∫_C f ds。拖動一個點沿曲線走，顯示一小段弧長 Δs 與那一小片圍籬的面積 f Δs。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 一條粗細不均的鐵絲",
+      "heading": "① 粗細不均的鐵絲",
       "body": [
-        "鐵絲彎成曲線 $C$，每一點的線密度是 $f(x,y)$（每單位長度的質量）。總質量怎麼算？把鐵絲切成很多小段，每段長 $\\Delta s$，質量約 $f\\cdot\\Delta s$，加起來取極限。這就是 $\\int_C f\\,ds$。",
-        "$f=1$ 時，$\\int_C 1\\,ds$ 就是曲線的長度。$f\\ge 0$ 時另一個圖像：沿著 $C$ 立起一道高度 $f$ 的圍籬，積分是圍籬的面積。"
-      ],
-      "collapsible": false
-    },
-    {
-      "heading": "② 化成定積分：$ds=|\\mathbf r'(t)|\\,dt$",
-      "body": [
-        "用參數式 $\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$ 描述 $C$。〈參數式弧長〉告訴我們：$t$ 增加 $dt$ 時，點走了 $|\\mathbf r'(t)|\\,dt$ 那麼長，$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$ 是速率。",
-        "被積函數 $f$ 也要代成 $t$：$f(x(t),y(t))$。於是："
+        "一條鐵絲彎成曲線 $C$，每一點的密度是 $f(x,y)$",
+        "密度的單位：每公分幾公克",
+        "均勻的鐵絲：質量 $=$ 密度 $\\times$ 長度",
+        "不均勻：切成小段，每段裡密度差不多是常數",
+        "第 $i$ 段長 $\\Delta s_i$，挑樣本點 $(x_i^*,y_i^*)$："
       ],
       "tex": [
-        "\\int_C f\\,ds=\\int_a^b f\\big(x(t),y(t)\\big)\\,\\big|\\mathbf r'(t)\\big|\\,dt"
+        "\\text{質量}\\approx\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i"
+      ]
+    },
+    {
+      "heading": "① 定義",
+      "body": [
+        "切到無限細，就是純量線積分：",
+        "跟一變數的 $\\displaystyle\\int_a^b f\\,dx$ 比：線段換成曲線，$dx$ 換成弧長 $ds$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_C f(x,y)\\,ds=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i"
+      ]
+    },
+    {
+      "heading": "② 化成定積分",
+      "body": [
+        "把 $C$ 參數化：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$",
+        "7.4 學過：一小段弧長",
+        "$|\\mathbf r'(t)|$ 就是速率；$C$ 要光滑：$\\mathbf r'$ 連續且不等於 $\\mathbf 0$",
+        "代進定義，曲線上的點換成 $(x(t),y(t))$：",
+        "三維一樣：$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2+z'^2}$",
+        "例：螺線 $\\langle\\cos t,\\sin t,t\\rangle$，$0\\le t\\le2\\pi$，$f=z$：$\\int_0^{2\\pi}t\\sqrt2\\,dt=2\\sqrt2\\,\\pi^2$"
+      ],
+      "tex": [
+        "\\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t=|\\mathbf r'(t)|\\,\\Delta t",
+        "ds=|\\mathbf r'(t)|\\,dt",
+        "\\int_C f\\,ds=\\int_a^b f\\big(x(t),y(t)\\big)\\,|\\mathbf r'(t)|\\,dt"
+      ]
     },
     {
       "heading": "③ 三步驟",
       "body": [
-        "1. 參數化 $C$，寫出 $t$ 的範圍。常用：線段 $(x_0,y_0)\\to(x_1,y_1)$ 用 $\\mathbf r(t)=(1-t)\\langle x_0,y_0\\rangle+t\\langle x_1,y_1\\rangle$，$0\\le t\\le 1$；半徑 $a$ 的圓用 $\\langle a\\cos t,a\\sin t\\rangle$；函數圖形 $y=g(x)$ 用 $\\langle t,g(t)\\rangle$。",
-        "2. 算 $|\\mathbf r'(t)|$。",
-        "3. 代入、積分。空間曲線一樣，只是多一個 $z(t)$。"
+        "• 參數化 $C$：寫出 $\\mathbf r(t)$ 和 $t$ 的範圍",
+        "• 算速率 $|\\mathbf r'(t)|$",
+        "• 代入：$f(\\mathbf r(t))\\,|\\mathbf r'(t)|$，對 $t$ 積分",
+        "例 1：$\\displaystyle\\int_C(2+x^2y)\\,ds$，$C$：單位圓的上半部",
+        "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$",
+        "$|\\mathbf r'(t)|=\\sqrt{\\sin^2t+\\cos^2t}=1$",
+        "第二項令 $u=\\cos t$：$\\int\\cos^2t\\sin t\\,dt=-\\frac13\\cos^3t$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^\\pi\\big(2+\\cos^2t\\,\\sin t\\big)\\,dt",
+        "=2\\pi+\\Big[-\\tfrac13\\cos^3t\\Big]_0^\\pi=2\\pi+\\frac23"
+      ]
     },
     {
-      "heading": "④ 跟方向、參數化都無關",
+      "heading": "③ 例 2：速率不是 1",
       "body": [
-        "$ds$ 是長度，永遠是正的。所以同一條曲線從哪一頭走到哪一頭，結果都一樣；換一個參數化（走快一點、慢一點），$|\\mathbf r'(t)|$ 跟 $dt$ 的變化互相抵消，結果也不變。",
-        "這一點下一課的〈功的線積分〉就不一樣了：那裡走反方向會變號。",
-        "$C$ 由幾段組成時（例如三角形的三個邊），每段各自參數化，積分相加。"
+        "$\\displaystyle\\int_C xy\\,ds$，$C$：從 $(0,0)$ 到 $(3,4)$ 的線段",
+        "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$",
+        "$|\\mathbf r'(t)|=|\\langle3,4\\rangle|=5$",
+        "忘了乘速率 $5$，會得到 $4$：速率是 $1$ 只是單位圓的巧合",
+        "例 3：$\\displaystyle\\int_C(x+y)\\,ds$，$C$：三角形 $(0,0)\\to(1,0)\\to(0,1)\\to(0,0)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1(3t)(4t)\\cdot5\\,dt=60\\int_0^1t^2\\,dt=20",
+        "\\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}"
+      ]
+    },
+    {
+      "heading": "③ 例 3：一段一段算",
+      "body": [
+        "• $C_1$：$\\langle t,0\\rangle$，速率 $1$，$\\int_0^1 t\\,dt=\\frac12$",
+        "• $C_2$：$\\langle1-t,t\\rangle$，速率 $\\sqrt2$，$x+y=1$：$\\int_0^1 1\\cdot\\sqrt2\\,dt=\\sqrt2$",
+        "• $C_3$：$\\langle0,1-t\\rangle$，速率 $1$，$\\int_0^1(1-t)\\,dt=\\frac12$"
+      ],
+      "tex": [
+        "\\int_C(x+y)\\,ds=\\frac12+\\sqrt2+\\frac12=1+\\sqrt2"
+      ]
+    },
+    {
+      "heading": "④ 跟方向、參數化無關",
+      "body": [
+        "例 2 的線段反著走：$\\mathbf r(t)=\\langle3-3t,\\,4-4t\\rangle$，$0\\le t\\le1$",
+        "速率還是 $5$：",
+        "換一種速度走：$\\mathbf r(t)=\\langle3t^2,4t^2\\rangle$，速率 $10t$：",
+        "原因：$ds$ 是長度，永遠是正的",
+        "質量是鐵絲本身的性質，跟你從哪一頭量起無關",
+        "下一課的 $\\int_C\\mathbf F\\cdot d\\mathbf r$ 不一樣：反著走會變號"
+      ],
+      "tex": [
+        "\\int_0^1(3-3t)(4-4t)\\cdot5\\,dt=60\\int_0^1(1-t)^2\\,dt=20",
+        "\\int_0^1(3t^2)(4t^2)\\cdot10t\\,dt=120\\int_0^1t^5\\,dt=20"
+      ]
+    },
+    {
+      "heading": "④ 為什麼：換變數",
+      "body": [
+        "換一個參數：$t=\\varphi(u)$，$c\\le u\\le d$，$\\mathbf R(u)=\\mathbf r(\\varphi(u))$",
+        "連鎖律：$\\mathbf R'(u)=\\mathbf r'(\\varphi(u))\\,\\varphi'(u)$",
+        "$\\varphi'>0$（同方向）：$t=\\varphi(u)$ 直接代換",
+        "$\\varphi'<0$（反方向）：$|\\varphi'|=-\\varphi'$，而且 $\\varphi(c)=b$、$\\varphi(d)=a$",
+        "絕對值的負號，剛好抵消上下限對調的負號"
+      ],
+      "tex": [
+        "|\\mathbf R'(u)|=|\\mathbf r'(\\varphi(u))|\\,|\\varphi'(u)|",
+        "\\int_c^d f(\\mathbf R(u))\\,|\\mathbf R'(u)|\\,du=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt",
+        "\\int_c^d f(\\mathbf r(\\varphi))|\\mathbf r'(\\varphi)|\\,(-\\varphi')\\,du=-\\int_b^a f(\\mathbf r(t))|\\mathbf r'(t)|\\,dt",
+        "=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\int_C f\\,ds$：沿曲線加總「密度 $\\times$ 一小段長度」；$f=1$ 時是長度",
+        "• 三步驟：參數化 → 速率 → 代入積分；有轉角就分段相加",
+        "• 跟方向、參數化無關：$ds$ 永遠是正的",
+        "下一課：功的線積分 $\\int_C\\mathbf F\\cdot d\\mathbf r$"
+      ],
+      "tex": [
+        "\\int_C f\\,ds=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,70 +191,40 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathbf r(t)=\\langle 3\\cos t,3\\sin t\\rangle$ 時，$ds$ 等於？",
+      "ask": "$\\mathbf r(t)=\\langle 2\\cos t,\\,2\\sin t\\rangle$，$ds=$？",
       "options": [
         {
-          "label": "$3\\,dt$",
+          "label": "$2\\,dt$",
           "correct": true
         },
         {
           "label": "$dt$",
-          "why": "只有單位圓的速率是 $1$。半徑 $3$ 時 $|\\mathbf r'(t)|=\\sqrt{9\\sin^2t+9\\cos^2t}=3$。"
+          "why": "那是單位圓；半徑 $2$ 的圓，速率也變成 $2$"
         },
         {
-          "label": "$9\\,dt$",
-          "why": "那是 $|\\mathbf r'(t)|^2$，忘了開根號。"
+          "label": "$4\\,dt$",
+          "why": "忘了開根號：$4\\sin^2t+4\\cos^2t=4$，開根號是 $2$"
+        },
+        {
+          "label": "$(-2\\sin t+2\\cos t)\\,dt$",
+          "why": "把分量加起來了；要的是向量的長度"
         }
       ]
     },
     {
-      "ask": "同一條曲線改成反方向走，$\\int_C f\\,ds$ 會？",
+      "ask": "例 1 的上半圓改成從 $(-1,0)$ 順時針走到 $(1,0)$，$\\displaystyle\\int_C(2+x^2y)\\,ds=$？",
       "options": [
         {
-          "label": "不變",
+          "label": "$2\\pi+\\frac23$",
           "correct": true
         },
         {
-          "label": "變號",
-          "why": "變號的是向量場的線積分 $\\int\\mathbf F\\cdot d\\mathbf r$。$ds$ 是長度，永遠是正的。"
+          "label": "$-2\\pi-\\frac23$",
+          "why": "那是把它當成會變號的積分；$ds$ 是長度，不會變負"
         },
         {
-          "label": "變成 $0$",
-          "why": "沒有理由抵消：每一小段的 $f\\,\\Delta s$ 都一樣，只是加的順序不同。"
-        }
-      ]
-    },
-    {
-      "ask": "$C$ 是半徑 $3$ 的整個圓，$\\int_C 1\\,ds$ 是？",
-      "options": [
-        {
-          "label": "$6\\pi$",
-          "correct": true
-        },
-        {
-          "label": "$2\\pi$",
-          "why": "漏了 $|\\mathbf r'(t)|=3$：$\\int_0^{2\\pi}3\\,dt=6\\pi$，就是圓周長。"
-        },
-        {
-          "label": "$9\\pi$",
-          "why": "那是圓的面積公式 $\\pi r^2$。$\\int 1\\,ds$ 是長度，不是面積。"
-        }
-      ]
-    },
-    {
-      "ask": "$C$ 是從 $(0,0)$ 到 $(3,4)$ 的線段，$\\int_C y\\,ds$ 是？",
-      "options": [
-        {
-          "label": "$10$",
-          "correct": true
-        },
-        {
-          "label": "$2$",
-          "why": "漏了 $|\\mathbf r'(t)|=5$：$\\int_0^1 4t\\,dt=2$，還要乘 $5$。"
-        },
-        {
-          "label": "$50$",
-          "why": "乘了 $|\\mathbf r'(t)|^2=25$，沒開根號。"
+          "label": "$2\\pi-\\frac23$",
+          "why": "只有第二項變號是不對的：換方向什麼都不變"
         }
       ]
     }
@@ -176,213 +233,774 @@
     {
       "title": "粗細不均的鐵絲",
       "beats": [
-        { "show": ["線密度 $f(x,y)$：每單位長度的質量"],
-          "say": "一條鐵絲彎成曲線，每一點粗細不同，線密度是 f。總質量怎麼算？",
+        {
+          "show": [
+            "一條鐵絲彎成曲線 $C$，每一點的密度是 $f(x,y)$"
+          ],
+          "say": "想像一條鐵絲，彎成一條曲線 C。它粗細不均，每一點的密度不一樣，是 f of x y。",
           "board": [
-            {"do":"write","line":"線密度 $f(x,y)$：每單位長度的質量"}
-          ] },
-        { "show": ["每段 $\\Delta s$，質量約 $f\\cdot\\Delta s$"],
-          "note": "加起來取極限：$\\int_C f\\,ds$。",
-          "say": "把鐵絲切成很多小段，每段長 delta s，質量大約是密度乘長度，加起來取極限。",
+            {
+              "do": "write",
+              "line": "一條鐵絲彎成曲線 $C$，每一點的密度是 $f(x,y)$"
+            },
+            {
+              "do": "write",
+              "line": "　密度的單位：每公分幾公克",
+              "color": "violet",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "均勻的鐵絲：質量 $=$ 密度 $\\times$ 長度",
+            "不均勻：切成小段，每段裡密度差不多是常數"
+          ],
+          "say": "如果鐵絲是均勻的，質量就是密度乘長度。不均勻的話，就把它切成很多小段，每一小段裡，密度差不多不變。",
           "board": [
-            {"do":"write","line":"每段質量 $\\approx {{a:f}}\\cdot{{b:\\Delta s}}$"},
-            {"do":"write","line":"總質量 $=\\int_C f\\,ds$","on":"加起來"}
-          ] },
-        { "show": ["$f=1$：$\\int_C 1\\,ds$ 是曲線長度"],
-          "note": "$f\\ge 0$：沿 $C$ 立起高 $f$ 的圍籬，積分是圍籬面積。",
-          "say": "密度是一，總質量就是長度。另一個畫面：沿著曲線立一道高度 f 的圍籬，積分是圍籬的面積。",
+            {
+              "do": "write",
+              "line": "均勻的鐵絲：質量 $=$ 密度 $\\times$ 長度"
+            },
+            {
+              "do": "write",
+              "line": "不均勻：切成小段，每段裡密度差不多是常數",
+              "on": "就把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 $i$ 段長 $\\Delta s_i$，挑樣本點 $(x_i^*,y_i^*)$：",
+            "$\\text{質量}\\approx\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i$"
+          ],
+          "say": "第 i 段的長度叫德爾塔 s i，在裡面挑一個樣本點。這一段的質量，大約是樣本點的密度，乘上這段的長度。全部加起來。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=1$：$\\int_C 1\\,ds$ = 長度","on":"密度是一"},
-            {"do":"write","line":"圍籬面積 $=\\int_C f\\,ds$","on":"另一個畫面"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "第 $i$ 段長 $\\Delta s_i$，挑樣本點 $(x_i^*,y_i^*)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{質量}\\approx\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i$",
+              "on": "段的#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，線條越粗代表密度越大。紅色這一小段的質量，就是樣本點的密度乘上它的長度。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"slWire\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2slWire\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2slWireblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2slWirered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2slWiregreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2slWirepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2slWireink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2slWire30\"><rect x=\"46.2\" y=\"16\" width=\"533.6\" height=\"284\"/></clipPath><g clip-path=\"url(#cl9b2slWire30)\"></g><line x1=\"84.9\" y1=\"166.6\" x2=\"92.4\" y2=\"159.5\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"92.4\" y1=\"159.5\" x2=\"99.9\" y2=\"152.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"99.9\" y1=\"152.5\" x2=\"107.3\" y2=\"145.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><line x1=\"107.3\" y1=\"145.6\" x2=\"114.8\" y2=\"138.8\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"114.8\" y1=\"138.8\" x2=\"122.2\" y2=\"132.2\" stroke=\"var(--blue)\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><line x1=\"122.2\" y1=\"132.2\" x2=\"129.7\" y2=\"125.8\" stroke=\"var(--blue)\" stroke-width=\"3.0\" stroke-linecap=\"round\"/><line x1=\"129.7\" y1=\"125.8\" x2=\"137.1\" y2=\"119.7\" stroke=\"var(--blue)\" stroke-width=\"3.3\" stroke-linecap=\"round\"/><line x1=\"137.1\" y1=\"119.7\" x2=\"144.6\" y2=\"113.9\" stroke=\"var(--blue)\" stroke-width=\"3.5\" stroke-linecap=\"round\"/><line x1=\"144.6\" y1=\"113.9\" x2=\"152.1\" y2=\"108.5\" stroke=\"var(--blue)\" stroke-width=\"3.7\" stroke-linecap=\"round\"/><line x1=\"152.1\" y1=\"108.5\" x2=\"159.5\" y2=\"103.5\" stroke=\"var(--blue)\" stroke-width=\"3.9\" stroke-linecap=\"round\"/><line x1=\"159.5\" y1=\"103.5\" x2=\"167\" y2=\"98.9\" stroke=\"var(--blue)\" stroke-width=\"4.1\" stroke-linecap=\"round\"/><line x1=\"167\" y1=\"98.9\" x2=\"174.4\" y2=\"94.8\" stroke=\"var(--blue)\" stroke-width=\"4.3\" stroke-linecap=\"round\"/><line x1=\"174.4\" y1=\"94.8\" x2=\"181.9\" y2=\"91.1\" stroke=\"var(--blue)\" stroke-width=\"4.6\" stroke-linecap=\"round\"/><line x1=\"181.9\" y1=\"91.1\" x2=\"189.4\" y2=\"88\" stroke=\"var(--blue)\" stroke-width=\"4.8\" stroke-linecap=\"round\"/><line x1=\"189.4\" y1=\"88\" x2=\"196.8\" y2=\"85.4\" stroke=\"var(--blue)\" stroke-width=\"5.0\" stroke-linecap=\"round\"/><line x1=\"196.8\" y1=\"85.4\" x2=\"204.3\" y2=\"83.3\" stroke=\"var(--blue)\" stroke-width=\"5.2\" stroke-linecap=\"round\"/><line x1=\"204.3\" y1=\"83.3\" x2=\"211.7\" y2=\"81.8\" stroke=\"var(--blue)\" stroke-width=\"5.4\" stroke-linecap=\"round\"/><line x1=\"211.7\" y1=\"81.8\" x2=\"219.2\" y2=\"80.9\" stroke=\"var(--blue)\" stroke-width=\"5.6\" stroke-linecap=\"round\"/><line x1=\"219.2\" y1=\"80.9\" x2=\"226.7\" y2=\"80.5\" stroke=\"var(--blue)\" stroke-width=\"5.9\" stroke-linecap=\"round\"/><line x1=\"226.7\" y1=\"80.5\" x2=\"234.1\" y2=\"80.8\" stroke=\"var(--blue)\" stroke-width=\"6.1\" stroke-linecap=\"round\"/><line x1=\"234.1\" y1=\"80.8\" x2=\"241.6\" y2=\"81.6\" stroke=\"var(--blue)\" stroke-width=\"6.3\" stroke-linecap=\"round\"/><line x1=\"241.6\" y1=\"81.6\" x2=\"249\" y2=\"83\" stroke=\"var(--blue)\" stroke-width=\"6.5\" stroke-linecap=\"round\"/><line x1=\"249\" y1=\"83\" x2=\"256.5\" y2=\"85\" stroke=\"var(--blue)\" stroke-width=\"6.7\" stroke-linecap=\"round\"/><line x1=\"256.5\" y1=\"85\" x2=\"263.9\" y2=\"87.5\" stroke=\"var(--blue)\" stroke-width=\"6.9\" stroke-linecap=\"round\"/><line x1=\"263.9\" y1=\"87.5\" x2=\"271.4\" y2=\"90.6\" stroke=\"var(--blue)\" stroke-width=\"7.2\" stroke-linecap=\"round\"/><line x1=\"271.4\" y1=\"90.6\" x2=\"278.9\" y2=\"94.1\" stroke=\"var(--blue)\" stroke-width=\"7.4\" stroke-linecap=\"round\"/><line x1=\"278.9\" y1=\"94.1\" x2=\"286.3\" y2=\"98.2\" stroke=\"var(--blue)\" stroke-width=\"7.6\" stroke-linecap=\"round\"/><line x1=\"286.3\" y1=\"98.2\" x2=\"293.8\" y2=\"102.7\" stroke=\"var(--blue)\" stroke-width=\"7.8\" stroke-linecap=\"round\"/><line x1=\"293.8\" y1=\"102.7\" x2=\"301.2\" y2=\"107.7\" stroke=\"var(--blue)\" stroke-width=\"8.0\" stroke-linecap=\"round\"/><line x1=\"301.2\" y1=\"107.7\" x2=\"308.7\" y2=\"113.1\" stroke=\"var(--blue)\" stroke-width=\"8.2\" stroke-linecap=\"round\"/><line x1=\"308.7\" y1=\"113.1\" x2=\"316.2\" y2=\"118.8\" stroke=\"var(--blue)\" stroke-width=\"8.5\" stroke-linecap=\"round\"/><line x1=\"316.2\" y1=\"118.8\" x2=\"323.6\" y2=\"124.8\" stroke=\"var(--blue)\" stroke-width=\"8.7\" stroke-linecap=\"round\"/><line x1=\"323.6\" y1=\"124.8\" x2=\"331.1\" y2=\"131.2\" stroke=\"var(--blue)\" stroke-width=\"8.9\" stroke-linecap=\"round\"/><line x1=\"331.1\" y1=\"131.2\" x2=\"338.5\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"9.1\" stroke-linecap=\"round\"/><line x1=\"338.5\" y1=\"137.7\" x2=\"346\" y2=\"144.5\" stroke=\"var(--blue)\" stroke-width=\"9.3\" stroke-linecap=\"round\"/><line x1=\"346\" y1=\"144.5\" x2=\"353.4\" y2=\"151.4\" stroke=\"var(--blue)\" stroke-width=\"9.5\" stroke-linecap=\"round\"/><line x1=\"353.4\" y1=\"151.4\" x2=\"360.9\" y2=\"158.4\" stroke=\"var(--blue)\" stroke-width=\"9.8\" stroke-linecap=\"round\"/><line x1=\"360.9\" y1=\"158.4\" x2=\"368.4\" y2=\"165.5\" stroke=\"var(--blue)\" stroke-width=\"10.0\" stroke-linecap=\"round\"/><line x1=\"368.4\" y1=\"165.5\" x2=\"375.8\" y2=\"172.6\" stroke=\"var(--blue)\" stroke-width=\"10.2\" stroke-linecap=\"round\"/><line x1=\"375.8\" y1=\"172.6\" x2=\"383.3\" y2=\"179.6\" stroke=\"var(--blue)\" stroke-width=\"10.4\" stroke-linecap=\"round\"/><line x1=\"383.3\" y1=\"179.6\" x2=\"390.7\" y2=\"186.6\" stroke=\"var(--blue)\" stroke-width=\"10.6\" stroke-linecap=\"round\"/><line x1=\"390.7\" y1=\"186.6\" x2=\"398.2\" y2=\"193.4\" stroke=\"var(--blue)\" stroke-width=\"10.8\" stroke-linecap=\"round\"/><line x1=\"398.2\" y1=\"193.4\" x2=\"405.7\" y2=\"200\" stroke=\"var(--blue)\" stroke-width=\"11.1\" stroke-linecap=\"round\"/><line x1=\"405.7\" y1=\"200\" x2=\"413.1\" y2=\"206.4\" stroke=\"var(--blue)\" stroke-width=\"11.3\" stroke-linecap=\"round\"/><line x1=\"413.1\" y1=\"206.4\" x2=\"420.6\" y2=\"212.6\" stroke=\"var(--blue)\" stroke-width=\"11.5\" stroke-linecap=\"round\"/><line x1=\"420.6\" y1=\"212.6\" x2=\"428\" y2=\"218.4\" stroke=\"var(--blue)\" stroke-width=\"11.7\" stroke-linecap=\"round\"/><line x1=\"428\" y1=\"218.4\" x2=\"435.5\" y2=\"223.9\" stroke=\"var(--blue)\" stroke-width=\"11.9\" stroke-linecap=\"round\"/><line x1=\"435.5\" y1=\"223.9\" x2=\"443\" y2=\"229\" stroke=\"var(--blue)\" stroke-width=\"12.1\" stroke-linecap=\"round\"/><line x1=\"443\" y1=\"229\" x2=\"450.4\" y2=\"233.6\" stroke=\"var(--blue)\" stroke-width=\"12.4\" stroke-linecap=\"round\"/><line x1=\"450.4\" y1=\"233.6\" x2=\"457.9\" y2=\"237.8\" stroke=\"var(--blue)\" stroke-width=\"12.6\" stroke-linecap=\"round\"/><line x1=\"457.9\" y1=\"237.8\" x2=\"465.3\" y2=\"241.6\" stroke=\"var(--blue)\" stroke-width=\"12.8\" stroke-linecap=\"round\"/><line x1=\"465.3\" y1=\"241.6\" x2=\"472.8\" y2=\"244.8\" stroke=\"var(--blue)\" stroke-width=\"13.0\" stroke-linecap=\"round\"/><line x1=\"472.8\" y1=\"244.8\" x2=\"480.2\" y2=\"247.5\" stroke=\"var(--blue)\" stroke-width=\"13.2\" stroke-linecap=\"round\"/><line x1=\"480.2\" y1=\"247.5\" x2=\"487.7\" y2=\"249.6\" stroke=\"var(--blue)\" stroke-width=\"13.4\" stroke-linecap=\"round\"/><line x1=\"487.7\" y1=\"249.6\" x2=\"495.2\" y2=\"251.2\" stroke=\"var(--blue)\" stroke-width=\"13.7\" stroke-linecap=\"round\"/><line x1=\"495.2\" y1=\"251.2\" x2=\"502.6\" y2=\"252.2\" stroke=\"var(--blue)\" stroke-width=\"13.9\" stroke-linecap=\"round\"/><line x1=\"502.6\" y1=\"252.2\" x2=\"510.1\" y2=\"252.7\" stroke=\"var(--blue)\" stroke-width=\"14.1\" stroke-linecap=\"round\"/><line x1=\"510.1\" y1=\"252.7\" x2=\"517.5\" y2=\"252.5\" stroke=\"var(--blue)\" stroke-width=\"14.3\" stroke-linecap=\"round\"/><line x1=\"517.5\" y1=\"252.5\" x2=\"525\" y2=\"251.8\" stroke=\"var(--blue)\" stroke-width=\"14.5\" stroke-linecap=\"round\"/><line x1=\"525\" y1=\"251.8\" x2=\"532.5\" y2=\"250.4\" stroke=\"var(--blue)\" stroke-width=\"14.7\" stroke-linecap=\"round\"/><line x1=\"364.6\" y1=\"162\" x2=\"370.2\" y2=\"167.3\" stroke=\"var(--red)\" stroke-width=\"11.1\" stroke-linecap=\"round\"/><line x1=\"370.2\" y1=\"167.3\" x2=\"375.8\" y2=\"172.6\" stroke=\"var(--red)\" stroke-width=\"11.2\" stroke-linecap=\"round\"/><line x1=\"375.8\" y1=\"172.6\" x2=\"381.4\" y2=\"177.9\" stroke=\"var(--red)\" stroke-width=\"11.4\" stroke-linecap=\"round\"/><line x1=\"381.4\" y1=\"177.9\" x2=\"387\" y2=\"183.1\" stroke=\"var(--red)\" stroke-width=\"11.6\" stroke-linecap=\"round\"/><line x1=\"387\" y1=\"183.1\" x2=\"392.6\" y2=\"188.3\" stroke=\"var(--red)\" stroke-width=\"11.7\" stroke-linecap=\"round\"/><line x1=\"392.6\" y1=\"188.3\" x2=\"398.2\" y2=\"193.4\" stroke=\"var(--red)\" stroke-width=\"11.9\" stroke-linecap=\"round\"/><line x1=\"398.2\" y1=\"193.4\" x2=\"403.8\" y2=\"198.4\" stroke=\"var(--red)\" stroke-width=\"12.1\" stroke-linecap=\"round\"/><line x1=\"403.8\" y1=\"198.4\" x2=\"409.4\" y2=\"203.3\" stroke=\"var(--red)\" stroke-width=\"12.2\" stroke-linecap=\"round\"/><line x1=\"409.4\" y1=\"203.3\" x2=\"415\" y2=\"208\" stroke=\"var(--red)\" stroke-width=\"12.4\" stroke-linecap=\"round\"/><line x1=\"415\" y1=\"208\" x2=\"420.6\" y2=\"212.6\" stroke=\"var(--red)\" stroke-width=\"12.5\" stroke-linecap=\"round\"/><circle cx=\"84.9\" cy=\"166.6\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"140.9\" cy=\"116.8\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"196.8\" cy=\"85.4\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"252.8\" cy=\"83.9\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"308.7\" cy=\"113.1\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"364.6\" cy=\"162\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"420.6\" cy=\"212.6\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"476.5\" cy=\"246.2\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"532.5\" cy=\"250.4\" r=\"3.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"396.9\" cy=\"192.2\" r=\"6\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"409.8\" y=\"164.7\" text-anchor=\"start\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δs<tspan baseline-shift=\"sub\" font-size=\"16\">i</tspan></text><text x=\"349.6\" y=\"213.7\" text-anchor=\"middle\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(x<tspan baseline-shift=\"super\" font-size=\"15\">*</tspan><tspan baseline-shift=\"sub\" font-size=\"15\">i</tspan>, y<tspan baseline-shift=\"super\" font-size=\"15\">*</tspan><tspan baseline-shift=\"sub\" font-size=\"15\">i</tspan>)</text><text x=\"76.3\" y=\"136.5\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"26\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</text><text x=\"16\" y=\"34\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">線條越粗 = 密度 f 越大</text><text x=\"16\" y=\"64\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">紅色一小段的質量 ≈ f(樣本點) × Δs</text></svg>"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "化成定積分",
+      "title": "定義",
       "beats": [
-        { "show": ["$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"],
-          "say": "要算，先把曲線參數化，t 從 a 走到 b。",
+        {
+          "show": [
+            "切到無限細，就是純量線積分：",
+            "$\\int_C f(x,y)\\,ds=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i$"
+          ],
+          "say": "再讓每一段都無限細，取極限，就是 f 沿著 C 的線積分。d s 代表一小段長度。",
           "board": [
-            {"do":"write","line":"$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"}
-          ] },
-        { "show": ["放大曲線上的一小段"],
-          "note": "一小段幾乎是直的，像直角三角形的斜邊。",
-          "say": "把曲線上一小段放大，它幾乎是直的，像一個直角三角形的斜邊。橫的走 dx，直的走 dy。",
+            {
+              "do": "write",
+              "line": "切到無限細，就是純量線積分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_C f(x,y)\\,ds=\\lim_{n\\to\\infty}\\sum_{i=1}^n f(x_i^*,y_i^*)\\,\\Delta s_i}}$",
+              "color": "red",
+              "on": "就是"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "代表"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟一變數的 $\\displaystyle\\int_a^b f\\,dx$ 比：線段換成曲線，$dx$ 換成弧長 $ds$"
+          ],
+          "say": "跟一變數的積分比，只是把 x 軸上的線段，換成平面上的一條曲線，把 d x 換成一小段弧長 d s。",
           "board": [
-            {"do":"plot","graph":{"window":[0,1.2,0,1.2],"curves":[{"expr":"sqrt(1-x^2)","domain":[0,1],"color":"blue"}],"dashed":[[[0.6,0.8],[0.8,0.8]],[[0.8,0.8],[0.8,0.6]],[[0.6,0.8],[0.8,0.6]]],"labels":[{"x":0.7,"y":0.85,"text":"dx","anchor":"middle"},{"x":0.83,"y":0.7,"text":"dy","anchor":"start"},{"x":0.62,"y":0.66,"text":"ds","anchor":"end"}]}}
-          ] },
-        { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$","$ds=\\sqrt{dx^2+dy^2}$"],
-          "note": "速率開根號，是因為斜邊用畢氏定理。",
-          "say": "橫向走 x 的速度乘 d t，直向走 y 的速度乘 d t。斜邊用畢氏定理，平方相加開根號，d t 提到外面。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$dx=x'\\,dt$，$dy=y'\\,dt$","on":"橫向走"},
-            {"do":"write","line":"$ds=\\sqrt{dx^2+dy^2}$","on":"畢氏定理"},
-            {"do":"write","line":"$=\\sqrt{x'^2+y'^2}\\,dt$","on":"開根號"}
-          ] },
-        { "show": ["$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$：速率"],
-          "note": "$t$ 增加 $dt$，點走了 $|\\mathbf r'(t)|\\,dt$。",
-          "say": "t 增加一點點，點在曲線上走的長度是速率乘 d t。速率要開根號。",
-          "board": [
-            {"do":"write","line":"$ds=|\\mathbf r'(t)|\\,dt$","on":"走的長度"},
-            {"do":"write","line":"$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$","on":"速率要"}
-          ] },
-        { "show": ["$\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt$"],
-          "note": "$f$ 也要代成 $t$。",
-          "say": "被積函數也要代成 t 的函數，再乘上速率，就變成普通的定積分。",
-          "board": [
-            {"do":"write","line":"${{r:\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt}}$","on":"被積函數"},
-            {"do":"box","term":"r","color":"green","on":"變成"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "上半圓",
-      "beats": [
-        { "show": ["$\\int_C(2+x^2y)\\,ds$，$C$：單位圓上半部"],
-          "say": "算一題：單位圓的上半部。",
-          "board": [
-            {"do":"write","line":"$\\int_C(2+x^2y)\\,ds$"},
-            {"do":"write","line":"$C$：單位圓上半部","on":"單位圓"}
-          ] },
-        { "show": ["$\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$，$|\\mathbf r'|=1$"],
-          "say": "用 cosine t、sine t，t 從零到 pi，速率剛好是一。",
-          "board": [
-            {"do":"write","line":"$\\mathbf r=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$"},
-            {"do":"write","line":"$|\\mathbf r'|={{v:1}}$","on":"速率剛好"}
-          ] },
-        { "show": ["$\\int_0^\\pi(2+\\cos^2t\\sin t)\\,dt$"],
-          "say": "代進去。第二項令 u 等於 cosine t 就積得出來。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^\\pi(2+\\cos^2t\\sin t)\\,dt$","on":"代進去"},
-            {"do":"write","line":"第二項：${{u:u=\\cos t}}$","on":"令"}
-          ] },
-        { "show": ["$u=\\cos t$，$du=-\\sin t\\,dt$","$t:0\\to\\pi$，$u:1\\to-1$"],
-          "note": "換變數時，上下限也要跟著換。",
-          "say": "u 等於 cosine t，微分得 d u 等於負 sine t d t。t 從零走到 pi，u 就從一走到負一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$du=-\\sin t\\,dt$","on":"微分得"},
-            {"do":"write","line":"$t:0\\to\\pi$，$u:1\\to-1$","on":"t 從零"}
-          ] },
-        { "show": ["$\\int_1^{-1}-u^2\\,du$","$\\int u^2\\,du=\\frac{u^3}{3}$"],
-          "note": "次方加一，再除以新的次方。",
-          "say": "sine t d t 換成負 d u，積分變成從一到負一的負 u 平方。次方加一再除以三，得三分之 u 三次方。",
-          "board": [
-            {"do":"write","line":"$\\int_1^{-1}-u^2\\,du$"},
-            {"do":"write","line":"$\\int u^2\\,du=\\frac{u^3}{3}$","on":"次方加一"}
-          ] }
+            {
+              "do": "write",
+              "line": "跟一變數的 $\\displaystyle\\int_a^b f\\,dx$ 比：線段換成曲線，$dx$ 換成弧長 $ds$"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "結果是？",
+        "ask": "如果 $f(x,y)=1$，$\\displaystyle\\int_C 1\\,ds$ 算的是什麼？",
         "options": [
           {
-            "label": "$2\\pi+\\frac{2}{3}$",
+            "label": "曲線 $C$ 的長度",
             "correct": true
           },
           {
-            "label": "$2\\pi$",
-            "why": "$\\left[-\\frac{\\cos^3t}{3}\\right]_0^\\pi=\\frac{1}{3}+\\frac{1}{3}=\\frac{2}{3}$，不是 $0$。"
+            "label": "$C$ 底下的面積",
+            "why": "那是 $\\int f\\,dx$ 的圖像；$ds$ 是一小段弧長，不是寬度乘高度"
           },
           {
-            "label": "$\\pi+\\frac{2}{3}$",
-            "why": "常數 $2$ 從 $0$ 積到 $\\pi$ 是 $2\\pi$。"
+            "label": "$0$",
+            "why": "$ds$ 是長度，永遠是正的，加起來不會抵消"
           }
         ]
       }
     },
     {
-      "title": "速率不是 1",
+      "title": "化成定積分",
       "beats": [
-        { "show": ["$\\int_C xy\\,ds$，$(0,0)\\to(3,4)$ 的線段"],
-          "note": "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le 1$。",
-          "say": "這一條是線段，參數化成三 t、四 t，t 從零到一。",
+        {
+          "show": [
+            "把 $C$ 參數化：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"
+          ],
+          "say": "定義有了，要怎麼算？先把曲線參數化：r of t 等於 x of t 逗號 y of t，t 從 a 走到 b。",
           "board": [
-            {"do":"write","line":"$\\int_C xy\\,{{ds:ds}}$，$(0,0)\\to(3,4)$"},
-            {"do":"write","line":"$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$","on":"參數化"}
-          ] },
-        { "show": ["$|\\mathbf r'(t)|=\\sqrt{9+16}=5$"],
-          "note": "最常漏的就是這個。",
-          "say": "速率是根號九加十六，等於五。直接把 d s 換成 d t 就錯了。",
+            {
+              "do": "write",
+              "line": "把 $C$ 參數化：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "7.4 學過：一小段弧長",
+            "$\\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t=|\\mathbf r'(t)|\\,\\Delta t$"
+          ],
+          "say": "參數式弧長那一課學過：時間經過德爾塔 t，走過的長度大約是速率乘德爾塔 t。速率就是 r prime 的長度。",
           "board": [
-            {"do":"write","line":"$|\\mathbf r'(t)|=\\sqrt{9+16}={{v:5}}$"},
-            {"do":"write","line":"${{ds:ds}}={{v:5}}\\,dt$，不是 ${{w:dt}}$","on":"直接把"},
-            {"do":"strike","term":"w","on":"換成"}
-          ] },
-        { "show": ["$\\int_0^1 12t^2\\cdot5\\,dt=20$"],
-          "say": "x y 代成十二 t 平方，乘上速率五，積出來是二十。",
+            {
+              "do": "write",
+              "line": "7.4 學過：一小段弧長"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t=|\\mathbf r'(t)|\\,\\Delta t$",
+              "on": "約是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$ds=|\\mathbf r'(t)|\\,dt$"
+          ],
+          "say": "寫成微分的樣子：d s 等於 r prime 的長度乘 d t。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\int_0^1 12t^2\\cdot{{v:5}}\\,dt=\\;{{r:20}}$","on":"x y 代成"},
-            {"do":"focus","term":"v","on":"速率五"},
-            {"do":"box","term":"r","color":"green","on":"積出來"}
-          ] },
-        { "show": ["$12t^2\\cdot5=60t^2$","$\\int_0^1 60t^2\\,dt=60\\int_0^1 t^2\\,dt$"],
-          "note": "常數可以提到積分外面。",
-          "say": "拆開來看：十二 t 平方乘五是六十 t 平方，常數六十可以提到積分外面。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle ds=|\\mathbf r'(t)|\\,dt}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　$|\\mathbf r'(t)|$ 就是速率；$C$ 要光滑：$\\mathbf r'$ 連續且不等於 $\\mathbf 0$",
+              "color": "violet",
+              "on": "的長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代進定義，曲線上的點換成 $(x(t),y(t))$：",
+            "$\\int_C f\\,ds=\\int_a^b f\\big(x(t),y(t)\\big)\\,|\\mathbf r'(t)|\\,dt$"
+          ],
+          "say": "把它代進定義。f 只看曲線上的點，所以 x 換成 x of t，y 換成 y of t，再乘上速率。這樣就變成一般的定積分了。",
           "board": [
-            {"do":"write","line":"$12t^2\\cdot5=60t^2$"},
-            {"do":"write","line":"$\\int_0^1 60t^2\\,dt=60\\int_0^1 t^2\\,dt$","on":"常數六十"}
-          ] },
-        { "show": ["$\\int t^2\\,dt=\\frac{t^3}{3}$","$60\\left(\\frac13-0\\right)=20$"],
-          "note": "次方加一，再除以新的次方。",
-          "say": "t 平方積分是次方加一再除以三，三分之 t 三次方。代入一和零，再乘六十，就是二十。",
+            {
+              "do": "write",
+              "line": "代進定義，曲線上的點換成 $(x(t),y(t))$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_C f\\,ds=\\int_a^b f\\big(x(t),y(t)\\big)\\,|\\mathbf r'(t)|\\,dt}}$",
+              "color": "red",
+              "on": "換成#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "再乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三維一樣：$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2+z'^2}$"
+          ],
+          "say": "空間曲線也一樣，速率的根號裡多一項 z prime 平方。",
           "board": [
-            {"do":"write","line":"$\\int t^2\\,dt=\\frac{t^3}{3}$"},
-            {"do":"write","line":"$60\\left(\\frac13-0\\right)=20$","on":"代入"}
-          ] }
+            {
+              "do": "write",
+              "line": "三維一樣：$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2+z'^2}$"
+            },
+            {
+              "do": "write",
+              "line": "　例：螺線 $\\langle\\cos t,\\sin t,t\\rangle$，$0\\le t\\le2\\pi$，$f=z$：$\\int_0^{2\\pi}t\\sqrt2\\,dt=2\\sqrt2\\,\\pi^2$",
+              "color": "violet",
+              "on": "多一"
+            }
+          ]
+        }
       ],
-      "key": "$ds=|\\mathbf r'(t)|\\,dt$，速率別漏乘",
-      "check": 3
+      "check": 0
     },
     {
-      "title": "方向不影響",
+      "title": "三步驟",
       "beats": [
-        { "show": ["$ds$ 是長度，永遠是正的"],
-          "note": "反方向走、換參數化，結果都不變。",
-          "say": "d s 是長度，永遠是正的。從哪一頭走，或走快走慢，結果都一樣。下一課的功就不一樣了。",
+        {
+          "show": [
+            "• 參數化 $C$：寫出 $\\mathbf r(t)$ 和 $t$ 的範圍",
+            "• 算速率 $|\\mathbf r'(t)|$"
+          ],
+          "say": "所以計算只有三步：參數化、算速率、代入積分。",
           "board": [
-            {"do":"write","line":"${{d:ds}}>0$：長度"},
-            {"do":"focus","term":"d","color":"gold","on":"永遠"}
-          ] },
-        { "show": ["三角形邊界：三段各自參數化"],
-          "note": "頂點 $(0,0)$、$(1,0)$、$(0,1)$。",
-          "say": "曲線由幾段組成時，每段各自參數化，挑順手的方向就好，最後相加。",
+            {
+              "do": "write",
+              "line": "• 參數化 $C$：寫出 $\\mathbf r(t)$ 和 $t$ 的範圍"
+            },
+            {
+              "do": "write",
+              "line": "• 算速率 $|\\mathbf r'(t)|$",
+              "on": "參數"
+            },
+            {
+              "do": "write",
+              "line": "• 代入：$f(\\mathbf r(t))\\,|\\mathbf r'(t)|$，對 $t$ 積分",
+              "on": "速率"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\int_C(2+x^2y)\\,ds$，$C$：單位圓的上半部"
+          ],
+          "say": "第一個例子：2 加 x 平方 y，沿著單位圓的上半部。",
           "board": [
-            {"do":"write","line":"$\\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}$"}
-          ] },
-        { "show": ["被積函數 $f=x+y$","$C_1$：$\\int_0^1 t\\,dt=\\frac12$"],
-          "note": "下面那條直角邊：$x=t$，$y=0$。",
-          "say": "被積函數是 x 加 y。先看下面那條直角邊，x 是 t、y 是零，速率一，積分 t 得二分之 t 平方，從零到一是二分之一。",
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\int_C(2+x^2y)\\,ds$，$C$：單位圓的上半部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "上半圓用餘弦 t、正弦 t，t 從 0 走到派，從 1 逗號 0 逆時針走到負 1 逗號 0。",
           "board": [
-            {"do":"write","line":"$f=x+y$"},
-            {"do":"write","line":"$C_1:\\mathbf r=\\langle t,0\\rangle$，速率 $1$","on":"直角邊"},
-            {"do":"write","line":"$\\int_0^1 t\\,dt=\\left[\\frac{t^2}{2}\\right]_0^1=\\frac12$","on":"積分"}
-          ] },
-        { "show": ["$C_2$：$\\mathbf r=\\langle 1-t,t\\rangle$","$\\int_0^1\\sqrt2\\,dt=\\sqrt2$"],
-          "note": "斜邊上 $x+y=1$。",
-          "say": "斜邊用一減 t 和 t 參數化。導數是負一和一，速率根號二；x 加 y 恆為一，所以積出根號二。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"slSemi\" viewBox=\"0 0 560 300\" width=\"560\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2slSemi\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2slSemiblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2slSemired\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2slSemigreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2slSemipencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2slSemiink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2slSemi30\"><rect x=\"44.9\" y=\"16\" width=\"476.3\" height=\"254\"/></clipPath><g clip-path=\"url(#cl9b2slSemi30)\"><line x1=\"124.3\" y1=\"16\" x2=\"124.3\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"283\" y1=\"16\" x2=\"283\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"441.8\" y1=\"16\" x2=\"441.8\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"44.9\" y1=\"230.3\" x2=\"521.1\" y2=\"230.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"44.9\" y1=\"71.6\" x2=\"521.1\" y2=\"71.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"40.9\" y1=\"230.3\" x2=\"533.1\" y2=\"230.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2slSemi)\"/><line x1=\"283\" y1=\"274\" x2=\"283\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2slSemi)\"/><text x=\"124.3\" y=\"252.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"441.8\" y=\"252.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"531.1\" y=\"221.3\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"292\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"283\" y1=\"230.3\" x2=\"399.2\" y2=\"122.1\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-dasharray=\"8 7\"/><path d=\"M441.8 230.3L441.7 228.2L441.7 226.2L441.6 224.1L441.5 222L441.4 219.9L441.3 217.9L441.1 215.8L440.9 213.7L440.6 211.7L440.4 209.6L440.1 207.5L439.8 205.5L439.5 203.4L439.1 201.4L438.7 199.3L438.3 197.3L437.8 195.3L437.4 193.3L436.9 191.2L436.3 189.2L435.8 187.2L435.2 185.2L434.6 183.2L434 181.3L433.3 179.3L432.6 177.3L431.9 175.4L431.2 173.4L430.4 171.5L429.7 169.6L428.9 167.6L428 165.7L427.2 163.9L426.3 162L425.4 160.1L424.4 158.2L423.5 156.4L422.5 154.6L421.5 152.7L420.5 150.9L419.4 149.1L418.4 147.4L417.3 145.6L416.1 143.9L415 142.1L413.8 140.4L412.6 138.7L411.4 137L410.2 135.3L408.9 133.7L407.7 132L406.4 130.4L405.1 128.8L403.7 127.2L402.4 125.6L401 124.1L399.6 122.6L398.2 121L396.7 119.5L395.3 118.1L393.8 116.6L392.3 115.2L390.8 113.7L389.2 112.3L387.7 111L386.1 109.6L384.5 108.3L382.9 106.9L381.3 105.6L379.6 104.4L378 103.1L376.3 101.9L374.6 100.7L372.9 99.5L371.2 98.3L369.5 97.2L367.7 96.1L365.9 95L364.2 93.9L362.4 92.8L360.6 91.8L358.7 90.8L356.9 89.8L355.1 88.9L353.2 87.9L351.3 87L349.5 86.1L347.6 85.3L345.7 84.5L343.8 83.6L341.8 82.9L339.9 82.1L337.9 81.4L336 80.7L334 80L332.1 79.3L330.1 78.7L328.1 78.1L326.1 77.5L324.1 77L322.1 76.4L320.1 75.9L318 75.5L316 75L314 74.6L311.9 74.2L309.9 73.9L307.8 73.5L305.8 73.2L303.7 72.9L301.7 72.7L299.6 72.4L297.5 72.2L295.5 72.1L293.4 71.9L291.3 71.8L289.2 71.7L287.2 71.6L285.1 71.6L283 71.6L280.9 71.6L278.8 71.6L276.8 71.7L274.7 71.8L272.6 71.9L270.5 72.1L268.5 72.2L266.4 72.4L264.3 72.7L262.3 72.9L260.2 73.2L258.2 73.5L256.1 73.9L254.1 74.2L252 74.6L250 75L248 75.5L245.9 75.9L243.9 76.4L241.9 77L239.9 77.5L237.9 78.1L235.9 78.7L233.9 79.3L232 80L230 80.7L228.1 81.4L226.1 82.1L224.2 82.9L222.2 83.6L220.3 84.5L218.4 85.3L216.5 86.1L214.7 87L212.8 87.9L210.9 88.9L209.1 89.8L207.3 90.8L205.4 91.8L203.6 92.8L201.8 93.9L200.1 95L198.3 96.1L196.5 97.2L194.8 98.3L193.1 99.5L191.4 100.7L189.7 101.9L188 103.1L186.4 104.4L184.7 105.6L183.1 106.9L181.5 108.3L179.9 109.6L178.3 111L176.8 112.3L175.2 113.7L173.7 115.2L172.2 116.6L170.7 118.1L169.3 119.5L167.8 121L166.4 122.6L165 124.1L163.6 125.6L162.3 127.2L160.9 128.8L159.6 130.4L158.3 132L157.1 133.7L155.8 135.3L154.6 137L153.4 138.7L152.2 140.4L151 142.1L149.9 143.9L148.7 145.6L147.6 147.4L146.6 149.1L145.5 150.9L144.5 152.7L143.5 154.6L142.5 156.4L141.6 158.2L140.6 160.1L139.7 162L138.8 163.9L138 165.7L137.1 167.6L136.3 169.6L135.6 171.5L134.8 173.4L134.1 175.4L133.4 177.3L132.7 179.3L132 181.3L131.4 183.2L130.8 185.2L130.2 187.2L129.7 189.2L129.1 191.2L128.6 193.3L128.2 195.3L127.7 197.3L127.3 199.3L126.9 201.4L126.5 203.4L126.2 205.5L125.9 207.5L125.6 209.6L125.4 211.7L125.1 213.7L124.9 215.8L124.7 217.9L124.6 219.9L124.5 222L124.4 224.1L124.3 226.2L124.3 228.2L124.3 230.3\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\"/><path d=\"M209.8 89.4L207.7 90.6L205.6 91.7L203.5 92.9L201.5 94.1L199.5 95.3L197.4 96.6L195.4 97.9L193.5 99.2L191.5 100.6L189.6 102L187.7 103.4L185.8 104.8L183.9 106.3L182 107.8L180.2 109.3L178.4 110.9L176.6 112.5L174.9 114.1L173.2 115.7L171.4 117.4\" stroke=\"var(--blue)\" stroke-width=\"3.4\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2slSemiblue)\"/><circle cx=\"441.8\" cy=\"230.3\" r=\"5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"124.3\" cy=\"230.3\" r=\"5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"399.2\" cy=\"122.1\" r=\"5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"321.1\" y=\"217.6\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</text><text x=\"411.9\" y=\"106.2\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(cos t, sin t)</text><text x=\"454.5\" y=\"211.3\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t = 0</text><text x=\"111.5\" y=\"211.3\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">t = π</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$",
+            "$|\\mathbf r'(t)|=\\sqrt{\\sin^2t+\\cos^2t}=1$"
+          ],
+          "say": "速率是正弦平方加餘弦平方開根號，等於 1。",
           "board": [
-            {"do":"write","line":"$C_2:\\mathbf r=\\langle1-t,t\\rangle$"},
-            {"do":"write","line":"$\\mathbf r'=\\langle-1,1\\rangle$，速率 $\\sqrt{1+1}=\\sqrt2$","on":"導數"},
-            {"do":"write","line":"$\\int_0^1 1\\cdot\\sqrt2\\,dt=\\sqrt2$","on":"x 加 y"}
-          ] },
-        { "show": ["$\\frac{1}{2}+\\sqrt2+\\frac{1}{2}=1+\\sqrt2$"],
-          "note": "斜邊的速率是 $\\sqrt2$。",
-          "say": "兩條直角邊各得二分之一；斜邊上 x 加 y 一直是一，速率根號二。合計一加根號二。",
+            {
+              "do": "write",
+              "line": "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$"
+            },
+            {
+              "do": "write",
+              "line": "$|\\mathbf r'(t)|=\\sqrt{\\sin^2t+\\cos^2t}=1$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^\\pi\\big(2+\\cos^2t\\,\\sin t\\big)\\,dt$"
+          ],
+          "say": "代入以後，被積函數是 2 加餘弦平方乘正弦。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"直角邊：$\\frac{1}{2}$","on":"兩條直角邊"},
-            {"do":"write","line":"斜邊：$x+y=1$，速率 $\\sqrt2$","on":"斜邊上"},
-            {"do":"write","line":"$\\frac12+\\sqrt2+\\frac12=1+\\sqrt2$","color":"green","on":"合計"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\pi\\big(2+\\cos^2t\\,\\sin t\\big)\\,dt$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二項令 $u=\\cos t$：$\\int\\cos^2t\\sin t\\,dt=-\\frac13\\cos^3t$"
+          ],
+          "say": "第二項用代換，u 等於餘弦 t，反導數是負三分之一餘弦三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二項令 $u=\\cos t$：$\\int\\cos^2t\\sin t\\,dt=-\\frac13\\cos^3t$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=2\\pi+\\Big[-\\tfrac13\\cos^3t\\Big]_0^\\pi=2\\pi+\\frac23$"
+          ],
+          "say": "2 積出 2 派。第二項代上下限：負三分之一乘負 1，減去負三分之一乘 1，是三分之二。答案是 2 派加三分之二。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =2\\pi+\\Big[-\\tfrac13\\cos^3t\\Big]_0^\\pi=2\\pi+\\frac23}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "去負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 2：速率不是 1",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_C xy\\,ds$，$C$：從 $(0,0)$ 到 $(3,4)$ 的線段"
+          ],
+          "say": "第二個例子：x y，沿著從原點到 3 逗號 4 的線段。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int_C xy\\,ds$，$C$：從 $(0,0)$ 到 $(3,4)$ 的線段"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$",
+            "$|\\mathbf r'(t)|=|\\langle3,4\\rangle|=5$"
+          ],
+          "say": "參數化成 3t 逗號 4t，t 從 0 到 1。速率是 3 4 5 的斜邊，等於 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$"
+            },
+            {
+              "do": "write",
+              "line": "$|\\mathbf r'(t)|=|\\langle3,4\\rangle|=5$",
+              "on": "速率"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1(3t)(4t)\\cdot5\\,dt=60\\int_0^1t^2\\,dt=20$"
+          ],
+          "say": "代入：3t 乘 4t 乘 5，是 60 t 平方，積出來是 20。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^1(3t)(4t)\\cdot5\\,dt=60\\int_0^1t^2\\,dt=20}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "60"
+            },
+            {
+              "do": "write",
+              "line": "　忘了乘速率 $5$，會得到 $4$：速率是 $1$ 只是單位圓的巧合",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 3：$\\displaystyle\\int_C(x+y)\\,ds$，$C$：三角形 $(0,0)\\to(1,0)\\to(0,1)\\to(0,0)$"
+          ],
+          "say": "第三個例子：x 加 y，沿著三角形的三個邊繞一圈。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 3：$\\displaystyle\\int_C(x+y)\\,ds$，$C$：三角形 $(0,0)\\to(1,0)\\to(0,1)\\to(0,0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "曲線有轉角，就一段一段算，再加起來。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"slTri\" viewBox=\"0 0 520 330\" width=\"520\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2slTri\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2slTriblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2slTrired\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2slTrigreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2slTripencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2slTriink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2slTri30\"><rect x=\"98.1\" y=\"16\" width=\"329.8\" height=\"284\"/></clipPath><g clip-path=\"url(#cl9b2slTri30)\"><line x1=\"162.2\" y1=\"16\" x2=\"162.2\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"345.5\" y1=\"16\" x2=\"345.5\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"98.1\" y1=\"245\" x2=\"427.9\" y2=\"245\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"98.1\" y1=\"61.8\" x2=\"427.9\" y2=\"61.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"94.1\" y1=\"245\" x2=\"439.9\" y2=\"245\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2slTri)\"/><line x1=\"162.2\" y1=\"304\" x2=\"162.2\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2slTri)\"/><text x=\"345.5\" y=\"267\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"155.2\" y=\"68.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"437.9\" y=\"236\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"171.2\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"162.2\" y1=\"245\" x2=\"345.5\" y2=\"245\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"162.2\" y1=\"245\" x2=\"268.5\" y2=\"245\" stroke=\"var(--blue)\" stroke-width=\"3.2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2slTriblue)\"/><line x1=\"345.5\" y1=\"245\" x2=\"162.2\" y2=\"61.8\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"345.5\" y1=\"245\" x2=\"239.2\" y2=\"138.8\" stroke=\"var(--red)\" stroke-width=\"3.2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2slTrired)\"/><line x1=\"162.2\" y1=\"61.8\" x2=\"162.2\" y2=\"245\" stroke=\"var(--green)\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"162.2\" y1=\"61.8\" x2=\"162.2\" y2=\"168.1\" stroke=\"var(--green)\" stroke-width=\"3.2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2slTrigreen)\"/><circle cx=\"162.2\" cy=\"245\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"345.5\" cy=\"245\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><circle cx=\"162.2\" cy=\"61.8\" r=\"5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"263\" y=\"276.2\" text-anchor=\"middle\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan baseline-shift=\"sub\" font-size=\"16\">1</tspan></text><text x=\"275.8\" y=\"144.3\" text-anchor=\"start\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan baseline-shift=\"sub\" font-size=\"16\">2</tspan></text><text x=\"138.4\" y=\"144.3\" text-anchor=\"end\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan baseline-shift=\"sub\" font-size=\"16\">3</tspan></text><text x=\"275.8\" y=\"74.6\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x + y = 1</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}$"
+          ],
+          "say": "整條的線積分，等於三段的線積分加起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "三段"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 3：一段一段算",
+      "beats": [
+        {
+          "show": [
+            "• $C_1$：$\\langle t,0\\rangle$，速率 $1$，$\\int_0^1 t\\,dt=\\frac12$"
+          ],
+          "say": "第一段：t 逗號 0，速率 1，x 加 y 就是 t，積出二分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $C_1$：$\\langle t,0\\rangle$，速率 $1$，$\\int_0^1 t\\,dt=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $C_2$：$\\langle1-t,t\\rangle$，速率 $\\sqrt2$，$x+y=1$：$\\int_0^1 1\\cdot\\sqrt2\\,dt=\\sqrt2$"
+          ],
+          "say": "第二段：1 減 t 逗號 t，速率根號 2。這條斜邊上 x 加 y 恰好都是 1，所以積分就是根號 2，也就是斜邊的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $C_2$：$\\langle1-t,t\\rangle$，速率 $\\sqrt2$，$x+y=1$：$\\int_0^1 1\\cdot\\sqrt2\\,dt=\\sqrt2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $C_3$：$\\langle0,1-t\\rangle$，速率 $1$，$\\int_0^1(1-t)\\,dt=\\frac12$"
+          ],
+          "say": "第三段：0 逗號 1 減 t，速率 1，積出二分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $C_3$：$\\langle0,1-t\\rangle$，速率 $1$，$\\int_0^1(1-t)\\,dt=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_C(x+y)\\,ds=\\frac12+\\sqrt2+\\frac12=1+\\sqrt2$"
+          ],
+          "say": "加起來是 1 加根號 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_C(x+y)\\,ds=\\frac12+\\sqrt2+\\frac12=1+\\sqrt2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "加根"
+            }
+          ]
+        }
       ],
-      "key": "分段曲線各自參數化再相加",
+      "proof": true,
+      "order": {
+        "ask": "算 $\\displaystyle\\int_C f\\,ds$ 的順序",
+        "steps": [
+          {
+            "label": "把 $C$ 寫成 $\\mathbf r(t)$，定出 $t$ 的範圍（有轉角就分段）"
+          },
+          {
+            "label": "算速率 $|\\mathbf r'(t)|$",
+            "why": "先要有上一步：把 $C$ 寫成 $\\mathbf r(t)$，定出 $t$ 的範圍（有轉角就分段）"
+          },
+          {
+            "label": "把 $x,y$ 換成 $x(t),y(t)$，乘上速率",
+            "why": "先要有上一步：算速率 $|\\mathbf r'(t)|$"
+          },
+          {
+            "label": "對 $t$ 從小積到大，各段相加",
+            "why": "先要有上一步：把 $x,y$ 換成 $x(t),y(t)$，乘上速率"
+          }
+        ]
+      }
+    },
+    {
+      "title": "跟方向、參數化無關",
+      "beats": [
+        {
+          "show": [
+            "例 2 的線段反著走：$\\mathbf r(t)=\\langle3-3t,\\,4-4t\\rangle$，$0\\le t\\le1$"
+          ],
+          "say": "最後一個重點。把例 2 的線段反過來，從 3 逗號 4 走回原點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2 的線段反著走：$\\mathbf r(t)=\\langle3-3t,\\,4-4t\\rangle$，$0\\le t\\le1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "速率還是 $5$：",
+            "$\\int_0^1(3-3t)(4-4t)\\cdot5\\,dt=60\\int_0^1(1-t)^2\\,dt=20$"
+          ],
+          "say": "速率還是 5。代進去，積出來還是 20，沒有變號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "速率還是 $5$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1(3-3t)(4-4t)\\cdot5\\,dt=60\\int_0^1(1-t)^2\\,dt=20$",
+              "on": "出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換一種速度走：$\\mathbf r(t)=\\langle3t^2,4t^2\\rangle$，速率 $10t$：",
+            "$\\int_0^1(3t^2)(4t^2)\\cdot10t\\,dt=120\\int_0^1t^5\\,dt=20$"
+          ],
+          "say": "再換一種走法：3 t 平方逗號 4 t 平方，一開始慢、後來快，速率是 10t。算出來還是 20。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換一種速度走：$\\mathbf r(t)=\\langle3t^2,4t^2\\rangle$，速率 $10t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1(3t^2)(4t^2)\\cdot10t\\,dt=120\\int_0^1t^5\\,dt=20$",
+              "on": "開始"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：$ds$ 是長度，永遠是正的"
+          ],
+          "say": "原因是：d s 是一小段的長度，永遠是正的。不管怎麼走、走多快，切出來的每一小段，密度乘長度都一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原因：$ds$ 是長度，永遠是正的",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "質量是鐵絲本身的性質，跟你從哪一頭量起無關"
+          ],
+          "say": "這也很合理：鐵絲有多重，跟你從哪一頭開始量無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "質量是鐵絲本身的性質，跟你從哪一頭量起無關"
+            },
+            {
+              "do": "write",
+              "line": "　下一課的 $\\int_C\\mathbf F\\cdot d\\mathbf r$ 不一樣：反著走會變號",
+              "color": "violet",
+              "on": "跟你"
+            }
+          ]
+        }
+      ],
       "check": 1
+    },
+    {
+      "title": "為什麼：換變數",
+      "beats": [
+        {
+          "show": [
+            "換一個參數：$t=\\varphi(u)$，$c\\le u\\le d$，$\\mathbf R(u)=\\mathbf r(\\varphi(u))$"
+          ],
+          "say": "證明一下為什麼跟參數化無關。換一個參數 u，t 等於斐 of u，新的參數式是 R of u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換一個參數：$t=\\varphi(u)$，$c\\le u\\le d$，$\\mathbf R(u)=\\mathbf r(\\varphi(u))$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "連鎖律：$\\mathbf R'(u)=\\mathbf r'(\\varphi(u))\\,\\varphi'(u)$",
+            "$|\\mathbf R'(u)|=|\\mathbf r'(\\varphi(u))|\\,|\\varphi'(u)|$"
+          ],
+          "say": "連鎖律：R prime 等於 r prime 乘斐 prime。取長度時，斐 prime 要加絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "連鎖律：$\\mathbf R'(u)=\\mathbf r'(\\varphi(u))\\,\\varphi'(u)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |\\mathbf R'(u)|=|\\mathbf r'(\\varphi(u))|\\,|\\varphi'(u)|$",
+              "on": "pr#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varphi'>0$（同方向）：$t=\\varphi(u)$ 直接代換",
+            "$\\int_c^d f(\\mathbf R(u))\\,|\\mathbf R'(u)|\\,du=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt$"
+          ],
+          "say": "如果斐 prime 是正的，同方向，絕對值拿掉，直接用 t 等於斐 of u 代換，就回到原來的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varphi'>0$（同方向）：$t=\\varphi(u)$ 直接代換"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_c^d f(\\mathbf R(u))\\,|\\mathbf R'(u)|\\,du=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt$",
+              "on": "接用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varphi'<0$（反方向）：$|\\varphi'|=-\\varphi'$，而且 $\\varphi(c)=b$、$\\varphi(d)=a$",
+            "$\\int_c^d f(\\mathbf r(\\varphi))|\\mathbf r'(\\varphi)|\\,(-\\varphi')\\,du=-\\int_b^a f(\\mathbf r(t))|\\mathbf r'(t)|\\,dt$"
+          ],
+          "say": "如果斐 prime 是負的，反方向。絕對值變成負的斐 prime，而且上下限也反過來，從 b 到 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\varphi'<0$（反方向）：$|\\varphi'|=-\\varphi'$，而且 $\\varphi(c)=b$、$\\varphi(d)=a$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_c^d f(\\mathbf r(\\varphi))|\\mathbf r'(\\varphi)|\\,(-\\varphi')\\,du=-\\int_b^a f(\\mathbf r(t))|\\mathbf r'(t)|\\,dt$",
+              "on": "pr#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt\\quad\\blacksquare$"
+          ],
+          "say": "兩個負號抵消，又回到原來的積分。所以不管怎麼參數化、往哪個方向走，答案都一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle =\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt\\quad\\blacksquare}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "管怎"
+            }
+          ]
+        },
+        {
+          "show": [
+            "絕對值的負號，剛好抵消上下限對調的負號"
+          ],
+          "say": "關鍵就是：速率帶著絕對值。它產生的負號，剛好抵消上下限對調的負號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "絕對值的負號，剛好抵消上下限對調的負號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\int_C f\\,ds$：沿曲線加總「密度 $\\times$ 一小段長度」；$f=1$ 時是長度",
+            "$\\int_C f\\,ds=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt$"
+          ],
+          "say": "整理一下：純量線積分沿著曲線，把密度乘一小段長度加起來；密度是 1 的時候就是長度。計算時 d s 換成速率乘 d t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\int_C f\\,ds$：沿曲線加總「密度 $\\times$ 一小段長度」；$f=1$ 時是長度"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\int_C f\\,ds=\\int_a^b f(\\mathbf r(t))\\,|\\mathbf r'(t)|\\,dt}}$",
+              "on": "小段"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "計算"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 三步驟：參數化 → 速率 → 代入積分；有轉角就分段相加",
+            "• 跟方向、參數化無關：$ds$ 永遠是正的"
+          ],
+          "say": "三個步驟：參數化、速率、代入。有轉角就分段。答案跟方向、參數化都無關，因為 d s 永遠是正的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 三步驟：參數化 → 速率 → 代入積分；有轉角就分段相加"
+            },
+            {
+              "do": "write",
+              "line": "• 跟方向、參數化無關：$ds$ 永遠是正的",
+              "on": "跟方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：功的線積分 $\\int_C\\mathbf F\\cdot d\\mathbf r$"
+          ],
+          "say": "下一課，沿著曲線算一個力做的功，那時候方向就很重要了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：功的線積分 $\\int_C\\mathbf F\\cdot d\\mathbf r$"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
@@ -429,5 +1047,6 @@
       "id": "cg-9b2-002",
       "trains": "line-integral-parametrize"
     }
-  ]
+  ],
+  "gaps": []
 }

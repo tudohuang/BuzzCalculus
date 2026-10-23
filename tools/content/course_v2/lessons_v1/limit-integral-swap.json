@@ -1,0 +1,348 @@
+{
+  "id": "limit-integral-swap",
+  "title": "極限與積分交換",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["weierstrass-m-test", "uniform-convergence", "uniform-convergence-tests"],
+  "next": ["limit-derivative-swap"],
+  "related": ["pointwise-convergence", "riemann-integrability", "dominated-convergence", "monotone-convergence-theorem"],
+  "objectives": [
+    "證明並使用：連續函數列在 $[a,b]$ 上一致收斂時，$\\lim\\int_a^b f_n=\\int_a^b\\lim f_n$。",
+    "用 $M$ 判別加上這個定理，合法地逐項積分一個函數項級數。",
+    "對每個條件舉出反例：不一致時會壞、區間無界時也會壞。"
+  ],
+  "visual": "上下兩張圖。上圖：nx e^{−nx²} 的高峰越來越高、越來越窄，底下的面積固定逼近 1/2，雖然每個點的高度都 → 0。下圖：(1/n)e^{−x/n} 越壓越扁、整條曲線都在 0 的 1/n 範圍內，但面積往右攤開，一直是 1。",
+  "concept": [
+    {
+      "heading": "① 問題",
+      "body": [
+        "$f_n\\to f$ 時，$\\lim\\int f_n$ 會不會等於 $\\int f$？〈逐點收斂〉那一課看過不會：$nx e^{-nx^2}$ 在 $[0,1]$ 上逐點收斂到 0，積分卻趨近 $\\frac{1}{2}$。高峰把面積「藏」在一個越來越窄的地方，逐點收斂看不見它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理與證明",
+      "body": [
+        "定理：若每個 $f_n$ 在 $[a,b]$ 上連續，且 $f_n$ 在 $[a,b]$ 上一致收斂到 $f$，則 $f$ 連續（所以可積），而且 $\\lim\\int_a^b f_n\\,dx=\\int_a^b f\\,dx$。",
+        "證明只有一行：$|\\int_a^b f_n-\\int_a^b f|\\le\\int_a^b|f_n-f|\\le(b-a)\\|f_n-f\\|_\\infty\\to0$。$f$ 連續是上一章的定理。",
+        "用到兩件事：誤差有一個與 $x$ 無關的上界 $\\|f_n-f\\|_\\infty$（一致性），以及區間長度 $b-a$ 有限。"
+      ],
+      "tex": ["\\left|\\int_a^b f_n-\\int_a^b f\\right|\\le (b-a)\\,\\|f_n-f\\|_\\infty"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 級數版：逐項積分",
+      "body": [
+        "若 $\\sum u_n$ 在 $[a,b]$ 上一致收斂（例如由 $M$ 判別），每個 $u_n$ 連續，則 $\\int_a^b\\sum u_n=\\sum\\int_a^b u_n$。理由：有限和本來就能和積分交換，把定理套在部分和 $S_n$ 上即可。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 條件拿掉會怎樣",
+      "body": [
+        "不一致：$nx e^{-nx^2}$，$\\lim\\int_0^1=\\frac{1}{2}$，$\\int_0^1\\lim=0$。",
+        "區間無界：$(\\frac{1}{n})e^{-x/n}$ 在 $[0,\\infty)$ 上一致收斂到 0（$\\|f_n\\|_\\infty=\\frac{1}{n}$），但 $\\int_0^\\infty=1$ 對每個 $n$ 成立（範例 3）。$(b-a)\\|f_n-f\\|_\\infty$ 這個上界在 $b=\\infty$ 時失效。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "預告：更一般的版本",
+      "body": [
+        "$f_n$ 只要 Riemann 可積（不必連續），一致收斂下極限 $f$ 仍然可積，而且積分可交換；證明要用上和、下和，見〈Riemann 可積〉。",
+        "一致收斂其實是很強的要求。Lebesgue 積分裡的〈控制收斂定理〉只要逐點收斂（甚至幾乎處處）加上一個可積的控制函數 $|f_n|\\le g$，就能交換，而且區間可以無界。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "積分會被藏起來",
+      "beats": [
+        { "show": ["$\\lim\\int f_n\\overset{?}{=}\\int f$"],
+          "say": "函數列收斂了，積分的極限會不會等於極限的積分？",
+          "board": [
+            {"do":"write","line":"$\\lim\\int f_n \\overset{?}{=}\\int f$"}
+          ] },
+        { "show": ["$nx e^{-nx^2}$ 在 $[0,1]$：逐點 $\\to0$"],
+          "note": "積分卻趨近 $\\frac{1}{2}$。",
+          "say": "看過反例：n x 乘 e 的負 n x 平方，逐點收斂到零，積分卻趨近二分之一。",
+          "board": [
+            {"do":"write","line":"$f_n=nx e^{-nx^2}$，在 $[0,1]$"},
+            {"do":"write","line":"逐點 $f_n\\to0$","on":"逐點收斂"},
+            {"do":"write","line":"$\\int_0^1 f_n\\to\\frac{1}{2}$","on":"積分卻"}
+          ] },
+        { "show": ["令 $u=nx^2$，$du=2nx\\,dx$"],
+          "say": "令 u 等於 n x 平方，d u 是二 n x 乘 d x。x 從零到一，u 從零到 n。",
+          "board": [
+            {"do":"write","line":"$u=nx^2$，$du=2nx\\,dx$"},
+            {"do":"write","line":"$\\int_0^1 f_n\\,dx=\\frac{1}{2}\\int_0^n e^{-u}du$","on":"u 從零"}
+          ] },
+        { "show": ["$\\frac{1}{2}(1-e^{-n})\\to\\frac{1}{2}$"],
+          "say": "e 的負 u 積分，得一減 e 的負 n 次方。n 變大它趨近零，剩二分之一。",
+          "board": [
+            {"do":"write","line":"$=\\frac{1}{2}(1-{{z:e^{-n}}})\\to\\frac{1}{2}$"},
+            {"do":"focus","term":"z","color":"gold","on":"趨近零"}
+          ] },
+        { "show": ["高峰越來越窄，面積還在"],
+          "say": "高峰把面積藏在越來越窄的地方，每個固定的點都看不見它，所以逐點收斂抓不到。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"高峰越來越窄，面積還在","on":"高峰"},
+            {"do":"write","line":"$\\int_0^1 f_n\\to{{a:\\frac{1}{2}}}$","on":"面積"},
+            {"do":"underline","term":"a","color":"gold","label":"逐點看不見","on":"看不見它"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "一致收斂就能交換",
+      "beats": [
+        { "show": ["$f_n$ 連續、在 $[a,b]$ 一致收斂到 $f$"],
+          "note": "$f$ 連續，所以可積。",
+          "say": "定理：每個 f n 在 a 到 b 上連續，又一致收斂到 f，那極限和積分就可以交換。",
+          "board": [
+            {"do":"write","line":"$f_n$ 連續，$f_n\\to f$ 一致於 $[a,b]$"},
+            {"do":"write","line":"$\\lim\\int_a^b f_n=\\int_a^b\\lim f_n$","on":"極限和積分"}
+          ] },
+        { "show": ["$\\left|\\int_a^b f_n-\\int_a^b f\\right|\\le (b-a)\\,\\|f_n-f\\|_\\infty$"],
+          "say": "證明只有一行：積分的差，不超過區間長度乘上最大誤差。最大誤差趨近零，就收工。",
+          "board": [
+            {"do":"write","line":"$\\left|\\int_a^b f_n-\\int_a^b f\\right|\\le {{l:(b-a)}}\\,{{e:\\|f_n-f\\|_\\infty}}$"},
+            {"do":"underline","term":"l","color":"blue","label":"區間長度","on":"區間長度"},
+            {"do":"circle","term":"e","color":"violet","on":"最大誤差#1"},
+            {"do":"write","line":"$\\|f_n-f\\|_\\infty\\to0$，所以差 $\\to0$","on":"趨近零"}
+          ] },
+        { "show": ["用到兩件事：一致、區間有限"],
+          "say": "注意它用了兩件事：誤差有一個跟 x 無關的上界，還有區間長度 b 減 a 是有限的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\|f_n-f\\|_\\infty$：跟 $x$ 無關","on":"誤差有"},
+            {"do":"write","line":"$b-a$：有限","on":"還有區間長度"}
+          ] },
+        { "show": ["$f_n'=ne^{-nx^2}(1-2nx^2)$"],
+          "say": "拿反例驗證，要找最大值就先微分。f n 微分，得 n 乘 e 的負 n x 平方，再乘一減二 n x 平方。",
+          "board": [
+            {"do":"write","line":"$f_n'=ne^{-nx^2}(1-2nx^2)$"}
+          ] },
+        { "show": ["令 $f_n'=0$，得 $x=\\frac{1}{\\sqrt{2n}}$","最大值 $\\sqrt{\\frac{n}{2}}e^{-1/2}\\to\\infty$"],
+          "say": "令它等於零，x 是根號二 n 分之一。代回去，最大值是根號二分之 n 乘 e 的負二分之一次方，跑到無限大。",
+          "board": [
+            {"do":"write","line":"$x=\\frac{1}{\\sqrt{2n}}$"},
+            {"do":"write","line":"$\\|f_n\\|_\\infty=\\sqrt{\\frac{n}{2}}\\,e^{-1/2}\\to\\infty$","on":"代回去"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "先證一致，再交換",
+      "beats": [
+        { "show": ["$\\lim_{n\\to\\infty}\\int_0^1(1+\\frac{x}{n})^n\\,dx$"],
+          "say": "求積分從零到一，一加 n 分之 x 的 n 次方，n 趨近無限大的極限。",
+          "board": [
+            {"do":"write","line":"$\\lim_{n\\to\\infty}\\int_0^1(1+\\frac{x}{n})^n\\,dx$"}
+          ] },
+        { "show": ["Dini：在 $[0,1]$ 上一致收斂到 $e^x$"],
+          "note": "每個 $f_n$ 連續。",
+          "say": "上一課用 Dini 定理證過，它在零到一上一致收斂到 e 的 x 次方，而且每一項都連續。",
+          "board": [
+            {"do":"write","line":"Dini：$f_n\\to e^x$ 一致於 $[0,1]$"},
+            {"do":"write","line":"每個 $f_n$ 連續","on":"每一項"}
+          ] },
+        { "show": ["極限搬進積分號，只剩普通積分"],
+          "say": "有了一致收斂，定理讓極限搬進積分號裡。剩下的是極限函數的普通積分，用反導函數去算。",
+          "board": [
+            {"do":"write","line":"$\\lim\\int f_n=\\int\\lim f_n$"},
+            {"do":"write","line":"$\\int_0^1\\lim f_n$：普通積分","on":"普通積分"}
+          ] }
+      ],
+      "key": "Dini：單調加連續，逐點升格成一致",
+      "predict": {
+        "ask": "所以極限是？",
+        "options": [
+          {
+            "label": "$\\int_0^1 e^x\\,dx=e-1\\approx1.718$",
+            "correct": true
+          },
+          {
+            "label": "$e$",
+            "why": "$e$ 是 $e^x$ 在 $x=1$ 的值；交換後要積分：$\\int_0^1 e^x\\,dx=e-1$。"
+          },
+          {
+            "label": "1",
+            "why": "那是 $n=1$ 附近的直覺。交換之後算 $\\int_0^1 e^x\\,dx=e-1$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "逐項積分",
+      "beats": [
+        { "show": ["$\\int_a^b\\sum u_n=\\sum\\int_a^b u_n$"],
+          "note": "條件：一致收斂、每項連續。",
+          "say": "級數版：一致收斂、每一項連續，就可以一項一項積分。理由是把定理套在部分和上。",
+          "board": [
+            {"do":"write","line":"$\\int_a^b\\sum u_n=\\sum\\int_a^b u_n$"},
+            {"do":"write","line":"條件：一致收斂、每一項連續","on":"一致收斂"}
+          ] },
+        { "show": ["$\\frac{1}{1-x}=\\sum_{n=0}^\\infty x^n$，在 $[0,\\frac{1}{2}]$"],
+          "note": "$|x^n|\\le(\\frac{1}{2})^n$，$M$ 判別。",
+          "say": "拿一減 x 分之一的幾何級數，在零到二分之一上，用 M 判別知道它一致收斂。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{1-x}=\\sum_{n=0}^\\infty x^n$，在 $[0,\\frac{1}{2}]$","on":"拿一減"},
+            {"do":"write","line":"$|x^n|\\le(\\frac{1}{2})^n$：$M$ 判別","on":"用 M 判別"}
+          ] },
+        { "show": ["左邊：$\\int_0^{1/2}\\frac{1}{1-x}\\,dx=\\ln2$"],
+          "say": "左邊積出來是負的自然對數一減 x，從零到二分之一，等於自然對數二。",
+          "board": [
+            {"do":"write","line":"左邊：$\\int_0^{1/2}\\frac{1}{1-x}\\,dx={{l:\\ln2}}$","tint":{"l":"blue"}}
+          ] },
+        { "show": ["右邊：$\\sum_{n=0}^\\infty\\frac{(\\frac{1}{2})^{n+1}}{n+1}$"],
+          "note": "令 $k=n+1$。",
+          "say": "右邊每一項積出來，是二分之一的 n 加一次方，再除以 n 加一。兩邊相等。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"右邊：$\\sum_{n=0}^\\infty {{r:\\frac{(\\frac{1}{2})^{n+1}}{n+1}}}$","tint":{"r":"violet"},"on":"右邊每一項"},
+            {"do":"focus","term":"r","color":"violet","label":"每一項積出來","on":"再除以"}
+          ] },
+        { "show": ["$k=n+1$：$\\sum_{k=1}^\\infty\\frac{1}{k\\cdot2^k}$"],
+          "say": "令 k 等於 n 加一，n 從零，k 從一。二分之一的 k 次方除以 k，就是 k 乘二的 k 次方分之一，所以和是自然對數二。",
+          "board": [
+            {"do":"write","line":"$k=n+1$，$k$ 從 $1$ 起"},
+            {"do":"write","line":"$\\frac{(1/2)^k}{k}=\\frac{1}{k\\cdot2^k}$","on":"二分之一的"}
+          ] }
+      ],
+      "key": "先用 $M$ 判別證一致，再逐項積分",
+      "check": 3
+    },
+    {
+      "title": "區間無界就不行",
+      "beats": [
+        { "show": ["$f_n(x)=(\\frac{1}{n})e^{-x/n}$，$[0,\\infty)$"],
+          "say": "最後一個：n 分之一乘 e 的負 n 分之 x，在零到無限大上。",
+          "board": [
+            {"do":"write","line":"$f_n(x)=(\\frac{1}{n})e^{-x/n}$，$[0,\\infty)$","on":"n 分之一"}
+          ] },
+        { "show": ["$f_n'=-\\frac{1}{n^2}e^{-x/n}<0$"],
+          "say": "先微分：前面 n 分之一是常數，指數再乘負 n 分之一。結果永遠小於零。",
+          "board": [
+            {"do":"write","line":"$f_n'=-\\frac{1}{n^2}e^{-x/n}<0$"}
+          ] },
+        { "show": ["$\\|f_n\\|_\\infty=\\frac{1}{n}\\to0$"],
+          "note": "最大值在 $x=0$，一致收斂到 0。",
+          "say": "函數遞減，最大值在零，是 n 分之一，趨近零。所以它一致收斂到零。",
+          "board": [
+            {"do":"write","line":"$\\|f_n\\|_\\infty={{mx:\\frac{1}{n}}}\\to0$","on":"最大值在零"},
+            {"do":"write","line":"一致收斂到 $0$","on":"所以它一致收斂"}
+          ] },
+        { "show": ["藍：$n=1$；紅：$n=2$"],
+          "say": "畫出來看：藍色是 n 等於一，紅色是 n 等於二。越來越扁，可是尾巴拖得越來越長。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6,0,1.2],"curves":[{"expr":"exp(-x)","domain":[0,6],"color":"blue"},{"expr":"exp(-x/2)/2","domain":[0,6],"color":"red"}]}}
+          ] },
+        { "show": ["$\\int_0^\\infty f_n\\,dx=1$"],
+          "note": "令 $u=\\frac{x}{n}$。",
+          "say": "可是積分換個變數，對每個 n 都是一。面積被攤平，攤到越來越遠的地方。",
+          "board": [
+            {"do":"write","line":"可是 $\\int_0^\\infty f_n\\,dx={{one:1}}$","on":"可是積分"},
+            {"do":"focus","term":"one","label":"每個 n 都是","on":"對每個 n"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "先證一致，再交換",
+      "prompt": "求 $\\lim_{n\\to\\infty}\\int_0^1(1+\\frac{x}{n})^n\\,dx$。",
+      "steps": [
+        "〈怎麼判斷一致收斂〉的範例 3 用 Dini 定理證過：$(1+\\frac{x}{n})^n$ 在 $[0,1]$ 上一致收斂到 $e^x$，而且每個 $f_n$ 連續。",
+        "由定理，$\\lim\\int_0^1(1+\\frac{x}{n})^n\\,dx=\\int_0^1 e^x\\,dx=e-1\\approx1.718$。",
+        "直接算也對得上：$\\int_0^1(1+\\frac{x}{n})^n\\,dx=(\\frac{n}{n+1})[(1+\\frac{1}{n})^{n+1}-1]$，$n\\to\\infty$ 時 $\\to e-1$。"
+      ],
+      "answer": "$e-1$",
+      "claim": "INT((1+x/n)^n, 0, 1) == n/(n+1)*((1+1/n)^(n+1)-1) ;; LIM(n/(n+1)*((1+1/n)^(n+1)-1), inf) == e-1"
+    },
+    {
+      "title": "逐項積分",
+      "prompt": "利用 $\\frac{1}{1-x}=\\sum_{n=0}^\\infty x^n$，求 $\\sum_{k=1}^\\infty\\frac{1}{k\\cdot2^k}$。",
+      "problemId": "lec-14-q3c",
+      "steps": [
+        "在 $[0,\\frac{1}{2}]$ 上 $|x^n|\\le(\\frac{1}{2})^n$，$\\sum(\\frac{1}{2})^n$ 收斂，由 $M$ 判別 $\\sum x^n$ 一致收斂，每一項連續，可以逐項積分。",
+        "左邊：$\\int_0^{1/2}\\frac{1}{1-x}\\,dx=[-\\ln(1-x)]_0^{1/2}=\\ln2$。",
+        "右邊：$\\sum_{n=0}^\\infty\\int_0^{1/2} x^n\\,dx=\\sum_{n=0}^\\infty\\frac{(\\frac{1}{2})^{n+1}}{n+1}$，令 $k=n+1$ 得 $\\sum_{k=1}^\\infty\\frac{1}{k\\cdot2^k}$。",
+        "所以 $\\sum\\frac{1}{k\\cdot2^k}=\\ln2$。"
+      ],
+      "answer": "$\\ln2$",
+      "claim": "INT(x^n, 0, 1/2) == (1/2)^(n+1)/(n+1) ;; INT(1/(1-x), 0, 1/2) == ln(2) ;; SUM(1/(n*2^n), 1) == ln(2)"
+    },
+    {
+      "title": "一致收斂，積分卻不收斂到 0",
+      "prompt": "$f_n(x)=(\\frac{1}{n})e^{-x/n}$，$x\\in[0,\\infty)$。求 $\\|f_n\\|_\\infty$ 與 $\\int_0^\\infty f_n\\,dx$。",
+      "steps": [
+        "$f_n$ 遞減，最大值在 $x=0$：$\\|f_n-0\\|_\\infty=\\frac{1}{n}\\to0$，所以在 $[0,\\infty)$ 上一致收斂到 0。",
+        "$\\int_0^\\infty(\\frac{1}{n})e^{-x/n}\\,dx$：令 $u=\\frac{x}{n}$，$=\\int_0^\\infty e^{-u}\\,du=1$，對每個 $n$ 都是 1。",
+        "$\\lim\\int f_n=1\\ne0=\\int\\lim f_n$。一致收斂救不了無界區間：面積被攤到越來越遠的地方。"
+      ],
+      "answer": "$\\|f_n\\|_\\infty=\\frac{1}{n}$，$\\int_0^\\infty f_n=1$",
+      "claim": "SUB(e^(-x/n)/n, 0) == 1/n ;; INT(e^(-x/n)/n, 0, inf) == 1"
+    }
+  ],
+  "pitfalls": [
+    "只有逐點收斂就把 $\\lim$ 搬進積分號。",
+    "在無界區間（或瑕積分）上以為一致收斂就夠。",
+    "逐項積分前沒說明級數在積分區間上一致收斂；冪級數要確認積分區間落在收斂半徑內的閉區間。",
+    "把 $\\int$ 的誤差上界寫成 $\\|f_n-f\\|_\\infty$，漏了區間長度 $b-a$。"
+  ],
+  "checks": [
+    {
+      "ask": "證明 $\\int_a^b f_n\\to\\int_a^b f$ 的關鍵不等式是？",
+      "options": [
+        { "label": "$|\\int_a^b f_n-\\int_a^b f|\\le(b-a)\\|f_n-f\\|_\\infty$", "correct": true },
+        { "label": "$|\\int_a^b f_n-\\int_a^b f|\\le\\|f_n-f\\|_\\infty$", "why": "你漏了區間長度。被積函數的上界要乘上 $b-a$ 才是積分的上界。" },
+        { "label": "$|\\int_a^b f_n-\\int_a^b f|\\le|f_n(a)-f(a)|(b-a)$", "why": "你只看一個點的誤差。要控制整段，需要所有 $x$ 共用的上界，也就是 $\\sup$。" }
+      ]
+    },
+    {
+      "ask": "$f_n(x)=nx e^{-nx^2}$ 在 $[0,1]$ 上，$\\lim\\int_0^1 f_n=\\frac{1}{2}$ 而 $\\int_0^1\\lim f_n=0$。原因是？",
+      "options": [
+        { "label": "收斂不是一致的：$\\|f_n\\|_\\infty=\\sqrt{\\frac{n}{2}}\\cdot e^{-1/2}\\to\\infty$", "correct": true },
+        { "label": "$f_n$ 不連續", "why": "每個 $nx e^{-nx^2}$ 都連續。出問題的是收斂方式，不是 $f_n$ 本身。" },
+        { "label": "積分算錯了，兩者其實相等", "why": "$\\int_0^1 f_n=\\frac{1-e^{-n}}{2}\\to\\frac{1}{2}$ 是對的；逐點極限 0 的積分是 0。它們真的不相等。" }
+      ]
+    },
+    {
+      "ask": "$(\\frac{1}{n})e^{-x/n}$ 在 $[0,\\infty)$ 上一致收斂到 0，積分卻一直是 1。違反了定理的哪個條件？",
+      "options": [
+        { "label": "區間要有界", "correct": true },
+        { "label": "$f_n$ 要連續", "why": "$(\\frac{1}{n})e^{-x/n}$ 是連續的。問題在 $(b-a)\\|f_n-f\\|_\\infty$ 這個上界在 $b=\\infty$ 時變成 $\\infty\\cdot0$。" },
+        { "label": "要一致收斂", "why": "這個例子是一致收斂的（$\\|f_n\\|_\\infty=\\frac{1}{n}$）。它說明的是一致收斂還不夠，區間也要有界。" }
+      ]
+    },
+    {
+      "ask": "$\\sum_{k=1}^\\infty\\frac{1}{k\\cdot2^k}$ 等於？",
+      "options": [
+        { "label": "$\\ln2$", "correct": true },
+        { "label": "1", "why": "你算的是 $\\sum\\frac{1}{2^k}$，漏了 $\\frac{1}{k}$。$\\frac{1}{k}$ 來自 $\\int x^{k-1}\\,dx$ 生出的分母。" },
+        { "label": "$\\ln(\\frac{3}{2})$", "why": "那是 $\\sum\\frac{1}{k\\cdot3^k}$，對應積分到 $\\frac{1}{3}$。這裡積分上限是 $\\frac{1}{2}$：$\\int_0^{1/2}\\frac{1}{1-x}\\,dx=\\ln2$。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence", "convergence-theorem", "power-series"],
+    "fine": ["intswap-uniform-bound", "intswap-termwise", "intswap-failure-nonuniform", "intswap-unbounded-domain"]
+  },
+  "practice": [
+    { "id": "lec-14-q3c", "core": true, "trains": "intswap-termwise" },
+    { "id": "lec-14-q2b", "core": true, "trains": "intswap-termwise" },
+    { "id": "lb-con-003", "core": true, "trains": "intswap-failure-nonuniform" },
+    { "id": "lb-con-005", "core": true, "trains": "intswap-failure-nonuniform" },
+    { "id": "cg-12f-024", "core": true, "trains": "intswap-uniform-bound" },
+    { "id": "cg-12f-026", "core": true, "trains": "intswap-unbounded-domain" },
+    { "id": "lb-con-001", "trains": "intswap-failure-nonuniform" },
+    { "id": "cg-12f-023", "trains": "intswap-uniform-bound" },
+    { "id": "cg-12f-025", "trains": "intswap-unbounded-domain" },
+    { "id": "dm-int-002", "challenge": true, "trains": "intswap-termwise", "note": "挑戰：在 $[0,1]$ 上把 $\\ln(1-x)$ 展開、乘上 $\\ln x$ 後逐項積分；每一項 $\\frac{x^n(-\\ln x)}{n}$ 非負，交換的理由是〈單調收斂定理（測度版）〉，不是一致收斂。" }
+  ],
+  "gaps": []
+}

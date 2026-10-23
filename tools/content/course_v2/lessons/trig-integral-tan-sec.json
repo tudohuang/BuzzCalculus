@@ -1,55 +1,143 @@
 {
   "id": "trig-integral-tan-sec",
   "title": "tanᵐ x secⁿ x",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["trig-integral-sin-cos", "derivative-trig"],
-  "next": ["trig-identity-integrals"],
-  "related": ["ibp-cyclic", "reduction-formula"],
+  "prerequisites": [
+    "trig-integral-sin-cos",
+    "derivative-trig"
+  ],
+  "next": [
+    "trig-identity-integrals"
+  ],
+  "related": [
+    "ibp-cyclic",
+    "reduction-formula"
+  ],
   "objectives": [
-    "記得兩組配對：$(\\tan x)'=\\sec^2 x$、$(\\sec x)'=\\sec x\\tan x$，以及 $\\tan^2 x=\\sec^2 x-1$。",
-    "$\\sec$ 是偶次方時留 $\\sec^2 x$，令 $u=\\tan x$；$\\tan$ 是奇次方時留 $\\sec x\\tan x$，令 $u=\\sec x$。",
-    "會 $\\int\\tan x\\,dx$ 與 $\\int\\sec x\\,dx$ 這兩個基本結果。"
+    "記得兩組配對：$(\\tan x)'=\\sec^2 x$、$(\\sec x)'=\\sec x\\tan x$，以及 $\\tan^2x+1=\\sec^2x$",
+    "$\\sec$ 是偶次方時留 $\\sec^2 x$，令 $u=\\tan x$",
+    "$\\tan$ 是奇次方時留 $\\sec x\\tan x$，令 $u=\\sec x$",
+    "會 $\\int\\tan x\\,dx$ 與 $\\int\\sec x\\,dx$ 這兩個基本結果"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 跟上一課同一個想法，換一組配對",
+      "heading": "① 換一組配對",
       "body": [
-        "上一課靠 $(\\sin x)'=\\cos x$ 與 $\\sin^2+\\cos^2=1$。這一課的配對是：$(\\tan x)'=\\sec^2 x$，$(\\sec x)'=\\sec x\\tan x$，恆等式 $\\tan^2 x=\\sec^2 x-1$（由 $\\sin^2+\\cos^2=1$ 兩邊除以 $\\cos^2 x$ 得到）。",
-        "策略一樣：留一組當 $du$，其餘用恆等式換成同一種。"
+        "上一課：$\\sin$、$\\cos$ 互為導數，靠 $\\sin^2+\\cos^2=1$ 換",
+        "這一課的兩組配對：",
+        "2.6 學過；$\\sec x=\\frac1{\\cos x}$",
+        "換的工具：",
+        "把 $\\sin^2x+\\cos^2x=1$ 兩邊除以 $\\cos^2x$",
+        "兩條路",
+        "• 留 $\\sec^2x$ → $u=\\tan x$，其餘換成 $\\tan$",
+        "• 留 $\\sec x\\tan x$ → $u=\\sec x$，其餘換成 $\\sec$",
+        "哪一條走得通？看剩下的能不能換"
       ],
-      "collapsible": false
+      "tex": [
+        "(\\tan x)'=\\sec^2x,\\qquad(\\sec x)'=\\sec x\\tan x",
+        "\\tan^2x+1=\\sec^2x"
+      ]
     },
     {
-      "heading": "② $\\sec$ 是偶次方（至少 $2$）：留 $\\sec^2 x$，$u=\\tan x$",
+      "heading": "② $\\sec$ 偶次方：留 $\\sec^2x$",
       "body": [
-        "拿 $\\sec^2 x\\,dx$ 當 $du$。剩下的 $\\sec$ 是偶次方，用 $\\sec^2 x=1+\\tan^2 x$ 換成 $\\tan$。整個變成 $\\tan$ 的多項式。"
+        "例：$\\displaystyle\\int\\tan^2x\\sec^4x\\,dx$",
+        "留一個 $\\sec^2x$，剩下 $\\sec^2x=1+\\tan^2x$：",
+        "令 $u=\\tan x$，$du=\\sec^2x\\,dx$：",
+        "為什麼要 $\\sec$ 偶次方？",
+        "留掉 $\\sec^2x$，剩下 $\\sec^{2k}x=(1+\\tan^2x)^k$ 才換得掉",
+        "$\\tan$ 是幾次方都沒關係",
+        "連 $\\tan^0$ 也可以：$\\int\\sec^4x\\,dx=\\tan x+\\frac{\\tan^3x}3+C$"
       ],
-      "collapsible": false
+      "tex": [
+        "=\\int\\tan^2x\\,(1+\\tan^2x)\\sec^2x\\,dx",
+        "=\\int(u^2+u^4)\\,du=\\frac{u^3}3+\\frac{u^5}5+C",
+        "\\int\\tan^2x\\sec^4x\\,dx=\\frac{\\tan^3x}3+\\frac{\\tan^5x}5+C"
+      ]
     },
     {
-      "heading": "③ $\\tan$ 是奇次方、而且有 $\\sec$：留 $\\sec x\\tan x$，$u=\\sec x$",
+      "heading": "③ $\\tan$ 奇次方：留 $\\sec x\\tan x$",
       "body": [
-        "拿 $\\sec x\\tan x\\,dx$ 當 $du$。剩下的 $\\tan$ 是偶次方，用 $\\tan^2 x=\\sec^2 x-1$ 換成 $\\sec$。整個變成 $\\sec$ 的多項式。",
-        "兩個條件都符合時（例如 $\\tan^3 x\\sec^4 x$），任選一種。"
+        "例：$\\displaystyle\\int\\tan^3x\\sec x\\,dx$",
+        "留一個 $\\sec x\\tan x$，剩下 $\\tan^2x=\\sec^2x-1$：",
+        "令 $u=\\sec x$，$du=\\sec x\\tan x\\,dx$：",
+        "為什麼要 $\\tan$ 奇次方？",
+        "留掉一個 $\\tan$，剩下 $\\tan^{2k}x=(\\sec^2x-1)^k$",
+        "而且至少要有一個 $\\sec$ 才留得出 $\\sec x\\tan x$；沒有 $\\sec$ 的見 ⑤",
+        "驗算：微分回去"
       ],
-      "collapsible": false
+      "tex": [
+        "=\\int(\\sec^2x-1)\\sec x\\tan x\\,dx",
+        "=\\int(u^2-1)\\,du=\\frac{u^3}3-u+C",
+        "\\int\\tan^3x\\sec x\\,dx=\\frac{\\sec^3x}3-\\sec x+C",
+        "\\Big(\\tfrac{\\sec^3x}3-\\sec x\\Big)'=\\sec^2x\\cdot\\sec x\\tan x-\\sec x\\tan x",
+        "=\\sec x\\tan x(\\sec^2x-1)=\\tan^3x\\sec x"
+      ]
     },
     {
-      "heading": "④ 兩個要記的基本結果",
+      "heading": "③ 試一題",
       "body": [
-        "$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$，令 $u=\\cos x$，得 $-\\ln|\\cos x|+C=\\ln|\\sec x|+C$。",
-        "$\\int\\sec x\\,dx=\\ln|\\sec x+\\tan x|+C$。這個不好猜，推導見範例 3。"
+        "兩條路都通的時候",
+        "$\\sec$ 偶次方、$\\tan$ 也是奇次方：兩種都行",
+        "例：$\\int\\tan x\\sec^2x\\,dx$ 得 $\\frac{\\tan^2x}2$ 或 $\\frac{\\sec^2x}2$，差 $\\frac12$",
+        "選剩下的比較少的那一條"
+      ]
+    },
+    {
+      "heading": "④ 兩個要記的結果",
+      "body": [
+        "$\\int\\tan x\\,dx$：寫成 $\\dfrac{\\sin x}{\\cos x}$，$u=\\cos x$",
+        "$-\\ln\\lvert\\cos x\\rvert=\\ln\\frac1{\\lvert\\cos x\\rvert}=\\ln\\lvert\\sec x\\rvert$",
+        "$\\int\\sec x\\,dx$：同乘 $\\dfrac{\\sec x+\\tan x}{\\sec x+\\tan x}$",
+        "分子正好是分母的導數：$(\\sec x+\\tan x)'=\\sec x\\tan x+\\sec^2x$",
+        "這個巧招不是「想得到」的，是記住的；驗算就微分回去"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{\\sin x}{\\cos x}\\,dx=-\\int\\frac{du}u=-\\ln\\lvert\\cos x\\rvert+C",
+        "\\int\\tan x\\,dx=\\ln\\lvert\\sec x\\rvert+C",
+        "\\int\\frac{\\sec^2x+\\sec x\\tan x}{\\sec x+\\tan x}\\,dx",
+        "\\int\\sec x\\,dx=\\ln\\lvert\\sec x+\\tan x\\rvert+C"
+      ]
+    },
+    {
+      "heading": "④ 看一個數值",
+      "body": [
+        "④ 看一個數值"
+      ],
+      "tex": [
+        "\\int_0^{\\pi/4}\\sec x\\,dx=\\ln(\\sqrt2+1)-\\ln1\\approx0.881"
+      ]
     },
     {
       "heading": "⑤ 剩下的情況",
       "body": [
-        "$\\tan$ 是偶次方、$\\sec$ 是奇次方（例如 $\\sec^3 x$、$\\tan^2 x\\sec x$）時，上面兩招都用不上，要分部積分，而且常常是循環型（〈重複分部與循環積分〉）。只有 $\\tan$ 的次方（例如 $\\tan^4 x$）時，反覆用 $\\tan^2 x=\\sec^2 x-1$ 拆出一項 $\\tan^k x\\sec^2 x$。"
+        "只有 $\\tan$，偶次方：$\\displaystyle\\int\\tan^2x\\,dx$",
+        "只有 $\\tan$，奇次方：拆一個 $\\tan^2$ 出來",
+        "$\\sec$ 奇次方、$\\tan$ 偶次方：兩條路都不通",
+        "通常要分部積分，例如",
+        "$u=\\sec x$、$dv=\\sec^2x\\,dx$，再把 $\\tan^2=\\sec^2-1$ 代回去、移項"
       ],
-      "collapsible": false
+      "tex": [
+        "=\\int(\\sec^2x-1)\\,dx=\\tan x-x+C",
+        "\\int\\tan^3x\\,dx=\\int\\tan x(\\sec^2x-1)\\,dx",
+        "\\begin{aligned}&=\\int\\tan x\\sec^2x\\,dx-\\int\\tan x\\,dx\\\\&=\\frac{\\tan^2x}2-\\ln\\lvert\\sec x\\rvert+C\\end{aligned}",
+        "\\int\\sec^3x\\,dx=\\frac12\\big(\\sec x\\tan x+\\ln\\lvert\\sec x+\\tan x\\rvert\\big)+C"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 配對：$(\\tan x)'=\\sec^2x$、$(\\sec x)'=\\sec x\\tan x$；$\\tan^2+1=\\sec^2$",
+        "• $\\sec$ 偶次方：留 $\\sec^2x$，$u=\\tan x$",
+        "• $\\tan$ 奇次方：留 $\\sec x\\tan x$，$u=\\sec x$",
+        "• $\\int\\tan x\\,dx=\\ln\\lvert\\sec x\\rvert+C$",
+        "• $\\int\\sec x\\,dx=\\ln\\lvert\\sec x+\\tan x\\rvert+C$",
+        "• 只有 $\\tan$：換 $\\sec^2-1$；都不通：分部積分",
+        "下一課：用三角恆等式積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,35 +184,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\int\\tan^2 x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\tan^3x\\sec^3x\\,dx=$？",
       "options": [
-        { "label": "$\\tan x-x+C$", "correct": true },
-        { "label": "$\\frac{\\tan^3 x}{3}+C$", "why": "那需要旁邊有 $\\sec^2 x$ 當 $du$。這裡沒有，要先寫成 $\\sec^2 x-1$。" },
-        { "label": "$\\sec^2 x+C$", "why": "$(\\sec^2 x)'=2\\sec^2 x\\tan x$，不是 $\\tan^2 x$。" }
+        {
+          "label": "$\\dfrac{\\sec^5x}5-\\dfrac{\\sec^3x}3+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\sec^4x}4-\\dfrac{\\sec^2x}2+C$",
+          "why": "留 $\\sec x\\tan x$ 之後剩 $\\sec^2x$，不是 $\\sec x$；次方少算了一"
+        },
+        {
+          "label": "$\\dfrac{\\sec^5x}5+\\dfrac{\\sec^3x}3+C$",
+          "why": "$\\tan^2x=\\sec^2x-1$，是減不是加"
+        },
+        {
+          "label": "$\\dfrac{\\tan^4x}4\\cdot\\dfrac{\\sec^4x}4+C$",
+          "why": "乘積不能各自積分再相乘"
+        }
       ]
     },
     {
-      "ask": "$\\int\\tan^5 x\\sec^3 x\\,dx$，$u$ 應該選？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/3}\\tan x\\,dx=$？",
       "options": [
-        { "label": "$u=\\sec x$", "correct": true },
-        { "label": "$u=\\tan x$", "why": "那要留 $\\sec^2 x$，剩下 $\\sec x$ 一次方，換成 $\\tan$ 會出現根號。$\\tan$ 是奇次方，就留 $\\sec x\\tan x$。" },
-        { "label": "用半角公式", "why": "半角是 $\\sin$、$\\cos$ 都偶次方時降次用的，這裡用不上。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\sec x\\,dx$ 是？",
-      "options": [
-        { "label": "$\\ln|\\sec x+\\tan x|+C$", "correct": true },
-        { "label": "$\\sec x\\tan x+C$", "why": "那是 $\\sec x$ 的導數，方向反了。" },
-        { "label": "$\\ln|\\sec x|+C$", "why": "那是 $\\int\\tan x\\,dx$ 的結果。$(\\ln|\\sec x|)'=\\tan x$。" }
-      ]
-    },
-    {
-      "ask": "$\\int\\tan x\\,dx$ 是？",
-      "options": [
-        { "label": "$-\\ln|\\cos x|+C$", "correct": true },
-        { "label": "$\\sec^2 x+C$", "why": "那是 $\\tan x$ 的導數，方向反了。" },
-        { "label": "$\\ln|\\sin x|+C$", "why": "$\\tan x=\\frac{\\sin x}{\\cos x}$，分母是 $\\cos x$。令 $u=\\cos x$，$du=-\\sin x\\,dx$，得 $-\\ln|\\cos x|$。" }
+        {
+          "label": "$\\ln2$",
+          "correct": true
+        },
+        {
+          "label": "$-\\ln2$",
+          "why": "寫成 $-\\ln\\lvert\\cos x\\rvert$ 時漏了負號：$-\\ln\\frac12=\\ln2$"
+        },
+        {
+          "label": "$\\sqrt3$",
+          "why": "那是 $\\tan\\frac\\pi3$ 本身，不是積分"
+        },
+        {
+          "label": "$\\ln\\frac12$",
+          "why": "用成 $\\ln\\lvert\\cos x\\rvert$，忘了前面的負號"
+        }
       ]
     }
   ],
@@ -132,206 +230,839 @@
     {
       "title": "換一組配對",
       "beats": [
-        { "show": ["$(\\tan x)'=\\sec^2 x$","$(\\sec x)'=\\sec x\\tan x$"],
-          "say": "上一課靠 sine 和 cosine 互為導數。這一課換一組：tangent 和 secant 的導數。",
+        {
+          "show": [
+            "上一課：$\\sin$、$\\cos$ 互為導數，靠 $\\sin^2+\\cos^2=1$ 換"
+          ],
+          "say": "上一課的想法是：正弦和餘弦互相是對方的導數，再用平方和等於 1，把剩下的換成同一種。",
           "board": [
-            {"do":"write","line":"$(\\tan x)'={{a:\\sec^2 x}}$","tint":{"a":"blue"}},
-            {"do":"write","line":"$(\\sec x)'={{b:\\sec x\\tan x}}$","tint":{"b":"violet"},"on":"secant"}
-          ] },
-        { "show": ["藍：$\\tan x$，紅：$\\sec^2 x$"],
-          "say": "畫出來看：藍色是 tangent，紅色是它的導數 secant 平方。tangent 爬得越陡，紅色就越高。",
+            {
+              "do": "write",
+              "line": "上一課：$\\sin$、$\\cos$ 互為導數，靠 $\\sin^2+\\cos^2=1$ 換"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這一課的兩組配對：",
+            "$(\\tan x)'=\\sec^2x,\\qquad(\\sec x)'=\\sec x\\tan x$"
+          ],
+          "say": "正切和正割也有一樣的關係：正切微分是正割平方；正割微分是正割乘正切。",
           "board": [
-            {"do":"plot","graph":{"window":[-1.2,1.2,-4,6],"curves":[{"expr":"tan(x)","domain":[-1.2,1.2],"color":"blue"},{"expr":"1/(cos(x)^2)","domain":[-1.2,1.2],"color":"red"}]}}
-          ] },
-        { "show": ["$\\tan^2 x=\\sec^2 x-1$"],
-          "note": "$\\sin^2+\\cos^2=1$ 兩邊除以 $\\cos^2 x$。",
-          "say": "恆等式也換一條：tangent 平方等於 secant 平方減一，從 sine 平方加 cosine 平方等於一來的。",
+            {
+              "do": "write",
+              "line": "這一課的兩組配對："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle (\\tan x)'=\\sec^2x,\\qquad(\\sec x)'=\\sec x\\tan x}}$",
+              "on": "樣的"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "是正#1"
+            },
+            {
+              "do": "write",
+              "line": "　2.6 學過；$\\sec x=\\frac1{\\cos x}$",
+              "color": "violet",
+              "on": "微分#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換的工具：",
+            "$\\tan^2x+1=\\sec^2x$"
+          ],
+          "say": "換的工具是：正切平方加 1 等於正割平方。",
           "board": [
-            {"do":"write","line":"$\\tan^2 x=\\sec^2 x-1$"},
-            {"do":"write","line":"$\\sin^2 x+\\cos^2 x=1$","on":"從 sine 平方"}
-          ] },
-        { "show": ["留一組當 $du$，其餘換成同一種"],
-          "say": "策略跟上一課一樣：留一組當 du，其他的用恆等式換成同一種函數。",
+            {
+              "do": "write",
+              "line": "換的工具："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\tan^2x+1=\\sec^2x}}$",
+              "on": "正切"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　把 $\\sin^2x+\\cos^2x=1$ 兩邊除以 $\\cos^2x$",
+              "color": "violet",
+              "on": "於正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩條路",
+            "• 留 $\\sec^2x$ → $u=\\tan x$，其餘換成 $\\tan$"
+          ],
+          "say": "所以有兩條路：留一個正割平方，令 u 等於正切，其餘全部換成正切；或者留一個正割乘正切，令 u 等於正割，其餘全部換成正割。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"留一組 ${{d:du}}$，其餘換同一種","on":"留一組"},
-            {"do":"underline","term":"d","label":"當 du","on":"當 du"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "兩條路"
+            },
+            {
+              "do": "write",
+              "line": "• 留 $\\sec^2x$ → $u=\\tan x$，其餘換成 $\\tan$",
+              "on": "於正#1"
+            },
+            {
+              "do": "write",
+              "line": "• 留 $\\sec x\\tan x$ → $u=\\sec x$，其餘換成 $\\sec$",
+              "on": "正切#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "哪一條走得通？看剩下的能不能換"
+          ],
+          "say": "要走哪一條，就看留下來之後，剩下的東西能不能用平方關係換過去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "哪一條走得通？看剩下的能不能換",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "$\\sec$ 偶次方",
+      "title": "$\\sec$ 偶次方：留 $\\sec^2x$",
       "beats": [
-        { "show": ["留 $\\sec^2 x$，$u=\\tan x$"],
-          "note": "剩下的用 $\\sec^2 x=1+\\tan^2 x$ 換掉。",
-          "say": "secant 是偶次方：留一個 secant 平方當 du，令 u 等於 tangent x，剩下的換成 tangent。",
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\tan^2x\\sec^4x\\,dx$"
+          ],
+          "say": "例子：正切平方乘正割 4 次方。正割是偶次方。",
           "board": [
-            {"do":"write","line":"留 ${{d:\\sec^2 x}}$，${{u:u=\\tan x}}$","tint":{"u":"blue"}},
-            {"do":"underline","term":"d","label":"當 du","on":"當 du"},
-            {"do":"write","line":"$\\sec^2 x=1+\\tan^2 x$","on":"剩下的"}
-          ] },
-        { "show": ["$\\int\\tan^2 x\\sec^4 x\\,dx$"],
-          "note": "$\\tan^2 x\\sec^2 x\\cdot\\sec^2 x$。",
-          "say": "試一題：secant 四次方，拆一個平方出來當 du，另一個平方換成一加 tangent 平方。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\tan^2x\\sec^4x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "留一個 $\\sec^2x$，剩下 $\\sec^2x=1+\\tan^2x$：",
+            "$=\\int\\tan^2x\\,(1+\\tan^2x)\\sec^2x\\,dx$"
+          ],
+          "say": "留一個正割平方下來當 d u。剩下的正割平方，換成 1 加正切平方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int\\tan^2 x\\sec^4 x\\,dx$","on":"試一題"},
-            {"do":"transform","line":"$=\\int\\tan^2 x\\sec^2 x\\cdot\\sec^2 x\\,dx$","on":"拆一個"},
-            {"do":"transform","line":"$=\\int\\tan^2 x\\,(1+\\tan^2 x)\\sec^2 x\\,dx$","on":"換成"}
-          ] },
-        { "show": ["$\\int u^2(1+u^2)\\,du$"],
-          "say": "整個變成 u 的多項式，一項一項積。",
+            {
+              "do": "write",
+              "line": "留一個 $\\sec^2x$，剩下 $\\sec^2x=1+\\tan^2x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int\\tan^2x\\,(1+\\tan^2x)\\sec^2x\\,dx$",
+              "on": "的正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\tan x$，$du=\\sec^2x\\,dx$：",
+            "$=\\int(u^2+u^4)\\,du=\\frac{u^3}3+\\frac{u^5}5+C$"
+          ],
+          "say": "令 u 等於正切 x，d u 就是正割平方 d x。積分變成 u 平方加 u 四次方，積出來 3 分之 u 立方加 5 分之 u 五次方。",
           "board": [
-            {"do":"transform","line":"$=\\int {{p:u^2(1+u^2)}}\\,du$"},
-            {"do":"underline","term":"p","label":"多項式","on":"多項式"}
-          ] },
-        { "show": ["$=\\int(u^2+u^4)\\,du$"],
-          "note": "每一項各自用次方公式。",
-          "say": "乘開是 u 平方加 u 四次方，每一項各自用次方公式積。",
+            {
+              "do": "write",
+              "line": "令 $u=\\tan x$，$du=\\sec^2x\\,dx$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int(u^2+u^4)\\,du=\\frac{u^3}3+\\frac{u^5}5+C$",
+              "on": "方加#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\tan^2x\\sec^4x\\,dx=\\frac{\\tan^3x}3+\\frac{\\tan^5x}5+C$"
+          ],
+          "say": "換回正切，就是答案。",
           "board": [
-            {"do":"write","line":"$=\\int(u^2+u^4)\\,du$"},
-            {"do":"write","line":"$\\int u^n\\,du=\\frac{u^{n+1}}{n+1}$","on":"次方公式"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int\\tan^2x\\sec^4x\\,dx=\\frac{\\tan^3x}3+\\frac{\\tan^5x}5+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼要 $\\sec$ 偶次方？"
+          ],
+          "say": "為什麼要正割偶次方？留掉一個正割平方以後，剩下的還是偶次方，才能整個換成正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼要 $\\sec$ 偶次方？"
+            },
+            {
+              "do": "write",
+              "line": "留掉 $\\sec^2x$，剩下 $\\sec^{2k}x=(1+\\tan^2x)^k$ 才換得掉",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\tan$ 是幾次方都沒關係"
+          ],
+          "say": "至於正切是幾次方，完全沒關係，它本來就是 u 的次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\tan$ 是幾次方都沒關係"
+            },
+            {
+              "do": "write",
+              "line": "　連 $\\tan^0$ 也可以：$\\int\\sec^4x\\,dx=\\tan x+\\frac{\\tan^3x}3+C$",
+              "color": "violet",
+              "on": "它本"
+            }
+          ]
+        }
       ],
-      "key": "留 $\\sec^2x$ 當 $du$，其餘換成 $\\tan$",
       "predict": {
-        "ask": "換回 $x$，答案是？",
+        "ask": "$\\displaystyle\\int\\tan^5x\\sec^2x\\,dx$ 該怎麼開始？",
         "options": [
           {
-            "label": "$\\frac{\\tan^3 x}{3}+\\frac{\\tan^5 x}{5}+C$",
+            "label": "令 $u=\\tan x$，答案 $\\frac{\\tan^6x}6+C$",
             "correct": true
           },
           {
-            "label": "$\\frac{\\tan^3 x}{3}+C$",
-            "why": "另一個 $\\sec^2 x$ 換成 $1+\\tan^2 x$ 之後還在，乘開有兩項。"
+            "label": "令 $u=\\sec x$",
+            "why": "可以但繞遠路：要留 $\\sec x\\tan x$，再把 $\\tan^4x$ 換成 $\\sec$"
           },
           {
-            "label": "$\\frac{\\sec^3 x}{3}+\\frac{\\sec^5 x}{5}+C$",
-            "why": "$u=\\tan x$，換回的是 $\\tan x$，不是 $\\sec x$。"
+            "label": "用半角公式",
+            "why": "半角是給 $\\sin^2$、$\\cos^2$ 用的，這裡不需要"
           }
         ]
       }
     },
     {
-      "title": "$\\tan$ 奇次方",
+      "title": "$\\tan$ 奇次方：留 $\\sec x\\tan x$",
       "beats": [
-        { "show": ["留 $\\sec x\\tan x$，$u=\\sec x$"],
-          "note": "剩下的 $\\tan$ 用 $\\tan^2 x=\\sec^2 x-1$ 換掉。",
-          "say": "tangent 是奇次方、又有 secant：留一組 secant 乘 tangent 當 du，令 u 等於 secant x。",
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\tan^3x\\sec x\\,dx$"
+          ],
+          "say": "再一個例子：正切 3 次方乘正割。正割只有一次，留不出正割平方，所以換另一條路。",
           "board": [
-            {"do":"write","line":"留 ${{du:\\sec x\\tan x}}$，${{u:u=\\sec x}}$","tint":{"u":"blue"},"on":"留一組"},
-            {"do":"underline","term":"du","label":"當 du","on":"當 du"}
-          ] },
-        { "show": ["$\\int\\tan^3 x\\sec x\\,dx=\\int(u^2-1)\\,du$"],
-          "say": "tangent 三次方留一個，剩下的平方換成 secant 平方減一，就是 u 平方減一。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\tan^3x\\sec x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "留一個 $\\sec x\\tan x$，剩下 $\\tan^2x=\\sec^2x-1$：",
+            "$=\\int(\\sec^2x-1)\\sec x\\tan x\\,dx$"
+          ],
+          "say": "正切是奇次方，留一個正割乘正切下來，剩下的正切平方，換成正割平方減 1。",
           "board": [
-            {"do":"write","line":"$\\tan^3 x\\sec x={{t2:\\tan^2 x}}\\cdot{{du:\\sec x\\tan x}}$"},
-            {"do":"write","line":"$\\int\\tan^3 x\\sec x\\,dx=\\int({{u2:u^2-1}})\\,du$","on":"剩下的平方"},
-            {"do":"underline","term":"u2","label":"sec² − 1","on":"就是 u 平方"}
-          ] },
-        { "show": ["$=\\frac{\\sec^3 x}{3}-\\sec x+C$"],
-          "note": "兩個條件都符合時，任選一種。",
-          "say": "積完換回 secant x。如果兩種條件都符合，任選一種都行。",
+            {
+              "do": "write",
+              "line": "留一個 $\\sec x\\tan x$，剩下 $\\tan^2x=\\sec^2x-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int(\\sec^2x-1)\\sec x\\tan x\\,dx$",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\sec x$，$du=\\sec x\\tan x\\,dx$：",
+            "$=\\int(u^2-1)\\,du=\\frac{u^3}3-u+C$"
+          ],
+          "say": "令 u 等於正割 x，d u 就是正割乘正切 d x。積分變成 u 平方減 1，積出來 3 分之 u 立方減 u。",
           "board": [
-            {"do":"write","line":"$=\\frac{\\sec^3 x}{3}-\\sec x+C$","on":"換回"}
-          ] },
-        { "show": ["$\\tan^3 x\\sec^4 x$：兩種都行"],
-          "note": "$\\tan$ 奇次方，$\\sec$ 偶次方。",
-          "say": "像 tangent 三次方乘 secant 四次方：tangent 是奇次方，secant 是偶次方，兩招都行。",
+            {
+              "do": "write",
+              "line": "令 $u=\\sec x$，$du=\\sec x\\tan x\\,dx$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\int(u^2-1)\\,du=\\frac{u^3}3-u+C$",
+              "on": "分變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\tan^3x\\sec x\\,dx=\\frac{\\sec^3x}3-\\sec x+C$"
+          ],
+          "say": "換回正割，就是答案。",
           "board": [
-            {"do":"write","line":"$\\tan^3 x\\sec^4 x$"},
-            {"do":"write","line":"tan 奇：$u=\\sec x$","on":"奇次方"},
-            {"do":"write","line":"sec 偶：$u=\\tan x$","on":"偶次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int\\tan^3x\\sec x\\,dx=\\frac{\\sec^3x}3-\\sec x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼要 $\\tan$ 奇次方？"
+          ],
+          "say": "為什麼要正切奇次方？留掉一個正切以後，剩下偶次方，才能換成正割。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼要 $\\tan$ 奇次方？"
+            },
+            {
+              "do": "write",
+              "line": "留掉一個 $\\tan$，剩下 $\\tan^{2k}x=(\\sec^2x-1)^k$",
+              "on": "留掉"
+            },
+            {
+              "do": "write",
+              "line": "　而且至少要有一個 $\\sec$ 才留得出 $\\sec x\\tan x$；沒有 $\\sec$ 的見 ⑤",
+              "color": "violet",
+              "on": "偶次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：微分回去",
+            "$\\Big(\\tfrac{\\sec^3x}3-\\sec x\\Big)'=\\sec^2x\\cdot\\sec x\\tan x-\\sec x\\tan x$"
+          ],
+          "say": "微分回去驗算：3 分之正割立方，微分是正割平方乘上正割乘正切；減掉正割的導數，正割乘正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：微分回去"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big(\\tfrac{\\sec^3x}3-\\sec x\\Big)'=\\sec^2x\\cdot\\sec x\\tan x-\\sec x\\tan x$",
+              "on": "方乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\sec x\\tan x(\\sec^2x-1)=\\tan^3x\\sec x$"
+          ],
+          "say": "提出正割乘正切，括號裡正割平方減 1 就是正切平方，合起來正是正切 3 次方乘正割。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\sec x\\tan x(\\sec^2x-1)=\\tan^3x\\sec x$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\tan^3x\\sec^3x\\,dx=$？"
+          ],
+          "say": "換你試一題：正切 3 次方乘正割 3 次方。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "兩條路都通的時候",
+            "$\\sec$ 偶次方、$\\tan$ 也是奇次方：兩種都行"
+          ],
+          "say": "有時候兩條路都通，例如正割偶次方、正切又是奇次方。兩種都可以，答案看起來不一樣，但只差一個常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩條路都通的時候"
+            },
+            {
+              "do": "write",
+              "line": "$\\sec$ 偶次方、$\\tan$ 也是奇次方：兩種都行",
+              "on": "正切"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\int\\tan x\\sec^2x\\,dx$ 得 $\\frac{\\tan^2x}2$ 或 $\\frac{\\sec^2x}2$，差 $\\frac12$",
+              "color": "violet",
+              "on": "案看"
+            }
+          ]
+        },
+        {
+          "show": [
+            "選剩下的比較少的那一條"
+          ],
+          "say": "實際上，挑換完以後項數比較少的那一條就好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "選剩下的比較少的那一條",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個要記的結果",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\tan x\\,dx$：寫成 $\\dfrac{\\sin x}{\\cos x}$，$u=\\cos x$",
+            "$\\int\\frac{\\sin x}{\\cos x}\\,dx=-\\int\\frac{du}u=-\\ln\\lvert\\cos x\\rvert+C$"
+          ],
+          "say": "第一個：正切的積分。寫成正弦除以餘弦，令 u 等於餘弦，d u 是負的正弦 d x。積出來是負的自然對數餘弦的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int\\tan x\\,dx$：寫成 $\\dfrac{\\sin x}{\\cos x}$，$u=\\cos x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{\\sin x}{\\cos x}\\,dx=-\\int\\frac{du}u=-\\ln\\lvert\\cos x\\rvert+C$",
+              "on": "是負#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\tan x\\,dx=\\ln\\lvert\\sec x\\rvert+C$"
+          ],
+          "say": "負號拿到對數裡面，變成餘弦分之一，就是正割。所以正切的積分是自然對數正割的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\tan x\\,dx=\\ln\\lvert\\sec x\\rvert+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　$-\\ln\\lvert\\cos x\\rvert=\\ln\\frac1{\\lvert\\cos x\\rvert}=\\ln\\lvert\\sec x\\rvert$",
+              "color": "violet",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\sec x\\,dx$：同乘 $\\dfrac{\\sec x+\\tan x}{\\sec x+\\tan x}$",
+            "$\\int\\frac{\\sec^2x+\\sec x\\tan x}{\\sec x+\\tan x}\\,dx$"
+          ],
+          "say": "第二個：正割的積分，要一個巧招。分子分母同乘正割加正切。分子變成正割平方加正割乘正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\int\\sec x\\,dx$：同乘 $\\dfrac{\\sec x+\\tan x}{\\sec x+\\tan x}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{\\sec^2x+\\sec x\\tan x}{\\sec x+\\tan x}\\,dx$",
+              "on": "乘正#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子正好是分母的導數：$(\\sec x+\\tan x)'=\\sec x\\tan x+\\sec^2x$"
+          ],
+          "say": "仔細看：分子正好是分母的導數。正割微分是正割乘正切，正切微分是正割平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子正好是分母的導數：$(\\sec x+\\tan x)'=\\sec x\\tan x+\\sec^2x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\sec x\\,dx=\\ln\\lvert\\sec x+\\tan x\\rvert+C$"
+          ],
+          "say": "令 u 等於分母，就是 u 分之 d u，積出來是自然對數正割加正切的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int\\sec x\\,dx=\\ln\\lvert\\sec x+\\tan x\\rvert+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　這個巧招不是「想得到」的，是記住的；驗算就微分回去",
+              "color": "violet",
+              "on": "然對"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "看一個數值",
+      "beats": [
+        {
+          "show": [
+            "0 到 π/4 底下的面積是 ln(√2 + 1) ≈ 0.881"
+          ],
+          "say": "用一個定積分看看：正割從 0 積到 4 分之派，就是圖上這塊面積。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "secarea",
+                  "window": [
+                    -0.2,
+                    1.6,
+                    0,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/cos(x)",
+                      "color": "blue",
+                      "label": "sec x",
+                      "domain": [
+                        -0.2,
+                        1.4
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/cos(x)",
+                      "from": 0,
+                      "to": "pi/4",
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "pi/4",
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "0 到 π/4 底下的面積是 ln(√2 + 1) ≈ 0.881",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{\\pi/4}\\sec x\\,dx=\\ln(\\sqrt2+1)-\\ln1\\approx0.881$"
+          ],
+          "say": "代公式：4 分之派時，正割是根號 2，正切是 1；0 的時候是 1 加 0。答案是自然對數根號 2 加 1，大約 0.881。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^{\\pi/4}\\sec x\\,dx=\\ln(\\sqrt2+1)-\\ln1\\approx0.881}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "答案"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "$\\int\\tan x\\,dx$",
+      "title": "剩下的情況",
       "beats": [
-        { "show": ["$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$"],
-          "note": "令 $u=\\cos x$，$du=-\\sin x\\,dx$。",
-          "say": "單獨一個 tangent，寫成 sine 除以 cosine，令 u 等於分母 cosine x。",
+        {
+          "show": [
+            "只有 $\\tan$，偶次方：$\\displaystyle\\int\\tan^2x\\,dx$",
+            "$=\\int(\\sec^2x-1)\\,dx=\\tan x-x+C$"
+          ],
+          "say": "剩下的情況。只有正切、而且是偶次方，例如正切平方：直接換成正割平方減 1，積出來正切 x 減 x。",
           "board": [
-            {"do":"write","line":"$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$"},
-            {"do":"write","line":"${{u:u=\\cos x}}$，$du=-\\sin x\\,dx$","tint":{"u":"blue"},"on":"令 u"},
-            {"do":"underline","term":"u","label":"分母","on":"分母"}
-          ] },
-        { "show": ["$\\sin x\\,dx=-du$"],
-          "note": "負號要帶著。",
-          "say": "分子是 sine x dx，剛好是 du 的負的，所以多一個負號，要記得帶著。",
+            {
+              "do": "write",
+              "line": "只有 $\\tan$，偶次方：$\\displaystyle\\int\\tan^2x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle =\\int(\\sec^2x-1)\\,dx=\\tan x-x+C}}$",
+              "on": "例如"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "方減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有 $\\tan$，奇次方：拆一個 $\\tan^2$ 出來",
+            "$\\int\\tan^3x\\,dx=\\int\\tan x(\\sec^2x-1)\\,dx$"
+          ],
+          "say": "只有正切、奇次方，例如正切 3 次方：拆一個正切平方出來，換成正割平方減 1，再分成兩項。",
           "board": [
-            {"do":"write","line":"$\\sin x\\,dx=-du$"}
-          ] },
-        { "show": ["$=\\ln|\\sec x|+C$"],
-          "note": "負號拿進去，$\\cos$ 變 $\\sec$。",
-          "say": "分子是分母導數的負號，積出負的自然對數。負號拿進去，就變成 secant。",
+            {
+              "do": "write",
+              "line": "只有 $\\tan$，奇次方：拆一個 $\\tan^2$ 出來"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\tan^3x\\,dx=\\int\\tan x(\\sec^2x-1)\\,dx$",
+              "on": "正切#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&=\\int\\tan x\\sec^2x\\,dx-\\int\\tan x\\,dx\\\\&=\\frac{\\tan^2x}2-\\ln\\lvert\\sec x\\rvert+C\\end{aligned}$"
+          ],
+          "say": "第一項令 u 等於正切，得 2 分之正切平方；第二項就是剛剛記的結果。",
           "board": [
-            {"do":"write","line":"$=-\\int\\frac{du}{u}=-\\ln|u|$"},
-            {"do":"write","line":"$=\\ln|{{s:\\sec x}}|+C$","on":"就變成"}
-          ] },
-        { "show": ["$\\tan$ 偶、$\\sec$ 奇：兩招都用不上"],
-          "note": "例如 $\\sec^3 x$：要分部，常常是循環型。",
-          "say": "還有一種情況兩招都不能用：tangent 偶次方、secant 奇次方，這要靠分部積分。",
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle {\\begin{aligned}&=\\int\\tan x\\sec^2x\\,dx-\\int\\tan x\\,dx\\\\&=\\frac{\\tan^2x}2-\\ln\\lvert\\sec x\\rvert+C\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "之正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sec$ 奇次方、$\\tan$ 偶次方：兩條路都不通"
+          ],
+          "say": "最麻煩的是正割奇次方、正切偶次方，兩條路都不通，例如正割 3 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{a:\\tan}}$ 偶、${{b:\\sec}}$ 奇","on":"兩招"},
-            {"do":"write","line":"→ 分部積分","color":"gold","on":"這要靠"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\sec$ 奇次方、$\\tan$ 偶次方：兩條路都不通",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "通常要分部積分，例如",
+            "$\\int\\sec^3x\\,dx=\\frac12\\big(\\sec x\\tan x+\\ln\\lvert\\sec x+\\tan x\\rvert\\big)+C$"
+          ],
+          "say": "這種通常要用分部積分。正割 3 次方的結果是 2 分之 1，乘上正割乘正切，加自然對數正割加正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "通常要分部積分，例如"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\sec^3x\\,dx=\\frac12\\big(\\sec x\\tan x+\\ln\\lvert\\sec x+\\tan x\\rvert\\big)+C$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "　$u=\\sec x$、$dv=\\sec^2x\\,dx$，再把 $\\tan^2=\\sec^2-1$ 代回去、移項",
+              "color": "violet",
+              "on": "正割#2"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "整理判斷順序：拿到 $\\int\\tan^mx\\sec^nx\\,dx$",
+        "steps": [
+          {
+            "label": "$\\sec$ 偶次方：留 $\\sec^2x$，$u=\\tan x$"
+          },
+          {
+            "label": "$\\tan$ 奇次方（有 $\\sec$）：留 $\\sec x\\tan x$，$u=\\sec x$",
+            "why": "先要有上一步：$\\sec$ 偶次方：留 $\\sec^2x$，$u=\\tan x$"
+          },
+          {
+            "label": "只有 $\\tan$：拆出 $\\tan^2x=\\sec^2x-1$",
+            "why": "先要有上一步：$\\tan$ 奇次方（有 $\\sec$）：留 $\\sec x\\tan x$，$u=\\sec x$"
+          },
+          {
+            "label": "都不行：分部積分",
+            "why": "先要有上一步：只有 $\\tan$：拆出 $\\tan^2x=\\sec^2x-1$"
+          }
+        ]
+      }
     },
     {
-      "title": "$\\int\\sec x\\,dx$",
+      "title": "重點整理",
       "beats": [
-        { "show": ["乘上 $\\frac{\\sec x+\\tan x}{\\sec x+\\tan x}$"],
-          "note": "值不變。",
-          "say": "secant 的積分不好猜。技巧是乘上一個等於一的分式，分子分母都是 secant 加 tangent。",
+        {
+          "show": [
+            "• 配對：$(\\tan x)'=\\sec^2x$、$(\\sec x)'=\\sec x\\tan x$；$\\tan^2+1=\\sec^2$",
+            "• $\\sec$ 偶次方：留 $\\sec^2x$，$u=\\tan x$"
+          ],
+          "say": "整理一下：正割偶次方，留正割平方、令 u 等於正切；正切奇次方，留正割乘正切、令 u 等於正割。正切和正割的積分要記住；兩條路都不通，就用分部積分。",
           "board": [
-            {"do":"write","line":"$\\sec x=\\sec x\\cdot{{m:\\frac{\\sec x+\\tan x}{\\sec x+\\tan x}}}$"},
-            {"do":"underline","term":"m","label":"值不變","on":"等於一"}
-          ] },
-        { "show": ["$\\sec x=\\frac{\\sec^2 x+\\sec x\\tan x}{\\sec x+\\tan x}$"],
-          "note": "分母的導數正好是分子。",
-          "say": "乘開以後，分母 secant 加 tangent 的導數，剛好就是分子，變成分子是分母導數的形狀。",
+            {
+              "do": "write",
+              "line": "• 配對：$(\\tan x)'=\\sec^2x$、$(\\sec x)'=\\sec x\\tan x$；$\\tan^2+1=\\sec^2$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sec$ 偶次方：留 $\\sec^2x$，$u=\\tan x$",
+              "on": "正割#2"
+            },
+            {
+              "do": "write",
+              "line": "• $\\tan$ 奇次方：留 $\\sec x\\tan x$，$u=\\sec x$",
+              "on": "正切#2"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\tan x\\,dx=\\ln\\lvert\\sec x\\rvert+C$",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int\\sec x\\,dx=\\ln\\lvert\\sec x+\\tan x\\rvert+C$",
+              "on": "切和"
+            },
+            {
+              "do": "write",
+              "line": "• 只有 $\\tan$：換 $\\sec^2-1$；都不通：分部積分",
+              "on": "條路"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：用三角恆等式積分"
+          ],
+          "say": "下一課，用更多三角恆等式來積分。",
           "board": [
-            {"do":"write","line":"$=\\frac{{{n:\\sec^2 x+\\sec x\\tan x}}}{{{d:\\sec x+\\tan x}}}$"},
-            {"do":"arrow","from":"d","to":"n","label":"導數是分子","on":"剛好"}
-          ] },
-        { "show": ["$\\int\\frac{u'}{u}\\,dx=\\int\\frac{du}{u}$"],
-          "note": "分子是分母的導數。",
-          "say": "令 u 是分母，分子乘 dx 就是 du，整個變成 du 除以 u，跟上一節同一個形狀。",
-          "board": [
-            {"do":"write","line":"$\\int\\frac{u'}{u}\\,dx=\\int\\frac{du}{u}$"}
-          ] },
-        { "show": ["事後看出來的技巧"],
-          "note": "記住結果，會微分檢查就好。",
-          "say": "這一步是事後才看出來的，不用自己想到。記住結果，會微分檢查就好。",
-          "board": [
-            {"do":"write","line":"事後看出來的技巧"},
-            {"do":"write","line":"會微分檢查就好","on":"會微分"}
-          ] }
-      ],
-      "key": "乘 $\\sec x+\\tan x$：分母導數正好是分子",
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：用三角恆等式積分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["trig-integral", "trig-power", "substitution"],
-    "fine": ["tan-sec-even-sec", "tan-sec-odd-tan", "tan-sec-identity", "tan-sec-basic"]
+    "coarse": [
+      "trig-integral",
+      "trig-power",
+      "substitution"
+    ],
+    "fine": [
+      "tan-sec-even-sec",
+      "tan-sec-odd-tan",
+      "tan-sec-identity",
+      "tan-sec-basic"
+    ]
   },
   "practice": [
-    { "id": "uni-int-007", "core": true, "trains": "tan-sec-even-sec" },
-    { "id": "lec-07-q3b", "core": true, "trains": "tan-sec-even-sec" },
-    { "id": "lec-07-q3c", "core": true, "trains": "tan-sec-odd-tan" },
-    { "id": "cg-4f-003", "core": true, "trains": "tan-sec-basic" },
-    { "id": "cg-4f-004", "core": true, "trains": "tan-sec-basic" },
-    { "id": "cg-4f-006", "core": true, "trains": "tan-sec-odd-tan" },
-    { "id": "cg-4f-008", "core": true, "trains": "tan-sec-even-sec" },
-    { "id": "cg-4f-005", "trains": "tan-sec-basic" },
-    { "id": "cg-4f-007", "trains": "tan-sec-odd-tan" },
-    { "id": "dm-seq-009", "challenge": true, "trains": "tan-sec-identity", "note": "挑戰：$\\tan^n x=\\tan^{n-2}x(\\sec^2 x-1)$，得到遞迴關係（〈遞迴公式〉的預告）。" }
+    {
+      "id": "uni-int-007",
+      "core": true,
+      "trains": "tan-sec-even-sec"
+    },
+    {
+      "id": "lec-07-q3b",
+      "core": true,
+      "trains": "tan-sec-even-sec"
+    },
+    {
+      "id": "lec-07-q3c",
+      "core": true,
+      "trains": "tan-sec-odd-tan"
+    },
+    {
+      "id": "cg-4f-003",
+      "core": true,
+      "trains": "tan-sec-basic"
+    },
+    {
+      "id": "cg-4f-004",
+      "core": true,
+      "trains": "tan-sec-basic"
+    },
+    {
+      "id": "cg-4f-006",
+      "core": true,
+      "trains": "tan-sec-odd-tan"
+    },
+    {
+      "id": "cg-4f-008",
+      "core": true,
+      "trains": "tan-sec-even-sec"
+    },
+    {
+      "id": "cg-4f-005",
+      "trains": "tan-sec-basic"
+    },
+    {
+      "id": "cg-4f-007",
+      "trains": "tan-sec-odd-tan"
+    },
+    {
+      "id": "dm-seq-009",
+      "challenge": true,
+      "trains": "tan-sec-identity",
+      "note": "挑戰：$\\tan^n x=\\tan^{n-2}x(\\sec^2 x-1)$，得到遞迴關係（〈遞迴公式〉的預告）。"
+    }
   ],
   "gaps": []
 }

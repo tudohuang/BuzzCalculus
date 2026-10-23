@@ -1,55 +1,126 @@
 {
   "id": "resonance",
   "title": "共振",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["driven-oscillator", "undetermined-coefficients"],
-  "next": [],
-  "related": ["lhopital", "harmonic-oscillator"],
-  "objectives": [
-    "沒有阻尼、外力頻率等於自然頻率時，用修正規則求出隨時間線性變大的解 $\\left(\\frac{F_0}{2\\omega_0}\\right)t\\sin\\omega_0t$。",
-    "有阻尼時，求振幅最大的外力頻率 $\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$ 與最大振幅。",
-    "說得出阻尼為什麼讓共振的振幅變成有限，以及這對真實結構的意義。"
+  "prerequisites": [
+    "driven-oscillator",
+    "undetermined-coefficients"
   ],
-  "visual": "上圖：沒有阻尼時 x″ + x = cos t 的解 (t sin t)/2，被兩條直線 ±t/2 夾著越振越大。下圖：振幅曲線 A(ω)，同時畫 γ = 0.1、0.3、0.6 三條（ω₀ = 1）；γ 越小峰越高越尖，峰的位置標成點，隨 γ 增加往左移；γ 超過 ω₀/√2 時峰消失，曲線從 ω = 0 一路往下。",
+  "next": [],
+  "related": [
+    "lhopital",
+    "harmonic-oscillator"
+  ],
+  "objectives": [
+    "沒有阻尼、外力頻率等於自然頻率時，用修正規則求出隨時間線性變大的解 $\\left(\\frac{F_0}{2\\omega_0}t\\sin\\omega_0t\\right)$",
+    "有阻尼時，求振幅最大的外力頻率 $\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$ 與最大振幅 $\\frac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}$",
+    "說得出阻尼為什麼讓共振的振幅變成有限，以及這對真實結構的意義"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 推的節奏剛好對上",
+      "heading": "① 節奏剛好對上",
       "body": [
-        "推鞦韆的人如果每次都在鞦韆盪回來時推一把，鞦韆會越盪越高。這是外力頻率等於系統自然頻率的情況，叫做共振。",
-        "數學上：$x''+\\omega_0^2x=F_0\\cos\\omega_0t$。上一課的猜測 $a\\cos\\omega_0t+b\\sin\\omega_0t$ 本身就是齊次解，代入左邊只得到 $0$，振幅公式分母也是 $0$。"
+        "盪鞦韆：每次盪回來時順著推一下",
+        "推的頻率＝鞦韆自己的頻率：$\\omega=\\omega_0$",
+        "沒有阻尼時：",
+        "上一課的公式在 $\\omega=\\omega_0$、$\\gamma=0$ 時："
       ],
-      "collapsible": false
+      "tex": [
+        "x''+\\omega_0^2x=F_0\\cos\\omega_0t",
+        "A=\\frac{F_0}{\\sqrt{0+0}}\\quad\\text{分母是 }0"
+      ]
     },
     {
-      "heading": "② 修正規則：乘上 $t$",
+      "heading": "② 修正規則：乘上 t",
       "body": [
-        "照〈待定係數〉的修正規則，猜 $t(a\\cos\\omega_0t+b\\sin\\omega_0t)$。代入得 $a=0$、$b=\\frac{F_0}{2\\omega_0}$："
+        "例：$y''+y=\\cos x$，$y(0)=0$，$y'(0)=0$",
+        "照表猜 $A\\cos x+B\\sin x$：正好是齊次解",
+        "修正規則：乘上 $x$",
+        "代入（$u=A\\cos x+B\\sin x$ 滿足 $u''=-u$）：",
+        "比係數：$2B=1$，$A=0$",
+        "$y=c_1\\cos x+c_2\\sin x+\\tfrac12x\\sin x$",
+        "$y(0)=c_1=0$；$y'(0)=c_2=0$",
+        "一般：$x''+\\omega_0^2x=F_0\\cos\\omega_0t$ 的特解",
+        "$(t\\sin\\omega_0t)''+\\omega_0^2\\,t\\sin\\omega_0t=2\\omega_0\\cos\\omega_0t$"
       ],
-      "tex": ["x_p = \\frac{F_0}{2\\omega_0}\\, t\\sin\\omega_0 t"],
-      "collapsible": false
+      "tex": [
+        "y_p=x\\,(A\\cos x+B\\sin x)",
+        "y_p''+y_p=2u'=-2A\\sin x+2B\\cos x",
+        "y_p=\\tfrac12x\\sin x",
+        "y=\\tfrac12x\\sin x",
+        "x_p=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t"
+      ]
     },
     {
-      "heading": "③ 振幅隨時間線性長大",
+      "heading": "③ 振幅線性長大",
       "body": [
-        "前面的 $t$ 讓振幅像 $\\frac{F_0t}{2\\omega_0}$ 一樣線性增加，沒有上限。這是沒有阻尼的理想模型：真實系統在變成無限大之前，不是阻尼開始起作用，就是彈簧不再遵守虎克定律，或結構損壞。"
-      ],
-      "collapsible": false
+        "沒有上限：只要一直推，振幅就一直變大",
+        "振幅的成長率 $\\dfrac{F_0}{2\\omega_0}$：推得越用力、長得越快",
+        "真實的系統不會真的無限大：",
+        "• 振幅大了，彈簧不再遵守虎克定律",
+        "• 結構先壞掉",
+        "• 總是有一點阻尼（⑤）"
+      ]
     },
     {
-      "heading": "④ 從非共振的解取極限（直覺，不是證明）",
+      "heading": "④ 從非共振取極限",
       "body": [
-        "$\\omega\\ne\\omega_0$、從靜止開始時，解是 $x=\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}$。固定 $t$，讓 $\\omega\\to\\omega_0$：分子分母都 $\\to0$，對 $\\omega$ 用 L'Hôpital（〈L'Hôpital 法則〉），得 $\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$，正好是共振解。這說明兩個答案一致，但「解的極限還是解」需要另外證明，上面的直接代入才是證明。"
+        "$\\omega\\ne\\omega_0$，從靜止開始推，解是：",
+        "上一課：$x''+4x=3\\cos t$ 的解 $\\cos t-\\cos2t$，正是 $\\frac{3}{4-1}(\\cos t-\\cos2t)$",
+        "讓 $\\omega\\to\\omega_0$：分子分母都 $\\to0$，對 $\\omega$ 用羅必達",
+        "這是直覺，不是證明：$t$ 固定時才逼近"
       ],
-      "collapsible": true
+      "tex": [
+        "x=\\frac{F_0}{\\omega_0^2-\\omega^2}\\big(\\cos\\omega t-\\cos\\omega_0t\\big)",
+        "\\lim_{\\omega\\to\\omega_0}\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}=\\lim\\frac{-F_0t\\sin\\omega t}{-2\\omega}",
+        "=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t"
+      ]
     },
     {
       "heading": "⑤ 有阻尼：峰值有限",
       "body": [
-        "$\\gamma>0$ 時，〈受迫振盪〉的振幅 $A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$ 分母永遠不為 $0$。令 $u=\\omega^2$，分母裡的 $(\\omega_0^2-u)^2+4\\gamma^2u$ 對 $u$ 微分 $=-2(\\omega_0^2-u)+4\\gamma^2$，為 $0$ 時 $u=\\omega_0^2-2\\gamma^2$。",
-        "所以 $\\gamma<\\frac{\\omega_0}{\\sqrt2}$ 時，振幅在 $\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$ 最大，最大值 $\\frac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}$。$\\gamma$ 越小，峰越高、越接近 $\\omega_0$。$\\gamma\\ge\\frac{\\omega_0}{\\sqrt2}$ 時沒有峰，$A(\\omega)$ 從 $\\omega=0$ 起一路遞減。"
+        "分母最小，$A$ 就最大。令 $u=\\omega^2$：",
+        "$D'(u)=-2(\\omega_0^2-u)+4\\gamma^2=0$",
+        "需要 $\\omega_0^2>2\\gamma^2$；否則 $A(\\omega)$ 一路遞減，最大在 $\\omega=0$",
+        "代回：$D_{\\min}=4\\gamma^2(\\omega_0^2-\\gamma^2)$",
+        "推導：$D_{\\min}=(2\\gamma^2)^2+4\\gamma^2(\\omega_0^2-2\\gamma^2)$",
+        "例：$x''+6x'+25x=\\cos\\omega t$",
+        "$\\gamma=3$，$\\omega_0=5$"
       ],
-      "collapsible": false
+      "tex": [
+        "A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+4\\gamma^2\\omega^2}}",
+        "D(u)=(\\omega_0^2-u)^2+4\\gamma^2u",
+        "\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}",
+        "A_{\\max}=\\frac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}",
+        "\\begin{aligned}\\omega_r&=\\sqrt{25-18}=\\sqrt7\\approx2.65\\\\A_{\\max}&=\\frac{1}{6\\sqrt{25-9}}=\\frac1{24}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑤ 小阻尼會放大多少",
+      "body": [
+        "$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$：",
+        "• $\\omega=0$（靜態）：$A=\\dfrac{F_0}{\\omega_0^2}=1$",
+        "• $\\omega=\\omega_0$：$A=\\dfrac{F_0}{2\\gamma\\omega_0}=5$",
+        "• 最大：$\\omega_r\\approx0.990$，$A_{\\max}\\approx5.03$",
+        "同樣的力，放大 5 倍；$\\gamma$ 越小放大越多",
+        "放大倍數大約 $\\dfrac{\\omega_0}{2\\gamma}$；$\\gamma=0.01$ 就是 $50$ 倍",
+        "真實結構：讓外力避開 $\\omega_0$，或加阻尼"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 沒有阻尼、$\\omega=\\omega_0$：猜到齊次解，乘 $t$",
+        "• $x_p=\\dfrac{F_0}{2\\omega_0}t\\sin\\omega_0t$：振幅線性長大",
+        "• 也是非共振解在 $\\omega\\to\\omega_0$ 的極限（直覺）",
+        "• 有阻尼：峰在 $\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$",
+        "• 最大振幅 $A_{\\max}=\\dfrac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}$，有限",
+        "• 阻尼小，放大倍數大：設計時避開或加阻尼",
+        "微分方程這一階段到這裡結束"
+      ]
     }
   ],
   "workedExamples": [
@@ -98,35 +169,45 @@
   ],
   "checks": [
     {
-      "ask": "$y''+4y=\\cos 2x$ 的特解要猜？",
+      "ask": "$x''+9x=4\\sin3t$ 的特解該猜什麼形式？",
       "options": [
-        { "label": "$x(A\\cos 2x+B\\sin 2x)$", "correct": true },
-        { "label": "$A\\cos 2x+B\\sin 2x$", "why": "這正是齊次解，代入左邊得 $0$，等不到 $\\cos 2x$；要乘 $x$。" },
-        { "label": "$Ax\\cos 2x$", "why": "$x\\cos 2x$ 微分會生出 $x\\sin 2x$ 與 $\\sin 2x$，要配 $Bx\\sin 2x$ 才對得起來。" }
+        {
+          "label": "$t(A\\cos3t+B\\sin3t)$",
+          "correct": true
+        },
+        {
+          "label": "$A\\cos3t+B\\sin3t$",
+          "why": "這是齊次解，代進去得 $0$"
+        },
+        {
+          "label": "$Bt\\sin3t$",
+          "why": "只猜 $\\sin$ 不夠：答案其實是 $t\\cos3t$ 的倍數"
+        },
+        {
+          "label": "$t^2(A\\cos3t+B\\sin3t)$",
+          "why": "$\\pm3i$ 是單根，乘一次 $t$ 就夠"
+        }
       ]
     },
     {
-      "ask": "沒有阻尼的共振，振幅隨時間怎麼變？",
+      "ask": "$x''+2x'+10x=\\cos\\omega t$，振幅最大的 $\\omega$ 是？",
       "options": [
-        { "label": "與 $t$ 成正比地增加", "correct": true },
-        { "label": "指數增加", "why": "解是 $t\\sin\\omega_0t$，前面是 $t$ 不是 $e^t$，振幅線性長大。" },
-        { "label": "維持固定", "why": "那是非共振的情形；共振時多出來的 $t$ 讓振幅一直變大。" }
-      ]
-    },
-    {
-      "ask": "有阻尼（$\\gamma>0$）時，外力頻率 $\\omega=\\omega_0$ 的穩態振幅是？",
-      "options": [
-        { "label": "有限值 $\\frac{F_0}{2\\gamma\\omega_0}$", "correct": true },
-        { "label": "無限大", "why": "$\\gamma>0$ 時分母剩下 $(2\\gamma\\omega_0)^2$，不是 $0$；阻尼限制了振幅。" },
-        { "label": "$0$", "why": "$\\omega=\\omega_0$ 時分母最接近最小值，振幅接近最大，不是 $0$。" }
-      ]
-    },
-    {
-      "ask": "$\\omega_0=10$、$\\gamma=6$，穩態振幅最大的外力頻率是？",
-      "options": [
-        { "label": "$\\sqrt{28}\\approx5.29$", "correct": true },
-        { "label": "$10$", "why": "那是 $\\omega_0$，只有沒有阻尼時峰才在那裡；有阻尼時峰在 $\\sqrt{100-2\\cdot36}$。" },
-        { "label": "$8$", "why": "$8$ 是 $\\omega_d=\\sqrt{100-36}$，自由振動的頻率；振幅峰值的公式是 $\\omega_0^2-2\\gamma^2$。" }
+        {
+          "label": "$2\\sqrt2$",
+          "correct": true
+        },
+        {
+          "label": "$\\sqrt{10}$",
+          "why": "那是 $\\omega_0$；有阻尼時峰會往左移"
+        },
+        {
+          "label": "$3$",
+          "why": "那是 $\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$；共振頻率是減 $2\\gamma^2$"
+        },
+        {
+          "label": "$\\sqrt6$",
+          "why": "$\\gamma=1$ 不是 $2$：$2$ 是 $2\\gamma$"
+        }
       ]
     }
   ],
@@ -134,229 +215,897 @@
     {
       "title": "節奏剛好對上",
       "beats": [
-        { "show": ["推鞦韆：盪回來時推一把"], "note": "鞦韆越盪越高。",
-          "say": "推鞦韆的人，每次都在鞦韆盪回來時推一把，鞦韆就越盪越高。",
+        {
+          "show": [
+            "盪鞦韆：每次盪回來時順著推一下"
+          ],
+          "say": "推過鞦韆就知道：每次盪回來的時候，順著方向推一下，就算推得很輕，也會越盪越高。",
           "board": [
-            { "do": "write", "line": "盪回來時推一把 ⇒ 越盪越高" }
-          ] },
-        { "show": ["外力頻率 = 自然頻率：共振"],
-          "say": "推的節奏剛好等於系統自己的頻率，這叫共振。",
+            {
+              "do": "write",
+              "line": "盪鞦韆：每次盪回來時順著推一下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推的頻率＝鞦韆自己的頻率：$\\omega=\\omega_0$"
+          ],
+          "say": "關鍵是推的節奏，剛好等於鞦韆自己擺動的節奏，也就是外力頻率等於自然頻率。",
           "board": [
-            { "do": "write", "line": "外力頻率 ＝ 自然頻率 ⇒ 共振" }
-          ] },
-        { "show": ["$x''+\\omega_0^2x=F_0\\cos\\omega_0t$"], "note": "沒有阻尼。",
-          "say": "數學上就是：沒有阻尼，外力的頻率剛好是 omega 零。",
+            {
+              "do": "write",
+              "line": "推的頻率＝鞦韆自己的頻率：$\\omega=\\omega_0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有阻尼時：",
+            "$x''+\\omega_0^2x=F_0\\cos\\omega_0t$"
+          ],
+          "say": "先看沒有阻尼的情況：右邊外力的頻率，剛好就是歐米伽 0。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x''+\\omega_0^2x={{f:F_0\\cos\\omega_0t}}$", "on": "沒有阻尼" },
-            { "do": "underline", "term": "f", "label": "外力", "on": "外力的" }
-          ] },
-        { "show": ["$a\\cos\\omega_0t+b\\sin\\omega_0t$ 是齊次解"], "note": "代入左邊只得到 0。",
-          "say": "上一課的猜法在這裡失效：它本身就是齊次解，代進左邊只得到零。",
+            {
+              "do": "write",
+              "line": "沒有阻尼時："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle x''+\\omega_0^2x=F_0\\cos\\omega_0t}}$",
+              "on": "右邊"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "剛好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課的公式在 $\\omega=\\omega_0$、$\\gamma=0$ 時：",
+            "$A=\\frac{F_0}{\\sqrt{0+0}}\\quad\\text{分母是 }0$"
+          ],
+          "say": "上一課的振幅公式，在歐米伽等於歐米伽 0、伽瑪等於 0 的時候，分母變成 0，公式壞掉了。",
           "board": [
-            { "do": "write", "line": "$a\\cos\\omega_0t+b\\sin\\omega_0t$ 是齊次解" },
-            { "do": "write", "line": "代入左邊 ⇒ $0$", "on": "代進左邊" }
-          ] }
+            {
+              "do": "write",
+              "line": "上一課的公式在 $\\omega=\\omega_0$、$\\gamma=0$ 時："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle A=\\frac{F_0}{\\sqrt{0+0}}\\quad\\text{分母是 }0$",
+              "color": "red",
+              "on": "瑪等"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "沒有阻尼、$\\omega=\\omega_0$，從靜止開始推，振幅會？",
+        "options": [
+          {
+            "label": "隨時間一直變大",
+            "correct": true
+          },
+          {
+            "label": "停在一個很大的固定值",
+            "why": "沒有阻尼就沒有東西限制它；有阻尼才會停在固定值"
+          },
+          {
+            "label": "停在 $\\frac{F_0}{\\omega_0^2}$",
+            "why": "那是推得很慢（$\\omega\\to0$）時的靜態值"
+          },
+          {
+            "label": "一下大一下小，忽大忽小",
+            "why": "那是 $\\omega$ 接近但不等於 $\\omega_0$ 的情形"
+          }
+        ]
+      }
+    },
+    {
+      "title": "修正規則：乘上 t",
+      "beats": [
+        {
+          "show": [
+            "例：$y''+y=\\cos x$，$y(0)=0$，$y'(0)=0$"
+          ],
+          "say": "用數學的例子：y 兩撇加 y 等於餘弦 x，從靜止開始。這裡歐米伽 0 是 1，外力頻率也是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''+y=\\cos x$，$y(0)=0$，$y'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "照表猜 $A\\cos x+B\\sin x$：正好是齊次解"
+          ],
+          "say": "照待定係數的表，要猜 A 餘弦加 B 正弦。可是它們正好是齊次解，代進去一定是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "照表猜 $A\\cos x+B\\sin x$：正好是齊次解",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "修正規則：乘上 $x$",
+            "$y_p=x\\,(A\\cos x+B\\sin x)$"
+          ],
+          "say": "用修正規則：乘上 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "修正規則：乘上 $x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y_p=x\\,(A\\cos x+B\\sin x)$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代入（$u=A\\cos x+B\\sin x$ 滿足 $u''=-u$）：",
+            "$y_p''+y_p=2u'=-2A\\sin x+2B\\cos x$"
+          ],
+          "say": "用乘積法則，x 乘 u 的二階導數加上它自己，因為 u 兩撇等於負 u，只剩 2 倍 u prime。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代入（$u=A\\cos x+B\\sin x$ 滿足 $u''=-u$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y_p''+y_p=2u'=-2A\\sin x+2B\\cos x$",
+              "on": "兩撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比係數：$2B=1$，$A=0$",
+            "$y_p=\\tfrac12x\\sin x$"
+          ],
+          "say": "要等於餘弦 x：B 是 2 分之 1，A 是 0。特解是 2 分之 1 x 正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比係數：$2B=1$，$A=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y_p=\\tfrac12x\\sin x}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=c_1\\cos x+c_2\\sin x+\\tfrac12x\\sin x$"
+          ],
+          "say": "代初始條件，兩個常數都是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=c_1\\cos x+c_2\\sin x+\\tfrac12x\\sin x$"
+            },
+            {
+              "do": "write",
+              "line": "$y(0)=c_1=0$；$y'(0)=c_2=0$",
+              "on": "個常"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\tfrac12x\\sin x$"
+          ],
+          "say": "答案就是 2 分之 1 x 正弦 x。跟參數變異那一課用積分算出來的，一模一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle y=\\tfrac12x\\sin x}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "參數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：$x''+\\omega_0^2x=F_0\\cos\\omega_0t$ 的特解",
+            "$x_p=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t$"
+          ],
+          "say": "一般的情況用同樣的算法：特解是 2 歐米伽 0 分之 F0，乘 t 正弦歐米伽 0 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般：$x''+\\omega_0^2x=F_0\\cos\\omega_0t$ 的特解"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle x_p=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t}}$",
+              "on": "特解"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　$(t\\sin\\omega_0t)''+\\omega_0^2\\,t\\sin\\omega_0t=2\\omega_0\\cos\\omega_0t$",
+              "color": "violet",
+              "on": "正弦"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$x''+9x=4\\sin3t$ 的特解該猜什麼形式？"
+          ],
+          "say": "試一題：這個方程的特解該猜什麼？"
+        }
       ],
       "check": 0
     },
     {
-      "title": "乘上 $t$", "key": "齊次解再乘 $x$，才不會被消成 0",
-      "beats": [
-        { "show": ["$y''+y=\\cos x$"], "note": "$\\cos x$ 是齊次解。",
-          "say": "看一題：右邊的 cosine x 剛好是齊次解。",
-          "board": [
-            { "do": "write", "line": "$y''+y={{c:\\cos x}}$" },
-            { "do": "focus", "term": "c", "label": "齊次解", "on": "剛好是" }
-          ] },
-        { "show": ["猜 $y_p=x(A\\cos x+B\\sin x)$"], "note": "$\\cos$、$\\sin$ 兩個都要乘。",
-          "say": "照修正規則，乘上一個 x。cosine 和 sine 兩個都要乘。",
-          "board": [
-            { "do": "write", "line": "$y_p={{m:x}}(A\\cos x+B\\sin x)$" },
-            { "do": "focus", "term": "m", "label": "乘 x", "on": "乘上" }
-          ] },
-        { "show": ["$y_p''+y_p=-2A\\sin x+2B\\cos x$"],
-          "say": "微分兩次再加回 y p，帶 x 的項全部消掉，只剩這兩項。要等於 cosine x。",
-          "board": [
-            { "do": "write", "line": "$y_p''+y_p={{r:-2A\\sin x+2B\\cos x}}$" },
-            { "do": "underline", "term": "r", "label": "只剩兩項", "on": "只剩" },
-            { "do": "write", "line": "要等於 $\\cos x$", "on": "要等於" }
-          ] }
-      ],
-      "predict": {
-        "ask": "$-2A\\sin x+2B\\cos x=\\cos x$，所以 $y_p$ 是？",
-        "options": [
-          { "label": "$\\frac{x\\sin x}{2}$", "correct": true },
-          { "label": "$\\frac{x\\cos x}{2}$", "why": "$\\sin x$ 的係數 $-2A=0$，所以 $A=0$；留下來的是 $B$，乘的是 $\\sin x$。" },
-          { "label": "$2x\\sin x$", "why": "$2B=1$ 給 $B=\\frac{1}{2}$，不是 2。" }
-        ]
-      }
-    },
-    {
       "title": "振幅線性長大",
       "beats": [
-        { "show": ["$x_p=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t$"],
-          "say": "一般的共振解：前面多了一個 t。",
+        {
+          "show": [
+            "藍：½ t sin t；紅色虛線：±t/2"
+          ],
+          "say": "畫出 2 分之 1 t 正弦 t：它被兩條紅色的直線夾著，振幅是 2 分之 t，跟時間成正比，一直長大。",
           "board": [
-            { "do": "write", "line": "$x_p=\\frac{F_0}{2\\omega_0}\\,{{t:t}}\\sin\\omega_0t$" },
-            { "do": "focus", "term": "t", "label": "多一個 t", "on": "多了" }
-          ] },
-        { "show": ["振幅 $\\frac{F_0t}{2\\omega_0}$，沒有上限"],
-          "say": "這個 t 讓振幅跟著時間直直往上長，沒有上限。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "grow",
+                  "window": [
+                    0,
+                    30,
+                    -16,
+                    16
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x*sin(x)/2",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x/2",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-x/2",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "xlabel": "t",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：½ t sin t；紅色虛線：±t/2",
+              "color": "violet",
+              "on": "夾著"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有上限：只要一直推，振幅就一直變大"
+          ],
+          "say": "沒有上限：只要一直對著節奏推，振幅就一直變大。",
           "board": [
-            { "do": "write", "line": "振幅 $=\\frac{F_0\\,{{m:t}}}{2\\omega_0}$" },
-            { "do": "underline", "term": "m", "color": "blue", "on": "跟著時間" }
-          ] },
-        { "show": ["理想模型"], "note": "真實系統：阻尼起作用、彈簧失效，或結構損壞。",
-          "say": "這是沒有阻尼的理想模型。真的系統在變成無限大之前，阻尼就會起作用，或是東西壞掉。",
+            {
+              "do": "write",
+              "line": "沒有上限：只要一直推，振幅就一直變大",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "振幅的成長率 $\\dfrac{F_0}{2\\omega_0}$：推得越用力、長得越快"
+          ],
+          "say": "長大的速度是 2 歐米伽 0 分之 F0：推得越用力，長得越快。",
           "board": [
-            { "do": "write", "line": "理想模型：沒有阻尼" },
-            { "do": "write", "line": "真實：阻尼起作用，或結構損壞", "on": "真的系統" }
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "振幅的成長率 $\\dfrac{F_0}{2\\omega_0}$：推得越用力、長得越快"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真實的系統不會真的無限大：",
+            "• 振幅大了，彈簧不再遵守虎克定律"
+          ],
+          "say": "真實的系統當然不會真的無限大：振幅大了，彈簧不再遵守虎克定律，或是結構先壞掉。而且真實世界總有一點阻尼，等一下看阻尼怎麼限制它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真實的系統不會真的無限大："
+            },
+            {
+              "do": "write",
+              "line": "• 振幅大了，彈簧不再遵守虎克定律",
+              "on": "幅大"
+            },
+            {
+              "do": "write",
+              "line": "• 結構先壞掉",
+              "on": "是結"
+            },
+            {
+              "do": "write",
+              "line": "• 總是有一點阻尼（⑤）",
+              "on": "點阻"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "推導：取極限", "key": "0/0 型：把 $\\omega$ 當變數用 L'Hôpital",
-      "proof": true, "of": 3, "skeleton": "直接",
+      "title": "從非共振取極限",
       "beats": [
-        { "show": ["從非共振的解出發，讓 $\\omega\\to\\omega_0$"],
-          "say": "策略：從非共振的解出發，固定 t，讓外力頻率趨近 omega 零，看極限是不是共振解。",
+        {
+          "show": [
+            "$\\omega\\ne\\omega_0$，從靜止開始推，解是：",
+            "$x=\\frac{F_0}{\\omega_0^2-\\omega^2}\\big(\\cos\\omega t-\\cos\\omega_0t\\big)$"
+          ],
+          "say": "換一個角度看。外力頻率不等於自然頻率時，從靜止開始推的解是這個，上一課的例子就是這種樣子。",
           "board": [
-            { "do": "write", "line": "非共振的解：固定 $t$，令 $\\omega \\to \\omega_0$", "on": "從非共振" }
-          ] },
-        { "show": ["$x=\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}$"], "note": "$\\omega\\ne\\omega_0$，從靜止開始。",
-          "say": "頻率不相等、從靜止開始，解是兩個 cosine 相減，除以兩個頻率平方的差。",
+            {
+              "do": "write",
+              "line": "$\\omega\\ne\\omega_0$，從靜止開始推，解是："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x=\\frac{F_0}{\\omega_0^2-\\omega^2}\\big(\\cos\\omega t-\\cos\\omega_0t\\big)$",
+              "on": "然頻"
+            },
+            {
+              "do": "write",
+              "line": "　上一課：$x''+4x=3\\cos t$ 的解 $\\cos t-\\cos2t$，正是 $\\frac{3}{4-1}(\\cos t-\\cos2t)$",
+              "color": "violet",
+              "on": "上一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "讓 $\\omega\\to\\omega_0$：分子分母都 $\\to0$，對 $\\omega$ 用羅必達"
+          ],
+          "say": "讓歐米伽趨近歐米伽 0：分子分母都趨近 0。把它看成歐米伽的函數，用羅必達法則。",
           "board": [
-            { "do": "write", "line": "$x = \\frac{{{nu:F_0(\\cos\\omega t-\\cos\\omega_0 t)}}}{{{de:\\omega_0^2-\\omega^2}}}$", "tint": { "nu": "blue", "de": "violet" }, "on": "解是" }
-          ] },
-        { "show": ["固定 $t$，$\\omega\\to\\omega_0$：分子、分母都 $\\to0$"],
-          "say": "固定 t，頻率越來越接近，分子分母一起趨近零，直接代進去沒有意義。",
+            {
+              "do": "write",
+              "line": "讓 $\\omega\\to\\omega_0$：分子分母都 $\\to0$，對 $\\omega$ 用羅必達"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{\\omega\\to\\omega_0}\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}=\\lim\\frac{-F_0t\\sin\\omega t}{-2\\omega}$"
+          ],
+          "say": "分子對歐米伽微分是負 F0 t 正弦歐米伽 t；分母微分是負 2 歐米伽。",
           "board": [
-            { "do": "write", "line": "$\\omega \\to \\omega_0$：$\\frac{{{nu:F_0(\\cos\\omega t-\\cos\\omega_0 t)}}}{{{de:\\omega_0^2-\\omega^2}}} \\to {{z:\\frac{0}{0}}}$", "on": "頻率越來越" },
-            { "do": "box", "term": "z", "label": "不能直接代", "on": "直接代進去" }
-          ] },
-        { "show": ["對 $\\omega$ 用 L'Hôpital", "$\\to\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$"], "note": "分子微出 $-F_0t\\sin\\omega t$，分母微出 $-2\\omega$。",
-          "why": {
-            "ask": "L'Hôpital 要對誰微分？",
-            "say": "這裡用羅必達，分子分母要對哪一個變數微分？",
-            "options": [
-              { "label": "對 $\\omega$：趨近的是 $\\omega$，$t$ 固定", "correct": true },
-              { "label": "對 $t$：解是 $t$ 的函數", "why": "解是 $t$ 的函數沒錯，可是這裡 $t$ 固定不動；趨近的是 $\\omega$，就對 $\\omega$ 微分。" },
-              { "label": "分子分母各自對自己的變數", "why": "L'Hôpital 要分子分母對同一個趨近的變數微分，這裡是 $\\omega$。" }
-            ]
-          },
-          "say": "對 omega 微分：分子帶出 t 乘 sine，分母是負二 omega，負號消掉，代 omega 零。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{\\omega\\to\\omega_0}\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}=\\lim\\frac{-F_0t\\sin\\omega t}{-2\\omega}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t$"
+          ],
+          "say": "代入歐米伽 0，正好就是共振的解。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "用 L'Hôpital：對誰微分？", "on": "羅必達" },
-            { "do": "transform", "line": "對 $\\omega$ 微分：$\\frac{{{dn:-F_0t\\sin\\omega t}}}{{{dd:-2\\omega}}}$", "tint": { "dn": "blue", "dd": "violet" }, "why": true, "on": "對 omega 微分" },
-            { "do": "write", "line": "$\\to {{r:\\frac{F_0 t\\sin\\omega_0 t}{2\\omega_0}}}$", "why": true, "on": "負號消掉" }
-          ] },
-        { "show": ["正好是共振解"], "note": "兩個答案一致；「解的極限還是解」要另外證明。",
-          "why": {
-            "ask": "這樣就證明了共振解嗎？",
-            "say": "極限正好是共振解。這樣算證明了嗎？",
-            "options": [
-              { "label": "還不算：「解的極限還是解」要另外證明", "correct": true },
-              { "label": "算，極限算對就證完了", "why": "極限只說兩個式子一致；它是不是方程式的解，要直接代入才確定。" },
-              { "label": "不算，因為 L'Hôpital 不能用", "why": "L'Hôpital 在這裡用得沒問題，分子分母都趨近零、對 $\\omega$ 可微；缺的是另一件事。" }
-            ]
-          },
-          "say": "這說明兩個答案一致，是很好的直覺；但解的極限還是不是解，要另外證明，直接代入才是證明。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "ω₀ = 1、F₀ = 1；紅色虛線是共振解"
+          ],
+          "say": "圖上，外力頻率是 0.8 時，振幅忽大忽小，叫做拍。",
           "board": [
-            { "do": "box", "term": "r", "on": "正好是" },
-            { "do": "write", "line": "直覺，不是證明：直接代入才算", "color": "red", "why": true, "on": "很好的直覺" }
-          ] }
-      ],
-      "order": {
-        "ask": "把推導排回順序：依序點每一步",
-        "steps": [
-          { "label": "寫出非共振的解" },
-          { "label": "固定 $t$，$\\omega\\to\\omega_0$：分子、分母都 $\\to0$", "why": "要先有解的式子，才能取極限。" },
-          { "label": "對 $\\omega$ 用 L'Hôpital", "why": "要先確認分子分母都趨近零，才能用 L'Hôpital。" },
-          { "label": "得到 $\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$", "why": "要先把分子分母對 $\\omega$ 微分，再代 $\\omega_0$。" }
-        ]
-      }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lim",
+                  "window": [
+                    0,
+                    40,
+                    -22,
+                    22
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(cos(w*x)-cos(x))/(1-w^2)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x*sin(x)/2",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "w": {
+                      "min": 0.6,
+                      "max": 0.99,
+                      "value": 0.8,
+                      "label": "ω"
+                    }
+                  },
+                  "xlabel": "t",
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ω₀ = 1、F₀ = 1；紅色虛線是共振解",
+              "color": "violet",
+              "on": "振幅"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從非共振取極限"
+          ],
+          "say": "讓歐米伽靠近 1：拍越拉越長，前面一段越來越像紅色的共振解，振幅一路長大。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "lim",
+                  "window": [
+                    0,
+                    40,
+                    -22,
+                    22
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(cos(w*x)-cos(x))/(1-w^2)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "x*sin(x)/2",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "params": {
+                    "w": {
+                      "min": 0.6,
+                      "max": 0.99,
+                      "value": 0.8,
+                      "label": "ω"
+                    }
+                  },
+                  "xlabel": "t",
+                  "height": 240
+                },
+                "vals": {
+                  "w": 0.97
+                }
+              }
+            }
+          ]
+        },
+        {
+          "show": [
+            "這是直覺，不是證明：$t$ 固定時才逼近"
+          ],
+          "say": "這是幫助理解的直覺，不是證明：每一個固定的時間 t，才會逼近共振解。證明就是剛剛代進去檢查。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這是直覺，不是證明：$t$ 固定時才逼近"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "有阻尼：峰值有限",
       "beats": [
-        { "show": ["$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$"], "note": "$\\gamma>0$ 時分母永遠不為 0。",
-          "say": "有阻尼的時候，振幅公式的分母多了一項，永遠不會是零，所以振幅有限。",
+        {
+          "show": [
+            "$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+4\\gamma^2\\omega^2}}$"
+          ],
+          "say": "有阻尼時，回到上一課的振幅公式。伽瑪大於 0，分母的第二項不會是 0，所以振幅一定有限。",
           "board": [
-            { "do": "write", "line": "$A(\\omega) = \\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2 + {{g:(2\\gamma\\omega)^2}}}}$", "tint": { "g": "violet" } },
-            { "do": "underline", "term": "g", "label": "不會是零", "on": "多了一項" }
-          ] },
-        { "show": ["$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$"],
-          "say": "例如自然頻率一，阻尼零點一，外力大小一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+4\\gamma^2\\omega^2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分母最小，$A$ 就最大。令 $u=\\omega^2$：",
+            "$D(u)=(\\omega_0^2-u)^2+4\\gamma^2u$"
+          ],
+          "say": "分母最小時振幅最大。把歐米伽平方記成 u，只要找根號裡面 D of u 的最小值。",
           "board": [
-            { "do": "write", "line": "$\\omega_0 = 1$，${{ga:\\gamma = 0.1}}$，$F_0 = 1$", "tint": { "ga": "violet" } }
-          ] },
-        { "show": ["$\\omega=0$：$A=1$"], "note": "靜態推。",
-          "say": "外力頻率是零，就是靜態地推，振幅是一。",
+            {
+              "do": "write",
+              "line": "分母最小，$A$ 就最大。令 $u=\\omega^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle D(u)=(\\omega_0^2-u)^2+4\\gamma^2u$",
+              "on": "只要"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$D'(u)=-2(\\omega_0^2-u)+4\\gamma^2=0$",
+            "$\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$"
+          ],
+          "say": "微分令它等於 0：u 等於歐米伽 0 平方減 2 伽瑪平方。開根號，就是共振頻率歐米伽 r。",
           "board": [
-            { "do": "write", "line": "${{st:\\omega = 0}}$：$A = \\frac{1}{\\sqrt{1^2}} = 1$" },
-            { "do": "underline", "term": "st", "label": "靜態推", "on": "靜態地推" }
-          ] },
-        { "show": ["$\\omega=1$：$A=\\frac{1}{0.2}=5$"], "note": "阻尼越小，放大越多。",
-          "say": "照著節奏推，分母剩二乘零點一，振幅變五，放大五倍。阻尼越小，放大越多。",
+            {
+              "do": "write",
+              "line": "$D'(u)=-2(\\omega_0^2-u)+4\\gamma^2=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}}}$",
+              "color": "red",
+              "on": "等於#2"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "伽瑪"
+            },
+            {
+              "do": "write",
+              "line": "　需要 $\\omega_0^2>2\\gamma^2$；否則 $A(\\omega)$ 一路遞減，最大在 $\\omega=0$",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回：$D_{\\min}=4\\gamma^2(\\omega_0^2-\\gamma^2)$",
+            "$A_{\\max}=\\frac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}$"
+          ],
+          "say": "代回去，D 的最小值是 4 伽瑪平方乘歐米伽 0 平方減伽瑪平方。最大振幅是這個：阻尼越小，峰越高。",
           "board": [
-            { "do": "write", "line": "$\\omega = 1$：$A = \\frac{1}{\\sqrt{0 + {{g2:(2\\cdot 0.1\\cdot 1)^2}}}}$", "tint": { "g2": "violet" }, "on": "分母剩" },
-            { "do": "transform", "line": "$\\omega = 1$：${{f:A = \\frac{1}{0.2} = 5}}$", "on": "振幅變五" },
-            { "do": "underline", "term": "f", "color": "green", "label": "放大五倍", "on": "放大五倍" }
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "代回：$D_{\\min}=4\\gamma^2(\\omega_0^2-\\gamma^2)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle A_{\\max}=\\frac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}}}$",
+              "on": "伽瑪#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "平方#2"
+            },
+            {
+              "do": "write",
+              "line": "　推導：$D_{\\min}=(2\\gamma^2)^2+4\\gamma^2(\\omega_0^2-2\\gamma^2)$",
+              "color": "violet",
+              "on": "是這"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x''+6x'+25x=\\cos\\omega t$"
+          ],
+          "say": "例子：x 兩撇加 6x 一撇加 25x 等於餘弦歐米伽 t。伽瑪是 3，歐米伽 0 是 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x''+6x'+25x=\\cos\\omega t$"
+            },
+            {
+              "do": "write",
+              "line": "$\\gamma=3$，$\\omega_0=5$",
+              "on": "弦歐"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\omega_r&=\\sqrt{25-18}=\\sqrt7\\approx2.65\\\\A_{\\max}&=\\frac{1}{6\\sqrt{25-9}}=\\frac1{24}\\end{aligned}$"
+          ],
+          "say": "共振頻率是根號 7，大約 2.65。最大振幅是 6 乘根號 16 分之一，等於 24 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\omega_r&=\\sqrt{25-18}=\\sqrt7\\approx2.65\\\\A_{\\max}&=\\frac{1}{6\\sqrt{25-9}}=\\frac1{24}\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "乘根"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "峰在哪裡",
+      "title": "小阻尼會放大多少",
       "beats": [
-        { "show": ["$\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$"], "note": "$\\gamma<\\frac{\\omega_0}{\\sqrt2}$ 才有峰。",
-          "say": "把分母對 omega 平方微分，峰在根號 omega 零平方減二 gamma 平方。",
+        {
+          "show": [
+            "$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$：",
+            "• $\\omega=0$（靜態）：$A=\\dfrac{F_0}{\\omega_0^2}=1$"
+          ],
+          "say": "比一比：歐米伽 0 是 1，伽瑪 0.1。慢慢推，振幅是 1；推的頻率等於 1，振幅變成 5；真正的最大值在 0.99，大約 5.03。",
           "board": [
-            { "do": "write", "line": "$u = \\omega^2$：$-2(\\omega_0^2-u) + 4\\gamma^2 = 0$" },
-            { "do": "write", "line": "${{wr:\\omega_r = \\sqrt{\\omega_0^2-2\\gamma^2}}}$", "tint": { "wr": "blue" }, "on": "峰在根號" }
-          ] },
-        { "show": ["$x''+6x'+25x=\\cos\\omega t$"], "note": "$\\gamma=3$，$\\omega_0=5$。",
-          "say": "這一題 gamma 是三，omega 零是五。三比五除以根號二還小，有峰。",
+            {
+              "do": "write",
+              "line": "$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$："
+            },
+            {
+              "do": "write",
+              "line": "• $\\omega=0$（靜態）：$A=\\dfrac{F_0}{\\omega_0^2}=1$",
+              "on": "慢慢"
+            },
+            {
+              "do": "write",
+              "line": "• $\\omega=\\omega_0$：$A=\\dfrac{F_0}{2\\gamma\\omega_0}=5$",
+              "on": "率等"
+            },
+            {
+              "do": "write",
+              "line": "• 最大：$\\omega_r\\approx0.990$，$A_{\\max}\\approx5.03$",
+              "on": "大值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的力，放大 5 倍；$\\gamma$ 越小放大越多"
+          ],
+          "say": "同樣大小的力，只是換個節奏，振幅就放大 5 倍。阻尼越小，放大越多。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$x'' + 6x' + 25x = \\cos\\omega t$", "on": "這一題" },
-            { "do": "write", "line": "${{ga:\\gamma = 3}}$，$\\omega_0 = 5$", "on": "gamma 是三" },
-            { "do": "underline", "term": "ga", "label": "有峰", "on": "還小" }
-          ] },
-        { "show": ["$\\omega_r=\\sqrt{25-2\\cdot9}=\\sqrt7$"], "note": "最大振幅 $\\frac{1}{24}$。",
-          "say": "峰在根號七，大約二點六五。代回去，分母是二十四，最大振幅二十四分之一。",
+            {
+              "do": "write",
+              "line": "同樣的力，放大 5 倍；$\\gamma$ 越小放大越多",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　放大倍數大約 $\\dfrac{\\omega_0}{2\\gamma}$；$\\gamma=0.01$ 就是 $50$ 倍",
+              "color": "violet",
+              "on": "放大#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "γ = 0.1：峰值約 5，靜態只有 1"
+          ],
+          "say": "圖上，紅色虛線是靜態的 1，藍色的峰高大約 5。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "${{w7:\\omega_r = \\sqrt{25-2\\cdot 9} = \\sqrt{7}}} \\approx 2.65$", "tint": { "w7": "blue" }, "on": "峰在根號七" },
-            { "do": "write", "line": "分母 $24$ ⇒ 最大振幅 $\\frac{1}{24}$", "color": "green", "on": "分母是" }
-          ] },
-        { "show": ["不在 $\\omega_0=5$，也不在 $\\omega_d=4$"],
-          "say": "注意，峰不在自然頻率五，也不在阻尼振動的頻率四。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "peak",
+                  "window": [
+                    0,
+                    2.5,
+                    0,
+                    5.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/sqrt((1-x^2)^2+0.04*x^2)",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.98995,
+                      "y": 5.0252,
+                      "color": "red"
+                    }
+                  ],
+                  "xlabel": "ω",
+                  "ylabel": "A",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "γ = 0.1：峰值約 5，靜態只有 1",
+              "color": "violet",
+              "on": "藍色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真實結構：讓外力避開 $\\omega_0$，或加阻尼"
+          ],
+          "say": "所以設計橋和大樓時，要讓常見的外力頻率避開自然頻率，或是加上阻尼裝置，把峰壓低。",
           "board": [
-            { "do": "write", "line": "峰不在 ${{a:\\omega_0 = 5}}$，也不在 ${{b:\\omega_d = 4}}$" },
-            { "do": "focus", "term": "a", "on": "自然頻率" },
-            { "do": "focus", "term": "b", "on": "阻尼振動" }
-          ] }
+            {
+              "do": "write",
+              "line": "真實結構：讓外力避開 $\\omega_0$，或加阻尼"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 沒有阻尼、$\\omega=\\omega_0$：猜到齊次解，乘 $t$",
+            "• $x_p=\\dfrac{F_0}{2\\omega_0}t\\sin\\omega_0t$：振幅線性長大"
+          ],
+          "say": "整理一下：沒有阻尼的共振，振幅隨時間線性長大；有阻尼時峰值有限，在根號歐米伽 0 平方減 2 伽瑪平方；阻尼越小，放大越多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 沒有阻尼、$\\omega=\\omega_0$：猜到齊次解，乘 $t$"
+            },
+            {
+              "do": "write",
+              "line": "• $x_p=\\dfrac{F_0}{2\\omega_0}t\\sin\\omega_0t$：振幅線性長大",
+              "on": "共振"
+            },
+            {
+              "do": "write",
+              "line": "• 也是非共振解在 $\\omega\\to\\omega_0$ 的極限（直覺）",
+              "on": "長大"
+            },
+            {
+              "do": "write",
+              "line": "• 有阻尼：峰在 $\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$",
+              "on": "在根"
+            },
+            {
+              "do": "write",
+              "line": "• 最大振幅 $A_{\\max}=\\dfrac{F_0}{2\\gamma\\sqrt{\\omega_0^2-\\gamma^2}}$，有限",
+              "on": "平方#1"
+            },
+            {
+              "do": "write",
+              "line": "• 阻尼小，放大倍數大：設計時避開或加阻尼",
+              "on": "阻尼#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "微分方程這一階段到這裡結束"
+          ],
+          "say": "二階線性微分方程和它的物理應用，到這裡告一段落。",
+          "board": [
+            {
+              "do": "write",
+              "line": "微分方程這一階段到這裡結束"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "resonance", "undetermined-coefficients"],
-    "fine": ["resonance-modification", "resonance-growth", "resonance-peak-frequency", "resonance-damped-amplitude"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "resonance",
+      "undetermined-coefficients"
+    ],
+    "fine": [
+      "resonance-modification",
+      "resonance-growth",
+      "resonance-peak-frequency",
+      "resonance-damped-amplitude"
+    ]
   },
   "practice": [
-    { "id": "ode-p2-006", "core": true, "trains": "resonance-modification" },
-    { "id": "cg-10d-016", "core": true, "trains": "resonance-modification" },
-    { "id": "cg-10d-018", "core": true, "trains": "resonance-peak-frequency" },
-    { "id": "cg-10d-020", "core": true, "trains": "resonance-damped-amplitude" },
-    { "id": "cg-10d-021", "core": true, "trains": "resonance-growth" },
-    { "id": "refine-derivatives-037", "trains": "resonance-modification" },
-    { "id": "cg-10d-017", "trains": "resonance-modification" },
-    { "id": "cg-10d-019", "challenge": true, "trains": "resonance-peak-frequency" }
+    {
+      "id": "ode-p2-006",
+      "core": true,
+      "trains": "resonance-modification"
+    },
+    {
+      "id": "cg-10d-016",
+      "core": true,
+      "trains": "resonance-modification"
+    },
+    {
+      "id": "cg-10d-018",
+      "core": true,
+      "trains": "resonance-peak-frequency"
+    },
+    {
+      "id": "cg-10d-020",
+      "core": true,
+      "trains": "resonance-damped-amplitude"
+    },
+    {
+      "id": "cg-10d-021",
+      "core": true,
+      "trains": "resonance-growth"
+    },
+    {
+      "id": "refine-derivatives-037",
+      "trains": "resonance-modification"
+    },
+    {
+      "id": "cg-10d-017",
+      "trains": "resonance-modification"
+    },
+    {
+      "id": "cg-10d-019",
+      "challenge": true,
+      "trains": "resonance-peak-frequency"
+    }
   ],
   "gaps": []
 }

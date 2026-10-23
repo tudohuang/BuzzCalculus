@@ -1,58 +1,143 @@
 {
   "id": "r2-r3",
   "title": "ℝ² 與 ℝ³",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["trig-functions"],
-  "next": ["two-variable-functions"],
-  "related": ["gradient", "directional-derivative", "tangent-plane"],
-  "objectives": [
-    "會算 $\\mathbb{R}^3$ 中兩點的距離與向量的長度，會把向量化成單位向量。",
-    "會用內積判斷兩個向量是否垂直，並算出夾角。",
-    "看到平面方程式 $ax+by+cz=d$ 就讀得出法向量 $(a,b,c)$，也會反過來寫出平面。"
+  "prerequisites": [
+    "trig-functions"
   ],
-  "visual": "一個可以轉動的 ℝ³ 座標系。拖動兩個向量 u、v 的箭頭端點，旁邊即時顯示 u·v、|u|、|v| 與夾角 θ；當 u·v = 0 時兩個箭頭之間出現直角記號。第二個畫面：一支法向量 n 立在一點上，與 n 垂直的所有箭頭鋪成一個平面。",
+  "next": [
+    "two-variable-functions"
+  ],
+  "related": [
+    "gradient",
+    "directional-derivative",
+    "tangent-plane"
+  ],
+  "objectives": [
+    "會算 $\\mathbb{R}^3$ 中兩點的距離與向量的長度，會把向量化成單位向量",
+    "會用內積判斷兩個向量是否垂直，並算出夾角",
+    "看到平面方程式 $ax+by+cz=d$ 就讀得出法向量 $(a,b,c)$，也會反過來寫出平面"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 從平面到空間",
       "body": [
-        "$\\mathbb{R}^2$ 是平面，點寫成 $(x,y)$；$\\mathbb{R}^3$ 多一個高度，點寫成 $(x,y,z)$。三個軸兩兩垂直。",
-        "兩點距離用兩次畢氏定理：先在 $xy$ 平面上走 $\\sqrt{\\Delta x^2+\\Delta y^2}$，再和高度差 $\\Delta z$ 組成直角三角形，得 $\\sqrt{\\Delta x^2+\\Delta y^2+\\Delta z^2}$。"
-      ],
-      "collapsible": false
+        "平面上的點：兩個數 $(x,y)$，全部的點叫 $\\mathbb{R}^2$",
+        "空間中的點：三個數 $(x,y,z)$，全部的點叫 $\\mathbb{R}^3$",
+        "右手系：右手四指從 $x$ 軸彎向 $y$ 軸，大拇指指的是 $z$ 軸"
+      ]
     },
     {
-      "heading": "② 向量：有方向、有長度的箭頭",
+      "heading": "① 距離：畢氏定理兩次",
       "body": [
-        "向量 $\\mathbf v=(a,b,c)$ 只記「往哪裡走、走多遠」，不管從哪裡出發。從 $P$ 到 $Q$ 的向量是 $Q-P$。",
-        "長度 $|\\mathbf v|=\\sqrt{a^2+b^2+c^2}$。把向量除以自己的長度，得到同方向、長度為 $1$ 的單位向量 $\\frac{\\mathbf v}{|\\mathbf v|}$。後面〈方向導數〉要求方向一定是單位向量，就是這個動作。"
+        "原點 $O$ 到 $P$ 有多遠？",
+        "• 地板上（綠線）：$O$ 到 $(x,y,0)$ 是 $\\sqrt{x^2+y^2}$",
+        "• 再加上高度 $z$：紅線是另一個直角三角形的斜邊",
+        "兩點 $P_1$、$P_2$：每個座標相減，平方、相加、開根號"
       ],
-      "collapsible": false
+      "tex": [
+        "|OP|=\\sqrt{\\big(\\sqrt{x^2+y^2}\\,\\big)^2+z^2}=\\sqrt{x^2+y^2+z^2}",
+        "|P_1P_2|=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}"
+      ]
     },
     {
-      "heading": "③ 內積：量兩個方向有多一致",
+      "heading": "① 例題：空間中的距離",
       "body": [
-        "$\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3$，對應分量相乘再加起來，結果是一個數。",
-        "它和夾角 $\\theta$ 的關係是 $\\mathbf u\\cdot\\mathbf v=|\\mathbf u||\\mathbf v|\\cos\\theta$（$0\\le\\theta\\le\\pi$）。所以：$\\mathbf u\\cdot\\mathbf v>0$ 夾角是銳角，$\\mathbf u\\cdot\\mathbf v<0$ 是鈍角，$\\mathbf u\\cdot\\mathbf v=0$ 兩向量垂直（$\\mathbf u$、$\\mathbf v$ 都不是零向量時）。判斷垂直只要算內積，不用算長度。"
+        "求 $P(1,2,3)$ 與 $Q(3,-1,9)$ 的距離",
+        "座標相減：$(3-1,\\ -1-2,\\ 9-3)=(2,-3,6)$",
+        "負號平方以後就不見了，所以誰減誰都可以"
       ],
-      "tex": ["\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}|PQ|&=\\sqrt{2^2+(-3)^2+6^2}\\\\&=\\sqrt{4+9+36}=\\sqrt{49}=7\\end{aligned}"
+      ]
     },
     {
-      "heading": "【為什麼】$\\mathbf u\\cdot\\mathbf v=|\\mathbf u||\\mathbf v|\\cos\\theta$ 的推導",
+      "heading": "② 向量：有方向的箭頭",
       "body": [
-        "$\\mathbf u$、$\\mathbf v$ 與 $\\mathbf u-\\mathbf v$ 圍成三角形。餘弦定理：$|\\mathbf u-\\mathbf v|^2=|\\mathbf u|^2+|\\mathbf v|^2-2|\\mathbf u||\\mathbf v|\\cos\\theta$。",
-        "左邊用分量展開：$|\\mathbf u-\\mathbf v|^2=(\\mathbf u-\\mathbf v)\\cdot(\\mathbf u-\\mathbf v)=|\\mathbf u|^2-2\\mathbf u\\cdot\\mathbf v+|\\mathbf v|^2$。兩式比較，得 $\\mathbf u\\cdot\\mathbf v=|\\mathbf u||\\mathbf v|\\cos\\theta$。"
+        "從 $P$ 指到 $Q$ 的箭頭：終點減起點",
+        "向量只記「往哪走、走多遠」，不記從哪裡出發",
+        "粗體 $\\mathbf v$ 表示向量；$\\mathbf v=(v_1,v_2,v_3)$",
+        "長度：$|\\mathbf v|=\\sqrt{v_1^2+v_2^2+v_3^2}$",
+        "加法、倍數都逐分量做：$(1,2,2)+(2,1,-2)=(3,3,0)$，$2(1,2,2)=(2,4,4)$",
+        "單位向量：長度是 $1$ 的向量，只留下方向",
+        "做法：除以自己的長度",
+        "驗算：$\\frac{4+9+36}{49}=1$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\overrightarrow{PQ}=Q-P=(2,-3,6)",
+        "\\frac{\\mathbf v}{|\\mathbf v|}=\\frac{(2,-3,6)}{7}=\\Big(\\frac27,-\\frac37,\\frac67\\Big)"
+      ]
     },
     {
-      "heading": "④ 平面：用一支垂直的箭頭決定",
+      "heading": "③ 內積：方向有多一致",
       "body": [
-        "過點 $P_0=(x_0,y_0,z_0)$、和 $\\mathbf n=(a,b,c)$ 垂直的平面：平面上任一點 $P$，向量 $P-P_0$ 都和 $\\mathbf n$ 垂直，也就是 $\\mathbf n\\cdot(P-P_0)=0$：",
-        "$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$。$\\mathbf n$ 叫法向量。反過來，看到 $ax+by+cz=d$，$x$、$y$、$z$ 的係數 $(a,b,c)$ 就是法向量。〈切平面〉會用到這個寫法。"
+        "它其實在量：兩個方向有多一致",
+        "• 同方向（$\\theta<90^\\circ$）：內積 $>0$",
+        "• 垂直（$\\theta=90^\\circ$）：內積 $=0$",
+        "• 反方向（$\\theta>90^\\circ$）：內積 $<0$",
+        "例題：$\\mathbf a=(1,2,2)$、$\\mathbf b=(2,1,-2)$",
+        "夾角：$\\mathbf a$ 與 $\\mathbf c=(1,1,0)$",
+        "$|\\mathbf a|=\\sqrt{1+4+4}=3$，$|\\mathbf c|=\\sqrt2$，$\\mathbf a\\cdot\\mathbf c=1+2+0=3$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3",
+        "\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta",
+        "\\mathbf a\\cdot\\mathbf b=2+2-4=0\\ \\Rightarrow\\ \\mathbf a\\perp\\mathbf b",
+        "\\cos\\theta=\\frac{3}{3\\sqrt2}=\\frac{1}{\\sqrt2}\\ \\Rightarrow\\ \\theta=\\frac\\pi4"
+      ]
+    },
+    {
+      "heading": "【為什麼】內積與夾角",
+      "body": [
+        "先看：$\\mathbf v\\cdot\\mathbf v=v_1^2+v_2^2+v_3^2=|\\mathbf v|^2$",
+        "餘弦定理：",
+        "用內積展開左邊（像乘法一樣分配）：",
+        "分配律、交換律逐分量就看得出來，例如 $\\mathbf u\\cdot\\mathbf v=\\mathbf v\\cdot\\mathbf u$",
+        "兩式比較，$|\\mathbf u|^2$、$|\\mathbf v|^2$ 消掉："
+      ],
+      "tex": [
+        "|\\mathbf u-\\mathbf v|^2=|\\mathbf u|^2+|\\mathbf v|^2-2|\\mathbf u||\\mathbf v|\\cos\\theta",
+        "\\begin{aligned}|\\mathbf u-\\mathbf v|^2&=(\\mathbf u-\\mathbf v)\\cdot(\\mathbf u-\\mathbf v)\\\\&=|\\mathbf u|^2-2\\,\\mathbf u\\cdot\\mathbf v+|\\mathbf v|^2\\end{aligned}",
+        "\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta\\qquad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "④ 平面：一支垂直的箭頭",
+      "body": [
+        "$P$ 在平面上 ⇔ $\\overrightarrow{P_0P}$ 躺在平面裡 ⇔ 跟 $\\mathbf n$ 垂直",
+        "$\\mathbf n=(a,b,c)$、$P_0=(x_0,y_0,z_0)$，展開：",
+        "整理成 $ax+by+cz=d$：係數就是法向量",
+        "讀法向量：$3x-2y+z=5$ 的 $\\mathbf n=(3,-2,1)$"
+      ],
+      "tex": [
+        "\\mathbf n\\cdot\\overrightarrow{P_0P}=0",
+        "a(x-x_0)+b(y-y_0)+c(z-z_0)=0"
+      ]
+    },
+    {
+      "heading": "④ 例題：寫出平面",
+      "body": [
+        "過 $(1,2,3)$、法向量 $\\mathbf n=(2,-1,2)$：",
+        "驗算：代 $(1,2,3)$，$2-2+6=6$"
+      ],
+      "tex": [
+        "2(x-1)-(y-2)+2(z-3)=0",
+        "2x-y+2z=2-2+6=6"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 距離：座標相減、平方、相加、開根號",
+        "• 單位向量：$\\dfrac{\\mathbf v}{|\\mathbf v|}$",
+        "• 內積：$\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3=|\\mathbf u||\\mathbf v|\\cos\\theta$",
+        "• 垂直 ⇔ 內積 $=0$",
+        "• 平面 $ax+by+cz=d$：法向量 $(a,b,c)$",
+        "下一課：二變數函數"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,35 +184,45 @@
   ],
   "checks": [
     {
-      "ask": "原點到 $(2,3,6)$ 的距離是？",
+      "ask": "$(1,0,-2)$ 與 $(3,2,-1)$ 的距離是？",
       "options": [
-        { "label": "$7$", "correct": true },
-        { "label": "$11$", "why": "這是把座標直接相加 $2+3+6$。距離要平方相加再開根號：$\\sqrt{4+9+36}=7$。" },
-        { "label": "$49$", "why": "$49$ 是平方和，還沒開根號。" }
+        {
+          "label": "$9$",
+          "why": "那是距離的平方；最後要開根號"
+        },
+        {
+          "label": "$3$",
+          "correct": true
+        },
+        {
+          "label": "$5$",
+          "why": "把差直接相加 $2+2+1$：距離要平方再相加"
+        },
+        {
+          "label": "$\\sqrt{17}$",
+          "why": "$z$ 的差算成 $-2+(-1)=-3$：應該是 $-1-(-2)=1$"
+        }
       ]
     },
     {
-      "ask": "$\\mathbf u=(1,2,-1)$、$\\mathbf v=(3,-1,1)$，兩者的關係是？",
+      "ask": "哪一個向量跟 $(3,-1,2)$ 垂直？",
       "options": [
-        { "label": "垂直", "correct": true },
-        { "label": "平行", "why": "平行要分量成比例；$(3,-1,1)$ 不是 $(1,2,-1)$ 的倍數。算內積：$3-2-1=0$，是垂直。" },
-        { "label": "要先算長度才能判斷", "why": "內積是 $0$ 就已經代表垂直（兩者都不是零向量），長度用不到。" }
-      ]
-    },
-    {
-      "ask": "$(3,0,4)$ 方向的單位向量是？",
-      "options": [
-        { "label": "$\\left(\\frac{3}{5},0,\\frac{4}{5}\\right)$", "correct": true },
-        { "label": "$\\left(\\frac{3}{7},0,\\frac{4}{7}\\right)$", "why": "$7$ 是分量的和，不是長度。長度是 $\\sqrt{9+16}=5$。" },
-        { "label": "$(1,0,1)$", "why": "這只是把非零分量改成 $1$，方向變了，長度也不是 $1$（是 $\\sqrt2$）。" }
-      ]
-    },
-    {
-      "ask": "平面 $3x-y+2z=7$ 的一個法向量是？",
-      "options": [
-        { "label": "$(3,-1,2)$", "correct": true },
-        { "label": "$(0,-7,0)$", "why": "這是平面上的一個點（$x=z=0$ 時 $y=-7$），不是法向量。法向量讀 $x$、$y$、$z$ 的係數。" },
-        { "label": "$(1,1,1)$", "why": "係數不是都當成 $1$；$y$ 前面是 $-1$、$z$ 前面是 $2$。" }
+        {
+          "label": "$(1,-1,1)$",
+          "why": "$(-1)(-1)=+1$：內積是 $3+1+2=6$，不是 $0$"
+        },
+        {
+          "label": "$(1,3,1)$",
+          "why": "前兩項是 $3-3=0$，但還有第三項 $2\\cdot1=2$"
+        },
+        {
+          "label": "$(1,1,-1)$",
+          "correct": true
+        },
+        {
+          "label": "$(-3,1,2)$",
+          "why": "只是把正負號換掉：內積 $-9-1+4=-6$"
+        }
       ]
     }
   ],
@@ -135,226 +230,793 @@
     {
       "title": "從平面到空間",
       "beats": [
-        { "show": ["平面 $(x,y)$ → 空間 $(x,y,z)$"],
-          "note": "多一個高度，三個軸兩兩垂直。",
-          "say": "平面上的點用兩個數記位置；空間多一個高度，所以要三個數，三個軸兩兩垂直。",
+        {
+          "show": [
+            "平面上的點：兩個數 $(x,y)$，全部的點叫 $\\mathbb{R}^2$"
+          ],
+          "say": "多變數微積分的舞台，是平面和空間。平面上的點用兩個數描述，x 和 y；所有這種點放在一起，叫做 R 2。",
           "board": [
-            {"do":"write","line":"平面：$(x,y)$"},
-            {"do":"write","line":"空間：$({{z:x,y,z}})$","on":"空間多一個高度"},
-            {"do":"focus","term":"z","label":"三個數","on":"三個數"}
-          ] },
-        { "show": ["$\\sqrt{\\Delta x^2+\\Delta y^2+\\Delta z^2}$"],
-          "note": "兩點距離：用兩次畢氏定理。",
-          "say": "距離怎麼算？先在 x y 平面上走一段斜邊，再跟高度差組成直角三角形，畢氏定理用兩次。",
+            {
+              "do": "write",
+              "line": "平面上的點：兩個數 $(x,y)$，全部的點叫 $\\mathbb{R}^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "空間中的點：三個數 $(x,y,z)$，全部的點叫 $\\mathbb{R}^3$"
+          ],
+          "say": "空間中的點要三個數：x、y、z。所有空間中的點叫做 R 3。多出來的 z，就是高度。",
           "board": [
-            {"do":"write","line":"$d=\\sqrt{{{a:\\Delta x^2+\\Delta y^2}}+{{b:\\Delta z^2}}}$"},
-            {"do":"underline","term":"a","color":"blue","label":"平面斜邊","on":"斜邊"},
-            {"do":"focus","term":"b","color":"violet","label":"高度差","on":"高度差"}
-          ] },
-        { "show": ["$P(1,2,3)$、$Q(3,-1,9)$","$Q-P=(2,-3,6)$"],
-          "say": "例如 P 和 Q 這兩點，座標一個一個相減，差是二、負三、六。",
+            {
+              "do": "write",
+              "line": "空間中的點：三個數 $(x,y,z)$，全部的點叫 $\\mathbb{R}^3$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　右手系：右手四指從 $x$ 軸彎向 $y$ 軸，大拇指指的是 $z$ 軸",
+              "color": "violet",
+              "on": "的點#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，從原點出發，沿 x 軸走 x，沿 y 軸走 y，到了地板上的點 x 逗號 y 逗號 0；再往上走 z，就到了 P。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$P(1,2,3)$、$Q(3,-1,9)$","on":"例如"},
-            {"do":"write","line":"$Q-P={{q:(2,-3,6)}}$","on":"座標一個一個相減"}
-          ] },
-        { "show": ["$4+9+36=49$，$\\sqrt{49}=7$"],
-          "say": "三個差各自平方再加起來是四十九，最後別忘了開根號，距離是七。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"r3pt\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ar3pt\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ar3ptblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ar3ptred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ar3ptgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ar3ptpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ar3ptink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"250\" y1=\"270\" x2=\"139.4\" y2=\"330.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3ptink)\"/><line x1=\"250\" y1=\"270\" x2=\"476.3\" y2=\"318.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3ptink)\"/><line x1=\"250\" y1=\"270\" x2=\"250\" y2=\"19.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3ptink)\"/><text x=\"126.5\" y=\"349.4\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"499.8\" y=\"329.3\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"250\" y=\"0.8\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><line x1=\"188.5\" y1=\"303.6\" x2=\"336.1\" y2=\"335.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"7 6\"/><line x1=\"397.6\" y1=\"301.5\" x2=\"336.1\" y2=\"335.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"7 6\"/><line x1=\"336.1\" y1=\"335.2\" x2=\"336.1\" y2=\"144.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"7 6\"/><line x1=\"250\" y1=\"270\" x2=\"336.1\" y2=\"335.2\" stroke=\"var(--green)\" stroke-width=\"3\"/><line x1=\"250\" y1=\"270\" x2=\"336.1\" y2=\"144.4\" stroke=\"var(--red)\" stroke-width=\"3\"/><circle cx=\"336.1\" cy=\"144.4\" r=\"5.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><circle cx=\"336.1\" cy=\"335.2\" r=\"4.5\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.2\"/><text x=\"354.1\" y=\"134.4\" text-anchor=\"start\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P(x, y, z)</text><text x=\"350.1\" y=\"357.2\" text-anchor=\"start\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">(x, y, <tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">0</tspan>)</text><text x=\"348.1\" y=\"245.8\" text-anchor=\"start\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><text x=\"236\" y=\"264\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">O</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "距離：畢氏定理兩次",
+      "beats": [
+        {
+          "show": [
+            "原點 $O$ 到 $P$ 有多遠？"
+          ],
+          "say": "原點到 P 有多遠？畢氏定理用兩次。",
           "board": [
-            {"do":"write","line":"$4+9+36=49$"},
-            {"do":"write","line":"$\\sqrt{49}={{r:7}}$","color":"green","on":"開根號"}
-          ] }
+            {
+              "do": "write",
+              "line": "原點 $O$ 到 $P$ 有多遠？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 地板上（綠線）：$O$ 到 $(x,y,0)$ 是 $\\sqrt{x^2+y^2}$",
+            "• 再加上高度 $z$：紅線是另一個直角三角形的斜邊"
+          ],
+          "say": "先看地板上：原點到 x 逗號 y 逗號 0，是根號 x 平方加 y 平方，跟平面一樣。再往上加高度 z，綠線、垂直的虛線和紅線，又圍出一個直角三角形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 地板上（綠線）：$O$ 到 $(x,y,0)$ 是 $\\sqrt{x^2+y^2}$"
+            },
+            {
+              "do": "write",
+              "line": "• 再加上高度 $z$：紅線是另一個直角三角形的斜邊",
+              "on": "跟平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|OP|=\\sqrt{\\big(\\sqrt{x^2+y^2}\\,\\big)^2+z^2}=\\sqrt{x^2+y^2+z^2}$"
+          ],
+          "say": "斜邊就是根號，綠線長的平方加 z 平方，也就是根號 x 平方加 y 平方加 z 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle |OP|=\\sqrt{\\big(\\sqrt{x^2+y^2}\\,\\big)^2+z^2}=\\sqrt{x^2+y^2+z^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩點 $P_1$、$P_2$：每個座標相減，平方、相加、開根號",
+            "$|P_1P_2|=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}$"
+          ],
+          "say": "一般的兩點，就把每個座標相減，平方、相加、再開根號。跟平面的距離公式一模一樣，只是多了一項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩點 $P_1$、$P_2$：每個座標相減，平方、相加、開根號"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle |P_1P_2|=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}}}$",
+              "on": "平方"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "距離"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例題：空間中的距離",
+      "beats": [
+        {
+          "show": [
+            "求 $P(1,2,3)$ 與 $Q(3,-1,9)$ 的距離"
+          ],
+          "say": "例題：P 是 1、2、3，Q 是 3、負 1、9，求距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "求 $P(1,2,3)$ 與 $Q(3,-1,9)$ 的距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "座標相減：$(3-1,\\ -1-2,\\ 9-3)=(2,-3,6)$"
+          ],
+          "say": "三個座標分別相減：3 減 1 是 2，負 1 減 2 是負 3，9 減 3 是 6。",
+          "board": [
+            {
+              "do": "write",
+              "line": "座標相減：$(3-1,\\ -1-2,\\ 9-3)=(2,-3,6)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}|PQ|&=\\sqrt{2^2+(-3)^2+6^2}\\\\&=\\sqrt{4+9+36}=\\sqrt{49}=7\\end{aligned}$"
+          ],
+          "say": "平方加起來：4 加 9 加 36，是 49。開根號，距離是 7。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}|PQ|&=\\sqrt{2^2+(-3)^2+6^2}\\\\&=\\sqrt{4+9+36}=\\sqrt{49}=7\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "36"
+            },
+            {
+              "do": "write",
+              "line": "　負號平方以後就不見了，所以誰減誰都可以",
+              "color": "violet",
+              "on": "開根"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "向量與單位向量",
+      "title": "向量：有方向的箭頭",
       "beats": [
-        { "show": ["$\\mathbf v=(a,b,c)$：往哪走、走多遠"],
-          "note": "不管從哪裡出發。$P$ 到 $Q$ 的向量是 $Q-P$。",
-          "say": "向量是一支箭頭，只記往哪個方向、走多遠，不管它從哪裡出發。",
+        {
+          "show": [
+            "從 $P$ 指到 $Q$ 的箭頭：終點減起點",
+            "$\\overrightarrow{PQ}=Q-P=(2,-3,6)$"
+          ],
+          "say": "從 P 指到 Q 的箭頭，叫做向量 P Q。它的分量是終點減起點：剛剛算過，是 2、負 3、6。",
           "board": [
-            {"do":"write","line":"$\\mathbf v=(a,b,c)$：往哪走、走多遠"},
-            {"do":"write","line":"$P\\to Q$ 的向量：$Q-P$","on":"不管"}
-          ] },
-        { "show": ["$|\\mathbf v|=\\sqrt{a^2+b^2+c^2}$"],
-          "say": "箭頭的長度，跟距離一樣：分量平方加起來再開根號。",
+            {
+              "do": "write",
+              "line": "從 $P$ 指到 $Q$ 的箭頭：終點減起點"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\overrightarrow{PQ}=Q-P=(2,-3,6)$",
+              "on": "分量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "向量只記「往哪走、走多遠」，不記從哪裡出發"
+          ],
+          "say": "向量只記錄往哪個方向走、走多遠，不記錄從哪裡出發。把箭頭平移，還是同一個向量。",
           "board": [
-            {"do":"write","line":"$|\\mathbf v|=\\sqrt{{{s:a^2+b^2+c^2}}}$"},
-            {"do":"underline","term":"s","label":"平方相加","on":"平方加起來"}
-          ] },
-        { "show": ["單位向量 $\\frac{\\mathbf v}{|\\mathbf v|}$"],
-          "note": "同方向、長度為 $1$。",
-          "say": "把向量除以自己的長度，方向不變，長度變成一。以後算方向導數，方向一定要先這樣處理。",
+            {
+              "do": "write",
+              "line": "向量只記「往哪走、走多遠」，不記從哪裡出發"
+            },
+            {
+              "do": "write",
+              "line": "　粗體 $\\mathbf v$ 表示向量；$\\mathbf v=(v_1,v_2,v_3)$",
+              "color": "violet",
+              "on": "從哪"
+            }
+          ]
+        },
+        {
+          "show": [
+            "長度：$|\\mathbf v|=\\sqrt{v_1^2+v_2^2+v_3^2}$"
+          ],
+          "say": "向量的長度，就是箭頭的長度：分量平方相加再開根號。P Q 的長度就是剛剛的距離 7。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"單位向量 ${{u:\\frac{\\mathbf v}{|\\mathbf v|}}}$","on":"除以自己"},
-            {"do":"write","line":"長度 $=1$","color":"green","on":"長度變成"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "長度：$|\\mathbf v|=\\sqrt{v_1^2+v_2^2+v_3^2}$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　加法、倍數都逐分量做：$(1,2,2)+(2,1,-2)=(3,3,0)$，$2(1,2,2)=(2,4,4)$",
+              "color": "violet",
+              "on": "開根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "單位向量：長度是 $1$ 的向量，只留下方向"
+          ],
+          "say": "長度剛好是 1 的向量叫做單位向量。它只保留方向這個資訊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "單位向量：長度是 $1$ 的向量，只留下方向"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法：除以自己的長度",
+            "$\\frac{\\mathbf v}{|\\mathbf v|}=\\frac{(2,-3,6)}{7}=\\Big(\\frac27,-\\frac37,\\frac67\\Big)$"
+          ],
+          "say": "做法是除以自己的長度。2、負 3、6 長度是 7，每個分量除以 7，就是單位向量。驗算：平方加起來是 49 分之 49，長度確實是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做法：除以自己的長度"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{\\mathbf v}{|\\mathbf v|}=\\frac{(2,-3,6)}{7}=\\Big(\\frac27,-\\frac37,\\frac67\\Big)}}$",
+              "on": "長度#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$\\frac{4+9+36}{49}=1$",
+              "color": "violet",
+              "on": "49#1"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "內積",
+      "title": "內積：方向有多一致",
       "beats": [
-        { "show": ["$\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3$"],
-          "note": "結果是一個數，不是向量。",
-          "say": "內積就是對應的分量相乘，再全部加起來。算出來是一個數，不是向量。",
+        {
+          "show": [
+            "$\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3$"
+          ],
+          "say": "內積的算法很簡單：對應的分量相乘，再全部加起來。結果是一個數，不是向量。",
           "board": [
-            {"do":"write","line":"$\\mathbf u\\cdot\\mathbf v={{s:u_1v_1+u_2v_2+u_3v_3}}$"},
-            {"do":"underline","term":"s","label":"一個數","on":"算出來是"}
-          ] },
-        { "show": ["$\\mathbf u\\cdot\\mathbf v=|\\mathbf u||\\mathbf v|\\cos\\theta$"],
-          "say": "它跟夾角有關：等於兩個長度相乘，再乘上夾角 theta 的 cosine。推導在全文。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "全部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它其實在量：兩個方向有多一致",
+            "$\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta$"
+          ],
+          "say": "它的意義是：內積等於兩個長度相乘，再乘上夾角西塔的餘弦。方向越一致，餘弦越大，內積越大。",
           "board": [
-            {"do":"write","line":"$\\mathbf u\\cdot\\mathbf v=|\\mathbf u||\\mathbf v|{{c:\\cos\\theta}}$"},
-            {"do":"focus","term":"c","label":"夾角","on":"夾角 theta"}
-          ] },
-        { "show": ["餘弦定理 → 比較兩式","直覺：三角形 $\\mathbf u,\\mathbf v,\\mathbf u-\\mathbf v$"],
-          "note": "完整推導在全文的折疊段落。",
-          "say": "u、v 和 u 減 v 圍成三角形。餘弦定理有個 cosine 項，內積展開有二倍內積，兩邊比一比就得到公式。",
+            {
+              "do": "write",
+              "line": "它其實在量：兩個方向有多一致"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta}}$",
+              "color": "red",
+              "on": "相乘"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "向越"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 同方向（$\\theta<90^\\circ$）：內積 $>0$",
+            "• 垂直（$\\theta=90^\\circ$）：內積 $=0$"
+          ],
+          "say": "所以看正負號就知道：夾角小於 90 度，內積是正的；剛好垂直，內積是 0；大於 90 度，內積是負的。",
           "board": [
-            {"do":"write","line":"${{k:|\\mathbf u-\\mathbf v|^2}}=|\\mathbf u|^2+|\\mathbf v|^2-2|\\mathbf u||\\mathbf v|\\cos\\theta$"},
-            {"do":"write","line":"${{k:|\\mathbf u-\\mathbf v|^2}}=|\\mathbf u|^2+|\\mathbf v|^2-{{t:2\\,\\mathbf u\\cdot\\mathbf v}}$","on":"內積展開"},
-            {"do":"underline","term":"t","color":"gold","label":"比較","on":"比一比"}
-          ] },
-        { "show": ["$>0$ 銳角，$<0$ 鈍角，$=0$ 垂直"],
-          "note": "垂直的判斷：兩個都不是零向量。",
-          "say": "所以內積是正的，夾角是銳角；負的是鈍角；剛好是零，兩個向量垂直。",
+            {
+              "do": "write",
+              "line": "• 同方向（$\\theta<90^\\circ$）：內積 $>0$"
+            },
+            {
+              "do": "write",
+              "line": "• 垂直（$\\theta=90^\\circ$）：內積 $=0$",
+              "on": "內積#1"
+            },
+            {
+              "do": "write",
+              "line": "• 反方向（$\\theta>90^\\circ$）：內積 $<0$",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例題：$\\mathbf a=(1,2,2)$、$\\mathbf b=(2,1,-2)$",
+            "$\\mathbf a\\cdot\\mathbf b=2+2-4=0\\ \\Rightarrow\\ \\mathbf a\\perp\\mathbf b$"
+          ],
+          "say": "例題：a 是 1、2、2，b 是 2、1、負 2。內積是 2 加 2 減 4，等於 0，所以 a 和 b 垂直。",
           "board": [
-            {"do":"write","line":"${{p:>0}}$ 銳角，${{m:<0}}$ 鈍角，${{z:=0}}$ 垂直","on":"內積是正的"},
-            {"do":"focus","term":"z","color":"green","on":"剛好是零"}
-          ] },
-        { "show": ["長度恆正，$\\cos\\theta$ 決定正負"],
-          "note": "夾角小於直角時 $\\cos\\theta>0$。",
-          "say": "長度一定是正的，所以內積的正負，就看 cosine theta。銳角的 cosine 是正的，鈍角是負的，直角是零。",
+            {
+              "do": "write",
+              "line": "例題：$\\mathbf a=(1,2,2)$、$\\mathbf b=(2,1,-2)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\mathbf a\\cdot\\mathbf b=2+2-4=0\\ \\Rightarrow\\ \\mathbf a\\perp\\mathbf b}}$",
+              "on": "內積"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "夾角：$\\mathbf a$ 與 $\\mathbf c=(1,1,0)$"
+          ],
+          "say": "再求 a 和 c 的夾角，c 是 1、1、0。",
           "board": [
-            {"do":"write","line":"$|\\mathbf u||\\mathbf v|>0$，正負看 ${{c2:\\cos\\theta}}$"},
-            {"do":"focus","term":"c2","color":"gold","label":"決定正負","on":"cosine theta"}
-          ] },
-        { "show": ["$(1,2,2)\\cdot(2,1,-2)=2+2-4=0$"],
-          "note": "內積為 $0$：垂直，不用算長度。",
-          "say": "試一組：一乘二、二乘一、二乘負二，加起來是零，所以這兩個向量垂直。",
+            {
+              "do": "write",
+              "line": "夾角：$\\mathbf a$ 與 $\\mathbf c=(1,1,0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|\\mathbf a|=\\sqrt{1+4+4}=3$，$|\\mathbf c|=\\sqrt2$，$\\mathbf a\\cdot\\mathbf c=1+2+0=3$"
+          ],
+          "say": "a 的長度是 3，c 的長度是根號 2，內積是 1 加 2 加 0，等於 3。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$(1,2,2)\\cdot(2,1,-2)=2+2-4={{r:0}}$","on":"一乘二"},
-            {"do":"focus","term":"r","color":"green","label":"垂直","on":"加起來是零"}
-          ] }
+            {
+              "do": "write",
+              "line": "$|\\mathbf a|=\\sqrt{1+4+4}=3$，$|\\mathbf c|=\\sqrt2$，$\\mathbf a\\cdot\\mathbf c=1+2+0=3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\cos\\theta=\\frac{3}{3\\sqrt2}=\\frac{1}{\\sqrt2}\\ \\Rightarrow\\ \\theta=\\frac\\pi4$"
+          ],
+          "say": "餘弦西塔等於內積除以兩個長度，3 除以 3 根號 2，是根號 2 分之 1，所以夾角是 4 分之派，也就是 45 度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\cos\\theta=\\frac{3}{3\\sqrt2}=\\frac{1}{\\sqrt2}\\ \\Rightarrow\\ \\theta=\\frac\\pi4}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "【為什麼】內積與夾角",
+      "beats": [
+        {
+          "show": [
+            "先看：$\\mathbf v\\cdot\\mathbf v=v_1^2+v_2^2+v_3^2=|\\mathbf v|^2$"
+          ],
+          "say": "為什麼內積會跟夾角有關？先看一個向量跟自己的內積，就是分量平方相加，也就是長度的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先看：$\\mathbf v\\cdot\\mathbf v=v_1^2+v_2^2+v_3^2=|\\mathbf v|^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，u 和 v 從同一點出發，夾角西塔；連接兩個箭頭尖端的綠線，就是 u 減 v。三條邊圍成一個三角形。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"r3dot\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ar3dot\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ar3dotblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ar3dotred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ar3dotgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ar3dotpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ar3dotink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8ar3dot30\"><rect x=\"101.3\" y=\"16\" width=\"423.3\" height=\"254\"/></clipPath><g clip-path=\"url(#cl8ar3dot30)\"></g><line x1=\"137.6\" y1=\"233.7\" x2=\"464.2\" y2=\"179.3\" stroke=\"var(--blue)\" stroke-width=\"3.2\" marker-end=\"url(#ah8ar3dotblue)\"/><line x1=\"137.6\" y1=\"233.7\" x2=\"258.6\" y2=\"52.3\" stroke=\"var(--red)\" stroke-width=\"3.2\" marker-end=\"url(#ah8ar3dotred)\"/><line x1=\"258.6\" y1=\"52.3\" x2=\"460\" y2=\"175.7\" stroke=\"var(--green)\" stroke-width=\"3\" stroke-dasharray=\"8 7\"/><path d=\"M191.3 224.8L191.3 224.6L191.2 224.4L191.2 224.2L191.2 224L191.1 223.9L191.1 223.7L191.1 223.5L191 223.3L191 223.1L191 222.9L190.9 222.8L190.9 222.6L190.9 222.4L190.8 222.2L190.8 222L190.7 221.9L190.7 221.7L190.7 221.5L190.6 221.3L190.6 221.1L190.5 221L190.5 220.8L190.4 220.6L190.4 220.4L190.4 220.2L190.3 220.1L190.3 219.9L190.2 219.7L190.2 219.5L190.1 219.3L190.1 219.2L190 219L190 218.8L189.9 218.6L189.9 218.4L189.8 218.3L189.8 218.1L189.7 217.9L189.6 217.7L189.6 217.6L189.5 217.4L189.5 217.2L189.4 217L189.4 216.8L189.3 216.7L189.3 216.5L189.2 216.3L189.1 216.1L189.1 216L189 215.8L189 215.6L188.9 215.4L188.8 215.3L188.8 215.1L188.7 214.9L188.6 214.7L188.6 214.6L188.5 214.4L188.4 214.2L188.4 214.1L188.3 213.9L188.2 213.7L188.2 213.5L188.1 213.4L188 213.2L188 213L187.9 212.8L187.8 212.7L187.7 212.5L187.7 212.3L187.6 212.2L187.5 212L187.5 211.8L187.4 211.7L187.3 211.5L187.2 211.3L187.1 211.1L187.1 211L187 210.8L186.9 210.6L186.8 210.5L186.8 210.3L186.7 210.1L186.6 210L186.5 209.8L186.4 209.6L186.4 209.5L186.3 209.3L186.2 209.1L186.1 209L186 208.8L185.9 208.6L185.8 208.5L185.8 208.3L185.7 208.2L185.6 208L185.5 207.8L185.4 207.7L185.3 207.5L185.2 207.3L185.1 207.2L185.1 207L185 206.9L184.9 206.7L184.8 206.5L184.7 206.4L184.6 206.2L184.5 206.1L184.4 205.9L184.3 205.7L184.2 205.6L184.1 205.4L184 205.3L183.9 205.1L183.8 204.9L183.7 204.8L183.6 204.6L183.5 204.5L183.4 204.3L183.3 204.2L183.2 204L183.1 203.9L183 203.7L182.9 203.5L182.8 203.4L182.7 203.2L182.6 203.1L182.5 202.9L182.4 202.8L182.3 202.6L182.2 202.5L182.1 202.3L182 202.2L181.9 202L181.8 201.9L181.6 201.7L181.5 201.6L181.4 201.4L181.3 201.3L181.2 201.1L181.1 201L181 200.8L180.9 200.7L180.8 200.5L180.6 200.4L180.5 200.2L180.4 200.1L180.3 199.9L180.2 199.8L180.1 199.7L180 199.5L179.8 199.4L179.7 199.2L179.6 199.1L179.5 198.9L179.4 198.8L179.2 198.6L179.1 198.5L179 198.4L178.9 198.2L178.8 198.1L178.6 197.9L178.5 197.8L178.4 197.7L178.3 197.5L178.2 197.4L178 197.3L177.9 197.1L177.8 197L177.7 196.8L177.5 196.7L177.4 196.6L177.3 196.4L177.1 196.3L177 196.2L176.9 196L176.8 195.9L176.6 195.8L176.5 195.6L176.4 195.5L176.2 195.4L176.1 195.2L176 195.1L175.9 195L175.7 194.8L175.6 194.7L175.5 194.6L175.3 194.5L175.2 194.3L175.1 194.2L174.9 194.1L174.8 193.9L174.6 193.8L174.5 193.7L174.4 193.6L174.2 193.4L174.1 193.3L174 193.2L173.8 193.1L173.7 192.9L173.5 192.8L173.4 192.7L173.3 192.6L173.1 192.5L173 192.3L172.8 192.2L172.7 192.1L172.6 192L172.4 191.9L172.3 191.7L172.1 191.6L172 191.5L171.8 191.4L171.7 191.3L171.6 191.2L171.4 191L171.3 190.9L171.1 190.8L171 190.7L170.8 190.6L170.7 190.5L170.5 190.4L170.4 190.3L170.2 190.1L170.1 190L169.9 189.9L169.8 189.8L169.6 189.7L169.5 189.6L169.3 189.5L169.2 189.4L169 189.3L168.9 189.2L168.7 189.1L168.6 188.9L168.4 188.8L168.3 188.7L168.1 188.6L168 188.5L167.8 188.4\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"137.6\" cy=\"233.7\" r=\"4\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"331.1\" y=\"233.5\" text-anchor=\"middle\" fill=\"var(--blue)\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u</text><text x=\"180.1\" y=\"143\" text-anchor=\"middle\" fill=\"var(--red)\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">v</text><text x=\"397.4\" y=\"108.8\" text-anchor=\"middle\" fill=\"var(--green)\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">u − v</text><text x=\"205.1\" y=\"201.4\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">θ</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "餘弦定理：",
+            "$|\\mathbf u-\\mathbf v|^2=|\\mathbf u|^2+|\\mathbf v|^2-2|\\mathbf u||\\mathbf v|\\cos\\theta$"
+          ],
+          "say": "對這個三角形用餘弦定理：第三邊的平方，等於兩邊平方和，減掉 2 倍兩邊乘積乘餘弦西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "餘弦定理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |\\mathbf u-\\mathbf v|^2=|\\mathbf u|^2+|\\mathbf v|^2-2|\\mathbf u||\\mathbf v|\\cos\\theta$",
+              "on": "兩邊#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用內積展開左邊（像乘法一樣分配）：",
+            "$\\begin{aligned}|\\mathbf u-\\mathbf v|^2&=(\\mathbf u-\\mathbf v)\\cdot(\\mathbf u-\\mathbf v)\\\\&=|\\mathbf u|^2-2\\,\\mathbf u\\cdot\\mathbf v+|\\mathbf v|^2\\end{aligned}$"
+          ],
+          "say": "另一方面，左邊是 u 減 v 跟自己的內積。內積可以像乘法一樣展開，得到 u 長度平方，減 2 倍 u 點 v，加 v 長度平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用內積展開左邊（像乘法一樣分配）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}|\\mathbf u-\\mathbf v|^2&=(\\mathbf u-\\mathbf v)\\cdot(\\mathbf u-\\mathbf v)\\\\&=|\\mathbf u|^2-2\\,\\mathbf u\\cdot\\mathbf v+|\\mathbf v|^2\\end{aligned}}$",
+              "on": "內積#2"
+            },
+            {
+              "do": "write",
+              "line": "　分配律、交換律逐分量就看得出來，例如 $\\mathbf u\\cdot\\mathbf v=\\mathbf v\\cdot\\mathbf u$",
+              "color": "violet",
+              "on": "長度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩式比較，$|\\mathbf u|^2$、$|\\mathbf v|^2$ 消掉：",
+            "$\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta\\qquad\\blacksquare$"
+          ],
+          "say": "兩個式子比較，長度平方的項都消掉，剩下 u 點 v 等於兩個長度乘餘弦西塔。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩式比較，$|\\mathbf u|^2$、$|\\mathbf v|^2$ 消掉："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta\\qquad\\blacksquare}}$",
+              "color": "red",
+              "on": "消掉"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "兩個#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "哪一個向量跟 $(3,-1,2)$ 垂直？"
+          ],
+          "say": "試一題：用內積判斷，哪一個跟 3、負 1、2 垂直？三個分量都要乘，不能漏掉任何一項。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "算夾角",
+      "title": "平面：一支垂直的箭頭",
       "beats": [
-        { "show": ["$\\mathbf a=(1,2,2)$、$\\mathbf c=(2,2,1)$"],
-          "say": "再看 a 和 c 的夾角，要的是夾角的 cosine。",
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "空間中的平面怎麼描述？只要兩樣東西：平面上的一個點 P 0，和一支跟平面垂直的箭頭 n，叫做法向量。",
           "board": [
-            {"do":"write","line":"$\\mathbf a=(1,2,2)$、$\\mathbf c=(2,2,1)$"},
-            {"do":"write","line":"要的是 $\\cos\\theta$","on":"要的是"}
-          ] },
-        { "show": ["$\\mathbf a\\cdot\\mathbf c=2+4+2=8$"],
-          "say": "先算內積：二加四加二，等於八。是正的，所以夾角是銳角。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"r3plane\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8ar3plane\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8ar3planeblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8ar3planered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8ar3planegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8ar3planepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8ar3planeink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"250\" y1=\"312\" x2=\"176\" y2=\"361\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3planeink)\"/><line x1=\"250\" y1=\"312\" x2=\"521.9\" y2=\"351.2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3planeink)\"/><line x1=\"250\" y1=\"312\" x2=\"250\" y2=\"45.7\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8ar3planeink)\"/><text x=\"166.1\" y=\"378.9\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"548.2\" y=\"361.5\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"250\" y=\"26.4\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><polygon points=\"161.3,256.7 323,319.6 477.7,136.1 316,73.2\" fill=\"var(--blue)\" fill-opacity=\"0.2\" stroke=\"var(--blue)\" stroke-width=\"1.8\"/><line x1=\"319.5\" y1=\"196.4\" x2=\"402.6\" y2=\"167.8\" stroke=\"var(--green)\" stroke-width=\"3\" marker-end=\"url(#ah8ar3planegreen)\"/><line x1=\"319.5\" y1=\"196.4\" x2=\"255.3\" y2=\"142.4\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8ar3planered)\"/><circle cx=\"319.5\" cy=\"196.4\" r=\"5.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><circle cx=\"402.6\" cy=\"167.8\" r=\"4.5\" fill=\"var(--green)\" stroke=\"var(--green)\" stroke-width=\"2.2\"/><text x=\"309.5\" y=\"222.4\" text-anchor=\"end\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P₀</text><text x=\"414.6\" y=\"171.8\" text-anchor=\"start\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</text><text x=\"269.3\" y=\"146.4\" text-anchor=\"start\" fill=\"var(--red)\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P$ 在平面上 ⇔ $\\overrightarrow{P_0P}$ 躺在平面裡 ⇔ 跟 $\\mathbf n$ 垂直"
+          ],
+          "say": "一個點 P 在平面上，等於說從 P 0 到 P 的箭頭躺在平面裡，也就是跟法向量 n 垂直。",
           "board": [
-            {"do":"write","line":"$\\mathbf a\\cdot\\mathbf c=2+4+2={{d:8}}$"},
-            {"do":"focus","term":"d","label":"正的：銳角","on":"是正的"}
-          ] },
-        { "show": ["$|\\mathbf a|=\\sqrt{1+4+4}=3$，$|\\mathbf c|=3$"],
-          "say": "兩個長度都是根號九，也就是三。",
+            {
+              "do": "write",
+              "line": "$P$ 在平面上 ⇔ $\\overrightarrow{P_0P}$ 躺在平面裡 ⇔ 跟 $\\mathbf n$ 垂直"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf n\\cdot\\overrightarrow{P_0P}=0$"
+          ],
+          "say": "垂直就是內積等於 0。這就是平面的方程式。",
           "board": [
-            {"do":"write","line":"$|\\mathbf a|=\\sqrt{1+4+4}={{l:3}}$，$|\\mathbf c|=3$"},
-            {"do":"focus","term":"l","on":"也就是三"}
-          ] },
-        { "show": ["$\\cos\\theta=\\frac{\\mathbf a\\cdot\\mathbf c}{|\\mathbf a||\\mathbf c|}$"],
-          "note": "把內積公式兩邊除以兩個長度。",
-          "say": "內積等於兩個長度乘 cosine theta，兩邊除以長度乘積，就得到 cosine theta。代入八、三、三。",
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\mathbf n\\cdot\\overrightarrow{P_0P}=0}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "這就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf n=(a,b,c)$、$P_0=(x_0,y_0,z_0)$，展開：",
+            "$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$"
+          ],
+          "say": "把 n 寫成 a、b、c，內積展開：a 乘 x 減 x 0，加 b 乘 y 減 y 0，加 c 乘 z 減 z 0，等於 0。",
           "board": [
-            {"do":"write","line":"$\\cos\\theta=\\frac{{{n1:\\mathbf a\\cdot\\mathbf c}}}{{{n2:|\\mathbf a||\\mathbf c|}}}$"},
-            {"do":"underline","term":"n2","color":"blue","label":"兩個長度","on":"長度乘積"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\mathbf n=(a,b,c)$、$P_0=(x_0,y_0,z_0)$，展開："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a(x-x_0)+b(y-y_0)+c(z-z_0)=0$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "整理成 $ax+by+cz=d$：係數就是法向量"
+          ],
+          "say": "整理以後是 a x 加 b y 加 c z 等於 d。重點是：x、y、z 前面的係數，就是法向量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "整理成 $ax+by+cz=d$：係數就是法向量",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "讀法向量：$3x-2y+z=5$ 的 $\\mathbf n=(3,-2,1)$"
+          ],
+          "say": "所以看到 3x 減 2y 加 z 等於 5，馬上讀出法向量是 3、負 2、1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "讀法向量：$3x-2y+z=5$ 的 $\\mathbf n=(3,-2,1)$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例題：寫出平面",
+      "beats": [
+        {
+          "show": [
+            "過 $(1,2,3)$、法向量 $\\mathbf n=(2,-1,2)$：",
+            "$2(x-1)-(y-2)+2(z-3)=0$"
+          ],
+          "say": "例題：過 1、2、3，法向量 2、負 1、2。直接套：2 乘 x 減 1，減 y 減 2，加 2 乘 z 減 3，等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "過 $(1,2,3)$、法向量 $\\mathbf n=(2,-1,2)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2(x-1)-(y-2)+2(z-3)=0$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2x-y+2z=2-2+6=6$"
+          ],
+          "say": "常數搬到右邊：2 減 2 加 6，等於 6。平面是 2x 減 y 加 2z 等於 6。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle 2x-y+2z=2-2+6=6}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "red",
+              "on": "等於#1"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：代 $(1,2,3)$，$2-2+6=6$",
+              "color": "violet",
+              "on": "2z"
+            }
+          ]
+        }
       ],
-      "key": "$\\cos\\theta$ 是內積除以兩個長度",
       "predict": {
-        "ask": "$\\cos\\theta$ 是？",
+        "ask": "平面 $2x-y+2z=6$ 和 $x+2y=4$ 的關係是？",
         "options": [
           {
-            "label": "$\\frac{8}{9}$",
+            "label": "互相平行",
+            "why": "平行要法向量成倍數；$(2,-1,2)$ 和 $(1,2,0)$ 不是"
+          },
+          {
+            "label": "互相垂直",
             "correct": true
           },
           {
-            "label": "$\\frac{8}{3}$",
-            "why": "只除了一個長度。要除以兩個長度的乘積 $3\\cdot3=9$。"
-          },
-          {
-            "label": "$8$",
-            "why": "$8$ 是內積；$\\cos\\theta$ 還要除以 $|\\mathbf a||\\mathbf c|$。"
+            "label": "第二個不是平面，少了 $z$",
+            "why": "少了 $z$ 只是 $c=0$：法向量 $(1,2,0)$，是一個直立的平面"
           }
         ]
       }
     },
     {
-      "title": "用法向量寫平面",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\mathbf n\\cdot(P-P_0)=0$"],
-          "note": "平面上任一點 $P$，$P-P_0$ 都和 $\\mathbf n$ 垂直。",
-          "say": "平面怎麼決定？給一個點，再給一支跟平面垂直的箭頭 n，叫法向量。",
+        {
+          "show": [
+            "• 距離：座標相減、平方、相加、開根號",
+            "• 單位向量：$\\dfrac{\\mathbf v}{|\\mathbf v|}$"
+          ],
+          "say": "整理一下：空間中的距離多一項 z；除以長度得到單位向量；內積是分量相乘相加，也等於長度乘長度乘餘弦，所以內積是零就垂直；平面的係數就是法向量。",
           "board": [
-            {"do":"write","line":"${{n:\\mathbf n}}\\cdot(P-P_0)=0$","tint":{"n":"blue"},"on":"給一個點"},
-            {"do":"focus","term":"n","color":"blue","label":"法向量","on":"叫法向量"}
-          ] },
-        { "show": ["垂直 $\\Leftrightarrow$ 在平面上"],
-          "note": "垂直 n 的箭頭鋪成一個平面。",
-          "say": "直覺是這樣：從 P0 出發，所有跟 n 垂直的箭頭，剛好鋪成一個平面。P 在平面上，箭頭 P 減 P0 就貼在平面裡，所以垂直 n。",
+            {
+              "do": "write",
+              "line": "• 距離：座標相減、平方、相加、開根號"
+            },
+            {
+              "do": "write",
+              "line": "• 單位向量：$\\dfrac{\\mathbf v}{|\\mathbf v|}$",
+              "on": "除以"
+            },
+            {
+              "do": "write",
+              "line": "• 內積：$\\mathbf u\\cdot\\mathbf v=u_1v_1+u_2v_2+u_3v_3=|\\mathbf u||\\mathbf v|\\cos\\theta$",
+              "on": "內積#1"
+            },
+            {
+              "do": "write",
+              "line": "• 垂直 ⇔ 內積 $=0$",
+              "on": "度乘#1"
+            },
+            {
+              "do": "write",
+              "line": "• 平面 $ax+by+cz=d$：法向量 $(a,b,c)$",
+              "on": "就垂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：二變數函數"
+          ],
+          "say": "下一課，我們在平面上定義函數：兩個輸入、一個輸出。",
           "board": [
-            {"do":"write","line":"${{pp:P-P_0}}\\perp\\mathbf n$ ⟺ $P$ 在平面上"},
-            {"do":"underline","term":"pp","color":"gold","on":"貼在平面裡"}
-          ] },
-        { "show": ["不在平面上：$\\mathbf n\\cdot(P-P_0)\\ne0$"],
-          "note": "偏上或偏下，內積就不是零。",
-          "say": "反過來，P 如果偏到平面上方或下方，箭頭就不垂直於 n，內積不會是零。所以只有平面上的點，剛好滿足這條式子。",
-          "board": [
-            {"do":"write","line":"$P$ 離開平面：${{ne:\\mathbf n\\cdot(P-P_0)\\ne0}}$","on":"偏到"},
-            {"do":"focus","term":"ne","color":"red","on":"不會是零"}
-          ] },
-        { "show": ["$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$"],
-          "say": "把垂直寫成內積等於零，展開就是這條式子。",
-          "board": [
-            {"do":"write","line":"$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$","on":"展開"}
-          ] },
-        { "show": ["過 $(1,2,3)$、$\\mathbf n=(2,-1,2)$","$2(x-1)-(y-2)+2(z-3)=0$"],
-          "say": "例如過點一、二、三，法向量二、負一、二，直接代進去。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"過 $(1,2,3)$、$\\mathbf n={{nv:(2,-1,2)}}$","tint":{"nv":"blue"},"on":"例如過點"},
-            {"do":"write","line":"$2(x-1)-(y-2)+2(z-3)=0$","on":"直接代"}
-          ] },
-        { "show": ["$2x-y+2z=6$"],
-          "note": "反過來：$x$、$y$、$z$ 的係數就是法向量。",
-          "say": "展開整理成二 x 減 y 加二 z 等於六。反過來讀，係數就是法向量，右邊的六不算。",
-          "board": [
-            {"do":"transform","line":"$2x-y+2z={{six:6}}$"},
-            {"do":"write","line":"係數 ${{nv:(2,-1,2)}}$ ＝ 法向量","on":"反過來讀"},
-            {"do":"focus","term":"six","label":"不算","on":"右邊的六"}
-          ] }
-      ],
-      "key": "平面上任一向量都與 $\\mathbf n$ 垂直",
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：二變數函數"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["vector", "dot-product", "plane", "multivariable"],
-    "fine": ["r3-distance", "vector-unit", "vector-dot-angle", "vector-perpendicular", "plane-normal-equation"]
+    "coarse": [
+      "vector",
+      "dot-product",
+      "plane",
+      "multivariable"
+    ],
+    "fine": [
+      "r3-distance",
+      "vector-unit",
+      "vector-dot-angle",
+      "vector-perpendicular",
+      "plane-normal-equation"
+    ]
   },
   "practice": [
-    { "id": "lec-16-m1", "core": true, "trains": "vector-dot-angle" },
-    { "id": "lec-16-q1d", "core": true, "trains": "plane-normal-equation", "note": "兩平面的夾角就是兩個法向量的夾角（取銳角）。" },
-    { "id": "lec-16-q1b", "core": true, "trains": "plane-normal-equation", "note": "垂直於平面的直線，方向就是法向量；把直線代入平面解 $t$。" },
-    { "id": "cg-8a-001", "core": true, "trains": "r3-distance" },
-    { "id": "cg-8a-003", "core": true, "trains": "vector-perpendicular" },
-    { "id": "cg-8a-005", "core": true, "trains": "vector-unit" },
-    { "id": "lec-16-m3", "trains": "plane-normal-equation", "note": "設平面 $ax+by+cz=d$，三點代進去，用 $d$ 表示 $a$、$b$、$c$，再挑一個讓係數都是整數的 $d$。" },
-    { "id": "cg-8a-002", "trains": "r3-distance" },
-    { "id": "cg-8a-004", "trains": "vector-perpendicular" },
-    { "id": "lec-16-q1a", "challenge": true, "trains": "plane-normal-equation", "note": "挑戰：從 $Q$ 沿法向量走到平面，走過的長度就是距離（接上一題的 $t$）。" }
+    {
+      "id": "lec-16-m1",
+      "core": true,
+      "trains": "vector-dot-angle"
+    },
+    {
+      "id": "lec-16-q1d",
+      "core": true,
+      "trains": "plane-normal-equation",
+      "note": "兩平面的夾角就是兩個法向量的夾角（取銳角）。"
+    },
+    {
+      "id": "lec-16-q1b",
+      "core": true,
+      "trains": "plane-normal-equation",
+      "note": "垂直於平面的直線，方向就是法向量；把直線代入平面解 $t$。"
+    },
+    {
+      "id": "cg-8a-001",
+      "core": true,
+      "trains": "r3-distance"
+    },
+    {
+      "id": "cg-8a-003",
+      "core": true,
+      "trains": "vector-perpendicular"
+    },
+    {
+      "id": "cg-8a-005",
+      "core": true,
+      "trains": "vector-unit"
+    },
+    {
+      "id": "lec-16-m3",
+      "trains": "plane-normal-equation",
+      "note": "設平面 $ax+by+cz=d$，三點代進去，用 $d$ 表示 $a$、$b$、$c$，再挑一個讓係數都是整數的 $d$。"
+    },
+    {
+      "id": "cg-8a-002",
+      "trains": "r3-distance"
+    },
+    {
+      "id": "cg-8a-004",
+      "trains": "vector-perpendicular"
+    },
+    {
+      "id": "lec-16-q1a",
+      "challenge": true,
+      "trains": "plane-normal-equation",
+      "note": "挑戰：從 $Q$ 沿法向量走到平面，走過的長度就是距離（接上一題的 $t$）。"
+    }
   ],
   "gaps": []
 }

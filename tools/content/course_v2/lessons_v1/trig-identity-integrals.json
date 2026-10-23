@@ -1,0 +1,384 @@
+{
+  "id": "trig-identity-integrals",
+  "title": "用三角恆等式積分",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["trig-integral-tan-sec", "trig-identities"],
+  "next": ["trig-sub-a2-minus-x2"],
+  "related": ["trig-integral-sin-cos", "indeterminate-other"],
+  "objectives": [
+    "會用積化和差積 $\\sin mx\\cos nx$、$\\sin mx\\sin nx$、$\\cos mx\\cos nx$。",
+    "會用 $\\sin^2+\\cos^2=1$ 處理 $\\frac{1}{1\\pm\\sin x}$ 這類分母。",
+    "會用半角公式把 $\\sqrt{1\\pm\\cos x}$ 的根號拿掉，並注意絕對值。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 這一課在做什麼",
+      "body": [
+        "前兩課的被積函數都是同一個角的 $\\sin$、$\\cos$、$\\tan$、$\\sec$ 的次方。這一課處理其他形狀：角度不同的乘積、分母有 $1\\pm\\sin x$、根號裡有 $1\\pm\\cos x$。共同的做法是：先用恆等式把它改寫成已經會積的樣子。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 角度不同的乘積：積化和差",
+      "body": [
+        "$\\sin 3x\\cos 2x$ 不能用「留一個當 $du$」，因為角度不同。用積化和差把乘積拆成兩個單一的三角函數："
+      ],
+      "tex": [
+        "\\sin A\\cos B=\\tfrac12\\big[\\sin(A-B)+\\sin(A+B)\\big]",
+        "\\sin A\\sin B=\\tfrac12\\big[\\cos(A-B)-\\cos(A+B)\\big],\\qquad \\cos A\\cos B=\\tfrac12\\big[\\cos(A-B)+\\cos(A+B)\\big]"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一個整週期上的結果",
+      "body": [
+        "$m$、$n$ 是正整數且 $m\\ne n$ 時，$\\int_0^{2\\pi}\\sin mx\\sin nx\\,dx=0$：積化和差後是 $\\cos((m-n)x)$ 與 $\\cos((m+n)x)$，各自在整數個週期上積分都是 $0$。$m=n$ 時，$\\sin^2 mx=\\frac{1-\\cos 2mx}{2}$，積出 $\\pi$。",
+        "這個「不同頻率相乘、整週期積分為 $0$」的性質，是之後把函數拆成正弦波的基礎。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 分母是 $1+\\sin x$：同乘 $1-\\sin x$",
+      "body": [
+        "$\\frac{1}{1+\\sin x}$ 的分子分母同乘 $1-\\sin x$，分母變成 $1-\\sin^2 x=\\cos^2 x$：$\\frac{1}{1+\\sin x}=\\frac{1-\\sin x}{\\cos^2 x}=\\sec^2 x-\\sec x\\tan x$。兩項都在表上。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 根號裡有 $1\\pm\\cos x$：半角，然後看正負",
+      "body": [
+        "$1+\\cos x=2\\cos^2\\frac{x}{2}$，所以 $\\sqrt{1+\\cos x}=\\sqrt{2}\\left|\\cos\\frac{x}{2}\\right|$。√(平方) 是絕對值，要看區間決定正負：在 $[0,\\pi]$ 上 $\\frac{x}{2}\\in[0,\\frac{\\pi}{2}]$，$\\cos\\frac{x}{2}\\ge 0$，絕對值可以拿掉。",
+        "同理 $1-\\cos x=2\\sin^2\\frac{x}{2}$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "積化和差",
+      "prompt": "$\\int\\sin 3x\\cos 2x\\,dx$",
+      "steps": [
+        "$\\sin 3x\\cos 2x=\\frac{1}{2}[\\sin x+\\sin 5x]$（$A-B=x$，$A+B=5x$）。",
+        "$\\int\\frac{1}{2}\\sin x\\,dx=-\\frac{1}{2}\\cos x$；$\\int\\frac{1}{2}\\sin 5x\\,dx=-\\frac{1}{10}\\cos 5x$。",
+        "答案：$-\\frac{1}{2}\\cos x-\\frac{1}{10}\\cos 5x+C$。"
+      ],
+      "answer": "$-\\frac{1}{2}\\cos x-\\frac{1}{10}\\cos 5x+C$",
+      "claim": "(sin(x)+sin(5*x))/2 == sin(3*x)*cos(2*x) ;; D(-cos(x)/2-cos(5*x)/10) == sin(3*x)*cos(2*x)"
+    },
+    {
+      "title": "分母 $1+\\sin x$",
+      "prompt": "$\\int\\frac{1}{1+\\sin x}\\,dx$",
+      "steps": [
+        "同乘 $\\frac{1-\\sin x}{1-\\sin x}$：$\\frac{1-\\sin x}{1-\\sin^2 x}=\\frac{1-\\sin x}{\\cos^2 x}$。",
+        "拆開：$\\frac{1}{\\cos^2 x}-\\frac{\\sin x}{\\cos^2 x}=\\sec^2 x-\\sec x\\tan x$。",
+        "$\\int=\\tan x-\\sec x+C$。"
+      ],
+      "answer": "$\\tan x-\\sec x+C$",
+      "claim": "D(tan(x)-sec(x)) == 1/(1+sin(x))"
+    },
+    {
+      "title": "根號與絕對值",
+      "prompt": "$\\int_0^{\\pi}\\sqrt{1+\\cos x}\\,dx$",
+      "steps": [
+        "$1+\\cos x=2\\cos^2\\frac{x}{2}$，所以 $\\sqrt{1+\\cos x}=\\sqrt{2}\\left|\\cos\\frac{x}{2}\\right|$。",
+        "$x\\in[0,\\pi]$ 時 $\\frac{x}{2}\\in[0,\\frac{\\pi}{2}]$，$\\cos\\frac{x}{2}\\ge 0$，絕對值拿掉。",
+        "$\\sqrt{2}\\int_0^{\\pi}\\cos\\frac{x}{2}\\,dx=\\sqrt{2}\\left[2\\sin\\frac{x}{2}\\right]_0^{\\pi}=\\sqrt{2}\\cdot 2\\cdot 1=2\\sqrt{2}$。"
+      ],
+      "answer": "$2\\sqrt{2}$",
+      "claim": "INT(sqrt(1+cos(x)),0,pi) == 2*sqrt(2)"
+    }
+  ],
+  "pitfalls": [
+    "積化和差只寫 $\\sin(A+B)$，漏了 $\\sin(A-B)$ 和前面的 $\\frac{1}{2}$。",
+    "$\\sqrt{1+\\cos x}$ 寫成 $\\sqrt{2}\\cos\\frac{x}{2}$ 卻沒檢查區間，在 $\\cos\\frac{x}{2}<0$ 的地方會差一個負號。",
+    "$\\frac{1}{1+\\sin x}$ 直接積成 $\\ln|1+\\sin x|$：分子不是分母的導數。",
+    "$1+\\cos x$ 與 $1-\\cos x$ 的半角搞混。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\sin 3x\\cos 2x$ 等於？",
+      "options": [
+        { "label": "$\\frac{\\sin x+\\sin 5x}{2}$", "correct": true },
+        { "label": "$\\sin 5x$", "why": "只取了 $A+B$ 那一項，而且漏了 $\\frac{1}{2}$。完整是 $\\frac{\\sin(A-B)+\\sin(A+B)}{2}$。" },
+        { "label": "$\\frac{\\sin 5x-\\sin x}{2}$", "why": "$\\sin A\\cos B$ 的兩項都是加號；$A-B=3x-2x=x$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_0^{2\\pi}\\sin 2x\\sin 3x\\,dx$ 是？",
+      "options": [
+        { "label": "$0$", "correct": true },
+        { "label": "$\\pi$", "why": "$\\pi$ 是 $m=n$ 時的值（例如 $\\int_0^{2\\pi}\\sin^2 3x\\,dx$）。$m\\ne n$ 時積化和差得 $\\cos x$ 與 $\\cos 5x$，整週期上都積成 $0$。" },
+        { "label": "算不出來", "why": "積化和差：$\\sin 2x\\sin 3x=\\frac{\\cos x-\\cos 5x}{2}$，兩項都會積。" }
+      ]
+    },
+    {
+      "ask": "$\\int\\frac{1}{1+\\sin x}\\,dx$ 的第一步？",
+      "options": [
+        { "label": "分子分母同乘 $1-\\sin x$", "correct": true },
+        { "label": "令 $u=1+\\sin x$", "why": "$du=\\cos x\\,dx$，但分子是 $1$，配不起來。" },
+        { "label": "直接寫 $\\ln|1+\\sin x|$", "why": "$\\ln$ 要分子是分母的導數 $\\cos x$，這裡分子是 $1$。" }
+      ]
+    },
+    {
+      "ask": "在 $[0,\\pi]$ 上，$\\sqrt{1+\\cos x}$ 等於？",
+      "options": [
+        { "label": "$\\sqrt{2}\\cos\\frac{x}{2}$", "correct": true },
+        { "label": "$1+\\sqrt{\\cos x}$", "why": "根號不能拆加法；而且 $\\cos x$ 在 $(\\frac{\\pi}{2},\\pi]$ 是負的，$\\sqrt{\\cos x}$ 沒有定義。" },
+        { "label": "$\\sqrt{2}\\sin\\frac{x}{2}$", "why": "$1+\\cos x=2\\cos^2\\frac{x}{2}$。$2\\sin^2\\frac{x}{2}$ 是 $1-\\cos x$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "角度不同的乘積",
+      "beats": [
+        { "show": ["角度不同、$1\\pm\\sin x$、$\\sqrt{1\\pm\\cos x}$"],
+          "note": "先用恆等式改寫成會積的樣子。",
+          "say": "這一課處理前兩課沒有的形狀。共同的做法：先用恆等式改寫成已經會積的樣子。",
+          "board": [
+            {"do":"write","line":"先用恆等式改寫成會積的樣子"}
+          ] },
+        { "show": ["$\\sin 3x\\cos 2x$"],
+          "note": "角度不同，不能留一個當 $du$。",
+          "say": "第一種：sine 三 x 乘 cosine 二 x，角度不一樣，留一個當 du 的方法用不上。",
+          "board": [
+            {"do":"write","line":"${{a:\\sin 3x\\cos 2x}}$"},
+            {"do":"underline","term":"a","label":"角度不同","on":"角度不一樣"}
+          ] },
+        { "show": ["$\\sin A\\cos B$","$=\\frac{1}{2}\\big[\\sin(A-B)+\\sin(A+B)\\big]$"],
+          "note": "積化和差。",
+          "say": "用積化和差：把乘積拆成兩個單一的 sine，一個是角度相減，一個是角度相加，前面乘二分之一。",
+          "board": [
+            {"do":"write","line":"$\\sin A\\cos B$"},
+            {"do":"write","line":"$=\\frac{1}{2}\\big[{{d:\\sin(A-B)}}+{{s:\\sin(A+B)}}\\big]$","on":"拆成"},
+            {"do":"underline","term":"d","color":"blue","on":"相減"},
+            {"do":"underline","term":"s","color":"violet","on":"相加"}
+          ] },
+        { "show": ["$\\sin(A+B)=\\sin A\\cos B+\\cos A\\sin B$","$\\sin(A-B)=\\sin A\\cos B-\\cos A\\sin B$"],
+          "note": "先展開，這是公式的來源。",
+          "say": "公式怎麼來？把 sine A 加 B 和 sine A 減 B 先展開，兩條都有 sine A cosine B。",
+          "board": [
+            {"do":"write","line":"$\\sin(A+B)=\\sin A\\cos B+{{p:\\cos A\\sin B}}$"},
+            {"do":"write","line":"$\\sin(A-B)=\\sin A\\cos B-{{q:\\cos A\\sin B}}$","on":"sine A 減 B"}
+          ] },
+        { "show": ["相加：$2\\sin A\\cos B$","除以 2 就是公式"],
+          "note": "一正一負的那一項消掉了。",
+          "say": "兩式相加，cosine A sine B 一正一負抵消，剩二倍的 sine A cosine B，再除以二。",
+          "board": [
+            {"do":"write","line":"相加：${{n1:2\\sin A\\cos B}}$"},
+            {"do":"focus","term":"p","color":"gold","on":"抵消"},
+            {"do":"box","term":"n1","color":"green","on":"二倍"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "拆開再積",
+      "beats": [
+        { "show": ["$\\sin A\\sin B$、$\\cos A\\cos B$ 也有對應的公式"],
+          "note": "都是拆成 $A-B$ 與 $A+B$ 兩項。",
+          "say": "sine 乘 sine、cosine 乘 cosine 也有對應的公式，一樣拆成角度相減和相加兩項。",
+          "board": [
+            {"do":"write","line":"$\\sin A\\sin B$、$\\cos A\\cos B$"},
+            {"do":"write","line":"一樣拆成 $A-B$ 與 $A+B$ 兩項","on":"角度相減"}
+          ] },
+        { "show": ["$\\sin A\\sin B=\\frac12[\\cos(A-B)-\\cos(A+B)]$","$\\cos A\\cos B=\\frac12[\\cos(A-B)+\\cos(A+B)]$"],
+          "note": "sine 乘 sine 中間是減號。",
+          "say": "sine 乘 sine，是 cosine 角度相減，減掉 cosine 角度相加。cosine 乘 cosine，兩項都是加。",
+          "board": [
+            {"do":"write","line":"$\\sin A\\sin B=\\frac12[\\cos(A-B)-\\cos(A+B)]$"},
+            {"do":"write","line":"$\\cos A\\cos B=\\frac12[\\cos(A-B)+\\cos(A+B)]$","on":"cosine 乘 cosine"}
+          ] },
+        { "show": ["$\\sin 3x\\cos 2x=\\frac{1}{2}[\\sin x+\\sin 5x]$"],
+          "note": "$A-B=x$，$A+B=5x$。",
+          "say": "回到剛剛那題，三 x 減二 x 是 x，三 x 加二 x 是五 x。現在兩項都會積了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin 3x\\cos 2x$","on":"回到剛剛"},
+            {"do":"write","line":"$3x-2x=x$","on":"三 x 減"},
+            {"do":"write","line":"$3x+2x=5x$","on":"三 x 加"},
+            {"do":"write","line":"$=\\frac{1}{2}[\\sin x+\\sin 5x]$","on":"現在兩項"}
+          ] }
+      ],
+      "key": "拆成兩項後，$\\sin 5x$ 積分要除以 5",
+      "predict": {
+        "ask": "積分是？",
+        "options": [
+          {
+            "label": "$-\\frac{1}{2}\\cos x-\\frac{1}{10}\\cos 5x+C$",
+            "correct": true
+          },
+          {
+            "label": "$-\\frac{1}{2}\\cos x-\\frac{1}{2}\\cos 5x+C$",
+            "why": "$\\int\\sin 5x\\,dx=-\\frac{1}{5}\\cos 5x$，裡面的 $5$ 要除掉，再乘 $\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\frac{1}{2}\\cos x+\\frac{1}{10}\\cos 5x+C$",
+            "why": "$\\sin$ 的反導函數是 $-\\cos$，負號不能丟。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "整週期上的結果",
+      "beats": [
+        { "show": ["$m\\ne n$：$\\int_0^{2\\pi}\\sin mx\\sin nx\\,dx=0$"],
+          "note": "拆成兩個 $\\cos$，整數個週期上都積成 $0$。",
+          "say": "m、n 是不同的正整數時，sine m x 乘 sine n x 拆開是兩個 cosine，整數個週期上都積成零。",
+          "board": [
+            {"do":"write","line":"$m\\ne n$：$\\int_0^{2\\pi}\\sin mx\\sin nx\\,dx$"},
+            {"do":"write","line":"$=$ 兩個 $\\cos$ 的積分","on":"拆開"},
+            {"do":"write","line":"$={{z:0}}$","color":"green","on":"整數個週期"}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\cos kx\\,dx=\\left[\\frac{\\sin kx}{k}\\right]_0^{2\\pi}=0$"],
+          "note": "k 是 m 減 n 或 m 加 n，非零整數。",
+          "say": "cosine k x 積出 k 分之一 sine k x。代入零和二 pi，sine 都是零，所以積分是零。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\cos kx\\,dx=\\left[\\frac{\\sin kx}{k}\\right]_0^{2\\pi}$"},
+            {"do":"write","line":"$\\sin 2\\pi k=0$，$\\sin 0=0$","on":"代入"}
+          ] },
+        { "show": ["$m=n$：積出 $\\pi$"],
+          "note": "$\\sin^2 mx=\\frac{1-\\cos 2mx}{2}$。",
+          "say": "m 等於 n 時就不一樣了：sine 平方用半角公式，積出來是 pi。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$m=n$：$\\sin^2 mx=\\frac{1-\\cos 2mx}{2}$","on":"半角公式"},
+            {"do":"write","line":"$\\int_0^{2\\pi}\\sin^2 mx\\,dx=\\pi$","on":"積出來"}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\frac12\\,dx=\\pi$","$\\int_0^{2\\pi}\\frac{\\cos 2mx}{2}\\,dx=0$"],
+          "note": "常數項積出 pi，cosine 項整週期積成零。",
+          "say": "逐項積：二分之一積出來是 pi，因為區間長二 pi；cosine 那項是整週期，積成零。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\frac12\\,dx=\\frac12\\cdot 2\\pi=\\pi$"},
+            {"do":"write","line":"$\\int_0^{2\\pi}\\frac{\\cos 2mx}{2}\\,dx=0$","on":"cosine 那項"}
+          ] },
+        { "show": ["不同頻率相乘，整週期積分為 $0$"],
+          "note": "之後把函數拆成正弦波的基礎。",
+          "say": "不同頻率相乘、整週期積分是零，這個性質之後會用來把函數拆成正弦波。",
+          "board": [
+            {"do":"write","line":"不同頻率相乘 → 整週期積分 $=0$"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "分母是 $1+\\sin x$",
+      "beats": [
+        { "show": ["$\\frac{1}{1+\\sin x}$：同乘 $1-\\sin x$"],
+          "say": "分母是一加 sine x，分子分母同乘一減 sine x，跟有理化很像。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1+\\sin x}$"},
+            {"do":"transform","line":"$=\\frac{1-\\sin x}{(1+\\sin x)(1-\\sin x)}$","on":"同乘"}
+          ] },
+        { "show": ["分母 $1-\\sin^2 x=\\cos^2 x$"],
+          "say": "分母變成一減 sine 平方，就是 cosine 平方。",
+          "board": [
+            {"do":"transform","line":"$=\\frac{1-\\sin x}{1-\\sin^2 x}$"},
+            {"do":"transform","line":"$=\\frac{1-\\sin x}{{{f:\\cos^2 x}}}$","on":"就是"}
+          ] },
+        { "show": ["藍：$\\sqrt{1+\\cos x}$","紅：$\\sqrt{2}\\cos\\frac{x}{2}$"],
+          "note": "過了 $\\pi$，紅色變負，藍色不會。",
+          "say": "畫出來：藍色是根號一加 cosine x，紅色是根號二乘 cosine 二分之 x。過了 pi，紅色掉到下面，藍色還是正的。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6.5,-2,2],"curves":[{"expr":"sqrt(1+cos(x))","domain":[0,6.2832],"color":"blue"},{"expr":"sqrt(2)*cos(x/2)","domain":[0,6.2832],"color":"red","dashed":true}]}}
+          ] },
+        { "show": ["$=\\sec^2 x-\\sec x\\tan x$"],
+          "note": "兩項都在表上：$\\tan x-\\sec x+C$。",
+          "say": "拆成兩項，一項是 secant 平方，一項是 secant 乘 tangent，兩個都在積分表上。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$={{a:\\sec^2 x}}-{{b:\\sec x\\tan x}}$","on":"拆成"},
+            {"do":"underline","term":"a","on":"secant 平方"},
+            {"do":"underline","term":"b","on":"secant 乘"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "根號裡 $1+\\cos x$",
+      "beats": [
+        { "show": ["$1+\\cos x=2\\cos^2\\frac{x}{2}$"],
+          "note": "同理 $1-\\cos x=2\\sin^2\\frac{x}{2}$。",
+          "say": "根號裡有一加 cosine x，用半角公式，它等於二倍 cosine 平方 二分之 x。",
+          "board": [
+            {"do":"write","line":"$1+\\cos x={{b:2\\cos^2\\frac{x}{2}}}$"},
+            {"do":"underline","term":"b","label":"半角公式","on":"半角公式"}
+          ] },
+        { "show": ["$\\sqrt{1+\\cos x}=\\sqrt{2}\\left|\\cos\\frac{x}{2}\\right|$"],
+          "note": "根號開平方是絕對值。",
+          "say": "開根號要小心：平方開根號是絕對值，正負要看區間決定。",
+          "board": [
+            {"do":"write","line":"$\\sqrt{1+\\cos x}=\\sqrt{2}\\,{{abs:\\left|\\cos\\frac{x}{2}\\right|}}$"},
+            {"do":"box","term":"abs","label":"絕對值","on":"是絕對值"}
+          ] },
+        { "show": ["$[0,\\pi]$ 上 $\\cos\\frac{x}{2}\\ge 0$"],
+          "note": "$\\frac{x}{2}\\in[0,\\frac{\\pi}{2}]$，絕對值可以拿掉。",
+          "say": "x 在零到 pi 之間，二分之 x 在零到二分之 pi，cosine 不是負的，絕對值可以拿掉。",
+          "board": [
+            {"do":"write","line":"$\\frac{x}{2}\\in[0,\\frac{\\pi}{2}]$：${{c:\\cos\\frac{x}{2}\\ge 0}}$","on":"二分之 x"},
+            {"do":"underline","term":"c","on":"不是負的"}
+          ] }
+      ],
+      "key": "開根號是絕對值，先看 $\\cos\\frac{x}{2}$ 正負",
+      "check": 3
+    },
+    {
+      "title": "根號的定積分",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi}\\sqrt{1+\\cos x}\\,dx$"],
+          "say": "最後一題：根號一加 cosine x，從零積到 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\pi}\\sqrt{1+\\cos x}\\,dx$"}
+          ] },
+        { "show": ["$=\\sqrt{2}\\int_0^{\\pi}\\cos\\frac{x}{2}\\,dx$"],
+          "note": "這一段上絕對值可以拿掉。",
+          "say": "剛剛確認過，這一段絕對值可以拿掉，剩下根號二乘 cosine 二分之 x。",
+          "board": [
+            {"do":"write","line":"$[0,\\pi]$ 上 $\\cos\\frac{x}{2}\\ge 0$"},
+            {"do":"write","line":"$=\\sqrt{2}\\int_0^{\\pi}\\cos\\frac{x}{2}\\,dx$","on":"剩下"}
+          ] },
+        { "show": ["$\\frac{d}{dx}\\sin\\frac{x}{2}=\\frac12\\cos\\frac{x}{2}$","$\\int\\cos\\frac{x}{2}\\,dx=2\\sin\\frac{x}{2}$"],
+          "note": "裡面是 $\\frac{x}{2}$，微分會多一個 $\\frac12$。",
+          "say": "cosine 二分之 x 的反導函數：試 sine 二分之 x，微分會多出二分之一，所以前面補乘二。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\sin\\frac{x}{2}=\\frac12\\cos\\frac{x}{2}$"},
+            {"do":"write","line":"$\\int\\cos\\frac{x}{2}\\,dx={{r:2}}\\sin\\frac{x}{2}$","on":"前面補乘"}
+          ] }
+      ],
+      "predict": {
+        "ask": "結果是？",
+        "options": [
+          {
+            "label": "$\\sqrt{2}\\left[2\\sin\\frac{x}{2}\\right]_0^{\\pi}=2\\sqrt{2}$",
+            "correct": true
+          },
+          {
+            "label": "$\\sqrt{2}$",
+            "why": "$\\int\\cos\\frac{x}{2}\\,dx=2\\sin\\frac{x}{2}$：裡面是 $\\frac{x}{2}$，要乘 $2$。"
+          },
+          {
+            "label": "$0$",
+            "why": "$\\cos\\frac{x}{2}$ 在這段都 $\\ge 0$，不會抵消；$\\sin\\frac{\\pi}{2}=1$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-integral", "trig", "half-angle"],
+    "fine": ["trig-product-to-sum", "trig-orthogonality", "trig-pythagorean-multiply", "trig-half-angle-root"]
+  },
+  "practice": [
+    { "id": "hc-rad-006", "core": true, "trains": "trig-pythagorean-multiply", "note": "反導函數 $\\tan x-\\sec x$ 在 $x\\to\\frac{\\pi}{2}$ 是 $\\infty-\\infty$，要寫成 $\\frac{\\sin x-1}{\\cos x}$ 再取極限（〈其他不定型〉）。" },
+    { "id": "cg-4f-009", "core": true, "trains": "trig-product-to-sum" },
+    { "id": "cg-4f-012", "core": true, "trains": "trig-orthogonality" },
+    { "id": "cg-4f-014", "core": true, "trains": "trig-half-angle-root" },
+    { "id": "cg-4f-010", "trains": "trig-product-to-sum" },
+    { "id": "cg-4f-011", "trains": "trig-product-to-sum" },
+    { "id": "cg-4f-013", "trains": "trig-orthogonality" },
+    { "id": "cg-4f-015", "trains": "trig-half-angle-root" }
+  ],
+  "gaps": []
+}

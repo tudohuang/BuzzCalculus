@@ -1,57 +1,117 @@
 {
   "id": "repeated-roots",
   "title": "重根",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["distinct-real-roots", "product-rule"],
-  "next": ["complex-roots"],
-  "related": ["characteristic-equation"],
+  "prerequisites": [
+    "distinct-real-roots",
+    "product-rule"
+  ],
+  "next": [
+    "complex-roots"
+  ],
+  "related": [
+    "characteristic-equation"
+  ],
   "objectives": [
-    "特徵方程有重根 $r$ 時，寫出通解 $y=(C_1+C_2x)e^{rx}$。",
-    "說得出為什麼只有 $e^{rx}$ 不夠，以及為什麼 $xe^{rx}$ 也是解。",
-    "用乘法法則對 $xe^{rx}$ 微分，正確代入初始條件。"
+    "特徵方程有重根 $r$ 時，寫出通解 $y=(C_1+C_2x)e^{rx}$",
+    "說得出為什麼只有 $e^{rx}$ 不夠，以及為什麼 $xe^{rx}$ 也是解",
+    "用乘法法則對 $xe^{rx}$ 微分，正確代入初始條件"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 只剩一個指數，少了一個常數",
+      "heading": "① 少了一個常數",
       "body": [
-        "$y''+4y'+4y=0$ 的特徵方程 $r^2+4r+4=(r+2)^2=0$，只有一個根 $r=-2$（重根，判別式 $b^2-4ac=0$）。",
-        "$e^{-2x}$ 是解，但 $C_1e^{-2x}+C_2e^{-2x}=(C_1+C_2)e^{-2x}$ 其實只有一個常數，配不上 $y(0)$、$y'(0)$ 兩個條件。需要第二個「不是 $e^{-2x}$ 常數倍」的解。"
+        "$b^2-4ac=0$：只有一個根 $r=-\\dfrac{b}{2a}$",
+        "例：$y''+4y'+4y=0$",
+        "只得到 $y=Ce^{-2x}$：一個常數",
+        "一個常數，應付不了兩個初始條件",
+        "$y(0)=1\\Rightarrow C=1$，但 $y'(0)=-2C=-2\\ne0$"
       ],
-      "collapsible": false
+      "tex": [
+        "r^2+4r+4=(r+2)^2=0,\\quad r=-2"
+      ]
     },
     {
       "heading": "② 答案：再乘一個 $x$",
       "body": [
-        "重根 $r$ 時，$xe^{rx}$ 也是解。通解是："
+        "重根 $r$ 時，$xe^{rx}$ 也是解",
+        "導數要用乘法法則：",
+        "$x=0$：$y(0)=C_1$，$y'(0)=C_2+rC_1$",
+        "例：$y''-2y'+y=0$，$y(0)=1$，$y'(0)=0$",
+        "$(r-1)^2=0$，$r=1$：$y=(C_1+C_2x)e^x$",
+        "$C_1=1$；$C_2+1\\cdot C_1=0\\Rightarrow C_2=-1$"
       ],
-      "tex": ["y = (C_1 + C_2 x)\\,e^{rx}"],
-      "collapsible": false
+      "tex": [
+        "y=(C_1+C_2x)e^{rx}",
+        "y'=\\big(C_2+r(C_1+C_2x)\\big)e^{rx}",
+        "y=(1-x)e^x"
+      ]
     },
     {
-      "heading": "③ $x$ 從哪裡來（直覺，不是證明）",
+      "heading": "② 常數剛好是 $0$",
       "body": [
-        "想像兩個根很接近：$r$ 與 $r+h$。那時 $e^{(r+h)x}$ 與 $e^{rx}$ 都是解，它們的差除以 $h$ 也是解（線性組合）。$h\\to0$ 時，$\\frac{e^{(r+h)x}-e^{rx}}{h}$ 趨近 $e^{rx}$ 對 $r$ 的導數，也就是 $xe^{rx}$。",
-        "這只是直覺：它假設「解的極限還是解」，而且方程本身也跟著 $h$ 在變。真正的證明是下面直接代入。"
+        "$y''+4y'+4y=0$，$y(0)=1$，$y'(0)=-2$",
+        "$y=(C_1+C_2x)e^{-2x}$，$C_1=1$",
+        "$y'(0)=C_2-2C_1=-2\\Rightarrow C_2=0$",
+        "陷阱：忘了乘法法則，寫 $y'(0)=C_2$",
+        "$\\Rightarrow$ 錯成 $(1-2x)e^{-2x}$",
+        "$\\big((1-2x)e^{-2x}\\big)'=(-2-2(1-2x))e^{-2x}$，在 $0$ 是 $-4$",
+        "$C_2=0$ 不代表 $xe^{rx}$ 沒用：通解還是需要它"
       ],
-      "collapsible": false
+      "tex": [
+        "y=e^{-2x}"
+      ]
     },
     {
-      "heading": "④ 直接驗證 $xe^{rx}$ 是解",
+      "heading": "③ $x$ 從哪裡來",
       "body": [
-        "$y=xe^{rx}$，乘法法則：$y'=e^{rx}(1+rx)$，$y''=e^{rx}(2r+r^2x)$。",
-        "代入 $ay''+by'+cy$，整理成 $e^{rx}\\left[x(ar^2+br+c)+(2ar+b)\\right]$。",
-        "$r$ 是特徵方程的根，第一個括號是 $0$；重根 $r=-\\frac{b}{2a}$，所以 $2ar+b=0$。整個是 $0$。注意第二步只有重根才成立，相異根時 $xe^{rx}$ 不是解。"
+        "兩個根 $r$、$r+h$ 很靠近：",
+        "$h\\to0$：這是 $e^{rx}$ 對 $r$ 的導數",
+        "解的極限還是解，這裡先接受；下一節直接驗證"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{e^{(r+h)x}-e^{rx}}{h}\\ \\text{是解（疊加）}",
+        "\\frac{\\partial}{\\partial r}e^{rx}=xe^{rx}"
+      ]
+    },
+    {
+      "heading": "④ 直接驗證 $xe^{rx}$",
+      "body": [
+        "$y=xe^{rx}$，用乘法法則：",
+        "代進 $ay''+by'+cy$，提出 $e^{rx}$，按 $x$ 整理：",
+        "• $ar^2+br+c=0$：$r$ 是特徵根",
+        "• $2ar+b=0$：因為 $r=-\\dfrac{b}{2a}$",
+        "兩項都是 $0$ ⇒ $xe^{rx}$ 是解",
+        "$2ar+b$ 就是特徵多項式的導數：重根同時是它的根"
+      ],
+      "tex": [
+        "\\begin{aligned}y'&=(1+rx)e^{rx}\\\\y''&=(2r+r^2x)e^{rx}\\end{aligned}",
+        "e^{rx}\\Big[(ar^2+br+c)\\,x+(2ar+b)\\Big]"
+      ]
     },
     {
       "heading": "⑤ 兩個解真的不同",
       "body": [
-        "$\\frac{xe^{rx}}{e^{rx}}=x$ 不是常數，所以兩者不是彼此的常數倍。Wronskian：$W(e^{rx},xe^{rx})=e^{rx}\\cdot e^{rx}(1+rx)-re^{rx}\\cdot xe^{rx}=e^{2rx}$，永遠不是 $0$。$y(0)=C_1$、$y'(0)=rC_1+C_2$，任何初始條件都配得上。"
+        "$\\dfrac{xe^{rx}}{e^{rx}}=x$，不是常數：不是常數倍",
+        "也可以像上一課令 $u=y'-ry$：$u=Ae^{rx}$，$(ye^{-rx})'=A$，得 $y=(Ax+B)e^{rx}$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}W&=e^{rx}(1+rx)e^{rx}-re^{rx}\\cdot xe^{rx}\\\\&=e^{2rx}\\ne0\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 重根 $r=-\\frac b{2a}$：只有 $e^{rx}$，少一個解",
+        "• 補上 $xe^{rx}$：$y=(C_1+C_2x)e^{rx}$",
+        "• 為什麼：$e^{rx}$ 對 $r$ 微分（直覺）；直接代入（證明）",
+        "• 導數用乘法法則：$y'(0)=C_2+rC_1$",
+        "• $W=e^{2rx}\\ne0$：兩個解獨立",
+        "下一課：複數根"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,35 +159,24 @@
   ],
   "checks": [
     {
-      "ask": "$y''-6y'+9y=0$ 的通解是？",
+      "ask": "$4y''+4y'+y=0$ 的通解是？",
       "options": [
-        { "label": "$y=(C_1+C_2x)e^{3x}$", "correct": true },
-        { "label": "$y=C_1e^{3x}+C_2e^{3x}$", "why": "兩項合起來是 $(C_1+C_2)e^{3x}$，只有一個常數，配不上兩個初始條件。" },
-        { "label": "$y=C_1e^{3x}+C_2e^{-3x}$", "why": "$(r-3)^2=0$ 的根只有 $3$，是重根；你把它當成 $r^2=9$ 的 $\\pm3$ 了。" }
-      ]
-    },
-    {
-      "ask": "重根時為什麼需要 $xe^{rx}$？",
-      "options": [
-        { "label": "只有 $e^{rx}$ 時，通解只有一個任意常數", "correct": true },
-        { "label": "因為 $e^{rx}$ 在重根時不是解", "why": "$e^{rx}$ 照樣是解，只是不夠：少了第二個獨立的解。" },
-        { "label": "因為重根的特徵方程沒有實根", "why": "重根是實根（判別式 $=0$），只是兩個根重疊成一個。" }
-      ]
-    },
-    {
-      "ask": "$y=(C_1+C_2x)e^{-2x}$，$y(0)=3$、$y'(0)=0$，則 $C_2={}$？",
-      "options": [
-        { "label": "$6$", "correct": true },
-        { "label": "$0$", "why": "你把 $C_2$ 當成 $y'(0)$。$y'(0)=C_2-2C_1$，$C_1=3$，所以 $C_2=6$。" },
-        { "label": "$-6$", "why": "$C_1e^{-2x}$ 微分貢獻的是 $-2C_1=-6$，移項後 $C_2=+6$。" }
-      ]
-    },
-    {
-      "ask": "$y''+ky'+9y=0$（$k>0$）有重根時 $k={}$？",
-      "options": [
-        { "label": "$6$", "correct": true },
-        { "label": "$3$", "why": "判別式 $k^2-4\\cdot9=0$ 給 $k=6$；$3$ 是重根的大小（$r=-3$），不是 $k$。" },
-        { "label": "$9$", "why": "$9$ 是 $y$ 的係數；重根條件是 $k^2=36$。" }
+        {
+          "label": "$(C_1+C_2x)e^{-x/2}$",
+          "correct": true
+        },
+        {
+          "label": "$(C_1+C_2x)e^{-2x}$",
+          "why": "首項的 $4$ 丟了：$r=-\\frac b{2a}=-\\frac48$"
+        },
+        {
+          "label": "$C_1e^{-x/2}+C_2e^{x/2}$",
+          "why": "重根只有一個 $-\\frac12$，沒有 $+\\frac12$"
+        },
+        {
+          "label": "$(C_1+C_2)e^{-x/2}$",
+          "why": "兩個常數合成一個，等於只有一個解；第二項要乘 $x$"
+        }
       ]
     }
   ],
@@ -135,300 +184,757 @@
     {
       "title": "少了一個常數",
       "beats": [
-        { "show": ["$y''+4y'+4y=0$","$(r+2)^2=0$"],
-          "note": "判別式 $b^2-4ac=0$。",
-          "say": "特徵方程 r 平方加四 r 加四，是 r 加二的平方，判別式是零。",
+        {
+          "show": [
+            "$b^2-4ac=0$：只有一個根 $r=-\\dfrac{b}{2a}$"
+          ],
+          "say": "這一課處理判別式等於 0 的情況。特徵方程只有一個根，r 等於負 2a 分之 b，叫做重根。",
           "board": [
-            {"do":"write","line":"$r^2 + 4r + 4 = 0$"},
-            {"do":"transform","line":"$(r+2)^2 = 0$","on":"是 r 加二"}
-          ] },
-        { "show": ["只有一個根 $r=-2$"],
-          "note": "叫重根。",
-          "say": "兩個根疊在一起，只剩負二一個，叫重根。e 的負二 x 次方是解。",
+            {
+              "do": "write",
+              "line": "$b^2-4ac=0$：只有一個根 $r=-\\dfrac{b}{2a}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''+4y'+4y=0$",
+            "$r^2+4r+4=(r+2)^2=0,\\quad r=-2$"
+          ],
+          "say": "例子：y 兩撇加 4 y 一撇加 4y。特徵方程是 r 加 2 的平方，只有一個根，負 2。",
           "board": [
-            {"do":"write","line":"重根 $r = -2$","on":"只剩負二"},
-            {"do":"transform","line":"重根 $r = -2$：$e^{-2x}$ 是解","on":"e 的負二"}
-          ] },
-        { "show": ["$C_1e^{-2x}+C_2e^{-2x}=(C_1+C_2)e^{-2x}$"],
-          "say": "可是兩項合起來，其實只是一個常數乘 e 的負二 x 次方。",
+            {
+              "do": "write",
+              "line": "例：$y''+4y'+4y=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2+4r+4=(r+2)^2=0,\\quad r=-2$",
+              "on": "程是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只得到 $y=Ce^{-2x}$：一個常數"
+          ],
+          "say": "照上一課的做法，只得到 C 乘 e 的負 2x 次方。只有一個常數。",
           "board": [
-            {"do":"write","line":"$C_1e^{-2x} + C_2e^{-2x} = {{c:(C_1+C_2)}}e^{-2x}$","on":"兩項合起來"},
-            {"do":"underline","term":"c","label":"一個常數","on":"一個常數"}
-          ] },
-        { "show": ["配不上 $y(0)$、$y'(0)$ 兩個條件"],
-          "note": "需要第二個不是常數倍的解。",
-          "say": "一個常數配不上兩個初始條件。我們還缺一個不是它常數倍的解。",
+            {
+              "do": "write",
+              "line": "只得到 $y=Ce^{-2x}$：一個常數",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一個常數，應付不了兩個初始條件"
+          ],
+          "say": "但二階方程有兩個初始條件，一個常數不可能同時滿足兩個。我們少了一個解。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"一個常數配不上 $y(0)$、$y'(0)$","color":"red","on":"配不上"}
-          ] }
+            {
+              "do": "write",
+              "line": "一個常數，應付不了兩個初始條件",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "predict": {
+        "ask": "$y''+4y'+4y=0$，$y(0)=1$，$y'(0)=0$。$y=Ce^{-2x}$ 辦得到嗎？",
+        "options": [
+          {
+            "label": "辦不到",
+            "correct": true
+          },
+          {
+            "label": "辦得到，$C=1$",
+            "why": "$C=1$ 時 $y'(0)=-2$，不是 $0$"
+          },
+          {
+            "label": "辦得到，$C=0$",
+            "why": "$C=0$ 時 $y(0)=0$，不是 $1$"
+          }
+        ]
+      }
     },
     {
-      "title": "再乘一個 $x$",
+      "title": "少了一個常數",
       "beats": [
-        { "show": ["$y=(C_1+C_2x)e^{rx}$"],
-          "note": "重根 $r$ 時，$xe^{rx}$ 也是解。",
-          "say": "答案很簡單：再乘一個 x。重根時，x 乘 e 的 r x 次方也是解。",
+        {
+          "show": [
+            "$y(0)=1\\Rightarrow C=1$，但 $y'(0)=-2C=-2\\ne0$"
+          ],
+          "say": "不行。第一個條件逼 C 等於 1，但這時斜率是負 2，不是 0。一定還有別的解。",
           "board": [
-            {"do":"write","line":"$y=(C_1+{{t:C_2x}})e^{rx}$"},
-            {"do":"underline","term":"t","label":"多乘 x","on":"x 乘"}
-          ] },
-        { "show": ["兩根 $r$、$r+h$ 很接近"],
-          "note": "直覺，不是證明。",
-          "say": "直覺是這樣：想像兩個根差一點點 h，兩個指數相減再除以 h，也是解。",
+            {
+              "do": "write",
+              "line": "$y(0)=1\\Rightarrow C=1$，但 $y'(0)=-2C=-2\\ne0$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "答案：再乘一個 $x$",
+      "beats": [
+        {
+          "show": [
+            "重根 $r$ 時，$xe^{rx}$ 也是解"
+          ],
+          "say": "答案是：重根的時候，x 乘 e 的 r x 次方也是解。",
           "board": [
-            {"do":"write","line":"$e^{rx}$、$e^{(r+h)x}$ 都是解"},
-            {"do":"write","line":"$\\frac{e^{(r+h)x}-e^{rx}}{h}$ 也是解","on":"相減再除以"}
-          ] },
-        { "show": ["線性：解的常數倍相加，仍是解"],
-          "note": "除以 $h$ 就是乘常數 $\\frac{1}{h}$。",
-          "say": "為什麼相減除以 h 還是解？方程是線性的，解乘常數再相加，仍然是解。除以 h 就是乘一個常數。",
+            {
+              "do": "write",
+              "line": "重根 $r$ 時，$xe^{rx}$ 也是解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=(C_1+C_2x)e^{rx}$"
+          ],
+          "say": "所以通解是 C1 加 C2 x，整個乘上 e 的 r x 次方。兩個常數又回來了。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{h}e^{(r+h)x}-\\frac{1}{h}e^{rx}$"},
-            {"do":"write","line":"線性：解的常數倍相加仍是解","on":"線性的"}
-          ] },
-        { "show": ["$h\\to0$：$\\frac{e^{(r+h)x}-e^{rx}}{h}\\to xe^{rx}$"],
-          "note": "對 $r$ 的導數。",
-          "say": "h 趨近零，這就是 e 的 r x 次方對 r 的導數，剛好是 x 乘 e 的 r x 次方。直接代入的證明在下一節。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle y=(C_1+C_2x)e^{rx}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "導數要用乘法法則：",
+            "$y'=\\big(C_2+r(C_1+C_2x)\\big)e^{rx}$"
+          ],
+          "say": "代初始條件之前，先用乘法法則算導數：括號的導數是 C2，加上括號乘 r。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$h\\to0$：$\\frac{e^{(r+h)x}-e^{rx}}{h}$","on":"h 趨近零"},
-            {"do":"write","line":"$\\frac{d}{dr}e^{rx} = {{t:xe^{rx}}}$","on":"對 r 的導數"},
-            {"do":"box","term":"t","color":"green","on":"剛好是"}
-          ] },
-        { "show": ["$W=y_1y_2'-y_1'y_2$","$y_2=cy_1$ 時 $W=0$"],
-          "note": "Wronskian 不是零，兩個解就不是常數倍。",
-          "say": "Wronskian 是 y 一乘 y 二 prime 減 y 一 prime 乘 y 二。常數倍的話，它一定是零。",
+            {
+              "do": "write",
+              "line": "導數要用乘法法則："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle y'=\\big(C_2+r(C_1+C_2x)\\big)e^{rx}$",
+              "on": "括號#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=0$：$y(0)=C_1$，$y'(0)=C_2+rC_1$"
+          ],
+          "say": "代 x 等於 0：y 在 0 是 C1；y 一撇在 0 是 C2 加 r 乘 C1。",
           "board": [
-            {"do":"write","line":"$W=y_1y_2'-y_1'y_2$"},
-            {"do":"write","line":"$y_2=cy_1 \\Rightarrow W=0$","on":"常數倍"}
-          ] },
-        { "show": ["$W(e^{rx},xe^{rx})=e^{2rx}\\ne 0$"],
-          "note": "$\\frac{xe^{rx}}{e^{rx}}=x$ 不是常數。",
-          "say": "兩個解相除是 x，不是常數，Wronskian 也永遠不是零，所以它們真的不同。",
+            {
+              "do": "write",
+              "line": "$x=0$：$y(0)=C_1$，$y'(0)=C_2+rC_1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''-2y'+y=0$，$y(0)=1$，$y'(0)=0$"
+          ],
+          "say": "例子：y 兩撇減 2 y 一撇加 y，初始值 1，初始斜率 0。",
           "board": [
-            {"do":"write","line":"$\\frac{xe^{rx}}{e^{rx}} = {{q:x}}$"},
-            {"do":"underline","term":"q","label":"不是常數","on":"不是常數"},
-            {"do":"write","line":"$W = e^{2rx}\\ne 0$","on":"Wronskian"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$y''-2y'+y=0$，$y(0)=1$，$y'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(r-1)^2=0$，$r=1$：$y=(C_1+C_2x)e^x$"
+          ],
+          "say": "特徵方程是 r 減 1 的平方，重根 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(r-1)^2=0$，$r=1$：$y=(C_1+C_2x)e^x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C_1=1$；$C_2+1\\cdot C_1=0\\Rightarrow C_2=-1$",
+            "$y=(1-x)e^x$"
+          ],
+          "say": "C1 等於 1。斜率條件：C2 加 C1 等於 0，所以 C2 是負 1。解是 1 減 x，乘 e 的 x 次方。兩個常數都用上了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C_1=1$；$C_2+1\\cdot C_1=0\\Rightarrow C_2=-1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y=(1-x)e^x}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(1 − x)eˣ：在 x = 1 穿過 0，之後往下掉"
+          ],
+          "say": "圖上，從 1 出發，起始水平，在 x 等於 1 穿過 0，之後往負無限大掉。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "rr1",
+                  "window": [
+                    -3,
+                    2,
+                    -4,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(1-x)*exp(x)",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "(1 − x)eˣ：在 x = 1 穿過 0，之後往下掉",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "常數剛好是 $0$",
+      "beats": [
+        {
+          "show": [
+            "$y''+4y'+4y=0$，$y(0)=1$，$y'(0)=-2$"
+          ],
+          "say": "再一例：還是 y 兩撇加 4 y 一撇加 4y，這次斜率條件是負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y''+4y'+4y=0$，$y(0)=1$，$y'(0)=-2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=(C_1+C_2x)e^{-2x}$，$C_1=1$"
+          ],
+          "say": "重根負 2，通解是 C1 加 C2 x 乘 e 的負 2x 次方。第一個條件給 C1 等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=(C_1+C_2x)e^{-2x}$，$C_1=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y'(0)=C_2-2C_1=-2\\Rightarrow C_2=0$",
+            "$y=e^{-2x}$"
+          ],
+          "say": "斜率：C2 減 2 C1 等於負 2，所以 C2 等於 0。解就是 e 的負 2x 次方，x 那一項剛好沒用到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y'(0)=C_2-2C_1=-2\\Rightarrow C_2=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle y=e^{-2x}}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "2x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "陷阱：忘了乘法法則，寫 $y'(0)=C_2$"
+          ],
+          "say": "常見的陷阱是：忘了乘法法則，以為 y 一撇在 0 就是 C2，於是得到 C2 等於負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "陷阱：忘了乘法法則，寫 $y'(0)=C_2$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow$ 錯成 $(1-2x)e^{-2x}$"
+          ],
+          "say": "那會錯成 1 減 2x 乘 e 的負 2x 次方。代回去檢查，它的斜率是負 4，不是負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Rightarrow$ 錯成 $(1-2x)e^{-2x}$"
+            },
+            {
+              "do": "write",
+              "line": "　$\\big((1-2x)e^{-2x}\\big)'=(-2-2(1-2x))e^{-2x}$，在 $0$ 是 $-4$",
+              "color": "violet",
+              "on": "代回"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$C_2=0$ 不代表 $xe^{rx}$ 沒用：通解還是需要它"
+          ],
+          "say": "C2 剛好是 0 只是這組條件的巧合。換一組條件就需要它，通解一定要寫兩項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C_2=0$ 不代表 $xe^{rx}$ 沒用：通解還是需要它",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$x$ 從哪裡來",
+      "beats": [
+        {
+          "show": [
+            "兩個根 $r$、$r+h$ 很靠近：",
+            "$\\frac{e^{(r+h)x}-e^{rx}}{h}\\ \\text{是解（疊加）}$"
+          ],
+          "say": "x 是從哪裡冒出來的？先給直覺，不是證明。想像兩個很靠近的相異根，r 和 r 加 h。兩個解相減再除以 h，由疊加原理還是解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個根 $r$、$r+h$ 很靠近："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{e^{(r+h)x}-e^{rx}}{h}\\ \\text{是解（疊加）}$",
+              "on": "兩個#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：這是 $e^{rx}$ 對 $r$ 的導數",
+            "$\\frac{\\partial}{\\partial r}e^{rx}=xe^{rx}$"
+          ],
+          "say": "h 趨近 0 時，這正是 e 的 r x 次方對 r 的導數。對 r 微分，鏈鎖律拉出一個 x，得到 x 乘 e 的 r x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：這是 $e^{rx}$ 對 $r$ 的導數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac{\\partial}{\\partial r}e^{rx}=xe^{rx}}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "微分"
+            },
+            {
+              "do": "write",
+              "line": "　解的極限還是解，這裡先接受；下一節直接驗證",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍：兩個解的差商；紅虛線：x e⁻²ˣ"
+          ],
+          "say": "圖上，藍色是 r 等於負 2 時的差商，紅色虛線是 x 乘 e 的負 2x 次方。現在 h 是 1，兩條差很多。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "merge",
+                  "window": [
+                    -0.3,
+                    4,
+                    -0.05,
+                    0.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x*exp(-2*x)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "(exp((-2+h)*x)-exp(-2*x))/h",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "h": {
+                      "min": 0.02,
+                      "max": 1,
+                      "value": 1,
+                      "label": "兩根的差 h"
+                    }
+                  },
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：兩個解的差商；紅虛線：x e⁻²ˣ",
+              "color": "violet",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 從哪裡來"
+          ],
+          "say": "把 h 縮小，兩個根撞在一起，藍色曲線就貼上了紅色虛線。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "merge",
+                  "window": [
+                    -0.3,
+                    4,
+                    -0.05,
+                    0.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x*exp(-2*x)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "(exp((-2+h)*x)-exp(-2*x))/h",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "h": {
+                      "min": 0.02,
+                      "max": 1,
+                      "value": 1,
+                      "label": "兩根的差 h"
+                    }
+                  },
+                  "height": 260
+                },
+                "vals": {
+                  "h": 0.02
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "直接驗證 $xe^{rx}$",
+      "beats": [
+        {
+          "show": [
+            "$y=xe^{rx}$，用乘法法則：",
+            "$\\begin{aligned}y'&=(1+rx)e^{rx}\\\\y''&=(2r+r^2x)e^{rx}\\end{aligned}$"
+          ],
+          "say": "現在正式驗證。y 等於 x 乘 e 的 r x 次方。用乘法法則微分一次、兩次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=xe^{rx}$，用乘法法則："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}y'&=(1+rx)e^{rx}\\\\y''&=(2r+r^2x)e^{rx}\\end{aligned}}$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代進 $ay''+by'+cy$，提出 $e^{rx}$，按 $x$ 整理：",
+            "$e^{rx}\\Big[(ar^2+br+c)\\,x+(2ar+b)\\Big]$"
+          ],
+          "say": "代進方程，提出 e 的 r x 次方，括號裡依 x 整理：x 的係數是 a r 平方加 b r 加 c，常數項是 2ar 加 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代進 $ay''+by'+cy$，提出 $e^{rx}$，按 $x$ 整理："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle e^{rx}\\Big[(ar^2+br+c)\\,x+(2ar+b)\\Big]}}$",
+              "on": "裡依"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $ar^2+br+c=0$：$r$ 是特徵根",
+            "• $2ar+b=0$：因為 $r=-\\dfrac{b}{2a}$"
+          ],
+          "say": "第一項是 0，因為 r 是特徵根。第二項也是 0，因為重根正好是負 2a 分之 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $ar^2+br+c=0$：$r$ 是特徵根"
+            },
+            {
+              "do": "write",
+              "line": "• $2ar+b=0$：因為 $r=-\\dfrac{b}{2a}$",
+              "on": "因為#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩項都是 $0$ ⇒ $xe^{rx}$ 是解"
+          ],
+          "say": "兩項都是 0，所以 x 乘 e 的 r x 次方真的是解。注意第二項只有在重根時才是 0，所以相異根不能這樣做。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩項都是 $0$ ⇒ $xe^{rx}$ 是解",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$2ar+b$ 就是特徵多項式的導數：重根同時是它的根",
+              "color": "violet",
+              "on": "注意"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "驗證 $xe^{rx}$ 是 $ay''+by'+cy=0$ 的解（$r$ 是重根）"
+          ],
+          "say": "排排看驗證的步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "驗證 $xe^{rx}$ 是 $ay''+by'+cy=0$ 的解（$r$ 是重根）",
+        "steps": [
+          {
+            "label": "用乘法法則算出 $y'$、$y''$"
+          },
+          {
+            "label": "代進方程，提出 $e^{rx}$",
+            "why": "先要有上一步：用乘法法則算出 $y'$、$y''$"
+          },
+          {
+            "label": "依 $x$ 整理成 $(ar^2+br+c)x+(2ar+b)$",
+            "why": "先要有上一步：代進方程，提出 $e^{rx}$"
+          },
+          {
+            "label": "用 $r$ 是特徵根、$r=-\\frac b{2a}$，兩項都是 $0$",
+            "why": "先要有上一步：依 $x$ 整理成 $(ar^2+br+c)x+(2ar+b)$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "兩個解真的不同",
+      "beats": [
+        {
+          "show": [
+            "$\\dfrac{xe^{rx}}{e^{rx}}=x$，不是常數：不是常數倍"
+          ],
+          "say": "最後確認這兩個解真的不同。相除得到 x，不是常數，所以不是彼此的常數倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{xe^{rx}}{e^{rx}}=x$，不是常數：不是常數倍"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}W&=e^{rx}(1+rx)e^{rx}-re^{rx}\\cdot xe^{rx}\\\\&=e^{2rx}\\ne0\\end{aligned}$"
+          ],
+          "say": "用朗斯基行列式也一樣：交叉的項抵消，剩下 e 的 2rx 次方，永遠不是 0。所以通解包含所有的解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}W&=e^{rx}(1+rx)e^{rx}-re^{rx}\\cdot xe^{rx}\\\\&=e^{2rx}\\ne0\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "剩下"
+            },
+            {
+              "do": "write",
+              "line": "　也可以像上一課令 $u=y'-ry$：$u=Ae^{rx}$，$(ye^{-rx})'=A$，得 $y=(Ax+B)e^{rx}$",
+              "color": "violet",
+              "on": "遠不"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "證明：直接代入",
+      "title": "重點整理",
       "beats": [
-        { "show": ["代進方程式，整理成兩個括號"],
-          "say": "策略：直接驗證。把 x 乘 e 的 r x 次方代進方程式，整理成兩個括號，再說明兩個都是零。",
+        {
+          "show": [
+            "• 重根 $r=-\\frac b{2a}$：只有 $e^{rx}$，少一個解",
+            "• 補上 $xe^{rx}$：$y=(C_1+C_2x)e^{rx}$"
+          ],
+          "say": "整理一下：重根時只有一個指數，要補上 x 乘 e 的 r x 次方；它真的是解，而且跟 e 的 r x 次方獨立；代初始條件時，記得用乘法法則。",
           "board": [
-            {"do":"write","line":"代入 $y = xe^{rx}$","on":"把 x 乘"},
-            {"do":"write","line":"整理成兩個括號，都是 $0$","on":"整理成"}
-          ] },
-        { "show": ["$y'=e^{rx}(1+rx)$","$y''=e^{rx}(2r+r^2x)$"],
-          "note": "乘法法則。",
-          "say": "用乘法法則微兩次：一階是 e 的 r x 次方乘一加 r x，二階是乘二 r 加 r 平方 x。",
+            {
+              "do": "write",
+              "line": "• 重根 $r=-\\frac b{2a}$：只有 $e^{rx}$，少一個解"
+            },
+            {
+              "do": "write",
+              "line": "• 補上 $xe^{rx}$：$y=(C_1+C_2x)e^{rx}$",
+              "on": "要補"
+            },
+            {
+              "do": "write",
+              "line": "• 為什麼：$e^{rx}$ 對 $r$ 微分（直覺）；直接代入（證明）",
+              "on": "次方#1"
+            },
+            {
+              "do": "write",
+              "line": "• 導數用乘法法則：$y'(0)=C_2+rC_1$",
+              "on": "次方#2"
+            },
+            {
+              "do": "write",
+              "line": "• $W=e^{2rx}\\ne0$：兩個解獨立",
+              "on": "代初"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複數根"
+          ],
+          "say": "下一課，判別式是負的：複數根。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y' = e^{rx}(1 + rx)$","on":"一階是"},
-            {"do":"write","line":"$y'' = e^{rx}(2r + r^2x)$","on":"二階是"}
-          ] },
-        { "show": ["有 $x$：$ar^2x+brx+cx$","沒有 $x$：$2ar+b$"],
-          "note": "每一項都帶 $e^{rx}$。",
-          "say": "每項都有 e 的 r x 次方。有 x 的：a r 平方 x、b r x、c x，提出 x。沒有 x 的：二 a r 加 b。",
-          "board": [
-            {"do":"write","line":"$ar^2x+brx+cx = x(ar^2+br+c)$"},
-            {"do":"write","line":"不含 $x$ 的項：$2ar+b$","on":"沒有"}
-          ] },
-        { "show": ["$ay''+by'+cy$","$=e^{rx}\\left[x(ar^2+br+c)+(2ar+b)\\right]$"],
-          "note": "按 $x$ 的次數整理。",
-          "say": "代進去，把有 x 的和沒有 x 的分開收，得到兩個括號。",
-          "board": [
-            {"do":"write","line":"$ay'' + by' + cy$"},
-            {"do":"write","line":"$= e^{rx}\\left[x({{p:ar^2+br+c}}) + ({{q:2ar+b}})\\right]$","tint":{"p":"blue","q":"violet"},"on":"分開收"}
-          ] },
-        { "show": ["第一個括號：$ar^2+br+c=0$"],
-          "note": "$r$ 是特徵方程的根。",
-          "why": {"ask":"為什麼 $ar^2+br+c=0$？","say":"第一個括號為什麼是零？","options":[{"label":"$r$ 是特徵方程的根","correct":true},{"label":"因為 $r$ 是重根","why":"任何一個根都讓它是零，不必是重根；重根要到第二個括號才用得上。"},{"label":"因為 $e^{rx}\\ne0$","why":"$e^{rx}\\ne0$ 只說整個式子要靠括號；括號本身為零，是因為 $r$ 是根。"}]},
-          "say": "r 是特徵方程的根，代進去就是零。這一步任何根都成立。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{p:ar^2+br+c}} = 0$","on":"第一個括號"},
-            {"do":"underline","term":"p","label":"r 是根","why":true,"on":"特徵方程的根"}
-          ] },
-        { "show": ["第二個括號：$2ar+b=0$"],
-          "note": "重根 $r=-\\frac{b}{2a}$。整個是 $0$。",
-          "say": "重根是負二 a 分之 b，代進二 a r 加 b 正好是零。兩個括號都是零，所以是解。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"重根 $r = -\\frac{b}{2a}$","on":"重根是"},
-            {"do":"write","line":"${{q:2ar+b}} = 0$","on":"代進二"},
-            {"do":"transform","line":"${{q:2ar+b}} = 0$ ⇒ $xe^{rx}$ 是解","color":"green","on":"兩個括號都"}
-          ] }
-      ],
-      "key": "代入後按 $x$ 的次方整理成兩個括號",
-      "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$r$ 是重根」用在哪一步？",
-        "steps": [
-          {
-            "label": "乘法法則算 $y'$、$y''$",
-            "why": "微分對任何 $r$ 都一樣。"
-          },
-          {
-            "label": "整理成兩個括號",
-            "why": "這只是代數整理。"
-          },
-          {
-            "label": "第一個括號 $ar^2+br+c=0$",
-            "why": "這只用到 $r$ 是根，相異根也成立。"
-          },
-          {
-            "label": "第二個括號 $2ar+b=0$",
-            "correct": true
-          }
-        ]
-      }
-    },
-    {
-      "title": "判別式等於零",
-      "beats": [
-        { "show": ["$4y''+4y'+y=0$","$(2r+1)^2=0$"],
-          "say": "首項係數不是一也一樣：四 r 平方加四 r 加一，是二 r 加一的平方。",
-          "board": [
-            {"do":"write","line":"$4r^2 + 4r + 1 = 0$"},
-            {"do":"transform","line":"$(2r+1)^2 = 0$","on":"是二 r"}
-          ] },
-        { "show": ["重根 $r=-\\frac{1}{2}$"],
-          "say": "讓括號變零的是負二分之一。",
-          "board": [
-            {"do":"write","line":"$2r + 1 = 0$"},
-            {"do":"transform","line":"$2r + 1 = 0$ ⇒ $r=-\\frac{1}{2}$","on":"變零的"}
-          ] },
-        { "show": ["$y=(C_1+C_2x)e^{-x/2}$"],
-          "say": "通解是 C 一加 C 二 x，乘上 e 的負二分之 x 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y=(C_1+C_2x)\\,{{e:e^{-x/2}}}$","on":"通解是"},
-            {"do":"underline","term":"e","on":"乘上"}
-          ] },
-        { "show": ["只有重根才加 $x$"],
-          "note": "相異根時 $xe^{rx}$ 不是解。",
-          "say": "要先確認判別式是零。相異根的時候亂加 x，那一項就不是解了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"判別式 $b^2-4ac=0$ 才加 $x$","on":"要先確認"},
-            {"do":"write","line":"相異根：$xe^{rx}$ 不是解","color":"red","on":"相異根"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "配初始條件",
-      "beats": [
-        { "show": ["$y=(C_1+C_2x)e^{-2x}$","$y(0)=1$，$y'(0)=-2$"],
-          "say": "回到負二的重根。條件是 y 在零是一，導數在零是負二。",
-          "board": [
-            {"do":"write","line":"$y = ({{c1:C_1}} + {{c2:C_2}}x)e^{-2x}$","tint":{"c1":"blue","c2":"violet"}},
-            {"do":"write","line":"$y(0) = 1$，$y'(0) = -2$","on":"條件是"}
-          ] },
-        { "show": ["$y'=C_2e^{-2x}-2(C_1+C_2x)e^{-2x}$"],
-          "note": "乘法法則。",
-          "say": "微分要用乘法法則：C 二 x 那一項會多出 C 二，指數也帶出一個負二。",
-          "board": [
-            {"do":"write","line":"$y' = {{m:C_2e^{-2x}}} {{n:- 2(C_1 + C_2x)e^{-2x}}}$"},
-            {"do":"underline","term":"m","label":"多出 C₂","on":"多出"},
-            {"do":"underline","term":"n","label":"帶出 −2","on":"帶出"}
-          ] },
-        { "show": ["$C_1=1$；$C_2-2C_1=-2$"],
-          "say": "代零，C 一是一。導數那一式，C 二減二是負二，所以 C 二是零。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{c1:C_1}} = 1$","on":"代零"},
-            {"do":"write","line":"${{c2:C_2}} - 2{{c1:C_1}} = -2$","on":"導數那一式"},
-            {"do":"transform","line":"${{c2:C_2}} - 2{{c1:C_1}} = -2$ ⇒ ${{z:C_2 = 0}}$","on":"所以 C 二"}
-          ] },
-        { "show": ["$C_2=0$：$y=e^{-2x}$"],
-          "note": "不是那一項不需要，是這組條件剛好用不到。",
-          "say": "C 二是零，不代表 x 那一項不需要，只是這組初始條件剛好用不到它。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$y = e^{-2x}$","color":"green","on":"C 二是零"},
-            {"do":"underline","term":"z","label":"剛好用不到","on":"剛好用不到"}
-          ] },
-        { "show": ["$y=e^{-2x}$ 從 $1$ 出發，斜率 $-2$"],
-          "say": "最後畫出來看：曲線從一出發，斜率是負二，一路往下滑。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.5,2,-0.5,3],"curves":[{"expr":"exp(-2*x)","domain":[-0.5,2],"color":"blue"}],"dashed":[[[0,1],[0.9,-0.8]]],"points":[{"x":0,"y":1}]},"on":"畫出來"}
-          ] }
-      ],
-      "key": "$y'$ 要用乘法法則，再代 $x=0$",
-      "check": 2
-    },
-    {
-      "title": "兩個常數都用上",
-      "beats": [
-        { "show": ["$y''-2y'+y=0$：$(r-1)^2=0$"],
-          "note": "$y(0)=1$，$y'(0)=0$。",
-          "say": "r 平方減二 r 加一，是 r 減一的平方，重根是一。",
-          "board": [
-            {"do":"write","line":"$r^2 - 2r + 1 = 0$"},
-            {"do":"transform","line":"$(r-1)^2 = 0$，重根 $r=1$","on":"是 r 減一"}
-          ] },
-        { "show": ["條件：$y(0)=1$，$y'(0)=0$"],
-          "note": "題目給的 $y'(0)$ 是 $0$。",
-          "say": "這題的條件是 y 在零是一，y 的導數在零是零。先寫下來，才知道兩個常數要用哪兩式解。",
-          "board": [
-            {"do":"write","line":"$y(0)=1$，$y'(0)=0$"}
-          ] },
-        { "show": ["$y=(C_1+C_2x)e^x$"],
-          "say": "通解是 C 一加 C 二 x，乘 e 的 x 次方。",
-          "board": [
-            {"do":"write","line":"$y=(C_1+C_2x)e^x$"}
-          ] },
-        { "show": ["$y'=C_2e^x+(C_1+C_2x)e^x$"],
-          "note": "$y(0)=1$：$C_1=1$。",
-          "say": "微分後代零，導數是 C 二加 C 一。C 一已經知道是一，C 二是多少？",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y' = C_2e^x + (C_1+C_2x)e^x$","on":"微分後"},
-            {"do":"write","line":"$y'(0) = C_2 + C_1$","on":"代零"},
-            {"do":"write","line":"$C_1 = 1$","on":"C 一已經"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$C_2+C_1=0$，$C_1=1$。解是？",
-        "options": [
-          {
-            "label": "$y=(1-x)e^x$",
-            "correct": true
-          },
-          {
-            "label": "$y=e^x$",
-            "why": "那是把 $C_2$ 當成 $y'(0)=0$；乘法法則還有 $C_1$，所以 $C_2=-1$。"
-          },
-          {
-            "label": "$y=(1+x)e^x$",
-            "why": "$C_2+1=0$ 給 $C_2=-1$，不是 $+1$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：複數根"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "constant-coefficients", "repeated-root", "wronskian"],
-    "fine": ["ode2-repeated-general", "ode2-repeated-ivp", "ode2-repeated-why-x"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "constant-coefficients",
+      "repeated-root",
+      "wronskian"
+    ],
+    "fine": [
+      "ode2-repeated-general",
+      "ode2-repeated-ivp",
+      "ode2-repeated-why-x"
+    ]
   },
   "practice": [
-    { "id": "ode-h2-004", "core": true, "trains": "ode2-repeated-ivp" },
-    { "id": "ode-h2-003", "core": true, "trains": "ode2-repeated-ivp" },
-    { "id": "cg-10b-014", "core": true, "trains": "ode2-repeated-general" },
-    { "id": "cg-10b-016", "core": true, "trains": "ode2-repeated-ivp" },
-    { "id": "der-064", "trains": "ode2-repeated-why-x", "note": "$W(e^x,xe^x)$ 不為 $0$：兩個解真的獨立。" },
-    { "id": "cg-10b-015", "trains": "ode2-repeated-general" }
+    {
+      "id": "ode-h2-004",
+      "core": true,
+      "trains": "ode2-repeated-ivp"
+    },
+    {
+      "id": "ode-h2-003",
+      "core": true,
+      "trains": "ode2-repeated-ivp"
+    },
+    {
+      "id": "cg-10b-014",
+      "core": true,
+      "trains": "ode2-repeated-general"
+    },
+    {
+      "id": "cg-10b-016",
+      "core": true,
+      "trains": "ode2-repeated-ivp"
+    },
+    {
+      "id": "der-064",
+      "trains": "ode2-repeated-why-x",
+      "note": "$W(e^x,xe^x)$ 不為 $0$：兩個解真的獨立。"
+    },
+    {
+      "id": "cg-10b-015",
+      "trains": "ode2-repeated-general"
+    }
   ],
   "gaps": []
 }

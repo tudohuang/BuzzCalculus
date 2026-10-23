@@ -1,0 +1,364 @@
+{
+  "id": "improper-infinite",
+  "title": "瑕積分 I：無窮區間",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["ftc-part2", "limit-at-infinity", "integration-by-parts", "inverse-trig-derivative"],
+  "next": ["improper-singular"],
+  "related": ["lhopital", "integral-test"],
+  "objectives": [
+    "用「先積到 $t$，再讓 $t\\to\\infty$」的定義算 $\\int_a^{\\infty}f\\,dx$，並判斷收斂或發散。",
+    "處理兩端都是無窮的積分：切成兩半，兩半要各自收斂。",
+    "分部積分時，把邊界項寫成極限來算，不直接「代入 $\\infty$」。"
+  ],
+  "visual": "畫 y = 1/x² 與 y = 1/x（x ≥ 1），右端點 t 用滑桿往右拉，即時顯示 ∫₁ᵗ 的值：1/x² 那條面積停在 1 − 1/t → 1，1/x 那條面積 ln t 一直慢慢往上爬，沒有上限。兩條曲線看起來都貼近 x 軸，面積的命運卻完全不同。",
+  "concept": [
+    {
+      "heading": "① 區間無限長，面積還可能有限",
+      "body": [
+        "$\\int_1^{\\infty}\\frac{dx}{x^2}$ 問的是「$y=\\frac{1}{x^2}$ 從 $1$ 一路到無窮遠，底下的面積」。區間無限長，但曲線降得夠快，面積可能是有限的數。我們不能直接把 $\\infty$ 代進反導函數，要用極限來定義。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義：先積到 $t$，再讓 $t\\to\\infty$",
+      "body": [
+        "若 $f$ 在每一個 $[a,t]$ 上都可積，定義 $\\int_a^{\\infty}f\\,dx=\\lim_{t\\to\\infty}\\int_a^t f\\,dx$。極限存在（是有限數）叫收斂；極限是 $\\pm\\infty$ 或不存在叫發散。$\\int_{-\\infty}^b$ 同理。",
+        "$\\int_1^t\\frac{dx}{x^2}=1-\\frac{1}{t}\\to 1$，收斂；$\\int_1^t\\frac{dx}{x}=\\ln t\\to\\infty$，發散。兩條曲線都 $\\to 0$，但 $\\frac{1}{x}$ 降得不夠快。被積函數 $\\to 0$ 不是收斂的保證。"
+      ],
+      "tex": ["\\int_a^{\\infty}f(x)\\,dx=\\lim_{t\\to\\infty}\\int_a^{t}f(x)\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩端都無窮：切開，兩半各自收斂",
+      "body": [
+        "$\\int_{-\\infty}^{\\infty}f\\,dx$ 的定義是任選一點 $c$，$\\int_{-\\infty}^c f+\\int_c^{\\infty}f$，而且兩半都要收斂才算收斂（選哪個 $c$ 結果都一樣）。",
+        "不能用 $\\lim_{t\\to\\infty}\\int_{-t}^t$ 代替：$\\int_{-t}^t x\\,dx=0$，但 $\\int_0^{\\infty}x\\,dx$ 發散，所以 $\\int_{-\\infty}^{\\infty}x\\,dx$ 發散。對稱地一起取極限會把兩個 $\\infty$ 互相抵銷，掩蓋發散。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 分部積分：邊界項要取極限",
+      "body": [
+        "$\\left[uv\\right]_1^{\\infty}$ 的意思是 $\\lim_{t\\to\\infty}u(t)v(t)-u(1)v(1)$。像 $\\frac{\\ln t}{t}$ 這種 $\\frac{\\infty}{\\infty}$ 的極限，用 〈L'Hôpital 法則〉或成長階梯（對數 $\\ll$ 冪次）處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼「被積函數 $\\to 0$」不夠，反過來呢？",
+      "body": [
+        "$\\frac{1}{x}\\to 0$ 但積分發散，所以 $f\\to 0$ 不是充分條件。反過來，積分收斂也不保證 $f\\to 0$：可以在每個整數 $n$ 附近放一個高度 $1$、寬度 $\\frac{1}{n^2}$ 的窄三角形，其餘地方是 $0$，面積總和 $\\sum\\frac{1}{2n^2}$ 收斂，但 $f$ 不 $\\to 0$。這跟級數「$a_n\\to 0$ 是必要條件」不一樣（〈積分判別〉要求 $f$ 遞減，就是為了避開這種情況）。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "收斂與發散的分界",
+      "prompt": "$\\int_1^{\\infty}\\frac{dx}{x^2}$ 與 $\\int_1^{\\infty}\\frac{dx}{x}$",
+      "steps": [
+        "$\\int_1^t x^{-2}\\,dx=\\left[-\\frac{1}{x}\\right]_1^t=1-\\frac{1}{t}$。$t\\to\\infty$ 時 $\\to 1$，收斂，值是 $1$。",
+        "$\\int_1^t x^{-1}\\,dx=\\ln t-\\ln 1=\\ln t$。$t\\to\\infty$ 時 $\\to\\infty$，發散。"
+      ],
+      "answer": "第一個是 $1$；第二個發散",
+      "claim": "INT(1/x^2, 1, inf) == 1"
+    },
+    {
+      "title": "分部積分，邊界項用極限",
+      "prompt": "$\\int_1^{\\infty}\\frac{\\ln x}{x^2}\\,dx$",
+      "problemId": "lec-08-q2a",
+      "steps": [
+        "令 $u=\\ln x$、$dv=x^{-2}\\,dx$，$du=\\frac{dx}{x}$、$v=-\\frac{1}{x}$。$\\int\\frac{\\ln x}{x^2}\\,dx=-\\frac{\\ln x}{x}+\\int\\frac{dx}{x^2}=-\\frac{\\ln x}{x}-\\frac{1}{x}+C$。",
+        "從 $1$ 積到 $t$：$\\left(-\\frac{\\ln t}{t}-\\frac{1}{t}\\right)-(0-1)=1-\\frac{\\ln t+1}{t}$。",
+        "$t\\to\\infty$ 時 $\\frac{\\ln t+1}{t}\\to 0$（L'Hôpital：$\\frac{1/t}{1}\\to 0$）。",
+        "所以積分收斂，值是 $1$。"
+      ],
+      "answer": "$1$",
+      "claim": "INT(ln(x)/x^2, 1, inf) == 1 ;; LIM((ln(x)+1)/x, inf) == 0"
+    },
+    {
+      "title": "兩端都無窮",
+      "prompt": "$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}$",
+      "problemId": "lec-08-q2c",
+      "steps": [
+        "在 $0$ 切開：$\\int_{-\\infty}^0+\\int_0^{\\infty}$。",
+        "$\\int_0^t\\frac{dx}{1+x^2}=\\arctan t\\to\\frac{\\pi}{2}$（$t\\to\\infty$），右半收斂到 $\\frac{\\pi}{2}$。",
+        "$\\int_s^0\\frac{dx}{1+x^2}=-\\arctan s\\to\\frac{\\pi}{2}$（$s\\to-\\infty$），左半也收斂到 $\\frac{\\pi}{2}$。",
+        "兩半都收斂，總和 $\\pi$。"
+      ],
+      "answer": "$\\pi$",
+      "claim": "INT(1/(1+x^2), -inf, inf) == pi ;; INT(1/(1+x^2), 0, inf) == pi/2"
+    }
+  ],
+  "pitfalls": [
+    "直接把 $\\infty$ 代進反導函數，寫出「$-\\frac{1}{\\infty}=0$」這種沒有定義的式子；要寫成 $t\\to\\infty$ 的極限。",
+    "看到被積函數 $\\to 0$ 就說收斂（$\\frac{1}{x}$ 是反例）。",
+    "$\\int_{-\\infty}^{\\infty}$ 用對稱極限 $\\lim\\int_{-t}^t$，把發散的積分算成 $0$。",
+    "分部積分後忘了檢查邊界項的極限存不存在。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int_0^{\\infty}e^{-3x}\\,dx$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{3}$", "correct": true },
+        { "label": "$3$", "why": "反導函數是 $-\\frac{e^{-3x}}{3}$，要除以 $3$，不是乘。" },
+        { "label": "發散，因為區間是無限長", "why": "區間無限長不代表發散：$\\int_0^t e^{-3x}\\,dx=\\frac{1-e^{-3t}}{3}\\to\\frac{1}{3}$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_{-\\infty}^{\\infty}x\\,dx$：",
+      "options": [
+        { "label": "發散", "correct": true },
+        { "label": "$0$，因為 $x$ 是奇函數", "why": "要切成兩半各自收斂；$\\int_0^{\\infty}x\\,dx$ 已經發散。$\\lim\\int_{-t}^t x\\,dx=0$ 是對稱抵銷，不是定義。" },
+        { "label": "$\\infty$", "why": "左半是 $-\\infty$、右半是 $+\\infty$，加起來不是 $\\infty$，而是沒有定義；結論是發散。" }
+      ]
+    },
+    {
+      "ask": "$\\int_1^{\\infty}\\frac{dx}{x}$：",
+      "options": [
+        { "label": "發散", "correct": true },
+        { "label": "收斂，因為 $\\frac{1}{x}\\to 0$", "why": "$\\frac{1}{x}$ 降得不夠快：$\\int_1^t\\frac{dx}{x}=\\ln t\\to\\infty$。" },
+        { "label": "收斂到 $1$", "why": "$1$ 是 $\\int_1^{\\infty}\\frac{dx}{x^2}$ 的值；$\\frac{1}{x}$ 的面積沒有上限。" }
+      ]
+    },
+    {
+      "ask": "$\\int_a^{\\infty}f\\,dx$ 的定義是？",
+      "options": [
+        { "label": "$\\lim_{t\\to\\infty}\\int_a^t f\\,dx$", "correct": true },
+        { "label": "$F(\\infty)-F(a)$", "why": "$F(\\infty)$ 不是一個數；要寫成 $\\lim_{t\\to\\infty}F(t)-F(a)$，而且這個極限可能不存在。" },
+        { "label": "$\\lim_{x\\to\\infty}f(x)$", "why": "那是被積函數的極限，不是面積。$\\frac{1}{x}\\to 0$ 但面積發散。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "無限長的面積",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^2}$"],
+          "note": "$y=\\frac{1}{x^2}$ 從 $1$ 到無窮遠底下的面積。",
+          "say": "x 平方分之一從一一路到無窮遠，底下的面積是多少？區間無限長，可是曲線降得很快。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{dx}{x^2}$"}
+          ] },
+        { "show": ["看圖：面積伸向無窮遠"],
+          "note": "越往右，曲線越貼近 x 軸。",
+          "say": "畫出來看：從一往右，曲線底下這塊面積一路伸向無窮遠，但越往右越薄。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6.5,-0.15,1.6],"curves":[{"expr":"1/x^2","domain":[0.8,6.3],"color":"blue"}],"fills":[{"expr":"1/x^2","from":1,"to":6.3,"color":"blue"}],"ticks":false}}
+          ] },
+        { "show": ["不能把 $\\infty$ 代進反導函數"],
+          "note": "無限大不是一個數。",
+          "say": "面積可能是有限的數，但我們不能把無限大直接代進反導函數，要用極限來定義。",
+          "board": [
+            {"do":"write","line":"$F({{inf:\\infty}})$"},
+            {"do":"strike","term":"inf","label":"不是數","on":"無限大"},
+            {"do":"write","line":"改用極限來定義","on":"要用極限"}
+          ] },
+        { "show": ["$\\int_a^{\\infty}f\\,dx=\\lim_{t\\to\\infty}\\int_a^t f\\,dx$"],
+          "note": "先積到 $t$，再讓 $t\\to\\infty$。",
+          "say": "做法是先積到一個有限的 t，再讓 t 趨近無限大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_a^{\\infty}f\\,dx=\\lim_{t\\to\\infty}{{in:\\int_a^t f\\,dx}}$","on":"先積到"},
+            {"do":"underline","term":"in","label":"有限區間","on":"有限的"}
+          ] },
+        { "show": ["極限是有限數：收斂","$\\pm\\infty$ 或不存在：發散"],
+          "say": "極限存在而且是有限的數，就叫收斂；跑到無限大或者不存在，就叫發散。",
+          "board": [
+            {"do":"write","line":"極限是有限數：收斂","color":"green"},
+            {"do":"write","line":"$\\pm\\infty$ 或不存在：發散","color":"red","on":"跑到"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "收斂：$\\frac{1}{x^2}$",
+      "beats": [
+        { "show": ["指數加 1，再除以新指數"],
+          "note": "$x^{-2}$：$-2+1=-1$，再除以 $-1$。",
+          "say": "冪次的反導函數：指數加一，再除以新的指數。x 的負二次方，指數變成負一，再除以負一。",
+          "board": [
+            {"do":"write","line":"$x^{-2}\\to$ 指數 $-2+1={{n1:-1}}$"},
+            {"do":"write","line":"$\\frac{x^{-1}}{-1}=-\\frac{1}{x}$","on":"除以#1"}
+          ] },
+        { "show": ["$\\int_1^t x^{-2}\\,dx=\\left[-\\frac{1}{x}\\right]_1^t$"],
+          "say": "照定義來：x 的負二次方從一積到 t，反導函數是負 x 分之一。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{{{t:t}}} x^{-2}\\,dx=\\left[{{ad:-\\frac{1}{x}}}\\right]_1^{t}$","tint":{"t":"blue"}},
+            {"do":"focus","term":"ad","label":"反導函數","on":"反導函數"}
+          ] },
+        { "show": ["$=1-\\frac{1}{t}$"],
+          "say": "代進去，得到一減 t 分之一。",
+          "board": [
+            {"do":"write","line":"$=1-{{sm:\\frac{1}{t}}}$"}
+          ] },
+        { "show": ["$t\\to\\infty$：$\\to 1$"],
+          "note": "收斂，值是 $1$。",
+          "say": "t 趨近無限大，t 分之一趨近零，所以積分收斂，面積剛好是一。",
+          "board": [
+            {"do":"focus","term":"sm","label":"趨近零","on":"t 分之一趨近零"},
+            {"do":"write","line":"$\\to {{one:1}}$","on":"所以積分收斂"},
+            {"do":"box","term":"one","color":"green","label":"收斂","on":"面積剛好"}
+          ] },
+        { "show": ["$e^{ax}$ 微分會多乘 $a$","所以反導函數要除以 $a$"],
+          "note": "微分檢查：$\\left(\\frac{e^{ax}}{a}\\right)'=e^{ax}$。",
+          "say": "指數函數也能這樣檢查：e 的 a x 次方微分，會多乘一個 a。所以反導函數要除以 a。",
+          "board": [
+            {"do":"write","line":"$(e^{ax})'={{p1:a}}\\,e^{ax}$"},
+            {"do":"write","line":"$\\int e^{ax}\\,dx=\\frac{e^{ax}}{{{p2:a}}}$","on":"除以"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "發散：$\\frac{1}{x}$",
+      "beats": [
+        { "show": ["$\\int_1^t\\frac{dx}{x}=\\ln t$"],
+          "say": "換成 x 分之一，從一積到 t，得到自然對數 t。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{{{t:t}}}\\frac{dx}{x}={{ln:\\ln t}}$","tint":{"t":"blue"},"on":"換成"}
+          ] },
+        { "show": ["$t\\to\\infty$：$\\ln t\\to\\infty$"],
+          "note": "發散。",
+          "say": "t 趨近無限大，自然對數 t 也趨近無限大，面積沒有上限，發散。",
+          "board": [
+            {"do":"write","line":"${{t:t}}\\to\\infty$：${{ln:\\ln t}}\\to\\infty$","tint":{"t":"blue"}},
+            {"do":"write","line":"面積沒有上限：發散","on":"面積沒有上限"}
+          ] },
+        { "show": ["$f\\to 0$ 不是收斂的保證"],
+          "note": "兩條曲線都 $\\to 0$，$\\frac{1}{x}$ 降得不夠快。",
+          "say": "兩條曲線都趨近零，差別在降得夠不夠快。所以被積函數趨近零，不代表積分收斂。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[0,6.5,-0.15,1.6],"curves":[{"expr":"1/x","domain":[0.65,6.3],"color":"violet"},{"expr":"1/x^2","domain":[0.8,6.3],"color":"blue"}],"labels":[{"x":5.2,"y":0.38,"text":"1/x","anchor":"middle"},{"x":2.6,"y":0.06,"text":"1/x²","anchor":"middle"}],"ticks":false},"on":"兩條曲線"},
+            {"do":"write","line":"$f\\to 0$ 不是收斂的保證","color":"red","on":"所以被積函數"}
+          ] },
+        { "show": ["$\\int_1^t x^{-p}\\,dx=\\frac{t^{1-p}-1}{1-p}$"],
+          "note": "$p\\ne 1$ 時；$p=1$ 就是 $\\ln t$。",
+          "say": "一般的 p：x 的負 p 次方，指數加一再除，從一積到 t，得到 t 的一減 p 次方，減一，除以一減 p。",
+          "board": [
+            {"do":"write","line":"$\\int_1^t x^{-p}\\,dx=\\frac{{{tp:t^{1-p}}}-1}{1-p}$"},
+            {"do":"focus","term":"tp","label":"看這項","on":"t 的一減"}
+          ] },
+        { "show": ["$p>1$：收斂；$p\\le 1$：發散"],
+          "say": "p 大於一，一減 p 是負數，t 的那個次方趨近零，收斂。p 小於等於一就發散。",
+          "board": [
+            {"do":"write","line":"$p>1$：$t^{1-p}\\to 0$，收斂","color":"green"},
+            {"do":"write","line":"$p\\le 1$：發散","color":"red","on":"小於等於一"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "分部積分",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{\\ln x}{x^2}\\,dx$"],
+          "note": "$u=\\ln x$，$dv=x^{-2}\\,dx$。",
+          "say": "分部積分：u 取自然對數 x，dv 取 x 的負二次方。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{\\ln x}{x^2}\\,dx$"},
+            {"do":"write","line":"$u={{u:\\ln x}}$","tint":{"u":"blue"},"on":"u 取"},
+            {"do":"write","line":"$dv=x^{-2}\\,dx$","on":"dv 取"}
+          ] },
+        { "show": ["$\\int\\frac{\\ln x}{x^2}\\,dx=-\\frac{\\ln x}{x}-\\frac{1}{x}+C$"],
+          "say": "v 是負 x 分之一，算完反導函數是負 x 分之自然對數 x，再減 x 分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$v=-\\frac{1}{x}$","on":"v 是"},
+            {"do":"write","line":"$\\int\\frac{\\ln x}{x^2}\\,dx=-\\frac{\\ln x}{x}-\\frac{1}{x}+C$","on":"算完"}
+          ] },
+        { "show": ["從 $1$ 積到 $t$：$1-\\frac{\\ln t+1}{t}$"],
+          "note": "邊界項要取極限，不是代 $\\infty$。",
+          "say": "從一積到 t，整理成一減 t 分之自然對數 t 加一。邊界項要取極限。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{t}\\frac{\\ln x}{x^2}\\,dx=1-{{bd:\\frac{\\ln t+1}{t}}}$"},
+            {"do":"focus","term":"bd","label":"取極限","on":"邊界項"}
+          ] },
+        { "show": ["$\\ln(2t)=\\ln t+\\ln 2$"],
+          "note": "t 變 2 倍，$\\ln t$ 只多加固定的數。",
+          "say": "t 變成兩倍，分母跟著變兩倍；可是自然對數 t 只多加一個固定的數。分母跑得快得多。",
+          "board": [
+            {"do":"write","line":"分母：$t\\to 2t$，變 2 倍"},
+            {"do":"write","line":"$\\ln(2t)=\\ln t+{{c1:\\ln 2}}$","on":"自然對數"},
+            {"do":"focus","term":"c1","label":"固定的數","on":"固定的"}
+          ] }
+      ],
+      "key": "分部：$u=\\ln x$，$dv=x^{-2}\\,dx$",
+      "predict": {
+        "ask": "$t\\to\\infty$ 時 $\\frac{\\ln t+1}{t}$ 趨近？",
+        "options": [
+          {
+            "label": "$0$，積分值是 $1$",
+            "correct": true
+          },
+          {
+            "label": "$\\infty$，積分發散",
+            "why": "分子 $\\ln t$ 也 $\\to\\infty$，但對數 $\\ll$ 冪次；L'Hôpital：$\\frac{1/t}{1}\\to 0$。"
+          },
+          {
+            "label": "$1$，積分值是 $0$",
+            "why": "$\\frac{\\infty}{\\infty}$ 不等於 $1$；用 L'Hôpital 得 $\\frac{1/t}{1}\\to 0$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "兩端都無窮",
+      "beats": [
+        { "show": ["$\\int_{-\\infty}^{\\infty}=\\int_{-\\infty}^c+\\int_c^{\\infty}$"],
+          "note": "兩半都要收斂才算收斂。",
+          "say": "兩端都是無限大，就任選一點切開，兩半各自取極限，兩半都收斂才算收斂。",
+          "board": [
+            {"do":"write","line":"$\\int_{-\\infty}^{\\infty}={{lh:\\int_{-\\infty}^c}}+{{rh:\\int_c^{\\infty}}}$","tint":{"lh":"blue","rh":"violet"}},
+            {"do":"write","line":"兩半都收斂才算收斂","on":"兩半都收斂"}
+          ] },
+        { "show": ["$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}=\\frac{\\pi}{2}+\\frac{\\pi}{2}=\\pi$"],
+          "note": "在 $0$ 切開，兩半都是 $\\arctan$ 的極限。",
+          "say": "例如一加 x 平方分之一，在零切開，左右兩半各收斂到二分之 pi，總和是 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}={{lh2:\\frac{\\pi}{2}}}+{{rh2:\\frac{\\pi}{2}}}=\\pi$","tint":{"lh2":"blue","rh2":"violet"},"on":"例如"},
+            {"do":"focus","term":"lh2","color":"blue","label":"左半","on":"左右兩半"}
+          ] },
+        { "show": ["$(\\arctan x)'=\\frac{1}{1+x^2}$"],
+          "note": "$\\arctan t\\to\\frac{\\pi}{2}$，$\\arctan s\\to-\\frac{\\pi}{2}$。",
+          "say": "反導函數是 arctan x。右半 arctan t 趨近二分之 pi；左半負 arctan s，s 往負無限大，也是二分之 pi。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{dx}{1+x^2}=\\arctan x$"},
+            {"do":"write","line":"$\\arctan t\\to\\frac{\\pi}{2}$","on":"右半"},
+            {"do":"write","line":"$-\\arctan s\\to\\frac{\\pi}{2}$","on":"左半"}
+          ] },
+        { "show": ["不能用 $\\lim_{t\\to\\infty}\\int_{-t}^t$"],
+          "note": "$\\int_{-t}^t x\\,dx=0$，但 $\\int_0^{\\infty}x\\,dx$ 發散。",
+          "say": "不能左右對稱一起取極限。那樣兩個無限大會互相抵銷，把發散的積分算成零。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"不能用 ${{bad:\\lim_{t\\to\\infty}\\int_{-t}^t}}$","on":"不能"},
+            {"do":"strike","term":"bad","on":"一起取極限"},
+            {"do":"write","line":"兩個無限大會互相抵銷","on":"兩個無限大"}
+          ] }
+      ],
+      "key": "拆成兩半各自取極限，不能對稱一起取",
+      "check": 1
+    }
+  ],
+  "skillTags": {
+    "coarse": ["improper-integral"],
+    "fine": ["improper-infinite-limit-definition", "improper-infinite-ibp", "improper-two-sided-split", "improper-divergence-detect"]
+  },
+  "practice": [
+    { "id": "exam-int-026", "core": true, "trains": "improper-infinite-limit-definition" },
+    { "id": "uni-int-025", "core": true, "trains": "improper-infinite-limit-definition" },
+    { "id": "uni-int-018", "core": true, "trains": "improper-infinite-limit-definition" },
+    { "id": "depth-int-019", "core": true, "trains": "improper-infinite-limit-definition" },
+    { "id": "lec-08-q2a", "core": true, "trains": "improper-infinite-ibp" },
+    { "id": "lec-08-q2c", "core": true, "trains": "improper-two-sided-split" },
+    { "id": "cg-11b-001", "core": true, "trains": "improper-divergence-detect" },
+    { "id": "cg-11b-003", "core": true, "trains": "improper-two-sided-split" },
+    { "id": "int-040", "trains": "improper-infinite-ibp" },
+    { "id": "uni-int-014", "trains": "improper-infinite-limit-definition" },
+    { "id": "depth-int-020", "trains": "improper-infinite-limit-definition" },
+    { "id": "cg-11b-002", "trains": "improper-divergence-detect" },
+    { "id": "cx-hi-007", "challenge": true, "trains": "improper-infinite-limit-definition", "note": "挑戰：先部分分式成兩個 $\\arctan$，再各自取極限。" }
+  ],
+  "gaps": []
+}

@@ -1,330 +1,117 @@
 {
   "id": "null-sets",
   "title": "零測集",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
-  "prerequisites": ["lebesgue-measure", "measure-zero"],
-  "next": ["almost-everywhere"],
+  "prerequisites": [
+    "lebesgue-measure",
+    "measure-zero"
+  ],
+  "next": [
+    "almost-everywhere"
+  ],
   "related": [],
   "objectives": [
-    "判斷常見集合是不是零測集：可數集、Cantor 集、可數多個零測集的聯集。",
-    "分清楚「零測」「可數」「不含區間」三件不同的事，各舉反例。",
-    "說得出 Lebesgue 測度的完備性：零測集的任何子集都可測、測度 0，並會證明。"
+    "判斷常見集合是不是零測集：可數集、Cantor 集、可數多個零測集的聯集",
+    "分清楚「零測」「可數」「不含區間」三件不同的事，各舉反例",
+    "說得出 Lebesgue 測度的完備性：零測集的任何子集都可測、測度 $0$，並會證明"
   ],
-  "visual": "Cantor 集的構造動畫：第 n 步留下 2ⁿ 段、每段長 3⁻ⁿ，下方的長條顯示剩下總長 (2/3)ⁿ 一路掉向 0；旁邊一個計數器顯示「剩下的點」仍然多到可以跟 [0, 1] 一一對應。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 測度論裡「可以忽略」的集合",
+      "heading": "① 可以忽略的集合",
       "body": [
-        "$N\\subseteq\\mathbb{R}$ 叫做（Lebesgue）零測集，如果 $m(N)=0$。因為 $m^*$ 由開區間覆蓋定義，這跟〈測度為零的直觀〉講的是同一件事：對每個 $\\varepsilon>0$，都能用總長 $<\\varepsilon$ 的可數多個開區間把 $N$ 蓋住。",
-        "直覺，不是證明：零測集是積分「看不見」的地方。函數在零測集上改成什麼值，積分都不變——這是後面〈幾乎處處〉整套語言的基礎。"
+        "$N\\subseteq\\mathbb{R}$ 是 零測集：$m^*(N)=0$",
+        "跟 12.41 的定義一樣：對每個 $\\varepsilon>0$，有總長 $<\\varepsilon$ 的開區間蓋住 $N$",
+        "為什麼「可以忽略」：$E$ 可測、$N$ 零測 ⇒",
+        "證明：單調 ⇒ $m(E)\\le m^*(E\\cup N)$；次可加 ⇒ $m^*(E\\cup N)\\le m(E)+0$",
+        "挖掉的情形一樣：$m(E\\setminus N)\\le m(E)\\le m(E\\setminus N)+m^*(N)$",
+        "直觀：零測集「沒有長度」；積分、極限都看不見它"
       ],
-      "collapsible": false
+      "tex": [
+        "m(E\\cup N)=m(E)=m(E\\setminus N)"
+      ]
     },
     {
       "heading": "② 零測集的家族",
       "body": [
-        "可數集：單點測度 0，可數可加給可數集測度 0。$\\mathbb{Q}$ 是稠密的零測集。",
-        "可數多個零測集的聯集仍是零測集：由次可加性 $m(\\bigcup N_k)\\le\\sum m(N_k)=0$。",
-        "不可數的零測集也存在：Cantor 集 $C$ 第 $n$ 步剩下的總長是 $(\\frac{2}{3})^n\\to0$，所以 $m(C)=0$；但 $C$ 不可數。",
-        "零測集不含任何區間（區間長度為正）。反過來不對：胖 Cantor 集與 $[0,1]\\setminus\\mathbb{Q}$ 都不含區間，測度卻分別是 $\\frac{1}{2}$ 與 1。"
+        "• 可數集（12.44：第 $n$ 個點用長 $\\frac{\\varepsilon}{2^n}$ 蓋）",
+        "• 可數多個零測集的聯集：$m^*\\big(\\bigcup N_k\\big)\\le\\sum m^*(N_k)=0$",
+        "例：$\\mathbb{Q}$、$\\mathbb{Q}^2$ 的投影、所有代數數，都是可數的",
+        "• Cantor 集 $C$：每步去掉每段中間的三分之一",
+        "第 $n$ 步剩 $2^n$ 段、每段長 $3^{-n}$："
       ],
-      "collapsible": false
+      "tex": [
+        "m(C)\\le\\Big(\\frac23\\Big)^n\\to0\\ \\Rightarrow\\ m(C)=0"
+      ]
     },
     {
-      "heading": "證明：Cantor 集不可數",
+      "heading": "② 例：十進位不含 7",
       "body": [
-        "$C$ 恰好是 $[0,1]$ 中有一種三進位展開只用數字 0 與 2 的數 $x=\\sum d_k3^{-k}$（$d_k\\in\\{0,2\\}$）；第 $k$ 步去掉的中間三分之一，正是第 $k$ 位必須是 1 的那些數。",
-        "定義 $F(x)=\\sum(\\frac{d_k}{2})2^{-k}$，也就是把數字 2 換成 1、改用二進位讀。每個 $y\\in[0,1]$ 都有二進位展開 $\\sum b_k2^{-k}$，取 $d_k=2b_k$ 就得到 $C$ 中一點被 $F$ 送到 $y$，所以 $F$ 映成 $[0,1]$。",
-        "若 $C$ 可數，它的像 $F(C)=[0,1]$ 也可數，矛盾。"
+        "$A$ = $[0,1]$ 中有一種十進位展開完全不出現 7 的數。證明 $m(A)=0$",
+        "前 $n$ 位 $d_1\\cdots d_n$ 都不是 7：只有 $9^n$ 種",
+        "每種對應一段 $[0.d_1\\cdots d_n,\\ 0.d_1\\cdots d_n+10^{-n}]$",
+        "一段閉區間可以換成稍大一點的開區間，多出的長度可以任意小",
+        "要多細才蓋到總長 $<0.01$？$(0.9)^{43}\\approx0.0108$，$(0.9)^{44}\\approx0.0097$ ⇒ 前 44 位",
+        "意思：「隨便」選一個 $[0,1]$ 裡的數，它的展開幾乎一定會出現 7",
+        "這個集合不可數（跟 Cantor 集一樣），測度卻是 $0$"
       ],
-      "collapsible": true
+      "tex": [
+        "m^*(A)\\le9^n\\cdot10^{-n}=(0.9)^n\\to0"
+      ]
     },
     {
-      "heading": "③ 完備性：零測集的子集也可測",
+      "heading": "② 零測、可數、不含區間",
       "body": [
-        "若 $m(N)=0$ 且 $A\\subseteq N$，則 $A$ 可測、$m(A)=0$。這叫 Lebesgue 測度是完備的。它讓我們可以放心地說「$f$ 跟一個可測函數幾乎處處相等，所以 $f$ 也可測」。"
+        "反方向都不對：",
+        "• 零測但不可數：Cantor 集（下面證明）",
+        "• 不含區間但測度 $>0$：胖 Cantor 集，$m=\\frac12$（12.44）",
+        "證明：Cantor 集不可數",
+        "$C$ = 能寫成三進位 $0.a_1a_2a_3\\ldots$、每個 $a_k\\in\\{0,2\\}$ 的數",
+        "第 $k$ 步挖掉的，正是第 $k$ 位非得是 1 的數",
+        "例：$\\frac14=0.020202\\ldots_{(3)}\\in C$，但它不是任何一段的端點",
+        "不同的 0–2 數列 ⇒ 不同的點：第一個不同的位置是 $k$，差至少 $2\\cdot3^{-k}-\\sum_{j>k}2\\cdot3^{-j}=3^{-k}>0$",
+        "對角線：假設 $C=\\{c_1,c_2,\\ldots\\}$；造 $a$，第 $n$ 位跟 $c_n$ 的第 $n$ 位相反（0↔2）",
+        "則 $a\\in C$，但 $a\\ne c_n$ 對每個 $n$。矛盾　$\\blacksquare$"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "可以忽略的集合",
-      "beats": [
-        { "show": ["$m(N)=0$：零測集"],
-          "note": "總長 $<\\varepsilon$ 的開區間蓋得住。",
-          "say": "Lebesgue 測度是零的集合叫零測集。跟之前的直觀一樣：總長要多小都蓋得住。",
-          "board": [
-            {"do":"write","line":"$m(N)=0$：零測集"},
-            {"do":"write","line":"總長 $<\\varepsilon$ 的開區間蓋得住","on":"總長要多小"}
-          ] },
-        { "show": ["高 × 寬：寬 $=0$ 就沒有面積"],
-          "say": "積分是把每一條的高乘寬加起來。零測集的寬度是零，不管函數在上面改成多高，面積都是高乘零，所以加不進積分。",
-          "board": [
-            {"do":"write","line":"零測集上：寬 $=0$"},
-            {"do":"write","line":"面積 $=$ 高 $\\times 0$","on":"高乘零"}
-          ] },
-        { "show": ["積分「看不見」的地方"],
-          "say": "零測集是積分看不見的地方。這是後面幾乎處處那整套語言的基礎。",
-          "board": [
-            {"do":"write","line":"積分「看不見」的地方"},
-            {"do":"write","line":"基礎：幾乎處處","on":"幾乎處處"}
-          ] }
-      ],
-      "predict": {
-        "ask": "函數在一個零測集上改成別的值，積分會？",
-        "options": [
-          {
-            "label": "不變",
-            "correct": true
-          },
-          {
-            "label": "看改成多大的值",
-            "why": "零測集上的值，不管多大，積分都看不見。"
-          },
-          {
-            "label": "變成不可積",
-            "why": "改零測集上的值不影響可積與積分；這正是零測集「可以忽略」的意思。"
-          }
-        ]
-      }
+      "tex": [
+        "\\text{可數}\\ \\Rightarrow\\ \\text{零測}\\ \\Rightarrow\\ \\text{不含區間}"
+      ]
     },
     {
-      "title": "零測集的家族",
-      "beats": [
-        { "show": ["可數集：單點測度 0，可數可加"],
-          "note": "$\\mathbb{Q}$ 是稠密的零測集。",
-          "say": "單點測度是零，可數可加，所以可數集都是零測集。有理數到處都是，照樣是零測。",
-          "board": [
-            {"do":"write","line":"$m(\\{x\\})=0$"},
-            {"do":"write","line":"$m(\\bigcup\\{x_k\\})=\\sum 0=0$","on":"可數可加"},
-            {"do":"write","line":"$\\mathbb{Q}$ 稠密，仍是零測集","on":"有理數"}
-          ] },
-        { "show": ["$m(\\bigcup N_k)\\le\\sum m(N_k)=0$"],
-          "say": "可數多個零測集聯集起來，用次可加性，還是零測集。",
-          "board": [
-            {"do":"write","line":"$m({{u:\\bigcup N_k}})\\le{{s:\\sum m(N_k)}}=0$"},
-            {"do":"underline","term":"s","label":"次可加","on":"次可加性"}
-          ] },
-        { "show": ["Cantor 集：$m(C)=0$，但不可數"],
-          "note": "剩下總長 $(\\frac{2}{3})^n\\to0$。",
-          "say": "不可數的也有：Cantor 集剩下的總長趨近零，測度是零，可是它的點跟零到一一樣多。為什麼不可數，後面有一節證明。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$C$：剩下總長 $(\\frac{2}{3})^n\\to0$","on":"剩下的總長"},
-            {"do":"write","line":"$m(C)=0$","on":"測度是零"},
-            {"do":"write","line":"$C$ 的點跟 $[0,1]$ 一樣多","on":"一樣多"}
-          ] }
-      ],
-      "check": 1
+      "heading": "② 試一題",
+      "body": [
+        "每個單點都零測，但 $[0,1]=\\bigcup_{t\\in[0,1]}\\{t\\}$ 的測度是 $1$：可數是關鍵"
+      ]
     },
     {
-      "title": "Cantor 集切幾步",
-      "beats": [
-        { "show": ["剩下總長 $(\\frac{2}{3})^n$ 一路往下掉"],
-          "say": "先看剩下的總長：每多切一步就乘三分之二，曲線一路往零掉。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,15,-0.1,1.1],"curves":[{"expr":"(2/3)^x","domain":[0,15],"color":"blue"}]}}
-          ] },
-        { "show": ["$C$ 包含於第 $n$ 步剩下的 $2^n$ 段"],
-          "note": "所以 $m(C)\\le(\\frac{2}{3})^n$。",
-          "say": "Cantor 集一直包含在第 n 步剩下的二的 n 次方段裡，所以它的測度不超過三分之二的 n 次方。",
-          "board": [
-            {"do":"write","line":"$C\\subseteq$ 第 $n$ 步剩下的 $2^n$ 段"},
-            {"do":"write","line":"$m(C)\\le(\\frac{2}{3})^n$","on":"測度不超過"}
-          ] },
-        { "show": ["去掉的總長 $\\sum\\frac{2^{n-1}}{3^n}=1$"],
-          "say": "換個角度：去掉的總長加起來是一，全部長度都被拿走了。",
-          "board": [
-            {"do":"write","line":"$\\sum\\frac{2^{n-1}}{3^n}={{r:1}}$"},
-            {"do":"box","term":"r","color":"green","on":"全部長度"}
-          ] },
-        { "show": ["要 $(\\frac{2}{3})^n<0.01$"],
-          "say": "那要剩不到零點零一，最少要切幾步？",
-          "board": [
-            {"do":"write","line":"$(\\frac{2}{3})^n<{{b:0.01}}$"},
-            {"do":"focus","term":"b","on":"零點零一"}
-          ] }
+      "heading": "③ 完備性",
+      "body": [
+        "定理：$m^*(N)=0$，$A\\subseteq N$ ⇒ $A$ 可測，而且 $m(A)=0$",
+        "策略：直接檢查 Carathéodory 判準；$\\le$ 永遠成立，只要證 $\\ge$",
+        "證明：任取 $E\\subseteq\\mathbb{R}$。",
+        "• 單調：$m^*(E\\cap A)\\le m^*(N)=0$",
+        "• 單調：$m^*(E\\cap A^c)\\le m^*(E)$",
+        "次可加：$m^*(E)\\le m^*(E\\cap A)+m^*(E\\cap A^c)$ ⇒ 相等",
+        "所以 $A$ 可測，$m(A)=m^*(A)\\le m^*(N)=0$　$\\blacksquare$",
+        "意義：零測集的子集，不用擔心可不可測",
+        "例：Cantor 集的每個子集都可測（測度 $0$）；但它們大多不是 Borel 集。只用 Borel 集的測度不完備"
       ],
-      "check": 2
+      "tex": [
+        "m^*(E\\cap A)+m^*(E\\cap A^c)\\le0+m^*(E)"
+      ]
     },
     {
-      "title": "證明：Cantor 不可數",
-      "beats": [
-        { "show": ["造一個從 $C$ 映成 $[0,1]$ 的函數"],
-          "say": "策略：反證。造一個從 Cantor 集映成零到一的函數；可數的集合，送不出不可數那麼多的像。",
-          "board": [
-            {"do":"write","line":"造 $F:C\\to[0,1]$，而且映成","on":"造一個"},
-            {"do":"write","line":"可數集合送不出不可數的像","on":"可數的集合"}
-          ] },
-        { "show": ["$C$：三進位只用 0 與 2 的數"],
-          "note": "第 $k$ 步去掉的，是第 $k$ 位必須是 1 的數。",
-          "say": "先換個方式看 Cantor 集：第 k 步挖掉的中間三分之一，正是三進位第 k 位非得是一的數。剩下的只用零和二。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-0.05,1.05,-0.12,0.42],"equal":true,"ticks":false,"curves":[{"pts":[[0,0.3],[1,0.3]],"color":"blue","width":4},{"pts":[[0,0.15],[0.3333,0.15]],"color":"blue","width":4},{"pts":[[0.6667,0.15],[1,0.15]],"color":"blue","width":4},{"pts":[[0,0],[0.1111,0]],"color":"blue","width":4},{"pts":[[0.2222,0],[0.3333,0]],"color":"blue","width":4},{"pts":[[0.6667,0],[0.7778,0]],"color":"blue","width":4},{"pts":[[0.8889,0],[1,0]],"color":"blue","width":4}]},"on":"先換個方式"},
-            {"do":"write","line":"$C$：三進位只用 ${{z:0}}$ 與 ${{t:2}}$ 的數","on":"剩下的"}
-          ] },
-        { "show": ["$\\frac{1}{2}$：三進位每位都是 1"],
-          "say": "舉例：二分之一的三進位每一位都是一，第一位是一，正好落在三分之一到三分之二被挖掉的中間。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{2}$ 的三進位：每一位都是 $1$"},
-            {"do":"write","line":"第 1 位是 1，落在 $(\\frac{1}{3},\\frac{2}{3})$","on":"三分之一"}
-          ] },
-        { "show": ["$F(x)=\\sum(\\frac{d_k}{2})2^{-k}$"],
-          "note": "把 2 換成 1，改用二進位讀。",
-          "say": "定義 F：把三進位裡的每個二換成一，再當成二進位來讀。",
-          "board": [
-            {"do":"write","line":"$F(x)=\\sum{{d:\\left(\\frac{d_k}{2}\\right)}}2^{-k}$","on":"定義 F"},
-            {"do":"underline","term":"d","on":"每個二換成一","label":"2 換成 1"}
-          ] },
-        { "show": ["$F(C)=[0,1]$"],
-          "note": "$y=\\sum b_k2^{-k}$，取 $d_k=2b_k$。",
-          "why": {"ask":"為什麼 $F$ 映成 $[0,1]$？","say":"零到一的每個 y，為什麼都打得到？","options":[{"label":"$y$ 有二進位展開，數字乘 2 就是 $C$ 的一點","correct":true},{"label":"$F$ 連續，用中間值定理","why":"$C$ 不是區間，中間值定理用不上；要直接替每個 $y$ 造出一個原像。"},{"label":"$F$ 是一對一","why":"一對一管的是不撞在一起，不是打不打得到；而且 $F$ 其實不一對一，要的只是映成。"}]},
-          "say": "零到一的每個 y 都有二進位展開。把每一位乘二，就是一個只用零和二的三進位數，在 C 裡，F 把它送到 y。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{img:F(C)=[0,1]}}$","on":"每個 y"},
-            {"do":"write","line":"$y=\\sum b_k2^{-k}$，取 ${{dk:d_k=2b_k}}$","on":"把每一位乘二","why":true},
-            {"do":"underline","term":"dk","on":"就是一個","label":"在 C 裡","why":true}
-          ] },
-        { "show": ["$C$ 可數 ⇒ $F(C)=[0,1]$ 可數：矛盾"],
-          "why": {"ask":"為什麼 $C$ 可數會推出 $[0,1]$ 可數？","say":"如果 Cantor 集可數，它的像為什麼也可數？","options":[{"label":"可數集的像最多可數","correct":true},{"label":"$m(C)=0$，所以像的測度也是 0","why":"$F$ 不保測度：$C$ 測度是零，它的像卻是整個 $[0,1]$。這裡比的是個數，不是長度。"},{"label":"$F$ 一對一，元素一樣多","why":"不需要一對一（$F$ 也不是）：把 $C$ 排成一列，像也跟著排成一列，就夠了。"}]},
-          "note": "$C$ 排成一列，像也排成一列。",
-          "say": "把 C 排成一列，它們的像也跟著排成一列，所以零到一可數。可是零到一不可數，矛盾。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$C$ 可數 ⇒ $F(C)=[0,1]$ 可數？","on":"如果 Cantor"},
-            {"do":"write","line":"$C$ 排成一列，像也排成一列","on":"把 C 排成","why":true},
-            {"do":"write","line":"可是 $[0,1]$ 不可數：矛盾","on":"可是零到一","color":"green","why":true}
-          ] }
-      ],
-      "key": "映成 $[0,1]$：像不可數，原像就不可數",
-      "proof": true,
-      "of": 2,
-      "skeleton": "反證",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          {
-            "label": "$C$ 是三進位只用 0 與 2 的數"
-          },
-          {
-            "label": "定義 $F$：2 換成 1，改用二進位讀",
-            "why": "要先知道 $C$ 的點長什麼樣（只用 0 與 2），才能把 2 換成 1。"
-          },
-          {
-            "label": "$F(C)=[0,1]$",
-            "why": "要先有 $F$，才談得上它打到哪些點。"
-          },
-          {
-            "label": "$C$ 可數就推出 $[0,1]$ 可數，矛盾",
-            "why": "要先知道 $F$ 映成 $[0,1]$，$C$ 可數才會拖著 $[0,1]$ 一起可數。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "不含區間不等於零測",
-      "beats": [
-        { "show": ["零測集不含任何區間"],
-          "note": "區間的長度是正的。",
-          "say": "零測集裡面放不進任何區間，因為區間長度是正的。",
-          "board": [
-            {"do":"write","line":"$m(N)=0$ ⇒ $N$ 不含區間"},
-            {"do":"write","line":"區間長度 $>0$","on":"區間長度"}
-          ] },
-        { "show": ["反過來不對"],
-          "say": "可是反過來不對，不含區間的集合也可以很大。",
-          "board": [
-            {"do":"write","line":"反過來：$A$ 不含區間 ⇒ ${{w:m(A)=0}}$"},
-            {"do":"strike","term":"w","label":"不對","on":"不對"}
-          ] },
-        { "show": ["胖 Cantor 集：$\\frac{1}{2}$","$[0,1]\\setminus\\mathbb{Q}$：1"],
-          "say": "胖 Cantor 集不含區間，測度二分之一；零到一的無理數也不含區間，測度是一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"胖 Cantor 集：$m=\\frac{1}{2}$","on":"胖 Cantor"},
-            {"do":"write","line":"$[0,1]\\setminus\\mathbb{Q}$：$m=1$","on":"無理數"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "不出現 7 的數",
-      "beats": [
-        { "show": ["$A$：十進位展開不出現 7"],
-          "note": "在 $[0,1]$ 裡。",
-          "say": "零到一裡面，十進位展開完全不出現數字七的數，這個集合有多大？",
-          "board": [
-            {"do":"write","line":"$A\\subseteq[0,1]$：十進位不出現 ${{s:7}}$"},
-            {"do":"focus","term":"s","on":"數字七"}
-          ] },
-        { "show": ["前 $n$ 位：$9^n$ 種，每種一段長 $10^{-n}$"],
-          "say": "只看前 n 位，每一位有九種選法，共九的 n 次方種，每一種對應一段長十的負 n 次方。",
-          "board": [
-            {"do":"write","line":"前 $n$ 位：每位 ${{a:9}}$ 種選法","on":"每一位"},
-            {"do":"write","line":"共 $9^n$ 種，每段長 $10^{-n}$","on":"共九的"}
-          ] },
-        { "show": ["蓋住 $A$ 的總長 是 $m(A)$ 的上界"],
-          "say": "這些段把 A 整個蓋住，所以 A 的測度不會超過這些段加起來的總長。",
-          "board": [
-            {"do":"write","line":"$A\\subseteq$ 這 $9^n$ 段的聯集"},
-            {"do":"write","line":"$m(A)\\le$ 蓋住它的總長","on":"不會超過"}
-          ] },
-        { "show": ["每個 $n$ 都成立：看總長隨 $n$ 怎麼走"],
-          "say": "這對每一個 n 都成立。所以要看，n 越來越大時，總長會走到哪裡。",
-          "board": [
-            {"do":"write","line":"對每個 $n$ 都成立","on":"每一個"},
-            {"do":"write","line":"總長 $=9^n\\cdot10^{-n}$，$n\\to\\infty$？","on":"總長會走"}
-          ] }
-      ],
-      "key": "前 $n$ 位各 $9$ 種，算蓋住它的總長",
-      "predict": {
-        "ask": "所以 $m(A)$ 是？",
-        "options": [
-          {
-            "label": "0：$m(A)\\le(\\frac{9}{10})^n\\to0$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{9}{10}$",
-            "why": "那只是看第一位的上界；$n$ 位都限制時上界是 $(\\frac{9}{10})^n$，趨近 0。"
-          },
-          {
-            "label": "正的，因為 $A$ 不可數",
-            "why": "不可數不代表有正測度；$A$ 跟 Cantor 集一樣是不可數的零測集。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "零測集的子集",
-      "beats": [
-        { "show": ["$m(N)=0$，$A\\subseteq N$"],
-          "say": "最後一件事：零測集的子集 A，會不會不可測？",
-          "board": [
-            {"do":"write","line":"$m(N)=0$，$A\\subseteq N$"},
-            {"do":"write","line":"$A$ 可測嗎？","on":"會不會"}
-          ] },
-        { "show": ["$m^*(A)\\le m^*(N)=0$"],
-          "note": "單調性。",
-          "say": "先看外測度：單調性給出 A 的外測度不超過零，所以是零。",
-          "board": [
-            {"do":"write","line":"$m^*(A)\\le m^*(N)={{z:0}}$"},
-            {"do":"focus","term":"z","on":"外測度不超過"}
-          ] },
-        { "show": ["Carathéodory 判準兩邊相等"],
-          "note": "Lebesgue 測度是完備的。",
-          "say": "拿 A 去切任何集合，兩邊的外測度剛好相加，所以 A 可測。這叫 Lebesgue 測度是完備的。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$m^*(E)=m^*(E\\cap A)+m^*(E\\setminus A)$","on":"去切"},
-            {"do":"write","line":"Lebesgue 測度是完備的","color":"green","on":"完備"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• 零測集：$m^*(N)=0$；加進來、挖掉都不改變測度",
+        "• 可數集、Cantor 集、可數多個零測集的聯集：都是零測",
+        "• 可數 ⇒ 零測 ⇒ 不含區間；反例：Cantor 集、胖 Cantor 集",
+        "• Cantor 集不可數：0–2 三進位＋對角線",
+        "• 完備性：零測集的子集都可測，測度 $0$",
+        "下一課：幾乎處處：不在乎零測集"
+      ]
     }
   ],
   "workedExamples": [
@@ -373,53 +160,702 @@
   ],
   "checks": [
     {
-      "ask": "下列哪一個是零測集？",
+      "ask": "最少要做幾步，剩下的總長 $\\big(\\frac23\\big)^n$ 才 $<0.01$？",
       "options": [
-        { "label": "Cantor 集", "correct": true },
-        { "label": "$[0,1]$ 中的無理數", "why": "它不含區間，但測度是 $1-m(\\mathbb{Q}\\cap[0,1])=1$。不含區間 $\\ne$ 零測。" },
-        { "label": "胖 Cantor 集", "why": "它去掉的總長只有 $\\frac{1}{2}$，剩下測度 $\\frac{1}{2}$。" }
+        {
+          "label": "$5$",
+          "why": "$(\\frac23)^5\\approx0.13$，還差很遠"
+        },
+        {
+          "label": "$11$",
+          "why": "$(\\frac23)^{11}\\approx0.0116$，還沒到 $0.01$"
+        },
+        {
+          "label": "$12$",
+          "correct": true
+        },
+        {
+          "label": "$100$",
+          "why": "夠，但不是「最少」：第 $12$ 步就做到了"
+        }
       ]
     },
     {
-      "ask": "一個集合不可數，它的測度一定是正的嗎？",
+      "ask": "下列哪一個集合==零測但不可數==？",
       "options": [
-        { "label": "不一定，Cantor 集不可數但測度 0", "correct": true },
-        { "label": "一定，不可數就有正測度", "why": "你把「點很多」跟「長度很大」混在一起。Cantor 集的點跟 $[0,1]$ 一樣多，總長卻是 0。" },
-        { "label": "一定，因為零測集都是可數集", "why": "可數集是零測集，但反過來不對；Cantor 集就是反例。" }
+        {
+          "label": "$\\mathbb{Q}\\cap[0,1]$",
+          "why": "零測，但它是可數的"
+        },
+        {
+          "label": "Cantor 集",
+          "correct": true
+        },
+        {
+          "label": "胖 Cantor 集",
+          "why": "它不可數，但測度是 $\\frac12$，不是 $0$"
+        },
+        {
+          "label": "$[0,1]\\setminus\\mathbb{Q}$",
+          "why": "不可數，但測度是 $1$"
+        }
       ]
     },
     {
-      "ask": "Cantor 集構造後剩下總長 $(\\frac{2}{3})^n$，最少要幾步才 $<0.01$？",
+      "ask": "每個 $N_t$ 都是零測集。哪一個==不一定==是零測集？",
       "options": [
-        { "label": "12", "correct": true },
-        { "label": "11", "why": "$(\\frac{2}{3})^{11}\\approx0.0116$，還比 0.01 大，要再多一步。" },
-        { "label": "5", "why": "你可能用 $(\\frac{1}{3})^n$ 去算（$(\\frac{1}{3})^5\\approx0.004$）。每步剩下的是三分之二，不是三分之一。" }
+        {
+          "label": "$\\bigcup_{k=1}^\\infty N_k$",
+          "why": "可數聯集：次可加給 $\\le\\sum0=0$"
+        },
+        {
+          "label": "$N_1$ 的任何子集",
+          "why": "單調（也就是下面的完備性）：子集的外測度 $\\le0$"
+        },
+        {
+          "label": "$\\bigcup_{t\\in[0,1]}N_t$",
+          "correct": true
+        },
+        {
+          "label": "$N_1\\cap N_2$",
+          "why": "包含於 $N_1$，單調給 $0$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "可以忽略的集合",
+      "beats": [
+        {
+          "show": [
+            "$N\\subseteq\\mathbb{R}$ 是 零測集：$m^*(N)=0$"
+          ],
+          "say": "外測度是 0 的集合，叫零測集。12.41 的測度為零，就是這個意思。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N\\subseteq\\mathbb{R}$ 是 零測集：$m^*(N)=0$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　跟 12.41 的定義一樣：對每個 $\\varepsilon>0$，有總長 $<\\varepsilon$ 的開區間蓋住 $N$",
+              "color": "violet",
+              "on": "41"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼「可以忽略」：$E$ 可測、$N$ 零測 ⇒",
+            "$m(E\\cup N)=m(E)=m(E\\setminus N)$"
+          ],
+          "say": "為什麼說可以忽略？把零測集加進來，或挖掉，測度都不變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼「可以忽略」：$E$ 可測、$N$ 零測 ⇒"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle m(E\\cup N)=m(E)=m(E\\setminus N)}}$",
+              "on": "把零"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "挖掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：單調 ⇒ $m(E)\\le m^*(E\\cup N)$；次可加 ⇒ $m^*(E\\cup N)\\le m(E)+0$"
+          ],
+          "say": "證明加進來的情形：由單調，聯集的外測度至少是 E 的測度；由次可加，至多是 E 的測度加 0。兩邊夾住，就相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：單調 ⇒ $m(E)\\le m^*(E\\cup N)$；次可加 ⇒ $m^*(E\\cup N)\\le m(E)+0$"
+            },
+            {
+              "do": "write",
+              "line": "　挖掉的情形一樣：$m(E\\setminus N)\\le m(E)\\le m(E\\setminus N)+m^*(N)$",
+              "color": "violet",
+              "on": "由次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直觀：零測集「沒有長度」；積分、極限都看不見它"
+          ],
+          "say": "直觀上，零測集沒有長度。之後的積分和極限，都看不見它，這是測度論最常用的想法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直觀：零測集「沒有長度」；積分、極限都看不見它"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$[0,1]$ 去掉所有有理數，剩下的測度是？",
+        "options": [
+          {
+            "label": "$0$",
+            "why": "有理數稠密，但「稠密」不代表「大」：$\\mathbb{Q}$ 是零測集"
+          },
+          {
+            "label": "$1$",
+            "correct": true
+          },
+          {
+            "label": "不可測",
+            "why": "差集是 Borel 集，一定可測"
+          }
+        ]
+      }
+    },
+    {
+      "title": "零測集的家族",
+      "beats": [
+        {
+          "show": [
+            "• 可數集（12.44：第 $n$ 個點用長 $\\frac{\\varepsilon}{2^n}$ 蓋）",
+            "• 可數多個零測集的聯集：$m^*\\big(\\bigcup N_k\\big)\\le\\sum m^*(N_k)=0$"
+          ],
+          "say": "哪些集合是零測集？第一，可數集，上一課證過。第二，可數多個零測集的聯集，由次可加，外測度不超過 0 的總和，就是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 可數集（12.44：第 $n$ 個點用長 $\\frac{\\varepsilon}{2^n}$ 蓋）"
+            },
+            {
+              "do": "write",
+              "line": "• 可數多個零測集的聯集：$m^*\\big(\\bigcup N_k\\big)\\le\\sum m^*(N_k)=0$",
+              "on": "證過"
+            },
+            {
+              "do": "write",
+              "line": "　例：$\\mathbb{Q}$、$\\mathbb{Q}^2$ 的投影、所有代數數，都是可數的",
+              "color": "violet",
+              "on": "外測"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• Cantor 集 $C$：每步去掉每段中間的三分之一"
+          ],
+          "say": "第三，康托爾集：從 0 到 1 開始，每一步把每一段中間的三分之一挖掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Cantor 集 $C$：每步去掉每段中間的三分之一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，第一步剩兩段，總長 3 分之 2；第二步剩四段，9 分之 4；第三步剩八段，27 分之 8。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ns-cantor\" viewBox=\"0 0 640 190\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><g stroke=\"var(--blue)\" stroke-width=\"9\"><line x1=\"40\" y1=\"25\" x2=\"600\" y2=\"25\"/><line x1=\"40\" y1=\"70\" x2=\"226.7\" y2=\"70\"/><line x1=\"413.3\" y1=\"70\" x2=\"600\" y2=\"70\"/><line x1=\"40\" y1=\"115\" x2=\"102.2\" y2=\"115\"/><line x1=\"164.4\" y1=\"115\" x2=\"226.7\" y2=\"115\"/><line x1=\"413.3\" y1=\"115\" x2=\"475.6\" y2=\"115\"/><line x1=\"537.8\" y1=\"115\" x2=\"600\" y2=\"115\"/><line x1=\"40\" y1=\"160\" x2=\"60.7\" y2=\"160\"/><line x1=\"81.5\" y1=\"160\" x2=\"102.2\" y2=\"160\"/><line x1=\"164.4\" y1=\"160\" x2=\"185.2\" y2=\"160\"/><line x1=\"205.9\" y1=\"160\" x2=\"226.7\" y2=\"160\"/><line x1=\"413.3\" y1=\"160\" x2=\"434.1\" y2=\"160\"/><line x1=\"454.8\" y1=\"160\" x2=\"475.6\" y2=\"160\"/><line x1=\"537.8\" y1=\"160\" x2=\"558.5\" y2=\"160\"/><line x1=\"579.3\" y1=\"160\" x2=\"600\" y2=\"160\"/></g><text x=\"320\" y=\"78\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">2 段，總長 2/3</tspan></text><text x=\"320\" y=\"123\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">4 段，總長 4/9</tspan></text><text x=\"320\" y=\"168\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">8 段，總長 8/27</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 $n$ 步剩 $2^n$ 段、每段長 $3^{-n}$：",
+            "$m(C)\\le\\Big(\\frac23\\Big)^n\\to0\\ \\Rightarrow\\ m(C)=0$"
+          ],
+          "say": "第 n 步剩 2 的 n 次方段，每段長 3 的負 n 次方，總長是 3 分之 2 的 n 次方。康托爾集被它蓋住，而它趨近 0，所以康托爾集是零測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 $n$ 步剩 $2^n$ 段、每段長 $3^{-n}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle m(C)\\le\\Big(\\frac23\\Big)^n\\to0\\ \\Rightarrow\\ m(C)=0}}$",
+              "on": "次方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "托爾#1"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：十進位不含 7",
+      "beats": [
+        {
+          "show": [
+            "$A$ = $[0,1]$ 中有一種十進位展開完全不出現 7 的數。證明 $m(A)=0$"
+          ],
+          "say": "例子：A 是 0 到 1 裡，有一種十進位展開完全不出現數字 7 的數。證明它是零測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$A$ = $[0,1]$ 中有一種十進位展開完全不出現 7 的數。證明 $m(A)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前 $n$ 位 $d_1\\cdots d_n$ 都不是 7：只有 $9^n$ 種"
+          ],
+          "say": "只看前 n 位，每一位有 9 種選法，所以有 9 的 n 次方種。每一種前 n 位，對應一段長 10 的負 n 次方的閉區間，後面的位數不管是什麼，都落在這段裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前 $n$ 位 $d_1\\cdots d_n$ 都不是 7：只有 $9^n$ 種"
+            },
+            {
+              "do": "write",
+              "line": "每種對應一段 $[0.d_1\\cdots d_n,\\ 0.d_1\\cdots d_n+10^{-n}]$",
+              "on": "對應"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$m^*(A)\\le9^n\\cdot10^{-n}=(0.9)^n\\to0$"
+          ],
+          "say": "所以 A 被 9 的 n 次方段蓋住，總長 0.9 的 n 次方，趨近 0。A 是零測集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle m^*(A)\\le9^n\\cdot10^{-n}=(0.9)^n\\to0}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "段蓋"
+            },
+            {
+              "do": "write",
+              "line": "　一段閉區間可以換成稍大一點的開區間，多出的長度可以任意小",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要多細才蓋到總長 $<0.01$？$(0.9)^{43}\\approx0.0108$，$(0.9)^{44}\\approx0.0097$ ⇒ 前 44 位"
+          ],
+          "say": "收斂得比康托爾集慢：0.9 的 43 次方還大於百分之一，要看到前 44 位，總長才小於百分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要多細才蓋到總長 $<0.01$？$(0.9)^{43}\\approx0.0108$，$(0.9)^{44}\\approx0.0097$ ⇒ 前 44 位"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：「隨便」選一個 $[0,1]$ 裡的數，它的展開幾乎一定會出現 7"
+          ],
+          "say": "換個說法：隨便選一個 0 到 1 的數，它的十進位展開幾乎一定會出現 7。",
+          "board": [
+            {
+              "do": "write",
+              "line": "意思：「隨便」選一個 $[0,1]$ 裡的數，它的展開幾乎一定會出現 7"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個集合不可數（跟 Cantor 集一樣），測度卻是 $0$"
+          ],
+          "say": "而且這個集合不可數，理由跟下一頁的康托爾集一樣，測度卻是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這個集合不可數（跟 Cantor 集一樣），測度卻是 $0$"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$m(N)=0$，$A\\subseteq N$。在 Lebesgue 測度下 $A$ 是？",
-      "options": [
-        { "label": "可測，而且 $m(A)=0$", "correct": true },
-        { "label": "可能不可測", "why": "Lebesgue 測度是完備的：外測度 0 的集合一定滿足 Carathéodory 判準。" },
-        { "label": "可測，測度介於 0 與 $m(N)$ 之間但不一定是 0", "why": "$m(N)=0$，單調性直接給 $m(A)\\le0$。" }
+      "title": "零測、可數、不含區間",
+      "beats": [
+        {
+          "show": [
+            "$\\text{可數}\\ \\Rightarrow\\ \\text{零測}\\ \\Rightarrow\\ \\text{不含區間}$"
+          ],
+          "say": "三件事要分清楚：可數推得零測，零測推得不含任何區間，因為區間有正的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\text{可數}\\ \\Rightarrow\\ \\text{零測}\\ \\Rightarrow\\ \\text{不含區間}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "得不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反方向都不對：",
+            "• 零測但不可數：Cantor 集（下面證明）"
+          ],
+          "say": "反方向都不對。零測卻不可數，例子是康托爾集；不含區間卻有正測度，例子是上一課的胖康托爾集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反方向都不對："
+            },
+            {
+              "do": "write",
+              "line": "• 零測但不可數：Cantor 集（下面證明）",
+              "on": "子是#1"
+            },
+            {
+              "do": "write",
+              "line": "• 不含區間但測度 $>0$：胖 Cantor 集，$m=\\frac12$（12.44）",
+              "on": "例子#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：Cantor 集不可數",
+            "$C$ = 能寫成三進位 $0.a_1a_2a_3\\ldots$、每個 $a_k\\in\\{0,2\\}$ 的數"
+          ],
+          "say": "證明康托爾集不可數。康托爾集就是可以寫成三進位、每一位只用 0 或 2 的數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：Cantor 集不可數"
+            },
+            {
+              "do": "write",
+              "line": "$C$ = 能寫成三進位 $0.a_1a_2a_3\\ldots$、每個 $a_k\\in\\{0,2\\}$ 的數",
+              "on": "集就"
+            },
+            {
+              "do": "write",
+              "line": "　第 $k$ 步挖掉的，正是第 $k$ 位非得是 1 的數",
+              "color": "violet",
+              "on": "位只"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\frac14=0.020202\\ldots_{(3)}\\in C$，但它不是任何一段的端點"
+          ],
+          "say": "例如 4 分之一，三進位是 0.0202 一直重複，所以在康托爾集裡，可是它不是任何一段的端點。康托爾集比端點多得多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\frac14=0.020202\\ldots_{(3)}\\in C$，但它不是任何一段的端點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不同的 0–2 數列 ⇒ 不同的點：第一個不同的位置是 $k$，差至少 $2\\cdot3^{-k}-\\sum_{j>k}2\\cdot3^{-j}=3^{-k}>0$"
+          ],
+          "say": "不同的數列給出不同的點：如果第一次不同在第 k 位，兩數至少差 3 的負 k 次方，後面的位數補不回來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不同的 0–2 數列 ⇒ 不同的點：第一個不同的位置是 $k$，差至少 $2\\cdot3^{-k}-\\sum_{j>k}2\\cdot3^{-j}=3^{-k}>0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對角線：假設 $C=\\{c_1,c_2,\\ldots\\}$；造 $a$，第 $n$ 位跟 $c_n$ 的第 $n$ 位相反（0↔2）"
+          ],
+          "say": "用對角線法：假設康托爾集排成一列。造一個數 a，第 n 位跟第 n 個數的第 n 位相反，0 換 2、2 換 0。a 在康托爾集裡，卻跟每一個都不同，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對角線：假設 $C=\\{c_1,c_2,\\ldots\\}$；造 $a$，第 $n$ 位跟 $c_n$ 的第 $n$ 位相反（0↔2）"
+            },
+            {
+              "do": "write",
+              "line": "則 $a\\in C$，但 $a\\ne c_n$ 對每個 $n$。矛盾　$\\blacksquare$",
+              "color": "gold",
+              "on": "位相"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "下列哪一個集合零測但不可數？"
+          ],
+          "say": "試一題：哪一個集合，測度是 0，卻不可數？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "每個 $N_t$ 都是零測集。哪一個不一定是零測集？"
+          ],
+          "say": "再一題：每個 N t 都是零測集，哪一個不一定是零測集？"
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "每個單點都零測，但 $[0,1]=\\bigcup_{t\\in[0,1]}\\{t\\}$ 的測度是 $1$：可數是關鍵"
+          ],
+          "say": "每個單點都是零測集，但 0 到 1 是不可數多個單點的聯集，測度是 1。可數這個條件，一定不能拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個單點都零測，但 $[0,1]=\\bigcup_{t\\in[0,1]}\\{t\\}$ 的測度是 $1$：可數是關鍵",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "完備性",
+      "beats": [
+        {
+          "show": [
+            "定理：$m^*(N)=0$，$A\\subseteq N$ ⇒ $A$ 可測，而且 $m(A)=0$"
+          ],
+          "say": "最後，完備性：零測集的任何子集，都是可測的，測度是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$m^*(N)=0$，$A\\subseteq N$ ⇒ $A$ 可測，而且 $m(A)=0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：直接檢查 Carathéodory 判準；$\\le$ 永遠成立，只要證 $\\ge$"
+          ],
+          "say": "策略：直接檢查卡拉西奧多里判準。小於等於由次可加永遠成立，只要證大於等於。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：直接檢查 Carathéodory 判準；$\\le$ 永遠成立，只要證 $\\ge$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：任取 $E\\subseteq\\mathbb{R}$。",
+            "• 單調：$m^*(E\\cap A)\\le m^*(N)=0$"
+          ],
+          "say": "證明：任取一個集合 E。E 交 A 包含於 N，外測度是 0。E 交 A 的補集包含於 E，外測度不超過 E 的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：任取 $E\\subseteq\\mathbb{R}$。"
+            },
+            {
+              "do": "write",
+              "line": "• 單調：$m^*(E\\cap A)\\le m^*(N)=0$",
+              "on": "含於#1"
+            },
+            {
+              "do": "write",
+              "line": "• 單調：$m^*(E\\cap A^c)\\le m^*(E)$",
+              "on": "補集"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$m^*(E\\cap A)+m^*(E\\cap A^c)\\le0+m^*(E)$"
+          ],
+          "say": "兩個加起來，不超過 E 的外測度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle m^*(E\\cap A)+m^*(E\\cap A^c)\\le0+m^*(E)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "次可加：$m^*(E)\\le m^*(E\\cap A)+m^*(E\\cap A^c)$ ⇒ 相等"
+          ],
+          "say": "反過來由次可加，E 的外測度不超過兩塊的和。所以相等，A 滿足判準，是可測的，測度是 0。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "次可加：$m^*(E)\\le m^*(E\\cap A)+m^*(E\\cap A^c)$ ⇒ 相等"
+            },
+            {
+              "do": "write",
+              "line": "所以 $A$ 可測，$m(A)=m^*(A)\\le m^*(N)=0$　$\\blacksquare$",
+              "color": "gold",
+              "on": "滿足"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意義：零測集的子集，不用擔心可不可測"
+          ],
+          "say": "意義是：零測集的子集，不用擔心可不可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "意義：零測集的子集，不用擔心可不可測"
+            },
+            {
+              "do": "write",
+              "line": "　例：Cantor 集的每個子集都可測（測度 $0$）；但它們大多不是 Borel 集。只用 Borel 集的測度不完備",
+              "color": "violet",
+              "on": "不用"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 零測集：$m^*(N)=0$；加進來、挖掉都不改變測度",
+            "• 可數集、Cantor 集、可數多個零測集的聯集：都是零測"
+          ],
+          "say": "整理：零測集加進來或挖掉都不改變測度。可數集、康托爾集、可數聯集都是零測集。可數推得零測、推得不含區間，反過來都不對。零測集的子集都可測。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 零測集：$m^*(N)=0$；加進來、挖掉都不改變測度"
+            },
+            {
+              "do": "write",
+              "line": "• 可數集、Cantor 集、可數多個零測集的聯集：都是零測",
+              "on": "不改"
+            },
+            {
+              "do": "write",
+              "line": "• 可數 ⇒ 零測 ⇒ 不含區間；反例：Cantor 集、胖 Cantor 集",
+              "on": "可數#2"
+            },
+            {
+              "do": "write",
+              "line": "• Cantor 集不可數：0–2 三進位＋對角線",
+              "on": "得零"
+            },
+            {
+              "do": "write",
+              "line": "• 完備性：零測集的子集都可測，測度 $0$",
+              "on": "都不#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：幾乎處處：不在乎零測集"
+          ],
+          "say": "下一課，幾乎處處：不在乎零測集上發生什麼事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：幾乎處處：不在乎零測集"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["measure", "lebesgue", "cantor", "geometric-series"],
-    "fine": ["null-countable-union", "null-cantor-type", "null-completeness", "null-vs-small"]
+    "coarse": [
+      "measure",
+      "lebesgue",
+      "cantor",
+      "geometric-series"
+    ],
+    "fine": [
+      "null-countable-union",
+      "null-cantor-type",
+      "null-completeness",
+      "null-vs-small"
+    ]
   },
   "practice": [
-    { "id": "lb-mea-001", "core": true, "trains": "null-cantor-type" },
-    { "id": "lb-mea-004", "core": true, "trains": "null-countable-union" },
-    { "id": "lb-mea-002", "core": true, "trains": "null-vs-small" },
-    { "id": "cg-12i-020", "core": true, "trains": "null-cantor-type" },
-    { "id": "cg-12i-023", "core": true, "trains": "null-vs-small" },
-    { "id": "cg-12i-025", "core": true, "trains": "null-completeness" },
-    { "id": "lb-mea-003", "trains": "null-vs-small" },
-    { "id": "cg-12i-021", "trains": "null-cantor-type" },
-    { "id": "cg-12i-022", "trains": "null-cantor-type" },
-    { "id": "cg-12i-024", "trains": "null-vs-small" }
+    {
+      "id": "lb-mea-001",
+      "core": true,
+      "trains": "null-cantor-type"
+    },
+    {
+      "id": "lb-mea-004",
+      "core": true,
+      "trains": "null-countable-union"
+    },
+    {
+      "id": "lb-mea-002",
+      "core": true,
+      "trains": "null-vs-small"
+    },
+    {
+      "id": "cg-12i-020",
+      "core": true,
+      "trains": "null-cantor-type"
+    },
+    {
+      "id": "cg-12i-023",
+      "core": true,
+      "trains": "null-vs-small"
+    },
+    {
+      "id": "cg-12i-025",
+      "core": true,
+      "trains": "null-completeness"
+    },
+    {
+      "id": "lb-mea-003",
+      "trains": "null-vs-small"
+    },
+    {
+      "id": "cg-12i-021",
+      "trains": "null-cantor-type"
+    },
+    {
+      "id": "cg-12i-022",
+      "trains": "null-cantor-type"
+    },
+    {
+      "id": "cg-12i-024",
+      "trains": "null-vs-small"
+    }
   ],
   "gaps": []
 }

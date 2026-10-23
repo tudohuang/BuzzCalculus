@@ -1,0 +1,487 @@
+{
+  "id": "derivative-definition",
+  "title": "導數定義",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["secant-to-tangent", "limit-one-sided", "limit-rationalize"],
+  "next": ["derivative-from-definition"],
+  "related": ["continuity-definition", "limit-exp-log-standard", "squeeze-theorem"],
+  "objectives": [
+    "寫出 $f'(a)$ 的兩種極限寫法，並說出它是切線斜率、也是瞬間變化率。",
+    "用定義算出某一點的導數，包括瞬間速度。",
+    "看到 $\\lim_{h\\to0} \\frac{f(a + h) - f(a)}{h}$ 這種極限，認得出它是哪個函數在哪一點的導數。",
+    "用左右極限判斷一個點不可微（例如 $|x|$ 在 0）。"
+  ],
+  "visual": "兩個並排的放大鏡頭。左邊是 y = x² 在 (1, 1)，右邊是 y = |x| 在 (0, 0)。按「放大」，鏡頭往點推近：左邊的曲線越來越直，最後看起來就是斜率 2 的直線；右邊不管放多大都還是一個尖角，左半斜率 −1、右半斜率 1。",
+  "figures": [
+    {"caption":"放大到 (1, 1)，x² 越看越像直線","after":0,"widget":{"type":"zoom","curves":[{"expr":"x^2","color":"blue"}],"center":[1,1],"window":[-1,3,-1,3],"levels":2}},
+    {"caption":"|x| 放大多少倍都是尖角","after":3,"widget":{"type":"zoom","curves":[{"expr":"abs(x)","color":"blue"}],"center":[0,0],"window":[-2,2,-0.5,2],"levels":3}}
+  ],
+  "concept": [
+    {
+      "heading": "① 給切線斜率一個名字",
+      "body": [
+        "上一課的極限太常用了，給它一個名字：$f$ 在 $a$ 的導數，記作 $f'(a)$。極限存在時，說 $f$ 在 $a$ 可微。"
+      ],
+      "tex": ["f'(a)=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 同一件事的另一種寫法",
+      "body": [
+        "令 $x = a + h$，$h \\to 0$ 就是 $x \\to a$，分母 $h$ 就是 $x - a$。所以 $f'(a)$ 也可以寫成下面這樣。兩種寫法算出來一樣，哪個好化簡就用哪個。"
+      ],
+      "tex": ["f'(a)=\\lim_{x\\to a}\\frac{f(x)-f(a)}{x-a}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三種讀法",
+      "body": [
+        "圖形上：$f'(a)$ 是曲線在 $(a, f(a))$ 的切線斜率。",
+        "變化上：$\\frac{f(a + h) - f(a)}{h}$ 是 $[a, a + h]$ 上的平均變化率，$h \\to 0$ 就是「在 $a$ 這一瞬間」的變化率，叫瞬間變化率。位置對時間的瞬間變化率就是瞬間速度。",
+        "單位和平均變化率一樣：$y$ 的單位 $\\div x$ 的單位。$f'(a)$ 是一個數；$f(a)$ 是高度，$f'(a)$ 是斜率，兩者沒有關係。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 什麼時候不可微",
+      "body": [
+        "導數是一個極限，極限可能不存在。常見的三種：尖角（$|x|$ 在 0，左右極限分別是 $-1$ 與 1）；鉛直切線（$\\sqrt[3]{x}$ 在 0，割線斜率 $\\frac{h^{1/3}}{h} = \\frac{1}{h^{2/3}} \\to \\infty$）；不連續（函數在 $a$ 跳開，割線斜率會爆掉）。",
+        "所以「連續」不保證「可微」：$|x|$ 在 0 連續，但不可微。反過來是對的：可微一定連續（下面的證明）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "可微一定連續（證明）",
+      "body": [
+        "設 $f'(a)$ 存在。$h \\ne 0$ 時，$f(a + h) - f(a) = \\left(\\frac{f(a + h) - f(a)}{h}\\right) \\cdot h$。",
+        "$h \\to 0$ 時，右邊第一個因子 $\\to f'(a)$（假設），第二個因子 $\\to 0$。兩個極限都存在，乘積的極限等於極限的乘積：$f'(a) \\cdot 0 = 0$。",
+        "所以 $\\lim_{h\\to0} f(a + h) = f(a)$，這正是 $f$ 在 $a$ 連續的定義（〈連續的定義〉）。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "瞬間速度",
+      "prompt": "石頭 $t$ 秒後的高度 $h(t) = 80 - 4.9t^2$（公尺）。求 $t = 2$ 時的瞬間速度。",
+      "problemId": "lx-app-001",
+      "steps": [
+        "函數名字已經用了 $h$，所以用 $x \\to a$ 的寫法：$h'(2) = \\lim_{t\\to2} \\frac{h(t) - h(2)}{t - 2}$。",
+        "分子：$h(t) - h(2) = (80 - 4.9t^2) - (80 - 4.9 \\cdot 4) = -4.9(t^2 - 4) = -4.9(t - 2)(t + 2)$。",
+        "除以 $t - 2$（$t \\ne 2$）：$-4.9(t + 2)$。",
+        "$t \\to 2$：$-4.9 \\cdot 4 = -19.6$。"
+      ],
+      "answer": "$-19.6$ 公尺／秒",
+      "note": "前 2 秒的平均速度是 $-9.8$，第 2 秒那一瞬間是它的兩倍：越掉越快。",
+      "claim": "LIM((80-4.9*t^2-(80-4.9*4))/(t-2), 2) == -19.6"
+    },
+    {
+      "title": "認出極限是哪個導數",
+      "prompt": "$\\lim_{h\\to0} \\frac{\\sqrt{9 + h} - 3}{h}$",
+      "problemId": "dd-def-001",
+      "steps": [
+        "$3 = \\sqrt{9}$，所以式子是 $\\frac{\\sqrt{9 + h} - \\sqrt{9}}{h}$：$f(x) = \\sqrt{x}$、$a = 9$ 的導數定義。",
+        "算它：乘共軛 $\\sqrt{9 + h} + 3$，分子變成 $(9 + h) - 9 = h$。",
+        "約掉 $h$（$h \\ne 0$）：$\\frac{1}{\\sqrt{9 + h} + 3}$。",
+        "$h \\to 0$：$\\frac{1}{3 + 3} = \\frac{1}{6}$。所以 $\\sqrt{x}$ 在 $x = 9$ 的切線斜率是 $\\frac{1}{6}$。"
+      ],
+      "answer": "$\\frac{1}{6}$",
+      "claim": "LIM((sqrt(9+x)-3)/x, 0) == 1/6"
+    },
+    {
+      "title": "$|x|$ 在 0 不可微",
+      "prompt": "$f(x) = |x|$，$f'(0)$ 存在嗎？",
+      "steps": [
+        "差商：$\\frac{f(0 + h) - f(0)}{h} = |h|/h$。",
+        "$h > 0$：$|h| = h$，差商是 1，右極限是 1。",
+        "$h < 0$：$|h| = -h$，差商是 $-1$，左極限是 $-1$。",
+        "左右極限不相等，極限不存在，$f'(0)$ 不存在。"
+      ],
+      "answer": "不存在（左右極限 $-1$ 與 1）",
+      "claim": "LIM(abs(x)/x, 0+) == 1 ;; LIM(abs(x)/x, 0-) == -1"
+    },
+    {
+      "title": "代數字看極限",
+      "prompt": "用數字看：(1) 差商約 3、乘 $h$；(2) $\\sqrt[3]{h}/h$。",
+      "steps": [
+        "差商約 3，$h=0.01$：$3 \\cdot 0.01 = 0.03$。",
+        "$h=0.0001$：$3 \\cdot 0.0001 = 0.0003$，越來越靠近 0。",
+        "$h=0.001$：$\\sqrt[3]{h}=0.1$，差商 $\\frac{0.1}{0.001}=100$，$h$ 越小越大。"
+      ],
+      "answer": "乘積 $\\to 0$；差商沒有上限",
+      "claim": "3*0.01 == 0.03 ;; 3*0.0001 == 0.0003 ;; 0.1/0.001 == 100"
+    }
+  ],
+  "pitfalls": [
+    "把 $f'(a)$ 和 $f(a)$ 搞混：一個是斜率，一個是高度。",
+    "以為連續就一定可微。$|x|$ 在 0 是反例。",
+    "$x \\to a$ 的寫法分母寫成 $a - x$，答案差一個負號。",
+    "分子寫成 $f(a + h) - f(h)$，或 $f(a) + h$。",
+    "左右只算一邊，就說導數存在。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\lim_{h\\to0} \\frac{(2 + h)^3 - 8}{h}$ 是哪個導數？",
+      "options": [
+        { "label": "$f(x) = x^3$ 在 $x = 2$ 的導數", "correct": true },
+        { "label": "$f(x) = x^3 - 8$ 在 $x = 0$ 的導數", "why": "那會是 $\\frac{(0 + h)^3 - 8 - (0 - 8)}{h} = \\frac{h^3}{h}$，跟題目不同。$8 = 2^3$ 告訴你 $a = 2$。" },
+        { "label": "$f(x) = (2 + x)^3$ 在 $x = 2$ 的導數", "why": "對 $(2 + x)^3$ 在 $x = 2$，分子要是 $(4 + h)^3 - 64$。這裡 $2 + h$ 整個是輸入。" }
+      ]
+    },
+    {
+      "ask": "$f(3) = 5$、$f'(3) = -2$。下面哪一句對？",
+      "options": [
+        { "label": "曲線過 $(3, 5)$，那裡的切線斜率是 $-2$", "correct": true },
+        { "label": "曲線過 $(3, -2)$", "why": "$-2$ 是斜率，不是高度；高度是 $f(3) = 5$。" },
+        { "label": "$f$ 在 $x = 3$ 附近遞增", "why": "斜率是負的，表示在那一點往下走。" }
+      ]
+    },
+    {
+      "ask": "$f(x) = |x - 1|$。$f'(1)$：",
+      "options": [
+        { "label": "不存在", "correct": true },
+        { "label": "0", "why": "尖角的底部看起來平，但差商 $|h|/h$ 右邊是 1、左邊是 $-1$，極限不存在。" },
+        { "label": "1", "why": "那只是右極限；左極限是 $-1$，兩邊不等。" }
+      ]
+    },
+    {
+      "ask": "下面哪一句對？",
+      "options": [
+        { "label": "$f$ 在 $a$ 可微，則 $f$ 在 $a$ 連續", "correct": true },
+        { "label": "$f$ 在 $a$ 連續，則 $f$ 在 $a$ 可微", "why": "$|x|$ 在 0 連續但有尖角，不可微。" },
+        { "label": "$f$ 在 $a$ 不連續，也可能可微", "why": "可微一定連續，所以不連續就一定不可微（上面的證明）。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "給斜率一個名字",
+      "beats": [
+        { "show": ["$f'(a)=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}$"],
+          "note": "讀作 f prime of a，$f$ 在 $a$ 的導數。",
+          "say": "上一課割線斜率的極限太常用了，給它一個名字：f 在 a 的導數，寫成 f prime a。",
+          "board": [
+            {"do":"write","line":"${{d:f'(a)}}=\\lim_{h\\to0}{{q:\\frac{f(a+h)-f(a)}{h}}}$"},
+            {"do":"underline","term":"q","label":"割線斜率","on":"割線斜率"},
+            {"do":"focus","term":"d","on":"導數"}
+          ] },
+        { "show": ["極限存在：$f$ 在 $a$ 可微"],
+          "say": "這個極限存在的時候，我們說 f 在 a 可微。",
+          "board": [
+            {"do":"write","line":"極限存在：$f$ 在 $a$ 可微"}
+          ] },
+        { "show": ["放大到 $(1, 1)$"],
+          "note": "$y = x^2$，鏡頭還沒推近。",
+          "fig": {"use":0,"to":0},
+          "say": "看 x 平方在點一、一。現在是原本的大小，看得出是彎的。",
+          "board": [
+            {"do":"write","line":"$y=x^2$，點 $(1, 1)$"}
+          ] }
+      ],
+      "drag": {
+        "use": 0,
+        "ask": "把鏡頭往 $(1, 1)$ 推近到底，曲線變成什麼樣子？",
+        "range": [
+          1.8,
+          2
+        ]
+      }
+    },
+    {
+      "title": "另一種寫法",
+      "beats": [
+        { "show": ["$f'(a)=\\lim_{x\\to a}\\frac{f(x)-f(a)}{x-a}$"],
+          "note": "令 $x = a + h$，分母 $h$ 就是 $x - a$。",
+          "say": "令 x 等於 a 加 h，h 趨近零就是 x 趨近 a。兩種寫法算出來一樣，哪個好化簡用哪個。",
+          "board": [
+            {"do":"write","line":"$x = a + h$"},
+            {"do":"write","line":"$f'(a)=\\lim_{x\\to a}\\frac{f(x)-f(a)}{{{d:x-a}}}$","on":"h 趨近零"},
+            {"do":"underline","term":"d","label":"等於 h","on":"兩種寫法"}
+          ] },
+        { "show": ["圖上：$(a, f(a))$ 的切線斜率"],
+          "say": "在圖上，f prime a 就是曲線在那一點的切線斜率。",
+          "board": [
+            {"do":"write","line":"圖上：${{p:f'(a)}}$ ＝ 在 $(a, f(a))$ 的切線斜率"},
+            {"do":"focus","term":"p","on":"f prime a"}
+          ] },
+        { "show": ["變化上：瞬間變化率"],
+          "note": "位置對時間的瞬間變化率就是瞬間速度。",
+          "say": "在變化上，平均變化率讓區間縮成一瞬間，就是瞬間變化率。位置的瞬間變化率就是瞬間速度。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"平均變化率 → 瞬間變化率","on":"平均變化率"},
+            {"do":"write","line":"位置的瞬間變化率 ＝ 瞬間速度","on":"位置的"}
+          ] },
+        { "show": ["$f(a)$ 是高度，$f'(a)$ 是斜率"],
+          "note": "單位：$y$ 的單位 $\\div x$ 的單位。",
+          "say": "小心，f 在 a 的值是高度，f prime a 是斜率，兩個沒有關係。",
+          "board": [
+            {"do":"write","line":"${{h:f(a)}}$ ＝ 高度","tint":{"h":"blue"}},
+            {"do":"write","line":"${{s:f'(a)}}$ ＝ 斜率","tint":{"s":"violet"},"on":"f prime a"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "瞬間速度",
+      "beats": [
+        { "show": ["$h(t) = 80 - 4.9t^2$，$t = 2$"],
+          "note": "函數名字用了 $h$，改用 $t \\to 2$ 的寫法。",
+          "say": "石頭的高度是八十減四點九 t 平方。求第二秒那一瞬間的速度。名字 h 已經被用了，所以用 t 趨近二的寫法。",
+          "board": [
+            {"do":"write","line":"$h(t) = 80 - 4.9t^2$"},
+            {"do":"write","line":"$t = 2$ 那一瞬間的速度？","on":"第二秒"}
+          ] },
+        { "show": ["$h'(2) = \\lim_{t\\to2} \\frac{h(t) - h(2)}{t - 2}$"],
+          "say": "h prime 二，就是 h 在 t 減 h 在二，除以 t 減二，再讓 t 趨近二。",
+          "board": [
+            {"do":"write","line":"$h'(2) = \\lim_{t\\to2} \\frac{{{n:h(t) - h(2)}}}{t - 2}$"},
+            {"do":"underline","term":"n","label":"分子","on":"h 在 t"}
+          ] },
+        { "show": ["分子 $= -4.9(t - 2)(t + 2)$"],
+          "note": "$h(t) - h(2) = -4.9(t^2 - 4)$",
+          "say": "分子兩個八十消掉，剩負四點九乘 t 平方減四，再分解成 t 減二乘 t 加二。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{n:h(t) - h(2)}} = -4.9(t^2 - 4)$","on":"負四點九"},
+            {"do":"transform","line":"${{n:h(t) - h(2)}} = -4.9(t - 2)(t + 2)$","on":"再分解"}
+          ] },
+        { "show": ["除以 $t - 2$：$-4.9(t + 2)$"],
+          "note": "$t \\ne 2$ 才能約。",
+          "say": "t 不等於二，可以把 t 減二約掉，剩負四點九乘 t 加二。",
+          "board": [
+            {"do":"transform","line":"$\\frac{h(t) - h(2)}{t - 2} = \\frac{-4.9{{a:(t - 2)}}(t + 2)}{{{b:t - 2}}}$"},
+            {"do":"focus","term":"a","on":"t 減二"},
+            {"do":"focus","term":"b","on":"約掉"},
+            {"do":"write","line":"$= -4.9(t + 2)$","on":"剩負"}
+          ] },
+        { "show": ["$-4.9(t+2)$ 是多項式","$t=2$：$-4.9\\cdot4=-19.6$"],
+          "note": "約掉 $t-2$ 以後，式子在 $t=2$ 沒有問題。",
+          "say": "約掉 t 減二以後，剩下的是一次式，沒有分母會變零，所以 t 趨近二，就等於直接把二代進去。",
+          "board": [
+            {"do":"write","line":"${{c:-4.9(t + 2)}}$ 沒有分母"},
+            {"do":"underline","term":"c","label":"可直接代","on":"沒有分母"},
+            {"do":"write","line":"$t=2$：$-4.9 \\cdot 4$","on":"直接把二"}
+          ] },
+        { "show": ["原式在 $t=2$ 是 $\\frac{0}{0}$，不能代"],
+          "say": "注意，約分以前直接代二，分子分母都是零，不能代。要先約掉，才能代。",
+          "board": [
+            {"do":"write","line":"$\\frac{h(t) - h(2)}{t - 2}$ 代 $t=2$：${{z:\\frac{0}{0}}}$"},
+            {"do":"strike","term":"z","label":"不能代","on":"不能代"}
+          ] }
+      ],
+      "key": "分子平方差，約掉 $t-2$ 再取極限",
+      "predict": {
+        "ask": "再讓 $t \\to 2$，瞬間速度是？",
+        "options": [
+          {
+            "label": "$-19.6$ 公尺／秒",
+            "correct": true
+          },
+          {
+            "label": "$-9.8$ 公尺／秒",
+            "why": "$-9.8$ 是前 2 秒的平均速度。瞬間速度是 $-4.9 \\cdot 4 = -19.6$，越掉越快。"
+          },
+          {
+            "label": "$-4.9$ 公尺／秒",
+            "why": "$t + 2$ 也要代 $t = 2$：$-4.9 \\cdot 4 = -19.6$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "認出是哪個導數",
+      "beats": [
+        { "show": ["$\\lim_{h\\to0} \\frac{\\sqrt{9 + h} - 3}{h}$"],
+          "say": "看到這種極限，先問：它是哪個函數、在哪一點的導數？",
+          "board": [
+            {"do":"write","line":"$\\lim_{h\\to0} \\frac{\\sqrt{9 + h} - {{t:3}}}{h}$"},
+            {"do":"write","line":"哪個函數、哪一點的導數？","on":"哪個函數"}
+          ] },
+        { "show": ["$3 = \\sqrt{9}$"],
+          "note": "$f(x) = \\sqrt{x}$、$a = 9$ 的導數定義。",
+          "say": "三就是根號九，所以這是根號 x 在 x 等於九的導數定義。",
+          "board": [
+            {"do":"focus","term":"t"},
+            {"do":"transform","line":"${{t:3}} = \\sqrt{9}$ ⇒ $f(x) = \\sqrt{x}$，$a = 9$","on":"所以這是"}
+          ] },
+        { "show": ["乘 $\\sqrt{9 + h} + 3$：$\\frac{1}{\\sqrt{9 + h} + 3}$"],
+          "note": "分子變成 $(9 + h) - 9 = h$，約掉。",
+          "say": "上下乘根號九加 h 加三，分子剩 h，跟分母約掉。",
+          "board": [
+            {"do":"write","line":"$\\frac{(9 + h) - 9}{h(\\sqrt{9 + h} + 3)}$"},
+            {"do":"transform","line":"$\\frac{1}{\\sqrt{9 + h} + 3}$","on":"分子剩"}
+          ] },
+        { "show": ["$h\\to0$ 時 $9+h\\to9$","所以 $\\sqrt{9+h}\\to3$"],
+          "note": "根號在 9 附近是連續的。",
+          "say": "h 趨近零，九加 h 就趨近九，根號是連續的，所以根號九加 h 趨近根號九，也就是三。",
+          "board": [
+            {"do":"write","line":"$h\\to0$：$9+h\\to9$"},
+            {"do":"write","line":"$\\sqrt{9+h}\\to{{s:\\sqrt{9}}}=3$","on":"根號九加"},
+            {"do":"focus","term":"s","on":"也就是三"}
+          ] },
+        { "show": ["$h \\to 0$：$\\frac{1}{3 + 3} = \\frac{1}{6}$"],
+          "say": "h 趨近零，得到六分之一。根號 x 在九的切線斜率就是六分之一。",
+          "board": [
+            {"do":"write","line":"$h \\to 0$：$\\frac{1}{3 + 3} = {{r:\\frac{1}{6}}}$"},
+            {"do":"box","term":"r","color":"green","label":"切線斜率","on":"切線斜率"}
+          ] }
+      ],
+      "key": "乘共軛 $\\sqrt{9+h}+3$，平方差消根號",
+      "check": 0
+    },
+    {
+      "title": "什麼時候不可微",
+      "beats": [
+        { "show": ["$|x|$ 在 0：尖角"],
+          "fig": {"use":1,"to":3},
+          "say": "絕對值 x 在零，鏡頭放得再大，都還是一個尖角，不會變直。",
+          "board": [
+            {"do":"write","line":"$|x|$ 在 $0$：尖角"}
+          ] },
+        { "show": ["差商 $|h|/h$：右邊 1，左邊 $-1$"],
+          "note": "左右極限不相等，$f'(0)$ 不存在。",
+          "say": "差商是絕對值 h 除以 h。h 是正的得一，負的得負一，左右不一樣，導數不存在。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"差商 $=\\frac{|h|}{h}$","on":"絕對值 h"},
+            {"do":"write","line":"$h>0$：$\\frac{|h|}{h}=1$","on":"h 是正的"},
+            {"do":"write","line":"$h<0$：$\\frac{|h|}{h}=-1$","on":"負的"}
+          ] },
+        { "show": ["差商 $\\frac{\\sqrt[3]{h}}{h}=\\frac{1}{h^{2/3}}$"],
+          "note": "$h=0.001$：$\\sqrt[3]{h}=0.1$，差商是 100。",
+          "say": "差商是三次根號 h 除以 h，化簡成 h 的三分之二次方分之一。h 取零點零零一，差商是一百。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"差商 $=\\frac{\\sqrt[3]{h}}{h}=\\frac{1}{h^{2/3}}$","on":"差商是#1"},
+            {"do":"write","line":"$h=0.001$：$\\frac{0.1}{0.001}=100$","on":"零點零零一"}
+          ] },
+        { "show": ["$h$ 越小，差商越大","斜率無限大＝鉛直"],
+          "say": "h 再小，分母越小，差商越大，沒有上限。斜率大到無限，切線就是鉛直的，所以導數不存在。",
+          "board": [
+            {"do":"write","line":"$h$ 越小，差商越大"},
+            {"do":"write","line":"斜率無限大 ＝ 鉛直線","on":"鉛直的"}
+          ] },
+        { "show": ["鉛直切線：$\\sqrt[3]{x}$ 在 0"],
+          "note": "割線斜率 $\\frac{1}{h^{2/3}} \\to \\infty$。",
+          "say": "第二種是鉛直切線：三次根號 x 在零，割線斜率會衝到無限大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"鉛直切線：$\\sqrt[3]{x}$ 在 $0$","on":"鉛直切線"},
+            {"do":"write","line":"割線斜率 $\\to\\infty$","on":"割線斜率"}
+          ] },
+        { "show": ["不連續：割線斜率爆掉"],
+          "say": "第三種是函數在那一點跳開，割線斜率也會爆掉。",
+          "board": [
+            {"do":"write","line":"不連續：跳開"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "可微與連續",
+      "beats": [
+        { "show": ["連續 ⇏ 可微"],
+          "note": "$|x|$ 在 0 連續，但不可微。",
+          "say": "連續不保證可微：絕對值 x 在零是連在一起的，但有尖角，所以不可微。",
+          "board": [
+            {"do":"write","line":"連續 $\\not\\Rightarrow$ 可微"},
+            {"do":"write","line":"$|x|$ 在 $0$：連續，但有尖角","on":"絕對值 x"}
+          ] },
+        { "show": ["可微 ⇒ 連續"],
+          "note": "證明在下一節。",
+          "say": "反過來是對的：可微一定連續。所以不連續的點，一定不可微。",
+          "board": [
+            {"do":"write","line":"可微 $\\Rightarrow$ 連續","color":"green"},
+            {"do":"write","line":"不連續 $\\Rightarrow$ 不可微","on":"不連續的點"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明：可微就連續",
+      "beats": [
+        { "show": ["把 $f(a+h)-f(a)$ 寫成差商乘 $h$"],
+          "note": "設 $f'(a)$ 存在，要證它 $\\to0$。",
+          "say": "策略：要證連續，就看 f 在 a 加 h 減 f 在 a 會不會趨近零。把它拆成差商乘上 h。",
+          "board": [
+            {"do":"write","line":"要證：$f(a+h)-f(a) \\to 0$","on":"要證連續"},
+            {"do":"write","line":"拆成 差商 $\\times\\, h$","on":"拆成"}
+          ] },
+        { "show": ["$f(a+h)-f(a)=\\frac{f(a+h)-f(a)}{h}\\cdot h$"],
+          "note": "$h\\ne0$ 時先除再乘，值沒變。",
+          "say": "h 不等於零的時候，先除以 h 再乘回 h，值沒有變，只是換了樣子。",
+          "board": [
+            {"do":"transform","line":"$f(a+h)-f(a)={{q:\\frac{f(a+h)-f(a)}{h}}}\\cdot {{hh:h}}$","tint":{"q":"blue","hh":"violet"}},
+            {"do":"focus","term":"hh","color":"violet","label":"再乘回 h","on":"再乘回"}
+          ] },
+        { "show": ["差商約 3，$h=0.01$：乘起來約 0.03"],
+          "say": "代數字看看：差商約三，h 是零點零一，乘起來約零點零三。h 再縮小，乘積跟著縮小，一直靠近零。",
+          "board": [
+            {"do":"write","line":"差商 $\\approx3$，$h=0.01$：$3\\cdot0.01=0.03$","on":"差商約三"},
+            {"do":"write","line":"$h=0.0001$：$3\\cdot0.0001=0.0003$","on":"h 再縮小"}
+          ] },
+        { "show": ["$h\\to0$：極限是 $f'(a)\\cdot0=0$"],
+          "note": "兩個因子的極限都存在，乘積的極限是極限的乘積。",
+          "why": {"ask":"為什麼乘起來的極限是 $0$？","say":"h 趨近零，這個乘積的極限為什麼是零？","options":[{"label":"差商 $\\to f'(a)$、$h\\to0$，兩個極限都存在","correct":true},{"label":"任何東西乘 $h$，$h\\to0$ 時都 $\\to0$","why":"另一個因子的極限要存在才行：$\\frac{1}{h}\\cdot h$ 恆等於 1，不趨近 0。"},{"label":"差商在 $h=0$ 的值就是 $f'(a)$","why":"差商在 $h=0$ 沒有定義；$f'(a)$ 是它的極限，不是代進去的值。"}]},
+          "say": "第一個因子趨近 f prime 在 a，這是假設；第二個因子趨近零。兩個極限都存在，乘起來是零。",
+          "board": [
+            {"do":"write","line":"$h\\to0$：極限是 $f'(a)\\cdot0=0$"},
+            {"do":"underline","term":"q","color":"blue","label":"這是假設","why":true,"on":"第一個因子"},
+            {"do":"focus","term":"hh","color":"violet","why":true,"on":"第二個因子"}
+          ] },
+        { "show": ["$\\lim_{h\\to0}f(a+h)=f(a)$"],
+          "note": "這正是 $f$ 在 $a$ 連續的定義。",
+          "say": "差的極限是零，移過去就是 f 在 a 加 h 趨近 f 在 a，正是連續的定義。證完。",
+          "board": [
+            {"do":"write","line":"${{r:\\lim_{h\\to0}f(a+h)=f(a)}}$","on":"移過去"},
+            {"do":"box","term":"r","color":"green","label":"連續","on":"正是連續"}
+          ] }
+      ],
+      "key": "先除再乘 $h$，把差商造出來",
+      "proof": true,
+      "of": 4,
+      "skeleton": "直接",
+      "where": {
+        "ask": "「$f'(a)$ 存在」用在哪一步？",
+        "steps": [
+          {
+            "label": "寫成 $\\frac{f(a+h)-f(a)}{h}\\cdot h$",
+            "why": "這只是代數：只用到 $h\\ne0$。"
+          },
+          {
+            "label": "第一個因子 $\\to f'(a)$",
+            "correct": true
+          },
+          {
+            "label": "第二個因子 $h\\to0$",
+            "why": "這是 $h$ 本身，跟 $f$ 無關。"
+          },
+          {
+            "label": "移項得 $\\lim_{h\\to0}f(a+h)=f(a)$",
+            "why": "這只是把「差的極限是 0」換個寫法。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["derivative-definition", "differentiability"],
+    "fine": ["deriv-def-limit-form", "deriv-def-instant-rate", "deriv-def-recognize-limit", "deriv-def-nondifferentiable"]
+  },
+  "practice": [
+    { "id": "lx-app-001", "core": true, "trains": "deriv-def-instant-rate" },
+    { "id": "db-def-001", "core": true, "trains": "deriv-def-limit-form" },
+    { "id": "dd-def-001", "core": true, "trains": "deriv-def-recognize-limit" },
+    { "id": "lec-02-m3", "core": true, "trains": "deriv-def-nondifferentiable" },
+    { "id": "cg-2a-016", "core": true, "trains": "deriv-def-instant-rate" },
+    { "id": "dd-pw-001", "trains": "deriv-def-limit-form", "note": "$\\sqrt{x^2} = |x|$；在 $x = -3$ 附近它等於 $-x$。" },
+    { "id": "lx-der-003", "trains": "deriv-def-recognize-limit", "note": "$x \\to a$ 的寫法；算值要用〈指數與對數標準極限〉的 $\\frac{\\ln(1 + u)}{u} \\to 1$。" },
+    { "id": "cg-2a-014", "trains": "deriv-def-nondifferentiable" },
+    { "id": "cg-2a-015", "trains": "deriv-def-nondifferentiable" },
+    { "id": "cg-2a-017", "trains": "deriv-def-instant-rate" },
+    { "id": "lec-02-q3b", "challenge": true, "trains": "deriv-def-limit-form", "note": "挑戰：差商是 $h \\sin\\left(\\frac{1}{h}\\right)$，要用〈夾擠定理〉。" }
+  ],
+  "gaps": []
+}

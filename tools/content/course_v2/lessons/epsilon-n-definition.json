@@ -1,43 +1,127 @@
 {
   "id": "epsilon-n-definition",
   "title": "ε-N 定義",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["sequence-limit", "archimedean-property", "negation"],
-  "next": ["epsilon-n-proofs"],
+  "prerequisites": [
+    "sequence-limit",
+    "archimedean-property",
+    "negation"
+  ],
+  "next": [
+    "epsilon-n-proofs"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 $a_n\\to L$ 的 $\\varepsilon$-$N$ 定義，並說出每個量詞的角色與順序。",
-    "給定具體的 $\\varepsilon$，會解出一個（以及最小的）可用的 $N$。",
-    "會寫出「$a_n$ 不收斂到 $L$」的否定句，並用它證明 $(-1)^n$ 發散。"
+    "寫得出 $a_n\\to L$ 的 $\\varepsilon$-$N$ 定義，並說出每個量詞的角色與順序",
+    "給定具體的 $\\varepsilon$，會解出一個（以及最小的）可用的 $N$",
+    "會寫出「$a_n$ 不收斂到 $L$」的否定句，並用它證明 $(-1)^n$ 發散"
   ],
-  "visual": "橫軸是 n、縱軸是 aₙ 的散點圖，畫出 aₙ = (2n + 1)/(n + 3)。一條以 L = 2 為中心、半寬 ε 的水平帶，ε 用滑桿調小；一條垂直線標出目前的 N，N 之後的點全部亮成綠色。ε 一縮小，N 自動往右跳。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 「越來越靠近」不夠精確",
+      "heading": "① 「越來越靠近」不夠",
       "body": [
-        "以前說 $a_n\\to L$ 是「$n$ 越大，$a_n$ 越靠近 $L$」。但 $a_n=\\frac{1}{n}$ 也「越來越靠近」$-1$（距離一直變小），它卻不收斂到 $-1$。問題在於：越來越近，不代表近到任意程度。",
-        "精確的說法是一場挑戰：對方隨便給一個誤差 $\\varepsilon>0$（0.1、0.001、$10^{-9}$），你都要能說出一個位置 $N$，使得從第 $N$ 項開始，每一項都落在 $L\\pm\\varepsilon$ 這條帶子裡。"
-      ],
-      "collapsible": false
+        "6.1 的說法：$n$ 越大，$a_n$ 越來越靠近 $L$",
+        "問題一：$a_n=\\dfrac1n$ 每一項都比前一項更靠近 $-1$",
+        "但極限是 $0$，不是 $-1$",
+        "問題二：$0,\\ 1,\\ 0,\\ \\tfrac12,\\ 0,\\ \\tfrac13,\\ \\dots$ 忽近忽遠",
+        "但它應該收斂到 $0$",
+        "真正要的是：不管多窄的帶子，從某一項起，後面全部在帶子裡"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "數列 $(a_n)$ 收斂到 $L$，寫成 $\\lim a_n=L$ 或 $a_n\\to L$，意思是：",
-        "量詞順序是重點：先有 $\\varepsilon$，才選 $N$，所以 $N$ 可以依賴 $\\varepsilon$（$\\varepsilon$ 越小，$N$ 通常越大）。$N$ 不必是最小的那個，只要「從 $N$ 開始全部都在帶子裡」就夠了。條件是對「所有 $n\\ge N$」，不是「有一些 $n$」。"
+        "$|a_n-L|<\\varepsilon\\iff L-\\varepsilon<a_n<L+\\varepsilon$：就是「在帶子裡」",
+        "三個量詞，三個角色：",
+        "• $\\forall\\varepsilon>0$：對手給誤差，要多小都可以",
+        "• $\\exists N$：我們找門檻，可以看 $\\varepsilon$ 再決定",
+        "• $\\forall n\\ge N$：門檻之後每一項都要做到",
+        "順序不能換：$N$ 寫在 $\\varepsilon$ 後面，所以 $N$ 可以依賴 $\\varepsilon$",
+        "習慣寫 $N(\\varepsilon)$ 提醒自己：不同的 $\\varepsilon$ 可以用不同的 $N$",
+        "$N$ 不必是最小的：$N$ 可行，則 $N+1,\\ N+100$ 也都可行"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{n\\to\\infty}a_n=L\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 否定：不收斂到 $L$ 長什麼樣子",
+      "heading": "② 例：解出最小的 $N$",
       "body": [
-        "照〈否定〉的規則把量詞一個一個翻過來：$a_n$ 不收斂到 $L$ 若且唯若存在一個 $\\varepsilon>0$，使得不管 $N$ 多大，$N$ 之後總有某一項 $n\\ge N$ 跑出帶子，$|a_n-L|\\ge\\varepsilon$。",
-        "人話：有一個固定的誤差，數列永遠甩不掉「偶爾跑出去」。要證明發散，就是要對所有 $L$ 都做到這件事。"
+        "$a_n=\\dfrac{2n+1}{n+3}$，$L=2$，$\\varepsilon=0.01$",
+        "先把誤差算成一個式子：",
+        "解不等式：",
+        "最小的 $N=498$",
+        "$n=497$：誤差 $\\frac5{500}=0.01$，不是小於 $0.01$",
+        "一般的 $\\varepsilon$：要 $n>\\dfrac5\\varepsilon-3$",
+        "取 $N$ 為任何大於 $\\frac5\\varepsilon-3$ 的自然數",
+        "這樣的 $N$ 一定存在：阿基米德性質"
       ],
-      "tex": ["\\exists\\varepsilon>0\\ \\forall N\\in\\mathbb{N}\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "|a_n-2|=\\left|\\frac{2n+1-2(n+3)}{n+3}\\right|=\\frac{5}{n+3}",
+        "\\frac{5}{n+3}<0.01\\iff n+3>500\\iff n>497"
+      ]
+    },
+    {
+      "heading": "② 收得很慢也是收斂",
+      "body": [
+        "$a_n=\\dfrac1{\\sqrt n}\\to0$，$\\varepsilon=10^{-3}$",
+        "最小的 $N=10^6+1=1\\,000\\,001$",
+        "比較：$\\dfrac1n$ 只要 $N=1001$",
+        "定義只問 $N$ 存在，不管它多大",
+        "速度是另一個問題（例如數值計算時很重要），但不影響「收不收斂」"
+      ],
+      "tex": [
+        "\\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6"
+      ]
+    },
+    {
+      "heading": "③ 否定：不收斂到 $L$",
+      "body": [
+        "照 12.2 一路翻：$\\forall\\to\\exists$，$\\exists\\to\\forall$，$<\\ \\to\\ \\ge$",
+        "白話：有一條帶子，不管從哪裡開始看，後面總有項跑出去",
+        "等價的說法：有無限多項落在帶子外",
+        "發散：對每一個 $L\\in\\mathbb{R}$，都有 $a_n\\not\\to L$",
+        "所以證明發散時，$L$ 是任意給的，不能只挑一個"
+      ],
+      "tex": [
+        "\\begin{aligned}&a_n\\not\\to L\\iff\\\\&\\exists\\varepsilon>0\\ \\forall N\\in\\mathbb{N}\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 證明 $(-1)^n$ 發散",
+      "body": [
+        "策略：帶寬 $\\varepsilon=1$ 的帶子長度 $2$；$1$ 和 $-1$ 距離 $2$，裝不下兩個",
+        "帶子是開區間 $(L-1,L+1)$：兩端點也不算在裡面",
+        "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=1$。任給 $N\\in\\mathbb{N}$，看 $n=2N$ 與 $n=2N+1$，兩個都 $\\ge N$。",
+        "假設兩項都在帶子裡，用三角不等式：",
+        "三角不等式：$|x-y|\\le|x-z|+|z-y|$"
+      ],
+      "tex": [
+        "2=|1-(-1)|\\le|1-L|+|L-(-1)|<1+1=2"
+      ]
+    },
+    {
+      "heading": "③ 證明（續）",
+      "body": [
+        "所以 $n=2N$、$2N+1$ 中至少一個滿足 $|a_n-L|\\ge1$",
+        "否定句的每一部分都做到了：$\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$",
+        "$L$ 是任意的，所以 $(-1)^n$ 發散　$\\blacksquare$"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $a_n\\to L$：$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$",
+        "• $\\varepsilon$ 對手給，$N$ 我們找（可依賴 $\\varepsilon$），$n\\ge N$ 全部要做到",
+        "• 找 $N$：先化簡 $|a_n-L|$，再解不等式；存在性靠阿基米德性質",
+        "• $N$ 不必最小，大多少都沒關係；收得慢也是收斂",
+        "• 否定：$\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$",
+        "• 發散要對每一個 $L$ 證",
+        "下一課：用定義證明數列極限"
+      ]
     }
   ],
   "workedExamples": [
@@ -88,332 +172,1074 @@
   ],
   "checks": [
     {
-      "ask": "$a_n\\to L$ 的定義，量詞順序是？",
+      "ask": "把順序改成「$\\exists N\\ \\forall\\varepsilon>0\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$」，這句話是什麼意思？",
       "options": [
-        { "label": "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N$：$|a_n-L|<\\varepsilon$", "correct": true },
-        { "label": "$\\exists N\\ \\forall\\varepsilon>0\\ \\forall n\\ge N$：$|a_n-L|<\\varepsilon$", "why": "你把 $N$ 放到 $\\varepsilon$ 前面，變成一個 $N$ 要應付所有 $\\varepsilon$，等於說 $n\\ge N$ 後 $a_n=L$。$N$ 必須可以依賴 $\\varepsilon$。" },
-        { "label": "$\\forall\\varepsilon>0\\ \\exists n$：$|a_n-L|<\\varepsilon$", "why": "你只要求「有某一項」進帶子。$(-1)^n$ 對 $L=1$ 也有無數項等於 1，卻不收斂；要求的是從 $N$ 起「每一項」。" }
+        {
+          "label": "跟原定義一樣",
+          "why": "量詞換順序意思會變：這裡同一個 $N$ 要對所有 $\\varepsilon$ 都行"
+        },
+        {
+          "label": "從某項起 $a_n$ ==恆等於== $L$",
+          "correct": true
+        },
+        {
+          "label": "$a_n$ 收斂得特別快，但不一定等於 $L$",
+          "why": "小於每一個正數的非負數只有 $0$，所以真的等於 $L$"
+        },
+        {
+          "label": "數列有界",
+          "why": "有界是另一件事；這句話的結論比有界強得多"
+        }
       ]
     },
     {
-      "ask": "$a_n=\\frac{2n+1}{n+3}$，$\\varepsilon=0.01$。下列哪個 $N$ 符合定義？",
+      "ask": "只要證明 $(-1)^n$ 不收斂到 $L=0$，下面哪個 $\\varepsilon$ ==不能用==？",
       "options": [
-        { "label": "$N=1000$", "correct": true },
-        { "label": "$N=497$", "why": "$n=497$ 時 $|a_n-2|=\\frac{5}{500}=0.01$，不是嚴格小於 0.01。最小可用的是 498，比它大的都行。" },
-        { "label": "$N=100$", "why": "你可能解成 $\\frac{5}{n}<0.05$ 之類。$n=100$ 時 $\\frac{5}{103}\\approx0.0485$，遠大於 0.01。" }
-      ]
-    },
-    {
-      "ask": "「$a_n$ 不收斂到 $L$」的正確寫法是？",
-      "options": [
-        { "label": "$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N$：$|a_n-L|\\ge\\varepsilon$", "correct": true },
-        { "label": "$\\forall\\varepsilon>0\\ \\forall N\\ \\forall n\\ge N$：$|a_n-L|\\ge\\varepsilon$", "why": "你把每個量詞都改成 $\\forall$。否定時 $\\forall$ 變 $\\exists$、$\\exists$ 變 $\\forall$，而且這樣寫會要求所有項都離 $L$ 很遠，太強了。" },
-        { "label": "$\\exists\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N$：$|a_n-L|\\ge\\varepsilon$", "why": "$\\exists N$ 應該翻成 $\\forall N$，$\\forall n$ 應該翻成 $\\exists n$。你寫的是「最後全部在外面」，比不收斂更強。" }
-      ]
-    },
-    {
-      "ask": "$a_n=\\frac{1}{\\sqrt{n}}$，$\\varepsilon=0.01$ 時最小的 $N$？",
-      "options": [
-        { "label": "10001", "correct": true },
-        { "label": "100", "why": "你解成 $\\frac{1}{n}<0.01$。這裡是 $\\frac{1}{\\sqrt{n}}<0.01$，要 $\\sqrt{n}>100$，即 $n>10000$。" },
-        { "label": "10000", "why": "$n=10000$ 時 $\\frac{1}{\\sqrt{n}}$ 剛好等於 0.01，不是嚴格小於；要從 10001 開始。" }
+        {
+          "label": "$\\varepsilon=2$",
+          "correct": true
+        },
+        {
+          "label": "$\\varepsilon=1$",
+          "why": "可以用：每一項都有 $|a_n-0|=1\\ge1$"
+        },
+        {
+          "label": "$\\varepsilon=\\frac12$",
+          "why": "可以用：每一項都有 $|a_n-0|=1\\ge\\frac12$"
+        },
+        {
+          "label": "$\\varepsilon=0.9$",
+          "why": "可以用：$1\\ge0.9$；$\\varepsilon$ 挑小一點只會更容易"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "越來越近不夠",
+      "title": "「越來越靠近」不夠",
       "beats": [
-        { "show": ["「$n$ 越大，$a_n$ 越靠近 $L$」"],
-          "note": "以前的說法。",
-          "say": "以前說數列收斂，是 n 越大，a n 越靠近 L。這句話聽起來沒問題，其實有漏洞。",
+        {
+          "show": [
+            "6.1 的說法：$n$ 越大，$a_n$ 越來越靠近 $L$"
+          ],
+          "say": "在 6.1，我們說 a n 收斂到 L，意思是 n 越大，a n 越來越靠近 L。這句話直覺很好，但拿來證明不夠精確。",
           "board": [
-            {"do":"write","line":"「$n$ 越大，$a_n$ 越靠近 ${{l:L}}$」"},
-            {"do":"write","line":"聽起來沒問題，但有漏洞","color":"red","on":"其實"}
-          ] },
-        { "show": ["$a_n=\\frac{1}{n}$ 到 $-1$ 的距離一直變小"],
-          "say": "n 分之一跟負一的距離，也是一直在變小。那它算不算越來越靠近負一？",
+            {
+              "do": "write",
+              "line": "6.1 的說法：$n$ 越大，$a_n$ 越來越靠近 $L$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題一：$a_n=\\dfrac1n$ 每一項都比前一項更靠近 $-1$"
+          ],
+          "say": "問題一：n 分之 1，每一項都比前一項更靠近負 1，可是它的極限是 0，不是負 1。越來越靠近，不代表靠到底。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a_n = \\frac{1}{n}$","on":"n 分之一"},
-            {"do":"write","line":"到 $-1$ 的距離一直變小","on":"距離"}
-          ] },
-        { "show": ["靠近 ＝ 能小於任何誤差"],
-          "note": "只變小、卡在某個數之上，不算靠近。",
-          "say": "判斷靠不靠近，要看距離能不能比任何指定的誤差都小，像零點一。只是變小卻停在某個數之上，不算靠近。",
+            {
+              "do": "write",
+              "line": "問題一：$a_n=\\dfrac1n$ 每一項都比前一項更靠近 $-1$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "但極限是 $0$，不是 $-1$",
+              "color": "red",
+              "on": "是它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題二：$0,\\ 1,\\ 0,\\ \\tfrac12,\\ 0,\\ \\tfrac13,\\ \\dots$ 忽近忽遠"
+          ],
+          "say": "問題二：這個數列 0、1、0、2 分之 1、0、3 分之 1，離 0 忽近忽遠，並不是越來越靠近；可是它顯然應該收斂到 0。",
           "board": [
-            {"do":"write","line":"靠近 ＝ 距離能小於任何 ${{e:\\varepsilon}}$"},
-            {"do":"write","line":"只變小、卡在某數之上，不算","color":"red","on":"只是變小"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\frac{1}{n}$ 收斂到 $-1$ 嗎？",
-        "options": [
-          {
-            "label": "不會：距離一直變小，但永遠大於 1",
-            "correct": true
-          },
-          {
-            "label": "會，因為距離一直變小",
-            "why": "距離變小不代表小到任意程度：$\\frac{1}{n}$ 到 $-1$ 的距離是 $1+\\frac{1}{n}$，永遠大於 1。"
-          },
-          {
-            "label": "要看 $n$ 取多大才知道",
-            "why": "收斂說的是整個數列的走向，不是某一項；而 $\\frac{1}{n}$ 每一項到 $-1$ 的距離都大於 1。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "問題二：$0,\\ 1,\\ 0,\\ \\tfrac12,\\ 0,\\ \\tfrac13,\\ \\dots$ 忽近忽遠"
+            },
+            {
+              "do": "write",
+              "line": "但它應該收斂到 $0$",
+              "on": "忽近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真正要的是：不管多窄的帶子，從某一項起，後面全部在帶子裡"
+          ],
+          "say": "真正要說的是：不管你畫一條多窄的帶子，從某一項開始，後面的項全部都在帶子裡面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真正要的是：不管多窄的帶子，從某一項起，後面全部在帶子裡",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "aₙ = (2n+1)/(n+3)，帶子是 2 ± ε"
+          ],
+          "say": "圖上是 n 加 3 分之 2n 加 1，帶子是 2 加減艾普西隆。帶寬 1 的時候，從第 3 項起全部在帶子裡。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "band",
+                  "window": [
+                    0,
+                    25,
+                    0.5,
+                    3.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2+e",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "2-e",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "floor(5/e-3)+1",
+                      "label": "N",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": "3/4",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": "5/5",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": "7/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": "9/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": "11/8",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": "13/9",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": "15/10",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": "17/11",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 9,
+                      "y": "19/12",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 10,
+                      "y": "21/13",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 11,
+                      "y": "23/14",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 12,
+                      "y": "25/15",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 13,
+                      "y": "27/16",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 14,
+                      "y": "29/17",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 15,
+                      "y": "31/18",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 16,
+                      "y": "33/19",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 17,
+                      "y": "35/20",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 18,
+                      "y": "37/21",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 19,
+                      "y": "39/22",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 20,
+                      "y": "41/23",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 21,
+                      "y": "43/24",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 22,
+                      "y": "45/25",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 23,
+                      "y": "47/26",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 24,
+                      "y": "49/27",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.2,
+                      "max": 1,
+                      "value": 1,
+                      "label": "帶寬 ε"
+                    }
+                  },
+                  "readout": "ε = {e}，從 N = {floor(5/e-3)+1} 起全部在帶子裡",
+                  "xlabel": "n",
+                  "ylabel": "aₙ",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 1，從 N = 3 起全部在帶子裡",
+              "on": "帶子#1"
+            },
+            {
+              "do": "write",
+              "line": "aₙ = (2n+1)/(n+3)，帶子是 2 ± ε",
+              "color": "violet",
+              "on": "的時"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「越來越靠近」不夠"
+          ],
+          "say": "把帶子縮到 0.25，門檻 N 往右移到 18，但還是找得到。帶子越窄，N 通常越大。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "band",
+                  "window": [
+                    0,
+                    25,
+                    0.5,
+                    3.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2+e",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "2-e",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "floor(5/e-3)+1",
+                      "label": "N",
+                      "color": "blue"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": "3/4",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": "5/5",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": "7/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": "9/7",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": "11/8",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": "13/9",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": "15/10",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": "17/11",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 9,
+                      "y": "19/12",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 10,
+                      "y": "21/13",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 11,
+                      "y": "23/14",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 12,
+                      "y": "25/15",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 13,
+                      "y": "27/16",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 14,
+                      "y": "29/17",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 15,
+                      "y": "31/18",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 16,
+                      "y": "33/19",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 17,
+                      "y": "35/20",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 18,
+                      "y": "37/21",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 19,
+                      "y": "39/22",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 20,
+                      "y": "41/23",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 21,
+                      "y": "43/24",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 22,
+                      "y": "45/25",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 23,
+                      "y": "47/26",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 24,
+                      "y": "49/27",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.2,
+                      "max": 1,
+                      "value": 1,
+                      "label": "帶寬 ε"
+                    }
+                  },
+                  "readout": "ε = {e}，從 N = {floor(5/e-3)+1} 起全部在帶子裡",
+                  "xlabel": "n",
+                  "ylabel": "aₙ",
+                  "height": 300
+                },
+                "vals": {
+                  "e": 0.25
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.25，從 N = 18 起全部在帶子裡",
+              "on": "18"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "一場挑戰",
+      "title": "定義",
       "beats": [
-        { "show": ["對方給誤差 $\\varepsilon>0$"],
-          "note": "0.1、0.001、$10^{-9}$，隨便給。",
-          "say": "精確的說法是一場挑戰。對方隨便給一個誤差 epsilon，零點一、零點零零一，多小都可以。",
+        {
+          "show": [
+            "$\\begin{aligned}&\\lim_{n\\to\\infty}a_n=L\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "正式定義：a n 收斂到 L，意思是對所有正的艾普西隆，存在自然數 N，使得對所有大於等於 N 的 n，a n 減 L 的絕對值小於艾普西隆。",
           "board": [
-            {"do":"write","line":"對方給 ${{e:\\varepsilon}} > 0$","tint":{"e":"blue"}},
-            {"do":"focus","term":"e","color":"blue","label":"多小都行","on":"多小"}
-          ] },
-        { "show": ["你說出位置 $N$"],
-          "note": "從第 $N$ 項起，每一項都在 $L\\pm\\varepsilon$ 的帶子裡。",
-          "say": "你要能說出一個位置 N，從第 N 項開始，每一項都落在 L 上下 epsilon 這條帶子裡。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\lim_{n\\to\\infty}a_n=L\\iff\\\\&\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "使得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|a_n-L|<\\varepsilon\\iff L-\\varepsilon<a_n<L+\\varepsilon$：就是「在帶子裡」"
+          ],
+          "say": "a n 減 L 的絕對值小於艾普西隆，就是 a n 在 L 減艾普西隆和 L 加艾普西隆之間，也就是在帶子裡。",
           "board": [
-            {"do":"write","line":"你說出 ${{nn:N}}$","tint":{"nn":"violet"}},
-            {"do":"write","line":"$n \\ge N$ ⇒ $|a_n - L| < \\varepsilon$","on":"每一項"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:|a_n-L|<\\varepsilon$"],
-          "say": "寫成符號就是這一行：對所有 epsilon，存在 N，對所有 n 大於等於 N，距離都小於 epsilon。",
+            {
+              "do": "write",
+              "line": "$|a_n-L|<\\varepsilon\\iff L-\\varepsilon<a_n<L+\\varepsilon$：就是「在帶子裡」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三個量詞，三個角色：",
+            "• $\\forall\\varepsilon>0$：對手給誤差，要多小都可以"
+          ],
+          "say": "三個量詞各有角色。艾普西隆由對手給，要多小都行。N 由我們找，可以看了艾普西隆再決定。門檻之後的每一項都要做到，沒有例外。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\forall {{e:\\varepsilon}}>0\\ \\exists {{nn:N}}\\ \\forall n\\ge N:|a_n-L|<\\varepsilon$","tint":{"e":"blue","nn":"violet"},"on":"這一行"},
-            {"do":"underline","term":"e","color":"blue","on":"對所有#1"},
-            {"do":"focus","term":"nn","color":"violet","on":"存在"}
-          ] },
-        { "show": ["先有 $\\varepsilon$，才選 $N$"],
-          "note": "$N$ 可以依賴 $\\varepsilon$；不必是最小的。",
-          "say": "順序是重點：epsilon 先給，N 後選，所以 N 可以跟著 epsilon 變。N 也不必挑最小的。",
+            {
+              "do": "write",
+              "line": "三個量詞，三個角色："
+            },
+            {
+              "do": "write",
+              "line": "• $\\forall\\varepsilon>0$：對手給誤差，要多小都可以",
+              "on": "手給"
+            },
+            {
+              "do": "write",
+              "line": "• $\\exists N$：我們找門檻，可以看 $\\varepsilon$ 再決定",
+              "on": "可以"
+            },
+            {
+              "do": "write",
+              "line": "• $\\forall n\\ge N$：門檻之後每一項都要做到",
+              "on": "之後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "順序不能換：$N$ 寫在 $\\varepsilon$ 後面，所以 $N$ 可以依賴 $\\varepsilon$"
+          ],
+          "say": "量詞的順序不能換。N 寫在艾普西隆後面，所以 N 可以隨艾普西隆改變，通常寫成 N of 艾普西隆。",
           "board": [
-            {"do":"write","line":"先給 ${{ep:\\varepsilon}}$","tint":{"ep":"blue"}},
-            {"do":"write","line":"後選 ${{nx:N}}$","tint":{"nx":"violet"},"on":"後選"},
-            {"do":"arrow","from":"ep","to":"nx","label":"N 跟著變","on":"跟著"},
-            {"do":"write","line":"$N$ 不必是最小的","on":"也不必"}
-          ] }
+            {
+              "do": "write",
+              "line": "順序不能換：$N$ 寫在 $\\varepsilon$ 後面，所以 $N$ 可以依賴 $\\varepsilon$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　習慣寫 $N(\\varepsilon)$ 提醒自己：不同的 $\\varepsilon$ 可以用不同的 $N$",
+              "color": "violet",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$N$ 不必是最小的：$N$ 可行，則 $N+1,\\ N+100$ 也都可行"
+          ],
+          "say": "另外，N 只要存在就好，不必是最小的。一個 N 可行，比它大的 N 也都可行，因為要求的項只會更少。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$N$ 不必是最小的：$N$ 可行，則 $N+1,\\ N+100$ 也都可行"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "給 $\\varepsilon$，解 $N$",
+      "title": "例：解出最小的 $N$",
       "beats": [
-        { "show": ["$a_n=\\frac{2n+1}{n+3}\\to2$，$\\varepsilon=0.01$"],
-          "say": "實際玩一回合。分子二 n 加一、分母 n 加三，往二收斂。對方出零點零一。",
+        {
+          "show": [
+            "$a_n=\\dfrac{2n+1}{n+3}$，$L=2$，$\\varepsilon=0.01$"
+          ],
+          "say": "例子：a n 等於 n 加 3 分之 2n 加 1，極限是 2。給定艾普西隆 0.01，找出最小的 N。",
           "board": [
-            {"do":"write","line":"$a_n = \\frac{2n+1}{n+3} \\to 2$"},
-            {"do":"write","line":"${{e:\\varepsilon}} = 0.01$","tint":{"e":"blue"},"on":"對方出"}
-          ] },
-        { "show": ["$|a_n-2|=\\frac{5}{n+3}$"],
-          "note": "先化簡距離。",
-          "say": "先把距離化簡：通分之後，跟二的距離是 n 加三分之五。",
+            {
+              "do": "write",
+              "line": "$a_n=\\dfrac{2n+1}{n+3}$，$L=2$，$\\varepsilon=0.01$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先把誤差算成一個式子：",
+            "$|a_n-2|=\\left|\\frac{2n+1-2(n+3)}{n+3}\\right|=\\frac{5}{n+3}$"
+          ],
+          "say": "先把誤差化簡：通分以後分子是 2n 加 1 減 2n 減 6，等於負 5。取絕對值，誤差就是 n 加 3 分之 5。",
           "board": [
-            {"do":"write","line":"$a_n - 2 = \\frac{2n+1-2(n+3)}{n+3}$","on":"通分"},
-            {"do":"transform","line":"$|a_n - 2| = {{d:\\frac{5}{n+3}}}$","on":"跟二的距離"},
-            {"do":"underline","term":"d","on":"三分之五"}
-          ] },
-        { "show": ["$2n+1-(2n+6)=-5$"],
-          "note": "二乘 $(n+3)$ 要整個展開。",
-          "say": "分子展開：二乘 n 加三是二 n 加六，減掉以後剩負五，取絕對值就是五。",
+            {
+              "do": "write",
+              "line": "先把誤差算成一個式子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_n-2|=\\left|\\frac{2n+1-2(n+3)}{n+3}\\right|=\\frac{5}{n+3}$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "解不等式：",
+            "$\\frac{5}{n+3}<0.01\\iff n+3>500\\iff n>497$"
+          ],
+          "say": "要它小於 0.01，就是 n 加 3 大於 500，也就是 n 大於 497。",
           "board": [
-            {"do":"write","line":"$2n+1-(2n+6) = -5$"}
-          ] },
-        { "show": ["$\\frac{5}{n+3}<0.01$ ⇔ $n+3>500$ ⇔ $n>497$"],
-          "say": "要它小於零點零一，分母要大於五百，也就是 n 大於四百九十七。",
+            {
+              "do": "write",
+              "line": "解不等式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{5}{n+3}<0.01\\iff n+3>500\\iff n>497$",
+              "on": "大於#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最小的 $N=498$"
+          ],
+          "say": "所以最小的 N 是 498。",
           "board": [
-            {"do":"write","line":"${{d:\\frac{5}{n+3}}} < 0.01$","on":"要它小於"},
-            {"do":"transform","line":"${{s:n+3}} > 500$","on":"分母"},
-            {"do":"transform","line":"$n > 497$","on":"也就是"}
-          ] },
-        { "show": ["$n=497$：$\\frac{5}{500}=0.01$，不算","最小的 $N=498$"],
-          "note": "距離隨 $n$ 遞減，進了帶子就不會再出去。",
-          "say": "四百九十七剛好等於零點零一，不是嚴格小於，所以最小的 N 是四百九十八。比它大的也都可以。",
+            {
+              "do": "write",
+              "line": "最小的 $N=498$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$n=497$：誤差 $\\frac5{500}=0.01$，不是小於 $0.01$",
+              "color": "violet",
+              "on": "49"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的 $\\varepsilon$：要 $n>\\dfrac5\\varepsilon-3$"
+          ],
+          "say": "一般的艾普西隆也一樣：要 n 大於艾普西隆分之 5 減 3。取 N 為任何比它大的自然數就行。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$n = 497$：${{q:\\frac{5}{500} = 0.01}}$","on":"四百九十七"},
-            {"do":"underline","term":"q","label":"不是嚴格小於","on":"不是嚴格"},
-            {"do":"write","line":"最小的 ${{nn:N = 498}}$","tint":{"nn":"violet"},"on":"所以最小的"},
-            {"do":"box","term":"nn","color":"green","on":"比它大的"}
-          ] }
+            {
+              "do": "write",
+              "line": "一般的 $\\varepsilon$：要 $n>\\dfrac5\\varepsilon-3$"
+            },
+            {
+              "do": "write",
+              "line": "取 $N$ 為任何大於 $\\frac5\\varepsilon-3$ 的自然數",
+              "on": "為任"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這樣的 $N$ 一定存在：阿基米德性質"
+          ],
+          "say": "為什麼這樣的自然數一定存在？這正是 12.11 的阿基米德性質：任何實數，都有比它大的自然數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這樣的 $N$ 一定存在：阿基米德性質"
+            }
+          ]
+        }
       ],
-      "key": "先化簡 $|a_n-2|$ 再解 $n$；等號不算",
-      "check": 1
-    },
-    {
-      "title": "收斂得很慢",
-      "beats": [
-        { "show": ["$a_n=\\frac{1}{\\sqrt{n}}\\to0$，$\\varepsilon=10^{-3}$"],
-          "say": "再一個：根號 n 分之一往零收斂，對方出十的負三次方。",
-          "board": [
-            {"do":"write","line":"$a_n = \\frac{1}{\\sqrt{n}} \\to 0$"},
-            {"do":"write","line":"$\\varepsilon = {{e:10^{-3}}}$","tint":{"e":"blue"},"on":"對方出"}
-          ] },
-        { "show": ["$\\sqrt{n}>1000$ ⇔ $n>10^6$"],
-          "say": "要根號 n 大於一千，n 就得大於十的六次方。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{n} > 1000$"},
-            {"do":"transform","line":"$n > 10^6$","on":"n 就得"}
-          ] },
-        { "show": ["最小的 $N=10^6+1$"],
-          "note": "$n=10^6$ 時剛好等於 $10^{-3}$，不算。",
-          "say": "等號那一項不算，所以 N 是十的六次方加一。誤差只要求千分之一，N 卻大得驚人。",
-          "board": [
-            {"do":"write","line":"最小的 ${{nn:N = 10^6 + 1}}$","tint":{"nn":"violet"},"on":"所以 N"},
-            {"do":"arrow","from":"e","to":"nn","label":"大得驚人","on":"千分之一"}
-          ] },
-        { "show": ["$\\frac{1}{\\sqrt{n}}$ 往 0 降得很慢"],
-          "say": "看圖：根號 n 分之一往零降，但降得很慢，要很靠右才進得了窄帶子。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,40,-0.2,1.2],"curves":[{"expr":"1/sqrt(x)","domain":[1,40],"color":"blue"}]}}
-          ] },
-        { "show": ["一般的 $\\varepsilon$：取 $N>\\frac{1}{\\varepsilon^2}$"],
-          "note": "阿基米德性質保證存在。",
-          "say": "對任何 epsilon，取 N 大於 epsilon 平方分之一就行，這樣的自然數一定存在。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{\\sqrt{n}} < {{g:\\varepsilon}} \\iff n > \\frac{1}{\\varepsilon^2}$","tint":{"g":"blue"},"on":"對任何"},
-            {"do":"write","line":"取 ${{m:N > \\frac{1}{\\varepsilon^2}}}$","tint":{"m":"violet"},"on":"取 N"},
-            {"do":"underline","term":"m","label":"一定存在","on":"自然數"}
-          ] },
-        { "show": ["例：$\\varepsilon=0.01$，取 $N=10001$"],
-          "note": "自然數沒有上界。",
-          "say": "為什麼找得到？自然數沒有上界，這是阿基米德性質。例如 epsilon 是零點零一，要大於一萬，取一萬零一就可以。",
-          "board": [
-            {"do":"write","line":"例：${{n1:\\varepsilon = 0.01}}$，$\\frac{1}{\\varepsilon^2} = 10000$"},
-            {"do":"write","line":"取 ${{n2:N = 10001}}$","tint":{"n2":"violet"},"on":"一萬零一"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "不收斂長什麼樣",
-      "beats": [
-        { "show": ["$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N:|a_n-L|\\ge\\varepsilon$"],
-          "say": "把定義的量詞一個一個翻過來，就是不收斂到 L。",
-          "board": [
-            {"do":"write","line":"$\\forall \\to \\exists$，$\\exists \\to \\forall$"},
-            {"do":"write","line":"$|a_n-L|<\\varepsilon \\to |a_n-L|\\ge\\varepsilon$","on":"翻過來"}
-          ] },
-        { "show": ["有一個固定的誤差","數列永遠甩不掉偶爾跑出去"],
-          "say": "人話：有一個固定的誤差，不管 N 多大，後面總有某一項跑出帶子。",
-          "board": [
-            {"do":"write","line":"有一個固定的 ${{e:\\varepsilon}}$","tint":{"e":"blue"}},
-            {"do":"underline","term":"e","color":"blue","label":"固定","on":"固定的"},
-            {"do":"write","line":"不管 $N$ 多大，後面總有一項跑出去","on":"不管"}
-          ] },
-        { "show": ["$(-1)^n$：取 $\\varepsilon=1$"],
-          "note": "帶子寬 2，裝不下距離 2 的兩個點 1 和 $-1$。",
-          "say": "負一的 n 次方在一和負一之間跳，兩點距離二。誤差取一，帶子寬二又是開的，裝不下兩個點。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(-1)^n$：在 $1$ 和 $-1$ 之間跳","on":"負一的"},
-            {"do":"write","line":"${{e:\\varepsilon = 1}}$：帶子寬 2，開的","tint":{"e":"blue"},"on":"誤差取一"},
-            {"do":"underline","term":"e","color":"blue","label":"裝不下","on":"裝不下"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：$(-1)^n$ 發散",
-      "beats": [
-        { "show": ["反設 $a_n\\to L$，挑一個 $\\varepsilon$ 逼出矛盾"],
-          "say": "策略：反證。假設負一的 n 次方收斂到某個 L，挑一個誤差，找兩項把 L 逼出矛盾。",
-          "board": [
-            {"do":"write","line":"反設 $(-1)^n \\to {{l:L}}$","tint":{"l":"violet"},"on":"假設"},
-            {"do":"write","line":"挑 $\\varepsilon$、找兩項 ⇒ 矛盾","on":"挑一個"}
-          ] },
-        { "show": ["取 $\\varepsilon=1$：有 $N$，$n\\ge N$ 時 $|a_n-L|<1$"],
-          "note": "1 是兩點距離 2 的一半。",
-          "why": {"ask":"為什麼取 $\\varepsilon=1$？","say":"第一步取誤差一。為什麼挑一？","options":[{"label":"寬 2 的開帶子裝不下距離 2 的兩點","correct":true},{"label":"$\\varepsilon$ 要比 1 小才嚴格","why":"1 已經夠：帶子是開的，裝不下距離 2 的兩點。更小也行，但不必。"},{"label":"取 $\\varepsilon=2$ 也一樣","why":"取 $L=0$，兩項到 0 的距離都是 1，小於 2，逼不出矛盾。"}]},
-          "say": "誤差一，帶子寬二又是開的，裝不下距離二的一和負一。定義給出一個 N。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{e:\\varepsilon = 1}}$：${{ge:n \\ge N}}$ ⇒ $|a_n - {{l:L}}| < 1$","tint":{"e":"blue"},"on":"取誤差一"},
-            {"do":"underline","term":"e","label":"裝不下兩點","why":true,"on":"裝不下"}
-          ] },
-        { "show": ["取 $n=2N$ 與 $2N+1$","$|1-L|<1$，$|-1-L|<1$"],
-          "note": "兩者都 $\\ge N$。",
-          "why": {"ask":"為什麼兩個不等式都成立？","say":"偶數項和奇數項，為什麼都落在帶子裡？","options":[{"label":"$2N$、$2N+1$ 都 $\\ge N$，定義管到每一項","correct":true},{"label":"$N$ 是我們挑的，挑偶數就好","why":"$N$ 是定義給的，不是我們挑的；我們能挑的是 $n$。"},{"label":"$(-1)^n$ 只有 1 和 $-1$ 兩個值","why":"那只說兩項的值；它們在帶子裡，是因為 $n$ 都 $\\ge N$。"}]},
-          "say": "二 N 和二 N 加一都大於等於 N，定義說 N 之後每一項都在帶子裡，一個是一，一個是負一。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$n = 2N$：$|1 - {{l:L}}| < 1$","on":"偶數項"},
-            {"do":"write","line":"$n = 2N+1$：$|-1 - {{l:L}}| < 1$","on":"奇數項"},
-            {"do":"underline","term":"ge","label":"管到每一項","why":true,"on":"都大於等於"}
-          ] },
-        { "show": ["$2=|1-(-1)|\\le|1-L|+|L-(-1)|<2$"],
-          "note": "三角不等式：中間插一個 $L$。",
-          "say": "三角不等式，中間插一個 L：一和負一的距離二，不超過兩段之和，兩段又各小於一。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$2 = |1-(-1)| \\le {{s:|1-{{l:L}}| + |{{m:L}}-(-1)|}}$","tint":{"m":"violet"},"on":"中間插"},
-            {"do":"underline","term":"s","label":"兩段之和","on":"不超過"},
-            {"do":"transform","line":"$2 = |1-(-1)| \\le {{s:|1-{{l:L}}| + |{{m:L}}-(-1)|}} < 2$","on":"各小於一"}
-          ] },
-        { "show": ["繞路不會比直達短","$|a-b|\\le|a-c|+|c-b|$"],
-          "note": "一到負一直達是 2，繞經 $L$ 兩段相加。",
-          "say": "三角不等式：從一走到負一，中途繞經 L，路不會變短。直達是二，繞路是兩段相加，所以直達不超過繞路。",
-          "board": [
-            {"do":"write","line":"${{p1:|a-b|}} \\le {{p2:|a-c|+|c-b|}}$"},
-            {"do":"focus","term":"p1","color":"blue","on":"直達#1"},
-            {"do":"underline","term":"p2","color":"violet","on":"繞路是"}
-          ] },
-        { "show": ["$2<2$，矛盾：沒有 $L$ 是極限"],
-          "note": "$L$ 任意，所以 $(-1)^n$ 發散。",
-          "say": "得到二小於二，矛盾。L 是任意的，所以沒有任何極限，負一的 n 次方發散。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{c:2 < 2}}$，矛盾","on":"得到"},
-            {"do":"circle","term":"c","color":"red","on":"矛盾"},
-            {"do":"write","line":"沒有 ${{l:L}}$ 是極限：$(-1)^n$ 發散","color":"green","on":"所以沒有"}
-          ] }
-      ],
-      "key": "兩項都在 $L\\pm1$ 內，三角不等式逼矛盾",
-      "proof": true,
-      "of": "ex2",
-      "skeleton": "反證",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
+      "predict": {
+        "ask": "同一個數列，$\\varepsilon=0.001$ 時最小的 $N$ 是？",
+        "options": [
           {
-            "label": "反設 $a_n\\to L$"
+            "label": "$4998$",
+            "correct": true
           },
           {
-            "label": "取 $\\varepsilon=1$，定義給出 $N$",
-            "why": "要先有 $L$，才有帶子 $L\\pm1$，定義才交出 $N$。"
+            "label": "$4997$",
+            "why": "$n=4997$ 時誤差剛好 $\\frac5{5000}=0.001$，不是小於"
           },
           {
-            "label": "取 $n=2N$ 與 $2N+1$",
-            "why": "要先有 $N$，才知道 $n$ 從哪裡開始取。"
+            "label": "$5000$",
+            "why": "忘了減 $3$：要的是 $n+3>5000$"
           },
           {
-            "label": "三角不等式得 $2<2$",
-            "why": "要先有 $|1-L|<1$ 與 $|-1-L|<1$ 兩個不等式。"
+            "label": "$498$",
+            "why": "這是 $\\varepsilon=0.01$ 的答案；$\\varepsilon$ 小十倍，$N$ 大約大十倍"
           }
         ]
       }
+    },
+    {
+      "title": "收得很慢也是收斂",
+      "beats": [
+        {
+          "show": [
+            "$a_n=\\dfrac1{\\sqrt n}\\to0$，$\\varepsilon=10^{-3}$"
+          ],
+          "say": "再看一個收斂得很慢的數列：根號 n 分之 1，趨近 0。艾普西隆給千分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n=\\dfrac1{\\sqrt n}\\to0$，$\\varepsilon=10^{-3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6$"
+          ],
+          "say": "根號 n 分之 1 小於千分之一，就是根號 n 大於 1000，也就是 n 大於一百萬。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最小的 $N=10^6+1=1\\,000\\,001$"
+          ],
+          "say": "所以最小的 N 是一百萬零一。要到第一百萬項以後，誤差才全部小於千分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最小的 $N=10^6+1=1\\,000\\,001$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比較：$\\dfrac1n$ 只要 $N=1001$"
+          ],
+          "say": "比較一下：n 分之 1 只要從第 1001 項開始就做到了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比較：$\\dfrac1n$ 只要 $N=1001$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義只問 $N$ 存在，不管它多大"
+          ],
+          "say": "但是定義只問 N 存不存在，不管它多大。收得再慢，只要每個艾普西隆都找得到 N，就是收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義只問 $N$ 存在，不管它多大",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　速度是另一個問題（例如數值計算時很重要），但不影響「收不收斂」",
+              "color": "violet",
+              "on": "再慢"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "否定：不收斂到 $L$",
+      "beats": [
+        {
+          "show": [
+            "照 12.2 一路翻：$\\forall\\to\\exists$，$\\exists\\to\\forall$，$<\\ \\to\\ \\ge$",
+            "$\\begin{aligned}&a_n\\not\\to L\\iff\\\\&\\exists\\varepsilon>0\\ \\forall N\\in\\mathbb{N}\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "接著寫否定。照 12.2 的規則一路翻，得到：存在一個艾普西隆，對所有 N，都有 n 大於等於 N，使得誤差大於等於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "照 12.2 一路翻：$\\forall\\to\\exists$，$\\exists\\to\\forall$，$<\\ \\to\\ \\ge$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&a_n\\not\\to L\\iff\\\\&\\exists\\varepsilon>0\\ \\forall N\\in\\mathbb{N}\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "存在"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大於#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "白話：有一條帶子，不管從哪裡開始看，後面總有項跑出去"
+          ],
+          "say": "白話：存在一條帶子，不管門檻設在哪裡，門檻後面總還有項跑到帶子外面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "白話：有一條帶子，不管從哪裡開始看，後面總有項跑出去"
+            },
+            {
+              "do": "write",
+              "line": "　等價的說法：有無限多項落在帶子外",
+              "color": "violet",
+              "on": "門檻#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "發散：對每一個 $L\\in\\mathbb{R}$，都有 $a_n\\not\\to L$"
+          ],
+          "say": "數列發散，意思是它不收斂到任何實數：對每一個實數 L，都要證明 a n 不收斂到 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "發散：對每一個 $L\\in\\mathbb{R}$，都有 $a_n\\not\\to L$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以證明發散時，$L$ 是任意給的，不能只挑一個"
+          ],
+          "say": "所以證明發散的時候，L 是任意給的，不能只檢查一兩個值。12.2 證過負 1 的 n 次方不收斂到 1，那還不夠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以證明發散時，$L$ 是任意給的，不能只挑一個"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明 $(-1)^n$ 發散",
+      "beats": [
+        {
+          "show": [
+            "策略：帶寬 $\\varepsilon=1$ 的帶子長度 $2$；$1$ 和 $-1$ 距離 $2$，裝不下兩個",
+            "圖"
+          ],
+          "say": "策略：取艾普西隆等於 1，帶子的總長是 2。負 1 和 1 相距 2，開區間的帶子裝不下兩個。數列又一直在兩者之間跳，所以總有項在帶子外。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：帶寬 $\\varepsilon=1$ 的帶子長度 $2$；$1$ 和 $-1$ 距離 $2$，裝不下兩個"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"60 10 520 150\" width=\"620\" height=\"179\"><line x1=\"70\" y1=\"85\" x2=\"570\" y2=\"85\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><rect x=\"230\" y=\"64\" width=\"300\" height=\"42\" fill=\"#f5d56e\" fill-opacity=\".5\" stroke=\"var(--blue)\" stroke-width=\"2.5\" stroke-dasharray=\"8 6\"/><circle cx=\"150\" cy=\"85\" r=\"10\" fill=\"var(--red)\"/><circle cx=\"450\" cy=\"85\" r=\"10\" fill=\"var(--red)\"/><line x1=\"380\" y1=\"72\" x2=\"380\" y2=\"98\" stroke=\"var(--blue)\" stroke-width=\"3.5\"/><text x=\"150\" y=\"145\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif\" font-size=\"30\">−1</text><text x=\"450\" y=\"145\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif\" font-size=\"30\">1</text><text x=\"380\" y=\"50\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"30\" fill=\"var(--blue)\">L</text><text x=\"230\" y=\"50\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">L−1</text><text x=\"530\" y=\"50\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">L+1</text></svg>",
+              "on": "相距"
+            },
+            {
+              "do": "write",
+              "line": "　帶子是開區間 $(L-1,L+1)$：兩端點也不算在裡面",
+              "color": "violet",
+              "on": "數列"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=1$。任給 $N\\in\\mathbb{N}$，看 $n=2N$ 與 $n=2N+1$，兩個都 $\\ge N$。"
+          ],
+          "say": "正式證明。任給一個實數 L，取艾普西隆等於 1。任給 N，看第 2N 項和第 2N 加 1 項，兩個足標都大於等於 N。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=1$。任給 $N\\in\\mathbb{N}$，看 $n=2N$ 與 $n=2N+1$，兩個都 $\\ge N$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "假設兩項都在帶子裡，用三角不等式：",
+            "$2=|1-(-1)|\\le|1-L|+|L-(-1)|<1+1=2$"
+          ],
+          "say": "假設兩項都在帶子裡。它們一個是 1、一個是負 1。用三角不等式，2 小於等於兩段距離的和，又小於 1 加 1，得到 2 小於 2，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "假設兩項都在帶子裡，用三角不等式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2=|1-(-1)|\\le|1-L|+|L-(-1)|<1+1=2$",
+              "on": "用三"
+            },
+            {
+              "do": "write",
+              "line": "　三角不等式：$|x-y|\\le|x-z|+|z-y|$",
+              "color": "violet",
+              "on": "又小"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "所以 $n=2N$、$2N+1$ 中至少一個滿足 $|a_n-L|\\ge1$"
+          ],
+          "say": "所以這兩項裡，至少有一項跟 L 的距離大於等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $n=2N$、$2N+1$ 中至少一個滿足 $|a_n-L|\\ge1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "否定句的每一部分都做到了：$\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$"
+          ],
+          "say": "對照否定句：艾普西隆我們挑了 1，N 是任給的，n 我們找到了，誤差大於等於 1。所以 a n 不收斂到 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "否定句的每一部分都做到了：$\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L$ 是任意的，所以 $(-1)^n$ 發散　$\\blacksquare$"
+          ],
+          "say": "而 L 是任意的實數，所以負 1 的 n 次方不收斂到任何實數，它發散。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L$ 是任意的，所以 $(-1)^n$ 發散　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $a_n\\to L$：$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$",
+            "• $\\varepsilon$ 對手給，$N$ 我們找（可依賴 $\\varepsilon$），$n\\ge N$ 全部要做到"
+          ],
+          "say": "整理一下：艾普西隆是對手給的，N 是我們找的，之後全部做到。找 N 就是化簡誤差、解不等式。否定是有一條帶子，總有項跑出去；證明發散，要對每一個 L 都做到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $a_n\\to L$：$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\varepsilon$ 對手給，$N$ 我們找（可依賴 $\\varepsilon$），$n\\ge N$ 全部要做到",
+              "on": "是我"
+            },
+            {
+              "do": "write",
+              "line": "• 找 $N$：先化簡 $|a_n-L|$，再解不等式；存在性靠阿基米德性質",
+              "on": "部做"
+            },
+            {
+              "do": "write",
+              "line": "• $N$ 不必最小，大多少都沒關係；收得慢也是收斂",
+              "on": "解不"
+            },
+            {
+              "do": "write",
+              "line": "• 否定：$\\exists\\varepsilon\\ \\forall N\\ \\exists n\\ge N:\\ |a_n-L|\\ge\\varepsilon$",
+              "on": "帶子"
+            },
+            {
+              "do": "write",
+              "line": "• 發散要對每一個 $L$ 證",
+              "on": "要對"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：用定義證明數列極限"
+          ],
+          "say": "下一課，我們正式寫艾普西隆 N 的證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：用定義證明數列極限"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["epsilon-delta", "sequence", "sequence-limit"],
-    "fine": ["epsn-find-n", "epsn-quantifier-order", "epsn-negation", "epsn-strict-inequality"]
+    "coarse": [
+      "epsilon-delta",
+      "sequence",
+      "sequence-limit"
+    ],
+    "fine": [
+      "epsn-find-n",
+      "epsn-quantifier-order",
+      "epsn-negation",
+      "epsn-strict-inequality"
+    ]
   },
   "practice": [
-    { "id": "an-en-001", "core": true, "trains": "epsn-find-n" },
-    { "id": "an-en-002", "core": true, "trains": "epsn-strict-inequality" },
-    { "id": "an-en-003", "core": true, "trains": "epsn-find-n" },
-    { "id": "cg-12c-001", "core": true, "trains": "epsn-quantifier-order" },
-    { "id": "cg-12c-005", "core": true, "trains": "epsn-negation" },
-    { "id": "cg-12c-002", "trains": "epsn-quantifier-order" },
-    { "id": "cg-12c-003", "trains": "epsn-quantifier-order" },
-    { "id": "an-en-004", "challenge": true, "trains": "epsn-find-n", "note": "挑戰：$|a_n-3|=\\frac{3n-1}{n^2+n}$，要解二次不等式，或逐項檢查。" },
-    { "id": "cg-12c-004", "challenge": true, "trains": "epsn-negation" }
+    {
+      "id": "an-en-001",
+      "core": true,
+      "trains": "epsn-find-n"
+    },
+    {
+      "id": "an-en-002",
+      "core": true,
+      "trains": "epsn-strict-inequality"
+    },
+    {
+      "id": "an-en-003",
+      "core": true,
+      "trains": "epsn-find-n"
+    },
+    {
+      "id": "cg-12c-001",
+      "core": true,
+      "trains": "epsn-quantifier-order"
+    },
+    {
+      "id": "cg-12c-005",
+      "core": true,
+      "trains": "epsn-negation"
+    },
+    {
+      "id": "cg-12c-002",
+      "trains": "epsn-quantifier-order"
+    },
+    {
+      "id": "cg-12c-003",
+      "trains": "epsn-quantifier-order"
+    },
+    {
+      "id": "an-en-004",
+      "challenge": true,
+      "trains": "epsn-find-n",
+      "note": "挑戰：$|a_n-3|=\\frac{3n-1}{n^2+n}$，要解二次不等式，或逐項檢查。"
+    },
+    {
+      "id": "cg-12c-004",
+      "challenge": true,
+      "trains": "epsn-negation"
+    }
   ],
   "gaps": []
 }

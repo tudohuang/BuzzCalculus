@@ -1,7 +1,8 @@
 {
   "id": "p-series",
   "title": "p 級數",
-  "readMinutes": 7,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 25,
   "prerequisites": [
     "divergence-test",
@@ -16,45 +17,137 @@
     "comparison-test"
   ],
   "objectives": [
-    "記住並使用：$\\sum\\frac{1}{n^p}$ 收斂 $\\iff p>1$。",
-    "先合併指數，把式子化成 $\\frac{1}{n^p}$ 再讀出 $p$。",
-    "用「長條與曲線」的圖說明為什麼它跟 $\\int_1^{\\infty}\\frac{dx}{x^p}$ 同生共死。"
+    "記住並使用：$\\sum\\frac{1}{n^p}$ 收斂 $\\iff p>1$",
+    "先合併指數，把式子化成 $\\frac{1}{n^p}$ 再讀出 $p$",
+    "用「長條與曲線」的圖說明為什麼它跟 $\\int_1^{\\infty}\\frac{dx}{x^p}$ 同生共死"
   ],
-  "visual": "畫出 y = 1/xᵖ（x ≥ 1），以及高度 1/n、寬 1 的長條。滑桿調 p：長條總面積與曲線下面積的讀數一起動。p 拖過 1 的瞬間，兩個讀數同時從「有限」變成「一直長」。p = 2 時把長條往左移一格，長條全部躲到曲線底下，看出 Σ_{n≥2} 1/n² < ∫₁^∞ dx/x² = 1。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 結論",
       "body": [
-        "$p$ 級數 $\\sum_{n=1}^{\\infty}\\frac{1}{n^p}$：$p>1$ 時收斂，$p\\le 1$ 時發散。$p=1$ 就是調和級數，剛好站在發散那一側。"
+        "$p$ 級數：",
+        "• $p=1$：$1+\\frac12+\\frac13+\\cdots$，調和級數，發散",
+        "• $p=2$：$1+\\frac14+\\frac19+\\cdots$，收斂",
+        "• $p\\le0$：$\\frac1{n^p}\\not\\to0$，用發散判別就知道發散",
+        "只看 $p$ 跟 $1$ 比，大一點點也算"
       ],
       "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{1}{n^p}=1+\\frac1{2^p}+\\frac1{3^p}+\\cdots",
         "\\sum_{n=1}^{\\infty}\\frac{1}{n^p}\\ \\text{收斂}\\iff p>1"
-      ],
-      "collapsible": false
+      ]
     },
     {
-      "heading": "② 為什麼：跟瑕積分比（直觀，不是證明）",
+      "heading": "① 範例：$p=\\frac12$",
       "body": [
-        "把第 $n$ 項畫成 $[n,n+1]$ 上高 $\\frac{1}{n^p}$ 的長條。長條的左上角貼著曲線 $y=\\frac{1}{x^p}$，曲線往右遞減，所以長條都蓋住曲線下的面積：$\\sum\\frac{1}{n^p}\\ge\\int_1^{\\infty}\\frac{dx}{x^p}$。把長條往左移一格，就全部躲到曲線底下：$\\sum_{n\\ge 2}\\frac{1}{n^p}\\le\\int_1^{\\infty}\\frac{dx}{x^p}$。",
-        "級數被積分從上下夾住，兩者一起有限、一起無限。〈p 判別〉說 $\\int_1^{\\infty}\\frac{dx}{x^p}$ 收斂 $\\iff p>1$，級數也就一樣。下一課〈積分判別〉把這張圖變成正式的定理。"
+        "$\\sqrt n=n^{1/2}$，所以 $\\dfrac1{\\sqrt n}=\\dfrac1{n^{1/2}}$，$p=\\dfrac12$",
+        "$p=\\dfrac12\\le1$，發散",
+        "注意：每一項 $\\dfrac1{\\sqrt n}\\to0$，照樣發散",
+        "發散判別只能說「不趨近 $0$ 就發散」，反過來不成立",
+        "跟 $\\frac1n$ 比：$\\dfrac1{\\sqrt n}\\ge\\dfrac1n$，每一項都更大",
+        "「每一項更大 ⇒ 也發散」就是 6.12 的比較判別"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{1}{\\sqrt n}\\ \\text{收斂嗎？}",
+        "\\begin{array}{c|cccc}n&1&4&100&10^4\\\\\\hline\\frac1n&1&0.25&0.01&0.0001\\\\[2pt]\\frac1{\\sqrt n}&1&0.5&0.1&0.01\\end{array}"
+      ]
+    },
+    {
+      "heading": "② 為什麼：跟積分比",
+      "body": [
+        "先回想 11.9 的瑕積分：",
+        "$p\\ne1$：$\\int_1^b x^{-p}dx=\\frac{b^{1-p}-1}{1-p}$；$p=1$：$\\ln b\\to\\infty$",
+        "把級數的每一項畫成寬 $1$、高 $\\frac1{n^p}$ 的長條"
+      ],
+      "tex": [
+        "\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1"
+      ]
+    },
+    {
+      "heading": "② $p=1$：長條比曲線大",
+      "body": [
+        "前 $N$ 根長條蓋住 $1$ 到 $N+1$ 的曲線下面積：",
+        "$s_N\\ge\\ln(N+1)$，所以 $s_N\\to\\infty$：調和級數發散",
+        "圖上 $N=8$：$s_8\\approx2.718$，$\\ln9\\approx2.197$",
+        "發散得非常慢：",
+        "$\\ln(10^6+1)\\approx13.82\\le14.39$，跟上面的不等式一致",
+        "同樣的道理：$p\\le1$ 時曲線下面積 $\\to\\infty$，長條更大，也發散"
+      ],
+      "tex": [
+        "s_N=1+\\frac12+\\cdots+\\frac1N\\ \\ge\\ \\int_1^{N+1}\\frac{dx}{x}",
+        "\\int_1^{N+1}\\frac{dx}{x}=\\ln(N+1)\\to\\infty",
+        "s_{1\\,000\\,000}\\approx14.39"
+      ]
+    },
+    {
+      "heading": "② $p=2$：長條比曲線小",
+      "body": [
+        "這次把長條往左挪一格：第 $n$ 根放在 $[n-1,n]$",
+        "$s_N<1+1=2$：部分和遞增、有上界",
+        "同生共死：級數跟 $\\int_1^\\infty\\frac{dx}{x^p}$ 一起收斂、一起發散"
+      ],
+      "tex": [
+        "\\frac1{2^2}+\\frac1{3^2}+\\cdots+\\frac1{N^2}\\le\\int_1^N\\frac{dx}{x^2}<\\int_1^\\infty\\frac{dx}{x^2}=1",
+        "\\Rightarrow\\ \\sum_{n=1}^{\\infty}\\frac1{n^2}\\ \\text{收斂}"
+      ]
     },
     {
       "heading": "③ 三段式",
       "body": [
-        "$p\\le 0$：各項 $\\frac{1}{n^p}=n^{|p|}$ 不趨近 0，〈發散判別〉直接說發散。",
-        "$0<p\\le 1$：各項 $\\to 0$，但部分和仍然沒有上界，發散。",
-        "$p>1$：收斂。分界很銳利：$p=1.001$ 也收斂，只是收斂得極慢。"
+        "化：合併指數，寫成 $\\dfrac{\\text{常數}}{n^p}$",
+        "讀：讀出 $p$",
+        "判：$p>1$ 收斂，$p\\le1$ 發散",
+        "前面乘常數 $c\\ne0$ 不影響收斂（6.5 的規則）",
+        "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\sqrt n}{n^2}$ 收斂嗎？",
+        "$p=\\dfrac32>1$，收斂"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\sqrt n}{n^2}=\\frac{n^{1/2}}{n^2}=\\frac{1}{n^{2-1/2}}=\\frac1{n^{3/2}}"
+      ]
+    },
+    {
+      "heading": "③ 收斂加發散",
+      "body": [
+        "• $\\sum\\frac2{n^3}$：$p=3$，收斂",
+        "• $\\sum\\frac5n$：$p=1$，發散",
+        "假設整個收斂，那",
+        "會是收斂減收斂，也收斂：矛盾",
+        "收斂 + 發散 = 發散",
+        "但「發散 + 發散」不一定：$\\sum\\frac1n+\\sum\\big(-\\frac1n\\big)$ 每一項加起來是 $0$"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\Big(\\frac{2}{n^3}+\\frac{5}{n}\\Big)\\ \\text{收斂嗎？}",
+        "\\sum\\frac5n=\\sum\\Big(\\frac2{n^3}+\\frac5n\\Big)-\\sum\\frac2{n^3}"
+      ]
     },
     {
       "heading": "④ 收斂不等於知道和",
       "body": [
-        "判別法只說收不收斂。和本身通常很難求：$\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$（〈Basel 問題〉），$\\sum\\frac{1}{n^3}\\approx 1.202$ 至今沒有簡單的封閉形式。$p$ 級數最大的用處是當「標準尺」：後面的〈比較判別〉要拿它跟別的級數比。"
+        "知道 $\\sum\\frac1{n^2}$ 收斂，但和是多少？",
+        "用剛才兩張圖把和 $S$ 夾住：",
+        "• 長條在曲線上方：$S>\\int_1^\\infty\\frac{dx}{x^2}=1$",
+        "• 長條在曲線下方：$S<1+\\int_1^\\infty\\frac{dx}{x^2}=2$",
+        "真正的值：$\\dfrac{\\pi^2}{6}\\approx1.645$",
+        "歐拉的結果；證明需要傅立葉級數等工具，這裡不證",
+        "一般 $p>1$：",
+        "例：$p=1.01$，和在 $100$ 到 $101$ 之間（實際約 $100.58$）：收斂，但和很大"
       ],
-      "collapsible": false
+      "tex": [
+        "1<\\sum_{n=1}^{\\infty}\\frac1{n^2}<2",
+        "\\frac1{p-1}<\\sum_{n=1}^{\\infty}\\frac1{n^p}<1+\\frac1{p-1}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\sum\\frac1{n^p}$ 收斂 $\\iff p>1$；$p=1$ 是調和級數，發散",
+        "• 項趨近 $0$ 不保證收斂：$\\frac1{\\sqrt n}\\to0$ 卻發散",
+        "• 長條與曲線互相夾：級數跟 $\\int_1^\\infty\\frac{dx}{x^p}$ 同生共死",
+        "• 三段式：合併指數、讀 $p$、跟 $1$ 比",
+        "• 收斂 + 發散 = 發散",
+        "• 收斂不等於知道和：$1<\\sum\\frac1{n^2}<2$",
+        "下一課：積分判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -111,298 +204,917 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum\\frac{1}{n^{0.9}}$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\sqrt[3]n}{n}$ 收斂嗎？",
       "options": [
         {
-          "label": "發散",
+          "label": "$p=\\frac23$，發散",
           "correct": true
         },
         {
-          "label": "收斂，因為各項 $\\to 0$",
-          "why": "各項 $\\to 0$ 不夠；$p=0.9\\le 1$，部分和沒有上界。"
+          "label": "$p=\\frac43$，收斂",
+          "why": "分子的指數要減掉，不是加上：$1-\\frac13$，不是 $1+\\frac13$"
         },
         {
-          "label": "收斂，因為 $p>0$",
-          "why": "收斂條件是 $p>1$；$p>0$ 只保證各項 $\\to 0$。"
+          "label": "$p=3$，收斂",
+          "why": "$\\sqrt[3]n$ 是 $n^{1/3}$，不是 $n^3$"
+        },
+        {
+          "label": "收斂，因為每一項都趨近 $0$",
+          "why": "項趨近 $0$ 只是必要條件；$\\frac1{\\sqrt n}$ 也趨近 $0$ 卻發散"
         }
       ]
     },
     {
-      "ask": "$\\sum\\frac{1}{n^{1.001}}$ 是？",
+      "ask": "用長條與曲線夾，$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n^3}$ 的上界是？",
       "options": [
         {
-          "label": "收斂",
+          "label": "$\\dfrac32$",
           "correct": true
         },
         {
-          "label": "發散，因為它跟調和級數幾乎一樣",
-          "why": "分界很銳利：只要 $p>1$ 就收斂，只是收斂得很慢。"
+          "label": "$\\dfrac12$",
+          "why": "忘了加回第一項 $1$：$\\frac12$ 是從第 $2$ 項開始的上界"
         },
         {
-          "label": "無法判斷",
-          "why": "$p$ 級數的結論非常明確：$p=1.001>1$，收斂。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\sum\\frac{\\sqrt{n}}{n^2}$ 的 $p$ 是多少？",
-      "options": [
-        {
-          "label": "$\\frac{3}{2}$，所以收斂",
-          "correct": true
+          "label": "$2$",
+          "why": "那是 $p=2$ 的上界；$p=3$ 的積分是 $\\frac12$，不是 $1$"
         },
         {
-          "label": "$\\frac{1}{2}$，所以發散",
-          "why": "$\\sqrt{n}$ 在分子，要從分母的指數扣掉：$2-\\frac{1}{2}=\\frac{3}{2}$。"
-        },
-        {
-          "label": "2，所以收斂",
-          "why": "結論碰巧對，但忽略了分子的 $\\sqrt{n}$；指數是 $\\frac{3}{2}$。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\sum_{n=1}^{\\infty}n$（也就是 $p=-1$）是？",
-      "options": [
-        {
-          "label": "發散，因為各項不趨近 0",
-          "correct": true
-        },
-        {
-          "label": "收斂，因為 $p<1$",
-          "why": "條件反了：$p>1$ 才收斂。"
-        },
-        {
-          "label": "要用積分判別才知道",
-          "why": "不必：$p\\le 0$ 時各項不 $\\to 0$，發散判別一步就結束。"
+          "label": "$\\dfrac54$",
+          "why": "積分算成 $\\frac1{p+1}$ 了：$\\int_1^\\infty x^{-3}dx=\\frac1{3-1}=\\frac12$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "一句結論",
+      "title": "結論",
       "beats": [
-        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{1}{n^p}$ 收斂 $\\iff p>1$"],
-          "say": "p 級數：n 的 p 次方分之一一直加。結論只有一句：p 大於一收斂，p 小於等於一發散。",
+        {
+          "show": [
+            "$p$ 級數：",
+            "$\\sum_{n=1}^{\\infty}\\frac{1}{n^p}=1+\\frac1{2^p}+\\frac1{3^p}+\\cdots$"
+          ],
+          "say": "這一課的主角叫 p 級數：n 的 p 次方分之一，從 n 等於 1 一直加下去。p 是一個固定的實數。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{1}{n^p}$ 收斂 $\\iff {{c:p>1}}$"},
-            {"do":"write","line":"${{d:p\\le 1}}$：發散","on":"p 小於等於一"}
-          ] },
-        { "show": ["藍：$p=1$　紅：$p=2$","$p$ 大，曲線掉得快"],
-          "note": "直覺：越掉得快，總和越有機會有限。",
-          "say": "畫出來比較：藍色是 p 等於一，紅色是 p 等於二。紅色掉得快很多，p 大一點，總和才有機會收斂。",
+            {
+              "do": "write",
+              "line": "$p$ 級數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{1}{n^p}=1+\\frac1{2^p}+\\frac1{3^p}+\\cdots$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{1}{n^p}\\ \\text{收斂}\\iff p>1$"
+          ],
+          "say": "結論只有一句：p 大於 1 收斂，p 小於等於 1 發散。分界線就在 1。",
           "board": [
-            {"do":"plot","graph":{"window":[0.5,5,0,2],"curves":[{"expr":"1/x","domain":[0.55,5],"color":"blue"},{"expr":"1/x^2","domain":[0.7,5],"color":"red"}]}},
-            {"do":"write","line":"紅：$p=2$ 掉得比 $p=1$ 快","on":"紅色掉得快"}
-          ] },
-        { "show": ["$p=1$：調和級數，發散"],
-          "note": "剛好站在發散那一側。",
-          "say": "p 等於一就是調和級數，剛好站在發散那一邊。分界點本身不收斂。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\sum_{n=1}^{\\infty}\\frac{1}{n^p}\\ \\text{收斂}\\iff p>1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "小於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $p=1$：$1+\\frac12+\\frac13+\\cdots$，調和級數，發散",
+            "• $p=2$：$1+\\frac14+\\frac19+\\cdots$，收斂"
+          ],
+          "say": "幾個代表：p 等於 1 是調和級數，發散；p 等於 2 收斂；p 小於等於 0 的時候，每一項根本不趨近 0，上一課的發散判別直接說它發散。",
           "board": [
-            {"do":"write","line":"$p=1$：$\\sum\\frac{1}{n}$ 調和級數，發散","on":"調和級數"},
-            {"do":"underline","term":"d","label":"分界點也算","on":"分界點"}
-          ] },
-        { "show": ["$p=1.001$ 也收斂"],
-          "note": "只是收斂得極慢。",
-          "say": "分界很銳利：p 只要比一大一點點，例如一點零零一，就收斂，只是收斂得非常慢。",
-          "board": [
-            {"do":"write","line":"$p=1.001$：只比 $1$ 大一點點","on":"一點零零一"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $p=1$：$1+\\frac12+\\frac13+\\cdots$，調和級數，發散"
+            },
+            {
+              "do": "write",
+              "line": "• $p=2$：$1+\\frac14+\\frac19+\\cdots$，收斂",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• $p\\le0$：$\\frac1{n^p}\\not\\to0$，用發散判別就知道發散",
+              "on": "項根"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "跟積分比",
-      "beats": [
-        { "show": ["第 $n$ 項 ＝ $[n,n+1]$ 上高 $\\frac{1}{n^p}$ 的長條"],
-          "note": "直觀，不是證明。",
-          "say": "把每一項畫成寬一的長條。曲線往右遞減，長條的左上角貼著曲線，整條蓋住曲線下的面積。",
-          "board": [
-            {"do":"plot","graph":{"window":[0.5,6.4,-0.08,1.12],"curves":[{"expr":"1/x^2","domain":[0.75,6.2],"color":"blue"}],"fills":[{"pts":[[1,0],[2,0],[2,1],[1,1]],"color":"gold","opacity":0.3},{"pts":[[2,0],[3,0],[3,0.25],[2,0.25]],"color":"gold","opacity":0.3},{"pts":[[3,0],[4,0],[4,0.1111111111111111],[3,0.1111111111111111]],"color":"gold","opacity":0.3},{"pts":[[4,0],[5,0],[5,0.0625],[4,0.0625]],"color":"gold","opacity":0.3},{"pts":[[5,0],[6,0],[6,0.04],[5,0.04]],"color":"gold","opacity":0.3}]}},
-            {"do":"write","line":"$\\sum\\frac{1}{n^p}\\ge\\int_1^{\\infty}\\frac{dx}{x^p}$","on":"整條蓋住"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n^p}\\ge\\int_1^{\\infty}\\frac{dx}{x^p}$","$\\sum_{n\\ge 2}\\frac{1}{n^p}\\le\\int_1^{\\infty}\\frac{dx}{x^p}$"],
-          "note": "長條往左移一格，就躲到曲線底下。",
-          "say": "長條往左移一格，又全部躲到曲線底下。級數被積分上下夾住，一起有限、一起無限。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[0.5,6.4,-0.08,1.12],"curves":[{"expr":"1/x^2","domain":[0.75,6.2],"color":"blue"}],"fills":[{"pts":[[1,0],[2,0],[2,0.25],[1,0.25]],"color":"violet","opacity":0.3},{"pts":[[2,0],[3,0],[3,0.1111111111111111],[2,0.1111111111111111]],"color":"violet","opacity":0.3},{"pts":[[3,0],[4,0],[4,0.0625],[3,0.0625]],"color":"violet","opacity":0.3},{"pts":[[4,0],[5,0],[5,0.04],[4,0.04]],"color":"violet","opacity":0.3}]},"on":"往左移"},
-            {"do":"write","line":"$\\sum_{n\\ge 2}\\frac{1}{n^p}\\le\\int_1^{\\infty}\\frac{dx}{x^p}$","on":"躲到曲線底下"}
-          ] },
-        { "show": ["$n=2$：長條 $[2,3]\\to[1,2]$","曲線在 $[1,2]$ 高 $\\ge\\frac{1}{2^p}$"],
-          "note": "曲線遞減，最低點在 $x=2$。",
-          "say": "看 n 等於二：長條原本在二到三，高是二的 p 次方分之一。左移到一到二，曲線遞減，最低點在二，剛好跟長條一樣高。",
-          "board": [
-            {"do":"write","line":"$n=2$：長條 ${{m:[2,3]\\to[1,2]}}$","on":"原本在"},
-            {"do":"underline","term":"m","label":"左移","on":"左移到"},
-            {"do":"write","line":"曲線在 $[1,2]$ 高 $\\ge\\frac{1}{2^p}$","on":"最低點"}
-          ] },
-        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^p}$ 收斂 $\\iff p>1$"],
-          "note": "〈p 判別〉。",
-          "say": "而這個瑕積分在 p 大於一時收斂，所以級數也一樣。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\int_1^{\\infty}\\frac{dx}{x^p}$ 收斂 $\\iff p>1$","on":"瑕積分"}
-          ] },
-        { "show": ["$\\int_1^N x^{-p}dx=\\frac{1-N^{1-p}}{p-1}$","$p>1$：$N^{1-p}\\to 0$，值 $\\to\\frac{1}{p-1}$"],
-          "note": "瑕積分：上限到無限大的積分。",
-          "say": "瑕積分是上限到無限大的積分：先積到 N，再讓 N 變大。p 大於一，N 的一減 p 次方趨近零，剩下有限值。",
-          "board": [
-            {"do":"write","line":"$\\int_1^N x^{-p}dx=\\frac{1-N^{1-p}}{p-1}$","on":"先積到"},
-            {"do":"write","line":"$p>1$：${{z:N^{1-p}\\to 0}}$，值 $\\to\\frac{1}{p-1}$","on":"趨近零"},
-            {"do":"underline","term":"z","label":"消失","on":"剩下"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n^2}\\ge\\int_1^{\\infty}\\frac{dx}{x^2}=1$"],
-          "say": "拿 p 等於二來試：長條蓋住曲線，所以和至少是一。上界呢？第一項先單獨拿出來。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[0.5,6.4,-0.08,1.12],"curves":[{"expr":"1/x^2","domain":[0.75,6.2],"color":"blue"}],"fills":[{"pts":[[1,0],[2,0],[2,1],[1,1]],"color":"gold","opacity":0.3},{"pts":[[2,0],[3,0],[3,0.25],[2,0.25]],"color":"gold","opacity":0.3},{"pts":[[3,0],[4,0],[4,0.1111111111111111],[3,0.1111111111111111]],"color":"gold","opacity":0.3},{"pts":[[4,0],[5,0],[5,0.0625],[4,0.0625]],"color":"gold","opacity":0.3},{"pts":[[5,0],[6,0],[6,0.04],[5,0.04]],"color":"gold","opacity":0.3}]},"on":"長條蓋住"},
-            {"do":"write","line":"$\\sum\\frac{1}{n^2}\\ge\\int_1^{\\infty}\\frac{dx}{x^2}=\\ {{lo:1}}$","on":"所以和至少"}
-          ] }
-      ],
-      "key": "長條在曲線上或下，夾出不等式",
       "predict": {
-        "ask": "第一項 1 拿出來，其餘躲到曲線下。$\\sum\\frac{1}{n^2}\\le$？",
+        "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{1}{n^{1.01}}$ 收斂嗎？",
         "options": [
           {
-            "label": "$1+\\int_1^{\\infty}\\frac{dx}{x^2}=2$",
+            "label": "收斂",
             "correct": true
           },
           {
-            "label": "$\\int_1^{\\infty}\\frac{dx}{x^2}=1$",
-            "why": "躲到曲線下的只有 $n\\ge 2$ 的長條；第一項 1 要加回去。真正的值約 1.645，比 1 大。"
+            "label": "發散，因為它跟調和級數幾乎一樣",
+            "why": "「幾乎一樣」不算：分界線是 $p>1$，$1.01$ 就在收斂那一邊"
           },
           {
-            "label": "$\\frac{\\pi^2}{6}$",
-            "why": "那是確切值（〈Basel 問題〉），不是這張圖給得出來的；圖只給 $1\\le\\sum\\frac{1}{n^2}\\le 2$。"
+            "label": "不一定，要算出和才知道",
+            "why": "判斷收斂不用知道和；$p$ 級數只看 $p$"
           }
         ]
       }
+    },
+    {
+      "title": "結論",
+      "beats": [
+        {
+          "show": [
+            "只看 $p$ 跟 $1$ 比，大一點點也算"
+          ],
+          "say": "答案是收斂。p 級數只看 p 跟 1 比：大於 1，就算只多一點點，也收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只看 $p$ 跟 $1$ 比，大一點點也算",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "範例：$p=\\frac12$",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac{1}{\\sqrt n}\\ \\text{收斂嗎？}$"
+          ],
+          "say": "範例：根號 n 分之一，從 1 加到無限大，收斂嗎？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac{1}{\\sqrt n}\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt n=n^{1/2}$，所以 $\\dfrac1{\\sqrt n}=\\dfrac1{n^{1/2}}$，$p=\\dfrac12$"
+          ],
+          "say": "根號 n 就是 n 的 2 分之 1 次方。所以這是 p 等於 2 分之 1 的 p 級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt n=n^{1/2}$，所以 $\\dfrac1{\\sqrt n}=\\dfrac1{n^{1/2}}$，$p=\\dfrac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=\\dfrac12\\le1$，發散"
+          ],
+          "say": "2 分之 1 小於 1，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$p=\\dfrac12\\le1$，發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "注意：每一項 $\\dfrac1{\\sqrt n}\\to0$，照樣發散"
+          ],
+          "say": "要注意，每一項都趨近 0，但它還是發散。項趨近 0 只是收斂的必要條件，不夠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "注意：每一項 $\\dfrac1{\\sqrt n}\\to0$，照樣發散"
+            },
+            {
+              "do": "write",
+              "line": "　發散判別只能說「不趨近 $0$ 就發散」，反過來不成立",
+              "color": "violet",
+              "on": "項趨"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 $\\frac1n$ 比：$\\dfrac1{\\sqrt n}\\ge\\dfrac1n$，每一項都更大"
+          ],
+          "say": "直覺上也合理：根號 n 分之一，每一項都比 n 分之一大。調和級數都已經加到無限大了，比它更大的當然也是。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 $\\frac1n$ 比：$\\dfrac1{\\sqrt n}\\ge\\dfrac1n$，每一項都更大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{array}{c|cccc}n&1&4&100&10^4\\\\\\hline\\frac1n&1&0.25&0.01&0.0001\\\\[2pt]\\frac1{\\sqrt n}&1&0.5&0.1&0.01\\end{array}$"
+          ],
+          "say": "看表：n 等於一萬時，n 分之一是萬分之一，根號 n 分之一還有百分之一，大了一百倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{array}{c|cccc}n&1&4&100&10^4\\\\\\hline\\frac1n&1&0.25&0.01&0.0001\\\\[2pt]\\frac1{\\sqrt n}&1&0.5&0.1&0.01\\end{array}}$"
+            },
+            {
+              "do": "write",
+              "line": "　「每一項更大 ⇒ 也發散」就是 6.12 的比較判別",
+              "color": "violet",
+              "on": "根號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼：跟積分比",
+      "beats": [
+        {
+          "show": [
+            "先回想 11.9 的瑕積分：",
+            "$\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1$"
+          ],
+          "say": "為什麼分界線是 1？回想瑕積分的 p 判別：x 的 p 次方分之一，從 1 積到無限大，也是 p 大於 1 收斂。這不是巧合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先回想 11.9 的瑕積分："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1}}$",
+              "on": "判別"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "之一"
+            },
+            {
+              "do": "write",
+              "line": "　$p\\ne1$：$\\int_1^b x^{-p}dx=\\frac{b^{1-p}-1}{1-p}$；$p=1$：$\\ln b\\to\\infty$",
+              "color": "violet",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "把級數的每一項畫成寬 $1$、高 $\\frac1{n^p}$ 的長條"
+          ],
+          "say": "想法是：把級數的每一項，畫成一根寬度 1、高度 n 的 p 次方分之一的長條。長條的面積就是那一項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把級數的每一項畫成寬 $1$、高 $\\frac1{n^p}$ 的長條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 n 根長條在 [n, n+1]，高 1/n：整根都在曲線上方"
+          ],
+          "say": "先看 p 等於 1。第 n 根長條放在 n 到 n 加 1，高度取曲線的左端。曲線往下走，所以每根長條都蓋住下面那段曲線。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bar1",
+                  "window": [
+                    0,
+                    9.6,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/floor(x)",
+                      "from": 1,
+                      "to": 8.999,
+                      "color": "orange"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/floor(x)",
+                      "color": "red",
+                      "domain": [
+                        1,
+                        8.999
+                      ],
+                      "width": 2
+                    },
+                    {
+                      "expr": "1/x",
+                      "color": "blue",
+                      "label": "y = 1/x",
+                      "domain": [
+                        0.8,
+                        9.6
+                      ]
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "第 n 根長條在 [n, n+1]，高 1/n：整根都在曲線上方",
+              "color": "violet",
+              "on": "高度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$p=1$：長條比曲線大",
+      "beats": [
+        {
+          "show": [
+            "前 $N$ 根長條蓋住 $1$ 到 $N+1$ 的曲線下面積：",
+            "$s_N=1+\\frac12+\\cdots+\\frac1N\\ \\ge\\ \\int_1^{N+1}\\frac{dx}{x}$"
+          ],
+          "say": "所以前 N 根長條的總面積，也就是部分和 s N，大於等於曲線從 1 到 N 加 1 底下的面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前 $N$ 根長條蓋住 $1$ 到 $N+1$ 的曲線下面積："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=1+\\frac12+\\cdots+\\frac1N\\ \\ge\\ \\int_1^{N+1}\\frac{dx}{x}$",
+              "on": "大於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^{N+1}\\frac{dx}{x}=\\ln(N+1)\\to\\infty$"
+          ],
+          "say": "這個積分是自然對數 N 加 1，會衝到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_1^{N+1}\\frac{dx}{x}=\\ln(N+1)\\to\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_N\\ge\\ln(N+1)$，所以 $s_N\\to\\infty$：調和級數發散"
+          ],
+          "say": "部分和比一個衝到無限大的東西還大，所以調和級數發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s_N\\ge\\ln(N+1)$，所以 $s_N\\to\\infty$：調和級數發散",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　圖上 $N=8$：$s_8\\approx2.718$，$\\ln9\\approx2.197$",
+              "color": "violet",
+              "on": "西還"
+            }
+          ]
+        },
+        {
+          "show": [
+            "發散得非常慢：",
+            "$s_{1\\,000\\,000}\\approx14.39$"
+          ],
+          "say": "不過它發散得非常慢：加了一百萬項，也才大約 14.39。自然對數就是長得這麼慢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "發散得非常慢："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_{1\\,000\\,000}\\approx14.39$",
+              "on": "百萬"
+            },
+            {
+              "do": "write",
+              "line": "　$\\ln(10^6+1)\\approx13.82\\le14.39$，跟上面的不等式一致",
+              "color": "violet",
+              "on": "自然"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的道理：$p\\le1$ 時曲線下面積 $\\to\\infty$，長條更大，也發散"
+          ],
+          "say": "p 小於 1 也一樣：曲線底下的面積是無限大，長條面積比它更大，一樣發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的道理：$p\\le1$ 時曲線下面積 $\\to\\infty$，長條更大，也發散"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$p=2$：長條比曲線小",
+      "beats": [
+        {
+          "show": [
+            "這次把長條往左挪一格：第 $n$ 根放在 $[n-1,n]$"
+          ],
+          "say": "收斂的情況，要反過來夾。把長條往左挪一格：第 n 根放在 n 減 1 到 n，用右端的高度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這次把長條往左挪一格：第 $n$ 根放在 $[n-1,n]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從第 2 根開始，長條全部在曲線下方"
+          ],
+          "say": "這樣從第 2 根開始，每根長條都躲在曲線下面。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bar2",
+                  "window": [
+                    0,
+                    9.6,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/ceil(x)^2",
+                      "from": 1.001,
+                      "to": 9,
+                      "color": "green"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/ceil(x)^2",
+                      "color": "green",
+                      "domain": [
+                        1.001,
+                        9
+                      ],
+                      "width": 2
+                    },
+                    {
+                      "expr": "1/x^2",
+                      "color": "blue",
+                      "label": "y = 1/x²",
+                      "domain": [
+                        0.93,
+                        9.6
+                      ]
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "從第 2 根開始，長條全部在曲線下方",
+              "color": "violet",
+              "on": "每根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac1{2^2}+\\frac1{3^2}+\\cdots+\\frac1{N^2}\\le\\int_1^N\\frac{dx}{x^2}<\\int_1^\\infty\\frac{dx}{x^2}=1$"
+          ],
+          "say": "所以從第 2 項加到第 N 項，小於曲線從 1 到 N 的面積，又小於從 1 到無限大的面積，也就是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{2^2}+\\frac1{3^2}+\\cdots+\\frac1{N^2}\\le\\int_1^N\\frac{dx}{x^2}<\\int_1^\\infty\\frac{dx}{x^2}=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_N<1+1=2$：部分和遞增、有上界"
+          ],
+          "say": "再加回第一項 1，部分和永遠小於 2。項都是正的，部分和一直增加，又有上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s_N<1+1=2$：部分和遞增、有上界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow\\ \\sum_{n=1}^{\\infty}\\frac1{n^2}\\ \\text{收斂}$"
+          ],
+          "say": "6.3 學過：遞增又有上界的數列一定收斂。所以 n 平方分之一的級數收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\Rightarrow\\ \\sum_{n=1}^{\\infty}\\frac1{n^2}\\ \\text{收斂}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "收斂#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同生共死：級數跟 $\\int_1^\\infty\\frac{dx}{x^p}$ 一起收斂、一起發散"
+          ],
+          "say": "結論：長條和曲線互相夾住，級數跟瑕積分同生共死。下一課會把這個想法寫成正式的積分判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同生共死：級數跟 $\\int_1^\\infty\\frac{dx}{x^p}$ 一起收斂、一起發散"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "三段式",
       "beats": [
-        { "show": ["$p\\le 0$：$\\frac{1}{n^p}=n^{|p|}$ 不 $\\to 0$"],
-          "note": "〈發散判別〉直接說發散。",
-          "say": "p 小於等於零，各項其實是 n 的正次方，根本不趨近零，發散判別一步就說發散。",
+        {
+          "show": [
+            "化：合併指數，寫成 $\\dfrac{\\text{常數}}{n^p}$"
+          ],
+          "say": "用 p 級數判斷，固定三步：第一，合併指數，把式子化成常數除以 n 的 p 次方；第二，讀出 p；第三，跟 1 比。",
           "board": [
-            {"do":"write","line":"$p\\le 0$：$\\frac{1}{n^p}=n^{|p|}$ 不 $\\to 0$ ⇒ 發散"}
-          ] },
-        { "show": ["$S_N=1+\\frac{1}{2^p}+\\cdots+\\frac{1}{N^p}$","收斂：$S_N\\to$ 有限值"],
-          "note": "部分和 $S_N$：前 $N$ 項的和。",
-          "say": "先說清楚詞：部分和 S N，就是前 N 項加起來。級數收斂，意思是 S N 越加越靠近一個有限的數。",
+            {
+              "do": "write",
+              "line": "化：合併指數，寫成 $\\dfrac{\\text{常數}}{n^p}$"
+            },
+            {
+              "do": "write",
+              "line": "讀：讀出 $p$",
+              "on": "第一"
+            },
+            {
+              "do": "write",
+              "line": "判：$p>1$ 收斂，$p\\le1$ 發散",
+              "color": "gold",
+              "on": "除以"
+            },
+            {
+              "do": "write",
+              "line": "　前面乘常數 $c\\ne0$ 不影響收斂（6.5 的規則）",
+              "color": "violet",
+              "on": "讀出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\sqrt n}{n^2}$ 收斂嗎？"
+          ],
+          "say": "例子：n 平方分之根號 n。",
           "board": [
-            {"do":"write","line":"${{s:S_N}}=1+\\frac{1}{2^p}+\\cdots+\\frac{1}{N^p}$"},
-            {"do":"focus","term":"s","label":"部分和","on":"部分和"},
-            {"do":"write","line":"收斂：$S_N\\to$ 有限值","on":"級數收斂"}
-          ] },
-        { "show": ["$0<p\\le 1$：各項 $\\to 0$，仍發散"],
-          "say": "p 在零和一之間，各項趨近零，可是部分和沒有上界，還是發散。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\sqrt n}{n^2}$ 收斂嗎？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\sqrt n}{n^2}=\\frac{n^{1/2}}{n^2}=\\frac{1}{n^{2-1/2}}=\\frac1{n^{3/2}}$"
+          ],
+          "say": "根號 n 是 n 的 2 分之 1 次方。上下都是 n 的次方，指數相減：2 減 2 分之 1，得到 2 分之 3。",
           "board": [
-            {"do":"write","line":"$0<p\\le 1$：各項 $\\to 0$，仍發散","on":"p 在零和一之間"}
-          ] },
-        { "show": ["$p>1$：收斂"],
-          "say": "只有 p 大於一才收斂。把三段連起來記，不要只記一半。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\sqrt n}{n^2}=\\frac{n^{1/2}}{n^2}=\\frac{1}{n^{2-1/2}}=\\frac1{n^{3/2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$p=\\dfrac32>1$，收斂"
+          ],
+          "say": "p 是 2 分之 3，大於 1，收斂。",
           "board": [
-            {"do":"write","line":"$p>1$：收斂","color":"green","on":"只有 p 大於一"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "$p=\\frac{1}{2}$",
-      "beats": [
-        { "show": ["$\\frac{1}{\\sqrt{n}}=\\frac{1}{n^{1/2}}$"],
-          "note": "$p=\\frac{1}{2}\\le 1$：發散。",
-          "say": "根號 n 分之一，就是 n 的二分之一次方分之一。p 是二分之一，小於一，發散。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{\\sqrt{n}}=\\frac{1}{n^{1/2}}$"},
-            {"do":"write","line":"${{p:p=\\frac{1}{2}}}\\le 1$：發散","on":"p 是二分之一"}
-          ] },
-        { "show": ["$\\int_1^N x^{-1/2}\\,dx=2\\sqrt{N}-2\\to\\infty$"],
-          "note": "$N=10^6$ 時是 1998。",
-          "say": "對照積分：從一積到 N 是二根號 N 減二。N 是十的六次方時已經一千九百九十八，還在長。",
-          "board": [
-            {"do":"write","line":"$\\int_1^N x^{-1/2}\\,dx={{r:2\\sqrt{N}-2}}$"},
-            {"do":"underline","term":"r","on":"二根號"},
-            {"do":"write","line":"$N=10^6$：$2\\sqrt{N}-2=1998$","on":"十的六次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "$p=\\dfrac32>1$，收斂",
+              "color": "red"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "先合併指數",
-      "beats": [
-        { "show": ["$\\frac{\\sqrt{n}}{n^2}=\\frac{n^{1/2}}{n^2}$"],
-          "say": "分子有根號 n 的時候，不能直接讀分母的二，要先把指數合併。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\sqrt{n}}{n^2}=\\frac{{{a:n^{1/2}}}}{{{b:n^2}}}$"},
-            {"do":"focus","term":"a","color":"blue","on":"根號 n"},
-            {"do":"underline","term":"b","label":"別直接讀","on":"分母的二"}
-          ] },
-        { "show": ["$\\frac{n^a}{n^b}=\\frac{1}{n^{b-a}}$"],
-          "note": "分子的次方要從分母扣掉。",
-          "say": "指數規則：分子 n 的 a 次方，分母 n 的 b 次方，約完剩下分母 b 減 a 次方。",
-          "board": [
-            {"do":"write","line":"$\\frac{n^a}{n^b}=\\frac{1}{n^{{{k:b-a}}}}$"},
-            {"do":"focus","term":"k","color":"gold","on":"b 減 a"}
-          ] },
-        { "show": ["$=\\frac{1}{n^{2-1/2}}=\\frac{1}{n^{3/2}}$"],
-          "note": "和約為 2.612，判別法本身不給這個值。",
-          "say": "二減二分之一，p 是二分之三，大於一，收斂。判別法只說收斂，不告訴你和是多少。",
-          "board": [
-            {"do":"write","line":"$=\\frac{1}{n^{2-1/2}}=\\frac{1}{n^{3/2}}$"},
-            {"do":"write","line":"${{c:p=\\frac{3}{2}}}>1$：收斂","on":"p 是二分之三"},
-            {"do":"box","term":"c","color":"green","on":"大於一"}
-          ] }
-      ],
-      "key": "先把 $n$ 的次方合併成一個 $p$",
-      "check": 2
-    },
-    {
       "title": "收斂加發散",
       "beats": [
-        { "show": ["$\\sum\\left(\\frac{2}{n^3}+\\frac{5}{\\sqrt[3]{n}}\\right)$"],
-          "say": "兩個 p 級數加在一起。前面 p 等於三，收斂；後面是 n 的三分之一次方，p 是三分之一，發散。",
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\Big(\\frac{2}{n^3}+\\frac{5}{n}\\Big)\\ \\text{收斂嗎？}$"
+          ],
+          "say": "再一個例子：n 立方分之 2，加上 n 分之 5。",
           "board": [
-            {"do":"write","line":"${{a:\\sum\\frac{2}{n^3}}}$：$p=3$，收斂"},
-            {"do":"write","line":"$\\sum\\frac{5}{n^{1/3}}$：${{q:p=\\frac{1}{3}}}$，發散","on":"後面是"},
-            {"do":"focus","term":"q","color":"red","on":"p 是三分之一"}
-          ] },
-        { "show": ["總和收斂 ⇒ 減掉收斂的也收斂？"],
-          "note": "那 $\\sum\\frac{5}{n^{1/3}}$ 就得收斂，矛盾。",
-          "say": "假設總和收斂，減掉收斂的那一個，剩下的也該收斂。可是它發散，矛盾。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\Big(\\frac{2}{n^3}+\\frac{5}{n}\\Big)\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\sum\\frac2{n^3}$：$p=3$，收斂",
+            "• $\\sum\\frac5n$：$p=1$，發散"
+          ],
+          "say": "拆開看：n 立方分之 2 是 p 等於 3，收斂；n 分之 5 是 p 等於 1，發散。",
           "board": [
-            {"do":"write","line":"假設總和收斂：收斂 − 收斂 ＝ 剩下的也收斂"},
-            {"do":"write","line":"但 $\\sum\\frac{5}{n^{1/3}}$ 發散 ⇒ 矛盾","color":"red","on":"可是它發散"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n}+\\sum\\left(-\\frac{1}{n}\\right)$"],
-          "note": "各自發散，相加卻是 0。",
-          "say": "可是發散加發散就沒有保證：n 分之一和負 n 分之一各自發散，加起來卻是零。",
+            {
+              "do": "write",
+              "line": "• $\\sum\\frac2{n^3}$：$p=3$，收斂"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sum\\frac5n$：$p=1$，發散",
+              "on": "收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "假設整個收斂，那",
+            "$\\sum\\frac5n=\\sum\\Big(\\frac2{n^3}+\\frac5n\\Big)-\\sum\\frac2{n^3}$"
+          ],
+          "say": "一個收斂、一個發散，加起來呢？用反證法：假設整個級數收斂，那 n 分之 5 的級數，就等於整個減掉 n 立方分之 2。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{1}{n}+\\sum\\left(-\\frac{1}{n}\\right)$","on":"沒有保證"},
-            {"do":"write","line":"各自發散，相加：$0$","on":"加起來卻是"}
-          ] }
+            {
+              "do": "write",
+              "line": "假設整個收斂，那"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum\\frac5n=\\sum\\Big(\\frac2{n^3}+\\frac5n\\Big)-\\sum\\frac2{n^3}$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "會是收斂減收斂，也收斂：矛盾"
+          ],
+          "say": "收斂減收斂還是收斂，可是 n 分之 5 明明發散，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "會是收斂減收斂，也收斂：矛盾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "收斂 + 發散 = 發散"
+          ],
+          "say": "所以收斂加發散，一定發散。這個級數發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "收斂 + 發散 = 發散",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　但「發散 + 發散」不一定：$\\sum\\frac1n+\\sum\\big(-\\frac1n\\big)$ 每一項加起來是 $0$",
+              "color": "violet",
+              "on": "發散#2"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "$\\sum\\left(\\frac{2}{n^3}+\\frac{5}{\\sqrt[3]{n}}\\right)$ 是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "判斷 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n^2}{n^4\\sqrt n}$",
+        "steps": [
           {
-            "label": "發散",
-            "correct": true
+            "label": "把根號寫成次方：$\\sqrt n=n^{1/2}$"
           },
           {
-            "label": "收斂，因為 $\\sum\\frac{2}{n^3}$ 收斂",
-            "why": "收斂加發散一定發散；一個收斂救不了另一個。"
+            "label": "合併指數：$\\frac{n^2}{n^{4+1/2}}=\\frac1{n^{5/2}}$",
+            "why": "先要有上一步：把根號寫成次方：$\\sqrt n=n^{1/2}$"
           },
           {
-            "label": "無法判斷",
-            "why": "不確定的是「發散加發散」；收斂加發散的結論很確定，是發散。"
+            "label": "讀出 $p=\\frac52$",
+            "why": "先要有上一步：合併指數：$\\frac{n^2}{n^{4+1/2}}=\\frac1{n^{5/2}}$"
+          },
+          {
+            "label": "$p>1$，收斂",
+            "why": "先要有上一步：讀出 $p=\\frac52$"
           }
         ]
       }
+    },
+    {
+      "title": "收斂不等於知道和",
+      "beats": [
+        {
+          "show": [
+            "知道 $\\sum\\frac1{n^2}$ 收斂，但和是多少？"
+          ],
+          "say": "最後一件事：知道收斂，跟知道和是多少，是兩回事。n 平方分之一的級數收斂，但它的和是多少？",
+          "board": [
+            {
+              "do": "write",
+              "line": "知道 $\\sum\\frac1{n^2}$ 收斂，但和是多少？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用剛才兩張圖把和 $S$ 夾住："
+          ],
+          "say": "用剛才的兩張圖，可以把和夾住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用剛才兩張圖把和 $S$ 夾住："
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 長條在曲線上方：$S>\\int_1^\\infty\\frac{dx}{x^2}=1$",
+            "• 長條在曲線下方：$S<1+\\int_1^\\infty\\frac{dx}{x^2}=2$"
+          ],
+          "say": "長條在曲線上方的那張圖說：和大於積分，也就是大於 1。長條在曲線下方的那張圖說：和小於 1 加積分，也就是小於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 長條在曲線上方：$S>\\int_1^\\infty\\frac{dx}{x^2}=1$"
+            },
+            {
+              "do": "write",
+              "line": "• 長條在曲線下方：$S<1+\\int_1^\\infty\\frac{dx}{x^2}=2$",
+              "on": "在曲#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$1<\\sum_{n=1}^{\\infty}\\frac1{n^2}<2$"
+          ],
+          "say": "所以和在 1 和 2 之間。不用知道確切值，也能估出範圍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle 1<\\sum_{n=1}^{\\infty}\\frac1{n^2}<2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "不用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真正的值：$\\dfrac{\\pi^2}{6}\\approx1.645$"
+          ],
+          "say": "真正的值是 6 分之派平方，大約 1.645，確實在 1 和 2 之間。這是歐拉發現的，證明要用到後面才學的工具。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真正的值：$\\dfrac{\\pi^2}{6}\\approx1.645$"
+            },
+            {
+              "do": "write",
+              "line": "　歐拉的結果；證明需要傅立葉級數等工具，這裡不證",
+              "color": "violet",
+              "on": "之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般 $p>1$：",
+            "$\\frac1{p-1}<\\sum_{n=1}^{\\infty}\\frac1{n^p}<1+\\frac1{p-1}$"
+          ],
+          "say": "一般的 p 大於 1，同樣的方法得到：和在 p 減 1 分之一，和 1 加 p 減 1 分之一之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般 $p>1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac1{p-1}<\\sum_{n=1}^{\\infty}\\frac1{n^p}<1+\\frac1{p-1}}}$",
+              "on": "樣的"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　例：$p=1.01$，和在 $100$ 到 $101$ 之間（實際約 $100.58$）：收斂，但和很大",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用長條與曲線夾，$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{n^3}$ 的上界是？"
+          ],
+          "say": "試一題：n 立方分之一的級數，上界是多少？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\sum\\frac1{n^p}$ 收斂 $\\iff p>1$；$p=1$ 是調和級數，發散",
+            "• 項趨近 $0$ 不保證收斂：$\\frac1{\\sqrt n}\\to0$ 卻發散"
+          ],
+          "say": "整理一下：p 大於 1 收斂；長條和曲線互相夾，所以級數跟瑕積分同生共死；判斷時先合併指數、讀出 p、跟 1 比；收斂不等於知道和，但可以用積分夾出範圍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\sum\\frac1{n^p}$ 收斂 $\\iff p>1$；$p=1$ 是調和級數，發散"
+            },
+            {
+              "do": "write",
+              "line": "• 項趨近 $0$ 不保證收斂：$\\frac1{\\sqrt n}\\to0$ 卻發散",
+              "on": "收斂#1"
+            },
+            {
+              "do": "write",
+              "line": "• 長條與曲線互相夾：級數跟 $\\int_1^\\infty\\frac{dx}{x^p}$ 同生共死",
+              "on": "以級"
+            },
+            {
+              "do": "write",
+              "line": "• 三段式：合併指數、讀 $p$、跟 $1$ 比",
+              "on": "斷時"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂 + 發散 = 發散",
+              "on": "收斂#2"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂不等於知道和：$1<\\sum\\frac1{n^2}<2$",
+              "on": "但可"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：積分判別"
+          ],
+          "say": "下一課，把長條與曲線的想法，寫成正式的積分判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：積分判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

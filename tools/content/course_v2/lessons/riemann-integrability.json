@@ -1,7 +1,8 @@
 {
   "id": "riemann-integrability",
   "title": "Riemann 可積",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
   "prerequisites": [
     "darboux-integral"
@@ -13,338 +14,160 @@
     "dirichlet-function"
   ],
   "objectives": [
-    "會用可積判準：對每個 $\\varepsilon>0$，存在分割 $P$ 使 $U(f,P)-L(f,P)<\\varepsilon$。",
-    "證明單調函數可積，並算出等長分割要切幾段才能讓 $U-L<\\varepsilon$。",
-    "說得出 Riemann 和的定義（寬度 $\\to0$ 時、不論怎麼取點都收斂）與 Darboux 定義等價，以及「只用某一種取點」為什麼不夠。"
+    "會用可積判準：對每個 $\\varepsilon>0$，存在分割 $P$ 使 $U(f,P)-L(f,P)<\\varepsilon$，就能判斷可積",
+    "證明單調函數可積，並算出等長分割要切幾段才能讓 $U-L<\\varepsilon$",
+    "說得出 Riemann 和的定義（寬度 $\\to0$ 時、不論怎麼取點都收斂）與 Darboux 定義等價，以及「只用某一種取點」收斂不足以推出可積"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 不必算出積分，也能判斷可積",
+      "heading": "① 不算積分也能判斷",
       "body": [
-        "照定義判斷可積，要先算出上積分和下積分。實際上我們只需要知道「上和與下和能被夾到任意近」。這就是可積判準，它把「兩個 $\\inf/\\sup$ 相等」換成「找得到一個好分割」。"
-      ],
-      "collapsible": false
+        "上一課的引理：先找到一串 $P_n$，順便算出極限",
+        "但很多積分算不出來：$\\displaystyle\\int_0^1e^{-x^2}\\,dx$",
+        "它沒有初等的反導數；但它是可積的（這一課結束就會知道為什麼）",
+        "想要：只看縫的判準，不必先知道 $\\int f$",
+        "就像 12.16 的 Cauchy 數列：不知道極限，也能判斷收斂"
+      ]
     },
     {
       "heading": "② 可積判準",
       "body": [
-        "有界的 $f$ 在 $[a,b]$ 上可積，若且唯若：對每一個 $\\varepsilon>0$，存在分割 $P$ 使 $U(f,P)-L(f,P)<\\varepsilon$。",
-        "量詞順序：先給 $\\varepsilon$，再找 $P$；$\\varepsilon$ 越小，$P$ 通常要越細。"
+        "$f$ 在 $[a,b]$ 上有界。則 $f$ 可積 $\\iff$",
+        "跟上一課的引理比：取 $\\varepsilon=\\frac1n$ 得到一串 $P_n$"
       ],
       "tex": [
-        "f\\ \\text{可積}\\iff\\forall\\varepsilon>0\\ \\exists P:\\ U(f,P)-L(f,P)<\\varepsilon"
-      ],
-      "collapsible": false
+        "\\forall\\varepsilon>0\\ \\ \\exists P:\\ \\ U(f,P)-L(f,P)<\\varepsilon"
+      ]
     },
     {
       "heading": "證明：可積判準",
       "body": [
-        "$(\\Leftarrow)$ 對任何分割 $P$，$L(f,P)\\le$ 下積分 $\\le$ 上積分 $\\le U(f,P)$，所以 $0\\le$ 上積分 − 下積分 $\\le U(f,P)-L(f,P)<\\varepsilon$。一個非負數小於每個正數，只能是 0。",
-        "$(\\Rightarrow)$ 設上下積分都等於 $I$，給定 $\\varepsilon>0$。$I$ 是上和的下確界，所以 $I+\\frac{\\varepsilon}{2}$ 不是下界：存在 $P_1$ 使 $U(f,P_1)<I+\\frac{\\varepsilon}{2}$。同理存在 $P_2$ 使 $L(f,P_2)>I-\\frac{\\varepsilon}{2}$。取 $P=P_1\\cup P_2$，由加細引理 $U(f,P)-L(f,P)\\le U(f,P_1)-L(f,P_2)<\\varepsilon$。"
+        "(⇐) 策略：上下積分的差，比每個 $\\varepsilon$ 都小",
+        "任給 $\\varepsilon>0$，取判準給的 $P$：",
+        "非負、又小於每個正數 ⇒ 差 $=0$，$f$ 可積　$\\blacksquare$",
+        "(⇒) 策略：從上、下各逼近 $I$ 到 $\\frac\\varepsilon2$，再合併兩個分割"
       ],
-      "collapsible": true
+      "tex": [
+        "0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P)-L(f,P)<\\varepsilon"
+      ]
+    },
+    {
+      "heading": "證明：可積判準（續）",
+      "body": [
+        "設 $I=\\int_a^bf=\\inf U=\\sup L$，任給 $\\varepsilon>0$",
+        "$I+\\frac\\varepsilon2$ 不是上和們的下界 ⇒ $\\exists P_1:\\ U(f,P_1)<I+\\frac\\varepsilon2$",
+        "$I-\\frac\\varepsilon2$ 不是下和們的上界 ⇒ $\\exists P_2:\\ L(f,P_2)>I-\\frac\\varepsilon2$",
+        "取 $P=P_1\\cup P_2$（加細引理）：",
+        "相減：$U(f,P)-L(f,P)<\\varepsilon$　$\\blacksquare$",
+        "共同加細又出場了：$P_1$ 管上和、$P_2$ 管下和，合起來兩邊都顧到"
+      ],
+      "tex": [
+        "\\begin{aligned}U(f,P)&\\le U(f,P_1)<I+\\tfrac\\varepsilon2\\\\L(f,P)&\\ge L(f,P_2)>I-\\tfrac\\varepsilon2\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 單調函數一定可積",
       "body": [
-        "設 $f$ 在 $[a,b]$ 遞增，用等長分割 $P_n$。每段的 $M_i=f(x_i)$、$m_i=f(x_{i-1})$，所以 $U-L=\\sum(f(x_i)-f(x_{i-1}))\\frac{b-a}{n}$。中間的項逐一相消，只剩 $(f(b)-f(a))\\frac{b-a}{n}$。$n$ 夠大就小於任何 $\\varepsilon$，所以 $f$ 可積。遞減函數同理，把 $f(b)-f(a)$ 換成 $f(a)-f(b)$。",
-        "這個結果不需要連續：單調函數可以有無限多個跳躍點，照樣可積。"
+        "定理：$f$ 在 $[a,b]$ 上單調 ⇒ $f$ 可積",
+        "策略：把 $P_n$ 每一段的縫平移疊起來",
+        "證明（遞增；遞減同理）：$P_n$ 上 $M_i=f(x_i)$，$m_i=f(x_{i-1})$",
+        "任給 $\\varepsilon>0$，取"
       ],
       "tex": [
-        "U(f,P_n)-L(f,P_n)=\\frac{\\bigl(f(b)-f(a)\\bigr)(b-a)}{n}"
-      ],
-      "collapsible": false
+        "\\begin{aligned}U-L&=\\frac{b-a}n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)\\\\&=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n\\end{aligned}",
+        "n>\\frac{(b-a)\\big(f(b)-f(a)\\big)}{\\varepsilon}\\ \\Rightarrow\\ U-L<\\varepsilon\\quad\\blacksquare"
+      ]
     },
     {
-      "heading": "④ 跟 Riemann 和的關係",
+      "heading": "③ 要切幾段",
       "body": [
-        "Riemann 的原始定義：存在 $I$，使得對每個 $\\varepsilon>0$ 有 $\\delta>0$，只要 $\\|P\\|<\\delta$，不論每段取哪個點 $t_i$，$|\\sum f(t_i)\\Delta x_i-I|<\\varepsilon$。可以證明這跟 Darboux 可積等價，積分值也相同，所以兩個名字通用。",
-        "重點在「不論取哪個點」。只用右端點、等長分割的和收斂，不足以推出可積：Dirichlet 函數在等長分割下取有理點（例如右端點 $\\frac{i}{n}$）每次都得 1，取無理點每次都得 0（見〈Dirichlet 函數〉）。反過來，一旦知道 $f$ 可積，就可以用任何方便的取點法來算積分。"
+        "• $x$ 在 $[0,1]$，$\\varepsilon=0.01$：$\\frac1n<0.01$ ⇒ $n\\ge101$",
+        "• $x^2$ 在 $[0,1]$，$\\varepsilon=0.005$：$\\frac1n<0.005$ ⇒ $n\\ge201$",
+        "兩個都是 $f(b)-f(a)=1$、$b-a=1$，所以縫 $=\\frac1n$",
+        "$\\frac1x$ 在 $[1,2]$（遞減）：",
+        "誤差 $\\ln2-L(f,P_n)\\le U-L=\\frac1{2n}$：",
+        "實際算：$n=250$ 時誤差已經 $\\approx0.000999<0.001$；公式給的是保證夠，不是最少"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "找一個好分割就夠",
-      "beats": [
-        { "show": ["不必先算出上下積分"],
-          "say": "照定義判斷可積，要先算出上積分和下積分。其實不必，只要知道上和下和能夾到任意近。",
-          "board": [
-            {"do":"write","line":"照定義：上積分 $=$ 下積分"},
-            {"do":"write","line":"其實：上和、下和夾得任意近","on":"其實不必"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists P:\\ U(f,P)-L(f,P)<\\varepsilon$"],
-          "say": "可積判準：不管給多小的 epsilon，都找得到一個分割，讓上和減下和小於 epsilon。",
-          "board": [
-            {"do":"write","line":"$\\forall\\,{{e:\\varepsilon>0}}\\ \\exists P:\\ {{d:U(f,P)-L(f,P)}}<\\varepsilon$"},
-            {"do":"focus","term":"e","label":"任給","on":"不管"},
-            {"do":"circle","term":"d","label":"夾到任意近","on":"上和減下和"}
-          ] },
-        { "show": ["先給 $\\varepsilon$，再找 $P$"],
-          "note": "$\\varepsilon$ 越小，$P$ 通常要越細。",
-          "say": "順序很重要：先有 epsilon，再找分割。epsilon 越小，分割通常要切得越細。證明在下一節。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"先給 $\\varepsilon$，再找 $P$","on":"先有"},
-            {"do":"write","line":"$\\varepsilon$ 越小 $\\Rightarrow$ $P$ 越細","on":"越小"}
-          ] }
-      ],
-      "check": 0
+      "tex": [
+        "U(f,P_n)-L(f,P_n)=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n<\\varepsilon",
+        "U-L=\\frac{1\\cdot\\big(1-\\frac12\\big)}n=\\frac1{2n}",
+        "\\frac1{2n}<0.001\\iff n\\ge501"
+      ]
     },
     {
-      "title": "證明：可積判準",
-      "beats": [
-        { "show": ["反方向：夾住；正方向：共同加細"],
-          "say": "策略：兩個方向。反方向，上下積分被夾在中間；正方向，各找一個分割，再取共同加細。",
-          "board": [
-            {"do":"write","line":"反方向：夾住；正方向：共同加細"}
-          ] },
-        { "show": ["$(\\Leftarrow)$ $L(f,P)\\le$ 下積分 $\\le$ 上積分 $\\le U(f,P)$"],
-          "say": "先證反方向。任何分割的下和，不超過下積分；上積分，不超過任何上和。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\Leftarrow)$ $L(f,P)\\le$ 下積分 $\\le$ 上積分 $\\le U(f,P)$","on":"先證"}
-          ] },
-        { "show": ["$0\\le$ 上積分 − 下積分 $<\\varepsilon$"],
-          "note": "非負，又小於每個正數，只能是 0。",
-          "why": {"ask":"為什麼上下積分只能相等？","say":"差夾在零和 epsilon 之間。為什麼它只能是零？","options":[{"label":"差非負，又小於每一個 $\\varepsilon>0$","correct":true},{"label":"$\\varepsilon$ 很小，差就約等於 0","why":"約等於不夠：差如果是某個正數，取 $\\varepsilon$ 等於它就破功。要對每一個 $\\varepsilon$ 都成立，才只能是 0。"},{"label":"上積分本來就等於下積分","why":"那正是要證的結論，不能先拿來用。"}]},
-          "say": "差是非負的，又小於每一個正的 epsilon，只能是零。所以可積。",
-          "board": [
-            {"do":"write","line":"$0\\le$ 上積分 $-$ 下積分 $<\\varepsilon$","on":"差夾在"},
-            {"do":"write","line":"⇒ 上積分 $=$ 下積分：可積","color":"green","why":true,"on":"只能是零"}
-          ] },
-        { "show": ["$(\\Rightarrow)$ 取 $P_1$：$U(f,P_1)<I+\\frac{\\varepsilon}{2}$"],
-          "note": "$I$ 是上和的下確界。",
-          "why": {"ask":"為什麼找得到 $P_1$？","say":"正方向：上和小於 I 加二分之 epsilon 的分割，為什麼找得到？","options":[{"label":"$I$ 是下確界，$I+\\frac{\\varepsilon}{2}$ 就不是下界","correct":true},{"label":"切得夠細，上和就接近 $I$","why":"「夠細就接近」還沒證；這裡只用到下確界的定義：比它大一點就不再是下界。"},{"label":"$f$ 有界，上和是有限數","why":"有界只讓上和有定義；找得到這麼小的上和，靠的是 $I$ 是上和的下確界。"}]},
-          "say": "I 是所有上和的下確界，比它大一點就不是下界了，所以有一個分割的上和比它小。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\Rightarrow)$ 取 $P_1$：$U(f,P_1)<{{i:I}}+\\frac{\\varepsilon}{2}$","tint":{"i":"violet"},"on":"正方向"},
-            {"do":"focus","term":"i","label":"上和的下確界","why":true,"on":"下確界"}
-          ] },
-        { "show": ["取 $P_2$：$L(f,P_2)>I-\\frac{\\varepsilon}{2}$"],
-          "note": "同理：$I$ 是下和的上確界。",
-          "say": "同樣的道理，I 也是下和的上確界，找得到一個分割，下和大於 I 減二分之 epsilon。",
-          "board": [
-            {"do":"write","line":"取 $P_2$：$L(f,P_2)>{{i:I}}-\\frac{\\varepsilon}{2}$"},
-            {"do":"focus","term":"i","label":"下和的上確界","on":"上確界"}
-          ] },
-        { "show": ["$P=P_1\\cup P_2$：$U-L<\\varepsilon$"],
-          "note": "加細引理：上和只降、下和只升。",
-          "say": "兩個分割合起來。加細之後上和只降、下和只升，差小於兩個二分之 epsilon 相加。",
-          "board": [
-            {"do":"write","line":"$P=P_1\\cup P_2$：$U-L<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}=\\varepsilon$","color":"green","on":"兩個分割"}
-          ] }
+      "heading": "③ 試一題",
+      "body": [
+        "回到 $e^{-x^2}$：在 $[0,1]$ 上遞減 ⇒ 可積"
       ],
-      "key": "上下和夾住上下積分；反向各逼 $\\frac{\\varepsilon}{2}$",
-      "proof": true,
-      "of": 2,
-      "skeleton": "ε-δ",
-      "where": {
-        "ask": "正方向裡，加細引理用在哪一步？",
-        "steps": [
-          {
-            "label": "取 $P_1$：$U(f,P_1)<I+\\frac{\\varepsilon}{2}$",
-            "why": "這只用到 $I$ 是上和的下確界。"
-          },
-          {
-            "label": "取 $P_2$：$L(f,P_2)>I-\\frac{\\varepsilon}{2}$",
-            "why": "這只用到 $I$ 是下和的上確界。"
-          },
-          {
-            "label": "$P=P_1\\cup P_2$：$U-L<\\varepsilon$",
-            "correct": true
-          }
-        ]
-      }
+      "tex": [
+        "U-L=\\frac{1\\cdot(1-e^{-1})}n\\approx\\frac{0.632}n"
+      ]
     },
     {
-      "title": "單調函數一定可積",
-      "beats": [
-        { "show": ["$f$ 遞增，等長 $P_n$：$M_i=f(x_i)$、$m_i=f(x_{i-1})$"],
-          "say": "設函數遞增，切成 n 等分。每段的上確界在右端，下確界在左端。",
-          "board": [
-            {"do":"write","line":"$f$ 遞增，等長 $P_n$"},
-            {"do":"write","line":"$M_i={{fr:f(x_i)}}$、$m_i={{fl:f(x_{i-1})}}$","tint":{"fr":"blue","fl":"violet"},"on":"每段的上確界"}
-          ] },
-        { "show": ["$U-L=\\sum(f(x_i)-f(x_{i-1}))\\frac{b-a}{n}$"],
-          "say": "上和減下和，每一項是相鄰兩點的函數值差，乘上每段寬度。",
-          "board": [
-            {"do":"write","line":"$U-L=\\sum({{fr:f(x_i)}}-{{fl:f(x_{i-1})}})\\frac{b-a}{n}$"}
-          ] },
-        { "show": ["$U-L=\\frac{(f(b)-f(a))(b-a)}{n}$"],
-          "note": "中間的項逐一相消。",
-          "say": "中間全部相消，只剩頭尾：f 在 b 減 f 在 a，乘上 b 減 a，再除以 n。n 夠大就夠小。",
-          "board": [
-            {"do":"transform","line":"$U-L=\\frac{(f(b)-f(a))(b-a)}{n}$","on":"只剩頭尾"}
-          ] },
-        { "show": ["不需要連續"],
-          "note": "無限多個跳躍點也照樣可積。",
-          "say": "這個論證完全沒用到連續。就算有無限多個跳躍點，單調函數照樣可積。",
-          "board": [
-            {"do":"write","line":"不需要連續"}
-          ] }
+      "heading": "④ Riemann 和",
+      "body": [
+        "Riemann 的定義：$\\int_a^bf=I$ 指",
+        "定理：$f$ 有界。Riemann 可積 $\\iff$ Darboux 可積，積分相同",
+        "(⇐) 策略：取點讓 $f(t_i)$ 逼近 $M_i$，Riemann 和就逼近上和",
+        "給 $\\varepsilon$ 得 $\\delta$，取 $\\|P\\|<\\delta$，選 $t_i$ 使 $f(t_i)>M_i-\\frac{\\varepsilon}{b-a}$：",
+        "同理 $L(f,P)>I-2\\varepsilon$ ⇒ $U-L<4\\varepsilon$ ⇒ 可積（判準）",
+        "$\\int f$ 也在 $(I-2\\varepsilon,\\,I+2\\varepsilon)$ 裡，對每個 $\\varepsilon$ ⇒ $\\int f=I$　$\\blacksquare$"
       ],
-      "key": "遞增時 $U-L$ 逐項相消，只剩兩端",
-      "check": 1
+      "tex": [
+        "\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0:\\ \\|P\\|<\\delta\\Rightarrow\\\\&\\Big|\\sum f(t_i)\\Delta x_i-I\\Big|<\\varepsilon\\ \\ \\text{（任意取點）}\\end{aligned}",
+        "U(f,P)<\\sum f(t_i)\\Delta x_i+\\varepsilon<I+2\\varepsilon"
+      ]
     },
     {
-      "title": "要切幾段",
-      "beats": [
-        { "show": ["$f(x)=x$，$[0,1]$：$U-L=\\frac{1}{n}$"],
-          "say": "用公式算：f 等於 x 在零到一，上和減下和是 n 分之一。",
-          "board": [
-            {"do":"write","line":"$f(x)=x$，$[0,1]$"},
-            {"do":"write","line":"$U-L=\\frac{1}{n}$","on":"上和減下和"}
-          ] },
-        { "show": ["要 $U-L<0.01$"],
-          "note": "注意是嚴格小於。",
-          "say": "要讓它小於零點零一，n 最少要多少？小心等號。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{n}<0.01$"}
-          ] }
+      "heading": "④ 證明：達布 ⇒ 黎曼",
+      "body": [
+        "策略：先固定縫 $<\\frac\\varepsilon2$ 的 $P_0$；很細的 $P$ 只有跨過 $P_0$ 分點的幾段會多出縫",
+        "設 $|f|\\le M$（$M>0$），$I=\\int_a^bf$，任給 $\\varepsilon>0$",
+        "判準 ⇒ $P_0$：$U(f,P_0)-L(f,P_0)<\\frac\\varepsilon2$，有 $k$ 個內部分點（$k\\ge1$）",
+        "$P_0$ 沒有內部分點時，加一個中點即可（加細縫不會變大）",
+        "任給 $\\|P\\|<\\delta$。$P$ 的小區間分兩種：",
+        "• 乾淨：內部沒有 $P_0$ 的分點 ⇒ 它也是 $P\\cup P_0$ 的一段",
+        "• 跨過：內部有 $P_0$ 的分點 ⇒ 最多 $k$ 段"
       ],
-      "predict": {
-        "ask": "最小的 $n$ 是？",
-        "options": [
-          {
-            "label": "101",
-            "correct": true
-          },
-          {
-            "label": "100",
-            "why": "$n=100$ 時 $\\frac{1}{n}=0.01$，剛好相等，不是嚴格小於。"
-          },
-          {
-            "label": "200",
-            "why": "那是 $x^2$ 要求 $U-L<0.005$ 時的邊界；這裡 $\\frac{1}{n}<0.01$ 只要 $n>100$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\text{取 }\\delta=\\frac{\\varepsilon}{4kM}"
+      ]
     },
     {
-      "title": "遞減也一樣",
-      "beats": [
-        { "show": ["$x^2$ 在 $[0,1]$：$U-L=\\frac{1}{n}$"],
-          "note": "要 $<0.005$：最小 $n=201$。",
-          "say": "x 平方在零到一也遞增，公式一樣給 n 分之一。要小於零點零零五，最少二百零一段。",
-          "board": [
-            {"do":"write","line":"$x^2$ 在 $[0,1]$：$U-L=\\frac{1}{n}$"},
-            {"do":"write","line":"要 $<0.005$：最少 $n=201$","on":"要小於"}
-          ] },
-        { "show": ["遞減：左端最大，右端最小"],
-          "note": "圖：$\\frac{1}{x}$ 在 $[1,2]$ 往下走。",
-          "say": "遞減的時候反過來：每一段的最大值在左端，最小值在右端。圖上一除以 x 從一到二一路往下走。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[0.5,2.5,0,1.5],"curves":[{"expr":"1/x","domain":[1,2],"color":"blue"}],"points":[{"x":1,"y":1},{"x":2,"y":0.5}]},"on":"值在#2"}
-          ] },
-        { "show": ["$U-L=\\sum(f(x_{i-1})-f(x_i))\\frac{b-a}{n}$","$=(f(a)-f(b))\\frac{b-a}{n}$"],
-          "note": "差還是頭尾差，只是左減右。",
-          "say": "所以上和減下和，每一項是左端減右端，再乘寬度。中間還是逐項相消，只剩頭尾。",
-          "board": [
-            {"do":"write","line":"$U-L=\\sum(f(x_{i-1})-f(x_i))\\frac{b-a}{n}$"},
-            {"do":"write","line":"$=(f(a)-f(b))\\frac{b-a}{n}$","on":"逐項相消"}
-          ] },
-        { "show": ["$\\frac{1}{x}$ 在 $[1,2]$：$U-L=\\frac{1-\\frac{1}{2}}{n}=\\frac{1}{2n}$"],
-          "note": "遞減，把 $f(b)-f(a)$ 換成 $f(a)-f(b)$。",
-          "say": "一除以 x 在一到二是遞減的，頭尾差是一減二分之一，所以上下和差二 n 分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{x}$ 在 $[1,2]$：$U-L=\\frac{ {{d:1-\\frac{1}{2}}} }{n}=\\frac{1}{2n}$"},
-            {"do":"underline","term":"d","label":"頭尾差","on":"頭尾差"}
-          ] },
-        { "show": ["$|L-\\int_1^2\\frac{1}{x}\\,dx|\\le\\frac{1}{2n}$"],
-          "say": "積分夾在上下和中間，所以拿下和當近似值，誤差不會超過二 n 分之一。",
-          "board": [
-            {"do":"write","line":"$|L-\\int_1^2\\frac{1}{x}\\,dx|\\le\\frac{1}{2n}$"}
-          ] }
+      "heading": "④ 證明（續）",
+      "body": [
+        "乾淨的段：每項 $(M_i-m_i)\\Delta x_i\\ge0$，都是 $P\\cup P_0$ 的項",
+        "跨過的段：$M_i-m_i\\le2M$，$\\Delta x_i<\\delta$，最多 $k$ 段",
+        "$m_i\\le f(t_i)\\le M_i$ ⇒ Riemann 和、$I$ 都在 $[L(f,P),U(f,P)]$ 裡："
       ],
-      "predict": {
-        "ask": "要 $U-L<10^{-3}$，最小 $n$ 是？",
-        "options": [
-          {
-            "label": "501",
-            "correct": true
-          },
-          {
-            "label": "500",
-            "why": "$n=500$ 時 $\\frac{1}{2n}=0.001$，剛好相等，不算。"
-          },
-          {
-            "label": "201",
-            "why": "那是 $x^2$ 要求 $U-L<0.005$ 的答案；這裡 $U-L=\\frac{1}{2n}<0.001$，要 $n>500$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}\\sum_{\\text{乾淨}}&\\le U(f,P\\cup P_0)-L(f,P\\cup P_0)\\\\&\\le U(f,P_0)-L(f,P_0)<\\tfrac\\varepsilon2\\end{aligned}",
+        "\\sum_{\\text{跨過}}<k\\cdot2M\\cdot\\frac{\\varepsilon}{4kM}=\\frac\\varepsilon2",
+        "U(f,P)-L(f,P)=\\sum_{\\text{乾淨}}+\\sum_{\\text{跨過}}<\\varepsilon",
+        "\\Big|\\sum f(t_i)\\Delta x_i-I\\Big|<\\varepsilon\\quad\\text{（任意取點）}\\ \\blacksquare"
+      ]
     },
     {
-      "title": "不論取哪個點",
-      "beats": [
-        { "show": ["$\\|P\\|<\\delta\\Rightarrow|\\sum f(t_i)\\Delta x_i-I|<\\varepsilon$"],
-          "note": "不論每段取哪個 $t_i$。",
-          "say": "Riemann 的原始定義：分割夠細，不論每一段取哪個點，Riemann 和都離 I 很近。它跟 Darboux 等價。",
-          "board": [
-            {"do":"write","line":"$\\|P\\|<\\delta\\Rightarrow|\\sum f({{t:t_i}})\\Delta x_i-I|<\\varepsilon$"},
-            {"do":"focus","term":"t","label":"任意取點","on":"不論每一段"}
-          ] },
-        { "show": ["$\\|P\\|=\\max_i\\Delta x_i$：最寬那一段"],
-          "note": "$\\|P\\|<\\delta$：每一段都比 $\\delta$ 窄。",
-          "say": "先定義記號：P 的範數，就是所有小段裡最寬的那一段。範數小於 delta，代表每一段都夠窄。",
-          "board": [
-            {"do":"write","line":"${{m:\\|P\\|}}=\\max_i\\Delta x_i$"},
-            {"do":"circle","term":"m","label":"最寬一段","on":"最寬"},
-            {"do":"write","line":"$\\|P\\|<\\delta$：每段 $\\Delta x_i<\\delta$","on":"範數小於"}
-          ] },
-        { "show": ["Riemann 定義 $\\iff$ Darboux 可積"],
-          "note": "兩個方向都成立，積分值相同。",
-          "say": "等價的意思是：Riemann 的定義成立，就推得 Darboux 可積；反過來也推得它成立，積分值一樣。",
-          "board": [
-            {"do":"write","line":"Riemann 定義 $\\iff$ Darboux 可積"}
-          ] },
-        { "show": ["只用右端點收斂：不夠"],
-          "say": "重點在不論取哪個點。只看右端點的和收斂，推不出可積。",
-          "board": [
-            {"do":"write","line":"只用右端點收斂：不夠"}
-          ] },
-        { "show": ["Dirichlet：有理點得 1，無理點得 0"],
-          "note": "每個分割 $U=1$、$L=0$。",
-          "say": "Dirichlet 函數，有理點取一、無理點取零。取有理點每次得一，取無理點每次得零。",
-          "board": [
-            {"do":"write","line":"Dirichlet：有理點 1，無理點 0"},
-            {"do":"write","line":"$U=1$、$L=0$","on":"取有理點"}
-          ] }
-      ],
-      "check": 2
+      "heading": "④ 只用一種取點不夠",
+      "body": [
+        "例（12.40）：$D(x)=1$（$x$ 有理），$0$（$x$ 無理）",
+        "右端點 $\\frac in$ 都是有理數：$\\sum D(\\frac in)\\frac1n=1\\to1$",
+        "每段改取無理點：黎曼和 $=0$",
+        "反過來：已經知道可積時，用右端點算就可以"
+      ]
     },
     {
-      "title": "可積之後隨便算",
-      "beats": [
-        { "show": ["可積 $\\Rightarrow$ 任何取點都收斂到 $\\int_a^b f$"],
-          "note": "Riemann 和夾在 $L$ 與 $U$ 之間。",
-          "say": "反過來，一旦知道可積，任何取點的 Riemann 和都夾在上下和中間，一起收斂到積分。",
-          "board": [
-            {"do":"write","line":"可積 $\\Rightarrow$ 取點都收斂到 ${{r:\\int_a^b f}}$"},
-            {"do":"write","line":"$L\\le\\sum f(t_i)\\Delta x_i\\le U$","on":"夾在"},
-            {"do":"box","term":"r","color":"green","on":"收斂"}
-          ] },
-        { "show": ["$m_i\\le f(t_i)\\le M_i$"],
-          "note": "第 $i$ 段裡，$t_i$ 的函數值夾在最小與最大之間。",
-          "say": "原因：第 i 段裡，f 在 t i 的值，落在這一段的最小值和最大值之間。乘上寬度再加總，就夾在下和與上和之間。",
-          "board": [
-            {"do":"write","line":"$m_i\\le f(t_i)\\le M_i$"},
-            {"do":"write","line":"$m_i\\Delta x_i\\le f(t_i)\\Delta x_i\\le M_i\\Delta x_i$","on":"乘上寬度"}
-          ] },
-        { "show": ["先判斷可積，再挑方便的算法"],
-          "say": "所以順序是：先判斷可積，再挑最方便的取點法來算。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"先：判斷可積","on":"先判斷"},
-            {"do":"write","line":"再：挑方便的取點法","on":"再挑"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• 判準：可積 $\\iff\\forall\\varepsilon\\ \\exists P:\\ U-L<\\varepsilon$",
+        "• 證明 ⇒：$P_1$ 管上、$P_2$ 管下，合併 $P_1\\cup P_2$",
+        "• 單調 ⇒ 可積：$U-L=\\frac{(b-a)(f(b)-f(a))}n$（相消）",
+        "• 公式給「保證夠」的 $n$，不一定最少",
+        "• Riemann 定義（寬度 $\\to0$、任意取點）與 Darboux 等價",
+        "• 只用一種取點收斂，推不出可積",
+        "下一課：連續函數一定可積"
+      ]
     }
   ],
   "workedExamples": [
@@ -393,70 +216,835 @@
   ],
   "checks": [
     {
-      "ask": "有界的 $f$ 在 $[a,b]$ 上可積，等價於：",
+      "ask": "要用判準證明 $f$ 可積，需要做的是？",
       "options": [
         {
-          "label": "對每個 $\\varepsilon>0$，存在分割 $P$ 使 $U(f,P)-L(f,P)<\\varepsilon$",
+          "label": "任給 $\\varepsilon>0$，找一個分割使 $U-L<\\varepsilon$",
           "correct": true
         },
         {
-          "label": "存在分割 $P$，使 $U(f,P)-L(f,P)<\\varepsilon$ 對每個 $\\varepsilon>0$ 都成立",
-          "why": "量詞順序反了：同一個 $P$ 要對所有 $\\varepsilon$ 成立，等於 $U(f,P)=L(f,P)$，比可積強太多。"
+          "label": "找一個分割使 $U-L$ 很小",
+          "why": "一個固定的分割不夠；要對每個 $\\varepsilon$ 都找得到"
         },
         {
-          "label": "等長分割的右端點和 $\\sum\\frac{f(\\frac{i}{n})}{n}$ 收斂",
-          "why": "只用一種取點不夠：Dirichlet 函數的右端點和恆為 1，卻不可積。"
+          "label": "證明每個分割都有 $U-L<\\varepsilon$",
+          "why": "太強了：粗的分割縫本來就大；只要「存在」"
+        },
+        {
+          "label": "先算出 $\\int f$，再比較",
+          "why": "判準的好處就是不必先知道積分"
         }
       ]
     },
     {
-      "ask": "$f$ 在 $[0,2]$ 遞增，$f(0)=1$、$f(2)=4$。等長分割 $P_n$ 的 $U-L$ 是？",
+      "ask": "$f(x)=e^x$ 在 $[0,1]$ 等分 $n$ 段。要 $U-L<0.01$，$n$ 最少是？",
       "options": [
         {
-          "label": "$\\frac{6}{n}$",
+          "label": "$172$",
           "correct": true
         },
         {
-          "label": "$\\frac{3}{n}$",
-          "why": "你漏了區間長度 $b-a=2$。公式是 $(f(b)-f(a))\\frac{b-a}{n}=3\\cdot\\frac{2}{n}$。"
+          "label": "$100$",
+          "why": "漏了 $f(b)-f(a)=e-1$"
         },
         {
-          "label": "$\\frac{2}{n}$",
-          "why": "你只乘了區間長度，漏了 $f(b)-f(a)=3$。"
+          "label": "$272$",
+          "why": "用了 $f(b)=e$，忘了減 $f(a)=1$"
+        },
+        {
+          "label": "$171$",
+          "why": "$n=171$ 時 $U-L\\approx0.01005$，還差一點"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "不算積分也能判斷",
+      "beats": [
+        {
+          "show": [
+            "上一課的引理：先找到一串 $P_n$，順便算出極限",
+            "但很多積分算不出來：$\\displaystyle\\int_0^1e^{-x^2}\\,dx$"
+          ],
+          "say": "上一課要順便算出極限。但很多積分算不出公式，例如 e 的負 x 平方次方。它可不可積？",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課的引理：先找到一串 $P_n$，順便算出極限"
+            },
+            {
+              "do": "write",
+              "line": "但很多積分算不出來：$\\displaystyle\\int_0^1e^{-x^2}\\,dx$",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "　它沒有初等的反導數；但它是可積的（這一課結束就會知道為什麼）",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "想要：只看縫的判準，不必先知道 $\\int f$"
+          ],
+          "say": "我們想要只看縫的判準，不必先知道積分。就像柯西數列：不知道極限，也能判斷收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "想要：只看縫的判準，不必先知道 $\\int f$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　就像 12.16 的 Cauchy 數列：不知道極限，也能判斷收斂",
+              "color": "violet",
+              "on": "就像"
+            }
+          ]
         }
       ]
     },
     {
-      "ask": "下列哪個函數在 $[0,1]$ 上不是 Riemann 可積？",
-      "options": [
+      "title": "可積判準",
+      "beats": [
         {
-          "label": "Dirichlet 函數：有理點取 1、無理點取 0（每個分割 $U=1$、$L=0$）",
-          "correct": true
+          "show": [
+            "$f$ 在 $[a,b]$ 上有界。則 $f$ 可積 $\\iff$",
+            "$\\forall\\varepsilon>0\\ \\ \\exists P:\\ \\ U(f,P)-L(f,P)<\\varepsilon$"
+          ],
+          "say": "可積判準：有界的 f 可積，若且唯若對每個正的艾普西隆，都有分割 P，讓上和減下和小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $[a,b]$ 上有界。則 $f$ 可積 $\\iff$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\forall\\varepsilon>0\\ \\ \\exists P:\\ \\ U(f,P)-L(f,P)<\\varepsilon}}$",
+              "color": "red",
+              "on": "唯若"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "讓上"
+            }
+          ]
         },
         {
-          "label": "一個遞增、有無限多個跳躍點的函數",
-          "why": "單調就夠了：$U-L=\\frac{f(1)-f(0)}{n}\\to0$，跳躍點不影響。"
+          "show": [
+            "跟上一課的引理比：取 $\\varepsilon=\\frac1n$ 得到一串 $P_n$"
+          ],
+          "say": "也就是縫可以小到任意小。艾普西隆取 n 分之 1，就是上一課的一串分割；但判準不必算出積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟上一課的引理比：取 $\\varepsilon=\\frac1n$ 得到一串 $P_n$"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：可積判準",
+      "beats": [
+        {
+          "show": [
+            "(⇐) 策略：上下積分的差，比每個 $\\varepsilon$ 都小"
+          ],
+          "say": "先證反方向。策略：上下積分的差，比每一個艾普西隆都小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(⇐) 策略：上下積分的差，比每個 $\\varepsilon$ 都小"
+            }
+          ]
         },
         {
-          "label": "一個只在一點不連續的有界函數",
-          "why": "含那一點的段可以切得很窄，其他地方連續；這種函數可積。"
+          "show": [
+            "任給 $\\varepsilon>0$，取判準給的 $P$：",
+            "$0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P)-L(f,P)<\\varepsilon$"
+          ],
+          "say": "任給艾普西隆，取判準給的 P。上下積分都夾在下和與上和中間，差小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任給 $\\varepsilon>0$，取判準給的 $P$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P)-L(f,P)<\\varepsilon$",
+              "on": "都夾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "非負、又小於每個正數 ⇒ 差 $=0$，$f$ 可積　$\\blacksquare$"
+          ],
+          "say": "非負、又小於每一個正數，只能是 0。所以 f 可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "非負、又小於每個正數 ⇒ 差 $=0$，$f$ 可積　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(⇒) 策略：從上、下各逼近 $I$ 到 $\\frac\\varepsilon2$，再合併兩個分割",
+            "圖"
+          ],
+          "say": "正方向。策略：設積分是 I。從上、下各找一個和，離 I 不到 2 分之艾普西隆，再把兩個分割合起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(⇒) 策略：從上、下各逼近 $I$ 到 $\\frac\\varepsilon2$，再合併兩個分割"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ri-crit\" viewBox=\"0 0 640 215\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12ri-critink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12ri-critblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12ri-critred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12ri-critgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12ri-critpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"120\" y1=\"120\" x2=\"520\" y2=\"120\" stroke=\"var(--green)\" stroke-width=\"9\" opacity=\"0.3\"/><line x1=\"20\" y1=\"120\" x2=\"620\" y2=\"120\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#g12ri-critink)\"/><path d=\"M122 58 L122 50 L518 50 L518 58\" stroke=\"var(--green)\" stroke-width=\"1.6\"/><text x=\"320\" y=\"42\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--green)\"><tspan style=\"font-family:inherit\">寬</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan></text><line x1=\"120\" y1=\"111\" x2=\"120\" y2=\"129\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><text x=\"120\" y=\"156\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">I</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> − </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/2</tspan></text><line x1=\"320\" y1=\"111\" x2=\"320\" y2=\"129\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"320\" y=\"156\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">I</tspan></text><line x1=\"520\" y1=\"111\" x2=\"520\" y2=\"129\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><text x=\"520\" y=\"156\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">I</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> + </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/2</tspan></text><circle cx=\"157.5\" cy=\"120\" r=\"6\" fill=\"var(--paper)\" stroke=\"var(--blue)\" stroke-width=\"2\"/><circle cx=\"232.5\" cy=\"120\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"475\" cy=\"120\" r=\"6\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><circle cx=\"415\" cy=\"120\" r=\"6\" fill=\"var(--red)\"/><text x=\"157.5\" y=\"102\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">L</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">2</tspan></tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"475\" y=\"102\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">U</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"232.5\" y=\"190\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">L</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"415\" y=\"190\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">U</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><line x1=\"170\" y1=\"134\" x2=\"222.5\" y2=\"134\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#g12ri-critblue)\"/><line x1=\"462.4\" y1=\"134\" x2=\"425\" y2=\"134\" stroke=\"var(--red)\" stroke-width=\"2\" marker-end=\"url(#g12ri-critred)\"/></svg>",
+              "on": "不到"
+            }
+          ]
         }
       ]
     },
     {
-      "ask": "已知 $f$ 在 $[a,b]$ 可積。要算 $\\int_a^b f$，可以：",
-      "options": [
+      "title": "證明：可積判準（續）",
+      "beats": [
         {
-          "label": "用等長分割、任選一種取點的 Riemann 和取極限",
-          "correct": true
+          "show": [
+            "設 $I=\\int_a^bf=\\inf U=\\sup L$，任給 $\\varepsilon>0$"
+          ],
+          "say": "設 I 是積分，也就是上和的下確界。任給艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $I=\\int_a^bf=\\inf U=\\sup L$，任給 $\\varepsilon>0$"
+            }
+          ]
         },
         {
-          "label": "只能用上和取極限，Riemann 和不可靠",
-          "why": "可積之後，任何取點的 Riemann 和都夾在 $L$ 與 $U$ 之間，一起收斂到積分。"
+          "show": [
+            "$I+\\frac\\varepsilon2$ 不是上和們的下界 ⇒ $\\exists P_1:\\ U(f,P_1)<I+\\frac\\varepsilon2$"
+          ],
+          "say": "I 是最大的下界，所以 I 加 2 分之艾普西隆不是下界：有個分割 P 1，上和比它小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$I+\\frac\\varepsilon2$ 不是上和們的下界 ⇒ $\\exists P_1:\\ U(f,P_1)<I+\\frac\\varepsilon2$"
+            }
+          ]
         },
         {
-          "label": "一定要對所有分割取 $\\inf$",
-          "why": "那是定義；知道可積之後，任何一族寬度 $\\to0$ 的分割都可以拿來算。"
+          "show": [
+            "$I-\\frac\\varepsilon2$ 不是下和們的上界 ⇒ $\\exists P_2:\\ L(f,P_2)>I-\\frac\\varepsilon2$"
+          ],
+          "say": "同樣，存在分割 P 2，下和大於 I 減 2 分之艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$I-\\frac\\varepsilon2$ 不是下和們的上界 ⇒ $\\exists P_2:\\ L(f,P_2)>I-\\frac\\varepsilon2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $P=P_1\\cup P_2$（加細引理）：",
+            "$\\begin{aligned}U(f,P)&\\le U(f,P_1)<I+\\tfrac\\varepsilon2\\\\L(f,P)&\\ge L(f,P_2)>I-\\tfrac\\varepsilon2\\end{aligned}$"
+          ],
+          "say": "取 P 等於 P 1 聯集 P 2。加細以後，上和只會更小，下和只會更大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $P=P_1\\cup P_2$（加細引理）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}U(f,P)&\\le U(f,P_1)<I+\\tfrac\\varepsilon2\\\\L(f,P)&\\ge L(f,P_2)>I-\\tfrac\\varepsilon2\\end{aligned}}$",
+              "on": "加細"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相減：$U(f,P)-L(f,P)<\\varepsilon$　$\\blacksquare$"
+          ],
+          "say": "兩式相減，上和減下和小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相減：$U(f,P)-L(f,P)<\\varepsilon$　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　共同加細又出場了：$P_1$ 管上和、$P_2$ 管下和，合起來兩邊都顧到",
+              "color": "violet",
+              "on": "於艾"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "單調函數一定可積",
+      "beats": [
+        {
+          "show": [
+            "定理：$f$ 在 $[a,b]$ 上單調 ⇒ $f$ 可積"
+          ],
+          "say": "第一個用途：單調函數一定可積，就算有跳躍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f$ 在 $[a,b]$ 上單調 ⇒ $f$ 可積",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：把 $P_n$ 每一段的縫平移疊起來",
+            "圖"
+          ],
+          "say": "策略看圖：每段的縫是一個紅色小長方形，寬都一樣。平移疊成一根柱子，高度剛好是 f of b 減 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：把 $P_n$ 每一段的縫平移疊起來"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ri-tele\" viewBox=\"0 0 640 300\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12ri-teleink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12ri-teleblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12ri-telered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12ri-telegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12ri-telepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><rect x=\"50\" y=\"227.4\" width=\"70\" height=\"5.8\" fill=\"var(--red)\" fill-opacity=\"0.2\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"505\" y=\"227.4\" width=\"70\" height=\"5.8\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"120\" y=\"210.2\" width=\"70\" height=\"17.3\" fill=\"var(--red)\" fill-opacity=\"0.2\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"505\" y=\"210.2\" width=\"70\" height=\"17.3\" fill=\"var(--red)\" fill-opacity=\"0.1\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"190\" y=\"91.6\" width=\"70\" height=\"118.6\" fill=\"var(--red)\" fill-opacity=\"0.2\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"505\" y=\"91.6\" width=\"70\" height=\"118.6\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"260\" y=\"74.8\" width=\"70\" height=\"16.8\" fill=\"var(--red)\" fill-opacity=\"0.2\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"505\" y=\"74.8\" width=\"70\" height=\"16.8\" fill=\"var(--red)\" fill-opacity=\"0.1\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"330\" y=\"58\" width=\"70\" height=\"16.8\" fill=\"var(--red)\" fill-opacity=\"0.2\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"505\" y=\"58\" width=\"70\" height=\"16.8\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><line x1=\"39.5\" y1=\"262\" x2=\"428\" y2=\"262\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#g12ri-teleink)\"/><path d=\"M50 233.2L51.5 233.2L52.9 233.2L54.4 233.2L55.8 233.2L57.3 233.1L58.7 233.1L60.2 233.1L61.7 233L63.1 233L64.6 233L66 232.9L67.5 232.8L69 232.8L70.4 232.7L71.9 232.6L73.3 232.6L74.8 232.5L76.2 232.4L77.7 232.3L79.2 232.2L80.6 232.1L82.1 232L83.5 231.9L85 231.8L86.5 231.6L87.9 231.5L89.4 231.4L90.8 231.2L92.3 231.1L93.7 231L95.2 230.8L96.7 230.6L98.1 230.5L99.6 230.3L101 230.1L102.5 230L103.9 229.8L105.4 229.6L106.9 229.4L108.3 229.2L109.8 229L111.2 228.8L112.7 228.6L114.2 228.4L115.6 228.1L117.1 227.9L118.5 227.7L120 227.4L121.4 227.2L122.9 227L124.4 226.7L125.8 226.4L127.3 226.2L128.7 225.9L130.2 225.6L131.7 225.4L133.1 225.1L134.6 224.8L136 224.5L137.5 224.2L138.9 223.9L140.4 223.6L141.9 223.3L143.3 223L144.8 222.6L146.2 222.3L147.7 222L149.1 221.6L150.6 221.3L152.1 221L153.5 220.6L155 220.2L156.4 219.9L157.9 219.5L159.4 219.1L160.8 218.8L162.3 218.4L163.7 218L165.2 217.6L166.6 217.2L168.1 216.8L169.6 216.4L171 216L172.5 215.6L173.9 215.1L175.4 214.7L176.8 214.3L178.3 213.8L179.8 213.4L181.2 213L182.7 212.5L184.1 212L185.6 211.6L187.1 211.1L188.5 210.6L190 210.2L191.4 209.7L192.9 209.2L194.3 208.7L195.8 208.2L197.3 207.7L198.7 207.2L200.2 206.7L201.6 206.2L203.1 205.6L204.6 205.1L206 204.6L207.5 204.1L208.9 203.5L210.4 203L211.8 202.4L213.3 201.9L214.8 201.3L216.2 200.7L217.7 200.2L219.1 199.6L220.6 199L222 198.4L223.5 197.8L225 197.2\" stroke=\"var(--ink)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M225 100L226.5 99.6L227.9 99.3L229.4 99L230.8 98.6L232.3 98.3L233.8 97.9L235.2 97.6L236.7 97.2L238.1 96.9L239.6 96.5L241 96.2L242.5 95.8L244 95.4L245.4 95.1L246.9 94.8L248.3 94.4L249.8 94.1L251.2 93.7L252.7 93.4L254.2 93L255.6 92.7L257.1 92.3L258.5 92L260 91.6L261.5 91.3L262.9 90.9L264.4 90.6L265.8 90.2L267.3 89.9L268.8 89.5L270.2 89.2L271.7 88.8L273.1 88.4L274.6 88.1L276 87.8L277.5 87.4L279 87L280.4 86.7L281.9 86.4L283.3 86L284.8 85.6L286.3 85.3L287.7 85L289.2 84.6L290.6 84.3L292.1 83.9L293.5 83.6L295 83.2L296.5 82.9L297.9 82.5L299.4 82.2L300.8 81.8L302.3 81.5L303.8 81.1L305.2 80.8L306.7 80.4L308.1 80.1L309.6 79.7L311 79.4L312.5 79L314 78.7L315.4 78.3L316.9 78L318.3 77.6L319.8 77.3L321.3 76.9L322.7 76.6L324.2 76.2L325.6 75.9L327.1 75.5L328.5 75.2L330 74.8L331.5 74.4L332.9 74.1L334.4 73.8L335.8 73.4L337.3 73.1L338.7 72.7L340.2 72.4L341.7 72L343.1 71.7L344.6 71.3L346 71L347.5 70.6L349 70.3L350.4 69.9L351.9 69.6L353.3 69.2L354.8 68.9L356.3 68.5L357.7 68.2L359.2 67.8L360.6 67.5L362.1 67.1L363.5 66.8L365 66.4L366.5 66.1L367.9 65.7L369.4 65.4L370.8 65L372.3 64.7L373.8 64.3L375.2 63.9L376.7 63.6L378.1 63.3L379.6 62.9L381 62.6L382.5 62.2L384 61.9L385.4 61.5L386.9 61.1L388.3 60.8L389.8 60.4L391.3 60.1L392.7 59.8L394.2 59.4L395.6 59L397.1 58.7L398.5 58.4L400 58\" stroke=\"var(--ink)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"225\" cy=\"197.2\" r=\"5\" fill=\"var(--paper)\" stroke=\"var(--ink)\" stroke-width=\"2\"/><circle cx=\"225\" cy=\"100\" r=\"5\" fill=\"var(--ink)\"/><line x1=\"50\" y1=\"265.6\" x2=\"50\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"120\" y1=\"265.6\" x2=\"120\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"190\" y1=\"265.6\" x2=\"190\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"260\" y1=\"265.6\" x2=\"260\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"330\" y1=\"265.6\" x2=\"330\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><line x1=\"400\" y1=\"265.6\" x2=\"400\" y2=\"258.4\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><text x=\"50\" y=\"283.6\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan></text><text x=\"400\" y=\"283.6\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan></text><line x1=\"505\" y1=\"233.2\" x2=\"585.5\" y2=\"233.2\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"6 4\"/><line x1=\"505\" y1=\"58\" x2=\"585.5\" y2=\"58\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"6 4\"/><line x1=\"421\" y1=\"142\" x2=\"487.5\" y2=\"142\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"6 4\" marker-end=\"url(#g12ri-telepencil)\"/><text x=\"454.2\" y=\"127.6\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">疊起來</tspan></text><text x=\"540\" y=\"283.6\" text-anchor=\"middle\" font-size=\"25\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan style=\"font-family:KaTeX_Main,serif\">−</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)/</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan></text><text x=\"540\" y=\"46\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"540\" y=\"250\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text></svg>",
+              "on": "成一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明（遞增；遞減同理）：$P_n$ 上 $M_i=f(x_i)$，$m_i=f(x_{i-1})$"
+          ],
+          "say": "證明：設 f 遞增，遞減一樣。每段最大的是右端點的值，最小的是左端點的值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明（遞增；遞減同理）：$P_n$ 上 $M_i=f(x_i)$，$m_i=f(x_{i-1})$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}U-L&=\\frac{b-a}n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)\\\\&=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n\\end{aligned}$"
+          ],
+          "say": "所以上和減下和，是 n 分之 b 減 a，乘上每段兩端的差，加起來全部相消，剩 f of b 減 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}U-L&=\\frac{b-a}n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)\\\\&=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "加起"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任給 $\\varepsilon>0$，取",
+            "$n>\\frac{(b-a)\\big(f(b)-f(a)\\big)}{\\varepsilon}\\ \\Rightarrow\\ U-L<\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "任給艾普西隆，n 取得比這個數大，阿基米德性質保證有這樣的 n，縫就小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任給 $\\varepsilon>0$，取"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle n>\\frac{(b-a)\\big(f(b)-f(a)\\big)}{\\varepsilon}\\ \\Rightarrow\\ U-L<\\varepsilon\\quad\\blacksquare$",
+              "on": "德性"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "要切幾段",
+      "beats": [
+        {
+          "show": [
+            "$U(f,P_n)-L(f,P_n)=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n<\\varepsilon$"
+          ],
+          "say": "這個公式還能告訴我們：要切幾段才夠。例如 x 在 0 到 1，縫是 n 分之 1，要小於 0.01，n 至少 101。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,P_n)-L(f,P_n)=\\frac{(b-a)\\big(f(b)-f(a)\\big)}n<\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $x$ 在 $[0,1]$，$\\varepsilon=0.01$：$\\frac1n<0.01$ ⇒ $n\\ge101$",
+            "• $x^2$ 在 $[0,1]$，$\\varepsilon=0.005$：$\\frac1n<0.005$ ⇒ $n\\ge201$"
+          ],
+          "say": "x 分之 1 在 1 到 2，遞減。縫是 2n 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $x$ 在 $[0,1]$，$\\varepsilon=0.01$：$\\frac1n<0.01$ ⇒ $n\\ge101$"
+            },
+            {
+              "do": "write",
+              "line": "• $x^2$ 在 $[0,1]$，$\\varepsilon=0.005$：$\\frac1n<0.005$ ⇒ $n\\ge201$",
+              "on": "遞減"
+            },
+            {
+              "do": "write",
+              "line": "　兩個都是 $f(b)-f(a)=1$、$b-a=1$，所以縫 $=\\frac1n$",
+              "color": "violet",
+              "on": "縫是"
+            },
+            {
+              "do": "write",
+              "line": "$\\frac1x$ 在 $[1,2]$（遞減）：",
+              "on": "2n"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U-L=\\frac{1\\cdot\\big(1-\\frac12\\big)}n=\\frac1{2n}$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "誤差 $\\ln2-L(f,P_n)\\le U-L=\\frac1{2n}$：",
+            "$\\frac1{2n}<0.001\\iff n\\ge501$"
+          ],
+          "say": "下和跟自然對數 2 的誤差，不超過縫。要小於 0.001，n 取 501 就保證夠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "誤差 $\\ln2-L(f,P_n)\\le U-L=\\frac1{2n}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac1{2n}<0.001\\iff n\\ge501}}$",
+              "on": "的誤"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "00"
+            },
+            {
+              "do": "write",
+              "line": "　實際算：$n=250$ 時誤差已經 $\\approx0.000999<0.001$；公式給的是保證夠，不是最少",
+              "color": "violet",
+              "on": "50"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=e^x$ 在 $[0,1]$ 等分 $n$ 段。要 $U-L<0.01$，$n$ 最少是？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "回到 $e^{-x^2}$：在 $[0,1]$ 上遞減 ⇒ 可積"
+          ],
+          "say": "回到 e 的負 x 平方次方：它在 0 到 1 上遞減，所以可積。算不出公式，卻證明了它存在；縫大約 n 分之 0.632。",
+          "board": [
+            {
+              "do": "write",
+              "line": "回到 $e^{-x^2}$：在 $[0,1]$ 上遞減 ⇒ 可積",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U-L=\\frac{1\\cdot(1-e^{-1})}n\\approx\\frac{0.632}n$",
+              "on": "算不"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Riemann 和",
+      "beats": [
+        {
+          "show": [
+            "Riemann 的定義：$\\int_a^bf=I$ 指",
+            "$\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0:\\ \\|P\\|<\\delta\\Rightarrow\\\\&\\Big|\\sum f(t_i)\\Delta x_i-I\\Big|<\\varepsilon\\ \\ \\text{（任意取點）}\\end{aligned}$"
+          ],
+          "say": "黎曼的定義：任給艾普西隆，有得塔，分割寬度小於得塔時，不管怎麼取點，黎曼和跟 I 都差不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Riemann 的定義：$\\int_a^bf=I$ 指"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}&\\forall\\varepsilon>0\\ \\exists\\delta>0:\\ \\|P\\|<\\delta\\Rightarrow\\\\&\\Big|\\sum f(t_i)\\Delta x_i-I\\Big|<\\varepsilon\\ \\ \\text{（任意取點）}\\end{aligned}}}}$",
+              "on": "分割"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "黎曼#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$f$ 有界。Riemann 可積 $\\iff$ Darboux 可積，積分相同"
+          ],
+          "say": "定理：對有界的 f，兩個定義等價，積分也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f$ 有界。Riemann 可積 $\\iff$ Darboux 可積，積分相同",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(⇐) 策略：取點讓 $f(t_i)$ 逼近 $M_i$，Riemann 和就逼近上和",
+            "給 $\\varepsilon$ 得 $\\delta$，取 $\\|P\\|<\\delta$，選 $t_i$ 使 $f(t_i)>M_i-\\frac{\\varepsilon}{b-a}$："
+          ],
+          "say": "黎曼推達布。策略：取點讓函數值逼近上確界。給艾普西隆得到得塔，取寬度小於得塔的分割，這樣選點，上和就小於 I 加 2 艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(⇐) 策略：取點讓 $f(t_i)$ 逼近 $M_i$，Riemann 和就逼近上和"
+            },
+            {
+              "do": "write",
+              "line": "給 $\\varepsilon$ 得 $\\delta$，取 $\\|P\\|<\\delta$，選 $t_i$ 使 $f(t_i)>M_i-\\frac{\\varepsilon}{b-a}$：",
+              "on": "給艾"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,P)<\\sum f(t_i)\\Delta x_i+\\varepsilon<I+2\\varepsilon$",
+              "on": "這樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同理 $L(f,P)>I-2\\varepsilon$ ⇒ $U-L<4\\varepsilon$ ⇒ 可積（判準）",
+            "$\\int f$ 也在 $(I-2\\varepsilon,\\,I+2\\varepsilon)$ 裡，對每個 $\\varepsilon$ ⇒ $\\int f=I$　$\\blacksquare$"
+          ],
+          "say": "同理下和大於 I 減 2 艾普西隆。由判準可積，積分也被夾到只能是 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同理 $L(f,P)>I-2\\varepsilon$ ⇒ $U-L<4\\varepsilon$ ⇒ 可積（判準）"
+            },
+            {
+              "do": "write",
+              "line": "$\\int f$ 也在 $(I-2\\varepsilon,\\,I+2\\varepsilon)$ 裡，對每個 $\\varepsilon$ ⇒ $\\int f=I$　$\\blacksquare$",
+              "color": "gold",
+              "on": "由判"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：達布 ⇒ 黎曼",
+      "beats": [
+        {
+          "show": [
+            "策略：先固定縫 $<\\frac\\varepsilon2$ 的 $P_0$；很細的 $P$ 只有跨過 $P_0$ 分點的幾段會多出縫"
+          ],
+          "say": "反方向較難。策略：先固定縫很小的 P 0；很細的分割，只有跨過 P 0 分點的幾段會多出縫。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：先固定縫 $<\\frac\\varepsilon2$ 的 $P_0$；很細的 $P$ 只有跨過 $P_0$ 分點的幾段會多出縫"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $|f|\\le M$（$M>0$），$I=\\int_a^bf$，任給 $\\varepsilon>0$",
+            "判準 ⇒ $P_0$：$U(f,P_0)-L(f,P_0)<\\frac\\varepsilon2$，有 $k$ 個內部分點（$k\\ge1$）"
+          ],
+          "say": "設 f 的絕對值不超過 M。由判準，有分割 P 0，縫小於 2 分之艾普西隆，它有 k 個內部分點。得塔取 4 k M 分之艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $|f|\\le M$（$M>0$），$I=\\int_a^bf$，任給 $\\varepsilon>0$"
+            },
+            {
+              "do": "write",
+              "line": "判準 ⇒ $P_0$：$U(f,P_0)-L(f,P_0)<\\frac\\varepsilon2$，有 $k$ 個內部分點（$k\\ge1$）",
+              "on": "由判"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\text{取 }\\delta=\\frac{\\varepsilon}{4kM}}}$",
+              "on": "縫小"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "個內"
+            },
+            {
+              "do": "write",
+              "line": "　$P_0$ 沒有內部分點時，加一個中點即可（加細縫不會變大）",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖",
+            "任給 $\\|P\\|<\\delta$。$P$ 的小區間分兩種："
+          ],
+          "say": "圖上黑線是寬度小於得塔的 P，綠線是 P 0 的分點。乾淨的段，裡面沒有綠線，也是共同加細的一段。每條綠線只跨一段，所以跨過的最多 k 段。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ri-cross\" viewBox=\"0 0 640 200\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect x=\"150\" y=\"96\" width=\"40\" height=\"28\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"300\" y=\"96\" width=\"45\" height=\"28\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><rect x=\"455\" y=\"96\" width=\"37\" height=\"28\" fill=\"var(--red)\" fill-opacity=\"0.3\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><line x1=\"40\" y1=\"110\" x2=\"600\" y2=\"110\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><path d=\"M40 100V120M78 100V120M115 100V120M150 100V120M190 100V120M228 100V120M262 100V120M300 100V120M345 100V120M385 100V120M420 100V120M455 100V120M492 100V120M530 100V120M565 100V120M600 100V120\" stroke=\"var(--ink)\" stroke-width=\"1.6\"/><path d=\"M175 76V144M330 76V144M470 76V144\" stroke=\"var(--green)\" stroke-width=\"3.2\"/><text x=\"330\" y=\"62\" text-anchor=\"middle\" font-size=\"25\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan baseline-shift=\"-22%\" font-size=\"0.7em\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></tspan><tspan style=\"font-family:inherit\"> 的分點（</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">k</tspan><tspan style=\"font-family:inherit\"> 個）</tspan></text><text x=\"170\" y=\"176\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">跨過</tspan></text><text x=\"322\" y=\"176\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">跨過</tspan></text><text x=\"473\" y=\"176\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">跨過</tspan></text><text x=\"245\" y=\"176\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">乾淨</tspan></text><text x=\"400\" y=\"176\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">乾淨</tspan></text><text x=\"40\" y=\"176\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan></text><text x=\"600\" y=\"176\" text-anchor=\"middle\" font-size=\"26\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan></text><text x=\"60\" y=\"62\" text-anchor=\"start\" font-size=\"25\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</tspan><tspan style=\"font-family:inherit\">：寬 </tspan><tspan style=\"font-family:KaTeX_Main,serif\">&lt; </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">δ</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "任給 $\\|P\\|<\\delta$。$P$ 的小區間分兩種：",
+              "on": "的分"
+            },
+            {
+              "do": "write",
+              "line": "• 乾淨：內部沒有 $P_0$ 的分點 ⇒ 它也是 $P\\cup P_0$ 的一段",
+              "on": "有綠"
+            },
+            {
+              "do": "write",
+              "line": "• 跨過：內部有 $P_0$ 的分點 ⇒ 最多 $k$ 段",
+              "on": "線只"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "乾淨的段：每項 $(M_i-m_i)\\Delta x_i\\ge0$，都是 $P\\cup P_0$ 的項",
+            "$\\begin{aligned}\\sum_{\\text{乾淨}}&\\le U(f,P\\cup P_0)-L(f,P\\cup P_0)\\\\&\\le U(f,P_0)-L(f,P_0)<\\tfrac\\varepsilon2\\end{aligned}$"
+          ],
+          "say": "乾淨的段都是共同加細的項，又都不是負的，總和不超過加細的縫，小於 2 分之艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乾淨的段：每項 $(M_i-m_i)\\Delta x_i\\ge0$，都是 $P\\cup P_0$ 的項"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\sum_{\\text{乾淨}}&\\le U(f,P\\cup P_0)-L(f,P\\cup P_0)\\\\&\\le U(f,P_0)-L(f,P_0)<\\tfrac\\varepsilon2\\end{aligned}}$",
+              "on": "和不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跨過的段：$M_i-m_i\\le2M$，$\\Delta x_i<\\delta$，最多 $k$ 段",
+            "$\\sum_{\\text{跨過}}<k\\cdot2M\\cdot\\frac{\\varepsilon}{4kM}=\\frac\\varepsilon2$"
+          ],
+          "say": "跨過的段，高度差不超過 2M，寬度小於得塔，最多 k 段，也小於 2 分之艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跨過的段：$M_i-m_i\\le2M$，$\\Delta x_i<\\delta$，最多 $k$ 段"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{\\text{跨過}}<k\\cdot2M\\cdot\\frac{\\varepsilon}{4kM}=\\frac\\varepsilon2$",
+              "on": "最多"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U(f,P)-L(f,P)=\\sum_{\\text{乾淨}}+\\sum_{\\text{跨過}}<\\varepsilon$",
+            "$m_i\\le f(t_i)\\le M_i$ ⇒ Riemann 和、$I$ 都在 $[L(f,P),U(f,P)]$ 裡："
+          ],
+          "say": "所以 P 的縫小於艾普西隆。黎曼和與積分都夾在這條縫裡，差小於艾普西隆。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,P)-L(f,P)=\\sum_{\\text{乾淨}}+\\sum_{\\text{跨過}}<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "$m_i\\le f(t_i)\\le M_i$ ⇒ Riemann 和、$I$ 都在 $[L(f,P),U(f,P)]$ 裡：",
+              "on": "普西#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\Big|\\sum f(t_i)\\Delta x_i-I\\Big|<\\varepsilon\\quad\\text{（任意取點）}\\ \\blacksquare}}$",
+              "on": "都夾"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "於艾#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "只用一種取點不夠",
+      "beats": [
+        {
+          "show": [
+            "例（12.40）：$D(x)=1$（$x$ 有理），$0$（$x$ 無理）"
+          ],
+          "say": "注意：定義要求任意取點。只用一種取點收斂，不夠。例子是狄利克雷函數：有理數取 1，無理數取 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例（12.40）：$D(x)=1$（$x$ 有理），$0$（$x$ 無理）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右端點 $\\frac in$ 都是有理數：$\\sum D(\\frac in)\\frac1n=1\\to1$",
+            "每段改取無理點：黎曼和 $=0$"
+          ],
+          "say": "右端點都是有理數，黎曼和永遠是 1；改取無理點，黎曼和就是 0。所以不可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右端點 $\\frac in$ 都是有理數：$\\sum D(\\frac in)\\frac1n=1\\to1$"
+            },
+            {
+              "do": "write",
+              "line": "每段改取無理點：黎曼和 $=0$",
+              "on": "取無"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "已知 $f$ 有界，右端點的 Riemann 和 $\\to\\frac12$。能推出 $f$ 可積嗎？",
+        "options": [
+          {
+            "label": "不能",
+            "correct": true
+          },
+          {
+            "label": "能，積分是 $\\frac12$",
+            "why": "只檢查了一種取點；定義要求每一種取點"
+          },
+          {
+            "label": "能，因為 $f$ 有界",
+            "why": "有界只是能談上和、下和的前提，不保證可積"
+          }
+        ]
+      }
+    },
+    {
+      "title": "只用一種取點不夠",
+      "beats": [
+        {
+          "show": [
+            "反過來：已經知道可積時，用右端點算就可以"
+          ],
+          "say": "反過來，已經知道可積，例如單調，就可以放心只用右端點算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來：已經知道可積時，用右端點算就可以",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 判準：可積 $\\iff\\forall\\varepsilon\\ \\exists P:\\ U-L<\\varepsilon$",
+            "• 證明 ⇒：$P_1$ 管上、$P_2$ 管下，合併 $P_1\\cup P_2$"
+          ],
+          "say": "整理：判準只看縫。單調函數一定可積。黎曼和的定義跟達布等價，但只用一種取點收斂，推不出可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 判準：可積 $\\iff\\forall\\varepsilon\\ \\exists P:\\ U-L<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• 證明 ⇒：$P_1$ 管上、$P_2$ 管下，合併 $P_1\\cup P_2$",
+              "on": "單調"
+            },
+            {
+              "do": "write",
+              "line": "• 單調 ⇒ 可積：$U-L=\\frac{(b-a)(f(b)-f(a))}n$（相消）",
+              "on": "可積#1"
+            },
+            {
+              "do": "write",
+              "line": "• 公式給「保證夠」的 $n$，不一定最少",
+              "on": "義跟"
+            },
+            {
+              "do": "write",
+              "line": "• Riemann 定義（寬度 $\\to0$、任意取點）與 Darboux 等價",
+              "on": "但只"
+            },
+            {
+              "do": "write",
+              "line": "• 只用一種取點收斂，推不出可積",
+              "on": "推不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：連續函數一定可積"
+          ],
+          "say": "下一課，證明連續函數一定可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：連續函數一定可積"
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,401 @@
+{
+  "id": "area-under-curve",
+  "title": "曲線與 x 軸圍成的面積",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["definite-signed-area", "ftc-part2"],
+  "next": ["area-between-curves"],
+  "related": ["intermediate-value-theorem", "riemann-sum-intuition"],
+  "objectives": [
+    "分清楚定積分（有號面積）與面積：面積是對 $|f|$ 積分。",
+    "會找出 $f$ 在區間內的零點，分段積分再把每段取正值相加。",
+    "用同一個想法算總路程：總路程是 $\\int|v|\\,dt$，位移是 $\\int v\\,dt$。"
+  ],
+  "visual": "f(x) = x² − 2x 在 [0, 3] 的圖形，x 軸上方塗藍、下方塗紅。拖動右端點 b，同時顯示兩個讀數：∫₀ᵇ f(x) dx（藍減紅）與面積（藍加紅）。b 還沒過零點 2 時兩個讀數只差一個負號；b 跨過 2 之後，有號面積開始被抵銷，面積卻一直變大。",
+  "concept": [
+    {
+      "heading": "① 定積分不等於面積",
+      "body": [
+        "〈定積分與有號面積〉說過：$\\int_a^b f(x)\\,dx$ 把 $x$ 軸上方的面積算正、下方的算負。$f$ 在整段上都 $\\ge 0$ 時，它剛好就是面積；$f$ 有正有負時，上下兩塊會互相抵銷。",
+        "例：$\\int_0^{2\\pi}\\sin x\\,dx=0$。可是 $\\sin x$ 跟 $x$ 軸在 $[0,2\\pi]$ 圍出兩塊，各自的面積都是 2，合起來是 4，不是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 面積是對 $|f|$ 積分",
+      "body": [
+        "面積不會是負的。把 $x$ 軸下方那塊翻到上面，就是把 $f$ 換成 $|f|$。用〈Riemann 和直觀〉的話說：面積是很多細長矩形加起來，每個矩形的高度是 $|f(x_i)|$，不是 $f(x_i)$。"
+      ],
+      "tex": ["A=\\int_a^b \\lvert f(x)\\rvert\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際算法：先找變號的地方",
+      "body": [
+        "$|f|$ 通常不好直接找反導函數，所以實際上這樣做：",
+        "1. 解 $f(x)=0$，只留下落在 $[a,b]$ 裡面的零點。2. 零點把 $[a,b]$ 切成幾段。$f$ 連續、一段內又沒有零點，這一段上 $f$ 就不會變號（否則由〈中間值定理〉中間一定有零點）。3. 每段代一個點看正負，各自積分；負的那段取相反數，全部加起來。",
+        "畫一張草圖最快：哪一塊在上、哪一塊在下一眼就知道。算出來的面積是 0 或負數，一定是漏了翻正。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 同一件事的物理版本",
+      "body": [
+        "$v(t)$ 是速度時，$\\int v\\,dt$ 是位移：往回走的路被扣掉。總路程是 $\\int|v|\\,dt$：往前、往回都算。做法一模一樣，先找 $v=0$ 的時刻。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "整段都在 $x$ 軸上方",
+      "prompt": "求 $y=4-x^2$ 與 $x$ 軸所圍區域的面積。",
+      "problemId": "gx-059",
+      "steps": [
+        "找邊界：$4-x^2=0$，$x=\\pm 2$。區域是 $-2\\le x\\le 2$。",
+        "在 $(-2,2)$ 裡代 $x=0$：$4>0$，整段在 $x$ 軸上方，面積就是定積分。",
+        "$\\int_{-2}^2(4-x^2)\\,dx=\\left[4x-\\frac{x^3}{3}\\right]_{-2}^2=\\left(8-\\frac{8}{3}\\right)-\\left(-8+\\frac{8}{3}\\right)=\\frac{32}{3}$。"
+      ],
+      "answer": "$\\frac{32}{3}$",
+      "claim": "INT(4-x^2, -2, 2) == 32/3"
+    },
+    {
+      "title": "跨過 $x$ 軸：要切開",
+      "prompt": "求 $y=x^2-2x$ 在 $0\\le x\\le 3$ 與 $x$ 軸之間的面積。",
+      "steps": [
+        "零點：$x^2-2x=x(x-2)=0$，$x=0$ 或 2。在 $[0,3]$ 裡切成 $[0,2]$ 與 $[2,3]$。",
+        "$[0,2]$ 代 $x=1$：$1-2=-1<0$，這段在下方。$\\int_0^2(x^2-2x)\\,dx=\\left[\\frac{x^3}{3}-x^2\\right]_0^2=\\frac{8}{3}-4=-\\frac{4}{3}$，面積取 $\\frac{4}{3}$。",
+        "$[2,3]$ 代 $x=2.5$：$6.25-5>0$，這段在上方。$\\int_2^3(x^2-2x)\\,dx=(9-9)-\\left(\\frac{8}{3}-4\\right)=\\frac{4}{3}$。",
+        "面積 $=\\frac{4}{3}+\\frac{4}{3}=\\frac{8}{3}$。對照：直接算 $\\int_0^3(x^2-2x)\\,dx=-\\frac{4}{3}+\\frac{4}{3}=0$，兩塊完全抵銷。"
+      ],
+      "answer": "$\\frac{8}{3}$",
+      "claim": "INT(x^2-2x, 0, 2) == -4/3 ;; INT(x^2-2x, 2, 3) == 4/3 ;; INT(abs(x^2-2x), 0, 3) == 8/3 ;; INT(x^2-2x, 0, 3) == 0"
+    },
+    {
+      "title": "位移與總路程",
+      "prompt": "質點速度 $v(t)=t^2-2t-3$（m/s），$0\\le t\\le 5$。求位移與總路程。",
+      "problemId": "lec-06-q4b",
+      "steps": [
+        "$v=(t-3)(t+1)=0$，在 $[0,5]$ 裡只有 $t=3$。$t=1$ 時 $v=-4<0$（往回走）；$t=4$ 時 $v=5>0$。",
+        "反導函數 $F(t)=\\frac{t^3}{3}-t^2-3t$。$F(0)=0$，$F(3)=9-9-9=-9$，$F(5)=\\frac{125}{3}-25-15=\\frac{5}{3}$。",
+        "$\\int_0^3 v\\,dt=-9$，$\\int_3^5 v\\,dt=\\frac{5}{3}-(-9)=\\frac{32}{3}$。",
+        "位移 $=\\int_0^5 v\\,dt=\\frac{5}{3}$（m）。總路程 $=9+\\frac{32}{3}=\\frac{59}{3}$（m）。"
+      ],
+      "answer": "位移 $\\frac{5}{3}$ m，總路程 $\\frac{59}{3}$ m",
+      "claim": "INT(x^2-2x-3, 0, 3) == -9 ;; INT(x^2-2x-3, 3, 5) == 32/3 ;; INT(x^2-2x-3, 0, 5) == 5/3 ;; INT(abs(x^2-2x-3), 0, 5) == 59/3"
+    }
+  ],
+  "pitfalls": [
+    "把 $\\int_a^b f(x)\\,dx$ 直接當面積，上下兩塊抵銷掉。",
+    "先積分再取絕對值：$\\left|\\int f\\right|$ 和 $\\int|f|$ 不一樣，前者已經抵銷過了。",
+    "只看端點的正負，漏掉區間中間的零點。",
+    "把落在區間外面的零點也拿來切。",
+    "速度題把位移當總路程。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int_0^{2\\pi}\\sin x\\,dx$ 的值，與 $\\sin x$ 和 $x$ 軸在 $[0,2\\pi]$ 圍成的面積，分別是？",
+      "options": [
+        { "label": "0 與 4", "correct": true },
+        { "label": "0 與 0", "why": "定積分是 0 是因為上下兩塊抵銷；面積把下面那塊翻正，不會抵銷，是 $2+2=4$。" },
+        { "label": "4 與 4", "why": "定積分把 $x$ 軸下方的 $[\\pi,2\\pi]$ 算成 $-2$，所以是 $2-2=0$，不是 4。" }
+      ]
+    },
+    {
+      "ask": "$f(x)=x-1$ 與 $x$ 軸在 $0\\le x\\le 3$ 之間的面積是？",
+      "options": [
+        { "label": "$\\frac{5}{2}$", "correct": true },
+        { "label": "$\\frac{3}{2}$", "why": "這是直接積分 $\\int_0^3(x-1)\\,dx$：$[0,1]$ 那塊在 $x$ 軸下方，面積 $\\frac{1}{2}$ 被算成負的。" },
+        { "label": "2", "why": "只算了 $[1,3]$ 上方的三角形，漏了 $[0,1]$ 下方那塊 $\\frac{1}{2}$。" }
+      ]
+    },
+    {
+      "ask": "要算 $\\int_a^b|f(x)|\\,dx$，第一步通常是？",
+      "options": [
+        { "label": "找出 $f$ 在 $[a,b]$ 裡的零點", "correct": true },
+        { "label": "先算 $\\int_a^b f(x)\\,dx$ 再取絕對值", "why": "那是 $\\left|\\int f\\right|$，正負已經在積分裡抵銷掉了，只會小於或等於面積。" },
+        { "label": "找出 $f$ 的極值點", "why": "決定正負的是零點；極值點兩側的 $f$ 可以完全同號。" }
+      ]
+    },
+    {
+      "ask": "速度 $v(t)$ 在 $0\\le t\\le T$ 走過的總路程是？",
+      "options": [
+        { "label": "$\\int_0^T|v(t)|\\,dt$", "correct": true },
+        { "label": "$\\int_0^T v(t)\\,dt$", "why": "這是位移：往回走的路程被扣掉了。" },
+        { "label": "$\\left|\\int_0^T v(t)\\,dt\\right|$", "why": "先抵銷再取絕對值，得到的是位移的大小，不是總路程。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定積分不等於面積",
+      "beats": [
+        { "show": ["$\\int_a^b f(x)\\,dx$：細長矩形面積相加"],
+          "note": "高是 $f$ 的值，寬是一小段 $x$。",
+          "say": "先說積分符號是什麼。它是把很多細長矩形的面積加起來，每條高是 f 的值，寬是一小段 x。",
+          "board": [
+            {"do":"write","line":"$\\int_a^b {{f1:f(x)}}\\,dx$：矩形面積相加"},
+            {"do":"focus","term":"f1","color":"blue","label":"高","on":"高是"}
+          ] },
+        { "show": ["上方算正，下方算負"],
+          "note": "$f$ 有正有負時，上下兩塊會互相抵銷。",
+          "say": "定積分把 x 軸上方算正、下方算負。函數有正有負時，上下兩塊會互相抵銷。",
+          "board": [
+            {"do":"write","line":"上方 ${{p:+}}$，下方 ${{n:-}}$"},
+            {"do":"focus","term":"p","color":"blue","on":"算正"},
+            {"do":"focus","term":"n","color":"violet","on":"算負"},
+            {"do":"write","line":"上下兩塊會抵銷","on":"上下兩塊"}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\sin x\\,dx=0$"],
+          "say": "例如 sine x 從零積到二 pi，答案是零。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\sin x\\,dx={{r:0}}$"},
+            {"do":"circle","term":"r","on":"積到"}
+          ] },
+        { "show": ["$[-\\cos x]_0^{2\\pi}=-1-(-1)=0$"],
+          "note": "找反導函數，代上限減代下限。",
+          "say": "算的方法是找反導函數，代上限減代下限。負 cosine x 在二 pi 和零都是負一，相減剛好是零。",
+          "board": [
+            {"do":"write","line":"$[-\\cos x]_0^{2\\pi}={{r2:-1-(-1)}}$"},
+            {"do":"focus","term":"r2","color":"green","on":"相減"}
+          ] },
+        { "show": ["可是圖上明明圍出兩塊"],
+          "note": "一塊在上，一塊在下，各自都有面積。",
+          "say": "可是 sine 和 x 軸在這一段明明圍出兩塊，一塊在上、一塊在下，面積不會是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x$ 軸圍出兩塊","on":"圍出"},
+            {"do":"write","line":"一塊在上，一塊在下","on":"一塊在上"},
+            {"do":"write","line":"面積 $\\neq 0$","on":"一塊在下"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "面積是積 $|f|$",
+      "beats": [
+        { "show": ["$A=\\int_a^b|f(x)|\\,dx$"],
+          "note": "把 $x$ 軸下方那塊翻到上面。",
+          "say": "面積不會是負的。把 x 軸下方那塊翻到上面，就是把 f 換成 f 的絕對值。",
+          "board": [
+            {"do":"write","line":"$A=\\int_a^b{{f:|f(x)|}}\\,dx$"},
+            {"do":"underline","term":"f","color":"blue","label":"翻正","on":"換成"}
+          ] },
+        { "show": ["$\\sum|f(x_i)|\\,\\Delta x\\to A$"],
+          "note": "切越細，矩形越貼近曲線。",
+          "say": "把區間切成很多細段，每段做一個矩形，面積是高乘寬。切得越細，矩形越貼近曲線，加總就越接近面積。",
+          "board": [
+            {"do":"write","line":"$\\sum {{h2:|f(x_i)|}}\\,\\Delta x\\to A$"},
+            {"do":"focus","term":"h2","color":"blue","on":"高乘"},
+            {"do":"write","line":"切越細，和越接近 $A$","on":"切得越細"}
+          ] },
+        { "show": ["矩形的高是 $|f(x_i)|$"],
+          "note": "不是 $f(x_i)$。",
+          "say": "用黎曼和來想：每個細長矩形的高要取絕對值，加起來才是面積。",
+          "board": [
+            {"do":"write","line":"高 $={{h:|f(x_i)|}}$"},
+            {"do":"underline","term":"h","on":"取絕對值"},
+            {"do":"write","line":"矩形全部加起來 $=A$","on":"加起來"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "實際算法",
+      "beats": [
+        { "show": ["① 解 $f(x)=0$，留下 $[a,b]$ 裡的零點"],
+          "say": "絕對值不好直接積，所以這樣做：先解 f 等於零，只留落在區間裡的零點。",
+          "board": [
+            {"do":"write","line":"① 解 ${{z:f(x)=0}}$，留區間內零點"},
+            {"do":"focus","term":"z","on":"等於零"}
+          ] },
+        { "show": ["② 零點把區間切段，每段不變號"],
+          "note": "$f$ 連續、段內沒零點，就不會變號。",
+          "say": "零點把區間切成幾段。f 連續，一段裡沒有零點，由中間值定理，這一段就不會變號。",
+          "board": [
+            {"do":"write","line":"② 零點把區間切段"},
+            {"do":"write","line":"段內沒零點 → 不變號","on":"中間值定理"}
+          ] },
+        { "show": ["連續：一筆畫完，不斷開"],
+          "note": "正走到負又不斷開，必踩過 $x$ 軸。",
+          "say": "連續就是圖形一筆畫得完。從正走到負又不斷開，一定會踩到 x 軸，所以段內沒零點就不會變號。",
+          "board": [
+            {"do":"write","line":"連續 ＝ 一筆畫完，不斷開"},
+            {"do":"write","line":"由正變負 ⇒ 必過 ${{z0:f=0}}$","on":"從正走到負"},
+            {"do":"focus","term":"z0","label":"零點","on":"踩到"}
+          ] },
+        { "show": ["③ 每段看正負，負的取相反數"],
+          "note": "算出 $0$ 或負數，一定是漏了翻正。",
+          "say": "每段代一個點看正負，各自積分，負的那段翻正，全部加起來。畫一張草圖最快。",
+          "board": [
+            {"do":"write","line":"③ 每段看正負，負的 ${{n:-\\to +}}$"},
+            {"do":"focus","term":"n","color":"green","on":"翻正"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "整段在上方",
+      "beats": [
+        { "show": ["$y=4-x^2$：零點 $x=\\pm 2$"],
+          "note": "區域是 $-2\\le x\\le 2$。",
+          "say": "四減 x 平方和 x 軸圍出的區域。先找邊界：零點是正負二。",
+          "board": [
+            {"do":"write","line":"$y=4-x^2$：零點 ${{z:x=\\pm2}}$"},
+            {"do":"plot","graph":{"window":[-2.9,2.9,-0.7,4.6],"curves":[{"expr":"4-x^2","domain":[-2,2],"color":"blue"}],"fills":[{"expr":"4-x^2","from":-2,"to":2,"color":"blue"}],"points":[{"x":-2,"y":0},{"x":2,"y":0}],"labels":[{"x":-2,"y":-0.55,"text":"-2","anchor":"middle"},{"x":2,"y":-0.55,"text":"2","anchor":"middle"}],"ticks":false},"on":"圍出的區域"},
+            {"do":"focus","term":"z","on":"零點是"}
+          ] },
+        { "show": ["代 $x=0$：$4>0$"],
+          "note": "整段在 $x$ 軸上方，面積就是定積分。",
+          "say": "中間代零，得到四，是正的。整段都在上方，不用切。",
+          "board": [
+            {"do":"write","line":"代 $x=0$：${{four:4>0}}$"},
+            {"do":"underline","term":"four","label":"整段在上方","on":"整段都在上方"}
+          ] },
+        { "show": ["段內沒零點 ⇒ 整段同號"],
+          "note": "一個點的正負，代表整段。",
+          "say": "為什麼一個點就夠？這一段裡沒有零點，函數不會變號，所以一個點是正的，整段都是正的。",
+          "board": [
+            {"do":"write","line":"段內沒零點 ⇒ 不變號"},
+            {"do":"write","line":"一點為正 ⇒ 整段為正","on":"所以一個點"}
+          ] },
+        { "show": ["$\\left[4x-\\frac{x^3}{3}\\right]_{-2}^2$"],
+          "say": "反導函數是四 x 減三分之 x 三次方，代上限減代下限。",
+          "board": [
+            {"do":"transform","line":"$A=\\left[4x-\\frac{x^3}{3}\\right]_{-2}^2$"}
+          ] }
+      ],
+      "predict": {
+        "ask": "面積是？",
+        "options": [
+          {
+            "label": "$\\frac{32}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$0$",
+            "why": "$4-x^2$ 是偶函數、整段在上方，不會抵銷；歸零是奇函數的事。"
+          },
+          {
+            "label": "$-\\frac{32}{3}$",
+            "why": "減掉下限的 $-8+\\frac{8}{3}$，負負得正：$\\left(8-\\frac{8}{3}\\right)-\\left(-8+\\frac{8}{3}\\right)$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "跨過 $x$ 軸：切開",
+      "beats": [
+        { "show": ["$y=x^2-2x$，$0\\le x\\le 3$"],
+          "note": "零點 $x=0$、$2$：切成 $[0,2]$ 與 $[2,3]$。",
+          "say": "x 平方減二 x，從零到三。零點是零和二，在二切一刀。",
+          "board": [
+            {"do":"write","line":"$y=x^2-2x$，$0\\le x\\le 3$"},
+            {"do":"write","line":"零點 ${{a:x=0}}$、${{b:x=2}}$","on":"零點是"},
+            {"do":"focus","term":"b","label":"切一刀","on":"零和二"}
+          ] },
+        { "show": ["零點 $x=2$ 把兩塊分開"],
+          "say": "畫出來看：在二的左邊，圖形在 x 軸下方，右邊在上方，這個點把兩塊分開。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,3.5,-1.4,3.4],"curves":[{"expr":"x^2-2*x","domain":[0,3],"color":"blue"}],"fills":[{"expr":"x^2-2*x","from":0,"to":2,"color":"red"},{"expr":"x^2-2*x","from":2,"to":3,"color":"blue"}],"points":[{"x":0,"y":0},{"x":2,"y":0}],"labels":[{"x":0,"y":0.35,"text":"0","anchor":"middle"},{"x":2,"y":0.35,"text":"2","anchor":"middle"}],"ticks":false}}
+          ] },
+        { "show": ["$[0,2]$ 在下方：$-\\frac{4}{3}$，面積 $\\frac{4}{3}$"],
+          "note": "代 $x=1$：$1-2=-1<0$。",
+          "say": "零到二代一進去是負一，在下方。積分是負三分之四，翻正。",
+          "board": [
+            {"do":"write","line":"$[0,2]$ 代 $x=1$：$-1$，在下方"},
+            {"do":"write","line":"$\\int_0^2 f={{n:-\\frac{4}{3}}}$","on":"積分是"}
+          ] },
+        { "show": ["$[2,3]$ 在上方：$\\frac{4}{3}$"],
+          "note": "代 $x=2.5$：$6.25-5>0$。",
+          "say": "二到三代二點五，是正的，在上方，積分三分之四。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$[2,3]$ 代 $x=2.5$：是正的","on":"二到三"},
+            {"do":"write","line":"$\\int_2^3 f={{p:\\frac{4}{3}}}$","on":"在上方"}
+          ] }
+      ],
+      "key": "零點切段，負的那段取相反數再加",
+      "predict": {
+        "ask": "面積，和直接算 $\\int_0^3(x^2-2x)\\,dx$？",
+        "options": [
+          {
+            "label": "面積 $\\frac{8}{3}$，直接積分是 $0$",
+            "correct": true
+          },
+          {
+            "label": "面積 $0$",
+            "why": "抵銷的是定積分；面積要每塊翻正再加：$\\frac{4}{3}+\\frac{4}{3}$。"
+          },
+          {
+            "label": "面積 $\\frac{4}{3}$",
+            "why": "兩塊都要算，下方那塊翻正後也是 $\\frac{4}{3}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "位移與總路程",
+      "beats": [
+        { "show": ["$v(t)=t^2-2t-3$，$0\\le t\\le 5$"],
+          "note": "$v=(t-3)(t+1)$：區間裡只有 $t=3$ 變號。",
+          "say": "同一件事的物理版本。速度在 t 等於三變號：之前往回走，之後往前走。",
+          "board": [
+            {"do":"write","line":"$v(t)=t^2-2t-3$，$0\\le t\\le 5$"},
+            {"do":"write","line":"${{c:t=3}}$ 變號：先往回，後往前","on":"等於三"}
+          ] },
+        { "show": ["位移：終點減起點","總路程：走過的所有路"],
+          "note": "往回走，位移會扣掉，總路程照算。",
+          "say": "位移是終點減起點，往回走會被扣掉。總路程是走過的所有路，往回也算。",
+          "board": [
+            {"do":"write","line":"位移 ＝ 終點 － 起點"},
+            {"do":"write","line":"總路程 ＝ 走過的所有路","on":"總路程"}
+          ] },
+        { "show": ["$v<0$：往回走，路仍是正的"],
+          "say": "速度是負的時候在往回走，路還是走了一段正的長度。所以那一段要翻正再算。",
+          "board": [
+            {"do":"write","line":"往回走：${{vn:v<0}}$"},
+            {"do":"focus","term":"vn","color":"red","on":"往回走"},
+            {"do":"write","line":"路程仍是正的","on":"正的長度"}
+          ] },
+        { "show": ["$\\int_0^3 v\\,dt=-9$，$\\int_3^5 v\\,dt=\\frac{32}{3}$"],
+          "say": "前三秒積分是負九，往回走了九公尺；後兩秒是三分之三十二。",
+          "board": [
+            {"do":"write","line":"$\\int_0^3 v\\,dt={{a:-9}}$"},
+            {"do":"focus","term":"a","label":"往回走","on":"往回走了"},
+            {"do":"write","line":"$\\int_3^5 v\\,dt={{b:\\frac{32}{3}}}$","on":"後兩秒"}
+          ] },
+        { "show": ["位移 $\\frac{5}{3}$ m，總路程 $\\frac{59}{3}$ m"],
+          "note": "總路程 $=9+\\frac{32}{3}$。",
+          "say": "位移把往回走的扣掉，是三分之五；總路程兩段都算，是三分之五十九。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"位移 ${{d:\\frac{5}{3}}}$ m","on":"位移"},
+            {"do":"write","line":"總路程 ${{t:\\frac{59}{3}}}$ m","on":"總路程"},
+            {"do":"box","term":"t","color":"green","on":"兩段都算"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["area", "kinematics"],
+    "fine": ["area-signed-vs-total", "area-split-at-zeros", "area-total-distance"]
+  },
+  "practice": [
+    { "id": "gx-055", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-057", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-059", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-015", "core": true, "trains": "area-split-at-zeros" },
+    { "id": "lec-06-q4b", "core": true, "trains": "area-total-distance" },
+    { "id": "cg-5a-001", "core": true, "trains": "area-split-at-zeros" },
+    { "id": "gx-058", "trains": "area-signed-vs-total" },
+    { "id": "gp-007", "trains": "area-split-at-zeros" },
+    { "id": "gx-060", "trains": "area-signed-vs-total" },
+    { "id": "gx-017", "trains": "area-total-distance" },
+    { "id": "cg-5a-002", "trains": "area-split-at-zeros" },
+    { "id": "cg-5a-003", "trains": "area-split-at-zeros" },
+    { "id": "gp-005", "challenge": true, "trains": "area-total-distance", "note": "挑戰：從折線速度圖讀出每一段的正負，再分段加總。" }
+  ],
+  "gaps": []
+}

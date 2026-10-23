@@ -1,316 +1,129 @@
 {
   "id": "cauchy-theorem",
   "title": "Cauchy 定理",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
-  "prerequisites": ["contour-integral", "green-theorem", "cauchy-riemann"],
-  "next": ["cauchy-integral-formula"],
+  "prerequisites": [
+    "contour-integral",
+    "green-theorem",
+    "cauchy-riemann"
+  ],
+  "next": [
+    "cauchy-integral-formula"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 Cauchy 定理的條件與結論：$f$ 在簡單封閉曲線 $C$ 上與 $C$ 的內部全純，則 $\\oint_C f\\,dz=0$。",
-    "用 Green 定理加上 CR 方程說明它為什麼成立（假設 $f'$ 連續）。",
-    "用「奇異點在不在曲線裡面」判斷積分是不是 0，並用變形曲線把複雜的圍道換成小圓。"
+    "寫得出 Cauchy 定理的條件與結論：$f$ 在簡單封閉曲線 $C$ 上與 $C$ 的內部全純，則 $\\oint_C f(z)\\,dz=0$",
+    "用 Green 定理加上 CR 方程說明它為什麼成立（假設 $f'$ 連續）",
+    "用「奇異點在不在曲線裡面」判斷積分是不是 $0$，並用變形曲線把複雜的圍道換成小圓"
   ],
-  "visual": "一條可拖動的封閉曲線 C 與一個標出的奇異點 z₀（例如 1/(z − z₀) 的極點）。z₀ 在 C 外面時，積分讀數一直是 0；把曲線拉過 z₀ 讓它跑進裡面，讀數跳成 2πi，之後怎麼捏曲線都不變。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 結論：全純就繞一圈是 0",
       "body": [
-        "Cauchy 定理：$C$ 是簡單封閉的分段光滑曲線，$f$ 在 $C$ 上以及 $C$ 的內部（某個包含它們的開集上）全純，則 $\\oint_C f\\,dz=0$。",
-        "條件的重點是「內部沒有洞」：$\\frac{1}{z}$ 在單位圓上全純，但在內部的 $0$ 不是，所以 $\\oint\\frac{dz}{z}=2\\pi i$ 不違反定理。"
+        "Cauchy 定理：$C$ 是分段光滑的簡單封閉曲線，$f$ 在一個包含 $C$ 與 $C$ 的內部的開集上全純，則",
+        "上一課：有反導函數 ⇒ 繞一圈是 0。這一課：只要全純就夠",
+        "方向不影響：反向只差一個負號，$-0=0$",
+        "例 1：$\\displaystyle\\oint_{|z|=1}e^{z^2}\\,dz=0$",
+        "$e^{z^2}$ 的反導函數寫不出初等式子，但不需要",
+        "條件裡的「內部」不能少："
       ],
-      "collapsible": false
+      "tex": [
+        "\\oint_C f(z)\\,dz=0",
+        "\\oint_{|z|=1}\\frac{dz}{z}=2\\pi i\\ne0"
+      ]
     },
     {
-      "heading": "② 為什麼：Green 定理 + CR",
+      "heading": "② 為什麼：Green + CR",
       "body": [
-        "寫成實部虛部：$\\oint f\\,dz=\\oint(u\\,dx-v\\,dy)+i\\oint(v\\,dx+u\\,dy)$。",
-        "對兩個實線積分用〈Green 定理〉（假設 $u$、$v$ 有連續偏導數）：第一個變成 $\\iint(-v_x-u_y)\\,dA$，第二個變成 $\\iint(u_x-v_y)\\,dA$。",
-        "CR 方程說 $u_y=-v_x$、$u_x=v_y$，兩個被積函數都是 $0$。所以 $\\oint f\\,dz=0$。",
-        "這個證明多假設了 $f'$ 連續；Goursat 證明了只要可微就夠，不需要這個假設。"
+        "假設 $f=u+iv$ 的 $f'$ 連續（所以 $u,v$ 的偏導數連續）。上一課：",
+        "Green 定理（$C$ 正向，$D$ 是內部）：",
+        "實部：$P=u$，$Q=-v$：",
+        "虛部：$P=v$，$Q=u$：",
+        "兩部分都是 $0$，所以 $\\oint_Cf\\,dz=0$　$\\blacksquare$",
+        "Green 需要偏導數連續：$u_x=\\operatorname{Re}f'$、$v_x=\\operatorname{Im}f'$、$u_y=-v_x$、$v_y=u_x$ 都連續"
       ],
-      "collapsible": false
+      "tex": [
+        "\\oint_C f\\,dz=\\oint_C(u\\,dx-v\\,dy)+i\\oint_C(v\\,dx+u\\,dy)",
+        "\\oint_C P\\,dx+Q\\,dy=\\iint_D\\big(Q_x-P_y\\big)\\,dA",
+        "\\iint_D(-v_x-u_y)\\,dA=0\\quad(\\text{CR：}u_y=-v_x)",
+        "\\iint_D(u_x-v_y)\\,dA=0\\quad(\\text{CR：}u_x=v_y)"
+      ]
     },
     {
-      "heading": "③ 推論：路徑無關與變形",
+      "heading": "② 「$f'$ 連續」可以拿掉嗎",
       "body": [
-        "路徑無關：在沒有洞的區域裡全純，從 $a$ 到 $b$ 的積分只看端點（兩條路徑合起來是一條封閉曲線，積分為 $0$）。",
-        "變形：$f$ 在兩條封閉曲線 $C_1$、$C_2$ 之間的環形區域全純，則 $\\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz$。所以繞著奇異點的任何曲線，都可以縮成一個小圓來算。這就是為什麼 $\\oint\\frac{dz}{z-z_0}$ 對任何繞 $z_0$ 一圈的曲線都是 $2\\pi i$。"
-      ],
-      "collapsible": false
+        "可以：Goursat 定理不假設 $f'$ 連續，直接證明 $\\oint_Cf\\,dz=0$",
+        "證明用三角形細分加上 ML 不等式，比較長，這裡不證；它是複變課程第一個硬證明",
+        "下一課會看到：全純函數的 $f'$ 自動連續（甚至無限次可微）"
+      ]
     },
     {
-      "heading": "變形原理的證明",
+      "heading": "③ 推論：路徑無關",
       "body": [
-        "在 $C_1$（外）與 $C_2$（內）之間切一刀，連成一條繞過環形區域邊界的封閉曲線：沿 $C_1$ 逆時針、沿切口進去、沿 $C_2$ 順時針、沿切口出來。這條曲線的內部不含奇異點，由 Cauchy 定理積分為 $0$；切口來回各走一次互相抵銷，剩下 $\\oint_{C_1}-\\oint_{C_2}=0$。"
+        "$C_1$、$C_2$ 都從 $A$ 到 $B$，合起來 $C_1-C_2$ 是簡單封閉曲線，$f$ 在它和內部全純：",
+        "在圓盤（或任何凸區域）裡，全純函數都有反導函數 $F(z)=\\int_{[z_0,z]}f$，所以任何兩條路都相等",
+        "跟上一課的 $\\bar z$ 對照：$\\bar z$ 不全純，所以路徑有關",
+        "推論二：變形原理",
+        "$C_1$ 包住 $C_2$（都正向），$f$ 在兩者之間（含曲線上）全純：",
+        "曲線可以在全純的地方隨意變形，只要不跨過奇異點",
+        "這解釋了上一課的「跟半徑 $r$ 無關」"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "全純就繞一圈是 0",
-      "beats": [
-        { "show": ["$C$ 簡單封閉、分段光滑"],
-          "note": "$f$ 在 $C$ 上以及內部全純。",
-          "say": "曲線是簡單封閉、分段光滑的，而且 f 在曲線上，連同整個內部，都全純。",
-          "board": [
-            {"do":"write","line":"$C$ 簡單封閉、分段光滑"},
-            {"do":"write","line":"$f$ 在 $C$ 上與內部全純","on":"連同整個內部"}
-          ] },
-        { "show": ["$\\oint_C f\\,dz=0$"],
-          "say": "那麼繞一圈的積分就是零。這就是 Cauchy 定理。",
-          "board": [
-            {"do":"write","line":"$\\oint_C f\\,dz = {{r:0}}$"},
-            {"do":"box","term":"r","color":"green","on":"就是零"}
-          ] },
-        { "show": ["重點：內部沒有洞"],
-          "note": "$\\frac{1}{z}$ 在圓上全純，但在 $0$ 不是。",
-          "say": "條件的重點是內部不能有洞。z 分之一在圓上沒問題，可是圓心零那裡不全純。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"重點：內部沒有洞","on":"重點"},
-            {"do":"write","line":"${{w:\\frac{1}{z}}}$ 在 ${{o:0}}$ 不全純","on":"z 分之一"},
-            {"do":"circle","term":"o","on":"圓心零"}
-          ] }
-      ],
-      "check": 1
+      "tex": [
+        "\\int_{C_1}f\\,dz-\\int_{C_2}f\\,dz=\\oint_{C_1-C_2}f\\,dz=0",
+        "\\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz"
+      ]
     },
     {
-      "title": "為什麼：Green + CR",
-      "beats": [
-        { "show": ["$\\oint(u\\,dx-v\\,dy)+i\\oint(v\\,dx+u\\,dy)$"],
-          "say": "把積分拆成實部和虛部，是兩個實的線積分。",
-          "board": [
-            {"do":"write","line":"$\\oint f\\,dz = \\oint (u+iv)(dx+i\\,dy)$"},
-            {"do":"write","line":"$= {{a:\\oint(u\\,dx-v\\,dy)}}+i{{b:\\oint(v\\,dx+u\\,dy)}}$","on":"拆成"}
-          ] },
-        { "show": ["$\\iint(-v_x-u_y)\\,dA$ 與 $\\iint(u_x-v_y)\\,dA$"],
-          "note": "Green 定理，假設偏導數連續。",
-          "say": "用 Green 定理，各自變成內部的二重積分。",
-          "board": [
-            {"do":"write","line":"${{c:\\iint(-v_x-u_y)\\,dA}}$ 與 ${{d:\\iint(u_x-v_y)\\,dA}}$"},
-            {"do":"focus","term":"c","on":"各自"}
-          ] },
-        { "show": ["CR：$u_y=-v_x$、$u_x=v_y$"],
-          "note": "兩個被積函數都是 $0$。",
-          "say": "CR 方程正好讓兩個被積函數都是零。不假設導數連續的版本叫 Goursat 定理。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"CR：${{p:u_y=-v_x}}$、${{q:u_x=v_y}}$","on":"CR 方程"},
-            {"do":"focus","term":"p","on":"被積函數"},
-            {"do":"write","line":"不假設 $f'$ 連續：Goursat","on":"不假設"}
-          ] }
+      "heading": "③ 例：奇異點在裡面還是外面",
+      "body": [
+        "$\\displaystyle\\oint\\frac{dz}{z-3}$，沿 $|z|=2$ 與 $|z|=4$（逆時針）",
+        "$|z|=2$：$3$ 在圓外。在開圓盤 $|z|<2.5$ 上全純 ⇒ $0$",
+        "$|z|=4$：$3$ 在圓內，Cauchy 不能用。變形成 $|z-3|=1$："
       ],
-      "key": "Green 把線積分變成偏導數的面積分",
-      "check": 2
+      "tex": [
+        "\\oint_{|z|=4}\\frac{dz}{z-3}=\\oint_{|z-3|=1}\\frac{dz}{z-3}=2\\pi i"
+      ]
     },
     {
-      "title": "奇異點在外面",
-      "beats": [
-        { "show": ["$\\oint_{|z|=1}e^{z^2}\\,dz=0$"],
-          "note": "整函數，內部全純。",
-          "say": "e 的 z 平方次方是整函數，到處全純，所以沿單位圓積分直接是零，不用參數式硬算。",
-          "board": [
-            {"do":"write","line":"$\\oint_{|z|=1}e^{z^2}\\,dz$"},
-            {"do":"write","line":"整函數：到處全純","on":"整函數"},
-            {"do":"write","line":"$= {{r:0}}$","on":"所以"},
-            {"do":"box","term":"r","color":"green","on":"直接是零"}
-          ] },
-        { "show": ["$\\oint_{|z|=2}\\frac{dz}{z-3}$"],
-          "note": "只在 $z=3$ 不全純。",
-          "say": "z 減三分之一只有在三不全純。沿半徑二的圓呢？",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\oint_{|z|=2}\\frac{dz}{{{s:z-3}}}$","on":"z 減"},
-            {"do":"focus","term":"s","on":"只有在"}
-          ] },
-        { "show": ["$3$ 在圓外 → 積分 $0$"],
-          "say": "三在半徑二的圓外面，圓和內部都全純，積分是零。先看奇異點在裡面還是外面。",
-          "board": [
-            {"do":"write","line":"${{t:3}}$ 在圓外 → 積分 ${{o:0}}$"},
-            {"do":"box","term":"o","color":"green","on":"積分是零"},
-            {"do":"write","line":"先看：奇異點在裡面還是外面","on":"先看"}
-          ] }
+      "heading": "③ 兩個奇異點：各自變形",
+      "body": [
+        "$\\displaystyle\\oint_{|z|=2}\\frac{dz}{z^2-1}$：奇異點 $\\pm1$ 都在裡面",
+        "多個洞的變形：$\\oint_C=\\oint_{c_1}+\\oint_{c_2}$（各繞一個奇異點的小圓）",
+        "部分分式：$\\dfrac{1}{z^2-1}=\\dfrac12\\Big(\\dfrac{1}{z-1}-\\dfrac{1}{z+1}\\Big)$",
+        "• 繞 $1$：$\\frac12\\cdot2\\pi i-\\frac12\\cdot0=\\pi i$",
+        "• 繞 $-1$：$\\frac12\\cdot0-\\frac12\\cdot2\\pi i=-\\pi i$"
       ],
-      "check": 0
+      "tex": [
+        "\\oint_{|z|=2}\\frac{dz}{z^2-1}=\\pi i+(-\\pi i)=0"
+      ]
     },
     {
-      "title": "變形",
-      "beats": [
-        { "show": ["路徑無關"],
-          "note": "兩條路合起來是封閉曲線，積分 $0$。",
-          "say": "推論一：在沒有洞的區域裡全純，從 a 到 b 怎麼走都一樣。",
-          "board": [
-            {"do":"write","line":"路徑無關：${{i:\\int_a^b f\\,dz}}$ 不看路徑"},
-            {"do":"underline","term":"i","on":"怎麼走"}
-          ] },
-        { "show": ["$\\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz$"],
-          "note": "$f$ 在兩條曲線之間全純。",
-          "say": "推論二：兩條封閉曲線之間全純，兩邊的積分相等。曲線可以捏、可以縮，只要不碰到奇異點。",
-          "board": [
-            {"do":"write","line":"${{e:\\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz}}$"},
-            {"do":"write","line":"$f$ 在 $C_1$、$C_2$ 之間全純","on":"之間全純"},
-            {"do":"box","term":"e","color":"green","on":"積分相等"}
-          ] },
-        { "show": ["形狀不重要，只看繞幾圈"],
-          "note": "$C$ 與小圓之間全純。",
-          "say": "不是只有圓。任何繞三一圈的正向簡單封閉曲線，和小圓之間都全純，所以積分都跟小圓一樣。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,8,-4,4],"equal":true,"curves":[{"param":{"x":"3+4*cos(t)","y":"2*sin(t)","t":[0,6.2832]},"color":"blue"},{"param":{"x":"3+cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"red"}],"points":[{"x":3,"y":0}]}},
-            {"do":"write","line":"繞 $3$ 一圈：同一個值","on":"和小圓"}
-          ] },
-        { "show": ["$\\oint_{|z|=4}\\frac{dz}{z-3}=2\\pi i$"],
-          "note": "縮成繞 $3$ 的小圓。",
-          "say": "半徑四的圓把三包在裡面，縮成繞三的小圓，就是二派 i。為什麼可以縮，下一節證明。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\oint_{|z|=4}\\frac{dz}{z-3}$","on":"半徑四"},
-            {"do":"write","line":"縮成繞 $3$ 的小圓","on":"縮成"},
-            {"do":"write","line":"$= 2\\pi i$","color":"green","on":"二派"}
-          ] },
-        { "show": ["$z-3=re^{it}$，$dz=ire^{it}dt$","$\\oint\\frac{dz}{z-3}=\\int_0^{2\\pi}i\\,dt$"],
-          "say": "小圓寫成 z 等於三加 r 乘 e 的 i t 次方。dz 除以 z 減三，只剩 i dt，從零積到二派，得二派 i。",
-          "board": [
-            {"do":"write","line":"$z-3=re^{it}$，$dz=ire^{it}dt$"},
-            {"do":"write","line":"$\\frac{dz}{z-3}={{k:i\\,dt}}$","on":"只剩"},
-            {"do":"write","line":"$\\int_0^{2\\pi}i\\,dt={{r:2\\pi i}}$","on":"從零積到"},
-            {"do":"box","term":"r","color":"green","on":"得二派"}
-          ] }
+      "heading": "④ 變形原理的證明",
+      "body": [
+        "$C_1$ 外、$C_2$ 內，都正向；畫兩條割線把中間的環切成兩塊",
+        "• $\\Gamma_1$、$\\Gamma_2$ 都是簡單封閉曲線，裡面沒有奇異點：$\\oint_{\\Gamma_k}f\\,dz=0$",
+        "• 外圈 $C_1$：兩塊合起來剛好逆時針走一圈",
+        "• 內圈 $C_2$：兩塊合起來剛好順時針走一圈，就是 $-C_2$",
+        "• 每條割線被走兩次、方向相反：抵消",
+        "多個洞：每個洞各畫割線連出去，同樣得到 $\\oint_C=\\sum_k\\oint_{c_k}$"
       ],
-      "check": 3
+      "tex": [
+        "0=\\oint_{\\Gamma_1}+\\oint_{\\Gamma_2}=\\oint_{C_1}f\\,dz-\\oint_{C_2}f\\,dz\\quad\\blacksquare"
+      ]
     },
     {
-      "title": "證明：切一刀",
-      "beats": [
-        { "show": ["切一刀，把環形變成沒有洞的區域"],
-          "note": "再對它用 Cauchy 定理。",
-          "say": "策略：環形區域中間有洞，Cauchy 定理不能直接用。切一刀，造一條把洞排在外面的封閉曲線。",
-          "board": [
-            {"do":"write","line":"環形區域有洞，Cauchy 定理不能直接用"},
-            {"do":"write","line":"切一刀，把洞排在外面","on":"切一刀"}
-          ] },
-        { "show": ["沿 $C_1$ 逆時針、切口進去","沿 $C_2$ 順時針、切口出來"],
-          "note": "連成繞過環形區域邊界的一條封閉曲線。",
-          "say": "從外圈逆時針走一圈，沿切口走進去，內圈順時針走一圈，再沿切口走出來，連成一條封閉曲線。",
-          "board": [
-            {"do":"write","line":"沿 ${{ca:C_1}}$ 逆時針、切口進去","tint":{"ca":"blue"}},
-            {"do":"write","line":"沿 ${{cb:C_2}}$ 順時針、切口出來","tint":{"cb":"violet"},"on":"內圈"}
-          ] },
-        { "show": ["切口是一條極窄的縫"],
-          "note": "縫縮到零，進出兩段才重合。",
-          "say": "把切口想成一條極窄的縫：進去走一邊，出來走另一邊，是兩條不同的線，所以曲線仍是簡單封閉。縫縮到零時才重合。",
-          "board": [
-            {"do":"write","line":"切口是窄縫：進、出是兩條邊"},
-            {"do":"write","line":"縫縮到零：兩邊重合","on":"縫縮到零"}
-          ] },
-        { "show": ["這條曲線的積分為 $0$"],
-          "note": "它的內部不含奇異點：Cauchy 定理。",
-          "why": {"ask":"為什麼積分是 $0$？","say":"這條新曲線的積分，為什麼是零？","options":[{"label":"它的內部沒有奇異點，$f$ 全純：Cauchy 定理","correct":true},{"label":"$f$ 在 $C_1$ 上全純","why":"只有曲線上全純不夠，內部也要全純；$C_1$ 裡面有奇異點，切一刀後的新曲線才把它排在外面。"},{"label":"曲線的長度有限","why":"長度有限只讓積分有定義；積分是 $0$ 要靠內部全純。"}]},
-          "say": "新曲線圍住的只有環形區域本身，奇異點都被排在外面。f 在裡面全純，Cauchy 定理說積分是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"這條曲線的積分 ${{z:0}}$","on":"新曲線"},
-            {"do":"write","line":"內部無奇異點，$f$ 全純","why":true,"on":"排在外面"},
-            {"do":"box","term":"z","color":"green","why":true,"on":"Cauchy 定理說"}
-          ] },
-        { "show": ["新曲線 = 外圈 + 進 + 內圈 + 出"],
-          "note": "四段加起來是 $0$。",
-          "say": "照走的順序拆成四段：外圈逆時針，切口進去，內圈順時針，切口出來，四段加起來是零。",
-          "board": [
-            {"do":"write","line":"${{a:\\oint_{C_1}}}+{{b:\\int_{\\text{進}}}}+{{c:\\oint_{C_2\\text{順}}}}+{{d:\\int_{\\text{出}}}}=0$"},
-            {"do":"underline","term":"b","on":"切口進去"},
-            {"do":"underline","term":"d","on":"切口出來"}
-          ] },
-        { "show": ["切口抵銷：$\\oint_{C_1}-\\oint_{C_2}=0$"],
-          "note": "$C_2$ 是順時針走的，所以是減。",
-          "why": {"ask":"為什麼 $\\oint_{C_2}$ 前面是減號？","say":"剩下兩個圈。內圈那一項，為什麼是減的？","options":[{"label":"沿 $C_2$ 走的是順時針，方向反了積分變號","correct":true},{"label":"因為 $C_2$ 在裡面","why":"在裡面還是外面不決定正負；決定正負的是走的方向。"},{"label":"切口抵銷時把它減掉了","why":"切口抵銷的是切口自己一進一出的兩段，跟 $C_2$ 無關。"}]},
-          "say": "切口走了一進一出，互相抵銷。內圈是順時針走的，換回逆時針要變號，所以兩圈的積分相等。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"切口抵銷：${{a:\\oint_{C_1}f\\,dz}}-{{b:\\oint_{C_2}f\\,dz}}=0$","on":"剩下"},
-            {"do":"underline","term":"b","on":"內圈"},
-            {"do":"write","line":"$C_2$ 順時針，方向反，積分變號","why":true,"on":"順時針"},
-            {"do":"write","line":"$\\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz$","why":true,"on":"兩圈"}
-          ] }
-      ],
-      "key": "切口來回各走一次，積分剛好抵銷",
-      "proof": true,
-      "of": 3,
-      "skeleton": "構造",
-      "where": {
-        "ask": "「$f$ 在 $C_1$、$C_2$ 之間全純」用在哪一步？",
-        "steps": [
-          {
-            "label": "切一刀，連成一條封閉曲線",
-            "why": "這一步只是畫路徑，還沒碰到 $f$。"
-          },
-          {
-            "label": "新曲線的積分為 $0$",
-            "correct": true
-          },
-          {
-            "label": "切口來回抵銷，剩 $\\oint_{C_1}-\\oint_{C_2}$",
-            "why": "這只用到同一段路反著走，積分變號；跟 $f$ 全不全純無關。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "兩個奇異點",
-      "beats": [
-        { "show": ["$\\oint_{|z|=2}\\frac{dz}{z^2-1}$"],
-          "note": "$\\pm 1$ 都在圓內。",
-          "say": "這次正負一兩個奇異點都在圓內，Cauchy 定理不能直接用。",
-          "board": [
-            {"do":"write","line":"$\\oint_{|z|=2}\\frac{dz}{z^2-1}$"},
-            {"do":"write","line":"$z=\\pm1$ 都在圓內","on":"奇異點"}
-          ] },
-        { "show": ["$\\frac{1}{2}\\left(\\frac{1}{z-1}-\\frac{1}{z+1}\\right)$"],
-          "say": "部分分式拆開，每一項只有一個奇異點。",
-          "board": [
-            {"do":"write","line":"$= \\frac{1}{2}\\left({{a:\\frac{1}{z-1}}}-{{b:\\frac{1}{z+1}}}\\right)$"},
-            {"do":"focus","term":"a","on":"每一項"}
-          ] },
-        { "show": ["$\\frac{A}{z-1}+\\frac{B}{z+1}$","通分：$1=A(z+1)+B(z-1)$"],
-          "say": "怎麼拆？設成 A 除以 z 減一，加 B 除以 z 加一。通分後，分子 A 乘 z 加一，加 B 乘 z 減一，要等於一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{z^2-1}=\\frac{A}{z-1}+\\frac{B}{z+1}$"},
-            {"do":"write","line":"$1=A(z+1)+B(z-1)$","on":"通分後"}
-          ] },
-        { "show": ["$z=1$：$2A=1$","$z=-1$：$-2B=1$"],
-          "note": "所以 $A=\\frac{1}{2}$、$B=-\\frac{1}{2}$。",
-          "say": "z 代一，B 那項消失，二 A 等於一。z 代負一，A 那項消失，負二 B 等於一。所以 A 是二分之一，B 是負二分之一。",
-          "board": [
-            {"do":"write","line":"$z=1$：$2A=1$，$z=-1$：$-2B=1$"},
-            {"do":"write","line":"${{ab:A=\\frac{1}{2},\\ B=-\\frac{1}{2}}}$","on":"所以"},
-            {"do":"box","term":"ab","color":"green","on":"負二分之一"}
-          ] },
-        { "show": ["每一項各自變形：$2\\pi i$"],
-          "say": "每一項各自縮成小圓，都是二派 i。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\oint\\frac{dz}{z-1}$ 與 $\\oint\\frac{dz}{z+1}$ 都是 $2\\pi i$","on":"各自"}
-          ] }
-      ],
-      "key": "部分分式拆開，每個奇異點各自變形",
-      "predict": {
-        "ask": "$\\oint_{|z|=2}\\frac{dz}{z^2-1}$ 是？",
-        "options": [
-          {
-            "label": "$0$：兩個貢獻剛好抵銷",
-            "correct": true
-          },
-          {
-            "label": "$4\\pi i$",
-            "why": "第二項前面是負號，而且整個乘 $\\frac{1}{2}$：$\\frac{1}{2}(2\\pi i-2\\pi i)=0$。"
-          },
-          {
-            "label": "$0$：因為 Cauchy 定理",
-            "why": "答案是 $0$，但理由不對：內部有奇異點，定理不適用；是兩項抵銷。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• Cauchy：$C$ 上與內部全純 ⇒ $\\oint_Cf\\,dz=0$",
+        "• 證明（$f'$ 連續）：Green 定理 + 兩條 CR 方程",
+        "• 路徑無關：中間全純，兩條路的積分相等",
+        "• 變形原理：不跨過奇異點，曲線可以隨意變形",
+        "• 多個奇異點：拆成各自的小圓；證明用割線",
+        "下一課：Cauchy 積分公式：小圓上到底剩下什麼"
+      ]
     }
   ],
   "workedExamples": [
@@ -358,51 +171,743 @@
   ],
   "checks": [
     {
-      "ask": "$\\oint_{|z|=1}\\frac{dz}{z-2}$ 是？",
+      "ask": "證明裡，CR 方程 $u_y=-v_x$ 讓哪一個二重積分變成 $0$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$2\\pi i$", "why": "奇異點 $z=2$ 在單位圓外面；圓及其內部全純，Cauchy 定理給 $0$。" },
-        { "label": "沒有定義", "why": "被積函數在圓上連續，積分有定義。" }
+        {
+          "label": "實部 $\\oint(u\\,dx-v\\,dy)$ 的 $\\iint(-v_x-u_y)\\,dA$",
+          "correct": true
+        },
+        {
+          "label": "虛部 $\\oint(v\\,dx+u\\,dy)$ 的 $\\iint(u_x-v_y)\\,dA$",
+          "why": "虛部用的是另一條 $u_x=v_y$"
+        },
+        {
+          "label": "兩個都要用到它，另一條沒用",
+          "why": "兩條 CR 方程各負責一個"
+        },
+        {
+          "label": "都不用：Green 定理本身就給 $0$",
+          "why": "Green 只把線積分換成二重積分，是 CR 讓被積函數為 $0$"
+        }
       ]
     },
     {
-      "ask": "$\\oint_{|z|=1}\\frac{dz}{z}=2\\pi i\\ne 0$，跟 Cauchy 定理矛盾嗎？",
+      "ask": "$\\displaystyle\\oint_{|z|=2}\\Big(\\frac{3}{z-1}+\\cos z\\Big)\\,dz=$？",
       "options": [
-        { "label": "不矛盾：$\\frac{1}{z}$ 在圓的內部 $z=0$ 不全純，條件不成立", "correct": true },
-        { "label": "矛盾，所以 Cauchy 定理有例外", "why": "定理要求內部全純；條件不成立時定理不說任何事。" },
-        { "label": "不矛盾，因為 $\\frac{1}{z}$ 不連續", "why": "$\\frac{1}{z}$ 在圓上連續；問題在內部的 $0$。" }
+        {
+          "label": "$6\\pi i$",
+          "correct": true
+        },
+        {
+          "label": "$0$",
+          "why": "$\\cos z$ 那項是 $0$，但 $\\frac{3}{z-1}$ 的奇異點 $1$ 在圓內"
+        },
+        {
+          "label": "$2\\pi i$",
+          "why": "忘了乘係數 $3$"
+        },
+        {
+          "label": "$6\\pi i+2\\pi i\\cos1$",
+          "why": "$\\cos z$ 沒有奇異點，Cauchy 定理直接給 $0$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "結論：全純就繞一圈是 0",
+      "beats": [
+        {
+          "show": [
+            "Cauchy 定理：$C$ 是分段光滑的簡單封閉曲線，$f$ 在一個包含 $C$ 與 $C$ 的內部的開集上全純，則",
+            "$\\oint_C f(z)\\,dz=0$"
+          ],
+          "say": "柯西定理：C 是簡單封閉曲線，f 在 C 上、以及 C 的整個內部都全純，那 f 沿 C 繞一圈的積分是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Cauchy 定理：$C$ 是分段光滑的簡單封閉曲線，$f$ 在一個包含 $C$ 與 $C$ 的內部的開集上全純，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\oint_C f(z)\\,dz=0}}$",
+              "on": "以及"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "繞一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課：有反導函數 ⇒ 繞一圈是 0。這一課：只要全純就夠"
+          ],
+          "say": "上一課說，有反導函數，繞一圈就是 0。這一課更強：不用先找反導函數，只要全純就夠了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課：有反導函數 ⇒ 繞一圈是 0。這一課：只要全純就夠"
+            },
+            {
+              "do": "write",
+              "line": "　方向不影響：反向只差一個負號，$-0=0$",
+              "color": "violet",
+              "on": "課更"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\oint_{|z|=1}e^{z^2}\\,dz=0$"
+          ],
+          "say": "例一：e 的 z 平方次方，是處處全純的整函數，所以沿單位圓的積分直接是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\oint_{|z|=1}e^{z^2}\\,dz=0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$e^{z^2}$ 的反導函數寫不出初等式子，但不需要",
+              "color": "violet",
+              "on": "的整"
+            }
+          ]
+        },
+        {
+          "show": [
+            "條件裡的「內部」不能少：",
+            "$\\oint_{|z|=1}\\frac{dz}{z}=2\\pi i\\ne0$"
+          ],
+          "say": "條件裡的內部不能少。z 分之一在單位圓上每一點都全純，但圓裡面的 0 不行，結果是 2 派 i，不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "條件裡的「內部」不能少："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\oint_{|z|=1}\\frac{dz}{z}=2\\pi i\\ne0$",
+              "on": "但圓"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\oint_{|z|=1}\\frac{dz}{z^2-4}=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$2\\pi i$",
+            "why": "只有奇異點在裡面時才可能不是 $0$；$\\pm2$ 在 $|z|=1$ 外面"
+          },
+          {
+            "label": "$\\pi i$",
+            "why": "不用算：$|z|\\le1$ 上 $z^2-4\\ne0$"
+          },
+          {
+            "label": "$-\\frac{\\pi i}{2}$",
+            "why": "把 $\\pm2$ 當成在圓裡面了"
+          }
+        ]
+      }
+    },
+    {
+      "title": "為什麼：Green + CR",
+      "beats": [
+        {
+          "show": [
+            "假設 $f=u+iv$ 的 $f'$ 連續（所以 $u,v$ 的偏導數連續）。上一課：",
+            "$\\oint_C f\\,dz=\\oint_C(u\\,dx-v\\,dy)+i\\oint_C(v\\,dx+u\\,dy)$"
+          ],
+          "say": "為什麼？先多假設 f prime 連續，這樣 u、v 的偏導數都連續。上一課把積分拆成兩個實數的線積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "假設 $f=u+iv$ 的 $f'$ 連續（所以 $u,v$ 的偏導數連續）。上一課："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\oint_C f\\,dz=\\oint_C(u\\,dx-v\\,dy)+i\\oint_C(v\\,dx+u\\,dy)$",
+              "on": "的偏"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Green 定理（$C$ 正向，$D$ 是內部）：",
+            "$\\oint_C P\\,dx+Q\\,dy=\\iint_D\\big(Q_x-P_y\\big)\\,dA$"
+          ],
+          "say": "兩個都用格林定理換成二重積分：P d x 加 Q d y 的環流，等於 Q 對 x 偏微分減 P 對 y 偏微分，在內部積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Green 定理（$C$ 正向，$D$ 是內部）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\oint_C P\\,dx+Q\\,dy=\\iint_D\\big(Q_x-P_y\\big)\\,dA}}$",
+              "on": "的環"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "偏微#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "實部：$P=u$，$Q=-v$：",
+            "$\\iint_D(-v_x-u_y)\\,dA=0\\quad(\\text{CR：}u_y=-v_x)$"
+          ],
+          "say": "實部：P 是 u，Q 是負 v，被積函數是負 v x 減 u y。由柯西黎曼方程，u y 等於負 v x，所以處處是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實部：$P=u$，$Q=-v$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_D(-v_x-u_y)\\,dA=0\\quad(\\text{CR：}u_y=-v_x)$",
+              "on": "由柯"
+            }
+          ]
+        },
+        {
+          "show": [
+            "虛部：$P=v$，$Q=u$：",
+            "$\\iint_D(u_x-v_y)\\,dA=0\\quad(\\text{CR：}u_x=v_y)$"
+          ],
+          "say": "虛部：P 是 v，Q 是 u，被積函數是 u x 減 v y，又由柯西黎曼方程是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "虛部：$P=v$，$Q=u$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_D(u_x-v_y)\\,dA=0\\quad(\\text{CR：}u_x=v_y)$",
+              "on": "又由"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩部分都是 $0$，所以 $\\oint_Cf\\,dz=0$　$\\blacksquare$"
+          ],
+          "say": "實部虛部都是 0，證畢。全純的兩個柯西黎曼方程，剛好分別讓兩個二重積分消失。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩部分都是 $0$，所以 $\\oint_Cf\\,dz=0$　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　Green 需要偏導數連續：$u_x=\\operatorname{Re}f'$、$v_x=\\operatorname{Im}f'$、$u_y=-v_x$、$v_y=u_x$ 都連續",
+              "color": "violet",
+              "on": "黎曼"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "用 Green 定理證明 Cauchy 定理時，哪一步用到 CR 方程？",
-      "options": [
-        { "label": "讓 $\\iint(-v_x-u_y)$ 與 $\\iint(u_x-v_y)$ 的被積函數都等於 $0$", "correct": true },
-        { "label": "把 $\\oint f\\,dz$ 拆成實部虛部", "why": "那只是代數展開，任何 $f$ 都可以這樣拆。" },
-        { "label": "把線積分換成二重積分", "why": "那是 Green 定理本身，跟 CR 無關。" }
+      "title": "「$f'$ 連續」可以拿掉嗎",
+      "beats": [
+        {
+          "show": [
+            "可以：Goursat 定理不假設 $f'$ 連續，直接證明 $\\oint_Cf\\,dz=0$"
+          ],
+          "say": "f prime 連續這個條件可以拿掉嗎？可以。古爾薩定理只假設可微，用三角形一直四等分的方法，直接證明積分是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "可以：Goursat 定理不假設 $f'$ 連續，直接證明 $\\oint_Cf\\,dz=0$"
+            },
+            {
+              "do": "write",
+              "line": "　證明用三角形細分加上 ML 不等式，比較長，這裡不證；它是複變課程第一個硬證明",
+              "color": "violet",
+              "on": "只假"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課會看到：全純函數的 $f'$ 自動連續（甚至無限次可微）"
+          ],
+          "say": "而且下一課會看到，全純函數的導數自動連續，甚至無限次可微。所以這個假設其實不會錯過任何函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課會看到：全純函數的 $f'$ 自動連續（甚至無限次可微）"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "推論：路徑無關",
+      "beats": [
+        {
+          "show": [
+            "$C_1$、$C_2$ 都從 $A$ 到 $B$，合起來 $C_1-C_2$ 是簡單封閉曲線，$f$ 在它和內部全純：",
+            "$\\int_{C_1}f\\,dz-\\int_{C_2}f\\,dz=\\oint_{C_1-C_2}f\\,dz=0$"
+          ],
+          "say": "推論一：路徑無關。兩條路從 A 到 B，第一條去、第二條倒著回來，合成一條封閉曲線。中間全純，積分是 0，所以兩條路的積分相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C_1$、$C_2$ 都從 $A$ 到 $B$，合起來 $C_1-C_2$ 是簡單封閉曲線，$f$ 在它和內部全純："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_{C_1}f\\,dz-\\int_{C_2}f\\,dz=\\oint_{C_1-C_2}f\\,dz=0}}$",
+              "on": "第一"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "合成"
+            },
+            {
+              "do": "write",
+              "line": "　在圓盤（或任何凸區域）裡，全純函數都有反導函數 $F(z)=\\int_{[z_0,z]}f$，所以任何兩條路都相等",
+              "color": "violet",
+              "on": "分是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟上一課的 $\\bar z$ 對照：$\\bar z$ 不全純，所以路徑有關"
+          ],
+          "say": "跟上一課的 z bar 對照：z bar 不全純，所以兩條路的答案不同，這並不矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟上一課的 $\\bar z$ 對照：$\\bar z$ 不全純，所以路徑有關"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推論二：變形原理",
+            "$C_1$ 包住 $C_2$（都正向），$f$ 在兩者之間（含曲線上）全純："
+          ],
+          "say": "推論二是最好用的變形原理：大曲線 C 1 包住小曲線 C 2，都逆時針，只要 f 在兩條曲線之間全純，兩個積分相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論二：變形原理"
+            },
+            {
+              "do": "write",
+              "line": "$C_1$ 包住 $C_2$（都正向），$f$ 在兩者之間（含曲線上）全純：",
+              "on": "曲線#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\oint_{C_1}f\\,dz=\\oint_{C_2}f\\,dz}}$",
+              "on": "都逆"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "條曲"
+            }
+          ]
+        },
+        {
+          "show": [
+            "曲線可以在全純的地方隨意變形，只要不跨過奇異點"
+          ],
+          "say": "換句話說，積分路徑可以在全純的地方隨意拉扯變形，只要不跨過奇異點，積分就不變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "曲線可以在全純的地方隨意變形，只要不跨過奇異點",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這解釋了上一課的「跟半徑 $r$ 無關」",
+              "color": "violet",
+              "on": "拉扯"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$C$ 是任意一條繞 $z=5i$ 一圈的正向簡單封閉曲線。$\\oint_C\\frac{dz}{z-5i}$ 是？",
-      "options": [
-        { "label": "$2\\pi i$", "correct": true },
-        { "label": "要知道 $C$ 的形狀才能算", "why": "由變形原理，任何繞 $5i$ 一圈的正向曲線都可以換成小圓，答案相同。" },
-        { "label": "$10\\pi i$", "why": "答案跟奇異點的位置、曲線的大小都無關，永遠是 $2\\pi i$。" }
+      "title": "例：奇異點在裡面還是外面",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\oint\\frac{dz}{z-3}$，沿 $|z|=2$ 與 $|z|=4$（逆時針）"
+          ],
+          "say": "例二：z 減 3 分之一，分別沿半徑 2 和半徑 4 的圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\oint\\frac{dz}{z-3}$，沿 $|z|=2$ 與 $|z|=4$（逆時針）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z|=2$：$3$ 在圓外。在開圓盤 $|z|<2.5$ 上全純 ⇒ $0$"
+          ],
+          "say": "半徑 2：唯一的奇異點 3 在圓外。在半徑 2.5 的開圓盤上全純，直接用柯西定理，答案是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z|=2$：$3$ 在圓外。在開圓盤 $|z|<2.5$ 上全純 ⇒ $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z|=4$：$3$ 在圓內，Cauchy 不能用。變形成 $|z-3|=1$：",
+            "$\\oint_{|z|=4}\\frac{dz}{z-3}=\\oint_{|z-3|=1}\\frac{dz}{z-3}=2\\pi i$"
+          ],
+          "say": "半徑 4：3 在圓裡面，柯西定理不能用。但兩條曲線之間全純，變形成繞 3 的小圓，就是最重要的積分：2 派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z|=4$：$3$ 在圓內，Cauchy 不能用。變形成 $|z-3|=1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\oint_{|z|=4}\\frac{dz}{z-3}=\\oint_{|z-3|=1}\\frac{dz}{z-3}=2\\pi i}}$",
+              "color": "red",
+              "on": "但兩"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "的小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "左圖：藍色小圓沒包住 3，綠色大圓包住了。右圖是下一個例子：半徑 2 的圓裡面，有 1 和負 1 兩個奇異點。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 300\" width=\"640\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hFk\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11hFb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11hFg\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker></defs><line x1=\"12\" y1=\"150\" x2=\"291\" y2=\"150\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11hFk)\"/><line x1=\"150\" y1=\"288\" x2=\"150\" y2=\"9\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11hFk)\"/><circle cx=\"150\" cy=\"150\" r=\"60\" stroke=\"var(--blue)\" stroke-width=\"2.8\"/><circle cx=\"150\" cy=\"150\" r=\"120\" stroke=\"var(--green)\" stroke-width=\"2.8\"/><path d=\"M120 98 A60 60 0 0 0 98 120\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hFb)\"/><path d=\"M90 46.1 A120 120 0 0 0 65.1 65.1\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hFg)\"/><circle cx=\"240\" cy=\"150\" r=\"6\" fill=\"var(--red)\"/><text x=\"234\" y=\"176\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"177\" y=\"103\" fill=\"var(--blue)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\">｜<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>｜= 2</text><text x=\"228\" y=\"48\" fill=\"var(--green)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\">｜<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>｜= 4</text><line x1=\"337.5\" y1=\"150\" x2=\"618\" y2=\"150\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11hFk)\"/><line x1=\"475\" y1=\"287.5\" x2=\"475\" y2=\"7\" stroke=\"var(--ink)\" stroke-width=\"1.6\" marker-end=\"url(#ah11hFk)\"/><circle cx=\"475\" cy=\"150\" r=\"110\" stroke=\"var(--blue)\" stroke-width=\"2.8\"/><path d=\"M420 54.7 A110 110 0 0 0 390.7 79.3\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hFb)\"/><circle cx=\"530\" cy=\"150\" r=\"24\" stroke=\"var(--muted)\" stroke-width=\"2.2\" stroke-dasharray=\"5 4\"/><circle cx=\"530\" cy=\"150\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"420\" cy=\"150\" r=\"24\" stroke=\"var(--muted)\" stroke-width=\"2.2\" stroke-dasharray=\"5 4\"/><circle cx=\"420\" cy=\"150\" r=\"6\" fill=\"var(--red)\"/><text x=\"524\" y=\"196\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"406\" y=\"196\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"527.3\" y=\"53.8\" fill=\"var(--blue)\" font-size=\"18\" style=\"font-family:KaTeX_Main,serif\">｜<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>｜= 2</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個奇異點：各自變形",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\oint_{|z|=2}\\frac{dz}{z^2-1}$：奇異點 $\\pm1$ 都在裡面"
+          ],
+          "say": "例三：z 平方減 1 分之一，沿半徑 2 的圓。奇異點 1 和負 1 都在裡面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\oint_{|z|=2}\\frac{dz}{z^2-1}$：奇異點 $\\pm1$ 都在裡面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多個洞的變形：$\\oint_C=\\oint_{c_1}+\\oint_{c_2}$（各繞一個奇異點的小圓）"
+          ],
+          "say": "變形原理推廣到多個洞：大圓的積分，等於繞每個奇異點的小圓積分加起來。證明一樣用割線，等一下看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多個洞的變形：$\\oint_C=\\oint_{c_1}+\\oint_{c_2}$（各繞一個奇異點的小圓）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "部分分式：$\\dfrac{1}{z^2-1}=\\dfrac12\\Big(\\dfrac{1}{z-1}-\\dfrac{1}{z+1}\\Big)$"
+          ],
+          "say": "小圓上怎麼算？先部分分式：2 分之一，乘 z 減 1 分之一，減 z 加 1 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "部分分式：$\\dfrac{1}{z^2-1}=\\dfrac12\\Big(\\dfrac{1}{z-1}-\\dfrac{1}{z+1}\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 繞 $1$：$\\frac12\\cdot2\\pi i-\\frac12\\cdot0=\\pi i$",
+            "• 繞 $-1$：$\\frac12\\cdot0-\\frac12\\cdot2\\pi i=-\\pi i$"
+          ],
+          "say": "繞 1 的小圓：第一項是 2 派 i 的一半，第二項在小圓裡全純，是 0，得派 i。繞負 1：得負派 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 繞 $1$：$\\frac12\\cdot2\\pi i-\\frac12\\cdot0=\\pi i$"
+            },
+            {
+              "do": "write",
+              "line": "• 繞 $-1$：$\\frac12\\cdot0-\\frac12\\cdot2\\pi i=-\\pi i$",
+              "on": "在小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\oint_{|z|=2}\\frac{dz}{z^2-1}=\\pi i+(-\\pi i)=0$"
+          ],
+          "say": "加起來剛好是 0。注意：這個 0 不是柯西定理給的，裡面有奇異點，是兩個貢獻剛好抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\oint_{|z|=2}\\frac{dz}{z^2-1}=\\pi i+(-\\pi i)=0}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "定理"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "變形原理的證明",
+      "beats": [
+        {
+          "show": [
+            "$C_1$ 外、$C_2$ 內，都正向；畫兩條割線把中間的環切成兩塊"
+          ],
+          "say": "最後證明變形原理。在兩條曲線之間，畫兩條割線，把環形區域切成上下兩塊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$C_1$ 外、$C_2$ 內，都正向；畫兩條割線把中間的環切成兩塊"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "上面一塊的邊界叫伽瑪 1，下面一塊叫伽瑪 2，都沿著內部在左手邊的方向走。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 300\" width=\"640\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11hGb\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11hGg\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker></defs><path d=\"M320 143 A120 120 0 0 0 80 143 L155 143 A45 45 0 0 1 245 143 Z\" stroke=\"var(--blue)\" stroke-width=\"2.8\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><path d=\"M80 157 A120 120 0 0 0 320 157 L245 157 A45 45 0 0 1 155 157 Z\" stroke=\"var(--green)\" stroke-width=\"2.8\" fill=\"var(--green)\" fill-opacity=\"0.0\"/><line x1=\"206\" y1=\"23\" x2=\"192\" y2=\"23\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGb)\"/><line x1=\"192\" y1=\"98\" x2=\"206\" y2=\"98\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGb)\"/><line x1=\"110\" y1=\"143\" x2=\"130\" y2=\"143\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGb)\"/><line x1=\"270\" y1=\"143\" x2=\"290\" y2=\"143\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGb)\"/><line x1=\"192\" y1=\"277\" x2=\"206\" y2=\"277\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGg)\"/><line x1=\"206\" y1=\"202\" x2=\"192\" y2=\"202\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGg)\"/><line x1=\"130\" y1=\"157\" x2=\"110\" y2=\"157\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGg)\"/><line x1=\"290\" y1=\"157\" x2=\"270\" y2=\"157\" stroke=\"var(--green)\" stroke-width=\"2.8\" marker-end=\"url(#ah11hGg)\"/><text x=\"188\" y=\"73\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">Γ<tspan font-size=\"15\" dy=\"5\">1</tspan></text><text x=\"188\" y=\"242\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">Γ<tspan font-size=\"15\" dy=\"5\">2</tspan></text><text x=\"288\" y=\"51\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan font-size=\"14\" dy=\"5\" style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"186\" y=\"156\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan font-size=\"14\" dy=\"5\" style=\"font-family:KaTeX_Main,serif\">2</tspan></text><text x=\"365\" y=\"95\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">外圈：兩塊都逆時針走</text><text x=\"365\" y=\"135\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">內圈：兩塊都順時針走</text><text x=\"365\" y=\"175\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">割線：一去一回，抵消</text><text x=\"365\" y=\"225\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">Γ<tspan font-size=\"14\" dy=\"5\">1</tspan><tspan dy=\"-5\"> + Γ</tspan><tspan font-size=\"14\" dy=\"5\">2</tspan><tspan dy=\"-5\"> = </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan><tspan font-size=\"14\" dy=\"5\">1</tspan><tspan dy=\"-5\"> − </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">C</tspan><tspan font-size=\"14\" dy=\"5\">2</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\Gamma_1$、$\\Gamma_2$ 都是簡單封閉曲線，裡面沒有奇異點：$\\oint_{\\Gamma_k}f\\,dz=0$",
+            "• 外圈 $C_1$：兩塊合起來剛好逆時針走一圈"
+          ],
+          "say": "每一塊都是簡單封閉曲線，裡面全純，積分是 0。把兩塊加起來：外圈合起來逆時針一圈；內圈合起來是順時針一圈；割線一去一回抵消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\Gamma_1$、$\\Gamma_2$ 都是簡單封閉曲線，裡面沒有奇異點：$\\oint_{\\Gamma_k}f\\,dz=0$"
+            },
+            {
+              "do": "write",
+              "line": "• 外圈 $C_1$：兩塊合起來剛好逆時針走一圈",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "• 內圈 $C_2$：兩塊合起來剛好順時針走一圈，就是 $-C_2$",
+              "on": "圈合#1"
+            },
+            {
+              "do": "write",
+              "line": "• 每條割線被走兩次、方向相反：抵消",
+              "on": "是順"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0=\\oint_{\\Gamma_1}+\\oint_{\\Gamma_2}=\\oint_{C_1}f\\,dz-\\oint_{C_2}f\\,dz\\quad\\blacksquare$"
+          ],
+          "say": "所以 0 等於 C 1 的積分減 C 2 的積分，兩者相等。證畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle 0=\\oint_{\\Gamma_1}+\\oint_{\\Gamma_2}=\\oint_{C_1}f\\,dz-\\oint_{C_2}f\\,dz\\quad\\blacksquare}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "的積#1"
+            },
+            {
+              "do": "write",
+              "line": "　多個洞：每個洞各畫割線連出去，同樣得到 $\\oint_C=\\sum_k\\oint_{c_k}$",
+              "color": "violet",
+              "on": "積分#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "用變形算 $\\oint_C f\\,dz$（$C$ 簡單封閉、正向）"
+          ],
+          "say": "把今天的做法排成步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用變形算 $\\oint_C f\\,dz$（$C$ 簡單封閉、正向）",
+        "steps": [
+          {
+            "label": "找出 $f$ 的奇異點"
+          },
+          {
+            "label": "判斷哪些在 $C$ 的內部",
+            "why": "先要有上一步：找出 $f$ 的奇異點"
+          },
+          {
+            "label": "沒有在內部的：Cauchy 定理，直接是 $0$",
+            "why": "先要有上一步：判斷哪些在 $C$ 的內部"
+          },
+          {
+            "label": "有在內部的：變形成繞每個奇異點的小圓",
+            "why": "先要有上一步：沒有在內部的：Cauchy 定理，直接是 $0$"
+          },
+          {
+            "label": "小圓上用部分分式與 $\\oint(z-z_0)^n\\,dz$ 算",
+            "why": "先要有上一步：有在內部的：變形成繞每個奇異點的小圓"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• Cauchy：$C$ 上與內部全純 ⇒ $\\oint_Cf\\,dz=0$",
+            "• 證明（$f'$ 連續）：Green 定理 + 兩條 CR 方程"
+          ],
+          "say": "整理：內部全純，繞一圈是 0；證明是格林定理加柯西黎曼方程；有奇異點，就把曲線變形成繞奇異點的小圓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Cauchy：$C$ 上與內部全純 ⇒ $\\oint_Cf\\,dz=0$"
+            },
+            {
+              "do": "write",
+              "line": "• 證明（$f'$ 連續）：Green 定理 + 兩條 CR 方程",
+              "on": "圈是"
+            },
+            {
+              "do": "write",
+              "line": "• 路徑無關：中間全純，兩條路的積分相等",
+              "on": "定理"
+            },
+            {
+              "do": "write",
+              "line": "• 變形原理：不跨過奇異點，曲線可以隨意變形",
+              "on": "有奇"
+            },
+            {
+              "do": "write",
+              "line": "• 多個奇異點：拆成各自的小圓；證明用割線",
+              "on": "形成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Cauchy 積分公式：小圓上到底剩下什麼"
+          ],
+          "say": "下一課，柯西積分公式：小圓上剩下的東西，正好是函數值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Cauchy 積分公式：小圓上到底剩下什麼"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "contour-integral", "green-theorem"],
-    "fine": ["cauchy-theorem-apply", "cauchy-theorem-singularity-location", "cauchy-theorem-deformation", "cauchy-theorem-green-proof"]
+    "coarse": [
+      "complex",
+      "contour-integral",
+      "green-theorem"
+    ],
+    "fine": [
+      "cauchy-theorem-apply",
+      "cauchy-theorem-singularity-location",
+      "cauchy-theorem-deformation",
+      "cauchy-theorem-green-proof"
+    ]
   },
   "practice": [
-    { "id": "der-084", "core": true, "trains": "cauchy-theorem-deformation" },
-    { "id": "cg-11h-015", "core": true, "trains": "cauchy-theorem-singularity-location" },
-    { "id": "cg-11h-016", "core": true, "trains": "cauchy-theorem-singularity-location" },
-    { "id": "cg-11h-018", "core": true, "trains": "cauchy-theorem-deformation" },
-    { "id": "cg-11h-017", "trains": "cauchy-theorem-singularity-location" },
-    { "id": "cg-11h-019", "trains": "cauchy-theorem-deformation" }
+    {
+      "id": "der-084",
+      "core": true,
+      "trains": "cauchy-theorem-deformation"
+    },
+    {
+      "id": "cg-11h-015",
+      "core": true,
+      "trains": "cauchy-theorem-singularity-location"
+    },
+    {
+      "id": "cg-11h-016",
+      "core": true,
+      "trains": "cauchy-theorem-singularity-location"
+    },
+    {
+      "id": "cg-11h-018",
+      "core": true,
+      "trains": "cauchy-theorem-deformation"
+    },
+    {
+      "id": "cg-11h-017",
+      "trains": "cauchy-theorem-singularity-location"
+    },
+    {
+      "id": "cg-11h-019",
+      "trains": "cauchy-theorem-deformation"
+    }
   ],
   "gaps": [
-    { "tag": "cauchy-theorem-green-proof", "count": 1, "note": "白話證明題：用 Green 定理與 CR 方程證明 Cauchy 定理。" }
+    {
+      "tag": "cauchy-theorem-green-proof",
+      "count": 1,
+      "note": "白話證明題：用 Green 定理與 CR 方程證明 Cauchy 定理。"
+    }
   ]
 }

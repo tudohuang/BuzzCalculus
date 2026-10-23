@@ -1,215 +1,153 @@
 {
   "id": "darboux-integral",
   "title": "Darboux 積分",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["upper-lower-sums"],
-  "next": ["riemann-integrability"],
-  "related": ["dirichlet-function"],
-  "objectives": [
-    "寫得出上積分 $\\inf U(f,P)$ 與下積分 $\\sup L(f,P)$ 的定義，並說明為什麼下積分 $\\le$ 上積分。",
-    "用一族分割的上和與下和夾出積分值，證明 $\\int_0^1 x\\,dx=\\frac{1}{2}$、$\\int_0^1 x^2\\,dx=\\frac{1}{3}$。",
-    "說明改變有限個點的函數值不影響積分。"
+  "prerequisites": [
+    "upper-lower-sums"
   ],
-  "visual": "兩條數線並排：左邊標出 L(f, Pₙ)，n = 1, 2, 4, 8, … 一路往右爬；右邊標出 U(f, Pₙ) 一路往左降。兩串點中間的縫隙即時顯示寬度，縫隙縮成一點時亮起「可積」。換成 Dirichlet 函數時，兩串點分別停在 0 與 1，縫隙永遠是 1。",
+  "next": [
+    "riemann-integrability"
+  ],
+  "related": [
+    "dirichlet-function"
+  ],
+  "objectives": [
+    "寫得出上積分 $\\inf U(f,P)$ 與下積分 $\\sup L(f,P)$ 的定義，並說明為什麼下積分 $\\le$ 上積分",
+    "用一族分割的上和與下和夾出積分值，證明 $\\int_0^1 x\\,dx=\\frac12$、$\\int_0^1 x^2\\,dx=\\frac13$",
+    "說明改變有限個點的函數值不影響積分"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 從兩邊逼近同一個數",
       "body": [
-        "上一課知道：任何下和都 $\\le$ 任何上和。所以所有下和組成的集合有上界（隨便一個上和），所有上和組成的集合有下界。由完備性，下面兩個數都存在。",
-        "直覺：下和是「保證不超過的估計」，取最好的那個就是下積分；上和是「保證不低於的估計」，取最好的就是上積分。兩個最佳估計若碰在一起，面積就只能是那個數。"
+        "上一課：任何下和 $\\le$ 任何上和",
+        "下和們有上界（任一個上和）⇒ $\\sup$ 存在",
+        "上和們有下界（任一個下和）⇒ $\\inf$ 存在",
+        "兩個數相等 ⇒ 中間只剩一個數：那就是面積"
       ],
-      "collapsible": false
+      "tex": [
+        "L(f,P)\\le U(f,Q)\\quad\\text{（任意 }P,Q\\text{）}"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "$f$ 在 $[a,b]$ 上有界。上積分 $=\\inf\\{U(f,P):P$ 是 $[a,b]$ 的分割$\\}$，下積分 $=\\sup\\{L(f,P):P$ 是分割$\\}$。",
-        "下積分 $\\le$ 上積分永遠成立：固定 $Q$，每個 $L(f,P)\\le U(f,Q)$，所以 $U(f,Q)$ 是下和集合的上界，$\\sup L\\le U(f,Q)$；這對每個 $Q$ 都對，所以 $\\sup L$ 是上和集合的下界，$\\sup L\\le\\inf U$。",
-        "若兩者相等，稱 $f$ 在 $[a,b]$ 上 Darboux 可積，共同的值記為 $\\int_a^b f$。"
+        "$f$ 在 $[a,b]$ 上有界：",
+        "定理：$\\displaystyle\\underline{\\int_a^b}f\\le\\overline{\\int_a^b}f$",
+        "策略：「最小上界」用一次，「最大下界」再用一次",
+        "證明：固定 $Q$。每個 $L(f,P)\\le U(f,Q)$",
+        "⇒ $U(f,Q)$ 是下和們的上界 ⇒ $\\underline{\\int}f\\le U(f,Q)$",
+        "這對每個 $Q$ 都成立 ⇒ $\\underline{\\int}f$ 是上和們的下界",
+        "定義：兩者相等時，$f$（Darboux）可積，",
+        "12.40 會看到兩者不相等的例子：Dirichlet 函數，下積分 $0$、上積分 $1$"
       ],
-      "tex": ["\\underline{\\int_a^b} f=\\sup_P L(f,P)\\ \\le\\ \\overline{\\int_a^b} f=\\inf_P U(f,P)"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\overline{\\int_a^b}f&=\\inf\\{U(f,P):P\\text{ 是分割}\\}\\\\\\underline{\\int_a^b}f&=\\sup\\{L(f,P):P\\text{ 是分割}\\}\\end{aligned}",
+        "\\Rightarrow\\ \\underline{\\int_a^b}f\\le\\inf_Q U(f,Q)=\\overline{\\int_a^b}f\\quad\\blacksquare",
+        "\\int_a^b f=\\underline{\\int_a^b}f=\\overline{\\int_a^b}f"
+      ]
     },
     {
-      "heading": "③ 怎麼實際算：只要一族分割",
+      "heading": "② 試一題",
       "body": [
-        "不必掃過所有分割。若找得到一族分割 $P_n$，使 $L(f,P_n)$ 與 $U(f,P_n)$ 都收斂到同一個 $I$，那麼：下積分 $\\ge L(f,P_n)$ 對每個 $n$ 成立，取極限得下積分 $\\ge I$；同理上積分 $\\le I$。再配上下積分 $\\le$ 上積分，兩者都等於 $I$。",
-        "不可積的例子在〈Dirichlet 函數〉：每個上和都是 1、每個下和都是 0，上積分 $1\\ne$ 下積分 0。"
-      ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "取最好的估計",
-      "beats": [
-        { "show": ["任何下和 $\\le$ 任何上和"],
-          "say": "上一課知道：任何一個下和，都不超過任何一個上和。",
-          "board": [
-            { "do": "write", "line": "${{l:L(f,P)}}\\le{{u:U(f,Q)}}$", "tint": {"l": "blue", "u": "violet"} },
-            { "do": "focus", "term": "l", "on": "下和" },
-            { "do": "focus", "term": "u", "on": "上和" }
-          ] },
-        { "show": ["下和：保證不超過", "上和：保證不低於"],
-          "say": "下和是保證不會超過的估計，上和是保證不會低於的估計。各自取最好的那一個。",
-          "board": [
-            { "do": "transform", "line": "${{l:L(f,P)}}\\le$ 面積 $\\le{{u:U(f,Q)}}$" },
-            { "do": "underline", "term": "l", "label": "不會超過", "on": "保證不會超過" },
-            { "do": "underline", "term": "u", "label": "不會低於", "on": "上和是" }
-          ] },
-        { "show": ["上積分 $=\\inf_P U(f,P)$"], "note": "上和越小越好。",
-          "say": "上和越小越接近，所以上積分是所有上和的下確界。",
-          "board": [
-            { "do": "write", "line": "上積分 $={{inf:\\inf_P}}\\,{{up:U(f,P)}}$", "tint": {"up": "violet"},"on": "上積分" },
-            { "do": "underline", "term": "inf", "label": "下確界", "on": "所有上和" }
-          ] },
-        { "show": ["下積分 $=\\sup_P L(f,P)$"], "note": "完備性保證這兩個數存在。",
-          "say": "下和越大越好，下積分是所有下和的上確界。實數的完備性保證這兩個數都存在。",
-          "board": [
-            { "do": "write", "line": "下積分 $={{sup:\\sup_P}}\\,{{lp:L(f,P)}}$", "tint": {"lp": "blue"},"on": "下積分是" },
-            { "do": "underline", "term": "sup", "label": "上確界", "on": "所有下和" }
-          ] }
-      ],
-      "check": 0
+        "一個分割只能把積分框在一個範圍裡"
+      ]
     },
     {
-      "title": "碰在一起就可積",
-      "beats": [
-        { "show": ["下積分 $\\le$ 上積分"], "note": "每個 $L(f,P)\\le U(f,Q)$，取 $\\sup$ 再取 $\\inf$。",
-          "say": "因為每個下和都不超過每個上和，取完上確界、下確界之後，方向不變：下積分不超過上積分。",
-          "board": [
-            { "do": "write", "line": "下積分 $\\le$ 上積分" },
-            { "do": "write", "line": "$\\sup_P L(f,P)\\le\\inf_P U(f,P)$", "on": "取完上確界" }
-          ] },
-        { "show": ["相等 $\\Rightarrow$ Darboux 可積，記為 $\\int_a^b f$"],
-          "say": "如果兩個最佳估計碰在一起，面積就只能是那個數，這時叫 Darboux 可積。",
-          "board": [
-            { "do": "write", "line": "下積分 $=$ 上積分" },
-            { "do": "write", "line": "$\\Rightarrow$ Darboux 可積，記為 $\\int_a^b f$", "on": "這時叫" }
-          ] },
-        { "show": ["Dirichlet 函數：上積分 1，下積分 0"],
-          "say": "可是不一定碰得到。Dirichlet 函數每個上和都是一，每個下和都是零，永遠碰不到。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "Dirichlet 函數：不碰在一起", "on": "Dirichlet" },
-            { "do": "write", "line": "上積分 $={{a:1}}$，下積分 $={{b:0}}$", "on": "每個下和" }
-          ] }
+      "heading": "③ 只要一族分割",
+      "body": [
+        "定義要對所有分割取 $\\inf$、$\\sup$：太多了",
+        "引理：若有分割 $P_n$ 使 $U(f,P_n)-L(f,P_n)\\to0$，則 $f$ 可積，且",
+        "策略：上下積分被夾在 $L(f,P_n)$ 與 $U(f,P_n)$ 之間",
+        "證明：由定義與上面的定理，",
+        "$0\\le U(f,P_n)-I\\le U(f,P_n)-L(f,P_n)\\to0$",
+        "⇒ $U(f,P_n)\\to I$；同理 $L(f,P_n)\\to I$　$\\blacksquare$"
       ],
-      "check": 2
+      "tex": [
+        "\\int_a^b f=\\lim_{n\\to\\infty}U(f,P_n)=\\lim_{n\\to\\infty}L(f,P_n)",
+        "L(f,P_n)\\le\\underline{\\int}f\\le\\overline{\\int}f\\le U(f,P_n)",
+        "0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P_n)-L(f,P_n)\\to0"
+      ]
     },
     {
-      "title": "證明：從兩邊夾", "key": "下確界不超過任何上和，一路夾到 $\\frac{1}{2}$",
-      "proof": true, "of": "ex0", "skeleton": "夾擠",
-      "beats": [
-        { "show": ["$L(f,P_n)\\to I$、$U(f,P_n)\\to I$"], "note": "就夾出上下積分都是 $I$。",
-          "say": "策略：不必掃過所有分割。找一族分割，上和、下和都收斂到同一個數，就把上下積分夾住。",
-          "board": [
-            { "do": "write", "line": "${{ln:L(f,P_n)}}\\to I$、${{un:U(f,P_n)}}\\to I$", "tint": {"ln": "blue", "un": "violet"} },
-            { "do": "write", "line": "夾出上下積分都是 $I$", "on": "就把上下積分" }
-          ] },
-        { "show": ["$f(x)=x$ 在 $[0,1]$，等長 $P_n$", "$M_i=\\frac{i}{n}$、$m_i=\\frac{i-1}{n}$"], "note": "遞增：上確界在右端，下確界在左端。",
-          "why": {
-            "ask": "為什麼 $M_i=\\frac{i}{n}$？",
-            "say": "f 等於 x 在零到一，等分 n 段。每段的上確界為什麼是 n 分之 i？",
-            "options": [
-              { "label": "$f$ 遞增，上確界在每段的右端點", "correct": true },
-              { "label": "取每段的中點", "why": "中點是黎曼和的取點法；上和要的是每一段的上確界。" },
-              { "label": "$f$ 的最大值是 1", "why": "上確界是每一段自己的，不是整個區間的；只有最後一段才是 1。" }
-            ]
-          },
-          "say": "函數遞增，每一段最高在右端，最低在左端，所以上確界是 n 分之 i，下確界是 n 分之 i 減一。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$f(x)=x$，$[0,1]$ 等分 $n$ 段", "on": "f 等於 x" },
-            { "do": "write", "line": "${{mi:M_i=\\frac{i}{n}}}$，${{mm:m_i=\\frac{i-1}{n}}}$", "on": "每段的上確界" },
-            { "do": "underline", "term": "mi", "label": "右端", "on": "最高在右端", "why": true },
-            { "do": "underline", "term": "mm", "label": "左端", "on": "最低在左端", "why": true }
-          ] },
-        { "show": ["$U=\\frac{n+1}{2n}$，$L=\\frac{n-1}{2n}$"],
-          "say": "上和是二 n 分之 n 加一，下和是二 n 分之 n 減一。",
-          "board": [
-            { "do": "write", "line": "$U={{u:\\frac{n+1}{2n}}}$，$L={{l:\\frac{n-1}{2n}}}$" }
-          ] },
-        { "show": ["上積分 $\\le U(f,P_n)=\\frac{1}{2}+\\frac{1}{2n}$", "每個 $n$ 都成立 ⇒ 上積分 $\\le\\frac{1}{2}$"], "note": "下確界不超過集合裡任何一個數。",
-          "why": {
-            "ask": "為什麼上積分 $\\le U(f,P_n)$？",
-            "say": "為什麼上積分不超過這一族的每一個上和？",
-            "options": [
-              { "label": "上積分是所有上和的下確界", "correct": true },
-              { "label": "上積分就是 $U(f,P_n)$ 的極限", "why": "定義是所有分割的上和取下確界，不是這一族的極限；這裡只用到它不超過每一個上和。" },
-              { "label": "$U(f,P_n)$ 隨 $n$ 遞減", "why": "遞減只說上和越來越小；它跟上積分誰大，要靠下確界的定義。" }
-            ]
-          },
-          "say": "上積分是所有上和的下確界，不超過任何一個。每個 n 都成立，n 越大越逼近，上積分不超過二分之一。",
-          "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "上積分 $\\le{{un:U(f,P_n)}}=\\frac{1}{2}+\\frac{1}{2n}$", "tint": {"un": "violet"},"on": "上積分不超過" },
-            { "do": "underline", "term": "un", "label": "下確界", "on": "上積分是所有上和", "why": true },
-            { "do": "write", "line": "每個 $n$ ⇒ 上積分 $\\le\\frac{1}{2}$", "on": "每個 n 都成立", "why": true }
-          ] },
-        { "show": ["同理下積分 $\\ge\\frac{1}{2}$", "$\\frac{1}{2}\\le$ 下積分 $\\le$ 上積分 $\\le\\frac{1}{2}$"], "note": "下積分 $\\le$ 上積分永遠成立。",
-          "say": "同理下積分至少二分之一。再配上下積分不超過上積分，全部被夾成二分之一。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "同理 下積分 $\\ge\\frac{1}{2}$", "on": "同理" },
-            { "do": "write", "line": "$\\frac{1}{2}\\le$ 下積分 $\\le$ 上積分 $\\le\\frac{1}{2}$", "color": "green", "on": "再配上" }
-          ] }
+      "heading": "③ 例：$\\int_0^1x\\,dx=\\frac12$",
+      "body": [
+        "$f(x)=x$，$P_n$：遞增 ⇒ $M_i=\\frac in$，$m_i=\\frac{i-1}n$，$\\Delta x_i=\\frac1n$",
+        "$U-L=\\dfrac1n\\to0$ ⇒ 可積，且"
       ],
-      "check": 1
+      "tex": [
+        "\\begin{aligned}U(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n i=\\frac{n+1}{2n}\\\\L(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n(i-1)=\\frac{n-1}{2n}\\end{aligned}",
+        "\\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12\\quad\\blacksquare"
+      ]
     },
     {
-      "title": "$x^2$ 也一樣",
-      "beats": [
-        { "show": ["$U(f,P_n)=\\frac{(n+1)(2n+1)}{6n^2}$"], "note": "$f(x)=x^2$，用 $1^2+\\dots+n^2$ 的公式。",
-          "say": "x 平方在零到一，上和用平方和公式，化簡成六 n 平方分之 n 加一乘二 n 加一。",
-          "board": [
-            { "do": "write", "line": "$f(x)=x^2$，$[0,1]$ 等分 $n$ 段" },
-            { "do": "write", "line": "$1^2+\\dots+n^2$ 的公式", "on": "平方和公式" },
-            { "do": "write", "line": "$U(f,P_n)={{u:\\frac{(n+1)(2n+1)}{6n^2}}}$", "tint": {"u":"violet"}, "on": "化簡成" }
-          ] },
-        { "show": ["$L(f,P_n)=\\frac{(n-1)(2n-1)}{6n^2}$"],
-          "say": "下和少了最後一項，是六 n 平方分之 n 減一乘二 n 減一。",
-          "board": [
-            { "do": "write", "line": "$L(f,P_n)={{l:\\frac{(n-1)(2n-1)}{6n^2}}}$", "tint": {"l":"blue"} }
-          ] }
+      "heading": "③ 例：$\\int_0^1x^2\\,dx=\\frac13$",
+      "body": [
+        "$f(x)=x^2$，$P_n$，用 $\\sum_{i=1}^n i^2=\\frac{n(n+1)(2n+1)}6$：",
+        "$U-L\\to0$ ⇒ 可積，",
+        "捷徑：遞增時，$U-L$ 中間全部相消："
       ],
-      "predict": {
-        "ask": "$U(f,P_n)-L(f,P_n)$ 是？",
-        "options": [
-          { "label": "$\\frac{1}{n}$，兩者都 $\\to\\frac{1}{3}$", "correct": true },
-          { "label": "0", "why": "單一分割的上下和不相等；展開相減得 $\\frac{6n}{6n^2}=\\frac{1}{n}$。" },
-          { "label": "$\\frac{1}{3}$", "why": "$\\frac{1}{3}$ 是兩者共同的極限，也就是積分；差是 $\\frac{1}{n}$。" }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}U(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^n i^2=\\frac{(n+1)(2n+1)}{6n^2}\\\\L(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^{n-1} i^2=\\frac{(n-1)(2n-1)}{6n^2}\\end{aligned}",
+        "U-L=\\frac{(2n^2+3n+1)-(2n^2-3n+1)}{6n^2}=\\frac1n",
+        "\\int_0^1x^2\\,dx=\\lim_{n\\to\\infty}\\frac{(n+1)(2n+1)}{6n^2}=\\frac26=\\frac13\\quad\\blacksquare",
+        "U-L=\\frac1n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)=\\frac{f(1)-f(0)}n"
+      ]
     },
     {
-      "title": "改一個點不影響", "key": "$U\\le5\\|P\\|$：把那一段的寬度壓小",
-      "beats": [
-        { "show": ["$f=0$（$0\\le x<1$），$f(1)=5$"],
-          "say": "最後一個：函數在零到一之前都是零，只有在一跳成五。",
-          "board": [
-            { "do": "plot", "graph": {"window": [-0.15,1.25,-0.6,5.8],"curves": [{"expr": "0", "domain": [0,0.985],"color": "blue"}],"points": [{"x": 1,"y": 0,"open": true},{"x": 1,"y": 5}],"dashed": [[[1,0.15],[1,4.8]]],"labels": [{"x": 1.06,"y": 5,"text": "5", "anchor": "start"},{"x": 0,"y": -0.5,"text": "0", "anchor": "middle"},{"x": 1,"y": -0.5,"text": "1", "anchor": "middle"}],"ticks": false} }
-          ] },
-        { "show": ["每段的下確界都是 0"], "note": "下積分 $=0$。",
-          "say": "每一段都含有 x 小於一的點，下確界都是零，所以下積分是零。",
-          "board": [
-            { "do": "write", "line": "每段 $m_i=0$ ⇒ 下積分 $=0$", "on": "每一段" }
-          ] },
-        { "show": ["$U(f,P)=5(1-x_{n-1})\\le5\\|P\\|$"],
-          "say": "上和只有最後一段吃到五，其他段都是零。最後一段越窄，上和越小。",
-          "board": [
-            { "do": "write", "line": "$U(f,P)={{last:5(1-x_{n-1})}}\\le5\\|P\\|$", "on": "上和只有" },
-            { "do": "underline", "term": "last", "label": "最後一段", "on": "最後一段吃到" }
-          ] },
-        { "show": ["$U(f,P_n)=\\frac{5}{n}\\to0$"], "note": "改有限個點，可積性與積分都不變。",
-          "say": "等分 n 段，上和是 n 分之五，趨近零。上下積分都是零，改一個點的值，積分不變。",
-          "board": [
-            { "do": "transform", "line": "$U(f,P_n)=\\frac{5}{n}\\to{{z:0}}$", "on": "上和是" },
-            { "do": "circle", "term": "z", "color": "green", "label": "上積分", "on": "上下積分都是零" }
-          ] }
+      "heading": "③ 改一個點的值",
+      "body": [
+        "$f(x)=0$（$0\\le x<1$），$f(1)=5$",
+        "任何分割：每段都有 $<1$ 的點 ⇒ $m_i=0$ ⇒ $L(f,P)=0$",
+        "只有最後一段含 $x=1$：$M_n=5$，其餘 $M_i=0$",
+        "用 $P_n$：$U=\\frac5n\\to0$，$L=0$ ⇒ $\\displaystyle\\int_0^1f=0$　$\\blacksquare$"
       ],
-      "check": 3
+      "tex": [
+        "U(f,P)=5\\,\\Delta x_n"
+      ]
+    },
+    {
+      "heading": "③ 有限個點都一樣",
+      "body": [
+        "定理：$f$ 可積，$\\int_a^bf=I$；$g$ 與 $f$ 只在 $c_1,\\dots,c_k$ 不同 ⇒ $g$ 可積，$\\int_a^bg=I$",
+        "策略：被改的點只碰到最多 $2k$ 段；段越細，差別越小",
+        "證明：設 $|f|,|g|\\le B$。任一分割 $P$：",
+        "只有含某個 $c_j$ 的段（$\\le2k$ 段）$M_i$ 會不同，每段差 $\\le2B\\,\\Delta x_i$",
+        "$L$ 也一樣：$\\big|L(g,P)-L(f,P)\\big|\\le4kB\\,\\|P\\|$"
+      ],
+      "tex": [
+        "\\big|U(g,P)-U(f,P)\\big|\\le4kB\\,\\|P\\|"
+      ]
+    },
+    {
+      "heading": "③ 證明（續）",
+      "body": [
+        "$I=\\inf U=\\sup L$ ⇒ 有 $Q_n$、$Q_n'$ 使",
+        "$P_n=Q_n\\cup Q_n'\\cup(n\\text{ 等分})$，由加細：",
+        "$g$ 的縫：上、下和各差 $\\le4kB\\|P_n\\|$",
+        "$\\big|U(g,P_n)-U(f,P_n)\\big|\\le\\frac{4kB(b-a)}n\\to0$，且 $U(f,P_n)\\to I$",
+        "那如果改的是無限多個點呢？"
+      ],
+      "tex": [
+        "U(f,Q_n)<I+\\tfrac1n,\\qquad L(f,Q_n')>I-\\tfrac1n",
+        "U(f,P_n)-L(f,P_n)<\\tfrac2n,\\qquad\\|P_n\\|\\le\\tfrac{b-a}n",
+        "U(g,P_n)-L(g,P_n)<\\frac{2+8kB(b-a)}n\\to0",
+        "\\Rightarrow\\ \\int_a^bg=\\lim U(g,P_n)=I\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 上積分 $=\\inf_P U(f,P)$；下積分 $=\\sup_P L(f,P)$",
+        "• 永遠 下積分 $\\le$ 上積分；相等 ⇔ 可積",
+        "• 只要一串 $P_n$ 讓 $U-L\\to0$：可積，且 $\\int=\\lim U=\\lim L$",
+        "• $\\int_0^1x\\,dx=\\frac12$，$\\int_0^1x^2\\,dx=\\frac13$：$U-L=\\frac1n$",
+        "• 改有限個點：積分不變",
+        "下一課：不算出積分，也能判斷可不可積"
+      ]
     }
   ],
   "workedExamples": [
@@ -259,52 +197,1156 @@
   ],
   "checks": [
     {
-      "ask": "上積分的定義是？",
+      "ask": "$f$ 有界，某個分割 $P$ 使 $L(f,P)=0.48$、$U(f,P)=0.52$。可以確定的是？",
       "options": [
-        { "label": "所有上和的下確界 $\\inf U(f,P)$", "correct": true },
-        { "label": "所有上和的上確界 $\\sup U(f,P)$", "why": "上和越小越接近真值，所以取「最好的」是取 $\\inf$。$\\sup U$ 可能是很粗分割的大估計。" },
-        { "label": "等長分割 $U(f,P_n)$ 的極限", "why": "那是一種計算方法，不是定義。定義要對所有分割取 $\\inf$；一族分割的極限只給上積分的上界。" }
+        {
+          "label": "上、下積分都在 $[0.48,\\,0.52]$ 裡",
+          "correct": true
+        },
+        {
+          "label": "$f$ 可積",
+          "why": "一個分割不夠：要 $U-L$ 能小到任意小，縫才會閉起來"
+        },
+        {
+          "label": "$\\int f=0.5$",
+          "why": "中點不一定是積分；甚至不一定可積"
+        },
+        {
+          "label": "下積分可能是 $0.55$",
+          "why": "下積分 $\\le\\overline{\\int}f\\le U(f,P)=0.52$"
+        }
       ]
     },
     {
-      "ask": "對 $f(x)=x$ 在 $[0,1]$，$U(f,P_{10})-L(f,P_{10})$ 是？",
+      "ask": "$f(x)=x^2$ 在 $[0,2]$，等分 $n$ 段。$U(f,P_n)-L(f,P_n)=$？",
       "options": [
-        { "label": "$\\frac{1}{10}$", "correct": true },
-        { "label": "$\\frac{1}{20}$", "why": "你算的是 $\\frac{n+1}{2n}-\\frac{1}{2}$，只量了上和跟真值的差。上下和相差 $\\frac{1}{n}$。" },
-        { "label": "0", "why": "單一分割的上下和不會相等（$f$ 不是常數）；相等的是取極限之後。" }
+        {
+          "label": "$\\frac8n$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac4n$",
+          "why": "把 $\\Delta x$ 當成 $\\frac1n$；區間長是 $2$，$\\Delta x=\\frac2n$"
+        },
+        {
+          "label": "$\\frac1n$",
+          "why": "那是 $[0,1]$ 的答案；端點值差也變了"
+        },
+        {
+          "label": "$\\frac2n$",
+          "why": "只乘了 $\\Delta x$，漏掉 $f(2)-f(0)=4$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從兩邊逼近同一個數",
+      "beats": [
+        {
+          "show": [
+            "上一課：任何下和 $\\le$ 任何上和",
+            "$L(f,P)\\le U(f,Q)\\quad\\text{（任意 }P,Q\\text{）}$"
+          ],
+          "say": "上一課證明了：任何下和都不超過任何上和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課：任何下和 $\\le$ 任何上和"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L(f,P)\\le U(f,Q)\\quad\\text{（任意 }P,Q\\text{）}$",
+              "on": "和都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫在數線上：藍色的下和都在左，紅色的上和都在右。x 平方的例子擠向 3 分之 1；但也可能中間留一條縫。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"di-line\" viewBox=\"0 0 640 320\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"g12di-lineink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"g12di-lineblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"g12di-linered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"g12di-linegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"g12di-linepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><text x=\"20\" y=\"30\" text-anchor=\"start\" font-size=\"31\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan><tspan style=\"font-family:KaTeX_Main,serif\">² </tspan><tspan style=\"font-family:inherit\">在</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> [0,1]</tspan><tspan style=\"font-family:inherit\">：可積</tspan></text><line x1=\"30\" y1=\"70\" x2=\"610\" y2=\"70\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><circle cx=\"40\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"600\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"110\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"390\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"143.7\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"330.4\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"162.5\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"302.5\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"174.4\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"286.4\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"182.6\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"275.9\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"188.6\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"268.6\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"193.1\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"263.1\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"196.7\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"258.9\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"199.6\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"255.6\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"202\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"252.9\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"204\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"250.6\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"205.7\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"248.8\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"207.1\" cy=\"70\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"247.1\" cy=\"70\" r=\"6\" fill=\"var(--red)\"/><line x1=\"226.7\" y1=\"56\" x2=\"226.7\" y2=\"84\" stroke=\"var(--green)\" stroke-width=\"3\"/><text x=\"226.7\" y=\"106\" text-anchor=\"middle\" font-size=\"31\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Main,serif\">1/3</tspan></text><line x1=\"40\" y1=\"61\" x2=\"40\" y2=\"79\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"40\" y=\"106\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><line x1=\"600\" y1=\"61\" x2=\"600\" y2=\"79\" stroke=\"var(--ink)\" stroke-width=\"2.4\"/><text x=\"600\" y=\"106\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text><text x=\"118.4\" y=\"110\" text-anchor=\"middle\" font-size=\"31\" fill=\"var(--blue)\"><tspan style=\"font-family:inherit\">下和</tspan></text><text x=\"387.2\" y=\"110\" text-anchor=\"middle\" font-size=\"31\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">上和</tspan></text><text x=\"20\" y=\"180\" text-anchor=\"start\" font-size=\"31\" fill=\"var(--ink)\"><tspan style=\"font-family:inherit\">示意：中間有縫</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> → </tspan><tspan style=\"font-family:inherit\">不可積</tspan></text><line x1=\"30\" y1=\"235\" x2=\"610\" y2=\"235\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><circle cx=\"68\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"129.6\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"174.4\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"202.4\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"219.2\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"227.6\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"232.1\" cy=\"235\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"572\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"510.4\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"465.6\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"437.6\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"420.8\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"412.4\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"407.9\" cy=\"235\" r=\"6\" fill=\"var(--red)\"/><line x1=\"236\" y1=\"221\" x2=\"236\" y2=\"249\" stroke=\"var(--blue)\" stroke-width=\"3\"/><text x=\"236\" y=\"271\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--blue)\"><tspan style=\"font-family:inherit\">下積分</tspan></text><line x1=\"404\" y1=\"221\" x2=\"404\" y2=\"249\" stroke=\"var(--red)\" stroke-width=\"3\"/><text x=\"404\" y=\"271\" text-anchor=\"middle\" font-size=\"29\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">上積分</tspan></text><line x1=\"236\" y1=\"235\" x2=\"404\" y2=\"235\" stroke=\"var(--muted)\" stroke-width=\"7\" opacity=\"0.4\"/></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下和們有上界（任一個上和）⇒ $\\sup$ 存在"
+          ],
+          "say": "下和們有上界，隨便一個上和都是，所以上確界存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下和們有上界（任一個上和）⇒ $\\sup$ 存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上和們有下界（任一個下和）⇒ $\\inf$ 存在"
+          ],
+          "say": "同樣，上和們的下確界存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上和們有下界（任一個下和）⇒ $\\inf$ 存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個數相等 ⇒ 中間只剩一個數：那就是面積"
+          ],
+          "say": "兩個數相等，中間只夾得下一個數，就定義成積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個數相等 ⇒ 中間只剩一個數：那就是面積",
+              "color": "gold"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f$ 在 $[a,b]$ 有界。下列何者一定成立？",
-      "options": [
-        { "label": "下積分 $\\le$ 上積分", "correct": true },
-        { "label": "下積分 $=$ 上積分", "why": "那就是可積的定義，不是每個有界函數都做得到（Dirichlet 函數是 0 與 1）。" },
-        { "label": "上積分 $\\le$ 下積分", "why": "方向反了。任何下和 $\\le$ 任何上和，取 $\\sup$ 與 $\\inf$ 後保持同一個方向。" }
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $[a,b]$ 上有界：",
+            "$\\begin{aligned}\\overline{\\int_a^b}f&=\\inf\\{U(f,P):P\\text{ 是分割}\\}\\\\\\underline{\\int_a^b}f&=\\sup\\{L(f,P):P\\text{ 是分割}\\}\\end{aligned}$"
+          ],
+          "say": "定義：上積分是所有上和的下確界，下積分是所有下和的上確界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $[a,b]$ 上有界："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}\\overline{\\int_a^b}f&=\\inf\\{U(f,P):P\\text{ 是分割}\\}\\\\\\underline{\\int_a^b}f&=\\sup\\{L(f,P):P\\text{ 是分割}\\}\\end{aligned}}}}$",
+              "on": "上和"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "是所#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$\\displaystyle\\underline{\\int_a^b}f\\le\\overline{\\int_a^b}f$"
+          ],
+          "say": "定理：下積分一定小於等於上積分。策略：最小上界用一次，最大下界再用一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$\\displaystyle\\underline{\\int_a^b}f\\le\\overline{\\int_a^b}f$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：「最小上界」用一次，「最大下界」再用一次",
+            "證明：固定 $Q$。每個 $L(f,P)\\le U(f,Q)$"
+          ],
+          "say": "證明：固定一個分割 Q。每個下和都不超過 U of f Q，所以它是下和們的上界。上確界是最小的上界，所以下積分不超過 U of f Q。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：「最小上界」用一次，「最大下界」再用一次"
+            },
+            {
+              "do": "write",
+              "line": "證明：固定 $Q$。每個 $L(f,P)\\le U(f,Q)$",
+              "on": "of#1"
+            },
+            {
+              "do": "write",
+              "line": "⇒ $U(f,Q)$ 是下和們的上界 ⇒ $\\underline{\\int}f\\le U(f,Q)$",
+              "on": "小的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這對每個 $Q$ 都成立 ⇒ $\\underline{\\int}f$ 是上和們的下界",
+            "$\\Rightarrow\\ \\underline{\\int_a^b}f\\le\\inf_Q U(f,Q)=\\overline{\\int_a^b}f\\quad\\blacksquare$"
+          ],
+          "say": "而 Q 是任意的，所以下積分是所有上和的一個下界。下確界是最大的下界，所以下積分小於等於上積分。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這對每個 $Q$ 都成立 ⇒ $\\underline{\\int}f$ 是上和們的下界"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Rightarrow\\ \\underline{\\int_a^b}f\\le\\inf_Q U(f,Q)=\\overline{\\int_a^b}f\\quad\\blacksquare}}$",
+              "on": "上和"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "所以#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義：兩者相等時，$f$（Darboux）可積，",
+            "$\\int_a^b f=\\underline{\\int_a^b}f=\\overline{\\int_a^b}f$"
+          ],
+          "say": "兩者相等時，就說 f 可積，共同的值就是積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義：兩者相等時，$f$（Darboux）可積，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_a^b f=\\underline{\\int_a^b}f=\\overline{\\int_a^b}f}}$",
+              "color": "red",
+              "on": "就說"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "可積"
+            },
+            {
+              "do": "write",
+              "line": "　12.40 會看到兩者不相等的例子：Dirichlet 函數，下積分 $0$、上積分 $1$",
+              "color": "violet",
+              "on": "值就"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f(x)=0$（$x\\ne\\frac{1}{2}$），$f(\\frac{1}{2})=7$，在 $[0,1]$ 上的積分是？",
-      "options": [
-        { "label": "0", "correct": true },
-        { "label": "7", "why": "那是函數在單一點的值。單點所在的段寬度可以任意小，上和 $\\le2\\cdot7\\cdot\\|P\\|\\to0$。" },
-        { "label": "不可積", "why": "只在一點不連續、而且有界，上和可以壓到 0，所以可積。" }
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$f$ 有界，某個分割 $P$ 使 $L(f,P)=0.48$、$U(f,P)=0.52$。可以確定的是？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "一個分割只能把積分框在一個範圍裡"
+          ],
+          "say": "一個分割只能框出範圍。要證明可積，縫要能小到任意小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一個分割只能把積分框在一個範圍裡"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "只要一族分割",
+      "beats": [
+        {
+          "show": [
+            "定義要對所有分割取 $\\inf$、$\\sup$：太多了"
+          ],
+          "say": "定義要對所有分割取上下確界，沒辦法一個一個算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義要對所有分割取 $\\inf$、$\\sup$：太多了"
+            }
+          ]
+        },
+        {
+          "show": [
+            "引理：若有分割 $P_n$ 使 $U(f,P_n)-L(f,P_n)\\to0$，則 $f$ 可積，且",
+            "$\\int_a^b f=\\lim_{n\\to\\infty}U(f,P_n)=\\lim_{n\\to\\infty}L(f,P_n)$"
+          ],
+          "say": "引理：只要一串分割讓上和減下和趨近 0，f 就可積，積分就是上和、下和的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "引理：若有分割 $P_n$ 使 $U(f,P_n)-L(f,P_n)\\to0$，則 $f$ 可積，且"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_a^b f=\\lim_{n\\to\\infty}U(f,P_n)=\\lim_{n\\to\\infty}L(f,P_n)}}$",
+              "color": "red",
+              "on": "下和#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：上下積分被夾在 $L(f,P_n)$ 與 $U(f,P_n)$ 之間"
+          ],
+          "say": "策略：上下積分被夾在下和與上和中間，縫趨近 0，就分不開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：上下積分被夾在 $L(f,P_n)$ 與 $U(f,P_n)$ 之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：由定義與上面的定理，",
+            "$L(f,P_n)\\le\\underline{\\int}f\\le\\overline{\\int}f\\le U(f,P_n)$"
+          ],
+          "say": "證明：下積分不小於 L of f P n，上積分不大於 U of f P n，中間是剛剛的定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：由定義與上面的定理，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L(f,P_n)\\le\\underline{\\int}f\\le\\overline{\\int}f\\le U(f,P_n)$",
+              "on": "不大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P_n)-L(f,P_n)\\to0$"
+          ],
+          "say": "上下積分的差是固定的數，又被夾到 0，只能等於 0。f 可積，積分記作 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le\\overline{\\int}f-\\underline{\\int}f\\le U(f,P_n)-L(f,P_n)\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0\\le U(f,P_n)-I\\le U(f,P_n)-L(f,P_n)\\to0$",
+            "⇒ $U(f,P_n)\\to I$；同理 $L(f,P_n)\\to I$　$\\blacksquare$"
+          ],
+          "say": "上和減 I 也被夾到 0，所以上和趨近 I，下和同理。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$0\\le U(f,P_n)-I\\le U(f,P_n)-L(f,P_n)\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "⇒ $U(f,P_n)\\to I$；同理 $L(f,P_n)\\to I$　$\\blacksquare$",
+              "color": "gold",
+              "on": "和趨"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$\\int_0^1x\\,dx=\\frac12$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=x$，$P_n$：遞增 ⇒ $M_i=\\frac in$，$m_i=\\frac{i-1}n$，$\\Delta x_i=\\frac1n$"
+          ],
+          "say": "例子：x 在 0 到 1，n 等分。遞增，上確界在右端點，下確界在左端點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x$，$P_n$：遞增 ⇒ $M_i=\\frac in$，$m_i=\\frac{i-1}n$，$\\Delta x_i=\\frac1n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}U(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n i=\\frac{n+1}{2n}\\\\L(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n(i-1)=\\frac{n-1}{2n}\\end{aligned}$"
+          ],
+          "say": "上和是 n 平方分之 1，乘上 1 加到 n，等於 2n 分之 n 加 1。下和是 2n 分之 n 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}U(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n i=\\frac{n+1}{2n}\\\\L(f,P_n)&=\\frac1{n^2}\\sum_{i=1}^n(i-1)=\\frac{n-1}{2n}\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U-L=\\dfrac1n\\to0$ ⇒ 可積，且",
+            "$\\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12\\quad\\blacksquare$"
+          ],
+          "say": "相減是 n 分之 1，趨近 0。由引理可積，積分是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$U-L=\\dfrac1n\\to0$ ⇒ 可積，且"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "趨近"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅色縫的總面積 = U − L = 1/n"
+          ],
+          "say": "圖上紅色的縫是 n 個小方塊，加起來正好 n 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "dix",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "floor(x*floor(N))/floor(N)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "(floor(x*floor(N))+1)/floor(N)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red",
+                      "under": "floor(x*floor(N))/floor(N)"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(floor(x*floor(N))+1)/floor(N)",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "floor(x*floor(N))/floor(N)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 30.99,
+                      "value": 3,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = {(floor(N)+1)/(2*floor(N))}　L = {(floor(N)-1)/(2*floor(N))}",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 3　U = 0.6667　L = 0.3333",
+              "on": "個小"
+            },
+            {
+              "do": "write",
+              "line": "紅色縫的總面積 = U − L = 1/n",
+              "color": "violet",
+              "on": "正好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\int_0^1x\\,dx=\\frac12$"
+          ],
+          "say": "切得越細，縫越小。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "dix",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.08,
+                    1.15
+                  ],
+                  "area": [
+                    {
+                      "expr": "floor(x*floor(N))/floor(N)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "(floor(x*floor(N))+1)/floor(N)",
+                      "from": 0,
+                      "to": 0.9999,
+                      "color": "red",
+                      "under": "floor(x*floor(N))/floor(N)"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(floor(x*floor(N))+1)/floor(N)",
+                      "color": "red",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "floor(x*floor(N))/floor(N)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.9999
+                      ]
+                    },
+                    {
+                      "expr": "x",
+                      "color": "ink",
+                      "width": 2
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 30.99,
+                      "value": 3,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = {(floor(N)+1)/(2*floor(N))}　L = {(floor(N)-1)/(2*floor(N))}",
+                  "height": 260
+                },
+                "vals": {
+                  "N": 30.5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 30　U = 0.5167　L = 0.4833",
+              "on": "縫越"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$\\int_0^1x^2\\,dx=\\frac13$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=x^2$，$P_n$，用 $\\sum_{i=1}^n i^2=\\frac{n(n+1)(2n+1)}6$：",
+            "$\\begin{aligned}U(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^n i^2=\\frac{(n+1)(2n+1)}{6n^2}\\\\L(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^{n-1} i^2=\\frac{(n-1)(2n-1)}{6n^2}\\end{aligned}$"
+          ],
+          "say": "第二個例子：x 平方。上和用右端點，下和只加到 n 減 1，用平方和公式化簡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=x^2$，$P_n$，用 $\\sum_{i=1}^n i^2=\\frac{n(n+1)(2n+1)}6$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}U(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^n i^2=\\frac{(n+1)(2n+1)}{6n^2}\\\\L(f,P_n)&=\\frac1{n^3}\\sum_{i=1}^{n-1} i^2=\\frac{(n-1)(2n-1)}{6n^2}\\end{aligned}}$",
+              "on": "和只"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U-L=\\frac{(2n^2+3n+1)-(2n^2-3n+1)}{6n^2}=\\frac1n$"
+          ],
+          "say": "兩個相減，展開以後 2n 平方和 1 都消掉，又是 n 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle U-L=\\frac{(2n^2+3n+1)-(2n^2-3n+1)}{6n^2}=\\frac1n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$U-L\\to0$ ⇒ 可積，",
+            "$\\int_0^1x^2\\,dx=\\lim_{n\\to\\infty}\\frac{(n+1)(2n+1)}{6n^2}=\\frac26=\\frac13\\quad\\blacksquare$"
+          ],
+          "say": "所以可積。積分是上和的極限，係數比是 6 分之 2，也就是 3 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$U-L\\to0$ ⇒ 可積，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^1x^2\\,dx=\\lim_{n\\to\\infty}\\frac{(n+1)(2n+1)}{6n^2}=\\frac26=\\frac13\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "係數"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "捷徑：遞增時，$U-L$ 中間全部相消：",
+            "$U-L=\\frac1n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)=\\frac{f(1)-f(0)}n$"
+          ],
+          "say": "捷徑：遞增函數的上和減下和，中間全部相消，只剩 f of 1 減 f of 0，除以 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "捷徑：遞增時，$U-L$ 中間全部相消："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U-L=\\frac1n\\sum_{i=1}^n\\big(f(x_i)-f(x_{i-1})\\big)=\\frac{f(1)-f(0)}n$",
+              "on": "of#1"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "改一個點的值",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=0$（$0\\le x<1$），$f(1)=5$"
+          ],
+          "say": "最後一個例子：f 都是 0，只有在 1 等於 5。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=0$（$0\\le x<1$），$f(1)=5$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "任何分割：每段都有 $<1$ 的點 ⇒ $m_i=0$ ⇒ $L(f,P)=0$"
+          ],
+          "say": "每一段都有函數值 0 的點，所以下和永遠是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "任何分割：每段都有 $<1$ 的點 ⇒ $m_i=0$ ⇒ $L(f,P)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有最後一段含 $x=1$：$M_n=5$，其餘 $M_i=0$",
+            "$U(f,P)=5\\,\\Delta x_n$"
+          ],
+          "say": "只有最後一段碰到 1，上確界是 5，所以上和是 5 乘最後一段的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只有最後一段含 $x=1$：$M_n=5$，其餘 $M_i=0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle U(f,P)=5\\,\\Delta x_n}}$",
+              "on": "上確"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "乘最"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上和只剩最後一條：寬 1/n、高 5",
+            "用 $P_n$：$U=\\frac5n\\to0$，$L=0$ ⇒ $\\displaystyle\\int_0^1f=0$　$\\blacksquare$"
+          ],
+          "say": "n 等分時，上和 n 分之 5 趨近 0，下和是 0，所以積分是 0。改一個點，積分不變。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "di5",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.5,
+                    5.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "0",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.995
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "5",
+                      "from": "1-1/floor(N)",
+                      "to": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 5,
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 0,
+                      "color": "blue",
+                      "open": true
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 20.99,
+                      "value": 2,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = 5/n = {5/floor(N)}　L = 0",
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 2　U = 5/n = 2.5　L = 0",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "上和只剩最後一條：寬 1/n、高 5",
+              "color": "violet",
+              "on": "趨近"
+            },
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "di5",
+                  "window": [
+                    -0.05,
+                    1.1,
+                    -0.5,
+                    5.6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "0",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        0.995
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "5",
+                      "from": "1-1/floor(N)",
+                      "to": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 5,
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 0,
+                      "color": "blue",
+                      "open": true
+                    }
+                  ],
+                  "params": {
+                    "N": {
+                      "min": 1,
+                      "max": 20.99,
+                      "value": 2,
+                      "label": "段數"
+                    }
+                  },
+                  "readout": "n = {floor(N)}　U = 5/n = {5/floor(N)}　L = 0",
+                  "height": 250
+                },
+                "vals": {
+                  "N": 20.5
+                }
+              },
+              "on": "和是"
+            },
+            {
+              "do": "write",
+              "line": "n = 20　U = 5/n = 0.25　L = 0",
+              "on": "分是"
+            },
+            {
+              "do": "write",
+              "line": "用 $P_n$：$U=\\frac5n\\to0$，$L=0$ ⇒ $\\displaystyle\\int_0^1f=0$　$\\blacksquare$",
+              "color": "red",
+              "on": "個點"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "有限個點都一樣",
+      "beats": [
+        {
+          "show": [
+            "定理：$f$ 可積，$\\int_a^bf=I$；$g$ 與 $f$ 只在 $c_1,\\dots,c_k$ 不同 ⇒ $g$ 可積，$\\int_a^bg=I$"
+          ],
+          "say": "一般的定理：f 可積，g 跟 f 只在 k 個點不同，那 g 也可積，積分一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f$ 可積，$\\int_a^bf=I$；$g$ 與 $f$ 只在 $c_1,\\dots,c_k$ 不同 ⇒ $g$ 可積，$\\int_a^bg=I$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：被改的點只碰到最多 $2k$ 段；段越細，差別越小"
+          ],
+          "say": "策略：被改的點，只碰得到最多 2k 段；分割越細，這幾段的影響越小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：被改的點只碰到最多 $2k$ 段；段越細，差別越小"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$g(x)=x$，但 $g(\\frac12)=7$。$\\int_0^1g=$？",
+        "options": [
+          {
+            "label": "$\\frac12$",
+            "correct": true
+          },
+          {
+            "label": "$7$",
+            "why": "一個點沒有寬度，對面積沒有貢獻"
+          },
+          {
+            "label": "$\\frac12+7$",
+            "why": "一個點的「長方形」寬度趨近 $0$，加不上去"
+          },
+          {
+            "label": "不可積",
+            "why": "改有限個點不影響可積性"
+          }
+        ]
+      }
+    },
+    {
+      "title": "有限個點都一樣",
+      "beats": [
+        {
+          "show": [
+            "證明：設 $|f|,|g|\\le B$。任一分割 $P$：",
+            "只有含某個 $c_j$ 的段（$\\le2k$ 段）$M_i$ 會不同，每段差 $\\le2B\\,\\Delta x_i$"
+          ],
+          "say": "證明：設 f、g 的絕對值都不超過 B。每個 c j 最多落在兩段，所以最多 2k 段的上確界不同，每段差不超過 2B 乘寬度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：設 $|f|,|g|\\le B$。任一分割 $P$："
+            },
+            {
+              "do": "write",
+              "line": "只有含某個 $c_j$ 的段（$\\le2k$ 段）$M_i$ 會不同，每段差 $\\le2B\\,\\Delta x_i$",
+              "on": "每個"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\big|U(g,P)-U(f,P)\\big|\\le4kB\\,\\|P\\|}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "每段"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L$ 也一樣：$\\big|L(g,P)-L(f,P)\\big|\\le4kB\\,\\|P\\|$"
+          ],
+          "say": "所以上和的差不超過 4 k B 乘分割寬度；下和也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L$ 也一樣：$\\big|L(g,P)-L(f,P)\\big|\\le4kB\\,\\|P\\|$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "$I=\\inf U=\\sup L$ ⇒ 有 $Q_n$、$Q_n'$ 使",
+            "$U(f,Q_n)<I+\\tfrac1n,\\qquad L(f,Q_n')>I-\\tfrac1n$"
+          ],
+          "say": "接著造一串分割。I 是上和的下確界，也是下和的上確界，所以有 Q n 和 Q n 一撇，分別離 I 不到 n 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$I=\\inf U=\\sup L$ ⇒ 有 $Q_n$、$Q_n'$ 使"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,Q_n)<I+\\tfrac1n,\\qquad L(f,Q_n')>I-\\tfrac1n$",
+              "on": "一撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P_n=Q_n\\cup Q_n'\\cup(n\\text{ 等分})$，由加細：",
+            "$U(f,P_n)-L(f,P_n)<\\tfrac2n,\\qquad\\|P_n\\|\\le\\tfrac{b-a}n$"
+          ],
+          "say": "P n 取這兩個再加上 n 等分的聯集。加細以後縫小於 n 分之 2，寬度也不超過 n 分之 b 減 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P_n=Q_n\\cup Q_n'\\cup(n\\text{ 等分})$，由加細："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(f,P_n)-L(f,P_n)<\\tfrac2n,\\qquad\\|P_n\\|\\le\\tfrac{b-a}n$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g$ 的縫：上、下和各差 $\\le4kB\\|P_n\\|$",
+            "$U(g,P_n)-L(g,P_n)<\\frac{2+8kB(b-a)}n\\to0$"
+          ],
+          "say": "g 的縫，最多比 f 的縫多 8 k B 乘寬度，也趨近 0。由引理，g 可積，積分是上和的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g$ 的縫：上、下和各差 $\\le4kB\\|P_n\\|$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle U(g,P_n)-L(g,P_n)<\\frac{2+8kB(b-a)}n\\to0$",
+              "on": "也趨"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\big|U(g,P_n)-U(f,P_n)\\big|\\le\\frac{4kB(b-a)}n\\to0$，且 $U(f,P_n)\\to I$",
+            "$\\Rightarrow\\ \\int_a^bg=\\lim U(g,P_n)=I\\quad\\blacksquare$"
+          ],
+          "say": "而 g 和 f 的上和越來越近，f 的上和趨近 I，所以 g 的積分也是 I。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\big|U(g,P_n)-U(f,P_n)\\big|\\le\\frac{4kB(b-a)}n\\to0$，且 $U(f,P_n)\\to I$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\Rightarrow\\ \\int_a^bg=\\lim U(g,P_n)=I\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "的上#2"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "的積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那如果改的是無限多個點呢？"
+          ],
+          "say": "那改無限多個點呢？這是下一章狄利克雷函數的問題。",
+          "board": [
+            {
+              "do": "write",
+              "line": "那如果改的是無限多個點呢？"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 上積分 $=\\inf_P U(f,P)$；下積分 $=\\sup_P L(f,P)$",
+            "• 永遠 下積分 $\\le$ 上積分；相等 ⇔ 可積"
+          ],
+          "say": "整理：上下積分相等就是可積。實際算時，只要一串分割讓縫趨近 0。改有限個點，積分不變。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 上積分 $=\\inf_P U(f,P)$；下積分 $=\\sup_P L(f,P)$"
+            },
+            {
+              "do": "write",
+              "line": "• 永遠 下積分 $\\le$ 上積分；相等 ⇔ 可積",
+              "on": "等就"
+            },
+            {
+              "do": "write",
+              "line": "• 只要一串 $P_n$ 讓 $U-L\\to0$：可積，且 $\\int=\\lim U=\\lim L$",
+              "on": "只要"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^1x\\,dx=\\frac12$，$\\int_0^1x^2\\,dx=\\frac13$：$U-L=\\frac1n$",
+              "on": "讓縫"
+            },
+            {
+              "do": "write",
+              "line": "• 改有限個點：積分不變",
+              "on": "限個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：不算出積分，也能判斷可不可積"
+          ],
+          "say": "下一課：不必算出積分，也能判斷可不可積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：不算出積分，也能判斷可不可積"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["darboux", "riemann-sum"],
-    "fine": ["darboux-upper-lower-integral", "darboux-squeeze-family", "darboux-closed-form-sums", "darboux-finite-change"]
+    "coarse": [
+      "darboux",
+      "riemann-sum"
+    ],
+    "fine": [
+      "darboux-upper-lower-integral",
+      "darboux-squeeze-family",
+      "darboux-closed-form-sums",
+      "darboux-finite-change"
+    ]
   },
   "practice": [
-    { "id": "an-int-002", "core": true, "trains": "darboux-closed-form-sums" },
-    { "id": "lec-06-q1b", "core": true, "trains": "darboux-closed-form-sums" },
-    { "id": "lec-06-q1c", "core": true, "trains": "darboux-squeeze-family" },
-    { "id": "cg-12g-011", "core": true, "trains": "darboux-upper-lower-integral" },
-    { "id": "cx-ftc-001", "trains": "darboux-squeeze-family" },
-    { "id": "an-int-004", "trains": "darboux-closed-form-sums" },
-    { "id": "cg-12g-013", "trains": "darboux-finite-change" },
-    { "id": "cg-12g-014", "trains": "darboux-finite-change" },
-    { "id": "cg-12g-012", "challenge": true, "trains": "darboux-upper-lower-integral" }
+    {
+      "id": "an-int-002",
+      "core": true,
+      "trains": "darboux-closed-form-sums"
+    },
+    {
+      "id": "lec-06-q1b",
+      "core": true,
+      "trains": "darboux-closed-form-sums"
+    },
+    {
+      "id": "lec-06-q1c",
+      "core": true,
+      "trains": "darboux-squeeze-family"
+    },
+    {
+      "id": "cg-12g-011",
+      "core": true,
+      "trains": "darboux-upper-lower-integral"
+    },
+    {
+      "id": "cx-ftc-001",
+      "trains": "darboux-squeeze-family"
+    },
+    {
+      "id": "an-int-004",
+      "trains": "darboux-closed-form-sums"
+    },
+    {
+      "id": "cg-12g-013",
+      "trains": "darboux-finite-change"
+    },
+    {
+      "id": "cg-12g-014",
+      "trains": "darboux-finite-change"
+    },
+    {
+      "id": "cg-12g-012",
+      "challenge": true,
+      "trains": "darboux-upper-lower-integral"
+    }
   ],
   "gaps": []
 }

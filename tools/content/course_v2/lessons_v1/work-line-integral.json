@@ -1,0 +1,333 @@
+{
+  "id": "work-line-integral",
+  "title": "功的線積分",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["scalar-line-integral", "vector-field", "work"],
+  "next": ["conservative-fields"],
+  "related": ["path-independence"],
+  "objectives": [
+    "說出 $\\int_C\\mathbf F\\cdot d\\mathbf r$ 是「沿著路徑，力在前進方向上的分量 $\\times$ 一小段距離」的總和。",
+    "用參數式算：$\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$；也會讀 $\\int_C P\\,dx+Q\\,dy$ 的寫法。",
+    "知道走反方向會變號，而且同樣的起點終點、不同的路徑，答案可能不同。"
+  ],
+  "visual": "一個力場的箭頭鋪在平面上，一條有方向的路徑 C 穿過其中。一個小車沿 C 前進，車上顯示當下的速度方向與力 F，並把 F 分解成沿路徑的分量（綠色，幫忙）與垂直的分量（灰色，不做功）。累計功的讀數隨車前進更新；按「反向」後讀數變號。",
+  "concept": [
+    {
+      "heading": "① 從「力 $\\times$ 距離」開始",
+      "body": [
+        "〈功〉：定力沿直線，功 $={}$ 力 $\\times$ 距離。力的方向跟位移不同時，只有沿著位移的分量在做功：$W=\\mathbf F\\cdot\\mathbf d$（點積）。",
+        "現在力是一個場 $\\mathbf F(x,y)$，路徑是曲線 $C$。切成很多小段，每段位移 $\\Delta\\mathbf r$，功約 $\\mathbf F\\cdot\\Delta\\mathbf r$，加起來取極限，記成 $\\int_C\\mathbf F\\cdot d\\mathbf r$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 化成定積分",
+      "body": [
+        "參數化 $\\mathbf r(t)$，$a\\le t\\le b$，方向跟 $C$ 一致（$t$ 增加就是往前走）。$d\\mathbf r=\\mathbf r'(t)\\,dt$。$\\mathbf F$ 要先代進曲線上的點："
+      ],
+      "tex": ["\\int_C \\mathbf F\\cdot d\\mathbf r=\\int_a^b \\mathbf F\\big(\\mathbf r(t)\\big)\\cdot\\mathbf r'(t)\\,dt"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 另外兩種寫法",
+      "body": [
+        "$\\mathbf F=\\langle P,Q\\rangle$、$d\\mathbf r=\\langle dx,dy\\rangle$，點積展開成 $\\int_C P\\,dx+Q\\,dy$。看到這種寫法，就代 $x=x(t)$、$y=y(t)$、$dx=x'(t)\\,dt$、$dy=y'(t)\\,dt$。",
+        "也可以寫成 $\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$，$\\mathbf T$ 是單位切向量：只取 $\\mathbf F$ 沿著前進方向的分量，再做〈純量線積分〉。這個寫法最能看出意義：$\\mathbf F$ 跟路徑垂直的地方不做功。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 方向很重要",
+      "body": [
+        "反方向走，每一段 $d\\mathbf r$ 都變號，所以 $\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r$。這跟純量線積分不同。",
+        "只要方向相同，換參數化（走快走慢）答案不變。",
+        "但同樣起點終點、不同路徑，答案一般不同（範例 2）。哪些場「只看起點終點」，是〈路徑無關〉的主題。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "順著旋轉場繞一圈",
+      "prompt": "$\\oint_C\\mathbf F\\cdot d\\mathbf r$，$\\mathbf F=\\langle -y,x\\rangle$，$C$ 是單位圓，逆時針。",
+      "steps": [
+        "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le 2\\pi$（逆時針）。$\\mathbf r'(t)=\\langle -\\sin t,\\cos t\\rangle$。",
+        "曲線上 $\\mathbf F=\\langle -\\sin t,\\cos t\\rangle$。",
+        "$\\mathbf F\\cdot\\mathbf r'=\\sin^2t+\\cos^2t=1$。",
+        "$\\int_0^{2\\pi}1\\,dt=2\\pi$。力處處順著前進方向推，所以功是正的。"
+      ],
+      "answer": "$2\\pi$",
+      "claim": "INT((-sin(t))*(-sin(t))+cos(t)*cos(t),0,2*pi,t) == 2*pi"
+    },
+    {
+      "title": "同樣起點終點，不同路徑",
+      "prompt": "$\\int_C y^2\\,dx+x\\,dy$，從 $(0,0)$ 到 $(1,1)$。(a) 沿 $y=x$；(b) 沿 $y=x^2$；(c) 沿 $y=x$ 但從 $(1,1)$ 走回 $(0,0)$。",
+      "steps": [
+        "(a) $\\mathbf r(t)=\\langle t,t\\rangle$：$dx=dy=dt$。$\\int_0^1(t^2+t)\\,dt=\\frac{1}{3}+\\frac{1}{2}=\\frac{5}{6}$。",
+        "(b) $\\mathbf r(t)=\\langle t,t^2\\rangle$：$dx=dt$、$dy=2t\\,dt$。$y^2\\,dx+x\\,dy=t^4\\,dt+t\\cdot2t\\,dt$。$\\int_0^1(t^4+2t^2)\\,dt=\\frac{1}{5}+\\frac{2}{3}=\\frac{13}{15}$。",
+        "(a) 與 (b) 起點終點一樣，答案不同：這個場的功跟路徑有關。",
+        "(c) 是 (a) 反過來走：$-\\frac{5}{6}$。"
+      ],
+      "answer": "(a) $\\frac{5}{6}$　(b) $\\frac{13}{15}$　(c) $-\\frac{5}{6}$",
+      "claim": "INT(t^2+t,0,1,t) == 5/6 ;; INT(t^4+t*2*t,0,1,t) == 13/15"
+    }
+  ],
+  "pitfalls": [
+    "把 $d\\mathbf r$ 寫成 $|\\mathbf r'(t)|\\,dt$，做成純量線積分。",
+    "$\\mathbf F$ 沒代成 $t$ 就跟 $\\mathbf r'(t)$ 點積，或拿位置 $\\mathbf r(t)$ 去點積。",
+    "參數方向跟題目指定的方向相反，忘了補負號。",
+    "$\\int P\\,dx+Q\\,dy$ 只換了 $dx$，忘了 $dy$ 也要換成 $y'(t)\\,dt$。"
+  ],
+  "checks": [
+    {
+      "ask": "同一條路徑改成反方向走，$\\int_C\\mathbf F\\cdot d\\mathbf r$ 會？",
+      "options": [
+        { "label": "變號", "correct": true },
+        { "label": "不變", "why": "不變的是純量線積分 $\\int f\\,ds$。這裡每一段位移 $d\\mathbf r$ 都反向，點積都變號。" },
+        { "label": "變成 $0$", "why": "去程與回程合起來才是 $0$；單獨反向只是變號。" }
+      ]
+    },
+    {
+      "ask": "$\\mathbf F$ 在路徑上每一點都跟路徑垂直，功是？",
+      "options": [
+        { "label": "$0$", "correct": true },
+        { "label": "$|\\mathbf F|$ 乘以路徑長", "why": "那是 $\\mathbf F$ 處處順著路徑時的值。垂直時 $\\mathbf F\\cdot\\mathbf T=0$，完全不做功。" },
+        { "label": "無法判斷", "why": "$\\mathbf F\\cdot\\mathbf T$ 處處為 $0$，積分就是 $0$，不需要其他資訊。" }
+      ]
+    },
+    {
+      "ask": "$\\oint_C x\\,dy$，$C$：$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le 2\\pi$，是？",
+      "options": [
+        { "label": "$\\pi$", "correct": true },
+        { "label": "$0$", "why": "$x\\,dy=\\cos t\\cdot\\cos t\\,dt=\\cos^2t\\,dt$，不是 $\\cos t\\,dt$；$\\cos^2t$ 不會抵消。" },
+        { "label": "$2\\pi$", "why": "$\\cos^2t$ 在一圈上的平均是 $\\frac{1}{2}$，不是 $1$：$\\int_0^{2\\pi}\\cos^2t\\,dt=\\pi$。" }
+      ]
+    },
+    {
+      "ask": "$\\int_C\\mathbf F\\cdot d\\mathbf r$ 用參數式寫，被積函數是？",
+      "options": [
+        { "label": "$\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)$", "correct": true },
+        { "label": "$\\mathbf F(\\mathbf r(t))\\,|\\mathbf r'(t)|$", "why": "那是把 $d\\mathbf r$ 當成 $ds$ 的純量寫法，而且 $\\mathbf F$ 是向量，不能直接乘一個長度當答案。" },
+        { "label": "$\\mathbf F(t)\\cdot\\mathbf r(t)$", "why": "$\\mathbf F$ 要先代進曲線上的點 $\\mathbf r(t)$；跟它點積的是速度 $\\mathbf r'(t)$，不是位置 $\\mathbf r(t)$。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "力乘距離，變成場",
+      "beats": [
+        { "show": ["$W=\\mathbf F\\cdot\\mathbf d$"],
+          "note": "只有沿著位移的分量在做功。",
+          "say": "定力沿直線推，功是力乘距離。力歪一邊的時候，只有沿著位移的那一份在做功，所以用點積。",
+          "board": [
+            {"do":"write","line":"$W={{w:\\mathbf F\\cdot\\mathbf d}}$"},
+            {"do":"underline","term":"w","label":"沿位移的分量","on":"只有沿著"}
+          ] },
+        { "show": ["每段功約 $\\mathbf F\\cdot\\Delta\\mathbf r$，加起來：$\\int_C\\mathbf F\\cdot d\\mathbf r$"],
+          "say": "現在力是一個場，路徑是曲線。切成小段，每段的功是力點積位移，加起來取極限。",
+          "board": [
+            {"do":"write","line":"$\\sum {{s:\\mathbf F\\cdot\\Delta\\mathbf r}}\\;\\to\\;{{i:\\int_C\\mathbf F\\cdot d\\mathbf r}}$"},
+            {"do":"underline","term":"s","label":"每段的功","on":"每段的功"},
+            {"do":"circle","term":"i","on":"加起來"}
+          ] },
+        { "show": ["$d\\mathbf r=\\mathbf r'(t)\\,dt$"],
+          "note": "參數方向要跟 $C$ 一致。",
+          "say": "參數化之後，一小段位移是 r prime 乘 d t。t 增加的方向，就是往前走的方向。",
+          "board": [
+            {"do":"write","line":"${{d:d\\mathbf r}}={{v:\\mathbf r'(t)\\,dt}}$"},
+            {"do":"focus","term":"d","on":"一小段位移"},
+            {"do":"underline","term":"v","color":"blue","on":"r prime"}
+          ] },
+        { "show": ["$\\int_a^b\\mathbf F(\\mathbf r(t))\\cdot\\mathbf r'(t)\\,dt$"],
+          "note": "$\\mathbf F$ 先代進曲線上的點。",
+          "say": "場要先代進曲線上的點，再跟速度向量做點積，不是乘速率。",
+          "board": [
+            {"do":"write","line":"${{f:\\mathbf F}}$ 先代進曲線上的點，再點積速度"},
+            {"do":"underline","term":"f","color":"blue","label":"先代進去","on":"先代進"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "順著旋轉場繞一圈",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle -y,x\\rangle$，單位圓逆時針"],
+          "note": "$\\mathbf r(t)=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le 2\\pi$。",
+          "say": "旋轉場，沿單位圓逆時針繞一圈。",
+          "board": [
+            {"do":"write","line":"$\\mathbf F=\\langle -y,x\\rangle$，單位圓逆時針"},
+            {"do":"plot","graph":{"window":[-2.1,2.1,-1.35,1.35],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}],"arrows":[{"from":[1.204,0.282],"to":[1.051,0.652],"color":"violet"},{"from":[0.652,1.051],"to":[0.282,1.204],"color":"violet"},{"from":[-0.282,1.204],"to":[-0.652,1.051],"color":"violet"},{"from":[-1.051,0.652],"to":[-1.204,0.282],"color":"violet"},{"from":[-1.204,-0.282],"to":[-1.051,-0.652],"color":"violet"},{"from":[-0.652,-1.051],"to":[-0.282,-1.204],"color":"violet"},{"from":[0.282,-1.204],"to":[0.652,-1.051],"color":"violet"},{"from":[1.051,-0.652],"to":[1.204,-0.282],"color":"violet"}],"ticks":false},"on":"沿單位圓"}
+          ] },
+        { "show": ["$\\oint_C$：沿閉合曲線積分"],
+          "note": "起點等於終點；算法跟 $\\int_C$ 一樣。",
+          "say": "這個圓圈的積分號，意思是沿閉合曲線積分，起點和終點是同一點。算法跟一般的線積分完全一樣，只是路徑封閉。",
+          "board": [
+            {"do":"write","line":"${{n4:\\oint_C}}$：閉合曲線，起點與終點同一點"},
+            {"do":"circle","term":"n4","on":"圓圈"}
+          ] },
+        { "show": ["$\\mathbf F=\\langle -\\sin t,\\cos t\\rangle$，$\\mathbf r'=\\langle -\\sin t,\\cos t\\rangle$"],
+          "say": "圓上的場，跟速度向量完全一樣。",
+          "board": [
+            {"do":"write","line":"${{f:\\mathbf F=\\langle -\\sin t,\\cos t\\rangle}}$，${{v:\\mathbf r'=\\langle -\\sin t,\\cos t\\rangle}}$","tint":{"f":"violet","v":"blue"}},
+            {"do":"focus","term":"f","on":"圓上的場"},
+            {"do":"focus","term":"v","on":"速度向量"}
+          ] },
+        { "show": ["$\\mathbf F\\cdot\\mathbf r'=\\sin^2t+\\cos^2t=1$，功 $2\\pi$"],
+          "note": "力處處順著前進方向推。",
+          "say": "點積處處是一，積一圈得二 pi。力一直順著前進方向推，功是正的。",
+          "board": [
+            {"do":"transform","line":"$\\mathbf F\\cdot\\mathbf r'=\\sin^2t+\\cos^2t=1$，功 ${{w:2\\pi}}$"},
+            {"do":"box","term":"w","color":"green","on":"積一圈得"}
+          ] }
+      ],
+      "key": "$\\mathbf F$ 先代成曲線上的點再內積",
+      "check": 2
+    },
+    {
+      "title": "另外兩種寫法",
+      "beats": [
+        { "show": ["$\\int_C P\\,dx+Q\\,dy$"],
+          "note": "代 $dx=x'(t)\\,dt$、$dy=y'(t)\\,dt$。",
+          "say": "把點積展開，寫成 P d x 加 Q d y。看到這種寫法，d x 和 d y 都要換成 t。",
+          "board": [
+            {"do":"write","line":"$\\int_C {{p:P\\,dx}}+{{q:Q\\,dy}}$"},
+            {"do":"write","line":"$dx=x'(t)\\,dt$，$dy=y'(t)\\,dt$","on":"都要換成"}
+          ] },
+        { "show": ["$\\int_C\\mathbf F\\cdot\\mathbf T\\,ds$"],
+          "note": "$\\mathbf T$ 是單位切向量。",
+          "say": "也可以寫成場在前進方向的分量，再做純量線積分。這個寫法最看得出意思。",
+          "board": [
+            {"do":"write","line":"$\\int_C{{c:\\mathbf F\\cdot\\mathbf T}}\\,ds$"},
+            {"do":"underline","term":"c","label":"前進方向分量","on":"前進方向"}
+          ] },
+        { "show": ["$\\mathbf T=\\frac{\\mathbf r'}{|\\mathbf r'|}$，$ds=|\\mathbf r'|\\,dt$"],
+          "note": "$\\mathbf T$ 長度是 1，$ds$ 是一小段弧長。",
+          "say": "T 是速度向量除以它的長度，長度一、指著前進方向。d s 是這一小段的弧長，等於速率乘 d t。",
+          "board": [
+            {"do":"write","line":"$\\mathbf T={{n1:\\frac{\\mathbf r'}{|\\mathbf r'|}}}$"},
+            {"do":"underline","term":"n1","color":"blue","label":"長度 1","on":"長度一"},
+            {"do":"write","line":"$ds={{n2:|\\mathbf r'|\\,dt}}$","on":"d s 是"},
+            {"do":"focus","term":"n2","on":"弧長"}
+          ] },
+        { "show": ["$\\mathbf T\\,ds=\\mathbf r'(t)\\,dt=d\\mathbf r$"],
+          "note": "所以兩種寫法是同一個積分。",
+          "say": "兩個乘起來，長度約掉，剩 r prime 乘 d t，就是 d r。所以兩種寫法是同一個積分。",
+          "board": [
+            {"do":"write","line":"$\\mathbf T\\,ds={{n3:\\mathbf r'(t)\\,dt=d\\mathbf r}}$"},
+            {"do":"box","term":"n3","color":"green","on":"就是"}
+          ] },
+        { "show": ["$\\mathbf F\\perp$ 路徑：不做功"],
+          "say": "場跟路徑垂直的地方，前進方向的分量是零，那一段就不做功。",
+          "board": [
+            {"do":"write","line":"${{f:\\mathbf F\\perp}}$ 路徑：那一段不做功"},
+            {"do":"underline","term":"f","color":"red","label":"垂直","on":"垂直"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "方向很重要",
+      "beats": [
+        { "show": ["$\\int_{-C}\\mathbf F\\cdot d\\mathbf r=-\\int_C\\mathbf F\\cdot d\\mathbf r$"],
+          "say": "反方向走，每一小段位移都變號，整個功就變號。這跟純量線積分不一樣。",
+          "board": [
+            {"do":"write","line":"${{l:\\int_{-C}\\mathbf F\\cdot d\\mathbf r}}$"},
+            {"do":"transform","line":"${{l:\\int_{-C}\\mathbf F\\cdot d\\mathbf r}}=-{{r:\\int_C\\mathbf F\\cdot d\\mathbf r}}$","on":"整個功"}
+          ] },
+        { "show": ["方向相同：換參數化，答案不變"],
+          "say": "只要方向一樣，走快走慢都不影響答案。",
+          "board": [
+            {"do":"write","line":"方向相同：換參數化，答案不變"}
+          ] },
+        { "show": ["$\\mathbf r_1=\\langle t,t\\rangle$","$\\mathbf r_2=\\langle s^2,s^2\\rangle$"],
+          "note": "同一段直線，兩種參數化。",
+          "say": "換參數化，就是用另一個變數描述同一條路。第二種寫法 x 和 y 都是 s 平方，s 從零走到一，一樣從原點走到點一、一。",
+          "board": [
+            {"do":"write","line":"${{n5:\\mathbf r_1=\\langle t,t\\rangle}}$，${{n6:\\mathbf r_2=\\langle s^2,s^2\\rangle}}$"},
+            {"do":"focus","term":"n6","on":"s 平方"}
+          ] },
+        { "show": ["$dx=dy=2s\\,ds$","$\\int_0^1(2s^5+2s^3)\\,ds=\\frac{1}{3}+\\frac{1}{2}$"],
+          "note": "拿 $\\int y^2\\,dx+x\\,dy$ 來代。",
+          "say": "d x 和 d y 都是二 s d s，被積函數變成二 s 的五次加二 s 的三次，積出來還是六分之五。因為走過的點和方向都一樣。",
+          "board": [
+            {"do":"write","line":"$dx=dy=2s\\,ds$"},
+            {"do":"write","line":"$\\int_0^1(2s^5+2s^3)\\,ds={{n7:\\frac{1}{3}+\\frac{1}{2}}}$","on":"被積函數"},
+            {"do":"box","term":"n7","color":"green","on":"還是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "同起點終點，不同路",
+      "beats": [
+        { "show": ["$\\int_C y^2\\,dx+x\\,dy$，$(0,0)\\to(1,1)$"],
+          "say": "同樣從原點走到點一、一，走兩條不同的路。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.6,1.6,-0.15,1.2],"equal":true,"curves":[{"expr":"x","domain":[0,1],"color":"blue"},{"expr":"x^2","domain":[0,1],"color":"violet"}],"points":[{"x":0,"y":0},{"x":1,"y":1}],"ticks":false}},
+            {"do":"write","line":"$\\int_C y^2\\,dx+x\\,dy$，$(0,0)\\to(1,1)$","on":"原點"}
+          ] },
+        { "show": ["沿 $y=x$：$\\int_0^1(t^2+t)\\,dt=\\frac{5}{6}$"],
+          "say": "沿直線，d x、d y 都是 d t，積出來六分之五。",
+          "board": [
+            {"do":"write","line":"沿 ${{l:y=x}}$：$\\int_0^1(t^2+t)\\,dt={{a:\\frac{5}{6}}}$","tint":{"l":"blue"}}
+          ] },
+        { "show": ["沿 $y=x^2$：$dx=dt$、$dy=2t\\,dt$"],
+          "say": "沿拋物線，x 是 t、y 是 t 平方，d y 要換成二 t d t。",
+          "board": [
+            {"do":"transform","line":"${{l:y=x}}$：${{a:\\frac{5}{6}}}$；${{p:y=x^2}}$：${{dy:dy=2t\\,dt}}$","tint":{"p":"violet"}},
+            {"do":"underline","term":"dy","on":"d y 要換成"}
+          ] },
+        { "show": ["$y^2=(t^2)^2=t^4$，$dx=dt$"],
+          "note": "$x=t$，$y=t^2$，代進第一項。",
+          "say": "先代 y 平方：y 是 t 平方，平方再平方是 t 的四次，d x 是 d t，所以第一項是 t 四次 d t。",
+          "board": [
+            {"do":"write","line":"${{n8:y^2}}=(t^2)^2=t^4$，$dx=dt$"},
+            {"do":"focus","term":"n8","on":"先代"}
+          ] },
+        { "show": ["$x\\,dy=t\\cdot2t\\,dt=2t^2\\,dt$","被積函數：$t^4+2t^2$，$t$ 從 0 到 1"],
+          "note": "各項用冪次法則積。",
+          "say": "第二項 x 是 t，d y 是二 t d t，相乘是二 t 平方 d t。兩項加起來積分，t 從零到一，各項用冪次法則積。",
+          "board": [
+            {"do":"write","line":"$x\\,dy=t\\cdot2t\\,dt=2t^2\\,dt$"},
+            {"do":"write","line":"被積函數：${{n9:t^4+2t^2}}$，$t$ 從 0 到 1","on":"兩項加起來"},
+            {"do":"box","term":"n9","on":"冪次法則"}
+          ] }
+      ],
+      "key": "換路徑：$dx$、$dy$ 都用新參數改寫",
+      "predict": {
+        "ask": "沿 $y=x^2$ 的結果是？",
+        "options": [
+          {
+            "label": "$\\frac{13}{15}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{5}{6}$",
+            "why": "起點終點一樣，不代表功一樣：$\\int_0^1(t^4+2t^2)\\,dt=\\frac{1}{5}+\\frac{2}{3}$。"
+          },
+          {
+            "label": "$\\frac{1}{5}+\\frac{1}{3}$",
+            "why": "$dy=2t\\,dt$ 的 $2$ 漏了：$x\\,dy=t\\cdot2t\\,dt$，積出 $\\frac{2}{3}$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["line-integral", "work", "vector-calculus"],
+    "fine": ["work-integral-parametrize", "work-integral-orientation", "work-integral-differential-form"]
+  },
+  "practice": [
+    { "id": "vc-work-001", "core": true, "trains": "work-integral-differential-form" },
+    { "id": "vc-work-003", "core": true, "trains": "work-integral-differential-form" },
+    { "id": "vc-work-004", "core": true, "trains": "work-integral-differential-form" },
+    { "id": "lec-20-q1b", "core": true, "trains": "work-integral-parametrize" },
+    { "id": "lec-20-q1c", "core": true, "trains": "work-integral-parametrize" },
+    { "id": "cg-9b2-003", "core": true, "trains": "work-integral-orientation" },
+    { "id": "vc-work-002", "trains": "work-integral-orientation" },
+    { "id": "cg-9b2-004", "trains": "work-integral-orientation" },
+    { "id": "cg-9b2-005", "trains": "work-integral-parametrize" },
+    { "id": "cg-9b2-006", "trains": "work-integral-parametrize" }
+  ]
+}

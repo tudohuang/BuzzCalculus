@@ -1,7 +1,8 @@
 {
   "id": "divergence-test",
   "title": "發散判別",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 30,
   "prerequisites": [
     "infinite-series",
@@ -15,52 +16,123 @@
     "alternating-series-test"
   ],
   "objectives": [
-    "證明並使用：$\\sum a_n$ 收斂 $\\Rightarrow a_n\\to 0$；所以 $a_n$ 不趨近 0 的級數發散。",
-    "知道這個判別法只能證明發散，$a_n\\to 0$ 時它什麼都不說。",
-    "用調和級數 $\\sum\\frac{1}{n}$ 說明「各項 $\\to 0$ 卻發散」。"
+    "證明並使用：$\\sum a_n$ 收斂 $\\Rightarrow a_n\\to 0$",
+    "所以 $a_n$ 不趨近 0 的級數一定發散",
+    "知道這個判別法只能證明發散，$a_n\\to 0$ 時它什麼都不說",
+    "用調和級數 $\\sum\\frac{1}{n}$ 說明「各項 $\\to 0$ 卻發散」"
   ],
-  "visual": "調和級數的分組圖：1、1/2、(1/3 + 1/4)、(1/5 + … + 1/8)、(1/9 + … + 1/16)、…，每一組畫成一根長條，旁邊一條 ½ 高的虛線。每一根長條都超過虛線，堆起來的高度沒有上限。上方同時畫出各項 1/n 的點越來越貼近 0。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 收斂的級數，各項一定 $\\to 0$",
+      "heading": "① 收斂 ⇒ 各項 $\\to0$",
       "body": [
-        "若 $\\sum a_n$ 收斂到 $S$，部分和 $s_n\\to S$，$s_{n-1}$ 也 $\\to S$。而 $a_n=s_n-s_{n-1}$，所以 $a_n\\to S-S=0$。這是完整的證明，沒有省略。"
+        "直覺：和要定下來，加進去的東西就要越來越小",
+        "定理：$\\displaystyle\\sum_{n=1}^\\infty a_n$ 收斂 $\\Rightarrow\\ \\lim_{n\\to\\infty}a_n=0$",
+        "證明：設 $s_n\\to S$。由 6.6：",
+        "$n\\to\\infty$ 時 $s_n\\to S$，$s_{n-1}\\to S$（同一個數列，只差一格）",
+        "關鍵是 $S$ 是一個有限的數；$\\infty-\\infty$ 就不能這樣減",
+        "例：$\\sum\\frac1{2^n}$ 收斂，果然 $\\frac1{2^n}\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "a_n=s_n-s_{n-1}\\quad(n\\ge2)",
+        "\\lim_{n\\to\\infty}a_n=S-S=0\\qquad\\blacksquare"
+      ]
     },
     {
       "heading": "② 判別法：反過來用",
       "body": [
-        "上面那句話的逆否命題：如果 $\\lim a_n\\ne 0$，或 $\\lim a_n$ 不存在，那 $\\sum a_n$ 發散。",
-        "這叫發散判別（也叫第 $n$ 項判別）。它是拿到任何級數的第一個檢查：算一下各項的極限，不是 0 就結束了。"
+        "把定理換句話說（逆否）：",
+        "例一：$\\displaystyle\\sum_{n=1}^\\infty\\frac{n}{n+1}$",
+        "直覺：後面每一項都差不多是 $1$，加無窮多個 $1$",
+        "例二：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{n+1}\\Big)^n$",
+        "$1^\\infty$ 型，倒過來看：",
+        "$\\big(1+\\frac1n\\big)^n\\to e$：",
+        "驗算：$n=100$ 時 $\\big(\\frac{100}{101}\\big)^{100}\\approx0.3697$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{n\\to\\infty}a_n\\ne0\\ \\text{或不存在}\\ \\Rightarrow\\ \\sum a_n\\ \\text{發散}",
+        "\\lim_{n\\to\\infty}\\frac{n}{n+1}=1\\ne0\\ \\Rightarrow\\ \\text{發散}",
+        "\\Big(\\frac{n}{n+1}\\Big)^n=\\frac1{\\big(1+\\frac1n\\big)^n}",
+        "\\lim a_n=\\frac1e\\ne0\\ \\Rightarrow\\ \\text{發散}"
+      ]
     },
     {
-      "heading": "③ 最常見的錯：$a_n\\to 0$ 不代表收斂",
+      "heading": "② 例三：極限不存在",
       "body": [
-        "$a_n\\to 0$ 時，判別法沒有結論，級數可能收斂（$\\sum\\frac{1}{2^n}$），也可能發散。標準反例是調和級數 $\\sum\\frac{1}{n}$：各項 $\\to 0$，部分和卻沒有上界。",
-        "直觀：各項雖然變小，但變小得太慢，把後面的項適當分組，每一組都至少有 $\\frac{1}{2}$，可以無限多組（證明在下面）。"
+        "• $n$ 偶數：$a_n=\\frac{n}{n+1}\\to1$",
+        "• $n$ 奇數：$a_n=-\\frac{n}{n+1}\\to-1$",
+        "$\\lim a_n$ 不存在 $\\Rightarrow$ 發散"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n+1}"
+      ]
+    },
+    {
+      "heading": "③ 最常見的錯",
+      "body": [
+        "錯：「$a_n\\to0$，所以 $\\sum a_n$ 收斂」",
+        "定理只有一個方向：",
+        "上一課就有反例：",
+        "最有名的反例：調和級數",
+        "$s_{1000}\\approx7.49$，$s_{10^6}\\approx14.39$：慢，但會超過任何數"
+      ],
+      "tex": [
+        "\\sum a_n\\ \\text{收斂}\\ \\Rightarrow\\ a_n\\to0",
+        "a_n\\to0\\ \\not\\Rightarrow\\ \\sum a_n\\ \\text{收斂}",
+        "\\ln\\frac{n}{n+1}\\to0,\\quad\\text{但}\\ \\sum\\ln\\frac{n}{n+1}=-\\infty",
+        "\\sum_{n=1}^\\infty\\frac1n=1+\\frac12+\\frac13+\\frac14+\\cdots"
+      ]
     },
     {
       "heading": "④ 三種情況一覽",
       "body": [
-        "$\\lim a_n=L\\ne 0$：發散。部分和每次大約加 $L$，不可能停下來。",
-        "$\\lim a_n$ 不存在（例如在 1 與 $-1$ 附近來回）：發散。",
-        "$\\lim a_n=0$：沒有結論，換別的判別法。後面幾課的〈p 級數〉、比較、比值……全都是為這種情況準備的。",
-        "算 $\\lim a_n$ 用的是〈數列與數列極限〉的工具：同除最高次、$e$ 型極限、增長速度的比較。常見的陷阱是把 $a_n$ 的極限和級數的和搞混：各項 $\\to\\frac{1}{e}$，跟級數和是多少毫無關係。"
-      ],
-      "collapsible": false
+        "算 $\\displaystyle\\lim_{n\\to\\infty}a_n$：",
+        "• $\\ne0$：發散",
+        "• 不存在：發散",
+        "• $=0$：不知道，要換別的方法",
+        "發散判別法只能證明發散，永遠不能證明收斂",
+        "$a_n\\to0$ 時：$\\sum\\frac1{2^n}$ 收斂，$\\sum\\frac1n$ 發散，兩種都有"
+      ]
     },
     {
       "heading": "⑤ 調和級數發散的證明",
       "body": [
-        "把各項分組：$\\frac{1}{3}+\\frac{1}{4}>\\frac{1}{4}+\\frac{1}{4}=\\frac{1}{2}$；$\\frac{1}{5}+\\frac{1}{6}+\\frac{1}{7}+\\frac{1}{8}>4\\cdot\\frac{1}{8}=\\frac{1}{2}$；$\\frac{1}{9}$ 到 $\\frac{1}{16}$ 共 8 項，每項 $\\ge\\frac{1}{16}$，和 $\\ge\\frac{1}{2}$。一般地，第 $k$ 組是 $\\frac{1}{2^{k-1}+1}$ 到 $\\frac{1}{2^k}$ 共 $2^{k-1}$ 項，每項 $\\ge\\frac{1}{2^k}$，和 $\\ge\\frac{1}{2}$。",
-        "所以 $s_{2^k}\\ge 1+\\frac{k}{2}$。$k\\to\\infty$ 時右邊 $\\to\\infty$，而部分和遞增，整個 $s_n\\to\\infty$，$\\sum\\frac{1}{n}$ 發散。"
+        "把項分組，每組長度加倍：",
+        "每組都把項換成組裡最小的：",
+        "一般：第 $k$ 組是 $\\frac1{2^{k-1}+1}$ 到 $\\frac1{2^k}$，共 $2^{k-1}$ 項",
+        "當然 $\\frac12\\ge\\frac12$ 也算：最前面的 $\\frac12$ 單獨當第 $1$ 組"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}&1+\\frac12+\\Big(\\frac13+\\frac14\\Big)\\\\&+\\Big(\\frac15+\\cdots+\\frac18\\Big)\\\\&+\\Big(\\frac19+\\cdots+\\frac1{16}\\Big)+\\cdots\\end{aligned}",
+        "\\frac13+\\frac14>\\frac14+\\frac14=\\frac12",
+        "\\frac15+\\frac16+\\frac17+\\frac18>4\\cdot\\frac18=\\frac12",
+        "\\text{第 }k\\text{ 組}\\ \\ge2^{k-1}\\cdot\\frac1{2^k}=\\frac12"
+      ]
+    },
+    {
+      "heading": "⑤ 證明（續）",
+      "body": [
+        "前 $2^k$ 項 = $1$ + $k$ 組，每組 $\\ge\\frac12$：",
+        "驗算：$s_8\\approx2.718\\ge2.5$，$s_{16}\\approx3.381\\ge3$",
+        "$k\\to\\infty$：$1+\\frac k2\\to\\infty$，所以 $s_{2^k}$ 沒有上界",
+        "各項都是正的：$s_n$ 遞增，又沒有上界",
+        "各項 $\\frac1n\\to0$，級數卻發散：判別法沉默的最好例子"
+      ],
+      "tex": [
+        "s_{2^k}\\ge1+\\frac k2",
+        "s_n\\to\\infty,\\qquad\\sum_{n=1}^\\infty\\frac1n\\ \\text{發散}\\qquad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 收斂 ⇒ $a_n\\to0$（證明：$a_n=s_n-s_{n-1}\\to S-S$）",
+        "• 判別法：$\\lim a_n\\ne0$ 或不存在 ⇒ 發散",
+        "• $\\lim a_n=0$：沒有結論（$\\sum\\frac1{2^n}$ 收斂、$\\sum\\frac1n$ 發散）",
+        "• $1^\\infty$ 型的 $a_n$：記得 $\\big(1+\\frac1n\\big)^n\\to e$",
+        "• 調和級數：分組，每組 $\\ge\\frac12$，$s_{2^k}\\ge1+\\frac k2$",
+        "下一課：p 級數"
+      ]
     }
   ],
   "workedExamples": [
@@ -108,316 +180,817 @@
   ],
   "checks": [
     {
-      "ask": "已知 $a_n\\to 0$。關於 $\\sum a_n$ 可以說什麼？",
+      "ask": "$\\displaystyle\\sum_{n=1}^\\infty\\frac{2n^2}{n^2+5}$ 用發散判別法，結論是？",
       "options": [
         {
-          "label": "光憑這點無法判斷",
+          "label": "發散，因為 $a_n\\to2$",
           "correct": true
         },
         {
-          "label": "一定收斂",
-          "why": "調和級數 $\\sum\\frac{1}{n}$ 各項 $\\to 0$，卻發散。"
+          "label": "收斂，因為 $a_n\\to2$",
+          "why": "方向反了：各項不趨近 $0$ 是==發散==的證據"
         },
         {
-          "label": "一定發散",
-          "why": "$\\sum\\frac{1}{2^n}$ 各項 $\\to 0$，而且收斂到 1。"
+          "label": "收斂到 $2$",
+          "why": "$2$ 是 $\\lim a_n$，不是級數的和"
+        },
+        {
+          "label": "判別法不能用",
+          "why": "只有 $a_n\\to0$ 時才不能用；這裡 $a_n\\to2$"
         }
       ]
     },
     {
-      "ask": "$\\sum\\frac{2n^2+1}{n^2+5}$ 是？",
+      "ask": "下面哪一個，發散判別法==不能==下結論？",
       "options": [
         {
-          "label": "發散，因為各項 $\\to 2$",
+          "label": "$\\displaystyle\\sum\\frac1{\\sqrt n}$",
           "correct": true
         },
         {
-          "label": "收斂，因為分子分母同次",
-          "why": "同次只說明各項趨近一個非零常數 2；各項不 $\\to 0$，部分和每次約加 2，會往上衝。"
+          "label": "$\\displaystyle\\sum\\cos\\frac1n$",
+          "why": "$\\cos\\frac1n\\to\\cos0=1\\ne0$，可以判斷發散"
         },
         {
-          "label": "發散判別無法判斷",
-          "why": "判別法只有在 $a_n\\to 0$ 時沒結論；這裡極限是 $2\\ne 0$，結論就是發散。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\sum\\cos\\frac{1}{n}$ 是？",
-      "options": [
-        {
-          "label": "發散，因為各項 $\\to 1$",
-          "correct": true
+          "label": "$\\displaystyle\\sum\\frac{3^n}{3^n+1}$",
+          "why": "同除 $3^n$：$\\frac1{1+3^{-n}}\\to1\\ne0$，可以判斷發散"
         },
         {
-          "label": "收斂，因為 $\\frac{1}{n}\\to 0$",
-          "why": "各項是 $\\cos\\frac{1}{n}$，不是 $\\frac{1}{n}$；$\\cos\\frac{1}{n}\\to\\cos 0=1$。"
-        },
-        {
-          "label": "無法判斷",
-          "why": "各項的極限是 $1\\ne 0$，發散判別直接給出發散。"
-        }
-      ]
-    },
-    {
-      "ask": "「$\\sum a_n$ 收斂 $\\Rightarrow a_n\\to 0$」的證明關鍵是？",
-      "options": [
-        {
-          "label": "$a_n=s_n-s_{n-1}$，兩個部分和都 $\\to S$",
-          "correct": true
-        },
-        {
-          "label": "收斂的級數各項越來越小",
-          "why": "這只是重述結論，沒有用到「收斂」的定義（部分和有極限）。"
-        },
-        {
-          "label": "$\\sum\\frac{1}{n}$ 發散",
-          "why": "調和級數是反方向的反例（$a_n\\to 0$ 但發散），證不了這個方向。"
+          "label": "$\\displaystyle\\sum(-1)^n$",
+          "why": "各項在 $\\pm1$ 跳，極限不存在，可以判斷發散"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "收斂就會 $\\to 0$",
+      "title": "收斂 ⇒ 各項 $\\to0$",
       "beats": [
-        { "show": ["$\\sum a_n=S$：$s_n\\to S$，$s_{n-1}\\to S$"],
-          "say": "如果級數收斂到 S，部分和趨近 S；往前挪一格的部分和，也一樣趨近 S。",
+        {
+          "show": [
+            "直覺：和要定下來，加進去的東西就要越來越小"
+          ],
+          "say": "先想直覺：如果級數收斂，部分和最後要定在一個數附近。那每次加進去的那一項，就必須越來越小，不然部分和會一直被推走。",
           "board": [
-            {"do":"write","line":"$\\sum a_n=S$：${{s:s_n}}\\to S$，${{p:s_{n-1}}}\\to S$","tint":{"s":"blue","p":"violet"}},
-            {"do":"focus","term":"p","color":"violet","label":"往前挪一格","on":"往前挪"}
-          ] },
-        { "show": ["$a_n=s_n-s_{n-1}\\to S-S=0$"],
-          "note": "這是完整的證明，沒有省略。",
-          "say": "第 n 項就是兩個相鄰部分和的差，所以趨近 S 減 S，等於零。整個證明就這兩行。",
+            {
+              "do": "write",
+              "line": "直覺：和要定下來，加進去的東西就要越來越小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理：$\\displaystyle\\sum_{n=1}^\\infty a_n$ 收斂 $\\Rightarrow\\ \\lim_{n\\to\\infty}a_n=0$"
+          ],
+          "say": "定理：級數收斂，那各項一定趨近 0。",
           "board": [
-            {"do":"write","line":"$a_n={{s:s_n}}-{{p:s_{n-1}}}$","on":"第 n 項"},
-            {"do":"transform","line":"$a_n={{s:s_n}}-{{p:s_{n-1}}}\\to S-S={{z:0}}$","on":"所以趨近"},
-            {"do":"box","term":"z","color":"green","on":"等於零"}
-          ] },
-        { "show": ["收斂 ⇒ $a_n\\to 0$"],
-          "say": "結論：收斂的級數，各項一定趨近零。注意箭頭的方向。",
+            {
+              "do": "write",
+              "line": "定理：$\\displaystyle\\sum_{n=1}^\\infty a_n$ 收斂 $\\Rightarrow\\ \\lim_{n\\to\\infty}a_n=0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：設 $s_n\\to S$。由 6.6：",
+            "$a_n=s_n-s_{n-1}\\quad(n\\ge2)$"
+          ],
+          "say": "證明。假設部分和趨近 S。部分和那一課學過，各項可以寫成相鄰兩個部分和的差。",
           "board": [
-            {"do":"write","line":"收斂 ${{ar:\\Rightarrow}}\\ a_n\\to 0$","on":"結論"},
-            {"do":"focus","term":"ar","label":"只有這個方向","on":"箭頭"}
-          ] }
+            {
+              "do": "write",
+              "line": "證明：設 $s_n\\to S$。由 6.6："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle a_n=s_n-s_{n-1}\\quad(n\\ge2)$",
+              "on": "學過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\to\\infty$ 時 $s_n\\to S$，$s_{n-1}\\to S$（同一個數列，只差一格）"
+          ],
+          "say": "n 趨近無限大，s n 趨近 S；s n 減 1 是同一個數列晚一格，也趨近 S。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\to\\infty$ 時 $s_n\\to S$，$s_{n-1}\\to S$（同一個數列，只差一格）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{n\\to\\infty}a_n=S-S=0\\qquad\\blacksquare$"
+          ],
+          "say": "用數列極限的減法定律，a n 的極限是 S 減 S，等於 0。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{n\\to\\infty}a_n=S-S=0\\qquad\\blacksquare}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "的極"
+            },
+            {
+              "do": "write",
+              "line": "　關鍵是 $S$ 是一個有限的數；$\\infty-\\infty$ 就不能這樣減",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\sum\\frac1{2^n}$ 收斂，果然 $\\frac1{2^n}\\to0$"
+          ],
+          "say": "例如 2 的 n 次方分之 1 的級數收斂，它的各項果然趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\sum\\frac1{2^n}$ 收斂，果然 $\\frac1{2^n}\\to0$"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "已知 $\\displaystyle\\sum_{n=1}^\\infty a_n=5$，那 $\\displaystyle\\lim_{n\\to\\infty}a_n=$？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$5$",
+            "why": "把級數的和（$\\lim s_n$）當成各項的極限（$\\lim a_n$）了"
+          },
+          {
+            "label": "不一定",
+            "why": "定理保證：只要收斂，各項的極限一定是 $0$"
+          }
+        ]
+      }
     },
     {
-      "title": "反過來用",
+      "title": "判別法：反過來用",
       "beats": [
-        { "show": ["$\\lim a_n\\ne 0$ 或不存在 ⇒ 發散"],
-          "note": "逆否命題，叫發散判別（第 $n$ 項判別）。",
-          "say": "把它反過來講：各項的極限不是零，或根本不存在，級數就發散。這叫發散判別。",
+        {
+          "show": [
+            "把定理換句話說（逆否）：",
+            "$\\lim_{n\\to\\infty}a_n\\ne0\\ \\text{或不存在}\\ \\Rightarrow\\ \\sum a_n\\ \\text{發散}$"
+          ],
+          "say": "這個定理真正好用的是它的逆否命題：如果各項的極限不是 0，或根本不存在，級數就一定發散。這叫發散判別法。",
           "board": [
-            {"do":"write","line":"$\\lim a_n\\ne 0$ 或不存在"},
-            {"do":"write","line":"⇒ 發散","color":"green","on":"級數就"}
-          ] },
-        { "show": ["$\\sum\\frac{n}{n+1}$：$\\lim\\frac{n}{n+1}=1\\ne 0$"],
-          "note": "部分和大約每次加 1。",
-          "say": "n 除以 n 加一趨近一，不是零，直接發散。部分和每次大約加一，當然一路往上衝。",
+            {
+              "do": "write",
+              "line": "把定理換句話說（逆否）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{n\\to\\infty}a_n\\ne0\\ \\text{或不存在}\\ \\Rightarrow\\ \\sum a_n\\ \\text{發散}}}$",
+              "on": "如果"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "級數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例一：$\\displaystyle\\sum_{n=1}^\\infty\\frac{n}{n+1}$",
+            "$\\lim_{n\\to\\infty}\\frac{n}{n+1}=1\\ne0\\ \\Rightarrow\\ \\text{發散}$"
+          ],
+          "say": "例一：n 加 1 分之 n。各項趨近 1，不是 0。所以不用算部分和，直接判斷發散。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum\\frac{n}{n+1}$：$\\lim\\frac{n}{n+1}={{o:1}}\\ne 0$","on":"除以"},
-            {"do":"focus","term":"o","label":"不是零","on":"趨近一"},
-            {"do":"write","line":"⇒ 發散","color":"green","on":"直接發散"}
-          ] },
-        { "show": ["代數字：$n=1$ 時 $\\frac{n}{n+1}=\\frac{1}{2}$"],
-          "note": "n 越大，分數越靠近 1。",
-          "say": "代一個數看看：n 等於一，是二分之一；n 越大，這個分數就越來越靠近一。",
+            {
+              "do": "write",
+              "line": "例一：$\\displaystyle\\sum_{n=1}^\\infty\\frac{n}{n+1}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\lim_{n\\to\\infty}\\frac{n}{n+1}=1\\ne0\\ \\Rightarrow\\ \\text{發散}}}$",
+              "color": "red",
+              "on": "各項"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "不是"
+            },
+            {
+              "do": "write",
+              "line": "　直覺：後面每一項都差不多是 $1$，加無窮多個 $1$",
+              "color": "violet",
+              "on": "部分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例二：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{n+1}\\Big)^n$"
+          ],
+          "say": "例二：n 加 1 分之 n 的 n 次方。",
           "board": [
-            {"do":"write","line":"$n=1$：$\\frac{n}{n+1}=\\frac{1}{2}$"},
-            {"do":"write","line":"$n$ 越大，越靠近 $1$","on":"越大"}
-          ] },
-        { "show": ["拿到級數，第一件事算 $\\lim a_n$"],
-          "say": "所以拿到任何級數，第一個檢查就是算各項的極限，不是零就結束了。",
+            {
+              "do": "write",
+              "line": "例二：$\\displaystyle\\sum_{n=1}^\\infty\\Big(\\frac{n}{n+1}\\Big)^n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$1^\\infty$ 型，倒過來看：",
+            "$\\Big(\\frac{n}{n+1}\\Big)^n=\\frac1{\\big(1+\\frac1n\\big)^n}$"
+          ],
+          "say": "底數趨近 1、指數趨近無限大，是 1 的無限大次方型，不能說它趨近 1。把分數倒過來：它是 1 加 n 分之 1 的 n 次方，分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"先算 $\\lim a_n$","on":"第一個"},
-            {"do":"write","line":"不是 0 ⇒ 結束","on":"不是零"}
-          ] }
+            {
+              "do": "write",
+              "line": "$1^\\infty$ 型，倒過來看："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big(\\frac{n}{n+1}\\Big)^n=\\frac1{\\big(1+\\frac1n\\big)^n}$",
+              "on": "把分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\big(1+\\frac1n\\big)^n\\to e$：",
+            "$\\lim a_n=\\frac1e\\ne0\\ \\Rightarrow\\ \\text{發散}$"
+          ],
+          "say": "1 加 n 分之 1 的 n 次方趨近 e，所以各項趨近 e 分之 1，大約 0.368，不是 0，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\big(1+\\frac1n\\big)^n\\to e$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\lim a_n=\\frac1e\\ne0\\ \\Rightarrow\\ \\text{發散}}}$",
+              "color": "red",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "趨近#2"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$n=100$ 時 $\\big(\\frac{100}{101}\\big)^{100}\\approx0.3697$",
+              "color": "violet",
+              "on": "36"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例三：極限不存在",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^\\infty(-1)^n\\frac{n}{n+1}$"
+          ],
+          "say": "例三：負 1 的 n 次方，乘上 n 加 1 分之 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty(-1)^n\\frac{n}{n+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $n$ 偶數：$a_n=\\frac{n}{n+1}\\to1$",
+            "• $n$ 奇數：$a_n=-\\frac{n}{n+1}\\to-1$"
+          ],
+          "say": "n 是偶數時，各項趨近 1；n 是奇數時，各項趨近負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $n$ 偶數：$a_n=\\frac{n}{n+1}\\to1$"
+            },
+            {
+              "do": "write",
+              "line": "• $n$ 奇數：$a_n=-\\frac{n}{n+1}\\to-1$",
+              "on": "是奇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim a_n$ 不存在 $\\Rightarrow$ 發散"
+          ],
+          "say": "兩個子數列趨近不同的數，所以各項的極限不存在，當然也不是 0。發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\lim a_n$ 不存在 $\\Rightarrow$ 發散",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "最常見的錯",
+      "beats": [
+        {
+          "show": [
+            "錯：「$a_n\\to0$，所以 $\\sum a_n$ 收斂」"
+          ],
+          "say": "現在講最常見的錯：各項趨近 0，所以級數收斂。這是錯的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯：「$a_n\\to0$，所以 $\\sum a_n$ 收斂」",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理只有一個方向：",
+            "$\\sum a_n\\ \\text{收斂}\\ \\Rightarrow\\ a_n\\to0$"
+          ],
+          "say": "定理只有一個方向：收斂推得出各項趨近 0。反過來，各項趨近 0，推不出收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理只有一個方向："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum a_n\\ \\text{收斂}\\ \\Rightarrow\\ a_n\\to0$",
+              "on": "收斂#1"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle a_n\\to0\\ \\not\\Rightarrow\\ \\sum a_n\\ \\text{收斂}}}$",
+              "on": "反過"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "推不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課就有反例：",
+            "$\\ln\\frac{n}{n+1}\\to0,\\quad\\text{但}\\ \\sum\\ln\\frac{n}{n+1}=-\\infty$"
+          ],
+          "say": "上一課就看過反例：自然對數 n 加 1 分之 n，各項趨近自然對數 1，等於 0；但是部分和是負的自然對數 N 加 1，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課就有反例："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\frac{n}{n+1}\\to0,\\quad\\text{但}\\ \\sum\\ln\\frac{n}{n+1}=-\\infty$",
+              "on": "對數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最有名的反例：調和級數",
+            "$\\sum_{n=1}^\\infty\\frac1n=1+\\frac12+\\frac13+\\frac14+\\cdots$"
+          ],
+          "say": "最有名的反例是調和級數：1 加 2 分之 1 加 3 分之 1，一直加下去。各項 n 分之 1 趨近 0，但它發散。第五段會證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最有名的反例：調和級數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^\\infty\\frac1n=1+\\frac12+\\frac13+\\frac14+\\cdots$",
+              "on": "一直"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍點是 s_n：爬得很慢，但沒有上界"
+          ],
+          "say": "圖上，紅色的各項掉向 0；藍色的部分和爬得越來越慢，但一直在爬，沒有上界。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "harm",
+                  "window": [
+                    0,
+                    17,
+                    0,
+                    4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "red",
+                      "dash": true,
+                      "domain": [
+                        1,
+                        16
+                      ]
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 12,
+                      "y": 0.55,
+                      "text": "紅線：a_n = 1/n"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 1.5,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 1.833,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": 2.083,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": 2.283,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": 2.45,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": 2.593,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": 2.718,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 9,
+                      "y": 2.829,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 10,
+                      "y": 2.929,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 11,
+                      "y": 3.02,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 12,
+                      "y": 3.103,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 13,
+                      "y": 3.18,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 14,
+                      "y": 3.252,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 15,
+                      "y": 3.318,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 16,
+                      "y": 3.381,
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍點是 s_n：爬得很慢，但沒有上界",
+              "color": "violet",
+              "on": "藍色"
+            },
+            {
+              "do": "write",
+              "line": "　$s_{1000}\\approx7.49$，$s_{10^6}\\approx14.39$：慢，但會超過任何數",
+              "color": "violet",
+              "on": "但一"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "三種情況一覽",
+      "beats": [
+        {
+          "show": [
+            "算 $\\displaystyle\\lim_{n\\to\\infty}a_n$：",
+            "• $\\ne0$：發散"
+          ],
+          "say": "整理成三種情況。算各項的極限：不是 0，發散；不存在，發散；等於 0，這個判別法什麼都不說，要換別的方法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "算 $\\displaystyle\\lim_{n\\to\\infty}a_n$："
+            },
+            {
+              "do": "write",
+              "line": "• $\\ne0$：發散",
+              "on": "不是"
+            },
+            {
+              "do": "write",
+              "line": "• 不存在：發散",
+              "on": "發散#2"
+            },
+            {
+              "do": "write",
+              "line": "• $=0$：不知道，要換別的方法",
+              "on": "法什"
+            }
+          ]
+        },
+        {
+          "show": [
+            "發散判別法只能證明發散，永遠不能證明收斂"
+          ],
+          "say": "換句話說，發散判別法只能用來證明發散，永遠不能用來證明收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "發散判別法只能證明發散，永遠不能證明收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$a_n\\to0$ 時：$\\sum\\frac1{2^n}$ 收斂，$\\sum\\frac1n$ 發散，兩種都有",
+              "color": "violet",
+              "on": "明發"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "$a_n\\to 0$：沒結論",
+      "title": "調和級數發散的證明",
       "beats": [
-        { "show": ["$\\sum\\frac{1}{2^n}$：各項 $\\to 0$，收斂"],
-          "say": "各項趨近零的時候，判別法什麼都沒說。二的 n 次方分之一各項趨近零，級數收斂。",
+        {
+          "show": [
+            "把項分組，每組長度加倍：",
+            "$\\begin{aligned}&1+\\frac12+\\Big(\\frac13+\\frac14\\Big)\\\\&+\\Big(\\frac15+\\cdots+\\frac18\\Big)\\\\&+\\Big(\\frac19+\\cdots+\\frac1{16}\\Big)+\\cdots\\end{aligned}$"
+          ],
+          "say": "最後證明調和級數發散。把項分組，每一組的長度加倍：2 項、4 項、8 項，一直下去。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{1}{2^n}$：各項 $\\to 0$，收斂","on":"二的 n 次方"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n}$：各項 $\\to 0$，發散"],
-          "note": "調和級數：部分和沒有上界。",
-          "say": "可是調和級數，n 分之一，各項也趨近零，部分和卻沒有上界，發散。",
+            {
+              "do": "write",
+              "line": "把項分組，每組長度加倍："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&1+\\frac12+\\Big(\\frac13+\\frac14\\Big)\\\\&+\\Big(\\frac15+\\cdots+\\frac18\\Big)\\\\&+\\Big(\\frac19+\\cdots+\\frac1{16}\\Big)+\\cdots\\end{aligned}}$",
+              "on": "度加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每組都把項換成組裡最小的：",
+            "$\\frac13+\\frac14>\\frac14+\\frac14=\\frac12$"
+          ],
+          "say": "每一組裡，把每一項都換成組裡最小的那一個，和只會變小。3 分之 1 加 4 分之 1，大於兩個 4 分之 1，等於 2 分之 1。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{1}{n}$：各項 $\\to 0$，發散","on":"調和級數"}
-          ] },
-        { "show": ["各項 $\\frac{1}{n}$ 的點貼近 0"],
-          "note": "點越來越低，但降得很慢。",
-          "say": "畫出各項：n 分之一的點，越來越貼近零，但貼近得很慢。",
+            {
+              "do": "write",
+              "line": "每組都把項換成組裡最小的："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac13+\\frac14>\\frac14+\\frac14=\\frac12$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac15+\\frac16+\\frac17+\\frac18>4\\cdot\\frac18=\\frac12$"
+          ],
+          "say": "5 分之 1 到 8 分之 1 這四項，大於四個 8 分之 1，也是 2 分之 1。",
           "board": [
-            {"do":"plot","graph":{"window":[0,9,-0.2,1.2],"curves":[{"expr":"1/x","domain":[1,9],"color":"blue"}],"points":[{"x":1,"y":1},{"x":2,"y":0.5},{"x":3,"y":0.3333},{"x":4,"y":0.25},{"x":5,"y":0.2},{"x":6,"y":0.1667},{"x":7,"y":0.1429},{"x":8,"y":0.125}]}}
-          ] },
-        { "show": ["$\\frac{1}{3}+\\frac{1}{4}>\\frac{1}{2}$，$\\frac{1}{5}+\\cdots+\\frac{1}{8}>\\frac{1}{2}$"],
-          "note": "分組，每組至少 $\\frac{1}{2}$，無限多組。",
-          "say": "直觀是：變小得太慢。適當分組，每一組都至少二分之一，可以分無限多組。證明在下一節。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac15+\\frac16+\\frac17+\\frac18>4\\cdot\\frac18=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：第 $k$ 組是 $\\frac1{2^{k-1}+1}$ 到 $\\frac1{2^k}$，共 $2^{k-1}$ 項",
+            "$\\text{第 }k\\text{ 組}\\ \\ge2^{k-1}\\cdot\\frac1{2^k}=\\frac12$"
+          ],
+          "say": "一般來說，第 k 組有 2 的 k 減 1 次方項，每一項都至少是 2 的 k 次方分之 1，所以每一組至少是 2 分之 1。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{3}+\\frac{1}{4}>{{a:\\frac{1}{2}}}$","on":"適當分組"},
-            {"do":"write","line":"$\\frac{1}{5}+\\cdots+\\frac{1}{8}>{{b:\\frac{1}{2}}}$","on":"每一組都"},
-            {"do":"focus","term":"b","label":"無限多組","on":"可以分"}
-          ] }
-      ],
-      "key": "$a_n\\to0$ 只是必要條件，判不了收斂",
-      "check": 0
+            {
+              "do": "write",
+              "line": "一般：第 $k$ 組是 $\\frac1{2^{k-1}+1}$ 到 $\\frac1{2^k}$，共 $2^{k-1}$ 項"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\text{第 }k\\text{ 組}\\ \\ge2^{k-1}\\cdot\\frac1{2^k}=\\frac12}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "少是#1"
+            },
+            {
+              "do": "write",
+              "line": "　當然 $\\frac12\\ge\\frac12$ 也算：最前面的 $\\frac12$ 單獨當第 $1$ 組",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：調和級數發散",
+      "title": "證明（續）",
       "beats": [
-        { "show": ["分組，每組至少 $\\frac{1}{2}$"],
-          "say": "策略：把各項分組，每一組都至少二分之一。組數無限多，部分和就沒有上界。",
+        {
+          "show": [
+            "前 $2^k$ 項 = $1$ + $k$ 組，每組 $\\ge\\frac12$：",
+            "$s_{2^k}\\ge1+\\frac k2$"
+          ],
+          "say": "前 2 的 k 次方項，就是 1 再加上 k 組，每一組至少 2 分之 1。所以 s 2 的 k 次方，至少是 1 加 2 分之 k。",
           "board": [
-            {"do":"write","line":"分組，每組至少 $\\frac{1}{2}$"},
-            {"do":"write","line":"組數無限 ⇒ 部分和沒有上界","on":"組數無限多"}
-          ] },
-        { "show": ["$\\frac{1}{3}+\\frac{1}{4}>\\frac{1}{4}+\\frac{1}{4}=\\frac{1}{2}$"],
-          "say": "三分之一加四分之一，大於兩個四分之一，也就是二分之一。",
+            {
+              "do": "write",
+              "line": "前 $2^k$ 項 = $1$ + $k$ 組，每組 $\\ge\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle s_{2^k}\\ge1+\\frac k2}}$",
+              "on": "再加"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$s_8\\approx2.718\\ge2.5$，$s_{16}\\approx3.381\\ge3$",
+              "color": "violet",
+              "on": "至少#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$k\\to\\infty$：$1+\\frac k2\\to\\infty$，所以 $s_{2^k}$ 沒有上界"
+          ],
+          "say": "k 越來越大，2 分之 k 衝到無限大，所以部分和沒有上界。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{3}+\\frac{1}{4}>\\frac{1}{4}+\\frac{1}{4}=\\frac{1}{2}$","on":"三分之一"}
-          ] },
-        { "show": ["$\\frac{1}{5}+\\dots+\\frac{1}{8}>4\\cdot\\frac{1}{8}=\\frac{1}{2}$"],
-          "note": "每一項都 $\\ge$ 組裡最小的 $\\frac{1}{8}$。",
-          "why": {"ask":"為什麼這四項的和 $>4\\cdot\\frac{1}{8}$？","say":"五分之一到八分之一，為什麼大於四個八分之一？","options":[{"label":"每一項都 $\\ge$ 組裡最小的 $\\frac{1}{8}$","correct":true},{"label":"各項 $\\to0$","why":"趨近零只說後面會變小，給不出「至少多少」；這裡要的是下界。"},{"label":"$\\frac{1}{8}$ 是四項的平均","why":"四項的平均比 $\\frac{1}{8}$ 大；$\\frac{1}{8}$ 是最小的那一項，所以才是下界。"}]},
-          "say": "四項裡最小的是八分之一，每一項都不比它小，四項加起來至少二分之一。",
+            {
+              "do": "write",
+              "line": "$k\\to\\infty$：$1+\\frac k2\\to\\infty$，所以 $s_{2^k}$ 沒有上界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "各項都是正的：$s_n$ 遞增，又沒有上界",
+            "$s_n\\to\\infty,\\qquad\\sum_{n=1}^\\infty\\frac1n\\ \\text{發散}\\qquad\\blacksquare$"
+          ],
+          "say": "各項都是正的，部分和一直往上爬；又沒有上界，所以衝到無限大。調和級數發散，證明完畢。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\frac{1}{5}+\\dots+{{e:\\frac{1}{8}}}>4\\cdot\\frac{1}{8}=\\frac{1}{2}$","on":"五分之一"},
-            {"do":"focus","term":"e","label":"最小的一項","why":true,"on":"最小的是"}
-          ] },
-        { "show": ["第 $k$ 組：$2^{k-1}$ 項，每項 $\\ge\\frac{1}{2^k}$","和 $\\ge\\frac{1}{2}$"],
-          "note": "第 $k$ 組是 $\\frac{1}{2^{k-1}+1}$ 到 $\\frac{1}{2^k}$。",
-          "why": {"ask":"為什麼每一組都 $\\ge\\frac{1}{2}$？","say":"後面每一組，為什麼也都至少二分之一？","options":[{"label":"項數 $2^{k-1}$ 乘最小項 $\\frac{1}{2^k}$，正好 $\\frac{1}{2}$","correct":true},{"label":"項數越來越多","why":"項數變多，每一項也變小；要算出項數乘最小項，剛好是 $\\frac{1}{2}$。"},{"label":"前兩組都 $\\ge\\frac{1}{2}$，後面也會是","why":"看幾組不能代替證明；要對一般的 $k$ 算出項數和最小項。"}]},
-          "say": "第 k 組有二的 k 減一次方項，每項至少二的 k 次方分之一，相乘正好二分之一。",
+            {
+              "do": "write",
+              "line": "各項都是正的：$s_n$ 遞增，又沒有上界"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle s_n\\to\\infty,\\qquad\\sum_{n=1}^\\infty\\frac1n\\ \\text{發散}\\qquad\\blacksquare}}$",
+              "color": "red",
+              "on": "又沒"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "調和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "各項 $\\frac1n\\to0$，級數卻發散：判別法沉默的最好例子"
+          ],
+          "say": "這就是各項趨近 0、級數卻發散的最好例子。也說明了為什麼各項趨近 0 時，發散判別法不能下結論。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"第 $k$ 組：和 $\\ge\\frac{1}{2}$","on":"後面每一組"},
-            {"do":"write","line":"$2^{k-1}$ 項，每項 $\\ge\\frac{1}{2^k}$","why":true,"on":"第 k 組有"},
-            {"do":"write","line":"$2^{k-1}\\cdot\\frac{1}{2^k}=\\frac{1}{2}$","color":"gold","why":true,"on":"相乘"}
-          ] },
-        { "show": ["$s_{2^k}=1+$ 前 $k$ 組","第 $k$ 組：分母 $2^{k-1}+1$ 到 $2^k$"],
-          "note": "只增不減又沒有上界，就會衝向無限大。",
-          "say": "第一項一單獨留著，第 k 組分母從二的 k 減一次方加一，到二的 k 次方。部分和只增不減又沒有上界，發散。",
-          "board": [
-            {"do":"write","line":"$s_{2^k}={{o:1}}+$ 前 $k$ 組"},
-            {"do":"focus","term":"o","label":"第一項","on":"單獨"},
-            {"do":"write","line":"第 $k$ 組：分母 $2^{k-1}+1$ 到 $2^k$","on":"分母"},
-            {"do":"write","line":"只增不減、沒有上界 ⇒ $\\to\\infty$","on":"只增不減"}
-          ] },
-        { "show": ["$s_{2^k}\\ge 1+\\frac{k}{2}\\to\\infty$"],
-          "note": "部分和遞增，整個 $s_n\\to\\infty$。",
-          "say": "前面這些項的部分和至少一加二分之 k，一路衝向無限大。部分和遞增，級數發散。",
-          "board": [
-            {"do":"write","line":"$s_{2^k}\\ge 1+\\frac{k}{2}\\to{{i:\\infty}}$","on":"前面這些項"},
-            {"do":"focus","term":"i","label":"沒有上界","on":"一路衝向"}
-          ] }
-      ],
-      "key": "分組：每組項數翻倍，和至少 $\\frac{1}{2}$",
-      "proof": true,
-      "of": 4,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「部分和遞增」用在哪一步？",
-        "steps": [
-          {
-            "label": "$\\frac{1}{3}+\\frac{1}{4}>\\frac{1}{2}$",
-            "why": "這只用到 $\\frac{1}{3}>\\frac{1}{4}$。"
-          },
-          {
-            "label": "第 $k$ 組 $\\ge\\frac{1}{2}$",
-            "why": "這只用到組裡每一項都 $\\ge$ 最小的那一項。"
-          },
-          {
-            "label": "$s_{2^k}\\ge 1+\\frac{k}{2}$",
-            "why": "這只是把前面各組的下界加起來。"
-          },
-          {
-            "label": "從 $s_{2^k}\\to\\infty$ 推到整個 $s_n\\to\\infty$",
-            "correct": true
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "各項 $\\frac1n\\to0$，級數卻發散：判別法沉默的最好例子"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "算各項的極限",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\left(\\frac{n}{n+1}\\right)^n=\\frac{1}{(1+1/n)^n}$"],
-          "say": "算各項的極限，用的是數列的工具。這一題翻過來，分母是一加 n 分之一的 n 次方。",
+        {
+          "show": [
+            "• 收斂 ⇒ $a_n\\to0$（證明：$a_n=s_n-s_{n-1}\\to S-S$）",
+            "• 判別法：$\\lim a_n\\ne0$ 或不存在 ⇒ 發散"
+          ],
+          "say": "整理一下：收斂的級數，各項一定趨近 0；所以各項不趨近 0，就發散。但各項趨近 0 時，沒有結論，調和級數就是反例。",
           "board": [
-            {"do":"write","line":"$a_n=\\left(\\frac{n}{n+1}\\right)^n$"},
-            {"do":"transform","line":"$a_n=\\frac{1}{{{d:(1+1/n)^n}}}$","on":"翻過來"},
-            {"do":"underline","term":"d","color":"blue","on":"分母"}
-          ] },
-        { "show": ["各項 $\\to\\frac{1}{e}\\approx 0.368\\ne 0$"],
-          "note": "〈e 型極限〉：$\\left(1+\\frac{1}{n}\\right)^n\\to e$。",
-          "say": "分母趨近 e，所以各項趨近 e 分之一，大約零點三六八，不是零，發散。",
+            {
+              "do": "write",
+              "line": "• 收斂 ⇒ $a_n\\to0$（證明：$a_n=s_n-s_{n-1}\\to S-S$）"
+            },
+            {
+              "do": "write",
+              "line": "• 判別法：$\\lim a_n\\ne0$ 或不存在 ⇒ 發散",
+              "on": "各項#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\lim a_n=0$：沒有結論（$\\sum\\frac1{2^n}$ 收斂、$\\sum\\frac1n$ 發散）",
+              "on": "項不"
+            },
+            {
+              "do": "write",
+              "line": "• $1^\\infty$ 型的 $a_n$：記得 $\\big(1+\\frac1n\\big)^n\\to e$",
+              "on": "但各"
+            },
+            {
+              "do": "write",
+              "line": "• 調和級數：分組，每組 $\\ge\\frac12$，$s_{2^k}\\ge1+\\frac k2$",
+              "on": "結論"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：p 級數"
+          ],
+          "say": "下一課，把調和級數推廣成 p 級數，看 p 是多少時會收斂。",
           "board": [
-            {"do":"write","line":"${{d:(1+1/n)^n}}\\to e$"},
-            {"do":"write","line":"$a_n\\to{{r:\\frac{1}{e}}}\\approx 0.368\\ne{{z:0}}$","on":"所以各項"},
-            {"do":"focus","term":"z","label":"不是零","on":"不是零"}
-          ] },
-        { "show": ["$2<e<3$，所以 $\\frac{1}{3}<\\frac{1}{e}<\\frac{1}{2}$"],
-          "note": "$\\left(1+\\frac{1}{n}\\right)^n\\to e$ 是已給的結果。",
-          "say": "這極限是 e 型極限那一課的結果，直接用。e 在二和三之間，所以 e 分之一介於三分之一與二分之一，零點三六八在裡面。",
-          "board": [
-            {"do":"write","line":"$2<{{ee:e}}<3$"},
-            {"do":"write","line":"$\\frac{1}{3}<\\frac{1}{e}<\\frac{1}{2}$","on":"所以"}
-          ] },
-        { "show": ["$\\frac{1}{e}$ 是各項的極限，不是級數和"],
-          "say": "小心別搞混：e 分之一是各項的極限，跟級數的和毫無關係，級數根本沒有和。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\lim a_n=\\frac{1}{e}$","on":"各項的極限"},
-            {"do":"write","line":"$\\sum a_n$ 沒有和","on":"毫無關係"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "極限不存在",
-      "beats": [
-        { "show": ["$\\sum(-1)^n\\frac{n}{n+1}$"],
-          "note": "$|a_n|=\\frac{n}{n+1}\\to 1$。",
-          "say": "加上正負號。大小趨近一：n 是偶數時靠近一，n 是奇數時靠近負一。",
-          "board": [
-            {"do":"write","line":"$a_n=(-1)^n\\frac{n}{n+1}$"},
-            {"do":"write","line":"$|a_n|\\to {{e:1}}$","on":"大小趨近一"},
-            {"do":"write","line":"偶數：$1$，奇數：$-1$","on":"偶數"}
-          ] },
-        { "show": ["$a_n$ 在 1 與 $-1$ 附近來回"],
-          "say": "各項在一和負一附近來回跳，沒有極限，更不是趨近零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a_n$ 在 $1$ 與 $-1$ 附近來回","on":"各項"},
-            {"do":"write","line":"${{l:\\lim a_n}}$ 不存在","on":"沒有極限"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\sum(-1)^n\\frac{n}{n+1}$ 是？",
-        "options": [
-          {
-            "label": "發散",
-            "correct": true
-          },
-          {
-            "label": "收斂，因為正負交替會互相抵消",
-            "why": "正負交替救不了它：〈交錯級數判別〉要求各項的大小 $\\to 0$，這裡大小 $\\to 1$。"
-          },
-          {
-            "label": "發散判別無法判斷",
-            "why": "沒結論的只有 $\\lim a_n=0$；極限不存在也直接判發散。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "下一課：p 級數"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

@@ -1,66 +1,129 @@
 {
   "id": "archimedean-property",
   "title": "阿基米德性質",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 32,
-  "prerequisites": ["completeness-axiom"],
-  "next": ["epsilon-n-definition"],
-  "related": ["sup-inf"],
+  "prerequisites": [
+    "completeness-axiom"
+  ],
+  "next": [
+    "epsilon-n-definition"
+  ],
+  "related": [
+    "sup-inf"
+  ],
   "objectives": [
-    "寫出阿基米德性質的兩種形式：$n>x$，以及 $\\frac{1}{n}<\\varepsilon$。",
-    "用完備性公理證明 $\\mathbb{N}$ 沒有上界。",
-    "給定 $\\varepsilon$，算出一個具體的 $n$；並用阿基米德性質在兩個實數之間找出有理數。"
+    "寫出阿基米德性質的兩種形式：$n>x$，以及 $\\frac1n<\\varepsilon$",
+    "用完備性公理證明 $\\mathbb{N}$ 沒有上界",
+    "給定 $\\varepsilon$，算出一個具體的 $n$，並用阿基米德性質在兩個實數之間找出有理數"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 沒有無限大，也沒有無限小",
       "body": [
-        "不管 $x$ 多大，總有自然數比它大；不管 $\\varepsilon$ 多小（只要是正的），總有 $\\frac{1}{n}$ 比它小。聽起來理所當然，但它是之後每一個 $\\varepsilon$-$N$ 證明的最後一步：「取 $N>\\frac{1}{\\varepsilon}$」之所以合法，靠的就是這一條。",
-        "它不是白送的：存在一些有序的數系，裡面有比所有自然數都大的元素。在 $\\mathbb{R}$ 裡它成立，理由是完備性。"
-      ],
-      "collapsible": false
+        "前幾課一直在用：「有正整數 $n>x$」、「有 $n$ 使 $\\frac1n<\\varepsilon$」",
+        "沒有無限大：再大的實數，都會被某個 $n$ 超過",
+        "沒有無限小：再小的正數，都比某個 $\\frac1n$ 大",
+        "名字的由來：再小的長度，累加夠多次，就能超過任何長度"
+      ]
     },
     {
       "heading": "② 敘述",
       "body": [
-        "阿基米德性質：對每一個實數 $x$，存在 $n\\in\\mathbb{N}$ 使 $n>x$。也就是說 $\\mathbb{N}$ 在 $\\mathbb{R}$ 中沒有上界。",
-        "等價形式：對每一個 $\\varepsilon>0$，存在 $n\\in\\mathbb{N}$ 使 $\\frac{1}{n}<\\varepsilon$。（對 $x=\\frac{1}{\\varepsilon}$ 用第一種形式，得 $n>\\frac{1}{\\varepsilon}$，兩邊取倒數即可。）而且一旦 $\\frac{1}{n}<\\varepsilon$，對所有 $m\\ge n$ 也有 $\\frac{1}{m}\\le\\frac{1}{n}<\\varepsilon$。"
+        "阿基米德性質：",
+        "形式二：$\\forall\\varepsilon>0\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ \\dfrac1n<\\varepsilon$",
+        "由形式一推：對 $x=\\frac1\\varepsilon$ 取 $n>\\frac1\\varepsilon$，兩邊都正，取倒數"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists n\\in\\mathbb{N},\\ \\frac1n<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\forall x\\in\\mathbb{R}\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ n>x",
+        "\\Rightarrow\\ \\frac1n<\\varepsilon"
+      ]
     },
     {
-      "heading": "證明：$\\mathbb{N}$ 沒有上界",
+      "heading": "證明：ℕ 沒有上界",
       "body": [
-        "反設 $\\mathbb{N}$ 有上界。$\\mathbb{N}$ 非空，由完備性公理 $s=\\sup\\mathbb{N}$ 存在。",
-        "$s-1<s$，所以 $s-1$ 不是 $\\mathbb{N}$ 的上界：存在 $n\\in\\mathbb{N}$ 使 $n>s-1$。",
-        "那麼 $n+1>s$，而 $n+1\\in\\mathbb{N}$，與 $s$ 是 $\\mathbb{N}$ 的上界矛盾。"
+        "策略：假設有天花板 $s=\\sup\\mathbb{N}$，往下退 $1$，還有 $n$ 在上面；那 $n+1$ 就跳過 $s$",
+        "證明：假設 $\\mathbb{N}$ 有上界。$\\mathbb{N}$ 非空，由完備性公理，$s=\\sup\\mathbb{N}$ 存在",
+        "用 $\\varepsilon=1$ 的判準：$s-1$ 不是上界",
+        "$\\Rightarrow n+1>s$，而 $n+1\\in\\mathbb{N}$：跟「$s$ 是上界」矛盾　$\\blacksquare$",
+        "完備性是關鍵：有些有序的數系裡真的有「無限大」，阿基米德性質不成立"
       ],
-      "collapsible": true
+      "tex": [
+        "\\exists n\\in\\mathbb{N}:\\ n>s-1"
+      ]
     },
     {
-      "heading": "③ 推論：有理數在實數中稠密",
+      "heading": "② 例：$\\inf\\{\\frac1n\\}=0$",
       "body": [
-        "對任意實數 $a<b$，存在有理數 $q$ 使 $a<q<b$。想法：先選 $n$ 讓步長 $\\frac{1}{n}$ 比區間長度 $b-a$ 小，然後在數線上以 $\\frac{1}{n}$ 為步長往前走，一定有一步落進 $(a,b)$，跨不過去。"
-      ],
-      "collapsible": false
+        "$S=\\{\\frac1n:n\\in\\mathbb{N}\\}$。(i) $\\frac1n>0$：$0$ 是下界",
+        "(ii′) 下確界的判準：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x<0+\\varepsilon$",
+        "給定 $\\varepsilon>0$，由形式二取 $n$ 使 $\\frac1n<\\varepsilon$：$x=\\frac1n$ 就是　$\\blacksquare$",
+        "$0\\notin S$：$\\inf$ 取不到，沒有最小元",
+        "12.9 的 $\\sup\\{1-\\frac1n\\}=1$，缺的那一步也補上了"
+      ]
     },
     {
-      "heading": "④ 在證明裡長什麼樣子",
+      "heading": "③ 推論：有理數稠密",
       "body": [
-        "之後的 $\\varepsilon$-$N$ 證明幾乎都會走到這一行：「要 $|a_n-L|<\\varepsilon$，只要 $n>$ 某個式子 $g(\\varepsilon)$ 就夠；由阿基米德性質取自然數 $N>g(\\varepsilon)$，則 $n\\ge N$ 時……」。$g(\\varepsilon)$ 是解不等式解出來的，可能是 $\\frac{1}{\\varepsilon}$、$\\frac{1}{\\varepsilon^2}$、$\\log_2(\\frac{1}{\\varepsilon})$。阿基米德性質保證這樣的 $N$ 一定存在，不管 $g(\\varepsilon)$ 有多大。範例 2 就是 $g(\\varepsilon)=\\frac{1}{\\varepsilon^2}$ 的例子。"
+        "定理：$a<b$ 是實數 ⇒ 存在 $q\\in\\mathbb{Q}$，",
+        "策略：$b-a$ 可能很小。放大 $n$ 倍，讓間隔 $>1$，中間就夾得進一個整數 $m$；再縮回來，$q=\\frac mn$"
       ],
-      "collapsible": false
+      "tex": [
+        "a<q<b"
+      ]
     },
     {
       "heading": "證明：有理數稠密",
       "body": [
-        "由阿基米德性質取 $n\\in\\mathbb{N}$ 使 $\\frac{1}{n}<b-a$。",
-        "整數集合 $\\{k\\in\\mathbb{Z}:k>na\\}$ 非空（阿基米德性質給一個比 $na$ 大的自然數），而且有下界（同理有整數 $-j<na$，比 $na$ 小的整數都不在集合裡）。有下界的非空整數集合有最小元，記為 $m$。",
-        "$m>na$，而 $m-1$ 不在集合裡，所以 $m-1\\le na<m$。除以 $n$：$a<\\frac{m}{n}\\le a+\\frac{1}{n}<a+(b-a)=b$。$q=\\frac{m}{n}$ 就是所求。"
+        "1. 阿基米德：取 $n\\in\\mathbb{N}$，$n>\\dfrac1{b-a}$，所以 $nb-na>1$",
+        "2. 取 $m$ 為大於 $na$ 的最小整數：$m-1\\le na<m$",
+        "$m$ 存在：大於 $na$ 的整數有（阿基米德），而且這個整數集合有下界 $na$，所以有最小元",
+        "3. $m\\le na+1<na+(nb-na)=nb$，所以",
+        "4. 除以 $n>0$：$a<\\dfrac mn<b$，$q=\\dfrac mn\\in\\mathbb{Q}$　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "na<m<nb"
+      ]
+    },
+    {
+      "heading": "③ 例：$\\sqrt2$ 與 $\\sqrt2+0.01$ 之間",
+      "body": [
+        "$a=\\sqrt2$，$b=\\sqrt2+0.01$，$b-a=0.01$",
+        "1. 要 $n>\\frac1{0.01}=100$：取 $n=101$",
+        "2. $na=101\\sqrt2\\approx142.836$，大於它的最小整數 $m=143$",
+        "3. $q=\\dfrac{143}{101}\\approx1.41584$",
+        "檢查：",
+        "證明只要 $n>100$：取 $n=1000$ 也行，$m=1415$，$q=1.415$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\sqrt2\\approx1.41421&<1.41584\\\\&<1.42421\\approx\\sqrt2+0.01\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "④ 在證明裡長什麼樣子",
+      "body": [
+        "要讓 $\\dfrac1{\\sqrt n}<10^{-3}$ 對所有 $n\\ge N$ 成立，最小的 $N$？",
+        "$n=10^6$ 剛好等於 $10^{-3}$，不算：最小 $N=10^6+1$",
+        "一般的 $\\varepsilon$：取 $N>\\dfrac1{\\varepsilon^2}$（阿基米德保證有）",
+        "「給定 $\\varepsilon$，取 $N>\\cdots$」：下一課 $\\varepsilon$–$N$ 定義的每個證明都這樣開頭"
+      ],
+      "tex": [
+        "\\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6",
+        "n\\ge N\\ \\Rightarrow\\ \\frac1{\\sqrt n}\\le\\frac1{\\sqrt N}<\\varepsilon"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 阿基米德：$\\forall x\\ \\exists n\\in\\mathbb{N}:\\ n>x$；形式二：$\\frac1n<\\varepsilon$",
+        "• 證明：$\\sup\\mathbb{N}=s$ ⇒ 有 $n>s-1$ ⇒ $n+1>s$，矛盾",
+        "• $\\inf\\{\\frac1n\\}=0$",
+        "• 有理數稠密：放大 $n$ 倍讓間隔 $>1$，夾進整數 $m$，$q=\\frac mn$",
+        "• 證明裡的樣子：「給定 $\\varepsilon$，取 $N>\\cdots$」",
+        "下一課：$\\varepsilon$–$N$ 定義"
+      ]
     }
   ],
   "workedExamples": [
@@ -108,320 +171,809 @@
   ],
   "checks": [
     {
-      "ask": "$\\varepsilon=0.003$ 時，下列哪個 $n$ 能保證 $\\frac{1}{n}<\\varepsilon$？",
+      "ask": "要 $\\dfrac1n<0.003$，最小的 $n$ 是？",
       "options": [
-        { "label": "$n=334$", "correct": true },
-        { "label": "$n=333$", "why": "$\\frac{1}{333}\\approx0.003003>0.003$。要 $n>\\frac{1}{\\varepsilon}\\approx333.33$，333 差一點。" },
-        { "label": "$n=300$", "why": "$\\frac{1}{300}\\approx0.00333>0.003$。$n$ 越大 $\\frac{1}{n}$ 越小，300 太小了。" }
-      ]
-    },
-    {
-      "ask": "證明 $\\mathbb{N}$ 沒有上界時，關鍵的一步是？",
-      "options": [
-        { "label": "$s=\\sup\\mathbb{N}$ 時 $s-1$ 不是上界，所以有 $n>s-1$，於是 $n+1>s$", "correct": true },
-        { "label": "$\\mathbb{N}$ 是無限集合，所以沒有上界", "why": "無限集合可以有上界，例如 $\\{1-\\frac{1}{n}\\}$。要用完備性才推得出來。" },
-        { "label": "$n+1>n$，所以沒有最大的自然數", "why": "這只證了 $\\mathbb{N}$ 沒有最大元。沒有最大元不代表沒有上界：$(0,1)$ 沒有最大元，上界卻是 1。" }
-      ]
-    },
-    {
-      "ask": "阿基米德性質的「$\\frac{1}{n}$ 形式」是？",
-      "options": [
-        { "label": "$\\forall\\varepsilon>0\\ \\exists n\\in\\mathbb{N},\\frac{1}{n}<\\varepsilon$", "correct": true },
-        { "label": "$\\exists n\\in\\mathbb{N}\\ \\forall\\varepsilon>0,\\frac{1}{n}<\\varepsilon$", "why": "量詞對調了：同一個 $n$ 要小於所有正數 $\\varepsilon$，會逼出 $\\frac{1}{n}\\le0$，不可能。" },
-        { "label": "$\\forall n\\in\\mathbb{N}\\ \\exists\\varepsilon>0,\\frac{1}{n}<\\varepsilon$", "why": "這句太弱，取 $\\varepsilon=\\frac{1}{n}+1$ 就成立，什麼都沒說。" }
-      ]
-    },
-    {
-      "ask": "要在 $a<b$ 之間找有理數 $\\frac{m}{n}$，為什麼先要 $\\frac{1}{n}<b-a$？",
-      "options": [
-        { "label": "步長小於區間長度，以 $\\frac{1}{n}$ 為步長往前走才不會跨過 $(a,b)$", "correct": true },
-        { "label": "為了讓 $\\frac{m}{n}$ 是最簡分數", "why": "最簡與否跟能不能落進區間無關；$q$ 不必是最簡分數。" },
-        { "label": "為了讓 $n$ 是整數", "why": "$n$ 本來就是自然數。條件 $\\frac{1}{n}<b-a$ 控制的是步長大小。" }
+        {
+          "label": "$334$",
+          "correct": true
+        },
+        {
+          "label": "$333$",
+          "why": "$\\frac1{333}\\approx0.003003>0.003$，差一點點"
+        },
+        {
+          "label": "$300$",
+          "why": "$\\frac1{300}\\approx0.0033$，還不夠小"
+        },
+        {
+          "label": "$3334$",
+          "why": "小數點移錯一位：$\\frac1{0.003}$ 是 $333.3$，不是 $3333$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "沒有無限大",
+      "title": "沒有無限大，也沒有無限小",
       "beats": [
-        { "show": ["對每個實數 $x$，存在 $n\\in\\mathbb{N}$，$n>x$"],
-          "note": "$\\mathbb{N}$ 在 $\\mathbb{R}$ 中沒有上界。",
-          "say": "不管 x 多大，總有自然數比它大。換句話說，自然數在實數裡沒有上界。",
+        {
+          "show": [
+            "前幾課一直在用：「有正整數 $n>x$」、「有 $n$ 使 $\\frac1n<\\varepsilon$」"
+          ],
+          "say": "前幾課有兩件事一直先拿來用：任何實數，都有比它大的正整數；任何正的艾普西隆，都有 n 分之 1 比它小。這一課把它證出來。",
           "board": [
-            {"do":"write","line":"$\\forall x\\in\\mathbb{R}\\ \\exists\\,n\\in\\mathbb{N}$：${{nx:n>x}}$"},
-            {"do":"underline","term":"nx","label":"沒有上界","on":"換句話說"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists n,\\ \\frac{1}{n}<\\varepsilon$"],
-          "note": "對 $x=\\frac{1}{\\varepsilon}$ 用上一行，再取倒數。",
-          "say": "倒過來講：不管 epsilon 多小，只要是正的，總有 n 分之一比它小。",
+            {
+              "do": "write",
+              "line": "前幾課一直在用：「有正整數 $n>x$」、「有 $n$ 使 $\\frac1n<\\varepsilon$」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "ε = 0.15：從 n = 7 起，1/n 都在線下"
+          ],
+          "say": "圖上是 n 分之 1。給艾普西隆 0.15，從 n 等於 7 開始，n 分之 1 都掉到線下面。艾普西隆再小，也一樣找得到。",
           "board": [
-            {"do":"write","line":"$\\forall\\varepsilon>0\\ \\exists\\,n$：${{q:\\frac{1}{n}<\\varepsilon}}$"}
-          ] },
-        { "show": ["$m\\ge n$ ⇒ $\\frac{1}{m}\\le\\frac{1}{n}<\\varepsilon$"],
-          "say": "而且一旦某個 n 做到了，比它大的每一個也都做到，因為分母越大，值越小。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv",
+                  "window": [
+                    0,
+                    12.5,
+                    -0.08,
+                    1.08
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "pencil",
+                      "dash": true,
+                      "domain": [
+                        1,
+                        12.3
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": "1/2",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": "1/3",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": "1/4",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": "1/5",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": "1/6",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": "1/7",
+                      "color": "red"
+                    },
+                    {
+                      "x": 8,
+                      "y": "1/8",
+                      "color": "red"
+                    },
+                    {
+                      "x": 9,
+                      "y": "1/9",
+                      "color": "red"
+                    },
+                    {
+                      "x": 10,
+                      "y": "1/10",
+                      "color": "red"
+                    },
+                    {
+                      "x": 11,
+                      "y": "1/11",
+                      "color": "red"
+                    },
+                    {
+                      "x": 12,
+                      "y": "1/12",
+                      "color": "red"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 0.15,
+                      "label": "ε = 0.15",
+                      "color": "green"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.15：從 n = 7 起，1/n 都在線下",
+              "color": "violet",
+              "on": "開始"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有無限大：再大的實數，都會被某個 $n$ 超過",
+            "沒有無限小：再小的正數，都比某個 $\\frac1n$ 大"
+          ],
+          "say": "換句話說：實數裡沒有無限大，再大的數都會被某個正整數超過；也沒有無限小，再小的正數，都比某個 n 分之 1 大。",
           "board": [
-            {"do":"write","line":"$m\\ge n$ ⇒ $\\frac{1}{m}\\le{{q:\\frac{1}{n}<\\varepsilon}}$","on":"比它大的"}
-          ] },
-        { "show": ["$\\inf\\{\\frac{1}{n}\\}=0$"],
-          "note": "0 是下界，而且這正是 $\\varepsilon$ 判準。取不到。",
-          "say": "所以 n 分之一的下確界是零：零是下界，往上退一點點就有某一項鑽到下面。",
+            {
+              "do": "write",
+              "line": "沒有無限大：再大的實數，都會被某個 $n$ 超過"
+            },
+            {
+              "do": "write",
+              "line": "沒有無限小：再小的正數，都比某個 $\\frac1n$ 大",
+              "color": "gold",
+              "on": "也沒"
+            }
+          ]
+        },
+        {
+          "show": [
+            "名字的由來：再小的長度，累加夠多次，就能超過任何長度"
+          ],
+          "say": "名字來自阿基米德：再小的長度，加夠多次，就能超過任何長度。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\inf\\{\\frac{1}{n}\\}={{z:0}}$","on":"下確界"},
-            {"do":"underline","term":"z","color":"green","label":"下界","on":"零是下界"}
-          ] },
-        { "show": ["$\\frac{1}{n}$ 一路往 0 靠"],
-          "say": "看圖：n 分之一的點，一路往零靠近，永遠是正的。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,10,-0.2,1.2],"curves":[{"expr":"1/x","domain":[1,10],"color":"blue"}],"points":[{"x":1,"y":1},{"x":2,"y":0.5},{"x":4,"y":0.25},{"x":8,"y":0.125}]}}
-          ] },
-        { "show": ["任何 $\\varepsilon>0$：有 $\\frac{1}{n}<0+\\varepsilon$","所以 $\\varepsilon$ 不是下界"],
-          "note": "比 0 大的數都不是下界，所以 0 最大。",
-          "say": "任何比零大的 epsilon，都有某個 n 分之一小於它，所以 epsilon 不是下界。這樣零就是最大的下界。",
-          "board": [
-            {"do":"write","line":"$\\varepsilon>0$：${{w:\\frac{1}{n}<0+\\varepsilon}}$"},
-            {"do":"underline","term":"w","label":"不是下界","on":"不是下界"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "名字的由來：再小的長度，累加夠多次，就能超過任何長度"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "它不是白送的",
+      "title": "敘述",
       "beats": [
-        { "show": ["有些有序數系有「無限大」的元素"],
-          "note": "在 $\\mathbb{R}$ 裡成立，理由是完備性。",
-          "say": "這聽起來理所當然，但有一些有序的數系，裡面真的有比所有自然數都大的東西。",
+        {
+          "show": [
+            "阿基米德性質：",
+            "$\\forall x\\in\\mathbb{R}\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ n>x$"
+          ],
+          "say": "阿基米德性質：對所有實數 x，都存在正整數 n，n 大於 x。這正是說：自然數沒有上界。",
           "board": [
-            {"do":"write","line":"有些有序數系：有比所有 $\\mathbb{N}$ 都大的元素"}
-          ] },
-        { "show": ["反設 $\\mathbb{N}$ 有上界","⇒ $s=\\sup\\mathbb{N}$ 存在"],
-          "say": "在實數裡怎麼證？反設自然數有上界，完備性公理就給出它的上確界 s。",
+            {
+              "do": "write",
+              "line": "阿基米德性質："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\forall x\\in\\mathbb{R}\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ n>x}}$",
+              "color": "red",
+              "on": "都存"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "這正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "形式二：$\\forall\\varepsilon>0\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ \\dfrac1n<\\varepsilon$"
+          ],
+          "say": "形式二：對所有正的艾普西隆，都存在 n，n 分之 1 小於艾普西隆。",
           "board": [
-            {"do":"write","line":"反設 $\\mathbb{N}$ 有上界"},
-            {"do":"write","line":"⇒ ${{sp:s=\\sup\\mathbb{N}}}$ 存在","on":"完備性公理"}
-          ] },
-        { "show": ["$s-1$ 不是上界"],
-          "note": "比上確界小的數，都不是上界。",
-          "say": "s 減一比 s 小，所以不是上界，有某個自然數穿過它。接下來一步就矛盾了。",
+            {
+              "do": "write",
+              "line": "形式二：$\\forall\\varepsilon>0\\ \\ \\exists n\\in\\mathbb{N}:\\ \\ \\dfrac1n<\\varepsilon$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由形式一推：對 $x=\\frac1\\varepsilon$ 取 $n>\\frac1\\varepsilon$，兩邊都正，取倒數",
+            "$\\Rightarrow\\ \\frac1n<\\varepsilon$"
+          ],
+          "say": "形式二由形式一推得：把 x 取成艾普西隆分之 1，找到比它大的 n。兩邊都是正的，取倒數，不等號反向，就是 n 分之 1 小於艾普西隆。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$s-1<s$","on":"s 減一"},
-            {"do":"write","line":"${{t:s-1}}$ 不是上界","on":"所以不是"},
-            {"do":"underline","term":"t","label":"有 n 穿過","on":"穿過"}
-          ] },
-        { "show": ["$n>s-1$ ⇒ $n+1>s$","但 $s$ 是上界，要 $n+1\\le s$"],
-          "note": "兩個式子互相衝突，所以反設不成立。",
-          "say": "n 大於 s 減一，兩邊加一，n 加一大於 s。可是 n 加一也是自然數，s 是上界，所以 n 加一不能超過 s，矛盾。",
-          "board": [
-            {"do":"write","line":"$n>s-1$ ⇒ ${{a:n+1>s}}$"},
-            {"do":"write","line":"但 $n+1\\in\\mathbb{N}$，要 ${{b:n+1\\le s}}$","on":"可是"},
-            {"do":"arrow","from":"a","to":"b","color":"red","label":"衝突","on":"不能超過"}
-          ] }
+            {
+              "do": "write",
+              "line": "由形式一推：對 $x=\\frac1\\varepsilon$ 取 $n>\\frac1\\varepsilon$，兩邊都正，取倒數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Rightarrow\\ \\frac1n<\\varepsilon$",
+              "on": "兩邊"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "取 $N>g(\\varepsilon)$",
-      "beats": [
-        { "show": ["只要 $n>g(\\varepsilon)$ 就夠"],
-          "note": "$g(\\varepsilon)$ 是解不等式解出來的。",
-          "say": "之後的 epsilon N 證明，幾乎都走到這一行：解不等式，解出 n 只要大於某個式子就夠。",
-          "board": [
-            {"do":"write","line":"解不等式 ⇒ 只要 $n>{{g:g(\\varepsilon)}}$","tint":{"g":"violet"}}
-          ] },
-        { "show": ["取自然數 $N>g(\\varepsilon)$"],
-          "note": "不管 $g(\\varepsilon)$ 多大，這樣的 $N$ 都存在。",
-          "say": "然後取一個比它大的自然數 N。這一步為什麼合法？就是阿基米德性質。",
-          "board": [
-            {"do":"write","line":"取自然數 ${{bn:N}}>{{g:g(\\varepsilon)}}$","tint":{"bn":"blue"}},
-            {"do":"underline","term":"bn","label":"阿基米德性質","on":"就是阿基米德"}
-          ] },
-        { "show": ["$\\frac{1}{\\sqrt{n}}<10^{-3}\\iff n>10^6$"],
-          "note": "取倒數、平方，兩邊都是正數，方向不變。",
-          "say": "算一個：要根號 n 分之一小於十的負三次方，等價於 n 大於十的六次方。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{\\sqrt{n}}<10^{-3}$"},
-            {"do":"transform","line":"$\\frac{1}{\\sqrt{n}}<10^{-3}\\iff n>{{g6:10^6}}$","tint":{"g6":"violet"},"on":"等價於"}
-          ] },
-        { "show": ["$n=10^6$：剛好等於，不行","最小的 $N=1000001$"],
-          "say": "n 剛好等於十的六次方時是等號，不算。所以最小的 N 是十的六次方再加一。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{bad:n=10^6}}$：剛好等於","on":"剛好等於"},
-            {"do":"strike","term":"bad","on":"不算"},
-            {"do":"write","line":"最小的 ${{bn:N}}=1000001$","color":"green","on":"所以最小的"}
-          ] }
-      ],
-      "key": "嚴格不等式：剛好等於不算數",
       "check": 0
     },
     {
-      "title": "有理數很密",
+      "title": "證明：ℕ 沒有上界",
       "beats": [
-        { "show": ["任意 $a<b$，存在有理數 $q$，$a<q<b$"],
-          "say": "阿基米德性質還有一個推論：任意兩個實數之間，一定有有理數。",
+        {
+          "show": [
+            "策略：假設有天花板 $s=\\sup\\mathbb{N}$，往下退 $1$，還有 $n$ 在上面；那 $n+1$ 就跳過 $s$",
+            "圖"
+          ],
+          "say": "用完備性公理證明。策略：假設自然數有天花板，上確界叫 s。從 s 往下退 1，一定有某個 n 跑進來；那 n 加 1 就跳過 s 了，矛盾。",
           "board": [
-            {"do":"write","line":"$\\forall a<b\\ \\exists\\,q\\in\\mathbb{Q}$：$a<q<b$"}
-          ] },
-        { "show": ["先選 $n$：$\\frac{1}{n}<b-a$"],
-          "note": "步長比區間長度小。",
-          "say": "想法是：先挑 n，讓 n 分之一這個步長，比區間的長度還短。",
+            {
+              "do": "write",
+              "line": "策略：假設有天花板 $s=\\sup\\mathbb{N}$，往下退 $1$，還有 $n$ 在上面；那 $n+1$ 就跳過 $s$"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ar-sup\" viewBox=\"0 0 640 175\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bar-supink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bar-supblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bar-supred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bar-supgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bar-suppencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"76\" x2=\"626\" y2=\"76\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bar-supink)\"/><line x1=\"264\" y1=\"70\" x2=\"264\" y2=\"82\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><text x=\"264\" y=\"112\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> − 1</tspan></text><line x1=\"376\" y1=\"70\" x2=\"376\" y2=\"82\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"376\" y=\"112\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan></text><circle cx=\"320\" cy=\"76\" r=\"6\" fill=\"var(--blue)\"/><text x=\"320\" y=\"56\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan></text><circle cx=\"432\" cy=\"76\" r=\"6\" fill=\"var(--green)\"/><text x=\"432\" y=\"56\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> + 1</tspan></text><path d=\"M264 126 L264 134 L376 134 L376 126\" stroke=\"var(--muted)\" stroke-width=\"1.6\"/><text x=\"320\" y=\"166\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">長度</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 1</tspan></text><text x=\"549.6\" y=\"56\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--red)\"><tspan style=\"font-family:inherit\">比</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">還大</tspan></text></svg>",
+              "on": "一定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：假設 $\\mathbb{N}$ 有上界。$\\mathbb{N}$ 非空，由完備性公理，$s=\\sup\\mathbb{N}$ 存在"
+          ],
+          "say": "證明。假設自然數有上界。它不是空的，由完備性公理，上確界 s 存在。",
           "board": [
-            {"do":"write","line":"先選 $n$：${{h:\\frac{1}{n}}}<b-a$"}
-          ] },
-        { "show": ["以 $\\frac{1}{n}$ 為步長往前走"],
-          "note": "一定有一步落進 $(a,b)$，跨不過去。",
-          "say": "然後在數線上一步一步往前走。步子比區間短，就不可能一步跨過整個區間。",
+            {
+              "do": "write",
+              "line": "證明：假設 $\\mathbb{N}$ 有上界。$\\mathbb{N}$ 非空，由完備性公理，$s=\\sup\\mathbb{N}$ 存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用 $\\varepsilon=1$ 的判準：$s-1$ 不是上界",
+            "$\\exists n\\in\\mathbb{N}:\\ n>s-1$"
+          ],
+          "say": "用上確界的判準，艾普西隆取 1：s 減 1 不是上界，所以存在正整數 n，大於 s 減 1。",
           "board": [
-            {"do":"write","line":"以 ${{st:\\frac{1}{n}}}$ 為步長往前走"},
-            {"do":"underline","term":"st","color":"blue","on":"一步一步"}
-          ] },
-        { "show": ["第 $k$ 步走到 $\\frac{k}{n}$","$k$ 夠大，$\\frac{k}{n}>a$"],
-          "note": "$\\frac{k}{n}$ 隨 $k$ 越來越大。",
-          "say": "第 k 步走到 n 分之 k。k 夠大時，由阿基米德性質，n 分之 k 一定超過 a。",
+            {
+              "do": "write",
+              "line": "用 $\\varepsilon=1$ 的判準：$s-1$ 不是上界"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\exists n\\in\\mathbb{N}:\\ n>s-1$",
+              "on": "是上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow n+1>s$，而 $n+1\\in\\mathbb{N}$：跟「$s$ 是上界」矛盾　$\\blacksquare$"
+          ],
+          "say": "兩邊加 1，n 加 1 大於 s。但 n 加 1 也是正整數，跟 s 是上界矛盾。所以自然數沒有上界。證明完畢。",
           "board": [
-            {"do":"write","line":"第 $k$ 步走到 $\\frac{k}{n}$"},
-            {"do":"write","line":"$k$ 夠大 ⇒ ${{ov:\\frac{k}{n}>a}}$","on":"夠大"},
-            {"do":"underline","term":"ov","label":"阿基米德","on":"阿基米德性質"}
-          ] },
-        { "show": ["前一步 $\\le a$","$\\frac{k}{n}\\le a+\\frac{1}{n}<b$"],
-          "note": "第一個超過 $a$ 的點就在區間裡。",
-          "say": "取第一個超過 a 的那一步，前一步還沒超過 a。這一步只多走 n 分之一，比 b 減 a 短，到不了 b。",
+            {
+              "do": "write",
+              "line": "$\\Rightarrow n+1>s$，而 $n+1\\in\\mathbb{N}$：跟「$s$ 是上界」矛盾　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　完備性是關鍵：有些有序的數系裡真的有「無限大」，阿基米德性質不成立",
+              "color": "violet",
+              "on": "整數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$\\inf\\{\\frac1n\\}=0$",
+      "beats": [
+        {
+          "show": [
+            "$S=\\{\\frac1n:n\\in\\mathbb{N}\\}$。(i) $\\frac1n>0$：$0$ 是下界"
+          ],
+          "say": "第一個應用：證明 n 分之 1 的下確界是 0。第一，n 分之 1 都是正的，0 是下界。",
           "board": [
-            {"do":"write","line":"前一步 $\\le a$"},
-            {"do":"write","line":"$\\frac{k}{n}\\le a+{{st:\\frac{1}{n}}}<b$","on":"只多走"},
-            {"do":"focus","term":"st","label":"比區間短","on":"比 b"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$S=\\{\\frac1n:n\\in\\mathbb{N}\\}$。(i) $\\frac1n>0$：$0$ 是下界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii′) 下確界的判準：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x<0+\\varepsilon$"
+          ],
+          "say": "第二，下確界的判準：對所有正的艾普西隆，要找到 S 裡的 x，比 0 加艾普西隆小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii′) 下確界的判準：$\\forall\\varepsilon>0\\ \\exists x\\in S:\\ x<0+\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "給定 $\\varepsilon>0$，由形式二取 $n$ 使 $\\frac1n<\\varepsilon$：$x=\\frac1n$ 就是　$\\blacksquare$"
+          ],
+          "say": "給定艾普西隆，用形式二，取 n 讓 n 分之 1 小於艾普西隆，這個 n 分之 1 就是要找的 x。所以下確界是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給定 $\\varepsilon>0$，由形式二取 $n$ 使 $\\frac1n<\\varepsilon$：$x=\\frac1n$ 就是　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0\\notin S$：$\\inf$ 取不到，沒有最小元"
+          ],
+          "say": "0 不在 S 裡，所以下確界取不到，S 沒有最小元。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$0\\notin S$：$\\inf$ 取不到，沒有最小元"
+            }
+          ]
+        },
+        {
+          "show": [
+            "12.9 的 $\\sup\\{1-\\frac1n\\}=1$，缺的那一步也補上了"
+          ],
+          "say": "上確界那一課，1 減 n 分之 1 的上確界是 1，當時先借用的那一步，現在也補上了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "12.9 的 $\\sup\\{1-\\frac1n\\}=1$，缺的那一步也補上了"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "推論：有理數稠密",
+      "beats": [
+        {
+          "show": [
+            "定理：$a<b$ 是實數 ⇒ 存在 $q\\in\\mathbb{Q}$，",
+            "$a<q<b$"
+          ],
+          "say": "阿基米德性質的重要推論：任兩個實數之間，一定有有理數。這叫有理數在實數中稠密。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$a<b$ 是實數 ⇒ 存在 $q\\in\\mathbb{Q}$，"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle a<q<b}}$",
+              "color": "red",
+              "on": "兩個"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "這叫"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：$b-a$ 可能很小。放大 $n$ 倍，讓間隔 $>1$，中間就夾得進一個整數 $m$；再縮回來，$q=\\frac mn$"
+          ],
+          "say": "策略：a 和 b 可能靠得很近。先放大 n 倍，讓間隔超過 1，中間就一定夾得進一個整數 m；再縮回來，m 除以 n 就在 a 和 b 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：$b-a$ 可能很小。放大 $n$ 倍，讓間隔 $>1$，中間就夾得進一個整數 $m$；再縮回來，$q=\\frac mn$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上是一個例子：a 是根號 2，b 是根號 2 加 0.01。放大 101 倍，中間夾進整數 143；縮回來，101 分之 143 就在 a 和 b 之間。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"ar-dense\" viewBox=\"0 0 640 250\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bar-denseink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bar-denseblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bar-densered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bar-densegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bar-densepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"78\" x2=\"626\" y2=\"78\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bar-denseink)\"/><line x1=\"105.9\" y1=\"72\" x2=\"105.9\" y2=\"84\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><text x=\"105.9\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">142</tspan></text><line x1=\"435.3\" y1=\"72\" x2=\"435.3\" y2=\"84\" stroke=\"var(--muted)\" stroke-width=\"1.4\"/><text x=\"435.3\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--muted)\"><tspan style=\"font-family:KaTeX_Main,serif\">144</tspan></text><line x1=\"270.6\" y1=\"72\" x2=\"270.6\" y2=\"84\" stroke=\"var(--green)\" stroke-width=\"1.4\"/><text x=\"270.6\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">m</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = 143</tspan></text><line x1=\"243.5\" y1=\"72\" x2=\"243.5\" y2=\"84\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"243.5\" y=\"62\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">na</tspan></text><line x1=\"409.9\" y1=\"72\" x2=\"409.9\" y2=\"84\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"409.9\" y=\"62\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">nb</tspan></text><line x1=\"243.5\" y1=\"78\" x2=\"409.9\" y2=\"78\" stroke=\"var(--red)\" stroke-width=\"5\" stroke-linecap=\"butt\" opacity=\"0.5\"/><circle cx=\"270.6\" cy=\"78\" r=\"6\" fill=\"var(--green)\"/><text x=\"612\" y=\"48\" text-anchor=\"end\" font-size=\"23\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">放大</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> 101 </tspan><tspan style=\"font-family:inherit\">倍</tspan></text><line x1=\"16\" y1=\"200\" x2=\"626\" y2=\"200\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bar-denseink)\"/><line x1=\"171.1\" y1=\"194\" x2=\"171.1\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"171.1\" y=\"236\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = √2</tspan></text><line x1=\"482.2\" y1=\"194\" x2=\"482.2\" y2=\"206\" stroke=\"var(--red)\" stroke-width=\"1.4\"/><text x=\"482.2\" y=\"236\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan></text><circle cx=\"221.7\" cy=\"200\" r=\"6\" fill=\"var(--green)\"/><text x=\"231.7\" y=\"182\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">q</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> = </tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">m</tspan><tspan style=\"font-family:KaTeX_Main,serif\">/</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</tspan></text><text x=\"612\" y=\"170\" text-anchor=\"end\" font-size=\"23\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">縮回原尺度</tspan></text></svg>"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "證明：有理數稠密",
       "beats": [
-        { "show": ["先選步長，再取第一個超過 $na$ 的整數"],
-          "say": "策略：直接把有理數造出來。先選一個夠短的步長，再取第一個超過 n a 的整數當分子。",
+        {
+          "show": [
+            "1. 阿基米德：取 $n\\in\\mathbb{N}$，$n>\\dfrac1{b-a}$，所以 $nb-na>1$"
+          ],
+          "say": "證明。第一步，用阿基米德性質，取 n 大於 b 減 a 分之 1。乘開，nb 減 na 大於 1，間隔超過 1。",
           "board": [
-            {"do":"write","line":"先選步長，再取第一個超過 $na$ 的整數"}
-          ] },
-        { "show": ["取 $n\\in\\mathbb{N}$：$\\frac{1}{n}<b-a$"],
-          "note": "阿基米德性質。",
-          "say": "由阿基米德性質，取 n，讓 n 分之一比區間長度 b 減 a 還小。",
+            {
+              "do": "write",
+              "line": "1. 阿基米德：取 $n\\in\\mathbb{N}$，$n>\\dfrac1{b-a}$，所以 $nb-na>1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. 取 $m$ 為大於 $na$ 的最小整數：$m-1\\le na<m$"
+          ],
+          "say": "第二步，取 m 為大於 na 的最小整數。m 比 na 大，而 m 減 1 不超過 na。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"取 $n\\in\\mathbb{N}$：${{h:\\frac{1}{n}}}<b-a$","tint":{"h":"blue"},"on":"取 n"}
-          ] },
-        { "show": ["$\\{k\\in\\mathbb{Z}:k>na\\}$ 有最小元 $m$"],
-          "note": "非空、有下界的整數集合有最小元。",
-          "why": {"ask":"為什麼有最小元？","say":"比 n a 大的整數有無限多個。為什麼挑得出最小的？","options":[{"label":"非空、有下界的整數集合有最小元","correct":true},{"label":"它是 $\\mathbb{N}$ 的子集，用良序原理","why":"$na$ 可能是負的，集合裡會有負整數，不一定在 $\\mathbb{N}$ 裡；要先知道它有下界。"},{"label":"有下界的集合都有最小元","why":"實數集合不行：$(0,1)$ 有下界卻沒有最小元。這裡靠的是元素都是整數。"}]},
-          "say": "阿基米德性質給出比 n a 大的自然數，所以非空；同理有比 n a 小的整數，它就是下界。整數集合這樣就有最小元。",
+            {
+              "do": "write",
+              "line": "2. 取 $m$ 為大於 $na$ 的最小整數：$m-1\\le na<m$"
+            },
+            {
+              "do": "write",
+              "line": "　$m$ 存在：大於 $na$ 的整數有（阿基米德），而且這個整數集合有下界 $na$，所以有最小元",
+              "color": "violet",
+              "on": "na#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. $m\\le na+1<na+(nb-na)=nb$，所以",
+            "$na<m<nb$"
+          ],
+          "say": "第三步，m 不超過 na 加 1，而 1 小於 nb 減 na，所以 m 小於 nb。m 被夾在 na 和 nb 中間。",
           "board": [
-            {"do":"write","line":"${{s:\\{k\\in\\mathbb{Z}:k>na\\}}}$ 有最小元 ${{m:m}}$","tint":{"m":"violet"}},
-            {"do":"underline","term":"s","label":"非空、有下界","why":true,"on":"所以非空"}
-          ] },
-        { "show": ["$k>na>-j$ ⇒ $k+j\\in\\mathbb{N}$","自然數非空子集有最小元（良序）"],
-          "note": "整數集合有最小元，靠的是良序原理。",
-          "say": "每個 k 都大於負 j，加上 j 就變自然數。自然數的非空子集有最小元，這叫良序原理，所以它也有最小元。",
+            {
+              "do": "write",
+              "line": "3. $m\\le na+1<na+(nb-na)=nb$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle na<m<nb$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "4. 除以 $n>0$：$a<\\dfrac mn<b$，$q=\\dfrac mn\\in\\mathbb{Q}$　$\\blacksquare$"
+          ],
+          "say": "第四步，全部除以正的 n，得到 a 小於 n 分之 m 小於 b。n 分之 m 是有理數，證明完畢。",
           "board": [
-            {"do":"write","line":"$k>na>-j$ ⇒ ${{kj:k+j}}\\in\\mathbb{N}$"},
-            {"do":"write","line":"自然數非空子集有最小元","on":"這叫良序原理"}
-          ] },
-        { "show": ["$m-1\\le na<m$"],
-          "note": "$m-1$ 不在集合裡。",
-          "why": {"ask":"為什麼 $m-1\\le na$？","say":"m 大於 n a。那 m 減一，為什麼就不大於 n a？","options":[{"label":"$m$ 是最小元，$m-1$ 不在集合裡","correct":true},{"label":"$m$ 和 $m-1$ 差 $1$","why":"差 $1$ 只說它們相鄰；$m-1\\le na$ 要靠 $m$ 是集合裡最小的。"},{"label":"$na$ 是整數","why":"$na$ 通常不是整數（例如 $101\\sqrt{2}$）；靠的是 $m$ 的最小性。"}]},
-          "say": "m 是集合裡最小的，m 減一就不在集合裡，也就是 m 減一不大於 n a。",
-          "board": [
-            {"do":"write","line":"${{m1:m-1}}\\le na<{{m:m}}$","on":"m 減一"},
-            {"do":"underline","term":"m1","label":"不在集合裡","why":true,"on":"就不在"}
-          ] },
-        { "show": ["$a<\\frac{m}{n}\\le a+\\frac{1}{n}<b$"],
-          "note": "除以 $n$，再用 $\\frac{1}{n}<b-a$。",
-          "say": "整串除以 n：a 小於 n 分之 m，不超過 a 加 n 分之一，又因為步長比區間短，小於 b。",
-          "board": [
-            {"do":"write","line":"$a<\\frac{ {{m:m}} }{n}\\le a+{{h:\\frac{1}{n}}}<b$","on":"整串除以"},
-            {"do":"focus","term":"h","label":"步長比區間短","on":"又因為"}
-          ] }
+            {
+              "do": "write",
+              "line": "4. 除以 $n>0$：$a<\\dfrac mn<b$，$q=\\dfrac mn\\in\\mathbb{Q}$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "key": "步長比區間短，第一個越過的點就落在裡面",
       "proof": true,
-      "of": 5,
-      "skeleton": "構造",
-      "where": {
-        "ask": "「$\\frac{1}{n}<b-a$」用在哪一步？",
+      "order": {
+        "ask": "有理數稠密的證明",
         "steps": [
           {
-            "label": "$\\{k\\in\\mathbb{Z}:k>na\\}$ 有最小元 $m$",
-            "why": "這一步只用到阿基米德性質給出非空、有下界，跟步長多短無關。"
+            "label": "取 $n>\\frac1{b-a}$，讓 $nb-na>1$"
           },
           {
-            "label": "$m-1\\le na<m$",
-            "why": "這只用到 $m$ 是最小元。"
+            "label": "取 $m$ 為大於 $na$ 的最小整數",
+            "why": "先要有上一步：取 $n>\\frac1{b-a}$，讓 $nb-na>1$"
           },
           {
-            "label": "$a<\\frac{m}{n}$",
-            "why": "這只用到 $m>na$。"
+            "label": "由 $m\\le na+1<nb$ 得 $na<m<nb$",
+            "why": "先要有上一步：取 $m$ 為大於 $na$ 的最小整數"
           },
           {
-            "label": "$\\frac{m}{n}\\le a+\\frac{1}{n}<b$",
-            "correct": true
+            "label": "除以 $n$：$a<\\frac mn<b$",
+            "why": "先要有上一步：由 $m\\le na+1<nb$ 得 $na<m<nb$"
           }
         ]
       }
     },
     {
-      "title": "實際找一個",
+      "title": "例：$\\sqrt2$ 與 $\\sqrt2+0.01$ 之間",
       "beats": [
-        { "show": ["找 $q$：$\\sqrt{2}<q<\\sqrt{2}+0.01$"],
-          "say": "實際做一次：在根號二和根號二加零點零一之間，找一個有理數。",
+        {
+          "show": [
+            "$a=\\sqrt2$，$b=\\sqrt2+0.01$，$b-a=0.01$",
+            "1. 要 $n>\\frac1{0.01}=100$：取 $n=101$"
+          ],
+          "say": "照證明一步一步做：在根號 2 和根號 2 加 0.01 之間找有理數。間隔是 0.01，n 要大於 100，取 101。",
           "board": [
-            {"do":"write","line":"$\\sqrt{2}<q<\\sqrt{2}+0.01$"}
-          ] },
-        { "show": ["$n=101$：$\\frac{1}{101}\\approx0.0099<0.01$"],
-          "say": "區間長度零點零一，步長要比它短，取 n 等於一百零一。",
+            {
+              "do": "write",
+              "line": "$a=\\sqrt2$，$b=\\sqrt2+0.01$，$b-a=0.01$"
+            },
+            {
+              "do": "write",
+              "line": "1. 要 $n>\\frac1{0.01}=100$：取 $n=101$",
+              "on": "找有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. $na=101\\sqrt2\\approx142.836$，大於它的最小整數 $m=143$"
+          ],
+          "say": "na 是 101 倍根號 2，大約 142.836。比它大的最小整數，m 等於 143。",
           "board": [
-            {"do":"write","line":"${{n:n=101}}$：$\\frac{1}{101}\\approx0.0099<0.01$"},
-            {"do":"underline","term":"n","color":"blue","on":"取 n"}
-          ] },
-        { "show": ["$101\\sqrt{2}\\approx142.8356$"],
-          "note": "取比它大的最小整數 $m$。",
-          "say": "a 乘 n 大約一百四十二點八三五六。m 取比它大的最小整數。",
+            {
+              "do": "write",
+              "line": "2. $na=101\\sqrt2\\approx142.836$，大於它的最小整數 $m=143$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. $q=\\dfrac{143}{101}\\approx1.41584$"
+          ],
+          "say": "q 等於 101 分之 143，大約 1.41584。",
           "board": [
-            {"do":"write","line":"$101\\sqrt{2}\\approx142.8356$"},
-            {"do":"write","line":"$m$＝比 $101\\sqrt{2}$ 大的最小整數","on":"m 取"}
-          ] }
+            {
+              "do": "write",
+              "line": "3. $q=\\dfrac{143}{101}\\approx1.41584$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：",
+            "$\\begin{aligned}\\sqrt2\\approx1.41421&<1.41584\\\\&<1.42421\\approx\\sqrt2+0.01\\end{aligned}$"
+          ],
+          "say": "檢查一下：根號 2 約 1.41421，根號 2 加 0.01 約 1.42421，1.41584 確實在中間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "檢查："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}\\sqrt2\\approx1.41421&<1.41584\\\\&<1.42421\\approx\\sqrt2+0.01\\end{aligned}}}}$",
+              "on": "根號#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "24"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明只要 $n>100$：取 $n=1000$ 也行，$m=1415$，$q=1.415$"
+          ],
+          "say": "證明只要求 n 大於 100。取 n 等於 1000 也可以，得到 1.415，同樣在中間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明只要 $n>100$：取 $n=1000$ 也行，$m=1415$，$q=1.415$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "在證明裡長什麼樣子",
+      "beats": [
+        {
+          "show": [
+            "要讓 $\\dfrac1{\\sqrt n}<10^{-3}$ 對所有 $n\\ge N$ 成立，最小的 $N$？"
+          ],
+          "say": "最後看它在證明裡長什麼樣子。要讓根號 n 分之 1 小於千分之 1，對所有大於等於 N 的 n 都成立，最小的 N 是多少？",
+          "board": [
+            {
+              "do": "write",
+              "line": "要讓 $\\dfrac1{\\sqrt n}<10^{-3}$ 對所有 $n\\ge N$ 成立，最小的 $N$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6$"
+          ],
+          "say": "兩邊都是正的，取倒數：根號 n 大於 1000，平方，n 大於 10 的 6 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{\\sqrt n}<10^{-3}\\iff\\sqrt n>1000\\iff n>10^6$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=10^6$ 剛好等於 $10^{-3}$，不算：最小 $N=10^6+1$"
+          ],
+          "say": "n 等於一百萬時，剛好等於千分之 1，不是小於，所以不算。最小的 N 是一百萬零一。而 n 越大，根號 n 分之 1 越小，之後都成立。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n=10^6$ 剛好等於 $10^{-3}$，不算：最小 $N=10^6+1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般的 $\\varepsilon$：取 $N>\\dfrac1{\\varepsilon^2}$（阿基米德保證有）",
+            "$n\\ge N\\ \\Rightarrow\\ \\frac1{\\sqrt n}\\le\\frac1{\\sqrt N}<\\varepsilon$"
+          ],
+          "say": "換成一般的艾普西隆：取 N 大於艾普西隆平方分之 1，阿基米德性質保證這樣的 N 存在。之後每個 n，都有根號 n 分之 1 小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般的 $\\varepsilon$：取 $N>\\dfrac1{\\varepsilon^2}$（阿基米德保證有）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle n\\ge N\\ \\Rightarrow\\ \\frac1{\\sqrt n}\\le\\frac1{\\sqrt N}<\\varepsilon}}$",
+              "on": "阿基"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "每個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「給定 $\\varepsilon$，取 $N>\\cdots$」：下一課 $\\varepsilon$–$N$ 定義的每個證明都這樣開頭"
+          ],
+          "say": "給定艾普西隆，取 N 大於某個式子：下一課數列極限的每一個證明，都會這樣開頭。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「給定 $\\varepsilon$，取 $N>\\cdots$」：下一課 $\\varepsilon$–$N$ 定義的每個證明都這樣開頭"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$m$ 是多少？",
+        "ask": "要 $\\dfrac1{n^2}<10^{-4}$ 對所有 $n\\ge N$ 成立，最小的 $N$？",
         "options": [
           {
-            "label": "$143$，$q=\\frac{143}{101}\\approx1.415842$",
+            "label": "$101$",
             "correct": true
           },
           {
-            "label": "比 $na$ 小的那個整數",
-            "why": "那樣 $\\frac{m}{n}<a$，落在 $\\sqrt{2}$ 左邊，不在區間裡。"
+            "label": "$100$",
+            "why": "$n=100$ 時剛好等於 $10^{-4}$，不是小於"
           },
           {
-            "label": "$m=101$",
-            "why": "$\\frac{101}{101}=1$，比 $\\sqrt{2}$ 小；$m$ 要看 $na$，不是看 $n$。"
+            "label": "$10001$",
+            "why": "忘了開根號：條件是 $n^2>10^4$，不是 $n>10^4$"
+          },
+          {
+            "label": "$11$",
+            "why": "$10^4$ 開根號是 $100$，不是 $10$"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 阿基米德：$\\forall x\\ \\exists n\\in\\mathbb{N}:\\ n>x$；形式二：$\\frac1n<\\varepsilon$",
+            "• 證明：$\\sup\\mathbb{N}=s$ ⇒ 有 $n>s-1$ ⇒ $n+1>s$，矛盾"
+          ],
+          "say": "整理：阿基米德性質說自然數沒有上界，等價於 n 分之 1 可以小於任何正數。它從完備性公理證出來。推論是有理數稠密：放大、夾一個整數、再縮回來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 阿基米德：$\\forall x\\ \\exists n\\in\\mathbb{N}:\\ n>x$；形式二：$\\frac1n<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$\\sup\\mathbb{N}=s$ ⇒ 有 $n>s-1$ ⇒ $n+1>s$，矛盾",
+              "on": "有上"
+            },
+            {
+              "do": "write",
+              "line": "• $\\inf\\{\\frac1n\\}=0$",
+              "on": "可以"
+            },
+            {
+              "do": "write",
+              "line": "• 有理數稠密：放大 $n$ 倍讓間隔 $>1$，夾進整數 $m$，$q=\\frac mn$",
+              "on": "公理"
+            },
+            {
+              "do": "write",
+              "line": "• 證明裡的樣子：「給定 $\\varepsilon$，取 $N>\\cdots$」",
+              "on": "放大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：$\\varepsilon$–$N$ 定義"
+          ],
+          "say": "下一課，用它來嚴格定義數列的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：$\\varepsilon$–$N$ 定義"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["supremum", "infimum", "sequence"],
-    "fine": ["archimedean-find-n", "archimedean-proof", "archimedean-density"]
+    "coarse": [
+      "supremum",
+      "infimum",
+      "sequence"
+    ],
+    "fine": [
+      "archimedean-find-n",
+      "archimedean-proof",
+      "archimedean-density"
+    ]
   },
   "practice": [
-    { "id": "an-sup-001", "core": true, "trains": "archimedean-find-n", "note": "證明最小性時用的就是「$\\frac{1}{n}<\\varepsilon$」。" },
-    { "id": "an-en-002", "core": true, "trains": "archimedean-find-n" },
-    { "id": "cg-12b-023", "core": true, "trains": "archimedean-find-n" },
-    { "id": "cg-12b-026", "core": true, "trains": "archimedean-density" },
-    { "id": "cg-12b-024", "trains": "archimedean-find-n" },
-    { "id": "cg-12b-025", "trains": "archimedean-find-n" },
-    { "id": "cg-12b-027", "trains": "archimedean-density" }
+    {
+      "id": "an-sup-001",
+      "core": true,
+      "trains": "archimedean-find-n",
+      "note": "證明最小性時用的就是「$\\frac{1}{n}<\\varepsilon$」。"
+    },
+    {
+      "id": "an-en-002",
+      "core": true,
+      "trains": "archimedean-find-n"
+    },
+    {
+      "id": "cg-12b-023",
+      "core": true,
+      "trains": "archimedean-find-n"
+    },
+    {
+      "id": "cg-12b-026",
+      "core": true,
+      "trains": "archimedean-density"
+    },
+    {
+      "id": "cg-12b-024",
+      "trains": "archimedean-find-n"
+    },
+    {
+      "id": "cg-12b-025",
+      "trains": "archimedean-find-n"
+    },
+    {
+      "id": "cg-12b-027",
+      "trains": "archimedean-density"
+    }
   ],
   "gaps": [
-    { "tag": "archimedean-proof", "count": 1, "note": "用完備性證 ℕ 無上界的白話證明題。" }
+    {
+      "tag": "archimedean-proof",
+      "count": 1,
+      "note": "用完備性證 ℕ 無上界的白話證明題。"
+    }
   ]
 }

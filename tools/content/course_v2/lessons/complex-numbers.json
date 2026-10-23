@@ -1,332 +1,152 @@
 {
   "id": "complex-numbers",
   "title": "複數",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["polynomial-rational", "r2-r3"],
-  "next": ["complex-polar"],
-  "related": ["complex-roots"],
-  "objectives": [
-    "會做複數的四則運算，除法用分母的共軛複數把分母變成實數。",
-    "把複數 $a+bi$ 看成平面上的點 $(a,b)$：加法是向量相加，$|z|$ 是到原點的距離。",
-    "用 $z\\bar{z}=|z|^2$ 與實係數多項式的根成對出現，解判別式為負的二次方程式。"
+  "prerequisites": [
+    "polynomial-rational",
+    "r2-r3"
   ],
-  "visual": "複數平面上兩個可拖動的點 z、w。畫出 z + w（平行四邊形法則）、z̄（對實軸鏡射）、|z|（到原點的線段長）。把 w 拖到 i 時，可以看到 i·z 正好是 z 繞原點轉 90°（為下一課的極式鋪路）。",
+  "next": [
+    "complex-polar"
+  ],
+  "related": [
+    "complex-roots"
+  ],
+  "objectives": [
+    "會做複數的四則運算，除法用分母的共軛複數把分母變成實數",
+    "把複數 $a+bi$ 看成平面上的點 $(a,b)$：加法是向量相加，$|z|$ 是到原點的距離",
+    "用 $z\\bar{z}=|z|^2$ 與實係數多項式的根成對出現，解判別式為負的二次方程式"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 為什麼要 $i$",
       "body": [
-        "$x^2+1=0$ 在實數裡沒有解。引進一個新的數 $i$，規定 $i^2=-1$，再允許它跟實數做加法與乘法，得到形如 $z=a+bi$（$a$、$b$ 為實數）的數，叫複數。$a$ 是實部 $\\operatorname{Re}z$，$b$ 是虛部 $\\operatorname{Im}z$（虛部是實數 $b$，不是 $bi$）。",
-        "在〈複數根〉解 $y''+y=0$ 時已經用過它；這一章把它當成一個完整的數系來研究。"
+        "$x$ 是實數時 $x^2+1\\ge1$：沒有實數解",
+        "那就發明一個數 $i$，規定",
+        "歷史上逼大家接受 $i$ 的是三次方程式：$x^3=15x+4$ 的實根 $4$，公式解中途一定經過 $\\sqrt{-121}$",
+        "複數：$z=a+bi$，$a,b$ 是實數",
+        "• 實部 $\\operatorname{Re}z=a$，虛部 $\\operatorname{Im}z=b$",
+        "• 相等：$a+bi=c+di\\iff a=c$ 且 $b=d$",
+        "虛部是實數 $b$，不是 $bi$；例：$\\operatorname{Im}(3-5i)=-5$",
+        "$i$ 的次方：四個一循環"
       ],
-      "collapsible": false
+      "tex": [
+        "x^2+1=0",
+        "i^2=-1",
+        "i^1=i,\\quad i^2=-1,\\quad i^3=-i,\\quad i^4=1"
+      ]
     },
     {
-      "heading": "② 運算：把 $i$ 當成字母，最後用 $i^2=-1$",
+      "heading": "② 運算：$i$ 當字母",
       "body": [
-        "加減：實部與實部、虛部與虛部各自相加減。",
-        "乘法：$(a+bi)(c+di)=ac+adi+bci+bd\\,i^2=(ac-bd)+(ad+bc)i$。",
-        "$i$ 的次方四個一循環：$i^1=i$、$i^2=-1$、$i^3=-i$、$i^4=1$。"
+        "加減：實部對實部、虛部對虛部",
+        "乘法：$(2+3i)(1-2i)$，照分配律展開",
+        "一般公式：",
+        "為什麼可以把 $i$ 當字母？",
+        "把 $i$ 換成 $x$：多項式相乘，再除以 $x^2+1$ 取餘式",
+        "多項式滿足交換、結合、分配律；取餘式不破壞它們",
+        "嚴格定義：複數是有序對 $(a,b)$，加法、乘法用上面的公式；$i=(0,1)$"
       ],
-      "collapsible": false
+      "tex": [
+        "(2+3i)+(1-2i)=3+i",
+        "\\begin{aligned}&=2-4i+3i-6i^2\\\\&=2-i+6=8-i\\end{aligned}",
+        "(a+bi)(c+di)=(ac-bd)+(ad+bc)\\,i"
+      ]
     },
     {
-      "heading": "③ 共軛複數、絕對值與除法",
+      "heading": "③ 共軛與絕對值",
       "body": [
-        "$z=a+bi$ 的共軛複數是 $\\bar{z}=a-bi$。關鍵恆等式：$z\\bar{z}=a^2+b^2$，是一個非負實數，記作 $|z|^2$。$|z|=\\sqrt{a^2+b^2}$ 就是點 $(a,b)$ 到原點的距離。",
-        "除法：分子分母同乘分母的共軛複數，分母就變成實數 $|w|^2$。例如 $\\frac{1}{i}=-i$。",
-        "性質：$|zw|=|z||w|$，$z+\\bar{z}=2\\operatorname{Re}z$，$z-\\bar{z}=2i\\operatorname{Im}z$，$z=\\bar{z}\\Leftrightarrow z$ 是實數。"
+        "共軛：$z=a+bi$，$\\bar z=a-bi$（虛部變號）",
+        "絕對值：$|z|=\\sqrt{a^2+b^2}$，所以",
+        "除法：分子分母同乘分母的共軛",
+        "驗算：$(-1+2i)(1-2i)=-1+4i-4i^2=3+4i$",
+        "一般：$z\\ne0$ 時 $\\dfrac1z=\\dfrac{\\bar z}{|z|^2}$，每個非零複數都有倒數"
       ],
-      "tex": ["\\frac{z}{w}=\\frac{z\\,\\bar w}{w\\,\\bar w}=\\frac{z\\,\\bar w}{|w|^{2}}"],
-      "collapsible": false
+      "tex": [
+        "z\\bar z=(a+bi)(a-bi)=a^2-(bi)^2=a^2+b^2",
+        "z\\bar z=|z|^2",
+        "\\frac{3+4i}{1-2i}=\\frac{(3+4i)(1+2i)}{(1-2i)(1+2i)}",
+        "=\\frac{3+10i+8i^2}{1+4}=\\frac{-5+10i}{5}=-1+2i"
+      ]
+    },
+    {
+      "heading": "③ 共軛的性質",
+      "body": [
+        "證（積）：$z=a+bi$，$w=c+di$，兩邊都等於",
+        "絕對值相乘：",
+        "推論：$zw=0\\Rightarrow z=0$ 或 $w=0$",
+        "$|z|=0\\iff a^2+b^2=0\\iff z=0$"
+      ],
+      "tex": [
+        "\\overline{z+w}=\\bar z+\\bar w,\\qquad\\overline{zw}=\\bar z\\,\\bar w",
+        "(ac-bd)-(ad+bc)\\,i",
+        "|zw|^2=zw\\,\\overline{zw}=(z\\bar z)(w\\bar w)=|z|^2|w|^2",
+        "|zw|=|z|\\,|w|"
+      ]
     },
     {
       "heading": "④ 平面上的圖像",
       "body": [
-        "$a+bi\\leftrightarrow$ 點 $(a,b)$：橫軸是實軸、縱軸是虛軸。加法就是向量相加（平行四邊形），共軛是對實軸的鏡射，$|z-w|$ 是兩點距離。乘法的圖像（轉角度、伸縮長度）要等下一課的極式才看得清楚。"
-      ],
-      "collapsible": false
+        "$a+bi\\ \\longleftrightarrow\\ $點 $(a,b)$：橫軸實軸、縱軸虛軸",
+        "• $|z|=\\sqrt{a^2+b^2}$：到原點的距離",
+        "• $\\bar z$：對實軸的鏡射",
+        "加法 = 向量相加",
+        "$|z-w|$：$z$ 和 $w$ 兩點的距離"
+      ]
     },
     {
-      "heading": "實係數多項式的根成對出現",
+      "heading": "④ 三角不等式",
       "body": [
-        "若 $p(x)$ 的係數都是實數，對 $p(z)=0$ 兩邊取共軛：共軛複數對加法、乘法都「可以穿過」，而實係數的共軛是自己，所以 $p(\\bar{z})=0$。因此非實數的根一定成對 $z$、$\\bar{z}$ 出現；例如 $x^2-2x+5=0$ 的根是 $1\\pm 2i$。"
+        "$\\operatorname{Re}u\\le|u|$，$|z\\bar w|=|z||w|$：",
+        "剛才的圖：$|z+w|=5\\le\\sqrt{10}+\\sqrt5\\approx5.40$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "為什麼要 $i$",
-      "beats": [
-        { "show": ["$x^2+1=0$"],
-          "note": "在實數裡沒有解。",
-          "say": "x 平方加一等於零，在實數裡找不到解，因為實數的平方不會是負的。",
-          "board": [
-            {"do":"write","line":"$x^2+1=0$"},
-            {"do":"transform","line":"${{sq:x^2}}=-1$","on":"找不到解"},
-            {"do":"underline","term":"sq","label":"平方不會是負","on":"實數的平方"}
-          ] },
-        { "show": ["規定 $i^2=-1$"],
-          "say": "那就引進一個新的數 i，規定它的平方是負一，再讓它跟實數做加法和乘法。",
-          "board": [
-            {"do":"write","line":"規定 ${{i2:i^2=-1}}$","on":"新的數"},
-            {"do":"focus","term":"i2","on":"規定"}
-          ] },
-        { "show": ["$z=a+bi$"],
-          "note": "$a$、$b$ 是實數。",
-          "say": "這樣得到的數都長成 a 加 b i，a 跟 b 是實數，叫做複數。",
-          "board": [
-            {"do":"write","line":"$z={{a:a}}+{{b:b}}\\,i$","tint":{"a":"blue","b":"violet"}},
-            {"do":"write","line":"${{a:a}},\\ {{b:b}}$ 是實數","on":"a 跟 b"}
-          ] },
-        { "show": ["實部 $\\operatorname{Re}z=a$，虛部 $\\operatorname{Im}z=b$"],
-          "note": "虛部是實數 $b$，不是 $bi$。",
-          "say": "a 是實部，b 是虛部。注意虛部是實數 b 本身，不帶 i。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\operatorname{Re}z={{a:a}}$，$\\operatorname{Im}z={{b:b}}$","on":"a 是實部"},
-            {"do":"write","line":"虛部不是 ${{bi:b\\,i}}$","on":"注意"},
-            {"do":"strike","term":"bi","on":"本身"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$2+3i$ 的虛部是？",
-        "options": [
-          {
-            "label": "$3$",
-            "correct": true
-          },
-          {
-            "label": "$3i$",
-            "why": "虛部是實數 $b$，不是 $bi$；$2+3i$ 的虛部是 $3$。"
-          },
-          {
-            "label": "$2$",
-            "why": "$2$ 是實部；虛部是 $i$ 前面的係數。"
-          }
-        ]
-      }
+      "tex": [
+        "|z+w|\\le|z|+|w|",
+        "\\begin{aligned}|z+w|^2&=(z+w)(\\bar z+\\bar w)\\\\&=|z|^2+|w|^2+2\\operatorname{Re}(z\\bar w)\\end{aligned}",
+        "|z+w|^2\\le(|z|+|w|)^2"
+      ]
     },
     {
-      "title": "乘法",
-      "beats": [
-        { "show": ["把 $i$ 當成字母，最後用 $i^2=-1$"],
-          "note": "加減：實部跟實部、虛部跟虛部。",
-          "say": "運算的秘訣：把 i 當成一個字母照樣算，最後看到 i 平方就換成負一。",
-          "board": [
-            {"do":"write","line":"把 $i$ 當成字母，最後 ${{i2:i^2=-1}}$"},
-            {"do":"focus","term":"i2","on":"i 平方"}
-          ] },
-        { "show": ["$(2+3i)(1-2i)$"],
-          "say": "例如二加三 i 乘一減二 i，像多項式一樣，四項都乘開。",
-          "board": [
-            {"do":"write","line":"$({{a:2+3i}})({{b:1-2i}})$","tint":{"a":"blue","b":"violet"}}
-          ] },
-        { "show": ["$=2-4i+3i-6i^2$"],
-          "say": "二乘一是二，二乘負二 i 是負四 i，三 i 乘一是三 i，三 i 乘負二 i 是負六 i 平方。",
-          "board": [
-            {"do":"write","line":"$={{t1:2}}$"},
-            {"do":"transform","line":"$={{t1:2}}{{t2:-4i}}$","on":"二乘負二"},
-            {"do":"transform","line":"$={{t1:2}}{{t2:-4i}}{{t3:+3i}}$","on":"三 i 乘一"},
-            {"do":"transform","line":"$={{t1:2}}{{t2:-4i}}{{t3:+3i}}{{t4:-6i^2}}$","on":"三 i 乘負二"}
-          ] },
-        { "show": ["$-6i^2=6$"],
-          "note": "$i^2=-1$",
-          "say": "i 平方是負一，所以負六 i 平方變成正六。剩下實部跟實部、虛部跟虛部合併。",
-          "board": [
-            {"do":"underline","term":"t4","label":"i² = −1"},
-            {"do":"transform","line":"$={{t1:2}}{{t2:-4i}}{{t3:+3i}}{{p6:+6}}$","on":"變成正六"}
-          ] }
+      "heading": "⑤ 判別式為負也能解",
+      "body": [
+        "配方：$(z-1)^2=-4$；令 $w=z-1$：",
+        "由 ③ 的推論，一個因式是 $0$：",
+        "驗算：$(1+2i)^2-2(1+2i)+5=(-3+4i)-(2+4i)+5=0$"
       ],
-      "predict": {
-        "ask": "$(2+3i)(1-2i)$ 是？",
-        "options": [
-          {
-            "label": "$8-i$",
-            "correct": true
-          },
-          {
-            "label": "$-4-i$",
-            "why": "$-6i^2=+6$，不是 $-6$；實部是 $2+6=8$。"
-          },
-          {
-            "label": "$2-6i$",
-            "why": "乘法不是實部乘實部、虛部乘虛部；四項都要乘開，再用 $i^2=-1$。"
-          }
-        ]
-      }
+      "tex": [
+        "z^2-2z+5=0",
+        "w^2+4=(w-2i)(w+2i)=0",
+        "z=1\\pm2i",
+        "(z-z_0)(z-\\bar z_0)=z^2-2\\operatorname{Re}(z_0)\\,z+|z_0|^2"
+      ]
     },
     {
-      "title": "$i$ 的次方",
-      "beats": [
-        { "show": ["$i^1=i$、$i^2=-1$"],
-          "say": "i 的一次方是 i，平方是負一。",
-          "board": [
-            {"do":"write","line":"$i^1=i$、${{p2:i^2=-1}}$"},
-            {"do":"focus","term":"p2","on":"平方"}
-          ] },
-        { "show": ["$i^3=-i$、$i^4=1$"],
-          "say": "再乘一次 i 是負 i，四次方回到一。之後就重複：四個一循環。",
-          "board": [
-            {"do":"write","line":"$i^3=-i$"},
-            {"do":"write","line":"${{p4:i^4=1}}$","on":"四次方"},
-            {"do":"write","line":"四個一循環","on":"之後就重複"}
-          ] },
-        { "show": ["餘數 $r$：$i^n=i^r$"],
-          "note": "餘數 0 對應 $i^0=1$。",
-          "say": "餘數是零就是一，餘數是一就是 i，餘數是二就是負一，餘數是三就是負 i。",
-          "board": [
-            {"do":"write","line":"餘數 ${{r0:0}}\\to 1$，${{r1:1}}\\to i$","on":"餘數是零"},
-            {"do":"write","line":"餘數 $2\\to -1$，$3\\to -i$","on":"餘數是二"}
-          ] },
-        { "show": ["$i^7=i^3=-i$、$i^8=1$"],
-          "say": "例如七除以四餘三，所以 i 的七次方是負 i；八除以四餘零，所以 i 的八次方是一。",
-          "board": [
-            {"do":"write","line":"$i^7=i^3={{e:-i}}$","on":"七除以四"},
-            {"do":"write","line":"$i^8={{f:1}}$","on":"八除以四"}
-          ] },
-        { "show": ["四個一循環"],
-          "note": "看指數除以 $4$ 的餘數。",
-          "say": "所以 i 的很大次方，只要看指數除以四的餘數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$i^n$：看 ${{r:n\\div 4}}$ 的餘數","on":"所以"},
-            {"do":"underline","term":"r","color":"gold","on":"只要看"}
-          ] }
+      "heading": "⑤ 根為什麼成對",
+      "body": [
+        "定理：$p(z)=\\sum_{k=0}^n a_kz^k$，係數 $a_k$ 都是實數",
+        "證：兩邊取共軛，用 ③ 的性質",
+        "係數不是實數就不一定：$z-i=0$ 只有根 $i$",
+        "代數基本定理：非常數的多項式，在複數裡一定有根",
+        "證明要用複變函數的工具，留到這一章後面"
       ],
-      "key": "四次一循環：看指數除以 $4$ 的餘數",
-      "check": 0
+      "tex": [
+        "p(z_0)=0\\ \\Rightarrow\\ p(\\bar z_0)=0",
+        "0=\\overline{p(z_0)}=\\sum_{k=0}^n\\overline{a_k}\\,\\bar z_0^{\\,k}=\\sum_{k=0}^n a_k\\,\\bar z_0^{\\,k}=p(\\bar z_0)"
+      ]
     },
     {
-      "title": "共軛複數",
-      "beats": [
-        { "show": ["$\\bar{z}=a-bi$"],
-          "note": "圖上是對實軸的鏡射。",
-          "say": "a 加 b i 的共軛複數是 a 減 b i，虛部變號。在平面上就是對實軸照鏡子。",
-          "board": [
-            {"do":"write","line":"$\\overline{a+bi}=a\\,{{m:-\\,bi}}$"},
-            {"do":"focus","term":"m","on":"虛部變號"},
-            {"do":"plot","graph":{"ticks":false,"window":[-0.6,3.6,-2.4,2.4],"dashed":[[[2,1.5],[2,-1.5]]],"arrows":[{"from":[0,0],"to":[2,1.5],"color":"blue"},{"from":[0,0],"to":[2,-1.5],"color":"violet"}],"points":[{"x":2,"y":1.5},{"x":2,"y":-1.5}],"labels":[{"x":2.2,"y":1.55,"text":"z","anchor":"start"},{"x":2.2,"y":-1.65,"text":"z̄","anchor":"start"}]},"on":"平面上"}
-          ] },
-        { "show": ["$z\\bar{z}=a^2+b^2$"],
-          "say": "關鍵恆等式：z 乘它的共軛，交叉項抵銷，剩下 a 平方加 b 平方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z\\bar{z}=(a+bi)(a-bi)$","on":"z 乘"},
-            {"do":"write","line":"$=a^2{{x:-abi+abi}}-b^2i^2$","on":"交叉項"},
-            {"do":"transform","line":"$={{s:a^2+b^2}}$","on":"剩下"}
-          ] },
-        { "show": ["$=|z|^2$，一個非負實數"],
-          "say": "這是一個非負的實數，記作 z 的絕對值平方。i 不見了，這是除法的關鍵。",
-          "board": [
-            {"do":"write","line":"$={{abs:|z|^2}}$，非負實數","on":"非負"},
-            {"do":"box","term":"abs","color":"green","on":"絕對值平方"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "平面上的圖像",
-      "beats": [
-        { "show": ["$a+bi\\leftrightarrow$ 點 $(a,b)$"],
-          "note": "橫軸實軸、縱軸虛軸。",
-          "say": "把 a 加 b i 畫成平面上的點，橫軸是實軸，縱軸是虛軸。",
-          "board": [
-            {"do":"write","line":"$a+bi\\leftrightarrow$ 點 $(a,b)$"},
-            {"do":"write","line":"橫軸實軸，縱軸虛軸","on":"橫軸"}
-          ] },
-        { "show": ["$|z|=\\sqrt{a^2+b^2}$"],
-          "note": "點 $(a,b)$ 到原點的距離。",
-          "say": "絕對值就是這個點到原點的距離，用畢氏定理：根號 a 平方加 b 平方。",
-          "board": [
-            {"do":"write","line":"$|z|={{d:\\sqrt{a^2+b^2}}}$"},
-            {"do":"underline","term":"d","label":"到原點","on":"畢氏定理"}
-          ] },
-        { "show": ["$z-w=(a-c)+(b-d)i$"],
-          "note": "設 $z=a+bi$，$w=c+di$。",
-          "say": "設 z 是 a 加 b i，w 是 c 加 d i。相減，實部是 a 減 c，虛部是 b 減 d。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z=a+bi,\\ w=c+di$","on":"是#2"},
-            {"do":"write","line":"$z-w={{r:(a-c)}}+{{s:(b-d)}}i$","on":"相減"}
-          ] },
-        { "show": ["$|z-w|=\\sqrt{(a-c)^2+(b-d)^2}$"],
-          "note": "正是 $(a,b)$ 到 $(c,d)$ 的距離。",
-          "say": "根號實部平方加虛部平方，就是橫差、縱差用畢氏定理，量出點 a b 到點 c d 的距離。",
-          "board": [
-            {"do":"write","line":"$|z-w|=\\sqrt{(a-c)^2+(b-d)^2}$"},
-            {"do":"underline","term":"r","label":"橫差","on":"橫差"},
-            {"do":"underline","term":"s","label":"縱差","on":"縱差"},
-            {"do":"plot","graph":{"ticks":false,"window":[-0.6,4,-0.6,3],"dashed":[[[1,1],[3,2]]],"arrows":[{"from":[0,0],"to":[3,2],"color":"blue"},{"from":[0,0],"to":[1,1],"color":"violet"}],"points":[{"x":3,"y":2},{"x":1,"y":1}],"labels":[{"x":3.1,"y":2.1,"text":"z","anchor":"start"},{"x":1.1,"y":0.7,"text":"w","anchor":"start"}]},"on":"點 a b"}
-          ] },
-        { "show": ["加法：平行四邊形","$|z-w|$：兩點距離"],
-          "say": "加法就是向量相加，z 減 w 的絕對值就是兩點的距離。乘法的圖像要等下一課的極式。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"加法：向量相加","on":"加法"},
-            {"do":"write","line":"$|z-w|$：兩點距離","on":"z 減 w"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "除法",
-      "beats": [
-        { "show": ["$\\frac{z}{w}=\\frac{z\\,\\bar w}{|w|^{2}}$"],
-          "note": "同乘分母的共軛，分母變實數。",
-          "say": "除法：分子分母同乘分母的共軛複數，分母就變成實數，絕對值平方。",
-          "board": [
-            {"do":"write","line":"$\\frac{z}{w}=\\frac{z\\,{{c:\\bar w}}}{{{d:|w|^{2}}}}$"},
-            {"do":"focus","term":"c","color":"blue","on":"共軛複數"},
-            {"do":"underline","term":"d","color":"green","on":"分母就變成"}
-          ] },
-        { "show": ["分母 $(1-2i)(1+2i)$ 乘開","$=1+2i-2i-4i^2=1+4=5$"],
-          "note": "$-4i^2=+4$",
-          "say": "分母乘開：一加二 i 減二 i 減四 i 平方，i 平方換成負一，變成一加四是五。",
-          "board": [
-            {"do":"write","line":"$(1-2i)(1+2i)=1+2i-2i{{q:-4i^2}}$"},
-            {"do":"underline","term":"q","label":"i²=−1","on":"i 平方#2"},
-            {"do":"transform","line":"$=1{{w:+4}}=5$","on":"換成負一"}
-          ] },
-        { "show": ["$\\frac{3+4i}{1-2i}$：同乘 $1+2i$"],
-          "note": "分母 $(1-2i)(1+2i)=1+4=5$",
-          "say": "例如三加四 i 除以一減二 i，上下同乘一加二 i，分母變成一加四等於五。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{{{n:3+4i}}}{{{m:1-2i}}}$","on":"三加四"},
-            {"do":"transform","line":"$=\\frac{{{n:3+4i}}\\,{{k:(1+2i)}}}{{{m:1-2i}}\\,{{j:(1+2i)}}}$","on":"上下同乘"},
-            {"do":"write","line":"分母 $=1+4=5$","on":"分母變成"}
-          ] },
-        { "show": ["$(3+4i)(1+2i)=3+6i+4i+8i^2$","$6i+4i=10i$"],
-          "note": "四項：$3\\cdot1,\\ 3\\cdot2i,\\ 4i\\cdot1,\\ 4i\\cdot2i$",
-          "say": "分子四項是三、六 i、四 i、八 i 平方。六 i 加四 i 合併成十 i，剩下八 i 平方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(3+4i)(1+2i)=3+{{a:6i}}+{{b:4i}}+8i^2$","on":"四#2"},
-            {"do":"transform","line":"$=3+{{t:10i}}+8i^2$","on":"合併成"},
-            {"do":"focus","term":"t","color":"green","on":"十 i"}
-          ] },
-        { "show": ["分子 $(3+4i)(1+2i)=-5+10i$"],
-          "say": "分子乘開，八 i 平方變成負八，得到負五加十 i。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(3+4i)(1+2i)=3+10i+{{e:8i^2}}$","on":"分子乘開"},
-            {"do":"focus","term":"e","on":"八 i"},
-            {"do":"transform","line":"$=3+10i-8$","on":"負八"}
-          ] },
-        { "show": ["$\\frac{-5+10i}{5}=-1+2i$"],
-          "say": "除以五，答案負一加二 i。可以乘回去檢查，會得到三加四 i。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{-5+10i}{5}$","on":"除以五"},
-            {"do":"transform","line":"$={{r:-1+2i}}$","on":"答案"},
-            {"do":"box","term":"r","color":"green","on":"負一加二"},
-            {"do":"write","line":"檢查：$(-1+2i)(1-2i)=3+4i$","on":"乘回去"}
-          ] }
-      ],
-      "key": "分子分母同乘分母的共軛",
-      "check": 2
+      "heading": "重點整理",
+      "body": [
+        "• $i^2=-1$；$i$ 當字母算，最後 $i^2\\to-1$",
+        "• $z\\bar z=|z|^2$；除法乘分母的共軛",
+        "• $\\overline{zw}=\\bar z\\bar w$，$|zw|=|z||w|$，$|z+w|\\le|z|+|w|$",
+        "• 平面上：$|z|$ 是距離，$\\bar z$ 是鏡射，加法是向量相加",
+        "• 實係數多項式：根成對共軛",
+        "下一課：極式"
+      ]
     }
   ],
   "workedExamples": [
@@ -372,55 +192,924 @@
   ],
   "checks": [
     {
-      "ask": "$i^{2025}$ 是？",
+      "ask": "$\\dfrac1i=$？",
       "options": [
-        { "label": "$i$", "correct": true },
-        { "label": "$-1$", "why": "$i$ 的次方四個一循環，$2025=4\\cdot 506+1$，所以是 $i^1=i$。" },
-        { "label": "$1$", "why": "只有指數是 $4$ 的倍數時才是 $1$；$2025$ 除以 $4$ 餘 $1$。" }
+        {
+          "label": "$-i$",
+          "correct": true
+        },
+        {
+          "label": "$i$",
+          "why": "$i\\cdot i=-1$，不是 $1$"
+        },
+        {
+          "label": "$1$",
+          "why": "$i\\ne1$，$\\frac1i$ 不會是 $1$"
+        },
+        {
+          "label": "$-1$",
+          "why": "$i\\cdot(-1)=-i$，不是 $1$"
+        }
       ]
     },
     {
-      "ask": "$|3-4i|$ 是？",
+      "ask": "滿足 $|z-1|=2$ 的點 $z$ 形成什麼圖形？",
       "options": [
-        { "label": "$5$", "correct": true },
-        { "label": "$-1$", "why": "絕對值是距離 $\\sqrt{3^2+(-4)^2}$，不是 $3+(-4)$。" },
-        { "label": "$\\sqrt{7}$", "why": "虛部也是平方後相加：$9+16=25$，不是 $9-16$ 的絕對值。" }
+        {
+          "label": "圓心 $1$、半徑 $2$ 的圓",
+          "correct": true
+        },
+        {
+          "label": "圓心 $-1$、半徑 $2$ 的圓",
+          "why": "$|z-1|$ 是到 $1$ 的距離；$|z+1|$ 才是到 $-1$"
+        },
+        {
+          "label": "直線 $\\operatorname{Re}z=3$",
+          "why": "$z=3$ 只是其中一點；距離固定是一個圓"
+        },
+        {
+          "label": "圓心 $0$、半徑 $3$ 的圓",
+          "why": "把 $|z-1|=2$ 當成 $|z|=1+2$；絕對值不能這樣拆"
+        }
       ]
     },
     {
-      "ask": "$\\frac{1}{i}$ 是？",
+      "ask": "$z^2+4z+13=0$ 的根是？",
       "options": [
-        { "label": "$-i$", "correct": true },
-        { "label": "$i$", "why": "$i\\cdot i=-1$，不是 $1$；同乘 $-i$（共軛複數）得 $\\frac{-i}{1}=-i$。" },
-        { "label": "沒有定義", "why": "只有 $0$ 不能當分母；$i\\ne 0$，$\\frac{1}{i}$ 有定義。" }
+        {
+          "label": "$-2\\pm3i$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pm3i$",
+          "why": "配方的號反了：$z^2+4z=(z+2)^2-4$"
+        },
+        {
+          "label": "$-2\\pm3$",
+          "why": "忘了 $\\sqrt{-9}=3i$ 的 $i$"
+        },
+        {
+          "label": "$-4\\pm6i$",
+          "why": "公式解忘了除以 $2$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "為什麼要 $i$",
+      "beats": [
+        {
+          "show": [
+            "$x^2+1=0$"
+          ],
+          "say": "這一章進入複數。先看最簡單的方程式：x 平方加 1 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^2+1=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 是實數時 $x^2+1\\ge1$：沒有實數解"
+          ],
+          "say": "實數的平方不會是負的，所以 x 平方加 1 至少是 1。在實數裡沒有解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x$ 是實數時 $x^2+1\\ge1$：沒有實數解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那就發明一個數 $i$，規定",
+            "$i^2=-1$"
+          ],
+          "say": "那就發明一個新的數 i，唯一的規定是：i 平方等於負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "那就發明一個數 $i$，規定"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle i^2=-1}}$",
+              "color": "red",
+              "on": "的數"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "的規"
+            },
+            {
+              "do": "write",
+              "line": "　歷史上逼大家接受 $i$ 的是三次方程式：$x^3=15x+4$ 的實根 $4$，公式解中途一定經過 $\\sqrt{-121}$",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "複數：$z=a+bi$，$a,b$ 是實數",
+            "• 實部 $\\operatorname{Re}z=a$，虛部 $\\operatorname{Im}z=b$"
+          ],
+          "say": "複數就是 a 加 b i，a、b 是實數。a 叫實部，b 叫虛部。相等的意思是實部、虛部都相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數：$z=a+bi$，$a,b$ 是實數"
+            },
+            {
+              "do": "write",
+              "line": "• 實部 $\\operatorname{Re}z=a$，虛部 $\\operatorname{Im}z=b$",
+              "on": "是實#1"
+            },
+            {
+              "do": "write",
+              "line": "• 相等：$a+bi=c+di\\iff a=c$ 且 $b=d$",
+              "on": "實部#1"
+            },
+            {
+              "do": "write",
+              "line": "　虛部是實數 $b$，不是 $bi$；例：$\\operatorname{Im}(3-5i)=-5$",
+              "color": "violet",
+              "on": "意思"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$i$ 的次方：四個一循環",
+            "$i^1=i,\\quad i^2=-1,\\quad i^3=-i,\\quad i^4=1$"
+          ],
+          "say": "i 的次方四個一循環：i、負 1、負 i、1，然後又回到 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$i$ 的次方：四個一循環"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle i^1=i,\\quad i^2=-1,\\quad i^3=-i,\\quad i^4=1}}$",
+              "on": "然後"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "後又"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$i^{23}=$？",
+        "options": [
+          {
+            "label": "$-i$",
+            "correct": true
+          },
+          {
+            "label": "$i$",
+            "why": "$23$ 是奇數，但要看除以 $4$ 的餘數，不是除以 $2$"
+          },
+          {
+            "label": "$-1$",
+            "why": "那是餘數 $2$ 的情形；$23$ 除以 $4$ 餘 $3$"
+          },
+          {
+            "label": "$1$",
+            "why": "那是 $4$ 的倍數；$23$ 不是"
+          }
+        ]
+      }
+    },
+    {
+      "title": "運算：$i$ 當字母",
+      "beats": [
+        {
+          "show": [
+            "加減：實部對實部、虛部對虛部",
+            "$(2+3i)+(1-2i)=3+i$"
+          ],
+          "say": "運算只有一個原則：把 i 當字母照常算，遇到 i 平方就換成負 1。加減就是實部加實部、虛部加虛部。",
+          "board": [
+            {
+              "do": "write",
+              "line": "加減：實部對實部、虛部對虛部"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (2+3i)+(1-2i)=3+i$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘法：$(2+3i)(1-2i)$，照分配律展開",
+            "$\\begin{aligned}&=2-4i+3i-6i^2\\\\&=2-i+6=8-i\\end{aligned}$"
+          ],
+          "say": "乘法：照分配律展開，得到 2 減 4i 加 3i 減 6 i 平方。i 平方換成負 1，變成加 6。答案是 8 減 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘法：$(2+3i)(1-2i)$，照分配律展開"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&=2-4i+3i-6i^2\\\\&=2-i+6=8-i\\end{aligned}}}}$",
+              "color": "red",
+              "on": "3i"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "變成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般公式：",
+            "$(a+bi)(c+di)=(ac-bd)+(ad+bc)\\,i$"
+          ],
+          "say": "一般公式：實部 ac 減 bd，這個減號就來自 i 平方等於負 1；虛部 ad 加 bc。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般公式："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle (a+bi)(c+di)=(ac-bd)+(ad+bc)\\,i}}$",
+              "on": "這個"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "虛部"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼可以把 $i$ 當字母？",
+            "把 $i$ 換成 $x$：多項式相乘，再除以 $x^2+1$ 取餘式"
+          ],
+          "say": "為什麼可以把 i 當字母？把 i 換成 x 來看：複數乘法，就是兩個多項式相乘，再除以 x 平方加 1 取餘式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼可以把 $i$ 當字母？"
+            },
+            {
+              "do": "write",
+              "line": "把 $i$ 換成 $x$：多項式相乘，再除以 $x^2+1$ 取餘式",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式滿足交換、結合、分配律；取餘式不破壞它們"
+          ],
+          "say": "多項式本來就滿足交換、結合、分配律；乘積的餘式，等於餘式相乘再取餘式，所以這些規則全部保留。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多項式滿足交換、結合、分配律；取餘式不破壞它們",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　嚴格定義：複數是有序對 $(a,b)$，加法、乘法用上面的公式；$i=(0,1)$",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$z\\bar{z}$ 一定是？",
-      "options": [
-        { "label": "非負實數 $|z|^2$", "correct": true },
-        { "label": "純虛數", "why": "$(a+bi)(a-bi)=a^2-(bi)^2=a^2+b^2$，虛部抵銷。" },
-        { "label": "$z^2$", "why": "$\\bar{z}\\ne z$（除非 $z$ 是實數），所以 $z\\bar{z}$ 一般不等於 $z^2$。" }
+      "title": "共軛與絕對值",
+      "beats": [
+        {
+          "show": [
+            "共軛：$z=a+bi$，$\\bar z=a-bi$（虛部變號）",
+            "$z\\bar z=(a+bi)(a-bi)=a^2-(bi)^2=a^2+b^2$"
+          ],
+          "say": "除法要用的工具是共軛：把虛部變號，記成 z bar。z 乘 z bar 是平方差，得到 a 平方加 b 平方，一個非負的實數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "共軛：$z=a+bi$，$\\bar z=a-bi$（虛部變號）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle z\\bar z=(a+bi)(a-bi)=a^2-(bi)^2=a^2+b^2$",
+              "on": "ba#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "絕對值：$|z|=\\sqrt{a^2+b^2}$，所以",
+            "$z\\bar z=|z|^2$"
+          ],
+          "say": "定義 z 的絕對值是根號 a 平方加 b 平方。那麼 z 乘 z bar，就是絕對值平方。這一條整章都會用到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "絕對值：$|z|=\\sqrt{a^2+b^2}$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle z\\bar z=|z|^2}}$",
+              "color": "red",
+              "on": "平方#2"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除法：分子分母同乘分母的共軛",
+            "$\\frac{3+4i}{1-2i}=\\frac{(3+4i)(1+2i)}{(1-2i)(1+2i)}$"
+          ],
+          "say": "除法：分子分母同乘分母的共軛，分母就變成實數。例子：1 減 2i 分之 3 加 4i，同乘 1 加 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除法：分子分母同乘分母的共軛"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3+4i}{1-2i}=\\frac{(3+4i)(1+2i)}{(1-2i)(1+2i)}$",
+              "on": "2i#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac{3+10i+8i^2}{1+4}=\\frac{-5+10i}{5}=-1+2i$"
+          ],
+          "say": "分子是負 5 加 10i，分母是 5，答案負 1 加 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =\\frac{3+10i+8i^2}{1+4}=\\frac{-5+10i}{5}=-1+2i}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "0i"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(-1+2i)(1-2i)=-1+4i-4i^2=3+4i$",
+              "color": "violet",
+              "on": "案負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一般：$z\\ne0$ 時 $\\dfrac1z=\\dfrac{\\bar z}{|z|^2}$，每個非零複數都有倒數"
+          ],
+          "say": "一般來說，z 不是 0 時，z 分之一等於 z bar 除以絕對值平方。每個非零複數都有倒數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一般：$z\\ne0$ 時 $\\dfrac1z=\\dfrac{\\bar z}{|z|^2}$，每個非零複數都有倒數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "共軛的性質",
+      "beats": [
+        {
+          "show": [
+            "$\\overline{z+w}=\\bar z+\\bar w,\\qquad\\overline{zw}=\\bar z\\,\\bar w$"
+          ],
+          "say": "共軛有兩個好性質：和的共軛是共軛的和，積的共軛是共軛的積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\overline{z+w}=\\bar z+\\bar w,\\qquad\\overline{zw}=\\bar z\\,\\bar w}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "共軛#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證（積）：$z=a+bi$，$w=c+di$，兩邊都等於",
+            "$(ac-bd)-(ad+bc)\\,i$"
+          ],
+          "say": "和的那條直接看就對。積的那條，把兩邊都展開，都是 ac 減 bd，減 ad 加 bc 倍的 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證（積）：$z=a+bi$，$w=c+di$，兩邊都等於"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (ac-bd)-(ad+bc)\\,i$",
+              "on": "ac"
+            }
+          ]
+        },
+        {
+          "show": [
+            "絕對值相乘：",
+            "$|zw|^2=zw\\,\\overline{zw}=(z\\bar z)(w\\bar w)=|z|^2|w|^2$"
+          ],
+          "say": "由此，zw 的絕對值平方，等於 zw 乘它的共軛，重新排列，就是兩個絕對值平方相乘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "絕對值相乘："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |zw|^2=zw\\,\\overline{zw}=(z\\bar z)(w\\bar w)=|z|^2|w|^2$",
+              "on": "的共"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|zw|=|z|\\,|w|$"
+          ],
+          "say": "開根號：積的絕對值，等於絕對值的積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle |zw|=|z|\\,|w|}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推論：$zw=0\\Rightarrow z=0$ 或 $w=0$"
+          ],
+          "say": "推論：zw 等於 0，那兩個絕對值相乘是 0，其中一個是 0。第五節解方程式會用到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：$zw=0\\Rightarrow z=0$ 或 $w=0$"
+            },
+            {
+              "do": "write",
+              "line": "　$|z|=0\\iff a^2+b^2=0\\iff z=0$",
+              "color": "violet",
+              "on": "其中"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "平面上的圖像",
+      "beats": [
+        {
+          "show": [
+            "$a+bi\\ \\longleftrightarrow\\ $點 $(a,b)$：橫軸實軸、縱軸虛軸",
+            "圖"
+          ],
+          "say": "把 a 加 b i 畫成點 a 逗號 b，這叫複數平面。3 加 2i 到原點的距離是根號 13，正好是它的絕對值；它的共軛是對實軸的鏡射。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a+bi\\ \\longleftrightarrow\\ $點 $(a,b)$：橫軸實軸、縱軸虛軸"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cnPoint\" viewBox=\"0 0 620 380\" width=\"620\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacnPoint\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacnPointblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacnPointred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacnPointgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacnPointpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacnPointink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacnPoint30\"><rect x=\"134.5\" y=\"16\" width=\"357\" height=\"334\"/></clipPath><g clip-path=\"url(#cl11gacnPoint30)\"><line x1=\"134.5\" y1=\"16\" x2=\"134.5\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192.1\" y1=\"16\" x2=\"192.1\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"249.7\" y1=\"16\" x2=\"249.7\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"307.2\" y1=\"16\" x2=\"307.2\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"364.8\" y1=\"16\" x2=\"364.8\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"422.4\" y1=\"16\" x2=\"422.4\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"480\" y1=\"16\" x2=\"480\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"134.5\" y1=\"298.2\" x2=\"491.5\" y2=\"298.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"134.5\" y1=\"240.6\" x2=\"491.5\" y2=\"240.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"134.5\" y1=\"183\" x2=\"491.5\" y2=\"183\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"134.5\" y1=\"125.4\" x2=\"491.5\" y2=\"125.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"134.5\" y1=\"67.8\" x2=\"491.5\" y2=\"67.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"130.5\" y1=\"183\" x2=\"503.5\" y2=\"183\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnPoint)\"/><line x1=\"192.1\" y1=\"354\" x2=\"192.1\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnPoint)\"/><text x=\"249.7\" y=\"205\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"307.2\" y=\"205\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"422.4\" y=\"205\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"185.1\" y=\"305.2\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"185.1\" y=\"247.6\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"185.1\" y=\"132.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"185.1\" y=\"74.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"501.5\" y=\"174\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"201.1\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"364.8\" y1=\"183\" x2=\"364.8\" y2=\"67.8\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"192.1\" y1=\"67.8\" x2=\"364.8\" y2=\"67.8\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"364.8\" y1=\"183\" x2=\"364.8\" y2=\"298.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"192.1\" y1=\"183\" x2=\"364.8\" y2=\"67.8\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacnPointblue)\"/><circle cx=\"364.8\" cy=\"67.8\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"364.8\" cy=\"298.2\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"378.8\" y=\"57.8\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> = 3 + 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"378.8\" y=\"308.2\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic;text-decoration:overline\">z</tspan> = 3 − 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"250.8\" y=\"172.7\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">|<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>| = √13</text></svg>",
+              "on": "到原"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $|z|=\\sqrt{a^2+b^2}$：到原點的距離",
+            "• $\\bar z$：對實軸的鏡射"
+          ],
+          "say": "加法跟向量相加一模一樣：3 加 i，加上 1 加 2i，得到 4 加 3i，是平行四邊形的對角線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $|z|=\\sqrt{a^2+b^2}$：到原點的距離"
+            },
+            {
+              "do": "write",
+              "line": "• $\\bar z$：對實軸的鏡射",
+              "on": "加上"
+            },
+            {
+              "do": "write",
+              "line": "加法 = 向量相加",
+              "on": "2i"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cnAdd\" viewBox=\"0 0 620 380\" width=\"620\" height=\"380\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacnAdd\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacnAddblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacnAddred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacnAddgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacnAddpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacnAddink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacnAdd30\"><rect x=\"82.4\" y=\"16\" width=\"461.2\" height=\"334\"/></clipPath><g clip-path=\"url(#cl11gacnAdd30)\"><line x1=\"130.1\" y1=\"16\" x2=\"130.1\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"209.6\" y1=\"16\" x2=\"209.6\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"289.1\" y1=\"16\" x2=\"289.1\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"368.7\" y1=\"16\" x2=\"368.7\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"448.2\" y1=\"16\" x2=\"448.2\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"527.7\" y1=\"16\" x2=\"527.7\" y2=\"350\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"82.4\" y1=\"302.3\" x2=\"543.6\" y2=\"302.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"82.4\" y1=\"222.8\" x2=\"543.6\" y2=\"222.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"82.4\" y1=\"143.2\" x2=\"543.6\" y2=\"143.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"82.4\" y1=\"63.7\" x2=\"543.6\" y2=\"63.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"78.4\" y1=\"302.3\" x2=\"555.6\" y2=\"302.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnAdd)\"/><line x1=\"130.1\" y1=\"354\" x2=\"130.1\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnAdd)\"/><text x=\"209.6\" y=\"324.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"289.1\" y=\"324.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"368.7\" y=\"324.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"448.2\" y=\"324.3\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"123.1\" y=\"229.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"123.1\" y=\"150.2\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"123.1\" y=\"70.7\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"553.6\" y=\"293.3\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"139.1\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"368.7\" y1=\"222.8\" x2=\"448.2\" y2=\"63.7\" stroke=\"var(--green)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"209.6\" y1=\"143.2\" x2=\"448.2\" y2=\"63.7\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"130.1\" y1=\"302.3\" x2=\"368.7\" y2=\"222.8\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacnAddblue)\"/><line x1=\"130.1\" y1=\"302.3\" x2=\"209.6\" y2=\"143.2\" stroke=\"var(--green)\" stroke-width=\"3\" marker-end=\"url(#ah11gacnAddgreen)\"/><line x1=\"130.1\" y1=\"302.3\" x2=\"448.2\" y2=\"63.7\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah11gacnAddred)\"/><text x=\"380.7\" y=\"240.8\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> = 3 + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"209.6\" y=\"117.2\" text-anchor=\"middle\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">w</tspan> = 1 + 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"434.2\" y=\"55.7\" text-anchor=\"end\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">w</tspan> = 4 + 3<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text></svg>",
+              "on": "是平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z-w|$：$z$ 和 $w$ 兩點的距離"
+          ],
+          "say": "所以 z 減 w 的絕對值，就是兩點之間的距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z-w|$：$z$ 和 $w$ 兩點的距離",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "三角不等式",
+      "beats": [
+        {
+          "show": [
+            "$|z+w|\\le|z|+|w|$"
+          ],
+          "say": "三角形兩邊和大於第三邊，寫成複數就是三角不等式。用代數證明它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle |z+w|\\le|z|+|w|}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "數就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}|z+w|^2&=(z+w)(\\bar z+\\bar w)\\\\&=|z|^2+|w|^2+2\\operatorname{Re}(z\\bar w)\\end{aligned}$"
+          ],
+          "say": "絕對值平方等於乘它的共軛。展開後兩個交叉項互為共軛，加起來是實部的兩倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}|z+w|^2&=(z+w)(\\bar z+\\bar w)\\\\&=|z|^2+|w|^2+2\\operatorname{Re}(z\\bar w)\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\operatorname{Re}u\\le|u|$，$|z\\bar w|=|z||w|$：",
+            "$|z+w|^2\\le(|z|+|w|)^2$"
+          ],
+          "say": "實部不超過絕對值，而 z 乘 w bar 的絕對值是兩個絕對值相乘。所以不超過絕對值和的平方，開根號就證完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\operatorname{Re}u\\le|u|$，$|z\\bar w|=|z||w|$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle |z+w|^2\\le(|z|+|w|)^2}}$",
+              "on": "ba"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "個絕"
+            },
+            {
+              "do": "write",
+              "line": "　剛才的圖：$|z+w|=5\\le\\sqrt{10}+\\sqrt5\\approx5.40$",
+              "color": "violet",
+              "on": "值和"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "判別式為負也能解",
+      "beats": [
+        {
+          "show": [
+            "$z^2-2z+5=0$"
+          ],
+          "say": "回到方程式：z 平方減 2z 加 5 等於 0。判別式是負 16，實數裡沒有解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle z^2-2z+5=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "配方：$(z-1)^2=-4$；令 $w=z-1$：",
+            "$w^2+4=(w-2i)(w+2i)=0$"
+          ],
+          "say": "配方，z 減 1 的平方等於負 4。令 w 等於 z 減 1，w 平方加 4 分解成 w 減 2i 乘 w 加 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "配方：$(z-1)^2=-4$；令 $w=z-1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle w^2+4=(w-2i)(w+2i)=0$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由 ③ 的推論，一個因式是 $0$：",
+            "$z=1\\pm2i$"
+          ],
+          "say": "由剛才的推論，其中一個因式是 0，所以 z 等於 1 加減 2i，恰好兩個根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "由 ③ 的推論，一個因式是 $0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle z=1\\pm2i}}$",
+              "color": "red",
+              "on": "一個"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(1+2i)^2-2(1+2i)+5=(-3+4i)-(2+4i)+5=0$",
+              "color": "violet",
+              "on": "2i"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "兩個根互為共軛，在平面上對實軸對稱。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cnRoots\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacnRoots\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacnRootsblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacnRootsred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacnRootsgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacnRootspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacnRootsink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacnRoots30\"><rect x=\"192\" y=\"16\" width=\"241.9\" height=\"284\"/></clipPath><g clip-path=\"url(#cl11gacnRoots30)\"><line x1=\"202.6\" y1=\"16\" x2=\"202.6\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"255.1\" y1=\"16\" x2=\"255.1\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"307.7\" y1=\"16\" x2=\"307.7\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"360.3\" y1=\"16\" x2=\"360.3\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"412.9\" y1=\"16\" x2=\"412.9\" y2=\"300\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192\" y1=\"263.2\" x2=\"434\" y2=\"263.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192\" y1=\"210.6\" x2=\"434\" y2=\"210.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192\" y1=\"158\" x2=\"434\" y2=\"158\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192\" y1=\"105.4\" x2=\"434\" y2=\"105.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"192\" y1=\"52.8\" x2=\"434\" y2=\"52.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"188\" y1=\"158\" x2=\"446\" y2=\"158\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnRoots)\"/><line x1=\"255.1\" y1=\"304\" x2=\"255.1\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacnRoots)\"/><text x=\"360.3\" y=\"180\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"248.1\" y=\"270.2\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"248.1\" y=\"217.6\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"248.1\" y=\"112.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"248.1\" y=\"59.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"444\" y=\"149\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"264.1\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"307.7\" y1=\"52.8\" x2=\"307.7\" y2=\"263.2\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><circle cx=\"307.7\" cy=\"52.8\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"307.7\" cy=\"263.2\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"321.7\" y=\"60.8\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 + 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"321.7\" y=\"271.2\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 − 2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(z-z_0)(z-\\bar z_0)=z^2-2\\operatorname{Re}(z_0)\\,z+|z_0|^2$"
+          ],
+          "say": "把共軛根乘回去，係數是實部的兩倍、和絕對值平方，全是實數。這裡是 2 和 5，正好還原原式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx12:\\displaystyle (z-z_0)(z-\\bar z_0)=z^2-2\\operatorname{Re}(z_0)\\,z+|z_0|^2}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx12",
+              "on": "全是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "根為什麼成對",
+      "beats": [
+        {
+          "show": [
+            "定理：$p(z)=\\sum_{k=0}^n a_kz^k$，係數 $a_k$ 都是實數",
+            "$p(z_0)=0\\ \\Rightarrow\\ p(\\bar z_0)=0$"
+          ],
+          "say": "這不是巧合。定理：實係數多項式，z 0 是根，z 0 bar 也是根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$p(z)=\\sum_{k=0}^n a_kz^k$，係數 $a_k$ 都是實數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx13:\\displaystyle p(z_0)=0\\ \\Rightarrow\\ p(\\bar z_0)=0}}$",
+              "on": "數多"
+            },
+            {
+              "do": "box",
+              "term": "bx13",
+              "on": "ba"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證：兩邊取共軛，用 ③ 的性質",
+            "$0=\\overline{p(z_0)}=\\sum_{k=0}^n\\overline{a_k}\\,\\bar z_0^{\\,k}=\\sum_{k=0}^n a_k\\,\\bar z_0^{\\,k}=p(\\bar z_0)$"
+          ],
+          "say": "證明：把 p of z 0 等於 0 取共軛，每一項變成 a k bar 乘 z 0 bar 的 k 次方。a k 是實數，共軛是自己，就得到 p of z 0 bar。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證：兩邊取共軛，用 ③ 的性質"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0=\\overline{p(z_0)}=\\sum_{k=0}^n\\overline{a_k}\\,\\bar z_0^{\\,k}=\\sum_{k=0}^n a_k\\,\\bar z_0^{\\,k}=p(\\bar z_0)$",
+              "on": "ba#1"
+            },
+            {
+              "do": "write",
+              "line": "　係數不是實數就不一定：$z-i=0$ 只有根 $i$",
+              "color": "violet",
+              "on": "是實"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "根為什麼成對",
+      "beats": [
+        {
+          "show": [
+            "代數基本定理：非常數的多項式，在複數裡一定有根"
+          ],
+          "say": "更一般的事實叫代數基本定理：非常數的多項式，在複數裡一定有根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代數基本定理：非常數的多項式，在複數裡一定有根"
+            },
+            {
+              "do": "write",
+              "line": "　證明要用複變函數的工具，留到這一章後面",
+              "color": "violet",
+              "on": "常數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $i^2=-1$；$i$ 當字母算，最後 $i^2\\to-1$",
+            "• $z\\bar z=|z|^2$；除法乘分母的共軛"
+          ],
+          "say": "整理：i 當字母算；除法乘分母的共軛；在平面上，絕對值是距離、共軛是鏡射、加法是向量相加；實係數多項式的根成對共軛。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $i^2=-1$；$i$ 當字母算，最後 $i^2\\to-1$"
+            },
+            {
+              "do": "write",
+              "line": "• $z\\bar z=|z|^2$；除法乘分母的共軛",
+              "on": "法乘"
+            },
+            {
+              "do": "write",
+              "line": "• $\\overline{zw}=\\bar z\\bar w$，$|zw|=|z||w|$，$|z+w|\\le|z|+|w|$",
+              "on": "絕對"
+            },
+            {
+              "do": "write",
+              "line": "• 平面上：$|z|$ 是距離，$\\bar z$ 是鏡射，加法是向量相加",
+              "on": "鏡射"
+            },
+            {
+              "do": "write",
+              "line": "• 實係數多項式：根成對共軛",
+              "on": "係數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：極式"
+          ],
+          "say": "下一課，用長度和角度描述複數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：極式"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "modulus"],
-    "fine": ["complex-arithmetic", "complex-division", "complex-modulus-conjugate", "complex-quadratic-roots"]
+    "coarse": [
+      "complex",
+      "modulus"
+    ],
+    "fine": [
+      "complex-arithmetic",
+      "complex-division",
+      "complex-modulus-conjugate",
+      "complex-quadratic-roots"
+    ]
   },
   "practice": [
-    { "id": "der-077", "core": true, "trains": "complex-modulus-conjugate" },
-    { "id": "der-078", "core": true, "trains": "complex-arithmetic" },
-    { "id": "cg-11g-001", "core": true, "trains": "complex-arithmetic" },
-    { "id": "cg-11g-004", "core": true, "trains": "complex-division" },
-    { "id": "cg-11g-007", "core": true, "trains": "complex-quadratic-roots" },
-    { "id": "der-075", "trains": "complex-arithmetic" },
-    { "id": "der-076", "trains": "complex-arithmetic" },
-    { "id": "cg-11g-002", "trains": "complex-arithmetic" },
-    { "id": "cg-11g-003", "trains": "complex-arithmetic" },
-    { "id": "cg-11g-005", "trains": "complex-division" },
-    { "id": "cg-11g-006", "trains": "complex-division" },
-    { "id": "cg-11g-008", "trains": "complex-quadratic-roots" }
+    {
+      "id": "der-077",
+      "core": true,
+      "trains": "complex-modulus-conjugate"
+    },
+    {
+      "id": "der-078",
+      "core": true,
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "cg-11g-001",
+      "core": true,
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "cg-11g-004",
+      "core": true,
+      "trains": "complex-division"
+    },
+    {
+      "id": "cg-11g-007",
+      "core": true,
+      "trains": "complex-quadratic-roots"
+    },
+    {
+      "id": "der-075",
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "der-076",
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "cg-11g-002",
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "cg-11g-003",
+      "trains": "complex-arithmetic"
+    },
+    {
+      "id": "cg-11g-005",
+      "trains": "complex-division"
+    },
+    {
+      "id": "cg-11g-006",
+      "trains": "complex-division"
+    },
+    {
+      "id": "cg-11g-008",
+      "trains": "complex-quadratic-roots"
+    }
   ],
   "gaps": []
 }

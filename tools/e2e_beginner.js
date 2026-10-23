@@ -67,6 +67,8 @@ const HELPERS = `
 async function run() {
   console.log("E2E 初學者");
   const server = await staticServer.start(ROOT, 0);
+  // 1.1 的小測一共幾個選項（照課文算；2026-10-23 換成交付的課之後題數變了，不寫死）
+  const LIMIT_INTRO_OPTIONS = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "content", "course_v2", "lessons", "limit-intro.json"), "utf8")).checks.reduce((n, c) => n + c.options.length, 0);
   const chrome = await launch();
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
   const click = async (selector, wait = 400) => {
@@ -407,7 +409,7 @@ async function run() {
       if (await evaluate(`return Boolean(document.querySelector(".cv2-lesson [data-course-checks]"));`)) break;
     }
     const lessonPage = await evaluate(`return { title: window.__b.text(".cv2-lesson h2"), label: window.__b.text(".cv2-lesson .page-head .section-label"), steps: document.querySelectorAll(".course-step").length, stepButton: Boolean(document.querySelector('[data-action="course-step"]')), options: document.querySelectorAll(".course-option").length, practice: document.querySelectorAll("[data-course-practice] .cv2-practice li").length };`);
-    check("單課：課號照大綱算、步驟先藏著、小測有選項、推薦題列出來", /^1\.1 ·/.test(lessonPage.label) && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= 9 && lessonPage.practice >= 2, JSON.stringify(lessonPage));
+    check("單課：課號照大綱算、步驟先藏著、小測有選項、推薦題列出來", /^1\.1 ·/.test(lessonPage.label) && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= LIMIT_INTRO_OPTIONS && lessonPage.practice >= 2, JSON.stringify(lessonPage));
     await click('[data-action="course-step"][data-ex="0"]', 300);
     await click('[data-action="course-step"][data-ex="0"]', 300);
     const revealed = await evaluate(`return document.querySelectorAll(".course-step").length;`);

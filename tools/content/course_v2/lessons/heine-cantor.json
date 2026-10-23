@@ -1,7 +1,8 @@
 {
   "id": "heine-cantor",
   "title": "Heine–Cantor 定理",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
   "prerequisites": [
     "uniform-continuity",
@@ -16,329 +17,124 @@
     "cauchy-sequence"
   ],
   "objectives": [
-    "說得出 Heine–Cantor 定理：有界閉區間上的連續函數一致連續。",
-    "會用反證法加 Bolzano–Weierstrass 寫出完整證明。",
-    "用定理判斷一致連續，並對每個假設舉出拿掉之後失敗的反例。"
+    "說得出 Heine–Cantor 定理：有界閉區間上的連續函數一致連續",
+    "會用反證法加 Bolzano–Weierstrass 寫出完整證明",
+    "用定理判斷一致連續，並對每個假設舉出拿掉之後失敗的反例"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 為什麼閉區間上不會出事",
+      "heading": "① 閉區間上不會出事",
       "body": [
-        "上一課的壞例子都有一個「逃生口」：$\\frac{1}{x}$ 在 $(0,1]$ 上的壞點擠向 0，而 0 不在定義域裡；$x^2$ 在 $\\mathbb{R}$ 上的壞點跑向無限遠。",
-        "直覺，不是證明：在 $[a,b]$ 上，兩個口都被封住——點不能跑到無限遠（有界），擠向的地方也還在區間裡、函數在那裡連續（閉）。在那一點附近，連續就把函數值壓住了。漏掉的是「擠向某一點」這件事本身，要靠 Bolzano–Weierstrass。"
-      ],
-      "collapsible": false
+        "上一課出事的兩個例子：",
+        "• $\\frac1x$ 在 $(0,1]$：壞點對擠向 $0$，而 $0$ 不在定義域",
+        "• $x^2$ 在 $\\mathbb{R}$：壞點對跑向 $\\infty$，沒有落腳處",
+        "在 $[a,b]$ 上：壞點對只能擠在某個 $c\\in[a,b]$",
+        "紅：$x_n$；藍：$y_n$；$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$"
+      ]
     },
     {
       "heading": "② 定理與反例",
       "body": [
-        "Heine–Cantor 定理：$f$ 在有界閉區間 $[a,b]$ 上連續，則 $f$ 在 $[a,b]$ 上一致連續。",
-        "拿掉「閉」：$\\frac{1}{x}$、$\\sin(\\frac{1}{x})$ 在 $(0,1]$ 上連續，都不一致連續。拿掉「有界」：$x^2$ 在 $[0,\\infty)$ 上連續，不一致連續。拿掉「連續」：階梯函數在 $[-1,1]$ 上，跳躍點兩側的點要多近有多近，函數值差 1。",
-        "這是充分條件，不是必要條件：$\\sqrt{x}$ 在 $[0,\\infty)$ 上一致連續，區間卻無界。"
+        "Heine–Cantor：$f$ 在 $[a,b]$ 上連續 ⇒ $f$ 在 $[a,b]$ 上一致連續",
+        "拿掉任何一個假設都會壞：",
+        "• 不閉：$\\frac1x$ 在 $(0,1]$",
+        "• 無界：$x^2$ 在 $[0,\\infty)$",
+        "• 不連續：$H$ 在 $[-1,1]$（一致連續一定連續）",
+        "例：$x^2$ 在 $[0,2]$ 上，定理保證一致連續。寫出 $\\delta$：",
+        "取 $\\delta=\\dfrac\\varepsilon4$：$|x-y|<\\delta\\Rightarrow|x^2-y^2|<\\varepsilon$"
       ],
-      "collapsible": false
+      "tex": [
+        "|x^2-y^2|=|x+y|\\,|x-y|\\le4|x-y|"
+      ]
     },
     {
-      "heading": "③ 它用在哪裡",
+      "heading": "③ 證明：反證加 B–W",
       "body": [
-        "需要「一個 $\\delta$ 管住整個區間」的地方都靠它。最重要的一處是〈連續函數可積〉：把 $[a,b]$ 切成寬度小於 $\\delta$ 的小段，每一段上 $f$ 的最大最小值差都小於 $\\varepsilon$，上和與下和就夠接近。"
+        "假設不一致連續。否定：有 $\\varepsilon_0>0$，對每個 $n$（取 $\\delta=\\frac1n$）有 $x_n,y_n\\in[a,b]$：",
+        "B–W：$x_n$ 有界 ⇒ 子數列 $x_{n_k}\\to c$；閉 ⇒ $c\\in[a,b]$",
+        "$y_{n_k}$ 也 $\\to c$：$|y_{n_k}-c|\\le|y_{n_k}-x_{n_k}|+|x_{n_k}-c|\\to0$",
+        "$f$ 在 $c$ 連續，數列判準：",
+        "⇒ $|f(x_{n_k})-f(y_{n_k})|\\to0$，但每一項都 $\\ge\\varepsilon_0$。矛盾　$\\blacksquare$",
+        "用到：有界（B–W）、閉（$c\\in[a,b]$）、連續（在 $c$）"
       ],
-      "collapsible": false
+      "tex": [
+        "|x_n-y_n|<\\frac1n,\\qquad|f(x_n)-f(y_n)|\\ge\\varepsilon_0",
+        "f(x_{n_k})\\to f(c),\\qquad f(y_{n_k})\\to f(c)"
+      ]
     },
     {
-      "heading": "證明：反證法加 Bolzano–Weierstrass",
+      "heading": "③ 排一排、用在哪",
       "body": [
-        "反設 $f$ 在 $[a,b]$ 上連續但不一致連續。由否定形式，存在 $\\varepsilon_0>0$，使每個 $\\delta>0$ 都有壞的一對點。對每個 $n$ 取 $\\delta=\\frac{1}{n}$，得到 $x_n$、$y_n\\in[a,b]$，$|x_n-y_n|<\\frac{1}{n}$ 且 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$。",
-        "$(x_n)$ 有界，由 Bolzano–Weierstrass 有子數列 $x_{n_k}\\to x^*$；$a\\le x_{n_k}\\le b$，所以 $x^*\\in[a,b]$（這裡用到閉）。",
-        "$|y_{n_k}-x^*|\\le|y_{n_k}-x_{n_k}|+|x_{n_k}-x^*|<\\frac{1}{n_k}+|x_{n_k}-x^*|\\to0$，所以 $y_{n_k}\\to x^*$ 也成立。",
-        "$f$ 在 $x^*$ 連續，由數列判準 $f(x_{n_k})\\to f(x^*)$ 且 $f(y_{n_k})\\to f(x^*)$，相減得 $|f(x_{n_k})-f(y_{n_k})|\\to0$。但每一項都 $\\ge\\varepsilon_0>0$，矛盾。"
-      ],
-      "collapsible": true
+        "用在哪：連續函數在 $[a,b]$ 上可積（12.39）",
+        "分割的每一段長度都 $<\\delta$ ⇒ 每一段上 $\\max-\\min<\\varepsilon$",
+        "⇒ 上和 $-$ 下和 $<\\varepsilon(b-a)$",
+        "一致收斂（12.30）也會用到同一種「一個 $\\delta$ 通用」的想法"
+      ]
     },
     {
-      "heading": "延伸：開區間上的判準",
+      "heading": "④ 例：$\\sin\\frac1x$ 在 $(0,1]$",
       "body": [
-        "$f$ 在 $(a,b)$ 上連續（$a$、$b$ 有限）時：$f$ 一致連續，若且唯若 $f$ 能補上端點值，延伸成 $[a,b]$ 上的連續函數。「$\\Leftarrow$」就是範例 3 的作法；「$\\Rightarrow$」要證 $f$ 把 Cauchy 數列送到 Cauchy 數列，再用〈Cauchy 數列〉收斂，這裡不展開。"
+        "有界、連續，卻不一致連續",
+        "• 兩者都 $\\to0$，所以 $|x_n-y_n|\\to0$",
+        "• $f(x_n)=1$，$f(y_n)=-1$，差 $=2$",
+        "問題不在函數值有界，在於定義域缺了 $0$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "兩個逃生口",
-      "beats": [
-        { "show": ["$\\frac{1}{x}$ 在 $(0,1]$：壞點擠向 0"],
-          "note": "0 不在定義域裡。",
-          "say": "上一課的壞例子都有逃生口。一除以 x 在零到一，壞點擠向零，可是零不在定義域裡。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{x}$ 在 $(0,1]$：壞點擠向 ${{z:0}}$"},
-            {"do":"underline","term":"z","label":"不在定義域","on":"零不在"}
-          ] },
-        { "show": ["$x^2$ 在 $\\mathbb{R}$：壞點跑向無限遠"],
-          "say": "x 平方在整條實數線上，壞點是往無限遠跑，越遠越陡。",
-          "board": [
-            {"do":"write","line":"$x^2$ 在 $\\mathbb{R}$：壞點跑向無限遠"}
-          ] },
-        { "show": ["$[a,b]$：兩個口都封住"],
-          "note": "有界跑不遠；閉，擠向的點還在區間裡。",
-          "say": "換成有界閉區間，兩個口都被封住：點跑不到無限遠，擠向的那一點也還在區間裡，函數在那裡連續。",
-          "board": [
-            {"do":"write","line":"${{c:[a,b]}}$：兩個口都封住"},
-            {"do":"box","term":"c","label":"有界閉","on":"封住"}
-          ] },
-        { "show": ["有界封無限遠，閉封端點"],
-          "note": "兩個字各管一個口。",
-          "say": "分工是這樣：有界封住跑向無限遠的口，閉封住擠向端點的口。",
-          "board": [
-            {"do":"write","line":"有界：封住跑向無限遠的口"},
-            {"do":"write","line":"閉：封住擠向端點的口","on":"閉封住"}
-          ] },
-        { "show": ["閉：端點都在區間裡，極限出不去"],
-          "note": "$\\frac{1}{n}$ 都在 $(0,1]$，極限 0 卻不在。",
-          "say": "閉就是端點都算在區間裡，所以區間裡的點收斂時，極限出不去。像 n 分之一都在零到一，極限零卻不在。",
-          "board": [
-            {"do":"write","line":"閉：端點在內，極限出不去"},
-            {"do":"write","line":"$(0,1]$：$\\frac{1}{n}\\to0$，$0$ 不在","on":"像 n 分之一"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$[a,b]$ 的「閉」封住的是哪一個逃生口？",
-        "options": [
-          {
-            "label": "壞點擠向一個不在定義域裡的端點",
-            "correct": true
-          },
-          {
-            "label": "壞點跑向無限遠",
-            "why": "跑向無限遠是靠「有界」封住的，像 $x^2$ 在 $\\mathbb{R}$。"
-          },
-          {
-            "label": "函數在某一點不連續",
-            "why": "那是「連續」這個假設在管，不是區間的形狀。"
-          }
-        ]
-      }
+      "tex": [
+        "x_n=\\frac1{\\frac\\pi2+2n\\pi},\\qquad y_n=\\frac1{\\frac{3\\pi}2+2n\\pi}"
+      ]
     },
     {
-      "title": "定理",
-      "beats": [
-        { "show": ["$f$ 在 $[a,b]$ 上連續","$\\Rightarrow$ $f$ 在 $[a,b]$ 上一致連續"],
-          "say": "Heine Cantor 定理：函數在有界閉區間上連續，就自動一致連續。",
-          "board": [
-            {"do":"write","line":"$f$ 在 $[a,b]$ 上連續"},
-            {"do":"write","line":"$\\Rightarrow$ $f$ 在 $[a,b]$ 上一致連續","on":"就自動"}
-          ] },
-        { "show": ["對每個 $\\varepsilon>0$ 有 $\\delta>0$","$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$"],
-          "note": "一致連續的定義。",
-          "say": "一致連續：不管 epsilon 多小，都有一個 delta，只要兩點距離小於 delta，函數值差就小於 epsilon。",
-          "board": [
-            {"do":"write","line":"$\\forall\\varepsilon>0,\\ \\exists\\delta>0$"},
-            {"do":"write","line":"$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$","on":"只要"}
-          ] },
-        { "show": ["否定：有 $\\varepsilon_0$，每個 $\\delta$ 都有壞的一對"],
-          "note": "壞的一對：靠很近，值差卻很大。",
-          "say": "否定：有個 epsilon 零，每個 delta 都有一對點，距離小於 delta，值差卻至少 epsilon 零。",
-          "board": [
-            {"do":"write","line":"$\\exists\\varepsilon_0$：每個 $\\delta$ 都有壞的一對"},
-            {"do":"write","line":"$|f(x)-f(y)|\\ge\\varepsilon_0$","on":"值差"}
-          ] },
-        { "show": ["一個 $\\delta$ 管住整個區間"],
-          "note": "定理只保證存在，不給公式。",
-          "say": "意思是有一個 delta 對整個區間都有效。不過定理只說它存在，不告訴你 delta 是多少。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\exists\\,{{d:\\delta}}$：整個 $[a,b]$ 都有效","on":"有一個"},
-            {"do":"focus","term":"d","label":"只保證存在","on":"存在"},
-            {"do":"write","line":"定理不給 $\\delta$ 的公式","on":"不告訴你"}
-          ] },
-        { "show": ["用在〈連續函數可積〉"],
-          "note": "切成寬度小於 $\\delta$ 的小段，上和下和就夠近。",
-          "say": "最重要的用途是證明連續函數可積：把區間切得比 delta 細，每一段上的高低差都小於 epsilon。",
-          "board": [
-            {"do":"write","line":"切成寬度 $<\\delta$ 的小段"},
-            {"do":"write","line":"每段高低差 $<\\varepsilon$","on":"高低差"}
-          ] }
+      "heading": "⑤ 延伸：開區間的判準",
+      "body": [
+        "$f$ 在 $(a,b]$ 上連續（$a,b$ 有限）：",
+        "⇐：令 $f(a)=\\lim_{x\\to a^+}f(x)$，補成 $[a,b]$ 上的連續函數 ⇒ Heine–Cantor",
+        "兩端都開時，兩端各看一次",
+        "⇒ 的策略：一致連續把柯西數列送成柯西數列（12.16）",
+        "先找出候選的極限 $L$，再用同一個 $\\delta$ 推到所有靠近 $a$ 的 $x$"
       ],
-      "check": 0
+      "tex": [
+        "f\\text{ 一致連續}\\iff\\lim_{x\\to a^+}f(x)\\text{ 存在（有限）}"
+      ]
     },
     {
-      "title": "拿掉一個假設",
-      "beats": [
-        { "show": ["拿掉「閉」：$\\sin(\\frac{1}{x})$ 在 $(0,1]$"],
-          "note": "有界、連續，還是不一致連續。",
-          "say": "拿掉閉：sine 一除以 x 在零到一，有界也連續，但在零附近振盪越來越快。",
-          "board": [
-            {"do":"write","line":"拿掉「閉」：${{f:\\sin(\\frac{1}{x})}}$ 在 $(0,1]$"},
-            {"do":"underline","term":"f","label":"振盪變快","on":"振盪"}
-          ] },
-        { "show": ["$f(x_n)=1$，$f(y_n)=-1$，$|x_n-y_n|\\to0$"],
-          "say": "取等於一和等於負一的兩串點，點越來越近，函數值差卻一直是二。",
-          "board": [
-            {"do":"write","line":"$f(x_n)=1$，$f(y_n)=-1$"},
-            {"do":"write","line":"$|x_n-y_n|\\to0$，值差 ${{g:2}}$","on":"點越來越近"},
-            {"do":"circle","term":"g","on":"函數值差"}
-          ] },
-        { "show": ["拿掉「有界」：$x^2$ 在 $[0,\\infty)$"],
-          "say": "拿掉有界：x 平方在零到無限大上連續，可是不一致連續。",
-          "board": [
-            {"do":"write","line":"拿掉「有界」：$x^2$ 在 $[0,\\infty)$"}
-          ] },
-        { "show": ["拿掉「連續」：階梯函數在 $[-1,1]$"],
-          "note": "跳躍點兩側要多近有多近，值差 1。",
-          "say": "拿掉連續：階梯函數在負一到一，跳躍點兩邊的點再近，函數值也差一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"拿掉「連續」：階梯函數在 $[-1,1]$","on":"拿掉連續"},
-            {"do":"write","line":"跳躍點兩側，值差 ${{j:1}}$","on":"跳躍點"}
-          ] },
-        { "show": ["$\\sqrt{x}$ 在 $[0,\\infty)$ 一致連續"],
-          "note": "充分條件，不是必要條件。",
-          "say": "但別反過來用：根號 x 在零到無限大上一致連續，區間卻無界。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{x}$ 在 ${{u:[0,\\infty)}}$ 一致連續"},
-            {"do":"underline","term":"u","label":"無界","on":"區間"}
-          ] }
+      "heading": "⑤ 證明：⇒",
+      "body": [
+        "1. 取 $x_n=a+\\frac{b-a}n\\in(a,b]$：$x_n\\to a$，所以 $(x_n)$ 是柯西數列",
+        "2. 給 $\\varepsilon$，取一致連續的 $\\delta$；有 $N$ 使 $m,n\\ge N\\Rightarrow|x_m-x_n|<\\delta$，所以",
+        "⇒ $f(x_n)$ 是柯西數列 ⇒ 收斂，記極限為 $L$（12.16）",
+        "3. 同一個 $\\delta$：若 $a<x<a+\\delta$，$n$ 夠大時 $x_n\\in(a,a+\\delta)$，$|x-x_n|<\\delta$：",
+        "令 $n\\to\\infty$：$|f(x)-L|\\le\\varepsilon$ ⇒ $\\displaystyle\\lim_{x\\to a^+}f(x)=L$　$\\blacksquare$",
+        "要嚴格的 $<\\varepsilon$，就把 $\\frac\\varepsilon2$ 代進去"
       ],
-      "check": 2
+      "tex": [
+        "|f(x_m)-f(x_n)|<\\varepsilon",
+        "|f(x)-L|\\le\\underbrace{|f(x)-f(x_n)|}_{<\\varepsilon}+|f(x_n)-L|"
+      ]
     },
     {
-      "title": "證明：夾到同一點",
-      "beats": [
-        { "show": ["反證：壞的一對對，擠到同一點"],
-          "say": "策略：反證。假設不一致連續，抓出越靠越近的壞點對，把它們擠到同一點，再用連續推出矛盾。",
-          "board": [
-            {"do":"write","line":"反證：壞點對 → 同一點 → 矛盾","on":"抓出"}
-          ] },
-        { "show": ["反設：有 $\\varepsilon_0$，每個 $\\delta=\\frac{1}{n}$ 都有壞的一對"],
-          "note": "$|x_n-y_n|<\\frac{1}{n}$，值差 $\\ge\\varepsilon_0$。",
-          "say": "假設不一致連續，那每個 delta 等於 n 分之一，都抓得到一對靠很近、值卻差很多的點。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|x_n-y_n|<{{d:\\frac{1}{n}}}$","on":"n 分之一"},
-            {"do":"write","line":"$|f(x_n)-f(y_n)|\\ge{{e:\\varepsilon_0}}$","tint":{"e":"violet"},"on":"值卻"}
-          ] },
-        { "show": ["收斂子數列 $x_{n_k}\\to x^*\\in[a,b]$"],
-          "note": "有界：Bolzano–Weierstrass；閉：極限還在區間裡。",
-          "why": {"ask":"為什麼 $x^*$ 還在 $[a,b]$ 裡？","say":"極限 x 星，為什麼還在區間裡？","options":[{"label":"區間是閉的，端點在裡面","correct":true},{"label":"每個 $x_n$ 都在區間裡，極限當然也在","why":"$(0,1]$ 就不行：$\\frac{1}{n}$ 都在裡面，極限 0 卻不在，這正是 $\\frac{1}{x}$ 的逃生口。"},{"label":"$f$ 在 $[a,b]$ 上連續","why":"連續管的是函數值，不決定極限點落在哪裡；這一步靠的是端點包含在內。"}]},
-          "say": "這串 x n 有界，挑出一個收斂的子數列；區間是閉的，所以極限 x 星還在區間裡。",
-          "board": [
-            {"do":"write","line":"子數列 $x_{n_k}\\to {{xs:x^*}}\\in{{ab:[a,b]}}$","tint":{"xs":"blue"},"on":"極限 x 星"},
-            {"do":"underline","term":"ab","label":"閉區間","why":true,"on":"區間是閉的"}
-          ] },
-        { "show": ["$y_{n_k}\\to x^*$ 也成立"],
-          "note": "配對的兩點距離 $<\\frac{1}{n_k}\\to0$。",
-          "say": "配對的 y 點跟 x 點的距離趨近零，所以也被拉到同一個 x 星。",
-          "board": [
-            {"do":"write","line":"配對的 $y_{n_k}\\to {{xs:x^*}}$","on":"所以"}
-          ] },
-        { "show": ["$f(x_{n_k})-f(y_{n_k})\\to0$"],
-          "note": "兩串值都 $\\to f(x^*)$。",
-          "why": {"ask":"為什麼值差趨近 0？","say":"兩串點擠到同一點。函數值的差，為什麼趨近零？","options":[{"label":"$f$ 在 $x^*$ 連續，用數列判準","correct":true},{"label":"兩串點越來越近，值自然越來越近","why":"「點近值就近、不管在哪」正是一致連續，是要證的結論；能用的只有 $f$ 在 $x^*$ 這一點連續。"},{"label":"$f$ 在閉區間上有界","why":"有界只讓值差不會爆掉，不會讓它趨近 0。"}]},
-          "say": "函數在 x 星連續，由數列判準，兩串函數值都趨近 f 在 x 星的值，差趨近零。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{fd:f(x_{n_k})-f(y_{n_k})\\to 0}}$","on":"函數值的差"},
-            {"do":"underline","term":"fd","label":"在 x* 連續","why":true,"on":"x 星連續"}
-          ] },
-        { "show": ["但每一項都 $\\ge\\varepsilon_0>0$：矛盾"],
-          "say": "可是每一對的值差都至少 epsilon 零，不會趨近零，矛盾。所以一致連續。",
-          "board": [
-            {"do":"write","line":"但每一項都 $\\ge{{e:\\varepsilon_0}}>0$：矛盾"},
-            {"do":"focus","term":"e","on":"epsilon 零"}
-          ] }
-      ],
-      "key": "壞的一對對取收斂子數列，擠到同一點",
-      "proof": true,
-      "of": 3,
-      "skeleton": "反證",
-      "check": 1
+      "heading": "⑤ 用判準",
+      "body": [
+        "$\\sin\\frac1x$：$\\lim_{x\\to0^+}$ 不存在 ⇒ 不一致連續（跟 ④ 吻合）"
+      ]
     },
     {
-      "title": "自己找 $\\delta$",
-      "beats": [
-        { "show": ["$x^2$ 在 $[0,2]$ 上"],
-          "note": "定理不給 $\\delta$，自己估。",
-          "say": "定理只保證 delta 存在。來替 x 平方在零到二上，自己找一個。",
-          "board": [
-            {"do":"write","line":"$x^2$ 在 $[0,2]$ 上，自己找 $\\delta$","on":"來替"}
-          ] },
-        { "show": ["$|x^2-y^2|=|x+y|\\cdot|x-y|$"],
-          "say": "x 平方減 y 平方，拆成 x 加 y 的絕對值，乘上 x 減 y 的絕對值。",
-          "board": [
-            {"do":"write","line":"$|x^2-y^2|={{s:|x+y|}}\\cdot|x-y|$"}
-          ] },
-        { "show": ["$|x+y|\\le4$ $\\Rightarrow$ $|x^2-y^2|\\le4|x-y|$"],
-          "say": "x 跟 y 都不超過二，所以 x 加 y 最多是四。",
-          "board": [
-            {"do":"underline","term":"s"},
-            {"do":"write","line":"$\\le {{f:4}}\\,|x-y|$","on":"x 加 y"}
-          ] },
-        { "show": ["$\\delta=\\frac{\\varepsilon}{4}$"],
-          "note": "$\\varepsilon=0.01$ 時 $\\delta=0.0025$。",
-          "say": "取 delta 等於四分之 epsilon，跟 x、y 在哪裡無關。epsilon 零點零一時，delta 是零點零零二五。",
-          "board": [
-            {"do":"write","line":"${{dl:\\delta=\\frac{\\varepsilon}{4}}}$"},
-            {"do":"box","term":"dl","color":"green","label":"跟 x、y 無關","on":"跟 x"}
-          ] }
-      ],
-      "key": "$|x+y|$ 在區間上有界，$\\delta$ 就取得出來",
-      "check": 3
+      "heading": "⑤ 例：$x\\sin\\frac1x$",
+      "body": [
+        "夾擠：$\\left|x\\sin\\frac1x\\right|\\le x\\to0$ ⇒ $\\displaystyle\\lim_{x\\to0^+}x\\sin\\frac1x=0$",
+        "補 $f(0)=0$：$f$ 在 $[0,1]$ 上連續 ⇒ Heine–Cantor ⇒ 一致連續"
+      ]
     },
     {
-      "title": "把端點補回來",
-      "beats": [
-        { "show": ["$x\\sin(\\frac{1}{x})$ 在 $(0,1]$"],
-          "note": "不是閉區間，不能直接套。",
-          "say": "x 乘 sine 一除以 x，在零到一。區間不閉，不能直接套定理，那就把零補進來。",
-          "board": [
-            {"do":"write","line":"$x\\sin(\\frac{1}{x})$ 在 $(0,1]$"},
-            {"do":"write","line":"補上 ${{z:0}}$：$[0,1]$","on":"那就"}
-          ] },
-        { "show": ["$|x\\sin(\\frac{1}{x})|\\le|x|\\to0$"],
-          "note": "令 $g(0)=0$，$g$ 在 0 連續。",
-          "say": "它的絕對值不超過 x 的絕對值，往零擠。令 g 在零的值是零，g 就在零連續。",
-          "board": [
-            {"do":"write","line":"$|x\\sin(\\frac{1}{x})|\\le|x|\\to0$"},
-            {"do":"write","line":"令 $g(0)=0$，$g$ 在 0 連續","on":"令 g"}
-          ] },
-        { "show": ["被 $x$ 與 $-x$ 夾住，往 0 擠"],
-          "say": "看圖：x 乘 sine 一除以 x，被上下兩條直線夾住，所以越靠近零越往零擠。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.1,1,-1,1],"curves":[{"expr":"x*sin(1/x)","domain":[0.01,1],"color":"blue"},{"expr":"x","domain":[0,1],"color":"gold"},{"expr":"-x","domain":[0,1],"color":"gold"}]}}
-          ] },
-        { "show": ["補值要靠極限：$x\\to0$ 時極限存在"],
-          "note": "補的值就取這個極限。",
-          "say": "補的值要讓函數在零連續，所以 x 趨近零時，函數值得有極限，補的值就取這個極限。",
-          "board": [
-            {"do":"write","line":"補值 $g(0)$ 取 ${{l:\\lim_{x\\to0}g(x)}}$"},
-            {"do":"focus","term":"l","label":"要存在","on":"極限#1"}
-          ] },
-        { "show": ["$g$ 在 $[0,1]$ 連續 $\\Rightarrow$ 一致連續"],
-          "say": "g 在有界閉區間零到一上連續，由定理一致連續；同一個 delta 在零到一裡當然也有效。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$g$ 在 $[0,1]$ 連續 $\\Rightarrow$ 一致連續","on":"有界閉區間"},
-            {"do":"write","line":"同一個 $\\delta$ 在 $(0,1]$ 也有效","on":"同一個"}
-          ] }
-      ],
-      "predict": {
-        "ask": "同樣的作法能救 $\\sin(\\frac{1}{x})$ 嗎？",
-        "options": [
-          {
-            "label": "不能：它在 0 沒有極限，補不出連續的值",
-            "correct": true
-          },
-          {
-            "label": "能：令 $f(0)=0$ 就好",
-            "why": "補了 $f(0)=0$ 也不連續，因為 $\\sin(\\frac{1}{x})$ 在 0 附近在 1 與 $-1$ 之間振盪。"
-          },
-          {
-            "label": "能：它有界，所以補得上",
-            "why": "有界不夠，要在 0 有極限才補得出連續的值。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• Heine–Cantor：$[a,b]$ 上連續 ⇒ 一致連續",
+        "• 證明：反證，壞點對 $\\to$ B–W $\\to c\\in[a,b]$ $\\to$ 連續矛盾",
+        "• 反例：不閉（$\\frac1x$）、無界（$x^2$）；$\\sin\\frac1x$ 有界也不行",
+        "• 用途：連續函數可積（12.39）",
+        "• 開區間判準：端點的單邊極限存在 $\\iff$ 一致連續",
+        "下一課：逐點收斂"
+      ]
     }
   ],
   "workedExamples": [
@@ -388,70 +184,774 @@
   ],
   "checks": [
     {
-      "ask": "下列哪一個可以直接由 Heine–Cantor 定理得到一致連續？",
+      "ask": "哪一個在指定區間上==一定==一致連續？",
       "options": [
         {
-          "label": "$e^x$ 在 $[-5,5]$ 上",
+          "label": "$e^x\\cos x$ 在 $[0,5]$",
           "correct": true
         },
         {
-          "label": "$e^x$ 在 $\\mathbb{R}$ 上",
-          "why": "$\\mathbb{R}$ 不是有界區間，定理不適用；事實上 $e^x$ 在 $\\mathbb{R}$ 上也不一致連續（越往右越陡）。"
+          "label": "$x^2$ 在 $[0,\\infty)$",
+          "why": "區間無界：$x_n=n+\\frac1n$、$y_n=n$ 是壞點對"
         },
         {
-          "label": "$\\frac{1}{x}$ 在 $(0,1]$ 上",
-          "why": "$(0,1]$ 不是閉區間，定理不適用；$\\frac{1}{x}$ 在那裡確實不一致連續。"
+          "label": "$\\frac1x$ 在 $(0,1]$",
+          "why": "區間不閉：壞點對擠向不在定義域的 $0$"
+        },
+        {
+          "label": "$\\tan x$ 在 $[0,\\frac\\pi2)$",
+          "why": "區間不閉，而且函數在 $\\frac\\pi2$ 附近無界"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "閉區間上不會出事",
+      "beats": [
+        {
+          "show": [
+            "上一課出事的兩個例子：",
+            "• $\\frac1x$ 在 $(0,1]$：壞點對擠向 $0$，而 $0$ 不在定義域"
+          ],
+          "say": "回顧上一課出事的兩個例子。x 分之 1 在半開區間上，壞點對擠向 0，可是 0 不在定義域裡。x 平方在實數上，壞點對一路跑向無限大，沒有地方落腳。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上一課出事的兩個例子："
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac1x$ 在 $(0,1]$：壞點對擠向 $0$，而 $0$ 不在定義域",
+              "on": "間上"
+            },
+            {
+              "do": "write",
+              "line": "• $x^2$ 在 $\\mathbb{R}$：壞點對跑向 $\\infty$，沒有落腳處",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $[a,b]$ 上：壞點對只能擠在某個 $c\\in[a,b]$"
+          ],
+          "say": "換成閉區間 a b：壞點對跑不出去，也沒有缺口可以鑽，只能擠在區間裡的某一點 c。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在 $[a,b]$ 上：壞點對只能擠在某個 $c\\in[a,b]$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，紅藍一對一對的壞點，彼此越來越近，最後擠到 c。可是 f 在 c 連續，c 附近的函數值不可能還差那麼多。這就是證明的想法。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 520 150\" width=\"520\" height=\"150\"><line x1=\"30\" y1=\"80\" x2=\"490\" y2=\"80\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"30\" y1=\"62\" x2=\"30\" y2=\"98\" stroke=\"var(--ink)\" stroke-width=\"4\"/><line x1=\"490\" y1=\"62\" x2=\"490\" y2=\"98\" stroke=\"var(--ink)\" stroke-width=\"4\"/><circle cx=\"170\" cy=\"80\" r=\"7\" fill=\"var(--red)\"/><circle cx=\"225\" cy=\"80\" r=\"7\" fill=\"var(--blue)\"/><circle cx=\"265\" cy=\"80\" r=\"7\" fill=\"var(--red)\"/><circle cx=\"292\" cy=\"80\" r=\"7\" fill=\"var(--blue)\"/><circle cx=\"308\" cy=\"80\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"322\" cy=\"80\" r=\"6\" fill=\"var(--blue)\"/><line x1=\"340\" y1=\"66\" x2=\"340\" y2=\"94\" stroke=\"var(--green)\" stroke-width=\"3\"/><path d=\"M170 64 Q197 40 225 64\" fill=\"none\" stroke=\"var(--muted)\" stroke-width=\"2\"/><path d=\"M265 64 Q278 48 292 64\" fill=\"none\" stroke=\"var(--muted)\" stroke-width=\"2\"/><text x=\"30\" y=\"128\" text-anchor=\"middle\" font-size=\"28\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</text><text x=\"490\" y=\"128\" text-anchor=\"middle\" font-size=\"28\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</text><text x=\"340\" y=\"128\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">c</text><text x=\"200\" y=\"30\" text-anchor=\"middle\" font-size=\"22\" fill=\"var(--ink)\" style=\"font-family:inherit\">壞點對越來越近</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　紅：$x_n$；藍：$y_n$；$|x_n-y_n|\\to0$，但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$",
+              "color": "violet",
+              "on": "連續"
+            }
+          ]
         }
       ]
     },
     {
-      "ask": "證明中，為什麼 $y_{n_k}$ 也收斂到 $x^*$？",
-      "options": [
+      "title": "定理與反例",
+      "beats": [
         {
-          "label": "$|y_{n_k}-x_{n_k}|<\\frac{1}{n_k}\\to0$，再用三角不等式",
-          "correct": true
+          "show": [
+            "Heine–Cantor：$f$ 在 $[a,b]$ 上連續 ⇒ $f$ 在 $[a,b]$ 上一致連續"
+          ],
+          "say": "海涅康托爾定理：f 在有界閉區間上連續，就自動一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Heine–Cantor：$f$ 在 $[a,b]$ 上連續 ⇒ $f$ 在 $[a,b]$ 上一致連續",
+              "color": "gold"
+            }
+          ]
         },
         {
-          "label": "對 $(y_n)$ 再用一次 Bolzano–Weierstrass",
-          "why": "那只會給出 $y$ 的某個收斂子數列，極限不一定是 $x^*$，下標也不一定對得上。"
+          "show": [
+            "拿掉任何一個假設都會壞：",
+            "• 不閉：$\\frac1x$ 在 $(0,1]$"
+          ],
+          "say": "每個假設都不能少：不閉，x 分之 1 是反例；無界，x 平方是反例；不連續更不用說，一致連續一定連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "拿掉任何一個假設都會壞："
+            },
+            {
+              "do": "write",
+              "line": "• 不閉：$\\frac1x$ 在 $(0,1]$",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "• 無界：$x^2$ 在 $[0,\\infty)$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "• 不連續：$H$ 在 $[-1,1]$（一致連續一定連續）",
+              "on": "不用"
+            }
+          ]
         },
         {
-          "label": "因為 $f$ 連續",
-          "why": "連續是下一步用來推 $f(x_{n_k})$ 與 $f(y_{n_k})$ 的極限；點本身的收斂只靠 $|x_n-y_n|<\\frac{1}{n}$。"
+          "show": [
+            "例：$x^2$ 在 $[0,2]$ 上，定理保證一致連續。寫出 $\\delta$：",
+            "$|x^2-y^2|=|x+y|\\,|x-y|\\le4|x-y|$"
+          ],
+          "say": "例子：x 平方在 0 到 2 上，定理保證它一致連續。實際寫出得塔：平方差等於 x 加 y 乘 x 減 y，x 加 y 不超過 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x^2$ 在 $[0,2]$ 上，定理保證一致連續。寫出 $\\delta$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x^2-y^2|=|x+y|\\,|x-y|\\le4|x-y|$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\delta=\\dfrac\\varepsilon4$：$|x-y|<\\delta\\Rightarrow|x^2-y^2|<\\varepsilon$"
+          ],
+          "say": "所以取得塔等於 4 分之艾普西隆，對區間裡所有的點都有效。有界區間上，斜率被壓住了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\delta=\\dfrac\\varepsilon4$：$|x-y|<\\delta\\Rightarrow|x^2-y^2|<\\varepsilon$",
+              "color": "red"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：反證加 B–W",
+      "beats": [
+        {
+          "show": [
+            "假設不一致連續。否定：有 $\\varepsilon_0>0$，對每個 $n$（取 $\\delta=\\frac1n$）有 $x_n,y_n\\in[a,b]$：",
+            "$|x_n-y_n|<\\frac1n,\\qquad|f(x_n)-f(y_n)|\\ge\\varepsilon_0$"
+          ],
+          "say": "證明用反證法。假設不一致連續。由否定句，有一個艾普西隆零；得塔取 n 分之 1，就得到一對壞點，距離不到 n 分之 1，函數值卻差至少艾普西隆零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "假設不一致連續。否定：有 $\\varepsilon_0>0$，對每個 $n$（取 $\\delta=\\frac1n$）有 $x_n,y_n\\in[a,b]$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x_n-y_n|<\\frac1n,\\qquad|f(x_n)-f(y_n)|\\ge\\varepsilon_0$",
+              "on": "就得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "B–W：$x_n$ 有界 ⇒ 子數列 $x_{n_k}\\to c$；閉 ⇒ $c\\in[a,b]$"
+          ],
+          "say": "x n 都在區間裡，是有界數列。由波爾查諾魏爾斯特拉斯，有收斂的子數列，極限 c；區間是閉的，所以 c 在區間裡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "B–W：$x_n$ 有界 ⇒ 子數列 $x_{n_k}\\to c$；閉 ⇒ $c\\in[a,b]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y_{n_k}$ 也 $\\to c$：$|y_{n_k}-c|\\le|y_{n_k}-x_{n_k}|+|x_{n_k}-c|\\to0$"
+          ],
+          "say": "對應的 y 也趨近 c：用三角不等式，它跟 c 的距離，不超過它跟 x 的距離加上 x 跟 c 的距離，兩項都趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y_{n_k}$ 也 $\\to c$：$|y_{n_k}-c|\\le|y_{n_k}-x_{n_k}|+|x_{n_k}-c|\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f$ 在 $c$ 連續，數列判準：",
+            "$f(x_{n_k})\\to f(c),\\qquad f(y_{n_k})\\to f(c)$"
+          ],
+          "say": "f 在 c 連續，由數列判準，兩串函數值都趨近 f of c。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $c$ 連續，數列判準："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x_{n_k})\\to f(c),\\qquad f(y_{n_k})\\to f(c)$",
+              "on": "兩串"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ $|f(x_{n_k})-f(y_{n_k})|\\to0$，但每一項都 $\\ge\\varepsilon_0$。矛盾　$\\blacksquare$"
+          ],
+          "say": "所以兩串函數值的差趨近 0。可是每一項的差都至少艾普西隆零，矛盾。所以 f 一致連續。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ $|f(x_{n_k})-f(y_{n_k})|\\to0$，但每一項都 $\\ge\\varepsilon_0$。矛盾　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用到：有界（B–W）、閉（$c\\in[a,b]$）、連續（在 $c$）"
+          ],
+          "say": "跟極值定理一模一樣的套路：有界給波爾查諾魏爾斯特拉斯，閉保住 c，連續把極限搬過去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用到：有界（B–W）、閉（$c\\in[a,b]$）、連續（在 $c$）"
+            }
+          ]
         }
       ]
     },
     {
-      "ask": "$\\sin(\\frac{1}{x})$ 在 $(0,1]$ 上有界又連續，為什麼不一致連續？",
-      "options": [
+      "title": "排一排、用在哪",
+      "beats": [
         {
-          "label": "定義域不閉：在 0 附近振盪越來越快，0 又補不出連續的值",
-          "correct": true
+          "show": [
+            "Heine–Cantor 的證明順序"
+          ],
+          "say": "排排看證明的順序。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "Heine–Cantor 的證明順序",
+        "steps": [
+          {
+            "label": "假設不一致連續，取 $\\varepsilon_0$ 與壞點對 $x_n,y_n$（$|x_n-y_n|<\\frac1n$）"
+          },
+          {
+            "label": "B–W：$x_{n_k}\\to c\\in[a,b]$",
+            "why": "先要有上一步：假設不一致連續，取 $\\varepsilon_0$ 與壞點對 $x_n,y_n$（$|x_n-y_n|<\\frac1n$）"
+          },
+          {
+            "label": "三角不等式：$y_{n_k}\\to c$",
+            "why": "先要有上一步：B–W：$x_{n_k}\\to c\\in[a,b]$"
+          },
+          {
+            "label": "連續：$f(x_{n_k})-f(y_{n_k})\\to0$，跟 $\\ge\\varepsilon_0$ 矛盾",
+            "why": "先要有上一步：三角不等式：$y_{n_k}\\to c$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "排一排、用在哪",
+      "beats": [
+        {
+          "show": [
+            "用在哪：連續函數在 $[a,b]$ 上可積（12.39）"
+          ],
+          "say": "這個定理用在哪裡？最重要的是：閉區間上的連續函數一定可以積分，12.39 會證。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用在哪：連續函數在 $[a,b]$ 上可積（12.39）"
+            }
+          ]
         },
         {
-          "label": "因為它不可微",
-          "why": "$\\sin(\\frac{1}{x})$ 在 $(0,1]$ 上處處可微。問題在 0 附近振盪越來越快。"
-        },
-        {
-          "label": "其實它一致連續，因為有界",
-          "why": "有界不夠。讓它等於 1 與 $-1$ 的兩串點越來越近，函數值差一直是 2。"
+          "show": [
+            "分割的每一段長度都 $<\\delta$ ⇒ 每一段上 $\\max-\\min<\\varepsilon$"
+          ],
+          "say": "想法是：把區間切成每段都比得塔短，每段的最大減最小就小於艾普西隆，上和減下和就很小。同一個得塔對每一段都有效，這就是一致的威力。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分割的每一段長度都 $<\\delta$ ⇒ 每一段上 $\\max-\\min<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "⇒ 上和 $-$ 下和 $<\\varepsilon(b-a)$",
+              "color": "gold",
+              "on": "大減"
+            },
+            {
+              "do": "write",
+              "line": "　一致收斂（12.30）也會用到同一種「一個 $\\delta$ 通用」的想法",
+              "color": "violet",
+              "on": "同一"
+            }
+          ]
         }
       ]
     },
     {
-      "ask": "對 $x^2$ 在 $[0,3]$ 上，$\\varepsilon$ 給定時哪個 $\\delta$ 有效？",
-      "options": [
+      "title": "例：$\\sin\\frac1x$ 在 $(0,1]$",
+      "beats": [
         {
-          "label": "$\\delta=\\frac{\\varepsilon}{6}$",
-          "correct": true
+          "show": [
+            "有界、連續，卻不一致連續"
+          ],
+          "say": "例子：正弦 x 分之 1 在 0 到 1 的半開區間上。它有界，也連續，但不一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有界、連續，卻不一致連續"
+            }
+          ]
         },
         {
-          "label": "$\\delta=\\frac{\\varepsilon}{3}$",
-          "why": "你用了 $|x+y|\\le3$，但 $x$、$y$ 都可以到 3，$|x+y|$ 最大是 6。"
+          "show": [
+            "$x_n=\\frac1{\\frac\\pi2+2n\\pi},\\qquad y_n=\\frac1{\\frac{3\\pi}2+2n\\pi}$"
+          ],
+          "say": "取兩串點：一串落在波峰，一串落在波谷。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle x_n=\\frac1{\\frac\\pi2+2n\\pi},\\qquad y_n=\\frac1{\\frac{3\\pi}2+2n\\pi}$"
+            }
+          ]
         },
         {
-          "label": "$\\delta=\\frac{\\varepsilon}{2x}$",
-          "why": "這個 $\\delta$ 依賴 $x$，是逐點連續的寫法；一致連續的 $\\delta$ 只能依賴 $\\varepsilon$。"
+          "show": [
+            "• 兩者都 $\\to0$，所以 $|x_n-y_n|\\to0$",
+            "• $f(x_n)=1$，$f(y_n)=-1$，差 $=2$"
+          ],
+          "say": "兩串都趨近 0，所以彼此的距離趨近 0；函數值一個是 1，一個是負 1，永遠差 2。所以不一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 兩者都 $\\to0$，所以 $|x_n-y_n|\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "• $f(x_n)=1$，$f(y_n)=-1$，差 $=2$",
+              "on": "一個#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題不在函數值有界，在於定義域缺了 $0$"
+          ],
+          "say": "這個例子說明：問題不在函數有沒有界，而在定義域少了 0 這一點，函數在那裡振盪得越來越快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題不在函數值有界，在於定義域缺了 $0$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：波峰 x_n；藍：波谷 y_n；越來越近，差始終是 2"
+          ],
+          "say": "圖上，紅色的波峰和藍色的波谷越擠越近，高度差始終是 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "s1x",
+                  "window": [
+                    0,
+                    0.4,
+                    -1.3,
+                    1.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(1/x)",
+                      "color": "ink",
+                      "domain": [
+                        0.004,
+                        0.4
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.12732,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.07074,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.04897,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.09095,
+                      "y": -1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.05787,
+                      "y": -1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.04244,
+                      "y": -1,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅：波峰 x_n；藍：波谷 y_n；越來越近，差始終是 2",
+              "color": "violet",
+              "on": "越擠"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "延伸：開區間的判準",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $(a,b]$ 上連續（$a,b$ 有限）：",
+            "$f\\text{ 一致連續}\\iff\\lim_{x\\to a^+}f(x)\\text{ 存在（有限）}$"
+          ],
+          "say": "延伸一個開區間的判準：f 在 a 到 b 的半開區間上連續，那它一致連續，若且唯若在 a 的右極限存在，而且是有限的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $(a,b]$ 上連續（$a,b$ 有限）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f\\text{ 一致連續}\\iff\\lim_{x\\to a^+}f(x)\\text{ 存在（有限）}}}$",
+              "on": "的半"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "唯若"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇐：令 $f(a)=\\lim_{x\\to a^+}f(x)$，補成 $[a,b]$ 上的連續函數 ⇒ Heine–Cantor"
+          ],
+          "say": "往左的方向很簡單：用右極限把 f of a 補上，就得到閉區間上的連續函數，海涅康托爾定理說它一致連續，限制回原來的區間也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇐：令 $f(a)=\\lim_{x\\to a^+}f(x)$，補成 $[a,b]$ 上的連續函數 ⇒ Heine–Cantor"
+            },
+            {
+              "do": "write",
+              "line": "　兩端都開時，兩端各看一次",
+              "color": "violet",
+              "on": "的連"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ 的策略：一致連續把柯西數列送成柯西數列（12.16）"
+          ],
+          "say": "往右的方向，策略是：一致連續把柯西數列送成柯西數列。先用一串點找出 L，再用同一個得塔推到所有靠近 a 的 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ 的策略：一致連續把柯西數列送成柯西數列（12.16）"
+            },
+            {
+              "do": "write",
+              "line": "先找出候選的極限 $L$，再用同一個 $\\delta$ 推到所有靠近 $a$ 的 $x$",
+              "on": "一串"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：⇒",
+      "beats": [
+        {
+          "show": [
+            "1. 取 $x_n=a+\\frac{b-a}n\\in(a,b]$：$x_n\\to a$，所以 $(x_n)$ 是柯西數列"
+          ],
+          "say": "第一步，取 x n 等於 a 加 n 分之 b 減 a，都在區間裡，趨近 a，所以是柯西數列。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. 取 $x_n=a+\\frac{b-a}n\\in(a,b]$：$x_n\\to a$，所以 $(x_n)$ 是柯西數列"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. 給 $\\varepsilon$，取一致連續的 $\\delta$；有 $N$ 使 $m,n\\ge N\\Rightarrow|x_m-x_n|<\\delta$，所以",
+            "$|f(x_m)-f(x_n)|<\\varepsilon$"
+          ],
+          "say": "第二步，給艾普西隆，取一致連續的得塔。x n 是柯西數列，所以 N 之後任兩項距離小於得塔，函數值就差不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "2. 給 $\\varepsilon$，取一致連續的 $\\delta$；有 $N$ 使 $m,n\\ge N\\Rightarrow|x_m-x_n|<\\delta$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x_m)-f(x_n)|<\\varepsilon$",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ $f(x_n)$ 是柯西數列 ⇒ 收斂，記極限為 $L$（12.16）"
+          ],
+          "say": "所以函數值 f of x n 也是柯西數列。由柯西準則，它收斂，把極限叫做 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ $f(x_n)$ 是柯西數列 ⇒ 收斂，記極限為 $L$（12.16）",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. 同一個 $\\delta$：若 $a<x<a+\\delta$，$n$ 夠大時 $x_n\\in(a,a+\\delta)$，$|x-x_n|<\\delta$：",
+            "$|f(x)-L|\\le\\underbrace{|f(x)-f(x_n)|}_{<\\varepsilon}+|f(x_n)-L|$"
+          ],
+          "say": "第三步，同一個得塔。x 在 a 到 a 加得塔之間，n 夠大時 x n 也在，兩點距離小於得塔。三角不等式拆開，第一項小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "3. 同一個 $\\delta$：若 $a<x<a+\\delta$，$n$ 夠大時 $x_n\\in(a,a+\\delta)$，$|x-x_n|<\\delta$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x)-L|\\le\\underbrace{|f(x)-f(x_n)|}_{<\\varepsilon}+|f(x_n)-L|$",
+              "on": "也在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $n\\to\\infty$：$|f(x)-L|\\le\\varepsilon$ ⇒ $\\displaystyle\\lim_{x\\to a^+}f(x)=L$　$\\blacksquare$"
+          ],
+          "say": "讓 n 趨近無限大，第二項消失，距離不超過艾普西隆。艾普西隆任意，所以右極限是 L。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $n\\to\\infty$：$|f(x)-L|\\le\\varepsilon$ ⇒ $\\displaystyle\\lim_{x\\to a^+}f(x)=L$　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　要嚴格的 $<\\varepsilon$，就把 $\\frac\\varepsilon2$ 代進去",
+              "color": "violet",
+              "on": "西隆#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用判準",
+      "beats": [
+        {
+          "show": [
+            "$\\sin\\frac1x$：$\\lim_{x\\to0^+}$ 不存在 ⇒ 不一致連續（跟 ④ 吻合）"
+          ],
+          "say": "用判準檢查：正弦 x 分之 1 在 0 的右極限不存在，所以不一致連續，跟前面的壞點對吻合。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sin\\frac1x$：$\\lim_{x\\to0^+}$ 不存在 ⇒ 不一致連續（跟 ④ 吻合）"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f(x)=x\\sin\\frac1x$ 在 $(0,1]$ 上一致連續嗎？",
+        "options": [
+          {
+            "label": "是",
+            "correct": true
+          },
+          {
+            "label": "不是，因為 $\\sin\\frac1x$ 振盪",
+            "why": "振盪被前面的 $x$ 壓扁了，右極限是 $0$"
+          },
+          {
+            "label": "不是，因為 $(0,1]$ 不是閉區間",
+            "why": "定理不直接適用，但判準說：右極限存在就一致連續"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：$x\\sin\\frac1x$",
+      "beats": [
+        {
+          "show": [
+            "夾擠：$\\left|x\\sin\\frac1x\\right|\\le x\\to0$ ⇒ $\\displaystyle\\lim_{x\\to0^+}x\\sin\\frac1x=0$"
+          ],
+          "say": "用夾擠：x 乘正弦 x 分之 1 的絕對值不超過 x，x 趨近 0，所以右極限是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "夾擠：$\\left|x\\sin\\frac1x\\right|\\le x\\to0$ ⇒ $\\displaystyle\\lim_{x\\to0^+}x\\sin\\frac1x=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "補 $f(0)=0$：$f$ 在 $[0,1]$ 上連續 ⇒ Heine–Cantor ⇒ 一致連續"
+          ],
+          "say": "補上 f of 0 等於 0，f 就在閉區間 0 到 1 上連續，由海涅康托爾定理一致連續，所以在原來的區間上也一致連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "補 $f(0)=0$：$f$ 在 $[0,1]$ 上連續 ⇒ Heine–Cantor ⇒ 一致連續",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "振盪被 ±x 壓扁，補上原點就連續"
+          ],
+          "say": "圖上，振盪被正負 x 兩條線壓扁，補上原點，整條曲線就接起來了。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xs",
+                  "window": [
+                    0,
+                    0.4,
+                    -0.4,
+                    0.4
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x*sin(1/x)",
+                      "color": "blue",
+                      "domain": [
+                        0.002,
+                        0.4
+                      ]
+                    },
+                    {
+                      "expr": "x",
+                      "color": "pencil",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-x",
+                      "color": "pencil",
+                      "dash": true
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "振盪被 ±x 壓扁，補上原點就連續",
+              "color": "violet",
+              "on": "補上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• Heine–Cantor：$[a,b]$ 上連續 ⇒ 一致連續",
+            "• 證明：反證，壞點對 $\\to$ B–W $\\to c\\in[a,b]$ $\\to$ 連續矛盾"
+          ],
+          "say": "整理一下：閉區間上的連續函數一定一致連續。證明是反證法：壞點對被波爾查諾魏爾斯特拉斯擠到 c，跟連續矛盾。開區間上，就看端點的單邊極限存不存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Heine–Cantor：$[a,b]$ 上連續 ⇒ 一致連續"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：反證，壞點對 $\\to$ B–W $\\to c\\in[a,b]$ $\\to$ 連續矛盾",
+              "on": "一定"
+            },
+            {
+              "do": "write",
+              "line": "• 反例：不閉（$\\frac1x$）、無界（$x^2$）；$\\sin\\frac1x$ 有界也不行",
+              "on": "壞點"
+            },
+            {
+              "do": "write",
+              "line": "• 用途：連續函數可積（12.39）",
+              "on": "跟連"
+            },
+            {
+              "do": "write",
+              "line": "• 開區間判準：端點的單邊極限存在 $\\iff$ 一致連續",
+              "on": "就看"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：逐點收斂"
+          ],
+          "say": "下一課，從一個函數走到一列函數：逐點收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：逐點收斂"
+            }
+          ]
         }
       ]
     }

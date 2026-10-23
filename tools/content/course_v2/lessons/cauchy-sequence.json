@@ -1,7 +1,8 @@
 {
   "id": "cauchy-sequence",
   "title": "Cauchy 數列",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
   "prerequisites": [
     "epsilon-n-proofs",
@@ -15,53 +16,138 @@
     "basel-problem"
   ],
   "objectives": [
-    "寫得出 Cauchy 數列的定義，說得出它跟收斂定義的差別：不需要事先知道極限。",
-    "會用 Cauchy 判準證明收斂（不知道極限值時）與證明發散（調和級數）。",
-    "知道「相鄰兩項差 $\\to0$」不夠，以及 Cauchy $\\Rightarrow$ 收斂要靠實數的完備性。"
+    "寫得出 Cauchy 數列的定義，說得出它跟收斂定義的差別：不需要事先知道極限",
+    "會用 Cauchy 判準證明收斂（不知道極限值時）與證明發散（調和級數）",
+    "知道「相鄰兩項差 $\\to0$」不夠，以及 Cauchy $\\Rightarrow$ 收斂要靠實數的完備性"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 不知道終點，也能判斷會不會停",
+      "heading": "① 不知道終點",
       "body": [
-        "用 $\\varepsilon$-$N$ 定義證明收斂，得先猜出極限 $L$。但很多數列（例如 $1+\\frac{1}{4}+\\frac{1}{9}+\\dots+\\frac{1}{n^2}$ 的部分和）收斂到哪裡並不好猜。Cauchy 的想法：不看項跟終點的距離，看項與項之間的距離。如果從某處開始，任何兩項都擠在一起，數列就停得下來。"
-      ],
-      "collapsible": false
+        "$\\varepsilon$-$N$ 定義要先知道 $L$，才能寫 $|a_n-L|<\\varepsilon$",
+        "但常常不知道：$s_n=1+\\dfrac1{2^2}+\\dfrac1{3^2}+\\dots+\\dfrac1{n^2}$ 收斂到多少？",
+        "答案是 $\\frac{\\pi^2}6$，要到很後面才證得出來",
+        "想法：不看終點，看項跟項之間：後面的項彼此擠在一起"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "$(a_n)$ 叫做 Cauchy 數列，如果：",
-        "注意 $m$、$n$ 是「任意兩個」都 $\\ge N$ 的足標，不只是相鄰的兩項。"
+        "$(a_n)$ 是 Cauchy 數列：",
+        "跟收斂比：$|a_n-L|$ 換成 $|a_m-a_n|$，沒有 $L$",
+        "$m,n$ 是任意兩個足標，不只是相鄰的"
       ],
       "tex": [
         "\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon"
-      ],
-      "collapsible": false
+      ]
     },
     {
-      "heading": "③ 在實數裡：收斂 $\\iff$ Cauchy",
+      "heading": "② 例：$\\sum\\frac1{k^2}$ 是 Cauchy",
       "body": [
-        "收斂 $\\Rightarrow$ Cauchy：都靠近 $L$ 的兩項，彼此也靠近（$\\frac{\\varepsilon}{2}$ 分帳）。",
-        "Cauchy $\\Rightarrow$ 收斂：這個方向需要完備性。在有理數裡它是錯的：1, 1.4, 1.41, 1.414, …（$\\sqrt{2}$ 的小數截斷）第 $n$ 項之後彼此相差不到 $10^{-(n-1)}$，是有理數裡的 Cauchy 數列，但在有理數裡沒有極限。所以 Cauchy 判準可以看成完備性的另一種說法。"
+        "策略：$m>n$ 時 $s_m-s_n$ 是中間那一段的和，把它放大成會消去的和",
+        "$k\\ge2$：$\\dfrac1{k^2}<\\dfrac1{k(k-1)}=\\dfrac1{k-1}-\\dfrac1k$",
+        "證明：給定 $\\varepsilon>0$，取自然數 $N>\\frac1\\varepsilon$。$m>n\\ge N$ 時",
+        "所以 $(s_n)$ 是 Cauchy　$\\blacksquare$",
+        "下一節：所以它收斂，雖然不知道極限是多少",
+        "$m=n$ 時距離是 $0$；$m<n$ 時對調即可"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}0<s_m-s_n&=\\sum_{k=n+1}^{m}\\frac1{k^2}<\\sum_{k=n+1}^{m}\\Big(\\frac1{k-1}-\\frac1k\\Big)\\\\&=\\frac1n-\\frac1m<\\frac1n\\end{aligned}",
+        "|s_m-s_n|<\\frac1n\\le\\frac1N<\\varepsilon"
+      ]
+    },
+    {
+      "heading": "③ 收斂 ⟺ Cauchy",
+      "body": [
+        "在 $\\mathbb{R}$ 裡：$(a_n)$ 收斂 $\\iff$ $(a_n)$ 是 Cauchy",
+        "• $\\Rightarrow$：容易，三角不等式",
+        "• $\\Leftarrow$：要靠完備性",
+        "沒有完備性就失敗：在 $\\mathbb{Q}$ 裡，$1,\\ 1.4,\\ 1.41,\\ 1.414,\\dots$",
+        "第 $n$ 項之後都只差小數第 $n$ 位以後：Cauchy",
+        "但 $\\sqrt2\\notin\\mathbb{Q}$，在 $\\mathbb{Q}$ 裡沒有極限",
+        "判斷發散：否定 Cauchy"
+      ],
+      "tex": [
+        "\\exists\\varepsilon>0\\ \\forall N\\ \\exists m,n\\ge N:\\ |a_m-a_n|\\ge\\varepsilon"
+      ]
+    },
+    {
+      "heading": "③ 調和級數發散",
+      "body": [
+        "$H_n=1+\\dfrac12+\\dots+\\dfrac1n$",
+        "策略：$H_{2n}-H_n$ 有 $n$ 項，每項 $\\ge\\frac1{2n}$",
+        "證明：取 $\\varepsilon=\\frac12$。任給 $N$，取 $n=N$、$m=2N$，都 $\\ge N$，且 $|H_m-H_n|\\ge\\frac12$。",
+        "所以 $(H_n)$ 不是 Cauchy ⇒ 發散　$\\blacksquare$"
+      ],
+      "tex": [
+        "\\begin{aligned}H_{2n}-H_n&=\\frac1{n+1}+\\dots+\\frac1{2n}\\\\&\\ge n\\cdot\\frac1{2n}=\\frac12\\end{aligned}"
+      ]
     },
     {
       "heading": "④ 相鄰差 $\\to0$ 不夠",
       "body": [
-        "$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}$ 的相鄰差 $\\frac{1}{n+1}\\to0$，但 $H_n$ 發散（範例 2）。Cauchy 要求的是任意遠的兩項都靠近。"
-      ],
-      "collapsible": false
+        "調和級數：$H_{n+1}-H_n=\\dfrac1{n+1}\\to0$",
+        "但 $H_n$ 發散",
+        "另一個：$a_n=\\sqrt n$，$\\sqrt{n+1}-\\sqrt n\\to0$（12.13 證過）",
+        "但 $\\sqrt n\\to\\infty$",
+        "步伐越來越小，但走不停：小步加起來可以走到無限遠"
+      ]
     },
     {
-      "heading": "證明：收斂 $\\Rightarrow$ Cauchy $\\Rightarrow$ 收斂",
+      "heading": "④ 例：壓縮",
       "body": [
-        "收斂 $\\Rightarrow$ Cauchy：設 $a_n\\to L$。給定 $\\varepsilon>0$，取 $N$ 使 $n\\ge N$ 時 $|a_n-L|<\\frac{\\varepsilon}{2}$。則 $m,n\\ge N$ 時 $|a_m-a_n|\\le|a_m-L|+|L-a_n|<\\varepsilon$。",
-        "Cauchy $\\Rightarrow$ 有界：對 $\\varepsilon=1$ 取 $N$，$n\\ge N$ 時 $|a_n-a_N|<1$，所以 $|a_n|<|a_N|+1$；再跟前面有限多項取最大值。",
-        "Cauchy $\\Rightarrow$ 收斂：數列有界，由〈Bolzano–Weierstrass〉有子數列 $a_{n_k}\\to L$。給定 $\\varepsilon>0$，取 $N$ 使 $m,n\\ge N$ 時 $|a_m-a_n|<\\frac{\\varepsilon}{2}$；再取 $k$ 夠大，使 $n_k\\ge N$ 且 $|a_{n_k}-L|<\\frac{\\varepsilon}{2}$（$n_k$ 嚴格遞增，所以 $n_k\\ge k$，$k$ 夠大時 $n_k\\ge N$）。則 $n\\ge N$ 時 $|a_n-L|\\le|a_n-a_{n_k}|+|a_{n_k}-L|<\\varepsilon$。"
+        "$a_1=0$，$a_{n+1}=\\dfrac1{3-a_n}$",
+        "有界：$0\\le a_n\\le\\frac12$ ⇒ $3-a_n\\ge\\frac52$，$a_{n+1}\\in[\\frac13,\\frac25]$（歸納法）",
+        "每一步差距至少縮成 $\\frac4{25}$：",
+        "$r=\\frac4{25}$：$|a_{k+1}-a_k|\\le\\frac13r^{k-1}$。$m>n$：",
+        "不是只有相鄰差 $\\to0$：這裡是任意兩項都被等比級數控制",
+        "收斂到 $L$，$L=\\frac1{3-L}$，$L^2-3L+1=0$，$L\\in[0,\\frac12]$：",
+        "另一根 $\\frac{3+\\sqrt5}2\\approx2.618$：每一項都 $\\le\\frac12$，離它超過 $2$，不可能是極限"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}|a_{n+1}-a_n|&=\\frac{|a_n-a_{n-1}|}{(3-a_n)(3-a_{n-1})}\\\\&\\le\\frac4{25}|a_n-a_{n-1}|\\end{aligned}",
+        "\\begin{aligned}|a_m-a_n|&\\le\\sum_{k=n}^{m-1}\\frac13r^{k-1}<\\frac{1}{3}\\cdot\\frac{r^{n-1}}{1-r}\\\\&=\\frac{25}{63}r^{n-1}\\to0\\end{aligned}",
+        "L=\\frac{3-\\sqrt5}2\\approx0.382"
+      ]
+    },
+    {
+      "heading": "證明：收斂 ⇒ Cauchy",
+      "body": [
+        "策略：兩項都離 $L$ 不到 $\\frac\\varepsilon2$，彼此就不到 $\\varepsilon$",
+        "設 $a_n\\to L$，給定 $\\varepsilon>0$，取 $N$ 使 $n\\ge N\\Rightarrow|a_n-L|<\\frac\\varepsilon2$。對 $m,n\\ge N$：",
+        "Cauchy ⇒ 有界：取 $\\varepsilon=1$，$n\\ge N$ 時 $|a_n|<|a_N|+1$",
+        "$M=\\max\\{|a_1|,\\dots,|a_{N-1}|,|a_N|+1\\}$",
+        "Cauchy ⇒ 收斂：策略：用完備性造出 $L$",
+        "$s_k=\\sup\\{a_m:m\\ge k\\}$（尾巴的上確界），$L=\\inf_k s_k$",
+        "這個 $L$ 就是 12.18 的 $\\limsup a_n$"
+      ],
+      "tex": [
+        "|a_m-a_n|\\le|a_m-L|+|L-a_n|<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare"
+      ]
+    },
+    {
+      "heading": "證明（續）",
+      "body": [
+        "給定 $\\varepsilon>0$，取 $N$ 使 $m,n\\ge N\\Rightarrow|a_m-a_n|<\\frac\\varepsilon2$。固定 $n\\ge N$。",
+        "$m\\ge N$ 時 $a_n-\\frac\\varepsilon2<a_m<a_n+\\frac\\varepsilon2$，所以",
+        "• $s_N\\le a_n+\\frac\\varepsilon2$（上界）",
+        "• 每個 $s_k\\ge s_N\\ \\text{或}\\ s_k\\ge a_k>a_n-\\frac\\varepsilon2$",
+        "$k<N$：$s_k\\ge s_N\\ge a_N>a_n-\\frac\\varepsilon2$",
+        "$L=\\inf s_k$：$a_n-\\frac\\varepsilon2\\le L\\le s_N\\le a_n+\\frac\\varepsilon2$",
+        "所以 $|a_n-L|\\le\\frac\\varepsilon2<\\varepsilon$，對所有 $n\\ge N$：$a_n\\to L$　$\\blacksquare$"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• Cauchy：$\\forall\\varepsilon\\ \\exists N\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon$，不用知道 $L$",
+        "• 在 $\\mathbb{R}$：收斂 $\\iff$ Cauchy；$\\Leftarrow$ 靠完備性（$\\mathbb{Q}$ 裡會失敗）",
+        "• 證收斂：把 $|a_m-a_n|$ 放大成會消去或等比的和",
+        "• 證發散：找兩項距離 $\\ge\\varepsilon$，例如 $H_{2n}-H_n\\ge\\frac12$",
+        "• 相鄰差 $\\to0$ 不夠：$\\sqrt n$、$H_n$",
+        "下一課：Bolzano–Weierstrass"
+      ]
     }
   ],
   "workedExamples": [
@@ -112,70 +198,44 @@
   ],
   "checks": [
     {
-      "ask": "Cauchy 數列的定義是？",
+      "ask": "下面哪一句是 Cauchy 數列的意思？",
       "options": [
         {
-          "label": "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N$：$|a_m-a_n|<\\varepsilon$",
+          "label": "相鄰兩項的差 $a_{n+1}-a_n\\to0$",
+          "why": "只管相鄰兩項：太弱，第 ④ 節有反例"
+        },
+        {
+          "label": "從某項起，==任何兩項==的距離都小於 $\\varepsilon$",
           "correct": true
         },
         {
-          "label": "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N$：$|a_{n+1}-a_n|<\\varepsilon$",
-          "why": "你只看相鄰兩項。$H_n$ 滿足這一條卻發散；定義要求任意兩項。"
+          "label": "從某項起，每一項跟 $L$ 的距離小於 $\\varepsilon$",
+          "why": "這是收斂的定義：要先知道 $L$"
         },
         {
-          "label": "$\\exists N\\ \\forall\\varepsilon>0\\ \\forall m,n\\ge N$：$|a_m-a_n|<\\varepsilon$",
-          "why": "$N$ 放到 $\\varepsilon$ 前面，會逼出 $N$ 之後全部相等。$N$ 要能依賴 $\\varepsilon$。"
+          "label": "存在一對 $m,n$ 使 $|a_m-a_n|<\\varepsilon$",
+          "why": "「存在一對」太弱：$(-1)^n$ 也有這樣的一對"
         }
       ]
     },
     {
-      "ask": "為什麼說 $H_n$ 不是 Cauchy？",
+      "ask": "$a_{n+1}-a_n\\to0$，下面哪個結論正確？",
       "options": [
         {
-          "label": "對任何 $N$，$H_{2N}-H_N\\ge\\frac{1}{2}$",
+          "label": "$(a_n)$ 是 Cauchy",
+          "why": "$\\sqrt n$、$H_n$ 都是反例"
+        },
+        {
+          "label": "$(a_n)$ 一定發散",
+          "why": "$\\frac1n$ 的相鄰差也趨近 $0$，但它收斂"
+        },
+        {
+          "label": "不能確定收不收斂",
           "correct": true
         },
         {
-          "label": "因為 $H_{n+1}-H_n$ 不趨近 0",
-          "why": "$H_{n+1}-H_n=\\frac{1}{n+1}$ 其實趨近 0。毛病出在相隔很遠的兩項。"
-        },
-        {
-          "label": "因為 $H_n$ 沒有極限值的公式",
-          "why": "沒有公式不代表發散（$\\sum\\frac{1}{k^2}$ 的部分和也一樣是靠 Cauchy 證收斂）。要用 $\\varepsilon=\\frac{1}{2}$ 證出否定句。"
-        }
-      ]
-    },
-    {
-      "ask": "1, 1.4, 1.41, 1.414, … 在有理數 $\\mathbb{Q}$ 裡是？",
-      "options": [
-        {
-          "label": "Cauchy 數列，但在 $\\mathbb{Q}$ 裡不收斂",
-          "correct": true
-        },
-        {
-          "label": "收斂到 $\\sqrt{2}$，所以在 $\\mathbb{Q}$ 裡收斂",
-          "why": "$\\sqrt{2}$ 不是有理數。在 $\\mathbb{Q}$ 裡談收斂，極限必須在 $\\mathbb{Q}$ 裡。"
-        },
-        {
-          "label": "不是 Cauchy 數列，因為它不收斂",
-          "why": "第 $n$ 項之後任兩項相差 $<10^{-(n-1)}$，滿足 Cauchy 定義。缺的是 $\\mathbb{Q}$ 的完備性。"
-        }
-      ]
-    },
-    {
-      "ask": "$s_n=\\sum_{k\\le n}\\frac{1}{k^2}$，用 $|s_m-s_n|<\\frac{1}{n}$（$m>n$）。$\\varepsilon=0.001$ 時可取哪個 $N$？",
-      "options": [
-        {
-          "label": "1001",
-          "correct": true
-        },
-        {
-          "label": "32",
-          "why": "你可能解成 $\\frac{1}{n^2}<0.001$。我們得到的上界是 $\\frac{1}{n}$，要 $n>1000$。"
-        },
-        {
-          "label": "1000 以下任何數都行，因為級數收斂",
-          "why": "收斂只保證某個 $N$ 存在，不代表小的 $N$ 就夠；這裡的估計需要 $N>\\frac{1}{\\varepsilon}=1000$。"
+          "label": "$(a_n)$ 有界",
+          "why": "$\\sqrt n$ 的相鄰差趨近 $0$，但無界"
         }
       ]
     }
@@ -184,265 +244,822 @@
     {
       "title": "不知道終點",
       "beats": [
-        { "show": ["$\\varepsilon$-$N$ 定義：先得猜出 $L$"],
-          "note": "例如 $1+\\frac{1}{4}+\\frac{1}{9}+\\dots+\\frac{1}{n^2}$，終點不好猜。",
-          "say": "用 epsilon N 定義證收斂，得先知道極限是多少。可是很多數列，終點根本猜不出來。",
+        {
+          "show": [
+            "$\\varepsilon$-$N$ 定義要先知道 $L$，才能寫 $|a_n-L|<\\varepsilon$"
+          ],
+          "say": "艾普西隆 N 定義要先知道極限 L，才能寫誤差。",
           "board": [
-            {"do":"write","line":"$\\varepsilon$-$N$ 定義：先得知道 ${{l:L}}$"},
-            {"do":"focus","term":"l","on":"極限是多少"},
-            {"do":"write","line":"終點 $L$ 猜不出來","on":"終點根本"}
-          ] },
-        { "show": ["不看項到終點的距離","看項與項之間的距離"],
-          "say": "Cauchy 的想法：不管終點，只看項和項之間。從某處開始任何兩項都擠在一起，數列就停得下來。",
+            {
+              "do": "write",
+              "line": "$\\varepsilon$-$N$ 定義要先知道 $L$，才能寫 $|a_n-L|<\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但常常不知道：$s_n=1+\\dfrac1{2^2}+\\dfrac1{3^2}+\\dots+\\dfrac1{n^2}$ 收斂到多少？"
+          ],
+          "say": "但很多時候我們不知道。比如這個和：1 加 2 平方分之 1，一直加到 n 平方分之 1，它收斂到哪？一時看不出來。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"不看 $a_n$ 到終點的距離","on":"不管終點"},
-            {"do":"write","line":"看 $a_m$ 與 $a_n$ 的距離","on":"只看項和項"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N:|a_m-a_n|<\\varepsilon$"],
-          "note": "$m$、$n$ 是任意兩個，不只相鄰。",
-          "say": "寫成定義：對每個 epsilon 有一個 N，N 之後任意兩項的距離都小於 epsilon。注意，是任意兩項。",
+            {
+              "do": "write",
+              "line": "但常常不知道：$s_n=1+\\dfrac1{2^2}+\\dfrac1{3^2}+\\dots+\\dfrac1{n^2}$ 收斂到多少？",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　答案是 $\\frac{\\pi^2}6$，要到很後面才證得出來",
+              "color": "violet",
+              "on": "一直"
+            }
+          ]
+        },
+        {
+          "show": [
+            "想法：不看終點，看項跟項之間：後面的項彼此擠在一起"
+          ],
+          "say": "換個想法：不看終點，只看項跟項之間。如果後面的項彼此擠到要多近有多近，它應該會停下來。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\forall\\varepsilon>0\\ \\exists N\\ \\forall {{mn:m,n\\ge N}}:{{d:|a_m-a_n|<\\varepsilon}}$","on":"對每個"},
-            {"do":"box","term":"d","color":"green","on":"距離都小於"},
-            {"do":"underline","term":"mn","label":"任意兩項","on":"任意兩項#2"}
-          ] }
+            {
+              "do": "write",
+              "line": "想法：不看終點，看項跟項之間：後面的項彼此擠在一起",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "後面的項彼此越擠越近（虛線是我們事先不知道的極限）"
+          ],
+          "say": "圖上的點越往後彼此越靠近。虛線是極限，但證明時我們假裝不知道它。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cs",
+                  "window": [
+                    0,
+                    13,
+                    0.9,
+                    1.75
+                  ],
+                  "ystep": 0.2,
+                  "hlines": [
+                    {
+                      "y": 1.644934,
+                      "color": "pencil"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 1.25,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 1.361111,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": 1.423611,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": 1.463611,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": 1.491389,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": 1.511797,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": 1.527422,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 9,
+                      "y": 1.539768,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 10,
+                      "y": 1.549768,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 11,
+                      "y": 1.558032,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 12,
+                      "y": 1.564977,
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "ylabel": "sₙ",
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "後面的項彼此越擠越近（虛線是我們事先不知道的極限）",
+              "color": "violet",
+              "on": "極限"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "$(a_n)$ 是 Cauchy 數列：",
+            "$\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon$"
+          ],
+          "say": "定義：對所有正的艾普西隆，存在 N，使得任何兩個足標 m、n 都大於等於 N 時，a m 和 a n 的距離小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(a_n)$ 是 Cauchy 數列："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon}}$",
+              "on": "任何"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的距"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟收斂比：$|a_n-L|$ 換成 $|a_m-a_n|$，沒有 $L$"
+          ],
+          "say": "跟收斂的定義比：誤差換成兩項之間的距離，完全沒有 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟收斂比：$|a_n-L|$ 換成 $|a_m-a_n|$，沒有 $L$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$m,n$ 是任意兩個足標，不只是相鄰的"
+          ],
+          "say": "注意：m 和 n 是門檻之後任意兩個足標，不只是相鄰的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$m,n$ 是任意兩個足標，不只是相鄰的",
+              "color": "red"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "收斂 ⇔ Cauchy",
+      "title": "例：$\\sum\\frac1{k^2}$ 是 Cauchy",
       "beats": [
-        { "show": ["收斂 ⇒ Cauchy"],
-          "note": "都靠近 $L$ 的兩項，彼此也靠近。",
-          "say": "收斂的數列一定是 Cauchy：兩項都離 L 不到二分之 epsilon，彼此就差不到 epsilon。",
+        {
+          "show": [
+            "策略：$m>n$ 時 $s_m-s_n$ 是中間那一段的和，把它放大成會消去的和"
+          ],
+          "say": "證明 s n 是柯西數列。策略：s m 減 s n 是中間一段的和；把每一項放大成可以前後消去的形式。",
           "board": [
-            {"do":"write","line":"${{p:|a_m-L|}}<\\frac{\\varepsilon}{2}$，${{q:|a_n-L|}}<\\frac{\\varepsilon}{2}$"},
-            {"do":"write","line":"$|a_m-a_n|\\le{{p:|a_m-L|}}+{{q:|a_n-L|}}<\\varepsilon$","on":"彼此就差不到"}
-          ] },
-        { "show": ["Cauchy ⇒ 收斂：要完備性"],
-          "note": "證明在下一節。",
-          "say": "反過來，Cauchy 推得出收斂，靠的是實數的完備性，下一節證明。",
+            {
+              "do": "write",
+              "line": "策略：$m>n$ 時 $s_m-s_n$ 是中間那一段的和，把它放大成會消去的和"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$k\\ge2$：$\\dfrac1{k^2}<\\dfrac1{k(k-1)}=\\dfrac1{k-1}-\\dfrac1k$"
+          ],
+          "say": "關鍵的放大：k 平方分之 1，小於 k 減 1 分之 1，減 k 分之 1。",
           "board": [
-            {"do":"write","line":"Cauchy ⇒ 收斂：靠 ${{r:\\mathbb{R}}}$ 完備"},
-            {"do":"focus","term":"r","on":"完備性"}
-          ] },
-        { "show": ["在 $\\mathbb{Q}$ 裡：1, 1.4, 1.41, 1.414, …"],
-          "note": "項擠在一起，要去的 $\\sqrt{2}$ 卻不在 $\\mathbb{Q}$ 裡。",
-          "say": "在有理數裡就不成立：根號二的小數截斷，項越擠越緊，但有理數裡沒有它要去的那一點。",
+            {
+              "do": "write",
+              "line": "$k\\ge2$：$\\dfrac1{k^2}<\\dfrac1{k(k-1)}=\\dfrac1{k-1}-\\dfrac1k$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}0<s_m-s_n&=\\sum_{k=n+1}^{m}\\frac1{k^2}<\\sum_{k=n+1}^{m}\\Big(\\frac1{k-1}-\\frac1k\\Big)\\\\&=\\frac1n-\\frac1m<\\frac1n\\end{aligned}$"
+          ],
+          "say": "加起來中間全部消掉，只剩 n 分之 1 減 m 分之 1，小於 n 分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"在 $\\mathbb{Q}$ 裡：${{s:1, 1.4, 1.41, 1.414, \\dots}}$","on":"根號二"},
-            {"do":"underline","term":"s","on":"越擠越緊"},
-            {"do":"write","line":"要去的 $\\sqrt{2}\\notin\\mathbb{Q}$","on":"沒有它要去"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}0<s_m-s_n&=\\sum_{k=n+1}^{m}\\frac1{k^2}<\\sum_{k=n+1}^{m}\\Big(\\frac1{k-1}-\\frac1k\\Big)\\\\&=\\frac1n-\\frac1m<\\frac1n\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給定 $\\varepsilon>0$，取自然數 $N>\\frac1\\varepsilon$。$m>n\\ge N$ 時",
+            "$|s_m-s_n|<\\frac1n\\le\\frac1N<\\varepsilon$"
+          ],
+          "say": "給定艾普西隆，取自然數 N 大於艾普西隆分之 1。m 大於 n 大於等於 N 時，距離小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給定 $\\varepsilon>0$，取自然數 $N>\\frac1\\varepsilon$。$m>n\\ge N$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |s_m-s_n|<\\frac1n\\le\\frac1N<\\varepsilon$",
+              "on": "大於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $(s_n)$ 是 Cauchy　$\\blacksquare$"
+          ],
+          "say": "所以它是柯西數列。下一節會看到柯西數列一定收斂；我們證明了收斂，卻不需要知道極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $(s_n)$ 是 Cauchy　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "下一節：所以它收斂，雖然不知道極限是多少",
+              "color": "red",
+              "on": "看到"
+            },
+            {
+              "do": "write",
+              "line": "　$m=n$ 時距離是 $0$；$m<n$ 時對調即可",
+              "color": "violet",
+              "on": "明了"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：Cauchy ⇒ 收斂",
+      "title": "收斂 ⟺ Cauchy",
       "beats": [
-        { "show": ["先有界，抓收斂子數列，再把整條拉過去"],
-          "say": "策略：不知道極限在哪，就先造一個。先證有界，抓出收斂的子數列，再把整條數列拉過去。",
+        {
+          "show": [
+            "在 $\\mathbb{R}$ 裡：$(a_n)$ 收斂 $\\iff$ $(a_n)$ 是 Cauchy"
+          ],
+          "say": "主定理：在實數裡，收斂和柯西是同一件事。",
           "board": [
-            {"do":"write","line":"有界 → 收斂子數列 → 整條收斂","on":"先證有界"}
-          ] },
-        { "show": ["Cauchy ⇒ 有界"],
-          "note": "$\\varepsilon=1$，再跟前面有限多項取最大。",
-          "say": "先證有界：epsilon 取一，第 N 項以後都離 a N 不到一；前面只有有限多項，取最大值。",
+            {
+              "do": "write",
+              "line": "在 $\\mathbb{R}$ 裡：$(a_n)$ 收斂 $\\iff$ $(a_n)$ 是 Cauchy",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\Rightarrow$：容易，三角不等式",
+            "• $\\Leftarrow$：要靠完備性"
+          ],
+          "say": "收斂推得柯西很容易；柯西推得收斂，要靠實數的完備性。證明放在最後。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\varepsilon=1$：$n\\ge N\\Rightarrow|a_n-a_N|<1$","on":"epsilon 取一"},
-            {"do":"write","line":"$|a_n|\\le\\max(|a_1|,\\dots,|a_N|+1)$","on":"前面只有"}
-          ] },
-        { "show": ["有子數列 $a_{n_k}\\to L$"],
-          "note": "Bolzano–Weierstrass。",
-          "why": {"ask":"$L$ 從哪裡來？","say":"極限 L 是從哪裡冒出來的？","options":[{"label":"有界，由 Bolzano–Weierstrass 抽出來","correct":true},{"label":"Cauchy 的定義直接給出 $L$","why":"Cauchy 的定義只講項跟項的距離，沒提極限；$L$ 要靠定理抓出來。"},{"label":"取 $L=\\lim a_n$","why":"$a_n$ 收斂正是要證的，還不能用。"}]},
-          "say": "數列有界，Bolzano Weierstrass 定理說它有收斂的子數列，極限叫 L。完備性就用在這裡。",
+            {
+              "do": "write",
+              "line": "• $\\Rightarrow$：容易，三角不等式"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Leftarrow$：要靠完備性",
+              "on": "要靠"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沒有完備性就失敗：在 $\\mathbb{Q}$ 裡，$1,\\ 1.4,\\ 1.41,\\ 1.414,\\dots$"
+          ],
+          "say": "為什麼要完備性？根號 2 的小數截斷，在有理數裡是柯西數列；但它要收斂到的根號 2 不是有理數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"有子數列 ${{s:a_{n_k}\\to L}}$","tint":{"s":"violet"},"on":"極限 L"},
-            {"do":"underline","term":"s","label":"B–W 定理","why":true,"on":"Bolzano"}
-          ] },
-        { "show": ["對半切夾出 $L$"],
-          "say": "L 怎麼來：有界表示全部的項關在一個區間裡。一直對半切，留下項多的那半，越切越小，就夾出一個 L。",
+            {
+              "do": "write",
+              "line": "沒有完備性就失敗：在 $\\mathbb{Q}$ 裡，$1,\\ 1.4,\\ 1.41,\\ 1.414,\\dots$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "第 $n$ 項之後都只差小數第 $n$ 位以後：Cauchy",
+              "color": "red",
+              "on": "截斷"
+            },
+            {
+              "do": "write",
+              "line": "但 $\\sqrt2\\notin\\mathbb{Q}$，在 $\\mathbb{Q}$ 裡沒有極限",
+              "color": "red",
+              "on": "要收"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判斷發散：否定 Cauchy",
+            "$\\exists\\varepsilon>0\\ \\forall N\\ \\exists m,n\\ge N:\\ |a_m-a_n|\\ge\\varepsilon$"
+          ],
+          "say": "柯西判準也能證明發散：寫出否定。存在艾普西隆，不管 N 多大，後面總有兩項距離至少艾普西隆。",
           "board": [
-            {"do":"write","line":"有界 ⇒ 項關在區間裡，對半切夾出 ${{lq:L}}$"},
-            {"do":"focus","term":"lq","on":"夾出"}
-          ] },
-        { "show": ["$m,n\\ge N$：$|a_m-a_n|<\\frac{\\varepsilon}{2}$","取 $k$：$n_k\\ge N$、$|a_{n_k}-L|<\\frac{\\varepsilon}{2}$"],
-          "say": "給定 epsilon，用 Cauchy 取 N；再取 k 夠大，讓 n k 至少是 N，子數列那一項也離 L 夠近。",
+            {
+              "do": "write",
+              "line": "判斷發散：否定 Cauchy"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\exists\\varepsilon>0\\ \\forall N\\ \\exists m,n\\ge N:\\ |a_m-a_n|\\ge\\varepsilon$",
+              "on": "不管"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "調和級數發散",
+      "beats": [
+        {
+          "show": [
+            "$H_n=1+\\dfrac12+\\dots+\\dfrac1n$"
+          ],
+          "say": "用它證明調和級數發散。",
           "board": [
-            {"do":"write","line":"$m,n\\ge N$：${{c:|a_m-a_n|}}<\\frac{\\varepsilon}{2}$","tint":{"c":"blue"},"on":"用 Cauchy 取 N"},
-            {"do":"write","line":"$n_k\\ge N$ 且 ${{d:|a_{n_k}-L|}}<\\frac{\\varepsilon}{2}$","tint":{"d":"violet"},"on":"再取 k"}
-          ] },
-        { "show": ["$|a_n-L|\\le|a_n-a_{n_k}|+|a_{n_k}-L|<\\varepsilon$"],
-          "note": "$n\\ge N$；兩段各 $<\\frac{\\varepsilon}{2}$。",
-          "why": {"ask":"為什麼 $|a_n-a_{n_k}|<\\frac{\\varepsilon}{2}$？","say":"第一段，a n 和子數列那一項為什麼很近？","options":[{"label":"$n$ 和 $n_k$ 都 $\\ge N$，用 Cauchy 條件","correct":true},{"label":"子數列的項都跟 $a_n$ 很接近","why":"子數列的項可以離某一項很遠；要靠兩個足標都 $\\ge N$ 的 Cauchy 條件。"},{"label":"$a_{n_k}\\to L$，$a_n$ 也 $\\to L$","why":"$a_n\\to L$ 正是要證的，不能先用。"}]},
-          "say": "n 和 n k 都至少是 N，Cauchy 條件說兩項很近；再加上子數列離 L 的距離，小於 epsilon。",
+            {
+              "do": "write",
+              "line": "$H_n=1+\\dfrac12+\\dots+\\dfrac1n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：$H_{2n}-H_n$ 有 $n$ 項，每項 $\\ge\\frac1{2n}$",
+            "$\\begin{aligned}H_{2n}-H_n&=\\frac1{n+1}+\\dots+\\frac1{2n}\\\\&\\ge n\\cdot\\frac1{2n}=\\frac12\\end{aligned}$"
+          ],
+          "say": "策略：H 2n 減 H n 共有 n 項，每一項都至少是最小的 2n 分之 1，所以總和至少 2 分之 1。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$|a_n-L|\\le{{e:|a_n-a_{n_k}|}}+{{d:|a_{n_k}-L|}}<\\varepsilon$","tint":{"e":"blue"},"on":"第一段"},
-            {"do":"focus","term":"e","on":"a n 和子數列"},
-            {"do":"underline","term":"c","why":true,"on":"Cauchy 條件"}
-          ] }
+            {
+              "do": "write",
+              "line": "策略：$H_{2n}-H_n$ 有 $n$ 項，每項 $\\ge\\frac1{2n}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}H_{2n}-H_n&=\\frac1{n+1}+\\dots+\\frac1{2n}\\\\&\\ge n\\cdot\\frac1{2n}=\\frac12\\end{aligned}}}}$",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：取 $\\varepsilon=\\frac12$。任給 $N$，取 $n=N$、$m=2N$，都 $\\ge N$，且 $|H_m-H_n|\\ge\\frac12$。"
+          ],
+          "say": "證明：取艾普西隆等於 2 分之 1。任給 N，取 n 等於 N、m 等於 2N，距離至少 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：取 $\\varepsilon=\\frac12$。任給 $N$，取 $n=N$、$m=2N$，都 $\\ge N$，且 $|H_m-H_n|\\ge\\frac12$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $(H_n)$ 不是 Cauchy ⇒ 發散　$\\blacksquare$"
+          ],
+          "say": "所以調和級數不是柯西數列，它發散。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $(H_n)$ 不是 Cauchy ⇒ 發散　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "key": "三角不等式：隔著子數列的一項比到 $L$",
-      "proof": true,
-      "of": 4,
-      "skeleton": "構造",
-      "where": {
-        "ask": "完備性用在哪一步？",
-        "steps": [
+      "predict": {
+        "ask": "$H_{20}-H_{10}$ 大約是多少？",
+        "options": [
           {
-            "label": "Cauchy ⇒ 有界",
-            "why": "這只用到 $\\varepsilon=1$ 和有限多項取最大值。"
-          },
-          {
-            "label": "抽出收斂子數列 $a_{n_k}\\to L$",
+            "label": "約 $0.669$",
             "correct": true
           },
           {
-            "label": "取 $N$ 和 $k$",
-            "why": "這只用到 Cauchy 的定義和子數列收斂的定義。"
+            "label": "約 $0.05$",
+            "why": "不是只差一項 $\\frac1{20}$：中間有 $10$ 項"
           },
           {
-            "label": "三角不等式：$|a_n-L|<\\varepsilon$",
-            "why": "這只是三角不等式，把兩段誤差加起來。"
+            "label": "約 $0.1$",
+            "why": "低估了：$10$ 項、每項 $\\ge\\frac1{20}$，總和至少 $0.5$"
+          },
+          {
+            "label": "約 $2$",
+            "why": "每項都 $\\le\\frac1{11}$，$10$ 項不到 $1$"
           }
         ]
       }
     },
     {
-      "title": "不知道極限也能證",
+      "title": "相鄰差 $\\to0$ 不夠",
       "beats": [
-        { "show": ["$s_n=\\sum_{k=1}^{n}\\frac{1}{k^2}$，設 $m>n$"],
-          "say": "回到一開始的部分和。設 m 大於 n，看 s m 減 s n，也就是從 n 加一加到 m 的那一段。",
+        {
+          "show": [
+            "調和級數：$H_{n+1}-H_n=\\dfrac1{n+1}\\to0$"
+          ],
+          "say": "調和級數也是一個警告：相鄰兩項的差趨近 0，可是它發散。",
           "board": [
-            {"do":"write","line":"$s_m-s_n={{seg:\\sum_{k=n+1}^{m}\\frac{1}{k^2}}}$（$m>n$）","on":"設 m"},
-            {"do":"underline","term":"seg","on":"從 n 加一"}
-          ] },
-        { "show": ["$\\frac{1}{k^2}<\\frac{1}{k-1}-\\frac{1}{k}$"],
-          "note": "$k\\ge2$。",
-          "say": "每一項 k 平方分之一，放大成 k 減一分之一減 k 分之一，這樣就能望遠鏡相消。",
+            {
+              "do": "write",
+              "line": "調和級數：$H_{n+1}-H_n=\\dfrac1{n+1}\\to0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "但 $H_n$ 發散",
+              "color": "red",
+              "on": "項的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "另一個：$a_n=\\sqrt n$，$\\sqrt{n+1}-\\sqrt n\\to0$（12.13 證過）"
+          ],
+          "say": "根號 n 也是：12.13 證過相鄰差趨近 0，但它往無限大走。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{k^2}<{{t:\\frac{1}{k-1}-\\frac{1}{k}}}$"},
-            {"do":"underline","term":"t","label":"望遠鏡","on":"放大成"}
-          ] },
-        { "show": ["$k(k-1)<k^2$"],
-          "say": "為什麼成立？右邊通分，等於 k 乘 k 減一分之一。分母 k 乘 k 減一比 k 平方小，所以分數比較大。",
+            {
+              "do": "write",
+              "line": "另一個：$a_n=\\sqrt n$，$\\sqrt{n+1}-\\sqrt n\\to0$（12.13 證過）"
+            },
+            {
+              "do": "write",
+              "line": "但 $\\sqrt n\\to\\infty$",
+              "on": "相鄰"
+            }
+          ]
+        },
+        {
+          "show": [
+            "步伐越來越小，但走不停：小步加起來可以走到無限遠"
+          ],
+          "say": "步伐越來越小，但小步加起來還是可以走到無限遠。柯西要求的是任意兩項都靠近。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{k-1}-\\frac{1}{k}={{g:\\frac{1}{k(k-1)}}}$"},
-            {"do":"underline","term":"g","on":"通分"},
-            {"do":"write","line":"$k(k-1)<{{sq:k^2}}$ ⇒ $\\frac{1}{k(k-1)}>\\frac{1}{k^2}$","on":"比 k 平方小"}
-          ] },
-        { "show": ["$s_m-s_n<\\frac{1}{n}-\\frac{1}{m}<\\frac{1}{n}$"],
-          "say": "中間全部消掉，只剩 n 分之一減 m 分之一，比 n 分之一小。",
-          "board": [
-            {"do":"write","line":"$s_m-s_n<{{r:\\frac{1}{n}-\\frac{1}{m}}}<{{b:\\frac{1}{n}}}$","on":"中間全部"},
-            {"do":"underline","term":"r","on":"只剩"},
-            {"do":"focus","term":"b","on":"比 n"}
-          ] },
-        { "show": ["取 $N>\\frac{1}{\\varepsilon}$：是 Cauchy"],
-          "note": "$\\varepsilon=0.01$ 取 $N=101$。",
-          "say": "所以 N 取比 epsilon 分之一大就行。我們證了收斂，卻完全沒用到極限值是多少。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"取 ${{nn:N>\\frac{1}{\\varepsilon}}}$ ⇒ 是 Cauchy","on":"所以 N"},
-            {"do":"box","term":"nn","color":"green","label":"沒用到極限","on":"我們證了收斂"}
-          ] }
-      ],
-      "key": "用望遠鏡上界估差，不需要知道極限",
-      "check": 3
-    },
-    {
-      "title": "相鄰差不夠",
-      "beats": [
-        { "show": ["$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}$"],
-          "note": "相鄰差 $\\frac{1}{n+1}\\to0$。",
-          "say": "調和數列，相鄰兩項只差 n 加一分之一，趨近零。看起來擠在一起了？",
-          "board": [
-            {"do":"write","line":"$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}$"},
-            {"do":"write","line":"相鄰差 ${{a:\\frac{1}{n+1}}}\\to0$","on":"相鄰兩項"}
-          ] },
-        { "show": ["$H_{2n}-H_n$：$n$ 項，每項 $\\ge\\frac{1}{2n}$"],
-          "note": "所以 $H_{2n}-H_n\\ge\\frac{1}{2}$。",
-          "say": "隔遠一點看：從 n 跳到二 n，中間 n 項，每一項至少二 n 分之一，加起來至少二分之一。",
-          "board": [
-            {"do":"write","line":"$H_{2n}-H_n={{s:\\frac{1}{n+1}+\\dots+\\frac{1}{2n}}}$","on":"從 n 跳到"},
-            {"do":"underline","term":"s","on":"中間 n 項"},
-            {"do":"write","line":"$\\ge n\\cdot\\frac{1}{2n}={{h:\\frac{1}{2}}}$","on":"每一項至少"}
-          ] },
-        { "show": ["取 $\\varepsilon=\\frac{1}{2}$：不是 Cauchy"],
-          "note": "所以 $H_n$ 發散。",
-          "say": "不管 N 多大，N 和二 N 這兩項永遠差至少二分之一。不是 Cauchy，所以發散。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"focus","term":"h","on":"至少二分之一"},
-            {"do":"write","line":"$\\varepsilon=\\frac{1}{2}$：不是 Cauchy ⇒ 發散","color":"green","on":"不是 Cauchy"}
-          ] }
+            {
+              "do": "write",
+              "line": "步伐越來越小，但走不停：小步加起來可以走到無限遠",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "每步縮成 $\\frac{4}{25}$",
+      "title": "例：壓縮",
       "beats": [
-        { "show": ["$a_1=0$，$a_{n+1}=\\frac{1}{3-a_n}$"],
-          "note": "歸納：所有項在 $[0,\\frac{1}{2}]$。",
-          "say": "最後一個遞迴：下一項是三減前一項分之一。先用歸納法，所有項都在零到二分之一之間。",
+        {
+          "show": [
+            "$a_1=0$，$a_{n+1}=\\dfrac1{3-a_n}$"
+          ],
+          "say": "最後一個例子：a1 等於 0，下一項是 3 減 a n 分之 1。",
           "board": [
-            {"do":"write","line":"$a_1=0$，$a_{n+1}=\\frac{1}{3-a_n}$"},
-            {"do":"write","line":"歸納：所有項在 ${{r:[0,\\frac{1}{2}]}}$","on":"歸納法"},
-            {"do":"underline","term":"r","on":"所有項都在"}
-          ] },
-        { "show": ["$|a_{n+1}-a_n|\\le\\frac{4}{25}|a_n-a_{n-1}|$"],
-          "note": "分母 $\\ge(\\frac{5}{2})^2=\\frac{25}{4}$。",
-          "say": "相鄰差每走一步，至少縮成二十五分之四。差距像等比數列一樣縮，加起來也趨近零，所以是 Cauchy。",
+            {
+              "do": "write",
+              "line": "$a_1=0$，$a_{n+1}=\\dfrac1{3-a_n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有界：$0\\le a_n\\le\\frac12$ ⇒ $3-a_n\\ge\\frac52$，$a_{n+1}\\in[\\frac13,\\frac25]$（歸納法）"
+          ],
+          "say": "歸納法：a n 在 0 和 2 分之 1 之間，3 減 a n 就至少 2 分之 5，下一項還在範圍內。",
           "board": [
-            {"do":"write","line":"$|a_{n+1}-a_n|\\le{{c:\\frac{4}{25}}}|a_n-a_{n-1}|$"},
-            {"do":"circle","term":"c","label":"每步縮","on":"縮成"},
-            {"do":"write","line":"差距像等比縮 ⇒ 是 Cauchy","on":"等比數列"}
-          ] },
-        { "show": ["$L=\\frac{1}{3-L}$ ⇒ $L=\\frac{3\\pm\\sqrt{5}}{2}$"],
-          "say": "極限存在之後才解方程：L 平方減三 L 加一等於零，兩個根。要哪一個？",
+            {
+              "do": "write",
+              "line": "有界：$0\\le a_n\\le\\frac12$ ⇒ $3-a_n\\ge\\frac52$，$a_{n+1}\\in[\\frac13,\\frac25]$（歸納法）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一步差距至少縮成 $\\frac4{25}$：",
+            "$\\begin{aligned}|a_{n+1}-a_n|&=\\frac{|a_n-a_{n-1}|}{(3-a_n)(3-a_{n-1})}\\\\&\\le\\frac4{25}|a_n-a_{n-1}|\\end{aligned}$"
+          ],
+          "say": "關鍵：通分以後，分母是兩個至少 2 分之 5 的數相乘。所以每一步的差距，至少縮成前一步的 25 分之 4。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$L=\\frac{1}{3-L}$","on":"極限存在"},
-            {"do":"write","line":"$L^2-3L+1=0$","on":"L 平方"},
-            {"do":"write","line":"$L=\\frac{3\\pm\\sqrt{5}}{2}$","on":"兩個根"}
-          ] },
-        { "show": ["看圖：$y=x$ 與 $y=\\frac{1}{3-x}$ 的交點"],
-          "say": "畫出來：藍線是 y 等於 x，紅線是 y 等於三減 x 分之一。兩線的交點就是極限，落在零到二分之一裡。",
+            {
+              "do": "write",
+              "line": "每一步差距至少縮成 $\\frac4{25}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}|a_{n+1}-a_n|&=\\frac{|a_n-a_{n-1}|}{(3-a_n)(3-a_{n-1})}\\\\&\\le\\frac4{25}|a_n-a_{n-1}|\\end{aligned}}}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "至少#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=\\frac4{25}$：$|a_{k+1}-a_k|\\le\\frac13r^{k-1}$。$m>n$：",
+            "$\\begin{aligned}|a_m-a_n|&\\le\\sum_{k=n}^{m-1}\\frac13r^{k-1}<\\frac{1}{3}\\cdot\\frac{r^{n-1}}{1-r}\\\\&=\\frac{25}{63}r^{n-1}\\to0\\end{aligned}$"
+          ],
+          "say": "一路縮下去，任意兩項的距離拆成一步一步，被等比級數控制住，趨近 0。所以它是柯西數列。",
           "board": [
-            {"do":"plot","graph":{"window":[0,0.6,0,0.6],"curves":[{"expr":"x","domain":[0,0.6],"color":"blue"},{"expr":"1/(3-x)","domain":[0,0.6],"color":"red"}]}}
-          ] },
-        { "show": ["極限也在 $[0,\\frac{1}{2}]$ 裡"],
-          "note": "拿兩個根跟 $\\frac{1}{2}$ 比。",
-          "say": "判斷依據：所有項都在零到二分之一之間，極限也只能待在這個範圍，不會跑出去。拿兩個根跟二分之一比。",
+            {
+              "do": "write",
+              "line": "$r=\\frac4{25}$：$|a_{k+1}-a_k|\\le\\frac13r^{k-1}$。$m>n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}|a_m-a_n|&\\le\\sum_{k=n}^{m-1}\\frac13r^{k-1}<\\frac{1}{3}\\cdot\\frac{r^{n-1}}{1-r}\\\\&=\\frac{25}{63}r^{n-1}\\to0\\end{aligned}}$",
+              "on": "成一"
+            },
+            {
+              "do": "write",
+              "line": "　不是只有相鄰差 $\\to0$：這裡是任意兩項都被等比級數控制",
+              "color": "violet",
+              "on": "趨近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "收斂到 $L$，$L=\\frac1{3-L}$，$L^2-3L+1=0$，$L\\in[0,\\frac12]$：",
+            "$L=\\frac{3-\\sqrt5}2\\approx0.382$"
+          ],
+          "say": "所以它收斂。取極限解二次方程，L 在 0 和 2 分之 1 之間，取 2 分之 3 減根號 5，大約 0.382。",
           "board": [
-            {"do":"write","line":"極限也在 ${{rg:[0,\\frac{1}{2}]}}$ 裡","on":"極限也"},
-            {"do":"underline","term":"rg","label":"範圍","on":"這個範圍"}
-          ] }
-      ],
-      "key": "相鄰差每步縮固定比例，像幾何級數",
-      "predict": {
-        "ask": "極限是哪一個根？",
-        "options": [
-          {
-            "label": "$\\frac{3-\\sqrt{5}}{2}\\approx0.38197$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{3+\\sqrt{5}}{2}$",
-            "why": "它比 $\\frac{1}{2}$ 大，可是所有項都在 $[0,\\frac{1}{2}]$，極限也跑不出去。"
-          },
-          {
-            "label": "兩個都是",
-            "why": "極限若存在就唯一；用項的界 $[0,\\frac{1}{2}]$ 排除其中一個。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "收斂到 $L$，$L=\\frac1{3-L}$，$L^2-3L+1=0$，$L\\in[0,\\frac12]$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle L=\\frac{3-\\sqrt5}2\\approx0.382}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "之間"
+            },
+            {
+              "do": "write",
+              "line": "　另一根 $\\frac{3+\\sqrt5}2\\approx2.618$：每一項都 $\\le\\frac12$，離它超過 $2$，不可能是極限",
+              "color": "violet",
+              "on": "減根"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：收斂 ⇒ Cauchy",
+      "beats": [
+        {
+          "show": [
+            "策略：兩項都離 $L$ 不到 $\\frac\\varepsilon2$，彼此就不到 $\\varepsilon$"
+          ],
+          "say": "最後是兩個證明。先證收斂推得柯西：兩項都離 L 不到一半，彼此就不到艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：兩項都離 $L$ 不到 $\\frac\\varepsilon2$，彼此就不到 $\\varepsilon$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $a_n\\to L$，給定 $\\varepsilon>0$，取 $N$ 使 $n\\ge N\\Rightarrow|a_n-L|<\\frac\\varepsilon2$。對 $m,n\\ge N$：",
+            "$|a_m-a_n|\\le|a_m-L|+|L-a_n|<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare$"
+          ],
+          "say": "對艾普西隆一半找到 N。m、n 都大於等於 N 時，用三角不等式，距離小於兩個一半。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $a_n\\to L$，給定 $\\varepsilon>0$，取 $N$ 使 $n\\ge N\\Rightarrow|a_n-L|<\\frac\\varepsilon2$。對 $m,n\\ge N$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle |a_m-a_n|\\le|a_m-L|+|L-a_n|<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare}}$",
+              "on": "都大"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Cauchy ⇒ 有界：取 $\\varepsilon=1$，$n\\ge N$ 時 $|a_n|<|a_N|+1$"
+          ],
+          "say": "柯西數列有界，證法跟上一課的引理一樣：門檻之後離 a N 不到 1，前面有限項取最大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Cauchy ⇒ 有界：取 $\\varepsilon=1$，$n\\ge N$ 時 $|a_n|<|a_N|+1$"
+            },
+            {
+              "do": "write",
+              "line": "$M=\\max\\{|a_1|,\\dots,|a_{N-1}|,|a_N|+1\\}$",
+              "on": "之後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Cauchy ⇒ 收斂：策略：用完備性造出 $L$"
+          ],
+          "say": "柯西推得收斂：我們用完備性把 L 造出來。先取每條尾巴的上確界 s k，再取它們的下確界，叫做 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Cauchy ⇒ 收斂：策略：用完備性造出 $L$"
+            },
+            {
+              "do": "write",
+              "line": "$s_k=\\sup\\{a_m:m\\ge k\\}$（尾巴的上確界），$L=\\inf_k s_k$",
+              "on": "造出"
+            },
+            {
+              "do": "write",
+              "line": "　這個 $L$ 就是 12.18 的 $\\limsup a_n$",
+              "color": "violet",
+              "on": "再取"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "給定 $\\varepsilon>0$，取 $N$ 使 $m,n\\ge N\\Rightarrow|a_m-a_n|<\\frac\\varepsilon2$。固定 $n\\ge N$。"
+          ],
+          "say": "給定艾普西隆，對艾普西隆一半找 N。固定一個 n 大於等於 N。",
+          "board": [
+            {
+              "do": "write",
+              "line": "給定 $\\varepsilon>0$，取 $N$ 使 $m,n\\ge N\\Rightarrow|a_m-a_n|<\\frac\\varepsilon2$。固定 $n\\ge N$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$m\\ge N$ 時 $a_n-\\frac\\varepsilon2<a_m<a_n+\\frac\\varepsilon2$，所以",
+            "• $s_N\\le a_n+\\frac\\varepsilon2$（上界）"
+          ],
+          "say": "門檻之後每一項都在 a n 加減一半之內。所以 s N 不超過 a n 加一半；而每個 s k 都大於 a n 減一半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$m\\ge N$ 時 $a_n-\\frac\\varepsilon2<a_m<a_n+\\frac\\varepsilon2$，所以"
+            },
+            {
+              "do": "write",
+              "line": "• $s_N\\le a_n+\\frac\\varepsilon2$（上界）",
+              "on": "減一#1"
+            },
+            {
+              "do": "write",
+              "line": "• 每個 $s_k\\ge s_N\\ \\text{或}\\ s_k\\ge a_k>a_n-\\frac\\varepsilon2$",
+              "on": "加一"
+            },
+            {
+              "do": "write",
+              "line": "　$k<N$：$s_k\\ge s_N\\ge a_N>a_n-\\frac\\varepsilon2$",
+              "color": "violet",
+              "on": "都大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\inf s_k$：$a_n-\\frac\\varepsilon2\\le L\\le s_N\\le a_n+\\frac\\varepsilon2$"
+          ],
+          "say": "L 是下確界，所以 L 不小於 a n 減一半；L 又不超過 s N。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$L=\\inf s_k$：$a_n-\\frac\\varepsilon2\\le L\\le s_N\\le a_n+\\frac\\varepsilon2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $|a_n-L|\\le\\frac\\varepsilon2<\\varepsilon$，對所有 $n\\ge N$：$a_n\\to L$　$\\blacksquare$"
+          ],
+          "say": "所以 a n 跟 L 的距離小於艾普西隆，a n 收斂到 L。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $|a_n-L|\\le\\frac\\varepsilon2<\\varepsilon$，對所有 $n\\ge N$：$a_n\\to L$　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• Cauchy：$\\forall\\varepsilon\\ \\exists N\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon$，不用知道 $L$",
+            "• 在 $\\mathbb{R}$：收斂 $\\iff$ Cauchy；$\\Leftarrow$ 靠完備性（$\\mathbb{Q}$ 裡會失敗）"
+          ],
+          "say": "整理一下：柯西數列不用知道極限；在實數裡它等於收斂，靠的是完備性。相鄰差趨近 0 不夠。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Cauchy：$\\forall\\varepsilon\\ \\exists N\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon$，不用知道 $L$"
+            },
+            {
+              "do": "write",
+              "line": "• 在 $\\mathbb{R}$：收斂 $\\iff$ Cauchy；$\\Leftarrow$ 靠完備性（$\\mathbb{Q}$ 裡會失敗）",
+              "on": "列不"
+            },
+            {
+              "do": "write",
+              "line": "• 證收斂：把 $|a_m-a_n|$ 放大成會消去或等比的和",
+              "on": "實數"
+            },
+            {
+              "do": "write",
+              "line": "• 證發散：找兩項距離 $\\ge\\varepsilon$，例如 $H_{2n}-H_n\\ge\\frac12$",
+              "on": "靠的"
+            },
+            {
+              "do": "write",
+              "line": "• 相鄰差 $\\to0$ 不夠：$\\sqrt n$、$H_n$",
+              "on": "差趨"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Bolzano–Weierstrass"
+          ],
+          "say": "下一課，有界數列一定有收斂的子數列。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Bolzano–Weierstrass"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

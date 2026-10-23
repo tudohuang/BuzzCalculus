@@ -1,49 +1,129 @@
 {
   "id": "improper-singular",
   "title": "瑕積分 II：奇異點",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["improper-infinite", "lhopital", "u-sub-definite"],
-  "next": ["improper-p-test"],
-  "related": ["discontinuity-types"],
-  "objectives": [
-    "被積函數在端點附近無界時，用「從瑕點旁邊積起，再取極限」的定義計算。",
-    "瑕點在區間內部時，先在瑕點切開，兩邊各自收斂才算收斂。",
-    "一個積分同時有好幾個問題點（端點無界、區間無限）時，切成每段只有一個問題。"
+  "prerequisites": [
+    "improper-infinite",
+    "lhopital",
+    "u-sub-definite"
   ],
-  "visual": "畫 y = 1/√x 與 y = 1/x 在 (0, 1]，左端點 s 用滑桿往 0 推，即時顯示 ∫ₛ¹ 的值：1/√x 那塊停在 2 − 2√s → 2，1/x 那塊 −ln s 一直往上爬。兩條曲線在 x = 0 都衝上無窮高，但一條「瘦得夠快」。",
+  "next": [
+    "improper-p-test"
+  ],
+  "related": [
+    "discontinuity-types"
+  ],
+  "objectives": [
+    "被積函數在端點附近無界時，用「從瑕點旁邊積起，再取極限」的定義計算",
+    "瑕點在區間內部時，先在瑕點切開，兩邊各自收斂才算收斂",
+    "一個積分同時有好幾個問題點（端點無界、區間無限）時，切成每段只有一個問題"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 另一種瑕：函數衝到無窮高",
+      "heading": "① 函數衝到無窮高",
       "body": [
-        "$\\int_0^1\\frac{dx}{\\sqrt{x}}$ 的區間有限，但 $\\frac{1}{\\sqrt{x}}$ 在 $x\\to 0^+$ 時 $\\to\\infty$，曲線底下是一根無限高的尖刺。上一課是「區間無限長」，這一課是「函數無界」，處理方法一樣：先避開問題點，再取極限。"
+        "$x\\to0^+$ 時 $\\dfrac1{\\sqrt x}\\to\\infty$：$[0,1]$ 上無界",
+        "黎曼和需要 $f$ 有界，4.10 的定理也要求 $f$ 在 $[0,1]$ 連續：都不能直接用",
+        "這種點叫瑕點（奇異點）：$f$ 在它附近無界",
+        "同樣的辦法：避開瑕點，先從 $s$ 積到 $1$（$0<s<1$）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1\\frac{dx}{\\sqrt x}",
+        "\\int_s^1\\frac{dx}{\\sqrt x}=\\Big[2\\sqrt x\\Big]_s^1=2-2\\sqrt s\\ \\xrightarrow{s\\to0^+}\\ 2"
+      ]
     },
     {
       "heading": "② 定義：從瑕點旁邊積起",
       "body": [
-        "$f$ 在 $(a,b]$ 上連續、在 $a$ 附近無界：$\\int_a^b f\\,dx=\\lim_{s\\to a^+}\\int_s^b f\\,dx$。瑕點在右端點 $b$ 時用 $t\\to b^-$。極限是有限數叫收斂。",
-        "$\\int_s^1\\frac{dx}{\\sqrt{x}}=2-2\\sqrt{s}\\to 2$，收斂；$\\int_s^1\\frac{dx}{x}=-\\ln s\\to\\infty$，發散。"
+        "$f$ 在 $(a,b]$ 連續，在 $a$ 附近無界：",
+        "瑕點在右端 $b$：$\\displaystyle\\int_a^bf\\,dx=\\lim_{t\\to b^-}\\int_a^tf\\,dx$",
+        "極限存在（有限）：收斂；否則：發散",
+        "如果 $f$ 其實在 $[a,b]$ 連續，$\\left|\\int_a^sf\\right|\\le M(s-a)\\to0$，新定義和原本的積分一樣",
+        "例：$\\displaystyle\\int_0^1\\frac{dx}x=\\lim_{s\\to0^+}(-\\ln s)=\\infty$，發散",
+        "例：$\\displaystyle\\int_0^1\\ln x\\,dx$（$\\ln x\\to-\\infty$，瑕點在 $0$）",
+        "$s\\ln s$ 是 $0\\cdot(-\\infty)$ 型，寫成 $\\dfrac{\\ln s}{1/s}$ 用 L'Hôpital："
       ],
-      "tex": ["\\int_a^{b}f(x)\\,dx=\\lim_{s\\to a^{+}}\\int_s^{b}f(x)\\,dx"],
-      "collapsible": false
+      "tex": [
+        "\\int_a^bf\\,dx=\\lim_{s\\to a^+}\\int_s^bf\\,dx",
+        "\\int_s^1\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_s^1=-1-s\\ln s+s",
+        "\\lim_{s\\to0^+}\\frac{\\ln s}{1/s}=\\lim_{s\\to0^+}\\frac{1/s}{-1/s^2}=\\lim_{s\\to0^+}(-s)=0",
+        "\\int_0^1\\ln x\\,dx=-1"
+      ]
     },
     {
-      "heading": "③ 瑕點在中間：一定要先切開",
+      "heading": "② 試一題",
       "body": [
-        "$\\int_{-1}^1\\frac{dx}{x^2}$：$\\frac{1}{x^2}$ 在 $x=0$ 無界。直接套微積分基本定理得 $\\left[-\\frac{1}{x}\\right]_{-1}^1=-2$，一個正函數積出負數，顯然不對——基本定理要求 $f$ 在整個區間連續，這裡不成立。",
-        "正確做法：切成 $\\int_{-1}^0+\\int_0^1$，兩半各自收斂才算收斂。$\\int_s^1\\frac{dx}{x^2}=\\frac{1}{s}-1\\to\\infty$，所以整個積分發散。"
+        "右端瑕點的例子：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx$",
+        "先在 $[0,t]$ 上換元：$u=1-x^2$，$du=-2x\\,dx$",
+        "$t\\to1^-$：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx=1$",
+        "換元是在 $[0,t]$ 這個正常的區間上做的，做完才取極限"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^t\\frac{x\\,dx}{\\sqrt{1-x^2}}=\\frac12\\int_{1-t^2}^{1}\\frac{du}{\\sqrt u}=1-\\sqrt{1-t^2}"
+      ]
     },
     {
-      "heading": "④ 好幾個問題點：每段只留一個",
+      "heading": "③ 瑕點在中間：先切開",
       "body": [
-        "$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$ 在 $x=0$ 無界、區間又無限長。在中間任一點（例如 $1$）切開，每一段只處理一個問題；兩段都收斂才算收斂。",
-        "也要分辨「假的瑕點」：$\\frac{\\sin x}{x}$ 在 $x=0$ 沒定義，但極限是 $1$，補上 $f(0)=1$ 就是連續函數（可去不連續，見〈不連續的種類〉），$\\int_0^1\\frac{\\sin x}{x}\\,dx$ 是普通的定積分。"
+        "被積函數 $\\dfrac1{x^2}>0$，積分卻是負的？錯了",
+        "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 無界，基本定理不能跨過 $0$ 用",
+        "規則：瑕點 $c$ 在 $(a,b)$ 內部，就在 $c$ 切開，",
+        "兩邊都收斂才收斂",
+        "右半：$\\displaystyle\\int_0^1\\frac{dx}{x^2}=\\lim_{s\\to0^+}\\Big(\\frac1s-1\\Big)=\\infty$",
+        "所以 $\\displaystyle\\int_{-1}^1\\frac{dx}{x^2}$ 發散（不是 $-2$）",
+        "跟上一課一樣，兩邊的極限要各自獨立；$\\int_{-1}^1\\frac{dx}x$ 對稱地一起取會得到 $0$，但它是發散的"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_{-1}^{1}\\frac{dx}{x^2}\\ \\overset{?}{=}\\ \\Big[-\\frac1x\\Big]_{-1}^{1}=-1-1=-2",
+        "\\int_a^bf=\\int_a^cf+\\int_c^bf"
+      ]
+    },
+    {
+      "heading": "④ 好幾個問題點",
+      "body": [
+        "兩個問題：$x=0$ 無界、上限是 $\\infty$",
+        "規則：切開，讓每一段只有一個問題，每一段各自收斂"
+      ],
+      "tex": [
+        "\\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}"
+      ]
+    },
+    {
+      "heading": "④ 每段各自算",
+      "body": [
+        "在 $[s,t]\\subset(0,\\infty)$ 上換元 $u=\\sqrt x$（$x=u^2$，$dx=2u\\,du$）：",
+        "左段（$t=1$，$s\\to0^+$）：",
+        "右段（$s=1$，$t\\to\\infty$）："
+      ],
+      "tex": [
+        "\\int_s^t\\frac{dx}{\\sqrt x(1+x)}=\\int_{\\sqrt s}^{\\sqrt t}\\frac{2\\,du}{1+u^2}",
+        "=2\\arctan\\sqrt t-2\\arctan\\sqrt s",
+        "\\int_0^1=\\lim_{s\\to0^+}\\Big(2\\cdot\\frac\\pi4-2\\arctan\\sqrt s\\Big)=\\frac\\pi2",
+        "\\int_1^{\\infty}=\\lim_{t\\to\\infty}\\Big(2\\arctan\\sqrt t-\\frac\\pi2\\Big)=\\frac\\pi2",
+        "\\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}=\\frac\\pi2+\\frac\\pi2=\\pi"
+      ]
+    },
+    {
+      "heading": "④ 排排看",
+      "body": [
+        "多個瑕點也一樣：例如 $\\displaystyle\\int_{0}^{2}\\frac{dx}{\\sqrt{x}\\,(x-1)}$ 有 $0$ 與 $1$ 兩個瑕點",
+        "切成 $[0,\\frac12]$、$[\\frac12,1]$、$[1,2]$，每段只有一個瑕點",
+        "這一個在 $x=1$ 附近像 $\\frac1{x-1}$，那一段發散，所以整個發散"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 瑕點：$f$ 在附近無界的點；黎曼和、基本定理都不能直接用",
+        "• 定義：從瑕點旁邊積起，$\\displaystyle\\lim_{s\\to a^+}\\int_s^bf$",
+        "• 瑕點在中間：先切開，兩邊各自收斂；直接代會算出 $\\int_{-1}^1\\frac{dx}{x^2}=-2$ 這種錯",
+        "• 好幾個問題點：切到每段只剩一個，每段各自收斂",
+        "• 換元、分部積分：在 $[s,t]$ 上做完，最後才取極限",
+        "下一課：p 判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,247 +171,909 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^1\\ln x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^1\\frac{dx}{\\sqrt{1-x}}=$？（瑕點在右端 $x=1$）",
       "options": [
-        { "label": "$-1$", "correct": true },
-        { "label": "發散，因為 $\\ln 0$ 沒有定義", "why": "$\\ln x$ 在 $0$ 無界，但無界不等於發散：$\\int_s^1\\ln x\\,dx=-1-s\\ln s+s\\to-1$（$s\\ln s\\to 0$）。" },
-        { "label": "$1$", "why": "$\\ln x$ 在 $(0,1)$ 是負的，面積帶負號。" }
+        {
+          "label": "$2$",
+          "correct": true
+        },
+        {
+          "label": "$-2$",
+          "why": "換元 $u=1-x$ 時 $du=-dx$，負號要跟上下限一起處理"
+        },
+        {
+          "label": "發散",
+          "why": "瑕點附近像 $\\frac1{\\sqrt u}$，跟 $\\int_0^1\\frac{dx}{\\sqrt x}$ 一樣收斂"
+        },
+        {
+          "label": "$1$",
+          "why": "反導函數是 $-2\\sqrt{1-x}$，係數是 $2$"
+        }
       ]
     },
     {
-      "ask": "$\\int_{-1}^1\\frac{dx}{x^2}$ 是？",
+      "ask": "$\\displaystyle\\int_{-1}^{8}x^{-1/3}\\,dx=$？",
       "options": [
-        { "label": "發散", "correct": true },
-        { "label": "$-2$", "why": "那是直接套 $\\left[-\\frac{1}{x}\\right]_{-1}^1$ 的結果；$\\frac{1}{x^2}$ 在 $0$ 無界，基本定理不能跨過瑕點。正函數也不可能積出負數。" },
-        { "label": "$2$", "why": "切開後 $\\int_s^1\\frac{dx}{x^2}=\\frac{1}{s}-1\\to\\infty$，每一半都發散。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^1\\frac{\\sin x}{x}\\,dx$ 需要當瑕積分處理嗎？",
-      "options": [
-        { "label": "不需要：$x\\to 0$ 時 $\\frac{\\sin x}{x}\\to 1$，補上 $f(0)=1$ 就是連續函數", "correct": true },
-        { "label": "需要，而且發散，因為分母在 $0$ 是 $0$", "why": "分母是 $0$ 不代表無界；$\\frac{\\sin x}{x}$ 在 $0$ 附近有界（$\\to 1$）。" },
-        { "label": "需要，用 $p$ 判別 $p=1$ 所以發散", "why": "$p$ 判別比的是 $\\frac{1}{x^p}$，但 $\\frac{\\sin x}{x}$ 在 $0$ 附近像 $1$，不像 $\\frac{1}{x}$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$ 有幾個問題點？",
-      "options": [
-        { "label": "兩個：$x\\to 0^+$ 無界、$x\\to\\infty$ 區間無限，要切開分別處理", "correct": true },
-        { "label": "只有 $x\\to\\infty$", "why": "$x\\to 0^+$ 時 $\\frac{1}{\\sqrt{x}}\\to\\infty$，這一端也是瑕點。" },
-        { "label": "只有 $x=0$", "why": "上限是 $\\infty$，那一端也要取極限。" }
+        {
+          "label": "$\\dfrac92$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{15}2$",
+          "why": "$\\int_{-1}^0$ 是 $0-\\frac32(-1)^{2/3}=-\\frac32$，是負的"
+        },
+        {
+          "label": "發散",
+          "why": "瑕點附近像 $|x|^{-1/3}$，次方小於 $1$，兩邊都收斂"
+        },
+        {
+          "label": "$6$",
+          "why": "只算了右半；左半 $\\int_{-1}^0=-\\frac32$ 也要加"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "衝到無窮高",
+      "title": "函數衝到無窮高",
       "beats": [
-        { "show": ["$\\int_0^1\\frac{dx}{\\sqrt{x}}$"],
-          "note": "$x\\to 0^+$ 時 $\\frac{1}{\\sqrt{x}}\\to\\infty$。",
-          "say": "這次區間有限，可是根號 x 分之一在零的右邊衝到無限大，底下是一根無限高的尖刺。",
+        {
+          "show": [
+            "$\\int_0^1\\frac{dx}{\\sqrt x}$"
+          ],
+          "say": "上一課是區間無限長。這一課是另一種瑕：區間有限，但函數本身衝到無限高。看根號 x 分之一，從 0 積到 1。",
           "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{dx}{\\sqrt{x}}$"},
-            {"do":"write","line":"$x\\to0^+$：$\\frac{1}{\\sqrt{x}}\\to\\infty$","on":"在零的右邊"}
-          ] },
-        { "show": ["$\\int_a^b f\\,dx=\\lim_{s\\to a^+}\\int_s^b f\\,dx$"],
-          "note": "先避開瑕點，再取極限。",
-          "say": "處理方法跟無窮區間一樣：從瑕點旁邊的 s 積起，再讓 s 靠近瑕點。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{dx}{\\sqrt x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to0^+$ 時 $\\dfrac1{\\sqrt x}\\to\\infty$：$[0,1]$ 上無界"
+          ],
+          "say": "x 從右邊靠近 0，根號 x 分之一趨近無限大。函數在 0 到 1 上沒有上界。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_a^b f\\,dx={{lm:\\lim_{s\\to a^+}}}\\int_{{{s:s}}}^b f\\,dx$","on":"處理方法"},
-            {"do":"focus","term":"s","label":"避開瑕點","on":"瑕點旁邊的 s"},
-            {"do":"underline","term":"lm","label":"再取極限","on":"再讓 s"}
-          ] },
-        { "show": ["$\\int_s^1\\frac{dx}{\\sqrt{x}}=2-2\\sqrt{s}\\to 2$"],
-          "note": "收斂。",
-          "say": "根號 x 分之一從 s 積到一，是二減二根號 s。s 趨近零，極限是二，收斂。",
+            {
+              "do": "write",
+              "line": "$x\\to0^+$ 時 $\\dfrac1{\\sqrt x}\\to\\infty$：$[0,1]$ 上無界"
+            }
+          ]
+        },
+        {
+          "show": [
+            "黎曼和需要 $f$ 有界，4.10 的定理也要求 $f$ 在 $[0,1]$ 連續：都不能直接用"
+          ],
+          "say": "黎曼積分的定義要求函數有界，微積分基本定理也要求整個閉區間連續。這裡兩個條件都不成立，不能直接算。",
           "board": [
-            {"do":"write","line":"$\\int_s^1\\frac{dx}{\\sqrt{x}}=2-2\\sqrt{s}\\to{{two:2}}$","on":"從 s 積到一"},
-            {"do":"box","term":"two","color":"green","label":"收斂","on":"極限是二"}
-          ] },
-        { "show": ["$(x\\ln x-x)'=\\ln x$"],
-          "note": "$\\ln x$ 的反導函數。",
-          "say": "自然對數 x 的反導函數是 x ln x 減 x。微分驗證：ln x 加一減一，剛好是 ln x。",
+            {
+              "do": "write",
+              "line": "黎曼和需要 $f$ 有界，4.10 的定理也要求 $f$ 在 $[0,1]$ 連續：都不能直接用",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這種點叫瑕點（奇異點）：$f$ 在它附近無界",
+              "color": "violet",
+              "on": "整個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的辦法：避開瑕點，先從 $s$ 積到 $1$（$0<s<1$）"
+          ],
+          "say": "辦法跟上一課一樣：先避開問題。從 s 開始積到 1，s 是一個比 0 大一點的數，這是普通的定積分。",
           "board": [
-            {"do":"write","line":"$(x\\ln x-x)'=\\ln x+1-1={{r:\\ln x}}$"},
-            {"do":"underline","term":"r","color":"blue","on":"剛好是"}
-          ] },
-        { "show": ["看 $s\\ln s$ 的極限"],
-          "note": "沒定義不等於發散。",
-          "say": "從 s 積到一，代進去會剩下 s ln s 這一項。ln 在零沒定義，不代表發散，要看極限。",
+            {
+              "do": "write",
+              "line": "同樣的辦法：避開瑕點，先從 $s$ 積到 $1$（$0<s<1$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "s 往 0 靠：面積趨近 2"
+          ],
+          "say": "圖上把起點 s 往 0 推。",
           "board": [
-            {"do":"write","line":"$\\int_s^1\\ln x\\,dx$ 要看 ${{p:s\\ln s}}$ 的極限"},
-            {"do":"underline","term":"p","color":"gold","label":"看極限","on":"沒定義"}
-          ] },
-        { "show": ["$\\int_s^1\\frac{dx}{x}=-\\ln s\\to\\infty$"],
-          "note": "發散。",
-          "say": "換成 x 分之一，積出來是負的自然對數 s，s 趨近零時衝到無限大，發散。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "spike0",
+                  "window": [
+                    0,
+                    1.2,
+                    0,
+                    6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/sqrt(x)",
+                      "color": "blue",
+                      "label": "y = 1/√x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/sqrt(x)",
+                      "from": "s",
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "s": {
+                      "min": 0.003,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "起點 s"
+                    }
+                  },
+                  "readout": "從 s 積到 1：2 − 2√s = {2-2*sqrt(s)}",
+                  "height": 270
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "從 s 積到 1：2 − 2√s = 0.5858",
+              "on": "推。"
+            },
+            {
+              "do": "write",
+              "line": "s 往 0 靠：面積趨近 2",
+              "color": "violet",
+              "at": 0.6666666666666666
+            }
+          ]
+        },
+        {
+          "show": [
+            "函數衝到無窮高"
+          ],
+          "say": "藍色那塊越來越高，但面積是 2 減 2 倍根號 s，一直往 2 靠，不會超過 2。",
           "board": [
-            {"do":"write","line":"$\\int_s^1\\frac{dx}{x}=-\\ln s\\to{{inf:\\infty}}$","on":"換成 x"},
-            {"do":"underline","term":"inf","label":"發散","on":"衝到無限大"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "spike0",
+                  "window": [
+                    0,
+                    1.2,
+                    0,
+                    6
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/sqrt(x)",
+                      "color": "blue",
+                      "label": "y = 1/√x"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/sqrt(x)",
+                      "from": "s",
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "s": {
+                      "min": 0.003,
+                      "max": 0.6,
+                      "value": 0.5,
+                      "label": "起點 s"
+                    }
+                  },
+                  "readout": "從 s 積到 1：2 − 2√s = {2-2*sqrt(s)}",
+                  "height": 270
+                },
+                "vals": {
+                  "s": 0.003
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "從 s 積到 1：2 − 2√s = 1.89",
+              "on": "倍根"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_s^1\\frac{dx}{\\sqrt x}=\\Big[2\\sqrt x\\Big]_s^1=2-2\\sqrt s\\ \\xrightarrow{s\\to0^+}\\ 2$"
+          ],
+          "say": "算出來：反導函數是 2 倍根號 x，從 s 到 1 是 2 減 2 倍根號 s。s 趨近 0，極限是 2。無限高，面積卻是有限的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_s^1\\frac{dx}{\\sqrt x}=\\Big[2\\sqrt x\\Big]_s^1=2-2\\sqrt s\\ \\xrightarrow{s\\to0^+}\\ 2}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "倍根#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義：從瑕點旁邊積起",
+      "beats": [
+        {
+          "show": [
+            "$f$ 在 $(a,b]$ 連續，在 $a$ 附近無界：",
+            "$\\int_a^bf\\,dx=\\lim_{s\\to a^+}\\int_s^bf\\,dx$"
+          ],
+          "say": "定義：f 在 a 到 b 連續，只有左端點 a 是瑕點。就從 s 積到 b，再讓 s 從右邊靠近 a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f$ 在 $(a,b]$ 連續，在 $a$ 附近無界："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_a^bf\\,dx=\\lim_{s\\to a^+}\\int_s^bf\\,dx}}$",
+              "on": "有左"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "再讓"
+            }
+          ]
+        },
+        {
+          "show": [
+            "瑕點在右端 $b$：$\\displaystyle\\int_a^bf\\,dx=\\lim_{t\\to b^-}\\int_a^tf\\,dx$"
+          ],
+          "say": "瑕點在右端點，就積到 t，讓 t 從左邊靠近 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "瑕點在右端 $b$：$\\displaystyle\\int_a^bf\\,dx=\\lim_{t\\to b^-}\\int_a^tf\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限存在（有限）：收斂；否則：發散"
+          ],
+          "say": "極限是有限的數就收斂，否則就發散。跟上一課完全一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極限存在（有限）：收斂；否則：發散"
+            },
+            {
+              "do": "write",
+              "line": "　如果 $f$ 其實在 $[a,b]$ 連續，$\\left|\\int_a^sf\\right|\\le M(s-a)\\to0$，新定義和原本的積分一樣",
+              "color": "violet",
+              "on": "就發"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^1\\frac{dx}x=\\lim_{s\\to0^+}(-\\ln s)=\\infty$，發散"
+          ],
+          "say": "例子：x 分之一，從 s 積到 1，是負的自然對數 s。s 趨近 0，自然對數趨近負無限大，所以積分是無限大，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^1\\frac{dx}x=\\lim_{s\\to0^+}(-\\ln s)=\\infty$，發散",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^1\\ln x\\,dx$（$\\ln x\\to-\\infty$，瑕點在 $0$）"
+          ],
+          "say": "再一個例子：自然對數 x 從 0 積到 1。自然對數在 0 附近趨近負無限大，0 是瑕點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^1\\ln x\\,dx$（$\\ln x\\to-\\infty$，瑕點在 $0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_s^1\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_s^1=-1-s\\ln s+s$"
+          ],
+          "say": "反導函數是 x 乘自然對數 x 減 x。從 s 到 1，得到負 1，減 s 乘自然對數 s，加 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_s^1\\ln x\\,dx=\\Big[x\\ln x-x\\Big]_s^1=-1-s\\ln s+s$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s\\ln s$ 是 $0\\cdot(-\\infty)$ 型，寫成 $\\dfrac{\\ln s}{1/s}$ 用 L'Hôpital：",
+            "$\\lim_{s\\to0^+}\\frac{\\ln s}{1/s}=\\lim_{s\\to0^+}\\frac{1/s}{-1/s^2}=\\lim_{s\\to0^+}(-s)=0$"
+          ],
+          "say": "s 乘自然對數 s，是 0 乘負無限大的型。寫成 s 分之一分之自然對數 s，用羅必達法則，上下各自微分，化簡成負 s，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s\\ln s$ 是 $0\\cdot(-\\infty)$ 型，寫成 $\\dfrac{\\ln s}{1/s}$ 用 L'Hôpital："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{s\\to0^+}\\frac{\\ln s}{1/s}=\\lim_{s\\to0^+}\\frac{1/s}{-1/s^2}=\\lim_{s\\to0^+}(-s)=0$",
+              "on": "自然#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^1\\ln x\\,dx=-1$"
+          ],
+          "say": "所以積分是負 1，收斂。函數在 0 到 1 都是負的，面積是負的，合理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_0^1\\ln x\\,dx=-1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "都是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1\\frac{dx}{\\sqrt{1-x}}=$？（瑕點在右端 $x=1$）"
+          ],
+          "say": "試一題，這次瑕點在右端點。先積到 t，再讓 t 靠近 1。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "瑕點在中間",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_{-1}^1\\frac{dx}{x^2}=\\left[-\\frac{1}{x}\\right]_{-1}^1=-2$？"],
-          "note": "正函數積出負數，顯然不對。",
-          "say": "x 平方分之一從負一積到一，直接代反導函數得到負二。正的函數積出負數，一定哪裡錯了。",
+        {
+          "show": [
+            "右端瑕點的例子：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx$"
+          ],
+          "say": "再看一個右端瑕點、要用換元的例子：x 除以根號 1 減 x 平方。",
           "board": [
-            {"do":"write","line":"$\\int_{-1}^1\\frac{dx}{x^2}$"},
-            {"do":"write","line":"$=\\left[-\\frac{1}{x}\\right]_{-1}^1={{w:-2}}$","on":"直接代"},
-            {"do":"strike","term":"w","label":"不可能","on":"正的函數"}
-          ] },
-        { "show": ["基本定理要求 $f$ 在整個區間連續"],
-          "note": "$\\frac{1}{x^2}$ 在 $0$ 無界。",
-          "say": "微積分基本定理要求函數在整個區間連續，可是零在區間中間，函數在那裡無界。",
+            {
+              "do": "write",
+              "line": "右端瑕點的例子：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先在 $[0,t]$ 上換元：$u=1-x^2$，$du=-2x\\,dx$",
+            "$\\int_0^t\\frac{x\\,dx}{\\sqrt{1-x^2}}=\\frac12\\int_{1-t^2}^{1}\\frac{du}{\\sqrt u}=1-\\sqrt{1-t^2}$"
+          ],
+          "say": "一樣先在有限區間 0 到 t 上做定積分換元，u 等於 1 減 x 平方。上下限跟著換，負號用來把上下限對調，得到 1 減根號 1 減 t 平方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"基本定理：$f$ 在整個區間連續","on":"微積分"},
-            {"do":"write","line":"$\\frac{1}{x^2}$ 在 ${{z:0}}$ 無界","on":"零在區間中間"},
-            {"do":"circle","term":"z","color":"red","label":"瑕點","on":"那裡"}
-          ] },
-        { "show": ["切開：$\\int_{-1}^0+\\int_0^1$"],
-          "note": "$\\int_s^1\\frac{dx}{x^2}=\\frac{1}{s}-1\\to\\infty$",
-          "say": "正確做法是在零切開。右半從 s 積到一，是 s 分之一減一，衝到無限大，所以整個發散。",
+            {
+              "do": "write",
+              "line": "先在 $[0,t]$ 上換元：$u=1-x^2$，$du=-2x\\,dx$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^t\\frac{x\\,dx}{\\sqrt{1-x^2}}=\\frac12\\int_{1-t^2}^{1}\\frac{du}{\\sqrt u}=1-\\sqrt{1-t^2}$",
+              "on": "上下#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t\\to1^-$：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx=1$"
+          ],
+          "say": "t 從左邊趨近 1，根號那項趨近 0，答案是 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_{-1}^1=\\int_{-1}^0+\\int_0^1$","on":"正確做法"},
-            {"do":"write","line":"$\\int_s^1\\frac{dx}{x^2}=\\frac{1}{s}-1\\to{{inf:\\infty}}$","on":"右半從"},
-            {"do":"underline","term":"inf","label":"發散","on":"衝到無限大"}
-          ] }
+            {
+              "do": "write",
+              "line": "$t\\to1^-$：$\\displaystyle\\int_0^1\\frac{x}{\\sqrt{1-x^2}}\\,dx=1$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　換元是在 $[0,t]$ 這個正常的區間上做的，做完才取極限",
+              "color": "violet",
+              "on": "那項"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "瑕點在中間：先切開",
+      "beats": [
+        {
+          "show": [
+            "$\\int_{-1}^{1}\\frac{dx}{x^2}\\ \\overset{?}{=}\\ \\Big[-\\frac1x\\Big]_{-1}^{1}=-1-1=-2$"
+          ],
+          "say": "最常見的陷阱：負 1 到 1 的 x 平方分之一。直接套反導函數，負 x 分之一，得到負 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{-1}^{1}\\frac{dx}{x^2}\\ \\overset{?}{=}\\ \\Big[-\\frac1x\\Big]_{-1}^{1}=-1-1=-2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數 $\\dfrac1{x^2}>0$，積分卻是負的？錯了"
+          ],
+          "say": "但是被積函數一直是正的，積分怎麼會是負的？一定是哪裡錯了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "被積函數 $\\dfrac1{x^2}>0$，積分卻是負的？錯了",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 無界，基本定理不能跨過 $0$ 用"
+          ],
+          "say": "錯在 0 是瑕點，就藏在區間中間。微積分基本定理要求整個區間連續，不能跨過 0 用。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 無界，基本定理不能跨過 $0$ 用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：瑕點 $c$ 在 $(a,b)$ 內部，就在 $c$ 切開，",
+            "$\\int_a^bf=\\int_a^cf+\\int_c^bf$"
+          ],
+          "say": "規則：瑕點在區間內部，就在瑕點切開成兩個積分，每一個的瑕點都在端點上。兩邊都收斂，整個才收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則：瑕點 $c$ 在 $(a,b)$ 內部，就在 $c$ 切開，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^bf=\\int_a^cf+\\int_c^bf$",
+              "on": "切開"
+            },
+            {
+              "do": "write",
+              "line": "兩邊都收斂才收斂",
+              "color": "gold",
+              "on": "端點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右半：$\\displaystyle\\int_0^1\\frac{dx}{x^2}=\\lim_{s\\to0^+}\\Big(\\frac1s-1\\Big)=\\infty$"
+          ],
+          "say": "右半邊，從 s 積到 1，是 s 分之一減 1，趨近無限大。光右半邊就發散了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右半：$\\displaystyle\\int_0^1\\frac{dx}{x^2}=\\lim_{s\\to0^+}\\Big(\\frac1s-1\\Big)=\\infty$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\displaystyle\\int_{-1}^1\\frac{dx}{x^2}$ 發散（不是 $-2$）"
+          ],
+          "say": "所以整個積分發散，不是負 2。左半邊也發散，不過不用算了：一半發散就夠了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\displaystyle\\int_{-1}^1\\frac{dx}{x^2}$ 發散（不是 $-2$）",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　跟上一課一樣，兩邊的極限要各自獨立；$\\int_{-1}^1\\frac{dx}x$ 對稱地一起取會得到 $0$，但它是發散的",
+              "color": "violet",
+              "on": "也發"
+            }
+          ]
+        }
       ],
-      "key": "基本定理不能跨過瑕點，先切開",
       "check": 1
     },
     {
       "title": "好幾個問題點",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"],
-          "note": "$x=0$ 無界，上限又是 $\\infty$。",
-          "say": "這一題兩頭都有問題：零的地方函數無界，上面又是無限長的區間。",
+        {
+          "show": [
+            "$\\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}$"
+          ],
+          "say": "最後，一個積分可能同時有好幾個問題。看根號 x 乘 1 加 x 分之一，從 0 積到無限大。",
           "board": [
-            {"do":"write","line":"$\\int_{{{lo:0}}}^{{{hi:\\infty}}}\\frac{dx}{\\sqrt{x}(1+x)}$"},
-            {"do":"focus","term":"lo","color":"red","label":"無界","on":"零的地方"},
-            {"do":"focus","term":"hi","color":"red","label":"無限長","on":"上面又是"}
-          ] },
-        { "show": ["在 $1$ 切開：$\\int_0^1+\\int_1^{\\infty}$"],
-          "note": "每一段只處理一個問題。",
-          "say": "在中間隨便找一點，例如一，切開。每一段只留一個問題點，兩段都收斂才算收斂。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個問題：$x=0$ 無界、上限是 $\\infty$"
+          ],
+          "say": "它有兩個問題：在 0 附近無界，而且上限是無限大。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}={{a:\\int_0^1}}+{{b:\\int_1^{\\infty}}}$","on":"例如一"},
-            {"do":"underline","term":"a","label":"無界","on":"每一段"},
-            {"do":"underline","term":"b","label":"無限長","on":"兩段都"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "兩個問題：$x=0$ 無界、上限是 $\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：切開，讓每一段只有一個問題，每一段各自收斂"
+          ],
+          "say": "規則：切開，讓每一段只剩一個問題，在一個端點上。每一段都收斂，整個才收斂。切點隨便取，跟上一課一樣不影響結果。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則：切開，讓每一段只有一個問題，每一段各自收斂",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "y = 1/(√x(1+x))。左段：0 附近無界；右段：延伸到 ∞"
+          ],
+          "say": "圖上，在 x 等於 1 切開。左段的問題是往上衝，右段的問題是無限長。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "two",
+                  "window": [
+                    0,
+                    8,
+                    0,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/(sqrt(x)*(1+x))",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/(sqrt(x)*(1+x))",
+                      "from": 0.002,
+                      "to": 1,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "1/(sqrt(x)*(1+x))",
+                      "from": 1,
+                      "to": 8,
+                      "color": "green"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "label": "x = 1",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "y = 1/(√x(1+x))。左段：0 附近無界；右段：延伸到 ∞",
+              "color": "violet",
+              "on": "的問#1"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "換元算出來",
+      "title": "每段各自算",
       "beats": [
-        { "show": ["$u=\\sqrt{x}$，$x=u^2$，$dx=2u\\,du$"],
-          "note": "$x$ 從 $0$ 到 $\\infty$，$u$ 也是。",
-          "say": "令 u 等於根號 x，dx 就是二 u du。x 從零到無限大，u 也從零到無限大。",
+        {
+          "show": [
+            "在 $[s,t]\\subset(0,\\infty)$ 上換元 $u=\\sqrt x$（$x=u^2$，$dx=2u\\,du$）：",
+            "$\\int_s^t\\frac{dx}{\\sqrt x(1+x)}=\\int_{\\sqrt s}^{\\sqrt t}\\frac{2\\,du}{1+u^2}$"
+          ],
+          "say": "先在一般的區間 s 到 t 上換元：令 u 等於根號 x，d x 等於 2u d u。根號 x 跟 u 約掉，得到 1 加 u 平方分之 2。",
           "board": [
-            {"do":"write","line":"$u=\\sqrt{x}$，$x=u^2$，$dx={{d:2u\\,du}}$"},
-            {"do":"focus","term":"d","color":"gold","on":"二 u du"},
-            {"do":"write","line":"$x:0\\to\\infty$，$u:0\\to\\infty$","on":"x 從零"}
-          ] },
-        { "show": ["$\\frac{2u\\,du}{u(1+u^2)}$"],
-          "say": "代進去，根號 x 變成 u，分子分母都有一個 u。",
+            {
+              "do": "write",
+              "line": "在 $[s,t]\\subset(0,\\infty)$ 上換元 $u=\\sqrt x$（$x=u^2$，$dx=2u\\,du$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_s^t\\frac{dx}{\\sqrt x(1+x)}=\\int_{\\sqrt s}^{\\sqrt t}\\frac{2\\,du}{1+u^2}$",
+              "on": "2u"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=2\\arctan\\sqrt t-2\\arctan\\sqrt s$"
+          ],
+          "say": "反導函數是 2 倍反正切，上下限代進去。",
           "board": [
-            {"do":"write","line":"$\\frac{2u\\,du}{{{m:u}}(1+u^2)}$"},
-            {"do":"underline","term":"m","color":"blue","label":"分母的 u","on":"分子分母"}
-          ] },
-        { "show": ["$(\\arctan u)'=\\frac{1}{1+u^2}$"],
-          "note": "所以 $\\frac{1}{1+u^2}$ 的反導函數是 $\\arctan u$。",
-          "say": "這一題要記住：arctan u 的導數是一加 u 平方分之一，所以它就是這個分式的反導函數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle =2\\arctan\\sqrt t-2\\arctan\\sqrt s$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左段（$t=1$，$s\\to0^+$）：",
+            "$\\int_0^1=\\lim_{s\\to0^+}\\Big(2\\cdot\\frac\\pi4-2\\arctan\\sqrt s\\Big)=\\frac\\pi2$"
+          ],
+          "say": "左段，t 取 1，讓 s 趨近 0：2 倍的 4 分之派，減掉趨近 0 的項，是 2 分之派。",
           "board": [
-            {"do":"write","line":"$(\\arctan u)'={{a:\\frac{1}{1+u^2}}}$"},
-            {"do":"underline","term":"a","color":"blue","on":"一加 u 平方"}
-          ] },
-        { "show": ["$t\\to\\infty$：$\\arctan t\\to\\frac{\\pi}{2}$"],
-          "note": "上限無限，先積到 $t$ 再取極限。",
-          "say": "上限是無限大，所以先積到 t，再讓 t 趨近無限大。這時 arctan t 趨近二分之 pi。",
+            {
+              "do": "write",
+              "line": "左段（$t=1$，$s\\to0^+$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1=\\lim_{s\\to0^+}\\Big(2\\cdot\\frac\\pi4-2\\arctan\\sqrt s\\Big)=\\frac\\pi2$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右段（$s=1$，$t\\to\\infty$）：",
+            "$\\int_1^{\\infty}=\\lim_{t\\to\\infty}\\Big(2\\arctan\\sqrt t-\\frac\\pi2\\Big)=\\frac\\pi2$"
+          ],
+          "say": "右段，s 取 1，讓 t 趨近無限大：反正切趨近 2 分之派，2 倍是派，減 2 分之派，也是 2 分之派。",
           "board": [
-            {"do":"write","line":"$t\\to\\infty$：${{b:\\arctan t}}\\to\\frac{\\pi}{2}$"},
-            {"do":"focus","term":"b","color":"gold","on":"arctan t"}
-          ] }
+            {
+              "do": "write",
+              "line": "右段（$s=1$，$t\\to\\infty$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_1^{\\infty}=\\lim_{t\\to\\infty}\\Big(2\\arctan\\sqrt t-\\frac\\pi2\\Big)=\\frac\\pi2$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}=\\frac\\pi2+\\frac\\pi2=\\pi$"
+          ],
+          "say": "兩段都收斂，加起來是派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_0^{\\infty}\\frac{dx}{\\sqrt x\\,(1+x)}=\\frac\\pi2+\\frac\\pi2=\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "加起"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "排排看",
+      "beats": [
+        {
+          "show": [
+            "處理 $\\displaystyle\\int_0^{\\infty}\\frac{dx}{x^{1/2}+x^{3/2}}$ 的流程"
+          ],
+          "say": "最後排排看處理的流程。這個積分跟剛才的是同一個，分母提出根號 x 就看得出來。"
+        }
       ],
-      "key": "令 $u=\\sqrt x$，根號和 $dx$ 一起換",
-      "predict": {
-        "ask": "約掉之後，積分變成？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "處理 $\\displaystyle\\int_0^{\\infty}\\frac{dx}{x^{1/2}+x^{3/2}}$ 的流程",
+        "steps": [
           {
-            "label": "$\\int_0^{\\infty}\\frac{2\\,du}{1+u^2}=\\pi$",
-            "correct": true
+            "label": "找出所有問題點：$x=0$ 無界、上限 $\\infty$"
           },
           {
-            "label": "$\\int_0^{\\infty}\\frac{du}{1+u^2}=\\frac{\\pi}{2}$",
-            "why": "漏了 $dx=2u\\,du$ 裡的 $2$。"
+            "label": "在中間取一個切點（例如 $1$），每段只剩一個問題",
+            "why": "先要有上一步：找出所有問題點：$x=0$ 無界、上限 $\\infty$"
           },
           {
-            "label": "$\\int_0^{\\infty}\\frac{2u\\,du}{1+u^2}$，發散",
-            "why": "分母的 $\\sqrt{x}$ 也換成了 $u$，要跟分子的 $u$ 約掉。"
+            "label": "每段在 $[s,1]$、$[1,t]$ 這種正常區間上算積分",
+            "why": "先要有上一步：在中間取一個切點（例如 $1$），每段只剩一個問題"
+          },
+          {
+            "label": "各自取極限 $s\\to0^+$、$t\\to\\infty$，兩段都收斂才相加",
+            "why": "先要有上一步：每段在 $[s,1]$、$[1,t]$ 這種正常區間上算積分"
           }
         ]
       }
     },
     {
-      "title": "假的瑕點",
+      "title": "排排看",
       "beats": [
-        { "show": ["$\\frac{\\sin x}{x}$ 在 $x=0$ 沒定義"],
-          "note": "但 $x\\to 0$ 時 $\\frac{\\sin x}{x}\\to 1$。",
-          "say": "sine x 除以 x 在零沒有定義，可是它在零附近趨近一，一點都不大。",
+        {
+          "show": [
+            "多個瑕點也一樣：例如 $\\displaystyle\\int_{0}^{2}\\frac{dx}{\\sqrt{x}\\,(x-1)}$ 有 $0$ 與 $1$ 兩個瑕點"
+          ],
+          "say": "瑕點不只一個時也一樣。例如這個積分，0 和 1 都是瑕點。",
           "board": [
-            {"do":"write","line":"$\\frac{\\sin x}{x}$ 在 ${{z:x=0}}$ 沒定義"},
-            {"do":"focus","term":"z","color":"red","on":"沒有定義"},
-            {"do":"write","line":"$x\\to0$：$\\frac{\\sin x}{x}\\to 1$","on":"它在零附近"}
-          ] },
-        { "show": ["$\\frac{\\sin x}{x}$ 貼近 $1$"],
-          "say": "看圖：曲線在零附近貼近一，沒有衝上去，所以沒有尖刺。",
+            {
+              "do": "write",
+              "line": "多個瑕點也一樣：例如 $\\displaystyle\\int_{0}^{2}\\frac{dx}{\\sqrt{x}\\,(x-1)}$ 有 $0$ 與 $1$ 兩個瑕點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切成 $[0,\\frac12]$、$[\\frac12,1]$、$[1,2]$，每段只有一個瑕點"
+          ],
+          "say": "那就切成三段，每段只有一個瑕點在端點上。只要有一段發散，整個就發散。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,6,-0.5,1.5],"curves":[{"expr":"sin(x)/x","domain":[0.01,6],"color":"blue"}],"points":[{"x":0,"y":1,"open":true}]}}
-          ] },
-        { "show": ["補上 $f(0)=1$ 就連續"],
-          "note": "可去不連續，見〈不連續的種類〉。",
-          "say": "補上零的函數值等於一，它就是連續函數。這種可去的點不是瑕點。",
+            {
+              "do": "write",
+              "line": "切成 $[0,\\frac12]$、$[\\frac12,1]$、$[1,2]$，每段只有一個瑕點",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　這一個在 $x=1$ 附近像 $\\frac1{x-1}$，那一段發散，所以整個發散",
+              "color": "violet",
+              "on": "點上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 瑕點：$f$ 在附近無界的點；黎曼和、基本定理都不能直接用",
+            "• 定義：從瑕點旁邊積起，$\\displaystyle\\lim_{s\\to a^+}\\int_s^bf$"
+          ],
+          "say": "整理一下：瑕點是函數無界的點；從瑕點旁邊積起，再取極限；瑕點在中間要先切開；好幾個問題就切到每段只剩一個；換元和分部都在正常區間上做完，再取極限。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"補上 ${{f:f(0)=1}}$","on":"補上"},
-            {"do":"box","term":"f","color":"green","on":"它就是"},
-            {"do":"write","line":"可去的點，不是瑕點","on":"這種可去"}
-          ] },
-        { "show": ["$\\int_0^1\\frac{\\sin x}{x}\\,dx$ 是普通的定積分"],
-          "say": "所以 sine x 除以 x 從零積到一，是一個普通的定積分，不必取極限，也不會發散。",
+            {
+              "do": "write",
+              "line": "• 瑕點：$f$ 在附近無界的點；黎曼和、基本定理都不能直接用"
+            },
+            {
+              "do": "write",
+              "line": "• 定義：從瑕點旁邊積起，$\\displaystyle\\lim_{s\\to a^+}\\int_s^bf$",
+              "on": "從瑕"
+            },
+            {
+              "do": "write",
+              "line": "• 瑕點在中間：先切開，兩邊各自收斂；直接代會算出 $\\int_{-1}^1\\frac{dx}{x^2}=-2$ 這種錯",
+              "on": "點在"
+            },
+            {
+              "do": "write",
+              "line": "• 好幾個問題點：切到每段只剩一個，每段各自收斂",
+              "on": "就切"
+            },
+            {
+              "do": "write",
+              "line": "• 換元、分部積分：在 $[s,t]$ 上做完，最後才取極限",
+              "on": "都在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：p 判別"
+          ],
+          "say": "下一課，用兩把最基本的尺，判斷一大類瑕積分收不收斂。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^1\\frac{\\sin x}{x}\\,dx$","on":"所以"},
-            {"do":"write","line":"普通的定積分，不必取極限","on":"普通的定積分"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：p 判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["improper-integral"],
-    "fine": ["improper-singular-endpoint", "improper-singular-interior", "improper-log-endpoint", "improper-mixed-split"]
+    "coarse": [
+      "improper-integral"
+    ],
+    "fine": [
+      "improper-singular-endpoint",
+      "improper-singular-interior",
+      "improper-log-endpoint",
+      "improper-mixed-split"
+    ]
   },
   "practice": [
-    { "id": "lec-08-m2", "core": true, "trains": "improper-singular-endpoint" },
-    { "id": "exam-int-025", "core": true, "trains": "improper-log-endpoint" },
-    { "id": "depth-int-028", "core": true, "trains": "improper-log-endpoint" },
-    { "id": "rel-hard-int-015", "core": true, "trains": "improper-log-endpoint" },
-    { "id": "rel-boss-017", "core": true, "trains": "improper-log-endpoint" },
-    { "id": "cg-11b-004", "core": true, "trains": "improper-singular-interior" },
-    { "id": "cg-11b-006", "core": true, "trains": "improper-mixed-split" },
-    { "id": "lec-08-m3", "trains": "improper-singular-interior" },
-    { "id": "cg-11b-005", "trains": "improper-singular-interior" },
-    { "id": "lec-08-q2d", "challenge": true, "trains": "improper-singular-interior", "note": "挑戰：瑕點 $x=1$ 在區間內部，切成兩段，兩段都收斂。" },
-    { "id": "cg-11b-007", "challenge": true, "trains": "improper-mixed-split" }
+    {
+      "id": "lec-08-m2",
+      "core": true,
+      "trains": "improper-singular-endpoint"
+    },
+    {
+      "id": "exam-int-025",
+      "core": true,
+      "trains": "improper-log-endpoint"
+    },
+    {
+      "id": "depth-int-028",
+      "core": true,
+      "trains": "improper-log-endpoint"
+    },
+    {
+      "id": "rel-hard-int-015",
+      "core": true,
+      "trains": "improper-log-endpoint"
+    },
+    {
+      "id": "rel-boss-017",
+      "core": true,
+      "trains": "improper-log-endpoint"
+    },
+    {
+      "id": "cg-11b-004",
+      "core": true,
+      "trains": "improper-singular-interior"
+    },
+    {
+      "id": "cg-11b-006",
+      "core": true,
+      "trains": "improper-mixed-split"
+    },
+    {
+      "id": "lec-08-m3",
+      "trains": "improper-singular-interior"
+    },
+    {
+      "id": "cg-11b-005",
+      "trains": "improper-singular-interior"
+    },
+    {
+      "id": "lec-08-q2d",
+      "challenge": true,
+      "trains": "improper-singular-interior",
+      "note": "挑戰：瑕點 $x=1$ 在區間內部，切成兩段，兩段都收斂。"
+    },
+    {
+      "id": "cg-11b-007",
+      "challenge": true,
+      "trains": "improper-mixed-split"
+    }
   ],
   "gaps": []
 }

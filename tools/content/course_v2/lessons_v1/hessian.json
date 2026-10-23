@@ -1,0 +1,343 @@
+{
+  "id": "hessian",
+  "title": "Hessian",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["higher-partials", "clairaut", "critical-points-2d"],
+  "next": ["second-derivative-test-2d"],
+  "related": ["taylor-polynomial"],
+  "objectives": [
+    "把二階偏導數排成 Hessian 矩陣，算出行列式 $D=f_{xx}f_{yy}-f_{xy}^2$。",
+    "說得出為什麼 Hessian 通常是對稱的（Clairaut 的條件）。",
+    "把臨界點附近的 $f$ 讀成一個二次式，用配方看出 $D$ 與 $f_{xx}$ 的符號決定曲面的形狀。"
+  ],
+  "visual": "二次曲面 z = A h² + 2B hk + C k²，三個滑桿控制 A、B、C，旁邊即時顯示 D = AC − B²。拉動 B 時，碗（D > 0、A > 0）慢慢被壓扁，D 經過 0 的瞬間變成一條槽，D < 0 之後變成馬鞍。底下同時畫等高線：D > 0 是橢圓，D < 0 是雙曲線。",
+  "concept": [
+    {
+      "heading": "① 二階偏導數排成矩陣",
+      "body": [
+        "$f(x,y)$ 有四個二階偏導數：$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$。排成一個 $2\\times2$ 矩陣，叫 Hessian："
+      ],
+      "tex": ["H=\\begin{pmatrix}f_{xx}&f_{xy}\\\\ f_{yx}&f_{yy}\\end{pmatrix},\\qquad D=\\det H=f_{xx}f_{yy}-f_{xy}^2"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼右上等於左下",
+      "body": [
+        "〈Clairaut 定理〉：$f_{xy}$ 與 $f_{yx}$ 在該點附近都存在而且連續時，$f_{xy}=f_{yx}$。題目裡的多項式、指數、三角組合都滿足，所以 Hessian 是對稱矩陣，$D$ 的公式才能寫成 $f_{xx}f_{yy}-f_{xy}^2$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼要看它：臨界點附近 $f$ 像一個二次式",
+      "body": [
+        "直覺，不是證明：在臨界點 $(a,b)$，$\\nabla f=\\mathbf 0$，一階項消失。往 $(a+h,b+k)$ 走，$f$ 的變化主要由二階項決定：",
+        "$f(a+h,b+k)-f(a,b)\\approx\\frac{1}{2}(Ah^2+2Bhk+Ck^2)$，其中 $A=f_{xx}$、$B=f_{xy}$、$C=f_{yy}$（在 $(a,b)$ 取值）。這就是單變數 $f(a+h)-f(a)\\approx\\frac{1}{2}f''(a)h^2$ 的兩變數版本（〈Taylor 多項式〉）。",
+        "這個近似漏掉了三階以上的項；二次式恰好退化（$D=0$）時，被丟掉的項就會決定一切。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 配方：$D$ 決定形狀",
+      "body": [
+        "設 $A\\ne 0$，把二次式配方：",
+        "$D>0$：括號外兩項同號，跟 $A$ 同號，曲面是碗（$A>0$）或倒碗（$A<0$）。$D<0$：兩項異號，有的方向往上、有的方向往下，是馬鞍。$D=0$：二次式在某個方向是 $0$，看不出來。"
+      ],
+      "tex": ["Ah^2+2Bhk+Ck^2=A\\Bigl(h+\\frac{B}{A}k\\Bigr)^2+\\frac{AC-B^2}{A}\\,k^2"],
+      "collapsible": false
+    },
+    {
+      "heading": "三個變數的 Hessian（預告）",
+      "body": [
+        "$f(x,y,z)$ 的 Hessian 是 $3\\times3$ 的對稱矩陣。判斷方式改看整個矩陣的特徵值（全正是極小、全負是極大、有正有負是鞍點），只算一個行列式不夠。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "在臨界點算 $D$",
+      "prompt": "$f=x^3+y^3-3xy$，求 Hessian 在 $(1,1)$ 的行列式。",
+      "problemId": "der-037",
+      "steps": [
+        "一階：$f_x=3x^2-3y$，$f_y=3y^2-3x$。",
+        "二階：$f_{xx}=6x$，$f_{yy}=6y$，$f_{xy}=-3$。",
+        "在 $(1,1)$：$H=\\begin{bmatrix}6&-3\\\\-3&6\\end{bmatrix}$。",
+        "$D=6\\cdot6-(-3)^2=36-9=27$。"
+      ],
+      "answer": "$27$",
+      "claim": "D2(x^3+1-3x, 1) == 6 ;; D2(1+y^3-3y, 1, y) == 6 ;; D(D(x^3+y^3-3*x*y, , y), , x) == -3 ;; 6*6 - (-3)^2 == 27"
+    },
+    {
+      "title": "對角是 $0$、交叉項不是",
+      "prompt": "$f=e^{xy}$，求 Hessian 在 $(0,0)$ 的行列式。",
+      "problemId": "der-053",
+      "steps": [
+        "$f_x=y\\,e^{xy}$，$f_y=x\\,e^{xy}$。",
+        "$f_{xx}=y^2e^{xy}$，$f_{yy}=x^2e^{xy}$，$f_{xy}=e^{xy}+xy\\,e^{xy}=(1+xy)e^{xy}$。",
+        "在 $(0,0)$：$f_{xx}=0$，$f_{yy}=0$，$f_{xy}=1$。$D=0\\cdot0-1^2=-1$。",
+        "對照配方：二次式是 $2hk$，$h$、$k$ 同號時正、異號時負，是馬鞍。"
+      ],
+      "answer": "$-1$",
+      "claim": "D(D(e^(x*y), , y), , x) == (1+x*y)*e^(x*y) ;; D2(e^(x*y), , x) == y^2*e^(x*y)"
+    },
+    {
+      "title": "$D=0$ 的例子",
+      "prompt": "$f=x^4+y^2$，求 Hessian 在 $(0,0)$ 的行列式。",
+      "problemId": "der-057",
+      "steps": [
+        "$f_{xx}=12x^2$，$f_{yy}=2$，$f_{xy}=0$。",
+        "在 $(0,0)$：$f_{xx}=0$，所以 $D=0\\cdot2-0=0$。",
+        "二次近似是 $\\frac{1}{2}(0\\cdot h^2+0\\cdot hk+2k^2)=k^2$，完全沒有 $h$：沿 $x$ 方向的行為看不出來，那個方向其實是被丟掉的 $x^4$ 在決定。"
+      ],
+      "answer": "$0$",
+      "claim": "D2(x^4, 0) + 1 == 1 ;; D2(y^2, 0, y) == 2"
+    }
+  ],
+  "pitfalls": [
+    "$D$ 的公式寫成 $f_{xx}f_{yy}+f_{xy}^2$，或忘了把 $f_{xy}$ 平方。",
+    "Hessian 在一般點算完，沒有代入臨界點。",
+    "把 $hk$ 項的係數 $2B$ 當成 $B$。",
+    "以為 $f_{xy}=f_{yx}$ 永遠成立；需要 Clairaut 的連續條件。"
+  ],
+  "checks": [
+    {
+      "ask": "$f=x^2y$，Hessian 在 $(1,2)$ 的行列式是？",
+      "options": [
+        { "label": "$-4$", "correct": true },
+        { "label": "$4$", "why": "$f_{xy}^2$ 要減掉，不是加：$f_{xx}f_{yy}-f_{xy}^2=4\\cdot0-2^2=-4$。" },
+        { "label": "$0$", "why": "只算了 $f_{xx}f_{yy}=4\\cdot0$；還要減 $f_{xy}^2=(2x)^2=4$。" }
+      ]
+    },
+    {
+      "ask": "Hessian 右上的 $f_{xy}$ 等於左下的 $f_{yx}$，根據的是？",
+      "options": [
+        { "label": "Clairaut 定理，需要混合偏導數在附近連續", "correct": true },
+        { "label": "定義本來就一樣", "why": "$f_{xy}$ 與 $f_{yx}$ 是不同順序的兩個極限，有反例讓它們不相等；連續才保證相等。" },
+        { "label": "因為 Hessian 一定是方陣", "why": "方陣不代表對稱；對稱是 Clairaut 給的。" }
+      ]
+    },
+    {
+      "ask": "二次式 $3h^2+2hk+k^2$ 的 $AC-B^2$（$A$、$B$、$C$ 照 $Ah^2+2Bhk+Ck^2$ 讀）是？",
+      "options": [
+        { "label": "$2$", "correct": true },
+        { "label": "$-1$", "why": "把 $hk$ 的係數 $2$ 當成 $B$ 了；$2B=2$，所以 $B=1$，$AC-B^2=3-1$。" },
+        { "label": "$3$", "why": "忘了減 $B^2$：$AC=3$，再減 $1$。" }
+      ]
+    },
+    {
+      "ask": "$f=x^2+xy+y^2$ 的 Hessian 行列式是？",
+      "options": [
+        { "label": "$3$", "correct": true },
+        { "label": "$4$", "why": "忘了 $f_{xy}=1$：$2\\cdot2-1^2=3$。" },
+        { "label": "$5$", "why": "把 $f_{xy}^2$ 加上去了；應該減掉。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "排成一個矩陣",
+      "beats": [
+        { "show": ["$\\begin{pmatrix}f_{xx}&f_{xy}\\\\f_{yx}&f_{yy}\\end{pmatrix}$"],
+          "note": "四個二階偏導數排成 $2\\times2$ 矩陣 $H$。",
+          "say": "四個二階偏導數，排成兩列兩行的矩陣，叫 Hessian。",
+          "board": [
+            {"do":"write","line":"$H=\\begin{pmatrix}{{a:f_{xx}}}&{{b:f_{xy}}}\\\\{{c:f_{yx}}}&{{d:f_{yy}}}\\end{pmatrix}$","tint":{"a":"blue","d":"blue","b":"violet","c":"violet"}}
+          ] },
+        { "show": ["$D=\\det H=f_{xx}f_{yy}-f_{xy}^2$"],
+          "say": "它的行列式記成 D：對角相乘，減掉混合偏導的平方。",
+          "board": [
+            {"do":"write","line":"$D=\\det H={{a:f_{xx}}}{{d:f_{yy}}}-{{b:f_{xy}}}^2$","on":"它的行列式"}
+          ] },
+        { "show": ["$f=x^3+y^3-3xy$ 在 $(1,1)$"],
+          "note": "$f_{xx}=6x$，$f_{yy}=6y$，$f_{xy}=-3$。",
+          "say": "算一個：二階偏導數算完，要記得代入那一點，不是停在一般的 x、y。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f=x^3+y^3-3xy$ 在 ${{pt:(1,1)}}$","on":"算一個"},
+            {"do":"write","line":"$f_{xx}=6x$，$f_{yy}=6y$，$f_{xy}=-3$","on":"二階偏導數"},
+            {"do":"underline","term":"pt","label":"要代入","on":"代入那一點"}
+          ] },
+        { "show": ["$H=\\begin{bmatrix}6&-3\\\\-3&6\\end{bmatrix}$","$D=36-9=27$"],
+          "say": "代點一、一，對角是六和六，混合是負三。六乘六減負三的平方，二十七。",
+          "board": [
+            {"do":"write","line":"$H=\\begin{bmatrix}{{a:6}}&{{b:-3}}\\\\{{c:-3}}&{{d:6}}\\end{bmatrix}$","tint":{"a":"blue","d":"blue","b":"violet","c":"violet"},"on":"代點"},
+            {"do":"write","line":"$D=36-9=27$","color":"green","on":"六乘六"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "右上等於左下",
+      "beats": [
+        { "show": ["$f_{xy}=f_{yx}$：〈Clairaut 定理〉"],
+          "note": "混合偏導在附近都存在、連續時。",
+          "say": "為什麼右上角等於左下角？靠的是 Clairaut 定理，條件是混合偏導在附近連續。",
+          "board": [
+            {"do":"write","line":"右上 ${{b:f_{xy}}}$ ＝ 左下 ${{c:f_{yx}}}$"},
+            {"do":"underline","term":"b","color":"violet","on":"右上角"},
+            {"do":"underline","term":"c","color":"violet","on":"左下角"},
+            {"do":"write","line":"條件：混合偏導在附近連續","on":"條件是"}
+          ] },
+        { "show": ["連續：靠近時，值不跳"],
+          "note": "附近＝這一點周圍的一小塊區域。",
+          "say": "連續的意思是：往這一點靠近時，函數值不會突然跳掉。附近，就是這一點周圍的一小塊區域。",
+          "board": [
+            {"do":"write","line":"$\\text{連續：靠近時，值}{{j:\\text{不跳}}}$"},
+            {"do":"underline","term":"j","color":"gold","label":"周圍小區域","on":"周圍"}
+          ] },
+        { "show": ["Hessian 是對稱矩陣"],
+          "note": "$D$ 才能寫成 $f_{xx}f_{yy}-f_{xy}^2$。",
+          "say": "多項式、指數、三角函數的組合都滿足條件，所以 Hessian 是對稱的，D 的公式才能這樣寫。",
+          "board": [
+            {"do":"write","line":"$H$ 對稱，所以 ${{d:D=f_{xx}f_{yy}-f_{xy}^2}}$"},
+            {"do":"box","term":"d","color":"green","on":"公式"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "臨界點附近像二次式",
+      "beats": [
+        { "show": ["臨界點：$\\nabla f=\\mathbf 0$，一階項消失"],
+          "note": "直覺，不是證明。",
+          "say": "在臨界點，梯度是零，一階的變化消失了，剩下的主要是二階項。",
+          "board": [
+            {"do":"write","line":"${{g:\\nabla f=\\mathbf 0}}$，一階項消失"},
+            {"do":"focus","term":"g","color":"gold","on":"梯度"},
+            {"do":"write","line":"$\\Delta f\\approx$ 二階項","on":"剩下"}
+          ] },
+        { "show": ["$\\Delta f\\approx\\frac{1}{2}(Ah^2+2Bhk+Ck^2)$"],
+          "note": "$A=f_{xx}$、$B=f_{xy}$、$C=f_{yy}$。",
+          "say": "往旁邊走 h、k，函數的變化大約是一個二次式的一半。注意 h k 那一項的係數是二 B。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\Delta f\\approx\\frac{1}{2}(Ah^2+{{t:2Bhk}}+Ck^2)$","on":"往旁邊"},
+            {"do":"underline","term":"t","color":"gold","label":"係數是 2B","on":"係數"}
+          ] },
+        { "show": ["單變數：$\\frac{1}{2}f''(a)h^2$"],
+          "note": "$f_{xy}hk$ 與 $f_{yx}hk$ 各一份，共 $2B$。",
+          "say": "一半跟單變數一樣：二分之一乘二階導數乘 h 平方。h k 那一項，f x y 和 f y x 各出一份，所以是二 B。",
+          "board": [
+            {"do":"focus","term":"t","color":"gold","label":"各一份","on":"各出一份"}
+          ] },
+        { "show": ["$A\\Bigl(h+\\frac{B}{A}k\\Bigr)^2+\\frac{AC-B^2}{A}k^2$"],
+          "note": "設 $A\\ne 0$，配方。",
+          "say": "把這個二次式配方，會冒出 A C 減 B 平方，正是 Hessian 的行列式。",
+          "board": [
+            {"do":"transform","line":"$= A\\Bigl(h+\\frac{B}{A}k\\Bigr)^2+\\frac{{{q:AC-B^2}}}{A}k^2$"},
+            {"do":"underline","term":"q","color":"gold","label":"Hessian","on":"正是"}
+          ] },
+        { "show": ["$C-\\frac{B^2}{A}=\\frac{AC-B^2}{A}$","$AC-B^2=D$"],
+          "note": "$A=f_{xx}$、$B=f_{xy}$、$C=f_{yy}$。",
+          "say": "提出 A 補成平方，剩下 A C 減 B 平方除以 A。A、B、C 就是 f x x、f x y、f y y，所以正是 D。",
+          "board": [
+            {"do":"write","line":"$Ah^2+2Bhk=A(h^2+\\frac{2B}{A}hk)$"},
+            {"do":"write","line":"$=A(h+\\frac{B}{A}k)^2+(C-\\frac{B^2}{A})k^2$","on":"剩下"},
+            {"do":"write","line":"$AC-B^2=f_{xx}f_{yy}-f_{xy}^2=D$","color":"green","on":"所以正是"}
+          ] }
+      ],
+      "key": "一階項消失後，配方看二次式的正負",
+      "check": 2
+    },
+    {
+      "title": "$D$ 決定形狀",
+      "beats": [
+        { "show": ["$D>0$：碗（$A>0$）或倒碗（$A<0$）"],
+          "note": "兩項同號，跟 $A$ 同號。",
+          "say": "D 大於零，配方後的兩項同號：A 正就是碗，A 負就是倒過來的碗。",
+          "board": [
+            {"do":"write","line":"$D>0$：碗（$A>0$）或倒碗（$A<0$）"}
+          ] },
+        { "show": ["兩個平方都大於等於 $0$"],
+          "note": "$D>0$ 時，$\\frac{D}{A}$ 跟 $A$ 同號。",
+          "say": "兩個平方都大於等於零。前面的係數 A 和 A 分之 D 同號，所以整個式子的正負，就看 A。",
+          "board": [
+            {"do":"write","line":"$({{p:h+\\frac{B}{A}k}})^2\\ge0$，$k^2\\ge0$"},
+            {"do":"underline","term":"p","color":"gold","label":"都不為負","on":"兩個平方"}
+          ] },
+        { "show": ["A 正往上開，A 負往下開"],
+          "say": "沿 h 方向切一刀看：藍色是 A 為正，往上開成碗；紅色是 A 為負，往下開成倒碗。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-3,3],"curves":[{"expr":"x^2","domain":[-2,2],"color":"blue"},{"expr":"-(x^2)","domain":[-2,2],"color":"red"}]}}
+          ] },
+        { "show": ["$D<0$：馬鞍"],
+          "note": "有的方向往上、有的方向往下。",
+          "say": "D 小於零，兩項異號，有的方向往上、有的往下，是馬鞍。",
+          "board": [
+            {"do":"write","line":"$D<0$：馬鞍"}
+          ] },
+        { "show": ["$f=e^{xy}$ 在 $(0,0)$：$f_{xx}=f_{yy}=0$，$f_{xy}=1$"],
+          "note": "$D=0\\cdot0-1^2=-1$。",
+          "say": "例如 e 的 x y 次方在原點：對角都是零，混合是一，D 是負一。二次式是二 h k，同號正、異號負，馬鞍。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$f=e^{xy}$ 在 $(0,0)$","on":"例如"},
+            {"do":"write","line":"$f_{xx}=f_{yy}=0$，$f_{xy}=1$","on":"對角都是零"},
+            {"do":"write","line":"$D=0\\cdot0-1^2=-1$","on":"D 是負一"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$D=0$：看不出來",
+      "beats": [
+        { "show": ["$f=x^4+y^2$ 在 $(0,0)$"],
+          "note": "$f_{xx}=12x^2=0$，$f_{yy}=2$，$f_{xy}=0$。",
+          "say": "最後一種情況。這個函數在原點，f 下標 x x 是零，所以 D 等於零。",
+          "board": [
+            {"do":"write","line":"$f=x^4+y^2$ 在 $(0,0)$"},
+            {"do":"write","line":"$f_{xx}=12x^2=0$，$f_{yy}=2$，$f_{xy}=0$","on":"f 下標"},
+            {"do":"write","line":"$D=0\\cdot2-0^2=0$","on":"所以"}
+          ] },
+        { "show": ["二次近似：$k^2$，完全沒有 $h$"],
+          "say": "二次近似只剩 k 平方，完全沒有 h。沿 x 方向會怎樣，二次式說不出來。",
+          "board": [
+            {"do":"write","line":"二次近似：${{kk:k^2}}$，沒有 $h$"},
+            {"do":"underline","term":"kk","color":"gold","label":"沒有 h","on":"完全"}
+          ] },
+        { "show": ["二次近似只留到二次項"],
+          "note": "三次、四次的高次項被丟掉了。",
+          "say": "二次近似只留到二次項，三次、四次的更高次項都被丟掉了。二次式說不出時，就得看這些項。",
+          "board": [
+            {"do":"write","line":"$f\\approx\\text{二次項}+{{d:\\text{被丟掉的項}}}$"},
+            {"do":"underline","term":"d","color":"gold","label":"高次項","on":"更高次"}
+          ] }
+      ],
+      "predict": {
+        "ask": "沿 $x$ 方向的行為，由什麼決定？",
+        "options": [
+          {
+            "label": "被丟掉的高階項 $x^4$",
+            "correct": true
+          },
+          {
+            "label": "二次式，沿 $x$ 方向是平的",
+            "why": "二次式在那個方向是 $0$，只代表它看不出來；真正的 $f$ 沿 $x$ 軸是 $x^4$，不是平的。"
+          },
+          {
+            "label": "$D=0$ 就是鞍點",
+            "why": "$D=0$ 什麼都不能下結論；鞍點對應的是 $D<0$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["hessian", "second-derivative", "multivariable"],
+    "fine": ["hessian-matrix", "hessian-determinant", "hessian-quadratic-form"]
+  },
+  "practice": [
+    { "id": "der-051", "core": true, "trains": "hessian-determinant" },
+    { "id": "der-052", "core": true, "trains": "hessian-determinant" },
+    { "id": "der-053", "core": true, "trains": "hessian-determinant" },
+    { "id": "der-037", "core": true, "trains": "hessian-determinant" },
+    { "id": "depth-der-011", "core": true, "trains": "hessian-matrix" },
+    { "id": "rel-hard-der-003", "core": true, "trains": "hessian-matrix" },
+    { "id": "cg-8e-005", "core": true, "trains": "hessian-quadratic-form" },
+    { "id": "der-054", "trains": "hessian-determinant" },
+    { "id": "der-057", "trains": "hessian-quadratic-form" },
+    { "id": "cg-8e-006", "trains": "hessian-quadratic-form" }
+  ],
+  "gaps": []
+}

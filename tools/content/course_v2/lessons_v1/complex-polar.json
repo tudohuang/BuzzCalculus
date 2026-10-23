@@ -1,0 +1,420 @@
+{
+  "id": "complex-polar",
+  "title": "極式",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["complex-numbers", "polar-coordinates", "trig-identities", "inverse-trig"],
+  "next": ["euler-formula"],
+  "related": [],
+  "objectives": [
+    "把 $z$ 寫成 $r(\\cos\\theta+i\\sin\\theta)$：$r=|z|$，$\\theta$ 是輻角，而且依象限判斷 $\\theta$，不是只算 $\\arctan\\frac{b}{a}$。",
+    "說出乘法的幾何意義：長度相乘、角度相加；並用 De Moivre 公式算 $z^n$。",
+    "求 $n$ 次方根：$n$ 個根平均分布在半徑 $r^{1/n}$ 的圓上。"
+  ],
+  "visual": "複數平面上點 z（可拖動）與單位圓。按「乘以 w」時，z 繞原點轉 arg w、長度乘上 |w|；連按 n 次畫出 z, zw, zw², … 的螺線。另一個模式畫出 zⁿ = c 的 n 個根，正 n 邊形的頂點，旋轉 c 時整個多邊形跟著轉。",
+  "concept": [
+    {
+      "heading": "① 用長度和角度描述一個複數",
+      "body": [
+        "點 $(a,b)$ 也可以用極座標描述（〈極座標〉）：$r=\\sqrt{a^2+b^2}=|z|$，$\\theta$ 是從正實軸逆時針量到它的角，叫輻角 $\\arg z$。於是 $z=r(\\cos\\theta+i\\sin\\theta)$。",
+        "輻角不唯一：$\\theta$ 加上 $2\\pi$ 的整數倍是同一個點。常用的主值 $\\operatorname{Arg}z$ 取在 $(-\\pi,\\pi]$。$z=0$ 沒有輻角。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 角度要看象限",
+      "body": [
+        "$\\tan\\theta=\\frac{b}{a}$ 只決定角度到差 $\\pi$：$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 的 $\\frac{b}{a}$ 都是 $-\\sqrt{3}$，但一個在第二象限、一個在第四象限。$\\arctan\\frac{b}{a}$ 給的值在 $\\left(-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right)$，只有 $a>0$ 時才直接是輻角；$a<0$ 時要加或減 $\\pi$。最可靠的做法：先畫點，看它在哪個象限，再找角度。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 乘法：長度相乘、角度相加",
+      "body": [
+        "$z_1=r_1(\\cos\\theta_1+i\\sin\\theta_1)$、$z_2=r_2(\\cos\\theta_2+i\\sin\\theta_2)$。乘開後用和角公式：實部 $\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2=\\cos(\\theta_1+\\theta_2)$，虛部 $\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2=\\sin(\\theta_1+\\theta_2)$。所以 $z_1z_2=r_1r_2(\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2))$。",
+        "圖像：乘以 $i$（$r=1$、$\\theta=\\frac{\\pi}{2}$）就是逆時針轉 $90^\\circ$。除法：長度相除、角度相減。",
+        "重複乘同一個數，得到 De Moivre 公式。"
+      ],
+      "tex": ["\\bigl(r(\\cos\\theta+i\\sin\\theta)\\bigr)^{n}=r^{n}\\bigl(\\cos n\\theta+i\\sin n\\theta\\bigr)"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $n$ 次方根",
+      "body": [
+        "解 $w^n=r(\\cos\\theta+i\\sin\\theta)$：長度 $|w|^n=r$，所以 $|w|=r^{1/n}$；角度 $n\\varphi=\\theta+2\\pi k$，所以 $\\varphi=\\frac{\\theta+2\\pi k}{n}$，$k=0,1,\\dots,n-1$。",
+        "$k$ 取 $n$ 個不同的值就得到 $n$ 個不同的根，它們是半徑 $r^{1/n}$ 的圓上正 $n$ 邊形的頂點；$k=n$ 又回到 $k=0$ 的根。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "長度和角度",
+      "beats": [
+        { "show": ["$r=\\sqrt{a^2+b^2}=|z|$"],
+          "say": "點 a 逗號 b 也可以用極座標描述：先量它到原點有多遠，就是 z 的絕對值 r。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.6,4.6,-0.4,2.5],"equal":true,"ticks":false,"curves":[{"expr":"2*x/3","domain":[0,3],"color":"blue"}],"dashed":[[[3,0],[3,2]]],"points":[{"x":3,"y":2}],"labels":[{"x":3.12,"y":2.25,"text":"(a, b)","anchor":"start"},{"x":1.35,"y":1.25,"text":"r","anchor":"end"}]}},
+            {"do":"write","line":"${{r:r}}=\\sqrt{a^2+b^2}=|z|$","tint":{"r":"blue"},"on":"到原點"}
+          ] },
+        { "show": ["$\\theta=\\arg z$"],
+          "note": "從正實軸逆時針量到它的角。",
+          "say": "再量角度：從正實軸逆時針轉到這個點，轉了多少，叫做輻角。",
+          "board": [
+            {"do":"transform","line":"${{r:r}}=|z|$，${{t:\\theta}}=\\arg z$","tint":{"t":"violet"}},
+            {"do":"focus","term":"t","label":"輻角","on":"逆時針"}
+          ] },
+        { "show": ["$z=r(\\cos\\theta+i\\sin\\theta)$"],
+          "say": "有了長度和角度，z 就寫成 r 乘上 cosine theta 加 i sine theta，這叫極式。",
+          "board": [
+            {"do":"transform","line":"$z={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$","on":"z 就寫成"}
+          ] },
+        { "show": ["主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$"],
+          "note": "加 $2\\pi$ 的整數倍是同一個點；$z=0$ 沒有輻角。",
+          "say": "輻角不唯一，多轉一整圈還是同一個點，所以常取主值，在負派到派之間。",
+          "board": [
+            {"do":"focus","term":"t","label":"加 2π 同一點","on":"多轉一整圈"},
+            {"do":"write","line":"主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$","on":"所以"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$1+i$ 的長度與輻角是？",
+        "options": [
+          {
+            "label": "$\\sqrt{2}$，$\\frac{\\pi}{4}$",
+            "correct": true
+          },
+          {
+            "label": "$2$，$\\frac{\\pi}{4}$",
+            "why": "長度是 $\\sqrt{1^2+1^2}=\\sqrt{2}$，不是 $1+1$。"
+          },
+          {
+            "label": "$\\sqrt{2}$，$\\frac{\\pi}{2}$",
+            "why": "點 $(1,1)$ 在正實軸與虛軸正中間，角度是 $\\frac{\\pi}{4}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "角度要看象限",
+      "beats": [
+        { "show": ["$\\tan\\theta=\\frac{b}{a}$ 只決定到差 $\\pi$"],
+          "note": "$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 都是 $-\\sqrt{3}$。",
+          "say": "小心：a 分之 b 只決定角度到差一個派。對面的兩個點，比值一模一樣。",
+          "board": [
+            {"do":"write","line":"$\\tan\\theta=\\frac{b}{a}$ 只決定到差 ${{p:\\pi}}$"},
+            {"do":"focus","term":"p","on":"差一個派"},
+            {"do":"write","line":"$-1+\\sqrt{3}\\,i$、$1-\\sqrt{3}\\,i$：$\\frac{b}{a}={{q:-\\sqrt{3}}}$","on":"對面的兩個點"},
+            {"do":"focus","term":"q","on":"一模一樣"}
+          ] },
+        { "show": ["$-1+\\sqrt{3}\\,i$：$r=2$"],
+          "note": "點在第二象限。",
+          "say": "例如負一加根號三 i，長度是根號四等於二，點在第二象限。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-3.4,3.4,-2,2],"equal":true,"ticks":false,"curves":[{"expr":"-sqrt(3)*x","domain":[-1,0],"color":"blue"}],"dashed":[[[0,0],[1,-1.7321]]],"points":[{"x":-1,"y":1.7321},{"x":1,"y":-1.7321}],"labels":[{"x":-1.15,"y":1.75,"text":"−1+√3 i","anchor":"end"},{"x":1.15,"y":-1.75,"text":"1−√3 i","anchor":"start"},{"x":-0.7,"y":0.5,"text":"r = 2","anchor":"end"}]},"on":"例如"}
+          ] },
+        { "show": ["$\\arctan\\frac{\\sqrt{3}}{-1}=-\\frac{\\pi}{3}$：第四象限，不對"],
+          "say": "arctan 只給負二分之派到二分之派，算出負三分之派，落在第四象限，方向反了。",
+          "board": [
+            {"do":"write","line":"$\\arctan\\frac{\\sqrt{3}}{-1}={{w:-\\frac{\\pi}{3}}}$"},
+            {"do":"circle","term":"w","color":"red","on":"落在第四象限"}
+          ] },
+        { "show": ["加 $\\pi$：$\\theta=\\frac{2\\pi}{3}$"],
+          "note": "先畫點、看象限，再找角度。",
+          "say": "要加一個派，得到三分之二派。最可靠的做法：先畫點，看象限，再找角度。",
+          "board": [
+            {"do":"write","line":"加 $\\pi$：$\\theta={{a:\\frac{2\\pi}{3}}}$"},
+            {"do":"box","term":"a","color":"green","on":"三分之二派"}
+          ] },
+        { "show": ["$-\\sqrt{3}-i$：$r=2$","$\\arctan\\frac{-1}{-\\sqrt{3}}=\\frac{\\pi}{6}$"],
+          "note": "點在第三象限，$\\frac{\\pi}{6}$ 在第一象限，方向反了。",
+          "say": "再看第三象限的點，負根號三減 i，長度二。arctan 算出六分之派，是第一象限，方向不對。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-3,3,-2,2],"equal":true,"ticks":false,"curves":[],"dashed":[[[0,0],[-1.7321,-1]]],"points":[{"x":-1.7321,"y":-1}],"labels":[{"x":-1.85,"y":-1.25,"text":"−√3−i","anchor":"end"}]},"on":"號三"},
+            {"do":"write","line":"$-\\sqrt{3}-i$：$r=2$","on":"長度二"},
+            {"do":"write","line":"$\\arctan\\frac{-1}{-\\sqrt{3}}=\\frac{\\pi}{6}$","on":"arctan"}
+          ] },
+        { "show": ["$\\frac{\\pi}{6}+\\pi-2\\pi=-\\frac{5\\pi}{6}$"],
+          "note": "超過 $\\pi$ 就減 $2\\pi$，拉回主值範圍。",
+          "say": "把六分之派加一個派，會超過派。主值要在負派到派之間，所以再減二派，得到負六分之五派。",
+          "board": [
+            {"do":"write","line":"${{p:\\frac{\\pi}{6}+\\pi}}>\\pi$"},
+            {"do":"write","line":"$-2\\pi$：${{a:-\\frac{5\\pi}{6}}}$","on":"再減"},
+            {"do":"box","term":"a","color":"green","on":"得到"}
+          ] }
+      ],
+      "key": "$\\arctan$ 只差 $\\pi$，畫點確認象限",
+      "check": 0
+    },
+    {
+      "title": "乘法：轉與伸縮",
+      "beats": [
+        { "show": ["$z_1z_2$：長度相乘，角度相加"],
+          "note": "乘開後用和角公式。",
+          "say": "兩個極式相乘，乘開之後剛好是 cosine 和 sine 的和角公式：長度相乘，角度相加。",
+          "board": [
+            {"do":"write","line":"$z_1z_2$ 乘開，用和角公式"},
+            {"do":"write","line":"$|z_1z_2|={{l:r_1r_2}}$","on":"長度相乘"},
+            {"do":"write","line":"$\\arg(z_1z_2)={{a:\\theta_1+\\theta_2}}$","on":"角度"}
+          ] },
+        { "show": ["$i\\cdot i=-1$","實部：$\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2$"],
+          "note": "對應 $\\cos(\\theta_1+\\theta_2)$。",
+          "say": "乘開時 i 乘 i 等於負一，所以實部是 cosine 乘 cosine 減 sine 乘 sine，正是 cosine 的和角公式。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$i\\cdot i=-1$","on":"乘開時"},
+            {"do":"write","line":"實部：$\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2$","on":"實部"}
+          ] },
+        { "show": ["虛部：$\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2$"],
+          "note": "對應 $\\sin(\\theta_1+\\theta_2)$。",
+          "say": "虛部是 sine 乘 cosine 加 cosine 乘 sine，正是 sine 的和角公式，所以角度相加。",
+          "board": [
+            {"do":"write","line":"虛部：$\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2$"}
+          ] },
+        { "show": ["$r_1r_2(\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2))$"],
+          "say": "所以乘一個複數，就是把點繞原點轉它的角度，再把長度放大它的長度倍。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"乘 $z_2$：把點轉 ${{t:\\theta_2}}$，放大 ${{r:r_2}}$ 倍","tint":{"t":"violet","r":"blue"},"on":"所以乘"},
+            {"do":"focus","term":"t","color":"violet","label":"轉角度","on":"它的角度"},
+            {"do":"focus","term":"r","color":"blue","label":"伸縮","on":"放大"}
+          ] },
+        { "show": ["除法：長度相除，角度相減"],
+          "say": "除法反過來：長度相除，角度相減。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{z_1}{z_2}\\right|={{m:\\frac{r_1}{r_2}}}$"},
+            {"do":"write","line":"$\\arg\\frac{z_1}{z_2}={{d:\\theta_1-\\theta_2}}$","on":"角度"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "De Moivre",
+      "beats": [
+        { "show": ["$\\bigl(r(\\cos\\theta+i\\sin\\theta)\\bigr)^{n}=r^{n}\\bigl(\\cos n\\theta+i\\sin n\\theta\\bigr)$"],
+          "say": "重複乘同一個數 n 次：長度變 r 的 n 次方，角度變 n 倍。這是 De Moivre 公式。",
+          "board": [
+            {"do":"write","line":"$z=r(\\cos\\theta+i\\sin\\theta)$"},
+            {"do":"write","line":"$z^{n}={{p:r^{n}}}(\\cos{{q:n\\theta}}+i\\sin n\\theta)$","on":"長度變"},
+            {"do":"focus","term":"q","color":"violet","label":"角度 n 倍","on":"n 倍"}
+          ] },
+        { "show": ["$(1+i)^{10}$"],
+          "note": "$1+i=\\sqrt{2}\\left(\\cos\\frac{\\pi}{4}+i\\sin\\frac{\\pi}{4}\\right)$",
+          "say": "算一加 i 的十次方。直接展開要十次乘法；先化成極式，長度根號二、角度四分之派。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(1+i)^{10}$","on":"算一加"},
+            {"do":"write","line":"$1+i={{r:\\sqrt{2}}}(\\cos\\frac{\\pi}{4}+i\\sin\\frac{\\pi}{4})$","on":"先化成極式"},
+            {"do":"focus","term":"r","color":"blue","label":"長度","on":"根號二"}
+          ] },
+        { "show": ["$(\\sqrt{2})^{10}=32$，角度 $\\frac{5\\pi}{2}$"],
+          "note": "跟 $\\frac{\\pi}{2}$ 同一個方向。",
+          "say": "長度變成三十二，角度十個四分之派是二分之五派，跟二分之派同方向，答案三十二 i。",
+          "board": [
+            {"do":"write","line":"$(\\sqrt{2})^{10}=32$，角度 $\\frac{5\\pi}{2}$"},
+            {"do":"write","line":"$(1+i)^{10}={{a:32i}}$","on":"跟二分之派"},
+            {"do":"box","term":"a","color":"green","on":"答案"}
+          ] },
+        { "show": ["$\\frac{5\\pi}{2}-2\\pi=\\frac{\\pi}{2}$"],
+          "note": "角度超過 $2\\pi$ 就減 $2\\pi$。",
+          "say": "二分之五派減掉一整圈二派，剩二分之派。轉一整圈回原處，所以同方向。角度太大，就這樣減。",
+          "board": [
+            {"do":"write","line":"${{b:\\frac{5\\pi}{2}}}-2\\pi=\\frac{\\pi}{2}$"},
+            {"do":"focus","term":"b","on":"一整圈#1"}
+          ] }
+      ],
+      "key": "先化極式：長度取次方，角度乘倍數",
+      "check": 2
+    },
+    {
+      "title": "$n$ 次方根",
+      "beats": [
+        { "show": ["$w^n=r(\\cos\\theta+i\\sin\\theta)$"],
+          "say": "反過來解 w 的 n 次方等於一個複數，長度和角度分開來解。",
+          "board": [
+            {"do":"write","line":"$w^n={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$","tint":{"r":"blue","t":"violet"}}
+          ] },
+        { "show": ["$|w|=r^{1/n}$"],
+          "say": "長度：w 的長度的 n 次方要等於 r，所以是 r 開 n 次方根。",
+          "board": [
+            {"do":"write","line":"$|w|={{l:r^{1/n}}}$"},
+            {"do":"underline","term":"l","on":"所以是"}
+          ] },
+        { "show": ["$\\varphi=\\frac{\\theta+2\\pi k}{n}$"],
+          "note": "$k=0,1,\\dots,n-1$",
+          "say": "角度：n 倍的角度可以是 theta 再加好幾圈，所以先加二派 k 再除以 n。",
+          "board": [
+            {"do":"write","line":"$\\varphi=\\frac{ {{t:\\theta}}+{{k:2\\pi k}}}{n}$"},
+            {"do":"underline","term":"k","label":"加好幾圈","on":"好幾圈"}
+          ] },
+        { "show": ["$n\\varphi=\\theta+2\\pi k$"],
+          "note": "差 $2\\pi$ 的整數倍，是同一個角。",
+          "say": "加二派等於多轉一整圈，點沒有動。所以只要 n 倍的角度，和 theta 差二派的整數倍，就夠了。",
+          "board": [
+            {"do":"write","line":"${{m:n\\varphi}}=\\theta+2\\pi k$"},
+            {"do":"focus","term":"m","label":"n 倍","on":"n 倍"}
+          ] },
+        { "show": ["正 $n$ 邊形的頂點"],
+          "note": "$k=n$ 又回到 $k=0$ 的根。",
+          "say": "k 取 n 個值，得到 n 個不同的根，排成圓上正 n 邊形的頂點。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$k=0,1,\\dots,n-1$：$n$ 個根","on":"k 取"},
+            {"do":"plot","graph":{"window":[-2.1,2.1,-1.15,1.15],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted"}],"fills":[{"pts":[[0.9553,0.2955],[0.0142,0.9999],[-0.9466,0.3225],[-0.5992,-0.8006],[0.5763,-0.8173]],"color":"violet"}],"points":[{"x":0.9553,"y":0.2955},{"x":0.0142,"y":0.9999},{"x":-0.9466,"y":0.3225},{"x":-0.5992,"y":-0.8006},{"x":0.5763,"y":-0.8173}]},"on":"正 n 邊形"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "三次方根",
+      "beats": [
+        { "show": ["$w^3=8i$"],
+          "note": "$8i=8\\left(\\cos\\frac{\\pi}{2}+i\\sin\\frac{\\pi}{2}\\right)$",
+          "say": "解 w 的三次方等於八 i。八 i 的長度是八，角度二分之派。",
+          "board": [
+            {"do":"write","line":"$w^3={{e:8i}}$"},
+            {"do":"write","line":"$8i={{r:8}}(\\cos{{t:\\frac{\\pi}{2}}}+i\\sin\\frac{\\pi}{2})$","tint":{"r":"blue","t":"violet"},"on":"長度是八"},
+            {"do":"focus","term":"t","color":"violet","label":"角度","on":"角度"}
+          ] },
+        { "show": ["$|w|=8^{1/3}=2$"],
+          "say": "長度：八開三次方是二。三個根都在半徑二的圓上。",
+          "board": [
+            {"do":"write","line":"$|w|=8^{1/3}={{l:2}}$"},
+            {"do":"underline","term":"l","color":"blue","label":"半徑","on":"半徑"}
+          ] },
+        { "show": ["$\\varphi=\\frac{\\pi/2+2\\pi k}{3}$"],
+          "say": "角度：二分之派加二派 k，再除以三，k 取零、一、二。",
+          "board": [
+            {"do":"write","line":"$\\varphi=\\frac{\\pi/2+{{k:2\\pi k}}}{{{d:3}}}$，$k=0,1,2$"},
+            {"do":"underline","term":"k","label":"加幾圈","on":"二派"},
+            {"do":"focus","term":"d","color":"blue","on":"除以三"}
+          ] }
+      ],
+      "key": "角度加 $2\\pi k$ 再除，三個根等距分布",
+      "predict": {
+        "ask": "三個根的角度是？",
+        "options": [
+          {
+            "label": "$\\frac{\\pi}{6}$、$\\frac{5\\pi}{6}$、$\\frac{3\\pi}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{\\pi}{6}$、$\\frac{\\pi}{6}+2\\pi$、$\\frac{\\pi}{6}+4\\pi$",
+            "why": "那是 $\\frac{\\theta}{n}+2\\pi k$，都是同一個根。要先加 $2\\pi k$ 再除以 $3$。"
+          },
+          {
+            "label": "$\\frac{\\pi}{2}$、$\\pi$、$\\frac{3\\pi}{2}$",
+            "why": "角度也要除以 $3$：$\\frac{\\pi/2}{3}=\\frac{\\pi}{6}$，三個根相差 $\\frac{2\\pi}{3}$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "化成極式，注意象限",
+      "prompt": "把 $-1+\\sqrt{3}\\,i$ 寫成極式。",
+      "steps": [
+        "$r=\\sqrt{1+3}=2$。",
+        "點 $(-1,\\sqrt{3})$ 在第二象限。$\\arctan\\frac{\\sqrt{3}}{-1}=-\\frac{\\pi}{3}$ 落在第四象限，不對；要加 $\\pi$，得 $\\theta=\\frac{2\\pi}{3}$。",
+        "$-1+\\sqrt{3}\\,i=2\\left(\\cos\\frac{2\\pi}{3}+i\\sin\\frac{2\\pi}{3}\\right)$。檢查：$2\\cos\\frac{2\\pi}{3}=-1$，$2\\sin\\frac{2\\pi}{3}=\\sqrt{3}$。"
+      ],
+      "answer": "$2\\left(\\cos\\frac{2\\pi}{3}+i\\sin\\frac{2\\pi}{3}\\right)$",
+      "claim": "2*cos(2*pi/3) == -1 ;; 2*sin(2*pi/3) == sqrt(3)"
+    },
+    {
+      "title": "De Moivre 算高次方",
+      "prompt": "$(1+i)^{10}$",
+      "steps": [
+        "$1+i=\\sqrt{2}\\left(\\cos\\frac{\\pi}{4}+i\\sin\\frac{\\pi}{4}\\right)$。",
+        "十次方：$(\\sqrt{2})^{10}=2^5=32$，角度 $10\\cdot\\frac{\\pi}{4}=\\frac{5\\pi}{2}$，跟 $\\frac{\\pi}{2}$ 是同一個方向。",
+        "$(1+i)^{10}=32\\left(\\cos\\frac{\\pi}{2}+i\\sin\\frac{\\pi}{2}\\right)=32i$。直接展開要十次乘法。"
+      ],
+      "answer": "$32i$",
+      "claim": "sqrt(2)^10*cos(10*pi/4) == 0 ;; sqrt(2)^10*sin(10*pi/4) == 32"
+    },
+    {
+      "title": "三次方根",
+      "prompt": "解 $w^3=8i$",
+      "steps": [
+        "$8i=8\\left(\\cos\\frac{\\pi}{2}+i\\sin\\frac{\\pi}{2}\\right)$。$|w|=8^{1/3}=2$。",
+        "角度 $\\varphi=\\frac{\\pi/2+2\\pi k}{3}$：$k=0,1,2$ 給 $\\frac{\\pi}{6}$、$\\frac{5\\pi}{6}$、$\\frac{3\\pi}{2}$。",
+        "三個根：$2\\left(\\cos\\frac{\\pi}{6}+i\\sin\\frac{\\pi}{6}\\right)=\\sqrt{3}+i$；$2\\left(\\cos\\frac{5\\pi}{6}+i\\sin\\frac{5\\pi}{6}\\right)=-\\sqrt{3}+i$；$2\\left(\\cos\\frac{3\\pi}{2}+i\\sin\\frac{3\\pi}{2}\\right)=-2i$。",
+        "驗算 $(\\sqrt{3}+i)^3=3\\sqrt{3}+9i-3\\sqrt{3}-i=8i$。三個根是正三角形的頂點。"
+      ],
+      "answer": "$\\sqrt{3}+i$、$-\\sqrt{3}+i$、$-2i$",
+      "claim": "sqrt(3)^3 - 3*sqrt(3) == 0 ;; 3*sqrt(3)^2 - 1 == 8 ;; 2*cos(5*pi/6) == -sqrt(3) ;; 2*sin(3*pi/2) == -2"
+    },
+    {
+      "title": "第三象限：超過 π 要減 2π",
+      "prompt": "求 $-\\sqrt{3}-i$ 的主輻角。",
+      "steps": [
+        "$r=\\sqrt{3+1}=2$。",
+        "$\\arctan\\frac{-1}{-\\sqrt{3}}=\\frac{\\pi}{6}$ 在第一象限；點在第三象限，要加 $\\pi$，但 $\\frac{\\pi}{6}+\\pi$ 超過 $\\pi$。",
+        "再減 $2\\pi$：$\\frac{\\pi}{6}+\\pi-2\\pi=-\\frac{5\\pi}{6}$。檢查：$2\\cos\\left(-\\frac{5\\pi}{6}\\right)=-\\sqrt{3}$，$2\\sin\\left(-\\frac{5\\pi}{6}\\right)=-1$。"
+      ],
+      "answer": "$-\\frac{5\\pi}{6}$",
+      "claim": "2*cos(-5*pi/6) == -sqrt(3) ;; 2*sin(-5*pi/6) == -1"
+    }
+  ],
+  "pitfalls": [
+    "輻角直接用 $\\arctan\\frac{b}{a}$，第二、三象限的點錯 $\\pi$。",
+    "De Moivre 時長度沒有取 $n$ 次方，只轉了角度。",
+    "$n$ 次方根只寫出一個（$k=0$），漏了其他 $n-1$ 個。",
+    "方根的角度寫成 $\\frac{\\theta}{n}+2\\pi k$，而不是 $\\frac{\\theta+2\\pi k}{n}$：前者只會得到同一個根。"
+  ],
+  "checks": [
+    {
+      "ask": "$-1-i$ 的主輻角 $\\operatorname{Arg}$ 是？",
+      "options": [
+        { "label": "$-\\frac{3\\pi}{4}$", "correct": true },
+        { "label": "$\\frac{\\pi}{4}$", "why": "$\\arctan\\frac{-1}{-1}=\\frac{\\pi}{4}$ 是第一象限的角；點 $(-1,-1)$ 在第三象限。" },
+        { "label": "$\\frac{5\\pi}{4}$", "why": "$\\frac{5\\pi}{4}$ 也指向同一個點，但主值要在 $(-\\pi,\\pi]$ 裡，所以是 $-\\frac{3\\pi}{4}$。" }
+      ]
+    },
+    {
+      "ask": "乘以 $i$ 在複數平面上的效果是？",
+      "options": [
+        { "label": "繞原點逆時針轉 $90^\\circ$", "correct": true },
+        { "label": "對實軸鏡射", "why": "那是取共軛複數。$i$ 的長度 $1$、角度 $\\frac{\\pi}{2}$，乘它是旋轉。" },
+        { "label": "往上平移 $1$", "why": "那是加上 $i$。乘法是旋轉加伸縮。" }
+      ]
+    },
+    {
+      "ask": "$\\left(\\cos\\frac{\\pi}{6}+i\\sin\\frac{\\pi}{6}\\right)^6$ 是？",
+      "options": [
+        { "label": "$-1$", "correct": true },
+        { "label": "$1$", "why": "角度 $6\\cdot\\frac{\\pi}{6}=\\pi$，$\\cos\\pi+i\\sin\\pi=-1$。" },
+        { "label": "$i$", "why": "那是三次方的結果（角度 $\\frac{\\pi}{2}$）。" }
+      ]
+    },
+    {
+      "ask": "$z^4=16$ 有幾個複數根？它們的長度是？",
+      "options": [
+        { "label": "4 個，長度都是 $2$", "correct": true },
+        { "label": "2 個（$\\pm 2$），長度 $2$", "why": "實數根只有 $\\pm 2$，但還有 $\\pm 2i$；$n$ 次方程式有 $n$ 個複數根。" },
+        { "label": "4 個，長度是 $16$、$4$、$2$、$1$", "why": "每個根的長度都是 $16^{1/4}=2$，它們在同一個圓上。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "polar-coordinates"],
+    "fine": ["complex-polar-form", "complex-argument-quadrant", "complex-de-moivre", "complex-nth-roots"]
+  },
+  "practice": [
+    { "id": "der-078", "core": true, "trains": "complex-de-moivre" },
+    { "id": "cg-11g-009", "core": true, "trains": "complex-argument-quadrant" },
+    { "id": "cg-11g-013", "core": true, "trains": "complex-de-moivre" },
+    { "id": "cg-11g-015", "core": true, "trains": "complex-nth-roots" },
+    { "id": "der-077", "trains": "complex-polar-form" },
+    { "id": "cg-11g-010", "trains": "complex-argument-quadrant" },
+    { "id": "cg-11g-011", "trains": "complex-argument-quadrant" },
+    { "id": "cg-11g-012", "trains": "complex-de-moivre" },
+    { "id": "cg-11g-014", "trains": "complex-de-moivre" },
+    { "id": "cg-11g-016", "trains": "complex-nth-roots" },
+    { "id": "cg-11g-017", "trains": "complex-nth-roots" }
+  ],
+  "gaps": []
+}

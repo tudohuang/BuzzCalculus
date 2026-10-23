@@ -1,0 +1,500 @@
+{
+  "id": "residue-real-integrals",
+  "title": "用留數算實積分",
+  "readMinutes": 14,
+  "totalMinutes": 50,
+  "prerequisites": ["residue-theorem", "contour-integral", "improper-infinite"],
+  "next": [],
+  "related": ["beta-gamma-relation", "feynman-trick-advanced"],
+  "objectives": [
+    "$\\int_{-\\infty}^{\\infty}\\frac{p(x)}{q(x)}\\,dx$（$q$ 無實根、次數比 $p$ 至少高 2）：接上上半圓，用 ML 不等式證明半圓那段 $\\to 0$，答案是 $2\\pi i$ 乘上半平面的留數和。",
+    "$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$：令 $z=e^{i\\theta}$ 變成單位圓上的圍道積分。",
+    "$\\int f(x)\\cos kx\\,dx$ 型：改積 $f(z)e^{ikz}$，說得出 Jordan 引理的條件，以及 $k>0$ 時為什麼要往上半平面接。"
+  ],
+  "visual": "實數軸上 [−R, R] 接一段上半圓 C_R，圍成半圓形區域，裡面標出 1/(1 + z⁴) 的兩個極點 e^{iπ/4}、e^{3iπ/4}。R 用滑桿放大，顯示三個數字：線段上的積分、半圓上的積分（越來越小）、兩者之和（一直等於 2πi × 留數和 = π/√2）。",
+  "concept": [
+    {
+      "heading": "① 想法：補一段曲線，讓它變成封閉的",
+      "body": [
+        "實數線上的積分不是封閉曲線，不能直接用留數定理。補一段：$\\int_{-R}^{R}+\\int_{C_R}=2\\pi i\\sum$（$C_R$ 與線段圍住的極點的留數），$C_R$ 是半徑 $R$ 的上半圓。",
+        "如果能證明 $\\int_{C_R}\\to 0$（$R\\to\\infty$），就得到 $\\int_{-\\infty}^{\\infty}f(x)\\,dx=2\\pi i\\sum$ 上半平面 $\\operatorname{Res}f$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 有理函數：半圓為什麼趨近 $0$",
+      "body": [
+        "$f=\\frac{p}{q}$，$q$ 沒有實根，$\\deg q\\ge\\deg p+2$。$|z|=R$ 很大時 $|f(z)|\\le\\frac{C}{R^2}$（分母至少比分子多兩次方）。半圓長度 $\\pi R$，由 ML 不等式 $\\left|\\int_{C_R}f\\,dz\\right|\\le\\pi R\\cdot\\frac{C}{R^2}=\\frac{\\pi C}{R}\\to 0$。",
+        "條件「至少高 2」也保證 $\\int_{-\\infty}^{\\infty}f\\,dx$ 本身收斂（〈瑕積分 I：無窮區間〉加上比較）；只高 1 次時這個論證不成立。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三角函數的積分：$z=e^{i\\theta}$",
+      "body": [
+        "$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$：$\\theta$ 從 $0$ 到 $2\\pi$ 時 $z=e^{i\\theta}$ 走一圈單位圓。代換 $\\cos\\theta=\\frac{z+1/z}{2}$、$\\sin\\theta=\\frac{z-1/z}{2i}$、$d\\theta=\\frac{dz}{iz}$，積分變成單位圓上有理函數的圍道積分，只算單位圓內部的留數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 乘上 $\\cos kx$：改用 $e^{ikz}$",
+      "body": [
+        "$\\int f(x)\\cos kx\\,dx$ 不能直接用 $\\cos kz$，因為 $\\cos(iy)=\\cosh y$ 在上半平面爆掉。改積 $f(z)e^{ikz}$，最後取實部（$f$ 是實係數時）。$k>0$ 時 $|e^{ikz}|=e^{-k\\operatorname{Im}z}\\le 1$ 在上半平面成立，所以要往上接；$k<0$ 就往下接（並注意方向變號）。",
+        "Jordan 引理：若在上半圓 $C_R$ 上 $|f(z)|\\le M_R$ 而且 $M_R\\to 0$，$k>0$，則 $\\left|\\int_{C_R}f(z)e^{ikz}\\,dz\\right|\\le\\frac{\\pi M_R}{k}\\to 0$。它只要求 $f\\to 0$，不要求比 $\\frac{1}{R^2}$ 快，所以 $\\frac{x\\sin x}{1+x^2}$ 這類次數只差 1 的也能處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "Jordan 引理的證明",
+      "body": [
+        "$z=Re^{it}$，$|e^{ikz}|=e^{-kR\\sin t}$，$|dz|=R\\,dt$。積分 $\\le M_R R\\int_0^{\\pi}e^{-kR\\sin t}\\,dt=2M_R R\\int_0^{\\pi/2}e^{-kR\\sin t}\\,dt$。在 $\\left[0,\\frac{\\pi}{2}\\right]$ 上 $\\sin t\\ge\\frac{2t}{\\pi}$（凹函數在弦的上方），所以 $\\le 2M_R R\\int_0^{\\pi/2}e^{-2kRt/\\pi}\\,dt<2M_R R\\cdot\\frac{\\pi}{2kR}=\\frac{\\pi M_R}{k}$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "補一段，變封閉",
+      "beats": [
+        { "show": ["$\\int_{-\\infty}^{\\infty}f(x)\\,dx$"],
+          "note": "實數線不是封閉曲線。",
+          "say": "實數線上的積分不是繞一圈，不能直接用留數定理。那就補一段，讓它封閉。",
+          "board": [
+            {"do":"write","line":"${{f:\\int_{-\\infty}^{\\infty}f(x)\\,dx}}$"},
+            {"do":"write","line":"補一段 → 封閉曲線","on":"補一段"}
+          ] },
+        { "show": ["$\\int_{-R}^{R}+\\int_{C_R}=2\\pi i\\sum\\operatorname{Res}$"],
+          "note": "$C_R$：半徑 $R$ 的上半圓。",
+          "say": "從負 R 走到 R，再沿上半圓繞回來，圍成半圓形區域，積分等於二派 i 乘圍住的留數和。",
+          "board": [
+            {"do":"write","line":"$\\int_{-R}^{R}+{{c:\\int_{C_R}}}={{r:2\\pi i\\sum\\operatorname{Res}}}$"},
+            {"do":"focus","term":"c","color":"gold","label":"上半圓","on":"上半圓"},
+            {"do":"underline","term":"r","on":"圍住的"}
+          ] },
+        { "show": ["證明 $\\int_{C_R}\\to 0$"],
+          "say": "如果 R 趨近無限大時，半圓那段趨近零，剩下的就是整條實數線的積分。",
+          "board": [
+            {"do":"write","line":"$R\\to\\infty$：${{d:\\int_{C_R}f\\,dz}}\\to 0$"},
+            {"do":"focus","term":"d","color":"gold","on":"半圓那段"}
+          ] }
+      ],
+      "predict": {
+        "ask": "最後要算哪些極點的留數？",
+        "options": [
+          {
+            "label": "上半平面的極點",
+            "correct": true
+          },
+          {
+            "label": "所有極點",
+            "why": "半圓形區域只圍住上半平面；下半平面的極點在曲線外，不算。"
+          },
+          {
+            "label": "實數線上的極點",
+            "why": "這裡要求 $f$ 在實數線上沒有極點；被圍住的是上半平面的那些。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "半圓為什麼趨近 0",
+      "beats": [
+        { "show": ["$f=\\frac{p}{q}$，$\\deg q\\ge\\deg p+2$"],
+          "note": "$q$ 沒有實根。",
+          "say": "有理函數，分母沒有實根，而且分母比分子至少高兩次方。",
+          "board": [
+            {"do":"write","line":"$f=\\frac{p}{{{q:q}}}$，${{dg:\\deg q\\ge\\deg p+2}}$"},
+            {"do":"underline","term":"q","label":"沒有實根","on":"沒有實根"},
+            {"do":"underline","term":"dg","on":"至少高兩"}
+          ] },
+        { "show": ["$|f(z)|\\le\\frac{C}{R^2}$，半圓長 $\\pi R$"],
+          "say": "R 很大時，f 的長度大約是 R 平方分之一那麼小，半圓長度只有派 R。",
+          "board": [
+            {"do":"write","line":"$|f(z)|\\le{{m:\\frac{C}{R^2}}}$","tint":{"m":"blue"},"on":"f 的長度"},
+            {"do":"write","line":"半圓長 ${{l:\\pi R}}$","tint":{"l":"violet"},"on":"半圓長度"}
+          ] },
+        { "show": ["$\\left|\\int_{C_R}f\\,dz\\right|\\le\\frac{\\pi C}{R}\\to 0$"],
+          "note": "ML 不等式；只高 1 次時不成立。",
+          "say": "用 ML 不等式相乘，只剩 R 分之一，趨近零。只高一次的話這個論證就不行。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\left|\\int_{C_R}f\\,dz\\right|\\le{{m:\\frac{C}{R^2}}}\\cdot{{l:\\pi R}}$","on":"ML 不等式"},
+            {"do":"transform","line":"$\\left|\\int_{C_R}f\\,dz\\right|\\le{{res:\\frac{\\pi C}{R}\\to 0}}$","on":"只剩"},
+            {"do":"write","line":"只高 $1$ 次：這個論證不行","color":"red","on":"只高一次"}
+          ] },
+        { "show": ["$\\frac{C}{R}\\cdot\\pi R=\\pi C$"],
+          "note": "R 消掉，剩下一個固定的數。",
+          "say": "只高一次的話，f 的長度大約是 R 分之 C。乘進半圓長派 R，R 約掉，剩下派 C，是固定的數，不會趨近零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"只高一次：$|f|\\le\\frac{C}{R}$","on":"R 分之 C"},
+            {"do":"write","line":"$\\frac{C}{R}\\cdot\\pi R=\\pi C$","on":"約掉"}
+          ] },
+        { "show": ["高 2 次往 0 掉，高 1 次不動"],
+          "say": "畫出來看：藍色是高兩次，一路往零掉；紅色是高一次，水平不動，停在派 C。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6.5,-0.3,4.5],"ticks":false,"curves":[{"expr":"PI/x","domain":[0.8,6],"color":"blue"},{"expr":"PI","domain":[0.5,6],"color":"red"}],"labels":[{"x":4,"y":1.2,"text":"高 2 次","anchor":"start"},{"x":4,"y":3.5,"text":"高 1 次","anchor":"start"}]}}
+          ] }
+      ],
+      "key": "分母高兩次：半圓積分被 $\\frac{\\pi C}{R}$ 壓住",
+      "check": 0
+    },
+    {
+      "title": "$\\frac{1}{1+x^4}$",
+      "beats": [
+        { "show": ["上半平面：$e^{i\\pi/4}$、$e^{3i\\pi/4}$"],
+          "note": "分母高 4 次，半圓 $\\to 0$。",
+          "say": "一加 z 四次方的四個根平均分在單位圓上，上半平面有兩個：四分之派和四分之三派方向。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1.7,1.7,-1.25,1.25],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted"}],"fills":[{"pts":[[-1.7,0],[1.7,0],[1.7,1.25],[-1.7,1.25]],"color":"blue"}],"points":[{"x":0.7071,"y":0.7071},{"x":-0.7071,"y":0.7071},{"x":0.7071,"y":-0.7071,"open":true},{"x":-0.7071,"y":-0.7071,"open":true}],"labels":[{"x":0.85,"y":0.95,"text":"π/4","anchor":"start"},{"x":-0.85,"y":0.95,"text":"3π/4","anchor":"end"}]}},
+            {"do":"write","line":"上半平面：${{z1:e^{i\\pi/4}}}$、${{z2:e^{3i\\pi/4}}}$","on":"上半平面"}
+          ] },
+        { "show": ["$\\operatorname{Res}=\\frac{1}{4z_0^3}=-\\frac{z_0}{4}$"],
+          "note": "$z_0^4=-1$。",
+          "say": "用 g 除以 h prime 得四 z 零三次方分之一；因為 z 零四次方是負一，化成負四分之 z 零。",
+          "board": [
+            {"do":"write","line":"$\\operatorname{Res}={{a:\\frac{1}{4z_0^3}}}$","on":"用 g 除以"},
+            {"do":"underline","term":"a","label":"z₀⁴ = −1","on":"因為 z 零"},
+            {"do":"transform","line":"$\\operatorname{Res}={{a:\\frac{1}{4z_0^3}}}={{b:-\\frac{z_0}{4}}}$","on":"化成"}
+          ] },
+        { "show": ["$\\frac{1}{z_0^3}=\\frac{z_0}{z_0^4}=-z_0$"],
+          "note": "分子分母同乘 $z_0$。",
+          "say": "一步一步來：分子分母同乘 z 零，分母變成 z 零四次方。z 零四次方是負一，所以整個是負 z 零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{4z_0^3}=\\frac{z_0}{4z_0^4}$","on":"分子分母同乘"},
+            {"do":"transform","line":"$=\\frac{z_0}{4\\cdot(-1)}=-\\frac{z_0}{4}$","on":"是負一"}
+          ] },
+        { "show": ["留數和 $=-\\frac{i\\sqrt{2}}{4}$"],
+          "note": "實部 $\\pm\\frac{\\sqrt{2}}{2}$ 抵銷。",
+          "say": "兩個根的實部正負抵銷，虛部各是二分之根號二，留數和是負四分之根號二 i。",
+          "board": [
+            {"do":"transform","line":"留數和 $={{s:-\\frac{i\\sqrt{2}}{4}}}$","on":"實部"},
+            {"do":"underline","term":"s","on":"留數和是"}
+          ] },
+        { "show": ["$2\\pi i\\cdot\\left(-\\frac{i\\sqrt{2}}{4}\\right)=\\frac{\\pi}{\\sqrt{2}}\\approx 2.221$"],
+          "say": "乘二派 i，i 乘 i 是負一，負負得正，答案根號二分之派，大約二點二二一。",
+          "board": [
+            {"do":"transform","line":"$2\\pi i\\cdot\\left({{s:-\\frac{i\\sqrt{2}}{4}}}\\right)=\\;{{r:\\frac{\\pi}{\\sqrt{2}}}}\\;\\approx 2.221$"},
+            {"do":"box","term":"r","color":"green","on":"答案根號"}
+          ] },
+        { "show": ["二次極點：$\\operatorname{Res}=\\left[(z-z_0)^2f\\right]'_{z_0}$"],
+          "note": "單極點才能直接用 $\\frac{g}{h'}$。",
+          "say": "二次極點不能用 g 除以 h prime。先乘上 z 減 z 零的平方，再對 z 微分一次，最後代入 z 零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"二次極點：$f=\\frac{g}{(z-z_0)^2}$","on":"先乘上"},
+            {"do":"write","line":"$\\operatorname{Res}=\\left[(z-z_0)^2f\\right]'_{z_0}$","on":"再對"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "三角積分：$z=e^{i\\theta}$",
+      "beats": [
+        { "show": ["$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$"],
+          "note": "$\\theta$ 走一圈，$z=e^{i\\theta}$ 走一圈單位圓。",
+          "say": "另一型：cosine、sine 的有理式，從零積到二派。theta 走一圈，e 的 i theta 次方就繞單位圓一圈。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$"},
+            {"do":"write","line":"${{z:z=e^{i\\theta}}}$：繞單位圓一圈","on":"e 的 i theta 次方"}
+          ] },
+        { "show": ["$\\cos\\theta=\\frac{z+1/z}{2}$，$\\sin\\theta=\\frac{z-1/z}{2i}$"],
+          "say": "用 Euler 公式把 cosine、sine 換成 z 和 z 分之一。",
+          "board": [
+            {"do":"write","line":"$\\cos\\theta={{c:\\frac{z+1/z}{2}}}$"},
+            {"do":"write","line":"$\\sin\\theta={{s:\\frac{z-1/z}{2i}}}$","on":"換成"}
+          ] },
+        { "show": ["只算單位圓內部的留數"],
+          "say": "還要把 d theta 換成 dz 的式子，就變成單位圓上的圍道積分，只算圓裡面的留數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"單位圓 $|z|=1$ 上的圍道積分","on":"圍道積分"},
+            {"do":"write","line":"只算 ${{in:|z|<1}}$ 內的留數","on":"只算"},
+            {"do":"underline","term":"in","color":"gold","on":"圓裡面"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "算一個三角積分",
+      "beats": [
+        { "show": ["$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$"],
+          "note": "被積式變成 $\\frac{2\\,dz}{i(z^2+4z+1)}$。",
+          "say": "二加 cosine theta 分之一。代換之後整理，分母是 z 平方加四 z 加一。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$"},
+            {"do":"write","line":"$\\frac{2\\,dz}{i({{d:z^2+4z+1}})}$","on":"代換之後"},
+            {"do":"underline","term":"d","color":"gold","on":"z 平方"}
+          ] },
+        { "show": ["$2+\\frac{z+1/z}{2}=\\frac{z^2+4z+1}{2z}$"],
+          "note": "先換分母。",
+          "say": "分母先換：cosine 換成 z 加 z 分之一的一半，通分之後是 z 平方加四 z 加一，除以二 z。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$2+\\frac{z+1/z}{2}$","on":"cosine"},
+            {"do":"transform","line":"$=\\frac{z^2+4z+1}{2z}$","on":"通分"}
+          ] },
+        { "show": ["$dz=iz\\,d\\theta$，$d\\theta=\\frac{dz}{iz}$"],
+          "note": "$z=e^{i\\theta}$ 對 $\\theta$ 微分得 $iz$。",
+          "say": "d theta 是 dz 除以 i z。乘進前面的二 z，z 約掉，剩二 dz 除以 i 乘分母。",
+          "board": [
+            {"do":"write","line":"$dz=iz\\,d\\theta$"},
+            {"do":"write","line":"$\\frac{2z}{z^2+4z+1}\\cdot\\frac{dz}{iz}$","on":"乘進前面"},
+            {"do":"transform","line":"$=\\frac{2\\,dz}{i(z^2+4z+1)}$","on":"約掉"}
+          ] },
+        { "show": ["根 $-2\\pm\\sqrt{3}$"],
+          "note": "$|-2+\\sqrt{3}|\\approx 0.268$ 在內，$-2-\\sqrt{3}$ 在外。",
+          "say": "兩個根是負二加減根號三。負二加根號三大約零點二六八，在圓內；另一個在外面。",
+          "board": [
+            {"do":"write","line":"根 $-2\\pm\\sqrt{3}$"},
+            {"do":"write","line":"${{in:|-2+\\sqrt{3}|\\approx 0.268}}<1$","on":"大約"},
+            {"do":"circle","term":"in","color":"green","label":"在圓內","on":"在圓內"}
+          ] },
+        { "show": ["$\\operatorname{Res}=\\frac{2}{i\\cdot 2\\sqrt{3}}=\\frac{1}{i\\sqrt{3}}$"],
+          "say": "在圓內那個根算留數：分母微分是二 z 加四，代進去是二根號三。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\operatorname{Res}=\\frac{2}{i\\,({{h:2z+4}})}$","on":"分母微分"},
+            {"do":"write","line":"$=\\frac{2}{i\\cdot 2\\sqrt{3}}={{r:\\frac{1}{i\\sqrt{3}}}}$","on":"代進去"}
+          ] }
+      ],
+      "key": "只留在單位圓內的那個根",
+      "predict": {
+        "ask": "積分是？",
+        "options": [
+          {
+            "label": "$\\frac{2\\pi}{\\sqrt{3}}\\approx 3.628$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{1}{i\\sqrt{3}}$",
+            "why": "那是留數；積分要乘 $2\\pi i$：$2\\pi i\\cdot\\frac{1}{i\\sqrt{3}}=\\frac{2\\pi}{\\sqrt{3}}$。"
+          },
+          {
+            "label": "$0$",
+            "why": "$-2-\\sqrt{3}$ 在圓外，不能拿來抵銷；只算圓內的那一個。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "乘上 $\\cos kx$",
+      "beats": [
+        { "show": ["不能直接用 $\\cos kz$"],
+          "note": "$\\cos(iy)=\\cosh y$，上半平面爆掉。",
+          "say": "乘上 cosine k x 的積分，不能直接把 cosine 搬到複數：它在上半平面會爆掉。",
+          "board": [
+            {"do":"write","line":"$\\int f(x)\\cos kx\\,dx$"},
+            {"do":"write","line":"不能直接用 ${{c:\\cos kz}}$","on":"不能直接"},
+            {"do":"strike","term":"c","on":"搬到複數"}
+          ] },
+        { "show": ["改積 $f(z)e^{ikz}$，取實部"],
+          "note": "$k>0$：$|e^{ikz}|\\le 1$ 在上半平面。",
+          "say": "改積 e 的 i k z 次方，最後取實部。k 大於零時它在上半平面長度不超過一，所以往上接。",
+          "board": [
+            {"do":"write","line":"改積 ${{e:f(z)e^{ikz}}}$，取實部"},
+            {"do":"write","line":"$k>0$：往上接","on":"k 大於零"}
+          ] },
+        { "show": ["Jordan 引理：只要 $f\\to 0$"],
+          "note": "次數只差 1 也能處理。",
+          "say": "Jordan 引理保證：只要 f 趨近零，半圓那段就趨近零，次數只差一也可以。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"Jordan 引理：${{f:f\\to 0}}$ ⇒ 半圓 $\\to 0$","on":"保證"},
+            {"do":"write","line":"次數只差 $1$ 也行","on":"次數只差一"}
+          ] },
+        { "show": ["$\\frac{\\cos x}{1+x^2}$：$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$"],
+          "say": "例如 cosine x 除以一加 x 平方：上半平面只有 i，e 的 i 乘 i 次方是 e 的負一次方。",
+          "board": [
+            {"do":"write","line":"$f(z)=\\frac{e^{iz}}{1+z^2}$"},
+            {"do":"write","line":"$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$","on":"e 的 i 乘"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "證明：Jordan 引理",
+      "beats": [
+        { "show": ["參數化半圓，把 $e^{-kR\\sin t}$ 留在積分裡"],
+          "note": "再用 $\\sin t\\ge\\frac{2t}{\\pi}$ 壓下去。",
+          "say": "策略：把半圓參數化，指數那一項不要直接估成一，留在積分裡，再用一個 sine 的下界把它壓下去。",
+          "board": [
+            {"do":"write","line":"把 ${{ex:e^{-kR\\sin t}}}$ 留在積分裡","tint":{"ex":"blue"},"on":"指數那一項"},
+            {"do":"write","line":"用 $\\sin t$ 的下界壓下去","on":"再用一個"}
+          ] },
+        { "show": ["$z=Re^{it}$：$|e^{ikz}|=e^{-kR\\sin t}$，$|dz|=R\\,dt$"],
+          "note": "$ikz$ 的實部是 $-kR\\sin t$。",
+          "why": {"ask":"為什麼 $|e^{ikz}|=e^{-kR\\sin t}$？","say":"e 的 i k z 次方，長度為什麼是 e 的負 k R sine t 次方？","options":[{"label":"長度只看指數的實部，$\\operatorname{Re}(ikz)=-kR\\sin t$","correct":true},{"label":"$|e^{i\\theta}|=1$，所以長度是 $1$","why":"$z$ 是複數，$ikz$ 不是純虛數：它有實部 $-kR\\sin t$。"},{"label":"$|e^{ikz}|=e^{k|z|}$","why":"長度看的是指數的實部，不是 $k|z|$；在上半平面它是負的，所以會衰減。"}]},
+          "say": "z 等於 R e 的 i t 次方，i k z 的實部是負 k R sine t。長度只看實部，所以是這個指數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$z=Re^{it}$","on":"e 的 i k z"},
+            {"do":"write","line":"$|e^{ikz}|={{ex:e^{-kR\\sin t}}}$，$|dz|=R\\,dt$","on":"長度為什麼"},
+            {"do":"write","line":"$\\operatorname{Re}(ikz)=-kR\\sin t$","why":true,"on":"i k z 的實部"}
+          ] },
+        { "show": ["$ikz=ikR\\cos t-kR\\sin t$"],
+          "say": "z 是 R cosine t 加 i R sine t。乘上 i k，i 乘 i 是負一，實部是負 k R sine t。長度只看這個實部。",
+          "board": [
+            {"do":"write","line":"$z=R\\cos t+iR\\sin t$"},
+            {"do":"write","line":"$ikz={{im:ikR\\cos t}}+{{re:(-kR\\sin t)}}$","on":"乘上"},
+            {"do":"underline","term":"re","color":"gold","label":"實部","on":"實部是"}
+          ] },
+        { "show": ["$\\le M_RR\\int_0^{\\pi}e^{-kR\\sin t}\\,dt$","$=2M_RR\\int_0^{\\pi/2}e^{-kR\\sin t}\\,dt$"],
+          "note": "$\\sin t$ 對 $t=\\frac{\\pi}{2}$ 對稱。",
+          "say": "f 的長度不超過 M R，乘上 R d t 積分。sine 對二分之派對稱，所以只算一半再乘二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\le M_RR\\int_0^{\\pi}{{ex:e^{-kR\\sin t}}}\\,dt$","on":"f 的長度"},
+            {"do":"write","line":"$=2M_RR\\int_0^{\\pi/2}{{ex:e^{-kR\\sin t}}}\\,dt$","on":"只算一半"}
+          ] },
+        { "show": ["$[0,\\frac{\\pi}{2}]$ 上 $\\sin t\\ge\\frac{2t}{\\pi}$"],
+          "note": "凹函數在弦的上方。",
+          "why": {"ask":"為什麼 $\\sin t\\ge\\frac{2t}{\\pi}$？","say":"要把指數壓下去，需要 sine t 的下界。這個下界為什麼成立？","options":[{"label":"$\\sin$ 在 $[0,\\frac{\\pi}{2}]$ 是凹的，圖形在弦的上方","correct":true},{"label":"$\\sin t\\le t$","why":"方向反了；這裡要的是 $\\sin t$ 的下界，才能把 $e^{-kR\\sin t}$ 往上估。"},{"label":"$\\sin t\\ge 0$ 就夠了","why":"只用 $\\sin t\\ge 0$，指數只能估成 $1$，得到 $\\pi M_RR$，$R$ 消不掉。"}]},
+          "say": "sine 在零到二分之派是凹的，圖形在連接兩端的弦上方，弦就是 y 等於派分之二 t。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$[0,\\frac{\\pi}{2}]$ 上 ${{lb:\\sin t\\ge\\frac{2t}{\\pi}}}$","on":"下界#1"},
+            {"do":"plot","why":true,"on":"是凹的","graph":{"window":[-0.08,1.75,-0.12,1.15],"ticks":false,"curves":[{"expr":"sin(x)","domain":[0,1.5708],"color":"blue"},{"expr":"2*x/PI","domain":[0,1.5708],"color":"violet"}],"labels":[{"x":0.55,"y":0.75,"text":"sin t","anchor":"end"},{"x":0.95,"y":0.42,"text":"2t/π","anchor":"start"}]}}
+          ] },
+        { "show": ["$<2M_RR\\cdot\\frac{\\pi}{2kR}=\\frac{\\pi M_R}{k}\\to 0$"],
+          "note": "指數積分給出 $\\frac{1}{R}$，消掉前面的 $R$。",
+          "say": "換成 e 的負二 k R t 除以派，積分小於二 k R 分之派，R 消掉，剩派 M R 除以 k，趨近零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\le 2M_RR\\int_0^{\\pi/2}e^{-2kRt/\\pi}\\,dt$","on":"換成"},
+            {"do":"write","line":"$<2M_RR\\cdot\\frac{\\pi}{2kR}=\\;{{fin:\\frac{\\pi M_R}{k}\\to 0}}$","on":"積分小於"},
+            {"do":"box","term":"fin","color":"green","on":"剩派"}
+          ] }
+      ],
+      "key": "用 $\\sin t\\ge\\frac{2t}{\\pi}$ 壓住指數積分",
+      "proof": true,
+      "of": 4,
+      "skeleton": "直接",
+      "where": {
+        "ask": "「$M_R\\to 0$」用在哪一步？",
+        "steps": [
+          {
+            "label": "參數化：$|e^{ikz}|=e^{-kR\\sin t}$",
+            "why": "這一步只用到半圓的參數式和指數的長度。"
+          },
+          {
+            "label": "對稱：$\\int_0^{\\pi}=2\\int_0^{\\pi/2}$",
+            "why": "這只用到 $\\sin(\\pi-t)=\\sin t$。"
+          },
+          {
+            "label": "$\\sin t\\ge\\frac{2t}{\\pi}$，估出 $\\frac{\\pi M_R}{k}$",
+            "why": "這一步只用到 $\\sin$ 的凹性；$M_R$ 多大，上界 $\\frac{\\pi M_R}{k}$ 都成立。"
+          },
+          {
+            "label": "$\\frac{\\pi M_R}{k}\\to 0$",
+            "correct": true
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有理函數：$\\frac{1}{1+x^4}$",
+      "prompt": "$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^4}$",
+      "problemId": "rel-hard-int-012",
+      "steps": [
+        "$1+z^4=0$ 的根是 $e^{i\\pi/4},e^{3i\\pi/4},e^{5i\\pi/4},e^{7i\\pi/4}$，上半平面是前兩個。分母比分子高 4 次，半圓 $\\to 0$。",
+        "用 $\\frac{g}{h'}$：$\\operatorname{Res}=\\frac{1}{4z_0^3}$。因為 $z_0^4=-1$，$\\frac{1}{4z_0^3}=\\frac{z_0}{4z_0^4}=-\\frac{z_0}{4}$。",
+        "留數和 $=-\\frac{e^{i\\pi/4}+e^{3i\\pi/4}}{4}=-\\frac{i\\sqrt{2}}{4}$（兩個實部 $\\pm\\frac{\\sqrt{2}}{2}$ 抵銷，虛部各 $\\frac{\\sqrt{2}}{2}$）。",
+        "積分 $=2\\pi i\\cdot\\left(-\\frac{i\\sqrt{2}}{4}\\right)=\\frac{\\pi\\sqrt{2}}{2}=\\frac{\\pi}{\\sqrt{2}}\\approx 2.221$。從 $0$ 積到 $\\infty$ 是一半，$\\frac{\\pi}{2\\sqrt{2}}$。"
+      ],
+      "answer": "$\\frac{\\pi}{\\sqrt{2}}$",
+      "claim": "INT(1/(1+x^4), -inf, inf) == pi/sqrt(2)"
+    },
+    {
+      "title": "三角積分",
+      "prompt": "$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$",
+      "steps": [
+        "$z=e^{i\\theta}$：$2+\\frac{z+1/z}{2}=\\frac{z^2+4z+1}{2z}$，$d\\theta=\\frac{dz}{iz}$。被積式變成 $\\frac{2z}{z^2+4z+1}\\cdot\\frac{dz}{iz}=\\frac{2\\,dz}{i(z^2+4z+1)}$。",
+        "$z^2+4z+1=0$ 的根 $-2\\pm\\sqrt{3}$。$|-2+\\sqrt{3}|\\approx 0.268$ 在單位圓內，$-2-\\sqrt{3}$ 在外。",
+        "$\\operatorname{Res}_{-2+\\sqrt{3}}=\\frac{2}{i(2z+4)}=\\frac{2}{i\\cdot 2\\sqrt{3}}=\\frac{1}{i\\sqrt{3}}$。",
+        "積分 $=2\\pi i\\cdot\\frac{1}{i\\sqrt{3}}=\\frac{2\\pi}{\\sqrt{3}}\\approx 3.628$。"
+      ],
+      "answer": "$\\frac{2\\pi}{\\sqrt{3}}$",
+      "claim": "INT(1/(2+cos(x)), 0, 2*pi) == 2*pi/sqrt(3)"
+    },
+    {
+      "title": "乘上 $\\cos x$",
+      "prompt": "$\\int_{-\\infty}^{\\infty}\\frac{\\cos x}{1+x^2}\\,dx$",
+      "problemId": "world-045",
+      "steps": [
+        "改積 $\\frac{e^{iz}}{1+z^2}$，取實部。$k=1>0$，往上半平面接。",
+        "上半圓上 $|e^{iz}|\\le 1$，$\\left|\\frac{1}{1+z^2}\\right|\\le\\frac{1}{R^2-1}$，ML 給 $\\le\\frac{\\pi R}{R^2-1}\\to 0$（這裡分母高 2 次，不用 Jordan 引理也行）。",
+        "上半平面只有 $z=i$：$\\operatorname{Res}=\\frac{e^{i\\cdot i}}{2i}=\\frac{e^{-1}}{2i}$。",
+        "$\\int_{-\\infty}^{\\infty}\\frac{e^{ix}}{1+x^2}\\,dx=2\\pi i\\cdot\\frac{e^{-1}}{2i}=\\frac{\\pi}{e}$，已經是實數；實部就是答案 $\\frac{\\pi}{e}\\approx 1.156$（虛部 $\\int\\frac{\\sin x}{1+x^2}\\,dx=0$，奇函數）。"
+      ],
+      "answer": "$\\frac{\\pi}{e}$",
+      "claim": "INT(cos(x)/(1+x^2), 0, inf) == pi/(2*e)"
+    }
+  ],
+  "pitfalls": [
+    "把下半平面的極點也算進去。",
+    "沒有檢查半圓那段 $\\to 0$ 的條件（次數差至少 2，或 Jordan 引理的條件）。",
+    "直接對 $\\cos z$ 做圍道積分；$\\cos z$ 在上半平面無界，要改用 $e^{iz}$。",
+    "$z=e^{i\\theta}$ 代換時漏了 $d\\theta=\\frac{dz}{iz}$，或算了單位圓外的極點。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\int_{-\\infty}^{\\infty}\\frac{dx}{x^2+4}$ 是？",
+      "options": [
+        { "label": "$\\frac{\\pi}{2}$", "correct": true },
+        { "label": "$\\frac{\\pi}{4}$", "why": "$\\operatorname{Res}_{2i}=\\frac{1}{4i}$，$2\\pi i\\cdot\\frac{1}{4i}=\\frac{\\pi}{2}$；$\\frac{\\pi}{4}$ 是只從 $0$ 積到 $\\infty$ 的值。" },
+        { "label": "$\\pi$", "why": "$\\pi$ 是 $\\frac{1}{x^2+1}$ 的答案；分母換成 $x^2+4$ 會縮成一半。" }
+      ]
+    },
+    {
+      "ask": "$\\int_{-\\infty}^{\\infty}\\frac{dx}{(1+x^2)^2}$ 是？",
+      "options": [
+        { "label": "$\\frac{\\pi}{2}$", "correct": true },
+        { "label": "$\\pi$", "why": "$z=i$ 是 2 階極點，$\\operatorname{Res}=\\frac{d}{dz}(z+i)^{-2}\\Big|_{z=i}=\\frac{-2}{(2i)^3}=-\\frac{i}{4}$，$2\\pi i\\cdot\\left(-\\frac{i}{4}\\right)=\\frac{\\pi}{2}$。" },
+        { "label": "$\\frac{\\pi}{4}$", "why": "$\\frac{\\pi}{4}$ 是 $\\int_0^{\\infty}$ 的值；整條實數線是兩倍。" }
+      ]
+    },
+    {
+      "ask": "為什麼 $\\int f(x)\\cos 3x\\,dx$（$f$ 有理、在 $\\infty$ 衰減）要改積 $f(z)e^{3iz}$，並往上半平面接？",
+      "options": [
+        { "label": "上半平面 $|e^{3iz}|=e^{-3\\operatorname{Im}z}\\le 1$，半圓上的積分才會 $\\to 0$", "correct": true },
+        { "label": "因為 $\\cos 3z$ 在上半平面有界", "why": "$\\cos(iy)=\\cosh y$，在上半平面無界；所以不能直接用 $\\cos 3z$。" },
+        { "label": "往哪邊接都可以", "why": "往下半平面時 $|e^{3iz}|=e^{-3\\operatorname{Im}z}$ 會指數變大，半圓那段不會 $\\to 0$。" }
+      ]
+    },
+    {
+      "ask": "用 $z=e^{i\\theta}$ 算 $\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$ 時，$d\\theta$ 要換成？",
+      "options": [
+        { "label": "$\\frac{dz}{iz}$", "correct": true },
+        { "label": "$dz$", "why": "$dz=ie^{i\\theta}\\,d\\theta=iz\\,d\\theta$，所以 $d\\theta=\\frac{dz}{iz}$。" },
+        { "label": "$iz\\,dz$", "why": "方向反了：$dz=iz\\,d\\theta$，要除以 $iz$。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["residue", "improper-integral", "contour"],
+    "fine": ["residue-rational-semicircle", "residue-trig-substitution", "residue-fourier-jordan", "residue-upper-half-poles"]
+  },
+  "practice": [
+    { "id": "lec-08-q2c", "core": true, "trains": "residue-rational-semicircle" },
+    { "id": "uni-int-025", "core": true, "trains": "residue-rational-semicircle" },
+    { "id": "uni-int-014", "core": true, "trains": "residue-upper-half-poles" },
+    { "id": "rel-hard-int-012", "core": true, "trains": "residue-upper-half-poles" },
+    { "id": "world-045", "core": true, "trains": "residue-fourier-jordan" },
+    { "id": "cg-11i-025", "core": true, "trains": "residue-trig-substitution" },
+    { "id": "depth-int-020", "trains": "residue-rational-semicircle" },
+    { "id": "cx-hi-007", "trains": "residue-rational-semicircle" },
+    { "id": "hc-rad-008", "trains": "residue-upper-half-poles" },
+    { "id": "burst-boss-int-008", "trains": "residue-upper-half-poles" },
+    { "id": "td-int-001", "trains": "residue-fourier-jordan" },
+    { "id": "cg-11i-026", "trains": "residue-trig-substitution" },
+    { "id": "cg-11i-027", "trains": "residue-trig-substitution" },
+    { "id": "cg-11i-028", "trains": "residue-fourier-jordan" },
+    { "id": "world-043", "challenge": true, "trains": "residue-upper-half-poles", "note": "挑戰：含 $\\ln x$ 的積分要用扇形或鑰匙孔形的圍道。" },
+    { "id": "cg-11i-029", "challenge": true, "trains": "residue-fourier-jordan" }
+  ],
+  "gaps": []
+}

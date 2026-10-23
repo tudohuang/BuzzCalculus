@@ -1,251 +1,155 @@
 {
   "id": "holomorphic",
   "title": "全純函數",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["cauchy-riemann", "complex-functions"],
-  "next": ["complex-curves"],
-  "related": ["cauchy-integral-formula", "complex-taylor"],
+  "prerequisites": [
+    "cauchy-riemann",
+    "complex-functions"
+  ],
+  "next": [
+    "complex-curves"
+  ],
+  "related": [
+    "cauchy-integral-formula",
+    "complex-taylor"
+  ],
   "objectives": [
-    "分清楚「在一點可微」與「在一點全純」：全純要求在那一點的某個鄰域裡每一點都可微。",
-    "判斷常見函數在哪裡全純：多項式、$e^z$ 是整函數；有理函數去掉分母的零點；$\\operatorname{Log}z$ 去掉 $(-\\infty,0]$。",
-    "說得出全純函數跟實數可微函數最不一樣的地方：可微一次就自動無限次可微，而且能展成冪級數（後面的課證明）。"
+    "分清楚「在一點可微」與「在一點全純」：全純要求在那一點的某個鄰域裡每一點都可微",
+    "判斷常見函數在哪裡全純：多項式、$e^z$ 是整函數，有理函數去掉分母的零點，$\\operatorname{Log}z$ 在去掉負實軸與 $0$ 的平面上全純",
+    "說得出全純函數跟實數可微函數最不一樣的地方：可微一次就自動無限次可微，而且能展成冪級數（後面的課證明）"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 定義：在一整塊開集上可微",
+      "heading": "① 定義：整塊開集上可微",
       "body": [
-        "$f$ 在開集 $D$ 上全純（holomorphic），是指 $f$ 在 $D$ 的每一點都複變可微。說 $f$ 在 $z_0$ 全純，意思是 $f$ 在 $z_0$ 的某個小圓盤裡處處可微。",
-        "所以 $|z|^2$ 在 $0$ 可微，但在 $0$ 不全純：$0$ 的任何小圓盤裡都有它不可微的點。在全平面全純的函數叫整函數，例如多項式、$e^z$、$\\sin z$、$\\cos z$。"
+        "開集 $U$：每一點 $z_0\\in U$ 都有一個圓盤 $|z-z_0|<r$ 整個在 $U$ 裡",
+        "例：$|z|<1$、$\\{x>0\\}$、$\\mathbb C\\setminus\\{0\\}$ 是開集；直線 $y=x$、$|z|\\le1$ 不是",
+        "在整個 $\\mathbb C$ 全純的叫整函數",
+        "「在 $z_0$ 全純」比「在 $z_0$ 可微」強：要一整個鄰域",
+        "也叫解析函數；這個名字的理由，要等到能展成冪級數之後才看得出來"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f\\ \\text{在}\\ U\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ U\\ \\text{的每一點可微}\\\\[4pt]&f\\ \\text{在}\\ z_0\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ z_0\\ \\text{的某個圓盤裡每一點可微}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "① 可微，但不全純",
+      "body": [
+        "例：$f=x^2+i\\,y^2$（上一課）：只在直線 $y=x$ 上可微",
+        "直線上任一點 $z_0$：任何圓盤都含有不在直線上的點",
+        "一條線不含任何圓盤：它沒有「內部」",
+        "$|z|^2$：在 $0$ 可微、在 $0$ 不全純；全純的點集一定是開集",
+        "若 $f$ 在 $z_0$ 全純，圓盤裡每一點也都全純（圓盤裡再取小圓盤）"
+      ],
+      "tex": [
+        "\\Rightarrow\\ f\\ \\text{在任何一點都不全純}"
+      ]
     },
     {
       "heading": "② 常見函數的全純範圍",
       "body": [
-        "有理函數 $\\frac{p(z)}{q(z)}$：在 $q\\ne 0$ 的地方全純。$\\frac{1}{z^2+1}$ 在 $\\mathbb{C}$ 去掉 $\\pm i$ 的地方全純，雖然在實數線上它處處光滑——它的「問題」藏在實數線外面。",
-        "$\\operatorname{Log}z$：在 $\\mathbb{C}$ 去掉負實軸與 $0$（記作 $\\mathbb{C}\\setminus(-\\infty,0]$）上全純，導數 $\\frac{1}{z}$。在負實軸上 $\\operatorname{Log}$ 不連續，當然也不可微。",
-        "$\\bar{z}$、$\\operatorname{Re}z$、$|z|$：哪裡都不全純。"
+        "• 多項式：整函數（和、積法則）",
+        "• $e^z$：整函數（上一課用 CR 證過）",
+        "• $\\sin z=\\dfrac{e^{iz}-e^{-iz}}{2i}$、$\\cos z=\\dfrac{e^{iz}+e^{-iz}}2$：整函數（連鎖律）",
+        "求導照舊：$(\\sin z)'=\\frac{ie^{iz}+ie^{-iz}}{2i}=\\cos z$",
+        "有理函數 $\\dfrac{p}{q}$：在 $\\mathbb C$ 去掉 $q$ 的零點上全純",
+        "例：$f(z)=\\dfrac{1}{z^2+1}$",
+        "分母 $z^2+1=(z-i)(z+i)$，零點 $z=\\pm i$",
+        "實數裡 $\\frac1{x^2+1}$ 處處有定義，看不出這兩個「壞點」",
+        "驗算：$f'(1+i)=-\\frac{2+2i}{(1+2i)^2}=-0.08+0.56i$"
       ],
-      "collapsible": false
+      "tex": [
+        "f\\ \\text{在}\\ \\mathbb C\\setminus\\{i,-i\\}\\ \\text{全純}",
+        "f'(z)=-\\frac{2z}{(z^2+1)^2}"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "分母零點：解 $e^z=1$，用 $e^{x+iy}=e^x(\\cos y+i\\sin y)$",
+        "跟 11.36 解 $e^z=-1$ 同樣的做法",
+        "全純的範圍去掉的是一串點，間隔 $2\\pi$ 排在虛軸上"
+      ]
+    },
+    {
+      "heading": "② 主值對數 $\\operatorname{Log}z$",
+      "body": [
+        "負實軸上不連續：在 $-1$ 附近",
+        "• 上方 $-1+i\\varepsilon$：$\\operatorname{Arg}\\to\\pi$",
+        "• 下方 $-1-i\\varepsilon$：$\\operatorname{Arg}\\to-\\pi$",
+        "數值：$\\operatorname{Arg}(-1\\pm0.001i)\\approx\\pm3.1406$",
+        "這條紅線叫分支切割；Log 在 $\\mathbb C\\setminus(-\\infty,0]$ 上全純"
+      ],
+      "tex": [
+        "\\begin{aligned}&\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z\\\\&-\\pi<\\operatorname{Arg}z\\le\\pi\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② $\\operatorname{Log}z$ 在 $x>0$ 全純",
+      "body": [
+        "$x>0$：$\\operatorname{Arg}z=\\arctan\\dfrac yx$，所以",
+        "$u_x=v_y$、$u_y=-v_x$ 成立；四個偏導數在 $x>0$ 連續",
+        "上半平面用 $\\operatorname{Arg}z=\\frac\\pi2-\\arctan\\frac xy$，下半平面用 $-\\frac\\pi2-\\arctan\\frac xy$，偏導數公式相同 ⇒ 在 $\\mathbb C\\setminus(-\\infty,0]$ 全純"
+      ],
+      "tex": [
+        "u=\\tfrac12\\ln(x^2+y^2),\\qquad v=\\arctan\\frac yx",
+        "u_x=\\frac{x}{x^2+y^2},\\quad u_y=\\frac{y}{x^2+y^2}",
+        "\\begin{aligned}v_x&=\\frac{-y/x^2}{1+y^2/x^2}=\\frac{-y}{x^2+y^2}\\\\v_y&=\\frac{1/x}{1+y^2/x^2}=\\frac{x}{x^2+y^2}\\end{aligned}",
+        "\\begin{aligned}\\frac{d}{dz}\\operatorname{Log}z&=u_x+i\\,v_x=\\frac{x-iy}{x^2+y^2}\\\\&=\\frac{\\bar z}{|z|^2}=\\frac1z\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 為什麼值得一個名字：剛性",
       "body": [
-        "實數函數可以可微一次但不能微兩次（例如 $x|x|$），也可以無限次可微卻不等於它的 Taylor 級數（$e^{-1/x^2}$ 在 $0$ 的所有導數都是 $0$）。",
-        "全純函數完全不是這樣：只要在開集上可微一次，就自動無限次可微，而且在每一點附近等於它的冪級數（〈Cauchy 積分公式〉與〈複數上的 Taylor 級數〉會證明）。它在一小塊上的值，就決定了它在整個連通區域上的值。這種「一處決定全部」的剛性，是複變能拿來算實積分的根本原因。"
-      ],
-      "collapsible": false
+        "• 再微分：實數 $x|x|$ 可微一次、二階不存在；全純自動無限次可微",
+        "• 冪級數：實數無限次可微也不一定等於泰勒級數；全純在圓盤裡等於泰勒級數",
+        "• 局部決定整體：實數可以一段是 $0$、別處不是；全純一小段的值決定全部",
+        "實數反例：$e^{-1/x^2}$（$x\\ne0$）、$0$（$x=0$）無限次可微，泰勒級數卻是 $0$",
+        "這些要用複數線積分證明（後面的課）",
+        "現在就能證的一個：$U$ 連通開集，$f'=0$ ⇒ $f$ 是常數",
+        "連通：任兩點能用一條折線（在 $U$ 裡）連起來"
+      ]
     },
     {
-      "heading": "預告：幾個因此成立的定理",
+      "heading": "③ 證明：$f'=0$ ⇒ 常數",
       "body": [
-        "Liouville 定理：有界的整函數一定是常數（所以 $\\sin z$、$\\cos z$ 在複數上無界）。最大模原理：非常數的全純函數，$|f|$ 的最大值只會出現在區域的邊界。恆等定理：兩個全純函數若在一個有聚點的集合上相等，就處處相等。"
+        "$f'=u_x+i\\,v_x=0$ ⇒ $u_x=v_x=0$",
+        "CR：$u_y=-v_x=0$，$v_y=u_x=0$",
+        "$\\nabla u=\\nabla v=\\mathbf 0$ 處處成立",
+        "沿折線的每一段用均值定理：$u,v$ 在每一段上不變",
+        "一段 $z(t)=a+t(b-a)$：$\\frac{d}{dt}u(z(t))=\\nabla u\\cdot(b-a)=0$",
+        "推論：連通開集上全純、而且只取實數值的 $f$ 是常數",
+        "$v=0$ ⇒ $v_x=v_y=0$ ⇒（CR）$u_x=u_y=0$ ⇒ $f'=0$"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "一整塊都可微",
-      "beats": [
-        { "show": ["在開集 $D$ 上全純"],
-          "note": "$D$ 的每一點都複變可微。",
-          "say": "全純的意思是：在一整塊開集上，每一點都複變可微。",
-          "board": [
-            {"do":"write","line":"在開集 $D$ 上全純"},
-            {"do":"write","line":"$\\Leftrightarrow$ $D$ 每一點都可微","on":"每一點"}
-          ] },
-        { "show": ["在 $z_0$ 全純"],
-          "note": "$z_0$ 的某個小圓盤裡處處可微。",
-          "say": "說在某一點全純，是說那一點周圍的一個小圓盤裡，每一點都可微，不只那一點。",
-          "board": [
-            {"do":"write","line":"在 $z_0$ 全純"},
-            {"do":"write","line":"$z_0$ 的小圓盤裡處處可微","on":"小圓盤"}
-          ] },
-        { "show": ["$|z|^2$：在 $0$ 可微，但不全純"],
-          "say": "例如 z 的長度平方：在零可微，可是零的任何小圓盤裡都有不可微的點，所以不全純。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$|z|^2$：在 $0$ 可微","on":"在零可微"},
-            {"do":"write","line":"$0$ 附近有不可微的點，不全純","color":"red","on":"任何小圓盤"}
-          ] }
-      ],
-      "check": 2
+      "tex": [
+        "\\Rightarrow\\ u,v\\ \\text{是常數},\\ f\\ \\text{是常數}\\quad\\blacksquare"
+      ]
     },
     {
-      "title": "整函數",
-      "beats": [
-        { "show": ["在全平面全純：整函數"],
-          "say": "在整個複數平面都全純的函數，叫整函數。",
-          "board": [
-            {"do":"write","line":"在全平面全純：整函數"}
-          ] },
-        { "show": ["多項式、$e^z$、$\\sin z$、$\\cos z$"],
-          "say": "多項式、e 的 z 次方、sine、cosine 都是。它們的和、積、合成也是。",
-          "board": [
-            {"do":"write","line":"多項式、$e^z$、$\\sin z$、$\\cos z$"},
-            {"do":"write","line":"和、積、合成也是整函數","on":"和、積"}
-          ] },
-        { "show": ["$\\bar{z}$、$\\operatorname{Re}z$、$|z|$：哪裡都不全純"],
-          "say": "反過來，共軛、取實部、取長度，哪裡都不全純。",
-          "board": [
-            {"do":"write","line":"$\\bar{z}$、$\\operatorname{Re}z$、$|z|$：哪裡都不全純","color":"red"}
-          ] }
-      ],
-      "check": 0
+      "heading": "③ 預告：因此成立的定理",
+      "body": [
+        "• Cauchy 積分定理：沿封閉曲線積分是 $0$",
+        "• Cauchy 積分公式：圓內的值由圓周上的值決定 ⇒ 無限次可微、冪級數",
+        "• Liouville：有界的整函數是常數",
+        "例：$|\\sin(iy)|=|\\sinh y|\\to\\infty$；實數的 $\\sin x$ 有界不矛盾，因為它只看實軸",
+        "• 唯一性：在一小段線上相等的兩個全純函數，處處相等",
+        "例：整函數 $f$ 在實軸上等於 $e^x$ ⇒ $f=e^z$",
+        "這就是為什麼 $e^z$、$\\sin z$ 的定義「只有一種合理的選法」"
+      ]
     },
     {
-      "title": "有理函數",
-      "beats": [
-        { "show": ["$\\frac{p(z)}{q(z)}$：在 $q\\ne 0$ 的地方全純"],
-          "say": "有理函數在分母不是零的地方全純，除法法則照搬。",
-          "board": [
-            {"do":"write","line":"$\\frac{p(z)}{q(z)}$"},
-            {"do":"write","line":"全純：$q\\ne 0$","on":"分母不是零"}
-          ] },
-        { "show": ["$\\frac{1}{z^2+1}$：去掉 $\\pm i$"],
-          "note": "$z^2+1=0\\Leftrightarrow z=\\pm i$",
-          "say": "例如 z 平方加一分之一：分母在正負 i 是零，其他地方都全純。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{{{q:z^2+1}}}$"},
-            {"do":"underline","term":"q","color":"blue","label":"分母","on":"分母在"},
-            {"do":"write","line":"$z^2+1=0\\Leftrightarrow z=\\pm i$","on":"正負"}
-          ] },
-        { "show": ["在實數線上處處光滑"],
-          "note": "問題藏在實數線外面。",
-          "say": "在實數線上它處處光滑，看不出任何問題；它的問題藏在實數線外面的正負 i。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"實數線上：處處光滑","on":"處處光滑"},
-            {"do":"write","line":"問題在 $\\pm i$","on":"藏在"}
-          ] },
-        { "show": ["實數線上的圖：圓滑，看不出 $\\pm i$"],
-          "say": "畫出來：這條曲線在實數線上圓滑得很，完全看不出分母的零點在哪裡。",
-          "board": [
-            {"do":"plot","graph":{"window":[-4,4,-0.5,1.5],"curves":[{"expr":"1/(x^2+1)","domain":[-4,4],"color":"blue"}]}}
-          ] },
-        { "show": ["$f'(z)=\\frac{-2z}{(z^2+1)^2}$"],
-          "say": "導數照實數的算法，負二 z 除以 z 平方加一的平方。",
-          "board": [
-            {"do":"write","line":"$f'(z)={{r:\\frac{-2z}{(z^2+1)^2}}}$"},
-            {"do":"box","term":"r","color":"green","on":"負二"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "證明：主值對數",
-      "beats": [
-        { "show": ["$\\operatorname{Log}z$ 在右半平面：寫出 $u$、$v$，驗 CR"],
-          "note": "它在 $\\mathbb{C}\\setminus(-\\infty,0]$ 全純；先證 $x>0$。",
-          "say": "主值對數在去掉負實軸和零的平面上全純。先證右半平面：寫出實部虛部，檢查 CR。",
-          "board": [
-            {"do":"write","line":"$\\operatorname{Log}z$（$x>0$）：寫出 $u,v$ 驗 CR","on":"先證右半平面"}
-          ] },
-        { "show": ["$x>0$：$\\frac{1}{2}\\ln(x^2+y^2)+i\\arctan\\frac{y}{x}$"],
-          "note": "$x>0$ 時 $\\operatorname{Arg}z=\\arctan\\frac{y}{x}$。",
-          "why": {"ask":"為什麼要限制 $x>0$？","say":"虛部寫成 arctan y 除以 x。為什麼要限制 x 大於零？","options":[{"label":"$x>0$ 時 $\\operatorname{Arg}z=\\arctan\\frac{y}{x}$ 才對","correct":true},{"label":"$x=0$ 時 $\\ln(x^2+y^2)$ 沒有定義","why":"$\\ln$ 裡是 $x^2+y^2$，$x=0$、$y\\ne0$ 也有定義；出問題的是 $\\arctan\\frac{y}{x}$。"},{"label":"左半平面 $\\operatorname{Log}z$ 不全純","why":"負實軸以外它都全純；只是左半平面的 $\\operatorname{Arg}$ 不等於 $\\arctan\\frac{y}{x}$，公式要改寫。"}]},
-          "say": "右半平面裡，輻角正好是 arctan y 除以 x，實部是 x 平方加 y 平方的對數的一半。",
-          "board": [
-            {"do":"write","line":"$u=\\frac{1}{2}\\ln(x^2+y^2)$"},
-            {"do":"write","line":"$v={{v:\\arctan\\frac{y}{x}}}$","tint":{"v":"violet"},"on":"arctan"},
-            {"do":"underline","term":"v","label":"x>0 才是輻角","why":true,"on":"輻角正好是"}
-          ] },
-        { "show": ["$u_x=v_y=\\frac{x}{x^2+y^2}$","$u_y=-v_x=\\frac{y}{x^2+y^2}$"],
-          "note": "CR 兩條都成立。",
-          "say": "偏微分算出來：u x 等於 v y，u y 等於負的 v x。CR 兩條都成立。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$u_x=v_y=\\frac{x}{x^2+y^2}$","on":"偏微分算出來"},
-            {"do":"write","line":"$u_y=-v_x=\\frac{y}{x^2+y^2}$","on":"u y 等於"}
-          ] },
-        { "show": ["偏導數連續 ⇒ 全純"],
-          "note": "CR 在整塊開集上成立，偏導又連續。",
-          "why": {"ask":"為什麼這樣就全純？","say":"CR 成立了。為什麼這樣就全純？","options":[{"label":"CR 在整塊開集上成立，而且偏導數連續","correct":true},{"label":"CR 在一點成立就夠","why":"那最多在那一點可微；全純要一整塊開集上每一點都可微，像 $|z|^2$ 就只在 $0$ 可微。"},{"label":"$u$、$v$ 各自很平滑","why":"實部虛部平滑不夠：$\\bar{z}$ 的 $x$、$-y$ 最平滑，卻處處不可微；要 CR 把它們綁在一起。"}]},
-          "say": "右半平面每一點 CR 都成立，偏導數又連續，所以每一點都可微：全純。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"偏導數連續 + CR ⇒ 全純","color":"green","why":true,"on":"偏導數又連續"}
-          ] },
-        { "show": ["$f'=u_x+i\\,v_x=\\frac{x-iy}{x^2+y^2}$"],
-          "say": "導數是 u x 加 i v x，分子是 x 減 i y，分母是 x 平方加 y 平方。",
-          "board": [
-            {"do":"write","line":"$f'=u_x+i\\,v_x=\\frac{x-iy}{x^2+y^2}$","on":"導數是"}
-          ] },
-        { "show": ["求 $\\operatorname{Log}z$ 的導數：沿水平方向靠近"],
-          "note": "可微時，各方向算出的導數都一樣。",
-          "say": "這一步是在求主值對數的導數。沿著水平方向靠近，差商的實部是 u x，虛部是 v x。",
-          "board": [
-            {"do":"write","line":"水平靠近：$f'=u_x+i\\,v_x$"}
-          ] }
-      ],
-      "key": "寫出 $u$、$v$ 驗 CR，偏導連續就全純",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "直接",
-      "predict": {
-        "ask": "$\\frac{x-iy}{x^2+y^2}$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{1}{z}$",
-            "correct": true
-          },
-          {
-            "label": "$\\bar{z}$",
-            "why": "分子是 $\\bar{z}$，但還要除以 $|z|^2$：$\\frac{\\bar{z}}{z\\bar{z}}=\\frac{1}{z}$。"
-          },
-          {
-            "label": "$\\frac{1}{|z|}$",
-            "why": "$\\frac{\\bar{z}}{|z|^2}$ 是複數，不只是長度；$|z|^2=z\\bar{z}$，約掉得 $\\frac{1}{z}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "剛性",
-      "beats": [
-        { "show": ["實數：$x|x|$ 可微一次、不能微兩次"],
-          "say": "實數函數可以很鬆散：x 乘 x 的絕對值，可微一次，卻不能微兩次。",
-          "board": [
-            {"do":"write","line":"$x|x|$：可微一次"},
-            {"do":"write","line":"不能微兩次","on":"卻不能"}
-          ] },
-        { "show": ["$e^{-1/x^2}$：在 $0$ 的導數全是 $0$"],
-          "note": "無限次可微，卻不等於 Taylor 級數。",
-          "say": "這個函數在零的所有導數都是零，Taylor 級數是零，可是函數本身不是零。",
-          "board": [
-            {"do":"write","line":"$e^{-1/x^2}$：在 $0$ 的導數全是 $0$"},
-            {"do":"write","line":"Taylor 級數 $=0$，函數 $\\ne 0$","on":"Taylor"}
-          ] },
-        { "show": ["Taylor 級數：用各階導數拼出來的式子"],
-          "note": "導數全是 $0$，拼出來就是 $0$。",
-          "say": "Taylor 級數是用函數在一點的各階導數，拼出一個一直加下去的多項式。導數全是零，拼出來就是零。",
-          "board": [
-            {"do":"write","line":"Taylor 級數：各階導數拼成"}
-          ] },
-        { "show": ["全純：可微一次 $\\Rightarrow$ 無限次可微"],
-          "note": "而且每一點附近等於冪級數。",
-          "say": "全純函數完全不是這樣：在開集上可微一次，就自動無限次可微，還等於它的冪級數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"全純：在開集上可微一次","on":"可微一次"},
-            {"do":"write","line":"$\\Rightarrow$ 等於它的冪級數","color":"green","on":"還等於"}
-          ] },
-        { "show": ["冪級數：各次方乘係數，一直加下去"],
-          "note": "直覺，不是證明：複變可微要各方向一致。",
-          "say": "冪級數就是 z 的各次方乘係數，一直加下去。複變可微要所有方向一致，比實數強很多，這是直覺。",
-          "board": [
-            {"do":"write","line":"冪級數：$z$ 的各次方乘係數","on":"各次方"}
-          ] },
-        { "show": ["一小塊的值決定整個連通區域"],
-          "say": "一處決定全部，這種剛性，正是複變能拿來算實積分的根本原因。",
-          "board": [
-            {"do":"write","line":"一小塊的值 $\\Rightarrow$ 整個區域"}
-          ] }
-      ],
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• 全純：在一整塊開集上每一點可微；整函數：在全 $\\mathbb C$ 全純",
+        "• 在一點可微 $\\ne$ 在一點全純：$|z|^2$、$x^2+iy^2$",
+        "• 多項式、$e^z$、$\\sin z$、$\\cos z$：整函數；$\\frac pq$：去掉 $q$ 的零點",
+        "• $\\operatorname{Log}z$：在 $\\mathbb C\\setminus(-\\infty,0]$ 全純，導數 $\\frac1z$",
+        "• 剛性：$f'=0$ ⇒ 常數；可微一次 ⇒ 無限次（後面證）",
+        "下一課：複平面上的曲線：為積分做準備"
+      ]
     }
   ],
   "workedExamples": [
@@ -291,51 +195,860 @@
   ],
   "checks": [
     {
-      "ask": "下面哪一個是整函數（在全平面全純）？",
+      "ask": "$f(z)=\\dfrac1{e^z-1}$ 在哪裡全純？",
       "options": [
-        { "label": "$e^{z^2}+z^3$", "correct": true },
-        { "label": "$\\frac{1}{z}$", "why": "在 $z=0$ 沒有定義，只在 $\\mathbb{C}\\setminus\\{0\\}$ 全純。" },
-        { "label": "$z\\bar{z}$", "why": "$z\\bar{z}=|z|^2$，只在 $0$ 可微，哪裡都不全純。" }
+        {
+          "label": "$\\mathbb C\\setminus\\{0\\}$",
+          "why": "忘了 $e^z$ 的週期 $2\\pi i$：$e^{2\\pi i}=1$"
+        },
+        {
+          "label": "$\\mathbb C\\setminus\\{2\\pi ik:\\ k\\in\\mathbb Z\\}$",
+          "correct": true
+        },
+        {
+          "label": "$\\mathbb C\\setminus\\{2\\pi k:\\ k\\in\\mathbb Z\\}$",
+          "why": "週期是 $2\\pi i$，不是 $2\\pi$；$e^{2\\pi}\\ne1$"
+        },
+        {
+          "label": "整個 $\\mathbb C$",
+          "why": "$z=0$ 時分母是 $0$"
+        }
       ]
     },
     {
-      "ask": "$f(z)=\\frac{1}{z^2+4}$ 在哪裡全純？",
+      "ask": "$f$ 在整個 $\\mathbb C$ 全純，而且 $\\operatorname{Im}f(z)=5$ 處處成立。那麼？",
       "options": [
-        { "label": "$\\mathbb{C}\\setminus\\{2i,-2i\\}$", "correct": true },
-        { "label": "$\\mathbb{C}\\setminus\\{2,-2\\}$", "why": "$z^2+4=0$ 的根是 $\\pm 2i$，不是 $\\pm 2$。" },
-        { "label": "整個 $\\mathbb{C}$", "why": "分母在 $\\pm 2i$ 是 $0$，$f$ 在那裡沒有定義。" }
+        {
+          "label": "$f$ 是常數",
+          "correct": true
+        },
+        {
+          "label": "$f=x+5i$",
+          "why": "$u=x$、$v=5$：$u_x=1\\ne v_y=0$，CR 不成立"
+        },
+        {
+          "label": "$f$ 可以是任何實部加 $5i$",
+          "why": "實部也被 CR 綁住了，不能任選"
+        },
+        {
+          "label": "這種 $f$ 不存在",
+          "why": "常數 $3+5i$ 就是一個"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義：整塊開集上可微",
+      "beats": [
+        {
+          "show": [
+            "開集 $U$：每一點 $z_0\\in U$ 都有一個圓盤 $|z-z_0|<r$ 整個在 $U$ 裡"
+          ],
+          "say": "先說開集：集合裡每一點，周圍都有一個小圓盤，整個落在集合裡。不含邊界的圓盤、右半平面，都是開集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "開集 $U$：每一點 $z_0\\in U$ 都有一個圓盤 $|z-z_0|<r$ 整個在 $U$ 裡"
+            },
+            {
+              "do": "write",
+              "line": "　例：$|z|<1$、$\\{x>0\\}$、$\\mathbb C\\setminus\\{0\\}$ 是開集；直線 $y=x$、$|z|\\le1$ 不是",
+              "color": "violet",
+              "on": "落在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&f\\ \\text{在}\\ U\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ U\\ \\text{的每一點可微}\\\\[4pt]&f\\ \\text{在}\\ z_0\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ z_0\\ \\text{的某個圓盤裡每一點可微}\\end{aligned}$"
+          ],
+          "say": "定義：f 在開集 U 的每一點都可微，就說 f 在 U 上全純。在一點全純，意思是在那一點周圍的某個圓盤裡，每一點都可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&f\\ \\text{在}\\ U\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ U\\ \\text{的每一點可微}\\\\[4pt]&f\\ \\text{在}\\ z_0\\ \\text{全純}\\\\&\\iff f\\ \\text{在}\\ z_0\\ \\text{的某個圓盤裡每一點可微}\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "在一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在整個 $\\mathbb C$ 全純的叫整函數"
+          ],
+          "say": "在整個複數平面都全純的函數，叫整函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在整個 $\\mathbb C$ 全純的叫整函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「在 $z_0$ 全純」比「在 $z_0$ 可微」強：要一整個鄰域"
+          ],
+          "say": "注意：在一點全純，比在一點可微強得多。可微只看那一個點；全純要求它周圍一整塊都可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「在 $z_0$ 全純」比「在 $z_0$ 可微」強：要一整個鄰域",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　也叫解析函數；這個名字的理由，要等到能展成冪級數之後才看得出來",
+              "color": "violet",
+              "on": "只看"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f$ 在 $z_0$ 可微，能不能推出 $f$ 在 $z_0$ 全純？",
-      "options": [
-        { "label": "不能，全純要求 $z_0$ 附近每一點都可微", "correct": true },
-        { "label": "能，可微就是全純", "why": "$|z|^2$ 在 $0$ 可微，但在 $0$ 附近其他點都不可微，所以不全純。" },
-        { "label": "能，只要再加上 CR 方程", "why": "可微已經蘊含 CR 在那一點成立；問題是其他點。" }
+      "title": "可微，但不全純",
+      "beats": [
+        {
+          "show": [
+            "例：$f=x^2+i\\,y^2$（上一課）：只在直線 $y=x$ 上可微"
+          ],
+          "say": "上一課的例子：x 平方加 i y 平方，只在直線 y 等於 x 上可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f=x^2+i\\,y^2$（上一課）：只在直線 $y=x$ 上可微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直線上任一點 $z_0$：任何圓盤都含有不在直線上的點"
+          ],
+          "say": "直線上任取一點，不管圓盤多小，裡面都有不在直線上的點，那些點不可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直線上任一點 $z_0$：任何圓盤都含有不在直線上的點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow\\ f\\ \\text{在任何一點都不全純}$"
+          ],
+          "say": "所以這個函數雖然在一整條線上可微，卻在任何一點都不全純。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Rightarrow\\ f\\ \\text{在任何一點都不全純}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "一整"
+            },
+            {
+              "do": "write",
+              "line": "　一條線不含任何圓盤：它沒有「內部」",
+              "color": "violet",
+              "on": "在任"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f(z)=|z|^2$ 在 $z=0$ 全純嗎？",
+        "options": [
+          {
+            "label": "全純，因為 $f'(0)=0$ 存在",
+            "why": "那只是在 $0$ 可微；全純要一整個圓盤"
+          },
+          {
+            "label": "不全純",
+            "correct": true
+          },
+          {
+            "label": "全純，因為 $u=x^2+y^2$ 很平滑",
+            "why": "平滑的 $u,v$ 不夠，還要 CR 成立：$u_x=2x$，$v_y=0$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "可微，但不全純",
+      "beats": [
+        {
+          "show": [
+            "$|z|^2$：在 $0$ 可微、在 $0$ 不全純；全純的點集一定是開集"
+          ],
+          "say": "答案是不全純。在原點可微，但周圍沒有任何一點可微。全純的點，集合起來一定是開集，一個孤立的點不可能。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z|^2$：在 $0$ 可微、在 $0$ 不全純；全純的點集一定是開集",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　若 $f$ 在 $z_0$ 全純，圓盤裡每一點也都全純（圓盤裡再取小圓盤）",
+              "color": "violet",
+              "on": "全純#2"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "跟實數函數比，全純函數最特別的性質是？",
-      "options": [
-        { "label": "在開集上可微一次，就自動無限次可微", "correct": true },
-        { "label": "它們都是有界的", "why": "相反：有界的整函數只有常數（Liouville），$e^z$、$\\sin z$ 都無界。" },
-        { "label": "它們都是多項式", "why": "$e^z$、$\\operatorname{Log}z$ 都不是多項式；它們只是「局部等於冪級數」。" }
+      "title": "常見函數的全純範圍",
+      "beats": [
+        {
+          "show": [
+            "• 多項式：整函數（和、積法則）",
+            "• $e^z$：整函數（上一課用 CR 證過）"
+          ],
+          "say": "常見的整函數：多項式，用和與積的法則；e 的 z 次方，上一課證過；正弦和餘弦是 e 的 i z 次方的組合，用連鎖律，也是整函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 多項式：整函數（和、積法則）"
+            },
+            {
+              "do": "write",
+              "line": "• $e^z$：整函數（上一課用 CR 證過）",
+              "on": "法則"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sin z=\\dfrac{e^{iz}-e^{-iz}}{2i}$、$\\cos z=\\dfrac{e^{iz}+e^{-iz}}2$：整函數（連鎖律）",
+              "on": "正弦"
+            },
+            {
+              "do": "write",
+              "line": "　求導照舊：$(\\sin z)'=\\frac{ie^{iz}+ie^{-iz}}{2i}=\\cos z$",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理函數 $\\dfrac{p}{q}$：在 $\\mathbb C$ 去掉 $q$ 的零點上全純"
+          ],
+          "say": "有理函數：在整個平面去掉分母的零點，全純。去掉有限個點，剩下的還是開集。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有理函數 $\\dfrac{p}{q}$：在 $\\mathbb C$ 去掉 $q$ 的零點上全純",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(z)=\\dfrac{1}{z^2+1}$"
+          ],
+          "say": "例題：z 平方加 1 分之 1。在哪裡全純？導數是什麼？",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(z)=\\dfrac{1}{z^2+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分母 $z^2+1=(z-i)(z+i)$，零點 $z=\\pm i$",
+            "$f\\ \\text{在}\\ \\mathbb C\\setminus\\{i,-i\\}\\ \\text{全純}$"
+          ],
+          "say": "分母在複數裡可以分解，零點是正負 i。所以在整個平面去掉 i 和負 i，全純。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分母 $z^2+1=(z-i)(z+i)$，零點 $z=\\pm i$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle f\\ \\text{在}\\ \\mathbb C\\setminus\\{i,-i\\}\\ \\text{全純}}}$",
+              "color": "red",
+              "on": "零點"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　實數裡 $\\frac1{x^2+1}$ 處處有定義，看不出這兩個「壞點」",
+              "color": "violet",
+              "on": "和負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'(z)=-\\frac{2z}{(z^2+1)^2}$"
+          ],
+          "say": "導數用商的法則或連鎖律，等於負的 z 平方加 1 的平方分之 2z。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle f'(z)=-\\frac{2z}{(z^2+1)^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$f'(1+i)=-\\frac{2+2i}{(1+2i)^2}=-0.08+0.56i$",
+              "color": "violet",
+              "on": "的平"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$f(z)=\\dfrac1{e^z-1}$ 在哪裡全純？"
+          ],
+          "say": "試一題：e 的 z 次方減 1 分之 1，在哪裡全純？"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "分母零點：解 $e^z=1$，用 $e^{x+iy}=e^x(\\cos y+i\\sin y)$"
+          ],
+          "say": "分母的零點要解 e 的 z 次方等於 1：絕對值 e 的 x 次方要是 1，所以 x 是 0；角度 y 要是 2 派的整數倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分母零點：解 $e^z=1$，用 $e^{x+iy}=e^x(\\cos y+i\\sin y)$"
+            },
+            {
+              "do": "write",
+              "line": "　跟 11.36 解 $e^z=-1$ 同樣的做法",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "全純的範圍去掉的是一串點，間隔 $2\\pi$ 排在虛軸上"
+          ],
+          "say": "所以壞點是虛軸上一串點，間隔 2 派。這也是複數的指數函數有週期的直接後果。",
+          "board": [
+            {
+              "do": "write",
+              "line": "全純的範圍去掉的是一串點，間隔 $2\\pi$ 排在虛軸上",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "主值對數 $\\operatorname{Log}z$",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}&\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z\\\\&-\\pi<\\operatorname{Arg}z\\le\\pi\\end{aligned}$"
+          ],
+          "say": "主值對數：自然對數 z 的絕對值，加上 i 乘主輻角，主輻角在負派到派之間，包含派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}&\\operatorname{Log}z=\\ln|z|+i\\operatorname{Arg}z\\\\&-\\pi<\\operatorname{Arg}z\\le\\pi\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "乘主"
+            }
+          ]
+        },
+        {
+          "show": [
+            "負實軸上不連續：在 $-1$ 附近",
+            "• 上方 $-1+i\\varepsilon$：$\\operatorname{Arg}\\to\\pi$"
+          ],
+          "say": "問題出在負實軸。從上方靠近負 1，主輻角趨近派；從下方靠近，趨近負派。虛部跳了 2 派，不連續，所以不可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "負實軸上不連續：在 $-1$ 附近"
+            },
+            {
+              "do": "write",
+              "line": "• 上方 $-1+i\\varepsilon$：$\\operatorname{Arg}\\to\\pi$",
+              "on": "主輻"
+            },
+            {
+              "do": "write",
+              "line": "• 下方 $-1-i\\varepsilon$：$\\operatorname{Arg}\\to-\\pi$",
+              "on": "靠近#2"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$\\operatorname{Arg}(-1\\pm0.001i)\\approx\\pm3.1406$",
+              "color": "violet",
+              "on": "不連"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上紅色是負實軸，連同原點，主值對數在這裡出問題。綠色的右半平面離它很遠，我們先在那裡證明全純。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><rect x=\"310\" y=\"20\" width=\"290\" height=\"260\" fill=\"var(--green)\" fill-opacity=\"0.1\"/><line x1=\"20\" y1=\"150\" x2=\"600\" y2=\"150\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><line x1=\"310\" y1=\"20\" x2=\"310\" y2=\"280\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><line x1=\"20\" y1=\"150\" x2=\"304\" y2=\"150\" stroke=\"var(--red)\" stroke-width=\"5\"/><circle cx=\"310\" cy=\"150\" r=\"6\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><circle cx=\"170\" cy=\"128\" r=\"5\" fill=\"var(--blue)\"/><circle cx=\"170\" cy=\"172\" r=\"5\" fill=\"var(--blue)\"/><text x=\"120\" y=\"110\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">Arg ≈ <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">π</tspan></text><text x=\"112\" y=\"204\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">Arg ≈ −<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">π</tspan></text><text x=\"40\" y=\"250\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">負實軸：跳 2π</text><text x=\"355\" y=\"70\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:inherit\">右半平面 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</tspan> &gt; 0</text><text x=\"322\" y=\"176\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:KaTeX_Main,serif\">0</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　這條紅線叫分支切割；Log 在 $\\mathbb C\\setminus(-\\infty,0]$ 上全純",
+              "color": "violet",
+              "on": "綠色"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$\\operatorname{Log}z$ 在 $x>0$ 全純",
+      "beats": [
+        {
+          "show": [
+            "$x>0$：$\\operatorname{Arg}z=\\arctan\\dfrac yx$，所以",
+            "$u=\\tfrac12\\ln(x^2+y^2),\\qquad v=\\arctan\\frac yx$"
+          ],
+          "say": "在右半平面，主輻角就是反正切 x 分之 y。所以實部是 2 分之 1 乘自然對數 x 平方加 y 平方，虛部是反正切 x 分之 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x>0$：$\\operatorname{Arg}z=\\arctan\\dfrac yx$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle u=\\tfrac12\\ln(x^2+y^2),\\qquad v=\\arctan\\frac yx$",
+              "on": "乘自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u_x=\\frac{x}{x^2+y^2},\\quad u_y=\\frac{y}{x^2+y^2}$"
+          ],
+          "say": "算偏導數。u x 是 x 平方加 y 平方分之 x，u y 是 x 平方加 y 平方分之 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle u_x=\\frac{x}{x^2+y^2},\\quad u_y=\\frac{y}{x^2+y^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}v_x&=\\frac{-y/x^2}{1+y^2/x^2}=\\frac{-y}{x^2+y^2}\\\\v_y&=\\frac{1/x}{1+y^2/x^2}=\\frac{x}{x^2+y^2}\\end{aligned}$"
+          ],
+          "say": "v x，用連鎖律，化簡成 x 平方加 y 平方分之負 y；v y 化簡成 x 平方加 y 平方分之 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}v_x&=\\frac{-y/x^2}{1+y^2/x^2}=\\frac{-y}{x^2+y^2}\\\\v_y&=\\frac{1/x}{1+y^2/x^2}=\\frac{x}{x^2+y^2}\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u_x=v_y$、$u_y=-v_x$ 成立；四個偏導數在 $x>0$ 連續"
+          ],
+          "say": "柯西黎曼方程成立，四個偏導數在右半平面都連續。由上一課的充分條件，主值對數在右半平面全純。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u_x=v_y$、$u_y=-v_x$ 成立；四個偏導數在 $x>0$ 連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\frac{d}{dz}\\operatorname{Log}z&=u_x+i\\,v_x=\\frac{x-iy}{x^2+y^2}\\\\&=\\frac{\\bar z}{|z|^2}=\\frac1z\\end{aligned}$"
+          ],
+          "say": "導數是 u x 加 i v x，等於 z bar 除以 z 的絕對值平方，正好是 z 分之一。跟實數的自然對數一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}\\frac{d}{dz}\\operatorname{Log}z&=u_x+i\\,v_x=\\frac{x-iy}{x^2+y^2}\\\\&=\\frac{\\bar z}{|z|^2}=\\frac1z\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "ba"
+            },
+            {
+              "do": "write",
+              "line": "　上半平面用 $\\operatorname{Arg}z=\\frac\\pi2-\\arctan\\frac xy$，下半平面用 $-\\frac\\pi2-\\arctan\\frac xy$，偏導數公式相同 ⇒ 在 $\\mathbb C\\setminus(-\\infty,0]$ 全純",
+              "color": "violet",
+              "on": "好是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼值得一個名字：剛性",
+      "beats": [
+        {
+          "show": [
+            "• 再微分：實數 $x|x|$ 可微一次、二階不存在；全純自動無限次可微",
+            "• 冪級數：實數無限次可微也不一定等於泰勒級數；全純在圓盤裡等於泰勒級數"
+          ],
+          "say": "為什麼要一個名字？因為全純函數非常剛硬：可微一次，就自動無限次可微，在圓盤裡等於泰勒級數；也不可能一段是零、別處不是。實數函數都做不到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 再微分：實數 $x|x|$ 可微一次、二階不存在；全純自動無限次可微"
+            },
+            {
+              "do": "write",
+              "line": "• 冪級數：實數無限次可微也不一定等於泰勒級數；全純在圓盤裡等於泰勒級數",
+              "on": "剛硬"
+            },
+            {
+              "do": "write",
+              "line": "• 局部決定整體：實數可以一段是 $0$、別處不是；全純一小段的值決定全部",
+              "on": "在圓"
+            },
+            {
+              "do": "write",
+              "line": "　實數反例：$e^{-1/x^2}$（$x\\ne0$）、$0$（$x=0$）無限次可微，泰勒級數卻是 $0$",
+              "color": "violet",
+              "on": "是零"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這些要用複數線積分證明（後面的課）"
+          ],
+          "say": "這幾個事實要用複數的線積分才能證明，後面的課會做。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這些要用複數線積分證明（後面的課）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在就能證的一個：$U$ 連通開集，$f'=0$ ⇒ $f$ 是常數"
+          ],
+          "say": "但有一個剛性，現在就能證：在連通的開集上，導數處處是 0，函數就是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "現在就能證的一個：$U$ 連通開集，$f'=0$ ⇒ $f$ 是常數",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　連通：任兩點能用一條折線（在 $U$ 裡）連起來",
+              "color": "violet",
+              "on": "集上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：$f'=0$ ⇒ 常數",
+      "beats": [
+        {
+          "show": [
+            "$f'=u_x+i\\,v_x=0$ ⇒ $u_x=v_x=0$"
+          ],
+          "say": "證明。導數等於 u x 加 i v x，是 0，所以 u x 和 v x 都是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f'=u_x+i\\,v_x=0$ ⇒ $u_x=v_x=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "CR：$u_y=-v_x=0$，$v_y=u_x=0$"
+          ],
+          "say": "由柯西黎曼方程，u y 等於負 v x，也是 0；v y 等於 u x，也是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "CR：$u_y=-v_x=0$，$v_y=u_x=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla u=\\nabla v=\\mathbf 0$ 處處成立"
+          ],
+          "say": "所以 u 和 v 的梯度處處是零向量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\nabla u=\\nabla v=\\mathbf 0$ 處處成立"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿折線的每一段用均值定理：$u,v$ 在每一段上不變",
+            "$\\Rightarrow\\ u,v\\ \\text{是常數},\\ f\\ \\text{是常數}\\quad\\blacksquare$"
+          ],
+          "say": "U 連通，任兩點用折線連起來；在每一段上，梯度是 0，由均值定理 u 和 v 不變。所以 f 是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "沿折線的每一段用均值定理：$u,v$ 在每一段上不變"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\Rightarrow\\ u,v\\ \\text{是常數},\\ f\\ \\text{是常數}\\quad\\blacksquare}}$",
+              "on": "起來"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "由均"
+            },
+            {
+              "do": "write",
+              "line": "　一段 $z(t)=a+t(b-a)$：$\\frac{d}{dt}u(z(t))=\\nabla u\\cdot(b-a)=0$",
+              "color": "violet",
+              "on": "不變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推論：連通開集上全純、而且只取實數值的 $f$ 是常數"
+          ],
+          "say": "推論：在連通開集上全純、又只取實數值的函數，一定是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：連通開集上全純、而且只取實數值的 $f$ 是常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$v=0$ ⇒ $v_x=v_y=0$ ⇒（CR）$u_x=u_y=0$ ⇒ $f'=0$"
+          ],
+          "say": "虛部 v 是 0，偏導數都是 0；由柯西黎曼方程，u 的偏導數也是 0，所以是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$v=0$ ⇒ $v_x=v_y=0$ ⇒（CR）$u_x=u_y=0$ ⇒ $f'=0$"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "預告：因此成立的定理",
+      "beats": [
+        {
+          "show": [
+            "• Cauchy 積分定理：沿封閉曲線積分是 $0$",
+            "• Cauchy 積分公式：圓內的值由圓周上的值決定 ⇒ 無限次可微、冪級數"
+          ],
+          "say": "預告後面會證的定理。柯西積分定理：沿封閉曲線積分是 0。柯西積分公式：圓裡的值由圓周上的值決定，由此得到無限次可微和冪級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Cauchy 積分定理：沿封閉曲線積分是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "• Cauchy 積分公式：圓內的值由圓周上的值決定 ⇒ 無限次可微、冪級數",
+              "on": "分公"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• Liouville：有界的整函數是常數"
+          ],
+          "say": "劉維爾定理：有界的整函數一定是常數。所以正弦 z 不可能有界，跟 11.36 看到的一致。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Liouville：有界的整函數是常數"
+            },
+            {
+              "do": "write",
+              "line": "　例：$|\\sin(iy)|=|\\sinh y|\\to\\infty$；實數的 $\\sin x$ 有界不矛盾，因為它只看實軸",
+              "color": "violet",
+              "on": "不可"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 唯一性：在一小段線上相等的兩個全純函數，處處相等"
+          ],
+          "say": "唯一性定理：兩個全純函數，只要在一小段線上相等，在整個連通區域都相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 唯一性：在一小段線上相等的兩個全純函數，處處相等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：整函數 $f$ 在實軸上等於 $e^x$ ⇒ $f=e^z$"
+          ],
+          "say": "例如一個整函數，在實軸上跟 e 的 x 次方一樣，它就只能是 e 的 z 次方。實數函數往複數的延伸，最多只有一種。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：整函數 $f$ 在實軸上等於 $e^x$ ⇒ $f=e^z$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這就是為什麼 $e^z$、$\\sin z$ 的定義「只有一種合理的選法」",
+              "color": "violet",
+              "on": "次方#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 全純：在一整塊開集上每一點可微；整函數：在全 $\\mathbb C$ 全純",
+            "• 在一點可微 $\\ne$ 在一點全純：$|z|^2$、$x^2+iy^2$"
+          ],
+          "say": "整理：全純是在一整塊開集上可微；多項式、指數、正弦餘弦是整函數，有理函數去掉分母零點，主值對數去掉負實軸；全純函數很剛硬，導數為零就是常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 全純：在一整塊開集上每一點可微；整函數：在全 $\\mathbb C$ 全純"
+            },
+            {
+              "do": "write",
+              "line": "• 在一點可微 $\\ne$ 在一點全純：$|z|^2$、$x^2+iy^2$",
+              "on": "多項"
+            },
+            {
+              "do": "write",
+              "line": "• 多項式、$e^z$、$\\sin z$、$\\cos z$：整函數；$\\frac pq$：去掉 $q$ 的零點",
+              "on": "整函"
+            },
+            {
+              "do": "write",
+              "line": "• $\\operatorname{Log}z$：在 $\\mathbb C\\setminus(-\\infty,0]$ 全純，導數 $\\frac1z$",
+              "on": "主值"
+            },
+            {
+              "do": "write",
+              "line": "• 剛性：$f'=0$ ⇒ 常數；可微一次 ⇒ 無限次（後面證）",
+              "on": "數很"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複平面上的曲線：為積分做準備"
+          ],
+          "say": "下一課，開始談複平面上的曲線，為複數線積分做準備。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：複平面上的曲線：為積分做準備"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "cauchy-riemann", "harmonic"],
-    "fine": ["holomorphic-domain", "holomorphic-vs-differentiable", "holomorphic-log-branch", "holomorphic-rigidity"]
+    "coarse": [
+      "complex",
+      "cauchy-riemann",
+      "harmonic"
+    ],
+    "fine": [
+      "holomorphic-domain",
+      "holomorphic-vs-differentiable",
+      "holomorphic-log-branch",
+      "holomorphic-rigidity"
+    ]
   },
   "practice": [
-    { "id": "der-080", "core": true, "trains": "holomorphic-vs-differentiable" },
-    { "id": "der-079", "core": true, "trains": "holomorphic-domain" },
-    { "id": "cg-11g-044", "core": true, "trains": "holomorphic-domain" },
-    { "id": "cg-11g-046", "core": true, "trains": "holomorphic-vs-differentiable" },
-    { "id": "der-087", "trains": "holomorphic-rigidity" },
-    { "id": "cg-11g-043", "trains": "holomorphic-domain" },
-    { "id": "cg-11g-045", "trains": "holomorphic-domain" },
-    { "id": "cg-11g-047", "trains": "holomorphic-vs-differentiable" }
+    {
+      "id": "der-080",
+      "core": true,
+      "trains": "holomorphic-vs-differentiable"
+    },
+    {
+      "id": "der-079",
+      "core": true,
+      "trains": "holomorphic-domain"
+    },
+    {
+      "id": "cg-11g-044",
+      "core": true,
+      "trains": "holomorphic-domain"
+    },
+    {
+      "id": "cg-11g-046",
+      "core": true,
+      "trains": "holomorphic-vs-differentiable"
+    },
+    {
+      "id": "der-087",
+      "trains": "holomorphic-rigidity"
+    },
+    {
+      "id": "cg-11g-043",
+      "trains": "holomorphic-domain"
+    },
+    {
+      "id": "cg-11g-045",
+      "trains": "holomorphic-domain"
+    },
+    {
+      "id": "cg-11g-047",
+      "trains": "holomorphic-vs-differentiable"
+    }
   ],
   "gaps": []
 }

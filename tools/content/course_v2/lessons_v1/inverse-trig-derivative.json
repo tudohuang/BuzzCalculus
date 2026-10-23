@@ -1,0 +1,474 @@
+{
+  "id": "inverse-trig-derivative",
+  "title": "反函數與反三角函數微分",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["inverse-function", "inverse-trig", "implicit-differentiation", "chain-rule", "derivative-trig"],
+  "next": ["higher-derivatives"],
+  "related": [],
+  "objectives": [
+    "用 $(f^{-1})'(b) = \\frac{1}{f'(a)}$（其中 $f(a) = b$）求反函數在一點的導數，不必解出反函數。",
+    "推導並記住 $\\arcsin$、$\\arccos$、$\\arctan$ 的導數，說得出 $\\sqrt{}$ 為什麼取正。",
+    "反三角函數套連鎖律，例如 $\\arcsin\\left(\\frac{x}{4}\\right)$、$\\arctan(x^2)$。"
+  ],
+  "visual": "同一張圖上畫 y = f(x)（例如 x³ + x）、它的反函數，和鏡射線 y = x。在 f 上 (a, b) 畫切線，斜率 m；它對 y = x 的鏡像是反函數在 (b, a) 的切線，斜率顯示為 1/m。拖動 a，兩個斜率同步變化，乘積一直是 1。",
+  "concept": [
+    {
+      "heading": "① 圖像：鏡射把斜率變成倒數",
+      "body": [
+        "$f$ 和 $f^{-1}$ 的圖形對 $y = x$ 對稱：$f$ 上的點 $(a, b)$ 對應 $f^{-1}$ 上的點 $(b, a)$。鏡射把「$x$ 方向」和「$y$ 方向」對調，所以上升除以前進變成前進除以上升：斜率 $m$ 變成 $\\frac{1}{m}$。",
+        "所以：$f^{-1}$ 在 $b$ 的導數，是 $f$ 在 $a$ 的導數的倒數，其中 $f(a) = b$。要 $f'(a) \\ne 0$，否則倒數不存在（那一點反函數的切線是鉛直的）。"
+      ],
+      "tex": ["(f^{-1})'(b)=\\frac{1}{f'(a)},\\qquad f(a)=b"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式從哪裡來（假設 $f^{-1}$ 可微）",
+      "body": [
+        "$f(f^{-1}(x)) = x$。兩邊對 $x$ 微分，左邊用連鎖律：$f'(f^{-1}(x)) \\cdot (f^{-1})'(x) = 1$。除過去就是上面的公式。",
+        "這個推法先假設了 $f^{-1}$ 可微。定理保證：$f$ 在一個區間上連續且嚴格單調、在區間內部的 $a$ 可微且 $f'(a) \\ne 0$，$f^{-1}$ 就在 $b = f(a)$ 可微。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ $\\arcsin$ 與 $\\arctan$",
+      "body": [
+        "$y = \\arcsin x$ 的意思是 $\\sin y = x$，而且 $y$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$。對 $x$ 隱函數微分：$\\cos y \\cdot y' = 1$，$y' = \\frac{1}{\\cos y}$。",
+        "要把 $\\cos y$ 寫回 $x$：$\\cos y = \\pm\\sqrt{1 - \\sin^2 y} = \\pm\\sqrt{1 - x^2}$。$y$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$，那裡 $\\cos y \\ge 0$，所以取正號。$x = \\pm1$ 時分母是 0，導數只在 $-1 < x < 1$ 存在。",
+        "$y = \\arctan x$：$\\tan y = x$，$y$ 在 $(-\\frac{\\pi}{2}, \\frac{\\pi}{2})$。$\\sec^2 y \\cdot y' = 1$，$y' = \\frac{1}{\\sec^2 y} = \\frac{1}{1 + \\tan^2 y} = \\frac{1}{1 + x^2}$，對所有 $x$ 成立。",
+        "$\\arccos x = \\frac{\\pi}{2} - \\arcsin x$，所以導數多一個負號。"
+      ],
+      "tex": ["(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}},\\quad(\\arccos x)'=-\\frac{1}{\\sqrt{1-x^2}},\\quad(\\arctan x)'=\\frac{1}{1+x^2}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 定理的證明",
+      "body": [
+        "設 $f$ 在區間 $I$ 上連續、嚴格單調，在 $a$ 可微且 $f'(a) \\ne 0$，$b = f(a)$。連續且嚴格單調的函數，反函數也連續（這一步本身需要中間值定理，這裡接受它）。",
+        "取 $k \\ne 0$ 很小，令 $x = f^{-1}(b + k)$。因為 $f^{-1}$ 一對一，$x \\ne a$；因為 $f^{-1}$ 連續，$k \\to 0$ 時 $x \\to a$。",
+        "$\\frac{f^{-1}(b + k) - f^{-1}(b)}{k} = \\frac{x - a}{f(x) - f(a)} = 1 / [\\frac{f(x) - f(a)}{x - a}]$。",
+        "$k \\to 0$ 時 $x \\to a$ 而且 $x \\ne a$，分母 $\\to f'(a) \\ne 0$，所以整個 $\\to \\frac{1}{f'(a)}$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "不解反函數，求它的導數",
+      "prompt": "$f(x) = x^3 + x$，求 $(f^{-1})'(2)$",
+      "problemId": "db-inv-001",
+      "steps": [
+        "$f'(x) = 3x^2 + 1 > 0$，$f$ 嚴格遞增，有反函數。",
+        "先找 $a$ 使 $f(a) = 2$：$a^3 + a = 2$，試 $a = 1$：$1 + 1 = 2$。所以 $f^{-1}(2) = 1$。",
+        "$f'(1) = 3 + 1 = 4$。",
+        "$(f^{-1})'(2) = \\frac{1}{f'(1)} = \\frac{1}{4}$。"
+      ],
+      "answer": "$\\frac{1}{4}$",
+      "note": "最常見的錯是算 $\\frac{1}{f'(2)} = \\frac{1}{13}$：2 是反函數的輸入，要先換成 $f$ 的輸入 $a = 1$。",
+      "claim": "SUB(x^3+x, 1) == 2 ;; 1/D(x^3+x, 1) == 1/4"
+    },
+    {
+      "title": "$\\arcsin$ 套連鎖律",
+      "prompt": "$\\frac{d}{dx} \\arcsin\\left(\\frac{x}{4}\\right)$",
+      "problemId": "lec-03-q3b",
+      "steps": [
+        "外層 $\\arcsin u$，導數 $\\frac{1}{\\sqrt{1 - u^2}}$；裡層 $u = \\frac{x}{4}$，導數 $\\frac{1}{4}$。",
+        "相乘：$\\left(\\frac{1}{4}\\right) \\cdot \\frac{1}{\\sqrt{1 - \\frac{x^2}{16}}}$。",
+        "化簡根號：$1 - \\frac{x^2}{16} = \\frac{16 - x^2}{16}$，所以 $\\sqrt{1 - \\frac{x^2}{16}} = \\frac{\\sqrt{16 - x^2}}{4}$。",
+        "$\\left(\\frac{1}{4}\\right) \\cdot \\frac{4}{\\sqrt{16 - x^2}} = \\frac{1}{\\sqrt{16 - x^2}}$（$-4 < x < 4$）。"
+      ],
+      "answer": "$\\frac{1}{\\sqrt{16 - x^2}}$",
+      "claim": "D(arcsin(x/4)) == 1/sqrt(16-x^2)"
+    },
+    {
+      "title": "$\\arctan$ 套連鎖律",
+      "prompt": "$\\frac{d}{dx} \\arctan(x^2)$",
+      "problemId": "db-itrig-002",
+      "steps": [
+        "外層 $\\arctan u$，導數 $\\frac{1}{1 + u^2}$；裡層 $u = x^2$，導數 $2x$。",
+        "$\\frac{1}{1 + (x^2)^2} \\cdot 2x = \\frac{2x}{1 + x^4}$。"
+      ],
+      "answer": "$\\frac{2x}{1 + x^4}$",
+      "claim": "D(arctan(x^2)) == 2x/(1+x^4)"
+    }
+  ],
+  "pitfalls": [
+    "$(f^{-1})'(b)$ 算成 $\\frac{1}{f'(b)}$，忘了先找 $a = f^{-1}(b)$。",
+    "把 $\\arcsin x$ 當成 $\\frac{1}{\\sin x}$。$\\sin^{-1} x$ 這個寫法指的是反函數，不是倒數。",
+    "忘了連鎖律：$\\arctan(x^2)$ 寫成 $\\frac{1}{1 + x^4}$。",
+    "把 $(x^2)^2$ 寫成 $x^2$，得到 $\\frac{2x}{1 + x^2}$。",
+    "$\\arccos$ 的導數漏了負號。"
+  ],
+  "checks": [
+    {
+      "ask": "$f(x) = x^3 + x$，$(f^{-1})'(2)$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{13}$", "why": "這是 $\\frac{1}{f'(2)}$。2 是反函數的輸入，要先找 $f(a) = 2$ 的 $a = 1$，再算 $\\frac{1}{f'(1)}$。" },
+        { "label": "$\\frac{1}{4}$", "correct": true },
+        { "label": "4", "why": "這是 $f'(1)$，忘了取倒數。" }
+      ]
+    },
+    {
+      "ask": "$\\arctan x$ 在 $x = 1$ 的導數是？",
+      "options": [
+        { "label": "$\\frac{\\pi}{4}$", "why": "這是函數值 $\\arctan 1$，不是導數。" },
+        { "label": "2", "why": "倒數弄反了：導數是 $\\frac{1}{1 + x^2} = \\frac{1}{2}$，不是 $1 + x^2$。" },
+        { "label": "$\\frac{1}{2}$", "correct": true }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} \\arcsin(2x)$ 是？",
+      "options": [
+        { "label": "$\\frac{2}{\\sqrt{1 - 4x^2}}$", "correct": true },
+        { "label": "$\\frac{1}{\\sqrt{1 - 4x^2}}$", "why": "外層對了，忘了乘裡層 $2x$ 的導數 2。" },
+        { "label": "$\\frac{2}{\\sqrt{1 - 2x^2}}$", "why": "$(2x)^2$ 是 $4x^2$，不是 $2x^2$。" }
+      ]
+    },
+    {
+      "ask": "推導 $(\\arcsin x)'$ 時，$\\cos y = \\sqrt{1 - x^2}$ 為什麼取正號？",
+      "options": [
+        { "label": "因為 $y = \\arcsin x$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$，那裡 $\\cos y \\ge 0$", "correct": true },
+        { "label": "因為根號一律取正", "why": "$\\sqrt{}$ 本身是正的沒錯，但問題是 $\\cos y$ 該等於 $+\\sqrt{}$ 還是 $-\\sqrt{}$；決定這件事的是 $y$ 的範圍。" },
+        { "label": "因為 $x > 0$", "why": "$x$ 可以是負的，例如 $\\arcsin\\left(-\\frac{1}{2}\\right) = -\\frac{\\pi}{6}$，那裡 $\\cos$ 仍然是正的。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "鏡射：斜率變倒數",
+      "beats": [
+        { "show": ["$f$ 上的 $(a, b)$ ↔ $f^{-1}$ 上的 $(b, a)$"],
+          "note": "兩個圖形對 $y = x$ 對稱。",
+          "say": "f 和它的反函數，圖形對 y 等於 x 這條線對稱：點 a、b 會換成點 b、a。",
+          "board": [
+            {"do":"write","line":"圖形對 $y = x$ 對稱"},
+            {"do":"write","line":"$f$ 上：${{p:(a, b)}}$","on":"點 a、b"},
+            {"do":"write","line":"$f^{-1}$ 上：${{q:(b, a)}}$","on":"換成"}
+          ] },
+        { "show": ["藍：$f$，紅：反函數，虛線：$y=x$"],
+          "say": "畫出來看：藍色是 f，紅色是它的反函數，虛線 y 等於 x 當鏡子，兩條曲線互為鏡像。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-3,3],"equal":true,"curves":[{"expr":"x^3+x","domain":[-1.3,1.3],"color":"blue"},{"param":{"x":"t^3+t","y":"t","t":[-1.3,1.3]},"color":"red"},{"expr":"x","domain":[-3,3],"color":"muted","dashed":true}]}}
+          ] },
+        { "show": ["斜率 $m$ 變成 $\\frac{1}{m}$"],
+          "note": "上升除以前進，變成前進除以上升。",
+          "say": "鏡射把橫的方向和直的方向對調，上升除以前進變成前進除以上升，斜率變成倒數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"橫、直方向對調","on":"對調"},
+            {"do":"write","line":"上升 ÷ 前進 → 前進 ÷ 上升","on":"上升除以前進"},
+            {"do":"write","line":"斜率 $m$ 變成 $\\frac{1}{m}$","color":"green","on":"斜率"}
+          ] },
+        { "show": ["$(f^{-1})'(b)=\\frac{1}{f'(a)}$，$f(a)=b$"],
+          "note": "要 $f'(a) \\ne 0$。",
+          "say": "所以反函數在 b 的導數，是 f 在 a 的導數的倒數。f prime 在 a 是零的話，倒數就不存在。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(f^{-1})'(b) = \\frac{1}{{{d:f'(a)}}}$","on":"反函數在"},
+            {"do":"write","line":"$f(a) = b$","on":"f 在 a"},
+            {"do":"underline","term":"d","color":"red","label":"不能是 0","on":"是零的話"}
+          ] },
+        { "show": ["$f(f^{-1}(x)) = x$ 兩邊微分"],
+          "note": "連鎖律：$f'(f^{-1}(x)) \\cdot (f^{-1})'(x) = 1$。",
+          "say": "公式也可以這樣得到：f 套在反函數外面等於 x，兩邊微分，左邊用連鎖律，再除過去。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f(f^{-1}(x)) = x$","on":"f 套在"},
+            {"do":"transform","line":"${{a:f'(f^{-1}(x))}} \\cdot {{p:(f^{-1})'(x)}} = 1$","on":"左邊用"},
+            {"do":"transform","line":"${{p:(f^{-1})'(x)}} = \\frac{1}{{{a:f'(f^{-1}(x))}}}$","on":"再除"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$f$ 在 $(a, b)$ 的切線斜率是 3。$f^{-1}$ 在 $(b, a)$ 的切線斜率是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{3}$",
+            "correct": true
+          },
+          {
+            "label": "3",
+            "why": "鏡射把前進和上升對調，斜率要取倒數。"
+          },
+          {
+            "label": "$-3$",
+            "why": "對 $y = x$ 鏡射不是翻正負號；遞增的 $f$，反函數也遞增。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "不解反函數也能算",
+      "beats": [
+        { "show": ["$f(x) = x^3 + x$，求 $(f^{-1})'(2)$"],
+          "note": "$f'(x) = 3x^2 + 1 > 0$，有反函數。",
+          "say": "x 三次方加 x，導數三 x 平方加一永遠大於零，嚴格遞增，所以有反函數。",
+          "board": [
+            {"do":"write","line":"$f(x) = x^3 + x$，求 $(f^{-1})'({{b:2}})$","tint":{"b":"blue"}},
+            {"do":"write","line":"$f'(x) = {{p:3x^2 + 1 > 0}}$","on":"導數"},
+            {"do":"underline","term":"p","label":"嚴格遞增","on":"嚴格遞增"}
+          ] },
+        { "show": ["先找 $a$：$f(a) = 2$"],
+          "note": "試 $a = 1$：$1 + 1 = 2$。",
+          "say": "關鍵：二是反函數的輸入。先找 f 的哪個輸入會得到二，試一，一加一是二，所以 a 是一。",
+          "board": [
+            {"do":"focus","term":"b","color":"blue","label":"反函數的輸入","on":"二是"},
+            {"do":"write","line":"$f(a) = {{b:2}}$","on":"先找"},
+            {"do":"transform","line":"${{a:a = 1}}$：$f(1) = 1 + 1 = {{b:2}}$","tint":{"a":"violet"},"on":"試一"},
+            {"do":"box","term":"a","color":"violet","on":"所以 a"}
+          ] },
+        { "show": ["$f'(1) = 3 + 1 = 4$"],
+          "say": "接著算 f 在一的導數，三加一是四。剩下的就是取倒數。",
+          "board": [
+            {"do":"write","line":"$f'(1) = 3 + 1 = {{f:4}}$","on":"接著算"},
+            {"do":"circle","term":"f","label":"還要取倒數","on":"剩下的"}
+          ] }
+      ],
+      "key": "先解 $f(a)=2$ 找到 $a$，再取倒數",
+      "check": 0
+    },
+    {
+      "title": "證明：翻成倒數",
+      "beats": [
+        { "show": ["反函數的差商 = $f$ 的差商倒過來"],
+          "note": "$f$ 連續、嚴格單調，$f'(a)\\ne0$，$b=f(a)$。",
+          "say": "策略：不先假設反函數可微。把反函數的差商翻成 f 的差商的倒數，再取極限。",
+          "board": [
+            {"do":"write","line":"${{g:\\frac{f^{-1}(b+k)-f^{-1}(b)}{k}}}$","on":"反函數的差商"},
+            {"do":"underline","term":"g","label":"翻成倒數","on":"翻成"}
+          ] },
+        { "show": ["令 $x=f^{-1}(b+k)$，$k\\ne0$"],
+          "note": "$f^{-1}$ 一對一，$b+k\\ne b$，所以 $x\\ne a$。",
+          "why": {"ask":"為什麼 $x\\ne a$？","say":"等一下要除以 x 減 a。x 為什麼不會等於 a？","options":[{"label":"$f^{-1}$ 一對一，而 $b+k\\ne b$","correct":true},{"label":"$k$ 很小，$x$ 離 $a$ 很近","why":"很近不等於不相等；$x\\ne a$ 靠的是一對一。"},{"label":"$f'(a)\\ne0$","why":"那是最後分母不為 0 要用的；$x\\ne a$ 只靠 $f^{-1}$ 一對一。"}]},
+          "say": "反函數一對一，b 加 k 不等於 b，送回去的 x 也就不等於 a，可以放心除以 x 減 a。",
+          "board": [
+            {"do":"write","line":"令 $x=f^{-1}(b+k)$，$k\\ne0$ ⇒ ${{xa:x\\ne a}}$","on":"等一下"},
+            {"do":"underline","term":"xa","why":true,"label":"一對一","on":"一對一"}
+          ] },
+        { "show": ["差商 $=\\frac{x-a}{f(x)-f(a)}$","$=1\\Big/\\frac{f(x)-f(a)}{x-a}$"],
+          "say": "分子是 x 減 a，分母 k 就是 f 在 x 減 f 在 a。上下翻過來，就是 f 的差商的倒數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"差商 $= \\frac{{{n:x-a}}}{{{d:f(x)-f(a)}}}$","tint":{"n":"blue","d":"violet"},"on":"分子是"},
+            {"do":"underline","term":"d","color":"violet","label":"就是 k","on":"分母 k"},
+            {"do":"transform","line":"差商 $= 1\\Big/\\frac{{{d:f(x)-f(a)}}}{{{n:x-a}}}$","on":"上下翻過來"}
+          ] },
+        { "show": ["$k\\to0$ 時 $x\\to a$"],
+          "note": "連續又嚴格單調，$f^{-1}$ 也連續。",
+          "why": {"ask":"為什麼 $x\\to a$？","say":"k 趨近零，x 為什麼一定往 a 靠？","options":[{"label":"$f^{-1}$ 連續","correct":true},{"label":"$f$ 在 $a$ 可微","why":"可微說的是 $f$；$x=f^{-1}(b+k)$ 跟著 $k$ 走，要的是 $f^{-1}$ 連續。"},{"label":"因為 $x\\ne a$","why":"$x\\ne a$ 只說不相等，沒說會靠近；靠近是 $f^{-1}$ 連續給的。"}]},
+          "say": "f 連續又嚴格單調，反函數也連續，所以 k 趨近零，x 就趨近 a。",
+          "board": [
+            {"do":"write","line":"$k\\to0$ 時 ${{xt:x\\to a}}$","on":"x 為什麼"},
+            {"do":"underline","term":"xt","why":true,"label":"反函數連續","on":"反函數也連續"}
+          ] },
+        { "show": ["$b+k\\to b$","$x\\to f^{-1}(b)=a$"],
+          "say": "具體看：k 變小，b 加 k 就靠近 b，反函數連續，x 就靠近反函數在 b 的值，那就是 a。",
+          "board": [
+            {"do":"write","line":"$b+k\\to b$"},
+            {"do":"write","line":"$x=f^{-1}(b+k)\\to f^{-1}(b)={{aa:a}}$","on":"反函數連續"},
+            {"do":"circle","term":"aa","on":"那就是"}
+          ] },
+        { "show": ["分母 $\\to f'(a)\\ne0$ ⇒ 極限 $=\\frac{1}{f'(a)}$"],
+          "say": "x 趨近 a 又不等於 a，分母趨近 f prime a，它不是零，整個趨近 f prime a 分之一。證完。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{d:f(x)-f(a)}}}{{{n:x-a}}}\\to {{nz:f'(a)\\ne0}}$","on":"分母趨近"},
+            {"do":"underline","term":"nz","label":"不是零","on":"它不是零"},
+            {"do":"write","line":"極限 $=\\frac{1}{f'(a)}$","color":"green","on":"整個趨近"}
+          ] }
+      ],
+      "key": "差商倒過來，再讓 $x\\to a$",
+      "proof": true,
+      "of": 3,
+      "skeleton": "構造",
+      "where": {
+        "ask": "「$f'(a)\\ne0$」用在哪一步？",
+        "steps": [
+          {
+            "label": "令 $x=f^{-1}(b+k)$，$x\\ne a$",
+            "why": "這只用到 $f^{-1}$ 一對一。"
+          },
+          {
+            "label": "差商翻成 $f$ 的差商倒數",
+            "why": "這只用到 $k\\ne0$、$x\\ne a$，上下都不是 0。"
+          },
+          {
+            "label": "$k\\to0$ 時 $x\\to a$",
+            "why": "這靠的是 $f^{-1}$ 連續。"
+          },
+          {
+            "label": "分母 $\\to f'(a)$，極限 $=\\frac{1}{f'(a)}$",
+            "correct": true
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\arcsin$ 的導數",
+      "beats": [
+        { "show": ["$y = \\arcsin x$：$\\sin y = x$"],
+          "note": "$y$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$。",
+          "say": "y 等於 arcsine x，意思是 sine y 等於 x，而且 y 在負二分之 pi 到二分之 pi 之間。",
+          "board": [
+            {"do":"write","line":"${{y:y}} = \\arcsin x$","tint":{"y":"blue"}},
+            {"do":"write","line":"$\\sin {{y:y}} = x$","on":"意思是"},
+            {"do":"write","line":"${{rg:-\\frac{\\pi}{2}\\le y\\le\\frac{\\pi}{2}}}$","on":"負二分之"}
+          ] },
+        { "show": ["$\\cos y \\cdot y' = 1$"],
+          "note": "隱函數微分。",
+          "say": "對 x 做隱函數微分：cosine y 乘 y prime 等於一，所以 y prime 是 cosine y 分之一。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\cos y \\cdot {{yp:y'}} = 1$","on":"cosine y 乘"},
+            {"do":"transform","line":"${{yp:y'}} = \\frac{1}{{{c:\\cos y}}}$","tint":{"c":"violet"},"on":"所以 y prime"}
+          ] },
+        { "show": ["$\\cos y = \\pm\\sqrt{1 - x^2}$，取正號"],
+          "say": "把 cosine y 換回 x：是正負根號一減 x 平方。y 的範圍裡 cosine 不是負的，所以取正號。",
+          "board": [
+            {"do":"write","line":"${{c:\\cos y}} = {{pm:\\pm}}\\sqrt{1-x^2}$","on":"換回 x"},
+            {"do":"underline","term":"rg","on":"y 的範圍"},
+            {"do":"transform","line":"${{c:\\cos y}} = {{s:\\sqrt{1-x^2}}}$","on":"不是負的"}
+          ] },
+        { "show": ["$x=\\pm1$ ⇒ $y=\\pm\\frac{\\pi}{2}$，$\\cos y=0$"],
+          "say": "x 等於正負一，y 就是正負二分之 pi，那裡 cosine 是零，分母就變成零。",
+          "board": [
+            {"do":"write","line":"$x=\\pm1$ ⇒ $y=\\pm\\frac{\\pi}{2}$，${{z:\\cos y=0}}$"},
+            {"do":"underline","term":"z","color":"red","label":"分母零","on":"cosine"}
+          ] },
+        { "show": ["$(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}}$"],
+          "note": "只在 $-1 < x < 1$ 存在。",
+          "say": "x 等於正負一時分母是零，所以導數只在負一到一之間存在。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$(\\arcsin x)'=\\frac{1}{{{s:\\sqrt{1-x^2}}}}$","on":"x 等於"},
+            {"do":"underline","term":"s","label":"±1 時是 0","on":"分母是零"},
+            {"do":"write","line":"只在 $-1 < x < 1$","color":"green","on":"只在"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\arctan$ 與 $\\arccos$",
+      "beats": [
+        { "show": ["$y = \\arctan x$：$\\tan y = x$"],
+          "note": "$\\sec^2 y \\cdot y' = 1$",
+          "say": "arctangent 一樣：tangent y 等於 x，微分得 secant 平方 y 乘 y prime 等於一。",
+          "board": [
+            {"do":"write","line":"$y = \\arctan x$：$\\tan y = x$"},
+            {"do":"write","line":"$\\sec^2 y \\cdot y' = 1$","on":"微分得"}
+          ] },
+        { "show": ["$y' = \\frac{1}{1 + \\tan^2 y} = \\frac{1}{1 + x^2}$"],
+          "note": "對所有 $x$ 成立。",
+          "say": "secant 平方等於一加 tangent 平方，tangent y 就是 x，得到一加 x 平方分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y' = \\frac{1}{\\sec^2 y}$","on":"secant 平方"},
+            {"do":"transform","line":"$y' = \\frac{1}{1 + \\tan^2 y}$","on":"tangent 平方"},
+            {"do":"transform","line":"$y' = {{r:\\frac{1}{1 + x^2}}}$","on":"tangent y 就是"},
+            {"do":"box","term":"r","color":"green","on":"得到"}
+          ] },
+        { "show": ["$(\\arccos x)'=-\\frac{1}{\\sqrt{1-x^2}}$"],
+          "note": "$\\arccos x = \\frac{\\pi}{2} - \\arcsin x$",
+          "say": "arccosine 是二分之 pi 減 arcsine，所以導數就是 arcsine 的導數多一個負號。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\arccos x = \\frac{\\pi}{2} - \\arcsin x$","on":"二分之 pi"},
+            {"do":"write","line":"$(\\arccos x)' = -\\frac{1}{\\sqrt{1 - x^2}}$","color":"green","on":"所以導數"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\arcsin$ 套連鎖律",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\arcsin\\left(\\frac{x}{4}\\right)$"],
+          "note": "裡層 $u = \\frac{x}{4}$，導數 $\\frac{1}{4}$。",
+          "say": "arcsine 四分之 x：外層 arcsine，裡層四分之 x，導數四分之一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\arcsin({{i:\\frac{x}{4}}})$","tint":{"i":"blue"}},
+            {"do":"underline","term":"i","color":"blue","label":"裡層","on":"裡層"},
+            {"do":"write","line":"$({{i:\\frac{x}{4}}})' = \\frac{1}{4}$","on":"導數"}
+          ] },
+        { "show": ["$\\left(\\frac{1}{4}\\right) \\cdot \\frac{1}{\\sqrt{1 - \\frac{x^2}{16}}}$"],
+          "say": "外層導數裡的 u 換成四分之 x，平方之後是十六分之 x 平方，再乘四分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{\\sqrt{1 - u^2}}$","on":"外層導數"},
+            {"do":"transform","line":"$\\frac{1}{\\sqrt{1 - (\\frac{x}{4})^2}}$","on":"換成"},
+            {"do":"transform","line":"${{r:\\frac{1}{\\sqrt{1 - \\frac{x^2}{16}}}}}$","on":"平方之後"},
+            {"do":"transform","line":"$\\frac{1}{4} \\cdot {{r:\\frac{1}{\\sqrt{1 - \\frac{x^2}{16}}}}}$","on":"再乘"}
+          ] },
+        { "show": ["$\\frac{1}{\\sqrt{16 - x^2}}$"],
+          "note": "$\\sqrt{1 - \\frac{x^2}{16}} = \\frac{\\sqrt{16 - x^2}}{4}$",
+          "say": "根號裡通分，拉出一個四分之一，跟前面的四分之一約掉，乾乾淨淨。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sqrt{1 - \\frac{x^2}{16}} = \\frac{\\sqrt{16 - x^2}}{4}$","on":"通分"},
+            {"do":"write","line":"$\\frac{1}{4} \\cdot \\frac{4}{\\sqrt{16 - x^2}}$","on":"跟前面"},
+            {"do":"transform","line":"$\\frac{1}{\\sqrt{16 - x^2}}$","color":"green","on":"約掉"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$\\arctan$ 套連鎖律",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\arctan(x^2)$"],
+          "note": "外層 $\\frac{1}{1 + u^2}$，裡層 $u = x^2$。",
+          "say": "arctangent x 平方：外層 arctangent，裡層是 x 平方。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}\\arctan({{i:x^2}})$","tint":{"i":"blue"}},
+            {"do":"write","line":"外層：$\\frac{1}{1 + u^2}$","on":"外層"},
+            {"do":"underline","term":"i","color":"blue","label":"裡層","on":"裡層是"}
+          ] },
+        { "show": ["$\\frac{1}{1 + (x^2)^2} \\cdot 2x$"],
+          "say": "外層導數的 u 換成 x 平方，再乘裡層的導數二 x。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{1 + {{u:u}}^2}$","on":"外層導數"},
+            {"do":"transform","line":"$\\frac{1}{1 + ({{v:x^2}})^2}$","on":"換成"},
+            {"do":"transform","line":"$\\frac{1}{1 + (x^2)^2} \\cdot {{d:2x}}$","on":"再乘"},
+            {"do":"circle","term":"d","color":"blue","on":"導數#2"}
+          ] }
+      ],
+      "predict": {
+        "ask": "整理之後是？",
+        "options": [
+          {
+            "label": "$\\frac{2x}{1 + x^4}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{2x}{1 + x^2}$",
+            "why": "把 $(x^2)^2$ 寫成了 $x^2$；平方再平方是 $x^4$。"
+          },
+          {
+            "label": "$\\frac{1}{1 + x^4}$",
+            "why": "忘了連鎖律，沒有乘裡層 $x^2$ 的導數 $2x$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["inverse-function", "inverse-trig"],
+    "fine": ["invtrig-deriv-inverse-function", "invtrig-deriv-arcsin", "invtrig-deriv-arctan", "invtrig-deriv-chain", "invtrig-deriv-arccos"]
+  },
+  "practice": [
+    { "id": "db-inv-001", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "lec-03-q3d", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "dd-invf-003", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "world-004", "core": true, "trains": "invtrig-deriv-arctan" },
+    { "id": "cx-der-008", "core": true, "trains": "invtrig-deriv-arctan" },
+    { "id": "db-itrig-001", "core": true, "trains": "invtrig-deriv-arcsin" },
+    { "id": "db-itrig-002", "core": true, "trains": "invtrig-deriv-chain" },
+    { "id": "cg-2d-001", "core": true, "trains": "invtrig-deriv-arccos" },
+    { "id": "lec-03-q3b", "trains": "invtrig-deriv-arcsin" },
+    { "id": "der-028", "trains": "invtrig-deriv-chain" },
+    { "id": "exam-der-017", "trains": "invtrig-deriv-chain" },
+    { "id": "hd-009", "trains": "invtrig-deriv-arcsin" },
+    { "id": "db-inv-003", "trains": "invtrig-deriv-inverse-function" },
+    { "id": "cg-2d-002", "trains": "invtrig-deriv-arccos" },
+    { "id": "dd-inv-003", "challenge": true, "trains": "invtrig-deriv-arcsin", "note": "挑戰：$x \\arcsin x + \\sqrt{1 - x^2}$ 微分後會大量消掉，只剩 $\\arcsin x$。" },
+    { "id": "depth-der-015", "challenge": true, "trains": "invtrig-deriv-arccos", "note": "挑戰：$\\arccos$ 套連鎖律，化簡時要用到 $x > 0$。" }
+  ],
+  "gaps": []
+}

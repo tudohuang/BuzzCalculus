@@ -1,0 +1,351 @@
+{
+  "id": "improper-comparison",
+  "title": "比較判別",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["improper-p-test", "asymptotic-equivalence", "comparison-test", "limit-comparison-test"],
+  "next": ["improper-conditional"],
+  "related": ["improper-singular"],
+  "objectives": [
+    "用直接比較判斷非負函數的瑕積分：被收斂的壓住就收斂、壓住發散的就發散。",
+    "用極限比較（$f\\sim c\\cdot g$）只看主項，跟 $\\frac{1}{x^p}$ 或 $e^{-x}$ 比。",
+    "知道比較判別要求非負；會變號的函數先看 $|f|$（絕對收斂）。"
+  ],
+  "visual": "畫 g(x) = 1/x² 與它底下的 f(x) = 1/(x³ + x + 1)，兩塊面積用不同顏色塗。右端點 t 往右拉：g 的面積停在 1，f 的面積一直被壓在它底下，也只能往上爬到某個有限值為止。",
+  "concept": [
+    {
+      "heading": "① 算不出來，也能判斷收不收斂",
+      "body": [
+        "$\\int_1^{\\infty}\\frac{dx}{x^3+x+1}$ 的反導函數很難寫，但要問的只是收不收斂。想法跟〈比較判別〉（級數）一樣：拿一個已經知道答案的函數來壓它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 直接比較（$f$、$g\\ge 0$）",
+      "body": [
+        "在 $[a,\\infty)$ 上 $0\\le f(x)\\le g(x)$：$\\int_a^{\\infty}g$ 收斂 $\\Rightarrow\\int_a^{\\infty}f$ 收斂；$\\int_a^{\\infty}f$ 發散 $\\Rightarrow\\int_a^{\\infty}g$ 發散。",
+        "反方向沒有結論：被發散的壓住、或壓住收斂的，什麼都說不出來。",
+        "瑕點在有限端點時一樣成立，只是比較對象換成 $0$ 端的 $\\frac{1}{x^p}$（$p<1$ 收斂）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 極限比較：只看主項",
+      "body": [
+        "$f$、$g>0$，$x\\to\\infty$ 時 $\\frac{f}{g}\\to L$，而且 $0<L<\\infty$：兩個積分同時收斂或同時發散。換成上一課的話就是 $f\\sim L\\cdot g$，主項決定命運。",
+        "做法：找出 $f$ 在問題點附近的主項，寫成 $\\frac{c}{x^p}$，再用 $p$ 判別。例如 $\\frac{x+1}{x^3+2}\\sim\\frac{1}{x^2}$（$x\\to\\infty$），收斂；$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$，發散。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 常用的比較對象",
+      "body": [
+        "$x\\to\\infty$：$\\frac{1}{x^p}$；指數衰減比任何冪次快，所以 $x^ne^{-x}\\le\\frac{C}{x^2}$ 在 $x$ 夠大時成立（成長階梯）。例如 $x\\ge 1$ 時 $e^{-x^2}\\le e^{-x}$，所以 $\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂。",
+        "會變號的函數不能直接比，但可以看 $|f|$：若 $\\int|f|$ 收斂（絕對收斂），則 $\\int f$ 也收斂。例如 $\\left|\\frac{\\sin x}{x^2}\\right|\\le\\frac{1}{x^2}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼直接比較成立",
+      "body": [
+        "$f\\ge 0$ 時，$F(t)=\\int_a^t f\\,dx$ 隨 $t$ 遞增。$f\\le g$ 給出 $F(t)\\le\\int_a^{\\infty}g$，所以 $F$ 遞增又有上界，$t\\to\\infty$ 時一定有極限（實數的完備性，跟單調收斂定理同一個道理）。",
+        "絕對收斂 $\\Rightarrow$ 收斂：$0\\le f+|f|\\le 2|f|$，由直接比較 $\\int(f+|f|)$ 收斂，再減掉收斂的 $\\int|f|$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "壓在收斂的底下",
+      "prompt": "判斷 $\\int_1^{\\infty}\\frac{dx}{x^3+x+1}$",
+      "problemId": "lec-08-q3b",
+      "steps": [
+        "$x\\ge 1$ 時分母 $x^3+x+1>x^3>0$，所以 $0<\\frac{1}{x^3+x+1}<\\frac{1}{x^3}$。",
+        "$\\int_1^{\\infty}\\frac{dx}{x^3}$ 是 $p=3>1$，收斂（值 $\\frac{1}{2}$）。",
+        "由直接比較，原積分收斂，而且值小於 $\\frac{1}{2}$。"
+      ],
+      "answer": "收斂（值 $<\\frac{1}{2}$）",
+      "claim": "INT(1/(x^3+x+1), 1, inf) < 1/2"
+    },
+    {
+      "title": "壓住發散的",
+      "prompt": "判斷 $\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$",
+      "problemId": "lec-08-q3a",
+      "steps": [
+        "$\\cos x\\ge-1$，所以 $2+\\cos x\\ge 1$，被積函數 $\\ge\\frac{1}{x}>0$。",
+        "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散（$p=1$）。",
+        "原積分壓在發散的上面，所以發散。$\\cos x$ 的振盪不影響結論。"
+      ],
+      "answer": "發散",
+      "claim": "INT((2+cos(x))/x, 1, 100) > INT(1/x, 1, 100)"
+    },
+    {
+      "title": "兩個問題點、各用一次極限比較",
+      "prompt": "判斷 $\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$",
+      "steps": [
+        "在 $1$ 切開。被積函數處處為正。",
+        "$x\\to 0^+$：$1+x\\to 1$，所以被積函數 $\\sim\\frac{1}{\\sqrt{x}}=\\frac{1}{x^{1/2}}$。$p=\\frac{1}{2}<1$，$[0,1]$ 那段收斂。",
+        "$x\\to\\infty$：$1+x\\sim x$，所以被積函數 $\\sim\\frac{1}{\\sqrt{x}\\cdot x}=\\frac{1}{x^{3/2}}$。$p=\\frac{3}{2}>1$，$[1,\\infty)$ 那段收斂。",
+        "兩段都收斂，整個收斂（〈瑕積分 II：奇異點〉算出它等於 $\\pi$）。"
+      ],
+      "answer": "收斂",
+      "claim": "LIM((1/(sqrt(x)*(1+x)))/(x^(-3/2)), inf) == 1 ;; LIM((1/(sqrt(x)*(1+x)))/(x^(-1/2)), 0+) == 1"
+    }
+  ],
+  "pitfalls": [
+    "方向用反：被發散的函數壓住，就說發散。",
+    "對會變號的函數直接比較，例如用 $-x\\le\\frac{1}{x^2}$ 推出 $\\int_1^{\\infty}(-x)\\,dx$ 收斂。",
+    "極限比較只看一端，忘了另一個問題點。",
+    "主項抓錯：$\\frac{x}{x^2+1}$ 的主項是 $\\frac{1}{x}$，不是 $\\frac{1}{x^2}$。"
+  ],
+  "checks": [
+    {
+      "ask": "在 $[1,\\infty)$ 上 $0\\le f\\le g$，而且 $\\int_1^{\\infty}g$ 發散。可以得到什麼？",
+      "options": [
+        { "label": "沒有結論", "correct": true },
+        { "label": "$\\int_1^{\\infty}f$ 發散", "why": "$f$ 比 $g$ 小，$g$ 的面積無限大不代表 $f$ 的也是；例如 $f=\\frac{1}{x^2}$、$g=\\frac{1}{x}$。" },
+        { "label": "$\\int_1^{\\infty}f$ 收斂", "why": "也不一定：$f=\\frac{g}{2}$ 也滿足條件，而它發散。" }
+      ]
+    },
+    {
+      "ask": "$\\int_1^{\\infty}\\frac{x}{x^3+1}\\,dx$：",
+      "options": [
+        { "label": "收斂：被積函數 $\\sim\\frac{1}{x^2}$，$p=2>1$", "correct": true },
+        { "label": "發散：跟 $\\frac{1}{x}$ 比", "why": "分子 $x$、分母 $x^3$，主項是 $\\frac{x}{x^3}=\\frac{1}{x^2}$，不是 $\\frac{1}{x}$。" },
+        { "label": "要先算出反導函數才能判斷", "why": "比較判別的目的就是不用算出值也能判斷。" }
+      ]
+    },
+    {
+      "ask": "$\\int_1^{\\infty}\\frac{\\sin^2 x}{x^2}\\,dx$：",
+      "options": [
+        { "label": "收斂，因為 $0\\le\\frac{\\sin^2 x}{x^2}\\le\\frac{1}{x^2}$", "correct": true },
+        { "label": "不能用比較，因為 $\\sin$ 會振盪", "why": "$\\sin^2 x$ 不會變號，$0\\le\\sin^2 x\\le 1$，直接比較完全合法。" },
+        { "label": "發散，因為 $\\sin^2 x$ 沒有極限", "why": "被積函數是否有極限不重要；它被 $\\frac{1}{x^2}$ 壓住，面積有限。" }
+      ]
+    },
+    {
+      "ask": "直接比較判別一定要求什麼？",
+      "options": [
+        { "label": "$f$、$g$ 在問題點附近非負", "correct": true },
+        { "label": "只要 $f\\le g$ 就好，不用管正負", "why": "反例：$-x\\le\\frac{1}{x^2}$，$\\int_1^{\\infty}\\frac{dx}{x^2}$ 收斂，但 $\\int_1^{\\infty}(-x)\\,dx$ 發散到 $-\\infty$。" },
+        { "label": "$f$ 與 $g$ 都要有初等反導函數", "why": "比較判別完全不用反導函數；這正是它有用的原因。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "拿已知的來壓",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^3+x+1}$"],
+          "note": "反導函數很難寫，但只問收不收斂。",
+          "say": "這個積分的反導函數很難寫。可是我們只想知道收不收斂，不一定要算出值。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{\\infty}{{f:\\frac{1}{x^3+x+1}}}\\,dx$","tint":{"f":"blue"}}
+          ] },
+        { "show": ["$0<\\frac{1}{x^3+x+1}<\\frac{1}{x^3}$"],
+          "note": "$x\\ge 1$ 時分母 $>x^3$。",
+          "say": "x 大於等於一的時候，分母比 x 三次方大，所以整個函數被 x 三次方分之一壓在底下。",
+          "board": [
+            {"do":"write","line":"$0<{{f:\\frac{1}{x^3+x+1}}}<{{g:\\frac{1}{x^3}}}$","tint":{"g":"violet"}},
+            {"do":"plot","graph":{"window":[0.8,4.2,-0.06,1.08],"ticks":false,"curves":[{"expr":"1/x^3","domain":[1,4],"color":"violet"},{"expr":"1/(x^3+x+1)","domain":[1,4],"color":"blue"}],"fills":[{"expr":"1/(x^3+x+1)","from":1,"to":4,"color":"blue"}],"dashed":[[[1,0],[1,1]]],"labels":[{"x":1.3,"y":0.62,"text":"1/x³","anchor":"start"}]},"on":"壓在底下"}
+          ] },
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^3}=\\frac{1}{2}$，收斂"],
+          "note": "所以原積分收斂，值 $<\\frac{1}{2}$。",
+          "say": "x 三次方分之一的面積是二分之一，有限。被它壓住的面積也有限，所以收斂。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\int_1^{\\infty}{{g:\\frac{1}{x^3}}}\\,dx={{h:\\frac{1}{2}}}$，收斂","on":"面積是"},
+            {"do":"box","term":"h","color":"green","label":"有限","on":"被它壓住"}
+          ] },
+        { "show": ["$0\\le f\\le g$：$g$ 收斂 ⇒ $f$ 收斂","$f$ 發散 ⇒ $g$ 發散"],
+          "say": "這就是直接比較：大的收斂，小的就收斂；小的發散，大的就發散。反方向什麼都說不出來。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$0\\le f\\le g$：$g$ 收斂 ⇒ $f$ 收斂","on":"直接比較"},
+            {"do":"write","line":"$f$ 發散 ⇒ $g$ 發散","on":"小的發散"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "壓住發散的",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$"],
+          "note": "$\\cos x\\ge-1$，所以 $2+\\cos x\\ge 1$。",
+          "say": "這一題分子會晃動，但 cosine 最小是負一，所以二加 cosine x 至少是一。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$"},
+            {"do":"write","line":"$\\cos x\\ge-1$","on":"cosine 最小"},
+            {"do":"write","line":"$2+\\cos x\\ge 1$","on":"二加"}
+          ] },
+        { "show": ["$\\frac{2+\\cos x}{x}\\ge\\frac{1}{x}>0$"],
+          "note": "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
+          "say": "被積函數壓在 x 分之一的上面，而 x 分之一的面積發散，所以原積分也發散。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{2+\\cos x}{x}\\ge\\frac{1}{x}>0$","on":"被積函數"},
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{dx}{x}$ 發散","on":"x 分之一的面積"},
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$ 發散","color":"green","on":"所以原積分"}
+          ] },
+        { "show": ["兩個函數都要非負"],
+          "note": "$-x\\le\\frac{1}{x^2}$，但 $\\int_1^{\\infty}(-x)\\,dx$ 發散。",
+          "say": "注意，這套推理要兩個函數都不是負的。負 x 比 x 平方分之一小，它的積分卻發散到負無限大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"兩個函數都要非負","on":"兩個函數"},
+            {"do":"write","line":"$-x\\le\\frac{1}{x^2}$","on":"負 x 比"},
+            {"do":"write","line":"$\\int_1^{\\infty}(-x)\\,dx$ 發散","color":"red","on":"它的積分"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "極限比較",
+      "beats": [
+        { "show": ["$\\frac{f}{g}\\to L$，$0<L<\\infty$"],
+          "note": "$f$、$g>0$。",
+          "say": "不想找不等式時，用極限比較：兩個正函數的比值趨近一個正的有限數 L。",
+          "board": [
+            {"do":"write","line":"$\\frac{f}{g}\\to {{l:L}}$，$0<L<\\infty$"},
+            {"do":"focus","term":"l","color":"gold","label":"正的有限","on":"一個正的"}
+          ] },
+        { "show": ["兩個積分同時收斂或同時發散"],
+          "note": "$f\\sim L\\cdot g$，主項決定命運。",
+          "say": "這時兩個積分同生共死，一起收斂或一起發散。換句話說，主項決定命運。",
+          "board": [
+            {"do":"write","line":"兩個積分同時收斂或同時發散"},
+            {"do":"write","line":"$f\\sim L\\cdot g$","on":"換句話說"}
+          ] },
+        { "show": ["$\\frac{x+1}{x^3+2}\\sim\\frac{1}{x^2}$：收斂"],
+          "note": "$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$：發散。",
+          "say": "做法是找主項。x 加一除以 x 三次方加二，主項是 x 平方分之一，收斂；x 除以 x 平方加一，主項是 x 分之一，發散。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{x+1}{x^3+2}\\sim{{a:\\frac{1}{x^2}}}$：收斂","on":"做法是"},
+            {"do":"circle","term":"a","color":"green","on":"x 平方分之一"},
+            {"do":"write","line":"$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$：發散","on":"x 除以"}
+          ] }
+      ],
+      "key": "只看分子分母的最高次，找出主項",
+      "check": 1
+    },
+    {
+      "title": "兩個問題點",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"],
+          "note": "在 $1$ 切開，被積函數處處為正。",
+          "say": "這一題零和無限遠都有問題。在一切開，兩段各用一次極限比較。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"},
+            {"do":"write","line":"$=\\int_0^{1}+\\int_1^{\\infty}$","on":"一切開"}
+          ] },
+        { "show": ["零附近與無限遠，主項不同"],
+          "note": "切點選 1 只是方便，任何正數都行。",
+          "say": "為什麼要切？靠近零和跑到無限遠，主項不一樣，一個比較顧不了兩端。切點選一只是方便，任何正數都行。",
+          "board": [
+            {"do":"write","line":"零附近、無限遠：主項不同"},
+            {"do":"write","line":"切點：任何正數都行","on":"切點"}
+          ] },
+        { "show": ["$\\frac{1}{x^p}$ 的收斂範圍","零端 $p<1$，無限遠端 $p>1$"],
+          "note": "找主項：分母每個因子取最大的那項。",
+          "say": "規則：零到一那段，x 的 p 次方分之一在 p 小於一時收斂；一到無限大那段，在 p 大於一時收斂。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^1\\frac{dx}{x^p}$：$p<1$ 收斂","on":"方分"},
+            {"do":"write","line":"$\\int_1^{\\infty}\\frac{dx}{x^p}$：$p>1$ 收斂","on":"一到無限大"}
+          ] },
+        { "show": ["$x\\to 0^+$：$\\sim\\frac{1}{x^{1/2}}$"],
+          "note": "$1+x\\to 1$，$p=\\frac{1}{2}<1$，收斂。",
+          "say": "x 靠近零，一加 x 趨近一，主項是根號 x 分之一。p 是二分之一，小於一，這段收斂。",
+          "board": [
+            {"do":"write","line":"$x\\to 0^+$：$\\sim\\frac{1}{x^{1/2}}$"},
+            {"do":"write","line":"$p=\\frac{1}{2}<1$：收斂","on":"p 是"}
+          ] }
+      ],
+      "key": "兩個問題點分開看，都收斂才收斂",
+      "predict": {
+        "ask": "$x\\to\\infty$ 時，被積函數的主項是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{x^{3/2}}$，收斂",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{1}{x}$，發散",
+            "why": "只把 $1+x$ 換成 $x$，忘了分母還有 $\\sqrt{x}$：$\\sqrt{x}\\cdot x=x^{3/2}$。"
+          },
+          {
+            "label": "$\\frac{1}{x^{1/2}}$，發散",
+            "why": "那是 $x\\to 0^+$ 的主項；$x\\to\\infty$ 時 $1+x\\sim x$ 不能丟。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "常用的比較對象",
+      "beats": [
+        { "show": ["指數衰減比任何冪次快"],
+          "note": "$x$ 夠大時 $x^ne^{-x}\\le\\frac{C}{x^2}$。",
+          "say": "無限遠那端，除了 x 的 p 次方分之一，還有指數：指數衰減比任何冪次都快。",
+          "board": [
+            {"do":"write","line":"比較對象：$\\frac{1}{x^p}$、$e^{-x}$"},
+            {"do":"write","line":"指數衰減比任何冪次快","on":"指數衰減"}
+          ] },
+        { "show": ["$e^x\\ge\\frac{x^{n+1}}{(n+1)!}$"],
+          "note": "所以 $x^ne^{-x}\\le\\frac{(n+1)!}{x}$，趨近 0。",
+          "say": "e 的 x 次方展開，有 x 的 n 加一次方除以階乘這項，所以 x 的 n 次方乘 e 的負 x 次方，不超過 n 加一階乘除以 x。",
+          "board": [
+            {"do":"write","line":"$e^x\\ge\\frac{x^{n+1}}{(n+1)!}$","on":"展開"},
+            {"do":"write","line":"$x^ne^{-x}\\le\\frac{(n+1)!}{x}$","on":"不超過"}
+          ] },
+        { "show": ["$x\\ge 1$：$e^{-x^2}\\le e^{-x}$"],
+          "note": "所以 $\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂。",
+          "say": "例如 x 大於等於一時，e 的負 x 平方次方比 e 的負 x 次方還小，所以它的積分收斂。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x\\ge 1$：$e^{-x^2}\\le e^{-x}$","on":"大於等於"},
+            {"do":"write","line":"$\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂","color":"green","on":"所以"}
+          ] },
+        { "show": ["$[0,1]$：$0<e^{-x^2}\\le 1$","面積有限，兩段相加收斂"],
+          "say": "零到一這段沒有無限遠的問題，e 的負 x 平方次方最大是一，面積最多一。有限加有限，整個收斂。",
+          "board": [
+            {"do":"write","line":"$[0,1]$：$0<e^{-x^2}\\le 1$，面積有限"},
+            {"do":"plot","graph":{"window":[-0.3,3,-0.2,1.2],"ticks":false,"curves":[{"expr":"exp(-(x^2))","domain":[0,3],"color":"blue"}],"fills":[{"expr":"exp(-(x^2))","from":0,"to":1,"color":"green"}],"dashed":[[[1,0],[1,1]]]},"on":"有限加有限"}
+          ] },
+        { "show": ["會變號：看 $|f|$"],
+          "note": "$\\int|f|$ 收斂 ⇒ $\\int f$ 收斂。",
+          "say": "函數會變號就不能直接比，但可以先取絕對值。絕對值的積分收斂，原積分就收斂。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"會變號：看 $|f|$","on":"變號"},
+            {"do":"write","line":"$\\int|f|$ 收斂 ⇒ $\\int f$ 收斂","on":"絕對值的積分"}
+          ] },
+        { "show": ["$\\left|\\frac{\\sin x}{x^2}\\right|\\le\\frac{1}{x^2}$"],
+          "say": "例如 sine x 除以 x 平方，取絕對值之後被 x 平方分之一壓住，所以收斂。",
+          "board": [
+            {"do":"write","line":"$\\left|\\frac{\\sin x}{x^2}\\right|\\le{{g:\\frac{1}{x^2}}}$"},
+            {"do":"underline","term":"g","label":"壓住","on":"x 平方分之一"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["improper-integral", "comparison-test"],
+    "fine": ["improper-direct-comparison", "improper-limit-comparison", "improper-dominant-term", "improper-absolute-convergence"]
+  },
+  "practice": [
+    { "id": "lec-08-q3b", "core": true, "trains": "improper-direct-comparison" },
+    { "id": "lec-08-q3a", "core": true, "trains": "improper-direct-comparison" },
+    { "id": "lec-08-q3c", "core": true, "trains": "improper-limit-comparison" },
+    { "id": "lec-08-m5", "core": true, "trains": "improper-dominant-term" },
+    { "id": "cg-11b-017", "core": true, "trains": "improper-limit-comparison" },
+    { "id": "cg-11b-019", "core": true, "trains": "improper-absolute-convergence" },
+    { "id": "cg-11b-022", "core": true, "trains": "improper-dominant-term" },
+    { "id": "cg-11b-016", "trains": "improper-limit-comparison" },
+    { "id": "cg-11b-018", "trains": "improper-limit-comparison" },
+    { "id": "cg-11b-020", "trains": "improper-absolute-convergence" },
+    { "id": "cg-11b-021", "trains": "improper-dominant-term" }
+  ],
+  "gaps": []
+}

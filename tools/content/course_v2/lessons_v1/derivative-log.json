@@ -1,0 +1,489 @@
+{
+  "id": "derivative-log",
+  "title": "對數函數微分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["derivative-exp", "exp-log", "inverse-function", "limit-exp-log-standard"],
+  "next": ["product-rule"],
+  "related": ["inverse-trig-derivative", "chain-rule", "logarithmic-differentiation"],
+  "objectives": [
+    "用 $(\\ln x)' = \\frac{1}{x}$ 與 $(\\log_a x)' = \\frac{1}{x \\ln a}$ 微分並求切線。",
+    "先用對數律把 $\\ln(x^3)$、$\\ln(5x)$、$\\log_2(x^3)$ 拆開再微分。",
+    "知道 $(\\ln|x|)' = \\frac{1}{x}$ 對所有 $x \\ne 0$ 成立。"
+  ],
+  "visual": "y = eˣ 與 y = ln x 對稱於直線 y = x。在 eˣ 上取一點 (a, eᵃ) 畫切線，同時在 ln x 上畫它的鏡像點 (eᵃ, a) 與鏡像切線。拖動 a，左邊顯示斜率 eᵃ，右邊顯示斜率 1/eᵃ，兩者乘積一直是 1。",
+  "concept": [
+    {
+      "heading": "① 鏡子裡的斜率（直覺，不是證明）",
+      "body": [
+        "$\\ln x$ 是 $e^x$ 的反函數，兩個圖形對稱於 $y = x$（〈反函數〉）。在 $e^x$ 上的點 $(a, e^a)$，切線斜率是 $e^a$。",
+        "對 $y = x$ 翻過去，點變成 $(e^a, a)$，直線的水平變化和鉛直變化對調，斜率變成倒數 $\\frac{1}{e^a}$。這個點的 $x$ 座標正是 $e^a$，所以 $\\ln x$ 在 $x$ 的斜率是 $\\frac{1}{x}$。",
+        "這個論證先假設了 $\\ln x$ 可微；嚴格的算法在下面，用的是導數定義。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式",
+      "body": [
+        "$\\ln x$ 只在 $x > 0$ 有定義，所以這個公式也是 $x > 0$。$x = 1$ 時斜率 1；$x = 100$ 時斜率 0.01：$\\ln x$ 一直往上，但越爬越慢。",
+        "其他底數用換底：$\\log_a x = \\ln x / \\ln a$，$\\ln a$ 是常數，所以導數是 $\\frac{1}{x \\ln a}$。"
+      ],
+      "tex": ["(\\ln x)'=\\frac1x\\quad(x>0),\\qquad (\\log_a x)'=\\frac{1}{x\\ln a}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 先拆再微",
+      "body": [
+        "對數律可以把乘、除、次方變成加、減、乘：$\\ln(x^3) = 3 \\ln x$，導數 $\\frac{3}{x}$。$\\ln(5x) = \\ln 5 + \\ln x$，$\\ln 5$ 是常數，所以導數是 $\\frac{1}{x}$，跟 $\\ln x$ 一樣：圖形只是整條往上平移 $\\ln 5$。",
+        "$\\ln(x^2 + 1)$ 拆不開（$\\ln$ 不能拆加法），要用〈連鎖律 I：兩層〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $\\ln|x|$：負數那一半",
+      "body": [
+        "$\\ln|x|$ 在 $x < 0$ 也有定義，圖形是 $\\ln x$ 對 $y$ 軸的鏡像。左右鏡射會把斜率變號，而 $x$ 本身也變號，結果公式不變：對所有 $x \\ne 0$，$(\\ln|x|)' = \\frac{1}{x}$。積分時會再用到它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "用定義證明 $(\\ln x)' = \\frac{1}{x}$ 與 $(\\ln|x|)' = \\frac{1}{x}$",
+      "body": [
+        "固定 $x > 0$。差商：$\\frac{\\ln(x + h) - \\ln x}{h} = \\ln\\left(\\frac{x + h}{x}\\right)/h = \\ln(1 + \\frac{h}{x})/h$。",
+        "令 $u = \\frac{h}{x}$：$h \\to 0$ 時 $u \\to 0$，$h \\ne 0$ 時 $u \\ne 0$，而且 $h = xu$。差商 $= \\frac{\\ln(1 + u)}{xu} = \\left(\\frac{1}{x}\\right) \\cdot \\frac{\\ln(1 + u)}{u}$。",
+        "$\\frac{\\ln(1 + u)}{u} \\to 1$（〈指數與對數標準極限〉），所以極限是 $\\frac{1}{x}$。",
+        "$x < 0$ 時，$\\ln|x| = \\ln(-x)$。記 $v = -x > 0$，差商 $\\frac{\\ln(-x - h) - \\ln(-x)}{h} = -\\frac{\\ln(v + (-h)) - \\ln v}{-h}$。$h \\to 0$ 時 $-h \\to 0$，後面那個分式是 $\\ln$ 在 $v$ 的差商，$\\to \\frac{1}{v}$。所以極限是 $-\\frac{1}{v} = -\\frac{1}{-x} = \\frac{1}{x}$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "切線的 $y$ 截距",
+      "prompt": "$y = \\ln x$ 在 $x = e^2$ 的切線，$y$ 截距是多少？",
+      "problemId": "db-tan-003",
+      "steps": [
+        "斜率：$\\frac{1}{x}$ 在 $x = e^2$ 是 $\\frac{1}{e^2}$。",
+        "切點：$\\ln(e^2) = 2$，切點是 $(e^2, 2)$。",
+        "切線：$y - 2 = \\left(\\frac{1}{e^2}\\right)(x - e^2) = \\frac{x}{e^2} - 1$，所以 $y = \\frac{x}{e^2} + 1$。",
+        "令 $x = 0$，$y$ 截距是 1。"
+      ],
+      "answer": "1",
+      "claim": "D(ln(x), e^2) == e^(-2) ;; SUB(ln(x) - (x/e^2+1), e^2) == 0"
+    },
+    {
+      "title": "先用對數律",
+      "prompt": "$y = \\log_2(x^3)$（$x > 0$），求 $y'$。",
+      "problemId": "lec-03-q2d",
+      "steps": [
+        "對數律：$\\log_2(x^3) = 3 \\log_2 x$。",
+        "$(\\log_2 x)' = \\frac{1}{x \\ln 2}$。",
+        "$y' = \\frac{3}{x \\ln 2}$。"
+      ],
+      "answer": "$\\frac{3}{x \\ln 2}$",
+      "claim": "D(ln(x^3)/ln(2)) == 3/(x*ln(2))"
+    },
+    {
+      "title": "$\\ln|x|$ 在負數",
+      "prompt": "$y = \\ln|x|$，求 $x = -2$ 處的切線斜率。",
+      "steps": [
+        "$x \\ne 0$ 時 $(\\ln|x|)' = \\frac{1}{x}$。",
+        "$x = -2$：$\\frac{1}{-2} = -\\frac{1}{2}$。",
+        "合理性：$x < 0$ 那一半是 $\\ln x$ 的左右鏡像，$x$ 往右走時 $|x|$ 變小，函數值下降，斜率應該是負的。"
+      ],
+      "answer": "$-\\frac{1}{2}$",
+      "claim": "D(ln(abs(x)), -2) == -1/2"
+    }
+  ],
+  "pitfalls": [
+    "$(\\ln 5)'$ 寫成 $\\frac{1}{5}$。$\\ln 5$ 是常數，導數是 0。",
+    "$\\ln(x + 1)$ 拆成 $\\ln x + \\ln 1$。對數不能拆加法。",
+    "$(\\log_2 x)'$ 寫成 $\\frac{1}{x}$，漏了 $\\ln 2$。",
+    "$(\\ln(5x))'$ 寫成 $\\frac{1}{5x}$，或 $\\frac{5}{x}$：拆成 $\\ln 5 + \\ln x$ 就知道是 $\\frac{1}{x}$。",
+    "在 $x \\le 0$ 的地方用 $\\ln x$ 的導數，忘了 $\\ln x$ 只在 $x > 0$ 有定義。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{d}{dx} \\ln(x^4)$（$x > 0$）是？",
+      "options": [
+        { "label": "$\\frac{4}{x}$", "correct": true },
+        { "label": "$\\frac{1}{x^4}$", "why": "$1/($裡面) 只對了一半：$\\ln(x^4) = 4 \\ln x$，導數是 $\\frac{4}{x}$。" },
+        { "label": "$4 \\ln x$", "why": "$4 \\ln x$ 是 $\\ln(x^4)$ 改寫後的樣子，還沒微分。" }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} \\ln(7x)$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{x}$", "correct": true },
+        { "label": "$\\frac{1}{7x}$", "why": "$\\ln(7x) = \\ln 7 + \\ln x$，$\\ln 7$ 是常數，導數只剩 $\\frac{1}{x}$。" },
+        { "label": "$\\frac{7}{x}$", "why": "7 是乘在裡面，不是次方；拆開後是 $\\ln 7 + \\ln x$，不是 $7 \\ln x$。" }
+      ]
+    },
+    {
+      "ask": "$\\frac{d}{dx} \\log_{10} x$ 是？",
+      "options": [
+        { "label": "$\\frac{1}{x \\ln 10}$", "correct": true },
+        { "label": "$\\frac{1}{x}$", "why": "$\\frac{1}{x}$ 是 $\\ln x$（底數 $e$）的導數；底數 10 要多除 $\\ln 10$。" },
+        { "label": "$\\frac{\\ln 10}{x}$", "why": "換底是 $\\ln x / \\ln 10$，$\\ln 10$ 在分母，不是乘上去。" }
+      ]
+    },
+    {
+      "ask": "$y = \\ln|x|$ 在 $x = -4$ 的切線斜率是？",
+      "options": [
+        { "label": "$-\\frac{1}{4}$", "correct": true },
+        { "label": "$\\frac{1}{4}$", "why": "$(\\ln|x|)' = \\frac{1}{x}$，不是 $1/|x|$。$x = -4$ 時是 $-\\frac{1}{4}$；左半邊往右走是下降的。" },
+        { "label": "不存在", "why": "$\\ln|x|$ 在 $x = -4$ 有定義而且可微；只有 $x = 0$ 不行。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "鏡子裡的斜率",
+      "beats": [
+        { "show": ["$\\ln x$ 與 $e^x$ 對稱於 $y = x$"],
+          "note": "$\\ln x$ 是 $e^x$ 的反函數。",
+          "say": "自然對數是 e 的 x 次方的反函數，兩個圖形對著 y 等於 x 這條線互為鏡像。",
+          "board": [
+            {"do":"write","line":"${{l:\\ln x}}$ 與 ${{e:e^x}}$ 對稱於 ${{m:y = x}}$","tint":{"l":"violet","e":"blue"}},
+            {"do":"underline","term":"m","on":"這條線"}
+          ] },
+        { "show": ["$e^x$ 上 $(a, e^a)$：斜率 $e^a$"],
+          "say": "在 e 的 x 次方上取一點 a、e 的 a 次方，那裡的切線斜率就是 e 的 a 次方。",
+          "board": [
+            {"do":"write","line":"點 $(a, e^a)$，斜率 ${{s:e^a}}$"},
+            {"do":"focus","term":"s","on":"切線斜率"}
+          ] },
+        { "show": ["翻過去：$(e^a, a)$，斜率 $\\frac{1}{e^a}$"],
+          "note": "水平變化和鉛直變化對調，斜率變倒數。",
+          "say": "對 y 等於 x 翻過去，往右和往上對調了，所以斜率變成倒數。",
+          "board": [
+            {"do":"write","line":"翻過去：點 $(e^a, a)$"},
+            {"do":"write","line":"往右、往上 對調","on":"往右和往上"}
+          ] },
+        { "show": ["原本：右 $1$、上 $e^a$","對調：右 $e^a$、上 $1$"],
+          "say": "斜率是往上除以往右。原本右一、上 e 的 a 次方；對調後右 e 的 a 次方、上一，所以斜率是一除以 e 的 a 次方。",
+          "board": [
+            {"do":"write","line":"原本：右 $1$、上 $e^a$，斜率 $e^a$"},
+            {"do":"write","line":"對調：右 $e^a$、上 $1$","on":"對調後"},
+            {"do":"write","line":"斜率 $= \\frac{1}{e^a}$","on":"所以斜率"}
+          ] },
+        { "show": ["這個點的 $x$ 座標是 $e^a$"],
+          "note": "直覺，不是證明：先假設了 $\\ln x$ 可微。",
+          "say": "鏡像點的 x 座標正好是 e 的 a 次方，所以自然對數在 x 的斜率就是 x 分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x$ 座標 $= {{c:e^a}}$","on":"x 座標"},
+            {"do":"box","term":"c","on":"正好是"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$e^x$ 在 $(a, e^a)$ 的斜率是 $e^a$。鏡像點 $(e^a, a)$ 上，$\\ln x$ 的斜率是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{e^a}$",
+            "correct": true
+          },
+          {
+            "label": "$e^a$",
+            "why": "對 $y = x$ 翻過去，水平和鉛直變化對調，斜率要變成倒數。"
+          },
+          {
+            "label": "$-e^a$",
+            "why": "對 $y = x$ 翻不是上下翻，斜率不變號，而是變倒數。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$(\\ln x)'=\\frac1x\\quad(x>0)$"],
+          "note": "證明在下一節。",
+          "say": "自然對數 x 的導數是 x 分之一。自然對數只在 x 大於零有定義，公式也是。",
+          "board": [
+            {"do":"write","line":"$(\\ln x)' = {{r:\\frac{1}{x}}}\\quad{{d:(x>0)}}$"},
+            {"do":"circle","term":"r","on":"x 分之一"},
+            {"do":"underline","term":"d","label":"定義域","on":"只在 x"}
+          ] },
+        { "show": ["$x = 1$：斜率 1","$x = 100$：斜率 0.01"],
+          "note": "一直往上，但越爬越慢。",
+          "say": "x 等於一，斜率一；x 等於一百，斜率只剩零點零一。它一直往上，但越爬越慢。",
+          "board": [
+            {"do":"write","line":"$x = 1$：斜率 $1$"},
+            {"do":"write","line":"$x = 100$：斜率 ${{s:0.01}}$","on":"x 等於一百"},
+            {"do":"focus","term":"s","label":"越爬越慢","on":"一直往上"}
+          ] },
+        { "show": ["圖：越往右越平"],
+          "say": "畫出來看：自然對數往右越爬越平，斜率一直變小。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6,-2,3],"curves":[{"expr":"log(x)","domain":[0.05,6],"color":"blue"}]}}
+          ] },
+        { "show": ["$(\\log_a x)'=\\frac{1}{x\\ln a}$"],
+          "note": "換底：$\\log_a x = \\ln x / \\ln a$。",
+          "say": "其他底數先換底：除以自然對數 a，那是常數，所以導數多除一個自然對數 a。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\log_a x = \\frac{\\ln x}{{{la:\\ln a}}}$","tint":{"la":"violet"},"on":"換底"},
+            {"do":"underline","term":"la","color":"violet","on":"那是常數"},
+            {"do":"write","line":"$(\\log_a x)' = \\frac{1}{x\\,{{la:\\ln a}}}$","on":"所以導數"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "證明：從定義算",
+      "beats": [
+        { "show": ["相減變相除，湊出 $\\frac{\\ln(1+u)}{u}$"],
+          "note": "先固定 $x>0$，從定義出發。",
+          "say": "策略：從定義出發，對數相減變成相除，再湊出對數的標準極限。先固定 x 大於零。",
+          "board": [
+            {"do":"write","line":"相減變相除，湊出 ${{lq:\\frac{\\ln(1+u)}{u}}}$","on":"對數相減"},
+            {"do":"underline","term":"lq","label":"標準極限","on":"標準極限"},
+            {"do":"write","line":"先固定 $x>0$","on":"先固定"}
+          ] },
+        { "show": ["$\\frac{\\ln(x+h)-\\ln x}{h}=\\frac{\\ln(1+\\frac{h}{x})}{h}$"],
+          "say": "兩個自然對數相減，變成 x 加 h 除以 x 的自然對數，也就是一加 x 分之 h。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"差商 $= \\frac{\\ln(x+h)-\\ln x}{h}$","on":"兩個自然對數相減"},
+            {"do":"transform","line":"差商 $= \\frac{\\ln\\frac{x+h}{x}}{h}$","on":"變成"},
+            {"do":"transform","line":"差商 $= \\frac{\\ln(1+{{q:\\frac{h}{x}}})}{h}$","on":"也就是"}
+          ] },
+        { "show": ["令 $u=\\frac{h}{x}$：差商 $=\\frac{1}{x}\\cdot\\frac{\\ln(1+u)}{u}$"],
+          "say": "令 u 等於 x 分之 h，h 不是零時 u 也不是零。分母的 h 換成 x 乘 u，x 分之一提到前面。",
+          "board": [
+            {"do":"write","line":"令 ${{u:u}}={{q:\\frac{h}{x}}}$，$h\\ne0 \\Rightarrow u\\ne0$","tint":{"u":"blue"}},
+            {"do":"write","line":"差商 $= \\frac{\\ln(1+u)}{{{xu:x\\,u}}}$","on":"分母的 h"},
+            {"do":"transform","line":"差商 $= {{ix:\\frac{1}{x}}}\\cdot{{lq:\\frac{\\ln(1+u)}{u}}}$","tint":{"ix":"violet"},"on":"x 分之一"}
+          ] },
+        { "show": ["$h\\to0$：極限 $=\\frac{1}{x}$"],
+          "note": "$u\\to0$ 時 $\\frac{\\ln(1+u)}{u}\\to1$。",
+          "why": {"ask":"為什麼極限是 $\\frac{1}{x}$？","say":"h 趨近零，為什麼整個差商趨近 x 分之一？","options":[{"label":"$\\frac{1}{x}$ 是常數，$\\frac{\\ln(1+u)}{u}\\to1$","correct":true},{"label":"代 $u=0$：$\\ln1=0$","why":"分母也是 0，是 $\\frac{0}{0}$；用的是標準極限 $\\frac{\\ln(1+u)}{u}\\to1$。"},{"label":"鏡子裡的斜率倒過來","why":"那是第一節的直覺，先假設了 $\\ln x$ 可微；這裡是從定義直接算。"}]},
+          "say": "x 固定，x 分之一是常數；u 趨近零，後面那塊是對數的標準極限，趨近一。所以是 x 分之一。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$h\\to0$：極限 $=\\frac{1}{x}$","on":"整個差商"},
+            {"do":"focus","term":"ix","color":"violet","why":true,"label":"常數","on":"是常數"},
+            {"do":"underline","term":"lq","why":true,"label":"趨近 1","on":"標準極限"}
+          ] },
+        { "show": ["$x<0$：記 $v=-x>0$","差商 $\\to-\\frac{1}{v}=\\frac{1}{x}$"],
+          "note": "$\\ln$ 在 $v$ 的差商，步長是 $-h$。",
+          "why": {"ask":"前面為什麼多一個負號？","say":"負數那一半，前面為什麼多出一個負號？","options":[{"label":"$-x-h=v+(-h)$，步長變成 $-h$","correct":true},{"label":"$x<0$，所以 $\\frac{1}{x}$ 是負的","why":"$\\frac{1}{x}$ 是負的是結果，不是理由；負號來自步長 $-h$。"},{"label":"$\\ln$ 在負數那邊遞減","why":"$\\ln$ 在負數沒有定義；那邊遞減的是 $\\ln|x|$，正是要算的東西。"}]},
+          "say": "絕對值 x 等於負 x，記作 v。x 往右走 h，v 就往左走 h，步長是負 h，所以多一個負號，負 v 分之一就是 x 分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x<0$：記 $v=-x>0$","on":"負數那一半"},
+            {"do":"write","line":"差商 $\\to {{m:-}}\\frac{1}{v}=\\frac{1}{x}$","on":"前面為什麼"},
+            {"do":"focus","term":"m","why":true,"label":"步長 −h","on":"步長是負 h"}
+          ] },
+        { "show": ["$x=-2$，$v=2$","差商 $=-\\frac{\\ln(2+(-h))-\\ln 2}{-h}$"],
+          "note": "後面那塊趨近 $\\frac{1}{2}$。",
+          "say": "代 x 等於負二，v 是二。分母 h 換成負 h，要提一個負號，後面趨近二分之一。",
+          "board": [
+            {"do":"write","line":"$x=-2$，$v=2$"},
+            {"do":"write","line":"差商 $=-{{p1:\\frac{\\ln(2+(-h))-\\ln 2}{-h}}}$","on":"分母"},
+            {"do":"write","line":"$\\to -\\frac{1}{2}=\\frac{1}{-2}$","on":"後面"}
+          ] }
+      ],
+      "key": "對數律合併，再令 $u=\\frac{h}{x}$ 湊標準極限",
+      "proof": true,
+      "of": 4,
+      "skeleton": "構造",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "差商合併成 $\\frac{\\ln(1+\\frac{h}{x})}{h}$"
+          },
+          {
+            "label": "令 $u=\\frac{h}{x}$，提出 $\\frac{1}{x}$",
+            "why": "要先合併成 $\\ln(1+\\frac{h}{x})$，才看得出要令 $u=\\frac{h}{x}$。"
+          },
+          {
+            "label": "$u\\to0$，得到 $\\frac{1}{x}$",
+            "why": "要先湊成 $\\frac{\\ln(1+u)}{u}$，才能用標準極限。"
+          },
+          {
+            "label": "$x<0$：換成 $v=-x$，也得 $\\frac{1}{x}$",
+            "why": "負數那一半借用 $x>0$ 的結果，要先把它證完。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "切線的截距",
+      "beats": [
+        { "show": ["$y = \\ln x$ 在 $x = e^2$"],
+          "note": "斜率 $\\frac{1}{e^2}$。",
+          "say": "自然對數在 x 等於 e 平方的切線。斜率是 x 分之一，代進去是 e 平方分之一。",
+          "board": [
+            {"do":"write","line":"$y=\\ln x$，$x = e^2$"},
+            {"do":"write","line":"斜率 $= \\frac{1}{x} = {{s:\\frac{1}{e^2}}}$","on":"斜率是"},
+            {"do":"circle","term":"s","on":"代進去"}
+          ] },
+        { "show": ["切點 $(e^2, 2)$"],
+          "note": "$\\ln(e^2) = 2$",
+          "say": "自然對數 e 平方等於二，切點是 e 平方、二。",
+          "board": [
+            {"do":"write","line":"$\\ln(e^2) = 2$"},
+            {"do":"write","line":"切點 $(e^2, 2)$","on":"切點是"}
+          ] },
+        { "show": ["$y - 2 = \\left(\\frac{1}{e^2}\\right)(x - e^2)$"],
+          "note": "右邊 $= \\frac{x}{e^2} - 1$",
+          "say": "點斜式寫出來，右邊展開是 x 除以 e 平方減一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y - 2 = {{s:\\frac{1}{e^2}}}(x - e^2)$","on":"點斜式"},
+            {"do":"write","line":"右邊 $= \\frac{x}{e^2} - 1$","on":"右邊展開"}
+          ] },
+        { "show": ["兩邊加 $2$，$y$ 單獨留左邊","截距 $=$ $x=0$ 時的 $y$"],
+          "say": "要找 y 截距，先把 y 單獨留在左邊：兩邊同時加二。截距是 x 等於零時的 y。",
+          "board": [
+            {"do":"write","line":"$y = \\frac{x}{e^2} - 1 + 2$","on":"兩邊同時"},
+            {"do":"write","line":"$y$ 截距：$x=0$ 時的 $y$","on":"截距是"}
+          ] }
+      ],
+      "predict": {
+        "ask": "這條切線的 $y$ 截距是？",
+        "options": [
+          {
+            "label": "1",
+            "correct": true
+          },
+          {
+            "label": "2",
+            "why": "2 是切點的高度。$y = \\frac{x}{e^2} - 1 + 2 = \\frac{x}{e^2} + 1$，截距是 1。"
+          },
+          {
+            "label": "$-1$",
+            "why": "那是 $y - 2$ 的常數項；左邊的 2 還要移過去：$-1 + 2 = 1$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "次方拉到前面",
+      "beats": [
+        { "show": ["$\\ln(x^3) = 3 \\ln x$"],
+          "note": "對數律：次方變乘法。",
+          "say": "對數律可以把次方變成乘法：自然對數 x 三次方，等於三倍自然對數 x。",
+          "board": [
+            {"do":"write","line":"$\\ln(x^{{{n:3}}})$","tint":{"n":"violet"},"on":"自然對數 x 三次方"},
+            {"do":"transform","line":"$\\ln(x^3) = {{n:3}}\\,\\ln x$","on":"等於三倍"}
+          ] },
+        { "show": ["導數 $\\frac{3}{x}$"],
+          "say": "三留著，自然對數 x 微成 x 分之一，得 x 分之三。",
+          "board": [
+            {"do":"write","line":"導數 $= {{n:3}}\\cdot{{d:\\frac{1}{x}}}$"},
+            {"do":"underline","term":"d","label":"微成 1/x","on":"微成"},
+            {"do":"transform","line":"導數 $= \\frac{{{n:3}}}{x}$","color":"green","on":"得 x"}
+          ] },
+        { "show": ["$\\log_2(x^3) = 3 \\log_2 x$"],
+          "note": "$x > 0$。",
+          "say": "換底數二也一樣：先把三拉到前面。",
+          "board": [
+            {"do":"write","line":"$\\log_2(x^{{{n:3}}})$","on":"換底數二"},
+            {"do":"transform","line":"$\\log_2(x^3) = {{n:3}}\\,\\log_2 x$","on":"先把三"}
+          ] },
+        { "show": ["$y' = \\frac{3}{x \\ln 2}$"],
+          "say": "以二為底的對數 x，導數是一除以 x 乘自然對數二；前面再乘三就好。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$(\\log_2 x)' = \\frac{1}{x\\ln 2}$","on":"以二為底"},
+            {"do":"write","line":"$y' = \\frac{{{n:3}}}{x \\ln 2}$","color":"green","on":"前面再乘三"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "乘法拆成加法",
+      "beats": [
+        { "show": ["$\\ln(5x) = \\ln 5 + \\ln x$"],
+          "say": "自然對數五 x，拆成自然對數五加自然對數 x。",
+          "board": [
+            {"do":"write","line":"$\\ln(5x) = {{a:\\ln 5}} + {{b:\\ln x}}$"}
+          ] },
+        { "show": ["導數 $\\frac{1}{x}$"],
+          "note": "$\\ln 5$ 是常數，導數是 0。",
+          "say": "自然對數五是常數，微分是零，所以導數跟自然對數 x 一樣，圖形只是整條往上平移。",
+          "board": [
+            {"do":"write","line":"$(\\ln 5)' = {{z:0}}$"},
+            {"do":"circle","term":"z","on":"是零"},
+            {"do":"write","line":"導數 $= \\frac{1}{x}$","on":"所以導數"}
+          ] },
+        { "show": ["$\\ln(x^2 + 1)$ 拆不開"],
+          "note": "$\\ln$ 不能拆加法，要用〈連鎖律 I：兩層〉。",
+          "say": "但自然對數 x 平方加一拆不開，對數不能拆加法，要等連鎖律。",
+          "board": [
+            {"do":"write","line":"$\\ln(x^2+1) = {{w:\\ln x^2 + \\ln 1}}$"},
+            {"do":"strike","term":"w","label":"不行","on":"不能拆加法"}
+          ] },
+        { "show": ["這類留給連鎖律，現在先跳過"],
+          "say": "這種對數裡面還有一層的，之後用連鎖律微。現在先跳過，本課只處理乘和次方。",
+          "board": [
+            {"do":"write","line":"留給連鎖律","on":"之後用"},
+            {"do":"write","line":"本課：乘、次方","on":"本課只"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\ln|x|$：負數那一半",
+      "beats": [
+        { "show": ["$\\ln|x|$：$\\ln x$ 對 $y$ 軸的鏡像"],
+          "note": "在 $x < 0$ 也有定義。",
+          "say": "自然對數絕對值 x，在負數那邊也有定義，圖形是右半邊對 y 軸翻過去。",
+          "board": [
+            {"do":"write","line":"$y = {{f:\\ln|x|}}$"},
+            {"do":"write","line":"$x<0$ 也有定義","on":"負數那邊"},
+            {"do":"write","line":"$\\ln x$ 的右半邊翻到左邊","on":"右半邊"}
+          ] },
+        { "show": ["$(\\ln|x|)' = \\frac{1}{x}$，$x \\ne 0$"],
+          "note": "斜率變號，$x$ 也變號，公式不變。",
+          "say": "左右翻會讓斜率變號，可是 x 本身也變號，結果公式不變，還是 x 分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"斜率變號，$x$ 也變號","on":"斜率變號"},
+            {"do":"write","line":"$(\\ln|x|)' = {{r:\\frac{1}{x}}}$，$x \\ne 0$","on":"結果公式不變"},
+            {"do":"box","term":"r","color":"green","on":"還是"}
+          ] },
+        { "show": ["$x = -2$：$\\frac{1}{-2} = -\\frac{1}{2}$"],
+          "say": "在 x 等於負二，斜率是負二分之一。",
+          "board": [
+            {"do":"write","line":"$x = -2$"},
+            {"do":"write","line":"$\\frac{1}{-2} = {{s:-\\frac{1}{2}}}$","on":"斜率是"}
+          ] },
+        { "show": ["負的，合理"],
+          "note": "$x$ 往右走時 $|x|$ 變小，函數值下降。",
+          "say": "合理嗎？左半邊 x 往右走，絕對值變小，函數值往下掉，斜率本來就該是負的。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x$ 往右走：$|x|$ 變小","on":"往右走"},
+            {"do":"write","line":"函數值下降 $\\Rightarrow$ 斜率 $<0$","on":"函數值往下掉"}
+          ] }
+      ],
+      "key": "$x<0$ 時 $|x|=-x$，兩個負號抵消",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["log", "basic-derivative"],
+    "fine": ["ln-deriv-basic", "ln-deriv-base-a", "ln-deriv-simplify-first", "ln-deriv-abs"]
+  },
+  "practice": [
+    { "id": "rel-basic-011", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "db-tan-003", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "lec-03-q2d", "core": true, "trains": "ln-deriv-base-a" },
+    { "id": "dd-def-005", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "ch-trap-002", "core": true, "trains": "ln-deriv-simplify-first", "note": "$\\ln$ 和 $e$ 互相抵消，先化簡就不用連鎖律。" },
+    { "id": "cg-2b-014", "core": true, "trains": "ln-deriv-simplify-first" },
+    { "id": "lx-der-003", "trains": "ln-deriv-basic" },
+    { "id": "db-def-006", "trains": "ln-deriv-basic" },
+    { "id": "cg-2b-015", "trains": "ln-deriv-simplify-first" },
+    { "id": "cg-2b-016", "trains": "ln-deriv-simplify-first" },
+    { "id": "cg-2b-018", "trains": "ln-deriv-abs" },
+    { "id": "cg-2b-017", "trains": "ln-deriv-abs" },
+    { "id": "cg-2b-019", "trains": "ln-deriv-base-a" }
+  ],
+  "gaps": []
+}

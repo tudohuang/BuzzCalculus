@@ -1,67 +1,135 @@
 {
   "id": "ftc-part2",
   "title": "微積分基本定理 II",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["ftc-part1", "antiderivative", "integral-table"],
-  "next": ["reverse-chain"],
-  "related": ["definite-signed-area", "riemann-sum-notation", "improper-singular", "area-under-curve"],
+  "prerequisites": [
+    "ftc-part1",
+    "antiderivative",
+    "integral-table"
+  ],
+  "next": [
+    "reverse-chain"
+  ],
+  "related": [
+    "definite-signed-area",
+    "riemann-sum-notation",
+    "improper-singular",
+    "area-under-curve"
+  ],
   "objectives": [
-    "會用 $\\int_a^b f(x)\\,dx=F(b)-F(a)$ 算定積分，知道為什麼不用寫 $+C$。",
-    "記得結果仍然是有號面積：要面積就得在零點切開。",
-    "使用前會檢查 $f$ 在 $[a,b]$ 上連續；不連續時硬套會得到錯的答案。"
+    "會用 $\\int_a^b f(x)\\,dx=F(b)-F(a)$ 算定積分，知道為什麼不用寫 $+C$",
+    "記得結果仍然是有號面積：要面積就得在零點切開",
+    "使用前會檢查 $f$ 在 $[a,b]$ 上連續",
+    "不連續時硬套會得到錯的答案"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 定理：找到反導函數，代上限減代下限",
+      "heading": "① 定理",
       "body": [
-        "$f$ 在 $[a,b]$ 上連續，$F$ 是 $f$ 的任何一個反導函數，則",
-        "常用簡寫：$F(b)-F(a)$ 記作 $\\left[F(x)\\right]_a^b$。",
-        "這把〈用和式寫定積分〉裡那個難算的極限，換成「找反導函數」這件事。"
+        "微積分基本定理 II：$f$ 在 $[a,b]$ 上連續，$F$ 是 $f$ 的任一個反導函數（$F'=f$），則",
+        "記號：$F(b)-F(a)$ 寫成 $\\Big[F(x)\\Big]_a^b$",
+        "不用再算 Riemann 和的極限：找反導函數就好",
+        "例：$\\displaystyle\\int_0^2(3x^2-2x)\\,dx$",
+        "反導函數：$F(x)=x^3-x^2$",
+        "對照 4.8：$\\int_0^3x^2\\,dx=\\big[\\frac{x^3}3\\big]_0^3=9-0=9$，一行就完成"
       ],
-      "tex": ["\\int_a^b f(x)\\,dx = F(b)-F(a) = \\Big[F(x)\\Big]_a^b"],
-      "collapsible": false
+      "tex": [
+        "\\int_a^bf(x)\\,dx=F(b)-F(a)",
+        "\\Big[x^3-x^2\\Big]_0^2=(8-4)-(0-0)=4"
+      ]
     },
     {
-      "heading": "② 人話：變化率積起來，就是總變化",
+      "heading": "① 兌現 4.7 的承諾",
       "body": [
-        "把式子寫成 $\\int_a^b F'(x)\\,dx=F(b)-F(a)$：$F'$ 是 $F$ 變化的快慢，把每一小段時間的「快慢 $\\times$ 時間」加起來，就是 $F$ 從頭到尾總共變了多少。",
-        "例：$v(t)$ 是速度，位置是 $s(t)$，$s'=v$。$\\int_a^b v(t)\\,dt=s(b)-s(a)$，就是這段時間的位移。"
+        "4.7 留下兩個積分「4.10 就會算」：",
+        "驗算：$\\big(\\frac23x^{3/2}\\big)'=\\frac23\\cdot\\frac32x^{1/2}=\\sqrt x$",
+        "也就是 $\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac1{n+k}=\\ln2\\approx0.693$",
+        "Riemann 和算不出來的極限，現在一行就得到精確值"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\int_1^4\\sqrt x\\,dx&=\\Big[\\frac23x^{3/2}\\Big]_1^4\\\\&=\\frac23\\cdot8-\\frac23\\cdot1=\\frac{14}3\\end{aligned}",
+        "\\int_1^2\\frac1x\\,dx=\\Big[\\ln x\\Big]_1^2=\\ln2-\\ln1=\\ln2"
+      ]
     },
     {
-      "heading": "證明（用基本定理 I）",
+      "heading": "② 變化率積起來＝總變化",
       "body": [
-        "令 $A(x)=\\int_a^x f(t)\\,dt$。由〈微積分基本定理 I〉，$A'=f$，所以 $A$ 是 $f$ 的一個反導函數。",
-        "$F$ 也是 $f$ 的反導函數，由〈反導函數〉，$F=A+C$。所以 $F(b)-F(a)=(A(b)+C)-(A(a)+C)=A(b)-A(a)$。",
-        "$A(a)=\\int_a^a f=0$，$A(b)=\\int_a^b f$。得證。"
+        "$F'$ 是 $F$ 的變化率，把定理寫成：",
+        "例：速度 $v(t)=2-t$，$0\\le t\\le4$（4.4 的例子）",
+        "位置 $s(t)$ 的變化率是 $v$：位移 $=s(4)-s(0)$",
+        "跟 4.4 用三角形算的一樣：前進 $2$、後退 $2$",
+        "其他例子：",
+        "• 水流入的速率積起來 = 水量的變化",
+        "• 邊際成本積起來 = 總成本的變化"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_a^bF'(x)\\,dx=F(b)-F(a)",
+        "\\int_0^4(2-t)\\,dt=\\Big[2t-\\frac{t^2}2\\Big]_0^4=8-8=0"
+      ]
+    },
+    {
+      "heading": "② 證明（用基本定理 I）",
+      "body": [
+        "令 $A(x)=\\displaystyle\\int_a^xf(t)\\,dt$",
+        "基本定理 I：$A'(x)=f(x)$；又 $F'(x)=f(x)$",
+        "$A$、$F$ 是同一個 $f$ 的反導函數 ⇒ 只差常數（4.1）：",
+        "代 $x=a$：$A(a)=\\int_a^af=0$",
+        "代 $x=b$：",
+        "用到 $f$ 連續：基本定理 I 才成立"
+      ],
+      "tex": [
+        "A(x)=F(x)+C",
+        "0=F(a)+C\\ \\Rightarrow\\ C=-F(a)",
+        "\\int_a^bf(t)\\,dt=A(b)=F(b)-F(a)\\quad\\blacksquare"
+      ]
     },
     {
       "heading": "③ 為什麼不用 $+C$",
       "body": [
-        "換成 $F+C$ 也一樣：$(F(b)+C)-(F(a)+C)=F(b)-F(a)$。$C$ 在相減時消掉了，所以挑最簡單的那個（$C=0$）就好。"
+        "反導函數有無限多個：$F(x)+C$",
+        "所以挑最簡單的，取 $C=0$",
+        "不定積分 $\\int f\\,dx$：一族函數，要寫 $+C$",
+        "定積分 $\\int_a^bf\\,dx$：一個數，不寫 $+C$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\big(F(b)+C\\big)-\\big(F(a)+C\\big)=F(b)-F(a)"
+      ]
     },
     {
       "heading": "④ 算出來的仍是有號面積",
       "body": [
-        "$\\int_0^{2\\pi}\\sin x\\,dx=\\left[-\\cos x\\right]_0^{2\\pi}=-1-(-1)=0$。上方一塊、下方一塊抵消（〈定積分與有號面積〉）。",
-        "要面積，先找 $f$ 的零點，把區間切開，每段取絕對值再加（〈曲線與 x 軸圍成的面積〉）。"
+        "$\\sin$ 的反導函數是 $-\\cos$：$(-\\cos x)'=\\sin x$",
+        "面積明明不是 $0$！上下兩塊正負抵消",
+        "要面積：在零點切開，下方取負號"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\int_0^\\pi\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^\\pi\\\\&=-(-1)-(-1)=2\\end{aligned}",
+        "\\begin{aligned}\\int_0^{2\\pi}\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^{2\\pi}\\\\&=-1-(-1)=0\\end{aligned}",
+        "\\begin{aligned}&\\int_0^{\\pi}\\sin x\\,dx-\\int_\\pi^{2\\pi}\\sin x\\,dx\\\\&=2-(-2)=4\\end{aligned}"
+      ]
     },
     {
       "heading": "⑤ 先檢查連續",
       "body": [
-        "$\\int_{-1}^1 \\frac{1}{x^2}\\,dx$：如果硬套，$\\left[-\\frac{1}{x}\\right]_{-1}^1=-1-1=-2$。但 $\\frac{1}{x^2}$ 處處為正，積分怎麼會是負的？",
-        "問題在 $\\frac{1}{x^2}$ 在 $x=0$ 沒有定義、也不連續，定理的條件不成立。事實上在 $0$ 附近的面積是無限大，這個積分發散（〈瑕積分 II：奇異點〉）。"
-      ],
-      "collapsible": false
+        "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 不連續",
+        "這種積分叫瑕積分，之後會學：這一個發散",
+        "使用前：先確認 $f$ 在 $[a,b]$ 上連續"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $f$ 連續：$\\int_a^bf(x)\\,dx=F(b)-F(a)$，$F'=f$",
+        "• 人話：變化率積起來 = 總變化",
+        "• 證明：$A$ 和 $F$ 只差常數，用 $A(a)=0$ 定出常數",
+        "• 不用 $+C$：代上限、代下限時消掉",
+        "• 結果是有號面積；要面積就在零點切開",
+        "• 先檢查連續，不連續硬套會錯",
+        "下一課：反連鎖律"
+      ]
     }
   ],
   "workedExamples": [
@@ -110,335 +178,920 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_1^3 2x\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_1^24x^3\\,dx=$？",
       "options": [
-        { "label": "$8$", "correct": true },
-        { "label": "$9$", "why": "只代了上限 $F(3)=9$，還要減 $F(1)=1$。" },
-        { "label": "$4$", "why": "你算的是 $f(3)-f(1)=6-2$。要代進反導函數 $x^2$，不是 $f$ 本身。" }
+        {
+          "label": "$15$",
+          "correct": true
+        },
+        {
+          "label": "$16$",
+          "why": "只代了上限；還要減掉 $F(1)=1$"
+        },
+        {
+          "label": "$28$",
+          "why": "代進了 $f$ 而不是 $F$：$f(2)-f(1)=32-4$"
+        },
+        {
+          "label": "$-15$",
+          "why": "減反了：是代上限減代下限"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^\\pi \\cos x\\,dx$ 是？",
+      "ask": "$y=x$ 與 $x$ 軸在 $[-1,2]$ 之間圍成的面積是？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$2$", "why": "$2$ 是面積（兩塊各 $1$ 取絕對值相加）。有號面積是 $\\sin\\pi-\\sin 0=0$，上下抵消。" },
-        { "label": "$1$", "why": "$\\sin\\pi=0$，不是 $1$。代值時要看 $\\pi$ 在單位圓上的位置。" }
-      ]
-    },
-    {
-      "ask": "為什麼定積分的答案不寫 $+C$？",
-      "options": [
-        { "label": "$C$ 在 $F(b)-F(a)$ 裡相減抵消了", "correct": true },
-        { "label": "因為定積分規定 $C=0$", "why": "$C$ 可以是任何數，只是 $(F(b)+C)-(F(a)+C)$ 把它消掉了，所以選哪個都一樣。" },
-        { "label": "因為定積分跟反導函數無關", "why": "正好相反：定積分就是用反導函數算的，只是結果是一個數。" }
-      ]
-    },
-    {
-      "ask": "$\\int_{-1}^1 \\frac{1}{x^2}\\,dx$：",
-      "options": [
-        { "label": "不能用基本定理 II：$\\frac{1}{x^2}$ 在 $0$ 不連續，這個積分發散", "correct": true },
-        { "label": "等於 $-2$", "why": "$\\left[-\\frac{1}{x}\\right]_{-1}^1=-2$ 是硬套的結果。被積函數處處為正，答案卻是負的，這就是條件不成立的訊號。" },
-        { "label": "等於 $2$，把符號改正就好", "why": "不是符號的問題：$x$ 靠近 $0$ 時面積無限大，積分根本沒有值。" }
+        {
+          "label": "$\\dfrac52$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac32$",
+          "why": "這是有號面積 $\\int_{-1}^2x\\,dx$；下方那塊被當成負的"
+        },
+        {
+          "label": "$2$",
+          "why": "只算了 $x$ 軸上方的部分"
+        },
+        {
+          "label": "$\\dfrac12$",
+          "why": "只算了 $x$ 軸下方那塊"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "代上限減代下限",
+      "title": "定理",
       "beats": [
-        { "show": ["$\\int_a^b f(x)\\,dx=F(b)-F(a)$"],
-          "note": "$f$ 連續，$F$ 是任何一個反導函數。",
-          "say": "基本定理第二部分：找到一個反導函數 F，代上限，減代下限，就是定積分。",
+        {
+          "show": [
+            "微積分基本定理 II：$f$ 在 $[a,b]$ 上連續，$F$ 是 $f$ 的任一個反導函數（$F'=f$），則",
+            "$\\int_a^bf(x)\\,dx=F(b)-F(a)$"
+          ],
+          "say": "微積分基本定理第二部分：f 在 a 到 b 上連續，F 是 f 的任何一個反導函數，那 a 到 b 的定積分，就等於 F of b 減 F of a。",
           "board": [
-            {"do":"write","line":"$\\int_a^b f(x)\\,dx={{u:F(b)}}-{{l:F(a)}}$"},
-            {"do":"focus","term":"u","label":"上限","on":"代上限"},
-            {"do":"focus","term":"l","label":"下限","on":"減代下限"}
-          ] },
-        { "show": ["簡寫：$\\Big[F(x)\\Big]_a^b$"],
-          "note": "難算的極限，換成「找反導函數」。",
-          "say": "上一課那個難算的黎曼和極限，現在換成找反導函數這件事，快很多。",
+            {
+              "do": "write",
+              "line": "微積分基本定理 II：$f$ 在 $[a,b]$ 上連續，$F$ 是 $f$ 的任一個反導函數（$F'=f$），則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\int_a^bf(x)\\,dx=F(b)-F(a)}}$",
+              "color": "red",
+              "on": "的任"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "的定"
+            }
+          ]
+        },
+        {
+          "show": [
+            "記號：$F(b)-F(a)$ 寫成 $\\Big[F(x)\\Big]_a^b$"
+          ],
+          "say": "代上限減代下限，常寫成中括號，右下角寫下限、右上角寫上限。",
           "board": [
-            {"do":"write","line":"黎曼和極限 → 找反導函數"},
-            {"do":"write","line":"簡寫：$\\Big[F(x)\\Big]_a^b$","on":"現在換成"}
-          ] },
-        { "show": ["$\\int_0^2(3x^2-2x)\\,dx$"],
-          "note": "反導函數 $F(x)=x^3-x^2$。",
-          "say": "試一題：三 x 平方減二 x，從零積到二。反導函數是 x 三次方減 x 平方。",
+            {
+              "do": "write",
+              "line": "記號：$F(b)-F(a)$ 寫成 $\\Big[F(x)\\Big]_a^b$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不用再算 Riemann 和的極限：找反導函數就好"
+          ],
+          "say": "上一課要寫黎曼和、套公式、取極限；現在只要找到反導函數，代兩個數相減。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^2(3x^2-2x)\\,dx$","on":"試一題"},
-            {"do":"write","line":"$F(x)={{f:x^3-x^2}}$","tint":{"f":"violet"},"on":"反導函數是"}
-          ] },
-        { "show": ["倒著微分：$(x^3-x^2)'=3x^2-2x$"],
-          "note": "找反導函數就是倒著微分，再檢查。",
-          "say": "找反導函數，就倒著微分：x 三次方微分是三 x 平方，x 平方微分是二 x。所以 F 微分是原式。",
+            {
+              "do": "write",
+              "line": "不用再算 Riemann 和的極限：找反導函數就好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^2(3x^2-2x)\\,dx$"
+          ],
+          "say": "例子：0 到 2，3x 平方減 2x。",
           "board": [
-            {"do":"write","line":"$(x^3)'=3x^2$"},
-            {"do":"write","line":"$(x^2)'=2x$","on":"x 平方微分"},
-            {"do":"write","line":"$(x^3-x^2)'=3x^2-2x$","on":"所以"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^2(3x^2-2x)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反導函數：$F(x)=x^3-x^2$"
+          ],
+          "say": "先找反導函數：x 立方減 x 平方。微分回去檢查：3x 平方減 2x，對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反導函數：$F(x)=x^3-x^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Big[x^3-x^2\\Big]_0^2=(8-4)-(0-0)=4$"
+          ],
+          "say": "代上限 2：8 減 4 等於 4；代下限 0：等於 0。相減，答案是 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\Big[x^3-x^2\\Big]_0^2=(8-4)-(0-0)=4}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "等於#1"
+            },
+            {
+              "do": "write",
+              "line": "　對照 4.8：$\\int_0^3x^2\\,dx=\\big[\\frac{x^3}3\\big]_0^3=9-0=9$，一行就完成",
+              "color": "violet",
+              "on": "相減"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "結果是？",
-        "options": [
-          {
-            "label": "$F(2)-F(0)=4$",
-            "correct": true
-          },
-          {
-            "label": "$8$",
-            "why": "那是 $f(2)-f(0)$：代進被積函數本身了。要代反導函數 $F$。"
-          },
-          {
-            "label": "$4+C$",
-            "why": "$C$ 在 $F(b)-F(a)$ 相減時消掉，定積分的結果是一個數。"
-          }
-        ]
-      }
+      "check": 0
     },
     {
-      "title": "變化率積起來",
+      "title": "兌現 4.7 的承諾",
       "beats": [
-        { "show": ["$\\int_a^b F'(x)\\,dx=F(b)-F(a)$"],
-          "note": "變化率積起來，就是總變化。",
-          "say": "換個寫法看：F prime 是 F 變化的快慢。每一小段的快慢乘時間加起來，就是 F 總共變了多少。",
+        {
+          "show": [
+            "4.7 留下兩個積分「4.10 就會算」："
+          ],
+          "say": "4.7 那一課，有兩個積分說「學了基本定理就會算」。現在來兌現。",
           "board": [
-            {"do":"write","line":"$\\int_a^b {{d:F'(x)}}\\,dx={{t:F(b)-F(a)}}$"},
-            {"do":"focus","term":"d","label":"變化快慢","on":"變化的快慢"},
-            {"do":"underline","term":"t","label":"總變化","on":"總共"}
-          ] },
-        { "show": ["$F'(x)\\,dx\\approx F(x+dx)-F(x)$","中間互相抵掉，剩 $F(b)-F(a)$"],
-          "note": "$dx$ 是一小段很短的長度。",
-          "say": "dx 是一小段很短的長度。F prime 乘 dx，就是這一小段 F 增加的量。全部接起來，中間互相抵掉，剩終點減起點。",
+            {
+              "do": "write",
+              "line": "4.7 留下兩個積分「4.10 就會算」："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int_1^4\\sqrt x\\,dx&=\\Big[\\frac23x^{3/2}\\Big]_1^4\\\\&=\\frac23\\cdot8-\\frac23\\cdot1=\\frac{14}3\\end{aligned}$"
+          ],
+          "say": "第一個：根號 x 的反導函數，是 3 分之 2 乘 x 的 2 分之 3 次方。4 的 2 分之 3 次方是 8，相減得 3 分之 14。",
           "board": [
-            {"do":"write","line":"$F'(x)\\,dx\\approx F(x+dx)-F(x)$"},
-            {"do":"write","line":"每一小段接起來，中間抵掉","on":"互相抵掉"},
-            {"do":"write","line":"剩 $F(b)-F(a)$","on":"剩終點"}
-          ] },
-        { "show": ["$\\int_a^b v(t)\\,dt=s(b)-s(a)$"],
-          "note": "$s'=v$：速度積起來是位移。",
-          "say": "例如速度是位置的導數，速度從 a 積到 b，就是這段時間的位移。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}\\int_1^4\\sqrt x\\,dx&=\\Big[\\frac23x^{3/2}\\Big]_1^4\\\\&=\\frac23\\cdot8-\\frac23\\cdot1=\\frac{14}3\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$\\big(\\frac23x^{3/2}\\big)'=\\frac23\\cdot\\frac32x^{1/2}=\\sqrt x$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^2\\frac1x\\,dx=\\Big[\\ln x\\Big]_1^2=\\ln2-\\ln1=\\ln2$"
+          ],
+          "say": "第二個：1 到 2，x 分之 1。反導函數是自然對數 x，代 2 減代 1，自然對數 1 是 0，答案是自然對數 2。",
           "board": [
-            {"do":"write","line":"$s'(t)=v(t)$"},
-            {"do":"write","line":"$\\int_a^b v(t)\\,dt={{ds:s(b)-s(a)}}$","on":"速度從"},
-            {"do":"underline","term":"ds","label":"位移","on":"這段時間"}
-          ] }
-      ],
-      "solve": {
-        "check": 0,
-        "kind": "numeric",
-        "answer": "8",
-        "claim": "INT(2x, 1, 3) == ANS",
-        "hint": "$2x$ 的反導函數是 $x^2$：代上限減代下限。",
-        "steps": [
-          "$F(x)=x^2$",
-          "$F(3)-F(1)=9-1=8$"
-        ],
-        "wrong": [
-          {
-            "answer": "9",
-            "why": "只代了上限 $F(3)=9$，還要減 $F(1)=1$。"
-          },
-          {
-            "answer": "4",
-            "why": "你算的是 $f(3)-f(1)=6-2$。要代進反導函數 $x^2$，不是 $f$ 本身。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_1^2\\frac1x\\,dx=\\Big[\\ln x\\Big]_1^2=\\ln2-\\ln1=\\ln2}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "函數"
+            },
+            {
+              "do": "write",
+              "line": "　也就是 $\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac1{n+k}=\\ln2\\approx0.693$",
+              "color": "violet",
+              "on": "然對#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Riemann 和算不出來的極限，現在一行就得到精確值"
+          ],
+          "say": "用黎曼和根本算不出來的極限，現在一行就得到精確值。這就是基本定理的威力。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Riemann 和算不出來的極限，現在一行就得到精確值"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "變化率積起來＝總變化",
+      "beats": [
+        {
+          "show": [
+            "$F'$ 是 $F$ 的變化率，把定理寫成：",
+            "$\\int_a^bF'(x)\\,dx=F(b)-F(a)$"
+          ],
+          "say": "換一個角度讀：F prime 是 F 的變化率。定理說，把變化率從 a 積到 b，就得到 F 從 a 到 b 的總變化量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$F'$ 是 $F$ 的變化率，把定理寫成："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_a^bF'(x)\\,dx=F(b)-F(a)}}$",
+              "on": "變化#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "就得"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：速度 $v(t)=2-t$，$0\\le t\\le4$（4.4 的例子）"
+          ],
+          "say": "例子：4.4 的速度，2 減 t，從 0 到 4 秒。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：速度 $v(t)=2-t$，$0\\le t\\le4$（4.4 的例子）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "位置 $s(t)$ 的變化率是 $v$：位移 $=s(4)-s(0)$",
+            "$\\int_0^4(2-t)\\,dt=\\Big[2t-\\frac{t^2}2\\Big]_0^4=8-8=0$"
+          ],
+          "say": "位置的變化率是速度，所以速度的積分就是位移。反導函數是 2t 減 2 分之 t 平方，代 4 是 0，代 0 也是 0，位移是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "位置 $s(t)$ 的變化率是 $v$：位移 $=s(4)-s(0)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int_0^4(2-t)\\,dt=\\Big[2t-\\frac{t^2}2\\Big]_0^4=8-8=0}}$",
+              "on": "反導"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "也是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 4.4 用三角形算的一樣：前進 $2$、後退 $2$"
+          ],
+          "say": "跟 4.4 用三角形算的一樣：先前進 2 公尺，再後退 2 公尺，回到原點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 4.4 用三角形算的一樣：前進 $2$、後退 $2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其他例子：",
+            "• 水流入的速率積起來 = 水量的變化"
+          ],
+          "say": "其他例子也一樣：水流入的速率積起來，是水量的變化；邊際成本積起來，是總成本的變化。",
+          "board": [
+            {
+              "do": "write",
+              "line": "其他例子："
+            },
+            {
+              "do": "write",
+              "line": "• 水流入的速率積起來 = 水量的變化",
+              "on": "率積"
+            },
+            {
+              "do": "write",
+              "line": "• 邊際成本積起來 = 總成本的變化",
+              "on": "成本#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（用基本定理 I）",
+      "beats": [
+        {
+          "show": [
+            "令 $A(x)=\\displaystyle\\int_a^xf(t)\\,dt$"
+          ],
+          "say": "證明用上一課的定理。令 A x 是從 a 到 x 的累積函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $A(x)=\\displaystyle\\int_a^xf(t)\\,dt$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "基本定理 I：$A'(x)=f(x)$；又 $F'(x)=f(x)$"
+          ],
+          "say": "由基本定理 I，A prime 等於 f；F 也是 f 的反導函數，F prime 也等於 f。",
+          "board": [
+            {
+              "do": "write",
+              "line": "基本定理 I：$A'(x)=f(x)$；又 $F'(x)=f(x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$A$、$F$ 是同一個 $f$ 的反導函數 ⇒ 只差常數（4.1）：",
+            "$A(x)=F(x)+C$"
+          ],
+          "say": "兩個函數導數一樣，由 4.1 用均值定理證過的結果，它們只差一個常數 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$A$、$F$ 是同一個 $f$ 的反導函數 ⇒ 只差常數（4.1）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle A(x)=F(x)+C}}$",
+              "on": "用均"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "它們"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=a$：$A(a)=\\int_a^af=0$",
+            "$0=F(a)+C\\ \\Rightarrow\\ C=-F(a)$"
+          ],
+          "say": "代 x 等於 a：上下限相同，積分是 0。所以 0 等於 F of a 加 C，C 等於負 F of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $x=a$：$A(a)=\\int_a^af=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0=F(a)+C\\ \\Rightarrow\\ C=-F(a)$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $x=b$：",
+            "$\\int_a^bf(t)\\,dt=A(b)=F(b)-F(a)\\quad\\blacksquare$"
+          ],
+          "say": "再代 x 等於 b：A 在 b 的值就是要求的積分，等於 F of b 減 F of a。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "代 $x=b$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\int_a^bf(t)\\,dt=A(b)=F(b)-F(a)\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "的值"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "　用到 $f$ 連續：基本定理 I 才成立",
+              "color": "violet",
+              "on": "of#2"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "為什麼不用 $+C$",
       "beats": [
-        { "show": ["$(F(b)+C)-(F(a)+C)=F(b)-F(a)$"],
-          "note": "$C$ 在相減時消掉了。",
-          "say": "換成 F 加 C 也一樣：上限、下限都多一個 C，一減就消掉了。",
+        {
+          "show": [
+            "反導函數有無限多個：$F(x)+C$"
+          ],
+          "say": "反導函數有無限多個，彼此差一個常數。用哪一個會不會影響答案？",
           "board": [
-            {"do":"write","line":"$(F(b)+{{c1:C}})-(F(a)+{{c2:C}})$"},
-            {"do":"focus","term":"c1","on":"上限"},
-            {"do":"focus","term":"c2","on":"下限"},
-            {"do":"transform","line":"$=F(b)-F(a)$","on":"一減"}
-          ] },
-        { "show": ["挑最簡單的：$C=0$"],
-          "say": "所以不管選哪一個反導函數，答案都一樣，挑 C 等於零最省事。",
+            {
+              "do": "write",
+              "line": "反導函數有無限多個：$F(x)+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\big(F(b)+C\\big)-\\big(F(a)+C\\big)=F(b)-F(a)$"
+          ],
+          "say": "不會。代上限、代下限都多了同一個 C，相減的時候就消掉了。",
           "board": [
-            {"do":"write","line":"挑最簡單的：${{c:C=0}}$"},
-            {"do":"box","term":"c","color":"green","on":"C 等於零"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\big(F(b)+C\\big)-\\big(F(a)+C\\big)=F(b)-F(a)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以挑最簡單的，取 $C=0$"
+          ],
+          "say": "所以定積分隨便挑一個反導函數就好，通常取 C 等於 0 最簡單。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以挑最簡單的，取 $C=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不定積分 $\\int f\\,dx$：一族函數，要寫 $+C$"
+          ],
+          "say": "對照一下：不定積分是一族函數，一定要寫加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不定積分 $\\int f\\,dx$：一族函數，要寫 $+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定積分 $\\int_a^bf\\,dx$：一個數，不寫 $+C$"
+          ],
+          "say": "定積分是一個數，C 已經消掉了，不用寫。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定積分 $\\int_a^bf\\,dx$：一個數，不寫 $+C$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：用基本定理 I",
+      "title": "算出來的仍是有號面積",
       "beats": [
-        { "show": ["造一個反導函數 $A$，再跟 $F$ 比"],
-          "say": "策略：先造出一個反導函數，就是累積函數 A，再跟隨便哪一個反導函數 F 比較。",
+        {
+          "show": [
+            "$\\begin{aligned}\\int_0^\\pi\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^\\pi\\\\&=-(-1)-(-1)=2\\end{aligned}$"
+          ],
+          "say": "例子：0 到派，正弦 x。反導函數是負餘弦。代派是 1，代 0 是負 1，相減得 2。",
           "board": [
-            {"do":"write","line":"造反導函數 ${{a:A}}$，再跟 ${{bf:F}}$ 比","tint":{"a":"violet","bf":"blue"}}
-          ] },
-        { "show": ["$A(x)=\\int_a^x f(t)\\,dt$，$A'=f$"],
-          "note": "〈微積分基本定理 I〉，要 $f$ 連續。",
-          "why": {"ask":"為什麼 $A'=f$？","say":"累積函數 A，為什麼是 f 的反導函數？","options":[{"label":"基本定理 I：$f$ 連續，對上限微分得 $f$","correct":true},{"label":"由 $\\int_a^b f=F(b)-F(a)$","why":"那正是要證的式子，拿來用就繞圈子了。"},{"label":"$A$ 就是 $F$","why":"這時還不知道 $A$ 和 $F$ 的關係；要先有 $A'=f$ 才比得了。"}]},
-          "say": "f 連續，由基本定理第一部分，對上限微分就得到 f，所以 A 是一個反導函數。",
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle {\\begin{aligned}\\int_0^\\pi\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^\\pi\\\\&=-(-1)-(-1)=2\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "導函"
+            },
+            {
+              "do": "write",
+              "line": "　$\\sin$ 的反導函數是 $-\\cos$：$(-\\cos x)'=\\sin x$",
+              "color": "violet",
+              "on": "是負#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\int_0^{2\\pi}\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^{2\\pi}\\\\&=-1-(-1)=0\\end{aligned}$"
+          ],
+          "say": "換成 0 到 2 派：代 2 派是負 1，代 0 也是負 1，相減是 0。",
           "board": [
-            {"do":"write","line":"${{a:A}}(x)=\\int_a^x f(t)\\,dt$，${{d:A'=f}}$","on":"累積函數"},
-            {"do":"underline","term":"d","on":"為什麼"},
-            {"do":"write","line":"$f$ 連續 ⇒ 基本定理 I","why":true,"on":"f 連續"}
-          ] },
-        { "show": ["$A(x+h)-A(x)\\approx f(x)\\cdot h$"],
-          "note": "直覺，不是證明：高度看成不變。",
-          "say": "直覺是這樣：x 多走一小段 h，A 就多出一條細長的面積，高大約是 f of x，寬是 h。除以 h 就剩 f of x。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\int_0^{2\\pi}\\sin x\\,dx&=\\Big[-\\cos x\\Big]_0^{2\\pi}\\\\&=-1-(-1)=0\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積明明不是 $0$！上下兩塊正負抵消"
+          ],
+          "say": "可是圖形和 x 軸圍出的面積明明不是 0。上面一塊是正的，下面一塊是負的，剛好抵消。",
           "board": [
-            {"do":"write","line":"$A(x+h)-A(x)\\approx {{g:f(x)}}\\cdot h$"},
-            {"do":"underline","term":"g","label":"高","on":"高大約"}
-          ] },
-        { "show": ["$F=A+C$"],
-          "note": "區間上導數相同，就只差一個常數。",
-          "why": {"ask":"為什麼 $F$ 和 $A$ 只差常數？","say":"F 和 A，為什麼只差一個常數？","options":[{"label":"$F'=A'=f$，區間上導數相同就只差常數","correct":true},{"label":"$F$ 一定等於 $A$","why":"$F$ 是任何一個反導函數，可以是 $A$ 再加任何常數；只能說差一個常數。"},{"label":"定積分不寫 $+C$","why":"那是這個定理的後果，不是理由；這一步靠的是〈反導函數〉那一課的定理。"}]},
-          "say": "F 和 A 的導數都是 f。在區間上導數相同，就只差一個常數，所以 F 是 A 加 C。",
+            {
+              "do": "write",
+              "line": "面積明明不是 $0$！上下兩塊正負抵消",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上方 +2，下方 −2，加起來 0"
+          ],
+          "say": "圖上，藍色那塊是正 2，紅色那塊是負 2。",
           "board": [
-            {"do":"write","line":"${{bf:F}}={{a:A}}+{{c:C}}$","on":"F 和 A"},
-            {"do":"underline","term":"c","label":"導數相同","why":true,"on":"在區間上"}
-          ] },
-        { "show": ["$(F-A)'=f-f=0$：水平線，是常數"],
-          "note": "直覺：沒有上坡下坡，圖形只能是水平線。",
-          "say": "兩個函數相減，差的導數是 f 減 f，等於零。沒有上坡下坡，圖形只能是水平線，就是常數。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sine",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.4,
+                    1.4
+                  ],
+                  "area": [
+                    {
+                      "expr": "sin(x)",
+                      "from": 0,
+                      "to": "pi",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "sin(x)",
+                      "from": "pi",
+                      "to": "2*pi",
+                      "color": "red"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "label": "y = sin x"
+                    }
+                  ],
+                  "labels": [
+                    {
+                      "x": 1.1,
+                      "y": 0.35,
+                      "text": "+2",
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4.4,
+                      "y": -0.72,
+                      "text": "−2",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 230
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "上方 +2，下方 −2，加起來 0",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要面積：在零點切開，下方取負號",
+            "$\\begin{aligned}&\\int_0^{\\pi}\\sin x\\,dx-\\int_\\pi^{2\\pi}\\sin x\\,dx\\\\&=2-(-2)=4\\end{aligned}$"
+          ],
+          "say": "要算面積，就在零點派切開：上方那段照算，下方那段取負號。面積是 2 減負 2，等於 4。",
           "board": [
-            {"do":"write","line":"$({{df:F-A}})'=f-f=0$"},
-            {"do":"focus","term":"df","color":"gold","label":"差","on":"差的導數"},
-            {"do":"write","line":"沒有上坡下坡 ⇒ 水平線 ⇒ 常數","on":"沒有上坡"}
-          ] },
-        { "show": ["$F(b)-F(a)=A(b)-A(a)$","$=\\int_a^b f(x)\\,dx-0$"],
-          "note": "$C$ 相減消掉；$A(a)=\\int_a^a f=0$。",
-          "say": "相減時 C 消掉。A 在 a 是從 a 積到 a，等於零；A 在 b 就是定積分。得證。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{bf:F}}(b)-F(a)={{a:A}}(b)-A(a)$","on":"相減時"},
-            {"do":"write","line":"$=\\int_a^b f(x)\\,dx-{{z:0}}$","on":"A 在 a"},
-            {"do":"underline","term":"z","label":"A(a) = 0","on":"等於零"}
-          ] }
-      ],
-      "key": "造 $A(x)=\\int_a^x f$，與 $F$ 只差常數",
-      "proof": true,
-      "of": 2,
-      "skeleton": "構造",
-      "where": {
-        "ask": "「$f$ 連續」用在哪一步？",
-        "steps": [
-          {
-            "label": "$A'=f$",
-            "correct": true
-          },
-          {
-            "label": "$F=A+C$",
-            "why": "這只用到 $F'=A'$，而且是在一個區間上。"
-          },
-          {
-            "label": "$C$ 相減消掉",
-            "why": "這只是代數：兩邊都加 $C$，一減就沒了。"
-          },
-          {
-            "label": "$A(a)=\\int_a^a f=0$",
-            "why": "這只用到積分區間長度是 $0$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "要面積：在零點切開，下方取負號"
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle {\\begin{aligned}&\\int_0^{\\pi}\\sin x\\,dx-\\int_\\pi^{2\\pi}\\sin x\\,dx\\\\&=2-(-2)=4\\end{aligned}}}}$",
+              "on": "方那#1"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "on": "積是"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "仍是有號面積",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_0^\\pi\\sin x\\,dx=-\\cos\\pi+\\cos 0=2$"],
-          "say": "sine 的反導函數是負 cosine。從零到 pi，代進去是一加一，等於二。",
-          "board": [
-            {"do":"write","line":"$\\int_0^\\pi\\sin x\\,dx=-\\cos\\pi+\\cos 0=2$"}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}\\sin x\\,dx=-1+1=0$"],
-          "note": "上方一塊、下方一塊抵消。",
-          "say": "積到二 pi，答案變成零：後半段在 x 軸下方，跟前半段抵消了。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{2\\pi}\\sin x\\,dx=-1+1=0$","on":"積到二 pi"},
-            {"do":"plot","graph":{"window":[-0.3,6.6,-1.3,1.3],"curves":[{"expr":"sin(x)","domain":[0,6.2832],"color":"ink"}],"fills":[{"expr":"sin(x)","from":0,"to":3.1416,"color":"green","opacity":0.3},{"expr":"sin(x)","from":3.1416,"to":6.2832,"color":"red","opacity":0.3}],"labels":[{"x":1.5708,"y":0.35,"text":"+2","anchor":"middle"},{"x":4.7124,"y":-0.45,"text":"−2","anchor":"middle"}]},"on":"後半段"}
-          ] },
-        { "show": ["$\\int_0^{2\\pi}|\\sin x|\\,dx=2+2=4$"],
-          "note": "要面積：在零點切開，每段取絕對值。",
-          "say": "要面積，就在零點切開，下方那一塊翻成正的，兩塊各二，加起來是四。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\int_0^{2\\pi}|\\sin x|\\,dx=2+2=4$","on":"要面積"}
-          ] }
+        {
+          "show": [
+            "$y=x$ 與 $x$ 軸在 $[-1,2]$ 之間圍成的面積是？"
+          ],
+          "say": "換你算。先找零點。"
+        }
       ],
-      "key": "要面積就在零點切開，每段取絕對值",
       "check": 1
     },
     {
       "title": "先檢查連續",
       "beats": [
-        { "show": ["$\\int_{-1}^1\\frac{1}{x^2}\\,dx$ 硬套：$-2$"],
-          "note": "$\\left[-\\frac{1}{x}\\right]_{-1}^1=-1-1$。",
-          "say": "最後一個陷阱：x 平方分之一從負一到一，硬套公式得到負二。",
-          "board": [
-            {"do":"write","line":"$\\int_{-1}^1\\frac{1}{x^2}\\,dx$"},
-            {"do":"write","line":"$=\\Big[-\\frac{1}{x}\\Big]_{-1}^1={{w:-2}}$","on":"硬套公式"},
-            {"do":"strike","term":"w","label":"硬套的","on":"得到"}
-          ] },
-        { "show": ["$\\frac{1}{x^2}$ 處處為正，怎麼會是負的？"],
-          "say": "可是被積函數處處是正的，積分怎麼可能是負的？一定哪裡出了問題。",
-          "board": [
-            {"do":"write","line":"${{p:\\frac{1}{x^2}}}>0$：處處為正"},
-            {"do":"underline","term":"p","color":"green","label":"正的","on":"處處"}
-          ] },
-        { "show": ["$x=0$ 不連續：定理的條件不成立"],
-          "say": "問題在 x 等於零：函數沒有定義，也不連續，基本定理的條件不成立，不能套。",
-          "board": [
-            {"do":"write","line":"${{z:x=0}}$：不連續，條件不成立"},
-            {"do":"underline","term":"z","label":"條件不成立","on":"條件"}
-          ] },
-        { "show": ["下限靠近 $0$，曲線往上衝"],
-          "say": "看圖：x 靠近零，曲線往上衝，下面的面積越塞越多。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,1.5,0,30],"curves":[{"expr":"1/x^2","domain":[0.15,1.5],"color":"blue"}],"fills":[{"expr":"1/x^2","from":0.15,"to":1,"color":"blue","opacity":0.25}]}}
-          ] },
-        { "show": ["$\\int_{0.01}^{1}\\frac{1}{x^2}\\,dx=99$"],
-          "note": "下限再靠近 $0$ 就無限變大：發散。",
-          "say": "看右半邊，從零點零一積到一已經是九十九，下限再靠近零就無限變大。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_{0.01}^{1}\\frac{1}{x^2}\\,dx={{r:99}}$","on":"看右半邊"},
-            {"do":"circle","term":"r","color":"green","on":"九十九"},
-            {"do":"write","line":"下限 → $0$：無限大","on":"下限再"}
-          ] },
-        { "show": ["$\\frac{1}{a}-1$，$a\\to 0$：越來越大"],
-          "note": "發散：沒有值，$\\infty$ 不是一個數。",
-          "say": "下限越靠近零，答案越大，沒有一個數擋得住。所以說發散：不是等於某個很大的數，而是根本沒有值。",
-          "board": [
-            {"do":"write","line":"$\\int_{a}^{1}\\frac{1}{x^2}\\,dx=\\frac{1}{a}-1$"},
-            {"do":"write","line":"$a\\to0$：越來越大，沒有值","on":"越靠近零"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\int_{-1}^{1}\\frac1{x^2}\\,dx=\\Big[-\\frac1x\\Big]_{-1}^{1}=-1-1=-2$，對嗎？"
+          ],
+          "say": "先猜猜看：這樣算對嗎？"
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "$\\displaystyle\\int_{-1}^{1}\\frac1{x^2}\\,dx=\\Big[-\\frac1x\\Big]_{-1}^{1}=-1-1=-2$，對嗎？",
+        "options": [
+          {
+            "label": "不對：$\\frac1{x^2}>0$，積分不可能是負的",
+            "correct": true
+          },
+          {
+            "label": "對：反導函數 $-\\frac1x$ 沒算錯",
+            "why": "反導函數沒錯，但定理的條件不成立"
+          },
+          {
+            "label": "不對：答案是 $0$，因為上下限對稱",
+            "why": "對稱區間歸零是給奇函數的；$\\frac1{x^2}$ 是偶函數"
+          }
+        ]
+      }
+    },
+    {
+      "title": "先檢查連續",
+      "beats": [
+        {
+          "show": [
+            "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 不連續"
+          ],
+          "say": "錯在條件：x 平方分之 1 在 0 不連續，而且往無限大衝。定理要求 f 在整個區間上連續，這裡不成立，不能套。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯在：$\\dfrac1{x^2}$ 在 $x=0$ 不連續",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊都往上衝：面積是無窮大，不是 −2"
+          ],
+          "say": "圖上，兩邊都往上衝，底下的面積其實是無限大，不是負 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bad",
+                  "window": [
+                    -1.6,
+                    1.6,
+                    -0.5,
+                    12
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x^2",
+                      "color": "blue",
+                      "label": "y = 1/x²"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "1/x^2",
+                      "from": -1,
+                      "to": -0.05,
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "1/x^2",
+                      "from": 0.05,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩邊都往上衝：面積是無窮大，不是 −2",
+              "color": "violet",
+              "on": "底下"
+            },
+            {
+              "do": "write",
+              "line": "　這種積分叫瑕積分，之後會學：這一個發散",
+              "color": "violet",
+              "on": "無限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "使用前：先確認 $f$ 在 $[a,b]$ 上連續"
+          ],
+          "say": "所以用基本定理之前，先確認 f 在整個區間上連續，特別是分母會不會是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "使用前：先確認 $f$ 在 $[a,b]$ 上連續",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $f$ 連續：$\\int_a^bf(x)\\,dx=F(b)-F(a)$，$F'=f$",
+            "• 人話：變化率積起來 = 總變化"
+          ],
+          "say": "整理一下：連續函數的定積分，是反導函數代上限減代下限；變化率積起來是總變化；不用加 C；結果是有號面積；使用前先檢查連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f$ 連續：$\\int_a^bf(x)\\,dx=F(b)-F(a)$，$F'=f$"
+            },
+            {
+              "do": "write",
+              "line": "• 人話：變化率積起來 = 總變化",
+              "on": "定積"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：$A$ 和 $F$ 只差常數，用 $A(a)=0$ 定出常數",
+              "on": "上限"
+            },
+            {
+              "do": "write",
+              "line": "• 不用 $+C$：代上限、代下限時消掉",
+              "on": "積起"
+            },
+            {
+              "do": "write",
+              "line": "• 結果是有號面積；要面積就在零點切開",
+              "on": "結果"
+            },
+            {
+              "do": "write",
+              "line": "• 先檢查連續，不連續硬套會錯",
+              "on": "使用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：反連鎖律"
+          ],
+          "say": "下一課，學怎麼找更複雜的反導函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：反連鎖律"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ftc", "definite-integral", "riemann-sum"],
-    "fine": ["ftc2-evaluate", "ftc2-signed", "ftc2-net-change", "ftc2-continuity-check", "ftc2-riemann-limit"]
+    "coarse": [
+      "ftc",
+      "definite-integral",
+      "riemann-sum"
+    ],
+    "fine": [
+      "ftc2-evaluate",
+      "ftc2-signed",
+      "ftc2-net-change",
+      "ftc2-continuity-check",
+      "ftc2-riemann-limit"
+    ]
   },
   "practice": [
-    { "id": "rel-basic-013", "core": true, "trains": "ftc2-evaluate" },
-    { "id": "fd-int-005", "core": true, "trains": "ftc2-evaluate" },
-    { "id": "fd-int-006", "core": true, "trains": "ftc2-evaluate" },
-    { "id": "cx-int-006", "core": true, "trains": "ftc2-evaluate" },
-    { "id": "fd-int-016", "core": true, "trains": "ftc2-signed" },
-    { "id": "int-039", "core": true, "trains": "ftc2-evaluate" },
-    { "id": "lm-rs-004", "core": true, "trains": "ftc2-riemann-limit", "note": "先認出是 $\\int_0^1 \\sqrt{x}\\,dx$。" },
-    { "id": "cg-4b-017", "core": true, "trains": "ftc2-continuity-check" },
-    { "id": "cg-4b-019", "core": true, "trains": "ftc2-net-change" },
-    { "id": "fd-int-007", "trains": "ftc2-evaluate" },
-    { "id": "fd-int-008", "trains": "ftc2-evaluate" },
-    { "id": "cx-ftc-006", "trains": "ftc2-net-change", "note": "$\\int f'\\,dx$ 就是 $f$ 的總變化，不必先展開。" },
-    { "id": "lm-rs-009", "trains": "ftc2-riemann-limit" },
-    { "id": "lm-rs-005", "trains": "ftc2-riemann-limit" },
-    { "id": "cg-4b-018", "trains": "ftc2-continuity-check" },
-    { "id": "cg-4b-020", "trains": "ftc2-net-change" },
-    { "id": "wg-def-001", "challenge": true, "trains": "ftc2-signed", "note": "挑戰：同一張表上，有號面積與面積是兩個不同的答案。" }
+    {
+      "id": "rel-basic-013",
+      "core": true,
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "fd-int-005",
+      "core": true,
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "fd-int-006",
+      "core": true,
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "cx-int-006",
+      "core": true,
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "fd-int-016",
+      "core": true,
+      "trains": "ftc2-signed"
+    },
+    {
+      "id": "int-039",
+      "core": true,
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "lm-rs-004",
+      "core": true,
+      "trains": "ftc2-riemann-limit",
+      "note": "先認出是 $\\int_0^1 \\sqrt{x}\\,dx$。"
+    },
+    {
+      "id": "cg-4b-017",
+      "core": true,
+      "trains": "ftc2-continuity-check"
+    },
+    {
+      "id": "cg-4b-019",
+      "core": true,
+      "trains": "ftc2-net-change"
+    },
+    {
+      "id": "fd-int-007",
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "fd-int-008",
+      "trains": "ftc2-evaluate"
+    },
+    {
+      "id": "cx-ftc-006",
+      "trains": "ftc2-net-change",
+      "note": "$\\int f'\\,dx$ 就是 $f$ 的總變化，不必先展開。"
+    },
+    {
+      "id": "lm-rs-009",
+      "trains": "ftc2-riemann-limit"
+    },
+    {
+      "id": "lm-rs-005",
+      "trains": "ftc2-riemann-limit"
+    },
+    {
+      "id": "cg-4b-018",
+      "trains": "ftc2-continuity-check"
+    },
+    {
+      "id": "cg-4b-020",
+      "trains": "ftc2-net-change"
+    },
+    {
+      "id": "wg-def-001",
+      "challenge": true,
+      "trains": "ftc2-signed",
+      "note": "挑戰：同一張表上，有號面積與面積是兩個不同的答案。"
+    }
   ],
   "gaps": []
 }

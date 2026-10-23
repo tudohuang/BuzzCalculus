@@ -1,57 +1,136 @@
 {
   "id": "limit-comparison-test",
   "title": "極限比較判別",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["comparison-test"],
-  "next": ["ratio-test"],
-  "related": ["limit-trig-standard", "limit-at-infinity"],
-  "objectives": [
-    "說出極限比較判別：$a_n,b_n>0$ 且 $\\lim\\frac{a_n}{b_n}=c$，$0<c<\\infty$，則兩級數同收同散。",
-    "用主要項選出 $b_n$（通常是 $\\frac{1}{n^p}$），算比值的極限。",
-    "知道 $c=0$ 或 $c=\\infty$ 時只剩單方向的結論。"
+  "prerequisites": [
+    "comparison-test"
   ],
-  "visual": "畫出比值 aₙ/bₙ 的點，aₙ = (n + 1)/(n³ − n + 5)、bₙ = 1/n²。點很快貼到水平線 c = 1，畫面上一條 c/2 到 3c/2 的帶子把第 N 項之後的點全部框住，旁邊註明：框住，就代表 aₙ 被 (c/2)bₙ 與 (3c/2)bₙ 夾著。",
+  "next": [
+    "ratio-test"
+  ],
+  "related": [
+    "limit-trig-standard",
+    "limit-at-infinity"
+  ],
+  "objectives": [
+    "說出極限比較判別：$a_n,b_n>0$ 且 $\\lim\\frac{a_n}{b_n}=c$，$0<c<\\infty$，則 $\\sum a_n$ 與 $\\sum b_n$ 同時收斂或同時發散",
+    "用主要項選出 $b_n$（通常是 $\\frac{1}{n^p}$），算比值的極限",
+    "知道 $c=0$ 或 $c=\\infty$ 時只剩單方向的結論"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 為什麼需要它",
       "body": [
-        "〈比較判別〉要一個方向剛好對的不等式。$\\frac{n+1}{n^3-n+5}$ 明明「長得像」$\\frac{1}{n^2}$，但要寫出 $\\le\\frac{C}{n^2}$ 得處理分母裡的 $-n$，很煩。其實我們只關心兩者在 $n$ 很大時的比例，所以改看比值的極限。"
+        "直覺：$n$ 很大時，$2^n-1\\approx2^n$，應該跟 $\\sum\\frac1{2^n}$ 一樣收斂",
+        "但不等式方向不對：",
+        "上一課的解法：自己找常數，例如 $2^n-1\\ge2^{n-1}$",
+        "更直接：看它們的比值",
+        "比值趨近正的常數：長得一樣快，命運應該也一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac1{2^n-1}\\ \\text{收斂嗎？}",
+        "\\frac1{2^n-1}>\\frac1{2^n}",
+        "\\frac{\\frac1{2^n-1}}{\\frac1{2^n}}=\\frac{2^n}{2^n-1}\\to1"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設從某一項開始 $a_n>0$、$b_n>0$，且 $\\lim\\frac{a_n}{b_n}=c$，$0<c<\\infty$（一個正的有限數）。則 $\\sum a_n$ 與 $\\sum b_n$ 同時收斂或同時發散。",
-        "直觀：比值靠近 $c$，代表 $n$ 很大時 $a_n\\approx c\\cdot b_n$，兩個級數只差一個倍數，命運相同。"
+        "設 $a_n>0$，$b_n>0$，而且",
+        "則 $\\sum a_n$ 與 $\\sum b_n$ 同時收斂、同時發散",
+        "不用找不等式，只要算一個極限",
+        "$c$ 是多少不重要，只要不是 $0$ 或 $\\infty$",
+        "剛才的例子：$c=1$，$\\sum\\frac1{2^n}$ 收斂 ⇒ $\\sum\\frac1{2^n-1}$ 收斂"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{n\\to\\infty}\\frac{a_n}{b_n}=c,\\qquad0<c<\\infty"
+      ]
     },
     {
       "heading": "③ 怎麼選 $b_n$",
       "body": [
-        "有理式（含根號）：分子分母各留最高次項。$\\frac{3n^2+1}{n^3+2}$ 的主要部分是 $\\frac{3n^2}{n^3}=\\frac{3}{n}$，取 $b_n=\\frac{1}{n}$（常數 3 不用帶）。",
-        "小量代換：$n\\to\\infty$ 時 $\\frac{1}{n}\\to 0$，$\\sin\\frac{1}{n}$ 和 $\\frac{1}{n}$ 的比值 $\\to 1$（〈三角標準極限〉）；$1-\\cos\\frac{1}{n}$ 和 $\\frac{1}{2n^2}$ 的比值 $\\to 1$。",
-        "選好之後一定要真的算比值的極限，確認它是正的有限數。"
+        "抓主要項：分子、分母各留最高次",
+        "• $\\dfrac{3n^2+1}{n^3+2}\\approx\\dfrac{3n^2}{n^3}=\\dfrac3n$ → 選 $b_n=\\dfrac1n$",
+        "例：像 $\\frac1n$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{3n^2+1}{n^3+2}$",
+        "$0<3<\\infty$，$\\sum\\frac1n$ 發散 ⇒ 發散",
+        "例：像 $\\frac1{n^2}$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n+1}{n^3-n+5}$",
+        "主要項：$\\dfrac{n}{n^3}=\\dfrac1{n^2}$，選 $b_n=\\dfrac1{n^2}$",
+        "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ 收斂",
+        "$a_n>0$：$n\\ge1$ 時 $n^3-n+5\\ge5>0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{a_n}{b_n}=\\frac{3n^2+1}{n^3+2}\\cdot n=\\frac{3n^3+n}{n^3+2}\\to3",
+        "\\frac{a_n}{b_n}=\\frac{(n+1)n^2}{n^3-n+5}=\\frac{n^3+n^2}{n^3-n+5}\\to1"
+      ]
+    },
+    {
+      "heading": "③ 小量代換",
+      "body": [
+        "$n\\to\\infty$：$\\frac1n\\to0$，而 $\\sin x\\approx x$（$x$ 很小）",
+        "選 $b_n=\\dfrac1n$，令 $x=\\dfrac1n\\to0^+$：",
+        "$\\sum\\frac1n$ 發散 ⇒ $\\displaystyle\\sum\\sin\\frac1n$ 發散",
+        "$a_n>0$：$0<\\frac1n\\le1<\\pi$，所以 $\\sin\\frac1n>0$",
+        "小量的近似都能這樣用：",
+        "• $1-\\cos\\frac1n\\approx\\frac1{2n^2}$ → 收斂",
+        "• $\\ln\\big(1+\\frac1n\\big)\\approx\\frac1n$ → 發散"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\sin\\frac1n\\ \\text{收斂嗎？}",
+        "\\lim_{n\\to\\infty}\\frac{\\sin\\frac1n}{\\frac1n}=\\lim_{x\\to0^+}\\frac{\\sin x}{x}=1"
+      ]
     },
     {
       "heading": "④ $c=0$ 或 $c=\\infty$",
       "body": [
-        "$c=0$：$a_n$ 比 $b_n$ 小很多。$\\sum b_n$ 收斂 $\\Rightarrow\\sum a_n$ 收斂；$\\sum b_n$ 發散時沒有結論。",
-        "$c=\\infty$：$a_n$ 比 $b_n$ 大很多。$\\sum b_n$ 發散 $\\Rightarrow\\sum a_n$ 發散；$\\sum b_n$ 收斂時沒有結論。",
-        "得到 0 或 $\\infty$ 通常表示 $b_n$ 選錯了次方，回去重選比較省事。"
+        "$c=0$：$a_n$ 比 $b_n$ 小得多",
+        "例：$\\displaystyle\\sum\\frac{\\ln n}{n^2}$，選 $b_n=\\dfrac1{n^{3/2}}$：",
+        "$\\sum\\frac1{n^{3/2}}$ 收斂 ⇒ 收斂",
+        "$\\frac{\\ln n}{\\sqrt n}\\to0$：對數比任何正次方都慢（羅必達）",
+        "$c=\\infty$：$a_n$ 比 $b_n$ 大得多",
+        "例：$\\displaystyle\\sum_{n=2}^{\\infty}\\frac{\\ln n}{n}$，選 $b_n=\\dfrac1n$：比值 $\\ln n\\to\\infty$ ⇒ 發散",
+        "其他組合：沒有結論"
       ],
-      "collapsible": false
+      "tex": [
+        "\\textstyle\\sum b_n\\ \\text{收斂}\\Rightarrow\\sum a_n\\ \\text{收斂}",
+        "\\frac{a_n}{b_n}=\\frac{\\ln n}{\\sqrt n}\\to0",
+        "\\textstyle\\sum b_n\\ \\text{發散}\\Rightarrow\\sum a_n\\ \\text{發散}"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "選 $b_n$ 的原則：讓比值趨近正的有限數最好"
+      ]
     },
     {
       "heading": "⑤ 證明",
       "body": [
-        "取 $\\varepsilon=\\frac{c}{2}$。因為 $\\frac{a_n}{b_n}\\to c$，存在 $N$ 使 $n\\ge N$ 時 $\\left|\\frac{a_n}{b_n}-c\\right|<\\frac{c}{2}$，也就是 $\\frac{c}{2}b_n<a_n<\\frac{3c}{2}b_n$。右半邊：$\\sum b_n$ 收斂 $\\Rightarrow\\sum\\frac{3c}{2}b_n$ 收斂 $\\Rightarrow$（比較判別）$\\sum a_n$ 收斂。左半邊：$\\sum b_n$ 發散 $\\Rightarrow\\sum\\frac{c}{2}b_n$ 發散 $\\Rightarrow\\sum a_n$ 發散。$c>0$ 保證了 $\\frac{c}{2}>0$，左半邊才用得上。"
+        "$\\frac{a_n}{b_n}\\to c>0$：取 $\\varepsilon=\\frac c2$，有 $N$ 使 $n\\ge N$ 時",
+        "$b_n>0$，乘過去：",
+        "• $\\sum b_n$ 收斂 ⇒ $\\sum\\frac{3c}2b_n$ 收斂 ⇒ $\\sum a_n$ 收斂（比較）",
+        "• $\\sum b_n$ 發散 ⇒ $\\sum\\frac c2b_n$ 發散 ⇒ $\\sum a_n$ 發散（比較）",
+        "兩個方向都用上一課的比較判別　$\\blacksquare$",
+        "$c=0$ 只剩右半邊 $a_n<b_n$；$c=\\infty$ 只剩左半邊 $a_n>b_n$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\Big|\\frac{a_n}{b_n}-c\\Big|<\\frac c2",
+        "\\frac c2<\\frac{a_n}{b_n}<\\frac{3c}2",
+        "\\frac c2\\,b_n<a_n<\\frac{3c}2\\,b_n"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $a_n,b_n>0$，$\\frac{a_n}{b_n}\\to c$，$0<c<\\infty$：同生共死",
+        "• $b_n$：分子分母各留最高次，通常是 $\\frac1{n^p}$",
+        "• 小量：$\\sin\\frac1n\\approx\\frac1n$，$1-\\cos\\frac1n\\approx\\frac1{2n^2}$",
+        "• $c=0$：$\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂",
+        "• $c=\\infty$：$\\sum b_n$ 發散 ⇒ $\\sum a_n$ 發散",
+        "下一課：比值判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -102,305 +181,781 @@
   ],
   "checks": [
     {
-      "ask": "判斷 $\\sum\\frac{2n+3}{n^3+1}$，最好的 $b_n$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{2n+5}{n^2\\sqrt n}$ 收斂嗎？",
       "options": [
-        { "label": "$\\frac{1}{n^2}$", "correct": true },
-        { "label": "$\\frac{1}{n}$", "why": "主要項是 $\\frac{2n}{n^3}=\\frac{2}{n^2}$；跟 $\\frac{1}{n}$ 比，比值 $\\to 0$，配上發散的 $\\sum\\frac{1}{n}$ 沒有結論。" },
-        { "label": "$\\frac{1}{n^3}$", "why": "漏了分子的 $n$；比值 $\\to\\infty$，配上收斂的 $\\sum\\frac{1}{n^3}$ 也沒有結論。" }
+        {
+          "label": "收斂：像 $\\frac2{n^{3/2}}$，$p=\\frac32$",
+          "correct": true
+        },
+        {
+          "label": "發散：像 $\\frac2{n}$",
+          "why": "分母是 $n^{2}\\cdot n^{1/2}=n^{5/2}$，不是 $n^2$"
+        },
+        {
+          "label": "收斂：像 $\\frac1{n^{5/2}}$",
+          "why": "漏了分子的 $n$：$\\frac{2n}{n^{5/2}}=\\frac2{n^{3/2}}$"
+        },
+        {
+          "label": "發散：比值的極限是 $2\\ne1$",
+          "why": "$c$ 不必是 $1$，只要 $0<c<\\infty$"
+        }
       ]
     },
     {
-      "ask": "$\\lim\\frac{a_n}{b_n}=0$，而且 $\\sum b_n$ 發散。關於 $\\sum a_n$？",
+      "ask": "$\\displaystyle\\sum\\frac{\\ln n}{n^2}$ 選 $b_n=\\frac1n$，比值 $\\frac{\\ln n}{n}\\to0$。結論是？",
       "options": [
-        { "label": "無法判斷", "correct": true },
-        { "label": "發散", "why": "$a_n$ 比 $b_n$ 小很多，可能收斂：$a_n=\\frac{1}{n^2}$、$b_n=\\frac{1}{n}$。" },
-        { "label": "收斂", "why": "也可能發散：$a_n=\\frac{1}{n\\ln n}$、$b_n=\\frac{1}{n}$，比值 $\\frac{1}{\\ln n}\\to 0$，但 $\\sum\\frac{1}{n\\ln n}$ 發散。" }
-      ]
-    },
-    {
-      "ask": "$\\sum\\left(1-\\cos\\frac{1}{n}\\right)$ 是？",
-      "options": [
-        { "label": "收斂：跟 $\\frac{1}{n^2}$ 比，比值 $\\to\\frac{1}{2}$", "correct": true },
-        { "label": "發散：跟 $\\frac{1}{n}$ 比", "why": "$1-\\cos\\frac{1}{n}$ 比 $\\frac{1}{n}$ 小得多，比值 $\\to 0$，配上發散的 $\\sum\\frac{1}{n}$ 沒有結論。" },
-        { "label": "發散：由發散判別", "why": "各項 $\\to 1-\\cos 0=0$，發散判別沒有結論。" }
-      ]
-    },
-    {
-      "ask": "極限比較判別需要的是？",
-      "options": [
-        { "label": "$a_n,b_n>0$，且 $\\frac{a_n}{b_n}$ 趨近一個正的有限數", "correct": true },
-        { "label": "$a_n\\le b_n$", "why": "那是比較判別的條件；極限比較只看比值的極限，不需要大小關係。" },
-        { "label": "$\\lim a_n=\\lim b_n$", "why": "兩者通常都 $\\to 0$，相等沒有意義；重要的是它們的比值。" }
+        {
+          "label": "沒有結論，要換 $b_n$",
+          "correct": true
+        },
+        {
+          "label": "發散，因為 $\\sum\\frac1n$ 發散",
+          "why": "那要 $0<c<\\infty$；$c=0$ 時 $a_n$ 比 $b_n$ 小得多，小的不跟大的發散"
+        },
+        {
+          "label": "收斂，因為比值趨近 $0$",
+          "why": "比值 $\\to0$ 只說 $a_n$ 比較小；比發散的小，沒有結論"
+        },
+        {
+          "label": "發散，因為 $\\ln n\\to\\infty$",
+          "why": "分母 $n^2$ 長得更快，每一項還是趨近 $0$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "改看比值",
+      "title": "為什麼需要它",
       "beats": [
-        { "show": ["$\\frac{n+1}{n^3-n+5}$ 像 $\\frac{1}{n^2}$"],
-          "note": "可是不等式的方向很難寫。",
-          "say": "這個式子明明長得像 n 平方分之一，但要寫出方向對的不等式，得處理分母的負 n，很煩。",
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac1{2^n-1}\\ \\text{收斂嗎？}$"
+          ],
+          "say": "看這個級數：2 的 n 次方減 1，分之一。",
           "board": [
-            {"do":"write","line":"$\\frac{n+1}{n^3-n+5}$ 像 $\\frac{1}{n^2}$"}
-          ] },
-        { "show": ["$\\lim\\frac{a_n}{b_n}=c$，$0<c<\\infty$"],
-          "note": "$a_n>0$、$b_n>0$。",
-          "say": "其實我們只在乎 n 很大時兩者的比例。兩邊都是正的，比值趨近一個正的有限數 c。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac1{2^n-1}\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：$n$ 很大時，$2^n-1\\approx2^n$，應該跟 $\\sum\\frac1{2^n}$ 一樣收斂"
+          ],
+          "say": "直覺上，n 很大的時候，減 1 根本不重要，它就像 2 的 n 次方分之一，應該收斂。",
           "board": [
-            {"do":"write","line":"$\\lim\\frac{a_n}{b_n}={{c:c}}$，$0<c<\\infty$"},
-            {"do":"focus","term":"c","label":"正的有限數","on":"正的有限數"}
-          ] },
-        { "show": ["⇒ $\\sum a_n$、$\\sum b_n$ 同收同散"],
-          "say": "那兩個級數就同時收斂或同時發散。",
+            {
+              "do": "write",
+              "line": "直覺：$n$ 很大時，$2^n-1\\approx2^n$，應該跟 $\\sum\\frac1{2^n}$ 一樣收斂"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但不等式方向不對：",
+            "$\\frac1{2^n-1}>\\frac1{2^n}$"
+          ],
+          "say": "可是用比較判別，分母變小了，每一項比 2 的 n 次方分之一大。比收斂的大，方向錯，沒有結論。",
           "board": [
-            {"do":"write","line":"⇒ $\\sum a_n$、$\\sum b_n$ 同收同散","color":"green"}
-          ] },
-        { "show": ["$n$ 很大時 $a_n\\approx c\\cdot b_n$"],
-          "note": "只差一個倍數，命運相同。",
-          "say": "直觀上，比值靠近 c，代表 a n 差不多是 c 倍的 b n。乘一個倍數，不會改變收不收斂。",
+            {
+              "do": "write",
+              "line": "但不等式方向不對："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{2^n-1}>\\frac1{2^n}$",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上一課的解法：自己找常數，例如 $2^n-1\\ge2^{n-1}$"
+          ],
+          "say": "上一課的辦法是自己湊不等式，例如 2 的 n 次方減 1，大於等於 2 的 n 減 1 次方。湊得出來，但每次都要想。",
           "board": [
-            {"do":"write","line":"$n$ 很大時 $a_n\\approx {{m:c\\cdot b_n}}$"},
-            {"do":"underline","term":"m","label":"一個倍數","on":"乘一個倍數"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "上一課的解法：自己找常數，例如 $2^n-1\\ge2^{n-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "更直接：看它們的比值",
+            "$\\frac{\\frac1{2^n-1}}{\\frac1{2^n}}=\\frac{2^n}{2^n-1}\\to1$"
+          ],
+          "say": "更直接的辦法：不比大小，看比值。兩個相除，得到 2 的 n 次方除以 2 的 n 次方減 1，趨近 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "更直接：看它們的比值"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{\\frac1{2^n-1}}{\\frac1{2^n}}=\\frac{2^n}{2^n-1}\\to1}}$",
+              "on": "個相"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比值趨近正的常數：長得一樣快，命運應該也一樣"
+          ],
+          "say": "比值趨近一個正的常數，代表兩個數列在無限遠處長得一樣快，命運應該也一樣。這就是極限比較判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比值趨近正的常數：長得一樣快，命運應該也一樣"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：夾在兩個倍數間",
+      "title": "定理",
       "beats": [
-        { "show": ["把 $a_n$ 夾在兩個 $b_n$ 的倍數之間"],
-          "say": "策略：n 夠大以後，把 a n 夾在兩個 b n 的倍數之間，再兩邊各用一次比較判別。",
+        {
+          "show": [
+            "設 $a_n>0$，$b_n>0$，而且",
+            "$\\lim_{n\\to\\infty}\\frac{a_n}{b_n}=c,\\qquad0<c<\\infty$"
+          ],
+          "say": "極限比較判別：a n 和 b n 都是正的，而且 a n 除以 b n 的極限是 c，c 是正的有限數。那兩個級數同時收斂，或同時發散。",
           "board": [
-            {"do":"write","line":"把 ${{a:a_n}}$ 夾在兩個 $b_n$ 的倍數之間","tint":{"a":"violet"}}
-          ] },
-        { "show": ["取 $\\varepsilon=\\frac{c}{2}$：$n\\ge N$ 時","$\\left|\\frac{a_n}{b_n}-c\\right|<\\frac{c}{2}$"],
-          "note": "比值的極限是 $c$。",
-          "say": "取 epsilon 等於二分之 c。比值趨近 c，所以 n 夠大以後，比值離 c 不到二分之 c。",
+            {
+              "do": "write",
+              "line": "設 $a_n>0$，$b_n>0$，而且"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{n\\to\\infty}\\frac{a_n}{b_n}=c,\\qquad0<c<\\infty$",
+              "on": "而且"
+            },
+            {
+              "do": "write",
+              "line": "則 $\\sum a_n$ 與 $\\sum b_n$ 同時收斂、同時發散",
+              "color": "red",
+              "on": "是正#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不用找不等式，只要算一個極限"
+          ],
+          "say": "好處是：不用找不等式，也不用管方向，只要算一個極限。",
           "board": [
-            {"do":"write","line":"取 $\\varepsilon=\\frac{c}{2}$：$n\\ge N$ 時","on":"取 epsilon"},
-            {"do":"write","line":"$\\left|\\frac{a_n}{b_n}-c\\right|<\\frac{c}{2}$","on":"比值離 c"}
-          ] },
-        { "show": ["$\\frac{c}{2}b_n<a_n<\\frac{3c}{2}b_n$"],
-          "note": "拆開絕對值，再乘上 $b_n>0$。",
-          "why": {"ask":"乘上 $b_n$，不等號為什麼不用變號？","say":"兩邊乘上 b n，不等號為什麼不用變號？","options":[{"label":"$b_n>0$","correct":true},{"label":"$c>0$","why":"$c>0$ 管的是左邊的倍數是正的；乘上去不變號，靠的是 $b_n>0$。"},{"label":"$a_n>0$","why":"$a_n$ 是被夾的那個；乘的是 $b_n$，要看 $b_n$ 的正負。"}]},
-          "say": "拆開絕對值，比值夾在二分之 c 和二分之三 c 之間；b n 是正的，乘上去方向不變。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"${{l:\\frac{c}{2}{{bl:b_n}}}}<{{a:a_n}}<{{r:\\frac{3c}{2}{{br:b_n}}}}$","on":"兩邊乘上"},
-            {"do":"underline","term":"bl","why":true,"on":"b n 是正的"},
-            {"do":"underline","term":"br","label":"正的，不變號","why":true,"on":"乘上去"}
-          ] },
-        { "show": ["$\\sum b_n$ 收斂 ⇒ $\\sum\\frac{3c}{2}b_n$ 收斂","⇒ $\\sum a_n$ 收斂"],
-          "note": "右半邊，加上〈比較判別〉。",
-          "say": "右半邊：b 的級數收斂，乘一個倍數還是收斂；a n 比它小，由比較判別也收斂。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"underline","term":"r","on":"右半邊"},
-            {"do":"write","line":"$\\sum b_n$ 收斂 ⇒ $\\sum{{a:a_n}}$ 收斂","on":"b 的級數收斂"}
-          ] },
-        { "show": ["$\\sum b_n$ 發散 ⇒ $\\sum\\frac{c}{2}b_n$ 發散","⇒ $\\sum a_n$ 發散"],
-          "note": "$c>0$，所以 $\\frac{c}{2}>0$。",
-          "why": {"ask":"為什麼 $\\sum\\frac{c}{2}b_n$ 也發散？","say":"乘上二分之 c，為什麼還是發散？","options":[{"label":"$\\frac{c}{2}>0$，乘正的倍數不改變發散","correct":true},{"label":"任何倍數都不改變發散","why":"乘 $0$ 就收斂了；要 $\\frac{c}{2}>0$，這正是 $c>0$ 的用處。"},{"label":"$\\frac{c}{2}b_n<a_n$","why":"那是下一個箭頭的理由；這一步只問乘上倍數之後還發不發散。"}]},
-          "say": "左半邊：c 是正的，二分之 c 也是正的，倍數不改變發散；a n 比它大，也發散。",
-          "board": [
-            {"do":"write","line":"$\\sum b_n$ 發散 ⇒ $\\sum{{a:a_n}}$ 發散","on":"乘上二分之 c"},
-            {"do":"underline","term":"l","why":true,"on":"左半邊"},
-            {"do":"write","line":"$c>0$ ⇒ $\\frac{c}{2}>0$","why":true,"on":"c 是正的"}
-          ] },
-        { "show": ["例：$\\sum\\frac{3}{n}$ 還是發散"],
-          "note": "部分和也是 3 倍，原本能超過任何數，3 倍更能。",
-          "say": "舉例：n 分之一的級數發散，乘三之後，每個部分和都是原來的三倍。原來能大過任何數，三倍更大，所以還是發散。",
-          "board": [
-            {"do":"write","line":"$\\sum\\frac{3}{n}={{k:3}}\\left(1+\\frac12+\\frac13+\\cdots\\right)$"},
-            {"do":"focus","term":"k","label":"三倍","on":"原來的三倍"}
-          ] }
+            {
+              "do": "write",
+              "line": "不用找不等式，只要算一個極限"
+            }
+          ]
+        }
       ],
-      "key": "取 $\\varepsilon=\\frac{c}{2}$，下界的倍數才保持正",
-      "proof": true,
-      "of": 4,
-      "skeleton": "ε-δ",
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{n\\to\\infty}\\frac{a_n}{b_n}=5$，$\\sum b_n$ 發散。那 $\\sum a_n$？",
+        "options": [
           {
-            "label": "取 $\\varepsilon=\\frac{c}{2}$，找到 $N$"
+            "label": "發散",
+            "correct": true
           },
           {
-            "label": "$n\\ge N$ 時 $\\frac{c}{2}b_n<a_n<\\frac{3c}{2}b_n$",
-            "why": "要先有 $N$，才知道哪些 $n$ 的比值靠近 $c$。"
+            "label": "收斂",
+            "why": "$c=5$ 是正的有限數，命運相同，不會相反"
           },
           {
-            "label": "兩邊各用一次比較判別",
-            "why": "比較判別要先有方向對的不等式。"
+            "label": "不一定，因為 $c\\ne1$",
+            "why": "$c$ 不必是 $1$：只要 $0<c<\\infty$ 就行"
           }
         ]
       }
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "$c$ 是多少不重要，只要不是 $0$ 或 $\\infty$"
+          ],
+          "say": "c 是多少不重要，5 也好，100 也好，只要不是 0、也不是無限大，命運就一樣。常數倍不影響收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c$ 是多少不重要，只要不是 $0$ 或 $\\infty$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　剛才的例子：$c=1$，$\\sum\\frac1{2^n}$ 收斂 ⇒ $\\sum\\frac1{2^n-1}$ 收斂",
+              "color": "violet",
+              "on": "也不"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "怎麼選 $b_n$",
       "beats": [
-        { "show": ["分子分母各留最高次項"],
-          "say": "有理式就分子分母各留最高次項，其他的在 n 很大時都不重要。",
+        {
+          "show": [
+            "抓主要項：分子、分母各留最高次",
+            "• $\\dfrac{3n^2+1}{n^3+2}\\approx\\dfrac{3n^2}{n^3}=\\dfrac3n$ → 選 $b_n=\\dfrac1n$"
+          ],
+          "say": "怎麼選 b n？分子、分母各自只留最高次。這個例子大約是 n 分之 3；常數不重要，選 b n 等於 n 分之一。",
           "board": [
-            {"do":"write","line":"分子分母各留最高次項"}
-          ] },
-        { "show": ["$\\frac{3n^2+1}{n^3+2}$ → $\\frac{3n^2}{n^3}=\\frac{3}{n}$"],
-          "note": "取 $b_n=\\frac{1}{n}$，常數 3 不用帶。",
-          "say": "三 n 平方加一，除以 n 三次方加二，主要部分是 n 分之三。常數不用帶，取 n 分之一。",
+            {
+              "do": "write",
+              "line": "抓主要項：分子、分母各留最高次"
+            },
+            {
+              "do": "write",
+              "line": "• $\\dfrac{3n^2+1}{n^3+2}\\approx\\dfrac{3n^2}{n^3}=\\dfrac3n$ → 選 $b_n=\\dfrac1n$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：像 $\\frac1n$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{3n^2+1}{n^3+2}$"
+          ],
+          "say": "算算看。",
           "board": [
-            {"do":"write","line":"$\\frac{3n^2+1}{n^3+2}$"},
-            {"do":"transform","line":"$\\frac{3n^2+1}{n^3+2}\\to\\frac{3n^2}{n^3}=\\frac{3}{n}$","on":"主要部分"},
-            {"do":"write","line":"$b_n=\\frac{1}{n}$","on":"常數不用帶"}
-          ] },
-        { "show": ["$\\frac{a_n}{b_n}=\\frac{3n^3+n}{n^3+2}\\to 3$"],
-          "note": "正的有限數，而 $\\sum\\frac{1}{n}$ 發散。",
-          "say": "選好一定要真的算比值：趨近三，是正的有限數。調和級數發散，所以原級數發散。",
+            {
+              "do": "write",
+              "line": "例：像 $\\frac1n$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{3n^2+1}{n^3+2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{a_n}{b_n}=\\frac{3n^2+1}{n^3+2}\\cdot n=\\frac{3n^3+n}{n^3+2}\\to3$"
+          ],
+          "say": "a n 除以 n 分之一，就是乘上 n，得到 n 立方加 2 分之 3 n 立方加 n。同次，看最高次係數，趨近 3。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{a_n}{b_n}=\\frac{3n^3+n}{n^3+2}\\to {{r:3}}$","on":"比值"},
-            {"do":"circle","term":"r","color":"gold","on":"趨近三"},
-            {"do":"write","line":"$\\sum\\frac{1}{n}$ 發散 ⇒ 原級數發散","color":"green","on":"調和級數"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "像 $\\frac{1}{n^2}$",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{n+1}{n^3-n+5}$"],
-          "note": "分母 $=n(n^2-1)+5>0$，各項為正。",
-          "say": "回到開頭那一題。先確認各項是正的：分母寫成 n 乘 n 平方減一，再加五，大於零。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_n}{b_n}=\\frac{3n^2+1}{n^3+2}\\cdot n=\\frac{3n^3+n}{n^3+2}\\to3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0<3<\\infty$，$\\sum\\frac1n$ 發散 ⇒ 發散"
+          ],
+          "say": "3 是正的有限數，n 分之一發散，所以原級數發散。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{n+1}{n^3-n+5}$"},
-            {"do":"write","line":"分母 $=n(n^2-1)+5>0$","on":"分母寫成"}
-          ] },
-        { "show": ["主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}$"],
-          "say": "分子留 n，分母留 n 三次方，主要部分是 n 平方分之一，就拿它當 b n。",
+            {
+              "do": "write",
+              "line": "$0<3<\\infty$，$\\sum\\frac1n$ 發散 ⇒ 發散",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：像 $\\frac1{n^2}$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n+1}{n^3-n+5}$"
+          ],
+          "say": "再一個：n 立方減 n 加 5，分之 n 加 1。",
           "board": [
-            {"do":"write","line":"主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}$","on":"分子留 n"},
-            {"do":"transform","line":"主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}={{b:b_n}}$","on":"就拿它當"}
-          ] },
-        { "show": ["$\\frac{a_n}{b_n}=\\frac{n^3+n^2}{n^3-n+5}$"],
-          "say": "乘上 n 平方，比值變成這個有理式。n 很大的時候，它趨近多少？",
+            {
+              "do": "write",
+              "line": "例：像 $\\frac1{n^2}$ $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{n+1}{n^3-n+5}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "主要項：$\\dfrac{n}{n^3}=\\dfrac1{n^2}$，選 $b_n=\\dfrac1{n^2}$"
+          ],
+          "say": "主要項是 n 除以 n 立方，n 平方分之一。",
           "board": [
-            {"do":"write","line":"$\\frac{a_n}{{{b:b_n}}}=\\frac{n^3+n^2}{n^3-n+5}$","on":"比值變成"},
-            {"do":"transform","line":"$\\frac{a_n}{{{b:b_n}}}=\\frac{n^3+n^2}{n^3-n+5}\\to\\ ?$","on":"n 很大的時候"}
-          ] },
-        { "show": ["分子分母同除 $n^3$"],
-          "note": "每個含 $n$ 的分數，$n$ 越大越小。",
-          "say": "同除以 n 三次方：分子是一加 n 分之一，分母是一減 n 平方分之一加 n 三次方分之五。",
+            {
+              "do": "write",
+              "line": "主要項：$\\dfrac{n}{n^3}=\\dfrac1{n^2}$，選 $b_n=\\dfrac1{n^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{a_n}{b_n}=\\frac{(n+1)n^2}{n^3-n+5}=\\frac{n^3+n^2}{n^3-n+5}\\to1$"
+          ],
+          "say": "相除，就是乘上 n 平方。分子 n 立方加 n 平方，分母 n 立方減 n 加 5，趨近 1。",
           "board": [
-            {"do":"write","line":"$\\frac{1+\\frac{1}{n}}{1-\\frac{1}{n^2}+\\frac{5}{n^3}}$"}
-          ] }
-      ],
-      "predict": {
-        "ask": "這個比值的極限，與結論是？",
-        "options": [
-          {
-            "label": "$\\to 1$，收斂",
-            "correct": true
-          },
-          {
-            "label": "$\\to 1$，發散",
-            "why": "比值是正的有限數沒錯，但 $\\sum\\frac{1}{n^2}$ 收斂（$p=2$），所以原級數也收斂。"
-          },
-          {
-            "label": "$\\to\\infty$，沒有結論",
-            "why": "分子分母都是三次，比值是最高次係數相除，$\\to 1$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_n}{b_n}=\\frac{(n+1)n^2}{n^3-n+5}=\\frac{n^3+n^2}{n^3-n+5}\\to1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ 收斂"
+          ],
+          "say": "n 平方分之一收斂，所以原級數收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$a_n>0$：$n\\ge1$ 時 $n^3-n+5\\ge5>0$",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "小量代換",
       "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\sin\\frac{1}{n}$"],
-          "note": "$0<\\frac{1}{n}\\le 1<\\pi$，所以各項為正。",
-          "say": "n 分之一在零和一之間，比 pi 小，所以 sine n 分之一是正的，可以用。",
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\sin\\frac1n\\ \\text{收斂嗎？}$"
+          ],
+          "say": "再看一個不是有理式的：正弦 n 分之一。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\sin\\frac{1}{n}$"},
-            {"do":"write","line":"$0<\\frac{1}{n}\\le 1<\\pi$ ⇒ 各項為正","on":"比 pi 小"}
-          ] },
-        { "show": ["$t=\\frac{1}{n}\\to 0^+$：$\\frac{\\sin t}{t}\\to 1$"],
-          "say": "跟 n 分之一比。令 t 等於 n 分之一，比值就是 sine t 除以 t，趨近一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\sin\\frac1n\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\to\\infty$：$\\frac1n\\to0$，而 $\\sin x\\approx x$（$x$ 很小）"
+          ],
+          "say": "n 很大的時候，n 分之一很小，而角度很小時，正弦 x 大約等於 x。所以正弦 n 分之一，大約是 n 分之一。",
           "board": [
-            {"do":"write","line":"${{t:t=\\frac{1}{n}}}\\to 0^+$","on":"令 t"},
-            {"do":"transform","line":"${{t:t=\\frac{1}{n}}}\\to 0^+$：$\\frac{\\sin t}{t}\\to 1$","on":"比值就是"}
-          ] },
-        { "show": ["$\\frac{\\sin t}{t}\\to 1$ 是已知的標準極限"],
-          "note": "〈三角標準極限〉算過，這裡直接用。",
-          "say": "t 靠近零時，sine t 除以 t 的圖貼到一。這是三角標準極限那一課算過的，這裡直接用。",
+            {
+              "do": "write",
+              "line": "$n\\to\\infty$：$\\frac1n\\to0$，而 $\\sin x\\approx x$（$x$ 很小）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "選 $b_n=\\dfrac1n$，令 $x=\\dfrac1n\\to0^+$：",
+            "$\\lim_{n\\to\\infty}\\frac{\\sin\\frac1n}{\\frac1n}=\\lim_{x\\to0^+}\\frac{\\sin x}{x}=1$"
+          ],
+          "say": "選 b n 等於 n 分之一。令 x 等於 n 分之一，比值就是正弦 x 除以 x，這個重要極限是 1。",
           "board": [
-            {"do":"plot","graph":{"window":[0,6,-0.5,1.5],"curves":[{"expr":"sin(x)/x","domain":[0.1,6],"color":"blue"}],"dashed":[[[0,1],[6,1]]]}},
-            {"do":"write","line":"已知：$\\frac{\\sin t}{t}\\to 1$","on":"算過的"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{n}$ 發散 ⇒ 發散"],
-          "note": "各項 $\\to 0$，發散判別在這裡沒有結論。",
-          "say": "調和級數發散，所以它也發散。注意每一項都趨近零，發散判別在這裡幫不上忙。",
+            {
+              "do": "write",
+              "line": "選 $b_n=\\dfrac1n$，令 $x=\\dfrac1n\\to0^+$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{n\\to\\infty}\\frac{\\sin\\frac1n}{\\frac1n}=\\lim_{x\\to0^+}\\frac{\\sin x}{x}=1$",
+              "on": "比值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1n$ 發散 ⇒ $\\displaystyle\\sum\\sin\\frac1n$ 發散"
+          ],
+          "say": "n 分之一發散，所以正弦 n 分之一的級數也發散。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{1}{n}$ 發散 ⇒ $\\sum\\sin\\frac{1}{n}$ 發散","color":"green"}
-          ] },
-        { "show": ["$1-\\cos\\frac{1}{n}$ 和 $\\frac{1}{2n^2}$ 的比值 $\\to 1$"],
-          "say": "另一個常用的小量代換：一減 cosine n 分之一，跟二 n 平方分之一，比值也趨近一。",
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1n$ 發散 ⇒ $\\displaystyle\\sum\\sin\\frac1n$ 發散",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$a_n>0$：$0<\\frac1n\\le1<\\pi$，所以 $\\sin\\frac1n>0$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小量的近似都能這樣用：",
+            "• $1-\\cos\\frac1n\\approx\\frac1{2n^2}$ → 收斂"
+          ],
+          "say": "其他小量近似也一樣：1 減餘弦 n 分之一，大約是 2 n 平方分之一，收斂；自然對數 1 加 n 分之一，大約是 n 分之一，發散。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1-\\cos\\frac{1}{n}$ 和 $\\frac{1}{2n^2}$","on":"一減 cosine"},
-            {"do":"write","line":"比值 $\\to 1$","on":"比值也"}
-          ] },
-        { "show": ["$\\frac{1-\\cos t}{t^2/2}\\to 1$"],
-          "note": "令 $t=\\frac{1}{n}$，這也是標準極限。",
-          "say": "令 t 等於 n 分之一，二 n 平方分之一就是 t 平方的一半。比值是三角標準極限那一課的結果，趨近一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1-\\cos t}{t^2/2}\\to 1$"}
-          ] }
+            {
+              "do": "write",
+              "line": "小量的近似都能這樣用："
+            },
+            {
+              "do": "write",
+              "line": "• $1-\\cos\\frac1n\\approx\\frac1{2n^2}$ → 收斂",
+              "on": "大約#1"
+            },
+            {
+              "do": "write",
+              "line": "• $\\ln\\big(1+\\frac1n\\big)\\approx\\frac1n$ → 發散",
+              "on": "分之#3"
+            }
+          ]
+        }
       ],
-      "key": "令 $t=\\frac{1}{n}\\to0$，套已知的標準極限",
-      "check": 2
+      "check": 0
     },
     {
       "title": "$c=0$ 或 $c=\\infty$",
       "beats": [
-        { "show": ["$c=0$：$a_n$ 比 $b_n$ 小很多"],
-          "note": "$\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂。",
-          "say": "比值趨近零，a n 比 b n 小很多。大的收斂，小的才跟著收斂；大的發散就沒結論。",
+        {
+          "show": [
+            "$c=0$：$a_n$ 比 $b_n$ 小得多",
+            "$\\textstyle\\sum b_n\\ \\text{收斂}\\Rightarrow\\sum a_n\\ \\text{收斂}$"
+          ],
+          "say": "如果比值的極限是 0，代表 a n 最後比 b n 小得多。這時只剩一個方向：大的 b 收斂，小的 a 就收斂。",
           "board": [
-            {"do":"write","line":"$c=0$：$a_n$ 比 $b_n$ 小很多"},
-            {"do":"write","line":"$\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂","on":"大的收斂"}
-          ] },
-        { "show": ["$c=\\infty$：$a_n$ 比 $b_n$ 大很多"],
-          "note": "$\\sum b_n$ 發散 ⇒ $\\sum a_n$ 發散。",
-          "say": "比值趨近無限大，a n 大很多。小的發散，大的才跟著發散；小的收斂就沒結論。",
+            {
+              "do": "write",
+              "line": "$c=0$：$a_n$ 比 $b_n$ 小得多"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\textstyle\\sum b_n\\ \\text{收斂}\\Rightarrow\\sum a_n\\ \\text{收斂}}}$",
+              "on": "最後"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "大的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\sum\\frac{\\ln n}{n^2}$，選 $b_n=\\dfrac1{n^{3/2}}$：",
+            "$\\frac{a_n}{b_n}=\\frac{\\ln n}{\\sqrt n}\\to0$"
+          ],
+          "say": "例子：n 平方分之自然對數 n。對數會拖一點後腿，所以選比 2 小一點的 2 分之 3。比值是自然對數 n 除以根號 n，趨近 0。",
           "board": [
-            {"do":"write","line":"$c=\\infty$：$a_n$ 比 $b_n$ 大很多"},
-            {"do":"write","line":"$\\sum b_n$ 發散 ⇒ $\\sum a_n$ 發散","on":"小的發散"}
-          ] },
-        { "show": ["得到 0 或 $\\infty$：多半 $b_n$ 選錯了次方"],
-          "say": "算出零或無限大，通常是 b n 的次方選錯了，回去重選比較省事。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum\\frac{\\ln n}{n^2}$，選 $b_n=\\dfrac1{n^{3/2}}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{a_n}{b_n}=\\frac{\\ln n}{\\sqrt n}\\to0$",
+              "on": "一點#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1{n^{3/2}}$ 收斂 ⇒ 收斂"
+          ],
+          "say": "2 分之 3 次方的 p 級數收斂，所以原級數收斂。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"得到 0 或 $\\infty$：多半 ${{b:b_n}}$ 選錯了","on":"算出零"},
-            {"do":"underline","term":"b","color":"red","label":"重選次方","on":"次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1{n^{3/2}}$ 收斂 ⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{\\ln n}{\\sqrt n}\\to0$：對數比任何正次方都慢（羅必達）",
+              "color": "violet",
+              "on": "級數#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c=\\infty$：$a_n$ 比 $b_n$ 大得多",
+            "$\\textstyle\\sum b_n\\ \\text{發散}\\Rightarrow\\sum a_n\\ \\text{發散}$"
+          ],
+          "say": "比值的極限是無限大，代表 a n 比 b n 大得多。也只剩一個方向：小的 b 發散，大的 a 就發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$c=\\infty$：$a_n$ 比 $b_n$ 大得多"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\textstyle\\sum b_n\\ \\text{發散}\\Rightarrow\\sum a_n\\ \\text{發散}}}$",
+              "on": "大得"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "小的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\sum_{n=2}^{\\infty}\\frac{\\ln n}{n}$，選 $b_n=\\dfrac1n$：比值 $\\ln n\\to\\infty$ ⇒ 發散"
+          ],
+          "say": "例子：n 分之自然對數 n，跟 n 分之一比，比值是自然對數 n，趨近無限大。n 分之一發散，所以它發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\sum_{n=2}^{\\infty}\\frac{\\ln n}{n}$，選 $b_n=\\dfrac1n$：比值 $\\ln n\\to\\infty$ ⇒ 發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其他組合：沒有結論"
+          ],
+          "say": "其他的組合，例如比值是 0，而 b 發散，就沒有結論，要換一個 b n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "其他組合：沒有結論",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\sum\\frac{\\ln n}{n^2}$ 選 $b_n=\\frac1n$，比值 $\\frac{\\ln n}{n}\\to0$。結論是？"
+          ],
+          "say": "試一題：選錯 b n 會怎樣？"
+        }
       ],
       "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "選 $b_n$ 的原則：讓比值趨近正的有限數最好"
+          ],
+          "say": "所以選 b n 時，最好讓比值趨近一個正的有限數；遇到對數，就把次方往旁邊挪一點點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "選 $b_n$ 的原則：讓比值趨近正的有限數最好",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{a_n}{b_n}\\to c>0$：取 $\\varepsilon=\\frac c2$，有 $N$ 使 $n\\ge N$ 時",
+            "$\\Big|\\frac{a_n}{b_n}-c\\Big|<\\frac c2$"
+          ],
+          "say": "最後證明。比值趨近 c，用數列極限的定義，取艾普西隆等於 2 分之 c：有一個 N，n 大於等於 N 之後，比值跟 c 的距離小於 2 分之 c。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\frac{a_n}{b_n}\\to c>0$：取 $\\varepsilon=\\frac c2$，有 $N$ 使 $n\\ge N$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big|\\frac{a_n}{b_n}-c\\Big|<\\frac c2$",
+              "on": "有一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac c2<\\frac{a_n}{b_n}<\\frac{3c}2$"
+          ],
+          "say": "也就是比值夾在 2 分之 c 和 2 分之 3 c 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac c2<\\frac{a_n}{b_n}<\\frac{3c}2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$b_n>0$，乘過去：",
+            "$\\frac c2\\,b_n<a_n<\\frac{3c}2\\,b_n$"
+          ],
+          "say": "b n 是正的，乘過去不等號不變：a n 夾在 b n 的兩個常數倍之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$b_n>0$，乘過去："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac c2\\,b_n<a_n<\\frac{3c}2\\,b_n}}$",
+              "on": "等號"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "的兩"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\sum b_n$ 收斂 ⇒ $\\sum\\frac{3c}2b_n$ 收斂 ⇒ $\\sum a_n$ 收斂（比較）",
+            "• $\\sum b_n$ 發散 ⇒ $\\sum\\frac c2b_n$ 發散 ⇒ $\\sum a_n$ 發散（比較）"
+          ],
+          "say": "如果 b 收斂，乘一個常數還是收斂，a 被它壓住，所以收斂。如果 b 發散，乘一個正的常數還是發散，它墊在 a 下面，所以 a 發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\sum b_n$ 收斂 ⇒ $\\sum\\frac{3c}2b_n$ 收斂 ⇒ $\\sum a_n$ 收斂（比較）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sum b_n$ 發散 ⇒ $\\sum\\frac c2b_n$ 發散 ⇒ $\\sum a_n$ 發散（比較）",
+              "on": "發散#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個方向都用上一課的比較判別　$\\blacksquare$"
+          ],
+          "say": "兩個方向都是上一課的比較判別。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個方向都用上一課的比較判別　$\\blacksquare$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　$c=0$ 只剩右半邊 $a_n<b_n$；$c=\\infty$ 只剩左半邊 $a_n>b_n$",
+              "color": "violet",
+              "on": "比較"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $a_n,b_n>0$，$\\frac{a_n}{b_n}\\to c$，$0<c<\\infty$：同生共死",
+            "• $b_n$：分子分母各留最高次，通常是 $\\frac1{n^p}$"
+          ],
+          "say": "整理一下：比值趨近正的有限數，兩個級數同生共死。b n 抓主要項來選，小量就用近似。比值是 0 或無限大時，只剩一個方向。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $a_n,b_n>0$，$\\frac{a_n}{b_n}\\to c$，$0<c<\\infty$：同生共死"
+            },
+            {
+              "do": "write",
+              "line": "• $b_n$：分子分母各留最高次，通常是 $\\frac1{n^p}$",
+              "on": "限數"
+            },
+            {
+              "do": "write",
+              "line": "• 小量：$\\sin\\frac1n\\approx\\frac1n$，$1-\\cos\\frac1n\\approx\\frac1{2n^2}$",
+              "on": "抓主"
+            },
+            {
+              "do": "write",
+              "line": "• $c=0$：$\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂",
+              "on": "量就"
+            },
+            {
+              "do": "write",
+              "line": "• $c=\\infty$：$\\sum b_n$ 發散 ⇒ $\\sum a_n$ 發散",
+              "on": "或無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：比值判別"
+          ],
+          "say": "下一課，不用找比較對象，級數跟自己比：比值判別。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：比值判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["limit-comparison", "comparison-test", "convergence-test"],
-    "fine": ["lct-choose-bn", "lct-compute-ratio", "lct-edge-cases"]
+    "coarse": [
+      "limit-comparison",
+      "comparison-test",
+      "convergence-test"
+    ],
+    "fine": [
+      "lct-choose-bn",
+      "lct-compute-ratio",
+      "lct-edge-cases"
+    ]
   },
   "practice": [
-    { "id": "gap-ser-lc-001", "core": true, "trains": "lct-choose-bn" },
-    { "id": "rel-adv-018", "core": true, "trains": "lct-choose-bn" },
-    { "id": "gap-ser-lc-002", "core": true, "trains": "lct-compute-ratio" },
-    { "id": "lec-12-q3b", "core": true, "trains": "lct-compute-ratio" },
-    { "id": "lec-12-q3c", "core": true, "trains": "lct-choose-bn" },
-    { "id": "cg-6c-013", "core": true, "trains": "lct-choose-bn" },
-    { "id": "lec-12-m4", "trains": "lct-choose-bn" },
-    { "id": "cg-6c-011", "trains": "lct-edge-cases" },
-    { "id": "cg-6c-014", "trains": "lct-choose-bn" },
-    { "id": "cg-6c-012", "challenge": true, "trains": "lct-edge-cases", "note": "挑戰：比值 → 0 而且 Σbₙ 發散時，自己造一個收斂、一個發散的 aₙ。" }
+    {
+      "id": "gap-ser-lc-001",
+      "core": true,
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "rel-adv-018",
+      "core": true,
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "gap-ser-lc-002",
+      "core": true,
+      "trains": "lct-compute-ratio"
+    },
+    {
+      "id": "lec-12-q3b",
+      "core": true,
+      "trains": "lct-compute-ratio"
+    },
+    {
+      "id": "lec-12-q3c",
+      "core": true,
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "cg-6c-013",
+      "core": true,
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "lec-12-m4",
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "cg-6c-011",
+      "trains": "lct-edge-cases"
+    },
+    {
+      "id": "cg-6c-014",
+      "trains": "lct-choose-bn"
+    },
+    {
+      "id": "cg-6c-012",
+      "challenge": true,
+      "trains": "lct-edge-cases",
+      "note": "挑戰：比值 → 0 而且 Σbₙ 發散時，自己造一個收斂、一個發散的 aₙ。"
+    }
   ],
   "gaps": []
 }

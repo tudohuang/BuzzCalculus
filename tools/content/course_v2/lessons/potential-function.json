@@ -1,7 +1,8 @@
 {
   "id": "potential-function",
   "title": "位勢函數",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
   "prerequisites": [
     "conservative-fields",
@@ -14,55 +15,120 @@
     "exact-equations"
   ],
   "objectives": [
-    "用「先對 $x$ 積分、留一個 $g(y)$、再對 $y$ 微分比對」的方法找出位勢函數 $f$。",
-    "三個變數時把同樣的方法多做一輪。",
-    "比對時若 $g'$ 出現 $x$，知道這代表 $\\mathbf F$ 不是保守場。"
+    "用「先對 $x$ 積分、留一個 $g(y)$、再對 $y$ 微分比對」的方法找出位勢函數 $f$",
+    "三個變數時把同樣的方法多做一輪",
+    "比對時若 $g'$ 出現 $x$，知道這代表 $\\mathbf F$ 不是保守場"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 目標",
       "body": [
-        "已經用〈保守場〉的檢驗確定 $\\mathbf F=\\langle P,Q\\rangle$ 是保守場，現在要找 $f$ 使得 $f_x=P$、$f_y=Q$。這等於同時解兩個偏微分方程。",
-        "$f$ 只決定到差一個常數：$f$ 與 $f+5$ 的梯度一樣。",
-        "找到 $f$ 有什麼好處？下一課〈路徑無關〉會說：$\\int_C\\mathbf F\\cdot d\\mathbf r=f($終點$)-f($起點$)$。線積分不用參數化，代兩個點就好。"
+        "已知 $\\mathbf F=\\langle P,Q\\rangle$ 是保守場，找 $f$ 使得",
+        "就像反導數：一變數是「已知 $f'$ 找 $f$」，現在是「已知 $\\nabla f$ 找 $f$」",
+        "用處：下一課 $\\displaystyle\\int_C\\mathbf F\\cdot d\\mathbf r=f(\\text{終點})-f(\\text{起點})$",
+        "物理上，位能 $=-f$"
       ],
-      "collapsible": false
+      "tex": [
+        "f_x=P,\\qquad f_y=Q"
+      ]
     },
     {
       "heading": "② 積分「常數」其實是函數",
       "body": [
-        "從 $f_x=P$ 出發，對 $x$ 積分。關鍵：對 $x$ 偏微分時，任何只含 $y$ 的東西都會變成 $0$。所以積分出來的「常數」可以是任意的 $g(y)$：",
-        "$f(x,y)=\\int P\\,dx+g(y)$。",
-        "這個 $g(y)$ 還不知道是誰，要靠第二個條件 $f_y=Q$ 決定。"
+        "$\\dfrac{\\partial}{\\partial x}$ 把 $y$ 當常數：所以只含 $y$ 的東西，對 $x$ 微分都是 $0$",
+        "反過來，$\\displaystyle\\int 2xy\\,dx=x^2y+g(y)$",
+        "$g(y)$ 對 $x$ 來說就是「常數」",
+        "接下來就是把 $g(y)$ 找出來"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial}{\\partial x}\\big(x^2y+\\sin y\\big)=2xy"
+      ]
     },
     {
       "heading": "③ 四個步驟（二維）",
       "body": [
-        "1. 檢驗 $P_y=Q_x$（不相等就停，不存在 $f$）。",
-        "2. $f=\\int P\\,dx+g(y)$。",
-        "3. 把這個 $f$ 對 $y$ 偏微分，令它等於 $Q$，解出 $g'(y)$。$g'(y)$ 只能含 $y$；如果還有 $x$，表示前面算錯或 $\\mathbf F$ 根本不保守。",
-        "4. 積出 $g(y)$，寫出 $f$，最後驗算 $\\nabla f=\\mathbf F$。"
+        "例：$\\mathbf F=\\langle 2xy+3,\\ x^2-4y\\rangle$",
+        "1. 檢查：$P_y=2x=Q_x$，$\\mathbb R^2$ 沒有洞，保守",
+        "2. 對 $x$ 積分 $P$：",
+        "3. 對 $y$ 微分，跟 $Q$ 比對：",
+        "$x^2$ 對消：$g'(y)=-4y$（只剩 $y$，很好）",
+        "4. 積出 $g$：$g(y)=-2y^2+K$",
+        "驗算：$f_x=2xy+3$，$f_y=x^2-4y$",
+        "也可以先對 $y$ 積分 $Q$、留一個 $h(x)$，結果一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "f=\\int(2xy+3)\\,dx=x^2y+3x+g(y)",
+        "f_y=x^2+g'(y)\\overset{!}{=}x^2-4y",
+        "f(x,y)=x^2y+3x-2y^2+K"
+      ]
+    },
+    {
+      "heading": "③ 常犯的錯",
+      "body": [
+        "把兩個積分直接加起來：",
+        "$x^2y$ 被算了兩次：$f_x=4xy+3\\ne P$",
+        "比對法保證重疊的項只算一次"
+      ],
+      "tex": [
+        "\\int P\\,dx+\\int Q\\,dy=(x^2y+3x)+(x^2y-2y^2)"
+      ]
     },
     {
       "heading": "④ 三維：多一輪",
       "body": [
-        "$f=\\int P\\,dx+g(y,z)$，「常數」變成 $y$、$z$ 的函數。",
-        "對 $y$ 微分比對 $Q$，得到 $g_y$，積出 $g=\\dots+h(z)$。",
-        "再對 $z$ 微分比對 $R$，決定 $h(z)$。每一輪都把「還不知道的部分」縮小一個變數。"
+        "例：$\\mathbf F=\\langle y^2,\\ 2xy+e^{3z},\\ 3y\\,e^{3z}\\rangle$",
+        "對 $x$ 積分：留下的「常數」是 $y,z$ 的函數",
+        "對 $y$ 比對：$2xy+g_y\\overset{!}{=}2xy+e^{3z}$",
+        "現在 $f=xy^2+y\\,e^{3z}+h(z)$",
+        "對 $z$ 比對：$3y\\,e^{3z}+h'(z)\\overset{!}{=}3y\\,e^{3z}$",
+        "$h'(z)=0\\ \\Rightarrow\\ h=K$",
+        "規則：每一輪，留下的函數少一個變數"
       ],
-      "collapsible": false
+      "tex": [
+        "f=\\int y^2\\,dx=xy^2+g(y,z)",
+        "g_y=e^{3z}\\ \\Rightarrow\\ g=y\\,e^{3z}+h(z)",
+        "f=xy^2+y\\,e^{3z}+K"
+      ]
+    },
+    {
+      "heading": "④ 找不到的時候",
+      "body": [
+        "$\\mathbf F=\\langle y,\\ 2x\\rangle$，硬做：",
+        "$f_y=x+g'(y)\\overset{!}{=}2x\\ \\Rightarrow\\ g'(y)=x$",
+        "$g$ 只能含 $y$，$g'$ 卻等於 $x$：矛盾",
+        "$g'$ 出現 $x$ ⇒ 沒有位勢函數，$\\mathbf F$ 不保守",
+        "對照檢驗：$P_y=1$，$Q_x=2$，本來就不相等"
+      ],
+      "tex": [
+        "f=\\int y\\,dx=xy+g(y)"
+      ]
     },
     {
       "heading": "⑤ 跟其他課的關係",
       "body": [
-        "同一套「積分、留函數、微分比對」的操作，在微分方程裡解〈正合方程〉時會再出現一次。"
+        "• 9.16 保守場：判斷 $f$ 存不存在（$P_y=Q_x$、沒有洞）",
+        "• 9.17 位勢函數：把 $f$ 找出來（這一課）",
+        "• 9.18 路徑無關：用 $f$ 算功",
+        "預告：$\\mathbf F=\\langle 2xy+3,x^2-4y\\rangle$，從 $(0,0)$ 到 $(1,2)$",
+        "常數 $K$ 相減就消掉了，所以通常取 $K=0$",
+        "一變數的定積分也是這樣：$F(b)-F(a)$ 裡的 $C$ 會消掉",
+        "物理：位能 $U=-f$，保守力做的功 $=$ 位能減少的量"
       ],
-      "collapsible": true
+      "tex": [
+        "\\int_C\\mathbf F\\cdot d\\mathbf r=f(1,2)-f(0,0)=(2+3-8)-0=-3"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 目標：$f_x=P$、$f_y=Q$（三維再加 $f_z=R$）",
+        "• 對 $x$ 積分時，「常數」是 $g(y)$（三維是 $g(y,z)$）",
+        "• 步驟：檢查 → 積 $P$ → 對 $y$ 比對 → 積出 $g$ → 驗算",
+        "• 三維：多比對一輪；不要把兩個積分直接相加",
+        "• $g'$ 出現 $x$ ⇒ 不保守",
+        "下一課：路徑無關：功 $=f(\\text{終點})-f(\\text{起點})$"
+      ]
     }
   ],
   "workedExamples": [
@@ -112,70 +178,23 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathbf F=\\langle 2x,2y\\rangle$ 的位勢函數是？",
+      "ask": "$\\mathbf F=\\langle 2x+y,\\ x+2y\\rangle$ 的位勢函數是？（$K$ 省略）",
       "options": [
+        {
+          "label": "$x^2+xy+y^2$",
+          "correct": true
+        },
+        {
+          "label": "$x^2+2xy+y^2$",
+          "why": "把兩個積分直接相加，$xy$ 被算了兩次"
+        },
         {
           "label": "$x^2+y^2$",
-          "correct": true
+          "why": "漏了 $xy$：$f_x$ 少了 $y$"
         },
         {
-          "label": "$2x+2y$",
-          "why": "那是把分量加起來。要的是 $f_x=2x$、$f_y=2y$ 的 $f$。"
-        },
-        {
-          "label": "$x^2y^2$",
-          "why": "$\\nabla(x^2y^2)=\\langle 2xy^2,2x^2y\\rangle$，不是 $\\langle 2x,2y\\rangle$。"
-        }
-      ]
-    },
-    {
-      "ask": "$f_x=P$，對 $x$ 積分之後要加上的是？",
-      "options": [
-        {
-          "label": "$g(y)$：一個只含 $y$ 的函數",
-          "correct": true
-        },
-        {
-          "label": "常數 $C$",
-          "why": "對 $x$ 偏微分時，任何只含 $y$ 的函數都變成 $0$，所以「常數」可以是任意的 $g(y)$。"
-        },
-        {
-          "label": "$g(x)$",
-          "why": "含 $x$ 的函數對 $x$ 偏微分不會消失，不能當成積分「常數」。"
-        }
-      ]
-    },
-    {
-      "ask": "比對時得到 $g'(y)=x$，代表？",
-      "options": [
-        {
-          "label": "$\\mathbf F$ 不是保守場（或前面算錯），不存在位勢函數",
-          "correct": true
-        },
-        {
-          "label": "再對 $y$ 積一次，得 $g=xy$",
-          "why": "$g$ 規定只能含 $y$。出現 $x$ 表示兩個條件 $f_x=P$、$f_y=Q$ 互相矛盾。"
-        },
-        {
-          "label": "把 $g$ 改成 $g(x,y)$ 就好",
-          "why": "這樣 $f_x$ 也會跟著變，第一個條件 $f_x=P$ 就被破壞了。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\mathbf F=\\langle y\\cos(xy),x\\cos(xy)\\rangle$ 的位勢函數是？",
-      "options": [
-        {
-          "label": "$\\sin(xy)$",
-          "correct": true
-        },
-        {
-          "label": "$\\cos(xy)$",
-          "why": "$\\nabla\\cos(xy)=-\\sin(xy)\\langle y,x\\rangle$，函數與正負號都不對。"
-        },
-        {
-          "label": "$xy\\sin(xy)$",
-          "why": "它對 $x$ 的偏導是 $y\\sin(xy)+xy^2\\cos(xy)$，不是 $y\\cos(xy)$。"
+          "label": "$2x^2+xy+2y^2$",
+          "why": "$\\int2x\\,dx=x^2$，不是 $2x^2$"
         }
       ]
     }
@@ -184,196 +203,661 @@
     {
       "title": "目標",
       "beats": [
-        { "show": ["找 $f$：$f_x=P$、$f_y=Q$"],
-          "note": "先用〈保守場〉的檢驗確定找得到。",
-          "say": "已經確定場是保守的，現在要把位勢函數找出來：對 x 偏微分是 P，對 y 偏微分是 Q。",
+        {
+          "show": [
+            "已知 $\\mathbf F=\\langle P,Q\\rangle$ 是保守場，找 $f$ 使得",
+            "$f_x=P,\\qquad f_y=Q$"
+          ],
+          "say": "上一課學會判斷一個場是不是保守場。這一課要把位勢函數真的找出來：找一個 f，對 x 偏微分是 P，對 y 偏微分是 Q。",
           "board": [
-            {"do":"write","line":"${{a:f_x=P}}$、${{b:f_y=Q}}$"},
-            {"do":"focus","term":"a","label":"對 x","on":"對 x 偏微分"},
-            {"do":"focus","term":"b","label":"對 y","on":"對 y 偏微分"}
-          ] },
-        { "show": ["$f$ 與 $f+5$ 的梯度一樣"],
-          "note": "只決定到差一個常數。",
-          "say": "答案只決定到差一個常數：加五、加任何常數，梯度都不變。",
+            {
+              "do": "write",
+              "line": "已知 $\\mathbf F=\\langle P,Q\\rangle$ 是保守場，找 $f$ 使得"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f_x=P,\\qquad f_y=Q}}$",
+              "on": "要把"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "偏微#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "就像反導數：一變數是「已知 $f'$ 找 $f$」，現在是「已知 $\\nabla f$ 找 $f$」"
+          ],
+          "say": "這就像反導數。一變數是已知導數找原函數；現在是已知梯度，把函數找回來。",
           "board": [
-            {"do":"write","line":"$\\nabla(f{{c:+5}})=\\nabla f$"},
-            {"do":"focus","term":"c","label":"常數","on":"加五"}
-          ] },
-        { "show": ["$\\int_C\\mathbf F\\cdot d\\mathbf r=f($終點$)-f($起點$)$"],
-          "note": "下一課〈路徑無關〉。",
-          "say": "找到它有什麼好處？下一課會看到：線積分不用參數化，代兩個點相減就好。",
+            {
+              "do": "write",
+              "line": "就像反導數：一變數是「已知 $f'$ 找 $f$」，現在是「已知 $\\nabla f$ 找 $f$」"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用處：下一課 $\\displaystyle\\int_C\\mathbf F\\cdot d\\mathbf r=f(\\text{終點})-f(\\text{起點})$"
+          ],
+          "say": "找到它有什麼用？下一課會看到：功就等於 f 在終點的值減掉起點的值，不用再參數化了。",
           "board": [
-            {"do":"write","line":"$\\int_C\\mathbf F\\cdot d\\mathbf r=f($終點$)-f($起點$)$"},
-            {"do":"write","line":"代兩個點相減","on":"代兩個點"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "用處：下一課 $\\displaystyle\\int_C\\mathbf F\\cdot d\\mathbf r=f(\\text{終點})-f(\\text{起點})$"
+            },
+            {
+              "do": "write",
+              "line": "　物理上，位能 $=-f$",
+              "color": "violet",
+              "on": "在終"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，紅色箭頭是 F，藍色是 f 的等高線。保守場的箭頭處處垂直於等高線，指向 f 增加最快的方向。我們要從箭頭，把這張地形圖找回來。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"pfField\" viewBox=\"0 0 620 420\" width=\"620\" height=\"420\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b2pfField\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b2pfFieldblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b2pfFieldred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b2pfFieldgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b2pfFieldpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b2pfFieldink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b2pfField30\"><rect x=\"89.5\" y=\"16\" width=\"447.1\" height=\"374\"/></clipPath><g clip-path=\"url(#cl9b2pfField30)\"><line x1=\"141\" y1=\"16\" x2=\"141\" y2=\"390\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"16\" x2=\"227\" y2=\"390\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"313\" y1=\"16\" x2=\"313\" y2=\"390\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"399\" y1=\"16\" x2=\"399\" y2=\"390\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"485\" y1=\"16\" x2=\"485\" y2=\"390\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.5\" y1=\"312.6\" x2=\"536.5\" y2=\"312.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.5\" y1=\"226.6\" x2=\"536.5\" y2=\"226.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.5\" y1=\"140.7\" x2=\"536.5\" y2=\"140.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"89.5\" y1=\"54.7\" x2=\"536.5\" y2=\"54.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M570.9 349.8L568.1 350.9L563.1 352.8L559.5 354.2L556.6 355.4L553.2 356.7L548.3 358.6L545.1 359.9L542.3 361L538.6 362.5L533.8 364.4L530.8 365.6L527.9 366.8L524.2 368.3L519.4 370.2L516.5 371.4L513.6 372.6L509.8 374.1L505 376L502.1 377.1L499.3 378.3L495.2 379.9L490.7 381.6L487.8 382.7L485 383.8L480 385.7L476.4 387.1L473.5 388.1L469.5 389.6L464.9 391.2L462 392.2L458.3 393.4L453.4 395.1L450.6 396L446.3 397.3L442 398.6L439.1 399.4L433.4 401L430.5 401.7L425 403.1L421.9 403.8L416.2 405L413.3 405.6L407.6 406.6L404.7 407.1L399 407.9L393.2 408.6L389.7 408.9L384.6 409.3L378.9 409.5L373.2 409.6L367.5 409.5L361.7 409.2L358 408.9L353.1 408.4L347.4 407.6L343.5 407L338.8 406.1L334.1 405L330.2 404.1L326.7 403.1L321.6 401.6L318.7 400.6L314.8 399.2L310.1 397.5L307.3 396.3L304.4 395.1L300.6 393.4L296.5 391.5L292.9 389.7L290.1 388.2L287.2 386.7L284.3 385.1L281.5 383.5L278.6 381.8L275.5 379.9L272.5 378L269.5 376L266.6 374.1L263.8 372.2L261.1 370.2L258.4 368.3L255.7 366.3L252.8 364.2L250 362L247.1 359.7L244.2 357.4L241.4 355.1L238.6 352.8L236.3 350.9L234.1 348.9L231.8 347L229.6 345.1L227 342.8L224.2 340.2L221.3 337.6L218.9 335.4L216.8 333.5L214.7 331.5L212.7 329.6L209.8 326.9L207 324.2L204.5 321.9L202.5 319.9L200.5 318L198.4 315.9L195.5 313.1L192.6 310.3L190.6 308.3L188.6 306.4L186.7 304.5L184 301.9L181.2 299.1L178.8 296.7L176.8 294.8L174.8 292.8L172.6 290.7L169.7 288L166.8 285.3L164.6 283.2L162.6 281.2L160.5 279.3L158.2 277.2L155.4 274.6L152.5 272.1L149.7 269.6L147.5 267.7L145.2 265.8L142.9 263.8L140.6 261.9L138.2 259.9L135.3 257.6L132.4 255.4L129.6 253.2L126.7 251.1L123.9 249.1L121 247.1L118.1 245.2L115.3 243.3L112.4 241.5L109.5 239.7L106.7 238.1L103.8 236.4L100.8 234.8L97.1 232.9L93.2 230.9L89.5 229.2L86.6 227.9L83.7 226.6L80.1 225.1L75.1 223.2L72.3 222.2L69.4 221.2L63.7 219.3L60.8 218.5L57.1 217.4L55.1 216.8\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 337.9L566.9 339.3L562.3 340.8L559.5 341.8L555.7 343.1L550.9 344.8L548 345.8L544.6 347L539.4 348.9L536.5 349.9L533.7 350.9L528.4 352.8L525.1 354L522.2 355L517.6 356.7L513.6 358.1L510.7 359.1L506.7 360.6L502.1 362.2L499.3 363.2L495.8 364.4L490.7 366.2L487.8 367.2L484.5 368.3L479.2 370.1L476.4 371L472.8 372.2L467.8 373.8L464.9 374.7L460.3 376L456.3 377.2L453.4 378L447.7 379.6L444.8 380.4L439.1 381.8L436.2 382.5L430.8 383.8L427.6 384.4L421.9 385.6L419 386.1L413.3 387L409.2 387.6L404.7 388.2L399 388.8L393.2 389.2L387.5 389.5L384.6 389.6L378.9 389.6L376 389.6L370.3 389.3L364.6 388.9L358.9 388.2L354.6 387.6L350.3 386.9L344.5 385.8L341.7 385.1L336.3 383.8L333.1 382.8L329.8 381.8L324.5 380.1L321.6 379L318.7 377.9L314.1 376L310.1 374.3L307.3 373L304.4 371.6L301.5 370.1L298.1 368.3L294.6 366.4L291.2 364.4L288 362.5L284.9 360.6L281.9 358.6L279 356.7L276.1 354.7L273.4 352.8L270.7 350.9L268.1 348.9L265.6 347L263.1 345.1L260.7 343.1L258.3 341.2L255.7 339.1L252.8 336.6L250 334.2L247.1 331.6L244.8 329.6L242.7 327.7L240.6 325.7L238.5 323.8L235.6 321L232.8 318.3L230.5 316.1L228.5 314.1L226.6 312.2L224.2 309.7L221.3 306.8L219 304.5L217.1 302.5L215.3 300.6L212.7 297.9L209.8 294.8L208 292.8L206.2 290.9L204.1 288.7L201.2 285.6L199 283.2L197.2 281.2L195.4 279.3L192.6 276.3L190 273.5L188.2 271.6L186.4 269.6L184 267.1L181.2 264L179.2 261.9L177.3 260L175.4 258L172.6 255.1L169.8 252.2L167.8 250.3L165.9 248.4L163.9 246.4L161.1 243.7L158.2 241.1L155.6 238.7L153.4 236.7L151.2 234.8L148.9 232.9L146.6 230.9L143.9 228.8L141 226.6L138.2 224.5L135.3 222.5L132.4 220.6L129.6 218.8L126.7 217L123.9 215.4L120.5 213.5L116.6 211.6L112.5 209.7L109.5 208.4L106.7 207.2L102.9 205.8L98.1 204.1L95.2 203.2L90.7 201.9L86.6 200.9L82.9 200L78 198.9L73.3 198.1L69.4 197.4L63.7 196.5L60.6 196.1L55.1 195.5\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M316.5 76.2L313 77.7L310.1 79L307.3 80.1L302.6 82L298.7 83.5L295.8 84.5L291.9 85.9L287.2 87.4L284.3 88.3L279.4 89.7L275.7 90.7L272.2 91.7L267.1 92.9L263.7 93.6L258.5 94.6L253.2 95.5L250 96L244.2 96.7L238.5 97.2L234.9 97.5L229.9 97.7L224.2 97.7L219.4 97.5L215.6 97.2L209.8 96.6L204.1 95.6L201.2 95L195.6 93.6L192.6 92.7L189.5 91.7L184.6 89.7L181.2 88.2L178.3 86.8L175.4 85.2L172.6 83.6L169.7 81.7L166.8 79.8L164 77.6L162.1 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M119.3 76.2L120.8 80.1L121.6 82L123.1 85.9L123.9 87.8L125.4 91.7L126.7 95.1L127.7 97.5L129.2 101.3L129.9 103.3L131.4 107.1L132.4 109.9L133.6 112.9L135 116.8L135.7 118.7L137.1 122.6L138.2 126.2L138.9 128.4L139.9 132.3L140.7 136.2L141 140L140.8 143.9L139.4 147.8L138 149.7L135.3 152L132.4 153.8L129 155.5L123.9 157.4L121 158.3L117.5 159.4L112.4 160.7L109.5 161.4L103.8 162.6L100.9 163.2L95.2 164.3L90.8 165.2L86.6 165.9L80.9 166.9L78 167.4L72.3 168.3L67.4 169L63.7 169.6L57.9 170.4L55.1 170.8\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 325.5L568.1 326.4L563.6 327.7L559.5 328.9L556.6 329.7L550.9 331.4L548 332.3L544.1 333.5L539.4 334.9L536.5 335.8L531.3 337.3L527.9 338.4L525 339.3L519.3 341L516.5 341.9L512.3 343.1L507.9 344.5L505 345.4L499.5 347L496.4 347.9L493 348.9L487.8 350.4L485 351.3L479.5 352.8L476.4 353.7L472.4 354.7L467.8 356L464.9 356.7L459.2 358.2L456.3 358.8L450.6 360.2L447.7 360.8L442 362L439.1 362.6L433.4 363.6L428.6 364.4L424.8 365L419 365.8L414 366.4L410.4 366.7L404.7 367.1L399 367.4L393.2 367.6L387.5 367.5L381.8 367.3L376 366.9L370.7 366.4L367.5 365.9L361.7 365L358.3 364.4L353.1 363.3L349.7 362.5L344.5 361.1L341.7 360.2L336.8 358.6L333.1 357.3L330.2 356.2L326.7 354.7L322.3 352.8L318.7 351.1L315.9 349.7L313 348.2L310.1 346.7L307.3 345.1L304 343.1L300.9 341.2L297.9 339.3L295 337.3L292.2 335.4L289.5 333.5L286.9 331.5L284.3 329.6L281.5 327.3L278.6 325L275.7 322.6L272.9 320.1L270.5 318L268.4 316.1L266.3 314.1L264.3 312.2L261.4 309.4L258.5 306.5L256.5 304.5L254.7 302.5L252.8 300.6L250 297.5L247.5 294.8L245.8 292.8L244.1 290.9L241.4 287.7L239.2 285.1L237.6 283.2L235.6 280.7L233 277.4L231.5 275.4L229.9 273.4L227 269.6L225.6 267.7L224.2 265.8L221.4 261.9L220 260L218.4 257.8L215.9 254.2L214.6 252.2L212.7 249.4L210.7 246.4L209.5 244.5L207 240.6L205.7 238.7L204.1 236.1L202.1 232.9L200.9 230.9L198.6 227.1L197.5 225.1L195.5 221.7L194.1 219.3L192.6 216.7L190.9 213.5L189.8 211.5L187.8 207.7L186.7 205.8L184.8 201.9L183.8 200L181.9 196.1L181 194.2L179.3 190.3L178.3 187.9L177 184.5L175.6 180.6L175 178.7L174.1 174.8L173.6 171L173.9 167.1L175.4 163.2L176.8 161.3L178.9 159.4L181.7 157.4L185.2 155.5L189.6 153.6L192.6 152.3L195.5 151.3L199.8 149.7L204.1 148.3L207 147.3L211.3 145.8L215.6 144.5L218.4 143.5L223.1 142L227 140.7L229.9 139.7L234.7 138.1L238.5 136.8L241.4 135.8L245.7 134.2L250 132.7L252.8 131.7L256.3 130.3L261.4 128.4L264.3 127.3L267.1 126.2L271.1 124.5L275.7 122.6L278.6 121.4L281.5 120.2L284.8 118.7L289.1 116.8L292.9 115L295.8 113.7L298.7 112.3L301.5 110.9L305.2 109.1L309 107.1L312.7 105.2L315.9 103.5L318.7 102L321.6 100.4L324.5 98.7L327.3 97.1L330.2 95.4L333.2 93.6L336.3 91.7L339.4 89.7L342.4 87.8L345.4 85.9L348.3 83.9L351.1 82L353.9 80.1L356.6 78.1L359.3 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M88.1 76.2L88.2 80.1L88.1 83.9L87.9 87.8L87.5 91.7L87 95.5L86.6 97.8L85.8 101.3L84.8 105.2L83.7 108.2L82.6 111L80.9 114.7L79.7 116.8L78 119.6L75.9 122.6L74.4 124.5L72.3 127L69.4 129.9L66.8 132.3L64.5 134.2L61.9 136.2L59.1 138.1L56.1 140L55.1 140.7\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 312.6L565.2 314L562.3 314.6L556.6 316L553.7 316.7L548.1 318L545.1 318.7L540.1 319.9L536.5 320.8L532.1 321.9L527.9 322.9L524.1 323.8L519.3 324.9L516.1 325.7L510.7 327L507.9 327.7L502.1 329L499.3 329.7L493.6 331L490.7 331.7L485 332.9L482.1 333.5L476.4 334.7L473.1 335.4L467.8 336.4L463 337.3L459.2 338L453.4 339L450.6 339.4L444.8 340.3L439.1 341L436.2 341.3L430.5 341.9L424.8 342.4L419 342.7L413.3 342.9L407.6 343L401.8 342.9L396.1 342.6L390.4 342.2L384.6 341.5L381.8 341.2L376 340.2L371.3 339.3L367.5 338.4L363.4 337.3L358.9 336L356 335.1L351.2 333.5L347.4 332L344.5 330.8L341.7 329.6L337.6 327.7L333.7 325.7L330.2 323.8L327.3 322.2L324.5 320.4L321.6 318.6L318.7 316.7L315.9 314.7L313 312.6L310.1 310.4L307.5 308.3L305.2 306.4L303 304.5L300.8 302.5L298.7 300.5L295.8 297.7L292.9 294.8L291.1 292.8L289.3 290.9L287.2 288.5L284.3 285.1L282.8 283.2L281.3 281.2L278.6 277.7L277 275.4L275.7 273.5L273.1 269.6L271.9 267.7L270 264.6L268.5 261.9L267.1 259.5L265.4 256.1L264.3 253.7L262.7 250.3L261.4 247.2L260.4 244.5L259 240.6L258.4 238.7L257.3 234.8L256.4 230.9L255.7 227.1L255.5 225.1L255.1 221.3L254.9 217.4L255 213.5L255.4 209.7L255.7 207.6L256.4 203.9L257.5 200L258.5 197L259.7 194.2L261.4 190.6L262.7 188.4L264.3 185.7L266.4 182.6L267.9 180.6L270 178L272.7 174.8L274.5 172.9L276.3 171L278.6 168.7L281.5 166L284.3 163.4L286.8 161.3L289 159.4L291.4 157.4L293.7 155.5L296.2 153.6L298.7 151.6L301.5 149.4L304.4 147.2L307.3 145L310.1 142.8L313 140.7L315.9 138.5L318.7 136.4L321.6 134.2L324.2 132.3L326.8 130.3L329.3 128.4L331.9 126.5L334.4 124.5L336.9 122.6L339.4 120.7L341.9 118.7L344.5 116.7L347.4 114.4L350.3 112.1L353.1 109.8L356 107.4L358.6 105.2L360.9 103.3L363.2 101.3L365.4 99.4L367.7 97.5L370.3 95.1L373.2 92.6L376 90L378.4 87.8L380.5 85.9L382.5 83.9L384.6 81.9L387.5 79.1L390.4 76.3L390.5 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M62.4 76.2L61.5 80.1L60.8 82.7L59.9 85.9L58.5 89.7L57.8 91.7L56.1 95.5L55.1 97.7\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 299.1L565.2 300L561.8 300.6L556.6 301.5L550.9 302.4L548 302.9L542.3 303.9L538.7 304.5L533.7 305.3L527.9 306.2L525.1 306.7L519.3 307.6L514.9 308.3L510.7 309L505 309.8L502.1 310.3L496.4 311.1L490.7 311.9L487.8 312.3L482.1 313L476.4 313.6L471.7 314.1L467.8 314.5L462 315L456.3 315.4L450.6 315.7L444.8 315.9L439.1 316.1L436.2 316.1L433.4 316L427.6 315.9L421.9 315.6L416.2 315.1L410.4 314.5L407.6 314.1L401.8 313.2L396.9 312.2L393.2 311.4L389 310.3L384.6 309L381.8 308.1L377.1 306.4L373.2 304.8L370.3 303.6L367.5 302.3L364.1 300.6L360.6 298.6L357.3 296.7L354.2 294.8L351.4 292.8L348.7 290.9L346.2 289L343.9 287L341.7 285.1L338.8 282.4L335.9 279.5L334 277.4L332.3 275.4L330.2 272.9L327.8 269.6L326.4 267.7L324.5 264.7L322.8 261.9L321.6 259.7L319.8 256.1L318.7 253.7L317.4 250.3L316 246.4L315.5 244.5L314.5 240.6L313.8 236.7L313.3 232.9L313 229L313 225.1L313.2 221.3L313.7 217.4L314.3 213.5L315.2 209.7L315.9 207.4L317 203.9L318.5 200L319.3 198.1L321.1 194.2L322 192.3L324.1 188.4L325.3 186.4L327.3 183.1L328.9 180.6L330.2 178.7L332.9 174.8L334.3 172.9L335.9 170.7L338.7 167.1L340.2 165.2L341.8 163.2L344.5 159.9L346.6 157.4L348.3 155.5L350.3 153.2L353.1 149.9L355 147.8L356.7 145.8L358.9 143.4L361.7 140.2L363.6 138.1L365.3 136.2L367.5 133.8L370.3 130.6L372.3 128.4L374 126.5L376 124.2L378.9 121L380.9 118.7L382.6 116.8L384.6 114.4L387.5 111.2L389.3 109.1L391 107.1L393.2 104.5L395.9 101.3L397.5 99.4L399.2 97.5L401.8 94.2L403.9 91.7L405.5 89.7L407.6 87.2L410.2 83.9L411.7 82L413.3 79.9L416.2 76.3L416.2 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 284.8L567.3 285.1L562.3 285.5L556.6 286L550.9 286.5L545.1 287L542.3 287.2L536.5 287.6L530.8 288L525.1 288.4L519.3 288.7L513.9 289L510.7 289.1L505 289.3L499.3 289.5L493.6 289.6L487.8 289.6L482.1 289.5L476.4 289.4L470.6 289.1L467.8 289L462 288.5L456.3 288L450.6 287.3L447.7 286.9L442 285.9L438.1 285.1L433.4 284L430 283.2L424.8 281.6L421.9 280.7L418 279.3L413.3 277.4L410.4 276.1L407.6 274.7L404.7 273.1L401.8 271.5L399 269.6L396.1 267.6L393.2 265.4L390.4 263L387.5 260.3L385.4 258L383.7 256.1L381.8 253.7L379.3 250.3L378.1 248.4L376 244.6L375 242.5L373.4 238.7L372.7 236.7L371.6 232.9L370.7 229L370.3 226.6L369.9 223.2L369.7 219.3L369.7 215.5L369.9 211.6L370.3 207.7L370.6 205.8L371.3 201.9L372.1 198.1L373.2 194.2L373.8 192.3L375 188.4L376 185.6L377.2 182.6L378.8 178.7L379.6 176.8L381.4 172.9L382.3 171L384.2 167.1L385.2 165.2L387.2 161.3L388.2 159.4L390.4 155.5L391.4 153.6L393.2 150.4L394.8 147.8L396.1 145.5L398.2 142L399.4 140L401.7 136.2L402.9 134.2L404.7 131.2L406.4 128.4L407.6 126.5L410 122.6L411.3 120.7L413.3 117.4L414.9 114.9L416.2 112.8L418.5 109.1L419.7 107.1L421.9 103.6L423.3 101.3L424.8 99L426.9 95.5L428.1 93.6L430.5 89.7L431.7 87.8L433.4 85L435.2 82L436.4 80.1L438.7 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 269.6L568.1 269.6L562.3 269.6L556.6 269.5L550.9 269.4L545.1 269.2L539.4 269L533.7 268.7L527.9 268.3L522.2 267.9L519.3 267.6L513.6 267L507.9 266.4L503.6 265.8L499.3 265.1L493.6 264.1L490.7 263.5L485 262.3L482.1 261.5L476.4 260L473.5 259.1L470.3 258L465.1 256.1L462 254.8L459.2 253.5L456.3 252.1L452.8 250.3L449.5 248.4L446.6 246.4L443.9 244.5L441.4 242.5L439.1 240.5L436.2 237.8L433.5 234.8L431.9 232.9L430.5 230.9L427.9 227.1L426.8 225.1L424.8 221.3L424 219.3L422.6 215.5L421.9 213.4L420.9 209.7L420.2 205.8L419.7 201.9L419.4 198.1L419.3 194.2L419.3 190.3L419.6 186.4L420 182.6L420.5 178.7L421.1 174.8L421.9 171L422.3 169L423.2 165.2L424.3 161.3L424.8 159.4L425.9 155.5L427.2 151.6L427.8 149.7L429.1 145.8L430.5 142L431.2 140L432.7 136.2L433.4 134.2L434.9 130.3L436.2 127.2L437.3 124.5L438.9 120.7L439.7 118.7L441.4 114.9L442.2 112.9L443.9 109.1L444.8 107L446.5 103.3L447.7 100.6L449.1 97.5L450.6 94.3L451.7 91.7L453.4 88L454.4 85.9L456.2 82L457.1 80.1L458.8 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/><path d=\"M570.9 253.4L565.2 252.8L560.9 252.2L556.6 251.6L550.9 250.7L548 250.2L542.3 249.2L538.3 248.4L533.7 247.3L530 246.4L525.1 245.1L522.2 244.3L516.7 242.5L513.6 241.5L510.7 240.4L506.4 238.7L502.1 236.8L499.3 235.4L496.4 233.9L493.6 232.3L490.7 230.6L487.8 228.7L485 226.6L482.1 224.4L479.2 221.9L476.6 219.3L474.7 217.4L473 215.5L470.6 212.5L468.6 209.7L467.4 207.7L465.2 203.9L464.2 201.9L462.5 198.1L461.7 196.1L460.4 192.3L459.4 188.4L458.9 186.4L458.1 182.6L457.6 178.7L457.2 174.8L457 171L456.9 167.1L456.9 163.2L457.1 159.4L457.3 155.5L457.7 151.6L458.2 147.8L458.8 143.9L459.2 141.5L459.8 138.1L460.5 134.2L461.3 130.3L462 127.2L462.7 124.5L463.6 120.7L464.6 116.8L465.1 114.9L466.2 111L467.3 107.1L467.9 105.2L469.1 101.3L470.3 97.5L470.9 95.5L472.1 91.7L473.4 87.8L474 85.9L475.3 82L476.4 79L477.3 76.2\" stroke=\"var(--blue)\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-opacity=\"0.5\"/></g><line x1=\"85.5\" y1=\"226.6\" x2=\"548.5\" y2=\"226.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2pfField)\"/><line x1=\"313\" y1=\"394\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b2pfField)\"/><text x=\"546.5\" y=\"217.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"123.9\" y1=\"355.6\" x2=\"144.4\" y2=\"332.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"123.9\" y1=\"304\" x2=\"143.5\" y2=\"280.1\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"123.9\" y1=\"252.4\" x2=\"141.9\" y2=\"227.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"123.9\" y1=\"200.9\" x2=\"136.8\" y2=\"172.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"123.9\" y1=\"149.3\" x2=\"104.9\" y2=\"124.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"123.9\" y1=\"97.7\" x2=\"94.4\" y2=\"107.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"355.6\" x2=\"192\" y2=\"332.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"304\" x2=\"192.4\" y2=\"281.5\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"252.4\" x2=\"193.2\" y2=\"230.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"200.9\" x2=\"195.8\" y2=\"182.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"149.3\" x2=\"172.2\" y2=\"180.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"171.1\" y1=\"97.7\" x2=\"155.3\" y2=\"124.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"355.6\" x2=\"238.8\" y2=\"332.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"304\" x2=\"240.7\" y2=\"282.5\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"252.4\" x2=\"244.3\" y2=\"235.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"200.9\" x2=\"249.4\" y2=\"200.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"149.3\" x2=\"230.6\" y2=\"177.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"218.4\" y1=\"97.7\" x2=\"216.5\" y2=\"128.6\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"355.6\" x2=\"284.1\" y2=\"330.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"304\" x2=\"287.8\" y2=\"282.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"252.4\" x2=\"293.9\" y2=\"239.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"200.9\" x2=\"295.1\" y2=\"210.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"149.3\" x2=\"281.8\" y2=\"175.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"265.7\" y1=\"97.7\" x2=\"272.8\" y2=\"127.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"355.6\" x2=\"326.8\" y2=\"327.9\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"304\" x2=\"332.8\" y2=\"280.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"252.4\" x2=\"341.7\" y2=\"240.9\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"200.9\" x2=\"341.7\" y2=\"212.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"149.3\" x2=\"332.8\" y2=\"173\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"313\" y1=\"97.7\" x2=\"326.8\" y2=\"125.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"355.6\" x2=\"366.8\" y2=\"325.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"304\" x2=\"374.5\" y2=\"276.5\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"252.4\" x2=\"387.3\" y2=\"237.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"200.9\" x2=\"390.2\" y2=\"208.9\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"149.3\" x2=\"384.1\" y2=\"169\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"360.3\" y1=\"97.7\" x2=\"379.9\" y2=\"121.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"355.6\" x2=\"406.3\" y2=\"324.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"304\" x2=\"414\" y2=\"273.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"252.4\" x2=\"429.1\" y2=\"230.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"200.9\" x2=\"438.5\" y2=\"200.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"149.3\" x2=\"435.5\" y2=\"162.7\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"407.6\" y1=\"97.7\" x2=\"432.2\" y2=\"116.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"355.6\" x2=\"448.1\" y2=\"325.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"304\" x2=\"455\" y2=\"273.1\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"252.4\" x2=\"469\" y2=\"224.9\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"200.9\" x2=\"483.8\" y2=\"189.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"149.3\" x2=\"485.5\" y2=\"153.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"454.9\" y1=\"97.7\" x2=\"483.5\" y2=\"109.5\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"355.6\" x2=\"492.4\" y2=\"326.2\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"304\" x2=\"498.7\" y2=\"273.3\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"252.4\" x2=\"510.4\" y2=\"222.6\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"200.9\" x2=\"525.8\" y2=\"180.9\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"149.3\" x2=\"532.6\" y2=\"143.8\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><line x1=\"502.1\" y1=\"97.7\" x2=\"532.9\" y2=\"101.4\" stroke=\"var(--red)\" stroke-width=\"2\" stroke-linecap=\"round\" marker-end=\"url(#ah9b2pfFieldred)\"/><text x=\"18\" y=\"32\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">藍：f 的等高線</text><text x=\"18\" y=\"60\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">紅：F = ∇f，垂直等高線、指向上坡</text></svg>"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "常數其實是函數",
+      "title": "積分「常數」其實是函數",
       "beats": [
-        { "show": ["從 $f_x=P$ 出發，對 $x$ 積分"],
-          "say": "從第一個條件開始，對 x 積分。",
+        {
+          "show": [
+            "$\\dfrac{\\partial}{\\partial x}$ 把 $y$ 當常數：所以只含 $y$ 的東西，對 $x$ 微分都是 $0$",
+            "$\\frac{\\partial}{\\partial x}\\big(x^2y+\\sin y\\big)=2xy$"
+          ],
+          "say": "關鍵觀念：對 x 偏微分時，y 被當成常數，只含 y 的東西微分都是 0。例如這裡的正弦 y，微分完就不見了。",
           "board": [
-            {"do":"write","line":"$f_x=P$"}
-          ] },
-        { "show": ["只含 $y$ 的東西，對 $x$ 微分都是 $0$"],
-          "say": "關鍵在這裡：任何只含 y 的東西，對 x 偏微分都會消失。",
+            {
+              "do": "write",
+              "line": "$\\dfrac{\\partial}{\\partial x}$ 把 $y$ 當常數：所以只含 $y$ 的東西，對 $x$ 微分都是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\partial}{\\partial x}\\big(x^2y+\\sin y\\big)=2xy$",
+              "on": "的東"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來，$\\displaystyle\\int 2xy\\,dx=x^2y+g(y)$"
+          ],
+          "say": "反過來，2xy 對 x 積分，後面要加的不是常數 C，而是一個任意的 y 的函數，我們叫它 g of y。",
           "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial x}{{g:g(y)}}=0$","tint":{"g":"blue"}},
-            {"do":"underline","term":"g","color":"blue","label":"只含 y","on":"只含 y"}
-          ] },
-        { "show": ["$f=\\int P\\,dx+g(y)$"],
-          "note": "$g(y)$ 要靠 $f_y=Q$ 決定。",
-          "say": "所以積分常數其實可以是任何一個 y 的函數，叫它 g y。它是誰，要靠第二個條件決定。",
-          "board": [
-            {"do":"write","line":"$f=\\int P\\,dx+{{g:g(y)}}$","tint":{"g":"blue"}},
-            {"do":"focus","term":"g","color":"blue","label":"y 的函數","on":"叫它"},
-            {"do":"write","line":"$g$ 靠 $f_y=Q$ 決定","on":"第二個條件"}
-          ] },
-        { "show": ["$\\int y\\,e^{xy}\\,dx$：把 $y$ 當常數"],
-          "note": "不是多項式也一樣：猜，再微分檢查。",
-          "say": "不是多項式也一樣。對 x 積分時，把 y 當成常數，猜一個對 x 微分會變成它的函數。",
-          "board": [
-            {"do":"write","line":"$\\int {{n1:y}}\\,e^{xy}\\,dx$"},
-            {"do":"focus","term":"n1","label":"當常數","on":"常數"}
-          ] },
-        { "show": ["$\\frac{\\partial}{\\partial x}e^{xy}=y\\,e^{xy}$"],
-          "note": "猜得對不對，微分一次就知道。",
-          "say": "猜 e 的 x y 次方。對 x 微分，y 是常數，連鎖律多乘一個 y，剛好對。所以積分是 e 的 x y 次方，再加 g y。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\partial}{\\partial x}e^{xy}={{n2:y}}\\,e^{xy}$"},
-            {"do":"write","line":"$\\int y\\,e^{xy}\\,dx=e^{xy}+g(y)$","on":"所以積分"}
-          ] }
+            {
+              "do": "write",
+              "line": "反過來，$\\displaystyle\\int 2xy\\,dx=x^2y+g(y)$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$g(y)$ 對 $x$ 來說就是「常數」",
+              "color": "violet",
+              "on": "而是"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "二維做一次",
-      "beats": [
-        { "show": ["$\\mathbf F=\\langle 2xy+3,\\ x^2-4y\\rangle$"],
-          "note": "先檢驗：$P_y=2x=Q_x$。",
-          "say": "先檢驗交叉偏導相等，確定找得到。",
-          "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle {{p:2xy+3}},\\ {{q:x^2-4y}}\\rangle$","tint":{"p":"blue","q":"violet"}},
-            {"do":"write","line":"$P_y=2x=Q_x$","on":"交叉偏導"}
-          ] },
-        { "show": ["積分時 $y$ 當常數"],
-          "note": "$\\int 2xy\\,dx=x^2y$，$\\int 3\\,dx=3x$。",
-          "say": "對 x 積分時，y 當成常數：二 x 乘 y 積成 x 平方乘 y，常數三積成三 x。",
-          "board": [
-            {"do":"write","line":"$\\int {{a1:2xy}}\\,dx={{a2:x^2y}}$"},
-            {"do":"write","line":"$\\int 3\\,dx={{a3:3x}}$","on":"常數三"}
-          ] },
-        { "show": ["$f=x^2y+3x+g(y)$"],
-          "say": "對 x 積分：二 x y 變 x 平方 y，三變三 x，再加上 g y。",
-          "board": [
-            {"do":"write","line":"$f=x^2y+3x+{{g:g(y)}}$","on":"對 x 積分"},
-            {"do":"focus","term":"g","label":"常數換成函數","on":"再加上"}
-          ] },
-        { "show": ["$f_y=x^2+g'(y)=x^2-4y$"],
-          "note": "$g'(y)=-4y$：只含 $y$，沒問題。",
-          "say": "對 y 微分，令它等於 Q。x 平方兩邊消掉，g prime 等於負四 y，只含 y，沒問題。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$f_y={{x2:x^2}}+g'(y)={{q:x^2-4y}}$","on":"對 y 微分"},
-            {"do":"focus","term":"x2","label":"兩邊消掉","on":"x 平方兩邊"},
-            {"do":"write","line":"${{gp:g'(y)=-4y}}$","on":"g prime"},
-            {"do":"underline","term":"gp","label":"只含 y","on":"只含 y"}
-          ] }
-      ],
-      "key": "對 $y$ 微分再比對 $Q$，解出 $g'(y)$",
       "predict": {
-        "ask": "位勢函數 $f$ 是？",
+        "ask": "下面哪一個==不是== $\\displaystyle\\int 2xy\\,dx$ 的可能答案？",
         "options": [
           {
-            "label": "$x^2y+3x-2y^2$",
+            "label": "$x^2y+x$",
             "correct": true
           },
           {
-            "label": "$x^2y+3x+x^2y-2y^2$",
-            "why": "把 $\\int P\\,dx$ 與 $\\int Q\\,dy$ 直接相加，$x^2y$ 被算了兩次。"
+            "label": "$x^2y+y^3$",
+            "why": "這個可以：$y^3$ 只含 $y$，對 $x$ 微分是 $0$"
           },
           {
-            "label": "$x^2y+3x$",
-            "why": "漏了 $g(y)=-2y^2$：只加常數 $C$ 不夠，$f_y$ 會少 $-4y$。"
+            "label": "$x^2y+e^y$",
+            "why": "這個可以：$e^y$ 對 $x$ 來說是常數"
           }
         ]
       }
     },
     {
-      "title": "找不到的時候",
+      "title": "積分「常數」其實是函數",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle y,2x\\rangle$：$f=xy+g(y)$"],
-          "say": "硬做一個不保守的場會怎樣？先對 x 積分，得 x y 加 g y。",
+        {
+          "show": [
+            "接下來就是把 $g(y)$ 找出來"
+          ],
+          "say": "所以位勢函數的方法，就是先積出主要的部分，再想辦法把這個 g of y 找出來。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle y,\\ 2x\\rangle$"},
-            {"do":"write","line":"$f=xy+g(y)$","on":"先對 x 積分"}
-          ] },
-        { "show": ["$x+g'(y)=2x$ ⟹ $g'(y)=x$"],
-          "note": "$g'(y)$ 卻出現 $x$：矛盾。",
-          "say": "對 y 微分比對 Q，g prime 竟然等於 x。它應該只含 y，矛盾，所以不存在。",
+            {
+              "do": "write",
+              "line": "接下來就是把 $g(y)$ 找出來",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "四個步驟（二維）",
+      "beats": [
+        {
+          "show": [
+            "例：$\\mathbf F=\\langle 2xy+3,\\ x^2-4y\\rangle$"
+          ],
+          "say": "用上一課的例子：2xy 加 3，逗號 x 平方減 4y。",
           "board": [
-            {"do":"write","line":"$x+g'(y)=2x$","on":"對 y 微分"},
-            {"do":"transform","line":"$g'(y)={{bad:x}}$","on":"g prime 竟然"},
-            {"do":"circle","term":"bad","color":"red","label":"應該只含 y","on":"它應該"},
-            {"do":"write","line":"矛盾 ⇒ 不存在","on":"矛盾"}
-          ] },
-        { "show": ["$P_y=1\\ne Q_x=2$"],
-          "note": "先檢驗，可以省掉這一趟。",
-          "say": "跟交叉偏導的檢驗一致：一個是一、一個是二。先檢驗，就不用白做。",
+            {
+              "do": "write",
+              "line": "例：$\\mathbf F=\\langle 2xy+3,\\ x^2-4y\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1. 檢查：$P_y=2x=Q_x$，$\\mathbb R^2$ 沒有洞，保守"
+          ],
+          "say": "第一步，檢查。P y 和 Q x 都是 2x，整個平面沒有洞，所以位勢函數存在。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$P_y={{a:1}}\\ne Q_x={{b:2}}$","on":"交叉偏導"},
-            {"do":"write","line":"先檢驗，就不用白做","on":"先檢驗"}
-          ] }
+            {
+              "do": "write",
+              "line": "1. 檢查：$P_y=2x=Q_x$，$\\mathbb R^2$ 沒有洞，保守"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. 對 $x$ 積分 $P$：",
+            "$f=\\int(2xy+3)\\,dx=x^2y+3x+g(y)$"
+          ],
+          "say": "第二步，因為 f x 等於 P，把 P 對 x 積分，得到 x 平方 y 加 3x，再加 g of y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "2. 對 $x$ 積分 $P$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f=\\int(2xy+3)\\,dx=x^2y+3x+g(y)$",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. 對 $y$ 微分，跟 $Q$ 比對：",
+            "$f_y=x^2+g'(y)\\overset{!}{=}x^2-4y$"
+          ],
+          "say": "第三步，把這個 f 對 y 微分，得到 x 平方加 g prime y。它必須等於 Q，也就是 x 平方減 4y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "3. 對 $y$ 微分，跟 $Q$ 比對："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_y=x^2+g'(y)\\overset{!}{=}x^2-4y$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^2$ 對消：$g'(y)=-4y$（只剩 $y$，很好）"
+          ],
+          "say": "x 平方兩邊消掉，g prime y 等於負 4y。注意：剩下的只有 y，這是保守場一定會發生的事。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x^2$ 對消：$g'(y)=-4y$（只剩 $y$，很好）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "4. 積出 $g$：$g(y)=-2y^2+K$",
+            "$f(x,y)=x^2y+3x-2y^2+K$"
+          ],
+          "say": "第四步，積出 g 是負 2 y 平方加常數 K。所以位勢函數是 x 平方 y 加 3x 減 2 y 平方，加 K。",
+          "board": [
+            {
+              "do": "write",
+              "line": "4. 積出 $g$：$g(y)=-2y^2+K$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f(x,y)=x^2y+3x-2y^2+K}}$",
+              "color": "red",
+              "on": "常數"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "3x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：$f_x=2xy+3$，$f_y=x^2-4y$"
+          ],
+          "say": "驗算一下：對 x 微分是 2xy 加 3，對 y 微分是 x 平方減 4y，都對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：$f_x=2xy+3$，$f_y=x^2-4y$"
+            },
+            {
+              "do": "write",
+              "line": "　也可以先對 $y$ 積分 $Q$、留一個 $h(x)$，結果一樣",
+              "color": "violet",
+              "on": "微分#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "常犯的錯",
+      "beats": [
+        {
+          "show": [
+            "把兩個積分直接加起來：",
+            "$\\int P\\,dx+\\int Q\\,dy=(x^2y+3x)+(x^2y-2y^2)$"
+          ],
+          "say": "一個常見的錯：把 P 對 x 積分、Q 對 y 積分，直接加起來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把兩個積分直接加起來："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int P\\,dx+\\int Q\\,dy=(x^2y+3x)+(x^2y-2y^2)$",
+              "on": "積分#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^2y$ 被算了兩次：$f_x=4xy+3\\ne P$"
+          ],
+          "say": "結果 x 平方 y 被算了兩次，對 x 微分變成 4xy 加 3，根本不對。兩個積分有重疊的部分，所以要用比對的方法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x^2y$ 被算了兩次：$f_x=4xy+3\\ne P$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比對法保證重疊的項只算一次"
+          ],
+          "say": "用比對的方法，重疊的項只會算一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "比對法保證重疊的項只算一次",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 0
     },
     {
       "title": "三維：多一輪",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle y^2,\\ 2xy+e^{3z},\\ 3y\\,e^{3z}\\rangle$"],
-          "note": "$f=xy^2+g(y,z)$。",
-          "say": "三維多一輪。對 x 積分之後，常數變成 y 和 z 的函數。",
+        {
+          "show": [
+            "例：$\\mathbf F=\\langle y^2,\\ 2xy+e^{3z},\\ 3y\\,e^{3z}\\rangle$"
+          ],
+          "say": "三維的例子：y 平方，2xy 加 e 的 3z 次方，3y 乘 e 的 3z 次方。上一課檢查過，它是保守場。",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle y^2,\\ 2xy+e^{3z},\\ 3y\\,e^{3z}\\rangle$"},
-            {"do":"write","line":"$f=xy^2+{{g:g(y,z)}}$","tint":{"g":"blue"},"on":"對 x 積分"},
-            {"do":"focus","term":"g","color":"blue","label":"y、z 的函數","on":"常數變成"}
-          ] },
-        { "show": ["$\\int y^2\\,dx=xy^2$"],
-          "note": "$y$ 當常數，只積 $x$。",
-          "say": "對 x 積分 y 平方，y 當成常數，所以積出來是 x 乘 y 平方。",
+            {
+              "do": "write",
+              "line": "例：$\\mathbf F=\\langle y^2,\\ 2xy+e^{3z},\\ 3y\\,e^{3z}\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $x$ 積分：留下的「常數」是 $y,z$ 的函數",
+            "$f=\\int y^2\\,dx=xy^2+g(y,z)$"
+          ],
+          "say": "先對 x 積分 y 平方，得到 x y 平方。這次留下的「常數」，是 y 和 z 的函數 g。",
           "board": [
-            {"do":"write","line":"$\\int {{b1:y^2}}\\,dx=x\\,{{b2:y^2}}$"},
-            {"do":"focus","term":"b1","label":"當常數","on":"當成常數"}
-          ] },
-        { "show": ["比對 $Q$：$g_y=e^{3z}$，$g=y\\,e^{3z}+h(z)$"],
-          "say": "對 y 微分比對 Q，決定出 y 的部分，剩下一個只含 z 的 h。",
+            {
+              "do": "write",
+              "line": "對 $x$ 積分：留下的「常數」是 $y,z$ 的函數"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f=\\int y^2\\,dx=xy^2+g(y,z)$",
+              "on": "這次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $y$ 比對：$2xy+g_y\\overset{!}{=}2xy+e^{3z}$",
+            "$g_y=e^{3z}\\ \\Rightarrow\\ g=y\\,e^{3z}+h(z)$"
+          ],
+          "say": "對 y 微分，跟第二個分量比對，得到 g y 等於 e 的 3z 次方。對 y 積分，再留一個只含 z 的 h of z。",
           "board": [
-            {"do":"write","line":"比對 $Q$：$g_y=e^{3z}$"},
-            {"do":"write","line":"$g=y\\,e^{3z}+{{h:h(z)}}$","tint":{"h":"violet"},"on":"決定出"},
-            {"do":"focus","term":"h","color":"violet","label":"只含 z","on":"剩下一個"}
-          ] },
-        { "show": ["$\\int e^{3z}\\,dy=y\\,e^{3z}$"],
-          "note": "這次 $z$ 當常數，只積 $y$。",
-          "say": "g y 是對 y 積分 e 的三 z 次方。這次 z 當成常數，所以積出來是 y 乘 e 的三 z 次方。",
+            {
+              "do": "write",
+              "line": "對 $y$ 比對：$2xy+g_y\\overset{!}{=}2xy+e^{3z}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle g_y=e^{3z}\\ \\Rightarrow\\ g=y\\,e^{3z}+h(z)$",
+              "on": "3z"
+            }
+          ]
+        },
+        {
+          "show": [
+            "現在 $f=xy^2+y\\,e^{3z}+h(z)$",
+            "對 $z$ 比對：$3y\\,e^{3z}+h'(z)\\overset{!}{=}3y\\,e^{3z}$"
+          ],
+          "say": "現在 f 是 x y 平方，加 y e 的 3z，加 h of z。再對 z 微分，跟第三個分量比對。",
           "board": [
-            {"do":"write","line":"$\\int {{c1:e^{3z}}}\\,dy=y\\,{{c2:e^{3z}}}$"},
-            {"do":"focus","term":"c1","label":"z 是常數","on":"z 當成常數"}
-          ] },
-        { "show": ["比對 $R$：$h'=0$；$f=xy^2+y\\,e^{3z}$"],
-          "note": "每一輪把未知的部分縮小一個變數。",
-          "say": "再對 z 微分比對 R，h prime 是零。每一輪都把還不知道的部分少一個變數。",
+            {
+              "do": "write",
+              "line": "現在 $f=xy^2+y\\,e^{3z}+h(z)$"
+            },
+            {
+              "do": "write",
+              "line": "對 $z$ 比對：$3y\\,e^{3z}+h'(z)\\overset{!}{=}3y\\,e^{3z}$",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h'(z)=0\\ \\Rightarrow\\ h=K$",
+            "$f=xy^2+y\\,e^{3z}+K$"
+          ],
+          "say": "h prime 是 0，所以 h 是常數。位勢函數是 x y 平方加 y 乘 e 的 3z 次方，加 K。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"比對 $R$：${{h2:h'}}=0$","tint":{"h2":"violet"},"on":"比對 R"},
-            {"do":"write","line":"$f=xy^2+y\\,e^{3z}$","color":"green","on":"h prime 是零"},
-            {"do":"write","line":"每一輪少一個變數","on":"每一輪"}
-          ] }
+            {
+              "do": "write",
+              "line": "$h'(z)=0\\ \\Rightarrow\\ h=K$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle f=xy^2+y\\,e^{3z}+K}}$",
+              "color": "red",
+              "on": "是常"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "3z"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則：每一輪，留下的函數少一個變數"
+          ],
+          "say": "規則很簡單：每多比對一輪，留下來的未知函數就少一個變數，最後只剩常數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則：每一輪，留下的函數少一個變數"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "找不到的時候",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbf F=\\langle y,\\ 2x\\rangle$，硬做：",
+            "$f=\\int y\\,dx=xy+g(y)$"
+          ],
+          "say": "如果場不是保守的，硬做會怎樣？看 y 逗號 2x。對 x 積分，得到 xy 加 g of y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle y,\\ 2x\\rangle$，硬做："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f=\\int y\\,dx=xy+g(y)$",
+              "on": "積分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_y=x+g'(y)\\overset{!}{=}2x\\ \\Rightarrow\\ g'(y)=x$"
+          ],
+          "say": "對 y 微分，x 加 g prime y 要等於 2x，所以 g prime y 等於 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_y=x+g'(y)\\overset{!}{=}2x\\ \\Rightarrow\\ g'(y)=x$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g$ 只能含 $y$，$g'$ 卻等於 $x$：矛盾"
+          ],
+          "say": "矛盾了！g 只能含 y，它的導數怎麼可能是 x？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g$ 只能含 $y$，$g'$ 卻等於 $x$：矛盾",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g'$ 出現 $x$ ⇒ 沒有位勢函數，$\\mathbf F$ 不保守"
+          ],
+          "say": "比對時只要 g prime 出現 x，就代表位勢函數不存在，F 不是保守場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$g'$ 出現 $x$ ⇒ 沒有位勢函數，$\\mathbf F$ 不保守",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對照檢驗：$P_y=1$，$Q_x=2$，本來就不相等"
+          ],
+          "say": "用交叉偏導檢查也一樣：P y 是 1，Q x 是 2，不相等。所以最好第一步就先檢查，省得白做。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對照檢驗：$P_y=1$，$Q_x=2$，本來就不相等"
+            }
+          ]
+        }
       ],
-      "key": "每輪比對一個分量，剩的交給下一輪",
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "找二維保守場 $\\langle P,Q\\rangle$ 的位勢函數",
+        "steps": [
+          {
+            "label": "檢查 $P_y=Q_x$"
+          },
+          {
+            "label": "$f=\\int P\\,dx+g(y)$",
+            "why": "先要有上一步：檢查 $P_y=Q_x$"
+          },
+          {
+            "label": "對 $y$ 微分，令 $f_y=Q$，解出 $g'(y)$",
+            "why": "先要有上一步：$f=\\int P\\,dx+g(y)$"
+          },
+          {
+            "label": "積出 $g(y)$，寫出 $f$，再驗算",
+            "why": "先要有上一步：對 $y$ 微分，令 $f_y=Q$，解出 $g'(y)$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "跟其他課的關係",
+      "beats": [
+        {
+          "show": [
+            "• 9.16 保守場：判斷 $f$ 存不存在（$P_y=Q_x$、沒有洞）",
+            "• 9.17 位勢函數：把 $f$ 找出來（這一課）"
+          ],
+          "say": "這三課連成一條線：上一課判斷位勢函數存不存在；這一課把它找出來；下一課用它算功。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 9.16 保守場：判斷 $f$ 存不存在（$P_y=Q_x$、沒有洞）"
+            },
+            {
+              "do": "write",
+              "line": "• 9.17 位勢函數：把 $f$ 找出來（這一課）",
+              "on": "斷位"
+            },
+            {
+              "do": "write",
+              "line": "• 9.18 路徑無關：用 $f$ 算功",
+              "on": "把它"
+            }
+          ]
+        },
+        {
+          "show": [
+            "預告：$\\mathbf F=\\langle 2xy+3,x^2-4y\\rangle$，從 $(0,0)$ 到 $(1,2)$",
+            "$\\int_C\\mathbf F\\cdot d\\mathbf r=f(1,2)-f(0,0)=(2+3-8)-0=-3$"
+          ],
+          "say": "預告一下：用剛剛找到的 f，從原點走到 1 逗號 2，不管走哪一條路，功都是 f of 1 2 減 f of 0 0，等於負 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "預告：$\\mathbf F=\\langle 2xy+3,x^2-4y\\rangle$，從 $(0,0)$ 到 $(1,2)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_C\\mathbf F\\cdot d\\mathbf r=f(1,2)-f(0,0)=(2+3-8)-0=-3}}$",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "of#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常數 $K$ 相減就消掉了，所以通常取 $K=0$"
+          ],
+          "say": "相減的時候，常數 K 會消掉，所以通常直接取 K 等於 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "常數 $K$ 相減就消掉了，所以通常取 $K=0$"
+            },
+            {
+              "do": "write",
+              "line": "　一變數的定積分也是這樣：$F(b)-F(a)$ 裡的 $C$ 會消掉",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "物理：位能 $U=-f$，保守力做的功 $=$ 位能減少的量"
+          ],
+          "say": "物理上，位能就是負的 f。保守力做的功，等於位能減少的量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "物理：位能 $U=-f$，保守力做的功 $=$ 位能減少的量"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 目標：$f_x=P$、$f_y=Q$（三維再加 $f_z=R$）",
+            "• 對 $x$ 積分時，「常數」是 $g(y)$（三維是 $g(y,z)$）"
+          ],
+          "say": "整理一下：目標是找 f，偏導數剛好是 F 的分量。對 x 積分時，積分常數其實是其他變數的函數。步驟是檢查、積分、比對、積出 g、驗算。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 目標：$f_x=P$、$f_y=Q$（三維再加 $f_z=R$）"
+            },
+            {
+              "do": "write",
+              "line": "• 對 $x$ 積分時，「常數」是 $g(y)$（三維是 $g(y,z)$）",
+              "on": "分量"
+            },
+            {
+              "do": "write",
+              "line": "• 步驟：檢查 → 積 $P$ → 對 $y$ 比對 → 積出 $g$ → 驗算",
+              "on": "函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 三維：多比對一輪；不要把兩個積分直接相加",
+            "• $g'$ 出現 $x$ ⇒ 不保守"
+          ],
+          "say": "三維就多比對一輪。比對時如果 g prime 出現了 x，代表不是保守場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 三維：多比對一輪；不要把兩個積分直接相加"
+            },
+            {
+              "do": "write",
+              "line": "• $g'$ 出現 $x$ ⇒ 不保守",
+              "on": "ri"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：路徑無關：功 $=f(\\text{終點})-f(\\text{起點})$"
+          ],
+          "say": "下一課，我們證明功等於 f 在終點減起點，並且用它算各種功。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：路徑無關：功 $=f(\\text{終點})-f(\\text{起點})$"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
@@ -425,5 +909,6 @@
       "id": "cg-9b2-014",
       "trains": "potential-3d"
     }
-  ]
+  ],
+  "gaps": []
 }

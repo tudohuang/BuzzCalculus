@@ -1,0 +1,402 @@
+{
+  "id": "complex-taylor",
+  "title": "複數上的 Taylor 級數",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "cauchy-integral-formula",
+    "taylor-series",
+    "radius-of-convergence",
+    "geometric-series"
+  ],
+  "next": [
+    "laurent-series"
+  ],
+  "related": [
+    "holomorphic",
+    "taylor-limits-higher"
+  ],
+  "objectives": [
+    "說得出定理：$f$ 在圓盤 $|z-z_0|<R$ 上全純，則它在整個圓盤上等於自己的 Taylor 級數，係數 $a_n=\\frac{f^{(n)}(z_0)}{n!}$。",
+    "用「收斂半徑 = 到最近奇異點的距離」直接讀出收斂半徑，包括實數函數的 Maclaurin 級數。",
+    "解釋 $\\frac{1}{1+x^2}$ 在實數線上處處光滑、Maclaurin 級數卻只在 $|x|<1$ 收斂的原因。"
+  ],
+  "visual": "複平面上標出 f 的奇異點（例如 1/(1 + z²) 的 ±i）。以展開中心 z₀ 為圓心畫圓，半徑自動停在碰到最近奇異點的地方；拖動 z₀，圓跟著變大變小。下方同步畫實數線上的部分和，圓的範圍以外部分和明顯發散。",
+  "concept": [
+    {
+      "heading": "① 全純就能展開，而且展開到碰到奇異點為止",
+      "body": [
+        "定理：$f$ 在 $|z-z_0|<R$ 上全純，則 $f(z)=\\sum a_n(z-z_0)^n$ 對整個圓盤成立，$a_n=\\frac{f^{(n)}(z_0)}{n!}$。",
+        "所以收斂半徑至少是「$z_0$ 到最近奇異點的距離」；而級數在收斂圓盤裡定義一個全純函數，不可能跨過奇異點，所以收斂半徑正好就是這個距離（$f$ 在奇異點真的不能延伸時）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解開實數的謎",
+      "body": [
+        "$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$ 只在 $|x|<1$ 收斂。在實數線上看，$x=1$ 一點特別的事都沒有：函數光滑、有界。",
+        "答案在複平面：$\\frac{1}{1+z^2}$ 在 $z=\\pm i$ 有奇異點，到 $0$ 的距離是 $1$。收斂圓盤是圓，它在實數線上的部分就是 $(-1,1)$。實數上看不到的奇異點，控制了實數級數的收斂範圍。",
+        "同理，$\\tan x$ 的 Maclaurin 級數收斂半徑是 $\\frac{\\pi}{2}$（$\\cos z$ 在 $\\pm\\frac{\\pi}{2}$ 為 $0$），$e^x$、$\\sin x$ 的半徑是 $\\infty$（整函數）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際算係數：借用已知的級數",
+      "body": [
+        "係數公式 $\\frac{f^{(n)}(z_0)}{n!}$ 很少真的去微分。因為展開是唯一的（同一個圓盤上兩個冪級數相等，係數就逐項相等），任何方法得到的冪級數都是「那一個」Taylor 級數：代換（$e^{z^2}=\\sum\\frac{z^{2n}}{n!}$）、幾何級數（$\\frac{1}{1-z}$）、相乘相除、逐項微分或積分，全部合法，而且在圓盤裡處處成立，不只在實數線上。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼可以展開：幾何級數 + Cauchy 公式",
+      "body": [
+        "取 $|z-z_0|<r<R$，在圓 $|w-z_0|=r$ 上用 Cauchy 積分公式 $f(z)=\\frac{1}{2\\pi i}\\oint\\frac{f(w)}{w-z}\\,dw$。",
+        "把 $\\frac{1}{w-z}$ 寫成 $\\frac{1}{w-z_0}\\cdot\\frac{1}{1-(z-z_0)/(w-z_0)}$，而 $\\left|\\frac{z-z_0}{w-z_0}\\right|<1$，展成〈幾何級數〉。級數在圓上一致收斂，可以逐項積分，每一項正好是 $a_n(z-z_0)^n$，$a_n=\\frac{1}{2\\pi i}\\oint\\frac{f(w)}{(w-z_0)^{n+1}}\\,dw=\\frac{f^{(n)}(z_0)}{n!}$。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "全純就能展開",
+      "beats": [
+        { "show": ["$f$ 在 $|z-z_0|<R$ 全純"],
+          "say": "f 在以 z 零為圓心、半徑 R 的圓盤裡全純。",
+          "board": [
+            {"do":"write","line":"$f$ 在 $|z-z_0|<R$ 全純"}
+          ] },
+        { "show": ["全純：圓盤每一點都複可微"],
+          "note": "沒有奇異點，就是處處全純。",
+          "say": "全純的意思是，在圓盤的每一點都可以微分，微的是複數變數。沒有奇異點，就是處處全純。",
+          "board": [
+            {"do":"write","line":"全純 $=$ 每一點都複可微"}
+          ] },
+        { "show": ["$f(z)=\\sum a_n(z-z_0)^n$","$a_n=\\frac{f^{(n)}(z_0)}{n!}$"],
+          "note": "對整個圓盤成立。",
+          "say": "那它就等於自己的 Taylor 級數，而且是在整個圓盤裡都成立。證明在全文。",
+          "board": [
+            {"do":"write","line":"$f(z)=\\sum a_n(z-z_0)^n$","on":"Taylor 級數"}
+          ] },
+        { "show": ["收斂半徑 $=$ 到最近奇異點的距離"],
+          "say": "所以級數一路收斂，直到碰到最近的奇異點為止；收斂範圍是一個圓盤，不只一段實數線。",
+          "board": [
+            {"do":"write","line":"半徑 $=$ 到最近奇異點的距離","color":"green","on":"直到碰到"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "解開實數的謎",
+      "beats": [
+        { "show": ["$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$"],
+          "note": "只在 $|x|<1$ 收斂。",
+          "say": "這個級數只在 x 的絕對值小於一時收斂。可是在 x 等於一，函數光滑又有界，什麼事都沒有。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1+x^2}=1-x^2+x^4-\\cdots$"},
+            {"do":"write","line":"只在 $|x|<1$ 收斂","on":"只在 x"}
+          ] },
+        { "show": ["$\\frac{1}{1+z^2}$：奇異點 $z=\\pm i$"],
+          "note": "到 $0$ 的距離是 $1$。",
+          "say": "答案在複平面：正負 i 是奇異點，到原點距離一。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2.2,2.2,-1.5,1.5],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue","dashed":true},{"expr":"0","domain":[-1,1],"color":"gold","width":3.5}],"points":[{"x":0,"y":1,"open":true},{"x":0,"y":-1,"open":true}],"labels":[{"x":0.13,"y":1.18,"text":"i","anchor":"start"},{"x":0.13,"y":-1.25,"text":"−i","anchor":"start"},{"x":1.02,"y":-0.28,"text":"1","anchor":"start"},{"x":-1.02,"y":-0.28,"text":"−1","anchor":"end"}]},"on":"答案在複平面"}
+          ] },
+        { "show": ["收斂圓盤與實數線的交集 $=(-1,1)$"],
+          "say": "收斂範圍是半徑一的圓盤，切到實數線上就是負一到一。實數上看不到的奇異點，控制了級數。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"圓盤 $\\cap$ 實數線 $=(-1,1)$","color":"gold","on":"切到實數線上"}
+          ] }
+      ],
+      "key": "把 $x$ 換成 $z$，到複平面找奇異點",
+      "check": 0
+    },
+    {
+      "title": "常見函數的半徑",
+      "beats": [
+        { "show": ["$\\tan z$：$\\cos z$ 在 $\\pm\\frac{\\pi}{2}$ 為 $0$"],
+          "note": "收斂半徑 $\\frac{\\pi}{2}$。",
+          "say": "tangent 是 sine 除以 cosine，cosine 在正負二分之派是零，所以半徑二分之派。",
+          "board": [
+            {"do":"write","line":"$\\tan z=\\frac{\\sin z}{\\cos z}$"},
+            {"do":"write","line":"$\\cos z=0$：$z=\\pm\\frac{\\pi}{2}$","on":"cosine#2"},
+            {"do":"write","line":"半徑 $=\\frac{\\pi}{2}$","color":"green","on":"所以半徑"}
+          ] },
+        { "show": ["$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$","零點全在實數線上"],
+          "note": "複數的 $\\cos z$ 用 $e^z$ 來定義。",
+          "say": "複數的 cosine 定義成 e 的 i z 次方加 e 的負 i z 次方，再除以二。它的零點全在實數線上，就是二分之派的奇數倍。",
+          "board": [
+            {"do":"write","line":"$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$"},
+            {"do":"write","line":"零點：$\\pm\\frac{\\pi}{2},\\pm\\frac{3\\pi}{2},\\dots$","on":"零點"}
+          ] },
+        { "show": ["實數線上的 $\\tan x$"],
+          "note": "靠近 $\\pm\\frac{\\pi}{2}$ 就往上、往下衝。",
+          "say": "畫出實數線上的 tangent：愈靠近二分之派，圖形就愈往上衝，所以級數到這裡就停。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2.5,2.5,-4,4],"curves":[{"expr":"tan(x)","domain":[-1.45,1.45],"color":"blue"}],"dashed":[[[1.5708,-4],[1.5708,4]],[[-1.5708,-4],[-1.5708,4]]],"labels":[{"x":1.65,"y":-3,"text":"π/2","anchor":"start"},{"x":-1.65,"y":-3,"text":"−π/2","anchor":"end"}]}}
+          ] },
+        { "show": ["$e^z$、$\\sin z$：整函數"],
+          "note": "沒有奇異點，半徑沒有上限。",
+          "say": "e 的 z 次方、sine z 是整函數，沒有奇異點，所以半徑是無限大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$e^z$、$\\sin z$：整函數","on":"e 的 z 次方"},
+            {"do":"write","line":"沒有奇異點","on":"沒有奇異點"},
+            {"do":"write","line":"半徑 $=\\infty$","color":"green","on":"所以半徑"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "不在原點展開",
+      "beats": [
+        { "show": ["$\\frac{1}{z^2+4}$ 在 $z_0=1$"],
+          "note": "奇異點 $z=\\pm 2i$。",
+          "say": "z 平方加四分之一，在 z 零等於一展開。奇異點是正負二 i。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{z^2+4}$，$z_0=1$"},
+            {"do":"write","line":"$z^2+4=0$ ⇒ $z=\\pm 2i$","on":"奇異點是"}
+          ] },
+        { "show": ["$|1-2i|=\\sqrt{1+4}=\\sqrt{5}$"],
+          "note": "距離是 $|$奇異點 $-z_0|$。",
+          "say": "量的是奇異點到展開中心的距離，不是到原點：一減二 i 的長度是根號五。",
+          "board": [
+            {"do":"write","line":"距離 $=|$奇異點$-z_0|$"},
+            {"do":"write","line":"$|1-2i|=\\sqrt{1+4}={{r:\\sqrt{5}}}$","on":"一減二"},
+            {"do":"box","term":"r","color":"green","on":"長度是"}
+          ] },
+        { "show": ["收斂半徑 $\\sqrt{5}$"],
+          "say": "所以半徑根號五。只看實數線，這個函數沒有奇異點，完全猜不到這個數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"半徑 $=\\sqrt{5}$","color":"green","on":"所以半徑"},
+            {"do":"write","line":"實數線上：沒有奇異點","on":"只看實數線"}
+          ] }
+      ],
+      "key": "先解 $z^2+4=0$，再量到 $z_0$ 的距離",
+      "check": 1
+    },
+    {
+      "title": "借用已知的級數",
+      "beats": [
+        { "show": ["展開是唯一的"],
+          "note": "同一個圓盤上兩個冪級數相等，係數逐項相等。",
+          "say": "係數很少真的去微分。展開是唯一的，用任何方法湊出來的冪級數，就是那一個 Taylor 級數。",
+          "board": [
+            {"do":"write","line":"展開是唯一的"},
+            {"do":"write","line":"任何方法湊出的冪級數 $=$ Taylor 級數","on":"用任何方法"}
+          ] },
+        { "show": ["兩個級數相減，恆為 $0$","$a_n=b_n$"],
+          "note": "逐項微分再代入 $z_0$。",
+          "say": "為什麼唯一？兩個級數相等，相減得到一個恆為零的級數。代 z 等於 z 零，常數項是零；微分後再代，每個係數都是零。",
+          "board": [
+            {"do":"write","line":"$\\sum(a_n-b_n)(z-z_0)^n=0$"},
+            {"do":"write","line":"代 $z_0$、逐項微分：$a_n=b_n$","on":"代 z"}
+          ] },
+        { "show": ["代換、幾何級數、相乘相除、逐項微積分"],
+          "note": "在圓盤裡處處成立。",
+          "say": "代換、幾何級數、相乘相除、逐項微分積分都合法，而且在整個圓盤成立。",
+          "board": [
+            {"do":"write","line":"代換、幾何級數、相乘相除"},
+            {"do":"write","line":"逐項微分積分","on":"逐項微分積分"}
+          ] },
+        { "show": ["$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$"],
+          "note": "sine 除以 cosine 相除展開。",
+          "say": "例如 tangent：sine 的級數除以 cosine 的級數，前三項是 z、三分之 z 三次方、十五分之二 z 五次方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\tan z=\\frac{\\sin z}{\\cos z}$","on":"例如"},
+            {"do":"transform","line":"$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$","on":"前三項"}
+          ] },
+        { "show": ["$\\sin z=(z+cz^3)\\cos z$","$c-\\frac12=-\\frac{1}{3!}$"],
+          "note": "只比 $z^3$ 的係數。",
+          "say": "sine 等於 tangent 乘 cosine。比 z 三次方的係數：c 減二分之一等於負三階乘分之一，所以 c 是三分之一。",
+          "board": [
+            {"do":"write","line":"$\\sin z=z-\\frac{z^3}{3!}+\\cdots$"},
+            {"do":"write","line":"$\\cos z=1-\\frac{z^2}{2!}+\\cdots$","on":"tangent"},
+            {"do":"write","line":"$\\sin z=(z+cz^3)\\cos z$","on":"cosine"},
+            {"do":"write","line":"$c-\\frac12=-\\frac{1}{3!}$，$c=\\frac13$","on":"c 減"}
+          ] }
+      ],
+      "predict": {
+        "ask": "用代換，$e^{z^2}$ 在 $0$ 的級數是？",
+        "options": [
+          {
+            "label": "$\\sum\\frac{z^{2n}}{n!}$",
+            "correct": true
+          },
+          {
+            "label": "$\\sum\\frac{z^{2n}}{(2n)!}$",
+            "why": "把 $e^w=\\sum\\frac{w^n}{n!}$ 的 $w$ 換成 $z^2$：分母還是 $n!$。"
+          },
+          {
+            "label": "$\\sum\\frac{z^{n}}{n!}$",
+            "why": "那是 $e^z$；代換 $w=z^2$ 後每一項是 $(z^2)^n=z^{2n}$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "實數級數的收斂半徑",
+      "prompt": "$\\frac{1}{1+x^2}$ 的 Maclaurin 級數收斂半徑是多少？在 $x=0.5$、$0.9$ 檢查。",
+      "steps": [
+        "$\\frac{1}{1+z^2}$ 的奇異點在 $z=\\pm i$，到 $0$ 的距離 $1$，所以半徑 $1$。",
+        "也可以從幾何級數看：$\\frac{1}{1+x^2}=\\sum(-1)^n x^{2n}$，公比 $-x^2$，$|x|<1$ 才收斂。",
+        "$x=0.5$：$\\sum(-1)^n 0.25^n=\\frac{1}{1.25}=0.8$；$x=0.9$：和是 $\\frac{1}{1.81}$。都在半徑內，跟函數值一致。"
+      ],
+      "answer": "$1$",
+      "claim": "SUM((-1)^n*0.5^(2n), 0) == 1/1.25 ;; SUM((-1)^n*0.9^(2n), 0) == 1/(1+0.81)"
+    },
+    {
+      "title": "不在原點展開",
+      "prompt": "$\\frac{1}{z^2+4}$ 在 $z_0=1$ 的 Taylor 級數收斂半徑",
+      "steps": [
+        "奇異點 $z=\\pm 2i$。",
+        "距離 $|1-2i|=\\sqrt{1+4}=\\sqrt{5}$，$|1+2i|=\\sqrt{5}$。",
+        "收斂半徑 $\\sqrt{5}$。如果只看實數線（$\\frac{1}{x^2+4}$ 在實數上沒有奇異點），完全猜不到這個數。"
+      ],
+      "answer": "$\\sqrt{5}$",
+      "claim": "sqrt(1^2+2^2) == sqrt(5)"
+    },
+    {
+      "title": "$\\tan$ 的係數與半徑",
+      "prompt": "$\\tan z$ 在 $0$ 的 Taylor 級數：前三項與收斂半徑",
+      "steps": [
+        "$\\tan z=\\frac{\\sin z}{\\cos z}$，奇異點是 $\\cos z$ 的零點 $\\pm\\frac{\\pi}{2},\\pm\\frac{3\\pi}{2},\\dots$（$\\cos z$ 的零點全在實數線上）。最近的距離 $\\frac{\\pi}{2}$，所以半徑 $\\frac{\\pi}{2}$。",
+        "係數：用〈高階 Taylor 求極限〉的相除展開，$\\tan z=z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$。",
+        "檢查 $z^5$ 的係數：$\\lim\\frac{\\tan x-x-x^3/3}{x^5}=\\frac{2}{15}$。"
+      ],
+      "answer": "$z+\\frac{z^3}{3}+\\frac{2z^5}{15}+\\cdots$，半徑 $\\frac{\\pi}{2}$",
+      "claim": "LIM((tan(x)-x-x^3/3)/x^5, 0) == 2/15"
+    }
+  ],
+  "pitfalls": [
+    "只看實數線找奇異點，算錯收斂半徑。",
+    "不在原點展開時，距離算成 $|$奇異點$|$ 而不是 $|$奇異點 $-z_0|$。",
+    "以為「無限次可微」就能等於 Taylor 級數；那只對全純函數保證，實數的 $e^{-1/x^2}$ 是反例。",
+    "收斂半徑內的端點行為：圓盤邊界上可能收斂也可能發散，定理不管邊界。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{1}{1+x^2}$ 的 Maclaurin 級數只在 $|x|<1$ 收斂，原因是？",
+      "options": [
+        {
+          "label": "$\\frac{1}{1+z^2}$ 在 $\\pm i$ 有奇異點，距離原點 $1$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{1}{1+x^2}$ 在 $x=1$ 不可微",
+          "why": "它在實數線上處處無限次可微；限制來自複平面上的 $\\pm i$。"
+        },
+        {
+          "label": "因為 $x=1$ 時分母等於 $2$",
+          "why": "分母不為 $0$ 不構成任何限制；看的是複數的奇異點。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\frac{1}{z-3}$ 在 $z_0=i$ 的 Taylor 級數收斂半徑是？",
+      "options": [
+        {
+          "label": "$\\sqrt{10}$",
+          "correct": true
+        },
+        {
+          "label": "$3$",
+          "why": "$3$ 是奇異點到原點的距離；展開中心是 $i$，距離是 $|3-i|=\\sqrt{10}$。"
+        },
+        {
+          "label": "$1$",
+          "why": "$1$ 是 $|i|$，跟奇異點無關。"
+        }
+      ]
+    },
+    {
+      "ask": "$e^z$ 的 Maclaurin 級數收斂半徑是？",
+      "options": [
+        {
+          "label": "$\\infty$",
+          "correct": true
+        },
+        {
+          "label": "$1$",
+          "why": "$e^z$ 是整函數，沒有奇異點，半徑沒有上限。"
+        },
+        {
+          "label": "$2\\pi$",
+          "why": "週期 $2\\pi i$ 跟奇異點無關；$e^z$ 處處全純。"
+        }
+      ]
+    },
+    {
+      "ask": "$f$ 在 $|z|<2$ 全純，在 $z=2$ 有奇異點。它在 $0$ 的 Taylor 級數在 $z=1+i$ 收斂嗎？",
+      "options": [
+        {
+          "label": "收斂：$|1+i|=\\sqrt{2}<2$",
+          "correct": true
+        },
+        {
+          "label": "發散：$1+i$ 不是實數",
+          "why": "收斂範圍是一個圓盤，不只實數線。"
+        },
+        {
+          "label": "不能判斷",
+          "why": "定理保證整個 $|z|<2$ 都收斂，$\\sqrt{2}<2$。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "taylor",
+      "power-series",
+      "complex"
+    ],
+    "fine": [
+      "complex-taylor-radius-singularity",
+      "complex-taylor-coefficients",
+      "complex-taylor-real-mystery"
+    ]
+  },
+  "practice": [
+    {
+      "id": "world-036",
+      "core": true,
+      "trains": "complex-taylor-coefficients"
+    },
+    {
+      "id": "cg-11i-001",
+      "core": true,
+      "trains": "complex-taylor-radius-singularity"
+    },
+    {
+      "id": "cg-11i-003",
+      "core": true,
+      "trains": "complex-taylor-radius-singularity"
+    },
+    {
+      "id": "cg-11i-005",
+      "core": true,
+      "trains": "complex-taylor-real-mystery"
+    },
+    {
+      "id": "td-ser-002",
+      "trains": "complex-taylor-coefficients"
+    },
+    {
+      "id": "burst-boss-lim-001",
+      "trains": "complex-taylor-coefficients"
+    },
+    {
+      "id": "cg-11i-002",
+      "trains": "complex-taylor-radius-singularity"
+    },
+    {
+      "id": "cg-11i-004",
+      "trains": "complex-taylor-radius-singularity"
+    }
+  ],
+  "gaps": []
+}

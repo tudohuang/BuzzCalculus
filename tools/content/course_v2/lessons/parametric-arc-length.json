@@ -1,50 +1,121 @@
 {
   "id": "parametric-arc-length",
   "title": "參數式弧長",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["parametric-derivative", "arc-length", "u-sub-definite", "trig-identities"],
-  "next": ["parametric-area"],
-  "related": ["polar-arc-length"],
-  "objectives": [
-    "寫出 $L=\\int\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt$，說得出被積函數就是速率。",
-    "化簡根號時處理絕對值：$\\sqrt{4\\sin^2\\frac{t}{2}}=2\\left|\\sin\\frac{t}{2}\\right|$。",
-    "知道公式量的是「走過的距離」：曲線被重複走過時，要把 $t$ 的範圍縮成只走一次。"
+  "prerequisites": [
+    "parametric-derivative",
+    "arc-length",
+    "u-sub-definite",
+    "trig-identities"
   ],
-  "visual": "一個點沿擺線移動，下方同步畫出速率 √(x′² + y′²) 對 t 的圖，曲線下的面積隨點前進一格一格填滿，旁邊顯示累積的路程。點在尖點 t = 0、2π 速率掉到 0，在拱頂 t = π 速率最大（等於 2）。",
+  "next": [
+    "parametric-area"
+  ],
+  "related": [
+    "polar-arc-length"
+  ],
+  "objectives": [
+    "寫出 $L=\\int_a^b\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt$ 並用它算參數曲線的弧長",
+    "化簡根號時處理絕對值：$\\sqrt{4\\sin^2\\frac{t}{2}}=2\\left|\\sin\\frac{t}{2}\\right|$",
+    "知道公式量的是「走過的距離」：曲線被重複走過時，要把 $t$ 的範圍縮成只走一次"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 小段路程 $\\approx$ 斜邊",
+      "heading": "① 小段路程 ≈ 斜邊",
       "body": [
-        "在很短的時間 $\\Delta t$ 內，點在 $x$ 方向走了大約 $x'(t)\\Delta t$，在 $y$ 方向走了大約 $y'(t)\\Delta t$。這一小段幾乎是直的，長度用畢氏定理：$\\sqrt{(x'\\Delta t)^2+(y'\\Delta t)^2}=\\sqrt{x'^2+y'^2}\\,\\Delta t$。",
-        "把每一小段加起來，$\\Delta t\\to 0$，就是積分。這是直覺，不是證明；嚴格的版本要求 $x'$、$y'$ 連續，並且曲線在 $t$ 的範圍內沒有被重複走過。"
+        "把曲線切成很多小段，每段用直線段代替",
+        "一小段：$\\Delta s\\approx\\sqrt{(\\Delta x)^2+(\\Delta y)^2}$",
+        "$\\Delta x\\approx x'(t)\\Delta t$，$\\Delta y\\approx y'(t)\\Delta t$：",
+        "加起來、切到無限細：",
+        "條件：$x'$、$y'$ 連續，而且 $t$ 從 $a$ 到 $b$ 時曲線只走一次",
+        "$x=t,\\ y=f(t)$ 時就是 5.8 的 $\\displaystyle\\int\\sqrt{1+f'(x)^2}\\,dx$"
       ],
-      "tex": ["L=\\int_a^b\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt"],
-      "collapsible": false
+      "tex": [
+        "\\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t",
+        "L=\\int_a^b\\sqrt{\\Big(\\frac{dx}{dt}\\Big)^2+\\Big(\\frac{dy}{dt}\\Big)^2}\\,dt"
+      ]
     },
     {
       "heading": "② 被積函數是速率",
       "body": [
-        "$(x'(t),y'(t))$ 是點的速度向量，$\\sqrt{x'^2+y'^2}$ 是它的長度，也就是速率。所以公式在說：路程 = 速率對時間積分。",
-        "〈弧長〉的公式 $\\int\\sqrt{1+(f')^2}\\,dx$ 是特例：令 $x=t$、$y=f(t)$，$x'=1$，就回到它。"
+        "$\\sqrt{x'^2+y'^2}$ = 速度向量的長度 = 速率",
+        "弧長 = 速率對時間積分 = 走過的路程",
+        "例：$x=3\\cos t,\\ y=3\\sin t$，$0\\le t\\le\\frac\\pi2$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sqrt{9\\sin^2t+9\\cos^2t}=\\sqrt9=3",
+        "L=\\int_0^{\\pi/2}3\\,dt=\\frac{3\\pi}{2}"
+      ]
     },
     {
-      "heading": "③ 根號開出來要記得絕對值",
+      "heading": "② 例：根號裡提出 $t^2$",
       "body": [
-        "能算出來的弧長題，根號裡幾乎都會湊成完全平方。開根號時 $\\sqrt{A^2}=|A|$，不是 $A$。要先看 $A$ 在積分範圍內的正負，必要時把區間切開。",
-        "例：$x=t^2$、$y=t^3$ 時 $x'^2+y'^2=t^2(4+9t^2)$，開根號是 $|t|\\sqrt{4+9t^2}$。在 $t\\ge 0$ 的區間寫成 $t\\sqrt{4+9t^2}$；如果積分區間是 $-1\\le t\\le 1$，要拆成兩段，或利用對稱把 $[0,1]$ 的結果乘 2。直接寫 $t\\sqrt{4+9t^2}$ 從 $-1$ 積到 1，會得到 0。"
+        "$x=t^2,\\ y=t^3$，$0\\le t\\le1$",
+        "因為 $t\\ge0$；如果 $t$ 從 $-1$ 走到 $1$，就要分段，或用對稱性算兩倍",
+        "令 $u=4+9t^2$，$du=18t\\,dt$；$t:0\\to1$，$u:4\\to13$",
+        "檢查：起點 $(0,0)$ 到終點 $(1,1)$ 的直線距離 $\\sqrt2\\approx1.414$，弧長只能比它長"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sqrt{(2t)^2+(3t^2)^2}=\\sqrt{t^2(4+9t^2)}",
+        "=|t|\\sqrt{4+9t^2}=t\\sqrt{4+9t^2}",
+        "L=\\frac1{18}\\int_4^{13}\\sqrt u\\,du=\\frac1{18}\\cdot\\frac23\\Big[u^{3/2}\\Big]_4^{13}",
+        "L=\\frac{13\\sqrt{13}-8}{27}\\approx1.440"
+      ]
     },
     {
-      "heading": "④ 公式量的是走過的距離",
+      "heading": "③ 根號開出來要絕對值",
       "body": [
-        "$x=\\cos 2t$、$y=\\sin 2t$，$0\\le t\\le 2\\pi$，速率是 2，積分得 $4\\pi$。但單位圓周長是 $2\\pi$：點繞了兩圈，公式把兩圈都算進去。",
-        "所以題目問「曲線的長度」時，要先確定 $t$ 的範圍讓曲線恰好走一次。"
+        "擺線 $x=t-\\sin t,\\ y=1-\\cos t$：",
+        "半角公式 $1-\\cos t=2\\sin^2\\frac t2$：",
+        "一拱：$0\\le t\\le2\\pi$，$\\frac t2\\in[0,\\pi]$，$\\sin\\frac t2\\ge0$",
+        "$-4\\cos\\pi-(-4\\cos0)=4+4=8$"
       ],
-      "collapsible": false
+      "tex": [
+        "x'^2+y'^2=(1-\\cos t)^2+\\sin^2t=2-2\\cos t",
+        "\\sqrt{2-2\\cos t}=\\sqrt{4\\sin^2\\tfrac t2}=2\\Big|\\sin\\frac t2\\Big|",
+        "L=\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{2\\pi}=8"
+      ]
+    },
+    {
+      "heading": "③ 丟掉絕對值會怎樣",
+      "body": [
+        "兩拱：$0\\le t\\le4\\pi$",
+        "忘了絕對值：",
+        "第二拱 $\\frac t2\\in[\\pi,2\\pi]$，$\\sin\\frac t2\\le0$，被積函數變負的"
+      ],
+      "tex": [
+        "\\int_0^{4\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{4\\pi}=-4+4=0",
+        "L=2\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=16"
+      ]
+    },
+    {
+      "heading": "④ 量的是走過的距離",
+      "body": [
+        "$x=\\cos2t,\\ y=\\sin2t$，$0\\le t\\le2\\pi$",
+        "速率 $\\sqrt{4\\sin^22t+4\\cos^22t}=2$",
+        "點繞了兩圈：公式算的是走過的路程",
+        "要曲線本身的長度：$t$ 只取 $[0,\\pi]$（剛好走一圈）",
+        "上一課的 $x=\\sin t,\\ y=\\sin^2t$ 也一樣：點在拋物線上來回走，路程比那一段拋物線長",
+        "用公式前先問：$t$ 的範圍內，曲線是不是只走一次？"
+      ],
+      "tex": [
+        "L=\\int_0^{2\\pi}2\\,dt=4\\pi"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 被積函數是速率；弧長 = 走過的路程",
+        "• $\\sqrt{a^2}=|a|$：看範圍決定正負，必要時分段",
+        "• 曲線被重複走過：把 $t$ 縮成只走一次",
+        "下一課：參數式面積"
+      ],
+      "tex": [
+        "L=\\int_a^b\\sqrt{x'(t)^2+y'(t)^2}\\,dt"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,257 +167,685 @@
   ],
   "checks": [
     {
-      "ask": "$x=3t$、$y=4t$ 的速率 $\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}$ 是？",
+      "ask": "化簡 $\\sqrt{4\\sin^2\\frac t2}$，什麼時候可以直接寫成 $2\\sin\\frac t2$？",
       "options": [
-        { "label": "5", "correct": true },
-        { "label": "7", "why": "這是 $3+4$。要先平方相加再開根號：$\\sqrt{9+16}=5$。" },
-        { "label": "25", "why": "$9+16=25$ 之後還要開根號。" }
-      ]
-    },
-    {
-      "ask": "在 $0\\le t\\le 2\\pi$ 上，$\\sqrt{4\\sin^2\\frac{t}{2}}$ 等於？",
-      "options": [
-        { "label": "$2\\sin\\frac{t}{2}$，因為這個範圍內 $\\sin\\frac{t}{2}\\ge 0$", "correct": true },
-        { "label": "$2|\\sin t|$", "why": "半角不能隨手變全角：根號裡是 $\\sin^2\\frac{t}{2}$，開出來是 $2\\left|\\sin\\frac{t}{2}\\right|$。" },
-        { "label": "$4\\sin\\frac{t}{2}$", "why": "$\\sqrt{4}=2$，係數也要開根號。" }
-      ]
-    },
-    {
-      "ask": "$x=\\cos 2t$、$y=\\sin 2t$，$0\\le t\\le 2\\pi$，速率積分得 $4\\pi$。單位圓的周長是 $2\\pi$，差在哪？",
-      "options": [
-        { "label": "點繞了兩圈，公式算的是走過的距離", "correct": true },
-        { "label": "公式錯了，要除以 2", "why": "公式沒錯，它忠實地量了路程。要改的是 $t$ 的範圍（$0\\le t\\le\\pi$ 只走一圈）。" },
-        { "label": "速率應該是 1 不是 2", "why": "$x'=-2\\sin 2t$、$y'=2\\cos 2t$，速率確實是 2。" }
-      ]
-    },
-    {
-      "ask": "下列哪一個是參數式弧長的被積函數？",
-      "options": [
-        { "label": "$\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}$", "correct": true },
-        { "label": "$\\sqrt{1+\\left(\\frac{dy}{dt}\\right)^2}$", "why": "這是把 $y=f(x)$ 版本的 $\\sqrt{1+f'^2}$ 硬搬過來；只有 $x=t$ 時兩者才一樣。" },
-        { "label": "$\\sqrt{1+\\left(\\frac{dy}{dx}\\right)^2}$", "why": "這要對 $x$ 積分，配的是 $dx$ 不是 $dt$；用 $t$ 積分時就該用速率。" }
+        {
+          "label": "只有在 $\\sin\\frac t2\\ge0$ 的範圍",
+          "correct": true
+        },
+        {
+          "label": "永遠可以",
+          "why": "$\\sqrt{a^2}=|a|$，不是 $a$；兩拱的例子會算成 $0$"
+        },
+        {
+          "label": "只有在 $t\\ge0$ 的時候",
+          "why": "$t\\in[2\\pi,4\\pi]$ 也是 $t\\ge0$，但 $\\sin\\frac t2<0$"
+        },
+        {
+          "label": "永遠不行，一定要寫 $-2\\sin\\frac t2$",
+          "why": "在第一拱 $\\sin\\frac t2\\ge0$，寫 $2\\sin\\frac t2$ 才對"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "小段路程是斜邊",
+      "title": "小段路程 ≈ 斜邊",
       "beats": [
-        { "show": ["$\\Delta t$ 內：橫走 $x'\\Delta t$，直走 $y'\\Delta t$"],
-          "say": "很短的時間 delta t 裡，點往 x 方向走了 x prime 乘 delta t，往 y 方向走了 y prime 乘 delta t。",
+        {
+          "show": [
+            "把曲線切成很多小段，每段用直線段代替"
+          ],
+          "say": "要量一條曲線多長，跟 5.8 的想法一樣：把它切成很多小段，每一小段用直線段代替。",
           "board": [
-            {"do":"write","line":"$\\Delta x\\approx{{a:x'\\Delta t}}$"},
-            {"do":"write","line":"$\\Delta y\\approx{{b:y'\\Delta t}}$","on":"往 y 方向"}
-          ] },
-        { "show": ["$\\sqrt{x'^2 + y'^2}\\,\\Delta t$"],
-          "note": "這一小段幾乎是直的，用畢氏定理。",
-          "say": "這一小段幾乎是直的，所以長度是斜邊：兩個方向平方相加再開根號，乘上 delta t。",
+            {
+              "do": "write",
+              "line": "把曲線切成很多小段，每段用直線段代替"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上紅色的折線，很貼近藍色的曲線。切得越細，折線的總長就越接近曲線的長度。",
           "board": [
-            {"do":"write","line":"$\\Delta s\\approx{{h:\\sqrt{x'^2+y'^2}}}\\,\\Delta t$"},
-            {"do":"underline","term":"h","color":"gold","label":"斜邊","on":"斜邊"}
-          ] },
-        { "show": ["$L = \\int_a^b \\sqrt{x'^2 + y'^2}\\,dt$"],
-          "note": "直覺，不是證明；完整條件在全文。",
-          "say": "每一小段加起來，讓 delta t 趨近零，就變成積分。這是直覺，嚴格的條件放在全文。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"chords\" viewBox=\"0 0 480 440\" width=\"480\" height=\"440\" font-size=\"20\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7chords\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"201.6\" y1=\"16.0\" x2=\"201.6\" y2=\"410.0\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"327.1\" y1=\"16.0\" x2=\"327.1\" y2=\"410.0\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"46.0\" y1=\"254.4\" x2=\"440.0\" y2=\"254.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"46.0\" y1=\"128.9\" x2=\"440.0\" y2=\"128.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"40.0\" y1=\"379.9\" x2=\"454.0\" y2=\"379.9\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7chords)\"/><line x1=\"76.1\" y1=\"416.0\" x2=\"76.1\" y2=\"6.0\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7chords)\"/><text x=\"201.6\" y=\"401.9\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">0.5</text><text x=\"327.1\" y=\"401.9\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"69.1\" y=\"261.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">0.5</text><text x=\"69.1\" y=\"135.9\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"448.0\" y=\"370.9\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"85.1\" y=\"20.0\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"76.1\" y1=\"379.9\" x2=\"152.0\" y2=\"338.1\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><line x1=\"152.0\" y1=\"338.1\" x2=\"257.4\" y2=\"225.8\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><line x1=\"257.4\" y1=\"225.8\" x2=\"379.8\" y2=\"45.9\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><line x1=\"152.0\" y1=\"338.1\" x2=\"257.4\" y2=\"338.1\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><line x1=\"257.4\" y1=\"338.1\" x2=\"257.4\" y2=\"225.8\" stroke=\"var(--green)\" stroke-width=\"2.4\"/><path d=\"M76.1 379.9L76.1 379.9L76.1 379.9L76.2 379.9L76.2 379.9L76.3 379.9L76.3 379.9L76.4 379.9L76.5 379.9L76.6 379.9L76.7 379.9L76.8 379.9L76.9 379.8L77.0 379.8L77.2 379.8L77.3 379.8L77.5 379.8L77.7 379.8L77.9 379.7L78.1 379.7L78.3 379.7L78.5 379.6L78.8 379.6L79.0 379.6L79.3 379.5L79.5 379.5L79.8 379.4L80.1 379.4L80.4 379.3L80.7 379.3L81.0 379.2L81.4 379.1L81.7 379.0L82.1 379.0L82.4 378.9L82.8 378.8L83.2 378.7L83.6 378.6L84.0 378.5L84.4 378.4L84.9 378.3L85.3 378.1L85.8 378.0L86.2 377.9L86.7 377.7L87.2 377.6L87.7 377.4L88.2 377.2L88.7 377.1L89.2 376.9L89.8 376.7L90.3 376.5L90.9 376.3L91.5 376.1L92.1 375.9L92.6 375.6L93.3 375.4L93.9 375.2L94.5 374.9L95.1 374.6L95.8 374.4L96.5 374.1L97.1 373.8L97.8 373.5L98.5 373.2L99.2 372.9L99.9 372.6L100.6 372.2L101.4 371.9L102.1 371.5L102.9 371.1L103.7 370.8L104.4 370.4L105.2 370.0L106.0 369.6L106.9 369.1L107.7 368.7L108.5 368.2L109.4 367.8L110.2 367.3L111.1 366.8L112.0 366.3L112.9 365.8L113.8 365.3L114.7 364.8L115.6 364.2L116.5 363.7L117.5 363.1L118.4 362.5L119.4 361.9L120.4 361.3L121.4 360.7L122.4 360.0L123.4 359.4L124.4 358.7L125.4 358.0L126.5 357.3L127.5 356.6L128.6 355.9L129.7 355.1L130.8 354.4L131.9 353.6L133.0 352.8L134.1 352.0L135.2 351.2L136.4 350.4L137.5 349.5L138.7 348.6L139.9 347.8L141.0 346.9L142.2 345.9L143.5 345.0L144.7 344.1L145.9 343.1L147.1 342.1L148.4 341.1L149.7 340.1L150.9 339.0L152.2 338.0L153.5 336.9L154.8 335.8L156.1 334.7L157.5 333.6L158.8 332.4L160.1 331.3L161.5 330.1L162.9 328.9L164.3 327.6L165.7 326.4L167.1 325.1L168.5 323.9L169.9 322.5L171.3 321.2L172.8 319.9L174.2 318.5L175.7 317.1L177.2 315.7L178.7 314.3L180.2 312.9L181.7 311.4L183.2 309.9L184.8 308.4L186.3 306.9L187.9 305.3L189.4 303.7L191.0 302.1L192.6 300.5L194.2 298.9L195.8 297.2L197.4 295.5L199.1 293.8L200.7 292.1L202.4 290.3L204.1 288.5L205.7 286.7L207.4 284.9L209.1 283.1L210.8 281.2L212.5 279.3L214.3 277.4L216.0 275.4L217.8 273.4L219.5 271.5L221.3 269.4L223.1 267.4L224.9 265.3L226.7 263.2L228.5 261.1L230.4 259.0L232.2 256.8L234.1 254.6L235.9 252.4L237.8 250.1L239.7 247.8L241.6 245.5L243.5 243.2L245.4 240.8L247.3 238.5L249.3 236.0L251.2 233.6L253.2 231.1L255.2 228.7L257.1 226.1L259.1 223.6L261.1 221.0L263.2 218.4L265.2 215.8L267.2 213.1L269.3 210.4L271.3 207.7L273.4 204.9L275.5 202.2L277.6 199.4L279.7 196.5L281.8 193.7L283.9 190.8L286.1 187.8L288.2 184.9L290.4 181.9L292.5 178.9L294.7 175.8L296.9 172.8L299.1 169.7L301.3 166.5L303.6 163.4L305.8 160.2L308.0 156.9L310.3 153.7L312.6 150.4L314.8 147.0L317.1 143.7L319.4 140.3L321.7 136.9L324.1 133.4L326.4 129.9L328.7 126.4L331.1 122.9L333.5 119.3L335.8 115.7L338.2 112.0L340.6 108.3L343.0 104.6L345.5 100.8L347.9 97.1L350.3 93.2L352.8 89.4L355.3 85.5L357.7 81.6L360.2 77.6L362.7 73.6L365.2 69.6L367.7 65.5L370.3 61.4L372.8 57.3L375.4 53.1L377.9 48.9L380.5 44.6L383.1 40.4L385.7 36.1L388.3 31.7L390.9 27.3\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"76.1\" cy=\"379.9\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><circle cx=\"152.0\" cy=\"338.1\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><circle cx=\"257.4\" cy=\"225.8\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><circle cx=\"379.8\" cy=\"45.9\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><text x=\"204.7\" y=\"360.7\" fill=\"var(--green)\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δx</text><text x=\"265.0\" y=\"287.0\" fill=\"var(--green)\" text-anchor=\"start\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δy</text><text x=\"192.2\" y=\"264.4\" fill=\"var(--red)\" text-anchor=\"end\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Δs</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一小段：$\\Delta s\\approx\\sqrt{(\\Delta x)^2+(\\Delta y)^2}$"
+          ],
+          "say": "每一小段是一個直角三角形的斜邊：橫的是德爾塔 x，直的是德爾塔 y，斜邊用畢氏定理。",
           "board": [
-            {"do":"transform","line":"$L=\\int_a^b{{h:\\sqrt{x'^2+y'^2}}}\\,dt$","on":"變成"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "一小段：$\\Delta s\\approx\\sqrt{(\\Delta x)^2+(\\Delta y)^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta x\\approx x'(t)\\Delta t$，$\\Delta y\\approx y'(t)\\Delta t$：",
+            "$\\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t$"
+          ],
+          "say": "經過時間德爾塔 t，德爾塔 x 大約是 x prime 乘德爾塔 t，德爾塔 y 大約是 y prime 乘德爾塔 t。把德爾塔 t 從根號裡提出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Delta x\\approx x'(t)\\Delta t$，$\\Delta y\\approx y'(t)\\Delta t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta s\\approx\\sqrt{x'(t)^2+y'(t)^2}\\;\\Delta t$",
+              "on": "大約#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "加起來、切到無限細：",
+            "$L=\\int_a^b\\sqrt{\\Big(\\frac{dx}{dt}\\Big)^2+\\Big(\\frac{dy}{dt}\\Big)^2}\\,dt$"
+          ],
+          "say": "全部加起來，再讓每段無限細，總和就變成積分。這就是參數曲線的弧長公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "加起來、切到無限細："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle L=\\int_a^b\\sqrt{\\Big(\\frac{dx}{dt}\\Big)^2+\\Big(\\frac{dy}{dt}\\Big)^2}\\,dt}}$",
+              "color": "red",
+              "on": "每段"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "變成"
+            },
+            {
+              "do": "write",
+              "line": "　條件：$x'$、$y'$ 連續，而且 $t$ 從 $a$ 到 $b$ 時曲線只走一次",
+              "color": "violet",
+              "on": "數曲"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=t,\\ y=f(t)$ 時就是 5.8 的 $\\displaystyle\\int\\sqrt{1+f'(x)^2}\\,dx$"
+          ],
+          "say": "如果 x 就是 t，y 是 f of t，公式就變回 5.8 學過的根號 1 加 f prime 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=t,\\ y=f(t)$ 時就是 5.8 的 $\\displaystyle\\int\\sqrt{1+f'(x)^2}\\,dx$"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "被積函數是速率",
       "beats": [
-        { "show": ["$(x', y')$ 是速度，$\\sqrt{x'^2 + y'^2}$ 是速率"],
-          "note": "路程 = 速率對時間積分。",
-          "say": "x prime、y prime 合起來是速度向量，根號那一串是它的長度，也就是速率。路程就是速率對時間積分。",
+        {
+          "show": [
+            "$\\sqrt{x'^2+y'^2}$ = 速度向量的長度 = 速率"
+          ],
+          "say": "根號裡面是 x 方向的速度平方，加 y 方向的速度平方。開根號，就是速度向量的長度，也就是速率。",
           "board": [
-            {"do":"write","line":"$L=\\int_a^b{{sp:\\sqrt{x'^2+y'^2}}}\\,dt$","tint":{"sp":"blue"}},
-            {"do":"underline","term":"sp","label":"速率","on":"根號那一串"}
-          ] },
-        { "show": ["$x = 3\\cos t$，$y = 3\\sin t$"],
-          "note": "$0 \\le t \\le \\frac{\\pi}{2}$。",
-          "say": "例如半徑三的圓，t 從零走到二分之 pi，是四分之一圈。",
+            {
+              "do": "write",
+              "line": "$\\sqrt{x'^2+y'^2}$ = 速度向量的長度 = 速率",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "弧長 = 速率對時間積分 = 走過的路程"
+          ],
+          "say": "速率乘時間是路程。所以弧長公式說的是：把每一刻的速率對時間積分，就是走過的路程。",
           "board": [
-            {"do":"write","line":"$x=3\\cos t,\\ y=3\\sin t\\ \\ (0\\le t\\le\\frac{\\pi}{2})$","on":"例如"}
-          ] },
-        { "show": ["$9\\sin^2 t + 9\\cos^2 t = 9$，速率 3"],
-          "say": "兩個速度平方相加，九 sine 平方加九 cosine 平方等於九，速率一直是三。",
+            {
+              "do": "write",
+              "line": "弧長 = 速率對時間積分 = 走過的路程"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x=3\\cos t,\\ y=3\\sin t$，$0\\le t\\le\\frac\\pi2$"
+          ],
+          "say": "例子：x 等於 3 倍餘弦 t，y 等於 3 倍正弦 t，t 從 0 到 2 分之派。這是半徑 3 的四分之一圓。",
           "board": [
-            {"do":"write","line":"$x'^2+y'^2=9\\sin^2 t+9\\cos^2 t=9$"},
-            {"do":"transform","line":"${{sp:\\sqrt{x'^2+y'^2}}}={{v:3}}$","on":"速率一直"}
-          ] },
-        { "show": ["$L = \\int_0^{\\pi/2} 3\\,dt = \\frac{3\\pi}{2}$"],
-          "note": "半徑 3 的圓周長 $6\\pi$，四分之一正好。",
-          "say": "速率三乘上時間二分之 pi，得二分之三 pi。周長六 pi 的四分之一，對得上。",
-          "board": [
-            {"do":"write","line":"$L=\\int_0^{\\pi/2}{{v:3}}\\,dt=\\;{{res:\\frac{3\\pi}{2}}}$","on":"速率三乘上"},
-            {"do":"box","term":"res","color":"green","label":"四分之一圈","on":"周長六 pi"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$x=3\\cos t,\\ y=3\\sin t$，$0\\le t\\le\\frac\\pi2$"
+            }
+          ]
+        }
       ],
-      "check": 0
-    },
-    {
-      "title": "開根號要絕對值",
-      "beats": [
-        { "show": ["$\\sqrt{A^2} = |A|$"],
-          "note": "根號裡常湊成完全平方，開出來先看正負。",
-          "say": "能算的弧長題，根號裡幾乎都湊成完全平方。開根號出來是絕對值，不是它自己。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{A^2}={{abs:|A|}}$"},
-            {"do":"circle","term":"abs","label":"不是 A","on":"出來是絕對值"}
-          ] },
-        { "show": ["完全平方是挑好的，不是定理"],
-          "note": "一般的平方和開根號，往往積不出初等反導函數。",
-          "say": "這不是定理，是出題的人挑好算的。一般的平方和，開根號之後常常沒有初等反導函數。",
-          "board": [
-            {"do":"write","line":"完全平方：出題挑的，不是定理"}
-          ] },
-        { "show": ["$x = t^2$，$y = t^3$","$x'^2 + y'^2 = t^2(4 + 9t^2)$"],
-          "say": "x 是 t 平方，y 是 t 三次方。速度平方和是四 t 平方加九 t 四次方，提出 t 平方。",
-          "board": [
-            {"do":"write","line":"$x=t^2,\\ y=t^3$"},
-            {"do":"write","line":"$x'^2+y'^2=4t^2+9t^4$","on":"速度平方和"},
-            {"do":"transform","line":"$x'^2+y'^2={{t2:t^2}}(4+9t^2)$","on":"提出"}
-          ] },
-        { "show": ["$|t|\\sqrt{4 + 9t^2}$"],
-          "note": "$-1 \\le t \\le 1$ 時直接拿掉絕對值，會積出 0。",
-          "say": "開出來是絕對值 t 乘根號。t 在零到一，可以拿掉絕對值；如果範圍跨過零，就要拆開。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\sqrt{x'^2+y'^2}={{at:|t|}}\\sqrt{4+9t^2}$","on":"開出來"},
-            {"do":"underline","term":"at","label":"看正負","on":"絕對值 t"},
-            {"do":"write","line":"$0\\le t\\le1$：$|t|=t$","on":"t 在零到一"}
-          ] },
-        { "show": ["$L = \\int_0^1 t\\sqrt{4 + 9t^2}\\,dt$"],
-          "note": "令 $u = 4 + 9t^2$，$du = 18t\\,dt$。",
-          "say": "在零到一上積分，令 u 是四加九 t 平方。換元之後，上下限也要跟著換。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$L=\\int_0^1 t\\sqrt{{{u:4+9t^2}}}\\,dt$","on":"在零到一"},
-            {"do":"write","line":"${{u:4+9t^2}}=u$","tint":{"u":"violet"},"on":"令 u"}
-          ] },
-        { "show": ["$du = 18t\\,dt$","$t\\,dt = \\frac{1}{18}du$"],
-          "say": "u 是四加九 t 平方，微分得 d u 等於十八 t 乘 d t。所以 t 乘 d t，就是十八分之一的 d u。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$u=4+9t^2$，$du=18t\\,dt$","on":"得"},
-            {"do":"write","line":"$t\\,dt={{q1:\\frac{1}{18}du}}$","on":"所以"},
-            {"do":"underline","term":"q1","color":"gold","label":"換成 du","on":"十八分之一"}
-          ] }
-      ],
-      "key": "$\\sqrt{t^2}=|t|$：先看正負再拿掉絕對值",
       "predict": {
-        "ask": "換成 $u$ 之後，積分從哪裡到哪裡？",
+        "ask": "這段四分之一圓的弧長是？",
         "options": [
           {
-            "label": "$u$ 從 4 到 13",
+            "label": "$\\frac{3\\pi}{2}$",
             "correct": true
           },
           {
-            "label": "$u$ 從 0 到 1",
-            "why": "0 到 1 是 $t$ 的範圍；換元後要代進 $u = 4 + 9t^2$：$t = 0$ 得 4，$t = 1$ 得 13。"
+            "label": "$3\\pi$",
+            "why": "那是半圓"
           },
           {
-            "label": "$u$ 從 4 到 9",
-            "why": "$t = 1$ 代進去是 $4 + 9 = 13$，不是只取 9。"
+            "label": "$\\frac{9\\pi}{4}$",
+            "why": "那是四分之一圓的面積 $\\frac14\\pi\\cdot3^2$"
+          },
+          {
+            "label": "$3$",
+            "why": "那是半徑，不是弧長"
           }
         ]
       }
     },
     {
-      "title": "擺線一拱",
+      "title": "被積函數是速率",
       "beats": [
-        { "show": ["$x' = 1 - \\cos t$，$y' = \\sin t$"],
-          "note": "擺線 $x = t - \\sin t$、$y = 1 - \\cos t$，$0 \\le t \\le 2\\pi$。",
-          "say": "擺線的一拱，t 從零到二 pi。先把兩個速度寫出來。",
+        {
+          "show": [
+            "$\\sqrt{9\\sin^2t+9\\cos^2t}=\\sqrt9=3$"
+          ],
+          "say": "用公式算：x prime 是負 3 正弦，y prime 是 3 餘弦。平方相加是 9 倍正弦平方加餘弦平方，等於 9，開根號是 3。",
           "board": [
-            {"do":"write","line":"$x=t-\\sin t,\\ y=1-\\cos t$"},
-            {"do":"write","line":"$x'=1-\\cos t,\\ y'=\\sin t$","on":"先把兩個速度"}
-          ] },
-        { "show": ["$x'^2 + y'^2 = 2 - 2\\cos t$"],
-          "say": "平方展開，cosine 平方加 sine 平方合成一，整理成二減二 cosine t。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt{9\\sin^2t+9\\cos^2t}=\\sqrt9=3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\int_0^{\\pi/2}3\\,dt=\\frac{3\\pi}{2}$"
+          ],
+          "say": "速率一直是 3，等速走了 2 分之派的時間，路程就是 2 分之 3 派。跟圓周的四分之一一樣。",
           "board": [
-            {"do":"write","line":"$x'^2+y'^2=1-2\\cos t+{{cs:\\cos^2 t+\\sin^2 t}}$","on":"平方展開"},
-            {"do":"underline","term":"cs","label":"合成 1","on":"合成一"},
-            {"do":"transform","line":"$x'^2+y'^2=2-2\\cos t$","on":"整理成"}
-          ] },
-        { "show": ["$1-\\cos t = 2\\sin^2\\frac{t}{2}$"],
-          "note": "來自 $\\cos t = 1-2\\sin^2\\frac{t}{2}$。",
-          "say": "cosine t 是一減二倍 sine 二分之 t 的平方。移項，一減 cosine t 就等於二倍那個平方。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle L=\\int_0^{\\pi/2}3\\,dt=\\frac{3\\pi}{2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "程就"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：根號裡提出 $t^2$",
+      "beats": [
+        {
+          "show": [
+            "$x=t^2,\\ y=t^3$，$0\\le t\\le1$"
+          ],
+          "say": "第二個例子：x 等於 t 平方，y 等於 t 立方，t 從 0 到 1。",
           "board": [
-            {"do":"write","line":"$\\cos t=1-2\\sin^2\\frac{t}{2}$"},
-            {"do":"transform","line":"$1-\\cos t={{k1:2\\sin^2\\frac{t}{2}}}$","on":"移項"}
-          ] },
-        { "show": ["$2-2\\cos t = 2(1-\\cos t)$","$= 4\\sin^2\\frac{t}{2}$"],
-          "say": "二減二 cosine t，先提出二，變成二乘一減 cosine t。再代入剛才的式子，二乘二就是四。",
+            {
+              "do": "write",
+              "line": "$x=t^2,\\ y=t^3$，$0\\le t\\le1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{(2t)^2+(3t^2)^2}=\\sqrt{t^2(4+9t^2)}$"
+          ],
+          "say": "x prime 是 2t，y prime 是 3t 平方。平方相加是 4t 平方加 9t 的 4 次方，提出 t 平方。",
           "board": [
-            {"do":"write","line":"$2-2\\cos t=2(1-\\cos t)$"},
-            {"do":"write","line":"$=2\\cdot 2\\sin^2\\frac{t}{2}=4\\sin^2\\frac{t}{2}$","on":"再代入"}
-          ] },
-        { "show": ["$= 4\\sin^2\\frac{t}{2}$"],
-          "note": "半角公式 $1 - \\cos t = 2\\sin^2\\frac{t}{2}$。",
-          "say": "用半角公式湊成完全平方：四乘 sine 二分之 t 的平方。開根號時，別忘了絕對值。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt{(2t)^2+(3t^2)^2}=\\sqrt{t^2(4+9t^2)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=|t|\\sqrt{4+9t^2}=t\\sqrt{4+9t^2}$"
+          ],
+          "say": "根號 t 平方是絕對值 t。這裡 t 在 0 到 1，不是負的，絕對值可以直接拿掉。",
           "board": [
-            {"do":"write","line":"$={{h:4\\sin^2\\frac{t}{2}}}$","on":"用半角公式"},
-            {"do":"box","term":"h","label":"完全平方","on":"完全平方"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =|t|\\sqrt{4+9t^2}=t\\sqrt{4+9t^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "這裡"
+            },
+            {
+              "do": "write",
+              "line": "　因為 $t\\ge0$；如果 $t$ 從 $-1$ 走到 $1$，就要分段，或用對稱性算兩倍",
+              "color": "violet",
+              "on": "是負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=4+9t^2$，$du=18t\\,dt$；$t:0\\to1$，$u:4\\to13$"
+          ],
+          "say": "換元：令 u 等於 4 加 9t 平方，du 等於 18t dt。上下限也跟著換：t 從 0 到 1，u 從 4 到 13。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $u=4+9t^2$，$du=18t\\,dt$；$t:0\\to1$，$u:4\\to13$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\frac1{18}\\int_4^{13}\\sqrt u\\,du=\\frac1{18}\\cdot\\frac23\\Big[u^{3/2}\\Big]_4^{13}$"
+          ],
+          "say": "積分變成 18 分之 1 乘根號 u 從 4 積到 13。根號 u 的反導數是 3 分之 2 倍 u 的 2 分之 3 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\frac1{18}\\int_4^{13}\\sqrt u\\,du=\\frac1{18}\\cdot\\frac23\\Big[u^{3/2}\\Big]_4^{13}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\frac{13\\sqrt{13}-8}{27}\\approx1.440$"
+          ],
+          "say": "代上下限：13 的 2 分之 3 次方是 13 根號 13，4 的是 8。答案是 27 分之，13 根號 13 減 8，大約 1.44。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle L=\\frac{13\\sqrt{13}-8}{27}\\approx1.440}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "根號#1"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：起點 $(0,0)$ 到終點 $(1,1)$ 的直線距離 $\\sqrt2\\approx1.414$，弧長只能比它長",
+              "color": "violet",
+              "on": "13#4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "根號開出來要絕對值",
+      "beats": [
+        {
+          "show": [
+            "擺線 $x=t-\\sin t,\\ y=1-\\cos t$：",
+            "$x'^2+y'^2=(1-\\cos t)^2+\\sin^2t=2-2\\cos t$"
+          ],
+          "say": "擺線：x prime 是 1 減餘弦，y prime 是正弦。平方相加，展開後餘弦平方加正弦平方是 1，剩下 2 減 2 倍餘弦 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "擺線 $x=t-\\sin t,\\ y=1-\\cos t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x'^2+y'^2=(1-\\cos t)^2+\\sin^2t=2-2\\cos t$",
+              "on": "相加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半角公式 $1-\\cos t=2\\sin^2\\frac t2$：",
+            "$\\sqrt{2-2\\cos t}=\\sqrt{4\\sin^2\\tfrac t2}=2\\Big|\\sin\\frac t2\\Big|$"
+          ],
+          "say": "用半角公式，根號裡變成 4 倍正弦平方 2 分之 t。開出來是 2 倍絕對值正弦 2 分之 t。絕對值不能丟。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半角公式 $1-\\cos t=2\\sin^2\\frac t2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\sqrt{2-2\\cos t}=\\sqrt{4\\sin^2\\tfrac t2}=2\\Big|\\sin\\frac t2\\Big|}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "對值#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一拱：$0\\le t\\le2\\pi$，$\\frac t2\\in[0,\\pi]$，$\\sin\\frac t2\\ge0$"
+          ],
+          "say": "一拱是 t 從 0 到 2 派。這時 2 分之 t 在 0 到派，正弦不是負的，絕對值可以拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一拱：$0\\le t\\le2\\pi$，$\\frac t2\\in[0,\\pi]$，$\\sin\\frac t2\\ge0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{2\\pi}=8$"
+          ],
+          "say": "反導數是負 4 倍餘弦 2 分之 t。代 2 派是 4，代 0 是負 4，相減得 8。擺線一拱長 8，剛好是輪子直徑的 4 倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle L=\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{2\\pi}=8}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "派是"
+            },
+            {
+              "do": "write",
+              "line": "　$-4\\cos\\pi-(-4\\cos0)=4+4=8$",
+              "color": "violet",
+              "on": "擺線"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "丟掉絕對值會怎樣",
+      "beats": [
+        {
+          "show": [
+            "兩拱：$0\\le t\\le4\\pi$",
+            "圖"
+          ],
+          "say": "如果算兩拱，t 從 0 到 4 派。每一拱長 8，答案應該是 16。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩拱：$0\\le t\\le4\\pi$"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"twoarch\" viewBox=\"0 0 620 250\" width=\"620\" height=\"250\" font-size=\"20\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7twoarch\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"133.3\" y1=\"58.1\" x2=\"133.3\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"215.9\" y1=\"58.1\" x2=\"215.9\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"298.5\" y1=\"58.1\" x2=\"298.5\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"381.2\" y1=\"58.1\" x2=\"381.2\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"463.8\" y1=\"58.1\" x2=\"463.8\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"546.4\" y1=\"58.1\" x2=\"546.4\" y2=\"177.9\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"120.1\" x2=\"596.0\" y2=\"120.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"78.8\" x2=\"596.0\" y2=\"78.8\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"24.0\" y1=\"161.4\" x2=\"610.0\" y2=\"161.4\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7twoarch)\"/><line x1=\"50.7\" y1=\"183.9\" x2=\"50.7\" y2=\"48.1\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7twoarch)\"/><text x=\"133.3\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"215.9\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"298.5\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">6</text><text x=\"381.2\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">8</text><text x=\"463.8\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">10</text><text x=\"546.4\" y=\"183.4\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">12</text><text x=\"43.7\" y=\"127.1\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"43.7\" y=\"85.8\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"604.0\" y=\"152.4\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"59.7\" y=\"62.1\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><path d=\"M50.7 161.4L50.7 161.4L50.7 161.3L50.7 161.2L50.7 161.1L50.7 160.9L50.7 160.6L50.7 160.4L50.8 160.1L50.8 159.7L50.9 159.4L50.9 158.9L51.0 158.5L51.1 158.0L51.2 157.4L51.4 156.9L51.5 156.3L51.7 155.6L51.9 154.9L52.1 154.2L52.3 153.5L52.6 152.7L52.9 151.9L53.2 151.1L53.5 150.2L53.9 149.3L54.3 148.3L54.7 147.4L55.2 146.4L55.7 145.4L56.2 144.3L56.7 143.3L57.3 142.2L57.9 141.1L58.6 140.0L59.3 138.8L60.0 137.7L60.8 136.5L61.6 135.3L62.4 134.1L63.3 132.8L64.2 131.6L65.2 130.3L66.1 129.1L67.2 127.8L68.3 126.5L69.4 125.2L70.5 124.0L71.7 122.7L73.0 121.4L74.2 120.1L75.6 118.8L76.9 117.5L78.3 116.2L79.8 114.9L81.2 113.6L82.8 112.3L84.3 111.1L85.9 109.8L87.6 108.5L89.2 107.3L91.0 106.1L92.7 104.9L94.5 103.7L96.3 102.5L98.2 101.3L100.1 100.2L102.1 99.0L104.0 97.9L106.0 96.8L108.1 95.8L110.2 94.7L112.3 93.7L114.4 92.7L116.6 91.8L118.8 90.9L121.0 89.9L123.3 89.1L125.6 88.2L127.9 87.4L130.2 86.6L132.6 85.9L134.9 85.2L137.4 84.5L139.8 83.9L142.2 83.3L144.7 82.7L147.2 82.1L149.7 81.7L152.2 81.2L154.7 80.8L157.2 80.4L159.8 80.0L162.4 79.7L164.9 79.5L167.5 79.3L170.1 79.1L172.7 78.9L175.3 78.8L177.9 78.8L180.4 78.8L183.0 78.8L185.6 78.8L188.2 78.9L190.8 79.1L193.4 79.3L196.0 79.5L198.5 79.7L201.1 80.0L203.7 80.4L206.2 80.8L208.7 81.2L211.2 81.7L213.7 82.1L216.2 82.7L218.7 83.3L221.1 83.9L223.5 84.5L225.9 85.2L228.3 85.9L230.7 86.6L233.0 87.4L235.3 88.2L237.6 89.1L239.9 89.9L242.1 90.9L244.3 91.8L246.5 92.7L248.6 93.7L250.7 94.7L252.8 95.8L254.9 96.8L256.9 97.9L258.8 99.0L260.8 100.2L262.7 101.3L264.6 102.5L266.4 103.7L268.2 104.9L269.9 106.1L271.7 107.3L273.3 108.5L275.0 109.8L276.6 111.1L278.1 112.3L279.7 113.6L281.1 114.9L282.6 116.2L284.0 117.5L285.3 118.8L286.7 120.1L287.9 121.4L289.2 122.7L290.4 124.0L291.5 125.2L292.6 126.5L293.7 127.8L294.7 129.1L295.7 130.3L296.7 131.6L297.6 132.8L298.5 134.1L299.3 135.3L300.1 136.5L300.9 137.7L301.6 138.8L302.3 140.0L303.0 141.1L303.6 142.2L304.2 143.3L304.7 144.3L305.2 145.4L305.7 146.4L306.2 147.4L306.6 148.3L307.0 149.3L307.4 150.2L307.7 151.1L308.0 151.9L308.3 152.7L308.6 153.5L308.8 154.2L309.0 154.9L309.2 155.6L309.4 156.3L309.5 156.9L309.7 157.4L309.8 158.0L309.9 158.5L310.0 158.9L310.0 159.4L310.1 159.7L310.1 160.1L310.2 160.4L310.2 160.6L310.2 160.9L310.2 161.1L310.2 161.2L310.2 161.3L310.2 161.4L310.2 161.4L310.2 161.4L310.2 161.3L310.2 161.2L310.3 161.1L310.3 160.9L310.3 160.6L310.3 160.4L310.3 160.1L310.4 159.7L310.5 159.4L310.5 158.9L310.6 158.5L310.7 158.0L310.8 157.4L311.0 156.9L311.1 156.3L311.3 155.6L311.5 154.9L311.7 154.2L311.9 153.5L312.2 152.7L312.5 151.9L312.8 151.1L313.1 150.2L313.5 149.3L313.9 148.3L314.3 147.4L314.7 146.4L315.2 145.4L315.8 144.3L316.3 143.3L316.9 142.2L317.5 141.1L318.2 140.0L318.9 138.8L319.6 137.7L320.3 136.5L321.1 135.3L322.0 134.1L322.9 132.8L323.8 131.6L324.7 130.3L325.7 129.1L326.8 127.8L327.8 126.5L329.0 125.2L330.1 124.0L331.3 122.7L332.5 121.4L333.8 120.1L335.1 118.8L336.5 117.5L337.9 116.2L339.3 114.9L340.8 113.6L342.3 112.3L343.9 111.1L345.5 109.8L347.1 108.5L348.8 107.3L350.5 106.1L352.3 104.9L354.1 103.7L355.9 102.5L357.8 101.3L359.7 100.2L361.6 99.0L363.6 97.9L365.6 96.8L367.7 95.8L369.7 94.7L371.9 93.7L374.0 92.7L376.2 91.8L378.4 90.9L380.6 89.9L382.9 89.1L385.1 88.2L387.5 87.4L389.8 86.6L392.1 85.9L394.5 85.2L396.9 84.5L399.4 83.9L401.8 83.3L404.3 82.7L406.8 82.1L409.2 81.7L411.8 81.2L414.3 80.8L416.8 80.4L419.4 80.0L421.9 79.7L424.5 79.5L427.1 79.3L429.7 79.1L432.2 78.9L434.8 78.8L437.4 78.8L440.0 78.8L442.6 78.8L445.2 78.8L447.8 78.9L450.4 79.1L453.0 79.3L455.6 79.5L458.1 79.7L460.7 80.0L463.2 80.4L465.8 80.8L468.3 81.2L470.8 81.7L473.3 82.1L475.8 82.7L478.3 83.3L480.7 83.9L483.1 84.5L485.5 85.2L487.9 85.9L490.3 86.6L492.6 87.4L494.9 88.2L497.2 89.1L499.5 89.9L501.7 90.9L503.9 91.8L506.1 92.7L508.2 93.7L510.3 94.7L512.4 95.8L514.4 96.8L516.4 97.9L518.4 99.0L520.4 100.2L522.3 101.3L524.1 102.5L526.0 103.7L527.8 104.9L529.5 106.1L531.2 107.3L532.9 108.5L534.6 109.8L536.2 111.1L537.7 112.3L539.2 113.6L540.7 114.9L542.2 116.2L543.6 117.5L544.9 118.8L546.2 120.1L547.5 121.4L548.8 122.7L550.0 124.0L551.1 125.2L552.2 126.5L553.3 127.8L554.3 129.1L555.3 130.3L556.3 131.6L557.2 132.8L558.1 134.1L558.9 135.3L559.7 136.5L560.5 137.7L561.2 138.8L561.9 140.0L562.6 141.1L563.2 142.2L563.8 143.3L564.3 144.3L564.8 145.4L565.3 146.4L565.8 147.4L566.2 148.3L566.6 149.3L567.0 150.2L567.3 151.1L567.6 151.9L567.9 152.7L568.1 153.5L568.4 154.2L568.6 154.9L568.8 155.6L569.0 156.3L569.1 156.9L569.2 157.4L569.4 158.0L569.5 158.5L569.5 158.9L569.6 159.4L569.7 159.7L569.7 160.1L569.7 160.4L569.8 160.6L569.8 160.9L569.8 161.1L569.8 161.2L569.8 161.3L569.8 161.4L569.8 161.4\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M188.2 78.8 L172.6 85.3 L172.6 72.3 Z\" fill=\"var(--blue)\"/><path d=\"M447.8 78.8 L432.2 85.3 L432.2 72.3 Z\" fill=\"var(--blue)\"/><text x=\"180.4\" y=\"109.7\" fill=\"var(--blue)\" text-anchor=\"middle\" style=\"font-family:inherit\">第一拱 8</text><text x=\"440.0\" y=\"109.7\" fill=\"var(--blue)\" text-anchor=\"middle\" style=\"font-family:inherit\">第二拱 8</text></svg>",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "忘了絕對值：",
+            "$\\int_0^{4\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{4\\pi}=-4+4=0$"
+          ],
+          "say": "如果忘了絕對值，直接積 2 倍正弦 2 分之 t，代 4 派是負 4，代 0 也是負 4，相減得到 0。走了一大段路，長度是 0，顯然不對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "忘了絕對值："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{4\\pi}2\\sin\\frac t2\\,dt=\\Big[-4\\cos\\frac t2\\Big]_0^{4\\pi}=-4+4=0$",
+              "color": "red",
+              "on": "也是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二拱 $\\frac t2\\in[\\pi,2\\pi]$，$\\sin\\frac t2\\le0$，被積函數變負的"
+          ],
+          "say": "問題出在第二拱：2 分之 t 在派到 2 派，正弦是負的。沒有絕對值，第二拱算出負 8，把第一拱的 8 抵消了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二拱 $\\frac t2\\in[\\pi,2\\pi]$，$\\sin\\frac t2\\le0$，被積函數變負的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=2\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=16$"
+          ],
+          "say": "正確的做法：分段處理絕對值，或是用對稱性，一拱的兩倍，16。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle L=2\\int_0^{2\\pi}2\\sin\\frac t2\\,dt=16}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "是用"
+            }
+          ]
+        }
       ],
-      "key": "用半角公式把 $1-\\cos t$ 化成平方",
-      "check": 1
+      "check": 0
     },
     {
       "title": "量的是走過的距離",
       "beats": [
-        { "show": ["擺線一拱：$L = 8$"],
-          "note": "$\\int_0^{2\\pi} 2\\sin\\frac{t}{2}\\,dt$。",
-          "say": "接上一節，二 sine 二分之 t 從零積到二 pi，擺線一拱的長度剛好是八。",
+        {
+          "show": [
+            "$x=\\cos2t,\\ y=\\sin2t$，$0\\le t\\le2\\pi$"
+          ],
+          "say": "最後一個陷阱。x 等於餘弦 2t，y 等於正弦 2t，t 從 0 到 2 派。",
           "board": [
-            {"do":"write","line":"$L=\\int_0^{2\\pi}2\\sin\\frac{t}{2}\\,dt={{r:8}}$"},
-            {"do":"box","term":"r","color":"green","on":"剛好是八"}
-          ] },
-        { "show": ["$\\int 2\\sin\\frac{t}{2}\\,dt = -4\\cos\\frac{t}{2}$"],
-          "note": "檢查：$-4\\cos\\frac{t}{2}$ 的導數是 $2\\sin\\frac{t}{2}$。",
-          "say": "反導函數是負四 cosine 二分之 t。微分檢查：負四乘負 sine 再乘二分之一，剛好是二 sine。",
-          "board": [
-            {"do":"write","line":"$\\int 2\\sin\\frac{t}{2}\\,dt={{an:-4\\cos\\frac{t}{2}}}$"},
-            {"do":"focus","term":"an","color":"gold","label":"反導函數","on":"微分檢查"}
-          ] },
-        { "show": ["$-4\\cos\\pi-(-4\\cos 0)=4+4=8$"],
-          "say": "上限二 pi，二分之 t 是 pi，cosine pi 是負一；下限零，cosine 零是一。四減負四，得八。",
-          "board": [
-            {"do":"write","line":"上限：$-4\\cos\\pi=4$"},
-            {"do":"write","line":"下限：$-4\\cos 0=-4$，$4-(-4)=8$","on":"下限零"}
-          ] },
-        { "show": ["$x = \\cos 2t$，$y = \\sin 2t$：速率 2"],
-          "note": "$0 \\le t \\le 2\\pi$，積分得 $4\\pi$。",
-          "say": "再看 cosine 二 t、sine 二 t，速率是二，從零積到二 pi，得到四 pi。",
-          "board": [
-            {"do":"write","line":"$x=\\cos 2t,\\ y=\\sin 2t$"},
-            {"do":"write","line":"$L=\\int_0^{2\\pi}2\\,dt={{f:4\\pi}}$","on":"從零積到"}
-          ] },
-        { "show": ["單位圓周長是 $2\\pi$"],
-          "say": "可是單位圓的周長是二 pi。多出來的那一份是哪裡來的？",
-          "board": [
-            {"do":"write","line":"單位圓周長 $={{c:2\\pi}}$"},
-            {"do":"arrow","from":"f","to":"c","color":"blue","label":"哪來的？","on":"多出來"}
-          ] }
+            {
+              "do": "write",
+              "line": "$x=\\cos2t,\\ y=\\sin2t$，$0\\le t\\le2\\pi$"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "predict": {
+        "ask": "用弧長公式算這一段，得到什麼？",
+        "options": [
+          {
+            "label": "$4\\pi$",
+            "correct": true
+          },
+          {
+            "label": "$2\\pi$",
+            "why": "那是單位圓的周長；但這個點繞了兩圈"
+          },
+          {
+            "label": "$\\pi$",
+            "why": "速率是 $2$，不是 $\\frac12$"
+          },
+          {
+            "label": "$8\\pi$",
+            "why": "速率是 $\\sqrt{4\\sin^2 2t+4\\cos^2 2t}=2$，不是 $4$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "量的是走過的距離",
+      "beats": [
+        {
+          "show": [
+            "速率 $\\sqrt{4\\sin^22t+4\\cos^22t}=2$",
+            "$L=\\int_0^{2\\pi}2\\,dt=4\\pi$"
+          ],
+          "say": "速率是 2，時間 2 派，公式算出 4 派。可是這個圓的周長只有 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "速率 $\\sqrt{4\\sin^22t+4\\cos^22t}=2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\int_0^{2\\pi}2\\,dt=4\\pi$",
+              "on": "可是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "點繞了兩圈：公式算的是走過的路程"
+          ],
+          "say": "原因是：t 從 0 到 2 派，2t 從 0 到 4 派，點繞了兩圈。公式忠實地算出走過的總路程，不是圖形的長度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "點繞了兩圈：公式算的是走過的路程",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要曲線本身的長度：$t$ 只取 $[0,\\pi]$（剛好走一圈）"
+          ],
+          "say": "想要曲線本身的長度，就把 t 縮成只走一次的範圍：0 到派，得到 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要曲線本身的長度：$t$ 只取 $[0,\\pi]$（剛好走一圈）"
+            },
+            {
+              "do": "write",
+              "line": "　上一課的 $x=\\sin t,\\ y=\\sin^2t$ 也一樣：點在拋物線上來回走，路程比那一段拋物線長",
+              "color": "violet",
+              "on": "走一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用公式前先問：$t$ 的範圍內，曲線是不是只走一次？"
+          ],
+          "say": "所以用弧長公式之前，先問自己：在這個 t 的範圍裡，曲線是不是剛好走一次？",
+          "board": [
+            {
+              "do": "write",
+              "line": "用公式前先問：$t$ 的範圍內，曲線是不是只走一次？",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "$L=\\int_a^b\\sqrt{x'(t)^2+y'(t)^2}\\,dt$",
+            "• 被積函數是速率；弧長 = 走過的路程"
+          ],
+          "say": "整理一下：參數式弧長是速率對時間的積分。根號開出來要記得絕對值。公式量的是走過的路程，曲線重複走過時，要把 t 的範圍縮成只走一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle L=\\int_a^b\\sqrt{x'(t)^2+y'(t)^2}\\,dt}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "對時"
+            },
+            {
+              "do": "write",
+              "line": "• 被積函數是速率；弧長 = 走過的路程",
+              "on": "記得"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sqrt{a^2}=|a|$：看範圍決定正負，必要時分段",
+              "on": "的路"
+            },
+            {
+              "do": "write",
+              "line": "• 曲線被重複走過：把 $t$ 縮成只走一次",
+              "on": "的範"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：參數式面積"
+          ],
+          "say": "下一課，算參數曲線圍出來的面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：參數式面積"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["parametric", "arc-length"],
-    "fine": ["parametric-speed", "parametric-arc-length-integral", "arc-length-sqrt-simplify", "parametric-arc-length-overlap"]
+    "coarse": [
+      "parametric",
+      "arc-length"
+    ],
+    "fine": [
+      "parametric-speed",
+      "parametric-arc-length-integral",
+      "arc-length-sqrt-simplify",
+      "parametric-arc-length-overlap"
+    ]
   },
   "practice": [
-    { "id": "gap-der-param-005", "core": true, "trains": "parametric-speed" },
-    { "id": "cx-arc-003", "core": true, "trains": "parametric-arc-length-integral" },
-    { "id": "lec-10-q1c", "core": true, "trains": "arc-length-sqrt-simplify" },
-    { "id": "cg-7a-012", "core": true, "trains": "parametric-arc-length-integral" },
-    { "id": "cg-7a-015", "core": true, "trains": "parametric-arc-length-overlap" },
-    { "id": "cg-7a-014", "trains": "parametric-arc-length-integral" },
-    { "id": "cg-7a-013", "trains": "parametric-arc-length-integral" }
+    {
+      "id": "gap-der-param-005",
+      "core": true,
+      "trains": "parametric-speed"
+    },
+    {
+      "id": "cx-arc-003",
+      "core": true,
+      "trains": "parametric-arc-length-integral"
+    },
+    {
+      "id": "lec-10-q1c",
+      "core": true,
+      "trains": "arc-length-sqrt-simplify"
+    },
+    {
+      "id": "cg-7a-012",
+      "core": true,
+      "trains": "parametric-arc-length-integral"
+    },
+    {
+      "id": "cg-7a-015",
+      "core": true,
+      "trains": "parametric-arc-length-overlap"
+    },
+    {
+      "id": "cg-7a-014",
+      "trains": "parametric-arc-length-integral"
+    },
+    {
+      "id": "cg-7a-013",
+      "trains": "parametric-arc-length-integral"
+    }
   ],
   "gaps": []
 }

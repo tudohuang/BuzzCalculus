@@ -1,0 +1,419 @@
+{
+  "id": "second-order-linear",
+  "title": "二階線性",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["first-order-linear", "initial-value-problem", "higher-derivatives"],
+  "next": ["characteristic-equation"],
+  "related": ["undetermined-coefficients", "harmonic-oscillator"],
+  "objectives": [
+    "說出齊次二階線性方程的疊加原理，並知道它對非齊次、非線性方程不成立。",
+    "用 Wronskian 判斷兩個解是否線性獨立，說出通解為什麼需要兩個獨立的解。",
+    "寫出通解 $y=c_1y_1+c_2y_2$（非齊次再加 $y_p$），用 $y(x_0)$、$y'(x_0)$ 定出 $c_1$、$c_2$。"
+  ],
+  "visual": "y″ + y = 0 的解 c₁ cos x + c₂ sin x：兩個滑桿調 c₁、c₂，曲線即時變化；另外在 x = 0 畫一個點和一小段切線，拖動點的高度與切線斜率，就自動解出唯一的 c₁、c₂。切換成「c₁ cos x + c₂ · 2cos x」時，切線斜率固定在 0 拖不動：兩個成比例的解配不出任意的初始速度。",
+  "concept": [
+    {
+      "heading": "① 形式與物理來源",
+      "body": [
+        "二階線性方程：$y''+p(x)y'+q(x)y=g(x)$。$g=0$ 叫齊次。牛頓定律 $F=ma$ 中加速度是位置的二階導數，所以彈簧、電路這類系統都是二階方程（〈簡諧振盪〉）。",
+        "物理上要知道起始位置和起始速度，運動才確定。數學上對應兩個初始條件 $y(x_0)$、$y'(x_0)$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 疊加：齊次方程的解可以線性組合",
+      "body": [
+        "記 $L[y]=y''+py'+qy$。微分是線性的，所以 $L[c_1y_1+c_2y_2]=c_1L[y_1]+c_2L[y_2]$。若 $y_1$、$y_2$ 都是齊次方程 $L[y]=0$ 的解，$c_1y_1+c_2y_2$ 也是。",
+        "對非齊次不成立：$L[y_1]=g$、$L[y_2]=g$，相加得 $2g$。對非線性方程也不成立。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 要兩個「真的不同」的解",
+      "body": [
+        "$y''+y=0$ 有解 $\\cos x$ 和 $2\\cos x$，但 $c_1\\cos x+c_2\\cdot2\\cos x$ 其實只是 $(c_1+2c_2)\\cos x$，只有一個自由度，在 $x=0$ 的導數永遠是 $0$，配不出 $y'(0)=1$。",
+        "兩個解不成比例，叫線性獨立。檢查的工具是 Wronskian $W=y_1y_2'-y_1'y_2$。結論：在 $p$、$q$ 連續的區間上，若 $y_1$、$y_2$ 是齊次方程的解且 $W$ 不為 $0$，則 $c_1y_1+c_2y_2$ 就是全部的解。"
+      ],
+      "tex": ["W(y_1,y_2)=\\det\\begin{pmatrix}y_1 & y_2\\\\ y_1' & y_2'\\end{pmatrix}=y_1y_2'-y_1'y_2"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 非齊次：一樣是齊次通解加特解",
+      "body": [
+        "兩個非齊次的解相減，$L[y-y_p]=g-g=0$，差是齊次解。所以 $y=y_p+c_1y_1+c_2y_2$。這和〈一階線性〉的結構一模一樣。怎麼找 $y_p$ 在〈待定係數〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼 $W\\ne 0$ 就夠：兩個條件解兩個常數",
+      "body": [
+        "要配 $y(x_0)=a$、$y'(x_0)=b$，得解 $c_1y_1(x_0)+c_2y_2(x_0)=a$、$c_1y_1'(x_0)+c_2y_2'(x_0)=b$。這個 $2\\times2$ 線性方程組的係數行列式正是 $W(x_0)$。$W(x_0)\\ne 0$ 時對任何 $a$、$b$ 都恰有一組 $c_1$、$c_2$。",
+        "存在唯一定理：$p$、$q$、$g$ 在含 $x_0$ 的區間 $I$ 上連續，則對任何 $a$、$b$，初值問題在整個 $I$ 上恰有一個解。所以任何解都被它在 $x_0$ 的 $(y,y')$ 決定，也就一定等於某個 $c_1y_1+c_2y_2$。另外，兩個解的 $W$ 在 $I$ 上要嘛處處為 $0$、要嘛處處不為 $0$，只要檢查一點。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩個解、Wronskian、初始條件",
+      "prompt": "已知 $e^x$ 與 $e^{2x}$ 是 $y''-3y'+2y=0$ 的解。求 $y(0)=0$、$y'(0)=1$ 的解。",
+      "problemId": "ode-h2-001",
+      "steps": [
+        "$W=e^x\\cdot2e^{2x}-e^x\\cdot e^{2x}=e^{3x}$，永遠不為 $0$，所以 $y=c_1e^x+c_2e^{2x}$ 是通解。",
+        "$y(0)=0$：$c_1+c_2=0$。",
+        "$y'=c_1e^x+2c_2e^{2x}$，$y'(0)=1$：$c_1+2c_2=1$。",
+        "相減得 $c_2=1$，$c_1=-1$。",
+        "$y=e^{2x}-e^x$。"
+      ],
+      "answer": "$y=e^{2x}-e^x$",
+      "claim": "e^x*D(e^(2x)) - D(e^x)*e^(2x) == e^(3x) ;; D2(e^(2x)-e^x) == 3*D(e^(2x)-e^x) - 2*(e^(2x)-e^x) ;; SUB(e^(2x)-e^x,0)+1 == 1 ;; D(e^(2x)-e^x, 0) == 1"
+    },
+    {
+      "title": "$\\cos$ 與 $\\sin$",
+      "prompt": "$y''+y=0$，$y(0)=1$、$y'(0)=0$。",
+      "problemId": "ode-h2-002",
+      "steps": [
+        "$\\cos x$、$\\sin x$ 都是解：$(\\cos x)''=-\\cos x$、$(\\sin x)''=-\\sin x$。",
+        "$W=\\cos x\\cdot\\cos x-(-\\sin x)\\cdot\\sin x=\\cos^2x+\\sin^2x=1\\ne 0$，通解 $y=c_1\\cos x+c_2\\sin x$。",
+        "$y(0)=c_1=1$；$y'(0)=c_2=0$。",
+        "$y=\\cos x$。"
+      ],
+      "answer": "$y=\\cos x$",
+      "claim": "cos(x)*D(sin(x)) - D(cos(x))*sin(x) == 1 ;; D2(cos(x)) == -cos(x) ;; SUB(cos(x),0) == 1 ;; D(cos(x),0)+1 == 1"
+    },
+    {
+      "title": "非齊次：特解加齊次通解",
+      "prompt": "$y''+y=x$，$y(0)=0$、$y'(0)=0$。",
+      "problemId": "ode-p2-001",
+      "steps": [
+        "猜特解 $y_p=x$：$y_p''+y_p=0+x=x$。✔",
+        "通解 $y=x+c_1\\cos x+c_2\\sin x$。",
+        "$y(0)=c_1=0$。",
+        "$y'=1-c_1\\sin x+c_2\\cos x$，$y'(0)=1+c_2=0$，$c_2=-1$。",
+        "$y=x-\\sin x$。注意常數要在加上 $y_p$ 之後才定，不能先定齊次部分。"
+      ],
+      "answer": "$y=x-\\sin x$",
+      "claim": "D2(x-sin(x)) + (x-sin(x)) == x ;; SUB(x-sin(x),0)+1 == 1 ;; D(x-sin(x),0)+1 == 1"
+    }
+  ],
+  "pitfalls": [
+    "拿兩個成比例的解（$\\cos x$ 與 $2\\cos x$）組通解。",
+    "對非齊次方程用疊加：兩個非齊次解相加不再是解。",
+    "先用初始條件定齊次部分的常數，再加上 $y_p$：常數要在 $y=y_p+c_1y_1+c_2y_2$ 整個寫好之後才定。",
+    "二階方程只給一個條件就想定出唯一解。"
+  ],
+  "checks": [
+    {
+      "ask": "$y_1$、$y_2$ 都是 $y''+4y=0$ 的解，下列哪一個也一定是解？",
+      "options": [
+        { "label": "$3y_1-5y_2$", "correct": true },
+        { "label": "$y_1y_2$", "why": "疊加只保證線性組合；乘積的二階導數會多出 $2y_1'y_2'$ 這種交叉項。" },
+        { "label": "$y_1+1$", "why": "常數 $1$ 不是解：$1''+4\\cdot1=4\\ne 0$，加上去就壞了。" }
+      ]
+    },
+    {
+      "ask": "為什麼 $c_1\\cos x+c_2\\cdot2\\cos x$ 不是 $y''+y=0$ 的通解？",
+      "options": [
+        { "label": "兩者成比例（$W=0$），在 $x=0$ 的導數永遠是 $0$，配不出 $y'(0)=1$", "correct": true },
+        { "label": "因為 $2\\cos x$ 不是解", "why": "它是解：$(2\\cos x)''=-2\\cos x$。問題是它和 $\\cos x$ 成比例。" },
+        { "label": "因為通解只需要一個解", "why": "二階方程有兩個初始條件，要兩個獨立的解才配得起來。" }
+      ]
+    },
+    {
+      "ask": "$W(e^x,xe^x)$ 是？",
+      "options": [
+        { "label": "$e^{2x}$", "correct": true },
+        { "label": "$0$", "why": "兩個都有 $e^x$，但 $\\frac{xe^x}{e^x}=x$ 不是常數，它們不成比例：$e^x(e^x+xe^x)-e^x\\cdot xe^x=e^{2x}$。" },
+        { "label": "$xe^{2x}$", "why": "$xe^{2x}$ 那兩項正好相消：$e^x\\cdot xe^x-e^x\\cdot xe^x=0$，只剩 $e^{2x}$。" }
+      ]
+    },
+    {
+      "ask": "二階線性初值問題要給哪兩個條件才保證唯一解？",
+      "options": [
+        { "label": "同一點的 $y(x_0)$ 與 $y'(x_0)$", "correct": true },
+        { "label": "兩個不同點的 $y(x_0)$ 與 $y(x_1)$", "why": "那是邊界值問題，可能無解或無限多解：$y''+y=0$、$y(0)=0$、$y(\\pi)=0$ 有無限多個解 $c\\sin x$。" },
+        { "label": "只要 $y(x_0)$", "why": "兩個常數 $c_1$、$c_2$ 要兩個條件。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "形式與物理來源",
+      "beats": [
+        { "show": ["$y''+p(x)y'+q(x)y=g(x)$"],
+          "note": "$g=0$ 叫齊次。",
+          "say": "二階線性方程長這樣：y 雙撇、y prime、y 各乘一個只跟 x 有關的係數，等於 g。",
+          "board": [
+            {"do":"write","line":"$y''+{{p:p(x)}}y'+{{q:q(x)}}y=g(x)$"},
+            {"do":"focus","term":"p","on":"各乘"},
+            {"do":"focus","term":"q","on":"係數"}
+          ] },
+        { "show": ["$F=ma$：加速度是二階導數"],
+          "note": "彈簧、電路都是二階方程。",
+          "say": "牛頓定律裡，加速度是位置的二階導數，所以彈簧、電路這類系統都寫成二階方程。",
+          "board": [
+            {"do":"write","line":"$F=ma$，加速度 $a={{d:y''}}$"},
+            {"do":"focus","term":"d","on":"二階導數"}
+          ] },
+        { "show": ["速度 $v=y'$，加速度 $a=v'=y''$"],
+          "note": "位置的變化率是速度，速度的變化率是加速度。",
+          "say": "位置是 y，速度是位置的變化率，也就是 y prime。加速度是速度的變化率，所以是 y 雙撇。",
+          "board": [
+            {"do":"write","line":"速度 $v={{n1:y'}}$"},
+            {"do":"write","line":"加速度 $a=v'={{n2:y''}}$","on":"加速度是"},
+            {"do":"underline","term":"n2","on":"所以是","label":"位置二階導"}
+          ] },
+        { "show": ["兩個條件：$y(x_0)$、$y'(x_0)$"],
+          "note": "起始位置和起始速度。",
+          "say": "物理上要知道起始位置和起始速度，運動才確定。數學上就是兩個初始條件。",
+          "board": [
+            {"do":"write","line":"起始位置 ＋ 起始速度"},
+            {"do":"write","line":"⇒ 兩個初始條件","on":"數學上"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "疊加",
+      "beats": [
+        { "show": ["$L[y]=y''+py'+qy$"],
+          "say": "把左邊整包記成 L 作用在 y 上。",
+          "board": [
+            {"do":"write","line":"$L[y]={{lhs:y''+py'+qy}}$"},
+            {"do":"underline","term":"lhs","on":"整包"}
+          ] },
+        { "show": ["$L[c_1y_1+c_2y_2]=c_1L[y_1]+c_2L[y_2]$"],
+          "note": "微分是線性的。",
+          "say": "微分是線性的，所以 L 作用在線性組合上，可以拆開，常數提出來。",
+          "board": [
+            {"do":"write","line":"$L[c_1y_1+c_2y_2]={{rs:c_1L[y_1]+c_2L[y_2]}}$","on":"所以 L"},
+            {"do":"underline","term":"rs","on":"拆開"}
+          ] },
+        { "show": ["$y_1$、$y_2$ 是齊次解 ⇒ $c_1y_1+c_2y_2$ 也是"],
+          "say": "兩個齊次解代進去都是零，任何線性組合代進去也還是零，也是解。",
+          "board": [
+            {"do":"write","line":"$L[y_1]=L[y_2]=0$","on":"兩個齊次解"},
+            {"do":"write","line":"⇒ $L[c_1y_1+c_2y_2]={{z:0}}$","on":"任何線性組合"},
+            {"do":"box","term":"z","on":"也是解","color":"green"}
+          ] },
+        { "show": ["非齊次：$g+g=2g$"],
+          "note": "對非齊次、非線性都不成立。",
+          "say": "非齊次就不行了：兩個解相加，右邊變成兩倍的 g，不再是原來的方程。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"非齊次：$L[y_1]=L[y_2]=g$","on":"非齊次"},
+            {"do":"write","line":"$L[y_1+y_2]={{g2:2g}}\\ne g$","on":"兩個解相加"},
+            {"do":"underline","term":"g2","on":"兩倍的 g","color":"red","label":"不再是解"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "真的不同的兩個解",
+      "beats": [
+        { "show": ["$\\cos x$ 和 $2\\cos x$ 都是 $y''+y=0$ 的解"],
+          "say": "y 雙撇加 y 等於零，cosine x 是解，兩倍的 cosine x 也是解。",
+          "board": [
+            {"do":"write","line":"$y''+y=0$"},
+            {"do":"write","line":"${{a:\\cos x}}$、${{b:2\\cos x}}$ 都是解","on":"cosine x 是解"},
+            {"do":"focus","term":"b","on":"兩倍的"}
+          ] },
+        { "show": ["$c_1\\cos x+c_2\\cdot2\\cos x=(c_1+2c_2)\\cos x$"],
+          "note": "其實只有一個自由度。",
+          "say": "可是把它們組合起來，整理完只是一個常數乘 cosine x，只有一個自由度。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$c_1\\cos x+c_2\\cdot2\\cos x$","on":"組合"},
+            {"do":"transform","line":"$=({{k:c_1+2c_2}})\\cos x$","on":"整理完"},
+            {"do":"underline","term":"k","label":"一個常數","on":"一個常數"}
+          ] },
+        { "show": ["在 $x=0$ 的導數永遠是 0"],
+          "note": "配不出 $y'(0)=1$。",
+          "say": "cosine x 在零的導數永遠是零，不管常數怎麼選，都配不出導數是一的條件。",
+          "board": [
+            {"do":"write","line":"$(\\cos x)'=-\\sin x$"},
+            {"do":"write","line":"$y'(0)={{z:0}}\\ne 1$","on":"永遠"},
+            {"do":"box","term":"z","color":"red","on":"不管常數"}
+          ] },
+        { "show": ["兩條都水平出發，只差兩倍高"],
+          "say": "畫在一起看：兩條曲線在 x 等於零都是水平出發，只差兩倍高。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,4,-3,3],"curves":[{"expr":"cos(x)","domain":[-1,4],"color":"blue"},{"expr":"2*cos(x)","domain":[-1,4],"color":"red"}]}}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "Wronskian",
+      "beats": [
+        { "show": ["$W=y_1y_2'-y_1'y_2$"],
+          "note": "兩個解不成比例，叫線性獨立。",
+          "say": "檢查兩個解是不是真的不同，用 Wronskian：y 一乘 y 二 prime，減 y 一 prime 乘 y 二。",
+          "board": [
+            {"do":"write","line":"$W={{a:y_1y_2'}}-{{b:y_1'y_2}}$"},
+            {"do":"underline","term":"a","on":"y 一乘"},
+            {"do":"underline","term":"b","on":"減"}
+          ] },
+        { "show": ["$y_2=ky_1$ ⇒ $W=0$"],
+          "note": "成比例的兩個解，$W$ 一定是 $0$。",
+          "say": "如果 y 二是 k 倍的 y 一，代進去，y 一乘 k y 一 prime，減 y 一 prime 乘 k y 一，剛好相消是零。",
+          "board": [
+            {"do":"write","line":"$y_2=ky_1$"},
+            {"do":"write","line":"$W=ky_1y_1'-ky_1'y_1={{n3:0}}$","on":"代進去"},
+            {"do":"box","term":"n3","color":"green","on":"剛好相消"}
+          ] },
+        { "show": ["$W\\ne 0$ ⇒ $c_1y_1+c_2y_2$ 是全部的解"],
+          "note": "在 $p$、$q$ 連續的區間上。",
+          "say": "在係數連續的區間上，兩個齊次解的 W 不是零，它們的組合就是全部的解。",
+          "board": [
+            {"do":"write","line":"${{w:W\\ne0}}$ ⇒ $c_1y_1+c_2y_2$ 是全部的解"},
+            {"do":"focus","term":"w","color":"green","on":"不是零"}
+          ] },
+        { "show": ["配條件：係數行列式就是 $W$"],
+          "note": "區間：$p$、$q$ 都沒有斷掉的一段 $x$。",
+          "say": "配 x 零的兩個條件，是兩個式子解 c 一、c 二，係數行列式就是 W。W 不是零，就解得出來。",
+          "board": [
+            {"do":"write","line":"解 ${{n4:c_1}}$、${{n5:c_2}}$ 的係數行列式 ＝ $W(x_0)$","on":"解 c 一"},
+            {"do":"focus","term":"n4","on":"係數行列式"}
+          ] },
+        { "show": ["$W(e^x,e^{2x})=e^x\\cdot2e^{2x}-e^x\\cdot e^{2x}$"],
+          "say": "例如 e 的 x 次方和 e 的二 x 次方：兩倍的 e 的三 x，減一倍的 e 的三 x。",
+          "board": [
+            {"do":"write","line":"$W(e^x,e^{2x})={{p:e^x\\cdot2e^{2x}}}-{{q:e^x\\cdot e^{2x}}}$"},
+            {"do":"focus","term":"p","on":"兩倍的"},
+            {"do":"focus","term":"q","on":"減一倍"}
+          ] },
+        { "show": ["$=e^{3x}$，永遠不為 0"],
+          "say": "剩 e 的三 x 次方，永遠不是零，所以這兩個解夠組出通解。",
+          "board": [
+            {"do":"transform","line":"$={{r:e^{3x}}}$"},
+            {"do":"box","term":"r","color":"green","on":"永遠"}
+          ] }
+      ],
+      "key": "$W\\ne 0$ 才保證兩解真的不同",
+      "check": 2
+    },
+    {
+      "title": "配初始條件",
+      "beats": [
+        { "show": ["$y''-3y'+2y=0$","$y=c_1e^x+c_2e^{2x}$"],
+          "note": "$y(0)=0$、$y'(0)=1$。",
+          "say": "通解有兩個常數，剛好用兩個條件來定。",
+          "board": [
+            {"do":"write","line":"$y''-3y'+2y=0$"},
+            {"do":"write","line":"$y={{ca:c_1}}e^x+{{cb:c_2}}e^{2x}$","on":"通解","tint":{"ca":"blue","cb":"violet"}},
+            {"do":"focus","term":"ca","on":"兩個常數"},
+            {"do":"focus","term":"cb","on":"兩個條件"}
+          ] },
+        { "show": ["$y(0)=0$：$c_1+c_2=0$"],
+          "say": "x 代零，兩個指數都是一，得 c 一加 c 二等於零。",
+          "board": [
+            {"do":"write","line":"$y(0)=0$：${{ca:c_1}}+{{cb:c_2}}=0$","on":"x 代零"}
+          ] },
+        { "show": ["$y'(0)=1$：$c_1+2c_2=1$"],
+          "say": "先微分，e 的二 x 帶出一個二。再代零，c 一加二 c 二等於一。",
+          "board": [
+            {"do":"write","line":"$y'(0)=1$：${{ca:c_1}}+{{two:2}}{{cb:c_2}}=1$","on":"先微分"},
+            {"do":"focus","term":"two","on":"帶出一個二"}
+          ] }
+      ],
+      "predict": {
+        "ask": "兩式相減，$c_1$、$c_2$ 是？",
+        "options": [
+          {
+            "label": "$c_1=-1$，$c_2=1$",
+            "correct": true
+          },
+          {
+            "label": "$c_1=1$，$c_2=-1$",
+            "why": "代回第二式：$1+2(-1)=-1\\ne 1$。相減得的是 $c_2=1$。"
+          },
+          {
+            "label": "$c_1=0$，$c_2=1$",
+            "why": "第一式要 $c_1+c_2=0$，$c_2=1$ 時 $c_1=-1$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "非齊次",
+      "beats": [
+        { "show": ["一階：$y'+p(x)y=g(x)$"],
+          "note": "一階也是特解加齊次通解。",
+          "say": "先說一階線性：y prime 加 p y 等於 g，它的解也是一個特解，加上齊次方程的通解。",
+          "board": [
+            {"do":"write","line":"一階：$y'+{{n6:p(x)}}y=g(x)$"},
+            {"do":"underline","term":"n6","on":"加 p y","label":"只含 y'"}
+          ] },
+        { "show": ["$y=y_p+c_1y_1+c_2y_2$"],
+          "note": "$L[y-y_p]=g-g=0$。",
+          "say": "兩個非齊次解相減，差是齊次解。所以跟一階線性一樣，特解加上齊次通解。",
+          "board": [
+            {"do":"write","line":"$L[y-y_p]=g-g=0$"},
+            {"do":"write","line":"$y={{yp:y_p}}+{{yh:c_1y_1+c_2y_2}}$","on":"所以跟","tint":{"yp":"blue","yh":"violet"}},
+            {"do":"underline","term":"yp","on":"特解加上","label":"特解"}
+          ] },
+        { "show": ["任何解 $y$：$y-y_p$ 是齊次解"],
+          "say": "任何非齊次的解 y，減掉 y p，差是齊次解。齊次解都是 c 一 y 一加 c 二 y 二，所以 y 一定長這樣。",
+          "board": [
+            {"do":"write","line":"$y-y_p={{n7:c_1y_1+c_2y_2}}$"},
+            {"do":"underline","term":"n7","on":"齊次解都是","label":"齊次通解"}
+          ] },
+        { "show": ["$y''+y=x$：$y_p=x$"],
+          "note": "$y_p''+y_p=0+x=x$。",
+          "say": "這一題猜特解就是 x：二階導數是零，加上 x，剛好等於右邊。",
+          "board": [
+            {"do":"write","line":"$y''+y=x$：${{px:y_p=x}}$","on":"猜特解","tint":{"px":"blue"}},
+            {"do":"underline","term":"px","on":"二階導數是零","label":"0+x=x"}
+          ] },
+        { "show": ["$y=x+c_1\\cos x+c_2\\sin x$"],
+          "note": "整個寫好之後才代條件。",
+          "say": "先把特解加上去，整個寫好，才用初始條件。y 在零是零，所以 c 一是零。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$y={{x:x}}+c_1\\cos x+c_2\\sin x$","on":"先把特解","tint":{"x":"blue"}},
+            {"do":"write","line":"$y(0)=0$：${{c1:c_1=0}}$","on":"y 在零"},
+            {"do":"box","term":"c1","on":"所以 c","color":"green"}
+          ] }
+      ],
+      "key": "通解＝特解＋齊次通解，再配條件",
+      "predict": {
+        "ask": "$y'(0)=1+c_2=0$，所以解是？",
+        "options": [
+          {
+            "label": "$y=x-\\sin x$",
+            "correct": true
+          },
+          {
+            "label": "$y=x$",
+            "why": "$y=x$ 的 $y'(0)=1$，不滿足 $y'(0)=0$；特解的導數也要算進去。"
+          },
+          {
+            "label": "$y=x+\\sin x$",
+            "why": "$1+c_2=0$ 給 $c_2=-1$，不是 $+1$。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "second-order", "wronskian", "linear-independence"],
+    "fine": ["second-order-superposition", "second-order-wronskian", "second-order-general-solution", "second-order-ivp-constants"]
+  },
+  "practice": [
+    { "id": "der-061", "core": true, "trains": "second-order-wronskian" },
+    { "id": "der-059", "core": true, "trains": "second-order-wronskian" },
+    { "id": "der-064", "core": true, "trains": "second-order-wronskian" },
+    { "id": "ode-h2-002", "core": true, "trains": "second-order-ivp-constants" },
+    { "id": "gap-der-ode-004", "core": true, "trains": "second-order-ivp-constants" },
+    { "id": "cg-10b-001", "core": true, "trains": "second-order-superposition" },
+    { "id": "cg-10b-003", "core": true, "trains": "second-order-general-solution" },
+    { "id": "der-062", "trains": "second-order-wronskian" },
+    { "id": "der-065", "trains": "second-order-wronskian" },
+    { "id": "cg-10b-002", "trains": "second-order-superposition" },
+    { "id": "cg-10b-004", "trains": "second-order-general-solution" },
+    { "id": "ode-p2-001", "challenge": true, "trains": "second-order-general-solution", "note": "挑戰：猜一個特解，再加上齊次通解定常數。" }
+  ],
+  "gaps": []
+}

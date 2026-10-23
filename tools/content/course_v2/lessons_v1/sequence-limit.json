@@ -1,0 +1,491 @@
+{
+  "id": "sequence-limit",
+  "title": "數列與數列極限",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "limit-at-infinity",
+    "squeeze-theorem"
+  ],
+  "next": [
+    "monotone-bounded"
+  ],
+  "related": [
+    "lhopital",
+    "epsilon-n-definition",
+    "limit-e-type"
+  ],
+  "objectives": [
+    "把數列看成只在正整數上取值的函數，說出 $\\lim a_n=L$ 的意思。",
+    "用代數化簡、借函數極限（含 L'Hôpital）、夾擠三種方法求數列極限。",
+    "記住 $r^n$ 的收斂範圍與 $\\ln n\\ll n^p\\ll b^n\\ll n!\\ll n^n$ 的增長順序。"
+  ],
+  "visual": "平面上畫出 aₙ = (3n² + n)/(n² + 2) 的點 (n, aₙ)，n = 1 到 60，一顆一顆冒出來。一條水平帶 3 ± ε 可以拖動寬窄；每換一個 ε，畫面標出「從第幾項開始全部落進帶子裡」的 N。帶子越窄，N 越大，但永遠找得到。",
+  "concept": [
+    {
+      "heading": "① 數列是一串點",
+      "body": [
+        "數列 $a_1,a_2,a_3,\\dots$ 是只在正整數上有定義的函數：$a_n=f(n)$。畫出來不是一條曲線，而是一顆一顆的點。",
+        "$\\lim_{n\\to\\infty}a_n=L$ 的意思是：$n$ 夠大以後，$a_n$ 能要多靠近 $L$ 就多靠近 $L$。這時說數列收斂到 $L$；不收斂就叫發散（可能往 $\\infty$ 跑，也可能一直跳）。精確的寫法在〈ε-N 定義〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 借用函數的極限",
+      "body": [
+        "如果 $\\lim_{x\\to\\infty}f(x)=L$，而 $a_n=f(n)$，那麼 $a_n\\to L$：函數在所有大 $x$ 都靠近 $L$，整數點當然也是。這讓我們可以對 $f(x)$ 用〈L'Hôpital 法則〉，再把結論搬回數列。",
+        "反過來不成立：$a_n=\\sin(\\pi n)$ 每一項都是 0，極限是 0；但 $\\sin(\\pi x)$ 在 $x\\to\\infty$ 時一直振盪、沒有極限。數列只看整數點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三個要記的結果",
+      "body": [
+        "$r^n$：$|r|<1$ 時 $\\to 0$；$r=1$ 時恆為 1；$r>1$ 時 $\\to\\infty$；$r\\le -1$ 時正負跳動，發散。所以 $r^n$ 收斂的充要條件是 $-1<r\\le 1$。",
+        "夾擠：$b_n\\le a_n\\le c_n$ 而兩邊收斂到同一個 $L$，$a_n$ 也 $\\to L$（〈夾擠定理〉的數列版）。例如 $\\left|\\frac{\\cos n}{n}\\right|\\le\\frac{1}{n}\\to 0$。",
+        "增長速度：$\\ln n\\ll n^p$（$p>0$）$\\ll b^n$（$b>1$）$\\ll n!\\ll n^n$。「$\\ll$」的意思是左邊除以右邊 $\\to 0$。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有理式：同除最高次",
+      "prompt": "$\\lim_{n\\to\\infty}\\frac{3n^2+n}{n^2+2}$",
+      "problemId": "cx-seq-001",
+      "steps": [
+        "分子分母同除以 $n^2$：$\\frac{3+1/n}{1+2/n^2}$。",
+        "$n\\to\\infty$ 時 $\\frac{1}{n}\\to 0$、$\\frac{2}{n^2}\\to 0$，極限 $=\\frac{3}{1}=3$。"
+      ],
+      "answer": "3",
+      "claim": "LIM((3x^2+x)/(x^2+2), inf) == 3"
+    },
+    {
+      "title": "借函數用 L'Hôpital",
+      "prompt": "$\\lim_{n\\to\\infty}\\frac{\\ln n}{n}$",
+      "problemId": "lec-11-q1b",
+      "steps": [
+        "L'Hôpital 只能對可微函數用，不能直接對 $n$ 微分。改看 $f(x)=\\frac{\\ln x}{x}$，$x\\to\\infty$ 時是 $\\frac{\\infty}{\\infty}$。",
+        "$\\lim_{x\\to\\infty}\\frac{\\ln x}{x}=\\lim_{x\\to\\infty}\\frac{1/x}{1}=0$。",
+        "$a_n=f(n)$，所以 $\\lim\\frac{\\ln n}{n}=0$。這也是「$\\ln n\\ll n$」的一個證明。"
+      ],
+      "answer": "0",
+      "claim": "LIM(ln(x)/x, inf) == 0"
+    },
+    {
+      "title": "夾擠",
+      "prompt": "$\\lim_{n\\to\\infty}(3^n+4^n)^{1/n}$",
+      "problemId": "lec-11-q1d",
+      "steps": [
+        "最大的一項是 $4^n$：$4^n\\le 3^n+4^n\\le 4^n+4^n=2\\cdot 4^n$。",
+        "三邊開 $n$ 次方（都是正數，開方保持大小順序）：$4\\le(3^n+4^n)^{1/n}\\le 2^{1/n}\\cdot 4$。",
+        "$2^{1/n}=e^{(\\ln 2)/n}\\to e^0=1$，右邊 $\\to 4$。由夾擠，極限是 4。"
+      ],
+      "answer": "4",
+      "claim": "LIM((3^x+4^x)^(1/x), inf) == 4 ;; LIM(2^(1/x)*4, inf) == 4"
+    }
+  ],
+  "pitfalls": [
+    "直接對 $n$ 微分用 L'Hôpital：要先換成連續變數 $x$ 的函數。",
+    "以為函數 $f(x)$ 沒有極限，數列 $f(n)$ 也一定沒有。",
+    "把 $r^n$ 的收斂範圍寫成 $|r|<1$，漏了 $r=1$。",
+    "看到 $\\cos n$、$\\sin n$ 就說發散，沒想到分母可能把它壓到 0。"
+  ],
+  "checks": [
+    {
+      "ask": "數列 $r^n$ 收斂的充要條件是？",
+      "options": [
+        {
+          "label": "$-1<r\\le 1$",
+          "correct": true
+        },
+        {
+          "label": "$|r|<1$",
+          "why": "漏了 $r=1$：$1^n$ 每一項都是 1，收斂到 1。"
+        },
+        {
+          "label": "$-1\\le r\\le 1$",
+          "why": "$r=-1$ 時 $(-1)^n$ 在 $-1$ 與 1 之間跳，不收斂。"
+        }
+      ]
+    },
+    {
+      "ask": "$a_n=\\sin(\\pi n)$，$\\lim a_n$ 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "不存在，因為 $\\sin(\\pi x)$ 在 $x\\to\\infty$ 沒有極限",
+          "why": "數列只看整數點；$n$ 是整數時 $\\sin(\\pi n)$ 全是 0。函數沒有極限，不代表數列沒有。"
+        },
+        {
+          "label": "1",
+          "why": "$\\sin$ 在 $\\pi$ 的整數倍都是 0，不是 1。"
+        }
+      ]
+    },
+    {
+      "ask": "$n\\to\\infty$ 時，由慢到快的增長順序是？",
+      "options": [
+        {
+          "label": "$\\ln n$、$n^2$、$2^n$、$n!$",
+          "correct": true
+        },
+        {
+          "label": "$\\ln n$、$2^n$、$n^2$、$n!$",
+          "why": "前幾項 $n^2$ 比較大，但指數最終一定贏過多項式：$n=10$ 時 $2^{10}=1024$ 已經超過 100。"
+        },
+        {
+          "label": "$n^2$、$\\ln n$、$2^n$、$n!$",
+          "why": "對數長得比任何正次方都慢：$\\frac{\\ln n}{n^2}\\to 0$。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\lim_{n\\to\\infty}\\frac{\\cos n}{n}$ 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "不存在，因為 $\\cos n$ 一直振盪",
+          "why": "分子雖然振盪，但被 $-1$ 與 1 夾住；$-\\frac{1}{n}\\le\\frac{\\cos n}{n}\\le\\frac{1}{n}$，兩邊都 $\\to 0$。"
+        },
+        {
+          "label": "1",
+          "why": "$\\cos n$ 沒有趨近 1；而且分母 $n\\to\\infty$，整個分式會被壓到 0。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "一串點",
+      "beats": [
+        { "show": ["$a_1,a_2,a_3,\\dots$","$a_n=f(n)$"],
+          "note": "只在正整數上有定義的函數。",
+          "say": "數列就是一個只吃正整數的函數。畫出來不是一條曲線，而是一顆一顆分開的點。",
+          "board": [
+            {"do":"write","line":"$a_1,a_2,a_3,\\dots$"},
+            {"do":"write","line":"$a_n=f({{n:n}})$","on":"只吃正整數"},
+            {"do":"focus","term":"n","color":"gold","label":"分開的點","on":"一顆一顆"}
+          ] },
+        { "show": ["$\\lim_{n\\to\\infty}a_n=L$"],
+          "note": "$n$ 夠大以後，$a_n$ 要多靠近 $L$ 就多靠近。",
+          "say": "a n 的極限是 L，意思是 n 夠大以後，這些點要多靠近 L，就能多靠近 L。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{n\\to\\infty}a_n={{l:L}}$","on":"極限是"},
+            {"do":"focus","term":"l","color":"gold","on":"n 夠大以後"}
+          ] },
+        { "show": ["$n=10$：$\\frac{1}{10}$","$n=100$：$\\frac{1}{100}$"],
+          "note": "想比它更小，$n$ 再大一點就好。",
+          "say": "n 是十，n 分之一是十分之一；n 是一百，就是一百分之一。要比它更小，n 再大一點就好，所以趨近零。",
+          "board": [
+            {"do":"write","line":"$n=10$：$\\frac{1}{10}$"},
+            {"do":"write","line":"$n=100$：$\\frac{1}{100}$","on":"n 是一百"},
+            {"do":"write","line":"想更小：$n$ 再大一點","on":"更小"}
+          ] },
+        { "show": ["收斂到 $L$；不收斂叫發散"],
+          "note": "發散可能往 $\\infty$ 跑，也可能一直跳。",
+          "say": "這時說數列收斂到 L。不收斂就叫發散，可能一路往無限大跑，也可能一直跳來跳去。",
+          "board": [
+            {"do":"write","line":"收斂到 $L$"},
+            {"do":"write","line":"不收斂 ＝ 發散","on":"不收斂"}
+          ] },
+        { "show": ["$\\lim_{n\\to\\infty}\\frac{3n^2+n}{n^2+2}$"],
+          "note": "跟函數在無窮遠一樣：同除最高次。",
+          "say": "來算一個。分子分母都是 n 平方帶頭，跟函數在無窮遠的作法一樣，同除以 n 平方。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{n\\to\\infty}\\frac{{{hi:3n^2}}+n}{n^2+2}$","on":"來算一個"},
+            {"do":"focus","term":"hi","color":"gold","label":"最高次","on":"帶頭"},
+            {"do":"transform","line":"$\\frac{3+1/n}{1+2/n^2}$","on":"同除以"}
+          ] }
+      ],
+      "predict": {
+        "ask": "同除以 $n^2$ 得 $\\frac{3+1/n}{1+2/n^2}$。極限是？",
+        "options": [
+          {
+            "label": "$3$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{3}{2}$",
+            "why": "$\\frac{2}{n^2}\\to 0$，分母剩 1，不是 2。"
+          },
+          {
+            "label": "$1$",
+            "why": "$\\frac{1}{n}$ 與 $\\frac{2}{n^2}$ 都 $\\to 0$，剩下 $\\frac{3}{1}$，不是兩個 1 相除。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "借用函數的極限",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty}f(x)=L$ ⇒ $f(n)\\to L$"],
+          "note": "大 $x$ 都靠近 $L$，整數點當然也是。",
+          "say": "如果函數在所有很大的 x 都靠近 L，那它在整數點上當然也靠近 L。數列可以借函數的極限。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty}f({{x:x}})=L$ ⇒ $f({{n:n}})\\to L$","tint":{"x":"blue","n":"violet"}},
+            {"do":"focus","term":"n","color":"violet","label":"整數點","on":"整數點上"}
+          ] },
+        { "show": ["$\\lim\\frac{\\ln n}{n}$：改看 $\\frac{\\ln x}{x}$"],
+          "note": "L'Hôpital 不能直接對 $n$ 微分。",
+          "say": "自然對數 n 除以 n 是無限大比無限大。羅必達要對可微函數用，所以先換成連續的 x。",
+          "board": [
+            {"do":"write","line":"${{an:\\lim\\frac{\\ln n}{n}}}$"},
+            {"do":"underline","term":"an","label":"無限大比無限大","on":"無限大比無限大"},
+            {"do":"write","line":"改看 $\\frac{\\ln {{x:x}}}{x}$","on":"所以先換成"}
+          ] },
+        { "show": ["$\\frac{\\infty}{\\infty}$：$\\lim\\frac{f}{g}=\\lim\\frac{f'}{g'}$"],
+          "note": "直覺：比誰長得快，快慢看導數。",
+          "say": "羅必達說：上下都跑向無限大時，原本比值的極限，跟上下各自微分後的比值一樣。直覺是比誰長得快，快慢就是導數。",
+          "board": [
+            {"do":"write","line":"$\\frac{f}{g}$ 是 $\\frac{\\infty}{\\infty}$"},
+            {"do":"write","line":"$\\lim\\frac{f}{g}=\\lim\\frac{f'}{g'}$","on":"各自微分"}
+          ] },
+        { "show": ["數列只有整數點，不能對 $n$ 微分","$f(x)=\\frac{\\ln x}{x}$：連續、可微"],
+          "say": "數列只有一顆一顆的點，兩個整數中間沒有定義，所以不能對 n 微分。換成 x 就是連續的曲線，才有導數可以用。",
+          "board": [
+            {"do":"write","line":"數列：只有整數點，沒有導數"},
+            {"do":"write","line":"$f(x)=\\frac{\\ln x}{x}$：連續，可微","on":"換成"}
+          ] },
+        { "show": ["$\\lim_{x\\to\\infty}\\frac{1/x}{1}=0$"],
+          "note": "所以 $\\lim\\frac{\\ln n}{n}=0$。",
+          "say": "上下各微分一次，得到 x 分之一，趨近零。再搬回數列，極限就是零。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{1/x}{1}=0$","on":"上下各微分"},
+            {"do":"write","line":"所以 $\\lim\\frac{\\ln n}{n}=0$","color":"green","on":"再搬回數列"}
+          ] },
+        { "show": ["$a_n=\\sin(\\pi n)$"],
+          "note": "反過來不成立：$\\sin(\\pi x)$ 一直振盪。",
+          "say": "反過來不行。sine pi x 在 x 很大時一直振盪，沒有極限；可是數列只看整數點。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin(\\pi {{x:x}})$ 一直振盪，沒有極限","on":"sine pi x"},
+            {"do":"write","line":"$a_{{{n:n}}}=\\sin(\\pi {{n2:n}})$","tint":{"n2":"violet"},"on":"可是數列"},
+            {"do":"focus","term":"n2","color":"violet","label":"只看整數點","on":"只看整數"}
+          ] }
+      ],
+      "key": "改成連續變數 $x$ 才能用 L'Hôpital",
+      "check": 1
+    },
+    {
+      "title": "$r^n$ 什麼時候收斂",
+      "beats": [
+        { "show": ["$|r|<1$：$r^n\\to 0$"],
+          "say": "r 的絕對值小於一，乘越多次越小，r 的 n 次方趨近零。",
+          "board": [
+            {"do":"write","line":"$|r|<1$：$r^n\\to 0$"}
+          ] },
+        { "show": ["$r=1$：恆為 1"],
+          "say": "r 剛好是一的時候，每一項都是一，當然收斂到一。這一點最容易漏掉。",
+          "board": [
+            {"do":"write","line":"${{one:r=1}}$：恆為 $1$"},
+            {"do":"underline","term":"one","label":"最容易漏","on":"最容易漏掉"}
+          ] },
+        { "show": ["$r>1$：$\\to\\infty$；$r\\le -1$：正負跳動"],
+          "say": "r 大於一就往無限大跑；r 小於等於負一，正負一直跳，兩種都發散。",
+          "board": [
+            {"do":"write","line":"$r>1$：$\\to\\infty$；$r\\le -1$：正負跳動"}
+          ] },
+        { "show": ["$r=-1$：$-1,1,-1,1,\\dots$"],
+          "note": "每一項都在 $-1$ 與 $1$ 之間跳。",
+          "say": "r 等於負一的時候，一項一項是負一、一、負一、一，一直交替。不會靠近任何一個數，所以這一頭發散。",
+          "board": [
+            {"do":"write","line":"$(-1)^n$：$-1,1,-1,1,\\dots$"},
+            {"do":"write","line":"不靠近任何數 → 發散","color":"red","on":"不會靠近"}
+          ] },
+        { "show": ["合起來：兩個端點各歸哪一邊？"],
+          "note": "$r=1$ 與 $r=-1$ 要各自看。",
+          "say": "合起來想：r 的 n 次方在哪些 r 收斂？兩個端點，負一和一，要各自看清楚。",
+          "board": [
+            {"do":"write","line":"收斂：端點 ${{m1:-1}}$、${{p1:1}}$ 各歸哪邊？","color":"green","on":"合起來"},
+            {"do":"focus","term":"m1","on":"兩個端點"},
+            {"do":"focus","term":"p1","on":"要各自看"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "夾擠",
+      "beats": [
+        { "show": ["$b_n\\le a_n\\le c_n$，兩邊 $\\to L$"],
+          "note": "〈夾擠定理〉的數列版。",
+          "say": "上下各找一個數列把它夾住。兩邊都收斂到同一個 L，中間的也只能跑到 L。",
+          "board": [
+            {"do":"write","line":"${{b:b_n}}\\le {{a:a_n}}\\le {{c:c_n}}$，兩邊 $\\to L$","tint":{"b":"blue","c":"blue","a":"violet"}},
+            {"do":"focus","term":"a","color":"violet","label":"只能跑到 L","on":"中間的"}
+          ] },
+        { "show": ["$-\\frac{1}{n}\\le\\frac{\\cos n}{n}\\le\\frac{1}{n}$"],
+          "note": "分子振盪，但被 $-1$ 與 1 夾住。",
+          "say": "cosine n 一直振盪，可是它被負一和一夾住；除以 n 之後，上下界是正負 n 分之一。",
+          "board": [
+            {"do":"write","line":"$-1\\le{{cs:\\cos n}}\\le 1$","tint":{"cs":"violet"},"on":"被負一和一"},
+            {"do":"write","line":"$-\\frac{1}{n}\\le\\frac{\\cos n}{n}\\le{{u:\\frac{1}{n}}}$","on":"除以 n"},
+            {"do":"underline","term":"u","label":"上下界","on":"上下界"}
+          ] },
+        { "show": ["$4^n\\le 3^n+4^n\\le 2\\cdot 4^n$"],
+          "note": "$(3^n+4^n)^{1/n}$：抓最大的一項。",
+          "say": "再看三的 n 次方加四的 n 次方，開 n 次方根。最大的是四的 n 次方，它最多兩倍。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$(3^n+4^n)^{1/n}$","on":"再看三的"},
+            {"do":"write","line":"$4^n\\le 3^n+4^n\\le {{hi:2\\cdot 4^n}}$","on":"最大的是"},
+            {"do":"underline","term":"hi","label":"最多兩倍","on":"它最多"}
+          ] },
+        { "show": ["$4\\le(3^n+4^n)^{1/n}\\le 2^{1/n}\\cdot 4$"],
+          "note": "$2^{1/n}\\to 1$，右邊 $\\to 4$。",
+          "say": "三邊開 n 次方，二的 n 分之一次方趨近一，右邊趨近四。夾擠，極限是四。",
+          "board": [
+            {"do":"write","line":"$4\\le(3^n+4^n)^{1/n}\\le {{t:2^{1/n}}}\\cdot 4$"},
+            {"do":"underline","term":"t","label":"趨近 1","on":"二的 n 分之一"},
+            {"do":"write","line":"夾擠：極限是 $4$","color":"green","on":"夾擠"}
+          ] },
+        { "show": ["$2^{1/n}=e^{(\\ln 2)/n}$","指數 $\\frac{\\ln 2}{n}\\to 0$，$e^0=1$"],
+          "note": "指數貼近 0，整個貼近 1。",
+          "say": "二的 n 分之一次方，可以寫成 e 的 n 分之自然對數二次方。n 越大，指數越靠近零，e 的零次方是一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$2^{1/n}=e^{(\\ln 2)/n}$","on":"寫成"},
+            {"do":"write","line":"指數 $\\frac{\\ln 2}{n}\\to 0$","on":"n 越大"},
+            {"do":"write","line":"$e^0=1$","color":"green","on":"e 的零次方"}
+          ] },
+        { "show": ["$y=2^{1/x}$ 貼近 $y=1$"],
+          "say": "看圖：n 越大，這條曲線越貼近一那條虛線。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,12,0,3],"curves":[{"expr":"2^(1/x)","domain":[0.5,12],"color":"blue"}],"dashed":[[[0,1],[12,1]]]}}
+          ] }
+      ],
+      "key": "提出最大的 $4^n$ 上下夾住",
+      "check": 3
+    },
+    {
+      "title": "誰長得快",
+      "beats": [
+        { "show": ["$\\ln n\\ll n^p\\ll b^n\\ll n!\\ll n^n$"],
+          "note": "$p>0$，$b>1$。",
+          "say": "由慢到快：對數，再來正次方，然後指數，再來 n 階乘，最快的是 n 的 n 次方。",
+          "board": [
+            {"do":"write","line":"$\\ln n\\ll n^p\\ll b^n\\ll n!\\ll {{nn:n^n}}$"},
+            {"do":"focus","term":"nn","color":"gold","label":"最快","on":"最快的是"}
+          ] },
+        { "show": ["$n=10$：$n^2=100$，$2^{10}=1024$"],
+          "note": "每多一項，指數固定乘 2。",
+          "say": "n 是十，n 平方是一百，二的十次方已經一千零二十四。多一項，指數乘二，n 平方只乘接近一的數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$n=10$：$n^2=100$","on":"n 是十"},
+            {"do":"write","line":"$2^{10}=1024$","on":"二的十次方"},
+            {"do":"write","line":"多一項：$2^n$ 乘 $2$，$n^2$ 乘近 $1$","on":"多一項"}
+          ] },
+        { "show": ["$n!$ 每項乘 $n$，$b^n$ 每項乘 $b$"],
+          "note": "$n>b$ 之後，階乘每步都贏。",
+          "say": "階乘也是這樣比：n 階乘每多一項乘 n，指數 b 的 n 次方只乘 b。等 n 大過 b，階乘每步都乘得更大。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$n!$：每多一項乘 $n$","on":"多一"},
+            {"do":"write","line":"$b^n$：每多一項乘 $b$","on":"只乘 b"},
+            {"do":"write","line":"$n>b$ 後 $n!$ 每步贏","color":"green","on":"等 n 大過"}
+          ] },
+        { "show": ["「$\\ll$」：左邊除以右邊 $\\to 0$"],
+          "say": "遠小於的意思是：左邊除以右邊，n 越大，比值越趨近零。",
+          "board": [
+            {"do":"write","line":"$a_n\\ll b_n$：${{r:\\frac{a_n}{b_n}}}\\to 0$"},
+            {"do":"focus","term":"r","color":"gold","on":"比值"}
+          ] },
+        { "show": ["$\\frac{\\ln n}{n}\\to 0$ 就是 $\\ln n\\ll n$"],
+          "say": "剛剛用羅必達算出自然對數 n 除以 n 趨近零，其實就是在證明對數比 n 慢。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\ln n}{n}\\to 0$"},
+            {"do":"write","line":"⇒ $\\ln n\\ll n$","color":"green","on":"其實就是"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "sequence",
+      "squeeze"
+    ],
+    "fine": [
+      "sequence-limit-algebra",
+      "sequence-limit-function",
+      "sequence-limit-squeeze",
+      "sequence-growth-order",
+      "sequence-power-rn"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-11-m1",
+      "core": true,
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "cx-seq-001",
+      "core": true,
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "lec-11-q1b",
+      "core": true,
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-q2a",
+      "core": true,
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "lec-11-q1d",
+      "core": true,
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "cg-6a-001",
+      "core": true,
+      "trains": "sequence-growth-order"
+    },
+    {
+      "id": "lec-11-q1a",
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "cx-seq-006",
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "lec-11-q1c",
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-m3",
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-m2",
+      "trains": "sequence-power-rn"
+    },
+    {
+      "id": "lec-11-q2d",
+      "trains": "sequence-growth-order"
+    },
+    {
+      "id": "cg-6a-002",
+      "trains": "sequence-growth-order"
+    },
+    {
+      "id": "cg-6a-003",
+      "trains": "sequence-growth-order"
+    }
+  ],
+  "gaps": []
+}

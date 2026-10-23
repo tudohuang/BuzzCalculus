@@ -1,51 +1,156 @@
 {
   "id": "gradient-field",
   "title": "梯度場",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 25,
-  "prerequisites": ["vector-field", "gradient", "clairaut"],
-  "next": ["scalar-line-integral"],
-  "related": ["level-curves", "conservative-fields", "potential-function"],
-  "objectives": [
-    "把一個函數 $f$ 的梯度 $\\nabla f$ 看成向量場，並說出它跟等高線的關係。",
-    "用交叉偏導數 $P_y$ 與 $Q_x$ 判斷一個場「不可能」是梯度場。",
-    "知道「是不是梯度場」為什麼重要：之後的線積分會因此變簡單。"
+  "prerequisites": [
+    "vector-field",
+    "gradient",
+    "clairaut"
   ],
-  "visual": "f(x, y) = x² + y² 的等高線（同心圓）上疊著 ∇f 的箭頭，箭頭處處垂直於等高線、指向外圈（較高處），等高線越密箭頭越長。切換到 F = ⟨−y, x⟩：箭頭沿著圓繞，畫面上同時顯示 P_y = −1、Q_x = 1，標出「找不到任何 f」。",
+  "next": [
+    "scalar-line-integral"
+  ],
+  "related": [
+    "level-curves",
+    "conservative-fields",
+    "potential-function"
+  ],
+  "objectives": [
+    "把一個函數 $f$ 的梯度 $\\nabla f$ 看成向量場，並說出它跟等高線的關係",
+    "用交叉偏導數 $P_y$ 與 $Q_x$ 判斷一個場「不可能」是梯度場",
+    "知道「是不是梯度場」為什麼重要：之後的線積分會因此變簡單"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 梯度本身就是一個向量場",
+      "heading": "① 梯度就是一個向量場",
       "body": [
-        "〈梯度〉：$f(x,y)$ 在每一點有一個梯度 $\\nabla f=\\langle f_x,f_y\\rangle$。每一點配一個向量，這就是一個向量場，叫做 $f$ 的梯度場。",
-        "例：$f=x^2+y^2$，$\\nabla f=\\langle 2x,2y\\rangle$，正好是上一課的發散場放大 $2$ 倍。",
-        "三個變數也一樣：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$ 是空間中的向量場，箭頭垂直於等值面 $f=c$。"
+        "$f(x,y)$ 在每一點都有梯度：",
+        "這個場叫做 $f$ 的梯度場",
+        "$f$ 叫做這個場的位勢函數",
+        "三變數也一樣：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$",
+        "例：$f(x,y)=x^2y+y^3$",
+        "要畫，就代點：",
+        "$2\\cdot2\\cdot(-1)=-4$，$2^2+3(-1)^2=7$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\nabla f(x,y)=\\langle f_x(x,y),\\,f_y(x,y)\\rangle",
+        "\\nabla f=\\langle 2xy,\\ x^2+3y^2\\rangle",
+        "\\nabla f(1,1)=\\langle 2,4\\rangle",
+        "\\nabla f(2,-1)=\\langle -4,\\,7\\rangle"
+      ]
     },
     {
-      "heading": "② 圖像：垂直於等高線、指向上坡",
+      "heading": "① 上一課的老朋友",
       "body": [
-        "把 $f$ 當成地形高度。梯度場的箭頭處處垂直於等高線（〈圖形與等高線〉），指向 $f$ 增加的方向；等高線越密，坡越陡，箭頭越長。",
-        "所以畫梯度場有一個捷徑：先畫 $f$ 的等高線，再畫垂直穿過它們、往高處指的箭頭。"
+        "發散場：$f=\\tfrac12(x^2+y^2)$",
+        "重力型的場：$f=\\dfrac1r=(x^2+y^2+z^2)^{-1/2}$",
+        "$y$、$z$ 一樣："
       ],
-      "collapsible": false
+      "tex": [
+        "\\nabla f=\\langle x,\\,y\\rangle",
+        "f_x=-\\tfrac12\\cdot 2x\\,(x^2+y^2+z^2)^{-3/2}=-\\frac{x}{r^3}",
+        "\\nabla\\Big(\\frac1r\\Big)=-\\frac{\\langle x,y,z\\rangle}{r^3}"
+      ]
     },
     {
-      "heading": "③ 反過來問：給一個場，它是誰的梯度？",
+      "heading": "② 垂直等高線、指向上坡",
       "body": [
-        "如果 $\\mathbf F=\\langle P,Q\\rangle=\\nabla f$，就說 $\\mathbf F$ 是梯度場，$f$ 叫做 $\\mathbf F$ 的位勢函數。這是之後〈保守場〉與〈位勢函數〉的主題。",
-        "物理書常寫 $\\mathbf F=-\\nabla U$（$U$ 是位能，力指向位能下降的方向）。數學上通常不帶負號，兩者只差 $f=-U$。"
+        "上一章的兩個性質，現在整個場一起看：",
+        "• $\\nabla f$ 垂直於經過那一點的等高線",
+        "• $\\nabla f$ 指向 $f$ 增加的方向（上坡）",
+        "例：在 $(1,2)$ 驗證 $\\nabla f$ 跟等高線垂直",
+        "經過 $(1,2)$ 的等高線：$x^2+y^2=5$",
+        "隱微分：$2x+2y\\,y'=0$，$y'=-\\dfrac xy=-\\dfrac12$",
+        "切線方向 $\\langle 2,-1\\rangle$："
       ],
-      "collapsible": false
+      "tex": [
+        "\\nabla f(1,2)=\\langle 2,4\\rangle",
+        "\\langle 2,4\\rangle\\cdot\\langle 2,-1\\rangle=4-4=0"
+      ]
     },
     {
-      "heading": "④ 一個必要條件：交叉偏導相等",
+      "heading": "② 為什麼一定垂直",
       "body": [
-        "若 $\\mathbf F=\\nabla f$，$P=f_x$、$Q=f_y$，那 $P_y=f_{xy}$、$Q_x=f_{yx}$。$f$ 的二階偏導連續時，〈Clairaut 定理〉說兩者相等。所以：",
-        "$P_y\\ne Q_x$，$\\mathbf F$ 一定不是梯度場。",
-        "反過來，$P_y=Q_x$ 還不夠保證是梯度場，還要看定義域有沒有「洞」，這是〈保守場〉要處理的事。"
+        "沿著等高線 $\\mathbf r(t)$ 走：$f(\\mathbf r(t))=c$",
+        "對 $t$ 微分（多變數連鎖律）：",
+        "前提：$\\nabla f\\ne\\mathbf 0$；梯度是零的地方沒有方向可談",
+        "上坡：沿 $\\nabla f$ 方向，方向導數 $=|\\nabla f|>0$"
       ],
-      "collapsible": false
+      "tex": [
+        "f_x\\,x'(t)+f_y\\,y'(t)=0",
+        "\\nabla f\\cdot\\mathbf r'(t)=0"
+      ]
+    },
+    {
+      "heading": "③ 給一個場，誰的梯度？",
+      "body": [
+        "給 $\\mathbf F=\\langle P,Q\\rangle$，想找 $f$ 使得",
+        "例：$\\mathbf F=\\langle 2xy,\\ x^2+3y^2\\rangle$",
+        "一：$f_x=2xy$，對 $x$ 積分",
+        "對 $x$ 偏微分時 $y$ 是常數，所以「積分常數」可以是 $y$ 的任意函數",
+        "二：對 $y$ 偏微分，跟 $Q$ 比",
+        "完整的找法在 9.17 位勢函數；這裡先看它長什麼樣子"
+      ],
+      "tex": [
+        "f_x=P,\\qquad f_y=Q",
+        "f=x^2y+g(y)",
+        "x^2+g'(y)=x^2+3y^2",
+        "g'(y)=3y^2\\ \\Rightarrow\\ g(y)=y^3+C",
+        "f=x^2y+y^3+C"
+      ]
+    },
+    {
+      "heading": "③ 找不到的時候",
+      "body": [
+        "$\\mathbf F=\\langle y,\\,-x\\rangle$ 是誰的梯度？",
+        "$f_x=y\\ \\Rightarrow\\ f=xy+g(y)$",
+        "$f_y=x+g'(y)$ 要等於 $-x$",
+        "矛盾：$g'(y)$ 只跟 $y$ 有關，不能含 $x$"
+      ],
+      "tex": [
+        "g'(y)=-2x"
+      ]
+    },
+    {
+      "heading": "④ 必要條件：交叉偏導",
+      "body": [
+        "若 $\\mathbf F=\\nabla f$，則 $P=f_x$、$Q=f_y$",
+        "Clairaut 定理（二階偏導連續）：",
+        "所以：$P_y\\ne Q_x\\ \\Rightarrow\\ $不可能是梯度場",
+        "例：$\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$ ⇒ 不是",
+        "旋轉場：$P_y=-1$，$Q_x=1$"
+      ],
+      "tex": [
+        "P_y=f_{xy}=f_{yx}=Q_x"
+      ]
+    },
+    {
+      "heading": "④ 試一題",
+      "body": [
+        "$P_y=Q_x$ 只是必要條件",
+        "反例：$\\big\\langle\\frac{-y}{x^2+y^2},\\frac{x}{x^2+y^2}\\big\\rangle$ 在去掉原點的平面上；什麼時候夠用，留到 9.16 保守場",
+        "為什麼在乎？ 沿曲線 $\\mathbf r(t)$ 走，連鎖律：",
+        "從 $a$ 積到 $b$（微積分基本定理）：",
+        "左邊就是之後的「線積分」：梯度場的線積分會變得很簡單"
+      ],
+      "tex": [
+        "\\frac{d}{dt}f(\\mathbf r(t))=\\nabla f\\cdot\\mathbf r'(t)",
+        "\\int_a^b\\nabla f\\cdot\\mathbf r'\\,dt=f(\\mathbf r(b))-f(\\mathbf r(a))"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 梯度場：每一點放上 $\\nabla f=\\langle f_x,f_y\\rangle$；$f$ 是位勢函數",
+        "• 圖像：垂直等高線、指向上坡",
+        "• 反過來：$f_x=P$ 對 $x$ 積分、留 $g(y)$、再比對 $Q$",
+        "• $P_y\\ne Q_x$ ⇒ 不可能是梯度場（$P_y=Q_x$ 只是必要條件）",
+        "• 梯度場沿曲線累積，只看兩端",
+        "下一課：純量線積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,247 +196,871 @@
   ],
   "checks": [
     {
-      "ask": "$\\nabla(xy)$ 是？",
+      "ask": "$f(x,y)=xe^y$ 的梯度場是？",
       "options": [
-        { "label": "$\\langle y,x\\rangle$", "correct": true },
-        { "label": "$\\langle x,y\\rangle$", "why": "$f_x$ 是把 $y$ 當常數對 $x$ 微分，得 $y$，放在第一個分量。" },
-        { "label": "$\\langle 1,1\\rangle$", "why": "$xy$ 對 $x$ 微分是 $y$，不是 $1$。" }
+        {
+          "label": "$\\langle e^y,\\ xe^y\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$\\langle e^y,\\ e^y\\rangle$",
+          "why": "對 $y$ 偏微分時，$x$ 是常數要留著"
+        },
+        {
+          "label": "$\\langle xe^y,\\ e^y\\rangle$",
+          "why": "兩個分量的順序放反了：第一個是對 $x$ 偏微分"
+        },
+        {
+          "label": "$e^y+xe^y$",
+          "why": "梯度是向量，不是把兩個偏導數加起來"
+        }
       ]
     },
     {
-      "ask": "梯度場 $\\nabla f$ 的箭頭跟 $f$ 的等高線是什麼關係？",
+      "ask": "哪一個場==可能==是梯度場？",
       "options": [
-        { "label": "垂直，指向 $f$ 增加的一側", "correct": true },
-        { "label": "相切，沿著等高線走", "why": "沿著等高線走 $f$ 不變，變化率是 $0$；梯度指的是變化最快的方向，跟等高線垂直。" },
-        { "label": "垂直，指向 $f$ 減少的一側", "why": "梯度指向上坡。指向下坡的是 $-\\nabla f$。" }
-      ]
-    },
-    {
-      "ask": "下列哪一個一定不是梯度場？",
-      "options": [
-        { "label": "$\\langle -y,x\\rangle$", "correct": true },
-        { "label": "$\\langle y,x\\rangle$", "why": "它是 $\\nabla(xy)$：$P_y=1=Q_x$。" },
-        { "label": "$\\langle 2x,2y\\rangle$", "why": "它是 $\\nabla(x^2+y^2)$。" }
-      ]
-    },
-    {
-      "ask": "$\\mathbf F=\\langle P,Q\\rangle=\\nabla f$（$f$ 的二階偏導連續），為什麼 $P_y=Q_x$？",
-      "options": [
-        { "label": "$P_y=f_{xy}$、$Q_x=f_{yx}$，混合偏導相等（Clairaut）", "correct": true },
-        { "label": "因為 $P=Q$", "why": "$P$ 與 $Q$ 通常不相等（例如 $\\nabla(x^2y)=\\langle 2xy,x^2\\rangle$），相等的是交叉偏導數。" },
-        { "label": "因為梯度場一定是常數場", "why": "$\\nabla(x^2+y^2)=\\langle 2x,2y\\rangle$ 就不是常數。" }
+        {
+          "label": "$\\langle 2x+y,\\ x\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$\\langle y,\\ 2x\\rangle$",
+          "why": "$P_y=1$，$Q_x=2$，不相等"
+        },
+        {
+          "label": "$\\langle x^2,\\ xy\\rangle$",
+          "why": "$P_y=0$，$Q_x=y$，不相等"
+        },
+        {
+          "label": "$\\langle -y,\\ x\\rangle$",
+          "why": "旋轉場：$P_y=-1$，$Q_x=1$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "梯度就是向量場",
+      "title": "梯度就是一個向量場",
       "beats": [
-        { "show": ["每一點：$\\nabla f=\\langle f_x,f_y\\rangle$"],
-          "say": "函數在每一點都有一個梯度。每一點配一個向量，這本身就是一個向量場，叫梯度場。",
+        {
+          "show": [
+            "$f(x,y)$ 在每一點都有梯度：",
+            "$\\nabla f(x,y)=\\langle f_x(x,y),\\,f_y(x,y)\\rangle$"
+          ],
+          "say": "上一章在一個點算梯度，得到一支箭頭。現在每一點都算，每一點都有箭頭，就是一個向量場。",
           "board": [
-            {"do":"write","line":"每一點：$\\nabla f=\\langle f_x,f_y\\rangle$"}
-          ] },
-        { "show": ["$f=x^2+y^2$：$\\nabla f=\\langle 2x,2y\\rangle$"],
-          "note": "上一課的發散場放大 $2$ 倍。",
-          "say": "例如 x 平方加 y 平方，梯度場是二 x、二 y，就是上一課的發散場放大兩倍。",
+            {
+              "do": "write",
+              "line": "$f(x,y)$ 在每一點都有梯度："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\nabla f(x,y)=\\langle f_x(x,y),\\,f_y(x,y)\\rangle}}$",
+              "on": "支箭"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "點都#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這個場叫做 $f$ 的梯度場"
+          ],
+          "say": "它叫做 f 的梯度場；反過來，f 叫做這個場的位勢函數。",
           "board": [
-            {"do":"write","line":"$f=x^2+y^2$：$\\nabla f={{g:\\langle 2x,2y\\rangle}}$"},
-            {"do":"plot","graph":{"window":[-2.4,2.4,-1.3,1.3],"equal":true,"ticks":false,"curves":[{"param":{"x":"0.8*cos(t)","y":"0.8*sin(t)","t":[0,6.2832]},"color":"muted","dashed":true}],"arrows":[{"from":[-1.6,-0.8],"to":[-2.24,-1.12],"color":"blue"},{"from":[-1.6,0],"to":[-2.24,0],"color":"blue"},{"from":[-1.6,0.8],"to":[-2.24,1.12],"color":"blue"},{"from":[-0.8,-0.8],"to":[-1.12,-1.12],"color":"blue"},{"from":[-0.8,0],"to":[-1.12,0],"color":"blue"},{"from":[-0.8,0.8],"to":[-1.12,1.12],"color":"blue"},{"from":[0,-0.8],"to":[0,-1.12],"color":"blue"},{"from":[0,0.8],"to":[0,1.12],"color":"blue"},{"from":[0.8,-0.8],"to":[1.12,-1.12],"color":"blue"},{"from":[0.8,0],"to":[1.12,0],"color":"blue"},{"from":[0.8,0.8],"to":[1.12,1.12],"color":"blue"},{"from":[1.6,-0.8],"to":[2.24,-1.12],"color":"blue"},{"from":[1.6,0],"to":[2.24,0],"color":"blue"},{"from":[1.6,0.8],"to":[2.24,1.12],"color":"blue"}]},"on":"梯度場是"}
-          ] },
-        { "show": ["發散場：箭頭從原點往外指"],
-          "note": "梯度場的箭頭是它的 $2$ 倍長。",
-          "say": "上一課的發散場：每一點的箭頭都從原點往外指，長度就是這點到原點的距離。梯度場的箭頭是它的兩倍長。",
+            {
+              "do": "write",
+              "line": "這個場叫做 $f$ 的梯度場"
+            },
+            {
+              "do": "write",
+              "line": "$f$ 叫做這個場的位勢函數",
+              "on": "反過"
+            },
+            {
+              "do": "write",
+              "line": "　三變數也一樣：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$",
+              "color": "violet",
+              "on": "做這"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x,y)=x^2y+y^3$",
+            "$\\nabla f=\\langle 2xy,\\ x^2+3y^2\\rangle$"
+          ],
+          "say": "例題：f 等於 x 平方 y 加 y 的三次方。對 x 偏微分是 2xy；對 y 偏微分是 x 平方加 3y 平方。",
           "board": [
-            {"do":"write","line":"發散場：箭頭從原點往外指"},
-            {"do":"write","line":"梯度場 ＝ 它的 2 倍長","on":"梯度場的箭頭"}
-          ] },
-        { "show": ["三變數：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$"],
-          "note": "箭頭垂直於等值面 $f=c$。",
-          "say": "三個變數也一樣，是空間中的向量場，箭頭垂直於等值面。",
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^2y+y^3$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\nabla f=\\langle 2xy,\\ x^2+3y^2\\rangle}}$",
+              "on": "的三"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "偏微#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要畫，就代點：",
+            "$\\nabla f(1,1)=\\langle 2,4\\rangle$"
+          ],
+          "say": "要畫出來，就代點：在 1 逗號 1，箭頭是 2 逗號 4；在 2 逗號負 1，是負 4 逗號 7。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"三變數：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$","on":"三個變數"},
-            {"do":"write","line":"箭頭 $\\perp$ 等值面 $f=c$","on":"箭頭垂直"}
-          ] },
-        { "show": ["等值面：$f=c$ 的所有點"],
-          "note": "例：球面。",
-          "say": "等值面是函數值固定的曲面。x 平方加 y 平方加 z 平方等於 c 是球面，梯度從球心往外，垂直球面。",
+            {
+              "do": "write",
+              "line": "要畫，就代點："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f(1,1)=\\langle 2,4\\rangle$",
+              "on": "逗號#1"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f(2,-1)=\\langle -4,\\,7\\rangle$",
+              "on": "逗號#2"
+            },
+            {
+              "do": "write",
+              "line": "　$2\\cdot2\\cdot(-1)=-4$，$2^2+3(-1)^2=7$",
+              "color": "violet",
+              "on": "是負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "上一課的老朋友",
+      "beats": [
+        {
+          "show": [
+            "發散場：$f=\\tfrac12(x^2+y^2)$",
+            "$\\nabla f=\\langle x,\\,y\\rangle$"
+          ],
+          "say": "上一課的兩個場其實都是梯度場。發散場 x 逗號 y，是 2 分之一乘 x 平方加 y 平方的梯度。",
           "board": [
-            {"do":"write","line":"$f=x^2+y^2+z^2=c$：球面"},
-            {"do":"write","line":"$\\nabla f=\\langle 2x,2y,2z\\rangle$","on":"梯度"}
-          ] }
+            {
+              "do": "write",
+              "line": "發散場：$f=\\tfrac12(x^2+y^2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f=\\langle x,\\,y\\rangle$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重力型的場：$f=\\dfrac1r=(x^2+y^2+z^2)^{-1/2}$"
+          ],
+          "say": "重力型的場也是：取 f 等於 r 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "重力型的場：$f=\\dfrac1r=(x^2+y^2+z^2)^{-1/2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_x=-\\tfrac12\\cdot 2x\\,(x^2+y^2+z^2)^{-3/2}=-\\frac{x}{r^3}$"
+          ],
+          "say": "對 x 偏微分，用連鎖律，得到負 x 除以 r 的三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x=-\\tfrac12\\cdot 2x\\,(x^2+y^2+z^2)^{-3/2}=-\\frac{x}{r^3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y$、$z$ 一樣：",
+            "$\\nabla\\Big(\\frac1r\\Big)=-\\frac{\\langle x,y,z\\rangle}{r^3}$"
+          ],
+          "say": "y 和 z 也一樣。所以 r 分之一的梯度，正好是上一課的重力型場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y$、$z$ 一樣："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\nabla\\Big(\\frac1r\\Big)=-\\frac{\\langle x,y,z\\rangle}{r^3}}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "正好"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "垂直於等高線",
+      "title": "垂直等高線、指向上坡",
       "beats": [
-        { "show": ["垂直於等高線、指向上坡"],
-          "note": "等高線越密，箭頭越長。",
-          "say": "把函數當地形高度，梯度的箭頭垂直穿過等高線，往高處指；坡越陡，箭頭越長。",
+        {
+          "show": [
+            "上一章的兩個性質，現在整個場一起看：",
+            "• $\\nabla f$ 垂直於經過那一點的等高線"
+          ],
+          "say": "上一章學過梯度的兩個性質：垂直於等高線，而且指向 f 增加的方向，也就是上坡。現在整個場一起看。",
           "board": [
-            {"do":"write","line":"$f$ ＝ 地形高度"},
-            {"do":"write","line":"坡越陡 ⇒ 箭頭越長","on":"坡越陡"}
-          ] },
-        { "show": ["$\\nabla f(1,2)=\\langle 2,4\\rangle$"],
-          "note": "等高線是圓 $x^2+y^2=5$。",
-          "say": "驗證一下。在點一、二，梯度是二、四；經過這一點的等高線是一個圓。",
+            {
+              "do": "write",
+              "line": "上一章的兩個性質，現在整個場一起看："
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla f$ 垂直於經過那一點的等高線",
+              "on": "等高"
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla f$ 指向 $f$ 增加的方向（上坡）",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看 f 等於 x 平方加 y 平方：等高線是同心圓，梯度箭頭全部往外，跟每個圓都垂直。外圈的 f 比較大，往外就是上坡。",
           "board": [
-            {"do":"write","line":"${{g:\\nabla f(1,2)=\\langle 2,4\\rangle}}$"},
-            {"do":"write","line":"等高線：圓 $x^2+y^2=5$","on":"等高線"}
-          ] },
-        { "show": ["圓是等高線，箭頭是梯度"],
-          "say": "畫出來看：圓是等高線，箭頭是梯度，從這一點垂直指向圓外。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gfCircle\" viewBox=\"0 0 620 370\" width=\"620\" height=\"370\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bgfCircle\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bgfCircleblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bgfCirclered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bgfCirclegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bgfCirclepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bgfCircleink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bgfCircle4\"><rect x=\"14\" y=\"12\" width=\"346\" height=\"346\"/></clipPath><g clip-path=\"url(#cl9bgfCircle4)\"><line x1=\"48.6\" y1=\"12\" x2=\"48.6\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"94.7\" y1=\"12\" x2=\"94.7\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"140.9\" y1=\"12\" x2=\"140.9\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"187\" y1=\"12\" x2=\"187\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"233.1\" y1=\"12\" x2=\"233.1\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"279.3\" y1=\"12\" x2=\"279.3\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"325.4\" y1=\"12\" x2=\"325.4\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"323.4\" x2=\"360\" y2=\"323.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"277.3\" x2=\"360\" y2=\"277.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"231.1\" x2=\"360\" y2=\"231.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"185\" x2=\"360\" y2=\"185\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"138.9\" x2=\"360\" y2=\"138.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"92.7\" x2=\"360\" y2=\"92.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"14\" y1=\"46.6\" x2=\"360\" y2=\"46.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M233.1 185L233.1 183.8L233.1 182.6L233 181.4L232.9 180.2L232.7 179L232.6 177.8L232.4 176.6L232.1 175.4L231.9 174.2L231.6 173.1L231.2 171.9L230.9 170.7L230.5 169.6L230.1 168.5L229.6 167.3L229.1 166.2L228.6 165.1L228.1 164.1L227.5 163L227 161.9L226.3 160.9L225.7 159.9L225 158.9L224.3 157.9L223.6 156.9L222.9 156L222.1 155L221.3 154.1L220.5 153.2L219.6 152.4L218.8 151.5L217.9 150.7L217 149.9L216 149.1L215.1 148.4L214.1 147.7L213.1 147L212.1 146.3L211.1 145.7L210.1 145L209 144.5L207.9 143.9L206.9 143.4L205.8 142.9L204.7 142.4L203.5 141.9L202.4 141.5L201.3 141.1L200.1 140.8L198.9 140.4L197.8 140.1L196.6 139.9L195.4 139.6L194.2 139.4L193 139.3L191.8 139.1L190.6 139L189.4 138.9L188.2 138.9L187 138.9L185.8 138.9L184.6 138.9L183.4 139L182.2 139.1L181 139.3L179.8 139.4L178.6 139.6L177.4 139.9L176.2 140.1L175.1 140.4L173.9 140.8L172.7 141.1L171.6 141.5L170.5 141.9L169.3 142.4L168.2 142.9L167.1 143.4L166.1 143.9L165 144.5L163.9 145L162.9 145.7L161.9 146.3L160.9 147L159.9 147.7L158.9 148.4L158 149.1L157 149.9L156.1 150.7L155.2 151.5L154.4 152.4L153.5 153.2L152.7 154.1L151.9 155L151.1 156L150.4 156.9L149.7 157.9L149 158.9L148.3 159.9L147.7 160.9L147 161.9L146.5 163L145.9 164.1L145.4 165.1L144.9 166.2L144.4 167.3L143.9 168.5L143.5 169.6L143.1 170.7L142.8 171.9L142.4 173.1L142.1 174.2L141.9 175.4L141.6 176.6L141.4 177.8L141.3 179L141.1 180.2L141 181.4L140.9 182.6L140.9 183.8L140.9 185L140.9 186.2L140.9 187.4L141 188.6L141.1 189.8L141.3 191L141.4 192.2L141.6 193.4L141.9 194.6L142.1 195.8L142.4 196.9L142.8 198.1L143.1 199.3L143.5 200.4L143.9 201.5L144.4 202.7L144.9 203.8L145.4 204.9L145.9 205.9L146.5 207L147 208.1L147.7 209.1L148.3 210.1L149 211.1L149.7 212.1L150.4 213.1L151.1 214L151.9 215L152.7 215.9L153.5 216.8L154.4 217.6L155.2 218.5L156.1 219.3L157 220.1L158 220.9L158.9 221.6L159.9 222.3L160.9 223L161.9 223.7L162.9 224.3L163.9 225L165 225.5L166.1 226.1L167.1 226.6L168.2 227.1L169.3 227.6L170.5 228.1L171.6 228.5L172.7 228.9L173.9 229.2L175.1 229.6L176.2 229.9L177.4 230.1L178.6 230.4L179.8 230.6L181 230.7L182.2 230.9L183.4 231L184.6 231.1L185.8 231.1L187 231.1L188.2 231.1L189.4 231.1L190.6 231L191.8 230.9L193 230.7L194.2 230.6L195.4 230.4L196.6 230.1L197.8 229.9L198.9 229.6L200.1 229.2L201.3 228.9L202.4 228.5L203.5 228.1L204.7 227.6L205.8 227.1L206.9 226.6L207.9 226.1L209 225.5L210.1 225L211.1 224.3L212.1 223.7L213.1 223L214.1 222.3L215.1 221.6L216 220.9L217 220.1L217.9 219.3L218.8 218.5L219.6 217.6L220.5 216.8L221.3 215.9L222.1 215L222.9 214L223.6 213.1L224.3 212.1L225 211.1L225.7 210.1L226.3 209.1L227 208.1L227.5 207L228.1 205.9L228.6 204.9L229.1 203.8L229.6 202.7L230.1 201.5L230.5 200.4L230.9 199.3L231.2 198.1L231.6 196.9L231.9 195.8L232.1 194.6L232.4 193.4L232.6 192.2L232.7 191L232.9 189.8L233 188.6L233.1 187.4L233.1 186.2L233.1 185\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/><path d=\"M266.9 185L266.9 182.9L266.8 180.8L266.7 178.7L266.5 176.6L266.2 174.6L265.9 172.5L265.6 170.4L265.2 168.4L264.7 166.3L264.2 164.3L263.6 162.3L263 160.3L262.3 158.3L261.6 156.4L260.8 154.4L260 152.5L259.1 150.6L258.2 148.7L257.2 146.9L256.2 145L255.1 143.2L254 141.5L252.9 139.7L251.6 138L250.4 136.4L249.1 134.7L247.8 133.1L246.4 131.5L245 130L243.5 128.5L242 127L240.5 125.6L238.9 124.2L237.3 122.9L235.6 121.6L234 120.4L232.3 119.1L230.5 118L228.8 116.9L227 115.8L225.1 114.8L223.3 113.8L221.4 112.9L219.5 112L217.6 111.2L215.6 110.4L213.7 109.7L211.7 109L209.7 108.4L207.7 107.8L205.7 107.3L203.6 106.8L201.6 106.4L199.5 106.1L197.4 105.8L195.4 105.5L193.3 105.3L191.2 105.2L189.1 105.1L187 105.1L184.9 105.1L182.8 105.2L180.7 105.3L178.6 105.5L176.6 105.8L174.5 106.1L172.4 106.4L170.4 106.8L168.3 107.3L166.3 107.8L164.3 108.4L162.3 109L160.3 109.7L158.4 110.4L156.4 111.2L154.5 112L152.6 112.9L150.7 113.8L148.9 114.8L147 115.8L145.2 116.9L143.5 118L141.7 119.1L140 120.4L138.4 121.6L136.7 122.9L135.1 124.2L133.5 125.6L132 127L130.5 128.5L129 130L127.6 131.5L126.2 133.1L124.9 134.7L123.6 136.4L122.4 138L121.1 139.7L120 141.5L118.9 143.2L117.8 145L116.8 146.9L115.8 148.7L114.9 150.6L114 152.5L113.2 154.4L112.4 156.4L111.7 158.3L111 160.3L110.4 162.3L109.8 164.3L109.3 166.3L108.8 168.4L108.4 170.4L108.1 172.5L107.8 174.6L107.5 176.6L107.3 178.7L107.2 180.8L107.1 182.9L107.1 185L107.1 187.1L107.2 189.2L107.3 191.3L107.5 193.4L107.8 195.4L108.1 197.5L108.4 199.6L108.8 201.6L109.3 203.7L109.8 205.7L110.4 207.7L111 209.7L111.7 211.7L112.4 213.6L113.2 215.6L114 217.5L114.9 219.4L115.8 221.3L116.8 223.1L117.8 225L118.9 226.8L120 228.5L121.1 230.3L122.4 232L123.6 233.6L124.9 235.3L126.2 236.9L127.6 238.5L129 240L130.5 241.5L132 243L133.5 244.4L135.1 245.8L136.7 247.1L138.4 248.4L140 249.6L141.7 250.9L143.5 252L145.2 253.1L147 254.2L148.9 255.2L150.7 256.2L152.6 257.1L154.5 258L156.4 258.8L158.4 259.6L160.3 260.3L162.3 261L164.3 261.6L166.3 262.2L168.3 262.7L170.4 263.2L172.4 263.6L174.5 263.9L176.6 264.2L178.6 264.5L180.7 264.7L182.8 264.8L184.9 264.9L187 264.9L189.1 264.9L191.2 264.8L193.3 264.7L195.4 264.5L197.4 264.2L199.5 263.9L201.6 263.6L203.6 263.2L205.7 262.7L207.7 262.2L209.7 261.6L211.7 261L213.7 260.3L215.6 259.6L217.6 258.8L219.5 258L221.4 257.1L223.3 256.2L225.1 255.2L227 254.2L228.8 253.1L230.5 252L232.3 250.9L234 249.6L235.6 248.4L237.3 247.1L238.9 245.8L240.5 244.4L242 243L243.5 241.5L245 240L246.4 238.5L247.8 236.9L249.1 235.3L250.4 233.6L251.6 232L252.9 230.3L254 228.5L255.1 226.8L256.2 225L257.2 223.1L258.2 221.3L259.1 219.4L260 217.5L260.8 215.6L261.6 213.6L262.3 211.7L263 209.7L263.6 207.7L264.2 205.7L264.7 203.7L265.2 201.6L265.6 199.6L265.9 197.5L266.2 195.4L266.5 193.4L266.7 191.3L266.8 189.2L266.9 187.1L266.9 185\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/><path d=\"M290.2 185L290.1 182.3L290 179.6L289.8 176.9L289.6 174.2L289.3 171.5L288.9 168.9L288.4 166.2L287.9 163.6L287.3 160.9L286.6 158.3L285.9 155.7L285.1 153.1L284.2 150.6L283.3 148L282.3 145.5L281.2 143L280.1 140.6L278.9 138.2L277.7 135.8L276.3 133.4L275 131.1L273.5 128.8L272 126.6L270.5 124.4L268.8 122.2L267.2 120.1L265.4 118L263.7 116L261.8 114L259.9 112.1L258 110.2L256 108.3L254 106.6L251.9 104.8L249.8 103.2L247.6 101.5L245.4 100L243.2 98.5L240.9 97L238.6 95.7L236.2 94.3L233.8 93.1L231.4 91.9L229 90.8L226.5 89.7L224 88.7L221.4 87.8L218.9 86.9L216.3 86.1L213.7 85.4L211.1 84.7L208.4 84.1L205.8 83.6L203.1 83.1L200.5 82.7L197.8 82.4L195.1 82.2L192.4 82L189.7 81.9L187 81.8L184.3 81.9L181.6 82L178.9 82.2L176.2 82.4L173.5 82.7L170.9 83.1L168.2 83.6L165.6 84.1L162.9 84.7L160.3 85.4L157.7 86.1L155.1 86.9L152.6 87.8L150 88.7L147.5 89.7L145 90.8L142.6 91.9L140.2 93.1L137.8 94.3L135.4 95.7L133.1 97L130.8 98.5L128.6 100L126.4 101.5L124.2 103.2L122.1 104.8L120 106.6L118 108.3L116 110.2L114.1 112.1L112.2 114L110.3 116L108.6 118L106.8 120.1L105.2 122.2L103.5 124.4L102 126.6L100.5 128.8L99 131.1L97.7 133.4L96.3 135.8L95.1 138.2L93.9 140.6L92.8 143L91.7 145.5L90.7 148L89.8 150.6L88.9 153.1L88.1 155.7L87.4 158.3L86.7 160.9L86.1 163.6L85.6 166.2L85.1 168.9L84.7 171.5L84.4 174.2L84.2 176.9L84 179.6L83.9 182.3L83.8 185L83.9 187.7L84 190.4L84.2 193.1L84.4 195.8L84.7 198.5L85.1 201.1L85.6 203.8L86.1 206.4L86.7 209.1L87.4 211.7L88.1 214.3L88.9 216.9L89.8 219.4L90.7 222L91.7 224.5L92.8 227L93.9 229.4L95.1 231.8L96.3 234.2L97.7 236.6L99 238.9L100.5 241.2L102 243.4L103.5 245.6L105.2 247.8L106.8 249.9L108.6 252L110.3 254L112.2 256L114.1 257.9L116 259.8L118 261.7L120 263.4L122.1 265.2L124.2 266.8L126.4 268.5L128.6 270L130.8 271.5L133.1 273L135.4 274.3L137.8 275.7L140.2 276.9L142.6 278.1L145 279.2L147.5 280.3L150 281.3L152.6 282.2L155.1 283.1L157.7 283.9L160.3 284.6L162.9 285.3L165.6 285.9L168.2 286.4L170.9 286.9L173.5 287.3L176.2 287.6L178.9 287.8L181.6 288L184.3 288.1L187 288.2L189.7 288.1L192.4 288L195.1 287.8L197.8 287.6L200.5 287.3L203.1 286.9L205.8 286.4L208.4 285.9L211.1 285.3L213.7 284.6L216.3 283.9L218.9 283.1L221.4 282.2L224 281.3L226.5 280.3L229 279.2L231.4 278.1L233.8 276.9L236.2 275.7L238.6 274.3L240.9 273L243.2 271.5L245.4 270L247.6 268.5L249.8 266.8L251.9 265.2L254 263.4L256 261.7L258 259.8L259.9 257.9L261.8 256L263.7 254L265.4 252L267.2 249.9L268.8 247.8L270.5 245.6L272 243.4L273.5 241.2L275 238.9L276.3 236.6L277.7 234.2L278.9 231.8L280.1 229.4L281.2 227L282.3 224.5L283.3 222L284.2 219.4L285.1 216.9L285.9 214.3L286.6 211.7L287.3 209.1L287.9 206.4L288.4 203.8L288.9 201.1L289.3 198.5L289.6 195.8L289.8 193.1L290 190.4L290.1 187.7L290.2 185\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M309.1 185L309 181.8L308.9 178.6L308.7 175.4L308.4 172.2L308 169.1L307.6 165.9L307 162.8L306.4 159.6L305.7 156.5L304.9 153.4L304 150.3L303.1 147.3L302.1 144.3L301 141.3L299.8 138.3L298.5 135.4L297.2 132.5L295.8 129.6L294.3 126.8L292.7 124L291.1 121.2L289.4 118.5L287.6 115.9L285.7 113.3L283.8 110.7L281.9 108.2L279.8 105.7L277.7 103.3L275.5 101L273.3 98.7L271 96.5L268.7 94.3L266.3 92.2L263.8 90.1L261.3 88.2L258.7 86.3L256.1 84.4L253.5 82.6L250.8 80.9L248 79.3L245.2 77.7L242.4 76.2L239.5 74.8L236.6 73.5L233.7 72.2L230.7 71L227.7 69.9L224.7 68.9L221.7 68L218.6 67.1L215.5 66.3L212.4 65.6L209.2 65L206.1 64.4L202.9 64L199.8 63.6L196.6 63.3L193.4 63.1L190.2 63L187 62.9L183.8 63L180.6 63.1L177.4 63.3L174.2 63.6L171.1 64L167.9 64.4L164.8 65L161.6 65.6L158.5 66.3L155.4 67.1L152.3 68L149.3 68.9L146.3 69.9L143.3 71L140.3 72.2L137.4 73.5L134.5 74.8L131.6 76.2L128.8 77.7L126 79.3L123.2 80.9L120.5 82.6L117.9 84.4L115.3 86.3L112.7 88.2L110.2 90.1L107.7 92.2L105.3 94.3L103 96.5L100.7 98.7L98.5 101L96.3 103.3L94.2 105.7L92.1 108.2L90.2 110.7L88.3 113.3L86.4 115.9L84.6 118.5L82.9 121.2L81.3 124L79.7 126.8L78.2 129.6L76.8 132.5L75.5 135.4L74.2 138.3L73 141.3L71.9 144.3L70.9 147.3L70 150.3L69.1 153.4L68.3 156.5L67.6 159.6L67 162.8L66.4 165.9L66 169.1L65.6 172.2L65.3 175.4L65.1 178.6L65 181.8L64.9 185L65 188.2L65.1 191.4L65.3 194.6L65.6 197.8L66 200.9L66.4 204.1L67 207.2L67.6 210.4L68.3 213.5L69.1 216.6L70 219.7L70.9 222.7L71.9 225.7L73 228.7L74.2 231.7L75.5 234.6L76.8 237.5L78.2 240.4L79.7 243.2L81.3 246L82.9 248.8L84.6 251.5L86.4 254.1L88.3 256.7L90.2 259.3L92.1 261.8L94.2 264.3L96.3 266.7L98.5 269L100.7 271.3L103 273.5L105.3 275.7L107.7 277.8L110.2 279.9L112.7 281.8L115.3 283.7L117.9 285.6L120.5 287.4L123.2 289.1L126 290.7L128.8 292.3L131.6 293.8L134.5 295.2L137.4 296.5L140.3 297.8L143.3 299L146.3 300.1L149.3 301.1L152.3 302L155.4 302.9L158.5 303.7L161.6 304.4L164.8 305L167.9 305.6L171.1 306L174.2 306.4L177.4 306.7L180.6 306.9L183.8 307L187 307.1L190.2 307L193.4 306.9L196.6 306.7L199.8 306.4L202.9 306L206.1 305.6L209.2 305L212.4 304.4L215.5 303.7L218.6 302.9L221.7 302L224.7 301.1L227.7 300.1L230.7 299L233.7 297.8L236.6 296.5L239.5 295.2L242.4 293.8L245.2 292.3L248 290.7L250.8 289.1L253.5 287.4L256.1 285.6L258.7 283.7L261.3 281.8L263.8 279.9L266.3 277.8L268.7 275.7L271 273.5L273.3 271.3L275.5 269L277.7 266.7L279.8 264.3L281.9 261.8L283.8 259.3L285.7 256.7L287.6 254.1L289.4 251.5L291.1 248.8L292.7 246L294.3 243.2L295.8 240.4L297.2 237.5L298.5 234.6L299.8 231.7L301 228.7L302.1 225.7L303.1 222.7L304 219.7L304.9 216.6L305.7 213.5L306.4 210.4L307 207.2L307.6 204.1L308 200.9L308.4 197.8L308.7 194.6L308.9 191.4L309 188.2L309.1 185\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/></g><line x1=\"10\" y1=\"185\" x2=\"372\" y2=\"185\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCircle)\"/><line x1=\"187\" y1=\"362\" x2=\"187\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCircle)\"/><text x=\"370\" y=\"176\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"196\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"229.6\" y1=\"167.3\" x2=\"245\" y2=\"161\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"204.7\" y1=\"142.4\" x2=\"211\" y2=\"127\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"169.3\" y1=\"142.4\" x2=\"163\" y2=\"127\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"144.4\" y1=\"167.3\" x2=\"129\" y2=\"161\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"144.4\" y1=\"202.7\" x2=\"129\" y2=\"209\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"169.3\" y1=\"227.6\" x2=\"163\" y2=\"243\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"204.7\" y1=\"227.6\" x2=\"211\" y2=\"243\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"229.6\" y1=\"202.7\" x2=\"245\" y2=\"209\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"260.8\" y1=\"154.4\" x2=\"287.4\" y2=\"143.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"217.6\" y1=\"111.2\" x2=\"228.6\" y2=\"84.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"156.4\" y1=\"111.2\" x2=\"145.4\" y2=\"84.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"113.2\" y1=\"154.4\" x2=\"86.6\" y2=\"143.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"113.2\" y1=\"215.6\" x2=\"86.6\" y2=\"226.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"156.4\" y1=\"258.8\" x2=\"145.4\" y2=\"285.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"217.6\" y1=\"258.8\" x2=\"228.6\" y2=\"285.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"260.8\" y1=\"215.6\" x2=\"287.4\" y2=\"226.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"282.3\" y1=\"145.5\" x2=\"316.6\" y2=\"131.3\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"147.5\" y1=\"89.7\" x2=\"133.3\" y2=\"55.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"91.7\" y1=\"145.5\" x2=\"57.4\" y2=\"131.3\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"91.7\" y1=\"224.5\" x2=\"57.4\" y2=\"238.7\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"147.5\" y1=\"280.3\" x2=\"133.3\" y2=\"314.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"226.5\" y1=\"280.3\" x2=\"240.7\" y2=\"314.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"282.3\" y1=\"224.5\" x2=\"316.6\" y2=\"238.7\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"299.8\" y1=\"138.3\" x2=\"340.4\" y2=\"121.5\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"233.7\" y1=\"72.2\" x2=\"250.5\" y2=\"31.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"140.3\" y1=\"72.2\" x2=\"123.5\" y2=\"31.6\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"74.2\" y1=\"138.3\" x2=\"33.6\" y2=\"121.5\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"74.2\" y1=\"231.7\" x2=\"33.6\" y2=\"248.5\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"140.3\" y1=\"297.8\" x2=\"123.5\" y2=\"338.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"233.7\" y1=\"297.8\" x2=\"250.5\" y2=\"338.4\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"299.8\" y1=\"231.7\" x2=\"340.4\" y2=\"248.5\" stroke=\"var(--muted)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfCirclepencil)\"/><line x1=\"163\" y1=\"57.7\" x2=\"303.3\" y2=\"127.8\" stroke=\"var(--green)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><line x1=\"233.1\" y1=\"92.7\" x2=\"249.7\" y2=\"59.5\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah9bgfCirclered)\"/><circle cx=\"233.1\" cy=\"92.7\" r=\"5.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"257.7\" y=\"63.5\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"23\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇f</text><text x=\"390\" y=\"64\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:inherit\">等高線 x²+y² = 5</text><text x=\"390\" y=\"104\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">∇f(1, 2) = ⟨2, 4⟩</text><text x=\"390\" y=\"144\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:inherit\">切線方向 ⟨2, −1⟩</text><text x=\"390\" y=\"214\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"19\" style=\"font-family:inherit\">灰色箭頭：∇f = ⟨2x, 2y⟩</text><text x=\"390\" y=\"244\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"19\" style=\"font-family:inherit\">（縮成 0.1 倍）</text><text x=\"390\" y=\"300\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:inherit\">外圈 f 比較大：上坡</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：在 $(1,2)$ 驗證 $\\nabla f$ 跟等高線垂直",
+            "$\\nabla f(1,2)=\\langle 2,4\\rangle$"
+          ],
+          "say": "例題：在 1 逗號 2 驗證。梯度是 2x 逗號 2y，代進去是 2 逗號 4。",
           "board": [
-            {"do":"plot","graph":{"window":[-3,3,-1.5,4.5],"equal":true,"ticks":false,"curves":[{"param":{"x":"sqrt(5)*cos(t)","y":"sqrt(5)*sin(t)","t":[0,6.2832]},"color":"muted","dashed":true}],"arrows":[{"from":[1,2],"to":[2,4],"color":"blue"}],"points":[{"x":1,"y":2}]}}
-          ] },
-        { "show": ["切線方向 $\\langle -2,1\\rangle$：$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle=0$"],
-          "say": "圓的切線方向可以取負二、一。點積是零，垂直；而且梯度指向圓外，也就是函數變大的方向。",
+            {
+              "do": "write",
+              "line": "例：在 $(1,2)$ 驗證 $\\nabla f$ 跟等高線垂直"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla f(1,2)=\\langle 2,4\\rangle$",
+              "on": "逗號#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "經過 $(1,2)$ 的等高線：$x^2+y^2=5$"
+          ],
+          "say": "經過這一點的等高線是 x 平方加 y 平方等於 5。隱微分，切線斜率是負二分之一。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"切線方向 $\\langle -2,1\\rangle$","on":"切線方向"},
-            {"do":"write","line":"$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle={{z:0}}$","on":"點積"},
-            {"do":"box","term":"z","color":"green","on":"垂直"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "經過 $(1,2)$ 的等高線：$x^2+y^2=5$"
+            },
+            {
+              "do": "write",
+              "line": "隱微分：$2x+2y\\,y'=0$，$y'=-\\dfrac xy=-\\dfrac12$",
+              "on": "方等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切線方向 $\\langle 2,-1\\rangle$：",
+            "$\\langle 2,4\\rangle\\cdot\\langle 2,-1\\rangle=4-4=0$"
+          ],
+          "say": "斜率負二分之一，切線方向可以取 2 逗號負 1。跟梯度做內積：4 減 4 等於 0，所以垂直。",
+          "board": [
+            {
+              "do": "write",
+              "line": "切線方向 $\\langle 2,-1\\rangle$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\langle 2,4\\rangle\\cdot\\langle 2,-1\\rangle=4-4=0}}$",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "算一個梯度場",
+      "title": "為什麼一定垂直",
       "beats": [
-        { "show": ["$f(x,y)=x^2y+y^3$"],
-          "say": "算一個：第一個分量對 x 偏微分，y 當常數；第二個分量對 y 偏微分，x 當常數。",
+        {
+          "show": [
+            "沿著等高線 $\\mathbf r(t)$ 走：$f(\\mathbf r(t))=c$"
+          ],
+          "say": "一般的理由：沿著一條等高線 r of t 走，f 的值一直等於同一個常數 c。",
           "board": [
-            {"do":"write","line":"$f(x,y)=x^2y+{{c:y^3}}$"},
-            {"do":"write","line":"$\\nabla f=\\langle f_x,\\ f_y\\rangle$","on":"第一個分量"}
-          ] },
-        { "show": ["$f_x=2xy$"],
-          "say": "對 x：x 平方 y 變二 x y，y 三次方是常數，消失。",
+            {
+              "do": "write",
+              "line": "沿著等高線 $\\mathbf r(t)$ 走：$f(\\mathbf r(t))=c$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對 $t$ 微分（多變數連鎖律）：",
+            "$f_x\\,x'(t)+f_y\\,y'(t)=0$"
+          ],
+          "say": "兩邊對 t 微分。右邊常數微分是 0；左邊用多變數連鎖律，是 f x 乘 x prime，加 f y 乘 y prime。",
           "board": [
-            {"do":"write","line":"$f_x=2xy$"},
-            {"do":"focus","term":"c","color":"gold","label":"常數","on":"三次方"}
-          ] },
-        { "show": ["$f_y$：$x$ 當常數"],
-          "note": "$x^2$ 只是係數。",
-          "say": "接著對 y：x 當常數，所以 x 平方只是係數，y 三次方照平常的規則微分。",
+            {
+              "do": "write",
+              "line": "對 $t$ 微分（多變數連鎖律）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x\\,x'(t)+f_y\\,y'(t)=0$",
+              "on": "pr#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla f\\cdot\\mathbf r'(t)=0$"
+          ],
+          "say": "這正好是梯度跟速度的內積。速度沿著等高線的切線，所以梯度垂直於等高線。",
           "board": [
-            {"do":"write","line":"$f_y$：${{k:x^2}}y$ 的 $x^2$ 是係數"},
-            {"do":"focus","term":"k","color":"gold","label":"當常數","on":"係數"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\nabla f\\cdot\\mathbf r'(t)=0}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "速度#2"
+            },
+            {
+              "do": "write",
+              "line": "　前提：$\\nabla f\\ne\\mathbf 0$；梯度是零的地方沒有方向可談",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上坡：沿 $\\nabla f$ 方向，方向導數 $=|\\nabla f|>0$"
+          ],
+          "say": "至於上坡：沿著梯度方向的方向導數，等於梯度的長度，是正的，所以 f 往這個方向增加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上坡：沿 $\\nabla f$ 方向，方向導數 $=|\\nabla f|>0$"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$\\nabla f$ 是？",
+        "ask": "$f=x^2+y^2$，在點 $(-2,0)$ 的梯度箭頭指向哪裡？",
         "options": [
           {
-            "label": "$\\langle 2xy,\\ x^2+3y^2\\rangle$",
+            "label": "往左（離開原點）",
             "correct": true
           },
           {
-            "label": "$\\langle x^2+3y^2,\\ 2xy\\rangle$",
-            "why": "分量放反了：第一個是 $f_x$。"
+            "label": "往右（朝向原點）",
+            "why": "朝原點是下坡；梯度指向上坡"
           },
           {
-            "label": "$\\langle 2xy,\\ 3y^2\\rangle$",
-            "why": "對 $y$ 偏微分時 $x^2y$ 也要算，得 $x^2$。"
+            "label": "往上",
+            "why": "往上是沿著圓的切線：f 不變，不是梯度方向"
+          },
+          {
+            "label": "往下",
+            "why": "也是沿著圓的切線，f 不變"
           }
         ]
       }
     },
     {
-      "title": "反過來問",
+      "title": "給一個場，誰的梯度？",
       "beats": [
-        { "show": ["$\\mathbf F=\\nabla f$：$f$ 叫位勢函數"],
-          "note": "物理書常寫 $\\mathbf F=-\\nabla U$，只差 $f=-U$。",
-          "say": "反過來問：給一個場，它是不是某個函數的梯度？是的話，那個函數叫位勢函數。",
+        {
+          "show": [
+            "給 $\\mathbf F=\\langle P,Q\\rangle$，想找 $f$ 使得",
+            "$f_x=P,\\qquad f_y=Q$"
+          ],
+          "say": "反過來問：給一個場 P 逗號 Q，它是誰的梯度？也就是找 f，讓 f x 等於 P，f y 等於 Q。",
           "board": [
-            {"do":"write","line":"${{vf:\\mathbf F}}=\\nabla {{f:f}}$：$f$ 叫位勢函數","on":"給一個場","tint":{"vf":"blue","f":"violet"}},
-            {"do":"underline","term":"f","on":"那個函數","label":"位勢函數"}
-          ] },
-        { "show": ["$P=f_x$、$Q=f_y$ ⟹ $P_y=f_{xy}$、$Q_x=f_{yx}$"],
-          "say": "如果是，P 對 y 微分就是 f x y，Q 對 x 微分就是 f y x。",
+            {
+              "do": "write",
+              "line": "給 $\\mathbf F=\\langle P,Q\\rangle$，想找 $f$ 使得"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle f_x=P,\\qquad f_y=Q}}$",
+              "on": "它是"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "等於#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\mathbf F=\\langle 2xy,\\ x^2+3y^2\\rangle$",
+            "一：$f_x=2xy$，對 $x$ 積分"
+          ],
+          "say": "例子：2xy 逗號 x 平方加 3y 平方。第一步，f x 等於 2xy，對 x 積分，得到 x 平方 y，加一個只跟 y 有關的 g of y。",
           "board": [
-            {"do":"write","line":"$P=f_x$、$Q=f_y$"},
-            {"do":"write","line":"$P_y={{a:f_{xy}}}$、$Q_x={{b:f_{yx}}}$","on":"P 對 y"}
-          ] },
-        { "show": ["Clairaut：$P_y=Q_x$"],
-          "note": "$f$ 的二階偏導連續時。",
-          "say": "二階偏導連續時，兩個混合偏導相等，所以交叉偏導一定相等。",
+            {
+              "do": "write",
+              "line": "例：$\\mathbf F=\\langle 2xy,\\ x^2+3y^2\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "一：$f_x=2xy$，對 $x$ 積分",
+              "on": "平方#2"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f=x^2y+g(y)$",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "　對 $x$ 偏微分時 $y$ 是常數，所以「積分常數」可以是 $y$ 的任意函數",
+              "color": "violet",
+              "on": "加一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "二：對 $y$ 偏微分，跟 $Q$ 比",
+            "$x^2+g'(y)=x^2+3y^2$"
+          ],
+          "say": "第二步，把它對 y 偏微分，得到 x 平方加 g prime y，要等於 Q。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"Clairaut：${{a:f_{xy}}}={{b:f_{yx}}}$","on":"兩個混合偏導"},
-            {"do":"write","line":"⇒ ${{eq:P_y=Q_x}}$","on":"所以交叉"},
-            {"do":"box","term":"eq","on":"一定相等","color":"green"}
-          ] },
-        { "show": ["二階偏導連續：沒有跳躍"],
-          "say": "二階偏導連續，是說二階偏導數畫出來沒有跳躍，是平順的函數。大多數寫得出來的函數都符合。",
+            {
+              "do": "write",
+              "line": "二：對 $y$ 偏微分，跟 $Q$ 比"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^2+g'(y)=x^2+3y^2$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g'(y)=3y^2\\ \\Rightarrow\\ g(y)=y^3+C$"
+          ],
+          "say": "兩邊的 x 平方抵消，g prime 等於 3y 平方，積分得到 y 的三次方加常數。",
           "board": [
-            {"do":"write","line":"二階偏導連續 ＝ 沒有跳躍"}
-          ] },
-        { "show": ["$f_{xy}$、$f_{yx}$ 量同一個扭轉"],
-          "note": "直覺，不是證明。",
-          "say": "直覺：f x y 是斜率隨 y 的變化，f y x 是隨 x 的變化，量的是曲面同一個扭轉。這是直覺，不是證明。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle g'(y)=3y^2\\ \\Rightarrow\\ g(y)=y^3+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f=x^2y+y^3+C$"
+          ],
+          "say": "所以 f 等於 x 平方 y 加 y 的三次方加常數，就是第一節的那個 f。",
           "board": [
-            {"do":"write","line":"直覺，不是證明","color":"red"}
-          ] }
-      ],
-      "key": "$\\mathbf F=\\nabla f$ 推出 $P_y=Q_x$：混合偏導相等",
-      "check": 3
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle f=x^2y+y^3+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "的三"
+            },
+            {
+              "do": "write",
+              "line": "　完整的找法在 9.17 位勢函數；這裡先看它長什麼樣子",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "不可能是梯度場",
+      "title": "找不到的時候",
       "beats": [
-        { "show": ["$\\mathbf F=\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$"],
-          "say": "拿這個場檢查：交叉偏導一個是一、一個是負一。",
+        {
+          "show": [
+            "$\\mathbf F=\\langle y,\\,-x\\rangle$ 是誰的梯度？"
+          ],
+          "say": "再試一個：y 逗號負 x，是誰的梯度？",
           "board": [
-            {"do":"write","line":"$\\mathbf F=\\langle y,-x\\rangle$"},
-            {"do":"write","line":"$P_y={{a:1}}$，$Q_x={{b:-1}}$","on":"交叉偏導"}
-          ] },
-        { "show": ["$P_y\\ne Q_x$ ⟹ 一定不是梯度場"],
-          "note": "它是順時針繞圈的旋轉場。",
-          "say": "不相等，就一定不是梯度場。它是一個順時針繞圈的旋轉場。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle y,\\,-x\\rangle$ 是誰的梯度？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_x=y\\ \\Rightarrow\\ f=xy+g(y)$"
+          ],
+          "say": "f x 等於 y，對 x 積分，f 等於 xy 加 g of y。",
           "board": [
-            {"do":"write","line":"$P_y\\ne Q_x\\Rightarrow$ 一定不是梯度場","color":"red"},
-            {"do":"write","line":"旋轉場：順時針繞圈","on":"順時針"}
-          ] },
-        { "show": ["$P_y=Q_x$ 還不夠"],
-          "note": "還要看定義域有沒有洞：〈保守場〉。",
-          "say": "反過來，交叉偏導相等還不能保證，要看定義域有沒有洞，那是後面保守場的事。",
+            {
+              "do": "write",
+              "line": "$f_x=y\\ \\Rightarrow\\ f=xy+g(y)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_y=x+g'(y)$ 要等於 $-x$",
+            "$g'(y)=-2x$"
+          ],
+          "say": "對 y 偏微分是 x 加 g prime y，要等於負 x，所以 g prime y 等於負 2x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$P_y=Q_x$ 還不夠","on":"交叉偏導"},
-            {"do":"write","line":"要看定義域有沒有洞","on":"定義域"}
-          ] },
-        { "show": ["有洞：定義域挖掉一點"],
-          "note": "例：挖掉原點。",
-          "say": "例如把原點挖掉，定義域中間就有一個洞。繞著洞走一圈，位勢函數可能回不到原來的值，所以相等還不夠。",
+            {
+              "do": "write",
+              "line": "$f_y=x+g'(y)$ 要等於 $-x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle g'(y)=-2x$",
+              "on": "於負#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "矛盾：$g'(y)$ 只跟 $y$ 有關，不能含 $x$"
+          ],
+          "say": "矛盾：g prime y 只能跟 y 有關，右邊卻有 x。所以找不到這樣的 f。",
           "board": [
-            {"do":"write","line":"例：挖掉原點 ⇒ 中間有洞","on":"原點"},
-            {"do":"write","line":"繞洞一圈，$f$ 可能回不到原值","on":"繞著洞"}
-          ] },
-        { "show": ["保守場：繞一圈，做功為 $0$"],
-          "note": "梯度場是保守場，後面細講。",
-          "say": "保守場的意思是：沿任何封閉的路繞一圈回來，做功是零。梯度場就是保守場，細節後面再講。",
-          "board": [
-            {"do":"write","line":"保守場：繞一圈，做功 $0$","on":"保守場#1"}
-          ] }
+            {
+              "do": "write",
+              "line": "矛盾：$g'(y)$ 只跟 $y$ 有關，不能含 $x$",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "key": "$P_y\\ne Q_x$ 一票否決；相等還不夠",
-      "check": 2
+      "proof": true,
+      "order": {
+        "ask": "找 $f$ 使 $\\nabla f=\\langle P,Q\\rangle$",
+        "steps": [
+          {
+            "label": "把 $P$ 對 $x$ 積分，寫成 $f=(\\cdots)+g(y)$"
+          },
+          {
+            "label": "對 $y$ 偏微分，跟 $Q$ 比較",
+            "why": "先要有上一步：把 $P$ 對 $x$ 積分，寫成 $f=(\\cdots)+g(y)$"
+          },
+          {
+            "label": "解出 $g'(y)$，確認它只含 $y$",
+            "why": "先要有上一步：對 $y$ 偏微分，跟 $Q$ 比較"
+          },
+          {
+            "label": "積分得到 $g(y)$，寫出 $f$",
+            "why": "先要有上一步：解出 $g'(y)$，確認它只含 $y$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "必要條件：交叉偏導",
+      "beats": [
+        {
+          "show": [
+            "若 $\\mathbf F=\\nabla f$，則 $P=f_x$、$Q=f_y$"
+          ],
+          "say": "有沒有更快的判斷法？假設 F 真的是 f 的梯度，那 P 就是 f x，Q 就是 f y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "若 $\\mathbf F=\\nabla f$，則 $P=f_x$、$Q=f_y$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Clairaut 定理（二階偏導連續）：",
+            "$P_y=f_{xy}=f_{yx}=Q_x$"
+          ],
+          "say": "P 對 y 偏微分是 f x y，Q 對 x 偏微分是 f y x。由克萊洛定理，二階偏導數連續時，兩個相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Clairaut 定理（二階偏導連續）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle P_y=f_{xy}=f_{yx}=Q_x}}$",
+              "on": "偏微#2"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "萊洛"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：$P_y\\ne Q_x\\ \\Rightarrow\\ $不可能是梯度場"
+          ],
+          "say": "所以只要 P y 不等於 Q x，就不可能是梯度場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以：$P_y\\ne Q_x\\ \\Rightarrow\\ $不可能是梯度場",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$ ⇒ 不是"
+          ],
+          "say": "剛剛的 y 逗號負 x：P y 是 1，Q x 是負 1，不相等，一行就判斷完。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$ ⇒ 不是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "旋轉場也不是。直覺上，如果它是梯度場，順著箭頭走就一直上坡；繞一圈回到出發點，f 卻變大了，不可能。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"gfLoop\" viewBox=\"0 0 620 350\" width=\"620\" height=\"350\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bgfLoop\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bgfLoopblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bgfLoopred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bgfLoopgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bgfLooppencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bgfLoopink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bgfLoop6\"><rect x=\"13\" y=\"12\" width=\"326\" height=\"326\"/></clipPath><g clip-path=\"url(#cl9bgfLoop6)\"><line x1=\"13\" y1=\"12\" x2=\"13\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"67.3\" y1=\"12\" x2=\"67.3\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"121.7\" y1=\"12\" x2=\"121.7\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"176\" y1=\"12\" x2=\"176\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"230.3\" y1=\"12\" x2=\"230.3\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"284.7\" y1=\"12\" x2=\"284.7\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"339\" y1=\"12\" x2=\"339\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"338\" x2=\"339\" y2=\"338\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"283.7\" x2=\"339\" y2=\"283.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"229.3\" x2=\"339\" y2=\"229.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"175\" x2=\"339\" y2=\"175\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"120.7\" x2=\"339\" y2=\"120.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"66.3\" x2=\"339\" y2=\"66.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"13\" y1=\"12\" x2=\"339\" y2=\"12\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M284.7 175L284.6 172.2L284.5 169.3L284.3 166.5L284.1 163.6L283.7 160.8L283.3 158L282.8 155.2L282.3 152.4L281.7 149.6L281 146.9L280.2 144.1L279.3 141.4L278.4 138.7L277.4 136.1L276.4 133.4L275.3 130.8L274.1 128.2L272.8 125.7L271.5 123.1L270.1 120.7L268.7 118.2L267.1 115.8L265.6 113.5L263.9 111.1L262.2 108.8L260.4 106.6L258.6 104.4L256.8 102.3L254.8 100.2L252.8 98.2L250.8 96.2L248.7 94.2L246.6 92.4L244.4 90.6L242.2 88.8L239.9 87.1L237.5 85.4L235.2 83.9L232.8 82.3L230.3 80.9L227.9 79.5L225.3 78.2L222.8 76.9L220.2 75.7L217.6 74.6L214.9 73.6L212.3 72.6L209.6 71.7L206.9 70.8L204.1 70L201.4 69.3L198.6 68.7L195.8 68.2L193 67.7L190.2 67.3L187.4 66.9L184.5 66.7L181.7 66.5L178.8 66.4L176 66.3L173.2 66.4L170.3 66.5L167.5 66.7L164.6 66.9L161.8 67.3L159 67.7L156.2 68.2L153.4 68.7L150.6 69.3L147.9 70L145.1 70.8L142.4 71.7L139.7 72.6L137.1 73.6L134.4 74.6L131.8 75.7L129.2 76.9L126.7 78.2L124.1 79.5L121.7 80.9L119.2 82.3L116.8 83.9L114.5 85.4L112.1 87.1L109.8 88.8L107.6 90.6L105.4 92.4L103.3 94.2L101.2 96.2L99.2 98.2L97.2 100.2L95.2 102.3L93.4 104.4L91.6 106.6L89.8 108.8L88.1 111.1L86.4 113.5L84.9 115.8L83.3 118.2L81.9 120.7L80.5 123.1L79.2 125.7L77.9 128.2L76.7 130.8L75.6 133.4L74.6 136.1L73.6 138.7L72.7 141.4L71.8 144.1L71 146.9L70.3 149.6L69.7 152.4L69.2 155.2L68.7 158L68.3 160.8L67.9 163.6L67.7 166.5L67.5 169.3L67.4 172.2L67.3 175L67.4 177.8L67.5 180.7L67.7 183.5L67.9 186.4L68.3 189.2L68.7 192L69.2 194.8L69.7 197.6L70.3 200.4L71 203.1L71.8 205.9L72.7 208.6L73.6 211.3L74.6 213.9L75.6 216.6L76.7 219.2L77.9 221.8L79.2 224.3L80.5 226.9L81.9 229.3L83.3 231.8L84.9 234.2L86.4 236.5L88.1 238.9L89.8 241.2L91.6 243.4L93.4 245.6L95.2 247.7L97.2 249.8L99.2 251.8L101.2 253.8L103.3 255.8L105.4 257.6L107.6 259.4L109.8 261.2L112.1 262.9L114.5 264.6L116.8 266.1L119.2 267.7L121.7 269.1L124.1 270.5L126.7 271.8L129.2 273.1L131.8 274.3L134.4 275.4L137.1 276.4L139.7 277.4L142.4 278.3L145.1 279.2L147.9 280L150.6 280.7L153.4 281.3L156.2 281.8L159 282.3L161.8 282.7L164.6 283.1L167.5 283.3L170.3 283.5L173.2 283.6L176 283.7L178.8 283.6L181.7 283.5L184.5 283.3L187.4 283.1L190.2 282.7L193 282.3L195.8 281.8L198.6 281.3L201.4 280.7L204.1 280L206.9 279.2L209.6 278.3L212.3 277.4L214.9 276.4L217.6 275.4L220.2 274.3L222.8 273.1L225.3 271.8L227.9 270.5L230.3 269.1L232.8 267.7L235.2 266.1L237.5 264.6L239.9 262.9L242.2 261.2L244.4 259.4L246.6 257.6L248.7 255.8L250.8 253.8L252.8 251.8L254.8 249.8L256.8 247.7L258.6 245.6L260.4 243.4L262.2 241.2L263.9 238.9L265.6 236.5L267.1 234.2L268.7 231.8L270.1 229.3L271.5 226.9L272.8 224.3L274.1 221.8L275.3 219.2L276.4 216.6L277.4 213.9L278.4 211.3L279.3 208.6L280.2 205.9L281 203.1L281.7 200.4L282.3 197.6L282.8 194.8L283.3 192L283.7 189.2L284.1 186.4L284.3 183.5L284.5 180.7L284.6 177.8L284.7 175\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"9\" y1=\"175\" x2=\"351\" y2=\"175\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfLoop)\"/><line x1=\"176\" y1=\"342\" x2=\"176\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bgfLoop)\"/><text x=\"349\" y=\"166\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"185\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"67.3\" y1=\"283.7\" x2=\"99.9\" y2=\"316.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"67.3\" y1=\"229.3\" x2=\"83.6\" y2=\"261.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"67.3\" y1=\"175\" x2=\"67.3\" y2=\"207.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"67.3\" y1=\"120.7\" x2=\"51\" y2=\"153.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"67.3\" y1=\"66.3\" x2=\"34.7\" y2=\"98.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"121.7\" y1=\"283.7\" x2=\"154.3\" y2=\"300\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"121.7\" y1=\"229.3\" x2=\"138\" y2=\"245.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"121.7\" y1=\"175\" x2=\"121.7\" y2=\"191.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"121.7\" y1=\"120.7\" x2=\"105.4\" y2=\"137\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"121.7\" y1=\"66.3\" x2=\"89.1\" y2=\"82.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"176\" y1=\"283.7\" x2=\"208.6\" y2=\"283.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"176\" y1=\"229.3\" x2=\"192.3\" y2=\"229.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"176\" y1=\"120.7\" x2=\"159.7\" y2=\"120.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"176\" y1=\"66.3\" x2=\"143.4\" y2=\"66.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"230.3\" y1=\"283.7\" x2=\"262.9\" y2=\"267.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"230.3\" y1=\"229.3\" x2=\"246.6\" y2=\"213\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"230.3\" y1=\"175\" x2=\"230.3\" y2=\"158.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"230.3\" y1=\"120.7\" x2=\"214\" y2=\"104.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"230.3\" y1=\"66.3\" x2=\"197.7\" y2=\"50\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"284.7\" y1=\"283.7\" x2=\"317.3\" y2=\"251.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"284.7\" y1=\"229.3\" x2=\"301\" y2=\"196.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"284.7\" y1=\"175\" x2=\"284.7\" y2=\"142.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"284.7\" y1=\"120.7\" x2=\"268.4\" y2=\"88.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><line x1=\"284.7\" y1=\"66.3\" x2=\"252.1\" y2=\"33.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bgfLoopblue)\"/><circle cx=\"284.7\" cy=\"175\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"272.7\" y=\"205\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">出發</text><text x=\"372\" y=\"70\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">如果 F = ∇f：</text><text x=\"372\" y=\"110\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:inherit\">順著箭頭走 = 一直上坡</text><text x=\"372\" y=\"170\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">繞一圈回到出發點，</text><text x=\"372\" y=\"202\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">f 卻變大了？</text><text x=\"372\" y=\"270\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"21\" style=\"font-family:inherit\">所以 ⟨−y, x⟩ 不是梯度場</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　旋轉場：$P_y=-1$，$Q_x=1$",
+              "color": "violet",
+              "on": "一直"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "哪一個場可能是梯度場？"
+          ],
+          "say": "試一題：哪一個可能是梯度場？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$P_y=Q_x$ 只是必要條件"
+          ],
+          "say": "注意：P y 等於 Q x 只是必要條件。有些場交叉偏導相等，卻還是不是梯度場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P_y=Q_x$ 只是必要條件"
+            },
+            {
+              "do": "write",
+              "line": "　反例：$\\big\\langle\\frac{-y}{x^2+y^2},\\frac{x}{x^2+y^2}\\big\\rangle$ 在去掉原點的平面上；什麼時候夠用，留到 9.16 保守場",
+              "color": "violet",
+              "on": "有些"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼在乎？ 沿曲線 $\\mathbf r(t)$ 走，連鎖律：",
+            "$\\frac{d}{dt}f(\\mathbf r(t))=\\nabla f\\cdot\\mathbf r'(t)$"
+          ],
+          "say": "為什麼在乎是不是梯度場？沿著曲線走，f of r of t 對 t 微分，由連鎖律，等於梯度跟速度的內積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼在乎？ 沿曲線 $\\mathbf r(t)$ 走，連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dt}f(\\mathbf r(t))=\\nabla f\\cdot\\mathbf r'(t)$",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從 $a$ 積到 $b$（微積分基本定理）：",
+            "$\\int_a^b\\nabla f\\cdot\\mathbf r'\\,dt=f(\\mathbf r(b))-f(\\mathbf r(a))$"
+          ],
+          "say": "兩邊從 a 積到 b，用微積分基本定理：梯度跟速度內積的積分，只看兩端 f 的差，跟中間怎麼走無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從 $a$ 積到 $b$（微積分基本定理）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle \\int_a^b\\nabla f\\cdot\\mathbf r'\\,dt=f(\\mathbf r(b))-f(\\mathbf r(a))}}$",
+              "on": "微積"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "內積"
+            },
+            {
+              "do": "write",
+              "line": "　左邊就是之後的「線積分」：梯度場的線積分會變得很簡單",
+              "color": "violet",
+              "on": "的差"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 梯度場：每一點放上 $\\nabla f=\\langle f_x,f_y\\rangle$；$f$ 是位勢函數",
+            "• 圖像：垂直等高線、指向上坡"
+          ],
+          "say": "整理一下：梯度場垂直等高線、指向上坡。反過來找 f，先對 x 積分再比對。交叉偏導不相等，就不可能是梯度場。梯度場沿曲線累積，只看兩端。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 梯度場：每一點放上 $\\nabla f=\\langle f_x,f_y\\rangle$；$f$ 是位勢函數"
+            },
+            {
+              "do": "write",
+              "line": "• 圖像：垂直等高線、指向上坡",
+              "on": "指向"
+            },
+            {
+              "do": "write",
+              "line": "• 反過來：$f_x=P$ 對 $x$ 積分、留 $g(y)$、再比對 $Q$",
+              "on": "積分"
+            },
+            {
+              "do": "write",
+              "line": "• $P_y\\ne Q_x$ ⇒ 不可能是梯度場（$P_y=Q_x$ 只是必要條件）",
+              "on": "導不"
+            },
+            {
+              "do": "write",
+              "line": "• 梯度場沿曲線累積，只看兩端",
+              "on": "梯度#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：純量線積分"
+          ],
+          "say": "下一課，開始學沿著曲線積分：純量線積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：純量線積分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["vector-calculus", "conservative-field", "nabla"],
-    "fine": ["gradient-field-compute", "gradient-field-level-curves", "gradient-field-cross-partials"]
+    "coarse": [
+      "vector-calculus",
+      "conservative-field",
+      "nabla"
+    ],
+    "fine": [
+      "gradient-field-compute",
+      "gradient-field-level-curves",
+      "gradient-field-cross-partials"
+    ]
   },
   "practice": [
-    { "id": "exam-multi-003", "core": true, "trains": "gradient-field-compute" },
-    { "id": "lec-20-m1", "core": true, "trains": "gradient-field-cross-partials" },
-    { "id": "cg-9b1-009", "core": true, "trains": "gradient-field-cross-partials" },
-    { "id": "cg-9b1-012", "core": true, "trains": "gradient-field-level-curves" },
-    { "id": "vc-nab-006", "trains": "gradient-field-level-curves", "note": "梯度的長度就是最大的方向變化率。" },
-    { "id": "cg-9b1-010", "trains": "gradient-field-cross-partials" },
-    { "id": "cg-9b1-011", "trains": "gradient-field-cross-partials" },
-    { "id": "cg-9b1-013", "trains": "gradient-field-level-curves" }
-  ]
+    {
+      "id": "exam-multi-003",
+      "core": true,
+      "trains": "gradient-field-compute"
+    },
+    {
+      "id": "lec-20-m1",
+      "core": true,
+      "trains": "gradient-field-cross-partials"
+    },
+    {
+      "id": "cg-9b1-009",
+      "core": true,
+      "trains": "gradient-field-cross-partials"
+    },
+    {
+      "id": "cg-9b1-012",
+      "core": true,
+      "trains": "gradient-field-level-curves"
+    },
+    {
+      "id": "vc-nab-006",
+      "trains": "gradient-field-level-curves",
+      "note": "梯度的長度就是最大的方向變化率。"
+    },
+    {
+      "id": "cg-9b1-010",
+      "trains": "gradient-field-cross-partials"
+    },
+    {
+      "id": "cg-9b1-011",
+      "trains": "gradient-field-cross-partials"
+    },
+    {
+      "id": "cg-9b1-013",
+      "trains": "gradient-field-level-curves"
+    }
+  ],
+  "gaps": []
 }

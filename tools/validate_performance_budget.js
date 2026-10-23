@@ -167,7 +167,9 @@ const BUDGETS = {
   // 2026-10-22 101 → 102：攤開筆記的墨跡對位修正、分節拿掉滑桿互動圖後「有圖的節」只算真的畫得出來的圖（約 +0.5KB，原本貼著上限）。
   "延後載入：課程黑板": { pattern: /^$/, budget: 102 * 1024, lazy: "board" },
   // 2026-10-12 新增：黑板上的圖（course_board_plot.js，約 2KB）。只有節裡有 plot 的才由 course_board.js 抓。
-  "延後載入：黑板的圖": { pattern: /^$/, budget: 4 * 1024, lazy: "boardplot" },
+  // 2026-10-23 4 → 22KB：同一組多了 course_board_nbplot.js（約 16KB，交付的筆記本課的函數圖：BuzzNotebook 的 plot 畫法原樣搬來）。
+  // 316 課換成交付的課之後，有圖的節幾乎都用得到它，所以放同一組、不另開一組（也省掉 course_board.js 多抓一組的程式）。
+  "延後載入：黑板的圖": { pattern: /^$/, budget: 22 * 1024, lazy: "boardplot" },
   // 2026-10-20 新增：筆記本上自己寫（course_ink.js，約 20KB，其中 perfect-freehand 約 4KB、工具列樣式與圖示約 4KB）。只有筆記本模式打開一課一塊板才抓。
   "延後載入：筆記本自己寫": { pattern: /^$/, budget: 24 * 1024, lazy: "ink" },
   // 2026-10-09 新增：課程的圖（course_figures.js，約 15KB，figures 與 8 種 widget 的畫法）。從 course_v2_ui.js 搬出來：
@@ -177,7 +179,11 @@ const BUDGETS = {
   // 最大的 Stage 會到 600KB 以上）。打開某一課只抓那一章 —— 使用者等的是「一章」，所以上限管最大的那一支。
   // 改的時候：最大的一章是 11D（Gamma 與 Beta，9 課）58KB；每課加上分節與旁白起訖約 +5KB → 約 105KB。上限 160KB。
   // 撞頂該做的是把那一章拆小（大綱的章本來就該 ≤ 8 課），不是調數字。
-  "延後載入：課文（最大的一章）": { pattern: /^src\/course_v2\/ch-[a-z0-9-]+\.js$/, budget: 160 * 1024, maxFile: true },
+  // 2026-10-23 160 → 768KB：316 課換成交付的筆記本課（tools/import_notebook.js），內容比原本長（每課 30–40 句、一句一段黑板），
+  // 而且帶著交付者手畫的圖（黑板 plot 的 svg）—— 多變數那幾章的立體圖（曲面網格）一張就 100–160KB，拆章也拆不掉。
+  // 最大的是 8E（712KB，brotli 71KB）；svg 重複的屬性多，壓縮後是原本的十分之一，使用者等的是壓過的那一份。
+  // 下一次撞頂：把立體圖的網格在匯入時減點（座標一位小數已經做了），或把圖拆成一課一支，不是再調數字。
+  "延後載入：課文（最大的一章）": { pattern: /^src\/course_v2\/ch-[a-z0-9-]+\.js$/, budget: 768 * 1024, maxFile: true },
   // 2026-10-16 新增：詳解 v2 的分片（src/detail/d-XX.js，64 片，開局只抓這一局的題目在的那幾片）。
   // 全題庫約 3,000 份、4MB 上下 → 平均一片 65KB；使用者等的是一片，所以管最大的那一片。撞頂就加片數
   // （build_solution_detail.js 的 SHARDS 跟 problem_authored_solutions.js 一起改），不是調數字。

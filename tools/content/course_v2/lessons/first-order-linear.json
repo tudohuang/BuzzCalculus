@@ -1,55 +1,125 @@
 {
   "id": "first-order-linear",
   "title": "一階線性",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["separation-of-variables"],
-  "next": ["integrating-factor"],
-  "related": ["second-order-linear"],
-  "objectives": [
-    "判斷一個一階方程是不是線性，並化成標準形 $y'+P(x)y=Q(x)$，正確讀出 $P$ 與 $Q$。",
-    "解齊次的情形 $y'+P(x)y=0$，並說出通解 $={}$ 齊次通解 $+$ 一個特解的理由。",
-    "解常數係數的 $y'+ay=b$，用平衡值說出長期行為（例如牛頓冷卻）。"
+  "prerequisites": [
+    "separation-of-variables"
   ],
-  "visual": "y′ + 2y = 4 的一族解：從不同的 y(0) 出發，每一條都以指數速度貼近水平線 y = 2。滑桿調整 a（a > 0），貼近的速度跟著變快或變慢；把 a 拉成負的，曲線改成遠離 y = b/a。",
+  "next": [
+    "integrating-factor"
+  ],
+  "related": [
+    "second-order-linear"
+  ],
+  "objectives": [
+    "判斷一個一階方程是不是線性，並化成標準形 $y'+P(x)y=Q(x)$，正確讀出 $P$ 與 $Q$",
+    "解齊次的情形 $y'+P(x)y=0$，並說出通解 $=$ 齊次通解 $+$ 一個特解的理由",
+    "解常數係數的 $y'+ay=b$，用平衡值說出長期行為（例如牛頓冷卻）"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 什麼叫線性",
       "body": [
-        "一階線性方程可以整理成 $y'+P(x)y=Q(x)$：$y$ 和 $y'$ 都只出現一次方、沒有互乘、不被包在函數裡，係數只跟 $x$ 有關。",
-        "線性：$xy'+y=x^2$、$y'=-y\\tan x$、$y'=x+y$。不是線性：$y'=y^2$（平方）、$yy'=x$（互乘）、$y'=\\sin y$（包在函數裡）。"
+        "$y$ 和 $y'$ 都只以一次方出現，係數只跟 $x$ 有關：",
+        "• $y'+x^2y=\\sin x$：線性",
+        "• $y'=e^xy+1$：線性（$y$ 的係數是 $e^x$）",
+        "• $y'+y^2=x$：不是（$y^2$）",
+        "• $yy'=x$：不是（$y$ 乘 $y'$）",
+        "線性：對 $x$ 可以亂，對 $y$ 要乾淨"
       ],
-      "collapsible": false
+      "tex": [
+        "a_1(x)\\,y'+a_0(x)\\,y=b(x)"
+      ]
     },
     {
       "heading": "② 先化成標準形",
       "body": [
-        "$y'$ 的係數要是 $1$，含 $y$ 的項全部移到左邊。$y'=x+y$ 要寫成 $y'-y=x$，所以 $P=-1$，不是 $+1$。$xy'+y=x^2$（$x>0$）要先除以 $x$：$y'+\\frac{1}{x}y=x$，$P=\\frac{1}{x}$、$Q=x$。"
+        "標準形：$y'$ 的係數是 $1$",
+        "例：$xy'+y=x^2$（$x>0$）",
+        "兩邊除以 $x$：",
+        "$P(x)=\\dfrac1x$，$Q(x)=x$",
+        "除以 $x$ 要 $x\\ne0$；所以題目限定 $x>0$"
       ],
-      "collapsible": false
+      "tex": [
+        "y'+P(x)\\,y=Q(x)",
+        "y'+\\frac1x\\,y=x"
+      ]
     },
     {
       "heading": "③ 齊次的情形就是可分離",
       "body": [
-        "$Q=0$ 時 $y'=-P(x)y$，用〈分離變數〉：$y=Ce^{-\\int P\\,dx}$。例如 $y'+2y=0$ 的解是 $Ce^{-2x}$。"
+        "$Q=0$ 叫齊次：$y'+P(x)y=0$",
+        "$\\displaystyle\\int\\frac{dy}{y}=-\\int P\\,dx$，整理常數：",
+        "$y=0$ 對應 $C=0$，沒有漏掉的平衡解",
+        "例：$y'+\\dfrac1xy=0$（$x>0$）",
+        "$\\displaystyle\\int\\frac1x\\,dx=\\ln x$，$e^{-\\ln x}=\\dfrac1x$：",
+        "驗算：$\\left(\\frac Cx\\right)'+\\frac1x\\cdot\\frac Cx=-\\frac C{x^2}+\\frac C{x^2}=0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{dy}{dx}=-P(x)\\,y\\quad\\text{可分離！}",
+        "y_h=Ce^{-\\int P(x)\\,dx}",
+        "y_h=\\frac{C}{x}"
+      ]
     },
     {
-      "heading": "④ 解的結構：齊次通解加一個特解",
+      "heading": "④ 解的結構",
       "body": [
-        "假設已經找到一個解 $y_p$。任何其他解 $y$ 和它相減：$(y-y_p)'+P(y-y_p)=Q-Q=0$，所以差是齊次方程的解，等於 $Ce^{-\\int P\\,dx}$。",
-        "結論：通解 $=y_p+Ce^{-\\int P\\,dx}$。只要找到一個特解，加上齊次通解，就是全部的解。這是「線性」帶來的好處，非線性方程沒有。找特解的系統方法在〈積分因子〉。"
+        "已知一個特解 $y_p$。任何解 $y$，令 $u=y-y_p$：",
+        "差 $u$ 是齊次方程的解：$u=y_h$",
+        "跟線性代數的 $A\\mathbf x=\\mathbf b$ 一樣：通解 $=$ 零空間 $+$ 一個特解",
+        "例：$xy'+y=x^2$，$y(1)=1$。已知 $y_p=\\dfrac{x^2}3$",
+        "檢查：$x\\cdot\\dfrac{2x}3+\\dfrac{x^2}3=x^2$",
+        "$y(1)=\\frac13+C=1$，$C=\\frac23$：",
+        "特解怎麼找？下一課的積分因子會直接算出來"
       ],
-      "collapsible": false
+      "tex": [
+        "u'+Pu=(y'+Py)-(y_p'+Py_p)=Q-Q=0",
+        "y=y_h+y_p",
+        "y=\\frac{x^2}3+\\frac Cx",
+        "y=\\frac{x^2}3+\\frac{2}{3x}"
+      ]
     },
     {
       "heading": "⑤ 常數係數：平衡值",
       "body": [
-        "$y'+ay=b$（$a\\ne 0$）有一個常數解 $y=\\frac{b}{a}$（代進去 $0+b=b$）。所以 $y=\\frac{b}{a}+Ce^{-ax}$。$a>0$ 時 $e^{-ax}\\to0$，每一條解都趨近 $\\frac{b}{a}$。",
-        "牛頓冷卻 $T'=-k(T-T_0)$ 就是這個形狀：溫差以指數速度消失，溫度趨近室溫 $T_0$。"
+        "$y'+ay=b$（$a\\ne0$）：常數 $y=\\frac ba$ 就是特解",
+        "例：$y'+2y=4$，$y(0)=0$",
+        "平衡值 $\\frac42=2$；$y=2+Ce^{-2x}$，$y(0)=2+C=0$：",
+        "$a>0$ 時 $e^{-ax}\\to0$：長期都趨近 $\\frac ba$"
       ],
-      "collapsible": false
+      "tex": [
+        "y=\\frac ba+Ce^{-ax}",
+        "y=2-2e^{-2x}"
+      ]
+    },
+    {
+      "heading": "⑤ 牛頓冷卻",
+      "body": [
+        "$100^\\circ\\text{C}$ 的物體放進 $20^\\circ\\text{C}$ 的房間，$10$ 分鐘後 $60^\\circ\\text{C}$。",
+        "就是 $T'+kT=20k$：平衡值 $20$",
+        "$T(10)=60$：$80e^{-10k}=40$，$e^{-10k}=\\frac12$",
+        "何時降到 $30^\\circ\\text{C}$？$80e^{-kt}=10$，$e^{-kt}=\\frac18=\\left(\\frac12\\right)^3$"
+      ],
+      "tex": [
+        "T'=-k(T-20)",
+        "T=20+Ce^{-kt},\\quad T(0)=100\\Rightarrow C=80",
+        "k=\\frac{\\ln2}{10}\\approx0.0693\\ (\\text{每分鐘})",
+        "t=30\\ \\text{分鐘}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 線性：$y$、$y'$ 只有一次方，係數只跟 $x$ 有關",
+        "• 先化標準形 $y'+Py=Q$：右邊也要除",
+        "• 齊次（$Q=0$）可分離：$y_h=Ce^{-\\int P\\,dx}$",
+        "• 通解 $=$ 齊次通解 $+$ 一個特解",
+        "• 常數係數：$y=\\frac ba+Ce^{-ax}$，$a>0$ 時趨近平衡值 $\\frac ba$",
+        "下一課：積分因子：特解直接算出來"
+      ]
     }
   ],
   "workedExamples": [
@@ -103,35 +173,45 @@
   ],
   "checks": [
     {
-      "ask": "下列哪一個是一階線性方程？",
+      "ask": "哪一個是線性的？",
       "options": [
-        { "label": "$y'+x^2y=\\sin x$", "correct": true },
-        { "label": "$y'+y^2=x$", "why": "$y^2$ 不是一次方，非線性。" },
-        { "label": "$yy'=x$", "why": "$y$ 和 $y'$ 互乘，非線性（它是可分離的）。" }
+        {
+          "label": "$y'=\\sin y$",
+          "why": "$y$ 被包在 $\\sin$ 裡，不是一次方"
+        },
+        {
+          "label": "$x^2y'+(\\cos x)\\,y=e^x$",
+          "correct": true
+        },
+        {
+          "label": "$y'+\\sqrt y=x$",
+          "why": "$\\sqrt y$ 是 $y^{1/2}$，不是一次方"
+        },
+        {
+          "label": "$y'=xy^2$",
+          "why": "$y^2$ 不是一次方；這題可分離，但不是線性"
+        }
       ]
     },
     {
-      "ask": "$y'=3y+x$ 化成 $y'+P(x)y=Q(x)$，$P$ 是？",
+      "ask": "$(x^2+1)\\,y'+2xy=4$ 化成標準形，$P(x)=$？",
       "options": [
-        { "label": "$-3$", "correct": true },
-        { "label": "$3$", "why": "$3y$ 從右邊移到左邊要變號：$y'-3y=x$。" },
-        { "label": "$x$", "why": "$x$ 不含 $y$，是 $Q$，不是 $P$。" }
-      ]
-    },
-    {
-      "ask": "$y'+5y=10$，$x\\to\\infty$ 時每一條解都趨近？",
-      "options": [
-        { "label": "$2$", "correct": true },
-        { "label": "$10$", "why": "平衡值是讓 $5y=10$ 的 $y$，也就是 $\\frac{b}{a}=2$，不是 $b$。" },
-        { "label": "$\\infty$", "why": "通解 $2+Ce^{-5x}$，$a=5>0$，指數項衰減到 $0$。" }
-      ]
-    },
-    {
-      "ask": "$y_p$ 是一階線性方程的一個特解，$y_h=Ce^{-\\int P\\,dx}$ 是齊次通解。全部的解是？",
-      "options": [
-        { "label": "$y_p+y_h$", "correct": true },
-        { "label": "$y_p\\cdot y_h$", "why": "線性方程的解是相加組合：任兩個解的差才是齊次解。" },
-        { "label": "只有 $y_p$", "why": "$y_p$ 沒有任意常數，配不上一般的初始條件。" }
+        {
+          "label": "$2x$",
+          "why": "忘了除以 $y'$ 的係數 $x^2+1$"
+        },
+        {
+          "label": "$\\dfrac{2x}{x^2+1}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{4}{x^2+1}$",
+          "why": "這是 $Q(x)$，不是 $P(x)$"
+        },
+        {
+          "label": "$-2x$",
+          "why": "搬到右邊才變號；標準形 $P$ 在左邊"
+        }
       ]
     }
   ],
@@ -139,272 +219,776 @@
     {
       "title": "什麼叫線性",
       "beats": [
-        { "show": ["$y'+P(x)y=Q(x)$"],
-          "note": "係數只跟 $x$ 有關。",
-          "say": "一階線性方程整理得成這個樣子：y prime 加上 P 乘 y，等於 Q，P 和 Q 只跟 x 有關。",
+        {
+          "show": [
+            "$y$ 和 $y'$ 都只以一次方出現，係數只跟 $x$ 有關：",
+            "$a_1(x)\\,y'+a_0(x)\\,y=b(x)$"
+          ],
+          "say": "一階線性方程，意思是 y 和 y prime 都只以一次方出現，前面的係數只跟 x 有關，不能跟 y 有關。",
           "board": [
-            {"do":"write","line":"$y'+{{p:P(x)}}\\,y={{q:Q(x)}}$","tint":{"p":"blue","q":"violet"}},
-            {"do":"focus","term":"p","color":"blue","label":"只跟 x","on":"P 乘"},
-            {"do":"focus","term":"q","color":"violet","on":"等於"}
-          ] },
-        { "show": ["$y$、$y'$ 一次方、不互乘、不包在函數裡"],
-          "say": "線性的意思是：y 和 y prime 都只出現一次方，不互相乘，也不被包在函數裡。",
+            {
+              "do": "write",
+              "line": "$y$ 和 $y'$ 都只以一次方出現，係數只跟 $x$ 有關："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle a_1(x)\\,y'+a_0(x)\\,y=b(x)}}$",
+              "on": "ri"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "數只"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $y'+x^2y=\\sin x$：線性",
+            "• $y'=e^xy+1$：線性（$y$ 的係數是 $e^x$）"
+          ],
+          "say": "例如 y prime 加 x 平方 y 等於正弦 x，是線性。y prime 等於 e 的 x 次方乘 y 加 1，也是線性，係數只跟 x 有關。",
           "board": [
-            {"do":"write","line":"$y$、$y'$ 只出現一次方"},
-            {"do":"write","line":"不互乘、不包在函數裡","on":"不互相乘"}
-          ] },
-        { "show": ["線性：$xy'+y=x^2$、$y'=x+y$"],
-          "note": "不是：$y'=y^2$、$yy'=x$、$y'=\\sin y$。",
-          "say": "y 平方、y 乘 y prime、sine y，這三種都破壞了線性。",
+            {
+              "do": "write",
+              "line": "• $y'+x^2y=\\sin x$：線性"
+            },
+            {
+              "do": "write",
+              "line": "• $y'=e^xy+1$：線性（$y$ 的係數是 $e^x$）",
+              "on": "me#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $y'+y^2=x$：不是（$y^2$）",
+            "• $yy'=x$：不是（$y$ 乘 $y'$）"
+          ],
+          "say": "有 y 平方的不是；y 乘 y prime 也不是，因為係數裡出現了 y。",
           "board": [
-            {"do":"write","line":"${{a:y^2}}$、${{b:yy'}}$、${{c:\\sin y}}$"},
-            {"do":"strike","term":"a","on":"平方"},
-            {"do":"strike","term":"b","on":"y 乘"},
-            {"do":"strike","term":"c","label":"破壞線性","on":"sine"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $y'+y^2=x$：不是（$y^2$）"
+            },
+            {
+              "do": "write",
+              "line": "• $yy'=x$：不是（$y$ 乘 $y'$）",
+              "on": "im"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
+      "title": "什麼叫線性",
+      "beats": [
+        {
+          "show": [
+            "線性：對 $x$ 可以亂，對 $y$ 要乾淨"
+          ],
+          "say": "口訣：跟 x 有關的部分可以很複雜，但 y 和 y prime 只能乾乾淨淨地乘上 x 的函數再相加。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線性：對 $x$ 可以亂，對 $y$ 要乾淨",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "先化成標準形",
       "beats": [
-        { "show": ["$y'$ 的係數是 1，含 $y$ 的項移到左邊"],
-          "say": "讀 P 之前先整理：y prime 前面的係數要是一，含 y 的項全部搬到左邊。",
+        {
+          "show": [
+            "標準形：$y'$ 的係數是 $1$",
+            "$y'+P(x)\\,y=Q(x)$"
+          ],
+          "say": "解線性方程之前，先化成標準形：y prime 前面的係數是 1，y 那一項放左邊，其他放右邊。",
           "board": [
-            {"do":"write","line":"$y'$ 係數 $1$，含 $y$ 項移左邊"}
-          ] },
-        { "show": ["$y'=x+y$ → $y'-y=x$"],
-          "note": "$P=-1$，不是 $+1$。",
-          "say": "y 從右邊搬過來要變號，所以 P 是負一，不是正一。",
+            {
+              "do": "write",
+              "line": "標準形：$y'$ 的係數是 $1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle y'+P(x)\\,y=Q(x)}}$",
+              "on": "pr"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "那一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$xy'+y=x^2$（$x>0$）"
+          ],
+          "say": "例子：x 乘 y prime 加 y 等於 x 平方，x 大於 0。",
           "board": [
-            {"do":"write","line":"$y'=x+{{y:y}}$"},
-            {"do":"transform","line":"$y'-{{y:y}}=x$","on":"變號"},
-            {"do":"write","line":"$P={{p:-1}}$","on":"所以"},
-            {"do":"box","term":"p","color":"green","on":"負一"}
-          ] },
-        { "show": ["$xy'+y=x^2$ → $y'+\\frac{1}{x}y=x$"],
-          "note": "$x>0$，先除以 $x$。",
-          "say": "y prime 前面有個 x，先整條除以 x，才讀得到 P 是 x 分之一，Q 是 x。",
+            {
+              "do": "write",
+              "line": "例：$xy'+y=x^2$（$x>0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊除以 $x$：",
+            "$y'+\\frac1x\\,y=x$"
+          ],
+          "say": "y prime 的係數是 x，兩邊都除以 x：y prime 加 x 分之 1 乘 y，等於 x。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$xy'+y=x^2$","on":"前面有個"},
-            {"do":"transform","line":"$y'+{{p:\\frac{1}{x}}}\\,y={{q:x}}$","on":"除以"},
-            {"do":"focus","term":"p","color":"blue","label":"P","on":"x 分之一"},
-            {"do":"focus","term":"q","color":"violet","label":"Q","on":"Q 是"}
-          ] }
+            {
+              "do": "write",
+              "line": "兩邊除以 $x$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle y'+\\frac1x\\,y=x}}$",
+              "on": "邊都"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P(x)=\\dfrac1x$，$Q(x)=x$"
+          ],
+          "say": "讀出 P 是 x 分之 1，Q 是 x。注意 Q 是 x，不是 x 平方：右邊也要除。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$P(x)=\\dfrac1x$，$Q(x)=x$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　除以 $x$ 要 $x\\ne0$；所以題目限定 $x>0$",
+              "color": "violet",
+              "on": "不是"
+            }
+          ]
+        }
       ],
-      "key": "含 $y$ 的項全移到左邊，再讀 $P$",
       "check": 1
     },
     {
-      "title": "齊次解＋特解",
+      "title": "齊次的情形就是可分離",
       "beats": [
-        { "show": ["$Q=0$：$y=Ce^{-\\int P\\,dx}$"],
-          "note": "這時就是〈分離變數〉。",
-          "say": "Q 是零的時候叫齊次，它是可分離的，解是 C 乘 e 的負 P 積分次方。",
+        {
+          "show": [
+            "$Q=0$ 叫齊次：$y'+P(x)y=0$"
+          ],
+          "say": "如果右邊 Q 等於 0，叫做齊次的。",
           "board": [
-            {"do":"write","line":"$Q=0$：$y=C{{h:e^{-\\int P\\,dx}}}$","tint":{"h":"blue"}},
-            {"do":"underline","term":"h","color":"blue","label":"可分離","on":"可分離的"}
-          ] },
-        { "show": ["$\\frac{dy}{y}=-P\\,dx$","$\\ln y=-\\int P\\,dx$"],
-          "note": "y 全放左邊、x 全放右邊，叫可分離。",
-          "say": "把 y 全放左邊、x 全放右邊，這叫可分離。兩邊積分，自然對數 y 等於負 P 的積分，反過來就是 C 乘 e 的那次方。",
+            {
+              "do": "write",
+              "line": "$Q=0$ 叫齊次：$y'+P(x)y=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=-P(x)\\,y\\quad\\text{可分離！}$"
+          ],
+          "say": "移項，y prime 等於負 P 乘 y，正好是上一課可分離的形狀，g 是負 P，h 是 y。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{y}=-P\\,dx$"},
-            {"do":"write","line":"$\\ln y=-\\int P\\,dx$","on":"兩邊積分"}
-          ] },
-        { "show": ["$y'+2y=0$：$y=Ce^{-2x}$"],
-          "say": "例如 y prime 加二 y 等於零，解是 C e 的負二 x 次方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dx}=-P(x)\\,y\\quad\\text{可分離！}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{dy}{y}=-\\int P\\,dx$，整理常數：",
+            "$y_h=Ce^{-\\int P(x)\\,dx}$"
+          ],
+          "say": "兩邊積分，取指數，把正負號和常數整理成一個 C，得到齊次通解：C 乘 e 的負 P 積分次方。",
           "board": [
-            {"do":"write","line":"$y'+2y=0$：$y=Ce^{-2x}$","on":"例如"}
-          ] },
-        { "show": ["$(y-y_p)'+P(y-y_p)=Q-Q=0$"],
-          "note": "兩個解的差，是齊次方程的解。",
-          "say": "假設已經有一個特解 y p。任何解減掉它，Q 跟 Q 抵消，差是齊次方程的解。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int\\frac{dy}{y}=-\\int P\\,dx$，整理常數："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y_h=Ce^{-\\int P(x)\\,dx}}}$",
+              "color": "red",
+              "on": "負號"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "得到"
+            },
+            {
+              "do": "write",
+              "line": "　$y=0$ 對應 $C=0$，沒有漏掉的平衡解",
+              "color": "violet",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y'+\\dfrac1xy=0$（$x>0$）"
+          ],
+          "say": "例子：剛才那題的齊次部分，y prime 加 x 分之 1 乘 y 等於 0。",
           "board": [
-            {"do":"write","line":"$(y-{{yp:y_p}})'+P(y-y_p)={{qq:Q-Q}}=0$","tint":{"yp":"violet"},"on":"任何解減掉"},
-            {"do":"focus","term":"qq","label":"抵消","on":"Q 跟 Q"}
-          ] },
-        { "show": ["通解 $=y_p+Ce^{-\\int P\\,dx}$"],
-          "note": "這是線性帶來的好處。",
-          "say": "所以找到一個特解，加上齊次通解，就是全部的解。非線性方程沒有這個好處。",
+            {
+              "do": "write",
+              "line": "例：$y'+\\dfrac1xy=0$（$x>0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac1x\\,dx=\\ln x$，$e^{-\\ln x}=\\dfrac1x$：",
+            "$y_h=\\frac{C}{x}$"
+          ],
+          "say": "x 分之 1 的積分是自然對數 x。e 的負自然對數 x，就是 x 分之 1。齊次通解是 x 分之 C。",
           "board": [
-            {"do":"write","line":"通解 $={{yp:y_p}}+C{{h:e^{-\\int P\\,dx}}}$","color":"green"}
-          ] },
-        { "show": ["$y'=y^2$：$y=\\frac{1}{1-x}$ 是解","乘 2 就不是解了"],
-          "note": "非線性：解不能這樣組合。",
-          "say": "拿 y prime 等於 y 平方來試：y 等於一減 x 分之一是解，可是把它乘二，就不是解了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$y'=y^2$","on":"等於#1"},
-            {"do":"write","line":"$y=\\frac{1}{1-x}$ 是解","on":"一減"},
-            {"do":"write","line":"${{w:y=\\frac{2}{1-x}}}$ 是解？","on":"乘二"},
-            {"do":"strike","term":"w","label":"不是解","on":"不是解"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int\\frac1x\\,dx=\\ln x$，$e^{-\\ln x}=\\dfrac1x$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y_h=\\frac{C}{x}}}$",
+              "on": "對數#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "就是"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$\\left(\\frac Cx\\right)'+\\frac1x\\cdot\\frac Cx=-\\frac C{x^2}+\\frac C{x^2}=0$",
+              "color": "violet",
+              "on": "齊次"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "平衡值",
+      "title": "解的結構",
       "beats": [
-        { "show": ["$y'+ay=b$：常數解 $y=\\frac{b}{a}$"],
-          "note": "代進去 $0+b=b$。",
-          "say": "係數是常數時，先找不動的解：y 是 a 分之 b，導數是零，代進去剛好成立。",
+        {
+          "show": [
+            "已知一個特解 $y_p$。任何解 $y$，令 $u=y-y_p$："
+          ],
+          "say": "右邊不是 0 的時候呢？假設我們已經知道一個特解 y p。任取一個解 y，看它跟 y p 的差 u。",
           "board": [
-            {"do":"write","line":"$y'+ay=b$：常數解 ${{eq:y=\\frac{b}{a}}}$"},
-            {"do":"focus","term":"eq","label":"不動的解","on":"不動的解"}
-          ] },
-        { "show": ["$y'+2y=4$：$y=2+Ce^{-2x}$"],
-          "note": "常數解 2 加上齊次解。",
-          "say": "y prime 加二 y 等於四，常數解是二，加上齊次解，就是通解。",
+            {
+              "do": "write",
+              "line": "已知一個特解 $y_p$。任何解 $y$，令 $u=y-y_p$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u'+Pu=(y'+Py)-(y_p'+Py_p)=Q-Q=0$"
+          ],
+          "say": "把 u 代進左邊：線性可以拆開，變成 y 那一份減 y p 那一份。兩個都等於 Q，相減是 0。",
           "board": [
-            {"do":"write","line":"$y'+2y=4$：$y={{two:2}}+{{hm:Ce^{-2x}}}$"},
-            {"do":"underline","term":"two","label":"常數解","on":"常數解是二"},
-            {"do":"underline","term":"hm","color":"blue","label":"齊次解","on":"加上齊次解"}
-          ] },
-        { "show": ["通解的 $C$ 可以是任何數","$y(0)=0$：指定曲線過哪一點"],
-          "note": "初始條件把 $C$ 定下來。",
-          "say": "通解裡的 C 是任意的，有無限多條曲線。初始條件指定曲線要過哪一點，才選出唯一一條。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle u'+Pu=(y'+Py)-(y_p'+Py_p)=Q-Q=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "差 $u$ 是齊次方程的解：$u=y_h$"
+          ],
+          "say": "所以差是齊次方程的解，形式就是剛剛的 C 乘 e 的負 P 積分。",
           "board": [
-            {"do":"write","line":"通解：$C$ 任意，無限多條"},
-            {"do":"write","line":"${{ic:y(0)=0}}$：指定過一點","on":"初始條件"},
-            {"do":"focus","term":"ic","color":"gold","label":"選出一條","on":"唯一一條"}
-          ] },
-        { "show": ["$y(0)=0$：$C=-2$","$y=2-2e^{-2x}$"],
-          "say": "代 y 在零是零，二加 C 等於零，C 是負二。",
+            {
+              "do": "write",
+              "line": "差 $u$ 是齊次方程的解：$u=y_h$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=y_h+y_p$"
+          ],
+          "say": "結論：通解等於齊次通解加上一個特解。反過來，齊次解加特解也一定是解。",
           "board": [
-            {"do":"write","line":"$y(0)=0$：$C=-2$","on":"代 y"},
-            {"do":"write","line":"$y=2-{{ex:2e^{-2x}}}$","on":"C 是負二"}
-          ] },
-        { "show": ["$a>0$：每條解都趨近 $\\frac{b}{a}$"],
-          "note": "$e^{-ax}\\to 0$。",
-          "say": "a 是正的，指數那一項衰減掉，每一條解最後都趨近平衡值。這一題趨近二。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle y=y_h+y_p}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "加上"
+            },
+            {
+              "do": "write",
+              "line": "　跟線性代數的 $A\\mathbf x=\\mathbf b$ 一樣：通解 $=$ 零空間 $+$ 一個特解",
+              "color": "violet",
+              "on": "齊次#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$xy'+y=x^2$，$y(1)=1$。已知 $y_p=\\dfrac{x^2}3$"
+          ],
+          "say": "回到例子：x 乘 y prime 加 y 等於 x 平方，y of 1 等於 1。已知一個特解是 3 分之 x 平方。",
           "board": [
-            {"do":"keep","n":3},
-            {"do":"focus","term":"ex","label":"衰減掉","on":"指數那一項"},
-            {"do":"write","line":"$a>0$：每條解都趨近 $\\frac{b}{a}$","on":"每一條解"}
-          ] },
-        { "show": ["$e^{-2x}$ 隨 $x$ 變大貼近 0"],
-          "say": "畫出 e 的負二 x 次方：x 往右越來越大，負二 x 越來越負，曲線就越貼近零。",
+            {
+              "do": "write",
+              "line": "例：$xy'+y=x^2$，$y(1)=1$。已知 $y_p=\\dfrac{x^2}3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$x\\cdot\\dfrac{2x}3+\\dfrac{x^2}3=x^2$"
+          ],
+          "say": "先檢查：x 乘 3 分之 2x，加 3 分之 x 平方，剛好是 x 平方。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.5,3,-0.5,3],"curves":[{"expr":"exp(-2*x)","domain":[-0.5,3],"color":"blue"}],"dashed":[[[-0.5,0],[3,0]]],"labels":[{"x":0.6,"y":0.7,"text":"e^(-2x)"}]}}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "檢查：$x\\cdot\\dfrac{2x}3+\\dfrac{x^2}3=x^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\frac{x^2}3+\\frac Cx$"
+          ],
+          "say": "通解是特解，加上齊次通解 x 分之 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle y=\\frac{x^2}3+\\frac Cx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y(1)=\\frac13+C=1$，$C=\\frac23$：",
+            "$y=\\frac{x^2}3+\\frac{2}{3x}$"
+          ],
+          "say": "代初始條件：3 分之 1 加 C 等於 1，C 是 3 分之 2。答案是 3 分之 x 平方，加 3x 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y(1)=\\frac13+C=1$，$C=\\frac23$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle y=\\frac{x^2}3+\\frac{2}{3x}}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　特解怎麼找？下一課的積分因子會直接算出來",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "組合出解",
+      "title": "常數係數：平衡值",
       "beats": [
-        { "show": ["$xy'+y=x^2$，$y(1)=1$","已知 $y_p=\\frac{x^2}{3}$"],
-          "say": "這一題給了一個特解，三分之 x 平方。代回去檢查：三分之二 x 加三分之 x，剛好是 x。",
+        {
+          "show": [
+            "$y'+ay=b$（$a\\ne0$）：常數 $y=\\frac ba$ 就是特解"
+          ],
+          "say": "最常見的是常數係數：y prime 加 a y 等於 b。特解很好找：試常數。常數的導數是 0，所以 y 等於 a 分之 b。",
           "board": [
-            {"do":"write","line":"$xy'+y=x^2$，${{ic:y(1)=1}}$"},
-            {"do":"write","line":"已知 ${{yp:y_p=\\frac{x^2}{3}}}$","on":"給了一個特解"},
-            {"do":"underline","term":"yp","label":"代回去成立","on":"代回去檢查"}
-          ] },
-        { "show": ["$(\\ln x)'=\\frac{1}{x}$"],
-          "note": "要記住的結果：積分就是倒過來找。",
-          "say": "積分就是倒過來找：哪個函數的導數是 x 分之一？自然對數 x 的導數剛好是，這是要記住的結果。",
+            {
+              "do": "write",
+              "line": "$y'+ay=b$（$a\\ne0$）：常數 $y=\\frac ba$ 就是特解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\frac ba+Ce^{-ax}$"
+          ],
+          "say": "齊次通解是 C e 的負 ax 次方，加起來就是通解。",
           "board": [
-            {"do":"write","line":"$({{l:\\ln x}})'=\\frac{1}{x}$"},
-            {"do":"focus","term":"l","color":"gold","label":"要記住","on":"要記住"}
-          ] },
-        { "show": ["齊次：$e^{-\\ln x}=\\frac{1}{x}$"],
-          "note": "$P=\\frac{1}{x}$，$x>0$。",
-          "say": "P 是 x 分之一，積分是自然對數 x，e 的負自然對數 x 次方就是 x 分之一。",
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle y=\\frac ba+Ce^{-ax}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "ax"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y'+2y=4$，$y(0)=0$"
+          ],
+          "say": "例子：y prime 加 2y 等於 4，y of 0 等於 0。",
           "board": [
-            {"do":"write","line":"齊次：$e^{-\\ln x}=\\frac{1}{x}$","on":"積分是"}
-          ] },
-        { "show": ["$y=\\frac{x^2}{3}+\\frac{C}{x}$"],
-          "say": "特解加齊次通解。代 x 等於一、y 等於一，C 是多少？",
+            {
+              "do": "write",
+              "line": "例：$y'+2y=4$，$y(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "平衡值 $\\frac42=2$；$y=2+Ce^{-2x}$，$y(0)=2+C=0$：",
+            "$y=2-2e^{-2x}$"
+          ],
+          "say": "平衡值是 2 分之 4，等於 2。通解 2 加 C e 的負 2x 次方。代 0：2 加 C 等於 0，C 等於負 2。",
           "board": [
-            {"do":"write","line":"$y=\\frac{x^2}{3}+\\frac{C}{x}$"},
-            {"do":"focus","term":"ic","label":"代進去","on":"代 x 等於一"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\frac{1}{3}+C=1$，所以 $C$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{2}{3}$",
-            "correct": true
-          },
-          {
-            "label": "$1$",
-            "why": "1 是 $y(1)$ 的值；還要扣掉特解在 $x=1$ 的 $\\frac{1}{3}$。"
-          },
-          {
-            "label": "$\\frac{1}{3}$",
-            "why": "$\\frac{1}{3}$ 是特解的值，$C=1-\\frac{1}{3}$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "平衡值 $\\frac42=2$；$y=2+Ce^{-2x}$，$y(0)=2+C=0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle y=2-2e^{-2x}}}$",
+              "color": "red",
+              "on": "的負"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "a > 0：每條解都被拉向平衡值 y = 2"
+          ],
+          "say": "圖上：不管從哪裡出發，每條解都被拉向紅線 y 等於 2。藍色從 0 出發，往上爬到 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "eq",
+                  "window": [
+                    -0.3,
+                    3,
+                    -1,
+                    4.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2+2*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2+1*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2-1*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2-3*exp(-2*x)",
+                      "color": "pencil"
+                    },
+                    {
+                      "expr": "2-2*exp(-2*x)",
+                      "color": "blue",
+                      "label": "y = 2 − 2e^(−2x)"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 2,
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "a > 0：每條解都被拉向平衡值 y = 2",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a>0$ 時 $e^{-ax}\\to0$：長期都趨近 $\\frac ba$"
+          ],
+          "say": "a 是正的時候，e 的負 ax 次方趨近 0，所以長期來看，每條解都趨近平衡值 a 分之 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a>0$ 時 $e^{-ax}\\to0$：長期都趨近 $\\frac ba$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "牛頓冷卻",
       "beats": [
-        { "show": ["$T'=-k(T-20)$"],
-          "note": "100°C 的物體放進 20°C 的房間。",
-          "say": "一百度的物體放進二十度的房間，溫度變化率跟溫差成正比。",
+        {
+          "show": [
+            "$100^\\circ\\text{C}$ 的物體放進 $20^\\circ\\text{C}$ 的房間，$10$ 分鐘後 $60^\\circ\\text{C}$。",
+            "$T'=-k(T-20)$"
+          ],
+          "say": "應用：牛頓冷卻定律。100 度的東西放進 20 度的房間，10 分鐘後變 60 度。降溫的速度跟溫差成正比。",
           "board": [
-            {"do":"write","line":"$T(0)=100$"},
-            {"do":"write","line":"$T'=-k({{d:T-20}})$","on":"溫度變化率"},
-            {"do":"focus","term":"d","color":"blue","label":"溫差","on":"溫差"}
-          ] },
-        { "show": ["$T=20+Ce^{-kt}$，$C=80$"],
-          "note": "平衡值是室溫 20。",
-          "say": "平衡值是室溫二十度，加上齊次解。一開始一百度，所以 C 是八十。",
+            {
+              "do": "write",
+              "line": "$100^\\circ\\text{C}$ 的物體放進 $20^\\circ\\text{C}$ 的房間，$10$ 分鐘後 $60^\\circ\\text{C}$。"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle T'=-k(T-20)$",
+              "on": "10#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "就是 $T'+kT=20k$：平衡值 $20$",
+            "$T=20+Ce^{-kt},\\quad T(0)=100\\Rightarrow C=80$"
+          ],
+          "say": "整理成常數係數的形式，平衡值是 20，就是室溫。通解 20 加 C e 的負 kt 次方，一開始 100 度，所以 C 是 80。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$T={{e:20}}+Ce^{-kt}$","on":"平衡值"},
-            {"do":"underline","term":"e","label":"室溫","on":"室溫"},
-            {"do":"write","line":"$100=20+C$，$C={{c:80}}$","on":"一開始"},
-            {"do":"box","term":"c","color":"green","on":"八十"}
-          ] },
-        { "show": ["$80e^{-10k}=40$：$e^{-10k}=\\frac{1}{2}$"],
-          "note": "10 分鐘後 60°C。",
-          "say": "十分鐘後六十度，溫差從八十變四十，十分鐘減一半。再十分鐘呢？",
+            {
+              "do": "write",
+              "line": "就是 $T'+kT=20k$：平衡值 $20$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle T=20+Ce^{-kt},\\quad T(0)=100\\Rightarrow C=80$",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$T(10)=60$：$80e^{-10k}=40$，$e^{-10k}=\\frac12$",
+            "$k=\\frac{\\ln2}{10}\\approx0.0693\\ (\\text{每分鐘})$"
+          ],
+          "say": "10 分鐘後 60 度：溫差從 80 變 40，剛好減半。所以 e 的負 10k 次方是 2 分之 1，k 是 10 分之自然對數 2。",
           "board": [
-            {"do":"write","line":"$80e^{-10k}=40$"},
-            {"do":"transform","line":"$e^{-10k}={{h:\\frac{1}{2}}}$","on":"減一半"}
-          ] }
+            {
+              "do": "write",
+              "line": "$T(10)=60$：$80e^{-10k}=40$，$e^{-10k}=\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle k=\\frac{\\ln2}{10}\\approx0.0693\\ (\\text{每分鐘})}}$",
+              "on": "剛好"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "何時降到 $30^\\circ\\text{C}$？$80e^{-kt}=10$，$e^{-kt}=\\frac18=\\left(\\frac12\\right)^3$",
+            "$t=30\\ \\text{分鐘}$"
+          ],
+          "say": "什麼時候降到 30 度？溫差要從 80 變 10，是 8 分之 1，也就是減半三次。每 10 分鐘減半一次，所以是 30 分鐘。",
+          "board": [
+            {
+              "do": "write",
+              "line": "何時降到 $30^\\circ\\text{C}$？$80e^{-kt}=10$，$e^{-kt}=\\frac18=\\left(\\frac12\\right)^3$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle t=30\\ \\text{分鐘}}}$",
+              "color": "red",
+              "on": "10#1"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "10#2"
+            }
+          ]
+        }
       ],
-      "key": "寫成溫差 $T-20$ 的指數衰減",
       "predict": {
-        "ask": "20 分鐘後的溫度是？",
+        "ask": "長時間之後，溫度會怎樣？",
         "options": [
           {
-            "label": "40°C",
+            "label": "趨近 $20^\\circ\\text{C}$，但不會低於它",
             "correct": true
           },
           {
-            "label": "20°C",
-            "why": "溫差是減半，不是每 10 分鐘少 40 度：$80\\to40\\to20$ 是溫差，溫度是 $20+20$。"
+            "label": "降到 $0^\\circ\\text{C}$",
+            "why": "被拉向的是室溫 $20$，不是 $0$"
           },
           {
-            "label": "60°C",
-            "why": "60°C 是 10 分鐘時的溫度；之後溫差還在減半。"
+            "label": "在 $t=40$ 分鐘剛好到 $20^\\circ\\text{C}$",
+            "why": "每 $10$ 分鐘溫差減半，永遠到不了 $0$"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 線性：$y$、$y'$ 只有一次方，係數只跟 $x$ 有關",
+            "• 先化標準形 $y'+Py=Q$：右邊也要除"
+          ],
+          "say": "整理一下：線性就是 y 和 y prime 只有一次方；先化標準形；齊次的可以分離；通解是齊次通解加特解；常數係數的，長期趨近平衡值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 線性：$y$、$y'$ 只有一次方，係數只跟 $x$ 有關"
+            },
+            {
+              "do": "write",
+              "line": "• 先化標準形 $y'+Py=Q$：右邊也要除",
+              "on": "pr"
+            },
+            {
+              "do": "write",
+              "line": "• 齊次（$Q=0$）可分離：$y_h=Ce^{-\\int P\\,dx}$",
+              "on": "先化"
+            },
+            {
+              "do": "write",
+              "line": "• 通解 $=$ 齊次通解 $+$ 一個特解",
+              "on": "通解#1"
+            },
+            {
+              "do": "write",
+              "line": "• 常數係數：$y=\\frac ba+Ce^{-ax}$，$a>0$ 時趨近平衡值 $\\frac ba$",
+              "on": "常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：積分因子：特解直接算出來"
+          ],
+          "say": "下一課，學積分因子，任何一階線性方程都能直接解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：積分因子：特解直接算出來"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "linear-first-order", "ivp"],
-    "fine": ["linear-standard-form", "linear-homogeneous-solution", "linear-solution-structure", "linear-constant-coefficient-equilibrium"]
+    "coarse": [
+      "ode",
+      "linear-first-order",
+      "ivp"
+    ],
+    "fine": [
+      "linear-standard-form",
+      "linear-homogeneous-solution",
+      "linear-solution-structure",
+      "linear-constant-coefficient-equilibrium"
+    ]
   },
   "practice": [
-    { "id": "gap-der-ode-001", "core": true, "trains": "linear-homogeneous-solution" },
-    { "id": "cx-ode-005", "core": true, "trains": "linear-constant-coefficient-equilibrium" },
-    { "id": "ode-lin-003", "core": true, "trains": "linear-constant-coefficient-equilibrium" },
-    { "id": "ode-lin-005", "core": true, "trains": "linear-homogeneous-solution" },
-    { "id": "ode-lin-007", "core": true, "trains": "linear-solution-structure", "note": "猜 $y=2x+1$ 是特解，代初始條件後 $C=0$。" },
-    { "id": "cg-10a-017", "core": true, "trains": "linear-standard-form" },
-    { "id": "cg-10a-019", "core": true, "trains": "linear-standard-form" },
-    { "id": "cg-10a-020", "core": true, "trains": "linear-solution-structure" },
-    { "id": "ap-gro-005", "trains": "linear-constant-coefficient-equilibrium" },
-    { "id": "cg-10a-018", "trains": "linear-standard-form" },
-    { "id": "cg-10a-021", "trains": "linear-solution-structure" }
+    {
+      "id": "gap-der-ode-001",
+      "core": true,
+      "trains": "linear-homogeneous-solution"
+    },
+    {
+      "id": "cx-ode-005",
+      "core": true,
+      "trains": "linear-constant-coefficient-equilibrium"
+    },
+    {
+      "id": "ode-lin-003",
+      "core": true,
+      "trains": "linear-constant-coefficient-equilibrium"
+    },
+    {
+      "id": "ode-lin-005",
+      "core": true,
+      "trains": "linear-homogeneous-solution"
+    },
+    {
+      "id": "ode-lin-007",
+      "core": true,
+      "trains": "linear-solution-structure",
+      "note": "猜 $y=2x+1$ 是特解，代初始條件後 $C=0$。"
+    },
+    {
+      "id": "cg-10a-017",
+      "core": true,
+      "trains": "linear-standard-form"
+    },
+    {
+      "id": "cg-10a-019",
+      "core": true,
+      "trains": "linear-standard-form"
+    },
+    {
+      "id": "cg-10a-020",
+      "core": true,
+      "trains": "linear-solution-structure"
+    },
+    {
+      "id": "ap-gro-005",
+      "trains": "linear-constant-coefficient-equilibrium"
+    },
+    {
+      "id": "cg-10a-018",
+      "trains": "linear-standard-form"
+    },
+    {
+      "id": "cg-10a-021",
+      "trains": "linear-solution-structure"
+    }
   ],
   "gaps": []
 }

@@ -1,43 +1,116 @@
 {
   "id": "fluid-force",
   "title": "液體壓力",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["work"],
-  "next": ["center-of-mass"],
+  "prerequisites": [
+    "work"
+  ],
+  "next": [
+    "center-of-mass"
+  ],
   "related": [],
   "objectives": [
-    "知道深度 $h$ 處的壓力 $P=\\rho gh$，壓力乘面積才是力。",
-    "垂直放的板子壓力隨深度改變：切成水平細條，$F=\\int\\rho g\\cdot h\\cdot w(h)\\,dh$。",
-    "用相似形寫出細條的寬度 $w(h)$。"
+    "知道深度 $h$ 處的壓力 $P=\\rho gh$，壓力乘面積才是力",
+    "垂直放的板子壓力隨深度改變：切成水平細條，$F=\\int\\rho g\\cdot h\\cdot w(h)\\,dh$",
+    "用相似形寫出細條的寬度 $w(h)$"
   ],
-  "visual": "一塊倒三角形的板子直立在水中，頂邊貼著水面。板子被切成水平細條，每一條往兩側畫出代表壓力的箭頭：越深箭頭越長，但條子越窄。旁邊的長條圖顯示每一條受的力 ρg · h · w(h) dh，最大的出現在中間深度 h = 1.5 m，不在最深處。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 壓力只跟深度有關",
       "body": [
-        "液體裡深度 $h$ 的地方，壓力 $P=\\rho gh$（$\\rho$ 是密度，$g$ 是重力加速度；水的 $\\rho g\\approx 9800\\ \\mathrm{N/m^3}$）。壓力的單位是 $\\mathrm{N/m^2}$：每平方公尺受多少牛頓。同一深度、不論朝哪個方向，壓力都一樣大。",
-        "水平放在深度 $h$ 的板子，每一點壓力相同，力 $F=P\\cdot A=\\rho gh\\cdot A$。"
+        "深度 $h$ 處，上面水柱的重量壓下來：",
+        "水：$\\rho g=1000\\times9.8=9800\\ \\mathrm{N/m^3}$",
+        "壓力的單位是 $\\mathrm{N/m^2}$：壓力 × 面積 = 力",
+        "例：水平放的板子，面積 $2\\ \\mathrm{m^2}$，在水深 $5$ m：",
+        "同一個深度，壓力往各個方向都一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "P=\\rho g h",
+        "F=P\\cdot A=\\rho g h\\,A",
+        "F=9800\\cdot5\\cdot2=98000\\ \\text{N}"
+      ]
     },
     {
       "heading": "② 直立的板子：切成水平細條",
       "body": [
-        "板子直立時，上緣淺、下緣深，壓力不是常數，不能直接乘面積。但在同一個深度，壓力相同，所以切成水平細條：深度 $h$ 的細條寬 $w(h)$、厚 $dh$，面積 $w(h)\\,dh$，受力約 $\\rho gh\\cdot w(h)\\,dh$。全部加起來："
+        "直立的板子：上面淺、下面深，壓力處處不同",
+        "水平細條：同一條上深度幾乎一樣",
+        "深度 $h$ 的細條，寬 $w(h)$、高 $dh$：",
+        "$h$ 一律從水面往下量，壓力公式才是 $\\rho gh$"
       ],
-      "tex": ["F=\\int_{h_1}^{h_2} \\rho g\\,h\\,w(h)\\,dh"],
-      "collapsible": false
+      "tex": [
+        "dF=\\underbrace{\\rho g h}_{\\text{壓力}}\\cdot\\underbrace{w(h)\\,dh}_{\\text{面積}}",
+        "F=\\int_{\\text{上緣}}^{\\text{下緣}}\\rho g\\,h\\,w(h)\\,dh"
+      ]
+    },
+    {
+      "heading": "② 例：矩形板",
+      "body": [
+        "寬 $2$ m、高 $3$ m，直立在水中，上緣貼著水面",
+        "$h$ 從 $0$ 到 $3$；寬度處處是 $w(h)=2$",
+        "平均深度 $1.5$ m：$9800\\cdot1.5\\cdot6=88200$",
+        "一般來說是用「形心」的深度；下一課會講形心"
+      ],
+      "tex": [
+        "F=\\int_0^3 9800\\cdot h\\cdot2\\,dh=19600\\Big[\\frac{h^2}{2}\\Big]_0^3",
+        "F=19600\\cdot\\frac92=88200\\ \\text{N}"
+      ]
     },
     {
       "heading": "③ 三個步驟",
       "body": [
-        "1. 設 $h$ = 到水面的深度（向下為正），找出板子所在的 $h$ 範圍。板子上緣不在水面時，下限就不是 0。",
-        "2. 寫出深度 $h$ 處板子的寬度 $w(h)$：矩形是常數，三角形、梯形用相似形，圓形用畢氏定理。",
-        "3. 積分 $\\int\\rho g\\cdot h\\cdot w(h)\\,dh$。",
-        "結構跟〈功〉的抽水題很像：切成水平層，每層有一個隨深度改變的量。差別是這裡每層乘的是「深度 × 寬度」。"
+        "1. 設 $h$：從水面往下量深度",
+        "2. 寫寬度 $w(h)$：深度 $h$ 那一條有多寬",
+        "3. 積分：$F=\\int\\rho g\\,h\\,w(h)\\,dh$，範圍是板子的上緣到下緣",
+        "寬度會變的板子（三角形、半圓……）：用相似形寫 $w(h)$"
+      ]
+    },
+    {
+      "heading": "③ 例：倒三角形板",
+      "body": [
+        "等腰三角形板頂點朝下，上緣（底邊 $4$ m）貼水面，深 $3$ m",
+        "寬度隨深度縮小：深度 $h$ 處，離頂點 $3-h$",
+        "檢查：$h=0$ 時寬 $4$（水面），$h=3$ 時寬 $0$（頂點）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{w(h)}{3-h}=\\frac{4}{3}\\ \\Rightarrow\\ w(h)=\\frac43(3-h)"
+      ]
+    },
+    {
+      "heading": "③ 例：倒三角形（續）",
+      "body": [
+        "寬的部分在淺處，所以頂點朝下的板子受力比較小"
+      ],
+      "tex": [
+        "\\begin{aligned}F&=\\int_0^3 9800\\,h\\cdot\\frac43(3-h)\\,dh\\\\&=\\frac{39200}{3}\\int_0^3(3h-h^2)\\,dh\\end{aligned}",
+        "\\int_0^3(3h-h^2)\\,dh=\\frac{27}{2}-9=\\frac92",
+        "F=\\frac{39200}{3}\\cdot\\frac92=58800\\ \\text{N}"
+      ]
+    },
+    {
+      "heading": "③ 板子沉得更深",
+      "body": [
+        "同一塊矩形板（寬 $2$、高 $3$）往下移，上緣在水面下 $1$ m",
+        "$h$ 仍然從水面量：板子從 $h=1$ 到 $h=4$",
+        "檢查：平均深度 $2.5$ m，$9800\\cdot2.5\\cdot6=147000$"
+      ],
+      "tex": [
+        "\\begin{aligned}F&=\\int_1^4 9800\\cdot h\\cdot2\\,dh\\\\&=9800\\Big[h^2\\Big]_1^4=147000\\ \\text{N}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 壓力 $P=\\rho gh$，只跟深度有關；壓力 × 面積 = 力",
+        "• 直立的板子：切成水平細條",
+        "• $F=\\displaystyle\\int\\rho g\\,h\\,w(h)\\,dh$，$h$ 從水面往下量",
+        "• 寬度會變：用相似形寫 $w(h)$",
+        "• 板子往下移：只改積分範圍，深度一樣從水面量",
+        "下一課：質心與形心"
+      ]
     }
   ],
   "workedExamples": [
@@ -83,229 +156,673 @@
   ],
   "checks": [
     {
-      "ask": "直立的板子為什麼不能直接用「壓力 $\\times$ 面積」？",
+      "ask": "有人用「底部的壓力 × 整塊面積」算：$9800\\cdot3\\cdot6$。這樣算出的力是？",
       "options": [
-        { "label": "板子上下的深度不同，壓力不是常數", "correct": true },
-        { "label": "直立的板子不受水壓", "why": "液體壓力朝各個方向都有，直立的板子照樣被推。" },
-        { "label": "直立板子的面積算不出來", "why": "面積很好算；問題在壓力隨深度變，不能用同一個值乘整塊。" }
+        {
+          "label": "$176400$ N，是正確答案的 $2$ 倍",
+          "correct": true
+        },
+        {
+          "label": "$88200$ N，剛好是對的",
+          "why": "底部壓力最大；只有板子各處都在同一深度時才能這樣乘"
+        },
+        {
+          "label": "$58800$ N，比較小",
+          "why": "$9800\\cdot3\\cdot6$ 算出來是 $176400$"
+        },
+        {
+          "label": "$0$ N，因為上緣在水面",
+          "why": "只有上緣那一條壓力是 $0$，下面都有壓力"
+        }
       ]
     },
     {
-      "ask": "寬 1 m、高 2 m 的矩形板直立，上緣貼水面（$\\rho g=9800$）。一面受的力是？",
+      "ask": "如果把寬度寫成 $w(h)=\\frac43h$，會算出多少？為什麼錯？",
       "options": [
-        { "label": "19600 N", "correct": true },
-        { "label": "39200 N", "why": "用最深處的壓力 $9800\\times 2$ 乘面積 2；上半部的壓力比較小，這樣高估了一倍。" },
-        { "label": "19.6 N", "why": "$\\rho g$ 只用了 9.8，漏乘水的密度 $1000\\ \\mathrm{kg/m^3}$。" }
+        {
+          "label": "$117600$ N：那是==頂點朝上==的三角形",
+          "correct": true
+        },
+        {
+          "label": "$58800$ N：結果一樣",
+          "why": "寬度在淺處、深處對調，深處壓力大，結果不一樣"
+        },
+        {
+          "label": "$88200$ N：跟矩形一樣",
+          "why": "矩形寬 $2$；這裡寬度會變"
+        },
+        {
+          "label": "$176400$ N：寬度用了 $4$",
+          "why": "那是把它當成寬 $4$ 的矩形"
+        }
       ]
     },
     {
-      "ask": "底邊 4 m 在水面、頂點朝下、深 3 m 的三角形板，深度 $h$ 處的寬度是？",
+      "ask": "同一塊板子，上緣在水面下 $1$ m。下面哪個式子==錯==？",
       "options": [
-        { "label": "$\\frac{4}{3}(3-h)$", "correct": true },
-        { "label": "$\\frac{4}{3}h$", "why": "這是頂點朝上的情況。這裡 $h=0$（水面）時寬度應該是 4，越深越窄。" },
-        { "label": "4", "why": "只有水面那一條是 4，往下會隨相似三角形縮小。" }
-      ]
-    },
-    {
-      "ask": "同一塊板子往下沉得更深（形狀、方向不變），受力會？",
-      "options": [
-        { "label": "變大", "correct": true },
-        { "label": "不變", "why": "形狀沒變，但每一條的深度都增加了，壓力跟深度成正比。" },
-        { "label": "變小", "why": "越深壓力越大，沒有變小的理由。" }
+        {
+          "label": "$\\displaystyle\\int_0^3 9800\\,h\\cdot2\\,dh$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int_1^4 9800\\,h\\cdot2\\,dh$",
+          "why": "這是正確的式子"
+        },
+        {
+          "label": "$\\displaystyle\\int_0^3 9800\\,(y+1)\\cdot2\\,dy$",
+          "why": "這也對：$y$ 從板子上緣量，深度是 $y+1$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "壓力只看深度",
+      "title": "壓力只跟深度有關",
       "beats": [
-        { "show": ["$P=\\rho gh$"],
-          "note": "水的 $\\rho g\\approx 9800\\ \\mathrm{N/m^3}$。",
-          "say": "液體裡深度 h 的地方，壓力是密度乘 g 乘 h。越深，壓力越大。",
+        {
+          "show": [
+            "深度 $h$ 處，上面水柱的重量壓下來：",
+            "$P=\\rho g h$"
+          ],
+          "say": "潛水時越往下，耳朵越痛。深度 h 的地方，壓力是密度乘 g 乘深度 h，也就是上面那一柱水的重量，壓在每一平方公尺上。",
           "board": [
-            {"do":"write","line":"$P={{r:\\rho g}}\\,{{d:h}}$"},
-            {"do":"underline","term":"d","label":"越深越大","on":"越深"}
-          ] },
-        { "show": ["同一深度，各方向壓力一樣"],
-          "say": "同一個深度，不管朝哪個方向，壓力都一樣大。",
+            {
+              "do": "write",
+              "line": "深度 $h$ 處，上面水柱的重量壓下來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle P=\\rho g h}}$",
+              "on": "壓力"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "上面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "水：$\\rho g=1000\\times9.8=9800\\ \\mathrm{N/m^3}$"
+          ],
+          "say": "水的密度乘 g，是 1000 乘 9.8，等於 9800 牛頓每立方公尺。",
           "board": [
-            {"do":"write","line":"同一深度：各方向壓力一樣"}
-          ] },
-        { "show": ["水平的板子：$F=\\rho gh\\cdot A$"],
-          "note": "每一點深度相同，壓力乘面積就好。",
-          "say": "板子水平放的話，整塊都一樣深，壓力乘面積就是受力。",
+            {
+              "do": "write",
+              "line": "水：$\\rho g=1000\\times9.8=9800\\ \\mathrm{N/m^3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "壓力的單位是 $\\mathrm{N/m^2}$：壓力 × 面積 = 力",
+            "$F=P\\cdot A=\\rho g h\\,A$"
+          ],
+          "say": "壓力是每平方公尺受多少牛頓的力。壓力乘上面積，才是力。",
           "board": [
-            {"do":"write","line":"$F={{p:\\rho gh}}\\cdot {{a:A}}$"},
-            {"do":"underline","term":"p","label":"壓力","on":"壓力乘面積"}
-          ] }
+            {
+              "do": "write",
+              "line": "壓力的單位是 $\\mathrm{N/m^2}$：壓力 × 面積 = 力"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F=P\\cdot A=\\rho g h\\,A$",
+              "on": "的力"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：水平放的板子，面積 $2\\ \\mathrm{m^2}$，在水深 $5$ m：",
+            "$F=9800\\cdot5\\cdot2=98000\\ \\text{N}$"
+          ],
+          "say": "例如一塊水平放的板子，面積 2 平方公尺，在水深 5 公尺。整塊板子深度一樣，力就是 9800 乘 5 乘 2，98000 牛頓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：水平放的板子，面積 $2\\ \\mathrm{m^2}$，在水深 $5$ m："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F=9800\\cdot5\\cdot2=98000\\ \\text{N}$",
+              "on": "板子#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同一個深度，壓力往各個方向都一樣"
+          ],
+          "say": "而且在同一個深度，壓力往各個方向都一樣大，往下壓、往旁邊推都一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同一個深度，壓力往各個方向都一樣"
+            }
+          ]
+        }
       ],
-      "check": 3
-    },
-    {
-      "title": "直立的板子",
-      "beats": [
-        { "show": ["上緣淺、下緣深：壓力不是常數"],
-          "say": "板子直立時，上面淺、下面深，壓力不是常數，不能直接乘面積。",
-          "board": [
-            {"do":"write","line":"上面淺、下面深：$P$ 隨 $h$ 變"},
-            {"do":"write","line":"$F={{w:P\\cdot A}}$","on":"壓力不是"},
-            {"do":"strike","term":"w","label":"不能這樣","on":"不能直接"}
-          ] },
-        { "show": ["切水平細條：受力 $\\rho gh\\cdot w(h)\\,dh$"],
-          "note": "同一深度壓力相同；細條寬 $w(h)$、厚 $dh$。",
-          "say": "可是同一個深度壓力相同，所以切成水平細條：每一條的面積是寬乘 dh，再乘那裡的壓力。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"細條：寬 ${{w:w(h)}}$、厚 ${{d:dh}}$","on":"切成水平細條"},
-            {"do":"write","line":"$dF={{p:\\rho g h}}\\,{{w:w(h)}}\\,{{d:dh}}$","on":"每一條的面積"},
-            {"do":"underline","term":"p","label":"壓力","on":"那裡的壓力"}
-          ] },
-        { "show": ["細條很薄：條內的深度幾乎不變"],
-          "note": "直覺，不是證明；dh 越小越準。",
-          "say": "細條很薄，條裡的深度差不多一樣，當成同一深度。大塊的話上下壓力差太多，所以要切細。",
-          "board": [
-            {"do":"write","line":"厚 ${{d:dh}}$ 很小：條內 $h$ 幾乎不變"},
-            {"do":"underline","term":"d","label":"越薄越準","on":"當成同一"}
-          ] },
-        { "show": ["$F=\\int_{h_1}^{h_2}\\rho g\\,h\\,w(h)\\,dh$"],
-          "say": "全部加起來，就是板子一面受的力。",
-          "board": [
-            {"do":"write","line":"$F={{r:\\int_{h_1}^{h_2}\\rho g\\,h\\,w(h)\\,dh}}$"},
-            {"do":"box","term":"r","color":"green","on":"板子一面"}
-          ] },
-        { "show": ["$\\int$ 是把很多細條加起來"],
-          "note": "$h_1$ 板子最淺處，$h_2$ 最深處。",
-          "say": "積分符號就是把無限多個細條的力加起來。下限是板子最淺的深度，上限是最深的深度，從淺的條加到深的條。",
-          "board": [
-            {"do":"write","line":"$\\int_{{{a:h_1}}}^{{{b:h_2}}}$：把每條 $dF$ 加起來"},
-            {"do":"focus","term":"a","label":"最淺處","on":"下限"},
-            {"do":"focus","term":"b","label":"最深處","on":"上限"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "三個步驟",
-      "beats": [
-        { "show": ["① $h$ = 到水面的深度，找出範圍"],
-          "note": "上緣不在水面時，下限不是 $0$。",
-          "say": "第一步，設 h 是到水面的深度，往下算正的，找出板子所在的範圍。",
-          "board": [
-            {"do":"write","line":"① $h$ ＝ 到水面的深度（往下為正）"},
-            {"do":"write","line":"範圍：$h_1\\le h\\le h_2$","on":"找出板子"}
-          ] },
-        { "show": ["② 寫出深度 $h$ 處的寬度 $w(h)$"],
-          "note": "矩形是常數；三角形用相似形；圓用畢氏定理。",
-          "say": "第二步，寫出深度 h 那裡板子有多寬。矩形是常數，三角形要用相似形。",
-          "board": [
-            {"do":"write","line":"② 深度 $h$ 處的寬度 $w(h)$"},
-            {"do":"write","line":"矩形：常數；三角形：相似形","on":"矩形是常數"}
-          ] },
-        { "show": ["③ 積分 $\\rho g\\cdot h\\cdot w(h)$"],
-          "note": "跟抽水題很像：切水平層。",
-          "say": "第三步，深度乘寬度乘密度乘 g，積分。結構跟抽水題很像。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"③ $F=\\int {{r:h\\cdot w(h)\\cdot\\rho g}}\\,dh$","on":"深度乘寬度"},
-            {"do":"underline","term":"r","on":"積分"}
-          ] },
-        { "show": ["算一個：$\\int_0^3 9800\\cdot h\\cdot 2\\,dh$"],
-          "note": "$9800\\cdot 2\\cdot\\frac{3^2}{2}=88200$",
-          "say": "代一個數字看看，矩形寬二、深度零到三。h 的反導函數是 h 平方除以二，代三再減零，得到八萬八千二百牛頓。",
-          "board": [
-            {"do":"write","line":"$19600\\left[\\frac{h^2}{2}\\right]_0^3=19600\\cdot 4.5$"},
-            {"do":"write","line":"$={{q:88200}}$","on":"八萬八千"},
-            {"do":"box","term":"q","color":"green","on":"牛頓"}
-          ] }
-      ],
-      "key": "切水平細條：深度乘寬度再積分",
-      "check": 1
-    },
-    {
-      "title": "矩形板",
-      "beats": [
-        { "show": ["寬 2 m、高 3 m，上緣貼水面"],
-          "note": "$F=\\int_0^3 9800\\cdot h\\cdot 2\\,dh=88200$ N。",
-          "say": "寬二公尺、高三公尺的矩形板，上緣貼著水面。寬度是常數二，深度從零積到三。",
-          "board": [
-            {"do":"write","line":"寬 2 m、高 3 m，上緣在水面"},
-            {"do":"write","line":"$F=\\int_0^3 9800\\cdot h\\cdot {{w:2}}\\,dh$","on":"寬度是常數二"},
-            {"do":"underline","term":"w","label":"常數","on":"深度從零"}
-          ] },
-        { "show": ["往下移：上緣在水面下 1 m"],
-          "note": "形狀、方向都不變。",
-          "say": "同一塊板子往下沉一公尺，上緣在水面下一公尺。深度範圍跟著變。",
-          "board": [
-            {"do":"write","line":"上緣在水面下 1 m"},
-            {"do":"write","line":"積分範圍跟著變","on":"深度範圍"}
-          ] },
-        { "show": ["範圍：上緣 1，下緣 $1+3=4$"],
-          "note": "$F=\\int_1^4 9800\\cdot h\\cdot 2\\,dh$",
-          "say": "上緣在水面下一公尺，板子高三公尺，所以下緣在一加三等於四公尺。積分式是從一到四。",
-          "board": [
-            {"do":"write","line":"$F=\\int_{{{a:1}}}^{{{b:4}}}9800\\cdot h\\cdot 2\\,dh$"},
-            {"do":"focus","term":"b","color":"gold","label":"1 加 3","on":"一加三"}
-          ] },
-        { "show": ["寬度對深度：只加 1 到 4 這一段"],
-          "say": "畫寬度對深度：寬度一直是二，要加的深度就是一到四這一段。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.5,5,-0.5,4],"curves":[{"expr":"2","domain":[0,5],"color":"blue"}],"fills":[{"expr":"2","from":1,"to":4,"color":"blue"}]}}
-          ] }
-      ],
-      "key": "往下移後，每條細條的深度都變了",
       "predict": {
-        "ask": "現在一面受的力是？",
+        "ask": "三個容器裝水，==水深都是 $1$ m==，底面積一樣，但形狀不同（一個上寬、一個直筒、一個上窄）。底部受的壓力？",
         "options": [
           {
-            "label": "$9800\\,[h^2]_1^4=147000$ N",
+            "label": "三個一樣",
             "correct": true
           },
           {
-            "label": "88200 N",
-            "why": "形狀一樣，但每一條都更深了，壓力跟深度成正比。"
+            "label": "上寬的最大，因為水最多",
+            "why": "水多但壓力只跟深度有關；多的水壓在斜的側壁上"
           },
           {
-            "label": "$9800\\,[h^2]_0^3$",
-            "why": "上緣在水面下 1 m，深度範圍是 $1$ 到 $4$，不是 $0$ 到 $3$。"
+            "label": "上窄的最大，因為水擠在一起",
+            "why": "形狀不影響同一深度的壓力"
           }
         ]
       }
     },
     {
-      "title": "倒三角形板",
+      "title": "直立的板子：切成水平細條",
       "beats": [
-        { "show": ["底邊 4 m 在水面，頂點朝下，深 3 m"],
-          "say": "等腰三角形板，底邊四公尺貼著水面，頂點朝下，深三公尺。",
+        {
+          "show": [
+            "直立的板子：上面淺、下面深，壓力處處不同"
+          ],
+          "say": "如果板子是直立的，問題就來了：上面淺、下面深，每個地方的壓力都不一樣，不能直接乘。",
           "board": [
-            {"do":"write","line":"底邊 4 m 在水面"},
-            {"do":"write","line":"頂點朝下，深 3 m","on":"頂點朝下"}
-          ] },
-        { "show": ["$h=0$ 寬 $4$；$h=3$ 寬 $0$"],
-          "note": "相似三角形：寬度隨深度線性變化。",
-          "say": "在水面寬四，到最深處變成零，中間照相似三角形線性變小。越深越窄。",
+            {
+              "do": "write",
+              "line": "直立的板子：上面淺、下面深，壓力處處不同"
+            }
+          ]
+        },
+        {
+          "show": [
+            "水平細條：同一條上深度幾乎一樣"
+          ],
+          "say": "想法跟功一樣：切成很多水平的細條。同一條細條上，深度幾乎一樣，壓力就幾乎一樣。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$h=0$：寬 ${{a:4}}$","on":"在水面寬四"},
-            {"do":"write","line":"$h=3$：寬 ${{b:0}}$","on":"最深處"},
-            {"do":"write","line":"相似形：寬隨 $h$ 線性變小","on":"相似三角形"}
-          ] }
+            {
+              "do": "write",
+              "line": "水平細條：同一條上深度幾乎一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "深度 $h$ 的細條，寬 $w(h)$、高 $dh$：",
+            "$dF=\\underbrace{\\rho g h}_{\\text{壓力}}\\cdot\\underbrace{w(h)\\,dh}_{\\text{面積}}$"
+          ],
+          "say": "深度 h 的那一條，寬度是 w of h，高度是 d h。面積是寬乘高，力是壓力乘面積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "深度 $h$ 的細條，寬 $w(h)$、高 $dh$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle dF=\\underbrace{\\rho g h}_{\\text{壓力}}\\cdot\\underbrace{w(h)\\,dh}_{\\text{面積}}$",
+              "on": "度是#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F=\\int_{\\text{上緣}}^{\\text{下緣}}\\rho g\\,h\\,w(h)\\,dh$"
+          ],
+          "say": "從板子的上緣積到下緣，就是整塊板子受的力。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle F=\\int_{\\text{上緣}}^{\\text{下緣}}\\rho g\\,h\\,w(h)\\,dh}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，黃色細條在深度 h，寬是 w of h，高是 d h。越往下的細條，壓力越大。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 300\" width=\"620\"><rect x=\"20\" y=\"40\" width=\"580\" height=\"250\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><line x1=\"20\" y1=\"40\" x2=\"600\" y2=\"40\" stroke=\"var(--blue)\" stroke-width=\"3\"/><text x=\"30\" y=\"30\" style=\"font-family:inherit;font-size:22px;fill:var(--blue)\">水面</text><rect x=\"200\" y=\"40\" width=\"200\" height=\"220\" fill=\"var(--muted)\" fill-opacity=\"0.1\" stroke=\"var(--ink)\" stroke-width=\"3\"/><rect x=\"200\" y=\"166\" width=\"200\" height=\"14\" fill=\"#f5d56e\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"150\" y1=\"44\" x2=\"150\" y2=\"166\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><polygon points=\"150,166 143,152 157,152\" fill=\"var(--red)\"/><text x=\"138\" y=\"112\" text-anchor=\"end\" style=\"font-family:inherit;font-size:24px;fill:var(--red)\">深度 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">h</tspan></text><text x=\"300\" y=\"214\" text-anchor=\"middle\" style=\"font-family:inherit;font-size:24px;fill:var(--ink)\">寬 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">w</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">h</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><text x=\"415\" y=\"180\" style=\"font-family:inherit;font-size:24px;fill:var(--ink)\">高 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">dh</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　$h$ 一律從水面往下量，壓力公式才是 $\\rho gh$",
+              "color": "violet",
+              "on": "高是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：矩形板",
+      "beats": [
+        {
+          "show": [
+            "寬 $2$ m、高 $3$ m，直立在水中，上緣貼著水面"
+          ],
+          "say": "例子：寬 2 公尺、高 3 公尺的矩形板，直立在水中，上緣貼著水面。求一面受的力。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寬 $2$ m、高 $3$ m，直立在水中，上緣貼著水面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h$ 從 $0$ 到 $3$；寬度處處是 $w(h)=2$"
+          ],
+          "say": "深度 h 從 0 到 3。矩形的寬度到處都一樣，是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h$ 從 $0$ 到 $3$；寬度處處是 $w(h)=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F=\\int_0^3 9800\\cdot h\\cdot2\\,dh=19600\\Big[\\frac{h^2}{2}\\Big]_0^3$"
+          ],
+          "say": "力是 9800 乘 h 乘 2，從 0 積到 3。19600 乘 2 分之 h 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle F=\\int_0^3 9800\\cdot h\\cdot2\\,dh=19600\\Big[\\frac{h^2}{2}\\Big]_0^3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F=19600\\cdot\\frac92=88200\\ \\text{N}$"
+          ],
+          "say": "等於 19600 乘 2 分之 9，88200 牛頓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle F=19600\\cdot\\frac92=88200\\ \\text{N}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "例：矩形板",
+      "beats": [
+        {
+          "show": [
+            "平均深度 $1.5$ m：$9800\\cdot1.5\\cdot6=88200$"
+          ],
+          "say": "對矩形板來說，用平均深度 1.5 公尺乘面積剛好對。但這只對寬度不變的板子成立，其他形狀要用積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "平均深度 $1.5$ m：$9800\\cdot1.5\\cdot6=88200$"
+            },
+            {
+              "do": "write",
+              "line": "　一般來說是用「形心」的深度；下一課會講形心",
+              "color": "violet",
+              "on": "但這"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "三個步驟",
+      "beats": [
+        {
+          "show": [
+            "1. 設 $h$：從水面往下量深度",
+            "2. 寫寬度 $w(h)$：深度 $h$ 那一條有多寬"
+          ],
+          "say": "整理成三個步驟：設 h 從水面往下量；寫出深度 h 那一條的寬度；最後積分，範圍是板子上緣到下緣的深度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. 設 $h$：從水面往下量深度"
+            },
+            {
+              "do": "write",
+              "line": "2. 寫寬度 $w(h)$：深度 $h$ 那一條有多寬",
+              "on": "寫出"
+            },
+            {
+              "do": "write",
+              "line": "3. 積分：$F=\\int\\rho g\\,h\\,w(h)\\,dh$，範圍是板子的上緣到下緣",
+              "on": "後積"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寬度會變的板子（三角形、半圓……）：用相似形寫 $w(h)$"
+          ],
+          "say": "矩形的寬度不變。三角形、半圓這些板子，寬度會隨深度改變，通常要用相似三角形寫出 w of h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寬度會變的板子（三角形、半圓……）：用相似形寫 $w(h)$"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "求直立板子受的液體壓力",
+        "steps": [
+          {
+            "label": "設 $h$ 從水面往下量"
+          },
+          {
+            "label": "寫出深度 $h$ 那一條的寬度 $w(h)$",
+            "why": "先要有上一步：設 $h$ 從水面往下量"
+          },
+          {
+            "label": "寫出細條受的力 $\\rho g\\,h\\,w(h)\\,dh$",
+            "why": "先要有上一步：寫出深度 $h$ 那一條的寬度 $w(h)$"
+          },
+          {
+            "label": "從板子上緣的深度積到下緣的深度",
+            "why": "先要有上一步：寫出細條受的力 $\\rho g\\,h\\,w(h)\\,dh$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：倒三角形板",
+      "beats": [
+        {
+          "show": [
+            "等腰三角形板頂點朝下，上緣（底邊 $4$ m）貼水面，深 $3$ m"
+          ],
+          "say": "例子：等腰三角形板，頂點朝下，底邊 4 公尺貼著水面，深 3 公尺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "等腰三角形板頂點朝下，上緣（底邊 $4$ m）貼水面，深 $3$ m"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寬度隨深度縮小：深度 $h$ 處，離頂點 $3-h$",
+            "$\\frac{w(h)}{3-h}=\\frac{4}{3}\\ \\Rightarrow\\ w(h)=\\frac43(3-h)$"
+          ],
+          "say": "寬度隨深度縮小。用相似三角形：寬度比上離頂點的距離 3 減 h，等於 4 比 3。所以寬度是 3 分之 4 乘 3 減 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寬度隨深度縮小：深度 $h$ 處，離頂點 $3-h$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{w(h)}{3-h}=\\frac{4}{3}\\ \\Rightarrow\\ w(h)=\\frac43(3-h)$",
+              "on": "頂點"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：$h=0$ 時寬 $4$（水面），$h=3$ 時寬 $0$（頂點）",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，黃色細條下面還剩一個小三角形，高 3 減 h。它跟整個三角形相似，所以寬度跟高度成比例。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 620 280\" width=\"620\"><rect x=\"20\" y=\"40\" width=\"580\" height=\"230\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><line x1=\"20\" y1=\"40\" x2=\"600\" y2=\"40\" stroke=\"var(--blue)\" stroke-width=\"3\"/><polygon points=\"150,40 450,40 300,265\" fill=\"var(--muted)\" fill-opacity=\"0.1\" stroke=\"var(--ink)\" stroke-width=\"3\"/><rect x=\"210\" y=\"128\" width=\"180\" height=\"12\" fill=\"#f5d56e\" stroke=\"var(--red)\" stroke-width=\"3\"/><text x=\"300\" y=\"30\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif;font-size:24px;fill:var(--ink)\">4</text><line x1=\"490\" y1=\"40\" x2=\"490\" y2=\"265\" stroke=\"var(--muted)\" stroke-width=\"2\"/><text x=\"502\" y=\"160\" style=\"font-family:KaTeX_Main,serif;font-size:24px;fill:var(--ink)\">3</text><line x1=\"110\" y1=\"44\" x2=\"110\" y2=\"128\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><polygon points=\"110,128 103,114 117,114\" fill=\"var(--red)\"/><text x=\"98\" y=\"94\" text-anchor=\"end\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:26px;fill:var(--red)\">h</text><text x=\"300\" y=\"170\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic;font-size:24px;fill:var(--red)\">w<tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">(</tspan>h<tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">)</tspan></text><line x1=\"330\" y1=\"140\" x2=\"330\" y2=\"265\" stroke=\"var(--ink)\" stroke-width=\"1.5\" stroke-dasharray=\"5 4\"/><text x=\"380\" y=\"225\" style=\"font-family:KaTeX_Main,serif;font-size:22px;fill:var(--ink)\">3 − <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">h</tspan></text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：倒三角形（續）",
+      "beats": [
+        {
+          "show": [
+            "$\\begin{aligned}F&=\\int_0^3 9800\\,h\\cdot\\frac43(3-h)\\,dh\\\\&=\\frac{39200}{3}\\int_0^3(3h-h^2)\\,dh\\end{aligned}$"
+          ],
+          "say": "代進公式：9800 乘 h 乘 3 分之 4 乘 3 減 h，從 0 積到 3。常數提出來，剩下 3h 減 h 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}F&=\\int_0^3 9800\\,h\\cdot\\frac43(3-h)\\,dh\\\\&=\\frac{39200}{3}\\int_0^3(3h-h^2)\\,dh\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^3(3h-h^2)\\,dh=\\frac{27}{2}-9=\\frac92$"
+          ],
+          "say": "3h 減 h 平方的積分：2 分之 27 減 9，等於 2 分之 9。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^3(3h-h^2)\\,dh=\\frac{27}{2}-9=\\frac92$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$F=\\frac{39200}{3}\\cdot\\frac92=58800\\ \\text{N}$"
+          ],
+          "say": "乘起來，58800 牛頓。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle F=\\frac{39200}{3}\\cdot\\frac92=58800\\ \\text{N}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "80"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "例：倒三角形（續）",
+      "beats": [
+        {
+          "show": [
+            "寬的部分在淺處，所以頂點朝下的板子受力比較小"
+          ],
+          "say": "頂點朝下時，寬的部分在淺處，壓力小，所以總力比較小；倒過來就變成兩倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寬的部分在淺處，所以頂點朝下的板子受力比較小"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "板子沉得更深",
+      "beats": [
+        {
+          "show": [
+            "同一塊矩形板（寬 $2$、高 $3$）往下移，上緣在水面下 $1$ m"
+          ],
+          "say": "最後，把範例 1 的矩形板往下移，上緣在水面下 1 公尺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同一塊矩形板（寬 $2$、高 $3$）往下移，上緣在水面下 $1$ m"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h$ 仍然從水面量：板子從 $h=1$ 到 $h=4$"
+          ],
+          "say": "深度還是從水面量，所以板子從 h 等於 1 到 h 等於 4。積分的上下限改了，寬度還是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h$ 仍然從水面量：板子從 $h=1$ 到 $h=4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}F&=\\int_1^4 9800\\cdot h\\cdot2\\,dh\\\\&=9800\\Big[h^2\\Big]_1^4=147000\\ \\text{N}\\end{aligned}$"
+          ],
+          "say": "9800 乘 h 平方，從 1 代到 4，是 9800 乘 15，147000 牛頓。比貼著水面時大很多。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}F&=\\int_1^4 9800\\cdot h\\cdot2\\,dh\\\\&=9800\\Big[h^2\\Big]_1^4=147000\\ \\text{N}\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "98#2"
+            },
+            {
+              "do": "write",
+              "line": "　檢查：平均深度 $2.5$ m，$9800\\cdot2.5\\cdot6=147000$",
+              "color": "violet",
+              "on": "70"
+            }
+          ]
+        }
       ],
       "check": 2
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 壓力 $P=\\rho gh$，只跟深度有關；壓力 × 面積 = 力",
+            "• 直立的板子：切成水平細條"
+          ],
+          "say": "整理一下：壓力只跟深度有關。直立的板子切成水平細條，壓力乘面積再積分。寬度用相似形寫，深度永遠從水面量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 壓力 $P=\\rho gh$，只跟深度有關；壓力 × 面積 = 力"
+            },
+            {
+              "do": "write",
+              "line": "• 直立的板子：切成水平細條",
+              "on": "度有"
+            },
+            {
+              "do": "write",
+              "line": "• $F=\\displaystyle\\int\\rho g\\,h\\,w(h)\\,dh$，$h$ 從水面往下量",
+              "on": "成水"
+            },
+            {
+              "do": "write",
+              "line": "• 寬度會變：用相似形寫 $w(h)$",
+              "on": "再積"
+            },
+            {
+              "do": "write",
+              "line": "• 板子往下移：只改積分範圍，深度一樣從水面量",
+              "on": "深度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：質心與形心"
+          ],
+          "say": "下一課，找出一塊薄板的平衡點：質心與形心。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：質心與形心"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["story-problem"],
-    "fine": ["fluid-pressure-depth", "fluid-strip-width", "fluid-force-integral"]
+    "coarse": [
+      "story-problem"
+    ],
+    "fine": [
+      "fluid-pressure-depth",
+      "fluid-strip-width",
+      "fluid-force-integral"
+    ]
   },
   "practice": [
-    { "id": "refine-integrals-036", "core": true, "trains": "fluid-strip-width" },
-    { "id": "cg-5d-016", "core": true, "trains": "fluid-pressure-depth" },
-    { "id": "cg-5d-010", "core": true, "trains": "fluid-force-integral" },
-    { "id": "cg-5d-011", "core": true, "trains": "fluid-force-integral" },
-    { "id": "cg-5d-013", "core": true, "trains": "fluid-strip-width" },
-    { "id": "cg-5d-012", "trains": "fluid-force-integral" },
-    { "id": "cg-5d-015", "trains": "fluid-strip-width" },
-    { "id": "cg-5d-014", "trains": "fluid-strip-width" }
+    {
+      "id": "refine-integrals-036",
+      "core": true,
+      "trains": "fluid-strip-width"
+    },
+    {
+      "id": "cg-5d-016",
+      "core": true,
+      "trains": "fluid-pressure-depth"
+    },
+    {
+      "id": "cg-5d-010",
+      "core": true,
+      "trains": "fluid-force-integral"
+    },
+    {
+      "id": "cg-5d-011",
+      "core": true,
+      "trains": "fluid-force-integral"
+    },
+    {
+      "id": "cg-5d-013",
+      "core": true,
+      "trains": "fluid-strip-width"
+    },
+    {
+      "id": "cg-5d-012",
+      "trains": "fluid-force-integral"
+    },
+    {
+      "id": "cg-5d-015",
+      "trains": "fluid-strip-width"
+    },
+    {
+      "id": "cg-5d-014",
+      "trains": "fluid-strip-width"
+    }
   ],
   "gaps": []
 }

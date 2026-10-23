@@ -1,0 +1,339 @@
+{
+  "id": "singularities",
+  "title": "奇異點",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["laurent-series", "discontinuity-types"],
+  "next": ["residue"],
+  "related": ["taylor-limits-higher"],
+  "objectives": [
+    "用 Laurent 級數的主要部分把孤立奇異點分成三類：可去（沒有負次方）、$m$ 階極點（最低到 $(z-z_0)^{-m}$）、本性（無窮多個負次方）。",
+    "不展開也能判斷：看 $\\lim f$ 是否存在、$(z-z_0)^m f$ 的極限是否為有限非零，或用分子分母零點的階數相減。",
+    "知道本性奇異點附近 $f$ 的行為極端：沿不同方向趨近，$f$ 可以趨近 $0$、$\\infty$ 或任何值附近。"
+  ],
+  "visual": "三張圖並排，用顏色表示 f 的輻角、亮度表示 |f|，中心是奇異點。可去（sin z/z）：中心附近顏色平順，像沒事一樣；極點（1/z²）：中心變成一個亮點，顏色繞兩圈；本性（e^{1/z}）：中心附近顏色與亮度瘋狂變化，任何顏色都出現無限多次。",
+  "concept": [
+    {
+      "heading": "① 孤立奇異點：只有中間一個洞",
+      "body": [
+        "$f$ 在 $0<|z-z_0|<r$ 全純、但在 $z_0$ 沒定義或不全純，$z_0$ 叫孤立奇異點。在這個去心圓盤上 $f$ 有 Laurent 級數，分類就看主要部分（負次方）長什麼樣。",
+        "不是孤立的例子：$\\operatorname{Log}z$ 在 $0$（負實軸整條都有問題）、$\\frac{1}{\\sin(1/z)}$ 在 $0$（奇異點 $\\frac{1}{k\\pi}$ 往 $0$ 擠）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三類",
+      "body": [
+        "可去：主要部分是 $0$。$\\lim_{z\\to z_0}f$ 存在，補上這個值 $f$ 就在 $z_0$ 全純。例：$\\frac{\\sin z}{z}$、$\\frac{1-\\cos z}{z^2}$。跟〈不連續的種類〉裡的可去不連續同一個想法。",
+        "$m$ 階極點：主要部分有限，最低一項是 $\\frac{a_{-m}}{(z-z_0)^m}$（$a_{-m}\\ne 0$）。等價說法：$(z-z_0)^m f(z)\\to$ 有限非零的數。這時 $|f|\\to\\infty$。例：$\\frac{1}{(z-1)^2}$ 在 $1$ 是二階極點。",
+        "本性：主要部分有無窮多項。例：$e^{1/z}=1+\\frac{1}{z}+\\frac{1}{2!\\,z^2}+\\cdots$ 在 $0$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 快速判斷極點的階數",
+      "body": [
+        "$f=\\frac{g}{h}$，$g$、$h$ 在 $z_0$ 全純：若 $h$ 在 $z_0$ 有 $k$ 階零點、$g$ 有 $j$ 階零點（$j$ 可以是 $0$），則 $k>j$ 時是 $(k-j)$ 階極點，$k\\le j$ 時是可去。零點的階數看 Taylor 展開的第一個非零項（〈高階 Taylor 求極限〉的技術）。",
+        "例：$\\frac{z}{\\sin^2 z}$ 在 $0$：$\\sin^2 z=z^2-\\cdots$ 是 2 階零點，分子 $z$ 是 1 階，所以是 1 階極點。$\\frac{\\sin z}{z^4}$：分子 1 階、分母 4 階，3 階極點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "本性奇異點的極端行為",
+      "body": [
+        "Casorati–Weierstrass 定理：$z_0$ 是本性奇異點時，在 $z_0$ 的任何小去心圓盤裡，$f$ 的值可以任意接近任何一個複數。（更強的 Picard 定理說：除了至多一個例外值，每個複數都會被取到無限多次。）$e^{1/z}$ 從正實軸趨近 $0$ 時 $\\to\\infty$，從負實軸趨近時 $\\to 0$，沿虛軸時在單位圓上繞。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "sections": [
+    {
+      "title": "只有中間一個洞",
+      "beats": [
+        { "show": ["$f$ 在 $0<|z-z_0|<r$ 全純"],
+          "note": "在 $z_0$ 沒定義或不全純。",
+          "say": "f 在一個挖掉中心的小圓盤上全純，只有中心那一點出問題，這叫孤立奇異點。",
+          "board": [
+            {"do":"write","line":"$f$ 在 ${{d:0<|z-z_0|<r}}$ 全純"},
+            {"do":"underline","term":"d","label":"去心圓盤","on":"挖掉中心"},
+            {"do":"write","line":"只有 $z_0$ 出問題","on":"只有中心"}
+          ] },
+        { "show": ["看 Laurent 級數的主要部分"],
+          "say": "在這個去心圓盤上 f 有 Laurent 級數。怎麼分類？就看負次方的主要部分長什麼樣。",
+          "board": [
+            {"do":"write","line":"$f={{p:\\sum_{n<0}a_n(z-z_0)^n}}+\\sum_{n\\ge 0}a_n(z-z_0)^n$"},
+            {"do":"underline","term":"p","label":"主要部分","on":"主要部分"}
+          ] },
+        { "show": ["不孤立：$\\operatorname{Log}z$ 在 $0$"],
+          "note": "負實軸整條都有問題。",
+          "say": "不是孤立的例子：主值對數在零，整條負實軸都有問題，不只一個洞。",
+          "board": [
+            {"do":"write","line":"$\\operatorname{Log}z$ 在 ${{o:0}}$：負實軸整條有問題"},
+            {"do":"focus","term":"o","color":"red","label":"不孤立","on":"整條負實軸"}
+          ] }
+      ],
+      "predict": {
+        "ask": "下面哪一個是孤立奇異點？",
+        "options": [
+          {
+            "label": "$\\frac{1}{(z-1)^2}$ 在 $1$",
+            "correct": true
+          },
+          {
+            "label": "$\\operatorname{Log}z$ 在 $0$",
+            "why": "$\\operatorname{Log}$ 在整條負實軸上都不連續，$0$ 附近沒有一個全純的去心圓盤。"
+          },
+          {
+            "label": "$\\frac{1}{\\sin(1/z)}$ 在 $0$",
+            "why": "奇異點 $\\frac{1}{k\\pi}$ 一路往 $0$ 擠，$0$ 附近每個去心圓盤都有別的奇異點。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "可去",
+      "beats": [
+        { "show": ["可去：主要部分是 $0$"],
+          "note": "極限存在，補上值就全純。",
+          "say": "第一類，可去：根本沒有負次方。極限存在，把洞補上這個值，f 就全純了。",
+          "board": [
+            {"do":"write","line":"可去：主要部分 $=0$"},
+            {"do":"write","line":"$\\lim_{z\\to z_0}f$ 存在，補值後全純","on":"極限存在"}
+          ] },
+        { "show": ["$\\frac{1-\\cos z}{z^2}$"],
+          "note": "$1-\\cos z=\\frac{z^2}{2}-\\frac{z^4}{24}+\\cdots$",
+          "say": "例如一減 cosine z 除以 z 平方。分母是零，可是先別急著說是極點，把分子展開。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{f:\\frac{1-\\cos z}{z^2}}}$","on":"例如"},
+            {"do":"write","line":"$1-\\cos z=\\frac{z^2}{2}-\\frac{z^4}{24}+\\cdots$","on":"把分子展開"}
+          ] },
+        { "show": ["$=\\frac{1}{2}-\\frac{z^2}{24}+\\cdots$"],
+          "note": "補值 $f(0)=\\frac{1}{2}$。",
+          "say": "除以 z 平方之後一個負次方都沒有，所以是可去，補上二分之一就好。",
+          "board": [
+            {"do":"write","line":"${{f:\\frac{1-\\cos z}{z^2}}}={{h:\\frac{1}{2}}}-\\frac{z^2}{24}+\\cdots$"},
+            {"do":"box","term":"h","color":"green","on":"補上"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$m$ 階極點",
+      "beats": [
+        { "show": ["主要部分有限，最低一項 $\\frac{a_{-m}}{(z-z_0)^m}$"],
+          "note": "$a_{-m}\\ne 0$。",
+          "say": "第二類，極點：負次方只有有限多項，最低到負 m 次，就叫 m 階極點。",
+          "board": [
+            {"do":"write","line":"主要部分有限：最低 ${{t:\\frac{a_{-m}}{(z-z_0)^m}}}$"},
+            {"do":"underline","term":"t","label":"最低項","on":"最低到"}
+          ] },
+        { "show": ["$(z-z_0)^m f(z)\\to$ 有限非零的數"],
+          "say": "等價說法：乘上 z 減 z 零的 m 次方，剛好把最壞的那項壓平，極限有限而且不是零。",
+          "board": [
+            {"do":"write","line":"${{p:(z-z_0)^m}} f(z)\\to$ 有限、非零"},
+            {"do":"focus","term":"p","label":"壓平","on":"壓平"}
+          ] },
+        { "show": ["$f=\\frac{a_{-m}}{(z-z_0)^m}+\\cdots$","乘上 $(z-z_0)^m$：$a_{-m}+\\cdots$"],
+          "note": "其餘每一項都多了正次方。",
+          "say": "為什麼等價？把 f 的展開整個乘上 z 減 z 零的 m 次方，最低那項變成常數 a 負 m，其餘每項都多了正次方。",
+          "board": [
+            {"do":"write","line":"$f=\\frac{a_{-m}}{(z-z_0)^m}+\\cdots$"},
+            {"do":"write","line":"$(z-z_0)^m f={{c:a_{-m}}}+\\cdots$","on":"整個乘上"},
+            {"do":"underline","term":"c","label":"常數","on":"常數"}
+          ] },
+        { "show": ["$z\\to z_0$：極限 $=a_{-m}\\ne 0$"],
+          "note": "乘的次方不夠，還剩負次方。",
+          "say": "令 z 趨近 z 零，其餘每項都趨近零，只剩 a 負 m，不是零，所以極限有限非零。乘的次方不夠，極限就跑掉。",
+          "board": [
+            {"do":"write","line":"$z\\to z_0$：極限 $={{r:a_{-m}}}\\ne 0$"},
+            {"do":"box","term":"r","color":"green","on":"有限非零"}
+          ] },
+        { "show": ["$|f|\\to\\infty$"],
+          "note": "例：$\\frac{1}{(z-1)^2}$ 在 $1$ 是二階極點。",
+          "say": "極點附近 f 的長度衝向無限大。例如 z 減一平方分之一，在一是二階極點。",
+          "board": [
+            {"do":"write","line":"$|f|\\to\\infty$"},
+            {"do":"write","line":"$\\frac{1}{(z-1)^2}$ 在 $1$：二階極點","on":"例如"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "快速判斷階數",
+      "beats": [
+        { "show": ["$f=\\frac{g}{h}$：分母 $k$ 階零點、分子 $j$ 階"],
+          "note": "$k>j$：$(k-j)$ 階極點；$k\\le j$：可去。",
+          "say": "分子分母都全純時，比零點的階數：分母 k 階、分子 j 階，相減就是極點的階數。",
+          "board": [
+            {"do":"write","line":"$f=\\frac{g}{h}$：分母 ${{k:k}}$ 階零點、分子 ${{j:j}}$ 階","tint":{"k":"violet","j":"blue"}},
+            {"do":"write","line":"${{k:k}}-{{j:j}}$ = 極點的階數","on":"相減"}
+          ] },
+        { "show": ["$\\frac{z}{\\sin^2 z}$：$\\sin^2 z=z^2-\\cdots$"],
+          "note": "分母 2 階，分子 1 階。",
+          "say": "例如 z 除以 sine 平方 z：分母展開從 z 平方開始，是二階零點；分子 z 是一階。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{{{z1:z}}}{\\sin^2 z}$：$\\sin^2 z={{zz:z^2}}-\\cdots$","tint":{"zz":"violet","z1":"blue"},"on":"例如"},
+            {"do":"underline","term":"zz","label":"2 階","on":"z 平方開始"},
+            {"do":"underline","term":"z1","label":"1 階","on":"分子 z"}
+          ] },
+        { "show": ["$\\sin z=z-\\frac{z^3}{6}+\\cdots$"],
+          "note": "第一個非零項是 $z$，所以是 1 階零點。",
+          "say": "sine z 自己的展開是 z 減六分之 z 三次方再加下去。第一個非零項是 z 的一次方，所以 sine z 在零是一階零點。",
+          "board": [
+            {"do":"write","line":"$\\sin z={{a:z}}-\\frac{z^3}{6}+\\cdots$"},
+            {"do":"underline","term":"a","label":"1 階","on":"第一個非零項"}
+          ] },
+        { "show": ["$2-1=1$：1 階極點"],
+          "note": "$\\frac{z^2}{\\sin^2 z}\\to 1$",
+          "say": "二減一，是一階極點，不是二階。檢查：乘上 z 之後極限是一，有限又非零。",
+          "board": [
+            {"do":"write","line":"$2-1={{one:1}}$：$1$ 階極點"},
+            {"do":"focus","term":"one","color":"green","on":"一階極點"},
+            {"do":"write","line":"檢查：$z\\cdot\\frac{z}{\\sin^2 z}\\to 1$","on":"檢查"}
+          ] }
+      ],
+      "key": "階數：分母零點階數減分子的",
+      "check": 1
+    },
+    {
+      "title": "本性",
+      "beats": [
+        { "show": ["主要部分有無窮多項"],
+          "say": "第三類，本性奇異點：負次方有無窮多項。",
+          "board": [
+            {"do":"write","line":"本性：主要部分有無窮多項"}
+          ] },
+        { "show": ["$e^{1/z}=1+\\frac{1}{z}+\\frac{1}{2!\\,z^2}+\\cdots$"],
+          "say": "例如 e 的 z 分之一次方，把 z 分之一代進 e 的級數，負次方一路下去沒有盡頭。",
+          "board": [
+            {"do":"write","line":"$e^{1/z}=1+{{n:\\frac{1}{z}+\\frac{1}{2!\\,z^2}+\\cdots}}$"},
+            {"do":"underline","term":"n","label":"負次方","on":"負次方"}
+          ] },
+        { "show": ["代 $w=\\frac{1}{z}$：$w^n$ 變成 $\\frac{1}{z^n}$"],
+          "note": "級數有無窮多項，負次方就有無窮多個。",
+          "say": "為什麼無窮多個負次方？e 的 w 次方的級數有無窮多項，w 換成 z 分之一，每一項都變成 z 的負 n 次方，不會消掉。",
+          "board": [
+            {"do":"write","line":"$w=\\frac{1}{z}$：$w^n\\to {{q:\\frac{1}{z^n}}}$"},
+            {"do":"underline","term":"q","label":"不會消","on":"每一項"}
+          ] },
+        { "show": ["$x\\to 0^-$：$e^{1/x}\\to 0$","$x\\to 0^+$：$e^{1/x}\\to\\infty$"],
+          "say": "從左邊靠近零，它趨近零；從右邊靠近，它衝向無限大。",
+          "board": [
+            {"do":"write","line":"$x\\to 0^-$：$e^{1/x}\\to 0$"},
+            {"do":"write","line":"$x\\to 0^+$：$e^{1/x}\\to\\infty$","on":"從右邊"}
+          ] },
+        { "show": ["$e^{1/x}$：右邊往上衝，左邊貼著 0"],
+          "say": "畫出來看：藍色是 x 大於零那一側，一路往上衝；紅色是 x 小於零那一側，貼著零。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,6],"curves":[{"expr":"exp(1/x)","domain":[0.55,2],"color":"blue"},{"expr":"exp(1/x)","domain":[-2,-0.1],"color":"red"}]}}
+          ] },
+        { "show": ["不是可去，也不是極點"],
+          "note": "極限不存在，$|f|$ 也沒有一致地 $\\to\\infty$。",
+          "say": "極限不存在，所以不是可去；長度也沒有一致地變大，所以不是極點。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"極限不存在：不是可去","on":"極限不存在"},
+            {"do":"write","line":"$|f|$ 沒有一致 $\\to\\infty$：不是極點","on":"長度也"}
+          ] }
+      ],
+      "key": "兩側趨近去向不同：非極點也不可去",
+      "check": 2
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "可去奇異點",
+      "prompt": "判斷 $\\frac{1-\\cos z}{z^2}$ 在 $0$ 的奇異點類型",
+      "steps": [
+        "$1-\\cos z=\\frac{z^2}{2}-\\frac{z^4}{24}+\\cdots$，除以 $z^2$：$\\frac{1}{2}-\\frac{z^2}{24}+\\cdots$，沒有負次方。",
+        "所以是可去奇異點；補上 $f(0)=\\frac{1}{2}$，$f$ 就在 $0$ 全純。",
+        "等價檢查：$\\lim_{z\\to 0}\\frac{1-\\cos z}{z^2}=\\frac{1}{2}$ 存在。"
+      ],
+      "answer": "可去，補值 $\\frac{1}{2}$",
+      "claim": "LIM((1-cos(x))/x^2, 0) == 1/2"
+    },
+    {
+      "title": "用零點階數判斷極點",
+      "prompt": "$\\frac{z}{\\sin^2 z}$ 在 $0$ 是幾階極點？",
+      "problemId": "rel-hard-cpx-007",
+      "steps": [
+        "$\\sin z=z-\\frac{z^3}{6}+\\cdots$，$\\sin^2 z=z^2-\\cdots$，分母是 2 階零點；分子 $z$ 是 1 階零點。",
+        "$2-1=1$，所以是 1 階（簡單）極點。",
+        "檢查：$(z-0)^1\\cdot\\frac{z}{\\sin^2 z}=\\frac{z^2}{\\sin^2 z}\\to 1$，有限而且不為 $0$。"
+      ],
+      "answer": "1 階極點",
+      "claim": "LIM(x*(x/sin(x)^2), 0) == 1"
+    },
+    {
+      "title": "本性奇異點",
+      "prompt": "$e^{1/z}$ 在 $0$ 是哪一類？沿實軸兩側趨近時會怎樣？",
+      "steps": [
+        "$e^{1/z}=\\sum_{n\\ge 0}\\frac{1}{n!\\,z^n}$，負次方有無窮多項：本性奇異點。",
+        "沿負實軸 $z=x\\to 0^-$：$\\frac{1}{x}\\to-\\infty$，$e^{1/x}\\to 0$。",
+        "沿正實軸 $x\\to 0^+$：$e^{1/x}\\to\\infty$，例如 $x=0.01$ 時 $e^{100}\\approx 2.7\\times 10^{43}$。",
+        "兩個方向的極限一個是 $0$、一個是 $\\infty$：既不是可去（極限不存在），也不是極點（$|f|$ 沒有一致地 $\\to\\infty$）。"
+      ],
+      "answer": "本性奇異點",
+      "claim": "LIM(e^(1/x), 0-) == 0 ;; SUB(e^(1/x), 0.01) > 1000000"
+    }
+  ],
+  "pitfalls": [
+    "看到分母是 $0$ 就說是極點；$\\frac{1-\\cos z}{z^2}$ 是可去。",
+    "極點階數只看分母的次方，忘了扣掉分子的零點（$\\frac{z}{\\sin^2 z}$ 是 1 階，不是 2 階）。",
+    "把「$|f|\\to\\infty$」當成本性奇異點的特徵；那是極點的特徵。",
+    "把不孤立的奇異點（$\\operatorname{Log}z$ 在 $0$）也拿來分類。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\frac{\\sin z}{z}$ 在 $0$ 的奇異點是？",
+      "options": [
+        { "label": "可去", "correct": true },
+        { "label": "1 階極點", "why": "分子 $\\sin z$ 在 $0$ 也是 1 階零點，跟分母抵銷；$\\frac{\\sin z}{z}=1-\\frac{z^2}{6}+\\cdots$，沒有負次方。" },
+        { "label": "本性", "why": "Laurent 級數根本沒有負次方，不可能是本性。" }
+      ]
+    },
+    {
+      "ask": "$\\frac{\\sin z}{z^4}$ 在 $0$ 是幾階極點？",
+      "options": [
+        { "label": "3 階", "correct": true },
+        { "label": "4 階", "why": "分子 $\\sin z$ 在 $0$ 有 1 階零點，$4-1=3$。" },
+        { "label": "可去", "why": "分母的零點階數比分子高，所以是極點。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個在 $z=0$ 是本性奇異點？",
+      "options": [
+        { "label": "$\\cos\\frac{1}{z}$", "correct": true },
+        { "label": "$\\frac{1}{z^5}$", "why": "主要部分只有一項，是 5 階極點。" },
+        { "label": "$\\frac{e^z-1}{z}$", "why": "$\\frac{e^z-1}{z}=1+\\frac{z}{2}+\\cdots$，可去。" }
+      ]
+    },
+    {
+      "ask": "$z_0$ 是 $m$ 階極點的等價說法是？",
+      "options": [
+        { "label": "$(z-z_0)^m f(z)$ 趨近一個有限、非零的數", "correct": true },
+        { "label": "$(z-z_0)^m f(z)\\to 0$", "why": "那表示 $m$ 取太大了；剛好的 $m$ 會讓極限有限而且不為 $0$。" },
+        { "label": "$f(z)\\to\\infty$，而且 $m$ 是分母的次方", "why": "分子可能也有零點；階數要用 $(z-z_0)^m f$ 的極限或零點相減來定。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "removable-singularity", "laurent"],
+    "fine": ["singularity-classify", "pole-order", "essential-singularity", "removable-singularity-limit"]
+  },
+  "practice": [
+    { "id": "hc-der-007", "trains": "removable-singularity-limit" },
+    { "id": "rel-hard-cpx-007", "core": true, "trains": "pole-order" },
+    { "id": "cg-11i-009", "core": true, "trains": "singularity-classify" },
+    { "id": "cg-11i-011", "core": true, "trains": "singularity-classify" },
+    { "id": "cg-11i-013", "core": true, "trains": "pole-order" },
+    { "id": "rel-boss-020", "trains": "pole-order" },
+    { "id": "cg-11i-010", "trains": "singularity-classify" },
+    { "id": "cg-11i-012", "trains": "singularity-classify" },
+    { "id": "cg-11i-014", "trains": "pole-order" },
+    { "id": "cg-11i-015", "trains": "pole-order" }
+  ],
+  "gaps": []
+}

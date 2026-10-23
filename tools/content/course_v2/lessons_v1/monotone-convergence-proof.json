@@ -1,0 +1,383 @@
+{
+  "id": "monotone-convergence-proof",
+  "title": "單調收斂定理（嚴格版）",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["monotone-convergence-sequence", "sup-inf", "completeness-axiom", "epsilon-n-definition"],
+  "next": ["cauchy-sequence"],
+  "related": ["induction", "recursive-sequence"],
+  "objectives": [
+    "用上確界的 $\\varepsilon$ 判準證明：遞增且有上界的數列收斂到它的上確界。",
+    "對每一個前提舉出反例：不單調、無上界、以及在有理數裡會失效（缺完備性）。",
+    "處理遞迴數列：先用歸納法證有界與單調，再解極限方程，並用界排除多餘的根。"
+  ],
+  "visual": "數線上 a₁, a₂, a₃, … 一個比一個右邊，全部被一道牆 M 擋住。牆可以往左推，推到再也推不動的位置就是 sup；畫出 sup − ε 的虛線，標出第一個越過虛線的 a_N，之後的點全部擠在 sup − ε 與 sup 之間。",
+  "concept": [
+    {
+      "heading": "① 只往上走、又撞不破天花板",
+      "body": [
+        "一個遞增數列，如果有上界，直覺上它一定會停在某個高度附近：不能往回走，又不能無限上去。〈單調收斂定理〉在主線是當成事實用的，這一課要說清楚它到底靠什麼成立。",
+        "答案是完備性：「停下來的那個高度」就是集合 $\\{a_n\\}$ 的上確界。實數有完備性，所以這個上確界一定存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理與證明",
+      "body": [
+        "定理：若 $(a_n)$ 遞增（$a_n\\le a_{n+1}$ 對所有 $n$）且有上界，則 $a_n$ 收斂，而且 $\\lim a_n=\\sup\\{a_n:n\\in\\mathbb{N}\\}$。遞減且有下界時，同理收斂到下確界。",
+        "證明：$S=\\{a_n\\}$ 非空、有上界，由完備性公理，$s=\\sup S$ 存在。給定 $\\varepsilon>0$。由 $\\varepsilon$ 判準，存在 $N$ 使 $a_N>s-\\varepsilon$。對所有 $n\\ge N$，遞增給 $a_N\\le a_n$，上界給 $a_n\\le s$，所以 $s-\\varepsilon<a_N\\le a_n\\le s<s+\\varepsilon$，即 $|a_n-s|<\\varepsilon$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 每一個前提都拿不掉",
+      "body": [
+        "沒有上界：$a_n=n$ 遞增，但發散到 $\\infty$。",
+        "不單調：$(-1)^n$ 有界，但不收斂。",
+        "沒有完備性：在有理數裡，1, 1.4, 1.41, 1.414, …（$\\sqrt{2}$ 的小數截斷）遞增、每項都 $<2$、全是有理數，但它要收斂到的 $\\sqrt{2}$ 不是有理數。證明裡唯一用到實數特性的地方，就是「$\\sup$ 存在」。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "經典遞迴：$\\sqrt{2+a_n}$",
+      "prompt": "$a_1=\\sqrt{2}$，$a_{n+1}=\\sqrt{2+a_n}$。證明數列收斂並求極限。",
+      "problemId": "lec-11-q3c",
+      "steps": [
+        "有界（歸納）：$0<a_1=\\sqrt{2}<2$。若 $0<a_n<2$，則 $a_{n+1}=\\sqrt{2+a_n}$ 滿足 $0<a_{n+1}<\\sqrt{4}=2$。所以所有 $n$ 都有 $0<a_n<2$。",
+        "遞增：兩邊都是正數，$a_{n+1}>a_n\\iff2+a_n>a_n^2\\iff(2-a_n)(1+a_n)>0$。由第一步 $0<a_n<2$，兩個因式都正，成立。",
+        "由單調收斂定理，$L=\\lim a_n$ 存在。$a_{n+1}\\to L$，而 $\\sqrt{\\cdot}$ 連續，所以 $\\sqrt{2+a_n}\\to\\sqrt{2+L}$，得 $L=\\sqrt{2+L}$。",
+        "平方：$L^2=2+L$，$L=2$ 或 $L=-1$。所有項 $\\ge\\sqrt{2}$，所以 $L\\ge\\sqrt{2}$，排除 $-1$。$L=2$。數值：1.4142, 1.8478, 1.9616, 1.9904, …"
+      ],
+      "answer": "$\\lim a_n=2$",
+      "claim": "sqrt(2+2) == 2 ;; (2-x)*(1+x) == 2+x-x^2"
+    },
+    {
+      "title": "極限方程有兩個根",
+      "prompt": "$a_1=0$，$a_{n+1}=\\frac{a_n^2+3}{4}$。求 $\\lim a_n$。",
+      "problemId": "an-ca-003",
+      "steps": [
+        "有界（歸納）：$0\\le a_1<1$。若 $0\\le a_n<1$，則 $a_n^2<1$，$a_{n+1}=\\frac{a_n^2+3}{4}<1$，而且顯然 $\\ge0$。",
+        "遞增：$a_{n+1}-a_n=\\frac{a_n^2-4a_n+3}{4}=\\frac{(a_n-1)(a_n-3)}{4}$。$a_n<1$ 時兩個因式都負，乘積為正，所以 $a_{n+1}>a_n$。",
+        "單調收斂定理給 $L$ 存在；兩邊取極限（乘積與和的定律）：$L=\\frac{L^2+3}{4}$，即 $(L-1)(L-3)=0$。",
+        "所有 $a_n<1$，所以 $L\\le1$，排除 3。$L=1$。數值：0, 0.75, 0.8906, 0.9483, 0.9748, …"
+      ],
+      "answer": "1",
+      "claim": "(1^2+3)/4 == 1 ;; (3^2+3)/4 == 3 ;; (x^2+3)/4 - x == (x-1)*(x-3)/4"
+    },
+    {
+      "title": "先證收斂，才能解方程",
+      "prompt": "$a_1=1$，$a_{n+1}=2a_n$。有人寫「$L=2L$，所以 $L=0$」。錯在哪？",
+      "steps": [
+        "實際上 $a_n=2^{n-1}$：1, 2, 4, 8, …，發散到 $\\infty$。",
+        "「$L=2L$」這一步假設了 $\\lim a_n$ 是一個實數 $L$，再對兩邊取極限。前提不成立時，方程的解沒有意義。",
+        "這正是單調收斂定理的用處：先證出極限存在，解極限方程才合法。這個數列遞增但沒有上界，定理不適用。"
+      ],
+      "answer": "沒先證收斂；數列其實發散",
+      "claim": null,
+      "claimNote": "概念性錯誤分析；數列是 2ⁿ⁻¹，沒有可驗的極限值。"
+    }
+  ],
+  "pitfalls": [
+    "沒證收斂就解極限方程（$a_1=1$、$a_{n+1}=2a_n$ 會「解」出 0）。",
+    "解出兩個根卻不說明為什麼丟掉其中一個；要用第一步證出的界。",
+    "歸納證有界時，只寫「$a_1<2$，所以全部 $<2$」，沒有寫歸納步驟 $a_n<2\\Rightarrow a_{n+1}<2$。",
+    "以為有界就收斂。$(-1)^n$ 有界但發散；單調是必要的前提。"
+  ],
+  "checks": [
+    {
+      "ask": "單調收斂定理的證明裡，哪一步用到實數的完備性？",
+      "options": [
+        { "label": "$\\{a_n\\}$ 的上確界存在", "correct": true },
+        { "label": "$a_N\\le a_n$（$n\\ge N$）", "why": "這一步只用到遞增，任何有序的數系都成立。" },
+        { "label": "存在 $N$ 使 $a_N>s-\\varepsilon$", "why": "這是上確界的 $\\varepsilon$ 判準，前提是 $s$ 已經存在；真正需要完備性的是 $s$ 存在這件事。" }
+      ]
+    },
+    {
+      "ask": "下列哪個數列遞增、有上界，但在有理數裡沒有極限？",
+      "options": [
+        { "label": "1, 1.4, 1.41, 1.414, …（$\\sqrt{2}$ 的小數截斷）", "correct": true },
+        { "label": "$1-\\frac{1}{n}$", "why": "它的極限 1 是有理數，在有理數裡也收斂。" },
+        { "label": "$(-1)^n$", "why": "它不單調，而且在實數裡也不收斂；跟有理數缺完備性無關。" }
+      ]
+    },
+    {
+      "ask": "$a_1=0$，$a_{n+1}=\\frac{a_n^2+3}{4}$，極限方程得 $L=1$ 或 3。為什麼不是 3？",
+      "options": [
+        { "label": "歸納證過所有 $a_n<1$，所以 $L\\le1$", "correct": true },
+        { "label": "因為 3 比較大，極限取小的", "why": "沒有「取小的」這種規則；排除根要靠數列的界。若 $a_1=4$，數列遞增到 $\\infty$，兩個根都不是極限。" },
+        { "label": "因為數列遞增，極限一定是較小的根", "why": "遞增只告訴你 $L\\ge a_1=0$，兩個根都 $\\ge0$，排除不了 3；要用上界 1。" }
+      ]
+    },
+    {
+      "ask": "哪一個敘述正確？",
+      "options": [
+        { "label": "遞減且有下界的數列收斂到它的下確界", "correct": true },
+        { "label": "有界的數列一定收斂", "why": "$(-1)^n$ 有界但不收斂。你漏了單調這個前提。" },
+        { "label": "遞增的數列一定收斂", "why": "$a_n=n$ 遞增但發散。你漏了有上界這個前提。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "撞不破的天花板",
+      "beats": [
+        { "show": ["遞增 + 有上界"],
+          "note": "不能往回走，又不能無限上去。",
+          "say": "一個數列只往上走，頭上又有天花板。直覺上它一定會停在某個高度附近。",
+          "board": [
+            {"do":"write","line":"遞增 ＋ 有上界"},
+            {"do":"write","line":"⇒ 停在某個高度","on":"停在"}
+          ] },
+        { "show": ["上界：每一項都 $\\le M$","最小的上界 $=\\sup$"],
+          "note": "上確界 = 最小的上界。",
+          "say": "先說清楚：上界是不比任何一項小的數，所有上界裡最小的那一個，就叫上確界。",
+          "board": [
+            {"do":"write","line":"上界：每個 $a_n\\le M$"},
+            {"do":"write","line":"最小的上界 ＝ 上確界","on":"最小的"}
+          ] },
+        { "show": ["停下來的高度 $=\\sup\\{a_n\\}$"],
+          "note": "完備性保證這個上確界存在。",
+          "say": "停下來的那個高度，就是所有項的上確界。實數有完備性，所以它一定存在。",
+          "board": [
+            {"do":"write","line":"停下來的高度 $={{s:\\sup\\{a_n\\} }}$"},
+            {"do":"focus","term":"s","color":"gold","label":"上確界","on":"上確界"},
+            {"do":"write","line":"實數有完備性 ⇒ 上確界存在","on":"完備性"}
+          ] },
+        { "show": ["低於 $\\sup$：有項爬過去","高於 $\\sup$：不是最小上界"],
+          "note": "所以只有上確界這個高度剛好。",
+          "say": "為什麼是它？比上確界低的高度，不是上界，總有一項爬過去；比它高的，又不是最小的上界。",
+          "board": [
+            {"do":"write","line":"低於上確界：有項爬過去"},
+            {"do":"write","line":"高於上確界：不是最小上界","on":"比它高的"}
+          ] },
+        { "show": ["定理：遞增、有上界 ⇒ 收斂","$\\lim a_n=\\sup\\{a_n:n\\in\\mathbb{N}\\}$"],
+          "say": "定理：遞增而且有上界，就收斂，極限是上確界。遞減而且有下界，就收斂到下確界。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"定理：遞增、有上界 ⇒ 收斂","on":"遞增而且"},
+            {"do":"write","line":"$\\lim a_n=\\sup\\{a_n\\}$","color":"green","on":"極限是"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "證明的三步",
+      "beats": [
+        { "show": ["$S=\\{a_n\\}$ 非空、有上界 ⇒ $s=\\sup S$"],
+          "note": "由完備性公理。",
+          "say": "第一步，所有項組成的集合非空、有上界，完備性公理給出上確界 s。",
+          "board": [
+            {"do":"write","line":"$S=\\{a_n\\}$ 非空、有上界 ⇒ ${{s:s}}=\\sup S$","tint":{"s":"blue"}}
+          ] },
+        { "show": ["給定 $\\varepsilon$：存在 $N$，$a_N>s-\\varepsilon$"],
+          "note": "上確界的 $\\varepsilon$ 判準。",
+          "say": "第二步，給定 epsilon。s 往下退 epsilon 就不是上界了，所以有某一項 a N 穿過去。",
+          "board": [
+            {"do":"write","line":"給定 $\\varepsilon$：${{s:s}}-\\varepsilon$ 不是上界","on":"s 往下退"},
+            {"do":"transform","line":"給定 $\\varepsilon$：$\\exists N$，${{an:a_N}}>{{s:s}}-\\varepsilon$","tint":{"an":"violet"},"on":"所以有某一項"}
+          ] },
+        { "show": ["若 $s-\\varepsilon$ 是上界","⇒ $s$ 不是最小上界"],
+          "note": "但 $s$ 是最小的上界，矛盾。",
+          "say": "為什麼 s 減 epsilon 不是上界？它要是上界，s 就不是最小的上界了，這就矛盾。",
+          "board": [
+            {"do":"write","line":"若 $s-\\varepsilon$ 是上界"},
+            {"do":"write","line":"⇒ $s$ 不是最小上界，矛盾","on":"s 就不是"}
+          ] },
+        { "show": ["$n\\ge N$：$s-\\varepsilon<a_N\\le a_n\\le s$"],
+          "note": "遞增給 $a_N\\le a_n$，上界給 $a_n\\le s$。",
+          "say": "第三步，之後每一項都不比 a N 小，又不超過 s，全部夾在帶子裡，所以收斂到 s。",
+          "board": [
+            {"do":"write","line":"$n\\ge N$：${{s:s}}-\\varepsilon<{{an:a_N}}\\le a_n{{ub:\\le s}}$"},
+            {"do":"focus","term":"an","label":"遞增","on":"不比"},
+            {"do":"underline","term":"ub","label":"上界","on":"又不超過"},
+            {"do":"write","line":"⇒ $a_n\\to s$","color":"green","on":"所以收斂"}
+          ] },
+        { "show": ["點一個比一個高，擠向上界"],
+          "say": "畫出來看：點一個比一個高，全部擠在上確界下面，越靠越近。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[0,7,0,1.3],"curves":[{"expr":"1-1/x","domain":[1,7],"color":"blue"}],"dashed":[[[0,1],[7,1]]]},"on":"部擠"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "前提拿不掉",
+      "beats": [
+        { "show": ["沒有上界：$a_n=n$"],
+          "note": "遞增，但發散。",
+          "say": "每一個前提都拿不掉。沒有上界：n 一直往上，發散。",
+          "board": [
+            {"do":"write","line":"沒有上界：$a_n=n$"},
+            {"do":"write","line":"遞增，但發散","on":"一直往上"}
+          ] },
+        { "show": ["不單調：$(-1)^n$"],
+          "note": "有界，但不收斂。",
+          "say": "不單調：負一的 n 次方有界，可是一直跳，不收斂。",
+          "board": [
+            {"do":"write","line":"不單調：$a_n=(-1)^n$"},
+            {"do":"write","line":"有界，但不收斂","on":"一直跳"}
+          ] },
+        { "show": ["沒有完備性：1, 1.4, 1.41, 1.414, …"],
+          "note": "全是有理數、每項 $<2$，要去的 $\\sqrt{2}$ 卻不是有理數。",
+          "say": "沒有完備性：根號二的小數截斷，一、一點四、一點四一，全是有理數，要去的地方卻不在有理數裡。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"沒有完備性：$\\sqrt{2}$ 的小數截斷","on":"沒有完備性"},
+            {"do":"write","line":"$1,\\ 1.4,\\ 1.41,\\ 1.414,\\dots$","on":"一、一點四"},
+            {"do":"write","line":"全是有理數，$\\sqrt{2}$ 卻不是","on":"全是有理數"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "證明：經典遞迴",
+      "beats": [
+        { "show": ["$a_1=\\sqrt{2}$，$a_{n+1}=\\sqrt{2+a_n}$","先證有界、遞增，再解極限方程"],
+          "say": "策略：第一項根號二，下一項是根號二加前一項。先證有界和遞增，定理給出極限，最後才解方程。",
+          "board": [
+            {"do":"write","line":"$a_1=\\sqrt{2}$，$a_{n+1}=\\sqrt{2+a_n}$"},
+            {"do":"write","line":"先證有界、遞增，再解極限方程","on":"先證"}
+          ] },
+        { "show": ["有界（歸納）：$0<a_n<2$"],
+          "note": "$2+a_n<4$，開根號 $a_{n+1}<\\sqrt{4}=2$。",
+          "why": {"ask":"為什麼 $a_n<2$ 推得 $a_{n+1}<2$？","say":"歸納那一步：前一項小於二，下一項為什麼也小於二？","options":[{"label":"$2+a_n<4$，根號又是遞增的","correct":true},{"label":"數列遞增，一路往 2 爬","why":"遞增還沒證，而且證遞增要用到這個界；先後不能倒過來。"},{"label":"極限是 2，每一項都比它小","why":"極限存不存在還不知道，這正是要證的；不能拿結論當理由。"}]},
+          "say": "前一項小於二，二加它小於四，開根號小於二。從第一項開始一路傳下去。",
+          "board": [
+            {"do":"write","line":"有界：${{b:0<a_n<2}}$","tint":{"b":"blue"},"on":"歸納那一步"},
+            {"do":"write","line":"$2+a_n<4$ ⇒ $a_{n+1}<\\sqrt{4}=2$","why":true,"on":"二加它"}
+          ] },
+        { "show": ["遞增：$a_{n+1}>a_n$ ⇔ $(2-a_n)(1+a_n)>0$"],
+          "note": "平方比較；上一步的界讓兩因式都正。",
+          "say": "兩邊都正，平方比較，等價於二減 a n 乘一加 a n 大於零。上一步的界讓兩個因式都正。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"遞增 ⇔ ${{f:(2-a_n)(1+a_n)}}>0$","on":"等價於"},
+            {"do":"focus","term":"b","on":"上一步的界"},
+            {"do":"underline","term":"f","label":"兩個都正","on":"兩個因式"}
+          ] },
+        { "show": ["遞增、有上界 ⇒ $L=\\lim a_n$ 存在"],
+          "say": "遞增又有上界，單調收斂定理保證極限 L 存在。這時候才可以談 L。",
+          "board": [
+            {"do":"write","line":"遞增、有上界 ⇒ ${{l:L}}=\\lim a_n$ 存在","tint":{"l":"violet"}},
+            {"do":"underline","term":"l","on":"極限 L"}
+          ] },
+        { "show": ["$a_{n+1}\\to L$，$\\sqrt{2+a_n}\\to\\sqrt{2+L}$","所以 $L=\\sqrt{2+L}$"],
+          "note": "根號連續。",
+          "say": "左邊往 L 去，右邊因為根號連續，往根號二加 L 去，所以 L 等於根號二加 L。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"$a_{n+1}\\to {{l:L}}$，${{r:\\sqrt{2+a_n}\\to\\sqrt{2+L}}}$","on":"左邊"},
+            {"do":"focus","term":"r","on":"右邊"},
+            {"do":"write","line":"所以 ${{l:L}}=\\sqrt{2+L}$","on":"所以 L"}
+          ] },
+        { "show": ["$L=2$ 或 $-1$；$L\\ge\\sqrt{2}$ ⇒ $L=2$"],
+          "note": "極限也 $\\ge\\sqrt{2}$。",
+          "why": {"ask":"為什麼排除 $-1$？","say":"平方解出二或負一。為什麼丟掉負一？","options":[{"label":"所有項 $\\ge\\sqrt{2}$，極限也 $\\ge\\sqrt{2}$","correct":true},{"label":"極限不能是負數","why":"數列的極限當然可以是負的；這裡是因為每一項都至少根號 2。"},{"label":"兩個根取比較大的","why":"沒有這種規則；下一節那一題，留下的反而是比較小的根 1。"}]},
+          "say": "每一項都至少根號二，極限也至少根號二，負一不可能。答案是二。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{t:L=2}}\\quad$或$\\quad{{m:L=-1}}$","on":"平方解出"},
+            {"do":"strike","term":"m","on":"丟掉負一"},
+            {"do":"write","line":"每一項 $\\ge\\sqrt{2}$ ⇒ $L\\ge\\sqrt{2}$","why":true,"on":"每一項"},
+            {"do":"box","term":"t","color":"green","why":true,"on":"答案是"}
+          ] }
+      ],
+      "key": "先歸納出界，界再保證遞增",
+      "proof": true,
+      "of": "ex0",
+      "skeleton": "歸納",
+      "where": {
+        "ask": "「根號連續」用在哪一步？",
+        "steps": [
+          {
+            "label": "歸納：$0<a_n<2$",
+            "why": "這只用到根號遞增：$2+a_n<4$ 開根號還是小於 2。"
+          },
+          {
+            "label": "遞增：$(2-a_n)(1+a_n)>0$",
+            "why": "這只用到平方比較與上一步的界。"
+          },
+          {
+            "label": "單調收斂定理：$L$ 存在",
+            "why": "這只用到遞增、有上界（背後是完備性）。"
+          },
+          {
+            "label": "兩邊取極限：$L=\\sqrt{2+L}$",
+            "correct": true
+          },
+          {
+            "label": "排除 $-1$",
+            "why": "這只用到每一項都 $\\ge\\sqrt{2}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "先證收斂再解",
+      "beats": [
+        { "show": ["$a_1=0$，$a_{n+1}=\\frac{a_n^2+3}{4}$"],
+          "note": "數值：0, 0.75, 0.8906, 0.9483, …",
+          "say": "再一個：零、零點七五、零點八九零六，往上爬。可以證明每一項都小於一，而且遞增。",
+          "board": [
+            {"do":"write","line":"$a_1=0$，$a_{n+1}=\\frac{a_n^2+3}{4}$"},
+            {"do":"write","line":"$0,\\ 0.75,\\ 0.8906,\\ \\dots$ 往上爬","on":"零、"}
+          ] },
+        { "show": ["歸納：$0\\le a_1<1$","$a_n<1$ ⇒ $a_{n+1}<1$"],
+          "note": "第一項成立，每項推下一項。",
+          "say": "先證每一項小於一：第一項是零。若 a n 小於一，平方也小於一，加三再除以四，還是小於一。",
+          "board": [
+            {"do":"write","line":"歸納：$0\\le a_1<1$"},
+            {"do":"write","line":"$a_n<1$ ⇒ $a_n^2<1$ ⇒ $a_{n+1}<1$","on":"平方"}
+          ] },
+        { "show": ["$a_{n+1}-a_n=\\frac{(a_n-1)(a_n-3)}{4}$","兩因式都負 ⇒ 遞增"],
+          "note": "負乘負是正。",
+          "say": "遞增：下一項減 a n，等於 a n 減一乘 a n 減三，再除以四。a n 小於一，兩個因式都負，乘積是正的。",
+          "board": [
+            {"do":"write","line":"$a_{n+1}-a_n=\\frac{(a_n-1)(a_n-3)}{4}$"},
+            {"do":"write","line":"兩個因式都負 ⇒ 乘積為正","on":"兩個因式"}
+          ] },
+        { "show": ["$(L-1)(L-3)=0$"],
+          "note": "兩個根要用界排除一個。",
+          "say": "極限方程有兩個根，一和三。解出兩個根，一定要說清楚為什麼丟掉其中一個。",
+          "board": [
+            {"do":"write","line":"$(L-1)(L-3)=0$"},
+            {"do":"write","line":"$L=1$ 或 $L=3$：丟掉哪一個？","on":"一定要說清楚"}
+          ] },
+        { "show": ["$a_1=1$，$a_{n+1}=2a_n$：「$L=2L$」？"],
+          "note": "其實 1, 2, 4, 8, … 發散。",
+          "say": "最後提醒：沒先證收斂就解方程會出事。一、二、四、八一路翻倍，卻會解出零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$a_1=1$，$a_{n+1}=2a_n$","on":"沒先證收斂"},
+            {"do":"write","line":"「$L=2L$」⇒ ${{z:L=0}}$","on":"就解方程"},
+            {"do":"strike","term":"z","on":"會出事"},
+            {"do":"write","line":"$1, 2, 4, 8, \\dots$ 發散","on":"一、二"}
+          ] }
+      ],
+      "key": "極限方程有兩根，要用界排除一個",
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["sequence", "recursive-sequence", "sequence-limit"],
+    "fine": ["mct-sup-proof", "mct-hypothesis-counterexample", "mct-recursive-bound-induction", "mct-fixed-point-root-selection"]
+  },
+  "practice": [
+    { "id": "lec-11-q3a", "core": true, "trains": "mct-recursive-bound-induction" },
+    { "id": "lec-11-q3b", "core": true, "trains": "mct-recursive-bound-induction" },
+    { "id": "lec-11-q3c", "core": true, "trains": "mct-fixed-point-root-selection" },
+    { "id": "an-ca-003", "core": true, "trains": "mct-fixed-point-root-selection" },
+    { "id": "lx-seq-001", "trains": "mct-fixed-point-root-selection" },
+    { "id": "cx-seq-004", "trains": "mct-fixed-point-root-selection" },
+    { "id": "cg-12c-010", "trains": "mct-hypothesis-counterexample" },
+    { "id": "cg-12c-011", "trains": "mct-hypothesis-counterexample" },
+    { "id": "cg-12c-012", "trains": "mct-hypothesis-counterexample" },
+    { "id": "an-sup-004", "challenge": true, "trains": "mct-sup-proof", "note": "挑戰：$(1+\\frac{1}{n})^n$ 遞增有上界，所以上確界就是極限 $e$。" }
+  ],
+  "gaps": [
+    { "tag": "mct-sup-proof", "count": 1, "note": "白話證明：遞減且有下界的數列收斂到下確界。" }
+  ]
+}

@@ -1,54 +1,106 @@
 {
   "id": "limit-factor",
   "title": "0/0：因式分解",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 30,
-  "prerequisites": ["limit-laws-direct", "polynomial-rational"],
-  "next": ["limit-rationalize"],
-  "related": ["infinite-limits"],
+  "prerequisites": [
+    "limit-laws-direct",
+    "polynomial-rational"
+  ],
+  "next": [
+    "limit-rationalize"
+  ],
+  "related": [
+    "infinite-limits"
+  ],
   "objectives": [
-    "知道代入得 $\\frac{0}{0}$ 的有理函數，分子分母一定有共同因式 $(x - a)$。",
-    "會因式分解、約掉 $(x - a)$、再代入；約完還是 $\\frac{0}{0}$ 就再約一次。",
-    "說得出為什麼可以約：極限只看 $x \\ne a$ 的地方。"
+    "知道代入得 $\\frac00$ 的有理函數，分子分母一定有共同因式 $(x-a)$",
+    "會因式分解、約掉 $(x-a)$、再代入，約完還是 $\\frac00$ 就再約一次",
+    "說得出為什麼可以約：極限只看 $x\\ne a$ 的地方"
   ],
   "visual": null,
-  "figures": [
-    {"caption":"就是 y = x + 2，只挖掉 x = 2 那一點","after":1,"graph":{"window":[-1,4,-0.5,6.5],"curves":[{"expr":"(x^2-4)/(x-2)","domain":[-1,4],"color":"blue"}],"points":[{"x":2,"y":4,"open":true}],"labels":[{"x":2.2,"y":3.5,"text":"(2, 4) 挖掉"}]}}
-  ],
   "concept": [
     {
-      "heading": "① $\\frac{0}{0}$ 是一個訊號",
+      "heading": "① $\\frac00$ 是一個訊號",
       "body": [
-        "$\\lim_{x\\to2} \\frac{x^2 - 4}{x - 2}$：代入得 $\\frac{0}{0}$。$\\frac{0}{0}$ 不是一個數，它不是答案，也不代表極限不存在。",
-        "對多項式來說，它在告訴你一件具體的事：分子分母在 $x = 2$ 都是 0，由因式定理（〈多項式與有理函數〉），兩者都有 $(x - 2)$ 這個因式。"
+        "上一課：代進去得 $\\dfrac00$ → 停下來",
+        "有理函數 $\\dfrac{p(x)}{q(x)}$，代 $a$ 得 $\\dfrac00$：",
+        "用 0.8 的因式定理：$p(a)=0\\iff(x-a)$ 是 $p$ 的因式",
+        "為什麼可以約掉 $(x-a)$？",
+        "極限只看 $x\\ne a$：在那裡 $x-a\\ne0$，約分完全合法",
+        "0.5 學過：化簡不改變定義域。約完的式子在 $a$ 有定義，但原式沒有 —— 極限不在乎這一點"
       ],
-      "collapsible": false
+      "tex": [
+        "p(a)=0\\quad\\text{且}\\quad q(a)=0",
+        "\\Rightarrow\\ p(x)=(x-a)\\,p_1(x),\\qquad q(x)=(x-a)\\,q_1(x)",
+        "\\frac{(x-a)p_1(x)}{(x-a)q_1(x)}=\\frac{p_1(x)}{q_1(x)}\\quad(x\\ne a)"
+      ]
     },
     {
       "heading": "② 約掉造成 0 的因式",
       "body": [
-        "$x^2 - 4 = (x - 2)(x + 2)$。$x$ 靠近 2 但不等於 2，所以 $x - 2 \\ne 0$，可以約：$\\frac{x^2 - 4}{x - 2} = x + 2$（$x \\ne 2$）。",
-        "為什麼約完的極限一樣：兩個函數只在 $x = 2$ 這一點不同（一個沒定義、一個是 4），而極限完全不看那一點。所以 $\\lim_{x\\to2} \\frac{x^2 - 4}{x - 2} = \\lim_{x\\to2} (x + 2) = 4$。"
+        "例：$\\displaystyle\\lim_{x\\to3}\\frac{x^2-x-6}{x-3}$",
+        "代 $3$：$\\dfrac{9-3-6}{0}=\\dfrac00$ → 一定有 $(x-3)$",
+        "三步：分解 → 約掉 $(x-a)$ → 代入",
+        "寫法要注意：",
+        "• 約分前後都要寫 $\\lim$，等號才成立",
+        "• 不要寫 $=\\dfrac00$ 再「接著算」：$\\frac00$ 不是一個數"
       ],
-      "tex": ["\\lim_{x\\to2}\\frac{x^2-4}{x-2}=\\lim_{x\\to2}\\frac{(x-2)(x+2)}{x-2}=\\lim_{x\\to2}(x+2)=4"],
-      "collapsible": false
+      "tex": [
+        "x^2-x-6=(x-3)(x+2)",
+        "\\lim_{x\\to3}\\frac{(x-3)(x+2)}{x-3}=\\lim_{x\\to3}(x+2)=5"
+      ]
     },
     {
       "heading": "③ 常用的分解",
       "body": [
-        "平方差 $a^2 - b^2 = (a - b)(a + b)$；立方差 $a^3 - b^3 = (a - b)(a^2 + ab + b^2)$；二次式用十字交乘。",
-        "看不出來時，已知 $x = a$ 是根，就用長除法或比較係數把 $(x - a)$ 除出來。"
+        "都可以展開回去驗算；不確定時，綜合除法一定能拆出 $(x-a)$",
+        "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-1}{x^2-1}$",
+        "代 $1$：$\\dfrac00$；分子立方差、分母平方差：",
+        "檢查：$x=1.001$ 時 $\\dfrac{x^3-1}{x^2-1}\\approx1.5$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}a^2-b^2&=(a-b)(a+b)\\\\ a^3-b^3&=(a-b)(a^2+ab+b^2)\\\\ a^3+b^3&=(a+b)(a^2-ab+b^2)\\end{aligned}",
+        "\\frac{(x-1)(x^2+x+1)}{(x-1)(x+1)}",
+        "=\\lim_{x\\to1}\\frac{x^2+x+1}{x+1}=\\frac{3}{2}"
+      ]
     },
     {
       "heading": "④ 約完還沒完",
       "body": [
-        "約一次之後再代入。還是 $\\frac{0}{0}$：分子分母還有 $(x - a)$，再約一次（重根）。",
-        "分母變成非 0：直接代，得到答案。",
-        "分母還是 0、分子不是 0：$\\frac{k}{0}$ 型，極限是 $\\pm\\infty$ 或左右不同號而不存在（〈無窮極限與垂直漸近線〉）。"
+        "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-3x+2}{x^2-2x+1}$",
+        "代 $1$：$\\dfrac{1-3+2}{1-2+1}=\\dfrac00$",
+        "約一次：",
+        "再代 $1$：$\\dfrac{1+1-2}{0}=\\dfrac00$ 還是！"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{(x-1)(x^2+x-2)}{(x-1)(x-1)}=\\frac{x^2+x-2}{x-1}"
+      ]
+    },
+    {
+      "heading": "④ 再約一次",
+      "body": [
+        "再約一次：$x^2+x-2=(x-1)(x+2)$",
+        "原因：分子分母都有兩個 $(x-1)$",
+        "1 是分子的「二重根」：每約一次只拿掉一個 $(x-1)$",
+        "原則：約完再代；還是 $\\frac00$ 就再約"
+      ],
+      "tex": [
+        "\\lim_{x\\to1}\\frac{(x-1)(x+2)}{x-1}=\\lim_{x\\to1}(x+2)=3",
+        "x^3-3x+2=(x-1)^2(x+2)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\frac00$ 是訊號：分子分母有共同因式 $(x-a)$（因式定理）",
+        "• 可以約：極限只看 $x\\ne a$，那裡 $x-a\\ne0$",
+        "• 三步：分解 → 約掉 → 代入",
+        "• 常用：平方差、立方差、立方和、十字交乘、綜合除法",
+        "• 約完還是 $\\frac00$：再約一次",
+        "下一課：$\\frac00$：有理化 —— 有根號的時候"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,206 +152,355 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to4} \\frac{x^2 - 16}{x - 4}$ 是？",
+      "ask": "$\\displaystyle\\lim_{x\\to-2}\\frac{x^2-4}{x+2}=$？",
       "options": [
-        { "label": "0", "why": "代入得 $\\frac{0}{0}$ 不是答案。約掉 $x - 4$ 後是 $x + 4$，代 4 得 8。" },
-        { "label": "4", "why": "約完剩 $x + 4$，不是 $x$；代 4 得 8。" },
-        { "label": "8", "correct": true }
+        {
+          "label": "$-4$",
+          "correct": true
+        },
+        {
+          "label": "$4$",
+          "why": "約完是 $x-2$，代 $-2$ 得 $-4$，正負號要小心"
+        },
+        {
+          "label": "$0$",
+          "why": "分子是 $0$ 不代表答案是 $0$：分母也是 $0$"
+        },
+        {
+          "label": "不存在",
+          "why": "$\\frac00$ 不是不存在，約完就算得出來"
+        }
       ]
     },
     {
-      "ask": "$x^3 - 8$ 的因式分解是？",
+      "ask": "$\\displaystyle\\lim_{x\\to2}\\frac{x^3-6x^2+12x-8}{x^2-4x+4}=$？",
       "options": [
-        { "label": "$(x - 2)(x^2 + 2x + 4)$", "correct": true },
-        { "label": "$(x - 2)(x^2 - 2x + 4)$", "why": "立方差 $a^3 - b^3$ 的第二個因式全是加號；中間是 $-2x$ 的是立方和 $x^3 + 8$ 的分解。" },
-        { "label": "$(x - 2)(x^2 + 4)$", "why": "展開是 $x^3 - 2x^2 + 4x - 8$，多了 $-2x^2 + 4x$。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to2} \\frac{x^3 - 8}{x - 2}$ 是？",
-      "options": [
-        { "label": "4", "why": "約完是 $x^2 + 2x + 4$，代 2 是 $4 + 4 + 4 = 12$。" },
-        { "label": "12", "correct": true },
-        { "label": "0", "why": "$\\frac{0}{0}$ 不是 0。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to-1} \\frac{x^2 - 1}{x^2 + 2x + 1}$ 是？",
-      "options": [
-        { "label": "1", "why": "分子 $(x - 1)(x + 1)$、分母 $(x + 1)^2$，約完是 $\\frac{x - 1}{x + 1}$，不是 1。" },
-        { "label": "0", "why": "約完分子 $\\to -2$、分母 $\\to 0$，是 $\\frac{k}{0}$ 型，不是 0。" },
-        { "label": "不存在", "correct": true }
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$1$",
+          "why": "約掉兩個 $(x-2)$ 之後還剩一個 $(x-2)$，它趨近 $0$"
+        },
+        {
+          "label": "不存在",
+          "why": "約完是 $x-2$，可以直接代"
+        },
+        {
+          "label": "$\\frac00$",
+          "why": "$\\frac00$ 不是答案；約到能代為止"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "$\\frac{0}{0}$ 是一個訊號",
+      "title": "$\\frac00$ 是一個訊號",
       "beats": [
-        { "show": ["$\\lim_{x\\to2} \\frac{x^2 - 4}{x - 2}$：代入得 $\\frac{0}{0}$"],
-          "say": "x 平方減四除以 x 減二，代二進去，上下都是零。",
+        {
+          "show": [
+            "上一課：代進去得 $\\dfrac00$ → 停下來"
+          ],
+          "say": "上一課說，代進去得到 0 分之 0，就要停下來。這一課學怎麼往下走。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to2} \\frac{x^2 - 4}{x - 2}$"},
-            {"do":"write","line":"代入：${{z:\\frac{0}{0}}}$","on":"代二進去"}
-          ] },
-        { "show": ["$\\frac{0}{0}$ 不是答案","也不代表不存在"],
-          "say": "零分之零不是一個數。它不是答案，也不代表極限不存在，它是一個訊號。",
+            {
+              "do": "write",
+              "line": "上一課：代進去得 $\\dfrac00$ → 停下來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理函數 $\\dfrac{p(x)}{q(x)}$，代 $a$ 得 $\\dfrac00$：",
+            "$p(a)=0\\quad\\text{且}\\quad q(a)=0$"
+          ],
+          "say": "有理函數代進 a 得 0 分之 0，意思是分子 p of a 等於 0，分母 q of a 也等於 0。",
           "board": [
-            {"do":"write","line":"$\\frac{0}{0}$ 不是答案"},
-            {"do":"write","line":"也不代表不存在","on":"也不代表"}
-          ] },
-        { "show": ["分子分母在 $x = 2$ 都是 0"],
-          "note": "由因式定理，兩者有共同的因式。",
-          "say": "多項式在二等於零，由因式定理，它一定有某個因式。分子分母都是零，就有同一個因式。",
+            {
+              "do": "write",
+              "line": "有理函數 $\\dfrac{p(x)}{q(x)}$，代 $a$ 得 $\\dfrac00$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle p(a)=0\\quad\\text{且}\\quad q(a)=0$",
+              "on": "of#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用 0.8 的因式定理：$p(a)=0\\iff(x-a)$ 是 $p$ 的因式"
+          ],
+          "say": "回想因式定理：p of a 等於 0，等價於 x 減 a 是 p 的因式。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"因式定理：$p(2) = 0$ ⇒ 有因式","on":"因式定理"},
-            {"do":"write","line":"分子、分母在 $x = 2$ 都是 0","on":"分子分母"}
-          ] }
-      ],
-      "predict": {
-        "ask": "分子分母共同的因式是？",
-        "options": [
-          {
-            "label": "$(x - 2)$",
-            "correct": true
-          },
-          {
-            "label": "$(x + 2)$",
-            "why": "$x + 2$ 在 $x = 2$ 是 4，不是 0；讓它變 0 的是 $x - 2$。"
-          },
-          {
-            "label": "$x$",
-            "why": "$x$ 在 $x = 2$ 不是 0；因式定理說 $p(2) = 0$ 就有因式 $(x - 2)$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "用 0.8 的因式定理：$p(a)=0\\iff(x-a)$ 是 $p$ 的因式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow\\ p(x)=(x-a)\\,p_1(x),\\qquad q(x)=(x-a)\\,q_1(x)$"
+          ],
+          "say": "所以分子分母都能拆出 x 減 a。0 分之 0 是一個訊號：分子分母有一個共同的因式 x 減 a，它就是造成 0 的元兇。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\Rightarrow\\ p(x)=(x-a)\\,p_1(x),\\qquad q(x)=(x-a)\\,q_1(x)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "分子#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼可以約掉 $(x-a)$？"
+          ],
+          "say": "為什麼可以約掉它？",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼可以約掉 $(x-a)$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極限只看 $x\\ne a$：在那裡 $x-a\\ne0$，約分完全合法",
+            "$\\frac{(x-a)p_1(x)}{(x-a)q_1(x)}=\\frac{p_1(x)}{q_1(x)}\\quad(x\\ne a)$"
+          ],
+          "say": "因為極限只看 x 不等於 a 的地方。在那裡 x 減 a 不是 0，約分是完全合法的。兩個函數除了 a 那一點以外一模一樣，所以極限也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "極限只看 $x\\ne a$：在那裡 $x-a\\ne0$，約分完全合法"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{(x-a)p_1(x)}{(x-a)q_1(x)}=\\frac{p_1(x)}{q_1(x)}\\quad(x\\ne a)}}$",
+              "on": "在那"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分是"
+            },
+            {
+              "do": "write",
+              "line": "　0.5 學過：化簡不改變定義域。約完的式子在 $a$ 有定義，但原式沒有 —— 極限不在乎這一點",
+              "color": "violet",
+              "on": "那一"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "約掉造成 0 的因式",
       "beats": [
-        { "show": ["$x^2 - 4 = (x - 2)(x + 2)$"],
-          "say": "分子用平方差拆開，是 x 減二乘 x 加二。",
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to3}\\frac{x^2-x-6}{x-3}$"
+          ],
+          "say": "例子：x 平方減 x 減 6，除以 x 減 3，x 趨近 3。",
           "board": [
-            {"do":"write","line":"$x^2 - 4 = {{a:(x - 2)}}(x + 2)$"},
-            {"do":"underline","term":"a","label":"平方差","on":"平方差"}
-          ] },
-        { "show": ["$\\frac{x^2 - 4}{x - 2} = x + 2$（$x \\ne 2$）"],
-          "note": "$x$ 靠近 2 但不等於 2，$x - 2 \\ne 0$。",
-          "say": "x 靠近二，但不等於二，所以 x 減二不是零，可以約掉，剩 x 加二。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to3}\\frac{x^2-x-6}{x-3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $3$：$\\dfrac{9-3-6}{0}=\\dfrac00$ → 一定有 $(x-3)$"
+          ],
+          "say": "代 3 進去：分子 9 減 3 減 6 等於 0，分母也是 0。所以分子一定有 x 減 3 這個因式。",
           "board": [
-            {"do":"write","line":"$\\frac{x^2 - 4}{{{b:x - 2}}} = {{c:x + 2}}$（$x \\ne 2$）","tint":{"c":"blue"}},
-            {"do":"underline","term":"b","label":"不是零","on":"不是零"}
-          ] },
-        { "show": ["兩個函數只差 $x = 2$ 這一點"],
-          "note": "極限完全不看那一點。",
-          "say": "約完的函數跟原來的，只在二這一點不一樣。圖上就是 x 加二那條線，挖掉一個洞。",
+            {
+              "do": "write",
+              "line": "代 $3$：$\\dfrac{9-3-6}{0}=\\dfrac00$ → 一定有 $(x-3)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^2-x-6=(x-3)(x+2)$"
+          ],
+          "say": "十字交乘：x 減 3 乘 x 加 2。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.5,4.5,-0.5,7],"curves":[{"expr":"x+2","domain":[-0.5,4.5],"color":"blue"}],"points":[{"x":2,"y":4,"open":true}],"dashed":[[[2,0],[2,4]],[[0,4],[2,4]]],"labels":[{"x":2.25,"y":3.5,"text":"洞","anchor":"start"}]},"on":"圖上"}
-          ] },
-        { "show": ["$\\lim_{x\\to2} (x + 2) = 4$"],
-          "say": "極限不看那一點，所以極限一樣。代二進去，得到四。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^2-x-6=(x-3)(x+2)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\lim_{x\\to3}\\frac{(x-3)(x+2)}{x-3}=\\lim_{x\\to3}(x+2)=5$"
+          ],
+          "say": "約掉 x 減 3，剩下 x 加 2。現在可以直接代了，答案是 5。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\lim_{x\\to2}({{c:x + 2}}) = {{r:4}}$","on":"所以極限"},
-            {"do":"box","term":"r","color":"green","on":"代二進去"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\lim_{x\\to3}\\frac{(x-3)(x+2)}{x-3}=\\lim_{x\\to3}(x+2)=5}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "現在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三步：分解 → 約掉 $(x-a)$ → 代入"
+          ],
+          "say": "整個過程三步：分解、約掉 x 減 a、再代入。",
+          "board": [
+            {
+              "do": "write",
+              "line": "三步：分解 → 約掉 $(x-a)$ → 代入",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寫法要注意：",
+            "• 約分前後都要寫 $\\lim$，等號才成立"
+          ],
+          "say": "寫法上要注意兩件事：約分前後都要寫 lim，等號才對；也不要先寫等於 0 分之 0，再接著算，0 分之 0 不是一個數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寫法要注意："
+            },
+            {
+              "do": "write",
+              "line": "• 約分前後都要寫 $\\lim$，等號才成立",
+              "on": "等號"
+            },
+            {
+              "do": "write",
+              "line": "• 不要寫 $=\\dfrac00$ 再「接著算」：$\\frac00$ 不是一個數",
+              "on": "再接"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
       "title": "常用的分解",
       "beats": [
-        { "show": ["$a^2 - b^2 = (a - b)(a + b)$"],
-          "say": "常用的分解有幾個。平方差，是 a 減 b 乘 a 加 b。",
+        {
+          "show": [
+            "$\\begin{aligned}a^2-b^2&=(a-b)(a+b)\\\\ a^3-b^3&=(a-b)(a^2+ab+b^2)\\\\ a^3+b^3&=(a+b)(a^2-ab+b^2)\\end{aligned}$"
+          ],
+          "say": "常用的分解有這幾個：平方差、立方差、立方和。另外還有十字交乘，和上一章學的綜合除法。",
           "board": [
-            {"do":"write","line":"$a^2 - b^2 = (a - b)(a + b)$","on":"平方差"}
-          ] },
-        { "show": ["$a^3 - b^3 = (a - b)(a^2 + ab + b^2)$"],
-          "note": "第二個因式全是加號。",
-          "say": "立方差，是 a 減 b，乘上 a 平方加 a b 加 b 平方。第二個因式全部是加號，最常寫錯。",
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}a^2-b^2&=(a-b)(a+b)\\\\ a^3-b^3&=(a-b)(a^2+ab+b^2)\\\\ a^3+b^3&=(a+b)(a^2-ab+b^2)\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "立方#1"
+            },
+            {
+              "do": "write",
+              "line": "　都可以展開回去驗算；不確定時，綜合除法一定能拆出 $(x-a)$",
+              "color": "violet",
+              "on": "交乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-1}{x^2-1}$"
+          ],
+          "say": "例子：x 三次方減 1，除以 x 平方減 1，在 1。",
           "board": [
-            {"do":"write","line":"$a^3 - b^3 = (a - b)({{p:a^2 + ab + b^2}})$","on":"立方差"},
-            {"do":"underline","term":"p","label":"全是加號","on":"全部是加號"}
-          ] },
-        { "show": ["$x^2 - x - 6 = (x - 3)(x + 2)$"],
-          "note": "二次式用十字交乘。",
-          "say": "二次式就湊兩個因式。x 平方減 x 減六，拆成 x 減三乘 x 加二，展開檢查一次。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-1}{x^2-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $1$：$\\dfrac00$；分子立方差、分母平方差：",
+            "$\\frac{(x-1)(x^2+x+1)}{(x-1)(x+1)}$"
+          ],
+          "say": "代進去是 0 分之 0。分子用立方差，分母用平方差，都拆出 x 減 1。",
           "board": [
-            {"do":"write","line":"$x^2 - x - 6 = (x - 3)(x + 2)$","on":"x 平方減 x"}
-          ] },
-        { "show": ["已知 $x = a$ 是根：除出 $(x - a)$"],
-          "say": "看不出來的時候，反正知道 a 是根，就用長除法把 x 減 a 除出來。",
+            {
+              "do": "write",
+              "line": "代 $1$：$\\dfrac00$；分子立方差、分母平方差："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(x-1)(x^2+x+1)}{(x-1)(x+1)}$",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\lim_{x\\to1}\\frac{x^2+x+1}{x+1}=\\frac{3}{2}$"
+          ],
+          "say": "約掉 x 減 1，代 1：分子 3、分母 2，答案是 2 分之 3。",
           "board": [
-            {"do":"write","line":"已知 $a$ 是根 ⇒ 除出 $(x - a)$","on":"反正知道"}
-          ] },
-        { "show": ["$x^2 + 2x + 1$ 除以 $x + 1$","先湊最高次：$x^2 \\div x = x$"],
-          "note": "商的第一項是 $x$。",
-          "say": "拿 x 平方加二 x 加一，除以 x 加一。最高次 x 平方除以 x 是 x，乘回去減掉，剩 x 加一。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =\\lim_{x\\to1}\\frac{x^2+x+1}{x+1}=\\frac{3}{2}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "檢查：$x=1.001$ 時 $\\dfrac{x^3-1}{x^2-1}\\approx1.5$"
+          ],
+          "say": "用一個很靠近 1 的數檢查一下，大約 1.5，對得上。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x^2 + 2x + 1 - {{m1:x(x + 1)}} = {{m2:x + 1}}$","on":"x 平方加"},
-            {"do":"focus","term":"m1","color":"blue","label":"乘回去","on":"乘回去"},
-            {"do":"circle","term":"m2","on":"剩"}
-          ] },
-        { "show": ["再除：$x + 1 - 1\\cdot(x + 1) = 0$","商 $x + 1$，餘數 $0$"],
-          "note": "餘數 0，表示 $x + 1$ 真的是因式。",
-          "say": "剩下的 x 加一，除以 x 加一是一，減完剛好沒有餘數。所以商是 x 加一，分解就是 x 加一的平方。",
-          "board": [
-            {"do":"write","line":"$x + 1 - 1\\cdot(x + 1) = {{m3:0}}$"},
-            {"do":"box","term":"m3","color":"green","label":"餘數 0","on":"沒有餘數"},
-            {"do":"write","line":"$x^2 + 2x + 1 = (x + 1)(x + 1)$","on":"所以商"}
-          ] }
+            {
+              "do": "write",
+              "line": "檢查：$x=1.001$ 時 $\\dfrac{x^3-1}{x^2-1}\\approx1.5$"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "立方差與平方差",
-      "beats": [
-        { "show": ["$\\lim_{x\\to1} \\frac{x^3 - 1}{x^2 - 1}$"],
-          "note": "代 $x = 1$：$\\frac{0}{0}$。",
-          "say": "一題同時用到兩個公式：x 立方減一，除以 x 平方減一，代一進去是零分之零。",
-          "board": [
-            {"do":"write","line":"$\\lim_{x\\to1} \\frac{x^3 - 1}{x^2 - 1}$"},
-            {"do":"write","line":"代 $x = 1$：$\\frac{0}{0}$","on":"代一進去"}
-          ] },
-        { "show": ["分子 $(x - 1)(x^2 + x + 1)$","分母 $(x - 1)(x + 1)$"],
-          "say": "分子是立方差，分母是平方差，兩個都拆出 x 減一。",
-          "board": [
-            {"do":"write","line":"分子：$x^3 - 1 = (x - 1)({{p:x^2 + x + 1}})$"},
-            {"do":"underline","term":"p","label":"全是加號","on":"立方差"},
-            {"do":"write","line":"分母：$x^2 - 1 = (x - 1)(x + 1)$","on":"平方差"}
-          ] },
-        { "show": ["約掉：$\\frac{x^2 + x + 1}{x + 1}$ → $\\frac{3}{2}$"],
-          "say": "約掉 x 減一，再代一：分子三，分母二，極限是二分之三。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{{{a:(x - 1)}}(x^2 + x + 1)}{{{b:(x - 1)}}(x + 1)}$","on":"約掉"},
-            {"do":"strike","term":"a","on":"減一"},
-            {"do":"strike","term":"b","on":"再代一"},
-            {"do":"transform","line":"$\\frac{x^2 + x + 1}{x + 1} = {{r:\\frac{3}{2}}}$","tint":{"r":"green"},"on":"分子三"}
-          ] }
-      ],
-      "key": "立方差的第二個因式全是加號",
-      "solve": {
-        "check": 2,
-        "kind": "numeric",
-        "answer": "12",
-        "claim": "LIM((x^3-8)/(x-2), 2) == ANS",
-        "hint": "$x^3 - 8$ 是立方差：$a^3 - b^3 = (a - b)(a^2 + ab + b^2)$。",
-        "steps": [
-          "$x^3 - 8 = (x - 2)(x^2 + 2x + 4)$",
-          "約掉 $x - 2$：$x^2 + 2x + 4$",
-          "代 $x = 2$：$4 + 4 + 4 = 12$"
-        ],
-        "wrong": [
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{x\\to2}\\frac{x^3-8}{x-2}$ 用立方差，答案是？",
+        "options": [
           {
-            "answer": "4",
-            "why": "約完是 $x^2 + 2x + 4$，代 2 是 $4 + 4 + 4 = 12$。"
+            "label": "$12$",
+            "correct": true
           },
           {
-            "answer": "0",
-            "why": "$\\frac{0}{0}$ 不是 0：先約掉 $x - 2$ 再代。"
+            "label": "$4$",
+            "why": "只約出 $x^2$ 的部分；立方差的第二個因式是 $x^2+2x+4$"
+          },
+          {
+            "label": "$8$",
+            "why": "$8$ 是 $2^3$；還要除掉 $(x-2)$"
           }
         ]
       }
@@ -307,75 +508,285 @@
     {
       "title": "約完還沒完",
       "beats": [
-        { "show": ["$\\lim_{x\\to1} \\frac{x^3 - 3x + 2}{x^2 - 2x + 1}$"],
-          "note": "分子 $1 - 3 + 2 = 0$，分母 $1 - 2 + 1 = 0$。",
-          "say": "這一題代一進去，分子一減三加二是零，分母一減二加一也是零。",
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-3x+2}{x^2-2x+1}$"
+          ],
+          "say": "最後一個例子：x 三次方減 3x 加 2，除以 x 平方減 2x 加 1，在 1。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to1} \\frac{x^3 - 3x + 2}{x^2 - 2x + 1}$"},
-            {"do":"write","line":"分子 $1 - 3 + 2 = 0$","on":"分子"},
-            {"do":"write","line":"分母 $1 - 2 + 1 = 0$","on":"分母"}
-          ] },
-        { "show": ["$x^2 - 2x + 1 = (x - 1)(x - 1)$"],
-          "note": "找兩個數：乘起來 1、加起來 $-2$。",
-          "say": "分母怎麼拆？找兩個數，乘起來是一，加起來是負二。是負一和負一，所以 x 減一出現兩次，就是平方。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to1}\\frac{x^3-3x+2}{x^2-2x+1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代 $1$：$\\dfrac{1-3+2}{1-2+1}=\\dfrac00$"
+          ],
+          "say": "代 1：分子 1 減 3 加 2 等於 0，分母 1 減 2 加 1 也是 0。",
           "board": [
-            {"do":"write","line":"$x^2 - 2x + 1 = {{q1:(x - 1)}}{{q2:(x - 1)}}$"},
-            {"do":"focus","term":"q1","color":"blue","label":"兩個一樣","on":"負一和負一"},
-            {"do":"transform","line":"$= {{q3:(x - 1)^2}}$","on":"就是平方"}
-          ] },
-        { "show": ["分子 $= (x - 1)^2(x + 2)$","分母 $= (x - 1)^2$"],
-          "say": "分子除掉 x 減一之後，剩下的在一還是零，再拆一次，所以有 x 減一的平方。",
+            {
+              "do": "write",
+              "line": "代 $1$：$\\dfrac{1-3+2}{1-2+1}=\\dfrac00$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "約一次：",
+            "$\\frac{(x-1)(x^2+x-2)}{(x-1)(x-1)}=\\frac{x^2+x-2}{x-1}$"
+          ],
+          "say": "分子用綜合除法除以 x 減 1，得到 x 平方加 x 減 2；分母是 x 減 1 的平方。約掉一個 x 減 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"分子 $= (x - 1)^2(x + 2)$","on":"再拆一次"},
-            {"do":"write","line":"分母 $= (x - 1)^2$","on":"所以有"}
-          ] },
-        { "show": ["約掉 $(x - 1)^2$：$x + 2$ → 3"],
-          "note": "只約一次，代入仍是 $\\frac{0}{0}$。",
-          "say": "約掉 x 減一的平方，剩 x 加二，代一得三。只約一次的話，代進去還是零分之零。",
+            {
+              "do": "write",
+              "line": "約一次："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{(x-1)(x^2+x-2)}{(x-1)(x-1)}=\\frac{x^2+x-2}{x-1}$",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再代 $1$：$\\dfrac{1+1-2}{0}=\\dfrac00$ 還是！"
+          ],
+          "say": "再代 1 看看：分子 1 加 1 減 2，還是 0；分母也是 0。還是 0 分之 0。",
           "board": [
-            {"do":"write","line":"$\\frac{{{a:(x - 1)^2}}(x + 2)}{{{b:(x - 1)^2}}}$"},
-            {"do":"strike","term":"a","on":"約掉"},
-            {"do":"strike","term":"b","on":"的平方"},
-            {"do":"transform","line":"$x + 2 \\to {{r:3}}$","on":"剩"},
-            {"do":"box","term":"r","color":"green","on":"代一"}
-          ] },
-        { "show": ["分母還是 0、分子不是 0"],
-          "note": "$\\frac{k}{0}$ 型：$\\pm\\infty$ 或不存在。",
-          "say": "要是約完分母還是零、分子卻不是零，就變成另一種情況：值會爆掉，極限不存在。",
+            {
+              "do": "write",
+              "line": "再代 $1$：$\\dfrac{1+1-2}{0}=\\dfrac00$ 還是！",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "再約一次",
+      "beats": [
+        {
+          "show": [
+            "再約一次：$x^2+x-2=(x-1)(x+2)$",
+            "$\\lim_{x\\to1}\\frac{(x-1)(x+2)}{x-1}=\\lim_{x\\to1}(x+2)=3$"
+          ],
+          "say": "沒關係，訊號還在，就再約一次。x 平方加 x 減 2 等於 x 減 1 乘 x 加 2，約掉以後代 1，得到 3。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"約完：分母 $\\to 0$，分子 $\\ne 0$","on":"約完"},
-            {"do":"write","line":"$\\frac{k}{0}$ 型：值爆掉","on":"值會爆掉"}
-          ] },
-        { "show": ["$\\frac{1}{x - 1}$：靠近 1，值越來越大"],
-          "note": "一直變大寫成 $\\to\\infty$，仍是不存在。",
-          "say": "看一除以 x 減一的圖。x 從右邊靠近一，值一路往上；從左邊靠近，往下。沒有靠近任何數，所以極限不存在。",
+            {
+              "do": "write",
+              "line": "再約一次：$x^2+x-2=(x-1)(x+2)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\lim_{x\\to1}\\frac{(x-1)(x+2)}{x-1}=\\lim_{x\\to1}(x+2)=3}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "約掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：分子分母都有兩個 $(x-1)$",
+            "$x^3-3x+2=(x-1)^2(x+2)$"
+          ],
+          "say": "原因是分子分母都含有兩個 x 減 1。分子其實是 x 減 1 的平方乘 x 加 2。",
           "board": [
-            {"do":"plot","graph":{"window":[-1,3,-5,5],"curves":[{"expr":"1/(x-1)","domain":[-1,0.8],"color":"blue"},{"expr":"1/(x-1)","domain":[1.2,3],"color":"blue"}],"dashed":[[[1,-5],[1,5]]]}}
-          ] }
+            {
+              "do": "write",
+              "line": "原因：分子分母都有兩個 $(x-1)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x^3-3x+2=(x-1)^2(x+2)$",
+              "on": "分子#2"
+            },
+            {
+              "do": "write",
+              "line": "　1 是分子的「二重根」：每約一次只拿掉一個 $(x-1)$",
+              "color": "violet",
+              "on": "的平"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原則：約完再代；還是 $\\frac00$ 就再約"
+          ],
+          "say": "原則：約完再代，還是 0 分之 0，就繼續約，直到能代為止。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原則：約完再代；還是 $\\frac00$ 就再約",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "key": "重根要約到 $(x-1)^2$，約一次不夠",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "再約一次",
+      "beats": [
+        {
+          "show": [
+            "算 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$（代入得 $\\frac00$）的步驟"
+          ],
+          "say": "排排看步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "算 $\\displaystyle\\lim_{x\\to a}\\frac{p(x)}{q(x)}$（代入得 $\\frac00$）的步驟",
+        "steps": [
+          {
+            "label": "確認代入是 $\\frac00$"
+          },
+          {
+            "label": "分子分母各拆出 $(x-a)$",
+            "why": "先要有上一步：確認代入是 $\\frac00$"
+          },
+          {
+            "label": "約掉 $(x-a)$",
+            "why": "先要有上一步：分子分母各拆出 $(x-a)$"
+          },
+          {
+            "label": "再代入；如果還是 $\\frac00$，回到第 2 步",
+            "why": "先要有上一步：約掉 $(x-a)$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\frac00$ 是訊號：分子分母有共同因式 $(x-a)$（因式定理）",
+            "• 可以約：極限只看 $x\\ne a$，那裡 $x-a\\ne0$"
+          ],
+          "say": "整理一下：0 分之 0 告訴你有共同因式 x 減 a；約掉它是合法的，因為極限只看 x 不等於 a；約完再代，還是 0 分之 0 就再約。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\frac00$ 是訊號：分子分母有共同因式 $(x-a)$（因式定理）"
+            },
+            {
+              "do": "write",
+              "line": "• 可以約：極限只看 $x\\ne a$，那裡 $x-a\\ne0$",
+              "on": "訴你"
+            },
+            {
+              "do": "write",
+              "line": "• 三步：分解 → 約掉 → 代入",
+              "on": "約掉"
+            },
+            {
+              "do": "write",
+              "line": "• 常用：平方差、立方差、立方和、十字交乘、綜合除法",
+              "on": "不等"
+            },
+            {
+              "do": "write",
+              "line": "• 約完還是 $\\frac00$：再約一次",
+              "on": "還是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：$\\frac00$：有理化 —— 有根號的時候"
+          ],
+          "say": "下一課，處理有根號的 0 分之 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：$\\frac00$：有理化 —— 有根號的時候"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["factoring"],
-    "fine": ["factor-difference-squares", "factor-trinomial", "factor-cubic-difference", "factor-repeated-root", "factor-after-cancel-check"]
+    "coarse": [
+      "factoring"
+    ],
+    "fine": [
+      "factor-difference-squares",
+      "factor-trinomial",
+      "factor-cubic-difference",
+      "factor-repeated-root",
+      "factor-after-cancel-check"
+    ]
   },
   "practice": [
-    { "id": "cx-lim-002", "core": true, "trains": "factor-difference-squares" },
-    { "id": "fd-lim-004", "core": true, "trains": "factor-difference-squares" },
-    { "id": "lim-003", "core": true, "trains": "factor-difference-squares" },
-    { "id": "cx-lim-009", "core": true, "trains": "factor-cubic-difference" },
-    { "id": "cg-1b-007", "core": true, "trains": "factor-trinomial" },
-    { "id": "cg-1b-009", "core": true, "trains": "factor-repeated-root" },
-    { "id": "tmpl-lim-factor-002", "trains": "factor-difference-squares" },
-    { "id": "cg-1b-008", "trains": "factor-trinomial" },
-    { "id": "cg-1b-010", "trains": "factor-repeated-root" },
-    { "id": "cg-1b-011", "trains": "factor-after-cancel-check" },
-    { "id": "tb-lh-003", "challenge": true, "trains": "factor-cubic-difference", "note": "挑戰：$x^5 - 1 = (x - 1)(x^4 + x^3 + x^2 + x + 1)$，跟立方差同一個道理。" },
-    { "id": "lx-con-003", "challenge": true, "trains": "factor-after-cancel-check", "note": "挑戰：要有洞，分子在 $x = 3$ 也得是 0。" }
+    {
+      "id": "cx-lim-002",
+      "core": true,
+      "trains": "factor-difference-squares"
+    },
+    {
+      "id": "fd-lim-004",
+      "core": true,
+      "trains": "factor-difference-squares"
+    },
+    {
+      "id": "lim-003",
+      "core": true,
+      "trains": "factor-difference-squares"
+    },
+    {
+      "id": "cx-lim-009",
+      "core": true,
+      "trains": "factor-cubic-difference"
+    },
+    {
+      "id": "cg-1b-007",
+      "core": true,
+      "trains": "factor-trinomial"
+    },
+    {
+      "id": "cg-1b-009",
+      "core": true,
+      "trains": "factor-repeated-root"
+    },
+    {
+      "id": "tmpl-lim-factor-002",
+      "trains": "factor-difference-squares"
+    },
+    {
+      "id": "cg-1b-008",
+      "trains": "factor-trinomial"
+    },
+    {
+      "id": "cg-1b-010",
+      "trains": "factor-repeated-root"
+    },
+    {
+      "id": "cg-1b-011",
+      "trains": "factor-after-cancel-check"
+    },
+    {
+      "id": "tb-lh-003",
+      "challenge": true,
+      "trains": "factor-cubic-difference",
+      "note": "挑戰：$x^5 - 1 = (x - 1)(x^4 + x^3 + x^2 + x + 1)$，跟立方差同一個道理。"
+    },
+    {
+      "id": "lx-con-003",
+      "challenge": true,
+      "trains": "factor-after-cancel-check",
+      "note": "挑戰：要有洞，分子在 $x = 3$ 也得是 0。"
+    }
   ],
   "gaps": []
 }

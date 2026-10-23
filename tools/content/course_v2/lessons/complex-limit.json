@@ -1,278 +1,160 @@
 {
   "id": "complex-limit",
   "title": "複變極限",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["complex-functions", "multivariable-limit", "path-test"],
-  "next": ["complex-differentiability"],
+  "prerequisites": [
+    "complex-functions",
+    "multivariable-limit",
+    "path-test"
+  ],
+  "next": [
+    "complex-differentiability"
+  ],
   "related": [],
   "objectives": [
-    "說得出 $\\lim_{z\\to z_0}f(z)=L$ 的意思：$|z-z_0|\\to 0$ 時 $|f(z)-L|\\to 0$，$z$ 可以從任何方向靠近。",
-    "用實部、虛部分開算極限，並用「兩條路徑給出不同值」證明極限不存在。",
-    "處理 $z\\to\\infty$ 的極限：比最高次項。"
+    "說得出 $\\lim_{z\\to z_0}f(z)=L$ 的意思：$|z-z_0|\\to0$ 時 $|f(z)-L|\\to0$，而且 $z$ 可以從任何方向靠近",
+    "用實部、虛部分開算極限，並用「兩條路徑給出不同值」證明極限不存在",
+    "處理 $z\\to\\infty$ 的極限：比最高次項"
   ],
-  "visual": "z 平面上以 z₀ 為圓心、半徑 δ 的小圓盤，w 平面上以 L 為圓心、半徑 ε 的小圓盤。縮小 ε 時，找得到一個 δ 讓整個 z 圓盤的像都落進 ε 圓盤，極限就存在。切換到 f(z) = z̄/z：z 圓盤再小，像都是整個單位圓，擠不進任何小圓盤。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 定義：距離換成絕對值",
       "body": [
-        "跟實數一樣，$\\lim_{z\\to z_0}f(z)=L$ 的意思是：只要 $z$ 夠靠近 $z_0$（但不等於 $z_0$），$f(z)$ 就能要多靠近 $L$ 就多靠近 $L$。差別是「靠近」用的是複數的絕對值 $|z-z_0|$，也就是平面上的距離。",
-        "所以 $z$ 可以從四面八方、沿任何曲線靠近 $z_0$，每一種方式都要得到同一個 $L$。這跟〈多變數極限〉完全一樣，不只左右兩邊。"
+        "實數：$|x-a|$ 是距離。複數：$|z-z_0|$ 也是距離",
+        "$f$ 要在 $z_0$ 附近（可以不含 $z_0$）有定義；$f(z_0)$ 是多少不重要",
+        "$|z-z_0|<\\delta$ 是一個圓盤，不是一段區間",
+        "從各個方向來的路，全部要走到同一個 $L$",
+        "跟 8.4 二變數極限是同一件事：$z=x+iy$ 就是點 $(x,y)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\text{使得}\\\\&0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "① 用定義證一題",
+      "body": [
+        "例：$\\displaystyle\\lim_{z\\to z_0}z^2=z_0^2$（任何 $z_0$）",
+        "$|ab|=|a|\\,|b|$：11.33 證過",
+        "控制 $|z+z_0|$：若 $|z-z_0|<1$，",
+        "$z+z_0=(z-z_0)+2z_0$，再用三角不等式",
+        "取 $\\delta=\\min\\!\\Big(1,\\dfrac{\\varepsilon}{1+2|z_0|}\\Big)$：",
+        "例：$z_0=1+i$，$|z_0|=\\sqrt2$，$\\delta=\\min\\big(1,\\frac{\\varepsilon}{1+2\\sqrt2}\\big)$",
+        "$1+2\\sqrt2\\approx3.83$",
+        "跟實數的證法一字不差：只用到 $|ab|=|a||b|$ 與三角不等式"
+      ],
+      "tex": [
+        "|z^2-z_0^2|=|z-z_0|\\,|z+z_0|",
+        "|z+z_0|\\le|z-z_0|+2|z_0|<1+2|z_0|",
+        "|z^2-z_0^2|<\\delta\\,(1+2|z_0|)\\le\\varepsilon"
+      ]
     },
     {
       "heading": "② 實部、虛部分開算",
       "body": [
-        "$f=u+iv$、$L=a+ib$ 時，$f(z)\\to L$ 若且唯若 $u\\to a$ 而且 $v\\to b$。原因：$|\\operatorname{Re}w|\\le|w|$、$|\\operatorname{Im}w|\\le|w|$，而 $|w|\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$。",
-        "所以極限定律（和、積、商、合成）跟實數一樣成立；多項式與分母不為 $0$ 處的有理函數都可以直接代入，也就是連續。"
+        "寫 $f=u+iv$，$L=a+ib$，$z_0=x_0+iy_0$：",
+        "證明：關鍵不等式（$w=f-L$ 的實部、虛部是 $u-a$、$v-b$）",
+        "$|w|=\\sqrt{(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2}$：左邊是因為根號裡少一項，右邊是三角不等式",
+        "• $\\Rightarrow$：$|f-L|<\\varepsilon$ 時，$|u-a|$、$|v-b|$ 都 $<\\varepsilon$",
+        "• $\\Leftarrow$：$u,v$ 各給 $\\delta_1,\\delta_2$ 使誤差 $<\\frac\\varepsilon2$；取 $\\delta=\\min(\\delta_1,\\delta_2)$，$|f-L|<\\varepsilon$　$\\blacksquare$",
+        "推論：極限的和、差、積、商定律都成立",
+        "積：$|fg-LM|\\le|f|\\,|g-M|+|M|\\,|f-L|$，跟實數同一行",
+        "所以多項式、分母不為 $0$ 的有理函數：直接代入"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\iff\\\\&\\lim_{(x,y)\\to(x_0,y_0)}u=a\\ \\text{且}\\ \\lim_{(x,y)\\to(x_0,y_0)}v=b\\end{aligned}",
+        "\\max(|u-a|,|v-b|)\\le|f-L|\\le|u-a|+|v-b|"
+      ]
     },
     {
-      "heading": "③ 證明極限不存在：找兩條路徑",
+      "heading": "② 例題：代入與驗算",
       "body": [
-        "$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近：沿實軸 $z=x$，$\\frac{\\bar{z}}{z}=1$；沿虛軸 $z=iy$，$\\frac{\\bar{z}}{z}=\\frac{-iy}{iy}=-1$。兩條路徑給出不同的值，所以極限不存在。",
-        "反過來，沿幾條路徑得到同一個值，不能證明極限存在；那需要估計 $|f(z)-L|$（〈路徑測試〉的同一個道理）。"
+        "用實部虛部驗算：$z^2=(x^2-y^2)+i\\,(2xy)$",
+        "$(x,y)\\to(1,1)$：$u\\to1-1=0$，$v\\to2\\cdot1\\cdot1=2$",
+        "$\\frac00$ 型：一樣先約分"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{z\\to1+i}z^2=(1+i)^2=1+2i+i^2=2i",
+        "\\lim_{z\\to i}\\frac{z^2+1}{z-i}=\\lim_{z\\to i}\\frac{(z-i)(z+i)}{z-i}=\\lim_{z\\to i}(z+i)"
+      ]
+    },
+    {
+      "heading": "③ 證明不存在：找兩條路徑",
+      "body": [
+        "原理：$\\lim_{z\\to z_0}f=L$，且路徑 $\\gamma(t)\\to z_0$（$\\gamma(t)\\ne z_0$）",
+        "證明：給 $\\varepsilon$，取定義的 $\\delta$；$\\gamma\\to z_0$，所以 $t$ 夠近 $t_0$ 時 $0<|\\gamma(t)-z_0|<\\delta$，於是 $|f(\\gamma(t))-L|<\\varepsilon$　$\\blacksquare$",
+        "反過來用：兩條路徑的極限不同 ⇒ 極限不存在",
+        "只能證「不存在」：再多條路徑一致，也不能推出存在"
+      ],
+      "tex": [
+        "\\Rightarrow\\ \\lim_{t\\to t_0}f(\\gamma(t))=L"
+      ]
+    },
+    {
+      "heading": "③ $\\bar z/z$：每個方向都不同",
+      "body": [
+        "沿實軸 $z=x$：$\\dfrac{\\bar z}{z}=\\dfrac xx=1\\ \\to1$",
+        "沿虛軸 $z=iy$：$\\dfrac{\\bar z}{z}=\\dfrac{-iy}{iy}=-1\\ \\to-1$",
+        "$1\\ne-1$ ⇒ $\\displaystyle\\lim_{z\\to0}\\frac{\\bar z}{z}$ 不存在",
+        "更多路徑：沿射線 $z=re^{i\\theta}$（$\\theta$ 固定，$r\\to0^+$）",
+        "每個方向給一個不同的值：整個單位圓都被取到",
+        "$\\theta=0$ 得 $1$，$\\theta=\\frac\\pi2$ 得 $e^{-i\\pi}=-1$，$\\theta=\\frac\\pi4$ 得 $-i$"
+      ],
+      "tex": [
+        "\\frac{\\bar z}{z}=\\frac{re^{-i\\theta}}{re^{i\\theta}}=e^{-2i\\theta}"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "證存在：把 $|f-L|$ 用 $|z-z_0|$ 夾住",
+        "複數版的夾擠：$|f(z)-L|\\le g(z)$ 且 $g\\to0$ ⇒ $f\\to L$"
+      ]
     },
     {
       "heading": "④ $z\\to\\infty$",
       "body": [
-        "$z\\to\\infty$ 的意思是 $|z|\\to\\infty$，方向不限。有理函數比最高次項：$\\frac{2z^2+1}{z^2-3i}\\to 2$。常用的事實：$\\frac{1}{z}\\to 0$（$z\\to\\infty$），因為 $\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$。"
+        "複數只有一個 $\\infty$：$|z|$ 變大，方向不限",
+        "換成 $w=\\frac1z$：$|z|>R\\iff|w|<\\frac1R$",
+        "基本事實：$\\left|\\dfrac1{z^k}\\right|=\\dfrac1{|z|^k}\\to0$（$k\\ge1$）",
+        "例：$\\displaystyle\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$",
+        "分子分母同除以最高次 $z^2$：",
+        "$\\big|\\frac{3i}{z^2}\\big|=\\frac{3}{|z|^2}\\to0$",
+        "同次：首項係數比；分子次數低：$0$"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "距離換成絕對值",
-      "beats": [
-        { "show": ["$\\lim_{z\\to z_0}f(z)=L$"],
-          "note": "$z$ 夠靠近 $z_0$，$f(z)$ 就要多靠近 $L$ 就多靠近。",
-          "say": "定義跟實數一樣：z 夠靠近 z 零但不等於它，f 就能要多靠近 L 就多靠近 L。",
-          "board": [
-            {"do":"write","line":"$\\lim_{z\\to z_0}f(z)=L$"}
-          ] },
-        { "show": ["靠近 $=$ $|z-z_0|$ 小"],
-          "note": "複數的絕對值就是平面上的距離。",
-          "say": "差別在「靠近」：用的是複數的絕對值，也就是平面上兩點的距離。",
-          "board": [
-            {"do":"write","line":"靠近 ⇔ ${{d:|z-z_0|}}$ 小"},
-            {"do":"underline","term":"d","label":"平面距離","on":"絕對值"}
-          ] },
-        { "show": ["小圓盤的像要落進小圓盤"],
-          "say": "看圖：z 零周圍一個小圓盤，它的像要整個塞進 L 周圍的小圓盤裡。",
-          "board": [
-            {"do":"write","line":"$|z-z_0|\\to 0$ ⇒ $|f(z)-L|\\to 0$"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$z$ 可以從哪些方向靠近 $z_0$？",
-        "options": [
-          {
-            "label": "四面八方，沿任何曲線都要得到同一個 $L$",
-            "correct": true
-          },
-          {
-            "label": "只有左右兩邊",
-            "why": "那是實數線。平面上的圓盤包圍 $z_0$，$z$ 可以從任何方向進來。"
-          },
-          {
-            "label": "只有實軸和虛軸",
-            "why": "圓盤裡每個點都算，$z$ 可以沿任何曲線靠近，不只兩個坐標方向。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}&\\lim_{z\\to\\infty}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists R\\ \\text{使得}\\\\&|z|>R\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}",
+        "\\lim_{z\\to\\infty}f(z)=\\lim_{w\\to0}f\\!\\left(\\tfrac1w\\right)",
+        "\\frac{2+\\frac1{z^2}}{1-\\frac{3i}{z^2}}\\ \\to\\ \\frac{2+0}{1-0}=2"
+      ]
     },
     {
-      "title": "實部、虛部分開算",
-      "beats": [
-        { "show": ["$f\\to L$ $\\Leftrightarrow$ $u\\to a$ 而且 $v\\to b$"],
-          "note": "$f=u+iv$，$L=a+ib$。",
-          "say": "好消息：複數的極限可以拆成實部和虛部，兩個實數極限分開算。",
-          "board": [
-            {"do":"write","line":"$f={{u:u}}+i{{v:v}}$，$L=a+ib$","tint":{"u":"blue","v":"violet"}},
-            {"do":"write","line":"$f\\to L$ ⇔ ${{u:u}}\\to a$ 而且 ${{v:v}}\\to b$","on":"拆成"}
-          ] },
-        { "show": ["和、差、積、商的極限可以拆開算"],
-          "note": "商：分母的極限不是 0。",
-          "say": "可以用的定律有四個：和、差、積，還有商。只要各自的極限存在，就能拆開算，商的話分母的極限不能是零。",
-          "board": [
-            {"do":"write","line":"${{l1:\\lim(f+g)=\\lim f+\\lim g}}$"},
-            {"do":"write","line":"${{l2:\\lim(fg)=\\lim f\\cdot\\lim g}}$","on":"積"},
-            {"do":"underline","term":"l2","label":"商同理","on":"商#1"}
-          ] },
-        { "show": ["$|\\operatorname{Re}w|\\le|w|\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$"],
-          "say": "原因是長度被實部虛部夾住：長度小，實部虛部都小；實部虛部都小，長度也小。",
-          "board": [
-            {"do":"write","line":"$|\\operatorname{Re}w|\\le{{len:|w|}}\\le|\\operatorname{Re}w|+|\\operatorname{Im}w|$"},
-            {"do":"underline","term":"len","label":"長度","on":"長度被"}
-          ] },
-        { "show": ["$|w|^2=(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2$"],
-          "note": "$w$ 的實部、虛部是直角三角形的兩股。",
-          "say": "把 w 畫成平面上的點，實部和虛部是直角三角形的兩股，長度是斜邊。斜邊最長，所以長度不小於實部的絕對值。",
-          "board": [
-            {"do":"write","line":"${{p:|w|^2}}=(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2$"},
-            {"do":"underline","term":"p","label":"勾股定理","on":"斜邊#1"}
-          ] },
-        { "show": ["$\\lim_{z\\to 1+i}z^2=(1+i)^2=2i$"],
-          "note": "多項式連續，直接代入。",
-          "say": "所以極限定律照樣成立，多項式直接代入。z 趨近一加 i，z 平方趨近二 i。",
-          "board": [
-            {"do":"write","line":"$\\lim_{z\\to 1+i}z^2=(1+i)^2=2i$","on":"多項式"}
-          ] }
+      "heading": "④ 試一題，與一個反例",
+      "body": [
+        "$\\lim f=\\infty$：$|f(z)|\\to\\infty$。例：$p$ 是 $n\\ge1$ 次多項式",
+        "反例：$e^z$ 在 $\\infty$ 沒有極限",
+        "• 沿正實軸 $z=x\\to+\\infty$：$e^x\\to\\infty$",
+        "• 沿負實軸 $z=x\\to-\\infty$：$e^x\\to0$",
+        "• 沿虛軸 $z=iy$：$|e^{iy}|=1$，一直繞圈",
+        "跟上一課一樣：$|e^{x+iy}|=e^x$，只看實部",
+        "「方向不限」比實數的 $\\pm\\infty$ 嚴格得多"
       ],
-      "check": 1
+      "tex": [
+        "|p(z)|\\ge|a_n||z|^n\\Big(1-\\sum_{k<n}\\frac{|a_k|}{|a_n|\\,|z|^{n-k}}\\Big)\\to\\infty"
+      ]
     },
     {
-      "title": "找兩條路徑",
-      "beats": [
-        { "show": ["$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近"],
-          "say": "要證明極限不存在，找兩條路徑給出不同的值。看 z 的共軛除以 z。",
-          "board": [
-            {"do":"write","line":"$f(z)=\\frac{\\bar{z}}{z}$ 在 $0$ 附近","on":"看 z"}
-          ] },
-        { "show": ["沿實軸 $z=x$：$\\frac{\\bar{z}}{z}=1$"],
-          "say": "沿實軸走，共軛就是自己，比值一直是一。",
-          "board": [
-            {"do":"write","line":"沿實軸 $z=x$：$\\frac{\\bar{z}}{z}={{a:1}}$","tint":{"a":"blue"}}
-          ] },
-        { "show": ["沿虛軸 $z=iy$：$\\frac{-iy}{iy}=-1$"],
-          "say": "沿虛軸走，共軛把 i y 變成負 i y，比值一直是負一。兩條路不一樣。",
-          "board": [
-            {"do":"write","line":"沿虛軸 $z=iy$：$\\frac{-iy}{iy}={{b:-1}}$","tint":{"b":"violet"}},
-            {"do":"focus","term":"b","color":"violet","label":"不一樣","on":"兩條路"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "證明：沿直線靠近",
-      "beats": [
-        { "show": ["沿每一條直線 $y=mx$ 靠近 $0$"],
-          "note": "找兩條給出不同值的直線。",
-          "say": "策略：一次看所有的直線。沿斜率 m 的直線走，只要兩條給出不同的值就證完。",
-          "board": [
-            {"do":"write","line":"沿每一條直線 $y={{m:m}}x$ 靠近 $0$","tint":{"m":"blue"}},
-            {"do":"write","line":"兩條給出不同的值 ⇒ 證完","on":"只要兩條"}
-          ] },
-        { "show": ["共軛：$\\overline{a+bi}=a-bi$"],
-          "note": "只有虛部變號。",
-          "say": "先看定義：a 加 b i 的共軛，是 a 減 b i，實部不動，只有虛部變號。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\overline{a+bi}={{a:a}}-bi$","on":"的共"},
-            {"do":"focus","term":"a","on":"虛部變號"}
-          ] },
-        { "show": ["$z=x(1+im)$：$\\frac{\\bar{z}}{z}=\\frac{1-im}{1+im}$"],
-          "note": "$\\bar{z}=x(1-im)$，實數 $x$ 約掉。",
-          "why": {"ask":"為什麼 $\\bar{z}=x(1-im)$？","say":"z 是 x 乘一加 i m。它的共軛為什麼是 x 乘一減 i m？","options":[{"label":"$x$、$m$ 是實數，共軛只把 $i$ 變號","correct":true},{"label":"共軛把每一項都變號","why":"那會得到 $-x(1+im)$；共軛只把虛部變號，實部不動。"},{"label":"共軛就是倒數 $\\frac{1}{z}$","why":"$\\frac{1}{z}$ 跟 $\\bar{z}$ 差一個 $|z|^2$；共軛是對實軸鏡射。"}]},
-          "say": "x 和 m 都是實數，共軛只把 i 變號。分子分母都有同一個 x，約掉，比值是一減 i m 除以一加 i m。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$z=x(1+i{{m:m}})$","on":"z 是 x"},
-            {"do":"write","line":"$\\bar{z}=x(1{{ng:-i}}{{m:m}})$","on":"它的共軛"},
-            {"do":"focus","term":"ng","label":"只把 i 變號","why":true,"on":"共軛只把"},
-            {"do":"write","line":"$\\frac{\\bar{z}}{z}=\\frac{1-im}{1+im}$","why":true,"on":"比值是"}
-          ] },
-        { "show": ["實部 $\\frac{1-m^2}{1+m^2}$"],
-          "note": "乘上分母的共軛複數。",
-          "say": "乘上分母的共軛，實部是一加 m 平方分之一減 m 平方。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"實部 $=\\frac{1-m^2}{1+m^2}$","on":"實部是"}
-          ] },
-        { "show": ["$m=0$ 得 $1$；$m=2$ 得 $-\\frac{3}{5}$"],
-          "note": "不同直線給出不同的值。",
-          "why": {"ask":"為什麼這樣就證完了？","say":"m 等於零是一，m 等於二是負五分之三。為什麼這樣就證完了？","options":[{"label":"極限存在的話，每條路徑都要趨近同一個 $L$","correct":true},{"label":"$\\frac{\\bar{z}}{z}$ 在 $0$ 沒有定義","why":"沒定義不影響極限：極限本來就不看 $0$ 那一點。"},{"label":"$m=2$ 給出負數","why":"負數不是問題；問題是兩條路徑的值不一樣。"}]},
-          "say": "極限要是存在，從哪個方向靠近都得趨近同一個 L。兩條直線給出不同的值，所以極限不存在。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{m:m}}=0$：$1$","on":"m 等於零"},
-            {"do":"write","line":"${{m:m}}=2$：$-\\frac{3}{5}$","on":"m 等於二"},
-            {"do":"write","line":"不同直線、不同的值 ⇒ 證完","color":"green","why":true,"on":"兩條直線給出"}
-          ] },
-        { "show": ["路徑測試只能證明「不存在」"],
-          "note": "證明存在要估計 $|f(z)-L|$。",
-          "say": "反過來，幾條路得到一樣的值，不能證明極限存在；那要直接估計 f 減 L 的長度。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"路徑測試只能證明「不存在」","on":"反過來"},
-            {"do":"write","line":"證明存在：估計 $|f(z)-L|$","on":"直接估計"}
-          ] }
-      ],
-      "key": "沿 $y=mx$ 靠近，極限隨 $m$ 改變",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "直接",
-      "check": 2
-    },
-    {
-      "title": "$z\\to\\infty$",
-      "beats": [
-        { "show": ["$z\\to\\infty$：$|z|\\to\\infty$"],
-          "note": "方向不限。",
-          "say": "z 趨近無限大，意思是長度趨近無限大，往哪個方向跑都算，不只往正實數。",
-          "board": [
-            {"do":"write","line":"$z\\to\\infty$ ⇔ $|z|\\to\\infty$"}
-          ] },
-        { "show": ["$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$"],
-          "say": "最常用的事實：z 分之一的長度，是 z 的長度分之一。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}$"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "有理函數在無窮遠",
-      "beats": [
-        { "show": ["$\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$"],
-          "say": "算這個極限：有理函數在無限遠，比最高次項。",
-          "board": [
-            {"do":"write","line":"$\\lim_{z\\to\\infty}\\frac{{{a:2z^2}}+1}{z^2-3i}$"},
-            {"do":"focus","term":"a","label":"最高次","on":"比最高"}
-          ] },
-        { "show": ["$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}$"],
-          "note": "$|z|$ 越大，$\\frac{1}{|z|^2}$ 越小。",
-          "say": "商的長度等於長度的商，所以 z 平方分之一的長度，是 z 長度的平方分之一。z 的長度越大，這個數就越趨近零。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}\\to 0$"}
-          ] },
-        { "show": ["同除 $z^2$：$\\frac{2+1/z^2}{1-3i/z^2}$"],
-          "say": "分子分母同除以 z 平方。z 平方分之一的長度趨近零，不論方向。",
-          "board": [
-            {"do":"transform","line":"同除 $z^2$：$\\frac{2+{{b:1/z^2}}}{1-3i/z^2}$"},
-            {"do":"focus","term":"b","label":"不論方向","on":"趨近零"}
-          ] },
-        { "show": ["分子 $\\to 2$，分母 $\\to 1$"],
-          "note": "分母不是 0，商的定律可用。",
-          "say": "一減 三 i 乘 z 平方分之一，也趨近一。分子趨近二，分母趨近一，不是零，所以可以用商的定律，答案是二。",
-          "board": [
-            {"do":"write","line":"分子 $\\to {{t:2}}$，分母 $\\to {{d:1}}$"},
-            {"do":"box","term":"t","color":"green","on":"答案"}
-          ] }
-      ],
-      "key": "分子分母同除最高次 $z^2$",
-      "predict": {
-        "ask": "極限是？",
-        "options": [
-          {
-            "label": "$2$",
-            "correct": true
-          },
-          {
-            "label": "不存在，因為方向不同",
-            "why": "$\\left|\\frac{1}{z^2}\\right|=\\frac{1}{|z|^2}\\to 0$，跟方向無關；極限 $\\frac{2+0}{1-0}=2$。"
-          },
-          {
-            "label": "$\\frac{2}{-3i}$",
-            "why": "$z\\to\\infty$ 時常數項 $1$、$-3i$ 都比不過 $z^2$；比的是最高次項係數 $\\frac{2}{1}$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 定義：$0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon$；靠近的範圍是圓盤",
+        "• $f\\to L\\iff u\\to a$ 且 $v\\to b$；極限定律全部成立，多項式直接代",
+        "• 路徑不同 ⇒ 不存在；極座標 $z=re^{i\\theta}$ 看方向",
+        "• 證存在：$|f-L|$ 用 $|z-z_0|$ 夾",
+        "• $z\\to\\infty$：只有一個 $\\infty$；換 $w=\\frac1z$，或比最高次項",
+        "下一課：複變可微：差商的極限"
+      ]
     }
   ],
   "workedExamples": [
@@ -318,51 +200,914 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{z\\to 0}\\frac{\\bar{z}}{z}$：",
+      "ask": "$\\displaystyle\\lim_{z\\to i}\\frac{z^2+1}{z-i}=$？",
       "options": [
-        { "label": "不存在", "correct": true },
-        { "label": "$1$", "why": "沿實軸是 $1$，但沿虛軸是 $-1$；方向不同給出不同值。" },
-        { "label": "$0$", "why": "$\\left|\\frac{\\bar{z}}{z}\\right|=1$，值一直在單位圓上，不會 $\\to 0$。" }
+        {
+          "label": "$2i$",
+          "correct": true
+        },
+        {
+          "label": "$0$",
+          "why": "分子趨近 $0$，但分母也是；要先約分"
+        },
+        {
+          "label": "$2$",
+          "why": "約完是 $z+i$，代 $i$ 是 $i+i=2i$，不是 $1+1$"
+        },
+        {
+          "label": "不存在",
+          "why": "$\\frac00$ 不代表不存在；約分後就能代"
+        }
       ]
     },
     {
-      "ask": "$f=u+iv$。$\\lim f(z)=3-2i$ 等價於？",
+      "ask": "下面哪一個極限==存在==？",
       "options": [
-        { "label": "$u\\to 3$ 而且 $v\\to-2$", "correct": true },
-        { "label": "$u\\to 3$ 而且 $v\\to-2i$", "why": "虛部 $v$ 是實數；$L$ 的虛部是 $-2$，不是 $-2i$。" },
-        { "label": "$|f|\\to\\sqrt{13}$ 就夠了", "why": "長度對了，方向可能不對；例如 $f$ 一直在半徑 $\\sqrt{13}$ 的圓上繞。" }
+        {
+          "label": "$\\displaystyle\\lim_{z\\to0}\\frac{\\operatorname{Re}z}{z}$",
+          "why": "沿實軸 $\\to1$，沿虛軸是 $0$：不存在"
+        },
+        {
+          "label": "$\\displaystyle\\lim_{z\\to0}\\frac{z^2}{|z|}$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\lim_{z\\to0}\\frac{z}{|z|}$",
+          "why": "沿射線的值是 $e^{i\\theta}$，每個方向都不同"
+        },
+        {
+          "label": "$\\displaystyle\\lim_{z\\to0}\\frac{\\bar z^{\\,2}}{z^2}$",
+          "why": "沿射線是 $e^{-4i\\theta}$：$\\theta=0$ 得 $1$，$\\theta=\\frac\\pi4$ 得 $-1$"
+        }
       ]
     },
     {
-      "ask": "沿實軸、虛軸、直線 $y=x$ 三條路徑，$f$ 都趨近 $0$。可以下結論嗎？",
+      "ask": "$\\displaystyle\\lim_{z\\to\\infty}\\frac{3z^3-z}{iz^3+2}=$？",
       "options": [
-        { "label": "不行，還可能有別的路徑給出不同值", "correct": true },
-        { "label": "可以，三條路徑已經足夠", "why": "路徑測試只能證明「不存在」；例如沿拋物線靠近可能得到別的值。" },
-        { "label": "可以，因為複數只有實部與虛部兩個方向", "why": "$z$ 可以沿任何曲線靠近，不只兩個坐標方向。" }
+        {
+          "label": "$-3i$",
+          "correct": true
+        },
+        {
+          "label": "$3i$",
+          "why": "$\\frac1i=-i$，不是 $i$：分子分母同乘 $-i$"
+        },
+        {
+          "label": "$3$",
+          "why": "分母的首項係數是 $i$，不是 $1$"
+        },
+        {
+          "label": "$0$",
+          "why": "分子分母同次，是係數比，不是 $0$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "定義：距離換成絕對值",
+      "beats": [
+        {
+          "show": [
+            "實數：$|x-a|$ 是距離。複數：$|z-z_0|$ 也是距離"
+          ],
+          "say": "實數的極限用絕對值量距離。複數的 z 減 z 零的絕對值，也正是平面上兩點的距離，所以定義可以直接搬過來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "實數：$|x-a|$ 是距離。複數：$|z-z_0|$ 也是距離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\text{使得}\\\\&0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "任給艾普西隆，都找得到得塔：z 跟 z 零的距離小於得塔、而且不等於 z 零，f of z 跟 L 的距離就小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\text{使得}\\\\&0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "零的"
+            },
+            {
+              "do": "write",
+              "line": "　$f$ 要在 $z_0$ 附近（可以不含 $z_0$）有定義；$f(z_0)$ 是多少不重要",
+              "color": "violet",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z-z_0|<\\delta$ 是一個圓盤，不是一段區間"
+          ],
+          "say": "最大的差別：z 零附近不是區間，而是圓盤。z 可以從任何方向、沿任何彎曲的路靠近。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|z-z_0|<\\delta$ 是一個圓盤，不是一段區間",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上：左邊半徑得塔的圓盤裡，除了 z 零，每一點都要被 f 送進右邊半徑艾普西隆的圓盤。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 640 300\" width=\"640\" height=\"300\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gbL\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><rect x=\"20\" y=\"40\" width=\"240\" height=\"220\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><rect x=\"380\" y=\"40\" width=\"240\" height=\"220\" stroke=\"var(--muted)\" stroke-width=\"1.5\"/><text x=\"140\" y=\"28\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:inherit\" font-size=\"22\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> 平面</text><text x=\"500\" y=\"28\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:inherit\" font-size=\"22\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">w</tspan> 平面</text><circle cx=\"140\" cy=\"150\" r=\"70\" stroke=\"var(--blue)\" stroke-width=\"2.5\" stroke-dasharray=\"7 5\" fill=\"var(--blue)\" fill-opacity=\"0.0\"/><circle cx=\"140\" cy=\"150\" r=\"5\" fill=\"var(--ink)\"/><text x=\"150\" y=\"196\" fill=\"var(--ink)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z<tspan font-size=\"16\" dy=\"5\">0</tspan></text><line x1=\"140\" y1=\"150\" x2=\"190\" y2=\"101\" stroke=\"var(--blue)\" stroke-width=\"2\"/><text x=\"148\" y=\"118\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">δ</text><path d=\"M60 70 Q90 160 133 153\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"4 4\" marker-end=\"url(#ah11gbL)\"/><path d=\"M252 128 Q200 128 150 147\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"4 4\" marker-end=\"url(#ah11gbL)\"/><path d=\"M30 230 Q120 230 136 158\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"4 4\" marker-end=\"url(#ah11gbL)\"/><circle cx=\"500\" cy=\"150\" r=\"60\" stroke=\"var(--red)\" stroke-width=\"2.5\" stroke-dasharray=\"7 5\" fill=\"var(--red)\" fill-opacity=\"0.0\"/><circle cx=\"500\" cy=\"150\" r=\"5\" fill=\"var(--ink)\"/><text x=\"508\" y=\"174\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">L</text><line x1=\"500\" y1=\"150\" x2=\"560\" y2=\"150\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"532\" y=\"140\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</text><path d=\"M270 150 Q320 115 370 150\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah11gbL)\"/><text x=\"320\" y=\"112\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">f</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從各個方向來的路，全部要走到同一個 $L$"
+          ],
+          "say": "換句話說，各個方向來的路，全部要走到同一個 L。這個要求很嚴格，下一課的可微性就是靠它變強的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "從各個方向來的路，全部要走到同一個 $L$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　跟 8.4 二變數極限是同一件事：$z=x+iy$ 就是點 $(x,y)$",
+              "color": "violet",
+              "on": "這個"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\lim_{z\\to\\infty}\\frac{1}{z}$ 是？",
-      "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "不存在，因為方向不同", "why": "$\\left|\\frac{1}{z}\\right|=\\frac{1}{|z|}\\to 0$，跟方向無關。" },
-        { "label": "$\\infty$", "why": "那是 $\\lim_{z\\to 0}\\frac{1}{z}$ 的情形。" }
+      "title": "用定義證一題",
+      "beats": [
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{z\\to z_0}z^2=z_0^2$（任何 $z_0$）"
+          ],
+          "say": "用定義證一題：z 平方趨近 z 零平方，z 零是任何一個複數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{z\\to z_0}z^2=z_0^2$（任何 $z_0$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|z^2-z_0^2|=|z-z_0|\\,|z+z_0|$"
+          ],
+          "say": "先分解：z 平方減 z 零平方，等於 z 減 z 零乘 z 加 z 零。絕對值可以拆乘積。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle |z^2-z_0^2|=|z-z_0|\\,|z+z_0|$"
+            },
+            {
+              "do": "write",
+              "line": "　$|ab|=|a|\\,|b|$：11.33 證過",
+              "color": "violet",
+              "on": "零乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "控制 $|z+z_0|$：若 $|z-z_0|<1$，",
+            "$|z+z_0|\\le|z-z_0|+2|z_0|<1+2|z_0|$"
+          ],
+          "say": "第一個因子會變小，第二個要控制住。距離小於 1 時，由三角不等式，z 加 z 零的絕對值小於 1 加 2 倍 z 零的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "控制 $|z+z_0|$：若 $|z-z_0|<1$，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |z+z_0|\\le|z-z_0|+2|z_0|<1+2|z_0|$",
+              "on": "由三"
+            },
+            {
+              "do": "write",
+              "line": "　$z+z_0=(z-z_0)+2z_0$，再用三角不等式",
+              "color": "violet",
+              "on": "對值#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\delta=\\min\\!\\Big(1,\\dfrac{\\varepsilon}{1+2|z_0|}\\Big)$：",
+            "$|z^2-z_0^2|<\\delta\\,(1+2|z_0|)\\le\\varepsilon$"
+          ],
+          "say": "所以得塔取 1，和 1 加 2 倍 z 零絕對值分之艾普西隆，兩個中小的那個。兩個因子相乘就小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\delta=\\min\\!\\Big(1,\\dfrac{\\varepsilon}{1+2|z_0|}\\Big)$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle |z^2-z_0^2|<\\delta\\,(1+2|z_0|)\\le\\varepsilon}}$",
+              "on": "零絕"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "的那"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$z_0=1+i$，$|z_0|=\\sqrt2$，$\\delta=\\min\\big(1,\\frac{\\varepsilon}{1+2\\sqrt2}\\big)$",
+            "跟實數的證法一字不差：只用到 $|ab|=|a||b|$ 與三角不等式"
+          ],
+          "say": "這跟實數的證法一字不差：只要有乘法性和三角不等式，實數極限的證明都能搬過來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$z_0=1+i$，$|z_0|=\\sqrt2$，$\\delta=\\min\\big(1,\\frac{\\varepsilon}{1+2\\sqrt2}\\big)$"
+            },
+            {
+              "do": "write",
+              "line": "　$1+2\\sqrt2\\approx3.83$",
+              "color": "violet",
+              "on": "只要"
+            },
+            {
+              "do": "write",
+              "line": "跟實數的證法一字不差：只用到 $|ab|=|a||b|$ 與三角不等式",
+              "on": "實數#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "實部、虛部分開算",
+      "beats": [
+        {
+          "show": [
+            "寫 $f=u+iv$，$L=a+ib$，$z_0=x_0+iy_0$：",
+            "$\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\iff\\\\&\\lim_{(x,y)\\to(x_0,y_0)}u=a\\ \\text{且}\\ \\lim_{(x,y)\\to(x_0,y_0)}v=b\\end{aligned}$"
+          ],
+          "say": "第二個工具：把 f 拆成實部 u 和虛部 v。f 趨近 L，等價於 u 趨近 a、而且 v 趨近 b，都是二變數的極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "寫 $f=u+iv$，$L=a+ib$，$z_0=x_0+iy_0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&\\lim_{z\\to z_0}f(z)=L\\iff\\\\&\\lim_{(x,y)\\to(x_0,y_0)}u=a\\ \\text{且}\\ \\lim_{(x,y)\\to(x_0,y_0)}v=b\\end{aligned}}}}$",
+              "on": "趨近#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：關鍵不等式（$w=f-L$ 的實部、虛部是 $u-a$、$v-b$）",
+            "$\\max(|u-a|,|v-b|)\\le|f-L|\\le|u-a|+|v-b|$"
+          ],
+          "say": "證明靠一個不等式：實部和虛部的誤差，各自不超過 f 減 L 的絕對值；而它又不超過兩者的和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：關鍵不等式（$w=f-L$ 的實部、虛部是 $u-a$、$v-b$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\max(|u-a|,|v-b|)\\le|f-L|\\le|u-a|+|v-b|$",
+              "on": "誤差"
+            },
+            {
+              "do": "write",
+              "line": "　$|w|=\\sqrt{(\\operatorname{Re}w)^2+(\\operatorname{Im}w)^2}$：左邊是因為根號裡少一項，右邊是三角不等式",
+              "color": "violet",
+              "on": "的絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\Rightarrow$：$|f-L|<\\varepsilon$ 時，$|u-a|$、$|v-b|$ 都 $<\\varepsilon$",
+            "• $\\Leftarrow$：$u,v$ 各給 $\\delta_1,\\delta_2$ 使誤差 $<\\frac\\varepsilon2$；取 $\\delta=\\min(\\delta_1,\\delta_2)$，$|f-L|<\\varepsilon$　$\\blacksquare$"
+          ],
+          "say": "往右：f 的誤差小，u 和 v 的誤差跟著小。往左：讓 u 和 v 的誤差各小於艾普西隆的一半，取小的得塔，加起來就小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\Rightarrow$：$|f-L|<\\varepsilon$ 時，$|u-a|$、$|v-b|$ 都 $<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\Leftarrow$：$u,v$ 各給 $\\delta_1,\\delta_2$ 使誤差 $<\\frac\\varepsilon2$；取 $\\delta=\\min(\\delta_1,\\delta_2)$，$|f-L|<\\varepsilon$　$\\blacksquare$",
+              "on": "的誤#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推論：極限的和、差、積、商定律都成立"
+          ],
+          "say": "推論：和、差、積、商的極限定律，在複數全部成立，證明照抄實數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：極限的和、差、積、商定律都成立"
+            },
+            {
+              "do": "write",
+              "line": "　積：$|fg-LM|\\le|f|\\,|g-M|+|M|\\,|f-L|$，跟實數同一行",
+              "color": "violet",
+              "on": "在複"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以多項式、分母不為 $0$ 的有理函數：直接代入"
+          ],
+          "say": "所以多項式，還有分母不是零的有理函數，極限就是直接代入。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以多項式、分母不為 $0$ 的有理函數：直接代入",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例題：代入與驗算",
+      "beats": [
+        {
+          "show": [
+            "$\\lim_{z\\to1+i}z^2=(1+i)^2=1+2i+i^2=2i$"
+          ],
+          "say": "例題：z 趨近 1 加 i，z 平方。直接代入：1 加 2i 加 i 平方，答案是 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\lim_{z\\to1+i}z^2=(1+i)^2=1+2i+i^2=2i}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "2i#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用實部虛部驗算：$z^2=(x^2-y^2)+i\\,(2xy)$"
+          ],
+          "say": "拆開驗算：z 平方的實部是 x 平方減 y 平方，虛部是 2 x y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用實部虛部驗算：$z^2=(x^2-y^2)+i\\,(2xy)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(x,y)\\to(1,1)$：$u\\to1-1=0$，$v\\to2\\cdot1\\cdot1=2$"
+          ],
+          "say": "x 和 y 都趨近 1：實部趨近 0，虛部趨近 2。合起來就是 2i，一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$(x,y)\\to(1,1)$：$u\\to1-1=0$，$v\\to2\\cdot1\\cdot1=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac00$ 型：一樣先約分",
+            "$\\lim_{z\\to i}\\frac{z^2+1}{z-i}=\\lim_{z\\to i}\\frac{(z-i)(z+i)}{z-i}=\\lim_{z\\to i}(z+i)$"
+          ],
+          "say": "碰到 0 分之 0，也跟實數一樣先約分。z 平方加 1 在複數裡可以分解成 z 減 i 乘 z 加 i，約掉 z 減 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\frac00$ 型：一樣先約分"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{z\\to i}\\frac{z^2+1}{z-i}=\\lim_{z\\to i}\\frac{(z-i)(z+i)}{z-i}=\\lim_{z\\to i}(z+i)$",
+              "on": "數裡"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明不存在：找兩條路徑",
+      "beats": [
+        {
+          "show": [
+            "原理：$\\lim_{z\\to z_0}f=L$，且路徑 $\\gamma(t)\\to z_0$（$\\gamma(t)\\ne z_0$）",
+            "$\\Rightarrow\\ \\lim_{t\\to t_0}f(\\gamma(t))=L$"
+          ],
+          "say": "原理：極限是 L，那沿任何一條靠近 z 零、不踩到 z 零的路，f 都趨近 L。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原理：$\\lim_{z\\to z_0}f=L$，且路徑 $\\gamma(t)\\to z_0$（$\\gamma(t)\\ne z_0$）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Rightarrow\\ \\lim_{t\\to t_0}f(\\gamma(t))=L}}$",
+              "on": "一條"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "零的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：給 $\\varepsilon$，取定義的 $\\delta$；$\\gamma\\to z_0$，所以 $t$ 夠近 $t_0$ 時 $0<|\\gamma(t)-z_0|<\\delta$，於是 $|f(\\gamma(t))-L|<\\varepsilon$　$\\blacksquare$"
+          ],
+          "say": "證明：給艾普西隆，拿到得塔。t 夠靠近時，路徑上的點落進半徑得塔的圓盤，函數值就在 L 的艾普西隆以內。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：給 $\\varepsilon$，取定義的 $\\delta$；$\\gamma\\to z_0$，所以 $t$ 夠近 $t_0$ 時 $0<|\\gamma(t)-z_0|<\\delta$，於是 $|f(\\gamma(t))-L|<\\varepsilon$　$\\blacksquare$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來用：兩條路徑的極限不同 ⇒ 極限不存在"
+          ],
+          "say": "反過來用就是路徑測試：兩條路徑給出不同的值，極限就不存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來用：兩條路徑的極限不同 ⇒ 極限不存在",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　只能證「不存在」：再多條路徑一致，也不能推出存在",
+              "color": "violet",
+              "on": "徑給"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{z\\to0}\\frac{\\bar z}{z}$ 會是？",
+        "options": [
+          {
+            "label": "$1$",
+            "why": "沿實軸是 $1$，但沿虛軸 $\\bar z=-z$"
+          },
+          {
+            "label": "$0$",
+            "why": "分子分母的絕對值一樣，比值的絕對值永遠是 $1$"
+          },
+          {
+            "label": "不存在",
+            "correct": true
+          },
+          {
+            "label": "$-1$",
+            "why": "那只是沿虛軸的值；沿實軸是 $1$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$\\bar z/z$：每個方向都不同",
+      "beats": [
+        {
+          "show": [
+            "沿實軸 $z=x$：$\\dfrac{\\bar z}{z}=\\dfrac xx=1\\ \\to1$"
+          ],
+          "say": "沿實軸靠近，z 就是實數 x，共軛還是 x，比值一直是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "沿實軸 $z=x$：$\\dfrac{\\bar z}{z}=\\dfrac xx=1\\ \\to1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿虛軸 $z=iy$：$\\dfrac{\\bar z}{z}=\\dfrac{-iy}{iy}=-1\\ \\to-1$"
+          ],
+          "say": "沿虛軸靠近，z 是 i y，共軛是負 i y，比值一直是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "沿虛軸 $z=iy$：$\\dfrac{\\bar z}{z}=\\dfrac{-iy}{iy}=-1\\ \\to-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$1\\ne-1$ ⇒ $\\displaystyle\\lim_{z\\to0}\\frac{\\bar z}{z}$ 不存在"
+          ],
+          "say": "1 不等於負 1，所以極限不存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$1\\ne-1$ ⇒ $\\displaystyle\\lim_{z\\to0}\\frac{\\bar z}{z}$ 不存在",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "更多路徑：沿射線 $z=re^{i\\theta}$（$\\theta$ 固定，$r\\to0^+$）",
+            "$\\frac{\\bar z}{z}=\\frac{re^{-i\\theta}}{re^{i\\theta}}=e^{-2i\\theta}$"
+          ],
+          "say": "再看所有射線：z 等於 r e 的 i 西塔次方，西塔固定。共軛把角度變號，比值是 e 的負 2 i 西塔次方，跟 r 無關。",
+          "board": [
+            {
+              "do": "write",
+              "line": "更多路徑：沿射線 $z=re^{i\\theta}$（$\\theta$ 固定，$r\\to0^+$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\bar z}{z}=\\frac{re^{-i\\theta}}{re^{i\\theta}}=e^{-2i\\theta}$",
+              "on": "軛把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個方向給一個不同的值：整個單位圓都被取到"
+          ],
+          "say": "每個方向給出單位圓上的一個值：整個單位圓都被取到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個方向給一個不同的值：整個單位圓都被取到"
+            },
+            {
+              "do": "write",
+              "line": "　$\\theta=0$ 得 $1$，$\\theta=\\frac\\pi2$ 得 $e^{-i\\pi}=-1$，$\\theta=\\frac\\pi4$ 得 $-i$",
+              "color": "violet",
+              "on": "個值"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "下面哪一個極限存在？"
+          ],
+          "say": "試一題：四個裡面，哪一個極限存在？"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "證存在：把 $|f-L|$ 用 $|z-z_0|$ 夾住"
+          ],
+          "say": "要證存在，不能靠路徑，要用絕對值夾。z 平方除以 z 的絕對值，它的絕對值正好是 z 的絕對值，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證存在：把 $|f-L|$ 用 $|z-z_0|$ 夾住",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　複數版的夾擠：$|f(z)-L|\\le g(z)$ 且 $g\\to0$ ⇒ $f\\to L$",
+              "color": "violet",
+              "on": "的絕#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "$z\\to\\infty$",
+      "beats": [
+        {
+          "show": [
+            "複數只有一個 $\\infty$：$|z|$ 變大，方向不限",
+            "$\\begin{aligned}&\\lim_{z\\to\\infty}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists R\\ \\text{使得}\\\\&|z|>R\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "z 趨近無限大：複數只有一個無限大，z 的絕對值變大，方向不限。z 在半徑 R 的圓外，f 就在 L 的艾普西隆以內。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數只有一個 $\\infty$：$|z|$ 變大，方向不限"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}&\\lim_{z\\to\\infty}f(z)=L\\ \\text{的意思：}\\\\&\\forall\\varepsilon>0\\ \\exists R\\ \\text{使得}\\\\&|z|>R\\Rightarrow|f(z)-L|<\\varepsilon\\end{aligned}}}}$",
+              "on": "的絕"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "的圓"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換成 $w=\\frac1z$：$|z|>R\\iff|w|<\\frac1R$",
+            "$\\lim_{z\\to\\infty}f(z)=\\lim_{w\\to0}f\\!\\left(\\tfrac1w\\right)$"
+          ],
+          "say": "好用的換法：令 w 等於 z 分之一。z 在大圓外，等於 w 在小圓內，所以可以換成 w 趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換成 $w=\\frac1z$：$|z|>R\\iff|w|<\\frac1R$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{z\\to\\infty}f(z)=\\lim_{w\\to0}f\\!\\left(\\tfrac1w\\right)$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "基本事實：$\\left|\\dfrac1{z^k}\\right|=\\dfrac1{|z|^k}\\to0$（$k\\ge1$）"
+          ],
+          "say": "基本事實：z 的 k 次方分之一，絕對值是 z 的絕對值的 k 次方分之一，趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "基本事實：$\\left|\\dfrac1{z^k}\\right|=\\dfrac1{|z|^k}\\to0$（$k\\ge1$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$"
+          ],
+          "say": "例題：2 z 平方加 1，除以 z 平方減 3i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{z\\to\\infty}\\frac{2z^2+1}{z^2-3i}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子分母同除以最高次 $z^2$：",
+            "$\\frac{2+\\frac1{z^2}}{1-\\frac{3i}{z^2}}\\ \\to\\ \\frac{2+0}{1-0}=2$"
+          ],
+          "say": "分子分母同除以 z 平方。z 平方分之一和 z 平方分之 3i 都趨近 0，答案是 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子分母同除以最高次 $z^2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\frac{2+\\frac1{z^2}}{1-\\frac{3i}{z^2}}\\ \\to\\ \\frac{2+0}{1-0}=2}}$",
+              "color": "red",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　$\\big|\\frac{3i}{z^2}\\big|=\\frac{3}{|z|^2}\\to0$",
+              "color": "violet",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "同次：首項係數比；分子次數低：$0$",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題，與一個反例",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\lim_{z\\to\\infty}\\frac{3z^3-z}{iz^3+2}=$？"
+          ],
+          "say": "換你：3 z 立方減 z，除以 i z 立方加 2。"
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "試一題，與一個反例",
+      "beats": [
+        {
+          "show": [
+            "$\\lim f=\\infty$：$|f(z)|\\to\\infty$。例：$p$ 是 $n\\ge1$ 次多項式",
+            "$|p(z)|\\ge|a_n||z|^n\\Big(1-\\sum_{k<n}\\frac{|a_k|}{|a_n|\\,|z|^{n-k}}\\Big)\\to\\infty$"
+          ],
+          "say": "趨近無限大，意思是絕對值趨近無限大。一次以上的多項式都是：首項主導。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\lim f=\\infty$：$|f(z)|\\to\\infty$。例：$p$ 是 $n\\ge1$ 次多項式"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |p(z)|\\ge|a_n||z|^n\\Big(1-\\sum_{k<n}\\frac{|a_k|}{|a_n|\\,|z|^{n-k}}\\Big)\\to\\infty$",
+              "on": "一次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反例：$e^z$ 在 $\\infty$ 沒有極限"
+          ],
+          "say": "但不是每個函數都有極限。看 e 的 z 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反例：$e^z$ 在 $\\infty$ 沒有極限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 沿正實軸 $z=x\\to+\\infty$：$e^x\\to\\infty$",
+            "• 沿負實軸 $z=x\\to-\\infty$：$e^x\\to0$"
+          ],
+          "say": "沿正實軸衝到無限大；沿負實軸趨近 0；沿虛軸絕對值永遠是 1，一直繞圈。三條路三個結果，沒有極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 沿正實軸 $z=x\\to+\\infty$：$e^x\\to\\infty$"
+            },
+            {
+              "do": "write",
+              "line": "• 沿負實軸 $z=x\\to-\\infty$：$e^x\\to0$",
+              "on": "實軸#2"
+            },
+            {
+              "do": "write",
+              "line": "• 沿虛軸 $z=iy$：$|e^{iy}|=1$，一直繞圈",
+              "on": "值永"
+            },
+            {
+              "do": "write",
+              "line": "　跟上一課一樣：$|e^{x+iy}|=e^x$，只看實部",
+              "color": "violet",
+              "on": "三條"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「方向不限」比實數的 $\\pm\\infty$ 嚴格得多"
+          ],
+          "say": "方向不限的無限大嚴格得多：多項式過得了，e 的 z 次方過不了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「方向不限」比實數的 $\\pm\\infty$ 嚴格得多",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 定義：$0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon$；靠近的範圍是圓盤",
+            "• $f\\to L\\iff u\\to a$ 且 $v\\to b$；極限定律全部成立，多項式直接代"
+          ],
+          "say": "整理：定義跟實數一樣，範圍變成圓盤；可以拆實部虛部；路徑不同就不存在，證存在用絕對值夾；無限大只有一個，有理函數比最高次項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 定義：$0<|z-z_0|<\\delta\\Rightarrow|f(z)-L|<\\varepsilon$；靠近的範圍是圓盤"
+            },
+            {
+              "do": "write",
+              "line": "• $f\\to L\\iff u\\to a$ 且 $v\\to b$；極限定律全部成立，多項式直接代",
+              "on": "圍變"
+            },
+            {
+              "do": "write",
+              "line": "• 路徑不同 ⇒ 不存在；極座標 $z=re^{i\\theta}$ 看方向",
+              "on": "路徑"
+            },
+            {
+              "do": "write",
+              "line": "• 證存在：$|f-L|$ 用 $|z-z_0|$ 夾",
+              "on": "在用"
+            },
+            {
+              "do": "write",
+              "line": "• $z\\to\\infty$：只有一個 $\\infty$；換 $w=\\frac1z$，或比最高次項",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：複變可微：差商的極限"
+          ],
+          "say": "下一課，用這一課的極限定義複數的導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：複變可微：差商的極限"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "multivariable-limit"],
-    "fine": ["complex-limit-components", "complex-limit-path", "complex-limit-infinity"]
+    "coarse": [
+      "complex",
+      "multivariable-limit"
+    ],
+    "fine": [
+      "complex-limit-components",
+      "complex-limit-path",
+      "complex-limit-infinity"
+    ]
   },
   "practice": [
-    { "id": "mob-limtrap-008", "core": true, "trains": "complex-limit-components" },
-    { "id": "cg-11g-027", "core": true, "trains": "complex-limit-path" },
-    { "id": "cg-11g-030", "core": true, "trains": "complex-limit-components" },
-    { "id": "cg-11g-032", "core": true, "trains": "complex-limit-infinity" },
-    { "id": "cg-11g-028", "trains": "complex-limit-path" },
-    { "id": "cg-11g-029", "trains": "complex-limit-path" },
-    { "id": "cg-11g-031", "trains": "complex-limit-components" },
-    { "id": "cg-11g-033", "trains": "complex-limit-infinity" }
+    {
+      "id": "mob-limtrap-008",
+      "core": true,
+      "trains": "complex-limit-components"
+    },
+    {
+      "id": "cg-11g-027",
+      "core": true,
+      "trains": "complex-limit-path"
+    },
+    {
+      "id": "cg-11g-030",
+      "core": true,
+      "trains": "complex-limit-components"
+    },
+    {
+      "id": "cg-11g-032",
+      "core": true,
+      "trains": "complex-limit-infinity"
+    },
+    {
+      "id": "cg-11g-028",
+      "trains": "complex-limit-path"
+    },
+    {
+      "id": "cg-11g-029",
+      "trains": "complex-limit-path"
+    },
+    {
+      "id": "cg-11g-031",
+      "trains": "complex-limit-components"
+    },
+    {
+      "id": "cg-11g-033",
+      "trains": "complex-limit-infinity"
+    }
   ],
   "gaps": []
 }

@@ -1,0 +1,428 @@
+{
+  "id": "volume-shell",
+  "title": "圓殼法",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "volume-washer"
+  ],
+  "next": [
+    "volume-choose-method"
+  ],
+  "related": [
+    "volume-disk"
+  ],
+  "objectives": [
+    "知道圓殼法的切法：條子平行於旋轉軸，每一條掃出一個薄圓筒。",
+    "寫出 $V=\\int 2\\pi$（半徑）（高）$dx$，半徑是條子到軸的距離。",
+    "旋轉軸是 $x=k$ 時正確寫出半徑；繞 $x$ 軸時改成對 $y$ 積分。"
+  ],
+  "visual": "y = 2x − x² 與 x 軸之間的區域，取一根位在 x 的細直條，繞 y 軸轉一圈掃出一個薄圓筒。接著把圓筒沿一條直線剪開攤平，變成長 2πx、高 2x − x²、厚 dx 的薄板。拖動 x，圓筒由內往外一層層疊滿整個立體。",
+  "concept": [
+    {
+      "heading": "① 換一個方向切",
+      "body": [
+        "墊圈法的條子垂直於旋轉軸。圓殼法反過來：條子平行於旋轉軸。繞 $y$ 軸時取鉛直的細直條，位置在 $x$、寬 $dx$、高 $h(x)$。它繞 $y$ 軸轉一圈，掃出一個薄薄的圓筒（圓殼），半徑 $x$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 一個圓殼的體積",
+      "body": [
+        "把圓殼沿縱向剪開攤平，近似一塊薄板：長是圓周 $2\\pi x$，高 $h(x)$，厚 $dx$。所以體積約 $2\\pi x\\cdot h(x)\\cdot dx$。把所有圓殼加起來：$V=\\int_a^b 2\\pi x\\,h(x)\\,dx$。",
+        "這是直觀，不是證明：攤平時內外圈周長其實差一點點。下面的可折疊段落說明這個差別為什麼不影響積分。"
+      ],
+      "tex": [
+        "V=\\int_a^b 2\\pi\\,(\\text{半徑})(\\text{高})\\,dx=\\int_a^b 2\\pi x\\,h(x)\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 半徑與高怎麼讀",
+      "body": [
+        "半徑 = 條子到旋轉軸的距離。繞 $y$ 軸是 $x$（$x\\ge 0$）；繞 $x=k$ 是 $|x-k|$，例如繞 $x=-1$ 時是 $x+1$。高 = 條子的長度 = 上面的曲線減下面的曲線，跟軸在哪裡無關。",
+        "繞 $x$ 軸（或水平線）用圓殼時，條子要水平，對 $y$ 積分：$V=\\int 2\\pi y\\cdot$（右減左）$dy$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼要多學一種",
+      "body": [
+        "繞 $y$ 軸用墊圈法，得把邊界解成 $x=g(y)$；$y=2x-x^2$ 要解出 $x=1\\pm\\sqrt{1-y}$，很麻煩。圓殼法直接用 $y=f(x)$，不必解。下一課〈選墊圈還是圓殼〉專門講怎麼挑。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 圓殼的精確體積",
+      "body": [
+        "內半徑 $x$、外半徑 $x+\\Delta x$、高 $h$ 的圓筒，體積是 $\\pi(x+\\Delta x)^2h-\\pi x^2h=2\\pi x h\\,\\Delta x+\\pi h(\\Delta x)^2$。多出來的 $\\pi h(\\Delta x)^2$ 是 $\\Delta x$ 的二次方，$n$ 個加起來約 $n\\cdot(\\Delta x)^2=(b-a)\\Delta x\\to 0$。所以極限只剩 $\\sum 2\\pi x h\\,\\Delta x$，也就是上面的積分。（嚴格來說還要處理 $h$ 在一個小區間裡會變，用 $h$ 的最大值、最小值把和夾住即可，跟 Riemann 和的論證一樣。）"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "繞 $y$ 軸",
+      "prompt": "區域由 $y=2x-x^2$ 與 $x$ 軸圍成，繞 $y$ 軸旋轉，求體積。",
+      "problemId": "lec-09-q2b",
+      "steps": [
+        "區域 $0\\le x\\le 2$。位在 $x$ 的直條：半徑 $x$，高 $2x-x^2$。",
+        "$V=\\int_0^2 2\\pi x(2x-x^2)\\,dx=2\\pi\\int_0^2(2x^2-x^3)\\,dx=2\\pi\\left(\\frac{16}{3}-4\\right)=2\\pi\\cdot\\frac{4}{3}=\\frac{8\\pi}{3}$。"
+      ],
+      "answer": "$\\frac{8\\pi}{3}$",
+      "claim": "INT(2*pi*x*(2x-x^2), 0, 2) == 8*pi/3"
+    },
+    {
+      "title": "繞 $x=-1$",
+      "prompt": "同一個區域繞直線 $x=-1$ 旋轉，求體積。",
+      "problemId": "lec-09-q2c",
+      "steps": [
+        "高不變，還是 $2x-x^2$。半徑變成到 $x=-1$ 的距離：$x-(-1)=x+1$。",
+        "$V=\\int_0^2 2\\pi(x+1)(2x-x^2)\\,dx=2\\pi\\left[\\int_0^2(2x^2-x^3)\\,dx+\\int_0^2(2x-x^2)\\,dx\\right]=2\\pi\\left(\\frac{4}{3}+\\frac{4}{3}\\right)=\\frac{16\\pi}{3}$。"
+      ],
+      "answer": "$\\frac{16\\pi}{3}$",
+      "claim": "INT(2*pi*(x+1)*(2x-x^2), 0, 2) == 16*pi/3"
+    },
+    {
+      "title": "繞 $x$ 軸，對 $y$ 積分",
+      "prompt": "$y=\\sqrt{x}$（$0\\le x\\le 4$）與 $x$ 軸之間的區域繞 $x$ 軸旋轉，用圓殼法求體積。",
+      "steps": [
+        "繞 $x$ 軸，條子要水平。$y$ 從 0 到 2；高度 $y$ 的橫條從 $x=y^2$ 到 $x=4$，長 $4-y^2$。",
+        "半徑是橫條到 $x$ 軸的距離 $y$。$V=\\int_0^2 2\\pi y(4-y^2)\\,dy=2\\pi(8-4)=8\\pi$。",
+        "對照〈圓盤法〉的範例 1：$\\int_0^4\\pi x\\,dx=8\\pi$，兩種方法答案一樣。"
+      ],
+      "answer": "$8\\pi$",
+      "claim": "INT(2*pi*y*(4-y^2), 0, 2) == 8*pi"
+    }
+  ],
+  "pitfalls": [
+    "把圓殼的半徑和高寫反。",
+    "繞 $x=k$ 時半徑還寫 $x$。",
+    "公式裡漏了 $2\\pi$ 或漏了半徑，只積高度。",
+    "條子方向切錯：圓殼法的條子要平行於旋轉軸。"
+  ],
+  "checks": [
+    {
+      "ask": "圓殼法的體積元素是？",
+      "options": [
+        {
+          "label": "$2\\pi\\cdot$ 半徑 $\\cdot$ 高 $\\cdot\\,dx$",
+          "correct": true
+        },
+        {
+          "label": "$\\pi\\cdot$ 半徑$^2\\cdot\\,dx$",
+          "why": "這是圓盤的體積元素：條子垂直於軸時才是圓盤。"
+        },
+        {
+          "label": "$2\\pi\\cdot$ 高 $\\cdot\\,dx$",
+          "why": "漏了半徑：圓殼攤平後的長度是圓周 $2\\pi\\times$ 半徑。"
+        }
+      ]
+    },
+    {
+      "ask": "$y=f(x)\\ge 0$（$1\\le x\\le 3$）下方的區域繞 $x=-2$ 旋轉，圓殼的半徑是？",
+      "options": [
+        {
+          "label": "$x+2$",
+          "correct": true
+        },
+        {
+          "label": "$x$",
+          "why": "$x$ 是到 $y$ 軸的距離；軸在 $x=-2$，要再加 2。"
+        },
+        {
+          "label": "$x-2$",
+          "why": "到 $x=-2$ 的距離是 $x-(-2)=x+2$，符號弄反了。"
+        }
+      ]
+    },
+    {
+      "ask": "$y=x^2$（$0\\le x\\le 1$）與 $x$ 軸之間的區域繞 $y$ 軸，用圓殼法：",
+      "options": [
+        {
+          "label": "$2\\pi\\int_0^1 x\\cdot x^2\\,dx=\\frac{\\pi}{2}$",
+          "correct": true
+        },
+        {
+          "label": "$2\\pi\\int_0^1 x^2\\,dx=\\frac{2\\pi}{3}$",
+          "why": "只積了高度 $x^2$，漏了半徑 $x$。"
+        },
+        {
+          "label": "$\\pi\\int_0^1 x^4\\,dx=\\frac{\\pi}{5}$",
+          "why": "這是繞 $x$ 軸的圓盤公式，旋轉軸弄錯了。"
+        }
+      ]
+    },
+    {
+      "ask": "用圓殼法繞 $y$ 軸時，細條該怎麼切？",
+      "options": [
+        {
+          "label": "鉛直的直條，對 $x$ 積分",
+          "correct": true
+        },
+        {
+          "label": "水平的橫條，對 $y$ 積分",
+          "why": "垂直於軸的橫條轉出來是圓盤或墊圈，那是另一種方法。"
+        },
+        {
+          "label": "怎麼切都可以，公式一樣",
+          "why": "切的方向決定了薄片的形狀：平行於軸才是圓殼，公式才是 $2\\pi rh$。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "換一個方向切",
+      "beats": [
+        { "show": ["墊圈：條子垂直於軸","圓殼：條子平行於軸"],
+          "say": "墊圈法的條子垂直於旋轉軸。圓殼法反過來，條子跟旋轉軸平行。",
+          "board": [
+            {"do":"write","line":"墊圈：條子垂直於軸"},
+            {"do":"write","line":"圓殼：條子平行於軸","on":"圓殼法"}
+          ] },
+        { "show": ["繞 $y$ 軸：鉛直直條，位置 $x$、高 $h(x)$"],
+          "note": "寬 $dx$。",
+          "say": "繞 y 軸時，取一根鉛直的細直條，位置在 x，高度是 h。",
+          "board": [
+            {"do":"write","line":"繞 $y$ 軸：直條位置 ${{x:x}}$、高 ${{h:h(x)}}$"},
+            {"do":"focus","term":"x","label":"位置","on":"位置在"}
+          ] },
+        { "show": ["轉一圈：掃出一個薄圓筒"],
+          "note": "這就是圓殼，半徑 $x$。",
+          "say": "這根直條繞 y 軸轉一圈，掃出一個薄薄的圓筒，叫圓殼，半徑就是 x。",
+          "board": [
+            {"do":"write","line":"圓殼：半徑 ${{x:x}}$"},
+            {"do":"focus","term":"x","color":"blue","label":"半徑","on":"叫圓殼"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "一個圓殼的體積",
+      "beats": [
+        { "show": ["剪開攤平：長 $2\\pi x$、高 $h(x)$、厚 $dx$"],
+          "say": "把圓殼沿縱向剪開攤平，近似一塊薄板：長是圓周二 pi x，高是 h，厚是 dx。",
+          "board": [
+            {"do":"write","line":"長 ${{l:2\\pi x}}$、高 ${{h:h(x)}}$、厚 ${{d:dx}}$"},
+            {"do":"underline","term":"l","label":"周長","on":"圓周"},
+            {"do":"focus","term":"h","on":"高是"}
+          ] },
+        { "show": ["體積＝面積×厚"],
+          "say": "直條寬 dx，轉一圈筒壁就厚 dx。薄板的面積乘上厚度，就是這一片圓殼的體積。",
+          "board": [
+            {"do":"write","line":"體積 ＝ 面積 × 厚"},
+            {"do":"write","line":"$V_{片}={{a:2\\pi x\\,h(x)}}\\cdot{{d:dx}}$","on":"面積"},
+            {"do":"focus","term":"d","color":"blue","label":"厚","on":"厚度"}
+          ] },
+        { "show": ["$dx$ 越小，周長差越小"],
+          "say": "內外圈周長其實差一點點，但 dx 越小差越小，加總之後會消失，所以可以這樣近似。",
+          "board": [
+            {"do":"write","line":"$dx\\to 0$：內外周長差消失"}
+          ] },
+        { "show": ["$V=\\int_a^b 2\\pi x\\,h(x)\\,dx$"],
+          "note": "直觀：內外圈周長差一點點，完整說明在全文。",
+          "say": "所有圓殼加起來，就是二 pi 乘半徑乘高的積分。",
+          "board": [
+            {"do":"write","line":"$V=\\int_a^b 2\\pi\\,{{x:x}}\\,{{h:h(x)}}\\,dx$"},
+            {"do":"underline","term":"x","color":"blue","label":"半徑","on":"半徑"},
+            {"do":"underline","term":"h","color":"violet","on":"乘高"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算一個",
+      "beats": [
+        { "show": ["$y=2x-x^2$ 與 $x$ 軸，繞 $y$ 軸"],
+          "note": "區域 $0\\le x\\le 2$。",
+          "say": "二 x 減 x 平方和 x 軸圍出的區域，繞 y 軸轉。x 從零到二。",
+          "board": [
+            {"do":"write","line":"$y=2x-x^2$，繞 $y$ 軸"},
+            {"do":"write","line":"${{b:0\\le x\\le 2}}$","on":"x 從零"}
+          ] },
+        { "show": ["區域：拋物線在 $x$ 軸上方"],
+          "say": "先看區域：二 x 減 x 平方在零到二之間，在 x 軸上方拱起來。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,3,-1,2],"curves":[{"expr":"2*x-(x^2)","domain":[0,2],"color":"blue"}],"fills":[{"expr":"2*x-(x^2)","from":0,"to":2,"color":"blue"}]}}
+          ] },
+        { "show": ["半徑 $x$，高 $2x-x^2$"],
+          "say": "位在 x 的直條，到 y 軸的距離是 x，高度是曲線的值。",
+          "board": [
+            {"do":"write","line":"半徑 ${{r:x}}$，高 ${{h:2x-x^2}}$","tint":{"r":"blue","h":"violet"}},
+            {"do":"focus","term":"r","color":"blue","on":"距離"},
+            {"do":"focus","term":"h","color":"violet","on":"高度是"}
+          ] },
+        { "show": ["$V=2\\pi\\int_0^2(2x^2-x^3)\\,dx$"],
+          "say": "乘開，二 pi 提到外面，剩下兩個冪次。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$V=\\int_0^2 2\\pi\\,x(2x-x^2)\\,dx$","on":"乘開"},
+            {"do":"transform","line":"$V={{c:2\\pi}}\\int_0^2{{p:(2x^2-x^3)}}\\,dx$","on":"二 pi"},
+            {"do":"underline","term":"p","label":"冪次","on":"剩下"}
+          ] },
+        { "show": ["反導函數：$\\frac{2}{3}x^3-\\frac{1}{4}x^4$"],
+          "note": "代上下限、乘 $2\\pi$ 後，拿去對選項。",
+          "say": "二 x 平方積分得三分之二 x 三次方，x 三次方得四分之一 x 四次方。代入零到二，再乘二 pi 去對選項。",
+          "board": [
+            {"do":"write","line":"$\\int(2x^2-x^3)dx=\\frac{2}{3}x^3-\\frac{1}{4}x^4$"}
+          ] }
+      ],
+      "predict": {
+        "ask": "體積是？",
+        "options": [
+          {
+            "label": "$2\\pi\\left(\\frac{16}{3}-4\\right)=\\frac{8\\pi}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{4}{3}$",
+            "why": "積分本身是 $\\frac{4}{3}$，還要乘 $2\\pi$。"
+          },
+          {
+            "label": "$\\frac{4\\pi}{3}$",
+            "why": "圓殼攤平的長是周長 $2\\pi x$，係數是 $2\\pi$，不是 $\\pi$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "半徑與高",
+      "beats": [
+        { "show": ["半徑：條子到軸的距離"],
+          "note": "繞 $x=k$ 時是 $|x-k|$。",
+          "say": "半徑一律是條子到旋轉軸的距離。軸換成 x 等於 k，就是 x 減 k 的絕對值。",
+          "board": [
+            {"do":"write","line":"半徑 ＝ 條子到軸的距離"},
+            {"do":"write","line":"繞 $x=k$：半徑 ${{r:|x-k|}}$","on":"軸換成"},
+            {"do":"circle","term":"r","color":"blue","on":"x 減 k"}
+          ] },
+        { "show": ["高：上減下，跟軸無關"],
+          "say": "高就是條子的長度，上面的曲線減下面的，跟軸在哪裡沒關係。",
+          "board": [
+            {"do":"write","line":"高 ＝ 上 − 下（跟軸無關）"}
+          ] },
+        { "show": ["繞 $x=-1$：半徑 $x+1$"],
+          "note": "$V=\\int_0^2 2\\pi(x+1)(2x-x^2)\\,dx=\\frac{16\\pi}{3}$。",
+          "say": "同一塊區域改繞 x 等於負一，高不變，半徑變成 x 加一，體積是三分之十六 pi。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"繞 $x=-1$：半徑 ${{s:x+1}}$","on":"改繞"},
+            {"do":"focus","term":"s","color":"blue","on":"半徑變成"},
+            {"do":"write","line":"$V=\\int_0^2 2\\pi\\,(x+1)(2x-x^2)\\,dx=\\frac{16\\pi}{3}$","on":"體積是"}
+          ] },
+        { "show": ["$(x+1)(2x-x^2)=-x^3+x^2+2x$"],
+          "say": "先把括號乘開，得負 x 三次方加 x 平方加二 x。",
+          "board": [
+            {"do":"write","line":"$(x+1)(2x-x^2)=-x^3+x^2+2x$"}
+          ] },
+        { "show": ["積分：$-4+\\frac{8}{3}+4=\\frac{8}{3}$"],
+          "note": "再乘 $2\\pi$。",
+          "say": "逐項積分，代二：負四加三分之八加四，等於三分之八，乘二 pi 就是三分之十六 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_0^2=-4+\\frac{8}{3}+4=\\frac{8}{3}$"},
+            {"do":"write","line":"$V=2\\pi\\cdot\\frac{8}{3}=\\frac{16\\pi}{3}$","on":"乘二"}
+          ] }
+      ],
+      "key": "高是上減下，跟軸在哪無關",
+      "check": 1
+    },
+    {
+      "title": "為什麼多學一種",
+      "beats": [
+        { "show": ["墊圈繞 $y$ 軸：要解出 $x=g(y)$"],
+          "note": "$y=2x-x^2$ 要解成 $x=1\\pm\\sqrt{1-y}$。",
+          "say": "剛剛那題用墊圈繞 y 軸，得先把曲線解成 x 等於 y 的函數，很麻煩。圓殼直接用。",
+          "board": [
+            {"do":"write","line":"墊圈繞 $y$ 軸：要 $x=g(y)$"},
+            {"do":"write","line":"$y=2x-x^2\\Rightarrow {{g:x=1\\pm\\sqrt{1-y}}}$","on":"解成"},
+            {"do":"underline","term":"g","label":"麻煩","on":"很麻煩"}
+          ] },
+        { "show": ["左半、右半各一支"],
+          "say": "解 x 的二次方程會有正負兩個根，是拋物線左右兩半。墊圈要兩支一起用，外半徑取加號，內半徑取減號。",
+          "board": [
+            {"do":"write","line":"左半：${{m:1-\\sqrt{1-y}}}$，右半：${{p:1+\\sqrt{1-y}}}$"},
+            {"do":"focus","term":"p","label":"外半徑","on":"外半徑"},
+            {"do":"focus","term":"m","label":"內半徑","on":"內半徑"}
+          ] },
+        { "show": ["繞 $x$ 軸用圓殼：條子水平，對 $y$ 積分"],
+          "note": "$V=\\int 2\\pi y\\cdot$（右減左）$dy$。",
+          "say": "圓殼也能繞 x 軸，條子要水平，半徑是 y，高是右減左，對 y 積分。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"繞 $x$ 軸：水平條，對 $y$ 積分","on":"圓殼也能"},
+            {"do":"write","line":"$V=\\int 2\\pi\\,{{r:y}}\\,h\\,dy$，$h$＝右減左","on":"條子要水平"},
+            {"do":"focus","term":"r","color":"blue","label":"半徑","on":"半徑是"}
+          ] },
+        { "show": ["$y=\\sqrt{x}$：$\\int_0^2 2\\pi y(4-y^2)\\,dy=8\\pi$"],
+          "note": "跟圓盤法的答案一樣。",
+          "say": "根號 x 從零到四繞 x 軸，用圓殼算也是八 pi，跟圓盤法一樣。",
+          "board": [
+            {"do":"write","line":"$y=\\sqrt{x}$，$0\\le x\\le 4$，繞 $x$ 軸"},
+            {"do":"write","line":"$V=\\int_0^2 2\\pi y(4-y^2)\\,dy={{a:8\\pi}}$","on":"用圓殼算"},
+            {"do":"box","term":"a","color":"green","on":"八 pi"}
+          ] },
+        { "show": ["$\\int_0^2(4y-y^3)\\,dy=4$，$V=8\\pi$"],
+          "say": "括號乘開，逐項積分得二 y 平方減四分之一 y 四次方。代二是八減四，乘二 pi 是八 pi。",
+          "board": [
+            {"do":"write","line":"$\\int_0^2(4y-y^3)\\,dy=8-4=4$"},
+            {"do":"write","line":"$V=2\\pi\\cdot 4=8\\pi$","on":"乘二"}
+          ] }
+      ],
+      "key": "繞 $x$ 軸用圓殼：條子水平、對 $y$ 積分",
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "volume",
+      "solid-of-revolution",
+      "shell-method"
+    ],
+    "fine": [
+      "shell-radius-height",
+      "shell-shifted-axis",
+      "shell-dy"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-09-m4",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "cx-rev-005",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "lec-09-q2b",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "lec-09-q2c",
+      "core": true,
+      "trains": "shell-shifted-axis"
+    },
+    {
+      "id": "cg-5b-014",
+      "core": true,
+      "trains": "shell-dy"
+    },
+    {
+      "id": "cg-5b-016",
+      "trains": "shell-shifted-axis"
+    },
+    {
+      "id": "cg-5b-015",
+      "trains": "shell-dy"
+    },
+    {
+      "id": "cg-5b-017",
+      "trains": "shell-shifted-axis"
+    }
+  ],
+  "gaps": []
+}

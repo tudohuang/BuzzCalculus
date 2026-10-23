@@ -1,52 +1,126 @@
 {
   "id": "gamma-half",
   "title": "Γ(1/2) = √π",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["gamma-recurrence-apps", "polar-double-integral", "improper-infinite", "u-sub-definite"],
-  "next": ["gamma-half-integer"],
-  "related": ["gaussian-integral", "beta-gamma-relation"],
-  "objectives": [
-    "用換元 $x=u^2$ 把 $\\Gamma\\left(\\frac{1}{2}\\right)$ 變成 $2\\int_0^{\\infty}e^{-u^2}\\,du$。",
-    "用「平方之後換極座標」算出 $\\int_0^{\\infty}e^{-u^2}\\,du=\\frac{\\sqrt{\\pi}}{2}$，並說得出多出來的 $r$ 為什麼是關鍵。",
-    "用縮放算 $\\int_0^{\\infty}e^{-ax^2}\\,dx=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$。"
+  "prerequisites": [
+    "gamma-recurrence-apps",
+    "polar-double-integral",
+    "improper-infinite",
+    "u-sub-definite"
   ],
-  "visual": "左圖：曲面 z = e^{−(x²+y²)} 像一頂鐘形帽子，從上方看是一圈圈同心圓等高線。右圖：同一塊區域用方格切（x、y 分開積，卡住）與用同心圓環切（每個環的面積約 2πr dr，剛好配上 e^{−r²}）對照，顯示換極座標為什麼能算。",
+  "next": [
+    "gamma-half-integer"
+  ],
+  "related": [
+    "gaussian-integral",
+    "beta-gamma-relation"
+  ],
+  "objectives": [
+    "用換元 $x=u^2$ 把 $\\Gamma\\left(\\frac{1}{2}\\right)$ 變成 $2\\int_0^{\\infty}e^{-u^2}\\,du$",
+    "用「平方之後換極座標」算出 $\\int_0^{\\infty}e^{-u^2}\\,du=\\frac{\\sqrt{\\pi}}{2}$，並說得出用正方形與四分之一圓夾擠為什麼讓它嚴格",
+    "用縮放算 $\\int_0^{\\infty}e^{-ax^2}\\,dx=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$，以及常態分布的常數 $\\sqrt{2\\pi}$"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從 Gamma 到鐘形曲線",
+      "heading": "① 化成鐘形曲線",
       "body": [
-        "$\\Gamma\\left(\\frac{1}{2}\\right)=\\int_0^{\\infty}x^{-1/2}e^{-x}\\,dx$。令 $x=u^2$（$u\\ge 0$），$dx=2u\\,du$，$x^{-1/2}=\\frac{1}{u}$：",
-        "$\\Gamma\\left(\\frac{1}{2}\\right)=\\int_0^{\\infty}\\frac{1}{u}e^{-u^2}\\,2u\\,du=2\\int_0^{\\infty}e^{-u^2}\\,du$。",
-        "問題變成鐘形曲線 $e^{-u^2}$ 底下的面積。$e^{-u^2}$ 有反導函數，但寫不成常見初等函數的有限組合，所以要換個方法。"
+        "令 $x=u^2$（$u\\ge0$）：$dx=2u\\,du$，$x^{-1/2}=\\dfrac1u$",
+        "換元先在 $[\\varepsilon,R]$ 上做，再取極限；左邊的瑕點 $x=0$ 換完就消失了",
+        "問題：$e^{-u^2}$ 沒有初等的反導函數",
+        "這是一個定理（Liouville），證明要用微分代數，超出這門課"
       ],
-      "collapsible": false
+      "tex": [
+        "\\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty x^{-1/2}e^{-x}\\,dx",
+        "\\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty\\frac1u\\,e^{-u^2}\\,2u\\,du=2\\int_0^\\infty e^{-u^2}\\,du"
+      ]
     },
     {
-      "heading": "② 一維算不動，就算它的平方",
+      "heading": "② 一維算不動，就算平方",
       "body": [
-        "令 $I=\\int_0^{\\infty}e^{-x^2}\\,dx$。$I^2$ 是兩個一樣的積分相乘，可以寫成第一象限上的二重積分：$I^2=\\int_0^{\\infty}\\int_0^{\\infty}e^{-(x^2+y^2)}\\,dx\\,dy$。",
-        "被積函數只跟 $x^2+y^2=r^2$ 有關，換極座標：第一象限是 $0\\le\\theta\\le\\frac{\\pi}{2}$、$0\\le r<\\infty$，面積元素 $dx\\,dy=r\\,dr\\,d\\theta$（〈極座標二重積分〉）。",
-        "多出來的 $r$ 是關鍵：$\\int e^{-r^2}r\\,dr$ 用 $u=r^2$ 一行就積出來。"
+        "$I=\\displaystyle\\int_0^\\infty e^{-x^2}dx$，同一個積分換個變數名字：",
+        "這一步對無界區域要小心；③ 會用有限區域把它補嚴格",
+        "$x^2+y^2=r^2$：被積函數只跟距離有關 → 換極座標",
+        "第一象限：$0\\le\\theta\\le\\frac\\pi2$，$0\\le r<\\infty$，$dA=r\\,dr\\,d\\theta$",
+        "多出來的 $r$ 正好讓它積得出來："
       ],
-      "tex": ["I^{2}=\\int_0^{\\pi/2}\\!\\!\\int_0^{\\infty}e^{-r^{2}}\\,r\\,dr\\,d\\theta=\\frac{\\pi}{2}\\cdot\\frac12=\\frac{\\pi}{4}"],
-      "collapsible": false
+      "tex": [
+        "I^2=\\int_0^\\infty e^{-x^2}dx\\int_0^\\infty e^{-y^2}dy",
+        "=\\iint_{x,y\\ge0}e^{-(x^2+y^2)}\\,dA",
+        "I^2=\\int_0^{\\pi/2}\\!\\!\\int_0^\\infty e^{-r^2}\\,r\\,dr\\,d\\theta",
+        "\\int_0^\\infty re^{-r^2}dr=\\Big[-\\tfrac12e^{-r^2}\\Big]_0^\\infty=\\tfrac12",
+        "I^2=\\frac\\pi2\\cdot\\frac12=\\frac\\pi4"
+      ]
     },
     {
       "heading": "③ 結果",
       "body": [
-        "$I>0$，所以 $I=\\frac{\\sqrt{\\pi}}{2}$，$\\Gamma\\left(\\frac{1}{2}\\right)=2I=\\sqrt{\\pi}$。由對稱，$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}$。",
-        "一個 $\\pi$ 出現在沒有圓的積分裡，是因為平方之後的被積函數 $e^{-(x^2+y^2)}$ 有旋轉對稱，圓是藏在裡面的。"
+        "$I>0$，所以 $I=\\dfrac{\\sqrt\\pi}2$：",
+        "代回 ①：",
+        "為什麼這個計算是嚴格的？",
+        "兩個疑點：",
+        "• 無界區域上，$I\\cdot I$ 等於二重積分？",
+        "• 無界區域可以直接換極座標？",
+        "解法：只在有限區域上算，再用夾擠"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\int_0^\\infty e^{-u^2}\\,du&=\\frac{\\sqrt\\pi}2\\\\\\int_{-\\infty}^\\infty e^{-u^2}\\,du&=\\sqrt\\pi\\end{aligned}",
+        "\\Gamma\\!\\left(\\tfrac12\\right)=2I=\\sqrt\\pi\\approx1.7725"
+      ]
     },
     {
-      "heading": "這個計算為什麼嚴格",
+      "heading": "③ 嚴格的證明",
       "body": [
-        "$I^2=\\left(\\int_0^{\\infty}e^{-x^2}\\,dx\\right)^2$ 寫成整個第一象限的二重積分，需要先在有限區域上做、再取極限。令 $S_R=[0,R]^2$，$D_R$ 是半徑 $R$ 的四分之一圓盤。被積函數為正，而且 $D_R\\subset S_R\\subset D_{R\\sqrt{2}}$，所以",
-        "$\\iint_{D_R}\\le\\left(\\int_0^Re^{-x^2}\\,dx\\right)^2\\le\\iint_{D_{R\\sqrt{2}}}$。左右兩邊用極座標算出來是 $\\frac{\\pi}{4}(1-e^{-R^2})$ 與 $\\frac{\\pi}{4}(1-e^{-2R^2})$，$R\\to\\infty$ 都 $\\to\\frac{\\pi}{4}$，夾擠得 $I^2=\\frac{\\pi}{4}$。"
+        "$I_R=\\displaystyle\\int_0^Re^{-x^2}dx$；正方形 $S_R=[0,R]^2$",
+        "被積函數 $>0$，區域越大積分越大：",
+        "四分之一圓是有界區域，可以放心換極座標：",
+        "$R\\to\\infty$：夾擠 ⇒ $I^2=\\dfrac\\pi4$　$\\blacksquare$",
+        "數值：$R=2$ 時 $0.7710\\le I_2^2\\approx0.7781\\le0.7851$；$\\frac\\pi4\\approx0.7854$"
       ],
-      "collapsible": true
+      "tex": [
+        "I_R^2=\\iint_{S_R}e^{-(x^2+y^2)}dA",
+        "\\iint_{D_R}\\le I_R^2\\le\\iint_{D_{R\\sqrt2}}",
+        "\\iint_{D_\\rho}e^{-(x^2+y^2)}dA=\\frac\\pi2\\int_0^\\rho re^{-r^2}dr=\\frac\\pi4\\left(1-e^{-\\rho^2}\\right)",
+        "\\frac\\pi4\\left(1-e^{-R^2}\\right)\\le I_R^2\\le\\frac\\pi4\\left(1-e^{-2R^2}\\right)"
+      ]
+    },
+    {
+      "heading": "④ 指數有係數",
+      "body": [
+        "$a>0$，令 $u=\\sqrt a\\,x$：$dx=\\dfrac{du}{\\sqrt a}$",
+        "例 1：$\\displaystyle\\int_0^\\infty e^{-3x^2}dx=\\frac12\\sqrt{\\frac\\pi3}\\approx0.5117$",
+        "直覺：$a$ 越大，鐘越窄，面積越小；寬度按 $\\frac1{\\sqrt a}$ 縮"
+      ],
+      "tex": [
+        "\\int_0^\\infty e^{-ax^2}dx=\\frac1{\\sqrt a}\\int_0^\\infty e^{-u^2}du=\\frac12\\sqrt{\\frac\\pi a}"
+      ]
+    },
+    {
+      "heading": "④ 常態分布的常數",
+      "body": [
+        "偶函數：$=2\\displaystyle\\int_0^\\infty e^{-\\frac12x^2}dx$，$a=\\frac12$",
+        "所以常態分布的密度",
+        "總面積是 $1$",
+        "那個 $\\sqrt{2\\pi}$，就是 $\\Gamma\\!\\left(\\frac12\\right)=\\sqrt\\pi$ 換了個樣子"
+      ],
+      "tex": [
+        "\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx",
+        "=2\\cdot\\frac12\\sqrt{\\frac{\\pi}{1/2}}=\\sqrt{2\\pi}\\approx2.5066",
+        "\\frac1{\\sqrt{2\\pi}}e^{-x^2/2}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $x=u^2$：$\\Gamma\\!\\left(\\frac12\\right)=2\\int_0^\\infty e^{-u^2}du$",
+        "• 平方 → 第一象限二重積分 → 極座標，多出的 $r$ 讓它積得出來",
+        "• $\\int_0^\\infty e^{-u^2}du=\\dfrac{\\sqrt\\pi}2$，$\\Gamma\\!\\left(\\frac12\\right)=\\sqrt\\pi$",
+        "• 嚴格：$D_R\\subset S_R\\subset D_{R\\sqrt2}$，有限區域上算，再夾擠",
+        "• $\\int_0^\\infty e^{-ax^2}dx=\\frac12\\sqrt{\\frac\\pi a}$；$\\int_{\\mathbb R}e^{-x^2/2}dx=\\sqrt{2\\pi}$",
+        "下一課：半整數的 Gamma"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,303 +168,751 @@
   ],
   "checks": [
     {
-      "ask": "$\\Gamma\\left(\\frac{1}{2}\\right)$ 等於？",
+      "ask": "$\\displaystyle\\int_0^\\infty e^{-4x^2}dx=$？",
       "options": [
-        { "label": "$\\sqrt{\\pi}$", "correct": true },
-        { "label": "$\\pi$", "why": "$\\pi$ 是 $I^2$ 那一層的量（整個平面上的 $\\left(\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx\\right)^2$），開根號才是 $\\sqrt{\\pi}$。" },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}$", "why": "那是 $\\int_0^{\\infty}e^{-x^2}\\,dx$。$\\Gamma\\left(\\frac{1}{2}\\right)=2\\int_0^{\\infty}e^{-u^2}\\,du$，多一個 $2$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx$ 等於？",
-      "options": [
-        { "label": "$\\sqrt{\\pi}$", "correct": true },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}$", "why": "那是從 $0$ 積到 $\\infty$ 的一半。" },
-        { "label": "$\\pi$", "why": "$\\pi$ 是它的平方；面積本身要開根號。" }
-      ]
-    },
-    {
-      "ask": "換極座標之後為什麼算得出來？",
-      "options": [
-        { "label": "面積元素多了一個 $r$，$\\int e^{-r^2}r\\,dr$ 可以用 $u=r^2$ 積出來", "correct": true },
-        { "label": "因為 $e^{-r^2}$ 本身有初等反導函數", "why": "$e^{-r^2}$ 跟 $e^{-x^2}$ 是同一個函數，一樣沒有初等反導函數；靠的是多出來的 $r$。" },
-        { "label": "因為極座標下積分區域變成有限", "why": "$r$ 還是從 $0$ 到 $\\infty$，區域沒有變有限。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^{\\infty}e^{-4x^2}\\,dx$ 等於？",
-      "options": [
-        { "label": "$\\frac{\\sqrt{\\pi}}{4}$", "correct": true },
-        { "label": "$\\frac{\\sqrt{\\pi}}{8}$", "why": "令 $u=2x$，$dx=\\frac{du}{2}$，只除以 $2$，不是 $4$：$\\frac{1}{2}\\cdot\\frac{\\sqrt{\\pi}}{2}=\\frac{\\sqrt{\\pi}}{4}$。" },
-        { "label": "$\\frac{\\sqrt{\\pi}}{2}$", "why": "係數 $4$ 會讓曲線變窄、面積變小，不能忽略。" }
+        {
+          "label": "$\\dfrac{\\sqrt\\pi}4$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\sqrt\\pi}8$",
+          "why": "除了 $a=4$；應該除以 $\\sqrt a=2$"
+        },
+        {
+          "label": "$\\sqrt\\pi$",
+          "why": "乘了 $\\sqrt a$；係數越大，鐘越窄，面積應該變小"
+        },
+        {
+          "label": "$\\dfrac{\\sqrt\\pi}2$",
+          "why": "那是 $a=1$ 的答案：忘了縮放"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "變成鐘形曲線",
+      "title": "化成鐘形曲線",
       "beats": [
-        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)=\\int_0^{\\infty}x^{-1/2}e^{-x}\\,dx$"],
-          "say": "Gamma 在二分之一的值，是 x 的負二分之一次方乘 e 的負 x 次方，從零積到無限大。",
+        {
+          "show": [
+            "$\\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty x^{-1/2}e^{-x}\\,dx$"
+          ],
+          "say": "整數點是階乘，那半整數呢？先看伽瑪 2 分之 1。s 是 2 分之 1，大於 0，積分收斂。",
           "board": [
-            {"do":"write","line":"$\\Gamma\\left(\\frac{1}{2}\\right)=\\int_0^{\\infty}{{a:x^{-1/2}}}e^{-x}\\,dx$"},
-            {"do":"focus","term":"a","on":"負二分之一次方"}
-          ] },
-        { "show": ["令 $x=u^2$，$dx=2u\\,du$"],
-          "note": "$u\\ge 0$，$x^{-1/2}=\\frac{1}{u}$。",
-          "say": "令 x 等於 u 平方，dx 是二 u du，x 的負二分之一次方變成 u 分之一。",
-          "board": [
-            {"do":"write","line":"令 $x=u^2$，$dx={{d:2u\\,du}}$"},
-            {"do":"focus","term":"d","on":"二 u du"},
-            {"do":"write","line":"$x^{-1/2}={{r:\\frac{1}{u}}}$","on":"變成"}
-          ] },
-        { "show": ["代入：$\\frac{1}{u}e^{-u^2}\\cdot 2u\\,du$"],
-          "note": "上下限：$u=0\\to x=0$，$u\\to\\infty$ 時 $x\\to\\infty$。",
-          "say": "代進去：u 分之一乘 e 的負 u 平方次方，再乘二 u du。u 從零到無限大，x 也是。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}{{c1:\\frac{1}{u}}}e^{-u^2}\\cdot{{c2:2u}}\\,du$"},
-            {"do":"focus","term":"c1","on":"u 分之一"},
-            {"do":"focus","term":"c2","on":"二 u"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty x^{-1/2}e^{-x}\\,dx$"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$\\Gamma\\left(\\frac{1}{2}\\right)$ 變成？",
+        "ask": "$\\Gamma\\!\\left(\\tfrac12\\right)$ 大約是多少？",
         "options": [
           {
-            "label": "$2\\int_0^{\\infty}e^{-u^2}\\,du$",
+            "label": "$1.77$",
             "correct": true
           },
           {
-            "label": "$\\int_0^{\\infty}e^{-u^2}\\,du$",
-            "why": "$\\frac{1}{u}$ 和 $2u$ 的 $u$ 約掉了，但 $2$ 還在。"
+            "label": "$0.5$",
+            "why": "把自變數 $\\frac12$ 當成函數值了"
           },
           {
-            "label": "$\\int_0^{\\infty}\\frac{1}{u}e^{-u^2}\\,du$",
-            "why": "漏了 $dx=2u\\,du$；換元時 $dx$ 也要換。"
+            "label": "$1$",
+            "why": "那是 $\\Gamma(1)=\\Gamma(2)$；$\\frac12$ 在 $(0,1)$，Gamma 在這裡比 $1$ 大"
           }
         ]
       }
     },
     {
-      "title": "算它的平方",
+      "title": "化成鐘形曲線",
       "beats": [
-        { "show": ["$e^{-u^2}$：寫不成初等函數的組合"],
-          "note": "鐘形曲線底下的面積，要換個方法。",
-          "say": "問題變成鐘形曲線底下的面積。它的反導函數寫不成常見的初等函數，直接積算不動。",
+        {
+          "show": [
+            "令 $x=u^2$（$u\\ge0$）：$dx=2u\\,du$，$x^{-1/2}=\\dfrac1u$",
+            "$\\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty\\frac1u\\,e^{-u^2}\\,2u\\,du=2\\int_0^\\infty e^{-u^2}\\,du$"
+          ],
+          "say": "令 x 等於 u 平方。dx 是 2u du，x 的負 2 分之 1 次方是 u 分之一，兩個 u 約掉。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.25,3.1,-0.15,1.15],"curves":[{"expr":"exp(-(x^2))","domain":[0,3],"color":"blue"}],"fills":[{"expr":"exp(-(x^2))","from":0,"to":3,"color":"blue"}],"ticks":false},"on":"鐘形曲線"}
-          ] },
-        { "show": ["$I^2=\\int_0^{\\infty}\\int_0^{\\infty}e^{-(x^2+y^2)}\\,dx\\,dy$"],
-          "note": "$I=\\int_0^{\\infty}e^{-x^2}\\,dx$",
-          "say": "一維算不動，就算它的平方：兩個一樣的積分相乘，寫成第一象限上的二重積分。",
+            {
+              "do": "write",
+              "line": "令 $x=u^2$（$u\\ge0$）：$dx=2u\\,du$，$x^{-1/2}=\\dfrac1u$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\Gamma\\!\\left(\\tfrac12\\right)=\\int_0^\\infty\\frac1u\\,e^{-u^2}\\,2u\\,du=2\\int_0^\\infty e^{-u^2}\\,du}}$",
+              "on": "2u"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　換元先在 $[\\varepsilon,R]$ 上做，再取極限；左邊的瑕點 $x=0$ 換完就消失了",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "y = e^(−u²)：要算的是右半邊的面積"
+          ],
+          "say": "e 的負 u 平方次方，就是鐘形曲線。伽瑪 2 分之 1，就是右半邊面積的兩倍。",
           "board": [
-            {"do":"write","line":"$I^2=\\int_0^{\\infty}\\int_0^{\\infty}e^{-(x^2+y^2)}\\,dx\\,dy$","on":"就算它的平方"}
-          ] },
-        { "show": ["換極座標：$dx\\,dy=r\\,dr\\,d\\theta$"],
-          "note": "$0\\le\\theta\\le\\frac{\\pi}{2}$，$0\\le r<\\infty$。",
-          "say": "被積函數只跟 x 平方加 y 平方有關，也就是 r 平方，所以換極座標，面積元素多一個 r。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "bell",
+                  "window": [
+                    -3,
+                    3,
+                    -0.2,
+                    1.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "exp(-x^2)",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "exp(-x^2)",
+                      "from": 0,
+                      "to": 3,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 200
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "y = e^(−u²)：要算的是右半邊的面積",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題：$e^{-u^2}$ 沒有初等的反導函數"
+          ],
+          "say": "麻煩的是，e 的負 u 平方次方沒有初等的反導函數，微積分基本定理用不上。",
           "board": [
-            {"do":"transform","line":"$I^2=\\int_0^{\\pi/2}\\int_0^{\\infty}e^{-r^2}\\,{{da:r\\,dr\\,d\\theta}}$","on":"換極座標"},
-            {"do":"underline","term":"da","on":"面積元素"}
-          ] },
-        { "show": ["第一象限：$0\\le\\theta\\le\\frac{\\pi}{2}$","面積 $\\approx r\\,d\\theta\\cdot dr$"],
-          "note": "直覺：弧長 $r\\,d\\theta$ 乘厚度 $dr$。",
-          "say": "第一象限從 x 軸轉到 y 軸，角度零到二分之 pi。小塊面積是弧長 r d theta 乘厚度 dr。",
+            {
+              "do": "write",
+              "line": "問題：$e^{-u^2}$ 沒有初等的反導函數",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　這是一個定理（Liouville），證明要用微分代數，超出這門課",
+              "color": "violet",
+              "on": "初等"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "一維算不動，就算平方",
+      "beats": [
+        {
+          "show": [
+            "$I=\\displaystyle\\int_0^\\infty e^{-x^2}dx$，同一個積分換個變數名字：",
+            "$I^2=\\int_0^\\infty e^{-x^2}dx\\int_0^\\infty e^{-y^2}dy$"
+          ],
+          "say": "把要算的積分叫做 I。妙招是：算 I 的平方。第二個 I 換個變數名字，叫 y。",
           "board": [
-            {"do":"write","line":"$x\\ge0,\\ y\\ge0\\Rightarrow 0\\le\\theta\\le\\frac{\\pi}{2}$"},
-            {"do":"write","line":"面積 $\\approx {{a:r\\,d\\theta}}\\cdot{{b:dr}}$","on":"小塊面積"},
-            {"do":"focus","term":"a","on":"弧長"}
-          ] },
-        { "show": ["$\\int_0^{\\infty}e^{-r^2}r\\,dr=\\frac{1}{2}$"],
-          "note": "令 $u=r^2$，一行積完。",
-          "say": "多出來的 r 是關鍵：令 u 等於 r 平方，一行就積出二分之一。完整的極限論證在後面那節。",
+            {
+              "do": "write",
+              "line": "$I=\\displaystyle\\int_0^\\infty e^{-x^2}dx$，同一個積分換個變數名字："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I^2=\\int_0^\\infty e^{-x^2}dx\\int_0^\\infty e^{-y^2}dy$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\iint_{x,y\\ge0}e^{-(x^2+y^2)}\\,dA$"
+          ],
+          "say": "兩個一維積分相乘，變成第一象限上的二重積分。指數相加，變成負 x 平方加 y 平方。",
           "board": [
-            {"do":"write","line":"內層 $\\int_0^{\\infty}e^{-r^2}{{r:r}}\\,dr=\\frac{1}{2}$"},
-            {"do":"focus","term":"r","on":"多出來的 r"}
-          ] },
-        { "show": ["$u=r^2$，$r\\,dr=\\frac{du}{2}$"],
-          "note": "$r=0\\to u=0$；$r\\to\\infty\\to u\\to\\infty$。",
-          "say": "令 u 等於 r 平方，r dr 就是二分之 du，上下限還是零到無限大，所以積出二分之一。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle =\\iint_{x,y\\ge0}e^{-(x^2+y^2)}\\,dA}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "限上"
+            },
+            {
+              "do": "write",
+              "line": "　這一步對無界區域要小心；③ 會用有限區域把它補嚴格",
+              "color": "violet",
+              "on": "成負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^2+y^2=r^2$：被積函數只跟距離有關 → 換極座標"
+          ],
+          "say": "關鍵：x 平方加 y 平方就是 r 平方，被積函數只跟到原點的距離有關。這正是極座標的強項。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$u=r^2$，$du=2r\\,dr$","on":"r#2"},
-            {"do":"write","line":"${{rd:r\\,dr}}=\\frac{du}{2}$","on":"就是"},
-            {"do":"write","line":"$\\int_0^{\\infty}e^{-r^2}r\\,dr=\\frac{1}{2}\\int_0^{\\infty}e^{-u}\\,du=\\frac{1}{2}$","on":"所以積出"}
-          ] }
-      ],
-      "key": "平方成二重積分，換極座標多出 $r$ 才積得動",
-      "check": 2
+            {
+              "do": "write",
+              "line": "$x^2+y^2=r^2$：被積函數只跟距離有關 → 換極座標"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第一象限：$0\\le\\theta\\le\\frac\\pi2$，$0\\le r<\\infty$，$dA=r\\,dr\\,d\\theta$",
+            "$I^2=\\int_0^{\\pi/2}\\!\\!\\int_0^\\infty e^{-r^2}\\,r\\,dr\\,d\\theta$"
+          ],
+          "say": "第一象限是西塔從 0 到 2 分之派，r 從 0 到無限大。面積元素多一個 r。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第一象限：$0\\le\\theta\\le\\frac\\pi2$，$0\\le r<\\infty$，$dA=r\\,dr\\,d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I^2=\\int_0^{\\pi/2}\\!\\!\\int_0^\\infty e^{-r^2}\\,r\\,dr\\,d\\theta$",
+              "on": "到無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多出來的 $r$ 正好讓它積得出來：",
+            "$\\int_0^\\infty re^{-r^2}dr=\\Big[-\\tfrac12e^{-r^2}\\Big]_0^\\infty=\\tfrac12$"
+          ],
+          "say": "多出來的這個 r 是關鍵。r 乘 e 的負 r 平方次方，反導函數是負 2 分之一 e 的負 r 平方次方。從 0 到無限大，是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多出來的 $r$ 正好讓它積得出來："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^\\infty re^{-r^2}dr=\\Big[-\\tfrac12e^{-r^2}\\Big]_0^\\infty=\\tfrac12$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$I^2=\\frac\\pi2\\cdot\\frac12=\\frac\\pi4$"
+          ],
+          "say": "西塔那一層貢獻 2 分之派，r 那一層貢獻 2 分之 1。I 平方等於 4 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle I^2=\\frac\\pi2\\cdot\\frac12=\\frac\\pi4}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "結果",
       "beats": [
-        { "show": ["$I^2=\\frac{\\pi}{2}\\cdot\\frac{1}{2}=\\frac{\\pi}{4}$"],
-          "note": "外層乘上 $\\theta$ 的範圍 $\\frac{\\pi}{2}$。",
-          "say": "內層是二分之一，外層乘上角度的範圍二分之 pi，I 平方等於四分之 pi。",
+        {
+          "show": [
+            "$I>0$，所以 $I=\\dfrac{\\sqrt\\pi}2$：",
+            "$\\begin{aligned}\\int_0^\\infty e^{-u^2}\\,du&=\\frac{\\sqrt\\pi}2\\\\\\int_{-\\infty}^\\infty e^{-u^2}\\,du&=\\sqrt\\pi\\end{aligned}$"
+          ],
+          "say": "I 是正函數的積分，是正的，開根號取正的：I 等於 2 分之根號派。鐘形曲線是偶函數，整條的面積是根號派。",
           "board": [
-            {"do":"write","line":"$I^2={{th:\\frac{\\pi}{2}}}\\cdot{{in:\\frac{1}{2}}}=\\frac{\\pi}{4}$"},
-            {"do":"focus","term":"in","on":"內層是"},
-            {"do":"focus","term":"th","on":"角度的範圍"}
-          ] },
-        { "show": ["$I=\\frac{\\sqrt{\\pi}}{2}$"],
-          "note": "取正根：被積函數為正。",
-          "say": "被積函數是正的，取正根，I 是二分之根號 pi。",
+            {
+              "do": "write",
+              "line": "$I>0$，所以 $I=\\dfrac{\\sqrt\\pi}2$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}\\int_0^\\infty e^{-u^2}\\,du&=\\frac{\\sqrt\\pi}2\\\\\\int_{-\\infty}^\\infty e^{-u^2}\\,du&=\\sqrt\\pi\\end{aligned}}}}$",
+              "on": "取正"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "形曲"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代回 ①：",
+            "$\\Gamma\\!\\left(\\tfrac12\\right)=2I=\\sqrt\\pi\\approx1.7725$"
+          ],
+          "say": "代回第一節：伽瑪 2 分之 1 等於 2 倍的 I，就是根號派，大約 1.7725。",
           "board": [
-            {"do":"write","line":"$I=\\frac{\\sqrt{\\pi}}{2}$","on":"取正根"}
-          ] },
-        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)=2I=\\sqrt{\\pi}\\approx 1.7725$"],
-          "say": "Gamma 二分之一是兩倍的 I，就是根號 pi。一個沒有圓的積分冒出 pi，因為平方之後有旋轉對稱。" }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "代回 ①："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\Gamma\\!\\left(\\tfrac12\\right)=2I=\\sqrt\\pi\\approx1.7725}}$",
+              "color": "red",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "根號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼這個計算是嚴格的？"
+          ],
+          "say": "但是剛剛有兩步跳得太快：無界區域上，兩個瑕積分相乘等於二重積分嗎？無界區域可以直接換極座標嗎？",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼這個計算是嚴格的？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個疑點：",
+            "• 無界區域上，$I\\cdot I$ 等於二重積分？"
+          ],
+          "say": "解法是：只在有限區域上計算，那裡一切都是熟悉的定理，最後再用夾擠定理取極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個疑點："
+            },
+            {
+              "do": "write",
+              "line": "• 無界區域上，$I\\cdot I$ 等於二重積分？",
+              "on": "域上"
+            },
+            {
+              "do": "write",
+              "line": "• 無界區域可以直接換極座標？",
+              "on": "是熟"
+            },
+            {
+              "do": "write",
+              "line": "解法：只在有限區域上算，再用夾擠",
+              "color": "gold",
+              "on": "再用"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "證明：為什麼嚴格",
+      "title": "嚴格的證明",
       "beats": [
-        { "show": ["有限區域上算，再用兩個圓盤夾"],
-          "note": "$S_R=[0,R]^2$；$D_R$：半徑 $R$ 的四分之一圓盤。",
-          "say": "策略：無窮的第一象限不能直接換座標。先在有限的正方形上算，再用兩個四分之一圓盤把它夾住。",
+        {
+          "show": [
+            "$I_R=\\displaystyle\\int_0^Re^{-x^2}dx$；正方形 $S_R=[0,R]^2$",
+            "$I_R^2=\\iint_{S_R}e^{-(x^2+y^2)}dA$"
+          ],
+          "say": "令 I R 是只積到 R 的積分。在有限的正方形上，二重積分可以拆成兩個一維積分相乘，這是富比尼定理。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.75,2.3,-0.12,1.52],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,1.5708]},"color":"blue"},{"param":{"x":"sqrt(2)*cos(t)","y":"sqrt(2)*sin(t)","t":[0,1.5708]},"color":"violet"}],"fills":[{"pts":[[0,0],[1,0],[1,1],[0,1]],"color":"gold"}],"points":[{"x":1,"y":1}],"ticks":false},"on":"有限的正方形"}
-          ] },
-        { "show": ["$D_R\\subset S_R\\subset D_{R\\sqrt{2}}$"],
-          "note": "正方形最遠的角 $(R,R)$ 離原點 $R\\sqrt{2}$。",
-          "why": {"ask":"為什麼 $S_R\\subset D_{R\\sqrt{2}}$？","say":"正方形為什麼裝得進半徑 R 根號二的圓盤？","options":[{"label":"最遠的角 $(R,R)$ 離原點 $R\\sqrt{2}$","correct":true},{"label":"正方形面積 $R^2$ 比較小","why":"面積小不代表裝得進去；要每一點離原點都不超過 $R\\sqrt{2}$。"},{"label":"邊長 $R$ 小於 $R\\sqrt{2}$","why":"邊長只管到軸上的點；離原點最遠的是對角的角。"}]},
-          "say": "正方形裡離原點最遠的是對角那個角，距離 R 根號二，所以整個正方形都在大圓盤裡。",
+            {
+              "do": "write",
+              "line": "$I_R=\\displaystyle\\int_0^Re^{-x^2}dx$；正方形 $S_R=[0,R]^2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle I_R^2=\\iint_{S_R}e^{-(x^2+y^2)}dA$",
+              "on": "二重"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，藍色的四分之一圓半徑 R，包在正方形裡；正方形又包在半徑根號 2 倍 R 的紅色四分之一圓裡，因為正方形的對角線長根號 2 倍 R。",
           "board": [
-            {"do":"write","line":"${{small:D_R}}\\subset S_R\\subset {{big:D_{R\\sqrt{2}}}}$","tint":{"small":"blue","big":"violet"}},
-            {"do":"underline","term":"big","label":"最遠的角","on":"對角那個角","why":true}
-          ] },
-        { "show": ["$\\iint_{D_R}\\le\\left(\\int_0^Re^{-x^2}dx\\right)^2$","$\\le\\iint_{D_{R\\sqrt{2}}}$"],
-          "note": "被積函數為正：區域大，積分大。",
-          "say": "被積函數是正的，區域越大積分越大，正方形上的積分就被兩個圓盤上的積分夾住。",
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 330 300\" width=\"330\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M40,270 L280.4,270 A240.4 240.4 0 0 0 40,29.6 Z\" fill=\"var(--red)\" fill-opacity=\"0.0\" stroke=\"var(--red)\" stroke-width=\"2\"/><rect x=\"40\" y=\"100\" width=\"170\" height=\"170\" fill=\"#f5d56e\" fill-opacity=\"0.3\" stroke=\"var(--ink)\" stroke-width=\"2\"/><path d=\"M40,270 L210,270 A170 170 0 0 0 40,100 Z\" fill=\"var(--blue)\" fill-opacity=\"0.1\" stroke=\"var(--blue)\" stroke-width=\"2\"/><line x1=\"25\" y1=\"270\" x2=\"310\" y2=\"270\" stroke=\"var(--ink)\" stroke-width=\"1.2\"/><line x1=\"40\" y1=\"285\" x2=\"40\" y2=\"12\" stroke=\"var(--ink)\" stroke-width=\"1.2\"/><text x=\"210\" y=\"290\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">R</text><text x=\"284\" y=\"292\" text-anchor=\"middle\" font-size=\"20\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">R<tspan style=\"font-family:KaTeX_Main,serif;font-style:normal\">√2</tspan></text><text x=\"75\" y=\"235\" font-size=\"24\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D<tspan font-size=\"17\" dy=\"6\">R</tspan></text><text x=\"168\" y=\"130\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">S<tspan font-size=\"17\" dy=\"6\">R</tspan></text><text x=\"58\" y=\"88\" font-size=\"24\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">D<tspan font-size=\"17\" dy=\"6\">R</tspan><tspan font-size=\"17\" style=\"font-family:KaTeX_Main,serif;font-style:normal\">√2</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "被積函數 $>0$，區域越大積分越大：",
+            "$\\iint_{D_R}\\le I_R^2\\le\\iint_{D_{R\\sqrt2}}$"
+          ],
+          "say": "被積函數是正的，區域越大，積分就越大。所以 I R 平方被兩個四分之一圓上的積分夾住。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\iint_{D_R}\\le\\left(\\int_0^Re^{-x^2}dx\\right)^2\\le\\iint_{D_{R\\sqrt{2}}}$","on":"區域越大"}
-          ] },
-        { "show": ["$\\frac{\\pi}{4}(1-e^{-R^2})$ 與 $\\frac{\\pi}{4}(1-e^{-2R^2})$"],
-          "note": "極座標。",
-          "say": "圓盤用極座標算：左邊四分之 pi 乘一減 e 的負 R 平方次方，右邊的 R 平方換成二 R 平方。",
+            {
+              "do": "write",
+              "line": "被積函數 $>0$，區域越大積分越大："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_{D_R}\\le I_R^2\\le\\iint_{D_{R\\sqrt2}}$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "四分之一圓是有界區域，可以放心換極座標：",
+            "$\\iint_{D_\\rho}e^{-(x^2+y^2)}dA=\\frac\\pi2\\int_0^\\rho re^{-r^2}dr=\\frac\\pi4\\left(1-e^{-\\rho^2}\\right)$"
+          ],
+          "say": "四分之一圓是有界區域，換極座標完全合法。半徑 肉 的四分之一圓上，積分是 4 分之派乘 1 減 e 的負 肉 平方次方。",
           "board": [
-            {"do":"write","line":"$\\frac{\\pi}{4}(1-e^{-R^2})$ 與 $\\frac{\\pi}{4}(1-e^{-2R^2})$","on":"圓盤用極座標"}
-          ] },
-        { "show": ["中間項 $\\to I^2$"],
-          "say": "中間那項，R 趨近無限大時，括號裡就是 I 的定義，所以趨近 I，平方趨近 I 平方。",
+            {
+              "do": "write",
+              "line": "四分之一圓是有界區域，可以放心換極座標："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\iint_{D_\\rho}e^{-(x^2+y^2)}dA=\\frac\\pi2\\int_0^\\rho re^{-r^2}dr=\\frac\\pi4\\left(1-e^{-\\rho^2}\\right)$",
+              "on": "圓上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac\\pi4\\left(1-e^{-R^2}\\right)\\le I_R^2\\le\\frac\\pi4\\left(1-e^{-2R^2}\\right)$"
+          ],
+          "say": "代進去，I R 平方被夾在這兩個式子中間。",
           "board": [
-            {"do":"write","line":"$\\left(\\int_0^Re^{-x^2}dx\\right)^2\\to {{ii:I^2}}$"},
-            {"do":"focus","term":"ii","on":"平方趨近"}
-          ] },
-        { "show": ["$R\\to\\infty$：兩邊都 $\\to\\frac{\\pi}{4}$ ⇒ $I^2=\\frac{\\pi}{4}$"],
-          "note": "上下界趨近同一個數。",
-          "why": {"ask":"為什麼能下結論 $I^2=\\frac{\\pi}{4}$？","say":"R 趨近無限大。憑什麼說 I 平方等於四分之 pi？","options":[{"label":"上下兩邊都 $\\to\\frac{\\pi}{4}$","correct":true},{"label":"右邊 $\\to\\frac{\\pi}{4}$ 就夠了","why":"只有上界，只能說 $I^2\\le\\frac{\\pi}{4}$；還要下界也趨近同一個數。"},{"label":"左邊 $\\to\\frac{\\pi}{4}$ 就夠了","why":"只有下界，只能說 $I^2\\ge\\frac{\\pi}{4}$；兩邊都要。"}]},
-          "say": "R 趨近無限大，e 的負 R 平方次方趨近零，上下兩邊都趨近四分之 pi，夾擠得 I 平方等於四分之 pi。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac\\pi4\\left(1-e^{-R^2}\\right)\\le I_R^2\\le\\frac\\pi4\\left(1-e^{-2R^2}\\right)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "被夾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$R\\to\\infty$：夾擠 ⇒ $I^2=\\dfrac\\pi4$　$\\blacksquare$"
+          ],
+          "say": "R 趨近無限大，兩邊都趨近 4 分之派。夾擠定理告訴我們，I 平方就是 4 分之派。這樣每一步都只用到有限區域上的定理，證明是嚴格的。",
           "board": [
-            {"do":"write","line":"$R\\to\\infty$：兩邊都 $\\to\\frac{\\pi}{4}$"},
-            {"do":"write","line":"夾擠 ⇒ $I^2=\\frac{\\pi}{4}$","color":"green","on":"夾擠得","why":true}
-          ] }
+            {
+              "do": "write",
+              "line": "$R\\to\\infty$：夾擠 ⇒ $I^2=\\dfrac\\pi4$　$\\blacksquare$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　數值：$R=2$ 時 $0.7710\\le I_2^2\\approx0.7781\\le0.7851$；$\\frac\\pi4\\approx0.7854$",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "嚴格證明 $\\int_0^\\infty e^{-x^2}dx=\\frac{\\sqrt\\pi}2$ 的步驟"
+          ],
+          "say": "把嚴格證明的步驟排排看。"
+        }
       ],
-      "key": "用兩個圓盤把方塊夾住，兩邊極限相同",
       "proof": true,
-      "of": 3,
-      "skeleton": "夾擠",
-      "where": {
-        "ask": "「被積函數為正」用在哪一步？",
+      "order": {
+        "ask": "嚴格證明 $\\int_0^\\infty e^{-x^2}dx=\\frac{\\sqrt\\pi}2$ 的步驟",
         "steps": [
           {
-            "label": "$D_R\\subset S_R\\subset D_{R\\sqrt{2}}$",
-            "why": "這是純幾何：比的是點到原點的距離。"
+            "label": "截斷：令 $I_R=\\int_0^Re^{-x^2}dx$"
           },
           {
-            "label": "區域大，積分大：三個積分排大小",
-            "correct": true
+            "label": "有限正方形上：$I_R^2=\\iint_{S_R}e^{-(x^2+y^2)}dA$",
+            "why": "先要有上一步：截斷：令 $I_R=\\int_0^Re^{-x^2}dx$"
           },
           {
-            "label": "極座標算出 $\\frac{\\pi}{4}(1-e^{-R^2})$",
-            "why": "這只用到 $dx\\,dy=r\\,dr\\,d\\theta$ 和 $u=r^2$ 的換元。"
+            "label": "用 $D_R\\subset S_R\\subset D_{R\\sqrt2}$ 上下夾住",
+            "why": "先要有上一步：有限正方形上：$I_R^2=\\iint_{S_R}e^{-(x^2+y^2)}dA$"
           },
           {
-            "label": "$R\\to\\infty$，夾擠",
-            "why": "這只用到 $e^{-R^2}\\to0$ 和夾擠定理。"
+            "label": "四分之一圓上換極座標，算出上下界",
+            "why": "先要有上一步：用 $D_R\\subset S_R\\subset D_{R\\sqrt2}$ 上下夾住"
+          },
+          {
+            "label": "令 $R\\to\\infty$，夾擠得 $I^2=\\frac\\pi4$",
+            "why": "先要有上一步：四分之一圓上換極座標，算出上下界"
           }
         ]
       }
     },
     {
-      "title": "整條實數線",
-      "beats": [
-        { "show": ["$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}$"],
-          "note": "偶函數，是 $\\int_0^{\\infty}$ 的兩倍。",
-          "say": "鐘形曲線左右對稱，整條實數線的面積是兩倍的 I，也是根號 pi。",
-          "board": [
-            {"do":"write","line":"$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=2\\,{{i:I}}$"},
-            {"do":"focus","term":"i","on":"兩倍的"}
-          ] },
-        { "show": ["$\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx=\\sqrt{2\\pi}$"],
-          "say": "指數換成負二分之 x 平方，整條線的面積是根號二 pi。",
-          "board": [
-            {"do":"write","line":"$\\int_{-\\infty}^{\\infty}e^{-{{e:x^2/2}}}\\,dx=\\sqrt{2\\pi}$"},
-            {"do":"focus","term":"e","on":"負二分之"}
-          ] },
-        { "show": ["常態分布前面的 $\\frac{1}{\\sqrt{2\\pi}}$"],
-          "note": "讓總面積等於 $1$。",
-          "say": "這就是常態分布的密度前面為什麼有根號二 pi 分之一：讓總面積剛好是一。",
-          "board": [
-            {"do":"write","line":"${{c:\\frac{1}{\\sqrt{2\\pi}}}}\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx=1$"},
-            {"do":"box","term":"c","color":"green","on":"根號二 pi 分之一"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
       "title": "指數有係數",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}e^{-3x^2}\\,dx$"],
-          "note": "令 $u=\\sqrt{3}\\,x$，$dx=\\frac{du}{\\sqrt{3}}$。",
-          "say": "指數前面有係數三，令 u 等於根號三 x，dx 就是根號三分之 du。",
+        {
+          "show": [
+            "$a>0$，令 $u=\\sqrt a\\,x$：$dx=\\dfrac{du}{\\sqrt a}$",
+            "$\\int_0^\\infty e^{-ax^2}dx=\\frac1{\\sqrt a}\\int_0^\\infty e^{-u^2}du=\\frac12\\sqrt{\\frac\\pi a}$"
+          ],
+          "say": "指數有係數 a 時，令 u 等於根號 a 乘 x，把 a x 平方變成 u 平方。dx 是根號 a 分之 du，答案是 2 分之一乘根號 a 分之派。",
           "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}e^{-3x^2}\\,dx$"},
-            {"do":"write","line":"令 $u={{u:\\sqrt{3}\\,x}}$，$dx=\\frac{du}{\\sqrt{3}}$","on":"令 u"},
-            {"do":"focus","term":"u","color":"blue","on":"根號三 x"}
-          ] },
-        { "show": ["$=\\frac{1}{\\sqrt{3}}\\cdot\\frac{\\sqrt{\\pi}}{2}$"],
-          "say": "剩下的是標準的鐘形積分二分之根號 pi，前面多一個根號三分之一。",
+            {
+              "do": "write",
+              "line": "$a>0$，令 $u=\\sqrt a\\,x$：$dx=\\dfrac{du}{\\sqrt a}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\int_0^\\infty e^{-ax^2}dx=\\frac1{\\sqrt a}\\int_0^\\infty e^{-u^2}du=\\frac12\\sqrt{\\frac\\pi a}}}$",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1：$\\displaystyle\\int_0^\\infty e^{-3x^2}dx=\\frac12\\sqrt{\\frac\\pi3}\\approx0.5117$"
+          ],
+          "say": "例一，係數 3：2 分之一乘根號 3 分之派，大約 0.5117。",
           "board": [
-            {"do":"write","line":"$={{f:\\frac{1}{\\sqrt{3}}}}\\cdot{{s:\\frac{\\sqrt{\\pi}}{2}}}$"},
-            {"do":"focus","term":"s","color":"blue","on":"標準的鐘形積分"},
-            {"do":"focus","term":"f","on":"多一個"}
-          ] },
-        { "show": ["$e^{-3x^2}$ 比 $e^{-x^2}$ 窄"],
-          "say": "畫出來看：藍色是標準的鐘形，紅色係數是三，比較窄，面積也比較小。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.25,3,-0.15,1.15],"curves":[{"expr":"exp(-(x^2))","domain":[0,3],"color":"blue"},{"expr":"exp(-3*x^2)","domain":[0,3],"color":"red"}],"ticks":false}}
-          ] },
-        { "show": ["$\\int_0^{\\infty}e^{-ax^2}\\,dx=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$"],
-          "note": "$a>0$；$a=3$ 時約 $0.5117$。",
-          "say": "一般公式：係數 a 讓曲線變窄，面積是二分之一乘根號 a 分之 pi。",
-          "board": [
-            {"do":"write","line":"$\\int_0^{\\infty}e^{-{{a:a}}x^2}\\,dx={{r:\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}}}$"},
-            {"do":"focus","term":"a","on":"係數"},
-            {"do":"box","term":"r","color":"green","on":"面積是"}
-          ] }
+            {
+              "do": "write",
+              "line": "例 1：$\\displaystyle\\int_0^\\infty e^{-3x^2}dx=\\frac12\\sqrt{\\frac\\pi3}\\approx0.5117$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　直覺：$a$ 越大，鐘越窄，面積越小；寬度按 $\\frac1{\\sqrt a}$ 縮",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 0
+    },
+    {
+      "title": "常態分布的常數",
+      "beats": [
+        {
+          "show": [
+            "$\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx$"
+          ],
+          "say": "最後看統計裡最重要的一個積分：e 的負 2 分之 x 平方次方，從負無限大積到無限大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "偶函數：$=2\\displaystyle\\int_0^\\infty e^{-\\frac12x^2}dx$，$a=\\frac12$"
+          ],
+          "say": "它是偶函數，等於右半邊的兩倍。係數 a 是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "偶函數：$=2\\displaystyle\\int_0^\\infty e^{-\\frac12x^2}dx$，$a=\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=2\\cdot\\frac12\\sqrt{\\frac{\\pi}{1/2}}=\\sqrt{2\\pi}\\approx2.5066$"
+          ],
+          "say": "代公式：2 乘 2 分之一乘根號 2 派，答案是根號 2 派，大約 2.5066。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle =2\\cdot\\frac12\\sqrt{\\frac{\\pi}{1/2}}=\\sqrt{2\\pi}\\approx2.5066}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以常態分布的密度",
+            "$\\frac1{\\sqrt{2\\pi}}e^{-x^2/2}$"
+          ],
+          "say": "這就是為什麼標準常態分布的密度函數，前面要乘根號 2 派分之一：這樣總面積才剛好是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以常態分布的密度"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{\\sqrt{2\\pi}}e^{-x^2/2}$",
+              "on": "度函"
+            },
+            {
+              "do": "write",
+              "line": "總面積是 $1$",
+              "color": "gold",
+              "on": "之一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那個 $\\sqrt{2\\pi}$，就是 $\\Gamma\\!\\left(\\frac12\\right)=\\sqrt\\pi$ 換了個樣子"
+          ],
+          "say": "那個根號 2 派，追根究柢就是伽瑪 2 分之 1 等於根號派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "那個 $\\sqrt{2\\pi}$，就是 $\\Gamma\\!\\left(\\frac12\\right)=\\sqrt\\pi$ 換了個樣子"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $x=u^2$：$\\Gamma\\!\\left(\\frac12\\right)=2\\int_0^\\infty e^{-u^2}du$",
+            "• 平方 → 第一象限二重積分 → 極座標，多出的 $r$ 讓它積得出來"
+          ],
+          "say": "整理：換元把伽瑪 2 分之 1 變成鐘形曲線；平方之後換極座標，多出來的 r 讓它積得出來；用正方形和兩個四分之一圓夾擠，讓證明嚴格；有係數就縮放。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $x=u^2$：$\\Gamma\\!\\left(\\frac12\\right)=2\\int_0^\\infty e^{-u^2}du$"
+            },
+            {
+              "do": "write",
+              "line": "• 平方 → 第一象限二重積分 → 極座標，多出的 $r$ 讓它積得出來",
+              "on": "變成"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^\\infty e^{-u^2}du=\\dfrac{\\sqrt\\pi}2$，$\\Gamma\\!\\left(\\frac12\\right)=\\sqrt\\pi$",
+              "on": "座標"
+            },
+            {
+              "do": "write",
+              "line": "• 嚴格：$D_R\\subset S_R\\subset D_{R\\sqrt2}$，有限區域上算，再夾擠",
+              "on": "用正"
+            },
+            {
+              "do": "write",
+              "line": "• $\\int_0^\\infty e^{-ax^2}dx=\\frac12\\sqrt{\\frac\\pi a}$；$\\int_{\\mathbb R}e^{-x^2/2}dx=\\sqrt{2\\pi}$",
+              "on": "讓證"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：半整數的 Gamma"
+          ],
+          "say": "下一課，從根號派往上爬，算出所有半整數的伽瑪。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：半整數的 Gamma"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["gamma-function", "gaussian", "special-functions"],
-    "fine": ["gamma-half-value", "gamma-half-gaussian-link", "gaussian-polar-trick", "gaussian-scaling"]
+    "coarse": [
+      "gamma-function",
+      "gaussian",
+      "special-functions"
+    ],
+    "fine": [
+      "gamma-half-value",
+      "gamma-half-gaussian-link",
+      "gaussian-polar-trick",
+      "gaussian-scaling"
+    ]
   },
   "practice": [
-    { "id": "mob-gamma-002", "core": true, "trains": "gamma-half-value" },
-    { "id": "world-090", "core": true, "trains": "gamma-half-gaussian-link" },
-    { "id": "cg-11d-011", "core": true, "trains": "gaussian-scaling" },
-    { "id": "cg-11d-014", "core": true, "trains": "gamma-half-gaussian-link" },
-    { "id": "mob-gamma-007", "trains": "gamma-half-value" },
-    { "id": "mob-gamma-003", "trains": "gamma-half-value" },
-    { "id": "cg-11d-012", "trains": "gaussian-scaling" },
-    { "id": "cg-11d-013", "trains": "gaussian-scaling" },
-    { "id": "cg-11d-015", "trains": "gamma-half-gaussian-link" }
+    {
+      "id": "mob-gamma-002",
+      "core": true,
+      "trains": "gamma-half-value"
+    },
+    {
+      "id": "world-090",
+      "core": true,
+      "trains": "gamma-half-gaussian-link"
+    },
+    {
+      "id": "cg-11d-011",
+      "core": true,
+      "trains": "gaussian-scaling"
+    },
+    {
+      "id": "cg-11d-014",
+      "core": true,
+      "trains": "gamma-half-gaussian-link"
+    },
+    {
+      "id": "mob-gamma-007",
+      "trains": "gamma-half-value"
+    },
+    {
+      "id": "mob-gamma-003",
+      "trains": "gamma-half-value"
+    },
+    {
+      "id": "cg-11d-012",
+      "trains": "gaussian-scaling"
+    },
+    {
+      "id": "cg-11d-013",
+      "trains": "gaussian-scaling"
+    },
+    {
+      "id": "cg-11d-015",
+      "trains": "gamma-half-gaussian-link"
+    }
   ],
   "gaps": [
-    { "tag": "gaussian-polar-trick", "count": 1, "note": "白話證明題：用極座標證明 ∫_{−∞}^∞ e^{−x²} dx = √π。" }
+    {
+      "tag": "gaussian-polar-trick",
+      "count": 1,
+      "note": "白話證明題：用極座標證明 ∫_{−∞}^∞ e^{−x²} dx = √π。"
+    }
   ]
 }

@@ -1,7 +1,8 @@
 {
   "id": "parametric-derivative",
   "title": "參數式的導數",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
   "prerequisites": [
     "parametric-curves",
@@ -16,54 +17,126 @@
     "polar-tangent"
   ],
   "objectives": [
-    "用 $\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$ 求參數曲線在某點的切線斜率與切線方程式。",
-    "找出水平切線（$\\frac{dy}{dt}=0$、$\\frac{dx}{dt}\\ne 0$）與鉛直切線（$\\frac{dx}{dt}=0$、$\\frac{dy}{dt}\\ne 0$）。",
-    "看到 $\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 同時為 0 時，知道公式不給結論，要另外分析。"
+    "用 $\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$ 求參數曲線在某點的切線斜率與切線方程式",
+    "找出水平切線（$\\frac{dy}{dt}=0$、$\\frac{dx}{dt}\\ne 0$）與鉛直切線（$\\frac{dx}{dt}=0$、$\\frac{dy}{dt}\\ne 0$）",
+    "看到 $\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 同時為 0 時，知道公式不給結論，要另外分析"
   ],
-  "visual": "參數曲線 x = t²、y = t³ − 3t 上一個點隨 t 移動，點上畫一支速度箭頭 (dx/dt, dy/dt)，以及延伸出去的切線。旁邊即時顯示 dx/dt、dy/dt 與兩者的比值。點經過 t = ±1 時箭頭變成水平，經過 t = 0 時變成鉛直；在交叉點 (3, 0) 兩次經過，切線方向不一樣。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 斜率是兩個速度的比",
+      "heading": "① 斜率是速度的比",
       "body": [
-        "點在時刻 $t$ 的位置是 $(x(t),y(t))$。很短的時間 $\\Delta t$ 內，$x$ 大約變了 $x'(t)\\Delta t$，$y$ 大約變了 $y'(t)\\Delta t$。切線斜率是「$y$ 的變化 ÷ $x$ 的變化」，$\\Delta t$ 約掉，就得到下面的公式。"
+        "點在動：$x$ 方向速度 $\\dfrac{dx}{dt}$，$y$ 方向速度 $\\dfrac{dy}{dt}$",
+        "經過一小段時間 $\\Delta t$：",
+        "斜率 $\\dfrac{\\Delta y}{\\Delta x}$：$\\Delta t$ 約掉",
+        "前提：$\\frac{dx}{dt}\\ne0$"
       ],
       "tex": [
-        "\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}\\qquad\\left(\\frac{dx}{dt}\\neq 0\\right)"
-      ],
-      "collapsible": false
+        "\\Delta x\\approx\\frac{dx}{dt}\\Delta t,\\qquad \\Delta y\\approx\\frac{dy}{dt}\\Delta t",
+        "\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}"
+      ]
     },
     {
-      "heading": "② 寫成連鎖律就好記",
+      "heading": "② 寫成連鎖律",
       "body": [
-        "上一段是直覺，不是證明：它把「大約」當成相等，也沒有說明什麼時候 $y$ 真的能看成 $x$ 的函數。嚴格的推導在下面可折疊的段落。",
-        "如果 $y$ 可以看成 $x$ 的函數，連鎖律給 $\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$。兩邊除以 $\\frac{dx}{dt}$ 就是上面的公式。",
-        "所以順序是：先各自對 $t$ 微分，再相除，最後代入題目給的 $t$。不要先把 $t$ 消掉，那常常更難。"
+        "把 $y$ 看成 $x$ 的函數，$x$ 又是 $t$ 的函數：",
+        "兩邊除以 $\\dfrac{dx}{dt}$（不是 $0$）就是公式",
+        "好記，但這裡偷用了「$y$ 真的是 $x$ 的可微函數」",
+        "為什麼 $\\frac{dx}{dt}\\ne0$ 就夠",
+        "設 $x'(t)$ 連續、$x'(t_0)\\ne0$ → $t_0$ 附近 $x'$ 不變號",
+        "$x$ 是一對一 → 有反函數 $t=t(x)$，且 $\\dfrac{dt}{dx}=\\dfrac1{x'(t)}$",
+        "$y=y\\big(t(x)\\big)$，連鎖律：",
+        "$x'=0$ 的點，曲線可能在那裡折返，不一定是 $x$ 的函數"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}",
+        "\\frac{dy}{dx}=y'(t)\\cdot\\frac{dt}{dx}=\\frac{y'(t)}{x'(t)}"
+      ]
     },
     {
-      "heading": "為什麼 $\\frac{dx}{dt}\\ne 0$ 就夠",
+      "heading": "② 例：直接套公式",
       "body": [
-        "假設 $x'$、$y'$ 在 $t_0$ 附近連續，而且 $x'(t_0)\\ne 0$。那 $x'$ 在 $t_0$ 附近不變號，$x(t)$ 在那裡嚴格單調，有反函數 $t=t(x)$，且 $\\frac{dt}{dx}=\\frac{1}{dx/dt}$（〈反函數〉的導數公式）。",
-        "於是在那一小段曲線上 $y=y(t(x))$ 真的是 $x$ 的函數，連鎖律給 $\\frac{dy}{dx}=y'(t)\\cdot\\frac{dt}{dx}=\\frac{y'(t)}{x'(t)}$。"
+        "$x=t^2,\\ y=t^3$，求 $t=1$ 的 $\\dfrac{dy}{dx}$",
+        "$t=1$：斜率 $\\dfrac32$，點 $(1,1)$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\frac{dy}{dx}=\\frac{3t^2}{2t}=\\frac{3t}{2}\\quad(t\\ne0)",
+        "y-1=\\frac32(x-1)"
+      ]
     },
     {
-      "heading": "③ 水平切線、鉛直切線、和一個例外",
+      "heading": "② 例：擺線的切線",
       "body": [
-        "水平切線：$\\frac{dy}{dt}=0$ 而 $\\frac{dx}{dt}\\ne 0$，斜率 0。",
-        "鉛直切線：$\\frac{dx}{dt}=0$ 而 $\\frac{dy}{dt}\\ne 0$，點在那一瞬間只上下動，斜率不存在。",
-        "兩個都是 0：點在那一瞬間停住了，公式變成 $\\frac{0}{0}$，不能下結論。擺線 $x=t-\\sin t$、$y=1-\\cos t$ 在 $t=0$ 就是這樣，那裡是一個尖點。要判斷，得看 $t\\to t_0$ 時 $\\frac{dy/dt}{dx/dt}$ 的極限。"
+        "$x=t-\\sin t,\\ y=1-\\cos t$，$t=\\frac\\pi2$",
+        "擺線：半徑 $1$ 的輪子在 $x$ 軸上滾，輪緣上一點畫出的曲線",
+        "$t=\\frac\\pi2$：$\\dfrac{dy}{dx}=\\dfrac{1}{1-0}=1$",
+        "點：$\\big(\\frac\\pi2-1,\\ 1\\big)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{dx}{dt}=1-\\cos t,\\quad \\frac{dy}{dt}=\\sin t",
+        "y=x+2-\\frac\\pi2"
+      ]
     },
     {
-      "heading": "④ 同一點，可以有兩條切線",
+      "heading": "③ 水平、鉛直切線",
       "body": [
-        "曲線自己交叉時，同一個 $(x,y)$ 對應兩個 $t$。斜率要用 $t$ 算，所以兩次經過可以有兩個不同的斜率（範例 3）。"
+        "• 水平：$\\dfrac{dy}{dt}=0$ 且 $\\dfrac{dx}{dt}\\ne0$",
+        "• 鉛直：$\\dfrac{dx}{dt}=0$ 且 $\\dfrac{dy}{dt}\\ne0$",
+        "例：$x=t^2,\\ y=t^3-3t$",
+        "水平：$t=\\pm1$ → $(1,-2)$、$(1,2)$",
+        "鉛直：$t=0$ → $(0,0)$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{dx}{dt}=2t,\\qquad \\frac{dy}{dt}=3t^2-3"
+      ]
+    },
+    {
+      "heading": "③ 試一題",
+      "body": [
+        "做法：$x'$、$y'$ 的零點分別列出，再互相檢查",
+        "• 只有 $y'=0$：水平",
+        "• 只有 $x'=0$：鉛直",
+        "• 同時是 $0$：下一頁"
+      ]
+    },
+    {
+      "heading": "③ 例外：兩個都是 0",
+      "body": [
+        "$\\dfrac{dx}{dt}=\\dfrac{dy}{dt}=0$：$\\dfrac00$，公式不給結論",
+        "情況一：$x=t^3,\\ y=t^6$，$t=0$",
+        "消去參數：$y=x^2$，在原點斜率是 $0$",
+        "也可以取極限：$\\frac{6t^5}{3t^2}=2t^3\\to0$",
+        "情況二：擺線在 $t=0$",
+        "輪緣上的點碰到地面時，速度剛好是 $0$"
+      ],
+      "tex": [
+        "\\frac{dy}{dx}=\\frac{\\sin t}{1-\\cos t}=\\cot\\frac t2\\to\\infty\\ (t\\to0^+)"
+      ]
+    },
+    {
+      "heading": "④ 同一點，兩條切線",
+      "body": [
+        "交叉點 $(3,0)$：$t=\\sqrt3$ 和 $t=-\\sqrt3$ 都經過",
+        "• $t=\\sqrt3$：斜率 $\\sqrt3$",
+        "• $t=-\\sqrt3$：斜率 $-\\sqrt3$",
+        "$y=f(x)$ 的圖形做不到這件事，參數曲線可以"
+      ],
+      "tex": [
+        "\\frac{dy}{dx}=\\frac{3t^2-3}{2t}=\\frac{6}{2t}=\\frac{3}{t}",
+        "y=\\sqrt3(x-3),\\qquad y=-\\sqrt3(x-3)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 水平切線：$y'=0,\\ x'\\ne0$；鉛直切線：$x'=0,\\ y'\\ne0$",
+        "• 兩個都是 $0$：公式沒結論，取極限或消去參數",
+        "• 交叉點：每經過一次，各算一條切線",
+        "下一課：參數式的二階導數"
+      ],
+      "tex": [
+        "\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}\\quad\\Big(\\frac{dx}{dt}\\ne0\\Big)"
+      ]
     }
   ],
   "workedExamples": [
@@ -113,323 +186,1081 @@
   ],
   "checks": [
     {
-      "ask": "$x=\\cos t$、$y=\\sin t$，$\\frac{dy}{dx}$ 是？",
+      "ask": "$x=t^3-3t,\\ y=t^2$ 的鉛直切線在哪些點？",
       "options": [
         {
-          "label": "$-\\cos t/\\sin t$",
+          "label": "$(-2,1)$ 和 $(2,1)$",
           "correct": true
         },
         {
-          "label": "$-\\sin t/\\cos t$",
-          "why": "這是 $\\frac{dx/dt}{dy/dt}$，分子分母放反了。"
+          "label": "$(0,0)$",
+          "why": "那是 $y'=0$ 的點：$t=0$ 是水平切線"
         },
         {
-          "label": "$\\cos t$",
-          "why": "這只是 $\\frac{dy}{dt}$，還要除以 $\\frac{dx}{dt}=-\\sin t$。"
-        }
-      ]
-    },
-    {
-      "ask": "參數曲線在某個 $t$ 有水平切線的條件是？",
-      "options": [
-        {
-          "label": "$\\frac{dy}{dt}=0$ 且 $\\frac{dx}{dt}\\ne 0$",
-          "correct": true
+          "label": "$(-2,1)$ 只有一個",
+          "why": "$t=-1$ 也要算：$x=-1+3=2$"
         },
         {
-          "label": "$\\frac{dx}{dt}=0$ 且 $\\frac{dy}{dt}\\ne 0$",
-          "why": "$x$ 不動、$y$ 在動，點正在上下走，那是鉛直切線。"
-        },
-        {
-          "label": "$\\frac{dx}{dt}=0$ 且 $\\frac{dy}{dt}=0$",
-          "why": "兩個都是 0 時公式是 $\\frac{0}{0}$，可能是尖點，什麼都不能確定。"
-        }
-      ]
-    },
-    {
-      "ask": "$x=e^t$、$y=te^t$，$t=0$ 處的 $\\frac{dy}{dx}$ 是？",
-      "options": [
-        {
-          "label": "1",
-          "correct": true
-        },
-        {
-          "label": "0",
-          "why": "$te^t$ 要用乘法法則：$\\frac{dy}{dt}=e^t+te^t$，在 $t=0$ 是 1，不是 0。"
-        },
-        {
-          "label": "$e$",
-          "why": "代錯了點：$t=0$ 時 $e^t=1$。$e$ 是 $t=1$ 的值。"
-        }
-      ]
-    },
-    {
-      "ask": "擺線 $x=t-\\sin t$、$y=1-\\cos t$ 在 $t=0$，下列何者正確？",
-      "options": [
-        {
-          "label": "$\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 都是 0，公式不給結論，要另外分析",
-          "correct": true
-        },
-        {
-          "label": "斜率是 0",
-          "why": "$\\frac{dy}{dt}=\\sin 0=0$，但 $\\frac{dx}{dt}=1-\\cos 0$ 也是 0，$\\frac{0}{0}$ 不是 0。"
-        },
-        {
-          "label": "有鉛直切線",
-          "why": "鉛直切線要 $\\frac{dx}{dt}=0$ 而 $\\frac{dy}{dt}\\ne 0$；這裡 $\\frac{dy}{dt}$ 也是 0。"
+          "label": "$(1,-2)$ 和 $(1,2)$",
+          "why": "把 $x$、$y$ 寫反了：$t=\\pm1$ 時 $x=\\mp2$、$y=1$"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "斜率是兩個速度的比",
+      "title": "斜率是速度的比",
       "beats": [
-        { "show": ["很短的 $\\Delta t$：$x$ 變 $x'(t)\\Delta t$","$y$ 變 $y'(t)\\Delta t$"],
-          "say": "很短的一段時間 delta t 裡，x 大約變了 x prime 乘 delta t，y 大約變了 y prime 乘 delta t。",
+        {
+          "show": [
+            "點在動：$x$ 方向速度 $\\dfrac{dx}{dt}$，$y$ 方向速度 $\\dfrac{dy}{dt}$"
+          ],
+          "say": "參數曲線上的點在動。它往右的速度是 d x d t，往上的速度是 d y d t。",
           "board": [
-            {"do":"write","line":"$\\Delta x \\approx {{a:x'(t)\\Delta t}}$","tint":{"a":"blue"}},
-            {"do":"write","line":"$\\Delta y \\approx {{b:y'(t)\\Delta t}}$","tint":{"b":"violet"},"on":"y 大約變了"}
-          ] },
-        { "show": ["$\\frac{dy}{dx} = \\frac{dy/dt}{dx/dt}$"],
-          "note": "要求 $\\frac{dx}{dt} \\ne 0$。",
-          "say": "斜率是 y 的變化除以 x 的變化，delta t 上下約掉，就剩兩個速度相除。分母的 x 速度不能是零。",
+            {
+              "do": "write",
+              "line": "點在動：$x$ 方向速度 $\\dfrac{dx}{dt}$，$y$ 方向速度 $\\dfrac{dy}{dt}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "經過一小段時間 $\\Delta t$：",
+            "$\\Delta x\\approx\\frac{dx}{dt}\\Delta t,\\qquad \\Delta y\\approx\\frac{dy}{dt}\\Delta t$"
+          ],
+          "say": "經過一小段時間德爾塔 t，x 大約變了 d x d t 乘德爾塔 t，y 大約變了 d y d t 乘德爾塔 t。",
           "board": [
-            {"do":"write","line":"$\\frac{\\Delta y}{\\Delta x} \\approx \\frac{{{yv:y'(t)}}{{d:\\Delta t}}}{{{xv:x'(t)}}{{e:\\Delta t}}}$","tint":{"yv":"violet","xv":"blue"}},
-            {"do":"strike","term":"d","on":"delta t"},
-            {"do":"strike","term":"e","on":"約掉"},
-            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{yv:y'(t)}}}{{{xv:x'(t)}}}$","on":"就剩"}
-          ] },
-        { "show": ["直覺，不是證明"],
-          "note": "它把「大約」當成相等。完整證明在全文。",
-          "say": "這是直覺，不是證明，它把大約當成相等。嚴格的版本用連鎖律，完整證明在全文。",
+            {
+              "do": "write",
+              "line": "經過一小段時間 $\\Delta t$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta x\\approx\\frac{dx}{dt}\\Delta t,\\qquad \\Delta y\\approx\\frac{dy}{dt}\\Delta t$",
+              "on": "乘德#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率 $\\dfrac{\\Delta y}{\\Delta x}$：$\\Delta t$ 約掉",
+            "$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$"
+          ],
+          "say": "斜率是德爾塔 y 除以德爾塔 x，德爾塔 t 約掉。所以切線斜率，就是往上的速度除以往右的速度。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"直覺，不是證明","color":"red","on":"直覺"},
-            {"do":"write","line":"把 $\\approx$ 當成 $=$","on":"把大約"}
-          ] },
-        { "show": ["連鎖律：$\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$","兩邊除以 $\\frac{dx}{dt}$"],
-          "note": "前提：$y$ 能看成 $x$ 的函數。",
-          "say": "嚴格版用連鎖律：y 對 t 的導數，等於 y 對 x 的導數乘 x 對 t 的導數。兩邊除以 x 的速度，就是公式。",
+            {
+              "do": "write",
+              "line": "斜率 $\\dfrac{\\Delta y}{\\Delta x}$：$\\Delta t$ 約掉"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}}}$",
+              "color": "red",
+              "on": "爾塔#2"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　前提：$\\frac{dx}{dt}\\ne0$",
+              "color": "violet",
+              "on": "上的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "x = t²，y = t³（t > 0）；紅色虛線是切線"
+          ],
+          "say": "圖上是 x 等於 t 平方、y 等於 t 立方。綠色三角形的兩邊，就是往右走的量和往上走的量，斜邊沿著切線。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{dt}={{c1:\\frac{dy}{dx}}}\\cdot\\frac{dx}{dt}$"},
-            {"do":"circle","term":"c1","color":"gold","label":"要求的","on":"y 對 x"},
-            {"do":"write","line":"兩邊除以 $\\frac{dx}{dt}$：$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$","on":"兩邊除以"}
-          ] },
-        { "show": ["先各自對 $t$ 微分，再相除"],
-          "note": "不要先把 $t$ 消掉。",
-          "say": "所以做法的順序是：x 和 y 各自對 t 微分，再相除，最後才代題目給的 t。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "semi",
+                  "window": [
+                    -0.2,
+                    2.4,
+                    -0.2,
+                    3.6
+                  ],
+                  "xstep": 0.5,
+                  "fn": [
+                    {
+                      "expr": "x^(3/2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        3
+                      ]
+                    },
+                    {
+                      "expr": "t^3+1.5*t*(x-t^2)",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "t^2",
+                        "t^3"
+                      ],
+                      "to": [
+                        "t^2+0.6*t",
+                        "t^3"
+                      ],
+                      "color": "green"
+                    },
+                    {
+                      "from": [
+                        "t^2+0.6*t",
+                        "t^3"
+                      ],
+                      "to": [
+                        "t^2+0.6*t",
+                        "t^3+0.9*t^2"
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "t^2",
+                      "y": "t^3",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0.4,
+                      "max": 1.4,
+                      "value": 0.6,
+                      "label": "t"
+                    }
+                  },
+                  "readout": "綠色三角形：橫的 = x′Δt，直的 = y′Δt",
+                  "height": 380
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "綠色三角形：橫的 = x′Δt，直的 = y′Δt",
+              "on": "立方"
+            },
+            {
+              "do": "write",
+              "line": "x = t²，y = t³（t > 0）；紅色虛線是切線",
+              "color": "violet",
+              "on": "右走"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率是速度的比"
+          ],
+          "say": "不管點走到哪裡，切線的斜率，都是直的這一邊除以橫的這一邊。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x'(t)$、$y'(t)$ 各自對 $t$ 微分","on":"各自對"},
-            {"do":"write","line":"再相除：$\\frac{y'(t)}{x'(t)}$","on":"再相除"},
-            {"do":"write","line":"最後才代 $t$","on":"最後才代"}
-          ] }
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "semi",
+                  "window": [
+                    -0.2,
+                    2.4,
+                    -0.2,
+                    3.6
+                  ],
+                  "xstep": 0.5,
+                  "fn": [
+                    {
+                      "expr": "x^(3/2)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        3
+                      ]
+                    },
+                    {
+                      "expr": "t^3+1.5*t*(x-t^2)",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "t^2",
+                        "t^3"
+                      ],
+                      "to": [
+                        "t^2+0.6*t",
+                        "t^3"
+                      ],
+                      "color": "green"
+                    },
+                    {
+                      "from": [
+                        "t^2+0.6*t",
+                        "t^3"
+                      ],
+                      "to": [
+                        "t^2+0.6*t",
+                        "t^3+0.9*t^2"
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "t^2",
+                      "y": "t^3",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0.4,
+                      "max": 1.4,
+                      "value": 0.6,
+                      "label": "t"
+                    }
+                  },
+                  "readout": "綠色三角形：橫的 = x′Δt，直的 = y′Δt",
+                  "height": 380
+                },
+                "vals": {
+                  "t": 1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "綠色三角形：橫的 = x′Δt，直的 = y′Δt",
+              "on": "都是"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "寫成連鎖律",
+      "beats": [
+        {
+          "show": [
+            "把 $y$ 看成 $x$ 的函數，$x$ 又是 $t$ 的函數：",
+            "$\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$"
+          ],
+          "say": "用連鎖律更好記。把 y 看成 x 的函數，x 又是 t 的函數，那 d y d t 等於 d y d x 乘 d x d t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把 $y$ 看成 $x$ 的函數，$x$ 又是 $t$ 的函數："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊除以 $\\dfrac{dx}{dt}$（不是 $0$）就是公式"
+          ],
+          "say": "兩邊除以 d x d t，就得到同一個公式。像分數一樣，dt 約掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊除以 $\\dfrac{dx}{dt}$（不是 $0$）就是公式",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　好記，但這裡偷用了「$y$ 真的是 $x$ 的可微函數」",
+              "color": "violet",
+              "on": "一個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼 $\\frac{dx}{dt}\\ne0$ 就夠"
+          ],
+          "say": "這一步偷用了一件事：y 真的可以寫成 x 的函數嗎？答案是：只要 d x d t 不是 0 就可以。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼 $\\frac{dx}{dt}\\ne0$ 就夠"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $x'(t)$ 連續、$x'(t_0)\\ne0$ → $t_0$ 附近 $x'$ 不變號"
+          ],
+          "say": "假設 x prime 連續，而且在 t0 不是 0。那 t0 附近 x prime 都同號，x 對 t 嚴格遞增或嚴格遞減。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $x'(t)$ 連續、$x'(t_0)\\ne0$ → $t_0$ 附近 $x'$ 不變號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x$ 是一對一 → 有反函數 $t=t(x)$，且 $\\dfrac{dt}{dx}=\\dfrac1{x'(t)}$"
+          ],
+          "say": "嚴格單調就是一對一，可以反過來把 t 寫成 x 的函數。反函數的導數，就是 x prime 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x$ 是一對一 → 有反函數 $t=t(x)$，且 $\\dfrac{dt}{dx}=\\dfrac1{x'(t)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=y\\big(t(x)\\big)$，連鎖律：",
+            "$\\frac{dy}{dx}=y'(t)\\cdot\\frac{dt}{dx}=\\frac{y'(t)}{x'(t)}$"
+          ],
+          "say": "所以 y 是 t of x 再代進 y，真的是 x 的函數。再用一次連鎖律，就得到 y prime 除以 x prime。這就證完了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=y\\big(t(x)\\big)$，連鎖律："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{dy}{dx}=y'(t)\\cdot\\frac{dt}{dx}=\\frac{y'(t)}{x'(t)}}}$",
+              "on": "真的"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "次連"
+            },
+            {
+              "do": "write",
+              "line": "　$x'=0$ 的點，曲線可能在那裡折返，不一定是 $x$ 的函數",
+              "color": "violet",
+              "on": "除以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：直接套公式",
+      "beats": [
+        {
+          "show": [
+            "$x=t^2,\\ y=t^3$，求 $t=1$ 的 $\\dfrac{dy}{dx}$"
+          ],
+          "say": "例子：x 等於 t 平方，y 等於 t 立方，求 t 等於 1 的斜率。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=t^2,\\ y=t^3$，求 $t=1$ 的 $\\dfrac{dy}{dx}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=\\frac{3t^2}{2t}=\\frac{3t}{2}\\quad(t\\ne0)$"
+          ],
+          "say": "d y d t 是 3t 平方，d x d t 是 2t，相除得到 2 分之 3t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dx}=\\frac{3t^2}{2t}=\\frac{3t}{2}\\quad(t\\ne0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t=1$：斜率 $\\dfrac32$，點 $(1,1)$"
+          ],
+          "say": "t 等於 1，斜率 2 分之 3；點是 1 逗號 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t=1$：斜率 $\\dfrac32$，點 $(1,1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y-1=\\frac32(x-1)$"
+          ],
+          "say": "切線方程式：y 減 1 等於 2 分之 3 乘 x 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle y-1=\\frac32(x-1)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "同一條曲線 $x=t^2,\\ y=t^3$，在 $t=2$ 的斜率是？",
+        "options": [
+          {
+            "label": "$3$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac13$",
+            "why": "分子分母放反了：是 $\\frac{dy/dt}{dx/dt}$"
+          },
+          {
+            "label": "$12$",
+            "why": "只算了 $\\frac{dy}{dt}=3t^2$，忘了除以 $\\frac{dx}{dt}$"
+          },
+          {
+            "label": "$\\frac32$",
+            "why": "那是 $t=1$ 的斜率"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：直接套公式",
+      "beats": [
+        {
+          "show": [
+            "求參數曲線在 $t=t_0$ 的切線"
+          ],
+          "say": "把步驟排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "求參數曲線在 $t=t_0$ 的切線",
+        "steps": [
+          {
+            "label": "算 $\\frac{dx}{dt}$、$\\frac{dy}{dt}$"
+          },
+          {
+            "label": "相除得 $\\frac{dy}{dx}$，代 $t=t_0$ 得斜率",
+            "why": "先要有上一步：算 $\\frac{dx}{dt}$、$\\frac{dy}{dt}$"
+          },
+          {
+            "label": "代 $t=t_0$ 進 $x(t)$、$y(t)$ 得切點",
+            "why": "先要有上一步：相除得 $\\frac{dy}{dx}$，代 $t=t_0$ 得斜率"
+          },
+          {
+            "label": "寫出 $y-y_0=m(x-x_0)$",
+            "why": "先要有上一步：代 $t=t_0$ 進 $x(t)$、$y(t)$ 得切點"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：擺線的切線",
+      "beats": [
+        {
+          "show": [
+            "$x=t-\\sin t,\\ y=1-\\cos t$，$t=\\frac\\pi2$"
+          ],
+          "say": "擺線：x 等於 t 減正弦 t，y 等於 1 減餘弦 t。求 t 等於 2 分之派的切線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=t-\\sin t,\\ y=1-\\cos t$，$t=\\frac\\pi2$"
+            },
+            {
+              "do": "write",
+              "line": "　擺線：半徑 $1$ 的輪子在 $x$ 軸上滾，輪緣上一點畫出的曲線",
+              "color": "violet",
+              "on": "減餘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dx}{dt}=1-\\cos t,\\quad \\frac{dy}{dt}=\\sin t$"
+          ],
+          "say": "先微分：d x d t 是 1 減餘弦 t，d y d t 是正弦 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dx}{dt}=1-\\cos t,\\quad \\frac{dy}{dt}=\\sin t$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t=\\frac\\pi2$：$\\dfrac{dy}{dx}=\\dfrac{1}{1-0}=1$"
+          ],
+          "say": "代 2 分之派，正弦是 1，餘弦是 0，斜率等於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t=\\frac\\pi2$：$\\dfrac{dy}{dx}=\\dfrac{1}{1-0}=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "點：$\\big(\\frac\\pi2-1,\\ 1\\big)$",
+            "$y=x+2-\\frac\\pi2$"
+          ],
+          "say": "切點是 2 分之派減 1，逗號 1。切線：y 減 1 等於 x 減 2 分之派加 1，整理成 y 等於 x 加 2 減 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "點：$\\big(\\frac\\pi2-1,\\ 1\\big)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y=x+2-\\frac\\pi2}}$",
+              "color": "red",
+              "on": "等於#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "理成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上藍色是擺線的一拱，紅線是斜率 1 的切線，切在左邊往上爬的那一段。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cyctan\" viewBox=\"0 0 620 330\" width=\"620\" height=\"330\" font-size=\"20\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7cyctan\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"149.2\" y1=\"42.6\" x2=\"149.2\" y2=\"273.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"223.6\" y1=\"42.6\" x2=\"223.6\" y2=\"273.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"298.1\" y1=\"42.6\" x2=\"298.1\" y2=\"273.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"372.6\" y1=\"42.6\" x2=\"372.6\" y2=\"273.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"447.1\" y1=\"42.6\" x2=\"447.1\" y2=\"273.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"161.7\" x2=\"596.0\" y2=\"161.7\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"87.3\" x2=\"596.0\" y2=\"87.3\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"24.0\" y1=\"236.2\" x2=\"610.0\" y2=\"236.2\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7cyctan)\"/><line x1=\"74.7\" y1=\"279.4\" x2=\"74.7\" y2=\"32.6\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7cyctan)\"/><text x=\"149.2\" y=\"258.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"223.6\" y=\"258.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"298.1\" y=\"258.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"372.6\" y=\"258.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">4</text><text x=\"447.1\" y=\"258.2\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">5</text><text x=\"67.7\" y=\"168.7\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"67.7\" y=\"94.3\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"604.0\" y=\"227.2\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"83.7\" y=\"46.6\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"52.3\" y1=\"226.6\" x2=\"231.1\" y2=\"47.8\" stroke=\"var(--red)\" stroke-width=\"2.6\"/><line x1=\"117.2\" y1=\"236.2\" x2=\"117.2\" y2=\"161.7\" stroke=\"var(--muted)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><path d=\"M74.7 236.2L74.7 236.2L74.7 236.1L74.7 236.0L74.7 235.8L74.7 235.6L74.7 235.3L74.8 235.0L74.8 234.6L74.8 234.1L74.9 233.7L75.0 233.1L75.1 232.6L75.2 231.9L75.3 231.3L75.4 230.5L75.6 229.8L75.8 228.9L76.0 228.1L76.2 227.2L76.4 226.2L76.7 225.2L77.0 224.2L77.3 223.1L77.7 222.0L78.1 220.8L78.5 219.6L79.0 218.4L79.4 217.1L80.0 215.7L80.5 214.4L81.1 213.0L81.7 211.6L82.4 210.1L83.1 208.6L83.8 207.1L84.6 205.5L85.4 203.9L86.3 202.3L87.2 200.6L88.2 199.0L89.2 197.3L90.2 195.5L91.3 193.8L92.4 192.0L93.6 190.2L94.8 188.4L96.1 186.6L97.4 184.7L98.8 182.9L100.2 181.0L101.7 179.1L103.2 177.2L104.8 175.3L106.4 173.4L108.1 171.4L109.8 169.5L111.6 167.6L113.4 165.6L115.3 163.7L117.2 161.7L119.2 159.8L121.2 157.8L123.3 155.9L125.4 153.9L127.6 152.0L129.8 150.1L132.1 148.2L134.4 146.2L136.8 144.3L139.2 142.4L141.7 140.6L144.2 138.7L146.8 136.9L149.4 135.0L152.1 133.2L154.8 131.4L157.6 129.7L160.4 127.9L163.3 126.2L166.2 124.5L169.1 122.8L172.1 121.2L175.1 119.5L178.2 117.9L181.3 116.4L184.5 114.9L187.7 113.4L190.9 111.9L194.2 110.5L197.5 109.1L200.8 107.7L204.2 106.4L207.6 105.1L211.1 103.8L214.6 102.6L218.1 101.5L221.6 100.3L225.2 99.3L228.8 98.2L232.4 97.2L236.1 96.3L239.7 95.4L243.4 94.5L247.2 93.7L250.9 92.9L254.7 92.2L258.4 91.5L262.2 90.9L266.1 90.3L269.9 89.8L273.7 89.3L277.6 88.9L281.4 88.5L285.3 88.2L289.2 87.9L293.1 87.7L297.0 87.5L300.9 87.4L304.8 87.3L308.7 87.3L312.5 87.3L316.4 87.4L320.3 87.5L324.2 87.7L328.1 87.9L332.0 88.2L335.9 88.5L339.7 88.9L343.6 89.3L347.4 89.8L351.2 90.3L355.1 90.9L358.9 91.5L362.6 92.2L366.4 92.9L370.1 93.7L373.9 94.5L377.6 95.4L381.2 96.3L384.9 97.2L388.5 98.2L392.1 99.3L395.7 100.3L399.2 101.5L402.7 102.6L406.2 103.8L409.7 105.1L413.1 106.4L416.5 107.7L419.8 109.1L423.1 110.5L426.4 111.9L429.6 113.4L432.8 114.9L436.0 116.4L439.1 117.9L442.2 119.5L445.2 121.2L448.2 122.8L451.1 124.5L454.0 126.2L456.9 127.9L459.7 129.7L462.5 131.4L465.2 133.2L467.9 135.0L470.5 136.9L473.1 138.7L475.6 140.6L478.1 142.4L480.5 144.3L482.9 146.2L485.2 148.2L487.5 150.1L489.7 152.0L491.9 153.9L494.0 155.9L496.1 157.8L498.1 159.8L500.1 161.7L502.0 163.7L503.9 165.6L505.7 167.6L507.5 169.5L509.2 171.4L510.9 173.4L512.5 175.3L514.1 177.2L515.6 179.1L517.1 181.0L518.5 182.9L519.9 184.7L521.2 186.6L522.5 188.4L523.7 190.2L524.9 192.0L526.0 193.8L527.1 195.5L528.1 197.3L529.1 199.0L530.1 200.6L531.0 202.3L531.9 203.9L532.7 205.5L533.5 207.1L534.2 208.6L534.9 210.1L535.6 211.6L536.2 213.0L536.8 214.4L537.3 215.7L537.9 217.1L538.3 218.4L538.8 219.6L539.2 220.8L539.6 222.0L540.0 223.1L540.3 224.2L540.6 225.2L540.9 226.2L541.1 227.2L541.3 228.1L541.5 228.9L541.7 229.8L541.9 230.5L542.0 231.3L542.1 231.9L542.2 232.6L542.3 233.1L542.4 233.7L542.5 234.1L542.5 234.6L542.5 235.0L542.6 235.3L542.6 235.6L542.6 235.8L542.6 236.0L542.6 236.1L542.6 236.2L542.6 236.2\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M316.5 87.3 L300.9 93.8 L300.9 80.8 Z\" fill=\"var(--blue)\"/><circle cx=\"117.2\" cy=\"161.7\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><text x=\"129.2\" y=\"185.7\" fill=\"var(--red)\" text-anchor=\"start\" style=\"font-family:KaTeX_Main,serif\">t = π/2</text><text x=\"242.3\" y=\"72.4\" fill=\"var(--red)\" text-anchor=\"start\" style=\"font-family:inherit\">斜率 1</text><text x=\"542.6\" y=\"267.5\" fill=\"var(--muted)\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif\">2π</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "水平、鉛直切線",
+      "beats": [
+        {
+          "show": [
+            "• 水平：$\\dfrac{dy}{dt}=0$ 且 $\\dfrac{dx}{dt}\\ne0$",
+            "• 鉛直：$\\dfrac{dx}{dt}=0$ 且 $\\dfrac{dy}{dt}\\ne0$"
+          ],
+          "say": "斜率是兩個速度的比。分子是 0、分母不是 0，斜率 0，是水平切線。分母是 0、分子不是 0，斜率衝到無限大，是鉛直切線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 水平：$\\dfrac{dy}{dt}=0$ 且 $\\dfrac{dx}{dt}\\ne0$"
+            },
+            {
+              "do": "write",
+              "line": "• 鉛直：$\\dfrac{dx}{dt}=0$ 且 $\\dfrac{dy}{dt}\\ne0$",
+              "on": "平切"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x=t^2,\\ y=t^3-3t$",
+            "$\\frac{dx}{dt}=2t,\\qquad \\frac{dy}{dt}=3t^2-3$"
+          ],
+          "say": "用上一課會交叉的曲線來找：x 等於 t 平方，y 等於 t 立方減 3t。d x d t 是 2t，d y d t 是 3t 平方減 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$x=t^2,\\ y=t^3-3t$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dx}{dt}=2t,\\qquad \\frac{dy}{dt}=3t^2-3$",
+              "on": "3t#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "水平：$t=\\pm1$ → $(1,-2)$、$(1,2)$"
+          ],
+          "say": "水平切線：3t 平方減 3 等於 0，t 是正負 1，這時 2t 不是 0。點是 1 逗號負 2 和 1 逗號 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "水平：$t=\\pm1$ → $(1,-2)$、$(1,2)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "鉛直：$t=0$ → $(0,0)$"
+          ],
+          "say": "鉛直切線：2t 等於 0，t 是 0，這時 d y d t 是負 3，不是 0。點是原點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "鉛直：$t=0$ → $(0,0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：水平切線；綠：鉛直切線"
+          ],
+          "say": "圖上，紅色兩個點是曲線的最低點和最高點，切線是水平的；綠色的原點是最左邊，切線是鉛直的。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "hv",
+                  "window": [
+                    -0.6,
+                    4.6,
+                    -2.8,
+                    2.8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)*(x-3)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        4.4
+                      ]
+                    },
+                    {
+                      "expr": "-sqrt(x)*(x-3)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        4.4
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        0.3,
+                        -2
+                      ],
+                      "to": [
+                        1.7,
+                        -2
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        0.3,
+                        2
+                      ],
+                      "to": [
+                        1.7,
+                        2
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        0,
+                        -0.8
+                      ],
+                      "to": [
+                        0,
+                        0.8
+                      ],
+                      "color": "green"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": -2,
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 2,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "color": "green"
+                    }
+                  ],
+                  "height": 320
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅：水平切線；綠：鉛直切線",
+              "color": "violet",
+              "on": "是水"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$x=t^3-3t,\\ y=t^2$ 的鉛直切線在哪些點？"
+          ],
+          "say": "試一題。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "直接套公式",
+      "title": "試一題",
       "beats": [
-        { "show": ["$x = t^2$，$y = t^3$，在 $t = 1$"],
-          "say": "練一題：x 是 t 平方，y 是 t 三次方，求 t 等於一的地方的斜率。",
+        {
+          "show": [
+            "做法：$x'$、$y'$ 的零點分別列出，再互相檢查"
+          ],
+          "say": "找水平和鉛直切線的做法：把 x prime 和 y prime 的零點分別列出來，再檢查另一個導數在那裡是不是 0。",
           "board": [
-            {"do":"write","line":"$x = t^2$，$y = t^3$，在 $t = 1$"}
-          ] },
-        { "show": ["$\\frac{dx}{dt} = 2t$，$\\frac{dy}{dt} = 3t^2$"],
-          "say": "先各自微分：x 對 t 微分是二 t，y 對 t 微分是三 t 平方。",
+            {
+              "do": "write",
+              "line": "做法：$x'$、$y'$ 的零點分別列出，再互相檢查",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 只有 $y'=0$：水平",
+            "• 只有 $x'=0$：鉛直"
+          ],
+          "say": "只有 y prime 是 0，是水平切線；只有 x prime 是 0，是鉛直切線；兩個同時是 0，就是下一頁要講的例外。",
           "board": [
-            {"do":"write","line":"$\\frac{dx}{dt} = {{dx:2t}}$","tint":{"dx":"blue"},"on":"x 對 t"},
-            {"do":"write","line":"$\\frac{dy}{dt} = {{dy:3t^2}}$","tint":{"dy":"violet"},"on":"y 對 t"}
-          ] },
-        { "show": ["$\\frac{dy}{dx} = \\frac{3t^2}{2t} = \\frac{3t}{2}$"],
-          "note": "$t \\ne 0$。",
-          "say": "y 的速度除以 x 的速度，約掉一個 t，得到二分之三 t。接著代 t 等於一。",
-          "board": [
-            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}}$","on":"y 的速度"},
-            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}} = {{r:\\frac{3t}{2}}}$","on":"約掉"},
-            {"do":"underline","term":"r","label":"代 t = 1","on":"接著代"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$t = 1$ 處的 $\\frac{dy}{dx}$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{3}{2}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{2}{3}$",
-            "why": "分子分母放反了：是 $\\frac{dy}{dt}$ 除以 $\\frac{dx}{dt}$，$\\frac{3}{2}$。"
-          },
-          {
-            "label": "3",
-            "why": "3 只是 $\\frac{dy}{dt}$ 在 $t = 1$ 的值，還要除以 $\\frac{dx}{dt} = 2$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "• 只有 $y'=0$：水平"
+            },
+            {
+              "do": "write",
+              "line": "• 只有 $x'=0$：鉛直",
+              "on": "只有#2"
+            },
+            {
+              "do": "write",
+              "line": "• 同時是 $0$：下一頁",
+              "on": "兩個"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "擺線的切線",
+      "title": "例外：兩個都是 0",
       "beats": [
-        { "show": ["$x = t - \\sin t$，$y = 1 - \\cos t$"],
-          "note": "在 $t = \\frac{\\pi}{2}$。",
-          "say": "換擺線：x 是 t 減 sine t，y 是一減 cosine t，求 t 等於二分之 pi 的切線。",
+        {
+          "show": [
+            "$\\dfrac{dx}{dt}=\\dfrac{dy}{dt}=0$：$\\dfrac00$，公式不給結論"
+          ],
+          "say": "如果 d x d t 和 d y d t 同時是 0，公式變成 0 分之 0，什麼都不能說。要另外分析。",
           "board": [
-            {"do":"write","line":"$x = t - \\sin t$，$y = 1 - \\cos t$"},
-            {"do":"write","line":"切線在 $t = \\frac{\\pi}{2}$","on":"求 t 等於"}
-          ] },
-        { "show": ["切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$"],
-          "say": "先找切點：sine 二分之 pi 是一，cosine 是零，所以 x 是二分之 pi 減一，y 是一。",
+            {
+              "do": "write",
+              "line": "$\\dfrac{dx}{dt}=\\dfrac{dy}{dt}=0$：$\\dfrac00$，公式不給結論",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "情況一：$x=t^3,\\ y=t^6$，$t=0$"
+          ],
+          "say": "第一個例子：x 等於 t 立方，y 等於 t 的 6 次方，t 等於 0。兩個導數都是 0。",
           "board": [
-            {"do":"write","line":"切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$","on":"所以 x 是"}
-          ] },
-        { "show": ["$\\frac{dx}{dt} = 1 - \\cos t$，$\\frac{dy}{dt} = \\sin t$"],
-          "note": "在 $\\frac{\\pi}{2}$ 都是 1，斜率 1。",
-          "say": "兩個速度在二分之 pi 都是一，相除得斜率一。",
+            {
+              "do": "write",
+              "line": "情況一：$x=t^3,\\ y=t^6$，$t=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "消去參數：$y=x^2$，在原點斜率是 $0$"
+          ],
+          "say": "但消去參數，y 就是 x 平方，在原點平平順順，切線是水平的。點只是在那一瞬間停了一下。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}}$","tint":{"dx":"blue","dy":"violet"}},
-            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}} = \\frac{1}{1} = 1$","on":"都是一"}
-          ] },
-        { "show": ["$y = x + 2 - \\frac{\\pi}{2}$"],
-          "say": "用點斜式，y 減一等於 x 減切點的 x，整理成 y 等於 x 加二減二分之 pi。",
+            {
+              "do": "write",
+              "line": "消去參數：$y=x^2$，在原點斜率是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "　也可以取極限：$\\frac{6t^5}{3t^2}=2t^3\\to0$",
+              "color": "violet",
+              "on": "切線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "情況二：擺線在 $t=0$"
+          ],
+          "say": "第二個例子：擺線在 t 等於 0，1 減餘弦和正弦都是 0。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$y - 1 = x - \\left(\\frac{\\pi}{2} - 1\\right)$","on":"用點斜式"},
-            {"do":"write","line":"$y = x + 2 - \\frac{\\pi}{2}$","color":"green","on":"整理成"}
-          ] },
-        { "show": ["$(e^t)' = e^t$","$x=e^t$：$\\frac{dx}{dt}=e^t$"],
-          "note": "指數函數微分後不變。",
-          "say": "x 是 e 的 t 次方時，它的導數就是自己，所以 x 的速度還是 e 的 t 次方。",
+            {
+              "do": "write",
+              "line": "情況二：擺線在 $t=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=\\frac{\\sin t}{1-\\cos t}=\\cot\\frac t2\\to\\infty\\ (t\\to0^+)$"
+          ],
+          "say": "取極限：正弦除以 1 減餘弦，用半角公式化成餘切 2 分之 t，t 從右邊趨近 0 時衝到無限大。",
           "board": [
-            {"do":"write","line":"$x = e^t$"},
-            {"do":"write","line":"$\\frac{dx}{dt} = {{n1:e^t}}$","on":"它的導數"},
-            {"do":"underline","term":"n1","label":"不變","on":"還是"}
-          ] },
-        { "show": ["$y=t\\sin t$：乘法法則","$y' = \\sin t + t\\cos t$"],
-          "note": "第一個的導數乘第二個，加第一個乘第二個的導數。",
-          "say": "y 是 t 乘 sine t，這種相乘的要用乘法法則。第一個的導數乘第二個，加第一個乘第二個的導數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dx}=\\frac{\\sin t}{1-\\cos t}=\\cot\\frac t2\\to\\infty\\ (t\\to0^+)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上看，擺線在這裡是個尖點：從左邊往下撞到地面，再直直往上離開。兩邊都貼著鉛直方向。",
           "board": [
-            {"do":"write","line":"$y = t\\sin t$"},
-            {"do":"write","line":"$y' = \\sin t + t\\cos t$","on":"乘法法則"}
-          ] }
-      ],
-      "key": "切點與斜率都用同一個 $t$ 代",
-      "check": 2
-    },
-    {
-      "title": "水平與鉛直切線",
-      "beats": [
-        { "show": ["水平：$\\frac{dy}{dt} = 0$，$\\frac{dx}{dt} \\ne 0$"],
-          "note": "斜率 0。",
-          "say": "y 不動、x 在動，點那一瞬間在水平移動，所以是水平切線。",
-          "board": [
-            {"do":"write","line":"水平：${{dy:\\frac{dy}{dt}}} = 0$，${{dx:\\frac{dx}{dt}}} \\ne 0$","tint":{"dx":"blue","dy":"violet"}},
-            {"do":"underline","term":"dy","on":"y 不動"},
-            {"do":"underline","term":"dx","on":"x 在動"}
-          ] },
-        { "show": ["鉛直：$\\frac{dx}{dt} = 0$，$\\frac{dy}{dt} \\ne 0$"],
-          "note": "點只上下動，斜率不存在。",
-          "say": "反過來，x 不動、y 在動，點只上下走，切線是鉛直的，斜率不存在。",
-          "board": [
-            {"do":"write","line":"鉛直：${{dx:\\frac{dx}{dt}}} = 0$，${{dy:\\frac{dy}{dt}}} \\ne 0$"},
-            {"do":"underline","term":"dx","on":"x 不動"}
-          ] },
-        { "show": ["$x = t^2$，$y = t^3 - 3t$"],
-          "note": "水平：$t = \\pm 1$，點 $(1, -2)$、$(1, 2)$。",
-          "say": "例如 x 是 t 平方，y 是 t 三次方減三 t。三 t 平方減三等於零，t 是正負一，得到兩條水平切線。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x = t^2$，$y = t^3 - 3t$","on":"x 是"},
-            {"do":"write","line":"水平：${{dy:\\frac{dy}{dt}}} = 3t^2 - 3 = 0$，$t = \\pm 1$","on":"三 t 平方"}
-          ] },
-        { "show": ["鉛直：$2t = 0$，點 $(0, 0)$"],
-          "note": "此時 $\\frac{dy}{dt} = -3 \\ne 0$。",
-          "say": "鉛直切線要 x 的速度二 t 等於零，t 是零；這時 y 的速度是負三，不是零，所以成立。",
-          "board": [
-            {"do":"write","line":"鉛直：${{dx:\\frac{dx}{dt}}} = 2t = 0$，$t = 0$"},
-            {"do":"write","line":"此時 ${{dy:\\frac{dy}{dt}}} = {{n:-3 \\ne 0}}$","on":"這時 y 的速度"},
-            {"do":"underline","term":"n","label":"成立","on":"不是零"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "兩個都是 0",
-      "beats": [
-        { "show": ["$\\frac{dx}{dt} = \\frac{dy}{dt} = 0$ → $\\frac{0}{0}$"],
-          "note": "點在那一瞬間停住了。",
-          "say": "如果兩個速度同時是零，點在那一瞬間停住了，公式變成零分之零，什麼都不能說。",
-          "board": [
-            {"do":"write","line":"$\\frac{dx}{dt} = \\frac{dy}{dt} = 0$"},
-            {"do":"transform","line":"$\\frac{dx}{dt} = \\frac{dy}{dt} = 0 \\Rightarrow {{r:\\frac{0}{0}}}$","on":"公式變成"},
-            {"do":"underline","term":"r","color":"red","on":"零分之零"}
-          ] },
-        { "show": ["擺線在 $t = 0$：尖點"],
-          "say": "擺線在 t 等於零就是這樣，那裡是一個尖點，不是水平也不是鉛直。",
-          "board": [
-            {"do":"write","line":"擺線在 ${{t:t = 0}}$：尖點"},
-            {"do":"focus","term":"t","on":"擺線在"},
-            {"do":"write","line":"不是水平也不是鉛直","on":"不是水平"}
-          ] },
-        { "show": ["擺線在 $t = 0$ 附近"],
-          "say": "畫出來看：t 靠近零，點幾乎垂直地落到原點，又馬上往上走，這就是尖點。",
-          "board": [
-            {"do":"plot","graph":{"window":[-4,4,-0.5,3],"curves":[{"param":{"x":"t-sin(t)","y":"1-cos(t)","t":[-3,3]},"color":"blue"}],"points":[{"x":0,"y":0}],"labels":[{"x":0.2,"y":0.3,"text":"t = 0","anchor":"start"}]}}
-          ] },
-        { "show": ["看 $t \\to t_0$ 時 $\\frac{dy/dt}{dx/dt}$ 的極限"],
-          "say": "要判斷，就得讓 t 靠近那一點，看兩個速度的比值有沒有極限。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{r:\\lim_{t \\to t_0} \\frac{dy/dt}{dx/dt}}}$","on":"判斷"},
-            {"do":"underline","term":"r","label":"有極限嗎","on":"兩個速度"}
-          ] },
-        { "show": ["$\\frac{\\sin t}{1-\\cos t}\\approx\\frac{2}{t}$"],
-          "note": "直覺的近似：$t \\to 0$ 時斜率越來越陡。",
-          "say": "t 很小時，sine t 約等於 t，一減 cosine t 約等於 t 平方的一半。比值約是二除以 t，越來越陡。",
-          "board": [
-            {"do":"write","line":"$\\sin t \\approx t$"},
-            {"do":"write","line":"$1-\\cos t \\approx \\frac{t^2}{2}$","on":"一減"},
-            {"do":"write","line":"$\\frac{\\sin t}{1-\\cos t}\\approx {{r1:\\frac{2}{t}}}$","on":"比值"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cusp\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"20\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7cusp\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"77.2\" y1=\"32.9\" x2=\"77.2\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"155.8\" y1=\"32.9\" x2=\"155.8\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"234.4\" y1=\"32.9\" x2=\"234.4\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"391.6\" y1=\"32.9\" x2=\"391.6\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"470.2\" y1=\"32.9\" x2=\"470.2\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"548.8\" y1=\"32.9\" x2=\"548.8\" y2=\"253.1\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"143.0\" x2=\"596.0\" y2=\"143.0\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"30.0\" y1=\"64.4\" x2=\"596.0\" y2=\"64.4\" stroke=\"var(--muted)\" stroke-opacity=\".18\"/><line x1=\"24.0\" y1=\"221.6\" x2=\"610.0\" y2=\"221.6\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7cusp)\"/><line x1=\"313.0\" y1=\"259.1\" x2=\"313.0\" y2=\"22.9\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7cusp)\"/><text x=\"77.2\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−3</text><text x=\"155.8\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"234.4\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"391.6\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"470.2\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"548.8\" y=\"243.6\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"306.0\" y=\"150.0\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"306.0\" y=\"71.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"604.0\" y=\"212.6\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"322.0\" y=\"36.9\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"313.0\" y1=\"221.6\" x2=\"313.0\" y2=\"48.7\" stroke=\"var(--red)\" stroke-width=\"2.2\" stroke-dasharray=\"8 7\"/><path d=\"M66.0 64.4L70.2 64.4L74.3 64.5L78.4 64.6L82.5 64.8L86.6 65.1L90.7 65.4L94.8 65.7L98.8 66.1L102.9 66.6L107.0 67.1L111.0 67.6L115.0 68.2L119.0 68.9L123.0 69.6L127.0 70.4L130.9 71.2L134.9 72.0L138.8 73.0L142.6 73.9L146.5 74.9L150.3 76.0L154.1 77.1L157.9 78.2L161.6 79.4L165.3 80.6L169.0 81.9L172.7 83.2L176.3 84.6L179.8 86.0L183.4 87.4L186.9 88.9L190.3 90.4L193.7 91.9L197.1 93.5L200.4 95.1L203.7 96.8L207.0 98.5L210.2 100.2L213.3 101.9L216.4 103.7L219.5 105.5L222.5 107.3L225.5 109.2L228.4 111.0L231.3 112.9L234.1 114.8L236.9 116.8L239.6 118.7L242.3 120.7L244.9 122.7L247.4 124.6L249.9 126.7L252.4 128.7L254.8 130.7L257.2 132.7L259.5 134.8L261.7 136.8L263.9 138.9L266.0 140.9L268.1 143.0L270.2 145.1L272.1 147.1L274.1 149.2L275.9 151.2L277.7 153.3L279.5 155.3L281.2 157.3L282.9 159.3L284.5 161.4L286.0 163.3L287.5 165.3L289.0 167.3L290.4 169.2L291.7 171.2L293.0 173.1L294.3 175.0L295.5 176.8L296.6 178.7L297.7 180.5L298.8 182.3L299.8 184.1L300.7 185.8L301.6 187.5L302.5 189.2L303.3 190.9L304.1 192.5L304.9 194.1L305.6 195.6L306.2 197.1L306.8 198.6L307.4 200.0L308.0 201.4L308.5 202.8L309.0 204.1L309.4 205.4L309.8 206.6L310.2 207.8L310.5 208.9L310.9 210.0L311.1 211.1L311.4 212.1L311.6 213.0L311.9 214.0L312.0 214.8L312.2 215.6L312.4 216.4L312.5 217.1L312.6 217.8L312.7 218.4L312.8 218.9L312.8 219.4L312.9 219.9L312.9 220.3L312.9 220.6L313.0 220.9L313.0 221.2L313.0 221.4L313.0 221.5L313.0 221.6L313.0 221.6L313.0 221.6L313.0 221.5L313.0 221.4L313.0 221.2L313.0 220.9L313.1 220.6L313.1 220.3L313.1 219.9L313.2 219.4L313.2 218.9L313.3 218.4L313.4 217.8L313.5 217.1L313.6 216.4L313.8 215.6L314.0 214.8L314.1 214.0L314.4 213.0L314.6 212.1L314.9 211.1L315.1 210.0L315.5 208.9L315.8 207.8L316.2 206.6L316.6 205.4L317.0 204.1L317.5 202.8L318.0 201.4L318.6 200.0L319.2 198.6L319.8 197.1L320.4 195.6L321.1 194.1L321.9 192.5L322.7 190.9L323.5 189.2L324.4 187.5L325.3 185.8L326.2 184.1L327.2 182.3L328.3 180.5L329.4 178.7L330.5 176.8L331.7 175.0L333.0 173.1L334.3 171.2L335.6 169.2L337.0 167.3L338.5 165.3L340.0 163.3L341.5 161.4L343.1 159.3L344.8 157.3L346.5 155.3L348.3 153.3L350.1 151.2L351.9 149.2L353.9 147.1L355.8 145.1L357.9 143.0L360.0 140.9L362.1 138.9L364.3 136.8L366.5 134.8L368.8 132.7L371.2 130.7L373.6 128.7L376.1 126.7L378.6 124.6L381.1 122.7L383.7 120.7L386.4 118.7L389.1 116.8L391.9 114.8L394.7 112.9L397.6 111.0L400.5 109.2L403.5 107.3L406.5 105.5L409.6 103.7L412.7 101.9L415.8 100.2L419.0 98.5L422.3 96.8L425.6 95.1L428.9 93.5L432.3 91.9L435.7 90.4L439.1 88.9L442.6 87.4L446.2 86.0L449.7 84.6L453.3 83.2L457.0 81.9L460.7 80.6L464.4 79.4L468.1 78.2L471.9 77.1L475.7 76.0L479.5 74.9L483.4 73.9L487.2 73.0L491.1 72.0L495.1 71.2L499.0 70.4L503.0 69.6L507.0 68.9L511.0 68.2L515.0 67.6L519.0 67.1L523.1 66.6L527.2 66.1L531.2 65.7L535.3 65.4L539.4 65.1L543.5 64.8L547.6 64.6L551.7 64.5L555.8 64.4L560.0 64.4\" stroke=\"var(--blue)\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M254.2 130.0 L237.9 125.4 L246.0 115.2 Z\" fill=\"var(--blue)\"/><path d=\"M384.1 120.3 L375.9 135.1 L367.8 124.9 Z\" fill=\"var(--blue)\"/><circle cx=\"313.0\" cy=\"221.6\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><text x=\"336.6\" y=\"207.5\" fill=\"var(--red)\" text-anchor=\"start\" style=\"font-family:inherit\">尖點 t = 0</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　輪緣上的點碰到地面時，速度剛好是 $0$",
+              "color": "violet",
+              "on": "地面"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "同一點，兩條切線",
       "beats": [
-        { "show": ["交叉點 $(3, 0)$：$t = \\pm\\sqrt{3}$"],
-          "note": "曲線 $x = t^2$、$y = t^3 - 3t$。",
-          "say": "曲線自己交叉時，同一點對應兩個 t。這條曲線在三、零交叉，t 是正負根號三。",
+        {
+          "show": [
+            "交叉點 $(3,0)$：$t=\\sqrt3$ 和 $t=-\\sqrt3$ 都經過"
+          ],
+          "say": "回到交叉點 3 逗號 0。上一課算過，t 等於根號 3 和負根號 3 都經過這裡。",
           "board": [
-            {"do":"write","line":"$x = t^2$，$y = t^3 - 3t$"},
-            {"do":"write","line":"交叉點 $(3, 0)$：$t = \\pm\\sqrt{3}$","on":"這條曲線在"}
-          ] },
-        { "show": ["$t = \\sqrt{3}$：$\\frac{9 - 3}{2\\sqrt{3}} = \\sqrt{3}$"],
-          "say": "斜率是用 t 算的。t 等於根號三，y 的速度是九減三，除以二根號三，斜率根號三。",
+            {
+              "do": "write",
+              "line": "交叉點 $(3,0)$：$t=\\sqrt3$ 和 $t=-\\sqrt3$ 都經過"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dy}{dx}=\\frac{3t^2-3}{2t}=\\frac{6}{2t}=\\frac{3}{t}$"
+          ],
+          "say": "在 t 平方等於 3 的地方，分子是 9 減 3 等於 6，所以斜率是 t 分之 3。",
           "board": [
-            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2 - 3}}}{{{dx:2t}}}$","tint":{"dy":"violet","dx":"blue"}},
-            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{9 - 3}{2\\sqrt{3}} = \\sqrt{3}$","on":"九減三"}
-          ] }
-      ],
-      "key": "同一點、不同 $t$，斜率要各自算",
-      "predict": {
-        "ask": "$t = -\\sqrt{3}$ 那一次經過，斜率是？",
-        "options": [
-          {
-            "label": "$-\\sqrt{3}$",
-            "correct": true
-          },
-          {
-            "label": "$\\sqrt{3}$",
-            "why": "同一點不代表同一個斜率：$\\frac{dx}{dt} = 2t$ 在 $t = -\\sqrt{3}$ 是負的，$\\frac{9 - 3}{-2\\sqrt{3}} = -\\sqrt{3}$。"
-          },
-          {
-            "label": "0",
-            "why": "$(3, 0)$ 的 $y$ 是 0，但斜率要看 $\\frac{dy}{dt} = 3t^2 - 3$，在這裡是 $9 - 3$，不是 0。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dy}{dx}=\\frac{3t^2-3}{2t}=\\frac{6}{2t}=\\frac{3}{t}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $t=\\sqrt3$：斜率 $\\sqrt3$",
+            "• $t=-\\sqrt3$：斜率 $-\\sqrt3$"
+          ],
+          "say": "t 等於根號 3，斜率根號 3；t 等於負根號 3，斜率負根號 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $t=\\sqrt3$：斜率 $\\sqrt3$"
+            },
+            {
+              "do": "write",
+              "line": "• $t=-\\sqrt3$：斜率 $-\\sqrt3$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=\\sqrt3(x-3),\\qquad y=-\\sqrt3(x-3)$"
+          ],
+          "say": "同一個點，有兩條切線：y 等於根號 3 乘 x 減 3，和 y 等於負根號 3 乘 x 減 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y=\\sqrt3(x-3),\\qquad y=-\\sqrt3(x-3)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩次經過 (3, 0)，各有一條切線"
+          ],
+          "say": "圖上，曲線兩次經過這一點，每一次有自己的方向，所以有兩條切線。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "two",
+                  "window": [
+                    -0.6,
+                    4.6,
+                    -2.8,
+                    2.8
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sqrt(x)*(x-3)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        4.4
+                      ]
+                    },
+                    {
+                      "expr": "-sqrt(x)*(x-3)",
+                      "color": "blue",
+                      "domain": [
+                        0,
+                        4.4
+                      ]
+                    },
+                    {
+                      "expr": "sqrt(3)*(x-3)",
+                      "color": "red",
+                      "dash": true,
+                      "domain": [
+                        1.8,
+                        4.4
+                      ]
+                    },
+                    {
+                      "expr": "-sqrt(3)*(x-3)",
+                      "color": "green",
+                      "dash": true,
+                      "domain": [
+                        1.8,
+                        4.4
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 3,
+                      "y": 0,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 320
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "兩次經過 (3, 0)，各有一條切線",
+              "color": "violet",
+              "on": "次有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=f(x)$ 的圖形做不到這件事，參數曲線可以"
+          ],
+          "say": "函數圖形每個 x 只有一個點，做不到這件事；參數曲線可以。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$y=f(x)$ 的圖形做不到這件事，參數曲線可以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}\\quad\\Big(\\frac{dx}{dt}\\ne0\\Big)$",
+            "• 水平切線：$y'=0,\\ x'\\ne0$；鉛直切線：$x'=0,\\ y'\\ne0$"
+          ],
+          "say": "整理一下：斜率是往上速度除以往右速度。水平切線看 y prime 等於 0，鉛直切線看 x prime 等於 0。兩個都是 0，就要另外分析。交叉點每經過一次，各有一條切線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}\\quad\\Big(\\frac{dx}{dt}\\ne0\\Big)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "水平"
+            },
+            {
+              "do": "write",
+              "line": "• 水平切線：$y'=0,\\ x'\\ne0$；鉛直切線：$x'=0,\\ y'\\ne0$",
+              "on": "鉛直"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個都是 $0$：公式沒結論，取極限或消去參數",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• 交叉點：每經過一次，各算一條切線",
+              "on": "交叉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：參數式的二階導數"
+          ],
+          "say": "下一課，算參數曲線往哪邊彎。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：參數式的二階導數"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

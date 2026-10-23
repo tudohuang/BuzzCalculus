@@ -1,294 +1,127 @@
 {
   "id": "log-sine-integral",
   "title": "∫₀^{π/2} ln(sin x) dx",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["improper-singular", "trig-identities", "u-sub-definite", "integration-by-parts"],
-  "next": ["basel-problem"],
-  "related": ["wallis-integral"],
-  "objectives": [
-    "說明 $\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 為什麼收斂（$x\\to 0$ 時 $\\ln(\\sin x)\\sim\\ln x$）。",
-    "用「$\\sin$、$\\cos$ 對稱 $+$ 倍角 $+$ 自己等於自己的一部分」算出 $-\\frac{\\pi}{2}\\ln 2$，每一步都說得出理由。",
-    "用分部積分或換元，把 $x\\cot x$、$\\frac{\\ln x}{\\sqrt{1-x^2}}$ 這類積分化成它。"
+  "prerequisites": [
+    "improper-singular",
+    "trig-identities",
+    "u-sub-definite",
+    "integration-by-parts"
   ],
-  "visual": "在 (0, π/2] 上畫 y = ln(sin x) 與 y = ln(cos x)，兩條曲線左右對稱，一條在 0 往下衝、一條在 π/2 往下衝。再畫兩者之和 ln(sin x cos x) = ln(sin 2x) − ln 2，它在兩端都往下衝，形狀像把 ln(sin x) 在 [0, π] 上壓縮一半再往下平移 ln 2。",
+  "next": [
+    "basel-problem"
+  ],
+  "related": [
+    "wallis-integral"
+  ],
+  "objectives": [
+    "說明 $\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 為什麼收斂（$x\\to 0$ 時 $\\ln(\\sin x)$ 跟 $\\ln x$ 差不多，而 $\\int_0^1\\ln x\\,dx$ 收斂）",
+    "用「$\\sin$、$\\cos$ 對稱 $+$ 倍角 $+$ 自己等於自己的一部分」算出 $-\\frac{\\pi}{2}\\ln 2$，並說得出為什麼移項之前要先知道它收斂",
+    "用分部積分或換元，把 $x\\cot x$、$\\frac{\\ln x}{\\sqrt{1-x^2}}$ 這類積分化成它"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 先確認它收斂",
       "body": [
-        "$\\ln(\\sin x)$ 在 $x\\to 0^+$ 時 $\\to-\\infty$，是瑕積分。$x\\to 0$ 時 $\\sin x\\sim x$，所以 $\\ln(\\sin x)-\\ln x=\\ln\\frac{\\sin x}{x}\\to 0$，被積函數的行為跟 $\\ln x$ 一樣，而 $\\int_0^1\\ln x\\,dx=-1$ 收斂（〈瑕積分 II：奇異點〉）。所以 $I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 收斂，是一個負數。"
+        "$x\\to0^+$：$\\sin x\\to0$，$\\ln(\\sin x)\\to-\\infty$：瑕點在 $0$",
+        "直覺：$\\sin x\\approx x$，所以 $\\ln(\\sin x)\\approx\\ln x$",
+        "用到 $\\varepsilon\\ln\\varepsilon\\to0$（羅必達法則）",
+        "嚴格：$\\sin$ 在 $[0,\\frac\\pi2]$ 凹向下（$\\sin''=-\\sin\\le0$），圖形在弦的上方：",
+        "$\\displaystyle\\int_0^{\\pi/2}\\ln\\frac{2x}\\pi\\,dx=-\\frac\\pi2$ 收斂 ⇒ 比較判別：$I$ 收斂，$-\\dfrac\\pi2\\le I\\le0$",
+        "令 $t=\\frac{2x}\\pi$：$\\frac\\pi2\\int_0^1\\ln t\\,dt=-\\frac\\pi2$；兩邊都 $\\le0$，對 $-\\ln\\sin x$ 用正項的比較判別"
       ],
-      "collapsible": false
+      "tex": [
+        "I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx",
+        "\\int_0^1\\ln x\\,dx=\\lim_{\\varepsilon\\to0^+}\\Big[x\\ln x-x\\Big]_\\varepsilon^1=-1",
+        "\\sin x\\ge\\frac{2x}\\pi\\quad\\big(0\\le x\\le\\tfrac\\pi2\\big)",
+        "\\ln\\frac{2x}\\pi\\le\\ln(\\sin x)\\le0"
+      ]
     },
     {
-      "heading": "② 三個對稱，讓 $I$ 等於自己的一部分",
+      "heading": "② 三個對稱",
       "body": [
-        "對稱一：令 $x=\\frac{\\pi}{2}-t$，$\\sin$ 變 $\\cos$，區間不變：$\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=I$。",
-        "倍角：$\\sin x\\cos x=\\frac{\\sin 2x}{2}$，所以 $2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx=\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx-\\frac{\\pi}{2}\\ln 2$。",
-        "對稱二：$\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx$ 令 $u=2x$ 變成 $\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$；$\\sin u$ 對 $u=\\frac{\\pi}{2}$ 對稱，$\\int_0^{\\pi}=2I$，所以這一項等於 $I$。",
-        "合起來：$2I=I-\\frac{\\pi}{2}\\ln 2$，$I=-\\frac{\\pi}{2}\\ln 2\\approx-1.0888$。"
+        "對稱一：令 $x=\\frac\\pi2-t$，$\\sin x=\\cos t$：",
+        "相加，再用倍角 $\\sin x\\cos x=\\frac12\\sin2x$：",
+        "對稱二：令 $t=2x$：",
+        "對稱三：$\\sin(\\pi-t)=\\sin t$，$[0,\\pi]$ 左右兩半一樣：",
+        "所以 $\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\cdot2I=I$：自己出現了"
       ],
-      "tex": ["\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=-\\frac{\\pi}{2}\\ln 2"],
-      "collapsible": false
+      "tex": [
+        "I=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx",
+        "\\begin{aligned}2I&=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx\\\\&=\\int_0^{\\pi/2}\\Big(\\ln(\\sin2x)-\\ln2\\Big)dx\\end{aligned}",
+        "2I=\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx-\\frac\\pi2\\ln2",
+        "\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\int_0^{\\pi}\\ln(\\sin t)\\,dt",
+        "\\int_0^{\\pi}\\ln(\\sin t)\\,dt=2I"
+      ]
+    },
+    {
+      "heading": "② 結果",
+      "body": [
+        "移項：",
+        "數值驗算：中點法 $\\approx-1.08879$"
+      ],
+      "tex": [
+        "2I=I-\\frac\\pi2\\ln2",
+        "\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac\\pi2\\ln2\\approx-1.0888"
+      ]
     },
     {
       "heading": "③ 為什麼可以這樣移項",
       "body": [
-        "「$2I=I-\\frac{\\pi}{2}\\ln 2$，所以 $I=\\dots$」要先知道 $I$ 是一個有限的數；如果 $I$ 發散，這種移項會得到荒謬的結論。這就是 ① 先證收斂的原因。",
-        "另外，拆成 $\\int\\ln(\\sin 2x)-\\int\\ln 2$ 也要每一項都收斂；兩項確實都收斂。"
+        "「$2I=I+c$ ⇒ $I=c$」只有在 $I$ 是有限的數時才對",
+        "反例：$S=1+2+4+8+\\cdots$",
+        "錯在 $S=\\infty$：$\\infty=\\infty-1$ 不能移項",
+        "這一課每一步都需要收斂：",
+        "• 拆開 $\\int\\ln(\\sin x\\cos x)=\\int\\ln\\sin x+\\int\\ln\\cos x$：兩個都收斂",
+        "• 瑕積分換元：在 $[\\varepsilon,\\frac\\pi2-\\varepsilon]$ 上換，再取極限",
+        "• 移項：$I$ 有限",
+        "所以 ① 不是多餘的：先證收斂，才能用技巧"
       ],
-      "collapsible": false
+      "tex": [
+        "2S=2+4+8+\\cdots=S-1\\ \\Rightarrow\\ S=-1\\ ?"
+      ]
     },
     {
-      "heading": "相關的結果",
+      "heading": "④ 化成它：分部積分",
       "body": [
-        "$\\int_0^{\\pi}\\ln(\\sin x)\\,dx=-\\pi\\ln 2$；$\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx=0$（$\\ln\\sin-\\ln\\cos$，兩項相等）；用 $x\\mapsto\\pi-x$ 可得 $\\int_0^{\\pi}x\\ln(\\sin x)\\,dx=\\frac{\\pi}{2}\\int_0^{\\pi}\\ln(\\sin x)\\,dx=-\\frac{\\pi^2}{2}\\ln 2$。"
+        "$u=x$，$dv=\\cot x\\,dx$，$v=\\ln(\\sin x)$：",
+        "邊界：$\\frac\\pi2\\ln1=0$；$x\\ln(\\sin x)=x\\ln x+x\\ln\\frac{\\sin x}x\\to0$",
+        "這個積分其實不是瑕積分：$x\\cot x\\to1$；分部積分後才出現瑕點，所以要在 $[\\varepsilon,\\frac\\pi2]$ 上做"
       ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "先確認收斂",
-      "beats": [
-        { "show": ["$I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"],
-          "note": "$x\\to 0^+$ 時 $\\ln(\\sin x)\\to-\\infty$。",
-          "say": "x 趨近零，sine x 趨近零，自然對數往負無限大衝，所以這是一個瑕積分。",
-          "board": [
-            {"do":"write","line":"$I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"},
-            {"do":"write","line":"$x\\to0^+$：$\\ln(\\sin x)\\to-\\infty$","on":"自然對數往"}
-          ] },
-        { "show": ["$\\sin x\\sim x$","$\\ln\\frac{\\sin x}{x}\\to 0$"],
-          "say": "x 很小時 sine x 跟 x 差不多，兩個對數的差趨近零，行為跟自然對數 x 一樣。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sin x\\sim x$","on":"跟 x"},
-            {"do":"write","line":"$\\ln\\frac{\\sin x}{x}\\to0$","on":"兩個對數"}
-          ] },
-        { "show": ["$\\sim$：比值趨近 $1$"],
-          "note": "比值趨近 1，取對數就是差趨近 0。",
-          "say": "波浪號是說比值趨近一，取對數就是差趨近零。所以兩個對數只差一點點，收斂與否一樣。",
-          "board": [
-            {"do":"write","line":"$\\sim$：$\\frac{\\sin x}{x}\\to1$"},
-            {"do":"write","line":"$\\ln(\\sin x)=\\ln x+\\ln\\frac{\\sin x}{x}$","on":"取對數"}
-          ] },
-        { "show": ["$\\int_0^1\\ln x\\,dx=-1$ 收斂"],
-          "note": "所以 $I$ 收斂，是一個負數。",
-          "say": "自然對數 x 從零積到一是負一，收斂。所以 I 也收斂，而且是負的。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1\\ln x\\,dx={{r:-1}}$"},
-            {"do":"box","term":"r","color":"green","on":"負一"},
-            {"do":"write","line":"$I$ 收斂，$I<0$","color":"green","on":"所以 I"}
-          ] }
-      ],
-      "check": 2
+      "tex": [
+        "\\int_0^{\\pi/2}x\\cot x\\,dx",
+        "=\\Big[x\\ln(\\sin x)\\Big]_{0^+}^{\\pi/2}-\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx",
+        "\\int_0^{\\pi/2}x\\cot x\\,dx=-I=\\frac\\pi2\\ln2\\approx1.0888"
+      ]
     },
     {
-      "title": "sin 換成 cos",
-      "beats": [
-        { "show": ["令 $x=\\frac{\\pi}{2}-t$"],
-          "note": "$\\sin$ 變 $\\cos$，區間不變。",
-          "say": "第一個對稱：x 換成二分之派減 t，sine 變成 cosine，區間還是零到二分之派。",
-          "board": [
-            {"do":"write","line":"令 $x=\\frac{\\pi}{2}-t$"},
-            {"do":"write","line":"${{s:\\sin x}}\\to{{c:\\cos t}}$，區間不變","tint":{"s":"blue","c":"violet"},"on":"sine 變成"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=I$"],
-          "say": "所以自然對數 cosine 的積分，跟原來的 I 一樣大。圖上兩條曲線左右對稱。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\ln({{c2:\\cos x}})\\,dx={{i:I}}$","tint":{"c2":"violet"},"on":"自然對數"},
-            {"do":"focus","term":"i","on":"原來的 I"},
-            {"do":"plot","graph":{"window":[-0.08,1.65,-3.2,0.45],"curves":[{"expr":"log(sin(x))","domain":[0.04,1.5708],"color":"blue"},{"expr":"log(cos(x))","domain":[0,1.5308],"color":"violet"}],"dashed":[[[0.7854,-3.1],[0.7854,0.3]]],"ticks":false},"on":"圖上"}
-          ] },
-        { "show": ["$2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx$"],
-          "note": "兩個加起來，對數相加變相乘。",
-          "say": "兩個加起來得到兩倍的 I，對數相加變成 sine 乘 cosine 的對數。",
-          "board": [
-            {"do":"write","line":"$2I=\\int_0^{\\pi/2}\\ln({{p:\\sin x\\cos x}})\\,dx$","on":"兩倍的 I"},
-            {"do":"underline","term":"p","on":"sine 乘"}
-          ] }
+      "heading": "④ 化成它：換元",
+      "body": [
+        "令 $x=\\sin\\theta$：$dx=\\cos\\theta\\,d\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$",
+        "換元在 $[\\varepsilon,1-\\varepsilon]$ 上做；$\\theta\\in(0,\\frac\\pi2)$ 時 $\\cos\\theta>0$，根號不用加絕對值",
+        "相關的結果",
+        "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=-\\frac\\pi2\\ln2$",
+        "• $\\displaystyle\\int_0^{\\pi}\\ln(\\sin x)\\,dx=-\\pi\\ln2$",
+        "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx=0$"
       ],
-      "check": 3
+      "tex": [
+        "\\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx",
+        "=\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta=-\\frac\\pi2\\ln2"
+      ]
     },
     {
-      "title": "等於自己的一部分",
-      "beats": [
-        { "show": ["$2I=\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx-\\frac{\\pi}{2}\\ln 2$"],
-          "say": "sine 乘 cosine 是二分之一 sine 二 x，減掉的自然對數二積過區間，得二分之派乘自然對數二。",
-          "board": [
-            {"do":"write","line":"$\\sin x\\cos x=\\frac{1}{2}\\sin 2x$"},
-            {"do":"write","line":"$2I=\\int_0^{\\pi/2}\\ln({{s2:\\sin 2x}})\\,dx-{{l2:\\frac{\\pi}{2}\\ln 2}}$","on":"減掉"},
-            {"do":"underline","term":"l2","on":"二分之派乘"}
-          ] },
-        { "show": ["$\\ln(\\tfrac12\\sin 2x)=\\ln(\\sin 2x)-\\ln 2$"],
-          "note": "常數 $-\\ln 2$ 積過長度 $\\frac{\\pi}{2}$ 的區間。",
-          "say": "二分之一 sine 二 x 的對數，拆成 sine 二 x 的對數減自然對數二。常數積分，就是乘上區間長。",
-          "board": [
-            {"do":"write","line":"$\\ln(\\frac12\\sin 2x)=\\ln(\\sin 2x)-\\ln 2$"},
-            {"do":"write","line":"$\\int_0^{\\pi/2}\\ln 2\\,dx=\\frac{\\pi}{2}\\ln 2$","on":"常數積分"}
-          ] },
-        { "show": ["$u=2x$：$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$"],
-          "note": "區間變成 $[0,\\pi]$，前面多 $\\frac{1}{2}$。",
-          "say": "剩下那項令 u 等於二 x：區間變成零到派，前面多一個二分之一。",
-          "board": [
-            {"do":"write","line":"$u=2x$：${{h:\\frac{1}{2}}}\\int_0^{ {{pi:\\pi}} }\\ln(\\sin u)\\,du$","on":"u 等於"},
-            {"do":"focus","term":"pi","on":"零到派"},
-            {"do":"focus","term":"h","on":"前面"}
-          ] },
-        { "show": ["$\\sin u$ 對 $u=\\frac{\\pi}{2}$ 對稱"],
-          "note": "$\\int_0^{\\pi}\\ln(\\sin u)\\,du=2I$",
-          "say": "第二個對稱：sine 在零到派，對二分之派左右對稱，所以零到派的積分是兩倍的 I。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"plot","graph":{"window":[-0.12,3.26,-3.2,0.5],"curves":[{"expr":"log(sin(x))","domain":[0.04,3.1016],"color":"ink"}],"fills":[{"expr":"log(sin(x))","from":0.04,"to":1.5708,"color":"blue"},{"expr":"log(sin(x))","from":1.5708,"to":3.1016,"color":"violet"}],"dashed":[[[1.5708,-3.1],[1.5708,0.35]]],"ticks":false},"on":"對二分之派"}
-          ] },
-        { "show": ["$u=\\pi-x$：$\\sin(\\pi-x)=\\sin x$","$\\int_{\\pi/2}^{\\pi}=\\int_0^{\\pi/2}=I$"],
-          "note": "兩段各是 $I$，合起來是 $2I$。",
-          "say": "令 u 等於派減 x，sine 不變，區間二分之派到派換成零到二分之派，所以這一段也是 I，合起來是兩倍。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$u=\\pi-x$：$\\sin(\\pi-x)=\\sin x$","on":"變"},
-            {"do":"write","line":"$\\int_{\\pi/2}^{\\pi}\\ln(\\sin x)\\,dx=\\int_0^{\\pi/2}\\ln(\\sin u)\\,du$","on":"換成"}
-          ] }
-      ],
-      "key": "令 $u=2x$，再用對稱把區間摺回一半",
-      "predict": {
-        "ask": "$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$ 等於？",
-        "options": [
-          {
-            "label": "$I$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{I}{2}$",
-            "why": "$[0,\\pi]$ 上的積分是 $2I$，乘 $\\frac{1}{2}$ 是 $I$。"
-          },
-          {
-            "label": "$2I$",
-            "why": "別漏了換元 $u=2x$ 帶出來的 $\\frac{1}{2}$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "移項",
-      "beats": [
-        { "show": ["$2I=I-\\frac{\\pi}{2}\\ln 2$"],
-          "say": "合起來：兩倍的 I 等於 I 減二分之派乘自然對數二。I 出現在等號兩邊。",
-          "board": [
-            {"do":"write","line":"$2I={{i:I}}-\\frac{\\pi}{2}\\ln 2$"},
-            {"do":"focus","term":"i","label":"兩邊都有","on":"等號"}
-          ] },
-        { "show": ["$I=-\\frac{\\pi}{2}\\ln 2\\approx-1.0888$"],
-          "say": "移項就解出來：負二分之派乘自然對數二，大約負一點零八八八。",
-          "board": [
-            {"do":"transform","line":"$I={{a:-\\frac{\\pi}{2}\\ln 2}}\\approx-1.0888$"},
-            {"do":"box","term":"a","color":"green","on":"負二分之派"}
-          ] },
-        { "show": ["移項前要知道 $I$ 有限"],
-          "note": "所以一開始先證收斂。",
-          "say": "這一步要先知道 I 是一個有限的數；發散的話這樣移項會得到荒謬的結論。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"先知道 $I$ 有限","on":"先知道"},
-            {"do":"write","line":"發散：不能這樣移項","color":"red","on":"發散"}
-          ] }
-      ],
-      "key": "移項的前提是 $I$ 有限",
-      "check": 0
-    },
-    {
-      "title": "sin 與 cos 一樣大",
-      "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx$"],
-          "say": "記住結論：零到二分之派，自然對數 sine 跟自然對數 cosine 的積分一樣大。",
-          "board": [
-            {"do":"write","line":"${{s:\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx}}$","tint":{"s":"blue"}},
-            {"do":"write","line":"$={{c:\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx}}$","tint":{"c":"violet"},"on":"跟自然對數"}
-          ] },
-        { "show": ["$=-\\frac{\\pi}{2}\\ln 2$"],
-          "note": "兩條曲線左右對稱。",
-          "say": "都等於負二分之派乘自然對數二。用這個對稱，相關的積分常常一眼看出來。",
-          "board": [
-            {"do":"write","line":"$={{r:-\\frac{\\pi}{2}\\ln 2}}$"},
-            {"do":"box","term":"r","color":"green","on":"負二分之派"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "化成 log-sine",
-      "beats": [
-        { "show": ["$\\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx$"],
-          "note": "令 $x=\\sin\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$。",
-          "say": "這個積分令 x 等於 sine theta，根號裡變成 cosine theta，正好跟 dx 的 cosine 約掉。",
-          "board": [
-            {"do":"write","line":"$\\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx$"},
-            {"do":"write","line":"$x=\\sin\\theta$","on":"令 x"},
-            {"do":"write","line":"$\\sqrt{1-x^2}={{c:\\cos\\theta}}$","on":"根號裡"},
-            {"do":"write","line":"$dx={{d:\\cos\\theta}}\\,d\\theta$","on":"dx 的"}
-          ] },
-        { "show": ["$\\sqrt{\\cos^2\\theta}=|\\cos\\theta|=\\cos\\theta$"],
-          "note": "$0\\le\\theta\\le\\frac{\\pi}{2}$ 時 $\\cos\\theta\\ge0$。",
-          "say": "theta 在零到二分之派，cosine 不是負的，所以根號 cosine 平方就是 cosine。",
-          "board": [
-            {"do":"write","line":"$0\\le\\theta\\le\\frac{\\pi}{2}$：$\\cos\\theta\\ge0$"},
-            {"do":"write","line":"$\\sqrt{\\cos^2\\theta}=\\cos\\theta$","on":"所以"}
-          ] },
-        { "show": ["$=\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta$"],
-          "say": "x 從零到一，theta 從零到二分之派，剛好就是 log-sine 積分。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$x:0\\to1$，$\\theta:0\\to\\frac{\\pi}{2}$","on":"x 從零"},
-            {"do":"write","line":"$=\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta$","on":"剛好就是"}
-          ] },
-        { "show": ["$\\int_0^{\\pi/2}x\\cot x\\,dx$"],
-          "note": "$u=x$，$v=\\ln(\\sin x)$。",
-          "say": "再看 x 乘 cotangent x：分部積分，cotangent 的反導函數正是自然對數 sine x。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\pi/2}x\\cot x\\,dx$","on":"x 乘"},
-            {"do":"write","line":"${{u:u=x}}$，${{v:v=\\ln(\\sin x)}}$","tint":{"u":"blue","v":"violet"},"on":"分部積分"},
-            {"do":"write","line":"$(\\ln(\\sin x))'=\\cot x$","on":"反導函數"}
-          ] },
-        { "show": ["邊界項 $\\left[x\\ln(\\sin x)\\right]_0^{\\pi/2}=0$"],
-          "note": "$x\\to 0^+$：$x\\ln x\\to 0$。",
-          "say": "邊界項在二分之派是自然對數一等於零，在零那端像 x 乘自然對數 x，也趨近零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{b:\\left[x\\ln(\\sin x)\\right]_0^{\\pi/2}}}$","on":"邊界項"},
-            {"do":"write","line":"$x=\\frac{\\pi}{2}$：$\\ln 1=0$","on":"二分之派"},
-            {"do":"write","line":"$x\\to0^+$：$x\\ln x\\to0$","on":"在零那端"}
-          ] },
-        { "show": ["$\\int x\\cot x\\,dx=[uv]-\\int v\\,du$","$=0-I$"],
-          "note": "分部積分：$uv$ 減 $\\int v\\,du$。",
-          "say": "整個寫出來：x cotangent x 的積分，等於邊界項減自然對數 sine x 的積分。邊界項是零，所以只剩負 I。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^{\\pi/2}x\\cot x\\,dx$","on":"nt"},
-            {"do":"write","line":"$=\\left[x\\ln(\\sin x)\\right]_0^{\\pi/2}-I$","on":"邊界項減"},
-            {"do":"write","line":"$=0-I$","on":"邊界項是"}
-          ] }
-      ],
-      "key": "分部積分取 $v=\\ln(\\sin x)$，再看邊界項",
-      "predict": {
-        "ask": "$\\int_0^{\\pi/2}x\\cot x\\,dx$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{\\pi}{2}\\ln 2\\approx 1.0888$",
-            "correct": true
-          },
-          {
-            "label": "$-\\frac{\\pi}{2}\\ln 2$",
-            "why": "分部積分剩下的是 $-\\int\\ln(\\sin x)\\,dx$，負負得正。"
-          },
-          {
-            "label": "$0$",
-            "why": "邊界項是 $0$，但還剩 $-\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• 先證收斂：$\\sin x\\ge\\frac{2x}\\pi$，跟 $\\ln x$ 比較",
+        "• 對稱 ＋ 倍角 ⇒ $2I=I-\\frac\\pi2\\ln2$",
+        "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac\\pi2\\ln2$",
+        "• 移項之前要知道 $I$ 有限",
+        "• 分部積分、換元：$x\\cot x$、$\\frac{\\ln x}{\\sqrt{1-x^2}}$ 都化成它",
+        "下一課：Basel 問題 $\\sum\\frac1{n^2}=\\frac{\\pi^2}6$"
+      ]
     }
   ],
   "workedExamples": [
@@ -337,52 +170,849 @@
   ],
   "checks": [
     {
-      "ask": "$\\int_0^{\\pi}\\ln(\\sin x)\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi}\\ln(\\sin x)\\,dx=$？",
       "options": [
-        { "label": "$-\\pi\\ln 2$", "correct": true },
-        { "label": "$-\\frac{\\pi}{2}\\ln 2$", "why": "那是 $[0,\\frac{\\pi}{2}]$ 的值；$\\sin$ 對 $\\frac{\\pi}{2}$ 對稱，$[0,\\pi]$ 是兩倍。" },
-        { "label": "$0$", "why": "$\\ln(\\sin x)$ 在 $(0,\\pi)$ 上都 $\\le 0$，積分是負的，不會抵銷成 $0$。" }
+        {
+          "label": "$-\\pi\\ln2$",
+          "correct": true
+        },
+        {
+          "label": "$-\\dfrac\\pi2\\ln2$",
+          "why": "那是 $[0,\\frac\\pi2]$ 的值；$[0,\\pi]$ 是兩倍"
+        },
+        {
+          "label": "$0$",
+          "why": "$\\ln(\\sin x)\\le0$，而且大部分是負的，不會抵消"
+        },
+        {
+          "label": "$-\\dfrac\\pi4\\ln2$",
+          "why": "範圍變大，積分應該變兩倍，不是變一半"
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx=$？",
       "options": [
-        { "label": "$0$", "correct": true },
-        { "label": "$-\\pi\\ln 2$", "why": "$\\ln(\\tan x)=\\ln(\\sin x)-\\ln(\\cos x)$，兩項積分相等，相減是 $0$。" },
-        { "label": "發散", "why": "兩端都是瑕點，但都像 $\\pm\\ln x$，可積；而且 $\\ln(\\tan x)$ 對 $\\frac{\\pi}{4}$ 反對稱。" }
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$-\\pi\\ln2$",
+          "why": "$\\tan=\\frac{\\sin}{\\cos}$，對數是相減，不是相加"
+        },
+        {
+          "label": "$-\\dfrac\\pi2\\ln2$",
+          "why": "只算了 $\\ln\\sin x$ 那一項，漏了 $-\\ln\\cos x$"
+        },
+        {
+          "label": "發散",
+          "why": "兩端都是瑕點，但 $\\ln\\sin x$、$\\ln\\cos x$ 各自收斂"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "先確認它收斂",
+      "beats": [
+        {
+          "show": [
+            "$I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"
+          ],
+          "say": "這一課算一個經典的瑕積分：自然對數正弦 x，從 0 積到 2 分之派。我們叫它 I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x\\to0^+$：$\\sin x\\to0$，$\\ln(\\sin x)\\to-\\infty$：瑕點在 $0$"
+          ],
+          "say": "x 靠近 0 時，正弦 x 趨近 0，取自然對數就往負無限大掉。所以 0 是瑕點，第一件事是確認它收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x\\to0^+$：$\\sin x\\to0$，$\\ln(\\sin x)\\to-\\infty$：瑕點在 $0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：$\\sin x\\approx x$，所以 $\\ln(\\sin x)\\approx\\ln x$",
+            "$\\int_0^1\\ln x\\,dx=\\lim_{\\varepsilon\\to0^+}\\Big[x\\ln x-x\\Big]_\\varepsilon^1=-1$"
+          ],
+          "say": "直覺上，正弦 x 跟 x 差不多，自然對數正弦 x 就跟自然對數 x 差不多。而自然對數 x 從 0 積到 1 收斂，是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直覺：$\\sin x\\approx x$，所以 $\\ln(\\sin x)\\approx\\ln x$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\ln x\\,dx=\\lim_{\\varepsilon\\to0^+}\\Big[x\\ln x-x\\Big]_\\varepsilon^1=-1$",
+              "on": "正弦#2"
+            },
+            {
+              "do": "write",
+              "line": "　用到 $\\varepsilon\\ln\\varepsilon\\to0$（羅必達法則）",
+              "color": "violet",
+              "on": "對數#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "嚴格：$\\sin$ 在 $[0,\\frac\\pi2]$ 凹向下（$\\sin''=-\\sin\\le0$），圖形在弦的上方：",
+            "$\\sin x\\ge\\frac{2x}\\pi\\quad\\big(0\\le x\\le\\tfrac\\pi2\\big)$"
+          ],
+          "say": "嚴格的做法：正弦在 0 到 2 分之派上凹向下，二階導數是負正弦，小於等於 0。凹函數在弦的上方，所以正弦 x 大於等於派分之 2x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "嚴格：$\\sin$ 在 $[0,\\frac\\pi2]$ 凹向下（$\\sin''=-\\sin\\le0$），圖形在弦的上方："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\sin x\\ge\\frac{2x}\\pi\\quad\\big(0\\le x\\le\\tfrac\\pi2\\big)}}$",
+              "on": "二階"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "弦的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln\\frac{2x}\\pi\\le\\ln(\\sin x)\\le0$"
+          ],
+          "say": "取自然對數，方向不變：自然對數正弦 x 被夾在自然對數派分之 2x 和 0 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\frac{2x}\\pi\\le\\ln(\\sin x)\\le0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi/2}\\ln\\frac{2x}\\pi\\,dx=-\\frac\\pi2$ 收斂 ⇒ 比較判別：$I$ 收斂，$-\\dfrac\\pi2\\le I\\le0$"
+          ],
+          "say": "下界的積分算得出來，是負 2 分之派，收斂。被積函數不是正的，比較判別一樣適用，所以 I 收斂，而且在負 2 分之派和 0 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int_0^{\\pi/2}\\ln\\frac{2x}\\pi\\,dx=-\\frac\\pi2$ 收斂 ⇒ 比較判別：$I$ 收斂，$-\\dfrac\\pi2\\le I\\le0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　令 $t=\\frac{2x}\\pi$：$\\frac\\pi2\\int_0^1\\ln t\\,dt=-\\frac\\pi2$；兩邊都 $\\le0$，對 $-\\ln\\sin x$ 用正項的比較判別",
+              "color": "violet",
+              "on": "較判"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 為什麼收斂？",
-      "options": [
-        { "label": "$x\\to 0^+$ 時 $\\ln(\\sin x)$ 的行為跟 $\\ln x$ 一樣，而 $\\int_0^1\\ln x\\,dx$ 收斂", "correct": true },
-        { "label": "因為 $\\ln(\\sin x)$ 在 $[0,\\frac{\\pi}{2}]$ 上有界", "why": "它在 $x\\to 0^+$ 時 $\\to-\\infty$，無界。" },
-        { "label": "因為區間長度有限", "why": "區間有限不夠：$\\int_0^1\\frac{dx}{x}$ 區間也有限，但發散。" }
+      "title": "圖與預測",
+      "beats": [
+        {
+          "show": [
+            "藍：ln(sin x)；紅虛線：ln(2x/π)，永遠在藍線下面"
+          ],
+          "say": "圖上，藍線是自然對數正弦 x，在 0 往下衝，但衝得很慢；紅色虛線是下界，一樣在 0 往下衝，面積有限。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "ls",
+                  "window": [
+                    0,
+                    1.65,
+                    -3.2,
+                    0.4
+                  ],
+                  "ystep": 1,
+                  "fn": [
+                    {
+                      "expr": "ln(sin(x))",
+                      "color": "blue",
+                      "domain": [
+                        0.01,
+                        1.5708
+                      ]
+                    },
+                    {
+                      "expr": "ln(2*x/pi)",
+                      "color": "red",
+                      "dash": true,
+                      "domain": [
+                        0.01,
+                        1.5708
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "ln(sin(x))",
+                      "from": 0.01,
+                      "to": 1.5708,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 320
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：ln(sin x)；紅虛線：ln(2x/π)，永遠在藍線下面",
+              "color": "violet",
+              "on": "很慢"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$I=\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 大約是多少？",
+        "options": [
+          {
+            "label": "$-1.09$",
+            "correct": true
+          },
+          {
+            "label": "$-\\infty$",
+            "why": "瑕點在 $0$，但 $\\ln$ 衝得很慢，面積有限"
+          },
+          {
+            "label": "$-1.57$",
+            "why": "那是下界 $-\\frac\\pi2$；藍線在紅線上面，$I$ 比它大"
+          },
+          {
+            "label": "$0.69$",
+            "why": "$\\sin x\\le1$，$\\ln(\\sin x)\\le0$，積分不會是正的"
+          }
+        ]
+      }
+    },
+    {
+      "title": "三個對稱",
+      "beats": [
+        {
+          "show": [
+            "對稱一：令 $x=\\frac\\pi2-t$，$\\sin x=\\cos t$：",
+            "$I=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx$"
+          ],
+          "say": "第一個對稱：令 x 等於 2 分之派減 t，正弦變成餘弦，積分範圍不變。所以 I 也等於自然對數餘弦 x 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對稱一：令 $x=\\frac\\pi2-t$，$\\sin x=\\cos t$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle I=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx}}$",
+              "on": "正弦"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "也等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相加，再用倍角 $\\sin x\\cos x=\\frac12\\sin2x$：",
+            "$\\begin{aligned}2I&=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx\\\\&=\\int_0^{\\pi/2}\\Big(\\ln(\\sin2x)-\\ln2\\Big)dx\\end{aligned}$"
+          ],
+          "say": "兩個相加，對數相加變成乘積的對數。正弦乘餘弦，是 2 分之一的正弦 2x，所以裡面拆成自然對數正弦 2x，減自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相加，再用倍角 $\\sin x\\cos x=\\frac12\\sin2x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}2I&=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx\\\\&=\\int_0^{\\pi/2}\\Big(\\ln(\\sin2x)-\\ln2\\Big)dx\\end{aligned}}$",
+              "on": "的正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2I=\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx-\\frac\\pi2\\ln2$"
+          ],
+          "say": "常數自然對數 2 積出來是 2 分之派乘自然對數 2。剩下正弦 2x 那一項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2I=\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx-\\frac\\pi2\\ln2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對稱二：令 $t=2x$：",
+            "$\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\int_0^{\\pi}\\ln(\\sin t)\\,dt$"
+          ],
+          "say": "第二個對稱是換元：令 t 等於 2x，範圍變成 0 到派，前面多一個 2 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對稱二：令 $t=2x$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\int_0^{\\pi}\\ln(\\sin t)\\,dt$",
+              "on": "圍變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對稱三：$\\sin(\\pi-t)=\\sin t$，$[0,\\pi]$ 左右兩半一樣：",
+            "$\\int_0^{\\pi}\\ln(\\sin t)\\,dt=2I$"
+          ],
+          "say": "第三個對稱：正弦對 2 分之派左右對稱，所以 0 到派的積分，是 0 到 2 分之派的兩倍，也就是 2I。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對稱三：$\\sin(\\pi-t)=\\sin t$，$[0,\\pi]$ 左右兩半一樣："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_0^{\\pi}\\ln(\\sin t)\\,dt=2I}}$",
+              "on": "對稱#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\cdot2I=I$：自己出現了"
+          ],
+          "say": "所以正弦 2x 那一項，就是 I 自己！",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin2x)\\,dx=\\frac12\\cdot2I=I$：自己出現了",
+              "color": "red"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "推導中 $2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx$ 之後，下一步是把 $\\sin x\\cos x$ 寫成？",
-      "options": [
-        { "label": "$\\frac{\\sin 2x}{2}$", "correct": true },
-        { "label": "$\\sin 2x$", "why": "$\\sin 2x=2\\sin x\\cos x$，所以 $\\sin x\\cos x$ 是它的一半，會多出 $-\\ln 2$。" },
-        { "label": "$\\frac{1-\\cos 2x}{2}$", "why": "那是 $\\sin^2 x$ 的半角公式，不是 $\\sin x\\cos x$。" }
+      "title": "結果",
+      "beats": [
+        {
+          "show": [
+            "$2I=I-\\frac\\pi2\\ln2$"
+          ],
+          "say": "代回去：2I 等於 I 減 2 分之派乘自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2I=I-\\frac\\pi2\\ln2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "移項：",
+            "$\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac\\pi2\\ln2\\approx-1.0888$"
+          ],
+          "say": "兩邊減掉 I，答案是負 2 分之派乘自然對數 2，大約負 1.0888。跟猜的一樣，也在負 2 分之派和 0 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "移項："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac\\pi2\\ln2\\approx-1.0888}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "08"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：中點法 $\\approx-1.08879$",
+              "color": "violet",
+              "on": "在負"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "推導 $\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$ 的步驟",
+        "steps": [
+          {
+            "label": "用 $\\sin x\\ge\\frac{2x}\\pi$ 確認 $I$ 收斂"
+          },
+          {
+            "label": "令 $x=\\frac\\pi2-t$，得 $I=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx$",
+            "why": "先要有上一步：用 $\\sin x\\ge\\frac{2x}\\pi$ 確認 $I$ 收斂"
+          },
+          {
+            "label": "相加，用 $\\sin x\\cos x=\\frac12\\sin2x$",
+            "why": "先要有上一步：令 $x=\\frac\\pi2-t$，得 $I=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx$"
+          },
+          {
+            "label": "令 $t=2x$，再用 $\\sin(\\pi-t)=\\sin t$，認出 $I$",
+            "why": "先要有上一步：相加，用 $\\sin x\\cos x=\\frac12\\sin2x$"
+          },
+          {
+            "label": "解 $2I=I-\\frac\\pi2\\ln2$",
+            "why": "先要有上一步：令 $t=2x$，再用 $\\sin(\\pi-t)=\\sin t$，認出 $I$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "為什麼可以這樣移項",
+      "beats": [
+        {
+          "show": [
+            "「$2I=I+c$ ⇒ $I=c$」只有在 $I$ 是有限的數時才對"
+          ],
+          "say": "最後一步把 I 移項，看起來理所當然，其實要先知道 I 是一個有限的數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「$2I=I+c$ ⇒ $I=c$」只有在 $I$ 是有限的數時才對",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反例：$S=1+2+4+8+\\cdots$",
+            "$2S=2+4+8+\\cdots=S-1\\ \\Rightarrow\\ S=-1\\ ?$"
+          ],
+          "say": "看一個反例：S 是 1 加 2 加 4 一直加下去。2S 等於 S 減 1，移項得到 S 等於負 1？正的數加起來怎麼會是負的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反例：$S=1+2+4+8+\\cdots$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2S=2+4+8+\\cdots=S-1\\ \\Rightarrow\\ S=-1\\ ?$",
+              "color": "red",
+              "on": "移項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "錯在 $S=\\infty$：$\\infty=\\infty-1$ 不能移項"
+          ],
+          "say": "錯在 S 根本不是一個數，是無限大。無限大等於無限大減 1，不能移項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯在 $S=\\infty$：$\\infty=\\infty-1$ 不能移項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這一課每一步都需要收斂：",
+            "• 拆開 $\\int\\ln(\\sin x\\cos x)=\\int\\ln\\sin x+\\int\\ln\\cos x$：兩個都收斂"
+          ],
+          "say": "這一課每一步都用到收斂：把積分拆成兩個，要兩個都收斂；瑕積分的換元，要先在有限區間上做再取極限；最後移項，要 I 有限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這一課每一步都需要收斂："
+            },
+            {
+              "do": "write",
+              "line": "• 拆開 $\\int\\ln(\\sin x\\cos x)=\\int\\ln\\sin x+\\int\\ln\\cos x$：兩個都收斂",
+              "on": "拆成"
+            },
+            {
+              "do": "write",
+              "line": "• 瑕積分換元：在 $[\\varepsilon,\\frac\\pi2-\\varepsilon]$ 上換，再取極限",
+              "on": "的換"
+            },
+            {
+              "do": "write",
+              "line": "• 移項：$I$ 有限",
+              "on": "極限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 ① 不是多餘的：先證收斂，才能用技巧"
+          ],
+          "say": "所以第一節不是多餘的：先證收斂，才有資格用這些技巧。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 ① 不是多餘的：先證收斂，才能用技巧",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi}\\ln(\\sin x)\\,dx=$？"
+          ],
+          "say": "試一題：從 0 積到派。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx=$？"
+          ],
+          "say": "再一題：自然對數正切 x。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "化成它：分部積分",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}x\\cot x\\,dx$"
+          ],
+          "say": "很多積分可以化成 I。第一個：x 乘餘切 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^{\\pi/2}x\\cot x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=x$，$dv=\\cot x\\,dx$，$v=\\ln(\\sin x)$：",
+            "$=\\Big[x\\ln(\\sin x)\\Big]_{0^+}^{\\pi/2}-\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"
+          ],
+          "say": "分部積分：u 取 x，dv 取餘切 x dx。餘切的反導函數，正是自然對數正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=x$，$dv=\\cot x\\,dx$，$v=\\ln(\\sin x)$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\Big[x\\ln(\\sin x)\\Big]_{0^+}^{\\pi/2}-\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$",
+              "on": "餘切#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "邊界：$\\frac\\pi2\\ln1=0$；$x\\ln(\\sin x)=x\\ln x+x\\ln\\frac{\\sin x}x\\to0$"
+          ],
+          "say": "邊界項：上限是 2 分之派乘自然對數 1，等於 0。下限，x 乘自然對數 x 趨近 0，另一項是 x 乘一個趨近 0 的數，也趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "邊界：$\\frac\\pi2\\ln1=0$；$x\\ln(\\sin x)=x\\ln x+x\\ln\\frac{\\sin x}x\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_0^{\\pi/2}x\\cot x\\,dx=-I=\\frac\\pi2\\ln2\\approx1.0888$"
+          ],
+          "say": "所以 x 乘餘切 x 的積分是負 I，等於 2 分之派乘自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^{\\pi/2}x\\cot x\\,dx=-I=\\frac\\pi2\\ln2\\approx1.0888}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "的積"
+            },
+            {
+              "do": "write",
+              "line": "　這個積分其實不是瑕積分：$x\\cot x\\to1$；分部積分後才出現瑕點，所以要在 $[\\varepsilon,\\frac\\pi2]$ 上做",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "y = x cot x：從 1 降到 0，面積 ≈ 1.0888"
+          ],
+          "say": "圖上，x 乘餘切 x 從 1 降到 0，面積就是 2 分之派乘自然對數 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "xc",
+                  "window": [
+                    0,
+                    1.65,
+                    -0.2,
+                    1.2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x/tan(x)",
+                      "color": "blue",
+                      "domain": [
+                        0.01,
+                        1.5708
+                      ]
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x/tan(x)",
+                      "from": 0.01,
+                      "to": 1.5708,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 170
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "y = x cot x：從 1 降到 0，面積 ≈ 1.0888",
+              "color": "violet",
+              "on": "面積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "化成它：換元",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx$"
+          ],
+          "say": "第二個：自然對數 x 除以根號 1 減 x 平方，兩端都是瑕點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $x=\\sin\\theta$：$dx=\\cos\\theta\\,d\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$"
+          ],
+          "say": "看到根號 1 減 x 平方，令 x 等於正弦西塔。dx 是餘弦西塔 d 西塔，根號正好是餘弦西塔，兩個約掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $x=\\sin\\theta$：$dx=\\cos\\theta\\,d\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta=-\\frac\\pi2\\ln2$"
+          ],
+          "say": "剩下的正是 I。答案是負 2 分之派乘自然對數 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta=-\\frac\\pi2\\ln2}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "答案"
+            },
+            {
+              "do": "write",
+              "line": "　換元在 $[\\varepsilon,1-\\varepsilon]$ 上做；$\\theta\\in(0,\\frac\\pi2)$ 時 $\\cos\\theta>0$，根號不用加絕對值",
+              "color": "violet",
+              "on": "派乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "相關的結果",
+            "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=-\\frac\\pi2\\ln2$"
+          ],
+          "say": "整理一下這一課順便得到的結果：自然對數餘弦一樣；0 到派是兩倍；自然對數正切是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "相關的結果"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=-\\frac\\pi2\\ln2$",
+              "on": "到的"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_0^{\\pi}\\ln(\\sin x)\\,dx=-\\pi\\ln2$",
+              "on": "一樣"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\tan x)\\,dx=0$",
+              "on": "自然#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 先證收斂：$\\sin x\\ge\\frac{2x}\\pi$，跟 $\\ln x$ 比較",
+            "• 對稱 ＋ 倍角 ⇒ $2I=I-\\frac\\pi2\\ln2$"
+          ],
+          "say": "整理一下：先用正弦大於等於派分之 2x 證收斂；再用對稱和倍角，讓 I 等於自己的一部分；移項之前一定要知道 I 有限；很多積分都能用分部積分或換元化成它。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 先證收斂：$\\sin x\\ge\\frac{2x}\\pi$，跟 $\\ln x$ 比較"
+            },
+            {
+              "do": "write",
+              "line": "• 對稱 ＋ 倍角 ⇒ $2I=I-\\frac\\pi2\\ln2$",
+              "on": "2x"
+            },
+            {
+              "do": "write",
+              "line": "• $\\displaystyle\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac\\pi2\\ln2$",
+              "on": "等於#2"
+            },
+            {
+              "do": "write",
+              "line": "• 移項之前要知道 $I$ 有限",
+              "on": "項之"
+            },
+            {
+              "do": "write",
+              "line": "• 分部積分、換元：$x\\cot x$、$\\frac{\\ln x}{\\sqrt{1-x^2}}$ 都化成它",
+              "on": "積分#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Basel 問題 $\\sum\\frac1{n^2}=\\frac{\\pi^2}6$"
+          ],
+          "say": "下一課，從積分轉到級數：n 平方分之一全部加起來，為什麼是 6 分之派平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Basel 問題 $\\sum\\frac1{n^2}=\\frac{\\pi^2}6$"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["log-sine", "improper-integral", "kings-property"],
-    "fine": ["log-sine-symmetry-trick", "log-sine-convergence", "log-sine-reduce-ibp", "log-sine-substitution"]
+    "coarse": [
+      "log-sine",
+      "improper-integral",
+      "kings-property"
+    ],
+    "fine": [
+      "log-sine-symmetry-trick",
+      "log-sine-convergence",
+      "log-sine-reduce-ibp",
+      "log-sine-substitution"
+    ]
   },
   "practice": [
-    { "id": "burst-int-011", "core": true, "trains": "log-sine-symmetry-trick" },
-    { "id": "rel-hard-int-017", "core": true, "trains": "log-sine-symmetry-trick" },
-    { "id": "dm-int-003", "core": true, "trains": "log-sine-reduce-ibp" },
-    { "id": "world-044", "core": true, "trains": "log-sine-reduce-ibp" },
-    { "id": "cg-11f-012", "core": true, "trains": "log-sine-convergence" },
-    { "id": "cg-11f-010", "trains": "log-sine-substitution" },
-    { "id": "cg-11f-011", "trains": "log-sine-substitution" },
-    { "id": "burst-int-012", "challenge": true, "trains": "log-sine-symmetry-trick", "note": "挑戰：$(\\ln\\sin x)^2$，需要 Basel 值 $\\frac{\\pi^2}{6}$ 或 Fourier 級數。" },
-    { "id": "burst-boss-int-015", "challenge": true, "trains": "log-sine-substitution", "note": "挑戰：$(\\ln\\tan x)^2$，令 $u=\\tan x$ 變成 $\\int_0^{\\infty}\\frac{(\\ln u)^2}{1+u^2}\\,du$。" }
+    {
+      "id": "burst-int-011",
+      "core": true,
+      "trains": "log-sine-symmetry-trick"
+    },
+    {
+      "id": "rel-hard-int-017",
+      "core": true,
+      "trains": "log-sine-symmetry-trick"
+    },
+    {
+      "id": "dm-int-003",
+      "core": true,
+      "trains": "log-sine-reduce-ibp"
+    },
+    {
+      "id": "world-044",
+      "core": true,
+      "trains": "log-sine-reduce-ibp"
+    },
+    {
+      "id": "cg-11f-012",
+      "core": true,
+      "trains": "log-sine-convergence"
+    },
+    {
+      "id": "cg-11f-010",
+      "trains": "log-sine-substitution"
+    },
+    {
+      "id": "cg-11f-011",
+      "trains": "log-sine-substitution"
+    },
+    {
+      "id": "burst-int-012",
+      "challenge": true,
+      "trains": "log-sine-symmetry-trick",
+      "note": "挑戰：$(\\ln\\sin x)^2$，需要 Basel 值 $\\frac{\\pi^2}{6}$ 或 Fourier 級數。"
+    },
+    {
+      "id": "burst-boss-int-015",
+      "challenge": true,
+      "trains": "log-sine-substitution",
+      "note": "挑戰：$(\\ln\\tan x)^2$，令 $u=\\tan x$ 變成 $\\int_0^{\\infty}\\frac{(\\ln u)^2}{1+u^2}\\,du$。"
+    }
   ],
   "gaps": []
 }

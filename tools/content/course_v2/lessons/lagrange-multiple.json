@@ -1,7 +1,8 @@
 {
   "id": "lagrange-multiple",
   "title": "多個條件",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
   "prerequisites": [
     "lagrange-one",
@@ -12,39 +13,111 @@
   ],
   "related": [],
   "objectives": [
-    "三個變數、兩個約束時，寫出 $\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$、$g=c_1$、$h=c_2$ 五條方程。",
-    "說得出為什麼 $\\nabla f$ 落在 $\\nabla g$、$\\nabla h$ 張成的平面上，以及為什麼要求 $\\nabla g$、$\\nabla h$ 不平行。",
-    "解出候選點後，用有界閉集或其他理由判斷最大、最小。"
+    "三個變數、兩個約束時，寫出 $\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$、$g=c_1$、$h=c_2$ 的聯立方程",
+    "說得出為什麼 $\\nabla f$ 落在 $\\nabla g$、$\\nabla h$ 張成的平面上，以及為什麼要求 $\\nabla g$、$\\nabla h$ 不平行",
+    "解出候選點後，用有界閉集或其他理由判斷最大、最小"
   ],
-  "visual": "平面 x + y + z = 1 與圓柱 x² + y² = 2 相交成一個傾斜的橢圓。一個點沿橢圓移動，同時畫出該點的 ∇g = (1, 1, 1)、∇h = (2x, 2y, 0) 與兩者張成的淺色平面，以及 ∇f = (0, 0, 1)。點走到最高處 (−1, −1, 3) 時，∇f 剛好落進那片淺色平面。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 兩個約束：在一條曲線上找極值",
+      "heading": "① 兩個約束：一條曲線",
       "body": [
-        "三個變數 $(x,y,z)$，同時滿足 $g=c_1$ 與 $h=c_2$。每個約束是一個曲面，兩個曲面相交通常是一條曲線。問題變成：在這條曲線上，$f$ 的最大、最小在哪？",
-        "例：平面 $x+y+z=1$ 斜切圓柱 $x^2+y^2=2$，交線是一個傾斜的橢圓。問這個橢圓上哪一點最高，就是在兩個約束下求 $f=z$ 的最大值。也可以想成：一個條件時能走的地方是一條曲線（二維）或一個曲面（三維）；兩個條件把三維空間再切一刀，只剩一條曲線。"
-      ],
-      "collapsible": false
+        "三個變數，兩個約束：$g(x,y,z)=c_1$，$h(x,y,z)=c_2$",
+        "每個約束是一個曲面；兩個曲面交出一條曲線",
+        "例 1　平面 $x+y+z=1$ 與圓柱 $x^2+y^2=2$ 交成一個橢圓。求橢圓上 $z$ 的最大值與最小值"
+      ]
+    },
+    {
+      "heading": "① 先猜猜看",
+      "body": [
+        "直覺：$z=1-(x+y)$，在圓 $x^2+y^2=2$ 上讓 $x+y$ 最小",
+        "$x+y$ 最小在 $(-1,-1)$：$x+y=-2$，$z=3$",
+        "這題有捷徑；一般的情形需要一套方法"
+      ]
     },
     {
       "heading": "② 條件從哪裡來",
       "body": [
-        "直覺，不是證明：沿著交線走，前進方向 $\\mathbf v$ 同時躺在兩個曲面上，所以 $\\mathbf v$ 同時垂直於 $\\nabla g$ 和 $\\nabla h$。在極值點，沿曲線走 $f$ 第一階不變，所以 $\\nabla f\\cdot\\mathbf v=0$，$\\nabla f$ 也垂直於 $\\mathbf v$。",
-        "三維空間裡跟 $\\mathbf v$ 垂直的向量，全部落在 $\\nabla g$、$\\nabla h$ 張成的平面上（前提是 $\\nabla g$、$\\nabla h$ 不平行，才張得出一個平面）。所以存在兩個數 $\\lambda$、$\\mu$："
+        "沿曲線 $\\mathbf r(t)$ 走，在極值點：",
+        "• $f(\\mathbf r(t))$ 的導數 $=0$ ⇒ $\\nabla f\\cdot T=0$",
+        "• $g$、$h$ 沿曲線是常數 ⇒ $\\nabla g\\cdot T=0$，$\\nabla h\\cdot T=0$",
+        "$\\nabla g$、$\\nabla h$ 不平行 ⇒ 它們張成整個法平面",
+        "一個約束時，法向只有一個方向：$\\nabla f=\\lambda\\nabla g$。兩個約束，就多一個乘數 $\\mu$",
+        "為什麼要不平行：平行時兩個梯度只張成一條線",
+        "法平面上其他方向的 $\\nabla f$ 就寫不出來，定理不成立",
+        "等價寫法：$\\nabla g\\times\\nabla h\\ne\\mathbf 0$；這也保證兩曲面真的交成一條光滑曲線"
       ],
       "tex": [
-        "\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h,\\qquad g=c_1,\\quad h=c_2"
-      ],
-      "collapsible": false
+        "\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "對照",
+        "• 一個約束（平面上）：約束是曲線，法向只有一個方向 ⇒ $\\nabla f=\\lambda\\nabla g$",
+        "• 兩個約束（空間中）：交線的法平面是二維 ⇒ $\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$",
+        "三個變數、一個約束（曲面）時，法向也只有一個方向：$\\nabla f=\\lambda\\nabla g$"
+      ]
     },
     {
       "heading": "③ 條件與數方程",
       "body": [
-        "精確的敘述：$f$、$g$、$h$ 的偏導數連續，$P$ 是 $f$ 在交線上的局部極值點，而且 $\\nabla g(P)$、$\\nabla h(P)$ 線性獨立（不平行、都不是零向量），那麼存在 $\\lambda$、$\\mu$ 使上式成立。",
-        "未知數有 $x$、$y$、$z$、$\\lambda$、$\\mu$ 五個，方程有 $\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$ 的三個分量加上兩個約束，也是五條。",
-        "跟一個條件時一樣：解出來的只是候選點。交線有界而且封閉（例如橢圓）時，最大、最小一定存在，比候選值就好。"
+        "未知數：$x,y,z,\\lambda,\\mu$，五個",
+        "方程式：",
+        "一般：$n$ 個變數、$m$ 個約束 ⇒ $n+m$ 個未知數、$n+m$ 條方程式"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f_x=\\lambda g_x+\\mu h_x,\\quad f_y=\\lambda g_y+\\mu h_y,\\\\&f_z=\\lambda g_z+\\mu h_z,\\quad g=c_1,\\quad h=c_2\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 解例 1",
+      "body": [
+        "$f=z$，$g=x+y+z$，$h=x^2+y^2$：",
+        "第三個分量：$1=\\lambda$",
+        "前兩個：$0=1+2\\mu x$，$0=1+2\\mu y$ ⇒ $x=y=-\\dfrac1{2\\mu}$",
+        "$x^2+y^2=2$ ⇒ $x=y=\\pm1$；$z=1-x-y$",
+        "候選點：$(1,1,-1)$ 與 $(-1,-1,3)$",
+        "橢圓是有界閉集 ⇒ $z$ 的最大、最小都存在",
+        "最大值 $z=3$，在 $(-1,-1,3)$",
+        "最小值 $z=-1$，在 $(1,1,-1)$",
+        "檢查前提：$\\nabla g=(1,1,1)$、$\\nabla h=(2x,2y,0)$ 在橢圓上不平行",
+        "驗算：$x=\\sqrt2\\cos t$，$y=\\sqrt2\\sin t$",
+        "正弦在 $-1$ 到 $1$ 之間 ⇒ $-1\\le z\\le3$"
+      ],
+      "tex": [
+        "(0,0,1)=\\lambda(1,1,1)+\\mu(2x,2y,0)",
+        "z=1-\\sqrt2(\\cos t+\\sin t)=1-2\\sin\\!\\Big(t+\\frac\\pi4\\Big)"
+      ]
+    },
+    {
+      "heading": "③ 例 2：離原點最近",
+      "body": [
+        "例 2　在 $x+y+z=3$ 與 $x-y=1$ 的交線上，求 $x^2+y^2+z^2$ 的最小值",
+        "前兩條相加：$x+y=\\lambda=2z$",
+        "代入 $x+y+z=3$：$3z=3$，$z=1$",
+        "$x+y=2$，$x-y=1$ ⇒ $x=\\frac32$，$y=\\frac12$",
+        "直線無界：走遠 $f\\to\\infty$，只有最小值 $\\frac72$",
+        "幾何驗證：交線方向 $(1,1,1)\\times(1,-1,0)=(1,1,-2)$",
+        "$\\left(\\tfrac32,\\tfrac12,1\\right)\\cdot(1,1,-2)=0$：從原點到這點垂直於直線"
+      ],
+      "tex": [
+        "(2x,2y,2z)=\\lambda(1,1,1)+\\mu(1,-1,0)",
+        "2x=\\lambda+\\mu,\\quad 2y=\\lambda-\\mu,\\quad 2z=\\lambda",
+        "f\\Big(\\tfrac32,\\tfrac12,1\\Big)=\\tfrac94+\\tfrac14+1=\\tfrac72"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 兩個約束 ⇒ 兩個曲面交成一條曲線",
+        "• 條件：$\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$，加上 $g=c_1$、$h=c_2$",
+        "• 理由：三個梯度都垂直於切向量；$\\nabla g$、$\\nabla h$ 不平行才張得滿法平面",
+        "• 數方程：$n$ 個變數、$m$ 個約束 ⇒ $n+m$ 條方程式",
+        "• 最後判斷最大最小：有界閉集比大小；無界要另外論證",
+        "下一章：二重積分，從微分走向積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -86,314 +159,650 @@
   ],
   "checks": [
     {
-      "ask": "三個變數、兩個約束，Lagrange 方程組有幾個未知數？",
+      "ask": "兩個約束下的極值點，下面哪一個一定成立？",
       "options": [
         {
-          "label": "5 個：$x$、$y$、$z$、$\\lambda$、$\\mu$",
+          "label": "$\\nabla f$ 垂直於交線的切向量",
           "correct": true
-        },
-        {
-          "label": "3 個",
-          "why": "還有兩個乘數 $\\lambda$、$\\mu$，每個約束一個。"
-        },
-        {
-          "label": "4 個",
-          "why": "兩個約束各有一個乘數，總共 $3+2=5$。"
-        }
-      ]
-    },
-    {
-      "ask": "兩個約束時，極值點要滿足的條件是？",
-      "options": [
-        {
-          "label": "$\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$",
-          "correct": true
-        },
-        {
-          "label": "$\\nabla f=\\lambda\\nabla g$ 而且 $\\nabla f=\\mu\\nabla h$",
-          "why": "那要求 $\\nabla f$ 同時平行 $\\nabla g$ 和 $\\nabla h$，太強了；$\\nabla f$ 只需要落在兩者張成的平面上。"
         },
         {
           "label": "$\\nabla f=\\mathbf 0$",
-          "why": "那是沒有約束的條件；在交線上的極值點 $\\nabla f$ 通常不是 $\\mathbf 0$。"
+          "why": "那是沒有約束時的條件"
+        },
+        {
+          "label": "$\\nabla f$ 與 $\\nabla g$ 平行",
+          "why": "一個約束才這樣；兩個約束時是 $\\nabla g$、$\\nabla h$ 的組合"
+        },
+        {
+          "label": "$\\nabla f$ 平行於交線的切向量",
+          "why": "方向弄反了：是垂直，不是平行"
         }
       ]
     },
     {
-      "ask": "為什麼要求 $\\nabla g$、$\\nabla h$ 不平行？",
+      "ask": "四個變數 $x,y,z,w$、兩個約束，用 Lagrange 乘數要解幾個未知數？",
       "options": [
         {
-          "label": "平行時兩者張不出平面，$\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$ 的推理不成立",
+          "label": "$6$",
           "correct": true
         },
         {
-          "label": "平行時 $\\lambda$、$\\mu$ 會是負數",
-          "why": "乘數的正負不是問題；問題是兩個平行向量只張成一條直線。"
+          "label": "$4$",
+          "why": "忘了乘數 $\\lambda$、$\\mu$ 也是未知數"
         },
         {
-          "label": "沒有影響，平行也一樣可以用",
-          "why": "就像一個條件時要 $\\nabla g\\ne\\mathbf 0$，兩個條件時要兩個梯度線性獨立，否則定理不保證。"
-        }
-      ]
-    },
-    {
-      "ask": "範例 1 的橢圓上，$z$ 的最小值是？",
-      "options": [
-        {
-          "label": "$-1$",
-          "correct": true
+          "label": "$8$",
+          "why": "每個約束只多一個乘數，不是多兩個"
         },
         {
-          "label": "$3$",
-          "why": "那是最大值，對應 $x=y=-1$。"
-        },
-        {
-          "label": "$1$",
-          "why": "$1$ 是平面方程的常數，不是 $z$ 的值；$x=y=1$ 時 $z=1-2=-1$。"
+          "label": "$5$",
+          "why": "有兩個約束，就有兩個乘數"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "兩個約束",
+      "title": "兩個約束：一條曲線",
       "beats": [
-        { "show": ["$g=c_1$ 且 $h=c_2$"],
-          "note": "三個變數 $(x,y,z)$，兩個約束各是一個曲面。",
-          "say": "三個變數，同時要滿足兩個條件。每個條件是一個曲面，兩個曲面相交，通常是一條曲線。",
+        {
+          "show": [
+            "三個變數，兩個約束：$g(x,y,z)=c_1$，$h(x,y,z)=c_2$"
+          ],
+          "say": "這一課有三個變數，同時要滿足兩個約束條件 g 等於 c 1，h 等於 c 2。",
           "board": [
-            {"do":"write","line":"${{g:g}}=c_1$ 且 ${{h:h}}=c_2$","tint":{"g":"blue","h":"violet"}},
-            {"do":"transform","line":"${{g:g}}=c_1$ 且 ${{h:h}}=c_2$ ⇒ 一條曲線","on":"通常是"}
-          ] },
-        { "show": ["平面 $x+y+z=1$ 切圓柱 $x^2+y^2=2$"],
-          "say": "例如一個平面斜斜地切過圓柱，切口是一圈。",
+            {
+              "do": "write",
+              "line": "三個變數，兩個約束：$g(x,y,z)=c_1$，$h(x,y,z)=c_2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個約束是一個曲面；兩個曲面交出一條曲線"
+          ],
+          "say": "在空間裡，每個約束都是一個曲面。兩個曲面相交，通常是一條曲線。問題變成：在這條曲線上，f 的最大最小是多少？",
           "board": [
-            {"do":"write","line":"平面 ${{pl:x+y+z=1}}$ 切圓柱 ${{cy:x^2+y^2=2}}$","tint":{"pl":"blue","cy":"violet"}}
-          ] },
-        { "show": ["從上面看是圓，切口是橢圓"],
-          "note": "$x^2+y^2=2$ 只管 $x$、$y$。",
-          "say": "圓柱從上面看是圓，可是平面是斜的，每一點的高度不同，所以切口是傾斜的橢圓。",
+            {
+              "do": "write",
+              "line": "每個約束是一個曲面；兩個曲面交出一條曲線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例 1　平面 $x+y+z=1$ 與圓柱 $x^2+y^2=2$ 交成一個橢圓。求橢圓上 $z$ 的最大值與最小值"
+          ],
+          "say": "例 1：一個斜的平面切過一個圓柱，切口是一個橢圓。橢圓上，最高點和最低點在哪裡？",
           "board": [
-            {"do":"write","line":"$x^2+y^2=2$：從上面看是圓"},
-            {"do":"write","line":"平面是斜的 ⇒ 切口是傾斜的橢圓","on":"傾斜的橢圓"}
-          ] },
-        { "show": ["繞一圈展開：高度 $z$ 有高有低"],
-          "say": "把這一圈展開來畫：橫軸是繞一圈的角度，縱軸是高度 z，有一個最高點和一個最低點。",
+            {
+              "do": "write",
+              "line": "例 1　平面 $x+y+z=1$ 與圓柱 $x^2+y^2=2$ 交成一個橢圓。求橢圓上 $z$ 的最大值與最小值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "看圖：藍色的圓柱，綠色的斜平面，交線是紅色的橢圓。平面往 x 加 y 增加的方向往下傾斜。",
           "board": [
-            {"do":"plot","graph":{"window":[0,6.3,-2,4],"curves":[{"expr":"1-sqrt(2)*cos(x)-sqrt(2)*sin(x)","domain":[0,6.2832],"color":"blue"}]}}
-          ] },
-        { "show": ["在交線上，$f=z$ 最大在哪？"],
-          "say": "問這一圈上哪一點最高，就是在兩個約束下，求 f 等於 z 的最大值。",
-          "board": [
-            {"do":"write","line":"在交線上，$f=z$ 最大在哪？","on":"問這一圈"}
-          ] }
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"lmEllipse\" viewBox=\"0 0 620 430\" width=\"620\" height=\"430\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8elmEllipse\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8elmEllipseblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8elmEllipsered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8elmEllipsegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8elmEllipsepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8elmEllipseink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"330\" y1=\"285\" x2=\"361.2\" y2=\"340\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8elmEllipseink)\"/><line x1=\"330\" y1=\"285\" x2=\"476.7\" y2=\"273.3\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8elmEllipseink)\"/><line x1=\"330\" y1=\"285\" x2=\"330\" y2=\"81\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah8elmEllipseink)\"/><text x=\"359.7\" y=\"358.4\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"495.5\" y=\"280.6\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"330\" y=\"64.8\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><polygon points=\"339.8,342.2 327.5,342 327.5,297.2 339.8,297.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,342 315.3,342.5 315.3,297.7 327.5,297.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,343.3 339.8,342.2 339.8,297.4 351.9,298.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,342.5 303.5,343.9 303.5,299.1 315.3,297.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,345.1 351.9,343.3 351.9,298.4 363.2,300.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,343.9 292.5,346 292.5,301.2 303.5,299.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,347.6 363.2,345.1 363.2,300.2 373.5,302.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,346 282.7,348.8 282.7,303.9 292.5,301.2\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,350.7 373.5,347.6 373.5,302.8 382.5,305.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.8,297.4 327.5,297.2 327.5,252.3 339.8,252.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,297.2 315.3,297.7 315.3,252.9 327.5,252.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,298.4 339.8,297.4 339.8,252.6 351.9,253.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,348.8 274.3,352.1 274.3,307.3 282.7,303.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,297.7 303.5,299.1 303.5,254.3 315.3,252.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,300.2 351.9,298.4 351.9,253.6 363.2,255.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,299.1 292.5,301.2 292.5,256.4 303.5,254.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,354.4 382.5,350.7 382.5,305.9 390,309.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,302.8 363.2,300.2 363.2,255.4 373.5,257.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,352.1 267.6,356 267.6,311.2 274.3,307.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,301.2 282.7,303.9 282.7,259.1 292.5,256.4\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,305.9 373.5,302.8 373.5,257.9 382.5,261.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,358.5 390,354.4 390,309.6 395.6,313.7\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.8,252.6 327.5,252.3 327.5,207.5 339.8,207.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,252.3 315.3,252.9 315.3,208.1 327.5,207.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,253.6 339.8,252.6 339.8,207.8 351.9,208.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,303.9 274.3,307.3 274.3,262.5 282.7,259.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,252.9 303.5,254.3 303.5,209.4 315.3,208.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,356 262.8,360.3 262.8,315.4 267.6,311.2\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,255.4 351.9,253.6 351.9,208.8 363.2,210.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,254.3 292.5,256.4 292.5,211.5 303.5,209.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,309.6 382.5,305.9 382.5,261.1 390,264.8\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,362.9 395.6,358.5 395.6,313.7 399.2,318.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,257.9 363.2,255.4 363.2,210.6 373.5,213.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,307.3 267.6,311.2 267.6,266.4 274.3,262.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,256.4 282.7,259.1 282.7,214.3 292.5,211.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,360.3 260,364.8 260,319.9 262.8,315.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,261.1 373.5,257.9 373.5,213.1 382.5,216.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,313.7 390,309.6 390,264.8 395.6,268.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.8,207.8 327.5,207.5 327.5,162.7 339.8,163\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,207.5 315.3,208.1 315.3,163.3 327.5,162.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,208.8 339.8,207.8 339.8,163 351.9,164\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,259.1 274.3,262.5 274.3,217.7 282.7,214.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,208.1 303.5,209.4 303.5,164.6 315.3,163.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,367.5 399.2,362.9 399.2,318.1 400.7,322.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,311.2 262.8,315.4 262.8,270.6 267.6,266.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,210.6 351.9,208.8 351.9,164 363.2,165.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,209.4 292.5,211.5 292.5,166.7 303.5,164.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,364.8 259.3,369.4 259.3,324.6 260,319.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,264.8 382.5,261.1 382.5,216.3 390,220\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,318.1 395.6,313.7 395.6,268.9 399.2,273.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,213.1 363.2,210.6 363.2,165.8 373.5,168.3\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,262.5 267.6,266.4 267.6,221.6 274.3,217.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,211.5 282.7,214.3 282.7,169.5 292.5,166.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,315.4 260,319.9 260,275.1 262.8,270.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,372.1 400.7,367.5 400.7,322.7 400,327.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,216.3 373.5,213.1 373.5,168.3 382.5,171.5\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,268.9 390,264.8 390,220 395.6,224.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.8,163 327.5,162.7 327.5,117.9 339.8,118.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,162.7 315.3,163.3 315.3,118.5 327.5,117.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,369.4 260.8,374 260.8,329.1 259.3,324.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,164 339.8,163 339.8,118.1 351.9,119.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,214.3 274.3,217.7 274.3,172.9 282.7,169.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,163.3 303.5,164.6 303.5,119.8 315.3,118.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,322.7 399.2,318.1 399.2,273.3 400.7,277.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,266.4 262.8,270.6 262.8,225.8 267.6,221.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,165.8 351.9,164 351.9,119.2 363.2,121\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,164.6 292.5,166.7 292.5,121.9 303.5,119.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,319.9 259.3,324.6 259.3,279.7 260,275.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,376.6 400,372.1 400,327.3 397.2,331.8\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,220 382.5,216.3 382.5,171.5 390,175.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,273.3 395.6,268.9 395.6,224.1 399.2,228.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,168.3 363.2,165.8 363.2,121 373.5,123.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,217.7 267.6,221.6 267.6,176.8 274.3,172.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,374 264.4,378.4 264.4,333.6 260.8,329.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,166.7 282.7,169.5 282.7,124.7 292.5,121.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,270.6 260,275.1 260,230.3 262.8,225.8\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,327.3 400.7,322.7 400.7,277.9 400,282.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,171.5 373.5,168.3 373.5,123.5 382.5,126.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,224.1 390,220 390,175.2 395.6,179.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"339.8,118.1 327.5,117.9 327.5,73.1 339.8,73.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,380.9 397.2,376.6 397.2,331.8 392.4,336.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"327.5,117.9 315.3,118.5 315.3,73.7 327.5,73.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,324.6 260.8,329.1 260.8,284.3 259.3,279.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"351.9,119.2 339.8,118.1 339.8,73.3 351.9,74.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,169.5 274.3,172.9 274.3,128.1 282.7,124.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"315.3,118.5 303.5,119.8 303.5,75 315.3,73.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,277.9 399.2,273.3 399.2,228.5 400.7,233.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,221.6 262.8,225.8 262.8,181 267.6,176.8\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,378.4 270,382.5 270,337.7 264.4,333.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"363.2,121 351.9,119.2 351.9,74.4 363.2,76.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"303.5,119.8 292.5,121.9 292.5,77.1 303.5,75\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,275.1 259.3,279.7 259.3,234.9 260,230.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,331.8 400,327.3 400,282.5 397.2,287\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,175.2 382.5,171.5 382.5,126.7 390,130.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,228.5 395.6,224.1 395.6,179.3 399.2,183.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,384.8 392.4,380.9 392.4,336.1 385.7,339.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"373.5,123.5 363.2,121 363.2,76.2 373.5,78.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,172.9 267.6,176.8 267.6,131.9 274.3,128.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,329.1 264.4,333.6 264.4,288.7 260.8,284.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"292.5,121.9 282.7,124.7 282.7,79.9 292.5,77.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,382.5 277.5,386.2 277.5,341.4 270,337.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,225.8 260,230.3 260,185.5 262.8,181\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,282.5 400.7,277.9 400.7,233.1 400,237.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"382.5,126.7 373.5,123.5 373.5,78.7 382.5,81.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,179.3 390,175.2 390,130.3 395.6,134.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,336.1 397.2,331.8 397.2,287 392.4,291.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,279.7 260.8,284.3 260.8,239.5 259.3,234.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,388.1 385.7,384.8 385.7,339.9 377.3,343.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"282.7,124.7 274.3,128.1 274.3,83.3 282.7,79.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,233.1 399.2,228.5 399.2,183.7 400.7,188.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,176.8 262.8,181 262.8,136.2 267.6,131.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,333.6 270,337.7 270,292.9 264.4,288.7\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,386.2 286.5,389.3 286.5,344.5 277.5,341.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,230.3 259.3,234.9 259.3,190.1 260,185.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,287 400,282.5 400,237.7 397.2,242.2\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"390,130.3 382.5,126.7 382.5,81.8 390,85.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,390.9 377.3,388.1 377.3,343.3 367.5,346.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,183.7 395.6,179.3 395.6,134.5 399.2,138.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,339.9 392.4,336.1 392.4,291.3 385.7,295.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,389.3 296.8,391.8 296.8,347 286.5,344.5\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"274.3,128.1 267.6,131.9 267.6,87.1 274.3,83.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,284.3 264.4,288.7 264.4,243.9 260.8,239.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,337.7 277.5,341.4 277.5,296.5 270,292.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,181 260,185.5 260,140.7 262.8,136.2\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,237.7 400.7,233.1 400.7,188.3 400,192.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,393 367.5,390.9 367.5,346.1 356.5,348.2\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,391.8 308.1,393.6 308.1,348.8 296.8,347\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"395.6,134.5 390,130.3 390,85.5 395.6,89.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,291.3 397.2,287 397.2,242.2 392.4,246.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,234.9 260.8,239.5 260.8,194.7 259.3,190.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,394.4 356.5,393 356.5,348.2 344.7,349.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,343.3 385.7,339.9 385.7,295.1 377.3,298.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,393.6 320.2,394.7 320.2,349.9 308.1,348.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,188.3 399.2,183.7 399.2,138.9 400.7,143.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,394.9 344.7,394.4 344.7,349.5 332.5,350.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"267.6,131.9 262.8,136.2 262.8,91.4 267.6,87.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,394.7 332.5,394.9 332.5,350.1 320.2,349.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,288.7 270,292.9 270,248 264.4,243.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,341.4 286.5,344.5 286.5,299.7 277.5,296.5\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,185.5 259.3,190.1 259.3,145.3 260,140.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,242.2 400,237.7 400,192.9 397.2,197.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,346.1 377.3,343.3 377.3,298.5 367.5,301.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"399.2,138.9 395.6,134.5 395.6,89.6 399.2,94.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,295.1 392.4,291.3 392.4,246.4 385.7,250.3\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,344.5 296.8,347 296.8,302.2 286.5,299.7\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,239.5 264.4,243.9 264.4,199.1 260.8,194.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,292.9 277.5,296.5 277.5,251.7 270,248\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"262.8,136.2 260,140.7 260,95.9 262.8,91.4\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,192.9 400.7,188.3 400.7,143.5 400,148.1\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,348.2 367.5,346.1 367.5,301.3 356.5,303.4\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,347 308.1,348.8 308.1,304 296.8,302.2\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,246.4 397.2,242.2 397.2,197.4 392.4,201.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,190.1 260.8,194.7 260.8,149.9 259.3,145.3\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,349.5 356.5,348.2 356.5,303.4 344.7,304.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,298.5 385.7,295.1 385.7,250.3 377.3,253.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,348.8 320.2,349.9 320.2,305 308.1,304\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400.7,143.5 399.2,138.9 399.2,94.1 400.7,98.6\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,350.1 344.7,349.5 344.7,304.7 332.5,305.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,349.9 332.5,350.1 332.5,305.3 320.2,305\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,243.9 270,248 270,203.2 264.4,199.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,296.5 286.5,299.7 286.5,254.9 277.5,251.7\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260,140.7 259.3,145.3 259.3,100.5 260,95.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,197.4 400,192.9 400,148.1 397.2,152.6\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,301.3 377.3,298.5 377.3,253.7 367.5,256.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,250.3 392.4,246.4 392.4,201.6 385.7,205.5\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,299.7 296.8,302.2 296.8,257.4 286.5,254.9\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,194.7 264.4,199.1 264.4,154.3 260.8,149.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,248 277.5,251.7 277.5,206.9 270,203.2\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"400,148.1 400.7,143.5 400.7,98.6 400,103.2\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,303.4 367.5,301.3 367.5,256.5 356.5,258.6\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,302.2 308.1,304 308.1,259.2 296.8,257.4\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,201.6 397.2,197.4 397.2,152.6 392.4,156.8\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"259.3,145.3 260.8,149.9 260.8,105.1 259.3,100.5\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,304.7 356.5,303.4 356.5,258.6 344.7,259.9\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,253.7 385.7,250.3 385.7,205.5 377.3,208.9\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,304 320.2,305 320.2,260.2 308.1,259.2\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,305.3 344.7,304.7 344.7,259.9 332.5,260.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,305 332.5,305.3 332.5,260.5 320.2,260.2\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,199.1 270,203.2 270,158.4 264.4,154.3\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,251.7 286.5,254.9 286.5,210.1 277.5,206.9\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"397.2,152.6 400,148.1 400,103.2 397.2,107.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,256.5 377.3,253.7 377.3,208.9 367.5,211.7\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,205.5 392.4,201.6 392.4,156.8 385.7,160.7\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,254.9 296.8,257.4 296.8,212.6 286.5,210.1\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"260.8,149.9 264.4,154.3 264.4,109.5 260.8,105.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,203.2 277.5,206.9 277.5,162.1 270,158.4\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,258.6 367.5,256.5 367.5,211.7 356.5,213.8\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,257.4 308.1,259.2 308.1,214.4 296.8,212.6\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"392.4,156.8 397.2,152.6 397.2,107.7 392.4,112\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,259.9 356.5,258.6 356.5,213.8 344.7,215.1\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,208.9 385.7,205.5 385.7,160.7 377.3,164.1\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,259.2 320.2,260.2 320.2,215.4 308.1,214.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,260.5 344.7,259.9 344.7,215.1 332.5,215.7\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,260.2 332.5,260.5 332.5,215.7 320.2,215.4\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"264.4,154.3 270,158.4 270,113.6 264.4,109.5\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,206.9 286.5,210.1 286.5,165.3 277.5,162.1\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,211.7 377.3,208.9 377.3,164.1 367.5,166.8\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"385.7,160.7 392.4,156.8 392.4,112 385.7,115.9\" fill=\"color-mix(in srgb, var(--blue) 10%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,210.1 296.8,212.6 296.8,167.8 286.5,165.3\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"270,158.4 277.5,162.1 277.5,117.3 270,113.6\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,213.8 367.5,211.7 367.5,166.8 356.5,168.9\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,212.6 308.1,214.4 308.1,169.6 296.8,167.8\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,215.1 356.5,213.8 356.5,168.9 344.7,170.3\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"377.3,164.1 385.7,160.7 385.7,115.9 377.3,119.2\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,214.4 320.2,215.4 320.2,170.6 308.1,169.6\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,215.7 344.7,215.1 344.7,170.3 332.5,170.8\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,215.4 332.5,215.7 332.5,170.8 320.2,170.6\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"277.5,162.1 286.5,165.3 286.5,120.4 277.5,117.3\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"367.5,166.8 377.3,164.1 377.3,119.2 367.5,122\" fill=\"color-mix(in srgb, var(--blue) 11%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"286.5,165.3 296.8,167.8 296.8,123 286.5,120.4\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"356.5,168.9 367.5,166.8 367.5,122 356.5,124.1\" fill=\"color-mix(in srgb, var(--blue) 12%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"296.8,167.8 308.1,169.6 308.1,124.8 296.8,123\" fill=\"color-mix(in srgb, var(--blue) 16%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"344.7,170.3 356.5,168.9 356.5,124.1 344.7,125.5\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"308.1,169.6 320.2,170.6 320.2,125.8 308.1,124.8\" fill=\"color-mix(in srgb, var(--blue) 15%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"332.5,170.8 344.7,170.3 344.7,125.5 332.5,126\" fill=\"color-mix(in srgb, var(--blue) 13%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"320.2,170.6 332.5,170.8 332.5,126 320.2,125.8\" fill=\"color-mix(in srgb, var(--blue) 14%, var(--paper))\" stroke=\"var(--blue)\" stroke-opacity=\"0.2\" stroke-width=\"0.9\" stroke-linejoin=\"round\"/><polygon points=\"350.8,368 363.4,378 375.4,385.6 386.6,390.7 396.9,393.1 406,393 413.9,390.2 420.3,384.8 425.1,376.9 428.3,366.6 429.9,354.2 429.7,339.7 427.8,323.6 424.3,306 419.1,287.2 412.4,267.6 404.3,247.5 394.9,227.3 384.5,207.2 373.1,187.7 360.9,169.1 348.2,151.6 335.2,135.7 322.2,121.5 309.2,109.3 296.6,99.3 284.6,91.7 273.4,86.6 263.1,84.1 254,84.3 246.1,87.1 239.7,92.5 234.9,100.4 231.7,110.7 230.1,123.1 230.3,137.6 232.2,153.7 235.7,171.3 240.9,190.1 247.6,209.7 255.7,229.8 265.1,250 275.5,270.1 286.9,289.6 299.1,308.2 311.8,325.7 324.8,341.6 337.8,355.8\" fill=\"var(--green)\" fill-opacity=\"0.1\" stroke=\"var(--green)\" stroke-width=\"1.8\"/><path d=\"M344.7 330.1L346.9 332L349 333.7L351.1 335.4L353.3 336.9L355.3 338.4L357.4 339.7L359.4 341L361.4 342.2L363.4 343.2L365.4 344.2L367.3 345L369.1 345.8L371 346.4L372.8 347L374.5 347.4L376.2 347.7L377.9 347.9L379.5 348.1L381 348.1L382.5 347.9L384 347.7L385.4 347.4L386.8 347L388.1 346.4L389.3 345.8L390.5 345L391.6 344.2L392.7 343.2L393.7 342.2L394.6 341L395.5 339.7L396.3 338.4L397 336.9L397.7 335.3L398.3 333.7L398.8 331.9L399.3 330.1L399.7 328.2L400.1 326.1L400.3 324L400.5 321.8L400.6 319.6L400.7 317.2L400.7 314.8L400.6 312.3L400.5 309.7L400.2 307L400 304.3L399.6 301.5L399.2 298.7L398.7 295.8L398.1 292.8L397.5 289.8L396.8 286.8L396 283.6L395.2 280.5L394.3 277.3L393.3 274.1L392.3 270.8L391.2 267.5L390.1 264.2L388.9 260.8L387.6 257.4L386.3 254L385 250.6L383.5 247.2L382 243.8L380.5 240.3L378.9 236.9L377.3 233.5L375.6 230L373.9 226.6L372.2 223.2L370.4 219.8L368.5 216.4L366.6 213.1L364.7 209.7L362.8 206.4L360.8 203.2L358.8 199.9L356.7 196.7L354.6 193.6L352.6 190.5L350.4 187.4L348.3 184.4L346.1 181.4L344 178.5L341.8 175.7L339.6 172.9L337.4 170.2L335.2 167.6L333 165L330.7 162.5L328.5 160L326.3 157.7L324.1 155.4L321.9 153.2L319.7 151.1L317.5 149.1L315.3 147.2L313.1 145.3L311 143.6L308.9 141.9L306.7 140.4L304.7 138.9L302.6 137.5L300.6 136.3L298.6 135.1L296.6 134L294.6 133.1L292.7 132.2L290.9 131.5L289 130.8L287.2 130.3L285.5 129.9L283.8 129.6L282.1 129.3L280.5 129.2L279 129.2L277.5 129.3L276 129.6L274.6 129.9L273.2 130.3L271.9 130.9L270.7 131.5L269.5 132.2L268.4 133.1L267.3 134.1L266.3 135.1L265.4 136.3L264.5 137.6L263.7 138.9L263 140.4L262.3 141.9L261.7 143.6L261.2 145.4L260.7 147.2L260.3 149.1L259.9 151.2L259.7 153.3L259.5 155.5L259.4 157.7L259.3 160.1L259.3 162.5L259.4 165L259.5 167.6L259.8 170.2L260 173L260.4 175.7L260.8 178.6L261.3 181.5L261.9 184.4L262.5 187.5L263.2 190.5L264 193.6L264.8 196.8L265.7 200L266.7 203.2L267.7 206.5L268.8 209.8L269.9 213.1L271.1 216.5L272.4 219.9L273.7 223.2L275 226.7L276.5 230.1L278 233.5L279.5 236.9L281.1 240.4L282.7 243.8L284.4 247.3L286.1 250.7L287.8 254.1L289.6 257.5L291.5 260.9L293.4 264.2L295.3 267.5L297.2 270.8L299.2 274.1L301.2 277.3L303.3 280.5L305.4 283.7L307.4 286.8L309.6 289.9L311.7 292.9L313.9 295.8L316 298.7L318.2 301.6L320.4 304.4L322.6 307.1L324.8 309.7L327 312.3L329.3 314.8L331.5 317.2L333.7 319.6L335.9 321.9L338.1 324.1L340.3 326.2L342.5 328.2L344.7 330.1\" stroke=\"var(--red)\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"270.7\" cy=\"131.5\" r=\"6.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.2\"/><circle cx=\"389.3\" cy=\"345.8\" r=\"6.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.2\"/><text x=\"284.7\" y=\"121.5\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(−1, −1, 3)</text><text x=\"403.3\" y=\"367.8\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">(1, 1, −1)</text><text x=\"14\" y=\"32\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:inherit\">藍：圓柱 x² + y² = 2</text><text x=\"14\" y=\"60\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"21\" style=\"font-family:inherit\">綠：平面 x + y + z = 1</text><text x=\"14\" y=\"88\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:inherit\">紅：交線（橢圓）</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "先猜猜看",
+      "beats": [
+        {
+          "show": [
+            "橢圓上最高的點在哪裡？"
+          ],
+          "say": "先猜猜看：最高點在哪裡？"
+        }
       ],
       "predict": {
-        "ask": "這條交線是什麼形狀？",
+        "ask": "橢圓上最高的點在哪裡？",
         "options": [
           {
-            "label": "一個傾斜的橢圓",
+            "label": "$(-1,-1,3)$",
             "correct": true
           },
           {
-            "label": "水平的圓",
-            "why": "交線的影子是圓，但平面是斜的，曲線本身是傾斜的橢圓，各點高度不同。"
+            "label": "$(1,1,-1)$",
+            "why": "那是最低點：$x+y$ 最大時 $z$ 最小"
           },
           {
-            "label": "一個曲面",
-            "why": "兩個條件把三維空間切了兩刀，只剩一條曲線。"
+            "label": "$(0,0,1)$",
+            "why": "原點上方不在圓柱 $x^2+y^2=2$ 上"
+          },
+          {
+            "label": "$(\\sqrt2,0,1-\\sqrt2)$",
+            "why": "在橢圓上，但 $z\\approx-0.41$，不是最高"
           }
         ]
       }
+    },
+    {
+      "title": "先猜猜看",
+      "beats": [
+        {
+          "show": [
+            "直覺：$z=1-(x+y)$，在圓 $x^2+y^2=2$ 上讓 $x+y$ 最小"
+          ],
+          "say": "直覺上：z 等於 1 減 x 加 y。要 z 最大，就要在圓上讓 x 加 y 最小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直覺：$z=1-(x+y)$，在圓 $x^2+y^2=2$ 上讓 $x+y$ 最小"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x+y$ 最小在 $(-1,-1)$：$x+y=-2$，$z=3$"
+          ],
+          "say": "圓上 x 加 y 最小，在負 1 逗號負 1，是負 2，這時 z 是 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x+y$ 最小在 $(-1,-1)$：$x+y=-2$，$z=3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這題有捷徑；一般的情形需要一套方法"
+          ],
+          "say": "這題有捷徑，但一般的情形看不出來。接下來看兩個約束時的一般條件。",
+          "board": [
+            {
+              "do": "write",
+              "line": "這題有捷徑；一般的情形需要一套方法"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "條件從哪裡來",
       "beats": [
-        { "show": ["梯度指向 $g$ 增加最快的方向"],
-          "note": "直覺：曲面上 $g=c_1$ 不變。",
-          "say": "梯度指向函數增加最快的方向。曲面上 g 的值不變，沿曲面走不增不減，所以梯度垂直於曲面。",
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "條件從哪裡來？在曲線上的極值點，畫出曲線的切向量 T，和垂直於 T 的平面，叫法平面。",
           "board": [
-            {"do":"write","line":"沿曲面走，$g=c_1$ 不變"},
-            {"do":"write","line":"${{q1:\\nabla g}}\\perp$ 曲面","on":"所以"}
-          ] },
-        { "show": ["前進方向 $\\mathbf v\\perp\\nabla g$、$\\mathbf v\\perp\\nabla h$"],
-          "note": "直覺，不是證明。",
-          "say": "沿交線走，前進方向同時躺在兩個曲面上，所以同時垂直於兩個梯度。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"lmNormal\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8elmNormal\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8elmNormalblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8elmNormalred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8elmNormalgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8elmNormalpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8elmNormalink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><polygon points=\"207.7,384.2 392.3,311.1 392.3,25.8 207.7,98.9\" fill=\"var(--muted)\" fill-opacity=\"0.1\" stroke=\"var(--muted)\" stroke-width=\"1.8\"/><path d=\"M141.5 131.1L143.7 132.5L145.9 133.9L148.1 135.3L150.2 136.7L152.4 138L154.6 139.4L156.7 140.7L158.9 142.1L161 143.4L163.2 144.7L165.3 146L167.4 147.2L169.5 148.5L171.7 149.8L173.8 151L175.9 152.2L178 153.4L180.1 154.6L182.2 155.8L184.3 157L186.4 158.2L188.4 159.3L190.5 160.5L192.6 161.6L194.6 162.7L196.7 163.8L198.7 164.9L200.8 166L202.8 167.1L204.9 168.1L206.9 169.2L208.9 170.2L210.9 171.2L212.9 172.2L215 173.2L217 174.2L219 175.1L221 176.1L222.9 177L224.9 178L226.9 178.9L228.9 179.8L230.8 180.7L232.8 181.6L234.8 182.4L236.7 183.3L238.7 184.1L240.6 185L242.5 185.8L244.5 186.6L246.4 187.4L248.3 188.2L250.2 188.9L252.1 189.7L254.1 190.4L256 191.2L257.8 191.9L259.7 192.6L261.6 193.3L263.5 194L265.4 194.6L267.2 195.3L269.1 195.9L271 196.6L272.8 197.2L274.7 197.8L276.5 198.4L278.3 199L280.2 199.5L282 200.1L283.8 200.6L285.6 201.2L287.5 201.7L289.3 202.2L291.1 202.7L292.9 203.2L294.7 203.7L296.4 204.1L298.2 204.6L300 205L301.8 205.4L303.5 205.8L305.3 206.2L307.1 206.6L308.8 207L310.5 207.3L312.3 207.7L314 208L315.7 208.4L317.5 208.7L319.2 209L320.9 209.2L322.6 209.5L324.3 209.8L326 210L327.7 210.3L329.4 210.5L331.1 210.7L332.7 210.9L334.4 211.1L336.1 211.3L337.7 211.4L339.4 211.6L341.1 211.7L342.7 211.8L344.3 211.9L346 212L347.6 212.1L349.2 212.2L350.9 212.3L352.5 212.3L354.1 212.4L355.7 212.4L357.3 212.4L358.9 212.4L360.5 212.4L362 212.4L363.6 212.3L365.2 212.3L366.8 212.2L368.3 212.1L369.9 212.1L371.4 212L373 211.8L374.5 211.7L376.1 211.6L377.6 211.4L379.1 211.3L380.6 211.1L382.2 210.9L383.7 210.7L385.2 210.5L386.7 210.3L388.2 210.1L389.7 209.8L391.1 209.5L392.6 209.3L394.1 209L395.6 208.7L397 208.4L398.5 208.1L399.9 207.7L401.4 207.4L402.8 207L404.3 206.7L405.7 206.3L407.1 205.9L408.6 205.5L410 205L411.4 204.6L412.8 204.2L414.2 203.7L415.6 203.2L417 202.8L418.4 202.3L419.7 201.8L421.1 201.2L422.5 200.7L423.9 200.2L425.2 199.6\" stroke=\"var(--ink)\" stroke-width=\"3.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"300\" y1=\"205\" x2=\"404\" y2=\"230.1\" stroke=\"var(--ink)\" stroke-width=\"3\" marker-end=\"url(#ah8elmNormalink)\"/><line x1=\"300\" y1=\"205\" x2=\"385\" y2=\"131.5\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah8elmNormalblue)\"/><line x1=\"300\" y1=\"205\" x2=\"266.8\" y2=\"98.3\" stroke=\"var(--green)\" stroke-width=\"3\" marker-end=\"url(#ah8elmNormalgreen)\"/><line x1=\"300\" y1=\"205\" x2=\"329.6\" y2=\"57.5\" stroke=\"var(--red)\" stroke-width=\"3.4\" marker-end=\"url(#ah8elmNormalred)\"/><circle cx=\"300\" cy=\"205\" r=\"5.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"410\" y=\"252.1\" text-anchor=\"start\" fill=\"var(--ink)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">T</text><text x=\"397\" y=\"139.5\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇g</text><text x=\"256.8\" y=\"94.3\" text-anchor=\"end\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇h</text><text x=\"341.6\" y=\"57.5\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">∇f</text><text x=\"14\" y=\"32\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"21\" style=\"font-family:inherit\">灰色：垂直於 T 的平面（法平面）</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿曲線 $\\mathbf r(t)$ 走，在極值點：",
+            "• $f(\\mathbf r(t))$ 的導數 $=0$ ⇒ $\\nabla f\\cdot T=0$"
+          ],
+          "say": "跟上一課一樣：沿著曲線走，f 在極值點的導數是 0，所以 f 的梯度垂直於 T。",
           "board": [
-            {"do":"write","line":"$\\mathbf v\\perp{{g:\\nabla g}}$、$\\mathbf v\\perp{{h:\\nabla h}}$","tint":{"g":"blue","h":"violet"}}
-          ] },
-        { "show": ["極值點：$\\nabla f\\cdot\\mathbf v=0$"],
-          "say": "在極值點，沿曲線走函數第一階不變，所以 f 的梯度也垂直於前進方向。",
+            {
+              "do": "write",
+              "line": "沿曲線 $\\mathbf r(t)$ 走，在極值點："
+            },
+            {
+              "do": "write",
+              "line": "• $f(\\mathbf r(t))$ 的導數 $=0$ ⇒ $\\nabla f\\cdot T=0$",
+              "on": "導數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $g$、$h$ 沿曲線是常數 ⇒ $\\nabla g\\cdot T=0$，$\\nabla h\\cdot T=0$"
+          ],
+          "say": "g 和 h 沿著曲線都是常數，微分是 0，所以它們的梯度也都垂直於 T。三個梯度都在法平面上。",
           "board": [
-            {"do":"write","line":"${{f:\\nabla f}}\\cdot\\mathbf v=0$"},
-            {"do":"underline","term":"f","label":"也垂直","on":"梯度也"}
-          ] },
-        { "show": ["垂直於 $\\mathbf v$ 的向量鋪成一個平面"],
-          "say": "垂直於前進方向的向量，本身就鋪成一個平面。兩個梯度都在裡面又不平行，剛好鋪滿它。",
+            {
+              "do": "write",
+              "line": "• $g$、$h$ 沿曲線是常數 ⇒ $\\nabla g\\cdot T=0$，$\\nabla h\\cdot T=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla g$、$\\nabla h$ 不平行 ⇒ 它們張成整個法平面",
+            "$\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h$"
+          ],
+          "say": "如果 g 和 h 的梯度不平行，它們就張成整個法平面，平面上任何向量都是它們的組合。所以 f 的梯度等於藍布達乘 g 的梯度，加謬乘 h 的梯度。",
           "board": [
-            {"do":"write","line":"垂直 $\\mathbf v$ 的向量 ＝ 一個平面"},
-            {"do":"write","line":"$\\nabla g$、$\\nabla h$ 不平行 ⇒ 鋪滿","on":"不平行"}
-          ] },
-        { "show": ["$\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h$"],
-          "note": "跟 $\\mathbf v$ 垂直的向量，都在兩個梯度張成的平面上。",
-          "say": "跟前進方向垂直的向量，全部落在兩個梯度張成的平面上，所以 f 的梯度是它們的組合，係數叫 lambda 和 mu。",
+            {
+              "do": "write",
+              "line": "$\\nabla g$、$\\nabla h$ 不平行 ⇒ 它們張成整個法平面"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h}}$",
+              "color": "red",
+              "on": "就張"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "它們#2"
+            },
+            {
+              "do": "write",
+              "line": "　一個約束時，法向只有一個方向：$\\nabla f=\\lambda\\nabla g$。兩個約束，就多一個乘數 $\\mu$",
+              "color": "violet",
+              "on": "達乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼要不平行：平行時兩個梯度只張成一條線"
+          ],
+          "say": "為什麼要求不平行？平行的話，兩個梯度只張成一條直線，不夠蓋住整個法平面，定理就可能失效。這跟上一課要求 g 的梯度不是零，是同一個道理。",
           "board": [
-            {"do":"write","line":"${{f:\\nabla f}}={{l:\\lambda}}\\,{{g:\\nabla g}}+{{m:\\mu}}\\,{{h:\\nabla h}}$"},
-            {"do":"focus","term":"l","color":"gold","label":"係數","on":"lambda"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "為什麼要不平行：平行時兩個梯度只張成一條線"
+            },
+            {
+              "do": "write",
+              "line": "法平面上其他方向的 $\\nabla f$ 就寫不出來，定理不成立",
+              "on": "條直"
+            },
+            {
+              "do": "write",
+              "line": "　等價寫法：$\\nabla g\\times\\nabla h\\ne\\mathbf 0$；這也保證兩曲面真的交成一條光滑曲線",
+              "color": "violet",
+              "on": "跟上"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "數一數方程",
+      "title": "試一題",
       "beats": [
-        { "show": ["未知數：$x$、$y$、$z$、$\\lambda$、$\\mu$"],
-          "say": "未知數有幾個？三個座標，再加兩個乘數。",
-          "board": [
-            {"do":"write","line":"未知數：${{c:x,y,z}}$、${{m:\\lambda,\\mu}}$","tint":{"c":"blue","m":"violet"}},
-            {"do":"underline","term":"c","on":"三個座標"},
-            {"do":"underline","term":"m","on":"再加"}
-          ] },
-        { "show": ["方程：三個分量 + 兩個約束"],
-          "note": "跟一個條件時一樣：解出來的只是候選點。",
-          "say": "方程也一樣多：梯度等式有三個分量，再加上兩個約束本身，別忘了約束也要代。",
-          "board": [
-            {"do":"write","line":"方程：${{e:\\nabla f=\\lambda\\nabla g+\\mu\\nabla h}}$ 的分量"},
-            {"do":"write","line":"加上約束 ${{k:g=c_1}}$、${{d:h=c_2}}$","on":"再加上"},
-            {"do":"underline","term":"k","label":"也要代","on":"別忘了"}
-          ] }
+        {
+          "show": [
+            "兩個約束下的極值點，下面哪一個一定成立？"
+          ],
+          "say": "試一題。"
+        }
       ],
       "check": 0
     },
     {
-      "title": "先檢查前提",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\nabla g(P)$、$\\nabla h(P)$ 線性獨立"],
-          "note": "不平行、都不是零向量。",
-          "say": "精確的定理要求兩個約束的梯度不平行、都不是零向量，這樣才張得出一個平面。",
+        {
+          "show": [
+            "對照",
+            "• 一個約束（平面上）：約束是曲線，法向只有一個方向 ⇒ $\\nabla f=\\lambda\\nabla g$"
+          ],
+          "say": "對照一下：一個約束時，曲線的法向只有一個方向，f 的梯度只能是 g 的梯度的倍數。兩個約束時，交線的法向是一整個平面，所以需要兩個梯度的組合。",
           "board": [
-            {"do":"write","line":"${{g:\\nabla g(P)}}$、${{h:\\nabla h(P)}}$ 線性獨立","tint":{"g":"blue","h":"violet"}},
-            {"do":"write","line":"不平行、都不是零向量","on":"不平行"}
-          ] },
-        { "show": ["$(1,0,0)$、$(0,1,0)$ 張成水平面"],
-          "note": "平行的向量只張成一條線。",
-          "say": "舉例：一零零和零一零，各乘一個數再相加，填滿水平面。兩個平行的向量只得一條線，不是線性獨立。",
-          "board": [
-            {"do":"write","line":"$a(1,0,0)+b(0,1,0)$ ＝ 水平面"},
-            {"do":"write","line":"兩個平行：只得一條線","on":"平行的向量"}
-          ] },
-        { "show": ["$\\nabla f=(0,0,1)$，$\\nabla g=(1,1,1)$","$\\nabla h=(2x,2y,0)$"],
-          "say": "回到斜切圓柱，三個梯度寫出來。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\nabla f=(0,0,1)$，${{gg:\\nabla g=(1,1,1)}}$","tint":{"gg":"blue"},"on":"回到"},
-            {"do":"write","line":"${{hh:\\nabla h=(2x,2y,0)}}$","tint":{"hh":"violet"},"on":"三個梯度"}
-          ] },
-        { "show": ["$\\nabla h$ 第三分量是 $0$，$\\nabla g$ 是 $1$"],
-          "note": "兩者不可能平行。",
-          "say": "圓柱的梯度第三個分量是零，平面的是一，兩者不可能平行，前提成立。",
-          "board": [
-            {"do":"underline","term":"hh","label":"第三是 0","on":"圓柱的梯度"},
-            {"do":"underline","term":"gg","label":"第三是 1","on":"平面的是"},
-            {"do":"write","line":"不可能平行 ⇒ 前提成立","color":"green","on":"兩者"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "對照"
+            },
+            {
+              "do": "write",
+              "line": "• 一個約束（平面上）：約束是曲線，法向只有一個方向 ⇒ $\\nabla f=\\lambda\\nabla g$",
+              "on": "有一"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個約束（空間中）：交線的法平面是二維 ⇒ $\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$",
+              "on": "梯度#2"
+            },
+            {
+              "do": "write",
+              "line": "　三個變數、一個約束（曲面）時，法向也只有一個方向：$\\nabla f=\\lambda\\nabla g$",
+              "color": "violet",
+              "on": "一整"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "找出最高點",
+      "title": "條件與數方程",
       "beats": [
-        { "show": ["$0=\\lambda+2\\mu x$，$0=\\lambda+2\\mu y$，$1=\\lambda$"],
-          "say": "三個分量各寫一條。第三條直接給 lambda 等於一。",
+        {
+          "show": [
+            "未知數：$x,y,z,\\lambda,\\mu$，五個"
+          ],
+          "say": "實際解題時，先數一數。未知數有 x、y、z，加兩個乘數，一共五個。",
           "board": [
-            {"do":"write","line":"$0=\\lambda+2\\mu x$，$0=\\lambda+2\\mu y$，${{l:1=\\lambda}}$"},
-            {"do":"underline","term":"l","on":"第三條"}
-          ] },
-        { "show": ["$\\lambda=1$ 代入：$0=1+2\\mu x$"],
-          "say": "lambda 等於一代進前兩條，得二 mu x 等於負一。負一不是零，所以 mu 不是零。",
+            {
+              "do": "write",
+              "line": "未知數：$x,y,z,\\lambda,\\mu$，五個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方程式：",
+            "$\\begin{aligned}&f_x=\\lambda g_x+\\mu h_x,\\quad f_y=\\lambda g_y+\\mu h_y,\\\\&f_z=\\lambda g_z+\\mu h_z,\\quad g=c_1,\\quad h=c_2\\end{aligned}$"
+          ],
+          "say": "方程式：梯度的三個分量各一條，再加上兩個約束本身，也是五條。五個未知數、五條方程式，剛剛好。",
           "board": [
-            {"do":"write","line":"$0=1+2\\mu x$ ⇒ $2\\mu x=-1$"},
-            {"do":"write","line":"$-1\\ne0$ ⇒ $\\mu\\ne0$","on":"所以"}
-          ] },
-        { "show": ["$2\\mu x=2\\mu y=-1$ ⟹ $x=y$"],
-          "say": "前兩條相比，mu 不是零，所以 x 等於 y。",
-          "board": [
-            {"do":"write","line":"$2\\mu x=2\\mu y=-1$ ⟹ $x=y$","on":"前兩條相比"}
-          ] },
-        { "show": ["$x=y=\\pm1$：兩個候選點"],
-          "note": "代入 $x^2+y^2=2$，再用平面求 $z$。",
-          "say": "代進圓柱，x 和 y 都是一或都是負一，再用平面算 z。",
-          "board": [
-            {"do":"write","line":"$x=y=\\pm1$：兩個候選點","on":"代進圓柱"}
-          ] },
-        { "show": ["$x=y=-1$：最大值 $z=3$"],
-          "note": "橢圓有界封閉，最大最小一定存在。",
-          "say": "橢圓有界又封閉，最大最小都存在，比一比候選值就好。最高點的 z 是三。",
-          "board": [
-            {"do":"write","line":"$x=y=-1$：最大值 $z=3$","color":"green","on":"比一比"}
-          ] },
-        { "show": ["有界閉集上，連續函數有最大最小"],
-          "note": "$z$ 連續，橢圓有界又封閉。",
-          "say": "為什麼最大最小一定存在：連續函數在有界閉集上一定取得兩者。橢圓沒有跑到無限遠，也沒有缺口。",
-          "board": [
-            {"do":"write","line":"橢圓：有界、封閉 ⇒ $z$ 有最大最小"}
-          ] }
+            {
+              "do": "write",
+              "line": "方程式："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&f_x=\\lambda g_x+\\mu h_x,\\quad f_y=\\lambda g_y+\\mu h_y,\\\\&f_z=\\lambda g_z+\\mu h_z,\\quad g=c_1,\\quad h=c_2\\end{aligned}}}}$",
+              "on": "各一"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "也是"
+            },
+            {
+              "do": "write",
+              "line": "　一般：$n$ 個變數、$m$ 個約束 ⇒ $n+m$ 個未知數、$n+m$ 條方程式",
+              "color": "violet",
+              "on": "五條#2"
+            }
+          ]
+        }
       ],
-      "key": "前兩式相減消掉 $\\lambda$，得 $x=y$",
-      "check": 3
+      "check": 1
     },
     {
-      "title": "兩平面的交線",
+      "title": "解例 1",
       "beats": [
-        { "show": ["$x+y+z=3$ 與 $x-y=1$ 的交線上，$x^2+y^2+z^2$ 最小"],
-          "say": "再一題：兩個平面交成一條直線，問線上離原點最近的點。",
+        {
+          "show": [
+            "$f=z$，$g=x+y+z$，$h=x^2+y^2$：",
+            "$(0,0,1)=\\lambda(1,1,1)+\\mu(2x,2y,0)$"
+          ],
+          "say": "回到例 1。f 是 z，梯度是 0 0 1；平面的梯度是 1 1 1；圓柱的梯度是 2x、2y、0。",
           "board": [
-            {"do":"write","line":"$x+y+z=3$ 與 $x-y=1$ 的交線上"},
-            {"do":"write","line":"$x^2+y^2+z^2$ 最小","on":"離原點最近"}
-          ] },
-        { "show": ["$2x=\\lambda+\\mu$，$2y=\\lambda-\\mu$，$2z=\\lambda$"],
-          "say": "三個分量各一條，用 lambda、mu 表示 x、y、z。",
+            {
+              "do": "write",
+              "line": "$f=z$，$g=x+y+z$，$h=x^2+y^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (0,0,1)=\\lambda(1,1,1)+\\mu(2x,2y,0)$",
+              "on": "梯度#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三個分量：$1=\\lambda$",
+            "前兩個：$0=1+2\\mu x$，$0=1+2\\mu y$ ⇒ $x=y=-\\dfrac1{2\\mu}$"
+          ],
+          "say": "看第三個分量：1 等於藍布達。代回前兩個：1 加 2 謬 x 等於 0，1 加 2 謬 y 也等於 0，所以 x 等於 y。",
           "board": [
-            {"do":"write","line":"$2x=\\lambda+\\mu$，$2y=\\lambda-\\mu$，$2z=\\lambda$"}
-          ] },
-        { "show": ["$\\frac{3\\lambda}{2}=3$，$\\mu=1$"],
-          "say": "代進第一個約束，三 lambda 除以二等於三，lambda 是二。x 減 y 等於 mu，所以 mu 是一。",
+            {
+              "do": "write",
+              "line": "第三個分量：$1=\\lambda$"
+            },
+            {
+              "do": "write",
+              "line": "前兩個：$0=1+2\\mu x$，$0=1+2\\mu y$ ⇒ $x=y=-\\dfrac1{2\\mu}$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x^2+y^2=2$ ⇒ $x=y=\\pm1$；$z=1-x-y$"
+          ],
+          "say": "代進圓柱，x 等於 y 等於正負 1。再由平面，z 等於 1 減 x 減 y。",
           "board": [
-            {"do":"write","line":"$x+y+z=\\frac{3\\lambda}{2}=3$ ⇒ $\\lambda=2$"},
-            {"do":"write","line":"$x-y=\\mu=1$","on":"x 減 y"}
-          ] },
-        { "show": ["代約束：$\\lambda=2$，$\\mu=1$"],
-          "note": "候選點 $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$。",
-          "say": "代進兩個約束，解出 lambda 等於二、mu 等於一，得到唯一的候選點。",
+            {
+              "do": "write",
+              "line": "$x^2+y^2=2$ ⇒ $x=y=\\pm1$；$z=1-x-y$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "候選點：$(1,1,-1)$ 與 $(-1,-1,3)$"
+          ],
+          "say": "兩個候選點：1、1、負 1，和負 1、負 1、3。",
           "board": [
-            {"do":"write","line":"代約束：$\\lambda=2$，$\\mu=1$"},
-            {"do":"transform","line":"代約束：$\\lambda=2$，$\\mu=1$ ⇒ $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$","on":"得到唯一"}
-          ] },
-        { "show": ["直線走遠：$f\\to\\infty$，沒有最大值"],
-          "say": "交線是直線，走遠時距離變無限大，所以沒有最大值。最小值存在，唯一的候選點就是它。",
+            {
+              "do": "write",
+              "line": "候選點：$(1,1,-1)$ 與 $(-1,-1,3)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "橢圓是有界閉集 ⇒ $z$ 的最大、最小都存在",
+            "最大值 $z=3$，在 $(-1,-1,3)$"
+          ],
+          "say": "橢圓有界又封閉，z 的最大值和最小值一定存在，而且一定在候選點裡。最高點的 z 是 3，最低點的 z 是負 1。",
           "board": [
-            {"do":"write","line":"走遠：$f\\to\\infty$ ⇒ 無最大值"},
-            {"do":"write","line":"最小值存在 ⇒ 候選點就是最小","on":"最小值存在"}
-          ] }
-      ],
-      "key": "三式都用 $\\lambda$、$\\mu$ 表示，再代回約束",
-      "predict": {
-        "ask": "最小值是？",
-        "options": [
-          {
-            "label": "$\\frac{7}{2}$",
-            "correct": true
-          },
-          {
-            "label": "$1$",
-            "why": "$1$ 只是 $z^2$；還要加上 $x^2=\\frac{9}{4}$ 和 $y^2=\\frac{1}{4}$。"
-          },
-          {
-            "label": "沒有最小值",
-            "why": "交線是直線，走遠時 $f\\to\\infty$：沒有最大值，但最小值存在。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "橢圓是有界閉集 ⇒ $z$ 的最大、最小都存在"
+            },
+            {
+              "do": "write",
+              "line": "最大值 $z=3$，在 $(-1,-1,3)$",
+              "color": "red",
+              "on": "和最"
+            },
+            {
+              "do": "write",
+              "line": "最小值 $z=-1$，在 $(1,1,-1)$",
+              "color": "red",
+              "on": "候選"
+            },
+            {
+              "do": "write",
+              "line": "　檢查前提：$\\nabla g=(1,1,1)$、$\\nabla h=(2x,2y,0)$ 在橢圓上不平行",
+              "color": "violet",
+              "on": "最低"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：$x=\\sqrt2\\cos t$，$y=\\sqrt2\\sin t$",
+            "$z=1-\\sqrt2(\\cos t+\\sin t)=1-2\\sin\\!\\Big(t+\\frac\\pi4\\Big)$"
+          ],
+          "say": "用參數化驗算：x 是根號 2 餘弦 t，y 是根號 2 正弦 t。z 化簡成 1 減 2 倍正弦 t 加 4 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：$x=\\sqrt2\\cos t$，$y=\\sqrt2\\sin t$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle z=1-\\sqrt2(\\cos t+\\sin t)=1-2\\sin\\!\\Big(t+\\frac\\pi4\\Big)$",
+              "on": "化簡"
+            }
+          ]
+        },
+        {
+          "show": [
+            "正弦在 $-1$ 到 $1$ 之間 ⇒ $-1\\le z\\le3$"
+          ],
+          "say": "正弦在負 1 到 1 之間，所以 z 在負 1 到 3 之間。跟拉格朗日的答案一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "正弦在 $-1$ 到 $1$ 之間 ⇒ $-1\\le z\\le3$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例 2：離原點最近",
+      "beats": [
+        {
+          "show": [
+            "例 2　在 $x+y+z=3$ 與 $x-y=1$ 的交線上，求 $x^2+y^2+z^2$ 的最小值",
+            "$(2x,2y,2z)=\\lambda(1,1,1)+\\mu(1,-1,0)$"
+          ],
+          "say": "例 2：兩個平面的交線是一條直線。在這條直線上，求 x 平方加 y 平方加 z 平方的最小值，也就是離原點最近的點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2　在 $x+y+z=3$ 與 $x-y=1$ 的交線上，求 $x^2+y^2+z^2$ 的最小值"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (2x,2y,2z)=\\lambda(1,1,1)+\\mu(1,-1,0)$",
+              "on": "方加#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$2x=\\lambda+\\mu,\\quad 2y=\\lambda-\\mu,\\quad 2z=\\lambda$"
+          ],
+          "say": "三個分量：2x 等於藍布達加謬，2y 等於藍布達減謬，2z 等於藍布達。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2x=\\lambda+\\mu,\\quad 2y=\\lambda-\\mu,\\quad 2z=\\lambda$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前兩條相加：$x+y=\\lambda=2z$",
+            "代入 $x+y+z=3$：$3z=3$，$z=1$"
+          ],
+          "say": "前兩條相加，謬消掉：x 加 y 等於藍布達，也就是 2z。代進第一個平面，3z 等於 3，z 是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前兩條相加：$x+y=\\lambda=2z$"
+            },
+            {
+              "do": "write",
+              "line": "代入 $x+y+z=3$：$3z=3$，$z=1$",
+              "on": "2z"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x+y=2$，$x-y=1$ ⇒ $x=\\frac32$，$y=\\frac12$",
+            "$f\\Big(\\tfrac32,\\tfrac12,1\\Big)=\\tfrac94+\\tfrac14+1=\\tfrac72$"
+          ],
+          "say": "再解 x 加 y 等於 2、x 減 y 等於 1：x 是 2 分之 3，y 是 2 分之 1。函數值是 2 分之 7。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x+y=2$，$x-y=1$ ⇒ $x=\\frac32$，$y=\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle f\\Big(\\tfrac32,\\tfrac12,1\\Big)=\\tfrac94+\\tfrac14+1=\\tfrac72}}$",
+              "on": "等於#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直線無界：走遠 $f\\to\\infty$，只有最小值 $\\frac72$"
+          ],
+          "say": "直線無界，往遠處走 f 趨近無限大，沒有最大值。只有一個候選點，它就是最小值，2 分之 7。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直線無界：走遠 $f\\to\\infty$，只有最小值 $\\frac72$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "幾何驗證：交線方向 $(1,1,1)\\times(1,-1,0)=(1,1,-2)$"
+          ],
+          "say": "幾何驗證：交線的方向是兩個法向量的外積，1、1、負 2。原點到這一點的向量跟它垂直，所以這正是原點到直線的垂足，距離最短。",
+          "board": [
+            {
+              "do": "write",
+              "line": "幾何驗證：交線方向 $(1,1,1)\\times(1,-1,0)=(1,1,-2)$"
+            },
+            {
+              "do": "write",
+              "line": "$\\left(\\tfrac32,\\tfrac12,1\\right)\\cdot(1,1,-2)=0$：從原點到這點垂直於直線",
+              "on": "到這"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 兩個約束 ⇒ 兩個曲面交成一條曲線",
+            "• 條件：$\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$，加上 $g=c_1$、$h=c_2$"
+          ],
+          "say": "整理一下：兩個約束切出一條曲線；條件是 f 的梯度等於兩個梯度的組合；理由是三個梯度都垂直於切向量；未知數和方程式一樣多；最後別忘了判斷最大還是最小。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 兩個約束 ⇒ 兩個曲面交成一條曲線"
+            },
+            {
+              "do": "write",
+              "line": "• 條件：$\\nabla f=\\lambda\\nabla g+\\mu\\nabla h$，加上 $g=c_1$、$h=c_2$",
+              "on": "條件"
+            },
+            {
+              "do": "write",
+              "line": "• 理由：三個梯度都垂直於切向量；$\\nabla g$、$\\nabla h$ 不平行才張得滿法平面",
+              "on": "度的"
+            },
+            {
+              "do": "write",
+              "line": "• 數方程：$n$ 個變數、$m$ 個約束 ⇒ $n+m$ 條方程式",
+              "on": "於切"
+            },
+            {
+              "do": "write",
+              "line": "• 最後判斷最大最小：有界閉集比大小；無界要另外論證",
+              "on": "最後"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一章：二重積分，從微分走向積分"
+          ],
+          "say": "多變數的微分到這裡告一段落。下一章，我們開始學二重積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一章：二重積分，從微分走向積分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

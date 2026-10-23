@@ -1,0 +1,512 @@
+{
+  "id": "parametric-derivative",
+  "title": "參數式的導數",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "parametric-curves",
+    "chain-rule",
+    "derivative-trig"
+  ],
+  "next": [
+    "parametric-second-derivative"
+  ],
+  "related": [
+    "inverse-function",
+    "polar-tangent"
+  ],
+  "objectives": [
+    "用 $\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$ 求參數曲線在某點的切線斜率與切線方程式。",
+    "找出水平切線（$\\frac{dy}{dt}=0$、$\\frac{dx}{dt}\\ne 0$）與鉛直切線（$\\frac{dx}{dt}=0$、$\\frac{dy}{dt}\\ne 0$）。",
+    "看到 $\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 同時為 0 時，知道公式不給結論，要另外分析。"
+  ],
+  "visual": "參數曲線 x = t²、y = t³ − 3t 上一個點隨 t 移動，點上畫一支速度箭頭 (dx/dt, dy/dt)，以及延伸出去的切線。旁邊即時顯示 dx/dt、dy/dt 與兩者的比值。點經過 t = ±1 時箭頭變成水平，經過 t = 0 時變成鉛直；在交叉點 (3, 0) 兩次經過，切線方向不一樣。",
+  "concept": [
+    {
+      "heading": "① 斜率是兩個速度的比",
+      "body": [
+        "點在時刻 $t$ 的位置是 $(x(t),y(t))$。很短的時間 $\\Delta t$ 內，$x$ 大約變了 $x'(t)\\Delta t$，$y$ 大約變了 $y'(t)\\Delta t$。切線斜率是「$y$ 的變化 ÷ $x$ 的變化」，$\\Delta t$ 約掉，就得到下面的公式。"
+      ],
+      "tex": [
+        "\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}\\qquad\\left(\\frac{dx}{dt}\\neq 0\\right)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 寫成連鎖律就好記",
+      "body": [
+        "上一段是直覺，不是證明：它把「大約」當成相等，也沒有說明什麼時候 $y$ 真的能看成 $x$ 的函數。嚴格的推導在下面可折疊的段落。",
+        "如果 $y$ 可以看成 $x$ 的函數，連鎖律給 $\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$。兩邊除以 $\\frac{dx}{dt}$ 就是上面的公式。",
+        "所以順序是：先各自對 $t$ 微分，再相除，最後代入題目給的 $t$。不要先把 $t$ 消掉，那常常更難。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼 $\\frac{dx}{dt}\\ne 0$ 就夠",
+      "body": [
+        "假設 $x'$、$y'$ 在 $t_0$ 附近連續，而且 $x'(t_0)\\ne 0$。那 $x'$ 在 $t_0$ 附近不變號，$x(t)$ 在那裡嚴格單調，有反函數 $t=t(x)$，且 $\\frac{dt}{dx}=\\frac{1}{dx/dt}$（〈反函數〉的導數公式）。",
+        "於是在那一小段曲線上 $y=y(t(x))$ 真的是 $x$ 的函數，連鎖律給 $\\frac{dy}{dx}=y'(t)\\cdot\\frac{dt}{dx}=\\frac{y'(t)}{x'(t)}$。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 水平切線、鉛直切線、和一個例外",
+      "body": [
+        "水平切線：$\\frac{dy}{dt}=0$ 而 $\\frac{dx}{dt}\\ne 0$，斜率 0。",
+        "鉛直切線：$\\frac{dx}{dt}=0$ 而 $\\frac{dy}{dt}\\ne 0$，點在那一瞬間只上下動，斜率不存在。",
+        "兩個都是 0：點在那一瞬間停住了，公式變成 $\\frac{0}{0}$，不能下結論。擺線 $x=t-\\sin t$、$y=1-\\cos t$ 在 $t=0$ 就是這樣，那裡是一個尖點。要判斷，得看 $t\\to t_0$ 時 $\\frac{dy/dt}{dx/dt}$ 的極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 同一點，可以有兩條切線",
+      "body": [
+        "曲線自己交叉時，同一個 $(x,y)$ 對應兩個 $t$。斜率要用 $t$ 算，所以兩次經過可以有兩個不同的斜率（範例 3）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "直接套公式",
+      "prompt": "$x=t^2$、$y=t^3$，求 $t=1$ 處的 $\\frac{dy}{dx}$。",
+      "problemId": "db-par-001",
+      "steps": [
+        "各自對 $t$ 微分：$\\frac{dx}{dt}=2t$，$\\frac{dy}{dt}=3t^2$。",
+        "相除：$\\frac{dy}{dx}=\\frac{3t^2}{2t}=\\frac{3t}{2}$（$t\\ne 0$）。",
+        "代 $t=1$：$\\frac{3}{2}$。"
+      ],
+      "answer": "$\\frac{3}{2}$",
+      "claim": "D(t^3, 1)/D(t^2, 1) == 3/2"
+    },
+    {
+      "title": "擺線的切線方程式",
+      "prompt": "擺線 $x=t-\\sin t$、$y=1-\\cos t$，求 $t=\\frac{\\pi}{2}$ 處的切線。",
+      "problemId": "lec-10-q1a",
+      "steps": [
+        "切點：$x=\\frac{\\pi}{2}-\\sin\\frac{\\pi}{2}=\\frac{\\pi}{2}-1$，$y=1-\\cos\\frac{\\pi}{2}=1$。",
+        "$\\frac{dx}{dt}=1-\\cos t$，在 $\\frac{\\pi}{2}$ 是 1；$\\frac{dy}{dt}=\\sin t$，在 $\\frac{\\pi}{2}$ 是 1。",
+        "斜率 $=\\frac{1}{1}=1$。",
+        "點斜式：$y-1=1\\cdot\\left(x-\\left(\\frac{\\pi}{2}-1\\right)\\right)$，整理得 $y=x+2-\\frac{\\pi}{2}$。"
+      ],
+      "answer": "$y=x+2-\\frac{\\pi}{2}$",
+      "claim": "D(1-cos(t), pi/2)/D(t-sin(t), pi/2) == 1 ;; SUB(1-cos(t), pi/2) == SUB(t-sin(t), pi/2) + 2 - pi/2"
+    },
+    {
+      "title": "水平、鉛直切線，以及交叉點",
+      "prompt": "$x=t^2$、$y=t^3-3t$。找出水平與鉛直切線的位置，並求曲線在交叉點 $(3,0)$ 的兩個斜率。",
+      "steps": [
+        "$\\frac{dx}{dt}=2t$，$\\frac{dy}{dt}=3t^2-3$。",
+        "水平：$3t^2-3=0$，$t=\\pm 1$，此時 $\\frac{dx}{dt}=\\pm 2\\ne 0$。點是 $t=1$ 的 $(1,-2)$ 與 $t=-1$ 的 $(1,2)$。",
+        "鉛直：$2t=0$，$t=0$，此時 $\\frac{dy}{dt}=-3\\ne 0$。點是 $(0,0)$。",
+        "〈參數曲線〉算過交叉點 $(3,0)$ 對應 $t=\\pm\\sqrt{3}$。$t=\\sqrt{3}$：斜率 $\\frac{9-3}{2\\sqrt{3}}=\\sqrt{3}$；$t=-\\sqrt{3}$：斜率 $\\frac{9-3}{-2\\sqrt{3}}=-\\sqrt{3}$。"
+      ],
+      "answer": "水平切線在 $(1,-2)$、$(1,2)$；鉛直切線在 $(0,0)$；交叉點 $(3,0)$ 的兩個斜率是 $\\sqrt{3}$ 與 $-\\sqrt{3}$。",
+      "claim": "D(t^3-3t, 1) == 0 ;; D(t^2, 1) == 2 ;; SUB(t^3-3t, 1) == -2 ;; D(t^3-3t, 0) == -3 ;; D(t^3-3t, sqrt(3))/D(t^2, sqrt(3)) == sqrt(3) ;; D(t^3-3t, -sqrt(3))/D(t^2, -sqrt(3)) == -sqrt(3)"
+    }
+  ],
+  "pitfalls": [
+    "分子分母放反：$\\frac{dy}{dx}$ 是 $\\frac{dy}{dt}$ 除以 $\\frac{dx}{dt}$。",
+    "只算 $\\frac{dy}{dt}$ 就當成斜率，忘了除以 $\\frac{dx}{dt}$。",
+    "把 $x$ 值當成 $t$ 代進去：題目給「$x=1$ 處」時，要先解出對應的 $t$。",
+    "$\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 同時為 0，就說「斜率 0」或「鉛直」。那是 $\\frac{0}{0}$，要另外分析。"
+  ],
+  "checks": [
+    {
+      "ask": "$x=\\cos t$、$y=\\sin t$，$\\frac{dy}{dx}$ 是？",
+      "options": [
+        {
+          "label": "$-\\cos t/\\sin t$",
+          "correct": true
+        },
+        {
+          "label": "$-\\sin t/\\cos t$",
+          "why": "這是 $\\frac{dx/dt}{dy/dt}$，分子分母放反了。"
+        },
+        {
+          "label": "$\\cos t$",
+          "why": "這只是 $\\frac{dy}{dt}$，還要除以 $\\frac{dx}{dt}=-\\sin t$。"
+        }
+      ]
+    },
+    {
+      "ask": "參數曲線在某個 $t$ 有水平切線的條件是？",
+      "options": [
+        {
+          "label": "$\\frac{dy}{dt}=0$ 且 $\\frac{dx}{dt}\\ne 0$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{dx}{dt}=0$ 且 $\\frac{dy}{dt}\\ne 0$",
+          "why": "$x$ 不動、$y$ 在動，點正在上下走，那是鉛直切線。"
+        },
+        {
+          "label": "$\\frac{dx}{dt}=0$ 且 $\\frac{dy}{dt}=0$",
+          "why": "兩個都是 0 時公式是 $\\frac{0}{0}$，可能是尖點，什麼都不能確定。"
+        }
+      ]
+    },
+    {
+      "ask": "$x=e^t$、$y=te^t$，$t=0$ 處的 $\\frac{dy}{dx}$ 是？",
+      "options": [
+        {
+          "label": "1",
+          "correct": true
+        },
+        {
+          "label": "0",
+          "why": "$te^t$ 要用乘法法則：$\\frac{dy}{dt}=e^t+te^t$，在 $t=0$ 是 1，不是 0。"
+        },
+        {
+          "label": "$e$",
+          "why": "代錯了點：$t=0$ 時 $e^t=1$。$e$ 是 $t=1$ 的值。"
+        }
+      ]
+    },
+    {
+      "ask": "擺線 $x=t-\\sin t$、$y=1-\\cos t$ 在 $t=0$，下列何者正確？",
+      "options": [
+        {
+          "label": "$\\frac{dx}{dt}$ 與 $\\frac{dy}{dt}$ 都是 0，公式不給結論，要另外分析",
+          "correct": true
+        },
+        {
+          "label": "斜率是 0",
+          "why": "$\\frac{dy}{dt}=\\sin 0=0$，但 $\\frac{dx}{dt}=1-\\cos 0$ 也是 0，$\\frac{0}{0}$ 不是 0。"
+        },
+        {
+          "label": "有鉛直切線",
+          "why": "鉛直切線要 $\\frac{dx}{dt}=0$ 而 $\\frac{dy}{dt}\\ne 0$；這裡 $\\frac{dy}{dt}$ 也是 0。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "斜率是兩個速度的比",
+      "beats": [
+        { "show": ["很短的 $\\Delta t$：$x$ 變 $x'(t)\\Delta t$","$y$ 變 $y'(t)\\Delta t$"],
+          "say": "很短的一段時間 delta t 裡，x 大約變了 x prime 乘 delta t，y 大約變了 y prime 乘 delta t。",
+          "board": [
+            {"do":"write","line":"$\\Delta x \\approx {{a:x'(t)\\Delta t}}$","tint":{"a":"blue"}},
+            {"do":"write","line":"$\\Delta y \\approx {{b:y'(t)\\Delta t}}$","tint":{"b":"violet"},"on":"y 大約變了"}
+          ] },
+        { "show": ["$\\frac{dy}{dx} = \\frac{dy/dt}{dx/dt}$"],
+          "note": "要求 $\\frac{dx}{dt} \\ne 0$。",
+          "say": "斜率是 y 的變化除以 x 的變化，delta t 上下約掉，就剩兩個速度相除。分母的 x 速度不能是零。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\Delta y}{\\Delta x} \\approx \\frac{{{yv:y'(t)}}{{d:\\Delta t}}}{{{xv:x'(t)}}{{e:\\Delta t}}}$","tint":{"yv":"violet","xv":"blue"}},
+            {"do":"strike","term":"d","on":"delta t"},
+            {"do":"strike","term":"e","on":"約掉"},
+            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{yv:y'(t)}}}{{{xv:x'(t)}}}$","on":"就剩"}
+          ] },
+        { "show": ["直覺，不是證明"],
+          "note": "它把「大約」當成相等。完整證明在全文。",
+          "say": "這是直覺，不是證明，它把大約當成相等。嚴格的版本用連鎖律，完整證明在全文。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"直覺，不是證明","color":"red","on":"直覺"},
+            {"do":"write","line":"把 $\\approx$ 當成 $=$","on":"把大約"}
+          ] },
+        { "show": ["連鎖律：$\\frac{dy}{dt}=\\frac{dy}{dx}\\cdot\\frac{dx}{dt}$","兩邊除以 $\\frac{dx}{dt}$"],
+          "note": "前提：$y$ 能看成 $x$ 的函數。",
+          "say": "嚴格版用連鎖律：y 對 t 的導數，等於 y 對 x 的導數乘 x 對 t 的導數。兩邊除以 x 的速度，就是公式。",
+          "board": [
+            {"do":"write","line":"$\\frac{dy}{dt}={{c1:\\frac{dy}{dx}}}\\cdot\\frac{dx}{dt}$"},
+            {"do":"circle","term":"c1","color":"gold","label":"要求的","on":"y 對 x"},
+            {"do":"write","line":"兩邊除以 $\\frac{dx}{dt}$：$\\frac{dy}{dx}=\\frac{dy/dt}{dx/dt}$","on":"兩邊除以"}
+          ] },
+        { "show": ["先各自對 $t$ 微分，再相除"],
+          "note": "不要先把 $t$ 消掉。",
+          "say": "所以做法的順序是：x 和 y 各自對 t 微分，再相除，最後才代題目給的 t。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x'(t)$、$y'(t)$ 各自對 $t$ 微分","on":"各自對"},
+            {"do":"write","line":"再相除：$\\frac{y'(t)}{x'(t)}$","on":"再相除"},
+            {"do":"write","line":"最後才代 $t$","on":"最後才代"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "直接套公式",
+      "beats": [
+        { "show": ["$x = t^2$，$y = t^3$，在 $t = 1$"],
+          "say": "練一題：x 是 t 平方，y 是 t 三次方，求 t 等於一的地方的斜率。",
+          "board": [
+            {"do":"write","line":"$x = t^2$，$y = t^3$，在 $t = 1$"}
+          ] },
+        { "show": ["$\\frac{dx}{dt} = 2t$，$\\frac{dy}{dt} = 3t^2$"],
+          "say": "先各自微分：x 對 t 微分是二 t，y 對 t 微分是三 t 平方。",
+          "board": [
+            {"do":"write","line":"$\\frac{dx}{dt} = {{dx:2t}}$","tint":{"dx":"blue"},"on":"x 對 t"},
+            {"do":"write","line":"$\\frac{dy}{dt} = {{dy:3t^2}}$","tint":{"dy":"violet"},"on":"y 對 t"}
+          ] },
+        { "show": ["$\\frac{dy}{dx} = \\frac{3t^2}{2t} = \\frac{3t}{2}$"],
+          "note": "$t \\ne 0$。",
+          "say": "y 的速度除以 x 的速度，約掉一個 t，得到二分之三 t。接著代 t 等於一。",
+          "board": [
+            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}}$","on":"y 的速度"},
+            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}} = {{r:\\frac{3t}{2}}}$","on":"約掉"},
+            {"do":"underline","term":"r","label":"代 t = 1","on":"接著代"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$t = 1$ 處的 $\\frac{dy}{dx}$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{3}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{2}{3}$",
+            "why": "分子分母放反了：是 $\\frac{dy}{dt}$ 除以 $\\frac{dx}{dt}$，$\\frac{3}{2}$。"
+          },
+          {
+            "label": "3",
+            "why": "3 只是 $\\frac{dy}{dt}$ 在 $t = 1$ 的值，還要除以 $\\frac{dx}{dt} = 2$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "擺線的切線",
+      "beats": [
+        { "show": ["$x = t - \\sin t$，$y = 1 - \\cos t$"],
+          "note": "在 $t = \\frac{\\pi}{2}$。",
+          "say": "換擺線：x 是 t 減 sine t，y 是一減 cosine t，求 t 等於二分之 pi 的切線。",
+          "board": [
+            {"do":"write","line":"$x = t - \\sin t$，$y = 1 - \\cos t$"},
+            {"do":"write","line":"切線在 $t = \\frac{\\pi}{2}$","on":"求 t 等於"}
+          ] },
+        { "show": ["切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$"],
+          "say": "先找切點：sine 二分之 pi 是一，cosine 是零，所以 x 是二分之 pi 減一，y 是一。",
+          "board": [
+            {"do":"write","line":"切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$","on":"所以 x 是"}
+          ] },
+        { "show": ["$\\frac{dx}{dt} = 1 - \\cos t$，$\\frac{dy}{dt} = \\sin t$"],
+          "note": "在 $\\frac{\\pi}{2}$ 都是 1，斜率 1。",
+          "say": "兩個速度在二分之 pi 都是一，相除得斜率一。",
+          "board": [
+            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}}$","tint":{"dx":"blue","dy":"violet"}},
+            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}} = \\frac{1}{1} = 1$","on":"都是一"}
+          ] },
+        { "show": ["$y = x + 2 - \\frac{\\pi}{2}$"],
+          "say": "用點斜式，y 減一等於 x 減切點的 x，整理成 y 等於 x 加二減二分之 pi。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$y - 1 = x - \\left(\\frac{\\pi}{2} - 1\\right)$","on":"用點斜式"},
+            {"do":"write","line":"$y = x + 2 - \\frac{\\pi}{2}$","color":"green","on":"整理成"}
+          ] },
+        { "show": ["$(e^t)' = e^t$","$x=e^t$：$\\frac{dx}{dt}=e^t$"],
+          "note": "指數函數微分後不變。",
+          "say": "x 是 e 的 t 次方時，它的導數就是自己，所以 x 的速度還是 e 的 t 次方。",
+          "board": [
+            {"do":"write","line":"$x = e^t$"},
+            {"do":"write","line":"$\\frac{dx}{dt} = {{n1:e^t}}$","on":"它的導數"},
+            {"do":"underline","term":"n1","label":"不變","on":"還是"}
+          ] },
+        { "show": ["$y=t\\sin t$：乘法法則","$y' = \\sin t + t\\cos t$"],
+          "note": "第一個的導數乘第二個，加第一個乘第二個的導數。",
+          "say": "y 是 t 乘 sine t，這種相乘的要用乘法法則。第一個的導數乘第二個，加第一個乘第二個的導數。",
+          "board": [
+            {"do":"write","line":"$y = t\\sin t$"},
+            {"do":"write","line":"$y' = \\sin t + t\\cos t$","on":"乘法法則"}
+          ] }
+      ],
+      "key": "切點與斜率都用同一個 $t$ 代",
+      "check": 2
+    },
+    {
+      "title": "水平與鉛直切線",
+      "beats": [
+        { "show": ["水平：$\\frac{dy}{dt} = 0$，$\\frac{dx}{dt} \\ne 0$"],
+          "note": "斜率 0。",
+          "say": "y 不動、x 在動，點那一瞬間在水平移動，所以是水平切線。",
+          "board": [
+            {"do":"write","line":"水平：${{dy:\\frac{dy}{dt}}} = 0$，${{dx:\\frac{dx}{dt}}} \\ne 0$","tint":{"dx":"blue","dy":"violet"}},
+            {"do":"underline","term":"dy","on":"y 不動"},
+            {"do":"underline","term":"dx","on":"x 在動"}
+          ] },
+        { "show": ["鉛直：$\\frac{dx}{dt} = 0$，$\\frac{dy}{dt} \\ne 0$"],
+          "note": "點只上下動，斜率不存在。",
+          "say": "反過來，x 不動、y 在動，點只上下走，切線是鉛直的，斜率不存在。",
+          "board": [
+            {"do":"write","line":"鉛直：${{dx:\\frac{dx}{dt}}} = 0$，${{dy:\\frac{dy}{dt}}} \\ne 0$"},
+            {"do":"underline","term":"dx","on":"x 不動"}
+          ] },
+        { "show": ["$x = t^2$，$y = t^3 - 3t$"],
+          "note": "水平：$t = \\pm 1$，點 $(1, -2)$、$(1, 2)$。",
+          "say": "例如 x 是 t 平方，y 是 t 三次方減三 t。三 t 平方減三等於零，t 是正負一，得到兩條水平切線。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x = t^2$，$y = t^3 - 3t$","on":"x 是"},
+            {"do":"write","line":"水平：${{dy:\\frac{dy}{dt}}} = 3t^2 - 3 = 0$，$t = \\pm 1$","on":"三 t 平方"}
+          ] },
+        { "show": ["鉛直：$2t = 0$，點 $(0, 0)$"],
+          "note": "此時 $\\frac{dy}{dt} = -3 \\ne 0$。",
+          "say": "鉛直切線要 x 的速度二 t 等於零，t 是零；這時 y 的速度是負三，不是零，所以成立。",
+          "board": [
+            {"do":"write","line":"鉛直：${{dx:\\frac{dx}{dt}}} = 2t = 0$，$t = 0$"},
+            {"do":"write","line":"此時 ${{dy:\\frac{dy}{dt}}} = {{n:-3 \\ne 0}}$","on":"這時 y 的速度"},
+            {"do":"underline","term":"n","label":"成立","on":"不是零"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "兩個都是 0",
+      "beats": [
+        { "show": ["$\\frac{dx}{dt} = \\frac{dy}{dt} = 0$ → $\\frac{0}{0}$"],
+          "note": "點在那一瞬間停住了。",
+          "say": "如果兩個速度同時是零，點在那一瞬間停住了，公式變成零分之零，什麼都不能說。",
+          "board": [
+            {"do":"write","line":"$\\frac{dx}{dt} = \\frac{dy}{dt} = 0$"},
+            {"do":"transform","line":"$\\frac{dx}{dt} = \\frac{dy}{dt} = 0 \\Rightarrow {{r:\\frac{0}{0}}}$","on":"公式變成"},
+            {"do":"underline","term":"r","color":"red","on":"零分之零"}
+          ] },
+        { "show": ["擺線在 $t = 0$：尖點"],
+          "say": "擺線在 t 等於零就是這樣，那裡是一個尖點，不是水平也不是鉛直。",
+          "board": [
+            {"do":"write","line":"擺線在 ${{t:t = 0}}$：尖點"},
+            {"do":"focus","term":"t","on":"擺線在"},
+            {"do":"write","line":"不是水平也不是鉛直","on":"不是水平"}
+          ] },
+        { "show": ["擺線在 $t = 0$ 附近"],
+          "say": "畫出來看：t 靠近零，點幾乎垂直地落到原點，又馬上往上走，這就是尖點。",
+          "board": [
+            {"do":"plot","graph":{"window":[-4,4,-0.5,3],"curves":[{"param":{"x":"t-sin(t)","y":"1-cos(t)","t":[-3,3]},"color":"blue"}],"points":[{"x":0,"y":0}],"labels":[{"x":0.2,"y":0.3,"text":"t = 0","anchor":"start"}]}}
+          ] },
+        { "show": ["看 $t \\to t_0$ 時 $\\frac{dy/dt}{dx/dt}$ 的極限"],
+          "say": "要判斷，就得讓 t 靠近那一點，看兩個速度的比值有沒有極限。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{r:\\lim_{t \\to t_0} \\frac{dy/dt}{dx/dt}}}$","on":"判斷"},
+            {"do":"underline","term":"r","label":"有極限嗎","on":"兩個速度"}
+          ] },
+        { "show": ["$\\frac{\\sin t}{1-\\cos t}\\approx\\frac{2}{t}$"],
+          "note": "直覺的近似：$t \\to 0$ 時斜率越來越陡。",
+          "say": "t 很小時，sine t 約等於 t，一減 cosine t 約等於 t 平方的一半。比值約是二除以 t，越來越陡。",
+          "board": [
+            {"do":"write","line":"$\\sin t \\approx t$"},
+            {"do":"write","line":"$1-\\cos t \\approx \\frac{t^2}{2}$","on":"一減"},
+            {"do":"write","line":"$\\frac{\\sin t}{1-\\cos t}\\approx {{r1:\\frac{2}{t}}}$","on":"比值"}
+          ] }
+      ],
+      "check": 3
+    },
+    {
+      "title": "同一點，兩條切線",
+      "beats": [
+        { "show": ["交叉點 $(3, 0)$：$t = \\pm\\sqrt{3}$"],
+          "note": "曲線 $x = t^2$、$y = t^3 - 3t$。",
+          "say": "曲線自己交叉時，同一點對應兩個 t。這條曲線在三、零交叉，t 是正負根號三。",
+          "board": [
+            {"do":"write","line":"$x = t^2$，$y = t^3 - 3t$"},
+            {"do":"write","line":"交叉點 $(3, 0)$：$t = \\pm\\sqrt{3}$","on":"這條曲線在"}
+          ] },
+        { "show": ["$t = \\sqrt{3}$：$\\frac{9 - 3}{2\\sqrt{3}} = \\sqrt{3}$"],
+          "say": "斜率是用 t 算的。t 等於根號三，y 的速度是九減三，除以二根號三，斜率根號三。",
+          "board": [
+            {"do":"write","line":"$\\frac{dy}{dx} = \\frac{{{dy:3t^2 - 3}}}{{{dx:2t}}}$","tint":{"dy":"violet","dx":"blue"}},
+            {"do":"transform","line":"$\\frac{dy}{dx} = \\frac{9 - 3}{2\\sqrt{3}} = \\sqrt{3}$","on":"九減三"}
+          ] }
+      ],
+      "key": "同一點、不同 $t$，斜率要各自算",
+      "predict": {
+        "ask": "$t = -\\sqrt{3}$ 那一次經過，斜率是？",
+        "options": [
+          {
+            "label": "$-\\sqrt{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\sqrt{3}$",
+            "why": "同一點不代表同一個斜率：$\\frac{dx}{dt} = 2t$ 在 $t = -\\sqrt{3}$ 是負的，$\\frac{9 - 3}{-2\\sqrt{3}} = -\\sqrt{3}$。"
+          },
+          {
+            "label": "0",
+            "why": "$(3, 0)$ 的 $y$ 是 0，但斜率要看 $\\frac{dy}{dt} = 3t^2 - 3$，在這裡是 $9 - 3$，不是 0。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "parametric",
+      "parametric-differentiation"
+    ],
+    "fine": [
+      "parametric-slope",
+      "parametric-tangent-line",
+      "parametric-horizontal-vertical",
+      "parametric-singular-point"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-10-m1",
+      "core": true,
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "db-par-001",
+      "core": true,
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "dd-par-001",
+      "core": true,
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "db-par-002",
+      "core": true,
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "db-par-004",
+      "core": true,
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "lec-10-q1a",
+      "core": true,
+      "trains": "parametric-tangent-line"
+    },
+    {
+      "id": "cg-7a-007",
+      "core": true,
+      "trains": "parametric-horizontal-vertical"
+    },
+    {
+      "id": "gx-038",
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "dd-par-003",
+      "trains": "parametric-slope"
+    },
+    {
+      "id": "gx-043",
+      "trains": "parametric-slope",
+      "note": "交叉點有兩個 $t$，題目指定的是 $t=\\sqrt{3}$。"
+    },
+    {
+      "id": "cg-7a-008",
+      "trains": "parametric-horizontal-vertical"
+    },
+    {
+      "id": "cg-7a-009",
+      "trains": "parametric-singular-point"
+    },
+    {
+      "id": "gx-044",
+      "challenge": true,
+      "trains": "parametric-slope",
+      "note": "挑戰：星形線 $x=\\cos^3 t$、$y=\\sin^3 t$，$\\frac{dx}{dt}$、$\\frac{dy}{dt}$ 都要用連鎖律，約分後才乾淨。"
+    }
+  ],
+  "gaps": []
+}

@@ -1,43 +1,128 @@
 {
   "id": "damped-oscillator",
   "title": "阻尼振盪",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["harmonic-oscillator", "repeated-roots", "complex-roots"],
-  "next": ["driven-oscillator"],
-  "related": ["distinct-real-roots"],
-  "objectives": [
-    "加上與速度成正比的阻力，寫出 $x''+2\\gamma x'+\\omega_0^2x=0$，並說出 $\\gamma$ 的物理意義。",
-    "比較 $\\gamma$ 與 $\\omega_0$，分辨欠阻尼、臨界阻尼、過阻尼，寫出各自的解。",
-    "讀出欠阻尼的振盪角頻率 $\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$ 與包絡線 $e^{-\\gamma t}$。"
+  "prerequisites": [
+    "harmonic-oscillator",
+    "repeated-roots",
+    "complex-roots"
   ],
-  "visual": "彈簧木塊泡在液體裡，右邊畫 x(t)，虛線畫出包絡線 ±Ae^{−γt}。滑桿調 γ（ω₀ 固定為 2）：γ 從 0 往上拉，波越衰減越快、也振得越慢；γ = 2 時剛好不再穿過 0（臨界）；γ 再大，木塊慢慢爬回平衡點（過阻尼）。角落標出目前屬於哪一種。",
+  "next": [
+    "driven-oscillator"
+  ],
+  "related": [
+    "distinct-real-roots"
+  ],
+  "objectives": [
+    "加上與速度成正比的阻力，寫出 $x''+2\\gamma x'+\\omega_0^2x=0$，並說出 $\\gamma$ 的意義（衰減率）",
+    "比較 $\\gamma$ 與 $\\omega_0$，分辨欠阻尼、臨界阻尼、過阻尼，寫出各自的解",
+    "讀出欠阻尼的振盪角頻率 $\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$ 與包絡線 $e^{-\\gamma t}$"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 加上阻力",
       "body": [
-        "木塊在空氣或液體裡運動，會受到跟速度方向相反、大小約與速度成正比的阻力 $-cx'$（$c>0$）。牛頓第二定律變成 $mx''=-kx-cx'$。除以 $m$，令 $2\\gamma=\\frac{c}{m}$、$\\omega_0^2=\\frac{k}{m}$："
+        "真實的彈簧會慢慢停下來：空氣、油、摩擦",
+        "最簡單的模型：阻力跟速度成正比、方向相反",
+        "牛頓第二定律：",
+        "除以 $m$，令 $2\\gamma=\\dfrac cm$、$\\omega_0^2=\\dfrac km$：",
+        "$\\gamma$：衰減率（單位 1/秒），阻力越大 $\\gamma$ 越大",
+        "能量會流失：乘 $x'$ 整理",
+        "括號是每單位質量的能量；$\\gamma=0$ 就回到能量守恆"
       ],
-      "tex": ["x'' + 2\\gamma x' + \\omega_0^2 x = 0"],
-      "collapsible": false
+      "tex": [
+        "F_{\\text{阻}}=-c\\,x'\\qquad(c>0)",
+        "mx''=-kx-cx'",
+        "x''+2\\gamma x'+\\omega_0^2x=0",
+        "\\frac{d}{dt}\\Big(\\tfrac12x'^2+\\tfrac12\\omega_0^2x^2\\Big)=-2\\gamma x'^2\\le0"
+      ]
     },
     {
-      "heading": "② 特徵根決定三種行為",
+      "heading": "② 特徵根決定行為",
       "body": [
-        "$r^2+2\\gamma r+\\omega_0^2=0$，$r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$。關鍵是比較 $\\gamma$ 與 $\\omega_0$：",
-        "欠阻尼 $\\gamma<\\omega_0$：根是 $-\\gamma\\pm i\\omega_d$，$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$。$x=e^{-\\gamma t}(C_1\\cos\\omega_dt+C_2\\sin\\omega_dt)$，一邊振一邊衰減，包絡線是 $e^{-\\gamma t}$，而且振得比沒有阻尼時慢（$\\omega_d<\\omega_0$）。",
-        "臨界阻尼 $\\gamma=\\omega_0$：重根 $-\\gamma$，$x=(C_1+C_2t)e^{-\\gamma t}$，不振盪。",
-        "過阻尼 $\\gamma>\\omega_0$：兩個負實根，$x=C_1e^{r_1t}+C_2e^{r_2t}$，不振盪，慢慢回到平衡，最多穿過平衡點一次。"
+        "特徵方程 $r^2+2\\gamma r+\\omega_0^2=0$：",
+        "根號裡的正負：比較 $\\gamma$ 和 $\\omega_0$",
+        "• $\\gamma<\\omega_0$：複數根 → 欠阻尼，會振盪",
+        "• $\\gamma=\\omega_0$：重根 → 臨界阻尼",
+        "• $\\gamma>\\omega_0$：兩個負實根 → 過阻尼",
+        "三種情況的根，實部都是負的：最後都回到 $0$"
       ],
-      "collapsible": false
+      "tex": [
+        "r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}"
+      ]
+    },
+    {
+      "heading": "② 欠阻尼：γ < ω₀",
+      "body": [
+        "$r=-\\gamma\\pm i\\omega_d$，其中",
+        "• $e^{-\\gamma t}$：包絡線，振幅越來越小",
+        "• $\\omega_d<\\omega_0$：阻力讓振盪變慢",
+        "例：$x''+2x'+5x=0$，$x(0)=1$，$x'(0)=-1$",
+        "$\\gamma=1$，$\\omega_0=\\sqrt5$：欠阻尼，$\\omega_d=\\sqrt{5-1}=2$",
+        "$x=e^{-t}(c_1\\cos2t+c_2\\sin2t)$",
+        "$x(0)=c_1=1$；$x'(0)=-c_1+2c_2=-1\\Rightarrow c_2=0$"
+      ],
+      "tex": [
+        "\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}",
+        "x=e^{-\\gamma t}\\big(c_1\\cos\\omega_dt+c_2\\sin\\omega_dt\\big)",
+        "x(t)=e^{-t}\\cos2t"
+      ]
+    },
+    {
+      "heading": "② 看圖：被包絡線夾住",
+      "body": [
+        "$e^{-\\pi}\\approx0.043$"
+      ]
+    },
+    {
+      "heading": "② 臨界阻尼：γ = ω₀",
+      "body": [
+        "重根 $r=-\\gamma$：",
+        "例：$x''+4x'+4x=0$，$x(0)=1$，$x'(0)=0$",
+        "$\\gamma=2=\\omega_0$：臨界",
+        "$c_1=1$；$x'(0)=c_2-2c_1=0\\Rightarrow c_2=2$",
+        "不振盪：$1+2t>0$，不會越過平衡點"
+      ],
+      "tex": [
+        "x=(c_1+c_2t)\\,e^{-\\gamma t}",
+        "x(t)=(1+2t)\\,e^{-2t}"
+      ]
+    },
+    {
+      "heading": "② 過阻尼：γ > ω₀",
+      "body": [
+        "例：$x''+5x'+4x=0$，$x(0)=1$，$x'(0)=0$",
+        "$\\gamma=2.5>\\omega_0=2$；$r^2+5r+4=(r+1)(r+4)$",
+        "$c_1+c_2=1$，$-c_1-4c_2=0$："
+      ],
+      "tex": [
+        "x(t)=\\tfrac43e^{-t}-\\tfrac13e^{-4t}"
+      ]
     },
     {
       "heading": "③ 物理意義",
       "body": [
-        "三種情況的解都 $\\to0$：阻力一直在消耗能量。能量 $E=\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2$ 的變化率 $\\frac{dE}{dt}=x'(mx''+kx)=-cx'^2\\le 0$。",
-        "汽車避震器設計在接近臨界阻尼：阻尼太小車子壓過坑會彈個不停，太大則回彈太慢。在所有 $\\gamma$ 中，臨界阻尼的指數衰減率最大。"
-      ],
-      "collapsible": false
+        "欠阻尼那條：$\\omega_d=\\sqrt{4-0.25}\\approx1.94$",
+        "欠阻尼：回得快，但衝過頭、來回晃",
+        "過阻尼：太黏，慢慢爬回來",
+        "臨界阻尼：不晃、又最快回到平衡",
+        "$t=2$：臨界 $5e^{-4}\\approx0.092$，過阻尼 $\\approx0.180$",
+        "應用：汽車避震器、自動關門器都設計在臨界附近"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 阻力 $-cx'$：$x''+2\\gamma x'+\\omega_0^2x=0$，能量只減不增",
+        "• 根 $r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$：比 $\\gamma$ 和 $\\omega_0$",
+        "• 欠阻尼：$e^{-\\gamma t}(c_1\\cos\\omega_dt+c_2\\sin\\omega_dt)$，$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$",
+        "• 臨界：$(c_1+c_2t)e^{-\\gamma t}$，不晃又最快",
+        "• 過阻尼：兩個負指數，慢慢回來",
+        "下一課：有人一直推它，受迫振盪"
+      ]
     }
   ],
   "workedExamples": [
@@ -85,35 +170,45 @@
   ],
   "checks": [
     {
-      "ask": "$x''+6x'+25x=0$ 屬於哪一種？",
+      "ask": "$x''+2x'+10x=0$ 的振盪角頻率 $\\omega_d$ 是？",
       "options": [
-        { "label": "欠阻尼，$\\omega_d=4$", "correct": true },
-        { "label": "過阻尼", "why": "你拿 $2\\gamma=6$ 和 $\\omega_0=5$ 比。應該是 $\\gamma=3$ 和 $\\omega_0=5$ 比，$3<5$。" },
-        { "label": "欠阻尼，$\\omega_d=5$", "why": "$5$ 是 $\\omega_0$；阻尼讓振動變慢，$\\omega_d=\\sqrt{25-9}=4$。" }
+        {
+          "label": "$3$",
+          "correct": true
+        },
+        {
+          "label": "$\\sqrt{10}$",
+          "why": "那是 $\\omega_0$；阻力會讓振盪變慢"
+        },
+        {
+          "label": "$\\sqrt{11}$",
+          "why": "符號反了：是 $\\omega_0^2-\\gamma^2$"
+        },
+        {
+          "label": "$\\sqrt{8}$",
+          "why": "$\\gamma=1$ 不是 $2$：$2$ 是 $2\\gamma$"
+        }
       ]
     },
     {
-      "ask": "$m=1$、$k=9$，阻尼係數 $c$ 是多少時剛好臨界阻尼？",
+      "ask": "自動關門器的阻尼太小（$\\gamma\\ll\\omega_0$），門會？",
       "options": [
-        { "label": "$c=6$", "correct": true },
-        { "label": "$c=3$", "why": "$3$ 是臨界時的 $\\gamma$（$=\\omega_0=3$），但 $c=2m\\gamma=6$。" },
-        { "label": "$c=9$", "why": "$9$ 是 $k$；臨界條件是 $c^2=4mk=36$。" }
-      ]
-    },
-    {
-      "ask": "有阻尼時，總能量 $\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2$ 會？",
-      "options": [
-        { "label": "隨時間遞減（只在 $x'=0$ 的瞬間不減）", "correct": true },
-        { "label": "保持不變", "why": "那是沒有阻尼的情況；有阻尼時 $\\frac{dE}{dt}=-cx'^2\\le 0$。" },
-        { "label": "在有限時間內降到剛好 $0$ 後停住", "why": "解是指數衰減，越來越接近 $0$，但在有限時間內不會剛好停住。" }
-      ]
-    },
-    {
-      "ask": "$x=e^{-t}\\cos 2t$ 的振幅降到一開始的一半，大約要多久？",
-      "options": [
-        { "label": "$t=\\ln 2\\approx0.69$", "correct": true },
-        { "label": "$t=\\frac{1}{2}$", "why": "振幅是包絡線 $e^{-t}$，要解 $e^{-t}=\\frac{1}{2}$，得 $t=\\ln 2$，不是線性的 $\\frac{1}{2}$。" },
-        { "label": "$t=\\frac{\\ln 2}{2}$", "why": "那是 $e^{-2t}$ 的半衰期；這裡的指數是 $-t$，$\\cos 2t$ 裡的 $2$ 只管振盪快慢。" }
+        {
+          "label": "關上時來回撞幾下",
+          "correct": true
+        },
+        {
+          "label": "關得很慢",
+          "why": "那是阻尼太大（過阻尼）"
+        },
+        {
+          "label": "完全不動",
+          "why": "$\\gamma>0$ 很小時仍然會回到平衡"
+        },
+        {
+          "label": "剛好不晃又最快",
+          "why": "那是臨界阻尼 $\\gamma=\\omega_0$"
+        }
       ]
     }
   ],
@@ -121,262 +216,743 @@
     {
       "title": "加上阻力",
       "beats": [
-        { "show": ["阻力 $-cx'$，$c>0$"],
-          "note": "跟速度方向相反、大小約與速度成正比。",
-          "say": "木塊在空氣或液體裡動，會受到阻力。方向跟速度相反，大小約跟速度成正比。",
+        {
+          "show": [
+            "真實的彈簧會慢慢停下來：空氣、油、摩擦"
+          ],
+          "say": "上一課的木塊會永遠振下去。真實的彈簧不會：空氣阻力、油、摩擦，都會讓它慢慢停下來。",
           "board": [
-            {"do":"write","line":"阻力 ${{d:-cx'}}$，$c > 0$","tint":{"d":"violet"},"on":"受到阻力"},
-            {"do":"underline","term":"d","label":"跟速度相反","on":"方向跟速度"}
-          ] },
-        { "show": ["$mx''=-kx-cx'$"],
-          "say": "牛頓第二定律多了這一項：彈簧的力，加上阻力。",
+            {
+              "do": "write",
+              "line": "真實的彈簧會慢慢停下來：空氣、油、摩擦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最簡單的模型：阻力跟速度成正比、方向相反",
+            "$F_{\\text{阻}}=-c\\,x'\\qquad(c>0)$"
+          ],
+          "say": "最簡單的模型：阻力跟速度成正比，方向跟速度相反，係數叫 c。動得越快，阻力越大。",
           "board": [
-            {"do":"write","line":"$mx'' = {{s:-kx}}{{d:-cx'}}$","tint":{"s":"blue"},"on":"牛頓"},
-            {"do":"focus","term":"s","label":"彈簧","on":"彈簧的力"}
-          ] },
-        { "show": ["$x''+2\\gamma x'+\\omega_0^2x=0$"],
-          "note": "$2\\gamma=\\frac{c}{m}$、$\\omega_0^2=\\frac{k}{m}$。",
-          "say": "除以 m，x prime 的係數記成二 gamma，x 的係數一樣是 omega 零平方。",
+            {
+              "do": "write",
+              "line": "最簡單的模型：阻力跟速度成正比、方向相反"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle F_{\\text{阻}}=-c\\,x'\\qquad(c>0)$",
+              "on": "度相"
+            }
+          ]
+        },
+        {
+          "show": [
+            "牛頓第二定律：",
+            "$mx''=-kx-cx'$"
+          ],
+          "say": "牛頓第二定律：質量乘加速度，等於彈力加阻力。",
           "board": [
-            {"do":"transform","line":"$x'' + {{g:2\\gamma}}\\,x' + {{w:\\omega_0^2}}\\,x = 0$","on":"除以 m"},
-            {"do":"focus","term":"g","label":"c/m","on":"記成二 gamma"},
-            {"do":"focus","term":"w","label":"k/m","on":"omega 零平方"}
-          ] },
-        { "show": ["$x''+2x'+5x=0$"],
-          "say": "看一個例子：x prime 的係數是二，x 的係數是五。gamma 是多少？",
+            {
+              "do": "write",
+              "line": "牛頓第二定律："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle mx''=-kx-cx'$",
+              "on": "速度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以 $m$，令 $2\\gamma=\\dfrac cm$、$\\omega_0^2=\\dfrac km$：",
+            "$x''+2\\gamma x'+\\omega_0^2x=0$"
+          ],
+          "say": "移項、除以 m。把 m 分之 c 記成 2 伽瑪，m 分之 k 記成歐米伽 0 平方，就是阻尼振盪的標準方程。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$x'' + {{g2:2}}\\,x' + 5x = 0$","on":"看一個例子"},
-            {"do":"focus","term":"g2","on":"係數是二"}
-          ] }
+            {
+              "do": "write",
+              "line": "除以 $m$，令 $2\\gamma=\\dfrac cm$、$\\omega_0^2=\\dfrac km$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle x''+2\\gamma x'+\\omega_0^2x=0}}$",
+              "color": "red",
+              "on": "伽瑪"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\gamma$：衰減率（單位 1/秒），阻力越大 $\\gamma$ 越大"
+          ],
+          "say": "伽瑪叫衰減率，單位是每秒，阻力越大伽瑪越大。寫成 2 伽瑪，是為了等一下的根比較好看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\gamma$：衰減率（單位 1/秒），阻力越大 $\\gamma$ 越大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "能量會流失：乘 $x'$ 整理",
+            "$\\frac{d}{dt}\\Big(\\tfrac12x'^2+\\tfrac12\\omega_0^2x^2\\Big)=-2\\gamma x'^2\\le0$"
+          ],
+          "say": "跟上一課一樣乘上 x prime，這次右邊不是 0，而是負 2 伽瑪 x prime 平方。能量只減不增，被阻力吃掉了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "能量會流失：乘 $x'$ 整理"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{d}{dt}\\Big(\\tfrac12x'^2+\\tfrac12\\omega_0^2x^2\\Big)=-2\\gamma x'^2\\le0$",
+              "on": "邊不"
+            },
+            {
+              "do": "write",
+              "line": "　括號是每單位質量的能量；$\\gamma=0$ 就回到能量守恆",
+              "color": "violet",
+              "on": "me#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "特徵根決定行為",
+      "beats": [
+        {
+          "show": [
+            "特徵方程 $r^2+2\\gamma r+\\omega_0^2=0$：",
+            "$r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$"
+          ],
+          "say": "特徵方程是 r 平方加 2 伽瑪 r 加歐米伽 0 平方。公式解：負伽瑪，加減根號伽瑪平方減歐米伽 0 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "特徵方程 $r^2+2\\gamma r+\\omega_0^2=0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}}}$",
+              "on": "加歐"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "加減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "根號裡的正負：比較 $\\gamma$ 和 $\\omega_0$"
+          ],
+          "say": "寫成 2 伽瑪的好處就在這裡：判別式只要比較伽瑪和歐米伽 0 誰大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "根號裡的正負：比較 $\\gamma$ 和 $\\omega_0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\gamma<\\omega_0$：複數根 → 欠阻尼，會振盪",
+            "• $\\gamma=\\omega_0$：重根 → 臨界阻尼"
+          ],
+          "say": "伽瑪比歐米伽 0 小，是複數根，叫欠阻尼，會振盪。相等是重根，叫臨界阻尼。伽瑪比較大，是兩個負實根，叫過阻尼。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\gamma<\\omega_0$：複數根 → 欠阻尼，會振盪"
+            },
+            {
+              "do": "write",
+              "line": "• $\\gamma=\\omega_0$：重根 → 臨界阻尼",
+              "on": "數根"
+            },
+            {
+              "do": "write",
+              "line": "• $\\gamma>\\omega_0$：兩個負實根 → 過阻尼",
+              "on": "是重"
+            },
+            {
+              "do": "write",
+              "line": "　三種情況的根，實部都是負的：最後都回到 $0$",
+              "color": "violet",
+              "on": "是兩"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$x''+2x'+5x=0$ 的 $\\gamma$ 是？",
+        "ask": "$x''+6x'+9x=0$ 是哪一種？",
         "options": [
           {
-            "label": "$1$",
+            "label": "臨界阻尼",
             "correct": true
           },
           {
-            "label": "$2$",
-            "why": "2 是 $2\\gamma$，還要除以 2。"
+            "label": "過阻尼",
+            "why": "$\\gamma=3$ 不是 $6$：$6$ 是 $2\\gamma$"
           },
           {
-            "label": "$\\sqrt5$",
-            "why": "$\\sqrt5$ 是 $\\omega_0$，從 $x$ 的係數來；$\\gamma$ 看 $x'$ 的係數。"
+            "label": "欠阻尼",
+            "why": "$\\omega_0=3$ 不是 $9$：$9$ 是 $\\omega_0^2$"
           }
         ]
       }
     },
     {
-      "title": "三種行為",
+      "title": "欠阻尼：γ < ω₀",
       "beats": [
-        { "show": ["$r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$"],
-          "note": "比較 $\\gamma$ 與 $\\omega_0$。",
-          "say": "特徵根是負 gamma 加減根號 gamma 平方減 omega 零平方。關鍵是比 gamma 和 omega 零。",
+        {
+          "show": [
+            "$r=-\\gamma\\pm i\\omega_d$，其中",
+            "$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$"
+          ],
+          "say": "伽瑪比較小時，根號裡是負的，根是負伽瑪加減 i 歐米伽 d。歐米伽 d 是根號歐米伽 0 平方減伽瑪平方。",
           "board": [
-            {"do":"write","line":"$r = -\\gamma \\pm \\sqrt{{{q:\\gamma^2 - \\omega_0^2}}}$"},
-            {"do":"focus","term":"q","label":"比 γ 和 ω₀","on":"關鍵是比"}
-          ] },
-        { "show": ["欠阻尼 $\\gamma<\\omega_0$：振盪＋衰減"],
-          "note": "$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}<\\omega_0$。",
-          "say": "gamma 比較小，根號裡是負的，複數根：一邊振一邊衰減，而且振得比原本慢。",
+            {
+              "do": "write",
+              "line": "$r=-\\gamma\\pm i\\omega_d$，其中"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$",
+              "on": "歐米#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=e^{-\\gamma t}\\big(c_1\\cos\\omega_dt+c_2\\sin\\omega_dt\\big)$"
+          ],
+          "say": "解就是 e 的負伽瑪 t 次方，乘上餘弦正弦的組合。",
           "board": [
-            {"do":"write","line":"欠阻尼 $\\gamma < \\omega_0$：振盪＋衰減","on":"gamma 比較小"}
-          ] },
-        { "show": ["$r=-\\gamma\\pm i\\omega_d$"],
-          "note": "$\\omega_d<\\omega_0$：根號裡少了 $\\gamma^2$。",
-          "say": "根號裡是負的，提出負號變成 i 乘根號 omega 零平方減 gamma 平方，記成 omega d。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle x=e^{-\\gamma t}\\big(c_1\\cos\\omega_dt+c_2\\sin\\omega_dt\\big)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $e^{-\\gamma t}$：包絡線，振幅越來越小",
+            "• $\\omega_d<\\omega_0$：阻力讓振盪變慢"
+          ],
+          "say": "前面的 e 的負伽瑪 t 次方是包絡線，控制振幅變小；歐米伽 d 比歐米伽 0 小，阻力讓它振得慢一點。",
           "board": [
-            {"do":"write","line":"$\\gamma^2-\\omega_0^2=-(\\omega_0^2-\\gamma^2)$"},
-            {"do":"write","line":"$r=-\\gamma\\pm i\\,{{w:\\omega_d}}$","on":"記成"},
-            {"do":"focus","term":"w","label":"振盪頻率","on":"omega d"}
-          ] },
-        { "show": ["臨界阻尼 $\\gamma=\\omega_0$：$(C_1+C_2t)e^{-\\gamma t}$"],
-          "say": "剛好相等，是重根，不振盪。",
+            {
+              "do": "write",
+              "line": "• $e^{-\\gamma t}$：包絡線，振幅越來越小"
+            },
+            {
+              "do": "write",
+              "line": "• $\\omega_d<\\omega_0$：阻力讓振盪變慢",
+              "on": "歐米#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x''+2x'+5x=0$，$x(0)=1$，$x'(0)=-1$"
+          ],
+          "say": "例子：x 兩撇加 2x 一撇加 5x 等於 0，初始位置 1，初速度負 1。",
           "board": [
-            {"do":"write","line":"臨界 $\\gamma = \\omega_0$：$(C_1+C_2t)e^{-\\gamma t}$"}
-          ] },
-        { "show": ["過阻尼 $\\gamma>\\omega_0$：兩個負實根"],
-          "note": "不振盪，慢慢回到平衡。",
-          "say": "gamma 比較大，兩個負實根，也不振盪，只是慢慢爬回平衡點。",
+            {
+              "do": "write",
+              "line": "例：$x''+2x'+5x=0$，$x(0)=1$，$x'(0)=-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\gamma=1$，$\\omega_0=\\sqrt5$：欠阻尼，$\\omega_d=\\sqrt{5-1}=2$"
+          ],
+          "say": "伽瑪是 1，歐米伽 0 是根號 5，伽瑪比較小，是欠阻尼。歐米伽 d 是根號 4，等於 2。",
           "board": [
-            {"do":"write","line":"過阻尼 $\\gamma > \\omega_0$：兩個負實根"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\gamma=1$，$\\omega_0=\\sqrt5$：欠阻尼，$\\omega_d=\\sqrt{5-1}=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x=e^{-t}(c_1\\cos2t+c_2\\sin2t)$"
+          ],
+          "say": "代初始條件：c1 是 1。微分後在 0 是負 c1 加 2 c2，等於負 1，所以 c2 是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x=e^{-t}(c_1\\cos2t+c_2\\sin2t)$"
+            },
+            {
+              "do": "write",
+              "line": "$x(0)=c_1=1$；$x'(0)=-c_1+2c_2=-1\\Rightarrow c_2=0$",
+              "on": "c2#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x(t)=e^{-t}\\cos2t$"
+          ],
+          "say": "答案是 e 的負 t 次方乘餘弦 2t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle x(t)=e^{-t}\\cos2t}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "次方"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "看圖：被包絡線夾住",
+      "beats": [
+        {
+          "show": [
+            "藍：e^(−t) cos 2t；紅色虛線：包絡線 ±e^(−t)"
+          ],
+          "say": "畫出來：藍色的振盪被兩條紅色虛線夾住，就是正負 e 的負 t 次方。每過一個週期派，振幅就乘上 e 的負派次方，大約剩 4%。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "under",
+                  "window": [
+                    0,
+                    4.5,
+                    -1.1,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "e^(-x)*cos(2*x)",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "e^(-x)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "-e^(-x)",
+                      "color": "red",
+                      "dash": true
+                    }
+                  ],
+                  "xlabel": "t",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "藍：e^(−t) cos 2t；紅色虛線：包絡線 ±e^(−t)",
+              "color": "violet",
+              "on": "正負"
+            },
+            {
+              "do": "write",
+              "line": "　$e^{-\\pi}\\approx0.043$",
+              "color": "violet",
+              "on": "振幅"
+            }
+          ]
+        }
       ],
-      "key": "比 $\\gamma$ 與 $\\omega_0$：判別式決定行為",
       "check": 0
     },
     {
-      "title": "欠阻尼",
+      "title": "臨界阻尼：γ = ω₀",
       "beats": [
-        { "show": ["$\\gamma=1$，$\\omega_0=\\sqrt5\\approx2.24$"],
-          "note": "$\\gamma<\\omega_0$，欠阻尼。",
-          "say": "回到剛剛那一題。gamma 是一，omega 零是根號五，大約二點二四。一比較小，欠阻尼。",
+        {
+          "show": [
+            "重根 $r=-\\gamma$：",
+            "$x=(c_1+c_2t)\\,e^{-\\gamma t}$"
+          ],
+          "say": "伽瑪等於歐米伽 0 時，是重根負伽瑪。重根那一課學過：解是 c1 加 c2 t，乘上 e 的負伽瑪 t 次方。",
           "board": [
-            {"do":"write","line":"$x'' + 2x' + 5x = 0$"},
-            {"do":"write","line":"$\\gamma = 1$，$\\omega_0 = \\sqrt{5} \\approx 2.24$","on":"gamma 是一"},
-            {"do":"write","line":"$\\gamma < \\omega_0$：欠阻尼","on":"一比較小"}
-          ] },
-        { "show": ["$\\omega_d=\\sqrt{5-1}=2$"],
-          "say": "振盪的角頻率是根號五減一，等於二。",
+            {
+              "do": "write",
+              "line": "重根 $r=-\\gamma$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle x=(c_1+c_2t)\\,e^{-\\gamma t}}}$",
+              "on": "重根#2"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$x''+4x'+4x=0$，$x(0)=1$，$x'(0)=0$"
+          ],
+          "say": "例子：x 兩撇加 4x 一撇加 4x 等於 0。拉開 1，靜止放手。",
           "board": [
-            {"do":"write","line":"$\\omega_d = \\sqrt{5 - 1} = 2$"}
-          ] },
-        { "show": ["$r=-1\\pm 2i$","$e^{2it}=\\cos 2t+i\\sin 2t$"],
-          "note": "兩個解的線性組合就是通解。",
-          "say": "根是負一加減二 i。e 的 i 二 t 次方是 cosine 二 t 加 i sine 二 t，實部、虛部各是一個解。",
+            {
+              "do": "write",
+              "line": "例：$x''+4x'+4x=0$，$x(0)=1$，$x'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\gamma=2=\\omega_0$：臨界"
+          ],
+          "say": "伽瑪是 2，歐米伽 0 也是 2，臨界阻尼。c1 是 1；微分後在 0 是 c2 減 2 c1，等於 0，所以 c2 是 2。",
           "board": [
-            {"do":"write","line":"$r=-1\\pm 2i$"},
-            {"do":"write","line":"$e^{2it}=\\cos 2t+i\\sin 2t$","on":"e 的 i"},
-            {"do":"write","line":"$x=e^{-t}(C_1\\cos 2t+C_2\\sin 2t)$","on":"實部"}
-          ] },
-        { "show": ["$x(0)=1$，$x'(0)=-1$：$x=e^{-t}\\cos 2t$"],
-          "say": "代初始條件，C 一是一，C 二是零。",
+            {
+              "do": "write",
+              "line": "$\\gamma=2=\\omega_0$：臨界"
+            },
+            {
+              "do": "write",
+              "line": "$c_1=1$；$x'(0)=c_2-2c_1=0\\Rightarrow c_2=2$",
+              "on": "後在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x(t)=(1+2t)\\,e^{-2t}$"
+          ],
+          "say": "答案是 1 加 2t，乘 e 的負 2t 次方。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$x(0) = 1$，$x'(0) = -1$","on":"代初始條件"},
-            {"do":"write","line":"$x = {{e:e^{-t}}}{{c:\\cos 2t}}$","tint":{"e":"violet","c":"blue"},"on":"C 一是一"}
-          ] },
-        { "show": ["$x(0)=C_1=1$","$x'(0)=-C_1+2C_2=-1$"],
-          "note": "微分時 $e^{-t}$ 也要微，用乘法法則。",
-          "say": "x 在零是 C 一，所以 C 一是一。x prime 在零是負 C 一加二 C 二，等於負一，C 二是零。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle x(t)=(1+2t)\\,e^{-2t}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不振盪：$1+2t>0$，不會越過平衡點"
+          ],
+          "say": "1 加 2t 永遠是正的，所以 x 一直是正的，不會越過平衡點，直接回去。",
           "board": [
-            {"do":"write","line":"$x(0)=C_1=1$"},
-            {"do":"write","line":"$x'(0)=-C_1+2C_2=-1$","on":"x prime"},
-            {"do":"write","line":"$C_2=0$，$x=e^{-t}{{c:\\cos 2t}}$","on":"C 二是零"}
-          ] },
-        { "show": ["振幅照 $e^{-t}$ 縮小"],
-          "note": "大約每 $\\pi$ 秒完成一次完整振動。",
-          "say": "包絡線是 e 的負 t 次方。cosine 二 t 只管振盪快慢，大約每 pi 秒振一次。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"plot","graph":{"window":[0,3.6,-1.1,1.1],"curves":[{"expr":"exp(-x)","domain":[0,3.6],"color":"violet"},{"expr":"-exp(-x)","domain":[0,3.6],"color":"violet"},{"expr":"exp(-x)*cos(2*x)","domain":[0,3.6],"color":"blue","steps":400}]},"on":"包絡線"},
-            {"do":"underline","term":"c","label":"每 π 秒一次","on":"cosine 二 t"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "不振盪：$1+2t>0$，不會越過平衡點"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "臨界阻尼",
+      "title": "過阻尼：γ > ω₀",
       "beats": [
-        { "show": ["$x''+4x'+4x=0$：$\\gamma=\\omega_0=2$"],
-          "note": "拉開 1 再靜止放手。",
-          "say": "gamma 是四的一半，二；omega 零是根號四，也是二。剛好臨界阻尼。",
+        {
+          "show": [
+            "例：$x''+5x'+4x=0$，$x(0)=1$，$x'(0)=0$"
+          ],
+          "say": "最後是過阻尼：x 兩撇加 5x 一撇加 4x 等於 0，一樣拉開 1 靜止放手。",
           "board": [
-            {"do":"write","line":"$x'' + 4x' + 4x = 0$"},
-            {"do":"write","line":"$\\gamma = {{g:2}}$，$\\omega_0 = \\sqrt{4} = 2$","on":"四的一半"},
-            {"do":"write","line":"$\\gamma = \\omega_0$：臨界阻尼","color":"green","on":"剛好"}
-          ] },
-        { "show": ["第二個解：$te^{-2t}$"],
-          "note": "一般：重根 $r$ 的解是 $(C_1+C_2t)e^{rt}$。",
-          "say": "重根只給一個解，e 的負二 t 次方。第二個解要乘上 t，用乘法法則代回去可以驗證。",
+            {
+              "do": "write",
+              "line": "例：$x''+5x'+4x=0$，$x(0)=1$，$x'(0)=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\gamma=2.5>\\omega_0=2$；$r^2+5r+4=(r+1)(r+4)$"
+          ],
+          "say": "伽瑪是 2.5，比歐米伽 0 的 2 大，過阻尼。特徵根是負 1 和負 4。",
           "board": [
-            {"do":"write","line":"解一：$e^{-2t}$"},
-            {"do":"write","line":"解二：$t\\,e^{-2t}$","on":"乘上"}
-          ] },
-        { "show": ["$x=(1+2t)e^{-2t}$"],
-          "note": "$C_1=1$，$x'(0)=C_2-2=0$。",
-          "say": "重根負二，代條件，C 一是一，C 二是二。",
+            {
+              "do": "write",
+              "line": "$\\gamma=2.5>\\omega_0=2$；$r^2+5r+4=(r+1)(r+4)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$c_1+c_2=1$，$-c_1-4c_2=0$：",
+            "$x(t)=\\tfrac43e^{-t}-\\tfrac13e^{-4t}$"
+          ],
+          "say": "解兩條方程：c1 是 3 分之 4，c2 是負 3 分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r = -2$（重根）","on":"重根"},
-            {"do":"write","line":"$C_1 = 1$，$C_2 = 2$","on":"代條件"},
-            {"do":"write","line":"$x = {{r:(1+2t)e^{-2t}}}$","on":"C 二是二"}
-          ] },
-        { "show": ["$x'(0)=C_2-2C_1=0$"],
-          "say": "x 在零是 C 一，所以 C 一是一。x prime 在零是 C 二減二倍 C 一，等於零，所以 C 二是二。",
+            {
+              "do": "write",
+              "line": "$c_1+c_2=1$，$-c_1-4c_2=0$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle x(t)=\\tfrac43e^{-t}-\\tfrac13e^{-4t}}}$",
+              "color": "red",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "是負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "物理意義",
+      "beats": [
+        {
+          "show": [
+            "ω₀ = 2，拉開 1 放手。藍：欠阻尼 γ = 0.5；紅：臨界 γ = 2；綠：過阻尼 γ = 2.5"
+          ],
+          "say": "把三種放在一起比：歐米伽 0 都是 2，都是拉開 1 靜止放手，只改變阻力。",
           "board": [
-            {"do":"write","line":"$x(0)=C_1=1$"},
-            {"do":"write","line":"$x'(0)=C_2-2C_1=0$","on":"x prime"},
-            {"do":"write","line":"$C_2=2$","on":"所以 C 二是二"}
-          ] },
-        { "show": ["$t>0$ 時 $x>0$：回到平衡但不越過"],
-          "say": "這個解一直是正的：木塊回到平衡點，但不會衝過頭。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cmp",
+                  "window": [
+                    0,
+                    5,
+                    -0.6,
+                    1.05
+                  ],
+                  "fn": [
+                    {
+                      "expr": "e^(-0.5*x)*(cos(1.9365*x)+0.2582*sin(1.9365*x))",
+                      "color": "blue"
+                    },
+                    {
+                      "expr": "(1+2*x)*e^(-2*x)",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "(4*e^(-x)-e^(-4*x))/3",
+                      "color": "green"
+                    }
+                  ],
+                  "xlabel": "t",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ω₀ = 2，拉開 1 放手。藍：欠阻尼 γ = 0.5；紅：臨界 γ = 2；綠：過阻尼 γ = 2.5",
+              "color": "violet",
+              "on": "都是#1"
+            },
+            {
+              "do": "write",
+              "line": "　欠阻尼那條：$\\omega_d=\\sqrt{4-0.25}\\approx1.94$",
+              "color": "violet",
+              "on": "靜止"
+            }
+          ]
+        },
+        {
+          "show": [
+            "欠阻尼：回得快，但衝過頭、來回晃"
+          ],
+          "say": "藍色的欠阻尼回得快，但會衝過頭，來回晃好幾次。",
           "board": [
-            {"do":"write","line":"$t > 0$ 時 ${{p:x > 0}}$"},
-            {"do":"box","term":"p","color":"green","label":"不衝過頭","on":"回到平衡點"}
-          ] },
-        { "show": ["避震器：接近臨界阻尼"],
-          "note": "臨界阻尼的指數衰減率最大。",
-          "say": "汽車避震器就設計在接近臨界：太小會彈個不停，太大又回得太慢。",
+            {
+              "do": "write",
+              "line": "欠阻尼：回得快，但衝過頭、來回晃"
+            }
+          ]
+        },
+        {
+          "show": [
+            "過阻尼：太黏，慢慢爬回來"
+          ],
+          "say": "綠色的過阻尼太黏了，慢慢爬回來。因為慢的那個根負 1，衰減得很慢。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"避震器：接近臨界阻尼","on":"汽車避震器"},
-            {"do":"write","line":"太小：彈個不停","on":"太小"},
-            {"do":"write","line":"太大：回得太慢","on":"太大"}
-          ] }
+            {
+              "do": "write",
+              "line": "過阻尼：太黏，慢慢爬回來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "臨界阻尼：不晃、又最快回到平衡"
+          ],
+          "say": "紅色的臨界阻尼剛剛好：不會晃，又是不晃的裡面最快回到平衡的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "臨界阻尼：不晃、又最快回到平衡",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$t=2$：臨界 $5e^{-4}\\approx0.092$，過阻尼 $\\approx0.180$",
+              "color": "violet",
+              "on": "又是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "應用：汽車避震器、自動關門器都設計在臨界附近"
+          ],
+          "say": "所以汽車的避震器、門上的自動關門器，都設計在臨界阻尼附近：不彈跳，又回得快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "應用：汽車避震器、自動關門器都設計在臨界附近"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "過阻尼與能量",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$x''+5x'+4x=0$：$r=-1$、$-4$"],
-          "note": "$\\gamma=2.5>\\omega_0=2$。",
-          "say": "gamma 是二點五，比 omega 零的二大，過阻尼。根是負一和負四。",
+        {
+          "show": [
+            "• 阻力 $-cx'$：$x''+2\\gamma x'+\\omega_0^2x=0$，能量只減不增",
+            "• 根 $r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$：比 $\\gamma$ 和 $\\omega_0$"
+          ],
+          "say": "整理一下：阻力讓能量流失；比較伽瑪和歐米伽 0，分成欠阻尼、臨界、過阻尼三種；欠阻尼有包絡線，臨界不晃又最快。",
           "board": [
-            {"do":"write","line":"$x'' + 5x' + 4x = 0$"},
-            {"do":"write","line":"$\\gamma = 2.5 > \\omega_0 = 2$：過阻尼","on":"gamma 是"},
-            {"do":"write","line":"$r = {{a:-1}}$，${{b:-4}}$","on":"根是"}
-          ] },
-        { "show": ["$x=\\frac{4e^{-t}-e^{-4t}}{3}$"],
-          "note": "之後由 $e^{-t}$ 主導。",
-          "say": "e 的負四 t 很快消失，剩 e 的負 t 主導，比臨界那一題的負二 t 回得慢。",
+            {
+              "do": "write",
+              "line": "• 阻力 $-cx'$：$x''+2\\gamma x'+\\omega_0^2x=0$，能量只減不增"
+            },
+            {
+              "do": "write",
+              "line": "• 根 $r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$：比 $\\gamma$ 和 $\\omega_0$",
+              "on": "比較"
+            },
+            {
+              "do": "write",
+              "line": "• 欠阻尼：$e^{-\\gamma t}(c_1\\cos\\omega_dt+c_2\\sin\\omega_dt)$，$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}$",
+              "on": "分成"
+            },
+            {
+              "do": "write",
+              "line": "• 臨界：$(c_1+c_2t)e^{-\\gamma t}$，不晃又最快",
+              "on": "過阻"
+            },
+            {
+              "do": "write",
+              "line": "• 過阻尼：兩個負指數，慢慢回來",
+              "on": "絡線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：有人一直推它，受迫振盪"
+          ],
+          "say": "下一課，如果有一個外力一直推它，會怎麼樣？",
           "board": [
-            {"do":"write","line":"$x = \\frac{4{{s:e^{-t}}} - {{f:e^{-4t}}}}{3}$"},
-            {"do":"underline","term":"f","label":"很快消失","on":"很快消失"},
-            {"do":"focus","term":"s","color":"violet","label":"主導","on":"主導"}
-          ] },
-        { "show": ["$e^{-t}$ 比 $e^{-2t}$ 掉得慢"],
-          "note": "指數的絕對值越大，掉得越快。",
-          "say": "紫色 e 的負 t，比藍色 e 的負二 t 掉得慢。e 的負四 t 早消失，剩 e 的負 t 主導。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,3,0,1.1],"curves":[{"expr":"exp(-x)","domain":[0,3],"color":"violet"},{"expr":"exp(-2*x)","domain":[0,3],"color":"blue"}]}}
-          ] },
-        { "show": ["阻尼越大不一定越快"],
-          "note": "超過臨界之後，反而越慢。",
-          "say": "所以阻尼越大不一定回得越快，超過臨界之後反而越慢。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"阻尼越大 $\\neq$ 回得越快","on":"阻尼越大"},
-            {"do":"write","line":"超過臨界：反而越慢","on":"超過臨界"}
-          ] },
-        { "show": ["$\\frac{dE}{dt}=-cx'^2\\le 0$"],
-          "note": "三種情況的解都趨近 0。",
-          "say": "不論哪一種，阻力一直在消耗能量，能量的變化率是負 c 乘速度平方。",
-          "board": [
-            {"do":"write","line":"阻力一直在消耗能量"},
-            {"do":"write","line":"$\\frac{dE}{dt} = {{p:-cx'^2}} \\le 0$","on":"能量的變化率"},
-            {"do":"focus","term":"p","color":"red","on":"負 c"}
-          ] },
-        { "show": ["$\\frac{dE}{dt}=x'(mx''+kx)=-cx'^2$"],
-          "note": "$E=\\frac{1}{2}mx'^2+\\frac{1}{2}kx^2$ 對 $t$ 微分。",
-          "say": "E 微分，提出 x prime，剩 m x double prime 加 k x。這一塊依牛頓定律，是負 c x prime。",
-          "board": [
-            {"do":"write","line":"$\\frac{dE}{dt}=mx'x''+kxx'$"},
-            {"do":"write","line":"$=x'(mx''+kx)$","on":"提出"},
-            {"do":"write","line":"$=x'(-cx')=-cx'^2$","on":"牛頓"}
-          ] }
-      ],
-      "key": "超過臨界後，慢的根 $e^{-t}$ 主導衰減",
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：有人一直推它，受迫振盪"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "complex-roots", "repeated-root", "ivp"],
-    "fine": ["damped-model", "damped-classify", "damped-underdamped-solve", "damped-critical-solve", "damped-overdamped-solve"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "complex-roots",
+      "repeated-root",
+      "ivp"
+    ],
+    "fine": [
+      "damped-model",
+      "damped-classify",
+      "damped-underdamped-solve",
+      "damped-critical-solve",
+      "damped-overdamped-solve"
+    ]
   },
   "practice": [
-    { "id": "ode-h2-005", "core": true, "trains": "damped-underdamped-solve" },
-    { "id": "ode-h2-004", "core": true, "trains": "damped-critical-solve" },
-    { "id": "cg-10d-001", "core": true, "trains": "damped-classify" },
-    { "id": "cg-10d-004", "core": true, "trains": "damped-overdamped-solve" },
-    { "id": "cg-10d-007", "core": true, "trains": "damped-model" },
-    { "id": "cg-10d-002", "trains": "damped-classify" },
-    { "id": "cg-10d-003", "trains": "damped-classify" },
-    { "id": "cg-10d-005", "trains": "damped-overdamped-solve" },
-    { "id": "cg-10d-006", "trains": "damped-model" }
+    {
+      "id": "ode-h2-005",
+      "core": true,
+      "trains": "damped-underdamped-solve"
+    },
+    {
+      "id": "ode-h2-004",
+      "core": true,
+      "trains": "damped-critical-solve"
+    },
+    {
+      "id": "cg-10d-001",
+      "core": true,
+      "trains": "damped-classify"
+    },
+    {
+      "id": "cg-10d-004",
+      "core": true,
+      "trains": "damped-overdamped-solve"
+    },
+    {
+      "id": "cg-10d-007",
+      "core": true,
+      "trains": "damped-model"
+    },
+    {
+      "id": "cg-10d-002",
+      "trains": "damped-classify"
+    },
+    {
+      "id": "cg-10d-003",
+      "trains": "damped-classify"
+    },
+    {
+      "id": "cg-10d-005",
+      "trains": "damped-overdamped-solve"
+    },
+    {
+      "id": "cg-10d-006",
+      "trains": "damped-model"
+    }
   ],
   "gaps": []
 }

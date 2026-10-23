@@ -1,0 +1,357 @@
+{
+  "id": "limit-laws-direct",
+  "title": "直接代入與極限定律",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["limit-intro", "limit-existence"],
+  "next": ["limit-factor"],
+  "related": ["continuity-definition", "infinite-limits", "limit-laws-proof"],
+  "objectives": [
+    "會用極限定律把一個極限拆成幾塊各自算，並說得出拆之前要確認什麼。",
+    "知道多項式、分母不為 0 的有理函數可以直接代入。",
+    "代入之前先檢查：得到 $\\frac{0}{0}$、$\\frac{k}{0}$、或在分段函數的分界點，就不能直接代。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 極限定律：可以拆開算",
+      "body": [
+        "設 $\\lim_{x\\to a} f(x) = L$、$\\lim_{x\\to a} g(x) = M$ 都存在。那麼和、差、常數倍、積、商的極限，等於極限的和、差、常數倍、積、商；商要求 $M \\ne 0$。",
+        "人話：每一塊的極限都存在，就可以各自算再組合。條件「每一塊都存在」不能省（見 ④）。"
+      ],
+      "tex": ["\\lim(f\\pm g)=L\\pm M,\\quad \\lim(cf)=cL,\\quad \\lim(fg)=LM,\\quad \\lim\\frac{f}{g}=\\frac{L}{M}\\ (M\\neq 0)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 直接代入",
+      "body": [
+        "$\\lim_{x\\to a} x = a$、$\\lim_{x\\to a} c = c$，再用定律一塊一塊拼，就得到：多項式 $p$ 有 $\\lim_{x\\to a} p(x) = p(a)$；有理函數 $\\frac{p}{q}$ 在 $q(a) \\ne 0$ 時有 $\\lim_{x\\to a} \\frac{p(x)}{q(x)} = \\frac{p(a)}{q(a)}$。",
+        "根號、$e^x$、$\\ln x$、$\\sin x$、$\\cos x$ 在它們的定義域裡也可以直接代入。「可以直接代入」有個名字，叫連續（〈連續的定義〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 代入之前先檢查",
+      "body": [
+        "代進去分母不是 0：直接代，完成。",
+        "得到 $\\frac{0}{0}$：商定律不能用（分母極限是 0），但極限可能存在，要先化簡，下一課開始處理。",
+        "得到 $\\frac{k}{0}$（$k \\ne 0$）：分子靠近 $k$、分母靠近 0，值會爆掉（〈無窮極限與垂直漸近線〉）。",
+        "分段函數的分界點：兩側式子不同，要分左右算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 拆不開的時候",
+      "body": [
+        "$\\lim_{x\\to0} (\\frac{1}{x} - \\frac{1}{x})$：$x \\ne 0$ 時式子恆等於 0，所以極限是 0。但不能拆成 $\\lim \\frac{1}{x} - \\lim \\frac{1}{x}$，因為 $\\lim_{x\\to0} \\frac{1}{x}$ 不存在。拆不開時先化簡，或換別的方法。",
+        "這些定律的嚴格證明要用 $\\varepsilon\\text{-}\\delta$ 的語言，見〈極限定律〉；這裡先會用。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式",
+      "prompt": "$\\lim_{x\\to2} (3x^2 - 5x + 1)$",
+      "steps": [
+        "多項式，處處可以直接代入。",
+        "$3 \\cdot 2^2 - 5 \\cdot 2 + 1 = 12 - 10 + 1 = 3$。"
+      ],
+      "answer": "3",
+      "claim": "LIM(3x^2-5x+1, 2) == 3"
+    },
+    {
+      "title": "有理函數：先看分母",
+      "prompt": "$\\lim_{x\\to-1} \\frac{x^2 + 2x + 3}{x - 4}$",
+      "steps": [
+        "分母在 $x = -1$：$-1 - 4 = -5 \\ne 0$，可以直接代。",
+        "分子：$(-1)^2 + 2(-1) + 3 = 1 - 2 + 3 = 2$。",
+        "極限 $= \\frac{2}{-5} = -\\frac{2}{5}$。"
+      ],
+      "answer": "$-\\frac{2}{5}$",
+      "claim": "LIM((x^2+2x+3)/(x-4), -1) == -2/5"
+    },
+    {
+      "title": "根號與分式組合",
+      "prompt": "$\\lim_{x\\to4} \\frac{\\sqrt{2x + 1}}{x - 1}$",
+      "steps": [
+        "分母在 4：$4 - 1 = 3 \\ne 0$。根號裡在 4：$2 \\cdot 4 + 1 = 9 > 0$，在定義域內。",
+        "分子極限：$\\sqrt{9} = 3$。分母極限：3。",
+        "商定律：$\\frac{3}{3} = 1$。"
+      ],
+      "answer": "1",
+      "claim": "LIM(sqrt(2x+1)/(x-1), 4) == 1"
+    },
+    {
+      "title": "代進去是 $\\frac{0}{0}$：停下來",
+      "prompt": "$\\lim_{x\\to1} \\frac{x^2 - 1}{x - 1}$ 可以直接代入嗎？",
+      "steps": [
+        "分母在 1 是 0，商定律不能用；分子在 1 也是 0，是 $\\frac{0}{0}$。",
+        "$\\frac{0}{0}$ 不是答案，也不代表極限不存在；它代表要先化簡。",
+        "（下一課：$x \\ne 1$ 時 $\\frac{x^2 - 1}{x - 1} = x + 1$，極限是 2。）"
+      ],
+      "answer": "不能直接代入；先化簡，極限是 2",
+      "claim": "LIM((x^2-1)/(x-1), 1) == 2"
+    }
+  ],
+  "pitfalls": [
+    "分母極限是 0 還硬用商定律。",
+    "把極限拆成兩個不存在的極限再相減。",
+    "代入得 $\\frac{0}{0}$ 就寫答案 0，或寫「不存在」。",
+    "在分段函數的分界點直接代某一段的式子。",
+    "在定義域外面代入：$\\sqrt{x}$ 在 $x = -1$ 附近根本沒有定義，談不上 $\\lim_{x\\to-1} \\sqrt{x}$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\lim_{x\\to3} \\frac{x^2 - 1}{x + 1}$ 是？",
+      "options": [
+        { "label": "8", "why": "8 只是分子；分母也要代：$3 + 1 = 4$，$\\frac{8}{4} = 2$。" },
+        { "label": "2", "correct": true },
+        { "label": "不存在", "why": "分母在 3 是 $4 \\ne 0$，可以直接代入。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個可以直接代入？",
+      "options": [
+        { "label": "$\\lim_{x\\to1} \\frac{x^2 - 1}{x - 1}$", "why": "代入得 $\\frac{0}{0}$，要先化簡。" },
+        { "label": "$\\lim_{x\\to-1} \\frac{x + 2}{x + 1}$", "why": "分母在 $-1$ 是 0、分子是 1，是 $\\frac{k}{0}$ 型，不能直接代。" },
+        { "label": "$\\lim_{x\\to1} \\frac{x + 2}{x + 1}$", "correct": true }
+      ]
+    },
+    {
+      "ask": "$\\lim f = 3$、$\\lim g = -2$（$x \\to a$）。$\\lim \\frac{2f - g^2}{f + g}$ 是？",
+      "options": [
+        { "label": "2", "correct": true },
+        { "label": "10", "why": "$g^2$ 是 $(-2)^2 = 4$，不是 $-4$。正確是 $\\frac{6 - 4}{1} = 2$。" },
+        { "label": "$\\frac{2}{5}$", "why": "分母是 $f + g = 3 + (-2) = 1$，不是 $3 - (-2) = 5$。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to0} (\\frac{1}{x} - \\frac{1}{x})$ 是？",
+      "options": [
+        { "label": "不存在，因為 $\\lim \\frac{1}{x}$ 不存在", "why": "$x \\ne 0$ 時式子恆等於 0；不能拆開時要先化簡，而不是放棄。" },
+        { "label": "0", "correct": true },
+        { "label": "$\\infty - \\infty$，無法決定", "why": "這不是兩個極限相減的問題；化簡後是常數 0。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "可以拆開算",
+      "beats": [
+        { "show": ["$\\lim f = L$、$\\lim g = M$ 都存在"],
+          "say": "假設 f 和 g 在 x 趨近 a 的極限都存在，分別是 L 和 M。",
+          "board": [
+            {"do":"write","line":"$\\lim f={{l:L}},\\quad \\lim g={{m:M}}$","tint":{"l":"blue","m":"violet"}},
+            {"do":"underline","term":"l","color":"blue","on":"分別是 L"},
+            {"do":"underline","term":"m","color":"violet","on":"和 M"}
+          ] },
+        { "show": ["$\\lim(f \\pm g) = L \\pm M$","$\\lim(cf) = cL$，$\\lim(fg) = LM$"],
+          "say": "那麼和、差、常數倍、乘積的極限，就等於各自的極限再做同樣的運算。",
+          "board": [
+            {"do":"write","line":"$\\lim(f\\pm g)={{l:L}}\\pm {{m:M}}$","on":"和、差"},
+            {"do":"write","line":"$\\lim(cf)=c{{l2:L}},\\quad \\lim(fg)={{l3:L}}{{m2:M}}$","tint":{"l2":"blue","l3":"blue","m2":"violet"},"on":"常數倍"}
+          ] },
+        { "show": ["$\\lim\\frac{f}{g} = \\frac{L}{M}$（$M \\ne 0$）"],
+          "note": "條件「每一塊都存在」不能省。",
+          "say": "商也一樣，但分母的極限 M 不能是零。人話：每一塊的極限都存在，就能各自算再組合。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\lim\\frac{f}{g}=\\frac{{{l:L}}}{{{m:M}}}$（${{nz:M\\ne 0}}$）","on":"商也一樣"},
+            {"do":"underline","term":"nz","label":"不能是零","on":"不能是零"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "直接代入",
+      "beats": [
+        { "show": ["多項式：$\\lim_{x\\to a} p(x) = p(a)$"],
+          "say": "用定律一塊一塊拼起來，就得到：多項式的極限，直接把 a 代進去就是了。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to a}\\,p(x)={{r:p(a)}}$"},
+            {"do":"underline","term":"r","color":"gold","on":"直接把"}
+          ] },
+        { "show": ["$\\frac{p}{q}$：$q(a) \\ne 0$ 時直接代"],
+          "note": "根號、$e^x$、$\\ln x$、$\\sin x$、$\\cos x$ 在定義域裡也行。",
+          "say": "有理函數只要分母在 a 不是零，也能直接代。可以直接代入，有個名字，叫做連續。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to a}\\frac{p(x)}{q(x)}=\\frac{p(a)}{{{q:q(a)}}}$"},
+            {"do":"underline","term":"q","color":"gold","label":"不能是零","on":"不是零"},
+            {"do":"write","line":"直接代入：連續","on":"有個名字"}
+          ] },
+        { "show": ["連續：圖在 $a$ 沒有斷開"],
+          "note": "極限值剛好等於函數值。",
+          "say": "連續的意思是，圖在 a 這一點沒有斷開，極限值剛好等於函數值。所以代進去就得到極限，才叫直接代入。",
+          "board": [
+            {"do":"write","line":"連續：${{c:\\lim_{x\\to a} f(x)=f(a)}}$"},
+            {"do":"underline","term":"c","color":"gold","label":"沒有斷開","on":"函數值"}
+          ] },
+        { "show": ["$\\lim_{x\\to2} (3x^2 - 5x + 1)$","$= 12 - 10 + 1 = 3$"],
+          "say": "例如三 x 平方減五 x 加一，x 趨近二：代進去十二減十加一，等於三。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{x\\to2}(3x^2-5x+1)$","on":"例如"},
+            {"do":"transform","line":"$=12-10+1={{r:3}}$","on":"代進去"},
+            {"do":"box","term":"r","color":"green","on":"加一#2"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "根號與分式",
+      "beats": [
+        { "show": ["$\\lim_{x\\to-1} \\frac{x^2 + 2x + 3}{x - 4}$"],
+          "note": "分母 $-1 - 4 = -5 \\ne 0$。",
+          "say": "有分母，先看分母。負一代進去是負五，不是零，可以直接代。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to-1}\\frac{x^2+2x+3}{{{d:x-4}}}$"},
+            {"do":"underline","term":"d","on":"先看分母"},
+            {"do":"write","line":"分母 $-1-4=-5\\ne 0$","on":"負一代進去"}
+          ] },
+        { "show": ["分子 $1 - 2 + 3 = 2$，極限 $-\\frac{2}{5}$"],
+          "say": "分子代負一，一減二加三等於二，所以極限是負五分之二。",
+          "board": [
+            {"do":"write","line":"分子 $1-2+3=2$，極限 $\\;{{r:-\\frac{2}{5}}}$"},
+            {"do":"box","term":"r","color":"green","on":"負五分之二"}
+          ] },
+        { "show": ["$\\lim_{x\\to4} \\frac{\\sqrt{2x + 1}}{x - 1}$"],
+          "note": "分母 $4 - 1 = 3 \\ne 0$；根號裡 $9 > 0$。",
+          "say": "再一題，有根號。分母在四是三，根號裡是九，在定義域裡，可以代。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\lim_{x\\to4}\\frac{\\sqrt{{{rt:2x+1}}}}{{{dd:x-1}}}$","on":"有根號"},
+            {"do":"underline","term":"dd","on":"分母在四"},
+            {"do":"underline","term":"rt","on":"根號裡是九"}
+          ] },
+        { "show": ["根號裡不能是負的"],
+          "note": "$x=4$：$2\\cdot4+1=9>0$。",
+          "say": "定義域，就是這個式子有意義的 x。根號裡不能是負的，四代進去是九，大於零，所以根號也能直接代入。",
+          "board": [
+            {"do":"write","line":"根號裡要 $2x+1\\ge 0$ 才有意義"},
+            {"do":"write","line":"$x=4$：${{n1:2\\cdot4+1=9>0}}$","on":"四代進去"},
+            {"do":"underline","term":"n1","color":"gold","on":"大於零"}
+          ] }
+      ],
+      "predict": {
+        "ask": "極限是？",
+        "options": [
+          {
+            "label": "1",
+            "correct": true
+          },
+          {
+            "label": "3",
+            "why": "3 是分子的極限 $\\sqrt{9}$；還要除以分母的極限 3。"
+          },
+          {
+            "label": "$\\frac{9}{3}$",
+            "why": "分子是 $\\sqrt{9} = 3$，不是 9：根號也要算。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "代入之前先檢查",
+      "beats": [
+        { "show": ["分母不是 0：直接代，完成"],
+          "say": "代之前，先看分母。分母不是零，直接代，就結束了。",
+          "board": [
+            {"do":"write","line":"先看分母：${{q:q(a)\\ne 0}}$，直接代"},
+            {"do":"underline","term":"q","color":"gold","on":"分母不是零"}
+          ] },
+        { "show": ["$\\frac{0}{0}$：先化簡"],
+          "note": "$\\frac{x^2 - 1}{x - 1}$ 在 1：不是答案，也不代表不存在。",
+          "say": "代出零分之零，商定律不能用，但極限可能存在，例如 x 平方減一除以 x 減一，要先化簡。",
+          "board": [
+            {"do":"write","line":"${{z:\\frac{0}{0}}}$：先化簡"},
+            {"do":"write","line":"$\\frac{x^2-1}{x-1}$","on":"例如"}
+          ] },
+        { "show": ["$\\frac{k}{0}$（$k \\ne 0$）：值會爆掉"],
+          "say": "分子靠近一個不是零的數，分母靠近零，值會爆掉，那是另一種情況。",
+          "board": [
+            {"do":"write","line":"${{k:\\frac{k}{0}}}$（$k\\ne 0$）：值爆掉"},
+            {"do":"circle","term":"k","color":"gold","on":"分母靠近零"}
+          ] },
+        { "show": ["$\\frac{1}{x^2}$，$x\\to0$：兩側都很大"],
+          "note": "沒有有限的極限，只能說是無窮大。",
+          "say": "例如 x 平方分之一，x 趨近零。左右兩邊的值都變成很大的正數，所以沒有有限的極限，只能說是無窮大，不是一個數。",
+          "board": [
+            {"do":"write","line":"${{f:\\frac{1}{x^2}}}$，$x\\to0$：兩側都很大的正數"},
+            {"do":"focus","term":"f","color":"gold","on":"左右兩邊"},
+            {"do":"write","line":"極限是無窮大：$\\infty$","on":"無窮大"}
+          ] },
+        { "show": ["分段函數的分界點：分左右算"],
+          "say": "還有分段函數的分界點，兩側式子不同，要分左右算。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"分界點：${{l:\\lim_{x\\to a^-}}}$ 與 ${{r:\\lim_{x\\to a^+}}}$","tint":{"l":"blue","r":"violet"},"on":"還有"},
+            {"do":"underline","term":"l","color":"blue","on":"兩側式子"}
+          ] },
+        { "show": ["左極限 = 右極限，極限才存在"],
+          "note": "不相等就不存在。",
+          "say": "左極限是從 a 的左邊靠近，右極限是從右邊靠近。兩個都存在而且相等，整體的極限才存在；不相等就不存在。",
+          "board": [
+            {"do":"write","line":"${{a1:\\lim_{x\\to a^-}f}}={{b1:\\lim_{x\\to a^+}f}}$：才有極限","tint":{"a1":"blue","b1":"violet"}},
+            {"do":"underline","term":"a1","color":"blue","on":"左邊"},
+            {"do":"underline","term":"b1","color":"violet","on":"右邊"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "拆不開的時候",
+      "beats": [
+        { "show": ["$\\lim_{x\\to0} (\\frac{1}{x} - \\frac{1}{x})$"],
+          "say": "最後一個陷阱：x 分之一減 x 分之一，x 趨近零。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to0}\\left(\\frac{1}{x}-\\frac{1}{x}\\right)$"}
+          ] },
+        { "show": ["不能拆成 $\\lim \\frac{1}{x} - \\lim \\frac{1}{x}$"],
+          "note": "$\\lim_{x\\to0} \\frac{1}{x}$ 不存在。",
+          "say": "不能拆成兩個極限相減，因為 x 分之一在零的極限根本不存在，定律的條件不成立。",
+          "board": [
+            {"do":"write","line":"${{w:\\lim\\frac{1}{x}-\\lim\\frac{1}{x}}}$"},
+            {"do":"strike","term":"w","label":"極限不存在","on":"根本不存在"}
+          ] },
+        { "show": ["圖：$\\frac{1}{x}$ 在 0 兩側往相反方向"],
+          "say": "看 x 分之一的圖：右邊往上衝，左邊往下掉，中間在零斷開。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-5,5],"curves":[{"expr":"1/x","domain":[0.2,3],"color":"blue"},{"expr":"1/x","domain":[-3,-0.2],"color":"red"}]}}
+          ] },
+        { "show": ["右邊很大的正數，左邊很大的負數"],
+          "note": "兩邊不靠近同一個數。",
+          "say": "從右邊靠近零，x 分之一是很大的正數；從左邊靠近，是很大的負數。兩邊不靠近同一個數，所以極限不存在。",
+          "board": [
+            {"do":"write","line":"${{r:x\\to0^+}}$：$\\frac{1}{x}$ 是很大的正數"},
+            {"do":"write","line":"${{l:x\\to0^-}}$：$\\frac{1}{x}$ 是很大的負數","on":"從左邊"}
+          ] },
+        { "show": ["拆不開：先化簡"],
+          "note": "嚴格證明要用 $\\varepsilon\\text{-}\\delta$，見〈極限定律〉。",
+          "say": "拆不開不等於放棄。先化簡，或換別的方法。這題化簡之後是什麼？",
+          "board": [
+            {"do":"write","line":"拆不開：先化簡","on":"先化簡"}
+          ] }
+      ],
+      "key": "拆不開就先化簡成恆等式，再取極限",
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["direct-substitution"],
+    "fine": ["limit-direct-polynomial", "limit-direct-rational", "limit-direct-check-form", "limit-laws-combine"]
+  },
+  "practice": [
+    { "id": "cx-lim-001", "core": true, "trains": "limit-direct-polynomial" },
+    { "id": "fd-lim-001", "core": true, "trains": "limit-direct-polynomial" },
+    { "id": "fd-lim-002", "core": true, "trains": "limit-direct-polynomial" },
+    { "id": "cg-1b-001", "core": true, "trains": "limit-direct-rational" },
+    { "id": "cg-1b-003", "core": true, "trains": "limit-laws-combine" },
+    { "id": "cg-1b-005", "core": true, "trains": "limit-direct-check-form" },
+    { "id": "tmpl-lim-direct-002", "trains": "limit-direct-polynomial" },
+    { "id": "cg-1b-002", "trains": "limit-direct-rational" },
+    { "id": "cg-1b-004", "trains": "limit-laws-combine" },
+    { "id": "cg-1b-006", "trains": "limit-direct-check-form" }
+  ],
+  "gaps": []
+}

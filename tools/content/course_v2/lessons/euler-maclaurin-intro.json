@@ -1,56 +1,150 @@
 {
   "id": "euler-maclaurin-intro",
   "title": "Euler–Maclaurin 入門",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["integral-test", "riemann-sum-intuition", "integration-by-parts", "big-o-little-o"],
-  "next": ["improper-infinite"],
-  "related": ["stirling", "basel-problem"],
+  "prerequisites": [
+    "integral-test",
+    "riemann-sum-intuition",
+    "integration-by-parts",
+    "big-o-little-o"
+  ],
+  "next": [
+    "improper-infinite"
+  ],
+  "related": [
+    "stirling",
+    "basel-problem"
+  ],
   "objectives": [
     "說得出「和 $\\approx$ 積分 $+$ 端點平均 $+$ 導數修正」三層，以及每一層修正的是什麼。",
-    "用前兩、三項估計和或級數的尾巴，例如 $H_n\\approx\\ln n+\\gamma+\\frac{1}{2n}$、$\\sum_{k\\ge N}\\frac{1}{k^2}\\approx\\frac{1}{N}+\\frac{1}{2N^2}+\\frac{1}{6N^3}$。",
+    "用前兩、三項估計和或級數的尾巴，例如 $H_n\\approx\\ln n+\\gamma+\\frac{1}{2n}$、$\\sum_{k=n}^\\infty\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}$",
     "知道這是漸近展開：取前幾項配合誤差估計，不是越多項越準。"
   ],
-  "visual": "y = f(x) 底下畫出寬度 1 的長條（高度 f(k)），和曲線下的面積重疊。第一層只比較長條與積分；第二層把每個長條換成梯形，多出來的三角形正好是端點平均；第三層把梯形與曲線之間剩下的彎月形放大，顯示它跟 f′ 的變化成正比。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 和與積分差多少",
       "body": [
-        "〈積分判別〉用 $\\int f\\,dx$ 夾住 $\\sum f(k)$，只知道兩者同階。Euler–Maclaurin 公式把差距一層一層算出來（$f$ 夠光滑、$a<b$ 是整數）："
+        "6.11 積分判別：$\\displaystyle\\sum_{k=1}^n\\frac1k$ 和 $\\displaystyle\\int_1^n\\frac{dx}x=\\ln n$ 差不多",
+        "Euler–Maclaurin（$a<b$ 整數）：",
+        "係數來自 Bernoulli 數：$\\frac{B_2}{2!}=\\frac1{12}$，$\\frac{B_4}{4!}=-\\frac1{720}$，$\\frac{B_6}{6!}=\\frac1{30240}$",
+        "三層，一層比一層小：",
+        "• 第 0 層：積分（面積）",
+        "• 第 1 層：$\\frac{f(a)+f(b)}2$（端點只算一半的修正）",
+        "• 第 2 層：$\\frac{f'(b)-f'(a)}{12}$（彎曲的修正）",
+        "只用到端點的值與導數：中間不用再加"
       ],
-      "tex": ["\\sum_{k=a}^{b}f(k)=\\int_a^b f(x)\\,dx+\\frac{f(a)+f(b)}{2}+\\frac{f'(b)-f'(a)}{12}-\\frac{f'''(b)-f'''(a)}{720}+\\cdots"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\sum_{k=a}^{b}f(k)\\approx{}&\\int_a^bf(x)\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\frac{f'(b)-f'(a)}{12}-\\frac{f'''(b)-f'''(a)}{720}+\\cdots\\end{aligned}"
+      ]
     },
     {
-      "heading": "② 每一層在修正什麼（圖像）",
+      "heading": "② 每一層在修正什麼",
       "body": [
-        "積分：曲線下的面積。端點平均：把長條換成梯形時，頭尾各多算了半個長條。$f'$ 項：梯形的斜邊與曲線之間還有一點彎曲造成的縫，總量跟 $f'$ 從頭到尾的變化有關，係數 $\\frac{1}{12}$。再下一層 $\\frac{1}{720}$ 修正更細的彎曲。",
-        "$f$ 是多項式時，高階導數最後全是 $0$，公式在有限項就停住，是精確等式。"
+        "第 1 層：梯形法把端點算一半",
+        "和把每一點都算一次：",
+        "第 2 層：$T$ 和積分還差一點：曲線是彎的",
+        "每一格多出 $\\approx\\frac{f''}{12}$，加起來 $\\approx\\frac1{12}\\int_a^bf''=\\frac{f'(b)-f'(a)}{12}$",
+        "梯形法誤差：一格寬 $1$ 時，$T_k-\\int_k^{k+1}f=\\frac{f''(\\xi_k)}{12}$"
       ],
-      "collapsible": false
+      "tex": [
+        "T=\\tfrac12f(a)+f(a+1)+\\cdots+f(b-1)+\\tfrac12f(b)",
+        "\\sum_{k=a}^bf(k)=T+\\frac{f(a)+f(b)}2"
+      ]
     },
     {
-      "heading": "③ 兩個代表性的結果",
+      "heading": "③ 多項式：公式是精確的",
       "body": [
-        "調和數：$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}=\\ln n+\\gamma+\\frac{1}{2n}-\\frac{1}{12n^2}+\\dots$，其中 $\\gamma\\approx 0.5772$ 是 Euler–Mascheroni 常數。所以 $H_n-\\ln n\\to\\gamma$，不是 $\\to 0$。",
-        "級數的尾巴（$b\\to\\infty$，$f$ 與 $f'$ 在 $\\infty$ 都 $\\to 0$）：$\\sum_{k=N}^{\\infty}f(k)\\approx\\int_N^{\\infty}f\\,dx+\\frac{f(N)}{2}-\\frac{f'(N)}{12}$。只加前幾項、尾巴用這條估，就能把收斂很慢的級數算得很準。"
+        "用 Euler–Maclaurin 求 $\\displaystyle\\sum_{k=1}^nk^2$，$f(x)=x^2$：",
+        "• 積分：$\\displaystyle\\int_1^nx^2dx=\\frac{n^3-1}3$",
+        "• 端點：$\\dfrac{1+n^2}2$",
+        "• 導數：$\\dfrac{f'(n)-f'(1)}{12}=\\dfrac{2n-2}{12}=\\dfrac{n-1}6$",
+        "• $f'''=0$：後面全部是 $0$",
+        "驗算：$\\frac{n(n+1)(2n+1)}6=\\frac{2n^3+3n^2+n}6$",
+        "多項式的高階導數最後都是 $0$，餘項也是 $0$：等號"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{n^3-1}3+\\frac{n^2+1}2+\\frac{n-1}6=\\frac{n^3}3+\\frac{n^2}2+\\frac n6",
+        "\\sum_{k=1}^nk^2=\\frac{n(n+1)(2n+1)}6"
+      ]
+    },
+    {
+      "heading": "③ 調和數 $H_n$",
+      "body": [
+        "$f(x)=\\frac1x$，從 $1$ 到 $n$；所有常數項合成 $\\gamma$：",
+        "$\\gamma=\\lim(H_n-\\ln n)\\approx0.5772157$；公式本身算不出 $\\gamma$，它是「收集起來的常數」",
+        "$H_{10}$：$\\ln10+\\gamma+\\frac1{20}-\\frac1{1200}\\approx2.9289674$",
+        "真值 $H_{10}=\\frac{7381}{2520}\\approx2.9289683$",
+        "一層一層加（$n=10$）："
+      ],
+      "tex": [
+        "H_n\\approx\\ln n+\\gamma+\\frac1{2n}-\\frac1{12n^2}+\\frac1{120n^4}",
+        "\\begin{aligned}\\ln n+\\gamma&\\approx2.87980&&\\text{誤差 }{-4.9\\times10^{-2}}\\\\+\\tfrac1{2n}&\\approx2.92980&&\\text{誤差 }8.3\\times10^{-4}\\\\-\\tfrac1{12n^2}&\\approx2.9289674&&\\text{誤差 }{-8.3\\times10^{-7}}\\\\+\\tfrac1{120n^4}&\\approx2.928968258&&\\text{誤差 }3.9\\times10^{-9}\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "③ 用尾巴加速級數",
+      "body": [
+        "$\\displaystyle\\sum_{k=1}^\\infty\\frac1{k^2}=\\frac{\\pi^2}6$：只加前 $9$ 項，尾巴用公式（$f=\\frac1{x^2}$，$b\\to\\infty$）",
+        "上端 $b\\to\\infty$ 時 $f,f',f'''\\to0$；$f'=-\\frac2{x^3}$，$f'''=-\\frac{24}{x^5}$",
+        "$n=10$：$\\displaystyle\\sum_{k=1}^{9}\\frac1{k^2}\\approx1.5397677$",
+        "• $+\\frac1{10}+\\frac1{200}$ → $1.6447677$（誤差 $1.7\\times10^{-4}$）",
+        "• $+\\frac1{6000}$ → $1.64493440$（誤差 $3.3\\times10^{-7}$）",
+        "• $-\\frac1{3\\,000\\,000}$ → $1.644934064$（誤差 $2.4\\times10^{-9}$）",
+        "$\\frac{\\pi^2}{6}\\approx1.644934067$：9 項就準到小數第 8 位",
+        "直接加 $N$ 項的誤差約 $\\frac1N$"
+      ],
+      "tex": [
+        "\\sum_{k=n}^\\infty\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}-\\frac1{30n^5}"
+      ]
     },
     {
       "heading": "④ 不是越多項越準",
       "body": [
-        "修正項的係數（Bernoulli 數）最後會以階乘速度長大，整條無窮級數通常發散。正確用法：固定取前幾項，誤差由下一項的大小控制。這叫漸近展開——$n$ 越大，取同樣幾項就越準。"
+        "$n=1$ 估 $H_1=1$：每多加一項導數修正，誤差：",
+        "原因：Bernoulli 數長得像 $\\dfrac{(2j)!}{(2\\pi)^{2j}}$，階乘級變大",
+        "漸近展開：項數 $p$ 固定、$n\\to\\infty$ 時誤差 $=O\\!\\left(\\frac1{n^{2p+2}}\\right)$",
+        "$n$ 越大，可以用的項越多（大約到 $2j\\approx2\\pi n$）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&6.1\\times10^{-3},\\ 2.2\\times10^{-3},\\ 1.7\\times10^{-3},\\\\&2.4\\times10^{-3},\\ 5.2\\times10^{-3},\\ 1.6\\times10^{-2},\\\\&6.7\\times10^{-2},\\ 0.38,\\ 2.7,\\ 24,\\ \\cdots\\end{aligned}"
+      ]
     },
     {
-      "heading": "第一層修正的推導",
+      "heading": "⑤ 第一層修正的推導",
       "body": [
-        "在 $[k,k+1]$ 上分部積分，取 $u=f$、$v=x-k-\\frac{1}{2}$：$\\int_k^{k+1}f\\,dx=\\frac{f(k)+f(k+1)}{2}-\\int_k^{k+1}\\left(x-k-\\frac{1}{2}\\right)f'(x)\\,dx$。",
-        "對 $k=a,\\dots,b-1$ 相加，用 $\\{x\\}$ 表示 $x$ 的小數部分，得到精確等式：$\\sum_{k=a}^b f(k)=\\int_a^b f+\\frac{f(a)+f(b)}{2}+\\int_a^b\\left(\\{x\\}-\\frac{1}{2}\\right)f'(x)\\,dx$。最後一項再分部積分一次，就生出 $\\frac{f'(b)-f'(a)}{12}$，依此類推。"
+        "在 $[k,k+1]$ 上分部積分（$u=x-k-\\frac12$，$dv=f'(x)dx$）：",
+        "令 $P_1(x)=\\{x\\}-\\frac12$（$\\{x\\}$ 是小數部分），從 $k=a$ 加到 $b-1$：",
+        "左邊每格的平均相加，中間的點各出現兩次 $\\frac12$，端點各一次"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}&\\int_k^{k+1}\\!\\Big(x-k-\\tfrac12\\Big)f'(x)\\,dx\\\\&\\quad=\\frac{f(k)+f(k+1)}2-\\int_k^{k+1}\\!f(x)\\,dx\\end{aligned}",
+        "\\begin{aligned}\\sum_{k=a}^bf(k)={}&\\int_a^bf\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\int_a^bP_1(x)f'(x)\\,dx\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑤ 推導（續）：第二層",
+      "body": [
+        "再分部一次：$P_2(x)=\\frac{\\{x\\}^2-\\{x\\}}2+\\frac1{12}$，$P_2'=P_1$，$P_2(\\text{整數})=\\frac1{12}$",
+        "$|P_2|\\le\\frac1{12}$ ⇒ 誤差 $\\le\\dfrac1{12}\\displaystyle\\int_a^b|f''(x)|\\,dx$",
+        "繼續分部就得到 $\\frac{B_{2j}}{(2j)!}$ 那些項；$P_2$ 的值在 $[-\\frac1{24},\\frac1{12}]$"
+      ],
+      "tex": [
+        "\\begin{aligned}\\int_a^bP_1f'\\,dx={}&\\frac{f'(b)-f'(a)}{12}\\\\&-\\int_a^bP_2(x)f''(x)\\,dx\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 和 ≈ 積分 $+\\frac{f(a)+f(b)}2+\\frac{f'(b)-f'(a)}{12}-\\cdots$",
+        "• 第 1 層：端點只算一半；第 2 層：曲線的彎曲",
+        "• 多項式：精確（$\\sum k^2$）",
+        "• $H_n\\approx\\ln n+\\gamma+\\frac1{2n}-\\frac1{12n^2}$；尾巴 $\\sum_{k\\ge n}\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}$",
+        "• 漸近展開：固定項數、$n\\to\\infty$；不是越多項越準",
+        "下一課：瑕積分：無窮區間"
+      ]
     }
   ],
   "workedExamples": [
@@ -99,35 +193,24 @@
   ],
   "checks": [
     {
-      "ask": "用 $\\int_1^n f\\,dx+\\frac{f(1)+f(n)}{2}$ 計算 $\\sum_{k=1}^n k$（$f(x)=x$），得到？",
+      "ask": "用 $H_n\\approx\\ln n+\\gamma+\\frac1{2n}$，$H_{100}-\\ln100$ 大約是？",
       "options": [
-        { "label": "$\\frac{n(n+1)}{2}$", "correct": true },
-        { "label": "$\\frac{n^2-1}{2}$", "why": "那只是積分，漏了端點平均 $\\frac{1+n}{2}$。" },
-        { "label": "$\\frac{n^2}{2}$", "why": "積分算錯了下限：$\\int_1^n x\\,dx=\\frac{n^2-1}{2}$，再加 $\\frac{1+n}{2}$ 才是 $\\frac{n(n+1)}{2}$。" }
-      ]
-    },
-    {
-      "ask": "為什麼 $\\sum k^2$ 用到 $f'$ 那一項就完全正確？",
-      "options": [
-        { "label": "$f(x)=x^2$ 的三階以上導數都是 $0$，後面的修正項全部消失", "correct": true },
-        { "label": "因為 $x^2$ 是遞增函數", "why": "遞增只保證和與積分的大小關係，跟修正項會不會停沒有關係。" },
-        { "label": "因為後面的修正項正負抵銷", "why": "不是抵銷，是每一項本身就是 $0$：它們都含 $f'''$、$f^{(5)}$……" }
-      ]
-    },
-    {
-      "ask": "$n\\to\\infty$ 時，$H_n-\\ln n$ 趨近？",
-      "options": [
-        { "label": "$\\gamma\\approx 0.5772$", "correct": true },
-        { "label": "$0$", "why": "$H_n\\sim\\ln n$ 只說比值 $\\to 1$，差可以趨近非零常數。" },
-        { "label": "$\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 出現在 $\\frac{1}{2n}$ 這一項，它會 $\\to 0$；留下的常數是 $\\gamma$。" }
-      ]
-    },
-    {
-      "ask": "Euler–Maclaurin 的修正項應該怎麼用？",
-      "options": [
-        { "label": "取前幾項，用下一項的大小估計誤差", "correct": true },
-        { "label": "取越多項越準，取到無窮多項就是精確值", "why": "修正項的係數最後以階乘速度長大，無窮級數通常發散；它是漸近展開。" },
-        { "label": "只能用在多項式", "why": "任何夠光滑的 $f$ 都能用；多項式只是剛好在有限項變成精確等式。" }
+        {
+          "label": "$0.5822$",
+          "correct": true
+        },
+        {
+          "label": "$0.5772$",
+          "why": "只用了 $\\gamma$，漏了 $\\frac1{2n}$ 這一層"
+        },
+        {
+          "label": "$0.5872$",
+          "why": "用成 $\\frac1n$；端點修正是 $\\frac1{2n}$"
+        },
+        {
+          "label": "$0.0050$",
+          "why": "$H_n-\\ln n$ 趨近 $\\gamma$，不是 $0$"
+        }
       ]
     }
   ],
@@ -135,286 +218,850 @@
     {
       "title": "和與積分差多少",
       "beats": [
-        { "show": ["$\\sum f(k)$ 和 $\\int f\\,dx$ 同階"],
-          "note": "積分判別只告訴我們這麼多。",
-          "say": "積分判別用積分把和夾住，只知道兩者同階。差距到底多少？",
+        {
+          "show": [
+            "6.11 積分判別：$\\displaystyle\\sum_{k=1}^n\\frac1k$ 和 $\\displaystyle\\int_1^n\\frac{dx}x=\\ln n$ 差不多"
+          ],
+          "say": "積分判別法告訴我們，和與積分差不多。這一課要問：到底差多少？能不能修正到很準？",
           "board": [
-            {"do":"write","line":"$\\sum f(k)$ 與 $\\int f\\,dx$ 同階"},
-            {"do":"write","line":"$\\sum f(k)-\\int f\\,dx=\\ ?$","on":"差距到底多少"}
-          ] },
-        { "show": ["$\\sum\\frac{1}{k^2}\\approx 1.6449341$","$\\int_1^\\infty\\frac{dx}{x^2}=1$"],
-          "note": "同階：大小差不多，但不等於。",
-          "say": "同階的意思是大小差不多。例如 k 平方分之一的和約一點六四四九三四一，積分是一，同階，但差多少沒說。",
+            {
+              "do": "write",
+              "line": "6.11 積分判別：$\\displaystyle\\sum_{k=1}^n\\frac1k$ 和 $\\displaystyle\\int_1^n\\frac{dx}x=\\ln n$ 差不多"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Euler–Maclaurin（$a<b$ 整數）：",
+            "$\\begin{aligned}\\sum_{k=a}^{b}f(k)\\approx{}&\\int_a^bf(x)\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\frac{f'(b)-f'(a)}{12}-\\frac{f'''(b)-f'''(a)}{720}+\\cdots\\end{aligned}$"
+          ],
+          "say": "尤拉馬克勞林公式：和，等於積分，加上兩個端點的平均，再加上一串導數的修正，係數是 12 分之一、負 720 分之一，一直下去。",
           "board": [
-            {"do":"write","line":"$\\sum\\frac{1}{k^2}\\approx 1.6449341$"},
-            {"do":"write","line":"$\\int_1^\\infty\\frac{dx}{x^2}=1$","on":"積分是一"}
-          ] },
-        { "show": ["曲線下面積是積分，長條面積合起來是和"],
-          "say": "畫成圖：曲線底下的面積是積分，長條高度是 f 在整數的值，長條面積加起來就是和。",
+            {
+              "do": "write",
+              "line": "Euler–Maclaurin（$a<b$ 整數）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}\\sum_{k=a}^{b}f(k)\\approx{}&\\int_a^bf(x)\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\frac{f'(b)-f'(a)}{12}-\\frac{f'''(b)-f'''(a)}{720}+\\cdots\\end{aligned}}}}$",
+              "on": "加上#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "導數"
+            },
+            {
+              "do": "write",
+              "line": "　係數來自 Bernoulli 數：$\\frac{B_2}{2!}=\\frac1{12}$，$\\frac{B_4}{4!}=-\\frac1{720}$，$\\frac{B_6}{6!}=\\frac1{30240}$",
+              "color": "violet",
+              "on": "72"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三層，一層比一層小：",
+            "• 第 0 層：積分（面積）"
+          ],
+          "say": "可以看成三層：積分是主體；端點平均是第一層修正；導數那一項是第二層，修正函數的彎曲。",
           "board": [
-            {"do":"plot","graph":{"window":[0,5,-0.2,1.5],"curves":[{"expr":"1/x^2","domain":[1,5],"color":"blue"}],"fills":[{"expr":"1/x^2","from":1,"to":5,"color":"blue"}]}}
-          ] },
-        { "show": ["$\\sum_{k=a}^{b}f(k)=\\int_a^b f(x)\\,dx$","$+\\frac{f(a)+f(b)}{2}+\\dots$"],
-          "note": "$f$ 夠光滑、$a<b$ 是整數。",
-          "say": "Euler–Maclaurin 公式一層一層算出來：先是積分，再加上兩個端點函數值的平均。",
+            {
+              "do": "write",
+              "line": "三層，一層比一層小："
+            },
+            {
+              "do": "write",
+              "line": "• 第 0 層：積分（面積）",
+              "on": "主體"
+            },
+            {
+              "do": "write",
+              "line": "• 第 1 層：$\\frac{f(a)+f(b)}2$（端點只算一半的修正）",
+              "on": "修正#1"
+            },
+            {
+              "do": "write",
+              "line": "• 第 2 層：$\\frac{f'(b)-f'(a)}{12}$（彎曲的修正）",
+              "on": "二層"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只用到端點的值與導數：中間不用再加"
+          ],
+          "say": "神奇的是，修正項只用到兩個端點的值和導數，中間那一大串都不用管。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum_{k=a}^{b}f(k)={{i:\\int_a^b f(x)\\,dx}}$","on":"先是積分"},
-            {"do":"write","line":"$+{{e:\\frac{f(a)+f(b)}{2}}}+\\dots$","on":"再加上"},
-            {"do":"underline","term":"e","label":"端點平均","on":"端點函數值"}
-          ] },
-        { "show": ["$+\\frac{f'(b)-f'(a)}{12}$","$-\\frac{f'''(b)-f'''(a)}{720}+\\cdots$"],
-          "say": "後面還有導數的修正：f prime 的變化除以十二，再來是三階導數的變化除以七百二十。",
+            {
+              "do": "write",
+              "line": "只用到端點的值與導數：中間不用再加",
+              "color": "blue"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "每一層在修正什麼",
+      "beats": [
+        {
+          "show": [
+            "第 1 層：梯形法把端點算一半",
+            "$T=\\tfrac12f(a)+f(a+1)+\\cdots+f(b-1)+\\tfrac12f(b)$"
+          ],
+          "say": "第一層。梯形法的面積，相當於中間的點各算一次，兩個端點只算一半。",
           "board": [
-            {"do":"write","line":"$+{{d:\\frac{f'(b)-f'(a)}{12}}}$"},
-            {"do":"write","line":"$-{{t:\\frac{f'''(b)-f'''(a)}{720}}}+\\cdots$","on":"三階導數"}
-          ] }
+            {
+              "do": "write",
+              "line": "第 1 層：梯形法把端點算一半"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle T=\\tfrac12f(a)+f(a+1)+\\cdots+f(b-1)+\\tfrac12f(b)$",
+              "on": "的點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "和把每一點都算一次：",
+            "$\\sum_{k=a}^bf(k)=T+\\frac{f(a)+f(b)}2$"
+          ],
+          "say": "而和把每一個點都算一次。所以和等於梯形面積，加上兩個端點的一半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "和把每一點都算一次："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\sum_{k=a}^bf(k)=T+\\frac{f(a)+f(b)}2}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "加上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第 2 層：$T$ 和積分還差一點：曲線是彎的"
+          ],
+          "say": "第二層：梯形面積和真正的積分還差一點，因為曲線是彎的，梯形的頂邊是直線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第 2 層：$T$ 和積分還差一點：曲線是彎的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "凸函數 1/x：梯形頂邊（紅）在曲線上方"
+          ],
+          "say": "圖上是 x 分之一。紅色是梯形的頂邊，在藍色曲線上方一點點。多出來的面積跟二階導數有關。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "trap",
+                  "window": [
+                    0.8,
+                    5.2,
+                    0,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "blue",
+                      "domain": [
+                        1,
+                        5
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        1,
+                        1
+                      ],
+                      "to": [
+                        2,
+                        0.5
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        2,
+                        0.5
+                      ],
+                      "to": [
+                        3,
+                        0.3333
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        3,
+                        0.3333
+                      ],
+                      "to": [
+                        4,
+                        0.25
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        4,
+                        0.25
+                      ],
+                      "to": [
+                        5,
+                        0.2
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 2,
+                      "y": 0.5,
+                      "color": "red"
+                    },
+                    {
+                      "x": 3,
+                      "y": 0.3333,
+                      "color": "red"
+                    },
+                    {
+                      "x": 4,
+                      "y": 0.25,
+                      "color": "red"
+                    },
+                    {
+                      "x": 5,
+                      "y": 0.2,
+                      "color": "red"
+                    }
+                  ],
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "凸函數 1/x：梯形頂邊（紅）在曲線上方",
+              "color": "violet",
+              "on": "曲線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一格多出 $\\approx\\frac{f''}{12}$，加起來 $\\approx\\frac1{12}\\int_a^bf''=\\frac{f'(b)-f'(a)}{12}$"
+          ],
+          "say": "每一格梯形多出大約 12 分之 f 兩撇。全部加起來，就是 12 分之一乘 f 二階導數的積分，也就是一階導數在兩端的差。⑤ 會嚴格推導。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一格多出 $\\approx\\frac{f''}{12}$，加起來 $\\approx\\frac1{12}\\int_a^bf''=\\frac{f'(b)-f'(a)}{12}$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　梯形法誤差：一格寬 $1$ 時，$T_k-\\int_k^{k+1}f=\\frac{f''(\\xi_k)}{12}$",
+              "color": "violet",
+              "on": "之一"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "多項式：公式是精確的",
+      "beats": [
+        {
+          "show": [
+            "用 Euler–Maclaurin 求 $\\displaystyle\\sum_{k=1}^nk^2$，$f(x)=x^2$："
+          ],
+          "say": "先看多項式。用公式求平方和，f 是 x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用 Euler–Maclaurin 求 $\\displaystyle\\sum_{k=1}^nk^2$，$f(x)=x^2$："
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 積分：$\\displaystyle\\int_1^nx^2dx=\\frac{n^3-1}3$",
+            "• 端點：$\\dfrac{1+n^2}2$"
+          ],
+          "say": "積分是 3 分之 n 立方減 1；端點平均是 2 分之 1 加 n 平方；導數項是 6 分之 n 減 1。三階以上的導數都是 0，後面全部消失。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 積分：$\\displaystyle\\int_1^nx^2dx=\\frac{n^3-1}3$"
+            },
+            {
+              "do": "write",
+              "line": "• 端點：$\\dfrac{1+n^2}2$",
+              "on": "點平"
+            },
+            {
+              "do": "write",
+              "line": "• 導數：$\\dfrac{f'(n)-f'(1)}{12}=\\dfrac{2n-2}{12}=\\dfrac{n-1}6$",
+              "on": "導數#1"
+            },
+            {
+              "do": "write",
+              "line": "• $f'''=0$：後面全部是 $0$",
+              "on": "階以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{n^3-1}3+\\frac{n^2+1}2+\\frac{n-1}6=\\frac{n^3}3+\\frac{n^2}2+\\frac n6$",
+            "$\\sum_{k=1}^nk^2=\\frac{n(n+1)(2n+1)}6$"
+          ],
+          "say": "常數項是負 3 分之 1 加 2 分之 1 減 6 分之 1，剛好是 0。合起來正是平方和公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{n^3-1}3+\\frac{n^2+1}2+\\frac{n-1}6=\\frac{n^3}3+\\frac{n^2}2+\\frac n6$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sum_{k=1}^nk^2=\\frac{n(n+1)(2n+1)}6}}$",
+              "color": "red",
+              "on": "分之#2"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "分之#3"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$\\frac{n(n+1)(2n+1)}6=\\frac{2n^3+3n^2+n}6$",
+              "color": "violet",
+              "on": "合起"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式的高階導數最後都是 $0$，餘項也是 $0$：等號"
+          ],
+          "say": "多項式的高階導數最後都是 0，所以公式是精確的等號，不是近似。",
+          "board": [
+            {
+              "do": "write",
+              "line": "多項式的高階導數最後都是 $0$，餘項也是 $0$：等號",
+              "color": "gold"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用 Euler–Maclaurin 估一個和",
+        "steps": [
+          {
+            "label": "寫出 $f$ 與上下限 $a$、$b$"
+          },
+          {
+            "label": "算積分 $\\int_a^bf\\,dx$",
+            "why": "先要有上一步：寫出 $f$ 與上下限 $a$、$b$"
+          },
+          {
+            "label": "加上端點平均 $\\frac{f(a)+f(b)}2$",
+            "why": "先要有上一步：算積分 $\\int_a^bf\\,dx$"
+          },
+          {
+            "label": "加上 $\\frac{f'(b)-f'(a)}{12}$，需要時再加下一項",
+            "why": "先要有上一步：加上端點平均 $\\frac{f(a)+f(b)}2$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "調和數 $H_n$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\frac1x$，從 $1$ 到 $n$；所有常數項合成 $\\gamma$：",
+            "$H_n\\approx\\ln n+\\gamma+\\frac1{2n}-\\frac1{12n^2}+\\frac1{120n^4}$"
+          ],
+          "say": "第二個例子：調和數。f 是 x 分之一。積分給自然對數 n；從下端點 1 來的修正都是常數，跟收斂到的常數合在一起，就是尤拉常數伽瑪。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\frac1x$，從 $1$ 到 $n$；所有常數項合成 $\\gamma$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle H_n\\approx\\ln n+\\gamma+\\frac1{2n}-\\frac1{12n^2}+\\frac1{120n^4}}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "來的"
+            },
+            {
+              "do": "write",
+              "line": "　$\\gamma=\\lim(H_n-\\ln n)\\approx0.5772157$；公式本身算不出 $\\gamma$，它是「收集起來的常數」",
+              "color": "violet",
+              "on": "的常"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$H_{10}$：$\\ln10+\\gamma+\\frac1{20}-\\frac1{1200}\\approx2.9289674$"
+          ],
+          "say": "算 H 10：自然對數 10 加伽瑪，加 20 分之一，減 1200 分之一，大約是 2.9289674。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$H_{10}$：$\\ln10+\\gamma+\\frac1{20}-\\frac1{1200}\\approx2.9289674$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真值 $H_{10}=\\frac{7381}{2520}\\approx2.9289683$"
+          ],
+          "say": "真值大約是 2.9289683。只差一百萬分之一左右。",
+          "board": [
+            {
+              "do": "write",
+              "line": "真值 $H_{10}=\\frac{7381}{2520}\\approx2.9289683$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "一層一層加（$n=10$）：",
+            "$\\begin{aligned}\\ln n+\\gamma&\\approx2.87980&&\\text{誤差 }{-4.9\\times10^{-2}}\\\\+\\tfrac1{2n}&\\approx2.92980&&\\text{誤差 }8.3\\times10^{-4}\\\\-\\tfrac1{12n^2}&\\approx2.9289674&&\\text{誤差 }{-8.3\\times10^{-7}}\\\\+\\tfrac1{120n^4}&\\approx2.928968258&&\\text{誤差 }3.9\\times10^{-9}\\end{aligned}$"
+          ],
+          "say": "一層一層加上去，誤差從百分之五，掉到萬分之八，再到一百萬分之一，最後到十億分之四。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一層一層加（$n=10$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\ln n+\\gamma&\\approx2.87980&&\\text{誤差 }{-4.9\\times10^{-2}}\\\\+\\tfrac1{2n}&\\approx2.92980&&\\text{誤差 }8.3\\times10^{-4}\\\\-\\tfrac1{12n^2}&\\approx2.9289674&&\\text{誤差 }{-8.3\\times10^{-7}}\\\\+\\tfrac1{120n^4}&\\approx2.928968258&&\\text{誤差 }3.9\\times10^{-9}\\end{aligned}}$",
+              "on": "之八"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "每一層修正什麼",
+      "title": "用尾巴加速級數",
       "beats": [
-        { "show": ["積分：曲線下的面積"],
-          "say": "第一層是積分，就是曲線底下的面積。",
+        {
+          "show": [
+            "$\\displaystyle\\sum_{k=1}^\\infty\\frac1{k^2}=\\frac{\\pi^2}6$：只加前 $9$ 項，尾巴用公式（$f=\\frac1{x^2}$，$b\\to\\infty$）"
+          ],
+          "say": "第三個例子：加速級數。平方倒數的級數等於 6 分之派平方。只加前 9 項，尾巴用公式估。",
           "board": [
-            {"do":"write","line":"第一層：${{i:\\int_a^b f(x)\\,dx}}$"},
-            {"do":"underline","term":"i","label":"面積","on":"曲線底下"}
-          ] },
-        { "show": ["端點平均：頭尾各半個長條"],
-          "note": "把長條換成梯形時多出來的。",
-          "say": "把一排長條換成梯形來比，頭尾各多算了半個長條，所以要加端點的平均。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\sum_{k=1}^\\infty\\frac1{k^2}=\\frac{\\pi^2}6$：只加前 $9$ 項，尾巴用公式（$f=\\frac1{x^2}$，$b\\to\\infty$）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{k=n}^\\infty\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}-\\frac1{30n^5}$"
+          ],
+          "say": "從 n 到無限大：積分是 n 分之一；端點只剩下面那一個，取一半；再加上一階和三階導數的修正。",
           "board": [
-            {"do":"write","line":"第二層：${{e:\\frac{f(a)+f(b)}{2}}}$"},
-            {"do":"underline","term":"e","label":"頭尾半個","on":"半個長條"}
-          ] },
-        { "show": ["$f'$ 項：斜邊和曲線之間的縫"],
-          "note": "係數 $\\frac{1}{12}$；下一層 $\\frac{1}{720}$ 修正更細的彎曲。",
-          "say": "梯形的斜邊和曲線之間還有一點彎曲的縫，總量跟 f prime 從頭到尾的變化有關。",
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\sum_{k=n}^\\infty\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}-\\frac1{30n^5}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　上端 $b\\to\\infty$ 時 $f,f',f'''\\to0$；$f'=-\\frac2{x^3}$，$f'''=-\\frac{24}{x^5}$",
+              "color": "violet",
+              "on": "再加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=10$：$\\displaystyle\\sum_{k=1}^{9}\\frac1{k^2}\\approx1.5397677$",
+            "• $+\\frac1{10}+\\frac1{200}$ → $1.6447677$（誤差 $1.7\\times10^{-4}$）"
+          ],
+          "say": "前 9 項的和大約是 1.5397677。加上積分和端點，誤差萬分之二；再加導數項，誤差一千萬分之三；再加一項，十億分之二。",
           "board": [
-            {"do":"write","line":"第三層：${{d:\\frac{f'(b)-f'(a)}{12}}}$"},
-            {"do":"underline","term":"d","label":"彎曲的縫","on":"彎曲的縫"}
-          ] },
-        { "show": ["$f$ 是多項式：有限項就停"],
-          "note": "高階導數全是 $0$，是精確等式。",
-          "say": "如果 f 是多項式，高階導數最後全是零，公式在有限項就停住，變成精確的等式。",
+            {
+              "do": "write",
+              "line": "$n=10$：$\\displaystyle\\sum_{k=1}^{9}\\frac1{k^2}\\approx1.5397677$"
+            },
+            {
+              "do": "write",
+              "line": "• $+\\frac1{10}+\\frac1{200}$ → $1.6447677$（誤差 $1.7\\times10^{-4}$）",
+              "on": "97"
+            },
+            {
+              "do": "write",
+              "line": "• $+\\frac1{6000}$ → $1.64493440$（誤差 $3.3\\times10^{-7}$）",
+              "on": "萬分#1"
+            },
+            {
+              "do": "write",
+              "line": "• $-\\frac1{3\\,000\\,000}$ → $1.644934064$（誤差 $2.4\\times10^{-9}$）",
+              "on": "萬分#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{\\pi^2}{6}\\approx1.644934067$：9 項就準到小數第 8 位"
+          ],
+          "say": "只加 9 項，就準到小數點後第 8 位。直接硬加的話，要加上億項才有這種精度。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f$ 是多項式：高階導數 $=0$","on":"高階導數"},
-            {"do":"write","line":"有限項就停：精確等式","color":"green","on":"公式在有限項就停住"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$f(x)=x^2$，$\\sum_{k=1}^n$：導數修正 $\\frac{f'(n)-f'(1)}{12}$ 是？",
-        "options": [
-          {
-            "label": "$\\frac{2n-2}{12}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{n^2-1}{12}$",
-            "why": "代的是 $f$ 不是 $f'$；$f'(x)=2x$，所以是 $\\frac{2n-2}{12}$。"
-          },
-          {
-            "label": "$0$",
-            "why": "是 $f'''=0$，不是 $f'$；$f'(x)=2x$ 頭尾不一樣。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "平方和：精確",
-      "beats": [
-        { "show": ["$\\int_1^n x^2\\,dx=\\frac{n^3-1}{3}$"],
-          "note": "端點平均 $\\frac{1+n^2}{2}$。",
-          "say": "用公式算平方和：積分是三分之 n 三次方減一，端點平均是二分之一加 n 平方。",
-          "board": [
-            {"do":"write","line":"$\\int_1^n x^2\\,dx=\\frac{n^3-1}{3}$"},
-            {"do":"write","line":"端點平均：$\\frac{1+n^2}{2}$","on":"端點平均"}
-          ] },
-        { "show": ["$f'(x)=2x$","$\\frac{f'(n)-f'(1)}{12}=\\frac{n}{6}-\\frac{1}{6}$"],
-          "note": "代入 $f'(n)=2n$、$f'(1)=2$。",
-          "say": "f 是 x 平方，f prime 是二 x。代 n 得二 n，代一得二，相減除十二，就是六分之 n 減六分之一。",
-          "board": [
-            {"do":"write","line":"$f'(x)=2x$"},
-            {"do":"write","line":"$\\frac{f'(n)-f'(1)}{12}=\\frac{2n-2}{12}$","on":"代 n"},
-            {"do":"write","line":"$=\\frac{n}{6}-\\frac{1}{6}$","on":"就是"}
-          ] },
-        { "show": ["$\\frac{n^3}{3}+\\frac{n^2}{2}+\\frac{n}{6}$"],
-          "note": "再加導數修正 $\\frac{2n-2}{12}$，常數剛好消掉。",
-          "say": "再加上導數修正，常數項負三分之一、二分之一、負六分之一剛好抵銷。",
-          "board": [
-            {"do":"write","line":"$\\frac{n^3}{3}+\\frac{n^2}{2}+\\frac{n}{6}$"},
-            {"do":"write","line":"常數：$-\\frac13+\\frac12-\\frac16=0$","on":"常數項"}
-          ] },
-        { "show": ["$=\\frac{n(n+1)(2n+1)}{6}$"],
-          "say": "整理一下，正是熟悉的平方和公式。三階導數是零，所以一點誤差都沒有。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum_{k=1}^n k^2={{r:\\frac{n(n+1)(2n+1)}{6}}}$","on":"正是熟悉的"},
-            {"do":"box","term":"r","color":"green","label":"精確","on":"所以一點"}
-          ] }
-      ],
-      "key": "積分、端點平均、導數修正三層相加",
-      "check": 1
-    },
-    {
-      "title": "調和數",
-      "beats": [
-        { "show": ["$H_n=\\ln n+\\gamma+\\frac{1}{2n}-\\frac{1}{12n^2}+\\dots$"],
-          "note": "$\\gamma\\approx 0.5772$。",
-          "say": "調和數用這個公式展開：自然對數 n，加一個常數 gamma，大約零點五七七二，再加修正。",
-          "board": [
-            {"do":"write","line":"$H_n=\\ln n+{{g:\\gamma}}+\\frac{1}{2n}-\\frac{1}{12n^2}+\\dots$"},
-            {"do":"focus","term":"g","label":"≈0.5772","on":"gamma"}
-          ] },
-        { "show": ["$H_n-\\ln n\\to\\gamma$"],
-          "note": "不是 $\\to 0$。",
-          "say": "所以調和數減自然對數 n，趨近的是 gamma，不是零。等價只管比值。",
-          "board": [
-            {"do":"write","line":"$H_n-\\ln n\\to {{g:\\gamma}}$"},
-            {"do":"focus","term":"g","on":"趨近的是"},
-            {"do":"write","line":"$H_n\\sim\\ln n$：只管比值","on":"等價"}
-          ] },
-        { "show": ["$\\frac{H_n}{\\ln n}\\to 1$","$H_n-\\ln n\\to\\gamma\\ne 0$"],
-          "note": "波浪號只管比值；差可以不是零。",
-          "say": "波浪號只說比值趨近一：n 越大，自然對數 n 跟著變大，gamma 就顯得小。但兩者的差還是 gamma，沒趨近零。",
-          "board": [
-            {"do":"write","line":"$\\frac{H_n}{\\ln n}\\to 1$"},
-            {"do":"write","line":"$H_n-\\ln n\\to\\gamma\\ne 0$","on":"兩者的差"}
-          ] },
-        { "show": ["$H_{10}$：估 $2.928967$，真值 $2.928968$"],
-          "note": "只用 $\\ln 10+\\gamma$，誤差約 $0.049$。",
-          "say": "拿 n 等於十試試：這幾項加起來和真值只差不到十的負六次方。只用前兩項，誤差差不多就是二 n 分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$H_{10}\\approx 2.928967$","on":"等於十"},
-            {"do":"write","line":"真值 $2.928968$","on":"真值"},
-            {"do":"write","line":"只用 $\\ln 10+\\gamma$：誤差 $\\approx\\frac{1}{2n}$","on":"只用前兩項"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "用尾巴加速",
-      "beats": [
-        { "show": ["$\\sum_{k=N}^{\\infty}f(k)\\approx\\int_N^{\\infty}f\\,dx$","$+\\frac{f(N)}{2}-\\frac{f'(N)}{12}$"],
-          "say": "級數的尾巴也能用這條估。f 遞減時 f prime 是負的，最後那一項其實是加上去。",
-          "board": [
-            {"do":"write","line":"$\\sum_{k=N}^{\\infty}f(k)\\approx{{i:\\int_N^{\\infty}f\\,dx}}$"},
-            {"do":"write","line":"$+\\frac{f(N)}{2}{{d:-\\frac{f'(N)}{12}}}$","on":"f prime"},
-            {"do":"underline","term":"d","label":"負負得正","on":"最後那一項"}
-          ] },
-        { "show": ["$\\sum_{k=1}^9\\frac{1}{k^2}\\approx 1.5397677$"],
-          "note": "只加前 9 項，誤差約 $0.105$。",
-          "say": "例如 k 平方分之一，只加前九項，離真值還差零點一零五。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum_{k=1}^9\\frac{1}{k^2}\\approx 1.5397677$","on":"平方分之一"},
-            {"do":"write","line":"離真值：約 $0.105$","on":"離真值"}
-          ] },
-        { "show": ["$\\int_{10}^{b}\\frac{dx}{x^2}=\\frac{1}{10}-\\frac{1}{b}$","$b$ 越大，$\\frac{1}{b}\\to 0$"],
-          "note": "積到無窮：上限 $b$ 先取有限，再讓它變大。",
-          "say": "尾巴的積分上限是無窮，先取 b：積分是十分之一減 b 分之一。b 越大，b 分之一越趨近零，只剩十分之一。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_{10}^{b}\\frac{dx}{x^2}=\\frac{1}{10}-\\frac{1}{b}$","on":"先取"},
-            {"do":"write","line":"$b$ 越大：$\\frac{1}{b}\\to 0$，剩 $\\frac{1}{10}$","on":"b 越大"}
-          ] },
-        { "show": ["$f'(x)=-\\frac{2}{x^3}$","$-\\frac{f'(10)}{12}=\\frac{2}{12\\cdot 1000}=\\frac{1}{6000}$"],
-          "note": "$f'(10)=-\\frac{2}{1000}$。",
-          "say": "f prime 是負二除以 x 三次方。代十得負一千分之二，乘負十二分之一，就是六千分之一。",
-          "board": [
-            {"do":"write","line":"$f'(x)=-\\frac{2}{x^3}$"},
-            {"do":"write","line":"$f'(10)=-\\frac{2}{1000}$","on":"代十"},
-            {"do":"write","line":"$-\\frac{f'(10)}{12}=\\frac{2}{12\\cdot 1000}=\\frac{1}{6000}$","on":"乘負"}
-          ] },
-        { "show": ["尾巴：$\\frac{1}{10}+\\frac{1}{200}+\\frac{1}{6000}$"],
-          "note": "積分、端點一半、導數修正。",
-          "say": "從十開始的尾巴，積分是十分之一，端點一半是兩百分之一，導數修正是六千分之一。",
-          "board": [
-            {"do":"write","line":"尾巴：${{a:\\frac{1}{10}}}+{{b:\\frac{1}{200}}}+{{c:\\frac{1}{6000}}}$"},
-            {"do":"underline","term":"a","label":"積分","on":"積分是"},
-            {"do":"underline","term":"b","label":"端點一半","on":"端點一半"},
-            {"do":"underline","term":"c","label":"導數修正","on":"導數修正"}
-          ] }
-      ],
-      "key": "前 9 項直接加，尾巴交給公式",
-      "predict": {
-        "ask": "總和該怎麼算？（真值 $\\frac{\\pi^2}{6}\\approx 1.6449341$）",
-        "options": [
-          {
-            "label": "$1.5397677+0.1051667$",
-            "correct": true
-          },
-          {
-            "label": "$1.5397677+0.1$",
-            "why": "尾巴只用了積分 $\\frac{1}{10}$，漏了 $\\frac{1}{200}$ 和 $\\frac{1}{6000}$。"
-          },
-          {
-            "label": "$1.5397677$",
-            "why": "那只是前 9 項；尾巴 $\\approx 0.1051667$ 還沒加。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "$\\frac{\\pi^2}{6}\\approx1.644934067$：9 項就準到小數第 8 位",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　直接加 $N$ 項的誤差約 $\\frac1N$",
+              "color": "violet",
+              "on": "直接"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "不是越多項越準",
       "beats": [
-        { "show": ["係數（Bernoulli 數）以階乘速度長大"],
-          "note": "整條無窮級數通常發散。",
-          "say": "修正項的係數最後會以階乘的速度長大，整條無窮級數通常是發散的。",
+        {
+          "show": [
+            "$n=1$ 估 $H_1=1$：每多加一項導數修正，誤差：",
+            "$\\begin{aligned}&6.1\\times10^{-3},\\ 2.2\\times10^{-3},\\ 1.7\\times10^{-3},\\\\&2.4\\times10^{-3},\\ 5.2\\times10^{-3},\\ 1.6\\times10^{-2},\\\\&6.7\\times10^{-2},\\ 0.38,\\ 2.7,\\ 24,\\ \\cdots\\end{aligned}$"
+          ],
+          "say": "但是不能一直加下去。用 n 等於 1 估 H 1：每多加一項，誤差先變小，到第三項最好，之後越來越大，最後爆掉。",
           "board": [
-            {"do":"write","line":"係數（Bernoulli 數）以階乘長大"},
-            {"do":"write","line":"無窮級數通常發散","color":"red","on":"整條無窮級數"}
-          ] },
-        { "show": ["$n!=1\\cdot 2\\cdots n$"],
-          "note": "階乘：從 1 連乘到 $n$。",
-          "say": "階乘是從一連乘到 n。每多一項，就多乘一個更大的數，所以長得比什麼固定倍數都快。",
+            {
+              "do": "write",
+              "line": "$n=1$ 估 $H_1=1$：每多加一項導數修正，誤差："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}&6.1\\times10^{-3},\\ 2.2\\times10^{-3},\\ 1.7\\times10^{-3},\\\\&2.4\\times10^{-3},\\ 5.2\\times10^{-3},\\ 1.6\\times10^{-2},\\\\&6.7\\times10^{-2},\\ 0.38,\\ 2.7,\\ 24,\\ \\cdots\\end{aligned}}}}$",
+              "on": "每多"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "到第"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原因：Bernoulli 數長得像 $\\dfrac{(2j)!}{(2\\pi)^{2j}}$，階乘級變大"
+          ],
+          "say": "原因是係數裡的伯努利數，長得像階乘那麼快。導數修正的級數，對固定的 n 是發散的。",
           "board": [
-            {"do":"write","line":"$n!=1\\cdot 2\\cdots n$"},
-            {"do":"write","line":"每多一項，多乘更大的數","on":"更大的數"}
-          ] },
-        { "show": ["係數 $\\frac{1}{12},\\frac{1}{720},\\dots$","項越來越大：發散"],
-          "note": "發散：加下去不停在一個數。",
-          "say": "Bernoulli 數就是十二分之一、七百二十分之一這些係數。後面的項越來越大，加下去停不在一個數，這叫發散。",
+            {
+              "do": "write",
+              "line": "原因：Bernoulli 數長得像 $\\dfrac{(2j)!}{(2\\pi)^{2j}}$，階乘級變大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "漸近展開：項數 $p$ 固定、$n\\to\\infty$ 時誤差 $=O\\!\\left(\\frac1{n^{2p+2}}\\right)$"
+          ],
+          "say": "正確的讀法是漸近展開：先固定取幾項，再讓 n 變大，誤差就以對應的速度變小。",
           "board": [
-            {"do":"write","line":"係數：$\\frac{1}{12},\\frac{1}{720},\\dots$"},
-            {"do":"write","line":"項越來越大：發散","color":"red","on":"越來越大"}
-          ] },
-        { "show": ["固定取前幾項","誤差看下一項的大小"],
-          "say": "正確用法是固定取前幾項，誤差由下一項的大小控制。",
+            {
+              "do": "write",
+              "line": "漸近展開：項數 $p$ 固定、$n\\to\\infty$ 時誤差 $=O\\!\\left(\\frac1{n^{2p+2}}\\right)$",
+              "color": "blue"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n$ 越大，可以用的項越多（大約到 $2j\\approx2\\pi n$）"
+          ],
+          "say": "n 越大，能用的項越多；但對固定的 n，總有一個最佳停止點。",
           "board": [
-            {"do":"write","line":"固定取前幾項"},
-            {"do":"write","line":"誤差 $\\approx$ 下一項的大小","on":"誤差由"}
-          ] },
-        { "show": ["這叫漸近展開"],
-          "note": "$n$ 越大，同樣幾項就越準。",
-          "say": "這叫漸近展開：不是項數越多越準，而是 n 越大，取同樣幾項就越準。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"漸近展開","on":"漸近展開"},
-            {"do":"write","line":"$n$ 越大，同樣幾項越準","color":"green","on":"n 越大"}
-          ] }
+            {
+              "do": "write",
+              "line": "$n$ 越大，可以用的項越多（大約到 $2j\\approx2\\pi n$）"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "predict": {
+        "ask": "用 $H_n$ 的漸近展開估 $H_{1000}$，下列哪個做法最合理？",
+        "options": [
+          {
+            "label": "取前兩、三項修正就停",
+            "correct": true
+          },
+          {
+            "label": "項數越多越準，盡量多取",
+            "why": "對固定的 $n$，修正項最後會變大，級數發散"
+          },
+          {
+            "label": "只能用 $\\ln n$，修正項沒有用",
+            "why": "修正項讓誤差從 $\\frac1{2n}$ 降到 $\\frac1{n^4}$ 等級"
+          },
+          {
+            "label": "先把整個級數加總再代 $n$",
+            "why": "這個級數發散，加不起來"
+          }
+        ]
+      }
+    },
+    {
+      "title": "第一層修正的推導",
+      "beats": [
+        {
+          "show": [
+            "在 $[k,k+1]$ 上分部積分（$u=x-k-\\frac12$，$dv=f'(x)dx$）：",
+            "$\\begin{aligned}&\\int_k^{k+1}\\!\\Big(x-k-\\tfrac12\\Big)f'(x)\\,dx\\\\&\\quad=\\frac{f(k)+f(k+1)}2-\\int_k^{k+1}\\!f(x)\\,dx\\end{aligned}$"
+          ],
+          "say": "最後推導第一層修正。在每一格上分部積分：u 取 x 減 k 減二分之一，在兩端是正負二分之一，邊界項正好是兩端點的平均。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在 $[k,k+1]$ 上分部積分（$u=x-k-\\frac12$，$dv=f'(x)dx$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\int_k^{k+1}\\!\\Big(x-k-\\tfrac12\\Big)f'(x)\\,dx\\\\&\\quad=\\frac{f(k)+f(k+1)}2-\\int_k^{k+1}\\!f(x)\\,dx\\end{aligned}}$",
+              "on": "減二"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $P_1(x)=\\{x\\}-\\frac12$（$\\{x\\}$ 是小數部分），從 $k=a$ 加到 $b-1$：",
+            "$\\begin{aligned}\\sum_{k=a}^bf(k)={}&\\int_a^bf\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\int_a^bP_1(x)f'(x)\\,dx\\end{aligned}$"
+          ],
+          "say": "令 P 1 等於 x 的小數部分減二分之一。每一格加起來，得到一個精確的等式：和等於積分，加端點平均，再加 P 1 乘 f prime 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $P_1(x)=\\{x\\}-\\frac12$（$\\{x\\}$ 是小數部分），從 $k=a$ 加到 $b-1$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}\\sum_{k=a}^bf(k)={}&\\int_a^bf\\,dx+\\frac{f(a)+f(b)}2\\\\&+\\int_a^bP_1(x)f'(x)\\,dx\\end{aligned}}}}$",
+              "on": "分之"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "等式"
+            },
+            {
+              "do": "write",
+              "line": "　左邊每格的平均相加，中間的點各出現兩次 $\\frac12$，端點各一次",
+              "color": "violet",
+              "on": "pr"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "推導（續）：第二層",
+      "beats": [
+        {
+          "show": [
+            "再分部一次：$P_2(x)=\\frac{\\{x\\}^2-\\{x\\}}2+\\frac1{12}$，$P_2'=P_1$，$P_2(\\text{整數})=\\frac1{12}$",
+            "$\\begin{aligned}\\int_a^bP_1f'\\,dx={}&\\frac{f'(b)-f'(a)}{12}\\\\&-\\int_a^bP_2(x)f''(x)\\,dx\\end{aligned}$"
+          ],
+          "say": "再分部積分一次。P 2 的導數是 P 1，在整數點的值是 12 分之一，邊界項就是 12 分之一乘一階導數的差。這就是第二層。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再分部一次：$P_2(x)=\\frac{\\{x\\}^2-\\{x\\}}2+\\frac1{12}$，$P_2'=P_1$，$P_2(\\text{整數})=\\frac1{12}$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}\\int_a^bP_1f'\\,dx={}&\\frac{f'(b)-f'(a)}{12}\\\\&-\\int_a^bP_2(x)f''(x)\\,dx\\end{aligned}}}}$",
+              "on": "在整"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "12#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|P_2|\\le\\frac1{12}$ ⇒ 誤差 $\\le\\dfrac1{12}\\displaystyle\\int_a^b|f''(x)|\\,dx$"
+          ],
+          "say": "而 P 2 的絕對值不超過 12 分之一，所以剩下的誤差，不超過 12 分之一乘二階導數絕對值的積分。這是嚴格的誤差估計。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$|P_2|\\le\\frac1{12}$ ⇒ 誤差 $\\le\\dfrac1{12}\\displaystyle\\int_a^b|f''(x)|\\,dx$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　繼續分部就得到 $\\frac{B_{2j}}{(2j)!}$ 那些項；$P_2$ 的值在 $[-\\frac1{24},\\frac1{12}]$",
+              "color": "violet",
+              "on": "超過#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 和 ≈ 積分 $+\\frac{f(a)+f(b)}2+\\frac{f'(b)-f'(a)}{12}-\\cdots$",
+            "• 第 1 層：端點只算一半；第 2 層：曲線的彎曲"
+          ],
+          "say": "整理：和等於積分加端點平均加導數修正；多項式時是精確的；用來估調和數和級數的尾巴非常有效；但它是漸近展開，不是越多項越準。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 和 ≈ 積分 $+\\frac{f(a)+f(b)}2+\\frac{f'(b)-f'(a)}{12}-\\cdots$"
+            },
+            {
+              "do": "write",
+              "line": "• 第 1 層：端點只算一半；第 2 層：曲線的彎曲",
+              "on": "均加"
+            },
+            {
+              "do": "write",
+              "line": "• 多項式：精確（$\\sum k^2$）",
+              "on": "精確"
+            },
+            {
+              "do": "write",
+              "line": "• $H_n\\approx\\ln n+\\gamma+\\frac1{2n}-\\frac1{12n^2}$；尾巴 $\\sum_{k\\ge n}\\frac1{k^2}\\approx\\frac1n+\\frac1{2n^2}+\\frac1{6n^3}$",
+              "on": "數的"
+            },
+            {
+              "do": "write",
+              "line": "• 漸近展開：固定項數、$n\\to\\infty$；不是越多項越準",
+              "on": "漸近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：瑕積分：無窮區間"
+          ],
+          "say": "下一課，進入瑕積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：瑕積分：無窮區間"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["euler-mascheroni", "series-estimate", "integral-test"],
-    "fine": ["euler-maclaurin-trapezoid", "euler-maclaurin-polynomial-sum", "euler-maclaurin-tail-estimate", "harmonic-asymptotic"]
+    "coarse": [
+      "euler-mascheroni",
+      "series-estimate",
+      "integral-test"
+    ],
+    "fine": [
+      "euler-maclaurin-trapezoid",
+      "euler-maclaurin-polynomial-sum",
+      "euler-maclaurin-tail-estimate",
+      "harmonic-asymptotic"
+    ]
   },
   "practice": [
-    { "id": "sg-est-004", "core": true, "trains": "euler-maclaurin-tail-estimate" },
-    { "id": "lec-12-q2d", "core": true, "trains": "euler-maclaurin-tail-estimate" },
-    { "id": "lm-st-002", "core": true, "trains": "harmonic-asymptotic" },
-    { "id": "sg-est-003", "core": true, "trains": "harmonic-asymptotic" },
-    { "id": "cg-11a-011", "core": true, "trains": "euler-maclaurin-polynomial-sum" },
-    { "id": "sg-est-005", "trains": "euler-maclaurin-tail-estimate" },
-    { "id": "an-ca-001", "trains": "harmonic-asymptotic" },
-    { "id": "cg-11a-012", "trains": "euler-maclaurin-polynomial-sum" },
-    { "id": "cg-11a-013", "trains": "euler-maclaurin-tail-estimate" },
-    { "id": "cg-11a-014", "challenge": true, "trains": "euler-maclaurin-tail-estimate" }
+    {
+      "id": "sg-est-004",
+      "core": true,
+      "trains": "euler-maclaurin-tail-estimate"
+    },
+    {
+      "id": "lec-12-q2d",
+      "core": true,
+      "trains": "euler-maclaurin-tail-estimate"
+    },
+    {
+      "id": "lm-st-002",
+      "core": true,
+      "trains": "harmonic-asymptotic"
+    },
+    {
+      "id": "sg-est-003",
+      "core": true,
+      "trains": "harmonic-asymptotic"
+    },
+    {
+      "id": "cg-11a-011",
+      "core": true,
+      "trains": "euler-maclaurin-polynomial-sum"
+    },
+    {
+      "id": "sg-est-005",
+      "trains": "euler-maclaurin-tail-estimate"
+    },
+    {
+      "id": "an-ca-001",
+      "trains": "harmonic-asymptotic"
+    },
+    {
+      "id": "cg-11a-012",
+      "trains": "euler-maclaurin-polynomial-sum"
+    },
+    {
+      "id": "cg-11a-013",
+      "trains": "euler-maclaurin-tail-estimate"
+    },
+    {
+      "id": "cg-11a-014",
+      "challenge": true,
+      "trains": "euler-maclaurin-tail-estimate"
+    }
   ],
   "gaps": []
 }

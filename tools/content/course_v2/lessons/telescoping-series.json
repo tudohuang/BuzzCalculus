@@ -1,7 +1,8 @@
 {
   "id": "telescoping-series",
   "title": "望遠鏡級數",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
   "prerequisites": [
     "partial-sums",
@@ -14,45 +15,116 @@
     "limit-rationalize"
   ],
   "objectives": [
-    "把 $a_n$ 寫成 $b_n-b_{n+1}$（或 $b_n-b_{n+k}$），寫出部分和、看出中間全部相消。",
-    "間隔是 $k$ 時，知道前面會留下 $k$ 項、後面會留下 $k$ 項。",
-    "相消之後還要取極限：$\\lim b_n$ 不存在時級數發散。"
+    "把 $a_n$ 寫成 $b_n-b_{n+1}$（或 $b_n-b_{n+k}$），寫出部分和、看出中間全部相消",
+    "間隔是 $k$ 時，知道前面會留下 $k$ 項、後面會留下 $k$ 項",
+    "相消之後還要取極限：$\\lim b_n$ 不存在時級數發散"
   ],
-  "visual": "把 (1 − 1/2) + (1/2 − 1/3) + (1/3 − 1/4) + … 排成一長列，同色的正負項一對一對亮起再淡出，像望遠鏡一節一節收起來，最後只剩頭 1 和尾 −1/(n + 1)。拖動 n，尾巴越縮越小。切換成間隔 2 的例子，頭尾各留下兩項。",
+  "visual": null,
   "concept": [
     {
       "heading": "① 中間全部消掉",
       "body": [
-        "如果每一項都能寫成相鄰兩個數的差 $a_n=b_n-b_{n+1}$，部分和就會大量相消：$s_n=(b_1-b_2)+(b_2-b_3)+\\dots+(b_n-b_{n+1})=b_1-b_{n+1}$。",
-        "所以 $\\sum a_n=b_1-\\lim b_n$，前提是 $\\lim b_n$ 存在；不存在，級數就發散。"
+        "關鍵：每一項是兩個數的差",
+        "寫出前 $N$ 項：",
+        "只剩頭和尾："
       ],
       "tex": [
-        "s_n=(b_1-b_2)+(b_2-b_3)+\\cdots+(b_n-b_{n+1})=b_1-b_{n+1}"
+        "\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}",
+        "\\frac1{n(n+1)}=\\frac1n-\\frac1{n+1}",
+        "s_N=\\Big(1-\\cancel{\\tfrac12}\\Big)+\\Big(\\cancel{\\tfrac12}-\\cancel{\\tfrac13}\\Big)+\\cdots+\\Big(\\cancel{\\tfrac1N}-\\tfrac1{N+1}\\Big)",
+        "s_N=1-\\frac1{N+1}",
+        "\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}=\\lim_{N\\to\\infty}\\Big(1-\\frac1{N+1}\\Big)=1"
+      ]
+    },
+    {
+      "heading": "① 一般的樣子",
+      "body": [
+        "$a_n=b_n-b_{n+1}$：",
+        "收斂 ⇔ $\\lim b_n$ 存在"
       ],
-      "collapsible": false
+      "tex": [
+        "s_N=(b_1-b_2)+(b_2-b_3)+\\cdots+(b_N-b_{N+1})",
+        "=b_1-b_{N+1}",
+        "\\sum_{n=1}^{\\infty}(b_n-b_{n+1})=b_1-\\lim_{N\\to\\infty}b_{N+1}"
+      ]
     },
     {
       "heading": "② 怎麼拆成差",
       "body": [
-        "有理式用〈部分分式 I：相異一次因式〉：$\\frac{1}{n(n+1)}=\\frac{1}{n}-\\frac{1}{n+1}$。",
-        "對數用 $\\ln\\frac{A}{B}=\\ln A-\\ln B$：$\\ln\\frac{n}{n+1}=\\ln n-\\ln(n+1)$。",
-        "根號用有理化（〈0/0：有理化〉）造出差的形式。"
+        "有理式：用部分分式（4.21）",
+        "$n=0$：$A=1$；$n=-1$：$B=-1$",
+        "再一個：$\\dfrac1{(2n-1)(2n+1)}$",
+        "驗算：$\\frac1{2n-1}-\\frac1{2n+1}=\\frac{2}{(2n-1)(2n+1)}$，所以要乘 $\\frac12$",
+        "$b_n=\\frac1{2n-1}$，$b_{n+1}=\\frac1{2n+1}$：剛好是相鄰的兩個"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac1{n(n+1)}=\\frac{A}{n}+\\frac{B}{n+1}",
+        "1=A(n+1)+Bn",
+        "=\\frac12\\Big(\\frac1{2n-1}-\\frac1{2n+1}\\Big)"
+      ]
     },
     {
-      "heading": "③ 間隔不是 1 的時候",
+      "heading": "② 試一題",
       "body": [
-        "$a_n=b_n-b_{n+2}$：正項是 $b_1, b_2, b_3,\\dots$，負項從 $b_3$ 開始。前面留下 $b_1+b_2$ 沒被消，後面留下 $-b_{n+1}-b_{n+2}$。一般來說間隔 $k$ 就留頭 $k$ 項、尾 $k$ 項。不確定時，把前四五項和最後兩三項實際寫出來，看誰沒有配對。"
+        "根號：先有理化",
+        "這裡的差是「後減前」：$b_{n+1}-b_n$，消法一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac1{\\sqrt{n+1}+\\sqrt n}=\\frac{\\sqrt{n+1}-\\sqrt n}{(n+1)-n}=\\sqrt{n+1}-\\sqrt n",
+        "s_N=(\\sqrt2-1)+(\\sqrt3-\\sqrt2)+\\cdots+(\\sqrt{N+1}-\\sqrt N)",
+        "=\\sqrt{N+1}-1"
+      ]
+    },
+    {
+      "heading": "③ 間隔不是 1",
+      "body": [
+        "這次兩項差 2：$\\frac1{n-1}$ 要等兩項後才被消掉",
+        "前面留下 2 項：$1+\\frac12$",
+        "後面留下 2 項：$-\\frac1N-\\frac1{N+1}$",
+        "驗算：$N=5$：$\\frac13+\\frac18+\\frac1{15}+\\frac1{24}=\\frac{17}{30}=\\frac12\\big(\\frac32-\\frac15-\\frac16\\big)$"
+      ],
+      "tex": [
+        "\\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\sum_{n=2}^{\\infty}\\frac12\\Big(\\frac1{n-1}-\\frac1{n+1}\\Big)",
+        "\\begin{aligned}n=2&:\\ 1-\\tfrac13\\\\n=3&:\\ \\tfrac12-\\tfrac14\\\\n=4&:\\ \\tfrac13-\\tfrac15\\\\n=5&:\\ \\tfrac14-\\tfrac16\\\\&\\ \\ \\vdots\\end{aligned}",
+        "s_N=\\frac12\\Big(1+\\frac12-\\frac1N-\\frac1{N+1}\\Big)",
+        "\\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\frac12\\cdot\\frac32=\\frac34"
+      ]
+    },
+    {
+      "heading": "③ 間隔 $k$：留 $k$ 項",
+      "body": [
+        "$a_n=b_n-b_{n+k}$：",
+        "這裡 $n$ 從 $1$ 開始；從別的指標開始，頭的 $k$ 項就從那裡數",
+        "不確定就寫出來：寫 $4$、$5$ 行就看得出誰消誰"
+      ],
+      "tex": [
+        "s_N=(b_1+\\cdots+b_k)-(b_{N+1}+\\cdots+b_{N+k})"
+      ]
     },
     {
       "heading": "④ 一定要經過部分和",
       "body": [
-        "不要在無窮和裡直接「消項」。先寫出有限的 $s_n$，相消是有限和的運算，絕對安全；再取 $n\\to\\infty$。跳過這一步，就會把 $\\sum\\ln\\frac{n}{n+1}$ 誤當成收斂（範例 3）。"
+        "錯的想法：「中間都消掉了，和就是頭的 $\\ln1=0$」",
+        "尾巴 $b_{N+1}=\\ln(N+1)$ 沒有極限，不會消失",
+        "會相消 ≠ 會收斂：相消之後還要取極限"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\ln\\frac{n}{n+1}\\ \\text{收斂嗎？}",
+        "\\ln\\frac{n}{n+1}=\\ln n-\\ln(n+1)",
+        "s_N=\\ln1-\\ln(N+1)=-\\ln(N+1)",
+        "-\\ln(N+1)\\to-\\infty\\quad\\Rightarrow\\quad\\text{發散}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $a_n=b_n-b_{n+1}$ ⇒ $s_N=b_1-b_{N+1}$",
+        "• 拆法：部分分式、$\\ln$ 的商、根號有理化",
+        "• 間隔 $k$：頭留 $k$ 項、尾留 $k$ 項（不確定就寫出來）",
+        "• 和 $=$ 頭 $-$ 尾巴的極限；尾巴沒有極限就發散",
+        "• $\\sum\\frac1{n(n+1)}=1$，$\\sum\\frac1{n^2-1}=\\frac34$，$\\sum\\ln\\frac n{n+1}$ 發散",
+        "下一課：發散判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -113,70 +185,65 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum_{n=1}^{\\infty}\\frac{1}{n(n+2)}=$？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{(2n-1)(2n+1)}=$？",
       "options": [
         {
-          "label": "$\\frac{3}{4}$",
+          "label": "$\\dfrac12$",
           "correct": true
         },
         {
-          "label": "$\\frac{1}{2}$",
-          "why": "$\\frac{1}{n(n+2)}=\\frac{1}{2}\\left(\\frac{1}{n}-\\frac{1}{n+2}\\right)$，間隔 2，頭會留下 1 和 $\\frac{1}{2}$ 兩項；只留 1 就得 $\\frac{1}{2}$。"
+          "label": "$1$",
+          "why": "忘了前面的 $\\frac12$"
         },
         {
-          "label": "$\\frac{3}{2}$",
-          "why": "$1+\\frac{1}{2}=\\frac{3}{2}$ 沒錯，但忘了部分分式前面的 $\\frac{1}{2}$。"
+          "label": "$\\dfrac13$",
+          "why": "那只是第一項 $a_1=\\frac1{1\\cdot3}$"
+        },
+        {
+          "label": "$0$",
+          "why": "頭的 $b_1=1$ 消不掉"
         }
       ]
     },
     {
-      "ask": "$\\sum_{n=1}^{\\infty}\\ln\\frac{n}{n+1}$ 是？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\Big(\\frac1n-\\frac1{n+2}\\Big)=$？",
+      "options": [
+        {
+          "label": "$\\dfrac32$",
+          "correct": true
+        },
+        {
+          "label": "$1$",
+          "why": "只留了一項：間隔 $2$ 要留兩項 $1$ 和 $\\frac12$"
+        },
+        {
+          "label": "$2$",
+          "why": "頭兩項是 $1$ 和 $\\frac12$，不是 $1+1$"
+        },
+        {
+          "label": "$\\dfrac23$",
+          "why": "把 $1+\\frac12$ 算成了倒數"
+        }
+      ]
+    },
+    {
+      "ask": "回到根號的例子：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{\\sqrt{n+1}+\\sqrt n}$ 呢？",
       "options": [
         {
           "label": "發散",
           "correct": true
         },
         {
-          "label": "收斂，因為各項 $\\to 0$",
-          "why": "各項 $\\to 0$ 不夠。部分和 $s_n=-\\ln(n+1)\\to-\\infty$。"
+          "label": "收斂到 $-1$",
+          "why": "只留了頭的 $-\\sqrt1$，忘了尾巴 $\\sqrt{N+1}$ 衝到 $\\infty$"
         },
         {
-          "label": "收斂到 $-\\ln 2$",
-          "why": "只留頭的 $\\ln 1-\\ln 2$ 是錯的：尾巴 $-\\ln(n+1)$ 不會消失，它 $\\to-\\infty$。"
-        }
-      ]
-    },
-    {
-      "ask": "$a_n=b_n-b_{n+1}$，而且 $\\lim b_n=L$ 存在。$\\sum_{n=1}^{\\infty}a_n=$？",
-      "options": [
-        {
-          "label": "$b_1-L$",
-          "correct": true
+          "label": "收斂到 $0$",
+          "why": "各項 $\\to0$ 不代表收斂；看部分和"
         },
         {
-          "label": "$b_1$",
-          "why": "只有 $b_n\\to 0$ 時才對；一般要減掉 $b_n$ 的極限。"
-        },
-        {
-          "label": "$b_1-b_2$",
-          "why": "那只是第一項 $a_1$，不是整個級數的和。"
-        }
-      ]
-    },
-    {
-      "ask": "$\\frac{1}{4n^2-1}$ 的部分分式是？",
-      "options": [
-        {
-          "label": "$\\frac{1}{2}\\left(\\frac{1}{2n-1}-\\frac{1}{2n+1}\\right)$",
-          "correct": true
-        },
-        {
-          "label": "$\\frac{1}{2n-1}-\\frac{1}{2n+1}$",
-          "why": "通分得 $\\frac{2}{4n^2-1}$，多了 2 倍；要乘 $\\frac{1}{2}$。"
-        },
-        {
-          "label": "$\\frac{1}{2}\\left(\\frac{1}{2n-1}+\\frac{1}{2n+1}\\right)$",
-          "why": "通分得 $\\frac{2n}{4n^2-1}$，不對；而且加號不會相消。"
+          "label": "收斂到 $1$",
+          "why": "頭是 $-\\sqrt1=-1$，而且尾巴沒有極限"
         }
       ]
     }
@@ -185,77 +252,162 @@
     {
       "title": "中間全部消掉",
       "beats": [
-        { "show": ["$a_n=b_n-b_{n+1}$"],
-          "note": "每一項寫成相鄰兩個數的差。",
-          "say": "如果每一項都能寫成相鄰兩個數的差，b n 減 b n 加一，部分和就會大量相消。",
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}$"
+          ],
+          "say": "上一課從部分和反推，得到這個級數的和是 1。這一課反過來：只給各項，怎麼自己算出部分和？",
           "board": [
-            {"do":"write","line":"$a_n=b_n-b_{n+1}$"}
-          ] },
-        { "show": ["$(b_1-b_2)+(b_2-b_3)+\\cdots+(b_n-b_{n+1})$"],
-          "say": "寫出來看：減 b 二的後面緊跟著加 b 二，減 b 三又碰上加 b 三，一路抵消。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac1{n(n+1)}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "關鍵：每一項是兩個數的差",
+            "$\\frac1{n(n+1)}=\\frac1n-\\frac1{n+1}$"
+          ],
+          "say": "關鍵是：每一項都可以寫成兩個數的差，n 分之 1 減 n 加 1 分之 1。通分驗算一下就對了。",
           "board": [
-            {"do":"write","line":"$({{h:b_1}}{{m2:-b_2}})+({{p2:b_2}}{{m3:-b_3}})+\\cdots+(b_n-{{t:b_{n+1}}})$","tint":{"h":"blue","t":"violet"}},
-            {"do":"focus","term":"m2","on":"減 b 二"},
-            {"do":"focus","term":"p2","on":"加 b 二"},
-            {"do":"focus","term":"m3","label":"一路抵消","on":"減 b 三"}
-          ] },
-        { "show": ["$s_n=b_1-b_{n+1}$"],
-          "note": "像望遠鏡一樣收起來，只剩頭尾。",
-          "say": "像望遠鏡一節一節收起來，只剩最前面的 b 一，和最後面的 b n 加一。",
+            {
+              "do": "write",
+              "line": "關鍵：每一項是兩個數的差"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac1{n(n+1)}=\\frac1n-\\frac1{n+1}}}$",
+              "on": "分之#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "寫出前 $N$ 項：",
+            "$s_N=\\Big(1-\\cancel{\\tfrac12}\\Big)+\\Big(\\cancel{\\tfrac12}-\\cancel{\\tfrac13}\\Big)+\\cdots+\\Big(\\cancel{\\tfrac1N}-\\tfrac1{N+1}\\Big)$"
+          ],
+          "say": "把前 N 項寫出來：1 減 2 分之 1，加 2 分之 1 減 3 分之 1，一直下去。每一項的後半，都被下一項的前半消掉。",
           "board": [
-            {"do":"write","line":"$s_n={{h:b_1}}-{{t:b_{n+1}}}$","on":"像望遠鏡"},
-            {"do":"focus","term":"h","color":"blue","label":"最前面","on":"最前面"},
-            {"do":"focus","term":"t","color":"violet","label":"最後面","on":"最後面"}
-          ] },
-        { "show": ["$\\sum a_n=b_1-\\lim b_n$"],
-          "note": "$\\lim b_n$ 不存在，級數就發散。",
-          "say": "再取極限，和就是 b 一減掉 b n 的極限。前提是那個極限存在，不存在就發散。",
+            {
+              "do": "write",
+              "line": "寫出前 $N$ 項："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=\\Big(1-\\cancel{\\tfrac12}\\Big)+\\Big(\\cancel{\\tfrac12}-\\cancel{\\tfrac13}\\Big)+\\cdots+\\Big(\\cancel{\\tfrac1N}-\\tfrac1{N+1}\\Big)$",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只剩頭和尾：",
+            "$s_N=1-\\frac1{N+1}$"
+          ],
+          "say": "中間全部消光，只剩最前面的 1，和最後面的 N 加 1 分之 1。像望遠鏡一節一節收起來，所以叫望遠鏡級數。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\sum a_n={{h:b_1}}-\\lim b_n$","on":"再取極限"},
-            {"do":"write","line":"$\\lim b_n$ 不存在 ⇒ 發散","on":"不存在就"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "只剩頭和尾："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=1-\\frac1{N+1}$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac1{n(n+1)}=\\lim_{N\\to\\infty}\\Big(1-\\frac1{N+1}\\Big)=1$"
+          ],
+          "say": "再取極限，N 加 1 分之 1 趨近 0，和是 1。跟上一課的答案一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\sum_{n=1}^{\\infty}\\frac1{n(n+1)}=\\lim_{N\\to\\infty}\\Big(1-\\frac1{N+1}\\Big)=1}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "和是"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "最基本的形式",
+      "title": "一般的樣子",
       "beats": [
-        { "show": ["$\\frac{1}{n(n+1)}=\\frac{1}{n}-\\frac{1}{n+1}$"],
-          "note": "通分檢查：$\\frac{(n+1)-n}{n(n+1)}$。",
-          "say": "用部分分式拆：n 乘 n 加一分之一，等於 n 分之一減 n 加一分之一。通分回去就能檢查。",
+        {
+          "show": [
+            "$a_n=b_n-b_{n+1}$：",
+            "$s_N=(b_1-b_2)+(b_2-b_3)+\\cdots+(b_N-b_{N+1})$"
+          ],
+          "say": "一般的樣子：如果每一項都是 b n 減 b n 加 1，前 N 項加起來，中間全部消掉，只剩 b 1 減 b N 加 1。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{n(n+1)}={{a:\\frac{1}{n}}}-{{b:\\frac{1}{n+1}}}$"},
-            {"do":"write","line":"通分：$\\frac{(n+1)-n}{n(n+1)}$","on":"通分回去"}
-          ] },
-        { "show": ["$\\left(1-\\frac{1}{2}\\right)+\\left(\\frac{1}{2}-\\frac{1}{3}\\right)+\\cdots$","$\\cdots+\\left(\\frac{1}{n}-\\frac{1}{n+1}\\right)$"],
-          "say": "寫出部分和：減二分之一碰上加二分之一，減三分之一碰上加三分之一。剩下誰？",
+            {
+              "do": "write",
+              "line": "$a_n=b_n-b_{n+1}$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=(b_1-b_2)+(b_2-b_3)+\\cdots+(b_N-b_{N+1})$",
+              "on": "項加"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =b_1-b_{N+1}$",
+              "on": "部消"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}(b_n-b_{n+1})=b_1-\\lim_{N\\to\\infty}b_{N+1}$"
+          ],
+          "say": "所以級數的和是 b 1 減掉 b n 的極限。",
           "board": [
-            {"do":"write","line":"$(1{{m2:-\\frac{1}{2}}})+({{p2:\\frac{1}{2}}}-\\frac{1}{3})+\\cdots$"},
-            {"do":"focus","term":"m2","on":"減二分之一"},
-            {"do":"focus","term":"p2","label":"碰上","on":"加二分之一"}
-          ] },
-        { "show": ["沒人配對的才留下"],
-          "say": "怎麼看剩什麼：每個括號的減項，會被下一個括號的加項消掉。只有最前面的加項，和最後面的減項沒人配。",
-          "board": [
-            {"do":"write","line":"$-\\frac{1}{2}+\\frac{1}{2}=0$，$-\\frac{1}{3}+\\frac{1}{3}=0$"},
-            {"do":"write","line":"只剩頭尾沒配對","on":"最前面的"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\sum_{n=1}^{\\infty}(b_n-b_{n+1})=b_1-\\lim_{N\\to\\infty}b_{N+1}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "減掉"
+            },
+            {
+              "do": "write",
+              "line": "　收斂 ⇔ $\\lim b_n$ 存在",
+              "color": "violet",
+              "on": "的極"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "$s_n$ 是？級數和是？",
+        "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\Big(\\frac1{\\sqrt n}-\\frac1{\\sqrt{n+1}}\\Big)=$？",
         "options": [
           {
-            "label": "$1-\\frac{1}{n+1}$，和為 1",
+            "label": "$1$",
             "correct": true
           },
           {
-            "label": "$1$，和為 1",
-            "why": "尾巴的 $-\\frac{1}{n+1}$ 沒有配對，有限的 $s_n$ 裡它還在；取極限後才 $\\to 0$。"
+            "label": "$0$",
+            "why": "不是每一項都消掉：頭的 $b_1=1$ 留下來了"
           },
           {
-            "label": "$1-\\frac{1}{2}$，和為 $\\frac{1}{2}$",
-            "why": "$-\\frac{1}{2}$ 被下一項的 $+\\frac{1}{2}$ 消掉了；沒被消的是最後的 $-\\frac{1}{n+1}$。"
+            "label": "發散",
+            "why": "$b_n=\\frac1{\\sqrt n}\\to0$，極限存在，所以收斂"
           }
         ]
       }
@@ -263,126 +415,480 @@
     {
       "title": "怎麼拆成差",
       "beats": [
-        { "show": ["有理式：部分分式"],
-          "note": "$\\frac{1}{n(n+1)}=\\frac{1}{n}-\\frac{1}{n+1}$",
-          "say": "有理式用部分分式，就像剛才那樣拆。",
+        {
+          "show": [
+            "有理式：用部分分式（4.21）",
+            "$\\frac1{n(n+1)}=\\frac{A}{n}+\\frac{B}{n+1}$"
+          ],
+          "say": "怎麼看出拆法？分母是兩個一次因式相乘，就用 4.21 的部分分式。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{n(n+1)}={{d:\\frac{1}{n}-\\frac{1}{n+1}}}$"}
-          ] },
-        { "show": ["對數：$\\ln\\frac{n}{n+1}=\\ln n-\\ln(n+1)$"],
-          "say": "對數把相除拆成相減：自然對數 n 減自然對數 n 加一。",
+            {
+              "do": "write",
+              "line": "有理式：用部分分式（4.21）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{n(n+1)}=\\frac{A}{n}+\\frac{B}{n+1}$",
+              "on": "相乘"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$1=A(n+1)+Bn$"
+          ],
+          "say": "兩邊乘上 n 乘 n 加 1，得到 1 等於 A 乘 n 加 1，加 B 乘 n。",
           "board": [
-            {"do":"write","line":"$\\ln\\frac{n}{n+1}={{e:\\ln n-\\ln(n+1)}}$"},
-            {"do":"underline","term":"e","on":"相減"}
-          ] },
-        { "show": ["根號：有理化造出差"],
-          "say": "有根號的，用有理化造出差的形式。拆完記得通分回去檢查係數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1=A(n+1)+Bn$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n=0$：$A=1$；$n=-1$：$B=-1$"
+          ],
+          "say": "代 n 等於 0，得 A 等於 1；代 n 等於負 1，得 B 等於負 1。就是 n 分之 1 減 n 加 1 分之 1。",
           "board": [
-            {"do":"write","line":"根號：有理化 ⇒ 造出差"},
-            {"do":"write","line":"拆完要通分回去檢查係數","on":"通分回去"}
-          ] },
-        { "show": ["$\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$"],
-          "say": "舉例：一除以根號 n 加一加根號 n。上下同乘根號 n 加一減根號 n，這就是有理化。",
+            {
+              "do": "write",
+              "line": "$n=0$：$A=1$；$n=-1$：$B=-1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再一個：$\\dfrac1{(2n-1)(2n+1)}$",
+            "$=\\frac12\\Big(\\frac1{2n-1}-\\frac1{2n+1}\\Big)$"
+          ],
+          "say": "再一個：2n 減 1 乘 2n 加 1 分之 1。部分分式拆出來，前面多一個 2 分之 1。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$"},
-            {"do":"write","line":"上下同乘 $\\sqrt{n+1}-\\sqrt{n}$","on":"上下同乘"}
-          ] },
-        { "show": ["分母 $(n+1)-n=1$"],
-          "say": "分母是平方差：n 加一減 n，等於一。所以整項就是根號 n 加一減根號 n，造出差了。",
+            {
+              "do": "write",
+              "line": "再一個：$\\dfrac1{(2n-1)(2n+1)}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =\\frac12\\Big(\\frac1{2n-1}-\\frac1{2n+1}\\Big)$",
+              "on": "分之#1"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$\\frac1{2n-1}-\\frac1{2n+1}=\\frac{2}{(2n-1)(2n+1)}$，所以要乘 $\\frac12$",
+              "color": "violet",
+              "on": "出來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$b_n=\\frac1{2n-1}$，$b_{n+1}=\\frac1{2n+1}$：剛好是相鄰的兩個"
+          ],
+          "say": "注意 b n 是 2n 減 1 分之 1，那 b n 加 1 就是 2n 加 1 分之 1，剛好相鄰，可以一路消。",
           "board": [
-            {"do":"write","line":"分母：$(n+1)-n=1$"},
-            {"do":"write","line":"$=\\sqrt{n+1}-\\sqrt{n}$","on":"整項就是"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$b_n=\\frac1{2n-1}$，$b_{n+1}=\\frac1{2n+1}$：剛好是相鄰的兩個"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "間隔 2：留兩項",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\frac{1}{n^2-1}=\\frac{1}{2}\\left(\\frac{1}{n-1}-\\frac{1}{n+1}\\right)$"],
-          "note": "從 $n=2$ 開始；前面的 $\\frac{1}{2}$ 別漏。",
-          "say": "n 平方減一拆成二分之一乘兩個分數的差。注意，前後差了二，間隔是二。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{n^2-1}=\\frac{1}{2}\\left({{a:\\frac{1}{n-1}}}-{{b:\\frac{1}{n+1}}}\\right)$"},
-            {"do":"focus","term":"a","on":"前後"},
-            {"do":"focus","term":"b","label":"間隔 2","on":"差了二"}
-          ] },
-        { "show": ["$\\frac{1}{n-1}-\\frac{1}{n+1}=\\frac{2}{n^2-1}$"],
-          "note": "通分後多了 2 倍，所以補 $\\frac{1}{2}$。",
-          "say": "係數怎麼來？把兩個分數相減通分，得到 n 平方減一分之二，多了二倍，所以前面要補二分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{n-1}-\\frac{1}{n+1}=\\frac{2}{n^2-1}$"},
-            {"do":"write","line":"所以前面補 $\\frac{1}{2}$","on":"補二分之一"}
-          ] },
-        { "show": ["從 $n=2$ 寫起，每項是 $\\frac12$ 乘一個差"],
-          "say": "從 n 等於二寫起，括號裡是一減三分之一，再來二分之一減四分之一，再來三分之一減五分之一。",
-          "board": [
-            {"do":"write","line":"$n=2$：$\\frac12\\left(1-\\frac13\\right)$"},
-            {"do":"write","line":"$n=3$：$\\frac12\\left(\\frac12-\\frac14\\right)$","on":"二分之一減四分之一"},
-            {"do":"write","line":"$n=4$：$\\frac12\\left(\\frac13-\\frac15\\right)$","on":"三分之一減五分之一"}
-          ] },
-        { "show": ["正項 $1,\\frac{1}{2},\\frac{1}{3},\\dots$","負項從 $\\frac{1}{3}$ 開始"],
-          "note": "沒被消的：頭 $1+\\frac{1}{2}$，尾兩項。",
-          "say": "正的有一、二分之一、三分之一；負的從三分之一才開始。所以頭留下兩項，尾也留下兩項。",
-          "board": [
-            {"do":"write","line":"正項 ${{h:1,\\frac{1}{2}}},\\frac{1}{3},\\dots$"},
-            {"do":"write","line":"負項從 $\\frac{1}{3}$ 開始","on":"負的從"},
-            {"do":"focus","term":"h","label":"頭留兩項","on":"頭留下"}
-          ] },
-        { "show": ["$s_N=\\frac{1}{2}\\left(\\frac{3}{2}-\\frac{1}{N}-\\frac{1}{N+1}\\right)\\to\\frac{3}{4}$"],
-          "say": "尾巴趨近零，剩二分之一乘二分之三，和是四分之三。間隔 k，就留頭 k 項、尾 k 項。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$s_N=\\frac{1}{2}\\left(\\frac{3}{2}-\\frac{1}{N}-\\frac{1}{N+1}\\right)$","on":"尾巴"},
-            {"do":"write","line":"$\\frac{1}{2}\\cdot\\frac{3}{2}$","on":"二分之三"},
-            {"do":"write","line":"間隔 $k$：頭 $k$ 項、尾 $k$ 項","on":"間隔 k"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{(2n-1)(2n+1)}=$？"
+          ],
+          "say": "試一題。"
+        }
       ],
-      "key": "間隔 2：頭留兩項、尾也留兩項",
       "check": 0
     },
     {
-      "title": "會消，卻發散",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\sum\\ln\\frac{n}{n+1}$"],
-          "note": "$\\ln n-\\ln(n+1)$：望遠鏡形式。",
-          "say": "自然對數 n 除以 n 加一，拆成相鄰兩項的差，也是望遠鏡。",
+        {
+          "show": [
+            "根號：先有理化",
+            "$\\frac1{\\sqrt{n+1}+\\sqrt n}=\\frac{\\sqrt{n+1}-\\sqrt n}{(n+1)-n}=\\sqrt{n+1}-\\sqrt n$"
+          ],
+          "say": "有根號的時候，先有理化。分子分母乘上共軛，分母變成 n 加 1 減 n，等於 1。這一項就是根號 n 加 1 減根號 n，又是一個差。",
           "board": [
-            {"do":"write","line":"$\\ln\\frac{n}{n+1}={{r:\\ln n-\\ln(n+1)}}$"},
-            {"do":"underline","term":"r","label":"望遠鏡","on":"相鄰兩項"}
-          ] },
-        { "show": ["$s_n=-\\ln(n+1)\\to-\\infty$"],
-          "note": "$\\ln 1=0$，尾巴不會消失。",
-          "say": "頭是自然對數一，等於零；尾巴是負的自然對數 n 加一，一路往負無限大跑。發散。",
+            {
+              "do": "write",
+              "line": "根號：先有理化"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{\\sqrt{n+1}+\\sqrt n}=\\frac{\\sqrt{n+1}-\\sqrt n}{(n+1)-n}=\\sqrt{n+1}-\\sqrt n$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_N=(\\sqrt2-1)+(\\sqrt3-\\sqrt2)+\\cdots+(\\sqrt{N+1}-\\sqrt N)$",
+            "$=\\sqrt{N+1}-1$"
+          ],
+          "say": "前 N 項的部分和，中間一樣消光，剩下根號 N 加 1 減 1。這個例子先記著，第 4 段會回來看它收不收斂。",
           "board": [
-            {"do":"write","line":"$s_n={{h:\\ln 1}}-{{t:\\ln(n+1)}}$"},
-            {"do":"focus","term":"h","color":"blue","on":"自然對數一"},
-            {"do":"write","line":"$s_n=-\\ln(n+1)\\to-\\infty$","on":"尾巴是"},
-            {"do":"focus","term":"t","color":"violet","on":"一路往"}
-          ] },
-        { "show": ["各項趨近 0，部分和卻一路下掉"],
-          "say": "畫出部分和：每一項都在變小，趨近零，可是部分和一路往下掉，沒有停。趨近零只是必要，不夠。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=(\\sqrt2-1)+(\\sqrt3-\\sqrt2)+\\cdots+(\\sqrt{N+1}-\\sqrt N)$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\sqrt{N+1}-1}}$",
+              "on": "樣消"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "這個"
+            },
+            {
+              "do": "write",
+              "line": "　這裡的差是「後減前」：$b_{n+1}-b_n$，消法一樣",
+              "color": "violet",
+              "on": "段會"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "間隔不是 1",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\sum_{n=2}^{\\infty}\\frac12\\Big(\\frac1{n-1}-\\frac1{n+1}\\Big)$"
+          ],
+          "say": "再一個：n 平方減 1 分之 1，n 從 2 開始。部分分式拆成 2 分之 1，乘上 n 減 1 分之 1，減 n 加 1 分之 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[0,10,-4,1],"curves":[{"expr":"-log(x+1)","domain":[0,10],"color":"violet"}]},"on":"趨近#1"},
-            {"do":"write","line":"各項趨近 0，只是必要條件","on":"只是必要"}
-          ] },
-        { "show": ["一定要先寫 $s_n$，再取極限"],
-          "note": "各項 $\\to 0$ 也救不了它。",
-          "say": "各項明明趨近零，級數照樣發散。所以一定在有限的部分和裡消項，最後才取極限。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\sum_{n=2}^{\\infty}\\frac12\\Big(\\frac1{n-1}-\\frac1{n+1}\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這次兩項差 2：$\\frac1{n-1}$ 要等兩項後才被消掉"
+          ],
+          "say": "注意，這次兩個分母差 2，不是差 1。所以要等兩項之後，才有人來消它。",
           "board": [
-            {"do":"write","line":"在 ${{s:s_n}}$ 裡消項，最後才取極限"},
-            {"do":"underline","term":"s","label":"有限","on":"有限的"}
-          ] },
-        { "show": ["有限：先取 $n=3$"],
-          "say": "有限的意思：先取 n 等於三，三個括號相加，中間抵消，剩下負的自然對數四。最後才讓 n 變大。",
+            {
+              "do": "write",
+              "line": "這次兩項差 2：$\\frac1{n-1}$ 要等兩項後才被消掉",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}n=2&:\\ 1-\\tfrac13\\\\n=3&:\\ \\tfrac12-\\tfrac14\\\\n=4&:\\ \\tfrac13-\\tfrac15\\\\n=5&:\\ \\tfrac14-\\tfrac16\\\\&\\ \\ \\vdots\\end{aligned}$"
+          ],
+          "say": "一行一行寫。第三行的 3 分之 1，跟第一行的消掉；第四行的 4 分之 1，跟第二行的消掉。每一個都隔兩行才消。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(\\ln1-\\ln2)+(\\ln2-\\ln3)+(\\ln3-\\ln4)$","on":"三個"},
-            {"do":"write","line":"$=-\\ln 4$","on":"剩下"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}n=2&:\\ 1-\\tfrac13\\\\n=3&:\\ \\tfrac12-\\tfrac14\\\\n=4&:\\ \\tfrac13-\\tfrac15\\\\n=5&:\\ \\tfrac14-\\tfrac16\\\\&\\ \\ \\vdots\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前面留下 2 項：$1+\\frac12$",
+            "後面留下 2 項：$-\\frac1N-\\frac1{N+1}$"
+          ],
+          "say": "一直消下去，前面留下兩項：1 和 2 分之 1，沒有人來消；後面也留下兩項：負 N 分之 1 和負 N 加 1 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前面留下 2 項：$1+\\frac12$"
+            },
+            {
+              "do": "write",
+              "line": "後面留下 2 項：$-\\frac1N-\\frac1{N+1}$",
+              "on": "後面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_N=\\frac12\\Big(1+\\frac12-\\frac1N-\\frac1{N+1}\\Big)$"
+          ],
+          "say": "所以部分和是 2 分之 1，乘上 1 加 2 分之 1，減 N 分之 1，減 N 加 1 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=\\frac12\\Big(1+\\frac12-\\frac1N-\\frac1{N+1}\\Big)$"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$N=5$：$\\frac13+\\frac18+\\frac1{15}+\\frac1{24}=\\frac{17}{30}=\\frac12\\big(\\frac32-\\frac15-\\frac16\\big)$",
+              "color": "violet",
+              "on": "分之#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\frac12\\cdot\\frac32=\\frac34$"
+          ],
+          "say": "取極限，尾巴的兩項都趨近 0，和是 2 分之 1 乘 2 分之 3，等於 4 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\sum_{n=2}^{\\infty}\\frac1{n^2-1}=\\frac12\\cdot\\frac32=\\frac34}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "間隔 $k$：留 $k$ 項",
+      "beats": [
+        {
+          "show": [
+            "$a_n=b_n-b_{n+k}$：",
+            "$s_N=(b_1+\\cdots+b_k)-(b_{N+1}+\\cdots+b_{N+k})$"
+          ],
+          "say": "一般的規則：如果差的間隔是 k，前面會留下 k 項，後面也會留下 k 項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n=b_n-b_{n+k}$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle s_N=(b_1+\\cdots+b_k)-(b_{N+1}+\\cdots+b_{N+k})}}$",
+              "on": "的間"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "會留#1"
+            },
+            {
+              "do": "write",
+              "line": "　這裡 $n$ 從 $1$ 開始；從別的指標開始，頭的 $k$ 項就從那裡數",
+              "color": "violet",
+              "on": "面也"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不確定就寫出來：寫 $4$、$5$ 行就看得出誰消誰"
+          ],
+          "say": "不確定留幾項，最可靠的方法就是把前四、五行寫出來，看誰跟誰消。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不確定就寫出來：寫 $4$、$5$ 行就看得出誰消誰"
+            }
+          ]
+        }
       ],
       "check": 1
+    },
+    {
+      "title": "一定要經過部分和",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\ln\\frac{n}{n+1}\\ \\text{收斂嗎？}$"
+          ],
+          "say": "最後一段，一個陷阱。自然對數 n 加 1 分之 n，收斂嗎？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\ln\\frac{n}{n+1}\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\ln\\frac{n}{n+1}=\\ln n-\\ln(n+1)$"
+          ],
+          "say": "對數的商可以拆成差：自然對數 n，減自然對數 n 加 1。又是望遠鏡。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\ln\\frac{n}{n+1}=\\ln n-\\ln(n+1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_N=\\ln1-\\ln(N+1)=-\\ln(N+1)$"
+          ],
+          "say": "中間全部消掉，剩下自然對數 1 減自然對數 N 加 1。自然對數 1 是 0，所以部分和是負的自然對數 N 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_N=\\ln1-\\ln(N+1)=-\\ln(N+1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$-\\ln(N+1)\\to-\\infty\\quad\\Rightarrow\\quad\\text{發散}$"
+          ],
+          "say": "N 越來越大，這個值衝到負無限大，所以級數發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle -\\ln(N+1)\\to-\\infty\\quad\\Rightarrow\\quad\\text{發散}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "負無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "錯的想法：「中間都消掉了，和就是頭的 $\\ln1=0$」"
+          ],
+          "say": "錯的想法是：中間都消掉了，所以和就是頭的那一項，0。這忽略了尾巴。",
+          "board": [
+            {
+              "do": "write",
+              "line": "錯的想法：「中間都消掉了，和就是頭的 $\\ln1=0$」",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　尾巴 $b_{N+1}=\\ln(N+1)$ 沒有極限，不會消失",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "會相消 ≠ 會收斂：相消之後還要取極限"
+          ],
+          "say": "會相消，不代表會收斂。相消完一定要回到部分和，取極限，看尾巴有沒有趨近一個數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "會相消 ≠ 會收斂：相消之後還要取極限",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "回到根號的例子：$\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{\\sqrt{n+1}+\\sqrt n}$ 呢？"
+          ],
+          "say": "回到剛才根號的例子，它收斂嗎？"
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用望遠鏡求 $\\sum a_n$"
+          ],
+          "say": "排排看完整的步驟。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "用望遠鏡求 $\\sum a_n$",
+        "steps": [
+          {
+            "label": "把 $a_n$ 拆成 $b_n-b_{n+k}$（部分分式、對數、有理化）"
+          },
+          {
+            "label": "寫出前幾行，看出誰跟誰消",
+            "why": "先要有上一步：把 $a_n$ 拆成 $b_n-b_{n+k}$（部分分式、對數、有理化）"
+          },
+          {
+            "label": "寫出部分和 $s_N$：頭留 $k$ 項、尾留 $k$ 項",
+            "why": "先要有上一步：寫出前幾行，看出誰跟誰消"
+          },
+          {
+            "label": "取 $N\\to\\infty$ 的極限；尾巴沒有極限就發散",
+            "why": "先要有上一步：寫出部分和 $s_N$：頭留 $k$ 項、尾留 $k$ 項"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $a_n=b_n-b_{n+1}$ ⇒ $s_N=b_1-b_{N+1}$",
+            "• 拆法：部分分式、$\\ln$ 的商、根號有理化"
+          ],
+          "say": "整理一下：拆成差，部分和只剩頭尾。間隔是 k，就留 k 項。最後一定要取極限：尾巴有極限才收斂，像自然對數的例子，會消但發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $a_n=b_n-b_{n+1}$ ⇒ $s_N=b_1-b_{N+1}$"
+            },
+            {
+              "do": "write",
+              "line": "• 拆法：部分分式、$\\ln$ 的商、根號有理化",
+              "on": "只剩"
+            },
+            {
+              "do": "write",
+              "line": "• 間隔 $k$：頭留 $k$ 項、尾留 $k$ 項（不確定就寫出來）",
+              "on": "最後"
+            },
+            {
+              "do": "write",
+              "line": "• 和 $=$ 頭 $-$ 尾巴的極限；尾巴沒有極限就發散",
+              "on": "尾巴"
+            },
+            {
+              "do": "write",
+              "line": "• $\\sum\\frac1{n(n+1)}=1$，$\\sum\\frac1{n^2-1}=\\frac34$，$\\sum\\ln\\frac n{n+1}$ 發散",
+              "on": "然對"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：發散判別"
+          ],
+          "say": "下一課，學第一個判斷收斂的工具：發散判別法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：發散判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {

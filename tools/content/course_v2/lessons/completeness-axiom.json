@@ -1,56 +1,136 @@
 {
   "id": "completeness-axiom",
   "title": "完備性公理",
-  "readMinutes": 12,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 32,
-  "prerequisites": ["sup-inf"],
-  "next": ["archimedean-property"],
-  "related": ["contradiction", "monotone-convergence-proof", "cauchy-sequence", "bolzano-weierstrass"],
-  "objectives": [
-    "寫出完備性公理：$\\mathbb{R}$ 的每個非空、有上界的子集都有上確界，而且上確界是實數。",
-    "說明 $\\mathbb{Q}$ 為什麼不滿足這條公理，並說得出「非空」「有上界」各自為什麼不能拿掉。",
-    "由上確界的版本推出下確界的版本。"
+  "prerequisites": [
+    "sup-inf"
   ],
-  "visual": "數線上只畫有理數（點很密但有縫）。集合 {x ∈ ℚ : x² < 2} 從左邊塗滿，往右逼近 √2 的位置；在 ℚ 的數線上，那個位置是一個空洞，任何有理數上界都可以再往左挪一點。切換到 ℝ，空洞被 √2 填上，成為上確界。",
+  "next": [
+    "archimedean-property"
+  ],
+  "related": [
+    "contradiction",
+    "monotone-convergence-proof",
+    "cauchy-sequence",
+    "bolzano-weierstrass"
+  ],
+  "objectives": [
+    "寫出完備性公理：$\\mathbb{R}$ 的每個非空、有上界的子集都有上確界，而且上確界是實數",
+    "說明 $\\mathbb{Q}$ 為什麼不滿足這條公理，並說得出「非空」「有上界」各自為什麼不能拿掉",
+    "由上確界的版本推出下確界的版本"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 有理數有洞",
       "body": [
-        "有理數很密：任兩個有理數之間還有有理數。但它有洞：$\\{x\\in\\mathbb{Q}:x^2<2\\}$ 在 $\\mathbb{Q}$ 裡有上界（例如 2），卻找不到最小的上界——任何有理數上界都可以再往左挪（範例 2）。最小的上界本來應該是 $\\sqrt{2}$，但 $\\sqrt{2}$ 不是有理數（〈反證法〉）。",
-        "微積分裡「數列往某處擠，那個地方就是極限」的直覺，正是依賴「沒有洞」。實數就是把這些洞補起來的數系，而「沒有洞」寫成精確的語言，就是完備性公理。"
+        "上確界一定存在嗎？先在 $\\mathbb{Q}$ 裡看：",
+        "在 $\\mathbb{Q}$ 裡：上界越找越小，沒有最小的",
+        "$\\mathbb{Q}$ 跟 $\\mathbb{R}$ 一樣能加減乘除、比大小；差別只在有沒有洞"
       ],
-      "collapsible": false
+      "tex": [
+        "S=\\{x\\in\\mathbb{Q}:\\ x^2<2\\}"
+      ]
+    },
+    {
+      "heading": "① 證明：ℚ 裡沒有最小上界",
+      "body": [
+        "策略：任給有理數 $s$，造一個往 $\\sqrt2$ 走一步的有理數",
+        "直接通分可以驗證：",
+        "$s>0$ 時分母都是正的，所以正負號由 $2-s^2$ 決定"
+      ],
+      "tex": [
+        "t=\\frac{2s+2}{s+2}",
+        "t-s=\\frac{2-s^2}{s+2},\\qquad t^2-2=\\frac{2(s^2-2)}{(s+2)^2}"
+      ]
+    },
+    {
+      "heading": "① 證明（續）",
+      "body": [
+        "設 $s\\in\\mathbb{Q}$ 是 $S$ 的上界。$1\\in S$ ⇒ $s\\ge1>0$；$\\sqrt2\\notin\\mathbb{Q}$ ⇒ $s^2\\ne2$",
+        "情況 $s^2<2$：$t>s$、$t^2<2$、$t\\in\\mathbb{Q}$ ⇒ $t\\in S$ 且 $t>s$",
+        "$s$ 根本不是上界，矛盾",
+        "情況 $s^2>2$：$0<t<s$、$t^2>2$",
+        "$t$ 是上界：若 $x\\in S$ 且 $x>t$，則 $x^2>t^2>2$，矛盾",
+        "$t$ 是更小的有理上界，所以 $s$ 不是最小的　$\\blacksquare$"
+      ]
     },
     {
       "heading": "② 公理",
       "body": [
-        "$\\mathbb{R}$ 的每一個非空、有上界的子集 $S$，都有上確界 $\\sup S$，而且 $\\sup S\\in\\mathbb{R}$。",
-        "這是公理，不是定理：它跟加減乘除、大小順序的規則一起，刻畫出實數。$\\mathbb{Q}$ 滿足其他所有規則，唯獨不滿足這一條。"
-      ],
-      "tex": ["\\varnothing\\ne S\\subseteq\\mathbb{R},\\ S\\text{ 有上界}\\ \\Longrightarrow\\ \\sup S\\text{ 存在且}\\in\\mathbb{R}"],
-      "collapsible": false
+        "完備性公理：$\\mathbb{R}$ 的每一個非空、有上界的子集 $S$，都有上確界，而且 $\\sup S\\in\\mathbb{R}$",
+        "也叫「最小上界性質」",
+        "它是公理：我們對 $\\mathbb{R}$ 的要求，不是定理",
+        "要從 $\\mathbb{Q}$ 造出 $\\mathbb{R}$ 再證明它，要用戴德金分割或柯西數列，超出這一章",
+        "放回 $\\mathbb{R}$：$S=\\{x\\in\\mathbb{Q}:x^2<2\\}$ 的上確界存在，就是 $\\sqrt2$",
+        "公理只說存在，不告訴你是多少"
+      ]
     },
     {
       "heading": "③ 兩個條件都不能拿掉",
       "body": [
-        "非空：空集合沒有元素，每個實數都是它的上界，上界裡沒有最小的。",
-        "有上界：$\\mathbb{N}$ 沒有上界（〈阿基米德性質〉），自然不會有最小上界。習慣上寫 $\\sup\\mathbb{N}=\\infty$，但 $\\infty$ 不是實數。"
-      ],
-      "collapsible": false
+        "拿掉「非空」：$S=\\varnothing$",
+        "每個 $u\\in\\mathbb{R}$ 都是上界（$\\forall x\\in\\varnothing,\\ x\\le u$ 自動成立）",
+        "上界們 $=\\mathbb{R}$，沒有最小的 ⇒ $\\sup\\varnothing$ 不存在",
+        "拿掉「有上界」：$S=\\mathbb{N}$",
+        "$\\sup$ 必須是上界；$\\mathbb{N}$ 沒有上界，所以沒有 $\\sup$",
+        "$\\mathbb{N}$ 沒有上界，下一課用完備性公理證明"
+      ]
     },
     {
-      "heading": "④ 公理怎麼用",
+      "heading": "④ 公理怎麼用：下確界",
       "body": [
-        "要證明「某個數存在」（$\\sqrt{2}$、數列的極限、函數取到最大值的那個點），標準手法是三步：先造一個集合，讓你要的數「應該是它的上確界」；再檢查這個集合非空、有上界，由公理得到 $s=\\sup S$；最後用上確界的兩個條件——$s$ 是上界，而且任何比 $s$ 小的數都不是上界——證明 $s$ 就是你要的那個數。範例 2 的論證，在 $\\mathbb{R}$ 裡就是這樣證出 $\\sqrt{2}$ 存在的。"
+        "定理：$S$ 非空、有下界 ⇒ $\\inf S$ 存在，而且",
+        "其中 $-S=\\{-x:x\\in S\\}$。策略：照鏡子，下界變上界",
+        "證明：$-S$ 非空。設 $\\ell$ 是 $S$ 的下界：",
+        "所以 $-\\ell$ 是 $-S$ 的上界。由公理，$s=\\sup(-S)$ 存在",
+        "接著驗 $-s$ 是 $\\inf S$ 的兩個條件"
       ],
-      "collapsible": false
+      "tex": [
+        "\\inf S=-\\sup(-S)",
+        "x\\in S\\ \\Rightarrow\\ x\\ge\\ell\\ \\Rightarrow\\ -x\\le-\\ell"
+      ]
     },
     {
-      "heading": "預告：完備性有很多張臉",
+      "heading": "④ 證明（續）",
       "body": [
-        "在 $\\mathbb{R}$ 上，下面幾句互相等價，任何一句都可以當作完備性公理：最小上界性質（本課）；有界單調數列收斂（〈單調收斂定理（嚴格版）〉）；Cauchy 數列收斂（〈Cauchy 數列〉，需再加上阿基米德性質）；有界數列有收斂子數列（〈Bolzano–Weierstrass〉）。這一章接下來的定理，全部都是從本課這條公理推出來的。"
+        "(i) $-s$ 是下界：$x\\in S$ ⇒ $-x\\in-S$ ⇒ $-x\\le s$ ⇒ $x\\ge-s$",
+        "(ii) 最大：$\\ell$ 是 $S$ 的任一下界 ⇒ $-\\ell$ 是 $-S$ 的上界",
+        "所以 $\\inf S=-s=-\\sup(-S)$　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\Rightarrow\\ s\\le-\\ell\\ \\Rightarrow\\ \\ell\\le-s"
+      ]
+    },
+    {
+      "heading": "④ 例：ℝ 裡的上確界",
+      "body": [
+        "$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$ 看成 $\\mathbb{R}$ 的子集",
+        "• 非空：$0\\in S$",
+        "• 有上界 $2$：$x\\ge2$ ⇒ $x^2\\ge4>3$",
+        "由公理，$s=\\sup S\\in\\mathbb{R}$ 存在，$s\\ge1>0$",
+        "同樣的一步：$t=\\dfrac{3s+3}{s+3}$，",
+        "• $s^2>3$：$t<s$ 且 $t^2>3$，$t$ 是更小的上界，矛盾",
+        "• $s^2<3$：$t>s$、$t^2<3$；取有理數 $q\\in(s,t)$，則 $q\\in S$、$q>s$，矛盾",
+        "「兩個實數之間有有理數」：下一課的稠密性",
+        "所以 $s^2=3$：$\\sqrt3$ 在 $\\mathbb{R}$ 裡存在"
+      ],
+      "tex": [
+        "t-s=\\frac{3-s^2}{s+3},\\qquad t^2-3=\\frac{6(s^2-3)}{(s+3)^2}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\mathbb{Q}$ 有洞：$\\{x\\in\\mathbb{Q}:x^2<2\\}$ 沒有有理的最小上界",
+        "• 完備性公理：非空、有上界 ⇒ $\\sup S$ 存在於 $\\mathbb{R}$",
+        "• 兩個條件缺一不可：$\\varnothing$、$\\mathbb{N}$",
+        "• 下確界：$\\inf S=-\\sup(-S)$",
+        "• 預告：完備性有很多張臉——單調有界數列收斂、區間套、波爾查諾–魏爾斯特拉斯、柯西數列收斂",
+        "下一課：完備性的第一個推論，阿基米德性質"
+      ]
     }
   ],
   "workedExamples": [
@@ -100,35 +180,24 @@
   ],
   "checks": [
     {
-      "ask": "完備性公理保證哪一種集合有上確界？",
+      "ask": "完備性公理保證下面哪一個集合在 $\\mathbb{R}$ 裡有上確界？",
       "options": [
-        { "label": "$\\mathbb{R}$ 的非空、有上界的子集", "correct": true },
-        { "label": "$\\mathbb{R}$ 的任何子集", "why": "空集合與 $\\mathbb{N}$ 都沒有實數上確界；兩個條件缺一不可。" },
-        { "label": "$\\mathbb{R}$ 的有限子集", "why": "有限集合本來就有最大元，不需要公理；公理的威力在無限集合。" }
-      ]
-    },
-    {
-      "ask": "為什麼 $\\mathbb{Q}$ 不滿足完備性？",
-      "options": [
-        { "label": "$\\{x\\in\\mathbb{Q}:x^2<2\\}$ 非空、有上界，卻沒有有理數最小上界", "correct": true },
-        { "label": "因為 $\\mathbb{Q}$ 沒有上界", "why": "$\\mathbb{R}$ 也沒有上界。公理講的是有上界的子集，跟整個數系有沒有上界無關。" },
-        { "label": "因為兩個有理數之間沒有有理數", "why": "剛好相反，有理數很密：$a$、$b$ 之間有 $\\frac{a+b}{2}$。$\\mathbb{Q}$ 的問題是有洞，不是不密。" }
-      ]
-    },
-    {
-      "ask": "$S$ 非空、有下界。$\\inf S$ 等於？",
-      "options": [
-        { "label": "$-\\sup(-S)$", "correct": true },
-        { "label": "$\\sup(-S)$", "why": "少了一個負號。$-S$ 的最小上界是 $S$ 的最大下界再取負。" },
-        { "label": "$-\\inf(-S)$", "why": "$-S$ 的下確界對應的是 $S$ 的上確界：$-\\inf(-S)=\\sup S$。" }
-      ]
-    },
-    {
-      "ask": "$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$，$\\sup S$ 是？",
-      "options": [
-        { "label": "$\\sqrt{3}$", "correct": true },
-        { "label": "不存在，因為 $\\sqrt{3}$ 不是有理數", "why": "這裡把 $S$ 看成 $\\mathbb{R}$ 的子集，上確界可以是無理數；只有限定在 $\\mathbb{Q}$ 裡找時才不存在。" },
-        { "label": "1.73", "why": "$1.73\\in S$ 但 1.731 也在 $S$ 裡，1.73 連上界都不是。" }
+        {
+          "label": "$\\{x\\in\\mathbb{R}:x^2<5\\}$",
+          "correct": true
+        },
+        {
+          "label": "$\\varnothing$",
+          "why": "空集合：每個實數都是上界，沒有最小的"
+        },
+        {
+          "label": "$\\{x\\in\\mathbb{R}:x>0\\}$",
+          "why": "沒有上界"
+        },
+        {
+          "label": "$\\{n^2:n\\in\\mathbb{N}\\}$",
+          "why": "沒有上界（12.7 證過）"
+        }
       ]
     }
   ],
@@ -136,245 +205,677 @@
     {
       "title": "有理數有洞",
       "beats": [
-        { "show": ["有理數很密"],
-          "note": "任兩個有理數之間還有有理數。",
-          "say": "有理數很密，任兩個之間都還塞得下有理數。可是密，不代表沒有洞。",
+        {
+          "show": [
+            "上確界一定存在嗎？先在 $\\mathbb{Q}$ 裡看：",
+            "$S=\\{x\\in\\mathbb{Q}:\\ x^2<2\\}$"
+          ],
+          "say": "上一課的上確界，一定存在嗎？先只用有理數看看。S 是平方小於 2 的有理數。",
           "board": [
-            {"do":"write","line":"有理數很密：$\\frac{a+b}{2}$ 在 $a$、$b$ 之間"},
-            {"do":"write","line":"密 ≠ 沒有洞","color":"gold","on":"不代表"}
-          ] },
-        { "show": ["$\\{x\\in\\mathbb{Q}:x^2<2\\}$：上界 2"],
-          "note": "卻找不到最小的有理數上界。",
-          "say": "看平方小於二的有理數。二是一個上界，可是在有理數裡，找不到最小的上界。",
+            {
+              "do": "write",
+              "line": "上確界一定存在嗎？先在 $\\mathbb{Q}$ 裡看："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle S=\\{x\\in\\mathbb{Q}:\\ x^2<2\\}$",
+              "on": "數看"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "S 往右一直擠向根號 2。有理數的上界有 1.5、1.45、1.43，越來越小，可以一直逼近根號 2。但根號 2 不是有理數，那個位置是一個洞。",
           "board": [
-            {"do":"write","line":"$S=\\{x\\in\\mathbb{Q}:x^2<2\\}$"},
-            {"do":"write","line":"${{u:2}}$ 是上界，找不到最小的","on":"二是"},
-            {"do":"circle","term":"u","on":"找不到"}
-          ] },
-        { "show": ["該是 $\\sqrt{2}$，但它不是有理數"],
-          "say": "最小的上界本來應該是根號二，偏偏它不是有理數。那個位置在有理數線上是個洞。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cq-hole\" viewBox=\"0 0 640 160\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bcq-holeink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bcq-holeblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bcq-holered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bcq-holegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bcq-holepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"78\" x2=\"626\" y2=\"78\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bcq-holeink)\"/><line x1=\"40\" y1=\"78\" x2=\"426.6\" y2=\"78\" stroke=\"var(--blue)\" stroke-width=\"4\" stroke-linecap=\"butt\" stroke-dasharray=\"7 5\"/><line x1=\"40\" y1=\"72\" x2=\"40\" y2=\"84\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"40\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1</tspan></text><line x1=\"506.7\" y1=\"72\" x2=\"506.7\" y2=\"84\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"506.7\" y=\"114\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">1.5</tspan></text><circle cx=\"506.7\" cy=\"78\" r=\"6\" fill=\"var(--green)\"/><circle cx=\"460\" cy=\"78\" r=\"6\" fill=\"var(--green)\"/><circle cx=\"441.3\" cy=\"78\" r=\"6\" fill=\"var(--green)\"/><circle cx=\"426.6\" cy=\"78\" r=\"7\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"426.6\" y=\"54\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">√2 ∉ ℚ</tspan><tspan style=\"font-family:inherit\">：洞</tspan></text><text x=\"226.7\" y=\"54\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan><tspan style=\"font-family:inherit\">（有理數）</tspan></text><text x=\"413.3\" y=\"150\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--green)\"><tspan style=\"font-family:inherit\">有理數上界：</tspan><tspan style=\"font-family:KaTeX_Main,serif\">1.5</tspan><tspan style=\"font-family:inherit\">、</tspan><tspan style=\"font-family:KaTeX_Main,serif\">1.4</tspan><tspan style=\"font-family:inherit\">、</tspan><tspan style=\"font-family:KaTeX_Main,serif\">1.4</tspan><tspan style=\"font-family:inherit\">、</tspan><tspan style=\"font-family:KaTeX_Main,serif\">…</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 $\\mathbb{Q}$ 裡：上界越找越小，沒有最小的"
+          ],
+          "say": "所以只看有理數的話，上界可以越找越小，卻沒有最小的那個。有理數裡，S 沒有上確界。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"最小上界該是 $\\sqrt{2}$","on":"最小的上界"},
-            {"do":"write","line":"${{r:\\sqrt{2}}}\\notin\\mathbb{Q}$","on":"偏偏"},
-            {"do":"underline","term":"r","label":"洞","on":"那個位置"}
-          ] },
-        { "show": ["$x^2<2$ 的那一段，往右擠向 $\\sqrt{2}$"],
-          "say": "畫成圖：x 平方低於二的那一段，往右擠向根號二，那一點就是洞。",
+            {
+              "do": "write",
+              "line": "在 $\\mathbb{Q}$ 裡：上界越找越小，沒有最小的",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbb{Q}$ 跟 $\\mathbb{R}$ 一樣能加減乘除、比大小；差別只在有沒有洞"
+          ],
+          "say": "有理數跟實數一樣，可以加減乘除、可以比大小。兩者真正的差別，就在有沒有洞。",
           "board": [
-            {"do":"plot","graph":{"window":[0,2,0,3],"curves":[{"expr":"x^2","domain":[0,2],"color":"blue"}],"dashed":[[[0,2],[2,2]],[[1.4142,0],[1.4142,2]]],"points":[{"x":1.4142,"y":2,"open":true}],"labels":[{"x":1.5,"y":0.3,"text":"√2","anchor":"start"}]}}
-          ] },
-        { "show": ["實數 = 把洞補起來"],
-          "note": "「沒有洞」寫成精確的話，就是完備性公理。",
-          "say": "數列往某處擠、那裡就是極限，這個直覺靠的就是沒有洞。實數就是把洞補起來的數系。",
-          "board": [
-            {"do":"write","line":"數列擠向某處 ⇒ 極限在那裡"},
-            {"do":"write","line":"實數 ＝ 把洞補起來的數系","color":"green","on":"實數就是"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\mathbb{Q}$ 跟 $\\mathbb{R}$ 一樣能加減乘除、比大小；差別只在有沒有洞"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "公理",
-      "beats": [
-        { "show": ["非空、有上界的 $S\\subseteq\\mathbb{R}$","⇒ $\\sup S$ 存在且在 $\\mathbb{R}$ 裡"],
-          "say": "完備性公理：實數裡每一個非空、有上界的集合，都有上確界，而且上確界是實數。",
-          "board": [
-            {"do":"write","line":"$S\\subseteq\\mathbb{R}$，非空、有上界"},
-            {"do":"write","line":"⇒ ${{b:\\sup S}}\\in\\mathbb{R}$ 存在","on":"都有上確界"},
-            {"do":"box","term":"b","color":"green","on":"而且"}
-          ] },
-        { "show": ["是公理，不是定理"],
-          "note": "$\\mathbb{Q}$ 滿足其他規則，唯獨不滿足這一條。",
-          "say": "這一條不是證出來的，是拿來刻畫實數的規則。有理數其他規則都滿足，就差這一條。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"公理：規定，不是證明","on":"不是證出來"},
-            {"do":"write","line":"$\\mathbb{Q}$：其他規則都滿足，缺這一條","on":"有理數其他規則"}
-          ] },
-        { "show": ["非空：空集合每個數都是上界"],
-          "say": "兩個條件都不能拿掉。空集合沒有元素，每個實數都是它的上界，上界裡沒有最小的。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"非空：空集合的上界 ＝ 所有實數","on":"空集合"},
-            {"do":"write","line":"上界裡沒有最小的","on":"上界裡"}
-          ] },
-        { "show": ["有上界：$\\mathbb{N}$ 沒有上界"],
-          "note": "$\\sup\\mathbb{N}=\\infty$ 只是記號，$\\infty$ 不是實數。",
-          "say": "自然數沒有上界，當然也沒有最小上界。寫上確界等於無限大，只是記號。",
-          "board": [
-            {"do":"write","line":"有上界：$\\mathbb{N}$ 沒有上界"},
-            {"do":"write","line":"$\\sup\\mathbb{N}={{i:\\infty}}$ 只是記號","on":"寫上確界"},
-            {"do":"underline","term":"i","label":"不是實數","on":"無限大"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "下確界也存在",
-      "beats": [
-        { "show": ["$S$ 有下界 $m$ ⇒ $-S$ 有上界 $-m$"],
-          "note": "$-S=\\{-x:x\\in S\\}$。",
-          "say": "下確界不用另外一條公理。把集合每個數取負號，下界就翻成上界。",
-          "board": [
-            {"do":"write","line":"$-S=\\{-x:x\\in S\\}$"},
-            {"do":"write","line":"$S$ 有下界 $m$ ⇒ $-S$ 有上界 $-m$","on":"就翻成"}
-          ] },
-        { "show": ["$s=\\sup(-S)$ 存在"],
-          "note": "由完備性公理。",
-          "say": "翻過去的集合非空、有上界，公理給我們它的上確界 s。",
-          "board": [
-            {"do":"write","line":"${{s:s}}=\\sup(-S)$ 存在","tint":{"s":"violet"}},
-            {"do":"focus","term":"s","color":"violet","label":"公理給的","on":"公理"}
-          ] },
-        { "show": ["$-s$ 是 $S$ 最大的下界"],
-          "say": "再翻回來：負 s 是原集合的下界，而且任何下界都不比它大。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{n:-s}}$ 是 $S$ 的下界","on":"負 s"},
-            {"do":"write","line":"任何下界 $\\le -s$","on":"而且"},
-            {"do":"box","term":"n","color":"green","label":"最大下界","on":"任何下界"}
-          ] },
-        { "show": ["$m$ 是 $S$ 的下界 ⇒ $-m$ 是 $-S$ 的上界","$-m\\ge s$，即 $m\\le-s$"],
-          "note": "$s$ 是 $-S$ 的最小上界。",
-          "say": "任取 S 的下界 m，負 m 是翻過去集合的上界。s 是最小上界，所以負 m 大於等於 s，m 就小於等於負 s。",
-          "board": [
-            {"do":"write","line":"$m$ 是 $S$ 的下界 ⇒ $-m$ 是 $-S$ 的上界"},
-            {"do":"write","line":"$-m\\ge s$，即 $m\\le-s$","on":"所以"}
-          ] },
-        { "show": ["例：$\\inf\\{\\frac{1}{n}\\}=-\\sup\\{-\\frac{1}{n}\\}=0$"],
-          "say": "例如 n 分之一的下確界：取負號之後上確界是零，翻回來還是零。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sup\\{-\\frac{1}{n}\\}=0$","on":"上確界是零"},
-            {"do":"write","line":"$\\inf\\{\\frac{1}{n}\\}=0$","color":"green","on":"翻回來"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：$\\mathbb{Q}$ 裡挪得動",
-      "beats": [
-        { "show": ["反設有理數 $s$ 是最小上界"],
-          "note": "$s^2=2$ 不可能，剩 $s^2<2$ 或 $s^2>2$。",
-          "say": "策略：反證。設有理數 s 是最小上界，它的平方不會剛好是二。分小於二、大於二，各推出矛盾。",
-          "board": [
-            {"do":"write","line":"反設：有理數 ${{s:s}}=\\sup S$","tint":{"s":"violet"}},
-            {"do":"write","line":"$s^2\\ne 2$ ⇒ $s^2<2$ 或 $s^2>2$","on":"它的平方"}
-          ] },
-        { "show": ["$s^2<2$：取有理數 $0<h\\le\\frac{1}{2}$ 夠小","$(s+h)^2<s^2+h(2s+1)<2$"],
-          "note": "$h^2<h$，且 $h\\le\\frac{2-s^2}{2(2s+1)}$。",
-          "why": {"ask":"為什麼 $(s+h)^2<2$？","say":"平方小於二的情況：往右推 h，平方為什麼還小於二？","options":[{"label":"$h<1$ 讓 $h^2<h$，增加量被 $h$ 的上限管住","correct":true},{"label":"$h$ 很小，$(s+h)^2$ 幾乎等於 $s^2$","why":"幾乎等於不夠：要確定增加量小於 $2-s^2$，$h$ 得照這個差來挑。"},{"label":"$s+h$ 是有理數","why":"有理數只說它有資格進 $S$；進不進得去，要看平方是不是小於 2。"}]},
-          "say": "h 小於一，h 平方小於 h，平方的增加量小於 h 乘二 s 加一，h 又照差距挑過，所以還小於二。",
-          "board": [
-            {"do":"write","line":"$s^2<2$：取 $0<h\\le\\frac{1}{2}$ 夠小"},
-            {"do":"write","line":"$(s+h)^2<s^2+{{inc:h(2s+1)}}<2$","on":"平方為什麼"},
-            {"do":"underline","term":"inc","label":"h² < h","why":true,"on":"h 平方小於 h"}
-          ] },
-        { "show": ["$s+h\\in S$，而且 $s+h>s$"],
-          "say": "於是 s 加 h 在集合裡，又比 s 大，s 根本不是上界，矛盾。例如一點四零五，平方還小於二。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$s+h\\in S$，而且 $s+h>s$","on":"於是"},
-            {"do":"transform","line":"$s+h\\in S$，而且 $s+h>s$ ⇒ ${{s:s}}$ 不是上界","on":"根本不是"}
-          ] },
-        { "show": ["$s^2>2$：取 $h=\\frac{s^2-2}{2s}>0$","$(s-h)^2>s^2-2sh=2$"],
-          "note": "$S$ 的元素追不過 $s-h$。",
-          "why": {"ask":"為什麼 $s-h$ 還是上界？","say":"平方大於二的情況：往左挪到 s 減 h，為什麼還是上界？","options":[{"label":"$(s-h)^2>2$，比 $s-h$ 大的正數平方都 $>2$","correct":true},{"label":"$s-h<s$，而 $s$ 是上界","why":"比上界小的數不一定是上界；要另外說沒有元素超過它。"},{"label":"$h$ 很小，挪一點沒關係","why":"挪太多就不是上界了（像 $\\frac{4}{3}$）；要靠 $(s-h)^2>2$ 才說得準。"}]},
-          "say": "s 減 h 的平方大於二。集合裡的正數平方都小於二，不可能超過 s 減 h，所以它還是上界。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$s^2>2$：取 $h=\\frac{s^2-2}{2s}>0$","on":"平方大於二"},
-            {"do":"write","line":"${{sq:(s-h)^2}}>s^2-2sh=2$","on":"往左挪"},
-            {"do":"write","line":"$S$ 的元素追不過 ${{sm:s-h}}$","why":true,"on":"集合裡"}
-          ] },
-        { "show": ["$s-h=\\frac{s^2+2}{2s}>0$","$x\\in S,\\ x>s-h$ ⇒ $x^2>(s-h)^2>2$"],
-          "say": "s 減 h 是二 s 分之 s 平方加二，是正數，所以能平方。若 x 在集合裡又大於它，x 平方就大於二，矛盾。",
-          "board": [
-            {"do":"write","line":"$s-h=\\frac{s^2+2}{2s}>0$"},
-            {"do":"write","line":"$x\\in S,\\ x>s-h$ ⇒ $x^2>(s-h)^2>2$","on":"若 x"}
-          ] },
-        { "show": ["$s-h<s$ 是更小的上界：矛盾"],
-          "note": "兩種情況都矛盾。",
-          "say": "s 減 h 比 s 小，又是上界，s 就不是最小的，矛盾。兩種情況都矛盾，證完。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{sm:s-h}}<{{s:s}}$ 是更小的上界：矛盾","on":"又是上界"},
-            {"do":"write","line":"兩種情況都矛盾，證完","color":"green","on":"兩種情況"}
-          ] }
-      ],
-      "key": "往上或往下挪一點 $h$，打敗最小上界",
-      "proof": true,
-      "of": "ex1",
-      "skeleton": "反證",
       "predict": {
-        "ask": "$s=\\frac{3}{2}$ 可以往左挪到哪個更小的上界？",
+        "ask": "只在 $\\mathbb{Q}$ 裡找，$S=\\{x\\in\\mathbb{Q}:x^2<2\\}$ 有最小的上界嗎？",
         "options": [
           {
-            "label": "$\\frac{17}{12}$：$(\\frac{17}{12})^2\\approx2.0069>2$",
+            "label": "沒有",
             "correct": true
           },
           {
-            "label": "$\\frac{4}{3}$",
-            "why": "$(\\frac{4}{3})^2$ 小於 2，挪過頭了，$\\frac{4}{3}$ 已經不是上界。"
+            "label": "有，是 $1.415$",
+            "why": "$1.4143$ 也是上界（$1.4143^2\\approx2.00024$），而且更小"
           },
           {
-            "label": "$1.4$",
-            "why": "$1.4^2$ 小於 2，比它大的有理數還在集合裡，1.4 不是上界。"
+            "label": "有，是 $1.4142$",
+            "why": "$1.4142^2\\approx1.99996<2$：它屬於 $S$，連上界都不是"
+          },
+          {
+            "label": "有，是 $\\sqrt2$",
+            "why": "$\\sqrt2$ 不是有理數；只在 $\\mathbb{Q}$ 裡找就找不到它"
           }
         ]
       }
     },
     {
-      "title": "在 $\\mathbb{R}$ 裡就有",
+      "title": "證明：ℚ 裡沒有最小上界",
       "beats": [
-        { "show": ["$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$ 看成 $\\mathbb{R}$ 的子集"],
-          "say": "換一個：平方小於三的有理數，這次放在實數裡看。",
+        {
+          "show": [
+            "策略：任給有理數 $s$，造一個往 $\\sqrt2$ 走一步的有理數",
+            "$t=\\frac{2s+2}{s+2}$"
+          ],
+          "say": "現在嚴格證明。策略：任給一個有理數 s，造一個往根號 2 走一步的有理數 t，等於 s 加 2 分之 2s 加 2。",
           "board": [
-            {"do":"write","line":"$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$"},
-            {"do":"write","line":"看成 $\\mathbb{R}$ 的子集","on":"實數裡"}
-          ] },
-        { "show": ["非空（$0\\in S$）、有上界（2）"],
-          "note": "$x\\ge2$ 時 $x^2\\ge4>3$。",
-          "say": "零在裡面，二是上界，因為二的平方是四，比三大。公理保證上確界存在。",
+            {
+              "do": "write",
+              "line": "策略：任給有理數 $s$，造一個往 $\\sqrt2$ 走一步的有理數"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle t=\\frac{2s+2}{s+2}}}$",
+              "on": "造一"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直接通分可以驗證：",
+            "$t-s=\\frac{2-s^2}{s+2},\\qquad t^2-2=\\frac{2(s^2-2)}{(s+2)^2}$"
+          ],
+          "say": "通分可以驗證兩個式子：t 減 s，等於 s 加 2 分之 2 減 s 平方；t 平方減 2，等於 2 倍的 s 平方減 2，除以 s 加 2 的平方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$0\\in S$，上界 ${{u:2}}$：$2^2=4>3$","on":"零在裡面"},
-            {"do":"circle","term":"u","on":"二是上界"},
-            {"do":"write","line":"公理 ⇒ $\\sup S$ 存在","on":"公理保證"}
-          ] },
-        { "show": ["$1.73^2=2.9929<3$","$1.74^2=3.0276>3$"],
-          "say": "一點七三的平方比三小，一點七四的平方比三大。上確界夾在這中間，而且不必是有理數。",
+            {
+              "do": "write",
+              "line": "直接通分可以驗證："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle t-s=\\frac{2-s^2}{s+2},\\qquad t^2-2=\\frac{2(s^2-2)}{(s+2)^2}$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "意思是：s 平方小於 2，t 就在 s 右邊，平方仍小於 2；s 平方大於 2，t 就在 s 左邊，平方仍大於 2。t 更靠近根號 2，卻跨不過去。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1.73^2=2.9929<3$","on":"一點七三"},
-            {"do":"write","line":"$1.74^2=3.0276>3$","on":"一點七四"},
-            {"do":"write","line":"$1.73<\\sup S<1.74$","on":"夾在這中間"}
-          ] },
-        { "show": ["$1.73\\in S$ ⇒ $\\sup S\\ge1.73$","$x^2<3<1.74^2$ ⇒ 1.74 是上界"],
-          "note": "所以 $\\sup S\\le1.74$。",
-          "say": "一點七三在 S 裡，所以上確界不小於它。每個 x 平方小於三，比一點七四平方小，所以一點七四是上界。",
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cq-t\" viewBox=\"0 0 640 250\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bcq-tink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bcq-tblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bcq-tred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bcq-tgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bcq-tpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"82\" x2=\"626\" y2=\"82\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bcq-tink)\"/><line x1=\"16\" y1=\"202\" x2=\"626\" y2=\"202\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bcq-tink)\"/><circle cx=\"351.7\" cy=\"82\" r=\"7\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"351.7\" y=\"64\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">√2</tspan></text><circle cx=\"96.9\" cy=\"82\" r=\"6\" fill=\"var(--blue)\"/><text x=\"96.9\" y=\"118\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan></text><circle cx=\"306.5\" cy=\"82\" r=\"6\" fill=\"var(--green)\"/><text x=\"306.5\" y=\"118\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan></text><text x=\"30\" y=\"32\" text-anchor=\"start\" font-size=\"23\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\">² < 2</tspan><tspan style=\"font-family:inherit\">：</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">在</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">右邊，</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan><tspan style=\"font-family:KaTeX_Main,serif\">² </tspan><tspan style=\"font-family:inherit\">仍</tspan><tspan style=\"font-family:KaTeX_Main,serif\">< 2</tspan></text><circle cx=\"351.7\" cy=\"202\" r=\"7\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2\"/><text x=\"351.7\" y=\"184\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">√2</tspan></text><circle cx=\"543.1\" cy=\"202\" r=\"6\" fill=\"var(--blue)\"/><text x=\"543.1\" y=\"238\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan></text><circle cx=\"383.7\" cy=\"202\" r=\"6\" fill=\"var(--green)\"/><text x=\"383.7\" y=\"238\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan></text><text x=\"30\" y=\"152\" text-anchor=\"start\" font-size=\"23\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\">² > 2</tspan><tspan style=\"font-family:inherit\">：</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">在</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">s</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:inherit\">左邊，</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">t</tspan><tspan style=\"font-family:KaTeX_Main,serif\">² </tspan><tspan style=\"font-family:inherit\">仍</tspan><tspan style=\"font-family:KaTeX_Main,serif\"> > 2</tspan></text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　$s>0$ 時分母都是正的，所以正負號由 $2-s^2$ 決定",
+              "color": "violet",
+              "on": "就在#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "設 $s\\in\\mathbb{Q}$ 是 $S$ 的上界。$1\\in S$ ⇒ $s\\ge1>0$；$\\sqrt2\\notin\\mathbb{Q}$ ⇒ $s^2\\ne2$"
+          ],
+          "say": "證明。設有理數 s 是 S 的上界。1 屬於 S，所以 s 至少是 1，是正的。根號 2 不是有理數，所以 s 平方不等於 2。",
           "board": [
-            {"do":"write","line":"$1.73\\in S$ ⇒ $\\sup S\\ge1.73$"},
-            {"do":"write","line":"$x^2<3<1.74^2$ ⇒ 1.74 是上界","on":"平方小於三"}
-          ] }
+            {
+              "do": "write",
+              "line": "設 $s\\in\\mathbb{Q}$ 是 $S$ 的上界。$1\\in S$ ⇒ $s\\ge1>0$；$\\sqrt2\\notin\\mathbb{Q}$ ⇒ $s^2\\ne2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "情況 $s^2<2$：$t>s$、$t^2<2$、$t\\in\\mathbb{Q}$ ⇒ $t\\in S$ 且 $t>s$",
+            "$s$ 根本不是上界，矛盾"
+          ],
+          "say": "情況一，s 平方小於 2：t 比 s 大，平方小於 2，又是有理數，所以 t 屬於 S，而且超過 s。那 s 就不是上界，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "情況 $s^2<2$：$t>s$、$t^2<2$、$t\\in\\mathbb{Q}$ ⇒ $t\\in S$ 且 $t>s$"
+            },
+            {
+              "do": "write",
+              "line": "$s$ 根本不是上界，矛盾",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "情況 $s^2>2$：$0<t<s$、$t^2>2$",
+            "$t$ 是上界：若 $x\\in S$ 且 $x>t$，則 $x^2>t^2>2$，矛盾"
+          ],
+          "say": "情況二，s 平方大於 2：t 是比 s 小的正數，平方還是大於 2。t 也是上界：S 裡如果有 x 超過 t，x 平方就大於 2，不可能。",
+          "board": [
+            {
+              "do": "write",
+              "line": "情況 $s^2>2$：$0<t<s$、$t^2>2$"
+            },
+            {
+              "do": "write",
+              "line": "$t$ 是上界：若 $x\\in S$ 且 $x>t$，則 $x^2>t^2>2$，矛盾",
+              "on": "也是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$t$ 是更小的有理上界，所以 $s$ 不是最小的　$\\blacksquare$"
+          ],
+          "say": "所以 t 是比 s 更小的有理上界，s 不是最小的。不管哪個有理數，都不是 S 的最小上界。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$t$ 是更小的有理上界，所以 $s$ 不是最小的　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "公理",
+      "beats": [
+        {
+          "show": [
+            "完備性公理：$\\mathbb{R}$ 的每一個非空、有上界的子集 $S$，都有上確界，而且 $\\sup S\\in\\mathbb{R}$"
+          ],
+          "say": "實數就是要把這些洞補起來。完備性公理：實數的每一個非空、有上界的子集，都有上確界，而且上確界是實數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "完備性公理：$\\mathbb{R}$ 的每一個非空、有上界的子集 $S$，都有上確界，而且 $\\sup S\\in\\mathbb{R}$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　也叫「最小上界性質」",
+              "color": "violet",
+              "on": "非空"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它是公理：我們對 $\\mathbb{R}$ 的要求，不是定理"
+          ],
+          "say": "這是一條公理：是我們對實數的要求，不是從別的東西證出來的。實數就是一個能加減乘除、能比大小、而且沒有洞的數系。",
+          "board": [
+            {
+              "do": "write",
+              "line": "它是公理：我們對 $\\mathbb{R}$ 的要求，不是定理"
+            },
+            {
+              "do": "write",
+              "line": "　要從 $\\mathbb{Q}$ 造出 $\\mathbb{R}$ 再證明它，要用戴德金分割或柯西數列，超出這一章",
+              "color": "violet",
+              "on": "實數#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "放回 $\\mathbb{R}$：$S=\\{x\\in\\mathbb{Q}:x^2<2\\}$ 的上確界存在，就是 $\\sqrt2$"
+          ],
+          "say": "回到剛剛的集合，放進實數裡看，它的上確界就存在了，正是根號 2。洞被補起來了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "放回 $\\mathbb{R}$：$S=\\{x\\in\\mathbb{Q}:x^2<2\\}$ 的上確界存在，就是 $\\sqrt2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "公理只說存在，不告訴你是多少"
+          ],
+          "say": "注意，公理只保證上確界存在，不告訴你它是多少。要算出來，還是要自己證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "公理只說存在，不告訴你是多少"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "兩個條件都不能拿掉",
+      "beats": [
+        {
+          "show": [
+            "拿掉「非空」：$S=\\varnothing$",
+            "每個 $u\\in\\mathbb{R}$ 都是上界（$\\forall x\\in\\varnothing,\\ x\\le u$ 自動成立）"
+          ],
+          "say": "兩個條件都不能拿掉。拿掉非空：空集合沒有元素，條件自動成立，每個實數都是它的上界。上界是整條實數線，沒有最小的，所以沒有上確界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "拿掉「非空」：$S=\\varnothing$"
+            },
+            {
+              "do": "write",
+              "line": "每個 $u\\in\\mathbb{R}$ 都是上界（$\\forall x\\in\\varnothing,\\ x\\le u$ 自動成立）",
+              "on": "條件#2"
+            },
+            {
+              "do": "write",
+              "line": "上界們 $=\\mathbb{R}$，沒有最小的 ⇒ $\\sup\\varnothing$ 不存在",
+              "on": "界是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "拿掉「有上界」：$S=\\mathbb{N}$",
+            "$\\sup$ 必須是上界；$\\mathbb{N}$ 沒有上界，所以沒有 $\\sup$"
+          ],
+          "say": "拿掉有上界：自然數沒有上界，上確界首先要是上界，所以也不存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "拿掉「有上界」：$S=\\mathbb{N}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\sup$ 必須是上界；$\\mathbb{N}$ 沒有上界，所以沒有 $\\sup$",
+              "on": "有上#2"
+            },
+            {
+              "do": "write",
+              "line": "　$\\mathbb{N}$ 沒有上界，下一課用完備性公理證明",
+              "color": "violet",
+              "on": "是上"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "check": 0
+    },
+    {
+      "title": "公理怎麼用：下確界",
+      "beats": [
+        {
+          "show": [
+            "定理：$S$ 非空、有下界 ⇒ $\\inf S$ 存在，而且",
+            "$\\inf S=-\\sup(-S)$"
+          ],
+          "say": "公理只講上確界，下確界呢？定理：非空、有下界的集合，下確界一定存在，而且等於負 S 的上確界，再加負號。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$S$ 非空、有下界 ⇒ $\\inf S$ 存在，而且"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\inf S=-\\sup(-S)}}$",
+              "on": "有下"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "而且"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其中 $-S=\\{-x:x\\in S\\}$。策略：照鏡子，下界變上界",
+            "圖"
+          ],
+          "say": "策略是照鏡子：把 S 對 0 翻過去，下界就變成上界，最大的下界就變成最小的上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "其中 $-S=\\{-x:x\\in S\\}$。策略：照鏡子，下界變上界"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cq-flip\" viewBox=\"0 0 640 130\" width=\"640\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"a12bcq-flipink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"a12bcq-flipblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"a12bcq-flipred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"a12bcq-flipgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"a12bcq-flippencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker></defs><line x1=\"16\" y1=\"80\" x2=\"626\" y2=\"80\" stroke=\"var(--ink)\" stroke-width=\"1.4\" marker-end=\"url(#a12bcq-flipink)\"/><line x1=\"400.6\" y1=\"80\" x2=\"561.7\" y2=\"80\" stroke=\"var(--blue)\" stroke-width=\"5\" stroke-linecap=\"butt\"/><line x1=\"78.3\" y1=\"80\" x2=\"239.4\" y2=\"80\" stroke=\"var(--green)\" stroke-width=\"5\" stroke-linecap=\"butt\"/><line x1=\"320\" y1=\"74\" x2=\"320\" y2=\"86\" stroke=\"var(--ink)\" stroke-width=\"1.4\"/><text x=\"320\" y=\"116\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--ink)\"><tspan style=\"font-family:KaTeX_Main,serif\">0</tspan></text><circle cx=\"400.6\" cy=\"80\" r=\"6\" fill=\"var(--red)\"/><circle cx=\"239.4\" cy=\"80\" r=\"6\" fill=\"var(--red)\"/><text x=\"497.2\" y=\"60\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--blue)\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan></text><text x=\"142.8\" y=\"60\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--green)\"><tspan style=\"font-family:KaTeX_Main,serif\">−</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan></text><text x=\"408.6\" y=\"116\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">inf</tspan><tspan style=\"font-family:KaTeX_Main,serif\"></tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan></text><text x=\"219.3\" y=\"116\" text-anchor=\"middle\" font-size=\"27\" fill=\"var(--red)\"><tspan style=\"font-family:KaTeX_Main,serif\">sup</tspan><tspan style=\"font-family:KaTeX_Main,serif\">(−</tspan><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">S</tspan><tspan style=\"font-family:KaTeX_Main,serif\">)</tspan></text><path d=\"M239.4 68 Q320 24 396.5 66\" stroke=\"var(--muted)\" stroke-width=\"1.6\" stroke-dasharray=\"5 4\" marker-end=\"url(#a12bcq-flippencil)\"/><text x=\"320\" y=\"34\" text-anchor=\"middle\" font-size=\"23\" fill=\"var(--muted)\"><tspan style=\"font-family:inherit\">鏡射</tspan></text></svg>",
+              "on": "界就#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$-S$ 非空。設 $\\ell$ 是 $S$ 的下界：",
+            "$x\\in S\\ \\Rightarrow\\ x\\ge\\ell\\ \\Rightarrow\\ -x\\le-\\ell$"
+          ],
+          "say": "證明。負 S 不是空的。設 l 是 S 的下界，每個 x 大於等於 l，乘負號，負 x 就小於等於負 l。所以負 S 有上界，由公理，上確界 s 存在。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$-S$ 非空。設 $\\ell$ 是 $S$ 的下界："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x\\in S\\ \\Rightarrow\\ x\\ge\\ell\\ \\Rightarrow\\ -x\\le-\\ell$",
+              "on": "大於"
+            },
+            {
+              "do": "write",
+              "line": "所以 $-\\ell$ 是 $-S$ 的上界。由公理，$s=\\sup(-S)$ 存在",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "接著驗 $-s$ 是 $\\inf S$ 的兩個條件"
+          ],
+          "say": "接下來驗證，負 s 滿足下確界的兩個條件。",
+          "board": [
+            {
+              "do": "write",
+              "line": "接著驗 $-s$ 是 $\\inf S$ 的兩個條件"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）",
+      "beats": [
+        {
+          "show": [
+            "(i) $-s$ 是下界：$x\\in S$ ⇒ $-x\\in-S$ ⇒ $-x\\le s$ ⇒ $x\\ge-s$"
+          ],
+          "say": "第一，負 s 是下界：x 屬於 S，負 x 就屬於負 S，所以負 x 不超過 s，也就是 x 大於等於負 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(i) $-s$ 是下界：$x\\in S$ ⇒ $-x\\in-S$ ⇒ $-x\\le s$ ⇒ $x\\ge-s$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(ii) 最大：$\\ell$ 是 $S$ 的任一下界 ⇒ $-\\ell$ 是 $-S$ 的上界",
+            "$\\Rightarrow\\ s\\le-\\ell\\ \\Rightarrow\\ \\ell\\le-s$"
+          ],
+          "say": "第二，它是最大的下界：任取 S 的下界 l，負 l 是負 S 的上界。s 是最小的上界，所以 s 不超過負 l，也就是 l 不超過負 s。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(ii) 最大：$\\ell$ 是 $S$ 的任一下界 ⇒ $-\\ell$ 是 $-S$ 的上界"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Rightarrow\\ s\\le-\\ell\\ \\Rightarrow\\ \\ell\\le-s$",
+              "on": "是最#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $\\inf S=-s=-\\sup(-S)$　$\\blacksquare$"
+          ],
+          "say": "兩個條件都成立，所以下確界存在，等於負的上確界。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $\\inf S=-s=-\\sup(-S)$　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "由公理推出下確界存在",
+        "steps": [
+          {
+            "label": "看 $-S$：非空，而且 $-\\ell$ 是上界"
+          },
+          {
+            "label": "由完備性公理，$s=\\sup(-S)$ 存在",
+            "why": "先要有上一步：看 $-S$：非空，而且 $-\\ell$ 是上界"
+          },
+          {
+            "label": "驗證 $-s$ 是 $S$ 的下界",
+            "why": "先要有上一步：由完備性公理，$s=\\sup(-S)$ 存在"
+          },
+          {
+            "label": "驗證每個下界都 $\\le-s$",
+            "why": "先要有上一步：驗證 $-s$ 是 $S$ 的下界"
+          }
+        ]
+      }
+    },
+    {
+      "title": "例：ℝ 裡的上確界",
+      "beats": [
+        {
+          "show": [
+            "$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$ 看成 $\\mathbb{R}$ 的子集",
+            "• 非空：$0\\in S$"
+          ],
+          "say": "再用一次公理。平方小於 3 的有理數，看成實數的子集。0 在裡面，非空；大於等於 2 的數平方至少是 4，不在 S 裡，所以 2 是上界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$S=\\{x\\in\\mathbb{Q}:x^2<3\\}$ 看成 $\\mathbb{R}$ 的子集"
+            },
+            {
+              "do": "write",
+              "line": "• 非空：$0\\in S$",
+              "on": "的子"
+            },
+            {
+              "do": "write",
+              "line": "• 有上界 $2$：$x\\ge2$ ⇒ $x^2\\ge4>3$",
+              "on": "方至"
+            }
+          ]
+        },
+        {
+          "show": [
+            "由公理，$s=\\sup S\\in\\mathbb{R}$ 存在，$s\\ge1>0$"
+          ],
+          "say": "由公理，上確界 s 存在，而且 1 在 S 裡，s 至少是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "由公理，$s=\\sup S\\in\\mathbb{R}$ 存在，$s\\ge1>0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣的一步：$t=\\dfrac{3s+3}{s+3}$，",
+            "$t-s=\\frac{3-s^2}{s+3},\\qquad t^2-3=\\frac{6(s^2-3)}{(s+3)^2}$"
+          ],
+          "say": "用同樣的一步：t 等於 s 加 3 分之 3s 加 3。t 減 s，和 t 平方減 3，正負號都由 s 平方減 3 決定。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣的一步：$t=\\dfrac{3s+3}{s+3}$，"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle t-s=\\frac{3-s^2}{s+3},\\qquad t^2-3=\\frac{6(s^2-3)}{(s+3)^2}$",
+              "on": "平方#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $s^2>3$：$t<s$ 且 $t^2>3$，$t$ 是更小的上界，矛盾",
+            "• $s^2<3$：$t>s$、$t^2<3$；取有理數 $q\\in(s,t)$，則 $q\\in S$、$q>s$，矛盾"
+          ],
+          "say": "s 平方大於 3：t 是更小的上界，矛盾。s 平方小於 3：在 s 和 t 之間取一個有理數 q，q 平方小於 3，屬於 S，又超過 s，矛盾。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $s^2>3$：$t<s$ 且 $t^2>3$，$t$ 是更小的上界，矛盾"
+            },
+            {
+              "do": "write",
+              "line": "• $s^2<3$：$t>s$、$t^2<3$；取有理數 $q\\in(s,t)$，則 $q\\in S$、$q>s$，矛盾",
+              "on": "方小#1"
+            },
+            {
+              "do": "write",
+              "line": "　「兩個實數之間有有理數」：下一課的稠密性",
+              "color": "violet",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $s^2=3$：$\\sqrt3$ 在 $\\mathbb{R}$ 裡存在"
+          ],
+          "say": "所以 s 平方等於 3。這就證明了根號 3 是一個實數：存在性來自完備性公理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以 $s^2=3$：$\\sqrt3$ 在 $\\mathbb{R}$ 裡存在",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\mathbb{Q}$ 有洞：$\\{x\\in\\mathbb{Q}:x^2<2\\}$ 沒有有理的最小上界",
+            "• 完備性公理：非空、有上界 ⇒ $\\sup S$ 存在於 $\\mathbb{R}$"
+          ],
+          "say": "整理：有理數有洞，完備性公理把洞補起來，非空、有上界缺一不可。完備性還有很多張臉：單調有界數列收斂、區間套、柯西數列收斂，之後會看到它們彼此等價。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\mathbb{Q}$ 有洞：$\\{x\\in\\mathbb{Q}:x^2<2\\}$ 沒有有理的最小上界"
+            },
+            {
+              "do": "write",
+              "line": "• 完備性公理：非空、有上界 ⇒ $\\sup S$ 存在於 $\\mathbb{R}$",
+              "on": "把洞"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個條件缺一不可：$\\varnothing$、$\\mathbb{N}$",
+              "on": "完備#2"
+            },
+            {
+              "do": "write",
+              "line": "• 下確界：$\\inf S=-\\sup(-S)$",
+              "on": "有界"
+            },
+            {
+              "do": "write",
+              "line": "• 預告：完備性有很多張臉——單調有界數列收斂、區間套、波爾查諾–魏爾斯特拉斯、柯西數列收斂",
+              "on": "收斂#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：完備性的第一個推論，阿基米德性質"
+          ],
+          "say": "下一課，完備性的第一個推論：阿基米德性質。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：完備性的第一個推論，阿基米德性質"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["supremum", "infimum"],
-    "fine": ["completeness-statement", "completeness-rational-gap", "completeness-inf-from-sup"]
+    "coarse": [
+      "supremum",
+      "infimum"
+    ],
+    "fine": [
+      "completeness-statement",
+      "completeness-rational-gap",
+      "completeness-inf-from-sup"
+    ]
   },
   "practice": [
-    { "id": "an-sup-003", "core": true, "trains": "completeness-rational-gap" },
-    { "id": "cg-12b-016", "core": true, "trains": "completeness-statement" },
-    { "id": "cg-12b-019", "core": true, "trains": "completeness-rational-gap" },
-    { "id": "cg-12b-021", "core": true, "trains": "completeness-inf-from-sup" },
-    { "id": "cg-12b-017", "trains": "completeness-statement" },
-    { "id": "cg-12b-018", "trains": "completeness-statement" },
-    { "id": "cg-12b-020", "trains": "completeness-rational-gap" },
-    { "id": "cg-12b-022", "trains": "completeness-inf-from-sup" }
+    {
+      "id": "an-sup-003",
+      "core": true,
+      "trains": "completeness-rational-gap"
+    },
+    {
+      "id": "cg-12b-016",
+      "core": true,
+      "trains": "completeness-statement"
+    },
+    {
+      "id": "cg-12b-019",
+      "core": true,
+      "trains": "completeness-rational-gap"
+    },
+    {
+      "id": "cg-12b-021",
+      "core": true,
+      "trains": "completeness-inf-from-sup"
+    },
+    {
+      "id": "cg-12b-017",
+      "trains": "completeness-statement"
+    },
+    {
+      "id": "cg-12b-018",
+      "trains": "completeness-statement"
+    },
+    {
+      "id": "cg-12b-020",
+      "trains": "completeness-rational-gap"
+    },
+    {
+      "id": "cg-12b-022",
+      "trains": "completeness-inf-from-sup"
+    }
   ],
   "gaps": []
 }

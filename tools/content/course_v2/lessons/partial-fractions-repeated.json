@@ -1,49 +1,136 @@
 {
   "id": "partial-fractions-repeated",
   "title": "部分分式 II：重複因式",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["partial-fractions-linear"],
-  "next": ["partial-fractions-quadratic"],
+  "prerequisites": [
+    "partial-fractions-linear"
+  ],
+  "next": [
+    "partial-fractions-quadratic"
+  ],
   "related": [],
   "objectives": [
-    "分母有 $(x-a)^k$ 時，會設 $k$ 項：$\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}$。",
-    "代根求不完的係數，會用比較係數或代其他值補齊。",
-    "記得只有一次方的那項積成 $\\ln$，$(x-a)^{-k}$（$k\\ge 2$）用冪次公式。"
+    "分母有 $(x-a)^k$ 時，會設 $k$ 項：$\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}$",
+    "代根求不完的係數，會用比較係數或代其他值補齊",
+    "記得只有一次方的那項積成 $\\ln$，$(x-a)^{-k}$（$k\\ge 2$）用冪次公式"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 重複的因式，每個次方都要一項",
+      "heading": "① 每個次方都要一項",
       "body": [
-        "$(x-1)^2$ 是同一個因式出現兩次。設 $\\frac{1}{x(x-1)^2}=\\frac{A}{x}+\\frac{B}{x-1}$ 不夠：右邊通分後分母只有 $x(x-1)$，跟左邊對不上。",
-        "規則：$(x-a)^k$ 要配 $k$ 項，從一次方寫到 $k$ 次方。這樣未知數的個數剛好等於分母的次數，一定解得出來。"
+        "只設 $\\dfrac{A}{x-1}$？通分後分母只有 $x-1$，不夠",
+        "只設 $\\dfrac{A}{(x-1)^2}$？分子只能是常數，湊不出 $3x+1$",
+        "兩個都要：",
+        "通分：$3x+1=A(x-1)+B$",
+        "• 比較 $x$ 係數：$A=3$",
+        "• 代 $x=1$：$B=4$",
+        "驗算：代 $x=0$，左邊 $1$，右邊 $-3+4=1$"
       ],
-      "tex": ["\\frac{P(x)}{(x-a)^k\\cdots}=\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}+\\cdots"],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{3x+1}{(x-1)^2}\\,dx",
+        "\\frac{3x+1}{(x-1)^2}=\\frac{A}{x-1}+\\frac{B}{(x-1)^2}",
+        "\\frac{3x+1}{(x-1)^2}=\\frac{3}{x-1}+\\frac{4}{(x-1)^2}"
+      ]
     },
     {
-      "heading": "② 求係數：代根 ＋ 比較係數",
+      "heading": "① 一般的規則",
       "body": [
-        "同乘分母後代根，能直接得到「每個相異根各一個」係數：一次因式的係數，以及重複因式最高次那項的係數。",
-        "其他係數代根會一起消失，求不出來。這時比較兩邊某個次方的係數（通常最高次最方便），或代一個好算的 $x$（例如 $0$、$1$），補出剩下的方程式。"
+        "$(x-a)^k$ 要設 $k$ 項：",
+        "為什麼是 $k$ 項？令 $u=x-a$，分子（次數 $<k$）改寫成 $u$ 的多項式：",
+        "除以 $u^k$，每一項剛好是一個次方："
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}",
+        "P=c_0+c_1u+\\cdots+c_{k-1}u^{k-1}",
+        "\\frac{P}{u^k}=\\frac{c_0}{u^k}+\\frac{c_1}{u^{k-1}}+\\cdots+\\frac{c_{k-1}}{u}"
+      ]
+    },
+    {
+      "heading": "② 求係數：代根＋比較係數",
+      "body": [
+        "設（$x$ 一項，$(x+1)^2$ 兩項）：",
+        "去分母：",
+        "代根：",
+        "• $x=0$：$1=A$，$A=1$",
+        "• $x=-1$：$1=-C$，$C=-1$",
+        "只有兩個根，$B$ 代不出來",
+        "補：比較 $x^2$ 係數：$0=A+B$，$B=-1$",
+        "或代別的值，例如 $x=1$：$1=4A+2B+C=3+2B$，一樣 $B=-1$"
+      ],
+      "tex": [
+        "\\int\\frac{1}{x(x+1)^2}\\,dx",
+        "\\frac{1}{x(x+1)^2}=\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}",
+        "1=A(x+1)^2+Bx(x+1)+Cx"
+      ]
+    },
+    {
+      "heading": "② 結果與驗算",
+      "body": [
+        "驗算 $x=1$：",
+        "遮住法只給最高次那項；其他的用比較係數補"
+      ],
+      "tex": [
+        "\\frac{1}{x(x+1)^2}=\\frac1x-\\frac{1}{x+1}-\\frac{1}{(x+1)^2}",
+        "\\text{左}=\\frac{1}{1\\cdot4}=\\frac14,\\qquad\\text{右}=1-\\frac12-\\frac14=\\frac14"
+      ]
     },
     {
       "heading": "③ 積分：只有一次方是 $\\ln$",
       "body": [
-        "$\\int \\frac{A}{x-a}\\,dx=A\\ln|x-a|$。",
-        "$\\int \\frac{A}{(x-a)^k}\\,dx$（$k\\ge 2$）是冪次：$\\frac{A(x-a)^{-k+1}}{-k+1}$。例如 $\\int \\frac{1}{(x-1)^2}\\,dx=-\\frac{1}{x-1}+C$，不是 $\\ln$。"
+        "一次方：",
+        "$k\\ge2$：冪次公式（$u=x-a$）",
+        "例：$\\displaystyle\\int\\frac{dx}{(x+1)^2}=\\frac{(x+1)^{-1}}{-1}=-\\frac{1}{x+1}+C$",
+        "回到 ② 那一題：",
+        "微分驗算：$\\frac1x-\\frac1{x+1}-\\frac1{(x+1)^2}$，跟拆開的樣子一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|+C",
+        "\\int\\frac{A}{(x-a)^k}\\,dx=\\frac{A\\,(x-a)^{-k+1}}{-k+1}+C",
+        "\\begin{aligned}&\\int\\frac{dx}{x(x+1)^2}\\\\&=\\ln|x|-\\ln|x+1|+\\frac{1}{x+1}+C\\end{aligned}"
+      ]
     },
     {
-      "heading": "④ 只有一個重複因式時，換元更快",
+      "heading": "③ 定積分",
       "body": [
-        "$\\frac{3x+1}{(x-1)^2}$ 只有一個因式。令 $u=x-1$，$x=u+1$，式子變成 $\\frac{3u+4}{u^2}=\\frac{3}{u}+\\frac{4}{u^2}$，跟部分分式得到的一樣，而且不用解方程式。"
+        "分子湊 $x+1$：$x=(x+1)-1$",
+        "也可以設 $\\frac{A}{x+1}+\\frac{B}{(x+1)^2}$，得 $A=1$、$B=-1$",
+        "反導函數：$\\ln(x+1)+\\dfrac{1}{x+1}$",
+        "$[0,1]$ 上 $x+1>0$，被積函數連續，可以用微積分基本定理"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^1\\frac{x}{(x+1)^2}\\,dx",
+        "\\frac{x}{(x+1)^2}=\\frac{1}{x+1}-\\frac{1}{(x+1)^2}",
+        "\\Big[\\ln(x+1)+\\frac{1}{x+1}\\Big]_0^1=\\Big(\\ln2+\\frac12\\Big)-\\Big(0+1\\Big)",
+        "=\\ln2-\\frac12\\approx0.193"
+      ]
+    },
+    {
+      "heading": "④ 只有一個重複因式：換元",
+      "body": [
+        "令 $u=x-1$：$x=u+1$，$dx=du$",
+        "跟 ① 拆出來的 $\\frac{3}{x-1}+\\frac{4}{(x-1)^2}$ 完全一樣",
+        "分母還有別的因式（如 $x(x+1)^2$）時，換元不會變簡單，還是用設、求、積"
+      ],
+      "tex": [
+        "\\int\\frac{3x+1}{(x-1)^2}\\,dx",
+        "3x+1=3(u+1)+1=3u+4",
+        "\\frac{3u+4}{u^2}=\\frac3u+\\frac{4}{u^2}",
+        "\\int\\Big(\\frac3u+\\frac4{u^2}\\Big)du=3\\ln|u|-\\frac4u+C",
+        "=3\\ln|x-1|-\\frac{4}{x-1}+C"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $(x-a)^k$：一次方到 $k$ 次方，每個次方一項",
+        "• 代根只求得出最高次項；其他的比較係數或代別的值",
+        "• 只有一次方積成 $\\ln$；$k\\ge2$ 用冪次公式",
+        "• 只有一個重複因式：令 $u=x-a$，直接除開",
+        "下一課：不可約二次式"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,230 +178,879 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{x+2}{(x-1)^2(x+3)}$ 應該設成？",
+      "ask": "遮住法（把整個 $(x+1)^2$ 遮住、代 $x=-1$）能直接算出哪一個係數？",
       "options": [
-        { "label": "$\\frac{A}{x-1}+\\frac{B}{(x-1)^2}+\\frac{C}{x+3}$", "correct": true },
-        { "label": "$\\frac{B}{(x-1)^2}+\\frac{C}{x+3}$", "why": "重複因式每個次方都要一項。少了 $\\frac{A}{x-1}$，未知數只有兩個，一般解不出來。" },
-        { "label": "$\\frac{A}{x-1}+\\frac{B}{x-1}+\\frac{C}{x+3}$", "why": "前兩項分母一樣，合起來其實只是一項；第二項要是 $(x-1)^2$。" }
+        {
+          "label": "$C$，$\\frac{1}{(x+1)^2}$ 那一項",
+          "correct": true
+        },
+        {
+          "label": "$B$，$\\frac{1}{x+1}$ 那一項",
+          "why": "$B$ 那項乘 $(x+1)^2$ 後還剩 $(x+1)$，代 $-1$ 變 $0$，所以算不到 $B$"
+        },
+        {
+          "label": "$B$ 和 $C$ 都可以",
+          "why": "代一個值只得到一個方程式；$B$ 要另外補"
+        },
+        {
+          "label": "都不行",
+          "why": "最高次那一項還是可以遮：$\\frac{1}{x}$ 在 $x=-1$ 是 $-1$"
+        }
       ]
     },
     {
-      "ask": "$\\int \\frac{4}{(x-1)^2}\\,dx$ 是？",
+      "ask": "$\\displaystyle\\int\\frac{dx}{(x-2)^3}=$？",
       "options": [
-        { "label": "$-\\frac{4}{x-1}+C$", "correct": true },
-        { "label": "$4\\ln((x-1)^2)+C$", "why": "只有一次方的分母才積成 $\\ln$。$(x-1)^{-2}$ 用冪次公式：次方加一變 $-1$，再除以 $-1$。" },
-        { "label": "$-\\frac{8}{(x-1)^3}+C$", "why": "那是 $\\frac{4}{(x-1)^2}$ 的導數，方向反了。" }
-      ]
-    },
-    {
-      "ask": "$\\frac{1}{x^3(x+2)}$ 拆成部分分式，共有幾個未知係數？",
-      "options": [
-        { "label": "$4$", "correct": true },
-        { "label": "$2$", "why": "$x^3$ 是 $x$ 重複三次，要 $\\frac{A}{x}+\\frac{B}{x^2}+\\frac{C}{x^3}$ 三項，再加 $x+2$ 的一項。" },
-        { "label": "$3$", "why": "$x+2$ 那個因式還要一項。總數等於分母的次數 $4$。" }
-      ]
-    },
-    {
-      "ask": "$1=A(x+1)^2+Bx(x+1)+Cx$，已代根得 $A=1$、$C=-1$。$B$ 怎麼求？",
-      "options": [
-        { "label": "比較 $x^2$ 係數：$A+B=0$，$B=-1$", "correct": true },
-        { "label": "沒有根可以代了，所以 $B=0$", "why": "$B$ 那項在兩個根都會消失，只代表代根看不到它，不代表它是 $0$。" },
-        { "label": "$B=A=1$", "why": "沒有這種規則。左邊沒有 $x^2$ 項，所以 $A+B=0$。" }
+        {
+          "label": "$-\\dfrac{1}{2(x-2)^2}+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\ln|x-2|^3+C$",
+          "why": "只有一次方才積成 $\\ln$；三次方要用冪次公式"
+        },
+        {
+          "label": "$\\dfrac{1}{2(x-2)^2}+C$",
+          "why": "漏了負號：除以的新指數是 $-2$"
+        },
+        {
+          "label": "$-\\dfrac{1}{4(x-2)^4}+C$",
+          "why": "指數要加 $1$：$-3+1=-2$，不是 $-4$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "每個次方一項",
+      "title": "每個次方都要一項",
       "beats": [
-        { "show": ["$\\frac{1}{x(x-1)^2}=\\frac{A}{x}+\\frac{B}{x-1}$？"],
-          "note": "右邊通分，分母只有 $x(x-1)$，對不上。",
-          "say": "x 減一出現兩次。如果只設兩塊，右邊通分回去分母只有 x 乘 x 減一，跟左邊對不上。",
+        {
+          "show": [
+            "$\\int\\frac{3x+1}{(x-1)^2}\\,dx$"
+          ],
+          "say": "上一課的分母都是不一樣的一次因式。這一課看重複的：3x 加 1，除以 x 減 1 的平方。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{x(x-1)^2}={{w:\\frac{A}{x}+\\frac{B}{x-1}}}$"},
-            {"do":"strike","term":"w","label":"對不上","on":"通分回去"}
-          ] },
-        { "show": ["$(x-a)^k$ 配 $k$ 項"],
-          "note": "從一次方一路寫到 $k$ 次方。",
-          "say": "規則是：重複 k 次的因式，要配 k 項，從一次方一路寫到 k 次方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{3x+1}{(x-1)^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只設 $\\dfrac{A}{x-1}$？通分後分母只有 $x-1$，不夠"
+          ],
+          "say": "只設一項 x 減 1 分之 A 嗎？它的分母只有一次，怎麼加都湊不出平方。",
           "board": [
-            {"do":"write","line":"${{p:(x-a)^k}}$ 配 ${{n:k}}$ 項"},
-            {"do":"focus","term":"n","on":"要配"}
-          ] },
-        { "show": ["$\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}$"],
-          "note": "未知數個數剛好等於分母次數。",
-          "say": "這樣未知數的個數，剛好等於分母的次數，一定解得出來。",
+            {
+              "do": "write",
+              "line": "只設 $\\dfrac{A}{x-1}$？通分後分母只有 $x-1$，不夠",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只設 $\\dfrac{A}{(x-1)^2}$？分子只能是常數，湊不出 $3x+1$"
+          ],
+          "say": "那只設 x 減 1 平方分之 A 呢？分子只是一個常數，湊不出 3x 加 1。",
           "board": [
-            {"do":"write","line":"$\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}$"},
-            {"do":"write","line":"未知數個數 ＝ 分母次數","on":"剛好等於"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "只設 $\\dfrac{A}{(x-1)^2}$？分子只能是常數，湊不出 $3x+1$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個都要：",
+            "$\\frac{3x+1}{(x-1)^2}=\\frac{A}{x-1}+\\frac{B}{(x-1)^2}$"
+          ],
+          "say": "所以兩個都要：一次方一項，平方一項。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個都要："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3x+1}{(x-1)^2}=\\frac{A}{x-1}+\\frac{B}{(x-1)^2}$",
+              "on": "方一#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "通分：$3x+1=A(x-1)+B$",
+            "• 比較 $x$ 係數：$A=3$"
+          ],
+          "say": "通分以後，3x 加 1 等於 A 乘 x 減 1，加 B。比較 x 的係數，A 是 3；代 x 等於 1，B 是 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "通分：$3x+1=A(x-1)+B$"
+            },
+            {
+              "do": "write",
+              "line": "• 比較 $x$ 係數：$A=3$",
+              "on": "比較"
+            },
+            {
+              "do": "write",
+              "line": "• 代 $x=1$：$B=4$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{3x+1}{(x-1)^2}=\\frac{3}{x-1}+\\frac{4}{(x-1)^2}$"
+          ],
+          "say": "所以拆成 x 減 1 分之 3，加 x 減 1 平方分之 4。積分留到第四節。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3x+1}{(x-1)^2}=\\frac{3}{x-1}+\\frac{4}{(x-1)^2}$"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：代 $x=0$，左邊 $1$，右邊 $-3+4=1$",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "只有一次方是 $\\ln$",
+      "title": "一般的規則",
       "beats": [
-        { "show": ["$\\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|$"],
-          "say": "積分的時候，一次方的那一項，照樣是自然對數。",
+        {
+          "show": [
+            "$(x-a)^k$ 要設 $k$ 項：",
+            "$\\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}$"
+          ],
+          "say": "一般的規則：分母有 x 減 a 的 k 次方，就要設 k 項，從一次方一路到 k 次方，每個次方一項。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|$"}
-          ] },
-        { "show": ["$k\\ge 2$：冪次公式"],
-          "note": "$\\int\\frac{1}{(x-1)^2}\\,dx=-\\frac{1}{x-1}+C$，不是 $\\ln$。",
-          "say": "二次方以上就不是自然對數了，是冪次：次方加一，再除以新的次方。",
+            {
+              "do": "write",
+              "line": "$(x-a)^k$ 要設 $k$ 項："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{A_1}{x-a}+\\frac{A_2}{(x-a)^2}+\\cdots+\\frac{A_k}{(x-a)^k}}}$",
+              "on": "次方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "方一#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼是 $k$ 項？令 $u=x-a$，分子（次數 $<k$）改寫成 $u$ 的多項式：",
+            "$P=c_0+c_1u+\\cdots+c_{k-1}u^{k-1}$"
+          ],
+          "say": "為什麼？令 u 等於 x 減 a，把分子改寫成 u 的多項式。分子次數小於 k，所以最多到 u 的 k 減 1 次方。",
           "board": [
-            {"do":"write","line":"$k\\ge 2$：不是 $\\ln$"},
-            {"do":"write","line":"$\\int (x-a)^{-k}\\,dx=\\frac{(x-a)^{{{e:-k+1}}}}{{{d:-k+1}}}$","on":"冪次"},
-            {"do":"focus","term":"e","on":"次方加一"},
-            {"do":"focus","term":"d","on":"新的次方"}
-          ] }
+            {
+              "do": "write",
+              "line": "為什麼是 $k$ 項？令 $u=x-a$，分子（次數 $<k$）改寫成 $u$ 的多項式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle P=c_0+c_1u+\\cdots+c_{k-1}u^{k-1}$",
+              "on": "分子#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除以 $u^k$，每一項剛好是一個次方：",
+            "$\\frac{P}{u^k}=\\frac{c_0}{u^k}+\\frac{c_1}{u^{k-1}}+\\cdots+\\frac{c_{k-1}}{u}$"
+          ],
+          "say": "再除以 u 的 k 次方，每一項剛好落在一個次方上，從 u 分之一到 u 的 k 次方分之一，一個都不能少。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除以 $u^k$，每一項剛好是一個次方："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{P}{u^k}=\\frac{c_0}{u^k}+\\frac{c_1}{u^{k-1}}+\\cdots+\\frac{c_{k-1}}{u}$",
+              "on": "分之#1"
+            }
+          ]
+        }
       ],
-      "check": 1
-    },
-    {
-      "title": "代根＋比較係數",
-      "beats": [
-        { "show": ["$\\frac{1}{x(x+1)^2}=\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}$"],
-          "say": "試一題：一個一次因式 x，加上重複兩次的 x 加一，一共三項。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{x(x+1)^2}=\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}$"}
-          ] },
-        { "show": ["$1=A(x+1)^2+Bx(x+1)+Cx$"],
-          "note": "同乘分母。",
-          "say": "兩邊同乘分母，得到一個對所有 x 都成立的等式。",
-          "board": [
-            {"do":"write","line":"$1={{a:A(x+1)^2}}+{{b:Bx(x+1)}}+{{c:Cx}}$","on":"同乘分母"}
-          ] },
-        { "show": ["代 $x=0$：$A=1$；代 $x=-1$：$C=-1$"],
-          "say": "代零，只剩 A；代負一，只剩 C。A 是一，C 是負一。",
-          "board": [
-            {"do":"focus","term":"a","on":"只剩 A"},
-            {"do":"focus","term":"c","on":"只剩 C"},
-            {"do":"write","line":"代 $x=0$：$A=1$；代 $x=-1$：$C=-1$","on":"A 是一"}
-          ] },
-        { "show": ["$B$ 代根求不到"],
-          "note": "比較某次方的係數，或代一個好算的 $x$。",
-          "say": "可是 B 那一項，在兩個根都會消失，代根看不到它。這時要換個辦法。",
-          "board": [
-            {"do":"underline","term":"b","label":"兩個根都消失","on":"B 那一項"},
-            {"do":"write","line":"$B$ 代根求不到","on":"這時要"}
-          ] },
-        { "show": ["右邊展開：$(A+B)x^2+(2A+B+C)x+A$"],
-          "note": "照 $x^2$、$x$、常數分類合併。",
-          "say": "把右邊展開，依 x 平方、x、常數項分類合併。",
-          "board": [
-            {"do":"write","line":"$1={{s:(A+B)x^2+(2A+B+C)x+A}}$"}
-          ] },
-        { "show": ["左邊 $1=0x^2+0x+1$"],
-          "note": "兩邊同一個次方的係數要相等。",
-          "say": "左邊的一，可以看成零個 x 平方、零個 x，再加一。兩邊同一個次方的係數要一樣。",
-          "board": [
-            {"do":"write","line":"$1={{z:0x^2+0x+1}}$"}
-          ] }
-      ],
-      "key": "代根求不到的係數，改比較最高次項",
-      "check": 3
-    },
-    {
-      "title": "積起來",
-      "beats": [
-        { "show": ["$\\frac{1}{x}-\\frac{1}{x+1}-\\frac{1}{(x+1)^2}$"],
-          "note": "$A=1$、$B=-1$、$C=-1$。",
-          "say": "三個係數都有了，拆成三項。",
-          "board": [
-            {"do":"write","line":"${{a:\\frac{1}{x}}}{{b:-\\frac{1}{x+1}}}{{c:-\\frac{1}{(x+1)^2}}}$"}
-          ] },
-        { "show": ["前兩項是 $\\ln$，第三項是冪次"],
-          "say": "前兩項是一次方，積成自然對數；第三項是平方，要用冪次公式。",
-          "board": [
-            {"do":"underline","term":"a","label":"ln","on":"前兩項"},
-            {"do":"focus","term":"b","on":"積成"},
-            {"do":"underline","term":"c","label":"冪次","on":"第三項"}
-          ] },
-        { "show": ["$\\int (x+1)^{-2}\\,dx=-\\frac{1}{x+1}$"],
-          "note": "次方 $-2$ 加一變 $-1$，再除以 $-1$。",
-          "say": "先單獨算平方那一項。次方是負二，加一變負一，再除以負一。",
-          "board": [
-            {"do":"write","line":"$\\int (x+1)^{-2}\\,dx={{r:\\frac{(x+1)^{-1}}{-1}}}$"},
-            {"do":"write","line":"$=-\\frac{1}{x+1}$","on":"除以負一"}
-          ] },
-        { "show": ["原式這一項前面有負號，要帶著算"],
-          "say": "原本這一項前面還有負號，要帶著算，不能掉。",
-          "board": [
-            {"do":"write","line":"${{m:-}}\\int\\frac{1}{(x+1)^2}\\,dx$"},
-            {"do":"focus","term":"m","color":"red","on":"帶著"}
-          ] }
-      ],
-      "key": "只有一次方積成 $\\ln$，二次方用冪次公式",
       "predict": {
-        "ask": "積分是？",
+        "ask": "$\\dfrac{1}{x^2(x-2)}$ 應該怎麼設？",
         "options": [
           {
-            "label": "$\\ln|x|-\\ln|x+1|+\\frac{1}{x+1}+C$",
+            "label": "$\\dfrac{A}{x}+\\dfrac{B}{x^2}+\\dfrac{C}{x-2}$",
             "correct": true
           },
           {
-            "label": "$\\ln|x|-\\ln|x+1|-\\frac{1}{x+1}+C$",
-            "why": "$\\int-\\frac{1}{(x+1)^2}\\,dx$：冪次公式除以 $-1$，負負得正，是 $+\\frac{1}{x+1}$。"
+            "label": "$\\dfrac{A}{x^2}+\\dfrac{B}{x-2}$",
+            "why": "漏了一次方 $\\frac{A}{x}$：三個未知數才配得上三次的分母"
           },
           {
-            "label": "$\\ln|x|-2\\ln|x+1|+C$",
-            "why": "只有一次方積成 $\\ln$；$\\frac{1}{(x+1)^2}$ 是冪次。"
+            "label": "$\\dfrac{A}{x}+\\dfrac{B}{x-2}$",
+            "why": "把 $x^2$ 當成 $x$：通分後分母只有一個 $x$"
+          },
+          {
+            "label": "$\\dfrac{A}{x}+\\dfrac{B}{x}+\\dfrac{C}{x-2}$",
+            "why": "兩個 $\\frac{\\cdot}{x}$ 加起來還是一項，等於沒設平方那項"
           }
         ]
       }
     },
     {
-      "title": "一個因式：換元更快",
+      "title": "求係數：代根＋比較係數",
       "beats": [
-        { "show": ["$\\int\\frac{3x+1}{(x-1)^2}\\,dx$：令 $u=x-1$"],
-          "note": "$x=u+1$。",
-          "say": "只有一個重複因式時，換元更快。令 u 等於 x 減一，x 就是 u 加一。",
+        {
+          "show": [
+            "$\\int\\frac{1}{x(x+1)^2}\\,dx$"
+          ],
+          "say": "現在看一題一次因式加上重複因式：x 乘 x 加 1 的平方，分之一。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{3x+1}{(x-1)^2}\\,dx$"},
-            {"do":"write","line":"令 $u=x-1$，$x=u+1$","on":"令 u"}
-          ] },
-        { "show": ["$\\frac{3u+4}{u^2}=\\frac{3}{u}+\\frac{4}{u^2}$"],
-          "note": "跟部分分式一樣，不用解方程式。",
-          "say": "分子三 x 加一變成三 u 加四，拆開就是兩項，跟部分分式得到的一樣。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{1}{x(x+1)^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設（$x$ 一項，$(x+1)^2$ 兩項）：",
+            "$\\frac{1}{x(x+1)^2}=\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}$"
+          ],
+          "say": "x 一項；x 加 1 的平方要兩項。總共三個未知數。",
           "board": [
-            {"do":"write","line":"$3(u+1)+1=3u+4$"},
-            {"do":"write","line":"$\\frac{3u+4}{u^2}=\\frac{3}{u}+\\frac{4}{u^2}$","on":"拆開"}
-          ] },
-        { "show": ["藍：原式；紅虛線：兩項相加"],
-          "note": "兩條曲線完全重合。",
-          "say": "畫出來看，藍色是原本的分式，紅色是拆開的兩項加起來，兩條完全重合。",
+            {
+              "do": "write",
+              "line": "設（$x$ 一項，$(x+1)^2$ 兩項）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{1}{x(x+1)^2}=\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}}}$",
+              "on": "的平"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "總共"
+            }
+          ]
+        },
+        {
+          "show": [
+            "去分母：",
+            "$1=A(x+1)^2+Bx(x+1)+Cx$"
+          ],
+          "say": "兩邊乘上分母：1 等於 A 乘 x 加 1 平方，加 B 乘 x 乘 x 加 1，加 C 乘 x。",
           "board": [
-            {"do":"plot","graph":{"window":[0,5,0,12],"curves":[{"expr":"(3*x+1)/(x-1)^2","domain":[1.5,5],"color":"blue"},{"expr":"3/(x-1)+4/(x-1)^2","domain":[1.5,5],"color":"red","dashed":true}]}}
-          ] },
-        { "show": ["$3\\ln|x-1|-\\frac{4}{x-1}+C$"],
-          "say": "一項是自然對數，一項是冪次，換回 x 就完成了。",
+            {
+              "do": "write",
+              "line": "去分母："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1=A(x+1)^2+Bx(x+1)+Cx$",
+              "on": "x。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代根：",
+            "• $x=0$：$1=A$，$A=1$"
+          ],
+          "say": "先代根。代 0，只剩 A，A 是 1；代負 1，只剩 C 那項，1 等於負 C，C 是負 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{a:\\frac{3}{u}}}+{{b:\\frac{4}{u^2}}}$","on":"一項是#1"},
-            {"do":"focus","term":"a","on":"自然對數"},
-            {"do":"focus","term":"b","on":"冪次"},
-            {"do":"write","line":"$3\\ln|x-1|-\\frac{4}{x-1}+C$","on":"換回"}
-          ] }
+            {
+              "do": "write",
+              "line": "代根："
+            },
+            {
+              "do": "write",
+              "line": "• $x=0$：$1=A$，$A=1$",
+              "on": "代負"
+            },
+            {
+              "do": "write",
+              "line": "• $x=-1$：$1=-C$，$C=-1$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "只有兩個根，$B$ 代不出來"
+          ],
+          "say": "可是只有兩個根，三個未知數。B 那一項在兩個根都是 0，代不出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "只有兩個根，$B$ 代不出來",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "補：比較 $x^2$ 係數：$0=A+B$，$B=-1$"
+          ],
+          "say": "補救的方法：比較 x 平方的係數。左邊是 1，沒有 x 平方，所以 0 等於 A 加 B，B 是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "補：比較 $x^2$ 係數：$0=A+B$，$B=-1$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　或代別的值，例如 $x=1$：$1=4A+2B+C=3+2B$，一樣 $B=-1$",
+              "color": "violet",
+              "on": "平方#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "結果與驗算",
+      "beats": [
+        {
+          "show": [
+            "$\\frac{1}{x(x+1)^2}=\\frac1x-\\frac{1}{x+1}-\\frac{1}{(x+1)^2}$"
+          ],
+          "say": "所以拆成：x 分之 1，減 x 加 1 分之 1，減 x 加 1 平方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\frac{1}{x(x+1)^2}=\\frac1x-\\frac{1}{x+1}-\\frac{1}{(x+1)^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算 $x=1$：",
+            "$\\text{左}=\\frac{1}{1\\cdot4}=\\frac14,\\qquad\\text{右}=1-\\frac12-\\frac14=\\frac14$"
+          ],
+          "say": "代 x 等於 1 驗算：左邊是 4 分之 1，右邊 1 減 2 分之 1 減 4 分之 1，也是 4 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算 $x=1$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\text{左}=\\frac{1}{1\\cdot4}=\\frac14,\\qquad\\text{右}=1-\\frac12-\\frac14=\\frac14$",
+              "on": "分之#2"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 0
+    },
+    {
+      "title": "結果與驗算",
+      "beats": [
+        {
+          "show": [
+            "遮住法只給最高次那項；其他的用比較係數補"
+          ],
+          "say": "所以遮住法只能給最高次的那一項，較低次的要用比較係數或代別的值補齊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "遮住法只給最高次那項；其他的用比較係數補"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "積分：只有一次方是 $\\ln$",
+      "beats": [
+        {
+          "show": [
+            "一次方：",
+            "$\\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|+C$"
+          ],
+          "say": "拆完就要積分。一次方的那一項，跟上一課一樣，積成自然對數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "一次方："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{A}{x-a}\\,dx=A\\ln|x-a|+C$",
+              "on": "跟上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$k\\ge2$：冪次公式（$u=x-a$）",
+            "$\\int\\frac{A}{(x-a)^k}\\,dx=\\frac{A\\,(x-a)^{-k+1}}{-k+1}+C$"
+          ],
+          "say": "二次方以上的不是自然對數！把它看成 x 減 a 的負 k 次方，用冪次公式：指數加 1，再除以新的指數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$k\\ge2$：冪次公式（$u=x-a$）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int\\frac{A}{(x-a)^k}\\,dx=\\frac{A\\,(x-a)^{-k+1}}{-k+1}+C}}$",
+              "color": "red",
+              "on": "的負"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "次公"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\int\\frac{dx}{(x+1)^2}=\\frac{(x+1)^{-1}}{-1}=-\\frac{1}{x+1}+C$"
+          ],
+          "say": "例如 x 加 1 平方分之一，積分是負的 x 加 1 分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int\\frac{dx}{(x+1)^2}=\\frac{(x+1)^{-1}}{-1}=-\\frac{1}{x+1}+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "回到 ② 那一題：",
+            "$\\begin{aligned}&\\int\\frac{dx}{x(x+1)^2}\\\\&=\\ln|x|-\\ln|x+1|+\\frac{1}{x+1}+C\\end{aligned}$"
+          ],
+          "say": "回到第二節那一題：x 分之 1 積成自然對數 x，負的 x 加 1 分之 1 積成負自然對數，最後一項負負得正，是 x 加 1 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "回到 ② 那一題："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle {\\begin{aligned}&\\int\\frac{dx}{x(x+1)^2}\\\\&=\\ln|x|-\\ln|x+1|+\\frac{1}{x+1}+C\\end{aligned}}}}$",
+              "on": "成自"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "分之#2"
+            },
+            {
+              "do": "write",
+              "line": "　微分驗算：$\\frac1x-\\frac1{x+1}-\\frac1{(x+1)^2}$，跟拆開的樣子一樣",
+              "color": "violet",
+              "on": "負負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{dx}{(x-2)^3}=$？"
+          ],
+          "say": "試一題。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "定積分",
+      "beats": [
+        {
+          "show": [
+            "$\\int_0^1\\frac{x}{(x+1)^2}\\,dx$"
+          ],
+          "say": "再一個定積分：從 0 到 1，x 除以 x 加 1 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_0^1\\frac{x}{(x+1)^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子湊 $x+1$：$x=(x+1)-1$",
+            "$\\frac{x}{(x+1)^2}=\\frac{1}{x+1}-\\frac{1}{(x+1)^2}$"
+          ],
+          "say": "分子 x 寫成 x 加 1 減 1，就直接拆成 x 加 1 分之 1，減 x 加 1 平方分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子湊 $x+1$：$x=(x+1)-1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x}{(x+1)^2}=\\frac{1}{x+1}-\\frac{1}{(x+1)^2}$",
+              "on": "就直"
+            },
+            {
+              "do": "write",
+              "line": "　也可以設 $\\frac{A}{x+1}+\\frac{B}{(x+1)^2}$，得 $A=1$、$B=-1$",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反導函數：$\\ln(x+1)+\\dfrac{1}{x+1}$"
+          ],
+          "say": "反導函數是自然對數 x 加 1，加 x 加 1 分之 1。在 0 到 1 上 x 加 1 是正的，絕對值可以拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反導函數：$\\ln(x+1)+\\dfrac{1}{x+1}$"
+            },
+            {
+              "do": "write",
+              "line": "　$[0,1]$ 上 $x+1>0$，被積函數連續，可以用微積分基本定理",
+              "color": "violet",
+              "on": "是正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Big[\\ln(x+1)+\\frac{1}{x+1}\\Big]_0^1=\\Big(\\ln2+\\frac12\\Big)-\\Big(0+1\\Big)$"
+          ],
+          "say": "代上下限：上限是自然對數 2 加 2 分之 1，下限是 0 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big[\\ln(x+1)+\\frac{1}{x+1}\\Big]_0^1=\\Big(\\ln2+\\frac12\\Big)-\\Big(0+1\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\ln2-\\frac12\\approx0.193$"
+          ],
+          "say": "相減，答案是自然對數 2 減 2 分之 1，大約 0.193。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle =\\ln2-\\frac12\\approx0.193}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "面積 ≈ 0.193"
+          ],
+          "say": "圖上這塊面積大約 0.193，被積函數最高只到 4 分之 1，答案合理。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "rep",
+                  "window": [
+                    0,
+                    1,
+                    0,
+                    0.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x/(x+1)^2",
+                      "color": "blue"
+                    }
+                  ],
+                  "area": [
+                    {
+                      "expr": "x/(x+1)^2",
+                      "from": 0,
+                      "to": 1,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "面積 ≈ 0.193",
+              "color": "violet",
+              "on": "數最"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "只有一個重複因式：換元",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\frac{3x+1}{(x-1)^2}\\,dx$"
+          ],
+          "say": "回到開頭那一題。分母只有一個重複因式時，有更快的方法：換元。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{3x+1}{(x-1)^2}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=x-1$：$x=u+1$，$dx=du$",
+            "$3x+1=3(u+1)+1=3u+4$"
+          ],
+          "say": "令 u 等於 x 減 1。那 x 是 u 加 1，3x 加 1 就是 3u 加 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $u=x-1$：$x=u+1$，$dx=du$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 3x+1=3(u+1)+1=3u+4$",
+              "on": "3x"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{3u+4}{u^2}=\\frac3u+\\frac{4}{u^2}$"
+          ],
+          "say": "分母變成 u 平方，直接逐項除開：u 分之 3，加 u 平方分之 4。不用解任何方程式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3u+4}{u^2}=\\frac3u+\\frac{4}{u^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\Big(\\frac3u+\\frac4{u^2}\\Big)du=3\\ln|u|-\\frac4u+C$"
+          ],
+          "say": "積分：u 分之 3 積成 3 倍自然對數，u 平方分之 4 用冪次公式，是負 u 分之 4。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\Big(\\frac3u+\\frac4{u^2}\\Big)du=3\\ln|u|-\\frac4u+C$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=3\\ln|x-1|-\\frac{4}{x-1}+C$"
+          ],
+          "say": "換回 x：3 倍自然對數絕對值 x 減 1，減 x 減 1 分之 4，加 C。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle =3\\ln|x-1|-\\frac{4}{x-1}+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 ① 拆出來的 $\\frac{3}{x-1}+\\frac{4}{(x-1)^2}$ 完全一樣"
+          ],
+          "say": "對照第一節：係數 3 和 4 完全一樣。換元其實就是把分子用 x 減 1 的次方重寫，也就是第一節那個證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 ① 拆出來的 $\\frac{3}{x-1}+\\frac{4}{(x-1)^2}$ 完全一樣"
+            },
+            {
+              "do": "write",
+              "line": "　分母還有別的因式（如 $x(x+1)^2$）時，換元不會變簡單，還是用設、求、積",
+              "color": "violet",
+              "on": "分子"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "整個流程",
+      "beats": [
+        {
+          "show": [
+            "積 $\\displaystyle\\int\\frac{1}{x(x+1)^2}\\,dx$ 的步驟"
+          ],
+          "say": "把整個流程排排看。"
+        }
+      ],
+      "proof": true,
+      "order": {
+        "ask": "積 $\\displaystyle\\int\\frac{1}{x(x+1)^2}\\,dx$ 的步驟",
+        "steps": [
+          {
+            "label": "確認是真分式"
+          },
+          {
+            "label": "設 $\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}$",
+            "why": "先要有上一步：確認是真分式"
+          },
+          {
+            "label": "代根 $x=0,-1$ 求出 $A$、$C$",
+            "why": "先要有上一步：設 $\\frac{A}{x}+\\frac{B}{x+1}+\\frac{C}{(x+1)^2}$"
+          },
+          {
+            "label": "比較 $x^2$ 係數補出 $B$",
+            "why": "先要有上一步：代根 $x=0,-1$ 求出 $A$、$C$"
+          },
+          {
+            "label": "一次方積成 $\\ln$，平方項用冪次公式",
+            "why": "先要有上一步：比較 $x^2$ 係數補出 $B$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $(x-a)^k$：一次方到 $k$ 次方，每個次方一項",
+            "• 代根只求得出最高次項；其他的比較係數或代別的值"
+          ],
+          "say": "整理一下：重複因式的每一個次方都要一項；代根求不完的，用比較係數補；只有一次方積成自然對數，高次方用冪次公式；只有一個重複因式時，換元最快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $(x-a)^k$：一次方到 $k$ 次方，每個次方一項"
+            },
+            {
+              "do": "write",
+              "line": "• 代根只求得出最高次項；其他的比較係數或代別的值",
+              "on": "一項"
+            },
+            {
+              "do": "write",
+              "line": "• 只有一次方積成 $\\ln$；$k\\ge2$ 用冪次公式",
+              "on": "有一#1"
+            },
+            {
+              "do": "write",
+              "line": "• 只有一個重複因式：令 $u=x-a$，直接除開",
+              "on": "公式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：不可約二次式"
+          ],
+          "say": "下一課，分母出現拆不開的二次式，例如 x 平方加 1，要怎麼辦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：不可約二次式"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["partial-fraction", "repeated-factor", "rational-integral"],
-    "fine": ["pf-repeated-setup", "pf-repeated-coefficients", "pf-repeated-power-integrate"]
+    "coarse": [
+      "partial-fraction",
+      "repeated-factor",
+      "rational-integral"
+    ],
+    "fine": [
+      "pf-repeated-setup",
+      "pf-repeated-coefficients",
+      "pf-repeated-power-integrate"
+    ]
   },
   "practice": [
-    { "id": "gap-int-pf-005", "core": true, "trains": "pf-repeated-power-integrate" },
-    { "id": "lec-08-m1", "core": true, "trains": "pf-repeated-setup" },
-    { "id": "lec-08-q1b", "core": true, "trains": "pf-repeated-coefficients" },
-    { "id": "cg-4e-003", "core": true, "trains": "pf-repeated-coefficients" },
-    { "id": "cg-4e-004", "core": true, "trains": "pf-repeated-coefficients" },
-    { "id": "cg-4e-006", "core": true, "trains": "pf-repeated-setup" },
-    { "id": "cg-4e-008", "core": true, "trains": "pf-repeated-power-integrate" },
-    { "id": "cg-4e-005", "trains": "pf-repeated-coefficients" },
-    { "id": "cg-4e-007", "trains": "pf-repeated-setup" },
-    { "id": "cg-4e-009", "trains": "pf-repeated-power-integrate" }
+    {
+      "id": "gap-int-pf-005",
+      "core": true,
+      "trains": "pf-repeated-power-integrate"
+    },
+    {
+      "id": "lec-08-m1",
+      "core": true,
+      "trains": "pf-repeated-setup"
+    },
+    {
+      "id": "lec-08-q1b",
+      "core": true,
+      "trains": "pf-repeated-coefficients"
+    },
+    {
+      "id": "cg-4e-003",
+      "core": true,
+      "trains": "pf-repeated-coefficients"
+    },
+    {
+      "id": "cg-4e-004",
+      "core": true,
+      "trains": "pf-repeated-coefficients"
+    },
+    {
+      "id": "cg-4e-006",
+      "core": true,
+      "trains": "pf-repeated-setup"
+    },
+    {
+      "id": "cg-4e-008",
+      "core": true,
+      "trains": "pf-repeated-power-integrate"
+    },
+    {
+      "id": "cg-4e-005",
+      "trains": "pf-repeated-coefficients"
+    },
+    {
+      "id": "cg-4e-007",
+      "trains": "pf-repeated-setup"
+    },
+    {
+      "id": "cg-4e-009",
+      "trains": "pf-repeated-power-integrate"
+    }
   ],
   "gaps": []
 }

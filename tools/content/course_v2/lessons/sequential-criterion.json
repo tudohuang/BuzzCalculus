@@ -1,50 +1,134 @@
 {
   "id": "sequential-criterion",
   "title": "數列判準",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["continuity-formal", "epsilon-n-definition", "limit-laws-proof"],
-  "next": ["ivt-proof"],
-  "related": ["extreme-value-theorem", "heine-cantor"],
-  "objectives": [
-    "說得出數列判準：$f$ 在 $a$ 連續，若且唯若每一個趨近 $a$ 的數列 $x_n$ 都使 $f(x_n)\\to f(a)$。",
-    "會用「找兩個數列」證明函數在某點不連續。",
-    "知道為什麼「某一個數列行得通」不足以證明連續。"
+  "prerequisites": [
+    "continuity-formal",
+    "epsilon-n-definition",
+    "limit-laws-proof"
   ],
-  "visual": "y = sin(1/x)（x ≠ 0）、f(0) = 0 的圖。兩串點 xₙ = 1/(2πn + π/2) 與 yₙ = 1/(2πn + 3π/2) 從右邊走向 0：前一串的函數值全是 1，後一串全是 −1，旁邊顯示兩串函數值各自的極限。",
+  "next": [
+    "ivt-proof"
+  ],
+  "related": [
+    "extreme-value-theorem",
+    "heine-cantor"
+  ],
+  "objectives": [
+    "說得出數列判準：$f$ 在 $a$ 連續，若且唯若每一個趨近 $a$ 的數列 $x_n$ 都使 $f(x_n)\\to f(a)$",
+    "會用「找兩個數列」證明函數在某點不連續",
+    "知道為什麼「某一個數列行得通」不足以證明連續"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 把 $\\varepsilon$-$\\delta$ 換成數列",
+      "heading": "① 把 ε-δ 換成數列",
       "body": [
-        "$\\varepsilon$-$\\delta$ 定義一次要管 $a$ 附近「所有」的 $x$。數列判準換個角度：不管你沿著哪一串點走向 $a$，函數值都要走向 $f(a)$。",
-        "直覺，不是證明：連續就是「輸入靠近，輸出就靠近」，而數列 $x_n\\to a$ 正是一種「輸入靠近」的方式。漏掉的是另一個方向——為什麼檢查所有數列就夠了，要靠下面的證明。"
-      ],
-      "collapsible": false
+        "$\\varepsilon$-$\\delta$：一次檢查 $a$ 附近所有的 $x$",
+        "換個方式：讓 $x_n$ 一步一步走向 $a$，看 $f(x_n)$ 走向哪裡",
+        "連續的函數：不管怎麼走，$f(x_n)$ 都走到 $f(a)$",
+        "問題：「每一條路都對」跟 $\\varepsilon$-$\\delta$ 一樣強嗎？"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設 $f$ 定義在 $D$ 上，$a\\in D$。$f$ 在 $a$ 連續，若且唯若：對 $D$ 中每一個滿足 $x_n\\to a$ 的數列 $(x_n)$，都有 $f(x_n)\\to f(a)$。",
-        "注意是「每一個」數列。找到一個數列使 $f(x_n)\\to f(a)$ 什麼都證明不了；但只要找到一個數列使 $f(x_n)$ 不趨近 $f(a)$，就證明了不連續。"
+        "設 $f:D\\to\\mathbb{R}$，$a\\in D$。",
+        "重點在每一個：只檢查一個數列不夠",
+        "$x_n$ 可以等於 $a$，也可以忽左忽右；只要求 $x_n\\in D$",
+        "⇒ 的策略：把三個量接成一條鏈"
       ],
-      "tex": ["f\\text{ 在 }a\\text{ 連續}\\iff\\bigl(\\forall (x_n)\\subseteq D,\\ x_n\\to a\\Rightarrow f(x_n)\\to f(a)\\bigr)"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&f\\text{ 在 }a\\text{ 連續}\\iff\\text{對}\\textbf{每一個}\\ (x_n)\\subset D,\\\\&\\quad x_n\\to a\\ \\Rightarrow\\ f(x_n)\\to f(a)\\end{aligned}"
+      ]
     },
     {
-      "heading": "③ 兩個用途",
+      "heading": "② 證明：⇒",
       "body": [
-        "證不連續：找一串 $x_n\\to a$，讓 $f(x_n)$ 趨近別的值或根本不收斂；或找兩串，讓函數值趨近不同的數。這通常比寫出 $\\varepsilon$ 與每個 $\\delta$ 的壞點快。",
-        "證連續：把數列的極限定律搬過來。例如 $f$、$g$ 在 $a$ 連續，$x_n\\to a$，則 $f(x_n)\\to f(a)$、$g(x_n)\\to g(a)$，由〈極限定律〉$f(x_n)g(x_n)\\to f(a)g(a)$，所以 $fg$ 在 $a$ 連續。合成函數也一樣。這個判準之後會在〈極值定理〉與〈Heine–Cantor 定理〉的證明裡反覆出現。"
+        "設 $f$ 在 $a$ 連續，$x_n\\in D$，$x_n\\to a$。給定 $\\varepsilon>0$。",
+        "• 連續：有 $\\delta>0$，$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$",
+        "• $x_n\\to a$（把 $\\delta$ 當誤差）：有 $N$，$n\\ge N\\Rightarrow|x_n-a|<\\delta$",
+        "$n\\ge N$：$|x_n-a|<\\delta$，所以",
+        "+ 這就是 $f(x_n)\\to f(a)$　$\\blacksquare$",
+        "⇐ 的策略：反過來不好直接證，改證逆否",
+        "不連續 ⇒ 造得出一個壞數列"
       ],
-      "collapsible": false
+      "tex": [
+        "|f(x_n)-f(a)|<\\varepsilon"
+      ]
     },
     {
-      "heading": "證明：兩個方向",
+      "heading": "② 證明：⇐",
       "body": [
-        "$(\\Rightarrow)$ 設 $f$ 在 $a$ 連續，$x_n\\to a$。給定 $\\varepsilon>0$，由連續取 $\\delta>0$，使 $|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$。由 $x_n\\to a$，對這個 $\\delta$ 存在 $N$，$n\\ge N$ 時 $|x_n-a|<\\delta$，於是 $|f(x_n)-f(a)|<\\varepsilon$。所以 $f(x_n)\\to f(a)$。",
-        "$(\\Leftarrow)$ 用逆否：設 $f$ 在 $a$ 不連續。則存在 $\\varepsilon_0>0$，使每個 $\\delta>0$ 都有壞點。對每個 $n$ 取 $\\delta=\\frac{1}{n}$，得到 $x_n\\in D$ 滿足 $|x_n-a|<\\frac{1}{n}$ 且 $|f(x_n)-f(a)|\\ge\\varepsilon_0$。這串 $x_n\\to a$，但 $f(x_n)$ 與 $f(a)$ 永遠差至少 $\\varepsilon_0$，不趨近 $f(a)$。所以「每個數列都行」不成立。"
+        "設 $f$ 在 $a$ 不連續：有 $\\varepsilon_0>0$，對每個 $\\delta>0$ 都有壞點",
+        "對每個 $n$，取 $\\delta=\\frac1n$，得到 $x_n\\in D$：",
+        "• $|x_n-a|<\\frac1n\\to0$，所以 $x_n\\to a$（阿基米德）",
+        "• 每一項的誤差都 $\\ge\\varepsilon_0$，所以 $f(x_n)\\not\\to f(a)$",
+        "找到一個壞數列，跟「每一個數列都好」矛盾　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "|x_n-a|<\\frac1n,\\qquad|f(x_n)-f(a)|\\ge\\varepsilon_0"
+      ]
+    },
+    {
+      "heading": "③ 用途一：證不連續",
+      "body": [
+        "$f(x)=\\sin\\frac1x$（$x\\ne0$），$f(0)=0$。證明 $f$ 在 $0$ 不連續。",
+        "策略：挑一串剛好落在波峰的點",
+        "$f(x_n)\\to1\\ne0=f(0)$ ⇒ 由判準，不連續　$\\blacksquare$"
+      ],
+      "tex": [
+        "x_n=\\frac{1}{\\frac\\pi2+2n\\pi}\\to0,\\qquad f(x_n)=\\sin\\!\\left(\\tfrac\\pi2+2n\\pi\\right)=1"
+      ]
+    },
+    {
+      "heading": "③ 一個數列不夠",
+      "body": [
+        "上題：$y_n\\to0$ 而且 $f(y_n)\\to f(0)$，可是 $f$ 不連續",
+        "判準要的是每一個數列；證不連續只要一個壞的",
+        "例：$g(x)=\\begin{cases}x,&x\\in\\mathbb{Q}\\\\0,&x\\notin\\mathbb{Q}\\end{cases}$，在哪些點連續？",
+        "$a=1$：$x_n=1+\\frac1n$ 都是有理數，$g(x_n)=x_n\\to1=g(1)$",
+        "但 $s_n=1+\\frac{\\sqrt2}n$ 都是無理數：$g(s_n)=0\\to0\\ne1$",
+        "$1+\\frac{\\sqrt2}n$ 是無理數：否則 $\\sqrt2=n(r-1)$ 是有理數"
+      ]
+    },
+    {
+      "heading": "③ 只在一點連續",
+      "body": [
+        "$a\\ne0$：取有理數 $r_n\\to a$、無理數 $s_n\\to a$（稠密性，12.11）",
+        "無理數列：取有理數 $q_n$，$|q_n-a|<\\frac1n$，令 $s_n=q_n+\\frac{\\sqrt2}n$",
+        "若連續，兩個極限都要是 $g(a)$ ⇒ $a=0$，矛盾",
+        "$a=0$：不管 $x$ 有理無理，$|g(x)-g(0)|\\le|x|$",
+        "取 $\\delta=\\varepsilon$：$|x|<\\delta\\Rightarrow|g(x)-0|\\le|x|<\\varepsilon$",
+        "⇒ $g$ 只在 $0$ 連續"
+      ],
+      "tex": [
+        "g(r_n)=r_n\\to a,\\qquad g(s_n)=0\\to0"
+      ]
+    },
+    {
+      "heading": "③ 用途二：證連續",
+      "body": [
+        "$f,g$ 在 $a$ 連續 ⇒ $f+g$、$fg$ 在 $a$ 連續",
+        "證明：任取 $x_n\\to a$。則 $f(x_n)\\to f(a)$，$g(x_n)\\to g(a)$",
+        "12.14：$f(x_n)+g(x_n)\\to f(a)+g(a)$，乘積同理",
+        "$x_n$ 是任意的 ⇒ 由判準，$f+g$、$fg$ 連續　$\\blacksquare$",
+        "推論：$x$ 連續 ⇒ 所有多項式處處連續",
+        "除法也一樣：$g(a)\\ne0$ 時 $\\frac fg$ 在 $a$ 連續（12.14 的除法定律）"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 判準：$f$ 在 $a$ 連續 $\\iff$ 每一個 $x_n\\to a$ 都有 $f(x_n)\\to f(a)$",
+        "• ⇒：$\\varepsilon\\to\\delta\\to N$ 接成一條鏈",
+        "• ⇐：逆否；$\\delta=\\frac1n$ 各抓一個壞點",
+        "• 證不連續：一個壞數列，或兩個極限不同的數列",
+        "• 一個數列行得通不夠；判準也把數列定律搬給函數",
+        "下一課：中間值定理的證明"
+      ]
     }
   ],
   "workedExamples": [
@@ -93,275 +177,892 @@
   ],
   "checks": [
     {
-      "ask": "要用數列判準證明 $f$ 在 $a$ 不連續，最少需要什麼？",
+      "ask": "要證明 $g$ 在 $a=1$ 不連續，下面哪個論證==正確==？",
       "options": [
-        { "label": "一個 $x_n\\to a$ 的數列，使 $f(x_n)$ 不趨近 $f(a)$", "correct": true },
-        { "label": "每一個 $x_n\\to a$ 的數列都使 $f(x_n)$ 不趨近 $f(a)$", "why": "你把「不是每一個都行」否定成「每一個都不行」。只要一個壞數列就夠，$\\sin(\\frac{1}{x})$ 也有讓 $f(x_n)\\to0$ 的數列。" },
-        { "label": "兩個數列，使 $f(x_n)$ 與 $f(y_n)$ 趨近不同的值", "why": "兩個數列是常用技巧（不知道 $f(a)$ 或要證補什麼值都不行時），但不是必要；一個 $f(x_n)$ 不趨近 $f(a)$ 就夠。" }
-      ]
-    },
-    {
-      "ask": "$f(x)=\\sin(\\frac{1}{x})$，$f(0)=0$。$x_n=\\frac{1}{\\pi n}\\to0$ 時 $f(x_n)$ 是多少？",
-      "options": [
-        { "label": "0，這串剛好行得通，但不能據此說 $f$ 在 0 連續", "correct": true },
-        { "label": "1，所以 $f$ 在 0 不連續", "why": "$\\sin(\\pi n)=0$，不是 1。讓 $\\sin$ 等於 1 的是 $\\frac{1}{x}=2\\pi n+\\frac{\\pi}{2}$。" },
-        { "label": "0，所以 $f$ 在 0 連續", "why": "一個數列成功不代表每個數列都成功；$x_n=\\frac{1}{2\\pi n+\\frac{\\pi}{2}}$ 給出 $f(x_n)=1$。" }
-      ]
-    },
-    {
-      "ask": "證明定理 $(\\Leftarrow)$ 方向時，為什麼取 $\\delta=\\frac{1}{n}$？",
-      "options": [
-        { "label": "為了造出一串壞點 $x_n$，而且 $|x_n-a|<\\frac{1}{n}$ 保證 $x_n\\to a$", "correct": true },
-        { "label": "因為連續的定義要求 $\\delta=\\frac{1}{n}$", "why": "定義只要求 $\\delta>0$。這裡是在不連續的假設下，對每個 $\\delta$ 都有壞點，挑 $\\delta=\\frac{1}{n}$ 這一串來用。" },
-        { "label": "為了讓 $f(x_n)\\to f(a)$", "why": "正好相反：這些 $x_n$ 滿足 $|f(x_n)-f(a)|\\ge\\varepsilon_0$，是用來證 $f(x_n)$ 不趨近 $f(a)$。" }
-      ]
-    },
-    {
-      "ask": "$f(x)=x$（$x$ 有理），$f(x)=0$（$x$ 無理）。$f$ 在 2 連續嗎？",
-      "options": [
-        { "label": "不連續：無理數列 $r_n\\to2$ 給 $f(r_n)=0$，不趨近 $f(2)=2$", "correct": true },
-        { "label": "連續：有理數列 $q_n\\to2$ 給 $f(q_n)\\to2$", "why": "你只檢查了有理數列。無理數列給出 0，至少有一串失敗。" },
-        { "label": "連續，因為 $|f(x)|\\le|x|$", "why": "這個不等式只在 0 處有用（夾到 $f(0)=0$）；在 2 處它夾不出 $f(x)\\to2$。" }
+        {
+          "label": "有一個 $s_n\\to1$，$g(s_n)\\to0\\ne g(1)$",
+          "correct": true
+        },
+        {
+          "label": "$x_n=1+\\frac1n$ 使 $g(x_n)\\to g(1)$，所以連續",
+          "why": "一個數列行得通不夠，判準要每一個"
+        },
+        {
+          "label": "$g$ 在 $1$ 附近有無理數，所以不連續",
+          "why": "方向對，但要寫出數列和極限，說明它真的不趨近 $g(1)$"
+        },
+        {
+          "label": "有理數列和無理數列的極限都是 $1$，所以矛盾",
+          "why": "$g(s_n)$ 的極限是 $0$，不是 $1$：看的是函數值"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "沿著數列走",
+      "title": "把 ε-δ 換成數列",
       "beats": [
-        { "show": ["$\\varepsilon$-$\\delta$：一次管所有的 $x$"],
-          "say": "epsilon delta 定義一次要管 a 附近所有的 x。換個角度看連續。",
+        {
+          "show": [
+            "$\\varepsilon$-$\\delta$：一次檢查 $a$ 附近所有的 $x$"
+          ],
+          "say": "艾普西隆得塔的定義，是一次檢查 a 附近所有的 x。這很強，但不好用。",
           "board": [
-            { "do": "write", "line": "$\\varepsilon$-$\\delta$：一次管所有的 $x$" }
-          ] },
-        { "show": ["沿哪一串點走向 $a$", "函數值都要走向 $f(a)$"], "note": "直覺，不是證明。",
-          "say": "不管你沿著哪一串點走向 a，函數值都要走向 f 在 a 的值。這是直覺，還要證明檢查數列就夠。",
+            {
+              "do": "write",
+              "line": "$\\varepsilon$-$\\delta$：一次檢查 $a$ 附近所有的 $x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換個方式：讓 $x_n$ 一步一步走向 $a$，看 $f(x_n)$ 走向哪裡"
+          ],
+          "say": "換個方式：讓一串點 x n 走向 a，看函數值走向哪裡。這樣就能用上數列的工具。",
           "board": [
-            { "do": "write", "line": "沿哪一串 $x_n$ 走向 $a$" },
-            { "do": "write", "line": "函數值都走向 $f(a)$", "on": "函數值都" }
-          ] },
-        { "show": ["連續 ⇔ 每個 $x_n\\to a$ 都有 $f(x_n)\\to f(a)$"], "note": "$x_n$ 要在定義域 $D$ 裡。",
-          "say": "定理：在 a 連續，若且唯若定義域裡每一串趨近 a 的數列，函數值都趨近 f 在 a 的值。",
+            {
+              "do": "write",
+              "line": "換個方式：讓 $x_n$ 一步一步走向 $a$，看 $f(x_n)$ 走向哪裡"
+            }
+          ]
+        },
+        {
+          "show": [
+            "x_n 左右跳著走向 a，f(x_n) 跟著走向 f(a)"
+          ],
+          "say": "圖上，x n 左右跳著走向 a，對應的函數值也跟著走向 f of a。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "連續 ⇔ 每個 ${{a:x_n\\to a}}$ 都有 ${{b:f(x_n)\\to f(a)}}$", "tint": {"a":"blue","b":"violet"}, "on": "若且唯若" },
-            { "do": "focus", "term": "a", "color": "blue", "on": "每一串" },
-            { "do": "focus", "term": "b", "color": "violet", "on": "函數值都" }
-          ] },
-        { "show": ["一個好數列：什麼都沒證到", "一個壞數列：證明了不連續"],
-          "say": "重點是每一個。找到一串行得通，什麼也證不了；找到一串行不通，就證明了不連續。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "walk",
+                  "window": [
+                    0,
+                    2,
+                    0,
+                    2
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2/2+0.5",
+                      "color": "ink",
+                      "label": "y = f(x)"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.2,
+                      "y": 0.52,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1.4,
+                      "y": 1.48,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.7333,
+                      "y": 0.7689,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1.2,
+                      "y": 1.22,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.84,
+                      "y": 0.8528,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1.1333,
+                      "y": 1.1422,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.8857,
+                      "y": 0.8922,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1.1,
+                      "y": 1.105,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 1,
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": 1,
+                      "label": "a",
+                      "color": "pencil"
+                    }
+                  ],
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "x_n 左右跳著走向 a，f(x_n) 跟著走向 f(a)",
+              "color": "violet",
+              "on": "應的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "連續的函數：不管怎麼走，$f(x_n)$ 都走到 $f(a)$"
+          ],
+          "say": "連續的函數，不管 x n 從哪一邊走、跳不跳，函數值都會走到 f of a。",
           "board": [
-            { "do": "write", "line": "重點：每一個數列 ${{s:x_n\\to a}}$" },
-            { "do": "underline", "term": "s", "color": "gold", "on": "每一個" },
-            { "do": "write", "line": "好數列：什麼都沒證到", "on": "找到一串行得通" }
-          ] }
+            {
+              "do": "write",
+              "line": "連續的函數：不管怎麼走，$f(x_n)$ 都走到 $f(a)$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題：「每一條路都對」跟 $\\varepsilon$-$\\delta$ 一樣強嗎？"
+          ],
+          "say": "反過來，每一條路都走對，夠不夠推回連續？夠，這就是今天的定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題：「每一條路都對」跟 $\\varepsilon$-$\\delta$ 一樣強嗎？"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "設 $f:D\\to\\mathbb{R}$，$a\\in D$。",
+            "$\\begin{aligned}&f\\text{ 在 }a\\text{ 連續}\\iff\\text{對}\\textbf{每一個}\\ (x_n)\\subset D,\\\\&\\quad x_n\\to a\\ \\Rightarrow\\ f(x_n)\\to f(a)\\end{aligned}$"
+          ],
+          "say": "數列判準：f 在 a 連續，若且唯若，對每一個在 D 裡、趨近 a 的數列 x n，函數值 f of x n 都趨近 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $f:D\\to\\mathbb{R}$，$a\\in D$。"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&f\\text{ 在 }a\\text{ 連續}\\iff\\text{對}\\textbf{每一個}\\ (x_n)\\subset D,\\\\&\\quad x_n\\to a\\ \\Rightarrow\\ f(x_n)\\to f(a)\\end{aligned}}}}$",
+              "on": "個在"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "of#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重點在每一個：只檢查一個數列不夠"
+          ],
+          "say": "重點在每一個這三個字。等一下會看到，只檢查一個數列是不夠的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "重點在每一個：只檢查一個數列不夠",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$x_n$ 可以等於 $a$，也可以忽左忽右；只要求 $x_n\\in D$",
+              "color": "violet",
+              "on": "看到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ 的策略：把三個量接成一條鏈",
+            "圖"
+          ],
+          "say": "先看往右的方向。策略是一條鏈：對手給艾普西隆；連續性給我們得塔；x n 趨近 a，再把得塔當成誤差，給我們一個 N。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ 的策略：把三個量接成一條鏈"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 520 110\" width=\"520\" height=\"110\"><rect x=\"5\" y=\"10\" width=\"140\" height=\"90\" rx=\"12\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><rect x=\"190\" y=\"10\" width=\"140\" height=\"90\" rx=\"12\" fill=\"none\" stroke=\"var(--blue)\" stroke-width=\"2.5\"/><rect x=\"375\" y=\"10\" width=\"140\" height=\"90\" rx=\"12\" fill=\"none\" stroke=\"var(--green)\" stroke-width=\"2.5\"/><text x=\"75\" y=\"50\" text-anchor=\"middle\" font-size=\"34\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">ε</text><text x=\"260\" y=\"50\" text-anchor=\"middle\" font-size=\"34\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">δ</text><text x=\"445\" y=\"50\" text-anchor=\"middle\" font-size=\"34\" fill=\"var(--green)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">N</text><text x=\"75\" y=\"86\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:inherit\">對手給</text><text x=\"260\" y=\"86\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:inherit\">連續給</text><text x=\"445\" y=\"86\" text-anchor=\"middle\" font-size=\"24\" fill=\"var(--ink)\" style=\"font-family:inherit\">收斂給</text><line x1=\"148\" y1=\"55\" x2=\"178\" y2=\"55\" stroke=\"var(--ink)\" stroke-width=\"3\"/><polygon points=\"187,55 175,47 175,63\" fill=\"var(--ink)\"/><line x1=\"333\" y1=\"55\" x2=\"363\" y2=\"55\" stroke=\"var(--ink)\" stroke-width=\"3\"/><polygon points=\"372,55 360,47 360,63\" fill=\"var(--ink)\"/></svg>",
+              "on": "得塔#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：⇒",
+      "beats": [
+        {
+          "show": [
+            "設 $f$ 在 $a$ 連續，$x_n\\in D$，$x_n\\to a$。給定 $\\varepsilon>0$。"
+          ],
+          "say": "正式證明。假設 f 在 a 連續，x n 在 D 裡而且趨近 a。給定艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $f$ 在 $a$ 連續，$x_n\\in D$，$x_n\\to a$。給定 $\\varepsilon>0$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 連續：有 $\\delta>0$，$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$",
+            "• $x_n\\to a$（把 $\\delta$ 當誤差）：有 $N$，$n\\ge N\\Rightarrow|x_n-a|<\\delta$"
+          ],
+          "say": "由連續，有一個得塔。由 x n 趨近 a，把這個得塔當成數列定義裡的誤差，就有一個 N，n 大於等於 N 時，x n 離 a 不到得塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 連續：有 $\\delta>0$，$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• $x_n\\to a$（把 $\\delta$ 當誤差）：有 $N$，$n\\ge N\\Rightarrow|x_n-a|<\\delta$",
+              "on": "誤差"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\ge N$：$|x_n-a|<\\delta$，所以",
+            "$|f(x_n)-f(a)|<\\varepsilon$"
+          ],
+          "say": "所以 n 大於等於 N 時，x n 落在直帶裡，函數值就落在橫帶裡，誤差小於艾普西隆。這正是 f of x n 趨近 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\ge N$：$|x_n-a|<\\delta$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x_n)-f(a)|<\\varepsilon$",
+              "on": "函數"
+            },
+            {
+              "do": "write",
+              "line": "+ 這就是 $f(x_n)\\to f(a)$　$\\blacksquare$",
+              "color": "gold",
+              "on": "正是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇐ 的策略：反過來不好直接證，改證逆否"
+          ],
+          "say": "反方向比較難直接證，改證逆否命題：如果 f 在 a 不連續，就造得出一個壞數列，它趨近 a，函數值卻不趨近 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇐ 的策略：反過來不好直接證，改證逆否"
+            },
+            {
+              "do": "write",
+              "line": "不連續 ⇒ 造得出一個壞數列",
+              "on": "就造"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：⇐",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "策略看圖：不連續，代表直帶再窄都有點跳出去。讓直帶半徑依序是 1、2 分之 1、3 分之 1，每次抓一個跳出去的點，排成數列。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 520 200\" width=\"520\" height=\"200\"><line x1=\"140\" y1=\"150\" x2=\"515\" y2=\"150\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"160\" y1=\"110\" x2=\"500\" y2=\"110\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"160\" y1=\"103\" x2=\"160\" y2=\"117\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"500\" y1=\"103\" x2=\"500\" y2=\"117\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"245\" y1=\"75\" x2=\"415\" y2=\"75\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"245\" y1=\"68\" x2=\"245\" y2=\"82\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"415\" y1=\"68\" x2=\"415\" y2=\"82\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"273.3\" y1=\"40\" x2=\"386.6\" y2=\"40\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"273.3\" y1=\"33\" x2=\"273.3\" y2=\"47\" stroke=\"var(--blue)\" stroke-width=\"3\"/><line x1=\"386.6\" y1=\"33\" x2=\"386.6\" y2=\"47\" stroke=\"var(--blue)\" stroke-width=\"3\"/><text x=\"8\" y=\"119\" font-size=\"26\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">δ = 1</text><text x=\"8\" y=\"84\" font-size=\"26\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">δ = 1/2</text><text x=\"8\" y=\"49\" font-size=\"26\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">δ = 1/3</text><line x1=\"330\" y1=\"140\" x2=\"330\" y2=\"160\" stroke=\"var(--ink)\" stroke-width=\"3\"/><text x=\"330\" y=\"190\" text-anchor=\"middle\" font-size=\"28\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</text><circle cx=\"449.0\" cy=\"150\" r=\"8\" fill=\"var(--red)\"/><text x=\"449.0\" y=\"188\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x<tspan font-size=\"19\" dy=\"6\">1</tspan></text><circle cx=\"262.0\" cy=\"150\" r=\"8\" fill=\"var(--red)\"/><text x=\"262.0\" y=\"188\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x<tspan font-size=\"19\" dy=\"6\">2</tspan></text><circle cx=\"372.5\" cy=\"150\" r=\"8\" fill=\"var(--red)\"/><text x=\"372.5\" y=\"188\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x<tspan font-size=\"19\" dy=\"6\">3</tspan></text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "設 $f$ 在 $a$ 不連續：有 $\\varepsilon_0>0$，對每個 $\\delta>0$ 都有壞點"
+          ],
+          "say": "正式證明：假設 f 在 a 不連續。照上一課的否定句，有一個艾普西隆零，對每一個得塔都有壞點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $f$ 在 $a$ 不連續：有 $\\varepsilon_0>0$，對每個 $\\delta>0$ 都有壞點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對每個 $n$，取 $\\delta=\\frac1n$，得到 $x_n\\in D$：",
+            "$|x_n-a|<\\frac1n,\\qquad|f(x_n)-f(a)|\\ge\\varepsilon_0$"
+          ],
+          "say": "對每一個 n，取得塔等於 n 分之 1，得到一個壞點 x n：它離 a 不到 n 分之 1，誤差卻大於等於艾普西隆零。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對每個 $n$，取 $\\delta=\\frac1n$，得到 $x_n\\in D$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x_n-a|<\\frac1n,\\qquad|f(x_n)-f(a)|\\ge\\varepsilon_0$",
+              "on": "它離"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $|x_n-a|<\\frac1n\\to0$，所以 $x_n\\to a$（阿基米德）",
+            "• 每一項的誤差都 $\\ge\\varepsilon_0$，所以 $f(x_n)\\not\\to f(a)$"
+          ],
+          "say": "一方面，x n 離 a 不到 n 分之 1，由阿基米德性質趨近 a。另一方面，每一項誤差都至少艾普西隆零，函數值不會趨近 f of a。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $|x_n-a|<\\frac1n\\to0$，所以 $x_n\\to a$（阿基米德）"
+            },
+            {
+              "do": "write",
+              "line": "• 每一項的誤差都 $\\ge\\varepsilon_0$，所以 $f(x_n)\\not\\to f(a)$",
+              "on": "另一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "找到一個壞數列，跟「每一個數列都好」矛盾　$\\blacksquare$"
+          ],
+          "say": "我們造出了一個壞數列，跟每一個數列都好的假設矛盾。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "找到一個壞數列，跟「每一個數列都好」矛盾　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用途一：證不連續",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=\\sin\\frac1x$（$x\\ne0$），$f(0)=0$。證明 $f$ 在 $0$ 不連續。"
+          ],
+          "say": "數列判準的第一個用途：證明不連續，只要找一個壞數列。看正弦 x 分之 1，在 0 補定義為 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=\\sin\\frac1x$（$x\\ne0$），$f(0)=0$。證明 $f$ 在 $0$ 不連續。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：x_n，函數值都是 1；藍：y_n，函數值都是 0"
+          ],
+          "say": "圖上，越靠近 0 振盪越快。紅點都在波峰，函數值是 1；藍點都在穿過零的地方。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "s1x",
+                  "window": [
+                    0,
+                    0.35,
+                    -1.3,
+                    1.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(1/x)",
+                      "color": "ink",
+                      "domain": [
+                        0.004,
+                        0.35
+                      ]
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 0.12732,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.070736,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.048971,
+                      "y": 1,
+                      "color": "red"
+                    },
+                    {
+                      "x": 0.31831,
+                      "y": 0,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.159155,
+                      "y": 0,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.106103,
+                      "y": 0,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 0.079577,
+                      "y": 0,
+                      "color": "blue"
+                    }
+                  ],
+                  "height": 250
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅：x_n，函數值都是 1；藍：y_n，函數值都是 0",
+              "color": "violet",
+              "on": "函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：挑一串剛好落在波峰的點",
+            "$x_n=\\frac{1}{\\frac\\pi2+2n\\pi}\\to0,\\qquad f(x_n)=\\sin\\!\\left(\\tfrac\\pi2+2n\\pi\\right)=1$"
+          ],
+          "say": "策略：挑一串剛好落在波峰的點。x n 等於 2 分之派加 2n 派，分之 1，它趨近 0，函數值每一項都是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：挑一串剛好落在波峰的點"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x_n=\\frac{1}{\\frac\\pi2+2n\\pi}\\to0,\\qquad f(x_n)=\\sin\\!\\left(\\tfrac\\pi2+2n\\pi\\right)=1$",
+              "on": "2n"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x_n)\\to1\\ne0=f(0)$ ⇒ 由判準，不連續　$\\blacksquare$"
+          ],
+          "say": "函數值趨近 1，不等於 f of 0 的 0。由數列判準，f 在 0 不連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x_n)\\to1\\ne0=f(0)$ ⇒ 由判準，不連續　$\\blacksquare$",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "先猜猜看",
+      "beats": [
+        {
+          "show": [
+            "同一個 $f$，取 $y_n=\\dfrac1{n\\pi}$。$f(y_n)$ 趨近多少？"
+          ],
+          "say": "先猜猜看：換一串點 n 派分之 1，函數值趨近多少？"
+        }
+      ],
+      "predict": {
+        "ask": "同一個 $f$，取 $y_n=\\dfrac1{n\\pi}$。$f(y_n)$ 趨近多少？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "那是落在波峰的 $x_n$；$y_n$ 落在 $\\sin$ 的零點"
+          },
+          {
+            "label": "不存在",
+            "why": "這串點的函數值每一項都一樣，是常數數列"
+          }
+        ]
+      }
+    },
+    {
+      "title": "一個數列不夠",
+      "beats": [
+        {
+          "show": [
+            "上題：$y_n\\to0$ 而且 $f(y_n)\\to f(0)$，可是 $f$ 不連續"
+          ],
+          "say": "上一題的 y n 走向 0，函數值也走向 f of 0。可是 f 在 0 並不連續。一條路走對，不代表每條路都對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上題：$y_n\\to0$ 而且 $f(y_n)\\to f(0)$，可是 $f$ 不連續",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判準要的是每一個數列；證不連續只要一個壞的"
+          ],
+          "say": "所以：證明連續，要對每一個數列；證明不連續，只要一個壞數列，或者兩個極限不同的數列。",
+          "board": [
+            {
+              "do": "write",
+              "line": "判準要的是每一個數列；證不連續只要一個壞的",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$g(x)=\\begin{cases}x,&x\\in\\mathbb{Q}\\\\0,&x\\notin\\mathbb{Q}\\end{cases}$，在哪些點連續？"
+          ],
+          "say": "再看一個更極端的例子：g of x，x 是有理數時等於 x，無理數時等於 0。它在哪些點連續？",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$g(x)={\\begin{cases}x,&x\\in\\mathbb{Q}\\\\0,&x\\notin\\mathbb{Q}\\end{cases}}$，在哪些點連續？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a=1$：$x_n=1+\\frac1n$ 都是有理數，$g(x_n)=x_n\\to1=g(1)$"
+          ],
+          "say": "先看 a 等於 1。取 1 加 n 分之 1，全是有理數，函數值就是自己，趨近 1，剛好等於 g of 1。看起來很好。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=1$：$x_n=1+\\frac1n$ 都是有理數，$g(x_n)=x_n\\to1=g(1)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "但 $s_n=1+\\frac{\\sqrt2}n$ 都是無理數：$g(s_n)=0\\to0\\ne1$"
+          ],
+          "say": "可是換成 1 加 n 分之根號 2，全是無理數，函數值都是 0，趨近 0，不等於 1。所以 g 在 1 不連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "但 $s_n=1+\\frac{\\sqrt2}n$ 都是無理數：$g(s_n)=0\\to0\\ne1$"
+            },
+            {
+              "do": "write",
+              "line": "　$1+\\frac{\\sqrt2}n$ 是無理數：否則 $\\sqrt2=n(r-1)$ 是有理數",
+              "color": "violet",
+              "on": "趨近"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "為什麼數列就夠",
-      "beats": [
-        { "show": ["連續 ⇒ 數列行得通"], "note": "$\\delta$ 給好，$x_n$ 遲早進到 $\\delta$ 裡。",
-          "say": "連續推數列這個方向很順：delta 給好，數列遲早會進到 delta 裡面，函數值就進到 epsilon 裡。",
-          "board": [
-            { "do": "write", "line": "連續 ⇒ 數列行得通" },
-            { "do": "write", "line": "$\\delta$ 給好 ⇒ ${{x:x_n}}$ 進 $\\delta$ ⇒ $f(x_n)$ 進 $\\varepsilon$", "tint": {"x":"blue"}, "on": "數列遲早" },
-            { "do": "focus", "term": "x", "color": "blue", "on": "函數值就" }
-          ] },
-        { "show": ["反方向用逆否"], "note": "從不連續造出一個壞數列。",
-          "say": "反方向直接證很難，要走逆否：假設不連續，造出一串壞數列。證明在下一節。",
-          "board": [
-            { "do": "write", "line": "反方向用逆否" },
-            { "do": "write", "line": "不連續 ⇒ 造出壞數列", "on": "假設不連續" }
-          ] },
-        { "show": ["每個 $\\delta$ 都有壞點：取 $\\delta=\\frac{1}{n}$"], "note": "得到 $|x_n-a|<\\frac{1}{n}$、$|f(x_n)-f(a)|\\ge\\varepsilon_0$。",
-          "say": "不連續表示對每個 delta 都有壞點。delta 取 n 分之一，每個 n 挑一個壞點，排成一串。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "每個 $\\delta>0$ 都有壞點", "on": "對每個" },
-            { "do": "write", "line": "$\\delta=\\frac{1}{n}$：壞點 ${{x:x_n}}$", "tint": {"x":"violet"}, "on": "delta 取" },
-            { "do": "focus", "term": "x", "color": "violet", "on": "挑一個壞點" }
-          ] },
-        { "show": ["證連續也好用：$f(x_n)g(x_n)\\to f(a)g(a)$"], "note": "數列的〈極限定律〉搬過來。",
-          "say": "這個判準也能證連續：數列的極限定律直接搬過來，連續函數的乘積、合成都還是連續。",
-          "board": [
-            { "do": "write", "line": "${{p:f(x_n)g(x_n)}}\\to f(a)g(a)$" },
-            { "do": "underline", "term": "p", "color": "blue", "label": "極限定律", "on": "極限定律" }
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：造一串壞數列", "key": "取 $\\delta=\\frac{1}{n}$，每次挑一個壞點",
-      "proof": true,
-      "of": 3,
-      "skeleton": "反證",
-      "beats": [
-        { "show": ["逆否：設不連續，造一串壞數列"],
-          "say": "策略：反方向走逆否。假設 f 在 a 不連續，就造出一串趨近 a 的壞數列。",
-          "board": [
-            { "do": "write", "line": "逆否：設不連續 ⇒ 造一串壞數列", "on": "反方向走逆否" }
-          ] },
-        { "show": ["存在 $\\varepsilon_0>0$：每個 $\\delta>0$ 都有壞點"], "note": "壞點：$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon_0$。",
-          "why": {
-            "ask": "「不連續」為什麼寫成這樣？",
-            "say": "第一步：不連續，寫成式子是什麼意思？",
-            "options": [
-              { "label": "把連續的定義整句否定", "correct": true },
-              { "label": "每個 $\\varepsilon$ 都找不到 $\\delta$", "why": "否定只要一個 $\\varepsilon$ 失敗就夠；說每個 $\\varepsilon$ 都失敗太強了，不連續的函數也不一定這樣。" },
-              { "label": "有一個 $\\delta$，裡面每一點都是壞點", "why": "否定之後 $\\delta$ 變成「每個」：每個 $\\delta$ 裡至少有一個壞點，不是整段都壞。" }
-            ]
-          },
-          "say": "把連續的定義整句否定：有一個 epsilon 零，不管 delta 多小，裡面都有壞點。",
-          "board": [
-            { "do": "write", "line": "存在 ${{e:\\varepsilon_0}}>0$：每個 $\\delta>0$ 都有壞點", "tint": { "e": "blue" } },
-            { "do": "underline", "term": "e", "color": "blue", "label": "整句否定", "why": true, "on": "整句否定" }
-          ] },
-        { "show": ["$\\delta=\\frac{1}{n}$：取壞點 $x_n\\in D$"], "note": "$|x_n-a|<\\frac{1}{n}$，$|f(x_n)-f(a)|\\ge\\varepsilon_0$。",
-          "say": "對每個 n，delta 取 n 分之一，挑一個壞點，叫 x n，排成一串。",
-          "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$\\delta=\\frac{1}{n}$：取壞點 ${{x:x_n}}$", "tint": { "x": "violet" }, "on": "delta 取" },
-            { "do": "write", "line": "${{dist:|x_n-a|<\\frac{1}{n}}}$，${{bad:|f(x_n)-f(a)|\\ge\\varepsilon_0}}$", "on": "排成一串" }
-          ] },
-        { "show": ["$x_n\\to a$"], "note": "$|x_n-a|<\\frac{1}{n}$，而 $\\frac{1}{n}\\to0$。",
-          "why": {
-            "ask": "為什麼 $x_n\\to a$？",
-            "say": "這串點為什麼會趨近 a？",
-            "options": [
-              { "label": "離 $a$ 的距離被 $\\frac{1}{n}$ 壓住", "correct": true },
-              { "label": "壞點都在 $a$ 附近，自然趨近 $a$", "why": "「附近」不夠：要每一項的距離被一個趨近 0 的數壓住，這正是 $\\delta$ 取 $\\frac{1}{n}$ 的用意。" },
-              { "label": "因為 $f(x_n)$ 不趨近 $f(a)$", "why": "那是函數值的事，是下一步；$x_n$ 會不會趨近 $a$，只看它跟 $a$ 的距離。" }
-            ]
-          },
-          "say": "每一項離 a 都不到 n 分之一，n 分之一趨近零，所以 x n 趨近 a。",
-          "board": [
-            { "do": "write", "line": "${{x:x_n}}\\to a$" },
-            { "do": "underline", "term": "dist", "label": "被 1/n 壓住", "why": true, "on": "不到 n 分之一" }
-          ] },
-        { "show": ["$|f(x_n)-f(a)|\\ge\\varepsilon_0$ 永遠成立"], "note": "$f(x_n)\\not\\to f(a)$：數列判準不成立。",
-          "say": "可是函數值跟 f 在 a 的值永遠差至少 epsilon 零，不會趨近。判準失敗，逆否證完。",
-          "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "underline", "term": "bad", "label": "永遠成立", "on": "永遠差" },
-            { "do": "write", "line": "$f(x_n)\\not\\to f(a)$：判準不成立", "color": "green", "on": "判準失敗" }
-          ] }
-      ],
-      "order": {
-        "ask": "把證明排回順序：依序點每一步",
-        "steps": [
-          { "label": "設不連續：存在 $\\varepsilon_0>0$" },
-          { "label": "每個 $n$ 取 $\\delta=\\frac{1}{n}$ 的壞點 $x_n$", "why": "壞不壞要拿 $\\varepsilon_0$ 量：要先有 $\\varepsilon_0$，才有壞點。" },
-          { "label": "$|x_n-a|<\\frac{1}{n}$，所以 $x_n\\to a$", "why": "要先把 $x_n$ 一個一個挑出來，才能談它趨不趨近 $a$。" },
-          { "label": "$f(x_n)\\not\\to f(a)$：判準不成立", "why": "判準管的是趨近 $a$ 的數列：要先知道 $x_n\\to a$，這一串才算數。" }
-        ]
-      }
-    },
-    {
-      "title": "$\\sin(\\frac{1}{x})$ 在 0", "key": "挑讓 $\\frac{1}{x_n}$ 落在 $\\frac{\\pi}{2}$ 的點",
-      "beats": [
-        { "show": ["$f(x)=\\sin(\\frac{1}{x})$，$f(0)=0$"],
-          "say": "sine x 分之一，在零補成零。它在零連續嗎？用數列找一串壞點。",
-          "board": [
-            { "do": "write", "line": "$f(x)=\\sin(\\frac{1}{x})$，$f(0)=0$" },
-            { "do": "write", "line": "在 $0$ 連續嗎？", "on": "它在零連續嗎" }
-          ] },
-        { "show": ["$x_n=\\frac{1}{2\\pi n+\\frac{\\pi}{2}}\\to0$"], "note": "讓 $\\sin(\\frac{1}{x})=1$ 的點。",
-          "say": "挑讓 sine 剛好等於一的點：x 分之一等於二 pi n 加二分之 pi。這串點趨近零。",
-          "board": [
-            { "do": "write", "line": "${{xn:x_n}}=\\frac{1}{2\\pi n+\\frac{\\pi}{2}}\\to0$", "tint": { "xn": "blue" }, "on": "x 分之一等於" }
-          ] },
-        { "show": ["$f(x_n)=1\\to1\\ne0$"], "note": "不連續。",
-          "say": "函數值每一項都是一，趨近一，不是零。一串壞數列就夠，不連續。",
-          "board": [
-            { "do": "write", "line": "$f({{xn:x_n}})={{one:1}}\\to1\\ne0$" },
-            { "do": "focus", "term": "one", "color": "green", "label": "不是零", "on": "不是零" }
-          ] },
-        { "show": ["$y_n=\\frac{1}{2\\pi n+\\frac{3\\pi}{2}}$：$f(y_n)=-1$"], "note": "兩串趨近不同的數：補什麼值都不行。",
-          "say": "再一串讓 sine 等於負一。兩串的函數值去不同的地方，所以在零補什麼值都不連續。",
-          "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "${{yn:y_n}}=\\frac{1}{2\\pi n+\\frac{3\\pi}{2}}$：$f(y_n)={{m1:-1}}$", "tint": { "yn": "violet" }, "on": "再一串" },
-            { "do": "focus", "term": "m1", "on": "去不同的地方" },
-            { "do": "write", "line": "補什麼值都不連續", "color": "green", "on": "所以在零補" }
-          ] }
-      ],
-      "check": 1
-    },
-    {
       "title": "只在一點連續",
       "beats": [
-        { "show": ["$f(x)=x$（有理）、$0$（無理）"],
-          "say": "一個怪函數：有理數送到自己，無理數送到零。它在哪些點連續？",
+        {
+          "show": [
+            "$a\\ne0$：取有理數 $r_n\\to a$、無理數 $s_n\\to a$（稠密性，12.11）"
+          ],
+          "say": "一般的 a 不等於 0：由稠密性，取一串有理數 r n 趨近 a，再取一串無理數 s n 趨近 a。",
           "board": [
-            { "do": "write", "line": "$f(x)=x$（有理）、$0$（無理）" }
-          ] },
-        { "show": ["在 0：$|f(x)|\\le|x|$，取 $\\delta=\\varepsilon$"], "note": "連續的點用 $\\varepsilon$-$\\delta$。",
-          "say": "在零：函數值的絕對值不超過 x 的絕對值，delta 取 epsilon 就好，所以在零連續。",
+            {
+              "do": "write",
+              "line": "$a\\ne0$：取有理數 $r_n\\to a$、無理數 $s_n\\to a$（稠密性，12.11）"
+            },
+            {
+              "do": "write",
+              "line": "　無理數列：取有理數 $q_n$，$|q_n-a|<\\frac1n$，令 $s_n=q_n+\\frac{\\sqrt2}n$",
+              "color": "violet",
+              "on": "趨近#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$g(r_n)=r_n\\to a,\\qquad g(s_n)=0\\to0$"
+          ],
+          "say": "有理數那串的函數值趨近 a；無理數那串的函數值趨近 0。",
           "board": [
-            { "do": "write", "line": "在 $0$：$|f(x)|\\le|x|$，取 ${{d:\\delta=\\varepsilon}}$" },
-            { "do": "focus", "term": "d", "color": "green", "label": "在 0 連續", "on": "所以在零" }
-          ] },
-        { "show": ["在 $a\\ne0$：有理數列 $q_n\\to a$、無理數列 $r_n\\to a$"], "note": "兩種數都在實數中稠密。",
-          "say": "在其他點，用數列。有理數和無理數都很密，各取一串趨近 a。函數值各自往哪裡去？",
+            {
+              "do": "write",
+              "line": "$\\displaystyle g(r_n)=r_n\\to a,\\qquad g(s_n)=0\\to0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "若連續，兩個極限都要是 $g(a)$ ⇒ $a=0$，矛盾"
+          ],
+          "say": "如果 g 在 a 連續，這兩個極限都必須等於 g of a，於是 a 等於 0，矛盾。所以 g 在每一個非零的點都不連續。",
           "board": [
-            { "do": "write", "line": "在 $a\\ne0$：${{q:q_n}}\\to a$、${{r:r_n}}\\to a$", "tint": { "q": "blue", "r": "violet" }, "on": "在其他點" },
-            { "do": "focus", "term": "q", "color": "blue", "label": "有理", "on": "有理數和" },
-            { "do": "focus", "term": "r", "color": "violet", "label": "無理", "on": "無理數都" }
-          ] }
+            {
+              "do": "write",
+              "line": "若連續，兩個極限都要是 $g(a)$ ⇒ $a=0$，矛盾",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a=0$：不管 $x$ 有理無理，$|g(x)-g(0)|\\le|x|$"
+          ],
+          "say": "最後看 0。不管 x 是有理數還是無理數，g of x 的絕對值都不超過 x 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=0$：不管 $x$ 有理無理，$|g(x)-g(0)|\\le|x|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\delta=\\varepsilon$：$|x|<\\delta\\Rightarrow|g(x)-0|\\le|x|<\\varepsilon$"
+          ],
+          "say": "取得塔等於艾普西隆就證完了。結論：g 只在 0 連續。證連續用艾普西隆得塔，證不連續用數列，各用順手的工具。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取 $\\delta=\\varepsilon$：$|x|<\\delta\\Rightarrow|g(x)-0|\\le|x|<\\varepsilon$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "⇒ $g$ 只在 $0$ 連續",
+              "color": "red",
+              "on": "證連"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用途二：證連續",
+      "beats": [
+        {
+          "show": [
+            "$f,g$ 在 $a$ 連續 ⇒ $f+g$、$fg$ 在 $a$ 連續"
+          ],
+          "say": "第二個用途：把 12.14 數列的極限定律，直接搬成連續函數的定律。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f,g$ 在 $a$ 連續 ⇒ $f+g$、$fg$ 在 $a$ 連續"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：任取 $x_n\\to a$。則 $f(x_n)\\to f(a)$，$g(x_n)\\to g(a)$"
+          ],
+          "say": "證明：任取趨近 a 的數列。由判準，f of x n、g of x n 各自趨近 f of a、g of a。再由數列的極限定律，和與積也跟著趨近。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：任取 $x_n\\to a$。則 $f(x_n)\\to f(a)$，$g(x_n)\\to g(a)$"
+            },
+            {
+              "do": "write",
+              "line": "12.14：$f(x_n)+g(x_n)\\to f(a)+g(a)$，乘積同理",
+              "on": "自趨"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x_n$ 是任意的 ⇒ 由判準，$f+g$、$fg$ 連續　$\\blacksquare$"
+          ],
+          "say": "x n 是任意取的，所以由判準，和與積都連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$x_n$ 是任意的 ⇒ 由判準，$f+g$、$fg$ 連續　$\\blacksquare$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "推論：$x$ 連續 ⇒ 所有多項式處處連續"
+          ],
+          "say": "推論：常數和 x 都連續，加加乘乘，所有多項式都處處連續，不用一個一個找得塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：$x$ 連續 ⇒ 所有多項式處處連續"
+            },
+            {
+              "do": "write",
+              "line": "　除法也一樣：$g(a)\\ne0$ 時 $\\frac fg$ 在 $a$ 連續（12.14 的除法定律）",
+              "color": "violet",
+              "on": "有多"
+            }
+          ]
+        }
       ],
-      "predict": {
-        "ask": "$f(q_n)$ 與 $f(r_n)$ 各趨近？",
-        "options": [
-          { "label": "$a$ 與 $0$", "correct": true },
-          { "label": "都趨近 $a$", "why": "無理點的函數值是 0：$f(r_n)=0$，一直是 0。" },
-          { "label": "都趨近 $0$", "why": "有理點的函數值是自己：$f(q_n)=q_n\\to a$，不是 0。" }
+      "proof": true,
+      "order": {
+        "ask": "用數列判準證明「$f$ 在 $a$ 不連續」",
+        "steps": [
+          {
+            "label": "找一串 $x_n\\in D$，證明 $x_n\\to a$"
+          },
+          {
+            "label": "算出 $f(x_n)$ 的極限（或說明它不收斂）",
+            "why": "先要有上一步：找一串 $x_n\\in D$，證明 $x_n\\to a$"
+          },
+          {
+            "label": "說明這個極限不等於 $f(a)$",
+            "why": "先要有上一步：算出 $f(x_n)$ 的極限（或說明它不收斂）"
+          },
+          {
+            "label": "由判準，$f$ 在 $a$ 不連續",
+            "why": "先要有上一步：說明這個極限不等於 $f(a)$"
+          }
         ]
       }
     },
     {
-      "title": "一串不夠",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$a\\ne0$：$a$ 與 0 不同"], "note": "至少一串不趨近 $f(a)$：不連續。",
-          "say": "a 不是零，兩串去不同的地方，至少有一串沒去 f 在 a 的值。所以只在零連續。",
+        {
+          "show": [
+            "• 判準：$f$ 在 $a$ 連續 $\\iff$ 每一個 $x_n\\to a$ 都有 $f(x_n)\\to f(a)$",
+            "• ⇒：$\\varepsilon\\to\\delta\\to N$ 接成一條鏈"
+          ],
+          "say": "整理一下：連續，等價於每一個趨近 a 的數列，函數值都趨近 f of a。證不連續只要一個壞數列；但一個好數列，證不了連續。",
           "board": [
-            { "do": "write", "line": "$a\\ne0$：$a$ 與 $0$ 不同" },
-            { "do": "write", "line": "至少一串不趨近 $f(a)$", "on": "至少有一串" },
-            { "do": "write", "line": "所以只在 $0$ 連續", "color": "green", "on": "所以只在" }
-          ] },
-        { "show": ["在 1：$x_n=1+\\frac{1}{n}$，$f(x_n)\\to1$"], "note": "這一串行得通。",
-          "say": "拿 a 等於一試：一加 n 分之一都是有理數，函數值趨近一，剛好行得通。",
+            {
+              "do": "write",
+              "line": "• 判準：$f$ 在 $a$ 連續 $\\iff$ 每一個 $x_n\\to a$ 都有 $f(x_n)\\to f(a)$"
+            },
+            {
+              "do": "write",
+              "line": "• ⇒：$\\varepsilon\\to\\delta\\to N$ 接成一條鏈",
+              "on": "一個#1"
+            },
+            {
+              "do": "write",
+              "line": "• ⇐：逆否；$\\delta=\\frac1n$ 各抓一個壞點",
+              "on": "數值"
+            },
+            {
+              "do": "write",
+              "line": "• 證不連續：一個壞數列，或兩個極限不同的數列",
+              "on": "證不#1"
+            },
+            {
+              "do": "write",
+              "line": "• 一個數列行得通不夠；判準也把數列定律搬給函數",
+              "on": "但一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：中間值定理的證明"
+          ],
+          "say": "下一課，用上確界證明中間值定理。",
           "board": [
-            { "do": "write", "line": "在 $1$：${{x:x_n=1+\\frac{1}{n}}}$，$f(x_n)\\to {{o:1}}$" },
-            { "do": "focus", "term": "o", "color": "green", "label": "行得通", "on": "函數值趨近" }
-          ] },
-        { "show": ["$r_n=1+\\frac{\\sqrt{2}}{n}$：$f(r_n)=0$"], "note": "這一串不行：不連續。",
-          "say": "可是換一串無理數，函數值一直是零。一個成功的例子不夠，一個失敗的例子就推翻。",
-          "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$r_n=1+\\frac{\\sqrt{2}}{n}$：${{z:f(r_n)=0}}$", "on": "換一串" },
-            { "do": "focus", "term": "z", "color": "red", "label": "這串不行", "on": "一直是零" },
-            { "do": "write", "line": "一串失敗：$f$ 在 $1$ 不連續", "color": "green", "on": "失敗的例子" }
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：中間值定理的證明"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["continuity", "sequence"],
-    "fine": ["seqcrit-disprove-continuity", "seqcrit-two-sequences", "seqcrit-proof-direction", "seqcrit-limit-laws-transfer"]
+    "coarse": [
+      "continuity",
+      "sequence"
+    ],
+    "fine": [
+      "seqcrit-disprove-continuity",
+      "seqcrit-two-sequences",
+      "seqcrit-proof-direction",
+      "seqcrit-limit-laws-transfer"
+    ]
   },
   "practice": [
-    { "id": "lec-02-q3d", "core": true, "trains": "seqcrit-two-sequences", "note": "$f'(x)=2x\\sin(\\frac{1}{x})-\\cos(\\frac{1}{x})$；取兩串讓 $\\cos(\\frac{1}{x})=1$ 與 $-1$ 的點。" },
-    { "id": "cg-12e-003", "core": true, "trains": "seqcrit-disprove-continuity" },
-    { "id": "cg-12e-004", "core": true, "trains": "seqcrit-disprove-continuity" },
-    { "id": "cg-12e-006", "core": true, "trains": "seqcrit-two-sequences" },
-    { "id": "px-sq-001", "trains": "seqcrit-limit-laws-transfer", "note": "對照組：$x\\sin(\\frac{1}{x})$ 補 $f(0)=0$ 後在 0 連續。" },
-    { "id": "cg-12e-005", "trains": "seqcrit-disprove-continuity" },
-    { "id": "cg-12e-007", "trains": "seqcrit-two-sequences" },
-    { "id": "ep-011", "challenge": true, "trains": "seqcrit-limit-laws-transfer", "note": "挑戰：$x\\sin(\\frac{1}{x})$ 的 $\\varepsilon$-$\\delta$ 互動挑戰，跟 $\\sin(\\frac{1}{x})$ 的不連續對照。" }
+    {
+      "id": "lec-02-q3d",
+      "core": true,
+      "trains": "seqcrit-two-sequences",
+      "note": "$f'(x)=2x\\sin(\\frac{1}{x})-\\cos(\\frac{1}{x})$；取兩串讓 $\\cos(\\frac{1}{x})=1$ 與 $-1$ 的點。"
+    },
+    {
+      "id": "cg-12e-003",
+      "core": true,
+      "trains": "seqcrit-disprove-continuity"
+    },
+    {
+      "id": "cg-12e-004",
+      "core": true,
+      "trains": "seqcrit-disprove-continuity"
+    },
+    {
+      "id": "cg-12e-006",
+      "core": true,
+      "trains": "seqcrit-two-sequences"
+    },
+    {
+      "id": "px-sq-001",
+      "trains": "seqcrit-limit-laws-transfer",
+      "note": "對照組：$x\\sin(\\frac{1}{x})$ 補 $f(0)=0$ 後在 0 連續。"
+    },
+    {
+      "id": "cg-12e-005",
+      "trains": "seqcrit-disprove-continuity"
+    },
+    {
+      "id": "cg-12e-007",
+      "trains": "seqcrit-two-sequences"
+    },
+    {
+      "id": "ep-011",
+      "challenge": true,
+      "trains": "seqcrit-limit-laws-transfer",
+      "note": "挑戰：$x\\sin(\\frac{1}{x})$ 的 $\\varepsilon$-$\\delta$ 互動挑戰，跟 $\\sin(\\frac{1}{x})$ 的不連續對照。"
+    }
   ],
   "gaps": [
-    { "tag": "seqcrit-proof-direction", "count": 2, "note": "白話證明：用數列判準證 f + g、f∘g 連續。" }
+    {
+      "tag": "seqcrit-proof-direction",
+      "count": 2,
+      "note": "白話證明：用數列判準證 f + g、f∘g 連續。"
+    }
   ]
 }

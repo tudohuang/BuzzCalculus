@@ -1,43 +1,122 @@
 {
   "id": "polar-arc-length",
   "title": "極座標弧長",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["polar-tangent", "parametric-arc-length", "trig-identities"],
-  "next": ["r2-r3"],
-  "related": ["polar-area"],
-  "objectives": [
-    "從參數式弧長推出 $L=\\int\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta$。",
-    "開根號時處理絕對值，例如 $\\sqrt{4\\cos^2\\frac{\\theta}{2}}=2\\left|\\cos\\frac{\\theta}{2}\\right|$，必要時切區間或用對稱。",
-    "不把弧長公式和面積公式 $\\frac{1}{2}\\int r^2\\,d\\theta$ 搞混。"
+  "prerequisites": [
+    "polar-tangent",
+    "parametric-arc-length",
+    "trig-identities"
   ],
-  "visual": "心臟線 r = 1 + cos θ 上一個點隨 θ 前進，在點上畫出一個小直角三角形：沿半徑方向的一邊長 |dr|，垂直半徑方向的一邊長 r dθ，斜邊就是那一小段弧長 ds。旁邊累加 ds，θ 走完一圈時停在 8。",
+  "next": [
+    "r2-r3"
+  ],
+  "related": [
+    "polar-area"
+  ],
+  "objectives": [
+    "從參數式弧長推出 $L=\\int\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta$",
+    "開根號時處理絕對值，例如 $\\sqrt{4\\cos^2\\frac{\\theta}{2}}=2\\left|\\cos\\frac{\\theta}{2}\\right|$，必要時用對稱拆開",
+    "不把弧長公式和面積公式 $\\frac{1}{2}\\int r^2\\,d\\theta$ 搞混"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 從參數式來",
       "body": [
-        "極座標曲線就是以 $\\theta$ 為參數的 $x=r\\cos\\theta$、$y=r\\sin\\theta$（〈極座標切線〉）。代進〈參數式弧長〉的速率：",
-        "$(x')^2=r'^2\\cos^2\\theta-2rr'\\sin\\theta\\cos\\theta+r^2\\sin^2\\theta$，$(y')^2=r'^2\\sin^2\\theta+2rr'\\sin\\theta\\cos\\theta+r^2\\cos^2\\theta$。",
-        "相加，交叉項互相抵消，$\\cos^2+\\sin^2=1$，只剩 $r^2+r'^2$。所以這不是新公式，只是參數式弧長在 $x=r\\cos\\theta$、$y=r\\sin\\theta$ 時的樣子；考試忘了也能當場推回來。"
+        "參數式弧長（7.4）：",
+        "極座標曲線：$x=r\\cos\\theta$、$y=r\\sin\\theta$，$r=f(\\theta)$",
+        "平方相加：交叉項 $\\mp2rr'\\sin\\theta\\cos\\theta$ 互相抵消"
       ],
-      "tex": ["L=\\int_\\alpha^\\beta\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta"],
-      "collapsible": false
+      "tex": [
+        "L=\\int_\\alpha^\\beta\\sqrt{\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2}\\,d\\theta",
+        "\\frac{dx}{d\\theta}=r'\\cos\\theta-r\\sin\\theta,\\quad\\frac{dy}{d\\theta}=r'\\sin\\theta+r\\cos\\theta",
+        "\\begin{aligned}&\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2\\\\&=r'^2(\\cos^2\\theta+\\sin^2\\theta)+r^2(\\sin^2\\theta+\\cos^2\\theta)\\end{aligned}",
+        "=r^2+r'^2",
+        "L=\\int_\\alpha^\\beta\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta"
+      ]
     },
     {
       "heading": "② 幾何上看：兩個方向的位移",
       "body": [
-        "$\\theta$ 增加一點點 $d\\theta$ 時，點沿兩個互相垂直的方向移動：沿著半徑往外 $dr$，以及繞著原點轉 $r\\,d\\theta$（半徑 $r$ 的圓弧長）。小段弧長是這個小直角三角形的斜邊 $\\sqrt{dr^2+(r\\,d\\theta)^2}$。這是直覺，不是證明；上面的計算才是。",
-        "兩個特例檢查：$r$ 是常數 $a$ 時 $r'=0$，$L=\\int a\\,d\\theta$，就是圓弧長「半徑 $\\times$ 角度」；$\\theta$ 是常數時曲線是射線，公式不適用（$\\theta$ 不能當參數）。"
+        "• 繞著轉的方向：弧長 $r\\,d\\theta$",
+        "• 往外的方向：$dr$",
+        "• 兩個方向互相垂直",
+        "畢氏定理：",
+        "別跟面積搞混",
+        "• 面積：$\\frac12\\int r^2\\,d\\theta$（扇形，二維）",
+        "• 弧長：$\\int\\sqrt{r^2+r'^2}\\,d\\theta$（邊長，一維）",
+        "圓 $r=a$：面積 $\\frac12\\int_0^{2\\pi}a^2d\\theta=\\pi a^2$，弧長 $\\int_0^{2\\pi}a\\,d\\theta=2\\pi a$"
       ],
-      "collapsible": false
+      "tex": [
+        "ds^2\\approx(r\\,d\\theta)^2+(dr)^2",
+        "ds=\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta"
+      ]
     },
     {
-      "heading": "③ 跟面積一樣，範圍要剛好走一次",
+      "heading": "② 試一題",
       "body": [
-        "$r=2\\cos\\theta$ 在 $0\\le\\theta\\le\\pi$ 已經畫完整個圓，長度 $2\\pi$；寫成 0 到 $2\\pi$ 會得到 $4\\pi$。",
-        "根號裡常湊成完全平方，開出來要加絕對值，看正負再決定要不要切開積分區間。曲線對 $x$ 軸對稱時（方程式裡只有 $\\cos\\theta$），常常只算上半部再乘 2，順便避開變號的那一段（範例 2）。"
+        "例 1：先拿圓檢查：$r=2\\cos\\theta$，$0\\le\\theta\\le\\pi$",
+        "$r'=-2\\sin\\theta$",
+        "若積 $0$ 到 $2\\pi$ 會得到 $4\\pi$：圓被走了兩圈（跟面積同一個陷阱）"
       ],
-      "collapsible": false
+      "tex": [
+        "r^2+r'^2=4\\cos^2\\theta+4\\sin^2\\theta=4",
+        "L=\\int_0^\\pi2\\,d\\theta=2\\pi"
+      ]
+    },
+    {
+      "heading": "③ 範圍剛好走一次",
+      "body": [
+        "例 2：心臟線 $r=1+\\cos\\theta$ 的全長（$0\\le\\theta\\le2\\pi$ 走一圈）",
+        "$r'=-\\sin\\theta$",
+        "半角公式 $1+\\cos\\theta=2\\cos^2\\frac\\theta2$：",
+        "開根號要加絕對值："
+      ],
+      "tex": [
+        "r^2+r'^2=1+2\\cos\\theta+\\cos^2\\theta+\\sin^2\\theta=2+2\\cos\\theta",
+        "r^2+r'^2=4\\cos^2\\frac\\theta2",
+        "\\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|"
+      ]
+    },
+    {
+      "heading": "③ 用對稱拆開",
+      "body": [
+        "$\\cos\\frac\\theta2\\ge0$ 只在 $0\\le\\theta\\le\\pi$；心臟線上下對稱：",
+        "數值驗算：把曲線切成二十萬段折線，總長 $\\approx8.0000$",
+        "原則（跟面積一樣）",
+        "• $\\theta$ 的範圍：曲線剛好走一次",
+        "• 開根號：先看裡面的東西在範圍內的正負",
+        "• 會變號：用對稱或拆區間，讓每一段都不用絕對值"
+      ],
+      "tex": [
+        "L=2\\int_0^\\pi2\\cos\\frac\\theta2\\,d\\theta",
+        "=2\\Big[4\\sin\\frac\\theta2\\Big]_0^\\pi=2\\cdot4=8"
+      ]
+    },
+    {
+      "heading": "③ 對數螺線",
+      "body": [
+        "例 3：$r=e^\\theta$，從 $\\theta=0$ 到 $\\theta=1$ 的長度",
+        "$r'=e^\\theta$，所以",
+        "對數螺線的特點：每一點的切線跟射線夾角都是 $45^\\circ$（因為 $r'=r$）"
+      ],
+      "tex": [
+        "r^2+r'^2=e^{2\\theta}+e^{2\\theta}=2e^{2\\theta}",
+        "\\sqrt{2e^{2\\theta}}=\\sqrt2\\,e^\\theta\\quad(e^\\theta>0)",
+        "L=\\sqrt2\\int_0^1e^\\theta\\,d\\theta=\\sqrt2\\,(e-1)\\approx2.43"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $L=\\int\\sqrt{r^2+r'^2}\\,d\\theta$：從參數式，或兩個垂直位移",
+        "• 開根號加絕對值，例 $\\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|$",
+        "• 範圍剛好走一次；會變號就用對稱拆開",
+        "• 面積 $\\frac12\\int r^2d\\theta$ 和弧長不要搞混",
+        "下一課：ℝ² 與 ℝ³"
+      ]
     }
   ],
   "workedExamples": [
@@ -86,35 +165,45 @@
   ],
   "checks": [
     {
-      "ask": "極座標弧長的被積函數是？",
+      "ask": "曲線 $r=f(\\theta)$ 從 $\\alpha$ 到 $\\beta$ 的弧長是？",
       "options": [
-        { "label": "$\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}$", "correct": true },
-        { "label": "$\\sqrt{1+\\left(\\frac{dr}{d\\theta}\\right)^2}$", "why": "這是把 $y=f(x)$ 版本的 $\\sqrt{1+f'^2}$ 硬搬過來；繞原點轉的那個方向位移是 $r\\,d\\theta$，不是 $d\\theta$。" },
-        { "label": "$\\frac{1}{2}r^2$", "why": "那是面積的被積函數。" }
+        {
+          "label": "$\\int_\\alpha^\\beta\\sqrt{r^2+r'^2}\\,d\\theta$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac12\\int_\\alpha^\\beta r^2\\,d\\theta$",
+          "why": "那是面積：扇形，不是弧長"
+        },
+        {
+          "label": "$\\int_\\alpha^\\beta\\sqrt{1+r'^2}\\,d\\theta$",
+          "why": "把直角座標的 $\\sqrt{1+y'^2}$ 照搬；這裡轉的方向位移是 $r\\,d\\theta$，不是 $d\\theta$"
+        },
+        {
+          "label": "$\\int_\\alpha^\\beta(r+r')\\,d\\theta$",
+          "why": "根號不能拆開：$\\sqrt{a^2+b^2}\\ne a+b$"
+        }
       ]
     },
     {
-      "ask": "圓 $r=3$，$\\theta$ 從 0 到 $2\\pi$，用弧長公式算出？",
+      "ask": "圓 $r=3\\sin\\theta$（$0\\le\\theta\\le\\pi$）的長度是？",
       "options": [
-        { "label": "$6\\pi$", "correct": true },
-        { "label": "$9\\pi$", "why": "這是 $\\frac{1}{2}\\int_0^{2\\pi}9\\,d\\theta$，用到面積公式了。" },
-        { "label": "0", "why": "$r'=0$ 不代表長度是 0：根號裡還有 $r^2=9$。" }
-      ]
-    },
-    {
-      "ask": "心臟線 $r=1+\\cos\\theta$ 化簡到 $L=\\int_0^{2\\pi}2\\left|\\cos\\frac{\\theta}{2}\\right|d\\theta$。有人寫成 $\\int_0^{2\\pi}2\\cos\\frac{\\theta}{2}\\,d\\theta$ 得到 0。錯在哪？",
-      "options": [
-        { "label": "$\\theta$ 在 $\\pi$ 到 $2\\pi$ 時 $\\cos\\frac{\\theta}{2}<0$，絕對值不能拿掉", "correct": true },
-        { "label": "半角公式用錯了", "why": "$2+2\\cos\\theta=4\\cos^2\\frac{\\theta}{2}$ 是對的；錯在開根號後把絕對值丟了。" },
-        { "label": "範圍應該是 0 到 $4\\pi$", "why": "0 到 $2\\pi$ 已經畫完心臟線一圈，加倍範圍只會重複算。" }
-      ]
-    },
-    {
-      "ask": "$r=2\\cos\\theta$ 從 $\\theta=0$ 積到 $2\\pi$，弧長公式給 $4\\pi$。為什麼不是 $2\\pi$？",
-      "options": [
-        { "label": "這個圓在 0 到 $\\pi$ 就畫完了，後半段重畫一次", "correct": true },
-        { "label": "因為 $r$ 有負的部分，要取絕對值", "why": "$r^2+r'^2=4$ 一直是正的，公式沒有符號問題；多出來的是重複走的那一圈。" },
-        { "label": "因為直徑是 2，周長本來就是 $4\\pi$", "why": "直徑 2 的圓周長是 $2\\pi$；$4\\pi$ 是走了兩圈。" }
+        {
+          "label": "$3\\pi$",
+          "correct": true
+        },
+        {
+          "label": "$6\\pi$",
+          "why": "積到 $2\\pi$：圓走了兩圈"
+        },
+        {
+          "label": "$\\dfrac{9\\pi}4$",
+          "why": "那是面積 $\\frac12\\int_0^\\pi9\\sin^2\\theta\\,d\\theta$"
+        },
+        {
+          "label": "$9\\pi$",
+          "why": "忘了開根號：$\\sqrt9=3$"
+        }
       ]
     }
   ],
@@ -122,207 +211,686 @@
     {
       "title": "從參數式來",
       "beats": [
-        { "show": ["$x = r\\cos\\theta$，$y = r\\sin\\theta$"],
-          "note": "以 $\\theta$ 為參數。",
-          "say": "極座標曲線，就是以 theta 為參數的參數曲線。所以弧長直接用參數式的速率。",
+        {
+          "show": [
+            "參數式弧長（7.4）：",
+            "$L=\\int_\\alpha^\\beta\\sqrt{\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2}\\,d\\theta$"
+          ],
+          "say": "參數曲線的弧長公式：x 和 y 對參數的導數各自平方、相加、開根號，再積分。",
           "board": [
-            {"do":"write","line":"$x=r\\cos\\theta$，$y=r\\sin\\theta$"},
-            {"do":"write","line":"$L=\\int\\sqrt{(x')^2+(y')^2}\\,d\\theta$","on":"弧長"}
-          ] },
-        { "show": ["$x'=r'\\cos\\theta-r\\sin\\theta$","$y'=r'\\sin\\theta+r\\cos\\theta$"],
-          "note": "$r$ 也跟著 $\\theta$ 變，用乘法法則。",
-          "say": "r 也跟著 theta 變，要用乘法法則。先看 x prime，再看 y prime。",
+            {
+              "do": "write",
+              "line": "參數式弧長（7.4）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=\\int_\\alpha^\\beta\\sqrt{\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2}\\,d\\theta$",
+              "on": "的導"
+            }
+          ]
+        },
+        {
+          "show": [
+            "極座標曲線：$x=r\\cos\\theta$、$y=r\\sin\\theta$，$r=f(\\theta)$"
+          ],
+          "say": "極座標曲線就是以西塔為參數的參數曲線。上一課已經用乘法法則算過兩個導數。",
           "board": [
-            {"do":"write","line":"$x'=r'\\cos\\theta-r\\sin\\theta$"},
-            {"do":"write","line":"$y'=r'\\sin\\theta+r\\cos\\theta$","on":"y prime"}
-          ] },
-        { "show": ["$(x')^2$ 展開有三項","中間是 $-2rr'\\sin\\theta\\cos\\theta$"],
-          "say": "展開 x prime 平方，中間是負二 r r prime sine cosine。y prime 平方的中間則是正的。",
+            {
+              "do": "write",
+              "line": "極座標曲線：$x=r\\cos\\theta$、$y=r\\sin\\theta$，$r=f(\\theta)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{dx}{d\\theta}=r'\\cos\\theta-r\\sin\\theta,\\quad\\frac{dy}{d\\theta}=r'\\sin\\theta+r\\cos\\theta$"
+          ],
+          "say": "d x d 西塔是 r prime 餘弦減 r 正弦；d y d 西塔是 r prime 正弦加 r 餘弦。這裡 r prime 是 d r d 西塔。",
           "board": [
-            {"do":"write","line":"$(x')^2=r'^2\\cos^2\\theta+r^2\\sin^2\\theta$"},
-            {"do":"write","line":"$\\qquad-2rr'\\sin\\theta\\cos\\theta$","on":"中間#1"}
-          ] },
-        { "show": ["$(x')^2 + (y')^2$：交叉項互相抵消"],
-          "note": "再用 $\\cos^2 + \\sin^2 = 1$。",
-          "say": "x prime 平方和 y prime 平方展開相加，正負兩個交叉項抵消，cosine 平方加 sine 平方變成一。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{dx}{d\\theta}=r'\\cos\\theta-r\\sin\\theta,\\quad\\frac{dy}{d\\theta}=r'\\sin\\theta+r\\cos\\theta$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "平方相加：交叉項 $\\mp2rr'\\sin\\theta\\cos\\theta$ 互相抵消",
+            "$\\begin{aligned}&\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2\\\\&=r'^2(\\cos^2\\theta+\\sin^2\\theta)+r^2(\\sin^2\\theta+\\cos^2\\theta)\\end{aligned}$"
+          ],
+          "say": "兩個平方展開相加。交叉項一個是負 2 r r prime 正弦餘弦，一個是正的，剛好抵消。剩下的用正弦平方加餘弦平方等於 1。",
           "board": [
-            {"do":"write","line":"交叉項：${{x:{{p:-2rr'\\sin\\theta\\cos\\theta}}+{{q:2rr'\\sin\\theta\\cos\\theta}}}}$"},
-            {"do":"underline","term":"x","label":"互相抵消","on":"交叉項"},
-            {"do":"write","line":"$(x')^2+(y')^2={{s:r^2+r'^2}}$","on":"cosine"}
-          ] },
-        { "show": ["$L = \\int_\\alpha^\\beta \\sqrt{r^2 + \\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta$"],
-          "say": "最後只剩 r 平方加 r prime 平方。這不是新公式，考試忘了，也能當場推回來。",
+            {
+              "do": "write",
+              "line": "平方相加：交叉項 $\\mp2rr'\\sin\\theta\\cos\\theta$ 互相抵消"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\Big(\\frac{dx}{d\\theta}\\Big)^2+\\Big(\\frac{dy}{d\\theta}\\Big)^2\\\\&=r'^2(\\cos^2\\theta+\\sin^2\\theta)+r^2(\\sin^2\\theta+\\cos^2\\theta)\\end{aligned}}$",
+              "on": "餘弦#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=r^2+r'^2$"
+          ],
+          "say": "整個化簡成 r 平方加 r prime 平方，非常乾淨。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{f:L=\\int_\\alpha^\\beta\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta}}$","on":"最後只剩"},
-            {"do":"box","term":"f","color":"green","on":"這不是新公式"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle =r^2+r'^2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\int_\\alpha^\\beta\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta$"
+          ],
+          "say": "這就是極座標的弧長公式：根號 r 平方加 d r d 西塔的平方，對西塔積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle L=\\int_\\alpha^\\beta\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "西塔#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "幾何上看：兩個方向的位移",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "從幾何上也看得出來。西塔轉一小角 d 西塔，r 變一小段 d r，曲線從這一點走到下一點。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"plpiece\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"26\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7bplpiece\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl7bplpiece\"><rect x=\"124.6\" y=\"16.0\" width=\"376.8\" height=\"314.0\"/></clipPath><g clip-path=\"url(#cl7bplpiece)\"></g><path d=\"M363.3 203.7L362.3 201.6L361.3 199.5L360.2 197.5L359.2 195.5L358.1 193.4L357.0 191.4L355.8 189.4L354.7 187.4L353.5 185.4L352.3 183.5L351.1 181.5L349.9 179.6L348.6 177.6L347.3 175.7L346.0 173.8L344.7 171.9L343.4 170.0L342.1 168.2L340.7 166.3L339.3 164.5L337.9 162.7L336.5 160.8L335.0 159.0L333.6 157.3L332.1 155.5L330.6 153.7L329.1 152.0L327.6 150.3L326.0 148.6L324.5 146.9L322.9 145.2L321.3 143.5L319.7 141.9L318.1 140.3L316.4 138.7L314.8 137.1L313.1 135.5L311.4 133.9L309.7 132.4L308.0 130.8\" stroke=\"var(--green)\" stroke-width=\"4\"/><path d=\"M203.1 281.1L202.9 280.6L202.7 280.1L202.4 279.7L202.2 279.2L201.9 278.7L201.7 278.3L201.4 277.8L201.2 277.4L200.9 276.9L200.6 276.5L200.3 276.0L200.1 275.6L199.8 275.2L199.5 274.7L199.2 274.3L198.9 273.9L198.6 273.4L198.3 273.0L198.0 272.6L197.7 272.2L197.3 271.7L197.0 271.3L196.7 270.9L196.4 270.5L196.0 270.1L195.7 269.7L195.3 269.3L195.0 268.9L194.6 268.5L194.3 268.2L193.9 267.8L193.6 267.4L193.2 267.0L192.8 266.7L192.5 266.3L192.1 265.9L191.7 265.6L191.3 265.2L190.9 264.9L190.5 264.5\" stroke=\"var(--ink)\" stroke-width=\"2\"/><line x1=\"118.6\" y1=\"303.8\" x2=\"515.4\" y2=\"303.8\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7bplpiece)\"/><line x1=\"156.0\" y1=\"336.0\" x2=\"156.0\" y2=\"6.0\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7bplpiece)\"/><text x=\"509.4\" y=\"294.8\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"165.0\" y=\"20.0\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"156.0\" y1=\"303.8\" x2=\"448.2\" y2=\"162.7\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><line x1=\"156.0\" y1=\"303.8\" x2=\"370.1\" y2=\"60.1\" stroke=\"var(--muted)\" stroke-width=\"1.8\" stroke-dasharray=\"8 7\"/><line x1=\"308.0\" y1=\"130.8\" x2=\"356.3\" y2=\"75.8\" stroke=\"var(--red)\" stroke-width=\"4\"/><path d=\"M363.3 203.7L363.7 202.2L364.0 200.8L364.3 199.3L364.6 197.9L364.8 196.4L365.1 195.0L365.4 193.5L365.6 192.0L365.9 190.5L366.1 189.0L366.3 187.6L366.6 186.1L366.8 184.6L367.0 183.0L367.1 181.5L367.3 180.0L367.5 178.5L367.6 177.0L367.8 175.4L367.9 173.9L368.0 172.4L368.2 170.8L368.3 169.3L368.4 167.7L368.5 166.2L368.5 164.6L368.6 163.0L368.6 161.5L368.7 159.9L368.7 158.3L368.7 156.7L368.8 155.1L368.8 153.5L368.8 151.9L368.7 150.4L368.7 148.7L368.7 147.1L368.6 145.5L368.5 143.9L368.5 142.3L368.4 140.7L368.3 139.1L368.2 137.4L368.1 135.8L367.9 134.2L367.8 132.6L367.7 130.9L367.5 129.3L367.3 127.6L367.1 126.0L366.9 124.3L366.7 122.7L366.5 121.0L366.3 119.4L366.1 117.7L365.8 116.1L365.5 114.4L365.3 112.8L365.0 111.1L364.7 109.4L364.4 107.7L364.1 106.1L363.7 104.4L363.4 102.7L363.0 101.1L362.7 99.4L362.3 97.7L361.9 96.0L361.5 94.3L361.1 92.7L360.7 91.0L360.2 89.3L359.8 87.6L359.3 85.9L358.9 84.2L358.4 82.5L357.9 80.9L357.4 79.2L356.9 77.5L356.3 75.8\" stroke=\"var(--blue)\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"363.3\" cy=\"203.7\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.5\"/><circle cx=\"356.3\" cy=\"75.8\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.5\"/><text x=\"213.6\" y=\"266.2\" fill=\"var(--ink)\" text-anchor=\"start\" font-size=\"24\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dθ</text><text x=\"273.2\" y=\"201.3\" fill=\"var(--green)\" text-anchor=\"start\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">r dθ</text><text x=\"330.2\" y=\"54.9\" fill=\"var(--red)\" text-anchor=\"end\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">dr</text><text x=\"386.3\" y=\"136.4\" fill=\"var(--blue)\" text-anchor=\"start\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">ds</text><text x=\"381.0\" y=\"246.3\" fill=\"var(--ink)\" text-anchor=\"start\" font-size=\"22\" style=\"font-family:inherit\">近似直角三角形</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 繞著轉的方向：弧長 $r\\,d\\theta$",
+            "• 往外的方向：$dr$"
+          ],
+          "say": "這一小步可以拆成兩個方向：繞著原點轉的方向，走了半徑乘角度，r d 西塔；往外的方向，走了 d r。這兩個方向互相垂直。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 繞著轉的方向：弧長 $r\\,d\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "• 往外的方向：$dr$",
+              "on": "走了#1"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個方向互相垂直",
+              "on": "方向#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "畢氏定理：",
+            "$ds^2\\approx(r\\,d\\theta)^2+(dr)^2$"
+          ],
+          "say": "兩邊垂直，就是一個近似的直角三角形。由畢氏定理，斜邊 d s 的平方，等於 r d 西塔的平方加 d r 的平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "畢氏定理："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle ds^2\\approx(r\\,d\\theta)^2+(dr)^2$",
+              "on": "的平#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$ds=\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta$"
+          ],
+          "say": "提出 d 西塔，d s 就是根號 r 平方加 d r d 西塔平方，乘 d 西塔。加起來就是弧長公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle ds=\\sqrt{r^2+\\Big(\\frac{dr}{d\\theta}\\Big)^2}\\,d\\theta}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "西塔#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "別跟面積搞混",
+            "• 面積：$\\frac12\\int r^2\\,d\\theta$（扇形，二維）"
+          ],
+          "say": "跟上一課的面積公式不要搞混。面積是 2 分之 1 積分 r 平方，來自扇形；弧長有根號，來自直角三角形的斜邊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "別跟面積搞混",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "• 面積：$\\frac12\\int r^2\\,d\\theta$（扇形，二維）",
+              "on": "面積#2"
+            },
+            {
+              "do": "write",
+              "line": "• 弧長：$\\int\\sqrt{r^2+r'^2}\\,d\\theta$（邊長，一維）",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "　圓 $r=a$：面積 $\\frac12\\int_0^{2\\pi}a^2d\\theta=\\pi a^2$，弧長 $\\int_0^{2\\pi}a\\,d\\theta=2\\pi a$",
+              "color": "violet",
+              "on": "根號"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "曲線 $r=f(\\theta)$ 從 $\\alpha$ 到 $\\beta$ 的弧長是？"
+          ],
+          "say": "試一題，分清楚這幾個長得很像的公式。"
+        }
       ],
-      "key": "平方相加時交叉項互相抵消",
       "check": 0
     },
     {
-      "title": "兩個方向的位移",
+      "title": "試一題",
       "beats": [
-        { "show": ["沿半徑往外 $dr$","繞原點轉 $r\\,d\\theta$"],
-          "say": "幾何上看，theta 多轉一點點，點同時往外走 dr，又繞著原點轉了一段 r 乘 d theta 的圓弧。",
+        {
+          "show": [
+            "例 1：先拿圓檢查：$r=2\\cos\\theta$，$0\\le\\theta\\le\\pi$"
+          ],
+          "say": "例一：先拿一個已知答案的曲線檢查。r 等於 2 倍餘弦西塔，西塔從 0 到派，是直徑 2 的圓。",
           "board": [
-            {"do":"write","line":"沿半徑往外 ${{a:dr}}$","tint":{"a":"blue"}},
-            {"do":"write","line":"繞原點轉 ${{b:r\\,d\\theta}}$","tint":{"b":"violet"},"on":"繞著原點"}
-          ] },
-        { "show": ["小段弧長 $\\sqrt{dr^2 + (r\\,d\\theta)^2}$"],
-          "note": "直覺，不是證明。",
-          "say": "這兩個方向互相垂直，小段弧長就是斜邊。這是直覺，上一節的計算才是推導。",
+            {
+              "do": "write",
+              "line": "例 1：先拿圓檢查：$r=2\\cos\\theta$，$0\\le\\theta\\le\\pi$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r'=-2\\sin\\theta$",
+            "$r^2+r'^2=4\\cos^2\\theta+4\\sin^2\\theta=4$"
+          ],
+          "say": "r prime 是負 2 正弦西塔。r 平方加 r prime 平方，是 4 餘弦平方加 4 正弦平方，等於 4。",
           "board": [
-            {"do":"write","line":"小段弧長 ${{h:\\sqrt{{{a:dr}}^2+({{b:r\\,d\\theta}})^2}}}$"},
-            {"do":"underline","term":"h","label":"斜邊","on":"斜邊"}
-          ] },
-        { "show": ["$r = a$：$L = \\int a\\,d\\theta$"],
-          "note": "就是圓弧長「半徑 × 角度」。",
-          "say": "檢查一個特例：r 是常數 a，r prime 是零，弧長就是半徑乘角度，跟圓弧長一樣。",
+            {
+              "do": "write",
+              "line": "$r'=-2\\sin\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2+r'^2=4\\cos^2\\theta+4\\sin^2\\theta=4$",
+              "on": "im#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\int_0^\\pi2\\,d\\theta=2\\pi$"
+          ],
+          "say": "開根號是 2，從 0 積到派，得到 2 派。直徑 2 的圓，周長確實是 2 派。",
           "board": [
-            {"do":"write","line":"$r=a$：$L={{ans:\\int a\\,d\\theta}}$"},
-            {"do":"box","term":"ans","color":"green","on":"半徑乘角度"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle L=\\int_0^\\pi2\\,d\\theta=2\\pi}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "得到"
+            },
+            {
+              "do": "write",
+              "line": "　若積 $0$ 到 $2\\pi$ 會得到 $4\\pi$：圓被走了兩圈（跟面積同一個陷阱）",
+              "color": "violet",
+              "on": "的圓"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "範圍剛好走一次",
+      "beats": [
+        {
+          "show": [
+            "例 2：心臟線 $r=1+\\cos\\theta$ 的全長（$0\\le\\theta\\le2\\pi$ 走一圈）"
+          ],
+          "say": "例二：心臟線的全長。西塔從 0 到 2 派，剛好走一圈。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例 2：心臟線 $r=1+\\cos\\theta$ 的全長（$0\\le\\theta\\le2\\pi$ 走一圈）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r'=-\\sin\\theta$",
+            "$r^2+r'^2=1+2\\cos\\theta+\\cos^2\\theta+\\sin^2\\theta=2+2\\cos\\theta$"
+          ],
+          "say": "r prime 是負正弦西塔。r 平方加 r prime 平方，展開後餘弦平方加正弦平方是 1，總共 2 加 2 餘弦西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r'=-\\sin\\theta$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2+r'^2=1+2\\cos\\theta+\\cos^2\\theta+\\sin^2\\theta=2+2\\cos\\theta$",
+              "on": "展開"
+            }
+          ]
+        },
+        {
+          "show": [
+            "半角公式 $1+\\cos\\theta=2\\cos^2\\frac\\theta2$：",
+            "$r^2+r'^2=4\\cos^2\\frac\\theta2$"
+          ],
+          "say": "用半角公式，1 加餘弦西塔等於 2 倍餘弦平方 2 分之西塔。所以整個是 4 倍餘弦平方 2 分之西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "半角公式 $1+\\cos\\theta=2\\cos^2\\frac\\theta2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2+r'^2=4\\cos^2\\frac\\theta2$",
+              "on": "分之#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "開根號要加絕對值：",
+            "$\\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|$"
+          ],
+          "say": "開根號的時候一定要加絕對值：根號 4 倍餘弦平方，等於 2 倍餘弦 2 分之西塔的絕對值，不是直接把平方拿掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "開根號要加絕對值："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|}}$",
+              "color": "red",
+              "on": "倍餘#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "分之"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "如果忘了絕對值，算 $\\displaystyle\\int_0^{2\\pi}2\\cos\\frac\\theta2\\,d\\theta$，會得到？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$8$",
+            "why": "這是正確答案，但要有絕對值才算得到"
+          },
+          {
+            "label": "$4$",
+            "why": "只積到一半；而且沒有絕對值時整段剛好抵消"
+          }
+        ]
+      }
+    },
+    {
+      "title": "範圍剛好走一次",
+      "beats": [
+        {
+          "show": [
+            "θ > π 時 cos(θ/2) < 0：沒有絕對值，後半段會抵消前半段"
+          ],
+          "say": "圖上，紅色虛線在派之後變成負的，積分會把前半段抵消掉。藍色的絕對值才是真正的長度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "halfcos",
+                  "window": [
+                    0,
+                    6.5,
+                    -2.3,
+                    2.3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "2*cos(x/2)",
+                      "color": "red",
+                      "dash": true,
+                      "label": "2cos(θ/2)"
+                    },
+                    {
+                      "expr": "2*abs(cos(x/2))",
+                      "color": "blue",
+                      "label": "2｜cos(θ/2)｜"
+                    }
+                  ],
+                  "height": 200
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "θ > π 時 cos(θ/2) < 0：沒有絕對值，後半段會抵消前半段",
+              "color": "violet",
+              "on": "前半"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用對稱拆開",
+      "beats": [
+        {
+          "show": [
+            "$\\cos\\frac\\theta2\\ge0$ 只在 $0\\le\\theta\\le\\pi$；心臟線上下對稱：",
+            "$L=2\\int_0^\\pi2\\cos\\frac\\theta2\\,d\\theta$"
+          ],
+          "say": "餘弦 2 分之西塔在 0 到派是正的，可以直接拿掉絕對值。心臟線上下對稱，算上半部再乘 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\cos\\frac\\theta2\\ge0$ 只在 $0\\le\\theta\\le\\pi$；心臟線上下對稱："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle L=2\\int_0^\\pi2\\cos\\frac\\theta2\\,d\\theta$",
+              "on": "拿掉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=2\\Big[4\\sin\\frac\\theta2\\Big]_0^\\pi=2\\cdot4=8$"
+          ],
+          "say": "反導函數是 4 倍正弦 2 分之西塔。代派是 4，代 0 是 0，乘 2，全長是 8。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle =2\\Big[4\\sin\\frac\\theta2\\Big]_0^\\pi=2\\cdot4=8}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：把曲線切成二十萬段折線，總長 $\\approx8.0000$",
+              "color": "violet",
+              "on": "全長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "原則（跟面積一樣）",
+            "• $\\theta$ 的範圍：曲線剛好走一次"
+          ],
+          "say": "原則跟面積一樣：範圍要讓曲線剛好走一次。開根號後先看正負，會變號就用對稱或拆區間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "原則（跟面積一樣）"
+            },
+            {
+              "do": "write",
+              "line": "• $\\theta$ 的範圍：曲線剛好走一次",
+              "on": "要讓"
+            },
+            {
+              "do": "write",
+              "line": "• 開根號：先看裡面的東西在範圍內的正負",
+              "on": "開根"
+            },
+            {
+              "do": "write",
+              "line": "• 會變號：用對稱或拆區間，讓每一段都不用絕對值",
+              "on": "變號"
+            }
+          ]
+        }
       ],
       "check": 1
     },
     {
-      "title": "先拿圓檢查",
+      "title": "對數螺線",
       "beats": [
-        { "show": ["$r = 2\\cos\\theta$，$0 \\le \\theta \\le \\pi$"],
-          "say": "r 等於二 cosine theta 是半徑一的圓，theta 從零到 pi 就畫完了。",
+        {
+          "show": [
+            "例 3：$r=e^\\theta$，從 $\\theta=0$ 到 $\\theta=1$ 的長度"
+          ],
+          "say": "例三：對數螺線 r 等於 e 的西塔次方，從西塔等於 0 到 1 的長度。",
           "board": [
-            {"do":"write","line":"${{r:r=2\\cos\\theta}}$，$0\\le\\theta\\le\\pi$","tint":{"r":"blue"}},
-            {"do":"plot","graph":{"window":[-1.1,3.1,-1.2,1.2],"equal":true,"curves":[{"polar":{"r":"2*cos(t)","t":[0,3.1416]},"color":"blue"}],"points":[{"x":1,"y":0}],"dashed":[[[1,0],[1,1]]],"labels":[{"x":1.08,"y":0.5,"text":"1","anchor":"start"}],"ticks":false},"on":"半徑一的圓"}
-          ] },
-        { "show": ["$r^2 + r'^2 = 4\\cos^2\\theta + 4\\sin^2\\theta = 4$"],
-          "say": "r prime 是負二 sine theta。平方相加，提出四，剩 cosine 平方加 sine 平方，等於四。",
+            {
+              "do": "write",
+              "line": "例 3：$r=e^\\theta$，從 $\\theta=0$ 到 $\\theta=1$ 的長度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r'=e^\\theta$，所以",
+            "$r^2+r'^2=e^{2\\theta}+e^{2\\theta}=2e^{2\\theta}$"
+          ],
+          "say": "e 的西塔次方微分還是自己，所以 r 平方加 r prime 平方是 2 倍 e 的 2 西塔次方。",
           "board": [
-            {"do":"write","line":"$r^2+r'^2=4(\\cos^2\\theta+\\sin^2\\theta)=4$","on":"平方相加"}
-          ] },
-        { "show": ["$L = \\int_0^\\pi 2\\,d\\theta = 2\\pi$"],
-          "note": "半徑 1 的圓周長，對得上。",
-          "say": "開根號是二，從零積到 pi，得到二 pi，正好是半徑一的圓周長。",
+            {
+              "do": "write",
+              "line": "$r'=e^\\theta$，所以"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2+r'^2=e^{2\\theta}+e^{2\\theta}=2e^{2\\theta}$",
+              "on": "pr"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{2e^{2\\theta}}=\\sqrt2\\,e^\\theta\\quad(e^\\theta>0)$"
+          ],
+          "say": "開根號是根號 2 乘 e 的西塔次方。這次 e 的西塔次方永遠是正的，絕對值可以直接拿掉。",
           "board": [
-            {"do":"transform","line":"$L=\\int_0^{\\pi}2\\,d\\theta={{ans:2\\pi}}$"},
-            {"do":"box","term":"ans","color":"green","label":"圓周長","on":"正好是"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sqrt{2e^{2\\theta}}=\\sqrt2\\,e^\\theta\\quad(e^\\theta>0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$L=\\sqrt2\\int_0^1e^\\theta\\,d\\theta=\\sqrt2\\,(e-1)\\approx2.43$"
+          ],
+          "say": "積分得到根號 2 乘 e 減 1，大約 2.43。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle L=\\sqrt2\\int_0^1e^\\theta\\,d\\theta=\\sqrt2\\,(e-1)\\approx2.43}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "大約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上藍色那段就是這條螺線從 r 等於 1 轉到 r 等於 e 的部分。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"plspiral\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"26\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah7bplspiral\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl7bplspiral\"><rect x=\"52.6\" y=\"16.0\" width=\"520.8\" height=\"294.0\"/></clipPath><g clip-path=\"url(#cl7bplspiral)\"><circle cx=\"304.6\" cy=\"259.6\" r=\"84.0\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><circle cx=\"304.6\" cy=\"259.6\" r=\"168.0\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><circle cx=\"304.6\" cy=\"259.6\" r=\"252.0\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"556.6\" y2=\"259.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"522.8\" y2=\"133.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"430.6\" y2=\"41.4\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"304.6\" y2=\"7.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"178.6\" y2=\"41.4\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"86.4\" y2=\"133.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"52.6\" y2=\"259.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"86.4\" y2=\"385.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"178.6\" y2=\"477.8\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"304.6\" y2=\"511.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"430.6\" y2=\"477.8\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/><line x1=\"304.6\" y1=\"259.6\" x2=\"522.8\" y2=\"385.6\" stroke=\"var(--muted)\" stroke-opacity=\".28\" stroke-width=\"1.3\"/></g><line x1=\"46.6\" y1=\"259.6\" x2=\"587.4\" y2=\"259.6\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7bplspiral)\"/><line x1=\"304.6\" y1=\"316.0\" x2=\"304.6\" y2=\"6.0\" stroke=\"var(--ink)\" stroke-width=\"2\" marker-end=\"url(#ah7bplspiral)\"/><text x=\"581.4\" y=\"250.6\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"313.6\" y=\"20.0\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><path d=\"M305.9 278.3L306.1 278.4L306.3 278.6L306.5 278.7L306.6 278.9L306.8 279.0L307.0 279.2L307.2 279.3L307.4 279.5L307.6 279.6L307.8 279.8L308.0 279.9L308.2 280.1L308.4 280.2L308.6 280.4L308.9 280.5L309.1 280.7L309.3 280.8L309.5 280.9L309.8 281.1L310.0 281.2L310.2 281.4L310.5 281.5L310.7 281.6L311.0 281.8L311.2 281.9L311.5 282.1L311.7 282.2L312.0 282.3L312.2 282.5L312.5 282.6L312.8 282.7L313.0 282.8L313.3 283.0L313.6 283.1L313.9 283.2L314.2 283.4L314.5 283.5L314.7 283.6L315.0 283.7L315.3 283.8L315.7 283.9L316.0 284.1L316.3 284.2L316.6 284.3L316.9 284.4L317.2 284.5L317.6 284.6L317.9 284.7L318.2 284.8L318.6 284.9L318.9 285.0L319.3 285.1L319.6 285.2L320.0 285.3L320.3 285.4L320.7 285.5L321.0 285.5L321.4 285.6L321.8 285.7L322.2 285.8L322.5 285.9L322.9 285.9L323.3 286.0L323.7 286.1L324.1 286.1L324.5 286.2L324.9 286.2L325.3 286.3L325.7 286.3L326.2 286.4L326.6 286.4L327.0 286.5L327.4 286.5L327.9 286.5L328.3 286.6L328.7 286.6L329.2 286.6L329.6 286.6L330.1 286.7L330.5 286.7L331.0 286.7L331.5 286.7L331.9 286.7L332.4 286.7L332.9 286.7L333.4 286.7L333.9 286.6L334.3 286.6L334.8 286.6L335.3 286.6L335.8 286.5L336.3 286.5L336.9 286.4L337.4 286.4L337.9 286.3L338.4 286.3L338.9 286.2L339.5 286.1L340.0 286.1L340.5 286.0L341.1 285.9L341.6 285.8L342.2 285.7L342.7 285.6L343.3 285.5L343.9 285.4L344.4 285.3L345.0 285.1L345.6 285.0L346.1 284.9L346.7 284.7L347.3 284.6L347.9 284.4L348.5 284.3L349.1 284.1L349.7 283.9L350.3 283.7L350.9 283.5L351.5 283.3L352.1 283.1L352.7 282.9L353.4 282.7L354.0 282.5L354.6 282.3L355.2 282.0L355.9 281.8L356.5 281.5L357.2 281.2L357.8 281.0L358.4 280.7L359.1 280.4L359.8 280.1L360.4 279.8L361.1 279.5L361.7 279.2L362.4 278.8L363.1 278.5L363.7 278.2L364.4 277.8L365.1 277.4L365.8 277.1L366.5 276.7L367.1 276.3L367.8 275.9L368.5 275.5L369.2 275.0L369.9 274.6L370.6 274.2L371.3 273.7L372.0 273.3L372.7 272.8L373.4 272.3L374.1 271.8L374.8 271.3L375.5 270.8L376.3 270.3L377.0 269.7L377.7 269.2L378.4 268.6L379.1 268.1L379.8 267.5L380.6 266.9L381.3 266.3L382.0 265.7L382.7 265.1L383.5 264.4L384.2 263.8L384.9 263.1L385.6 262.5L386.4 261.8L387.1 261.1L387.8 260.4L388.5 259.7L389.3 258.9L390.0 258.2L390.7 257.4L391.5 256.6L392.2 255.9L392.9 255.1L393.6 254.3L394.4 253.4L395.1 252.6L395.8 251.7L396.5 250.9L397.2 250.0L398.0 249.1L398.7 248.2L399.4 247.3L400.1 246.3L400.8 245.4L401.5 244.4L402.2 243.4L402.9 242.4L403.6 241.4L404.3 240.4L405.0 239.4L405.7 238.3L406.4 237.3L407.1 236.2L407.8 235.1L408.5 234.0L409.2 232.8L409.8 231.7L410.5 230.5L411.2 229.3L411.8 228.1L412.5 226.9L413.1 225.7L413.8 224.5L414.4 223.2L415.0 221.9L415.7 220.6L416.3 219.3L416.9 218.0L417.5 216.7L418.1 215.3L418.7 213.9L419.3 212.5L419.9 211.1L420.5 209.7L421.0 208.3L421.6 206.8L422.1 205.3L422.7 203.8L423.2 202.3L423.8 200.8L424.3 199.2L424.8 197.6L425.3 196.1L425.8 194.5L426.2 192.8L426.7 191.2L427.2 189.5L427.6 187.8L428.1 186.1L428.5 184.4L428.9 182.7L429.3 180.9L429.7 179.2L430.1 177.4L430.5 175.6L430.8 173.7L431.2 171.9L431.5 170.0L431.8 168.1L432.1 166.2L432.4 164.3L432.7 162.4L432.9 160.4L433.2 158.4L433.4 156.4L433.6 154.4L433.8 152.4L434.0 150.3L434.2 148.2L434.3 146.1L434.5 144.0L434.6 141.9L434.7 139.7L434.7 137.5L434.8 135.4L434.8 133.1L434.9 130.9L434.9 128.6L434.9 126.4L434.8 124.1L434.8 121.8L434.7 119.4L434.6 117.1L434.5 114.7L434.3 112.3L434.2 109.9L434.0 107.5L433.8 105.0L433.5 102.6L433.3 100.1L433.0 97.6L432.7 95.0L432.4 92.5L432.0 89.9L431.6 87.3L431.2 84.7L430.8 82.1L430.3 79.5L429.9 76.8L429.4 74.1L428.8 71.4L428.2 68.7L427.6 66.0L427.0 63.2L426.4 60.5L425.7 57.7L425.0 54.9L424.2 52.0L423.4 49.2L422.6 46.3L421.8 43.4L420.9 40.6L420.0 37.6L419.1 34.7\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"10 8\"/><path d=\"M388.6 259.6L389.0 259.2L389.4 258.8L389.9 258.3L390.3 257.9L390.7 257.4L391.1 257.0L391.5 256.6L392.0 256.1L392.4 255.6L392.8 255.2L393.2 254.7L393.6 254.3L394.1 253.8L394.5 253.3L394.9 252.8L395.3 252.3L395.7 251.8L396.1 251.3L396.6 250.8L397.0 250.3L397.4 249.8L397.8 249.3L398.2 248.8L398.6 248.3L399.0 247.7L399.5 247.2L399.9 246.7L400.3 246.1L400.7 245.6L401.1 245.0L401.5 244.5L401.9 243.9L402.3 243.3L402.7 242.8L403.1 242.2L403.5 241.6L403.9 241.0L404.3 240.4L404.8 239.8L405.2 239.2L405.6 238.6L406.0 238.0L406.4 237.4L406.7 236.8L407.1 236.1L407.5 235.5L407.9 234.9L408.3 234.2L408.7 233.6L409.1 232.9L409.5 232.3L409.9 231.6L410.3 230.9L410.7 230.2L411.0 229.6L411.4 228.9L411.8 228.2L412.2 227.5L412.5 226.8L412.9 226.1L413.3 225.4L413.7 224.7L414.0 223.9L414.4 223.2L414.8 222.5L415.1 221.7L415.5 221.0L415.9 220.2L416.2 219.5L416.6 218.7L416.9 218.0L417.3 217.2L417.6 216.4L418.0 215.6L418.3 214.8L418.7 214.0L419.0 213.2L419.4 212.4L419.7 211.6L420.0 210.8L420.4 210.0L420.7 209.1L421.0 208.3L421.3 207.5L421.7 206.6L422.0 205.8L422.3 204.9L422.6 204.0L422.9 203.2L423.2 202.3L423.5 201.4L423.8 200.5L424.1 199.6L424.4 198.7L424.7 197.8L425.0 196.9L425.3 196.0L425.6 195.1L425.9 194.1L426.1 193.2L426.4 192.3L426.7 191.3L427.0 190.4L427.2 189.4L427.5 188.4L427.7 187.5L428.0 186.5L428.2 185.5L428.5 184.5L428.7 183.5L429.0 182.5L429.2 181.5L429.4 180.5L429.7 179.4L429.9 178.4L430.1 177.4L430.3 176.3L430.5 175.3L430.7 174.2L430.9 173.2L431.1 172.1L431.3 171.0L431.5 170.0L431.7 168.9L431.9 167.8L432.0 166.7L432.2 165.6L432.4 164.5L432.5 163.3L432.7 162.2L432.8 161.1L433.0 160.0L433.1 158.8L433.3 157.7L433.4 156.5L433.5 155.3L433.6 154.2L433.8 153.0L433.9 151.8L434.0 150.6L434.1 149.4L434.2 148.2L434.3 147.0L434.3 145.8L434.4 144.6L434.5 143.4L434.6 142.1L434.6 140.9L434.7 139.6L434.7 138.4L434.8 137.1L434.8 135.9L434.8 134.6L434.8 133.3L434.9 132.0L434.9 130.7L434.9 129.4L434.9 128.1L434.9 126.8L434.8 125.5L434.8 124.2L434.8 122.8L434.8 121.5L434.7 120.2L434.7 118.8L434.6 117.4L434.5 116.1L434.5 114.7L434.4 113.3L434.3 112.0L434.2 110.6L434.1 109.2L434.0 107.8L433.9 106.4L433.8 104.9L433.6 103.5L433.5 102.1L433.3 100.6L433.2 99.2L433.0 97.8L432.9 96.3L432.7 94.8L432.5 93.4L432.3 91.9L432.1 90.4L431.9 88.9L431.7 87.4L431.4 85.9L431.2 84.4L430.9 82.9L430.7 81.4L430.4 79.9L430.1 78.4L429.9 76.8L429.6 75.3L429.3 73.7L429.0 72.2L428.6 70.6L428.3 69.0L428.0 67.5\" stroke=\"var(--blue)\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M432.4 165.5 L435.9 182.0 L423.1 179.6 Z\" fill=\"var(--blue)\"/><circle cx=\"388.6\" cy=\"259.6\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><text x=\"396.6\" y=\"289.6\" fill=\"var(--red)\" text-anchor=\"start\" style=\"font-family:KaTeX_Main,serif\">θ = 0, r = 1</text><circle cx=\"428.0\" cy=\"67.5\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.5\"/><text x=\"440.0\" y=\"61.5\" fill=\"var(--red)\" text-anchor=\"start\" style=\"font-family:KaTeX_Main,serif\">θ = 1, r = e</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "　對數螺線的特點：每一點的切線跟射線夾角都是 $45^\\circ$（因為 $r'=r$）",
+              "color": "violet",
+              "on": "轉到"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "心臟線：絕對值",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$r = 1 + \\cos\\theta$：$r^2 + r'^2 = 2 + 2\\cos\\theta$"],
-          "say": "換心臟線。r prime 是負 sine theta，平方相加，整理成二加二 cosine theta。",
+        {
+          "show": [
+            "• $L=\\int\\sqrt{r^2+r'^2}\\,d\\theta$：從參數式，或兩個垂直位移",
+            "• 開根號加絕對值，例 $\\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|$"
+          ],
+          "say": "整理一下：弧長公式從參數式或畢氏定理來；開根號要加絕對值；範圍剛好走一次；和面積公式分清楚。",
           "board": [
-            {"do":"write","line":"$r=1+\\cos\\theta$：$r^2+r'^2={{s:2+2\\cos\\theta}}$"},
-            {"do":"underline","term":"s","on":"整理成"}
-          ] },
-        { "show": ["$2+2\\cos\\theta=2(1+\\cos\\theta)$","$=2\\cdot2\\cos^2\\frac{\\theta}{2}$"],
-          "note": "先提出 2，再用半角公式。",
-          "say": "先提出二。半角公式把括號裡換成二 cosine 平方二分之 theta，再乘二，得到四倍。",
-          "board": [
-            {"do":"write","line":"$2+2\\cos\\theta=2(1+\\cos\\theta)$"},
-            {"do":"write","line":"$=2\\cdot2\\cos^2\\frac{\\theta}{2}$","on":"半角公式"}
-          ] },
-        { "show": ["$= 4\\cos^2\\frac{\\theta}{2}$ → $2\\left|\\cos\\frac{\\theta}{2}\\right|$"],
-          "note": "半角公式 $1 + \\cos\\theta = 2\\cos^2\\frac{\\theta}{2}$。",
-          "say": "用半角公式湊成完全平方，開根號出來是二乘絕對值 cosine 二分之 theta。",
-          "board": [
-            {"do":"write","line":"$={{sq:4\\cos^2\\frac{\\theta}{2}}}$","on":"半角公式"},
-            {"do":"write","line":"$\\sqrt{r^2+r'^2}=2{{ab:\\left|\\cos\\frac{\\theta}{2}\\right|}}$","on":"開根號"},
-            {"do":"focus","term":"ab","on":"絕對值"}
-          ] },
-        { "show": ["$\\theta > \\pi$ 時 $\\cos\\frac{\\theta}{2} < 0$"],
-          "note": "絕對值不能直接拿掉。",
-          "say": "theta 超過 pi 之後，二分之 theta 超過二分之 pi，cosine 變成負的，絕對值不能直接丟。",
-          "board": [
-            {"do":"write","line":"$\\theta>\\pi$：$\\cos\\frac{\\theta}{2}<0$","on":"theta 超過 pi"},
-            {"do":"circle","term":"ab","label":"不能丟","on":"絕對值不能"}
-          ] },
-        { "show": ["$r(-\\theta)=r(\\theta)$：上下對稱"],
-          "note": "$r$ 只含 $\\cos\\theta$。",
-          "say": "r 只含 cosine theta，換成負 theta，r 不變，點翻到 x 軸另一邊。所以曲線上下對稱。",
-          "board": [
-            {"do":"write","line":"$r(-\\theta)=r(\\theta)$，點翻到 $x$ 軸另一側"}
-          ] }
+            {
+              "do": "write",
+              "line": "• $L=\\int\\sqrt{r^2+r'^2}\\,d\\theta$：從參數式，或兩個垂直位移"
+            },
+            {
+              "do": "write",
+              "line": "• 開根號加絕對值，例 $\\sqrt{4\\cos^2\\frac\\theta2}=2\\left|\\cos\\frac\\theta2\\right|$",
+              "on": "數式"
+            },
+            {
+              "do": "write",
+              "line": "• 範圍剛好走一次；會變號就用對稱拆開",
+              "on": "要加"
+            },
+            {
+              "do": "write",
+              "line": "• 面積 $\\frac12\\int r^2d\\theta$ 和弧長不要搞混",
+              "on": "一次"
+            }
+          ]
+        }
       ],
-      "key": "開根號要加絕對值，看 $\\cos\\frac{\\theta}{2}$ 正負",
-      "check": 2
-    },
-    {
-      "title": "對稱與螺線",
-      "beats": [
-        { "show": ["上半部乘 2：$2\\int_0^\\pi 2\\cos\\frac{\\theta}{2}\\,d\\theta = 8$"],
-          "note": "對 $x$ 軸對稱，避開變號的那一段。",
-          "say": "心臟線對 x 軸對稱，只算上半部，零到 pi 沒有變號，再乘二，全長是八。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1.2,2.9,-1.4,1.4],"equal":true,"curves":[{"polar":{"r":"1+cos(t)","t":[0,3.1416]},"color":"blue"},{"polar":{"r":"1+cos(t)","t":[3.1416,6.2832]},"color":"muted","dashed":true}],"ticks":false}},
-            {"do":"write","line":"${{two:2}}{{up:\\int_0^{\\pi}}}2\\cos\\frac{\\theta}{2}\\,d\\theta={{ans:8}}$","tint":{"up":"blue"},"on":"只算上半部"},
-            {"do":"underline","term":"up","label":"沒有變號","on":"零到 pi"},
-            {"do":"box","term":"ans","color":"green","on":"全長"}
-          ] },
-        { "show": ["$\\int 2\\cos\\frac{\\theta}{2}\\,d\\theta=4\\sin\\frac{\\theta}{2}$","代入 $\\pi$ 與 0"],
-          "note": "微分 $4\\sin\\frac{\\theta}{2}$ 會多乘 $\\frac{1}{2}$。",
-          "say": "反導函數是四 sine 二分之 theta，微分多乘二分之一，抵掉。代 pi 得四，代零得零。",
-          "board": [
-            {"do":"write","line":"$\\int 2\\cos\\frac{\\theta}{2}\\,d\\theta=4\\sin\\frac{\\theta}{2}$"},
-            {"do":"write","line":"$\\left[4\\sin\\frac{\\theta}{2}\\right]_0^{\\pi}=4-0$","on":"代 pi"}
-          ] },
-        { "show": ["$r = e^\\theta$，$\\theta$ 從 0 到 1"],
-          "note": "$r^2 + r'^2 = 2e^{2\\theta}$。",
-          "say": "再看對數螺線，r 是 e 的 theta 次方。r prime 跟 r 一樣，平方相加是二倍的 e 的二 theta 次方。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$r=e^\\theta$，$0\\le\\theta\\le1$","on":"對數螺線"},
-            {"do":"write","line":"$r^2+r'^2=2e^{2\\theta}$","on":"平方相加"}
-          ] },
-        { "show": ["$r'=(e^\\theta)'=e^\\theta$","$e^{2\\theta}+e^{2\\theta}=2e^{2\\theta}$"],
-          "note": "$e^\\theta$ 微分還是自己。",
-          "say": "e 的 theta 次方微分還是自己，所以 r prime 就是它。平方各是 e 的二 theta 次方，加起來兩倍。",
-          "board": [
-            {"do":"write","line":"$r'=(e^\\theta)'=e^\\theta$"},
-            {"do":"write","line":"$e^{2\\theta}+e^{2\\theta}=2e^{2\\theta}$","on":"平方各"}
-          ] },
-        { "show": ["$\\sqrt{2e^{2\\theta}} = \\sqrt{2}\\,e^\\theta$"],
-          "note": "$e^\\theta > 0$，不用絕對值。",
-          "say": "開根號是根號二乘 e 的 theta 次方。它一定是正的，不用絕對值。接著從零積到一。",
-          "board": [
-            {"do":"write","line":"$\\sqrt{2e^{2\\theta}}={{q:\\sqrt{2}\\,e^\\theta}}$"},
-            {"do":"underline","term":"q","label":"不用絕對值","on":"它一定是正的"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\sqrt{2}\\int_0^1 e^\\theta\\,d\\theta$ 是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "求極座標曲線的弧長",
+        "steps": [
           {
-            "label": "$\\sqrt{2}(e - 1)$",
-            "correct": true
+            "label": "畫圖，選讓曲線剛好走一次的 $\\theta$ 範圍"
           },
           {
-            "label": "$e - 1$",
-            "why": "前面的 $\\sqrt{2}$ 不見了：它是從 $\\sqrt{2e^{2\\theta}}$ 開出來的。"
+            "label": "算 $r'$，化簡 $r^2+r'^2$",
+            "why": "先要有上一步：畫圖，選讓曲線剛好走一次的 $\\theta$ 範圍"
           },
           {
-            "label": "$\\sqrt{2}\\,e$",
-            "why": "下限 $e^0 = 1$ 也要減掉：$e^1 - e^0 = e - 1$。"
+            "label": "開根號，看裡面在範圍內的正負，加絕對值",
+            "why": "先要有上一步：算 $r'$，化簡 $r^2+r'^2$"
+          },
+          {
+            "label": "用對稱或拆區間去掉絕對值，再積分",
+            "why": "先要有上一步：開根號，看裡面在範圍內的正負，加絕對值"
           }
         ]
       }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "下一課：ℝ² 與 ℝ³"
+          ],
+          "say": "這一章結束。下一課，從平面走進三維空間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：ℝ² 與 ℝ³"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["polar", "arc-length"],
-    "fine": ["polar-arc-length-formula", "polar-arc-length-abs", "polar-arc-length-range"]
+    "coarse": [
+      "polar",
+      "arc-length"
+    ],
+    "fine": [
+      "polar-arc-length-formula",
+      "polar-arc-length-abs",
+      "polar-arc-length-range"
+    ]
   },
   "practice": [
-    { "id": "lec-10-q2d", "core": true, "trains": "polar-arc-length-abs" },
-    { "id": "cg-7b-022", "core": true, "trains": "polar-arc-length-formula" },
-    { "id": "cg-7b-023", "core": true, "trains": "polar-arc-length-formula" },
-    { "id": "cg-7b-024", "trains": "polar-arc-length-formula" },
-    { "id": "cg-7b-025", "trains": "polar-arc-length-abs" }
+    {
+      "id": "lec-10-q2d",
+      "core": true,
+      "trains": "polar-arc-length-abs"
+    },
+    {
+      "id": "cg-7b-022",
+      "core": true,
+      "trains": "polar-arc-length-formula"
+    },
+    {
+      "id": "cg-7b-023",
+      "core": true,
+      "trains": "polar-arc-length-formula"
+    },
+    {
+      "id": "cg-7b-024",
+      "trains": "polar-arc-length-formula"
+    },
+    {
+      "id": "cg-7b-025",
+      "trains": "polar-arc-length-abs"
+    }
   ],
   "gaps": []
 }

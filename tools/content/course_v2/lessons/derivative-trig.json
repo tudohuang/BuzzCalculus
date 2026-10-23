@@ -1,72 +1,144 @@
 {
   "id": "derivative-trig",
   "title": "三角函數微分",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["derivative-power-rules", "limit-trig-standard", "trig-identities"],
-  "next": ["derivative-exp"],
-  "related": ["chain-rule", "quotient-rule"],
-  "objectives": [
-    "背熟六個三角函數的導數，並用「co 開頭的帶負號」記正負。",
-    "說出這些公式只在弧度下成立的原因。",
-    "算三角函數在某一點的切線斜率，以及認出 $\\lim \\frac{\\sin(a + h) - \\sin a}{h}$ 是哪個導數。"
+  "prerequisites": [
+    "derivative-power-rules",
+    "limit-trig-standard",
+    "trig-identities"
   ],
-  "visual": "上面是 y = sin x 的圖形，一條切線沿著曲線滑動；下面同步畫出每個 x 的切線斜率。滑過一整個週期之後，下面留下的軌跡正好是 y = cos x。",
+  "next": [
+    "derivative-exp"
+  ],
+  "related": [
+    "chain-rule",
+    "quotient-rule"
+  ],
+  "objectives": [
+    "背熟六個三角函數的導數，並用「co 開頭的帶負號」記正負",
+    "說出這些公式只在弧度下成立的原因",
+    "算三角函數在某一點的切線斜率，以及認出 $\\lim_{h\\to0}\\frac{\\sin(a+h)-\\sin a}{h}$ 是哪個函數在哪一點的導數",
+    "用和角公式與標準極限證明 $\\sin$、$\\cos$、$\\tan$、$\\sec$ 的導數"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從圖看 $(\\sin x)' = \\cos x$（直覺，不是證明）",
+      "heading": "① 從圖看 $(\\sin x)'$",
       "body": [
-        "看 $\\sin x$ 的圖：$x = 0$ 時曲線以斜率 1 往上爬；$x = \\frac{\\pi}{2}$ 在山頂，斜率 0；$x = \\pi$ 往下穿過 $x$ 軸，斜率 $-1$；$x = \\frac{3\\pi}{2}$ 在谷底，斜率 0。",
-        "把這些斜率點出來：1、0、$-1$、0……正好是 $\\cos x$ 在這些點的值。這只是抽樣幾個點，沒有說明中間每一點都對得上；真正的證明在下面。"
+        "猜：",
+        "這只是直覺，不是證明；證明在 ⑤",
+        "同樣看 $\\cos x$：在 $0$ 是最高點（斜率 $0$），接著往下（斜率負）"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{d}{dx}\\sin x=\\cos x",
+        "\\frac{d}{dx}\\cos x=-\\sin x"
+      ]
     },
     {
       "heading": "② 六個公式",
       "body": [
-        "記法：$\\sin$、$\\tan$、$\\sec$ 的導數都是正的；co 開頭的 $\\cos$、$\\cot$、$\\csc$，導數前面都有負號，而且長相是把前三個的答案「每個字都換成 co 版本」：$\\sec^2 \\leftrightarrow \\csc^2$，$\\sec\\cdot\\tan \\leftrightarrow \\csc\\cdot\\cot$。"
+        "記法：co 開頭的（$\\cos,\\cot,\\csc$）帶負號",
+        "每一對：把左邊公式的每個函數都換成「co 版」，再加負號",
+        "例：$(\\tan)'=\\sec^2$ → $(\\cot)'=-\\csc^2$；$(\\sec)'=\\sec\\tan$ → $(\\csc)'=-\\csc\\cot$",
+        "例：$\\dfrac{d}{dx}(\\sin x+\\cos x)$",
+        "線性：一項一項微",
+        "在 $x=\\frac\\pi4$ 是 $0$：$\\sin x+\\cos x$ 在那裡到最高點 $\\sqrt2$"
       ],
       "tex": [
-        "(\\sin x)'=\\cos x,\\qquad (\\cos x)'=-\\sin x",
-        "(\\tan x)'=\\sec^2 x,\\qquad (\\cot x)'=-\\csc^2 x",
-        "(\\sec x)'=\\sec x\\tan x,\\qquad (\\csc x)'=-\\csc x\\cot x"
+        "\\def\\arraystretch{1.4}\\begin{array}{ll}(\\sin x)'=\\cos x & (\\cos x)'=-\\sin x\\\\(\\tan x)'=\\sec^2x & (\\cot x)'=-\\csc^2x\\\\(\\sec x)'=\\sec x\\tan x\\; & (\\csc x)'=-\\csc x\\cot x\\end{array}",
+        "=\\cos x-\\sin x"
+      ]
+    },
+    {
+      "heading": "② 切線斜率與切線",
+      "body": [
+        "$y=\\tan x$ 在 $x=\\dfrac\\pi4$",
+        "斜率：$\\sec^2\\dfrac\\pi4=\\Big(\\dfrac{1}{\\cos\\frac\\pi4}\\Big)^2=(\\sqrt2)^2=2$",
+        "切點：$\\tan\\dfrac\\pi4=1$",
+        "混在一起：$f(x)=2\\sec x+\\cot x$，求 $f'\\big(\\frac\\pi3\\big)$",
+        "$\\sec\\frac\\pi3=2$，$\\tan\\frac\\pi3=\\sqrt3$，$\\csc\\frac\\pi3=\\frac{2}{\\sqrt3}$",
+        "$\\csc^2\\frac\\pi3=\\frac43$；數值 $\\approx5.595$"
       ],
-      "collapsible": false
+      "tex": [
+        "y-1=2\\Big(x-\\frac\\pi4\\Big)\\ \\Rightarrow\\ y=2x+1-\\frac\\pi2",
+        "f'(x)=2\\sec x\\tan x-\\csc^2x",
+        "f'\\Big(\\frac\\pi3\\Big)=2\\cdot2\\cdot\\sqrt3-\\frac43=4\\sqrt3-\\frac43"
+      ]
     },
     {
       "heading": "③ 只在弧度下成立",
       "body": [
-        "證明的關鍵是 $\\lim_{h\\to0} \\frac{\\sin h}{h} = 1$（〈三角標準極限〉），而這個極限只在 $h$ 用弧度量的時候是 1。",
-        "如果 $x$ 用度，$\\sin(x^\\circ) = \\sin\\left(\\frac{\\pi x}{180}\\right)$，導數會多一個因子 $\\frac{\\pi}{180}$（要用〈連鎖律 I：兩層〉）。所以微積分裡的三角函數一律用弧度。"
+        "公式的證明用到（⑤）：",
+        "用度量：$h$ 度 $=\\dfrac{\\pi h}{180}$ 弧度",
+        "所以用度的話：",
+        "弧度是讓係數剛好是 1 的單位",
+        "直覺：弧度下，單位圓上走過的弧長 = 角度數；$\\sin h$（高）和弧長 $h$ 在 $h$ 很小時幾乎一樣"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{h\\to0}\\frac{\\sin h}{h}=1\\quad(h\\text{ 用弧度})",
+        "\\frac{\\sin(h^\\circ)}{h}\\to\\frac{\\pi}{180}\\approx0.01745",
+        "\\frac{d}{dx}\\sin(x^\\circ)=\\frac{\\pi}{180}\\cos(x^\\circ)"
+      ]
     },
     {
       "heading": "④ 公式本身就是極限",
       "body": [
-        "$\\lim_{h\\to0} (\\sin(\\frac{\\pi}{6} + h) - \\frac{1}{2})/h$ 看起來很難，其實 $\\frac{1}{2} = \\sin\\left(\\frac{\\pi}{6}\\right)$，這就是 $\\sin x$ 在 $\\frac{\\pi}{6}$ 的導數 $= \\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}$。認出導數定義，就不用硬算。"
+        "導數的定義：",
+        "認法：$\\frac{f(a+h)-f(a)}{h}$，找出 $f$ 和 $a$",
+        "例：$\\displaystyle\\lim_{h\\to0}\\frac{\\sin\\big(\\frac\\pi6+h\\big)-\\frac12}{h}$",
+        "$\\frac12=\\sin\\frac\\pi6$：$f=\\sin$，$a=\\frac\\pi6$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{h\\to0}\\frac{\\sin(a+h)-\\sin a}{h}\\\\&=(\\sin x)'\\Big|_{x=a}=\\cos a\\end{aligned}",
+        "=\\cos\\frac\\pi6=\\frac{\\sqrt3}{2}"
+      ]
     },
     {
-      "heading": "$\\sin$ 與 $\\cos$ 的證明",
+      "heading": "⑤ 證明：$\\sin$ 與 $\\cos$",
       "body": [
-        "需要兩個極限（〈三角標準極限〉）：$\\frac{\\sin h}{h} \\to 1$，以及 $\\frac{1 - \\cos h}{h^2} \\to \\frac{1}{2}$。由後者，$\\frac{\\cos h - 1}{h} = -\\left(\\frac{1 - \\cos h}{h^2}\\right) \\cdot h \\to -\\left(\\frac{1}{2}\\right) \\cdot 0 = 0$。",
-        "和角公式：$\\sin(x + h) = \\sin x \\cos h + \\cos x \\sin h$。所以 $\\frac{\\sin(x + h) - \\sin x}{h} = \\sin x \\cdot \\frac{\\cos h - 1}{h} + \\cos x \\cdot \\left(\\frac{\\sin h}{h}\\right)$。",
-        "$x$ 固定，$h \\to 0$：$\\sin x \\cdot 0 + \\cos x \\cdot 1 = \\cos x$。",
-        "同理 $\\cos(x + h) = \\cos x \\cos h - \\sin x \\sin h$，$\\frac{\\cos(x + h) - \\cos x}{h} = \\cos x \\cdot \\frac{\\cos h - 1}{h} - \\sin x \\cdot \\left(\\frac{\\sin h}{h}\\right) \\to \\cos x \\cdot 0 - \\sin x \\cdot 1 = -\\sin x$。"
+        "需要：$\\dfrac{\\sin h}{h}\\to1$，$\\dfrac{\\cos h-1}{h}\\to0$",
+        "第二條：$\\frac{\\cos h-1}{h}=-\\frac{1-\\cos h}{h^2}\\cdot h\\to-\\frac12\\cdot0=0$",
+        "和角公式：$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$",
+        "$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1$",
+        "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}&\\frac{\\sin(x+h)-\\sin x}{h}\\\\&=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}\\end{aligned}",
+        "(\\sin x)'=\\cos x",
+        "\\begin{aligned}&\\frac{\\cos(x+h)-\\cos x}{h}\\\\&=\\cos x\\cdot\\frac{\\cos h-1}{h}-\\sin x\\cdot\\frac{\\sin h}{h}\\end{aligned}",
+        "\\to\\cos x\\cdot0-\\sin x\\cdot1=-\\sin x"
+      ]
     },
     {
-      "heading": "$\\tan$ 與 $\\sec$ 的證明（$\\cos x \\ne 0$ 的地方）",
+      "heading": "⑤ 證明：$\\tan$ 與 $\\sec$",
       "body": [
-        "$\\tan(x + h) - \\tan x = \\frac{\\sin(x + h)\\cos x - \\cos(x + h)\\sin x}{\\cos(x + h)\\cos x} = \\frac{\\sin h}{\\cos(x + h)\\cos x}$，分子用的是 $\\sin$ 的差角公式 $\\sin((x + h) - x)$。",
-        "除以 $h$：$\\left(\\frac{\\sin h}{h}\\right) \\cdot \\frac{1}{\\cos(x + h)\\cos x}$。$\\cos$ 連續，$h \\to 0$ 時 $\\cos(x + h) \\to \\cos x \\ne 0$，所以極限是 $1 \\cdot \\frac{1}{\\cos^2 x} = \\sec^2 x$。",
-        "$\\sec(x + h) - \\sec x = \\frac{\\cos x - \\cos(x + h)}{\\cos(x + h)\\cos x}$。除以 $h$，分子部分 $\\frac{\\cos x - \\cos(x + h)}{h} \\to -(\\cos x)' = \\sin x$，分母 $\\to \\cos^2 x$，所以極限是 $\\frac{\\sin x}{\\cos^2 x} = \\sec x \\tan x$。",
-        "$\\cot$ 與 $\\csc$ 完全對稱（把 $\\sin$、$\\cos$ 互換並注意正負），之後也可以用〈除法法則〉一行算出來。"
+        "在 $\\cos x\\ne0$ 的地方。通分：",
+        "分子是差角公式：$\\sin\\big((x+h)-x\\big)=\\sin h$",
+        "$h\\to0$：$\\cos(x+h)\\to\\cos x$（$\\cos$ 連續）",
+        "前一塊 $=-\\dfrac{\\cos(x+h)-\\cos x}{h}\\to-(-\\sin x)=\\sin x$",
+        "$\\cot$、$\\csc$：同樣的方法（在 $\\sin x\\ne0$ 的地方）"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}&\\tan(x+h)-\\tan x\\\\&=\\frac{\\sin(x+h)\\cos x-\\cos(x+h)\\sin x}{\\cos(x+h)\\cos x}\\end{aligned}",
+        "\\frac{\\tan(x+h)-\\tan x}{h}=\\frac{\\sin h}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}",
+        "(\\tan x)'=\\frac{1}{\\cos^2x}=\\sec^2x",
+        "\\begin{aligned}&\\frac{\\sec(x+h)-\\sec x}{h}\\\\&=\\frac{\\cos x-\\cos(x+h)}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}\\end{aligned}",
+        "(\\sec x)'=\\frac{\\sin x}{\\cos^2x}=\\sec x\\tan x"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 圖：$\\sin$ 的斜率描出 $\\cos$",
+        "• $(\\sin)'=\\cos$，$(\\tan)'=\\sec^2$，$(\\sec)'=\\sec\\tan$",
+        "• co 開頭帶負號：$(\\cos)'=-\\sin$，$(\\cot)'=-\\csc^2$，$(\\csc)'=-\\csc\\cot$",
+        "• 只在弧度下成立：因為 $\\frac{\\sin h}{h}\\to1$ 要用弧度",
+        "• $\\frac{f(a+h)-f(a)}{h}$ 的極限：認出 $f$、$a$，用公式",
+        "• 證明：和角公式 ＋ 標準極限",
+        "下一課：指數函數微分"
+      ]
     }
   ],
   "workedExamples": [
@@ -117,379 +189,1147 @@
   ],
   "checks": [
     {
-      "ask": "$\\frac{d}{dx} (3 \\sin x - 2 \\cos x)$ 是？",
+      "ask": "$\\dfrac{d}{dx}\\big(3\\cos x-\\tan x\\big)=$？",
       "options": [
-        { "label": "$3 \\cos x + 2 \\sin x$", "correct": true },
-        { "label": "$3 \\cos x - 2 \\sin x$", "why": "$(\\cos x)' = -\\sin x$，所以 $-2 \\cos x$ 微分是 $-2 \\cdot (-\\sin x) = +2 \\sin x$。" },
-        { "label": "$-3 \\cos x - 2 \\sin x$", "why": "$(\\sin x)' = \\cos x$ 沒有負號；負號只跟著 co 開頭的函數。" }
+        {
+          "label": "$-3\\sin x-\\sec^2x$",
+          "correct": true
+        },
+        {
+          "label": "$3\\sin x-\\sec^2x$",
+          "why": "$\\cos$ 的導數帶負號"
+        },
+        {
+          "label": "$-3\\sin x+\\sec^2x$",
+          "why": "$\\tan$ 前面本來就是減號，導數 $\\sec^2x$ 照減"
+        },
+        {
+          "label": "$-3\\sin x-\\sec x\\tan x$",
+          "why": "$\\sec x\\tan x$ 是 $\\sec x$ 的導數，$\\tan x$ 的是 $\\sec^2x$"
+        }
       ]
     },
     {
-      "ask": "下面哪一個導數前面有負號？",
+      "ask": "$\\displaystyle\\lim_{h\\to0}\\frac{\\cos\\big(\\frac\\pi3+h\\big)-\\cos\\frac\\pi3}{h}=$？",
       "options": [
-        { "label": "$(\\csc x)'$", "correct": true },
-        { "label": "$(\\sec x)'$", "why": "$(\\sec x)' = \\sec x \\tan x$，是正的；有負號的是 co 開頭的 $\\cos$、$\\cot$、$\\csc$。" },
-        { "label": "$(\\tan x)'$", "why": "$(\\tan x)' = \\sec^2 x$，是正的。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{h\\to0} (\\cos(\\frac{\\pi}{3} + h) - \\frac{1}{2})/h$ 是？",
-      "options": [
-        { "label": "$-\\frac{\\sqrt{3}}{2}$", "correct": true },
-        { "label": "$\\frac{\\sqrt{3}}{2}$", "why": "這是 $\\cos x$ 在 $\\frac{\\pi}{3}$ 的導數，$(\\cos x)' = -\\sin x$，負號不能漏：$-\\sin\\left(\\frac{\\pi}{3}\\right) = -\\frac{\\sqrt{3}}{2}$。" },
-        { "label": "0", "why": "$\\frac{0}{0}$ 不是 0。$\\frac{1}{2} = \\cos\\left(\\frac{\\pi}{3}\\right)$，所以這是 $\\cos$ 在 $\\frac{\\pi}{3}$ 的導數。" }
-      ]
-    },
-    {
-      "ask": "為什麼 $(\\sin x)' = \\cos x$ 要用弧度？",
-      "options": [
-        { "label": "證明用到 $\\frac{\\sin h}{h} \\to 1$，這只在弧度下成立", "correct": true },
-        { "label": "因為度不能代進 $\\sin$", "why": "度可以代進 $\\sin$（$\\sin 30^\\circ = \\frac{1}{2}$）；問題是用度時 $\\frac{\\sin h}{h}$ 的極限是 $\\frac{\\pi}{180}$，不是 1。" },
-        { "label": "其實用度也一樣", "why": "用度的話 $(\\sin x^\\circ)' = \\left(\\frac{\\pi}{180}\\right) \\cos x^\\circ$，多一個因子。" }
+        {
+          "label": "$-\\dfrac{\\sqrt3}{2}$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac{\\sqrt3}{2}$",
+          "why": "漏了負號：$\\cos$ 是 co 開頭"
+        },
+        {
+          "label": "$-\\dfrac12$",
+          "why": "那是 $-\\cos\\frac\\pi3$；導數是 $-\\sin$，不是 $-\\cos$"
+        },
+        {
+          "label": "$0$",
+          "why": "分子分母都 $\\to0$，是 $\\frac00$ 型，不是 $0$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "從圖看斜率",
+      "title": "從圖看 $(\\sin x)'$",
       "beats": [
-        { "show": ["$x = 0$：斜率 1"],
-          "note": "$\\sin x$ 以斜率 1 往上爬。",
-          "say": "看 sine 的圖。在 x 等於零，曲線以斜率一往上爬。",
+        {
+          "show": [
+            "藍：sin x 和它的切線；綠點：切線斜率"
+          ],
+          "say": "先用圖猜。藍色是正弦，紅色虛線是它在 a 的切線。在 0 的地方，切線很陡，斜率是 1。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.6,5.4,-1.5,1.5],"curves":[{"expr":"sin(x)","color":"blue"}],"dashed":[[[-0.6,-0.6],[1.35,1.35]],[[0.75,1],[2.4,1]],[[3.9,-1],[5.4,-1]]],"points":[{"x":0,"y":0},{"x":1.5708,"y":1},{"x":4.7124,"y":-1}]}},
-            {"do":"write","line":"斜率：${{a:1}}$","on":"曲線以"}
-          ] },
-        { "show": ["$x = \\frac{\\pi}{2}$：山頂，斜率 0"],
-          "say": "到二分之 pi 是山頂，切線是平的，斜率零。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sn",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.7,
+                    1.7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "blue",
+                      "label": "y = sin x"
+                    },
+                    {
+                      "expr": "cos(a)*(x-a)+sin(a)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "cos(x)",
+                      "color": "green",
+                      "dash": true,
+                      "label": "y = cos x"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sin(a)",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "a",
+                      "y": "cos(a)",
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0,
+                      "label": "切點 a"
+                    }
+                  },
+                  "readout": "切線斜率 = {cos(a)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "切線斜率 = 1",
+              "on": "線是"
+            },
+            {
+              "do": "write",
+              "line": "藍：sin x 和它的切線；綠點：切線斜率",
+              "color": "violet",
+              "on": "的地"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從圖看 $(\\sin x)'$"
+          ],
+          "say": "往右走到 2 分之派，正弦到最高點，切線變水平，斜率是 0。",
           "board": [
-            {"do":"transform","line":"斜率：${{a:1}}$、${{b:0}}$","on":"山頂"},
-            {"do":"focus","term":"b","label":"平的","on":"切線是平的"}
-          ] },
-        { "show": ["$x = \\frac{3\\pi}{2}$：谷底，斜率 0"],
-          "note": "中間 $x = \\pi$ 往下穿過 $x$ 軸。",
-          "say": "接著往下穿過 x 軸，到二分之三 pi 是谷底，斜率又是零。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sn",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.7,
+                    1.7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "blue",
+                      "label": "y = sin x"
+                    },
+                    {
+                      "expr": "cos(a)*(x-a)+sin(a)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "cos(x)",
+                      "color": "green",
+                      "dash": true,
+                      "label": "y = cos x"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sin(a)",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "a",
+                      "y": "cos(a)",
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0,
+                      "label": "切點 a"
+                    }
+                  },
+                  "readout": "切線斜率 = {cos(a)}",
+                  "height": 280
+                },
+                "vals": {
+                  "a": 1.5708
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "切線斜率 = −0.000003673",
+              "on": "高點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從圖看 $(\\sin x)'$"
+          ],
+          "say": "走到派，正弦往下穿過 0，斜率是負 1。",
           "board": [
-            {"do":"transform","line":"斜率：${{a:1}}$、${{b:0}}$、？、${{c:0}}$","on":"谷底"},
-            {"do":"focus","term":"c","on":"斜率又是"}
-          ] },
-        { "show": ["斜率＝升多少 ÷ 右走多少"],
-          "note": "平的是 0，往下掉是負的。",
-          "say": "切線往右走一格，升了幾格，斜率就是幾。平的是零，往下掉就是負的。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sn",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.7,
+                    1.7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "blue",
+                      "label": "y = sin x"
+                    },
+                    {
+                      "expr": "cos(a)*(x-a)+sin(a)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "cos(x)",
+                      "color": "green",
+                      "dash": true,
+                      "label": "y = cos x"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sin(a)",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "a",
+                      "y": "cos(a)",
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0,
+                      "label": "切點 a"
+                    }
+                  },
+                  "readout": "切線斜率 = {cos(a)}",
+                  "height": 280
+                },
+                "vals": {
+                  "a": 3.1416
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "切線斜率 = −1",
+              "on": "斜率"
+            }
+          ]
+        },
+        {
+          "show": [
+            "從圖看 $(\\sin x)'$"
+          ],
+          "say": "把每一點的斜率畫成綠點，綠點描出來的，剛好是餘弦的圖形。",
           "board": [
-            {"do":"write","line":"斜率＝升多少 ÷ 右走多少"},
-            {"do":"write","line":"往下掉：斜率是負","on":"往下掉"}
-          ] },
-        { "show": ["斜率：1、0、？、0……"],
-          "note": "直覺，不是證明：只抽樣幾個點。",
-          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，證明在後面那節。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "sn",
+                  "window": [
+                    -0.3,
+                    6.6,
+                    -1.7,
+                    1.7
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(x)",
+                      "color": "blue",
+                      "label": "y = sin x"
+                    },
+                    {
+                      "expr": "cos(a)*(x-a)+sin(a)",
+                      "color": "red",
+                      "dash": true
+                    },
+                    {
+                      "expr": "cos(x)",
+                      "color": "green",
+                      "dash": true,
+                      "label": "y = cos x"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "a",
+                      "y": "sin(a)",
+                      "color": "blue"
+                    },
+                    {
+                      "x": "a",
+                      "y": "cos(a)",
+                      "color": "green"
+                    }
+                  ],
+                  "params": {
+                    "a": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0,
+                      "label": "切點 a"
+                    }
+                  },
+                  "readout": "切線斜率 = {cos(a)}",
+                  "height": 280
+                },
+                "vals": {
+                  "a": 6
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "切線斜率 = 0.9602",
+              "on": "描出"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜：",
+            "$\\frac{d}{dx}\\sin x=\\cos x$"
+          ],
+          "say": "所以我們猜：正弦的導數，就是餘弦。",
           "board": [
-            {"do":"write","line":"正好是 ${{k:\\cos x}}$ 在這些點的值","on":"正好是"},
-            {"do":"underline","term":"k","label":"只抽幾個點","on":"只是抽幾個點"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$\\sin x$ 在 $x = \\pi$ 的切線斜率是？",
-        "options": [
-          {
-            "label": "$-1$",
-            "correct": true
-          },
-          {
-            "label": "0",
-            "why": "0 是 $\\sin \\pi$，是高度。曲線在那裡往下穿過 $x$ 軸，斜率 $\\cos \\pi = -1$。"
-          },
-          {
-            "label": "1",
-            "why": "斜率 1 是 $x = 0$ 往上爬的時候；$x = \\pi$ 是往下穿過。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "$\\sin$ 與 $\\cos$",
-      "beats": [
-        { "show": ["$(\\sin x)'=\\cos x$"],
-          "say": "所以 sine 的導數是 cosine。",
+            {
+              "do": "write",
+              "line": "猜："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{d}{dx}\\sin x=\\cos x}}$",
+              "color": "red",
+              "on": "正弦"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "的導"
+            },
+            {
+              "do": "write",
+              "line": "　這只是直覺，不是證明；證明在 ⑤",
+              "color": "violet",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣看 $\\cos x$：在 $0$ 是最高點（斜率 $0$），接著往下（斜率負）"
+          ],
+          "say": "同樣看餘弦：在 0 是最高點，斜率 0；接著往下走，斜率是負的，形狀像負的正弦。",
           "board": [
-            {"do":"write","line":"$(\\sin x)'=\\cos x$"}
-          ] },
-        { "show": ["$(\\cos x)'=-\\sin x$"],
-          "note": "負號不能漏。",
-          "say": "cosine 的導數是負 sine，這個負號最常被漏掉。",
+            {
+              "do": "write",
+              "line": "同樣看 $\\cos x$：在 $0$ 是最高點（斜率 $0$），接著往下（斜率負）"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac{d}{dx}\\cos x=-\\sin x$"
+          ],
+          "say": "所以餘弦的導數是負的正弦。這個負號很重要。",
           "board": [
-            {"do":"write","line":"$(\\cos x)'={{n:-\\sin x}}$"},
-            {"do":"focus","term":"n","label":"負號","on":"這個負號"}
-          ] },
-        { "show": ["藍：$\\sin x$，紅：$\\cos x$"],
-          "say": "把兩個圖放在一起，藍色是 sine，紅色是 cosine。x 等於零時 sine 爬得最陡，cosine 剛好在最高的一。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1,6.5,-1.5,1.5],"curves":[{"expr":"sin(x)","domain":[-1,6.5],"color":"blue"},{"expr":"cos(x)","domain":[-1,6.5],"color":"red"}]}}
-          ] },
-        { "show": ["$\\frac{d}{dx} (\\sin x + \\cos x)$"],
-          "note": "加減逐項微分。",
-          "say": "試一個：sine 加 cosine，加減可以一項一項微。",
-          "board": [
-            {"do":"write","line":"$\\frac{d}{dx}(\\sin x+\\cos x)$","on":"sine 加"}
-          ] },
-        { "show": ["$= \\cos x - \\sin x$"],
-          "say": "sine 變 cosine，cosine 變負 sine，合起來 cosine 減 sine。",
-          "board": [
-            {"do":"transform","line":"$\\frac{d}{dx}(\\sin x+\\cos x)={{r:\\cos x-\\sin x}}$"},
-            {"do":"box","term":"r","color":"green","on":"合起來"}
-          ] }
-      ],
-      "check": 0
-    },
-    {
-      "title": "證明：和角拆開",
-      "beats": [
-        { "show": ["和角公式拆開，交給兩個標準極限"],
-          "note": "$\\frac{\\sin h}{h}\\to1$，$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$。",
-          "say": "策略：用和角公式把 sine x 加 h 拆開，差商就變成兩個標準極限的組合。",
-          "board": [
-            {"do":"write","line":"$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$"},
-            {"do":"write","line":"$\\frac{\\sin h}{h}\\to1,\\quad\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$","on":"兩個標準極限"}
-          ] },
-        { "show": ["$\\frac{\\cos h-1}{h}=-\\frac{1-\\cos h}{h^2}\\cdot h\\to0$"],
-          "note": "$-\\frac{1}{2}\\cdot0=0$。",
-          "why": {"ask":"為什麼它趨近 $0$？","say":"先準備一塊：cosine h 減一再除以 h，為什麼趨近零？","options":[{"label":"$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$，再乘一個 $h\\to0$","correct":true},{"label":"代 $h=0$：$\\cos0-1=0$","why":"分母也是 0，是 $\\frac{0}{0}$；要先湊成標準極限的樣子。"},{"label":"$\\cos h\\le1$，所以分子很小","why":"分子小、分母也小，比值不一定小；要靠 $\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$ 量出它多小。"}]},
-          "say": "把它寫成負的 h 平方分之一減 cosine h，再乘 h。前面趨近二分之一，後面趨近零，乘起來是零。",
-          "board": [
-            {"do":"write","line":"${{p:\\frac{\\cos h-1}{h}}}\\to0$"},
-            {"do":"transform","line":"${{p:\\frac{\\cos h-1}{h}}}=-{{a:\\frac{1-\\cos h}{h^2}}}\\cdot{{b:h}}\\to0$","why":true,"on":"把它寫成"},
-            {"do":"underline","term":"a","label":"→ 1/2","why":true,"on":"前面趨近"},
-            {"do":"focus","term":"b","label":"→ 0","why":true,"on":"後面趨近零"}
-          ] },
-        { "show": ["分子分母同乘 $1+\\cos h$"],
-          "note": "$(1-\\cos h)(1+\\cos h)=\\sin^2 h$",
-          "say": "分子分母同乘一加 cosine h，分子變成 sine h 平方，所以趨近一的平方乘二分之一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1-\\cos h}{h^2}=\\frac{\\sin^2 h}{h^2(1+\\cos h)}$"},
-            {"do":"write","line":"$=\\left(\\frac{\\sin h}{h}\\right)^2\\frac{1}{1+\\cos h}\\to 1^2\\cdot\\frac{1}{2}$","on":"所以"}
-          ] },
-        { "show": ["$\\frac{\\sin(x+h)-\\sin x}{h}$","$=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}$"],
-          "note": "$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$。",
-          "say": "和角公式展開，減掉 sine x，再照 cosine h 減一和 sine h 分組，差商就拆成兩塊。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\frac{\\sin(x+h)-\\sin x}{h}$","on":"和角公式展開"},
-            {"do":"write","line":"$={{sx:\\sin x}}\\cdot{{p:\\frac{\\cos h-1}{h}}}+{{cx:\\cos x}}\\cdot{{q:\\frac{\\sin h}{h}}}$","on":"再照"},
-            {"do":"underline","term":"q","on":"和 sine h"}
-          ] },
-        { "show": ["$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1=\\cos x$"],
-          "note": "$x$ 固定，$\\sin x$、$\\cos x$ 只是常數。",
-          "why": {"ask":"為什麼可以兩塊分開取極限？","say":"兩塊為什麼可以各自取極限，再加起來？","options":[{"label":"$\\sin x$、$\\cos x$ 是常數，兩塊的極限都存在","correct":true},{"label":"因為 $\\sin$、$\\cos$ 都連續","why":"這裡在動的是 $h$，不是 $x$；$\\sin x$、$\\cos x$ 根本不動，只是常數。"},{"label":"代 $h=0$ 就好","why":"代進去兩塊都是 $\\frac{0}{0}$；要用兩個標準極限，不能直接代。"}]},
-          "say": "x 固定，sine x 和 cosine x 只是常數。兩塊的極限是零和一，加起來就是 cosine x。",
-          "board": [
-            {"do":"write","line":"$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1={{r:\\cos x}}$"},
-            {"do":"underline","term":"sx","label":"常數","why":true,"on":"sine x 和"},
-            {"do":"underline","term":"cx","why":true,"on":"cosine x#1"},
-            {"do":"box","term":"r","color":"green","why":true,"on":"加起來"}
-          ] },
-        { "show": ["同理 $(\\cos x)'=-\\sin x$"],
-          "note": "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$。",
-          "say": "cosine 一樣做：它的和角公式中間是減號，所以最後得到負 sine x。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\cos(x+h)=\\cos x\\cos h{{m:-\\sin x\\sin h}}$","on":"和角公式"},
-            {"do":"focus","term":"m","label":"減號","on":"中間是減號"},
-            {"do":"write","line":"$(\\cos x)'=-\\sin x$","color":"green","on":"所以最後"}
-          ] }
-      ],
-      "key": "和角公式把 $x$ 與 $h$ 分開",
-      "proof": true,
-      "of": 4,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$\\frac{\\sin h}{h}\\to1$」用在哪一步？",
-        "steps": [
-          {
-            "label": "$\\frac{\\cos h-1}{h}\\to0$",
-            "why": "這一步用的是另一個極限：$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$。"
-          },
-          {
-            "label": "和角公式拆成兩塊",
-            "why": "這只是三角恆等式，還沒取極限。"
-          },
-          {
-            "label": "$h\\to0$：得到 $\\cos x$",
-            "correct": true
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\frac{d}{dx}\\cos x=-\\sin x}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "正弦"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "六個公式",
       "beats": [
-        { "show": ["$(\\tan x)'=\\sec^2 x$","$(\\sec x)'=\\sec x\\tan x$"],
-          "say": "sine、tangent、secant 的導數前面都是正的。tangent 微成 secant 平方。",
+        {
+          "show": [
+            "$\\def\\arraystretch{1.4}\\begin{array}{ll}(\\sin x)'=\\cos x & (\\cos x)'=-\\sin x\\\\(\\tan x)'=\\sec^2x & (\\cot x)'=-\\csc^2x\\\\(\\sec x)'=\\sec x\\tan x\\; & (\\csc x)'=-\\csc x\\cot x\\end{array}$"
+          ],
+          "say": "六個公式排成三對：正弦和餘弦、正切和餘切、正割和餘割。",
           "board": [
-            {"do":"write","line":"$(\\tan x)'={{t:\\sec^2 x}}$"},
-            {"do":"write","line":"$(\\sec x)'=\\sec x\\tan x$","on":"secant 的導數"},
-            {"do":"box","term":"t","on":"微成"}
-          ] },
-        { "show": ["$(\\cot x)'=-\\csc^2 x$","$(\\csc x)'=-\\csc x\\cot x$"],
-          "note": "co 開頭的三個，前面都有負號。",
-          "say": "co 開頭的三個，答案把每個字換成 co 版本，前面再加負號。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\def\\arraystretch{1.4}{\\begin{array}{ll}(\\sin x)'=\\cos x & (\\cos x)'=-\\sin x\\\\(\\tan x)'=\\sec^2x & (\\cot x)'=-\\csc^2x\\\\(\\sec x)'=\\sec x\\tan x\\; & (\\csc x)'=-\\csc x\\cot x\\end{array}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "正切"
+            }
+          ]
+        },
+        {
+          "show": [
+            "記法：co 開頭的（$\\cos,\\cot,\\csc$）帶負號"
+          ],
+          "say": "記法：co 開頭的三個，也就是餘弦、餘切、餘割，導數都帶負號。",
           "board": [
-            {"do":"write","line":"$(\\cot x)'={{m:-\\csc^2 x}}$"},
-            {"do":"write","line":"$(\\csc x)'={{n:-\\csc x\\cot x}}$","on":"答案把"},
-            {"do":"focus","term":"m","on":"co 版本"},
-            {"do":"focus","term":"n","label":"前面加負號","on":"前面再"}
-          ] },
-        { "show": ["$f(x) = 2 \\sec x + \\cot x$"],
-          "note": "$f' = 2 \\sec x \\tan x - \\csc^2 x$",
-          "say": "例如二 secant 加 cotangent，導數是二 secant tangent 減 cosecant 平方。",
+            {
+              "do": "write",
+              "line": "記法：co 開頭的（$\\cos,\\cot,\\csc$）帶負號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一對：把左邊公式的每個函數都換成「co 版」，再加負號"
+          ],
+          "say": "而且每一對是對稱的：左邊的公式，把每個函數換成 co 開頭的版本，再加一個負號，就是右邊。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f(x)=2\\sec x+\\cot x$","on":"例如"},
-            {"do":"write","line":"$f'(x)=2\\sec x\\tan x-\\csc^2 x$","on":"導數是"}
-          ] },
-        { "show": ["$f'\\left(\\frac{\\pi}{3}\\right) = 4\\sqrt{3} - \\frac{4}{3}$"],
-          "note": "$\\sec = 2$，$\\tan = \\sqrt{3}$，$\\csc^2 = \\frac{4}{3}$。",
-          "say": "在三分之 pi，secant 是二、tangent 是根號三、cosecant 平方是三分之四，代進去就好。",
+            {
+              "do": "write",
+              "line": "每一對：把左邊公式的每個函數都換成「co 版」，再加負號"
+            },
+            {
+              "do": "write",
+              "line": "　例：$(\\tan)'=\\sec^2$ → $(\\cot)'=-\\csc^2$；$(\\sec)'=\\sec\\tan$ → $(\\csc)'=-\\csc\\cot$",
+              "color": "violet",
+              "on": "co"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\dfrac{d}{dx}(\\sin x+\\cos x)$"
+          ],
+          "say": "例子：正弦加餘弦。",
           "board": [
-            {"do":"write","line":"$\\sec=2,\\quad\\tan=\\sqrt{3},\\quad\\csc^2=\\frac{4}{3}$"},
-            {"do":"write","line":"$f'\\left(\\frac{\\pi}{3}\\right)=4\\sqrt{3}-\\frac{4}{3}$","color":"green","on":"代進去"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\dfrac{d}{dx}(\\sin x+\\cos x)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "線性：一項一項微",
+            "$=\\cos x-\\sin x$"
+          ],
+          "say": "上一課的線性還是能用：一項一項微。正弦變餘弦，餘弦變負正弦，答案是餘弦減正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "線性：一項一項微"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle =\\cos x-\\sin x}}$",
+              "on": "一項#1"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "變餘"
+            },
+            {
+              "do": "write",
+              "line": "　在 $x=\\frac\\pi4$ 是 $0$：$\\sin x+\\cos x$ 在那裡到最高點 $\\sqrt2$",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "check": 0
     },
     {
-      "title": "$\\tan x$ 的切線",
+      "title": "切線斜率與切線",
       "beats": [
-        { "show": ["$y = \\tan x$ 在 $x = \\frac{\\pi}{4}$"],
-          "note": "$(\\tan x)' = \\sec^2 x = \\frac{1}{\\cos^2 x}$",
-          "say": "求 tangent 在四分之 pi 的切線。導數是 secant 平方，也就是一除以 cosine 平方。",
+        {
+          "show": [
+            "$y=\\tan x$ 在 $x=\\dfrac\\pi4$"
+          ],
+          "say": "例子：正切 x 在 4 分之派的切線。",
           "board": [
-            {"do":"write","line":"$y=\\tan x$ 在 $x=\\frac{\\pi}{4}$"},
-            {"do":"write","line":"$(\\tan x)'=\\sec^2 x=\\frac{1}{\\cos^2 x}$","on":"導數是"}
-          ] },
-        { "show": ["$\\cos^2\\left(\\frac{\\pi}{4}\\right) = \\frac{1}{2}$"],
-          "note": "$\\cos\\left(\\frac{\\pi}{4}\\right) = \\frac{\\sqrt{2}}{2}$",
-          "say": "cosine 四分之 pi 是二分之根號二，平方是二分之一。",
+            {
+              "do": "write",
+              "line": "$y=\\tan x$ 在 $x=\\dfrac\\pi4$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "斜率：$\\sec^2\\dfrac\\pi4=\\Big(\\dfrac{1}{\\cos\\frac\\pi4}\\Big)^2=(\\sqrt2)^2=2$"
+          ],
+          "say": "斜率是正割平方。餘弦 4 分之派是根號 2 分之 1，正割是根號 2，平方是 2。",
           "board": [
-            {"do":"write","line":"$\\cos^2\\left(\\frac{\\pi}{4}\\right)=\\frac{1}{2}$","on":"平方是"}
-          ] },
-        { "show": ["切點 $(\\frac{\\pi}{4}, 1)$"],
-          "say": "tangent 四分之 pi 等於一，所以切點是四分之 pi、一。",
+            {
+              "do": "write",
+              "line": "斜率：$\\sec^2\\dfrac\\pi4=\\Big(\\dfrac{1}{\\cos\\frac\\pi4}\\Big)^2=(\\sqrt2)^2=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "切點：$\\tan\\dfrac\\pi4=1$",
+            "$y-1=2\\Big(x-\\frac\\pi4\\Big)\\ \\Rightarrow\\ y=2x+1-\\frac\\pi2$"
+          ],
+          "say": "切點的 y 是正切 4 分之派，等於 1。點斜式寫出來，整理得 y 等於 2x 加 1 減 2 分之派。",
           "board": [
-            {"do":"write","line":"$\\tan\\frac{\\pi}{4}=1$，切點 ${{pt:(\\frac{\\pi}{4},1)}}$"},
-            {"do":"underline","term":"pt","on":"所以切點"}
-          ] }
+            {
+              "do": "write",
+              "line": "切點：$\\tan\\dfrac\\pi4=1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y-1=2\\Big(x-\\frac\\pi4\\Big)\\ \\Rightarrow\\ y=2x+1-\\frac\\pi2}}$",
+              "color": "red",
+              "on": "點斜"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "混在一起：$f(x)=2\\sec x+\\cot x$，求 $f'\\big(\\frac\\pi3\\big)$"
+          ],
+          "say": "再一個：f 等於 2 倍正割加餘切，求在 3 分之派的導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "混在一起：$f(x)=2\\sec x+\\cot x$，求 $f'\\big(\\frac\\pi3\\big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'(x)=2\\sec x\\tan x-\\csc^2x$"
+          ],
+          "say": "一項一項微：2 倍正割微成 2 倍正割乘正切；餘切是 co 開頭，微成負的餘割平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f'(x)=2\\sec x\\tan x-\\csc^2x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sec\\frac\\pi3=2$，$\\tan\\frac\\pi3=\\sqrt3$，$\\csc\\frac\\pi3=\\frac{2}{\\sqrt3}$"
+          ],
+          "say": "代值：正割 3 分之派是 2，正切是根號 3，餘割是根號 3 分之 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sec\\frac\\pi3=2$，$\\tan\\frac\\pi3=\\sqrt3$，$\\csc\\frac\\pi3=\\frac{2}{\\sqrt3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f'\\Big(\\frac\\pi3\\Big)=2\\cdot2\\cdot\\sqrt3-\\frac43=4\\sqrt3-\\frac43$"
+          ],
+          "say": "所以是 4 根號 3，減 3 分之 4，大約 5.59。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle f'\\Big(\\frac\\pi3\\Big)=2\\cdot2\\cdot\\sqrt3-\\frac43=4\\sqrt3-\\frac43}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "color": "red",
+              "on": "分之"
+            },
+            {
+              "do": "write",
+              "line": "　$\\csc^2\\frac\\pi3=\\frac43$；數值 $\\approx5.595$",
+              "color": "violet",
+              "on": "大約"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "只在弧度下成立",
+      "beats": [
+        {
+          "show": [
+            "公式的證明用到（⑤）：",
+            "$\\lim_{h\\to0}\\frac{\\sin h}{h}=1\\quad(h\\text{ 用弧度})$"
+          ],
+          "say": "這些公式有一個前提：x 要用弧度。因為證明裡用到正弦 h 除以 h 趨近 1，而這個極限只有在弧度下才是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "公式的證明用到（⑤）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\lim_{h\\to0}\\frac{\\sin h}{h}=1\\quad(h\\text{ 用弧度})}}$",
+              "on": "為證"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "而這"
+            }
+          ]
+        },
+        {
+          "show": [
+            "用度量：$h$ 度 $=\\dfrac{\\pi h}{180}$ 弧度",
+            "$\\frac{\\sin(h^\\circ)}{h}\\to\\frac{\\pi}{180}\\approx0.01745$"
+          ],
+          "say": "如果用度來量，h 度等於 180 分之派 h 弧度，這個極限就變成 180 分之派，大約 0.01745，不是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "用度量：$h$ 度 $=\\dfrac{\\pi h}{180}$ 弧度"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\sin(h^\\circ)}{h}\\to\\frac{\\pi}{180}\\approx0.01745$",
+              "on": "限就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以用度的話：",
+            "$\\frac{d}{dx}\\sin(x^\\circ)=\\frac{\\pi}{180}\\cos(x^\\circ)$"
+          ],
+          "say": "結果用度的話，正弦的導數會多一個討厭的 180 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以用度的話："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\frac{d}{dx}\\sin(x^\\circ)=\\frac{\\pi}{180}\\cos(x^\\circ)}}$",
+              "on": "的導"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "18"
+            }
+          ]
+        },
+        {
+          "show": [
+            "弧度是讓係數剛好是 1 的單位"
+          ],
+          "say": "換句話說，弧度就是讓這個係數剛好等於 1 的那個單位。這也是微積分裡一律用弧度的原因。",
+          "board": [
+            {
+              "do": "write",
+              "line": "弧度是讓係數剛好是 1 的單位",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　直覺：弧度下，單位圓上走過的弧長 = 角度數；$\\sin h$（高）和弧長 $h$ 在 $h$ 很小時幾乎一樣",
+              "color": "violet",
+              "on": "的那"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "切線斜率是多少？",
+        "ask": "$x$ 用度量時，$\\sin(x^\\circ)$ 在 $x=0$ 的斜率最接近？",
         "options": [
           {
-            "label": "2",
+            "label": "$0.017$",
             "correct": true
           },
           {
-            "label": "$\\frac{1}{2}$",
-            "why": "$\\frac{1}{2}$ 是 $\\cos^2$，斜率是它的倒數 $\\sec^2 = 2$。"
+            "label": "$1$",
+            "why": "那是弧度的結果"
           },
           {
-            "label": "1",
-            "why": "1 是 $\\tan\\left(\\frac{\\pi}{4}\\right)$，是切點高度，不是斜率。"
+            "label": "$57.3$",
+            "why": "把 $\\frac{180}{\\pi}$ 顛倒了：$x$ 每增加 $1$ 度，角度只多 $\\frac\\pi{180}$ 弧度"
           }
         ]
       }
     },
     {
-      "title": "只在弧度下成立",
-      "beats": [
-        { "show": ["切線：$y = 2x + 1 - \\frac{\\pi}{2}$"],
-          "note": "$y - 1 = 2(x - \\frac{\\pi}{4})$",
-          "say": "上一題斜率二，用點斜式整理，切線是 y 等於二 x 加一減二分之 pi。這裡的 x 都是弧度。",
-          "board": [
-            {"do":"write","line":"$y-1=2(x-\\frac{\\pi}{4})$","on":"點斜式"},
-            {"do":"transform","line":"$y={{l:2x+1-\\frac{\\pi}{2}}}$","on":"整理"},
-            {"do":"box","term":"l","color":"green","on":"y 等於"}
-          ] },
-        { "show": ["關鍵：$\\lim_{h\\to0} \\frac{\\sin h}{h} = 1$"],
-          "note": "這個極限只在弧度下是 1。",
-          "say": "這些公式的證明都靠 sine h 除以 h 趨近一，而它只在 h 用弧度量的時候成立。",
-          "board": [
-            {"do":"write","line":"關鍵：${{k:\\lim_{h\\to0}\\frac{\\sin h}{h}=1}}$"},
-            {"do":"underline","term":"k","label":"弧度","on":"弧度量"}
-          ] },
-        { "show": ["用度：多一個因子 $\\frac{\\pi}{180}$"],
-          "say": "如果 x 用度，導數會多乘一個 pi 除以一百八十。所以微積分裡的三角函數一律用弧度。",
-          "board": [
-            {"do":"write","line":"用度：多一個因子 ${{f:\\frac{\\pi}{180}}}$","on":"如果 x 用度"},
-            {"do":"circle","term":"f","on":"pi 除以"}
-          ] },
-        { "show": ["$h^\\circ=\\frac{\\pi h}{180}$ 弧度"],
-          "say": "用度的 h，換成弧度是一百八十分之 pi 乘 h。所以 sine h 度，就是 sine 一百八十分之 pi h。",
-          "board": [
-            {"do":"write","line":"$\\sin(h^\\circ)=\\sin(u)$，$u=\\frac{\\pi h}{180}$"}
-          ] },
-        { "show": ["$\\frac{\\sin u}{h}=\\frac{\\sin u}{u}\\cdot\\frac{u}{h}$"],
-          "note": "$u\\to0$ 時 $\\frac{\\sin u}{u}\\to1$。",
-          "say": "把 sine u 除以 h 改寫成 sine u 除以 u，再乘 u 除以 h。前者趨近一，後者就是 pi 除以一百八十。",
-          "board": [
-            {"do":"write","line":"$\\frac{\\sin u}{h}=\\frac{\\sin u}{u}\\cdot{{n1:\\frac{u}{h}}}$"},
-            {"do":"write","line":"$\\to 1\\cdot{{n2:\\frac{\\pi}{180}}}$","on":"後者"},
-            {"do":"circle","term":"n2","on":"一百八十"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
       "title": "公式本身就是極限",
       "beats": [
-        { "show": ["$\\lim_{h\\to0} \\frac{\\sin(\\frac{\\pi}{6} + h) - \\frac{1}{2}}{h}$"],
-          "note": "看起來很難算。",
-          "say": "這個極限看起來很難。先別硬算，看看二分之一是什麼。",
+        {
+          "show": [
+            "導數的定義：",
+            "$\\begin{aligned}&\\lim_{h\\to0}\\frac{\\sin(a+h)-\\sin a}{h}\\\\&=(\\sin x)'\\Big|_{x=a}=\\cos a\\end{aligned}$"
+          ],
+          "say": "反過來看：導數的定義就是一個極限。所以看到這種長相的極限，可以直接用公式算。",
           "board": [
-            {"do":"write","line":"$\\lim_{h\\to0}\\frac{\\sin(\\frac{\\pi}{6}+h)-{{c:\\frac{1}{2}}}}{h}$"},
-            {"do":"focus","term":"c","label":"是什麼","on":"看看二分之一"}
-          ] },
-        { "show": ["$\\frac{1}{2} = \\sin\\left(\\frac{\\pi}{6}\\right)$"],
-          "note": "這是 $\\sin x$ 在 $\\frac{\\pi}{6}$ 的導數定義。",
-          "say": "二分之一就是 sine 六分之 pi，所以這整個是 sine 在六分之 pi 的導數。",
+            {
+              "do": "write",
+              "line": "導數的定義："
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle {\\begin{aligned}&\\lim_{h\\to0}\\frac{\\sin(a+h)-\\sin a}{h}\\\\&=(\\sin x)'\\Big|_{x=a}=\\cos a\\end{aligned}}}}$",
+              "on": "義就"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "on": "看到"
+            },
+            {
+              "do": "write",
+              "line": "　認法：$\\frac{f(a+h)-f(a)}{h}$，找出 $f$ 和 $a$",
+              "color": "violet",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{h\\to0}\\frac{\\sin\\big(\\frac\\pi6+h\\big)-\\frac12}{h}$"
+          ],
+          "say": "例子：正弦 6 分之派加 h，減 2 分之 1，除以 h。",
           "board": [
-            {"do":"write","line":"${{c:\\frac{1}{2}}}=\\sin\\left(\\frac{\\pi}{6}\\right)$"},
-            {"do":"write","line":"$\\sin x$ 在 $\\frac{\\pi}{6}$ 的導數","on":"所以這整個"}
-          ] },
-        { "show": ["$f'(a)=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}$"],
-          "note": "這裡 $f=\\sin$，$a=\\frac{\\pi}{6}$。",
-          "say": "對照導數定義：f a 加 h 減 f a，除以 h。這裡 f 是 sine，a 是六分之 pi，f a 是二分之一。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{h\\to0}\\frac{\\sin\\big(\\frac\\pi6+h\\big)-\\frac12}{h}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\frac12=\\sin\\frac\\pi6$：$f=\\sin$，$a=\\frac\\pi6$",
+            "$=\\cos\\frac\\pi6=\\frac{\\sqrt3}{2}$"
+          ],
+          "say": "2 分之 1 正好是正弦 6 分之派。所以這是正弦在 6 分之派的導數，等於餘弦 6 分之派，根號 3 除以 2。",
           "board": [
-            {"do":"write","line":"$f'(a)=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}$"},
-            {"do":"write","line":"$f=\\sin,\\ a=\\frac{\\pi}{6},\\ f(a)=\\frac{1}{2}$","on":"這裡"}
-          ] },
-        { "show": ["$= \\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}$"],
-          "say": "導數是 cosine，代六分之 pi，得到二分之根號三。認出導數定義，就不用硬算。",
-          "board": [
-            {"do":"write","line":"$=\\cos\\left(\\frac{\\pi}{6}\\right)={{r:\\frac{\\sqrt{3}}{2}}}$"},
-            {"do":"box","term":"r","color":"green","on":"得到"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\frac12=\\sin\\frac\\pi6$：$f=\\sin$，$a=\\frac\\pi6$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle =\\cos\\frac\\pi6=\\frac{\\sqrt3}{2}}}$",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "color": "red",
+              "on": "餘弦"
+            }
+          ]
+        }
       ],
-      "key": "把常數認成函數值，整個極限就是導數",
-      "check": 2
+      "check": 1
+    },
+    {
+      "title": "證明：$\\sin$ 與 $\\cos$",
+      "beats": [
+        {
+          "show": [
+            "需要：$\\dfrac{\\sin h}{h}\\to1$，$\\dfrac{\\cos h-1}{h}\\to0$"
+          ],
+          "say": "現在證明。需要兩個標準極限：正弦 h 除以 h 趨近 1，還有餘弦 h 減 1 除以 h 趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "需要：$\\dfrac{\\sin h}{h}\\to1$，$\\dfrac{\\cos h-1}{h}\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "　第二條：$\\frac{\\cos h-1}{h}=-\\frac{1-\\cos h}{h^2}\\cdot h\\to-\\frac12\\cdot0=0$",
+              "color": "violet",
+              "on": "還有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "和角公式：$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$"
+          ],
+          "say": "用和角公式，把正弦 x 加 h 展開。",
+          "board": [
+            {
+              "do": "write",
+              "line": "和角公式：$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\frac{\\sin(x+h)-\\sin x}{h}\\\\&=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}\\end{aligned}$"
+          ],
+          "say": "減掉正弦 x，重新分組：正弦 x 乘餘弦 h 減 1 除以 h，加上餘弦 x 乘正弦 h 除以 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\frac{\\sin(x+h)-\\sin x}{h}\\\\&=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1$",
+            "$(\\sin x)'=\\cos x$"
+          ],
+          "say": "h 趨近 0，第一塊趨近 0，第二塊趨近 1，得到餘弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle (\\sin x)'=\\cos x}}$",
+              "color": "red",
+              "on": "趨近#2"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$",
+            "$\\begin{aligned}&\\frac{\\cos(x+h)-\\cos x}{h}\\\\&=\\cos x\\cdot\\frac{\\cos h-1}{h}-\\sin x\\cdot\\frac{\\sin h}{h}\\end{aligned}$"
+          ],
+          "say": "餘弦一樣：和角公式中間是減號，所以分組之後，第二塊前面是負的正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\frac{\\cos(x+h)-\\cos x}{h}\\\\&=\\cos x\\cdot\\frac{\\cos h-1}{h}-\\sin x\\cdot\\frac{\\sin h}{h}\\end{aligned}}$",
+              "on": "分組"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\to\\cos x\\cdot0-\\sin x\\cdot1=-\\sin x$"
+          ],
+          "say": "取極限，得到負正弦 x。負號就是從和角公式的減號來的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx12:\\displaystyle \\to\\cos x\\cdot0-\\sin x\\cdot1=-\\sin x}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx12",
+              "color": "red",
+              "on": "號就"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：$\\tan$ 與 $\\sec$",
+      "beats": [
+        {
+          "show": [
+            "在 $\\cos x\\ne0$ 的地方。通分：",
+            "$\\begin{aligned}&\\tan(x+h)-\\tan x\\\\&=\\frac{\\sin(x+h)\\cos x-\\cos(x+h)\\sin x}{\\cos(x+h)\\cos x}\\end{aligned}$"
+          ],
+          "say": "正切和正割，在餘弦不等於 0 的地方證。先把正切 x 加 h 減正切 x 通分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "在 $\\cos x\\ne0$ 的地方。通分："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\tan(x+h)-\\tan x\\\\&=\\frac{\\sin(x+h)\\cos x-\\cos(x+h)\\sin x}{\\cos(x+h)\\cos x}\\end{aligned}}$",
+              "on": "先把"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子是差角公式：$\\sin\\big((x+h)-x\\big)=\\sin h$",
+            "$\\frac{\\tan(x+h)-\\tan x}{h}=\\frac{\\sin h}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}$"
+          ],
+          "say": "分子剛好是差角公式，等於正弦 h。除以 h，拆成正弦 h 除以 h，乘上一個分式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子是差角公式：$\\sin\\big((x+h)-x\\big)=\\sin h$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\tan(x+h)-\\tan x}{h}=\\frac{\\sin h}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}$",
+              "on": "拆成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$h\\to0$：$\\cos(x+h)\\to\\cos x$（$\\cos$ 連續）",
+            "$(\\tan x)'=\\frac{1}{\\cos^2x}=\\sec^2x$"
+          ],
+          "say": "h 趨近 0，正弦 h 除以 h 趨近 1；餘弦連續，餘弦 x 加 h 趨近餘弦 x。所以得到餘弦平方分之一，就是正割平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$h\\to0$：$\\cos(x+h)\\to\\cos x$（$\\cos$ 連續）"
+            },
+            {
+              "do": "write",
+              "line": "${{bx13:\\displaystyle (\\tan x)'=\\frac{1}{\\cos^2x}=\\sec^2x}}$",
+              "color": "red",
+              "on": "餘弦#1"
+            },
+            {
+              "do": "box",
+              "term": "bx13",
+              "color": "red",
+              "on": "所以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&\\frac{\\sec(x+h)-\\sec x}{h}\\\\&=\\frac{\\cos x-\\cos(x+h)}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}\\end{aligned}$"
+          ],
+          "say": "正割也一樣通分。分子變成餘弦 x 減餘弦 x 加 h，除以 h。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&\\frac{\\sec(x+h)-\\sec x}{h}\\\\&=\\frac{\\cos x-\\cos(x+h)}{h}\\cdot\\frac{1}{\\cos(x+h)\\cos x}\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "前一塊 $=-\\dfrac{\\cos(x+h)-\\cos x}{h}\\to-(-\\sin x)=\\sin x$"
+          ],
+          "say": "前一塊是餘弦差商的相反數，趨近負的負正弦，也就是正弦 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "前一塊 $=-\\dfrac{\\cos(x+h)-\\cos x}{h}\\to-(-\\sin x)=\\sin x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(\\sec x)'=\\frac{\\sin x}{\\cos^2x}=\\sec x\\tan x$"
+          ],
+          "say": "後一塊趨近餘弦平方分之一。合起來，餘弦平方分之正弦 x，拆成正割乘正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx14:\\displaystyle (\\sec x)'=\\frac{\\sin x}{\\cos^2x}=\\sec x\\tan x}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx14",
+              "color": "red",
+              "on": "弦平#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\cot$、$\\csc$：同樣的方法（在 $\\sin x\\ne0$ 的地方）"
+          ],
+          "say": "餘切和餘割，在正弦不等於 0 的地方，用完全一樣的方法，會多出負號。學了除法法則後還有更快的證法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\cot$、$\\csc$：同樣的方法（在 $\\sin x\\ne0$ 的地方）"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 圖：$\\sin$ 的斜率描出 $\\cos$",
+            "• $(\\sin)'=\\cos$，$(\\tan)'=\\sec^2$，$(\\sec)'=\\sec\\tan$"
+          ],
+          "say": "整理一下：正弦的導數是餘弦；co 開頭的三個帶負號；這些公式只在弧度下成立；看到差商的極限，認出是哪個函數在哪一點的導數；證明靠和角公式和標準極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 圖：$\\sin$ 的斜率描出 $\\cos$"
+            },
+            {
+              "do": "write",
+              "line": "• $(\\sin)'=\\cos$，$(\\tan)'=\\sec^2$，$(\\sec)'=\\sec\\tan$",
+              "on": "co"
+            },
+            {
+              "do": "write",
+              "line": "• co 開頭帶負號：$(\\cos)'=-\\sin$，$(\\cot)'=-\\csc^2$，$(\\csc)'=-\\csc\\cot$",
+              "on": "這些"
+            },
+            {
+              "do": "write",
+              "line": "• 只在弧度下成立：因為 $\\frac{\\sin h}{h}\\to1$ 要用弧度",
+              "on": "看到"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{f(a+h)-f(a)}{h}$ 的極限：認出 $f$、$a$，用公式",
+              "on": "哪個"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：和角公式 ＋ 標準極限",
+              "on": "證明"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：指數函數微分"
+          ],
+          "say": "下一課，學指數函數的導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：指數函數微分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["trig", "basic-derivative"],
-    "fine": ["trig-deriv-sin-cos", "trig-deriv-tan-sec", "trig-deriv-recognize-limit", "trig-deriv-tangent-slope"]
+    "coarse": [
+      "trig",
+      "basic-derivative"
+    ],
+    "fine": [
+      "trig-deriv-sin-cos",
+      "trig-deriv-tan-sec",
+      "trig-deriv-recognize-limit",
+      "trig-deriv-tangent-slope"
+    ]
   },
   "practice": [
-    { "id": "rel-basic-008", "core": true, "trains": "trig-deriv-sin-cos" },
-    { "id": "fd-der-008", "core": true, "trains": "trig-deriv-sin-cos" },
-    { "id": "der-002", "core": true, "trains": "trig-deriv-sin-cos" },
-    { "id": "cx-der-006", "core": true, "trains": "trig-deriv-tan-sec" },
-    { "id": "tb-tan-004", "core": true, "trains": "trig-deriv-tangent-slope" },
-    { "id": "dd-def-003", "core": true, "trains": "trig-deriv-recognize-limit" },
-    { "id": "cg-2b-004", "core": true, "trains": "trig-deriv-tan-sec" },
-    { "id": "db-def-002", "trains": "trig-deriv-recognize-limit" },
-    { "id": "dd-def-004", "trains": "trig-deriv-recognize-limit" },
-    { "id": "gi-102", "trains": "trig-deriv-tangent-slope" },
-    { "id": "cg-2b-005", "trains": "trig-deriv-tan-sec" },
-    { "id": "cg-2b-006", "trains": "trig-deriv-tan-sec" },
-    { "id": "db-def-008", "challenge": true, "trains": "trig-deriv-recognize-limit", "note": "挑戰：$x \\to a$ 的寫法，先認出 $1 = \\tan\\left(\\frac{\\pi}{4}\\right)$。" }
+    {
+      "id": "rel-basic-008",
+      "core": true,
+      "trains": "trig-deriv-sin-cos"
+    },
+    {
+      "id": "fd-der-008",
+      "core": true,
+      "trains": "trig-deriv-sin-cos"
+    },
+    {
+      "id": "der-002",
+      "core": true,
+      "trains": "trig-deriv-sin-cos"
+    },
+    {
+      "id": "cx-der-006",
+      "core": true,
+      "trains": "trig-deriv-tan-sec"
+    },
+    {
+      "id": "tb-tan-004",
+      "core": true,
+      "trains": "trig-deriv-tangent-slope"
+    },
+    {
+      "id": "dd-def-003",
+      "core": true,
+      "trains": "trig-deriv-recognize-limit"
+    },
+    {
+      "id": "cg-2b-004",
+      "core": true,
+      "trains": "trig-deriv-tan-sec"
+    },
+    {
+      "id": "db-def-002",
+      "trains": "trig-deriv-recognize-limit"
+    },
+    {
+      "id": "dd-def-004",
+      "trains": "trig-deriv-recognize-limit"
+    },
+    {
+      "id": "gi-102",
+      "trains": "trig-deriv-tangent-slope"
+    },
+    {
+      "id": "cg-2b-005",
+      "trains": "trig-deriv-tan-sec"
+    },
+    {
+      "id": "cg-2b-006",
+      "trains": "trig-deriv-tan-sec"
+    },
+    {
+      "id": "db-def-008",
+      "challenge": true,
+      "trains": "trig-deriv-recognize-limit",
+      "note": "挑戰：$x \\to a$ 的寫法，先認出 $1 = \\tan\\left(\\frac{\\pi}{4}\\right)$。"
+    }
   ],
   "gaps": []
 }

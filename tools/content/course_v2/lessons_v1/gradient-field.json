@@ -1,0 +1,337 @@
+{
+  "id": "gradient-field",
+  "title": "梯度場",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["vector-field", "gradient", "clairaut"],
+  "next": ["scalar-line-integral"],
+  "related": ["level-curves", "conservative-fields", "potential-function"],
+  "objectives": [
+    "把一個函數 $f$ 的梯度 $\\nabla f$ 看成向量場，並說出它跟等高線的關係。",
+    "用交叉偏導數 $P_y$ 與 $Q_x$ 判斷一個場「不可能」是梯度場。",
+    "知道「是不是梯度場」為什麼重要：之後的線積分會因此變簡單。"
+  ],
+  "visual": "f(x, y) = x² + y² 的等高線（同心圓）上疊著 ∇f 的箭頭，箭頭處處垂直於等高線、指向外圈（較高處），等高線越密箭頭越長。切換到 F = ⟨−y, x⟩：箭頭沿著圓繞，畫面上同時顯示 P_y = −1、Q_x = 1，標出「找不到任何 f」。",
+  "concept": [
+    {
+      "heading": "① 梯度本身就是一個向量場",
+      "body": [
+        "〈梯度〉：$f(x,y)$ 在每一點有一個梯度 $\\nabla f=\\langle f_x,f_y\\rangle$。每一點配一個向量，這就是一個向量場，叫做 $f$ 的梯度場。",
+        "例：$f=x^2+y^2$，$\\nabla f=\\langle 2x,2y\\rangle$，正好是上一課的發散場放大 $2$ 倍。",
+        "三個變數也一樣：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$ 是空間中的向量場，箭頭垂直於等值面 $f=c$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：垂直於等高線、指向上坡",
+      "body": [
+        "把 $f$ 當成地形高度。梯度場的箭頭處處垂直於等高線（〈圖形與等高線〉），指向 $f$ 增加的方向；等高線越密，坡越陡，箭頭越長。",
+        "所以畫梯度場有一個捷徑：先畫 $f$ 的等高線，再畫垂直穿過它們、往高處指的箭頭。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 反過來問：給一個場，它是誰的梯度？",
+      "body": [
+        "如果 $\\mathbf F=\\langle P,Q\\rangle=\\nabla f$，就說 $\\mathbf F$ 是梯度場，$f$ 叫做 $\\mathbf F$ 的位勢函數。這是之後〈保守場〉與〈位勢函數〉的主題。",
+        "物理書常寫 $\\mathbf F=-\\nabla U$（$U$ 是位能，力指向位能下降的方向）。數學上通常不帶負號，兩者只差 $f=-U$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一個必要條件：交叉偏導相等",
+      "body": [
+        "若 $\\mathbf F=\\nabla f$，$P=f_x$、$Q=f_y$，那 $P_y=f_{xy}$、$Q_x=f_{yx}$。$f$ 的二階偏導連續時，〈Clairaut 定理〉說兩者相等。所以：",
+        "$P_y\\ne Q_x$，$\\mathbf F$ 一定不是梯度場。",
+        "反過來，$P_y=Q_x$ 還不夠保證是梯度場，還要看定義域有沒有「洞」，這是〈保守場〉要處理的事。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "算一個梯度場",
+      "prompt": "$f(x,y)=x^2y+y^3$，寫出梯度場 $\\nabla f$。",
+      "steps": [
+        "$f_x$：把 $y$ 當常數，得 $2xy$。",
+        "$f_y$：把 $x$ 當常數，得 $x^2+3y^2$。",
+        "$\\nabla f=\\langle 2xy,x^2+3y^2\\rangle$。"
+      ],
+      "answer": "$\\langle 2xy,x^2+3y^2\\rangle$",
+      "claim": "D(x^2*y+y^3, , x) == 2*x*y ;; D(x^2*y+y^3, , y) == x^2+3*y^2"
+    },
+    {
+      "title": "垂直於等高線",
+      "prompt": "$f=x^2+y^2$。在 $(1,2)$ 驗證 $\\nabla f$ 跟經過該點的等高線垂直。",
+      "steps": [
+        "$\\nabla f(1,2)=\\langle 2,4\\rangle$。",
+        "經過 $(1,2)$ 的等高線是圓 $x^2+y^2=5$。圓在 $(1,2)$ 的切線方向跟半徑 $\\langle 1,2\\rangle$ 垂直，可以取 $\\langle -2,1\\rangle$。",
+        "$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle=-4+4=0$，互相垂直。$\\langle 2,4\\rangle$ 指向圓外，也就是 $f$ 變大的方向。"
+      ],
+      "answer": "點積為 $0$，垂直",
+      "claim": "2*(-2)+4*1 == 0"
+    },
+    {
+      "title": "不可能是梯度場",
+      "prompt": "$\\mathbf F=\\langle y,-x\\rangle$ 是不是某個 $f$ 的梯度場？",
+      "steps": [
+        "$P=y$、$Q=-x$。$P_y=1$，$Q_x=-1$。",
+        "兩者不相等。如果 $\\mathbf F=\\nabla f$ 且 $f$ 的二階偏導連續，必須 $P_y=Q_x$，矛盾。",
+        "所以 $\\mathbf F$ 不是任何（二階偏導連續的）$f$ 的梯度場。它是順時針繞圈的旋轉場。"
+      ],
+      "answer": "不是",
+      "claim": "D(y, , y) == 1 ;; D(-x, , x) == -1"
+    }
+  ],
+  "pitfalls": [
+    "把 $\\nabla f$ 的兩個分量放反：第一個是 $f_x$。",
+    "以為梯度箭頭沿著等高線走；它是垂直穿過等高線。",
+    "看到 $P_y=Q_x$ 就斷定是梯度場，沒看定義域。",
+    "檢查時比的是 $P$ 與 $Q$ 本身，而不是交叉偏導數。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\nabla(xy)$ 是？",
+      "options": [
+        { "label": "$\\langle y,x\\rangle$", "correct": true },
+        { "label": "$\\langle x,y\\rangle$", "why": "$f_x$ 是把 $y$ 當常數對 $x$ 微分，得 $y$，放在第一個分量。" },
+        { "label": "$\\langle 1,1\\rangle$", "why": "$xy$ 對 $x$ 微分是 $y$，不是 $1$。" }
+      ]
+    },
+    {
+      "ask": "梯度場 $\\nabla f$ 的箭頭跟 $f$ 的等高線是什麼關係？",
+      "options": [
+        { "label": "垂直，指向 $f$ 增加的一側", "correct": true },
+        { "label": "相切，沿著等高線走", "why": "沿著等高線走 $f$ 不變，變化率是 $0$；梯度指的是變化最快的方向，跟等高線垂直。" },
+        { "label": "垂直，指向 $f$ 減少的一側", "why": "梯度指向上坡。指向下坡的是 $-\\nabla f$。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個一定不是梯度場？",
+      "options": [
+        { "label": "$\\langle -y,x\\rangle$", "correct": true },
+        { "label": "$\\langle y,x\\rangle$", "why": "它是 $\\nabla(xy)$：$P_y=1=Q_x$。" },
+        { "label": "$\\langle 2x,2y\\rangle$", "why": "它是 $\\nabla(x^2+y^2)$。" }
+      ]
+    },
+    {
+      "ask": "$\\mathbf F=\\langle P,Q\\rangle=\\nabla f$（$f$ 的二階偏導連續），為什麼 $P_y=Q_x$？",
+      "options": [
+        { "label": "$P_y=f_{xy}$、$Q_x=f_{yx}$，混合偏導相等（Clairaut）", "correct": true },
+        { "label": "因為 $P=Q$", "why": "$P$ 與 $Q$ 通常不相等（例如 $\\nabla(x^2y)=\\langle 2xy,x^2\\rangle$），相等的是交叉偏導數。" },
+        { "label": "因為梯度場一定是常數場", "why": "$\\nabla(x^2+y^2)=\\langle 2x,2y\\rangle$ 就不是常數。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "梯度就是向量場",
+      "beats": [
+        { "show": ["每一點：$\\nabla f=\\langle f_x,f_y\\rangle$"],
+          "say": "函數在每一點都有一個梯度。每一點配一個向量，這本身就是一個向量場，叫梯度場。",
+          "board": [
+            {"do":"write","line":"每一點：$\\nabla f=\\langle f_x,f_y\\rangle$"}
+          ] },
+        { "show": ["$f=x^2+y^2$：$\\nabla f=\\langle 2x,2y\\rangle$"],
+          "note": "上一課的發散場放大 $2$ 倍。",
+          "say": "例如 x 平方加 y 平方，梯度場是二 x、二 y，就是上一課的發散場放大兩倍。",
+          "board": [
+            {"do":"write","line":"$f=x^2+y^2$：$\\nabla f={{g:\\langle 2x,2y\\rangle}}$"},
+            {"do":"plot","graph":{"window":[-2.4,2.4,-1.3,1.3],"equal":true,"ticks":false,"curves":[{"param":{"x":"0.8*cos(t)","y":"0.8*sin(t)","t":[0,6.2832]},"color":"muted","dashed":true}],"arrows":[{"from":[-1.6,-0.8],"to":[-2.24,-1.12],"color":"blue"},{"from":[-1.6,0],"to":[-2.24,0],"color":"blue"},{"from":[-1.6,0.8],"to":[-2.24,1.12],"color":"blue"},{"from":[-0.8,-0.8],"to":[-1.12,-1.12],"color":"blue"},{"from":[-0.8,0],"to":[-1.12,0],"color":"blue"},{"from":[-0.8,0.8],"to":[-1.12,1.12],"color":"blue"},{"from":[0,-0.8],"to":[0,-1.12],"color":"blue"},{"from":[0,0.8],"to":[0,1.12],"color":"blue"},{"from":[0.8,-0.8],"to":[1.12,-1.12],"color":"blue"},{"from":[0.8,0],"to":[1.12,0],"color":"blue"},{"from":[0.8,0.8],"to":[1.12,1.12],"color":"blue"},{"from":[1.6,-0.8],"to":[2.24,-1.12],"color":"blue"},{"from":[1.6,0],"to":[2.24,0],"color":"blue"},{"from":[1.6,0.8],"to":[2.24,1.12],"color":"blue"}]},"on":"梯度場是"}
+          ] },
+        { "show": ["發散場：箭頭從原點往外指"],
+          "note": "梯度場的箭頭是它的 $2$ 倍長。",
+          "say": "上一課的發散場：每一點的箭頭都從原點往外指，長度就是這點到原點的距離。梯度場的箭頭是它的兩倍長。",
+          "board": [
+            {"do":"write","line":"發散場：箭頭從原點往外指"},
+            {"do":"write","line":"梯度場 ＝ 它的 2 倍長","on":"梯度場的箭頭"}
+          ] },
+        { "show": ["三變數：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$"],
+          "note": "箭頭垂直於等值面 $f=c$。",
+          "say": "三個變數也一樣，是空間中的向量場，箭頭垂直於等值面。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"三變數：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$","on":"三個變數"},
+            {"do":"write","line":"箭頭 $\\perp$ 等值面 $f=c$","on":"箭頭垂直"}
+          ] },
+        { "show": ["等值面：$f=c$ 的所有點"],
+          "note": "例：球面。",
+          "say": "等值面是函數值固定的曲面。x 平方加 y 平方加 z 平方等於 c 是球面，梯度從球心往外，垂直球面。",
+          "board": [
+            {"do":"write","line":"$f=x^2+y^2+z^2=c$：球面"},
+            {"do":"write","line":"$\\nabla f=\\langle 2x,2y,2z\\rangle$","on":"梯度"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "垂直於等高線",
+      "beats": [
+        { "show": ["垂直於等高線、指向上坡"],
+          "note": "等高線越密，箭頭越長。",
+          "say": "把函數當地形高度，梯度的箭頭垂直穿過等高線，往高處指；坡越陡，箭頭越長。",
+          "board": [
+            {"do":"write","line":"$f$ ＝ 地形高度"},
+            {"do":"write","line":"坡越陡 ⇒ 箭頭越長","on":"坡越陡"}
+          ] },
+        { "show": ["$\\nabla f(1,2)=\\langle 2,4\\rangle$"],
+          "note": "等高線是圓 $x^2+y^2=5$。",
+          "say": "驗證一下。在點一、二，梯度是二、四；經過這一點的等高線是一個圓。",
+          "board": [
+            {"do":"write","line":"${{g:\\nabla f(1,2)=\\langle 2,4\\rangle}}$"},
+            {"do":"write","line":"等高線：圓 $x^2+y^2=5$","on":"等高線"}
+          ] },
+        { "show": ["圓是等高線，箭頭是梯度"],
+          "say": "畫出來看：圓是等高線，箭頭是梯度，從這一點垂直指向圓外。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-1.5,4.5],"equal":true,"ticks":false,"curves":[{"param":{"x":"sqrt(5)*cos(t)","y":"sqrt(5)*sin(t)","t":[0,6.2832]},"color":"muted","dashed":true}],"arrows":[{"from":[1,2],"to":[2,4],"color":"blue"}],"points":[{"x":1,"y":2}]}}
+          ] },
+        { "show": ["切線方向 $\\langle -2,1\\rangle$：$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle=0$"],
+          "say": "圓的切線方向可以取負二、一。點積是零，垂直；而且梯度指向圓外，也就是函數變大的方向。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"切線方向 $\\langle -2,1\\rangle$","on":"切線方向"},
+            {"do":"write","line":"$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle={{z:0}}$","on":"點積"},
+            {"do":"box","term":"z","color":"green","on":"垂直"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "算一個梯度場",
+      "beats": [
+        { "show": ["$f(x,y)=x^2y+y^3$"],
+          "say": "算一個：第一個分量對 x 偏微分，y 當常數；第二個分量對 y 偏微分，x 當常數。",
+          "board": [
+            {"do":"write","line":"$f(x,y)=x^2y+{{c:y^3}}$"},
+            {"do":"write","line":"$\\nabla f=\\langle f_x,\\ f_y\\rangle$","on":"第一個分量"}
+          ] },
+        { "show": ["$f_x=2xy$"],
+          "say": "對 x：x 平方 y 變二 x y，y 三次方是常數，消失。",
+          "board": [
+            {"do":"write","line":"$f_x=2xy$"},
+            {"do":"focus","term":"c","color":"gold","label":"常數","on":"三次方"}
+          ] },
+        { "show": ["$f_y$：$x$ 當常數"],
+          "note": "$x^2$ 只是係數。",
+          "say": "接著對 y：x 當常數，所以 x 平方只是係數，y 三次方照平常的規則微分。",
+          "board": [
+            {"do":"write","line":"$f_y$：${{k:x^2}}y$ 的 $x^2$ 是係數"},
+            {"do":"focus","term":"k","color":"gold","label":"當常數","on":"係數"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$\\nabla f$ 是？",
+        "options": [
+          {
+            "label": "$\\langle 2xy,\\ x^2+3y^2\\rangle$",
+            "correct": true
+          },
+          {
+            "label": "$\\langle x^2+3y^2,\\ 2xy\\rangle$",
+            "why": "分量放反了：第一個是 $f_x$。"
+          },
+          {
+            "label": "$\\langle 2xy,\\ 3y^2\\rangle$",
+            "why": "對 $y$ 偏微分時 $x^2y$ 也要算，得 $x^2$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "反過來問",
+      "beats": [
+        { "show": ["$\\mathbf F=\\nabla f$：$f$ 叫位勢函數"],
+          "note": "物理書常寫 $\\mathbf F=-\\nabla U$，只差 $f=-U$。",
+          "say": "反過來問：給一個場，它是不是某個函數的梯度？是的話，那個函數叫位勢函數。",
+          "board": [
+            {"do":"write","line":"${{vf:\\mathbf F}}=\\nabla {{f:f}}$：$f$ 叫位勢函數","on":"給一個場","tint":{"vf":"blue","f":"violet"}},
+            {"do":"underline","term":"f","on":"那個函數","label":"位勢函數"}
+          ] },
+        { "show": ["$P=f_x$、$Q=f_y$ ⟹ $P_y=f_{xy}$、$Q_x=f_{yx}$"],
+          "say": "如果是，P 對 y 微分就是 f x y，Q 對 x 微分就是 f y x。",
+          "board": [
+            {"do":"write","line":"$P=f_x$、$Q=f_y$"},
+            {"do":"write","line":"$P_y={{a:f_{xy}}}$、$Q_x={{b:f_{yx}}}$","on":"P 對 y"}
+          ] },
+        { "show": ["Clairaut：$P_y=Q_x$"],
+          "note": "$f$ 的二階偏導連續時。",
+          "say": "二階偏導連續時，兩個混合偏導相等，所以交叉偏導一定相等。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"Clairaut：${{a:f_{xy}}}={{b:f_{yx}}}$","on":"兩個混合偏導"},
+            {"do":"write","line":"⇒ ${{eq:P_y=Q_x}}$","on":"所以交叉"},
+            {"do":"box","term":"eq","on":"一定相等","color":"green"}
+          ] },
+        { "show": ["二階偏導連續：沒有跳躍"],
+          "say": "二階偏導連續，是說二階偏導數畫出來沒有跳躍，是平順的函數。大多數寫得出來的函數都符合。",
+          "board": [
+            {"do":"write","line":"二階偏導連續 ＝ 沒有跳躍"}
+          ] },
+        { "show": ["$f_{xy}$、$f_{yx}$ 量同一個扭轉"],
+          "note": "直覺，不是證明。",
+          "say": "直覺：f x y 是斜率隨 y 的變化，f y x 是隨 x 的變化，量的是曲面同一個扭轉。這是直覺，不是證明。",
+          "board": [
+            {"do":"write","line":"直覺，不是證明","color":"red"}
+          ] }
+      ],
+      "key": "$\\mathbf F=\\nabla f$ 推出 $P_y=Q_x$：混合偏導相等",
+      "check": 3
+    },
+    {
+      "title": "不可能是梯度場",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$"],
+          "say": "拿這個場檢查：交叉偏導一個是一、一個是負一。",
+          "board": [
+            {"do":"write","line":"$\\mathbf F=\\langle y,-x\\rangle$"},
+            {"do":"write","line":"$P_y={{a:1}}$，$Q_x={{b:-1}}$","on":"交叉偏導"}
+          ] },
+        { "show": ["$P_y\\ne Q_x$ ⟹ 一定不是梯度場"],
+          "note": "它是順時針繞圈的旋轉場。",
+          "say": "不相等，就一定不是梯度場。它是一個順時針繞圈的旋轉場。",
+          "board": [
+            {"do":"write","line":"$P_y\\ne Q_x\\Rightarrow$ 一定不是梯度場","color":"red"},
+            {"do":"write","line":"旋轉場：順時針繞圈","on":"順時針"}
+          ] },
+        { "show": ["$P_y=Q_x$ 還不夠"],
+          "note": "還要看定義域有沒有洞：〈保守場〉。",
+          "say": "反過來，交叉偏導相等還不能保證，要看定義域有沒有洞，那是後面保守場的事。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$P_y=Q_x$ 還不夠","on":"交叉偏導"},
+            {"do":"write","line":"要看定義域有沒有洞","on":"定義域"}
+          ] },
+        { "show": ["有洞：定義域挖掉一點"],
+          "note": "例：挖掉原點。",
+          "say": "例如把原點挖掉，定義域中間就有一個洞。繞著洞走一圈，位勢函數可能回不到原來的值，所以相等還不夠。",
+          "board": [
+            {"do":"write","line":"例：挖掉原點 ⇒ 中間有洞","on":"原點"},
+            {"do":"write","line":"繞洞一圈，$f$ 可能回不到原值","on":"繞著洞"}
+          ] },
+        { "show": ["保守場：繞一圈，做功為 $0$"],
+          "note": "梯度場是保守場，後面細講。",
+          "say": "保守場的意思是：沿任何封閉的路繞一圈回來，做功是零。梯度場就是保守場，細節後面再講。",
+          "board": [
+            {"do":"write","line":"保守場：繞一圈，做功 $0$","on":"保守場#1"}
+          ] }
+      ],
+      "key": "$P_y\\ne Q_x$ 一票否決；相等還不夠",
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": ["vector-calculus", "conservative-field", "nabla"],
+    "fine": ["gradient-field-compute", "gradient-field-level-curves", "gradient-field-cross-partials"]
+  },
+  "practice": [
+    { "id": "exam-multi-003", "core": true, "trains": "gradient-field-compute" },
+    { "id": "lec-20-m1", "core": true, "trains": "gradient-field-cross-partials" },
+    { "id": "cg-9b1-009", "core": true, "trains": "gradient-field-cross-partials" },
+    { "id": "cg-9b1-012", "core": true, "trains": "gradient-field-level-curves" },
+    { "id": "vc-nab-006", "trains": "gradient-field-level-curves", "note": "梯度的長度就是最大的方向變化率。" },
+    { "id": "cg-9b1-010", "trains": "gradient-field-cross-partials" },
+    { "id": "cg-9b1-011", "trains": "gradient-field-cross-partials" },
+    { "id": "cg-9b1-013", "trains": "gradient-field-level-curves" }
+  ]
+}

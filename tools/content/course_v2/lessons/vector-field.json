@@ -1,51 +1,146 @@
 {
   "id": "vector-field",
   "title": "向量場",
+  "source": "notebook",
   "readMinutes": 8,
   "totalMinutes": 25,
-  "prerequisites": ["r2-r3", "parametric-curves"],
-  "next": ["gradient-field"],
-  "related": ["gradient", "work-line-integral", "flux"],
-  "objectives": [
-    "說出向量場是「每一點配一支箭頭」，並在幾個點上畫出它。",
-    "認得三種基本的樣子：均勻、向外發散、繞圈旋轉。",
-    "驗證一條曲線是不是向量場的流線：曲線的速度處處等於該點的箭頭。"
+  "prerequisites": [
+    "r2-r3",
+    "parametric-curves"
   ],
-  "visual": "整個平面鋪滿小箭頭，可以在 ⟨0, 1⟩、⟨x, y⟩、⟨−y, x⟩、⟨y, 0⟩ 幾個場之間切換。點任意一處放下一顆粒子，它沿著箭頭漂流並留下軌跡（流線）；在 ⟨−y, x⟩ 裡軌跡是圓，在 ⟨x, y⟩ 裡是往外的射線。滑鼠停在某點會顯示該點的箭頭分量與長度。",
+  "next": [
+    "gradient-field"
+  ],
+  "related": [
+    "gradient",
+    "work-line-integral",
+    "flux"
+  ],
+  "objectives": [
+    "說出向量場是「每一點配一支箭頭」，並在幾個點上畫出它",
+    "認得三種基本的樣子：均勻、向外發散、繞圈旋轉",
+    "驗證一條曲線是不是向量場的流線：曲線的速度處處等於該點的箭頭"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 每一點一支箭頭",
       "body": [
-        "天氣圖上的風：每個地點都有一個風向與風速，畫成一支箭頭。把這個想法寫成函數：輸入一個點，輸出一個向量。",
-        "平面上寫成 $\\mathbf F(x,y)=\\langle P(x,y),Q(x,y)\\rangle$，空間中 $\\mathbf F(x,y,z)=\\langle P,Q,R\\rangle$。$P$、$Q$、$R$ 是普通的多變數函數，叫做分量。（向量也常寫成 $(P,Q)$，意思一樣。）"
+        "風場圖：每個地點一支箭頭，方向是風往哪吹、長度是風多強",
+        "向量場：每一點 $(x,y)$ 配一個向量",
+        "尖括號 $\\langle\\ \\rangle$ 寫向量、圓括號 $(\\ )$ 寫點，免得搞混",
+        "輸入一個點，輸出一個向量",
+        "兩變數函數 $f(x,y)$ 每一點輸出一個數，也叫純量場",
+        "空間中也一樣：",
+        "例子：水的流速、重力與電力、梯度 $\\nabla f$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\mathbf F(x,y)=\\langle P(x,y),\\,Q(x,y)\\rangle",
+        "\\mathbf F(x,y,z)=\\langle P,\\,Q,\\,R\\rangle"
+      ]
     },
     {
-      "heading": "② 怎麼畫",
+      "heading": "② 怎麼畫：起點放在那點",
       "body": [
-        "挑幾個點，算出 $\\mathbf F$，從那個點出發畫箭頭。箭頭太長會疊在一起，所以常常把所有箭頭等比例縮短；方向與相對長短才是重點。",
-        "例：$\\mathbf F=\\langle -y,x\\rangle$。在 $(1,0)$ 是 $\\langle 0,1\\rangle$（朝上），在 $(0,1)$ 是 $\\langle -1,0\\rangle$（朝左），在 $(-1,0)$ 是 $\\langle 0,-1\\rangle$（朝下）。連起來看，箭頭繞著原點逆時針轉。"
+        "例：$\\mathbf F(x,y)=\\langle -y,\\,x\\rangle$，挑幾個點代進去",
+        "規則只有一條：箭頭的起點放在那一點"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}\\mathbf F(1,0)&=\\langle 0,1\\rangle\\\\ \\mathbf F(0,1)&=\\langle -1,0\\rangle\\\\ \\mathbf F(2,0)&=\\langle 0,2\\rangle\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 箭頭太長就縮短",
+      "body": [
+        "點一多，真實長度的箭頭會互相交叉",
+        "慣例：全部乘上同一個倍數縮短",
+        "方向不變，相對長短也不變"
+      ]
     },
     {
       "heading": "③ 三種基本的樣子",
       "body": [
-        "均勻場 $\\langle 0,1\\rangle$：到處都一樣，像穩定的風。",
-        "發散場 $\\langle x,y\\rangle$：每一點都從原點往外指，離越遠越長。",
-        "旋轉場 $\\langle -y,x\\rangle$：箭頭跟位置向量垂直（$\\langle -y,x\\rangle\\cdot\\langle x,y\\rangle=0$），長度等於到原點的距離，像一個轉盤上每一點的速度。",
-        "物理上的例子：流體速度場、重力場 $\\mathbf F=-GMm\\frac{\\mathbf r}{|\\mathbf r|^3}$（指向中心、大小與距離平方成反比）、電場。"
-      ],
-      "collapsible": false
+        "• 均勻 $\\langle 2,1\\rangle$：每一點都一樣",
+        "• 向外發散 $\\langle x,y\\rangle$：背著原點往外",
+        "• 繞圈旋轉 $\\langle -y,x\\rangle$：繞原點逆時針"
+      ]
     },
     {
-      "heading": "④ 流線",
+      "heading": "③ 旋轉場的兩個性質",
       "body": [
-        "放一顆小粒子讓它順著場漂：它的路徑 $\\mathbf r(t)$ 處處滿足 $\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$，也就是速度永遠等於所在位置的箭頭。這條路徑叫流線（場線）。",
-        "之後的課會一直問兩件事：沿著一條曲線，場幫忙還是扯後腿（〈功的線積分〉）；穿過一張曲面，流出去多少（〈通量〉）。"
+        "$\\mathbf F=\\langle -y,x\\rangle$，位置向量 $\\langle x,y\\rangle$",
+        "性質一：跟位置向量垂直",
+        "性質二：長度 = 到原點的距離",
+        "合起來：沿著圓轉，越外圈越長",
+        "例：$(3,4)$ 的箭頭 $\\langle -4,3\\rangle$：內積 $-12+12=0$，長度 $5$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\langle x,y\\rangle\\cdot\\langle -y,x\\rangle=-xy+xy=0",
+        "|\\mathbf F|=\\sqrt{(-y)^2+x^2}=\\sqrt{x^2+y^2}"
+      ]
+    },
+    {
+      "heading": "③ 重力型的場",
+      "body": [
+        "記 $r=\\sqrt{x^2+y^2+z^2}$（到原點的距離）：",
+        "• 方向：$-\\langle x,y,z\\rangle$，指向原點",
+        "• 長度：$\\dfrac{r}{r^3}=\\dfrac1{r^2}$，平方反比",
+        "例：在 $(1,2,2)$，$r=\\sqrt{1+4+4}=3$"
+      ],
+      "tex": [
+        "\\mathbf F(x,y,z)=-\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}",
+        "\\mathbf F=-\\frac{\\langle x,y,z\\rangle}{r^3}",
+        "\\mathbf F=-\\tfrac1{27}\\langle1,2,2\\rangle,\\quad|\\mathbf F|=\\tfrac{3}{27}=\\tfrac19"
+      ]
+    },
+    {
+      "heading": "④ 流線：跟著箭頭走",
+      "body": [
+        "把 $\\mathbf F$ 想成水的流速，丟一片葉子進去",
+        "流線：曲線 $\\mathbf r(t)$ 對每個 $t$ 都滿足",
+        "速度：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle\\Rightarrow\\mathbf r'(t)=\\langle x'(t),y'(t)\\rangle$",
+        "速度向量畫在曲線上那一點，方向就是切線方向",
+        "不只方向，快慢也要等於箭頭的長度"
+      ],
+      "tex": [
+        "\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))"
+      ]
+    },
+    {
+      "heading": "④ 驗證一條流線",
+      "body": [
+        "證明 $\\mathbf r(t)=\\langle 2\\cos t,\\,2\\sin t\\rangle$ 是 $\\mathbf F=\\langle -y,x\\rangle$ 的流線",
+        "左邊：速度",
+        "右邊：$x=2\\cos t$、$y=2\\sin t$ 代進 $\\mathbf F=\\langle -y,x\\rangle$",
+        "每個分量都相同，對所有 $t$ 成立 ⇒ 是流線"
+      ],
+      "tex": [
+        "\\mathbf r'(t)=\\langle -2\\sin t,\\,2\\cos t\\rangle",
+        "\\mathbf F(\\mathbf r(t))=\\langle -2\\sin t,\\,2\\cos t\\rangle"
+      ]
+    },
+    {
+      "heading": "④ 快慢不對就不是",
+      "body": [
+        "$\\mathbf r(t)=\\langle 2\\cos 2t,\\,2\\sin 2t\\rangle$：同一個圓，走兩倍快",
+        "方向對、長度不對 ⇒ 不是流線",
+        "流線說的是「怎麼走」：同一條路，要用對的速度走"
+      ],
+      "tex": [
+        "\\mathbf r'(t)=\\langle -4\\sin 2t,\\,4\\cos 2t\\rangle",
+        "\\mathbf F(\\mathbf r(t))=\\langle -2\\sin 2t,\\,2\\cos 2t\\rangle"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 向量場：每一點配一支箭頭 $\\mathbf F=\\langle P,Q\\rangle$",
+        "• 畫法：起點放在那一點；太長就等比例縮短",
+        "• 三種樣子：均勻、發散 $\\langle x,y\\rangle$、旋轉 $\\langle -y,x\\rangle$",
+        "• 重力型：指向原點，長度 $\\frac1{r^2}$",
+        "• 流線：$\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$，方向、快慢都要對",
+        "下一課：梯度場"
+      ]
     }
   ],
   "workedExamples": [
@@ -91,35 +186,66 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathbf F=\\langle y,0\\rangle$ 在點 $(3,2)$ 的值是？",
+      "ask": "下面哪一個是向量場？",
       "options": [
-        { "label": "$\\langle 2,0\\rangle$", "correct": true },
-        { "label": "$\\langle 3,0\\rangle$", "why": "第一個分量是 $y$，不是 $x$。在 $(3,2)$ 的 $y$ 是 $2$。" },
-        { "label": "$\\langle 0,2\\rangle$", "why": "分量的位置放反了：$P=y$ 在前面（$x$ 方向），$Q=0$ 在後面。" }
+        {
+          "label": "$\\mathbf F(x,y)=\\langle y,\\,x^2\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$f(x,y)=x^2+y^2$",
+          "why": "這是兩變數函數：每一點輸出一個數，不是箭頭"
+        },
+        {
+          "label": "$\\mathbf r(t)=\\langle\\cos t,\\,\\sin t\\rangle$",
+          "why": "這是參數曲線：輸入是時間 $t$，不是平面上的點"
+        },
+        {
+          "label": "$\\mathbf v=\\langle 2,4\\rangle$",
+          "why": "這只是一支固定的向量，不是每一點各配一支"
+        }
       ]
     },
     {
-      "ask": "哪一個場的箭頭處處從原點往外指？",
+      "ask": "$\\mathbf F(x,y)=\\langle x-y,\\,x\\rangle$，在點 $(2,1)$ 要畫哪一支箭頭？",
       "options": [
-        { "label": "$\\langle x,y\\rangle$", "correct": true },
-        { "label": "$\\langle -y,x\\rangle$", "why": "它跟位置向量垂直，箭頭繞著原點轉，不往外。" },
-        { "label": "$\\langle y,x\\rangle$", "why": "在 $(1,-1)$ 它是 $\\langle -1,1\\rangle$，指向原點那一側，不是往外。" }
+        {
+          "label": "從 $(2,1)$ 出發的 $\\langle1,2\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "從 $(2,1)$ 出發的 $\\langle2,1\\rangle$",
+          "why": "把點的座標直接當成箭頭了；箭頭要代進 $\\mathbf F$ 算"
+        },
+        {
+          "label": "從 $(2,1)$ 出發的 $\\langle-1,2\\rangle$",
+          "why": "第一個分量算成 $y-x$ 了"
+        },
+        {
+          "label": "從 $(0,0)$ 出發的 $\\langle1,2\\rangle$",
+          "why": "向量對了，但起點要放在 $(2,1)$，不是原點"
+        }
       ]
     },
     {
-      "ask": "$\\mathbf F=\\langle -y,x\\rangle$ 在 $(3,4)$ 的箭頭長度是？",
+      "ask": "哪一條是 $\\mathbf F=\\langle x,y\\rangle$ 的流線？",
       "options": [
-        { "label": "$5$", "correct": true },
-        { "label": "$7$", "why": "長度是 $\\sqrt{4^2+3^2}$，不是分量的絕對值相加。" },
-        { "label": "$1$", "why": "向量場的箭頭不一定是單位向量；這個場的長度等於到原點的距離。" }
-      ]
-    },
-    {
-      "ask": "向量場 $\\mathbf F$ 的流線是指？",
-      "options": [
-        { "label": "一條曲線，在每一點的切線方向（速度）都等於 $\\mathbf F$", "correct": true },
-        { "label": "$\\mathbf F$ 的等高線", "why": "向量場本身沒有「高度」可以畫等高線。梯度場的場線跟位勢的等高線垂直，兩者不是同一個東西。" },
-        { "label": "把每支箭頭的尖端連起來的曲線", "why": "箭頭的長短是縮放過的，尖端連線沒有意義。流線是粒子順著箭頭走出來的路徑。" }
+        {
+          "label": "$\\mathbf r(t)=\\langle e^t,\\,2e^t\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$\\mathbf r(t)=\\langle t,\\,2t\\rangle$",
+          "why": "方向對，但 $\\mathbf r'=\\langle1,2\\rangle$、$\\mathbf F(\\mathbf r)=\\langle t,2t\\rangle$，只有 $t=1$ 相等"
+        },
+        {
+          "label": "$\\mathbf r(t)=\\langle e^{2t},\\,e^{2t}\\rangle$",
+          "why": "$\\mathbf r'=2\\mathbf r$，是箭頭的兩倍：快慢不對"
+        },
+        {
+          "label": "$\\mathbf r(t)=\\langle\\cos t,\\,\\sin t\\rangle$",
+          "why": "$\\mathbf r'$ 跟 $\\mathbf r$ 垂直：這是旋轉場的流線"
+        }
       ]
     }
   ],
@@ -127,216 +253,960 @@
     {
       "title": "每一點一支箭頭",
       "beats": [
-        { "show": ["天氣圖上的風"],
-          "note": "每個地點一個風向、一個風速。",
-          "say": "天氣圖上的風，每個地點都有方向和大小，畫成一支箭頭。",
+        {
+          "show": [
+            "風場圖：每個地點一支箭頭，方向是風往哪吹、長度是風多強"
+          ],
+          "say": "打開天氣預報的風場圖：每個地點都畫一支小箭頭，方向是風往哪裡吹，長度是風有多強。這就是向量場。",
           "board": [
-            {"do":"write","line":"天氣圖的風：每個地點一支箭頭"}
-          ] },
-        { "show": ["輸入一個點，輸出一個向量"],
-          "say": "把這個想法寫成函數：放進去一個點，出來的不是一個數，而是一個向量。",
+            {
+              "do": "write",
+              "line": "風場圖：每個地點一支箭頭，方向是風往哪吹、長度是風多強"
+            }
+          ]
+        },
+        {
+          "show": [
+            "向量場：每一點 $(x,y)$ 配一個向量",
+            "$\\mathbf F(x,y)=\\langle P(x,y),\\,Q(x,y)\\rangle$"
+          ],
+          "say": "正式的說法：向量場是在每一點 x 逗號 y，都配上一個向量 F。兩個分量 P 和 Q，都是 x、y 的函數。",
           "board": [
-            {"do":"write","line":"${{pt:(x,y)}}\\ \\to\\ {{v:\\mathbf F(x,y)}}$"},
-            {"do":"underline","term":"pt","label":"輸入","on":"放進去"},
-            {"do":"underline","term":"v","label":"輸出","on":"出來的"}
-          ] },
-        { "show": ["$\\mathbf F(x,y)=\\langle P(x,y),Q(x,y)\\rangle$"],
-          "note": "$P$、$Q$ 是分量；第一個是 $x$ 方向。",
-          "say": "平面上寫成兩個分量 P 和 Q，各自是普通的兩變數函數。P 管 x 方向，Q 管 y 方向。",
+            {
+              "do": "write",
+              "line": "向量場：每一點 $(x,y)$ 配一個向量"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\mathbf F(x,y)=\\langle P(x,y),\\,Q(x,y)\\rangle}}$",
+              "on": "逗號"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "向量#2"
+            },
+            {
+              "do": "write",
+              "line": "　尖括號 $\\langle\\ \\rangle$ 寫向量、圓括號 $(\\ )$ 寫點，免得搞混",
+              "color": "violet",
+              "on": "都是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "輸入一個點，輸出一個向量"
+          ],
+          "say": "換句話說，向量場是一個函數：輸入一個點，輸出一個向量。兩變數函數輸出的則是一個數。",
           "board": [
-            {"do":"transform","line":"${{v:\\mathbf F(x,y)}}=\\langle {{p:P(x,y)}},{{q:Q(x,y)}}\\rangle$","tint":{"p":"blue","q":"violet"}},
-            {"do":"focus","term":"p","color":"blue","label":"x 方向","on":"P 管"},
-            {"do":"focus","term":"q","color":"violet","label":"y 方向","on":"Q 管"}
-          ] }
+            {
+              "do": "write",
+              "line": "輸入一個點，輸出一個向量"
+            },
+            {
+              "do": "write",
+              "line": "　兩變數函數 $f(x,y)$ 每一點輸出一個數，也叫純量場",
+              "color": "violet",
+              "on": "輸出#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "空間中也一樣：",
+            "$\\mathbf F(x,y,z)=\\langle P,\\,Q,\\,R\\rangle$"
+          ],
+          "say": "空間中也一樣。水流的速度、重力、上一章的梯度，都是向量場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "空間中也一樣："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F(x,y,z)=\\langle P,\\,Q,\\,R\\rangle$",
+              "on": "的速"
+            },
+            {
+              "do": "write",
+              "line": "　例子：水的流速、重力與電力、梯度 $\\nabla f$",
+              "color": "violet",
+              "on": "的梯"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "怎麼畫",
+      "title": "怎麼畫：起點放在那點",
       "beats": [
-        { "show": ["挑點、算 $\\mathbf F$、從那個點畫箭頭"],
-          "note": "常常等比例縮短；看方向與相對長短。",
-          "say": "畫法：挑幾個點，算出向量，從那個點出發畫箭頭，不是從原點。",
+        {
+          "show": [
+            "例：$\\mathbf F(x,y)=\\langle -y,\\,x\\rangle$，挑幾個點代進去"
+          ],
+          "say": "怎麼畫向量場？用 F 等於負 y 逗號 x 當例子，先挑幾個點代進去。",
           "board": [
-            {"do":"write","line":"挑點 → 算 $\\mathbf F$ → 從那點畫箭頭"}
-          ] },
-        { "show": ["$\\mathbf F=\\langle -y,x\\rangle$：$(1,0)$ 朝上，$(0,1)$ 朝左"],
-          "say": "例如這個場，在點一、零是零、一，朝上；在點零、一是負一、零，朝左。",
+            {
+              "do": "write",
+              "line": "例：$\\mathbf F(x,y)=\\langle -y,\\,x\\rangle$，挑幾個點代進去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}\\mathbf F(1,0)&=\\langle 0,1\\rangle\\\\ \\mathbf F(0,1)&=\\langle -1,0\\rangle\\\\ \\mathbf F(2,0)&=\\langle 0,2\\rangle\\end{aligned}$"
+          ],
+          "say": "在 1 逗號 0，F 是 0 逗號 1；在 0 逗號 1，是負 1 逗號 0；在 2 逗號 0，是 0 逗號 2。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\mathbf F=\\langle -y,x\\rangle$","on":"這個場"},
-            {"do":"write","line":"$(1,0)$：$\\langle 0,1\\rangle$ 朝上","on":"在點一"},
-            {"do":"write","line":"$(0,1)$：$\\langle -1,0\\rangle$ 朝左","on":"在點零、一"}
-          ] },
-        { "show": ["$(-1,0)$：$\\langle 0,-1\\rangle$ 朝下"],
-          "say": "在點負一、零，朝下。再猜猜下一個點。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}\\mathbf F(1,0)&=\\langle 0,1\\rangle\\\\ \\mathbf F(0,1)&=\\langle -1,0\\rangle\\\\ \\mathbf F(2,0)&=\\langle 0,2\\rangle\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則只有一條：箭頭的起點放在那一點"
+          ],
+          "say": "畫的規則只有一條：在每一點，畫出那一點算出來的向量，箭頭的起點就放在那一點上。",
           "board": [
-            {"do":"write","line":"$(-1,0)$：$\\langle 0,-1\\rangle$ 朝下"}
-          ] }
+            {
+              "do": "write",
+              "line": "規則只有一條：箭頭的起點放在那一點",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "在 1 逗號 0，畫一支往上、長度 1 的箭頭；在 2 逗號 0，往上、長度 2。八個點畫完，全都在逆時針轉。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"vfPin\" viewBox=\"0 0 620 370\" width=\"620\" height=\"370\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bvfPin\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bvfPinblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bvfPinred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bvfPingreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bvfPinpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bvfPinink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bvfPin6\"><rect x=\"18\" y=\"12\" width=\"346\" height=\"346\"/></clipPath><g clip-path=\"url(#cl9bvfPin6)\"><line x1=\"18\" y1=\"12\" x2=\"18\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"75.7\" y1=\"12\" x2=\"75.7\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"133.3\" y1=\"12\" x2=\"133.3\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"191\" y1=\"12\" x2=\"191\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"248.7\" y1=\"12\" x2=\"248.7\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"306.3\" y1=\"12\" x2=\"306.3\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"364\" y1=\"12\" x2=\"364\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"358\" x2=\"364\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"300.3\" x2=\"364\" y2=\"300.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"242.7\" x2=\"364\" y2=\"242.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"185\" x2=\"364\" y2=\"185\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"127.3\" x2=\"364\" y2=\"127.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"69.7\" x2=\"364\" y2=\"69.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"12\" x2=\"364\" y2=\"12\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"14\" y1=\"185\" x2=\"376\" y2=\"185\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfPin)\"/><line x1=\"191\" y1=\"362\" x2=\"191\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfPin)\"/><text x=\"374\" y=\"176\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"200\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"248.7\" y1=\"185\" x2=\"248.7\" y2=\"127.3\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinblue)\"/><line x1=\"191\" y1=\"127.3\" x2=\"133.3\" y2=\"127.3\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinblue)\"/><line x1=\"133.3\" y1=\"185\" x2=\"133.3\" y2=\"242.7\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinblue)\"/><line x1=\"191\" y1=\"242.7\" x2=\"248.7\" y2=\"242.7\" stroke=\"var(--blue)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinblue)\"/><line x1=\"306.3\" y1=\"185\" x2=\"306.3\" y2=\"69.7\" stroke=\"var(--red)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinred)\"/><line x1=\"191\" y1=\"69.7\" x2=\"75.7\" y2=\"69.7\" stroke=\"var(--red)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinred)\"/><line x1=\"75.7\" y1=\"185\" x2=\"75.7\" y2=\"300.3\" stroke=\"var(--red)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinred)\"/><line x1=\"191\" y1=\"300.3\" x2=\"306.3\" y2=\"300.3\" stroke=\"var(--red)\" stroke-width=\"2.8\" marker-end=\"url(#ah9bvfPinred)\"/><circle cx=\"248.7\" cy=\"185\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"191\" cy=\"127.3\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"133.3\" cy=\"185\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"191\" cy=\"242.7\" r=\"4.5\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"306.3\" cy=\"185\" r=\"4.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"191\" cy=\"69.7\" r=\"4.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"75.7\" cy=\"185\" r=\"4.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"191\" cy=\"300.3\" r=\"4.5\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"316.3\" y=\"75.7\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">⟨0, 2⟩</text><text x=\"256.7\" y=\"131.3\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"21\" style=\"font-family:KaTeX_Main,serif\">⟨0, 1⟩</text><text x=\"312.3\" y=\"213\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">(2, 0)</text><text x=\"244.7\" y=\"213\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"20\" style=\"font-family:KaTeX_Main,serif\">(1, 0)</text><text x=\"404\" y=\"70\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">起點 = 那個點</text><text x=\"404\" y=\"104\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">箭頭 = F(那個點)</text><text x=\"404\" y=\"172\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">內圈：長度 1</text><text x=\"404\" y=\"206\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">外圈：長度 2</text><text x=\"404\" y=\"274\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">全都逆時針轉</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "箭頭太長就縮短",
+      "beats": [
+        {
+          "show": [
+            "點一多，真實長度的箭頭會互相交叉"
+          ],
+          "say": "點一多，用真實長度畫的箭頭會互相交叉，什麼都看不清楚。",
+          "board": [
+            {
+              "do": "write",
+              "line": "點一多，真實長度的箭頭會互相交叉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "慣例：全部乘上同一個倍數縮短"
+          ],
+          "say": "慣例是把所有箭頭乘上同一個倍數縮短。方向不變，誰長誰短也不變，所以圖上的長度只能拿來比較。",
+          "board": [
+            {
+              "do": "write",
+              "line": "慣例：全部乘上同一個倍數縮短"
+            },
+            {
+              "do": "write",
+              "line": "方向不變，相對長短也不變",
+              "color": "gold",
+              "on": "誰長"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "縮成零點二四倍以後，整體的樣子就清楚了：繞著原點轉，越外面越長。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"vfRot\" viewBox=\"0 0 620 370\" width=\"620\" height=\"370\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bvfRot\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bvfRotblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bvfRotred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bvfRotgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bvfRotpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bvfRotink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bvfRot6\"><rect x=\"18\" y=\"12\" width=\"346\" height=\"346\"/></clipPath><g clip-path=\"url(#cl9bvfRot6)\"><line x1=\"52.6\" y1=\"12\" x2=\"52.6\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"98.7\" y1=\"12\" x2=\"98.7\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"144.9\" y1=\"12\" x2=\"144.9\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"191\" y1=\"12\" x2=\"191\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"237.1\" y1=\"12\" x2=\"237.1\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"283.3\" y1=\"12\" x2=\"283.3\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"329.4\" y1=\"12\" x2=\"329.4\" y2=\"358\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"323.4\" x2=\"364\" y2=\"323.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"277.3\" x2=\"364\" y2=\"277.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"231.1\" x2=\"364\" y2=\"231.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"185\" x2=\"364\" y2=\"185\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"138.9\" x2=\"364\" y2=\"138.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"92.7\" x2=\"364\" y2=\"92.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"46.6\" x2=\"364\" y2=\"46.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"14\" y1=\"185\" x2=\"376\" y2=\"185\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfRot)\"/><line x1=\"191\" y1=\"362\" x2=\"191\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfRot)\"/><text x=\"374\" y=\"176\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"200\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"52.6\" y1=\"323.4\" x2=\"85.8\" y2=\"356.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"277.3\" x2=\"74.7\" y2=\"310.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"231.1\" x2=\"63.7\" y2=\"264.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"185\" x2=\"52.6\" y2=\"218.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"138.9\" x2=\"41.5\" y2=\"172.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"92.7\" x2=\"30.5\" y2=\"125.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"52.6\" y1=\"46.6\" x2=\"19.4\" y2=\"79.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"323.4\" x2=\"131.9\" y2=\"345.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"277.3\" x2=\"120.9\" y2=\"299.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"231.1\" x2=\"109.8\" y2=\"253.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"185\" x2=\"98.7\" y2=\"207.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"138.9\" x2=\"87.7\" y2=\"161\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"92.7\" x2=\"76.6\" y2=\"114.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"98.7\" y1=\"46.6\" x2=\"65.5\" y2=\"68.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"323.4\" x2=\"178.1\" y2=\"334.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"277.3\" x2=\"167\" y2=\"288.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"231.1\" x2=\"155.9\" y2=\"242.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"185\" x2=\"144.9\" y2=\"196.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"138.9\" x2=\"133.8\" y2=\"149.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"92.7\" x2=\"122.7\" y2=\"103.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"144.9\" y1=\"46.6\" x2=\"111.7\" y2=\"57.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"323.4\" x2=\"224.2\" y2=\"323.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"277.3\" x2=\"213.1\" y2=\"277.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"231.1\" x2=\"202.1\" y2=\"231.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"138.9\" x2=\"179.9\" y2=\"138.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"92.7\" x2=\"168.9\" y2=\"92.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"191\" y1=\"46.6\" x2=\"157.8\" y2=\"46.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"323.4\" x2=\"270.3\" y2=\"312.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"277.3\" x2=\"259.3\" y2=\"266.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"231.1\" x2=\"248.2\" y2=\"220.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"185\" x2=\"237.1\" y2=\"173.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"138.9\" x2=\"226.1\" y2=\"127.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"92.7\" x2=\"215\" y2=\"81.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"237.1\" y1=\"46.6\" x2=\"203.9\" y2=\"35.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"323.4\" x2=\"316.5\" y2=\"301.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"277.3\" x2=\"305.4\" y2=\"255.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"231.1\" x2=\"294.3\" y2=\"209\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"185\" x2=\"283.3\" y2=\"162.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"138.9\" x2=\"272.2\" y2=\"116.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"92.7\" x2=\"261.1\" y2=\"70.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"283.3\" y1=\"46.6\" x2=\"250.1\" y2=\"24.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"323.4\" x2=\"362.6\" y2=\"290.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"277.3\" x2=\"351.5\" y2=\"244.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"231.1\" x2=\"340.5\" y2=\"197.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"185\" x2=\"329.4\" y2=\"151.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"138.9\" x2=\"318.3\" y2=\"105.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"92.7\" x2=\"307.3\" y2=\"59.5\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><line x1=\"329.4\" y1=\"46.6\" x2=\"296.2\" y2=\"13.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfRotblue)\"/><text x=\"404\" y=\"90\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">每支都縮成</text><text x=\"404\" y=\"122\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">原來的 0.2 倍</text><text x=\"404\" y=\"190\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">相對長短不變：</text><text x=\"404\" y=\"222\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">離原點越遠越長</text></svg>"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "三種基本的樣子",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "向量場千變萬化，但有三種最基本的樣子，先把它們認熟。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"vfThree\" viewBox=\"0 0 660 270\" width=\"660\" height=\"270\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bvfThree\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bvfThreeblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bvfThreered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bvfThreegreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bvfThreepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bvfThreeink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bvfThree8\"><rect x=\"8\" y=\"8\" width=\"206\" height=\"206\"/></clipPath><g clip-path=\"url(#cl9bvfThree8)\"><line x1=\"34.7\" y1=\"8\" x2=\"34.7\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"72.9\" y1=\"8\" x2=\"72.9\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"111\" y1=\"8\" x2=\"111\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"149.1\" y1=\"8\" x2=\"149.1\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"187.3\" y1=\"8\" x2=\"187.3\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"8\" y1=\"187.3\" x2=\"214\" y2=\"187.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"8\" y1=\"149.1\" x2=\"214\" y2=\"149.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"8\" y1=\"111\" x2=\"214\" y2=\"111\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"8\" y1=\"72.9\" x2=\"214\" y2=\"72.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"8\" y1=\"34.7\" x2=\"214\" y2=\"34.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"34.7\" y1=\"187.3\" x2=\"57.6\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"34.7\" y1=\"149.1\" x2=\"57.6\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"34.7\" y1=\"111\" x2=\"57.6\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"34.7\" y1=\"72.9\" x2=\"57.6\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"34.7\" y1=\"34.7\" x2=\"57.6\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"72.9\" y1=\"187.3\" x2=\"95.7\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"72.9\" y1=\"149.1\" x2=\"95.7\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"72.9\" y1=\"111\" x2=\"95.7\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"72.9\" y1=\"72.9\" x2=\"95.7\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"72.9\" y1=\"34.7\" x2=\"95.7\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"111\" y1=\"187.3\" x2=\"133.9\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"111\" y1=\"149.1\" x2=\"133.9\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"111\" y1=\"111\" x2=\"133.9\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"111\" y1=\"72.9\" x2=\"133.9\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"111\" y1=\"34.7\" x2=\"133.9\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"149.1\" y1=\"187.3\" x2=\"172\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"149.1\" y1=\"149.1\" x2=\"172\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"149.1\" y1=\"111\" x2=\"172\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"149.1\" y1=\"72.9\" x2=\"172\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"149.1\" y1=\"34.7\" x2=\"172\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"187.3\" y1=\"187.3\" x2=\"210.2\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"187.3\" y1=\"149.1\" x2=\"210.2\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"187.3\" y1=\"111\" x2=\"210.2\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"187.3\" y1=\"72.9\" x2=\"210.2\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"187.3\" y1=\"34.7\" x2=\"210.2\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><circle cx=\"111\" cy=\"111\" r=\"3.5\" fill=\"var(--muted)\" stroke=\"var(--muted)\" stroke-width=\"2.4\"/><clipPath id=\"cl9bvfThree227\"><rect x=\"227\" y=\"8\" width=\"206\" height=\"206\"/></clipPath><g clip-path=\"url(#cl9bvfThree227)\"><line x1=\"253.7\" y1=\"8\" x2=\"253.7\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"291.9\" y1=\"8\" x2=\"291.9\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330\" y1=\"8\" x2=\"330\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"368.1\" y1=\"8\" x2=\"368.1\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"406.3\" y1=\"8\" x2=\"406.3\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"187.3\" x2=\"433\" y2=\"187.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"149.1\" x2=\"433\" y2=\"149.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"111\" x2=\"433\" y2=\"111\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"72.9\" x2=\"433\" y2=\"72.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"227\" y1=\"34.7\" x2=\"433\" y2=\"34.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"253.7\" y1=\"187.3\" x2=\"230.8\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"253.7\" y1=\"149.1\" x2=\"230.8\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"253.7\" y1=\"111\" x2=\"230.8\" y2=\"111\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"253.7\" y1=\"72.9\" x2=\"230.8\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"253.7\" y1=\"34.7\" x2=\"230.8\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"291.9\" y1=\"187.3\" x2=\"280.4\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"291.9\" y1=\"149.1\" x2=\"280.4\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"291.9\" y1=\"111\" x2=\"280.4\" y2=\"111\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"291.9\" y1=\"72.9\" x2=\"280.4\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"291.9\" y1=\"34.7\" x2=\"280.4\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"330\" y1=\"187.3\" x2=\"330\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"330\" y1=\"149.1\" x2=\"330\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"330\" y1=\"72.9\" x2=\"330\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"330\" y1=\"34.7\" x2=\"330\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"368.1\" y1=\"187.3\" x2=\"379.6\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"368.1\" y1=\"149.1\" x2=\"379.6\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"368.1\" y1=\"111\" x2=\"379.6\" y2=\"111\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"368.1\" y1=\"72.9\" x2=\"379.6\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"368.1\" y1=\"34.7\" x2=\"379.6\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"406.3\" y1=\"187.3\" x2=\"429.2\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"406.3\" y1=\"149.1\" x2=\"429.2\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"406.3\" y1=\"111\" x2=\"429.2\" y2=\"111\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"406.3\" y1=\"72.9\" x2=\"429.2\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"406.3\" y1=\"34.7\" x2=\"429.2\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><circle cx=\"330\" cy=\"111\" r=\"3.5\" fill=\"var(--muted)\" stroke=\"var(--muted)\" stroke-width=\"2.4\"/><clipPath id=\"cl9bvfThree446\"><rect x=\"446\" y=\"8\" width=\"206\" height=\"206\"/></clipPath><g clip-path=\"url(#cl9bvfThree446)\"><line x1=\"472.7\" y1=\"8\" x2=\"472.7\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"510.9\" y1=\"8\" x2=\"510.9\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"549\" y1=\"8\" x2=\"549\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"587.1\" y1=\"8\" x2=\"587.1\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"625.3\" y1=\"8\" x2=\"625.3\" y2=\"214\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"446\" y1=\"187.3\" x2=\"652\" y2=\"187.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"446\" y1=\"149.1\" x2=\"652\" y2=\"149.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"446\" y1=\"111\" x2=\"652\" y2=\"111\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"446\" y1=\"72.9\" x2=\"652\" y2=\"72.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"446\" y1=\"34.7\" x2=\"652\" y2=\"34.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"472.7\" y1=\"187.3\" x2=\"495.6\" y2=\"210.2\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"472.7\" y1=\"149.1\" x2=\"484.1\" y2=\"172\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"472.7\" y1=\"111\" x2=\"472.7\" y2=\"133.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"472.7\" y1=\"72.9\" x2=\"461.3\" y2=\"95.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"472.7\" y1=\"34.7\" x2=\"449.8\" y2=\"57.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"510.9\" y1=\"187.3\" x2=\"533.7\" y2=\"198.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"510.9\" y1=\"149.1\" x2=\"522.3\" y2=\"160.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"510.9\" y1=\"111\" x2=\"510.9\" y2=\"122.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"510.9\" y1=\"72.9\" x2=\"499.4\" y2=\"84.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"510.9\" y1=\"34.7\" x2=\"488\" y2=\"46.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"549\" y1=\"187.3\" x2=\"571.9\" y2=\"187.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"549\" y1=\"149.1\" x2=\"560.4\" y2=\"149.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"549\" y1=\"72.9\" x2=\"537.6\" y2=\"72.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"549\" y1=\"34.7\" x2=\"526.1\" y2=\"34.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"587.1\" y1=\"187.3\" x2=\"610\" y2=\"175.9\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"587.1\" y1=\"149.1\" x2=\"598.6\" y2=\"137.7\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"587.1\" y1=\"111\" x2=\"587.1\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"587.1\" y1=\"72.9\" x2=\"575.7\" y2=\"61.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"587.1\" y1=\"34.7\" x2=\"564.3\" y2=\"23.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"625.3\" y1=\"187.3\" x2=\"648.2\" y2=\"164.4\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"625.3\" y1=\"149.1\" x2=\"636.7\" y2=\"126.3\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"625.3\" y1=\"111\" x2=\"625.3\" y2=\"88.1\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"625.3\" y1=\"72.9\" x2=\"613.9\" y2=\"50\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><line x1=\"625.3\" y1=\"34.7\" x2=\"602.4\" y2=\"11.8\" stroke=\"var(--blue)\" stroke-width=\"2.2\" marker-end=\"url(#ah9bvfThreeblue)\"/><circle cx=\"549\" cy=\"111\" r=\"3.5\" fill=\"var(--muted)\" stroke=\"var(--muted)\" stroke-width=\"2.4\"/><text x=\"111\" y=\"244\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">均勻</text><text x=\"330\" y=\"244\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">向外發散</text><text x=\"549\" y=\"244\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">繞圈旋轉</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 均勻 $\\langle 2,1\\rangle$：每一點都一樣"
+          ],
+          "say": "第一種，均勻：每一點的箭頭都一樣，例如 2 逗號 1，像一條平穩的河。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 均勻 $\\langle 2,1\\rangle$：每一點都一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 向外發散 $\\langle x,y\\rangle$：背著原點往外"
+          ],
+          "say": "第二種，向外發散：x 逗號 y 就是這一點的位置向量，所以箭頭都背著原點往外，越遠越長。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 向外發散 $\\langle x,y\\rangle$：背著原點往外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 繞圈旋轉 $\\langle -y,x\\rangle$：繞原點逆時針"
+          ],
+          "say": "第三種，繞圈旋轉：負 y 逗號 x，就是剛剛畫的那一個，繞著原點逆時針轉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 繞圈旋轉 $\\langle -y,x\\rangle$：繞原點逆時針"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "在 $(0,-1)$，箭頭是？",
+        "ask": "$\\mathbf F=\\langle y,\\,-x\\rangle$ 長什麼樣子？",
         "options": [
           {
-            "label": "$\\langle 1,0\\rangle$，朝右",
+            "label": "繞原點順時針旋轉",
             "correct": true
           },
           {
-            "label": "$\\langle -1,0\\rangle$，朝左",
-            "why": "$-y=-(-1)=1$，第一個分量是正的。"
+            "label": "繞原點逆時針旋轉",
+            "why": "在 $(1,0)$ 算出 $\\langle0,-1\\rangle$，往下：是順時針"
           },
           {
-            "label": "$\\langle 0,-1\\rangle$，朝下",
-            "why": "分量放錯位置：第一個分量是 $-y$，第二個是 $x=0$。"
+            "label": "向外發散",
+            "why": "在 $(1,0)$ 箭頭往下，跟位置向量垂直，不是往外"
+          },
+          {
+            "label": "向內收縮",
+            "why": "箭頭跟位置向量垂直，沒有朝著原點"
           }
         ]
       }
     },
     {
-      "title": "三種基本樣子",
-      "beats": [
-        { "show": ["均勻場 $\\langle 0,1\\rangle$"],
-          "note": "到處一樣，像穩定的風。",
-          "say": "第一種，均勻場：每一點的箭頭都一樣。",
-          "board": [
-            {"do":"write","line":"均勻場 $\\langle 0,1\\rangle$：處處一樣"}
-          ] },
-        { "show": ["發散場 $\\langle x,y\\rangle$"],
-          "note": "從原點往外指，離越遠越長。",
-          "say": "第二種，發散場：每一點都從原點往外指，越外面越長。",
-          "board": [
-            {"do":"write","line":"發散場 $\\langle x,y\\rangle$：往外指"}
-          ] },
-        { "show": ["旋轉場 $\\langle -y,x\\rangle$"],
-          "note": "像轉盤上每一點的速度。",
-          "say": "第三種，旋轉場：箭頭繞著原點逆時針轉，像轉盤。",
-          "board": [
-            {"do":"write","line":"旋轉場 $\\langle -y,x\\rangle$：繞原點逆時針"}
-          ] },
-        { "show": ["$-\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$","在 $(0,0,2)$：長 $\\frac{1}{4}$"],
-          "note": "指向原點，大小與距離平方成反比。",
-          "say": "物理上的重力型場：指向中心。在距離二的地方，長度是四分之一，跟距離平方成反比。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$-\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$","on":"重力型場"},
-            {"do":"write","line":"在 $(0,0,2)$：長 ${{r:\\frac{1}{4}}}$","on":"在距離二"},
-            {"do":"box","term":"r","color":"green","on":"四分之一"}
-          ] },
-        { "show": ["$(x^2+y^2+z^2)^{3/2}=|\\mathbf r|^3$"],
-          "note": "$|\\mathbf r|$ 是到原點的距離。",
-          "say": "分母是距離平方的二分之三次方，也就是距離的三次方。",
-          "board": [
-            {"do":"write","line":"$(x^2+y^2+z^2)^{3/2}={{d:|\\mathbf r|^3}}$"},
-            {"do":"underline","term":"d","on":"距離的"}
-          ] },
-        { "show": ["$\\frac{|\\mathbf r|}{|\\mathbf r|^3}=\\frac{1}{|\\mathbf r|^2}$"],
-          "note": "三維場：每點一支箭頭，有三個分量。",
-          "say": "分子長度是距離，除以距離三次方，剩距離平方分之一。三維場也一樣，每點一支箭頭，只是有三個分量。",
-          "board": [
-            {"do":"write","line":"$\\frac{|\\mathbf r|}{|\\mathbf r|^3}={{k:\\frac{1}{|\\mathbf r|^2}}}$"},
-            {"do":"box","term":"k","color":"green","on":"剩距離平方"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
       "title": "旋轉場的兩個性質",
       "beats": [
-        { "show": ["$\\langle -y,x\\rangle\\cdot\\langle x,y\\rangle=-xy+xy=0$"],
-          "say": "旋轉場跟位置向量做點積，兩項剛好抵消，是零：箭頭永遠跟位置向量垂直。",
+        {
+          "show": [
+            "$\\mathbf F=\\langle -y,x\\rangle$，位置向量 $\\langle x,y\\rangle$"
+          ],
+          "say": "回到旋轉場，證明它的兩個性質，對照的是位置向量 x 逗號 y。",
           "board": [
-            {"do":"write","line":"$\\langle -y,x\\rangle\\cdot\\langle x,y\\rangle={{s:-xy+xy}}={{z:0}}$"},
-            {"do":"underline","term":"s","on":"兩項"},
-            {"do":"box","term":"z","color":"green","label":"垂直","on":"是零"}
-          ] },
-        { "show": ["$|\\mathbf F|=\\sqrt{x^2+y^2}$"],
-          "note": "等於到原點的距離。",
-          "say": "它的長度，正好是那一點到原點的距離。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle -y,x\\rangle$，位置向量 $\\langle x,y\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "性質一：跟位置向量垂直",
+            "$\\langle x,y\\rangle\\cdot\\langle -y,x\\rangle=-xy+xy=0$"
+          ],
+          "say": "性質一，用內積：x 乘負 y，加 y 乘 x，等於 0。所以每一點的箭頭都跟半徑垂直，也就是順著圓的切線方向。",
           "board": [
-            {"do":"write","line":"$|\\mathbf F|={{n:\\sqrt{x^2+y^2}}}$"},
-            {"do":"underline","term":"n","label":"到原點","on":"那一點"}
-          ] },
-        { "show": ["兩個圓上的箭頭都沿切線"],
-          "note": "外圈的箭頭比內圈長。",
-          "say": "畫出來看：兩個圓上的箭頭都沿著切線，外圈的箭頭比內圈長。",
+            {
+              "do": "write",
+              "line": "性質一：跟位置向量垂直"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\langle x,y\\rangle\\cdot\\langle -y,x\\rangle=-xy+xy=0}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "都跟"
+            }
+          ]
+        },
+        {
+          "show": [
+            "性質二：長度 = 到原點的距離",
+            "$|\\mathbf F|=\\sqrt{(-y)^2+x^2}=\\sqrt{x^2+y^2}$"
+          ],
+          "say": "性質二，算長度：正好是根號 x 平方加 y 平方，也就是這一點到原點的距離。",
           "board": [
-            {"do":"plot","graph":{"window":[-3.2,3.2,-2.5,2.5],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"},{"param":{"x":"2*cos(t)","y":"2*sin(t)","t":[0,6.2832]},"color":"blue"}],"arrows":[{"from":[1,0],"to":[1,0.5],"color":"violet"},{"from":[0,1],"to":[-0.5,1],"color":"violet"},{"from":[-1,0],"to":[-1,-0.5],"color":"violet"},{"from":[0,-1],"to":[0.5,-1],"color":"violet"},{"from":[2,0],"to":[2,1],"color":"violet"},{"from":[0,2],"to":[-1,2],"color":"violet"},{"from":[-2,0],"to":[-2,-1],"color":"violet"},{"from":[0,-2],"to":[1,-2],"color":"violet"}]}}
-          ] },
-        { "show": ["沿著同心圓的切線，越外圈越長"],
-          "say": "合起來：箭頭都沿著以原點為中心的圓走，外圈的轉得比較快。",
+            {
+              "do": "write",
+              "line": "性質二：長度 = 到原點的距離"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle |\\mathbf F|=\\sqrt{(-y)^2+x^2}=\\sqrt{x^2+y^2}}}$",
+              "on": "平方#1"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "合起來：沿著圓轉，越外圈越長"
+          ],
+          "say": "合起來：箭頭沿著圓轉，越外圈越長。",
           "board": [
-            {"do":"write","line":"沿著同心圓的切線，越外圈越長"}
-          ] }
+            {
+              "do": "write",
+              "line": "合起來：沿著圓轉，越外圈越長"
+            },
+            {
+              "do": "write",
+              "line": "　例：$(3,4)$ 的箭頭 $\\langle -4,3\\rangle$：內積 $-12+12=0$，長度 $5$",
+              "color": "violet",
+              "on": "圓轉"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重力型的場",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbf F(x,y,z)=-\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$"
+          ],
+          "say": "空間中的例子：負的 x、y、z，除以 x 平方加 y 平方加 z 平方的二分之三次方。原點放一個質量，吸引力就長這樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F(x,y,z)=-\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "記 $r=\\sqrt{x^2+y^2+z^2}$（到原點的距離）：",
+            "$\\mathbf F=-\\frac{\\langle x,y,z\\rangle}{r^3}$"
+          ],
+          "say": "把到原點的距離記成 r，分母就是 r 的三次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "記 $r=\\sqrt{x^2+y^2+z^2}$（到原點的距離）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F=-\\frac{\\langle x,y,z\\rangle}{r^3}$",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 方向：$-\\langle x,y,z\\rangle$，指向原點",
+            "• 長度：$\\dfrac{r}{r^3}=\\dfrac1{r^2}$，平方反比"
+          ],
+          "say": "方向：有負號，跟位置向量相反，所以指向原點。長度：r 除以 r 的三次方，是 r 平方分之一，這就是平方反比。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 方向：$-\\langle x,y,z\\rangle$，指向原點"
+            },
+            {
+              "do": "write",
+              "line": "• 長度：$\\dfrac{r}{r^3}=\\dfrac1{r^2}$，平方反比",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：在 $(1,2,2)$，$r=\\sqrt{1+4+4}=3$",
+            "$\\mathbf F=-\\tfrac1{27}\\langle1,2,2\\rangle,\\quad|\\mathbf F|=\\tfrac{3}{27}=\\tfrac19$"
+          ],
+          "say": "例如在 1、2、2，r 是 3。F 是負 27 分之一乘 1、2、2，長度是 9 分之一，正好是 3 平方分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：在 $(1,2,2)$，$r=\\sqrt{1+4+4}=3$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F=-\\tfrac1{27}\\langle1,2,2\\rangle,\\quad|\\mathbf F|=\\tfrac{3}{27}=\\tfrac19$",
+              "on": "長度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "畫在 xy 平面上：全部指向原點，越靠近越長。距離變成 2 倍，長度就變成 4 分之一。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"vfGrav\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bvfGrav\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bvfGravblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bvfGravred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bvfGravgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bvfGravpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bvfGravink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bvfGrav6\"><rect x=\"18\" y=\"12\" width=\"336\" height=\"336\"/></clipPath><g clip-path=\"url(#cl9bvfGrav6)\"><line x1=\"61.6\" y1=\"12\" x2=\"61.6\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.8\" y1=\"12\" x2=\"123.8\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"186\" y1=\"12\" x2=\"186\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"248.2\" y1=\"12\" x2=\"248.2\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"310.4\" y1=\"12\" x2=\"310.4\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"304.4\" x2=\"354\" y2=\"304.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"242.2\" x2=\"354\" y2=\"242.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"180\" x2=\"354\" y2=\"180\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"117.8\" x2=\"354\" y2=\"117.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"55.6\" x2=\"354\" y2=\"55.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"14\" y1=\"180\" x2=\"366\" y2=\"180\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfGrav)\"/><line x1=\"186\" y1=\"352\" x2=\"186\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfGrav)\"/><text x=\"364\" y=\"171\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"195\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"255\" y1=\"151.4\" x2=\"225\" y2=\"163.8\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"214.6\" y1=\"111\" x2=\"202.2\" y2=\"141\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"157.4\" y1=\"111\" x2=\"169.8\" y2=\"141\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"117\" y1=\"151.4\" x2=\"147\" y2=\"163.8\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"117\" y1=\"208.6\" x2=\"147\" y2=\"196.2\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"157.4\" y1=\"249\" x2=\"169.8\" y2=\"219\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"214.6\" y1=\"249\" x2=\"202.2\" y2=\"219\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"255\" y1=\"208.6\" x2=\"225\" y2=\"196.2\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"288.2\" y1=\"152.6\" x2=\"272.6\" y2=\"156.8\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"260.8\" y1=\"105.2\" x2=\"249.4\" y2=\"116.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"213.4\" y1=\"77.8\" x2=\"209.2\" y2=\"93.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"158.6\" y1=\"77.8\" x2=\"162.8\" y2=\"93.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"111.2\" y1=\"105.2\" x2=\"122.6\" y2=\"116.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"83.8\" y1=\"152.6\" x2=\"99.4\" y2=\"156.8\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"83.8\" y1=\"207.4\" x2=\"99.4\" y2=\"203.2\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"111.2\" y1=\"254.8\" x2=\"122.6\" y2=\"243.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"158.6\" y1=\"282.2\" x2=\"162.8\" y2=\"266.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"213.4\" y1=\"282.2\" x2=\"209.2\" y2=\"266.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"260.8\" y1=\"254.8\" x2=\"249.4\" y2=\"243.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"288.2\" y1=\"207.4\" x2=\"272.6\" y2=\"203.2\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"332.5\" y1=\"150.9\" x2=\"324.5\" y2=\"152.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"310.2\" y1=\"97\" x2=\"303.4\" y2=\"101.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"269\" y1=\"55.8\" x2=\"264.5\" y2=\"62.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"215.1\" y1=\"33.5\" x2=\"213.6\" y2=\"41.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"156.9\" y1=\"33.5\" x2=\"158.4\" y2=\"41.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"103\" y1=\"55.8\" x2=\"107.5\" y2=\"62.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"61.8\" y1=\"97\" x2=\"68.6\" y2=\"101.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"39.5\" y1=\"150.9\" x2=\"47.5\" y2=\"152.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"39.5\" y1=\"209.1\" x2=\"47.5\" y2=\"207.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"61.8\" y1=\"263\" x2=\"68.6\" y2=\"258.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"103\" y1=\"304.2\" x2=\"107.5\" y2=\"297.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"156.9\" y1=\"326.5\" x2=\"158.4\" y2=\"318.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"215.1\" y1=\"326.5\" x2=\"213.6\" y2=\"318.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"269\" y1=\"304.2\" x2=\"264.5\" y2=\"297.4\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"310.2\" y1=\"263\" x2=\"303.4\" y2=\"258.5\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><line x1=\"332.5\" y1=\"209.1\" x2=\"324.5\" y2=\"207.6\" stroke=\"var(--blue)\" stroke-width=\"1.7\" marker-end=\"url(#ah9bvfGravblue)\"/><circle cx=\"186\" cy=\"180\" r=\"7\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"396\" y=\"80\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">全部指向原點</text><text x=\"396\" y=\"150\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">距離變 2 倍，</text><text x=\"396\" y=\"182\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">長度變 1/4</text><text x=\"396\" y=\"260\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"20\" style=\"font-family:inherit\">（xy 平面上的截面）</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "流線：跟著箭頭走",
+      "beats": [
+        {
+          "show": [
+            "把 $\\mathbf F$ 想成水的流速，丟一片葉子進去"
+          ],
+          "say": "把向量場想成水流的速度，在某一點丟一片葉子，它會被水帶著走，走出一條路。",
+          "board": [
+            {
+              "do": "write",
+              "line": "把 $\\mathbf F$ 想成水的流速，丟一片葉子進去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "流線：曲線 $\\mathbf r(t)$ 對每個 $t$ 都滿足",
+            "$\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$"
+          ],
+          "say": "這條路叫做流線。條件是：在每個時刻 t，曲線的速度 r prime t，都等於它所在位置的箭頭 F。",
+          "board": [
+            {
+              "do": "write",
+              "line": "流線：曲線 $\\mathbf r(t)$ 對每個 $t$ 都滿足"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\mathbf r'(t)=\\mathbf F(\\mathbf r(t))}}$",
+              "on": "曲線"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "都等"
+            }
+          ]
+        },
+        {
+          "show": [
+            "速度：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle\\Rightarrow\\mathbf r'(t)=\\langle x'(t),y'(t)\\rangle$"
+          ],
+          "say": "曲線的速度，就是每個分量對 t 微分，指出點往哪裡走、走多快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "速度：$\\mathbf r(t)=\\langle x(t),y(t)\\rangle\\Rightarrow\\mathbf r'(t)=\\langle x'(t),y'(t)\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "　速度向量畫在曲線上那一點，方向就是切線方向",
+              "color": "violet",
+              "on": "微分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "旋轉場的流線是一圈一圈的圓：圓上每一點的切線方向，都順著那一點的箭頭。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"vfFlow\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9bvfFlow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9bvfFlowblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9bvfFlowred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9bvfFlowgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9bvfFlowpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9bvfFlowink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9bvfFlow6\"><rect x=\"18\" y=\"12\" width=\"336\" height=\"336\"/></clipPath><g clip-path=\"url(#cl9bvfFlow6)\"><line x1=\"49.8\" y1=\"12\" x2=\"49.8\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"95.2\" y1=\"12\" x2=\"95.2\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"140.6\" y1=\"12\" x2=\"140.6\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"186\" y1=\"12\" x2=\"186\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"231.4\" y1=\"12\" x2=\"231.4\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"276.8\" y1=\"12\" x2=\"276.8\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"322.2\" y1=\"12\" x2=\"322.2\" y2=\"348\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"316.2\" x2=\"354\" y2=\"316.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"270.8\" x2=\"354\" y2=\"270.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"225.4\" x2=\"354\" y2=\"225.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"180\" x2=\"354\" y2=\"180\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"134.6\" x2=\"354\" y2=\"134.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"89.2\" x2=\"354\" y2=\"89.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"18\" y1=\"43.8\" x2=\"354\" y2=\"43.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M231.4 180L231.4 178.8L231.3 177.6L231.3 176.4L231.2 175.3L231 174.1L230.8 172.9L230.6 171.7L230.4 170.6L230.2 169.4L229.9 168.2L229.5 167.1L229.2 166L228.8 164.8L228.4 163.7L227.9 162.6L227.5 161.5L227 160.5L226.5 159.4L225.9 158.3L225.3 157.3L224.7 156.3L224.1 155.3L223.4 154.3L222.7 153.3L222 152.4L221.3 151.4L220.5 150.5L219.7 149.6L218.9 148.7L218.1 147.9L217.3 147.1L216.4 146.3L215.5 145.5L214.6 144.7L213.6 144L212.7 143.3L211.7 142.6L210.7 141.9L209.7 141.3L208.7 140.7L207.7 140.1L206.6 139.5L205.5 139L204.5 138.5L203.4 138.1L202.3 137.6L201.2 137.2L200 136.8L198.9 136.5L197.8 136.1L196.6 135.8L195.4 135.6L194.3 135.4L193.1 135.2L191.9 135L190.7 134.8L189.6 134.7L188.4 134.7L187.2 134.6L186 134.6L184.8 134.6L183.6 134.7L182.4 134.7L181.3 134.8L180.1 135L178.9 135.2L177.7 135.4L176.6 135.6L175.4 135.8L174.2 136.1L173.1 136.5L172 136.8L170.8 137.2L169.7 137.6L168.6 138.1L167.5 138.5L166.5 139L165.4 139.5L164.3 140.1L163.3 140.7L162.3 141.3L161.3 141.9L160.3 142.6L159.3 143.3L158.4 144L157.4 144.7L156.5 145.5L155.6 146.3L154.7 147.1L153.9 147.9L153.1 148.7L152.3 149.6L151.5 150.5L150.7 151.4L150 152.4L149.3 153.3L148.6 154.3L147.9 155.3L147.3 156.3L146.7 157.3L146.1 158.3L145.5 159.4L145 160.5L144.5 161.5L144.1 162.6L143.6 163.7L143.2 164.8L142.8 166L142.5 167.1L142.1 168.2L141.8 169.4L141.6 170.6L141.4 171.7L141.2 172.9L141 174.1L140.8 175.3L140.7 176.4L140.7 177.6L140.6 178.8L140.6 180L140.6 181.2L140.7 182.4L140.7 183.6L140.8 184.7L141 185.9L141.2 187.1L141.4 188.3L141.6 189.4L141.8 190.6L142.1 191.8L142.5 192.9L142.8 194L143.2 195.2L143.6 196.3L144.1 197.4L144.5 198.5L145 199.5L145.5 200.6L146.1 201.7L146.7 202.7L147.3 203.7L147.9 204.7L148.6 205.7L149.3 206.7L150 207.6L150.7 208.6L151.5 209.5L152.3 210.4L153.1 211.3L153.9 212.1L154.7 212.9L155.6 213.7L156.5 214.5L157.4 215.3L158.4 216L159.3 216.7L160.3 217.4L161.3 218.1L162.3 218.7L163.3 219.3L164.3 219.9L165.4 220.5L166.5 221L167.5 221.5L168.6 221.9L169.7 222.4L170.8 222.8L172 223.2L173.1 223.5L174.2 223.9L175.4 224.2L176.6 224.4L177.7 224.6L178.9 224.8L180.1 225L181.3 225.2L182.4 225.3L183.6 225.3L184.8 225.4L186 225.4L187.2 225.4L188.4 225.3L189.6 225.3L190.7 225.2L191.9 225L193.1 224.8L194.3 224.6L195.4 224.4L196.6 224.2L197.8 223.9L198.9 223.5L200 223.2L201.2 222.8L202.3 222.4L203.4 221.9L204.5 221.5L205.5 221L206.6 220.5L207.7 219.9L208.7 219.3L209.7 218.7L210.7 218.1L211.7 217.4L212.7 216.7L213.6 216L214.6 215.3L215.5 214.5L216.4 213.7L217.3 212.9L218.1 212.1L218.9 211.3L219.7 210.4L220.5 209.5L221.3 208.6L222 207.6L222.7 206.7L223.4 205.7L224.1 204.7L224.7 203.7L225.3 202.7L225.9 201.7L226.5 200.6L227 199.5L227.5 198.5L227.9 197.4L228.4 196.3L228.8 195.2L229.2 194L229.5 192.9L229.9 191.8L230.2 190.6L230.4 189.4L230.6 188.3L230.8 187.1L231 185.9L231.2 184.7L231.3 183.6L231.3 182.4L231.4 181.2L231.4 180\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M276.8 180L276.8 177.6L276.7 175.2L276.5 172.9L276.3 170.5L276 168.1L275.7 165.8L275.3 163.5L274.8 161.1L274.3 158.8L273.7 156.5L273.1 154.2L272.4 151.9L271.6 149.7L270.8 147.5L269.9 145.2L269 143.1L268 140.9L266.9 138.8L265.8 136.7L264.6 134.6L263.4 132.6L262.2 130.5L260.8 128.6L259.5 126.6L258 124.7L256.6 122.9L255.1 121L253.5 119.2L251.9 117.5L250.2 115.8L248.5 114.1L246.8 112.5L245 110.9L243.1 109.4L241.3 108L239.4 106.5L237.4 105.2L235.5 103.8L233.4 102.6L231.4 101.4L229.3 100.2L227.2 99.1L225.1 98L222.9 97L220.8 96.1L218.5 95.2L216.3 94.4L214.1 93.6L211.8 92.9L209.5 92.3L207.2 91.7L204.9 91.2L202.5 90.7L200.2 90.3L197.9 90L195.5 89.7L193.1 89.5L190.8 89.3L188.4 89.2L186 89.2L183.6 89.2L181.2 89.3L178.9 89.5L176.5 89.7L174.1 90L171.8 90.3L169.5 90.7L167.1 91.2L164.8 91.7L162.5 92.3L160.2 92.9L157.9 93.6L155.7 94.4L153.5 95.2L151.2 96.1L149.1 97L146.9 98L144.8 99.1L142.7 100.2L140.6 101.4L138.6 102.6L136.5 103.8L134.6 105.2L132.6 106.5L130.7 108L128.9 109.4L127 110.9L125.2 112.5L123.5 114.1L121.8 115.8L120.1 117.5L118.5 119.2L116.9 121L115.4 122.9L114 124.7L112.5 126.6L111.2 128.6L109.8 130.5L108.6 132.6L107.4 134.6L106.2 136.7L105.1 138.8L104 140.9L103 143.1L102.1 145.2L101.2 147.5L100.4 149.7L99.6 151.9L98.9 154.2L98.3 156.5L97.7 158.8L97.2 161.1L96.7 163.5L96.3 165.8L96 168.1L95.7 170.5L95.5 172.9L95.3 175.2L95.2 177.6L95.2 180L95.2 182.4L95.3 184.8L95.5 187.1L95.7 189.5L96 191.9L96.3 194.2L96.7 196.5L97.2 198.9L97.7 201.2L98.3 203.5L98.9 205.8L99.6 208.1L100.4 210.3L101.2 212.5L102.1 214.8L103 216.9L104 219.1L105.1 221.2L106.2 223.3L107.4 225.4L108.6 227.4L109.8 229.5L111.2 231.4L112.5 233.4L114 235.3L115.4 237.1L116.9 239L118.5 240.8L120.1 242.5L121.8 244.2L123.5 245.9L125.2 247.5L127 249.1L128.9 250.6L130.7 252L132.6 253.5L134.6 254.8L136.5 256.2L138.6 257.4L140.6 258.6L142.7 259.8L144.8 260.9L146.9 262L149.1 263L151.2 263.9L153.5 264.8L155.7 265.6L157.9 266.4L160.2 267.1L162.5 267.7L164.8 268.3L167.1 268.8L169.5 269.3L171.8 269.7L174.1 270L176.5 270.3L178.9 270.5L181.2 270.7L183.6 270.8L186 270.8L188.4 270.8L190.8 270.7L193.1 270.5L195.5 270.3L197.9 270L200.2 269.7L202.5 269.3L204.9 268.8L207.2 268.3L209.5 267.7L211.8 267.1L214.1 266.4L216.3 265.6L218.5 264.8L220.8 263.9L222.9 263L225.1 262L227.2 260.9L229.3 259.8L231.4 258.6L233.4 257.4L235.5 256.2L237.4 254.8L239.4 253.5L241.3 252L243.1 250.6L245 249.1L246.8 247.5L248.5 245.9L250.2 244.2L251.9 242.5L253.5 240.8L255.1 239L256.6 237.1L258 235.3L259.5 233.4L260.8 231.4L262.2 229.5L263.4 227.4L264.6 225.4L265.8 223.3L266.9 221.2L268 219.1L269 216.9L269.9 214.8L270.8 212.5L271.6 210.3L272.4 208.1L273.1 205.8L273.7 203.5L274.3 201.2L274.8 198.9L275.3 196.5L275.7 194.2L276 191.9L276.3 189.5L276.5 187.1L276.7 184.8L276.8 182.4L276.8 180\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M322.2 180L322.2 176.4L322 172.9L321.8 169.3L321.5 165.8L321.1 162.2L320.5 158.7L319.9 155.2L319.2 151.7L318.5 148.2L317.6 144.7L316.6 141.3L315.5 137.9L314.4 134.5L313.2 131.2L311.8 127.9L310.4 124.6L308.9 121.4L307.4 118.2L305.7 115L304 111.9L302.1 108.8L300.2 105.8L298.3 102.8L296.2 99.9L294.1 97.1L291.9 94.3L289.6 91.5L287.2 88.9L284.8 86.2L282.3 83.7L279.8 81.2L277.1 78.8L274.5 76.4L271.7 74.1L268.9 71.9L266.1 69.8L263.2 67.7L260.2 65.8L257.2 63.9L254.1 62L251 60.3L247.8 58.6L244.6 57.1L241.4 55.6L238.1 54.2L234.8 52.8L231.5 51.6L228.1 50.5L224.7 49.4L221.3 48.4L217.8 47.5L214.3 46.8L210.8 46.1L207.3 45.5L203.8 44.9L200.2 44.5L196.7 44.2L193.1 44L189.6 43.8L186 43.8L182.4 43.8L178.9 44L175.3 44.2L171.8 44.5L168.2 44.9L164.7 45.5L161.2 46.1L157.7 46.8L154.2 47.5L150.7 48.4L147.3 49.4L143.9 50.5L140.5 51.6L137.2 52.8L133.9 54.2L130.6 55.6L127.4 57.1L124.2 58.6L121 60.3L117.9 62L114.8 63.9L111.8 65.8L108.8 67.7L105.9 69.8L103.1 71.9L100.3 74.1L97.5 76.4L94.9 78.8L92.2 81.2L89.7 83.7L87.2 86.2L84.8 88.9L82.4 91.5L80.1 94.3L77.9 97.1L75.8 99.9L73.7 102.8L71.8 105.8L69.9 108.8L68 111.9L66.3 115L64.6 118.2L63.1 121.4L61.6 124.6L60.2 127.9L58.8 131.2L57.6 134.5L56.5 137.9L55.4 141.3L54.4 144.7L53.5 148.2L52.8 151.7L52.1 155.2L51.5 158.7L50.9 162.2L50.5 165.8L50.2 169.3L50 172.9L49.8 176.4L49.8 180L49.8 183.6L50 187.1L50.2 190.7L50.5 194.2L50.9 197.8L51.5 201.3L52.1 204.8L52.8 208.3L53.5 211.8L54.4 215.3L55.4 218.7L56.5 222.1L57.6 225.5L58.8 228.8L60.2 232.1L61.6 235.4L63.1 238.6L64.6 241.8L66.3 245L68 248.1L69.9 251.2L71.8 254.2L73.7 257.2L75.8 260.1L77.9 262.9L80.1 265.7L82.4 268.5L84.8 271.1L87.2 273.8L89.7 276.3L92.2 278.8L94.9 281.2L97.5 283.6L100.3 285.9L103.1 288.1L105.9 290.2L108.8 292.3L111.8 294.2L114.8 296.1L117.9 298L121 299.7L124.2 301.4L127.4 302.9L130.6 304.4L133.9 305.8L137.2 307.2L140.5 308.4L143.9 309.5L147.3 310.6L150.7 311.6L154.2 312.5L157.7 313.2L161.2 313.9L164.7 314.5L168.2 315.1L171.8 315.5L175.3 315.8L178.9 316L182.4 316.2L186 316.2L189.6 316.2L193.1 316L196.7 315.8L200.2 315.5L203.8 315.1L207.3 314.5L210.8 313.9L214.3 313.2L217.8 312.5L221.3 311.6L224.7 310.6L228.1 309.5L231.5 308.4L234.8 307.2L238.1 305.8L241.4 304.4L244.6 302.9L247.8 301.4L251 299.7L254.1 298L257.2 296.1L260.2 294.2L263.2 292.3L266.1 290.2L268.9 288.1L271.7 285.9L274.5 283.6L277.1 281.2L279.8 278.8L282.3 276.3L284.8 273.8L287.2 271.1L289.6 268.5L291.9 265.7L294.1 262.9L296.2 260.1L298.3 257.2L300.2 254.2L302.1 251.2L304 248.1L305.7 245L307.4 241.8L308.9 238.6L310.4 235.4L311.8 232.1L313.2 228.8L314.4 225.5L315.5 222.1L316.6 218.7L317.6 215.3L318.5 211.8L319.2 208.3L319.9 204.8L320.5 201.3L321.1 197.8L321.5 194.2L321.8 190.7L322 187.1L322.2 183.6L322.2 180\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><line x1=\"14\" y1=\"180\" x2=\"366\" y2=\"180\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfFlow)\"/><line x1=\"186\" y1=\"352\" x2=\"186\" y2=\"0\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9bvfFlow)\"/><text x=\"364\" y=\"171\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"195\" y=\"16\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><line x1=\"49.8\" y1=\"316.2\" x2=\"79.8\" y2=\"346.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"270.8\" x2=\"69.8\" y2=\"300.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"225.4\" x2=\"59.8\" y2=\"255.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"180\" x2=\"49.8\" y2=\"210\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"134.6\" x2=\"39.8\" y2=\"164.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"89.2\" x2=\"29.8\" y2=\"119.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"49.8\" y1=\"43.8\" x2=\"19.8\" y2=\"73.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"316.2\" x2=\"125.2\" y2=\"336.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"270.8\" x2=\"115.2\" y2=\"290.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"225.4\" x2=\"105.2\" y2=\"245.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"180\" x2=\"95.2\" y2=\"200\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"134.6\" x2=\"85.2\" y2=\"154.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"89.2\" x2=\"75.2\" y2=\"109.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"95.2\" y1=\"43.8\" x2=\"65.2\" y2=\"63.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"316.2\" x2=\"170.6\" y2=\"326.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"270.8\" x2=\"160.6\" y2=\"280.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"225.4\" x2=\"150.6\" y2=\"235.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"180\" x2=\"140.6\" y2=\"190\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"134.6\" x2=\"130.6\" y2=\"144.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"89.2\" x2=\"120.6\" y2=\"99.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"140.6\" y1=\"43.8\" x2=\"110.6\" y2=\"53.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"316.2\" x2=\"216\" y2=\"316.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"270.8\" x2=\"206\" y2=\"270.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"225.4\" x2=\"196\" y2=\"225.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"134.6\" x2=\"176\" y2=\"134.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"89.2\" x2=\"166\" y2=\"89.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"186\" y1=\"43.8\" x2=\"156\" y2=\"43.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"316.2\" x2=\"261.4\" y2=\"306.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"270.8\" x2=\"251.4\" y2=\"260.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"225.4\" x2=\"241.4\" y2=\"215.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"180\" x2=\"231.4\" y2=\"170\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"134.6\" x2=\"221.4\" y2=\"124.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"89.2\" x2=\"211.4\" y2=\"79.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"231.4\" y1=\"43.8\" x2=\"201.4\" y2=\"33.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"316.2\" x2=\"306.8\" y2=\"296.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"270.8\" x2=\"296.8\" y2=\"250.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"225.4\" x2=\"286.8\" y2=\"205.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"180\" x2=\"276.8\" y2=\"160\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"134.6\" x2=\"266.8\" y2=\"114.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"89.2\" x2=\"256.8\" y2=\"69.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"276.8\" y1=\"43.8\" x2=\"246.8\" y2=\"23.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"316.2\" x2=\"352.2\" y2=\"286.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"270.8\" x2=\"342.2\" y2=\"240.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"225.4\" x2=\"332.2\" y2=\"195.4\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"180\" x2=\"322.2\" y2=\"150\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"134.6\" x2=\"312.2\" y2=\"104.6\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"89.2\" x2=\"302.2\" y2=\"59.2\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><line x1=\"322.2\" y1=\"43.8\" x2=\"292.2\" y2=\"13.8\" stroke=\"var(--blue)\" stroke-width=\"2\" marker-end=\"url(#ah9bvfFlowblue)\"/><text x=\"392\" y=\"90\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">紅線：流線</text><text x=\"392\" y=\"140\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">每一點的切線方向</text><text x=\"392\" y=\"172\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:inherit\">都順著箭頭</text><text x=\"392\" y=\"250\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" style=\"font-family:inherit\">旋轉場的流線：圓</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "不只方向，快慢也要等於箭頭的長度"
+          ],
+          "say": "注意：流線要求速度整個等於箭頭。不只方向要對，快慢也要對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "不只方向，快慢也要等於箭頭的長度",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "驗證一條流線",
+      "beats": [
+        {
+          "show": [
+            "證明 $\\mathbf r(t)=\\langle 2\\cos t,\\,2\\sin t\\rangle$ 是 $\\mathbf F=\\langle -y,x\\rangle$ 的流線"
+          ],
+          "say": "例題：證明 2 倍餘弦 t 逗號 2 倍正弦 t，是旋轉場的流線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明 $\\mathbf r(t)=\\langle 2\\cos t,\\,2\\sin t\\rangle$ 是 $\\mathbf F=\\langle -y,x\\rangle$ 的流線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊：速度",
+            "$\\mathbf r'(t)=\\langle -2\\sin t,\\,2\\cos t\\rangle$"
+          ],
+          "say": "左邊算速度：2 倍餘弦 t 微分是負 2 倍正弦 t，2 倍正弦 t 微分是 2 倍餘弦 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊：速度"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf r'(t)=\\langle -2\\sin t,\\,2\\cos t\\rangle$",
+              "on": "倍正#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊：$x=2\\cos t$、$y=2\\sin t$ 代進 $\\mathbf F=\\langle -y,x\\rangle$",
+            "$\\mathbf F(\\mathbf r(t))=\\langle -2\\sin t,\\,2\\cos t\\rangle$"
+          ],
+          "say": "右邊，把曲線的位置代進 F：第一個分量是負 y，就是負 2 倍正弦 t；第二個分量是 x，就是 2 倍餘弦 t。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊：$x=2\\cos t$、$y=2\\sin t$ 代進 $\\mathbf F=\\langle -y,x\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F(\\mathbf r(t))=\\langle -2\\sin t,\\,2\\cos t\\rangle$",
+              "on": "倍正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每個分量都相同，對所有 $t$ 成立 ⇒ 是流線"
+          ],
+          "say": "兩邊每個分量都一樣，而且對所有 t 都成立，所以它是流線：半徑 2 的圓，逆時針走。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每個分量都相同，對所有 $t$ 成立 ⇒ 是流線",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅箭頭：速度 r′(t)，每一刻都等於那一點的 F"
+          ],
+          "say": "動起來看：紅點沿著圓走，紅色箭頭是它的速度。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "flow",
+                  "window": [
+                    -4.6,
+                    4.6,
+                    -3.2,
+                    3.2
+                  ],
+                  "equal": true,
+                  "fn": [
+                    {
+                      "expr": "sqrt(4-x^2)",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        2
+                      ]
+                    },
+                    {
+                      "expr": "-sqrt(4-x^2)",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        2
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "2*cos(t)",
+                        "2*sin(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)+0.45*sin(t+0.45)",
+                        "2*sin(t)+2*cos(t)-0.45*cos(t+0.45)"
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)+0.45*sin(t-0.45)",
+                        "2*sin(t)+2*cos(t)-0.45*cos(t-0.45)"
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "2*cos(t)",
+                      "y": "2*sin(t)",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0.4,
+                      "label": "時間 t"
+                    }
+                  },
+                  "height": 430
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅箭頭：速度 r′(t)，每一刻都等於那一點的 F",
+              "color": "violet",
+              "on": "紅色"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗證一條流線"
+          ],
+          "say": "走一整圈，每一刻速度都貼著圓的切線，長度一直是 2，跟那一點的 F 一模一樣。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "flow",
+                  "window": [
+                    -4.6,
+                    4.6,
+                    -3.2,
+                    3.2
+                  ],
+                  "equal": true,
+                  "fn": [
+                    {
+                      "expr": "sqrt(4-x^2)",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        2
+                      ]
+                    },
+                    {
+                      "expr": "-sqrt(4-x^2)",
+                      "color": "blue",
+                      "domain": [
+                        -2,
+                        2
+                      ]
+                    }
+                  ],
+                  "lines": [
+                    {
+                      "from": [
+                        "2*cos(t)",
+                        "2*sin(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)+0.45*sin(t+0.45)",
+                        "2*sin(t)+2*cos(t)-0.45*cos(t+0.45)"
+                      ],
+                      "color": "red"
+                    },
+                    {
+                      "from": [
+                        "2*cos(t)-2*sin(t)",
+                        "2*sin(t)+2*cos(t)"
+                      ],
+                      "to": [
+                        "2*cos(t)-2*sin(t)+0.45*sin(t-0.45)",
+                        "2*sin(t)+2*cos(t)-0.45*cos(t-0.45)"
+                      ],
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "2*cos(t)",
+                      "y": "2*sin(t)",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "t": {
+                      "min": 0,
+                      "max": 6.28,
+                      "value": 0.4,
+                      "label": "時間 t"
+                    }
+                  },
+                  "height": 430
+                },
+                "vals": {
+                  "t": 6.2
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "快慢不對就不是",
+      "beats": [
+        {
+          "show": [
+            "$\\mathbf r(t)=\\langle 2\\cos 2t,\\,2\\sin 2t\\rangle$：同一個圓，走兩倍快"
+          ],
+          "say": "如果換成 2 倍餘弦 2t、2 倍正弦 2t 呢？路徑是同一個圓，只是走得兩倍快。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbf r(t)=\\langle 2\\cos 2t,\\,2\\sin 2t\\rangle$：同一個圓，走兩倍快"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf r'(t)=\\langle -4\\sin 2t,\\,4\\cos 2t\\rangle$",
+            "$\\mathbf F(\\mathbf r(t))=\\langle -2\\sin 2t,\\,2\\cos 2t\\rangle$"
+          ],
+          "say": "速度的分量是 4 倍；代進 F 的分量卻只有 2 倍。速度剛好是箭頭的 2 倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf r'(t)=\\langle -4\\sin 2t,\\,4\\cos 2t\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F(\\mathbf r(t))=\\langle -2\\sin 2t,\\,2\\cos 2t\\rangle$",
+              "on": "只有"
+            }
+          ]
+        },
+        {
+          "show": [
+            "方向對、長度不對 ⇒ 不是流線"
+          ],
+          "say": "方向對，長度不對，所以照定義它不是流線。軌跡一樣，但走的快慢不對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "方向對、長度不對 ⇒ 不是流線",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　流線說的是「怎麼走」：同一條路，要用對的速度走",
+              "color": "violet",
+              "on": "是流"
+            }
+          ]
+        }
       ],
-      "key": "跟位置向量內積為 0：沿圓的切線",
       "check": 2
     },
     {
-      "title": "證明：圓是流線",
+      "title": "驗證的步驟",
       "beats": [
-        { "show": ["流線：$\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$"],
-          "note": "兩邊各算出來，比一比。",
-          "say": "粒子順著場漂，速度永遠等於所在位置的箭頭，這條路徑叫流線。策略：兩邊各算出來，比一比。",
-          "board": [
-            {"do":"write","line":"流線：${{rp:\\mathbf r'(t)}}={{fr:\\mathbf F(\\mathbf r(t))}}$","tint":{"rp":"blue","fr":"violet"},"on":"這條路徑"}
-          ] },
-        { "show": ["$\\mathbf r(t)=\\langle 2\\cos t,2\\sin t\\rangle$","$\\mathbf r'(t)=\\langle -2\\sin t,2\\cos t\\rangle$"],
-          "say": "左邊：半徑二的圓，速度是負二 sine t、二 cosine t。",
-          "board": [
-            {"do":"write","line":"$\\mathbf r(t)=\\langle 2\\cos t,2\\sin t\\rangle$","on":"左邊"},
-            {"do":"write","line":"${{rp:\\mathbf r'(t)}}={{v1:\\langle -2\\sin t,2\\cos t\\rangle}}$","on":"速度是"}
-          ] },
-        { "show": ["$\\mathbf r'(t)$＝速度"],
-          "note": "各分量各自對 $t$ 微分。",
-          "say": "r prime t 是位置對時間的變化率，也就是速度。每個分量各自微分：二 cosine t 變成負二 sine t。",
-          "board": [
-            {"do":"focus","term":"rp","color":"blue"},
-            {"do":"write","line":"$(2\\cos t)'=-2\\sin t$","on":"二 cosine t"}
-          ] },
-        { "show": ["$\\mathbf F(\\mathbf r(t))=\\langle -2\\sin t,2\\cos t\\rangle$"],
-          "note": "$x=2\\cos t$、$y=2\\sin t$ 代進 $\\langle -y,x\\rangle$。",
-          "why": {"ask":"為什麼代 $x=2\\cos t$、$y=2\\sin t$？","say":"右邊的箭頭，為什麼要代圓上這一點的座標？","options":[{"label":"要比的是粒子所在那一點的箭頭","correct":true},{"label":"只比起點 $(2,0)$ 的箭頭就夠","why":"只比起點不夠：粒子走到哪裡，就要比哪裡的箭頭。"},{"label":"$\\mathbf F$ 的分量裡本來就有 $t$","why":"$\\mathbf F$ 只認位置 $x$、$y$；$t$ 是透過粒子的位置才進來的。"}]},
-          "say": "粒子在時刻 t 的位置是二 cosine t、二 sine t，把它代進旋轉場，就是那一點的箭頭。",
-          "board": [
-            {"do":"write","line":"${{fr:\\mathbf F(\\mathbf r(t))}}={{v2:\\langle -2\\sin t,2\\cos t\\rangle}}$","on":"右邊的箭頭"},
-            {"do":"underline","term":"fr","label":"代圓上的點","why":true,"on":"把它代進"}
-          ] },
-        { "show": ["$t=0$：箭頭 $\\langle 0,2\\rangle$"],
-          "say": "t 是零時粒子在二、零，那裡的箭頭是零、二，正好等於速度，也是零、二。",
-          "board": [
-            {"do":"focus","term":"fr","color":"violet"},
-            {"do":"focus","term":"v1","color":"blue","on":"等於速度"}
-          ] },
-        { "show": ["每個 $t$ 都相等 ⇒ 是流線"],
-          "note": "半徑 $2$ 的圓，逆時針繞。",
-          "why": {"ask":"為什麼這樣就證完了？","say":"兩邊算出來一樣。為什麼這樣就證完了？","options":[{"label":"每個 $t$ 都有 $\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$","correct":true},{"label":"箭頭都跟位置向量垂直","why":"垂直只說方向沿著切線，沒說長度一樣、也沒說逆時針；流線要速度整個相等。"},{"label":"$t=0$ 時兩邊相等","why":"只檢查一個時刻不夠：定義要每個 $t$ 都相等。"}]},
-          "say": "推導對每個 t 都成立，速度處處等於所在位置的箭頭，所以這個圓就是流線，逆時針繞。",
-          "board": [
-            {"do":"underline","term":"v1","on":"兩邊算出來"},
-            {"do":"underline","term":"v2","on":"一樣"},
-            {"do":"keep","n":2,"why":true,"on":"推導對每個"},
-            {"do":"plot","graph":{"window":[-4.2,4.2,-2.75,2.75],"equal":true,"ticks":false,"curves":[{"param":{"x":"2*cos(t)","y":"2*sin(t)","t":[0,6.2832]},"color":"blue"}],"arrows":[{"from":[2,0],"to":[2,0.7],"color":"violet"},{"from":[1.414,1.414],"to":[0.919,1.909],"color":"violet"},{"from":[0,2],"to":[-0.7,2],"color":"violet"},{"from":[-1.414,1.414],"to":[-1.909,0.919],"color":"violet"},{"from":[-2,0],"to":[-2,-0.7],"color":"violet"},{"from":[-1.414,-1.414],"to":[-0.919,-1.909],"color":"violet"},{"from":[0,-2],"to":[0.7,-2],"color":"violet"},{"from":[1.414,-1.414],"to":[1.909,-0.919],"color":"violet"}],"labels":[{"x":2.15,"y":-0.3,"text":"2","anchor":"start"}]},"why":true,"on":"所以這個圓"}
-          ] }
+        {
+          "show": [
+            "驗證 $\\mathbf r(t)$ 是 $\\mathbf F$ 的流線"
+          ],
+          "say": "把驗證流線的步驟排排看。"
+        }
       ],
-      "key": "兩邊各算出來，每個 $t$ 都要相等",
       "proof": true,
-      "of": "ex1",
-      "skeleton": "直接",
-      "check": 3
+      "order": {
+        "ask": "驗證 $\\mathbf r(t)$ 是 $\\mathbf F$ 的流線",
+        "steps": [
+          {
+            "label": "每個分量對 $t$ 微分，得到 $\\mathbf r'(t)$"
+          },
+          {
+            "label": "把 $x(t)$、$y(t)$ 代進 $\\mathbf F$，得到 $\\mathbf F(\\mathbf r(t))$",
+            "why": "先要有上一步：每個分量對 $t$ 微分，得到 $\\mathbf r'(t)$"
+          },
+          {
+            "label": "逐個分量比較兩邊",
+            "why": "先要有上一步：把 $x(t)$、$y(t)$ 代進 $\\mathbf F$，得到 $\\mathbf F(\\mathbf r(t))$"
+          },
+          {
+            "label": "對所有 $t$ 都相等，才是流線",
+            "why": "先要有上一步：逐個分量比較兩邊"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 向量場：每一點配一支箭頭 $\\mathbf F=\\langle P,Q\\rangle$",
+            "• 畫法：起點放在那一點；太長就等比例縮短"
+          ],
+          "say": "整理一下：向量場是每一點配一支箭頭；三種基本樣子是均勻、發散、旋轉；流線的速度處處等於箭頭。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 向量場：每一點配一支箭頭 $\\mathbf F=\\langle P,Q\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "• 畫法：起點放在那一點；太長就等比例縮短",
+              "on": "每一"
+            },
+            {
+              "do": "write",
+              "line": "• 三種樣子：均勻、發散 $\\langle x,y\\rangle$、旋轉 $\\langle -y,x\\rangle$",
+              "on": "三種"
+            },
+            {
+              "do": "write",
+              "line": "• 重力型：指向原點，長度 $\\frac1{r^2}$",
+              "on": "發散"
+            },
+            {
+              "do": "write",
+              "line": "• 流線：$\\mathbf r'(t)=\\mathbf F(\\mathbf r(t))$，方向、快慢都要對",
+              "on": "的速"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：梯度場"
+          ],
+          "say": "下一課，看一種特別重要的向量場：梯度場。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：梯度場"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["vector-calculus", "vector"],
-    "fine": ["vector-field-evaluate", "vector-field-sketch", "vector-field-flow-line"]
+    "coarse": [
+      "vector-calculus",
+      "vector"
+    ],
+    "fine": [
+      "vector-field-evaluate",
+      "vector-field-sketch",
+      "vector-field-flow-line"
+    ]
   },
   "practice": [
-    { "id": "cg-9b1-001", "core": true, "trains": "vector-field-evaluate" },
-    { "id": "cg-9b1-004", "core": true, "trains": "vector-field-sketch" },
-    { "id": "cg-9b1-006", "core": true, "trains": "vector-field-sketch" },
-    { "id": "cg-9b1-008", "core": true, "trains": "vector-field-flow-line" },
-    { "id": "cg-9b1-002", "trains": "vector-field-evaluate" },
-    { "id": "cg-9b1-003", "trains": "vector-field-evaluate" },
-    { "id": "cg-9b1-005", "trains": "vector-field-sketch" },
-    { "id": "cg-9b1-007", "trains": "vector-field-flow-line" }
-  ]
+    {
+      "id": "cg-9b1-001",
+      "core": true,
+      "trains": "vector-field-evaluate"
+    },
+    {
+      "id": "cg-9b1-004",
+      "core": true,
+      "trains": "vector-field-sketch"
+    },
+    {
+      "id": "cg-9b1-006",
+      "core": true,
+      "trains": "vector-field-sketch"
+    },
+    {
+      "id": "cg-9b1-008",
+      "core": true,
+      "trains": "vector-field-flow-line"
+    },
+    {
+      "id": "cg-9b1-002",
+      "trains": "vector-field-evaluate"
+    },
+    {
+      "id": "cg-9b1-003",
+      "trains": "vector-field-evaluate"
+    },
+    {
+      "id": "cg-9b1-005",
+      "trains": "vector-field-sketch"
+    },
+    {
+      "id": "cg-9b1-007",
+      "trains": "vector-field-flow-line"
+    }
+  ],
+  "gaps": []
 }

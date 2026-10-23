@@ -1,0 +1,372 @@
+{
+  "id": "riemann-sum-notation",
+  "title": "用和式寫定積分",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["riemann-sum-intuition"],
+  "next": ["riemann-sum-compute"],
+  "related": ["ftc-part2", "riemann-integrability"],
+  "objectives": [
+    "讀寫 $\\sum$ 記號，會把 $R_n$ 寫成 $\\sum f(a+i\\Delta x)\\Delta x$。",
+    "說得出定積分的定義：$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum f(x_i)\\Delta x$。",
+    "看到一個和式的極限，會認出它是哪個 $f$ 在哪個區間上的定積分。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① $\\sum$：把一串加法寫短",
+      "body": [
+        "$\\sum_{i=1}^{n} a_i$ 表示 $a_1+a_2+\\dots+a_n$。$i$ 是編號，從下面的數跑到上面的數。例：$\\sum_{i=1}^{4} i^2=1+4+9+16=30$。",
+        "常數可以提出來：$\\sum c\\cdot a_i=c\\sum a_i$；加法可以拆：$\\sum (a_i+b_i)=\\sum a_i+\\sum b_i$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 把右端點和寫成一行",
+      "body": [
+        "$[a,b]$ 切成 $n$ 等分：$\\Delta x=\\frac{b-a}{n}$。第 $i$ 個分點是 $x_i=a+i\\Delta x$（$i=0$ 時是 $a$，$i=n$ 時是 $b$）。",
+        "右端點和取第 1 到第 $n$ 個分點：$R_n=\\sum_{i=1}^{n} f(a+i\\Delta x)\\Delta x$。左端點和取第 0 到第 $n-1$ 個。"
+      ],
+      "tex": ["R_n=\\sum_{i=1}^{n} f\\!\\left(a+i\\,\\frac{b-a}{n}\\right)\\frac{b-a}{n}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 定積分的定義",
+      "body": [
+        "對連續函數，$n\\to\\infty$ 時 $R_n$ 會收斂，極限就定義成定積分：",
+        "記號就是從這裡來的：拉長的 S 是「Sum」，$\\Delta x$ 變得無限小，寫成 $dx$。所以 $\\int_a^b f(x)\\,dx$ 讀起來就是「把 $f(x)\\cdot dx$ 從 $a$ 加到 $b$」。"
+      ],
+      "tex": ["\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,\\Delta x"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 反過來讀：這個和是哪個積分？",
+      "body": [
+        "考試常給 $\\lim\\sum$，要你認出積分。三件事要找：$\\Delta x$ 是什麼（決定區間長度）、$f$ 裡面的 $x_i$ 長什麼樣（決定起點）、$f$ 本身。",
+        "最常見的樣子：$\\sum_{k=1}^{n} \\frac{1}{n} f\\left(\\frac{k}{n}\\right)\\to\\int_0^1 f(x)\\,dx$。$\\Delta x=\\frac{1}{n}$，$\\frac{k}{n}$ 從 $\\frac{1}{n}$ 跑到 $1$，所以區間是 $[0,1]$。",
+        "沒有現成的 $\\frac{1}{n}$，就先湊：$\\frac{1}{n+k}=\\frac{1}{n}\\cdot\\frac{1}{1+k/n}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "一般的定義（給想知道的人）",
+      "body": [
+        "完整的定義不要求等分，也不要求取端點：任意切割 $a=x_0<x_1<\\dots<x_n=b$，每一段任取一點 $x_i^*$，當最寬那一段的寬度 $\\to 0$ 時，$\\sum f(x_i^*)(x_i-x_{i-1})$ 若都趨近同一個數，$f$ 就叫 Riemann 可積。",
+        "連續函數一定可積，所以用等分、右端點去算就夠了。為什麼成立，以及什麼函數不可積，在〈Riemann 可積〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "寫出右端點和",
+      "prompt": "把 $\\int_1^3 x^2\\,dx$ 的右端點和 $R_n$ 用 $\\sum$ 寫出來，並算 $R_4$。",
+      "steps": [
+        "$\\Delta x=\\frac{3-1}{n}=\\frac{2}{n}$；$x_i=1+\\frac{2i}{n}$。",
+        "$R_n=\\sum_{i=1}^{n} \\left(1+\\frac{2i}{n}\\right)^2\\cdot\\frac{2}{n}$，而 $\\int_1^3 x^2\\,dx=\\lim_{n\\to\\infty}R_n$。",
+        "$n=4$：$\\Delta x=\\frac{1}{2}$，右端點 $1.5$、$2$、$2.5$、$3$，高 $2.25$、$4$、$6.25$、$9$，和 $21.5$。$R_4=21.5\\times\\frac{1}{2}=10.75$。"
+      ],
+      "answer": "$R_n=\\sum_{i=1}^{n} \\left(1+\\frac{2i}{n}\\right)^2\\frac{2}{n}$；$R_4=\\frac{43}{4}$",
+      "claim": "0.5*(1.5^2+2^2+2.5^2+3^2) == 43/4 ;; LIM(2+4*(n+1)/n+4*(n+1)*(2*n+1)/(3*n^2), inf) == INT(x^2,1,3)",
+      "note": "第二條驗算的是 $R_n$ 化簡後的極限等於 $\\int_1^3 x^2\\,dx$；怎麼化簡在下一課。"
+    },
+    {
+      "title": "認出積分（兩種讀法都對）",
+      "prompt": "$\\lim_{n\\to\\infty}\\sum_{k=1}^{n} \\frac{3}{n}\\sqrt{1+\\frac{3k}{n}}$ 是哪個定積分？",
+      "steps": [
+        "$\\Delta x=\\frac{3}{n}$，所以區間長度是 $3$。",
+        "讀法一：令 $x_k=1+\\frac{3k}{n}$，從 $1+\\frac{3}{n}$ 跑到 $4$，區間 $[1,4]$，$f(x)=\\sqrt{x}$。得 $\\int_1^4 \\sqrt{x}\\,dx$。",
+        "讀法二：令 $x_k=\\frac{3k}{n}$，區間 $[0,3]$，$f(x)=\\sqrt{1+x}$。得 $\\int_0^3 \\sqrt{1+x}\\,dx$。",
+        "兩個積分是同一塊面積左右平移，值相同（之後算得出是 $\\frac{14}{3}$）。"
+      ],
+      "answer": "$\\int_1^4 \\sqrt{x}\\,dx$（或 $\\int_0^3 \\sqrt{1+x}\\,dx$）",
+      "claim": "INT(sqrt(x),1,4) == INT(sqrt(1+x),0,3) ;; INT(sqrt(x),1,4) == 14/3"
+    },
+    {
+      "title": "先湊出 $\\frac{1}{n}$",
+      "prompt": "$\\lim_{n\\to\\infty}\\sum_{k=1}^{n} \\frac{1}{n+k}$ 是哪個定積分？",
+      "problemId": "cx-ftc-002",
+      "steps": [
+        "和式裡看不到 $\\frac{1}{n}$。把 $n$ 從分母提出來：$\\frac{1}{n+k}=\\frac{1}{n}\\cdot\\frac{1}{1+k/n}$。",
+        "現在是 $\\sum \\frac{1}{n} f\\left(\\frac{k}{n}\\right)$，$f(x)=\\frac{1}{1+x}$，$\\Delta x=\\frac{1}{n}$，區間 $[0,1]$。",
+        "所以極限是 $\\int_0^1 \\frac{1}{1+x}\\,dx$。它的值 $\\ln 2$ 要用〈微積分基本定理 II〉算。"
+      ],
+      "answer": "$\\int_0^1 \\frac{1}{1+x}\\,dx$（$=\\ln 2$）",
+      "claim": "INT(1/(1+x),0,1) == ln(2)"
+    }
+  ],
+  "pitfalls": [
+    "$x_i$ 寫成 $i\\Delta x$，忘了從 $a$ 出發。",
+    "$\\Delta x$ 寫成 $\\frac{1}{n}$，忘了乘區間長度 $b-a$。",
+    "認積分時把區間寫成 $[0,n]$：$\\frac{k}{n}$ 只從 $\\frac{1}{n}$ 跑到 $1$。",
+    "把 $\\Delta x$ 的 $\\frac{1}{n}$ 留在被積函數裡，變成 $\\int \\frac{f(x)}{n}\\,dx$。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\sum_{i=1}^{4} i^2$ 是？",
+      "options": [
+        { "label": "$30$", "correct": true },
+        { "label": "$16$", "why": "$16$ 只是最後一項 $4^2$。$\\sum$ 要從 $i=1$ 加到 $i=4$。" },
+        { "label": "$10$", "why": "$10$ 是 $1+2+3+4$，忘了每一項要平方。" }
+      ]
+    },
+    {
+      "ask": "$\\int_2^5 f(x)\\,dx$ 的右端點和中，$x_i$ 是？",
+      "options": [
+        { "label": "$2+\\frac{3i}{n}$", "correct": true },
+        { "label": "$\\frac{3i}{n}$", "why": "你忘了從 $a=2$ 出發。$i=0$ 時 $x_i$ 應該是 $2$。" },
+        { "label": "$2+\\frac{i}{n}$", "why": "$\\Delta x=\\frac{5-2}{n}=\\frac{3}{n}$，不是 $\\frac{1}{n}$。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{n\\to\\infty}\\sum_{k=1}^{n} \\frac{1}{n}e^{k/n}$ 等於？",
+      "options": [
+        { "label": "$\\int_0^1 e^x\\,dx$", "correct": true },
+        { "label": "$\\int_0^n e^x\\,dx$", "why": "$\\frac{k}{n}$ 只從 $\\frac{1}{n}$ 跑到 $1$，區間是 $[0,1]$。積分上下限裡不會出現 $n$。" },
+        { "label": "$\\int_0^1 \\frac{e^x}{n}\\,dx$", "why": "$\\frac{1}{n}$ 就是 $\\Delta x$，取極限後變成 $dx$，不會留在被積函數裡。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{n\\to\\infty}\\sum_{k=1}^{n} \\frac{2}{n}\\left(\\frac{2k}{n}\\right)^2$ 等於？",
+      "options": [
+        { "label": "$\\int_0^2 x^2\\,dx$", "correct": true },
+        { "label": "$\\int_0^1 x^2\\,dx$", "why": "$\\Delta x=\\frac{2}{n}$ 表示區間長度是 $2$；$\\frac{2k}{n}$ 也一路跑到 $2$。" },
+        { "label": "$\\int_0^2 2x^2\\,dx$", "why": "$\\frac{2}{n}$ 整個是 $\\Delta x$，那個 $2$ 屬於寬度，不是被積函數的係數。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "$\\sum$：把加法寫短",
+      "beats": [
+        { "show": ["$\\sum_{i=1}^{n} a_i=a_1+a_2+\\dots+a_n$"],
+          "note": "$i$ 是編號，從下面的數跑到上面的數。",
+          "say": "一長串加法太長，用 sigma 寫短。i 是編號，從底下的一開始，一路跑到上面的 n。",
+          "board": [
+            {"do":"write","line":"${{s:a_1+a_2+\\dots+a_n}}$"},
+            {"do":"transform","line":"$\\sum_{i={{lo:1}}}^{{{hi:n}}} a_i={{s:a_1+a_2+\\dots+a_n}}$","on":"用 sigma"},
+            {"do":"focus","term":"lo","on":"底下的一"},
+            {"do":"focus","term":"hi","on":"一路跑到"}
+          ] },
+        { "show": ["$\\sum c\\cdot a_i=c\\sum a_i$","$\\sum(a_i+b_i)=\\sum a_i+\\sum b_i$"],
+          "say": "每一項都乘的常數可以提到外面；兩串加在一起的，也可以拆成兩個 sigma。",
+          "board": [
+            {"do":"write","line":"$\\sum c\\cdot a_i=c\\sum a_i$"},
+            {"do":"write","line":"$\\sum(a_i+b_i)=\\sum a_i+\\sum b_i$","on":"兩串"}
+          ] },
+        { "show": ["$\\sum_{i=1}^{4} i^2$"],
+          "note": "$i$ 從 $1$ 跑到 $4$，每一項都平方。",
+          "say": "試一個：i 從一跑到四，每一項是 i 平方，全部加起來。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sum_{i=1}^{4} {{sq:i^2}}$","on":"試一個"},
+            {"do":"focus","term":"sq","on":"每一項是"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "右端點和寫成一行",
+      "beats": [
+        { "show": ["$\\Delta x=\\frac{b-a}{n}$，$x_i=a+i\\Delta x$"],
+          "note": "$i=0$ 時是 $a$，$i=n$ 時是 $b$。",
+          "say": "切成 n 等分，每一步寬 delta x。第 i 個分點，就是從 a 出發走 i 步。",
+          "board": [
+            {"do":"write","line":"${{w:\\Delta x}}=\\frac{b-a}{n}$","tint":{"w":"blue"}},
+            {"do":"write","line":"$x_i={{a:a}}+i{{w:\\Delta x}}$","on":"第 i 個分點"},
+            {"do":"focus","term":"a","label":"起點","on":"出發"}
+          ] },
+        { "show": ["$R_n=\\sum_{i=1}^{n} f(a+i\\Delta x)\\Delta x$"],
+          "note": "左端點和取第 $0$ 到第 $n-1$ 個。",
+          "say": "右端點和取第一到第 n 個分點，高乘寬再加起來，一行就寫完了。",
+          "board": [
+            {"do":"write","line":"$R_n=\\sum_{i=1}^{n} {{h:f(a+i\\Delta x)}}{{w:\\Delta x}}$"},
+            {"do":"underline","term":"h","label":"高","on":"高乘寬"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "定積分的定義",
+      "beats": [
+        { "show": ["$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,\\Delta x$"],
+          "note": "對連續函數，這個極限存在。",
+          "say": "n 趨近無限大時，這個和的極限，就定義成定積分。",
+          "board": [
+            {"do":"write","line":"$\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,{{dx:\\Delta x}}$","tint":{"dx":"blue"}},
+            {"do":"transform","line":"${{ig:\\int_a^b}} f(x)\\,{{d2:dx}}=\\lim_{n\\to\\infty}{{sm:\\sum_{i=1}^{n}}} f(x_i)\\,{{dx:\\Delta x}}$","tint":{"d2":"blue"},"on":"定義成"}
+          ] },
+        { "show": ["拉長的 S 是 Sum，$\\Delta x$ 變成 $dx$"],
+          "say": "記號就是從這裡來的：積分號是拉長的 S，代表加總；delta x 變得無限小，寫成 dx。",
+          "board": [
+            {"do":"underline","term":"ig","label":"拉長的 S","on":"積分號是"},
+            {"do":"focus","term":"d2","color":"blue","label":"無限小的 Δx","on":"delta x 變得"}
+          ] },
+        { "show": ["$\\int_1^3 x^2\\,dx$：$\\Delta x=\\frac{2}{n}$，$x_i=1+\\frac{2i}{n}$"],
+          "say": "例如 x 平方從一到三。區間長度二，所以寬是 n 分之二，分點從一出發。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_1^3 x^2\\,dx$","on":"例如"},
+            {"do":"write","line":"${{w:\\Delta x=\\frac{2}{n}}}$，$x_i={{st:1}}+\\frac{2i}{n}$","tint":{"w":"blue"},"on":"所以寬是"},
+            {"do":"focus","term":"st","label":"起點","on":"分點從一"}
+          ] },
+        { "show": ["$n=4$：右端點 $1.5$、$2$、$2.5$、$3$"],
+          "note": "高 $2.25$、$4$、$6.25$、$9$，和 $21.5$。",
+          "say": "先拿 n 等於四算一次。四個右端點平方，高的總和是二十一點五。",
+          "board": [
+            {"do":"write","line":"$n=4$：右端點 $1.5$、$2$、$2.5$、$3$"},
+            {"do":"write","line":"高：$2.25+4+6.25+9=21.5$","on":"四個右端點平方"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$R_4$ 是？",
+        "options": [
+          {
+            "label": "$21.5\\times\\frac{1}{2}=10.75$",
+            "correct": true
+          },
+          {
+            "label": "$21.5$",
+            "why": "那只是高的總和，還要乘寬 $\\Delta x=\\frac{1}{2}$。"
+          },
+          {
+            "label": "$(1+2.25+4+6.25)\\times\\frac{1}{2}$",
+            "why": "那是左端點 $1$、$1.5$、$2$、$2.5$。右端點是 $1.5$ 到 $3$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "反過來讀",
+      "beats": [
+        { "show": ["找三件事：$\\Delta x$、$x_i$、$f$"],
+          "note": "$\\Delta x$ 決定區間長度，$x_i$ 決定起點。",
+          "say": "考試常反過來，給一個極限的和，要你認出是哪個積分。找三件事：寬、分點、函數。",
+          "board": [
+            {"do":"write","line":"找三件事：${{w:\\Delta x}}$、${{x:x_i}}$、${{f:f}}$","tint":{"w":"blue"}},
+            {"do":"focus","term":"w","color":"blue","on":"寬"}
+          ] },
+        { "show": ["$\\sum_{k=1}^{n}\\frac{1}{n}f\\left(\\frac{k}{n}\\right)\\to\\int_0^1 f(x)\\,dx$"],
+          "note": "$\\frac{k}{n}$ 從 $\\frac{1}{n}$ 跑到 $1$。",
+          "say": "最常見的樣子：n 分之一是寬，n 分之 k 從很靠近零跑到一，所以區間是零到一。",
+          "board": [
+            {"do":"write","line":"$\\sum_{k=1}^{n}{{dw:\\frac{1}{n}}}f\\left({{p:\\frac{k}{n}}}\\right)$"},
+            {"do":"underline","term":"dw","color":"blue","label":"寬","on":"是寬"},
+            {"do":"underline","term":"p","on":"從很靠近零"},
+            {"do":"transform","line":"$\\sum_{k=1}^{n}{{dw:\\frac{1}{n}}}f\\left({{p:\\frac{k}{n}}}\\right)\\to {{in:\\int_0^1}} f(x)\\,dx$","on":"所以區間"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "兩種讀法都對",
+      "beats": [
+        { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{3}{n}\\sqrt{1+\\frac{3k}{n}}$"],
+          "note": "$\\Delta x=\\frac{3}{n}$：區間長度 $3$。",
+          "say": "這一個，寬是 n 分之三，所以區間長度是三。起點要看根號裡怎麼讀。",
+          "board": [
+            {"do":"write","line":"$\\lim\\sum_{k=1}^{n}{{w:\\frac{3}{n}}}\\sqrt{{{in:1+\\frac{3k}{n}}}}$","tint":{"w":"blue"}},
+            {"do":"underline","term":"w","color":"blue","label":"區間長度 3","on":"寬是"},
+            {"do":"underline","term":"in","label":"怎麼讀","on":"根號裡"}
+          ] },
+        { "show": ["$x_k=1+\\frac{3k}{n}$ → $\\int_1^4\\sqrt{x}\\,dx$"],
+          "say": "讀法一：分點是一加 n 分之三 k，從一跑到四，函數是根號 x。",
+          "board": [
+            {"do":"write","line":"讀法一：$x_k={{in:1+\\frac{3k}{n}}}$"},
+            {"do":"transform","line":"讀法一：$x_k={{in:1+\\frac{3k}{n}}}$ → $\\int_1^4\\sqrt{x}\\,dx$","on":"從一跑到四"}
+          ] },
+        { "show": ["$x_k=\\frac{3k}{n}$ → $\\int_0^3\\sqrt{1+x}\\,dx$"],
+          "note": "同一塊面積左右平移，值相同。",
+          "say": "讀法二：分點是 n 分之三 k，從零跑到三，函數是根號一加 x。兩個都對。",
+          "board": [
+            {"do":"write","line":"讀法二：$x_k=\\frac{3k}{n}$"},
+            {"do":"transform","line":"讀法二：$x_k=\\frac{3k}{n}$ → $\\int_0^3\\sqrt{1+x}\\,dx$","on":"從零跑到三"}
+          ] },
+        { "show": ["兩個積分畫出來：同一塊面積"],
+          "say": "畫出來：藍色是根號 x 從一到四，紅色是根號一加 x 從零到三。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,5,-1,3],"curves":[{"expr":"sqrt(x)","domain":[1,4],"color":"blue"},{"expr":"sqrt(1+x)","domain":[0,3],"color":"red"}],"fills":[{"expr":"sqrt(x)","from":1,"to":4,"color":"blue"},{"expr":"sqrt(1+x)","from":0,"to":3,"color":"red"}]}}
+          ] },
+        { "show": ["$\\int_1^4\\sqrt{x}\\,dx=\\int_0^3\\sqrt{1+x}\\,dx$"],
+          "note": "把 $x$ 換成 $1+x$，圖形往左平移 1。",
+          "say": "把 x 換成一加 x，圖形整個往左平移，寬和高都沒變。面積不變，所以兩個積分都是三分之十四。",
+          "board": [
+            {"do":"write","line":"${{a:\\int_1^4\\sqrt{x}\\,dx}}={{b:\\int_0^3\\sqrt{1+x}\\,dx}}$"},
+            {"do":"write","line":"值都是 ${{v:\\frac{14}{3}}}$","on":"面積不變"}
+          ] }
+      ],
+      "key": "$x_k$ 的起點可平移，積分範圍跟著換",
+      "check": 3
+    },
+    {
+      "title": "先湊出 $\\frac{1}{n}$",
+      "beats": [
+        { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{1}{n+k}$"],
+          "note": "和式裡看不到 $\\frac{1}{n}$。",
+          "say": "這一題找不到 n 分之一當寬，那就自己湊出來。",
+          "board": [
+            {"do":"write","line":"$\\lim\\sum_{k=1}^{n}{{f:\\frac{1}{n+k}}}$"},
+            {"do":"underline","term":"f","label":"沒有寬","on":"當寬"}
+          ] },
+        { "show": ["$\\frac{1}{n+k}=\\frac{1}{n}\\cdot\\frac{1}{1+k/n}$"],
+          "note": "把 $n$ 從分母提出來。",
+          "say": "把分母的 n 提出來，前面就有了 n 分之一，後面剩下一加 n 分之 k 分之一。",
+          "board": [
+            {"do":"transform","line":"${{f:\\frac{1}{n+k}}}={{a:\\frac{1}{n}}}\\cdot{{b:\\frac{1}{1+k/n}}}$","tint":{"a":"blue"}},
+            {"do":"circle","term":"a","color":"blue","label":"寬","on":"前面就有了"},
+            {"do":"focus","term":"b","on":"後面剩下"}
+          ] },
+        { "show": ["把 $k/n$ 當成 $x$：函數是 $\\frac{1}{1+x}$"],
+          "say": "把 n 分之 k 當成 x，後面那一塊就是一加 x 分之一，這就是函數。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1+{{q:k/n}}}$"},
+            {"do":"focus","term":"q","on":"n 分之 k"},
+            {"do":"write","line":"$\\frac{1}{1+{{q:k/n}}}\\;\\to\\;\\frac{1}{1+x}$","on":"就是一加"}
+          ] },
+        { "show": ["$k/n$ 從 $1/n$ 跑到 $1$"],
+          "note": "寬 $\\frac{1}{n}$，$n$ 條，總長 $1$。",
+          "say": "k 從一跑到 n，所以 n 分之 k 從 n 分之一跑到一。寬是 n 分之一，總長就是一。",
+          "board": [
+            {"do":"write","line":"$k=1$：$\\frac{1}{n}$；$k=n$：$1$"},
+            {"do":"write","line":"總長 $n\\cdot\\frac{1}{n}=1$","on":"總長"}
+          ] }
+      ],
+      "key": "提出 $\\frac{1}{n}$，寫成 $\\frac{k}{n}$ 的函數",
+      "predict": {
+        "ask": "所以極限是？",
+        "options": [
+          {
+            "label": "$\\int_0^1\\frac{1}{1+x}\\,dx$",
+            "correct": true
+          },
+          {
+            "label": "$\\int_0^n\\frac{1}{1+x}\\,dx$",
+            "why": "$\\frac{k}{n}$ 只從 $\\frac{1}{n}$ 跑到 $1$，上下限裡不會有 $n$。"
+          },
+          {
+            "label": "$\\int_0^1\\frac{1}{x}\\,dx$",
+            "why": "$\\frac{k}{n}$ 換成 $x$，$\\frac{1}{1+k/n}$ 變成 $\\frac{1}{1+x}$，那個 $1$ 還在。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": ["riemann-sum"],
+    "fine": ["riemann-sigma", "riemann-notation-write", "riemann-limit-definition", "riemann-notation-identify"]
+  },
+  "practice": [
+    { "id": "lec-06-q1a", "core": true, "trains": "riemann-notation-write" },
+    { "id": "refine-integrals-016", "core": true, "trains": "riemann-limit-definition" },
+    { "id": "cg-4b-006", "core": true, "trains": "riemann-notation-identify" },
+    { "id": "cg-4b-007", "core": true, "trains": "riemann-notation-identify" },
+    { "id": "cg-4b-009", "core": true, "trains": "riemann-notation-write" },
+    { "id": "cg-4b-011", "core": true, "trains": "riemann-sigma" },
+    { "id": "cg-4b-008", "trains": "riemann-notation-identify" },
+    { "id": "cg-4b-010", "trains": "riemann-notation-write" },
+    { "id": "cg-4b-012", "trains": "riemann-sigma" },
+    { "id": "lm-rs-014", "challenge": true, "trains": "riemann-notation-identify", "note": "挑戰：分母多了一個 $k$，它不是標準的 Riemann 和；先證明它跟 $\\sum \\frac{k}{n^2}$ 的差趨近 $0$。" },
+    { "id": "refine-limits-070", "challenge": true, "trains": "riemann-limit-definition" }
+  ],
+  "gaps": []
+}

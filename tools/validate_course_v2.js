@@ -332,11 +332,15 @@ function leakWarn(id, L, sec, where) {
 
 function checkSections(id, L) {
   const S = L.sections;
+  // 交付的筆記本課（source: "notebook"，tools/import_notebook.js 從 .md 轉的）：內容照交來的原樣（一節多長、幾句、題目放哪裡都是寫課的人定的），
+  // 所以「長度與數量」的規則不套：節數、句數、show／note／say 的字數、一節的總字數、數字規則（課文就是它自己）、一節恰好一個動作、
+  // predict 恰好 3 個選項、證明節的 of／skeleton（排順序題借證明節的 order 畫面）。格式、KaTeX、旁白的符號、題目的結構照驗。
+  const loose = L.source === "notebook";
   if (S === undefined) return "";
   if (!Array.isArray(S)) { err(id, "sections 要是陣列"); return ""; }
   // 有證明節的課可以多一節（證明另外拆成一節，原本的切法不用硬擠）
   const maxSec = S.some((sec) => sec && sec.proof) ? 7 : 6;
-  if (S.length < 4 || S.length > maxSec) err(id, `sections 要 4–${maxSec} 節，現在 ${S.length}`);
+  if (!loose && (S.length < 4 || S.length > maxSec)) err(id, `sections 要 4–${maxSec} 節，現在 ${S.length}`);
   const figs = L.figures || [];
   const widget = (k) => Number.isInteger(k) && figs[k] && figs[k].widget ? figs[k] : null;
   const inRange = (fig, v) => { const s = Figures.sliderOf(fig); return Number.isFinite(v) && v >= s.min - 1e-9 && v <= s.max + 1e-9; };
@@ -360,30 +364,30 @@ function checkSections(id, L) {
       }
     }
     if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
-    else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
+    else if (!loose && cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
     const beats = Array.isArray(sec.beats) ? sec.beats : [];
-    if (beats.length < 2 || beats.length > 6) err(id, `${where} 要 2–6 句（beats），現在 ${beats.length}`);
+    if (loose ? !beats.length : beats.length < 2 || beats.length > 6) err(id, `${where} 要 2–6 句（beats），現在 ${beats.length}`);
     const local = new Set(known);
     let shown = cjkLen(sec.title);
     let peak = 0; // 證明節：句子出到一半、底下掛著「為什麼」的那一刻，畫面上的字也算
     const texts = [sec.title];
     const spoken = [];
-    if (sec.proof !== undefined) checkProof(id, L, sec, where, texts);
+    if (sec.proof !== undefined) checkProof(id, L, sec, where, texts, loose);
     else ["of", "skeleton", "order", "where"].filter((k) => sec[k] !== undefined).forEach((k) => err(id, `${where} 的 ${k} 只能用在證明節（proof: true）`));
     beats.forEach((b, bi) => {
       const at = `${where}第 ${bi + 1} 句`;
       const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say", "why", "board"].includes(k));
       if (bad.length) err(id, `${at} 多了不認得的欄位：${bad.join("、")}`);
-      if (!Array.isArray(b.show) || !b.show.length || b.show.length > 2) err(id, `${at} 的 show 要 1–2 行`);
+      if (!Array.isArray(b.show) || !b.show.length || (!loose && b.show.length > 2)) err(id, `${at} 的 show 要 1–2 行`);
       (b.show || []).forEach((line) => {
         if (typeof line !== "string" || !line.trim()) err(id, `${at} 的 show 有空行`);
-        else if (cjkLen(line) > 30) err(id, `${at} 的 show「${line}」${cjkLen(line)} 字（一行 ≤ 30）`);
+        else if (!loose && cjkLen(line) > 30) err(id, `${at} 的 show「${line}」${cjkLen(line)} 字（一行 ≤ 30）`);
         shown += cjkLen(line);
         texts.push(line);
       });
       if (b.note !== undefined) {
         if (typeof b.note !== "string" || !b.note.trim()) err(id, `${at} 的 note 是空的`);
-        else if (cjkLen(b.note) > 40) err(id, `${at} 的 note ${cjkLen(b.note)} 字（一句 ≤ 40）`);
+        else if (!loose && cjkLen(b.note) > 40) err(id, `${at} 的 note ${cjkLen(b.note)} 字（一句 ≤ 40）`);
         shown += cjkLen(b.note);
         texts.push(b.note);
       }
@@ -401,13 +405,13 @@ function checkSections(id, L) {
         else {
           const sym = say.match(SAY_BAD);
           if (sym) err(id, `${at} 的 say 有「${sym[0]}」：念的稿不寫 LaTeX 與符號（分數、次方、不等號寫成中文）`);
-          if (cjkLen(say) > SAY_MAX) err(id, `${at} 的 say ${cjkLen(say)} 字（≤ ${SAY_MAX}，約 12 秒）`);
-          if (say === (b.note || "").trim() || b.show.some((line) => line.replace(/\$/g, "") === say)) err(id, `${at} 的 say 照念畫面上的字：要講解畫面，不是重念`);
+          if (!loose && cjkLen(say) > SAY_MAX) err(id, `${at} 的 say ${cjkLen(say)} 字（≤ ${SAY_MAX}，約 12 秒）`);
+          if (!loose && say === (b.note || "").trim() || !loose && b.show.some((line) => line.replace(/\$/g, "") === say)) err(id, `${at} 的 say 照念畫面上的字：要講解畫面，不是重念`);
           spoken.push(say);
           const emo = narrationSpeakable(say).match(EMOTICON);
           if (emo) warn(id, `${at} 的 say 有像表情符號的「${emo[0].trim()}」：語音會念成表情（改寫成字）`);
           const clip = voicedClip(id, `${si}-${bi}`, say);
-          if (clip && clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
+          if (!loose && clip && clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
         }
       }
       if (b.why !== undefined) {
@@ -434,14 +438,14 @@ function checkSections(id, L) {
       }
     });
     // 黑板的字跟 show 一樣守數字規則（push 進 texts）；格式、項的 id、KaTeX、長度在 course_board_check.js
-    texts.push(...boardCheck.checkSection(sec, where, (m) => err(id, m), L.sections.some((s2) => (s2.beats || []).some((b2) => b2 && b2.say))));
+    texts.push(...boardCheck.checkSection(sec, where, (m) => err(id, m), L.sections.some((s2) => (s2.beats || []).some((b2) => b2 && b2.say)), loose));
     if (sec.proof) {
       const asks = beats.filter((b) => b && b.why !== undefined).length;
       if (asks > Math.floor(beats.length / 2)) err(id, `${where} 有 ${asks} 句問為什麼（${beats.length} 句裡最多 ${Math.floor(beats.length / 2)}：大約兩三句一問，問太多就變成考試）`);
-      if (beats.length < 3) err(id, `${where}：證明節至少 3 句（策略一句＋至少兩步）`);
+      if (beats.length < 3 && !loose) err(id, `${where}：證明節至少 3 句（策略一句＋至少兩步）`);
     }
     const acts = ["check", "predict", "drag", "order", "where", "solve"].filter((k) => sec[k] !== undefined);
-    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag／solve${sec.proof ? "／order／where" : ""}），現在 ${acts.length ? acts.join("、") : "沒有"}`);
+    if (loose ? acts.length > 1 : acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag／solve${sec.proof ? "／order／where" : ""}），現在 ${acts.length ? acts.join("、") : "沒有"}`);
     if (sec.check !== undefined) {
       if (!(Number.isInteger(sec.check) && L.checks && L.checks[sec.check])) err(id, `${where} 的 check 要是小測的索引（0–${(L.checks || []).length - 1}）`);
       else usedChecks.push(sec.check);
@@ -450,7 +454,7 @@ function checkSections(id, L) {
       const p = sec.predict || {};
       const opts = Array.isArray(p.options) ? p.options : [];
       if (typeof p.ask !== "string" || !p.ask.trim()) err(id, `${where} 的 predict 沒有 ask`);
-      if (opts.length !== 3) err(id, `${where} 的 predict 要 3 個選項`);
+      if (loose ? opts.length < 2 : opts.length !== 3) err(id, `${where} 的 predict 要 3 個選項`);
       if (opts.filter((o) => o.correct === true).length !== 1) err(id, `${where} 的 predict 正解要恰好一個`);
       opts.filter((o) => !o.correct).forEach((o) => { if (!o.why) err(id, `${where} 的 predict 選項「${o.label}」沒有 why`); });
       texts.push(p.ask || "", ...opts.flatMap((o) => [o.label, o.why || ""]));
@@ -478,12 +482,12 @@ function checkSections(id, L) {
     }
     leakWarn(id, L, sec, where);
     shown = Math.max(shown, peak);
-    if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
+    if (loose) { /* 交付的課：一節多長照原樣 */ } else if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
     else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);
     const fresh = [...new Set(texts.flatMap(numbersIn))].filter((n) => !local.has(n));
-    if (fresh.length) err(id, `${where} 出現課文裡沒有的數字：${fresh.join("、")}（分節不寫新內容）`);
+    if (fresh.length && !loose) err(id, `${where} 出現課文裡沒有的數字：${fresh.join("、")}（分節不寫新內容）`);
     const said = [...new Set(spoken.flatMap(spokenItems).filter((alts) => !alts.some((n) => local.has(n))).map((alts) => alts[0]))];
-    if (said.length) err(id, `${where} 的旁白念了課文裡沒有的數字：${said.join("、")}（中文數字也算）`);
+    if (said.length && !loose) err(id, `${where} 的旁白念了課文裡沒有的數字：${said.join("、")}（中文數字也算）`);
     parts.push(...texts);
   });
   // 旁白要嘛整課都有、要嘛都沒有：「播放」一路念下去，不會念到一半沒聲音
@@ -537,7 +541,7 @@ function checkWhy(id, at, b, texts) {
   texts.push(ask, ...(w.options || []).flatMap((o) => [o.label || "", o.why || ""]));
   return cjkLen(ask) + labels.reduce((n, l) => n + cjkLen(l), 0);
 }
-function checkProof(id, L, sec, where, texts) {
+function checkProof(id, L, sec, where, texts, loose) {
   if (sec.proof !== true) { err(id, `${where} 的 proof 只能寫 true`); return; }
   // of：證明的出處 —— 全文裡可折疊的那一段，或寫成證明的範例
   const of = sec.of;
@@ -549,18 +553,18 @@ function checkProof(id, L, sec, where, texts) {
     const ex = (L.workedExamples || [])[Number(of.slice(2))];
     if (!ex) err(id, `${where} 的 of = "${of}" 沒有這一題範例`);
     else if (!/證明|證/.test(`${ex.title}${ex.prompt}`)) err(id, `${where} 的 of 指到範例「${ex.title}」，但它不是證明`);
-  } else err(id, `${where} 要有 of：可折疊證明段落的索引（數字），或範例 "ex<N>"`);
-  if (!SKELETONS.includes(sec.skeleton)) err(id, `${where} 的 skeleton 要是 ${SKELETONS.join("／")} 之一`);
+  } else if (!loose) err(id, `${where} 要有 of：可折疊證明段落的索引（數字），或範例 "ex<N>"`);
+  if (!(loose && sec.skeleton === undefined) && !SKELETONS.includes(sec.skeleton)) err(id, `${where} 的 skeleton 要是 ${SKELETONS.join("／")} 之一`);
   if (sec.order !== undefined) {
     const o = sec.order || {};
     const odd = Object.keys(o).filter((k) => !["ask", "steps"].includes(k));
     if (odd.length) err(id, `${where} 的 order 多了：${odd.join("、")}`);
     const steps = Array.isArray(o.steps) ? o.steps : [];
-    if (steps.length < 3 || steps.length > 5) err(id, `${where} 的 order 要 3–5 步，現在 ${steps.length}`);
+    if (loose ? steps.length < 2 : steps.length < 3 || steps.length > 5) err(id, `${where} 的 order 要 3–5 步，現在 ${steps.length}`);
     const labels = steps.map((s) => String((s && s.label) || "").trim());
     if (labels.some((l) => !l)) err(id, `${where} 的 order 有空的步驟`);
     if (new Set(labels).size !== labels.length) err(id, `${where} 的 order 有重複的步驟（排不出唯一的順序）`);
-    labels.forEach((l) => { if (cjkLen(l) > 40) err(id, `${where} 的 order 步驟「${l}」${cjkLen(l)} 字（≤ 40）`); });
+    labels.forEach((l) => { if (!loose && cjkLen(l) > 40) err(id, `${where} 的 order 步驟「${l}」${cjkLen(l)} 字（≤ 40）`); });
     // 第 2 步起每一步都要說「要先有什麼」：點太早的時候給看
     steps.forEach((s, k) => { if (k > 0 && !(s && typeof s.why === "string" && s.why.trim())) err(id, `${where} 的 order 第 ${k + 1} 步沒有 why（點太早時說要先有什麼）`); });
     if (o.ask !== undefined && !String(o.ask).trim()) err(id, `${where} 的 order.ask 是空的`);
@@ -764,6 +768,8 @@ for (const L of lessons) {
     if (!Array.isArray(L[key])) { err(id, `${key} 要是陣列`); continue; }
     L[key].forEach((ref) => { if (!outline[ref]) err(id, `${key} 引用了不存在的課 ${ref}`); });
   }
+  const loose = L.source === "notebook";
+  if (L.source !== undefined && !loose) err(id, `source 只能是 "notebook"（交付的筆記本課）`);
   if (!Array.isArray(L.objectives) || L.objectives.length < 2 || L.objectives.length > 4) err(id, "objectives 要 2–4 條");
   if (!(L.visual === null || (typeof L.visual === "string" && L.visual.trim()))) err(id, "visual 要是字串或 null");
   if (!Array.isArray(L.concept) || !L.concept.length) err(id, "concept 不能是空的");
@@ -774,10 +780,10 @@ for (const L of lessons) {
   });
   const visibleConcept = (L.concept || []).filter((c) => !c.collapsible).map((c) => (c.body || []).join("")).join("");
   const vlen = cjkLen(visibleConcept);
-  if (vlen < 350 || vlen > 950) warn(id, `預設顯示的觀念 ${vlen} 字（建議 450–800）`);
+  if (!loose && (vlen < 350 || vlen > 950)) warn(id, `預設顯示的觀念 ${vlen} 字（建議 450–800）`);
 
   const W = L.workedExamples || [];
-  if (W.length < 2 || W.length > 4) err(id, `workedExamples 要 2–4 題，現在 ${W.length}`);
+  if (!(loose && !W.length) && (W.length < 2 || W.length > 4)) err(id, `workedExamples 要 2–4 題，現在 ${W.length}`);
   W.forEach((w, i) => {
     if (!w.prompt || !Array.isArray(w.steps) || w.steps.length < 2 || !w.answer) err(id, `範例 ${i + 1} 要有 prompt、至少 2 步、answer`);
     if (w.problemId && !byId[w.problemId]) err(id, `範例 ${i + 1} 的 problemId ${w.problemId} 不在題庫`);
@@ -800,12 +806,12 @@ for (const L of lessons) {
       else warn(id, `範例 ${i + 1} 無機器驗算（${w.claimNote.slice(0, 40)}）`);
     }
   });
-  if (!Array.isArray(L.pitfalls) || L.pitfalls.length < 2) err(id, "pitfalls 至少 2 條");
+  if (!Array.isArray(L.pitfalls) || (!loose && L.pitfalls.length < 2)) err(id, "pitfalls 至少 2 條");
   const C = L.checks || [];
-  if (C.length < 3 || C.length > 5) err(id, `checks 要 3–5 題（建議 4），現在 ${C.length}`);
+  if (!loose && (C.length < 3 || C.length > 5)) err(id, `checks 要 3–5 題（建議 4），現在 ${C.length}`);
   C.forEach((c, i) => {
     const opts = c.options || [];
-    if (opts.length < 3) err(id, `小測 Q${i + 1} 至少 3 個選項`);
+    if (opts.length < (loose ? 2 : 3)) err(id, `小測 Q${i + 1} 至少 3 個選項`);
     const correct = opts.filter((x) => x.correct === true).length;
     if (correct !== 1) err(id, `小測 Q${i + 1} 正解要恰好一個，現在 ${correct}`);
     opts.filter((x) => !x.correct).forEach((x) => { if (!x.why) err(id, `小測 Q${i + 1} 的錯誤選項「${x.label}」沒有 why`); });
@@ -814,7 +820,7 @@ for (const L of lessons) {
   });
   const tags = L.skillTags || {};
   (tags.coarse || []).forEach((t) => { if (!bankTags.has(t)) err(id, `粗 tag「${t}」題庫裡沒有（新標籤請放 fine）`); });
-  if (!Array.isArray(tags.fine) || !tags.fine.length) err(id, "skillTags.fine 至少一個");
+  if (!Array.isArray(tags.fine) || (!loose && !tags.fine.length)) err(id, "skillTags.fine 至少一個");
   (tags.fine || []).forEach((t) => { if (!/^[a-z0-9]+(-[a-z0-9]+)+$/.test(t)) err(id, `細標籤「${t}」要是 kebab-case`); });
   const P = L.practice || [];
   P.forEach((p) => {
@@ -824,7 +830,7 @@ for (const L of lessons) {
     if (p.trains && !(tags.fine || []).includes(p.trains)) err(id, `推薦題 ${p.id} 的 trains「${p.trains}」不在本課的細標籤裡`);
   });
   if (P.length && !P.some((p) => p.core)) err(id, "推薦題至少要有一題 core");
-  if (!P.length && !(L.gaps || []).length) err(id, "沒有推薦題就要在 gaps 寫清楚缺什麼");
+  if (!loose && !P.length && !(L.gaps || []).length) err(id, "沒有推薦題就要在 gaps 寫清楚缺什麼");
   (L.gaps || []).forEach((g, i) => { if (!g.tag || !(g.count > 0)) err(id, `gaps[${i}] 要有 tag 與 count`); });
 
   checkFigures(id, L);
@@ -846,11 +852,12 @@ for (const L of lessons) {
   for (const m of text.matchAll(/〈([^〉]+)〉/g)) {
     const refs = titleToIds[m[1]];
     const listed = [...(L.prerequisites || []), ...(L.next || []), ...(L.related || []), id];
-    if (!refs) err(id, `〈${m[1]}〉不是大綱裡的課名`);
+    // 交付的課照原樣：〈〉裡不是大綱課名的（例如泛指「遞增遞減」那一段）只警告
+    if (!refs) (loose ? warn : err)(id, `〈${m[1]}〉不是大綱裡的課名`);
     else if (!refs.some((ref) => listed.includes(ref))) err(id, `提到〈${m[1]}〉但 ${refs.join(" 或 ")} 不在 prerequisites／next／related`);
   }
   const total = cjkLen(allText(L));
-  if (total < 1500 || total > 3600) warn(id, `整課 ${total} 字（建議 2,000–2,800）`);
+  if (!loose && (total < 1500 || total > 3600)) warn(id, `整課 ${total} 字（建議 2,000–2,800）`);
 }
 
 // ── 章首魔王題（bosses.json）──

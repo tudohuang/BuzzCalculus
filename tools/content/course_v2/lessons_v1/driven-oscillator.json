@@ -1,0 +1,478 @@
+{
+  "id": "driven-oscillator",
+  "title": "受迫振盪",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "damped-oscillator",
+    "undetermined-coefficients"
+  ],
+  "next": [
+    "resonance"
+  ],
+  "related": [
+    "complex-roots"
+  ],
+  "objectives": [
+    "寫出受週期外力推動的方程 $x''+2\\gamma x'+\\omega_0^2x=F_0\\cos\\omega t$，說出解 $={}$ 暫態 $+$ 穩態。",
+    "用待定係數求穩態解，並用公式 $A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$ 讀出振幅。",
+    "說得出有阻尼時，長時間後系統以外力的頻率 $\\omega$ 振動，與初始條件無關。"
+  ],
+  "visual": "木塊被一個以角頻率 ω 來回推動的馬達帶著。右上畫 x(t)：一開始波形雜亂（暫態），幾個週期後變成跟著馬達節奏的整齊正弦（穩態）；淡色線單獨畫出穩態解，兩條線逐漸重合。右下畫振幅 A(ω) 對 ω 的曲線，拖動 ω 的滑桿，曲線上的點跟著移動，木塊的振幅同步變化。",
+  "concept": [
+    {
+      "heading": "① 有人在推",
+      "body": [
+        "在阻尼振盪上加一個週期外力 $mF_0\\cos\\omega t$（例如馬達、地震、聲波）。除以 $m$："
+      ],
+      "tex": [
+        "x'' + 2\\gamma x' + \\omega_0^2 x = F_0\\cos\\omega t"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解 $={}$ 暫態 $+$ 穩態",
+      "body": [
+        "這是非齊次方程，通解是齊次解加一個特解（〈待定係數〉）。",
+        "齊次解就是〈阻尼振盪〉的解，帶著 $e^{-\\gamma t}$，$\\gamma>0$ 時會消失，叫做暫態。初始條件只影響它。",
+        "特解用待定係數猜 $a\\cos\\omega t+b\\sin\\omega t$（$\\cos$ 與 $\\sin$ 都要），它不會消失，叫做穩態。長時間之後，系統以外力的角頻率 $\\omega$ 振動，不是以自己的 $\\omega_0$ 或 $\\omega_d$。",
+        "生活裡的例子：洗衣機脫水時機身先亂抖一陣，轉速穩定之後，機身就跟著滾筒的轉速規律地振動。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 穩態振幅",
+      "body": [
+        "把 $a$、$b$ 解出來，穩態可以寫成 $A\\cos(\\omega t-\\delta)$，振幅只跟 $\\omega$ 有關：",
+        "$\\delta$ 是位移落後外力的相位角（$0<\\delta<\\pi$）。推得慢（$\\omega<\\omega_0$）時 $\\delta$ 接近 $0$，木塊幾乎和力同步；$\\omega=\\omega_0$ 時 $\\delta=\\frac{\\pi}{2}$；推得快（$\\omega>\\omega_0$）時 $\\delta$ 接近 $\\pi$，木塊和力幾乎反向。$\\tan\\delta$ 只定出 $\\delta$ 的正切，$\\omega>\\omega_0$ 時分母為負，$\\delta$ 在 $\\frac{\\pi}{2}$ 與 $\\pi$ 之間。"
+      ],
+      "tex": [
+        "A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}},\\qquad \\tan\\delta=\\frac{2\\gamma\\omega}{\\omega_0^2-\\omega^2}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 推導（用複數比較快）",
+      "body": [
+        "$F_0\\cos\\omega t$ 是 $F_0e^{i\\omega t}$ 的實部。試 $x=Ze^{i\\omega t}$：$x'=i\\omega Ze^{i\\omega t}$、$x''=-\\omega^2Ze^{i\\omega t}$，代入得 $Z(\\omega_0^2-\\omega^2+2i\\gamma\\omega)=F_0$。",
+        "所以 $Z=\\frac{F_0}{\\omega_0^2-\\omega^2+2i\\gamma\\omega}$，穩態解是 $Ze^{i\\omega t}$ 的實部（係數都是實數，實部仍是解，見〈複數根〉）。振幅 $|Z|$ 就是上面的公式；$\\delta$ 是分母的輻角，代表位移落後外力多少。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "⑤ 讀公式",
+      "body": [
+        "$\\omega$ 很小（推得很慢）：$A\\approx\\frac{F_0}{\\omega_0^2}$，木塊幾乎跟著力靜態地移動。$\\omega$ 很大：$A\\approx\\frac{F_0}{\\omega^2}$，推太快木塊來不及反應。中間 $\\omega$ 接近 $\\omega_0$ 時分母最小、振幅最大，這是下一課〈共振〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "沒有阻尼，從靜止開始推",
+      "prompt": "$x''+4x=3\\cos t$，$x(0)=0$，$x'(0)=0$",
+      "steps": [
+        "$\\omega_0=2$、$\\omega=1$，不相等。$\\cos t$ 不是齊次解，猜 $x_p=A\\cos t$（方程裡沒有 $x'$，$\\sin t$ 的係數會是 $0$）。",
+        "代入：$-A+4A=3$，$A=1$。$x=C_1\\cos 2t+C_2\\sin 2t+\\cos t$。",
+        "$x(0)=0$：$C_1+1=0$，$C_1=-1$。$x'(0)=2C_2=0$，$C_2=0$。",
+        "$x=\\cos t-\\cos 2t$：沒有阻尼，自然頻率那一項不會消失，兩個頻率一直疊在一起。"
+      ],
+      "answer": "$x(t)=\\cos t-\\cos 2t$",
+      "claim": "D2(cos(t)-cos(2t)) + 4*(cos(t)-cos(2t)) == 3*cos(t) ;; SUB(cos(t)-cos(2t), 0) == 0 ;; D(cos(t)-cos(2t), 0) == 0"
+    },
+    {
+      "title": "有阻尼的穩態",
+      "prompt": "$x''+2x'+2x=10\\cos 2t$，求穩態解與振幅。",
+      "steps": [
+        "$\\gamma=1$、$\\omega_0^2=2$、$\\omega=2$。猜 $x_p=a\\cos 2t+b\\sin 2t$。",
+        "$x_p'=-2a\\sin 2t+2b\\cos 2t$，$x_p''=-4a\\cos 2t-4b\\sin 2t$。",
+        "代入比較係數：$\\cos$：$-4a+4b+2a=10$，即 $-2a+4b=10$；$\\sin$：$-4b-4a+2b=0$，即 $b=-2a$。",
+        "$-2a-8a=10$，$a=-1$、$b=2$。振幅 $\\sqrt{1+4}=\\sqrt5$，與公式 $\\frac{10}{\\sqrt{(2-4)^2+(2\\cdot1\\cdot2)^2}}=\\frac{10}{\\sqrt{20}}=\\sqrt5$ 一致。"
+      ],
+      "answer": "$x_p=-\\cos 2t+2\\sin 2t$，振幅 $\\sqrt5$",
+      "claim": "D2(-cos(2t)+2*sin(2t)) + 2*D(-cos(2t)+2*sin(2t)) + 2*(-cos(2t)+2*sin(2t)) == 10*cos(2t) ;; 10/sqrt((2-4)^2+(2*1*2)^2) == sqrt(5)"
+    },
+    {
+      "title": "完整解：暫態會消失",
+      "prompt": "同上方程，$x(0)=0$，$x'(0)=0$，求 $x(t)$。",
+      "steps": [
+        "齊次：$r^2+2r+2=0$，$r=-1\\pm i$。$x=e^{-t}(C_1\\cos t+C_2\\sin t)-\\cos 2t+2\\sin 2t$。",
+        "$x(0)=0$：$C_1-1=0$，$C_1=1$。",
+        "$x'(0)=-C_1+C_2+4=0$，$C_2=-3$。",
+        "$e^{-t}$ 那一項幾秒後就小到看不見，剩下穩態 $-\\cos 2t+2\\sin 2t$。換一組初始條件只會改 $C_1$、$C_2$，穩態不變。"
+      ],
+      "answer": "$x(t)=e^{-t}(\\cos t-3\\sin t)-\\cos 2t+2\\sin 2t$",
+      "claim": "D2(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) + 2*D(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) + 2*(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) == 10*cos(2t) ;; SUB(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t), 0) == 0 ;; D(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t), 0) == 0"
+    }
+  ],
+  "pitfalls": [
+    "有 $x'$ 項時只猜 $a\\cos\\omega t$，漏了 $b\\sin\\omega t$。",
+    "初始條件代進穩態解，忘了暫態那一項。",
+    "以為長時間後以自然頻率 $\\omega_0$ 振動：有阻尼時留下來的是外力的頻率 $\\omega$。",
+    "振幅公式漏了 $2\\gamma\\omega$ 那一項，或把 $\\omega_0^2-\\omega^2$ 寫成 $\\omega_0-\\omega$。"
+  ],
+  "checks": [
+    {
+      "ask": "有阻尼（$\\gamma>0$）的受迫振盪，很久以後木塊以什麼角頻率振動？",
+      "options": [
+        {
+          "label": "外力的 $\\omega$",
+          "correct": true
+        },
+        {
+          "label": "欠阻尼的 $\\omega_d$",
+          "why": "$\\omega_d$ 屬於齊次解（暫態），它帶著 $e^{-\\gamma t}$，會消失。"
+        },
+        {
+          "label": "不振動，停在平衡點",
+          "why": "外力一直在推，持續提供能量，穩態解不會消失。"
+        }
+      ]
+    },
+    {
+      "ask": "$x''+9x=8\\cos t$ 的穩態解振幅是？",
+      "options": [
+        {
+          "label": "$1$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{8}{9}$",
+          "why": "忘了 $x''$ 的貢獻：猜 $A\\cos t$ 代入得 $(9-1)A=8$，$A=1$。"
+        },
+        {
+          "label": "$\\frac{8}{10}$",
+          "why": "符號錯了：$x''=-A\\cos t$，是 $9-1$，不是 $9+1$。"
+        }
+      ]
+    },
+    {
+      "ask": "換一組初始條件，穩態解會改變嗎？",
+      "options": [
+        {
+          "label": "不會，初始條件只影響暫態的常數",
+          "correct": true
+        },
+        {
+          "label": "會，振幅跟著 $x(0)$ 改變",
+          "why": "穩態解是特解，它的係數由方程本身決定，跟 $x(0)$、$x'(0)$ 無關。"
+        },
+        {
+          "label": "只有 $x'(0)$ 會影響它",
+          "why": "兩個初始條件都只用來決定齊次解的 $C_1$、$C_2$。"
+        }
+      ]
+    },
+    {
+      "ask": "振幅公式在 $\\gamma=0$、$\\omega=\\omega_0$ 時會怎樣？",
+      "options": [
+        {
+          "label": "分母為 $0$，公式不能用，要另外處理",
+          "correct": true
+        },
+        {
+          "label": "振幅是 $0$",
+          "why": "是分母為 $0$ 不是分子為 $0$；這時猜 $a\\cos\\omega t$ 根本失敗，因為它是齊次解（〈共振〉）。"
+        },
+        {
+          "label": "振幅是 $F_0$",
+          "why": "代進去分母是 $\\sqrt0$，不是 $1$。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "有人在推",
+      "beats": [
+        { "show": ["$x''+2\\gamma x'+\\omega_0^2x=F_0\\cos\\omega t$"],
+          "note": "週期外力：馬達、地震、聲波。",
+          "say": "在阻尼振盪上，再加一個週期性的外力，例如馬達、地震、聲波，一直推它。",
+          "board": [
+            {"do":"write","line":"$x''+2\\gamma x'+\\omega_0^2x={{f:F_0\\cos\\omega t}}$","tint":{"f":"blue"}},
+            {"do":"underline","term":"f","color":"blue","label":"外力","on":"週期性的外力"}
+          ] },
+        { "show": ["$x''+4x=3\\cos t$"],
+          "note": "沒有阻尼，$\\omega_0=2$、$\\omega=1$。",
+          "say": "先看沒有阻尼的一題：自己的頻率是二，外力的頻率是一，兩個不相等。",
+          "board": [
+            {"do":"write","line":"$x''+{{w0:4}}x=3{{c1:\\cos t}}$","tint":{"w0":"violet","c1":"blue"},"on":"先看"},
+            {"do":"focus","term":"w0","color":"violet","label":"頻率 √4=2","on":"自己的頻率"},
+            {"do":"focus","term":"c1","color":"blue","label":"頻率 1","on":"外力的頻率"}
+          ] },
+        { "show": ["猜 $x_p=A\\cos t$：$-A+4A=3$"],
+          "note": "沒有 $x'$，$\\sin t$ 的係數會是 0。",
+          "say": "cosine t 不是齊次解，直接猜 A cosine t。二階導數帶出負號，負 A 加四 A 等於三。",
+          "board": [
+            {"do":"write","line":"猜 $x_p=A{{c1:\\cos t}}$","tint":{"c1":"blue"}},
+            {"do":"write","line":"${{m:-A}}+4A=3$","on":"二階導數"},
+            {"do":"focus","term":"m","label":"負號","on":"負 A 加"}
+          ] },
+        { "show": ["$x=\\cos t-\\cos 2t$"],
+          "note": "從靜止開始：$C_1=-1$，$C_2=0$。",
+          "say": "A 是一。從靜止開始推，兩個頻率一直疊在一起，自然頻率那一項不會消失。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"transform","line":"$A=1$","on":"A 是一"},
+            {"do":"write","line":"$x={{c1:\\cos t}}{{c2:-\\cos 2t}}$","tint":{"c1":"blue","c2":"violet"},"on":"從靜止"},
+            {"do":"underline","term":"c2","color":"violet","label":"自然頻率","on":"自然頻率那一項"}
+          ] },
+        { "show": ["$x=C_1\\cos 2t+C_2\\sin 2t+\\cos t$"],
+          "note": "齊次根 $r=\\pm 2i$。",
+          "say": "完整的解要加上齊次解 cosine 二 t 和 sine 二 t。沒有阻尼，沒有 e 的負 gamma t 壓著，所以不會消失。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x={{g:C_1\\cos 2t+C_2\\sin 2t}}+\\cos t$","on":"完整"},
+            {"do":"underline","term":"g","color":"violet","label":"不會消失","on":"沒有阻尼"}
+          ] },
+        { "show": ["$x(0)=0$：$C_1+1=0$","$x'(0)=0$：$2C_2=0$"],
+          "note": "$x'=-2C_1\\sin 2t+2C_2\\cos 2t-\\sin t$",
+          "say": "代 t 等於零，C 一加一等於零，所以 C 一是負一。微分再代零，二 C 二等於零。",
+          "board": [
+            {"do":"write","line":"$x(0)=0$：$C_1+1=0$"},
+            {"do":"write","line":"$x'(0)=0$：$2C_2=0$","on":"微分再代零"}
+          ] }
+      ],
+      "key": "沒有阻尼就沒有 $\\sin t$ 項，只猜 $A\\cos t$",
+      "check": 1
+    },
+    {
+      "title": "暫態＋穩態",
+      "beats": [
+        { "show": ["齊次解：帶著 $e^{-\\gamma t}$"],
+          "note": "$\\gamma>0$ 時會消失，叫暫態。",
+          "say": "有阻尼的時候，齊次解帶著 e 的負 gamma t，過一陣子就消失，叫做暫態。",
+          "board": [
+            {"do":"write","line":"${{h:x_h}}\\sim e^{-\\gamma t}$","tint":{"h":"blue"}},
+            {"do":"underline","term":"h","color":"blue","label":"暫態","on":"消失"}
+          ] },
+        { "show": ["特解 $a\\cos\\omega t+b\\sin\\omega t$"],
+          "note": "不會消失，叫穩態。",
+          "say": "特解照待定係數猜 cosine 加 sine，它不會消失，叫做穩態。",
+          "board": [
+            {"do":"write","line":"${{p:x_p}}=a\\cos\\omega t+b\\sin\\omega t$","tint":{"p":"violet"}},
+            {"do":"underline","term":"p","color":"violet","label":"穩態","on":"不會消失"}
+          ] },
+        { "show": ["長時間後：以外力的 $\\omega$ 振動"],
+          "note": "不是 $\\omega_0$，也不是 $\\omega_d$。",
+          "say": "所以很久以後，系統跟著外力的頻率振動，不是自己原本的頻率。",
+          "board": [
+            {"do":"write","line":"$x = {{h:x_h}}+{{p:x_p}}$","tint":{"h":"blue","p":"violet"}},
+            {"do":"write","line":"很久以後：$x\\approx {{p:x_p}}$","tint":{"p":"violet"},"on":"跟著外力"}
+          ] },
+        { "show": ["洗衣機脫水"],
+          "note": "先亂抖一陣，之後跟著滾筒的轉速振動。",
+          "say": "像洗衣機脫水，機身先亂抖一陣，轉速穩定之後，就跟著滾筒規律地振。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"洗衣機：先亂抖，再規律振","on":"機身先"},
+            {"do":"write","line":"暫態 → 穩態","color":"green","on":"轉速穩定"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "算出穩態",
+      "beats": [
+        { "show": ["$x''+2x'+2x=10\\cos 2t$"],
+          "note": "$\\gamma=1$、$\\omega_0^2=2$、$\\omega=2$。",
+          "say": "這一題有阻尼，外力頻率是二。猜 a cosine 二 t 加 b sine 二 t，兩個都要。",
+          "board": [
+            {"do":"write","line":"$x''+2x'+2x=10\\cos 2t$"},
+            {"do":"write","line":"猜 ${{a:a}}\\cos 2t+{{b:b}}\\sin 2t$","tint":{"a":"blue","b":"violet"},"on":"猜 a"}
+          ] },
+        { "show": ["$x_p'=-2a\\sin 2t+2b\\cos 2t$","$x_p''=-4a\\cos 2t-4b\\sin 2t$"],
+          "say": "先微分一次，係數多乘二，cosine 和 sine 對調。再微分一次，又多乘二，所以是四。",
+          "board": [
+            {"do":"write","line":"$x_p'=-2a\\sin 2t+2b\\cos 2t$"},
+            {"do":"write","line":"$x_p''=-4a\\cos 2t-4b\\sin 2t$","on":"再微分一次"}
+          ] },
+        { "show": ["$\\cos$：$-4a+4b+2a=-2a+4b$","$\\sin$：$-4b-4a+2b=-4a-2b$"],
+          "note": "$2x'$ 與 $2x$ 都要乘二。",
+          "say": "x 一撇乘二，x 也乘二。cosine 係數：負四 a 加四 b 加二 a。sine 係數合起來負四 a 減二 b。",
+          "board": [
+            {"do":"write","line":"$\\cos$：$-4a+4b+2a=-2a+4b$"},
+            {"do":"write","line":"$\\sin$：$-4b-4a+2b=-4a-2b$","on":"合起來"}
+          ] },
+        { "show": ["$\\cos$：$-2a+4b=10$","$\\sin$：$b=-2a$"],
+          "say": "微分兩次代進去，cosine 和 sine 的係數分別比對，得到兩條方程。",
+          "board": [
+            {"do":"write","line":"$\\cos$：$-2{{a:a}}+4{{b:b}}=10$","tint":{"a":"blue","b":"violet"}},
+            {"do":"write","line":"$\\sin$：${{b:b}}=-2{{a:a}}$","tint":{"a":"blue","b":"violet"},"on":"和 sine"}
+          ] },
+        { "show": ["$-2a-8a=10$"],
+          "say": "把 b 換成負二 a，代進第一條，負十 a 等於十。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$-2{{a:a}}{{m:-8a}}=10$","tint":{"a":"blue"},"on":"把 b"},
+            {"do":"focus","term":"m","color":"violet","label":"4b 換掉","on":"代進第一條"},
+            {"do":"transform","line":"$-10{{a:a}}=10$","tint":{"a":"blue"},"on":"負十 a"}
+          ] }
+      ],
+      "key": "$\\cos$、$\\sin$ 係數分開比對，解聯立",
+      "predict": {
+        "ask": "所以穩態解是？",
+        "options": [
+          {
+            "label": "$-\\cos 2t+2\\sin 2t$",
+            "correct": true
+          },
+          {
+            "label": "$\\cos 2t-2\\sin 2t$",
+            "why": "$-10a=10$ 給 $a=-1$，不是 $+1$；$b=-2a=2$。"
+          },
+          {
+            "label": "$-\\cos 2t$",
+            "why": "有 $x'$ 項時 $\\sin$ 的係數不會是 0：$b=-2a=2$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "暫態會消失",
+      "beats": [
+        { "show": ["$x=e^{-t}(C_1\\cos t+C_2\\sin t)-\\cos 2t+2\\sin 2t$"],
+          "note": "齊次根 $r=-1\\pm i$。",
+          "say": "完整的解是暫態加穩態。初始條件要代進這整個式子，不能只代穩態。",
+          "board": [
+            {"do":"write","line":"$x={{h:e^{-t}(C_1\\cos t+C_2\\sin t)}}$","tint":{"h":"blue"}},
+            {"do":"write","line":"$\\;{}+{{p:-\\cos 2t+2\\sin 2t}}$","tint":{"p":"violet"},"on":"加穩態"}
+          ] },
+        { "show": ["$(e^{-t}u)'=-e^{-t}u+e^{-t}u'$","穩態微分：$2\\sin 2t+4\\cos 2t$"],
+          "note": "$u=C_1\\cos t+C_2\\sin t$。",
+          "say": "暫態用乘法法則，u 是括號那包，e 的負 t 微分出一個負號。穩態照舊微分，變成二 sine 二 t 加四 cosine 二 t。",
+          "board": [
+            {"do":"write","line":"$(e^{-t}u)'=-e^{-t}u+e^{-t}u'$"},
+            {"do":"write","line":"穩態微分：$2\\sin 2t+4\\cos 2t$","on":"穩態"}
+          ] },
+        { "show": ["$x'(0)=-C_1+C_2+4$"],
+          "note": "$e^0=1$、$\\cos 0=1$、$\\sin 0=0$。",
+          "say": "代 t 等於零：e 的零次方是一，u 變 C 一，u 一撇變 C 二，四 cosine 零是四。",
+          "board": [
+            {"do":"write","line":"$x'(0)=-C_1+C_2+4$"}
+          ] },
+        { "show": ["$x(0)=0$：$C_1=1$；$x'(0)=0$：$C_2=-3$"],
+          "say": "從靜止開始：C 一是一，C 二是負三。",
+          "board": [
+            {"do":"write","line":"$x(0)=0$：${{c1:C_1=1}}$","on":"從靜止"},
+            {"do":"write","line":"$x'(0)=0$：${{c2:C_2=-3}}$","on":"C 二"}
+          ] },
+        { "show": ["$e^{-t}$ 那一項幾秒後就看不見"],
+          "note": "剩下穩態 $-\\cos 2t+2\\sin 2t$。",
+          "say": "e 的負 t 那一項幾秒後就小到看不見，只剩穩態。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{h:e^{-t}}}\\to 0$","tint":{"h":"blue"},"on":"那一項"},
+            {"do":"write","line":"剩下 ${{p:-\\cos 2t+2\\sin 2t}}$","tint":{"p":"violet"},"on":"只剩"}
+          ] },
+        { "show": ["初始條件只改 $C_1$、$C_2$"],
+          "say": "換一組初始條件，只會改暫態的兩個常數，穩態完全不變。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "穩態振幅",
+      "beats": [
+        { "show": ["$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$"],
+          "say": "穩態寫成一個 cosine，振幅只跟外力的頻率 omega 有關。推導在全文。",
+          "board": [
+            {"do":"write","line":"${{aw:A(\\omega)}}=\\frac{F_0}{\\sqrt{({{df:\\omega_0^2-\\omega^2}})^2+(2\\gamma\\omega)^2}}$"},
+            {"do":"underline","term":"aw","label":"只跟 ω 有關","on":"振幅只跟"}
+          ] },
+        { "show": ["$(-2)^2+4^2=20$"],
+          "note": "$\\omega_0^2-\\omega^2=2-4=-2$。",
+          "say": "omega 零平方是二，omega 平方是四，差負二。二 gamma omega 是四。平方相加得二十。",
+          "board": [
+            {"do":"write","line":"$(-2)^2+4^2=20$"}
+          ] },
+        { "show": ["驗算：$\\frac{10}{\\sqrt{20}}=\\sqrt5$"],
+          "note": "跟 $\\sqrt{1+4}$ 一致。",
+          "say": "剛剛那一題代進去，十除以根號二十，是根號五，跟一加四開根號一樣。",
+          "board": [
+            {"do":"write","line":"驗算：$\\frac{10}{\\sqrt{20}}=\\sqrt5$","on":"剛剛那一題"},
+            {"do":"transform","line":"驗算：$\\frac{10}{\\sqrt{20}}=\\sqrt5=\\sqrt{1+4}$","on":"一加四"}
+          ] },
+        { "show": ["$a^2+b^2=1+4$"],
+          "note": "$a=-1$、$b=2$。",
+          "say": "穩態是負 cosine 加二 sine，a 是負一、b 是二，振幅是 a 平方加 b 平方開根號，一加四，也是根號五。",
+          "board": [
+            {"do":"write","line":"$a^2+b^2=1+4$"}
+          ] },
+        { "show": ["$\\omega$ 很小：$A\\approx\\frac{F_0}{\\omega_0^2}$；很大：$A\\approx\\frac{F_0}{\\omega^2}$"],
+          "say": "推得很慢，木塊幾乎跟著力走；推得很快，木塊來不及反應，振幅很小。",
+          "board": [
+            {"do":"transform","line":"$\\omega$ 很小：$A\\approx\\frac{F_0}{\\omega_0^2}$","on":"推得很慢"},
+            {"do":"write","line":"$\\omega$ 很大：$A\\approx\\frac{F_0}{\\omega^2}$","on":"推得很快"}
+          ] },
+        { "show": ["$\\omega$ 接近 $\\omega_0$：振幅最大"],
+          "note": "下一課〈共振〉。",
+          "say": "中間，外力頻率接近自然頻率時，分母最小、振幅最大。這就是共振。",
+          "board": [
+            {"do":"write","line":"$\\omega$ 接近 $\\omega_0$：振幅最大","color":"green","on":"中間"},
+            {"do":"focus","term":"df","label":"分母最小","on":"分母最小"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "ode",
+      "second-order",
+      "undetermined-coefficients",
+      "ivp"
+    ],
+    "fine": [
+      "driven-steady-state",
+      "driven-amplitude-formula",
+      "driven-transient",
+      "driven-full-solution"
+    ]
+  },
+  "practice": [
+    {
+      "id": "ode-p2-003",
+      "core": true,
+      "trains": "driven-full-solution",
+      "note": "固定外力：木塊繞著新的平衡點 $x=2$ 振動。"
+    },
+    {
+      "id": "cg-10d-008",
+      "core": true,
+      "trains": "driven-steady-state"
+    },
+    {
+      "id": "cg-10d-011",
+      "core": true,
+      "trains": "driven-amplitude-formula"
+    },
+    {
+      "id": "cg-10d-013",
+      "core": true,
+      "trains": "driven-full-solution"
+    },
+    {
+      "id": "cg-10d-015",
+      "core": true,
+      "trains": "driven-transient"
+    },
+    {
+      "id": "cg-10d-009",
+      "trains": "driven-steady-state"
+    },
+    {
+      "id": "cg-10d-010",
+      "trains": "driven-steady-state"
+    },
+    {
+      "id": "cg-10d-012",
+      "trains": "driven-amplitude-formula"
+    },
+    {
+      "id": "cg-10d-014",
+      "challenge": true,
+      "trains": "driven-full-solution"
+    }
+  ],
+  "gaps": []
+}

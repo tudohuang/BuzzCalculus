@@ -1,0 +1,505 @@
+{
+  "id": "geometric-series",
+  "title": "幾何級數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "partial-sums",
+    "sequence-limit"
+  ],
+  "next": [
+    "telescoping-series"
+  ],
+  "related": [
+    "power-series"
+  ],
+  "objectives": [
+    "推出部分和 $s_n=\\frac{a(1-r^n)}{1-r}$，並由 $r^n$ 的極限得到收斂條件 $|r|<1$。",
+    "用「首項／$(1-$公比$)$」求和，首項依起始指標認清楚。",
+    "判斷 $|r|\\ge 1$ 時發散，不硬套公式。"
+  ],
+  "visual": "部分和圖：滑桿調公比 r（−1.5 到 1.5），首項固定為 1。|r| < 1 時點列貼向水平線 1/(1 − r)；r 為負時點列上下交錯地貼近。r 拖到 1 或 −1、再往外，點列不是沿直線往上衝、就是越跳越大，旁邊的「1/(1 − r)」讀數變成灰色，表示公式失效。",
+  "concept": [
+    {
+      "heading": "① 每一項乘同一個數",
+      "body": [
+        "幾何級數：$a+ar+ar^2+ar^3+\\dots$，每一項都是前一項乘 $r$（公比）。$a$ 是首項。用 $\\sum$ 寫成 $\\sum_{n=0}^{\\infty}ar^n$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 部分和有公式",
+      "body": [
+        "$s_n=a+ar+\\dots+ar^{n-1}$（前 $n$ 項）。乘上 $r$：$rs_n=ar+ar^2+\\dots+ar^n$。兩式相減，中間全部消掉：$s_n-rs_n=a-ar^n$。$r\\ne 1$ 時兩邊除以 $1-r$：$s_n=\\frac{a(1-r^n)}{1-r}$。",
+        "（$r=1$ 時每一項都是 $a$，$s_n=na$。）"
+      ],
+      "tex": [
+        "s_n=\\frac{a\\,(1-r^n)}{1-r}\\qquad(r\\ne 1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 收斂的條件",
+      "body": [
+        "部分和裡唯一跟 $n$ 有關的是 $r^n$。〈數列與數列極限〉說過：$|r|<1$ 時 $r^n\\to 0$，所以 $s_n\\to\\frac{a}{1-r}$。",
+        "$|r|\\ge 1$（而 $a\\ne 0$）時發散：$r=1$ 是 $na\\to\\pm\\infty$；$r=-1$ 時部分和在 $a$ 與 0 之間跳；$|r|>1$ 時 $r^n$ 爆掉。"
+      ],
+      "tex": [
+        "\\sum_{n=0}^{\\infty} a r^n=\\frac{a}{1-r}\\qquad(\\lvert r\\rvert<1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 實用口訣與陷阱",
+      "body": [
+        "和 = 首項 /（$1-$公比）。「首項」是級數真正的第一項，不一定是 $a$：$\\sum_{n=2}^{\\infty}\\left(\\frac{1}{3}\\right)^n$ 的首項是 $\\left(\\frac{1}{3}\\right)^2=\\frac{1}{9}$。",
+        "公比也要看清楚：$\\sum\\left(-\\frac{1}{2}\\right)^n$ 的公比是 $-\\frac{1}{2}$；$\\sum\\frac{5}{2^n}$ 的公比是 $\\frac{1}{2}$，5 是乘在外面的常數。",
+        "公式只在 $|r|<1$ 時能用。把 $r=\\frac{3}{2}$ 代進 $\\frac{1}{1-r}$ 會得到 $-2$，一堆正數加起來不可能是負的。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "拆成兩個幾何級數",
+      "prompt": "求 $\\sum_{n=1}^{\\infty}\\frac{3^n+2^n}{6^n}$。",
+      "problemId": "lec-12-q1a",
+      "steps": [
+        "拆開：$\\frac{3^n+2^n}{6^n}=\\left(\\frac{1}{2}\\right)^n+\\left(\\frac{1}{3}\\right)^n$。兩個都是 $|r|<1$ 的幾何級數，各自收斂，可以分開加。",
+        "$\\sum_{n=1}^{\\infty}\\left(\\frac{1}{2}\\right)^n$：首項 $\\frac{1}{2}$，和 $=\\frac{1/2}{1-1/2}=1$。",
+        "$\\sum_{n=1}^{\\infty}\\left(\\frac{1}{3}\\right)^n$：首項 $\\frac{1}{3}$，和 $=\\frac{1/3}{1-1/3}=\\frac{1}{2}$。",
+        "總和 $=1+\\frac{1}{2}=\\frac{3}{2}$。"
+      ],
+      "answer": "$\\frac{3}{2}$",
+      "claim": "SUM((3^n+2^n)/6^n, 1) == 3/2"
+    },
+    {
+      "title": "循環小數化分數",
+      "prompt": "把 $0.121212\\dots$ 化成最簡分數。",
+      "problemId": "lec-12-q1b",
+      "steps": [
+        "$0.121212\\dots=\\frac{12}{100}+\\frac{12}{100^2}+\\frac{12}{100^3}+\\dots$，首項 $\\frac{12}{100}$，公比 $\\frac{1}{100}$。",
+        "和 $=\\frac{12/100}{1-1/100}=\\frac{12/100}{99/100}=\\frac{12}{99}=\\frac{4}{33}$。"
+      ],
+      "answer": "$\\frac{4}{33}$",
+      "claim": "SUM(12/100^n, 1) == 4/33"
+    },
+    {
+      "title": "公比裡有 $x$",
+      "prompt": "對哪些 $x$，$\\sum_{n=0}^{\\infty}\\frac{(x-1)^n}{2^n}$ 收斂？和是多少？",
+      "problemId": "lec-12-q1d",
+      "steps": [
+        "這是公比 $r=\\frac{x-1}{2}$、首項 1 的幾何級數。",
+        "收斂 $\\iff\\left|\\frac{x-1}{2}\\right|<1\\iff|x-1|<2\\iff -1<x<3$。",
+        "和 $=\\frac{1}{1-(x-1)/2}=\\frac{2}{2-(x-1)}=\\frac{2}{3-x}$。",
+        "這是第一個「和是 $x$ 的函數」的級數，〈冪級數〉會從這裡出發。"
+      ],
+      "answer": "$-1<x<3$ 時收斂，和為 $\\frac{2}{3-x}$",
+      "claim": "SUM(((x-1)/2)^n, 0) == 2/(3-x)"
+    }
+  ],
+  "pitfalls": [
+    "起始指標不是 0 時，首項還用 $a$（例如把 $\\sum_{n=2}^{\\infty}\\left(\\frac{1}{3}\\right)^n$ 的首項當成 1）。",
+    "$|r|\\ge 1$ 時還套 $\\frac{a}{1-r}$。",
+    "負的公比少了負號：$\\sum\\left(-\\frac{1}{2}\\right)^n=\\frac{1}{1+1/2}$。",
+    "把有限項的公式 $\\frac{a(1-r^n)}{1-r}$ 和無窮和 $\\frac{a}{1-r}$ 搞混。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\sum_{n=2}^{\\infty}\\left(\\frac{1}{3}\\right)^n=$？",
+      "options": [
+        {
+          "label": "$\\frac{1}{6}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{3}{2}$",
+          "why": "$\\frac{1}{1-1/3}=\\frac{3}{2}$ 是從 $n=0$ 開始、首項 1 的和；這裡從 $n=2$ 開始，首項是 $\\frac{1}{9}$。"
+        },
+        {
+          "label": "$\\frac{1}{2}$",
+          "why": "$\\frac{1/3}{1-1/3}=\\frac{1}{2}$ 是從 $n=1$ 開始的和；$n=2$ 起首項是 $\\frac{1}{9}$，$\\frac{1/9}{2/3}=\\frac{1}{6}$。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\sum_{n=0}^{\\infty}\\left(\\frac{3}{2}\\right)^n$ 是？",
+      "options": [
+        {
+          "label": "發散",
+          "correct": true
+        },
+        {
+          "label": "$-2$",
+          "why": "這是把 $r=\\frac{3}{2}$ 硬套 $\\frac{1}{1-r}$。公式只在 $|r|<1$ 時成立；一堆正數不可能加出負數。"
+        },
+        {
+          "label": "收斂，因為每一項都是有限的數",
+          "why": "每一項有限不代表和有限；$\\left(\\frac{3}{2}\\right)^n\\to\\infty$，部分和也 $\\to\\infty$。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\sum_{n=0}^{\\infty}\\left(-\\frac{1}{2}\\right)^n=$？",
+      "options": [
+        {
+          "label": "$\\frac{2}{3}$",
+          "correct": true
+        },
+        {
+          "label": "2",
+          "why": "那是公比 $\\frac{1}{2}$ 的答案。公比是 $-\\frac{1}{2}$：$\\frac{1}{1-(-1/2)}=\\frac{2}{3}$。"
+        },
+        {
+          "label": "發散，因為正負交替",
+          "why": "$|r|=\\frac{1}{2}<1$ 就收斂；正負交替不影響。"
+        }
+      ]
+    },
+    {
+      "ask": "首項 $a$、公比 $r$（$r\\ne 1$）的幾何級數，前 $n$ 項的和是？",
+      "options": [
+        {
+          "label": "$\\frac{a(1-r^n)}{1-r}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{a}{1-r}$",
+          "why": "這是 $|r|<1$ 時無窮多項的和（$n\\to\\infty$ 的極限），不是前 $n$ 項。"
+        },
+        {
+          "label": "$\\frac{ar^n}{1-r}$",
+          "why": "推導是 $s_n-rs_n=a-ar^n$，分子是 $a-ar^n=a(1-r^n)$。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "每一項乘 $r$",
+      "beats": [
+        { "show": ["$a+ar+ar^2+ar^3+\\cdots$"],
+          "note": "$a$ 是首項，$r$ 是公比。",
+          "say": "幾何級數：每一項都是前一項乘同一個數 r，叫公比。第一項 a 叫首項。",
+          "board": [
+            {"do":"write","line":"${{a:a}} + a{{r:r}} + ar^2 + ar^3 + \\cdots$"},
+            {"do":"focus","term":"r","label":"公比","on":"叫公比"},
+            {"do":"focus","term":"a","label":"首項","on":"叫首項"}
+          ] },
+        { "show": ["$s_n=a+ar+\\cdots+ar^{n-1}$","$rs_n=ar+ar^2+\\cdots+ar^n$"],
+          "say": "前 n 項的和整個乘 r，每一項往後挪一格。兩行對齊，中間幾乎一模一樣。",
+          "board": [
+            {"do":"write","line":"$s_n = a + {{m:ar + \\cdots + ar^{n-1}}}$"},
+            {"do":"write","line":"$rs_n = {{m:ar + \\cdots + ar^{n-1}}} + ar^n$","on":"整個乘"},
+            {"do":"focus","term":"m","label":"一模一樣","on":"中間幾乎"}
+          ] },
+        { "show": ["$s_n-rs_n=a-ar^n$"],
+          "note": "中間全部消掉。",
+          "say": "兩式相減，中間全部消掉，只剩頭一項 a，和尾巴的 a 乘 r 的 n 次方。",
+          "board": [
+            {"do":"write","line":"$s_n - rs_n = {{h:a}} - {{t:ar^n}}$"},
+            {"do":"focus","term":"h","label":"頭","on":"頭一項"},
+            {"do":"focus","term":"t","label":"尾巴","on":"尾巴"}
+          ] },
+        { "show": ["$s_n=\\frac{a(1-r^n)}{1-r}$"],
+          "note": "$r\\ne 1$；$r=1$ 時 $s_n=na$。",
+          "say": "r 不等於一的時候，兩邊除以一減 r，就是部分和公式。r 等於一，每一項都是 a，和是 n a。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"transform","line":"$s_n(1-r) = a(1-r^n)$","on":"不等於一"},
+            {"do":"write","line":"${{f:s_n = \\frac{a(1-r^n)}{1-r}}}$","on":"兩邊除以"},
+            {"do":"box","term":"f","color":"green","on":"部分和公式"},
+            {"do":"write","line":"$r = 1$：$s_n = na$","on":"每一項都是"}
+          ] }
+      ],
+      "key": "$s_n-rs_n$：中間項錯位全部消掉",
+      "check": 3
+    },
+    {
+      "title": "收斂的條件",
+      "beats": [
+        { "show": ["唯一跟 $n$ 有關的是 $r^n$"],
+          "say": "看部分和公式，唯一會隨 n 變的只有 r 的 n 次方。所以一切看它。",
+          "board": [
+            {"do":"write","line":"$s_n = \\frac{a(1-{{p:r^n}})}{1-r}$"},
+            {"do":"focus","term":"p","label":"只看它","on":"r 的 n 次方"}
+          ] },
+        { "show": ["$|r|<1$：$\\sum_{n=0}^{\\infty}ar^n=\\frac{a}{1-r}$"],
+          "note": "$r^n\\to 0$。",
+          "say": "r 的絕對值小於一，r 的 n 次方趨近零，部分和趨近 a 除以一減 r。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|r|<1$：${{p:r^n}} \\to 0$","on":"絕對值"},
+            {"do":"focus","term":"p","on":"趨近零"},
+            {"do":"write","line":"$s_n \\to \\frac{a}{1-r}$","color":"green","on":"部分和"}
+          ] },
+        { "show": ["$s_n$＝前 $n$ 項的和","$s_n\\to S$：收斂，和是 $S$"],
+          "note": "收斂＝部分和靠近某個數。",
+          "say": "無限項加不完，只看前 n 項的和 s n。s n 愈靠近某個數，就說收斂，那個數是和。",
+          "board": [
+            {"do":"write","line":"$s_n$ ＝ 前 $n$ 項的和"},
+            {"do":"write","line":"$s_n \\to S$：收斂，和 $=S$","on":"收斂"}
+          ] },
+        { "show": ["公比 $\\frac{1}{2}$，首項 1：$s_n$ 貼向 2"],
+          "say": "看圖：公比二分之一、首項一，部分和一格一格往上，貼向二這條線。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,8,0,3],"curves":[{"expr":"2*(1-(1/2)^x)","domain":[0,8],"color":"blue"}],"dashed":[[[0,2],[8,2]]]}}
+          ] },
+        { "show": ["$|r|\\ge 1$（$a\\ne 0$）：發散"],
+          "note": "$r=-1$ 時部分和在 $a$ 與 0 之間跳。",
+          "say": "r 的絕對值大於等於一就發散：等於一是一直加 a，等於負一是來回跳，大於一是整個爆掉。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|r|\\ge 1$：發散","color":"red","on":"絕對值"},
+            {"do":"write","line":"$r=1$：$s_n = na$","on":"一直加"},
+            {"do":"write","line":"$r=-1$：$s_n$ 在 $a$、$0$ 間跳","on":"來回跳"},
+            {"do":"write","line":"$r>1$：$r^n \\to \\infty$","on":"大於一是"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "首項是哪一項",
+      "beats": [
+        { "show": ["和 ＝ 首項 ／（1 − 公比）"],
+          "say": "口訣：和等於首項，除以一減公比。重點是首項要抓對。",
+          "board": [
+            {"do":"write","line":"和 $= \\frac{{{a:\\text{首項} }}}{1-\\text{公比}}$"},
+            {"do":"focus","term":"a","label":"要抓對","on":"首項#2"}
+          ] },
+        { "show": ["$\\sum_{n=2}^{\\infty}\\left(\\frac{1}{3}\\right)^n$：首項 $\\frac{1}{9}$"],
+          "note": "首項是級數真正的第一項，不一定是 $a$。",
+          "say": "這個級數從 n 等於二開始，真正的第一項是三分之一的平方，九分之一，不是一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sum_{n=2}^{\\infty}\\left(\\frac{1}{3}\\right)^n$","on":"這個級數"},
+            {"do":"write","line":"首項 $= \\left(\\frac{1}{3}\\right)^2 = {{f:\\frac{1}{9}}}$","on":"真正的"},
+            {"do":"circle","term":"f","color":"gold","on":"九分之一"}
+          ] },
+        { "show": ["誤用 $a=\\frac{1}{3}$：得 $\\frac{1}{2}$"],
+          "note": "那是從 $n=1$ 開始的和。",
+          "say": "誤用 a 等於三分之一，會得到二分之一。那其實是從 n 等於一開始的和，所以這樣算是錯的。",
+          "board": [
+            {"do":"write","line":"誤用 $a=\\frac{1}{3}$：${{w:\\frac{1/3}{1-1/3}=\\frac{1}{2}}}$"},
+            {"do":"strike","term":"w","label":"錯","on":"那其實"}
+          ] },
+        { "show": ["$\\frac{1/9}{1-1/3}$"],
+          "say": "首項九分之一，公比三分之一，代進口訣，算算看是多少。",
+          "board": [
+            {"do":"write","line":"$a={{f:\\frac{1}{9}}}$，$r={{g:\\frac{1}{3}}}$"},
+            {"do":"focus","term":"f","on":"九分之一"},
+            {"do":"focus","term":"g","on":"三分之一"},
+            {"do":"write","line":"和 $= \\frac{a}{1-r}$","on":"代進口訣"}
+          ] }
+      ],
+      "key": "首項是第一個加進來的項，不一定是 $a$",
+      "check": 0
+    },
+    {
+      "title": "公比看清楚",
+      "beats": [
+        { "show": ["$\\sum\\left(-\\frac{1}{2}\\right)^n$：公比 $-\\frac{1}{2}$"],
+          "note": "負號要跟著。",
+          "say": "公比是負二分之一，負號是公比的一部分。正負交替沒關係，絕對值小於一就收斂。",
+          "board": [
+            {"do":"write","line":"$\\sum {{q:\\left(-\\frac{1}{2}\\right)}}^n$"},
+            {"do":"write","line":"公比 $r = {{r:-\\frac{1}{2}}}$","on":"公比是"},
+            {"do":"focus","term":"r","color":"blue","label":"負號跟著","on":"負號"},
+            {"do":"write","line":"$|r| = \\frac{1}{2} < 1$","on":"絕對值"}
+          ] },
+        { "show": ["$\\sum\\frac{5}{2^n}$：公比 $\\frac{1}{2}$"],
+          "note": "5 是乘在外面的常數。",
+          "say": "這一個的五是乘在外面的常數，公比只看每次乘的二分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sum\\frac{5}{2^n} = \\sum {{c:5}}\\cdot{{k:\\left(\\frac{1}{2}\\right)^n}}$","on":"這一個"},
+            {"do":"focus","term":"c","label":"常數","on":"五是"},
+            {"do":"underline","term":"k","color":"blue","label":"公比","on":"每次乘"}
+          ] },
+        { "show": ["$\\frac{1}{1-r}$ 代 $r=\\frac{3}{2}$ 得 $-2$？"],
+          "note": "一堆正數加起來不可能是負的。",
+          "say": "公式只在 r 的絕對值小於一時能用。硬把二分之三代進去，正數加出負二，一看就知道錯。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|r|<1$ 才能用 $\\frac{1}{1-r}$","on":"公式只在"},
+            {"do":"write","line":"$r=\\frac{3}{2}$：$\\frac{1}{1-r} = {{w:-2}}$","on":"硬把"},
+            {"do":"strike","term":"w","label":"錯","on":"負二"}
+          ] },
+        { "show": ["$r=\\frac{3}{2}$：$1+\\frac{3}{2}+\\frac{9}{4}+\\cdots$","前三項已經 $>4$"],
+          "say": "再看 r 等於二分之三：項是一、二分之三、四分之九，前三項已經超過四。項愈來愈大，和只會愈來愈大。",
+          "board": [
+            {"do":"write","line":"$1+\\frac{3}{2}+\\frac{9}{4}+\\cdots$"},
+            {"do":"write","line":"前三項 $>4$，還在變大","on":"超過四"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "拆成兩個",
+      "beats": [
+        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{3^n+2^n}{6^n}$"],
+          "say": "分子兩項，分母六的 n 次方。先拆開來，各自是幾何級數。",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{{{p:3^n}} + {{q:2^n}}}{6^n}$","tint":{"p":"blue","q":"violet"}}
+          ] },
+        { "show": ["$\\left(\\frac{1}{2}\\right)^n+\\left(\\frac{1}{3}\\right)^n$"],
+          "note": "兩個都 $|r|<1$，各自收斂，可以分開加。",
+          "say": "三的 n 次方除以六的 n 次方是二分之一的 n 次方，另一個是三分之一的 n 次方。",
+          "board": [
+            {"do":"write","line":"$\\frac{{{p:3^n}}}{6^n} = {{u:\\left(\\frac{1}{2}\\right)^n}}$","tint":{"u":"blue"}},
+            {"do":"write","line":"$\\frac{{{q:2^n}}}{6^n} = {{v:\\left(\\frac{1}{3}\\right)^n}}$","tint":{"v":"violet"},"on":"另一個"}
+          ] },
+        { "show": ["$\\frac{1/2}{1-1/2}=1$"],
+          "note": "從 $n=1$ 開始，首項 $\\frac{1}{2}$。",
+          "say": "第一個從 n 等於一開始，首項二分之一，和是一。第二個呢？",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}{{u:\\left(\\frac{1}{2}\\right)^n}} = \\frac{{{f:1/2}}}{1-1/2}$","on":"第一個"},
+            {"do":"underline","term":"f","label":"首項","on":"首項"},
+            {"do":"transform","line":"$\\sum_{n=1}^{\\infty}{{u:\\left(\\frac{1}{2}\\right)^n}} = \\frac{{{f:1/2}}}{1-1/2} = 1$","on":"和是一"},
+            {"do":"focus","term":"v","on":"第二個"}
+          ] },
+        { "show": ["第二個：首項 $\\frac{1}{3}$，公比 $\\frac{1}{3}$"],
+          "say": "第二個也一樣：先認出首項和公比，再套口訣。自己先算算看，再選。",
+          "board": [
+            {"do":"write","line":"第二個：首項 $\\frac{1}{3}$，公比 $\\frac{1}{3}$"}
+          ] }
+      ],
+      "key": "分子拆開，各自是一個幾何級數",
+      "predict": {
+        "ask": "$\\sum_{n=1}^{\\infty}\\left(\\frac{1}{3}\\right)^n$ 是？所以總和是？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}$，總和 $\\frac{3}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{3}{2}$，總和 $\\frac{5}{2}$",
+            "why": "$\\frac{1}{1-1/3}=\\frac{3}{2}$ 是從 $n=0$ 開始的和；這裡首項是 $\\frac{1}{3}$。"
+          },
+          {
+            "label": "$\\frac{1}{3}$，總和 $\\frac{4}{3}$",
+            "why": "$\\frac{1}{3}$ 只是首項，還要除以 $1-\\frac{1}{3}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "公比裡有 $x$",
+      "beats": [
+        { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(x-1)^n}{2^n}$"],
+          "note": "首項 1，公比 $r=\\frac{x-1}{2}$。",
+          "say": "公比裡有 x：首項是一，公比是 x 減一除以二。哪些 x 會收斂？",
+          "board": [
+            {"do":"write","line":"$\\sum_{n=0}^{\\infty}\\frac{(x-1)^n}{2^n}$"},
+            {"do":"write","line":"首項 $1$，公比 $r = {{r:\\frac{x-1}{2}}}$","tint":{"r":"blue"},"on":"首項是一"}
+          ] },
+        { "show": ["$\\left|\\frac{x-1}{2}\\right|<1\\iff|x-1|<2$"],
+          "say": "條件還是公比的絕對值小於一，也就是 x 減一的絕對值小於二。",
+          "board": [
+            {"do":"write","line":"$\\left|{{r:\\frac{x-1}{2}}}\\right| < 1$","on":"絕對值小於一"},
+            {"do":"transform","line":"$|x-1| < 2$","on":"也就是"}
+          ] },
+        { "show": ["和 $=\\frac{1}{1-(x-1)/2}=\\frac{2}{3-x}$"],
+          "note": "和是 $x$ 的函數：〈冪級數〉的起點。",
+          "say": "收斂時和是三減 x 分之二。這是第一個和會隨 x 變的級數，冪級數就從這裡出發。",
+          "board": [
+            {"do":"write","line":"和 $= \\frac{1}{1-{{r:\\frac{x-1}{2}}}}$"},
+            {"do":"transform","line":"和 $= {{z:\\frac{2}{3-x}}}$","on":"三減 x"},
+            {"do":"underline","term":"z","color":"green","label":"隨 x 變","on":"隨 x 變"}
+          ] },
+        { "show": ["冪級數：每一項帶 $x$ 的次方"],
+          "note": "這題是最簡單的一種。",
+          "say": "冪級數就是每一項都帶 x 的次方的級數。這一題是公比裡放 x 的幾何級數，是最簡單的一種。",
+          "board": [
+            {"do":"write","line":"冪級數 ＝ 每一項帶 $x$ 的次方，這題最簡單"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$|x-1|<2$ 是哪個範圍？",
+        "options": [
+          {
+            "label": "$-1<x<3$",
+            "correct": true
+          },
+          {
+            "label": "$-2<x<2$",
+            "why": "那是 $|x|<2$；這裡是 $x-1$ 在 $-2$ 與 2 之間，兩邊再加 1。"
+          },
+          {
+            "label": "$-1\\le x\\le 3$",
+            "why": "端點 $|r|=1$，幾何級數發散，要用嚴格不等號。"
+          }
+        ]
+      }
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "geometric-series"
+    ],
+    "fine": [
+      "geometric-identify-a-r",
+      "geometric-sum-formula",
+      "geometric-divergence",
+      "geometric-with-x"
+    ]
+  },
+  "practice": [
+    {
+      "id": "fd-ser-001",
+      "core": true,
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-006",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-007",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-017",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-012",
+      "core": true,
+      "trains": "geometric-divergence"
+    },
+    {
+      "id": "lec-12-q1a",
+      "core": true,
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-004",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "tmpl-ser-geo-tail-001",
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-016",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "lec-12-q1b",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-011",
+      "trains": "geometric-divergence"
+    },
+    {
+      "id": "lec-12-q1d",
+      "trains": "geometric-with-x"
+    }
+  ],
+  "gaps": []
+}

@@ -1,315 +1,144 @@
 {
   "id": "complex-polar",
   "title": "極式",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["complex-numbers", "polar-coordinates", "trig-identities", "inverse-trig"],
-  "next": ["euler-formula"],
+  "prerequisites": [
+    "complex-numbers",
+    "polar-coordinates",
+    "trig-identities",
+    "inverse-trig"
+  ],
+  "next": [
+    "euler-formula"
+  ],
   "related": [],
   "objectives": [
-    "把 $z$ 寫成 $r(\\cos\\theta+i\\sin\\theta)$：$r=|z|$，$\\theta$ 是輻角，而且依象限判斷 $\\theta$，不是只算 $\\arctan\\frac{b}{a}$。",
-    "說出乘法的幾何意義：長度相乘、角度相加；並用 De Moivre 公式算 $z^n$。",
-    "求 $n$ 次方根：$n$ 個根平均分布在半徑 $r^{1/n}$ 的圓上。"
+    "把 $z$ 寫成 $r(\\cos\\theta+i\\sin\\theta)$：$r=|z|$，$\\theta$ 是輻角，而且角度要依點所在的象限決定",
+    "說出乘法的幾何意義：長度相乘、角度相加",
+    "並用 De Moivre 公式算 $z^n$",
+    "求 $n$ 次方根：$n$ 個根平均分布在半徑 $r^{1/n}$ 的圓上"
   ],
-  "visual": "複數平面上點 z（可拖動）與單位圓。按「乘以 w」時，z 繞原點轉 arg w、長度乘上 |w|；連按 n 次畫出 z, zw, zw², … 的螺線。另一個模式畫出 zⁿ = c 的 n 個根，正 n 邊形的頂點，旋轉 c 時整個多邊形跟著轉。",
+  "visual": null,
   "concept": [
     {
-      "heading": "① 用長度和角度描述一個複數",
+      "heading": "① 長度和角度",
       "body": [
-        "點 $(a,b)$ 也可以用極座標描述（〈極座標〉）：$r=\\sqrt{a^2+b^2}=|z|$，$\\theta$ 是從正實軸逆時針量到它的角，叫輻角 $\\arg z$。於是 $z=r(\\cos\\theta+i\\sin\\theta)$。",
-        "輻角不唯一：$\\theta$ 加上 $2\\pi$ 的整數倍是同一個點。常用的主值 $\\operatorname{Arg}z$ 取在 $(-\\pi,\\pi]$。$z=0$ 沒有輻角。"
+        "複數是平面上的點：也能用距離 $r$ 和角度 $\\theta$ 描述",
+        "$a=r\\cos\\theta$，$b=r\\sin\\theta$，所以",
+        "$r=|z|=\\sqrt{a^2+b^2}$；$\\theta$ 叫輻角，記作 $\\arg z$"
       ],
-      "collapsible": false
+      "tex": [
+        "z=r(\\cos\\theta+i\\sin\\theta)"
+      ]
+    },
+    {
+      "heading": "① 輻角與例子",
+      "body": [
+        "輻角不唯一：$\\theta$ 加減 $2\\pi$ 的倍數，是同一個點",
+        "主輻角 $\\operatorname{Arg}z$：規定落在 $(-\\pi,\\pi]$",
+        "$z=0$ 沒有輻角（任何角度都行），極式只談 $z\\ne0$",
+        "例：$-1+\\sqrt3\\,i$",
+        "$r=\\sqrt{1+3}=2$；$\\cos\\theta=-\\frac12$，$\\sin\\theta=\\frac{\\sqrt3}2$",
+        "餘弦負、正弦正：第二象限，$\\theta=\\dfrac{2\\pi}3$"
+      ],
+      "tex": [
+        "-1+\\sqrt3\\,i=2\\Big(\\cos\\frac{2\\pi}3+i\\sin\\frac{2\\pi}3\\Big)"
+      ]
     },
     {
       "heading": "② 角度要看象限",
       "body": [
-        "$\\tan\\theta=\\frac{b}{a}$ 只決定角度到差 $\\pi$：$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 的 $\\frac{b}{a}$ 都是 $-\\sqrt{3}$，但一個在第二象限、一個在第四象限。$\\arctan\\frac{b}{a}$ 給的值在 $\\left(-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right)$，只有 $a>0$ 時才直接是輻角；$a<0$ 時要加或減 $\\pi$。最可靠的做法：先畫點，看它在哪個象限，再找角度。"
+        "想偷懶：$\\tan\\theta=\\dfrac ba$，直接 $\\theta=\\arctan\\dfrac ba$？",
+        "$\\arctan(-\\sqrt3)=-\\dfrac\\pi3$：錯了",
+        "$\\arctan$ 只給 $(-\\frac\\pi2,\\frac\\pi2)$：只看得到右半平面",
+        "規則（$z=a+bi\\ne0$）：",
+        "為什麼是補 $\\pi$：$(a,b)$ 和 $(-a,-b)$ 的 $\\frac ba$ 一樣，差半圈",
+        "實務上：先看點在哪個象限，再定角，最保險"
       ],
-      "collapsible": false
+      "tex": [
+        "\\operatorname{Arg}z=\\begin{cases}\\arctan\\frac ba,&a>0\\\\[2pt]\\arctan\\frac ba+\\pi,&a<0,\\ b\\ge0\\\\[2pt]\\arctan\\frac ba-\\pi,&a<0,\\ b<0\\\\[2pt]\\pm\\frac\\pi2,&a=0\\ (\\text{看 }b\\text{ 的正負})\\end{cases}"
+      ]
     },
     {
-      "heading": "③ 乘法：長度相乘、角度相加",
+      "heading": "② 第三象限",
       "body": [
-        "$z_1=r_1(\\cos\\theta_1+i\\sin\\theta_1)$、$z_2=r_2(\\cos\\theta_2+i\\sin\\theta_2)$。乘開後用和角公式：實部 $\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2=\\cos(\\theta_1+\\theta_2)$，虛部 $\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2=\\sin(\\theta_1+\\theta_2)$。所以 $z_1z_2=r_1r_2(\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2))$。",
-        "圖像：乘以 $i$（$r=1$、$\\theta=\\frac{\\pi}{2}$）就是逆時針轉 $90^\\circ$。除法：長度相除、角度相減。",
-        "重複乘同一個數，得到 De Moivre 公式。"
+        "$\\arctan\\dfrac{-1}{-\\sqrt3}=\\dfrac\\pi6$，點在第三象限",
+        "$\\dfrac\\pi6+\\pi=\\dfrac{7\\pi}6>\\pi$，超過 $\\pi$ 要減 $2\\pi$："
       ],
-      "tex": ["\\bigl(r(\\cos\\theta+i\\sin\\theta)\\bigr)^{n}=r^{n}\\bigl(\\cos n\\theta+i\\sin n\\theta\\bigr)"],
-      "collapsible": false
+      "tex": [
+        "\\operatorname{Arg}(-\\sqrt3-i)=-\\frac{5\\pi}6"
+      ]
+    },
+    {
+      "heading": "③ 乘法：長度乘、角度加",
+      "body": [
+        "$z_1=r_1(\\cos\\theta_1+i\\sin\\theta_1)$，$z_2=r_2(\\cos\\theta_2+i\\sin\\theta_2)$",
+        "括號裡正好是和角公式：",
+        "乘 $i$ $=$ 乘「長 $1$、角 $\\frac\\pi2$」：逆時針轉 $90^\\circ$",
+        "除法（$z_2\\ne0$）：長度相除、角度相減"
+      ],
+      "tex": [
+        "\\begin{aligned}z_1z_2=r_1r_2\\big[&(\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2)\\\\&+i(\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2)\\big]\\end{aligned}",
+        "z_1z_2=r_1r_2\\big[\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2)\\big]",
+        "\\frac{z_1}{z_2}=\\frac{r_1}{r_2}\\big[\\cos(\\theta_1-\\theta_2)+i\\sin(\\theta_1-\\theta_2)\\big]"
+      ]
+    },
+    {
+      "heading": "③ De Moivre 公式",
+      "body": [
+        "證（數學歸納法）：$n=1$ 成立；設 $n$ 成立，再乘一次：",
+        "角度相加：$=\\cos(n+1)\\theta+i\\sin(n+1)\\theta$",
+        "負整數：$(\\cos\\theta+i\\sin\\theta)^{-1}=\\cos(-\\theta)+i\\sin(-\\theta)$（兩者相乘是 $\\cos0+i\\sin0=1$），再對 $-\\theta$ 用正整數的情形",
+        "例：$(1+i)^{10}$，$1+i=\\sqrt2\\Big(\\cos\\dfrac\\pi4+i\\sin\\dfrac\\pi4\\Big)$",
+        "$\\dfrac{10\\pi}4=\\dfrac\\pi2+2\\pi$：",
+        "驗算：$(1+i)^2=2i$，$(1+i)^{10}=(2i)^5=32i^5=32i$"
+      ],
+      "tex": [
+        "(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta",
+        "\\begin{aligned}&(\\cos\\theta+i\\sin\\theta)^{n+1}\\\\&=(\\cos n\\theta+i\\sin n\\theta)(\\cos\\theta+i\\sin\\theta)\\end{aligned}",
+        "(1+i)^{10}=(\\sqrt2)^{10}\\Big(\\cos\\frac{10\\pi}4+i\\sin\\frac{10\\pi}4\\Big)",
+        "(1+i)^{10}=32\\Big(\\cos\\frac\\pi2+i\\sin\\frac\\pi2\\Big)=32i"
+      ]
     },
     {
       "heading": "④ $n$ 次方根",
       "body": [
-        "解 $w^n=r(\\cos\\theta+i\\sin\\theta)$：長度 $|w|^n=r$，所以 $|w|=r^{1/n}$；角度 $n\\varphi=\\theta+2\\pi k$，所以 $\\varphi=\\frac{\\theta+2\\pi k}{n}$，$k=0,1,\\dots,n-1$。",
-        "$k$ 取 $n$ 個不同的值就得到 $n$ 個不同的根，它們是半徑 $r^{1/n}$ 的圓上正 $n$ 邊形的頂點；$k=n$ 又回到 $k=0$ 的根。"
+        "解 $w^n=z$，$z=r(\\cos\\theta+i\\sin\\theta)\\ne0$；設 $w=\\rho(\\cos\\varphi+i\\sin\\varphi)$",
+        "De Moivre：$\\rho^n(\\cos n\\varphi+i\\sin n\\varphi)=r(\\cos\\theta+i\\sin\\theta)$",
+        "取絕對值：$\\rho^n=r$，所以 $\\rho=r^{1/n}$（正實數根）",
+        "再比餘弦、正弦：$n\\varphi=\\theta+2k\\pi$",
+        "恰好 $n$ 個：",
+        "• $k$ 和 $k+n$：角度差 $2\\pi$，是同一個根",
+        "• $0\\le j<k\\le n-1$：角度差 $\\frac{2\\pi(k-j)}n$，不是 $2\\pi$ 的倍數，不同",
+        "幾何：$n$ 個根在半徑 $r^{1/n}$ 的圓上，相鄰差 $\\frac{2\\pi}n$，排成正 $n$ 邊形"
       ],
-      "collapsible": false
-    }
-  ],
-  "sections": [
-    {
-      "title": "長度和角度",
-      "beats": [
-        { "show": ["$r=\\sqrt{a^2+b^2}=|z|$"],
-          "say": "點 a 逗號 b 也可以用極座標描述：先量它到原點有多遠，就是 z 的絕對值 r。",
-          "board": [
-            {"do":"plot","graph":{"window":[-0.6,4.6,-0.4,2.5],"equal":true,"ticks":false,"curves":[{"expr":"2*x/3","domain":[0,3],"color":"blue"}],"dashed":[[[3,0],[3,2]]],"points":[{"x":3,"y":2}],"labels":[{"x":3.12,"y":2.25,"text":"(a, b)","anchor":"start"},{"x":1.35,"y":1.25,"text":"r","anchor":"end"}]}},
-            {"do":"write","line":"${{r:r}}=\\sqrt{a^2+b^2}=|z|$","tint":{"r":"blue"},"on":"到原點"}
-          ] },
-        { "show": ["$\\theta=\\arg z$"],
-          "note": "從正實軸逆時針量到它的角。",
-          "say": "再量角度：從正實軸逆時針轉到這個點，轉了多少，叫做輻角。",
-          "board": [
-            {"do":"transform","line":"${{r:r}}=|z|$，${{t:\\theta}}=\\arg z$","tint":{"t":"violet"}},
-            {"do":"focus","term":"t","label":"輻角","on":"逆時針"}
-          ] },
-        { "show": ["$z=r(\\cos\\theta+i\\sin\\theta)$"],
-          "say": "有了長度和角度，z 就寫成 r 乘上 cosine theta 加 i sine theta，這叫極式。",
-          "board": [
-            {"do":"transform","line":"$z={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$","on":"z 就寫成"}
-          ] },
-        { "show": ["主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$"],
-          "note": "加 $2\\pi$ 的整數倍是同一個點；$z=0$ 沒有輻角。",
-          "say": "輻角不唯一，多轉一整圈還是同一個點，所以常取主值，在負派到派之間。",
-          "board": [
-            {"do":"focus","term":"t","label":"加 2π 同一點","on":"多轉一整圈"},
-            {"do":"write","line":"主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$","on":"所以"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$1+i$ 的長度與輻角是？",
-        "options": [
-          {
-            "label": "$\\sqrt{2}$，$\\frac{\\pi}{4}$",
-            "correct": true
-          },
-          {
-            "label": "$2$，$\\frac{\\pi}{4}$",
-            "why": "長度是 $\\sqrt{1^2+1^2}=\\sqrt{2}$，不是 $1+1$。"
-          },
-          {
-            "label": "$\\sqrt{2}$，$\\frac{\\pi}{2}$",
-            "why": "點 $(1,1)$ 在正實軸與虛軸正中間，角度是 $\\frac{\\pi}{4}$。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}w_k&=r^{1/n}(\\cos\\varphi_k+i\\sin\\varphi_k)\\\\\\varphi_k&=\\frac{\\theta+2k\\pi}n,\\quad k=0,1,\\dots,n-1\\end{aligned}"
+      ]
     },
     {
-      "title": "角度要看象限",
-      "beats": [
-        { "show": ["$\\tan\\theta=\\frac{b}{a}$ 只決定到差 $\\pi$"],
-          "note": "$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 都是 $-\\sqrt{3}$。",
-          "say": "小心：a 分之 b 只決定角度到差一個派。對面的兩個點，比值一模一樣。",
-          "board": [
-            {"do":"write","line":"$\\tan\\theta=\\frac{b}{a}$ 只決定到差 ${{p:\\pi}}$"},
-            {"do":"focus","term":"p","on":"差一個派"},
-            {"do":"write","line":"$-1+\\sqrt{3}\\,i$、$1-\\sqrt{3}\\,i$：$\\frac{b}{a}={{q:-\\sqrt{3}}}$","on":"對面的兩個點"},
-            {"do":"focus","term":"q","on":"一模一樣"}
-          ] },
-        { "show": ["$-1+\\sqrt{3}\\,i$：$r=2$"],
-          "note": "點在第二象限。",
-          "say": "例如負一加根號三 i，長度是根號四等於二，點在第二象限。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-3.4,3.4,-2,2],"equal":true,"ticks":false,"curves":[{"expr":"-sqrt(3)*x","domain":[-1,0],"color":"blue"}],"dashed":[[[0,0],[1,-1.7321]]],"points":[{"x":-1,"y":1.7321},{"x":1,"y":-1.7321}],"labels":[{"x":-1.15,"y":1.75,"text":"−1+√3 i","anchor":"end"},{"x":1.15,"y":-1.75,"text":"1−√3 i","anchor":"start"},{"x":-0.7,"y":0.5,"text":"r = 2","anchor":"end"}]},"on":"例如"}
-          ] },
-        { "show": ["$\\arctan\\frac{\\sqrt{3}}{-1}=-\\frac{\\pi}{3}$：第四象限，不對"],
-          "say": "arctan 只給負二分之派到二分之派，算出負三分之派，落在第四象限，方向反了。",
-          "board": [
-            {"do":"write","line":"$\\arctan\\frac{\\sqrt{3}}{-1}={{w:-\\frac{\\pi}{3}}}$"},
-            {"do":"circle","term":"w","color":"red","on":"落在第四象限"}
-          ] },
-        { "show": ["加 $\\pi$：$\\theta=\\frac{2\\pi}{3}$"],
-          "note": "先畫點、看象限，再找角度。",
-          "say": "要加一個派，得到三分之二派。最可靠的做法：先畫點，看象限，再找角度。",
-          "board": [
-            {"do":"write","line":"加 $\\pi$：$\\theta={{a:\\frac{2\\pi}{3}}}$"},
-            {"do":"box","term":"a","color":"green","on":"三分之二派"}
-          ] },
-        { "show": ["$-\\sqrt{3}-i$：$r=2$","$\\arctan\\frac{-1}{-\\sqrt{3}}=\\frac{\\pi}{6}$"],
-          "note": "點在第三象限，$\\frac{\\pi}{6}$ 在第一象限，方向反了。",
-          "say": "再看第三象限的點，負根號三減 i，長度二。arctan 算出六分之派，是第一象限，方向不對。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[-3,3,-2,2],"equal":true,"ticks":false,"curves":[],"dashed":[[[0,0],[-1.7321,-1]]],"points":[{"x":-1.7321,"y":-1}],"labels":[{"x":-1.85,"y":-1.25,"text":"−√3−i","anchor":"end"}]},"on":"號三"},
-            {"do":"write","line":"$-\\sqrt{3}-i$：$r=2$","on":"長度二"},
-            {"do":"write","line":"$\\arctan\\frac{-1}{-\\sqrt{3}}=\\frac{\\pi}{6}$","on":"arctan"}
-          ] },
-        { "show": ["$\\frac{\\pi}{6}+\\pi-2\\pi=-\\frac{5\\pi}{6}$"],
-          "note": "超過 $\\pi$ 就減 $2\\pi$，拉回主值範圍。",
-          "say": "把六分之派加一個派，會超過派。主值要在負派到派之間，所以再減二派，得到負六分之五派。",
-          "board": [
-            {"do":"write","line":"${{p:\\frac{\\pi}{6}+\\pi}}>\\pi$"},
-            {"do":"write","line":"$-2\\pi$：${{a:-\\frac{5\\pi}{6}}}$","on":"再減"},
-            {"do":"box","term":"a","color":"green","on":"得到"}
-          ] }
+      "heading": "④ 例：$w^3=8i$",
+      "body": [
+        "$8i=8\\Big(\\cos\\dfrac\\pi2+i\\sin\\dfrac\\pi2\\Big)$：$r=8$，$\\theta=\\dfrac\\pi2$",
+        "$\\rho=\\sqrt[3]8=2$，$\\varphi=\\dfrac\\pi6+\\dfrac{2k\\pi}3$：$\\dfrac\\pi6,\\ \\dfrac{5\\pi}6,\\ \\dfrac{3\\pi}2$",
+        "驗算：$(-2i)^3=-8i^3=8i$；$(\\sqrt3+i)^2=2+2\\sqrt3\\,i$，再乘 $\\sqrt3+i$ 得 $8i$"
       ],
-      "key": "$\\arctan$ 只差 $\\pi$，畫點確認象限",
-      "check": 0
+      "tex": [
+        "w=\\sqrt3+i,\\quad-\\sqrt3+i,\\quad-2i"
+      ]
     },
     {
-      "title": "乘法：轉與伸縮",
-      "beats": [
-        { "show": ["$z_1z_2$：長度相乘，角度相加"],
-          "note": "乘開後用和角公式。",
-          "say": "兩個極式相乘，乘開之後剛好是 cosine 和 sine 的和角公式：長度相乘，角度相加。",
-          "board": [
-            {"do":"write","line":"$z_1z_2$ 乘開，用和角公式"},
-            {"do":"write","line":"$|z_1z_2|={{l:r_1r_2}}$","on":"長度相乘"},
-            {"do":"write","line":"$\\arg(z_1z_2)={{a:\\theta_1+\\theta_2}}$","on":"角度"}
-          ] },
-        { "show": ["$i\\cdot i=-1$","實部：$\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2$"],
-          "note": "對應 $\\cos(\\theta_1+\\theta_2)$。",
-          "say": "乘開時 i 乘 i 等於負一，所以實部是 cosine 乘 cosine 減 sine 乘 sine，正是 cosine 的和角公式。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$i\\cdot i=-1$","on":"乘開時"},
-            {"do":"write","line":"實部：$\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2$","on":"實部"}
-          ] },
-        { "show": ["虛部：$\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2$"],
-          "note": "對應 $\\sin(\\theta_1+\\theta_2)$。",
-          "say": "虛部是 sine 乘 cosine 加 cosine 乘 sine，正是 sine 的和角公式，所以角度相加。",
-          "board": [
-            {"do":"write","line":"虛部：$\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2$"}
-          ] },
-        { "show": ["$r_1r_2(\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2))$"],
-          "say": "所以乘一個複數，就是把點繞原點轉它的角度，再把長度放大它的長度倍。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"乘 $z_2$：把點轉 ${{t:\\theta_2}}$，放大 ${{r:r_2}}$ 倍","tint":{"t":"violet","r":"blue"},"on":"所以乘"},
-            {"do":"focus","term":"t","color":"violet","label":"轉角度","on":"它的角度"},
-            {"do":"focus","term":"r","color":"blue","label":"伸縮","on":"放大"}
-          ] },
-        { "show": ["除法：長度相除，角度相減"],
-          "say": "除法反過來：長度相除，角度相減。",
-          "board": [
-            {"do":"write","line":"$\\left|\\frac{z_1}{z_2}\\right|={{m:\\frac{r_1}{r_2}}}$"},
-            {"do":"write","line":"$\\arg\\frac{z_1}{z_2}={{d:\\theta_1-\\theta_2}}$","on":"角度"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "De Moivre",
-      "beats": [
-        { "show": ["$\\bigl(r(\\cos\\theta+i\\sin\\theta)\\bigr)^{n}=r^{n}\\bigl(\\cos n\\theta+i\\sin n\\theta\\bigr)$"],
-          "say": "重複乘同一個數 n 次：長度變 r 的 n 次方，角度變 n 倍。這是 De Moivre 公式。",
-          "board": [
-            {"do":"write","line":"$z=r(\\cos\\theta+i\\sin\\theta)$"},
-            {"do":"write","line":"$z^{n}={{p:r^{n}}}(\\cos{{q:n\\theta}}+i\\sin n\\theta)$","on":"長度變"},
-            {"do":"focus","term":"q","color":"violet","label":"角度 n 倍","on":"n 倍"}
-          ] },
-        { "show": ["$(1+i)^{10}$"],
-          "note": "$1+i=\\sqrt{2}\\left(\\cos\\frac{\\pi}{4}+i\\sin\\frac{\\pi}{4}\\right)$",
-          "say": "算一加 i 的十次方。直接展開要十次乘法；先化成極式，長度根號二、角度四分之派。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(1+i)^{10}$","on":"算一加"},
-            {"do":"write","line":"$1+i={{r:\\sqrt{2}}}(\\cos\\frac{\\pi}{4}+i\\sin\\frac{\\pi}{4})$","on":"先化成極式"},
-            {"do":"focus","term":"r","color":"blue","label":"長度","on":"根號二"}
-          ] },
-        { "show": ["$(\\sqrt{2})^{10}=32$，角度 $\\frac{5\\pi}{2}$"],
-          "note": "跟 $\\frac{\\pi}{2}$ 同一個方向。",
-          "say": "長度變成三十二，角度十個四分之派是二分之五派，跟二分之派同方向，答案三十二 i。",
-          "board": [
-            {"do":"write","line":"$(\\sqrt{2})^{10}=32$，角度 $\\frac{5\\pi}{2}$"},
-            {"do":"write","line":"$(1+i)^{10}={{a:32i}}$","on":"跟二分之派"},
-            {"do":"box","term":"a","color":"green","on":"答案"}
-          ] },
-        { "show": ["$\\frac{5\\pi}{2}-2\\pi=\\frac{\\pi}{2}$"],
-          "note": "角度超過 $2\\pi$ 就減 $2\\pi$。",
-          "say": "二分之五派減掉一整圈二派，剩二分之派。轉一整圈回原處，所以同方向。角度太大，就這樣減。",
-          "board": [
-            {"do":"write","line":"${{b:\\frac{5\\pi}{2}}}-2\\pi=\\frac{\\pi}{2}$"},
-            {"do":"focus","term":"b","on":"一整圈#1"}
-          ] }
-      ],
-      "key": "先化極式：長度取次方，角度乘倍數",
-      "check": 2
-    },
-    {
-      "title": "$n$ 次方根",
-      "beats": [
-        { "show": ["$w^n=r(\\cos\\theta+i\\sin\\theta)$"],
-          "say": "反過來解 w 的 n 次方等於一個複數，長度和角度分開來解。",
-          "board": [
-            {"do":"write","line":"$w^n={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$","tint":{"r":"blue","t":"violet"}}
-          ] },
-        { "show": ["$|w|=r^{1/n}$"],
-          "say": "長度：w 的長度的 n 次方要等於 r，所以是 r 開 n 次方根。",
-          "board": [
-            {"do":"write","line":"$|w|={{l:r^{1/n}}}$"},
-            {"do":"underline","term":"l","on":"所以是"}
-          ] },
-        { "show": ["$\\varphi=\\frac{\\theta+2\\pi k}{n}$"],
-          "note": "$k=0,1,\\dots,n-1$",
-          "say": "角度：n 倍的角度可以是 theta 再加好幾圈，所以先加二派 k 再除以 n。",
-          "board": [
-            {"do":"write","line":"$\\varphi=\\frac{ {{t:\\theta}}+{{k:2\\pi k}}}{n}$"},
-            {"do":"underline","term":"k","label":"加好幾圈","on":"好幾圈"}
-          ] },
-        { "show": ["$n\\varphi=\\theta+2\\pi k$"],
-          "note": "差 $2\\pi$ 的整數倍，是同一個角。",
-          "say": "加二派等於多轉一整圈，點沒有動。所以只要 n 倍的角度，和 theta 差二派的整數倍，就夠了。",
-          "board": [
-            {"do":"write","line":"${{m:n\\varphi}}=\\theta+2\\pi k$"},
-            {"do":"focus","term":"m","label":"n 倍","on":"n 倍"}
-          ] },
-        { "show": ["正 $n$ 邊形的頂點"],
-          "note": "$k=n$ 又回到 $k=0$ 的根。",
-          "say": "k 取 n 個值，得到 n 個不同的根，排成圓上正 n 邊形的頂點。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$k=0,1,\\dots,n-1$：$n$ 個根","on":"k 取"},
-            {"do":"plot","graph":{"window":[-2.1,2.1,-1.15,1.15],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted"}],"fills":[{"pts":[[0.9553,0.2955],[0.0142,0.9999],[-0.9466,0.3225],[-0.5992,-0.8006],[0.5763,-0.8173]],"color":"violet"}],"points":[{"x":0.9553,"y":0.2955},{"x":0.0142,"y":0.9999},{"x":-0.9466,"y":0.3225},{"x":-0.5992,"y":-0.8006},{"x":0.5763,"y":-0.8173}]},"on":"正 n 邊形"}
-          ] }
-      ],
-      "check": 3
-    },
-    {
-      "title": "三次方根",
-      "beats": [
-        { "show": ["$w^3=8i$"],
-          "note": "$8i=8\\left(\\cos\\frac{\\pi}{2}+i\\sin\\frac{\\pi}{2}\\right)$",
-          "say": "解 w 的三次方等於八 i。八 i 的長度是八，角度二分之派。",
-          "board": [
-            {"do":"write","line":"$w^3={{e:8i}}$"},
-            {"do":"write","line":"$8i={{r:8}}(\\cos{{t:\\frac{\\pi}{2}}}+i\\sin\\frac{\\pi}{2})$","tint":{"r":"blue","t":"violet"},"on":"長度是八"},
-            {"do":"focus","term":"t","color":"violet","label":"角度","on":"角度"}
-          ] },
-        { "show": ["$|w|=8^{1/3}=2$"],
-          "say": "長度：八開三次方是二。三個根都在半徑二的圓上。",
-          "board": [
-            {"do":"write","line":"$|w|=8^{1/3}={{l:2}}$"},
-            {"do":"underline","term":"l","color":"blue","label":"半徑","on":"半徑"}
-          ] },
-        { "show": ["$\\varphi=\\frac{\\pi/2+2\\pi k}{3}$"],
-          "say": "角度：二分之派加二派 k，再除以三，k 取零、一、二。",
-          "board": [
-            {"do":"write","line":"$\\varphi=\\frac{\\pi/2+{{k:2\\pi k}}}{{{d:3}}}$，$k=0,1,2$"},
-            {"do":"underline","term":"k","label":"加幾圈","on":"二派"},
-            {"do":"focus","term":"d","color":"blue","on":"除以三"}
-          ] }
-      ],
-      "key": "角度加 $2\\pi k$ 再除，三個根等距分布",
-      "predict": {
-        "ask": "三個根的角度是？",
-        "options": [
-          {
-            "label": "$\\frac{\\pi}{6}$、$\\frac{5\\pi}{6}$、$\\frac{3\\pi}{2}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{\\pi}{6}$、$\\frac{\\pi}{6}+2\\pi$、$\\frac{\\pi}{6}+4\\pi$",
-            "why": "那是 $\\frac{\\theta}{n}+2\\pi k$，都是同一個根。要先加 $2\\pi k$ 再除以 $3$。"
-          },
-          {
-            "label": "$\\frac{\\pi}{2}$、$\\pi$、$\\frac{3\\pi}{2}$",
-            "why": "角度也要除以 $3$：$\\frac{\\pi/2}{3}=\\frac{\\pi}{6}$，三個根相差 $\\frac{2\\pi}{3}$。"
-          }
-        ]
-      }
+      "heading": "重點整理",
+      "body": [
+        "• $z=r(\\cos\\theta+i\\sin\\theta)$，$r=|z|$；主輻角在 $(-\\pi,\\pi]$",
+        "• 定角度：先看象限；左半平面補 $\\pm\\pi$",
+        "• 乘法：長度相乘、角度相加（和角公式）",
+        "• De Moivre：$(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta$",
+        "• $n$ 次方根：半徑 $r^{1/n}$，相鄰差 $\\frac{2\\pi}n$，恰好 $n$ 個",
+        "下一課：Euler 公式：$\\cos\\theta+i\\sin\\theta=e^{i\\theta}$"
+      ]
     }
   ],
   "workedExamples": [
@@ -367,54 +196,842 @@
   ],
   "checks": [
     {
-      "ask": "$-1-i$ 的主輻角 $\\operatorname{Arg}$ 是？",
+      "ask": "$-\\sqrt3-i$ 的主輻角 $\\operatorname{Arg}$ 是？",
       "options": [
-        { "label": "$-\\frac{3\\pi}{4}$", "correct": true },
-        { "label": "$\\frac{\\pi}{4}$", "why": "$\\arctan\\frac{-1}{-1}=\\frac{\\pi}{4}$ 是第一象限的角；點 $(-1,-1)$ 在第三象限。" },
-        { "label": "$\\frac{5\\pi}{4}$", "why": "$\\frac{5\\pi}{4}$ 也指向同一個點，但主值要在 $(-\\pi,\\pi]$ 裡，所以是 $-\\frac{3\\pi}{4}$。" }
+        {
+          "label": "$-\\dfrac{5\\pi}6$",
+          "correct": true
+        },
+        {
+          "label": "$\\dfrac\\pi6$",
+          "why": "直接取 $\\arctan\\frac{-1}{-\\sqrt3}$：那是 $\\sqrt3+i$ 的方向，在第一象限"
+        },
+        {
+          "label": "$\\dfrac{7\\pi}6$",
+          "why": "角度對，但不在 $(-\\pi,\\pi]$ 裡，不是主輻角"
+        },
+        {
+          "label": "$-\\dfrac\\pi6$",
+          "why": "那是 $\\sqrt3-i$，在第四象限"
+        }
       ]
     },
     {
-      "ask": "乘以 $i$ 在複數平面上的效果是？",
+      "ask": "$(1+\\sqrt3\\,i)^6=$？",
       "options": [
-        { "label": "繞原點逆時針轉 $90^\\circ$", "correct": true },
-        { "label": "對實軸鏡射", "why": "那是取共軛複數。$i$ 的長度 $1$、角度 $\\frac{\\pi}{2}$，乘它是旋轉。" },
-        { "label": "往上平移 $1$", "why": "那是加上 $i$。乘法是旋轉加伸縮。" }
+        {
+          "label": "$64$",
+          "correct": true
+        },
+        {
+          "label": "$-64$",
+          "why": "$6\\cdot\\frac\\pi3=2\\pi$，$\\cos2\\pi=1$，不是 $-1$"
+        },
+        {
+          "label": "$64i$",
+          "why": "角度 $2\\pi$ 落在正實軸，不是虛軸"
+        },
+        {
+          "label": "$8$",
+          "why": "長度 $2$ 要取 $6$ 次方，$2^6=64$"
+        }
       ]
     },
     {
-      "ask": "$\\left(\\cos\\frac{\\pi}{6}+i\\sin\\frac{\\pi}{6}\\right)^6$ 是？",
+      "ask": "$w^4=-16$ 在第一象限的根是？",
       "options": [
-        { "label": "$-1$", "correct": true },
-        { "label": "$1$", "why": "角度 $6\\cdot\\frac{\\pi}{6}=\\pi$，$\\cos\\pi+i\\sin\\pi=-1$。" },
-        { "label": "$i$", "why": "那是三次方的結果（角度 $\\frac{\\pi}{2}$）。" }
+        {
+          "label": "$\\sqrt2+\\sqrt2\\,i$",
+          "correct": true
+        },
+        {
+          "label": "$1+i$",
+          "why": "長度是 $16^{1/4}=2$；$|1+i|=\\sqrt2$"
+        },
+        {
+          "label": "$2i$",
+          "why": "角度是 $\\frac{\\pi}{4}$，不是 $\\frac\\pi2$：$\\theta=\\pi$ 要除以 $4$"
+        },
+        {
+          "label": "$2$",
+          "why": "$2^4=16$，不是 $-16$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "長度和角度",
+      "beats": [
+        {
+          "show": [
+            "複數是平面上的點：也能用距離 $r$ 和角度 $\\theta$ 描述",
+            "圖"
+          ],
+          "say": "上一課把複數看成平面上的點。平面上的點，也可以用極座標描述：到原點的距離 r，和跟正實軸的夾角西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "複數是平面上的點：也能用距離 $r$ 和角度 $\\theta$ 描述"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cpGeneric\" viewBox=\"0 0 620 340\" width=\"620\" height=\"340\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacpGeneric\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacpGenericblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacpGenericred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacpGenericgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacpGenericpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacpGenericink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacpGeneric30\"><rect x=\"81.4\" y=\"16\" width=\"463.3\" height=\"294\"/></clipPath><g clip-path=\"url(#cl11gacpGeneric30)\"><line x1=\"152.6\" y1=\"16\" x2=\"152.6\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"241.7\" y1=\"16\" x2=\"241.7\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"330.8\" y1=\"16\" x2=\"330.8\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"419.9\" y1=\"16\" x2=\"419.9\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"509\" y1=\"16\" x2=\"509\" y2=\"310\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"81.4\" y1=\"247.6\" x2=\"544.6\" y2=\"247.6\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"81.4\" y1=\"158.5\" x2=\"544.6\" y2=\"158.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"81.4\" y1=\"69.5\" x2=\"544.6\" y2=\"69.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"77.4\" y1=\"247.6\" x2=\"556.6\" y2=\"247.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpGeneric)\"/><line x1=\"152.6\" y1=\"314\" x2=\"152.6\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpGeneric)\"/><text x=\"554.6\" y=\"238.6\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"161.6\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"357.4\" y1=\"247.6\" x2=\"357.4\" y2=\"75.8\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"152.6\" y1=\"247.6\" x2=\"357.4\" y2=\"75.8\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpGenericblue)\"/><path d=\"M219.5 247.6L219.5 247.4L219.5 247.2L219.5 247.1L219.5 246.9L219.4 246.7L219.4 246.5L219.4 246.3L219.4 246.1L219.4 245.9L219.4 245.7L219.4 245.5L219.4 245.3L219.4 245.1L219.4 244.9L219.4 244.7L219.4 244.5L219.4 244.3L219.4 244.1L219.4 243.9L219.3 243.8L219.3 243.6L219.3 243.4L219.3 243.2L219.3 243L219.3 242.8L219.3 242.6L219.2 242.4L219.2 242.2L219.2 242L219.2 241.8L219.2 241.6L219.2 241.4L219.1 241.2L219.1 241L219.1 240.8L219.1 240.7L219.1 240.5L219 240.3L219 240.1L219 239.9L219 239.7L219 239.5L218.9 239.3L218.9 239.1L218.9 238.9L218.9 238.7L218.8 238.5L218.8 238.3L218.8 238.1L218.7 238L218.7 237.8L218.7 237.6L218.7 237.4L218.6 237.2L218.6 237L218.6 236.8L218.5 236.6L218.5 236.4L218.5 236.2L218.4 236L218.4 235.8L218.4 235.7L218.3 235.5L218.3 235.3L218.3 235.1L218.2 234.9L218.2 234.7L218.2 234.5L218.1 234.3L218.1 234.1L218 233.9L218 233.7L218 233.6L217.9 233.4L217.9 233.2L217.8 233L217.8 232.8L217.7 232.6L217.7 232.4L217.7 232.2L217.6 232L217.6 231.8L217.5 231.7L217.5 231.5L217.4 231.3L217.4 231.1L217.3 230.9L217.3 230.7L217.2 230.5L217.2 230.3L217.1 230.2L217.1 230L217 229.8L217 229.6L216.9 229.4L216.9 229.2L216.8 229L216.8 228.8L216.7 228.7L216.6 228.5L216.6 228.3L216.5 228.1L216.5 227.9L216.4 227.7L216.4 227.5L216.3 227.4L216.2 227.2L216.2 227L216.1 226.8L216.1 226.6L216 226.4L215.9 226.3L215.9 226.1L215.8 225.9L215.8 225.7L215.7 225.5L215.6 225.3L215.6 225.1L215.5 225L215.4 224.8L215.4 224.6L215.3 224.4L215.2 224.2L215.2 224.1L215.1 223.9L215 223.7L214.9 223.5L214.9 223.3L214.8 223.1L214.7 223L214.7 222.8L214.6 222.6L214.5 222.4L214.4 222.2L214.4 222.1L214.3 221.9L214.2 221.7L214.1 221.5L214.1 221.3L214 221.2L213.9 221L213.8 220.8L213.8 220.6L213.7 220.5L213.6 220.3L213.5 220.1L213.4 219.9L213.4 219.8L213.3 219.6L213.2 219.4L213.1 219.2L213 219L212.9 218.9L212.9 218.7L212.8 218.5L212.7 218.3L212.6 218.2L212.5 218L212.4 217.8L212.3 217.6L212.3 217.5L212.2 217.3L212.1 217.1L212 217L211.9 216.8L211.8 216.6L211.7 216.4L211.6 216.3L211.5 216.1L211.4 215.9L211.4 215.8L211.3 215.6L211.2 215.4L211.1 215.2L211 215.1L210.9 214.9L210.8 214.7L210.7 214.6L210.6 214.4L210.5 214.2L210.4 214.1L210.3 213.9L210.2 213.7L210.1 213.6L210 213.4L209.9 213.2L209.8 213.1L209.7 212.9L209.6 212.7L209.5 212.6L209.4 212.4L209.3 212.2L209.2 212.1L209.1 211.9L209 211.7L208.9 211.6L208.8 211.4L208.7 211.2L208.6 211.1L208.5 210.9L208.4 210.8L208.2 210.6L208.1 210.4L208 210.3L207.9 210.1L207.8 210L207.7 209.8L207.6 209.6L207.5 209.5L207.4 209.3L207.3 209.2L207.1 209L207 208.8L206.9 208.7L206.8 208.5L206.7 208.4L206.6 208.2L206.5 208L206.3 207.9L206.2 207.7L206.1 207.6L206 207.4L205.9 207.3L205.8 207.1L205.6 207L205.5 206.8L205.4 206.7L205.3 206.5L205.2 206.3L205 206.2L204.9 206L204.8 205.9L204.7 205.7L204.6 205.6L204.4 205.4L204.3 205.3L204.2 205.1L204.1 205L203.9 204.8L203.8 204.7\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" marker-end=\"url(#ah11gacpGenericred)\"/><circle cx=\"357.4\" cy=\"75.8\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"369.4\" y=\"67.8\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan> = <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan> + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">bi</tspan></text><text x=\"245\" y=\"149.7\" text-anchor=\"end\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</tspan></text><text x=\"240.2\" y=\"228.7\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">θ</text><text x=\"255\" y=\"275.6\" text-anchor=\"middle\" fill=\"var(--muted)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">a</tspan> = <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</tspan> cos θ</text><text x=\"367.4\" y=\"169.7\" text-anchor=\"start\" fill=\"var(--muted)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">b</tspan> = <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">r</tspan> sin θ</text></svg>",
+              "on": "座標"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a=r\\cos\\theta$，$b=r\\sin\\theta$，所以",
+            "$z=r(\\cos\\theta+i\\sin\\theta)$"
+          ],
+          "say": "a 是 r 餘弦西塔，b 是 r 正弦西塔。代回去，z 等於 r 乘括號餘弦西塔加 i 正弦西塔。這叫複數的極式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a=r\\cos\\theta$，$b=r\\sin\\theta$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle z=r(\\cos\\theta+i\\sin\\theta)}}$",
+              "color": "red",
+              "on": "西塔#2"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "西塔#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=|z|=\\sqrt{a^2+b^2}$；$\\theta$ 叫輻角，記作 $\\arg z$"
+          ],
+          "say": "r 就是 z 的絕對值；西塔叫做輻角。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r=|z|=\\sqrt{a^2+b^2}$；$\\theta$ 叫輻角，記作 $\\arg z$"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$z^4=16$ 有幾個複數根？它們的長度是？",
-      "options": [
-        { "label": "4 個，長度都是 $2$", "correct": true },
-        { "label": "2 個（$\\pm 2$），長度 $2$", "why": "實數根只有 $\\pm 2$，但還有 $\\pm 2i$；$n$ 次方程式有 $n$ 個複數根。" },
-        { "label": "4 個，長度是 $16$、$4$、$2$、$1$", "why": "每個根的長度都是 $16^{1/4}=2$，它們在同一個圓上。" }
+      "title": "輻角與例子",
+      "beats": [
+        {
+          "show": [
+            "輻角不唯一：$\\theta$ 加減 $2\\pi$ 的倍數，是同一個點"
+          ],
+          "say": "輻角不唯一：轉一整圈回到同一點，所以加減 2 派的倍數都可以。規定落在負派到派之間、包含派的那一個，叫主輻角，大寫 Arg。",
+          "board": [
+            {
+              "do": "write",
+              "line": "輻角不唯一：$\\theta$ 加減 $2\\pi$ 的倍數，是同一個點"
+            },
+            {
+              "do": "write",
+              "line": "主輻角 $\\operatorname{Arg}z$：規定落在 $(-\\pi,\\pi]$",
+              "on": "派的#1"
+            },
+            {
+              "do": "write",
+              "line": "　$z=0$ 沒有輻角（任何角度都行），極式只談 $z\\ne0$",
+              "color": "violet",
+              "on": "包含"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$-1+\\sqrt3\\,i$"
+          ],
+          "say": "例子：負 1 加根號 3 i。r 是根號 1 加 3，等於 2。餘弦西塔是負 2 分之 1，正弦西塔是 2 分之根號 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$-1+\\sqrt3\\,i$"
+            },
+            {
+              "do": "write",
+              "line": "$r=\\sqrt{1+3}=2$；$\\cos\\theta=-\\frac12$，$\\sin\\theta=\\frac{\\sqrt3}2$",
+              "on": "餘弦"
+            }
+          ]
+        },
+        {
+          "show": [
+            "餘弦負、正弦正：第二象限，$\\theta=\\dfrac{2\\pi}3$",
+            "$-1+\\sqrt3\\,i=2\\Big(\\cos\\frac{2\\pi}3+i\\sin\\frac{2\\pi}3\\Big)$"
+          ],
+          "say": "餘弦負、正弦正，在第二象限，角度是 3 分之 2 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "餘弦負、正弦正：第二象限，$\\theta=\\dfrac{2\\pi}3$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle -1+\\sqrt3\\,i=2\\Big(\\cos\\frac{2\\pi}3+i\\sin\\frac{2\\pi}3\\Big)}}$",
+              "on": "第二"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "分之"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "角度要看象限",
+      "beats": [
+        {
+          "show": [
+            "想偷懶：$\\tan\\theta=\\dfrac ba$，直接 $\\theta=\\arctan\\dfrac ba$？"
+          ],
+          "say": "很多人想偷懶：正切西塔是 a 分之 b，那就直接取反正切。",
+          "board": [
+            {
+              "do": "write",
+              "line": "想偷懶：$\\tan\\theta=\\dfrac ba$，直接 $\\theta=\\arctan\\dfrac ba$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\arctan(-\\sqrt3)=-\\dfrac\\pi3$：錯了"
+          ],
+          "say": "試試剛才的例子：反正切負根號 3，是負 3 分之派。但答案明明是 3 分之 2 派，錯了。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\arctan(-\\sqrt3)=-\\dfrac\\pi3$：錯了",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上看原因：負 3 分之派指向 1 減根號 3 i，在第四象限。它跟負 1 加根號 3 i 的 a 分之 b 一樣，但方向剛好相反。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cpQuad\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacpQuad\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacpQuadblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacpQuadred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacpQuadgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacpQuadpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacpQuadink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacpQuad30\"><rect x=\"127.5\" y=\"16\" width=\"371.1\" height=\"314\"/></clipPath><g clip-path=\"url(#cl11gacpQuad30)\"><line x1=\"170.3\" y1=\"16\" x2=\"170.3\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"241.6\" y1=\"16\" x2=\"241.6\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"313\" y1=\"16\" x2=\"313\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"384.4\" y1=\"16\" x2=\"384.4\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"455.7\" y1=\"16\" x2=\"455.7\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"127.5\" y1=\"322.9\" x2=\"498.5\" y2=\"322.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"127.5\" y1=\"251.5\" x2=\"498.5\" y2=\"251.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"127.5\" y1=\"180.1\" x2=\"498.5\" y2=\"180.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"127.5\" y1=\"108.8\" x2=\"498.5\" y2=\"108.8\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"127.5\" y1=\"37.4\" x2=\"498.5\" y2=\"37.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"123.5\" y1=\"180.1\" x2=\"510.5\" y2=\"180.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpQuad)\"/><line x1=\"313\" y1=\"334\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpQuad)\"/><text x=\"241.6\" y=\"202.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−1</text><text x=\"384.4\" y=\"202.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"508.5\" y=\"171.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"241.6\" y1=\"180.1\" x2=\"241.6\" y2=\"56.5\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"313\" y1=\"180.1\" x2=\"241.6\" y2=\"56.5\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpQuadblue)\"/><line x1=\"313\" y1=\"180.1\" x2=\"384.4\" y2=\"303.7\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-dasharray=\"8 7\"/><path d=\"M355.8 180.1L355.8 179.8L355.8 179.4L355.8 179L355.8 178.6L355.8 178.3L355.8 177.9L355.7 177.5L355.7 177.1L355.7 176.8L355.7 176.4L355.6 176L355.6 175.7L355.5 175.3L355.5 174.9L355.5 174.5L355.4 174.2L355.3 173.8L355.3 173.4L355.2 173.1L355.2 172.7L355.1 172.3L355 172L355 171.6L354.9 171.2L354.8 170.9L354.7 170.5L354.6 170.1L354.5 169.8L354.5 169.4L354.4 169.1L354.3 168.7L354.2 168.3L354.1 168L353.9 167.6L353.8 167.3L353.7 166.9L353.6 166.5L353.5 166.2L353.4 165.8L353.2 165.5L353.1 165.1L353 164.8L352.8 164.4L352.7 164.1L352.6 163.8L352.4 163.4L352.3 163.1L352.1 162.7L352 162.4L351.8 162L351.6 161.7L351.5 161.4L351.3 161L351.2 160.7L351 160.4L350.8 160L350.6 159.7L350.4 159.4L350.3 159.1L350.1 158.7L349.9 158.4L349.7 158.1L349.5 157.8L349.3 157.4L349.1 157.1L348.9 156.8L348.7 156.5L348.5 156.2L348.3 155.9L348.1 155.6L347.9 155.3L347.6 155L347.4 154.7L347.2 154.4L347 154.1L346.7 153.8L346.5 153.5L346.3 153.2L346 152.9L345.8 152.6L345.6 152.3L345.3 152L345.1 151.8L344.8 151.5L344.6 151.2L344.3 150.9L344.1 150.7L343.8 150.4L343.5 150.1L343.3 149.9L343 149.6L342.7 149.3L342.5 149.1L342.2 148.8L341.9 148.6L341.7 148.3L341.4 148.1L341.1 147.8L340.8 147.6L340.5 147.3L340.2 147.1L339.9 146.9L339.7 146.6L339.4 146.4L339.1 146.2L338.8 145.9L338.5 145.7L338.2 145.5L337.9 145.3L337.6 145.1L337.3 144.8L336.9 144.6L336.6 144.4L336.3 144.2L336 144L335.7 143.8L335.4 143.6L335.1 143.4L334.7 143.2L334.4 143.1L334.1 142.9L333.8 142.7L333.4 142.5L333.1 142.3L332.8 142.2L332.4 142L332.1 141.8L331.8 141.7L331.4 141.5L331.1 141.3L330.8 141.2L330.4 141L330.1 140.9L329.7 140.7L329.4 140.6L329 140.4L328.7 140.3L328.3 140.2L328 140L327.6 139.9L327.3 139.8L326.9 139.7L326.6 139.5L326.2 139.4L325.9 139.3L325.5 139.2L325.2 139.1L324.8 139L324.4 138.9L324.1 138.8L323.7 138.7L323.4 138.6L323 138.5L322.6 138.4L322.3 138.3L321.9 138.3L321.5 138.2L321.2 138.1L320.8 138L320.4 138L320.1 137.9L319.7 137.8L319.3 137.8L319 137.7L318.6 137.7L318.2 137.6L317.8 137.6L317.5 137.6L317.1 137.5L316.7 137.5L316.4 137.5L316 137.4L315.6 137.4L315.2 137.4L314.9 137.4L314.5 137.3L314.1 137.3L313.7 137.3L313.4 137.3L313 137.3L312.6 137.3L312.3 137.3L311.9 137.3L311.5 137.3L311.1 137.4L310.8 137.4L310.4 137.4L310 137.4L309.6 137.5L309.3 137.5L308.9 137.5L308.5 137.6L308.2 137.6L307.8 137.6L307.4 137.7L307 137.7L306.7 137.8L306.3 137.8L305.9 137.9L305.6 138L305.2 138L304.8 138.1L304.5 138.2L304.1 138.3L303.7 138.3L303.4 138.4L303 138.5L302.6 138.6L302.3 138.7L301.9 138.8L301.6 138.9L301.2 139L300.8 139.1L300.5 139.2L300.1 139.3L299.8 139.4L299.4 139.5L299.1 139.7L298.7 139.8L298.4 139.9L298 140L297.7 140.2L297.3 140.3L297 140.4L296.6 140.6L296.3 140.7L295.9 140.9L295.6 141L295.2 141.2L294.9 141.3L294.6 141.5L294.2 141.7L293.9 141.8L293.6 142L293.2 142.2L292.9 142.3L292.6 142.5L292.2 142.7L291.9 142.9L291.6 143.1\" stroke=\"var(--blue)\" stroke-width=\"2.6\" stroke-linecap=\"round\" marker-end=\"url(#ah11gacpQuadblue)\"/><path d=\"M373.7 180.1L373.7 180.4L373.7 180.7L373.7 180.9L373.6 181.2L373.6 181.5L373.6 181.7L373.6 182L373.6 182.3L373.6 182.5L373.6 182.8L373.6 183L373.6 183.3L373.6 183.6L373.5 183.8L373.5 184.1L373.5 184.4L373.5 184.6L373.5 184.9L373.5 185.2L373.4 185.4L373.4 185.7L373.4 186L373.4 186.2L373.3 186.5L373.3 186.7L373.3 187L373.2 187.3L373.2 187.5L373.2 187.8L373.1 188.1L373.1 188.3L373.1 188.6L373 188.8L373 189.1L373 189.4L372.9 189.6L372.9 189.9L372.8 190.1L372.8 190.4L372.7 190.7L372.7 190.9L372.6 191.2L372.6 191.5L372.5 191.7L372.5 192L372.4 192.2L372.4 192.5L372.3 192.7L372.3 193L372.2 193.3L372.2 193.5L372.1 193.8L372 194L372 194.3L371.9 194.6L371.9 194.8L371.8 195.1L371.7 195.3L371.7 195.6L371.6 195.8L371.5 196.1L371.5 196.3L371.4 196.6L371.3 196.9L371.2 197.1L371.2 197.4L371.1 197.6L371 197.9L370.9 198.1L370.9 198.4L370.8 198.6L370.7 198.9L370.6 199.1L370.5 199.4L370.4 199.6L370.4 199.9L370.3 200.1L370.2 200.4L370.1 200.6L370 200.9L369.9 201.1L369.8 201.4L369.7 201.6L369.6 201.9L369.5 202.1L369.4 202.4L369.3 202.6L369.2 202.9L369.1 203.1L369 203.3L368.9 203.6L368.8 203.8L368.7 204.1L368.6 204.3L368.5 204.6L368.4 204.8L368.3 205.1L368.2 205.3L368.1 205.5L368 205.8L367.9 206L367.8 206.3L367.6 206.5L367.5 206.7L367.4 207L367.3 207.2L367.2 207.4L367 207.7L366.9 207.9L366.8 208.1L366.7 208.4L366.6 208.6L366.4 208.8L366.3 209.1L366.2 209.3L366.1 209.5L365.9 209.8L365.8 210L365.7 210.2L365.5 210.5L365.4 210.7L365.3 210.9L365.1 211.2L365 211.4L364.9 211.6L364.7 211.8L364.6 212.1L364.4 212.3L364.3 212.5L364.2 212.7L364 213L363.9 213.2L363.7 213.4L363.6 213.6L363.4 213.8L363.3 214.1L363.1 214.3L363 214.5L362.8 214.7L362.7 214.9L362.5 215.1L362.4 215.4L362.2 215.6L362.1 215.8L361.9 216L361.8 216.2L361.6 216.4L361.4 216.6L361.3 216.9L361.1 217.1L361 217.3L360.8 217.5L360.6 217.7L360.5 217.9L360.3 218.1L360.1 218.3L360 218.5L359.8 218.7L359.6 218.9L359.5 219.1L359.3 219.3L359.1 219.5L359 219.7L358.8 219.9L358.6 220.1L358.4 220.3L358.3 220.5L358.1 220.7L357.9 220.9L357.7 221.1L357.5 221.3L357.4 221.5L357.2 221.7L357 221.9L356.8 222.1L356.6 222.3L356.5 222.5L356.3 222.7L356.1 222.8L355.9 223L355.7 223.2L355.5 223.4L355.3 223.6L355.1 223.8L354.9 224L354.8 224.1L354.6 224.3L354.4 224.5L354.2 224.7L354 224.9L353.8 225L353.6 225.2L353.4 225.4L353.2 225.6L353 225.7L352.8 225.9L352.6 226.1L352.4 226.3L352.2 226.4L352 226.6L351.8 226.8L351.6 226.9L351.4 227.1L351.2 227.3L351 227.4L350.8 227.6L350.6 227.8L350.3 227.9L350.1 228.1L349.9 228.3L349.7 228.4L349.5 228.6L349.3 228.7L349.1 228.9L348.9 229.1L348.7 229.2L348.4 229.4L348.2 229.5L348 229.7L347.8 229.8L347.6 230L347.4 230.1L347.1 230.3L346.9 230.4L346.7 230.6L346.5 230.7L346.3 230.9L346 231L345.8 231.2L345.6 231.3L345.4 231.4L345.1 231.6L344.9 231.7L344.7 231.9L344.5 232L344.2 232.1L344 232.3L343.8 232.4L343.6 232.5L343.3 232.7\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-dasharray=\"6 5\" marker-end=\"url(#ah11gacpQuadred)\"/><circle cx=\"241.6\" cy=\"56.5\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"384.4\" cy=\"303.7\" r=\"6\" fill=\"var(--paper)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"229.6\" y=\"50.5\" text-anchor=\"end\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−1 + √3 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"344.4\" y=\"131.1\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">2π/3</text><text x=\"398.4\" y=\"311.7\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">1 − √3 <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"380.5\" y=\"252.4\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">arctan(−√3) = −π/3</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\arctan$ 只給 $(-\\frac\\pi2,\\frac\\pi2)$：只看得到右半平面"
+          ],
+          "say": "反正切的值只在負 2 分之派到 2 分之派之間，只看得到右半平面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\arctan$ 只給 $(-\\frac\\pi2,\\frac\\pi2)$：只看得到右半平面"
+            }
+          ]
+        },
+        {
+          "show": [
+            "規則（$z=a+bi\\ne0$）：",
+            "$\\operatorname{Arg}z=\\begin{cases}\\arctan\\frac ba,&a>0\\\\[2pt]\\arctan\\frac ba+\\pi,&a<0,\\ b\\ge0\\\\[2pt]\\arctan\\frac ba-\\pi,&a<0,\\ b<0\\\\[2pt]\\pm\\frac\\pi2,&a=0\\ (\\text{看 }b\\text{ 的正負})\\end{cases}$"
+          ],
+          "say": "正確的規則：a 大於 0，反正切就對了。a 小於 0，點在左半平面，要補半圈：上半部加派，下半部減派。a 等於 0 就是正負 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "規則（$z=a+bi\\ne0$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\operatorname{Arg}z={\\begin{cases}\\arctan\\frac ba,&a>0\\\\[2pt]\\arctan\\frac ba+\\pi,&a<0,\\ b\\ge0\\\\[2pt]\\arctan\\frac ba-\\pi,&a<0,\\ b<0\\\\[2pt]\\pm\\frac\\pi2,&a=0\\ (\\text{看 }b\\text{ 的正負})\\end{cases}}}}$",
+              "on": "點在"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "半部#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼是補 $\\pi$：$(a,b)$ 和 $(-a,-b)$ 的 $\\frac ba$ 一樣，差半圈"
+          ],
+          "say": "為什麼補的是派？因為 a 逗號 b 跟負 a 逗號負 b，比值一樣，方向差半圈，也就是差一個派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼是補 $\\pi$：$(a,b)$ 和 $(-a,-b)$ 的 $\\frac ba$ 一樣，差半圈"
+            },
+            {
+              "do": "write",
+              "line": "　實務上：先看點在哪個象限，再定角，最保險",
+              "color": "violet",
+              "on": "號負"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "第三象限",
+      "beats": [
+        {
+          "show": [
+            "$-\\sqrt3-i$ 的主輻角 $\\operatorname{Arg}$ 是？"
+          ],
+          "say": "試一題：負根號 3 減 i 的主輻角。"
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "第三象限",
+      "beats": [
+        {
+          "show": [
+            "$\\arctan\\dfrac{-1}{-\\sqrt3}=\\dfrac\\pi6$，點在第三象限"
+          ],
+          "say": "反正切給的是 6 分之派，可是點在第三象限，還要轉半圈。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\arctan\\dfrac{-1}{-\\sqrt3}=\\dfrac\\pi6$，點在第三象限"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac\\pi6+\\pi=\\dfrac{7\\pi}6>\\pi$，超過 $\\pi$ 要減 $2\\pi$：",
+            "$\\operatorname{Arg}(-\\sqrt3-i)=-\\frac{5\\pi}6$"
+          ],
+          "say": "6 分之派加派，是 6 分之 7 派，超過派了，不在主值的範圍。減掉 2 派，得到負 6 分之 5 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac\\pi6+\\pi=\\dfrac{7\\pi}6>\\pi$，超過 $\\pi$ 要減 $2\\pi$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\operatorname{Arg}(-\\sqrt3-i)=-\\frac{5\\pi}6}}$",
+              "color": "red",
+              "on": "超過"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "得到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，逆時針轉 6 分之 7 派，和順時針轉 6 分之 5 派，到的是同一點。主輻角取順時針那一個。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cpThird\" viewBox=\"0 0 620 300\" width=\"620\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacpThird\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacpThirdblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacpThirdred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacpThirdgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacpThirdpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacpThirdink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacpThird30\"><rect x=\"109.8\" y=\"16\" width=\"406.4\" height=\"254\"/></clipPath><g clip-path=\"url(#cl11gacpThird30)\"><line x1=\"160.6\" y1=\"16\" x2=\"160.6\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"245.3\" y1=\"16\" x2=\"245.3\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"329.9\" y1=\"16\" x2=\"329.9\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"414.6\" y1=\"16\" x2=\"414.6\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"499.3\" y1=\"16\" x2=\"499.3\" y2=\"270\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"109.8\" y1=\"227.7\" x2=\"516.2\" y2=\"227.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"109.8\" y1=\"143\" x2=\"516.2\" y2=\"143\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"109.8\" y1=\"58.3\" x2=\"516.2\" y2=\"58.3\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"105.8\" y1=\"143\" x2=\"528.2\" y2=\"143\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpThird)\"/><line x1=\"329.9\" y1=\"274\" x2=\"329.9\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpThird)\"/><text x=\"526.2\" y=\"134\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"338.9\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"329.9\" y1=\"143\" x2=\"183.3\" y2=\"227.7\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpThirdblue)\"/><path d=\"M376.5 143L376.5 143.5L376.5 144L376.5 144.5L376.5 145L376.4 145.5L376.4 146L376.4 146.6L376.3 147.1L376.3 147.6L376.2 148.1L376.2 148.6L376.1 149.1L376 149.6L376 150.1L375.9 150.6L375.8 151.1L375.7 151.6L375.6 152.1L375.5 152.6L375.4 153.1L375.3 153.6L375.2 154.1L375 154.6L374.9 155.1L374.8 155.5L374.6 156L374.5 156.5L374.3 157L374.2 157.5L374 158L373.9 158.4L373.7 158.9L373.5 159.4L373.3 159.9L373.1 160.3L373 160.8L372.8 161.3L372.6 161.8L372.3 162.2L372.1 162.7L371.9 163.1L371.7 163.6L371.5 164.1L371.2 164.5L371 165L370.8 165.4L370.5 165.8L370.3 166.3L370 166.7L369.7 167.2L369.5 167.6L369.2 168L368.9 168.4L368.7 168.9L368.4 169.3L368.1 169.7L367.8 170.1L367.5 170.5L367.2 170.9L366.9 171.3L366.6 171.7L366.2 172.1L365.9 172.5L365.6 172.9L365.3 173.3L364.9 173.7L364.6 174.1L364.3 174.5L363.9 174.8L363.6 175.2L363.2 175.6L362.9 175.9L362.5 176.3L362.1 176.6L361.8 177L361.4 177.3L361 177.7L360.6 178L360.3 178.3L359.9 178.7L359.5 179L359.1 179.3L358.7 179.6L358.3 179.9L357.9 180.3L357.5 180.6L357.1 180.9L356.6 181.1L356.2 181.4L355.8 181.7L355.4 182L355 182.3L354.5 182.5L354.1 182.8L353.7 183.1L353.2 183.3L352.8 183.6L352.3 183.8L351.9 184.1L351.4 184.3L351 184.5L350.5 184.8L350.1 185L349.6 185.2L349.2 185.4L348.7 185.6L348.2 185.8L347.8 186L347.3 186.2L346.8 186.4L346.3 186.6L345.9 186.8L345.4 186.9L344.9 187.1L344.4 187.3L343.9 187.4L343.5 187.6L343 187.7L342.5 187.8L342 188L341.5 188.1L341 188.2L340.5 188.4L340 188.5L339.5 188.6L339 188.7L338.5 188.8L338 188.9L337.5 188.9L337 189L336.5 189.1L336 189.2L335.5 189.2L335 189.3L334.5 189.3L334 189.4L333.5 189.4L333 189.5L332.5 189.5L332 189.5L331.5 189.5L330.9 189.6L330.4 189.6L329.9 189.6L329.4 189.6L328.9 189.6L328.4 189.5L327.9 189.5L327.4 189.5L326.9 189.5L326.4 189.4L325.9 189.4L325.4 189.3L324.9 189.3L324.4 189.2L323.9 189.2L323.4 189.1L322.8 189L322.3 188.9L321.8 188.9L321.3 188.8L320.8 188.7L320.4 188.6L319.9 188.5L319.4 188.4L318.9 188.2L318.4 188.1L317.9 188L317.4 187.8L316.9 187.7L316.4 187.6L315.9 187.4L315.4 187.3L315 187.1L314.5 186.9L314 186.8L313.5 186.6L313.1 186.4L312.6 186.2L312.1 186L311.6 185.8L311.2 185.6L310.7 185.4L310.3 185.2L309.8 185L309.3 184.8L308.9 184.5L308.4 184.3L308 184.1L307.5 183.8L307.1 183.6L306.7 183.3L306.2 183.1L305.8 182.8L305.3 182.5L304.9 182.3L304.5 182L304.1 181.7L303.6 181.4L303.2 181.1L302.8 180.9L302.4 180.6L302 180.3L301.6 179.9L301.2 179.6L300.8 179.3L300.4 179L300 178.7L299.6 178.3L299.2 178L298.8 177.7L298.5 177.3L298.1 177L297.7 176.6L297.4 176.3L297 175.9L296.6 175.6L296.3 175.2L295.9 174.8L295.6 174.5L295.3 174.1L294.9 173.7L294.6 173.3L294.3 172.9L293.9 172.5L293.6 172.1L293.3 171.7L293 171.3L292.7 170.9L292.4 170.5L292.1 170.1L291.8 169.7L291.5 169.3L291.2 168.9L290.9 168.4L290.7 168L290.4 167.6L290.1 167.2L289.9 166.7L289.6 166.3\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" marker-end=\"url(#ah11gacpThirdred)\"/><path d=\"M401.9 143L401.9 141.9L401.9 140.8L401.8 139.7L401.8 138.6L401.7 137.5L401.6 136.4L401.5 135.3L401.4 134.2L401.2 133.1L401.1 132.1L400.9 131L400.7 129.9L400.5 128.8L400.3 127.7L400 126.7L399.8 125.6L399.5 124.5L399.2 123.5L398.9 122.4L398.6 121.4L398.2 120.3L397.9 119.3L397.5 118.2L397.1 117.2L396.7 116.2L396.3 115.2L395.9 114.2L395.4 113.2L395 112.2L394.5 111.2L394 110.2L393.5 109.2L393 108.2L392.4 107.3L391.9 106.3L391.3 105.4L390.7 104.5L390.1 103.5L389.5 102.6L388.9 101.7L388.2 100.8L387.6 99.9L386.9 99.1L386.3 98.2L385.6 97.3L384.9 96.5L384.1 95.7L383.4 94.8L382.7 94L381.9 93.2L381.2 92.4L380.4 91.7L379.6 90.9L378.8 90.2L378 89.4L377.1 88.7L376.3 88L375.5 87.3L374.6 86.6L373.7 85.9L372.9 85.2L372 84.6L371.1 84L370.2 83.3L369.3 82.7L368.3 82.1L367.4 81.6L366.5 81L365.5 80.4L364.5 79.9L363.6 79.4L362.6 78.9L361.6 78.4L360.6 77.9L359.6 77.4L358.6 77L357.6 76.6L356.6 76.2L355.6 75.8L354.5 75.4L353.5 75L352.5 74.7L351.4 74.3L350.4 74L349.3 73.7L348.3 73.4L347.2 73.1L346.1 72.9L345 72.6L344 72.4L342.9 72.2L341.8 72L340.7 71.8L339.6 71.7L338.5 71.6L337.5 71.4L336.4 71.3L335.3 71.2L334.2 71.2L333.1 71.1L332 71.1L330.9 71L329.8 71L328.7 71L327.6 71.1L326.5 71.1L325.4 71.2L324.3 71.3L323.2 71.3L322.1 71.5L321 71.6L319.9 71.7L318.8 71.9L317.7 72.1L316.7 72.3L315.6 72.5L314.5 72.7L313.4 72.9L312.4 73.2L311.3 73.5L310.2 73.8L309.2 74.1L308.1 74.4L307.1 74.8L306.1 75.1L305 75.5L304 75.9L303 76.3L302 76.7L300.9 77.1L299.9 77.6L299 78L298 78.5L297 79L296 79.5L295 80.1L294.1 80.6L293.1 81.2L292.2 81.7L291.3 82.3L290.3 82.9L289.4 83.5L288.5 84.1L287.6 84.8L286.7 85.4L285.9 86.1L285 86.8L284.2 87.5L283.3 88.2L282.5 88.9L281.7 89.6L280.9 90.4L280.1 91.1L279.3 91.9L278.5 92.7L277.7 93.5L277 94.3L276.2 95.1L275.5 95.9L274.8 96.7L274.1 97.6L273.4 98.4L272.7 99.3L272.1 100.2L271.4 101.1L270.8 102L270.2 102.9L269.6 103.8L269 104.7L268.4 105.7L267.8 106.6L267.3 107.6L266.8 108.5L266.2 109.5L265.7 110.5L265.3 111.5L264.8 112.4L264.3 113.4L263.9 114.4L263.4 115.5L263 116.5L262.6 117.5L262.3 118.5L261.9 119.6L261.5 120.6L261.2 121.7L260.9 122.7L260.6 123.8L260.3 124.8L260 125.9L259.8 127L259.5 128L259.3 129.1L259.1 130.2L258.9 131.3L258.8 132.4L258.6 133.5L258.5 134.5L258.3 135.6L258.2 136.7L258.2 137.8L258.1 138.9L258 140L258 141.1L258 142.2L258 143.3L258 144.4L258 145.5L258.1 146.6L258.1 147.7L258.2 148.8L258.3 149.9L258.4 151L258.5 152.1L258.7 153.2L258.9 154.3L259 155.3L259.2 156.4L259.4 157.5L259.7 158.6L259.9 159.6L260.2 160.7L260.5 161.8L260.8 162.8L261.1 163.9L261.4 164.9L261.7 166L262.1 167L262.5 168.1L262.9 169.1L263.3 170.1L263.7 171.1L264.1 172.1L264.6 173.1L265 174.1L265.5 175.1L266 176.1L266.5 177.1L267.1 178L267.6 179\" stroke=\"var(--muted)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"6 5\" marker-end=\"url(#ah11gacpThirdpencil)\"/><circle cx=\"183.3\" cy=\"227.7\" r=\"6\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><text x=\"177.3\" y=\"257.7\" text-anchor=\"middle\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−√3 − <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"343.9\" y=\"211.6\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−5π/6（主值）</text><text x=\"341.9\" y=\"67\" text-anchor=\"start\" fill=\"var(--muted)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">7π/6 超過 π</text></svg>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "乘法：長度乘、角度加",
+      "beats": [
+        {
+          "show": [
+            "$z_1=r_1(\\cos\\theta_1+i\\sin\\theta_1)$，$z_2=r_2(\\cos\\theta_2+i\\sin\\theta_2)$"
+          ],
+          "say": "極式真正的威力在乘法。兩個複數，長度 r 1、r 2，角度西塔 1、西塔 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$z_1=r_1(\\cos\\theta_1+i\\sin\\theta_1)$，$z_2=r_2(\\cos\\theta_2+i\\sin\\theta_2)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}z_1z_2=r_1r_2\\big[&(\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2)\\\\&+i(\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2)\\big]\\end{aligned}$"
+          ],
+          "say": "直接展開。實部是餘弦乘餘弦減正弦乘正弦，虛部是正弦乘餘弦加餘弦乘正弦。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}z_1z_2=r_1r_2\\big[&(\\cos\\theta_1\\cos\\theta_2-\\sin\\theta_1\\sin\\theta_2)\\\\&+i(\\sin\\theta_1\\cos\\theta_2+\\cos\\theta_1\\sin\\theta_2)\\big]\\end{aligned}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "括號裡正好是和角公式：",
+            "$z_1z_2=r_1r_2\\big[\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2)\\big]$"
+          ],
+          "say": "括號裡正好是和角公式：餘弦西塔 1 加西塔 2，和正弦西塔 1 加西塔 2。所以乘積的長度是 r 1 乘 r 2，角度是西塔 1 加西塔 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "括號裡正好是和角公式："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle z_1z_2=r_1r_2\\big[\\cos(\\theta_1+\\theta_2)+i\\sin(\\theta_1+\\theta_2)\\big]}}$",
+              "color": "red",
+              "on": "和正"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "角度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上：長 2、角 30 度，乘上長 1.5、角 45 度，得到長 3、角 75 度。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cpMult\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacpMult\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacpMultblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacpMultred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacpMultgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacpMultpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacpMultink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacpMult30\"><rect x=\"156\" y=\"16\" width=\"314\" height=\"314\"/></clipPath><g clip-path=\"url(#cl11gacpMult30)\"><line x1=\"208.3\" y1=\"16\" x2=\"208.3\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"295.6\" y1=\"16\" x2=\"295.6\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"382.8\" y1=\"16\" x2=\"382.8\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"470\" y1=\"16\" x2=\"470\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"156\" y1=\"295.1\" x2=\"470\" y2=\"295.1\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"156\" y1=\"207.9\" x2=\"470\" y2=\"207.9\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"156\" y1=\"120.7\" x2=\"470\" y2=\"120.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"156\" y1=\"33.4\" x2=\"470\" y2=\"33.4\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/></g><line x1=\"152\" y1=\"295.1\" x2=\"482\" y2=\"295.1\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpMult)\"/><line x1=\"208.3\" y1=\"334\" x2=\"208.3\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpMult)\"/><text x=\"295.6\" y=\"317.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"382.8\" y=\"317.1\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"201.3\" y=\"214.9\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">1</text><text x=\"201.3\" y=\"127.7\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"201.3\" y=\"40.4\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">3</text><text x=\"480\" y=\"286.1\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"217.3\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"208.3\" y1=\"295.1\" x2=\"359.4\" y2=\"207.9\" stroke=\"var(--blue)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpMultblue)\"/><line x1=\"208.3\" y1=\"295.1\" x2=\"300.8\" y2=\"202.6\" stroke=\"var(--green)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpMultgreen)\"/><line x1=\"208.3\" y1=\"295.1\" x2=\"276.1\" y2=\"42.4\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah11gacpMultred)\"/><path d=\"M269.4 295.1L269.4 295L269.4 294.8L269.4 294.7L269.4 294.6L269.4 294.4L269.4 294.3L269.4 294.2L269.4 294L269.4 293.9L269.4 293.8L269.4 293.6L269.4 293.5L269.4 293.4L269.4 293.2L269.4 293.1L269.4 293L269.3 292.8L269.3 292.7L269.3 292.6L269.3 292.4L269.3 292.3L269.3 292.2L269.3 292L269.3 291.9L269.3 291.8L269.3 291.6L269.3 291.5L269.3 291.4L269.3 291.3L269.3 291.1L269.2 291L269.2 290.9L269.2 290.7L269.2 290.6L269.2 290.5L269.2 290.3L269.2 290.2L269.2 290.1L269.2 289.9L269.2 289.8L269.1 289.7L269.1 289.5L269.1 289.4L269.1 289.3L269.1 289.1L269.1 289L269.1 288.9L269.1 288.7L269 288.6L269 288.5L269 288.3L269 288.2L269 288.1L269 287.9L268.9 287.8L268.9 287.7L268.9 287.5L268.9 287.4L268.9 287.3L268.9 287.1L268.8 287L268.8 286.9L268.8 286.7L268.8 286.6L268.8 286.5L268.8 286.4L268.7 286.2L268.7 286.1L268.7 286L268.7 285.8L268.7 285.7L268.6 285.6L268.6 285.4L268.6 285.3L268.6 285.2L268.6 285L268.5 284.9L268.5 284.8L268.5 284.6L268.5 284.5L268.4 284.4L268.4 284.2L268.4 284.1L268.4 284L268.3 283.9L268.3 283.7L268.3 283.6L268.3 283.5L268.2 283.3L268.2 283.2L268.2 283.1L268.2 282.9L268.1 282.8L268.1 282.7L268.1 282.5L268.1 282.4L268 282.3L268 282.2L268 282L267.9 281.9L267.9 281.8L267.9 281.6L267.9 281.5L267.8 281.4L267.8 281.2L267.8 281.1L267.7 281L267.7 280.9L267.7 280.7L267.6 280.6L267.6 280.5L267.6 280.3L267.5 280.2L267.5 280.1L267.5 280L267.4 279.8L267.4 279.7L267.4 279.6L267.3 279.4L267.3 279.3L267.3 279.2L267.2 279.1L267.2 278.9L267.2 278.8L267.1 278.7L267.1 278.5L267.1 278.4L267 278.3L267 278.2L266.9 278L266.9 277.9L266.9 277.8L266.8 277.6L266.8 277.5L266.8 277.4L266.7 277.3L266.7 277.1L266.6 277L266.6 276.9L266.6 276.8L266.5 276.6L266.5 276.5L266.4 276.4L266.4 276.2L266.4 276.1L266.3 276L266.3 275.9L266.2 275.7L266.2 275.6L266.1 275.5L266.1 275.4L266.1 275.2L266 275.1L266 275L265.9 274.9L265.9 274.7L265.8 274.6L265.8 274.5L265.8 274.4L265.7 274.2L265.7 274.1L265.6 274L265.6 273.9L265.5 273.7L265.5 273.6L265.4 273.5L265.4 273.4L265.3 273.2L265.3 273.1L265.2 273L265.2 272.9L265.1 272.7L265.1 272.6L265 272.5L265 272.4L264.9 272.2L264.9 272.1L264.8 272L264.8 271.9L264.7 271.7L264.7 271.6L264.6 271.5L264.6 271.4L264.5 271.3L264.5 271.1L264.4 271L264.4 270.9L264.3 270.8L264.3 270.6L264.2 270.5L264.2 270.4L264.1 270.3L264.1 270.2L264 270L263.9 269.9L263.9 269.8L263.8 269.7L263.8 269.5L263.7 269.4L263.7 269.3L263.6 269.2L263.6 269.1L263.5 268.9L263.4 268.8L263.4 268.7L263.3 268.6L263.3 268.5L263.2 268.3L263.2 268.2L263.1 268.1L263 268L263 267.9L262.9 267.7L262.9 267.6L262.8 267.5L262.7 267.4L262.7 267.3L262.6 267.2L262.6 267L262.5 266.9L262.4 266.8L262.4 266.7L262.3 266.6L262.2 266.4L262.2 266.3L262.1 266.2L262.1 266.1L262 266L261.9 265.9L261.9 265.7L261.8 265.6L261.7 265.5L261.7 265.4L261.6 265.3L261.5 265.2L261.5 265L261.4 264.9L261.3 264.8L261.3 264.7L261.2 264.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M287.6 249.3L287.5 249.1L287.3 248.8L287.2 248.5L287 248.3L286.9 248L286.7 247.8L286.6 247.5L286.4 247.3L286.3 247L286.1 246.7L285.9 246.5L285.8 246.2L285.6 246L285.5 245.7L285.3 245.5L285.1 245.2L285 245L284.8 244.7L284.6 244.5L284.5 244.2L284.3 244L284.1 243.7L284 243.5L283.8 243.2L283.6 243L283.5 242.7L283.3 242.5L283.1 242.3L283 242L282.8 241.8L282.6 241.5L282.4 241.3L282.2 241L282.1 240.8L281.9 240.6L281.7 240.3L281.5 240.1L281.4 239.8L281.2 239.6L281 239.4L280.8 239.1L280.6 238.9L280.4 238.6L280.3 238.4L280.1 238.2L279.9 237.9L279.7 237.7L279.5 237.5L279.3 237.2L279.1 237L278.9 236.8L278.7 236.5L278.6 236.3L278.4 236.1L278.2 235.9L278 235.6L277.8 235.4L277.6 235.2L277.4 235L277.2 234.7L277 234.5L276.8 234.3L276.6 234.1L276.4 233.8L276.2 233.6L276 233.4L275.8 233.2L275.6 232.9L275.4 232.7L275.2 232.5L275 232.3L274.8 232.1L274.6 231.9L274.4 231.6L274.1 231.4L273.9 231.2L273.7 231L273.5 230.8L273.3 230.6L273.1 230.4L272.9 230.1L272.7 229.9L272.5 229.7L272.2 229.5L272 229.3L271.8 229.1L271.6 228.9L271.4 228.7L271.2 228.5L270.9 228.3L270.7 228.1L270.5 227.9L270.3 227.7L270.1 227.5L269.8 227.3L269.6 227.1L269.4 226.9L269.2 226.7L268.9 226.5L268.7 226.3L268.5 226.1L268.3 225.9L268 225.7L267.8 225.5L267.6 225.3L267.4 225.1L267.1 224.9L266.9 224.7L266.7 224.5L266.4 224.3L266.2 224.1L266 223.9L265.7 223.7L265.5 223.6L265.3 223.4L265 223.2L264.8 223L264.6 222.8L264.3 222.6L264.1 222.5L263.8 222.3L263.6 222.1L263.4 221.9L263.1 221.7L262.9 221.6L262.6 221.4L262.4 221.2L262.2 221L261.9 220.8L261.7 220.7L261.4 220.5L261.2 220.3L260.9 220.1L260.7 220L260.5 219.8L260.2 219.6L260 219.5L259.7 219.3L259.5 219.1L259.2 219L259 218.8L258.7 218.6L258.5 218.5L258.2 218.3L258 218.1L257.7 218L257.5 217.8L257.2 217.7L256.9 217.5L256.7 217.3L256.4 217.2L256.2 217L255.9 216.9L255.7 216.7L255.4 216.6L255.2 216.4L254.9 216.3L254.6 216.1L254.4 215.9L254.1 215.8L253.9 215.6L253.6 215.5L253.3 215.4L253.1 215.2L252.8 215.1L252.6 214.9L252.3 214.8L252 214.6L251.8 214.5L251.5 214.3L251.2 214.2L251 214.1L250.7 213.9L250.4 213.8L250.2 213.6L249.9 213.5L249.6 213.4L249.4 213.2L249.1 213.1L248.8 213L248.6 212.8L248.3 212.7L248 212.6L247.8 212.4L247.5 212.3L247.2 212.2L246.9 212.1L246.7 211.9L246.4 211.8L246.1 211.7L245.9 211.6L245.6 211.4L245.3 211.3L245 211.2L244.8 211.1L244.5 211L244.2 210.8L243.9 210.7L243.7 210.6L243.4 210.5L243.1 210.4L242.8 210.3L242.5 210.2L242.3 210L242 209.9L241.7 209.8L241.4 209.7L241.2 209.6L240.9 209.5L240.6 209.4L240.3 209.3L240 209.2L239.8 209.1L239.5 209L239.2 208.9L238.9 208.8L238.6 208.7L238.3 208.6L238.1 208.5L237.8 208.4L237.5 208.3L237.2 208.2L236.9 208.1L236.6 208L236.3 207.9L236.1 207.8L235.8 207.7L235.5 207.6L235.2 207.6L234.9 207.5L234.6 207.4L234.3 207.3L234.1 207.2L233.8 207.1L233.5 207L233.2 207L232.9 206.9L232.6 206.8L232.3 206.7L232 206.6\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\" marker-end=\"url(#ah11gacpMultred)\"/><text x=\"369.4\" y=\"217.9\" text-anchor=\"start\" fill=\"var(--blue)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>₁</text><text x=\"310.8\" y=\"202.6\" text-anchor=\"start\" fill=\"var(--green)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>₂</text><text x=\"288.1\" y=\"46.4\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\"><tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>₁<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</tspan>₂</text><text x=\"277.9\" y=\"203.4\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"21\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">+45°</text><text x=\"410\" y=\"60\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:inherit\">z₁：長 2、角 30°</text><text x=\"410\" y=\"94\" text-anchor=\"start\" fill=\"var(--green)\" font-size=\"22\" style=\"font-family:inherit\">z₂：長 1.5、角 45°</text><text x=\"410\" y=\"128\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"22\" style=\"font-family:inherit\">z₁z₂：長 3、角 75°</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "乘 $i$ $=$ 乘「長 $1$、角 $\\frac\\pi2$」：逆時針轉 $90^\\circ$"
+          ],
+          "say": "特例：乘 i，就是乘長度 1、角度 2 分之派，所以乘 i 就是逆時針轉 90 度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "乘 $i$ $=$ 乘「長 $1$、角 $\\frac\\pi2$」：逆時針轉 $90^\\circ$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除法（$z_2\\ne0$）：長度相除、角度相減",
+            "$\\frac{z_1}{z_2}=\\frac{r_1}{r_2}\\big[\\cos(\\theta_1-\\theta_2)+i\\sin(\\theta_1-\\theta_2)\\big]$"
+          ],
+          "say": "除法反過來：長度相除、角度相減。因為把右邊乘上 z 2，用乘法規則，正好得到 z 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除法（$z_2\\ne0$）：長度相除、角度相減"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{z_1}{z_2}=\\frac{r_1}{r_2}\\big[\\cos(\\theta_1-\\theta_2)+i\\sin(\\theta_1-\\theta_2)\\big]$",
+              "on": "乘上"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "De Moivre 公式",
+      "beats": [
+        {
+          "show": [
+            "$(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta$"
+          ],
+          "say": "一直乘同一個數，角度一直加，就是棣美弗公式：餘弦西塔加 i 正弦西塔的 n 次方，等於餘弦 n 西塔加 i 正弦 n 西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle (\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "弦西#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證（數學歸納法）：$n=1$ 成立；設 $n$ 成立，再乘一次：",
+            "$\\begin{aligned}&(\\cos\\theta+i\\sin\\theta)^{n+1}\\\\&=(\\cos n\\theta+i\\sin n\\theta)(\\cos\\theta+i\\sin\\theta)\\end{aligned}$"
+          ],
+          "say": "證明用數學歸納法：n 等於 1 顯然成立。假設 n 成立，再乘一次，用剛才的乘法規則，角度 n 西塔加西塔，就是 n 加 1 西塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證（數學歸納法）：$n=1$ 成立；設 $n$ 成立，再乘一次："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&(\\cos\\theta+i\\sin\\theta)^{n+1}\\\\&=(\\cos n\\theta+i\\sin n\\theta)(\\cos\\theta+i\\sin\\theta)\\end{aligned}}$",
+              "on": "顯然"
+            },
+            {
+              "do": "write",
+              "line": "角度相加：$=\\cos(n+1)\\theta+i\\sin(n+1)\\theta$",
+              "on": "用剛"
+            },
+            {
+              "do": "write",
+              "line": "　負整數：$(\\cos\\theta+i\\sin\\theta)^{-1}=\\cos(-\\theta)+i\\sin(-\\theta)$（兩者相乘是 $\\cos0+i\\sin0=1$），再對 $-\\theta$ 用正整數的情形",
+              "color": "violet",
+              "on": "塔加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$(1+i)^{10}$，$1+i=\\sqrt2\\Big(\\cos\\dfrac\\pi4+i\\sin\\dfrac\\pi4\\Big)$"
+          ],
+          "say": "例子：1 加 i 的 10 次方。先寫成極式：長度根號 2，角度 4 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$(1+i)^{10}$，$1+i=\\sqrt2\\Big(\\cos\\dfrac\\pi4+i\\sin\\dfrac\\pi4\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(1+i)^{10}=(\\sqrt2)^{10}\\Big(\\cos\\frac{10\\pi}4+i\\sin\\frac{10\\pi}4\\Big)$"
+          ],
+          "say": "長度變成根號 2 的 10 次方，等於 32；角度變成 4 分之 10 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle (1+i)^{10}=(\\sqrt2)^{10}\\Big(\\cos\\frac{10\\pi}4+i\\sin\\frac{10\\pi}4\\Big)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\dfrac{10\\pi}4=\\dfrac\\pi2+2\\pi$：",
+            "$(1+i)^{10}=32\\Big(\\cos\\frac\\pi2+i\\sin\\frac\\pi2\\Big)=32i$"
+          ],
+          "say": "4 分之 10 派是 2 分之派再多轉一圈，所以答案是 32 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\dfrac{10\\pi}4=\\dfrac\\pi2+2\\pi$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle (1+i)^{10}=32\\Big(\\cos\\frac\\pi2+i\\sin\\frac\\pi2\\Big)=32i}}$",
+              "color": "red",
+              "on": "派是"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "再多"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(1+i)^2=2i$，$(1+i)^{10}=(2i)^5=32i^5=32i$",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$n$ 次方根",
+      "beats": [
+        {
+          "show": [
+            "解 $w^n=z$，$z=r(\\cos\\theta+i\\sin\\theta)\\ne0$；設 $w=\\rho(\\cos\\varphi+i\\sin\\varphi)$"
+          ],
+          "say": "反過來，解 w 的 n 次方等於 z。把 w 也寫成極式，長度肉，角度斐。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解 $w^n=z$，$z=r(\\cos\\theta+i\\sin\\theta)\\ne0$；設 $w=\\rho(\\cos\\varphi+i\\sin\\varphi)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "De Moivre：$\\rho^n(\\cos n\\varphi+i\\sin n\\varphi)=r(\\cos\\theta+i\\sin\\theta)$"
+          ],
+          "say": "由棣美弗公式，左邊是肉的 n 次方，角度 n 斐。",
+          "board": [
+            {
+              "do": "write",
+              "line": "De Moivre：$\\rho^n(\\cos n\\varphi+i\\sin n\\varphi)=r(\\cos\\theta+i\\sin\\theta)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取絕對值：$\\rho^n=r$，所以 $\\rho=r^{1/n}$（正實數根）"
+          ],
+          "say": "兩邊取絕對值，肉的 n 次方等於 r，肉是 r 的 n 次方根。長度約掉後，餘弦和正弦都相等，角度只能差 2 派的整數倍。",
+          "board": [
+            {
+              "do": "write",
+              "line": "取絕對值：$\\rho^n=r$，所以 $\\rho=r^{1/n}$（正實數根）"
+            },
+            {
+              "do": "write",
+              "line": "再比餘弦、正弦：$n\\varphi=\\theta+2k\\pi$",
+              "on": "長度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}w_k&=r^{1/n}(\\cos\\varphi_k+i\\sin\\varphi_k)\\\\\\varphi_k&=\\frac{\\theta+2k\\pi}n,\\quad k=0,1,\\dots,n-1\\end{aligned}$"
+          ],
+          "say": "所以根是 r 的 n 次方根，乘上角度 n 分之西塔加 2 k 派，k 從 0 到 n 減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle {\\begin{aligned}w_k&=r^{1/n}(\\cos\\varphi_k+i\\sin\\varphi_k)\\\\\\varphi_k&=\\frac{\\theta+2k\\pi}n,\\quad k=0,1,\\dots,n-1\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "color": "red",
+              "on": "西塔"
+            }
+          ]
+        },
+        {
+          "show": [
+            "恰好 $n$ 個：",
+            "• $k$ 和 $k+n$：角度差 $2\\pi$，是同一個根"
+          ],
+          "say": "為什麼恰好 n 個？k 加 n 跟 k 的角度差 2 派，是同一個根；而 0 到 n 減 1 之間，任兩個角度差不到 2 派，所以都不一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "恰好 $n$ 個："
+            },
+            {
+              "do": "write",
+              "line": "• $k$ 和 $k+n$：角度差 $2\\pi$，是同一個根",
+              "on": "是同"
+            },
+            {
+              "do": "write",
+              "line": "• $0\\le j<k\\le n-1$：角度差 $\\frac{2\\pi(k-j)}n$，不是 $2\\pi$ 的倍數，不同",
+              "on": "之間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "幾何：$n$ 個根在半徑 $r^{1/n}$ 的圓上，相鄰差 $\\frac{2\\pi}n$，排成正 $n$ 邊形"
+          ],
+          "say": "幾何上，n 個根都在半徑 r 的 n 次方根的圓上，相鄰兩個差 n 分之 2 派，排成正 n 邊形。",
+          "board": [
+            {
+              "do": "write",
+              "line": "幾何：$n$ 個根在半徑 $r^{1/n}$ 的圓上，相鄰差 $\\frac{2\\pi}n$，排成正 $n$ 邊形",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：$w^3=8i$",
+      "beats": [
+        {
+          "show": [
+            "$8i=8\\Big(\\cos\\dfrac\\pi2+i\\sin\\dfrac\\pi2\\Big)$：$r=8$，$\\theta=\\dfrac\\pi2$"
+          ],
+          "say": "例子：解 w 的三次方等於 8 i。8 i 的長度是 8，角度 2 分之派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$8i=8\\Big(\\cos\\dfrac\\pi2+i\\sin\\dfrac\\pi2\\Big)$：$r=8$，$\\theta=\\dfrac\\pi2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\rho=\\sqrt[3]8=2$，$\\varphi=\\dfrac\\pi6+\\dfrac{2k\\pi}3$：$\\dfrac\\pi6,\\ \\dfrac{5\\pi}6,\\ \\dfrac{3\\pi}2$"
+          ],
+          "say": "長度是 8 的立方根，等於 2。角度是 6 分之派加 3 分之 2 k 派：6 分之派、6 分之 5 派、2 分之 3 派。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\rho=\\sqrt[3]8=2$，$\\varphi=\\dfrac\\pi6+\\dfrac{2k\\pi}3$：$\\dfrac\\pi6,\\ \\dfrac{5\\pi}6,\\ \\dfrac{3\\pi}2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$w=\\sqrt3+i,\\quad-\\sqrt3+i,\\quad-2i$"
+          ],
+          "say": "換回 a 加 b i：根號 3 加 i、負根號 3 加 i、負 2 i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle w=\\sqrt3+i,\\quad-\\sqrt3+i,\\quad-2i}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "負根"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$(-2i)^3=-8i^3=8i$；$(\\sqrt3+i)^2=2+2\\sqrt3\\,i$，再乘 $\\sqrt3+i$ 得 $8i$",
+              "color": "violet",
+              "on": "i。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "圖上，三個根在半徑 2 的圓上，相差 120 度，排成正三角形。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"cpRoots\" viewBox=\"0 0 620 360\" width=\"620\" height=\"360\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah11gacpRoots\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah11gacpRootsblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah11gacpRootsred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah11gacpRootsgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah11gacpRootspencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah11gacpRootsink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl11gacpRoots30\"><rect x=\"123.4\" y=\"16\" width=\"379.2\" height=\"314\"/></clipPath><g clip-path=\"url(#cl11gacpRoots30)\"><line x1=\"135.3\" y1=\"16\" x2=\"135.3\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"194.5\" y1=\"16\" x2=\"194.5\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"253.8\" y1=\"16\" x2=\"253.8\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"313\" y1=\"16\" x2=\"313\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"372.2\" y1=\"16\" x2=\"372.2\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"431.5\" y1=\"16\" x2=\"431.5\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"490.7\" y1=\"16\" x2=\"490.7\" y2=\"330\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.4\" y1=\"294.5\" x2=\"502.6\" y2=\"294.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.4\" y1=\"235.2\" x2=\"502.6\" y2=\"235.2\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.4\" y1=\"176\" x2=\"502.6\" y2=\"176\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.4\" y1=\"116.7\" x2=\"502.6\" y2=\"116.7\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><line x1=\"123.4\" y1=\"57.5\" x2=\"502.6\" y2=\"57.5\" stroke=\"var(--muted)\" stroke-opacity=\".16\"/><path d=\"M431.5 176L431.4 172.9L431.3 169.8L431.1 166.7L430.8 163.6L430.5 160.5L430 157.4L429.5 154.4L428.9 151.3L428.2 148.3L427.5 145.3L426.6 142.3L425.7 139.3L424.7 136.4L423.6 133.5L422.5 130.6L421.2 127.8L419.9 125L418.6 122.2L417.1 119.4L415.6 116.7L414 114.1L412.4 111.4L410.7 108.8L408.9 106.3L407 103.8L405.1 101.4L403.1 99L401.1 96.7L399 94.4L396.8 92.2L394.6 90L392.3 87.9L390 85.9L387.6 83.9L385.1 82L382.6 80.1L380.1 78.3L377.5 76.6L374.9 74.9L372.2 73.3L369.5 71.8L366.8 70.4L364 69L361.2 67.7L358.3 66.5L355.5 65.3L352.6 64.3L349.6 63.3L346.7 62.4L343.7 61.5L340.7 60.7L337.6 60.1L334.6 59.5L331.5 58.9L328.5 58.5L325.4 58.1L322.3 57.8L319.2 57.6L316.1 57.5L313 57.5L309.9 57.5L306.8 57.6L303.7 57.8L300.6 58.1L297.5 58.5L294.5 58.9L291.4 59.5L288.4 60.1L285.3 60.7L282.3 61.5L279.3 62.4L276.4 63.3L273.4 64.3L270.5 65.3L267.7 66.5L264.8 67.7L262 69L259.2 70.4L256.5 71.8L253.8 73.3L251.1 74.9L248.5 76.6L245.9 78.3L243.4 80.1L240.9 82L238.4 83.9L236 85.9L233.7 87.9L231.4 90L229.2 92.2L227 94.4L224.9 96.7L222.9 99L220.9 101.4L219 103.8L217.1 106.3L215.3 108.8L213.6 111.4L212 114.1L210.4 116.7L208.9 119.4L207.4 122.2L206.1 125L204.8 127.8L203.5 130.6L202.4 133.5L201.3 136.4L200.3 139.3L199.4 142.3L198.5 145.3L197.8 148.3L197.1 151.3L196.5 154.4L196 157.4L195.5 160.5L195.2 163.6L194.9 166.7L194.7 169.8L194.6 172.9L194.5 176L194.6 179.1L194.7 182.2L194.9 185.3L195.2 188.3L195.5 191.4L196 194.5L196.5 197.6L197.1 200.6L197.8 203.6L198.5 206.6L199.4 209.6L200.3 212.6L201.3 215.5L202.4 218.4L203.5 221.3L204.8 224.2L206.1 227L207.4 229.8L208.9 232.5L210.4 235.2L212 237.9L213.6 240.5L215.3 243.1L217.1 245.6L219 248.1L220.9 250.5L222.9 252.9L224.9 255.2L227 257.5L229.2 259.7L231.4 261.9L233.7 264L236 266.1L238.4 268L240.9 270L243.4 271.8L245.9 273.6L248.5 275.3L251.1 277L253.8 278.6L256.5 280.1L259.2 281.5L262 282.9L264.8 284.2L267.7 285.4L270.5 286.6L273.4 287.7L276.4 288.7L279.3 289.6L282.3 290.4L285.3 291.2L288.4 291.9L291.4 292.5L294.5 293L297.5 293.4L300.6 293.8L303.7 294.1L306.8 294.3L309.9 294.4L313 294.5L316.1 294.4L319.2 294.3L322.3 294.1L325.4 293.8L328.5 293.4L331.5 293L334.6 292.5L337.6 291.9L340.7 291.2L343.7 290.4L346.7 289.6L349.6 288.7L352.6 287.7L355.5 286.6L358.3 285.4L361.2 284.2L364 282.9L366.8 281.5L369.5 280.1L372.2 278.6L374.9 277L377.5 275.3L380.1 273.6L382.6 271.8L385.1 270L387.6 268L390 266.1L392.3 264L394.6 261.9L396.8 259.7L399 257.5L401.1 255.2L403.1 252.9L405.1 250.5L407 248.1L408.9 245.6L410.7 243.1L412.4 240.5L414 237.9L415.6 235.2L417.1 232.5L418.6 229.8L419.9 227L421.2 224.2L422.5 221.3L423.6 218.4L424.7 215.5L425.7 212.6L426.6 209.6L427.5 206.6L428.2 203.6L428.9 200.6L429.5 197.6L430 194.5L430.5 191.4L430.8 188.3L431.1 185.3L431.3 182.2L431.4 179.1L431.5 176\" stroke=\"var(--muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"7 6\"/></g><line x1=\"119.4\" y1=\"176\" x2=\"514.6\" y2=\"176\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpRoots)\"/><line x1=\"313\" y1=\"334\" x2=\"313\" y2=\"4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah11gacpRoots)\"/><text x=\"194.5\" y=\"198\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"431.5\" y=\"198\" text-anchor=\"middle\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"306\" y=\"301.5\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">−2</text><text x=\"306\" y=\"64.5\" text-anchor=\"end\" fill=\"var(--muted)\" style=\"font-family:KaTeX_Main,serif\">2</text><text x=\"512.6\" y=\"167\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Re</text><text x=\"322\" y=\"20\" text-anchor=\"start\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">Im</text><line x1=\"415.6\" y1=\"116.7\" x2=\"210.4\" y2=\"116.7\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"210.4\" y1=\"116.7\" x2=\"313\" y2=\"294.5\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><line x1=\"313\" y1=\"294.5\" x2=\"415.6\" y2=\"116.7\" stroke=\"var(--blue)\" stroke-width=\"2\" stroke-dasharray=\"8 7\"/><circle cx=\"415.6\" cy=\"116.7\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"210.4\" cy=\"116.7\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"313\" cy=\"294.5\" r=\"6\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"425.6\" y=\"106.7\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">√3 + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"200.4\" y=\"106.7\" text-anchor=\"end\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−√3 + <tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"327\" y=\"316.5\" text-anchor=\"start\" fill=\"var(--red)\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:KaTeX_Main,serif\">−2<tspan style=\"font-family:KaTeX_Math,serif;font-style:italic\">i</tspan></text><text x=\"415.9\" y=\"272.8\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"22\" stroke=\"var(--paper)\" stroke-width=\"5\" paint-order=\"stroke\" style=\"font-family:inherit\">半徑 2</text></svg>"
+            }
+          ]
+        }
+      ],
+      "check": 2
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $z=r(\\cos\\theta+i\\sin\\theta)$，$r=|z|$；主輻角在 $(-\\pi,\\pi]$",
+            "• 定角度：先看象限；左半平面補 $\\pm\\pi$"
+          ],
+          "say": "整理：極式是長度乘角度；定角度一定先看象限；乘法長度相乘、角度相加；棣美弗公式算次方；n 次方根平均分布在圓上，恰好 n 個。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $z=r(\\cos\\theta+i\\sin\\theta)$，$r=|z|$；主輻角在 $(-\\pi,\\pi]$"
+            },
+            {
+              "do": "write",
+              "line": "• 定角度：先看象限；左半平面補 $\\pm\\pi$",
+              "on": "定角"
+            },
+            {
+              "do": "write",
+              "line": "• 乘法：長度相乘、角度相加（和角公式）",
+              "on": "度相#1"
+            },
+            {
+              "do": "write",
+              "line": "• De Moivre：$(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta$",
+              "on": "公式"
+            },
+            {
+              "do": "write",
+              "line": "• $n$ 次方根：半徑 $r^{1/n}$，相鄰差 $\\frac{2\\pi}n$，恰好 $n$ 個",
+              "on": "分布"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：Euler 公式：$\\cos\\theta+i\\sin\\theta=e^{i\\theta}$"
+          ],
+          "say": "下一課，尤拉公式會告訴我們，餘弦西塔加 i 正弦西塔，其實就是 e 的 i 西塔次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：Euler 公式：$\\cos\\theta+i\\sin\\theta=e^{i\\theta}$"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["complex", "polar-coordinates"],
-    "fine": ["complex-polar-form", "complex-argument-quadrant", "complex-de-moivre", "complex-nth-roots"]
+    "coarse": [
+      "complex",
+      "polar-coordinates"
+    ],
+    "fine": [
+      "complex-polar-form",
+      "complex-argument-quadrant",
+      "complex-de-moivre",
+      "complex-nth-roots"
+    ]
   },
   "practice": [
-    { "id": "der-078", "core": true, "trains": "complex-de-moivre" },
-    { "id": "cg-11g-009", "core": true, "trains": "complex-argument-quadrant" },
-    { "id": "cg-11g-013", "core": true, "trains": "complex-de-moivre" },
-    { "id": "cg-11g-015", "core": true, "trains": "complex-nth-roots" },
-    { "id": "der-077", "trains": "complex-polar-form" },
-    { "id": "cg-11g-010", "trains": "complex-argument-quadrant" },
-    { "id": "cg-11g-011", "trains": "complex-argument-quadrant" },
-    { "id": "cg-11g-012", "trains": "complex-de-moivre" },
-    { "id": "cg-11g-014", "trains": "complex-de-moivre" },
-    { "id": "cg-11g-016", "trains": "complex-nth-roots" },
-    { "id": "cg-11g-017", "trains": "complex-nth-roots" }
+    {
+      "id": "der-078",
+      "core": true,
+      "trains": "complex-de-moivre"
+    },
+    {
+      "id": "cg-11g-009",
+      "core": true,
+      "trains": "complex-argument-quadrant"
+    },
+    {
+      "id": "cg-11g-013",
+      "core": true,
+      "trains": "complex-de-moivre"
+    },
+    {
+      "id": "cg-11g-015",
+      "core": true,
+      "trains": "complex-nth-roots"
+    },
+    {
+      "id": "der-077",
+      "trains": "complex-polar-form"
+    },
+    {
+      "id": "cg-11g-010",
+      "trains": "complex-argument-quadrant"
+    },
+    {
+      "id": "cg-11g-011",
+      "trains": "complex-argument-quadrant"
+    },
+    {
+      "id": "cg-11g-012",
+      "trains": "complex-de-moivre"
+    },
+    {
+      "id": "cg-11g-014",
+      "trains": "complex-de-moivre"
+    },
+    {
+      "id": "cg-11g-016",
+      "trains": "complex-nth-roots"
+    },
+    {
+      "id": "cg-11g-017",
+      "trains": "complex-nth-roots"
+    }
   ],
   "gaps": []
 }

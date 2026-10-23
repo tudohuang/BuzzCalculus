@@ -1,58 +1,155 @@
 {
   "id": "riemann-sum-compute",
   "title": "用 Riemann 和算簡單積分",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["riemann-sum-notation", "limit-at-infinity"],
-  "next": ["ftc-part1"],
-  "related": ["ftc-part2"],
+  "prerequisites": [
+    "riemann-sum-notation",
+    "limit-at-infinity"
+  ],
+  "next": [
+    "ftc-part1"
+  ],
+  "related": [
+    "ftc-part2"
+  ],
   "objectives": [
-    "記得 $\\sum i$、$\\sum i^2$、$\\sum i^3$ 三個求和公式，知道它們怎麼來。",
-    "會照「寫出 $R_n\\to$ 展開 $\\to$ 套公式 $\\to$ 取極限」算出多項式的定積分。",
-    "說得出為什麼有限的 $n$ 只是近似，等於積分的是極限。"
+    "記得 $\\sum i$、$\\sum i^2$、$\\sum i^3$ 三個求和公式，知道它們怎麼來",
+    "會照「寫出 $R_n\\to$ 展開 $\\to$ 套公式 $\\to$ 取極限」算出多項式的定積分",
+    "說得出為什麼有限的 $n$ 只是近似，等於積分的是極限"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 目標：把極限真的算出來",
+      "heading": "① 目標：真的算出極限",
       "body": [
-        "上一課把定積分寫成 $\\lim\\sum f(x_i)\\Delta x$。要算出這個極限，關鍵是把「$n$ 項相加」化成一個只含 $n$ 的式子，然後讓 $n\\to\\infty$。",
-        "對多項式，這件事靠三個求和公式就能做到。"
+        "定義：",
+        "困難：$\\sum$ 裡面有 $n$ 項，$n$ 又要趨近 $\\infty$",
+        "辦法：先把 $\\sum$ 化成只含 $n$ 的式子，再取極限",
+        "需要的三個求和公式（證明在最後一節）：",
+        "驗算 $n=7$：$28$、$140$、$784=28^2$"
       ],
-      "tex": ["\\sum_{i=1}^{n} i=\\frac{n(n+1)}{2},\\quad \\sum_{i=1}^{n} i^2=\\frac{n(n+1)(2n+1)}{6},\\quad \\sum_{i=1}^{n} i^3=\\left(\\frac{n(n+1)}{2}\\right)^2"],
-      "collapsible": false
+      "tex": [
+        "\\int_a^bf(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n}f(x_i)\\,\\Delta x",
+        "\\sum_{i=1}^{n}i=\\frac{n(n+1)}2",
+        "\\sum_{i=1}^{n}i^2=\\frac{n(n+1)(2n+1)}6",
+        "\\sum_{i=1}^{n}i^3=\\Big[\\frac{n(n+1)}2\\Big]^2"
+      ]
     },
     {
       "heading": "② 四個步驟",
       "body": [
-        "1. 寫出 $\\Delta x=\\frac{b-a}{n}$、$x_i=a+i\\Delta x$、$R_n=\\sum f(x_i)\\Delta x$。",
-        "2. 把 $f(x_i)$ 展開成「常數、$i$、$i^2$、$i^3$」的組合，跟 $i$ 無關的東西提到 $\\sum$ 外面。",
-        "3. 套公式，把 $\\sum$ 消掉，得到只含 $n$ 的式子。",
-        "4. 取 $n\\to\\infty$（〈x → ∞〉的方法：看最高次）。"
+        "例：$\\displaystyle\\int_0^1x\\,dx$",
+        "1. 寫出 $R_n$：$\\Delta x=\\dfrac1n$，$x_i=\\dfrac in$",
+        "2. 展開、提出常數：$\\dfrac1{n^2}$ 跟 $i$ 無關",
+        "在 $\\sum$ 裡，$i$ 才是變數，$n$ 是固定的",
+        "3. 套公式：",
+        "4. 取極限：",
+        "對照幾何：底 $1$、高 $1$ 的三角形，面積 $\\frac12$"
       ],
-      "collapsible": false
+      "tex": [
+        "R_n=\\sum_{i=1}^{n}\\frac in\\cdot\\frac1n",
+        "R_n=\\frac1{n^2}\\sum_{i=1}^{n}i",
+        "R_n=\\frac1{n^2}\\cdot\\frac{n(n+1)}2=\\frac{n+1}{2n}",
+        "\\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12"
+      ]
     },
     {
-      "heading": "③ 為什麼要取極限，不能取 $n=1000$ 就好",
+      "heading": "② 用 $\\sum i^2$",
       "body": [
-        "任何有限的 $n$ 都只是近似。例如 $\\int_1^3 (2x+1)\\,dx$ 的右端點和是 $R_n=6+\\frac{4(n+1)}{n}$，$R_{1000}=10.004$，真正的值是 $10$。只有極限才剛好相等。"
+        "例：$\\displaystyle\\int_0^3x^2\\,dx$",
+        "$\\Delta x=\\dfrac3n$，$x_i=\\dfrac{3i}n$：",
+        "套平方和公式：",
+        "整理成 $\\frac1n$ 的樣子：",
+        "$\\frac{27}6=\\frac92$；$\\frac{n}{n}\\cdot\\frac{n+1}n\\cdot\\frac{2n+1}n$",
+        "$n\\to\\infty$：$\\frac1n\\to0$"
       ],
-      "collapsible": false
+      "tex": [
+        "R_n=\\sum_{i=1}^{n}\\Big(\\frac{3i}n\\Big)^2\\frac3n=\\frac{27}{n^3}\\sum_{i=1}^{n}i^2",
+        "R_n=\\frac{27}{n^3}\\cdot\\frac{n(n+1)(2n+1)}6",
+        "R_n=\\frac92\\Big(1+\\frac1n\\Big)\\Big(2+\\frac1n\\Big)",
+        "\\int_0^3x^2\\,dx=\\frac92\\cdot1\\cdot2=9"
+      ]
+    },
+    {
+      "heading": "② 起點不是 $0$",
+      "body": [
+        "例：$\\displaystyle\\int_1^3(2x+1)\\,dx$",
+        "$\\Delta x=\\dfrac2n$，$x_i=1+\\dfrac{2i}n$",
+        "常數加 $n$ 次要乘 $n$：",
+        "驗算：梯形，高 $f(1)=3$、$f(3)=7$，寬 $2$",
+        "常見錯誤：$\\sum\\frac6n$ 寫成 $\\frac6n$，少乘了 $n$"
+      ],
+      "tex": [
+        "f(x_i)=2\\Big(1+\\frac{2i}n\\Big)+1=3+\\frac{4i}n",
+        "R_n=\\sum_{i=1}^{n}\\Big(3+\\frac{4i}n\\Big)\\frac2n=\\sum_{i=1}^{n}\\frac6n+\\frac8{n^2}\\sum_{i=1}^{n}i",
+        "R_n=\\frac6n\\cdot n+\\frac8{n^2}\\cdot\\frac{n(n+1)}2=6+\\frac{4(n+1)}n",
+        "\\int_1^3(2x+1)\\,dx=\\lim_{n\\to\\infty}\\Big(6+4+\\frac4n\\Big)=10",
+        "\\frac{3+7}2\\cdot2=10"
+      ]
+    },
+    {
+      "heading": "③ 為什麼一定要取極限",
+      "body": [
+        "$R_n=\\dfrac12+\\dfrac1{2n}$：每一個有限的 $n$，都多了 $\\frac1{2n}$",
+        "$R_{1000}=0.5005$ 只是近似值",
+        "積分是一個確定的數：只有極限才剛好等於它",
+        "同理：$\\int_0^3x^2\\,dx$ 的 $R_{1000}=9.0135045$，而積分剛好是 $9$"
+      ]
     },
     {
       "heading": "④ 這條路很慢",
       "body": [
-        "$x^2$ 要 $\\sum i^2$、$x^3$ 要 $\\sum i^3$，換成 $\\sqrt{x}$ 或 $\\sin x$ 就沒有這麼好用的公式。所以實際算積分不會走這條路，而是用〈微積分基本定理 II〉：只要找到反導函數。這一課的價值是確定「定義」本身是算得出來的，而且等一下可以拿來對答案。"
+        "$\\displaystyle\\int_0^1x^5\\,dx$：需要 $\\sum i^5$ 的公式",
+        "$\\displaystyle\\int_0^\\pi\\sin x\\,dx$：需要 $\\sum\\sin\\frac{i\\pi}n$ 的公式",
+        "多項式以外的函數，幾乎算不下去",
+        "好消息：微積分基本定理",
+        "Riemann 和仍然重要：它是定義，也是電腦算積分的方法"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int_0^3x^2\\,dx=\\Big[\\frac{x^3}3\\Big]_0^3=9"
+      ]
     },
     {
-      "heading": "求和公式從哪裡來",
+      "heading": "⑤ 求和公式從哪裡來",
       "body": [
-        "$\\sum i$：把 $1+2+\\dots+n$ 正著寫一次、倒著寫一次，上下相加每一對都是 $n+1$，共 $n$ 對，所以兩倍的和是 $n(n+1)$。",
-        "$\\sum i^2$：$(i+1)^3-i^3=3i^2+3i+1$。對 $i=1$ 到 $n$ 相加，左邊前後相消剩 $(n+1)^3-1$，右邊是 $3\\sum i^2+3\\sum i+n$。代入 $\\sum i$ 的公式解出 $\\sum i^2$，就得到 $\\frac{n(n+1)(2n+1)}{6}$。$\\sum i^3$ 用 $(i+1)^4-i^4$ 做同樣的事。"
+        "$\\sum i$：頭尾配對",
+        "上下相加：每一對都是 $n+1$，共 $n$ 對",
+        "$\\sum i^2$：疊縮。先展開",
+        "左邊從 $i=1$ 加到 $n$：中間全部抵消"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}S&=1+2+\\cdots+n\\\\S&=n+(n-1)+\\cdots+1\\end{aligned}",
+        "2S=n(n+1)\\ \\Rightarrow\\ S=\\frac{n(n+1)}2",
+        "(i+1)^3-i^3=3i^2+3i+1",
+        "\\begin{aligned}&(2^3-1^3)+(3^3-2^3)+\\cdots+\\big((n+1)^3-n^3\\big)\\\\&=(n+1)^3-1\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "⑤ 求和公式（續）",
+      "body": [
+        "右邊加起來，令 $S=\\sum i^2$：",
+        "解 $S$（右邊的 $n$ 移過去，提出 $n+1$）：",
+        "$\\sum i^3$：同樣的方法，從 $(i+1)^4-i^4$ 開始",
+        "也可以用數學歸納法驗證：$\\big[\\frac{n(n+1)}2\\big]^2+(n+1)^3=\\big[\\frac{(n+1)(n+2)}2\\big]^2$"
+      ],
+      "tex": [
+        "(n+1)^3-1=3S+3\\cdot\\frac{n(n+1)}2+n",
+        "3S=(n+1)\\Big[(n+1)^2-1-\\frac{3n}2\\Big]=(n+1)\\Big(n^2+\\frac n2\\Big)",
+        "\\begin{aligned}3S&=\\frac{n(n+1)(2n+1)}2\\\\S&=\\frac{n(n+1)(2n+1)}6\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 公式：$\\sum i=\\frac{n(n+1)}2$，$\\sum i^2=\\frac{n(n+1)(2n+1)}6$，$\\sum i^3=\\big[\\frac{n(n+1)}2\\big]^2$",
+        "• 四步：寫出 $R_n$ → 展開 → 套公式 → 取極限",
+        "• 常數加 $n$ 次要乘 $n$；起點不是 $0$ 時 $x_i=a+i\\Delta x$",
+        "• 有限的 $n$ 只是近似，極限才等於積分",
+        "• 很慢：下一課的基本定理會取代它",
+        "下一課：微積分基本定理 I"
+      ]
     }
   ],
   "workedExamples": [
@@ -101,267 +198,918 @@
   ],
   "checks": [
     {
-      "ask": "$\\sum_{i=1}^{n} i$ 等於？",
+      "ask": "$\\displaystyle\\int_0^2x\\,dx$ 的 $R_n$，化簡後是？",
       "options": [
-        { "label": "$\\frac{n(n+1)}{2}$", "correct": true },
-        { "label": "$\\frac{n^2}{2}$", "why": "那只是最高次項，精確的和還有 $\\frac{n}{2}$。取極限之前不能先丟。" },
-        { "label": "$n(n+1)$", "why": "少除了 $2$：正寫倒寫配成 $n$ 對、每對 $n+1$，那是兩倍的和。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{n\\to\\infty}\\frac{(n+1)(2n+1)}{6n^2}$ 是？",
-      "options": [
-        { "label": "$\\frac{1}{3}$", "correct": true },
-        { "label": "$\\frac{1}{6}$", "why": "分子展開最高次是 $2n^2$，不是 $n^2$：$\\frac{2}{6}=\\frac{1}{3}$。" },
-        { "label": "$0$", "why": "分子分母都是 $n^2$ 次，比值趨近最高次係數的比，不是 $0$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^1 x^3\\,dx$ 的右端點和是 $\\frac{1}{n^4}\\cdot\\left(\\frac{n(n+1)}{2}\\right)^2$。極限是？",
-      "options": [
-        { "label": "$\\frac{1}{4}$", "correct": true },
-        { "label": "$\\frac{1}{2}$", "why": "$\\left(\\frac{n(n+1)}{2}\\right)^2$ 的最高次是 $\\frac{n^4}{4}$：分母的 $2$ 也要平方。" },
-        { "label": "$1$", "why": "你把 $\\left(\\frac{n(n+1)}{2}\\right)^2$ 的最高次當成 $n^4$，漏了 $\\frac{1}{2}$ 的平方 $\\frac{1}{4}$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_1^3 (2x+1)\\,dx$ 的 $R_{1000}=10.004$，真正的值是 $10$。這代表？",
-      "options": [
-        { "label": "有限的 $n$ 只是近似，等於積分的是 $n\\to\\infty$ 的極限", "correct": true },
-        { "label": "$R_{1000}$ 算錯了", "why": "沒有算錯：$f$ 遞增，右端點和本來就高估一點點。" },
-        { "label": "$n$ 夠大就等於積分，$n=1000$ 還不夠大", "why": "這裡任何有限的 $n$ 都給 $6+\\frac{4(n+1)}{n}>10$，永遠不會剛好等於 $10$。" }
+        {
+          "label": "$2+\\dfrac2n$",
+          "correct": true
+        },
+        {
+          "label": "$2$",
+          "why": "那是極限；有限的 $n$ 還多了 $\\frac2n$"
+        },
+        {
+          "label": "$4+\\dfrac4n$",
+          "why": "$\\sum i$ 公式忘了除以 $2$"
+        },
+        {
+          "label": "$1+\\dfrac1n$",
+          "why": "寬寫成 $\\frac1n$；$\\Delta x=\\frac{2-0}n=\\frac2n$"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "三個求和公式",
+      "title": "目標：真的算出極限",
       "beats": [
-        { "show": ["把 $n$ 項相加化成只含 $n$ 的式子"],
-          "note": "然後讓 $n\\to\\infty$。",
-          "say": "要真的算出黎曼和的極限，關鍵是把 n 項相加，化成一個只含 n 的式子。",
+        {
+          "show": [
+            "定義：",
+            "$\\int_a^bf(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n}f(x_i)\\,\\Delta x$"
+          ],
+          "say": "上一課把定積分定義成黎曼和的極限。這一課，要把這個極限真的算出來。",
           "board": [
-            {"do":"write","line":"$n$ 項相加：$\\sum_{i=1}^{n}$"},
-            {"do":"write","line":"$\\Rightarrow$ 只含 $n$ 的式子","on":"化成"}
-          ] },
-        { "show": ["$R_n=\\sum f(x_i)\\Delta x$","長條面積加起來，近似面積"],
-          "note": "n 越大，長條越細，越貼近曲線。",
-          "say": "每個長條寬是 delta x，高是 f 在 x i 的值，寬乘高是一條的面積。全部加起來近似面積，n 越大越準。",
+            {
+              "do": "write",
+              "line": "定義："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int_a^bf(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n}f(x_i)\\,\\Delta x$",
+              "on": "這一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "困難：$\\sum$ 裡面有 $n$ 項，$n$ 又要趨近 $\\infty$"
+          ],
+          "say": "困難在於：總和裡有 n 項，n 又要趨近無限大，沒辦法一項一項加。",
           "board": [
-            {"do":"write","line":"$R_n=\\sum_{i=1}^{n} f(x_i)\\Delta x$"},
-            {"do":"write","line":"$n$ 越大越準，極限就是積分","on":"越大越準"}
-          ] },
-        { "show": ["曲線下的面積，用長條去湊"],
-          "say": "畫成圖：曲線下面的面積，用一條一條的長條去湊。",
+            {
+              "do": "write",
+              "line": "困難：$\\sum$ 裡面有 $n$ 項，$n$ 又要趨近 $\\infty$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "辦法：先把 $\\sum$ 化成只含 $n$ 的式子，再取極限"
+          ],
+          "say": "辦法是：先用公式把整個總和化簡成只含 n 的一個式子，然後就是 1.12 學過的，n 趨近無限大的極限。",
           "board": [
-            {"do":"plot","graph":{"window":[-0.5,3.5,-1,10],"curves":[{"expr":"x^2","domain":[0,3],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":3,"color":"blue"}]}}
-          ] },
-        { "show": ["$\\sum_{i=1}^{n} i=\\frac{n(n+1)}{2}$"],
-          "say": "對多項式，靠三個公式就夠。第一個：一加到 n，等於 n 乘 n 加一，再除以二。",
+            {
+              "do": "write",
+              "line": "辦法：先把 $\\sum$ 化成只含 $n$ 的式子，再取極限",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "需要的三個求和公式（證明在最後一節）：",
+            "$\\sum_{i=1}^{n}i=\\frac{n(n+1)}2$"
+          ],
+          "say": "需要三個求和公式。第一個：1 加到 n，等於 n 乘 n 加 1，除以 2。",
           "board": [
-            {"do":"write","line":"$\\sum_{i=1}^{n} i={{a:\\frac{n(n+1)}{2}}}$"},
-            {"do":"box","term":"a","color":"green","on":"n 乘"}
-          ] },
-        { "show": ["$\\sum i^2=\\frac{n(n+1)(2n+1)}{6}$","$\\sum i^3=\\left(\\frac{n(n+1)}{2}\\right)^2$"],
-          "note": "公式從哪裡來，在全文。",
-          "say": "平方和、立方和也各有一個公式。立方和剛好是一加到 n 那個公式的平方。",
+            {
+              "do": "write",
+              "line": "需要的三個求和公式（證明在最後一節）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{i=1}^{n}i=\\frac{n(n+1)}2$",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{i=1}^{n}i^2=\\frac{n(n+1)(2n+1)}6$"
+          ],
+          "say": "第二個：平方和，等於 n 乘 n 加 1 乘 2n 加 1，除以 6。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\sum i^2=\\frac{n(n+1)(2n+1)}{6}$","on":"平方和"},
-            {"do":"write","line":"$\\sum i^3=\\left({{a:\\frac{n(n+1)}{2}}}\\right)^2$","on":"立方和#2"},
-            {"do":"underline","term":"a","label":"同一個","on":"那個公式"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{i=1}^{n}i^2=\\frac{n(n+1)(2n+1)}6$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum_{i=1}^{n}i^3=\\Big[\\frac{n(n+1)}2\\Big]^2$"
+          ],
+          "say": "第三個：立方和，剛好是第一個公式的平方。這三個公式，最後一節會推給你看。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\sum_{i=1}^{n}i^3=\\Big[\\frac{n(n+1)}2\\Big]^2}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "一個"
+            },
+            {
+              "do": "write",
+              "line": "　驗算 $n=7$：$28$、$140$、$784=28^2$",
+              "color": "violet",
+              "on": "最後"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "四個步驟",
       "beats": [
-        { "show": ["① 寫出 $\\Delta x$、$x_i$、$R_n$","② 展開，跟 $i$ 無關的提到外面"],
-          "say": "步驟一，寫出寬、分點和右端點和。步驟二，展開，跟 i 無關的東西提到 sigma 外面。",
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^1x\\,dx$"
+          ],
+          "say": "先做最簡單的一個：0 到 1，x 的積分。",
           "board": [
-            {"do":"write","line":"① 寫出 $\\Delta x$、$x_i$、$R_n$"},
-            {"do":"write","line":"② 展開，跟 $i$ 無關的提到外面","on":"步驟二"}
-          ] },
-        { "show": ["③ 套公式消掉 $\\sum$","④ 取 $n\\to\\infty$"],
-          "note": "看最高次。",
-          "say": "步驟三，套公式把 sigma 消掉。步驟四，讓 n 趨近無限大，看最高次就好。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^1x\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1. 寫出 $R_n$：$\\Delta x=\\dfrac1n$，$x_i=\\dfrac in$",
+            "$R_n=\\sum_{i=1}^{n}\\frac in\\cdot\\frac1n$"
+          ],
+          "say": "第一步，寫出右端點和：寬是 n 分之 1，分點是 n 分之 i。每一項是 n 分之 i 乘 n 分之 1。",
           "board": [
-            {"do":"write","line":"③ 套公式消掉 $\\sum$"},
-            {"do":"write","line":"④ 取 $n\\to\\infty$，看最高次","on":"步驟四"}
-          ] },
-        { "show": ["$\\frac{3n^2+n}{n^2}=3+\\frac{1}{n}\\to 3$"],
-          "note": "直覺：低次項被最高次蓋過。",
-          "say": "舉例：三 n 平方加 n，除以 n 平方。上下同除 n 平方，得三加 n 分之一，n 變大時只剩三。",
+            {
+              "do": "write",
+              "line": "1. 寫出 $R_n$：$\\Delta x=\\dfrac1n$，$x_i=\\dfrac in$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\sum_{i=1}^{n}\\frac in\\cdot\\frac1n$",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "2. 展開、提出常數：$\\dfrac1{n^2}$ 跟 $i$ 無關",
+            "$R_n=\\frac1{n^2}\\sum_{i=1}^{n}i$"
+          ],
+          "say": "第二步，整理：n 平方分之 1 跟 i 無關，是常數，可以提到總和外面。",
           "board": [
-            {"do":"write","line":"$\\frac{3n^2+n}{n^2}$"},
-            {"do":"transform","line":"$=3+{{u:\\frac{1}{n}}}\\to 3$","on":"得三加"},
-            {"do":"circle","term":"u","label":"趨近 0","on":"變大時"}
-          ] },
-        { "show": ["$\\int_0^1 x\\,dx$：$R_n=\\frac{1}{n^2}\\sum i$"],
-          "note": "$\\Delta x=\\frac{1}{n}$，$f(x_i)=\\frac{i}{n}$。",
-          "say": "試最簡單的：x 從零積到一。寬 n 分之一乘高 n 分之 i，提出來是 n 平方分之一乘 sigma i。",
+            {
+              "do": "write",
+              "line": "2. 展開、提出常數：$\\dfrac1{n^2}$ 跟 $i$ 無關"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\frac1{n^2}\\sum_{i=1}^{n}i$",
+              "on": "無關"
+            },
+            {
+              "do": "write",
+              "line": "　在 $\\sum$ 裡，$i$ 才是變數，$n$ 是固定的",
+              "color": "violet",
+              "on": "常數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "3. 套公式：",
+            "$R_n=\\frac1{n^2}\\cdot\\frac{n(n+1)}2=\\frac{n+1}{2n}$"
+          ],
+          "say": "第三步，套公式：1 加到 n 是 n 乘 n 加 1 除以 2。約掉一個 n，得到 2n 分之 n 加 1。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int_0^1 x\\,dx$","on":"x 從零"},
-            {"do":"write","line":"$\\Delta x=\\frac{1}{n},\\quad f(x_i)=\\frac{i}{n}$","on":"寬"},
-            {"do":"write","line":"$R_n={{c:\\frac{1}{n^2}}}\\sum i$","on":"提出來"}
-          ] },
-        { "show": ["$R_n=\\frac{1}{n^2}\\cdot\\frac{n(n+1)}{2}$"],
-          "note": "接著自己化簡，再取極限。",
-          "say": "套公式：把 sigma i 換成 n 乘 n 加一除以二，再自己化簡，看最高次。",
+            {
+              "do": "write",
+              "line": "3. 套公式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\frac1{n^2}\\cdot\\frac{n(n+1)}2=\\frac{n+1}{2n}$",
+              "on": "除以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "4. 取極限：",
+            "$\\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12$"
+          ],
+          "say": "第四步，取極限：分子分母同次，趨近係數比 2 分之 1。答案是 2 分之 1。",
           "board": [
-            {"do":"write","line":"$R_n=\\frac{1}{n^2}\\cdot{{s:\\frac{n(n+1)}{2}}}$"},
-            {"do":"box","term":"s","label":"代入公式","on":"換成"}
-          ] }
+            {
+              "do": "write",
+              "line": "4. 取極限："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\int_0^1x\\,dx=\\lim_{n\\to\\infty}\\frac{n+1}{2n}=\\frac12}}$",
+              "color": "red",
+              "on": "趨近"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "答案"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對照幾何：底 $1$、高 $1$ 的三角形，面積 $\\frac12$"
+          ],
+          "say": "對照一下幾何：x 從 0 到 1 底下是一個三角形，底 1 高 1，面積正好 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對照幾何：底 $1$、高 $1$ 的三角形，面積 $\\frac12$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用 $\\sum i^2$",
+      "beats": [
+        {
+          "show": [
+            "例：$\\displaystyle\\int_0^3x^2\\,dx$"
+          ],
+          "say": "第二個例子：0 到 3，x 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_0^3x^2\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta x=\\dfrac3n$，$x_i=\\dfrac{3i}n$：",
+            "$R_n=\\sum_{i=1}^{n}\\Big(\\frac{3i}n\\Big)^2\\frac3n=\\frac{27}{n^3}\\sum_{i=1}^{n}i^2$"
+          ],
+          "say": "寬是 n 分之 3，分點是 n 分之 3i。平方以後是 n 平方分之 9 i 平方，再乘 n 分之 3，常數一共是 n 立方分之 27，提出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Delta x=\\dfrac3n$，$x_i=\\dfrac{3i}n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\sum_{i=1}^{n}\\Big(\\frac{3i}n\\Big)^2\\frac3n=\\frac{27}{n^3}\\sum_{i=1}^{n}i^2$",
+              "on": "平方#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "套平方和公式：",
+            "$R_n=\\frac{27}{n^3}\\cdot\\frac{n(n+1)(2n+1)}6$"
+          ],
+          "say": "套平方和公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "套平方和公式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\frac{27}{n^3}\\cdot\\frac{n(n+1)(2n+1)}6$",
+              "on": "和公"
+            }
+          ]
+        },
+        {
+          "show": [
+            "整理成 $\\frac1n$ 的樣子：",
+            "$R_n=\\frac92\\Big(1+\\frac1n\\Big)\\Big(2+\\frac1n\\Big)$"
+          ],
+          "say": "27 除以 6 約成 2 分之 9；分母的三個 n 分給三個括號，變成 1 加 n 分之 1、2 加 n 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "整理成 $\\frac1n$ 的樣子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\frac92\\Big(1+\\frac1n\\Big)\\Big(2+\\frac1n\\Big)$",
+              "on": "母的"
+            },
+            {
+              "do": "write",
+              "line": "　$\\frac{27}6=\\frac92$；$\\frac{n}{n}\\cdot\\frac{n+1}n\\cdot\\frac{2n+1}n$",
+              "color": "violet",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\to\\infty$：$\\frac1n\\to0$",
+            "$\\int_0^3x^2\\,dx=\\frac92\\cdot1\\cdot2=9$"
+          ],
+          "say": "n 趨近無限大，n 分之 1 都趨近 0，剩下 2 分之 9 乘 1 乘 2，等於 9。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\to\\infty$：$\\frac1n\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\int_0^3x^2\\,dx=\\frac92\\cdot1\\cdot2=9}}$",
+              "color": "red",
+              "on": "都趨"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "等於"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用 Riemann 和算 $\\int_a^bf(x)\\,dx$ 的步驟"
+          ],
+          "say": "排排看這四個步驟。"
+        }
       ],
-      "predict": {
-        "ask": "套公式之後，$R_n$ 是？",
-        "options": [
+      "proof": true,
+      "order": {
+        "ask": "用 Riemann 和算 $\\int_a^bf(x)\\,dx$ 的步驟",
+        "steps": [
           {
-            "label": "$\\frac{1}{2}+\\frac{1}{2n}$，極限 $\\frac{1}{2}$",
-            "correct": true
+            "label": "算 $\\Delta x=\\frac{b-a}n$、$x_i=a+i\\Delta x$，寫出 $R_n$"
           },
           {
-            "label": "$\\frac{1}{n^2}\\cdot n$，極限 $0$",
-            "why": "$\\sum i$ 是 $\\frac{n(n+1)}{2}$；$n$ 是 $\\sum 1$。"
+            "label": "展開，把跟 $i$ 無關的常數提到 $\\sum$ 外面",
+            "why": "先要有上一步：算 $\\Delta x=\\frac{b-a}n$、$x_i=a+i\\Delta x$，寫出 $R_n$"
           },
           {
-            "label": "$\\frac{1}{n^2}\\cdot\\frac{n^2}{2}$，剛好 $\\frac{1}{2}$",
-            "why": "取極限前不能先丟掉 $\\frac{n}{2}$；有限的 $n$ 時 $R_n$ 比 $\\frac{1}{2}$ 大。"
+            "label": "套 $\\sum i$、$\\sum i^2$ 等公式，化成只含 $n$ 的式子",
+            "why": "先要有上一步：展開，把跟 $i$ 無關的常數提到 $\\sum$ 外面"
+          },
+          {
+            "label": "取 $n\\to\\infty$ 的極限",
+            "why": "先要有上一步：套 $\\sum i$、$\\sum i^2$ 等公式，化成只含 $n$ 的式子"
           }
         ]
       }
     },
     {
-      "title": "用 $\\sum i^2$",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int_0^3 x^2\\,dx$：$x_i=\\frac{3i}{n}$"],
-          "note": "$f(x_i)=\\frac{9i^2}{n^2}$，$\\Delta x=\\frac{3}{n}$。",
-          "say": "換 x 平方從零到三。寬是 n 分之三，分點 n 分之三 i，平方之後是 n 平方分之九 i 平方。",
-          "board": [
-            {"do":"write","line":"$\\int_0^3 x^2\\,dx$"},
-            {"do":"write","line":"$\\Delta x=\\frac{3}{n},\\quad x_i=\\frac{3i}{n}$","on":"寬是"},
-            {"do":"write","line":"$f(x_i)=\\frac{9i^2}{n^2}$","on":"平方之後"}
-          ] },
-        { "show": ["$R_n=\\frac{27}{n^3}\\sum i^2$"],
-          "say": "跟 i 無關的九和三提出來，乘起來是 n 三次方分之二十七。",
-          "board": [
-            {"do":"write","line":"$R_n={{c:\\frac{27}{n^3}}}\\sum i^2$"},
-            {"do":"circle","term":"c","label":"九乘三","on":"乘起來是"}
-          ] },
-        { "show": ["$=\\frac{9(n+1)(2n+1)}{2n^2}$"],
-          "note": "套平方和公式，約掉一個 $n$。",
-          "say": "套平方和公式，約掉一個 n，剩下這個只含 n 的式子。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$=\\frac{9(n+1)(2n+1)}{2n^2}$","on":"套平方和公式"}
-          ] },
-        { "show": ["最高次：$\\frac{18n^2}{2n^2}\\to 9$"],
-          "say": "分子最高次是十八 n 平方，分母二 n 平方，所以極限是九。",
-          "board": [
-            {"do":"write","line":"最高次：$\\frac{{{t:18n^2}}}{{{b:2n^2}}}\\to{{r:9}}$"},
-            {"do":"focus","term":"t","on":"十八 n 平方"},
-            {"do":"focus","term":"b","on":"分母二"},
-            {"do":"box","term":"r","color":"green","on":"所以極限"}
-          ] }
+        {
+          "show": [
+            "$\\displaystyle\\int_0^2x\\,dx$ 的 $R_n$，化簡後是？"
+          ],
+          "say": "換你：0 到 2 的 x，R n 化簡成什麼？"
+        }
       ],
-      "key": "只看分子分母最高次項取極限",
-      "check": 1
+      "check": 0
     },
     {
       "title": "起點不是 $0$",
       "beats": [
-        { "show": ["$\\int_1^3(2x+1)\\,dx$：$x_i=1+\\frac{2i}{n}$"],
-          "note": "起點不是 $0$，$x_i$ 要加 $a$。",
-          "say": "二 x 加一，從一積到三。寬 n 分之二，分點要從一出發。",
+        {
+          "show": [
+            "例：$\\displaystyle\\int_1^3(2x+1)\\,dx$"
+          ],
+          "say": "第三個例子：1 到 3，2x 加 1。這次起點不是 0。",
           "board": [
-            {"do":"write","line":"$\\int_1^3(2x+1)\\,dx$"},
-            {"do":"write","line":"$\\Delta x=\\frac{2}{n},\\quad x_i={{s:1}}+\\frac{2i}{n}$","on":"寬"},
-            {"do":"focus","term":"s","label":"從 1 出發","on":"分點要"}
-          ] },
-        { "show": ["$f(x_i)=3+\\frac{4i}{n}$"],
-          "say": "代進函數，二乘一加 n 分之二 i，再加一，整理成三加 n 分之四 i。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\int_1^3(2x+1)\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta x=\\dfrac2n$，$x_i=1+\\dfrac{2i}n$"
+          ],
+          "say": "寬是 n 分之 2；分點要記得加上起點 1，是 1 加 n 分之 2i。",
           "board": [
-            {"do":"write","line":"$f(x_i)=2\\left(1+\\frac{2i}{n}\\right)+1=3+\\frac{4i}{n}$"}
-          ] },
-        { "show": ["每項乘寬 $\\frac{2}{n}$，拆成兩個 $\\sum$"],
-          "say": "每一項乘 n 分之二：三乘二得六，四乘二得八，拆成兩個 sigma。",
+            {
+              "do": "write",
+              "line": "$\\Delta x=\\dfrac2n$，$x_i=1+\\dfrac{2i}n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f(x_i)=2\\Big(1+\\frac{2i}n\\Big)+1=3+\\frac{4i}n$"
+          ],
+          "say": "代進函數：2 乘 1 加 n 分之 2i，再加 1，等於 3 加 n 分之 4i。",
           "board": [
-            {"do":"write","line":"$R_n=\\sum\\left(3+\\frac{4i}{n}\\right)\\frac{2}{n}$"},
-            {"do":"transform","line":"$=\\frac{6}{n}\\sum 1+\\frac{8}{n^2}\\sum i$","on":"拆成"}
-          ] },
-        { "show": ["$\\sum 1=n$，$\\frac{6}{n}\\cdot n=6$"],
-          "note": "$\\sum i$ 套公式，約掉 $n$。",
-          "say": "sigma 一是 n 個一，等於 n。套公式後，n 分之六乘 n 是六，另一項約掉 n，剩四乘 n 加一除以 n。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x_i)=2\\Big(1+\\frac{2i}n\\Big)+1=3+\\frac{4i}n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$R_n=\\sum_{i=1}^{n}\\Big(3+\\frac{4i}n\\Big)\\frac2n=\\sum_{i=1}^{n}\\frac6n+\\frac8{n^2}\\sum_{i=1}^{n}i$"
+          ],
+          "say": "乘上寬，拆成兩個總和：一個是常數 n 分之 6，一個是 n 平方分之 8 乘 i。",
           "board": [
-            {"do":"write","line":"$=\\frac{6}{n}\\cdot n+\\frac{8}{n^2}\\cdot\\frac{n(n+1)}{2}$","on":"套公式"},
-            {"do":"transform","line":"$={{k:6}}+\\frac{4(n+1)}{n}$","on":"是六"}
-          ] },
-        { "show": ["$R_n=6+\\frac{4(n+1)}{n}\\to 10$"],
-          "note": "梯形面積 $\\frac{3+7}{2}\\times 2=10$，對得上。",
-          "say": "套公式化成六加 n 分之四乘 n 加一，極限是六加四，十。跟梯形面積對得上。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\sum_{i=1}^{n}\\Big(3+\\frac{4i}n\\Big)\\frac2n=\\sum_{i=1}^{n}\\frac6n+\\frac8{n^2}\\sum_{i=1}^{n}i$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常數加 $n$ 次要乘 $n$：",
+            "$R_n=\\frac6n\\cdot n+\\frac8{n^2}\\cdot\\frac{n(n+1)}2=6+\\frac{4(n+1)}n$"
+          ],
+          "say": "小心：常數 n 分之 6 加 n 次，是乘 n，得 6。另一項套公式，得 n 分之 4 乘 n 加 1。",
           "board": [
-            {"do":"write","line":"$R_n=6+\\frac{4(n+1)}{n}\\to{{r:10}}$"},
-            {"do":"box","term":"r","color":"green","label":"梯形面積","on":"跟梯形面積"}
-          ] },
-        { "show": ["$R_{1000}=10.004$"],
-          "say": "那 n 取一千夠不夠？算出來是十點零零四，還差一點點。",
+            {
+              "do": "write",
+              "line": "常數加 $n$ 次要乘 $n$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle R_n=\\frac6n\\cdot n+\\frac8{n^2}\\cdot\\frac{n(n+1)}2=6+\\frac{4(n+1)}n$",
+              "on": "另一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int_1^3(2x+1)\\,dx=\\lim_{n\\to\\infty}\\Big(6+4+\\frac4n\\Big)=10$"
+          ],
+          "say": "取極限，n 分之 4 趨近 0，答案是 10。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$R_{1000}={{v:10.004}}$","on":"算出來是"},
-            {"do":"underline","term":"v","label":"差一點點","on":"還差"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int_1^3(2x+1)\\,dx=\\lim_{n\\to\\infty}\\Big(6+4+\\frac4n\\Big)=10}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "趨近"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗算：梯形，高 $f(1)=3$、$f(3)=7$，寬 $2$",
+            "$\\frac{3+7}2\\cdot2=10$"
+          ],
+          "say": "驗算：直線底下是梯形，兩邊的高是 3 和 7，寬是 2，面積也是 10。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗算：梯形，高 $f(1)=3$、$f(3)=7$，寬 $2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3+7}2\\cdot2=10$",
+              "on": "邊的"
+            },
+            {
+              "do": "write",
+              "line": "　常見錯誤：$\\sum\\frac6n$ 寫成 $\\frac6n$，少乘了 $n$",
+              "color": "violet",
+              "on": "面積"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "為什麼一定要取極限",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1x\\,dx$ 的 $R_{1000}$ 是多少？"
+          ],
+          "say": "先猜猜看：n 等於一千時，右端點和是多少？"
+        }
       ],
-      "key": "$x_i$ 要從起點 1 開始往右加",
-      "check": 3
+      "predict": {
+        "ask": "$\\displaystyle\\int_0^1x\\,dx$ 的 $R_{1000}$ 是多少？",
+        "options": [
+          {
+            "label": "$0.5005$",
+            "correct": true
+          },
+          {
+            "label": "剛好 $0.5$",
+            "why": "$n$ 再大，$R_n=\\frac12+\\frac1{2n}$ 都還多一點"
+          },
+          {
+            "label": "$0.4995$",
+            "why": "那是左端點和 $L_{1000}$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "為什麼一定要取極限",
+      "beats": [
+        {
+          "show": [
+            "$R_n=\\dfrac12+\\dfrac1{2n}$：每一個有限的 $n$，都多了 $\\frac1{2n}$"
+          ],
+          "say": "R n 等於 2 分之 1 加 2n 分之 1。不管 n 是一千還是一百萬，都多了一點點，永遠不會剛好是 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$R_n=\\dfrac12+\\dfrac1{2n}$：每一個有限的 $n$，都多了 $\\frac1{2n}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$R_{1000}=0.5005$ 只是近似值"
+          ],
+          "say": "所以 R 一千等於 0.5005，只是一個很好的近似，不是答案。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$R_{1000}=0.5005$ 只是近似值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "積分是一個確定的數：只有極限才剛好等於它"
+          ],
+          "say": "定積分是一個確定的數。誤差 2n 分之 1 要真的變成 0，只有取極限才做得到。這就是定義裡為什麼要有極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "積分是一個確定的數：只有極限才剛好等於它",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　同理：$\\int_0^3x^2\\,dx$ 的 $R_{1000}=9.0135045$，而積分剛好是 $9$",
+              "color": "violet",
+              "on": "只有"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "這條路很慢",
       "beats": [
-        { "show": ["$x^2$ 要 $\\sum i^2$，$x^3$ 要 $\\sum i^3$"],
-          "say": "x 平方要用平方和，x 三次方要用立方和，每多一次方就要一個新公式。",
+        {
+          "show": [
+            "$\\displaystyle\\int_0^1x^5\\,dx$：需要 $\\sum i^5$ 的公式"
+          ],
+          "say": "這個方法可行，但很慢。算 x 的 5 次方，就需要 i 的 5 次方和公式，又長又難記。",
           "board": [
-            {"do":"write","line":"$x^2\\Rightarrow\\sum i^2$"},
-            {"do":"write","line":"$x^3\\Rightarrow\\sum i^3$","on":"x 三次方"}
-          ] },
-        { "show": ["$\\sqrt{x}$、$\\sin x$：沒有好用的公式"],
-          "note": "實際算積分用〈微積分基本定理 II〉。",
-          "say": "換成根號 x 或 sine x，就沒有這麼好用的公式了。實際上要靠基本定理：找反導函數。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int_0^1x^5\\,dx$：需要 $\\sum i^5$ 的公式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\displaystyle\\int_0^\\pi\\sin x\\,dx$：需要 $\\sum\\sin\\frac{i\\pi}n$ 的公式"
+          ],
+          "say": "算正弦，就需要正弦的總和公式，這要用到三角恆等式的技巧，一般人根本想不到。",
           "board": [
-            {"do":"write","line":"$\\sqrt{x}$、$\\sin x$：沒有好用的公式"},
-            {"do":"write","line":"基本定理：找反導函數","on":"基本定理"}
-          ] },
-        { "show": ["反導函數 $F$：$F'=f$","$\\int_a^b f\\,dx=F(b)-F(a)$"],
-          "note": "細節在〈微積分基本定理 II〉。",
-          "say": "反導函數就是微分之後會回到原函數的那個函數。基本定理說，積分等於上限代進去，減掉下限代進去。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle\\int_0^\\pi\\sin x\\,dx$：需要 $\\sum\\sin\\frac{i\\pi}n$ 的公式"
+            }
+          ]
+        },
+        {
+          "show": [
+            "多項式以外的函數，幾乎算不下去"
+          ],
+          "say": "多項式以外的函數，幾乎都算不下去。",
           "board": [
-            {"do":"write","line":"反導函數 $F$：$F'(x)=f(x)$"},
-            {"do":"write","line":"$\\int_a^b f\\,dx=F(b)-F(a)$","on":"基本定理說"}
-          ] },
-        { "show": ["定義本身算得出來，也能拿來對答案"],
-          "say": "這一課的價值，是確定定義真的算得出來，之後也可以拿它來對答案。",
+            {
+              "do": "write",
+              "line": "多項式以外的函數，幾乎算不下去",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "好消息：微積分基本定理",
+            "$\\int_0^3x^2\\,dx=\\Big[\\frac{x^3}3\\Big]_0^3=9$"
+          ],
+          "say": "好消息是，接下來的微積分基本定理，會把積分跟反導函數連起來。剛剛那一頁的 9，只要一行就算完。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"定義算得出來 $\\Rightarrow$ 對答案","on":"確定"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "好消息：微積分基本定理"
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int_0^3x^2\\,dx=\\Big[\\frac{x^3}3\\Big]_0^3=9}}$",
+              "on": "會把"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "剛那"
+            }
+          ]
+        },
+        {
+          "show": [
+            "Riemann 和仍然重要：它是定義，也是電腦算積分的方法"
+          ],
+          "say": "黎曼和仍然重要：它是定積分的定義，也是電腦算積分的方法。",
+          "board": [
+            {
+              "do": "write",
+              "line": "Riemann 和仍然重要：它是定義，也是電腦算積分的方法"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "求和公式從哪裡來",
+      "beats": [
+        {
+          "show": [
+            "$\\sum i$：頭尾配對",
+            "$\\begin{aligned}S&=1+2+\\cdots+n\\\\S&=n+(n-1)+\\cdots+1\\end{aligned}$"
+          ],
+          "say": "最後看三個公式怎麼來。第一個用頭尾配對：把 1 加到 n 正著寫一次，倒著寫一次。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum i$：頭尾配對"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}S&=1+2+\\cdots+n\\\\S&=n+(n-1)+\\cdots+1\\end{aligned}}$",
+              "on": "加到"
+            }
+          ]
+        },
+        {
+          "show": [
+            "上下相加：每一對都是 $n+1$，共 $n$ 對",
+            "$2S=n(n+1)\\ \\Rightarrow\\ S=\\frac{n(n+1)}2$"
+          ],
+          "say": "上下對齊相加，每一對都是 n 加 1，一共 n 對。所以兩倍的 S 等於 n 乘 n 加 1，S 就是它的一半。",
+          "board": [
+            {
+              "do": "write",
+              "line": "上下相加：每一對都是 $n+1$，共 $n$ 對"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle 2S=n(n+1)\\ \\Rightarrow\\ S=\\frac{n(n+1)}2}}$",
+              "on": "一共"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "就是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum i^2$：疊縮。先展開",
+            "$(i+1)^3-i^3=3i^2+3i+1$"
+          ],
+          "say": "平方和用一個技巧，叫疊縮。先展開 i 加 1 的立方減 i 的立方，等於 3 i 平方加 3i 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum i^2$：疊縮。先展開"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (i+1)^3-i^3=3i^2+3i+1$",
+              "on": "的立#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "左邊從 $i=1$ 加到 $n$：中間全部抵消",
+            "$\\begin{aligned}&(2^3-1^3)+(3^3-2^3)+\\cdots+\\big((n+1)^3-n^3\\big)\\\\&=(n+1)^3-1\\end{aligned}$"
+          ],
+          "say": "左邊從 i 等於 1 加到 n，相鄰的項一正一負全部抵消，只剩下 n 加 1 的立方減 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "左邊從 $i=1$ 加到 $n$：中間全部抵消"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle {\\begin{aligned}&(2^3-1^3)+(3^3-2^3)+\\cdots+\\big((n+1)^3-n^3\\big)\\\\&=(n+1)^3-1\\end{aligned}}$",
+              "on": "負全"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "求和公式（續）",
+      "beats": [
+        {
+          "show": [
+            "右邊加起來，令 $S=\\sum i^2$：",
+            "$(n+1)^3-1=3S+3\\cdot\\frac{n(n+1)}2+n$"
+          ],
+          "say": "右邊也從 1 加到 n：3 倍的平方和，加上 3 倍的 1 加到 n，再加 n 個 1。兩邊相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊加起來，令 $S=\\sum i^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (n+1)^3-1=3S+3\\cdot\\frac{n(n+1)}2+n$",
+              "on": "倍的#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "解 $S$（右邊的 $n$ 移過去，提出 $n+1$）：",
+            "$3S=(n+1)\\Big[(n+1)^2-1-\\frac{3n}2\\Big]=(n+1)\\Big(n^2+\\frac n2\\Big)$"
+          ],
+          "say": "解出 S：已知的項移到左邊，每一項都提得出 n 加 1。括號裡化簡成 n 平方加 2 分之 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解 $S$（右邊的 $n$ 移過去，提出 $n+1$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 3S=(n+1)\\Big[(n+1)^2-1-\\frac{3n}2\\Big]=(n+1)\\Big(n^2+\\frac n2\\Big)$",
+              "on": "括號"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}3S&=\\frac{n(n+1)(2n+1)}2\\\\S&=\\frac{n(n+1)(2n+1)}6\\end{aligned}$"
+          ],
+          "say": "n 平方加 2 分之 n，就是 2 分之 n 乘 2n 加 1。兩邊再除以 3，就得到平方和公式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}3S&=\\frac{n(n+1)(2n+1)}2\\\\S&=\\frac{n(n+1)(2n+1)}6\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "2n"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum i^3$：同樣的方法，從 $(i+1)^4-i^4$ 開始"
+          ],
+          "say": "立方和用同樣的方法，從 i 加 1 的四次方減 i 的四次方開始，就推得出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum i^3$：同樣的方法，從 $(i+1)^4-i^4$ 開始"
+            },
+            {
+              "do": "write",
+              "line": "　也可以用數學歸納法驗證：$\\big[\\frac{n(n+1)}2\\big]^2+(n+1)^3=\\big[\\frac{(n+1)(n+2)}2\\big]^2$",
+              "color": "violet",
+              "on": "四次#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 公式：$\\sum i=\\frac{n(n+1)}2$，$\\sum i^2=\\frac{n(n+1)(2n+1)}6$，$\\sum i^3=\\big[\\frac{n(n+1)}2\\big]^2$",
+            "• 四步：寫出 $R_n$ → 展開 → 套公式 → 取極限"
+          ],
+          "say": "整理一下：記住三個求和公式；照四個步驟，寫出 R n、展開、套公式、取極限；常數加 n 次要乘 n；有限的 n 只是近似，極限才是積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 公式：$\\sum i=\\frac{n(n+1)}2$，$\\sum i^2=\\frac{n(n+1)(2n+1)}6$，$\\sum i^3=\\big[\\frac{n(n+1)}2\\big]^2$"
+            },
+            {
+              "do": "write",
+              "line": "• 四步：寫出 $R_n$ → 展開 → 套公式 → 取極限",
+              "on": "照四"
+            },
+            {
+              "do": "write",
+              "line": "• 常數加 $n$ 次要乘 $n$；起點不是 $0$ 時 $x_i=a+i\\Delta x$",
+              "on": "展開"
+            },
+            {
+              "do": "write",
+              "line": "• 有限的 $n$ 只是近似，極限才等於積分",
+              "on": "次要"
+            },
+            {
+              "do": "write",
+              "line": "• 很慢：下一課的基本定理會取代它",
+              "on": "只是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：微積分基本定理 I"
+          ],
+          "say": "下一課，微積分基本定理。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：微積分基本定理 I"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["riemann-sum"],
-    "fine": ["riemann-sum-formulas", "riemann-closed-form", "riemann-limit-evaluate"]
+    "coarse": [
+      "riemann-sum"
+    ],
+    "fine": [
+      "riemann-sum-formulas",
+      "riemann-closed-form",
+      "riemann-limit-evaluate"
+    ]
   },
   "practice": [
-    { "id": "lec-06-q1b", "core": true, "trains": "riemann-closed-form" },
-    { "id": "lec-06-q1c", "core": true, "trains": "riemann-limit-evaluate" },
-    { "id": "cx-ftc-001", "core": true, "trains": "riemann-limit-evaluate", "note": "認出是 $\\int_0^1 x^2\\,dx$，再用 $\\sum i^2$ 算。" },
-    { "id": "lec-06-m5", "core": true, "trains": "riemann-closed-form", "note": "把 $\\left(1+\\frac{i}{n}\\right)^2$ 展開成三項，各自用公式。" },
-    { "id": "cg-4b-013", "core": true, "trains": "riemann-closed-form" },
-    { "id": "cg-4b-015", "core": true, "trains": "riemann-sum-formulas" },
-    { "id": "cg-4b-014", "trains": "riemann-closed-form" },
-    { "id": "cg-4b-016", "trains": "riemann-sum-formulas" }
+    {
+      "id": "lec-06-q1b",
+      "core": true,
+      "trains": "riemann-closed-form"
+    },
+    {
+      "id": "lec-06-q1c",
+      "core": true,
+      "trains": "riemann-limit-evaluate"
+    },
+    {
+      "id": "cx-ftc-001",
+      "core": true,
+      "trains": "riemann-limit-evaluate",
+      "note": "認出是 $\\int_0^1 x^2\\,dx$，再用 $\\sum i^2$ 算。"
+    },
+    {
+      "id": "lec-06-m5",
+      "core": true,
+      "trains": "riemann-closed-form",
+      "note": "把 $\\left(1+\\frac{i}{n}\\right)^2$ 展開成三項，各自用公式。"
+    },
+    {
+      "id": "cg-4b-013",
+      "core": true,
+      "trains": "riemann-closed-form"
+    },
+    {
+      "id": "cg-4b-015",
+      "core": true,
+      "trains": "riemann-sum-formulas"
+    },
+    {
+      "id": "cg-4b-014",
+      "trains": "riemann-closed-form"
+    },
+    {
+      "id": "cg-4b-016",
+      "trains": "riemann-sum-formulas"
+    }
   ],
   "gaps": []
 }

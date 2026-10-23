@@ -1,51 +1,118 @@
 {
   "id": "characteristic-equation",
   "title": "特徵方程",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 25,
-  "prerequisites": ["second-order-linear", "derivative-exp"],
-  "next": ["distinct-real-roots"],
-  "related": ["repeated-roots", "complex-roots"],
-  "objectives": [
-    "說得出為什麼常數係數方程要猜 $y=e^{rx}$，並從 $ay''+by'+cy=0$ 寫出特徵方程 $ar^2+br+c=0$。",
-    "解出特徵根，並驗證對應的 $e^{rx}$ 真的是解。",
-    "用判別式 $b^2-4ac$ 分成三種情況，知道各自接下來要學什麼。"
+  "prerequisites": [
+    "second-order-linear",
+    "derivative-exp"
   ],
-  "visual": "兩個滑桿調 b、c（a = 1），左邊畫出複數平面上的兩個特徵根，右邊畫 y(0) = 1、y′(0) = 0 的解曲線。根在實軸上分開時曲線是指數型；兩根撞在一起時是 (1 + rx)e^{rx} 型；根離開實軸變成共軛複數時，曲線開始上下振盪，實部決定振幅變大或變小。",
+  "next": [
+    "distinct-real-roots"
+  ],
+  "related": [
+    "repeated-roots",
+    "complex-roots"
+  ],
+  "objectives": [
+    "說得出為什麼常數係數方程要猜 $y=e^{rx}$，並從 $ay''+by'+cy=0$ 寫出特徵方程 $ar^2+br+c=0$",
+    "解出特徵根，並驗證對應的 $e^{rx}$ 真的是解",
+    "用判別式 $b^2-4ac$ 分成三種情況，知道各自接下來要學什麼"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 為什麼猜 $e^{rx}$",
       "body": [
-        "常數係數齊次方程 $ay''+by'+cy=0$（$a\\ne 0$）要求 $y$、$y'$、$y''$ 乘上常數後加起來互相抵消。要能抵消，三者最好長得一樣，只差倍數。$e^{rx}$ 正好如此：$(e^{rx})'=re^{rx}$，$(e^{rx})''=r^2e^{rx}$。",
-        "這是猜測，不是推導；猜完要代進去檢查，下面就是檢查。"
+        "常數係數齊次方程（$a\\ne0$）：",
+        "三項加起來要完全抵消",
+        "所以要找：微分以後還是自己的常數倍的函數",
+        "一階的 $y'=ky$ 解是 $e^{kx}$，這裡是同一個想法"
       ],
-      "collapsible": false
+      "tex": [
+        "ay''+by'+cy=0",
+        "(e^{rx})'=r\\,e^{rx},\\qquad(e^{rx})''=r^2e^{rx}"
+      ]
     },
     {
-      "heading": "② 代進去：得到一個二次方程",
+      "heading": "② 代進去：二次方程",
       "body": [
-        "代 $y=e^{rx}$：$ar^2e^{rx}+bre^{rx}+ce^{rx}=(ar^2+br+c)e^{rx}$。$e^{rx}$ 永遠不是 $0$，所以 $e^{rx}$ 是解，若且唯若 $ar^2+br+c=0$。這個二次方程叫特徵方程，它的根叫特徵根。",
-        "讀法：$y''$ 換成 $r^2$，$y'$ 換成 $r$，$y$ 換成 $1$，係數照抄。缺項就是係數 $0$：$y''-4y=0$ 的特徵方程是 $r^2-4=0$；$y''+3y'=0$ 的是 $r^2+3r=0$，根 $r=0$ 對應常數解 $y=1$。"
+        "$y=e^{rx}$ 代進 $ay''+by'+cy$：",
+        "$e^{rx}$ 永遠不是 $0$，所以",
+        "叫特徵方程；它的根叫特徵根",
+        "$y''\\to r^2$，$y'\\to r$，$y\\to1$：係數照抄",
+        "例：$y''-5y'+6y=0$",
+        "$r=2,3$：解是 $e^{2x}$ 和 $e^{3x}$",
+        "驗證 $e^{3x}$：$9e^{3x}-15e^{3x}+6e^{3x}=0$",
+        "$W=e^{2x}\\cdot3e^{3x}-2e^{2x}\\cdot e^{3x}=e^{5x}\\ne0$"
       ],
-      "tex": ["ay''+by'+cy=0\\quad\\longrightarrow\\quad ar^2+br+c=0"],
-      "collapsible": false
+      "tex": [
+        "ar^2e^{rx}+bre^{rx}+ce^{rx}=e^{rx}\\,(ar^2+br+c)",
+        "ar^2+br+c=0",
+        "r^2-5r+6=(r-2)(r-3)=0",
+        "y=C_1e^{2x}+C_2e^{3x}"
+      ]
+    },
+    {
+      "heading": "② 首項係數不是 $1$",
+      "body": [
+        "$2y''+y'-y=0$",
+        "$r=\\dfrac12$，$r=-1$",
+        "驗證 $e^{x/2}$：$2\\cdot\\frac14+\\frac12-1=0$"
+      ],
+      "tex": [
+        "2r^2+r-1=(2r-1)(r+1)=0",
+        "y=C_1e^{x/2}+C_2e^{-x}"
+      ]
     },
     {
       "heading": "③ 判別式分三種情況",
       "body": [
-        "$b^2-4ac>0$：兩個相異實根 $r_1$、$r_2$，得到兩個獨立的解 $e^{r_1x}$、$e^{r_2x}$（〈相異實根〉）。",
-        "$b^2-4ac=0$：只有一個根 $r$，只得到一個解 $e^{rx}$，第二個要另外找，答案是 $xe^{rx}$（〈重根〉）。",
-        "$b^2-4ac<0$：根是複數 $\\alpha\\pm i\\beta$，實數解是 $e^{\\alpha x}\\cos\\beta x$、$e^{\\alpha x}\\sin\\beta x$，曲線會振盪（〈複數根〉）。",
-        "不論哪一種，最後都是用兩個獨立的解組成通解 $c_1y_1+c_2y_2$，再用兩個初始條件定常數。"
+        "• $b^2-4ac>0$：兩個相異實根 → $C_1e^{r_1x}+C_2e^{r_2x}$",
+        "• $b^2-4ac=0$：重根，只有一個 $e^{rx}$",
+        "• $b^2-4ac<0$：一對共軛複數根",
+        "下三課分別處理：相異實根、重根、複數根"
       ],
-      "collapsible": false
+      "tex": [
+        "r=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"
+      ]
+    },
+    {
+      "heading": "③ 判別式是負的（預告）",
+      "body": [
+        "$y''+2y'+5y=0$：$r^2+2r+5=0$",
+        "$b^2-4ac=4-20=-16<0$",
+        "驗證：$(-1+2i)^2+2(-1+2i)+5=(-3-4i)+(-2+4i)+5=0$",
+        "$e^{(-1+2i)x}$ 是複數值的函數",
+        "預告：實數通解會是 $e^{-x}(C_1\\cos2x+C_2\\sin2x)$"
+      ],
+      "tex": [
+        "r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i"
+      ]
     },
     {
       "heading": "④ 只適用常數係數",
       "body": [
-        "係數若含 $x$，例如 $xy''+y=0$，代 $e^{rx}$ 會得到 $(xr^2+1)e^{rx}$，括號裡跟 $x$ 有關，找不到一個固定的 $r$ 讓它對所有 $x$ 都是 $0$。"
+        "$y''+xy=0$ 也猜 $e^{rx}$？",
+        "要對所有 $x$ 成立，$r$ 卻得跟著 $x$ 變",
+        "係數會變，各項就不再只差常數倍",
+        "例外：$x^2y''+bxy'+cy=0$ 這種形式改猜 $x^r$"
       ],
-      "collapsible": false
+      "tex": [
+        "e^{rx}(r^2+x)=0"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 常數係數：猜 $y=e^{rx}$，因為微分只多出常數",
+        "• $ay''+by'+cy=0\\ \\Rightarrow\\ ar^2+br+c=0$",
+        "• 根 $r$ 對應解 $e^{rx}$；首項係數不能丟",
+        "• $b^2-4ac>0$：相異實根；$=0$：重根；$<0$：複數根",
+        "• 係數會隨 $x$ 變時，這個方法不能用",
+        "下一課：相異實根"
+      ]
     }
   ],
   "workedExamples": [
@@ -94,35 +161,45 @@
   ],
   "checks": [
     {
-      "ask": "$y''+4y'-5y=0$ 的特徵方程是？",
+      "ask": "$2y''+y'-y=0$ 的特徵根是？",
       "options": [
-        { "label": "$r^2+4r-5=0$", "correct": true },
-        { "label": "$r^2-5=0$", "why": "$y'$ 對應 $r$，$4y'$ 要寫成 $4r$，不能丟掉。" },
-        { "label": "$4r-5=0$", "why": "$y''$ 對應 $r^2$，這一項不能丟；特徵方程是二次的。" }
+        {
+          "label": "$\\frac12,\\ -1$",
+          "correct": true
+        },
+        {
+          "label": "$-\\frac12,\\ 1$",
+          "why": "正負號反了：$2r-1=0$ 的根是 $+\\frac12$"
+        },
+        {
+          "label": "$2,\\ -1$",
+          "why": "$2r-1=0$ 要解成 $r=\\frac12$，不是 $2$"
+        },
+        {
+          "label": "$\\frac{-1\\pm\\sqrt5}2$",
+          "why": "把首項的 $2$ 丟掉了：那是 $r^2+r-1=0$ 的根"
+        }
       ]
     },
     {
-      "ask": "$y''-9y=0$ 的特徵根是？",
+      "ask": "$y''-6y'+9y=0$ 屬於哪一種情況？",
       "options": [
-        { "label": "$r=\\pm3$", "correct": true },
-        { "label": "$r=9$", "why": "$r^2=9$，還要開根號，而且有正負兩個。" },
-        { "label": "$r=\\pm3i$", "why": "$r^2=+9$，不是 $-9$；$\\pm3i$ 是 $y''+9y=0$ 的根。" }
-      ]
-    },
-    {
-      "ask": "$y''+6y'+9y=0$ 屬於哪一種情況？",
-      "options": [
-        { "label": "重根 $r=-3$", "correct": true },
-        { "label": "相異實根", "why": "判別式 $36-36=0$，兩根重合，只有 $-3$。" },
-        { "label": "複數根", "why": "判別式是 $0$ 不是負的，根是實數。" }
-      ]
-    },
-    {
-      "ask": "為什麼特徵方程只能用在常數係數方程？",
-      "options": [
-        { "label": "係數含 $x$ 時，代入 $e^{rx}$ 得到的括號會隨 $x$ 變，找不到固定的 $r$", "correct": true },
-        { "label": "因為 $e^{rx}$ 不能微分兩次", "why": "$e^{rx}$ 可以無限次微分；問題出在係數。" },
-        { "label": "因為變係數方程沒有解", "why": "變係數方程通常有解（存在唯一定理），只是解不是 $e^{rx}$ 的樣子。" }
+        {
+          "label": "重根 $r=3$",
+          "correct": true
+        },
+        {
+          "label": "相異實根 $r=3,-3$",
+          "why": "$(r-3)^2$ 的兩個根都是 $3$；$\\pm3$ 是 $r^2-9$ 的根"
+        },
+        {
+          "label": "複數根",
+          "why": "判別式是 $36-36=0$，不是負的"
+        },
+        {
+          "label": "相異實根 $r=2,3$",
+          "why": "那是 $r^2-5r+6$；這裡常數項是 $9$"
+        }
       ]
     }
   ],
@@ -130,225 +207,763 @@
     {
       "title": "為什麼猜 $e^{rx}$",
       "beats": [
-        { "show": ["$ay''+by'+cy=0$"],
-          "note": "常數係數，$a\\ne 0$。",
-          "say": "y 雙撇、y prime、y 各乘一個常數，加起來要互相抵消。",
+        {
+          "show": [
+            "常數係數齊次方程（$a\\ne0$）：",
+            "$ay''+by'+cy=0$"
+          ],
+          "say": "這一課處理係數都是常數的齊次方程：a y 兩撇加 b y 一撇加 c y 等於 0。",
           "board": [
-            {"do":"write","line":"$ay''+by'+cy=0$"}
-          ] },
-        { "show": ["三者長得一樣，只差倍數"],
-          "say": "要能抵消，三個最好長得一樣，只差一個倍數。哪一種函數微分後長相不變？",
+            {
+              "do": "write",
+              "line": "常數係數齊次方程（$a\\ne0$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle ay''+by'+cy=0}}$",
+              "on": "方程"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "一撇"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三項加起來要完全抵消"
+          ],
+          "say": "三項加起來要處處等於 0。最簡單的辦法是：三項長得一模一樣，只差常數倍，才有可能互相抵消。",
           "board": [
-            {"do":"write","line":"三者長得一樣，只差倍數"}
-          ] },
-        { "show": ["$(e^{rx})'=re^{rx}$，$(e^{rx})''=r^2e^{rx}$"],
-          "note": "這是猜測，猜完要代進去檢查。",
-          "say": "e 的 r x 次方：每微分一次，只是多乘一個 r。這是猜的，所以等一下要代進去檢查。",
+            {
+              "do": "write",
+              "line": "三項加起來要完全抵消"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以要找：微分以後還是自己的常數倍的函數"
+          ],
+          "say": "所以我們要找一種函數，微分以後還是自己的常數倍。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(e^{rx})'={{d:r}}e^{rx}$","on":"每微分一次"},
-            {"do":"write","line":"$(e^{rx})''=r^2e^{rx}$","on":"多乘"},
-            {"do":"write","line":"猜測：代進去檢查","color":"red","on":"這是猜的"}
-          ] }
+            {
+              "do": "write",
+              "line": "所以要找：微分以後還是自己的常數倍的函數",
+              "color": "red"
+            }
+          ]
+        }
       ],
-      "key": "導數只差倍數，所以猜指數函數",
       "predict": {
-        "ask": "代 $y=e^{rx}$，左邊整理成？",
+        "ask": "哪一個函數，每微分一次都還是自己的常數倍？",
         "options": [
           {
-            "label": "$(ar^2+br+c)e^{rx}$",
+            "label": "$e^{rx}$",
             "correct": true
           },
           {
-            "label": "$(ar^2+br+cr)e^{rx}$",
-            "why": "$y$ 本身沒有微分，不會多乘 $r$；$cy$ 對應 $c$。"
+            "label": "$x^r$",
+            "why": "微分變成 $rx^{r-1}$，次方變了，不是常數倍"
           },
           {
-            "label": "$ar^2+br+c$",
-            "why": "每一項都還帶著 $e^{rx}$；提出來之後才看括號。"
+            "label": "$\\ln x$",
+            "why": "微分變成 $\\frac1x$，完全換了樣子"
+          },
+          {
+            "label": "$\\sin x$",
+            "why": "一次微分變 $\\cos x$；兩次才回到 $-\\sin x$"
           }
         ]
       }
     },
     {
-      "title": "特徵方程",
+      "title": "為什麼猜 $e^{rx}$",
       "beats": [
-        { "show": ["$(ar^2+br+c)e^{rx}=0$"],
-          "note": "$e^{rx}$ 永遠不是 0。",
-          "say": "e 的 r x 次方永遠不是零，所以整個是零，只能靠括號。",
+        {
+          "show": [
+            "$(e^{rx})'=r\\,e^{rx},\\qquad(e^{rx})''=r^2e^{rx}$"
+          ],
+          "say": "答案是 e 的 r x 次方：一次微分多一個 r，兩次微分多一個 r 平方，形狀都沒變。",
           "board": [
-            {"do":"write","line":"$({{p:ar^2+br+c}}){{e:e^{rx}}}=0$","tint":{"p":"violet","e":"blue"}},
-            {"do":"underline","term":"e","label":"永遠不是 0","on":"永遠不是零"}
-          ] },
-        { "show": ["$ar^2+br+c=0$"],
-          "note": "叫特徵方程，根叫特徵根。",
-          "say": "e 的 r x 次方是解，剛好就是 r 滿足這個二次方程。微分方程變成了代數。",
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle (e^{rx})'=r\\,e^{rx},\\qquad(e^{rx})''=r^2e^{rx}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "一次"
+            },
+            {
+              "do": "write",
+              "line": "　一階的 $y'=ky$ 解是 $e^{kx}$，這裡是同一個想法",
+              "color": "violet",
+              "on": "多一#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "代進去：二次方程",
+      "beats": [
+        {
+          "show": [
+            "$y=e^{rx}$ 代進 $ay''+by'+cy$：",
+            "$ar^2e^{rx}+bre^{rx}+ce^{rx}=e^{rx}\\,(ar^2+br+c)$"
+          ],
+          "say": "把 e 的 r x 次方代進去，三項都有 e 的 r x 次方，提出來，剩下 a r 平方加 b r 加 c。",
           "board": [
-            {"do":"write","line":"${{p:ar^2+br+c}}=0$","on":"剛好就是"},
-            {"do":"box","term":"p","color":"green","label":"特徵方程","on":"微分方程變成"}
-          ] },
-        { "show": ["$y''\\to r^2$，$y'\\to r$，$y\\to 1$"],
-          "note": "係數照抄。",
-          "say": "讀法：y 雙撇換 r 平方，y prime 換 r，y 換成一，係數照抄。",
+            {
+              "do": "write",
+              "line": "$y=e^{rx}$ 代進 $ay''+by'+cy$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle ar^2e^{rx}+bre^{rx}+ce^{rx}=e^{rx}\\,(ar^2+br+c)$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{rx}$ 永遠不是 $0$，所以",
+            "$ar^2+br+c=0$"
+          ],
+          "say": "e 的 r x 次方永遠不是 0，所以整個等於 0，等價於括號等於 0。",
           "board": [
-            {"do":"write","line":"$y''\\to r^2$，$y'\\to r$，$y\\to 1$","on":"讀法"}
-          ] },
-        { "show": ["$y''-4y=0$ → $r^2-4=0$"],
-          "note": "缺項就是係數 0。",
-          "say": "缺哪一項，那一項的係數就是零。這一題沒有 y prime，所以沒有 r 的一次項。",
+            {
+              "do": "write",
+              "line": "$e^{rx}$ 永遠不是 $0$，所以"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle ar^2+br+c=0}}$",
+              "color": "red",
+              "on": "不是"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "等價"
+            }
+          ]
+        },
+        {
+          "show": [
+            "叫特徵方程；它的根叫特徵根"
+          ],
+          "say": "這個二次方程叫做特徵方程。寫的時候很機械：y 兩撇換成 r 平方，y 一撇換成 r，y 換成 1，係數照抄。",
           "board": [
-            {"do":"write","line":"$y''-4y=0$ → ${{q:r^2-4}}=0$"},
-            {"do":"underline","term":"q","label":"沒有一次項","on":"這一題沒有"}
-          ] }
+            {
+              "do": "write",
+              "line": "叫特徵方程；它的根叫特徵根"
+            },
+            {
+              "do": "write",
+              "line": "　$y''\\to r^2$，$y'\\to r$，$y\\to1$：係數照抄",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$y''-5y'+6y=0$",
+            "$r^2-5r+6=(r-2)(r-3)=0$"
+          ],
+          "say": "例子：y 兩撇減 5 y 一撇加 6y。特徵方程是 r 平方減 5r 加 6，分解成 r 減 2 乘 r 減 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$y''-5y'+6y=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle r^2-5r+6=(r-2)(r-3)=0$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=2,3$：解是 $e^{2x}$ 和 $e^{3x}$"
+          ],
+          "say": "根是 2 和 3，所以 e 的 2x 次方和 e 的 3x 次方都是解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r=2,3$：解是 $e^{2x}$ 和 $e^{3x}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗證 $e^{3x}$：$9e^{3x}-15e^{3x}+6e^{3x}=0$"
+          ],
+          "say": "驗證一下 e 的 3x 次方：兩撇是 9 倍，一撇是 3 倍。9 減 15 加 6，剛好是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗證 $e^{3x}$：$9e^{3x}-15e^{3x}+6e^{3x}=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$W=e^{2x}\\cdot3e^{3x}-2e^{2x}\\cdot e^{3x}=e^{5x}\\ne0$",
+            "$y=C_1e^{2x}+C_2e^{3x}$"
+          ],
+          "say": "朗斯基行列式是 e 的 5x 次方，不是 0，所以兩個解獨立，通解是 C1 e 的 2x 次方加 C2 e 的 3x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$W=e^{2x}\\cdot3e^{3x}-2e^{2x}\\cdot e^{3x}=e^{5x}\\ne0$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle y=C_1e^{2x}+C_2e^{3x}}}$",
+              "on": "所以"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "2x"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "首項係數不是 $1$",
+      "beats": [
+        {
+          "show": [
+            "$2y''+y'-y=0$",
+            "$2r^2+r-1=(2r-1)(r+1)=0$"
+          ],
+          "say": "首項係數不是 1 的例子：2 y 兩撇加 y 一撇減 y。特徵方程是 2 r 平方加 r 減 1，分解成 2r 減 1 乘 r 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$2y''+y'-y=0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2r^2+r-1=(2r-1)(r+1)=0$",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=\\dfrac12$，$r=-1$"
+          ],
+          "say": "根是 2 分之 1 和負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$r=\\dfrac12$，$r=-1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "驗證 $e^{x/2}$：$2\\cdot\\frac14+\\frac12-1=0$"
+          ],
+          "say": "驗證 e 的 2 分之 x 次方：r 等於 2 分之 1 代進特徵方程，2 乘 4 分之 1，加 2 分之 1，減 1，剛好是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "驗證 $e^{x/2}$：$2\\cdot\\frac14+\\frac12-1=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$y=C_1e^{x/2}+C_2e^{-x}$"
+          ],
+          "say": "通解是 C1 e 的 2 分之 x 次方，加 C2 e 的負 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle y=C_1e^{x/2}+C_2e^{-x}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "次方#1"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "代進去驗證",
+      "title": "判別式分三種情況",
       "beats": [
-        { "show": ["$y''-5y'+6y=0$：$r^2-5r+6=0$"],
-          "say": "照著讀，特徵方程是 r 平方減五 r 加六等於零。",
+        {
+          "show": [
+            "$r=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$"
+          ],
+          "say": "特徵方程是二次方程，根由判別式 b 平方減 4ac 決定，分成三種情況。",
           "board": [
-            {"do":"write","line":"$y''-5y'+6y=0$"},
-            {"do":"transform","line":"$y''-5y'+6y=0$：$r^2-5r+6=0$","on":"特徵方程是"}
-          ] },
-        { "show": ["$(r-2)(r-3)=0$"],
-          "note": "$r=2$ 或 $3$。",
-          "say": "因式分解，根是二和三，對應 e 的二 x 次方和 e 的三 x 次方。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle r=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $b^2-4ac>0$：兩個相異實根 → $C_1e^{r_1x}+C_2e^{r_2x}$",
+            "• $b^2-4ac=0$：重根，只有一個 $e^{rx}$"
+          ],
+          "say": "大於 0，兩個相異實根，直接得到通解。等於 0，是重根，只得到一個指數，還缺一個解。小於 0，根是一對複數，要想辦法變成實數的解。",
           "board": [
-            {"do":"write","line":"$(r-2)(r-3)=0$"},
-            {"do":"transform","line":"$(r-2)(r-3)=0$ ⇒ $e^{2x}$、$e^{3x}$","on":"對應"}
-          ] },
-        { "show": ["$y=e^{2x}$：$y'=2e^{2x}$","$y''=4e^{2x}$"],
-          "note": "每微分一次多乘 2，所以兩次多乘 4。",
-          "say": "e 的二 x 次方微分一次多乘二，兩次就多乘四。y 雙撇的係數是一，所以第一項是四倍。",
+            {
+              "do": "write",
+              "line": "• $b^2-4ac>0$：兩個相異實根 → $C_1e^{r_1x}+C_2e^{r_2x}$"
+            },
+            {
+              "do": "write",
+              "line": "• $b^2-4ac=0$：重根，只有一個 $e^{rx}$",
+              "on": "通解"
+            },
+            {
+              "do": "write",
+              "line": "• $b^2-4ac<0$：一對共軛複數根",
+              "on": "個指"
+            },
+            {
+              "do": "write",
+              "line": "　下三課分別處理：相異實根、重根、複數根",
+              "color": "violet",
+              "on": "是一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "r² + 2r + c：跟橫軸交兩點、碰一點、不相交"
+          ],
+          "say": "用圖來看。這是 r 平方加 2r 加 c。現在 c 是負 3，拋物線跟橫軸交在兩點，負 3 和 1。",
           "board": [
-            {"do":"write","line":"$y'=2e^{2x}$，$y''=4e^{2x}$"}
-          ] },
-        { "show": ["$-5y'=-10e^{2x}$","$6y=6e^{2x}$"],
-          "note": "係數照乘：$-5\\cdot2=-10$。",
-          "say": "減五乘 y prime，就是減五乘二倍，得到減十倍。加六乘 y，還是六倍。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "disc",
+                  "window": [
+                    -4.5,
+                    2.5,
+                    -5,
+                    9
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+2*x+c",
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "r",
+                  "params": {
+                    "c": {
+                      "min": -3,
+                      "max": 5,
+                      "value": -3,
+                      "label": "常數項 c"
+                    }
+                  },
+                  "readout": "判別式 = {4-4*c}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "判別式 = 16",
+              "on": "現在"
+            },
+            {
+              "do": "write",
+              "line": "r² + 2r + c：跟橫軸交兩點、碰一點、不相交",
+              "color": "violet",
+              "on": "線跟"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判別式分三種情況"
+          ],
+          "say": "c 調到 1，判別式是 0，拋物線剛好碰到橫軸，只有一個根，負 1。",
           "board": [
-            {"do":"write","line":"$-5y'=-5\\cdot2e^{2x}=-10e^{2x}$"},
-            {"do":"write","line":"$+6y=6e^{2x}$","on":"加六乘"}
-          ] },
-        { "show": ["$4e^{2x}-10e^{2x}+6e^{2x}=0$"],
-          "say": "驗證 e 的二 x：四倍減十倍加六倍，剛好是零。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "disc",
+                  "window": [
+                    -4.5,
+                    2.5,
+                    -5,
+                    9
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+2*x+c",
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "r",
+                  "params": {
+                    "c": {
+                      "min": -3,
+                      "max": 5,
+                      "value": -3,
+                      "label": "常數項 c"
+                    }
+                  },
+                  "readout": "判別式 = {4-4*c}",
+                  "height": 300
+                },
+                "vals": {
+                  "c": 1
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "判別式 = 0",
+              "on": "剛好"
+            }
+          ]
+        },
+        {
+          "show": [
+            "判別式分三種情況"
+          ],
+          "say": "c 調到 5，判別式是負 16，拋物線整個在橫軸上方，沒有實根。",
           "board": [
-            {"do":"write","line":"$4e^{2x}-10e^{2x}+6e^{2x}=0$","on":"四倍"}
-          ] },
-        { "show": ["$2y''+y'-y=0$：$r=\\frac{1}{2}$ 或 $-1$"],
-          "note": "$(2r-1)(r+1)=0$。",
-          "say": "首項係數不是一也一樣。二 r 平方加 r 減一，根是二分之一和負一。",
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "disc",
+                  "window": [
+                    -4.5,
+                    2.5,
+                    -5,
+                    9
+                  ],
+                  "fn": [
+                    {
+                      "expr": "x^2+2*x+c",
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "r",
+                  "params": {
+                    "c": {
+                      "min": -3,
+                      "max": 5,
+                      "value": -3,
+                      "label": "常數項 c"
+                    }
+                  },
+                  "readout": "判別式 = {4-4*c}",
+                  "height": 300
+                },
+                "vals": {
+                  "c": 5
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "判別式 = −16",
+              "on": "拋物"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "判別式是負的（預告）",
+      "beats": [
+        {
+          "show": [
+            "$y''+2y'+5y=0$：$r^2+2r+5=0$"
+          ],
+          "say": "剛剛 c 等於 5 那條，就是 y 兩撇加 2 y 一撇加 5y。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$2y''+y'-y=0$：$2r^2+r-1=0$","on":"首項係數"},
-            {"do":"write","line":"$(2r-1)(r+1)=0$","on":"二 r 平方"},
-            {"do":"write","line":"$r=\\frac{1}{2}$ 或 $-1$","on":"根是"}
-          ] }
+            {
+              "do": "write",
+              "line": "$y''+2y'+5y=0$：$r^2+2r+5=0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$b^2-4ac=4-20=-16<0$"
+          ],
+          "say": "判別式是 4 減 20，負 16，屬於第三種情況。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$b^2-4ac=4-20=-16<0$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i$"
+          ],
+          "say": "照公式算，根號負 16 是 4i，根是負 1 加減 2i。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle r=\\frac{-2\\pm\\sqrt{-16}}{2}=-1\\pm2i}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "16"
+            },
+            {
+              "do": "write",
+              "line": "　驗證：$(-1+2i)^2+2(-1+2i)+5=(-3-4i)+(-2+4i)+5=0$",
+              "color": "violet",
+              "on": "加減"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$e^{(-1+2i)x}$ 是複數值的函數"
+          ],
+          "say": "e 的負 1 加 2i 乘 x 次方，是複數值的函數。我們要的是實數的解。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$e^{(-1+2i)x}$ 是複數值的函數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "預告：實數通解會是 $e^{-x}(C_1\\cos2x+C_2\\sin2x)$"
+          ],
+          "say": "預告一下：用尤拉公式拆開，實數通解會是 e 的負 x 次方，乘上餘弦 2x 和正弦 2x 的組合。這是複數根那一課的內容。",
+          "board": [
+            {
+              "do": "write",
+              "line": "預告：實數通解會是 $e^{-x}(C_1\\cos2x+C_2\\sin2x)$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$y''-6y'+9y=0$ 屬於哪一種情況？"
+          ],
+          "say": "換你判斷。先算判別式。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "判別式分三種",
-      "beats": [
-        { "show": ["$b^2-4ac>0$：$e^{r_1x}$、$e^{r_2x}$"],
-          "note": "〈相異實根〉",
-          "say": "判別式大於零，兩個不同的實根，直接得到兩個獨立的解。",
-          "board": [
-            {"do":"write","line":"$b^2-4ac>0$：$e^{r_1x}$、$e^{r_2x}$"}
-          ] },
-        { "show": ["$b^2-4ac=0$：$e^{rx}$ 與 $xe^{rx}$"],
-          "note": "〈重根〉",
-          "say": "判別式等於零，只有一個根，第二個解要另外找，答案是 x 乘 e 的 r x 次方。",
-          "board": [
-            {"do":"write","line":"$b^2-4ac=0$：$e^{rx}$ 與 ${{x:xe^{rx}}}$"},
-            {"do":"underline","term":"x","label":"另外找","on":"答案是"}
-          ] },
-        { "show": ["代 $xe^{rx}$，括號是","$(ar^2+br+c)x+(2ar+b)$"],
-          "note": "重根 $r=-\\frac{b}{2a}$，所以 $2ar+b=0$。",
-          "say": "代進去檢查：括號裡 x 的係數就是特徵方程，所以是零。剩下兩 a r 加 b，重根時剛好也是零。",
-          "board": [
-            {"do":"write","line":"$(ar^2+br+c)x+{{k:(2ar+b)}}$"},
-            {"do":"underline","term":"k","label":"重根時是 0","on":"剩下"}
-          ] },
-        { "show": ["$b^2-4ac<0$：$\\alpha\\pm i\\beta$"],
-          "note": "〈複數根〉：曲線會振盪。",
-          "say": "判別式小於零，根是複數，實數解會帶 cosine 和 sine，曲線上下振盪。",
-          "board": [
-            {"do":"write","line":"$b^2-4ac<0$：$\\alpha\\pm i\\beta$"}
-          ] },
-        { "show": ["$e^{(\\alpha+i\\beta)x}=e^{\\alpha x}$","$\\times(\\cos\\beta x+i\\sin\\beta x)$"],
-          "note": "推導留到〈複數根〉，這裡先用結果。",
-          "say": "複數的指數可以拆開：e 的 alpha x 次方，乘上 cosine 加 i sine。實部管衰減或增長，虛部管振盪快慢。",
-          "board": [
-            {"do":"write","line":"$e^{(\\alpha+i\\beta)x}={{ea:e^{\\alpha x}}}$"},
-            {"do":"write","line":"$\\times({{ec:\\cos\\beta x+i\\sin\\beta x}})$","on":"乘上"},
-            {"do":"focus","term":"ea","color":"blue","label":"實部","on":"實部"},
-            {"do":"focus","term":"ec","color":"violet","label":"虛部","on":"虛部"}
-          ] },
-        { "show": ["$y''+2y'+5y=0$：$4-20=-16<0$"],
-          "note": "根 $-1\\pm2i$，振幅以 $e^{-x}$ 衰減。",
-          "say": "例如這一題，判別式四減二十是負十六，根是負一加減二 i，一邊振盪一邊衰減。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$y''+2y'+5y=0$：$4-20=-16<0$","on":"例如"},
-            {"do":"write","line":"根 $-1\\pm2i$：一邊振盪一邊衰減","on":"根是負一"}
-          ] }
-      ],
-      "key": "看判別式正、零、負，分三種解的形式",
-      "check": 2
-    },
-    {
       "title": "只適用常數係數",
       "beats": [
-        { "show": ["$xy''+y=0$：$(xr^2+1)e^{rx}$"],
-          "say": "係數裡有 x 的話，例如 x y 雙撇加 y，代進去括號裡也帶著 x。",
+        {
+          "show": [
+            "$y''+xy=0$ 也猜 $e^{rx}$？",
+            "$e^{rx}(r^2+x)=0$"
+          ],
+          "say": "這個方法只適用常數係數。如果係數有 x，例如 y 兩撇加 x y 等於 0，代 e 的 r x 次方進去，得到 r 平方加 x 等於 0。",
           "board": [
-            {"do":"write","line":"$xy''+y=0$"},
-            {"do":"transform","line":"$xy''+y=0$ ⇒ $({{q:xr^2+1}})e^{rx}$","on":"代進去"},
-            {"do":"underline","term":"q","label":"帶著 x","on":"括號裡"}
-          ] },
-        { "show": ["找不到固定的 $r$"],
-          "note": "要對所有 $x$ 都是 0。",
-          "say": "括號會隨 x 變，找不到一個固定的 r 讓它對每個 x 都是零。這招就失效了。",
+            {
+              "do": "write",
+              "line": "$y''+xy=0$ 也猜 $e^{rx}$？"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle e^{rx}(r^2+x)=0$",
+              "on": "次方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要對所有 $x$ 成立，$r$ 卻得跟著 $x$ 變"
+          ],
+          "say": "這要對所有的 x 都成立，但 r 是一個固定的常數，不可能讓 r 平方加 x 永遠是 0。猜法失效了。",
           "board": [
-            {"do":"write","line":"找不到固定的 $r$","color":"red"},
-            {"do":"write","line":"$xr^2+1=0$ 要對每個 $x$ 成立","on":"每個"}
-          ] },
-        { "show": ["$\\frac{e^{3x}}{e^{2x}}=e^{x}$","比值會變，不是常數倍"],
-          "note": "獨立：一個不是另一個的常數倍。",
-          "say": "獨立的意思是，一個不是另一個的常數倍。e 的三 x 除以 e 的二 x 是 e 的 x，會變，所以這兩個獨立。",
+            {
+              "do": "write",
+              "line": "要對所有 $x$ 成立，$r$ 卻得跟著 $x$ 變",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "係數會變，各項就不再只差常數倍"
+          ],
+          "say": "原因是係數一變，各項就不再只差常數倍，沒辦法靠一個 r 全部抵消。",
           "board": [
-            {"do":"write","line":"$\\frac{e^{3x}}{e^{2x}}=e^{x}$：會變"},
-            {"do":"plot","graph":{"window":[-1,1,0,10],"curves":[{"expr":"exp(2*x)","domain":[-1,1],"color":"blue"},{"expr":"exp(3*x)","domain":[-1,1],"color":"red"}]},"on":"會變"}
-          ] },
-        { "show": ["通解：$c_1y_1+c_2y_2$"],
-          "note": "三種情況最後都這樣組。",
-          "say": "常數係數的話，不論哪一種情況，最後都用兩個獨立的解組成通解，再用初始條件定常數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"通解：${{g:c_1y_1+c_2y_2}}$","on":"最後都用"},
-            {"do":"box","term":"g","color":"green","on":"兩個獨立"}
-          ] }
+            {
+              "do": "write",
+              "line": "係數會變，各項就不再只差常數倍",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　例外：$x^2y''+bxy'+cy=0$ 這種形式改猜 $x^r$",
+              "color": "violet",
+              "on": "數倍"
+            }
+          ]
+        }
       ],
-      "check": 3
+      "proof": true,
+      "order": {
+        "ask": "解 $ay''+by'+cy=0$（$a,b,c$ 是常數）",
+        "steps": [
+          {
+            "label": "把 $y''\\to r^2$、$y'\\to r$、$y\\to1$，寫出 $ar^2+br+c=0$"
+          },
+          {
+            "label": "算判別式 $b^2-4ac$，判斷是哪一種情況",
+            "why": "先要有上一步：把 $y''\\to r^2$、$y'\\to r$、$y\\to1$，寫出 $ar^2+br+c=0$"
+          },
+          {
+            "label": "解出特徵根",
+            "why": "先要有上一步：算判別式 $b^2-4ac$，判斷是哪一種情況"
+          },
+          {
+            "label": "依情況寫出通解",
+            "why": "先要有上一步：解出特徵根"
+          }
+        ]
+      }
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 常數係數：猜 $y=e^{rx}$，因為微分只多出常數",
+            "• $ay''+by'+cy=0\\ \\Rightarrow\\ ar^2+br+c=0$"
+          ],
+          "say": "整理一下：常數係數就猜 e 的 r x 次方；特徵方程照抄係數；判別式分成三種情況；係數會變的方程不能這樣做。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 常數係數：猜 $y=e^{rx}$，因為微分只多出常數"
+            },
+            {
+              "do": "write",
+              "line": "• $ay''+by'+cy=0\\ \\Rightarrow\\ ar^2+br+c=0$",
+              "on": "次方"
+            },
+            {
+              "do": "write",
+              "line": "• 根 $r$ 對應解 $e^{rx}$；首項係數不能丟",
+              "on": "特徵"
+            },
+            {
+              "do": "write",
+              "line": "• $b^2-4ac>0$：相異實根；$=0$：重根；$<0$：複數根",
+              "on": "別式"
+            },
+            {
+              "do": "write",
+              "line": "• 係數會隨 $x$ 變時，這個方法不能用",
+              "on": "會變"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：相異實根"
+          ],
+          "say": "下一課，從第一種情況開始：兩個相異實根。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：相異實根"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["ode", "second-order", "constant-coefficients"],
-    "fine": ["characteristic-write-equation", "characteristic-solve-roots", "characteristic-classify-discriminant"]
+    "coarse": [
+      "ode",
+      "second-order",
+      "constant-coefficients"
+    ],
+    "fine": [
+      "characteristic-write-equation",
+      "characteristic-solve-roots",
+      "characteristic-classify-discriminant"
+    ]
   },
   "practice": [
-    { "id": "ode-h2-001", "core": true, "trains": "characteristic-solve-roots" },
-    { "id": "ode-h2-006", "core": true, "trains": "characteristic-solve-roots" },
-    { "id": "cg-10b-005", "core": true, "trains": "characteristic-write-equation" },
-    { "id": "cg-10b-008", "core": true, "trains": "characteristic-classify-discriminant" },
-    { "id": "ode-h2-007", "trains": "characteristic-classify-discriminant", "note": "預告：根是 $\\pm3i$，解是 $\\sin$、$\\cos$。" },
-    { "id": "ode-h2-004", "trains": "characteristic-classify-discriminant", "note": "預告：重根，第二個解是 $xe^{rx}$。" },
-    { "id": "cg-10b-006", "trains": "characteristic-write-equation" },
-    { "id": "cg-10b-007", "trains": "characteristic-write-equation" },
-    { "id": "cg-10b-009", "trains": "characteristic-classify-discriminant" }
+    {
+      "id": "ode-h2-001",
+      "core": true,
+      "trains": "characteristic-solve-roots"
+    },
+    {
+      "id": "ode-h2-006",
+      "core": true,
+      "trains": "characteristic-solve-roots"
+    },
+    {
+      "id": "cg-10b-005",
+      "core": true,
+      "trains": "characteristic-write-equation"
+    },
+    {
+      "id": "cg-10b-008",
+      "core": true,
+      "trains": "characteristic-classify-discriminant"
+    },
+    {
+      "id": "ode-h2-007",
+      "trains": "characteristic-classify-discriminant",
+      "note": "預告：根是 $\\pm3i$，解是 $\\sin$、$\\cos$。"
+    },
+    {
+      "id": "ode-h2-004",
+      "trains": "characteristic-classify-discriminant",
+      "note": "預告：重根，第二個解是 $xe^{rx}$。"
+    },
+    {
+      "id": "cg-10b-006",
+      "trains": "characteristic-write-equation"
+    },
+    {
+      "id": "cg-10b-007",
+      "trains": "characteristic-write-equation"
+    },
+    {
+      "id": "cg-10b-009",
+      "trains": "characteristic-classify-discriminant"
+    }
   ],
   "gaps": []
 }

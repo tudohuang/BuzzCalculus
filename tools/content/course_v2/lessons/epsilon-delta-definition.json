@@ -1,52 +1,132 @@
 {
   "id": "epsilon-delta-definition",
   "title": "ε-δ 定義",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["limit-intro", "epsilon-n-definition", "negation"],
-  "next": ["epsilon-delta-linear"],
+  "prerequisites": [
+    "limit-intro",
+    "epsilon-n-definition",
+    "negation"
+  ],
+  "next": [
+    "epsilon-delta-linear"
+  ],
   "related": [],
   "objectives": [
-    "寫得出 $\\lim_{x\\to a} f(x)=L$ 的 $\\varepsilon$-$\\delta$ 定義，說得出 $0<|x-a|$ 與量詞順序各自的作用。",
-    "給定 $\\varepsilon$，從圖形或不等式找出可用的 $\\delta$，並知道最大的 $\\delta$ 要取離 $a$ 較近的那一側。",
-    "寫出「極限不是 $L$」的否定句，並用它證明跳躍點沒有極限。"
+    "寫得出 $\\lim_{x\\to a} f(x)=L$ 的 $\\varepsilon$-$\\delta$ 定義，說得出 $0<|x-a|$ 的「$0<$」為什麼要寫（$f(a)$ 不影響極限）",
+    "給定 $\\varepsilon$，從圖形或不等式找出可用的 $\\delta$，並知道最大的 $\\delta$ 要取離 $a$ 較近的那一側",
+    "寫出「極限不是 $L$」的否定句，並用它證明跳躍點沒有極限"
   ],
-  "visual": "f(x) = 1/x 的圖形，a = 2、L = 1/2。水平帶 L ± ε 由滑桿控制；使用者拖動垂直帶 2 ± δ 的寬度，帶內（挖掉 x = 2）只要有一段曲線跑出水平帶就變紅。左右兩側離開水平帶的位置 5/3 與 5/2 標出來，顯示 δ 被較近的左側卡住。",
-  "figures": [
-    {"caption":"ε = 0.1：δ 要拖到 1/3 以下才整段在綠帶裡","after":2,"widget":{"type":"epsilon-delta","f":"1/x","at":2,"limit":0.5,"drive":"delta","eps":0.1,"range":[0.02,1.2],"value":0.8,"window":[0.5,4,0,1.5]}}
-  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 從「夠靠近」到一場挑戰",
+      "heading": "① 一場挑戰",
       "body": [
-        "〈極限到底在問什麼〉說：$x$ 夠靠近 $a$（但不等於 $a$），$f(x)$ 就能要多靠近 $L$ 就多靠近。把它變成一場挑戰：對方先給一個誤差 $\\varepsilon>0$，你要回答一個距離 $\\delta>0$，保證只要 $0<|x-a|<\\delta$，就有 $|f(x)-L|<\\varepsilon$。對方給的每一個 $\\varepsilon$，你都接得住，極限才是 $L$。",
-        "這跟〈ε-N 定義〉是同一個架構：數列是「$n$ 夠大」，函數是「$x$ 夠靠近 $a$」。"
-      ],
-      "collapsible": false
+        "1.1 的說法：$x$ 夠靠近 $a$，$f(x)$ 就夠靠近 $L$",
+        "但「夠近」沒有數字，沒辦法檢查",
+        "挑戰：對手指定誤差 $\\varepsilon$，我們回答距離 $\\delta$",
+        "只要 $x$ 離 $a$ 不到 $\\delta$（$x\\ne a$），$f(x)$ 離 $L$ 就不到 $\\varepsilon$",
+        "每一個 $\\varepsilon$ 都接得住，才算極限是 $L$",
+        "試玩：$f(x)=3x+1$，$a=2$，$L=7$",
+        "• 對手給 $\\varepsilon=0.3$　→　我們回 $\\delta=0.1$",
+        "• 對手給 $\\varepsilon=0.06$　→　我們回 $\\delta=0.02$",
+        "• 對手給 $\\varepsilon=0.003$　→　我們回 $\\delta=0.001$",
+        "跟 $\\varepsilon$-$N$ 一樣：$\\varepsilon$ 對手給，$\\delta$ 我們找，可以看 $\\varepsilon$ 再決定",
+        "數列：$n$ 夠大（$n\\ge N$）；函數：$x$ 夠近（$0<|x-a|<\\delta$）"
+      ]
     },
     {
       "heading": "② 定義",
       "body": [
-        "設 $f$ 在 $a$ 附近（$a$ 本身可以除外）有定義。$\\lim_{x\\to a} f(x)=L$ 的意思是：",
-        "$0<|x-a|$：完全不看 $x=a$ 這一點，$f(a)$ 是多少、有沒有定義都無關。$\\delta$ 寫在 $\\varepsilon$ 後面：$\\delta$ 可以依賴 $\\varepsilon$（與 $a$），但不能依賴 $x$。一個 $\\delta$ 可用，任何更小的正數也可用。"
+        "設 $f$ 在 $a$ 附近有定義（$a$ 本身可以沒有）。",
+        "「附近有定義」：有某個 $r>0$，$f$ 在 $(a-r,a)\\cup(a,a+r)$ 上都有定義",
+        "• $|x-a|<\\delta$：$x$ 在 $(a-\\delta,\\ a+\\delta)$ 裡",
+        "• $|f(x)-L|<\\varepsilon$：$f(x)$ 在 $(L-\\varepsilon,\\ L+\\varepsilon)$ 裡",
+        "那個 $0<$：把 $x=a$ 排除",
+        "所以 $f(a)$ 是多少、有沒有定義，都不影響極限",
+        "1.1 的「洞」：$\\frac{x^2-1}{x-1}$ 在 $x=1$ 沒定義，極限照樣是 $2$",
+        "$\\delta$ 不必最大：$\\delta$ 可行，更小的也都可行"
       ],
-      "tex": ["\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\ 0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-L|<\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{x\\to a}f(x)=L\\iff\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-L|<\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "② 例：解出最大的 $\\delta$",
+      "body": [
+        "$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$",
+        "先把誤差寫成 $|x-2|$ 的式子：",
+        "解不等式：",
+        "最大的 $\\delta=0.02$；一般的 $\\varepsilon$：$\\delta=\\dfrac\\varepsilon3$",
+        "$\\delta=0.021$ 就不行：$x=2.0205$ 時誤差 $0.0615\\ge0.06$"
+      ],
+      "tex": [
+        "|f(x)-7|=|3x-6|=3|x-2|",
+        "3|x-2|<0.06\\iff|x-2|<0.02"
+      ]
     },
     {
       "heading": "③ 圖上看：兩條帶子",
       "body": [
-        "$|f(x)-L|<\\varepsilon$ 是一條水平帶，$0<|x-a|<\\delta$ 是一條挖掉中線的垂直帶。定義要求：垂直帶裡的那段曲線，全部落在水平帶裡。曲線往左往右離開水平帶的位置通常不對稱，最大的 $\\delta$ 是 $a$ 到較近那一側的距離。"
+        "• 橫帶：$y\\in(L-\\varepsilon,\\ L+\\varepsilon)$，對手給",
+        "• 直帶：$x\\in(a-\\delta,\\ a+\\delta)$，我們給",
+        "直帶裡（$x\\ne a$）的圖形，要全部落在橫帶裡",
+        "例：$f(x)=\\dfrac1x$，$a=2$，$L=\\dfrac12$，$\\varepsilon=0.1$"
       ],
-      "collapsible": false
+      "tex": [
+        "0.4<\\frac1x<0.6\\iff\\frac53<x<\\frac52"
+      ]
+    },
+    {
+      "heading": "③ 取近的那一側",
+      "body": [
+        "左右不對稱：直帶左右一樣寬，$\\delta$ 取近的那一側",
+        "取 $\\delta=\\frac12$ 就不行：$x=1.6$ 時 $\\frac1{1.6}=0.625$，誤差 $0.125\\ge0.1$",
+        "$\\varepsilon=0.05$：左邊 $\\approx0.182$，右邊 $\\approx0.222$，$\\delta=\\dfrac2{11}$",
+        "一般地，左邊的距離 $\\frac{2\\varepsilon}{0.5+\\varepsilon}$ 永遠比右邊的 $\\frac{2\\varepsilon}{0.5-\\varepsilon}$ 小"
+      ],
+      "tex": [
+        "\\delta=\\min\\left(2-\\tfrac53,\\ \\tfrac52-2\\right)=\\tfrac13"
+      ]
     },
     {
       "heading": "④ 否定：極限不是 $L$",
       "body": [
-        "把量詞翻過來：存在 $\\varepsilon>0$，對每一個 $\\delta>0$，都有某個 $x$ 滿足 $0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$。人話：有一個誤差，不管垂直帶多窄，帶子裡總有點跑出水平帶。"
+        "照 12.2 翻：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變成 $P$ 且 $\\neg Q$",
+        "白話：有一條橫帶，不管直帶多窄，裡面總有點跑出去",
+        "「極限不存在」：對每一個 $L\\in\\mathbb{R}$ 都有 $\\lim f\\ne L$",
+        "例：$H(x)=\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}$，證明 $\\displaystyle\\lim_{x\\to0}H(x)$ 不存在",
+        "策略：$\\varepsilon=\\frac12$ 的橫帶總長 $1$；$0$ 和 $1$ 距離 $1$，裝不下兩個"
       ],
-      "tex": ["\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x:\\ 0<|x-a|<\\delta\\ \\text{且}\\ |f(x)-L|\\ge\\varepsilon"],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\lim_{x\\to a}f(x)\\ne L\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x:\\\\&\\quad0<|x-a|<\\delta\\ \\text{且}\\ |f(x)-L|\\ge\\varepsilon\\end{aligned}"
+      ]
+    },
+    {
+      "heading": "④ 證明：跳躍點沒有極限",
+      "body": [
+        "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，看 $x_1=-\\frac\\delta2$ 與 $x_2=\\frac\\delta2$：兩個都滿足 $0<|x|<\\delta$。",
+        "$H(x_1)=0$，$H(x_2)=1$。假設兩個誤差都 $<\\frac12$：",
+        "所以 $x_1,x_2$ 中至少一個滿足 $|H(x)-L|\\ge\\frac12$",
+        "對照否定句：$\\varepsilon$ 我們挑了 $\\frac12$，$\\delta$ 任給，$x$ 我們找到了",
+        "所以 $\\lim_{x\\to0}H(x)\\ne L$；$L$ 任意 ⇒ 極限不存在　$\\blacksquare$"
+      ],
+      "tex": [
+        "1=|1-0|\\le|1-L|+|L-0|<\\tfrac12+\\tfrac12=1"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\lim_{x\\to a}f(x)=L$：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$",
+        "• $\\varepsilon$ 對手給，$\\delta$ 我們找；$0<$ 排除 $x=a$，$f(a)$ 不影響極限",
+        "• 圖：直帶裡（除了 $a$）的圖形全部在橫帶裡",
+        "• 最大的 $\\delta$：解不等式，取離 $a$ 近的那一側",
+        "• 否定：$\\exists\\varepsilon\\ \\forall\\delta\\ \\exists x:\\ 0<|x-a|<\\delta,\\ |f(x)-L|\\ge\\varepsilon$",
+        "• 不存在：要對每一個 $L$ 證",
+        "下一課：線性函數的 ε-δ 證明"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,35 +176,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\varepsilon$-$\\delta$ 定義中，$\\delta$ 可以依賴什麼？",
+      "ask": "定義裡把「$0<|x-a|<\\delta$」改成「$|x-a|<\\delta$」，哪一個極限會==跟著改變==？",
       "options": [
-        { "label": "$\\varepsilon$ 與 $a$，不能依賴 $x$", "correct": true },
-        { "label": "$\\varepsilon$、$a$ 與 $x$", "why": "$\\delta$ 決定的是「哪些 $x$ 要檢查」，它必須在 $x$ 之前選好。依賴 $x$ 的 $\\delta$ 等於沒有回答挑戰。" },
-        { "label": "只能是固定的常數，不依賴 $\\varepsilon$", "why": "$\\varepsilon$ 越小，$\\delta$ 通常必須越小。量詞順序 $\\forall\\varepsilon\\exists\\delta$ 正是允許 $\\delta$ 跟著 $\\varepsilon$ 變。" }
+        {
+          "label": "$g(x)=0$（$x\\ne0$）、$g(0)=5$，在 $x\\to0$",
+          "correct": true
+        },
+        {
+          "label": "$\\lim_{x\\to2}(3x+1)$",
+          "why": "這個函數在 $x=2$ 的值剛好是 $7$，加不加 $x=2$ 都一樣"
+        },
+        {
+          "label": "$\\lim_{x\\to1}\\frac{x^2-1}{x-1}$",
+          "why": "$x=1$ 沒有定義，「對所有 $x$」本來就只看定義域裡的點"
+        },
+        {
+          "label": "都不會改變",
+          "why": "$0<$ 正是在排除 $x=a$；$f(a)$ 跟 $L$ 不同的時候就會出事"
+        }
       ]
     },
     {
-      "ask": "定義裡 $0<|x-a|$ 這個條件的作用是？",
+      "ask": "只要證明 $\\lim_{x\\to0}H(x)\\ne1$。給定 $\\delta$，該挑哪個 $x$？",
       "options": [
-        { "label": "排除 $x=a$，極限不看 $f(a)$", "correct": true },
-        { "label": "保證 $\\delta$ 是正數", "why": "$\\delta>0$ 是另外寫的條件。$0<|x-a|$ 管的是 $x$，意思是 $x\\ne a$。" },
-        { "label": "保證 $f(x)$ 有定義", "why": "$f$ 在 $a$ 附近有定義是前提。這個條件的意思是 $x\\ne a$，所以 $f(a)$ 沒定義或另外定義都不影響極限。" }
-      ]
-    },
-    {
-      "ask": "$f(x)=2x+1$，$a=1$，$L=3$，$\\varepsilon=0.1$。最大的 $\\delta$ 是？",
-      "options": [
-        { "label": "0.05", "correct": true },
-        { "label": "0.1", "why": "你把 $\\delta$ 取成 $\\varepsilon$。$|f(x)-3|=2|x-1|$，斜率 2 會把誤差放大兩倍，要 $|x-1|<0.05$。" },
-        { "label": "0.2", "why": "你把 $\\varepsilon$ 乘上斜率，方向反了。要讓 $2|x-1|<0.1$，$\\delta$ 是 $\\frac{\\varepsilon}{2}$。" }
-      ]
-    },
-    {
-      "ask": "「$\\lim_{x\\to a} f(x)\\ne L$」的正確寫法是？",
-      "options": [
-        { "label": "$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$：$0<|x-a|<\\delta$ 且 $|f(x)-L|\\ge\\varepsilon$", "correct": true },
-        { "label": "$\\forall\\varepsilon>0\\ \\forall\\delta>0\\ \\forall x$：$|f(x)-L|\\ge\\varepsilon$", "why": "你把所有量詞都換成 $\\forall$，太強了：只要某些點跑出去就夠，不需要每個點都在外面。" },
-        { "label": "$\\exists\\varepsilon>0\\ \\exists\\delta>0\\ \\exists x$：$|f(x)-L|\\ge\\varepsilon$", "why": "$\\forall\\delta$ 沒有翻對。只找一個 $\\delta$ 有點跑出去不夠，原定義也只要求「某個」$\\delta$ 可行，要證所有 $\\delta$ 都失敗。" }
+        {
+          "label": "$x=-\\frac\\delta2$",
+          "correct": true
+        },
+        {
+          "label": "$x=\\frac\\delta2$",
+          "why": "$H(\\frac\\delta2)=1$，誤差是 $0$，正好在橫帶裡"
+        },
+        {
+          "label": "$x=0$",
+          "why": "定義裡 $0<|x-0|$，$x=0$ 不准用；而且 $H(0)=1$ 也沒跑出去"
+        },
+        {
+          "label": "$x=-2\\delta$",
+          "why": "離 $0$ 有 $2\\delta$，不在直帶裡"
+        }
       ]
     }
   ],
@@ -132,215 +222,838 @@
     {
       "title": "一場挑戰",
       "beats": [
-        { "show": ["對方給誤差 $\\varepsilon>0$"],
-          "say": "x 夠靠近 a，f 就能要多靠近 L 就多靠近。把這句話變成一場挑戰：對方先出一個誤差 epsilon。",
+        {
+          "show": [
+            "1.1 的說法：$x$ 夠靠近 $a$，$f(x)$ 就夠靠近 $L$"
+          ],
+          "say": "在 1.1，我們說：x 夠靠近 a，f of x 就夠靠近 L。可是多近才算夠近？沒有數字，就沒辦法檢查，也沒辦法證明。",
           "board": [
-            {"do":"write","line":"對方給誤差 ${{e:\\varepsilon}}>0$","tint":{"e":"blue"},"on":"對方先出"}
-          ] },
-        { "show": ["你回答距離 $\\delta>0$"],
-          "note": "只要 $0<|x-a|<\\delta$，就有 $|f(x)-L|<\\varepsilon$。",
-          "say": "你要回答一個距離 delta，保證 x 離 a 不到 delta，f 在 x 的值就離 L 不到 epsilon。",
+            {
+              "do": "write",
+              "line": "1.1 的說法：$x$ 夠靠近 $a$，$f(x)$ 就夠靠近 $L$"
+            },
+            {
+              "do": "write",
+              "line": "但「夠近」沒有數字，沒辦法檢查",
+              "on": "可是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "挑戰：對手指定誤差 $\\varepsilon$，我們回答距離 $\\delta$"
+          ],
+          "say": "跟數列一樣，把它變成一場挑戰：對手指定誤差艾普西隆，我們回答距離得塔，保證 x 離 a 不到得塔時，f of x 離 L 不到艾普西隆。",
           "board": [
-            {"do":"write","line":"你回答距離 ${{d:\\delta}}>0$","tint":{"d":"violet"}},
-            {"do":"focus","term":"d","color":"violet","label":"保證","on":"保證"}
-          ] },
-        { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:$","$0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$"],
-          "say": "每一個 epsilon 你都接得住，極限才是 L。跟數列的 epsilon N 是同一個架構，只是 n 夠大換成 x 夠近。",
+            {
+              "do": "write",
+              "line": "挑戰：對手指定誤差 $\\varepsilon$，我們回答距離 $\\delta$"
+            },
+            {
+              "do": "write",
+              "line": "只要 $x$ 離 $a$ 不到 $\\delta$（$x\\ne a$），$f(x)$ 離 $L$ 就不到 $\\varepsilon$",
+              "color": "gold",
+              "on": "保證"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一個 $\\varepsilon$ 都接得住，才算極限是 $L$"
+          ],
+          "say": "對手可以一直出更小的艾普西隆。每一個都接得住，才算極限是 L。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\forall{{qe:\\varepsilon}}>0\\ \\exists{{qd:\\delta}}>0\\ \\forall x:$","tint":{"qe":"blue","qd":"violet"},"on":"每一個 epsilon"},
-            {"do":"write","line":"$0<|x-a|<{{d:\\delta}}\\Rightarrow|f(x)-L|<{{e:\\varepsilon}}$","on":"接得住"}
-          ] },
-        { "show": ["$\\delta$ 寫在 $\\varepsilon$ 後面"],
-          "note": "可以依賴 $\\varepsilon$ 與 $a$，不能依賴 $x$。",
-          "say": "delta 寫在 epsilon 後面，可以跟著 epsilon 變。但 delta 要在 x 出場之前就決定好。",
+            {
+              "do": "write",
+              "line": "每一個 $\\varepsilon$ 都接得住，才算極限是 $L$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "試玩：$f(x)=3x+1$，$a=2$，$L=7$",
+            "• 對手給 $\\varepsilon=0.3$　→　我們回 $\\delta=0.1$"
+          ],
+          "say": "試玩一下：3x 加 1，在 2 的極限是 7。對手給 0.3，我們回 0.1；給 0.06，回 0.02。規律是得塔取艾普西隆的三分之一。",
           "board": [
-            {"do":"underline","term":"qd","color":"violet","label":"跟著 ε 變","on":"可以跟著"}
-          ] }
+            {
+              "do": "write",
+              "line": "試玩：$f(x)=3x+1$，$a=2$，$L=7$"
+            },
+            {
+              "do": "write",
+              "line": "• 對手給 $\\varepsilon=0.3$　→　我們回 $\\delta=0.1$",
+              "on": "極限"
+            },
+            {
+              "do": "write",
+              "line": "• 對手給 $\\varepsilon=0.06$　→　我們回 $\\delta=0.02$",
+              "on": "06"
+            },
+            {
+              "do": "write",
+              "line": "• 對手給 $\\varepsilon=0.003$　→　我們回 $\\delta=0.001$",
+              "on": "規律"
+            }
+          ]
+        },
+        {
+          "show": [
+            "跟 $\\varepsilon$-$N$ 一樣：$\\varepsilon$ 對手給，$\\delta$ 我們找，可以看 $\\varepsilon$ 再決定"
+          ],
+          "say": "跟艾普西隆 N 一樣：艾普西隆對手給，得塔我們找，可以看了艾普西隆再決定。只是門檻 N 換成了距離得塔。",
+          "board": [
+            {
+              "do": "write",
+              "line": "跟 $\\varepsilon$-$N$ 一樣：$\\varepsilon$ 對手給，$\\delta$ 我們找，可以看 $\\varepsilon$ 再決定"
+            },
+            {
+              "do": "write",
+              "line": "　數列：$n$ 夠大（$n\\ge N$）；函數：$x$ 夠近（$0<|x-a|<\\delta$）",
+              "color": "violet",
+              "on": "以看"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定義",
+      "beats": [
+        {
+          "show": [
+            "設 $f$ 在 $a$ 附近有定義（$a$ 本身可以沒有）。",
+            "$\\begin{aligned}&\\lim_{x\\to a}f(x)=L\\iff\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-L|<\\varepsilon\\end{aligned}$"
+          ],
+          "say": "正式定義：對所有正的艾普西隆，存在正的得塔，使得對所有 x，只要 x 減 a 的絕對值大於 0 又小於得塔，推得 f of x 減 L 的絕對值小於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $f$ 在 $a$ 附近有定義（$a$ 本身可以沒有）。"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\lim_{x\\to a}f(x)=L\\iff\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\\\&\\quad0<|x-a|<\\delta\\ \\Rightarrow\\ |f(x)-L|<\\varepsilon\\end{aligned}}}}$",
+              "on": "得塔#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "的絕#1"
+            },
+            {
+              "do": "write",
+              "line": "　「附近有定義」：有某個 $r>0$，$f$ 在 $(a-r,a)\\cup(a,a+r)$ 上都有定義",
+              "color": "violet",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $|x-a|<\\delta$：$x$ 在 $(a-\\delta,\\ a+\\delta)$ 裡",
+            "• $|f(x)-L|<\\varepsilon$：$f(x)$ 在 $(L-\\varepsilon,\\ L+\\varepsilon)$ 裡"
+          ],
+          "say": "兩個絕對值翻成區間：x 在 a 加減得塔之間，f of x 在 L 加減艾普西隆之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $|x-a|<\\delta$：$x$ 在 $(a-\\delta,\\ a+\\delta)$ 裡"
+            },
+            {
+              "do": "write",
+              "line": "• $|f(x)-L|<\\varepsilon$：$f(x)$ 在 $(L-\\varepsilon,\\ L+\\varepsilon)$ 裡",
+              "on": "of"
+            }
+          ]
+        },
+        {
+          "show": [
+            "那個 $0<$：把 $x=a$ 排除"
+          ],
+          "say": "特別注意前面那個大於 0：它把 x 等於 a 排除在外。所以 f of a 是多少、有沒有定義，都不影響極限。極限只看 a 旁邊，不看 a 本身。",
+          "board": [
+            {
+              "do": "write",
+              "line": "那個 $0<$：把 $x=a$ 排除",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "所以 $f(a)$ 是多少、有沒有定義，都不影響極限",
+              "color": "red",
+              "on": "除在"
+            },
+            {
+              "do": "write",
+              "line": "　1.1 的「洞」：$\\frac{x^2-1}{x-1}$ 在 $x=1$ 沒定義，極限照樣是 $2$",
+              "color": "violet",
+              "on": "都不"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\delta$ 不必最大：$\\delta$ 可行，更小的也都可行"
+          ],
+          "say": "還有，一個得塔可行，更小的得塔也都可行，因為要檢查的 x 只會更少。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\delta$ 不必最大：$\\delta$ 可行，更小的也都可行"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "例：解出最大的 $\\delta$",
+      "beats": [
+        {
+          "show": [
+            "$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$"
+          ],
+          "say": "把剛才的試玩算清楚：艾普西隆 0.06 時，可以用的得塔最大是多少？",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先把誤差寫成 $|x-2|$ 的式子：",
+            "$|f(x)-7|=|3x-6|=3|x-2|$"
+          ],
+          "say": "先把誤差寫成 x 減 2 的式子：3x 加 1 減 7，是 3 倍的 x 減 2 的絕對值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先把誤差寫成 $|x-2|$ 的式子："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |f(x)-7|=|3x-6|=3|x-2|$",
+              "on": "倍的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "解不等式：",
+            "$3|x-2|<0.06\\iff|x-2|<0.02$"
+          ],
+          "say": "要它小於 0.06，就是 x 減 2 的絕對值小於 0.02。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解不等式："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 3|x-2|<0.06\\iff|x-2|<0.02$",
+              "on": "的絕"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最大的 $\\delta=0.02$；一般的 $\\varepsilon$：$\\delta=\\dfrac\\varepsilon3$"
+          ],
+          "say": "所以最大的得塔是 0.02。一般的艾普西隆，得塔取艾普西隆的三分之一。下一課把它寫成正式證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最大的 $\\delta=0.02$；一般的 $\\varepsilon$：$\\delta=\\dfrac\\varepsilon3$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　$\\delta=0.021$ 就不行：$x=2.0205$ 時誤差 $0.0615\\ge0.06$",
+              "color": "violet",
+              "on": "塔取"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "不看 $x=a$",
+      "title": "圖上看：兩條帶子",
       "beats": [
-        { "show": ["$0<|x-a|$：$x\\ne a$"],
-          "note": "$f(a)$ 是多少、有沒有定義，都無關。",
-          "say": "條件裡的零小於，意思是 x 不等於 a。極限完全不看 a 這一點本身。",
+        {
+          "show": [
+            "• 橫帶：$y\\in(L-\\varepsilon,\\ L+\\varepsilon)$，對手給",
+            "• 直帶：$x\\in(a-\\delta,\\ a+\\delta)$，我們給"
+          ],
+          "say": "在圖上，定義就是兩條帶子：橫帶是 L 加減艾普西隆，對手給；直帶是 a 加減得塔，我們給。",
           "board": [
-            {"do":"write","line":"$0<|x-a|$：${{n:x\\ne a}}$"},
-            {"do":"write","line":"極限不看 $x=a$ 這一點","on":"極限完全"}
-          ] },
-        { "show": ["一個 $\\delta$ 可用，更小的也可用"],
-          "say": "還有，一個 delta 可以用，任何更小的正數也可以用。所以不必找最大的。",
+            {
+              "do": "write",
+              "line": "• 橫帶：$y\\in(L-\\varepsilon,\\ L+\\varepsilon)$，對手給"
+            },
+            {
+              "do": "write",
+              "line": "• 直帶：$x\\in(a-\\delta,\\ a+\\delta)$，我們給",
+              "on": "普西"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直帶裡（$x\\ne a$）的圖形，要全部落在橫帶裡"
+          ],
+          "say": "要做到：直帶裡的圖形，除了 x 等於 a 那一點，全部落在橫帶裡。",
           "board": [
-            {"do":"write","line":"一個 $\\delta$ 可用 ⇒ 更小的也可用"},
-            {"do":"write","line":"不必找最大的 $\\delta$","on":"所以不必"}
-          ] }
-      ],
-      "check": 1
+            {
+              "do": "write",
+              "line": "直帶裡（$x\\ne a$）的圖形，要全部落在橫帶裡",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f(x)=\\dfrac1x$，$a=2$，$L=\\dfrac12$，$\\varepsilon=0.1$"
+          ],
+          "say": "例子：x 分之 1，在 2 的極限是 2 分之 1，艾普西隆給 0.1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f(x)=\\dfrac1x$，$a=2$，$L=\\dfrac12$，$\\varepsilon=0.1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0.4<\\frac1x<0.6\\iff\\frac53<x<\\frac52$"
+          ],
+          "say": "誤差小於 0.1，就是 x 分之 1 在 0.4 到 0.6 之間；x 是正的，取倒數，x 在 3 分之 5 到 2 分之 5 之間。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0.4<\\frac1x<0.6\\iff\\frac53<x<\\frac52$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：橫帶 1/2 ± ε；藍：直帶 2 ± δ"
+          ],
+          "say": "紅色是橫帶。曲線只在兩條虛線之間待在橫帶裡：往左只有 3 分之 1 的空間，往右有 2 分之 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv",
+                  "window": [
+                    1.2,
+                    3.2,
+                    0.25,
+                    0.85
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.5+e",
+                      "from": 1.2,
+                      "to": 3.2,
+                      "color": "red",
+                      "under": "0.5-e"
+                    },
+                    {
+                      "expr": "0.85",
+                      "from": "2-2*e/(0.5+e)",
+                      "to": "2+2*e/(0.5+e)",
+                      "color": "blue",
+                      "under": "0.25"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "ink",
+                      "label": "y = 1/x"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "1/(0.5+e)",
+                      "color": "pencil"
+                    },
+                    {
+                      "x": "1/(0.5-e)",
+                      "color": "pencil"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 0.5,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.03,
+                      "max": 0.15,
+                      "value": 0.1,
+                      "label": "誤差 ε"
+                    }
+                  },
+                  "readout": "ε = {e}：左邊還有 {2-1/(0.5+e)}，右邊還有 {1/(0.5-e)-2}",
+                  "height": 300
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.1：左邊還有 0.3333，右邊還有 0.5",
+              "on": "待在"
+            },
+            {
+              "do": "write",
+              "line": "紅：橫帶 1/2 ± ε；藍：直帶 2 ± δ",
+              "color": "violet",
+              "on": "的空"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖上看：兩條帶子"
+          ],
+          "say": "艾普西隆縮小到 0.05，虛線往中間靠，藍色直帶跟著變窄，但還是找得到。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "inv",
+                  "window": [
+                    1.2,
+                    3.2,
+                    0.25,
+                    0.85
+                  ],
+                  "area": [
+                    {
+                      "expr": "0.5+e",
+                      "from": 1.2,
+                      "to": 3.2,
+                      "color": "red",
+                      "under": "0.5-e"
+                    },
+                    {
+                      "expr": "0.85",
+                      "from": "2-2*e/(0.5+e)",
+                      "to": "2+2*e/(0.5+e)",
+                      "color": "blue",
+                      "under": "0.25"
+                    }
+                  ],
+                  "fn": [
+                    {
+                      "expr": "1/x",
+                      "color": "ink",
+                      "label": "y = 1/x"
+                    }
+                  ],
+                  "vlines": [
+                    {
+                      "x": "1/(0.5+e)",
+                      "color": "pencil"
+                    },
+                    {
+                      "x": "1/(0.5-e)",
+                      "color": "pencil"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 0.5,
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "e": {
+                      "min": 0.03,
+                      "max": 0.15,
+                      "value": 0.1,
+                      "label": "誤差 ε"
+                    }
+                  },
+                  "readout": "ε = {e}：左邊還有 {2-1/(0.5+e)}，右邊還有 {1/(0.5-e)-2}",
+                  "height": 300
+                },
+                "vals": {
+                  "e": 0.05
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "ε = 0.05：左邊還有 0.1818，右邊還有 0.2222",
+              "on": "藍色"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "直線：除以斜率",
+      "title": "取近的那一側",
       "beats": [
-        { "show": ["$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$"],
-          "say": "先練一條直線：三 x 加一，在二附近，極限七，對方出零點零六。",
+        {
+          "show": [
+            "左右不對稱：直帶左右一樣寬，$\\delta$ 取近的那一側",
+            "$\\delta=\\min\\left(2-\\tfrac53,\\ \\tfrac52-2\\right)=\\tfrac13$"
+          ],
+          "say": "回到艾普西隆 0.1。左右不對稱，可是直帶左右一樣寬，所以只能取近的那一側：得塔最大是 3 分之 1。",
           "board": [
-            {"do":"write","line":"$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$","on":"三 x 加一"}
-          ] },
-        { "show": ["直線過 $(2,7)$"],
-          "say": "先看圖：這條直線經過 x 等於二、高度七的那一點。我們就在這一點附近檢查。",
+            {
+              "do": "write",
+              "line": "左右不對稱：直帶左右一樣寬，$\\delta$ 取近的那一側"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\delta=\\min\\left(2-\\tfrac53,\\ \\tfrac52-2\\right)=\\tfrac13}}$",
+              "color": "red",
+              "on": "右不"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "所以"
+            },
+            {
+              "do": "write",
+              "line": "　取 $\\delta=\\frac12$ 就不行：$x=1.6$ 時 $\\frac1{1.6}=0.625$，誤差 $0.125\\ge0.1$",
+              "color": "violet",
+              "on": "得塔"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\varepsilon=0.05$：左邊 $\\approx0.182$，右邊 $\\approx0.222$，$\\delta=\\dfrac2{11}$"
+          ],
+          "say": "艾普西隆 0.05 時也一樣，左邊比較近，得塔取 11 分之 2。",
           "board": [
-            {"do":"plot","graph":{"window":[0,4,0,12],"curves":[{"expr":"3*x+1","domain":[0,4],"color":"blue"}],"points":[{"x":2,"y":7}]}}
-          ] },
-        { "show": ["$|f(x)-7|=|3x-6|=3|x-2|$"],
-          "say": "距離化簡成三倍的 x 減二的絕對值。斜率三會把誤差放大三倍。",
-          "board": [
-            {"do":"write","line":"$|f(x)-7|=|3x-6|={{t:3}}|x-2|$"},
-            {"do":"focus","term":"t","label":"放大三倍","on":"斜率三"}
-          ] },
-        { "show": ["$3|x-2|<0.06$ ⇔ $|x-2|<0.02$"],
-          "note": "$x=2.021$ 就超出：最大的 $\\delta=0.02$。",
-          "say": "所以 x 只能離二不到零點零二。再大一點，像二點零二一，就跑出去了。",
-          "board": [
-            {"do":"write","line":"${{t:3}}|x-2|<0.06$ ⇔ $|x-2|<{{dd:0.02}}$"},
-            {"do":"underline","term":"dd","color":"green","on":"零點零二"},
-            {"do":"write","line":"$x={{w:2.021}}$：跑出去","on":"像二點零二一"},
-            {"do":"focus","term":"w","color":"red","on":"就跑出去"}
-          ] },
-        { "show": ["$x=2.021$：距離 $0.063>0.06$"],
-          "say": "檢查一下：x 是二點零二一時，f 的值離七是零點零六三，比零點零六大，所以真的超出去了。",
-          "board": [
-            {"do":"write","line":"$|f(2.021)-7|={{m:0.063}}>0.06$","on":"零點零六三"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\varepsilon=0.05$：左邊 $\\approx0.182$，右邊 $\\approx0.222$，$\\delta=\\dfrac2{11}$"
+            },
+            {
+              "do": "write",
+              "line": "　一般地，左邊的距離 $\\frac{2\\varepsilon}{0.5+\\varepsilon}$ 永遠比右邊的 $\\frac{2\\varepsilon}{0.5-\\varepsilon}$ 小",
+              "color": "violet",
+              "on": "邊比"
+            }
+          ]
+        }
       ],
-      "check": 2
-    },
-    {
-      "title": "兩條帶子",
-      "beats": [
-        { "show": ["水平帶 $|f(x)-L|<\\varepsilon$","垂直帶 $0<|x-a|<\\delta$"],
-          "fig": {"use":0,"to":0.8},
-          "say": "看圖。綠色的水平帶是誤差 epsilon，垂直帶是 delta。垂直帶裡的曲線，要全部落在水平帶裡。",
-          "board": [
-            {"do":"write","line":"水平帶 $|f(x)-L|<\\varepsilon$"},
-            {"do":"write","line":"垂直帶 $0<|x-a|<\\delta$","on":"垂直帶是"}
-          ] },
-        { "show": ["$f(x)=\\frac{1}{x}$，$a=2$，$\\varepsilon=0.1$"],
-          "note": "$\\frac{5}{3}<x<\\frac{5}{2}$ 才在帶裡。",
-          "say": "x 分之一在二，極限二分之一，誤差零點一。解出來 x 要在三分之五到二分之五之間。",
-          "board": [
-            {"do":"write","line":"$f(x)=\\frac{1}{x}$，$a=2$，$\\varepsilon=0.1$"},
-            {"do":"write","line":"${{r:\\frac{5}{3}<x<\\frac{5}{2}}}$","on":"解出來"}
-          ] },
-        { "show": ["檢查：$1\\div\\frac{5}{3}=0.6$"],
-          "note": "$0.6-\\frac{1}{2}=0.1$，剛好是 $\\varepsilon$。",
-          "say": "檢查一下：一除以三分之五是零點六，比二分之一多了零點一，剛好就是誤差。",
-          "board": [
-            {"do":"write","line":"$1\\div\\frac{5}{3}={{c:0.6}}$","on":"零點六"}
-          ] },
-        { "show": ["左邊離 2 有 $\\frac{1}{3}$，右邊 $\\frac{1}{2}$"],
-          "note": "不以 2 為中心。",
-          "fig": {"use":0,"to":0.5},
-          "say": "這段不對稱：左邊只到三分之一，右邊有二分之一。delta 拉到二分之一，左邊的曲線就跑出帶子了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"左邊離 $2$ 有 $\\frac{1}{3}$，右邊 $\\frac{1}{2}$","on":"這段不對稱"},
-            {"do":"write","line":"${{w:\\delta=\\frac{1}{2}}}$","on":"拉到"},
-            {"do":"strike","term":"w","label":"跑出去","on":"左邊的曲線"}
-          ] },
-        { "show": ["取近的那一側：$\\delta=\\frac{1}{3}$"],
-          "say": "垂直帶左右一樣寬，所以 delta 只能取比較近的那一側，三分之一。",
-          "board": [
-            {"do":"write","line":"取近的那一側：$\\delta={{d:\\frac{1}{3}}}$"},
-            {"do":"box","term":"d","color":"green","on":"比較近"}
-          ] }
-      ],
-      "key": "兩側距離不對稱，取近的那一側",
-      "drag": {
-        "use": 0,
-        "ask": "自己把 $\\delta$ 拖到 $\\frac{1}{3}$ 以下，讓那段曲線整段在綠帶裡",
-        "range": [
-          0.02,
-          0.33
+      "predict": {
+        "ask": "$f(x)=\\frac1x$，$a=2$，$L=\\frac12$。$\\varepsilon=0.2$ 時，最大的 $\\delta$ 是？",
+        "options": [
+          {
+            "label": "$\\frac47$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac43$",
+            "why": "這是右邊的距離；直帶左右一樣寬，要取近的那一側"
+          },
+          {
+            "label": "$\\frac23$",
+            "why": "把 $\\varepsilon=0.1$ 的 $\\frac13$ 直接乘 $2$：曲線不是直線，要回去解不等式"
+          },
+          {
+            "label": "$0.2$",
+            "why": "把 $\\delta$ 取成跟 $\\varepsilon$ 一樣：$\\delta$ 是 $x$ 方向的距離，要從不等式解出來"
+          }
         ]
       }
     },
     {
+      "title": "否定：極限不是 $L$",
+      "beats": [
+        {
+          "show": [
+            "照 12.2 翻：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變成 $P$ 且 $\\neg Q$",
+            "$\\begin{aligned}&\\lim_{x\\to a}f(x)\\ne L\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x:\\\\&\\quad0<|x-a|<\\delta\\ \\text{且}\\ |f(x)-L|\\ge\\varepsilon\\end{aligned}$"
+          ],
+          "say": "接著寫否定。照 12.2：對所有和存在互換；推得的否定，是前提成立、結論不成立。所以：存在艾普西隆，對所有得塔，存在一個 x 離 a 不到得塔，誤差卻大於等於艾普西隆。",
+          "board": [
+            {
+              "do": "write",
+              "line": "照 12.2 翻：$\\forall\\leftrightarrow\\exists$，$P\\Rightarrow Q$ 變成 $P$ 且 $\\neg Q$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}&\\lim_{x\\to a}f(x)\\ne L\\iff\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x:\\\\&\\quad0<|x-a|<\\delta\\ \\text{且}\\ |f(x)-L|\\ge\\varepsilon\\end{aligned}}}}$",
+              "on": "是前"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "存在#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "白話：有一條橫帶，不管直帶多窄，裡面總有點跑出去"
+          ],
+          "say": "白話：有一條橫帶，不管直帶多窄，裡面總有點跑出去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "白話：有一條橫帶，不管直帶多窄，裡面總有點跑出去"
+            }
+          ]
+        },
+        {
+          "show": [
+            "「極限不存在」：對每一個 $L\\in\\mathbb{R}$ 都有 $\\lim f\\ne L$"
+          ],
+          "say": "極限不存在，是對每一個實數 L，極限都不是 L。所以 L 要任意給，不能只檢查一兩個值。",
+          "board": [
+            {
+              "do": "write",
+              "line": "「極限不存在」：對每一個 $L\\in\\mathbb{R}$ 都有 $\\lim f\\ne L$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$H(x)=\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}$，證明 $\\displaystyle\\lim_{x\\to0}H(x)$ 不存在"
+          ],
+          "say": "例子：H of x，負的時候是 0，大於等於 0 時是 1，在 0 跳了一階。證明它在 0 沒有極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$H(x)={\\begin{cases}0,&x<0\\\\1,&x\\ge0\\end{cases}}$，證明 $\\displaystyle\\lim_{x\\to0}H(x)$ 不存在"
+            }
+          ]
+        },
+        {
+          "show": [
+            "策略：$\\varepsilon=\\frac12$ 的橫帶總長 $1$；$0$ 和 $1$ 距離 $1$，裝不下兩個",
+            "圖"
+          ],
+          "say": "策略：艾普西隆取 2 分之 1，橫帶總長 1。函數值只有 0 和 1，相距 1，開區間裝不下兩個；而 0 的兩側兩個值都有，所以總有點跑出去。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：$\\varepsilon=\\frac12$ 的橫帶總長 $1$；$0$ 和 $1$ 距離 $1$，裝不下兩個"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"60 10 520 150\" width=\"620\" height=\"179\"><line x1=\"70\" y1=\"85\" x2=\"570\" y2=\"85\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><rect x=\"230\" y=\"64\" width=\"300\" height=\"42\" fill=\"#f5d56e\" fill-opacity=\".5\" stroke=\"var(--red)\" stroke-width=\"2.5\" stroke-dasharray=\"8 6\"/><circle cx=\"150\" cy=\"85\" r=\"10\" fill=\"var(--blue)\"/><circle cx=\"450\" cy=\"85\" r=\"10\" fill=\"var(--blue)\"/><line x1=\"380\" y1=\"72\" x2=\"380\" y2=\"98\" stroke=\"var(--red)\" stroke-width=\"3.5\"/><text x=\"150\" y=\"145\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif\" font-size=\"30\">0</text><text x=\"450\" y=\"145\" text-anchor=\"middle\" style=\"font-family:KaTeX_Main,serif\" font-size=\"30\">1</text><text x=\"380\" y=\"50\" text-anchor=\"middle\" style=\"font-family:KaTeX_Math,serif;font-style:italic\" font-size=\"30\" fill=\"var(--red)\">L</text><text x=\"230\" y=\"50\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">L−½</text><text x=\"530\" y=\"50\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">L+½</text></svg>",
+              "on": "相距"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "證明：跳躍點沒有極限",
       "beats": [
-        { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$"],
-          "note": "$0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$。",
-          "say": "策略：量詞翻過來。有一個誤差，不管垂直帶多窄，帶子裡總有點跑出水平帶。",
+        {
+          "show": [
+            "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，看 $x_1=-\\frac\\delta2$ 與 $x_2=\\frac\\delta2$：兩個都滿足 $0<|x|<\\delta$。"
+          ],
+          "say": "正式證明。任給實數 L，取艾普西隆 2 分之 1。任給得塔，看負的和正的 2 分之得塔這兩點：離 0 都不到得塔，也都不等於 0。",
           "board": [
-            {"do":"write","line":"$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$"},
-            {"do":"write","line":"$0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$","on":"帶子裡總有點"}
-          ] },
-        { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）","任一 $L$，取 $\\varepsilon=\\frac{1}{2}$"],
-          "say": "跳躍函數：零的左邊是零，右邊是一。固定任何一個 L，誤差取二分之一。",
+            {
+              "do": "write",
+              "line": "證明：任給 $L\\in\\mathbb{R}$，取 $\\varepsilon=\\frac12$。任給 $\\delta>0$，看 $x_1=-\\frac\\delta2$ 與 $x_2=\\frac\\delta2$：兩個都滿足 $0<|x|<\\delta$。"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$H(x_1)=0$，$H(x_2)=1$。假設兩個誤差都 $<\\frac12$：",
+            "$1=|1-0|\\le|1-L|+|L-0|<\\tfrac12+\\tfrac12=1$"
+          ],
+          "say": "它們的函數值是 0 和 1。假設兩個誤差都小於 2 分之 1，三角不等式給出 1 小於 1，矛盾。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$H(x)=0$（$x<0$）、$1$（$x\\ge0$）","on":"跳躍函數"},
-            {"do":"write","line":"任一 $L$，取 ${{eh:\\varepsilon=\\frac{1}{2}}}$","on":"固定任何"}
-          ] },
-        { "show": ["任何 $\\delta$：$x_1=-\\frac{\\delta}{2}$，$x_2=\\frac{\\delta}{2}$"],
-          "note": "都滿足 $0<|x|<\\delta$；函數值 0 和 1。",
-          "why": {"ask":"為什麼取這兩點？","say":"對方給任何 delta，我們取這兩點。為什麼是它們？","options":[{"label":"都在垂直帶裡，一邊值 0、一邊值 1","correct":true},{"label":"取 $x=0$ 就好，$H(0)=1$","why":"極限不看 $x=0$ 這一點：$0<|x|$ 把它排除了。"},{"label":"取 $x=\\delta$ 也一樣","why":"$|x|<\\delta$ 是嚴格的，$x=\\delta$ 不在垂直帶裡。"}]},
-          "say": "左右各取二分之 delta，兩點都在垂直帶裡，又不是零本身。函數值一個零，一個一。",
+            {
+              "do": "write",
+              "line": "$H(x_1)=0$，$H(x_2)=1$。假設兩個誤差都 $<\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 1=|1-0|\\le|1-L|+|L-0|<\\tfrac12+\\tfrac12=1$",
+              "on": "分之"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以 $x_1,x_2$ 中至少一個滿足 $|H(x)-L|\\ge\\frac12$"
+          ],
+          "say": "所以這兩點裡，至少一個的誤差大於等於 2 分之 1。",
           "board": [
-            {"do":"write","line":"任何 $\\delta$：$x_1=-\\frac{\\delta}{2}$，$x_2=\\frac{\\delta}{2}$","on":"我們取這兩點"},
-            {"do":"write","line":"$H(x_1)=0$，$H(x_2)=1$","why":true,"on":"函數值一個零"}
-          ] },
-        { "show": ["$1=|H(x_2)-H(x_1)|$","$\\le|H(x_2)-L|+|L-H(x_1)|$"],
-          "note": "兩段都 $<\\frac{1}{2}$ 會得到 $1<1$，矛盾。",
-          "why": {"ask":"為什麼至少一點跑出去？","say":"為什麼這兩點裡，至少有一個跑出水平帶？","options":[{"label":"兩段都 $<\\frac{1}{2}$ 會推出 $1<1$","correct":true},{"label":"$L$ 只能是 0 或 1","why":"$L$ 是任意實數；$L=\\frac{1}{2}$ 時兩點的距離都剛好 $\\frac{1}{2}$，也不小於誤差。"},{"label":"對方給的 $\\delta$ 太大","why":"$\\delta$ 多小都一樣：每一個 $\\delta$ 都取得到這兩點。"}]},
-          "say": "三角不等式：兩個函數值差一，不超過兩段距離的和。兩段都小於二分之一，就得一小於一。",
+            {
+              "do": "write",
+              "line": "所以 $x_1,x_2$ 中至少一個滿足 $|H(x)-L|\\ge\\frac12$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對照否定句：$\\varepsilon$ 我們挑了 $\\frac12$，$\\delta$ 任給，$x$ 我們找到了"
+          ],
+          "say": "對照否定句：艾普西隆我們挑，得塔任給，x 我們找到了。所以極限不是 L；L 又是任意的，所以 H 在 0 沒有極限。證明完畢。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$1=|H(x_2)-H(x_1)|$","on":"至少有一個"},
-            {"do":"write","line":"$\\le|H(x_2)-L|+|L-H(x_1)|$","on":"跑出水平帶"},
-            {"do":"write","line":"兩段都 $<\\frac{1}{2}$ ⇒ $1<1$，矛盾","why":true,"on":"兩段都小於"}
-          ] },
-        { "show": ["值差 1，不可能都貼近 $L$","⇒ 至少一個 $\\ge\\frac{1}{2}$"],
-          "note": "「不小於」就是「大於等於」。",
-          "say": "兩點值差一，不可能都貼近 L。不是兩個都小於二分之一，就是至少一個大於等於二分之一。",
-          "board": [
-            {"do":"write","line":"值差 1，不可能都貼近 $L$"},
-            {"do":"write","line":"不是（兩個都 $<\\frac{1}{2}$）","on":"不是兩個"},
-            {"do":"write","line":"⇒ 至少一個 ${{n1:\\ge\\frac{1}{2}}}$","on":"至少一個"},
-            {"do":"box","term":"n1","color":"green","on":"大於等於"}
-          ] },
-        { "show": ["存在 $\\varepsilon=\\frac{1}{2}$，每個 $\\delta$ 都有壞點"],
-          "note": "$L$ 任意：極限不存在。",
-          "say": "這正是否定句：存在一個誤差，每個 delta 都有跑出去的點。L 是任意的，所以極限不存在。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"存在 $\\varepsilon=\\frac{1}{2}$，每個 $\\delta$ 都有壞點","on":"存在一個誤差"},
-            {"do":"write","line":"$L$ 任意 ⇒ 極限不存在","color":"green","on":"L 是任意的"}
-          ] }
+            {
+              "do": "write",
+              "line": "對照否定句：$\\varepsilon$ 我們挑了 $\\frac12$，$\\delta$ 任給，$x$ 我們找到了",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "所以 $\\lim_{x\\to0}H(x)\\ne L$；$L$ 任意 ⇒ 極限不存在　$\\blacksquare$",
+              "color": "red",
+              "on": "不是"
+            }
+          ]
+        }
       ],
-      "key": "左右各取一點，三角不等式逼出 $1<1$",
-      "proof": true,
-      "of": "ex2",
-      "skeleton": "反證",
-      "check": 3
+      "check": 1
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\lim_{x\\to a}f(x)=L$：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$",
+            "• $\\varepsilon$ 對手給，$\\delta$ 我們找；$0<$ 排除 $x=a$，$f(a)$ 不影響極限"
+          ],
+          "say": "整理一下：艾普西隆對手給，得塔我們找；f of a 不影響極限。最大的得塔取近的那一側。否定是有一條橫帶總有點跑出去；證明不存在，要對每一個 L 做到。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\lim_{x\\to a}f(x)=L$：$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:\\ 0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "• $\\varepsilon$ 對手給，$\\delta$ 我們找；$0<$ 排除 $x=a$，$f(a)$ 不影響極限",
+              "on": "得塔#1"
+            },
+            {
+              "do": "write",
+              "line": "• 圖：直帶裡（除了 $a$）的圖形全部在橫帶裡",
+              "on": "不影"
+            },
+            {
+              "do": "write",
+              "line": "• 最大的 $\\delta$：解不等式，取離 $a$ 近的那一側",
+              "on": "近的"
+            },
+            {
+              "do": "write",
+              "line": "• 否定：$\\exists\\varepsilon\\ \\forall\\delta\\ \\exists x:\\ 0<|x-a|<\\delta,\\ |f(x)-L|\\ge\\varepsilon$",
+              "on": "橫帶"
+            },
+            {
+              "do": "write",
+              "line": "• 不存在：要對每一個 $L$ 證",
+              "on": "要對"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：線性函數的 ε-δ 證明"
+          ],
+          "say": "下一課，從直線開始，正式寫艾普西隆得塔的證明。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：線性函數的 ε-δ 證明"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["epsilon-delta", "epsilon-game", "continuity"],
-    "fine": ["epsdelta-quantifier-order", "epsdelta-max-delta", "epsdelta-asymmetric-side", "epsdelta-negation"]
+    "coarse": [
+      "epsilon-delta",
+      "epsilon-game",
+      "continuity"
+    ],
+    "fine": [
+      "epsdelta-quantifier-order",
+      "epsdelta-max-delta",
+      "epsdelta-asymmetric-side",
+      "epsdelta-negation"
+    ]
   },
   "practice": [
-    { "id": "lx-eps-001", "core": true, "trains": "epsdelta-max-delta" },
-    { "id": "an-ed-001", "core": true, "trains": "epsdelta-asymmetric-side" },
-    { "id": "ep-002", "core": true, "trains": "epsdelta-quantifier-order", "note": "互動挑戰：三關 $\\varepsilon$ 越來越小，每一關都要重新找 $\\delta$。" },
-    { "id": "cg-12d-004", "core": true, "trains": "epsdelta-quantifier-order" },
-    { "id": "cg-12d-001", "core": true, "trains": "epsdelta-negation" },
-    { "id": "ep-007", "trains": "epsdelta-quantifier-order", "note": "$x=1$ 沒有定義也不影響：這就是 $0<|x-a|$ 的作用。" },
-    { "id": "cg-12d-002", "trains": "epsdelta-negation" },
-    { "id": "ep-013", "challenge": true, "trains": "epsdelta-asymmetric-side", "note": "挑戰：$e^x$ 在 0 兩側彎曲不對稱，$\\delta$ 被左側或右側卡住要自己看。" },
-    { "id": "ep-009", "challenge": true, "trains": "epsdelta-max-delta", "note": "挑戰：$\\frac{\\sin x}{x}$ 在 0 沒有定義，曲線在 1 下方，水平帶只有下緣在作用。" },
-    { "id": "cg-12d-005", "challenge": true, "trains": "epsdelta-quantifier-order" },
-    { "id": "cg-12d-003", "challenge": true, "trains": "epsdelta-negation" }
+    {
+      "id": "lx-eps-001",
+      "core": true,
+      "trains": "epsdelta-max-delta"
+    },
+    {
+      "id": "an-ed-001",
+      "core": true,
+      "trains": "epsdelta-asymmetric-side"
+    },
+    {
+      "id": "ep-002",
+      "core": true,
+      "trains": "epsdelta-quantifier-order",
+      "note": "互動挑戰：三關 $\\varepsilon$ 越來越小，每一關都要重新找 $\\delta$。"
+    },
+    {
+      "id": "cg-12d-004",
+      "core": true,
+      "trains": "epsdelta-quantifier-order"
+    },
+    {
+      "id": "cg-12d-001",
+      "core": true,
+      "trains": "epsdelta-negation"
+    },
+    {
+      "id": "ep-007",
+      "trains": "epsdelta-quantifier-order",
+      "note": "$x=1$ 沒有定義也不影響：這就是 $0<|x-a|$ 的作用。"
+    },
+    {
+      "id": "cg-12d-002",
+      "trains": "epsdelta-negation"
+    },
+    {
+      "id": "ep-013",
+      "challenge": true,
+      "trains": "epsdelta-asymmetric-side",
+      "note": "挑戰：$e^x$ 在 0 兩側彎曲不對稱，$\\delta$ 被左側或右側卡住要自己看。"
+    },
+    {
+      "id": "ep-009",
+      "challenge": true,
+      "trains": "epsdelta-max-delta",
+      "note": "挑戰：$\\frac{\\sin x}{x}$ 在 0 沒有定義，曲線在 1 下方，水平帶只有下緣在作用。"
+    },
+    {
+      "id": "cg-12d-005",
+      "challenge": true,
+      "trains": "epsdelta-quantifier-order"
+    },
+    {
+      "id": "cg-12d-003",
+      "challenge": true,
+      "trains": "epsdelta-negation"
+    }
   ],
   "gaps": []
 }

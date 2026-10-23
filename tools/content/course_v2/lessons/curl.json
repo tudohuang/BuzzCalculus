@@ -1,56 +1,139 @@
 {
   "id": "curl",
   "title": "旋度",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 35,
-  "prerequisites": ["green-theorem", "partial-derivatives", "conservative-fields"],
-  "next": ["divergence"],
-  "related": ["stokes-theorem", "clairaut"],
-  "objectives": [
-    "用行列式記號算 $\\nabla\\times\\mathbf F$。",
-    "說出旋度的意義：放一個小槳輪，它轉不轉、繞哪個軸轉、轉多快；平面上就是 Green 定理裡的 $Q_x-P_y$。",
-    "知道 $\\nabla\\times(\\nabla f)=\\mathbf 0$，以及「旋度為 $0\\Rightarrow$ 保守」需要單連通。"
+  "prerequisites": [
+    "green-theorem",
+    "partial-derivatives",
+    "conservative-fields"
   ],
-  "visual": "流場中放一個小槳輪，可以拖到任何位置。剛體旋轉場 ⟨−y, x⟩ 裡，槳輪在哪裡都以同樣速度逆時針自轉；剪切流 ⟨y, 0⟩（上層流得快、下層慢，流線全是直線）裡，槳輪也會轉，順時針；發散場 ⟨x, y⟩ 裡槳輪不轉。旁邊即時顯示該點的 Q_x − P_y。",
+  "next": [
+    "divergence"
+  ],
+  "related": [
+    "stokes-theorem",
+    "clairaut"
+  ],
+  "objectives": [
+    "用行列式記號算 $\\nabla\\times\\mathbf F$",
+    "說出旋度的意義：放一個小槳輪，它轉不轉、繞哪個軸轉、轉多快",
+    "平面上就是 Green 定理裡的 $Q_x-P_y$",
+    "知道 $\\nabla\\times(\\nabla f)=\\mathbf 0$，以及「旋度為 $\\mathbf 0\\Rightarrow$ 保守」要求定義域沒有洞"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 小槳輪",
       "body": [
-        "在流體裡放一個很小的槳輪，軸固定不動。槳葉被兩側流速推動：如果一邊推得比另一邊用力，槳輪就會轉。旋度量的就是這件事：在每一點，槳輪最想繞哪個軸轉（方向）、轉得多快（大小）。",
-        "平面場 $\\mathbf F=\\langle P,Q\\rangle$ 只有繞 $z$ 軸轉的可能，量是 $Q_x-P_y$，正值代表逆時針。這正是〈Green 定理〉裡的被積函數：小方格的環流 $\\approx(Q_x-P_y)\\times{}$ 面積。"
+        "$\\mathbf F$ 是水流的速度場；放一個很小的槳輪，中心固定、可以自由轉",
+        "它轉不轉？看兩側：一邊推得多、一邊推得少，就會轉",
+        "平面上，轉的強度就是 Green 定理裡的",
+        "空間裡，槳輪的軸可以指向任何方向",
+        "三個方向的轉動強度，組成一個向量：旋度"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=\\frac{\\text{小方格的環流量}}{\\text{面積}}"
+      ]
     },
     {
       "heading": "② 定義與記號",
       "body": [
-        "$\\mathbf F=\\langle P,Q,R\\rangle$。把 $\\nabla=\\left\\langle\\frac{\\partial}{\\partial x},\\frac{\\partial}{\\partial y},\\frac{\\partial}{\\partial z}\\right\\rangle$ 當成一個向量，跟 $\\mathbf F$ 做外積："
+        "$\\mathbf F=\\langle P,Q,R\\rangle$，$\\nabla=\\big\\langle\\frac{\\partial}{\\partial x},\\frac{\\partial}{\\partial y},\\frac{\\partial}{\\partial z}\\big\\rangle$",
+        "展開：",
+        "$R_y$ 是 $\\frac{\\partial R}{\\partial y}$；也寫 $\\operatorname{curl}\\mathbf F$",
+        "第三個分量 $Q_x-P_y$：正是 Green 定理的那個（繞 $z$ 軸的轉動）",
+        "記法：每個分量都是「另外兩個字母」交叉偏導相減，順序 $x\\to y\\to z\\to x$ 輪著走",
+        "旋度只對空間的向量場有定義；平面場 $\\langle P,Q\\rangle$ 當成 $\\langle P,Q,0\\rangle$"
       ],
-      "tex": ["\\nabla\\times\\mathbf F=\\det\\begin{pmatrix}\\mathbf i&\\mathbf j&\\mathbf k\\\\ \\partial_x&\\partial_y&\\partial_z\\\\ P&Q&R\\end{pmatrix}=\\left\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\right\\rangle"],
-      "collapsible": false
+      "tex": [
+        "\\nabla\\times\\mathbf F=\\begin{vmatrix}\\mathbf i&\\mathbf j&\\mathbf k\\\\[2pt] \\dfrac{\\partial}{\\partial x}&\\dfrac{\\partial}{\\partial y}&\\dfrac{\\partial}{\\partial z}\\\\[6pt] P&Q&R\\end{vmatrix}",
+        "\\nabla\\times\\mathbf F=\\big\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\big\\rangle"
+      ]
     },
     {
-      "heading": "③ 兩個例子對照直觀",
+      "heading": "② 照公式算",
       "body": [
-        "剛體旋轉 $\\langle -y,x,0\\rangle$：$\\nabla\\times\\mathbf F=\\langle 0,0,2\\rangle$。整個平面以角速度 $1$ 逆時針轉，旋度是角速度的 $2$ 倍，方向沿 $z$ 軸（右手定則：四指沿旋轉方向彎，拇指指向 $+z$）。",
-        "剪切流 $\\langle y,0,0\\rangle$：流線都是水平直線，沒有任何東西在「繞圈」，旋度卻是 $\\langle 0,0,-1\\rangle$。因為上方流得比下方快，槳輪上緣被推得比下緣用力，順時針轉。旋度量的是局部的自轉，不是流線彎不彎。"
+        "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$，求 $\\nabla\\times\\mathbf F$",
+        "$P=xz$，$Q=xyz$，$R=-y^2$",
+        "• 第一個：$R_y-Q_z=-2y-xy$",
+        "• 第二個：$P_z-R_x=x-0=x$",
+        "• 第三個：$Q_x-P_y=yz-0=yz$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\nabla\\times\\mathbf F=\\big\\langle -y(2+x),\\ x,\\ yz\\big\\rangle"
+      ]
+    },
+    {
+      "heading": "③ 兩個例子對照",
+      "body": [
+        "旋轉 $\\mathbf F=\\langle -y,x,0\\rangle$：",
+        "處處相同：槳輪放在哪裡都一樣，繞 $z$ 軸逆時針轉",
+        "角速度 $\\omega$ 的剛體轉動 $\\langle-\\omega y,\\omega x,0\\rangle$：旋度 $\\langle0,0,2\\omega\\rangle$；槳輪的角速度是旋度的一半"
+      ],
+      "tex": [
+        "\\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 1-(-1)\\rangle=\\langle0,0,2\\rangle"
+      ]
+    },
+    {
+      "heading": "③ 直的流也會轉",
+      "body": [
+        "重點：旋度看的是兩側的速度差，不是流線彎不彎",
+        "反過來，彎的流也可以沒有旋度：",
+        "• 流線彎曲：想讓槳輪逆時針轉",
+        "• 內側快、外側慢：想讓它順時針轉",
+        "• 兩個效果剛好抵消：$z$ 軸以外 $\\nabla\\times\\mathbf F=\\mathbf 0$",
+        "驗算第三個分量：$Q_x=P_y=\\frac{y^2-x^2}{(x^2+y^2)^2}$，相減是 $0$"
+      ],
+      "tex": [
+        "\\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 0-1\\rangle=\\langle0,0,-1\\rangle",
+        "\\mathbf F=\\frac{\\langle -y,\\ x,\\ 0\\rangle}{x^2+y^2}\\quad(\\text{速率 }\\tfrac1r)"
+      ]
     },
     {
       "heading": "④ 跟保守場的關係",
       "body": [
-        "$\\nabla\\times(\\nabla f)=\\mathbf 0$（$f$ 的二階偏導連續）：每個分量都是一對混合偏導相減，由〈Clairaut 定理〉抵消。所以梯度場沒有旋度。",
-        "反過來，$\\mathbf F$ 的一階偏導連續、$\\nabla\\times\\mathbf F=\\mathbf 0$，而且定義域單連通（例如整個 $\\mathbb{R}^3$）時，$\\mathbf F$ 是保守場。定義域有洞時不一定，見〈保守場〉的反例。"
+        "梯度場沒有旋度：$\\nabla\\times(\\nabla f)=\\mathbf 0$",
+        "證明：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$，第一個分量",
+        "混合偏導相等（Clairaut，$f$ 有連續的二階偏導），另外兩個分量一樣",
+        "例：$f=x^2yz^3$，$\\nabla f=\\langle 2xyz^3,\\ x^2z^3,\\ 3x^2yz^2\\rangle$",
+        "所以：旋度不是 $\\mathbf 0$ 的場，一定不保守",
+        "反方向：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$ 上 $\\Rightarrow$ $\\mathbf F$ 保守",
+        "定義域只要「單連通」（每個圈都能縮成一點）就夠；證明留到 9.26 Stokes 定理",
+        "定義域有洞就不行：$\\mathbf F=\\dfrac{\\langle -y,x,0\\rangle}{x^2+y^2}$（$z$ 軸上沒定義）",
+        "• 在 $z$ 軸以外 $\\nabla\\times\\mathbf F=\\mathbf 0$",
+        "• 但繞 $z$ 軸一圈 $\\displaystyle\\oint\\mathbf F\\cdot d\\mathbf r=2\\pi\\ne0$，不保守"
       ],
-      "collapsible": false
+      "tex": [
+        "(f_z)_y-(f_y)_z=f_{zy}-f_{yz}=0",
+        "R_y-Q_z=3x^2z^2-3x^2z^2=0"
+      ]
     },
     {
-      "heading": "⑤ 精確的意義（給想知道的人）",
+      "heading": "⑤ 精確的意義",
       "body": [
-        "取一個單位向量 $\\mathbf n$，在點 $p$ 放一個垂直於 $\\mathbf n$、半徑 $\\varepsilon$ 的小圓盤，邊界依右手定則繞。那麼 $(\\nabla\\times\\mathbf F)(p)\\cdot\\mathbf n=\\lim_{\\varepsilon\\to0}\\frac{1}{\\pi\\varepsilon^2}\\oint\\mathbf F\\cdot d\\mathbf r$：旋度在 $\\mathbf n$ 方向的分量，就是「每單位面積的環流」。這個式子由〈Stokes 定理〉加上連續性推出。"
+        "在點 $P$ 選一個方向 $\\mathbf n$（單位向量），放一個垂直於 $\\mathbf n$、半徑 $r$ 的小圓 $C_r$",
+        "理由：取座標讓 $\\mathbf n=\\mathbf k$，$C_r$ 在平面 $z=z_0$ 上，$dz=0$：",
+        "$Q_x-P_y$ 連續，圓盤很小時 $\\approx(Q_x-P_y)(P)\\cdot\\pi r^2$，除掉 $\\pi r^2$ 就是第三個分量",
+        "$\\mathbf n$ 沿著 $\\nabla\\times\\mathbf F$ 時最大：槳輪的軸朝旋度的方向轉得最快"
       ],
-      "collapsible": true
+      "tex": [
+        "(\\nabla\\times\\mathbf F)\\cdot\\mathbf n=\\lim_{r\\to0}\\frac{1}{\\pi r^2}\\oint_{C_r}\\mathbf F\\cdot d\\mathbf r",
+        "\\oint_{C_r}P\\,dx+Q\\,dy=\\iint_{D_r}(Q_x-P_y)\\,dA"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\nabla\\times\\mathbf F=\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\rangle$（行列式記）",
+        "• 意義：小槳輪；方向是轉軸（右手），長度是轉的強度",
+        "• $(\\nabla\\times\\mathbf F)\\cdot\\mathbf n$：垂直 $\\mathbf n$ 的小圓上，每單位面積的環流量",
+        "• 看兩側的速度差：直的剪切流也有旋度",
+        "• $\\nabla\\times(\\nabla f)=\\mathbf 0$；旋度 $\\ne\\mathbf 0$ ⇒ 不保守",
+        "• 旋度 $=\\mathbf 0$ ⇒ 保守：定義域要沒有洞",
+        "下一課：散度"
+      ]
     }
   ],
   "workedExamples": [
@@ -98,35 +181,45 @@
   ],
   "checks": [
     {
-      "ask": "$\\mathbf F=\\langle -y,x,0\\rangle$ 的旋度是？",
+      "ask": "$\\mathbf F=\\langle z,\\ x,\\ y\\rangle$，$\\nabla\\times\\mathbf F=$？",
       "options": [
-        { "label": "$\\langle 0,0,2\\rangle$", "correct": true },
-        { "label": "$\\langle 0,0,0\\rangle$", "why": "$Q_x-P_y=1-(-1)=2$。算成 $Q_x+P_y$ 才會得到 $0$。" },
-        { "label": "$\\langle 0,0,1\\rangle$", "why": "這個場的角速度是 $1$，但旋度是角速度的 $2$ 倍。" }
+        {
+          "label": "$\\langle1,1,1\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$\\langle-1,-1,-1\\rangle$",
+          "why": "每個分量的順序都反了：第一個是 $R_y-Q_z$，不是 $Q_z-R_y$"
+        },
+        {
+          "label": "$\\langle0,0,1\\rangle$",
+          "why": "只算了第三個分量；$R=y$、$P=z$ 也會產生另外兩個方向的轉動"
+        },
+        {
+          "label": "$0$",
+          "why": "旋度是向量，而且這裡每個分量都是 $1$"
+        }
       ]
     },
     {
-      "ask": "剪切流 $\\mathbf F=\\langle y,0,0\\rangle$ 的流線都是水平直線。它的旋度？",
+      "ask": "哪一個場==一定不是==梯度場？",
       "options": [
-        { "label": "$\\langle 0,0,-1\\rangle$，不是 $\\mathbf 0$", "correct": true },
-        { "label": "$\\mathbf 0$，因為流線是直的", "why": "旋度量的是局部自轉。上下流速不同，槳輪會被帶著轉。" },
-        { "label": "$\\langle 0,0,1\\rangle$", "why": "$Q_x-P_y=0-1=-1$，是順時針，正負號要注意。" }
-      ]
-    },
-    {
-      "ask": "$\\nabla\\times(\\nabla f)$ 等於？（$f$ 的二階偏導連續）",
-      "options": [
-        { "label": "零向量", "correct": true },
-        { "label": "$\\nabla^2f$", "why": "那是 $\\nabla\\cdot(\\nabla f)$（散度），是一個純量。旋度的每個分量都是混合偏導相減，等於 $0$。" },
-        { "label": "要看 $f$", "why": "對任何二階偏導連續的 $f$ 都成立，由 Clairaut 定理保證。" }
-      ]
-    },
-    {
-      "ask": "下列哪一句正確？",
-      "options": [
-        { "label": "$\\mathbf F$ 在整個 $\\mathbb{R}^3$ 偏導連續且 $\\nabla\\times\\mathbf F=\\mathbf 0$，則 $\\mathbf F$ 是保守場", "correct": true },
-        { "label": "$\\nabla\\times\\mathbf F=\\mathbf 0$ 就一定是保守場，不必管定義域", "why": "$\\frac{\\langle -y,x,0\\rangle}{x^2+y^2}$ 在去掉 $z$ 軸的空間裡旋度為 $\\mathbf 0$，繞 $z$ 軸一圈的功卻是 $2\\pi$。" },
-        { "label": "$\\nabla\\times\\mathbf F\\ne\\mathbf 0$ 的場也可能是保守場", "why": "保守場是梯度場，而梯度場的旋度一定是 $\\mathbf 0$。" }
+        {
+          "label": "$\\langle y,\\ -x,\\ 0\\rangle$",
+          "correct": true
+        },
+        {
+          "label": "$\\langle 2x,\\ 2y,\\ 2z\\rangle$",
+          "why": "這是 $x^2+y^2+z^2$ 的梯度；旋度是 $\\mathbf 0$"
+        },
+        {
+          "label": "$\\langle yz,\\ xz,\\ xy\\rangle$",
+          "why": "這是 $xyz$ 的梯度；三個分量的交叉偏導都相等"
+        },
+        {
+          "label": "$\\langle 0,\\ 0,\\ e^z\\rangle$",
+          "why": "這是 $e^z$ 的梯度；只跟 $z$ 有關，交叉偏導都是 $0$"
+        }
       ]
     }
   ],
@@ -134,238 +227,761 @@
     {
       "title": "小槳輪",
       "beats": [
-        { "show": ["流體裡放一個小槳輪，軸固定"],
-          "note": "一邊推得比另一邊用力，槳輪就轉。",
-          "say": "在流體裡放一個很小的槳輪，軸固定。兩側的流速如果不一樣，一邊推得比較用力，輪子就會轉。",
+        {
+          "show": [
+            "$\\mathbf F$ 是水流的速度場；放一個很小的槳輪，中心固定、可以自由轉"
+          ],
+          "say": "把向量場想成水流的速度。在水裡放一個很小的槳輪，中心釘住不動，但輪子可以自由轉。",
           "board": [
-            {"do":"write","line":"小槳輪，軸固定"},
-            {"do":"write","line":"兩側流速不同，輪子就轉","on":"兩側的流速"}
-          ] },
-        { "show": ["旋度：繞哪個軸轉、轉多快"],
-          "say": "旋度量的就是這件事：在每一點，槳輪最想繞哪個軸轉，轉得多快。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F$ 是水流的速度場；放一個很小的槳輪，中心固定、可以自由轉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "它轉不轉？看兩側：一邊推得多、一邊推得少，就會轉"
+          ],
+          "say": "它會不會轉？看輪子兩側：如果一邊被推得多、另一邊被推得少，輪子就會轉起來。",
           "board": [
-            {"do":"write","line":"旋度：繞哪個軸轉、轉多快"}
-          ] },
-        { "show": ["平面場：$Q_x-P_y$，正值逆時針"],
-          "note": "〈Green 定理〉的被積函數。",
-          "say": "平面上的場只能繞 z 軸轉，量就是 Q 下標 x 減 P 下標 y，也就是 Green 定理裡那個小漩渦。",
+            {
+              "do": "write",
+              "line": "它轉不轉？看兩側：一邊推得多、一邊推得少，就會轉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "例如繞原點轉的水流。槳輪放在原點，每一片葉子都被往逆時針方向推，所以輪子逆時針轉。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"平面場只繞 $z$ 軸轉","on":"只能繞"},
-            {"do":"write","line":"${{c:Q_x-P_y}}$，正值逆時針","on":"量就是"},
-            {"do":"box","term":"c","on":"Green 定理"}
-          ] }
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"curlRot\" viewBox=\"0 0 600 300\" width=\"600\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b5curlRot\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b5curlRotblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b5curlRotred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b5curlRotgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b5curlRotpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b5curlRotink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b5curlRot30\"><rect x=\"107.4\" y=\"16\" width=\"391.2\" height=\"254\"/></clipPath><g clip-path=\"url(#cl9b5curlRot30)\"></g><line x1=\"287.8\" y1=\"151\" x2=\"287.8\" y2=\"135\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"277.8\" y1=\"110.9\" x2=\"266.5\" y2=\"99.6\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"242.4\" y1=\"89.7\" x2=\"226.4\" y2=\"89.7\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"202.4\" y1=\"99.6\" x2=\"191\" y2=\"110.9\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"181.1\" y1=\"135\" x2=\"181.1\" y2=\"151\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"191\" y1=\"175.1\" x2=\"202.4\" y2=\"186.4\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"226.4\" y1=\"196.3\" x2=\"242.4\" y2=\"196.3\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"266.5\" y1=\"186.4\" x2=\"277.8\" y2=\"175.1\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"334\" y1=\"131.7\" x2=\"326.3\" y2=\"103\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"315\" y1=\"83.5\" x2=\"294\" y2=\"62.4\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"274.4\" y1=\"51.2\" x2=\"245.7\" y2=\"43.5\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"223.1\" y1=\"43.5\" x2=\"194.4\" y2=\"51.2\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"174.9\" y1=\"62.4\" x2=\"153.9\" y2=\"83.5\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"142.6\" y1=\"103\" x2=\"134.9\" y2=\"131.7\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"134.9\" y1=\"154.3\" x2=\"142.6\" y2=\"183\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"153.9\" y1=\"202.5\" x2=\"174.9\" y2=\"223.6\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"194.4\" y1=\"234.8\" x2=\"223.1\" y2=\"242.5\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"245.7\" y1=\"242.5\" x2=\"274.4\" y2=\"234.8\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"294\" y1=\"223.6\" x2=\"315\" y2=\"202.5\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"326.3\" y1=\"183\" x2=\"334\" y2=\"154.3\" stroke=\"var(--blue)\" stroke-width=\"2.3\" marker-end=\"url(#ah9b5curlRotblue)\"/><line x1=\"234.4\" y1=\"143\" x2=\"252.7\" y2=\"143\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"252.7\" y1=\"148.1\" x2=\"252.7\" y2=\"137.9\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"234.4\" y1=\"143\" x2=\"234.4\" y2=\"124.7\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"239.5\" y1=\"124.7\" x2=\"229.3\" y2=\"124.7\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"234.4\" y1=\"143\" x2=\"216.1\" y2=\"143\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"216.1\" y1=\"137.9\" x2=\"216.1\" y2=\"148.1\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"234.4\" y1=\"143\" x2=\"234.4\" y2=\"161.3\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"229.3\" y1=\"161.3\" x2=\"239.5\" y2=\"161.3\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><path d=\"M237.7 143L237.7 142.9L237.7 142.8L237.7 142.7L237.7 142.7L237.7 142.6L237.7 142.5L237.7 142.4L237.6 142.3L237.6 142.2L237.6 142.1L237.6 142.1L237.6 142L237.5 141.9L237.5 141.8L237.5 141.7L237.4 141.7L237.4 141.6L237.4 141.5L237.3 141.4L237.3 141.4L237.2 141.3L237.2 141.2L237.1 141.1L237.1 141.1L237 141L237 140.9L236.9 140.9L236.9 140.8L236.8 140.7L236.7 140.7L236.7 140.6L236.6 140.6L236.6 140.5L236.5 140.4L236.4 140.4L236.4 140.3L236.3 140.3L236.2 140.2L236.1 140.2L236.1 140.1L236 140.1L235.9 140.1L235.8 140L235.8 140L235.7 140L235.6 139.9L235.5 139.9L235.4 139.9L235.4 139.8L235.3 139.8L235.2 139.8L235.1 139.8L235 139.8L234.9 139.7L234.8 139.7L234.8 139.7L234.7 139.7L234.6 139.7L234.5 139.7L234.4 139.7L234.3 139.7L234.2 139.7L234.2 139.7L234.1 139.7L234 139.7L233.9 139.7L233.8 139.8L233.7 139.8L233.7 139.8L233.6 139.8L233.5 139.8L233.4 139.9L233.3 139.9L233.2 139.9L233.2 140L233.1 140L233 140L232.9 140.1L232.8 140.1L232.8 140.1L232.7 140.2L232.6 140.2L232.6 140.3L232.5 140.3L232.4 140.4L232.3 140.4L232.3 140.5L232.2 140.6L232.2 140.6L232.1 140.7L232 140.7L232 140.8L231.9 140.9L231.9 140.9L231.8 141L231.8 141.1L231.7 141.1L231.7 141.2L231.6 141.3L231.6 141.4L231.5 141.4L231.5 141.5L231.4 141.6L231.4 141.7L231.4 141.7L231.3 141.8L231.3 141.9L231.3 142L231.3 142.1L231.2 142.1L231.2 142.2L231.2 142.3L231.2 142.4L231.2 142.5L231.2 142.6L231.1 142.7L231.1 142.7L231.1 142.8L231.1 142.9L231.1 143L231.1 143.1L231.1 143.2L231.1 143.3L231.1 143.3L231.2 143.4L231.2 143.5L231.2 143.6L231.2 143.7L231.2 143.8L231.2 143.9L231.3 143.9L231.3 144L231.3 144.1L231.3 144.2L231.4 144.3L231.4 144.3L231.4 144.4L231.5 144.5L231.5 144.6L231.6 144.6L231.6 144.7L231.7 144.8L231.7 144.9L231.8 144.9L231.8 145L231.9 145.1L231.9 145.1L232 145.2L232 145.3L232.1 145.3L232.2 145.4L232.2 145.4L232.3 145.5L232.3 145.6L232.4 145.6L232.5 145.7L232.6 145.7L232.6 145.8L232.7 145.8L232.8 145.9L232.8 145.9L232.9 145.9L233 146L233.1 146L233.2 146L233.2 146.1L233.3 146.1L233.4 146.1L233.5 146.2L233.6 146.2L233.7 146.2L233.7 146.2L233.8 146.2L233.9 146.3L234 146.3L234.1 146.3L234.2 146.3L234.2 146.3L234.3 146.3L234.4 146.3L234.5 146.3L234.6 146.3L234.7 146.3L234.8 146.3L234.8 146.3L234.9 146.3L235 146.2L235.1 146.2L235.2 146.2L235.3 146.2L235.4 146.2L235.4 146.1L235.5 146.1L235.6 146.1L235.7 146L235.8 146L235.8 146L235.9 145.9L236 145.9L236.1 145.9L236.1 145.8L236.2 145.8L236.3 145.7L236.4 145.7L236.4 145.6L236.5 145.6L236.6 145.5L236.6 145.4L236.7 145.4L236.7 145.3L236.8 145.3L236.9 145.2L236.9 145.1L237 145.1L237 145L237.1 144.9L237.1 144.9L237.2 144.8L237.2 144.7L237.3 144.6L237.3 144.6L237.4 144.5L237.4 144.4L237.4 144.3L237.5 144.3L237.5 144.2L237.5 144.1L237.6 144L237.6 143.9L237.6 143.9L237.6 143.8L237.6 143.7L237.7 143.6L237.7 143.5L237.7 143.4L237.7 143.3L237.7 143.3L237.7 143.2L237.7 143.1L237.7 143\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M262.4 134.4L261.8 132.6L261.1 130.9L260.3 129.3L259.3 127.7L258.3 126.1L257.2 124.7L256 123.3L254.8 122L253.4 120.7L252 119.6L250.4 118.5L248.9 117.6L247.3 116.7L245.6 115.9L243.9 115.3L242.1 114.8L240.3 114.3L238.5 114L236.7 113.8L234.8 113.7L233 113.8L231.2 113.9L229.3 114.2L227.5 114.6L225.8 115L224 115.6L222.3 116.4L220.7 117.2L219.1 118.1L217.6 119.1L216.1 120.2L214.7 121.4L213.4 122.7L212.1 124L211 125.5L209.9 127L209 128.5L208.1 130.2L207.4 131.8L206.7 133.6L206.2 135.3L205.8 137.1L205.4 138.9L205.2 140.7L205.2 142.6L205.2 144.4L205.3 146.3L205.6 148.1L206 149.9L206.5 151.6L207.1 153.4L207.8 155.1L208.6 156.7L209.5 158.3L210.5 159.9L211.6 161.3L212.8 162.7L214.1 164L215.5 165.3L216.9 166.4L218.4 167.5L220 168.4L221.6 169.3L223.3 170.1L225 170.7L226.7 171.2L228.5 171.7L230.3 172L232.2 172.2L234 172.3L235.8 172.2L237.7 172.1L239.5 171.8L241.3 171.4L243.1 171L244.8 170.4L246.5 169.6L248.2 168.8L249.7 167.9L251.3 166.9\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b5curlRotred)\"/><text x=\"405\" y=\"95\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"23\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">F = ⟨−y, x⟩</text><text x=\"405\" y=\"150\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">繞原點逆時針轉</text><text x=\"405\" y=\"205\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">紅：槳輪也逆時針轉</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "平面上，轉的強度就是 Green 定理裡的",
+            "$\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=\\frac{\\text{小方格的環流量}}{\\text{面積}}$"
+          ],
+          "say": "9.19 已經看過：小方格繞一圈的環流量，除以面積，就是 Q x 減 P y。這正是槳輪轉的強度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "平面上，轉的強度就是 Green 定理裡的"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=\\frac{\\text{小方格的環流量}}{\\text{面積}}}}$",
+              "on": "的環"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "這正"
+            }
+          ]
+        },
+        {
+          "show": [
+            "空間裡，槳輪的軸可以指向任何方向",
+            "三個方向的轉動強度，組成一個向量：旋度"
+          ],
+          "say": "到了空間，槳輪的軸可以指向任何方向。把繞 x、y、z 三個軸的轉動強度排在一起，就是一個向量，叫做旋度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "空間裡，槳輪的軸可以指向任何方向"
+            },
+            {
+              "do": "write",
+              "line": "三個方向的轉動強度，組成一個向量：旋度",
+              "on": "三個"
+            }
+          ]
+        }
       ],
       "predict": {
-        "ask": "平面場 $\\langle P,Q,0\\rangle$（不含 $z$）的旋度，哪個分量可能不是 $0$？",
+        "ask": "同一個場 $\\mathbf F=\\langle -y,x\\rangle$，把槳輪改放在 $(1,0)$，它會？",
         "options": [
           {
-            "label": "只有 $z$ 分量",
+            "label": "逆時針轉，跟放在原點一樣快",
             "correct": true
           },
           {
-            "label": "只有 $x$ 分量",
-            "why": "平面上的轉動都繞垂直於平面的軸，也就是 $z$ 軸。"
+            "label": "不轉，只是被水帶著繞圈",
+            "why": "中心是釘住的，不會被帶走；右側 $(1.1,0)$ 的速度 $\\langle0,1.1\\rangle$ 比左側 $\\langle0,0.9\\rangle$ 大，會轉"
           },
           {
-            "label": "三個都可能",
-            "why": "$R=0$ 而且 $P$、$Q$ 不含 $z$，前兩個分量 $R_y-Q_z$、$P_z-R_x$ 都是 $0$。"
+            "label": "順時針轉",
+            "why": "右側往上的推力比較大，是逆時針"
           }
         ]
       }
     },
     {
-      "title": "定義與公式",
+      "title": "定義與記號",
       "beats": [
-        { "show": ["$\\nabla\\times\\mathbf F$：把 $\\nabla$ 當向量做外積"],
-          "say": "三維的定義：把 nabla 當成一個由偏微分組成的向量，跟場做外積。",
+        {
+          "show": [
+            "$\\mathbf F=\\langle P,Q,R\\rangle$，$\\nabla=\\big\\langle\\frac{\\partial}{\\partial x},\\frac{\\partial}{\\partial y},\\frac{\\partial}{\\partial z}\\big\\rangle$"
+          ],
+          "say": "向量場 F 的分量叫 P、Q、R。把偏微分的符號排成一個向量，叫 del，寫成倒三角形。",
           "board": [
-            {"do":"write","line":"${{n:\\nabla}}\\times\\mathbf F$"},
-            {"do":"focus","term":"n","label":"當成向量","on":"nabla"},
-            {"do":"write","line":"$\\nabla=\\langle\\partial_x,\\partial_y,\\partial_z\\rangle$","on":"偏微分"}
-          ] },
-        { "show": ["$\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\rangle$"],
-          "note": "第三個分量就是平面的 $Q_x-P_y$。",
-          "say": "展開行列式得到三個分量。第三個正是平面版本。中間那一項要特別小心正負。",
+            {
+              "do": "write",
+              "line": "$\\mathbf F=\\langle P,Q,R\\rangle$，$\\nabla=\\big\\langle\\frac{\\partial}{\\partial x},\\frac{\\partial}{\\partial y},\\frac{\\partial}{\\partial z}\\big\\rangle$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\times\\mathbf F=\\begin{vmatrix}\\mathbf i&\\mathbf j&\\mathbf k\\\\[2pt] \\dfrac{\\partial}{\\partial x}&\\dfrac{\\partial}{\\partial y}&\\dfrac{\\partial}{\\partial z}\\\\[6pt] P&Q&R\\end{vmatrix}$"
+          ],
+          "say": "旋度寫成 del 叉 F，用外積的行列式來記：第一列 i j k，第二列三個偏微分，第三列 P Q R。",
           "board": [
-            {"do":"write","line":"$\\langle R_y-Q_z,\\ {{m:P_z-R_x}},\\ {{t:Q_x-P_y}}\\rangle$"},
-            {"do":"underline","term":"t","on":"第三個"},
-            {"do":"focus","term":"m","label":"注意正負","on":"中間那一項"}
-          ] },
-        { "show": ["中間項帶負號：$-(R_x-P_z)=P_z-R_x$"],
-          "note": "$\\mathbf j$ 那一項前面有負號。",
-          "say": "行列式照第一列展開，中間那一項前面帶負號。負號乘進去，R 對 x 減 P 對 z 就翻成 P 對 z 減 R 對 x。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\nabla\\times\\mathbf F={\\begin{vmatrix}\\mathbf i&\\mathbf j&\\mathbf k\\\\[2pt] \\dfrac{\\partial}{\\partial x}&\\dfrac{\\partial}{\\partial y}&\\dfrac{\\partial}{\\partial z}\\\\[6pt] P&Q&R\\end{vmatrix}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "展開：",
+            "$\\nabla\\times\\mathbf F=\\big\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\big\\rangle$"
+          ],
+          "say": "照外積展開：第一個分量是 R y 減 Q z，第二個是 P z 減 R x，第三個是 Q x 減 P y。",
           "board": [
-            {"do":"write","line":"$\\mathbf j$ 項：${{p1:-(R_x-P_z)}}$"},
-            {"do":"focus","term":"p1","color":"red","label":"帶負號","on":"負號#1"},
-            {"do":"write","line":"$={{p2:P_z-R_x}}$","on":"翻成"}
-          ] },
-        { "show": ["$\\mathbf F=\\langle xz,xyz,-y^2\\rangle$"],
-          "note": "第一分量 $R_y-Q_z=-2y-xy$。",
-          "say": "算一個。第一個分量是 R 對 y 減 Q 對 z，得負二 y 減 x y。",
+            {
+              "do": "write",
+              "line": "展開："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\nabla\\times\\mathbf F=\\big\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\big\\rangle}}$",
+              "color": "red",
+              "on": "第二"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "第三"
+            },
+            {
+              "do": "write",
+              "line": "　$R_y$ 是 $\\frac{\\partial R}{\\partial y}$；也寫 $\\operatorname{curl}\\mathbf F$",
+              "color": "violet",
+              "on": "三個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第三個分量 $Q_x-P_y$：正是 Green 定理的那個（繞 $z$ 軸的轉動）"
+          ],
+          "say": "第三個分量 Q x 減 P y，就是格林定理裡那個，代表繞 z 軸的轉動。另外兩個是同樣的東西，換到繞 x 軸和繞 y 軸。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\mathbf F=\\langle xz,xyz,-y^2\\rangle$","on":"算一個"},
-            {"do":"write","line":"$R_y-Q_z={{r:-2y-xy}}$","on":"R 對 y"},
-            {"do":"box","term":"r","color":"green","on":"得負二"}
-          ] }
-      ],
-      "key": "把 $\\nabla$ 當向量，照行列式逐項展開",
-      "predict": {
-        "ask": "第二分量是？",
-        "options": [
-          {
-            "label": "$P_z-R_x=x$",
-            "correct": true
-          },
-          {
-            "label": "$R_x-P_z=-x$",
-            "why": "行列式展開中間那項有負號，正確順序是 $P_z-R_x$。"
-          },
-          {
-            "label": "$Q_x-P_y=yz$",
-            "why": "那是第三分量。第二分量是 $P_z-R_x$。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "第三個分量 $Q_x-P_y$：正是 Green 定理的那個（繞 $z$ 軸的轉動）"
+            },
+            {
+              "do": "write",
+              "line": "記法：每個分量都是「另外兩個字母」交叉偏導相減，順序 $x\\to y\\to z\\to x$ 輪著走",
+              "on": "定理"
+            },
+            {
+              "do": "write",
+              "line": "　旋度只對空間的向量場有定義；平面場 $\\langle P,Q\\rangle$ 當成 $\\langle P,Q,0\\rangle$",
+              "color": "violet",
+              "on": "是同"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "剛體旋轉",
+      "title": "照公式算",
       "beats": [
-        { "show": ["整個平面以角速度 $1$ 逆時針轉"],
-          "say": "一個圓盤整個以角速度一逆時針轉，每一點的速度就是旋轉場。",
+        {
+          "show": [
+            "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$，求 $\\nabla\\times\\mathbf F$"
+          ],
+          "say": "例一：F 等於 x z、x y z、負 y 平方。求旋度。",
           "board": [
-            {"do":"write","line":"圓盤以角速度 $1$ 逆時針轉"},
-            {"do":"write","line":"每點的速度 ＝ 旋轉場","on":"每一點"}
-          ] },
-        { "show": ["旋轉場 $\\mathbf F=\\langle -y,x,0\\rangle$"],
-          "note": "代進公式算算看。",
-          "say": "角速度一逆時針轉的場，速度是負 y、x、零。所以 P 是負 y，Q 是 x，R 是零。",
+            {
+              "do": "write",
+              "line": "例 1：$\\mathbf F=\\langle xz,\\ xyz,\\ -y^2\\rangle$，求 $\\nabla\\times\\mathbf F$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$P=xz$，$Q=xyz$，$R=-y^2$",
+            "• 第一個：$R_y-Q_z=-2y-xy$"
+          ],
+          "say": "第一個分量：R 對 y 是負 2 y，Q 對 z 是 x y，相減。第二個：P 對 z 是 x。第三個：Q 對 x 是 y z。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\mathbf F=\\langle -y,x,0\\rangle$","on":"負#1"},
-            {"do":"write","line":"$P=-y$，$Q=x$，$R=0$","on":"所以"}
-          ] },
-        { "show": ["右手定則：四指沿旋轉方向，拇指指向 $+z$"],
-          "say": "方向用右手定則：手指沿著旋轉的方向彎，拇指指向正 z。",
+            {
+              "do": "write",
+              "line": "$P=xz$，$Q=xyz$，$R=-y^2$"
+            },
+            {
+              "do": "write",
+              "line": "• 第一個：$R_y-Q_z=-2y-xy$",
+              "on": "相減"
+            },
+            {
+              "do": "write",
+              "line": "• 第二個：$P_z-R_x=x-0=x$",
+              "on": "第二"
+            },
+            {
+              "do": "write",
+              "line": "• 第三個：$Q_x-P_y=yz-0=yz$",
+              "on": "第三"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\times\\mathbf F=\\big\\langle -y(2+x),\\ x,\\ yz\\big\\rangle$"
+          ],
+          "say": "所以旋度是負 y 乘 2 加 x、x、y z。結果還是一個向量場，每一點都有一個旋度向量。",
           "board": [
-            {"do":"write","line":"右手定則：拇指指向 ${{z:+z}}$"},
-            {"do":"focus","term":"z","on":"拇指"}
-          ] },
-        { "show": ["旋度是角速度的 $2$ 倍"],
-          "note": "不是等於角速度。",
-          "say": "大小呢？算出來，旋度是角速度的兩倍，不是相等。",
-          "board": [
-            {"do":"write","line":"旋度 ＝ ${{t:2}}$ × 角速度"},
-            {"do":"underline","term":"t","label":"不是相等","on":"兩倍"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\nabla\\times\\mathbf F=\\big\\langle -y(2+x),\\ x,\\ yz\\big\\rangle}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "結果"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "直線流也會轉",
+      "title": "兩個例子對照",
       "beats": [
-        { "show": ["剪切流 $\\langle y,0,0\\rangle$：流線都是水平直線"],
-          "say": "剪切流：每一層水平地流，越上面流得越快。流線全是直線，沒有任何東西在繞圈。",
+        {
+          "show": [
+            "旋轉 $\\mathbf F=\\langle -y,x,0\\rangle$：",
+            "$\\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 1-(-1)\\rangle=\\langle0,0,2\\rangle$"
+          ],
+          "say": "先看旋轉的場，負 y、x、0。只有第三個分量：1 減負 1，等於 2。旋度是 0、0、2，指向 z 軸。",
           "board": [
-            {"do":"write","line":"剪切流：每層水平流，越上越快"},
-            {"do":"write","line":"流線全是直線，沒有繞圈","on":"流線全是"}
-          ] },
-        { "show": ["上緣推得比下緣用力"],
-          "say": "可是放一個槳輪：上緣的水比下緣快，上緣被往右推得比較多，輪子就順時針轉起來。",
+            {
+              "do": "write",
+              "line": "旋轉 $\\mathbf F=\\langle -y,x,0\\rangle$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 1-(-1)\\rangle=\\langle0,0,2\\rangle}}$",
+              "on": "第三"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "旋度"
+            }
+          ]
+        },
+        {
+          "show": [
+            "處處相同：槳輪放在哪裡都一樣，繞 $z$ 軸逆時針轉"
+          ],
+          "say": "旋度處處相同，所以槳輪放在哪裡都一樣快，都繞著 z 軸逆時針轉，跟剛才猜的一樣。",
           "board": [
-            {"do":"write","line":"上緣快、下緣慢"},
-            {"do":"write","line":"槳輪被帶著順時針轉","on":"輪子就"}
-          ] },
-        { "show": ["旋度量的是局部自轉"],
-          "note": "不是看流線彎不彎。",
-          "say": "所以旋度看的不是流線彎不彎，而是那一點附近會不會自轉。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"不看流線彎不彎","on":"不是"},
-            {"do":"write","line":"看那一點附近會不會自轉","on":"而是"}
-          ] }
+            {
+              "do": "write",
+              "line": "處處相同：槳輪放在哪裡都一樣，繞 $z$ 軸逆時針轉"
+            },
+            {
+              "do": "write",
+              "line": "　角速度 $\\omega$ 的剛體轉動 $\\langle-\\omega y,\\omega x,0\\rangle$：旋度 $\\langle0,0,2\\omega\\rangle$；槳輪的角速度是旋度的一半",
+              "color": "violet",
+              "on": "都繞"
+            }
+          ]
+        }
       ],
-      "key": "比兩側流速差，別看流線彎不彎",
+      "predict": {
+        "ask": "**剪切流** $\\mathbf F=\\langle y,0,0\\rangle$：流線全是==直線==。槳輪放在原點，會？",
+        "options": [
+          {
+            "label": "順時針轉（從上往下看）",
+            "correct": true
+          },
+          {
+            "label": "不轉，因為流線是直的",
+            "why": "會不會轉看的是兩側推力的差，不是流線彎不彎"
+          },
+          {
+            "label": "逆時針轉",
+            "why": "上面往右、下面往左，是順時針；第三個分量 $0-1=-1$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "直的流也會轉",
+      "beats": [
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "上面的水往右流、下面的往左流，越遠越快。槳輪上面被往右推，下面被往左推，所以順時針轉。",
+          "board": [
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"curlShear\" viewBox=\"0 0 600 300\" width=\"600\" height=\"300\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b5curlShear\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b5curlShearblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b5curlShearred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b5curlSheargreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b5curlShearpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b5curlShearink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl9b5curlShear30\"><rect x=\"102.3\" y=\"16\" width=\"401.3\" height=\"254\"/></clipPath><g clip-path=\"url(#cl9b5curlShear30)\"></g><line x1=\"107.4\" y1=\"143\" x2=\"371.6\" y2=\"143\" stroke=\"var(--muted)\" stroke-width=\"1.2\" stroke-dasharray=\"8 7\"/><line x1=\"159.2\" y1=\"244.6\" x2=\"116.6\" y2=\"244.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"148.6\" y1=\"193.8\" x2=\"127.2\" y2=\"193.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"127.2\" y1=\"92.2\" x2=\"148.6\" y2=\"92.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"116.6\" y1=\"41.4\" x2=\"159.2\" y2=\"41.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"210\" y1=\"244.6\" x2=\"167.4\" y2=\"244.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"199.4\" y1=\"193.8\" x2=\"178\" y2=\"193.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"178\" y1=\"92.2\" x2=\"199.4\" y2=\"92.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"167.4\" y1=\"41.4\" x2=\"210\" y2=\"41.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"260.8\" y1=\"244.6\" x2=\"218.2\" y2=\"244.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"250.2\" y1=\"193.8\" x2=\"228.8\" y2=\"193.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"228.8\" y1=\"92.2\" x2=\"250.2\" y2=\"92.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"218.2\" y1=\"41.4\" x2=\"260.8\" y2=\"41.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"311.6\" y1=\"244.6\" x2=\"269\" y2=\"244.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"301\" y1=\"193.8\" x2=\"279.6\" y2=\"193.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"279.6\" y1=\"92.2\" x2=\"301\" y2=\"92.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"269\" y1=\"41.4\" x2=\"311.6\" y2=\"41.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"362.4\" y1=\"244.6\" x2=\"319.8\" y2=\"244.6\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"351.8\" y1=\"193.8\" x2=\"330.4\" y2=\"193.8\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"330.4\" y1=\"92.2\" x2=\"351.8\" y2=\"92.2\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"319.8\" y1=\"41.4\" x2=\"362.4\" y2=\"41.4\" stroke=\"var(--blue)\" stroke-width=\"2.4\" marker-end=\"url(#ah9b5curlShearblue)\"/><line x1=\"239.5\" y1=\"143\" x2=\"257.8\" y2=\"143\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"257.8\" y1=\"148.1\" x2=\"257.8\" y2=\"137.9\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"239.5\" y1=\"143\" x2=\"239.5\" y2=\"124.7\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"244.6\" y1=\"124.7\" x2=\"234.4\" y2=\"124.7\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"239.5\" y1=\"143\" x2=\"221.2\" y2=\"143\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"221.2\" y1=\"137.9\" x2=\"221.2\" y2=\"148.1\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><line x1=\"239.5\" y1=\"143\" x2=\"239.5\" y2=\"161.3\" stroke=\"var(--red)\" stroke-width=\"3\"/><line x1=\"234.4\" y1=\"161.3\" x2=\"244.6\" y2=\"161.3\" stroke=\"var(--red)\" stroke-width=\"3.4\"/><path d=\"M242.8 143L242.8 142.9L242.8 142.8L242.8 142.7L242.8 142.7L242.8 142.6L242.8 142.5L242.7 142.4L242.7 142.3L242.7 142.2L242.7 142.1L242.7 142.1L242.6 142L242.6 141.9L242.6 141.8L242.5 141.7L242.5 141.7L242.5 141.6L242.4 141.5L242.4 141.4L242.4 141.4L242.3 141.3L242.3 141.2L242.2 141.1L242.2 141.1L242.1 141L242.1 140.9L242 140.9L241.9 140.8L241.9 140.7L241.8 140.7L241.8 140.6L241.7 140.6L241.6 140.5L241.6 140.4L241.5 140.4L241.4 140.3L241.4 140.3L241.3 140.2L241.2 140.2L241.1 140.1L241.1 140.1L241 140.1L240.9 140L240.8 140L240.8 140L240.7 139.9L240.6 139.9L240.5 139.9L240.4 139.8L240.4 139.8L240.3 139.8L240.2 139.8L240.1 139.8L240 139.7L239.9 139.7L239.8 139.7L239.8 139.7L239.7 139.7L239.6 139.7L239.5 139.7L239.4 139.7L239.3 139.7L239.2 139.7L239.2 139.7L239.1 139.7L239 139.7L238.9 139.8L238.8 139.8L238.7 139.8L238.6 139.8L238.6 139.8L238.5 139.9L238.4 139.9L238.3 139.9L238.2 140L238.2 140L238.1 140L238 140.1L237.9 140.1L237.9 140.1L237.8 140.2L237.7 140.2L237.6 140.3L237.6 140.3L237.5 140.4L237.4 140.4L237.4 140.5L237.3 140.6L237.2 140.6L237.2 140.7L237.1 140.7L237.1 140.8L237 140.9L236.9 140.9L236.9 141L236.8 141.1L236.8 141.1L236.7 141.2L236.7 141.3L236.6 141.4L236.6 141.4L236.6 141.5L236.5 141.6L236.5 141.7L236.5 141.7L236.4 141.8L236.4 141.9L236.4 142L236.3 142.1L236.3 142.1L236.3 142.2L236.3 142.3L236.3 142.4L236.2 142.5L236.2 142.6L236.2 142.7L236.2 142.7L236.2 142.8L236.2 142.9L236.2 143L236.2 143.1L236.2 143.2L236.2 143.3L236.2 143.3L236.2 143.4L236.2 143.5L236.3 143.6L236.3 143.7L236.3 143.8L236.3 143.9L236.3 143.9L236.4 144L236.4 144.1L236.4 144.2L236.5 144.3L236.5 144.3L236.5 144.4L236.6 144.5L236.6 144.6L236.6 144.6L236.7 144.7L236.7 144.8L236.8 144.9L236.8 144.9L236.9 145L236.9 145.1L237 145.1L237.1 145.2L237.1 145.3L237.2 145.3L237.2 145.4L237.3 145.4L237.4 145.5L237.4 145.6L237.5 145.6L237.6 145.7L237.6 145.7L237.7 145.8L237.8 145.8L237.9 145.9L237.9 145.9L238 145.9L238.1 146L238.2 146L238.2 146L238.3 146.1L238.4 146.1L238.5 146.1L238.6 146.2L238.6 146.2L238.7 146.2L238.8 146.2L238.9 146.2L239 146.3L239.1 146.3L239.2 146.3L239.2 146.3L239.3 146.3L239.4 146.3L239.5 146.3L239.6 146.3L239.7 146.3L239.8 146.3L239.8 146.3L239.9 146.3L240 146.3L240.1 146.2L240.2 146.2L240.3 146.2L240.4 146.2L240.4 146.2L240.5 146.1L240.6 146.1L240.7 146.1L240.8 146L240.8 146L240.9 146L241 145.9L241.1 145.9L241.1 145.9L241.2 145.8L241.3 145.8L241.4 145.7L241.4 145.7L241.5 145.6L241.6 145.6L241.6 145.5L241.7 145.4L241.8 145.4L241.8 145.3L241.9 145.3L241.9 145.2L242 145.1L242.1 145.1L242.1 145L242.2 144.9L242.2 144.9L242.3 144.8L242.3 144.7L242.4 144.6L242.4 144.6L242.4 144.5L242.5 144.4L242.5 144.3L242.5 144.3L242.6 144.2L242.6 144.1L242.6 144L242.7 143.9L242.7 143.9L242.7 143.8L242.7 143.7L242.7 143.6L242.8 143.5L242.8 143.4L242.8 143.3L242.8 143.3L242.8 143.2L242.8 143.1L242.8 143\" stroke=\"var(--red)\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M267.5 151.6L266.9 153.4L266.1 155.1L265.3 156.7L264.4 158.3L263.4 159.9L262.3 161.3L261.1 162.7L259.8 164L258.5 165.3L257 166.4L255.5 167.5L254 168.4L252.3 169.3L250.7 170.1L248.9 170.7L247.2 171.2L245.4 171.7L243.6 172L241.8 172.2L239.9 172.3L238.1 172.2L236.2 172.1L234.4 171.8L232.6 171.4L230.9 171L229.1 170.4L227.4 169.6L225.8 168.8L224.2 167.9L222.6 166.9L221.2 165.8L219.8 164.6L218.5 163.3L217.2 162L216.1 160.5L215 159L214.1 157.5L213.2 155.8L212.4 154.2L211.8 152.4L211.3 150.7L210.8 148.9L210.5 147.1L210.3 145.3L210.2 143.4L210.3 141.6L210.4 139.7L210.7 137.9L211.1 136.1L211.5 134.4L212.1 132.6L212.9 130.9L213.7 129.3L214.6 127.7L215.6 126.1L216.7 124.7L217.9 123.3L219.2 122L220.5 120.7L222 119.6L223.5 118.5L225 117.6L226.7 116.7L228.3 115.9L230.1 115.3L231.8 114.8L233.6 114.3L235.4 114L237.2 113.8L239.1 113.7L240.9 113.8L242.8 113.9L244.6 114.2L246.4 114.6L248.1 115L249.9 115.6L251.6 116.4L253.2 117.2L254.8 118.1L256.4 119.1\" stroke=\"var(--red)\" stroke-width=\"2.6\" stroke-linecap=\"round\" marker-end=\"url(#ah9b5curlShearred)\"/><text x=\"395\" y=\"75\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"23\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">F = ⟨y, 0, 0⟩</text><text x=\"395\" y=\"125\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">上面往右推</text><text x=\"395\" y=\"158\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">下面往左推</text><text x=\"395\" y=\"215\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"20\" style=\"font-family:inherit\">紅：槳輪順時針轉</text><text x=\"395\" y=\"246\" text-anchor=\"start\" fill=\"var(--muted)\" font-size=\"18\" style=\"font-family:inherit\">（從上往下看）</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 0-1\\rangle=\\langle0,0,-1\\rangle$"
+          ],
+          "say": "公式也一樣：第三個分量是 0 減 1，負 1，指向負 z 軸，也就是順時針。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\nabla\\times\\mathbf F=\\langle0,\\ 0,\\ 0-1\\rangle=\\langle0,0,-1\\rangle}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "指向"
+            }
+          ]
+        },
+        {
+          "show": [
+            "重點：旋度看的是兩側的速度差，不是流線彎不彎"
+          ],
+          "say": "所以重點是：旋度看的是兩側的速度差，不是流線彎不彎。直的流可以有旋度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "重點：旋度看的是兩側的速度差，不是流線彎不彎",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反過來，彎的流也可以沒有旋度：",
+            "$\\mathbf F=\\frac{\\langle -y,\\ x,\\ 0\\rangle}{x^2+y^2}\\quad(\\text{速率 }\\tfrac1r)$"
+          ],
+          "say": "反過來，彎的流也可以沒有旋度。這個場也繞著 z 軸轉，但速率是 r 分之一：越外面越慢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反過來，彎的流也可以沒有旋度："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\mathbf F=\\frac{\\langle -y,\\ x,\\ 0\\rangle}{x^2+y^2}\\quad(\\text{速率 }\\tfrac1r)$",
+              "on": "軸轉"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 流線彎曲：想讓槳輪逆時針轉",
+            "• 內側快、外側慢：想讓它順時針轉"
+          ],
+          "say": "流線彎曲，會讓槳輪想逆時針轉；可是內側流得快、外側流得慢，又讓它想順時針轉。兩個效果剛好抵消，旋度是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 流線彎曲：想讓槳輪逆時針轉"
+            },
+            {
+              "do": "write",
+              "line": "• 內側快、外側慢：想讓它順時針轉",
+              "on": "可是"
+            },
+            {
+              "do": "write",
+              "line": "• 兩個效果剛好抵消：$z$ 軸以外 $\\nabla\\times\\mathbf F=\\mathbf 0$",
+              "on": "得慢"
+            },
+            {
+              "do": "write",
+              "line": "　驗算第三個分量：$Q_x=P_y=\\frac{y^2-x^2}{(x^2+y^2)^2}$，相減是 $0$",
+              "color": "violet",
+              "on": "個效"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "跟保守場的關係",
+      "beats": [
+        {
+          "show": [
+            "梯度場沒有旋度：$\\nabla\\times(\\nabla f)=\\mathbf 0$"
+          ],
+          "say": "現在看旋度跟保守場的關係。第一個事實：梯度場沒有旋度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "梯度場沒有旋度：$\\nabla\\times(\\nabla f)=\\mathbf 0$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$，第一個分量",
+            "$(f_z)_y-(f_y)_z=f_{zy}-f_{yz}=0$"
+          ],
+          "say": "證明：梯度的分量是 f x、f y、f z。旋度的第一個分量，是 f z 對 y 減 f y 對 z。",
+          "board": [
+            {
+              "do": "write",
+              "line": "證明：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$，第一個分量"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle (f_z)_y-(f_y)_z=f_{zy}-f_{yz}=0$",
+              "on": "第一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "混合偏導相等（Clairaut，$f$ 有連續的二階偏導），另外兩個分量一樣"
+          ],
+          "say": "只要 f 的二階偏導連續，克萊洛定理說混合偏導的順序可以交換，所以相減等於 0。另外兩個分量完全一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "混合偏導相等（Clairaut，$f$ 有連續的二階偏導），另外兩個分量一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$f=x^2yz^3$，$\\nabla f=\\langle 2xyz^3,\\ x^2z^3,\\ 3x^2yz^2\\rangle$",
+            "$R_y-Q_z=3x^2z^2-3x^2z^2=0$"
+          ],
+          "say": "例如 f 等於 x 平方 y z 三次方。R 對 y、Q 對 z，都是 3 x 平方 z 平方，第一個分量就是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：$f=x^2yz^3$，$\\nabla f=\\langle 2xyz^3,\\ x^2z^3,\\ 3x^2yz^2\\rangle$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle R_y-Q_z=3x^2z^2-3x^2z^2=0}}$",
+              "on": "都是"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：旋度不是 $\\mathbf 0$ 的場，一定不保守"
+          ],
+          "say": "反過來說，只要算出旋度不是 0，這個場一定不保守，不是任何函數的梯度。",
+          "board": [
+            {
+              "do": "write",
+              "line": "所以：旋度不是 $\\mathbf 0$ 的場，一定不保守"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反方向：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$ 上 $\\Rightarrow$ $\\mathbf F$ 保守"
+          ],
+          "say": "反方向也成立，但要加條件：如果旋度在整個空間上都是 0，F 才保守。",
+          "board": [
+            {
+              "do": "write",
+              "line": "反方向：$\\nabla\\times\\mathbf F=\\mathbf 0$ 在整個 $\\mathbb R^3$ 上 $\\Rightarrow$ $\\mathbf F$ 保守",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　定義域只要「單連通」（每個圈都能縮成一點）就夠；證明留到 9.26 Stokes 定理",
+              "color": "violet",
+              "on": "在整"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定義域有洞就不行：$\\mathbf F=\\dfrac{\\langle -y,x,0\\rangle}{x^2+y^2}$（$z$ 軸上沒定義）",
+            "• 在 $z$ 軸以外 $\\nabla\\times\\mathbf F=\\mathbf 0$"
+          ],
+          "say": "定義域有洞就不行。剛才那個 r 分之一的場，在 z 軸上沒有定義；旋度是 0，可是繞 z 軸一圈，線積分是 2 派，所以不保守。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定義域有洞就不行：$\\mathbf F=\\dfrac{\\langle -y,x,0\\rangle}{x^2+y^2}$（$z$ 軸上沒定義）"
+            },
+            {
+              "do": "write",
+              "line": "• 在 $z$ 軸以外 $\\nabla\\times\\mathbf F=\\mathbf 0$",
+              "on": "軸上"
+            },
+            {
+              "do": "write",
+              "line": "• 但繞 $z$ 軸一圈 $\\displaystyle\\oint\\mathbf F\\cdot d\\mathbf r=2\\pi\\ne0$，不保守",
+              "on": "軸一"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "哪一個場一定不是梯度場？"
+          ],
+          "say": "試一題：哪一個場一定不是梯度場？"
+        }
+      ],
       "check": 1
     },
     {
-      "title": "梯度場沒有旋度",
+      "title": "精確的意義",
       "beats": [
-        { "show": ["$\\nabla\\times(\\nabla f)=\\mathbf 0$"],
-          "note": "$f$ 的二階偏導連續。",
-          "say": "梯度場的旋度一定是零：每個分量都是一對混合偏導相減，Clairaut 讓它們抵消。",
+        {
+          "show": [
+            "在點 $P$ 選一個方向 $\\mathbf n$（單位向量），放一個垂直於 $\\mathbf n$、半徑 $r$ 的小圓 $C_r$"
+          ],
+          "say": "最後，給想知道的人：旋度的精確意義。在點 P 選一個方向 n，放一個垂直於 n、半徑 r 的小圓。",
           "board": [
-            {"do":"write","line":"$\\nabla\\times(\\nabla f)={{z:\\mathbf 0}}$"},
-            {"do":"box","term":"z","color":"green","on":"一定是零"},
-            {"do":"write","line":"$R_y-Q_z=f_{zy}-f_{yz}$","on":"混合偏導"},
-            {"do":"write","line":"$f_{zy}=f_{yz}$","on":"Clairaut"}
-          ] },
-        { "show": ["$f=x^2yz^3$：$3x^2z^2-3x^2z^2=0$"],
-          "note": "第一分量；另外兩個同理。",
-          "say": "拿一個函數驗算第一個分量：兩項一模一樣，相減是零。",
+            {
+              "do": "write",
+              "line": "在點 $P$ 選一個方向 $\\mathbf n$（單位向量），放一個垂直於 $\\mathbf n$、半徑 $r$ 的小圓 $C_r$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖"
+          ],
+          "say": "小圓的方向用右手定則：右手拇指指向 n，四根手指彎的方向，就是沿小圓走的方向。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$f=x^2yz^3$","on":"拿一個函數"},
-            {"do":"write","line":"${{a:3x^2z^2}}-{{b:3x^2z^2}}=0$","on":"兩項"},
-            {"do":"focus","term":"a","on":"一模一樣"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"curlDisk\" viewBox=\"0 0 600 320\" width=\"600\" height=\"320\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah9b5curlDisk\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah9b5curlDiskblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah9b5curlDiskred\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah9b5curlDiskgreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah9b5curlDiskpencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah9b5curlDiskink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><line x1=\"250\" y1=\"240\" x2=\"160\" y2=\"298.4\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b5curlDiskink)\"/><line x1=\"250\" y1=\"240\" x2=\"440.5\" y2=\"281.2\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b5curlDiskink)\"/><line x1=\"250\" y1=\"240\" x2=\"250\" y2=\"54.6\" stroke=\"var(--ink)\" stroke-width=\"1.8\" marker-end=\"url(#ah9b5curlDiskink)\"/><text x=\"148.8\" y=\"317.1\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">x</text><text x=\"462\" y=\"291.7\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">y</text><text x=\"250\" y=\"39.3\" text-anchor=\"middle\" fill=\"var(--ink)\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">z</text><polygon points=\"218.9,150.3 215.1,155 211.9,160 209.5,165.3 207.9,170.7 207.1,176.2 207.1,181.7 208,187.3 209.6,192.8 212.1,198.1 215.3,203.3 219.3,208.2 223.9,212.8 229.2,217.1 235,221 241.4,224.4 248.2,227.4 255.4,229.8 262.8,231.7 270.5,233 278.3,233.8 286.2,234 294,233.6 301.6,232.6 309.1,231.1 316.2,229 323,226.4 329.4,223.3 335.2,219.7 340.4,215.7 345,211.3 348.9,206.5 352,201.5 354.4,196.3 356,190.9 356.8,185.4 356.8,179.8 355.9,174.2 354.3,168.7 351.8,163.4 348.6,158.2 344.7,153.3 340,148.7 334.7,144.4 328.9,140.6 322.5,137.1 315.7,134.2 308.5,131.7 301.1,129.8 293.4,128.5 285.6,127.7 277.7,127.5 270,127.9 262.3,128.9 254.8,130.5 247.7,132.5 240.9,135.2 234.6,138.3 228.8,141.9 223.5,145.9 218.9,150.3\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/><path d=\"M218.9 150.3L217.4 152L216 153.8L214.6 155.6L213.4 157.5L212.2 159.4L211.2 161.3L210.3 163.3L209.5 165.3L208.8 167.3L208.2 169.3L207.8 171.3L207.4 173.4L207.2 175.5L207 177.6L207 179.7L207.1 181.7L207.4 183.8L207.7 185.9L208.1 188L208.7 190.1L209.4 192.1L210.2 194.1L211.1 196.2L212.1 198.1L213.2 200.1L214.4 202L215.8 203.9L217.2 205.8L218.7 207.6L220.4 209.4L222.1 211.2L223.9 212.8L225.8 214.5L227.8 216.1L229.9 217.6L232 219.1L234.3 220.5L236.6 221.9L238.9 223.2L241.4 224.4L243.9 225.6L246.5 226.7L249.1 227.7L251.7 228.6L254.5 229.5L257.2 230.3L260 231L262.8 231.7L265.7 232.3L268.6 232.8L271.5 233.2L274.4 233.5L277.4 233.7L280.3 233.9L283.2 234L286.2 234L289.1 233.9L292 233.8L294.9 233.5L297.8 233.2L300.7 232.8L303.5 232.3L306.3 231.7L309.1 231.1L311.8 230.4L314.5 229.6L317.1 228.7L319.7 227.7L322.2 226.7L324.7 225.6L327 224.5L329.4 223.3L331.6 222L333.8 220.6L335.8 219.2L337.9 217.7L339.8 216.2L341.6 214.6L343.3 213L345 211.3L346.5 209.5L348 207.7L349.3 205.9L350.5 204.1L351.7 202.2L352.7 200.2L353.6 198.3L354.4 196.3L355.1 194.3L355.7 192.2L356.2 190.2L356.5 188.1L356.8 186.1L356.9 184L356.9 181.9L356.8 179.8L356.6 177.7L356.2 175.6L355.8 173.5L355.2 171.5L354.5 169.4L353.7 167.4L352.8 165.4L351.8 163.4L350.7 161.4L349.5 159.5L348.2 157.6L346.7 155.7L345.2 153.9L343.6 152.1L341.8 150.4L340 148.7L338.1 147L336.1 145.5L334 143.9L331.9 142.4L329.7 141L327.4 139.7L325 138.4L322.5 137.1L320 136L317.5 134.9L314.8 133.9L312.2 132.9L309.5 132L306.7 131.2L303.9 130.5L301.1 129.8L298.2 129.3L295.3 128.8L292.4 128.4L289.5 128L286.6 127.8L283.6 127.6L280.7 127.5L277.7 127.5L274.8 127.6L271.9 127.8L269 128L266.1 128.4L263.2 128.8L260.4 129.2L257.6 129.8L254.8 130.5L252.1 131.2L249.4 132L246.8 132.8L244.2 133.8L241.7 134.8L239.3 135.9L236.9 137.1L234.6 138.3L232.3 139.6L230.2 140.9L228.1 142.3L226.1 143.8L224.2 145.4L222.3 146.9L220.6 148.6L218.9 150.3\" stroke=\"var(--blue)\" stroke-width=\"2.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"253.3\" y1=\"229.1\" x2=\"263.9\" y2=\"231.9\" stroke=\"var(--blue)\" stroke-width=\"3.2\" marker-end=\"url(#ah9b5curlDiskblue)\"/><line x1=\"280.8\" y1=\"127.5\" x2=\"269.6\" y2=\"128\" stroke=\"var(--blue)\" stroke-width=\"3.2\" marker-end=\"url(#ah9b5curlDiskblue)\"/><line x1=\"350.6\" y1=\"204\" x2=\"354.3\" y2=\"196.6\" stroke=\"var(--blue)\" stroke-width=\"3.2\" marker-end=\"url(#ah9b5curlDiskblue)\"/><line x1=\"282\" y1=\"180.8\" x2=\"287.7\" y2=\"75.1\" stroke=\"var(--red)\" stroke-width=\"3\" marker-end=\"url(#ah9b5curlDiskred)\"/><circle cx=\"282\" cy=\"180.8\" r=\"4.5\" fill=\"var(--ink)\" stroke=\"var(--ink)\" stroke-width=\"2.2\"/><text x=\"301.7\" y=\"79.1\" text-anchor=\"middle\" fill=\"var(--red)\" font-size=\"24\" font-weight=\"bold\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">n</text><text x=\"266\" y=\"196.8\" text-anchor=\"middle\" fill=\"var(--ink)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">P</text><text x=\"374.2\" y=\"161.7\" text-anchor=\"middle\" fill=\"var(--blue)\" font-size=\"22\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">C<tspan baseline-shift=\"sub\" font-size=\"15\">r</tspan></text><text x=\"430\" y=\"120\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">圓盤垂直於 n</text><text x=\"430\" y=\"155\" text-anchor=\"start\" fill=\"var(--ink)\" font-size=\"20\" style=\"font-family:inherit\">半徑 r → 0</text><text x=\"430\" y=\"210\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"19\" style=\"font-family:inherit\">右手：拇指沿 n，</text><text x=\"430\" y=\"240\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"19\" style=\"font-family:inherit\">四指沿 C 的方向</text></svg>"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$(\\nabla\\times\\mathbf F)\\cdot\\mathbf n=\\lim_{r\\to0}\\frac{1}{\\pi r^2}\\oint_{C_r}\\mathbf F\\cdot d\\mathbf r$"
+          ],
+          "say": "旋度在 n 方向的分量，等於小圓上的環流量除以圓面積，再讓圓縮成一點：也就是每單位面積的環流量。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle (\\nabla\\times\\mathbf F)\\cdot\\mathbf n=\\lim_{r\\to0}\\frac{1}{\\pi r^2}\\oint_{C_r}\\mathbf F\\cdot d\\mathbf r}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "面積#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "理由：取座標讓 $\\mathbf n=\\mathbf k$，$C_r$ 在平面 $z=z_0$ 上，$dz=0$：",
+            "$\\oint_{C_r}P\\,dx+Q\\,dy=\\iint_{D_r}(Q_x-P_y)\\,dA$"
+          ],
+          "say": "理由：轉一下座標，讓 n 就是 z 軸。小圓在水平面上，d z 是 0，用格林定理換成圓盤上 Q x 減 P y 的積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "理由：取座標讓 $\\mathbf n=\\mathbf k$，$C_r$ 在平面 $z=z_0$ 上，$dz=0$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\oint_{C_r}P\\,dx+Q\\,dy=\\iint_{D_r}(Q_x-P_y)\\,dA$",
+              "on": "用格"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$Q_x-P_y$ 連續，圓盤很小時 $\\approx(Q_x-P_y)(P)\\cdot\\pi r^2$，除掉 $\\pi r^2$ 就是第三個分量"
+          ],
+          "say": "Q x 減 P y 是連續的，圓盤很小的時候，積分大約是它在 P 的值乘上面積。除掉面積、取極限，就得到旋度的第三個分量，也就是旋度點 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$Q_x-P_y$ 連續，圓盤很小時 $\\approx(Q_x-P_y)(P)\\cdot\\pi r^2$，除掉 $\\pi r^2$ 就是第三個分量"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\mathbf n$ 沿著 $\\nabla\\times\\mathbf F$ 時最大：槳輪的軸朝旋度的方向轉得最快"
+          ],
+          "say": "而旋度點 n，在 n 跟旋度同方向時最大。所以槳輪的軸朝向旋度的方向時轉得最快，轉速跟旋度的長度成正比。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\mathbf n$ 沿著 $\\nabla\\times\\mathbf F$ 時最大：槳輪的軸朝旋度的方向轉得最快",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "旋度為零就保守？",
+      "title": "重點整理",
       "beats": [
-        { "show": ["保守場：$\\mathbf F=\\nabla f$"],
-          "note": "某個函數 $f$ 的梯度場。",
-          "say": "先說保守場：就是某個函數 f 的梯度場，也就是 F 等於 f 的梯度。",
+        {
+          "show": [
+            "• $\\nabla\\times\\mathbf F=\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\rangle$（行列式記）",
+            "• 意義：小槳輪；方向是轉軸（右手），長度是轉的強度"
+          ],
+          "say": "整理一下：旋度的方向是槳輪的轉軸，長度是轉的強度，看的是兩側的速度差。梯度場沒有旋度；反過來，要定義域沒有洞，旋度是零才保證保守。",
           "board": [
-            {"do":"write","line":"保守場：$\\mathbf F=\\nabla f$"}
-          ] },
-        { "show": ["$\\nabla\\times\\mathbf F=\\mathbf 0$ + 單連通 ⟹ 保守"],
-          "note": "一階偏導連續；例如整個 $\\mathbb{R}^3$。",
-          "say": "反過來，旋度是零、偏導連續，而且定義域沒有洞，就是保守場。",
+            {
+              "do": "write",
+              "line": "• $\\nabla\\times\\mathbf F=\\langle R_y-Q_z,\\ P_z-R_x,\\ Q_x-P_y\\rangle$（行列式記）"
+            },
+            {
+              "do": "write",
+              "line": "• 意義：小槳輪；方向是轉軸（右手），長度是轉的強度",
+              "on": "是槳"
+            },
+            {
+              "do": "write",
+              "line": "• $(\\nabla\\times\\mathbf F)\\cdot\\mathbf n$：垂直 $\\mathbf n$ 的小圓上，每單位面積的環流量",
+              "on": "的強"
+            },
+            {
+              "do": "write",
+              "line": "• 看兩側的速度差：直的剪切流也有旋度",
+              "on": "度差"
+            },
+            {
+              "do": "write",
+              "line": "• $\\nabla\\times(\\nabla f)=\\mathbf 0$；旋度 $\\ne\\mathbf 0$ ⇒ 不保守",
+              "on": "反過"
+            },
+            {
+              "do": "write",
+              "line": "• 旋度 $=\\mathbf 0$ ⇒ 保守：定義域要沒有洞",
+              "on": "旋度#3"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：散度"
+          ],
+          "say": "下一課，看向量場的另一種導數：散度。",
           "board": [
-            {"do":"write","line":"$\\nabla\\times\\mathbf F=\\mathbf 0$，偏導連續"},
-            {"do":"write","line":"定義域沒有洞（單連通）","on":"而且"},
-            {"do":"write","line":"$\\Rightarrow$ 保守場","on":"就是"}
-          ] },
-        { "show": ["定義域有洞：不一定"],
-          "note": "見〈保守場〉的反例。",
-          "say": "定義域有洞就不一定，保守場那一課的反例就是這樣。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"定義域有洞：不一定","on":"定義域有洞"},
-            {"do":"write","line":"反例見〈保守場〉","on":"反例"}
-          ] },
-        { "show": ["挖掉 $z$ 軸：繞軸一圈，功是 $2\\pi$"],
-          "note": "旋度為 $\\mathbf 0$，卻不保守。",
-          "say": "洞的意思：把 z 軸挖掉，繞著軸的圈縮不成一點。沿這個圈走一圈，功是二 pi，不是零。",
-          "board": [
-            {"do":"plot","graph":{"window":[-2,2,-2,2],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}],"points":[{"x":0,"y":0,"open":true}]}},
-            {"do":"write","line":"繞軸一圈：功 $=2\\pi$","on":"功是二"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：散度"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["curl", "nabla", "vector-calculus", "vector-identity"],
-    "fine": ["curl-compute", "curl-paddle-wheel", "curl-of-gradient"]
+    "coarse": [
+      "curl",
+      "nabla",
+      "vector-calculus",
+      "vector-identity"
+    ],
+    "fine": [
+      "curl-compute",
+      "curl-paddle-wheel",
+      "curl-of-gradient"
+    ]
   },
   "practice": [
-    { "id": "mob-nabla-002", "core": true, "trains": "curl-compute" },
-    { "id": "lec-20-m3", "core": true, "trains": "curl-paddle-wheel" },
-    { "id": "vc-nab-012", "core": true, "trains": "curl-compute" },
-    { "id": "vc-nab-004", "core": true, "trains": "curl-of-gradient" },
-    { "id": "cg-9b5-001", "core": true, "trains": "curl-paddle-wheel" },
-    { "id": "exam-multi-010", "trains": "curl-compute" },
-    { "id": "uni-der-016", "trains": "curl-compute" },
-    { "id": "depth-der-014", "trains": "curl-compute" },
-    { "id": "vc-nab-011", "trains": "curl-of-gradient", "note": "$\\langle yz,zx,xy\\rangle=\\nabla(xyz)$。" },
-    { "id": "mob-nabla-005", "trains": "curl-of-gradient" },
-    { "id": "cg-9b5-002", "trains": "curl-paddle-wheel" },
-    { "id": "cg-9b5-003", "trains": "curl-paddle-wheel" }
+    {
+      "id": "mob-nabla-002",
+      "core": true,
+      "trains": "curl-compute"
+    },
+    {
+      "id": "lec-20-m3",
+      "core": true,
+      "trains": "curl-paddle-wheel"
+    },
+    {
+      "id": "vc-nab-012",
+      "core": true,
+      "trains": "curl-compute"
+    },
+    {
+      "id": "vc-nab-004",
+      "core": true,
+      "trains": "curl-of-gradient"
+    },
+    {
+      "id": "cg-9b5-001",
+      "core": true,
+      "trains": "curl-paddle-wheel"
+    },
+    {
+      "id": "exam-multi-010",
+      "trains": "curl-compute"
+    },
+    {
+      "id": "uni-der-016",
+      "trains": "curl-compute"
+    },
+    {
+      "id": "depth-der-014",
+      "trains": "curl-compute"
+    },
+    {
+      "id": "vc-nab-011",
+      "trains": "curl-of-gradient",
+      "note": "$\\langle yz,zx,xy\\rangle=\\nabla(xyz)$。"
+    },
+    {
+      "id": "mob-nabla-005",
+      "trains": "curl-of-gradient"
+    },
+    {
+      "id": "cg-9b5-002",
+      "trains": "curl-paddle-wheel"
+    },
+    {
+      "id": "cg-9b5-003",
+      "trains": "curl-paddle-wheel"
+    }
   ],
   "gaps": []
 }

@@ -72,8 +72,18 @@ const SAMPLE_CORE = (() => {
   const entry = SAMPLE.chapter.lessons.find((l) => l.id === SAMPLE.lesson.id) || {};
   return String(entry.practice || "").split(" ").filter((t) => t.endsWith("*")).length;
 })();
-const STATIC_FIG = figureLesson((f) => Boolean(f.graph));
-const WIDGET_FIG = figureLesson((f) => Boolean(f.widget));
+// 圖（figures）：交付的筆記本課沒有全文的圖（圖都畫在黑板上）—— 用舊版的課（lessons_v1/）測，開頁時塞進頁面
+const FX = require("./lib/course_v1_fixture.js");
+const figureV1 = (pred) => {
+  for (const stage of OUTLINE.stages) for (const chapter of stage.chapters) for (const entry of chapter.lessons) {
+    const lesson = FX.lessonOf(entry.id);
+    const k = lesson ? (lesson.figures || []).findIndex((f) => pred(f) && !(lesson.concept[f.after === undefined ? 0 : f.after] || {}).collapsible) : -1;
+    if (k >= 0) return { lesson, k, fig: lesson.figures[k] };
+  }
+  return null;
+};
+const STATIC_FIG = figureLesson((f) => Boolean(f.graph)) || figureV1((f) => Boolean(f.graph));
+const WIDGET_FIG = figureLesson((f) => Boolean(f.widget)) || figureV1((f) => Boolean(f.widget));
 // 比對課文只看漢字：$…$ 畫成 KaTeX 之後 innerText 會多出 MathML 的字；數學本身由「行內數學」那一段檢查
 const han = (text) => (String(text || "").replace(/\$[^$]*\$/g, "").match(/[一-鿿]/g) || []).join("");
 const TOTAL =OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
@@ -138,6 +148,7 @@ async function run() {
   const { lesson } = SAMPLE;
   const server = await staticServer.start(ROOT, 0);
   const chrome = await launch();
+  await chrome.send("Page.addScriptToEvaluateOnNewDocument", { source: FX.script([STATIC_FIG, WIDGET_FIG].filter(Boolean).map((x) => x.lesson.id)) });
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
   const sleep = (ms) => chrome.sleep(ms);
   const click = async (selector, wait = 400) => {

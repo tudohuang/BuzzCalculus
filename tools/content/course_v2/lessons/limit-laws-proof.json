@@ -1,7 +1,8 @@
 {
   "id": "limit-laws-proof",
   "title": "極限定律",
-  "readMinutes": 13,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 40,
   "prerequisites": [
     "epsilon-n-proofs",
@@ -14,57 +15,133 @@
     "epsilon-n-definition"
   ],
   "objectives": [
-    "用 $\\frac{\\varepsilon}{2}$ 的分帳技巧證明和的極限定律。",
-    "說得出乘積定律為什麼需要「收斂數列有界」，並會證明這個引理。",
-    "知道定律只有一個方向：$a_n+b_n$ 收斂不代表 $a_n$、$b_n$ 各自收斂；除法要求分母的極限不是 0。"
+    "用 $\\frac{\\varepsilon}{2}$ 的分帳技巧證明和的極限定律",
+    "說得出乘積定律為什麼需要「收斂數列有界」，並會證明這個引理",
+    "知道定律只有一個方向：$a_n+b_n$ 收斂不代表 $a_n$、$b_n$ 各自收斂",
+    "除法要求分母的極限不是 0"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 我們一直在用、但還沒證明的東西",
+      "heading": "① 一直在用的定律",
       "body": [
-        "〈直接代入與極限定律〉裡的「和的極限等於極限的和」等規則，現在要用 $\\varepsilon$-$N$ 定義證明。設 $a_n\\to a$、$b_n\\to b$，要證 $a_n+b_n\\to a+b$、$a_nb_n\\to ab$，以及 $b\\ne0$ 時 $\\frac{a_n}{b_n}\\to\\frac{a}{b}$。"
+        "設 $a_n\\to A$、$b_n\\to B$，則",
+        "1.5、6.1 都是憑直覺用，從來沒證明",
+        "主要工具：三角不等式",
+        "先看怎麼用：$\\displaystyle\\lim\\frac{3n^2+1}{n^2+n}$",
+        "• $\\frac1n\\to0$（上一課證過），$\\frac1{n^2}=\\frac1n\\cdot\\frac1n\\to0$（乘積）",
+        "• 分子 $3+\\frac1{n^2}\\to3$，分母 $1+\\frac1n\\to1$（和；常數數列）",
+        "• 分母的極限 $1\\ne0$，用商：$\\to\\dfrac31=3$",
+        "每一步都引用一條定律，商要檢查分母極限 $\\ne0$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&a_n+b_n\\to A+B,\\quad c\\,a_n\\to cA\\\\&a_nb_n\\to AB,\\quad \\frac{a_n}{b_n}\\to\\frac AB\\ (B\\ne0)\\end{aligned}",
+        "|x+y|\\le|x|+|y|",
+        "\\frac{3n^2+1}{n^2+n}=\\frac{3+\\frac1{n^2}}{1+\\frac1n}"
+      ]
     },
     {
       "heading": "② 和：誤差分兩半",
       "body": [
-        "三角不等式給 $|(a_n+b_n)-(a+b)|\\le|a_n-a|+|b_n-b|$。總誤差要 $<\\varepsilon$，就讓兩邊各 $<\\frac{\\varepsilon}{2}$。因為 $\\frac{\\varepsilon}{2}$ 也是正數，定義讓我們對 $(a_n)$ 拿到一個 $N_1$、對 $(b_n)$ 拿到一個 $N_2$；取 $N=\\max(N_1,N_2)$，兩個條件同時成立。",
-        "這個「先決定最後要的誤差，再分配給每一塊」的手法，之後會一再出現。"
+        "策略：要 $|(a_n+b_n)-(A+B)|<\\varepsilon$",
+        "三角不等式拆成兩個誤差，每個給 $\\frac\\varepsilon2$",
+        "例：$a_n=1+\\frac1n\\to1$，$b_n=2+\\frac1{n^2}\\to2$，$\\varepsilon=0.1$",
+        "• $a_n$ 的誤差 $\\frac1n<0.05\\iff n>20$：$N_1=21$",
+        "• $b_n$ 的誤差 $\\frac1{n^2}<0.05\\iff n^2>20$：$N_2=5$",
+        "兩個要同時成立：$N=\\max(N_1,N_2)=21$",
+        "驗算：$n\\ge21$ 時 $\\frac1n+\\frac1{n^2}\\le\\frac1{21}+\\frac1{441}\\approx0.0499<0.1$"
       ],
-      "collapsible": false
+      "tex": [
+        "|(a_n+b_n)-(A+B)|\\le|a_n-A|+|b_n-B|"
+      ]
     },
     {
-      "heading": "③ 乘積：需要一個「有界」",
+      "heading": "③ 乘積：需要「有界」",
       "body": [
-        "$a_nb_n-ab=a_n(b_n-b)+b(a_n-a)$。第二項好控制，$b$ 是固定的數；第一項前面乘著 $a_n$，它會變。所以要先知道：收斂數列一定有界，存在 $M>0$ 使所有 $|a_n|\\le M$。有了 $M$，$|a_n(b_n-b)|\\le M|b_n-b|$，又回到分兩半的情形。",
-        "反過來不對：$(-1)^n$ 有界但不收斂。"
+        "策略：加一項、減一項，拆成兩塊",
+        "展開檢查：$a_nb_n-a_nB+Ba_n-AB=a_nb_n-AB$",
+        "問題在第一塊：$|a_n|$ 跟著 $n$ 變",
+        "如果 $|a_n|$ 可以很大，$|b_n-B|$ 小也沒用",
+        "需要的是：$|a_n|\\le M$ 對所有 $n$",
+        "引理：收斂的數列一定有界",
+        "直覺：從某項起都在 $A\\pm1$ 裡；前面只有有限多項"
       ],
-      "collapsible": false
+      "tex": [
+        "a_nb_n-AB=a_n(b_n-B)+B(a_n-A)",
+        "|a_nb_n-AB|\\le|a_n|\\,|b_n-B|+|B|\\,|a_n-A|"
+      ]
     },
     {
       "heading": "④ 定律只有一個方向",
       "body": [
-        "定律說：兩個都收斂 $\\Rightarrow$ 和收斂。反方向錯：$a_n=n$、$b_n=-n$ 都發散，$a_n+b_n=0$ 卻收斂。除法要 $b\\ne0$：$a_n=\\frac{1}{n}$、$b_n=\\frac{1}{n^2}$ 都 $\\to0$，$\\frac{a_n}{b_n}=n$ 發散。"
-      ],
-      "collapsible": false
+        "定律說：$a_n$、$b_n$ 各自收斂 ⇒ 和收斂",
+        "反過來不成立",
+        "$a_n=(-1)^n$，$b_n=-(-1)^n$：$a_n+b_n=0\\to0$",
+        "但 $a_n$、$b_n$ 都發散",
+        "除法：分母的極限必須 $\\ne0$",
+        "$b_n=\\frac1n\\to0$：$\\frac1{b_n}=n$ 發散",
+        "分母極限是 $0$ 時，商可能收斂也可能發散（例如 $\\frac{1/n}{1/n}=1$）：定律不告訴你，要另外處理"
+      ]
     },
     {
-      "heading": "證明：和與有界",
+      "heading": "證明：和",
       "body": [
-        "和：給定 $\\varepsilon>0$。取 $N_1$ 使 $n\\ge N_1$ 時 $|a_n-a|<\\frac{\\varepsilon}{2}$，取 $N_2$ 使 $n\\ge N_2$ 時 $|b_n-b|<\\frac{\\varepsilon}{2}$，令 $N=\\max(N_1,N_2)$。$n\\ge N$ 時 $|(a_n+b_n)-(a+b)|\\le|a_n-a|+|b_n-b|<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}=\\varepsilon$。",
-        "有界：對 $\\varepsilon=1$ 取 $N$，使 $n\\ge N$ 時 $|a_n-a|<1$，於是 $|a_n|\\le|a_n-a|+|a|<1+|a|$。前面只有有限多項 $a_1,\\dots,a_{N-1}$。令 $M=\\max(|a_1|,\\dots,|a_{N-1}|,1+|a|)$，則所有 $n$ 都有 $|a_n|\\le M$，而且 $M\\ge1>0$。"
+        "定理：$a_n\\to A$，$b_n\\to B$ ⇒ $a_n+b_n\\to A+B$",
+        "給定 $\\varepsilon>0$。$\\frac\\varepsilon2>0$，所以",
+        "• 存在 $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\frac\\varepsilon2$",
+        "• 存在 $N_2$：$n\\ge N_2\\Rightarrow|b_n-B|<\\frac\\varepsilon2$",
+        "定義對每一個正數都成立，所以可以餵 $\\frac\\varepsilon2$ 進去",
+        "取 $N=\\max(N_1,N_2)$。對 $n\\ge N$：",
+        "引理：$a_n\\to A$ ⇒ 存在 $M$，$|a_n|\\le M$ 對所有 $n$",
+        "證明：取 $\\varepsilon=1$，存在 $N$ 使 $n\\ge N\\Rightarrow|a_n-A|<1$，於是",
+        "令 $M=\\max\\{|a_1|,\\dots,|a_{N-1}|,\\ |A|+1\\}$",
+        "有限個數取最大，一定存在；所有 $n$ 都 $|a_n|\\le M$　$\\blacksquare$"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}|(a_n+b_n)-(A+B)|&\\le|a_n-A|+|b_n-B|\\\\&<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare\\end{aligned}",
+        "|a_n|\\le|a_n-A|+|A|<|A|+1"
+      ]
     },
     {
-      "heading": "證明：乘積與倒數",
+      "heading": "證明：乘積",
       "body": [
-        "乘積：取上面的 $M$。給定 $\\varepsilon>0$，取 $N_1$ 使 $n\\ge N_1$ 時 $|b_n-b|<\\frac{\\varepsilon}{2M}$，取 $N_2$ 使 $n\\ge N_2$ 時 $|a_n-a|<\\frac{\\varepsilon}{2(|b|+1)}$（用 $|b|+1$ 是為了 $b=0$ 時也不會除以 0）。$n\\ge\\max(N_1,N_2)$ 時 $|a_nb_n-ab|\\le|a_n||b_n-b|+|b||a_n-a|<M\\cdot\\frac{\\varepsilon}{2M}+|b|\\cdot\\frac{\\varepsilon}{2(|b|+1)}<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}=\\varepsilon$。",
-        "倒數（$b\\ne0$）：對 $|b|/2>0$ 取 $N_1$，$n\\ge N_1$ 時 $|b_n-b|<|b|/2$，所以 $|b_n|\\ge|b|-|b_n-b|>|b|/2>0$，特別是 $b_n\\ne0$。這時 $|\\frac{1}{b_n}-\\frac{1}{b}|=|b-b_n|/(|b_n||b|)<2|b_n-b|/|b|^2$。給定 $\\varepsilon>0$，再取 $N_2$ 使 $n\\ge N_2$ 時 $|b_n-b|<\\varepsilon|b|^2/2$，$n\\ge\\max(N_1,N_2)$ 時 $|\\frac{1}{b_n}-\\frac{1}{b}|<\\varepsilon$。除法 $\\frac{a_n}{b_n}=a_n\\cdot(\\frac{1}{b_n})$ 由乘積定律得到。"
+        "設 $|a_n|\\le M$（引理；可取 $M>0$）。給定 $\\varepsilon>0$：",
+        "• $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\dfrac{\\varepsilon}{2(|B|+1)}$",
+        "• $N_2$：$n\\ge N_2\\Rightarrow|b_n-B|<\\dfrac{\\varepsilon}{2M}$",
+        "用 $|B|+1$ 而不用 $|B|$：避免 $B=0$ 時除以 $0$",
+        "取 $N=\\max(N_1,N_2)$，對 $n\\ge N$：",
+        "倒數：$b_n\\to B\\ne0$ ⇒ $\\frac1{b_n}\\to\\frac1B$",
+        "策略：$\\left|\\dfrac1{b_n}-\\dfrac1B\\right|=\\dfrac{|b_n-B|}{|b_n||B|}$，要讓分母的 $|b_n|$ 不要太小",
+        "取 $\\varepsilon=\\frac{|B|}2$：存在 $N_0$，$n\\ge N_0$ 時"
       ],
-      "collapsible": true
+      "tex": [
+        "\\begin{aligned}|a_nb_n-AB|&\\le M|b_n-B|+|B||a_n-A|\\\\&<\\tfrac\\varepsilon2+\\tfrac{|B|}{|B|+1}\\cdot\\tfrac\\varepsilon2<\\varepsilon\\quad\\blacksquare\\end{aligned}",
+        "|b_n|\\ge|B|-|b_n-B|>\\frac{|B|}2"
+      ]
+    },
+    {
+      "heading": "證明：倒數（續）",
+      "body": [
+        "$n\\ge N_0$ 時：",
+        "給定 $\\varepsilon>0$，取 $N_1$ 使 $|b_n-B|<\\dfrac{|B|^2\\varepsilon}{2}$，令 $N=\\max(N_0,N_1)$",
+        "則 $\\left|\\frac1{b_n}-\\frac1B\\right|<\\varepsilon$　$\\blacksquare$",
+        "商：$\\dfrac{a_n}{b_n}=a_n\\cdot\\dfrac1{b_n}\\to A\\cdot\\dfrac1B=\\dfrac AB$",
+        "常數倍 $ca_n\\to cA$：把常數數列 $c,c,c,\\dots$ 當成 $b_n$ 用乘積定律"
+      ],
+      "tex": [
+        "\\left|\\frac1{b_n}-\\frac1B\\right|=\\frac{|b_n-B|}{|b_n||B|}<\\frac{2}{|B|^2}\\,|b_n-B|"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 和：三角不等式拆兩塊，每塊給 $\\frac\\varepsilon2$，$N=\\max$",
+        "• 收斂 ⇒ 有界：$\\varepsilon=1$ 管住後面，有限項取最大",
+        "• 乘積：$a_nb_n-AB=a_n(b_n-B)+B(a_n-A)$，靠有界壓住 $a_n$",
+        "• 倒數：先讓 $|b_n|>\\frac{|B|}2$，分母才不會太小",
+        "• 定律只有一個方向；商要分母極限 $\\ne0$",
+        "下一課：單調收斂定理（嚴格版）"
+      ]
     }
   ],
   "workedExamples": [
@@ -112,419 +189,764 @@
   ],
   "checks": [
     {
-      "ask": "證明和的定律時，為什麼取 $N=\\max(N_1,N_2)$？",
+      "ask": "「若 $a_nb_n$ 收斂，且 $a_n$ 收斂，則 $b_n$ 收斂。」成立嗎？",
       "options": [
         {
-          "label": "要讓 $|a_n-a|<\\frac{\\varepsilon}{2}$ 與 $|b_n-b|<\\frac{\\varepsilon}{2}$ 同時成立",
+          "label": "成立：$b_n=\\frac{a_nb_n}{a_n}$，用商的定律",
+          "why": "商的定律要求分母的極限 $\\ne0$；$a_n\\to0$ 時不能用"
+        },
+        {
+          "label": "不成立：$a_n=\\frac1n$、$b_n=(-1)^n$ 是反例",
           "correct": true
         },
         {
-          "label": "因為 $N$ 越大越好",
-          "why": "$N$ 夠用就好，不是越大越好；取 $\\max$ 的理由是同時滿足兩個條件，取 $\\min$ 會漏掉其中一個。"
+          "label": "成立：乘積定律倒過來用",
+          "why": "定律只有一個方向，不能倒過來"
         },
         {
-          "label": "取 $\\min(N_1,N_2)$ 也可以",
-          "why": "$n\\ge\\min$ 時只保證其中一個條件成立，另一個數列可能還沒進帶子。"
+          "label": "不成立，而且 $a_n$ 收斂到非零的數也不行",
+          "why": "若 $a_n\\to A\\ne0$，從某項起 $a_n\\ne0$，商的定律就給出 $b_n\\to\\frac{\\lim a_nb_n}{A}$"
         }
       ]
     },
     {
-      "ask": "乘積定律的證明裡，哪一步需要「收斂數列有界」？",
+      "ask": "有界引理的證明裡，如果只取 $M=|A|+1$，會出什麼問題？",
       "options": [
         {
-          "label": "控制 $|a_n||b_n-b|$，因為 $a_n$ 會隨 $n$ 變",
+          "label": "前面 $a_1,\\dots,a_{N-1}$ 可能比 $|A|+1$ 大",
           "correct": true
         },
         {
-          "label": "控制 $|b||a_n-a|$",
-          "why": "$b$ 是固定的數，$|b|$ 本身就是常數，不需要額外的引理。"
+          "label": "沒問題，$|A|+1$ 已經夠大",
+          "why": "例：$a_1=100$、其餘 $a_n=\\frac1n$，$A=0$，$|a_1|>1$"
         },
         {
-          "label": "證明 $ab$ 存在",
-          "why": "$a$、$b$ 是實數，$ab$ 當然存在。有界引理是用來把會變的因子 $a_n$ 換成固定的 $M$。"
-        }
-      ]
-    },
-    {
-      "ask": "$a_n=n$、$b_n=-n$。下列何者正確？",
-      "options": [
-        {
-          "label": "$a_n+b_n$ 收斂，但不能用和的定律，因為 $a_n$、$b_n$ 都發散",
-          "correct": true
+          "label": "$|A|+1$ 可能是負的",
+          "why": "絕對值加 $1$ 一定是正的"
         },
         {
-          "label": "$\\lim(a_n+b_n)=\\lim a_n+\\lim b_n=\\infty-\\infty=0$",
-          "why": "你把定律套在不收斂的數列上，又把 $\\infty$ 當數相減。定律的前提是兩個極限都是實數。"
-        },
-        {
-          "label": "$a_n+b_n$ 發散，因為兩個都發散",
-          "why": "$a_n+b_n=0$ 對每個 $n$ 都成立，是常數數列，收斂到 0。定律不能倒過來推。"
-        }
-      ]
-    },
-    {
-      "ask": "$a_n=\\frac{1}{n}$，$b_n=\\frac{1}{n^2}$。$\\lim\\frac{a_n}{b_n}$ 是？",
-      "options": [
-        {
-          "label": "不存在（$\\frac{a_n}{b_n}=n$ 發散）",
-          "correct": true
-        },
-        {
-          "label": "$\\frac{0}{0}=1$",
-          "why": "除法定律要求分母極限不是 0；這裡分母 $\\to0$，不能套。直接化簡 $\\frac{a_n}{b_n}=n$。"
-        },
-        {
-          "label": "0",
-          "why": "你可能只看分子 $\\to0$。分母更快 $\\to0$，比值是 $n$，越來越大。"
+          "label": "$N$ 會依賴 $n$",
+          "why": "$N$ 只依賴我們取的 $\\varepsilon=1$"
         }
       ]
     }
   ],
   "sections": [
     {
+      "title": "一直在用的定律",
+      "beats": [
+        {
+          "show": [
+            "設 $a_n\\to A$、$b_n\\to B$，則",
+            "$\\begin{aligned}&a_n+b_n\\to A+B,\\quad c\\,a_n\\to cA\\\\&a_nb_n\\to AB,\\quad \\frac{a_n}{b_n}\\to\\frac AB\\ (B\\ne0)\\end{aligned}$"
+          ],
+          "say": "從 1.5 開始，我們一直在用極限定律：和、乘積、商的極限，等於極限的和、乘積、商；商要求分母的極限不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設 $a_n\\to A$、$b_n\\to B$，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&a_n+b_n\\to A+B,\\quad c\\,a_n\\to cA\\\\&a_nb_n\\to AB,\\quad \\frac{a_n}{b_n}\\to\\frac AB\\ (B\\ne0)\\end{aligned}}}}$",
+              "on": "乘積#1"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "乘積#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1.5、6.1 都是憑直覺用，從來沒證明"
+          ],
+          "say": "但我們一直是憑直覺在用，從來沒有證明。這一課把它們證出來。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1.5、6.1 都是憑直覺用，從來沒證明",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "主要工具：三角不等式",
+            "$|x+y|\\le|x|+|y|$"
+          ],
+          "say": "主要的工具是三角不等式。",
+          "board": [
+            {
+              "do": "write",
+              "line": "主要工具：三角不等式"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |x+y|\\le|x|+|y|$",
+              "on": "三角"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先看怎麼用：$\\displaystyle\\lim\\frac{3n^2+1}{n^2+n}$",
+            "$\\frac{3n^2+1}{n^2+n}=\\frac{3+\\frac1{n^2}}{1+\\frac1n}$"
+          ],
+          "say": "先看定律怎麼用。把分子分母同除以 n 平方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先看怎麼用：$\\displaystyle\\lim\\frac{3n^2+1}{n^2+n}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3n^2+1}{n^2+n}=\\frac{3+\\frac1{n^2}}{1+\\frac1n}$",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $\\frac1n\\to0$（上一課證過），$\\frac1{n^2}=\\frac1n\\cdot\\frac1n\\to0$（乘積）",
+            "• 分子 $3+\\frac1{n^2}\\to3$，分母 $1+\\frac1n\\to1$（和；常數數列）"
+          ],
+          "say": "n 分之 1 趨近 0；n 平方分之 1 是兩個 n 分之 1 相乘，趨近 0。分子趨近 3，分母趨近 1；分母極限不是 0，用商，得到 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\frac1n\\to0$（上一課證過），$\\frac1{n^2}=\\frac1n\\cdot\\frac1n\\to0$（乘積）"
+            },
+            {
+              "do": "write",
+              "line": "• 分子 $3+\\frac1{n^2}\\to3$，分母 $1+\\frac1n\\to1$（和；常數數列）",
+              "on": "分之#3"
+            },
+            {
+              "do": "write",
+              "line": "• 分母的極限 $1\\ne0$，用商：$\\to\\dfrac31=3$",
+              "on": "分母#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "每一步都引用一條定律，商要檢查分母極限 $\\ne0$"
+          ],
+          "say": "每一步都引用一條定律；用到商的時候，一定要檢查分母的極限不是 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "每一步都引用一條定律，商要檢查分母極限 $\\ne0$",
+              "color": "gold"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "和：誤差分兩半",
       "beats": [
-        { "show": ["設 $a_n\\to a$、$b_n\\to b$"],
-          "note": "要證和、積、商的極限定律。",
-          "say": "和的極限等於極限的和，我們一直在用，現在用 epsilon N 定義把它證出來。",
+        {
+          "show": [
+            "策略：要 $|(a_n+b_n)-(A+B)|<\\varepsilon$",
+            "$|(a_n+b_n)-(A+B)|\\le|a_n-A|+|b_n-B|$"
+          ],
+          "say": "和的策略：總誤差用三角不等式拆成兩個誤差。每一個誤差都小於艾普西隆的一半，加起來就小於艾普西隆。像分帳，一人出一半。",
           "board": [
-            {"do":"write","line":"設 $a_n\\to a$、$b_n\\to b$"},
-            {"do":"write","line":"要證：$a_n+b_n\\to a+b$","on":"現在用"}
-          ] },
-        { "show": ["$|(a_n+b_n)-(a+b)|\\le|a_n-a|+|b_n-b|$"],
-          "say": "用絕對值的不等式，總誤差拆成兩塊：a n 的誤差，加上 b n 的誤差。",
+            {
+              "do": "write",
+              "line": "策略：要 $|(a_n+b_n)-(A+B)|<\\varepsilon$"
+            },
+            {
+              "do": "write",
+              "line": "三角不等式拆成兩個誤差，每個給 $\\frac\\varepsilon2$",
+              "on": "每一"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |(a_n+b_n)-(A+B)|\\le|a_n-A|+|b_n-B|$",
+              "on": "起來"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖",
+            "例：$a_n=1+\\frac1n\\to1$，$b_n=2+\\frac1{n^2}\\to2$，$\\varepsilon=0.1$"
+          ],
+          "say": "例子：a n 等於 1 加 n 分之 1，趨近 1；b n 等於 2 加 n 平方分之 1，趨近 2。給艾普西隆 0.1。",
           "board": [
-            {"do":"write","line":"$|(a_n+b_n)-(a+b)|\\le{{p:|a_n-a|}}+{{q:|b_n-b|}}$","tint":{"p":"blue","q":"violet"},"on":"用絕對值的"},
-            {"do":"underline","term":"p","color":"blue","on":"a n 的誤差"},
-            {"do":"underline","term":"q","color":"violet","on":"b n 的誤差"}
-          ] },
-        { "show": ["兩邊各 $<\\frac{\\varepsilon}{2}$"],
-          "note": "$\\frac{\\varepsilon}{2}$ 也是正數，定義照樣能用。",
-          "say": "總誤差要小於 epsilon，就讓兩塊各小於二分之 epsilon。它也是正數，兩個數列各給一個 N。",
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 440 140\" width=\"620\" height=\"197\"><line x1=\"10\" y1=\"72\" x2=\"430\" y2=\"72\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><line x1=\"30\" y1=\"56\" x2=\"30\" y2=\"88\" stroke=\"var(--ink)\" stroke-width=\"3\"/><line x1=\"410\" y1=\"56\" x2=\"410\" y2=\"88\" stroke=\"var(--ink)\" stroke-width=\"3\"/><rect x=\"30\" y=\"60\" width=\"190\" height=\"24\" fill=\"var(--blue)\" fill-opacity=\".4\"/><rect x=\"220\" y=\"60\" width=\"160\" height=\"24\" fill=\"var(--red)\" fill-opacity=\".4\"/><text x=\"125\" y=\"44\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">|aₙ − A|</text><text x=\"300\" y=\"44\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:KaTeX_Main,serif\">|bₙ − B|</text><text x=\"220\" y=\"125\" text-anchor=\"middle\" font-size=\"26\" style=\"font-family:inherit\">各 &lt; ε/2，接起來 &lt; ε</text></svg>"
+            },
+            {
+              "do": "write",
+              "line": "例：$a_n=1+\\frac1n\\to1$，$b_n=2+\\frac1{n^2}\\to2$，$\\varepsilon=0.1$",
+              "on": "等於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $a_n$ 的誤差 $\\frac1n<0.05\\iff n>20$：$N_1=21$",
+            "• $b_n$ 的誤差 $\\frac1{n^2}<0.05\\iff n^2>20$：$N_2=5$"
+          ],
+          "say": "a n 的誤差要小於 0.05，n 要大於 20，N1 是 21。b n 的誤差要小於 0.05，n 平方大於 20，N2 是 5。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{p:|a_n-a|}}<\\frac{\\varepsilon}{2}$，${{q:|b_n-b|}}<\\frac{\\varepsilon}{2}$","on":"各小於"},
-            {"do":"write","line":"各給一個 $N_1$、$N_2$","on":"兩個數列"}
-          ] },
-        { "show": ["$N=\\max(N_1,N_2)$"],
-          "note": "先決定要的誤差，再分給每一塊。",
-          "say": "取兩個 N 裡比較大的那個。先決定最後要的誤差、再分配給每一塊，這個手法之後一直會用。",
+            {
+              "do": "write",
+              "line": "• $a_n$ 的誤差 $\\frac1n<0.05\\iff n>20$：$N_1=21$"
+            },
+            {
+              "do": "write",
+              "line": "• $b_n$ 的誤差 $\\frac1{n^2}<0.05\\iff n^2>20$：$N_2=5$",
+              "on": "的誤#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個要同時成立：$N=\\max(N_1,N_2)=21$"
+          ],
+          "say": "兩個誤差要同時小，所以 N 取兩者中比較大的，21。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$N=\\max(N_1,N_2)$","on":"取兩個"},
-            {"do":"write","line":"先決定要的誤差，再分給每一塊","on":"先決定"}
-          ] }
+            {
+              "do": "write",
+              "line": "兩個要同時成立：$N=\\max(N_1,N_2)=21$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　驗算：$n\\ge21$ 時 $\\frac1n+\\frac1{n^2}\\le\\frac1{21}+\\frac1{441}\\approx0.0499<0.1$",
+              "color": "violet",
+              "on": "取兩"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "同樣兩個數列，$\\varepsilon=0.02$ 時這個方法給的 $N=\\max(N_1,N_2)$ 是？"
+          ],
+          "say": "先猜猜看，艾普西隆改成 0.02 呢？"
+        }
+      ],
+      "predict": {
+        "ask": "同樣兩個數列，$\\varepsilon=0.02$ 時這個方法給的 $N=\\max(N_1,N_2)$ 是？",
+        "options": [
+          {
+            "label": "$101$",
+            "correct": true
+          },
+          {
+            "label": "$100$",
+            "why": "$n=100$ 時 $\\frac1n=0.01$，不是小於 $0.01$"
+          },
+          {
+            "label": "$51$",
+            "why": "這是把整個 $\\varepsilon$ 給 $a_n$：分帳要給 $\\frac\\varepsilon2=0.01$"
+          },
+          {
+            "label": "$11$",
+            "why": "這只是 $N_2$；$N$ 要兩個都顧到，取較大的"
+          }
+        ]
+      }
+    },
+    {
+      "title": "乘積：需要「有界」",
+      "beats": [
+        {
+          "show": [
+            "策略：加一項、減一項，拆成兩塊",
+            "$a_nb_n-AB=a_n(b_n-B)+B(a_n-A)$"
+          ],
+          "say": "乘積的策略：在中間減掉 a n 乘 B，再加回去。整理成兩塊：a n 乘上 b n 減 B，加上 B 乘上 a n 減 A。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：加一項、減一項，拆成兩塊"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle a_nb_n-AB=a_n(b_n-B)+B(a_n-A)}}$",
+              "on": "再加"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "on": "乘上#1"
+            },
+            {
+              "do": "write",
+              "line": "　展開檢查：$a_nb_n-a_nB+Ba_n-AB=a_nb_n-AB$",
+              "color": "violet",
+              "on": "加上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$|a_nb_n-AB|\\le|a_n|\\,|b_n-B|+|B|\\,|a_n-A|$"
+          ],
+          "say": "取絕對值、用三角不等式。第二塊好處理：B 是固定的數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_nb_n-AB|\\le|a_n|\\,|b_n-B|+|B|\\,|a_n-A|$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題在第一塊：$|a_n|$ 跟著 $n$ 變"
+          ],
+          "say": "麻煩在第一塊：a n 會跟著 n 變。如果它可以很大，b n 減 B 再小也壓不住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題在第一塊：$|a_n|$ 跟著 $n$ 變",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "如果 $|a_n|$ 可以很大，$|b_n-B|$ 小也沒用",
+              "color": "red",
+              "on": "它可"
+            }
+          ]
+        },
+        {
+          "show": [
+            "需要的是：$|a_n|\\le M$ 對所有 $n$",
+            "引理：收斂的數列一定有界"
+          ],
+          "say": "我們需要 a n 有一個固定的上界 M。這就是引理：收斂的數列一定有界。",
+          "board": [
+            {
+              "do": "write",
+              "line": "需要的是：$|a_n|\\le M$ 對所有 $n$"
+            },
+            {
+              "do": "write",
+              "line": "引理：收斂的數列一定有界",
+              "color": "gold",
+              "on": "這就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：從某項起都在 $A\\pm1$ 裡；前面只有有限多項",
+            "圖"
+          ],
+          "say": "直覺：取艾普西隆等於 1，從某一項起，全部都在 A 加減 1 裡面；在那之前，只有有限多項，有限多個數一定有最大的。",
+          "board": [
+            {
+              "do": "write",
+              "line": "直覺：從某項起都在 $A\\pm1$ 裡；前面只有有限多項"
+            },
+            {
+              "do": "plot",
+              "svg": "<svg viewBox=\"0 0 460 135\" width=\"620\" height=\"182\"><line x1=\"10\" y1=\"72\" x2=\"450\" y2=\"72\" stroke=\"var(--ink)\" stroke-width=\"2.5\"/><rect x=\"230\" y=\"56\" width=\"140\" height=\"32\" fill=\"#f5d56e\" fill-opacity=\".55\" stroke=\"var(--blue)\" stroke-width=\"2.5\" stroke-dasharray=\"8 6\"/><circle cx=\"35\" cy=\"72\" r=\"9\" fill=\"var(--red)\"/><circle cx=\"140\" cy=\"72\" r=\"9\" fill=\"var(--red)\"/><circle cx=\"425\" cy=\"72\" r=\"9\" fill=\"var(--red)\"/><circle cx=\"250\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"275\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"295\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"312\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"327\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><circle cx=\"340\" cy=\"72\" r=\"6\" fill=\"var(--blue)\"/><text x=\"300\" y=\"40\" text-anchor=\"middle\" font-size=\"30\" fill=\"var(--blue)\" style=\"font-family:KaTeX_Main,serif\">A ± 1</text><text x=\"140\" y=\"122\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--red)\" style=\"font-family:inherit\">前面有限項</text><text x=\"300\" y=\"122\" text-anchor=\"middle\" font-size=\"28\" fill=\"var(--blue)\" style=\"font-family:inherit\">n ≥ N</text></svg>",
+              "on": "裡面"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定律只有一個方向",
+      "beats": [
+        {
+          "show": [
+            "定律說：$a_n$、$b_n$ 各自收斂 ⇒ 和收斂"
+          ],
+          "say": "要小心，定律只有一個方向：a n 和 b n 各自收斂，和才收斂。反過來不對。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定律說：$a_n$、$b_n$ 各自收斂 ⇒ 和收斂"
+            },
+            {
+              "do": "write",
+              "line": "反過來不成立",
+              "on": "各自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_n=(-1)^n$，$b_n=-(-1)^n$：$a_n+b_n=0\\to0$"
+          ],
+          "say": "例如 a n 是負 1 的 n 次方，b n 是它的相反數。相加永遠是 0，收斂；但 a n 和 b n 各自都發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$a_n=(-1)^n$，$b_n=-(-1)^n$：$a_n+b_n=0\\to0$",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "但 $a_n$、$b_n$ 都發散",
+              "color": "red",
+              "on": "相加"
+            }
+          ]
+        },
+        {
+          "show": [
+            "除法：分母的極限必須 $\\ne0$"
+          ],
+          "say": "除法的條件也不能省：b n 等於 n 分之 1，趨近 0，它的倒數是 n，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "除法：分母的極限必須 $\\ne0$"
+            },
+            {
+              "do": "write",
+              "line": "$b_n=\\frac1n\\to0$：$\\frac1{b_n}=n$ 發散",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　分母極限是 $0$ 時，商可能收斂也可能發散（例如 $\\frac{1/n}{1/n}=1$）：定律不告訴你，要另外處理",
+              "color": "violet",
+              "on": "它的"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "分帳的實際數字",
+      "title": "證明：和",
       "beats": [
-        { "show": ["$a_n=1+\\frac{1}{n}$，$b_n=2+\\frac{1}{n^2}$"],
-          "note": "$\\varepsilon=0.01$，每邊分到 0.005。",
-          "say": "算一次真的。誤差零點零一，兩個數列各分到零點零零五。",
+        {
+          "show": [
+            "定理：$a_n\\to A$，$b_n\\to B$ ⇒ $a_n+b_n\\to A+B$"
+          ],
+          "say": "現在寫正式證明。先證和。",
           "board": [
-            {"do":"write","line":"$a_n=1+\\frac{1}{n}$，$b_n=2+\\frac{1}{n^2}$"},
-            {"do":"write","line":"$\\varepsilon=0.01$","on":"誤差零點零一"},
-            {"do":"write","line":"每邊分 $0.005$","on":"各分到"}
-          ] },
-        { "show": ["$\\frac{1}{n}<0.005$ ⇔ $n>200$：$N_1=201$"],
-          "say": "第一個：n 分之一小於零點零零五，n 要大於兩百，取兩百零一。",
+            {
+              "do": "write",
+              "line": "定理：$a_n\\to A$，$b_n\\to B$ ⇒ $a_n+b_n\\to A+B$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "給定 $\\varepsilon>0$。$\\frac\\varepsilon2>0$，所以",
+            "• 存在 $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\frac\\varepsilon2$"
+          ],
+          "say": "給定艾普西隆。艾普西隆的一半也是正數，所以拿它代進 a n 收斂的定義，得到 N1；代進 b n 收斂的定義，得到 N2。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{n}<0.005$","on":"n 分之一"},
-            {"do":"write","line":"$n>200$","on":"n 要大於"},
-            {"do":"write","line":"$N_1=201$","color":"green","on":"取兩百"}
-          ] },
-        { "show": ["$\\frac{1}{n^2}<0.005$ ⇔ $n^2>200$"],
-          "say": "第二個：n 平方分之一小於零點零零五，n 平方要大於兩百。n 至少要多少？",
+            {
+              "do": "write",
+              "line": "給定 $\\varepsilon>0$。$\\frac\\varepsilon2>0$，所以"
+            },
+            {
+              "do": "write",
+              "line": "• 存在 $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\frac\\varepsilon2$",
+              "on": "是正"
+            },
+            {
+              "do": "write",
+              "line": "• 存在 $N_2$：$n\\ge N_2\\Rightarrow|b_n-B|<\\frac\\varepsilon2$",
+              "on": "收斂#1"
+            },
+            {
+              "do": "write",
+              "line": "　定義對每一個正數都成立，所以可以餵 $\\frac\\varepsilon2$ 進去",
+              "color": "violet",
+              "on": "收斂#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $N=\\max(N_1,N_2)$。對 $n\\ge N$：",
+            "$\\begin{aligned}|(a_n+b_n)-(A+B)|&\\le|a_n-A|+|b_n-B|\\\\&<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare\\end{aligned}$"
+          ],
+          "say": "取 N 為兩者的最大值，兩個條件同時成立。用三角不等式，總誤差小於兩個一半，也就是艾普西隆。證明完畢。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{1}{n^2}<0.005$","on":"n 平方分之一"},
-            {"do":"write","line":"$n^2>200$","on":"要大於"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$N_2$ 取多少？",
-        "options": [
-          {
-            "label": "$15$（$14^2=196$ 不夠）",
-            "correct": true
-          },
-          {
-            "label": "$201$",
-            "why": "201 也行，但那是 $\\frac{1}{n}$ 的條件；$\\frac{1}{n^2}$ 收斂得快，$n^2>200$ 就夠。"
-          },
-          {
-            "label": "$14$",
-            "why": "$14^2=196$，沒有大於 200，$\\frac{1}{196}$ 比 0.005 大。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "乘積要先有界",
-      "beats": [
-        { "show": ["$N=\\max(201,15)=201$"],
-          "note": "誤差 $\\approx0.00500<0.01$。",
-          "say": "兩個取大的，N 是兩百零一。檢查一下，總誤差大約零點零零五，小於零點零一。",
+            {
+              "do": "write",
+              "line": "取 $N=\\max(N_1,N_2)$。對 $n\\ge N$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle {\\begin{aligned}|(a_n+b_n)-(A+B)|&\\le|a_n-A|+|b_n-B|\\\\&<\\tfrac\\varepsilon2+\\tfrac\\varepsilon2=\\varepsilon\\quad\\blacksquare\\end{aligned}}}}$",
+              "on": "時成"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "個一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "引理：$a_n\\to A$ ⇒ 存在 $M$，$|a_n|\\le M$ 對所有 $n$"
+          ],
+          "say": "接著證有界引理。",
           "board": [
-            {"do":"write","line":"$N=\\max(201,15)=201$"},
-            {"do":"write","line":"誤差 $\\approx0.00500<0.01$","on":"總誤差"}
-          ] },
-        { "show": ["$a_nb_n-ab=a_n(b_n-b)+b(a_n-a)$"],
-          "say": "接著是乘積。拆成兩項：第二項前面乘的是固定的 b，好控制；第一項乘的是 a n，它會變。",
+            {
+              "do": "write",
+              "line": "引理：$a_n\\to A$ ⇒ 存在 $M$，$|a_n|\\le M$ 對所有 $n$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "證明：取 $\\varepsilon=1$，存在 $N$ 使 $n\\ge N\\Rightarrow|a_n-A|<1$，於是",
+            "$|a_n|\\le|a_n-A|+|A|<|A|+1$"
+          ],
+          "say": "取艾普西隆等於 1，得到一個 N。n 大於等於 N 時，用三角不等式，a n 的絕對值小於 A 的絕對值加 1。",
           "board": [
-            {"do":"write","line":"$a_nb_n-ab={{p:a_n(b_n-b)}}+{{q:b(a_n-a)}}$","tint":{"p":"blue","q":"violet"}},
-            {"do":"focus","term":"q","color":"violet","label":"固定，好控制","on":"第二項"},
-            {"do":"focus","term":"p","color":"blue","label":"會變","on":"第一項"}
-          ] },
-        { "show": ["收斂數列一定有界：$|a_n|\\le M$"],
-          "note": "反過來不對：$(-1)^n$ 有界但不收斂。",
-          "say": "所以要先知道收斂數列有界，用一個固定的 M 蓋住 a n。證明在後面那節。",
+            {
+              "do": "write",
+              "line": "證明：取 $\\varepsilon=1$，存在 $N$ 使 $n\\ge N\\Rightarrow|a_n-A|<1$，於是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |a_n|\\le|a_n-A|+|A|<|A|+1$",
+              "on": "用三"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $M=\\max\\{|a_1|,\\dots,|a_{N-1}|,\\ |A|+1\\}$"
+          ],
+          "say": "令 M 為前面 N 減 1 項的絕對值，和 A 的絕對值加 1，裡面最大的。有限個數一定有最大值，於是每一項都不超過 M。證明完畢。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"收斂數列有界：$|a_n|\\le{{m:M}}$","on":"收斂數列有界"},
-            {"do":"underline","term":"m","label":"固定","on":"固定的 M"}
-          ] },
-        { "show": ["$|a_n(b_n-b)|\\le M|b_n-b|$"],
-          "say": "有了 M，第一項又變成常數乘一個小量，回到誤差分兩半的情形。",
-          "board": [
-            {"do":"write","line":"$|a_n(b_n-b)|\\le M|b_n-b|$"},
-            {"do":"write","line":"常數 × 小量","on":"常數乘"}
-          ] }
-      ],
-      "check": 1
-    },
-    {
-      "title": "證明：收斂就有界",
-      "beats": [
-        { "show": ["後段用 $\\varepsilon=1$ 關住，前段只有有限多項"],
-          "say": "策略：把 M 造出來。後面的項用 epsilon 等於一關在極限附近，前面的只有有限多項，取最大值。",
-          "board": [
-            {"do":"write","line":"後段：用 $\\varepsilon=1$ 關住","on":"後面的項"},
-            {"do":"write","line":"前段：有限多項，取最大","on":"前面的只有"}
-          ] },
-        { "show": ["取 $N$：$n\\ge N$ 時 $|a_n-a|<1$"],
-          "note": "收斂的定義，$\\varepsilon=1$。",
-          "say": "收斂的定義用在 epsilon 等於一：從第 N 項開始，每一項離 a 都不到一。",
-          "board": [
-            {"do":"write","line":"$n\\ge N$：$|a_n-a|<1$","on":"從第 N 項"}
-          ] },
-        { "show": ["$|a_n|\\le|a_n-a|+|a|<1+|a|$"],
-          "note": "三角不等式。",
-          "why": {"ask":"為什麼 $|a_n|<1+|a|$？","say":"離 a 不到一，為什麼就推得出 a n 的大小有上限？","options":[{"label":"三角不等式：$|a_n|\\le|a_n-a|+|a|$","correct":true},{"label":"$a_n\\to a$，所以 $|a_n|\\le|a|$","why":"收斂不代表每一項都不超過極限：$1+\\frac{1}{n}\\to1$，每一項都比 $1$ 大。"},{"label":"$|a_n-a|<1$，所以 $|a_n|<1$","why":"那只說 $a_n$ 離 $a$ 不到 $1$，不是離 $0$ 不到 $1$；還要加上 $|a|$。"}]},
-          "say": "三角不等式：a n 的長度不超過它離 a 的距離，加上 a 的長度，所以小於一加 a 的絕對值。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$n\\ge N$：$|a_n|<1+|a|$","on":"推得出"},
-            {"do":"write","line":"三角不等式：$|a_n|\\le|a_n-a|+|a|$","color":"gold","why":true,"on":"三角不等式"}
-          ] },
-        { "show": ["離 $a$ 不到 $1$ ⇒ 落在 $a-1$ 到 $a+1$ 之間"],
-          "note": "圖：取 $a=1$，$a_n=1+\\frac{1}{n}$。",
-          "say": "拿 a 等於一畫畫看：離 a 不到一，就是落在 a 減一和 a 加一之間，所以大小不超過一加 a 的絕對值。",
-          "board": [
-            {"do":"clear"},
-            {"do":"plot","graph":{"window":[0,10,-1,3],"curves":[{"expr":"1+1/x","domain":[1,10],"color":"blue"}],"dashed":[[[0,0],[10,0]],[[0,2],[10,2]]]},"on":"畫畫看"},
-            {"do":"write","line":"$a-1<a_n<a+1$","on":"落在"}
-          ] },
-        { "show": ["$M=\\max(|a_1|,\\dots,|a_{N-1}|,1+|a|)$"],
-          "note": "有限多個數取最大值；而且 $M\\ge1>0$。",
-          "why": {"ask":"為什麼前面那些項要另外放進來？","say":"M 裡為什麼還要放前面那幾項？","options":[{"label":"$n<N$ 的項沒被 $\\varepsilon=1$ 管到，但只有有限多項","correct":true},{"label":"前面的項一定比較大","why":"不一定比較大；問題是 $\\varepsilon=1$ 那一步完全沒管到它們。"},{"label":"前面的項可能是無限大","why":"每一項都是確定的實數；只是沒被管到，有限多個取最大值就好。"}]},
-          "say": "第 N 項以前沒被管到，可是只有有限多項，和一加 a 的絕對值一起取最大值，就是 M。",
-          "board": [
-            {"do":"write","line":"${{m:M}}=\\max({{f:|a_1|,\\dots,|a_{N-1}|}},1+|a|)$","on":"M 裡"},
-            {"do":"underline","term":"f","label":"有限多項","why":true,"on":"只有有限多項"},
-            {"do":"box","term":"m","color":"green","why":true,"on":"取最大值"}
-          ] },
-        { "show": ["前段沒被管到：每一項有限 ≠ 有共同上限"],
-          "say": "第 N 項以前，沒有離 a 不到一的保證。每一項雖然都有限，但沒有共同的上限，所以也要放進 M。",
-          "board": [
-            {"do":"write","line":"前段：沒有 $|a_n-a|<1$ 保證"},
-            {"do":"write","line":"每一項有限，不等於有共同上限","on":"每一項"}
-          ] }
-      ],
-      "key": "尾巴落在 $a$ 附近，前段有限項取最大",
-      "proof": true,
-      "of": 4,
-      "skeleton": "構造",
-      "where": {
-        "ask": "「$a_n\\to a$」用在哪一步？",
-        "steps": [
-          {
-            "label": "取 $N$，$n\\ge N$ 時 $|a_n-a|<1$",
-            "correct": true
-          },
-          {
-            "label": "三角不等式：$|a_n|<1+|a|$",
-            "why": "這只用到三角不等式和上一步的 $|a_n-a|<1$。"
-          },
-          {
-            "label": "前 $N-1$ 項和 $1+|a|$ 取最大值",
-            "why": "這只用到有限多個數一定有最大值。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "令 $M=\\max\\{|a_1|,\\dots,|a_{N-1}|,\\ |A|+1\\}$"
+            },
+            {
+              "do": "write",
+              "line": "有限個數取最大，一定存在；所有 $n$ 都 $|a_n|\\le M$　$\\blacksquare$",
+              "color": "gold",
+              "on": "面最"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "證明：乘積",
       "beats": [
-        { "show": ["誤差拆兩項，各分 $\\frac{\\varepsilon}{2}$"],
-          "note": "第一項用有界的 $M$ 蓋住 $a_n$。",
-          "say": "策略：跟和一樣，把誤差拆成兩項、各分一半。多的一招是用 M 蓋住會變的 a n。",
+        {
+          "show": [
+            "設 $|a_n|\\le M$（引理；可取 $M>0$）。給定 $\\varepsilon>0$：",
+            "• $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\dfrac{\\varepsilon}{2(|B|+1)}$"
+          ],
+          "say": "乘積。由引理，a n 有上界 M。給定艾普西隆，這次餵進定義的量要調整：a n 那邊除以 2 倍的 B 絕對值加 1，b n 那邊除以 2M。",
           "board": [
-            {"do":"write","line":"誤差拆兩項，各分 $\\frac{\\varepsilon}{2}$"},
-            {"do":"write","line":"用 $M$ 蓋住會變的 $a_n$","on":"多的一招"}
-          ] },
-        { "show": ["$|a_nb_n-ab|\\le|a_n||b_n-b|+|b||a_n-a|$"],
-          "note": "加一項、減一項，再用三角不等式。",
-          "say": "a n b n 減 a b，加一項 a n b、減一項 a n b，再用三角不等式，拆成兩項。",
+            {
+              "do": "write",
+              "line": "設 $|a_n|\\le M$（引理；可取 $M>0$）。給定 $\\varepsilon>0$："
+            },
+            {
+              "do": "write",
+              "line": "• $N_1$：$n\\ge N_1\\Rightarrow|a_n-A|<\\dfrac{\\varepsilon}{2(|B|+1)}$",
+              "on": "給定"
+            },
+            {
+              "do": "write",
+              "line": "• $N_2$：$n\\ge N_2\\Rightarrow|b_n-B|<\\dfrac{\\varepsilon}{2M}$",
+              "on": "那邊#1"
+            },
+            {
+              "do": "write",
+              "line": "　用 $|B|+1$ 而不用 $|B|$：避免 $B=0$ 時除以 $0$",
+              "color": "violet",
+              "on": "對值"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $N=\\max(N_1,N_2)$，對 $n\\ge N$：",
+            "$\\begin{aligned}|a_nb_n-AB|&\\le M|b_n-B|+|B||a_n-A|\\\\&<\\tfrac\\varepsilon2+\\tfrac{|B|}{|B|+1}\\cdot\\tfrac\\varepsilon2<\\varepsilon\\quad\\blacksquare\\end{aligned}$"
+          ],
+          "say": "取最大的 N，代進剛才的拆法：第一塊小於一半；第二塊是一半再乘上一個小於 1 的數。加起來小於艾普西隆。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a_nb_n-ab=a_n(b_n-b)+b(a_n-a)$","on":"加一項"},
-            {"do":"write","line":"$|a_nb_n-ab|\\le{{p:|a_n||b_n-b|}}+{{q:|b||a_n-a|}}$","tint":{"p":"blue","q":"violet"},"on":"再用三角"}
-          ] },
-        { "show": ["取 $N_1$：$|b_n-b|<\\frac{\\varepsilon}{2M}$"],
-          "note": "$|a_n|\\le M$，第一項 $<\\frac{\\varepsilon}{2}$。",
-          "why": {"ask":"為什麼除以 $M$，不除以 $|a_n|$？","say":"第一項前面乘的是 a n。為什麼分母放 M，不放 a n？","options":[{"label":"$N_1$ 要先取好，只能用不跟著 $n$ 變的 $M$","correct":true},{"label":"$|a_n|$ 可能是 $0$","why":"就算不是 $0$ 也不行：$N_1$ 得在看到 $n$ 之前取好，不能跟著 $|a_n|$ 走。"},{"label":"$M$ 比 $|a_n|$ 小","why":"$M\\ge|a_n|$，比較大；用它是因為它固定不動。"}]},
-          "say": "N 一要在看到 n 之前就取好，所以只能用固定的 M。M 乘二 M 分之 epsilon，就是二分之 epsilon。",
+            {
+              "do": "write",
+              "line": "取 $N=\\max(N_1,N_2)$，對 $n\\ge N$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle {\\begin{aligned}|a_nb_n-AB|&\\le M|b_n-B|+|B||a_n-A|\\\\&<\\tfrac\\varepsilon2+\\tfrac{|B|}{|B|+1}\\cdot\\tfrac\\varepsilon2<\\varepsilon\\quad\\blacksquare\\end{aligned}}}}$",
+              "on": "塊小"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "小於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "倒數：$b_n\\to B\\ne0$ ⇒ $\\frac1{b_n}\\to\\frac1B$",
+            "策略：$\\left|\\dfrac1{b_n}-\\dfrac1B\\right|=\\dfrac{|b_n-B|}{|b_n||B|}$，要讓分母的 $|b_n|$ 不要太小"
+          ],
+          "say": "最後是倒數。通分以後，誤差是 b n 減 B 的絕對值，除以 b n 乘 B 的絕對值。危險在分母的 b n：它不能太靠近 0。",
           "board": [
-            {"do":"focus","term":"p","color":"blue","on":"第一項"},
-            {"do":"write","line":"取 $N_1$：$|b_n-b|<\\frac{\\varepsilon}{{{m:2M}}}$","on":"為什麼分母"},
-            {"do":"underline","term":"m","label":"固定的 M","why":true,"on":"固定的 M"}
-          ] },
-        { "show": ["取 $N_2$：$|a_n-a|<\\frac{\\varepsilon}{2(|b|+1)}$"],
-          "note": "$b=0$ 時也不會除以 $0$。",
-          "why": {"ask":"為什麼是 $|b|+1$，不是 $|b|$？","say":"第二項前面乘的是 b。分母為什麼要多加一？","options":[{"label":"$b=0$ 時不會除以 $0$，而且 $\\frac{|b|}{|b|+1}<1$","correct":true},{"label":"$b_n$ 會變，要多留一點","why":"這一項乘的是固定的 $b$，不是 $b_n$；加 $1$ 是怕 $b=0$。"},{"label":"讓誤差剛好等於 $\\frac{\\varepsilon}{2}$","why":"加 $1$ 之後是嚴格小於 $\\frac{\\varepsilon}{2}$；目的是避開 $b=0$ 時除以 $0$。"}]},
-          "say": "b 可能是零，除以 b 的絕對值會出事；多加一就安全，而且 b 的絕對值除以它小於一。",
+            {
+              "do": "write",
+              "line": "倒數：$b_n\\to B\\ne0$ ⇒ $\\frac1{b_n}\\to\\frac1B$"
+            },
+            {
+              "do": "write",
+              "line": "策略：$\\left|\\dfrac1{b_n}-\\dfrac1B\\right|=\\dfrac{|b_n-B|}{|b_n||B|}$，要讓分母的 $|b_n|$ 不要太小",
+              "on": "的絕#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "取 $\\varepsilon=\\frac{|B|}2$：存在 $N_0$，$n\\ge N_0$ 時",
+            "$|b_n|\\ge|B|-|b_n-B|>\\frac{|B|}2$"
+          ],
+          "say": "先用一次定義，艾普西隆取 B 的絕對值的一半：從某項起，b n 離 B 不到一半，所以 b n 的絕對值大於 B 的一半。特別是 b n 不等於 0。",
           "board": [
-            {"do":"focus","term":"q","color":"violet","on":"第二項"},
-            {"do":"write","line":"取 $N_2$：$|a_n-a|<\\frac{\\varepsilon}{2({{bb:|b|+1}})}$","on":"分母為什麼"},
-            {"do":"underline","term":"bb","label":"b 可能是 0","why":true,"on":"b 可能是零"}
-          ] },
-        { "show": ["$|b|+1\\ge1$，且 $\\frac{|b|}{|b|+1}<1$"],
-          "say": "分母至少是一，不會是零。而且 b 的絕對值除以它小於一，所以第二項小於二分之 epsilon。",
-          "board": [
-            {"do":"write","line":"$|b|+1\\ge1$"},
-            {"do":"write","line":"$\\frac{|b|}{|b|+1}<1$","on":"除以它"},
-            {"do":"write","line":"$|b||a_n-a|<\\frac{\\varepsilon}{2}$","on":"第二項"}
-          ] },
-        { "show": ["$n\\ge\\max(N_1,N_2)$：$<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}=\\varepsilon$"],
-          "say": "取兩個 N 裡大的那個，兩項各小於二分之 epsilon，加起來小於 epsilon。證完。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$n\\ge\\max(N_1,N_2)$","on":"取兩個"},
-            {"do":"write","line":"$|a_nb_n-ab|<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}={{e:\\varepsilon}}$","on":"兩項各"},
-            {"do":"box","term":"e","color":"green","label":"證完","on":"加起來"}
-          ] }
-      ],
-      "key": "加一項減一項，再用有界的 $M$ 壓住 $a_n$",
-      "proof": true,
-      "of": 5,
-      "skeleton": "ε-δ",
-      "where": {
-        "ask": "「$b_n\\to b$」用在哪一步？",
-        "steps": [
-          {
-            "label": "拆成 $|a_n||b_n-b|+|b||a_n-a|$",
-            "why": "這只是加一項減一項和三角不等式，對任何數都成立。"
-          },
-          {
-            "label": "取 $N_1$：$|b_n-b|<\\frac{\\varepsilon}{2M}$",
-            "correct": true
-          },
-          {
-            "label": "取 $N_2$：$|a_n-a|<\\frac{\\varepsilon}{2(|b|+1)}$",
-            "why": "這一步用的是 $a_n\\to a$，$b$ 只是固定的常數。"
-          },
-          {
-            "label": "$n\\ge\\max(N_1,N_2)$，兩項相加 $<\\varepsilon$",
-            "why": "這只是把前兩步的結果加起來。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "取 $\\varepsilon=\\frac{|B|}2$：存在 $N_0$，$n\\ge N_0$ 時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |b_n|\\ge|B|-|b_n-B|>\\frac{|B|}2$",
+              "on": "到一"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "只有一個方向",
+      "title": "證明：倒數（續）",
       "beats": [
-        { "show": ["兩個都收斂 ⇒ 和收斂"],
-          "note": "反方向不成立。",
-          "say": "定律只說：兩個都收斂，和就收斂。倒過來推是錯的。",
+        {
+          "show": [
+            "$n\\ge N_0$ 時：",
+            "$\\left|\\frac1{b_n}-\\frac1B\\right|=\\frac{|b_n-B|}{|b_n||B|}<\\frac{2}{|B|^2}\\,|b_n-B|$"
+          ],
+          "say": "於是 n 大於等於 N0 時，誤差小於 B 平方分之 2，乘上 b n 減 B 的絕對值。分母被我們換成了固定的數。",
           "board": [
-            {"do":"write","line":"$a_n\\to a$、$b_n\\to b$ ⇒ $a_n+b_n\\to a+b$"},
-            {"do":"write","line":"${{r:a_n+b_n\\to a+b\\Rightarrow a_n\\to a,\\ b_n\\to b}}$","on":"倒過來"},
-            {"do":"strike","term":"r","label":"錯","on":"推是"}
-          ] },
-        { "show": ["$a_n=n$、$b_n=-n$：都發散","$a_n+b_n=0$ 收斂"],
-          "say": "n 和負 n 都發散，加起來卻每一項都是零，收斂。",
+            {
+              "do": "write",
+              "line": "$n\\ge N_0$ 時："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\left|\\frac1{b_n}-\\frac1B\\right|=\\frac{|b_n-B|}{|b_n||B|}<\\frac{2}{|B|^2}\\,|b_n-B|$",
+              "on": "乘上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "給定 $\\varepsilon>0$，取 $N_1$ 使 $|b_n-B|<\\dfrac{|B|^2\\varepsilon}{2}$，令 $N=\\max(N_0,N_1)$"
+          ],
+          "say": "給定艾普西隆，再取 N1，讓 b n 減 B 小於 2 分之 B 平方乘艾普西隆。N 取兩者最大，誤差就小於艾普西隆。證明完畢。",
           "board": [
-            {"do":"write","line":"$a_n=n$、$b_n=-n$：都發散"},
-            {"do":"write","line":"$a_n+b_n=0$","on":"加起來"}
-          ] },
-        { "show": ["$a_n=\\frac{1}{n}$，$b_n=(-1)^n$"],
-          "note": "$a_nb_n\\to0$，$a_n\\to0$，$b_n$ 卻發散。",
-          "say": "乘積也一樣：n 分之一乘負一的 n 次方會收斂到零，可是負一的 n 次方本身發散。",
+            {
+              "do": "write",
+              "line": "給定 $\\varepsilon>0$，取 $N_1$ 使 $|b_n-B|<\\dfrac{|B|^2\\varepsilon}{2}$，令 $N=\\max(N_0,N_1)$"
+            },
+            {
+              "do": "write",
+              "line": "則 $\\left|\\frac1{b_n}-\\frac1B\\right|<\\varepsilon$　$\\blacksquare$",
+              "color": "gold",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "商：$\\dfrac{a_n}{b_n}=a_n\\cdot\\dfrac1{b_n}\\to A\\cdot\\dfrac1B=\\dfrac AB$"
+          ],
+          "say": "商就不用另外證了：a n 除以 b n，就是 a n 乘上 b n 的倒數，用乘積和倒數兩條就得到。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$a_n=\\frac{1}{n}$，$b_n=(-1)^n$","on":"乘積也一樣"},
-            {"do":"write","line":"$a_nb_n\\to0$","on":"會收斂到零"},
-            {"do":"write","line":"$b_n$ 發散","on":"可是負一"}
-          ] },
-        { "show": ["$|(-1)^n|=1$，所以 $|a_nb_n|=\\frac{1}{n}$"],
-          "say": "為什麼會收斂到零？負一的 n 次方，絕對值永遠是一，所以乘積的絕對值就是 n 分之一，趨近零。",
-          "board": [
-            {"do":"write","line":"$|(-1)^n|=1$"},
-            {"do":"write","line":"$|a_nb_n|=\\frac{1}{n}\\to0$","on":"乘積的絕對值"}
-          ] }
+            {
+              "do": "write",
+              "line": "商：$\\dfrac{a_n}{b_n}=a_n\\cdot\\dfrac1{b_n}\\to A\\cdot\\dfrac1B=\\dfrac AB$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　常數倍 $ca_n\\to cA$：把常數數列 $c,c,c,\\dots$ 當成 $b_n$ 用乘積定律",
+              "color": "violet",
+              "on": "乘上"
+            }
+          ]
+        }
       ],
-      "check": 2
+      "check": 1
     },
     {
-      "title": "除法要 $b\\ne0$",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\frac{a_n}{b_n}\\to\\frac{a}{b}$ 要 $b\\ne0$"],
-          "note": "還要先證 $n$ 夠大時 $|b_n|>|b|/2$。",
-          "say": "除法定律多一個條件：分母的極限不是零。證明時還要先確定 b n 離零夠遠，不會除以零。",
+        {
+          "show": [
+            "• 和：三角不等式拆兩塊，每塊給 $\\frac\\varepsilon2$，$N=\\max$",
+            "• 收斂 ⇒ 有界：$\\varepsilon=1$ 管住後面，有限項取最大"
+          ],
+          "say": "整理一下：和用一半分帳；收斂數列有界；乘積加一項減一項，再用有界壓住；倒數先讓分母遠離 0。定律只有一個方向。",
           "board": [
-            {"do":"write","line":"$\\frac{a_n}{b_n}\\to\\frac{a}{b}$，要 ${{c:b\\ne0}}$"},
-            {"do":"box","term":"c","label":"條件","on":"分母的極限"},
-            {"do":"write","line":"$n$ 夠大：$|b_n|>|b|/2$","on":"離零夠遠"}
-          ] },
-        { "show": ["取 $\\varepsilon=|b|/2$：$|b_n-b|<|b|/2$"],
-          "say": "取 epsilon 等於 b 的絕對值的一半，收斂給我們一個 N，從那裡起 b n 離 b 不到一半。",
+            {
+              "do": "write",
+              "line": "• 和：三角不等式拆兩塊，每塊給 $\\frac\\varepsilon2$，$N=\\max$"
+            },
+            {
+              "do": "write",
+              "line": "• 收斂 ⇒ 有界：$\\varepsilon=1$ 管住後面，有限項取最大",
+              "on": "收斂"
+            },
+            {
+              "do": "write",
+              "line": "• 乘積：$a_nb_n-AB=a_n(b_n-B)+B(a_n-A)$，靠有界壓住 $a_n$",
+              "on": "一項#1"
+            },
+            {
+              "do": "write",
+              "line": "• 倒數：先讓 $|b_n|>\\frac{|B|}2$，分母才不會太小",
+              "on": "倒數"
+            },
+            {
+              "do": "write",
+              "line": "• 定律只有一個方向；商要分母極限 $\\ne0$",
+              "on": "定律"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：單調收斂定理（嚴格版）"
+          ],
+          "say": "下一課，用上確界嚴格證明單調收斂定理。",
           "board": [
-            {"do":"write","line":"取 $\\varepsilon=|b|/2$"},
-            {"do":"write","line":"$|b_n-b|<|b|/2$","on":"離 b"}
-          ] },
-        { "show": ["$|b_n|\\ge|b|-|b_n-b|>|b|/2$"],
-          "say": "再用三角不等式：b n 的長度，至少是 b 的絕對值減去它離 b 的距離，所以大於 b 的絕對值的一半。",
-          "board": [
-            {"do":"write","line":"$|b_n|\\ge|b|-|b_n-b|>|b|/2$"}
-          ] },
-        { "show": ["$\\frac{3n^2+1}{n^2+n}=\\frac{3+\\frac{1}{n^2}}{1+\\frac{1}{n}}$"],
-          "note": "代數恆等式，不涉及極限。",
-          "say": "用定律算一題。分子分母同除以 n 平方，這只是代數，對每個 n 都成立。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{3n^2+1}{n^2+n}={{r:\\frac{3+\\frac{1}{n^2}}{1+\\frac{1}{n}}}}$","on":"分子分母"},
-            {"do":"underline","term":"r","label":"只是代數","on":"只是代數"}
-          ] },
-        { "show": ["分子 $\\to3$，分母 $\\to1$"],
-          "note": "乘積定律、和的定律。",
-          "say": "n 平方分之一是 n 分之一乘自己，趨近零；用和的定律，分子趨近三、分母趨近一。",
-          "board": [
-            {"do":"write","line":"$\\frac{1}{n^2}=\\frac{1}{n}\\cdot\\frac{1}{n}\\to0$"},
-            {"do":"write","line":"分子 $\\to3$，分母 $\\to1$","on":"分子趨近"}
-          ] },
-        { "show": ["分母極限 $1\\ne0$ ⇒ 極限 $=3$"],
-          "say": "分母的極限是一，不是零，才可以用除法定律，答案是三。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"分母極限 $1\\ne0$","on":"分母的極限"},
-            {"do":"write","line":"極限 $=3$","color":"green","on":"才可以用"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：單調收斂定理（嚴格版）"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
@@ -571,7 +993,15 @@
     }
   ],
   "gaps": [
-    { "tag": "limlaw-epsilon-split", "count": 2, "note": "白話證明：用定義證明和的極限定律、常數倍定律。" },
-    { "tag": "limlaw-bounded-lemma", "count": 1, "note": "白話證明：收斂數列有界（「給 ε = 1 求具體的界 M」的計算已由 cg-12c-006 補上）。" }
+    {
+      "tag": "limlaw-epsilon-split",
+      "count": 2,
+      "note": "白話證明：用定義證明和的極限定律、常數倍定律。"
+    },
+    {
+      "tag": "limlaw-bounded-lemma",
+      "count": 1,
+      "note": "白話證明：收斂數列有界（「給 ε = 1 求具體的界 M」的計算已由 cg-12c-006 補上）。"
+    }
   ]
 }

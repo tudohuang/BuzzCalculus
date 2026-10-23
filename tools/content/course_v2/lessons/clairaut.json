@@ -1,64 +1,147 @@
 {
   "id": "clairaut",
   "title": "Clairaut 定理",
-  "readMinutes": 10,
+  "source": "notebook",
+  "readMinutes": 8,
   "totalMinutes": 30,
-  "prerequisites": ["higher-partials", "mean-value-theorem"],
-  "next": ["total-differential"],
-  "related": ["gradient-field", "conservative-fields", "multivariable-continuity"],
+  "prerequisites": [
+    "higher-partials",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "total-differential"
+  ],
+  "related": [
+    "gradient-field",
+    "conservative-fields",
+    "multivariable-continuity"
+  ],
   "objectives": [
-    "正確說出 Clairaut 定理的條件：$f_{xy}$ 與 $f_{yx}$ 在該點附近都連續，才保證兩者相等。",
-    "會用它檢查計算，並挑比較好算的微分順序。",
-    "會用 $P_y=Q_x$ 判斷 $(P,Q)$ 不可能是某個函數的兩個偏導數。"
+    "正確說出 Clairaut 定理的條件：$f_{xy}$ 與 $f_{yx}$ 在該點附近都連續，才保證兩者相等",
+    "會用它檢查計算，並挑比較好算的微分順序",
+    "會用 $P_y=Q_x$ 判斷 $(P,Q)$ 不可能是某個函數的兩個偏導數"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 觀察：順序好像不重要",
       "body": [
-        "上一課每個例子都有 $f_{xy}=f_{yx}$：先對 $x$ 再對 $y$，和先對 $y$ 再對 $x$，結果一樣。這不是巧合，但也不是無條件成立。"
+        "例：$f(x,y)=x^3y+e^{xy^2}$",
+        "先 $x$：$f_x=3x^2y+y^2e^{xy^2}$",
+        "再對 $y$：$y^2e^{xy^2}$ 要用乘法法則",
+        "先 $y$：$f_y=x^3+2xy\\,e^{xy^2}$",
+        "再對 $x$：$2xy\\cdot e^{xy^2}$ 也是乘法法則",
+        "數值驗算：$(0.6,0.8)$ 時兩個都是 $4.3311$"
       ],
-      "collapsible": false
+      "tex": [
+        "f_{xy}=3x^2+2ye^{xy^2}+y^2\\cdot2xy\\,e^{xy^2}",
+        "f_{xy}=3x^2+(2y+2xy^3)e^{xy^2}",
+        "f_{yx}=3x^2+2ye^{xy^2}+2xy\\cdot y^2e^{xy^2}",
+        "f_{yx}=3x^2+(2y+2xy^3)e^{xy^2}"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設 $f$ 定義在包含 $(a,b)$ 的某個開圓盤 $D$ 上，而且 $f_{xy}$ 與 $f_{yx}$ 在 $D$ 上都存在且連續。那麼 $f_{xy}(a,b)=f_{yx}(a,b)$。",
-        "實際上：多項式、$e^x$、$\\sin$、$\\cos$、$\\ln$（在定義域內）以及它們的四則與合成，各階偏導數在定義域內部都連續，所以順序可以隨便換。要小心的是分段定義的函數在接縫點。"
+        "Clairaut 定理：若 $f_{xy}$ 與 $f_{yx}$ 在 $(a,b)$ 附近（某個圓盤裡）都連續，則",
+        "條件是連續，不是「存在」就好",
+        "常見的函數都符合：多項式、$e^x$、$\\sin$、$\\cos$、$\\ln$（定義域內）組合起來的",
+        "三階也一樣：$f_{xxy}=f_{xyx}=f_{yxx}$",
+        "例如三個都是「$x$ 兩次、$y$ 一次」"
       ],
-      "collapsible": false
+      "tex": [
+        "f_{xy}(a,b)=f_{yx}(a,b)"
+      ]
     },
     {
       "heading": "③ 用途一：挑好算的順序",
       "body": [
-        "$f=x^2y+e^{\\sin y}\\ln(1+y^2)$，要 $f_{yx}$。照字面先對 $y$ 微分，後面那一項很麻煩。但 $f$ 是初等函數，條件成立，$f_{yx}=f_{xy}$；先對 $x$ 微分，後面那項不含 $x$，直接消失：$f_x=2xy$，$f_{xy}=2x$。"
+        "例：$f(x,y)=x^2y+e^{\\sin y}\\ln(1+y^2)$，求 $f_{yx}$",
+        "照字面先對 $y$：第二項要用乘法法則＋兩次連鎖律",
+        "換順序：Clairaut 說 $f_{yx}=f_{xy}$，改成先對 $x$",
+        "第二項沒有 $x$：對 $x$ 微分直接是 $0$",
+        "再對 $y$：",
+        "可以用：$e^{\\sin y}$ 與 $\\ln(1+y^2)$ 處處光滑（$1+y^2>0$），條件成立"
       ],
-      "collapsible": false
+      "tex": [
+        "f_x=2xy",
+        "f_{yx}=f_{xy}=2x"
+      ]
     },
     {
-      "heading": "④ 用途二：判斷是不是某個函數的偏導數",
+      "heading": "④ 用途二：是不是偏導數",
       "body": [
-        "如果 $P=f_x$、$Q=f_y$，而且 $f$ 的二階偏導數連續，那麼 $P_y=f_{xy}=f_{yx}=Q_x$。",
-        "所以 $P_y\\ne Q_x$ 時，$(P,Q)$ 不可能是任何（二階偏導數連續的）函數的 $(f_x,f_y)$。例：$(y,-x)$，$P_y=1$、$Q_x=-1$，不可能。反過來 $P_y=Q_x$ 還需要區域的條件才保證找得到 $f$，那是〈保守場〉的主題。"
+        "問題：給 $(P,Q)$，有沒有 $f$ 使得 $f_x=P$、$f_y=Q$？",
+        "如果有（而且夠光滑）：",
+        "所以：$P_y\\ne Q_x$ 就不可能",
+        "(a) $(P,Q)=(2xy+1,\\ x^2+3y^2)$",
+        "$P_y=2x$，$Q_x=2x$：相等，可能",
+        "真的找得到：$f=x^2y+x+y^3$",
+        "(b) $(P,Q)=(y,\\ 2x)$",
+        "$P_y=1$，$Q_x=2$：不相等，不可能",
+        "相等只是「必要」；在整個平面上它也是充分條件，留到線積分的「保守場」再證"
       ],
-      "collapsible": false
+      "tex": [
+        "P_y=f_{xy}=f_{yx}=Q_x"
+      ]
     },
     {
-      "heading": "【直觀與證明】為什麼連續就夠",
+      "heading": "【證明】為什麼連續就夠",
       "body": [
-        "看小矩形四個角的組合 $\\Delta=f(a+h,b+k)-f(a+h,b)-f(a,b+k)+f(a,b)$。先看成「$x$ 方向差分的 $y$ 方向差分」，再看成「$y$ 方向差分的 $x$ 方向差分」，是同一個數。",
-        "嚴格做法：令 $g(x)=f(x,b+k)-f(x,b)$，$\\Delta=g(a+h)-g(a)$。用〈均值定理〉兩次，$\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$，$(\\xi,\\eta)$ 在矩形裡。換一種分組，$\\Delta=hk\\cdot f_{yx}(\\xi',\\eta')$。所以 $f_{xy}(\\xi,\\eta)=f_{yx}(\\xi',\\eta')$。$h$、$k\\to0$ 時兩點都 $\\to(a,b)$，兩個混合偏導在 $(a,b)$ 連續，兩邊的極限就是 $f_{xy}(a,b)$ 與 $f_{yx}(a,b)$，因此相等。連續性就用在最後這一步。"
+        "看小正方形四個角的交錯和：",
+        "分組一：令 $g(x)=f(x,b{+}h)-f(x,b)$，則 $\\Delta=g(a{+}h)-g(a)$",
+        "均值定理（對 $x$）：",
+        "再用一次均值定理（對 $y$）："
       ],
-      "collapsible": true
+      "tex": [
+        "\\Delta=f(a{+}h,b{+}h)-f(a{+}h,b)-f(a,b{+}h)+f(a,b)",
+        "\\Delta=h\\,g'(c_1)=h\\big[f_x(c_1,b{+}h)-f_x(c_1,b)\\big]",
+        "\\Delta=h^2f_{xy}(c_1,d_1)"
+      ]
+    },
+    {
+      "heading": "【證明】（續）",
+      "body": [
+        "分組二：令 $k(y)=f(a{+}h,y)-f(a,y)$，則 $\\Delta=k(b{+}h)-k(b)$",
+        "同樣用兩次均值定理（先對 $y$，再對 $x$）：",
+        "兩式相等，除以 $h^2$：",
+        "兩點都在正方形裡：$h\\to0$ 時都 $\\to(a,b)$",
+        "$f_{xy}$、$f_{yx}$ 連續：兩邊取極限",
+        "用均值定理需要 $f_x$、$f_y$ 在附近存在；有 $f_{xy}$、$f_{yx}$ 就表示它們存在"
+      ],
+      "tex": [
+        "\\Delta=h^2f_{yx}(c_2,d_2)",
+        "f_{xy}(c_1,d_1)=f_{yx}(c_2,d_2)",
+        "f_{xy}(a,b)=f_{yx}(a,b)\\quad\\blacksquare"
+      ]
     },
     {
       "heading": "【反例】條件拿掉會出錯",
       "body": [
-        "$f(x,y)=\\frac{xy(x^2-y^2)}{x^2+y^2}$（原點以外），$f(0,0)=0$。$|f|\\le|xy|$，所以 $f$ 連續，而且到處都有一階偏導數。",
-        "$f_x(0,y)$：對 $y\\ne 0$，$\\lim_{h\\to0}\\frac{f(h,y)}{h}=\\lim\\frac{y(h^2-y^2)}{h^2+y^2}=-y$；$y=0$ 時 $f(h,0)=0$，也得 $0$。所以 $f_x(0,y)=-y$，$f_{xy}(0,0)=-1$。",
-        "同理 $f_y(x,0)=x$，$f_{yx}(0,0)=1$。兩個混合偏導都存在，卻不相等：它們在原點不連續，定理的條件不成立。"
+        "沿 $y$ 軸算 $f_x$（$y\\ne0$）：",
+        "$y=0$ 時 $f_x(0,0)=0=-0$，也符合",
+        "$f_{xy}(0,0)=\\dfrac{d}{dy}(-y)=-1$",
+        "同理沿 $x$ 軸：$f_y(x,0)=x$",
+        "問題出在：$f_{xy}$ 在原點不連續",
+        "原點以外 $f_{xy}=\\frac{x^6+9x^4y^2-9x^2y^4-y^6}{(x^2+y^2)^3}$"
       ],
-      "collapsible": true
+      "tex": [
+        "f(x,y)=\\begin{cases}\\dfrac{xy(x^2-y^2)}{x^2+y^2}, & (x,y)\\ne(0,0)\\\\[4pt]0, & (x,y)=(0,0)\\end{cases}",
+        "f_x(0,y)=\\lim_{h\\to0}\\frac{f(h,y)}{h}=\\lim_{h\\to0}\\frac{y(h^2-y^2)}{h^2+y^2}=-y",
+        "f_{yx}(0,0)=\\frac{d}{dx}(x)=1",
+        "f_{xy}(0,0)=-1\\ne1=f_{yx}(0,0)"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• Clairaut：$f_{xy}$、$f_{yx}$ 在附近都連續 ⇒ $f_{xy}=f_{yx}$",
+        "• 用途一：挑好算的順序（沒有 $x$ 的項，先對 $x$ 就消失）",
+        "• 用途二：$P_y\\ne Q_x$ ⇒ $(P,Q)$ 不可能是某個 $f$ 的偏導數",
+        "• 證明：小正方形的交錯和，兩種分組各用兩次均值定理",
+        "• 不連續時可能不相等：反例 $f_{xy}(0,0)=-1$，$f_{yx}(0,0)=1$",
+        "下一課：全微分"
+      ]
     }
   ],
   "workedExamples": [
@@ -106,318 +189,909 @@
   ],
   "checks": [
     {
-      "ask": "Clairaut 定理保證 $f_{xy}(a,b)=f_{yx}(a,b)$ 的條件是？",
+      "ask": "$f(x,y)=xe^{y}+\\arctan\\!\\big(y^5+y\\big)$，$f_{yx}=$？",
       "options": [
-        { "label": "$f_{xy}$ 與 $f_{yx}$ 在 $(a,b)$ 附近都連續", "correct": true },
-        { "label": "$f$ 在 $(a,b)$ 連續", "why": "反例 $\\frac{xy(x^2-y^2)}{x^2+y^2}$ 處處連續，混合偏導在原點還是 $-1$ 與 $1$。" },
-        { "label": "$f_x$ 與 $f_y$ 在 $(a,b)$ 附近都存在", "why": "反例的一階偏導數到處都存在，仍然不相等。要的是混合偏導連續。" }
+        {
+          "label": "$e^{y}$",
+          "correct": true
+        },
+        {
+          "label": "$0$",
+          "why": "第一項有 $x$ 也有 $y$，混合偏導不是 $0$"
+        },
+        {
+          "label": "$xe^{y}$",
+          "why": "這是 $f_{yy}$ 的第一項；對 $x$ 微分後 $x$ 就不見了"
+        },
+        {
+          "label": "$e^{y}+\\dfrac{5y^4+1}{1+(y^5+y)^2}$",
+          "why": "第二項沒有 $x$，對 $x$ 微分就是 $0$"
+        }
       ]
     },
     {
-      "ask": "反例 $f=\\frac{xy(x^2-y^2)}{x^2+y^2}$（原點補 $0$）說明了什麼？",
+      "ask": "哪一組==可能==是某個 $f$ 的 $(f_x,f_y)$？",
       "options": [
-        { "label": "混合偏導不連續時，$f_{xy}$ 與 $f_{yx}$ 可以不相等", "correct": true },
-        { "label": "Clairaut 定理是錯的", "why": "反例不滿足定理的條件（混合偏導在原點不連續），所以不違反定理。" },
-        { "label": "微分順序永遠不重要", "why": "在這個例子裡順序就造成 $-1$ 與 $1$ 的差別。" }
+        {
+          "label": "$(y\\cos x,\\ \\sin x)$",
+          "correct": true
+        },
+        {
+          "label": "$(xy,\\ xy)$",
+          "why": "$P_y=x$，$Q_x=y$，不相等"
+        },
+        {
+          "label": "$(y^2,\\ x^2)$",
+          "why": "$P_y=2y$，$Q_x=2x$，不相等"
+        },
+        {
+          "label": "$(2x,\\ x)$",
+          "why": "$P_y=0$，$Q_x=1$，不相等"
+        }
       ]
     },
     {
-      "ask": "$f=x\\,e^y+y^5\\sin(y^3)$，$f_{yx}$ 是？",
+      "ask": "你算出某個 $f$ 的 $f_{xy}=2x+y$、$f_{yx}=2x$，兩個都處處連續。這代表？",
       "options": [
-        { "label": "$e^y$", "correct": true },
-        { "label": "$e^y+5y^4\\sin(y^3)$", "why": "$y^5\\sin(y^3)$ 不含 $x$，最後對 $x$ 微分會消失。先對 $x$ 微分：$f_x=e^y$，再對 $y$ 還是 $e^y$。" },
-        { "label": "$0$", "why": "$x\\,e^y$ 含 $x$ 也含 $y$，混合偏導不是 $0$：先對 $x$ 得 $e^y$，對 $y$ 再微分還是 $e^y$。" }
-      ]
-    },
-    {
-      "ask": "$(P,Q)=(y,2x)$ 是某個二階偏導數連續的 $f$ 的 $(f_x,f_y)$ 嗎？",
-      "options": [
-        { "label": "不是，因為 $P_y=1\\ne 2=Q_x$", "correct": true },
-        { "label": "是，$f=2xy$", "why": "$f=2xy$ 給 $f_x=2y$，不是 $y$。檢查 $P_y$ 與 $Q_x$：$1\\ne 2$，任何 $f$ 都不行。" },
-        { "label": "無法判斷", "why": "$P_y\\ne Q_x$ 就足以判斷不是：Clairaut 要求 $f_{xy}=f_{yx}$。" }
+        {
+          "label": "一定有一個算錯了",
+          "correct": true
+        },
+        {
+          "label": "$f$ 剛好是 Clairaut 的反例",
+          "why": "反例需要不連續；這兩個都是連續的"
+        },
+        {
+          "label": "沒問題，微分順序本來就會影響答案",
+          "why": "Clairaut：都連續時，順序不影響"
+        },
+        {
+          "label": "要再算 $f_{xx}$ 才知道",
+          "why": "$f_{xx}$ 跟這件事無關；看混合偏導就夠"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "順序好像不重要",
+      "title": "觀察：順序好像不重要",
       "beats": [
-        { "show": ["$f=x^3y+e^{xy^2}$"],
-          "say": "上一課的例子，兩種順序都得到一樣的答案。再拿一個比較複雜的試試。",
+        {
+          "show": [
+            "例：$f(x,y)=x^3y+e^{xy^2}$"
+          ],
+          "say": "上一課，兩個混合偏導數算出來一樣。這次挑複雜一點的：x 三次方 y，加上 e 的 x y 平方次方。",
           "board": [
-            {"do":"write","line":"$f=x^3y+{{b:e^{xy^2}}}$","on":"再拿一個"},
-            {"do":"underline","term":"b","label":"比較複雜","on":"比較複雜"}
-          ] },
-        { "show": ["$f_{xy}=3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}$"],
-          "note": "先對 $x$，再對 $y$（要用乘法法則）。",
-          "say": "先對 x 再對 y，中間要用乘法法則，最後整理成三項。",
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^3y+e^{xy^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先 $x$：$f_x=3x^2y+y^2e^{xy^2}$"
+          ],
+          "say": "先對 x：第一項得 3x 平方 y；第二項連鎖律，指數 x y 平方對 x 微分是 y 平方。",
           "board": [
-            {"do":"write","line":"${{xy:f_{xy}}}={{r:3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}}}$","tint":{"xy":"blue"}},
-            {"do":"underline","term":"r","label":"三項","on":"整理成"}
-          ] },
-        { "show": ["$f_{yx}=3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}$"],
-          "note": "先對 $y$，再對 $x$：一模一樣。",
-          "say": "換成先對 y 再對 x，過程完全不同，結果卻是同樣三項。",
+            {
+              "do": "write",
+              "line": "先 $x$：$f_x=3x^2y+y^2e^{xy^2}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再對 $y$：$y^2e^{xy^2}$ 要用乘法法則",
+            "$f_{xy}=3x^2+2ye^{xy^2}+y^2\\cdot2xy\\,e^{xy^2}$"
+          ],
+          "say": "再對 y：第一項得 3x 平方。第二項的兩個因子都有 y，用乘法法則，再整理一下。",
           "board": [
-            {"do":"write","line":"${{yx:f_{yx}}}={{r:3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}}}$","tint":{"yx":"violet"},"on":"過程完全不同"},
-            {"do":"underline","term":"r","color":"green","label":"一模一樣","on":"結果卻是"}
-          ] }
-      ],
-      "predict": {
-        "ask": "$f_{xy}$ 和 $f_{yx}$ 總是相等嗎？",
-        "options": [
-          {
-            "label": "要條件才保證相等",
-            "correct": true
-          },
-          {
-            "label": "永遠相等",
-            "why": "全文有反例：混合偏導在原點不連續，兩個順序算出 $-1$ 和 $1$。"
-          },
-          {
-            "label": "通常不相等，剛好碰巧",
-            "why": "不是巧合：初等函數在定義域內部，兩個順序都相等，這正是定理要說的。"
-          }
-        ]
-      }
+            {
+              "do": "write",
+              "line": "再對 $y$：$y^2e^{xy^2}$ 要用乘法法則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{xy}=3x^2+2ye^{xy^2}+y^2\\cdot2xy\\,e^{xy^2}$",
+              "on": "兩個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}=3x^2+(2y+2xy^3)e^{xy^2}$",
+            "先 $y$：$f_y=x^3+2xy\\,e^{xy^2}$"
+          ],
+          "say": "反過來，先對 y：x 三次方，加上 2x y 乘 e 的次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle f_{xy}=3x^2+(2y+2xy^3)e^{xy^2}}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "三次"
+            },
+            {
+              "do": "write",
+              "line": "先 $y$：$f_y=x^3+2xy\\,e^{xy^2}$",
+              "on": "的次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再對 $x$：$2xy\\cdot e^{xy^2}$ 也是乘法法則",
+            "$f_{yx}=3x^2+2ye^{xy^2}+2xy\\cdot y^2e^{xy^2}$"
+          ],
+          "say": "再對 x：2x y 乘 e 的次方，也要用乘法法則。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再對 $x$：$2xy\\cdot e^{xy^2}$ 也是乘法法則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{yx}=3x^2+2ye^{xy^2}+2xy\\cdot y^2e^{xy^2}$",
+              "on": "的次"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{yx}=3x^2+(2y+2xy^3)e^{xy^2}$"
+          ],
+          "say": "結果跟剛剛一模一樣。路線完全不同，答案卻相同。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f_{yx}=3x^2+(2y+2xy^3)e^{xy^2}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "一樣"
+            },
+            {
+              "do": "write",
+              "line": "　數值驗算：$(0.6,0.8)$ 時兩個都是 $4.3311$",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "Clairaut 定理",
+      "title": "定理",
       "beats": [
-        { "show": ["$f_{xy}$、$f_{yx}$ 在 $(a,b)$ 附近都連續"],
-          "note": "附近：包含 $(a,b)$ 的某個開圓盤。",
-          "say": "條件是：在那一點附近的一小塊圓盤上，兩個混合偏導都存在，而且都連續。",
+        {
+          "show": [
+            "Clairaut 定理：若 $f_{xy}$ 與 $f_{yx}$ 在 $(a,b)$ 附近（某個圓盤裡）都連續，則",
+            "$f_{xy}(a,b)=f_{yx}(a,b)$"
+          ],
+          "say": "這就是克萊洛定理：如果兩個混合偏導數，在點 a b 附近的一個小圓盤裡都連續，那它們在 a b 相等。",
           "board": [
-            {"do":"write","line":"${{m:f_{xy},\\ f_{yx}}}$ 在 $(a,b)$ 附近都連續"},
-            {"do":"underline","term":"m","label":"混合偏導","on":"兩個混合偏導"}
-          ] },
-        { "show": ["圓盤裡放一個小矩形"],
-          "note": "證明用的矩形與點，都落在那一點附近。",
-          "say": "為什麼要一塊圓盤？證明的小矩形四個角，還有均值定理找的點，都落在這點附近。",
+            {
+              "do": "write",
+              "line": "Clairaut 定理：若 $f_{xy}$ 與 $f_{yx}$ 在 $(a,b)$ 附近（某個圓盤裡）都連續，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle f_{xy}(a,b)=f_{yx}(a,b)}}$",
+              "on": "在點"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "裡都"
+            }
+          ]
+        },
+        {
+          "show": [
+            "條件是連續，不是「存在」就好"
+          ],
+          "say": "注意條件是連續，不是存在就好。最後會看到一個反例：兩個都存在，卻不相等。",
           "board": [
-            {"do":"plot","graph":{"window":[-1.5,1.5,-1.5,1.5],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"blue"}],"fills":[{"pts":[[-0.4,-0.3],[0.4,-0.3],[0.4,0.3],[-0.4,0.3]],"color":"gold"}],"points":[{"x":0,"y":0}],"labels":[{"x":0.1,"y":0.1,"text":"(a,b)","anchor":"start"}]}}
-          ] },
-        { "show": ["⟹ $f_{xy}(a,b)=f_{yx}(a,b)$"],
-          "note": "為什麼連續就夠：證明在後面那節。",
-          "say": "那麼在這一點，兩種順序就相等。為什麼連續就夠，後面那節一步一步證。",
+            {
+              "do": "write",
+              "line": "條件是連續，不是「存在」就好",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "常見的函數都符合：多項式、$e^x$、$\\sin$、$\\cos$、$\\ln$（定義域內）組合起來的"
+          ],
+          "say": "好消息是：多項式、指數、三角、對數，在定義域裡組合出來的函數，混合偏導都連續，定理直接能用。",
           "board": [
-            {"do":"write","line":"⟹ ${{r:f_{xy}(a,b)=f_{yx}(a,b)}}$"},
-            {"do":"box","term":"r","color":"green","on":"相等"}
-          ] },
-        { "show": ["連續：點靠近 $(a,b)$，值也靠近"],
-          "note": "證明最後一步用的就是這個。",
-          "say": "連續就是點靠近 a b，混合偏導的值也靠近 a b 的值。兩個點都縮到 a b，兩邊就收到同一個數。",
+            {
+              "do": "write",
+              "line": "常見的函數都符合：多項式、$e^x$、$\\sin$、$\\cos$、$\\ln$（定義域內）組合起來的"
+            }
+          ]
+        },
+        {
+          "show": [
+            "三階也一樣：$f_{xxy}=f_{xyx}=f_{yxx}$"
+          ],
+          "say": "三階以上也一樣，只要夠連續，只看每個變數各微了幾次，順序不重要。",
           "board": [
-            {"do":"write","line":"$f_{xy}(\\xi,\\eta)\\to f_{xy}(a,b)$"},
-            {"do":"write","line":"$f_{yx}(\\xi',\\eta')\\to f_{yx}(a,b)$","on":"兩個點"}
-          ] },
-        { "show": ["初等函數：在定義域內部都成立"],
-          "note": "要小心的是分段函數的接縫點。",
-          "say": "多項式、指數、sine、cosine、自然對數，和它們的組合，在定義域內部都滿足條件，可以隨便換順序。",
+            {
+              "do": "write",
+              "line": "三階也一樣：$f_{xxy}=f_{xyx}=f_{yxx}$"
+            },
+            {
+              "do": "write",
+              "line": "　例如三個都是「$x$ 兩次、$y$ 一次」",
+              "color": "violet",
+              "on": "每個"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "用途一：挑好算的順序",
+      "beats": [
+        {
+          "show": [
+            "例：$f(x,y)=x^2y+e^{\\sin y}\\ln(1+y^2)$，求 $f_{yx}$"
+          ],
+          "say": "第一個用途：挑好算的順序。求 f y x：照字面是先對 y 微分。",
           "board": [
-            {"do":"write","line":"初等函數：定義域內部都成立","on":"多項式"},
-            {"do":"write","line":"可換順序：$f_{xy}=f_{yx}$","on":"可以隨便"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$f(x,y)=x^2y+e^{\\sin y}\\ln(1+y^2)$，求 $f_{yx}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "照字面先對 $y$：第二項要用乘法法則＋兩次連鎖律"
+          ],
+          "say": "可是第二項，e 的正弦 y 次方乘自然對數 1 加 y 平方，對 y 微分要乘法法則加上兩次連鎖律，很麻煩。",
+          "board": [
+            {
+              "do": "write",
+              "line": "照字面先對 $y$：第二項要用乘法法則＋兩次連鎖律",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "換順序：Clairaut 說 $f_{yx}=f_{xy}$，改成先對 $x$"
+          ],
+          "say": "換個順序。克萊洛定理說 f y x 等於 f x y，那就先對 x 微分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "換順序：Clairaut 說 $f_{yx}=f_{xy}$，改成先對 $x$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "第二項沒有 $x$：對 $x$ 微分直接是 $0$",
+            "$f_x=2xy$"
+          ],
+          "say": "第二項裡完全沒有 x，對 x 微分直接是 0。f 對 x 只剩 2x y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "第二項沒有 $x$：對 $x$ 微分直接是 $0$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x=2xy$",
+              "on": "接是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再對 $y$：",
+            "$f_{yx}=f_{xy}=2x$"
+          ],
+          "say": "再對 y 微分，得到 2x。麻煩的那一項根本不用碰。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再對 $y$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle f_{yx}=f_{xy}=2x}}$",
+              "color": "red",
+              "on": "得到"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "麻煩"
+            },
+            {
+              "do": "write",
+              "line": "　可以用：$e^{\\sin y}$ 與 $\\ln(1+y^2)$ 處處光滑（$1+y^2>0$），條件成立",
+              "color": "violet",
+              "on": "項根"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "條件拿掉會出錯",
+      "title": "用途二：是不是偏導數",
       "beats": [
-        { "show": ["$f=\\frac{xy(x^2-y^2)}{x^2+y^2}$，原點補 $0$"],
-          "note": "$f$ 連續，一階偏導數到處都有。",
-          "say": "這個分段函數很乖：連續，一階偏導數到處都有。",
+        {
+          "show": [
+            "問題：給 $(P,Q)$，有沒有 $f$ 使得 $f_x=P$、$f_y=Q$？"
+          ],
+          "say": "第二個用途：給兩個函數 P 和 Q，問有沒有一個 f，使得 f 對 x 是 P，f 對 y 是 Q。",
           "board": [
-            {"do":"write","line":"$f=\\frac{xy(x^2-y^2)}{x^2+y^2}$，原點補 $0$"},
-            {"do":"write","line":"$f$ 連續；一階偏導數處處存在","on":"連續"}
-          ] },
-        { "show": ["$f_x(0,y)=\\lim\\frac{f(h,y)}{h}=-y$"],
-          "note": "原點的偏導要用定義算。",
-          "say": "原點的偏導要用定義算：f h y 除以 h，化簡後極限是負 y，再對 y 微分得負一。",
+            {
+              "do": "write",
+              "line": "問題：給 $(P,Q)$，有沒有 $f$ 使得 $f_x=P$、$f_y=Q$？"
+            }
+          ]
+        },
+        {
+          "show": [
+            "如果有（而且夠光滑）：",
+            "$P_y=f_{xy}=f_{yx}=Q_x$"
+          ],
+          "say": "如果有這樣的 f，那 P 對 y 微分就是 f x y，Q 對 x 微分就是 f y x，克萊洛說它們相等。",
           "board": [
-            {"do":"write","line":"$f_x(0,y)=\\lim_{h\\to0}\\frac{f(h,y)}{h}$"},
-            {"do":"write","line":"$=\\lim\\frac{y(h^2-y^2)}{h^2+y^2}={{r:-y}}$","on":"化簡後"},
-            {"do":"write","line":"$f_{xy}(0,0)=(-y)'=-1$","on":"再對 y 微分"}
-          ] },
-        { "show": ["$f_y(x,0)=x$，$f_{yx}(0,0)=1$"],
-          "note": "同樣用定義，換成對 y 的差商。",
-          "say": "同理 f y 在 x 零是 x，對 x 微分得一。",
+            {
+              "do": "write",
+              "line": "如果有（而且夠光滑）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle P_y=f_{xy}=f_{yx}=Q_x}}$",
+              "on": "分就#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "on": "就是#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "所以：$P_y\\ne Q_x$ 就不可能"
+          ],
+          "say": "反過來說，只要 P 對 y 和 Q 對 x 不一樣，就不可能有這樣的 f。",
           "board": [
-            {"do":"write","line":"$f_y(x,0)=x$，$f_{yx}(0,0)=1$","on":"同理"}
-          ] },
-        { "show": ["$f_{xy}(0,0)=-1$，$f_{yx}(0,0)=1$"],
-          "say": "可是在原點，兩種順序的混合偏導，一個是負一，一個是一，不相等。",
+            {
+              "do": "write",
+              "line": "所以：$P_y\\ne Q_x$ 就不可能",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(a) $(P,Q)=(2xy+1,\\ x^2+3y^2)$",
+            "$P_y=2x$，$Q_x=2x$：相等，可能"
+          ],
+          "say": "第一組：2x y 加 1，和 x 平方加 3y 平方。P 對 y 是 2x，Q 對 x 也是 2x，相等，所以有可能。",
           "board": [
-            {"do":"write","line":"${{a:f_{xy}(0,0)=-1}}$，${{b:f_{yx}(0,0)=1}}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"a","color":"blue","on":"負一"},
-            {"do":"focus","term":"b","color":"violet","on":"一個是一"}
-          ] },
-        { "show": ["混合偏導在原點不連續"],
-          "note": "定理的條件不成立。",
-          "say": "問題出在混合偏導在原點不連續，定理的條件不成立，結論也就不保證了。",
+            {
+              "do": "write",
+              "line": "(a) $(P,Q)=(2xy+1,\\ x^2+3y^2)$"
+            },
+            {
+              "do": "write",
+              "line": "$P_y=2x$，$Q_x=2x$：相等，可能",
+              "on": "2x#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "真的找得到：$f=x^2y+x+y^3$"
+          ],
+          "say": "真的找得到：x 平方 y 加 x 加 y 三次方。可以自己微分檢查看看。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{c:f_{xy}}}$ 在原點不連續","on":"問題出在"},
-            {"do":"focus","term":"c","color":"red","on":"不連續"},
-            {"do":"write","line":"條件不成立 ⟹ 不保證相等","on":"定理的條件"}
-          ] }
+            {
+              "do": "write",
+              "line": "真的找得到：$f=x^2y+x+y^3$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "(b) $(P,Q)=(y,\\ 2x)$",
+            "$P_y=1$，$Q_x=2$：不相等，不可能"
+          ],
+          "say": "第二組：y 和 2x。P 對 y 是 1，Q 對 x 是 2，不相等，所以不可能是任何函數的兩個偏導數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "(b) $(P,Q)=(y,\\ 2x)$"
+            },
+            {
+              "do": "write",
+              "line": "$P_y=1$，$Q_x=2$：不相等，不可能",
+              "color": "red",
+              "on": "不相"
+            },
+            {
+              "do": "write",
+              "line": "　相等只是「必要」；在整個平面上它也是充分條件，留到線積分的「保守場」再證",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "哪一組可能是某個 $f$ 的 $(f_x,f_y)$？"
+          ],
+          "say": "換你判斷：哪一組可能是某個函數的兩個偏導數？"
+        }
       ],
-      "key": "原點補的值要用定義算偏導",
       "check": 1
     },
     {
-      "title": "證明：四個角算兩次",
+      "title": "試一題",
       "beats": [
-        { "show": ["同一個 $\\Delta$ 算兩次，再縮到一點"],
-          "say": "策略：直接證。小矩形四個角的組合，用兩種分組各算一次，再讓矩形縮到那一點。",
-          "board": [
-            {"do":"write","line":"${{d:\\Delta}}$ ＝ 小矩形四個角的組合","on":"小矩形"},
-            {"do":"write","line":"兩種分組各算一次，再縮到一點","on":"用兩種分組"}
-          ] },
-        { "show": ["$g(x)=f(x,b+k)-f(x,b)$","$\\Delta=g(a+h)-g(a)$"],
-          "note": "$\\Delta$ 是小矩形四個角的組合。",
-          "say": "令 g 是上下兩條邊的差，那四個角的組合，就是 g 在 a 加 h 減 g 在 a。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$g(x)=f(x,b+k)-f(x,b)$","on":"令 g"},
-            {"do":"write","line":"${{d:\\Delta}}=g(a+h)-g(a)$","on":"那四個角"}
-          ] },
-        { "show": ["$\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$"],
-          "note": "〈均值定理〉兩次：先對 $g$，再對 $f_x$ 的 $y$。",
-          "why": {"ask":"為什麼 $\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$？","say":"這個差分怎麼變成 h k 乘一個混合偏導？","options":[{"label":"〈均值定理〉用兩次","correct":true},{"label":"差分就等於 $hk\\cdot f_{xy}(a,b)$","why":"差分只是近似導數；要用均值定理才寫得成等號，代價是取值點變成矩形裡的某一點。"},{"label":"用 Clairaut 定理換順序","why":"這正是要證的事，還不能拿來用。"}]},
-          "say": "g 用一次均值定理得 h 乘 f x 的差，這個差對 y 再用一次，就是 h k 乘 f x y，取在矩形裡某一點。",
-          "board": [
-            {"do":"write","line":"${{d:\\Delta}}=hk\\cdot {{p:f_{xy}(\\xi,\\eta)}}$","tint":{"p":"blue"},"on":"h k 乘"},
-            {"do":"underline","term":"p","label":"均值定理兩次","why":true,"on":"再用一次"}
-          ] },
-        { "show": ["$\\Delta=h[f_x(\\xi,b+k)-f_x(\\xi,b)]$"],
-          "note": "第一次均值定理；$\\xi$ 在 $a$ 與 $a+h$ 之間。",
-          "say": "g 用均值定理，得 h 乘 g prime xi，那是 f x 的差。這個差再對 y 用一次，得 k 乘 f x y。",
-          "board": [
-            {"do":"write","line":"$g(a+h)-g(a)=h\\,g'(\\xi)$"},
-            {"do":"write","line":"$=h[f_x(\\xi,b+k)-f_x(\\xi,b)]$","on":"f x 的差"},
-            {"do":"write","line":"$=hk\\,f_{xy}(\\xi,\\eta)$","on":"得 k"}
-          ] },
-        { "show": ["換一種分組：$\\Delta=hk\\cdot f_{yx}(\\xi',\\eta')$"],
-          "note": "先看 $y$ 方向的差分。",
-          "say": "改成先看 y 方向的差分，同樣用兩次均值定理，得到 h k 乘 f y x，在另一個點。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"${{d:\\Delta}}=hk\\cdot {{q:f_{yx}(\\xi',\\eta')}}$","tint":{"q":"violet"},"on":"同樣用兩次"},
-            {"do":"underline","term":"q","label":"另一個點","on":"f y x"}
-          ] },
-        { "show": ["$h$、$k\\to0$：$f_{xy}(a,b)=f_{yx}(a,b)$"],
-          "note": "兩點都 $\\to(a,b)$，兩邊取極限。",
-          "say": "消掉 h k，兩個混合偏導在兩個點相等。矩形縮到 a b，兩點都跑向 a b，取極限就相等。",
-          "board": [
-            {"do":"write","line":"${{p:f_{xy}(\\xi,\\eta)}}={{q:f_{yx}(\\xi',\\eta')}}$","on":"消掉"},
-            {"do":"transform","line":"⇒ ${{r:f_{xy}(a,b)=f_{yx}(a,b)}}$","on":"兩點都跑向"},
-            {"do":"box","term":"r","color":"green","on":"取極限"}
-          ] }
-      ],
-      "key": "同一個四角差 $\\Delta$，兩種分組各用均值",
-      "proof": true,
-      "of": 4,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「混合偏導在 $(a,b)$ 連續」用在哪一步？",
-        "steps": [
-          {
-            "label": "寫出 $\\Delta$ 與 $g(x)$",
-            "why": "這只是定義，代入四個角的值。"
-          },
-          {
-            "label": "均值定理兩次：$\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$",
-            "why": "均值定理只要偏導數存在，不要它連續。"
-          },
-          {
-            "label": "換分組：$\\Delta=hk\\cdot f_{yx}(\\xi',\\eta')$",
-            "why": "一樣只用到均值定理，要的是 $f_{yx}$ 存在。"
-          },
-          {
-            "label": "$h$、$k\\to0$，兩邊取極限",
-            "correct": true
-          }
-        ]
-      }
-    },
-    {
-      "title": "挑好算的順序",
-      "beats": [
-        { "show": ["$f=x^2y+e^{\\sin y}\\ln(1+y^2)$，求 $f_{yx}$"],
-          "say": "照字面要先對 y 微分，後面那一項又是 e 的 sine y 次方、又是自然對數，很麻煩。",
-          "board": [
-            {"do":"write","line":"$f=x^2y+{{b:e^{\\sin y}\\ln(1+y^2)}}$，求 $f_{yx}$"},
-            {"do":"underline","term":"b","label":"很麻煩","on":"後面那一項"}
-          ] },
-        { "show": ["初等函數：$f_{yx}=f_{xy}$"],
-          "say": "可是它由初等函數組成，條件成立，順序可以換：改成先對 x。",
-          "board": [
-            {"do":"write","line":"初等函數：${{s:f_{yx}=f_{xy}}}$","on":"初等函數"},
-            {"do":"focus","term":"s","label":"順序可以換","on":"順序可以換"}
-          ] },
-        { "show": ["$f_x=2xy$，$f_{xy}=2x$"],
-          "note": "後面那項不含 $x$，直接消失。",
-          "say": "後面那一項根本不含 x，一微就消失。剩下二 x y，再對 y 微分，得二 x。",
-          "board": [
-            {"do":"focus","term":"b","label":"不含 x","on":"後面那一項"},
-            {"do":"write","line":"$f_x={{k:2xy}}$","on":"一微就消失"},
-            {"do":"transform","line":"$f_x=2xy$，$f_{xy}={{r:2x}}$","on":"再對 y"},
-            {"do":"focus","term":"r","color":"green","on":"微分"}
-          ] }
+        {
+          "show": [
+            "你算出某個 $f$ 的 $f_{xy}=2x+y$、$f_{yx}=2x$，兩個都處處連續。這代表？"
+          ],
+          "say": "再一題：如果兩個混合偏導算出來不一樣，代表什麼？"
+        }
       ],
       "check": 2
     },
     {
-      "title": "是不是某個偏導數",
+      "title": "【證明】為什麼連續就夠",
       "beats": [
-        { "show": ["$P=f_x$、$Q=f_y$ ⟹ $P_y=Q_x$"],
-          "note": "$f$ 的二階偏導數連續時。",
-          "say": "如果 P 和 Q 真的是某個函數的兩個偏導數，那 P 對 y 微分就是 f x y，Q 對 x 微分就是 f y x，兩者要相等。",
+        {
+          "show": [
+            "看小正方形四個角的交錯和：",
+            "圖"
+          ],
+          "say": "為什麼連續就夠？看一個邊長 h 的小正方形，四個角的函數值，一組對角相加，另一組對角相減。",
           "board": [
-            {"do":"write","line":"$P=f_x$、$Q=f_y$"},
-            {"do":"write","line":"$P_y=f_{xy}$、$Q_x=f_{yx}$","on":"P 對 y 微分"},
-            {"do":"write","line":"⟹ ${{r:P_y=Q_x}}$","on":"兩者"}
-          ] },
-        { "show": ["$(y,-x)$：$P_y=1$、$Q_x=-1$"],
-          "note": "不相等：不可能是任何 $f$ 的偏導數。",
-          "say": "所以拿到一對函數，先交叉微分。這一對一個得一、一個得負一，不可能。",
+            {
+              "do": "write",
+              "line": "看小正方形四個角的交錯和："
+            },
+            {
+              "do": "plot",
+              "svg": "<svg data-fig=\"clSquare\" viewBox=\"0 0 620 280\" width=\"620\" height=\"280\" font-size=\"24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\"><defs><marker id=\"ah8bclSquare\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker><marker id=\"ah8bclSquareblue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--blue)\"/></marker><marker id=\"ah8bclSquarered\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--red)\"/></marker><marker id=\"ah8bclSquaregreen\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--green)\"/></marker><marker id=\"ah8bclSquarepencil\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--muted)\"/></marker><marker id=\"ah8bclSquareink\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0 L10 5 L0 10 z\" fill=\"var(--ink)\"/></marker></defs><clipPath id=\"cl8bclSquare30\"><rect x=\"72.1\" y=\"16\" width=\"481.8\" height=\"234\"/></clipPath><g clip-path=\"url(#cl8bclSquare30)\"><polygon points=\"237.3,201.8 388.7,201.8 388.7,50.4 237.3,50.4\" fill=\"var(--blue)\" fill-opacity=\"0.1\"/></g><line x1=\"237.3\" y1=\"201.8\" x2=\"388.7\" y2=\"201.8\" stroke=\"var(--muted)\" stroke-width=\"2\"/><line x1=\"388.7\" y1=\"201.8\" x2=\"388.7\" y2=\"50.4\" stroke=\"var(--muted)\" stroke-width=\"2\"/><line x1=\"388.7\" y1=\"50.4\" x2=\"237.3\" y2=\"50.4\" stroke=\"var(--muted)\" stroke-width=\"2\"/><line x1=\"237.3\" y1=\"50.4\" x2=\"237.3\" y2=\"201.8\" stroke=\"var(--muted)\" stroke-width=\"2\"/><circle cx=\"237.3\" cy=\"201.8\" r=\"8\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"388.7\" cy=\"50.4\" r=\"8\" fill=\"var(--blue)\" stroke=\"var(--blue)\" stroke-width=\"2.4\"/><circle cx=\"388.7\" cy=\"201.8\" r=\"8\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><circle cx=\"237.3\" cy=\"50.4\" r=\"8\" fill=\"var(--red)\" stroke=\"var(--red)\" stroke-width=\"2.4\"/><text x=\"221.3\" y=\"211.8\" text-anchor=\"end\" fill=\"var(--blue)\" font-size=\"30\" style=\"font-family:KaTeX_Main,serif\">+ f(a, b)</text><text x=\"404.7\" y=\"211.8\" text-anchor=\"start\" fill=\"var(--red)\" font-size=\"30\" style=\"font-family:KaTeX_Main,serif\">− f(a+h, b)</text><text x=\"221.3\" y=\"60.4\" text-anchor=\"end\" fill=\"var(--red)\" font-size=\"30\" style=\"font-family:KaTeX_Main,serif\">− f(a, b+h)</text><text x=\"404.7\" y=\"60.4\" text-anchor=\"start\" fill=\"var(--blue)\" font-size=\"30\" style=\"font-family:KaTeX_Main,serif\">+ f(a+h, b+h)</text><text x=\"313\" y=\"237.8\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"30\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">h</text><text x=\"410.7\" y=\"136.1\" text-anchor=\"middle\" fill=\"var(--muted)\" font-size=\"30\" style=\"font-family:KaTeX_Math,serif;font-style:italic\">h</text></svg>",
+              "on": "四個"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Delta=f(a{+}h,b{+}h)-f(a{+}h,b)-f(a,b{+}h)+f(a,b)$"
+          ],
+          "say": "叫它德爾塔。它可以有兩種分組：先看 x 方向的差，或先看 y 方向的差。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(y,-x)$","on":"拿到一對函數"},
-            {"do":"write","line":"$P_y=1$、$Q_x=-1$","on":"這一對"},
-            {"do":"write","line":"$P_y\\ne Q_x$：不可能","color":"red","on":"負一"}
-          ] },
-        { "show": ["$(2xy+1,\\ x^2+3y^2)$：$P_y=Q_x=2x$"],
-          "note": "真的找得到：$f=x^2y+x+y^3$。",
-          "say": "這一對交叉微分都是二 x，通過檢查，也真的找得到 f。不過相等只是必要條件。",
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\Delta=f(a{+}h,b{+}h)-f(a{+}h,b)-f(a,b{+}h)+f(a,b)}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "方向#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分組一：令 $g(x)=f(x,b{+}h)-f(x,b)$，則 $\\Delta=g(a{+}h)-g(a)$"
+          ],
+          "say": "第一種分組：令 g of x 等於上邊的值減下邊的值。德爾塔就是 g 在 a 加 h，減 g 在 a。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$(2xy+1,\\ x^2+3y^2)$","on":"這一對"},
-            {"do":"write","line":"${{r:P_y=Q_x=2x}}$","on":"交叉微分"},
-            {"do":"box","term":"r","color":"green","on":"通過檢查"},
-            {"do":"write","line":"$f=x^2y+x+y^3$","on":"找得到"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "分組一：令 $g(x)=f(x,b{+}h)-f(x,b)$，則 $\\Delta=g(a{+}h)-g(a)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "均值定理（對 $x$）：",
+            "$\\Delta=h\\,g'(c_1)=h\\big[f_x(c_1,b{+}h)-f_x(c_1,b)\\big]$"
+          ],
+          "say": "對 g 用均值定理：等於 h 乘 g prime 在某個 c 1，也就是 f x 在上邊減 f x 在下邊。",
+          "board": [
+            {
+              "do": "write",
+              "line": "均值定理（對 $x$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Delta=h\\,g'(c_1)=h\\big[f_x(c_1,b{+}h)-f_x(c_1,b)\\big]$",
+              "on": "也就"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再用一次均值定理（對 $y$）：",
+            "$\\Delta=h^2f_{xy}(c_1,d_1)$"
+          ],
+          "say": "中括號裡是 f x 在 y 方向的差，再用一次均值定理，得到 h 平方乘 f x y 在某一點 c 1 d 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再用一次均值定理（對 $y$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle \\Delta=h^2f_{xy}(c_1,d_1)}}$",
+              "on": "再用"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "on": "在某"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "【證明】（續）",
+      "beats": [
+        {
+          "show": [
+            "分組二：令 $k(y)=f(a{+}h,y)-f(a,y)$，則 $\\Delta=k(b{+}h)-k(b)$"
+          ],
+          "say": "第二種分組：令 k of y 等於右邊減左邊。德爾塔一樣等於 k 在 b 加 h 減 k 在 b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分組二：令 $k(y)=f(a{+}h,y)-f(a,y)$，則 $\\Delta=k(b{+}h)-k(b)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同樣用兩次均值定理（先對 $y$，再對 $x$）：",
+            "$\\Delta=h^2f_{yx}(c_2,d_2)$"
+          ],
+          "say": "同樣用兩次均值定理，這次先 y 後 x，得到 h 平方乘 f y x 在另一點 c 2 d 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同樣用兩次均值定理（先對 $y$，再對 $x$）："
+            },
+            {
+              "do": "write",
+              "line": "${{bx8:\\displaystyle \\Delta=h^2f_{yx}(c_2,d_2)}}$",
+              "on": "得到"
+            },
+            {
+              "do": "box",
+              "term": "bx8",
+              "on": "在另"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩式相等，除以 $h^2$：",
+            "$f_{xy}(c_1,d_1)=f_{yx}(c_2,d_2)$"
+          ],
+          "say": "兩個都是同一個德爾塔，除以 h 平方，f x y 在一點，等於 f y x 在另一點。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩式相等，除以 $h^2$："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_{xy}(c_1,d_1)=f_{yx}(c_2,d_2)$",
+              "on": "在一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩點都在正方形裡：$h\\to0$ 時都 $\\to(a,b)$"
+          ],
+          "say": "這兩點都在小正方形裡面。讓 h 趨近 0，兩點都被擠到 a b。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩點都在正方形裡：$h\\to0$ 時都 $\\to(a,b)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}$、$f_{yx}$ 連續：兩邊取極限",
+            "$f_{xy}(a,b)=f_{yx}(a,b)\\quad\\blacksquare$"
+          ],
+          "say": "因為兩個混合偏導數都連續，兩邊取極限，就得到它們在 a b 相等。證明完畢。連續就用在這最後一步。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_{xy}$、$f_{yx}$ 連續：兩邊取極限"
+            },
+            {
+              "do": "write",
+              "line": "${{bx9:\\displaystyle f_{xy}(a,b)=f_{yx}(a,b)\\quad\\blacksquare}}$",
+              "color": "red",
+              "on": "兩邊"
+            },
+            {
+              "do": "box",
+              "term": "bx9",
+              "color": "red",
+              "on": "相等"
+            },
+            {
+              "do": "write",
+              "line": "　用均值定理需要 $f_x$、$f_y$ 在附近存在；有 $f_{xy}$、$f_{yx}$ 就表示它們存在",
+              "color": "violet",
+              "on": "連續#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "【反例】條件拿掉會出錯",
+      "beats": [
+        {
+          "show": [
+            "$f(x,y)=\\begin{cases}\\dfrac{xy(x^2-y^2)}{x^2+y^2}, & (x,y)\\ne(0,0)\\\\[4pt]0, & (x,y)=(0,0)\\end{cases}$"
+          ],
+          "say": "最後看條件拿掉會怎樣。這個分段函數：x y 乘 x 平方減 y 平方，除以 x 平方加 y 平方，原點規定成 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f(x,y)={\\begin{cases}\\dfrac{xy(x^2-y^2)}{x^2+y^2}, & (x,y)\\ne(0,0)\\\\[4pt]0, & (x,y)=(0,0)\\end{cases}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "沿 $y$ 軸算 $f_x$（$y\\ne0$）：",
+            "$f_x(0,y)=\\lim_{h\\to0}\\frac{f(h,y)}{h}=\\lim_{h\\to0}\\frac{y(h^2-y^2)}{h^2+y^2}=-y$"
+          ],
+          "say": "先算 f x 在 y 軸上的值。差商是 f of h 逗號 y 除以 h，分子分母約掉一個 h，h 趨近 0 得到負 y。",
+          "board": [
+            {
+              "do": "write",
+              "line": "沿 $y$ 軸算 $f_x$（$y\\ne0$）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_x(0,y)=\\lim_{h\\to0}\\frac{f(h,y)}{h}=\\lim_{h\\to0}\\frac{y(h^2-y^2)}{h^2+y^2}=-y$",
+              "on": "of"
+            },
+            {
+              "do": "write",
+              "line": "　$y=0$ 時 $f_x(0,0)=0=-0$，也符合",
+              "color": "violet",
+              "on": "母約"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}(0,0)=\\dfrac{d}{dy}(-y)=-1$"
+          ],
+          "say": "所以在 y 軸上 f x 就是負 y，再對 y 微分，f x y 在原點是負 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_{xy}(0,0)=\\dfrac{d}{dy}(-y)=-1$",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同理沿 $x$ 軸：$f_y(x,0)=x$",
+            "$f_{yx}(0,0)=\\frac{d}{dx}(x)=1$"
+          ],
+          "say": "同樣的算法，在 x 軸上 f y 是 x，再對 x 微分，f y x 在原點是 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同理沿 $x$ 軸：$f_y(x,0)=x$"
+            },
+            {
+              "do": "write",
+              "line": "${{bx10:\\displaystyle f_{yx}(0,0)=\\frac{d}{dx}(x)=1}}$",
+              "on": "再對"
+            },
+            {
+              "do": "box",
+              "term": "bx10",
+              "on": "在原"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_{xy}(0,0)=-1\\ne1=f_{yx}(0,0)$"
+          ],
+          "say": "負 1 不等於 1。兩個混合偏導都存在，卻不相等。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx11:\\displaystyle f_{xy}(0,0)=-1\\ne1=f_{yx}(0,0)}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx11",
+              "color": "red",
+              "on": "混合"
+            }
+          ]
+        },
+        {
+          "show": [
+            "問題出在：$f_{xy}$ 在原點不連續"
+          ],
+          "say": "原因是條件不成立：在原點以外算 f x y，沿 x 軸靠近原點是 1，沿 y 軸是負 1，所以它不連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "問題出在：$f_{xy}$ 在原點不連續"
+            },
+            {
+              "do": "write",
+              "line": "　原點以外 $f_{xy}=\\frac{x^6+9x^4y^2-9x^2y^4-y^6}{(x^2+y^2)^3}$",
+              "color": "violet",
+              "on": "軸靠"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• Clairaut：$f_{xy}$、$f_{yx}$ 在附近都連續 ⇒ $f_{xy}=f_{yx}$",
+            "• 用途一：挑好算的順序（沒有 $x$ 的項，先對 $x$ 就消失）"
+          ],
+          "say": "整理一下：混合偏導都連續，順序就不重要。它能幫你挑好算的順序，也能判斷 P 和 Q 不可能是偏導數。條件拿掉，真的會出錯。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• Clairaut：$f_{xy}$、$f_{yx}$ 在附近都連續 ⇒ $f_{xy}=f_{yx}$"
+            },
+            {
+              "do": "write",
+              "line": "• 用途一：挑好算的順序（沒有 $x$ 的項，先對 $x$ 就消失）",
+              "on": "順序#1"
+            },
+            {
+              "do": "write",
+              "line": "• 用途二：$P_y\\ne Q_x$ ⇒ $(P,Q)$ 不可能是某個 $f$ 的偏導數",
+              "on": "挑好"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：小正方形的交錯和，兩種分組各用兩次均值定理",
+              "on": "不可"
+            },
+            {
+              "do": "write",
+              "line": "• 不連續時可能不相等：反例 $f_{xy}(0,0)=-1$，$f_{yx}(0,0)=1$",
+              "on": "條件"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：全微分"
+          ],
+          "say": "下一課，全微分：二變數真正的「可微」。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：全微分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["mixed-partial", "multivariable", "conservative-field"],
-    "fine": ["clairaut-verify", "clairaut-order-choice", "clairaut-hypothesis", "clairaut-gradient-test"]
+    "coarse": [
+      "mixed-partial",
+      "multivariable",
+      "conservative-field"
+    ],
+    "fine": [
+      "clairaut-verify",
+      "clairaut-order-choice",
+      "clairaut-hypothesis",
+      "clairaut-gradient-test"
+    ]
   },
   "practice": [
-    { "id": "lec-16-q4b", "core": true, "trains": "clairaut-verify", "note": "兩個順序都算一次，對答案。" },
-    { "id": "exam-multi-002", "core": true, "trains": "clairaut-verify" },
-    { "id": "der-023", "core": true, "trains": "clairaut-order-choice", "note": "試兩個順序，看哪個比較短。" },
-    { "id": "vc-nab-004", "core": true, "trains": "clairaut-gradient-test", "note": "$\\nabla\\times(\\nabla f)$ 的每個分量都是 $f_{yz}-f_{zy}$ 這種混合偏導的差。" },
-    { "id": "cg-8b-007", "core": true, "trains": "clairaut-hypothesis" },
-    { "id": "cg-8b-008", "core": true, "trains": "clairaut-order-choice" },
-    { "id": "cg-8b-010", "core": true, "trains": "clairaut-gradient-test" },
-    { "id": "cg-8b-009", "trains": "clairaut-order-choice" },
-    { "id": "cg-8b-011", "trains": "clairaut-gradient-test" },
-    { "id": "lec-20-m1", "challenge": true, "trains": "clairaut-gradient-test", "note": "挑戰：用 $P_y=Q_x$ 篩選。" },
-    { "id": "cg-8b-006", "challenge": true, "trains": "clairaut-hypothesis" }
+    {
+      "id": "lec-16-q4b",
+      "core": true,
+      "trains": "clairaut-verify",
+      "note": "兩個順序都算一次，對答案。"
+    },
+    {
+      "id": "exam-multi-002",
+      "core": true,
+      "trains": "clairaut-verify"
+    },
+    {
+      "id": "der-023",
+      "core": true,
+      "trains": "clairaut-order-choice",
+      "note": "試兩個順序，看哪個比較短。"
+    },
+    {
+      "id": "vc-nab-004",
+      "core": true,
+      "trains": "clairaut-gradient-test",
+      "note": "$\\nabla\\times(\\nabla f)$ 的每個分量都是 $f_{yz}-f_{zy}$ 這種混合偏導的差。"
+    },
+    {
+      "id": "cg-8b-007",
+      "core": true,
+      "trains": "clairaut-hypothesis"
+    },
+    {
+      "id": "cg-8b-008",
+      "core": true,
+      "trains": "clairaut-order-choice"
+    },
+    {
+      "id": "cg-8b-010",
+      "core": true,
+      "trains": "clairaut-gradient-test"
+    },
+    {
+      "id": "cg-8b-009",
+      "trains": "clairaut-order-choice"
+    },
+    {
+      "id": "cg-8b-011",
+      "trains": "clairaut-gradient-test"
+    },
+    {
+      "id": "lec-20-m1",
+      "challenge": true,
+      "trains": "clairaut-gradient-test",
+      "note": "挑戰：用 $P_y=Q_x$ 篩選。"
+    },
+    {
+      "id": "cg-8b-006",
+      "challenge": true,
+      "trains": "clairaut-hypothesis"
+    }
   ],
   "gaps": []
 }

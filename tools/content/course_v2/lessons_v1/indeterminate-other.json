@@ -1,0 +1,471 @@
+{
+  "id": "indeterminate-other",
+  "title": "其他不定型",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["lhopital", "limit-e-type", "derivative-log"],
+  "next": ["antiderivative"],
+  "related": ["continuity-definition", "limit-algebra-other", "limit-rationalize"],
+  "objectives": [
+    "認得五種不定型 $0\\cdot\\infty$、$\\infty-\\infty$、$1^\\infty$、$0^0$、$\\infty^0$，也認得哪些長得像、其實不是。",
+    "把 $0\\cdot\\infty$ 與 $\\infty-\\infty$ 改寫成 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$，再用 L'Hôpital。",
+    "指數型先取 $\\ln$，算完記得取 $e$ 回來。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 為什麼這五種叫「不定」",
+      "body": [
+        "$x\\to 0^+$ 時，$x\\to 0$、$\\frac{1}{x}\\to\\infty$。可是 $x\\cdot\\frac{1}{x}=1$，$x^2\\cdot\\frac{1}{x}=x\\to 0$，$x\\cdot\\frac{1}{x^2}=\\frac{1}{x}\\to\\infty$。三個都是「$0$ 乘 $\\infty$」，答案卻是 $1$、$0$、$\\infty$。",
+        "所以 $0\\cdot\\infty$ 不是一個數：一個往 $0$ 拉、一個往 $\\infty$ 拉，誰贏要看誰跑得快。$\\infty-\\infty$、$1^\\infty$、$0^0$、$\\infty^0$ 也一樣，只看型態決定不了答案，要算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② $0\\cdot\\infty$：把其中一個翻到分母",
+      "body": [
+        "$f\\cdot g=\\frac{f}{1/g}$。這樣 $0\\cdot\\infty$ 就變成 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$，可以用〈L'Hôpital 法則〉。",
+        "翻哪一個？翻完之後微分要好算的那個。$\\ln x$ 留在分子（它的導數 $\\frac{1}{x}$ 很簡單），把多項式那一邊翻下去。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ $\\infty-\\infty$：先合成一個分式",
+      "body": [
+        "兩個分式就通分，有平方根就乘共軛（〈0/0：有理化〉），目標都一樣：變成一個分式，再看是不是 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ $1^\\infty$、$0^0$、$\\infty^0$：先取 $\\ln$",
+      "body": [
+        "$y=f(x)^{g(x)}$（$f>0$），取 $\\ln$ 得 $\\ln y=g(x)\\cdot\\ln f(x)$。三種情況都會變成 $0\\cdot\\infty$：$1^\\infty$ 是 $\\infty\\cdot\\ln 1=\\infty\\cdot 0$；$0^0$ 是 $0\\cdot(-\\infty)$；$\\infty^0$ 是 $0\\cdot\\infty$。",
+        "先用 ② 算出 $\\lim\\ln y=L$，再取 $e$ 回來：$\\lim y=e^L$。最後一步最容易忘。"
+      ],
+      "tex": ["\\lim y=\\lim e^{\\ln y}=e^{\\lim \\ln y}"],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼可以先算 $\\ln y$、再取 $e$",
+      "body": [
+        "$e^x$ 是連續函數（〈連續的定義〉）：只要 $h(x)\\to L$（$L$ 是一個數），就有 $e^{h(x)}\\to e^L$。拿 $h=\\ln y$，因為 $y=e^{\\ln y}$，得到 $\\lim y=e^L$。",
+        "若 $\\ln y\\to-\\infty$，則 $y=e^{\\ln y}\\to 0$；若 $\\ln y\\to+\\infty$，則 $y\\to\\infty$。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "⑤ 長得像、但不是不定型",
+      "body": [
+        "$\\infty+\\infty=\\infty$、$\\infty\\cdot\\infty=\\infty$。底數 $\\to 0^+$、指數 $\\to+\\infty$ 的 $0^\\infty$ 是 $0$（越小的正數乘越多次越小）。這些直接下結論，不必算。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$0\\cdot\\infty$",
+      "prompt": "$\\lim_{x\\to 0^+}x\\ln x$",
+      "problemId": "lim-011",
+      "steps": [
+        "$x\\to 0^+$、$\\ln x\\to-\\infty$，是 $0\\cdot\\infty$。",
+        "$\\ln x$ 留在分子，把 $x$ 翻下去：$x\\ln x=\\frac{\\ln x}{1/x}$。現在分子 $\\to-\\infty$、分母 $\\to+\\infty$，是 $\\frac{\\infty}{\\infty}$。",
+        "L'Hôpital：分子微分 $\\frac{1}{x}$，分母微分 $-\\frac{1}{x^2}$。",
+        "$\\frac{1/x}{-1/x^2}=\\frac{1}{x}\\cdot(-x^2)=-x\\to 0$。"
+      ],
+      "answer": "$0$",
+      "note": "反過來把 $\\ln x$ 翻下去，$\\frac{x}{1/\\ln x}$ 的分母微分是 $-\\frac{1}{x(\\ln x)^2}$，越算越亂。",
+      "claim": "LIM(x*ln(x), 0+) == 0 ;; LIM(-x, 0+) == 0"
+    },
+    {
+      "title": "$0^0$",
+      "prompt": "$\\lim_{x\\to 0^+}x^x$",
+      "problemId": "exam-lim-011",
+      "steps": [
+        "底數 $\\to 0^+$、指數 $\\to 0$，是 $0^0$。$x>0$，可以取 $\\ln$。",
+        "令 $y=x^x$，$\\ln y=x\\ln x$。",
+        "範例 1 已經算過：$x\\ln x\\to 0$。",
+        "取 $e$ 回來：$y\\to e^0=1$。"
+      ],
+      "answer": "$1$",
+      "claim": "LIM(x*ln(x), 0+) == 0 ;; LIM(x^(1/x), inf) == 1",
+      "note": "第二條驗算是同一招用在 $\\infty^0$：$x^{1/x}$ 取 $\\ln$ 得 $\\frac{\\ln x}{x}\\to 0$，所以 $x\\to\\infty$ 時 $x^{1/x}\\to 1$。"
+    },
+    {
+      "title": "$1^\\infty$",
+      "prompt": "$\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^{3x}$",
+      "problemId": "exam-lim-012",
+      "steps": [
+        "底數 $\\to 1$、指數 $\\to\\infty$，是 $1^\\infty$。底數 $>0$，取 $\\ln$：$\\ln y=3x\\cdot\\ln\\left(1+\\frac{2}{x}\\right)$。",
+        "這是 $\\infty\\cdot 0$。把 $x$ 翻下去：$\\ln y=\\frac{3\\ln(1+2/x)}{1/x}$，是 $\\frac{0}{0}$。",
+        "分子微分：$\\frac{3\\cdot(-2/x^2)}{1+2/x}$（連鎖律，裡層 $\\frac{2}{x}$ 的導數是 $-\\frac{2}{x^2}$）。分母微分：$-\\frac{1}{x^2}$。",
+        "相除，$-\\frac{1}{x^2}$ 約掉：$\\frac{6}{1+2/x}\\to 6$。",
+        "取 $e$ 回來：$y\\to e^6$。"
+      ],
+      "answer": "$e^6$",
+      "note": "這是〈e 型極限〉$\\left(1+\\frac{a}{x}\\right)^x\\to e^a$ 的另一種算法：$\\left(1+\\frac{2}{x}\\right)^{3x}=\\left(\\left(1+\\frac{2}{x}\\right)^x\\right)^3\\to(e^2)^3$。",
+      "claim": "LIM((1+2/x)^(3x), inf) == e^6 ;; LIM(3*x*ln(1+2/x), inf) == 6"
+    },
+    {
+      "title": "$\\infty-\\infty$",
+      "prompt": "$\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{1}{e^x-1}\\right)$",
+      "problemId": "cx-lh-012",
+      "steps": [
+        "$x\\to 0^+$ 時兩項都 $\\to+\\infty$（$x\\to 0^-$ 時都 $\\to-\\infty$），是 $\\infty-\\infty$。通分：$\\frac{e^x-1-x}{x(e^x-1)}$。",
+        "代 $0$：分子 $1-1-0=0$、分母 $0$，是 $\\frac{0}{0}$。",
+        "L'Hôpital：分子微分 $e^x-1$；分母 $x(e^x-1)$ 用乘法法則，微分是 $(e^x-1)+xe^x$。代 $0$ 還是 $\\frac{0}{0}$。",
+        "再用一次：分子微分 $e^x$；分母微分 $e^x+(e^x+xe^x)=2e^x+xe^x$。",
+        "代 $0$：$\\frac{1}{2+0}=\\frac{1}{2}$。"
+      ],
+      "answer": "$\\frac{1}{2}$",
+      "claim": "LIM(1/x - 1/(e^x-1), 0) == 1/2 ;; LIM((e^x-1-x)/(x*(e^x-1)), 0) == 1/2 ;; SUB(e^x/(2*e^x+x*e^x), 0) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "把 $1^\\infty$ 當成 $1$。底數只是靠近 $1$，不等於 $1$。",
+    "把 $0^0$ 當成 $1$、把 $0\\cdot\\infty$ 當成 $0$。",
+    "取了 $\\ln$ 算出 $L$，忘了答案是 $e^L$。",
+    "$\\infty-\\infty$ 沒有先合成一個分式，就對兩項分別用 L'Hôpital。",
+    "$0\\cdot\\infty$ 翻錯邊，把 $\\ln x$ 翻到分母，越微分越複雜。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\lim_{x\\to 0^+}x\\ln x$ 是哪一型？",
+      "options": [
+        { "label": "$0\\cdot\\infty$", "correct": true },
+        { "label": "$0$，因為 $0$ 乘任何數都是 $0$", "why": "「$0$ 乘任何數是 $0$」是對固定的數。$\\ln x$ 不是一個數，它一直往 $-\\infty$ 跑；$x$ 也只是靠近 $0$。" },
+        { "label": "$\\frac{0}{0}$", "why": "式子是相乘，不是相除。要先改寫成 $\\frac{\\ln x}{1/x}$，才會變成分式（而且是 $\\frac{\\infty}{\\infty}$）。" }
+      ]
+    },
+    {
+      "ask": "$\\lim_{x\\to\\infty}\\left(1+\\frac{1}{x}\\right)^x$ 是？",
+      "options": [
+        { "label": "$e$", "correct": true },
+        { "label": "$1$", "why": "你把底數當成剛好是 $1$。底數只是靠近 $1$，指數卻一直變大，兩股力量拉扯，結果是 $e$。" },
+        { "label": "$\\infty$", "why": "你只看到指數 $\\to\\infty$。底數同時在往 $1$ 靠，$\\ln y=x\\ln\\left(1+\\frac{1}{x}\\right)\\to 1$，所以極限是 $e^1$。" }
+      ]
+    },
+    {
+      "ask": "算 $\\lim y$ 時取 $\\ln$，得到 $\\lim\\ln y=0$。那 $\\lim y$ 是？",
+      "options": [
+        { "label": "$1$", "correct": true },
+        { "label": "$0$", "why": "$0$ 是 $\\ln y$ 的極限，不是 $y$ 的。最後一步要取 $e$：$y\\to e^0=1$。" },
+        { "label": "$e$", "why": "$e=e^1$，那是 $\\ln y\\to 1$ 的情況。這裡 $\\ln y\\to 0$，所以是 $e^0=1$。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個「不是」不定型？（底數都是正的）",
+      "options": [
+        { "label": "底數 $\\to 0^+$、指數 $\\to+\\infty$", "correct": true },
+        { "label": "底數 $\\to 1$、指數 $\\to\\infty$", "why": "這是 $1^\\infty$，$\\left(1+\\frac{1}{x}\\right)^x\\to e$、$\\left(1+\\frac{2}{x}\\right)^x\\to e^2$，答案會變，所以是不定型。" },
+        { "label": "底數 $\\to\\infty$、指數 $\\to 0$", "why": "這是 $\\infty^0$：$x^{1/x}\\to 1$，但 $(e^x)^{1/x}=e$。答案會變，所以是不定型。" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "為什麼叫不定",
+      "beats": [
+        { "show": ["$x\\to 0^+$：$x\\to 0$，$\\frac{1}{x}\\to\\infty$"],
+          "say": "x 從右邊趨近零：x 本身趨近零，x 分之一趨近無限大。把它們乘起來會怎樣？",
+          "board": [
+            {"do":"write","line":"$x\\to 0^+$：$x\\to 0$，$\\frac{1}{x}\\to\\infty$"}
+          ] },
+        { "show": ["$x\\cdot\\frac{1}{x}=1$","$x^2\\cdot\\frac{1}{x}\\to 0$，$x\\cdot\\frac{1}{x^2}\\to\\infty$"],
+          "say": "三個都是零乘無限大，答案卻分別是一、零、無限大。",
+          "board": [
+            {"do":"write","line":"$x\\cdot\\frac{1}{x}=1$"},
+            {"do":"write","line":"$x^2\\cdot\\frac{1}{x}\\to 0$","on":"答案卻"},
+            {"do":"write","line":"$x\\cdot\\frac{1}{x^2}\\to\\infty$","on":"分別是"}
+          ] },
+        { "show": ["三個乘積：一條停在 $1$，一條往 $0$，一條往 $\\infty$"],
+          "say": "畫出三個乘積：一條停在一，一條往零，一條衝向無限大。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,1,0,5],"curves":[{"expr":"1","domain":[0.05,1],"color":"blue"},{"expr":"x","domain":[0.05,1],"color":"green"},{"expr":"1/x","domain":[0.2,1],"color":"red"}],"labels":[{"x":0.7,"y":1.3,"text":"1","anchor":"start"},{"x":0.8,"y":0.5,"text":"x","anchor":"start"},{"x":0.3,"y":4.2,"text":"1/x","anchor":"start"}]}}
+          ] },
+        { "show": ["$0\\cdot\\infty$ 不是一個數"],
+          "note": "一個往 $0$ 拉、一個往 $\\infty$ 拉，看誰跑得快。",
+          "say": "一個往零拉，一個往無限大拉，誰贏要看誰跑得快。所以只看型態決定不了，要算。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{z:0\\cdot\\infty}}$ 不是一個數","on":"一個往零拉"},
+            {"do":"write","line":"看誰跑得快","on":"誰贏"},
+            {"do":"underline","term":"z","label":"要算","on":"只看型態"}
+          ] },
+        { "show": ["$\\infty-\\infty$、$1^\\infty$、$0^0$、$\\infty^0$"],
+          "note": "也一樣，要算。",
+          "say": "無限大減無限大、一的無限大次方、零的零次方、無限大的零次方，也都一樣。",
+          "board": [
+            {"do":"write","line":"$\\infty-\\infty$、$1^\\infty$、$0^0$、$\\infty^0$"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "翻到分母",
+      "beats": [
+        { "show": ["$f\\cdot g=\\frac{f}{1/g}$"],
+          "note": "$0\\cdot\\infty$ 變成 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$。",
+          "say": "零乘無限大的辦法：把其中一個翻到分母，變成分式，就可以用羅必達法則。",
+          "board": [
+            {"do":"write","line":"$f\\cdot g=\\frac{f}{{{d:1/g}}}$"},
+            {"do":"underline","term":"d","label":"翻下去","on":"變成分式"}
+          ] },
+        { "show": ["$\\ln x$ 留在分子"],
+          "note": "它的導數 $\\frac{1}{x}$ 很簡單。",
+          "say": "翻哪一個？翻完之後要好微分的。自然對數的導數很簡單，留在上面，把多項式那邊翻下去。",
+          "board": [
+            {"do":"write","line":"${{l:\\ln x}}$ 留分子，$x$ 翻到分母","tint":{"l":"blue"}},
+            {"do":"focus","term":"l","color":"blue","on":"留在上面"}
+          ] },
+        { "show": ["反過來翻 $\\ln x$：$\\frac{x}{1/\\ln x}$"],
+          "note": "分母要用連鎖律，越算越亂。",
+          "say": "反過來翻自然對數，分母變成自然對數 x 分之一，微分要用連鎖律，越算越亂。",
+          "board": [
+            {"do":"write","line":"$\\frac{x}{{{w1:1/\\ln x}}}$"},
+            {"do":"focus","term":"w1","color":"red","label":"越算越亂","on":"連鎖律"}
+          ] },
+        { "show": ["$x\\ln x=\\frac{\\ln x}{1/x}$"],
+          "note": "$x\\to 0^+$：是 $\\frac{\\infty}{\\infty}$。",
+          "say": "x 乘自然對數 x，把 x 翻下去，變成自然對數 x 除以 x 分之一，無限大比無限大。",
+          "board": [
+            {"do":"write","line":"$x\\,{{l:\\ln x}}=\\frac{\\ln x}{{{e:1/x}}}$"},
+            {"do":"underline","term":"e","label":"翻下去","on":"x 分之一"}
+          ] },
+        { "show": ["$\\frac{1/x}{-1/x^2}$"],
+          "note": "分子微分 $\\frac{1}{x}$，分母微分 $-\\frac{1}{x^2}$。",
+          "say": "上下各自微分：上面變 x 分之一，下面變負的 x 平方分之一。",
+          "board": [
+            {"do":"write","line":"$({{l:\\ln x}})'={{u:\\frac{1}{x}}}$，$(1/x)'={{v:-\\frac{1}{x^2}}}$"},
+            {"do":"underline","term":"u","on":"上面變"},
+            {"do":"underline","term":"v","on":"負的"}
+          ] }
+      ],
+      "key": "$\\ln x$ 留分子，把 $x$ 翻到分母",
+      "predict": {
+        "ask": "$x\\to 0^+$ 時，$\\frac{1/x}{-1/x^2}$ 趨近？",
+        "options": [
+          {
+            "label": "$0$",
+            "correct": true
+          },
+          {
+            "label": "$\\infty$",
+            "why": "除以 $-\\frac{1}{x^2}$ 等於乘 $-x^2$：$\\frac{1}{x}\\cdot(-x^2)=-x\\to 0$。"
+          },
+          {
+            "label": "$-\\infty$",
+            "why": "那是分子 $\\ln x$ 原本的去向。微分完要化簡：$\\frac{1}{x}\\cdot(-x^2)=-x\\to 0$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "指數型：先取 $\\ln$",
+      "beats": [
+        { "show": ["$\\ln y=g(x)\\cdot\\ln f(x)$"],
+          "note": "$y=f(x)^{g(x)}$，$f>0$。",
+          "say": "一的無限大次方、零的零次方、無限大的零次方，都先取自然對數，把指數拉下來變成乘法。",
+          "board": [
+            {"do":"write","line":"$y = f(x)^{{{g:g(x)}}}$","tint":{"g":"blue"}},
+            {"do":"write","line":"$\\ln y = {{p:{{g:g(x)}}\\cdot\\ln f(x)}}$","on":"先取自然對數"},
+            {"do":"focus","term":"g","label":"拉下來","on":"指數拉下來"}
+          ] },
+        { "show": ["三種都變成 $0\\cdot\\infty$"],
+          "say": "拉下來之後三種都變成零乘無限大，就用剛剛翻到分母的方法算。",
+          "board": [
+            {"do":"underline","term":"p","label":"都是 0·∞","on":"三種都變成"}
+          ] },
+        { "show": ["$\\lim y=e^{\\lim \\ln y}$"],
+          "note": "算出 $L$ 之後，答案是 $e^L$。",
+          "say": "算出自然對數 y 的極限 L 之後，答案是 e 的 L 次方。最後這一步最容易忘。",
+          "board": [
+            {"do":"write","line":"$\\lim \\ln y = {{l:L}}$","tint":{"l":"violet"}},
+            {"do":"write","line":"⇒ ${{r:\\lim y = e^{{{l:L}}}}}$","on":"答案是"},
+            {"do":"box","term":"r","color":"green","label":"最容易忘","on":"最後這一步"}
+          ] },
+        { "show": ["$e^{\\ln y}=y$"],
+          "note": "$e^x$ 與 $\\ln x$ 是反運算。",
+          "say": "e 的 x 次方和自然對數是反運算，所以 e 的自然對數 y 次方，就是 y 本身。",
+          "board": [
+            {"do":"write","line":"$e^{\\ln y}=y$"}
+          ] },
+        { "show": ["$\\ln y\\to L\\Rightarrow e^{\\ln y}\\to e^L$"],
+          "note": "$e^x$ 連續，指數靠近 $L$，整個就靠近 $e^L$。",
+          "say": "e 的 x 次方是連續的，所以自然對數 y 靠近 L，e 的那個次方就靠近 e 的 L 次方。",
+          "board": [
+            {"do":"write","line":"$\\ln y\\to L\\Rightarrow {{n1:e^{\\ln y}\\to e^{L}}}$"},
+            {"do":"box","term":"n1","color":"green","on":"就靠近"}
+          ] },
+        { "show": ["$x^x$：$\\ln y=x\\ln x\\to 0$"],
+          "note": "$x\\to 0^+$，是 $0^0$。",
+          "say": "例：x 的 x 次方，零的零次方。取自然對數是 x 乘自然對數 x，剛剛算過，趨近零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$y = x^x$（$x \\to 0^+$）：$0^0$ 型","on":"x 的 x 次方"},
+            {"do":"write","line":"$\\ln y = {{xl:x\\ln x}} \\to 0$","on":"取自然對數"},
+            {"do":"underline","term":"xl","label":"剛剛算過","on":"剛剛算過"}
+          ] }
+      ],
+      "key": "取 $\\ln$ 化成 $0\\cdot\\infty$，算完再取 $e$",
+      "check": 2
+    },
+    {
+      "title": "一的無限大次方",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^{3x}$"],
+          "note": "底數 $\\to 1$、指數 $\\to\\infty$。",
+          "say": "一加 x 分之二的三 x 次方，底數靠近一，指數衝向無限大。",
+          "board": [
+            {"do":"write","line":"$\\lim_{x\\to\\infty}\\left({{b:1+\\frac{2}{x}}}\\right)^{{{e:3x}}}$","tint":{"b":"blue","e":"violet"}},
+            {"do":"underline","term":"b","label":"靠近 1","on":"底數靠近一"},
+            {"do":"focus","term":"e","label":"衝向 ∞","on":"指數衝向"}
+          ] },
+        { "show": ["$\\ln y=\\frac{3\\ln(1+2/x)}{1/x}$"],
+          "note": "取 $\\ln$，再把 $x$ 翻下去：$\\frac{0}{0}$。",
+          "say": "取自然對數，是無限大乘零。把三 x 的 x 翻下去，變成零比零。",
+          "board": [
+            {"do":"write","line":"$\\ln y = {{e:3x}}\\,\\ln\\left({{b:1+\\frac{2}{x}}}\\right)$"},
+            {"do":"transform","line":"$\\ln y = \\frac{3\\ln\\left({{b:1+\\frac{2}{x}}}\\right)}{1/x}$","on":"翻下去"}
+          ] },
+        { "show": ["$3\\cdot\\frac{1}{1+2/x}\\cdot\\left(-\\frac{2}{x^2}\\right)$"],
+          "note": "3 留在外面；$\\ln u$ 的導數是 $\\frac{1}{u}$，再乘裡層。",
+          "say": "三留在外面，自然對數 u 微分是 u 分之一，再乘裡層的導數，負的 x 平方分之二。",
+          "board": [
+            {"do":"write","line":"$3\\cdot\\frac{1}{{{n2:1+2/x}}}\\cdot{{n3:\\left(-\\frac{2}{x^2}\\right)}}$"},
+            {"do":"focus","term":"n3","color":"blue","label":"裡層導數","on":"裡層的導數"}
+          ] },
+        { "show": ["$\\frac{6}{1+2/x}\\to 6$"],
+          "note": "連鎖律：$\\frac{2}{x}$ 的導數是 $-\\frac{2}{x^2}$。",
+          "say": "上下微分，負的 x 平方分之一約掉，剩六除以一加 x 分之二，趨近六。",
+          "board": [
+            {"do":"write","line":"L'Hôpital：$\\frac{6}{{{b:1+\\frac{2}{x}}}} \\to 6$","on":"剩六"}
+          ] },
+        { "show": ["$\\left(1+\\frac{a}{x}\\right)^x\\to e^a$","$a=2$：$e^2$"],
+          "note": "這是 e 型極限。",
+          "say": "e 型極限的結果是：一加 x 分之 a 的 x 次方，趨近 e 的 a 次方。這裡 a 是二，所以是 e 平方。",
+          "board": [
+            {"do":"write","line":"$\\left(1+\\frac{a}{x}\\right)^x\\to e^{a}$"},
+            {"do":"write","line":"$a=2$：$\\left(1+\\frac{2}{x}\\right)^x\\to e^2$","on":"這裡"}
+          ] },
+        { "show": ["$y\\to e^6$"],
+          "note": "也就是 $\\left(e^2\\right)^3$。",
+          "say": "別忘了取 e 回來：答案是 e 的六次方。跟 e 型極限算的一樣，e 平方的三次方。",
+          "board": [
+            {"do":"write","line":"$y \\to e^6$","color":"green","on":"取 e 回來"},
+            {"do":"transform","line":"$y \\to e^6 = (e^2)^3$","color":"green","on":"e 平方"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "無限大減無限大",
+      "beats": [
+        { "show": ["先合成一個分式"],
+          "note": "通分，或乘共軛。",
+          "say": "無限大減無限大，目標是合成一個分式：分式就通分，有平方根就乘共軛。",
+          "board": [
+            {"do":"write","line":"$\\infty-\\infty\\Rightarrow$ 合成一個分式"},
+            {"do":"write","line":"分式：通分","on":"分式就通分"},
+            {"do":"write","line":"有平方根：乘共軛","on":"有平方根"}
+          ] },
+        { "show": ["$\\frac{1}{x}-\\frac{1}{e^x-1}=\\frac{e^x-1-x}{x(e^x-1)}$"],
+          "say": "例：x 分之一減 e 的 x 次方減一分之一。通分之後，代零，上下都是零。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{x}-\\frac{1}{e^x-1}$","on":"例"},
+            {"do":"transform","line":"$\\frac{1}{x}-\\frac{1}{e^x-1}=\\frac{{{n:e^x-1-x}}}{x(e^x-1)}$","on":"通分之後"},
+            {"do":"underline","term":"n","label":"代零是零","on":"代零"}
+          ] },
+        { "show": ["一次：$\\frac{e^x-1}{(e^x-1)+xe^x}$"],
+          "note": "分母用乘法法則。代 $0$ 還是 $\\frac{0}{0}$。",
+          "say": "用一次羅必達，分母是乘積要用乘法法則。代零還是零比零，再用一次。",
+          "board": [
+            {"do":"write","line":"一次：$\\frac{e^x-1}{{{p:(e^x-1)+xe^x}}}$"},
+            {"do":"underline","term":"p","label":"乘法法則","on":"乘法法則"},
+            {"do":"write","line":"還是 $\\frac{0}{0}$：再用一次","on":"代零還是"}
+          ] },
+        { "show": ["$(e^x)'=e^x$","分子：$(e^x-1)'=e^x$"],
+          "note": "$e^x$ 微分還是它自己。",
+          "say": "先記住：e 的 x 次方微分還是它自己。所以分子 e 的 x 次方減一，微分得 e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"$(e^x)'=e^x$"},
+            {"do":"write","line":"分子：$(e^x-1)'=e^x$","on":"所以分子"}
+          ] },
+        { "show": ["分母：$e^x+(e^x+xe^x)$"],
+          "note": "第二項 $xe^x$ 用乘法法則。",
+          "say": "分母第一項微分是 e 的 x 次方，第二項 x 乘 e 的 x 次方用乘法法則，得 e 的 x 次方加 x e 的 x 次方。",
+          "board": [
+            {"do":"write","line":"分母：$e^x+(e^x+xe^x)$"}
+          ] }
+      ],
+      "key": "先通分合成一個分式，再用 L'Hôpital",
+      "predict": {
+        "ask": "再微分一次，代 $x=0$ 得？",
+        "options": [
+          {
+            "label": "$\\frac{1}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "分母 $(e^x-1)+xe^x$ 的兩項都要微：$e^x$ 加上 $e^x+xe^x$，是 $2e^x+xe^x$，代 $0$ 是 $2$。"
+          },
+          {
+            "label": "$0$",
+            "why": "你可能沒通分就說 $\\infty-\\infty=0$。它不是 $0$，要先合成一個分式再算。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "長得像但不是",
+      "beats": [
+        { "show": ["$\\infty+\\infty=\\infty$","$\\infty\\cdot\\infty=\\infty$"],
+          "say": "有些長得像，但不是不定型：兩個都往無限大跑，加起來或乘起來，只會更大。",
+          "board": [
+            {"do":"write","line":"$\\infty+\\infty=\\infty$"},
+            {"do":"write","line":"$\\infty\\cdot\\infty=\\infty$","on":"乘起來"}
+          ] },
+        { "show": ["$0^\\infty$ 是 $0$"],
+          "note": "底數 $\\to 0^+$、指數 $\\to+\\infty$。",
+          "say": "底數趨近零、指數趨近無限大：越小的正數乘越多次，只會越小，所以是零。",
+          "board": [
+            {"do":"write","line":"底數 $\\to 0^+$、指數 $\\to\\infty$"},
+            {"do":"write","line":"${{r:0^\\infty = 0}}$","on":"越小的正數"},
+            {"do":"box","term":"r","color":"green","on":"乘越多次"}
+          ] },
+        { "show": ["直接下結論，不必算"],
+          "say": "這些兩股力量往同一個方向拉，沒有拉扯，可以直接下結論。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"同一個方向拉","on":"這些兩股力量"},
+            {"do":"write","line":"沒有拉扯 → 直接下結論","on":"沒有拉扯"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": ["lhopital", "exponential-limit", "log-limit"],
+    "fine": ["indeterminate-zero-times-inf", "indeterminate-inf-minus-inf", "indeterminate-one-pow-inf", "indeterminate-zero-pow-zero", "indeterminate-inf-pow-zero", "indeterminate-take-log"]
+  },
+  "practice": [
+    { "id": "lim-011", "core": true, "trains": "indeterminate-zero-times-inf" },
+    { "id": "exam-lim-019", "core": true, "trains": "indeterminate-zero-times-inf", "note": "先把 $\\ln(x+1)-\\ln x$ 合成 $\\ln\\left(1+\\frac{1}{x}\\right)$。" },
+    { "id": "cx-lh-013", "core": true, "trains": "indeterminate-zero-times-inf" },
+    { "id": "exam-lim-011", "core": true, "trains": "indeterminate-zero-pow-zero" },
+    { "id": "cx-lim-008", "core": true, "trains": "indeterminate-one-pow-inf" },
+    { "id": "exam-lim-012", "core": true, "trains": "indeterminate-one-pow-inf" },
+    { "id": "lm-os-006", "core": true, "trains": "indeterminate-take-log", "note": "看起來是 $0^0$，取 $\\ln$ 之後指數與 $\\ln x$ 剛好抵消。" },
+    { "id": "world-011", "trains": "indeterminate-one-pow-inf" },
+    { "id": "lm-os-007", "trains": "indeterminate-zero-pow-zero" },
+    { "id": "cx-lh-012", "core": true, "trains": "indeterminate-inf-minus-inf" },
+    { "id": "cg-3e-013", "core": true, "trains": "indeterminate-inf-pow-zero" },
+    { "id": "cg-3e-014", "core": true, "trains": "indeterminate-inf-minus-inf" },
+    { "id": "lec-05-q1e", "trains": "indeterminate-inf-minus-inf" },
+    { "id": "cg-3e-012", "trains": "indeterminate-inf-pow-zero" },
+    { "id": "cg-3e-015", "trains": "indeterminate-inf-minus-inf" },
+    { "id": "burst-boss2-lim-001", "challenge": true, "trains": "indeterminate-one-pow-inf", "note": "挑戰：取 $\\ln$ 後要用 $\\ln\\left(\\frac{\\sin x}{x}\\right)$ 的展開，或連用 L'Hôpital。" }
+  ],
+  "gaps": []
+}

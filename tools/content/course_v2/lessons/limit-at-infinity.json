@@ -1,61 +1,106 @@
 {
   "id": "limit-at-infinity",
   "title": "x → ∞",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 5,
   "totalMinutes": 30,
-  "prerequisites": ["limit-laws-direct", "polynomial-rational"],
-  "next": ["infinite-limits"],
-  "related": ["asymptotes"],
+  "prerequisites": [
+    "limit-laws-direct",
+    "polynomial-rational"
+  ],
+  "next": [
+    "infinite-limits"
+  ],
+  "related": [
+    "asymptotes"
+  ],
   "objectives": [
-    "說得出 $\\lim_{x\\to\\infty} f(x) = L$ 的意思，以及它跟水平漸近線 $y = L$ 的關係。",
-    "有理函數會同除以分母的最高次，並依分子分母的次數判斷答案是 0、首項係數比，還是無窮。",
-    "$x \\to -\\infty$ 遇到根號時，記得 $\\sqrt{x^2} = |x| = -x$。"
+    "說得出 $\\lim_{x\\to\\infty}f(x)=L$ 的意思，以及它跟水平漸近線 $y=L$ 的關係",
+    "有理函數會同除以分母的最高次，並依分子分母的次數判斷答案是 $0$、首項係數比，還是無窮",
+    "$x\\to-\\infty$ 遇到根號時，記得 $\\sqrt{x^2}=|x|=-x$"
   ],
-  "visual": "畫出 y = (2x² + 1)/(x² + 3) 與虛線 y = 2。按「拉遠」，x 軸的範圍從 [−10, 10] 一路擴大到 [−10⁶, 10⁶]，曲線越來越貼著 y = 2；旁邊顯示 x = 10、100、1000 時的函數值。",
-  "figures": [
-    {"caption":"拉遠看，曲線貼住虛線 y = 2","after":0,"widget":{"type":"zoom","curves":[{"expr":"(2*x^2+1)/(x^2+3)","color":"blue"},{"expr":"2","color":"muted","dashed":true}],"center":[0,0],"window":[-10,10,-0.5,2.6],"levels":4,"out":true,"axes":"x","point":false}},
-    {"caption":"sin x / x 一再穿過 y = 0，仍然趨近 0","after":4,"graph":{"window":[0,30,-0.4,1.1],"curves":[{"expr":"sin(x)/x","domain":[0.05,30],"color":"blue","steps":300}]}}
-  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 意思：$x$ 一直變大時，$f(x)$ 往哪裡去",
+      "heading": "① 意思",
       "body": [
-        "$\\lim_{x\\to\\infty} f(x) = L$：只要 $x$ 夠大，$f(x)$ 就能要多靠近 $L$ 就多靠近 $L$。這時直線 $y = L$ 叫做水平漸近線。$x \\to -\\infty$ 同理，兩端的漸近線可以不一樣。",
-        "最基本的：$p > 0$ 時 $\\lim_{x\\to\\infty} \\frac{1}{x^p} = 0$。分母越來越大，分數越來越小。"
+        "意思：$x$ 一直變大，$f(x)$ 越來越靠近 $L$",
+        "「$\\infty$」不是一個數，$x\\to\\infty$ 是「$x$ 無限制地變大」的簡寫",
+        "圖上：曲線往右延伸，越來越貼近水平線 $y=L$",
+        "這條線叫水平漸近線",
+        "最基本的一條：",
+        "例：$x=1000$ 時 $\\frac1{x^2}=0.000001$",
+        "其他的有理函數，都要想辦法化成這種形式"
       ],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to\\infty}f(x)=L",
+        "\\lim_{x\\to\\infty}\\frac1{x^n}=0\\qquad(n>0)"
+      ]
     },
     {
-      "heading": "② 有理函數：同除以分母的最高次",
+      "heading": "② 同除以最高次",
       "body": [
-        "$\\frac{3x^2 - x + 7}{2x^2 + 5}$：分子分母同除以 $x^2$，得 $(3 - \\frac{1}{x} + \\frac{7}{x^2})/(2 + \\frac{5}{x^2})$。$x \\to \\infty$ 時每個 $\\frac{1}{x}$、$\\frac{1}{x^2}$ 都 $\\to 0$，剩 $\\frac{3}{2}$。",
-        "這就是〈多項式與有理函數〉裡「首項決定遠方」的精確版：除完之後，非首項的部分全部變成會趨近 0 的小項。"
+        "直接看是 $\\dfrac\\infty\\infty$：分子分母都變大",
+        "分子分母同除以 $x^2$（分母的最高次）：",
+        "為什麼是係數比？",
+        "$x$ 很大時，最高次項壓倒其他項"
       ],
-      "tex": ["\\frac{3x^2-x+7}{2x^2+5}=\\frac{3-\\frac1x+\\frac{7}{x^2}}{2+\\frac{5}{x^2}}\\ \\longrightarrow\\ \\frac{3}{2}"],
-      "collapsible": false
+      "tex": [
+        "\\lim_{x\\to\\infty}\\frac{3x^2-x+7}{2x^2+5}",
+        "\\frac{3-\\frac1x+\\frac7{x^2}}{2+\\frac5{x^2}}",
+        "\\to\\frac{3-0+0}{2+0}=\\frac32",
+        "\\frac{3x^2-x+7}{2x^2+5}\\approx\\frac{3x^2}{2x^2}=\\frac32"
+      ]
     },
     {
       "heading": "③ 三種情況",
       "body": [
-        "分子次數 $<$ 分母次數：極限 0。分子次數 $=$ 分母次數：首項係數的比。分子次數 $>$ 分母次數：沒有有限的極限，往 $+\\infty$ 或 $-\\infty$（$x \\to \\infty$ 時看首項係數比的正負），沒有水平漸近線。",
-        "這三句是同除最高次的結果，不是新規則；忘了就回去除一次。"
+        "分子次數 $m$、分母次數 $n$：",
+        "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{5x+2}{x^2+1}$（$m=1<n=2$）",
+        "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^3+1}{2x^2-x}$（$m=3>n=2$）",
+        "這時寫 $=\\infty$，只是描述「不存在，而且一路變大」"
       ],
-      "collapsible": false
+      "tex": [
+        "\\def\\arraystretch{1.5}\\begin{array}{c|c}m<n & 0\\\\\\hline m=n & \\text{首項係數比}\\\\\\hline m>n & \\pm\\infty\\end{array}",
+        "\\frac{\\frac5x+\\frac2{x^2}}{1+\\frac1{x^2}}\\to\\frac{0}{1}=0",
+        "\\frac{x+\\frac1{x^2}}{2-\\frac1x}\\to\\frac{\\infty}{2}=\\infty"
+      ]
     },
     {
-      "heading": "④ $x \\to -\\infty$ 與根號",
+      "heading": "④ $x\\to-\\infty$ 與根號",
       "body": [
-        "$\\sqrt{x^2} = |x|$。$x \\to -\\infty$ 時 $x$ 是負的，$|x| = -x$。所以 $\\sqrt{x^2 + 1} = \\sqrt{x^2(1 + \\frac{1}{x^2})} = |x|\\sqrt{1 + \\frac{1}{x^2}} = -x\\sqrt{1 + \\frac{1}{x^2}}$。",
-        "漏了負號，答案的正負會整個反過來。"
+        "$x\\to-\\infty$：$x$ 往左走，變成很大的負數",
+        "有理函數：一樣同除以最高次，答案通常跟 $+\\infty$ 一樣",
+        "根號要小心：$\\sqrt{x^2}=|x|$",
+        "$x<0$ 時 $|x|=-x$，所以 $\\sqrt{x^2}=-x$",
+        "例：$\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{x^2+1}}{2x+3}$",
+        "分子：$\\sqrt{x^2+1}=|x|\\sqrt{1+\\frac1{x^2}}=-x\\sqrt{1+\\frac1{x^2}}$",
+        "同除以 $x$：",
+        "同一個式子在 $x\\to+\\infty$ 時是 $+\\frac12$：兩邊有不同的水平漸近線"
       ],
-      "collapsible": false
+      "tex": [
+        "\\frac{-\\sqrt{1+\\frac1{x^2}}}{2+\\frac3x}\\to\\frac{-1}{2}=-\\frac12"
+      ]
     },
     {
       "heading": "⑤ 漸近線可以被穿過",
       "body": [
-        "水平漸近線只描述 $x$ 很大時的行為，圖形在中間可以穿過它，甚至穿過無限多次：$\\sin x / x$ 在 $x \\to \\infty$ 時趨近 0，卻一再穿過 $y = 0$。"
-      ],
-      "collapsible": false
+        "水平漸近線管的是遠方，不管中間",
+        "例：$g(x)=\\dfrac{2x^2+3x}{x^2+1}$，水平漸近線 $y=2$",
+        "解 $g(x)=2$：$2x^2+3x=2x^2+2\\Rightarrow x=\\dfrac23$",
+        "垂直漸近線才是真的穿不過（函數在那裡沒定義）；下一課講"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $\\lim_{x\\to\\infty}f(x)=L$：往右走越來越靠近 $L$；$y=L$ 是水平漸近線",
+        "• 有理函數：同除以分母的最高次",
+        "• 三種情況：$m<n$ 得 $0$；$m=n$ 得係數比；$m>n$ 得 $\\pm\\infty$",
+        "• $x\\to-\\infty$ 遇根號：$\\sqrt{x^2}=|x|=-x$",
+        "• 漸近線可以被穿過",
+        "下一課：無窮極限與垂直漸近線"
+      ]
     }
   ],
   "workedExamples": [
@@ -104,237 +149,694 @@
   ],
   "checks": [
     {
-      "ask": "$\\lim_{x\\to\\infty} \\frac{5x + 3}{x - 2}$ 是？",
+      "ask": "$\\displaystyle\\lim_{x\\to\\infty}\\frac{4x^3-x}{2x^3+7x^2}=$？",
       "options": [
-        { "label": "$\\infty$", "why": "分子分母都是一次，次數相同，答案是係數比 $\\frac{5}{1}$。" },
-        { "label": "0", "why": "只有分子次數比分母低才是 0。" },
-        { "label": "5", "correct": true }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to\\infty} \\frac{x^2 + 1}{x^3 - x}$ 是？",
-      "options": [
-        { "label": "0", "correct": true },
-        { "label": "1", "why": "分母是三次、分子是二次，次數不同；同除以 $x^3$ 後分子 $\\to 0$。" },
-        { "label": "$\\infty$", "why": "分母長得比分子快，分數會變小。" }
-      ]
-    },
-    {
-      "ask": "$\\lim_{x\\to-\\infty} \\frac{\\sqrt{4x^2 + 1}}{x}$ 是？",
-      "options": [
-        { "label": "2", "why": "$x < 0$ 時 $\\sqrt{4x^2} = 2|x| = -2x$，除以 $x$ 得 $-2$。" },
-        { "label": "$-2$", "correct": true },
-        { "label": "$-4$", "why": "$\\sqrt{4x^2} = 2|x|$，根號裡的 4 開出來是 2。" }
-      ]
-    },
-    {
-      "ask": "$y = \\frac{2x^2 + 1}{x^2 + 3}$ 的水平漸近線是？",
-      "options": [
-        { "label": "$y = \\frac{1}{3}$", "why": "$\\frac{1}{3}$ 是 $x = 0$ 時的函數值，跟 $x$ 很大時的行為無關。" },
-        { "label": "$y = 2$", "correct": true },
-        { "label": "$y = 0$", "why": "分子分母同次，不會趨近 0。" }
+        {
+          "label": "$2$",
+          "correct": true
+        },
+        {
+          "label": "$0$",
+          "why": "分子分母同次，不是分子次數比較小"
+        },
+        {
+          "label": "$\\infty$",
+          "why": "分子沒有比分母高次"
+        },
+        {
+          "label": "$-\\dfrac17$",
+          "why": "不是看最低次項；$x$ 很大時看最高次"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "$x$ 一直變大",
+      "title": "意思",
       "beats": [
-        { "show": ["$\\lim_{x\\to\\infty} f(x) = L$"],
-          "note": "$x$ 夠大，$f(x)$ 就能要多靠近 $L$ 就多靠近。",
-          "say": "這一課問的是：x 一直變大，函數值往哪裡去？只要 x 夠大，就能要多靠近 L 就多靠近 L。",
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}f(x)=L$"
+          ],
+          "say": "這一課看 x 趨近無限大的極限。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty} f(x) = {{l:L}}$"},
-            {"do":"focus","term":"l","label":"目標","on":"要多靠近"}
-          ] },
-        { "show": ["離 2 的差距：$\\frac{5}{x^2+3}$"],
-          "say": "拿圖上的曲線來量：它跟二的差，通分後是五除以 x 平方加三。",
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{x\\to\\infty}f(x)=L}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "近無"
+            }
+          ]
+        },
+        {
+          "show": [
+            "意思：$x$ 一直變大，$f(x)$ 越來越靠近 $L$"
+          ],
+          "say": "意思是：x 一直往右走、越來越大，f of x 就越來越靠近 L，而且要多近都可以。",
           "board": [
-            {"do":"write","line":"$2-\\frac{2x^2+1}{x^2+3}={{g1:\\frac{5}{x^2+3}}}$"},
-            {"do":"focus","term":"g1","label":"差距","on":"五除以"}
-          ] },
-        { "show": ["$x=1$ 差 $\\frac{5}{4}$；$x=2$ 差 $\\frac{5}{7}$"],
-          "note": "x 越大，差距越小。",
-          "say": "x 取一，差距是四分之五；x 取二，差距是七分之五。分母越大，差距越小，要多小都做得到。",
+            {
+              "do": "write",
+              "line": "意思：$x$ 一直變大，$f(x)$ 越來越靠近 $L$"
+            },
+            {
+              "do": "write",
+              "line": "　「$\\infty$」不是一個數，$x\\to\\infty$ 是「$x$ 無限制地變大」的簡寫",
+              "color": "violet",
+              "on": "就越"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圖上：曲線往右延伸，越來越貼近水平線 $y=L$"
+          ],
+          "say": "在圖上，就是曲線往右延伸，越來越貼近一條水平線 y 等於 L。",
           "board": [
-            {"do":"write","line":"$x=1$：差 $\\frac{5}{4}$"},
-            {"do":"write","line":"$x=2$：差 ${{s:\\frac{5}{7}}}$","on":"x 取二"},
-            {"do":"focus","term":"s","label":"更小","on":"分母越大"}
-          ] },
-        { "show": ["$y = L$：水平漸近線"],
-          "fig": {"use":0,"to":0},
-          "say": "這時直線 y 等於 L 叫水平漸近線。看圖，藍色曲線在中間彎來彎去，虛線是 y 等於二。",
+            {
+              "do": "write",
+              "line": "圖上：曲線往右延伸，越來越貼近水平線 $y=L$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "這條線叫水平漸近線"
+          ],
+          "say": "這條水平線叫做水平漸近線。",
           "board": [
-            {"do":"write","line":"${{y:y = L}}$：水平漸近線"},
-            {"do":"underline","term":"y","on":"藍色曲線"}
-          ] },
-        { "show": ["拉遠看"],
-          "fig": {"use":0,"to":2},
-          "say": "把 x 方向拉遠，中間的彎曲被壓扁，曲線兩端越來越貼著虛線。",
+            {
+              "do": "write",
+              "line": "這條線叫水平漸近線",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最基本的一條：",
+            "$\\lim_{x\\to\\infty}\\frac1{x^n}=0\\qquad(n>0)$"
+          ],
+          "say": "最基本的一條：x 的 n 次方分之一，x 趨近無限大時趨近 0。分母越來越大，分數就越來越小。",
           "board": [
-            {"do":"write","line":"拉遠：兩端貼著 $y = L$"}
-          ] },
-        { "show": ["$p > 0$：$\\lim_{x\\to\\infty} \\frac{1}{x^p} = 0$"],
-          "note": "分母越來越大，分數越來越小。",
-          "say": "最基本的一條：p 大於零時，x 的 p 次方分之一趨近零。分母越來越大，分數就越來越小。",
+            {
+              "do": "write",
+              "line": "最基本的一條："
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle \\lim_{x\\to\\infty}\\frac1{x^n}=0\\qquad(n>0)}}$",
+              "color": "red",
+              "on": "次方"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "無限"
+            },
+            {
+              "do": "write",
+              "line": "　例：$x=1000$ 時 $\\frac1{x^2}=0.000001$",
+              "color": "violet",
+              "on": "來越#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "其他的有理函數，都要想辦法化成這種形式"
+          ],
+          "say": "等一下的有理函數，都要想辦法化成這種形式。",
           "board": [
-            {"do":"write","line":"$p > 0$：$\\lim_{x\\to\\infty} \\frac{1}{{{d:x^p}}} = 0$"},
-            {"do":"underline","term":"d","label":"分母變大","on":"分母越來越大"}
-          ] }
-      ],
-      "drag": {
-        "use": 0,
-        "ask": "自己拉遠到最底，看曲線貼著哪一條線",
-        "range": [
-          3.5,
-          4
-        ]
-      }
+            {
+              "do": "write",
+              "line": "其他的有理函數，都要想辦法化成這種形式"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "同除以最高次",
       "beats": [
-        { "show": ["$\\lim_{x\\to\\infty} \\frac{3x^2 - x + 7}{2x^2 + 5}$"],
-          "note": "分母最高次是 $x^2$，分子分母同除以 $x^2$。",
-          "say": "有理函數的做法：找分母的最高次，這裡是 x 平方，分子分母一起除以它。",
+        {
+          "show": [
+            "$\\lim_{x\\to\\infty}\\frac{3x^2-x+7}{2x^2+5}$"
+          ],
+          "say": "例子：3x 平方減 x 加 7，除以 2x 平方加 5。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty} \\frac{{{a:3}}x^2 - x + 7}{{{b:2}}{{top:x^2}} + 5}$","tint":{"a":"blue","b":"violet"}},
-            {"do":"focus","term":"top","label":"最高次","on":"這裡是 x 平方"},
-            {"do":"write","line":"分子分母同除以 $x^2$","on":"一起除以"}
-          ] },
-        { "show": ["$(3 - \\frac{1}{x} + \\frac{7}{x^2})/(2 + \\frac{5}{x^2})$"],
-          "say": "除完之後，除了首項，其他每一項都變成 x 分之幾、x 平方分之幾。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\lim_{x\\to\\infty}\\frac{3x^2-x+7}{2x^2+5}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直接看是 $\\dfrac\\infty\\infty$：分子分母都變大"
+          ],
+          "say": "分子分母都往無限大跑，無限大除以無限大，看不出答案。",
           "board": [
-            {"do":"write","line":"$=\\frac{{{a:3}} - \\frac{1}{x} + \\frac{7}{x^2}}{{{b:2}} + \\frac{5}{x^2}}$"}
-          ] },
-        { "show": ["小項 $\\to 0$，剩 $\\frac{3}{2}$"],
-          "note": "水平漸近線 $y = \\frac{3}{2}$。",
-          "say": "x 趨近無限大，那些小項全部趨近零，只剩二分之三。這就是首項決定遠方的精確版。",
+            {
+              "do": "write",
+              "line": "直接看是 $\\dfrac\\infty\\infty$：分子分母都變大"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子分母同除以 $x^2$（分母的最高次）：",
+            "$\\frac{3-\\frac1x+\\frac7{x^2}}{2+\\frac5{x^2}}$"
+          ],
+          "say": "分子分母同除以分母的最高次，x 平方。每一項都變成常數或是 x 的幾次方分之一。",
           "board": [
-            {"do":"transform","line":"$\\to\\frac{{{a:3}} - 0 + 0}{{{b:2}} + 0}$","on":"小項全部"},
-            {"do":"transform","line":"$\\to\\frac{{{a:3}}}{{{b:2}}}$","on":"只剩"}
-          ] }
-      ],
-      "check": 0
+            {
+              "do": "write",
+              "line": "分子分母同除以 $x^2$（分母的最高次）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3-\\frac1x+\\frac7{x^2}}{2+\\frac5{x^2}}$",
+              "on": "一項"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\to\\frac{3-0+0}{2+0}=\\frac32$"
+          ],
+          "say": "那些分之一都趨近 0，剩下 2 分之 3。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\to\\frac{3-0+0}{2+0}=\\frac32}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "color": "red",
+              "on": "剩下"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼是係數比？",
+            "$x$ 很大時，最高次項壓倒其他項"
+          ],
+          "say": "為什麼答案是首項係數的比？因為 x 很大的時候，最高次項遠遠大過其他項，其他的都可以忽略。這就是 0.8 說的「看首項」。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼是係數比？"
+            },
+            {
+              "do": "write",
+              "line": "$x$ 很大時，最高次項壓倒其他項",
+              "on": "的時"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{3x^2-x+7}{2x^2+5}\\approx\\frac{3x^2}{2x^2}=\\frac32$",
+              "on": "可以"
+            }
+          ]
+        },
+        {
+          "show": [
+            "越往右越貼近 y = 3/2"
+          ],
+          "say": "圖上看，越往右越貼近 2 分之 3。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "same",
+                  "window": [
+                    0,
+                    40,
+                    0,
+                    3
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(3*x^2-x+7)/(2*x^2+5)",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 1.5,
+                      "label": "y = 3/2",
+                      "color": "red"
+                    }
+                  ],
+                  "height": 220
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "越往右越貼近 y = 3/2",
+              "color": "violet",
+              "on": "分之"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "三種情況",
       "beats": [
-        { "show": ["分子次數 $<$ 分母次數：0"],
-          "note": "例：$\\frac{5x + 2}{x^2 + 1} \\to \\frac{0}{1} = 0$。",
-          "say": "分子次數比較低，同除以分母最高次之後，分子全部趨近零，極限是零。",
+        {
+          "show": [
+            "分子次數 $m$、分母次數 $n$：",
+            "$\\def\\arraystretch{1.5}\\begin{array}{c|c}m<n & 0\\\\\\hline m=n & \\text{首項係數比}\\\\\\hline m>n & \\pm\\infty\\end{array}$"
+          ],
+          "say": "有理函數的答案只有三種情況，看分子次數 m 和分母次數 n。分子次數比較小，答案是 0；一樣大，答案是首項係數比；分子比較大，往正無限大或負無限大跑。",
           "board": [
-            {"do":"write","line":"分子次數 $<$ 分母次數：${{z:0}}$"},
-            {"do":"focus","term":"z","label":"分子 → 0","on":"分子全部"}
-          ] },
-        { "show": ["分子次數 $=$ 分母次數：首項係數的比"],
-          "say": "次數一樣，極限是首項係數的比，像剛剛的二分之三。注意是係數的比，不是次數的比。",
+            {
+              "do": "write",
+              "line": "分子次數 $m$、分母次數 $n$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\def\\arraystretch{1.5}{\\begin{array}{c|c}m<n & 0\\\\\\hline m=n & \\text{首項係數比}\\\\\\hline m>n & \\pm\\infty\\end{array}}}}$",
+              "on": "次數#2"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "是首"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{5x+2}{x^2+1}$（$m=1<n=2$）",
+            "$\\frac{\\frac5x+\\frac2{x^2}}{1+\\frac1{x^2}}\\to\\frac{0}{1}=0$"
+          ],
+          "say": "分子 1 次、分母 2 次。同除以 x 平方，分子都趨近 0，分母趨近 1，答案是 0。",
           "board": [
-            {"do":"write","line":"分子次數 $=$ 分母次數：首項係數的比"},
-            {"do":"write","line":"像 $\\frac{{{a:3}}x^2 - x + 7}{{{b:2}}x^2 + 5}\\to\\frac{3}{2}$","tint":{"a":"blue","b":"violet"},"on":"像剛剛"}
-          ] },
-        { "show": ["分子次數 $>$ 分母次數：沒有有限的極限"],
-          "note": "例：$\\frac{x^2 + 1}{x + 2} \\to +\\infty$，沒有水平漸近線。",
-          "say": "分子次數比較高，函數會往正無限大或負無限大跑，沒有水平漸近線。這三句忘了，就回去除一次。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{5x+2}{x^2+1}$（$m=1<n=2$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\frac5x+\\frac2{x^2}}{1+\\frac1{x^2}}\\to\\frac{0}{1}=0$",
+              "on": "分子#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^3+1}{2x^2-x}$（$m=3>n=2$）",
+            "$\\frac{x+\\frac1{x^2}}{2-\\frac1x}\\to\\frac{\\infty}{2}=\\infty$"
+          ],
+          "say": "分子 3 次、分母 2 次。同除以 x 平方：分子還剩一個 x，往無限大跑；分母趨近 2。所以整個往無限大跑，極限不存在。",
           "board": [
-            {"do":"write","line":"分子次數 $>$ 分母次數：沒有有限的極限"}
-          ] }
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to\\infty}\\frac{x^3+1}{2x^2-x}$（$m=3>n=2$）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{x+\\frac1{x^2}}{2-\\frac1x}\\to\\frac{\\infty}{2}=\\infty$",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "　這時寫 $=\\infty$，只是描述「不存在，而且一路變大」",
+              "color": "violet",
+              "on": "趨近"
+            }
+          ]
+        }
       ],
-      "check": 1
+      "check": 0
     },
     {
-      "title": "$x \\to -\\infty$ 與根號",
+      "title": "$x\\to-\\infty$ 與根號",
       "beats": [
-        { "show": ["$\\sqrt{x^2} = |x|$"],
-          "note": "$x \\to -\\infty$ 時 $x$ 是負的，$|x| = -x$。",
-          "say": "根號 x 平方不是 x，是 x 的絕對值。x 趨近負無限大時 x 是負的，絕對值要寫成負 x。",
+        {
+          "show": [
+            "$x\\to-\\infty$：$x$ 往左走，變成很大的負數"
+          ],
+          "say": "x 也可以往左走，趨近負無限大，變成絕對值很大的負數。",
           "board": [
-            {"do":"write","line":"$\\sqrt{x^2} = {{w:x}}$"},
-            {"do":"strike","term":"w","on":"不是 x"},
-            {"do":"transform","line":"$\\sqrt{x^2} = {{ab:|x|}}$","on":"是 x 的絕對值"},
-            {"do":"write","line":"$x\\to-\\infty$：${{ab:|x|}} = {{nx:-x}}$","tint":{"nx":"violet"},"on":"絕對值要"}
-          ] },
-        { "show": ["$\\lim_{x\\to-\\infty} \\frac{\\sqrt{x^2 + 1}}{2x + 3}$"],
-          "note": "$\\sqrt{x^2 + 1} = -x\\sqrt{1 + \\frac{1}{x^2}}$",
-          "say": "看這一題：根號 x 平方加一，先把 x 平方提出來，開出來是負 x 乘根號一加 x 平方分之一。",
+            {
+              "do": "write",
+              "line": "$x\\to-\\infty$：$x$ 往左走，變成很大的負數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理函數：一樣同除以最高次，答案通常跟 $+\\infty$ 一樣"
+          ],
+          "say": "有理函數一樣同除以最高次，做法跟正無限大一樣。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\lim_{x\\to-\\infty} \\frac{{{rt:\\sqrt{x^2 + 1}}}}{2x + 3}$","on":"看這一題"},
-            {"do":"write","line":"${{rt:\\sqrt{x^2 + 1}}} = {{nx:-x}}\\sqrt{1 + \\frac{1}{x^2}}$","tint":{"nx":"violet"},"on":"先把 x 平方"},
-            {"do":"focus","term":"nx","color":"violet","label":"x 是負的","on":"開出來是負 x"}
-          ] },
-        { "show": ["$\\sqrt{4x^2}=\\sqrt4\\cdot\\sqrt{x^2}=2|x|$"],
-          "note": "係數 4 也要開根號，不是 4。",
-          "say": "如果根號裡是四 x 平方呢？四也要開出來：根號四是二，所以得到二乘 x 的絕對值。",
+            {
+              "do": "write",
+              "line": "有理函數：一樣同除以最高次，答案通常跟 $+\\infty$ 一樣"
+            }
+          ]
+        },
+        {
+          "show": [
+            "根號要小心：$\\sqrt{x^2}=|x|$"
+          ],
+          "say": "但遇到根號要特別小心：根號 x 平方等於 x 的絕對值，不是 x。",
           "board": [
-            {"do":"write","line":"$\\sqrt{4x^2}={{a:\\sqrt4}}\\sqrt{x^2}={{b:2}}|x|$"},
-            {"do":"focus","term":"a","label":"也要開","on":"根號四"},
-            {"do":"circle","term":"b","on":"二乘"}
-          ] },
-        { "show": ["$\\sqrt{4x^2+1}=-2x\\sqrt{1+\\frac{1}{4x^2}}$"],
-          "say": "整個提出來：根號四 x 平方加一，等於負二 x 乘根號一加四 x 平方分之一，因為 x 是負的。",
+            {
+              "do": "write",
+              "line": "根號要小心：$\\sqrt{x^2}=|x|$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$x<0$ 時 $|x|=-x$，所以 $\\sqrt{x^2}=-x$"
+          ],
+          "say": "x 是負的時候，絕對值是負 x。所以根號 x 平方，等於負 x。",
           "board": [
-            {"do":"write","line":"$\\sqrt{4x^2+1}={{n:-2x}}\\sqrt{1+\\frac{1}{4x^2}}$"},
-            {"do":"focus","term":"n","color":"violet","label":"x 是負的","on":"負二 x"}
-          ] },
-        { "show": ["同除以 $x$：$-\\sqrt{1 + \\frac{1}{x^2}}/(2 + \\frac{3}{x})$"],
-          "say": "分子分母同除以 x。負 x 除以 x 是負一，所以分子前面留下一個負號。",
+            {
+              "do": "write",
+              "line": "$x<0$ 時 $|x|=-x$，所以 $\\sqrt{x^2}=-x$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{x^2+1}}{2x+3}$"
+          ],
+          "say": "例子：根號 x 平方加 1，除以 2x 加 3，x 趨近負無限大。",
           "board": [
-            {"do":"write","line":"同除以 $x$：$\\frac{{{m:-}}\\sqrt{1 + \\frac{1}{x^2}}}{2 + \\frac{3}{x}}$"},
-            {"do":"focus","term":"m","color":"violet","label":"−x 除以 x","on":"負 x 除以"}
-          ] },
-        { "show": ["$\\to -\\frac{1}{2}$"],
-          "note": "$x \\to +\\infty$ 時是 $\\frac{1}{2}$：兩端各一條漸近線。",
-          "say": "答案是負二分之一。同一個函數往右邊去是二分之一，兩端各有一條水平漸近線。",
+            {
+              "do": "write",
+              "line": "例：$\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{x^2+1}}{2x+3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子：$\\sqrt{x^2+1}=|x|\\sqrt{1+\\frac1{x^2}}=-x\\sqrt{1+\\frac1{x^2}}$"
+          ],
+          "say": "分子先提出 x 平方：根號 x 平方加 1 等於 x 的絕對值，乘根號 1 加 x 平方分之一。x 是負的，絕對值換成負 x。",
           "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"$\\to\\;\\; {{r:-\\frac{1}{2}}}$","on":"答案是"},
-            {"do":"box","term":"r","color":"green","on":"負二分之一"},
-            {"do":"write","line":"$x\\to+\\infty$ 時是 $\\frac{1}{2}$","on":"往右邊去"}
-          ] }
+            {
+              "do": "write",
+              "line": "分子：$\\sqrt{x^2+1}=|x|\\sqrt{1+\\frac1{x^2}}=-x\\sqrt{1+\\frac1{x^2}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "同除以 $x$：",
+            "$\\frac{-\\sqrt{1+\\frac1{x^2}}}{2+\\frac3x}\\to\\frac{-1}{2}=-\\frac12$"
+          ],
+          "say": "分子分母同除以 x，分子剩負的根號 1 加 x 平方分之一，分母剩 2 加 x 分之 3。答案是負 2 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "同除以 $x$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\frac{-\\sqrt{1+\\frac1{x^2}}}{2+\\frac3x}\\to\\frac{-1}{2}=-\\frac12}}$",
+              "color": "red",
+              "on": "的根"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分母#2"
+            },
+            {
+              "do": "write",
+              "line": "　同一個式子在 $x\\to+\\infty$ 時是 $+\\frac12$：兩邊有不同的水平漸近線",
+              "color": "violet",
+              "on": "答案"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{4x^2+x}}{x}=$？"
+          ],
+          "say": "先猜猜看。"
+        }
       ],
-      "key": "$x<0$ 時 $\\sqrt{x^2}=-x$，負號別丟",
-      "check": 2
+      "predict": {
+        "ask": "$\\displaystyle\\lim_{x\\to-\\infty}\\frac{\\sqrt{4x^2+x}}{x}=$？",
+        "options": [
+          {
+            "label": "$-2$",
+            "correct": true
+          },
+          {
+            "label": "$2$",
+            "why": "這是 $x\\to+\\infty$；負的 $x$ 時 $\\sqrt{x^2}=-x$"
+          },
+          {
+            "label": "$4$",
+            "why": "根號裡的 $4$ 開根號是 $2$"
+          }
+        ]
+      }
     },
     {
       "title": "漸近線可以被穿過",
       "beats": [
-        { "show": ["水平漸近線只管 $x$ 很大的時候"],
-          "say": "很多人以為曲線永遠碰不到漸近線。其實水平漸近線只描述 x 很大時的行為，中間怎樣都可以。",
+        {
+          "show": [
+            "水平漸近線管的是遠方，不管中間"
+          ],
+          "say": "最後一個常見誤解：曲線永遠碰不到漸近線？不對。水平漸近線只管遠方的行為，中間可以穿過去。",
           "board": [
-            {"do":"write","line":"水平漸近線只管 ${{b:x}}$ 很大的時候"},
-            {"do":"focus","term":"b","label":"只看遠方","on":"x 很大"},
-            {"do":"write","line":"中間怎樣都可以","on":"中間怎樣"}
-          ] },
-        { "show": ["$\\sin x / x \\to 0$"],
-          "note": "卻一再穿過 $y = 0$，穿過無限多次。",
-          "say": "sine x 除以 x，x 趨近無限大時趨近零，可是它一路上下擺動，一再穿過 y 等於零。",
+            {
+              "do": "write",
+              "line": "水平漸近線管的是遠方，不管中間",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：$g(x)=\\dfrac{2x^2+3x}{x^2+1}$，水平漸近線 $y=2$"
+          ],
+          "say": "例子：2x 平方加 3x，除以 x 平方加 1。同次，水平漸近線是 y 等於 2。",
           "board": [
-            {"do":"write","line":"$\\lim_{x\\to\\infty}\\frac{\\sin x}{x} = {{z:0}}$"},
-            {"do":"focus","term":"z","on":"趨近零"},
-            {"do":"write","line":"上下擺動，一再穿過 $y = 0$","on":"上下擺動"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "例：$g(x)=\\dfrac{2x^2+3x}{x^2+1}$，水平漸近線 $y=2$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "解 $g(x)=2$：$2x^2+3x=2x^2+2\\Rightarrow x=\\dfrac23$"
+          ],
+          "say": "但是解 g of x 等於 2：2x 平方消掉，剩 3x 等於 2，x 等於 3 分之 2。曲線在這裡穿過漸近線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "解 $g(x)=2$：$2x^2+3x=2x^2+2\\Rightarrow x=\\dfrac23$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "在 x = 2/3 穿過 y = 2，往兩邊才慢慢貼近"
+          ],
+          "say": "圖上：曲線在 3 分之 2 穿過紅線，越過去以後，往右再慢慢從上面貼近 2。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cross",
+                  "window": [
+                    -10,
+                    10,
+                    -1.5,
+                    3.5
+                  ],
+                  "fn": [
+                    {
+                      "expr": "(2*x^2+3*x)/(x^2+1)",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": 2,
+                      "label": "y = 2",
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": "2/3",
+                      "y": 2,
+                      "color": "ink"
+                    }
+                  ],
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "在 x = 2/3 穿過 y = 2，往兩邊才慢慢貼近",
+              "color": "violet",
+              "on": "穿過"
+            },
+            {
+              "do": "write",
+              "line": "　垂直漸近線才是真的穿不過（函數在那裡沒定義）；下一課講",
+              "color": "violet",
+              "on": "往右"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• $\\lim_{x\\to\\infty}f(x)=L$：往右走越來越靠近 $L$；$y=L$ 是水平漸近線",
+            "• 有理函數：同除以分母的最高次"
+          ],
+          "say": "整理一下：x 趨近無限大的極限對應水平漸近線；有理函數同除以分母的最高次，答案看次數；負無限大遇到根號，根號 x 平方等於負 x；漸近線可以被穿過。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $\\lim_{x\\to\\infty}f(x)=L$：往右走越來越靠近 $L$；$y=L$ 是水平漸近線"
+            },
+            {
+              "do": "write",
+              "line": "• 有理函數：同除以分母的最高次",
+              "on": "限對"
+            },
+            {
+              "do": "write",
+              "line": "• 三種情況：$m<n$ 得 $0$；$m=n$ 得係數比；$m>n$ 得 $\\pm\\infty$",
+              "on": "以分"
+            },
+            {
+              "do": "write",
+              "line": "• $x\\to-\\infty$ 遇根號：$\\sqrt{x^2}=|x|=-x$",
+              "on": "無限#2"
+            },
+            {
+              "do": "write",
+              "line": "• 漸近線可以被穿過",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：無窮極限與垂直漸近線"
+          ],
+          "say": "下一課，看函數值往無限大跑的情況：垂直漸近線。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：無窮極限與垂直漸近線"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["rational-limit", "asymptote", "rational"],
-    "fine": ["infinity-rational-same-degree", "infinity-rational-degree-compare", "infinity-negative-sqrt", "infinity-horizontal-asymptote"]
+    "coarse": [
+      "rational-limit",
+      "asymptote",
+      "rational"
+    ],
+    "fine": [
+      "infinity-rational-same-degree",
+      "infinity-rational-degree-compare",
+      "infinity-negative-sqrt",
+      "infinity-horizontal-asymptote"
+    ]
   },
   "practice": [
-    { "id": "cx-lim-003", "core": true, "trains": "infinity-rational-same-degree" },
-    { "id": "fd-lim-007", "core": true, "trains": "infinity-rational-same-degree" },
-    { "id": "fd-lim-008", "core": true, "trains": "infinity-rational-same-degree" },
-    { "id": "exam-lim-008", "core": true, "trains": "infinity-rational-same-degree" },
-    { "id": "cx-curve-004", "core": true, "trains": "infinity-horizontal-asymptote" },
-    { "id": "lec-01-q4b", "core": true, "trains": "infinity-horizontal-asymptote" },
-    { "id": "cg-1d-001", "core": true, "trains": "infinity-rational-degree-compare" },
-    { "id": "cg-1d-002", "core": true, "trains": "infinity-rational-degree-compare" },
-    { "id": "cg-1d-003", "core": true, "trains": "infinity-negative-sqrt" },
-    { "id": "lx-app-002", "trains": "infinity-horizontal-asymptote" },
-    { "id": "lx-app-008", "trains": "infinity-horizontal-asymptote" },
-    { "id": "cg-1d-004", "trains": "infinity-negative-sqrt" }
+    {
+      "id": "cx-lim-003",
+      "core": true,
+      "trains": "infinity-rational-same-degree"
+    },
+    {
+      "id": "fd-lim-007",
+      "core": true,
+      "trains": "infinity-rational-same-degree"
+    },
+    {
+      "id": "fd-lim-008",
+      "core": true,
+      "trains": "infinity-rational-same-degree"
+    },
+    {
+      "id": "exam-lim-008",
+      "core": true,
+      "trains": "infinity-rational-same-degree"
+    },
+    {
+      "id": "cx-curve-004",
+      "core": true,
+      "trains": "infinity-horizontal-asymptote"
+    },
+    {
+      "id": "lec-01-q4b",
+      "core": true,
+      "trains": "infinity-horizontal-asymptote"
+    },
+    {
+      "id": "cg-1d-001",
+      "core": true,
+      "trains": "infinity-rational-degree-compare"
+    },
+    {
+      "id": "cg-1d-002",
+      "core": true,
+      "trains": "infinity-rational-degree-compare"
+    },
+    {
+      "id": "cg-1d-003",
+      "core": true,
+      "trains": "infinity-negative-sqrt"
+    },
+    {
+      "id": "lx-app-002",
+      "trains": "infinity-horizontal-asymptote"
+    },
+    {
+      "id": "lx-app-008",
+      "trains": "infinity-horizontal-asymptote"
+    },
+    {
+      "id": "cg-1d-004",
+      "trains": "infinity-negative-sqrt"
+    }
   ],
   "gaps": []
 }

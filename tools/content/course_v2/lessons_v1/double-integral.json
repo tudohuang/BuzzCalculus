@@ -1,0 +1,427 @@
+{
+  "id": "double-integral",
+  "title": "二重積分",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "riemann-sum-intuition",
+    "definite-signed-area",
+    "two-variable-functions"
+  ],
+  "next": [
+    "iterated-integral"
+  ],
+  "related": [
+    "nonrectangular-regions",
+    "polar-double-integral",
+    "average-value",
+    "surface-area"
+  ],
+  "objectives": [
+    "說出 $\\iint_R f(x,y)\\,dA$ 是「切小格、高度 $\\times$ 面積、加起來、取極限」，$f\\ge 0$ 時是曲面下方的體積。",
+    "用中點法估計矩形上的二重積分。",
+    "用面積、常數倍、對稱性，不算累次積分就直接得到某些二重積分。"
+  ],
+  "visual": "矩形 R 上方有一張曲面 z = f(x, y)。R 被切成 m × n 個小矩形，每一格立一根高度是 f(中點) 的柱子；拖動滑桿把格子加密，柱子總體積的讀數一路逼近曲面下的體積。把曲面往下拖到 xy 平面以下，那部分的柱子變成紅色、以負值計入。",
+  "concept": [
+    {
+      "heading": "① 從面積到體積",
+      "body": [
+        "一維時，$\\int_a^b f(x)\\,dx$ 是把 $[a,b]$ 切細，每段算 $f(x_i)\\Delta x$，再加起來取極限。",
+        "現在 $f(x,y)$ 有兩個輸入，$z=f(x,y)$ 是一張曲面。問題換成：曲面跟它底下的區域 $R$ 之間，夾著多少體積？"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 切小格、立柱子、加起來",
+      "body": [
+        "先看矩形 $R=[a,b]\\times[c,d]$。$x$ 方向切 $m$ 段、$y$ 方向切 $n$ 段，得到 $mn$ 個小矩形，每個面積 $\\Delta A=\\Delta x\\,\\Delta y$。",
+        "每一格挑一個點 $(x_{ij}^*,y_{ij}^*)$，立一根高 $f(x_{ij}^*,y_{ij}^*)$ 的柱子，體積是 $f\\cdot\\Delta A$。全部加起來是一個 Riemann 和。格子越切越細，這個和的極限就叫二重積分。",
+        "$dA$ 讀成「一小塊面積」。下一課〈累次積分〉會把它拆成 $dx\\,dy$ 來算。"
+      ],
+      "tex": [
+        "\\iint_R f(x,y)\\,dA=\\lim_{m,n\\to\\infty}\\sum_{i=1}^{m}\\sum_{j=1}^{n} f(x_{ij}^*,y_{ij}^*)\\,\\Delta A"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 有號體積",
+      "body": [
+        "$f\\ge 0$ 時，二重積分就是曲面下、$R$ 上的體積。$f$ 有負值時，$R$ 下方那部分算負的，跟〈定積分與有號面積〉同一個道理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 不用算就知道的幾件事",
+      "body": [
+        "$\\iint_R 1\\,dA={}$ $R$ 的面積（高度 $1$ 的柱體，體積數值等於底面積）；$\\iint_R c\\,dA=c\\times{}$ 面積。",
+        "可以拆加法、提常數；$R$ 切成兩塊，積分也拆成兩塊相加。",
+        "對稱：$R$ 對 $y$ 軸對稱，而且 $f(-x,y)=-f(x,y)$，左右兩半剛好抵消，積分是 $0$。",
+        "$f$ 在 $R$ 上的平均值 $=(1/$面積$)\\iint_R f\\,dA$，跟〈平均值〉同一個想法。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 什麼時候這個極限存在（給想知道的人）",
+      "body": [
+        "$f$ 在矩形 $R$ 上連續，極限一定存在，而且跟每格怎麼挑點無關。$f$ 有界、不連續的點只落在有限條光滑曲線上，也還是存在。",
+        "非矩形的區域 $D$：把 $f$ 在 $D$ 外面補成 $0$，放進一個包住 $D$ 的大矩形裡，就回到矩形的定義。實際怎麼算見〈非矩形區域〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "中點法估計",
+      "prompt": "用 $2\\times2$ 的格子、取每格中點，估計 $\\iint_R(x^2+y)\\,dA$，$R=[0,2]\\times[0,2]$。",
+      "steps": [
+        "每格是 $1\\times1$，$\\Delta A=1$。四個中點：$(0.5,0.5)$、$(0.5,1.5)$、$(1.5,0.5)$、$(1.5,1.5)$。",
+        "高度依序是 $0.25+0.5=0.75$、$0.25+1.5=1.75$、$2.25+0.5=2.75$、$2.25+1.5=3.75$。",
+        "估計值 $=(0.75+1.75+2.75+3.75)\\times1=9$。",
+        "精確值是 $\\frac{28}{3}\\approx9.33$（下一課會算）。格子加密，估計會更準。"
+      ],
+      "answer": "估計 $9$（精確值 $\\frac{28}{3}$）",
+      "claim": "0.75+1.75+2.75+3.75 == 9 ;; INT(INT(x^2+y,0,2,y),0,2,x) == 28/3"
+    },
+    {
+      "title": "看出它是一個認得的立體",
+      "prompt": "$\\iint_D\\sqrt{4-x^2-y^2}\\,dA$，$D$：$x^2+y^2\\le 4$。",
+      "steps": [
+        "$z=\\sqrt{4-x^2-y^2}$ 平方移項是 $x^2+y^2+z^2=4$，而且 $z\\ge 0$：這是半徑 $2$ 的上半球面。",
+        "$D$ 正好是它在 $xy$ 平面上的影子，所以積分就是上半球的體積。",
+        "球體積 $\\frac{4}{3}\\pi\\cdot2^3=\\frac{32\\pi}{3}$，一半是 $\\frac{16\\pi}{3}$。"
+      ],
+      "answer": "$\\frac{16\\pi}{3}$",
+      "claim": "INT(INT(sqrt(4-r^2)*r,0,2,r),0,2*pi,t) == 16*pi/3",
+      "note": "claim 用的是〈極座標二重積分〉的算法，這裡只拿來核對。"
+    },
+    {
+      "title": "常數加奇函數",
+      "prompt": "$\\iint_R(5+x^3\\cos y)\\,dA$，$R=[-1,1]\\times[0,\\pi]$。",
+      "steps": [
+        "拆成兩項：$\\iint_R 5\\,dA+\\iint_R x^3\\cos y\\,dA$。",
+        "第一項：$R$ 的面積是 $2\\times\\pi=2\\pi$，乘 $5$ 得 $10\\pi$。",
+        "第二項：$R$ 對 $y$ 軸對稱，$(-x)^3\\cos y=-x^3\\cos y$，左右抵消，是 $0$。",
+        "合計 $10\\pi$。"
+      ],
+      "answer": "$10\\pi$",
+      "claim": "INT(INT(5+x^3*cos(y),0,pi,y),-1,1,x) == 10*pi"
+    }
+  ],
+  "pitfalls": [
+    "把二重積分一律說成「體積」：$f$ 有負值時是有號體積。",
+    "把 $\\iint_R f\\,dA$ 跟「曲面的面積」搞混：後者是〈曲面面積〉，要另外算。",
+    "中點法只加了高度，忘了乘每格面積 $\\Delta A$。",
+    "用奇函數對稱前，沒先確認區域也對稱。"
+  ],
+  "checks": [
+    {
+      "ask": "$R=[1,4]\\times[0,2]$，$\\iint_R 1\\,dA$ 是？",
+      "options": [
+        {
+          "label": "$6$",
+          "correct": true
+        },
+        {
+          "label": "$8$",
+          "why": "$x$ 方向是從 $1$ 到 $4$，長度 $3$，不是 $4$。"
+        },
+        {
+          "label": "$3$",
+          "why": "那只是 $x$ 方向的長度，還要乘 $y$ 方向的長度 $2$。"
+        }
+      ]
+    },
+    {
+      "ask": "$f\\ge 0$ 時，$\\iint_R f(x,y)\\,dA$ 在幾何上是？",
+      "options": [
+        {
+          "label": "曲面 $z=f(x,y)$ 下方、$R$ 上方的立體體積",
+          "correct": true
+        },
+        {
+          "label": "曲面 $z=f(x,y)$ 在 $R$ 上那一片的面積",
+          "why": "$dA$ 是底面的小塊面積，柱子高 $f$，乘起來是體積；曲面本身的面積是另一個積分。"
+        },
+        {
+          "label": "$R$ 的面積",
+          "why": "那是 $f=1$ 的特例。一般的 $f$ 會把每一格乘上不同的高度。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\iint_R x\\,e^y\\,dA$，$R=[-2,2]\\times[0,1]$，是？",
+      "options": [
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$4(e-1)$",
+          "why": "這是把 $x$ 當成 $|x|$ 算出來的。$R$ 左右對稱、$x\\,e^y$ 對 $x$ 是奇函數，兩半抵消。"
+        },
+        {
+          "label": "$e-1$",
+          "why": "只算了 $y$ 那一半。$x$ 的部分 $\\int_{-2}^{2}x\\,dx=0$，乘起來是 $0$。"
+        }
+      ]
+    },
+    {
+      "ask": "用 $2\\times2$ 格子、取中點估計 $\\iint(x^2+y^2)\\,dA$，$R=[0,2]\\times[0,2]$。四個中點的高度是 $0.5$、$2.5$、$2.5$、$4.5$，估計值是？",
+      "options": [
+        {
+          "label": "$10$",
+          "correct": true
+        },
+        {
+          "label": "$2.5$",
+          "why": "那是四根柱子的平均高度。每格面積是 $1$，要把四個高度乘面積後加起來。"
+        },
+        {
+          "label": "$40$",
+          "why": "每格的 $\\Delta A$ 是 $1\\times1=1$，不是整個 $R$ 的面積 $4$。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從面積到體積",
+      "beats": [
+        { "show": ["$\\int_a^b f(x)\\,dx$：切細、相乘、加起來"],
+          "say": "一維的定積分：把區間切細，每段算函數值乘寬度，加起來再取極限。",
+          "board": [
+            {"do":"write","line":"$\\int_a^b f(x)\\,dx=\\lim\\sum f\\,\\Delta x$"},
+            {"do":"write","line":"切細、相乘、加起來","on":"每段算"}
+          ] },
+        { "show": ["$z=f(x,y)$ 是一張曲面"],
+          "note": "曲面跟底下的區域 $R$ 之間，夾著多少體積？",
+          "say": "現在函數有兩個輸入，圖形是一張曲面。問題變成：曲面和底下的區域之間，夾著多少體積？",
+          "board": [
+            {"do":"write","line":"$z=f(x,y)$"},
+            {"do":"write","line":"夾著的體積 ＝ ？","on":"夾著"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "切小格、立柱子",
+      "beats": [
+        { "show": ["$R=[a,b]\\times[c,d]$ 切成 $mn$ 個小矩形"],
+          "note": "每格面積 $\\Delta A=\\Delta x\\,\\Delta y$。",
+          "say": "先看矩形區域。x 方向切 m 段、y 方向切 n 段，得到一格一格的小矩形。",
+          "board": [
+            {"do":"write","line":"$R=[a,b]\\times[c,d]$"},
+            {"do":"write","line":"$\\Delta A=\\Delta x\\,\\Delta y$","on":"得到"}
+          ] },
+        { "show": ["每格挑一點，立一根高 $f(x_{ij}^*,y_{ij}^*)$ 的柱子"],
+          "say": "每一格挑一個點，在那一格上立一根柱子，高度就是那一點的函數值。",
+          "board": [
+            {"do":"write","line":"高度 $={{h:f(x_{ij}^*,y_{ij}^*)}}$"},
+            {"do":"focus","term":"h","on":"那一點"}
+          ] },
+        { "show": ["$\\iint_R f\\,dA=\\lim\\sum\\sum f\\,\\Delta A$"],
+          "note": "$dA$ 讀成「一小塊面積」。",
+          "say": "柱子全部加起來是 Riemann 和；格子越切越細，和的極限就叫二重積分。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"柱子加總 ＝ Riemann 和","on":"柱子全部"},
+            {"do":"write","line":"$\\iint_R f\\,dA=\\lim$ 和","on":"越切越細"}
+          ] }
+      ],
+      "predict": {
+        "ask": "一根柱子的體積是？",
+        "options": [
+          {
+            "label": "$f(x_{ij}^*,y_{ij}^*)\\cdot\\Delta A$",
+            "correct": true
+          },
+          {
+            "label": "$f(x_{ij}^*,y_{ij}^*)$",
+            "why": "那只是柱子的高度，體積還要乘底面積 $\\Delta A$。"
+          },
+          {
+            "label": "$\\Delta A$",
+            "why": "那是底面積；乘上高度 $f$ 才是體積。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "中點法估計",
+      "beats": [
+        { "show": ["$\\iint_R(x^2+y)\\,dA$，$R=[0,2]\\times[0,2]$"],
+          "note": "$2\\times2$ 格子，每格 $\\Delta A=1$。",
+          "say": "實際估一次。正方形切成四格，每格面積是一。",
+          "board": [
+            {"do":"write","line":"$\\iint_R(x^2+y)\\,dA$"},
+            {"do":"write","line":"$R=[0,2]\\times[0,2]$，$\\Delta A=1$","on":"切成四格"}
+          ] },
+        { "show": ["中點 $(0.5,0.5)$、$(0.5,1.5)$","$(1.5,0.5)$、$(1.5,1.5)$"],
+          "say": "每格取中點，算出四根柱子的高度。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"中點 $(0.5,0.5)$、$(0.5,1.5)$","on":"每格取"},
+            {"do":"write","line":"$(1.5,0.5)$、$(1.5,1.5)$","on":"算出"}
+          ] },
+        { "show": ["第一格：$0.5^2+0.5=0.75$","柱子體積 $=0.75\\times1$"],
+          "say": "第一格中點代進去：零點五平方加零點五，是零點七五。乘面積一，這根柱子的體積就是零點七五。",
+          "board": [
+            {"do":"write","line":"$0.5^2+0.5=0.25+0.5=0.75$","on":"代進去"},
+            {"do":"write","line":"柱子體積 $=0.75\\times1=0.75$","on":"乘面積"}
+          ] },
+        { "show": ["$(0.75+1.75+2.75+3.75)\\times1=9$"],
+          "note": "精確值是 $\\frac{28}{3}\\approx9.33$。",
+          "say": "高度加起來乘面積一，估計是九。精確值三分之二十八，格子加密就會更準。",
+          "board": [
+            {"do":"write","line":"$(0.75+1.75+2.75+3.75)\\times1={{r:9}}$"},
+            {"do":"box","term":"r","color":"green","on":"估計"},
+            {"do":"write","line":"精確值 $\\frac{28}{3}\\approx9.33$","on":"精確值"}
+          ] },
+        { "show": ["$\\frac{28}{3}$ 是格子無限細的極限"],
+          "note": "四格只是近似，所以 $9$ 略小。",
+          "say": "三分之二十八是下一課的累次積分算出來的，相當於格子切到無限細。九只切了四格，所以還差一點。",
+          "board": [
+            {"do":"write","line":"$\\frac{28}{3}$：格子無限細的極限","on":"無限細"}
+          ] }
+      ],
+      "key": "每格取中點高度，乘 $\\Delta A$ 再加總",
+      "check": 3
+    },
+    {
+      "title": "不用算就知道",
+      "beats": [
+        { "show": ["$f$ 有負值：下方那部分算負的"],
+          "note": "有號體積，跟一維的有號面積同一個道理。",
+          "say": "函數有負值時，區域下方那一塊算負的，所以一般說的是有號體積。",
+          "board": [
+            {"do":"write","line":"有號體積"},
+            {"do":"write","line":"$f<0$：那一塊算負的","on":"算負的"}
+          ] },
+        { "show": ["$f<0$：曲面在 $xy$ 平面下方","柱子高是負數，體積記成負的"],
+          "say": "f 小於零，曲面在 x y 平面下方，柱子的高是負數，體積就記成負的。有號的意思是上正下負，可以抵消。",
+          "board": [
+            {"do":"write","line":"$f<0$：曲面在 $xy$ 平面下方"},
+            {"do":"write","line":"高 $<0$，所以體積記成負的","on":"柱子的高"}
+          ] },
+        { "show": ["$\\iint_R 1\\,dA=R$ 的面積"],
+          "note": "$\\iint_R c\\,dA=c\\times$ 面積。",
+          "say": "高度一的柱體，體積的數值就等於底面積。常數 c 就是 c 乘面積。",
+          "board": [
+            {"do":"write","line":"$\\iint_R 1\\,dA=$ $R$ 的面積"},
+            {"do":"write","line":"$\\iint_R c\\,dA=c\\times$ 面積","on":"常數"}
+          ] },
+        { "show": ["$\\iint_D\\sqrt{4-x^2-y^2}\\,dA=\\frac{16\\pi}{3}$"],
+          "note": "$D$：$x^2+y^2\\le 4$。半徑 $2$ 的上半球。",
+          "say": "認得出立體也不用算：這個曲面是半徑二的上半球，積分就是半個球的體積。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\iint_D\\sqrt{4-x^2-y^2}\\,dA$","on":"這個曲面"},
+            {"do":"write","line":"$D$：$x^2+y^2\\le 4$，半徑 2 上半球","on":"半徑二"},
+            {"do":"write","line":"$={{r:\\frac{16\\pi}{3}}}$","on":"積分就是"},
+            {"do":"box","term":"r","color":"green","on":"半個球"}
+          ] },
+        { "show": ["球體積 $\\frac{4}{3}\\pi\\cdot2^3$，一半 $\\frac{16\\pi}{3}$"],
+          "say": "柱子的高是曲面的高，全部加起來就是曲面下的半個球。球體積是三分之四 pi 乘二的三次方，一半是三分之十六 pi。",
+          "board": [
+            {"do":"write","line":"球：$\\frac{4}{3}\\pi\\cdot2^3=\\frac{32\\pi}{3}$","on":"球體積"},
+            {"do":"write","line":"一半：$\\frac{16\\pi}{3}$","on":"一半是"}
+          ] }
+      ],
+      "key": "認出上半球，用體積公式不必積分",
+      "check": 0
+    },
+    {
+      "title": "對稱抵消",
+      "beats": [
+        { "show": ["$\\iint_R(5+x^3\\cos y)\\,dA$，$R=[-1,1]\\times[0,\\pi]$"],
+          "say": "可以拆加法、提常數。這一題拆成兩項。",
+          "board": [
+            {"do":"write","line":"$\\iint_R({{c:5}}+{{o:x^3\\cos y}})\\,dA$","tint":{"c":"blue","o":"violet"}},
+            {"do":"write","line":"$R=[-1,1]\\times[0,\\pi]$","on":"可以拆加法"},
+            {"do":"focus","term":"c","on":"拆成兩項"}
+          ] },
+        { "show": ["$\\iint_R 5\\,dA=5\\times2\\pi=10\\pi$"],
+          "say": "第一項是常數五乘上面積，面積是二乘 pi。",
+          "board": [
+            {"do":"write","line":"$\\iint_R {{c:5}}\\,dA=5\\times2\\pi=10\\pi$"}
+          ] },
+        { "show": ["$y=x^3$：左右大小相同、正負相反"],
+          "say": "先看 x 的三次方的圖。右邊 x 等於一，高度是一；左邊 x 等於負一，高度是負一，大小一樣、正負相反。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-1.5,1.5,-1.5,1.5],"curves":[{"expr":"x^3","domain":[-1,1],"color":"blue"}],"fills":[{"expr":"x^3","from":-1,"to":0,"color":"red"},{"do":"x","expr":"x^3","from":0,"to":1,"color":"blue"}]},"on":"等於#1"},
+            {"do":"write","line":"$1^3=1$，$(-1)^3=-1$","on":"左邊"}
+          ] },
+        { "show": ["$(-x)^3\\cos y=-x^3\\cos y$：抵消為 $0$"],
+          "note": "先確認 $R$ 對 $y$ 軸對稱。",
+          "say": "第二項：區域左右對稱，函數把 x 換成負 x 就變號，左右兩半剛好抵消，是零。",
+          "board": [
+            {"do":"write","line":"$\\iint_R {{o:x^3\\cos y}}\\,dA={{zero:0}}$"},
+            {"do":"underline","term":"o","color":"violet","label":"x 換 −x 變號","on":"函數把 x"},
+            {"do":"box","term":"zero","color":"green","on":"剛好抵消"}
+          ] },
+        { "show": ["$\\cos y$ 只跟 $y$ 有關"],
+          "note": "固定 $y$，它是常數。",
+          "say": "cosine y 只跟 y 有關。固定任何一個 y，它都是同一個數，左右兩邊乘的一樣，所以符號只由 x 的三次方決定。",
+          "board": [
+            {"do":"write","line":"固定 $y$：$\\cos y$ 是常數"},
+            {"do":"write","line":"$x$ 換 $-x$：只有 $x^3$ 變號","on":"符號"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "double-integral",
+      "area"
+    ],
+    "fine": [
+      "double-integral-riemann-sum",
+      "double-integral-area",
+      "double-integral-symmetry"
+    ]
+  },
+  "practice": [
+    {
+      "id": "int-022",
+      "core": true,
+      "trains": "double-integral-area"
+    },
+    {
+      "id": "int-034",
+      "core": true,
+      "trains": "double-integral-area",
+      "note": "看出它是四分之一圓的面積，不必真的積。"
+    },
+    {
+      "id": "cg-9a1-001",
+      "core": true,
+      "trains": "double-integral-riemann-sum"
+    },
+    {
+      "id": "cg-9a1-004",
+      "core": true,
+      "trains": "double-integral-symmetry"
+    },
+    {
+      "id": "int-021",
+      "trains": "double-integral-symmetry",
+      "note": "$x$ 與 $y$ 地位對稱：$\\iint x\\,dA=\\iint y\\,dA$。"
+    },
+    {
+      "id": "cg-9a1-002",
+      "trains": "double-integral-riemann-sum"
+    },
+    {
+      "id": "cg-9a1-003",
+      "trains": "double-integral-riemann-sum"
+    },
+    {
+      "id": "cg-9a1-005",
+      "trains": "double-integral-symmetry"
+    }
+  ],
+  "gaps": []
+}

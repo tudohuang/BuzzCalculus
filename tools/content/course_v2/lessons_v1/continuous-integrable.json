@@ -1,0 +1,419 @@
+{
+  "id": "continuous-integrable",
+  "title": "連續函數可積",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["riemann-integrability", "heine-cantor", "extreme-value-theorem"],
+  "next": ["dirichlet-function"],
+  "related": ["uniform-continuity", "improper-singular"],
+  "objectives": [
+    "證明：$f$ 在閉區間 $[a,b]$ 上連續，則 $f$ 在 $[a,b]$ 上可積。",
+    "指出證明裡哪一步需要一致連續，而不只是逐點連續。",
+    "對具體函數從一致連續的 $\\delta$ 算出「切幾段就夠」，並知道它通常不是最小值。"
+  ],
+  "visual": "y = √x 在 [0, 1] 上，畫等長分割的上下和長方形，每段上方標出 Mᵢ − mᵢ。滑桿調 n，最高的那一根 Mᵢ − mᵢ 即時顯示：它一律在 x = 0 旁邊那段，但隨著 n 增大照樣壓得下去——因為一致連續給的 δ 不挑位置。",
+  "concept": [
+    {
+      "heading": "① 想法：每一段的起伏都很小",
+      "body": [
+        "$U-L=\\sum(M_i-m_i)\\Delta x_i$。如果每一段的起伏 $M_i-m_i$ 都小於某個 $\\eta$，就有 $U-L<\\eta\\sum\\Delta x_i=\\eta(b-a)$。所以只要找一個分割，讓每一段上的函數值都差不多。",
+        "直覺，不是證明：「連續就是小區間上變化小」漏了一件事。逐點連續給的 $\\delta$ 跟位置有關，可能某些地方要切得無限細；我們需要一個對整個區間都通用的 $\\delta$，才切得出有限段的分割。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理與兩個需要的工具",
+      "body": [
+        "定理：$f$ 在 $[a,b]$ 上連續，則 $f$ 在 $[a,b]$ 上可積。",
+        "工具一〈Heine–Cantor 定理〉：閉區間上的連續函數一致連續——存在一個 $\\delta$，對區間裡所有 $x$、$y$，$|x-y|<\\delta$ 就有 $|f(x)-f(y)|$ 小於指定的量。",
+        "工具二〈極值定理〉：$f$ 在每一段閉的 $[x_{i-1},x_i]$ 上取得到最大值與最小值，所以 $M_i=f(u_i)$、$m_i=f(v_i)$，$u_i$、$v_i$ 都在這一段裡。它同時保證 $f$ 有界，上下和有定義。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明",
+      "body": [
+        "給定 $\\varepsilon>0$。由 Heine–Cantor，存在 $\\delta>0$，使得對所有 $x,y\\in[a,b]$，$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\frac{\\varepsilon}{b-a}$。注意這是 $\\exists\\delta\\ \\forall x,y$：同一個 $\\delta$ 適用於整個區間。",
+        "取任一分割 $P$ 使 $\\|P\\|<\\delta$（例如等長分割，$n>\\frac{b-a}{\\delta}$）。在第 $i$ 段上，由極值定理取 $u_i$、$v_i$ 使 $M_i=f(u_i)$、$m_i=f(v_i)$。$|u_i-v_i|\\le\\Delta x_i<\\delta$，所以 $M_i-m_i<\\frac{\\varepsilon}{b-a}$。",
+        "於是 $U(f,P)-L(f,P)=\\sum(M_i-m_i)\\Delta x_i<(\\frac{\\varepsilon}{b-a})\\sum\\Delta x_i=\\varepsilon$。由可積判準，$f$ 可積。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 每個條件都拿掉看看",
+      "body": [
+        "區間不是閉的：$f(x)=\\frac{1}{x}$ 在 $(0,1]$ 上連續，但無界，沒有上和，不是 Riemann 可積（$\\int_0^1\\frac{1}{x}\\,dx$ 作為瑕積分也發散，見〈瑕積分 II：奇異點〉）。",
+        "只有逐點連續：同樣是 $\\frac{1}{x}$，在 $x$ 附近要 $|\\frac{1}{x}-\\frac{1}{y}|<\\eta$，$\\delta$ 大約要取 $\\eta x^2$，$x\\to0$ 時 $\\delta\\to0$，找不到一個通用的 $\\delta$。",
+        "連續不是必要條件：上一課的單調函數、只有一個跳躍的函數都可積。連續只是最常用的充分條件。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "每段起伏都很小",
+      "beats": [
+        { "show": ["$M_i$ 最高、$m_i$ 最低、$\\Delta x_i$ 段寬"],
+          "say": "先講記號：把區間切成小段，第 i 段上函數的最高值叫 M i，最低值叫 m i，段寬叫 delta x i。",
+          "board": [
+            {"do":"write","line":"第 $i$ 段：$M_i$ 最高、$m_i$ 最低、$\\Delta x_i$ 寬"}
+          ] },
+        { "show": ["$U=\\sum M_i\\Delta x_i$","$L=\\sum m_i\\Delta x_i$"],
+          "say": "上和 U 是用每段最高值當高的長方形面積加起來，下和 L 是用最低值當高。",
+          "board": [
+            {"do":"write","line":"$U=\\sum M_i\\Delta x_i$，$L=\\sum m_i\\Delta x_i$"}
+          ] },
+        { "show": ["$U-L=\\sum(M_i-m_i)\\Delta x_i$"],
+          "say": "上和減下和，是每一段的起伏，也就是最高減最低，乘上那一段的寬度，再加起來。",
+          "board": [
+            {"do":"write","line":"$U-L=\\sum({{r:M_i-m_i}})\\,{{w:\\Delta x_i}}$"},
+            {"do":"underline","term":"r","label":"起伏","on":"最高減最低"},
+            {"do":"underline","term":"w","label":"寬度","on":"寬度"}
+          ] },
+        { "show": ["每段 $M_i-m_i<\\eta$","$\\Rightarrow U-L<\\eta(b-a)$"],
+          "say": "如果每一段的起伏都小於 eta，寬度加起來是 b 減 a，所以上和減下和小於 eta 乘 b 減 a。",
+          "board": [
+            {"do":"write","line":"每段 $M_i-m_i<\\eta$"},
+            {"do":"write","line":"$U-L<{{e:\\eta(b-a)}}$","on":"寬度加起來"},
+            {"do":"box","term":"e","color":"green","on":"所以上和減下和"}
+          ] },
+        { "show": ["找一個分割，每段函數值都差不多"],
+          "say": "所以目標很清楚：找一個分割，讓每一段上的函數值都差不多。",
+          "board": [
+            {"do":"write","line":"目標：找分割，每段函數值差不多"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "要一個通用的 $\\delta$",
+      "beats": [
+        { "show": ["$f$ 在 $[a,b]$ 連續 $\\Rightarrow$ 可積"],
+          "say": "定理：有界閉區間上的連續函數一定可積。",
+          "board": [
+            {"do":"write","line":"$f$ 在 $[a,b]$ 連續 $\\Rightarrow$ 可積","color":"green"}
+          ] },
+        { "show": ["逐點連續的 $\\delta$ 跟位置有關"],
+          "note": "可能某些地方要切得無限細。",
+          "say": "可是逐點連續給的 delta 跟位置有關，某些地方可能要切到無限細，切不出有限段。",
+          "board": [
+            {"do":"write","line":"逐點連續：${{d:\\delta}}$ 跟位置有關"},
+            {"do":"focus","term":"d","label":"隨位置變","on":"跟位置有關"}
+          ] },
+        { "show": ["$\\frac{1}{x}$：$\\delta\\approx\\eta x^2$，越靠近 $0$ 越小"],
+          "say": "例如一除以 x：x 附近的 delta 大約是 eta 乘 x 平方，越靠近零越小，有限段切不完。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{x}$：${{n1:\\delta}}\\approx\\eta x^2$"},
+            {"do":"focus","term":"n1","color":"red","label":"縮向 0","on":"越靠近零"}
+          ] },
+        { "show": ["Heine–Cantor：$\\exists\\delta\\ \\forall x,y$"],
+          "note": "同一個 $\\delta$ 管整個區間。",
+          "say": "工具一是 Heine Cantor：閉區間上連續就一致連續，同一個 delta 管住整個區間。",
+          "board": [
+            {"do":"write","line":"一致連續：同一個 ${{d:\\delta}}$ 管整個區間","tint":{"d":"blue"}},
+            {"do":"underline","term":"d","label":"通用","on":"同一個"}
+          ] },
+        { "show": ["極值定理：$M_i=f(u_i)$、$m_i=f(v_i)$"],
+          "note": "也保證 $f$ 有界。",
+          "say": "工具二是極值定理：每一段都取得到最大最小值，也保證函數有界。證明在下一節。",
+          "board": [
+            {"do":"write","line":"極值定理：$M_i=f(u_i)$、$m_i=f(v_i)$"}
+          ] },
+        { "show": ["閉區間＋連續 $\\Rightarrow$ 最高值被取到"],
+          "note": "直覺，不是證明。",
+          "say": "直覺，不是證明：連續函數的圖沒有斷，閉區間含兩端點，爬到最高時不會溜出去，所以最高值真的被取到。",
+          "board": [
+            {"do":"write","line":"閉區間＋連續 ⇒ 最高值被取到"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "證明：一刀切到底",
+      "beats": [
+        { "show": ["一個通用的 $\\delta$ 切出分割，每段起伏都小"],
+          "say": "策略：用一致連續拿到一個通用的 delta，照它切分割，讓每一段的起伏都小，再加起來。",
+          "board": [
+            {"do":"write","line":"一個通用的 $\\delta$ → 切分割 → 每段起伏都小"}
+          ] },
+        { "show": ["Heine–Cantor：$|x-y|<\\delta$","$\\Rightarrow|f(x)-f(y)|<\\frac{\\varepsilon}{b-a}$"],
+          "note": "同一個 $\\delta$ 管整個區間。",
+          "say": "Heine Cantor 給一個 delta：距離小於它的兩點，函數值差小於 b 減 a 分之 epsilon。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$|x-y|<{{d:\\delta}}$ ⇒ $|f(x)-f(y)|<{{e:\\frac{\\varepsilon}{b-a}}}$","tint":{"d":"blue","e":"violet"},"on":"Heine"},
+            {"do":"underline","term":"d","label":"管整個區間","on":"給一個"}
+          ] },
+        { "show": ["取分割 $P$，$\\|P\\|<\\delta$"],
+          "note": "例如等長分割，$n>\\frac{b-a}{\\delta}$。",
+          "say": "照這個 delta 切：每一段都比 delta 短，例如切成夠多的等長小段。",
+          "board": [
+            {"do":"write","line":"取分割 $P$，$\\|P\\|<{{d:\\delta}}$"}
+          ] },
+        { "show": ["第 $i$ 段：$M_i=f(u_i)$、$m_i=f(v_i)$"],
+          "note": "極值定理。",
+          "why": {"ask":"為什麼 $M_i$ 是某一點的函數值？","say":"每一段的最高，為什麼是某一點真的取到的值？","options":[{"label":"$f$ 在閉的小段上連續，極值定理","correct":true},{"label":"$M_i$ 是上確界，一定取得到","why":"上確界不一定取得到：$x$ 在 $(0,1)$ 的上確界 1 就取不到。要閉區間上連續才保證。"},{"label":"Heine–Cantor 保證的","why":"Heine–Cantor 只給一個通用的 $\\delta$，不管最大值取不取得到；那是極值定理的事。"}]},
+          "say": "每一段是閉的，f 在上面連續，極值定理說最高和最低都取得到，在 u i 和 v i。",
+          "board": [
+            {"do":"write","line":"第 $i$ 段：${{mi:M_i=f(u_i)}}$、$m_i=f(v_i)$","on":"最高"},
+            {"do":"underline","term":"mi","label":"極值定理","why":true,"on":"極值定理"}
+          ] },
+        { "show": ["$|u_i-v_i|<\\delta$ ⇒ $M_i-m_i<\\frac{\\varepsilon}{b-a}$"],
+          "note": "兩點在同一段裡。",
+          "why": {"ask":"為什麼 $|u_i-v_i|<\\delta$？","say":"最高點和最低點，為什麼距離小於 delta？","options":[{"label":"兩點在同一段裡，距離不超過段寬","correct":true},{"label":"最大、最小值點本來就靠得很近","why":"它們可以在這一段的兩端；近，是因為整段寬度小於 $\\delta$。"},{"label":"$\\delta$ 是對 $u_i$ 這一點找的","why":"$\\delta$ 是 Heine–Cantor 給的，對整個區間通用，不是對某一點找的。"}]},
+          "say": "兩點都在同一段裡，距離不超過段寬，小於 delta，所以這一段的起伏小於 b 減 a 分之 epsilon。",
+          "board": [
+            {"do":"write","line":"${{uv:|u_i-v_i|<{{d:\\delta}}}}$ ⇒ $M_i-m_i<{{e:\\frac{\\varepsilon}{b-a}}}$","on":"距離小於"},
+            {"do":"underline","term":"uv","label":"同一段裡","why":true,"on":"同一段裡"}
+          ] },
+        { "show": ["$U-L<\\frac{\\varepsilon}{b-a}\\sum\\Delta x_i=\\varepsilon$"],
+          "note": "由可積判準，$f$ 可積。",
+          "say": "每一段的起伏乘寬度加起來，寬度總和是 b 減 a，剛好得到 epsilon。由可積判準，f 可積。",
+          "board": [
+            {"do":"keep","n":2},
+            {"do":"write","line":"$U-L<{{e:\\frac{\\varepsilon}{b-a}}}{{sw:\\sum\\Delta x_i}}=\\varepsilon$","on":"加起來"},
+            {"do":"underline","term":"sw","label":"寬度總和","on":"寬度總和"},
+            {"do":"write","line":"由可積判準 ⇒ $f$ 可積","color":"green","on":"由可積判準"}
+          ] }
+      ],
+      "key": "Heine–Cantor 給一個 $\\delta$ 管住每一段",
+      "proof": true,
+      "of": 2,
+      "skeleton": "ε-δ",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "給定 $\\varepsilon$，由 Heine–Cantor 取 $\\delta$"
+          },
+          {
+            "label": "取分割 $P$，$\\|P\\|<\\delta$",
+            "why": "要先有 $\\delta$，才知道要切多細。"
+          },
+          {
+            "label": "每段 $M_i-m_i<\\frac{\\varepsilon}{b-a}$",
+            "why": "要先切好分割，才有「每一段」。"
+          },
+          {
+            "label": "$U-L<\\varepsilon$，可積",
+            "why": "要先知道每一段的起伏都小，才能加起來。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "$x^2$：切幾段",
+      "beats": [
+        { "show": ["$|x^2-y^2|\\le2|x-y|$"],
+          "note": "$x,y\\in[0,1]$。",
+          "say": "x 平方在零到一，x 平方減 y 平方的絕對值，不超過二倍的 x 減 y。",
+          "board": [
+            {"do":"write","line":"$x,y\\in[0,1]$"},
+            {"do":"write","line":"$|x^2-y^2|={{s:|x+y|}}\\,|x-y|\\le2|x-y|$","on":"x 平方減"},
+            {"do":"underline","term":"s","label":"不超過 2","on":"不超過二倍"}
+          ] },
+        { "show": ["要差 $<0.01$：取 $\\delta=0.005$"],
+          "say": "要讓函數值的差小於零點零一，取 delta 零點零零五就夠。",
+          "board": [
+            {"do":"write","line":"要差 $<0.01$：取 $\\delta=0.005$"}
+          ] },
+        { "show": ["$\\frac{1}{n}<0.005$，$n>200$"],
+          "say": "等長分割的寬度 n 分之一要小於 delta，所以 n 要大於二百。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{n}<0.005$ ⇒ $n>200$"}
+          ] }
+      ],
+      "key": "$|x^2-y^2|=|x+y||x-y|$，前者有界",
+      "check": 3
+    },
+    {
+      "title": "保證夠，不是最少",
+      "beats": [
+        { "show": ["$x^2$ 遞增：$U-L=\\frac{1}{n}$，$n=101$ 就夠"],
+          "say": "可是 x 平方遞增，直接算上和減下和是 n 分之一，一百零一段就夠了。",
+          "board": [
+            {"do":"write","line":"$x^2$ 遞增：$U-L=\\frac{1}{n}$"},
+            {"do":"write","line":"$n={{n:101}}$ 就夠","on":"一百零一段"}
+          ] },
+        { "show": ["$\\sqrt{x}$ 在 $[0,1]$：$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$"],
+          "note": "導數在 0 附近無界。",
+          "say": "再看根號 x。它在零附近導數無界，但還是有一個估計：根號差不超過差的根號。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sqrt{x}$ 在 $[0,1]$：導數在 $0$ 附近無界","on":"再看根號"},
+            {"do":"write","line":"$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$","on":"根號差"}
+          ] },
+        { "show": ["$(\\sqrt{y}+\\sqrt{x-y})^2\\ge x$"],
+          "note": "設 $0\\le y\\le x$。",
+          "say": "設 y 小於 x，根號 y 加根號 x 減 y 的平方，展開比 x 多一個非負的項，所以開根號就得到不等式。",
+          "board": [
+            {"do":"write","line":"$(\\sqrt{y}+\\sqrt{x-y})^2=x+2\\sqrt{y(x-y)}$"},
+            {"do":"write","line":"$\\ge x$ ⇒ $\\sqrt{x}-\\sqrt{y}\\le\\sqrt{x-y}$","on":"開根號"}
+          ] },
+        { "show": ["$|x-y|<\\delta\\Rightarrow|\\sqrt{x}-\\sqrt{y}|<\\sqrt{\\delta}$"],
+          "say": "所以 x 和 y 的距離小於 delta 時，根號值的差小於根號 delta。",
+          "board": [
+            {"do":"write","line":"$|x-y|<\\delta$ ⇒ $|\\sqrt{x}-\\sqrt{y}|<{{sd:\\sqrt{\\delta}}}$"},
+            {"do":"underline","term":"sd","on":"小於根號"}
+          ] },
+        { "show": ["$\\sqrt{x}$：$0$ 附近陡，但沒有斷"],
+          "say": "看圖：根號 x 在零附近陡得幾乎直立，但曲線沒有斷，所以導數無界也能有通用的 delta。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,1.2,-0.2,1.3],"curves":[{"expr":"sqrt(x)","domain":[0,1],"color":"blue"}]}}
+          ] }
+      ],
+      "predict": {
+        "ask": "$\\varepsilon=0.01$，$\\delta$ 取多少？",
+        "options": [
+          {
+            "label": "$\\delta=\\varepsilon^2=0.0001$",
+            "correct": true
+          },
+          {
+            "label": "$0.005$",
+            "why": "那是 $x^2$ 的 $\\delta$。這裡要 $\\sqrt{\\delta}\\le0.01$，所以 $\\delta=0.0001$。"
+          },
+          {
+            "label": "$0.01$",
+            "why": "$\\delta=0.01$ 只保證差 $<\\sqrt{0.01}$；要 $\\sqrt{\\delta}\\le0.01$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "拿掉條件看看",
+      "beats": [
+        { "show": ["$\\delta=0.0001$ $\\Rightarrow$ $n=10001$"],
+          "note": "實際最小 101：$x=0$ 附近最陡，拖小了 $\\delta$。",
+          "say": "根號 x 照證明要一萬零一段，實際一百零一段就夠。零附近最陡，把 delta 拖小了。",
+          "board": [
+            {"do":"write","line":"$\\delta=0.0001$ $\\Rightarrow$ $n={{n:10001}}$"},
+            {"do":"write","line":"實際最小 $n=101$","on":"實際"},
+            {"do":"write","line":"$x=0$ 附近最陡，拖小了 $\\delta$","on":"零附近"}
+          ] },
+        { "show": ["$\\frac{1}{x}$ 在 $(0,1]$：連續但無界"],
+          "note": "第一段的 $\\sup$ 不是實數。",
+          "say": "把閉拿掉：一除以 x 在零到一不含零，連續但無界，含零的第一段上確界是無限大，不可積。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{f:\\frac{1}{x}}}$ 在 $(0,1]$：連續但無界","on":"一除以"},
+            {"do":"write","line":"含零的第一段：上確界無限大","on":"含零的第一段"}
+          ] },
+        { "show": ["連續不是必要條件"],
+          "note": "單調、只有一個跳躍的函數都可積。",
+          "say": "反過來，連續只是充分條件。單調函數、只跳一次的函數，都可積。",
+          "board": [
+            {"do":"write","line":"連續：充分條件，不是必要"},
+            {"do":"write","line":"單調、只跳一次的函數也可積","on":"單調函數"}
+          ] },
+        { "show": ["有界、壞點少 $\\Rightarrow$ 仍可積"],
+          "say": "有界的函數就算有不連續的點，只要壞點少到可以用總長很小的小段蓋住，上和減下和照樣壓得下去。",
+          "board": [
+            {"do":"write","line":"有界，壞點能被總長很小的段蓋住 ⇒ 可積"}
+          ] },
+        { "show": ["判斷：有界嗎？壞點蓋得住嗎？"],
+          "note": "一個點永遠蓋得住。",
+          "say": "所以判斷看兩件事：函數有界嗎？壞點蓋得住嗎？一個點永遠蓋得住，有限個也是。",
+          "board": [
+            {"do":"write","line":"① 有界嗎？② 壞點蓋得住嗎？"}
+          ] }
+      ],
+      "check": 2
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "$x^2$：從 $\\delta$ 算出切幾段",
+      "prompt": "$f(x)=x^2$ 在 $[0,1]$。照定理的證明，要保證 $U-L<0.01$，等長分割切幾段就夠？與實際最小值比較。",
+      "steps": [
+        "對 $x,y\\in[0,1]$：$|x^2-y^2|=|x+y||x-y|\\le2|x-y|$。要 $|f(x)-f(y)|<\\frac{\\varepsilon}{b-a}=0.01$，取 $\\delta=0.005$ 就夠。",
+        "要 $\\|P_n\\|=\\frac{1}{n}<0.005$，也就是 $n>200$，取 $n=201$。此時 $U-L<0.01$ 有保證（實際上 $M_i-m_i\\le\\frac{2}{n}$，$U-L\\le\\frac{2}{201}<0.01$）。",
+        "實際上 $x^2$ 遞增，$U-L=\\frac{1}{n}$，$n=101$ 就小於 0.01。證明給的 201 是「保證夠」，不是「最少」。"
+      ],
+      "answer": "證明保證 $n=201$ 足夠；實際最小 $n=101$",
+      "claim": "2/201 < 0.01 ;; 2/200 >= 0.01 ;; 1/101 < 0.01 ;; 1/100 >= 0.01"
+    },
+    {
+      "title": "$\\sqrt{x}$：一致連續但不是 Lipschitz",
+      "prompt": "$f(x)=\\sqrt{x}$ 在 $[0,1]$。導數在 0 附近無界，證明仍然可以用。給 $\\varepsilon=0.01$，找一個足夠的 $n$。",
+      "steps": [
+        "對 $0\\le y\\le x$：$\\sqrt{x}-\\sqrt{y}\\le\\sqrt{x-y}$。理由：$(\\sqrt{y}+\\sqrt{x-y})^2=x+2\\sqrt{y(x-y)}\\ge x$，兩邊非負，開根號得 $\\sqrt{y}+\\sqrt{x-y}\\ge\\sqrt{x}$。",
+        "所以 $|x-y|<\\delta$ 時 $|\\sqrt{x}-\\sqrt{y}|<\\sqrt{\\delta}$。要 $<\\varepsilon=0.01$（$b-a=1$），取 $\\delta=\\varepsilon^2=0.0001$。",
+        "要 $\\frac{1}{n}<0.0001$，$n>10000$，取 $n=10001$ 就保證 $U-L<0.01$。",
+        "$\\sqrt{x}$ 遞增，實際 $U-L=\\frac{1-0}{n}=\\frac{1}{n}$，$n=101$ 就夠。差距更大，因為 $x=0$ 附近最陡，$\\delta$ 被那裡拖小了。"
+      ],
+      "answer": "$n=10001$ 有保證（實際最小 101）",
+      "claim": "sqrt(0.0001) == 0.01 ;; 1/10001 < 0.0001 ;; 1/101 < 0.01"
+    },
+    {
+      "title": "閉區間不能拿掉",
+      "prompt": "$f(x)=\\frac{1}{x}$（$0<x\\le1$），$f(0)=0$。說明 $f$ 在 $[0,1]$ 上不 Riemann 可積，雖然它在 $(0,1]$ 上連續。",
+      "steps": [
+        "任取分割 $P$，第一段是 $[0,x_1]$。在 $(0,x_1]$ 上 $\\frac{1}{x}$ 可以任意大，所以 $M_1=\\sup=+\\infty$ 不是實數。",
+        "$f$ 在 $[0,1]$ 上無界，上和沒有定義，Darboux（也就是 Riemann）積分不存在。",
+        "定理失效的原因：$f$ 在 $[0,1]$ 上不連續（在 0 處），而在 $(0,1]$ 上連續卻不是閉區間，Heine–Cantor 與極值定理都用不上。"
+      ],
+      "answer": "不可積：$f$ 無界，第一段的上確界不是實數",
+      "claim": null,
+      "claimNote": "這是說明定理條件為什麼必要的反例，沒有可以數值驗證的量。"
+    }
+  ],
+  "pitfalls": [
+    "證明裡用了逐點連續的 $\\delta$（依賴 $x$），卻拿它去切一個分割。必須是 $\\exists\\delta\\ \\forall x,y$ 的一致連續。",
+    "忘了極值定理：沒有它，$M_i$ 是 $\\sup$，可能不是某點的函數值；要嘛用極值定理，要嘛改寫成 $M_i-m_i\\le\\frac{\\varepsilon}{b-a}$ 再取 $\\frac{\\varepsilon}{2}$。",
+    "以為「連續 $\\iff$ 可積」。連續只是充分條件，單調或有限個跳躍的函數也可積。",
+    "把證明給出的 $n$ 當成最小的 $n$。它只保證夠。"
+  ],
+  "checks": [
+    {
+      "ask": "證明「連續 $\\Rightarrow$ 可積」時，哪一步需要一致連續？",
+      "options": [
+        { "label": "要一個 $\\delta$ 讓分割的每一段同時都有 $M_i-m_i$ 很小", "correct": true },
+        { "label": "要證 $f$ 有界", "why": "有界來自極值定理（閉區間上連續），不需要一致連續。" },
+        { "label": "要證 $U(f,P)\\ge L(f,P)$", "why": "這對任何有界函數都成立（每段 $M_i\\ge m_i$），跟連續無關。" }
+      ]
+    },
+    {
+      "ask": "$f$ 在 $[0,2]$ 上連續，且 $|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\eta$。分割寬度 $<\\delta$ 時，$U-L$ 小於？",
+      "options": [
+        { "label": "$2\\eta$", "correct": true },
+        { "label": "$\\eta$", "why": "你漏了區間長度：$U-L<\\eta\\sum\\Delta x_i=\\eta(b-a)=2\\eta$。" },
+        { "label": "$\\eta\\delta$", "why": "$\\delta$ 是每段的寬度上限，但段數不固定，總長是 $b-a=2$，不是 $\\delta$。" }
+      ]
+    },
+    {
+      "ask": "$f(x)=\\sin(\\frac{1}{x})$（$x\\in(0,1]$），$f(0)=0$。它在 $[0,1]$ 上：",
+      "options": [
+        { "label": "可積：有界，而且只在 $x=0$ 不連續", "correct": true },
+        { "label": "不可積：在 0 附近振盪無限多次", "why": "振盪不影響有界性 $|f|\\le1$。把 $[0,\\eta]$ 單獨一段，那段貢獻 $\\le2\\eta$，其餘的 $[\\eta,1]$ 上 $f$ 連續，可積。" },
+        { "label": "不可積：在 $(0,1]$ 上不一致連續", "why": "不一致連續只是讓本課定理用不上，不代表不可積；可積只需要 $U-L$ 能壓小。" }
+      ]
+    },
+    {
+      "ask": "$f(x)=x^2$ 在 $[0,1]$，照證明取 $\\delta=\\frac{\\varepsilon}{2}$。要 $U-L<0.01$，證明保證 $n$ 等於多少就夠？",
+      "options": [
+        { "label": "201", "correct": true },
+        { "label": "101", "why": "101 是實際的最小值（用 $U-L=\\frac{1}{n}$ 算的），不是從 $\\delta=0.005$ 推出的。" },
+        { "label": "200", "why": "$n=200$ 時 $\\frac{1}{n}=0.005=\\delta$，寬度要嚴格小於 $\\delta$，所以要 201。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["darboux", "uniform-continuity", "riemann-sum"],
+    "fine": ["integrable-continuous-proof", "integrable-uc-delta-to-n", "integrable-hypothesis-counterexample", "integrable-riemann-sum-limit"]
+  },
+  "practice": [
+    { "id": "an-int-003", "core": true, "trains": "integrable-uc-delta-to-n" },
+    { "id": "lm-rs-004", "core": true, "trains": "integrable-riemann-sum-limit" },
+    { "id": "lm-rs-009", "core": true, "trains": "integrable-riemann-sum-limit" },
+    { "id": "cg-12g-022", "core": true, "trains": "integrable-hypothesis-counterexample" },
+    { "id": "lm-rs-005", "trains": "integrable-riemann-sum-limit" },
+    { "id": "an-uc-001", "trains": "integrable-hypothesis-counterexample" },
+    { "id": "cg-12g-023", "trains": "integrable-hypothesis-counterexample" },
+    { "id": "cg-12g-019", "trains": "integrable-uc-delta-to-n" },
+    { "id": "cg-12g-020", "trains": "integrable-uc-delta-to-n" },
+    { "id": "cg-12g-021", "trains": "integrable-uc-delta-to-n" },
+    { "id": "an-uc-006", "challenge": true, "trains": "integrable-uc-delta-to-n", "note": "挑戰：Lipschitz 常數 $K$ 給 $\\delta=\\frac{\\eta}{K}$；在 $[1,\\infty)$ 上 $\\sqrt{x}$ 的最佳 $K$ 是 $\\frac{1}{2}$。" }
+  ],
+  "gaps": []
+}

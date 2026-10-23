@@ -1,313 +1,133 @@
 {
   "id": "limit-derivative-swap",
   "title": "極限與微分交換",
-  "readMinutes": 11,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 35,
-  "prerequisites": ["limit-integral-swap", "weierstrass-m-test", "ftc-part1"],
-  "next": ["partitions"],
-  "related": ["power-series-calculus"],
-  "objectives": [
-    "舉出反例：$f_n$ 一致收斂，極限的導數卻不等於 $\\lim f_n'$，甚至極限不可微。",
-    "說出正確的條件：導數列 $f_n'$ 一致收斂，再加上 $f_n$ 在一個點收斂。",
-    "用這個定理合法地逐項微分冪級數，算出 $\\sum\\frac{n}{2^n}$ 這類和。"
+  "prerequisites": [
+    "limit-integral-swap",
+    "weierstrass-m-test",
+    "ftc-part1"
   ],
-  "visual": "畫 y = sin(nx)/√n，n 從 1 拉到 400：曲線被壓進 ±1/√n 的細帶子，看起來趨近一條水平線；同時在旁邊畫原點的切線，斜率 √n 越來越陡。值很接近，斜率卻越差越遠。",
+  "next": [
+    "partitions"
+  ],
+  "related": [
+    "power-series-calculus"
+  ],
+  "objectives": [
+    "舉出反例：$f_n$ 一致收斂，極限的導數卻不等於 $\\lim f_n'$，甚至極限不可微",
+    "說出正確的條件：導數列 $f_n'$ 一致收斂，再加上 $f_n$ 在一個點收斂",
+    "用這個定理合法地逐項微分冪級數，算出 $\\sum\\frac{n}{2^n}$ 這類和"
+  ],
+  "visual": null,
   "concept": [
     {
       "heading": "① 值靠近，斜率不一定靠近",
       "body": [
-        "$f_n(x)=\\frac{\\sin(nx)}{\\sqrt{n}}$。$|f_n(x)|\\le\\frac{1}{\\sqrt{n}}$，所以 $f_n$ 在 $\\mathbb{R}$ 上一致收斂到 0，極限的導數是 0。但 $f_n'(x)=\\sqrt{n}\\cos(nx)$，$f_n'(0)=\\sqrt{n}\\to\\infty$。",
-        "直覺，不是證明：振幅小、抖得快的函數，值可以很小，斜率卻很大。一致收斂只管「高度差」，不管「斜率差」。",
-        "更糟的例子：$\\sqrt{x^2+\\frac{1}{n}}$ 在 $[-1,1]$ 上一致收斂到 $|x|$（範例 3），每個 $f_n$ 都可微，極限在 0 卻不可微。"
+        "$\\|f_n\\|_\\infty=\\dfrac1{\\sqrt n}\\to0$：一致收斂到 $f\\equiv0$",
+        "$f_n'(x)=\\sqrt n\\cos(nx)$："
       ],
-      "collapsible": false
+      "tex": [
+        "f_n(x)=\\frac{\\sin(nx)}{\\sqrt n},\\quad x\\in\\mathbb{R}",
+        "\\lim_{n\\to\\infty}f_n'(0)=\\infty\\ne0=f'(0)"
+      ]
     },
     {
-      "heading": "② 正確的定理：條件要放在導數上",
+      "heading": "① 一致極限甚至不可微",
       "body": [
-        "設每個 $f_n$ 在 $[a,b]$ 上連續可微，且 (1) $f_n'$ 在 $[a,b]$ 上一致收斂到某個 $g$；(2) 存在一點 $x_0\\in[a,b]$ 使 $f_n(x_0)$ 收斂。則 $f_n$ 在 $[a,b]$ 上一致收斂到某個 $f$，$f$ 可微，而且 $f'=g$，也就是 $(\\lim f_n)'=\\lim f_n'$。",
-        "條件 (2) 不能省：$f_n(x)=n$（常數）的導數全是 0，一致收斂到 0，但 $f_n$ 本身發散。導數只決定形狀，要一個點把高度釘住。"
+        "有理化：",
+        "$\\Rightarrow$ $f_n\\to|x|$ 一致，而 $|x|$ 在 $0$ 不可微",
+        "$f_n'(x)=\\dfrac{x}{\\sqrt{x^2+\\frac1n}}\\to\\begin{cases}-1,&x<0\\\\0,&x=0\\\\1,&x>0\\end{cases}$",
+        "每個 $f_n'$ 連續、極限不連續 $\\Rightarrow$ $f_n'$ 不是一致收斂（12.30）"
       ],
-      "collapsible": false
+      "tex": [
+        "f_n(x)=\\sqrt{x^2+\\frac1n},\\quad x\\in[-1,1]",
+        "0\\le f_n(x)-|x|=\\frac{1/n}{\\sqrt{x^2+\\frac1n}+|x|}\\le\\frac{1/n}{\\sqrt{1/n}}=\\frac1{\\sqrt n}"
+      ]
+    },
+    {
+      "heading": "② 正確的定理",
+      "body": [
+        "定理：$f_n$ 在 $[a,b]$ 上可微，且",
+        "• $f_n'\\to g$ 在 $[a,b]$ 上一致收斂",
+        "• 有一點 $x_0\\in[a,b]$ 使 $f_n(x_0)$ 收斂",
+        "則 $f_n\\to f$ 在 $[a,b]$ 上一致收斂，$f$ 可微，且",
+        "為什麼要「一點收斂」？",
+        "$f_n(x)=n$：$f_n'=0\\to0$ 一致，但 $f_n$ 自己發散"
+      ],
+      "tex": [
+        "f'=g,\\quad\\text{即}\\quad\\Big(\\lim_{n\\to\\infty}f_n\\Big)'=\\lim_{n\\to\\infty}f_n'"
+      ]
     },
     {
       "heading": "③ 級數版：逐項微分",
       "body": [
-        "若 $\\sum u_n'$ 在 $[a,b]$ 上一致收斂，且 $\\sum u_n(x_0)$ 收斂，則 $(\\sum u_n)'=\\sum u_n'$。冪級數逐項微分後收斂半徑不變，所以在每個 $[-r,r]$（$r<R$）上導數級數由 $M$ 判別一致收斂，逐項微分在 $(-R,R)$ 內處處合法（這就是〈冪級數的微分與積分〉背後的理由）。"
+        "推論：$u_n$ 可微，$\\sum u_n'$ 在 $[a,b]$ 上一致收斂，且 $\\sum u_n(x_0)$ 收斂，則",
+        "冪級數：$\\dfrac1{1-x}=\\displaystyle\\sum_{n=0}^\\infty x^n$，$|x|<1$",
+        "逐項微分得 $\\sum_{n\\ge1}nx^{n-1}$。在 $[-r,r]$（$r<1$）：",
+        "$|nx^{n-1}|\\le nr^{n-1}=M_n$，比值 $\\frac{(n+1)r^n}{nr^{n-1}}\\to r<1$，$\\sum M_n<\\infty$",
+        "定理成立（$x_0=0$ 收斂）：$|x|<1$ 時",
+        "一般冪級數也一樣：逐項微分後收斂半徑不變，在 $(-R,R)$ 內可以逐項微分",
+        "兩邊乘 $x$，代 $x=\\frac12$："
       ],
-      "collapsible": false
+      "tex": [
+        "\\Big(\\sum u_n\\Big)'=\\sum u_n'",
+        "\\frac1{(1-x)^2}=\\sum_{n=1}^\\infty nx^{n-1}",
+        "\\sum_{n=1}^\\infty\\frac n{2^n}=\\frac{1/2}{(1-1/2)^2}=2"
+      ]
     },
     {
-      "heading": "證明（$f_n'$ 連續的版本）",
+      "heading": "③ 試一題",
       "body": [
-        "$g$ 是連續函數 $f_n'$ 的一致極限，所以連續。令 $L=\\lim f_n(x_0)$，定義 $f(x)=L+\\int_{x_0}^{x} g(t)\\,dt$。",
-        "由〈微積分基本定理 I〉，$f_n(x)=f_n(x_0)+\\int_{x_0}^{x} f_n'(t)\\,dt$。相減：$|f_n(x)-f(x)|\\le|f_n(x_0)-L|+|\\int_{x_0}^{x}(f_n'-g)\\,dt|\\le|f_n(x_0)-L|+(b-a)\\|f_n'-g\\|_\\infty$。右邊與 $x$ 無關且 $\\to0$，所以 $f_n\\to f$ 一致收斂。",
-        "$g$ 連續，再用一次〈微積分基本定理 I〉：$f'(x)=g(x)$。",
-        "補充：不假設 $f_n'$ 連續時定理仍成立，證明改用均值定理估計 $(f_n-f_m)(x)-(f_n-f_m)(y)$，比較長，這裡不寫。"
-      ],
-      "collapsible": true
-    }
-  ],
-  "sections": [
-    {
-      "title": "值靠近，斜率不一定",
-      "beats": [
-        { "show": ["$f_n(x)=\\frac{\\sin(nx)}{\\sqrt{n}}$"],
-          "say": "看 sine n x 除以根號 n。振幅越來越小，可是抖得越來越快。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=\\frac{\\sin(nx)}{\\sqrt{n}}$"}
-          ] },
-        { "show": ["$\\|f_n\\|_\\infty=\\frac{1}{\\sqrt{n}}\\to0$"],
-          "note": "一致收斂到 0，極限的導數是 0。",
-          "say": "高度不超過根號 n 分之一，所以一致收斂到零，極限函數的導數當然是零。",
-          "board": [
-            {"do":"write","line":"${{h:\\|f_n\\|_\\infty}}=\\frac{1}{\\sqrt{n}}\\to0$","on":"高度不超過"}
-          ] },
-        { "show": ["$\\|f_n-f\\|_\\infty=\\max_x|f_n(x)-f(x)|$"],
-          "say": "一致收斂的意思是整條曲線一起貼近極限。每個位置的誤差取最大的那一個，記成範數，要趨近零。",
-          "board": [
-            {"do":"write","line":"$\\|f_n-f\\|_\\infty=\\max_x|f_n(x)-f(x)|$"}
-          ] },
-        { "show": ["逐點：每個 $x$ 各自靠近","一致：最大誤差 $\\to0$"],
-          "say": "逐點收斂只要每個位置各自靠近，有的位置可以慢很多。一致要求所有位置的最大誤差，一起趨近零。",
-          "board": [
-            {"do":"write","line":"逐點：每個 $x$ 各自靠近"},
-            {"do":"write","line":"一致：最大誤差 $\\to0$","on":"一致要求"}
-          ] },
-        { "show": ["$f_n'(x)=\\sqrt{n}\\cos(nx)$，$f_n'(0)=\\sqrt{n}\\to\\infty$"],
-          "say": "可是微分一下，導數是根號 n 乘 cosine n x，在零是根號 n，衝到無限大。",
-          "board": [
-            {"do":"write","line":"$f_n'(x)=\\sqrt{n}\\cos(nx)$，${{sl:f_n'(0)}}=\\sqrt{n}\\to\\infty$","on":"微分一下"}
-          ] },
-        { "show": ["一致收斂只管高度差，不管斜率差"],
-          "say": "值可以很小，斜率卻很大。一致收斂只管高度，不管斜率。",
-          "board": [
-            {"do":"underline","term":"h","on":"值可以很小"},
-            {"do":"underline","term":"sl","label":"斜率","on":"斜率卻很大"}
-          ] }
-      ],
-      "check": 0
+        "為什麼要先證一致？",
+        "$\\sum\\frac{\\sin(nx)}{n^2}$ 一致收斂，但逐項微分得 $\\sum\\frac{\\cos(nx)}n$，在 $x=0$ 是 $\\sum\\frac1n$，發散",
+        "跟 ① 一樣：原級數一致，管不到導數"
+      ]
     },
     {
-      "title": "可微的極限不可微",
-      "beats": [
-        { "show": ["$f_n(x)=\\sqrt{x^2+\\frac{1}{n}}$，$[-1,1]$"],
-          "say": "更糟的例子：根號 x 平方加 n 分之一，在負一到一。每一個都很光滑，處處可微。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=\\sqrt{x^2+\\frac{1}{n}}$"}
-          ] },
-        { "show": ["$0\\le f_n(x)-|x|\\le\\frac{1}{\\sqrt{n}}$"],
-          "note": "分子有理化。",
-          "say": "分子有理化，跟 x 的絕對值差不超過根號 n 分之一，跟 x 無關，一致收斂到絕對值 x。",
-          "board": [
-            {"do":"write","line":"$0\\le f_n(x)-|x|\\le{{b:\\frac{1}{\\sqrt{n}}}}$"},
-            {"do":"underline","term":"b","label":"跟 x 無關","on":"跟 x 無關"}
-          ] },
-        { "show": ["極限 $|x|$ 在 0 不可微"],
-          "say": "可是絕對值 x 在零有尖角，不可微。光滑函數的一致極限，可以有尖角。",
-          "board": [
-            {"do":"write","line":"極限 ${{a:|x|}}$ 在 0 不可微"},
-            {"do":"underline","term":"a","label":"尖角","on":"尖角#1"}
-          ] },
-        { "show": ["紅：$n=4$ 的 $f_n$；藍：$|x|$"],
-          "say": "畫 n 等於四的樣子，藍色是 x 絕對值，紅色是根號 x 平方加四分之一。貼得很近，但只有紅色在零是圓滑的。",
-          "board": [
-            {"do":"plot","graph":{"window":[-1,1,-0.2,1.2],"curves":[{"expr":"abs(x)","domain":[-1,1],"color":"blue"},{"expr":"sqrt(x^2+1/4)","domain":[-1,1],"color":"red"}]}}
-          ] },
-        { "show": ["$f_n'(x)=\\frac{x}{\\sqrt{x^2+\\frac{1}{n}}}\\to\\operatorname{sign}(x)$"],
-          "note": "極限在 0 不連續。",
-          "say": "看導數：它逐點趨近 sign x，正的是一、負的是負一、零是零，在零斷掉了。",
-          "board": [
-            {"do":"write","line":"$f_n'=\\frac{x}{\\sqrt{x^2+\\frac{1}{n}}}\\to{{s:\\operatorname{sign}(x)}}$"},
-            {"do":"underline","term":"s","label":"斷掉","on":"零是零"}
-          ] }
+      "heading": "④ 證明：先證一致",
+      "body": [
+        "策略：導數不一定連續，不能寫成積分；改用均值定理，讓導數的差管住函數的差",
+        "若 $f_n'$ 連續有捷徑：$f_n(x)=f_n(x_0)+\\int_{x_0}^xf_n'$，取極限得 $f=L+\\int_{x_0}^xg$（12.33），再用微積分基本定理",
+        "1. 對 $h=f_n-f_m$ 用均值定理：$h(x)-h(x_0)=h'(\\xi)(x-x_0)$",
+        "移項、取絕對值：",
+        "• $f_n(x_0)$ 收斂 ⇒ 柯西：第一項 $\\to0$",
+        "• $f_n'$ 一致收斂 ⇒ 一致柯西：第二項 $\\to0$",
+        "⇒ $f_n$ 一致柯西 ⇒ 一致收斂到某個 $f$（12.32）",
+        "一致收斂 ⇒ 一致柯西：$\\|f_n'-f_m'\\|_\\infty\\le\\|f_n'-g\\|_\\infty+\\|g-f_m'\\|_\\infty$"
       ],
-      "predict": {
-        "ask": "所以 $f_n'$ 的收斂是？",
-        "options": [
-          {
-            "label": "不一致：連續函數的極限不連續",
-            "correct": true
-          },
-          {
-            "label": "一致，因為 $f_n$ 一致收斂",
-            "why": "$f_n$ 一致不代表 $f_n'$ 一致；每個 $f_n'$ 連續而極限 $\\operatorname{sign}(x)$ 不連續，就不可能一致。"
-          },
-          {
-            "label": "連逐點都不收斂",
-            "why": "每個 $x$ 上 $f_n'(x)$ 都有極限：$x>0$ 為 1、$x<0$ 為 $-1$、$x=0$ 為 0。"
-          }
-        ]
-      }
+      "tex": [
+        "\\begin{aligned}|f_n(x)-f_m(x)|\\le{}&|f_n(x_0)-f_m(x_0)|\\\\&+(b-a)\\|f_n'-f_m'\\|_\\infty\\end{aligned}"
+      ]
     },
     {
-      "title": "條件放在導數上",
-      "beats": [
-        { "show": ["(1) $f_n'$ 在 $[a,b]$ 一致收斂到 $g$"],
-          "note": "每個 $f_n$ 連續可微。",
-          "say": "正確的定理把條件放在導數上：第一，導數 f n prime 一致收斂到某個 g。",
-          "board": [
-            {"do":"write","line":"(1) ${{d:f_n'}}$ 在 $[a,b]$ 一致收斂到 ${{g:g}}$","tint":{"g":"blue"}},
-            {"do":"underline","term":"d","label":"導數","on":"導數#2"}
-          ] },
-        { "show": ["(2) 某一點 $f_n(x_0)$ 收斂"],
-          "say": "第二，至少有一個點，f n 在那裡的值收斂。",
-          "board": [
-            {"do":"write","line":"(2) 某一點 ${{p:f_n(x_0)}}$ 收斂"},
-            {"do":"underline","term":"p","label":"一個點","on":"至少"}
-          ] },
-        { "show": ["$\\Rightarrow(\\lim f_n)'=\\lim f_n'$"],
-          "note": "而且 $f_n$ 一致收斂到 $f$，$f'=g$。",
-          "say": "這樣 f n 就一致收斂到某個 f，f 可微，導數就是 g。極限和微分可以交換。證明在後面那節。",
-          "board": [
-            {"do":"write","line":"$\\Rightarrow{{c:(\\lim f_n)'=\\lim f_n'}}$"},
-            {"do":"box","term":"c","color":"green","label":"交換","on":"極限和微分"}
-          ] }
+      "heading": "④ 證明（續）：$f'=g$",
+      "body": [
+        "2. 固定 $x\\in[a,b]$，看差商：",
+        "同樣定義 $\\varphi$：$t\\ne x$ 用 $f$ 的差商，$\\varphi(x)=g(x)$；$\\varphi_n\\to\\varphi$ 逐點",
+        "再用一次均值定理（$h=f_n-f_m$，在 $x$ 與 $t$ 之間）：",
+        "右邊跟 $t$ 無關 ⇒ $\\varphi_n\\to\\varphi$ 一致（12.32）",
+        "每個 $\\varphi_n$ 在 $x$ 連續 ⇒ $\\varphi$ 在 $x$ 連續（12.30）",
+        "本質上就是交換兩個極限：$\\lim_{t\\to x}\\lim_{n}\\varphi_n(t)=\\lim_{n}\\lim_{t\\to x}\\varphi_n(t)$"
       ],
-      "check": 1
+      "tex": [
+        "\\varphi_n(t)=\\begin{cases}\\dfrac{f_n(t)-f_n(x)}{t-x},&t\\ne x\\\\[6pt]f_n'(x),&t=x\\end{cases}",
+        "|\\varphi_n(t)-\\varphi_m(t)|=\\left|\\frac{h(t)-h(x)}{t-x}\\right|",
+        "=|h'(\\xi)|\\le\\|f_n'-f_m'\\|_\\infty",
+        "\\begin{aligned}f'(x)&=\\lim_{t\\to x}\\frac{f(t)-f(x)}{t-x}=\\lim_{t\\to x}\\varphi(t)\\\\&=\\varphi(x)=g(x)\\quad\\blacksquare\\end{aligned}"
+      ]
     },
     {
-      "title": "一個點釘住高度",
-      "beats": [
-        { "show": ["$f_n(x)=n$（常數）"],
-          "say": "為什麼要第二個條件？看常數函數 f n 等於 n。",
-          "board": [
-            {"do":"write","line":"$f_n(x)={{c:n}}$（常數）"}
-          ] },
-        { "show": ["$f_n'=0$，一致收斂到 0"],
-          "note": "但 $f_n$ 本身發散。",
-          "say": "它們的導數全是零，當然一致收斂；可是 f n 本身一路往上跑，沒有極限。",
-          "board": [
-            {"do":"write","line":"$f_n'=0$，一致收斂到 0"},
-            {"do":"write","line":"$f_n=n$ 沒有極限","on":"本身"}
-          ] },
-        { "show": ["導數決定形狀，一個點釘住高度"],
-          "say": "導數只決定形狀，要一個點把高度釘住，整條才收斂。",
-          "board": [
-            {"do":"write","line":"$f_n'$ 決定形狀，${{p:f_n(x_0)}}$ 釘住高度"},
-            {"do":"underline","term":"p","color":"blue","label":"高度","on":"一個點"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "證明：先把 $f$ 造出來",
-      "beats": [
-        { "show": ["釘住高度，把 $g$ 積分回去"],
-          "note": "$f_n'$ 連續的版本。",
-          "say": "策略：直接把答案造出來。用那一點釘住高度，把 g 積分回去，再證 f n 一致收斂到它。",
-          "board": [
-            {"do":"write","line":"釘住高度，把 ${{g:g}}$ 積分回去","tint":{"g":"blue"}}
-          ] },
-        { "show": ["$f(x)=L+\\int_{x_0}^{x}g(t)\\,dt$"],
-          "note": "$L=\\lim f_n(x_0)$；$g$ 連續，積分有意義。",
-          "why": {"ask":"為什麼 $g$ 連續？","say":"要積分 g，g 最好連續。它為什麼連續？","options":[{"label":"$g$ 是連續函數 $f_n'$ 的一致極限","correct":true},{"label":"每個 $f_n'$ 都連續，極限當然連續","why":"逐點極限保不住連續：$\\frac{x}{\\sqrt{x^2+\\frac{1}{n}}}$ 都連續，極限在 0 斷掉。要一致收斂才保得住。"},{"label":"$f_n$ 一致收斂","why":"這還沒證，是等一下才要證的；而且它管的是 $f_n$，不是導數。"}]},
-          "say": "g 是連續函數 f n prime 的一致極限，所以連續。L 是那一點的極限，用來釘住高度。",
-          "board": [
-            {"do":"write","line":"${{f:f}}(x)=L+\\int_{x_0}^{x}{{g:g}}(t)\\,dt$","tint":{"f":"violet"},"on":"要積分 g"},
-            {"do":"underline","term":"g","label":"連續","why":true,"on":"g 是連續函數"}
-          ] },
-        { "show": ["前、中、後，用 $f_n$ 當橋"],
-          "say": "g 在兩點的差，用 f n 當橋，拆成前、中、後。前後靠一致收斂壓小，中間靠 f n 連續。",
-          "board": [
-            {"do":"write","line":"$|g(x)-g(y)|\\le{{a:|g(x)-f_n(x)|}}$"},
-            {"do":"write","line":"$\\quad+{{b:|f_n(x)-f_n(y)|}}+{{c:|f_n(y)-g(y)|}}$","on":"當橋"},
-            {"do":"focus","term":"a","on":"前後靠"},
-            {"do":"focus","term":"b","on":"中間靠"}
-          ] },
-        { "show": ["$f_n(x)=f_n(x_0)+\\int_{x_0}^{x}f_n'(t)\\,dt$"],
-          "note": "微積分基本定理 I。",
-          "say": "每一個 f n 也能寫成同樣的樣子：那一點的值，加上導數的積分。",
-          "board": [
-            {"do":"write","line":"$f_n(x)=f_n(x_0)+\\int_{x_0}^{x}f_n'(t)\\,dt$"}
-          ] },
-        { "show": ["$|f_n(x)-f(x)|\\le|f_n(x_0)-L|$","$+(b-a)\\|f_n'-g\\|_\\infty$"],
-          "note": "右邊與 $x$ 無關，而且 $\\to0$。",
-          "why": {"ask":"這為什麼推得出一致收斂？","say":"兩式相減，差被右邊蓋住。為什麼這就是一致收斂？","options":[{"label":"右邊與 $x$ 無關，而且趨近 0","correct":true},{"label":"對每個 $x$，左邊都趨近 0","why":"每個 $x$ 各自趨近 0 只是逐點收斂；一致要的是一個不看 $x$ 的上界趨近 0。"},{"label":"$f_n'$ 一致收斂，$f_n$ 就一致收斂","why":"光有導數不夠：$f_n=n$ 的導數一致收斂，$f_n$ 卻發散。還要第一項 $|f_n(x_0)-L|\\to0$。"}]},
-          "say": "相減，積分不超過區間長度乘最大誤差。右邊兩項都跟 x 無關又趨近零，所以一致收斂。",
-          "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$|f_n(x)-{{f:f}}(x)|\\le{{r1:|f_n(x_0)-L|}}$","on":"兩式相減"},
-            {"do":"write","line":"$+(b-a){{r2:\\|f_n'-{{g:g}}\\|_\\infty}}$","on":"差被右邊"},
-            {"do":"underline","term":"r1","why":true,"on":"右邊兩項"},
-            {"do":"underline","term":"r2","label":"跟 x 無關、→ 0","why":true,"on":"跟 x 無關"}
-          ] },
-        { "show": ["$f'(x)=g(x)$"],
-          "note": "$g$ 連續，再用一次基本定理。",
-          "say": "最後，g 連續，對 f 再用一次微積分基本定理，f prime 就是 g。極限和微分交換了。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{g:g}}$ 連續 ⇒ 再用基本定理","on":"g 連續"},
-            {"do":"write","line":"${{f:f}}'(x)={{g:g}}(x)$","color":"green","on":"f prime 就是"}
-          ] }
-      ],
-      "key": "把 $f_n$ 寫成積分，一致收斂搬進積分號",
-      "proof": true,
-      "of": 3,
-      "skeleton": "構造",
-      "where": {
-        "ask": "條件 (2)「$f_n(x_0)$ 收斂」用在哪一步？",
-        "steps": [
-          {
-            "label": "$g$ 連續",
-            "why": "這只用到 $f_n'$ 連續、而且一致收斂到 $g$。"
-          },
-          {
-            "label": "取 $L=\\lim f_n(x_0)$，定義 $f$",
-            "correct": true
-          },
-          {
-            "label": "$f_n(x)=f_n(x_0)+\\int_{x_0}^{x}f_n'$",
-            "why": "這是基本定理用在每一個 $f_n$ 上，跟 $n$ 趨近無限大無關。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "逐項微分求和",
-      "beats": [
-        { "show": ["$\\sum_{n=0}^\\infty x^n=\\frac{1}{1-x}$，$|x|<1$"],
-          "note": "目標：$\\sum_{n=1}^\\infty\\frac{n}{2^n}$。",
-          "say": "想求 n 除以二的 n 次方的和。從幾何級數出發，打算逐項微分。",
-          "board": [
-            {"do":"write","line":"目標：$\\sum_{n=1}^\\infty\\frac{n}{2^n}$"},
-            {"do":"write","line":"$\\sum_{n=0}^\\infty x^n=\\frac{1}{1-x}$，$|x|<1$","on":"從幾何級數"}
-          ] },
-        { "show": ["$[-r,r]$ 上 $|n x^{n-1}|\\le n r^{n-1}$"],
-          "note": "$\\sum n r^{n-1}$ 收斂；$x_0=0$ 處原級數收斂。",
-          "say": "先檢查條件：在負 r 到 r 上，導數級數被一個收斂的數字級數蓋住，M 判別說一致收斂。",
-          "board": [
-            {"do":"write","line":"$[-r,r]$ 上 $|n x^{n-1}|\\le {{m:n r^{n-1}}}$","on":"在負 r"},
-            {"do":"underline","term":"m","label":"M 判別","on":"M 判別"}
-          ] },
-        { "show": ["$|u_n(x)|\\le M_n$，$\\sum M_n<\\infty$"],
-          "say": "M 判別：每項被一個常數蓋住，常數加起來有限，就一致收斂。這裡常數的比值是 r，r 小於一就收斂。",
-          "board": [
-            {"do":"write","line":"$|u_n(x)|\\le M_n$，$\\sum M_n<\\infty$"},
-            {"do":"write","line":"比值 $\\to r<1$，所以收斂","on":"比值"}
-          ] },
-        { "show": ["$(x^n)'=nx^{n-1}$，常數項消失"],
-          "say": "逐項微分，x 的 n 次方變成 n 乘 x 的 n 減一次方，常數項消失。右邊一減 x 分之一，導數是一減 x 平方分之一。",
-          "board": [
-            {"do":"write","line":"$(x^n)'=nx^{n-1}$，常數項 $\\to0$"},
-            {"do":"write","line":"$\\left(\\frac{1}{1-x}\\right)'=\\frac{1}{(1-x)^2}$","on":"右邊"}
-          ] },
-        { "show": ["$\\sum_{n=1}^\\infty n x^{n-1}=\\frac{1}{(1-x)^2}$"],
-          "say": "所以可以逐項微分：n 乘 x 的 n 減一次方加起來，等於一減 x 平方分之一。",
-          "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty n x^{n-1}=\\frac{1}{(1-x)^2}$","on":"逐項微分"}
-          ] },
-        { "show": ["乘 $x$：$\\sum n x^n=\\frac{x}{(1-x)^2}$"],
-          "note": "再代 $x=\\frac{1}{2}$。",
-          "say": "兩邊乘 x，得到 n 乘 x 的 n 次方的和。最後代 x 等於二分之一。",
-          "board": [
-            {"do":"keep","n":1},
-            {"do":"write","line":"乘 $x$：$\\sum n x^n=\\frac{x}{(1-x)^2}$","on":"兩邊乘 x"},
-            {"do":"write","line":"再代 $x=\\frac{1}{2}$","on":"最後代"}
-          ] }
-      ],
-      "key": "先逐項微分，再乘 $x$ 補回次方",
-      "check": 3
+      "heading": "重點整理",
+      "body": [
+        "• 一致收斂只管值，不管斜率：$\\frac{\\sin(nx)}{\\sqrt n}$、$\\sqrt{x^2+\\frac1n}\\to|x|$",
+        "• 正確條件：$f_n'$ 一致收斂 + $f_n$ 在一點收斂",
+        "• 結論：$f_n\\to f$ 一致，$f'=\\lim f_n'$",
+        "• 逐項微分：先證導數級數一致；$\\sum\\frac n{2^n}=2$",
+        "• 證明：均值定理 ⇒ 一致柯西；差商一致收斂 + 12.30",
+        "下一課：分割：黎曼積分的嚴格理論"
+      ]
     }
   ],
   "workedExamples": [
@@ -355,51 +175,919 @@
   ],
   "checks": [
     {
-      "ask": "$f_n(x)=\\frac{\\sin(nx)}{\\sqrt{n}}$ 在 $\\mathbb{R}$ 上一致收斂到 0。下列何者正確？",
+      "ask": "上面兩個反例，各是哪個條件不成立？",
       "options": [
-        { "label": "$f_n'(0)=\\sqrt{n}\\to\\infty$，所以 $\\lim f_n'\\ne(\\lim f_n)'$", "correct": true },
-        { "label": "一致收斂，所以 $f_n'\\to0$", "why": "你把一致收斂當成也管導數。$f_n'(x)=\\sqrt{n}\\cos(nx)$，在 $x=0$ 是 $\\sqrt{n}$。" },
-        { "label": "$f_n$ 其實不一致收斂，因為導數發散", "why": "一致收斂只看 $\\|f_n-0\\|_\\infty=\\frac{1}{\\sqrt{n}}\\to0$，跟導數無關。" }
+        {
+          "label": "兩個都是 $f_n'$ 不一致收斂",
+          "correct": true
+        },
+        {
+          "label": "兩個都是沒有一點收斂",
+          "why": "兩個 $f_n$ 本身都一致收斂，每一點都收斂"
+        },
+        {
+          "label": "第一個 $f_n'$ 不一致，第二個 $f_n$ 不一致",
+          "why": "第二個 $f_n\\to|x|$ 是一致的；壞的是導數"
+        },
+        {
+          "label": "條件都成立，定理有例外",
+          "why": "定理沒有例外；是導數列不一致"
+        }
       ]
     },
     {
-      "ask": "要保證 $(\\lim f_n)'=\\lim f_n'$，定理主要的條件是？",
+      "ask": "用同一條公式 $\\displaystyle\\sum_{n=1}^\\infty nx^n=\\frac{x}{(1-x)^2}$，求 $\\displaystyle\\sum_{n=1}^\\infty\\frac n{3^n}$。",
       "options": [
-        { "label": "$f_n'$ 一致收斂，且某一點 $f_n(x_0)$ 收斂", "correct": true },
-        { "label": "$f_n$ 一致收斂，且每個 $f_n$ 可微", "why": "$\\sqrt{x^2+\\frac{1}{n}}\\to|x|$ 就滿足這兩個條件，極限卻在 0 不可微。條件要放在導數上。" },
-        { "label": "$f_n'$ 逐點收斂", "why": "$\\sqrt{x^2+\\frac{1}{n}}$ 的導數逐點收斂到 $\\operatorname{sign}(x)$，但極限函數 $|x|$ 在 0 沒有導數。逐點不夠。" }
+        {
+          "label": "$\\frac34$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac12$",
+          "why": "漏了平方：分母要用 $(\\frac23)^2$，不是 $\\frac23$"
+        },
+        {
+          "label": "$3$",
+          "why": "把 $x$ 代成 $3$；要代 $x=\\frac13$，而且 $3$ 不在收斂範圍內"
+        },
+        {
+          "label": "$\\frac94$",
+          "why": "用了 $\\frac1{(1-x)^2}$，忘了乘 $x$"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "值靠近，斜率不一定靠近",
+      "beats": [
+        {
+          "show": [
+            "$f_n(x)=\\frac{\\sin(nx)}{\\sqrt n},\\quad x\\in\\mathbb{R}$"
+          ],
+          "say": "上一課，一致收斂可以交換極限與積分。微分呢？看這個例子：正弦 n x 除以根號 n。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_n(x)=\\frac{\\sin(nx)}{\\sqrt n},\\quad x\\in\\mathbb{R}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\|f_n\\|_\\infty=\\dfrac1{\\sqrt n}\\to0$：一致收斂到 $f\\equiv0$"
+          ],
+          "say": "正弦的絕對值不超過 1，所以上確界範數是根號 n 分之 1，趨近 0。一致收斂到 0 函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\|f_n\\|_\\infty=\\dfrac1{\\sqrt n}\\to0$：一致收斂到 $f\\equiv0$"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$f_n\\to0$ 一致。那 $f_n'(0)$ 會趨近什麼？",
+        "options": [
+          {
+            "label": "趨近 $\\infty$",
+            "correct": true
+          },
+          {
+            "label": "趨近 $0$，因為 $f\\equiv0$ 的導數是 $0$",
+            "why": "這正是「以為可以交換」的錯；值靠近不代表斜率靠近"
+          },
+          {
+            "label": "一直是 $1$",
+            "why": "那是 $\\sin x$ 在 $0$ 的斜率；$\\sin(nx)$ 在 $0$ 的斜率是 $n$，再除以 $\\sqrt n$"
+          }
+        ]
+      }
+    },
+    {
+      "title": "值靠近，斜率不一定靠近",
+      "beats": [
+        {
+          "show": [
+            "振幅變小，抖動變快"
+          ],
+          "say": "圖上，曲線被兩條紅線夾住。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "wig",
+                  "window": [
+                    -3.2,
+                    3.2,
+                    -1.1,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(n*x)/sqrt(n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": "1/sqrt(n)",
+                      "color": "red"
+                    },
+                    {
+                      "y": "-1/sqrt(n)",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：高度 {1/sqrt(n)}，在 0 的斜率 {sqrt(n)}",
+                  "height": 280
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1：高度 1，在 0 的斜率 1",
+              "on": "線被"
+            },
+            {
+              "do": "write",
+              "line": "振幅變小，抖動變快",
+              "color": "violet",
+              "on": "紅線"
+            }
+          ]
+        },
+        {
+          "show": [
+            "值靠近，斜率不一定靠近"
+          ],
+          "say": "n 變大，紅線往 0 收，值越來越靠近 0；可是曲線抖得越來越快，斜率越來越陡。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "wig",
+                  "window": [
+                    -3.2,
+                    3.2,
+                    -1.1,
+                    1.1
+                  ],
+                  "fn": [
+                    {
+                      "expr": "sin(n*x)/sqrt(n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "hlines": [
+                    {
+                      "y": "1/sqrt(n)",
+                      "color": "red"
+                    },
+                    {
+                      "y": "-1/sqrt(n)",
+                      "color": "red"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 60,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：高度 {1/sqrt(n)}，在 0 的斜率 {sqrt(n)}",
+                  "height": 280
+                },
+                "vals": {
+                  "n": 60
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 60：高度 0.1291，在 0 的斜率 7.746",
+              "on": "可是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_n'(x)=\\sqrt n\\cos(nx)$：",
+            "$\\lim_{n\\to\\infty}f_n'(0)=\\infty\\ne0=f'(0)$"
+          ],
+          "say": "算出來，導數是根號 n 乘餘弦 n x。在 0 這點是根號 n，趨近無限大，而極限函數的導數是 0。一致收斂只管值靠近，完全不管斜率。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$f_n'(x)=\\sqrt n\\cos(nx)$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle \\lim_{n\\to\\infty}f_n'(0)=\\infty\\ne0=f'(0)}}$",
+              "color": "red",
+              "on": "這點"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "導數#2"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$f_n(x)=n$（常數函數）。$f_n'=0$ 一致收斂到 0。為什麼不能說 $\\lim f_n$ 的導數是 0？",
-      "options": [
-        { "label": "$f_n$ 本身沒有極限：缺了「某一點 $f_n(x_0)$ 收斂」", "correct": true },
-        { "label": "其實可以，$\\lim f_n$ 的導數就是 0", "why": "$\\lim f_n$ 根本不存在（$n\\to\\infty$），沒有函數可以求導。" },
-        { "label": "因為 $f_n'$ 不是一致收斂", "why": "$f_n'$ 全是 0，當然一致收斂。缺的是把高度釘住的那個點。" }
+      "title": "一致極限甚至不可微",
+      "beats": [
+        {
+          "show": [
+            "$f_n(x)=\\sqrt{x^2+\\frac1n},\\quad x\\in[-1,1]$"
+          ],
+          "say": "更糟的例子：根號 x 平方加 n 分之 1，在負 1 到 1 上。每一條都是光滑的，處處可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle f_n(x)=\\sqrt{x^2+\\frac1n},\\quad x\\in[-1,1]$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "有理化：",
+            "$0\\le f_n(x)-|x|=\\frac{1/n}{\\sqrt{x^2+\\frac1n}+|x|}\\le\\frac{1/n}{\\sqrt{1/n}}=\\frac1{\\sqrt n}$"
+          ],
+          "say": "跟絕對值 x 比。有理化以後，差距等於 n 分之 1 除以兩個根號的和，分母至少是根號 n 分之 1，所以差距不超過根號 n 分之 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "有理化："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le f_n(x)-|x|=\\frac{1/n}{\\sqrt{x^2+\\frac1n}+|x|}\\le\\frac{1/n}{\\sqrt{1/n}}=\\frac1{\\sqrt n}$",
+              "on": "分母"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\Rightarrow$ $f_n\\to|x|$ 一致，而 $|x|$ 在 $0$ 不可微"
+          ],
+          "say": "跟 x 無關，趨近 0，所以一致收斂到絕對值 x。可是絕對值 x 在 0 不可微。可微函數的一致極限，可以不可微。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\Rightarrow$ $f_n\\to|x|$ 一致，而 $|x|$ 在 $0$ 不可微",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "圓角被磨成尖角"
+          ],
+          "say": "圖上，藍色的圓角越來越尖，最後變成紅色的尖角。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "corner",
+                  "window": [
+                    -1,
+                    1,
+                    -0.05,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "abs(x)",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "sqrt(x^2+1/n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 200,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：最大差 1/√n = {1/sqrt(n)}",
+                  "height": 240
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 1：最大差 1/√n = 1",
+              "on": "角越"
+            },
+            {
+              "do": "write",
+              "line": "圓角被磨成尖角",
+              "color": "violet",
+              "on": "變成"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$f_n'(x)=\\dfrac{x}{\\sqrt{x^2+\\frac1n}}\\to\\begin{cases}-1,&x<0\\\\0,&x=0\\\\1,&x>0\\end{cases}$"
+          ],
+          "say": "導數呢？x 除以根號 x 平方加 n 分之 1，逐點收斂到符號函數：負的是負 1，0 是 0，正的是 1。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "corner",
+                  "window": [
+                    -1,
+                    1,
+                    -0.05,
+                    1.15
+                  ],
+                  "fn": [
+                    {
+                      "expr": "abs(x)",
+                      "color": "red"
+                    },
+                    {
+                      "expr": "sqrt(x^2+1/n)",
+                      "color": "blue"
+                    }
+                  ],
+                  "params": {
+                    "n": {
+                      "min": 1,
+                      "max": 200,
+                      "value": 1,
+                      "label": "n"
+                    }
+                  },
+                  "readout": "n = {floor(n)}：最大差 1/√n = {1/sqrt(n)}",
+                  "height": 240
+                },
+                "vals": {
+                  "n": 200
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "n = 200：最大差 1/√n = 0.07071",
+              "on": "平方"
+            },
+            {
+              "do": "write",
+              "line": "$f_n'(x)=\\dfrac{x}{\\sqrt{x^2+\\frac1n}}\\to{\\begin{cases}-1,&x<0\\\\0,&x=0\\\\1,&x>0\\end{cases}}$",
+              "on": "收斂"
+            },
+            {
+              "do": "write",
+              "line": "　每個 $f_n'$ 連續、極限不連續 $\\Rightarrow$ $f_n'$ 不是一致收斂（12.30）",
+              "color": "violet",
+              "on": "正的"
+            }
+          ]
+        }
       ]
     },
     {
-      "ask": "$\\sum_{n=1}^\\infty\\frac{n}{2^n}$ 等於？",
-      "options": [
-        { "label": "2", "correct": true },
-        { "label": "4", "why": "你算的是 $\\sum n x^{n-1}=\\frac{1}{(1-x)^2}$ 在 $x=\\frac{1}{2}$ 的值，還要乘上 $x=\\frac{1}{2}$。" },
-        { "label": "1", "why": "那是 $\\sum\\frac{1}{2^n}$。分子的 $n$ 要靠逐項微分生出來。" }
+      "title": "正確的定理",
+      "beats": [
+        {
+          "show": [
+            "定理：$f_n$ 在 $[a,b]$ 上可微，且",
+            "• $f_n'\\to g$ 在 $[a,b]$ 上一致收斂"
+          ],
+          "say": "正確的定理：每個 f n 在 a 到 b 上可微。條件放在導數上：導數列一致收斂到 g；另外再要求某一點 x 0 的值收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理：$f_n$ 在 $[a,b]$ 上可微，且"
+            },
+            {
+              "do": "write",
+              "line": "• $f_n'\\to g$ 在 $[a,b]$ 上一致收斂",
+              "on": "上可"
+            },
+            {
+              "do": "write",
+              "line": "• 有一點 $x_0\\in[a,b]$ 使 $f_n(x_0)$ 收斂",
+              "on": "另外"
+            }
+          ]
+        },
+        {
+          "show": [
+            "則 $f_n\\to f$ 在 $[a,b]$ 上一致收斂，$f$ 可微，且",
+            "$f'=g,\\quad\\text{即}\\quad\\Big(\\lim_{n\\to\\infty}f_n\\Big)'=\\lim_{n\\to\\infty}f_n'$"
+          ],
+          "say": "結論：f n 一致收斂到某個 f，f 可微，而且 f 的導數就是 g。也就是先取極限再微分，等於先微分再取極限。",
+          "board": [
+            {
+              "do": "write",
+              "line": "則 $f_n\\to f$ 在 $[a,b]$ 上一致收斂，$f$ 可微，且"
+            },
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle f'=g,\\quad\\text{即}\\quad\\Big(\\lim_{n\\to\\infty}f_n\\Big)'=\\lim_{n\\to\\infty}f_n'}}$",
+              "color": "red",
+              "on": "可微"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "是先"
+            }
+          ]
+        },
+        {
+          "show": [
+            "為什麼要「一點收斂」？"
+          ],
+          "say": "為什麼還要一點收斂？看常數函數 n：導數都是 0，當然一致收斂，可是函數本身跑到無限大。導數只決定形狀，要一個點把高度釘住。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼要「一點收斂」？"
+            },
+            {
+              "do": "write",
+              "line": "$f_n(x)=n$：$f_n'=0\\to0$ 一致，但 $f_n$ 自己發散",
+              "on": "可是"
+            }
+          ]
+        }
+      ],
+      "check": 0
+    },
+    {
+      "title": "級數版：逐項微分",
+      "beats": [
+        {
+          "show": [
+            "推論：$u_n$ 可微，$\\sum u_n'$ 在 $[a,b]$ 上一致收斂，且 $\\sum u_n(x_0)$ 收斂，則",
+            "$\\Big(\\sum u_n\\Big)'=\\sum u_n'$"
+          ],
+          "say": "級數版：每一項可微，導數的級數一致收斂，某一點的級數收斂，就可以逐項微分。證明是把定理用在部分和上。",
+          "board": [
+            {
+              "do": "write",
+              "line": "推論：$u_n$ 可微，$\\sum u_n'$ 在 $[a,b]$ 上一致收斂，且 $\\sum u_n(x_0)$ 收斂，則"
+            },
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle \\Big(\\sum u_n\\Big)'=\\sum u_n'}}$",
+              "on": "致收"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "項微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "冪級數：$\\dfrac1{1-x}=\\displaystyle\\sum_{n=0}^\\infty x^n$，$|x|<1$"
+          ],
+          "say": "例子：1 減 x 分之 1，等於 x 的 n 次方的總和，x 的絕對值小於 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "冪級數：$\\dfrac1{1-x}=\\displaystyle\\sum_{n=0}^\\infty x^n$，$|x|<1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "逐項微分得 $\\sum_{n\\ge1}nx^{n-1}$。在 $[-r,r]$（$r<1$）："
+          ],
+          "say": "逐項微分得到 n 乘 x 的 n 減 1 次方。在負 r 到 r 上，用 M 判別：M n 是 n 乘 r 的 n 減 1 次方，比值趨近 r，小於 1，級數收斂。所以導數級數一致收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "逐項微分得 $\\sum_{n\\ge1}nx^{n-1}$。在 $[-r,r]$（$r<1$）："
+            },
+            {
+              "do": "write",
+              "line": "$|nx^{n-1}|\\le nr^{n-1}=M_n$，比值 $\\frac{(n+1)r^n}{nr^{n-1}}\\to r<1$，$\\sum M_n<\\infty$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定理成立（$x_0=0$ 收斂）：$|x|<1$ 時",
+            "$\\frac1{(1-x)^2}=\\sum_{n=1}^\\infty nx^{n-1}$"
+          ],
+          "say": "在 0 這一點原級數當然收斂，所以定理成立。每一個絕對值小於 1 的 x 都落在某個負 r 到 r 裡，所以 1 減 x 平方分之 1，等於 n 乘 x 的 n 減 1 次方的總和。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定理成立（$x_0=0$ 收斂）：$|x|<1$ 時"
+            },
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\frac1{(1-x)^2}=\\sum_{n=1}^\\infty nx^{n-1}}}$",
+              "on": "每一"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "on": "所以#2"
+            },
+            {
+              "do": "write",
+              "line": "　一般冪級數也一樣：逐項微分後收斂半徑不變，在 $(-R,R)$ 內可以逐項微分",
+              "color": "violet",
+              "on": "等於"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩邊乘 $x$，代 $x=\\frac12$：",
+            "$\\sum_{n=1}^\\infty\\frac n{2^n}=\\frac{1/2}{(1-1/2)^2}=2$"
+          ],
+          "say": "兩邊乘 x，得到 n 乘 x 的 n 次方的總和，等於 1 減 x 平方分之 x。代 x 等於 2 分之 1：2 分之 1 除以 4 分之 1，等於 2。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩邊乘 $x$，代 $x=\\frac12$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\sum_{n=1}^\\infty\\frac n{2^n}=\\frac{1/2}{(1-1/2)^2}=2}}$",
+              "color": "red",
+              "on": "等於#1"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "分之#3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "用同一條公式 $\\displaystyle\\sum_{n=1}^\\infty nx^n=\\frac{x}{(1-x)^2}$，求 $\\displaystyle\\sum_{n=1}^\\infty\\frac n{3^n}$。"
+          ],
+          "say": "試一題：用同一條公式，求 n 除以 3 的 n 次方的總和。"
+        }
+      ],
+      "check": 1
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "為什麼要先證一致？"
+          ],
+          "say": "為什麼一定要檢查導數級數？上一課的正弦 n x 除以 n 平方，一致收斂；逐項微分卻得到餘弦 n x 除以 n，在 0 是調和級數，發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "為什麼要先證一致？",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "$\\sum\\frac{\\sin(nx)}{n^2}$ 一致收斂，但逐項微分得 $\\sum\\frac{\\cos(nx)}n$，在 $x=0$ 是 $\\sum\\frac1n$，發散",
+              "color": "red",
+              "on": "除以#1"
+            },
+            {
+              "do": "write",
+              "line": "　跟 ① 一樣：原級數一致，管不到導數",
+              "color": "violet",
+              "on": "除以#2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明：先證一致",
+      "beats": [
+        {
+          "show": [
+            "策略：導數不一定連續，不能寫成積分；改用均值定理，讓導數的差管住函數的差"
+          ],
+          "say": "證明只假設可微，導數不一定連續，不能寫成積分。改用均值定理：導數的差，可以管住函數的差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "策略：導數不一定連續，不能寫成積分；改用均值定理，讓導數的差管住函數的差"
+            },
+            {
+              "do": "write",
+              "line": "　若 $f_n'$ 連續有捷徑：$f_n(x)=f_n(x_0)+\\int_{x_0}^xf_n'$，取極限得 $f=L+\\int_{x_0}^xg$（12.33），再用微積分基本定理",
+              "color": "violet",
+              "on": "改用"
+            }
+          ]
+        },
+        {
+          "show": [
+            "1. 對 $h=f_n-f_m$ 用均值定理：$h(x)-h(x_0)=h'(\\xi)(x-x_0)$"
+          ],
+          "say": "第一步，把均值定理用在 f n 減 f m 上：兩點的差，等於中間某點的導數乘距離。",
+          "board": [
+            {
+              "do": "write",
+              "line": "1. 對 $h=f_n-f_m$ 用均值定理：$h(x)-h(x_0)=h'(\\xi)(x-x_0)$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "移項、取絕對值：",
+            "$\\begin{aligned}|f_n(x)-f_m(x)|\\le{}&|f_n(x_0)-f_m(x_0)|\\\\&+(b-a)\\|f_n'-f_m'\\|_\\infty\\end{aligned}$"
+          ],
+          "say": "移項取絕對值：在 x 的差，不超過在 x 0 的差，加上區間長度乘導數差的上確界範數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "移項、取絕對值："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle {\\begin{aligned}|f_n(x)-f_m(x)|\\le{}&|f_n(x_0)-f_m(x_0)|\\\\&+(b-a)\\|f_n'-f_m'\\|_\\infty\\end{aligned}}}}$",
+              "on": "不超"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "區間"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• $f_n(x_0)$ 收斂 ⇒ 柯西：第一項 $\\to0$",
+            "• $f_n'$ 一致收斂 ⇒ 一致柯西：第二項 $\\to0$"
+          ],
+          "say": "右邊兩項都跟 x 無關。f n of x 0 收斂，是柯西數列；導數一致收斂，是一致柯西。兩項都趨近 0。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• $f_n(x_0)$ 收斂 ⇒ 柯西：第一項 $\\to0$"
+            },
+            {
+              "do": "write",
+              "line": "• $f_n'$ 一致收斂 ⇒ 一致柯西：第二項 $\\to0$",
+              "on": "是柯"
+            }
+          ]
+        },
+        {
+          "show": [
+            "⇒ $f_n$ 一致柯西 ⇒ 一致收斂到某個 $f$（12.32）"
+          ],
+          "say": "所以 f n 符合一致柯西準則，一致收斂到某個 f。",
+          "board": [
+            {
+              "do": "write",
+              "line": "⇒ $f_n$ 一致柯西 ⇒ 一致收斂到某個 $f$（12.32）",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　一致收斂 ⇒ 一致柯西：$\\|f_n'-f_m'\\|_\\infty\\le\\|f_n'-g\\|_\\infty+\\|g-f_m'\\|_\\infty$",
+              "color": "violet",
+              "on": "準則"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "證明（續）：$f'=g$",
+      "beats": [
+        {
+          "show": [
+            "2. 固定 $x\\in[a,b]$，看差商：",
+            "$\\varphi_n(t)=\\begin{cases}\\dfrac{f_n(t)-f_n(x)}{t-x},&t\\ne x\\\\[6pt]f_n'(x),&t=x\\end{cases}$"
+          ],
+          "say": "第二步，固定一點 x，看割線斜率，叫斐 n of t；在 t 等於 x 補上 f n prime x。f n 在 x 可微，所以斐 n 在 x 連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "2. 固定 $x\\in[a,b]$，看差商："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\varphi_n(t)={\\begin{cases}\\dfrac{f_n(t)-f_n(x)}{t-x},&t\\ne x\\\\[6pt]f_n'(x),&t=x\\end{cases}}$",
+              "on": "等於"
+            },
+            {
+              "do": "write",
+              "line": "　同樣定義 $\\varphi$：$t\\ne x$ 用 $f$ 的差商，$\\varphi(x)=g(x)$；$\\varphi_n\\to\\varphi$ 逐點",
+              "color": "violet",
+              "on": "可微"
+            }
+          ]
+        },
+        {
+          "show": [
+            "再用一次均值定理（$h=f_n-f_m$，在 $x$ 與 $t$ 之間）：",
+            "$|\\varphi_n(t)-\\varphi_m(t)|=\\left|\\frac{h(t)-h(x)}{t-x}\\right|$"
+          ],
+          "say": "再用一次均值定理：兩個割線斜率的差，等於 h 在中間某點的導數，不超過導數差的上確界範數。t 等於 x 時也一樣。",
+          "board": [
+            {
+              "do": "write",
+              "line": "再用一次均值定理（$h=f_n-f_m$，在 $x$ 與 $t$ 之間）："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle |\\varphi_n(t)-\\varphi_m(t)|=\\left|\\frac{h(t)-h(x)}{t-x}\\right|$",
+              "on": "在中"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle =|h'(\\xi)|\\le\\|f_n'-f_m'\\|_\\infty$",
+              "on": "的上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "右邊跟 $t$ 無關 ⇒ $\\varphi_n\\to\\varphi$ 一致（12.32）"
+          ],
+          "say": "右邊跟 t 無關，所以斐 n 一致收斂到斐。每個斐 n 在 x 連續，由 12.30，一致極限斐也在 x 連續。",
+          "board": [
+            {
+              "do": "write",
+              "line": "右邊跟 $t$ 無關 ⇒ $\\varphi_n\\to\\varphi$ 一致（12.32）"
+            },
+            {
+              "do": "write",
+              "line": "每個 $\\varphi_n$ 在 $x$ 連續 ⇒ $\\varphi$ 在 $x$ 連續（12.30）",
+              "on": "連續#1"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}f'(x)&=\\lim_{t\\to x}\\frac{f(t)-f(x)}{t-x}=\\lim_{t\\to x}\\varphi(t)\\\\&=\\varphi(x)=g(x)\\quad\\blacksquare\\end{aligned}$"
+          ],
+          "say": "所以 f 在 x 的導數，就是斐在 x 的極限，等於斐 of x，也就是 g of x。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx7:\\displaystyle {\\begin{aligned}f'(x)&=\\lim_{t\\to x}\\frac{f(t)-f(x)}{t-x}=\\lim_{t\\to x}\\varphi(t)\\\\&=\\varphi(x)=g(x)\\quad\\blacksquare\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx7",
+              "color": "red",
+              "on": "的極"
+            },
+            {
+              "do": "write",
+              "line": "　本質上就是交換兩個極限：$\\lim_{t\\to x}\\lim_{n}\\varphi_n(t)=\\lim_{n}\\lim_{t\\to x}\\varphi_n(t)$",
+              "color": "violet",
+              "on": "也就"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "重點整理",
+      "beats": [
+        {
+          "show": [
+            "• 一致收斂只管值，不管斜率：$\\frac{\\sin(nx)}{\\sqrt n}$、$\\sqrt{x^2+\\frac1n}\\to|x|$",
+            "• 正確條件：$f_n'$ 一致收斂 + $f_n$ 在一點收斂"
+          ],
+          "say": "整理一下：一致收斂只管值、不管斜率，極限甚至可以不可微。正確的條件放在導數上：導數列一致收斂，加上一點收斂。逐項微分前，先證導數級數一致收斂。證明的關鍵是均值定理，用導數的差管住函數的差。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 一致收斂只管值，不管斜率：$\\frac{\\sin(nx)}{\\sqrt n}$、$\\sqrt{x^2+\\frac1n}\\to|x|$"
+            },
+            {
+              "do": "write",
+              "line": "• 正確條件：$f_n'$ 一致收斂 + $f_n$ 在一點收斂",
+              "on": "極限"
+            },
+            {
+              "do": "write",
+              "line": "• 結論：$f_n\\to f$ 一致，$f'=\\lim f_n'$",
+              "on": "導數#2"
+            },
+            {
+              "do": "write",
+              "line": "• 逐項微分：先證導數級數一致；$\\sum\\frac n{2^n}=2$",
+              "on": "微分"
+            },
+            {
+              "do": "write",
+              "line": "• 證明：均值定理 ⇒ 一致柯西；差商一致收斂 + 12.30",
+              "on": "鍵是"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：分割：黎曼積分的嚴格理論"
+          ],
+          "say": "這一章到這裡結束。下一章，我們從分割開始，嚴格地建立黎曼積分。",
+          "board": [
+            {
+              "do": "write",
+              "line": "下一課：分割：黎曼積分的嚴格理論"
+            }
+          ]
+        }
       ]
     }
   ],
   "skillTags": {
-    "coarse": ["power-series", "uniform-convergence", "series-sum"],
-    "fine": ["derivswap-counterexample", "derivswap-hypotheses", "derivswap-termwise-power-series"]
+    "coarse": [
+      "power-series",
+      "uniform-convergence",
+      "series-sum"
+    ],
+    "fine": [
+      "derivswap-counterexample",
+      "derivswap-hypotheses",
+      "derivswap-termwise-power-series"
+    ]
   },
   "practice": [
-    { "id": "lec-14-q3a", "core": true, "trains": "derivswap-termwise-power-series" },
-    { "id": "fd-serx-204", "core": true, "trains": "derivswap-termwise-power-series" },
-    { "id": "tmpl-ser-arith-geo-001", "core": true, "trains": "derivswap-termwise-power-series" },
-    { "id": "cg-12f-027", "core": true, "trains": "derivswap-counterexample" },
-    { "id": "cg-12f-030", "core": true, "trains": "derivswap-hypotheses" },
-    { "id": "cg-12f-028", "trains": "derivswap-counterexample" },
-    { "id": "lec-14-q3b", "challenge": true, "trains": "derivswap-termwise-power-series", "note": "挑戰：$\\sum\\frac{n^2}{2^n}$ 要逐項微分兩次（或對 $\\sum n x^n$ 再微分一次再乘 $x$）。" },
-    { "id": "cg-12f-029", "challenge": true, "trains": "derivswap-hypotheses" }
+    {
+      "id": "lec-14-q3a",
+      "core": true,
+      "trains": "derivswap-termwise-power-series"
+    },
+    {
+      "id": "fd-serx-204",
+      "core": true,
+      "trains": "derivswap-termwise-power-series"
+    },
+    {
+      "id": "tmpl-ser-arith-geo-001",
+      "core": true,
+      "trains": "derivswap-termwise-power-series"
+    },
+    {
+      "id": "cg-12f-027",
+      "core": true,
+      "trains": "derivswap-counterexample"
+    },
+    {
+      "id": "cg-12f-030",
+      "core": true,
+      "trains": "derivswap-hypotheses"
+    },
+    {
+      "id": "cg-12f-028",
+      "trains": "derivswap-counterexample"
+    },
+    {
+      "id": "lec-14-q3b",
+      "challenge": true,
+      "trains": "derivswap-termwise-power-series",
+      "note": "挑戰：$\\sum\\frac{n^2}{2^n}$ 要逐項微分兩次（或對 $\\sum n x^n$ 再微分一次再乘 $x$）。"
+    },
+    {
+      "id": "cg-12f-029",
+      "challenge": true,
+      "trains": "derivswap-hypotheses"
+    }
   ],
   "gaps": []
 }

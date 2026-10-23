@@ -1,50 +1,143 @@
 {
   "id": "comparison-test",
   "title": "比較判別",
-  "readMinutes": 8,
+  "source": "notebook",
+  "readMinutes": 7,
   "totalMinutes": 30,
-  "prerequisites": ["p-series", "geometric-series"],
-  "next": ["limit-comparison-test"],
-  "related": ["monotone-convergence-sequence", "improper-comparison"],
-  "objectives": [
-    "說出比較判別：$0\\le a_n\\le b_n$ 時，$\\sum b_n$ 收斂 $\\Rightarrow\\sum a_n$ 收斂；$\\sum a_n$ 發散 $\\Rightarrow\\sum b_n$ 發散。",
-    "抓住主要項，選 $p$ 級數或幾何級數當比較對象。",
-    "分辨「方向對、有結論」與「方向錯、沒結論」的不等式。"
+  "prerequisites": [
+    "p-series",
+    "geometric-series"
   ],
-  "visual": "兩排長條：下排是 aₙ = 1/(2ⁿ + n)，上排是 bₙ = 1/2ⁿ，每一根下排都比上排矮。右側兩個累加讀數：上排停在 1，下排一直被它壓著。切換到「方向錯」的例子：下排 1/n² 被上排 1/n 壓著，但上排一路往上衝，下排停在 1.645，壓住它的東西無限大，什麼都說明不了。",
+  "next": [
+    "limit-comparison-test"
+  ],
+  "related": [
+    "monotone-convergence-sequence",
+    "improper-comparison"
+  ],
+  "objectives": [
+    "說出比較判別：$0\\le a_n\\le b_n$ 時，$\\sum b_n$ 收斂 $\\Rightarrow\\sum a_n$ 收斂，$\\sum a_n$ 發散 $\\Rightarrow\\sum b_n$ 發散",
+    "抓住主要項，選 $p$ 級數或幾何級數當比較對象",
+    "分辨「方向對、有結論」與「方向錯、沒結論」的不等式"
+  ],
+  "visual": null,
   "concept": [
     {
-      "heading": "① 直觀：被收斂的壓住",
+      "heading": "① 被收斂的壓住",
       "body": [
-        "各項都 $\\ge 0$ 的級數，部分和只會往上走。如果每一項都比一個收斂級數的對應項小，部分和就被那個級數的和壓住，有上界，所以收斂（〈單調收斂定理〉）。反過來，每一項都比一個發散級數的對應項大，部分和就被拖著衝向 $\\infty$。"
+        "分母比 $2^n$ 大，所以每一項比較小：",
+        "$\\sum\\frac1{2^n}$：公比 $\\frac12$ 的幾何級數，和是 $1$",
+        "藍色遞增、又被 $1$ 壓住：只能收斂",
+        "實際的和約 $0.697$；比較判別只說收斂，不給和"
       ],
-      "collapsible": false
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac1{2^n+n}\\ \\text{收斂嗎？}",
+        "0<\\frac1{2^n+n}\\le\\frac1{2^n}"
+      ]
     },
     {
       "heading": "② 定理",
       "body": [
-        "設從某一項開始 $0\\le a_n\\le b_n$。",
-        "若 $\\sum b_n$ 收斂，則 $\\sum a_n$ 收斂（大的收斂，小的也收斂）。",
-        "若 $\\sum a_n$ 發散，則 $\\sum b_n$ 發散（小的發散，大的也發散）。",
-        "其餘兩種組合沒有結論：比發散的小、比收斂的大，都什麼都說明不了。"
+        "設對所有 $n\\ge N$，$0\\le a_n\\le b_n$：",
+        "「從某一項開始」就好：前面有限項不影響收斂",
+        "口訣：大的收斂，小的跟著收斂；小的發散，大的跟著發散",
+        "方向錯，沒有結論",
+        "• 小的收斂 ⇏ 大的",
+        "• 大的發散 ⇏ 小的"
       ],
-      "collapsible": false
+      "tex": [
+        "\\begin{aligned}&\\textstyle\\sum b_n\\ \\text{收斂}\\ \\Rightarrow\\ \\sum a_n\\ \\text{收斂}\\\\&\\textstyle\\sum a_n\\ \\text{發散}\\ \\Rightarrow\\ \\sum b_n\\ \\text{發散}\\end{aligned}"
+      ]
     },
     {
       "heading": "③ 怎麼找比較對象",
       "body": [
-        "先猜：只留下 $n$ 很大時的主要項。$\\frac{1}{2^n+n}$ 的分母裡 $2^n$ 遠大於 $n$，所以它「長得像」$\\frac{1}{2^n}$。猜它收斂，就要找一個比它大、而且收斂的級數；猜它發散，就要找一個比它小、而且發散的。",
-        "標準尺：$p$ 級數（〈p 級數〉）與幾何級數。常用的不等式：$\\ln n<n$、$|\\sin n|\\le 1$、去掉分母裡的正項會變大。",
-        "不等式方向剛好不對時（例如 $\\frac{1}{n^2-3}$ 比 $\\frac{1}{n^2}$ 大），可以改比 $\\frac{2}{n^2}$，或直接用下一課的〈極限比較判別〉。"
+        "抓主要項：$n$ 很大時，誰說了算？",
+        "• 分母 $2^n+n$：$2^n$ 說了算 → 跟 $\\frac1{2^n}$ 比",
+        "• $\\frac{\\sqrt n+1}{n^2}$：大約 $\\frac{\\sqrt n}{n^2}=\\frac1{n^{3/2}}$ → 跟 $p$ 級數比",
+        "最常用的兩個標準尺：",
+        "$p$ 級數 $\\sum\\frac1{n^p}$：$p>1$ 收斂",
+        "幾何級數 $\\sum r^n$：$|r|<1$ 收斂",
+        "例：用 $\\ln n<n$ 壓掉對數 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\ln n}{n^3}$",
+        "對數比任何次方都慢：$\\ln n<n$",
+        "$n=1$ 時 $\\ln1=0$，所以 $\\ge0$ 也成立",
+        "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ $\\displaystyle\\sum\\frac{\\ln n}{n^3}$ 收斂",
+        "實際的和約 $0.198$"
       ],
-      "collapsible": false
+      "tex": [
+        "0\\le\\frac{\\ln n}{n^3}<\\frac{n}{n^3}=\\frac1{n^2}"
+      ]
+    },
+    {
+      "heading": "③ 從下面比，證明發散",
+      "body": [
+        "猜：大約是 $\\frac1n$ 乘一個慢慢變大的東西 → 猜發散",
+        "要證發散，得找一個更小但發散的：",
+        "$n\\ge3>e$：$\\ln n>1$",
+        "$\\sum\\frac1n$ 發散（$p=1$）⇒ $\\displaystyle\\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}$ 發散",
+        "從 $n=3$ 開始的調和級數也發散：只少了前兩項",
+        "先猜結果，再決定往哪個方向比"
+      ],
+      "tex": [
+        "\\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}\\ \\text{收斂嗎？}",
+        "\\frac{\\ln n}{n}>\\frac1n\\ge0"
+      ]
+    },
+    {
+      "heading": "③ 方向錯了怎麼辦",
+      "body": [
+        "直覺：像 $\\frac1{n^2}$，應該收斂。但是",
+        "比收斂的大 → 沒有結論",
+        "修正：把分母往下縮一點，常數給大方一點",
+        "$n\\ge2$ 時 $n^2\\ge2$，所以 $n^2-1\\ge\\dfrac{n^2}2$：",
+        "$\\sum\\frac2{n^2}$ 收斂 ⇒ 原級數收斂",
+        "下一課的極限比較判別，可以免掉這種找常數的麻煩"
+      ],
+      "tex": [
+        "\\sum_{n=2}^{\\infty}\\frac1{n^2-1}",
+        "\\frac1{n^2-1}>\\frac1{n^2}",
+        "\\frac1{n^2-1}\\le\\frac2{n^2}"
+      ]
+    },
+    {
+      "heading": "③ 階乘：用幾何級數壓",
+      "body": [
+        "$n!=1\\cdot2\\cdot3\\cdots n$：除了第一個因數，每個都 $\\ge2$",
+        "$\\sum\\frac1{2^{n-1}}=1+\\frac12+\\frac14+\\cdots=2$ 收斂 ⇒ 收斂",
+        "和是 $e-1\\approx1.718$（6.26 會看到），確實 $<2$"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac1{n!}=1+\\frac12+\\frac16+\\frac1{24}+\\cdots",
+        "n!\\ge1\\cdot\\underbrace{2\\cdot2\\cdots2}_{n-1\\text{ 個}}=2^{n-1}",
+        "0<\\frac1{n!}\\le\\frac1{2^{n-1}}"
+      ]
     },
     {
       "heading": "④ 證明",
       "body": [
-        "$a_n\\ge 0$，部分和 $s_n=\\sum_{k\\le n}a_k$ 遞增。若 $\\sum b_k=B$ 收斂，則 $s_n\\le\\sum_{k\\le n}b_k\\le B$（$b_k\\ge 0$），有上界，由單調收斂定理收斂。第二句是第一句的逆否命題。「從某一項開始」只是丟掉前面有限項，不影響收斂。"
+        "令 $s_n=\\sum_{k=1}^{n}a_k$，$t_n=\\sum_{k=1}^{n}b_k$，設 $N=1$",
+        "$a_k,b_k\\ge0$：$s_n$、$t_n$ 都遞增",
+        "大的收斂：$\\sum b_n=T$，則",
+        "$s_n$ 遞增、有上界 $T$ ⇒ 收斂（6.3）",
+        "小的發散：",
+        "• 若 $\\sum b_n$ 收斂，由上面 $\\sum a_n$ 收斂，矛盾",
+        "• 所以 $\\sum b_n$ 發散　$\\blacksquare$",
+        "條件 $a_n\\ge0$ 不能少：它讓 $s_n$ 遞增"
       ],
-      "collapsible": true
+      "tex": [
+        "s_n\\le t_n\\le T"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• $0\\le a_n\\le b_n$：大的收斂 ⇒ 小的收斂",
+        "• 小的發散 ⇒ 大的發散",
+        "• 方向錯（比收斂的大、比發散的小）：沒有結論",
+        "• 抓主要項，選 $p$ 級數或幾何級數當尺",
+        "• 先猜結果，再決定往上壓還是往下墊",
+        "下一課：極限比較判別"
+      ]
     }
   ],
   "workedExamples": [
@@ -92,35 +185,45 @@
   ],
   "checks": [
     {
-      "ask": "$0\\le a_n\\le b_n$，且 $\\sum b_n$ 發散。關於 $\\sum a_n$？",
+      "ask": "$\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\sin^2n}{n^2}$ 收斂嗎？",
       "options": [
-        { "label": "無法判斷", "correct": true },
-        { "label": "發散", "why": "比發散的小，可能收斂：$\\frac{1}{n^2}\\le\\frac{1}{n}$，$\\sum\\frac{1}{n^2}$ 卻收斂。" },
-        { "label": "收斂", "why": "也可能發散：$\\frac{1}{2n}\\le\\frac{1}{n}$，$\\sum\\frac{1}{2n}$ 發散。" }
+        {
+          "label": "收斂：$0\\le\\frac{\\sin^2n}{n^2}\\le\\frac1{n^2}$",
+          "correct": true
+        },
+        {
+          "label": "發散：$\\sin^2n$ 不趨近 $0$",
+          "why": "要看的是整項 $\\frac{\\sin^2n}{n^2}$，它趨近 $0$"
+        },
+        {
+          "label": "不能判斷，因為 $\\sin n$ 會變號",
+          "why": "平方之後 $\\sin^2n\\ge0$，是正項級數"
+        },
+        {
+          "label": "收斂：$\\frac{\\sin^2n}{n^2}\\ge\\frac1{n^2}$",
+          "why": "不等式寫反了；而且「大於收斂的」沒有結論"
+        }
       ]
     },
     {
-      "ask": "判斷 $\\sum\\frac{1}{n^2+5}$，正確的比較是？",
+      "ask": "想證 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{\\sqrt n+1}$ 發散，哪一個不等式有用？",
       "options": [
-        { "label": "$\\frac{1}{n^2+5}<\\frac{1}{n^2}$，$\\sum\\frac{1}{n^2}$ 收斂，所以收斂", "correct": true },
-        { "label": "$\\frac{1}{n^2+5}<\\frac{1}{n}$，$\\sum\\frac{1}{n}$ 發散，所以發散", "why": "比發散的小得不到任何結論，方向沒用。" },
-        { "label": "$\\frac{1}{n^2+5}>\\frac{1}{n^3}$，$\\sum\\frac{1}{n^3}$ 收斂，所以收斂", "why": "比收斂的大得不到結論；而且 $n$ 大時這個不等式其實是對的，卻沒有用。" }
-      ]
-    },
-    {
-      "ask": "$\\sum_{n=2}^\\infty\\frac{1}{n^2-3}$：發現 $\\frac{1}{n^2-3}>\\frac{1}{n^2}$。下一步？",
-      "options": [
-        { "label": "改比 $\\frac{2}{n^2}$：$n\\ge 3$ 時 $n^2-3\\ge\\frac{n^2}{2}$，所以 $\\frac{1}{n^2-3}\\le\\frac{2}{n^2}$", "correct": true },
-        { "label": "結論是發散", "why": "比收斂的級數大，得不到發散；它其實收斂。" },
-        { "label": "結論是收斂，因為它和 $\\frac{1}{n^2}$ 很像", "why": "「很像」不是比較判別；要嘛找到方向對的不等式，要嘛用極限比較判別。" }
-      ]
-    },
-    {
-      "ask": "$\\sum\\frac{2+\\sin n}{n}$ 是？",
-      "options": [
-        { "label": "發散，因為 $\\frac{2+\\sin n}{n}\\ge\\frac{1}{n}$", "correct": true },
-        { "label": "收斂，因為 $\\sin n$ 有界", "why": "有界的是分子；分子在 1 到 3 之間，整項跟 $\\frac{1}{n}$ 一樣大小，而 $\\sum\\frac{1}{n}$ 發散。" },
-        { "label": "無法比較，因為 $\\sin n$ 會振盪", "why": "$2+\\sin n$ 永遠 $\\ge 1$，振盪也跑不出這個範圍，可以拿 $\\frac{1}{n}$ 從下面比。" }
+        {
+          "label": "$\\frac1{\\sqrt n+1}\\ge\\frac1{2\\sqrt n}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac1{\\sqrt n+1}\\le\\frac1{\\sqrt n}$",
+          "why": "比發散的小：方向錯，沒有結論"
+        },
+        {
+          "label": "$\\frac1{\\sqrt n+1}\\le\\frac1{n^2}$",
+          "why": "不成立：例如 $n=4$ 時 $\\frac13>\\frac1{16}$；把項想得太小了"
+        },
+        {
+          "label": "$\\frac1{\\sqrt n+1}\\ge\\frac1{n^2}$",
+          "why": "成立但沒用：比收斂的大，沒有結論"
+        }
       ]
     }
   ],
@@ -128,269 +231,878 @@
     {
       "title": "被收斂的壓住",
       "beats": [
-        { "show": ["$a_n\\ge 0$：部分和只會往上走"],
-          "say": "每一項都不是負的，部分和就只會往上走，不會回頭。問題只剩它有沒有上界。",
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac1{2^n+n}\\ \\text{收斂嗎？}$"
+          ],
+          "say": "看這個級數：2 的 n 次方加 n，分之一。它不是幾何級數，也不是 p 級數，積分也很難算。",
           "board": [
-            {"do":"write","line":"$a_n\\ge 0$：部分和只會往上走"},
-            {"do":"write","line":"問題：有沒有上界","on":"問題只剩"}
-          ] },
-        { "show": ["$0\\le a_n\\le b_n$，$\\sum b_n$ 收斂","⇒ $\\sum a_n$ 收斂"],
-          "note": "大的收斂，小的也收斂。",
-          "say": "每一項都比一個收斂級數小，部分和就被那個級數的和壓住，有上界，所以收斂。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac1{2^n+n}\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分母比 $2^n$ 大，所以每一項比較小：",
+            "$0<\\frac1{2^n+n}\\le\\frac1{2^n}$"
+          ],
+          "say": "但是分母比 2 的 n 次方還大，所以每一項都比 2 的 n 次方分之一小。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$0\\le a_n\\le b_n$，${{b:\\sum b_n}}$ 收斂","tint":{"b":"violet"},"on":"比一個"},
-            {"do":"underline","term":"b","color":"violet","label":"壓住","on":"壓住"},
-            {"do":"write","line":"⇒ $\\sum a_n$ 收斂","color":"green","on":"有上界"}
-          ] },
-        { "show": ["$\\sum a_n$ 發散 ⇒ $\\sum b_n$ 發散"],
-          "note": "小的發散，大的也發散。",
-          "say": "反過來，小的那個已經衝向無限大，比它大的被拖著走，也發散。",
+            {
+              "do": "write",
+              "line": "分母比 $2^n$ 大，所以每一項比較小："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0<\\frac1{2^n+n}\\le\\frac1{2^n}$",
+              "on": "每一"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1{2^n}$：公比 $\\frac12$ 的幾何級數，和是 $1$"
+          ],
+          "say": "而 2 的 n 次方分之一，是公比 2 分之 1 的幾何級數，收斂，和是 1。",
           "board": [
-            {"do":"write","line":"${{a:\\sum a_n}}$ 發散 ⇒ ${{b:\\sum b_n}}$ 發散"},
-            {"do":"underline","term":"a","color":"gold","label":"衝向無限大","on":"衝向無限大"},
-            {"do":"underline","term":"b","color":"gold","on":"拖著走"}
-          ] },
-        { "show": ["比發散的小、比收斂的大：沒結論"],
-          "say": "其他兩種組合什麼都說明不了。比發散的小，可能收斂也可能發散。" }
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1{2^n}$：公比 $\\frac12$ 的幾何級數，和是 $1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "紅：1/2ⁿ 的部分和；藍：1/(2ⁿ+n) 的部分和"
+          ],
+          "say": "看部分和：紅點是幾何級數的部分和，往 1 爬，永遠不超過 1。藍點每一步加的都比較少，所以一直待在紅點下面。",
+          "board": [
+            {
+              "do": "plot",
+              "nb": {
+                "spec": {
+                  "id": "cmp",
+                  "window": [
+                    0,
+                    9,
+                    0,
+                    1.15
+                  ],
+                  "hlines": [
+                    {
+                      "y": 1,
+                      "color": "red"
+                    }
+                  ],
+                  "points": [
+                    {
+                      "x": 1,
+                      "y": 0.5,
+                      "color": "red"
+                    },
+                    {
+                      "x": 2,
+                      "y": 0.75,
+                      "color": "red"
+                    },
+                    {
+                      "x": 3,
+                      "y": 0.875,
+                      "color": "red"
+                    },
+                    {
+                      "x": 4,
+                      "y": 0.9375,
+                      "color": "red"
+                    },
+                    {
+                      "x": 5,
+                      "y": 0.9688,
+                      "color": "red"
+                    },
+                    {
+                      "x": 6,
+                      "y": 0.9844,
+                      "color": "red"
+                    },
+                    {
+                      "x": 7,
+                      "y": 0.9922,
+                      "color": "red"
+                    },
+                    {
+                      "x": 8,
+                      "y": 0.9961,
+                      "color": "red"
+                    },
+                    {
+                      "x": 1,
+                      "y": 0.3333,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 2,
+                      "y": 0.5,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 3,
+                      "y": 0.5909,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 4,
+                      "y": 0.6409,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 5,
+                      "y": 0.6679,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 6,
+                      "y": 0.6822,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 7,
+                      "y": 0.6896,
+                      "color": "blue"
+                    },
+                    {
+                      "x": 8,
+                      "y": 0.6934,
+                      "color": "blue"
+                    }
+                  ],
+                  "xlabel": "n",
+                  "height": 260
+                }
+              }
+            },
+            {
+              "do": "write",
+              "line": "紅：1/2ⁿ 的部分和；藍：1/(2ⁿ+n) 的部分和",
+              "color": "violet",
+              "on": "藍點"
+            }
+          ]
+        },
+        {
+          "show": [
+            "藍色遞增、又被 $1$ 壓住：只能收斂"
+          ],
+          "say": "藍色的部分和一直增加，又被 1 壓住，跑不掉，只能收斂。這就是比較判別的直覺。",
+          "board": [
+            {
+              "do": "write",
+              "line": "藍色遞增、又被 $1$ 壓住：只能收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　實際的和約 $0.697$；比較判別只說收斂，不給和",
+              "color": "violet",
+              "on": "跑不"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "設對所有 $n\\ge N$，$0\\le a_n\\le b_n$：",
+            "$\\begin{aligned}&\\textstyle\\sum b_n\\ \\text{收斂}\\ \\Rightarrow\\ \\sum a_n\\ \\text{收斂}\\\\&\\textstyle\\sum a_n\\ \\text{發散}\\ \\Rightarrow\\ \\sum b_n\\ \\text{發散}\\end{aligned}$"
+          ],
+          "say": "比較判別：如果從某一項開始，a n 都在 0 和 b n 之間。那大的收斂，小的就收斂；小的發散，大的就發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "設對所有 $n\\ge N$，$0\\le a_n\\le b_n$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle {\\begin{aligned}&\\textstyle\\sum b_n\\ \\text{收斂}\\ \\Rightarrow\\ \\sum a_n\\ \\text{收斂}\\\\&\\textstyle\\sum a_n\\ \\text{發散}\\ \\Rightarrow\\ \\sum b_n\\ \\text{發散}\\end{aligned}}}}$",
+              "color": "red",
+              "on": "都在"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "color": "red",
+              "on": "之間"
+            },
+            {
+              "do": "write",
+              "line": "　「從某一項開始」就好：前面有限項不影響收斂",
+              "color": "violet",
+              "on": "收斂#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "口訣：大的收斂，小的跟著收斂；小的發散，大的跟著發散"
+          ],
+          "say": "口訣：大的收斂，小的跟著收斂；小的發散，大的跟著發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "口訣：大的收斂，小的跟著收斂；小的發散，大的跟著發散"
+            }
+          ]
+        }
+      ],
+      "predict": {
+        "ask": "$0\\le a_n\\le b_n$，而且 $\\sum a_n$ 收斂。那 $\\sum b_n$？",
+        "options": [
+          {
+            "label": "不一定",
+            "correct": true
+          },
+          {
+            "label": "一定收斂",
+            "why": "方向反了：小的收斂，管不到大的"
+          },
+          {
+            "label": "一定發散",
+            "why": "$b_n=a_n$ 也滿足條件，那就收斂"
+          }
+        ]
+      }
+    },
+    {
+      "title": "定理",
+      "beats": [
+        {
+          "show": [
+            "方向錯，沒有結論"
+          ],
+          "say": "不一定。小的收斂，大的可以收斂也可以發散；大的發散，小的也一樣什麼都不知道。方向錯了，就沒有結論。",
+          "board": [
+            {
+              "do": "write",
+              "line": "方向錯，沒有結論",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "• 小的收斂 ⇏ 大的",
+            "• 大的發散 ⇏ 小的"
+          ],
+          "say": "這兩種情況，比較判別幫不上忙，要換一個比較對象。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 小的收斂 ⇏ 大的"
+            },
+            {
+              "do": "write",
+              "line": "• 大的發散 ⇏ 小的",
+              "on": "上忙"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "怎麼找比較對象",
+      "beats": [
+        {
+          "show": [
+            "抓主要項：$n$ 很大時，誰說了算？",
+            "• 分母 $2^n+n$：$2^n$ 說了算 → 跟 $\\frac1{2^n}$ 比"
+          ],
+          "say": "比較對象怎麼找？抓主要項：n 很大的時候誰說了算，就跟誰比。指數贏過多項式；多項式就看最高次，跟 p 級數比。",
+          "board": [
+            {
+              "do": "write",
+              "line": "抓主要項：$n$ 很大時，誰說了算？"
+            },
+            {
+              "do": "write",
+              "line": "• 分母 $2^n+n$：$2^n$ 說了算 → 跟 $\\frac1{2^n}$ 比",
+              "on": "時候"
+            },
+            {
+              "do": "write",
+              "line": "• $\\frac{\\sqrt n+1}{n^2}$：大約 $\\frac{\\sqrt n}{n^2}=\\frac1{n^{3/2}}$ → 跟 $p$ 級數比",
+              "on": "多項#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "最常用的兩個標準尺："
+          ],
+          "say": "最常用的兩把尺：p 級數，和幾何級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "最常用的兩個標準尺："
+            },
+            {
+              "do": "write",
+              "line": "$p$ 級數 $\\sum\\frac1{n^p}$：$p>1$ 收斂",
+              "on": "級數#1"
+            },
+            {
+              "do": "write",
+              "line": "幾何級數 $\\sum r^n$：$|r|<1$ 收斂",
+              "color": "gold",
+              "on": "和幾"
+            }
+          ]
+        },
+        {
+          "show": [
+            "例：用 $\\ln n<n$ 壓掉對數 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\ln n}{n^3}$"
+          ],
+          "say": "例子：自然對數 n 除以 n 立方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "例：用 $\\ln n<n$ 壓掉對數 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac{\\ln n}{n^3}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "對數比任何次方都慢：$\\ln n<n$",
+            "$0\\le\\frac{\\ln n}{n^3}<\\frac{n}{n^3}=\\frac1{n^2}$"
+          ],
+          "say": "對數長得很慢，自然對數 n 一定小於 n。把分子換成比較大的 n，整個分數變大：小於 n 平方分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "對數比任何次方都慢：$\\ln n<n$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0\\le\\frac{\\ln n}{n^3}<\\frac{n}{n^3}=\\frac1{n^2}$",
+              "on": "把分"
+            },
+            {
+              "do": "write",
+              "line": "　$n=1$ 時 $\\ln1=0$，所以 $\\ge0$ 也成立",
+              "color": "violet",
+              "on": "個分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ $\\displaystyle\\sum\\frac{\\ln n}{n^3}$ 收斂"
+          ],
+          "say": "n 平方分之一收斂，大的收斂，小的跟著收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1{n^2}$ 收斂（$p=2$）⇒ $\\displaystyle\\sum\\frac{\\ln n}{n^3}$ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　實際的和約 $0.198$",
+              "color": "violet",
+              "on": "的收"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "從下面比，證明發散",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}\\ \\text{收斂嗎？}$"
+          ],
+          "say": "再一個例子：自然對數 n 除以 n，n 從 3 開始。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}\\ \\text{收斂嗎？}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "猜：大約是 $\\frac1n$ 乘一個慢慢變大的東西 → 猜發散"
+          ],
+          "say": "先猜：這大約是 n 分之一，再乘上一個慢慢變大的自然對數。n 分之一已經發散了，這個應該也發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "猜：大約是 $\\frac1n$ 乘一個慢慢變大的東西 → 猜發散"
+            }
+          ]
+        },
+        {
+          "show": [
+            "要證發散，得找一個更小但發散的："
+          ],
+          "say": "要證明發散，方向要反過來：找一個比它小、但已經發散的級數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "要證發散，得找一個更小但發散的："
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n\\ge3>e$：$\\ln n>1$",
+            "$\\frac{\\ln n}{n}>\\frac1n\\ge0$"
+          ],
+          "say": "n 大於等於 3，比 e 大，自然對數 n 大於 1。所以每一項都比 n 分之一大。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n\\ge3>e$：$\\ln n>1$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac{\\ln n}{n}>\\frac1n\\ge0$",
+              "on": "大於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1n$ 發散（$p=1$）⇒ $\\displaystyle\\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}$ 發散"
+          ],
+          "say": "n 分之一發散，小的發散，大的跟著發散。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1n$ 發散（$p=1$）⇒ $\\displaystyle\\sum_{n=3}^{\\infty}\\frac{\\ln n}{n}$ 發散",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　從 $n=3$ 開始的調和級數也發散：只少了前兩項",
+              "color": "violet",
+              "on": "發散#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "先猜結果，再決定往哪個方向比"
+          ],
+          "say": "所以用比較判別的順序是：先猜結果。猜收斂，就往上找一個收斂的壓住它；猜發散，就往下找一個發散的墊在下面。",
+          "board": [
+            {
+              "do": "write",
+              "line": "先猜結果，再決定往哪個方向比",
+              "color": "gold"
+            }
+          ]
+        }
       ],
       "check": 0
     },
     {
-      "title": "證明：部分和有上界",
+      "title": "方向錯了怎麼辦",
       "beats": [
-        { "show": ["部分和遞增，只要證有上界"],
-          "say": "策略：各項都不是負的，部分和只會往上走，剩下只要證明它有上界。",
+        {
+          "show": [
+            "$\\sum_{n=2}^{\\infty}\\frac1{n^2-1}$"
+          ],
+          "say": "再看一個容易踩的坑：n 平方減 1，分之一。",
           "board": [
-            {"do":"write","line":"部分和遞增","on":"部分和只會"},
-            {"do":"transform","line":"部分和遞增，只要證有上界","on":"只要證明"}
-          ] },
-        { "show": ["$s_n=\\sum_{k\\le n}a_k$ 遞增"],
-          "note": "$a_n\\ge 0$。",
-          "say": "a n 大於等於零，每多加一項，部分和都不會變小，所以 s n 遞增。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=2}^{\\infty}\\frac1{n^2-1}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "直覺：像 $\\frac1{n^2}$，應該收斂。但是",
+            "$\\frac1{n^2-1}>\\frac1{n^2}$"
+          ],
+          "say": "直覺上它像 n 平方分之一，應該收斂。可是分母變小了，每一項比 n 平方分之一大。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$s_n=\\sum_{k\\le n}a_k$","on":"a n 大於"},
-            {"do":"write","line":"$s_{n+1}=s_n+{{a:a_{n+1}}}\\ge s_n$","on":"每多加一項"},
-            {"do":"focus","term":"a","label":"不是負的","on":"都不會變小"}
-          ] },
-        { "show": ["$s_n\\le\\sum_{k\\le n}b_k\\le B$"],
-          "note": "$a_k\\le b_k$；$b_k\\ge 0$，再加下去只會更大。",
-          "why": {"ask":"為什麼 $\\sum_{k\\le n}b_k\\le B$？","say":"b 的部分和，為什麼不會超過總和 B？","options":[{"label":"$b_k\\ge 0$，後面的項只會讓和變大","correct":true},{"label":"$b_n\\to 0$","why":"各項趨近零，說不出部分和跟總和誰大；要的是後面每一項都不是負的。"},{"label":"$a_k\\le b_k$","why":"那是前一個不等號 $s_n\\le\\sum b_k$ 的理由；這一個比的是 $b$ 自己的部分和與總和。"}]},
-          "say": "每一項 a 都不超過 b。b 的項都不是負的，它的部分和不會超過總和 B，所以 s n 有上界。",
+            {
+              "do": "write",
+              "line": "直覺：像 $\\frac1{n^2}$，應該收斂。但是"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{n^2-1}>\\frac1{n^2}$",
+              "on": "是分"
+            }
+          ]
+        },
+        {
+          "show": [
+            "比收斂的大 → 沒有結論"
+          ],
+          "say": "比一個收斂的還大，這是方向錯，什麼都不能說。",
           "board": [
-            {"do":"write","line":"$s_n\\le{{pb:\\sum_{k\\le n}b_k}}\\le B$","tint":{"pb":"violet"}},
-            {"do":"underline","term":"pb","color":"violet","label":"再加只會更大","why":true,"on":"b 的項"}
-          ] },
-        { "show": ["$B$ 是 $b$ 全部加起來的和"],
-          "note": "部分和一路遞增，往 $B$ 靠近。",
-          "say": "B 是 b 全部加起來的總和，部分和一路遞增靠近它。不會跳過終點，所以每個部分和都不超過 B。",
+            {
+              "do": "write",
+              "line": "比收斂的大 → 沒有結論",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "修正：把分母往下縮一點，常數給大方一點",
+            "$n\\ge2$ 時 $n^2\\ge2$，所以 $n^2-1\\ge\\dfrac{n^2}2$："
+          ],
+          "say": "修正：分母改跟 n 平方的一半比。n 大於等於 2 時，n 平方減 1 至少是 n 平方的一半，所以這一項小於等於 n 平方分之 2。",
           "board": [
-            {"do":"write","line":"$B={{t:b_1+b_2+\\cdots}}$"},
-            {"do":"write","line":"每個部分和 $\\le B$","on":"不會跳過"}
-          ] },
-        { "show": ["單調有界 ⇒ $\\sum a_n$ 收斂"],
-          "note": "〈單調收斂定理〉。",
-          "say": "遞增又有上界，由單調收斂定理，小的那個級數收斂。",
+            {
+              "do": "write",
+              "line": "修正：把分母往下縮一點，常數給大方一點"
+            },
+            {
+              "do": "write",
+              "line": "$n\\ge2$ 時 $n^2\\ge2$，所以 $n^2-1\\ge\\dfrac{n^2}2$：",
+              "on": "平方#2"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{n^2-1}\\le\\frac2{n^2}$",
+              "on": "的一#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac2{n^2}$ 收斂 ⇒ 原級數收斂"
+          ],
+          "say": "n 平方分之 2 收斂，所以原級數收斂。",
           "board": [
-            {"do":"write","line":"單調有界 ⇒ ${{c:\\sum a_n}}$ 收斂","on":"遞增又有上界"},
-            {"do":"box","term":"c","color":"green","on":"小的那個"}
-          ] },
-        { "show": ["發散那一句：逆否命題"],
-          "note": "若 $\\sum b_n$ 收斂，$\\sum a_n$ 就收斂，矛盾。",
-          "why": {"ask":"「小的發散 ⇒ 大的發散」為什麼不用另外證？","say":"小的發散，大的也發散。這一句為什麼不用另外證？","options":[{"label":"它是第一句的逆否命題","correct":true},{"label":"把第一句的不等號反過來就是","why":"反過來是「比發散的小」，那沒有結論；第二句是逆否命題，不是逆命題。"},{"label":"$a_n$ 不 $\\to 0$","why":"小的發散不代表各項不趨近零，調和級數就是；這裡靠的是邏輯。"}]},
-          "say": "大的如果收斂，第一句就說小的也收斂，跟小的發散矛盾。所以大的一定發散。",
+            {
+              "do": "write",
+              "line": "$\\sum\\frac2{n^2}$ 收斂 ⇒ 原級數收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　下一課的極限比較判別，可以免掉這種找常數的麻煩",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "階乘：用幾何級數壓",
+      "beats": [
+        {
+          "show": [
+            "$\\sum_{n=1}^{\\infty}\\frac1{n!}=1+\\frac12+\\frac16+\\frac1{24}+\\cdots$"
+          ],
+          "say": "再一個例子：n 階乘分之一。階乘長得比任何多項式都快，p 級數不好比，改用幾何級數。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{sa:\\sum a_n}}$ 發散 ⇒ ${{sb:\\sum b_n}}$ 發散","tint":{"sb":"violet"},"on":"小的發散"},
-            {"do":"write","line":"若 $\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂，矛盾","why":true,"on":"大的如果收斂"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\sum_{n=1}^{\\infty}\\frac1{n!}=1+\\frac12+\\frac16+\\frac1{24}+\\cdots$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$n!=1\\cdot2\\cdot3\\cdots n$：除了第一個因數，每個都 $\\ge2$",
+            "$n!\\ge1\\cdot\\underbrace{2\\cdot2\\cdots2}_{n-1\\text{ 個}}=2^{n-1}$"
+          ],
+          "say": "n 階乘是 1 乘 2 乘 3 一直乘到 n。除了第一個 1，其他每個因數都大於等於 2，所以 n 階乘大於等於 2 的 n 減 1 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$n!=1\\cdot2\\cdot3\\cdots n$：除了第一個因數，每個都 $\\ge2$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle n!\\ge1\\cdot\\underbrace{2\\cdot2\\cdots2}_{n-1\\text{ 個}}=2^{n-1}$",
+              "on": "因數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$0<\\frac1{n!}\\le\\frac1{2^{n-1}}$"
+          ],
+          "say": "倒過來，n 階乘分之一，小於等於 2 的 n 減 1 次方分之一。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle 0<\\frac1{n!}\\le\\frac1{2^{n-1}}$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sum\\frac1{2^{n-1}}=1+\\frac12+\\frac14+\\cdots=2$ 收斂 ⇒ 收斂"
+          ],
+          "say": "右邊是首項 1、公比 2 分之 1 的幾何級數，和是 2，收斂。所以 n 階乘分之一的級數收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sum\\frac1{2^{n-1}}=1+\\frac12+\\frac14+\\cdots=2$ 收斂 ⇒ 收斂",
+              "color": "red"
+            },
+            {
+              "do": "write",
+              "line": "　和是 $e-1\\approx1.718$（6.26 會看到），確實 $<2$",
+              "color": "violet",
+              "on": "和是"
+            }
+          ]
+        }
       ],
-      "key": "用 $\\sum b_k$ 當天花板壓住部分和",
       "proof": true,
-      "of": 3,
-      "skeleton": "直接",
-      "where": {
-        "ask": "「$a_n\\ge 0$」用在哪一步？",
+      "order": {
+        "ask": "用比較判別證明 $\\sum a_n$ 收斂",
         "steps": [
           {
-            "label": "$s_n$ 遞增",
-            "correct": true
+            "label": "抓主要項，猜它收斂"
           },
           {
-            "label": "$s_n\\le\\sum_{k\\le n}b_k$",
-            "why": "這只用到每一項 $a_k\\le b_k$。"
+            "label": "找一個已知收斂的 $\\sum b_n$",
+            "why": "先要有上一步：抓主要項，猜它收斂"
           },
           {
-            "label": "單調有界 ⇒ 收斂",
-            "why": "這只用到單調收斂定理：遞增又有上界。"
+            "label": "證明 $0\\le a_n\\le b_n$",
+            "why": "先要有上一步：找一個已知收斂的 $\\sum b_n$"
           },
           {
-            "label": "逆否命題推出發散那一句",
-            "why": "這只是邏輯，換個方向讀第一句。"
+            "label": "下結論：大的收斂，小的跟著收斂",
+            "why": "先要有上一步：證明 $0\\le a_n\\le b_n$"
           }
         ]
       }
     },
     {
-      "title": "先猜，再找尺",
+      "title": "試一題",
       "beats": [
-        { "show": ["只留 $n$ 很大時的主要項"],
-          "note": "標準尺：$p$ 級數與幾何級數。",
-          "say": "先猜：只留下 n 很大時最重要的那一項，看它像哪一把標準尺，p 級數或幾何級數。",
-          "board": [
-            {"do":"write","line":"只留 $n$ 很大時的主要項"},
-            {"do":"write","line":"標準尺：$p$ 級數、幾何級數","on":"標準尺"}
-          ] },
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{1}{2^n+n}$ 像 $\\sum\\frac{1}{2^n}$"],
-          "note": "分母裡 $2^n$ 遠大於 $n$。",
-          "say": "分母裡二的 n 次方遠大於 n，所以它長得像二的 n 次方分之一，猜它收斂。",
-          "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{1}{{{m:2^n}}+n}$"},
-            {"do":"focus","term":"m","on":"遠大於"},
-            {"do":"write","line":"像 $\\sum\\frac{1}{2^n}$","on":"長得像"}
-          ] },
-        { "show": ["分母變小，分數變大"],
-          "note": "例：$\\frac13<\\frac12$。",
-          "say": "為什麼分母去掉 n 會變大？分母變小，分數反而變大，像三分之一比二分之一小。",
-          "board": [
-            {"do":"write","line":"分母變小 → 分數變大"},
-            {"do":"write","line":"$\\frac13<\\frac12$","on":"三分之一"}
-          ] },
-        { "show": ["猜收斂：找比它大的收斂級數"],
-          "note": "猜發散：找比它小的發散級數。",
-          "say": "猜收斂，就要找一個比它大、而且收斂的；猜發散，就找一個比它小、而且發散的。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"猜收斂 → 找比它大的收斂級數","on":"猜收斂"},
-            {"do":"write","line":"猜發散 → 找比它小的發散級數","on":"猜發散"}
-          ] }
-      ],
-      "key": "先抓主要項猜斂散，再挑比較方向",
-      "predict": {
-        "ask": "要證 $\\sum\\frac{1}{2^n+n}$ 收斂，該用哪個不等式？",
-        "options": [
-          {
-            "label": "$\\frac{1}{2^n+n}<\\frac{1}{2^n}$",
-            "correct": true
-          },
-          {
-            "label": "$\\frac{1}{2^n+n}<\\frac{1}{n}$",
-            "why": "這也對，但 $\\sum\\frac{1}{n}$ 發散，比發散的小得不到結論。"
-          },
-          {
-            "label": "$\\frac{1}{2^n+n}>\\frac{1}{2^n}$",
-            "why": "分母去掉正的 $n$ 會變小，分式變大，所以方向是 $<$。"
-          }
-        ]
-      }
-    },
-    {
-      "title": "壓掉對數",
-      "beats": [
-        { "show": ["$\\sum_{n=1}^\\infty\\frac{\\ln n}{n^3}$"],
-          "note": "$\\ln n$ 長得比 $n$ 慢。",
-          "say": "自然對數 n 長得比 n 慢，猜它比 n 平方分之一還小，收斂。",
-          "board": [
-            {"do":"write","line":"$\\sum_{n=1}^\\infty\\frac{{{l:\\ln n}}}{n^3}$"},
-            {"do":"underline","term":"l","label":"長得比 n 慢","on":"長得比"}
-          ] },
-        { "show": ["$0\\le\\frac{\\ln n}{n^3}<\\frac{n}{n^3}=\\frac{1}{n^2}$"],
-          "note": "$n\\ge 1$ 時 $0\\le\\ln n<n$。",
-          "say": "把分子的自然對數 n 換成比它大的 n，約掉一個 n，剩 n 平方分之一。",
-          "board": [
-            {"do":"write","line":"$0\\le\\frac{{{l:\\ln n}}}{n^3}<\\frac{{{nn:n}}}{n^3}$"},
-            {"do":"focus","term":"nn","label":"比它大","on":"比它大的"},
-            {"do":"transform","line":"$0\\le\\frac{{{l:\\ln n}}}{n^3}<\\frac{{{nn:n}}}{n^3}=\\frac{1}{n^2}$","on":"約掉"}
-          ] },
-        { "show": ["$\\ln n<n\\iff n<e^n$"],
-          "note": "$e^n$ 展開後都是正項，比 $n$ 大。",
-          "say": "為什麼自然對數 n 小於 n？等於說 n 小於 e 的 n 次方，而 e 的 n 次方展開，是 1 加 n 再加更多正的項。",
-          "board": [
-            {"do":"write","line":"$\\ln n<n\\iff n<e^n$"},
-            {"do":"write","line":"$e^n=1+n+\\cdots$","on":"展開"}
-          ] },
-        { "show": ["直線 $y=x$ 在對數曲線上面"],
-          "say": "看圖：藍色是自然對數，紅色是 y 等於 x，紅色一直在藍色上面。",
-          "board": [
-            {"do":"plot","graph":{"window":[0,6,-1,6],"curves":[{"expr":"log(x)","domain":[0.2,6],"color":"blue"},{"expr":"x","domain":[0,6],"color":"red"}]}}
-          ] },
-        { "show": ["$p=2$ 的 $p$ 級數收斂"],
-          "say": "n 平方分之一是 p 等於二的 p 級數，收斂。比它小的原級數也收斂。",
-          "board": [
-            {"do":"write","line":"$p=2$ 的 $p$ 級數收斂"},
-            {"do":"write","line":"⇒ 原級數收斂","color":"green","on":"比它小的"}
-          ] }
+        {
+          "show": [
+            "想證 $\\displaystyle\\sum_{n=1}^{\\infty}\\frac1{\\sqrt n+1}$ 發散，哪一個不等式有用？"
+          ],
+          "say": "換你：要證明發散，該用哪一個不等式？"
+        }
       ],
       "check": 1
     },
     {
-      "title": "從下面比",
+      "title": "證明",
       "beats": [
-        { "show": ["$\\sum_{n=3}^\\infty\\frac{\\ln n}{n}$"],
-          "note": "$\\ln n$ 會長大，猜它比 $\\frac{1}{n}$ 大。",
-          "say": "這次自然對數 n 在分子會一直長大，猜它比 n 分之一還大，發散。",
+        {
+          "show": [
+            "令 $s_n=\\sum_{k=1}^{n}a_k$，$t_n=\\sum_{k=1}^{n}b_k$，設 $N=1$"
+          ],
+          "say": "最後證明。令 s n 是 a 的部分和，t n 是 b 的部分和。",
           "board": [
-            {"do":"write","line":"$\\sum_{n=3}^\\infty\\frac{{{l:\\ln n}}}{n}$"},
-            {"do":"underline","term":"l","label":"一直長大","on":"在分子會"}
-          ] },
-        { "show": ["$n\\ge 3$：$\\ln n\\ge\\ln 3>1$"],
-          "say": "n 從三開始，自然對數三已經大於一，所以每一項都比 n 分之一大。",
+            {
+              "do": "write",
+              "line": "令 $s_n=\\sum_{k=1}^{n}a_k$，$t_n=\\sum_{k=1}^{n}b_k$，設 $N=1$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$a_k,b_k\\ge0$：$s_n$、$t_n$ 都遞增"
+          ],
+          "say": "每一項都大於等於 0，所以兩個部分和都遞增。",
           "board": [
-            {"do":"write","line":"$n\\ge 3$：$\\ln n\\ge\\ln 3>{{one:1}}$"},
-            {"do":"focus","term":"one","on":"大於一"}
-          ] },
-        { "show": ["$\\frac{\\ln n}{n}>\\frac{1}{n}$，$\\sum\\frac{1}{n}$ 發散"],
-          "note": "比發散的大，也發散。",
-          "say": "調和級數發散，比它大的也被拖著發散。要證發散，就從下面比。",
+            {
+              "do": "write",
+              "line": "$a_k,b_k\\ge0$：$s_n$、$t_n$ 都遞增"
+            }
+          ]
+        },
+        {
+          "show": [
+            "大的收斂：$\\sum b_n=T$，則",
+            "$s_n\\le t_n\\le T$"
+          ],
+          "say": "如果 b 的級數收斂到 T：每一項 a 都小於等於 b，所以 s n 小於等於 t n；t n 遞增，又趨近 T，所以 t n 小於等於 T。",
           "board": [
-            {"do":"write","line":"$\\frac{\\ln n}{n}>\\frac{1}{n}$，${{h:\\sum\\frac{1}{n}}}$ 發散"},
-            {"do":"write","line":"⇒ $\\sum\\frac{\\ln n}{n}$ 發散","color":"green","on":"比它大的"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "大的收斂：$\\sum b_n=T$，則"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle s_n\\le t_n\\le T$",
+              "on": "小於#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$s_n$ 遞增、有上界 $T$ ⇒ 收斂（6.3）"
+          ],
+          "say": "s n 遞增又有上界，單調收斂定理說它收斂。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$s_n$ 遞增、有上界 $T$ ⇒ 收斂（6.3）",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "小的發散：",
+            "• 若 $\\sum b_n$ 收斂，由上面 $\\sum a_n$ 收斂，矛盾"
+          ],
+          "say": "第二部分：如果小的發散，大的卻收斂，由第一部分，小的也要收斂，矛盾。所以大的發散。證明完畢。",
+          "board": [
+            {
+              "do": "write",
+              "line": "小的發散："
+            },
+            {
+              "do": "write",
+              "line": "• 若 $\\sum b_n$ 收斂，由上面 $\\sum a_n$ 收斂，矛盾",
+              "on": "大的#1"
+            },
+            {
+              "do": "write",
+              "line": "• 所以 $\\sum b_n$ 發散　$\\blacksquare$",
+              "on": "小的#2"
+            },
+            {
+              "do": "write",
+              "line": "　條件 $a_n\\ge0$ 不能少：它讓 $s_n$ 遞增",
+              "color": "violet",
+              "on": "所以"
+            }
+          ]
+        }
+      ]
     },
     {
-      "title": "方向不對時",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\frac{1}{n^2-3}>\\frac{1}{n^2}$"],
-          "note": "比收斂的大：沒結論。",
-          "say": "n 平方減三分之一，比 n 平方分之一大。方向剛好反了，什麼都推不出來。",
+        {
+          "show": [
+            "• $0\\le a_n\\le b_n$：大的收斂 ⇒ 小的收斂",
+            "• 小的發散 ⇒ 大的發散"
+          ],
+          "say": "整理一下：大的收斂，小的跟著收斂；小的發散，大的跟著發散。方向錯就沒有結論。用之前先抓主要項猜結果，再決定往上壓、還是往下墊。",
           "board": [
-            {"do":"write","line":"$\\frac{1}{n^2-3}>{{r:\\frac{1}{n^2}}}$"},
-            {"do":"underline","term":"r","color":"red","label":"方向反了","on":"方向剛好"},
-            {"do":"write","line":"比收斂的大：沒結論","color":"red","on":"什麼都"}
-          ] },
-        { "show": ["改比 $\\frac{2}{n^2}$"],
-          "note": "或直接用〈極限比較判別〉。",
-          "say": "可以把尺放大一點，跟 n 平方分之二比；或者用下一課的極限比較判別。" },
-        { "show": ["比較判別要 $a_n\\ge 0$"],
-          "note": "不等式只對大的 $n$ 成立時，說清楚從第幾項開始。",
-          "say": "還有兩件事：有負項的級數不能用；不等式只在 n 大時成立，要說從第幾項開始。",
+            {
+              "do": "write",
+              "line": "• $0\\le a_n\\le b_n$：大的收斂 ⇒ 小的收斂"
+            },
+            {
+              "do": "write",
+              "line": "• 小的發散 ⇒ 大的發散",
+              "on": "跟著#1"
+            },
+            {
+              "do": "write",
+              "line": "• 方向錯（比收斂的大、比發散的小）：沒有結論",
+              "on": "著發"
+            },
+            {
+              "do": "write",
+              "line": "• 抓主要項，選 $p$ 級數或幾何級數當尺",
+              "on": "用之"
+            },
+            {
+              "do": "write",
+              "line": "• 先猜結果，再決定往上壓還是往下墊",
+              "on": "再決"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：極限比較判別"
+          ],
+          "say": "下一課，用極限來比，不用再找不等式：極限比較判別。",
           "board": [
-            {"do":"write","line":"比較判別要 $a_n\\ge 0$","on":"有負項"},
-            {"do":"write","line":"不等式只對大的 $n$ 成立：說從第幾項開始","on":"n 大時"}
-          ] }
-      ],
-      "check": 2
+            {
+              "do": "write",
+              "line": "下一課：極限比較判別"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["comparison-test", "comparison", "convergence-test"],
-    "fine": ["comparison-direction", "comparison-choose-benchmark", "comparison-bound-inequality"]
+    "coarse": [
+      "comparison-test",
+      "comparison",
+      "convergence-test"
+    ],
+    "fine": [
+      "comparison-direction",
+      "comparison-choose-benchmark",
+      "comparison-bound-inequality"
+    ]
   },
   "practice": [
-    { "id": "lec-12-q3a", "core": true, "trains": "comparison-choose-benchmark" },
-    { "id": "ser-036", "core": true, "trains": "comparison-choose-benchmark" },
-    { "id": "lec-12-q3d", "core": true, "trains": "comparison-bound-inequality" },
-    { "id": "lec-12-m4", "core": true, "trains": "comparison-direction" },
-    { "id": "cg-6c-006", "core": true, "trains": "comparison-direction" },
-    { "id": "cg-6c-009", "core": true, "trains": "comparison-bound-inequality" },
-    { "id": "lec-13-q1c", "trains": "comparison-bound-inequality" },
-    { "id": "lec-12-q3b", "trains": "comparison-choose-benchmark" },
-    { "id": "cg-6c-007", "trains": "comparison-direction" },
-    { "id": "cg-6c-008", "trains": "comparison-direction" },
-    { "id": "cg-6c-010", "trains": "comparison-bound-inequality" }
+    {
+      "id": "lec-12-q3a",
+      "core": true,
+      "trains": "comparison-choose-benchmark"
+    },
+    {
+      "id": "ser-036",
+      "core": true,
+      "trains": "comparison-choose-benchmark"
+    },
+    {
+      "id": "lec-12-q3d",
+      "core": true,
+      "trains": "comparison-bound-inequality"
+    },
+    {
+      "id": "lec-12-m4",
+      "core": true,
+      "trains": "comparison-direction"
+    },
+    {
+      "id": "cg-6c-006",
+      "core": true,
+      "trains": "comparison-direction"
+    },
+    {
+      "id": "cg-6c-009",
+      "core": true,
+      "trains": "comparison-bound-inequality"
+    },
+    {
+      "id": "lec-13-q1c",
+      "trains": "comparison-bound-inequality"
+    },
+    {
+      "id": "lec-12-q3b",
+      "trains": "comparison-choose-benchmark"
+    },
+    {
+      "id": "cg-6c-007",
+      "trains": "comparison-direction"
+    },
+    {
+      "id": "cg-6c-008",
+      "trains": "comparison-direction"
+    },
+    {
+      "id": "cg-6c-010",
+      "trains": "comparison-bound-inequality"
+    }
   ],
   "gaps": []
 }

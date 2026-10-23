@@ -1,0 +1,415 @@
+{
+  "id": "surface-integral",
+  "title": "曲面積分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "surface-area",
+    "scalar-line-integral"
+  ],
+  "next": [
+    "flux"
+  ],
+  "related": [
+    "center-of-mass",
+    "parametric-surfaces"
+  ],
+  "objectives": [
+    "說出 $\\iint_S f\\,dS$ 的意思：薄殼上「密度 $\\times$ 一小片面積」的總和。",
+    "用 $dS=|\\mathbf r_u\\times\\mathbf r_v|\\,dA$ 把它化成參數區域上的二重積分。",
+    "用對稱性簡化球面上的曲面積分。"
+  ],
+  "visual": "一片曲面被著色，顏色深淺代表 f 的值（例如薄殼的密度）。曲面被切成小片，滑鼠指到某一片時顯示它的面積 ΔS、f 的值與乘積 f ΔS，旁邊累計總和。切換參數化（例如球面用經緯度或用兩個半球的圖形），總和不變。",
+  "concept": [
+    {
+      "heading": "① 從線到面",
+      "body": [
+        "〈純量線積分〉$\\int_C f\\,ds$：一條鐵絲的質量。曲面版本是一片薄殼：每一點的面密度是 $f$（每單位面積的質量），切成小片，每片面積 $\\Delta S$，質量約 $f\\,\\Delta S$，加起來取極限。這就是 $\\iint_S f\\,dS$。",
+        "$f=1$ 時，$\\iint_S 1\\,dS$ 就是〈曲面面積〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 化成二重積分",
+      "body": [
+        "跟線積分的 $ds=|\\mathbf r'(t)|\\,dt$ 完全平行：曲面參數化 $\\mathbf r(u,v)$，$(u,v)\\in D$，$dS=|\\mathbf r_u\\times\\mathbf r_v|\\,dA$。$f$ 也要代成 $u$、$v$。",
+        "函數圖形 $z=g(x,y)$ 時：$dS=\\sqrt{1+g_x^2+g_y^2}\\,dA$，$f$ 裡的 $z$ 換成 $g(x,y)$。"
+      ],
+      "tex": [
+        "\\iint_S f\\,dS=\\iint_D f\\big(\\mathbf r(u,v)\\big)\\,\\big|\\mathbf r_u\\times\\mathbf r_v\\big|\\,dA"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 跟方向無關",
+      "body": [
+        "$dS$ 是面積，永遠是正的。所以 $\\iint_S f\\,dS$ 不需要決定曲面的「正面」是哪一面，換參數化也不影響結果。下一課的〈通量〉就需要選方向了。",
+        "曲面由好幾片組成（例如圓柱的側面加上下底），每片各自算，再相加。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 球面上的對稱捷徑",
+      "body": [
+        "單位球面上 $x^2+y^2+z^2=1$，所以 $\\iint(x^2+y^2+z^2)\\,dS=\\iint 1\\,dS=4\\pi$。球面對 $x$、$y$、$z$ 三個方向一樣，三項各佔三分之一：$\\iint x^2\\,dS=\\frac{4\\pi}{3}$。",
+        "奇函數也一樣：$\\iint_{\\text{球面}} z\\,dS=0$，上下半球抵消。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "球面上的 $x^2$：參數化與對稱各做一次",
+      "prompt": "$\\iint_S x^2\\,dS$，$S$ 是單位球面。",
+      "steps": [
+        "參數化：$x=\\sin\\varphi\\cos\\theta$，$dS=\\sin\\varphi\\,d\\varphi\\,d\\theta$（上一課的 $|\\mathbf r_\\varphi\\times\\mathbf r_\\theta|$，$a=1$）。",
+        "$\\int_0^{2\\pi}\\int_0^\\pi\\sin^2\\varphi\\cos^2\\theta\\cdot\\sin\\varphi\\,d\\varphi\\,d\\theta=\\left(\\int_0^{2\\pi}\\cos^2\\theta\\,d\\theta\\right)\\left(\\int_0^\\pi\\sin^3\\varphi\\,d\\varphi\\right)=\\pi\\cdot\\frac{4}{3}=\\frac{4\\pi}{3}$。",
+        "對稱法：$\\iint(x^2+y^2+z^2)\\,dS={}$ 球面積 $4\\pi$，三項相等，每項 $\\frac{4\\pi}{3}$。一樣。"
+      ],
+      "answer": "$\\frac{4\\pi}{3}$",
+      "claim": "INT(INT(sin(u)^2*cos(t)^2*sin(u),0,pi,u),0,2*pi,t) == 4*pi/3"
+    },
+    {
+      "title": "函數圖形上",
+      "prompt": "$\\iint_S y\\,dS$，$S$ 是曲面 $z=x+y^2$，$0\\le x\\le 1$、$0\\le y\\le 2$。",
+      "steps": [
+        "$g_x=1$、$g_y=2y$，$dS=\\sqrt{1+1+4y^2}\\,dA=\\sqrt{2+4y^2}\\,dA$。",
+        "$\\int_0^1\\int_0^2 y\\sqrt{2+4y^2}\\,dy\\,dx$。$x$ 那層只貢獻 $1$。",
+        "令 $w=2+4y^2$，$dw=8y\\,dy$：$\\int_0^2 y\\sqrt{2+4y^2}\\,dy=\\frac{1}{8}\\cdot\\frac{2}{3}\\left[w^{3/2}\\right]_2^{18}=\\frac{1}{12}(18\\sqrt{18}-2\\sqrt2)=\\frac{1}{12}(54\\sqrt2-2\\sqrt2)=\\frac{13\\sqrt2}{3}$。"
+      ],
+      "answer": "$\\frac{13\\sqrt2}{3}$",
+      "claim": "INT(INT(y*sqrt(2+4*y^2),0,2,y),0,1,x) == 13*sqrt(2)/3"
+    },
+    {
+      "title": "好幾片拼成的曲面",
+      "prompt": "$\\iint_S z\\,dS$，$S$ 是圓柱 $x^2+y^2\\le 1$、$0\\le z\\le 1$ 的整個表面（側面、上蓋、底）。",
+      "steps": [
+        "分三片算，再相加。",
+        "側面：$\\mathbf r(\\theta,z)=\\langle\\cos\\theta,\\sin\\theta,z\\rangle$，$|\\mathbf r_\\theta\\times\\mathbf r_z|=1$（〈參數曲面〉的圓柱例子）。$\\int_0^{2\\pi}\\int_0^1 z\\,dz\\,d\\theta=2\\pi\\cdot\\frac{1}{2}=\\pi$。",
+        "上蓋：$z=1$ 的單位圓盤，$dS=dA$。$\\iint 1\\,dA=\\pi$。",
+        "底：$z=0$，被積函數是 $0$，貢獻 $0$。",
+        "合計 $2\\pi$。"
+      ],
+      "answer": "$2\\pi$",
+      "claim": "INT(INT(z,0,1,z),0,2*pi,t) + INT(INT(1*r,0,1,r),0,2*pi,t) == 2*pi"
+    }
+  ],
+  "pitfalls": [
+    "直接寫 $\\iint_D f\\,dA$，漏了 $|\\mathbf r_u\\times\\mathbf r_v|$（或 $\\sqrt{1+g_x^2+g_y^2}$）。",
+    "$f$ 裡的 $z$ 沒有代成 $g(x,y)$。",
+    "用了奇函數對稱，但曲面其實不對稱（例如只有上半球）。",
+    "以為曲面積分會因為法向量方向而變號；純量曲面積分不會。"
+  ],
+  "checks": [
+    {
+      "ask": "$\\iint_S 1\\,dS$ 是？",
+      "options": [
+        {
+          "label": "$S$ 的面積",
+          "correct": true
+        },
+        {
+          "label": "$S$ 圍住的體積",
+          "why": "$dS$ 是曲面上的小片面積，加起來是面積。體積要用三重積分。"
+        },
+        {
+          "label": "$0$",
+          "why": "每一小片都貢獻正的面積，不會抵消。"
+        }
+      ]
+    },
+    {
+      "ask": "$S$ 是 $z=g(x,y)$ 的圖形，$dS$ 換成？",
+      "options": [
+        {
+          "label": "$\\sqrt{1+g_x^2+g_y^2}\\,dA$",
+          "correct": true
+        },
+        {
+          "label": "$dA$",
+          "why": "那是假設曲面是平的。斜的曲面比它的影子大，要乘放大倍率。"
+        },
+        {
+          "label": "$g(x,y)\\,dA$",
+          "why": "$g$ 是高度，跟小片面積的放大倍率無關。"
+        }
+      ]
+    },
+    {
+      "ask": "$S$ 是單位球面（整顆），$\\iint_S z\\,dS$ 是？",
+      "options": [
+        {
+          "label": "$0$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{4\\pi}{3}$",
+          "why": "那是 $\\iint z^2\\,dS$。$z$ 本身在上下半球正負相反，互相抵消。"
+        },
+        {
+          "label": "$2\\pi$",
+          "why": "那是 $\\iint|z|\\,dS$（上半球 $\\pi$ 加下半球 $\\pi$）。$z$ 在下半球是負的。"
+        }
+      ]
+    },
+    {
+      "ask": "把曲面的「正面」換成另一面，$\\iint_S f\\,dS$ 會？",
+      "options": [
+        {
+          "label": "不變",
+          "correct": true
+        },
+        {
+          "label": "變號",
+          "why": "變號的是通量 $\\iint\\mathbf F\\cdot\\mathbf n\\,dS$。$dS$ 是面積，跟選哪一面無關。"
+        },
+        {
+          "label": "變成 $0$",
+          "why": "沒有理由抵消，每一小片的 $f\\,\\Delta S$ 都沒變。"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "從線到面",
+      "beats": [
+        { "show": ["鐵絲：$\\int_C f\\,ds$ → 薄殼：$\\iint_S f\\,dS$"],
+          "say": "純量線積分算一條鐵絲的質量。換成一片薄殼，每一點的面密度是 f。",
+          "board": [
+            {"do":"write","line":"鐵絲：$\\int_C f\\,ds$"},
+            {"do":"write","line":"薄殼：$\\iint_S {{f:f}}\\,dS$","on":"換成"},
+            {"do":"focus","term":"f","label":"面密度","on":"面密度"}
+          ] },
+        { "show": ["每片質量約 $f\\,\\Delta S$"],
+          "note": "切成小片，加起來取極限。",
+          "say": "切成小片，每片的質量大約是密度乘面積，加起來取極限，就是曲面積分。",
+          "board": [
+            {"do":"write","line":"每片質量 $\\approx {{f:f}}\\,\\Delta S$"},
+            {"do":"write","line":"$\\iint_S f\\,dS=\\lim\\sum f\\,\\Delta S$","on":"取極限"}
+          ] },
+        { "show": ["$f=1$：曲面面積"],
+          "say": "密度是一，總質量的數值就是曲面面積。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f={{o:1}}$：總質量的數值","on":"密度是一"},
+            {"do":"focus","term":"o","label":"密度","on":"總質量"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "化成二重積分",
+      "beats": [
+        { "show": ["$dS=|\\mathbf r_u\\times\\mathbf r_v|\\,dA$"],
+          "note": "跟 $ds=|\\mathbf r'(t)|\\,dt$ 完全平行。",
+          "say": "跟線積分一模一樣的想法：參數化之後，一小片面積是外積的長度乘 d A。",
+          "board": [
+            {"do":"write","line":"$dS=|{{c:\\mathbf r_u\\times\\mathbf r_v}}|\\,dA$"},
+            {"do":"underline","term":"c","label":"放大倍率","on":"外積的長度"}
+          ] },
+        { "show": ["$\\iint_D f(\\mathbf r(u,v))\\,|\\mathbf r_u\\times\\mathbf r_v|\\,dA$"],
+          "note": "$f$ 也要代成 $u$、$v$。",
+          "say": "被積函數也要代成 u、v 的函數，再乘上那個放大倍率。",
+          "board": [
+            {"do":"write","line":"$\\iint_D {{f:f(\\mathbf r(u,v))}}\\,{{k:|\\mathbf r_u\\times\\mathbf r_v|}}\\,dA$","tint":{"f":"blue"}},
+            {"do":"focus","term":"f","color":"blue","label":"代成參數","on":"代成"},
+            {"do":"underline","term":"k","on":"放大倍率"}
+          ] },
+        { "show": ["$\\mathbf r(x,y)=\\langle x,y,g(x,y)\\rangle$","$\\mathbf r_x=\\langle1,0,g_x\\rangle$，$\\mathbf r_y=\\langle0,1,g_y\\rangle$"],
+          "note": "圖形也是參數曲面，$x$、$y$ 當參數。",
+          "say": "圖形可以當參數式，x、y 就是參數。算出來 r x 是一、零、g x，r y 是零、一、g y。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\mathbf r(x,y)=\\langle x,y,g(x,y)\\rangle$","on":"就是"},
+            {"do":"write","line":"$\\mathbf r_x=\\langle{{a:1,0,g_x}}\\rangle$","on":"r x"},
+            {"do":"write","line":"$\\mathbf r_y=\\langle{{b:0,1,g_y}}\\rangle$","on":"r y"}
+          ] },
+        { "show": ["$\\mathbf r_x\\times\\mathbf r_y=\\langle-g_x,-g_y,1\\rangle$","$|\\cdot|=\\sqrt{1+g_x^2+g_y^2}$"],
+          "note": "這就是圖形的面積因子。",
+          "say": "兩個向量做外積，得到負 g x、負 g y、一。它的長度開根號，就是下面要用的面積因子。",
+          "board": [
+            {"do":"write","line":"$\\mathbf r_x\\times\\mathbf r_y=\\langle-g_x,-g_y,1\\rangle$","on":"外積"},
+            {"do":"write","line":"$|\\cdot|={{s:\\sqrt{1+g_x^2+g_y^2}}}$","on":"長度"},
+            {"do":"box","term":"s","color":"green","on":"面積因子"}
+          ] },
+        { "show": ["圖形 $z=g(x,y)$：$dS=\\sqrt{1+g_x^2+g_y^2}\\,dA$"],
+          "note": "$f$ 裡的 $z$ 換成 $g(x,y)$。",
+          "say": "函數圖形就用上一課的因子，記得 f 裡的 z 也要換成 g。",
+          "board": [
+            {"do":"write","line":"圖形 $z=g(x,y)$"},
+            {"do":"write","line":"$f(x,y,{{z:z}})\\to f(x,y,{{g:g(x,y)}})$","on":"記得"},
+            {"do":"focus","term":"z","color":"red","label":"換掉","on":"z 也"},
+            {"do":"focus","term":"g","color":"green","on":"換成"}
+          ] }
+      ],
+      "key": "$f$ 也要代成參數，不是只換 $dS$",
+      "check": 1
+    },
+    {
+      "title": "函數圖形上",
+      "beats": [
+        { "show": ["$\\iint_S y\\,dS$，$z=x+y^2$"],
+          "note": "$0\\le x\\le 1$、$0\\le y\\le 2$。",
+          "say": "算一題：曲面是 z 等於 x 加 y 平方，影子是一個矩形。",
+          "board": [
+            {"do":"write","line":"$\\iint_S y\\,dS$，$z=x+y^2$"},
+            {"do":"write","line":"$0\\le x\\le 1$，$0\\le y\\le 2$","on":"影子"}
+          ] },
+        { "show": ["$dS=\\sqrt{1+g_x^2+g_y^2}\\,dA$"],
+          "note": "把偏導數代進根號裡。",
+          "say": "把兩個偏導數各自平方放進根號，記得根號裡本來還有一個一。",
+          "board": [
+            {"do":"write","line":"$dS=\\sqrt{1+{{p1:g_x^2}}+{{p2:g_y^2}}}\\,dA$"},
+            {"do":"focus","term":"p1","label":"代入","on":"各自平方"},
+            {"do":"focus","term":"p2","on":"根號裡"}
+          ] },
+        { "show": ["$g_x=1$，$g_y=2y$"],
+          "say": "兩個偏導數，一個是一，一個是二 y。代進面積因子。",
+          "board": [
+            {"do":"write","line":"$g_x={{a:1}}$，$g_y={{b:2y}}$"},
+            {"do":"focus","term":"a","on":"一個是一"},
+            {"do":"focus","term":"b","on":"二 y"}
+          ] }
+      ],
+      "predict": {
+        "ask": "$dS$ 是？",
+        "options": [
+          {
+            "label": "$\\sqrt{2+4y^2}\\,dA$",
+            "correct": true
+          },
+          {
+            "label": "$\\sqrt{1+4y^2}\\,dA$",
+            "why": "漏了 $g_x^2=1$：$1+1+4y^2=2+4y^2$。"
+          },
+          {
+            "label": "$(2+4y^2)\\,dA$",
+            "why": "要開根號：面積因子是 $\\sqrt{1+g_x^2+g_y^2}$。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "球面上的對稱",
+      "beats": [
+        { "show": ["單位球面上 $x^2+y^2+z^2=1$"],
+          "note": "$\\iint(x^2+y^2+z^2)\\,dS=4\\pi$。",
+          "say": "單位球面上，三個平方加起來永遠是一，所以它的曲面積分就是球面積四 pi。",
+          "board": [
+            {"do":"write","line":"$x^2+y^2+z^2=1$"},
+            {"do":"write","line":"$\\iint(x^2+y^2+z^2)\\,dS={{r:4\\pi}}$","on":"所以"},
+            {"do":"box","term":"r","color":"green","on":"球面積"}
+          ] },
+        { "show": ["三項各佔三分之一：$\\iint x^2\\,dS=\\frac{4\\pi}{3}$"],
+          "say": "球面對三個方向一模一樣，三項平分，x 平方那一項是三分之四 pi。用參數式硬算也一樣。",
+          "board": [
+            {"do":"write","line":"$\\iint {{x:x^2}}\\,dS=\\iint y^2\\,dS=\\iint z^2\\,dS$"},
+            {"do":"write","line":"$\\iint x^2\\,dS={{t:\\frac{4\\pi}{3}}}$","on":"x 平方"},
+            {"do":"box","term":"t","color":"green","on":"三分之四"}
+          ] },
+        { "show": ["$x=\\sin\\varphi\\cos\\theta$，$dS=\\sin\\varphi\\,d\\varphi\\,d\\theta$","$\\pi\\cdot\\frac{4}{3}=\\frac{4\\pi}{3}$"],
+          "note": "$\\theta$ 從 $0$ 到 $2\\pi$，$\\varphi$ 從 $0$ 到 $\\pi$。",
+          "say": "硬算：x 是 sine phi 乘 cosine theta，面積因子是 sine phi，拆開得 pi 乘三分之四。",
+          "board": [
+            {"do":"write","line":"$x=\\sin\\varphi\\cos\\theta$，$dS=\\sin\\varphi\\,d\\varphi\\,d\\theta$","on":"硬算"},
+            {"do":"write","line":"$\\int\\cos^2\\theta\\,d\\theta\\cdot\\int\\sin^3\\varphi\\,d\\varphi$","on":"拆開"},
+            {"do":"write","line":"$=\\pi\\cdot\\frac{4}{3}$","on":"pi 乘"}
+          ] },
+        { "show": ["$\\int_0^\\pi\\sin^3\\varphi\\,d\\varphi=\\frac{4}{3}$"],
+          "note": "圖：$\\sin^3\\varphi$ 底下的面積。",
+          "say": "看 sine phi 的三次方，從零到 pi，它底下的面積正好是三分之四。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-0.5,3.6,-0.5,1.3],"curves":[{"expr":"sin(x)^3","domain":[0,3.1416],"color":"blue"}],"fills":[{"expr":"sin(x)^3","from":0,"to":3.1416,"color":"blue"}]},"on":"到"}
+          ] },
+        { "show": ["奇函數：上下半球抵消"],
+          "note": "曲面要真的對稱；只有上半球就不行。",
+          "say": "奇函數也有捷徑：上下兩半剛好抵消。但曲面本身要對稱，只有上半球就不能用。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"奇函數：上下兩半抵消","on":"奇函數"},
+            {"do":"write","line":"曲面本身要對稱","on":"曲面本身"},
+            {"do":"write","line":"只有上半球 → 不能用","color":"red","on":"只有上半球"}
+          ] }
+      ],
+      "key": "對稱：$x^2$、$y^2$、$z^2$ 三項積分相等",
+      "check": 2
+    },
+    {
+      "title": "方向無關，可以拼",
+      "beats": [
+        { "show": ["$dS$ 永遠是正的"],
+          "note": "不必選正面；換參數化也不變。",
+          "say": "d S 是面積，永遠是正的。所以不用決定哪一面是正面。下一課的通量就要選了。",
+          "board": [
+            {"do":"write","line":"$dS>0$：面積"},
+            {"do":"write","line":"不必選正面","on":"不用決定"},
+            {"do":"write","line":"通量：要選正面","on":"通量"}
+          ] },
+        { "show": ["圓柱表面 $\\iint_S z\\,dS$：側面 + 上蓋 + 底"],
+          "note": "$x^2+y^2\\le 1$、$0\\le z\\le 1$。",
+          "say": "曲面由好幾片組成時，每片各自算再相加。例如圓柱的側面、上蓋和底。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\iint_S z\\,dS$：側面 + 上蓋 + 底","on":"曲面由"},
+            {"do":"write","line":"$x^2+y^2\\le 1$，$0\\le z\\le 1$","on":"圓柱"}
+          ] },
+        { "show": ["$\\pi+\\pi+0=2\\pi$"],
+          "say": "側面得 pi，上蓋 z 是一，得圓盤面積 pi，底的 z 是零。合計二 pi。",
+          "board": [
+            {"do":"write","line":"$\\pi+\\pi+0={{r:2\\pi}}$"},
+            {"do":"box","term":"r","color":"green","on":"底的"}
+          ] }
+      ],
+      "check": 3
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "surface-integral",
+      "vector-calculus"
+    ],
+    "fine": [
+      "surface-integral-param",
+      "surface-integral-graph",
+      "surface-integral-symmetry"
+    ]
+  },
+  "practice": [
+    {
+      "id": "vc-surf-001",
+      "core": true,
+      "trains": "surface-integral-param"
+    },
+    {
+      "id": "vc-surf-002",
+      "core": true,
+      "trains": "surface-integral-param",
+      "note": "圓柱側面：$|\\mathbf r_\\theta\\times\\mathbf r_z|=2$。"
+    },
+    {
+      "id": "cg-9b4-013",
+      "core": true,
+      "trains": "surface-integral-graph"
+    },
+    {
+      "id": "cg-9b4-016",
+      "core": true,
+      "trains": "surface-integral-symmetry"
+    },
+    {
+      "id": "cg-9b4-014",
+      "trains": "surface-integral-graph"
+    },
+    {
+      "id": "cg-9b4-015",
+      "trains": "surface-integral-graph"
+    },
+    {
+      "id": "cg-9b4-017",
+      "trains": "surface-integral-symmetry"
+    }
+  ],
+  "gaps": []
+}

@@ -1,53 +1,110 @@
 {
   "id": "u-sub-nonobvious",
   "title": "非顯然的換元",
-  "readMinutes": 9,
+  "source": "notebook",
+  "readMinutes": 6,
   "totalMinutes": 35,
-  "prerequisites": ["u-sub-definite"],
-  "next": ["integration-by-parts"],
-  "related": ["integration-strategy"],
+  "prerequisites": [
+    "u-sub-definite"
+  ],
+  "next": [
+    "integration-by-parts"
+  ],
+  "related": [
+    "integration-strategy"
+  ],
   "objectives": [
-    "換完還剩下 $x$ 時，會用 $u$ 把 $x$ 表示出來（反解）。",
-    "看到 $\\sqrt{x}$、$\\sqrt{ax+b}$ 卡住時，會令 $u$ 等於整個根號，連 $dx$ 一起換掉。",
-    "知道有些積分要先變形（例如同乘 $e^{-x}$）才看得出 $u$。"
+    "換完還剩下 $x$ 時，會用 $u$ 把 $x$ 表示出來（反解）",
+    "看到 $\\sqrt{x}$、$\\sqrt{ax+b}$ 卡住時，會令 $u$ 等於整個根號，連 $dx$ 一起換掉",
+    "知道有些積分要先變形（例如同乘 $e^{-x}$）才看得出 $u$"
   ],
   "visual": null,
   "concept": [
     {
-      "heading": "① 剩下的 $x$，用 $u$ 表示",
+      "heading": "① 剩下的 $x$ 用 $u$ 表示",
       "body": [
-        "$\\int x\\sqrt{x+1}\\,dx$：令 $u=x+1$，$du=dx$。根號換好了，但外面還有一個 $x$，$du$ 吃不掉它。",
-        "不要放棄：$u=x+1$ 也代表 $x=u-1$。把 $x$ 換成 $u-1$，整個積分就只剩 $u$ 了：$\\int (u-1)\\sqrt{u}\\,du=\\int (u^{3/2}-u^{1/2})\\,du$。",
-        "規則沒有變：$x$ 和 $dx$ 全部換掉。只是換 $x$ 的方法從「配 $du$」多了一種「反解」。"
+        "令 $u=x+1$，$du=dx$：$\\displaystyle\\int x\\sqrt u\\,du$ 還剩一個 $x$",
+        "之前說「剩 $x$ 就行不通」，但這個 $x$ 可以用 $u$ 寫出來：",
+        "定積分：$\\displaystyle\\int_0^3x\\sqrt{x+1}\\,dx$，$u$ 從 $1$ 到 $4$",
+        "$\\big(\\frac{64}5-\\frac{16}3\\big)-\\big(\\frac25-\\frac23\\big)=\\frac{112}{15}+\\frac4{15}$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int x\\sqrt{x+1}\\,dx",
+        "u=x+1\\ \\Rightarrow\\ x=u-1",
+        "\\int(u-1)\\sqrt u\\,du=\\int\\big(u^{3/2}-u^{1/2}\\big)\\,du",
+        "\\begin{aligned}&=\\frac25u^{5/2}-\\frac23u^{3/2}+C\\\\&=\\frac25(x+1)^{5/2}-\\frac23(x+1)^{3/2}+C\\end{aligned}",
+        "\\Big[\\tfrac25u^{5/2}-\\tfrac23u^{3/2}\\Big]_1^4=\\frac{116}{15}"
+      ]
+    },
+    {
+      "heading": "① 試一題",
+      "body": [
+        "接著積：",
+        "反解：從 $u=g(x)$ 解出 $x$，剩下的 $x$ 就能換掉"
+      ],
+      "tex": [
+        "\\int\\big(u^{1/2}-4u^{-1/2}\\big)\\,du=\\frac23u^{3/2}-8u^{1/2}+C",
+        "=\\frac23(x+4)^{3/2}-8\\sqrt{x+4}+C"
+      ]
     },
     {
       "heading": "② 令 $u$ 等於整個根號",
       "body": [
-        "$\\int \\frac{\\sqrt{x}}{1+x}\\,dx$：找不到哪一層的導數在場。換個想法，令 $u=\\sqrt{x}$，則 $x=u^2$、$dx=2u\\,du$，根號整個消失：$\\int \\frac{u}{1+u^2}\\cdot 2u\\,du=\\int \\frac{2u^2}{1+u^2}\\,du$，變成有理函數。",
-        "這招的特徵：根號裡是 $x$ 或一次式，卡住的原因就是根號本身。"
+        "令 $u=\\sqrt x$：$x=u^2$，$dx=2u\\,du$",
+        "從 $x=u^2$ 對 $u$ 微分：$\\frac{dx}{du}=2u$",
+        "分子比分母：拆成 $1-\\dfrac{1}{1+u^2}$",
+        "$\\sqrt{ax+b}$ 一樣：令 $u=\\sqrt{ax+b}$"
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{\\sqrt x}{1+x}\\,dx",
+        "\\int\\frac{u}{1+u^2}\\cdot2u\\,du=2\\int\\frac{u^2}{1+u^2}\\,du",
+        "2\\int\\Big(1-\\frac1{1+u^2}\\Big)du=2u-2\\arctan u+C",
+        "\\int\\frac{\\sqrt x}{1+x}\\,dx=2\\sqrt x-2\\arctan\\sqrt x+C",
+        "x=\\frac{u^2-b}{a},\\qquad dx=\\frac{2u}{a}\\,du"
+      ]
+    },
+    {
+      "heading": "② 試一題",
+      "body": [
+        "令 $u=$ 整個根號的好處：根號消失，剩下有理函數",
+        "代價：$dx$ 要跟著換成 $2u\\,du$，不能只換根號"
+      ]
     },
     {
       "heading": "③ 先變形，$u$ 才會出現",
       "body": [
-        "$\\int \\frac{dx}{1+e^x}$：令 $u=1+e^x$，$du=e^x\\,dx$，可是分子是 $1$，配不起來。",
-        "先把分子分母同乘 $e^{-x}$：$\\frac{1}{1+e^x}=\\frac{e^{-x}}{e^{-x}+1}$。現在分子是分母的導數乘上 $-1$，$u=e^{-x}+1$ 就配得起來。",
-        "另一種變形：$\\frac{1}{1+e^x}=1-\\frac{e^x}{1+e^x}$，第二項是 $\\frac{u'}{u}$。兩條路答案長得不同，但只差一個常數。"
+        "做法一：先拆項（分子加一減一）",
+        "做法二：同乘 $e^{-x}$",
+        "$u=e^{-x}+1$，$du=-e^{-x}\\,dx$：",
+        "兩個答案相等："
       ],
-      "collapsible": false
+      "tex": [
+        "\\int\\frac{1}{1+e^x}\\,dx",
+        "\\frac1{1+e^x}=\\frac{(1+e^x)-e^x}{1+e^x}=1-\\frac{e^x}{1+e^x}",
+        "\\int\\frac{dx}{1+e^x}=x-\\ln(1+e^x)+C",
+        "\\frac1{1+e^x}=\\frac{e^{-x}}{e^{-x}+1}",
+        "\\int\\frac{e^{-x}}{e^{-x}+1}\\,dx=-\\ln(1+e^{-x})+C",
+        "-\\ln(1+e^{-x})=-\\ln\\frac{e^x+1}{e^x}=x-\\ln(1+e^x)"
+      ]
     },
     {
-      "heading": "④ 什麼時候該想到這些",
+      "heading": "④ 什麼時候想到這些",
       "body": [
-        "換完剩下 $x$ → 反解 $x$。",
-        "根號（或分數次方）卡住、而根號裡是一次式 → 令 $u$ 等於根號。",
-        "$e^x$ 出現在分母、分子是常數 → 同乘 $e^{-x}$ 或拆項。",
-        "這些都試過還不行，可能要換別的技巧（〈綜合積分：到底要用哪招？〉）。"
-      ],
-      "collapsible": false
+        "• 換完剩 $x$：從 $u=g(x)$ 反解 $x$",
+        "• 根號卡住：令 $u$ 等於整個根號，$dx$ 一起換",
+        "• 形狀對不上：先變形（拆項、同乘、通分）",
+        "做完一律微分檢查"
+      ]
+    },
+    {
+      "heading": "重點整理",
+      "body": [
+        "• 剩下的 $x$：反解 $x=g^{-1}(u)$，全部換成 $u$",
+        "• 根號卡住：令 $u=\\sqrt{\\cdots}$，$x=$ 用 $u$ 表示，$dx$ 一起換",
+        "• 形狀對不上：先變形，例如拆項、同乘 $e^{-x}$",
+        "• 同一題常有多種做法，答案只差常數",
+        "下一課：分部積分"
+      ]
     }
   ],
   "workedExamples": [
@@ -96,261 +153,648 @@
   ],
   "checks": [
     {
-      "ask": "$\\int x(x-2)^5\\,dx$，令 $u=x-2$。剩下的 $x$ 要寫成？",
+      "ask": "$\\displaystyle\\int\\frac{x}{\\sqrt{x+4}}\\,dx$，令 $u=x+4$，會變成？",
       "options": [
-        { "label": "$u+2$", "correct": true },
-        { "label": "$u-2$", "why": "$u=x-2$，所以 $x=u+2$。反解的方向弄反了。" },
-        { "label": "沒辦法，換完還有 $x$ 就不能用換元", "why": "剩下的 $x$ 用 $u$ 表示就好：$x=u+2$，積分變成 $\\int (u+2)u^5\\,du$。" }
+        {
+          "label": "$\\displaystyle\\int\\frac{u-4}{\\sqrt u}\\,du$",
+          "correct": true
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{x}{\\sqrt u}\\,du$",
+          "why": "還留著 $x$：要把它用 $u$ 表示"
+        },
+        {
+          "label": "$\\displaystyle\\int\\frac{u+4}{\\sqrt u}\\,du$",
+          "why": "反解反了號：$u=x+4$，所以 $x=u-4$"
+        },
+        {
+          "label": "$\\displaystyle\\int (u-4)\\sqrt u\\,du$",
+          "why": "根號在分母，換完還是在分母"
+        }
       ]
     },
     {
-      "ask": "令 $u=\\sqrt{x}$，$dx$ 要換成？",
+      "ask": "$\\displaystyle\\int\\frac{1}{1+\\sqrt x}\\,dx=$？",
       "options": [
-        { "label": "$2u\\,du$", "correct": true },
-        { "label": "$\\frac{du}{2\\sqrt{x}}$", "why": "$du=\\frac{dx}{2\\sqrt{x}}$，所以 $dx=2\\sqrt{x}\\,du=2u\\,du$。你把式子解反了，而且還留著 $x$。" },
-        { "label": "$du$", "why": "$x=u^2$，$dx=2u\\,du$，不是 $du$。" }
-      ]
-    },
-    {
-      "ask": "$\\int \\frac{1}{1+e^x}\\,dx$ 最有效的第一步是？",
-      "options": [
-        { "label": "分子分母同乘 $e^{-x}$（或把 $1$ 拆成 $(1+e^x)-e^x$）", "correct": true },
-        { "label": "令 $u=1+e^x$，直接得 $\\ln|u|$", "why": "$du=e^x\\,dx$，但分子是 $1$，配不起來，不能直接得 $\\ln|u|$。" },
-        { "label": "放棄，它沒有初等反導函數", "why": "它有：$x-\\ln(1+e^x)+C$。只是要先變形才看得出 $u$。" }
-      ]
-    },
-    {
-      "ask": "$\\int_0^4 \\frac{x}{\\sqrt{2x+1}}\\,dx$，令 $u=2x+1$。$u$ 的上下限是？",
-      "options": [
-        { "label": "$1$ 到 $9$", "correct": true },
-        { "label": "$0$ 到 $4$", "why": "換成 $u$ 之後上下限要換成 $u$ 的值：$2\\cdot 0+1=1$，$2\\cdot 4+1=9$。" },
-        { "label": "$1$ 到 $3$", "why": "那是令 $u=\\sqrt{2x+1}$ 時的上下限。這裡 $u=2x+1$，沒有開根號。" }
+        {
+          "label": "$2\\sqrt x-2\\ln(1+\\sqrt x)+C$",
+          "correct": true
+        },
+        {
+          "label": "$\\ln(1+\\sqrt x)+C$",
+          "why": "分子不是分母的導數：$(1+\\sqrt x)'=\\frac1{2\\sqrt x}$"
+        },
+        {
+          "label": "$2\\ln(1+\\sqrt x)+C$",
+          "why": "忘了 $dx=2u\\,du$ 的 $u$，把 $\\frac{2u}{1+u}$ 當成 $\\frac{2}{1+u}$"
+        },
+        {
+          "label": "$2\\sqrt x+2\\ln(1+\\sqrt x)+C$",
+          "why": "$\\frac{u}{1+u}=1-\\frac1{1+u}$，中間是減號"
+        }
       ]
     }
   ],
   "sections": [
     {
-      "title": "剩下的 $x$ 反解",
+      "title": "剩下的 $x$ 用 $u$ 表示",
       "beats": [
-        { "show": ["$\\int x\\sqrt{x+1}\\,dx$：$u=x+1$"],
-          "note": "$du=dx$。根號換好了，外面還有一個 $x$。",
-          "say": "令 u 等於 x 加一，du 就是 dx。根號換好了，可是外面還剩一個 x，du 吃不掉它。",
+        {
+          "show": [
+            "$\\int x\\sqrt{x+1}\\,dx$"
+          ],
+          "say": "前幾課的換元，裡層的導數都剛好在場。這一課看不在場的情形。先看 x 乘根號 x 加 1。",
           "board": [
-            {"do":"write","line":"$\\int {{x:x}}\\sqrt{ {{u:x+1}} }\\,dx$","tint":{"u":"blue"}},
-            {"do":"write","line":"$u={{u:x+1}}$，$du=dx$","on":"du 就是"},
-            {"do":"focus","term":"x","label":"還剩一個 x","on":"外面還剩"}
-          ] },
-        { "show": ["$u=x+1$ 也代表 $x=u-1$"],
-          "note": "換 $x$ 的方法，多了一種「反解」。",
-          "say": "不要放棄：u 等於 x 加一，反過來就是 x 等於 u 減一。把剩下的 x 也換掉。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int x\\sqrt{x+1}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=x+1$，$du=dx$：$\\displaystyle\\int x\\sqrt u\\,du$ 還剩一個 $x$"
+          ],
+          "say": "令 u 等於根號裡的 x 加 1，d u 就是 d x。換進去以後，前面還剩一個 x。",
           "board": [
-            {"do":"write","line":"$x={{um:u-1}}$","tint":{"um":"blue"},"on":"反過來"},
-            {"do":"underline","term":"um","on":"u 減一"}
-          ] },
-        { "show": ["$\\sqrt{u}=u^{1/2}$","$u\\cdot u^{1/2}=u^{3/2}$"],
-          "note": "同底數相乘，指數相加。",
-          "say": "根號 u 就是 u 的二分之一次方。u 本身是一次方，一加二分之一是二分之三，所以 u 乘根號 u 是 u 的二分之三次方。",
+            {
+              "do": "write",
+              "line": "令 $u=x+1$，$du=dx$：$\\displaystyle\\int x\\sqrt u\\,du$ 還剩一個 $x$",
+              "color": "red"
+            }
+          ]
+        },
+        {
+          "show": [
+            "之前說「剩 $x$ 就行不通」，但這個 $x$ 可以用 $u$ 寫出來：",
+            "$u=x+1\\ \\Rightarrow\\ x=u-1$"
+          ],
+          "say": "之前說，剩下 x 就行不通。但這個 x 其實可以用 u 寫出來：u 等於 x 加 1，反解得到 x 等於 u 減 1。",
           "board": [
-            {"do":"write","line":"$\\sqrt{u}=u^{1/2}$"},
-            {"do":"write","line":"$u\\cdot u^{1/2}=u^{ {{p:1+1/2}} }=u^{3/2}$","on":"一加二分之一"},
-            {"do":"focus","term":"p","label":"指數相加","on":"是 u 的二分之三"}
-          ] },
-        { "show": ["$\\int(u-1)\\sqrt{u}\\,du=\\int(u^{3/2}-u^{1/2})\\,du$"],
-          "note": "換回 $x$：$\\frac{2}{5}(x+1)^{5/2}-\\frac{2}{3}(x+1)^{3/2}+C$。",
-          "say": "現在只剩 u，乘開變成兩個冪次，一項一項積，最後把 u 換回 x 加一。",
+            {
+              "do": "write",
+              "line": "之前說「剩 $x$ 就行不通」，但這個 $x$ 可以用 $u$ 寫出來："
+            },
+            {
+              "do": "write",
+              "line": "${{bx1:\\displaystyle u=x+1\\ \\Rightarrow\\ x=u-1}}$",
+              "on": "其實"
+            },
+            {
+              "do": "box",
+              "term": "bx1",
+              "on": "反解"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int(u-1)\\sqrt u\\,du=\\int\\big(u^{3/2}-u^{1/2}\\big)\\,du$"
+          ],
+          "say": "把 x 換成 u 減 1，乘開，變成 u 的 2 分之 3 次方，減 u 的 2 分之 1 次方。這就只是冪次了。",
           "board": [
-            {"do":"keep","n":2},
-            {"do":"write","line":"$\\int({{um:u-1}})\\sqrt{u}\\,du=\\int(u^{3/2}-u^{1/2})\\,du$","on":"現在只剩"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int(u-1)\\sqrt u\\,du=\\int\\big(u^{3/2}-u^{1/2}\\big)\\,du$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\begin{aligned}&=\\frac25u^{5/2}-\\frac23u^{3/2}+C\\\\&=\\frac25(x+1)^{5/2}-\\frac23(x+1)^{3/2}+C\\end{aligned}$"
+          ],
+          "say": "一項一項積，最後把 u 換回 x 加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx2:\\displaystyle {\\begin{aligned}&=\\frac25u^{5/2}-\\frac23u^{3/2}+C\\\\&=\\frac25(x+1)^{5/2}-\\frac23(x+1)^{3/2}+C\\end{aligned}}}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx2",
+              "color": "red",
+              "on": "換回"
+            }
+          ]
+        },
+        {
+          "show": [
+            "定積分：$\\displaystyle\\int_0^3x\\sqrt{x+1}\\,dx$，$u$ 從 $1$ 到 $4$",
+            "$\\Big[\\tfrac25u^{5/2}-\\tfrac23u^{3/2}\\Big]_1^4=\\frac{116}{15}$"
+          ],
+          "say": "定積分也一樣，上下限跟著換：x 從 0 到 3，u 從 1 到 4。代進去，得到 15 分之 116。",
+          "board": [
+            {
+              "do": "write",
+              "line": "定積分：$\\displaystyle\\int_0^3x\\sqrt{x+1}\\,dx$，$u$ 從 $1$ 到 $4$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\Big[\\tfrac25u^{5/2}-\\tfrac23u^{3/2}\\Big]_1^4=\\frac{116}{15}$",
+              "on": "代進"
+            },
+            {
+              "do": "write",
+              "line": "　$\\big(\\frac{64}5-\\frac{16}3\\big)-\\big(\\frac25-\\frac23\\big)=\\frac{112}{15}+\\frac4{15}$",
+              "color": "violet",
+              "on": "進去"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{x}{\\sqrt{x+4}}\\,dx$，令 $u=x+4$，會變成？"
+          ],
+          "say": "試一題：把剩下的 x 也換掉。"
+        }
       ],
-      "key": "剩下的 $x$ 用 $u$ 反解出來",
       "check": 0
     },
     {
-      "title": "令 $u$ 等於根號",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int\\frac{\\sqrt{x}}{1+x}\\,dx$"],
-          "note": "找不到哪一層的導數在場。",
-          "say": "這一題找不到哪一層的導數在場。卡住的原因，就是根號本身。",
+        {
+          "show": [
+            "接著積：",
+            "$\\int\\big(u^{1/2}-4u^{-1/2}\\big)\\,du=\\frac23u^{3/2}-8u^{1/2}+C$"
+          ],
+          "say": "接下來拆成兩項冪次：u 的 2 分之 1 次方，減 4 倍 u 的負 2 分之 1 次方，積出來就是答案。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{ {{r:\\sqrt{x} }} }{1+x}\\,dx$"},
-            {"do":"focus","term":"r","label":"卡住的地方","on":"卡住"}
-          ] },
-        { "show": ["令 $u=\\sqrt{x}$：$x=u^2$"],
-          "say": "那就直接令 u 等於根號 x，反過來 x 等於 u 平方。",
+            {
+              "do": "write",
+              "line": "接著積："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\big(u^{1/2}-4u^{-1/2}\\big)\\,du=\\frac23u^{3/2}-8u^{1/2}+C$",
+              "on": "的負"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$=\\frac23(x+4)^{3/2}-8\\sqrt{x+4}+C$"
+          ],
+          "say": "換回 x：3 分之 2 倍的 x 加 4 的 2 分之 3 次方，減 8 倍根號 x 加 4。",
           "board": [
-            {"do":"write","line":"$u={{r:\\sqrt{x} }}$"},
-            {"do":"write","line":"$x={{s:u^2}}$","on":"反過來"}
-          ] },
-        { "show": ["$x=u^2$：$u^2$ 的導數是 $2u$","$dx=2u\\,du$"],
-          "note": "兩邊微分：左邊 $dx$，右邊 $2u\\,du$。",
-          "say": "微分就是求導數。u 平方的導數是二 u，所以 x 微分是 dx，右邊是二 u 乘 du。這就是 dx 等於二 u du。",
+            {
+              "do": "write",
+              "line": "${{bx3:\\displaystyle =\\frac23(x+4)^{3/2}-8\\sqrt{x+4}+C}}$"
+            },
+            {
+              "do": "box",
+              "term": "bx3",
+              "on": "分之#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "反解：從 $u=g(x)$ 解出 $x$，剩下的 $x$ 就能換掉"
+          ],
+          "say": "這一招叫反解：從 u 等於 g of x 把 x 解出來，剩下的 x 就能全部換成 u。",
           "board": [
-            {"do":"write","line":"$x={{s:u^2}}$"},
-            {"do":"write","line":"$({{s:u^2}})'=2u$","on":"導數#1"},
-            {"do":"write","line":"$dx={{t:2u\\,du}}$","on":"所以 x 微分"},
-            {"do":"box","term":"t","color":"green","on":"二 u#2"}
-          ] },
-        { "show": ["$dx=2u\\,du$"],
-          "note": "$dx$ 也要換，不能只換根號。",
-          "say": "dx 也要跟著換：x 等於 u 平方，微分得 dx 等於二 u du。",
+            {
+              "do": "write",
+              "line": "反解：從 $u=g(x)$ 解出 $x$，剩下的 $x$ 就能換掉",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "令 $u$ 等於整個根號",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\frac{\\sqrt x}{1+x}\\,dx$"
+          ],
+          "say": "第二招。看 1 加 x 分之根號 x。令 u 等於 1 加 x？分子的根號 x 還是卡著。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"${{d:dx}}$ 也要跟著換","on":"dx#1"},
-            {"do":"underline","term":"d","label":"別漏掉","on":"跟著換"},
-            {"do":"write","line":"$x=u^2$，兩邊微分","on":"微分得"}
-          ] }
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{\\sqrt x}{1+x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "令 $u=\\sqrt x$：$x=u^2$，$dx=2u\\,du$"
+          ],
+          "say": "換個想法：直接令 u 等於整個根號，根號 x。那麼 x 就是 u 平方，d x 是 2u d u。連 d x 都一起換掉。",
+          "board": [
+            {
+              "do": "write",
+              "line": "令 $u=\\sqrt x$：$x=u^2$，$dx=2u\\,du$",
+              "color": "gold"
+            },
+            {
+              "do": "write",
+              "line": "　從 $x=u^2$ 對 $u$ 微分：$\\frac{dx}{du}=2u$",
+              "color": "violet",
+              "on": "平方"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\frac{u}{1+u^2}\\cdot2u\\,du=2\\int\\frac{u^2}{1+u^2}\\,du$"
+          ],
+          "say": "換進去：根號 x 變成 u，1 加 x 變成 1 加 u 平方，再乘上 2u d u。根號完全不見了，變成有理函數。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{u}{1+u^2}\\cdot2u\\,du=2\\int\\frac{u^2}{1+u^2}\\,du$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "分子比分母：拆成 $1-\\dfrac{1}{1+u^2}$",
+            "$2\\int\\Big(1-\\frac1{1+u^2}\\Big)du=2u-2\\arctan u+C$"
+          ],
+          "say": "分子 u 平方，等於分母減 1，所以拆成 1 減 1 加 u 平方分之 1。積出來是 2u 減 2 倍反正切 u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "分子比分母：拆成 $1-\\dfrac{1}{1+u^2}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle 2\\int\\Big(1-\\frac1{1+u^2}\\Big)du=2u-2\\arctan u+C$",
+              "on": "平方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\frac{\\sqrt x}{1+x}\\,dx=2\\sqrt x-2\\arctan\\sqrt x+C$"
+          ],
+          "say": "換回 x：2 倍根號 x，減 2 倍反正切根號 x。",
+          "board": [
+            {
+              "do": "write",
+              "line": "${{bx4:\\displaystyle \\int\\frac{\\sqrt x}{1+x}\\,dx=2\\sqrt x-2\\arctan\\sqrt x+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx4",
+              "color": "red",
+              "on": "倍反"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\sqrt{ax+b}$ 一樣：令 $u=\\sqrt{ax+b}$",
+            "$x=\\frac{u^2-b}{a},\\qquad dx=\\frac{2u}{a}\\,du$"
+          ],
+          "say": "根號 a x 加 b 也一樣：令 u 等於整個根號，反解 x，d x 是 a 分之 2u d u。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$\\sqrt{ax+b}$ 一樣：令 $u=\\sqrt{ax+b}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle x=\\frac{u^2-b}{a},\\qquad dx=\\frac{2u}{a}\\,du$",
+              "on": "反解"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "試一題",
+      "beats": [
+        {
+          "show": [
+            "$\\displaystyle\\int\\frac{1}{1+\\sqrt x}\\,dx=$？"
+          ],
+          "say": "試一題：令 u 等於根號 x，d x 也要換。"
+        }
       ],
       "check": 1
     },
     {
-      "title": "變成有理函數",
+      "title": "試一題",
       "beats": [
-        { "show": ["$\\int\\frac{u}{1+u^2}\\cdot 2u\\,du=\\int\\frac{2u^2}{1+u^2}\\,du$"],
-          "note": "根號整個消失了。",
-          "say": "全部換掉，根號整個消失，剩下一個有理函數。",
+        {
+          "show": [
+            "令 $u=$ 整個根號的好處：根號消失，剩下有理函數"
+          ],
+          "say": "這一招的好處是：根號整個消失，剩下的是有理函數，通常可以用除法或拆項處理。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{u}{1+u^2}\\cdot 2u\\,du$"},
-            {"do":"transform","line":"$=\\int\\frac{ {{n:2u^2}} }{ {{dn:1+u^2}} }\\,du$","on":"剩下一個"}
-          ] },
-        { "show": ["$\\frac{2u^2}{1+u^2}=2-\\frac{2}{1+u^2}$"],
-          "note": "分子寫成 $2(1+u^2)-2$。",
-          "say": "分子湊出分母：二 u 平方寫成二倍一加 u 平方再減二，拆成兩項。",
+            {
+              "do": "write",
+              "line": "令 $u=$ 整個根號的好處：根號消失，剩下有理函數",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "show": [
+            "代價：$dx$ 要跟著換成 $2u\\,du$，不能只換根號"
+          ],
+          "say": "代價是 d x 一定要跟著換。最常見的錯誤，就是只把根號換成 u，忘了 d x 是 2u d u。",
           "board": [
-            {"do":"write","line":"${{n:2u^2}}=2({{dn:1+u^2}})-2$"},
-            {"do":"underline","term":"dn","label":"湊出分母","on":"湊出"},
-            {"do":"write","line":"$\\frac{2u^2}{1+u^2}=2-\\frac{2}{1+u^2}$","on":"拆成"}
-          ] },
-        { "show": ["$\\frac{d}{dx}\\arctan x=\\frac{1}{1+x^2}$"],
-          "note": "arctan 是 tan 的反函數。",
-          "say": "arctangent 是 tangent 的反函數，它的導數是一加 u 平方分之一。反過來積分，就得到它。",
+            {
+              "do": "write",
+              "line": "代價：$dx$ 要跟著換成 $2u\\,du$，不能只換根號",
+              "color": "red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "先變形，$u$ 才會出現",
+      "beats": [
+        {
+          "show": [
+            "$\\int\\frac{1}{1+e^x}\\,dx$"
+          ],
+          "say": "第三招。看 1 加 e 的 x 次方分之 1。令 u 等於分母，d u 是 e 的 x 次方 d x，可是分子只有 1，對不上。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\frac{d}{du}{{a:\\arctan u}}=\\frac{1}{1+u^2}$","on":"arctangent"},
-            {"do":"underline","term":"a","label":"tan 的反函數","on":"反函數"}
-          ] },
-        { "show": ["$\\int\\frac{2}{1+u^2}\\,du=2\\arctan u$"],
-          "note": "常數 2 提出來。",
-          "say": "二是常數，可以提到積分外面，剩下一加 u 平方分之一，積出來是 arctangent u。",
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\int\\frac{1}{1+e^x}\\,dx$"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法一：先拆項（分子加一減一）",
+            "$\\frac1{1+e^x}=\\frac{(1+e^x)-e^x}{1+e^x}=1-\\frac{e^x}{1+e^x}$"
+          ],
+          "say": "做法一，先拆項：分子寫成 1 加 e 的 x 次方，再減 e 的 x 次方。拆開以後，第二項是分母的導數除以分母。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{2}{1+u^2}\\,du=2\\int\\frac{1}{1+u^2}\\,du$"},
-            {"do":"write","line":"$=2\\arctan u+C$","on":"積出來"}
-          ] },
-        { "show": ["積分：$2u-2\\arctan u+C$"],
-          "say": "第一項積出二 u，第二項是 arctangent。",
+            {
+              "do": "write",
+              "line": "做法一：先拆項（分子加一減一）"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{1+e^x}=\\frac{(1+e^x)-e^x}{1+e^x}=1-\\frac{e^x}{1+e^x}$",
+              "on": "次方#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$\\int\\frac{dx}{1+e^x}=x-\\ln(1+e^x)+C$"
+          ],
+          "say": "第一項積成 x，第二項是 u 分之 u prime 的形狀，積成自然對數。答案是 x 減自然對數 1 加 e 的 x 次方。",
           "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$\\int 2\\,du={{a:2u}}$","on":"第一項"},
-            {"do":"write","line":"$\\int\\frac{2}{1+u^2}\\,du=2\\arctan u$","on":"第二項"}
-          ] }
+            {
+              "do": "write",
+              "line": "${{bx5:\\displaystyle \\int\\frac{dx}{1+e^x}=x-\\ln(1+e^x)+C}}$",
+              "color": "red"
+            },
+            {
+              "do": "box",
+              "term": "bx5",
+              "color": "red",
+              "on": "成自"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做法二：同乘 $e^{-x}$",
+            "$\\frac1{1+e^x}=\\frac{e^{-x}}{e^{-x}+1}$"
+          ],
+          "say": "做法二：分子分母同乘 e 的負 x 次方。分母變成 e 的負 x 次方加 1。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做法二：同乘 $e^{-x}$"
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle \\frac1{1+e^x}=\\frac{e^{-x}}{e^{-x}+1}$",
+              "on": "分母#2"
+            }
+          ]
+        },
+        {
+          "show": [
+            "$u=e^{-x}+1$，$du=-e^{-x}\\,dx$：",
+            "$\\int\\frac{e^{-x}}{e^{-x}+1}\\,dx=-\\ln(1+e^{-x})+C$"
+          ],
+          "say": "現在分子差一個負號，就是分母的導數。令 u 等於分母，答案是負的自然對數 1 加 e 的負 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "$u=e^{-x}+1$，$du=-e^{-x}\\,dx$："
+            },
+            {
+              "do": "write",
+              "line": "${{bx6:\\displaystyle \\int\\frac{e^{-x}}{e^{-x}+1}\\,dx=-\\ln(1+e^{-x})+C}}$",
+              "on": "等於"
+            },
+            {
+              "do": "box",
+              "term": "bx6",
+              "on": "對數"
+            }
+          ]
+        },
+        {
+          "show": [
+            "兩個答案相等：",
+            "$-\\ln(1+e^{-x})=-\\ln\\frac{e^x+1}{e^x}=x-\\ln(1+e^x)$"
+          ],
+          "say": "兩個答案一樣嗎？把 1 加 e 的負 x 次方通分，取對數，正好是 x 減自然對數 1 加 e 的 x 次方。",
+          "board": [
+            {
+              "do": "write",
+              "line": "兩個答案相等："
+            },
+            {
+              "do": "write",
+              "line": "$\\displaystyle -\\ln(1+e^{-x})=-\\ln\\frac{e^x+1}{e^x}=x-\\ln(1+e^x)$",
+              "on": "對數#1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "什麼時候想到這些",
+      "beats": [
+        {
+          "show": [
+            "• 換完剩 $x$：從 $u=g(x)$ 反解 $x$",
+            "• 根號卡住：令 $u$ 等於整個根號，$dx$ 一起換"
+          ],
+          "say": "整理成一張判斷表：換完剩 x，就反解；根號卡住，就令 u 等於整個根號；形狀對不上，就先變形，例如拆項或同乘一個東西。",
+          "board": [
+            {
+              "do": "write",
+              "line": "• 換完剩 $x$：從 $u=g(x)$ 反解 $x$"
+            },
+            {
+              "do": "write",
+              "line": "• 根號卡住：令 $u$ 等於整個根號，$dx$ 一起換",
+              "on": "根號#1"
+            },
+            {
+              "do": "write",
+              "line": "• 形狀對不上：先變形（拆項、同乘、通分）",
+              "on": "不上"
+            }
+          ]
+        },
+        {
+          "show": [
+            "做完一律微分檢查"
+          ],
+          "say": "這些招數比較繞，所以做完更要微分檢查。",
+          "board": [
+            {
+              "do": "write",
+              "line": "做完一律微分檢查",
+              "color": "gold"
+            }
+          ]
+        }
       ],
-      "key": "分子寫成 $2(1+u^2)-2$ 再拆開",
       "predict": {
-        "ask": "換回 $x$ 是？",
+        "ask": "$\\displaystyle\\int x^3\\sqrt{x^2+1}\\,dx$，令 $u=x^2+1$，會變成？",
         "options": [
           {
-            "label": "$2\\sqrt{x}-2\\arctan\\sqrt{x}+C$",
+            "label": "$\\displaystyle\\frac12\\int(u-1)\\sqrt u\\,du$",
             "correct": true
           },
           {
-            "label": "$2x-2\\arctan x+C$",
-            "why": "$u=\\sqrt{x}$，換回時是 $\\sqrt{x}$，不是 $x$。"
+            "label": "$\\displaystyle\\int(u-1)\\sqrt u\\,du$",
+            "why": "忘了 $x\\,dx=\\frac12\\,du$ 的 $\\frac12$"
           },
           {
-            "label": "$2u-2\\arctan u+C$",
-            "why": "答案要用 $x$ 寫：把 $u$ 換回 $\\sqrt{x}$。"
+            "label": "$\\displaystyle\\frac12\\int x^2\\sqrt u\\,du$",
+            "why": "還剩 $x^2$：反解 $x^2=u-1$"
+          },
+          {
+            "label": "$\\displaystyle\\frac12\\int(u+1)\\sqrt u\\,du$",
+            "why": "反解反了號：$x^2=u-1$"
           }
         ]
       }
     },
     {
-      "title": "先變形，$u$ 才出現",
+      "title": "重點整理",
       "beats": [
-        { "show": ["$\\int\\frac{dx}{1+e^x}$"],
-          "note": "$u=1+e^x$ 時 $du=e^x\\,dx$，分子是 $1$，配不起來。",
-          "say": "這一題直接令 u 等於一加 e 的 x 次方，du 需要 e 的 x 次方，分子卻只有一。",
+        {
+          "show": [
+            "• 剩下的 $x$：反解 $x=g^{-1}(u)$，全部換成 $u$",
+            "• 根號卡住：令 $u=\\sqrt{\\cdots}$，$x=$ 用 $u$ 表示，$dx$ 一起換"
+          ],
+          "say": "整理一下：剩下的 x 就反解；根號卡住就令 u 等於整個根號，d x 一起換；形狀對不上就先變形。做法不只一種，答案只差常數。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{ {{one:1}} }{1+e^x}\\,dx$"},
-            {"do":"write","line":"$u=1+e^x$，$du={{d:e^x}}\\,dx$","on":"令 u"},
-            {"do":"focus","term":"one","label":"只有 1","on":"分子卻"}
-          ] },
-        { "show": ["同乘 $e^{-x}$：$\\frac{e^{-x}}{e^{-x}+1}$"],
-          "note": "分子是分母的導數乘上 $-1$。",
-          "say": "先變形：分子分母同乘 e 的負 x 次方，分子就變成分母的導數，只差一個負號。",
+            {
+              "do": "write",
+              "line": "• 剩下的 $x$：反解 $x=g^{-1}(u)$，全部換成 $u$"
+            },
+            {
+              "do": "write",
+              "line": "• 根號卡住：令 $u=\\sqrt{\\cdots}$，$x=$ 用 $u$ 表示，$dx$ 一起換",
+              "on": "根號#1"
+            },
+            {
+              "do": "write",
+              "line": "• 形狀對不上：先變形，例如拆項、同乘 $e^{-x}$",
+              "on": "一起"
+            },
+            {
+              "do": "write",
+              "line": "• 同一題常有多種做法，答案只差常數",
+              "on": "做法"
+            }
+          ]
+        },
+        {
+          "show": [
+            "下一課：分部積分"
+          ],
+          "say": "換元是連鎖律倒過來。下一課，把乘積法則倒過來，就是分部積分。",
           "board": [
-            {"do":"write","line":"$\\int\\frac{ {{n:e^{-x} }} }{ {{dn:e^{-x}+1}} }\\,dx$"},
-            {"do":"write","line":"$({{dn:e^{-x}+1}})'=-e^{-x}$","on":"導數"},
-            {"do":"underline","term":"n","label":"差負號","on":"只差"}
-          ] },
-        { "show": ["$(e^{x})'=e^{x}$","$(e^{-x})'=-e^{-x}$"],
-          "note": "$e^{-x}$ 是 $e^{u}$，$u=-x$。",
-          "say": "e 的 x 次方的導數還是自己。e 的負 x 次方用連鎖律，外層不變，再乘裡層負 x 的導數負一，所以多一個負號。",
-          "board": [
-            {"do":"write","line":"$(e^{x})'=e^{x}$"},
-            {"do":"write","line":"$(e^{ {{m:-x}} })'=e^{-x}\\cdot(-x)'$","on":"連鎖律"},
-            {"do":"write","line":"$=-e^{-x}$","on":"多一個"}
-          ] },
-        { "show": ["或拆項：$1-\\frac{e^x}{1+e^x}$"],
-          "note": "答案 $x-\\ln(1+e^x)+C$。",
-          "say": "另一種：分子拆成一加 e 的 x 次方減 e 的 x 次方，第二項就是分子是分母的導數。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"$1=(1+e^x)-e^x$","on":"分子拆成"},
-            {"do":"write","line":"$\\frac{1}{1+e^x}=1-\\frac{ {{q:e^x}} }{1+e^x}$","on":"第二項"},
-            {"do":"underline","term":"q","color":"blue","label":"分母導數","on":"分子是分母"}
-          ] },
-        { "show": ["令 $u=1+e^x$，$du=e^x\\,dx$","$\\int\\frac{du}{u}=\\ln(1+e^x)$"],
-          "note": "$1+e^x>0$，不用絕對值。",
-          "say": "積第二項：令 u 等於一加 e 的 x 次方，du 剛好是分子加 dx，得到 ln u。所以整題是 x 減 ln u，再加 C。",
-          "board": [
-            {"do":"write","line":"$\\int\\frac{e^x}{1+e^x}\\,dx=\\int\\frac{ {{d:du}} }{u}$"},
-            {"do":"write","line":"$=\\ln(1+e^x)$","on":"得到"},
-            {"do":"write","line":"$\\int\\frac{dx}{1+e^x}=x-\\ln(1+e^x)+C$","on":"整題是"}
-          ] }
-      ],
-      "check": 2
-    },
-    {
-      "title": "什麼時候想到",
-      "beats": [
-        { "show": ["剩下 $x$ → 反解 $x$","根號裡是一次式 → $u$ 等於根號"],
-          "say": "整理一下：換完剩下 x，就反解 x。根號卡住、根號裡是一次式，就令 u 等於根號。",
-          "board": [
-            {"do":"write","line":"剩下 $x$ → 反解 $x$"},
-            {"do":"write","line":"根號裡一次式 → $u=\\sqrt{ax+b}$","on":"根號卡住"}
-          ] },
-        { "show": ["$e^x$ 在分母、分子是常數","→ 同乘 $e^{-x}$ 或拆項"],
-          "say": "e 的 x 次方在分母、分子是常數，就同乘 e 的負 x 次方，或者拆項。",
-          "board": [
-            {"do":"write","line":"$e^x$ 在分母、分子是常數"},
-            {"do":"write","line":"→ 同乘 $e^{-x}$ 或拆項","on":"同乘"}
-          ] },
-        { "show": ["定積分：上下限也換成 $u$ 的值"],
-          "note": "反解時一樣。",
-          "say": "用在定積分時別忘了：換成 u 之後，上下限也要換成 u 的值。",
-          "board": [
-            {"do":"clear"},
-            {"do":"write","line":"定積分：上下限也換成 ${{uu:u}}$ 的值","on":"定積分"},
-            {"do":"focus","term":"uu","label":"換上下限","on":"上下限"}
-          ] }
-      ],
-      "check": 3
+            {
+              "do": "write",
+              "line": "下一課：分部積分"
+            }
+          ]
+        }
+      ]
     }
   ],
   "skillTags": {
-    "coarse": ["substitution", "u-sub", "radical", "exponential"],
-    "fine": ["u-sub-back-substitute", "u-sub-root-substitution", "u-sub-rewrite-first"]
+    "coarse": [
+      "substitution",
+      "u-sub",
+      "radical",
+      "exponential"
+    ],
+    "fine": [
+      "u-sub-back-substitute",
+      "u-sub-root-substitution",
+      "u-sub-rewrite-first"
+    ]
   },
   "practice": [
-    { "id": "lec-06-q3d", "core": true, "trains": "u-sub-back-substitute" },
-    { "id": "hc-usub-001", "core": true, "trains": "u-sub-back-substitute", "note": "$x^3\\,dx$ 拆成 $x^2\\cdot x\\,dx$，$x^2$ 用 $u$ 表示。" },
-    { "id": "hc-usub-008", "core": true, "trains": "u-sub-back-substitute" },
-    { "id": "int-019", "core": true, "trains": "u-sub-root-substitution" },
-    { "id": "exam-int-019", "core": true, "trains": "u-sub-root-substitution" },
-    { "id": "cg-4c-010", "core": true, "trains": "u-sub-rewrite-first" },
-    { "id": "depth-int-010", "trains": "u-sub-root-substitution" },
-    { "id": "cg-4c-011", "trains": "u-sub-rewrite-first" },
-    { "id": "rel-adv-009", "challenge": true, "trains": "u-sub-back-substitute", "note": "挑戰：$u=x^2$ 之後還剩 $u e^u$，要接〈分部積分推導〉。" }
+    {
+      "id": "lec-06-q3d",
+      "core": true,
+      "trains": "u-sub-back-substitute"
+    },
+    {
+      "id": "hc-usub-001",
+      "core": true,
+      "trains": "u-sub-back-substitute",
+      "note": "$x^3\\,dx$ 拆成 $x^2\\cdot x\\,dx$，$x^2$ 用 $u$ 表示。"
+    },
+    {
+      "id": "hc-usub-008",
+      "core": true,
+      "trains": "u-sub-back-substitute"
+    },
+    {
+      "id": "int-019",
+      "core": true,
+      "trains": "u-sub-root-substitution"
+    },
+    {
+      "id": "exam-int-019",
+      "core": true,
+      "trains": "u-sub-root-substitution"
+    },
+    {
+      "id": "cg-4c-010",
+      "core": true,
+      "trains": "u-sub-rewrite-first"
+    },
+    {
+      "id": "depth-int-010",
+      "trains": "u-sub-root-substitution"
+    },
+    {
+      "id": "cg-4c-011",
+      "trains": "u-sub-rewrite-first"
+    },
+    {
+      "id": "rel-adv-009",
+      "challenge": true,
+      "trains": "u-sub-back-substitute",
+      "note": "挑戰：$u=x^2$ 之後還剩 $u e^u$，要接〈分部積分推導〉。"
+    }
   ],
   "gaps": []
 }

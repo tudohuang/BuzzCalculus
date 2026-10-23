@@ -1,0 +1,597 @@
+{
+  "id": "basel-problem",
+  "title": "Basel 問題",
+  "readMinutes": 13,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "p-series",
+    "maclaurin-series",
+    "squeeze-theorem",
+    "partial-fractions-linear"
+  ],
+  "next": [
+    "complex-numbers"
+  ],
+  "related": [
+    "euler-formula",
+    "residue-theorem",
+    "euler-maclaurin-intro",
+    "gamma-scaled"
+  ],
+  "objectives": [
+    "說得出 Euler 的論證（把 $\\frac{\\sin x}{x}$ 當成無窮次多項式分解），並說清楚它是直覺、漏了什麼。",
+    "從 $\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$ 推出奇數項和 $\\frac{\\pi^2}{8}$、交錯和 $\\frac{\\pi^2}{12}$。",
+    "把級數與積分互換，算出 $\\int_0^{\\infty}\\frac{x}{e^x-1}\\,dx$、$\\int_0^1\\frac{\\ln(1+x)}{x}\\,dx$ 這類積分，並說出交換的理由。"
+  ],
+  "visual": "部分和 Sₙ = Σ_{k≤n} 1/k² 的點列慢慢爬向水平線 π²/6 ≈ 1.6449；旁邊用顏色標出奇數項的部分和爬向 π²/8、偶數項爬向 π²/24，兩者相加正好是總和。",
+  "concept": [
+    {
+      "heading": "① 問題",
+      "body": [
+        "〈p 級數〉說 $\\sum\\frac{1}{n^2}$ 收斂（$p=2>1$），但收斂到多少？部分和 $1+\\frac{1}{4}+\\frac{1}{9}+\\cdots$ 收斂得很慢，加一萬項還差約 $10^{-4}$。答案是 $\\frac{\\pi^2}{6}$，一個圓周率出現在只有整數的級數裡。"
+      ],
+      "tex": [
+        "\\sum_{n=1}^{\\infty}\\frac{1}{n^{2}}=\\frac{\\pi^{2}}{6}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② Euler 的論證（直覺，不是證明）",
+      "body": [
+        "多項式可以用根分解。$\\frac{\\sin x}{x}$ 的根是 $x=\\pm\\pi,\\pm 2\\pi,\\pm 3\\pi,\\dots$，而且在 $x=0$ 的值是 $1$。Euler 大膽假設它可以像多項式一樣寫成 $\\left(1-\\frac{x^2}{\\pi^2}\\right)\\left(1-\\frac{x^2}{4\\pi^2}\\right)\\left(1-\\frac{x^2}{9\\pi^2}\\right)\\cdots$。",
+        "比較 $x^2$ 的係數：右邊乘開，$x^2$ 項是 $-\\frac{1}{\\pi^2}\\left(1+\\frac{1}{4}+\\frac{1}{9}+\\cdots\\right)$；左邊由 Maclaurin 級數 $\\frac{\\sin x}{x}=1-\\frac{x^2}{6}+\\cdots$ 得 $-\\frac{1}{6}$。兩邊相等就得到 $\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$。",
+        "漏掉的是：無窮乘積是否收斂、是否真的等於 $\\frac{\\sin x}{x}$（例如乘上 $e^{x}$ 這種沒有根的因子，根完全不變），以及能不能逐項比較係數。這些都要複變的工具才能補齊。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "一個初等的嚴格證明（Cauchy）",
+      "body": [
+        "$0<x<\\frac{\\pi}{2}$ 時 $\\sin x<x<\\tan x$，所以 $\\cot^2 x<\\frac{1}{x^2}<1+\\cot^2 x$。取 $x=\\frac{k\\pi}{2m+1}$，$k=1,\\dots,m$，相加。",
+        "需要一個恆等式：$\\sum_{k=1}^m\\cot^2\\frac{k\\pi}{2m+1}=\\frac{m(2m-1)}{3}$。令 $n=2m+1$，棣美弗 $(\\cos\\theta+i\\sin\\theta)^n=\\cos n\\theta+i\\sin n\\theta$ 取虛部：$\\sin n\\theta=\\sum_{j=0}^{m}(-1)^j\\binom{n}{2j+1}\\cos^{n-2j-1}\\theta\\sin^{2j+1}\\theta$。除以 $\\sin^n\\theta$ 得 $\\frac{\\sin n\\theta}{\\sin^n\\theta}=\\sum_{j}(-1)^j\\binom{n}{2j+1}\\cot^{2(m-j)}\\theta$。$\\theta_k=\\frac{k\\pi}{n}$（$k=1,\\dots,m$）讓左邊是 $0$，所以 $x_k=\\cot^2\\theta_k$ 是 $p(x)=\\binom{n}{1}x^m-\\binom{n}{3}x^{m-1}+\\cdots$ 的根；$\\theta_k$ 在 $(0,\\frac{\\pi}{2})$ 裡、$\\cot^2$ 嚴格遞減，$m$ 個值互不相同，就是全部的根。根與係數：$\\sum x_k=\\frac{\\binom{n}{3}}{\\binom{n}{1}}=\\frac{m(2m-1)}{3}$。",
+        "得 $\\frac{m(2m-1)}{3}<\\left(\\frac{2m+1}{\\pi}\\right)^2\\sum_{k\\le m}\\frac{1}{k^2}<m+\\frac{m(2m-1)}{3}$。乘上 $\\frac{\\pi^2}{(2m+1)^2}$ 後兩邊都 $\\to\\frac{\\pi^2}{6}$，由夾擠定理得證。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 一個值，推出一串",
+      "body": [
+        "偶數項：$\\sum\\frac{1}{(2n)^2}=\\frac{1}{4}\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{24}$。",
+        "奇數項：$\\frac{\\pi^2}{6}-\\frac{\\pi^2}{24}=\\frac{\\pi^2}{8}$。",
+        "交錯：$\\sum\\frac{(-1)^{n+1}}{n^2}=$ 奇數項 $-$ 偶數項 $=\\frac{\\pi^2}{8}-\\frac{\\pi^2}{24}=\\frac{\\pi^2}{12}$。（這些重組合法，因為級數絕對收斂。）"
+      ],
+      "collapsible": false
+    }
+  ],
+  "sections": [
+    {
+      "title": "問題與 Euler 的直覺",
+      "beats": [
+        { "show": ["$1+\\frac{1}{4}+\\frac{1}{9}+\\cdots$ 收斂到多少？"],
+          "note": "$p=2>1$，收斂，但收斂得很慢。",
+          "say": "平方的倒數加起來，p 級數告訴我們會收斂。可是收斂到多少？加了很多項還是差一點點。",
+          "board": [
+            {"do":"write","line":"${{s:\\sum_{n=1}^{\\infty}\\frac{1}{n^2}}}=\\,?$"},
+            {"do":"underline","term":"s","label":"收斂","on":"p 級數"}
+          ] },
+        { "show": ["$\\frac{\\sin x}{x}$ 的根：$\\pm\\pi,\\pm 2\\pi,\\pm 3\\pi,\\dots$"],
+          "note": "在 $x=0$ 的值是 $1$。",
+          "say": "Euler 的想法：多項式可以用根分解。sine x 除以 x 的根是正負派、正負二派、正負三派。",
+          "board": [
+            {"do":"write","line":"多項式 ＝ 用根分解"},
+            {"do":"write","line":"${{f:\\frac{\\sin x}{x}}}$ 的根：$\\pm\\pi,\\pm2\\pi,\\pm3\\pi$","on":"sine x 除以"}
+          ] },
+        { "show": ["$\\left(1-\\frac{x^2}{\\pi^2}\\right)\\left(1-\\frac{x^2}{4\\pi^2}\\right)\\cdots$"],
+          "say": "他大膽假設它可以像多項式一樣，寫成這樣一串因子相乘，每一個因子對應一對根。",
+          "board": [
+            {"do":"transform","line":"${{f:\\frac{\\sin x}{x}}}={{p1:(1-\\frac{x^2}{\\pi^2})}}{{p2:(1-\\frac{x^2}{4\\pi^2})}}\\cdots$"},
+            {"do":"underline","term":"p1","label":"一對根","on":"每一個因子"}
+          ] },
+        { "show": ["右邊 $x^2$ 係數：$-\\frac{1}{\\pi^2}\\left(1+\\frac{1}{4}+\\frac{1}{9}+\\cdots\\right)$"],
+          "say": "乘開來看 x 平方的係數：每個因子各貢獻一項，加起來正好藏著我們要的級數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"乘開：$x^2$ 的係數","on":"乘開來看"},
+            {"do":"write","line":"$=-\\frac{1}{\\pi^2}{{s:\\left(1+\\frac{1}{4}+\\frac{1}{9}+\\cdots\\right)}}$","on":"每個因子"},
+            {"do":"underline","term":"s","label":"要的級數","on":"藏著"}
+          ] },
+        { "show": ["$\\sum_{n=1}^{\\infty}\\frac{1}{n^{2}}=\\frac{\\pi^{2}}{6}$"],
+          "note": "兩邊的 $x^2$ 係數相等。",
+          "say": "兩邊的 x 平方係數一相等，就得到六分之派平方。圓周率出現在只有整數的級數裡。",
+          "board": [
+            {"do":"write","line":"兩邊 $x^2$ 係數相等"},
+            {"do":"write","line":"$\\sum_{n=1}^{\\infty}\\frac{1}{n^2}={{r:\\frac{\\pi^2}{6}}}$","on":"就得到"},
+            {"do":"box","term":"r","color":"green","on":"圓周率"}
+          ] },
+        { "show": ["乘積收斂嗎？真的等於 $\\frac{\\sin x}{x}$ 嗎？能逐項比係數嗎？"],
+          "note": "乘上 $e^{x}$，根完全不變；這些要複變的工具才補得齊。初等的嚴格證明在後面兩節。",
+          "say": "漏洞不少：乘積收不收斂？真的等於它嗎？乘上 e 的 x 次方根都不變。嚴格證明在後面兩節。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{e:e^{x}}}\\cdot\\frac{\\sin x}{x}$ 的根也一樣","on":"乘上"},
+            {"do":"write","line":"嚴格證明：後面兩節","on":"嚴格證明"}
+          ] }
+      ],
+      "check": 2
+    },
+    {
+      "title": "證明：cot² 恆等式",
+      "beats": [
+        { "show": ["把 $m$ 個 $\\cot^2$ 變成多項式的根"],
+          "say": "策略：讓這 m 個 cotangent 平方，變成同一個多項式的 m 個根。根的和，就能從係數讀出來。",
+          "board": [
+            {"do":"write","line":"目標：$\\sum_{k=1}^{m}\\cot^2\\frac{k\\pi}{2m+1}={{g:\\frac{m(2m-1)}{3}}}$"},
+            {"do":"box","term":"g","label":"要證","on":"根的和"},
+            {"do":"write","line":"$m$ 個值 $\\to$ 一個多項式的根","on":"從係數"}
+          ] },
+        { "show": ["$n=2m+1$，棣美弗"],
+          "say": "令 n 等於二 m 加一，用棣美弗：cos 加 i sin 的 n 次方，等於 cos n theta 加 i sin n theta。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"${{n:n=2m+1}}$","on":"令 n"},
+            {"do":"write","line":"$({{c:\\cos\\theta}}+i{{s:\\sin\\theta}})^n=\\cos n\\theta+i\\,{{im:\\sin n\\theta}}$","tint":{"c":"blue","s":"violet"},"on":"棣美弗"},
+            {"do":"underline","term":"im","label":"虛部","on":"i sin n theta"}
+          ] },
+        { "show": ["虛部只收 $\\sin\\theta$ 的奇數次方"],
+          "note": "$i$ 的偶數次方是實數、奇數次方是虛數。",
+          "why": {"ask":"為什麼只剩奇數次方？","say":"左邊用二項式展開。為什麼虛部只留下 sin 的奇數次方那幾項？","options":[{"label":"$i$ 的奇數次方是虛數","correct":true},{"label":"$\\sin$ 是奇函數","why":"奇偶性講的是 $\\theta$ 換成 $-\\theta$；決定實部、虛部的是 $i$ 的次方。"},{"label":"$\\cos$ 的次方要是偶數","why":"$\\cos$ 的次方跟著 $\\sin$ 的次方走；挑出虛部的是 $i$ 的次方。"}]},
+          "say": "展開以後 sin 的次方帶著 i 的同樣次方，i 的奇數次方才是虛數，所以虛部只收奇數次，還多一個正負號。",
+          "board": [
+            {"do":"write","line":"${{im:\\sin n\\theta}}=\\sum_{j=0}^{m}(-1)^j\\binom{n}{2j+1}$","on":"左邊用二項式"},
+            {"do":"write","line":"$\\cdot\\,{{c:\\cos\\theta}}^{\\,n-2j-1}\\,{{s:\\sin\\theta}}^{\\,2j+1}$","on":"虛部只留下"},
+            {"do":"focus","term":"s","label":"奇數次","on":"奇數次方才是","why":true}
+          ] },
+        { "show": ["除以 $\\sin^n\\theta$：$\\cot$ 的偶數次方"],
+          "note": "$n-2j-1=2(m-j)$，次方都是偶數。",
+          "say": "兩邊除以 sin 的 n 次方。cos 跟分母的 sin 合成 cotangent，次方是二乘 m 減 j，全都是偶數次。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\div\\,\\sin^n\\theta$：$\\frac{\\sin n\\theta}{\\sin^n\\theta}$","on":"兩邊除以"},
+            {"do":"transform","line":"$=\\sum_{j=0}^{m}(-1)^j\\binom{n}{2j+1}{{ct:\\cot^{2(m-j)}\\theta}}$","on":"合成"},
+            {"do":"underline","term":"ct","label":"偶數次","on":"全都是偶數次"}
+          ] },
+        { "show": ["$x_k=\\cot^2\\frac{k\\pi}{n}$ 是 $p$ 的根"],
+          "note": "$\\theta_k\\in(0,\\frac{\\pi}{2})$，$m$ 個值互不相同。",
+          "why": {"ask":"為什麼就是全部的根？","say":"代進 k 派除以 n，左邊等於零。可是為什麼這 m 個 cotangent 平方，剛好就是 p 的全部的根？","options":[{"label":"$m$ 個值互不相同（$\\cot^2$ 遞減）","correct":true},{"label":"$\\sin n\\theta=0$ 的解有無限多","why":"解是無限多個，但 $\\cot^2$ 的值只有 $m$ 種；要的是恰好 $m$ 個相異的根。"},{"label":"$p$ 的係數是整數","why":"整數係數跟根有幾個、是不是互不相同無關。"}]},
+          "say": "這 m 個角都在零到二分之派之間，cotangent 平方嚴格遞減，m 個值互不相同。m 次多項式就這 m 個根。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\theta_k=\\frac{k\\pi}{n}$：$\\sin n\\theta_k=\\sin k\\pi=0$","on":"代進"},
+            {"do":"write","line":"${{x:x_k=\\cot^2\\theta_k}}$ 是 $p(x)$ 的根","tint":{"x":"green"},"on":"剛好就是"},
+            {"do":"write","line":"$p(x)={{a:\\binom{n}{1}}}x^m-{{b:\\binom{n}{3}}}x^{m-1}+\\cdots$","on":"m 次多項式","why":true},
+            {"do":"focus","term":"x","label":"互不相同","on":"就這 m 個根","why":true}
+          ] },
+        { "show": ["根與係數：$\\sum x_k=\\frac{m(2m-1)}{3}$"],
+          "note": "$\\binom{n}{3}=\\frac{n(n-1)(n-2)}{6}$，$n=2m+1$。",
+          "why": {"ask":"為什麼是係數的比？","say":"最後一步：m 個根的和，為什麼是這兩個係數的比？","options":[{"label":"根與係數：根之和是係數比","correct":true},{"label":"每個 $\\theta_k$ 代進去算","why":"那是要證的東西本身；根與係數讓我們不用一個一個算。"},{"label":"$\\cot^2$ 平均約 $\\frac{m}{3}$","why":"大約給不出恆等式；平均值本身就是從這個和算出來的。"}]},
+          "say": "根與係數：根的和是 n 取三除以 n 取一。約掉二 m 加一，得到三分之 m 乘二 m 減一。證完。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sum x_k=\\frac{{{b:\\binom{n}{3}}}}{{{a:\\binom{n}{1}}}}$","on":"最後一步"},
+            {"do":"transform","line":"$=\\frac{(2m+1)(2m)(2m-1)}{6(2m+1)}$","on":"n 取三除以","why":true},
+            {"do":"transform","line":"$={{g:\\frac{m(2m-1)}{3}}}$","color":"green","on":"約掉","why":true},
+            {"do":"box","term":"g","color":"green","label":"證完","on":"得到","why":true}
+          ] }
+      ],
+      "proof": true,
+      "of": 2,
+      "skeleton": "構造",
+      "where": {
+        "ask": "哪一步要用到 $\\theta_k$ 都在 $(0,\\frac{\\pi}{2})$ 裡？",
+        "steps": [
+          {
+            "label": "棣美弗：取 $(\\cos\\theta+i\\sin\\theta)^n$ 的虛部",
+            "why": "對每一個 $\\theta$ 都成立，不需要 $\\theta$ 在哪裡。"
+          },
+          {
+            "label": "除以 $\\sin^n\\theta$，換成 $\\cot$ 的偶數次方",
+            "why": "只需要 $\\sin\\theta\\ne0$。"
+          },
+          {
+            "label": "$m$ 個 $\\cot^2\\theta_k$ 互不相同，正好是 $p$ 的根",
+            "correct": true
+          },
+          {
+            "label": "根與係數：根之和是兩個係數的比",
+            "why": "對任何多項式都成立，跟根怎麼來的無關。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "證明：夾出來",
+      "beats": [
+        { "show": ["把 $\\frac{1}{x^2}$ 夾在兩個 $\\cot^2$ 式子中間"],
+          "say": "策略：把 x 平方分之一夾在兩個 cotangent 平方的式子中間，取 m 個點加起來，再用夾擠定理。",
+          "board": [
+            {"do":"write","line":"把 $\\frac{1}{x^2}$ 夾在兩個 $\\cot^2$ 式子中間"},
+            {"do":"write","line":"取 $m$ 個點相加，再夾擠","on":"取 m 個點"}
+          ] },
+        { "show": ["$0<x<\\frac{\\pi}{2}$：$\\cot^2 x<\\frac{1}{x^2}<1+\\cot^2 x$"],
+          "note": "由 $\\sin x<x<\\tan x$ 取倒數再平方。",
+          "why": {"ask":"為什麼夾得住？","say":"x 平方分之一，為什麼一定夾在這兩個式子中間？","options":[{"label":"$\\sin x<x<\\tan x$，三者都正，取倒數再平方","correct":true},{"label":"$x$ 很小時 $\\sin x\\approx x$","why":"約等於只說差不多，給不出嚴格的 $<$；夾擠要的是區間裡每一個 $x$ 都成立的不等式。"},{"label":"$\\cot x$ 在 $(0,\\frac{\\pi}{2})$ 遞減","why":"遞減比的是不同點的 $\\cot$；這裡比的是同一個 $x$ 的 $\\frac{1}{x^2}$ 和 $\\cot^2 x$。"}]},
+          "say": "零到二分之派之間，sine x 小於 x 小於 tangent x，三個都是正的。取倒數再平方，就夾住了。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$0<x<\\frac{\\pi}{2}$：$\\cot^2 x<\\frac{1}{x^2}<1+\\cot^2 x$","on":"x 平方分之一"},
+            {"do":"write","line":"${{st:\\sin x<x<\\tan x}}$","on":"sine x 小於","why":true},
+            {"do":"underline","term":"st","label":"取倒數再平方","on":"取倒數","why":true}
+          ] },
+        { "show": ["倒"],
+          "say": "取倒數，不等號反向。再平方，sine 平方分之一通分拆開，就是一加 cotangent 平方。",
+          "board": [
+            {"do":"write","line":"$\\cot x<\\frac{1}{x}<\\frac{1}{\\sin x}$"},
+            {"do":"write","line":"$\\frac{1}{\\sin^2 x}=\\frac{\\sin^2 x+\\cos^2 x}{\\sin^2 x}$","on":"再平方"},
+            {"do":"write","line":"$=1+\\cot^2 x$","on":"就是一加"}
+          ] },
+        { "show": ["取 $x=\\frac{k\\pi}{2m+1}$，$k=1,\\dots,m$，相加"],
+          "note": "$k\\le m$，這些點都在 $(0,\\frac{\\pi}{2})$ 裡。",
+          "say": "取 x 等於 k 派除以二 m 加一，k 從一到 m，每一點都在零到二分之派之間，把 m 個不等式加起來。",
+          "board": [
+            {"do":"write","line":"取 $x=\\frac{k\\pi}{2m+1}$，$k=1,\\dots,m$，相加"}
+          ] },
+        { "show": ["$\\frac{m(2m-1)}{3}<\\left(\\frac{2m+1}{\\pi}\\right)^2\\sum_{k\\le m}\\frac{1}{k^2}$","$<m+\\frac{m(2m-1)}{3}$"],
+          "note": "$\\cot^2$ 的和換成上一節證的恆等式 $\\frac{m(2m-1)}{3}$。",
+          "why": {"ask":"$\\cot^2$ 的和從哪來？","say":"兩邊那一串 cotangent 平方的和，怎麼變成一個乾淨的式子？","options":[{"label":"恆等式，由 $(\\cos\\theta+i\\sin\\theta)^{2m+1}$ 的虛部展開","correct":true},{"label":"$\\cot^2 x\\approx\\frac{1}{x^2}$，直接換掉","why":"這樣就把要證的東西拿來用了；而且約等於不能放進嚴格的不等式。"},{"label":"每一項 $\\cot^2\\frac{k\\pi}{2m+1}<1$","why":"不對：$m$ 大時，$k=1$ 那一項的 $\\cot^2$ 遠大於 $1$。兩邊要的是和的確切值，不是每一項的上限。"}]},
+          "say": "cotangent 平方的和，用上一節證的恆等式：等於三分之 m 乘二 m 減一。兩邊都變成乾淨的式子。",
+          "board": [
+            {"do":"keep","n":1},
+            {"do":"write","line":"${{id:\\frac{m(2m-1)}{3}}}<\\left(\\frac{2m+1}{\\pi}\\right)^2\\sum_{k\\le m}\\frac{1}{k^2}$","on":"兩邊那一串"},
+            {"do":"write","line":"$<m+\\frac{m(2m-1)}{3}$","on":"乾淨的式子"},
+            {"do":"underline","term":"id","label":"恆等式","on":"上一節證的","why":true}
+          ] },
+        { "show": ["乘上 $\\frac{\\pi^2}{(2m+1)^2}$，兩邊都 $\\to\\frac{\\pi^2}{6}$"],
+          "note": "夾擠定理：中間的部分和也 $\\to\\frac{\\pi^2}{6}$。",
+          "say": "整串乘上二 m 加一平方分之派平方，m 趨近無限大時兩邊都趨近六分之派平方，中間被夾住。證完。",
+          "board": [
+            {"do":"write","line":"乘上 $\\frac{\\pi^2}{(2m+1)^2}$，兩邊都 $\\to\\frac{\\pi^2}{6}$","color":"green"}
+          ] }
+      ],
+      "key": "$\\cot^2$ 在等分點的和算得出來，兩邊夾",
+      "proof": true,
+      "of": 2,
+      "skeleton": "夾擠",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          {
+            "label": "$\\cot^2 x<\\frac{1}{x^2}<1+\\cot^2 x$"
+          },
+          {
+            "label": "取 $x=\\frac{k\\pi}{2m+1}$，$k=1,\\dots,m$，相加",
+            "why": "要先有對每一個 $x\\in(0,\\frac{\\pi}{2})$ 都成立的不等式，才能代點進去加。"
+          },
+          {
+            "label": "用恆等式換掉 $\\cot^2$ 的和",
+            "why": "要先把 $m$ 個不等式加起來，才有 $\\cot^2$ 的和可以換。"
+          },
+          {
+            "label": "乘上 $\\frac{\\pi^2}{(2m+1)^2}$，用夾擠定理",
+            "why": "要先有兩邊都只含 $m$ 的明確式子，才算得出它們的極限。"
+          }
+        ]
+      }
+    },
+    {
+      "title": "偶數項與奇數項",
+      "beats": [
+        { "show": ["偶數項：$\\sum\\frac{1}{(2n)^2}=\\frac{1}{4}\\sum\\frac{1}{n^2}$"],
+          "note": "$(2n)^2=4n^2$，是 $\\frac{1}{4}$ 不是 $\\frac{1}{2}$。",
+          "say": "一個值可以推出一串。偶數項的分母是四倍的 n 平方，所以是全部的四分之一。",
+          "board": [
+            {"do":"write","line":"偶數項：$\\sum\\frac{1}{(2n)^2}={{q:\\frac{1}{4}}}\\sum\\frac{1}{n^2}$"},
+            {"do":"underline","term":"q","label":"不是一半","on":"所以是全部"}
+          ] },
+        { "show": ["$=\\frac{\\pi^2}{24}$"],
+          "say": "六分之派平方乘四分之一，偶數項的和是二十四分之派平方。",
+          "board": [
+            {"do":"write","line":"偶數項 $=\\frac{\\pi^2}{6}\\cdot\\frac{1}{4}=\\frac{\\pi^2}{24}$"}
+          ] },
+        { "show": ["奇數項 $=$ 全部 $-$ 偶數項"],
+          "note": "級數絕對收斂，可以這樣重組。",
+          "say": "奇數項就是全部減掉偶數項。級數絕對收斂，這樣重組是合法的。",
+          "board": [
+            {"do":"write","line":"奇數項 $=$ 全部 $-$ 偶數項"},
+            {"do":"write","line":"絕對收斂：可以重組","on":"級數絕對收斂"}
+          ] }
+      ],
+      "check": 0
+    },
+    {
+      "title": "交錯和",
+      "beats": [
+        { "show": ["奇數項：$\\frac{\\pi^2}{6}-\\frac{\\pi^2}{24}=\\frac{\\pi^2}{8}$"],
+          "say": "六分之派平方減二十四分之派平方，奇數項的和是八分之派平方。",
+          "board": [
+            {"do":"write","line":"奇數項 $=\\frac{\\pi^2}{6}-\\frac{\\pi^2}{24}={{r:\\frac{\\pi^2}{8}}}$"},
+            {"do":"box","term":"r","color":"green","on":"奇數項的和"}
+          ] },
+        { "show": ["$\\sum\\frac{(-1)^{n+1}}{n^2}=$ 奇數項 $-$ 偶數項"],
+          "say": "正負交錯的版本：奇數項是正的，偶數項是負的，所以就是奇數項減偶數項。",
+          "board": [
+            {"do":"write","line":"${{a:\\sum\\frac{(-1)^{n+1}}{n^2}}}$ ＝ 奇數項 $-$ 偶數項"},
+            {"do":"underline","term":"a","label":"交錯和","on":"所以就是"}
+          ] }
+      ],
+      "check": 1
+    },
+    {
+      "title": "積分裡藏著 Basel",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\frac{x}{e^x-1}\\,dx$"],
+          "say": "交錯和是十二分之派平方。再看這個積分，Basel 會從裡面冒出來。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\infty}\\frac{x}{e^x-1}\\,dx$"}
+          ] },
+        { "show": ["$\\frac{1}{e^x-1}=\\sum_{n\\ge 1}e^{-nx}$"],
+          "note": "幾何級數，公比 $e^{-x}<1$。",
+          "say": "上下同乘 e 的負 x 次方，變成公比小於一的幾何級數。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{e^x-1}=\\frac{e^{-x}}{1-e^{-x}}$"},
+            {"do":"write","line":"$={{s:\\sum_{n\\ge1}e^{-nx}}}$","on":"變成"}
+          ] },
+        { "show": ["每一項非負：可以逐項積分"],
+          "note": "$\\int_0^{\\infty}xe^{-nx}\\,dx=\\frac{1}{n^2}$",
+          "say": "每一項都非負，可以逐項積分；x 乘 e 的負 n x，積出來剛好是 n 平方分之一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"每一項 $\\ge 0$：逐項積分","on":"每一項都非負"},
+            {"do":"write","line":"$\\int_0^{\\infty}xe^{-nx}\\,dx={{r:\\frac{1}{n^2}}}$","on":"x 乘"},
+            {"do":"box","term":"r","label":"剛好","on":"積出來"}
+          ] },
+        { "show": ["總和 $\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$"],
+          "say": "全部加起來就是 Basel 的和。展開成級數再逐項積分，是很常見的套路。",
+          "board": [
+            {"do":"write","line":"${{b:\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}}}$"},
+            {"do":"box","term":"b","color":"green","on":"Basel"},
+            {"do":"write","line":"套路：展開 → 逐項積分","on":"展開成級數"}
+          ] },
+        { "show": ["$\\ln(1+x)=\\int_0^x\\frac{dt}{1+t}$"],
+          "note": "$\\frac{1}{1+t}$ 是公比 $-t$ 的幾何級數。",
+          "say": "要處理自然對數 x 加一，先看它是一加 t 分之一從零積到 x，而這個分數是公比負 t 的幾何級數。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\ln(1+x)=\\int_0^x\\frac{dt}{1+t}$","on":"是一"},
+            {"do":"write","line":"$\\frac{1}{1+t}=1-t+t^2-\\cdots$","on":"幾何級數"}
+          ] },
+        { "show": ["$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
+          "say": "逐項積分，得 x 減二分之 x 平方加三分之 x 立方。最後整串除以 x，被積函數就長出來了。",
+          "board": [
+            {"do":"write","line":"$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"},
+            {"do":"write","line":"$\\frac{\\ln(1+x)}{x}=1-\\frac{x}{2}+\\frac{x^2}{3}-\\cdots$","on":"除以"}
+          ] }
+      ],
+      "key": "展開成 $\\sum e^{-nx}$，非負才能逐項積",
+      "check": 3
+    },
+    {
+      "title": "部分分式 + Basel",
+      "beats": [
+        { "show": ["$\\frac{1}{n^2(n+1)}=\\frac{1}{n^2}-\\frac{1}{n}+\\frac{1}{n+1}$"],
+          "say": "最後一題，先用部分分式拆成三項。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{n^2(n+1)}={{a:\\frac{1}{n^2}}}-{{b:\\frac{1}{n}}}+{{c:\\frac{1}{n+1}}}$"}
+          ] },
+        { "show": ["紅色項比 $\\frac{1}{n^2}$ 矮"],
+          "say": "畫出來：藍色是 n 平方分之一，紅色是這一題的項，永遠矮一截，所以總和會比 Basel 的和小。",
+          "board": [
+            {"do":"plot","graph":{"window":[1,6,0,1.1],"curves":[{"expr":"1/x^2","domain":[1,6],"color":"blue"},{"expr":"1/(x^2*(x+1))","domain":[1,6],"color":"red"}]}}
+          ] },
+        { "show": ["不能拆成三個級數"],
+          "note": "後兩個各自發散。",
+          "say": "可是不能拆成三個級數分別加：調和級數那兩個各自都發散。",
+          "board": [
+            {"do":"write","line":"不能拆成三個級數"},
+            {"do":"underline","term":"b","color":"red","label":"發散","on":"調和級數那兩個"},
+            {"do":"underline","term":"c","color":"red","on":"各自"}
+          ] },
+        { "show": ["$\\sum\\left(-\\frac{1}{n}+\\frac{1}{n+1}\\right)$：部分和 $-1+\\frac{1}{N+1}$"],
+          "say": "後兩項要先合在一起，是望遠鏡級數，中間全部消掉，部分和趨近負一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\sum\\left(-\\frac{1}{n}+\\frac{1}{n+1}\\right)$","on":"後兩項"},
+            {"do":"write","line":"部分和 $=-1+\\frac{1}{N+1}$","on":"望遠鏡"}
+          ] }
+      ],
+      "key": "合併成望遠鏡和，不能拆成三個級數",
+      "predict": {
+        "ask": "$\\sum_{n\\ge 1}\\frac{1}{n^2(n+1)}$ 是？",
+        "options": [
+          {
+            "label": "$\\frac{\\pi^2}{6}-1\\approx 0.6449$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{\\pi^2}{6}+1$",
+            "why": "望遠鏡那部分趨近 $-1$，是減 $1$。"
+          },
+          {
+            "label": "$\\frac{\\pi^2}{6}$",
+            "why": "望遠鏡級數不是 $0$：部分和 $-1+\\frac{1}{N+1}\\to-1$。"
+          }
+        ]
+      }
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "奇數項與交錯和",
+      "prompt": "求 $\\sum_{n\\ge 1}\\frac{1}{(2n-1)^2}$ 與 $\\sum_{n\\ge 1}\\frac{(-1)^{n+1}}{n^2}$。",
+      "problemId": "burst-boss-ser-004",
+      "steps": [
+        "偶數項 $\\sum\\frac{1}{(2n)^2}=\\frac{1}{4}\\cdot\\frac{\\pi^2}{6}=\\frac{\\pi^2}{24}$。",
+        "奇數項 $=$ 全部 $-$ 偶數項 $=\\frac{\\pi^2}{6}-\\frac{\\pi^2}{24}=\\frac{3\\pi^2}{24}=\\frac{\\pi^2}{8}$。",
+        "交錯和 $=$ 奇數項 $-$ 偶數項 $=\\frac{\\pi^2}{8}-\\frac{\\pi^2}{24}=\\frac{2\\pi^2}{24}=\\frac{\\pi^2}{12}$。"
+      ],
+      "answer": "$\\frac{\\pi^2}{8}$ 與 $\\frac{\\pi^2}{12}$",
+      "claim": "SUM(1/(2n)^2, 1) == pi^2/24 ;; SUM(1/(2n-1)^2, 1) == pi^2/8 ;; SUM((-1)^(n+1)/n^2, 1) == pi^2/12"
+    },
+    {
+      "title": "積分裡藏著 Basel",
+      "prompt": "$\\int_0^{\\infty}\\frac{x}{e^x-1}\\,dx$",
+      "problemId": "burst-int-026",
+      "steps": [
+        "$x>0$ 時 $\\frac{1}{e^x-1}=\\frac{e^{-x}}{1-e^{-x}}=\\sum_{n\\ge 1}e^{-nx}$（幾何級數，公比 $e^{-x}<1$）。",
+        "被積函數 $=\\sum_{n\\ge 1}xe^{-nx}$，每一項都非負，所以可以逐項積分（非負項的級數與積分可以交換，即單調收斂定理）。",
+        "$\\int_0^{\\infty}xe^{-nx}\\,dx=\\frac{1}{n^2}$（〈縮放的 Gamma 積分〉，$\\frac{\\Gamma(2)}{n^2}$）。",
+        "總和 $\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$。"
+      ],
+      "answer": "$\\frac{\\pi^2}{6}$",
+      "claim": "INT(x/(e^x-1), 0, inf) == pi^2/6 ;; INT(x*e^(-t*x), 0, inf) == 1/t^2"
+    },
+    {
+      "title": "部分分式 + Basel",
+      "prompt": "$\\sum_{n\\ge 1}\\frac{1}{n^2(n+1)}$",
+      "problemId": "world-075",
+      "steps": [
+        "部分分式：$\\frac{1}{n^2(n+1)}=\\frac{1}{n^2}-\\frac{1}{n}+\\frac{1}{n+1}$。（通分檢查：$(n+1)-n(n+1)+n^2=1$。）",
+        "$\\sum\\left(-\\frac{1}{n}+\\frac{1}{n+1}\\right)$ 是望遠鏡級數，部分和 $-1+\\frac{1}{N+1}\\to-1$。",
+        "$\\sum\\frac{1}{n^2}=\\frac{\\pi^2}{6}$。兩個收斂級數可以相加：總和 $\\frac{\\pi^2}{6}-1\\approx 0.6449$。"
+      ],
+      "answer": "$\\frac{\\pi^2}{6}-1$",
+      "note": "不能把 $\\sum\\frac{1}{n^2}-\\sum\\frac{1}{n}+\\sum\\frac{1}{n+1}$ 拆成三個級數：後兩個各自發散。要先把後兩項合成望遠鏡。",
+      "claim": "SUM(1/(n^2*(n+1)), 1) == pi^2/6-1"
+    }
+  ],
+  "pitfalls": [
+    "把 Euler 的乘積論證當成證明。",
+    "偶數項寫成 $\\frac{1}{2}\\cdot\\frac{\\pi^2}{6}$：$(2n)^2=4n^2$，是 $\\frac{1}{4}$。",
+    "部分分式後把發散的 $\\sum\\frac{1}{n}$ 單獨拆出來。",
+    "逐項積分不說理由；非負項或一致收斂才能交換。"
+  ],
+  "checks": [
+    {
+      "ask": "$1+\\frac{1}{9}+\\frac{1}{25}+\\frac{1}{49}+\\cdots$ 是？",
+      "options": [
+        {
+          "label": "$\\frac{\\pi^2}{8}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\pi^2}{12}$",
+          "why": "那是交錯和 $1-\\frac{1}{4}+\\frac{1}{9}-\\cdots$。奇數項和是 $\\frac{\\pi^2}{6}-\\frac{\\pi^2}{24}$。"
+        },
+        {
+          "label": "$\\frac{\\pi^2}{24}$",
+          "why": "$\\frac{\\pi^2}{24}$ 是偶數項 $\\frac{1}{4}+\\frac{1}{16}+\\cdots$ 的和。"
+        }
+      ]
+    },
+    {
+      "ask": "$1-\\frac{1}{4}+\\frac{1}{9}-\\frac{1}{16}+\\cdots$ 是？",
+      "options": [
+        {
+          "label": "$\\frac{\\pi^2}{12}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\pi^2}{6}$",
+          "why": "那是全部取正號的和；交錯和要減掉兩倍的偶數項。"
+        },
+        {
+          "label": "$\\ln 2$",
+          "why": "$\\ln 2$ 是 $1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$（分母沒有平方）。"
+        }
+      ]
+    },
+    {
+      "ask": "Euler 用乘積 $\\frac{\\sin x}{x}=\\prod\\left(1-\\frac{x^2}{n^2\\pi^2}\\right)$ 的論證，問題在哪裡？",
+      "options": [
+        {
+          "label": "只知道兩邊根相同，沒證明乘積收斂而且真的等於 $\\frac{\\sin x}{x}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\sin x}{x}$ 的 Maclaurin 級數算錯了",
+          "why": "$\\frac{\\sin x}{x}=1-\\frac{x^2}{6}+\\cdots$ 是對的；問題在乘積那一邊。"
+        },
+        {
+          "label": "答案 $\\frac{\\pi^2}{6}$ 是錯的",
+          "why": "答案對，論證不完整；嚴格證明（例如 Cauchy 的夾擠法）給出同樣的值。"
+        }
+      ]
+    },
+    {
+      "ask": "$\\int_0^1\\frac{\\ln(1+x)}{x}\\,dx$ 是？",
+      "options": [
+        {
+          "label": "$\\frac{\\pi^2}{12}$",
+          "correct": true
+        },
+        {
+          "label": "$\\frac{\\pi^2}{6}$",
+          "why": "$\\frac{\\ln(1+x)}{x}=1-\\frac{x}{2}+\\frac{x^2}{3}-\\cdots$，逐項積分得 $1-\\frac{1}{4}+\\frac{1}{9}-\\cdots$，是交錯和。"
+        },
+        {
+          "label": "$\\ln 2$",
+          "why": "那是 $\\int_0^1\\frac{dx}{1+x}$；這裡被積函數是 $\\frac{\\ln(1+x)}{x}$。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "zeta",
+      "special-sum",
+      "series-integral"
+    ],
+    "fine": [
+      "basel-derived-sums",
+      "basel-series-integral-swap",
+      "basel-partial-fraction",
+      "basel-euler-argument"
+    ]
+  },
+  "practice": [
+    {
+      "id": "burst-boss-ser-004",
+      "core": true,
+      "trains": "basel-derived-sums"
+    },
+    {
+      "id": "world-075",
+      "core": true,
+      "trains": "basel-partial-fraction"
+    },
+    {
+      "id": "depth-int-017",
+      "core": true,
+      "trains": "basel-series-integral-swap"
+    },
+    {
+      "id": "burst-int-026",
+      "core": true,
+      "trains": "basel-series-integral-swap"
+    },
+    {
+      "id": "burst-boss-int-010",
+      "core": true,
+      "trains": "basel-series-integral-swap"
+    },
+    {
+      "id": "world-023",
+      "trains": "basel-partial-fraction"
+    },
+    {
+      "id": "dm-int-002",
+      "trains": "basel-series-integral-swap"
+    },
+    {
+      "id": "dm-int-005",
+      "trains": "basel-series-integral-swap"
+    },
+    {
+      "id": "dm-int-007",
+      "challenge": true,
+      "trains": "basel-series-integral-swap",
+      "note": "挑戰：$\\iint\\frac{dx\\,dy}{1-xy}$ 展成 $\\sum(xy)^{n-1}$，逐項積分正好是 $\\sum\\frac{1}{n^2}$。"
+    },
+    {
+      "id": "cg-11f-013",
+      "challenge": true,
+      "trains": "basel-euler-argument",
+      "note": "挑戰：$x^4$ 係數要用 $\\left(\\sum a_n\\right)^2=\\sum a_n^2+2\\sum_{j<k}a_ja_k$ 拆開。"
+    }
+  ],
+  "gaps": []
+}
