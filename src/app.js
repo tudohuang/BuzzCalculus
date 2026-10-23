@@ -1747,7 +1747,7 @@
     return `<section class="overview-grid" aria-label="${t("學習概覽")}">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong>${note ? `<span class="overview-note">${note}</span>` : ""}</button>`).join("")}</section>`;
   }
 
-  // 首頁「今天三件事」（2026-10-23）：每日訓練、課程的下一課、到期的錯題（沒有就換今日函數），做完打勾。
+  // 首頁「今天三件事」（2026-10-23）：每日訓練、課程的下一課、到期的錯題（沒有就到期的翻牌卡、再沒有就今日函數），做完打勾。
   // 取代原本的「一點一滴，練成習慣」七天格（跟連勝卡的七格重複）與「接下來練什麼」兩張卡 —— 四個地方都在講「接下來做什麼」
   function renderTodayThree(records, mission) {
     const due = srsDueSummary(records).due;
@@ -1755,12 +1755,20 @@
     const today = dailyOneDateKey();
     const readToday = Object.values(records.courseV2 || {}).some((e) => e && typeof e.doneAt === "string" && e.doneAt.slice(0, 10) === today);
     const guessed = Boolean(((records.funcle || {}).days || {})[today]);
+    // 翻牌卡（course_keys.js）的排程只看紀錄：不用載課文就知道今天有幾張到期（排程用本地日期，跟 course_keys.js 一樣）
+    const d = new Date();
+    const local = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const cards = Object.values(((records.flash || {}).cards) || {}).filter((c) => c && typeof c.due === "string");
+    const flashDue = cards.filter((c) => c.due <= local).length;
+    const flashedToday = cards.some((c) => c.last === local);
     const items = [
       { done: mission.done, attrs: 'data-action="start-daily"', icon: "calendar", label: t("每日訓練"), note: t("{completed} / {target} 題", { completed: mission.completed, target: mission.target }) },
       { done: readToday, attrs: lesson ? `data-action="open-course-lesson" data-lesson-id="${escapeAttr(lesson.id)}"` : 'data-action="open-course"', icon: "book-open",
         label: lesson ? t("下一課：{title}", { title: `${lesson.no} ${lesson.title}` }) : t("課程"), note: readToday ? t("今天讀過一課了") : t("一課約 5 分鐘") },
       due
         ? { done: false, attrs: 'data-action="start-srs-review"', icon: "refresh", label: t("錯題 {due} 題到期", { due }), note: t("照排程清掉才會真的記住") }
+        : flashDue || flashedToday
+        ? { done: !flashDue, attrs: 'data-action="course-keys-flash"', icon: "layers", label: t("翻牌卡"), note: flashDue ? t("{n} 張到期", { n: flashDue }) : t("今天翻完了") }
         : { done: guessed, attrs: 'data-action="open-funcle"', icon: "grid", label: t("今日函數"), note: guessed ? t("今天猜過了") : t("猜今天的神秘函數") }
     ];
     const n = items.filter((item) => item.done).length;
