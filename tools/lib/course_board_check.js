@@ -308,7 +308,14 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
     eq("\\left( … \\right) 裡的 = 不切", LY.relSplit("\\left(a=b\\right)'=c").length, 2);
     eq("\\le 與 \\left 分得開", LY.relSplit("0\\le f_n\\le\\frac{1}{2}").length, 3);
     const u = LY.units("取 $k=g(x+h)-g(x)$，除以 $h$");
-    eq("字＋式子：在 = 前、中文標點後可以換行", u.units.length, 3);
+    eq("字＋式子：在 = 前、最外層的 − 前、中文標點後可以換行", u.units.length, 4);
+    const us = (x) => LY.units(x).units.map((y) => (y.hard ? "|" : "") + y.toks.map((t) => t.s).join(""));
+    eq("+ − 只在括號、絕對值外面切；正負號不切", us("$a=-b+(c-d)+|e-f|$"), ["a", "=-b", "{}+(c-d)", "{}+|e-f|"]);
+    eq("框起來的長式子（{{bxN:）拆開、每塊各包一次；別的 id 不拆", [us("${{bx1:a=b+c}}$"), us("${{t:a=b+c}}$").length], [["{{bx1:a}}", "{{bx1:=b}}", "{{bx1:{}+c}}"], 1]);
+    eq("aligned：\\\\ 一定換行、& 換成空白", us("$\\displaystyle {\\begin{aligned}a&=b\\\\&=c\\end{aligned}}$"), ["a ", "=b", "|=c"]);
+    eq("橫的表轉直的：欄的直線變列的橫線", LY.flip("$\\begin{array}{c|ccc}x&1&2&3\\\\\\hline y&4&5&6\\end{array}$"), "$\\begin{array}{c|c}x& y\\\\\\hline 1&4\\\\2&5\\\\3&6\\\\\\end{array}$");
+    eq("直的表：沒有格線的攤成一欄、有格線的不動", [LY.flip("$\\begin{array}{cc}1&2\\\\3&4\\\\5&6\\end{array}$"), LY.flip("$\\begin{array}{c|c}1&2\\\\3&4\\end{array}$")], ["$\\begin{array}{l}1\\\\2\\\\3\\\\4\\\\5\\\\6\\end{array}$", null]);
+    eq("一定換行的列：放得下就不再換", LY.compose([50, 50, 50], 200, 0.84, 1, [false, false, true]).rows, [[0, 1], [2]]);
     eq("長的一串中文每四個字可以換行（標點、空白黏前面）", LY.units("一二三四五六七八，九").units.map((x) => x.toks.map((t) => t.s).join("")), ["一二三四", "五六七八，", "九"]);
     eq("有中文的行不對齊", u.align, -1);
     eq("純式子對齊到第一個關係符號", LY.units("$y=f(u)$").align, 1);

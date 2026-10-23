@@ -94,7 +94,7 @@ function pageHelpers(MIN_LINE, MIN_LABEL, T) {
         const ps = [...g.querySelectorAll("path")].filter((p) => Number(p.style.strokeDashoffset || 0) < 0.98);
         if (!ps.length) return;
         const own = new Set();
-        an.refs.forEach(([n, id]) => { const t = c.querySelector(`.cvb-i[data-n="${n}"] .cvb-t-${id}`); if (t) leaves(t).forEach((x) => own.add(x)); });
+        an.refs.forEach(([n, id]) => { c.querySelectorAll(`.cvb-i[data-n="${n}"] .cvb-t-${id}`).forEach((t) => leaves(t).forEach((x) => own.add(x))); });
         const k = contrast(parse(getComputedStyle(g).color), bg);
         if (op > 0.95 && k < 3) add(`${tag}：記號 ${a}（${an.do}）的顏色對比 ${k.toFixed(2)}（< 3）`);
         if (an.do === "arrow") {

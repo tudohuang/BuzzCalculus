@@ -2,7 +2,7 @@
 // 畫面在 src/course_board.js（同一組 data-lazy="board"）。規格：SCHEMA.md「黑板」；樣式：docs/board-style.md。
 (function () {
   "use strict";
-  const REL = new Set(["=", "<", ">", "\\le", "\\ge", "\\leq", "\\geq", "\\ne", "\\neq", "\\approx", "\\to", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\equiv", "\\sim", "\\lt", "\\gt", "\\mapsto", "\\longrightarrow"]);
+  const REL = new Set(["=", "<", ">", "\\le", "\\ge", "\\leq", "\\geq", "\\ne", "\\neq", "\\approx", "\\to", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\equiv", "\\sim", "\\lt", "\\gt", "\\mapsto", "\\longrightarrow", "\\overset", "\\stackrel", "\\in", "\\notin", "\\subset", "\\subseteq", "\\supset", "\\supseteq"]);
   const PUNCT = /[，、：；。！？]/;
   const IDS = /\{\{([a-z][a-z0-9]{0,7}):/g;
   const ids = (s) => [...String(s).matchAll(IDS)].map((m) => m[1]);
@@ -36,21 +36,94 @@
   }
   const IMPL = new Set(["\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies"]);
   const isRel = (s) => { const t = s.trim(); const m = /^\\[a-zA-Z]+/.exec(t); return /^[=<>]/.test(t) || Boolean(m && REL.has(m[0])); };
+  // 走過最外層（括號、\left…\right、|…| 外面）的每一個位置：f(i, 指令或字)；ats 回傳要切的位置（切在那個位置之前）
+  function cut(src, f) {
+    const at = [];
+    let d = 0;
+    let lr = 0;
+    let bar = 0;
+    for (let i = 0; i < src.length; i += 1) {
+      const c = src[i];
+      let cmd = c === "\\" ? /^\\([a-zA-Z]+|.)/.exec(src.slice(i))[0] : c;
+      if (!d && !lr && !bar) { const p = f(i, cmd); if (p > 0 && p < src.length) at.push(p); }
+      if (cmd === "\\left") lr += 1;
+      else if (cmd === "\\right") lr -= 1;
+      // \big( \Big] 這種自己就畫得出來（不像 \left 要成對）：不算一層，裡面照樣可以切
+      else if (/^\\[Bb]igg?[lr]?$/.test(cmd) && "()[]|".includes(src[i + cmd.length] || "-")) cmd += src[i + cmd.length];
+      else if ("{([".includes(c) && cmd === c) d += 1;
+      else if ("})]".includes(c) && cmd === c) d -= 1;
+      else if (c === "|" && !d && !lr) bar ^= 1;
+      i += cmd.length - 1;
+    }
+    return at.reduce((o, p, k) => o.concat(src.slice(at[k - 1] || 0, p)), []).concat(src.slice(at[at.length - 1] || 0)).filter((s) => s.trim());
+  }
+  // 式子太長、關係符號之間也放不下時可以換行的地方：+ − 之前（不是正負號）、相乘的兩個括號 )( 之間、\cdot \times 之前、\quad 之後、\text 之前
+  const opSplit = (s) => cut(s, (i, c) => ((c === "+" || c === "-") && /[\w})\]!'|.]\s*$/.test(s.slice(0, i))) || (c === "(" && /\)(\s|\\[,;: ])*$/.test(s.slice(0, i))) || c === "\\cdot" || c === "\\times" || c === "\\text" ? i : /^\\q?quad$/.test(c) ? i + c.length : -1);
+  // 橫的表（欄比列多）轉成直的：手機上放不下時 course_board.js 改排這一個。只認一行裡只有一個 array、裡面沒有別的環境；不是就 null
+  function flip(line) {
+    const all = String(line).match(/\\begin\{/g) || [];
+    const m = /\\begin\{array\}\{([^}]*)\}([\s\S]*?)\\end\{array\}/.exec(line);
+    if (!m || all.length !== 1) return null;
+    const bars = [0];
+    m[1].replace(/\s/g, "").split("").forEach((ch) => (ch === "|" ? (bars[bars.length - 1] += 1) : bars.push(0)));
+    const hl = [0];
+    const cells = [];
+    cut(m[2], (i, c) => (c === "\\\\" ? i : -1)).forEach((chunk) => {
+      let s = chunk.replace(/^\\\\(\[[^\]]*\])?/, "");
+      while (/^\s*\\hline/.test(s)) { s = s.replace(/^\s*\\hline/, ""); hl[hl.length - 1] += 1; }
+      if (!s.trim()) return;
+      cells.push(cut(`&${s}`, (i, c) => (c === "&" ? i : -1)).map((x) => x.slice(1)));
+      hl.push(0);
+    });
+    const cols = bars.length - 1;
+    if (cells.some((r) => r.length !== cols)) return null;
+    const rule = (n) => "\\hline ".repeat(n);
+    const put = (spec, body) => line.slice(0, m.index) + `\\begin{array}{${spec}}${body}\\end{array}` + line.slice(m.index + m[0].length);
+    // 欄沒有比列多：沒有格線的（排版用的兩欄公式）攤成一欄；有格線的（資料表）不動
+    if (cols <= cells.length) return cols > 1 && !bars.concat(hl).some(Boolean) ? put("l", cells.flat().join("\\\\")) : null;
+    const spec = "|".repeat(hl[0]) + cells.map((_r, r) => `c${"|".repeat(hl[r + 1])}`).join("");
+    const body = rule(bars[0]) + bars.slice(1).map((b, c) => `${cells.map((r) => r[c]).join("&")}\\\\${rule(b)}`).join("");
+    return put(spec, body);
+  }
+  // 整段被一對括號包住（{{id:…}} 或 {…}）：[id, 裡面]；不是就 null
+  function wrapOf(s) {
+    const t = s.trim();
+    const m = /^\{\{([a-z][a-z0-9]{0,7}):|^\{/.exec(t);
+    if (!m || t.slice(-(m[1] ? 2 : 1)) !== (m[1] ? "}}" : "}")) return null;
+    let d = 0;
+    for (let i = 0; i < t.length; i += 1) {
+      if (t[i] === "\\") i += 1;
+      else if (t[i] === "{") d += 1;
+      else if (t[i] === "}" && !(d -= 1) && i < t.length - 1) return null;
+    }
+    return [m[1] || "", t.slice(m[0].length, m[1] ? -2 : -1)];
+  }
+  // 一段式子 → 可以換行的小塊。整段框起來的（{{bxN:…}}，import_notebook.js 的框；別的 id 會被 transform 整個飛走，不拆）拆開、每一塊各包一次（框照整組畫）；
+  // aligned 拆成一列一列（\\ 一定換行，hard），每一列再照關係符號、+ − 切
+  function mathToks(p) {
+    const w = wrapOf(p.replace(/^\s*\\displaystyle\s*/, ""));
+    if (w && /^bx\d/.test(w[0])) return mathToks(w[1]).map((t) => ({ ...t, s: `{{${w[0]}:${t.s}}}` }));
+    const al = w && !/\\begin[\s\S]*\\begin/.test(w[1]) && /^\s*\\begin\{aligned\}([\s\S]*)\\end\{aligned\}\s*$/.exec(w[1]);
+    if (al) return cut(al[1], (i, c) => (c === "\\\\" ? i : -1)).flatMap((row, r) => mathToks(row.replace(/^\\\\(\[[^\]]*\])?/, "").replace(/&/g, " ")).map((t, j) => (r && !j ? { ...t, brk: true, hard: true } : t)));
+    // 切下來以 + − · × 開頭的那一塊前面補 {}：單獨排的時候 KaTeX 才把它當二元運算（兩邊留空），不會排成負號
+    return relSplit(p).flatMap((s, k) => opSplit(s).map((x, j) => ({ s: j && /^\s*([+-]|\\cdot|\\times)/.test(x) ? `{}${x}` : x, rel: !j && isRel(s), brk: k > 0 || j > 0 })));
+  }
 
   // 一行 → 單位（可以在單位之間換行）：每個單位是 [{m: 數學?, s}]。換行點：中文標點之後、最外層的關係符號之前、中文每四字
-  const CJK = /[「『（]*[㐀-鿿]{1,4}[，、：；。！？」』）\s]*|[^㐀-鿿「『（]+|./g;
+  // 不是中文的一串（英文、數字）在空白處可以換行
+  const CJK = /[「『（]*[㐀-鿿]{1,4}[，、：；。！？」』）\s]*|[^㐀-鿿「『（\s]+\s*|./g;
   function units(line) {
     const toks = [];
     String(line).split(/(?<!\\)\$/).forEach((p, i) => {
       if (!p) return;
-      if (i % 2) relSplit(p).forEach((s, k) => toks.push({ m: true, s, rel: isRel(s), brk: k > 0 }));
+      if (i % 2) mathToks(p).forEach((t) => toks.push({ m: true, ...t }));
       else p.split(/(?<=[，、：；。！？])/).forEach((s, k) => { (s.match(CJK) || []).forEach((c, j) => toks.push({ m: false, s: c, brk: k > 0 || j > 0 })); });
     });
     const out = [];
     toks.forEach((t, k) => {
       const prev = toks[k - 1];
       const brk = k > 0 && (t.brk || t.rel || (prev && !prev.m && PUNCT.test(prev.s.trim().slice(-1))));
-      if (!out.length || brk) out.push({ rel: Boolean(t.rel), toks: [] });
+      if (!out.length || brk) out.push({ rel: Boolean(t.rel), hard: Boolean(t.hard), toks: [] });
       out[out.length - 1].toks.push({ m: t.m, s: t.s });
     });
     const pure = toks.every((t) => t.m);
@@ -66,14 +139,22 @@
   }
 
   // 一行放進寬 W：太寬先小縮（≥ 0.9），再在單位之間換行，最後才縮到放得下（低於 smin 會被 lint 擋）
-  function compose(ws, W, smin, align) {
+  // hard[i]：第 i 個單位一定從新的一列開始（aligned 的 \\）
+  function compose(ws, W, smin, align, hard) {
+    const hd = (i) => Boolean(hard && hard[i]);
     const total = ws.reduce((a, b) => a + b, 0);
-    if (total <= W) return { rows: [ws.map((_w, i) => i)], s: 1, ind: [0] };
-    if (W / total >= Math.max(0.9, smin)) return { rows: [ws.map((_w, i) => i)], s: W / total, ind: [0] };
+    if (!ws.some((_w, i) => hd(i))) {
+      if (total <= W) return { rows: [ws.map((_w, i) => i)], s: 1, ind: [0] };
+      if (W / total >= Math.max(0.9, smin)) return { rows: [ws.map((_w, i) => i)], s: W / total, ind: [0] };
+    } else if (W < Infinity) {
+      const k = compose(ws, Infinity, smin, align, hard);
+      const widest = Math.max(...k.rows.map((r, j) => r.reduce((a, i) => a + ws[i], 0) + k.ind[j]));
+      if (W / widest >= Math.max(0.9, smin)) return { ...k, s: Math.min(1, W / widest) };
+    }
     const rows = [[]];
     let x = 0;
     ws.forEach((w, i) => {
-      if (rows[rows.length - 1].length && x + w > W) { rows.push([]); x = 0; }
+      if (rows[rows.length - 1].length && (hd(i) || x + w > W)) { rows.push([]); x = 0; }
       rows[rows.length - 1].push(i);
       x += w;
     });
@@ -534,5 +615,5 @@
     return out;
   }
 
-  window.BuzzBoardLayout = { placeArrowLabel, relSplit, units, plainLen, compose, compile, stack, lifetimes, placeLabel, routeArrow, curveBoxes, markBox, markPath, qpt, schedule, natural, charOf, hit, inside, ease, cl, ids };
+  window.BuzzBoardLayout = { placeArrowLabel, relSplit, units, flip, plainLen, compose, compile, stack, lifetimes, placeLabel, routeArrow, curveBoxes, markBox, markPath, qpt, schedule, natural, charOf, hit, inside, ease, cl, ids };
 })();

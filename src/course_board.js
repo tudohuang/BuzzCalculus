@@ -21,7 +21,7 @@
 .cvb-i.is-t{text-align:center}
 .cvb-r{white-space:nowrap}.cvb-r+.cvb-r{margin-top:.3em}
 .cvb-u{display:inline-block;white-space:nowrap}.cvb-u.is-rel{padding-left:.2778em}
-.cvb .katex{font-size:1em;line-height:1.3}
+.cvb .katex{font-size:1em;line-height:1.3}@media (max-width:480px){.cvb .arraycolsep{width:.22em!important}}
 .cvb-x,.cvb-s{white-space:pre;font-size:.95em;letter-spacing:.01em}.cvb-cm{margin-left:.25em;padding-right:.45em}
 .cvb-lab{position:absolute;left:0;top:0;font-size:13.5px;font-weight:650;line-height:1.3;letter-spacing:.02em;white-space:nowrap;opacity:0}
 .cvb-ink{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
@@ -310,14 +310,20 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         el.style.height = `${(w * g.h) / g.w}px`;
         return { el, it, w, h: (w * g.h) / g.w, leaves: [[0, 0, w, (w * g.h) / g.w]], terms: {} };
       }
-      const u = LY.units(it.a.line);
       const row = mk("div", "cvb-r");
-      const us = u.units.map((x) => { const n = mk("span", `cvb-u${x.rel ? " is-rel" : ""}`, x.toks.map(tokHtml).join("")); row.appendChild(n); return n; });
       el.appendChild(row);
-      Object.entries(it.tint).forEach(([id, col]) => el.querySelectorAll(`.cvb-t-${id}`).forEach((t) => t.classList.add(CO[col] || "kg")));
+      const { u, us } = fill(it, row, it.a.line);
       if (u.align < 0 && u.units.some((x) => x.toks.some((t) => !t.m))) el.classList.add("is-t");
       return { el, it, u, us, row };
     });
+    // 一行寫進 row：切成單位、每個單位一個 span、上色
+    function fill(it, row, line) {
+      const u = LY.units(line);
+      const us = u.units.map((x) => mk("span", `cvb-u${x.rel ? " is-rel" : ""}`, x.toks.map(tokHtml).join("")));
+      row.replaceChildren(...us);
+      Object.entries(it.tint).forEach(([id, col]) => row.querySelectorAll(`.cvb-t-${id}`).forEach((t) => t.classList.add(CO[col] || "kg")));
+      return { u, us };
+    }
     const labs = M.anns.map((an) => {
       if (!an.a.label) return null;
       const l = mk("span", `cvb-lab ${CO[an.a.color] || MARKS[an.a.do]}`);
@@ -329,7 +335,11 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const ws = V.map((v) => (v.us ? v.us.map((n) => R(n).width) : null));
     V.forEach((v, i) => {
       if (!v.us) return;
-      const k = LY.compose(ws[i], roomOf(v.it), smin, v.u.align);
+      const fit = () => LY.compose(ws[i], roomOf(v.it), smin, v.u.align, v.u.units.map((x) => x.hard));
+      let k = fit();
+      // 橫的表放不下（字會小於 16px）：轉成直的再排
+      const fl = k.s < smin && LY.flip(v.it.a.line);
+      if (fl) { Object.assign(v, fill(v.it, v.row, fl)); ws[i] = v.us.map((n) => R(n).width); k = fit(); }
       v.s = k.s;
       v.wrapped = Boolean(k.wrapped);
       v.el.style.fontSize = `${F * k.s}px`;
@@ -353,10 +363,12 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       v.terms = {};
       v.el.querySelectorAll('[class*="cvb-t-"]').forEach((t) => {
         const id = (/cvb-t-([a-z0-9]+)/.exec(t.getAttribute("class")) || [])[1];
-        const mine = ls.map((n, j) => (t.contains(n) ? j : -1)).filter((j) => j >= 0);
+        // 同一個 id 拆成好幾塊（框起來的長式子換了行）：框照整組
+        const was = v.terms[id];
+        const mine = (was ? was.leaves : []).concat(ls.map((n, j) => (t.contains(n) ? j : -1)).filter((j) => j >= 0));
         const box = union(mine.map((j) => v.leaves[j]));
         if (!box) return;
-        const row = v.rows.findIndex((r) => box[1] >= r[1] - 1 && box[3] <= r[3] + 1);
+        const row = was ? was.row : v.rows.findIndex((r) => box[1] >= r[1] - 1 && box[3] <= r[3] + 1);
         // 到最近的字（同一列、上下左右）的距離：記號不能壓到旁邊的字
         const gaps = [99, 99, 99, 99];
         v.leaves.forEach((b, j) => {
@@ -369,7 +381,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
           if (vx && b[1] >= box[3] - 0.5) gaps[3] = Math.min(gaps[3], b[1] - box[3]);
         });
         // er：那一項自己的框（飛的複製對的是它：複製出來的結構一樣、框也一樣，墨水框在不同的上下文裡會差一點）
-        v.terms[id] = { el: t, box, er: rel(R(t), o), row: row < 0 ? 0 : row, gaps, leaves: mine };
+        v.terms[id] = { el: was ? was.el : t, els: (was ? was.els : []).concat(t), box, er: was ? union([was.er, rel(R(t), o)]) : rel(R(t), o), row: row < 0 ? 0 : row, gaps, leaves: mine };
       });
       const al = v.u.align;
       v.alignable = al >= 0 && !v.wrapped;
@@ -418,7 +430,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       const l = labs[i];
       if (l) { if (ga.lab) { l.style.left = `${ga.lab[0]}px`; l.style.top = `${ga.lab[1]}px`; l.dataset.a = i; } else l.remove(); }
       const term = an.kind === "mark" ? V[an.refs[0][0]].terms[an.refs[0][1]] : null;
-      return { g, paths: [...g.children], lab: ga.lab ? l : null, term: term && term.el, col };
+      return { g, paths: [...g.children], lab: ga.lab ? l : null, term: term ? term.els : [], col };
     });
     const fly = flights(M, V, st.pos, c);
     // 給分節的捲動對位（course_sections.js 找 .cvb-l:last-child）：一個看不見的點，放在現在最下面那一行的頂
@@ -727,7 +739,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       if (beat >= an.dieBeat) alive = Math.min(alive, beat === an.dieBeat ? 1 - ease(entry) : 0);
       // 畫到哪先寫（收掉的也寫）：慢的裝置上新一句的第一格可能晚過淡出的 320ms，上一句沒畫完的記號就會停在半截藏著
       if (an.kind === "mark") { if (s.paths[0]) s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.8))).toFixed(4); } else { s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.75))).toFixed(4); s.paths[1].style.strokeDashoffset = (1 - cl((pr - 0.72) / 0.2)).toFixed(4); }
-      if (pr <= 0 || alive <= 0) { setS(s.g, "opacity", "0"); if (s.lab) setS(s.lab, "opacity", "0"); if (s.term) setS(s.term, "color", ""); return; }
+      if (pr <= 0 || alive <= 0) { setS(s.g, "opacity", "0"); if (s.lab) setS(s.lab, "opacity", "0"); s.term.forEach((e) => setS(e, "color", "")); return; }
       setS(s.g, "opacity", alive >= 1 ? "" : alive.toFixed(3));
       const n0 = an.refs[0][0];
       const o0 = L.pos[an.g][n0];
@@ -739,9 +751,9 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         setS(s.lab, "opacity", lo.toFixed(3));
         setS(s.lab, "transform", `translate(${dx.toFixed(2)}px,${(dy + (1 - cl((pr - 0.5) / 0.4)) * 4).toFixed(2)}px)`);
       }
-      if (s.term && !hideIn.has(s.term)) {
+      if (s.term.length && !hideIn.has(s.term[0])) {
         const k = Math.round(cl(pr / 0.4) * alive * 20) * 5;
-        setS(s.term, "color", k ? `color-mix(in srgb,var(--${s.col}) ${k}%,currentColor)` : "");
+        s.term.forEach((e) => setS(e, "color", k ? `color-mix(in srgb,var(--${s.col}) ${k}%,currentColor)` : ""));
       }
     });
   }
