@@ -103,6 +103,8 @@ async function launch(options = {}) {
     "--lang=zh-TW",
     "--accept-lang=zh-TW,zh",
     "--window-size=1280,900",
+    // headless 照樣會把聲音放到喇叭（課程旁白、答題音效）：半夜錄影整台電腦在念課文。測試只看 currentTime，不需要聽
+    "--mute-audio",
     // 分析事件絕不能從測試送進正式的 GA（真的使用者數據會被 E2E 灌水）：GA 的網域在 DNS 層就解析不到。
     // 要驗「有去抓 gtag.js」的測試用 Fetch 攔截，攔截發生在 DNS 之前，照樣看得到請求。
     `--host-resolver-rules=${GA_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`).join(", ")}`

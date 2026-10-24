@@ -412,16 +412,21 @@ async function run() {
     check("重新整理再打開：還是全文", (await openLesson(SECOND.id)) && (await evaluate(`return Boolean(document.querySelector("[data-course-concept]")) && !window.__s.root();`)));
     await tap('[data-action="course-s-mode"][data-mode="sec"]');
     check("切回「分節」", await waitFor(`window.__s.root()`, 4000) && !(await evaluate(`return (window.__s.rec().settings || {}).courseView || "";`)));
-    // 標題列（課號那一列）寫這一課還差多少；跳著讀到結算、小測還沒做：結算寫「完成還差 0/3」，「做小測」帶回第一個有小測的節
+    // 標題列（課號那一列）寫這一課還差多少；直接跳到結算（沒有一節一節讀過去）：結算寫「完成還差：看完整課 x/n 節」
+    // （2026-10-24：完成改成看完整課或核心題全對，不再看小測第一次就對幾題）
     const secondRule = await evaluate(`return window.__s.text(".cv2-head [data-cv2-rule]");`);
-    check("分節的標題列：完成 小測 0/3 · 熟練 核心題 0/n（數字是自己的）", new RegExp(`^完成 小測 0/3 熟練 核心題 0/${SECOND.practice.filter((p) => p.core).length}$`).test(secondRule), secondRule);
+    check("分節的標題列：完成 看完 x/n · 熟練 核心題 0/k（數字是自己的）", new RegExp(`^完成 看完 \\d+/${SECOND.sections.length} 熟練 核心題 0/${SECOND.practice.filter((p) => p.core).length}$`).test(secondRule), secondRule);
     await evaluate(`const b = document.createElement("button"); b.dataset.action = "course-s-go"; b.dataset.to = "${SECOND.sections.length}"; document.querySelector("#app main").appendChild(b); b.click(); return 1;`);
     check("跳到結算", await waitFor(`document.querySelector("[data-cv2s-finish]")`));
     const notDone = await evaluate(`const row = document.querySelector("[data-cv2s-finish] [data-cv2s-tier]"); return { tier: row ? row.dataset.cv2sTier : "", text: window.__s.text("[data-cv2s-finish] [data-cv2s-tier]") };`);
-    check("還沒完成的結算：寫「完成還差：小測首次就對 0/3」＋「做小測」", notDone.tier === "1" && /^完成還差：小測首次就對 0\/3 做小測$/.test(notDone.text), JSON.stringify(notDone));
-    await tap('[data-cv2s-finish] [data-action="course-s-requiz"]');
-    const firstCheck = SECOND.sections.findIndex((s) => s.check !== undefined);
-    check("「做小測」回到第一個有小測的節", await waitFor(`window.__s.si() === ${firstCheck}`, 4000), String(await evaluate(`return window.__s.si();`)));
+    check("還沒完成的結算：寫「完成還差：看完整課 x/n 節」", notDone.tier === "1" && new RegExp(`^完成還差：看完整課 \\d+/${SECOND.sections.length} 節$`).test(notDone.text), JSON.stringify(notDone));
+    // 從最後一節一句一句按「下一句／完成這一課」走到結算：小測沒有第一次就對也算完成（使用者：答錯一題、中途出狀況都不該永遠完成不了）
+    const lastSi = SECOND.sections.length - 1;
+    await evaluate(`const b = document.createElement("button"); b.dataset.action = "course-s-go"; b.dataset.to = "${lastSi}"; document.querySelector("#app main").appendChild(b); b.click(); return 1;`);
+    await waitFor(`window.__s.si() === ${lastSi}`, 4000);
+    for (let k = 0; k < SECOND.sections[lastSi].beats.length + 2 && !(await evaluate(`return Boolean(document.querySelector("[data-cv2s-finish]"));`)); k += 1) { await tap("[data-cv2s-next]"); await sleep(250); }
+    const readThrough = await evaluate(`const e = (window.__s.rec().courseV2 || {})[${JSON.stringify(SECOND.id)}] || {}; return { finish: Boolean(document.querySelector("[data-cv2s-finish]")), doneAt: Boolean(e.doneAt), quizBest: e.quizBest === undefined ? null : e.quizBest, row: window.__s.text("[data-cv2s-finish] [data-cv2s-tier]") };`);
+    check("走完最後一節到結算＝完成（小測沒做對也算），結算不再寫「完成還差」", readThrough.finish && readThrough.doneAt && !/完成還差/.test(readThrough.row), JSON.stringify(readThrough));
 
     /* ── 有 widget 的課：分節（黑板／筆記本）不放滑桿互動圖（黏在板上會擋字），拖滑桿的動作也拿掉；全文才有 ── */
     check(`打開 ${WIDGET.id}`, await openLesson(WIDGET.id));

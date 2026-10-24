@@ -78,6 +78,8 @@ async function run() {
       const seen = await ev(`return [...new Set([...document.querySelectorAll('.cvb [data-action="course-s-ord"]')].map((e) => Number(e.dataset.step)))];`);
       check(`${tag}：紙上 ${n} 步都在、洗過（不是排好的）`, seen.length === n && seen.join() !== [...Array(n).keys()].join(), seen.join());
       await tapLine(`.cvb [data-action="course-s-ord"][data-step="${seen.find((j) => j !== 0)}"]`);
+      // 劃線與理由是重畫之後才出現（偶爾比 450ms 慢）：等到看得到再量
+      await waitFor(`document.querySelector(".cvb .cvb-no") && (document.querySelector("[data-cv2p-live]") || {}).textContent`, 3000);
       const bad = await ev(`const w = document.querySelector("[data-cv2p-live]"); return { struck: document.querySelectorAll(".cvb .cvb-no").length, why: w ? w.textContent.trim() : "", h: w ? Math.round(w.getBoundingClientRect().height) : 0 };`);
       check(`${tag}：點錯一步 → 紙上劃掉、紙上看得到理由`, bad.struck > 0 && /^還不行/.test(bad.why) && bad.h > 0, JSON.stringify(bad));
       for (let j = 0; j < n; j += 1) await tapLine(`.cvb [data-action="course-s-ord"][data-step="${j}"]`);

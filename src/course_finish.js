@@ -50,18 +50,18 @@
     const ladder = ((window.BUZZ_COURSE_V2 || {}).proofLadders || {})[m.id] || null;
     // 自己算（course_solve.js）：這一課的自己算第一次就打對幾題
     const solved = window.BuzzCourseSolve ? window.BuzzCourseSolve.stat(data, e) : null;
-    // 下一層還差什麼、按哪裡做：完成 → 重做小測；熟練 → 練還沒對的核心題；全破 → 練還沒對的（含挑戰）
+    // 下一層還差什麼、按哪裡做：完成 → 還沒讀完的節數；熟練 → 練還沒對的核心題；全破 → 練還沒對的（含挑戰）
     const g = api.progress ? api.progress(records) : null;
     const left = g && (g.tier === 1 ? g.mid : g.tier === 2 ? g.all : null);
     const tierRow = !g ? "" : g.tier === 0
-      ? `<p class="cv2s-tier" data-cv2s-tier="1"><span>完成還差：小測首次就對 <b>${g.quiz}/${g.pass}</b></span><button type="button" class="button secondary" data-action="course-s-requiz">${icon("refresh")}${g.tried ? "重做小測" : "做小測"}</button></p>`
+      ? `<p class="cv2s-tier" data-cv2s-tier="1"><span>完成還差：看完整課 <b>${g.read}/${g.secs}</b> 節</span></p>`
       : left && left.left.length
         ? `<p class="cv2s-tier" data-cv2s-tier="${g.tier + 1}"><span>${g.tier === 1 ? "熟練" : "全破"}還差：${g.tier === 1 ? g.midName : g.allName} <b>${left.ok}/${left.n}</b></span><button type="button" class="button secondary" data-action="course-lesson-practice" data-lesson-id="${escapeAttr(m.id)}" data-ids="${escapeAttr(left.left.join(" "))}">${icon("play")}練這 ${left.left.length} 題</button></p>`
-        : g.tier === 3 ? `<p class="cv2s-tier" data-cv2s-tier="3"><b>✔ 全破</b>${g.none ? "<span>這一課沒有推薦題：小測完成就是全破</span>" : ""}</p>` : "";
+        : g.tier === 3 ? `<p class="cv2s-tier" data-cv2s-tier="3"><b>✔ 全破</b>${g.none ? "<span>這一課沒有推薦題：看完就是全破</span>" : ""}</p>` : "";
     // 學習目標：節都做完才打勾（「你現在會」）；還有沒做的節就只列出來（中性的點，不放灰色的勾 —— 灰勾讀起來像「做過了」）。
     // XP 是 0（什麼都還沒做）就不印那一格
     const allDone = !todo.length;
-    // 「你現在會」＋綠勾只在小測也過了（完成層）才給：節都讀完、小測全錯還打滿勾，跟下面「完成還差 0/3」互相矛盾
+    // 「你現在會」＋綠勾只在到了完成層才給（看完整課或核心題全對）
     const learned = allDone && !(g && g.tier === 0);
     const xp = Number(e.xp) || 0;
     return `

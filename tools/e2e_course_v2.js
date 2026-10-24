@@ -214,7 +214,7 @@ async function run() {
     check("課程表是平的：Stage 裡沒有框中框、章不再是可折疊的盒子", !flat.framed.length && !flat.chapterBoxes, JSON.stringify(flat.framed.slice(0, 3)));
     // 層級點的圖例：一行，三個顏色各寫它要什麼
     const legend = await evaluate(`const el = document.querySelector("[data-cv2-legend]"); return { seen: window.__c.visible(el), dots: el ? [...el.querySelectorAll(".cv2-dot")].map((d) => d.className.replace("cv2-dot", "").trim()).join(",") : "", text: window.__c.text("[data-cv2-legend]") };`);
-    check("課程表有層級點的圖例（完成／熟練／全破各要什麼）", legend.seen && legend.dots === "t1,t2,t3" && /完成：小測首次就對 3 題/.test(legend.text) && /熟練：核心題全對/.test(legend.text) && /全破：含挑戰全對/.test(legend.text), legend.text);
+    check("課程表有層級點的圖例（完成／熟練／全破各要什麼）", legend.seen && legend.dots === "t1,t2,t3" && /完成：看完整課/.test(legend.text) && /熟練：核心題全對/.test(legend.text) && /全破：含挑戰全對/.test(legend.text), legend.text);
     await shot("01-index");
 
     /* ── 2. 從課程表點進樣本課（展開它的 Stage 與章）── */
@@ -250,7 +250,7 @@ async function run() {
     check("閱讀時間與完成時間分開寫", page.meta.includes(`閱讀 ${lesson.readMinutes} 分`) && page.meta.includes(`全程 ${lesson.totalMinutes} 分`), page.meta);
     // 完成條件寫成這個人自己的數字：還沒做小測 → 完成 0/3、熟練 0/核心題數
     const coreN = SAMPLE_CORE;
-    check("標題下寫著還差多少：完成 小測首次就對 0/3 · 熟練 核心題 0/n", page.rule === `完成 小測首次就對 0/3 熟練 核心題 0/${coreN}`, page.rule);
+    check("標題下寫著還差多少：完成 小測作答 0/n · 熟練 核心題 0/k", page.rule === `完成 小測作答 0/${lesson.checks.length} 熟練 核心題 0/${coreN}`, page.rule);
     check("觀念預設顯示", page.conceptParas >= 2, `${page.conceptParas} 段`);
     check("可折疊段落（定理條件／證明／預告）預設收起", page.folds === lesson.concept.filter((p) => p.collapsible).length && page.foldsClosed, `${page.folds} 段`);
     check("範例的步驟先藏著", page.examples === lesson.workedExamples.length && page.steps === 0, `${page.examples} 題範例、${page.steps} 步`);
@@ -358,7 +358,7 @@ async function run() {
     await evaluate(`document.querySelectorAll("[data-course-checks] .course-check")[0].scrollIntoView({ block: "center" }); return 1;`);
     await sleep(200);
     await click(`[data-action="course-pick"][data-check="0"][data-option="${right}"]`, 400);
-    check("第一題第一次選錯：完成那一格仍是 0/3（第一次就對才算）", /完成 小測首次就對 0\/3/.test(await evaluate(`return window.__c.text("[data-cv2-rule]");`)));
+    check("第一題選錯也算作答過：完成那一格 1/n（對錯不論）", new RegExp(`完成 小測作答 1/${lesson.checks.length}`).test(await evaluate(`return window.__c.text("[data-cv2-rule]");`)));
     check("再選對：綠、選項鎖住", await evaluate(`const box = document.querySelectorAll("[data-course-checks] .course-check")[0]; return box.classList.contains("is-right") && [...box.querySelectorAll(".course-option")].every((b) => b.disabled);`));
     for (let ci = 1; ci < lesson.checks.length; ci += 1) {
       await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${lesson.checks[ci].options.findIndex((o) => o.correct)}"]`, 300);
