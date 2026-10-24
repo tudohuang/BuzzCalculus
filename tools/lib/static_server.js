@@ -51,9 +51,22 @@ function start(root, port, options = {}) {
         res.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("404 " + rel);
         return;
       }
+      const type = TYPES[path.extname(file).toLowerCase()] || "application/octet-stream";
+      // Range（206）：正式站（Vercel）有，這裡沒有的話 Chrome 不能在 mp3 裡 seek ——
+      // 從第 7 節開始播，旁白會從檔頭念起（錄課程影片時抓到的假 bug）
+      const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || ""));
+      if (range && (range[1] || range[2])) {
+        const size = data.length;
+        const from = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+        const to = range[1] && range[2] ? Math.min(size - 1, Number(range[2])) : size - 1;
+        if (from >= size || from > to) { res.writeHead(416, { "content-range": `bytes */${size}` }).end(); return; }
+        res.writeHead(206, { "content-type": type, "cache-control": "no-store", "accept-ranges": "bytes", "content-range": `bytes ${from}-${to}/${size}`, "content-length": to - from + 1 }).end(data.subarray(from, to + 1));
+        return;
+      }
       res.writeHead(200, {
-        "content-type": TYPES[path.extname(file).toLowerCase()] || "application/octet-stream",
-        "cache-control": "no-store"
+        "content-type": type,
+        "cache-control": "no-store",
+        "accept-ranges": "bytes"
       }).end(data);
     };
     if (overrides.has(rel)) send(null, Buffer.from(overrides.get(rel)));

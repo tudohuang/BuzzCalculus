@@ -9,7 +9,7 @@
 // 顯示規則（review 認可的 v0.8 樣稿）：
 //   觀念預設顯示；collapsible 的段落（完整定理條件、嚴格證明、預告）預設收起；
 //   範例一步一步揭；常見錯誤是短句清單；小測選錯才顯示那個選項的理由；挑戰題另外標；
-//   通過三層 —— 完成（小測第一次就選對 ≥ 3 題）／熟練（核心推薦題全對）／全破（含挑戰全對）—— 不鎖課；
+//   通過三層 —— 完成（看完整課，或核心題全對；2026-10-24 前是小測第一次就選對 ≥ 3 題）／熟練（核心推薦題全對）／全破（含挑戰全對）—— 不鎖課；
 //   閱讀時間與完成時間分開；課號照大綱順序算，正文的〈課名〉連到那一課；visual（給作者的文字規格）不顯示，
 //   畫面上的圖是 figures（畫法在 course_figures.js 的 BuzzCourseFigures，data-lazy="figures"），放在 after 指定的觀念段落之後。
 //
@@ -110,43 +110,60 @@
       return Boolean(stat && stat.correct > 0);
     };
     // 三層是累進的：熟練要先完成、全破要先熟練。沒有核心題的課，熟練跟著「全部推薦題」走。
-    // 沒有推薦題的課（19 課，多半是預備與證明入門）：小測完成就是全破 —— 不然它們永遠卡在完成，
+    // 沒有推薦題的課（19 課，多半是預備與證明入門）：看完就是全破 —— 不然它們永遠卡在完成，
     // 地圖、課程表、結算、層級 XP 全都跟著這一支，所以三層加成也一次發齊（course_sections.js 的 settle）。
+    // 完成（2026-10-24 改，使用者：「小測一答錯就不可能完成，中途出 bug 也不可能完成」）：
+    // 看完整課（分節走到結算、全文的小測每題都作答過 —— 對錯不論）或核心題（沒有核心題：推薦題）都做對，哪一個先到都算。
+    // 以前是小測第一次就對 3 題才蓋 doneAt；小測整輪做完過（quizBest 有值）的舊紀錄一律算看完
     function tierOf(records, m) {
-      if (!entryOf(records, m.id).doneAt) return 0;
+      const e = entryOf(records, m.id);
       const all = m.practice.filter((p) => problem(p.id));
-      if (!all.length) return 3;
       const core = all.filter((p) => p.kind === "core");
-      const coreOk = (core.length ? core : all.filter((p) => p.kind !== "challenge")).every((p) => solved(records, p.id));
+      const coreOk = all.length > 0 && (core.length ? core : all.filter((p) => p.kind !== "challenge")).every((p) => solved(records, p.id));
+      if (!e.doneAt && e.quizBest === undefined && !coreOk) return 0;
+      if (!all.length) return 3;
       if (!coreOk) return 1;
       return all.every((p) => solved(records, p.id)) ? 3 : 2;
     }
-    const isDone = (records, m) => Boolean(entryOf(records, m.id).doneAt);
-    // 三層各差多少（畫面寫數字，不寫規則）：完成看小測「第一次就選對」幾題（這一輪還在做就看這一輪）、
+    const isDone = (records, m) => tierOf(records, m) > 0;
+    // 三層各差多少（畫面寫數字，不寫規則）：完成看讀完幾節（全文看小測作答了幾題）；quiz＝小測第一次就選對幾題，只記給學生看、
     // 熟練看核心題（沒有核心題：非挑戰的推薦題）、全破看全部推薦題（含挑戰）。left = 還沒對的題號，結算的按鈕用
     function progressOf(records, m) {
       const e = entryOf(records, m.id);
       const data = lessonData(m.id);
       let quiz = Number(e.quizBest) || 0;
+      let answered = 0;
       if (data) {
         const live = state.lessonId === m.id && Object.keys(state.picks || {}).some((k) => (state.picks[k] || []).length);
         const picks = live ? state.picks : e.picks || {};
         const first = data.checks.filter((c, ci) => { const p = picks[ci] || []; return p.length && c.options[p[0]] && c.options[p[0]].correct; }).length;
         quiz = live ? first : Math.max(quiz, first);
+        answered = data.checks.filter((_c, ci) => (picks[ci] || []).length).length;
       }
       const all = m.practice.filter((p) => problem(p.id));
       const core = all.filter((p) => p.kind === "core");
       const mid = core.length ? core : all.filter((p) => p.kind !== "challenge");
       const tally = (list) => ({ ok: list.filter((p) => solved(records, p.id)).length, n: list.length, left: list.filter((p) => !solved(records, p.id)).map((p) => p.id) });
-      return { tier: tierOf(records, m), pass: PASS, none: !all.length, tried: e.quizBest !== undefined, quiz: Math.min(quiz, PASS), mid: tally(mid), all: tally(all), midName: core.length ? "核心題" : "推薦題", allName: all.some((p) => p.kind === "challenge") ? "含挑戰" : "全部" };
+      const secs = data && data.sections ? data.sections.length : 0;
+      return { tier: tierOf(records, m), pass: PASS, none: !all.length, tried: e.quizBest !== undefined, quiz: Math.min(quiz, PASS), read: Math.min(secs, (e.secDone || []).length), secs, answered, checks: data ? data.checks.length : 0, mid: tally(mid), all: tally(all), midName: core.length ? "核心題" : "推薦題", allName: all.some((p) => p.kind === "challenge") ? "含挑戰" : "全部" };
     }
-    // 還沒到的下兩層各差多少（到了的看層級標籤）——「完成 小測首次就對 2/3 · 熟練 核心題 1/4」。
+    // 蓋「完成」（只蓋一次）：分節走到結算、全文小測全作答過都叫這一支；第一次完成順便排進回溫
+    function markDone(id) {
+      let first = false;
+      update(id, (entry) => {
+        first = !entry.doneAt;
+        return first ? { ...entry, doneAt: new Date().toISOString(), ...deps.review.plan(meta[id], lessonData(id)) } : entry;
+      });
+      if (first) track("course_lesson_complete", { lesson: id, tier: tierOf(loadRecords(), meta[id]) });
+    }
+    // 還沒到的下兩層各差多少（到了的看層級標籤）——「完成 看完 4/11 · 熟練 核心題 1/4」。
     // 全文：標題下自成一行；分節（inline）：擠進課號那一列、字短一點（第一句要在手機第一屏上半，多一行就掉下去）。
     // 沒有推薦題的課只有完成（完成就是全破，全文多寫半句）；全破了不印
     function ruleLine(records, m, inline) {
       const g = progressOf(records, m);
-      const title = g.none ? "這一課沒有推薦題：小測完成就是全破" : `完成：小測首次就對 ${PASS} 題 · 熟練：${g.midName}全對 · 全破：${g.allName === "含挑戰" ? "含挑戰全對" : "全部全對"}`;
-      const segs = [[1, "完成", inline ? "小測" : "小測首次就對", g.quiz, PASS]].concat(g.all.n ? [[2, "熟練", g.midName, g.mid.ok, g.mid.n], [3, "全破", g.allName, g.all.ok, g.all.n]] : [])
+      const title = g.none ? "這一課沒有推薦題：看完就是全破" : `完成：看完整課（或${g.midName}全對） · 熟練：${g.midName}全對 · 全破：${g.allName === "含挑戰" ? "含挑戰全對" : "全部全對"}`;
+      // 分節（inline）數讀完幾節；全文沒有節的進度，數小測作答了幾題（對錯不論）
+      const segs = [inline ? [1, "完成", "看完", g.read, g.secs] : [1, "完成", "小測作答", g.answered, g.checks]].concat(g.all.n ? [[2, "熟練", g.midName, g.mid.ok, g.mid.n], [3, "全破", g.allName, g.all.ok, g.all.n]] : [])
         .filter(([i]) => i > g.tier).slice(0, 2);
       const tag = inline ? "span" : "p";
       return segs.length ? `<${tag} class="cv2-rule" data-cv2-rule title="${title}">${segs.map(([i, name, what, ok, n]) => `<span data-tier="${i}">${name} <b>${what} ${ok}/${n}</b></span>`).join("")}${g.none && !inline ? `<span data-tier="3">沒有推薦題：完成就是全破</span>` : ""}</${tag}>` : "";
@@ -378,7 +395,7 @@
               ${indexView === "map" ? litLine(records) : `<div class="course-progress"><strong>${done}<small> / ${mainPath.length} 課 · 主線</small></strong><i style="--pct:${pct}%"></i></div>`}
               <div class="cv2-seg" role="group" aria-label="檢視">${[["list", "清單"], ["map", "地圖"]].map(([key, name]) => `<button type="button" data-action="course-view" data-mode="${key}" aria-pressed="${indexView === key}">${name}</button>`).join("")}</div>
             </div>
-            <p class="cv2-legend" data-cv2-legend><span><i class="cv2-dot t1"></i>完成：小測首次就對 ${PASS} 題</span><span><i class="cv2-dot t2"></i>熟練：核心題全對</span><span><i class="cv2-dot t3"></i>全破：含挑戰全對</span></p>
+            <p class="cv2-legend" data-cv2-legend><span><i class="cv2-dot t1"></i>完成：看完整課</span><span><i class="cv2-dot t2"></i>熟練：核心題全對</span><span><i class="cv2-dot t3"></i>全破：含挑戰全對</span></p>
             ${indexView === "map" ? `<div class="cv2-map" data-cv2-map><p class="panel-note">載入地圖…</p></div>` : `
             ${goalLine(records)}
             <div class="cv2-stages">${stages}</div>
@@ -517,7 +534,7 @@
     let state = { lessonId: "", steps: {}, picks: {}, figs: {}, recorded: false };
     let secFail = false;
     const sec = (fn) => Promise.resolve(deps.ensureLazy("sections")).then(fn, () => { secFail = true; render(); });
-    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: secData(lessonData(m.id)), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), progress: (r) => progressOf(r, m), next: neighbour(m, 1), label, lessonLink, deps, act, boss: bossView(records, m) }; };
+    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: secData(lessonData(m.id)), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), progress: (r) => progressOf(r, m), done: () => markDone(m.id), next: neighbour(m, 1), label, lessonLink, deps, act, boss: bossView(records, m) }; };
 
     // 圖的滑桿：只換那一張圖（不整頁重繪 —— 拖動時每一格都重繪整課太貴）；值記在 state.figs，
     // 之後別的動作重繪時圖停在原地。委派在 document 上，app.js 重繪換掉 DOM 也不用重綁。
@@ -737,9 +754,9 @@
       const allAnswered = data.checks.every((_check, ci) => (state.picks[ci] || []).length);
       const score = quizScore(data);
       const quizResult = allAnswered ? `
-        <div class="cv2-quiz-result ${score >= PASS ? "is-pass" : ""}" data-course-quiz-result>
+        <div class="cv2-quiz-result is-pass" data-course-quiz-result>
           <strong>${score} / ${data.checks.length}</strong>
-          <span>${score >= PASS ? "這一課完成了" : `第一次就選對 ${PASS} 題才算完成`}</span>
+          <span>第一次就選對 ${score} 題 · 這一課完成了</span>
           <button type="button" class="button ghost" data-action="course-quiz-reset">${icon("refresh")}重做小測</button>
         </div>` : "";
 
@@ -753,7 +770,7 @@
         </li>`;
       const g = progressOf(records, m);
       const tiers = [
-        ["完成", `小測首次就對 ${g.quiz}/${PASS}`],
+        ["完成", "看完整課（小測每題作答過）"],
         ["熟練", `${items.some((p) => p.core) ? "★ 題" : "推薦題"} ${g.mid.ok}/${g.mid.n}`],
         ["全破", `${challengeItems.length ? "含挑戰" : "全部"} ${g.all.ok}/${g.all.n}`]
       ];
@@ -821,7 +838,7 @@
 
               <section class="course-block cv2-sec" data-course-practice ${mark("practice", "practice")}>
                 <h3 class="cv2-sec-title">推薦題</h3>
-                ${items.length ? `<ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>` : `<p class="panel-note" data-cv2-none>${tier ? "<strong>✔ 全破</strong> · " : ""}這一課沒有推薦題：小測完成就是全破。</p>`}
+                ${items.length ? `<ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>` : `<p class="panel-note" data-cv2-none>${tier ? "<strong>✔ 全破</strong> · " : ""}這一課沒有推薦題：看完就是全破。</p>`}
                 ${mainItems.length ? `
                   <ul class="cv2-practice">${mainItems.map(practiceRow).join("")}</ul>
                   <div class="action-row"><button class="button home-primary" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${mainItems.length} 題</button></div>` : ""}
@@ -1018,17 +1035,12 @@
         const picks = state.picks[ci] || [];
         if (picks.some((x) => (check.options[x] || {}).correct) || picks.includes(oi)) return;
         state.picks = { ...state.picks, [ci]: picks.concat(oi) };
-        // 每一題都選過就記分（同一輪只記一次）；第一次完成順便排進回溫
+        // 每一題都選過就記分（同一輪只記一次）；小測整輪作答過＝這一課看完了（對錯不論，分數只記著給學生看）
         if (!state.recorded && lesson.checks.every((_c, k) => (state.picks[k] || []).length)) {
           state.recorded = true;
           const score = quizScore(lesson);
-          let first = false;
-          update(state.lessonId, (entry) => {
-            first = score >= PASS && !entry.doneAt;
-            return { ...entry, quizBest: Math.max(score, Number(entry.quizBest || 0)), quizAt: new Date().toISOString(), ...(first ? { doneAt: new Date().toISOString(), ...deps.review.plan(meta[state.lessonId], lesson) } : {}) };
-          });
-          // 第一次完成才記（重讀、重做小測不再記）
-          if (first) track("course_lesson_complete", { lesson: state.lessonId, tier: tierOf(loadRecords(), meta[state.lessonId]) });
+          update(state.lessonId, (entry) => ({ ...entry, quizBest: Math.max(score, Number(entry.quizBest || 0)), quizAt: new Date().toISOString() }));
+          markDone(state.lessonId);
         }
         return render();
       }
