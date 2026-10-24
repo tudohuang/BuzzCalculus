@@ -154,6 +154,7 @@
     "2026-10-21": "depth-int-027",
     "2026-10-22": "putnam-003",
     "2026-10-23": "world-039",
+    "2026-10-24": "rel-hard-ser-008",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;
