@@ -395,7 +395,7 @@ interface Window {
   BuzzI18n: BuzzI18nApi;
   t: typeof t;
   /** src/funcle.js：今日函數（微積分版 Wordle，data-lazy="funcle"） */
-  BuzzFuncle?: { open(deps: { evaluate: (src: string, vars: Record<string, number>) => number; loadRecords: () => BuzzRecords; saveRecords: (r: BuzzRecords) => void; today?: () => string; tex?: (src: string) => string; track?: (name: string, params?: Record<string, unknown>) => void }): void };
+  BuzzFuncle?: { open(deps: { evaluate: (src: string, vars: Record<string, number>) => number; loadRecords: () => BuzzRecords; saveRecords: (r: BuzzRecords) => void; today?: () => string; tex?: (src: string) => string; track?: (name: string, params?: Record<string, unknown>) => void; onClose?: () => void }): void };
   /** src/search.js：全站搜尋（Ctrl+K／「/」，data-lazy="search"） */
   BuzzSearch?: { open(): void; close(): void; search(q: string): any };
   /** src/course_keys.js：課的重點（三分鐘複習、考前一張紙、翻牌卡，data-lazy="keys"） */
