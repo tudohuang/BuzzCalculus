@@ -11937,12 +11937,15 @@
   function applyImplicitMultiplication(expr, variables = []) {
     const functionNames = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "log", "exp", "sqrt", "abs", "pow", "sinh", "cosh", "tanh", "sec", "csc", "cot"]);
     const names = variables.filter((name) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name)).sort((a, b) => b.length - a.length);
+    // 黏在一起的字母拆成相乘：xy → x*y。pi 與 e 也拆得出來（2026-10-27，玩家回報「4pi 不能打」：
+    // 以前 4pi、2pi/3、πr²、2e 會被拆成 4*p*i、2*e 而算不出來，只有 4*pi 才行）。題目自己有叫 p、e 的變數時，照變數拆
     const splitIdentifier = (identifier) => {
       if (functionNames.has(identifier) || ["PI", "E", "Infinity"].includes(identifier)) return identifier;
       const parts = [];
       for (let i = 0; i < identifier.length;) {
-        const name = names.find((candidate) => identifier.startsWith(candidate, i)) || identifier[i];
-        parts.push(name);
+        const named = names.find((candidate) => identifier.startsWith(candidate, i));
+        const name = named || (identifier.startsWith("pi", i) ? "pi" : identifier[i]);
+        parts.push(named ? name : name === "pi" ? "PI" : name === "e" ? "E" : name);
         i += name.length;
       }
       return parts.join("*");

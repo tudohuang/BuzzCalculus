@@ -210,7 +210,16 @@ const regressions = [
   ["space-separated factors before a function", byId("ch-mix-001"), "2x sin(e^(3x)) + 3x^2 e^(3x) cos(e^(3x))", true],
   ["space-separated factors still catch a missing chain factor", byId("ch-mix-001"), "2x sin(e^(3x)) + x^2 e^(3x) cos(e^(3x))", false],
   ["variable then bare function", { ...derivativeProblem, answer: "x*sin(x)" }, "x sin x", true],
-  ["bare LaTeX functions", { ...derivativeProblem, answer: "sin(x)*cos(x)" }, "\\sin x \\cos x", true]
+  ["bare LaTeX functions", { ...derivativeProblem, answer: "sin(x)*cos(x)" }, "\\sin x \\cos x", true],
+  // pi 與 e 省略乘號（2026-10-27 玩家回報：全站只收 4*pi，4pi、2pi/3、πr²、2e 都判成格式無法解析）
+  ["implicit 4pi", { ...numericProblem, answer: "4*pi" }, "4pi", true],
+  ["implicit 4π", { ...numericProblem, answer: "4*pi" }, "4π", true],
+  ["implicit 2pi/3", { ...numericProblem, answer: "2*pi/3" }, "2pi/3", true],
+  ["implicit -4pi", { ...numericProblem, answer: "-4*pi" }, "-4pi", true],
+  ["implicit 2e", { ...numericProblem, answer: "2*e" }, "2e", true],
+  ["implicit 4pi still wrong for 2pi", { ...numericProblem, answer: "2*pi" }, "4pi", false],
+  ["implicit pi times variable", { ...derivativeProblem, answer: "2*pi*x" }, "2pix", true],
+  ["implicit x times pi", { ...derivativeProblem, answer: "pi*x" }, "xpi", true]
 ];
 regressions.forEach(([name, problem, input, expected]) => {
   const result = api.checkAnswer(problem, input);
