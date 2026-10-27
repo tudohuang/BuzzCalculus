@@ -1754,7 +1754,7 @@
     const lesson = courseUI.nextInfo ? courseUI.nextInfo(records) : null;
     const today = dailyOneDateKey();
     const readToday = Object.values(records.courseV2 || {}).some((e) => e && typeof e.doneAt === "string" && e.doneAt.slice(0, 10) === today);
-    const guessed = Boolean(((records.funcle || {}).days || {})[today]);
+    const guessed = Boolean(((records.funcle || {}).days || {})[funcleDateKey()]);
     // 翻牌卡（course_keys.js）的排程只看紀錄：不用載課文就知道今天有幾張到期（排程用本地日期，跟 course_keys.js 一樣）
     const d = new Date();
     const local = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -2423,7 +2423,7 @@
           // 它決定的是接下來每一題長什麼樣，屬於開局前的第一個決定，
           // 所以放在分類頁籤下面，不捲就看得到。
           bucket === "practice"
-            ? `${renderHomeAnswerModeBar()}<nav class="home-quick-links" aria-label="${t("每日小遊戲")}"><button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}${((records.funcle || {}).days || {})[dailyOneDateKey()] ? " ✓" : ""}</span></button></nav>${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
+            ? `${renderHomeAnswerModeBar()}<nav class="home-quick-links" aria-label="${t("每日小遊戲")}"><button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}${((records.funcle || {}).days || {})[funcleDateKey()] ? " ✓" : ""}</span></button></nav>${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
             : ""
         }
         ${bucket === "weakness" ? renderWeaknessBucket(records) : ""}
@@ -2630,7 +2630,7 @@
         <div class="action-row">
           <button class="button home-primary" data-action="start-daily">${icon("calendar")}${t("每日挑戰 {completed}/{target}", { completed: mission.completed, target: mission.target })}</button>
           <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}${t("每日一題 {records}", { records: renderDailyOneBadge(records) })}</button>
-          <button class="button secondary" data-action="open-funcle">${icon("grid")}${t("今日函數")}${((records.funcle || {}).days || {})[dailyOneDateKey()] ? " ✓" : ""}</button>
+          <button class="button secondary" data-action="open-funcle">${icon("grid")}${t("今日函數")}${((records.funcle || {}).days || {})[funcleDateKey()] ? " ✓" : ""}</button>
         </div>
       </section>
       <section class="study-card">
@@ -8022,8 +8022,8 @@
     // 今日函數（funcle.js，點了才抓）：猜今天的神秘函數，六次
     if (action === "open-funcle") {
       Promise.resolve(ensureLazy("funcle")).then(() => window.BuzzFuncle && window.BuzzFuncle.open({
-        evaluate: evaluateExpression, loadRecords, saveRecords: (r) => { saveRecords(r); }, today: dailyOneDateKey,
-        tex: (src) => window.katex.renderToString(src, { throwOnError: false }), track: trackEvent
+        evaluate: evaluateExpression, loadRecords, saveRecords: (r) => { saveRecords(r); }, today: funcleDateKey,
+        tex: (src) => window.katex.renderToString(src, { throwOnError: false }), track: trackEvent, onClose: () => render()
       })).catch(() => {});
     }
     // 課程結尾的「自己證證看」：載證明引擎，開那條梯子第一級還沒解的（都解了就第一級）
@@ -8405,6 +8405,11 @@
 
   // ---- 每日一題（Wordle 式）：全站同一題，一天一次正式機會 ----
   const SITE_URL = "https://buzz-calculus.vercel.app/";
+
+  // 今日函數的日期：台灣時間（UTC+8），半夜 12 點換題（2026-10-27 起；每日一題照舊用 dailyOneDateKey，它的歷史釘選是照那個日期）
+  function funcleDateKey() {
+    return new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);
+  }
 
   function dailyOneDateKey(date = new Date()) {
     return date.toISOString().slice(0, 10);

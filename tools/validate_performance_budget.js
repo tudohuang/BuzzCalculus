@@ -122,7 +122,8 @@ const BUDGETS = {
   // 2026-10-23 新增：全站搜尋（search.js 約 9KB＋索引 search_index.js 約 670KB：每一節的標題與黑板上的中文，壓縮後約 180KB）。
   // 按 Ctrl+K／點搜尋才抓；課文全文（近 50 萬字）不收，收的是板上寫的字
   "延後載入：全站搜尋": { pattern: /^$/, budget: 740 * 1024, lazy: "search" },
-  "延後載入：今日函數": { pattern: /^$/, budget: 17 * 1024, lazy: "funcle" },
+  // 2026-10-27 17 → 32：類型格、線索點、打字預覽、快捷鍵、翻牌動畫、戰績與倒數、答案的 TeX（玩家變多，讓它猜得下去）
+  "延後載入：今日函數": { pattern: /^$/, budget: 32 * 1024, lazy: "funcle" },
   // 2026-10-13 新增：課程畫面的樣式（course_v2_style.js，約 21KB）從 course_v2_ui.js 整段搬出來 —— 課程組只剩 24 位元組，
   // 塞不下「完成／熟練／全破還差多少」的那幾行。跟課程組一起抓（course.js），上限留約兩成。
   "延後載入：課程樣式": { pattern: /^$/, budget: 26 * 1024, lazy: "coursestyle" },
