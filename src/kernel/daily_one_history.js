@@ -155,6 +155,9 @@
     "2026-10-22": "putnam-003",
     "2026-10-23": "world-039",
     "2026-10-24": "rel-hard-ser-008",
+    "2026-10-25": "int-012",
+    "2026-10-26": "lim-028",
+    "2026-10-27": "burst-boss-ser-002",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;
