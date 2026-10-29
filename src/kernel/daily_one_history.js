@@ -158,6 +158,8 @@
     "2026-10-25": "int-012",
     "2026-10-26": "lim-028",
     "2026-10-27": "burst-boss-ser-002",
+    "2026-10-28": "db-itrig-005",
+    "2026-10-29": "rel-hard-lim-009",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;
