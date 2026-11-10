@@ -2490,7 +2490,8 @@
   // 存在句：由 <定理>，存在 c ∈ (a, b) 使 <關係式>。
   // c 變成一個在 (a, b) 裡取樣的變數，關係式登記成條件（抽象 atom 的等式會解成定義）；
   // 解不了、抽不到點的等式（g(c) = 0 這種）就只記成「主張過的關係」，之後字面或等價地引用它才算。
-  const EXISTENTIAL = /^(存在|有|there\s+(?:exists|is)(?:\s+an?|\s+some)?|exists?|for\s+some)\s+([A-Za-z_]\w*)\s*(?:in\s*([\(\[])\s*([^,]+?)\s*,\s*([^\)\]]+?)\s*([\)\]]))?\s*,?\s*(使得|使|滿足|such\s+that|with|so\s+that|s\.t\.|where)\s*(.+)$/i;
+  // 中文的「存在」後面可以直接黏變數（存在c∈(x,y) 使 …）；其他引導詞要空白，免得「有」吃到別的字
+  const EXISTENTIAL = /^(存在(?=\s*[A-Za-z_])\s*|(?:有|there\s+(?:exists|is)(?:\s+an?|\s+some)?|exists?|for\s+some)\s+)([A-Za-z_]\w*)\s*(?:in\s*([\(\[])\s*([^,]+?)\s*,\s*([^\)\]]+?)\s*([\)\]]))?\s*,?\s*(使得|使|滿足|such\s+that|with|so\s+that|s\.t\.|where)\s*(.+)$/i;
 
   function handleExistential(spec, ctx, match, rule, evaluate) {
     const name = match[2];
@@ -2637,6 +2638,9 @@
       for (const mine of candidates) {
         const hit = mine.match(re);
         if (!hit) continue;
+        // 代進 _ 的東西括號要配平：f'(c)(y-x) > 0 不是 f'(_) > 0 套到「c)(y-x」
+        let depth = 0;
+        if (hit[1].split("").some((ch) => (depth += ch === "(" ? 1 : ch === ")" ? -1 : 0) < 0) || depth !== 0) continue;
         // 全稱主張帶 domain（對所有 x > 0）：代進去的東西要在 domain 裡，用取樣驗；驗不了就不算
         if (item.domain && evaluate) {
           const cond = splitChain(item.domain.replace(/_/g, `(${hit[1]})`));

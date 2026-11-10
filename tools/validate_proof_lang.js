@@ -402,6 +402,22 @@ lessons.forEach((lesson, index) => {
   }
 }
 
+// 12. 中文黏字的存在句（2026-11-10 使用者回報）：「存在c∈(x,y) 使 …」沒空白就沒被當存在句，
+//     MVT 的等式沒登記成條件，下一行 f(y) − f(x) > 0 抽到假反例而紅。
+//     同一份裡 f'(c)(y-x) > 0 被當成 f'(_) > 0 套到「c)(y-x」—— 括號不配平也放行，寫成 (x-y) 一樣綠。
+{
+  const inc = problems.find((spec) => spec.title === "導數為正則函數嚴格遞增");
+  if (inc) {
+    const glued = ["任取 x, y ∈I且x<y。", "由平均值定理,存在c∈(x,y) 使f(y) - f(x) = f'(c)(y-x)。", "因為f'(c) > 0且y-x>0,所以f'(c)(y-x) > 0", "則f(y) - f(x)>0", "故 f(x)<f(y),即f在I上嚴格遞增"];
+    const report = lang.check(inc, glued.join("\n"));
+    checks += 1;
+    if (report.verdict !== "verified") fail(`黏字存在句：「存在c∈(x,y) 使 …」應該登記 MVT 等式、全綠：${report.verdict} ${report.lines.map((l) => `${l.status} ${l.note}`).join(" / ")}`);
+    const flipped = lang.check(inc, glued.map((line, i) => (i === 2 ? "因為f'(c) > 0且y-x>0,所以f'(c)(x-y) > 0" : line)).join("\n"));
+    checks += 1;
+    if (flipped.lines[2].status !== "error" || /套用到/.test(flipped.lines[2].note.split("結論")[1] || "")) fail(`全稱代換括號要配平：f'(c)(x-y) > 0 不是 f'(_) > 0 的實例，應該紅：${flipped.lines[2].status} ${flipped.lines[2].note}`);
+  }
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));
